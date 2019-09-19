@@ -16,9 +16,9 @@ MLN是一个移动跨平台开发框架，让开发者用一套代码构建Andro
 
 ## 前置条件
 
-Android:
+Android:Android4.4及以上
 
-iOS:
+iOS:iOS8及以上
 
 ## IDE插件和开发工具
 [整理上传中。。。]()
