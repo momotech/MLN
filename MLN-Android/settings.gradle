@@ -1,0 +1,8 @@
+include ':sample'
+include ':mlncore'
+include ':mlnservics'
+include ':annotation'
+include ':processor'
+include ':scan'
+include ':HotReload'
+include ':HotReload_Empty'

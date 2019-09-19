@@ -1,0 +1,37 @@
+/**
+  * Created by MomoLuaNative.
+  * Copyright (c) 2019, Momo Group. All rights reserved.
+  *
+  * This source code is licensed under the MIT.
+  * For the full copyright and license information,please view the LICENSE file in the root directory of this source tree.
+  */
+syntax = "proto3";
+
+option java_package = "com.immomo.luanative.codec.protobuf";
+option java_outer_classname = "PBBaseCommand";
+
+message pbbasecommand {
+    int32 version = 1; // 指令协议版本
+    string osType = 2; // 设备的系统类型
+    string serialNumber = 3; // 设备的SN码或UUID
+    string ip = 4; //
+    int32 port = 5; //
+    int32 instruction = 6; //
+    int64 timestamp = 7; //
+        enum InstructionType //消息命令的类型
+            {
+                PING = 0; //ping 指令，用于心跳
+                PONG = 1; // pong 指令， 用户心跳
+                ENTRY_FILE = 2; // 同步入口文件的指令
+                UPDATE = 3; // 文件更新指令
+                RELOAD = 4; // 刷新指令
+                DEVICE = 5; // 同步设备信息指令
+                LOG = 6; // 打印日志指令
+                ERROR = 7; // 打印error指令
+                CLOSE = 8; // 关闭连接指令
+                MOVE = 9; // 文件移动指令
+                RENAME = 10; // 文件重命名指令
+                REMOVE = 11; // 删除文件指令
+                CREATE = 12; // 创建文件指令
+            }
+}

@@ -1,0 +1,69 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion project.compileSdkVersion
+    buildToolsVersion project.buildToolsVersion
+    defaultConfig {
+        minSdkVersion project.minSdkVersion
+        targetSdkVersion project.targetSdkVersion
+        versionCode 1
+        versionName "1.0"
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = [isSdk: 'true']
+            }
+        }
+        externalNativeBuild {
+            cmake {
+                cppFlags "-frtti -fexceptions"
+                cFlags "-pie -fPIE"
+                abiFilters  'armeabi-v7a'
+            }
+        }
+    }
+
+    buildTypes {
+        debug {
+            minifyEnabled false
+        }
+        release {
+            minifyEnabled false
+//            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    externalNativeBuild {
+        cmake {
+            path file('src/main/jni/CMakeLists.txt')
+        }
+    }
+    testOptions {
+        unitTests.returnDefaultValues = true
+    }
+    lintOptions {
+        abortOnError false
+    }
+}
+
+dependencies {
+    compileOnly 'androidx.legacy:legacy-support-v4:1.0.0'
+    compileOnly "androidx.recyclerview:recyclerview:$androidxVersion"
+    compileOnly "androidx.appcompat:appcompat:$androidxVersion"
+    testImplementation 'junit:junit:4.12'
+    testImplementation 'org.mockito:mockito-core:2.23.0'
+
+    if (implementation_debug) {
+        compileOnly project(":mlncore")
+        compileOnly project(':HotReload')
+        api project(':annotation')
+        annotationProcessor project(':processor')
+    } else {
+        compileOnly "com.immomo.mlncore:core:$mlnCoreVersion"
+        compileOnly "com.immomo.luanative:hotreload:$hotreloadVersion"
+        api "com.immomo.mls:annotation:$annotationVersion"
+        annotationProcessor "com.immomo.mls:processor:$processorVersion"
+    }
+}
+
+apply from: "../bintrayUpload.gradle"
+version=mlnsVersion
