@@ -20,7 +20,7 @@ Android:Android4.4及以上
 
 iOS:iOS8及以上
 
-## IDE插件和开发工具
+## IDE插件、Demo和开发工具
 [整理上传中。。。]()
 
 ## 如何交流
