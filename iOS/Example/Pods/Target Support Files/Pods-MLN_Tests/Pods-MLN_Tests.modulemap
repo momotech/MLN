@@ -1,0 +1,6 @@
+module Pods_MLN_Tests {
+  umbrella header "Pods-MLN_Tests-umbrella.h"
+
+  export *
+  module * { export * }
+}
