@@ -1,0 +1,20 @@
+/**
+  * Created by MomoLuaNative.
+  * Copyright (c) 2019, Momo Group. All rights reserved.
+  *
+  * This source code is licensed under the MIT.
+  * For the full copyright and license information,please view the LICENSE file in the root directory of this source tree.
+  */
+syntax = "proto3";
+
+import "PBBaseCommand.proto";
+
+option java_package = "com.immomo.luanative.codec.protobuf";
+option java_outer_classname = "PBEntryFileCommand";
+
+message pbentryfilecommand {
+    pbbasecommand basecommand = 1;
+    string entryFilePath = 2;
+    string relativeEntryFilePath = 3;
+    string params = 4;
+}

@@ -1,0 +1,44 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.immomo.mln">
+
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/main_logo"
+        android:label="@string/app_name"
+        android:roundIcon="@drawable/main_logo"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme"
+        android:name="com.immomo.demo.App">
+
+        <meta-data
+            android:name="android.max_aspect"
+            android:value="2.34" />
+        <meta-data
+            android:name="notch.config"
+            android:value="portrait|landscape" />
+        <meta-data
+            android:name="android.notch_support"
+            android:value="true" />
+        <!--config for Glide-->
+        <meta-data
+            android:name="com.immomo.demo.provider.GlideConfiguration"
+            android:value="GlideModule"/>
+
+        <activity android:name="com.immomo.demo.activity.LuaViewActivity"/>
+        <activity android:name="com.immomo.demo.activity.AssetsChooserActivity"/>
+        <activity
+            android:name="com.immomo.demo.activity.WebActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
+        <activity android:name="com.immomo.demo.activity.MainActivity"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+</manifest>

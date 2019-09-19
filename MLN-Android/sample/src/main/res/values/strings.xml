@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">LuaNative</string>
+
+    <string name="btn_scan_qr">离线预览</string>
+    <string name="wait">请稍后</string>
+    <string name="dev_debug_tv_value">热重载</string>
+</resources>
