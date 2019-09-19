@@ -1,0 +1,93 @@
+{
+  "name": "MLNDevTool",
+  "version": "0.1.0",
+  "summary": "Debug Tool of MLN.",
+  "description": "Debug Tool of MLN.",
+  "homepage": "https://mln.immomo.com",
+  "license": {
+    "type": "MIT",
+    "file": "LICENSE"
+  },
+  "authors": "MoMo",
+  "source": {
+    "git": "https://github.com/wemomo/MLN.git",
+    "tag": "0.1.0"
+  },
+  "platforms": {
+    "ios": "8.0"
+  },
+  "libraries": "z",
+  "requires_arc": true,
+  "public_header_files": "MLNDevTool/Classes/*.h",
+  "subspecs": [
+    {
+      "name": "DevTool",
+      "source_files": "MLNDevTool/Classes/DevTool/**/*.{h,m,c}",
+      "public_header_files": "MLNDevTool/Classes/DevTool/**/*.h",
+      "resource_bundles": {
+        "MLNDevTool_Util": "MLNDevTool/Classes/DevTool/Util/**/Assets/*.{png,lua,xib,storyboard}",
+        "MLNDevTool_UI": "MLNDevTool/Classes/DevTool/UI/**/Assets/*.{png,xib}"
+      }
+    },
+    {
+      "name": "Conn",
+      "frameworks": [
+        "Foundation",
+        "UIKit",
+        "CoreGraphics",
+        "AVFoundation"
+      ],
+      "source_files": "MLNDevTool/Classes/Conn/**/*.{h,m,c}",
+      "public_header_files": "MLNDevTool/Classes/Conn/**/*.h",
+      "dependencies": {
+        "Protobuf": [
+          "~> 3.6.0"
+        ]
+      }
+    },
+    {
+      "name": "Protobuf",
+      "source_files": "MLNDevTool/Classes/Protobuf/**/*.{h,m,c}",
+      "public_header_files": "MLNDevTool/Classes/Protobuf/**/*.h",
+      "dependencies": {
+        "Protobuf": [
+          "~> 3.6.0"
+        ]
+      },
+      "requires_arc": false
+    },
+    {
+      "name": "Offline",
+      "source_files": "MLNDevTool/Classes/Offline/**/*.{h,m,c}",
+      "public_header_files": "MLNDevTool/Classes/Offline/**/*.h",
+      "resource_bundles": {
+        "MLNDevTool_Offline": "MLNDevTool/Classes/Offline/**/Assets/*.{png,lua,xib}"
+      },
+      "dependencies": {
+        "MLNDevTool/DevTool": [
+
+        ]
+      }
+    },
+    {
+      "name": "HotReload",
+      "frameworks": [
+        "Foundation",
+        "UIKit"
+      ],
+      "source_files": "MLNDevTool/Classes/HotReload/**/*.{h,m,c}",
+      "public_header_files": "MLNDevTool/Classes/HotReload/**/*.h",
+      "dependencies": {
+        "MLNDevTool/DevTool": [
+
+        ],
+        "MLN": [
+
+        ]
+      },
+      "resource_bundles": {
+        "MLNDevTool_HotReload": "MLNDevTool/Classes/HotReload/**/Assets/*.{png,xib}"
+      }
+    }
+  ]
+}
