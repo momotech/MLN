@@ -23,7 +23,7 @@ Pod::Spec.new do |s|
     
     s.homepage         = 'https://mln.immomo.com'
     # s.screenshots     = 'www.example.com/screenshots_1', 'www.example.com/screenshots_2'
-    s.license          = { :type => 'MIT', :file => '../LICENSE' }
+    s.license          = { :type => 'MIT', :file => 'LICENSE' }
     s.author           = 'MoMo'
     s.source           = { :git => 'https://github.com/momotech/MLN.git', :tag => s.version.to_s }
     # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
