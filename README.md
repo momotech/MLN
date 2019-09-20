@@ -9,9 +9,9 @@ MLN是一个移动跨平台开发框架，让开发者用一套代码构建Andro
 
 ## 了解MLN
 
-[使用指南](https://mln.immomo.com/zh-cn/docs/)
+[使用指南，更新完善中。。](https://mln.immomo.com/zh-cn/docs/)
 
-[文档](https://mln.immomo.com/zh-cn/api/)
+[文档，更新完善中。。](https://mln.immomo.com/zh-cn/api/)
 
 
 ## 前置条件
