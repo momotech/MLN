@@ -133,9 +133,9 @@
                 success = NO;
                 msg = [error localizedDescription];
             }
-            [callback setBOOLParam:success];
-            [callback setObjParam:msg];
-            [callback setStringParam:imagePath];
+            [callback addBOOLArgument:success];
+            [callback addObjArgument:msg];
+            [callback addStringArgument:imagePath];
             [callback callIfCan];
         })
     }];
@@ -188,29 +188,8 @@
         return;
     }
     self.contentMode = UIViewContentModeScaleToFill;
-    MLNKitLuaAssert([imageLoader respondsToSelector:@selector(view:loadImageWithPath:completed:)], @"-[imageLoader view:loadImageWithPath:completed:] was not found!");
-#if defined(DEBUG)
-    if ([imageLoader respondsToSelector:@selector(view:loadImageWithPath:completed:)]) {
-        [imageLoader view:self loadImageWithPath:imageName completed:^(UIImage *image, NSError *error, NSString *imagePath) {
-            if (image) {
-                CGSize imgViewSize = self.frame.size;
-                if (!synchronzied) {
-                    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-                        UIImage* resizedImage = [MLNNinePatchImageFactory mln_in_createResizableNinePatchImage:image imgViewSize:imgViewSize];
-                        dispatch_async(dispatch_get_main_queue(), ^{
-                            self.image = resizedImage;
-                        });
-                    });
-                } else {
-                    self.image = [MLNNinePatchImageFactory mln_in_createResizableNinePatchImage:image imgViewSize:imgViewSize];
-                }
-            } else {
-                self.image = nil;
-            }
-        }];
-    }
-#else
-    [imageLoader loadImageWithPath:imageName completed:^(UIImage *image, NSError *error, NSString *imagePath) {
+    NSAssert([imageLoader respondsToSelector:@selector(view:loadImageWithPath:completed:)], @"-[imageLoader view:loadImageWithPath:completed:] was not found!");
+    [imageLoader view:self loadImageWithPath:imageName completed:^(UIImage *image, NSError *error, NSString *imagePath) {
         if (image) {
             CGSize imgViewSize = self.frame.size;
             if (!synchronzied) {
@@ -227,8 +206,6 @@
             self.image = nil;
         }
     }];
-#endif
-    
 }
 
 - (void)lua_startAnimation:(NSArray <NSString *> *)urlArray duration:(CGFloat)duration repeat:(BOOL)repeat

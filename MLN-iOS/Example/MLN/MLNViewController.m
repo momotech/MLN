@@ -54,11 +54,11 @@
 }
 
 - (IBAction)showDemoClick:(id)sender {
-//        NSString *entryFile = @"moment.lua";
+        NSString *entryFile = @"moment.lua";
         MLNLuaBundle *bundle = [MLNLuaBundle mainBundleWithPath:@"moment"];
     
     
-        NSString *entryFile = @"foo.lua";
+//        NSString *entryFile = @"foo.lua";
 //        MLNLuaBundle *bundle = [MLNLuaBundle mainBundle];
     
         MLNKitViewController *kcv = [[MLNKitViewController alloc] initWithEntryFilePath:entryFile];

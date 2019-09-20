@@ -7,6 +7,7 @@
 
 #import "MLNEditTextView.h"
 #import "MLNKitHeader.h"
+#import "MLNViewExporterMacro.h"
 #import "MLNBlock.h"
 #import "MLNStringUtil.h"
 #import "MLNLayoutEngine.h"
