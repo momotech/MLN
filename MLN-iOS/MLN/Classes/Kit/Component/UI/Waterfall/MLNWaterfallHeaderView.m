@@ -86,6 +86,11 @@
     return self.luaContentView.lastReuaseId;
 }
 
+- (nonnull UIView *)contentView
+{
+    return self.luaContentView;
+}
+
 #pragma mark - Getter
 - (MLNReuseContentView *)luaContentView
 {

@@ -16,7 +16,7 @@
 #include "lapi.h"
 
 #import "MLNStaticExporterMacro.h"
-#import "MLNViewExporterMacro.h"
+#import "MLNEntityExporterMacro.h"
 #import "MLNGlobalFuncExporterMacro.h"
 #import "MLNGlobalVarExporterMacro.h"
 
