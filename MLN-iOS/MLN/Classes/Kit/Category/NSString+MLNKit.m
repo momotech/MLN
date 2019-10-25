@@ -6,8 +6,7 @@
 //
 
 #import "NSString+MLNKit.h"
-
-@import CommonCrypto;
+#import <CommonCrypto/CommonCrypto.h>
 
 @implementation NSString (MLNKit)
 
