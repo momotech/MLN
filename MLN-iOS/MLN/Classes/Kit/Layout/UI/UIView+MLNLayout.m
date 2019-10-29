@@ -15,6 +15,15 @@
 
 @implementation UIView (MLNLayout)
 
+- (void)mln_user_data_dealloc
+{
+    // 如果是归属于lua的视图，在对应UserData被GC时候，应该从界面上移除
+    if (self.mln_isLuaObject) {
+        [self lua_removeFromSuperview];
+        [self lua_removeAllSubViews];
+    }
+}
+
 #pragma mark - View Tree
 - (UIView *)lua_superview
 {
@@ -29,6 +38,11 @@
 {
 //    MLNCheckTypeAndNilValue(view, @"View", UIView);
     [self addSubview:view];
+    if ([view mln_isConvertible]) {
+        // 添加Lua强引用
+        id<MLNEntityExportProtocol> obj = (id<MLNEntityExportProtocol>)view;
+        [obj.mln_luaCore setStrongObjectWithIndex:2 cKey:(__bridge void *)view];
+    }
     if (view.lua_node) {
         [(MLNLayoutContainerNode *)self.lua_node addSubnode:view.lua_node];
     }
@@ -39,6 +53,11 @@
     index = index - 1;
     index = index >= 0 && index < self.subviews.count? index : self.subviews.count;
     [self insertSubview:view atIndex:index];
+    if ([view mln_isConvertible]) {
+        // 添加Lua强引用
+        id<MLNEntityExportProtocol> obj = (id<MLNEntityExportProtocol>)view;
+        [obj.mln_luaCore setStrongObjectWithIndex:2 cKey:(__bridge void *)view];
+    }
     if (view.lua_node) {
         [(MLNLayoutContainerNode *)self.lua_node insertSubnode:view.lua_node atIndex:index];
     }
@@ -47,6 +66,11 @@
 - (void)lua_removeFromSuperview
 {
     [self removeFromSuperview];
+    if ([self mln_isConvertible]) {
+        // 删除Lua强引用
+        id<MLNEntityExportProtocol> obj = (id<MLNEntityExportProtocol>)self;
+        [obj.mln_luaCore removeStrongObjectForCKey:(__bridge void *)self];
+    }
     if (self.lua_node) {
         [self.lua_node removeFromSupernode];
     }
@@ -55,10 +79,7 @@
 - (void)lua_removeAllSubViews
 {
     NSArray *subViews = self.subviews;
-    [subViews makeObjectsPerformSelector:@selector(removeFromSuperview)];
-    if (self.lua_node) {
-        [(MLNLayoutContainerNode *)self.lua_node removeAllSubnodes];
-    }
+    [subViews makeObjectsPerformSelector:@selector(lua_removeFromSuperview)];
 }
 
 #pragma mark - Layout

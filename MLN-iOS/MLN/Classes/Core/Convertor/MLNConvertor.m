@@ -28,6 +28,13 @@ static MLN_FORCE_INLINE void __mln_lua_createUDLuatable(lua_State *L, int index)
 }
 
 static MLN_FORCE_INLINE void __mln_lua_pushentity(lua_State *L, id<MLNEntityExportProtocol> obj) {
+    int base = lua_gettop(L);
+    // cache
+    if ([MLN_LUA_CORE(L) pushStrongObjectForCKey:(__bridge void *)obj]) {
+        return;
+    }
+    lua_settop(L, base);
+    
     const mln_objc_class *classInfo = [[obj class] mln_clazzInfo];
     // 创建Userdata对象
     MLNUserData *userData = ((MLNUserData *)lua_newuserdata(L, sizeof(MLNUserData)));

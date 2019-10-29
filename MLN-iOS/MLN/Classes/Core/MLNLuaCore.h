@@ -9,6 +9,7 @@
 #import "MLNHeader.h"
 #import "MLNExportProtocol.h"
 #import "MLNErrorHandlerProtocol.h"
+#import "MLNEntityExportProtocol.h"
 #import "MLNConvertorProtocol.h"
 #import "MLNExporterProtocol.h"
 #import "MLNLuaCoreDelegate.h"
@@ -16,6 +17,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @class MLNLuaBundle;
+@class MLNLuaTable;
 @class MLNExporter;
 @interface MLNLuaCore : NSObject
 
@@ -23,6 +25,11 @@ NS_ASSUME_NONNULL_BEGIN
  lua状态机。
  */
 @property (nonatomic, assign, readonly) lua_State *state;
+
+/**
+ 强引用对象的lua table
+ */
+@property (nonatomic, strong, readonly) MLNLuaTable *objStrongTable;
 
 /**
  原生类的注册导出工具
@@ -241,6 +248,66 @@ NS_ASSUME_NONNULL_BEGIN
  @param bundle 新的lua bundle
  */
 - (void)changeLuaBundle:(MLNLuaBundle *)bundle;
+
+/**
+ 强引用对象
+ 
+ @param objIndex 被强引用的对象在栈上的索引
+ @param key 关联的key
+ */
+- (void)setStrongObjectWithIndex:(int)objIndex key:(NSString *)key;
+
+/**
+ 强引用对象
+
+ @param objIndex 被强引用的对象在栈上的索引
+ @param cKey 关联的key
+ */
+- (void)setStrongObjectWithIndex:(int)objIndex cKey:(void *)cKey;
+
+/**
+ 强引用对象
+ 
+ @param obj 被强引用的对象
+ @param key 关联的key
+ */
+- (void)setStrongObject:(id<MLNEntityExportProtocol>)obj key:(NSString *)key;
+
+/**
+ 强引用对象
+ 
+ @param obj 被强引用的对象
+ @param cKey 关联的key
+ */
+- (void)setStrongObject:(id<MLNEntityExportProtocol>)obj cKey:(void *)cKey;
+
+/**
+ 移除强引用对象
+ 
+ @param key 关联的key
+ */
+- (void)removeStrongObject:(NSString *)key;
+
+/**
+ 移除强引用对象
+ 
+ @param cKey 关联的key
+ */
+- (void)removeStrongObjectForCKey:(void *)cKey;
+
+/**
+ 将对应强引用对象压入栈顶
+ 
+ @param key 关联的key
+ */
+- (BOOL)pushStrongObject:(NSString *)key;
+
+/**
+ 将对应强引用对象压入栈顶
+ 
+ @param cKey 关联的key
+ */
+- (BOOL)pushStrongObjectForCKey:(void *)cKey;
 
 @end
 

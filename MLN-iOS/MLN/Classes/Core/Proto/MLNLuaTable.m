@@ -17,7 +17,7 @@
 
 static MLN_FORCE_INLINE int mln_pushTable(lua_State *L, void * key, MLNLuaTableEnvironment env) {
     lua_pushlightuserdata(L, key);
-    lua_gettable(L, LUA_REGISTRYINDEX); // [ ... | table ]
+    lua_gettable(L, env); // [ ... | table ]
     mln_lua_checktable(L, -1);
     return -1;
 }
@@ -60,15 +60,80 @@ static MLN_FORCE_INLINE int mln_pushTable(lua_State *L, void * key, MLNLuaTableE
     }
 }
 
+- (void)setObjectWithIndex:(int)objIndex key:(NSString *)key
+{
+    NSAssert([NSThread isMainThread], @"This method to be executed in the main thread!");
+    lua_State *L = self.luaCore.state;
+    MLNAssert(self.luaCore, L, @"The lua state must not be nil!");
+    if (!key || key.length <= 0) {
+        MLNError(self.luaCore, @"the key of obj mustn't be nil");
+        return;
+    }
+    int base = lua_gettop(L);
+    lua_pushvalue(L, objIndex);
+    // 将对应table压栈
+    mln_pushTable(L, (__bridge void *)(self), self.env);
+    // 设置key - value
+    lua_pushstring(L, key.UTF8String); // [ ... | table | key ]
+    lua_pushvalue(L, -3); // [ ... | table | key | ud ]
+    lua_settable(L, -3); // [ ... | table ]
+    // 清理栈
+    lua_settop(L, base);
+}
+
+- (void)setObjectWithIndex:(int)objIndex cKey:(void *)cKey
+{
+    NSAssert([NSThread isMainThread], @"This method to be executed in the main thread!");
+    lua_State *L = self.luaCore.state;
+    MLNAssert(self.luaCore, L, @"The lua state must not be nil!");
+    if (cKey == NULL) {
+        MLNError(self.luaCore, @"the key of obj mustn't be nil");
+        return;
+    }
+    int base = lua_gettop(L);
+    lua_pushvalue(L, objIndex);
+    // 将对应table压栈
+    mln_pushTable(L, (__bridge void *)(self), self.env);
+    // 设置key - value
+    lua_pushlightuserdata(L, cKey); // [ ... | table | key ]
+    lua_pushvalue(L, -3); // [ ... | table | key | ud ]
+    lua_settable(L, -3); // [ ... | table ]
+    // 清理栈
+    lua_settop(L, base);
+}
+
 - (void)setObject:(id<MLNEntityExportProtocol>)obj key:(NSString *)key
 {
     NSAssert([NSThread isMainThread], @"This method to be executed in the main thread!");
     lua_State *L = self.luaCore.state;
     MLNAssert(self.luaCore, L, @"The lua state must not be nil!");
+    if (!key || key.length <= 0) {
+        MLNError(self.luaCore, @"the key of %@ mustn't be nil",  obj);
+        return;
+    }
     // 将对应table压栈
     mln_pushTable(L, (__bridge void *)(self), self.env);
     // 设置key - value
     lua_pushstring(L, key.UTF8String); // [ ... | table | key ]
+    [MLN_LUA_CORE(L) pushNativeObject:obj error:NULL]; // [ ... | table | key | ud ]
+    lua_settable(L, -3); // [ ... | table ]
+    // 清理栈
+    lua_pop(L, 1);
+}
+
+- (void)setObject:(id<MLNEntityExportProtocol>)obj cKey:(void *)cKey
+{
+    NSAssert([NSThread isMainThread], @"This method to be executed in the main thread!");
+    lua_State *L = self.luaCore.state;
+    MLNAssert(self.luaCore, L, @"The lua state must not be nil!");
+    if (cKey == NULL) {
+        MLNError(self.luaCore, @"the key of %@ mustn't be nil",  obj);
+        return;
+    }
+    // 将对应table压栈
+    mln_pushTable(L, (__bridge void *)(self), self.env);
+    // 设置key - value
+    lua_pushlightuserdata(L, cKey); // [ ... | table | key ]
     [MLN_LUA_CORE(L) pushNativeObject:obj error:NULL]; // [ ... | table | key | ud ]
     lua_settable(L, -3); // [ ... | table ]
     // 清理栈
@@ -80,6 +145,10 @@ static MLN_FORCE_INLINE int mln_pushTable(lua_State *L, void * key, MLNLuaTableE
     NSAssert([NSThread isMainThread], @"This method to be executed in the main thread!");
     lua_State *L = self.luaCore.state;
     MLNAssert(self.luaCore, L, @"The lua state must not be nil!");
+    if (key == NULL) {
+        MLNError(self.luaCore, @"the key of obj mustn't be nil");
+        return;
+    }
     int oldTop = lua_gettop(L);
     mln_pushTable(L, (__bridge void *)(self), self.env); // [ ... | table ]
     // 设置key - nil
@@ -89,6 +158,70 @@ static MLN_FORCE_INLINE int mln_pushTable(lua_State *L, void * key, MLNLuaTableE
     // 清理栈
     int popCount = lua_gettop(L) - oldTop;
     lua_pop(L, popCount);
+}
+
+- (void)removeObjectForCKey:(void *)cKey
+{
+    NSAssert([NSThread isMainThread], @"This method to be executed in the main thread!");
+    lua_State *L = self.luaCore.state;
+    MLNAssert(self.luaCore, L, @"The lua state must not be nil!");
+    if (cKey == NULL) {
+        MLNError(self.luaCore, @"the key of obj mustn't be nil");
+        return;
+    }
+    int oldTop = lua_gettop(L);
+    mln_pushTable(L, (__bridge void *)(self), self.env); // [ ... | table ]
+    // 设置key - nil
+    lua_pushlightuserdata(L, cKey); // [ ... | table | key ]
+    lua_pushnil(L); // [ ... | table | key | nil ]
+    lua_settable(L, -3); // [ ... | table ]
+    // 清理栈
+    int popCount = lua_gettop(L) - oldTop;
+    lua_pop(L, popCount);
+}
+
+- (NSInteger)pushObjectToLuaStack:(NSString *)key
+{
+    NSAssert([NSThread isMainThread], @"This method to be executed in the main thread!");
+    lua_State *L = self.luaCore.state;
+    if (!L) {
+        MLNError(self.luaCore, @"The lua state must not be nil!");
+        return NSNotFound;
+    }
+    int oldTop = lua_gettop(L);
+    mln_pushTable(L, (__bridge void *)(self), self.env);
+    lua_pushstring(L, key.UTF8String);
+    lua_gettable(L, -2);
+    if (lua_type(L, -1) == LUA_TUSERDATA) {
+        // 删除Table
+        lua_remove(L, -2);
+        return -1;
+    }
+    // 清理栈
+    lua_settop(L, oldTop);
+    return NSNotFound;
+}
+
+- (NSInteger)pushObjectToLuaStackForCKey:(void *)cKey
+{
+    NSAssert([NSThread isMainThread], @"This method to be executed in the main thread!");
+    lua_State *L = self.luaCore.state;
+    if (!L) {
+        MLNError(self.luaCore, @"The lua state must not be nil!");
+        return NSNotFound;
+    }
+    int oldTop = lua_gettop(L);
+    mln_pushTable(L, (__bridge void *)(self), self.env);
+    lua_pushlightuserdata(L, cKey);
+    lua_gettable(L, -2);
+    if (lua_type(L, -1) == LUA_TUSERDATA) {
+        // 删除Table
+        lua_remove(L, -2);
+        return -1;
+    }
+    // 清理栈
+    lua_settop(L, oldTop);
+    return NSNotFound;
 }
 
 - (NSInteger)pushToLuaStack

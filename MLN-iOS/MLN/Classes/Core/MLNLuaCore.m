@@ -11,6 +11,7 @@
 #import "MLNExporterManager.h"
 #import "MLNConvertor.h"
 #import "MLNFileLoader.h"
+#import "MLNLuaTable.h"
 
 static void * mln_state_alloc(void *ud, void *ptr, size_t osize, size_t nsize) {
     (void)ud;
@@ -211,7 +212,8 @@ static int mln_errorFunc_traceback (lua_State *L) {
         if (!_currentBundle) {
             _currentBundle = [MLNLuaBundle mainBundle];
         }
-         [self registerMLNBridge];
+        [self createViewStrongTable];
+        [self registerMLNBridge];
     }
     return self;
 }
@@ -220,6 +222,11 @@ static int mln_errorFunc_traceback (lua_State *L) {
 {
     self = [self initWithLuaBundle:[MLNLuaBundle mainBundle] convertor:nil exporter:nil];
     return self;
+}
+
+- (void)createViewStrongTable
+{
+    _objStrongTable = [[MLNLuaTable alloc] initWithLuaCore:self env:MLNLuaTableEnvRegister];
 }
 
 - (BOOL)runFile:(NSString *)filePath error:(NSError * _Nullable __autoreleasing *)error
@@ -321,14 +328,14 @@ static int mln_errorFunc_traceback (lua_State *L) {
     if (!L) {
         if (error) {
             *error = [NSError mln_errorState:@"Lua state is released"];
-             MLNError(self, @"Lua state is released");
+            MLNError(self, @"Lua state is released");
         }
         return NO;
     }
     if (lua_type(L, -1) != LUA_TFUNCTION) {
         if (error) {
             *error = [NSError mln_errorCall:@"Function not found"];
-             MLNError(self, @"Function not found");
+            MLNError(self, @"Function not found");
         }
         return NO;
     }
@@ -602,6 +609,46 @@ static int mln_errorFunc_traceback (lua_State *L) {
 - (void)changeLuaBundle:(MLNLuaBundle *)bundle
 {
     _currentBundle = bundle;
+}
+
+- (void)setStrongObjectWithIndex:(int)objIndex key:(NSString *)key
+{
+    [self.objStrongTable setObjectWithIndex:objIndex key:key];
+}
+
+- (void)setStrongObjectWithIndex:(int)objIndex cKey:(void *)cKey
+{
+    [self.objStrongTable setObjectWithIndex:objIndex cKey:cKey];
+}
+
+- (void)setStrongObject:(id<MLNEntityExportProtocol>)obj key:(NSString *)key
+{
+    [self.objStrongTable setObject:obj key:key];
+}
+
+- (void)setStrongObject:(id<MLNEntityExportProtocol>)obj cKey:(void *)cKey
+{
+    [self.objStrongTable setObject:obj cKey:cKey];
+}
+
+- (void)removeStrongObject:(NSString *)key
+{
+    [self.objStrongTable removeObject:key];
+}
+
+- (void)removeStrongObjectForCKey:(void *)cKey
+{
+    [self.objStrongTable removeObjectForCKey:cKey];
+}
+
+- (BOOL)pushStrongObject:(NSString *)key
+{
+    return [self.objStrongTable pushObjectToLuaStack:key] != NSNotFound;
+}
+
+- (BOOL)pushStrongObjectForCKey:(void *)cKey
+{
+    return [self.objStrongTable pushObjectToLuaStackForCKey:cKey] != NSNotFound;
 }
 
 #pragma mark - 私有方法
