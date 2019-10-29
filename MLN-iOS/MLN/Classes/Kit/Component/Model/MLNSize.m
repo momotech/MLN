@@ -80,6 +80,6 @@
 LUA_EXPORT_BEGIN(MLNSize)
 LUA_EXPORT_PROPERTY(width, "setWidth:", "width", MLNSize)
 LUA_EXPORT_PROPERTY(height, "setHeight:", "height", MLNSize)
-LUA_EXPORT_END(MLNSize, Size, NO, NULL, "initWithLuaCore:with:height:")
+LUA_EXPORT_END(MLNSize, Size, NO, NULL, "initWithLuaCore:width:height:")
 
 @end

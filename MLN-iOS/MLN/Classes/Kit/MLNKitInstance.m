@@ -7,6 +7,7 @@
 
 #import "MLNKitInstance.h"
 #import "MLNLuaCore.h"
+#import "MLNLuaTable.h"
 #import "MLNLayoutEngine.h"
 #import "MLNBeforeWaitingTaskEngine.h"
 #import "MLNKiConvertor.h"
@@ -259,6 +260,36 @@
         self.luaWindow.frame = rootView.bounds;
         [self.rootView addSubview:self.luaWindow];
     }
+}
+
+- (void)setStrongObjectWithIndex:(int)objIndex key:(NSString *)key
+{
+    [self.luaCore setStrongObjectWithIndex:objIndex key:key];
+}
+
+- (void)setStrongObjectWithIndex:(int)objIndex cKey:(void *)cKey
+{
+    [self.luaCore setStrongObjectWithIndex:objIndex cKey:cKey];
+}
+
+- (void)setStrongObject:(id<MLNEntityExportProtocol>)obj key:(NSString *)key
+{
+    [self.luaCore setStrongObject:obj key:key];
+}
+
+- (void)setStrongObject:(id<MLNEntityExportProtocol>)obj cKey:(nonnull void *)cKey
+{
+    [self.luaCore setStrongObject:obj cKey:cKey];
+}
+
+- (void)removeStrongObject:(NSString *)key
+{
+    [self.luaCore removeStrongObject:key];
+}
+
+- (void)removeStrongObjectForCKey:(void *)cKey
+{
+    [self.luaCore removeStrongObjectForCKey:cKey];
 }
 
 - (void)addOnDestroyCallback:(MLNOnDestroyCallback)callback

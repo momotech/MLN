@@ -57,8 +57,6 @@ MLNLuaAssert(((id<MLNEntityExportProtocol>)self).mln_luaCore, CONDITION, FORMAT,
 #define MLNKitLuaStaticAssert(CONDITION, FORMAT, ...)\
 MLNLuaAssert(self.mln_currentLuaCore, CONDITION, FORMAT, ##__VA_ARGS__)
 
-
-
 #define MLNCheckTypeAndNilValue(OBJ, LUA_TYPE, NATIVE_TYPE)\
 MLNLuaAssert(self.mln_luaCore, ([(OBJ) isKindOfClass:([NATIVE_TYPE class])]), @"The parameter type must be %@ and not a nil value!", LUA_TYPE);
 

@@ -12,11 +12,13 @@
 #import "MLNBeforeWaitingTaskProtocol.h"
 #import "MLNViewControllerProtocol.h"
 #import "MLNKitInstanceDelegate.h"
+#import "MLNEntityExportProtocol.h"
 
 typedef void (^MLNOnDestroyCallback)(void);
 
 NS_ASSUME_NONNULL_BEGIN
 @class MLNLuaCore;
+@class MLNLuaTable;
 @class MLNLuaBundle;
 @class MLNExporter;
 @class MLNLayoutContainerNode;
@@ -195,6 +197,52 @@ NS_ASSUME_NONNULL_BEGIN
  @param rootView 承载LuaWindow的根视图
  */
 - (void)changeRootView:(UIView *)rootView;
+
+/**
+ 强引用对象
+ 
+ @param objIndex 被强引用的对象在栈上的索引
+ @param key 关联的key
+ */
+- (void)setStrongObjectWithIndex:(int)objIndex key:(NSString *)key;
+
+/**
+ 强引用对象
+ 
+ @param objIndex 被强引用的对象在栈上的索引
+ @param cKey 关联的key
+ */
+- (void)setStrongObjectWithIndex:(int)objIndex cKey:(void *)cKey;
+
+/**
+ 强引用对象
+ 
+ @param obj 被强引用的对象
+ @param key 关联的key
+ */
+- (void)setStrongObject:(id<MLNEntityExportProtocol>)obj key:(NSString *)key;
+
+/**
+ 强引用对象
+
+ @param obj 被强引用的对象
+ @param cKey 关联的key
+ */
+- (void)setStrongObject:(id<MLNEntityExportProtocol>)obj cKey:(void *)cKey;
+
+/**
+ 移除强引用对象
+ 
+ @param key 关联的key
+ */
+- (void)removeStrongObject:(NSString *)key;
+
+/**
+ 移除强引用对象
+
+ @param cKey 关联的key
+ */
+- (void)removeStrongObjectForCKey:(void *)cKey;
 
 /**
  添加监听Instance释放的回调
