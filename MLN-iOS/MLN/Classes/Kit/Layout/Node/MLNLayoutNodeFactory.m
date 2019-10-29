@@ -12,6 +12,7 @@
 #import "MLNLinearLayoutNode.h"
 #import "MLNLayoutScrollContainerNode.h"
 #import "MLNLinearLayout.h"
+#import "MLNLayoutImageViewNode.h"
 
 @implementation MLNLayoutNodeFactory
 
@@ -19,6 +20,8 @@
 {
     if (aView.lua_isContainer) {
         return [self internalCreateContainerNodeWithTargetView:aView];
+    } else if([aView isKindOfClass:[UIImageView class]]) {
+        return [[MLNLayoutImageViewNode alloc] initWithTargetView:aView];
     }
     return [[MLNLayoutNode alloc] initWithTargetView:aView];
 }

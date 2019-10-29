@@ -24,6 +24,7 @@ NS_ASSUME_NONNULL_BEGIN
 @class MLNLayoutContainerNode;
 @class MLNLayoutEngine;
 @class MLNKitInstanceHandlersManager;
+@class MLNKitInstanceConsts;
 /**
  承载Kit库bridge和LuaCore的实例，用来运行Lua文件。
  */
@@ -78,6 +79,11 @@ NS_ASSUME_NONNULL_BEGIN
  其他处理句柄的管理器
  */
 @property (nonatomic, strong, readonly) MLNKitInstanceHandlersManager *instanceHandlersManager;
+
+/**
+ 记录对应Instance中通用信息配置
+ */
+@property (nonatomic, strong, readonly) MLNKitInstanceConsts *instanceConsts;
 
 /**
  初始化方法

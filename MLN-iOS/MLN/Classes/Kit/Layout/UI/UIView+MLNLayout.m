@@ -12,6 +12,7 @@
 #import "MLNLayoutContainerNode.h"
 #import "MLNLayoutNodeFactory.h"
 #import "UIView+MLNKit.h"
+#import "MLNRenderContext.h"
 
 @implementation UIView (MLNLayout)
 
@@ -177,6 +178,16 @@ static const void *kLuaLayoutEnable = &kLuaLayoutEnable;
     return self.lua_node.priority;
 }
 
+- (void)setLua_weight:(int)lua_weight
+{
+    self.lua_node.weight = lua_weight;
+}
+
+- (int)lua_weight
+{
+    return self.lua_node.weight;
+}
+
 - (void)setLua_wrapContent:(BOOL)lua_wrapContent
 {
     self.lua_node.wrapContent = lua_wrapContent;
@@ -194,7 +205,7 @@ static const void *kLuaLayoutEnable = &kLuaLayoutEnable;
 
 - (BOOL)lua_clipsToBounds
 {
-    return [self.lua_node clipToBounds];
+    return self.mln_renderContext.clipToBounds;
 }
 
 #pragma mark - Setter & Getter Padding

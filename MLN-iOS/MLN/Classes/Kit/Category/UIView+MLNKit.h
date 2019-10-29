@@ -14,7 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @class MLNBlock;
 @class MLNKeyboardViewHandler;
-
+@class MLNRenderContext;
 @interface UIView (MLNKit)
 
 @property (nonatomic, assign) CGFloat lua_x;
@@ -40,6 +40,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) MLNBlock *mln_touchesMovedExtensionCallback;
 @property (nonatomic, strong) MLNBlock *mln_touchesEndedExtensionCallback;
 @property (nonatomic, strong) MLNBlock *mln_touchesCancelledExtensionCallback;
+
+#pragma mark - render
+@property (nonatomic, strong, readonly) MLNRenderContext *mln_renderContext;
 
 #pragma mark - Gesture
 @property (nonatomic, strong) MLNBlock * mln_tapClickBlock;
