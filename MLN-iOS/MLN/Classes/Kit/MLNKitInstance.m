@@ -16,6 +16,7 @@
 #import "MLNKitInstanceHandlersManager.h"
 #import "MLNKitBridgesManager.h"
 #import "MLNWindow.h"
+#import "MLNKitInstanceConsts.h"
 
 #define kMLNRunLoopBeforeWaitingLazyTaskOrder   1
 #define kMLNRunLoopBeforeWaitingRenderOrder     2
@@ -153,6 +154,7 @@
         _viewController = viewController;
         _instanceHandlersManager = [[MLNKitInstanceHandlersManager alloc] initWithUIInstance:self];
         _bridgesManager = [[MLNKitBridgesManager alloc] initWithUIInstance:self];
+        _instanceConsts = [[MLNKitInstanceConsts alloc] init];
     }
     return self;
 }

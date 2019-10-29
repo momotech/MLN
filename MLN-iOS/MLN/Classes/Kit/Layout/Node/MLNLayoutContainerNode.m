@@ -26,6 +26,9 @@
     if (self.isGone) {
         return CGSizeZero;
     }
+    // 权重
+    maxWidth = [self calculateWidthBaseOnWeightWithMaxWidth:maxWidth];
+    maxHeight = [self calculateHeightBaseOnWeightWithMaxHeight:maxHeight];
     if (!self.isDirty && (self.lastMeasuredMaxWidth==maxWidth && self.lastMeasuredMaxHeight==maxHeight)) {
         return CGSizeMake(self.measuredWidth, self.measuredHeight);
     }
@@ -80,29 +83,39 @@
         }
     }
     // width
-    switch (self.mergedWidthType) {
-        case MLNLayoutMeasurementTypeWrapContent:
-            myMeasuredWidth = self.minWidth > 0 ? MAX(self.minWidth, myMeasuredWidth) : myMeasuredWidth;
-            self.measuredWidth = myMeasuredWidth;
-            break;
-        case MLNLayoutMeasurementTypeMatchParent:
-            self.measuredWidth = MAX(self.minWidth, myMaxWidth);
-            break;
-        default:
-            self.measuredWidth = myMaxWidth;
+    if (!self.isWidthExcatly) {
+        switch (self.mergedWidthType) {
+            case MLNLayoutMeasurementTypeWrapContent:
+                myMeasuredWidth = MAX(self.minWidth, myMeasuredWidth);
+                myMeasuredWidth = self.maxWidth > 0 ? MIN(myMeasuredWidth, self.maxWidth) : myMeasuredWidth;
+                self.measuredWidth = myMeasuredWidth;
+                break;
+            case MLNLayoutMeasurementTypeMatchParent:
+                self.measuredWidth = MAX(self.minWidth, myMaxWidth);
+                break;
+            default:
+                self.measuredWidth = myMaxWidth;
+        }
+    } else {
+        self.measuredWidth = maxWidth;
     }
     
     // height
-    switch (self.mergedHeightType) {
-        case MLNLayoutMeasurementTypeWrapContent:
-            myMeasuredHeight = self.minHeight > 0 ? MAX(self.minHeight, myMeasuredHeight) : myMeasuredHeight;
-            self.measuredHeight = myMeasuredHeight;
-            break;
-        case MLNLayoutMeasurementTypeMatchParent:
-            self.measuredHeight = MAX(self.minHeight, myMaxHeight);
-            break;
-        default:
-            self.measuredHeight = myMaxHeight;
+    if (!self.isHeightExcatly) {
+        switch (self.mergedHeightType) {
+            case MLNLayoutMeasurementTypeWrapContent:
+                myMeasuredHeight = MAX(self.minHeight, myMeasuredHeight);
+                myMeasuredHeight = self.maxHeight > 0 ? MIN(myMeasuredHeight, self.maxHeight) : myMeasuredHeight;
+                self.measuredHeight = myMeasuredHeight;
+                break;
+            case MLNLayoutMeasurementTypeMatchParent:
+                self.measuredHeight = MAX(self.minHeight, myMaxHeight);
+                break;
+            default:
+                self.measuredHeight = myMaxHeight;
+        }
+    } else {
+        self.measuredHeight = maxHeight;
     }
     
     // resize match parent nodes
@@ -122,7 +135,6 @@
 #pragma mark - Node Tree
 - (void)addSubnode:(MLNLayoutNode *)subNode
 {
-//    MLNLuaAssert(isMainQueue, @"This application is modifying the layout from a background thread!");
     if (subNode.supernode) {
         [subNode removeFromSupernode];
     }
@@ -137,7 +149,6 @@
 
 - (void)insertSubnode:(MLNLayoutNode *)subNode atIndex:(NSUInteger)index
 {
-//    MLNLuaAssert(isMainQueue, @"This application is modifying the layout from a background thread!");
     if (subNode.supernode) {
         [subNode removeFromSupernode];
     }
@@ -152,7 +163,6 @@
 
 - (void)removeSubnode:(MLNLayoutNode *)subNode
 {
-//    MLNLuaAssert(isMainQueue, @"This application is modifying the layout from a background thread!");
     if (subNode && [self.subNodes_m containsObject:subNode]) {
         [self.subNodes_m removeObject:subNode];
         [subNode unbind];
@@ -163,7 +173,6 @@
 
 - (void)removeAllSubnodes
 {
-//    MLNLuaAssert(isMainQueue, @"This application is modifying the layout from a background thread!");
     while (self.subNodes_m.count > 0) {
         [self removeSubnode:[self.subNodes_m lastObject]];
     }

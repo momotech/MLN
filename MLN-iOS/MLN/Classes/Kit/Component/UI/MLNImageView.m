@@ -48,17 +48,7 @@
 
 - (CGSize)lua_measureSizeWithMaxWidth:(CGFloat)maxWidth maxHeight:(CGFloat)maxHeight
 {
-    if (self.image) {
-        maxWidth -= self.lua_paddingLeft + self.lua_paddingRight;
-        maxHeight -= self.lua_paddingTop + self.lua_paddingBottom;
-        CGSize size = self.image.size;
-        size.width = ceil(size.width);
-        size.height = ceil(size.height);
-        size.width = size.width + self.lua_paddingLeft + self.lua_paddingRight;
-        size.height = size.height + self.lua_paddingTop + self.lua_paddingBottom;
-        return size;
-    }
-    return CGSizeZero;
+    return self.image ? self.image.size : CGSizeZero;
 }
 
 #pragma mark - Export Methods

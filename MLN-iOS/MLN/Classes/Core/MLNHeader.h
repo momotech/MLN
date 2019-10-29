@@ -76,7 +76,6 @@ __VA_ARGS__;\
  */
 #define MLN_FORCE_INLINE __inline__ __attribute__((always_inline))
 
-
 /**
  强制类型检查
  */

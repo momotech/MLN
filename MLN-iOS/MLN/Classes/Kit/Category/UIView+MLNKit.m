@@ -575,7 +575,9 @@ static const void *kNeedEndEditing = &kNeedEndEditing;
 - (void)lua_setClipsToBounds:(BOOL)clipsToBounds
 {
     self.clipsToBounds = clipsToBounds;
-    self.lua_node.clipToBounds = clipsToBounds;
+    MLNRenderContext *renderContext = [self mln_in_renderContext];
+    renderContext.clipToBounds = clipsToBounds;
+    renderContext.didSetClipToBounds = YES;
 }
 
 #pragma mark - Corner Radius
@@ -656,6 +658,11 @@ static const void *kLuaRenderContext = &kLuaRenderContext;
         objc_setAssociatedObject(self, kLuaRenderContext, cxt, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     }
     return cxt;
+}
+
+- (MLNRenderContext *)mln_renderContext
+{
+    return [self mln_in_renderContext];
 }
 
 #pragma mark - blurEffect

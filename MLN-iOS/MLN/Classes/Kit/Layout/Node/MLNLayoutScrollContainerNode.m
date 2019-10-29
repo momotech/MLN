@@ -23,6 +23,9 @@
     if (self.isGone) {
         return CGSizeZero;
     }
+    // 权重
+    maxWidth = [self calculateWidthBaseOnWeightWithMaxWidth:maxWidth];
+    maxHeight = [self calculateHeightBaseOnWeightWithMaxHeight:maxHeight];
     if (!self.isDirty && (self.lastMeasuredMaxWidth==maxWidth && self.lastMeasuredMaxHeight==maxHeight)) {
         return CGSizeMake(self.measuredWidth, self.measuredHeight);
     }
@@ -73,30 +76,38 @@
     CGFloat rawContentWidth = myMeasuredWidth;
     CGFloat rawContentHeight = myMeasuredHeight;
     // 4. update width
-    switch (self.mergedWidthType) {
-        case MLNLayoutMeasurementTypeWrapContent:
-            myMeasuredWidth = MIN(myMeasuredWidth, myMaxWidth);
-            myMeasuredWidth = MAX(self.minWidth, myMeasuredWidth);
-            self.measuredWidth = myMeasuredWidth;
-            break;
-        case MLNLayoutMeasurementTypeMatchParent:
-            self.measuredWidth = MAX(self.minWidth, myMaxWidth);
-            break;
-        default:
-            self.measuredWidth = myMaxWidth;
+    if (!self.isWidthExcatly) {
+        switch (self.mergedWidthType) {
+            case MLNLayoutMeasurementTypeWrapContent:
+                myMeasuredWidth = MIN(myMeasuredWidth, myMaxWidth);
+                myMeasuredWidth = MAX(self.minWidth, myMeasuredWidth);
+                self.measuredWidth = myMeasuredWidth;
+                break;
+            case MLNLayoutMeasurementTypeMatchParent:
+                self.measuredWidth = MAX(self.minWidth, myMaxWidth);
+                break;
+            default:
+                self.measuredWidth = myMaxWidth;
+        }
+    } else {
+        self.measuredWidth = maxWidth;
     }
     // 5. update height
-    switch (self.mergedHeightType) {
-        case MLNLayoutMeasurementTypeWrapContent:
-            myMeasuredHeight = MIN(myMeasuredHeight, myMaxHeight);
-            myMeasuredHeight = MAX(self.minHeight, myMeasuredHeight);
-            self.measuredHeight = myMeasuredHeight;
-            break;
-        case MLNLayoutMeasurementTypeMatchParent:
-            self.measuredHeight = MAX(self.minHeight, myMaxHeight);
-            break;
-        default:
-            self.measuredHeight = myMaxHeight;
+    if (!self.isHeightExcatly) {
+        switch (self.mergedHeightType) {
+            case MLNLayoutMeasurementTypeWrapContent:
+                myMeasuredHeight = MIN(myMeasuredHeight, myMaxHeight);
+                myMeasuredHeight = MAX(self.minHeight, myMeasuredHeight);
+                self.measuredHeight = myMeasuredHeight;
+                break;
+            case MLNLayoutMeasurementTypeMatchParent:
+                self.measuredHeight = MAX(self.minHeight, myMaxHeight);
+                break;
+            default:
+                self.measuredHeight = myMaxHeight;
+        }
+    } else {
+        self.measuredHeight = maxHeight;
     }
     // 6. calculate content size
     [self measureContentSize:rawContentWidth rawContentHeight:rawContentHeight];
