@@ -319,19 +319,13 @@ static MLN_FORCE_INLINE int __mln_lua_pushinvocation_return(NSInvocation* invoca
             if (isInit) {
                 // 标注为Lua创建
                 obj.mln_isLuaObject = YES;
-                // @note 这两种集合类型以这种方式创建，会出现引用计数多1的情况。
-                //       集合类簇中的所有实例，通过这种方式创建应该都有这样的问题。
-                switch ([obj mln_nativeType]) {
-                    case MLNNativeTypeMDictionary:
-                    case MLNNativeTypeMArray: {
-                        obj = CFBridgingRelease((CFTypeRef)result);
-                        break;
-                    }
-                    default:
-                        break;
-                }
             }
-            return [MLN_LUA_CORE(L) pushNativeObject:obj error:NULL];
+            int nret = [MLN_LUA_CORE(L) pushNativeObject:obj error:NULL];
+            if (isInit) {
+                // 模拟ARC，手动添加release
+                CFBridgingRelease(result);
+            }
+            return nret;
         }
         case MLN_OBJCType_char: {
             char result = 0;
@@ -509,6 +503,8 @@ int mln_lua_constructor (lua_State *L) {
         mln_lua_assert(L, NO, errmsg.UTF8String);
         return 0;
     }
+    // 模拟ARC，手动添加retain
+    CFBridgingRetain(target);
     // call
     return __mln_lua_objc_invoke(L, 1, target, selector, NO, NO, YES);
 }
