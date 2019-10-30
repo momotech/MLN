@@ -13,6 +13,8 @@
 		30A4EB5D231CC86B00995416 /* MLNMyImageHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 30A4EB5C231CC86B00995416 /* MLNMyImageHandler.m */; };
 		30A4EB60231CD75200995416 /* MLNMyRefreshHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 30A4EB5F231CD75200995416 /* MLNMyRefreshHandler.m */; };
 		30A4EB6D231F4FD400995416 /* MLNTestMe+Test.m in Sources */ = {isa = PBXBuildFile; fileRef = 30A4EB6C231F4FD400995416 /* MLNTestMe+Test.m */; };
+		30CB3BF923684B7F00AB90C6 /* MLNDevTool.podspec in Resources */ = {isa = PBXBuildFile; fileRef = 30CB3BF823684B7F00AB90C6 /* MLNDevTool.podspec */; };
+		30CB3BFB23684CD400AB90C6 /* MLN.podspec in Resources */ = {isa = PBXBuildFile; fileRef = 30CB3BFA23684CD400AB90C6 /* MLN.podspec */; };
 		30E24E9322F3D74A00A0E78C /* MLNTestMe.m in Sources */ = {isa = PBXBuildFile; fileRef = 30E24E8B22F3D74900A0E78C /* MLNTestMe.m */; };
 		30E24E9422F3D74A00A0E78C /* MLNGlobalFuncTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 30E24E8D22F3D74900A0E78C /* MLNGlobalFuncTest.m */; };
 		30E24E9522F3D74A00A0E78C /* MLNStaticTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 30E24E8E22F3D74900A0E78C /* MLNStaticTest.m */; };
@@ -60,6 +62,8 @@
 		30A4EB5F231CD75200995416 /* MLNMyRefreshHandler.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNMyRefreshHandler.m; sourceTree = "<group>"; };
 		30A4EB6B231F4FD400995416 /* MLNTestMe+Test.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MLNTestMe+Test.h"; sourceTree = "<group>"; };
 		30A4EB6C231F4FD400995416 /* MLNTestMe+Test.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "MLNTestMe+Test.m"; sourceTree = "<group>"; };
+		30CB3BF823684B7F00AB90C6 /* MLNDevTool.podspec */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = MLNDevTool.podspec; path = ../../MLNDevTool.podspec; sourceTree = "<group>"; };
+		30CB3BFA23684CD400AB90C6 /* MLN.podspec */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = MLN.podspec; path = ../../MLN.podspec; sourceTree = "<group>"; };
 		30E24E8B22F3D74900A0E78C /* MLNTestMe.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLNTestMe.m; sourceTree = "<group>"; };
 		30E24E8C22F3D74900A0E78C /* MLNGlobalFuncTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLNGlobalFuncTest.h; sourceTree = "<group>"; };
 		30E24E8D22F3D74900A0E78C /* MLNGlobalFuncTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLNGlobalFuncTest.m; sourceTree = "<group>"; };
@@ -93,7 +97,6 @@
 		873B8AEA1B1F5CCA007FD442 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = Main.storyboard; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		A6E2454F7DDA4338383073BC /* libPods-MLN_Tests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-MLN_Tests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		C0FB2CAC8F9592C3092ACF62 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
-		CDF27A552605E93BB1D554DF /* MLN.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = MLN.podspec; path = ../MLN.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		F236AA5C6B666135B994F09B /* Pods-MLN_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MLN_Example.debug.xcconfig"; path = "Target Support Files/Pods-MLN_Example/Pods-MLN_Example.debug.xcconfig"; sourceTree = "<group>"; };
 		F449C1D4FDA5182F0D579269 /* libPods-MLN_Example.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-MLN_Example.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -237,7 +240,8 @@
 		60FF7A9C1954A5C5007DD14C /* Podspec Metadata */ = {
 			isa = PBXGroup;
 			children = (
-				CDF27A552605E93BB1D554DF /* MLN.podspec */,
+				30CB3BFA23684CD400AB90C6 /* MLN.podspec */,
+				30CB3BF823684B7F00AB90C6 /* MLNDevTool.podspec */,
 				1018AD05C0E113C32A1AD38C /* README.md */,
 				C0FB2CAC8F9592C3092ACF62 /* LICENSE */,
 			);
@@ -330,7 +334,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				30A4EB55231CBF7900995416 /* moment in Resources */,
+				30CB3BFB23684CD400AB90C6 /* MLN.podspec in Resources */,
 				873B8AEB1B1F5CCA007FD442 /* Main.storyboard in Resources */,
+				30CB3BF923684B7F00AB90C6 /* MLNDevTool.podspec in Resources */,
 				71719F9F1E33DC2100824A3D /* LaunchScreen.storyboard in Resources */,
 				6003F5A9195388D20070C39A /* Images.xcassets in Resources */,
 				6003F598195388D20070C39A /* InfoPlist.strings in Resources */,

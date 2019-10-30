@@ -62,8 +62,8 @@ DEPENDENCIES:
   - "Expecta+Snapshots"
   - FBSnapshotTestCase
   - MJRefresh (= 3.1.16)
-  - MLN (from `../`)
-  - MLNDevTool (from `../`)
+  - MLN (from `../../`)
+  - MLNDevTool (from `../../`)
   - SDWebImage (~> 4.0)
   - Specta
 
@@ -80,9 +80,9 @@ SPEC REPOS:
 
 EXTERNAL SOURCES:
   MLN:
-    :path: "../"
+    :path: "../../"
   MLNDevTool:
-    :path: "../"
+    :path: "../../"
 
 SPEC CHECKSUMS:
   AFNetworking: b6f891fdfaed196b46c7a83cf209e09697b94057
@@ -90,12 +90,12 @@ SPEC CHECKSUMS:
   "Expecta+Snapshots": dcff217eef506dabd6dfdc7864ea2da321fafbb8
   FBSnapshotTestCase: 094f9f314decbabe373b87cc339bea235a63e07a
   MJRefresh: 7798e16e53a5ef7f332dd05b27664db4e29530fd
-  MLN: f0df0cb9fb9cca9a542c8d9f158c8f759c2204d4
-  MLNDevTool: a59f444c0a96b35492716bd005db00aaac977cea
+  MLN: 1b5205523f70ac341baed565dd0012ed35cc43a3
+  MLNDevTool: 1d3a5d3940f2b4b3744107cc2feab6232877c555
   Protobuf: 1eb9700044745f00181c136ef21b8ff3ad5a0fd5
   SDWebImage: c10d14a8883ebd89664f02a422006f66a85c0c5d
   Specta: 3e1bd89c3517421982dc4d1c992503e48bd5fe66
 
-PODFILE CHECKSUM: a7e9ac822e326027bfa17d3270a1ca16b49c3eff
+PODFILE CHECKSUM: b5d99ede5877d8d3a489e349403a01218d6ad6f4
 
 COCOAPODS: 1.7.5
