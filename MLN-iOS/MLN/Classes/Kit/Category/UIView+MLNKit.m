@@ -16,6 +16,8 @@
 #import "MLNKeyboardViewHandler.h"
 #import "MLNTransformTask.h"
 #import "MLNSnapshotManager.h"
+#import "MLNCanvasAnimation.h"
+#import "MLNKitInstanceHandlersManager.h"
 
 static IMP __mln_in_UIView_Origin_TouchesBegan_Method_Imp;
 static IMP __mln_in_UIView_Origin_TouchesMoved_Method_Imp;
@@ -400,7 +402,7 @@ static const void *kNeedEndEditing = &kNeedEndEditing;
 
 - (void)lua_layoutIfNeed
 {
-//    MLNLuaAssert(NO, @"View:layoutIfNeeded method is deprecated!");
+    MLNKitLuaAssert(NO, @"View:layoutIfNeeded method is deprecated!");
     [self layoutIfNeeded];
     self.lua_node.enable = NO;
 }
@@ -622,8 +624,8 @@ static const void *kNeedEndEditing = &kNeedEndEditing;
 #pragma mark - gradientLayer
 - (void)lua_setGradientColor:(UIColor *)startColor endColor:(UIColor *)endColor vertical:(BOOL)isVertical
 {
-//    MLNLuaAssert(startColor && [startColor isKindOfClass:[UIColor class]], @"startColor must be type of UIColor");
-//    MLNLuaAssert(endColor MLNRectCorner&& [endColor isKindOfClass:[UIColor class]], @"endColor must be type of UIColor");
+    MLNKitLuaAssert(startColor && [startColor isKindOfClass:[UIColor class]], @"startColor must be type of UIColor");
+    MLNKitLuaAssert(endColor && [endColor isKindOfClass:[UIColor class]], @"endColor must be type of UIColor");
     if (![startColor isKindOfClass:[UIColor class]] || ![endColor isKindOfClass:[UIColor class]]) return;
     MLNGradientType type = isVertical ? MLNGradientTypeTopToBottom : MLNGradientTypeLeftToRight;
     [self.mln_in_renderContext resetGradientColor:startColor endColor:endColor direction:type];
@@ -631,8 +633,8 @@ static const void *kNeedEndEditing = &kNeedEndEditing;
 
 - (void)lua_setGradientColor:(UIColor *)startColor endColor:(UIColor *)endColor direction:(MLNGradientType)direction
 {
-//    MLNLuaAssert(startColor && [startColor isKindOfClass:[UIColor class]], @"startColor must be type of UIColor");
-//    MLNLuaAssert(endColor && [endColor isKindOfClass:[UIColor class]], @"endColor must be type of UIColor");
+    MLNKitLuaAssert(startColor && [startColor isKindOfClass:[UIColor class]], @"startColor must be type of UIColor");
+    MLNKitLuaAssert(endColor && [endColor isKindOfClass:[UIColor class]], @"endColor must be type of UIColor");
     [self.mln_in_renderContext resetGradientColor:startColor endColor:endColor direction:direction];
 }
 
@@ -772,7 +774,7 @@ static const void *kLuaRenderContext = &kLuaRenderContext;
 
 - (void)lua_addTouch:(MLNBlock *)touchCallBack
 {
-//    MLNLuaAssert(NO, @"View:onTouch method is deprecated");
+    MLNKitLuaAssert(NO, @"View:onTouch method is deprecated");
     [self mln_in_addTapGestureIfNeed];
     self.mln_touchClickBlock = touchCallBack;
 }
@@ -985,9 +987,9 @@ static const void *kLuaTouchesCancelledExtensionEvent = &kLuaTouchesCancelledExt
 - (void)lua_setPositionAdjustForKeyboard:(BOOL)bAdjust offsetY:(CGFloat)offsetY
 {
     if (offsetY != 0.0) {
-//        MLNLuaAssert(NO, @"View:setPositionAdjustForKeyboardOffsetY method is deprecated!");
+        MLNKitLuaAssert(NO, @"View:setPositionAdjustForKeyboardOffsetY method is deprecated!");
     } else {
-//        MLNLuaAssert(NO, @"View:setPositionAdjustForKeyboard method is deprecated!");
+        MLNKitLuaAssert(NO, @"View:setPositionAdjustForKeyboard method is deprecated!");
     }
     [self mln_in_setPositionAdjustForKeyboard:bAdjust offsetY:offsetY];
 }
@@ -1087,14 +1089,14 @@ static const void *kLuaTouchesCancelledExtensionEvent = &kLuaTouchesCancelledExt
 
 - (void)lua_anchorPoint:(CGFloat)x y:(CGFloat)y
 {
-//    MLNLuaAssert(x >= 0.0f && x <= 1.0f, @"param x should bigger or equal than 0.0 and smaller or equal than 1.0!");
-//    MLNLuaAssert(y >= 0.0f && y <= 1.0f, @"param y should bigger or equal than 0.0 and smaller or equal than 1.0!");
+    MLNKitLuaAssert(x >= 0.0f && x <= 1.0f, @"param x should bigger or equal than 0.0 and smaller or equal than 1.0!");
+    MLNKitLuaAssert(y >= 0.0f && y <= 1.0f, @"param y should bigger or equal than 0.0 and smaller or equal than 1.0!");
     [self.lua_node changeAnchorPoint:CGPointMake(x, y)];
 }
 
 - (void)lua_transform:(CGFloat)angle adding:(BOOL)add
 {
-//    MLNLuaAssert(NO, @"View:transform method is deprecated , please use View:rotation method to achieve the same effect");
+    MLNKitLuaAssert(NO, @"View:transform method is deprecated , please use View:rotation method to achieve the same effect");
     MLNTransformTask *myTransform = [self mln_in_getTransform];
     angle = angle / 360.0 * M_PI * 2;
     if (!add) {
@@ -1158,13 +1160,13 @@ static const void *kViewTransform = &kViewTransform;
     [self.layer removeAllAnimations];
 }
 
-//- (void)lua_startAnimation:(MLNCanvasAnimation *)animation
-//{
-////    MLNLuaAssert([animation isKindOfClass:[MLNCanvasAnimation class]], @"animation must be type CanvasAnimation!");
-//    if ([animation isKindOfClass:[MLNCanvasAnimation class]]) {
-//        [animation startWithView:self];
-//    }
-//}
+- (void)lua_startAnimation:(MLNCanvasAnimation *)animation
+{
+    MLNKitLuaAssert([animation isKindOfClass:[MLNCanvasAnimation class]], @"animation must be type CanvasAnimation!");
+    if ([animation isKindOfClass:[MLNCanvasAnimation class]]) {
+        [animation startWithView:self];
+    }
+}
 
 - (NSString *)lua_snapshotWithFileName:(NSString *)fileName
 {
@@ -1175,7 +1177,7 @@ static const void *kViewTransform = &kViewTransform;
         image = [MLNSnapshotManager mln_captureNormalView:self];
     }
     
-    return [MLNSnapshotManager image:image mln_saveWithFileName:fileName];
+    return [MLNSnapshotManager mln_image:image saveWithFileName:fileName];
 }
 
 - (void)lua_setBgImage:(NSString *)imageName
@@ -1184,16 +1186,18 @@ static const void *kViewTransform = &kViewTransform;
         self.layer.contents = nil;
         return;
     }
-//    id<MLNImageLoaderDelegate> imageLoader =  [MLNContext sharedContext].imageLoader;
-//    MLNLuaAssert([imageLoader respondsToSelector:@selector(loadImageWithPath:completed:)], @"-[imageLoader loadImageWithPath:completed:] was not found!");
-//    [imageLoader loadImageWithPath:imageName completed:^(UIImage *image, NSError *error, NSString *imagePath) {
-//        if (image) {
-//            self.layer.contentsScale = [UIScreen mainScreen].scale;
-//            self.layer.contents = (__bridge id)image.CGImage;
-//        } else {
-//            self.layer.contents = nil;
-//        }
-//    }];
+    if ([self mln_isConvertible]) {
+        UIView<MLNEntityExportProtocol> *obj = (UIView<MLNEntityExportProtocol> *)self;
+        id<MLNImageLoaderProtocol> imageLoader = MLN_KIT_INSTANCE(obj.mln_luaCore).instanceHandlersManager.imageLoader;
+        [imageLoader view:obj loadImageWithPath:imageName completed:^(UIImage * _Nullable image, NSError * _Nullable error, NSString * _Nullable imagePath) {
+            if (image) {
+                self.layer.contentsScale = [UIScreen mainScreen].scale;
+                self.layer.contents = (__bridge id)image.CGImage;
+            } else {
+                self.layer.contents = nil;
+            }
+        }];
+    }
 }
 
 @end

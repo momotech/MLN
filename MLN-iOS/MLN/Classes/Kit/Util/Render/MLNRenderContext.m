@@ -8,6 +8,7 @@
 #import "MLNRenderContext.h"
 #import "MLNGradientLayerOperation.h"
 #import "MLNShadowOperation.h"
+#import "MLNBorderLayerOperation.h"
 #import "MLNBeforeWaitingTask.h"
 #import "MLNCornerManagerFactory.h"
 #import "UIView+MLNKit.h"
@@ -21,6 +22,7 @@
 @property (nonatomic, strong) id<MLNCornerHandlerPotocol> maskViewOperation;
 @property (nonatomic, strong) MLNGradientLayerOperation *gradientLayerOperation;
 @property (nonatomic, strong) MLNShadowOperation *shadowOperation;
+@property (nonatomic, strong) MLNBorderLayerOperation *borderOperation;
 
 @property (nonatomic, strong) MLNBeforeWaitingTask *beforeWaitingTask;
 
@@ -31,6 +33,7 @@
 {
     if (self = [super init]) {
         _targetView = targetView;
+        _clipToBounds = targetView.clipsToBounds;
     }
     return self;
 }
@@ -67,6 +70,23 @@
     [self.targetView mln_pushRenderTask:self.beforeWaitingTask];
 }
 
+- (void)resetBorderWithBorderWidth:(CGFloat)borderWidth borderColor:(UIColor *)borderColor
+{
+    self.borderOperation.borderWidth = borderWidth;
+    self.borderOperation.borderColor = borderColor;
+    [self.targetView mln_pushRenderTask:self.beforeWaitingTask];
+}
+
+- (MLNCornerRadius)currentCornerRadiusWithCornerMode:(MLNCornerMode)cornerMode
+{
+    MLNCornerRadius cornerRadius = { .topLeft = 0, .topRight = 0, .bottomLeft = 0, .bottomRight = 0 };
+    cornerRadius.topLeft = [self cornerRadiusWithDirection:MLNRectCornerTopLeft];
+    cornerRadius.topRight = [self cornerRadiusWithDirection:MLNRectCornerTopRight];
+    cornerRadius.bottomLeft = [self cornerRadiusWithDirection:MLNRectCornerBottomLeft];
+    cornerRadius.bottomRight = [self cornerRadiusWithDirection:MLNRectCornerBottomRight];
+    return  cornerRadius;
+}
+
 - (CGFloat)cornerRadius
 {
     return [[self cornerOperationWithMode:self.newCornerMode] cornerRadiusWithDirection:UIRectCornerTopLeft];
@@ -84,6 +104,14 @@
     }
     [[self cornerOperationWithMode:self.newCornerMode] remakeIfNeed];
     self.lastCornerMode = self.newCornerMode;
+}
+
+#pragma mark - Layer
+- (void)cleanLayerContentsIfNeed
+{
+    if (self.targetView.layer.contents) {
+        self.targetView.layer.contents = nil;
+    }
 }
 
 #pragma mark - Gradient
@@ -112,7 +140,9 @@
 {
     [self doCornerTask];
     [self.gradientLayerOperation remakeIfNeed];
-    [self.shadowOperation remakeIfNeed];
+    MLNCornerRadius radius = [self currentCornerRadiusWithCornerMode:self.newCornerMode];
+    [self.borderOperation updateCornerRadiusAndRemake:radius];
+    [self.shadowOperation updateCornerRadiusAndRemake:radius];
 }
 
 - (MLNBeforeWaitingTask *)beforeWaitingTask
@@ -180,6 +210,14 @@
         _shadowOperation = [[MLNShadowOperation alloc] initWithTargetView:self.targetView];
     }
     return _shadowOperation;
+}
+
+- (MLNBorderLayerOperation *)borderOperation
+{
+    if (!_borderOperation) {
+        _borderOperation = [[MLNBorderLayerOperation alloc] initWithTargetView:self.targetView];
+    }
+    return _borderOperation;
 }
 
 @end

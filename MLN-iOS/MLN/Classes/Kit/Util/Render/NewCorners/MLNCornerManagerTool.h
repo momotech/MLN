@@ -28,9 +28,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (UIBezierPath *)bezierPathWithRect:(CGRect)frame multiRadius:(MLNCornerRadius)multiRadius;
 
++ (UIBezierPath *)bezierPathWithRect:(CGRect)frame multiRadius:(MLNCornerRadius)multiRadius lineWidth:(CGFloat)lineWidth;
+
 + (CGFloat)cornerRadiusWithDirection:(UIRectCorner)corner multiRadius:(MLNCornerRadius)multiRadius;
 
 + (CGRect)viewFrame:(UIView *)view;
+
 @end
 
 NS_ASSUME_NONNULL_END

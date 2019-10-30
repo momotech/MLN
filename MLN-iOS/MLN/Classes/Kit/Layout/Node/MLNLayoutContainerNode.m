@@ -250,7 +250,7 @@
              // horizontal
              switch (subnode.gravity & MLNGravityHorizontalMask) {
                  case MLNGravityCenterHorizontal:
-                     subnode.measuredX = (layoutZoneWidth - subnode.measuredWidth) *0.5 + subnode.marginLeft - subnode.marginRight;
+                     subnode.measuredX = self.paddingLeft + (layoutZoneWidth - subnode.measuredWidth) *0.5 + subnode.marginLeft - subnode.marginRight;
                      break;
                  case MLNGravityRight:
                      subnode.measuredX = self.measuredWidth -self.paddingRight -subnode.measuredWidth -subnode.marginRight;
