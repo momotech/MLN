@@ -279,7 +279,7 @@
     }
     self.fontStyle = style;
     [self lua_needLayoutAndSpread];
-    self.font = [MLNFont fontWithFontName:nil fontStyle:style fontSize:self.fontSize];
+    self.font = [MLNFont fontWithFontName:nil fontStyle:style fontSize:self.fontSize instance:MLN_KIT_INSTANCE(self.mln_luaCore)];
     [self handleLineSpacing];
 }
 

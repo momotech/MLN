@@ -37,7 +37,7 @@ MLNLuaError(((id<MLNEntityExportProtocol>)self).mln_luaCore, FORMAT, ##__VA_ARGS
  @param ... 可变参数
  */
 #define MLNKitLuaStaticError(FORMAT, ...)\
-MLNLuaAssert([((id<MLNStaticExportProtocol>)self) mln_currentLuaCore], FORMAT, ##__VA_ARGS__)
+MLNLuaError([((id<MLNStaticExportProtocol>)self) mln_currentLuaCore], FORMAT, ##__VA_ARGS__)
 
 /**
  可实例化对象的相关断言

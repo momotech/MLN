@@ -197,7 +197,7 @@
     if ([self remainingDelay] > FLT_EPSILON) {
         return;
     }
-    CGFloat percent = (CACurrentMediaTime() - self.startTime - self.delay) / (self.duration * (_repeatType == MLNAnimationRepeatTypeREVERSE?2:1));
+    CGFloat percent = (CACurrentMediaTime() - self.startTime - self.delay) / (self.duration * (_repeatType == MLNAnimationRepeatTypeReverse?2:1));
    
     NSInteger repeatCount = (NSUInteger)percent;
     percent = percent - repeatCount;
@@ -495,7 +495,7 @@
 - (void)setRepeatType:(MLNAnimationRepeatType)repeatType
 {
     _repeatType = repeatType;
-    self.animationGroup.autoreverses = repeatType == MLNAnimationRepeatTypeREVERSE;
+    self.animationGroup.autoreverses = repeatType == MLNAnimationRepeatTypeReverse;
 }
 
 - (MLNBeforeWaitingTask *)lazyTask
@@ -557,7 +557,7 @@
             self.animationGroup.repeatCount = count;
             self.animationGroup.autoreverses = NO;
             break;
-        case MLNAnimationRepeatTypeREVERSE:
+        case MLNAnimationRepeatTypeReverse:
             self.animationGroup.repeatCount = count;
             self.animationGroup.autoreverses = YES;
             break;

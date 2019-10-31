@@ -36,19 +36,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)lua_startWithView:(UIView *)view;
 
-
-+ (MLNExportType)mln_exportType;
-
-+ (const mln_objc_class *)mln_clazzInfo;
-
-- (void)mln_luaRelease;
-
-- (void)mln_luaRetain:(MLNUserData *)userData;
-
-- (int)mln_luaRetainCount;
-
-- (void)doTask;
-
 @end
 
 NS_ASSUME_NONNULL_END

@@ -6,7 +6,7 @@
 //
 
 #import "MLNSystem.h"
-#import "MLNStaticExporterMacro.h"
+#import "MLNKitHeader.h"
 #import "MLNVersion.h"
 #import "MLNBlock.h"
 #import "MLNDevice.h"
@@ -115,6 +115,7 @@
 
 + (void)lua_setTimeOut:(MLNBlock *)task delay:(NSTimeInterval)delay
 {
+    MLNStaticCheckTypeAndNilValue(task, @"callback", MLNBlock);
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delay * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         if (task) {
             [task callIfCan];
@@ -129,6 +130,7 @@
 
 + (void)lua_setOnNetworkStateChange:(MLNBlock *)callback
 {
+    MLNStaticCheckTypeAndNilValue(callback, @"callback", MLNBlock);
     [[MLNNetworkReachabilityManager sharedManager] addNetworkChangedCallback:^(MLNNetworkStatus status) {
         if (callback) {
             [callback addIntArgument:status];
@@ -151,7 +153,11 @@
 
 + (void)lua_changeBrightness:(NSInteger)brightness
 {
-    if (brightness < 0 || brightness > 255) return;
+    if ( brightness < 1) {
+        brightness = 1;
+    } else if ( brightness > 255) {
+        brightness = 255;
+    }
     [UIScreen mainScreen].brightness = [UIScreen mainScreen].brightness - 0.01;
     [UIScreen mainScreen].brightness = brightness / 255.0;
 }
