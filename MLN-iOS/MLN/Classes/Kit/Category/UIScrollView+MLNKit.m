@@ -42,16 +42,6 @@ static const void *kLuaLoadCallBack = &kLuaLoadCallBack;
     return self;
 }
 
-//@override
-- (void)lua_addSubview:(UIView *)view
-{
-    if (self.mln_contentView && self.mln_contentView != view) {
-        [self.mln_contentView lua_addSubview:view];
-    } else {
-        [super lua_addSubview:view];
-    }
-}
-
 static const void *kMLNScrollDirection = &kMLNScrollDirection;
 - (void)setMln_horizontal:(BOOL)mln_horizontal
 {
@@ -61,11 +51,6 @@ static const void *kMLNScrollDirection = &kMLNScrollDirection;
 - (BOOL)mln_horizontal
 {
     return [objc_getAssociatedObject(self, kMLNScrollDirection) boolValue];
-}
-
-- (void)mln_setLuaScrollEnable:(BOOL)enable
-{
-    self.scrollEnabled = enable;
 }
 
 - (void)setLua_refreshEnable:(BOOL)lua_refreshEnable
@@ -213,7 +198,9 @@ static const void *kMLNScrollDirection = &kMLNScrollDirection;
 {
     if (self.mln_isConvertible) {
         id<MLNEntityExportProtocol> ud = (id<MLNEntityExportProtocol>)self;
-        return MLN_KIT_INSTANCE(ud.mln_luaCore).instanceHandlersManager.scrollRefreshHandler;
+        id<MLNRefreshDelegate> delegate = MLN_KIT_INSTANCE(ud.mln_luaCore).instanceHandlersManager.scrollRefreshHandler;
+        MLNKitLuaAssert(delegate, @"The refresh delegate must not be nil!");
+        return delegate;
     }
     return nil;
 }
@@ -315,7 +302,44 @@ static const void *kLuaStartDeceleratingCallback = &kLuaStartDeceleratingCallbac
 
 - (void)lua_setContentOffsetWithAnimation:(CGPoint)point
 {
-    [self setContentOffset:point animated:YES];
+    if(self.mln_horizontal) {
+        point.x = point.x < 0 ? 0 : point.x;
+        [self setContentOffset:CGPointMake(point.x, 0) animated:YES];
+    } else {
+        point.y = point.y < 0 ? 0 : point.y;
+        [self setContentOffset:CGPointMake(0, point.y) animated:YES];
+    }
+}
+
+- (void)lua_setContentOffset:(CGPoint)point
+{
+    if(self.mln_horizontal) {
+        point.x = point.x < 0 ? 0 : point.x;
+        [self setContentOffset:CGPointMake(point.x, 0)];
+    } else {
+        point.y = point.y < 0 ? 0 : point.y;
+        [self setContentOffset:CGPointMake(0, point.y)];
+    }
+}
+
+- (CGPoint)lua_contentOffset
+{
+    return self.contentOffset;
+}
+
+//@override
+- (void)lua_addSubview:(UIView *)view
+{
+    if (self.mln_contentView && self.mln_contentView != view) {
+        [self.mln_contentView lua_addSubview:view];
+    } else {
+        [super lua_addSubview:view];
+    }
+}
+
+- (void)mln_setLuaScrollEnable:(BOOL)enable
+{
+    self.scrollEnabled = enable;
 }
 
 @end
