@@ -10,7 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface MLNRenderContext : UIView
+@interface MLNRenderContext : NSObject
 
 - (instancetype)initWithTargetView:(UIView *)targetView;
 
@@ -23,9 +23,11 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)resetCornerMaskViewWithRadius:(CGFloat)cornerRadius maskColor:(UIColor *)maskColor corners:(UIRectCorner)corners;
 - (void)resetGradientColor:(UIColor *)startColor endColor:(UIColor *)endColor direction:(MLNGradientType)direction;
 - (void)resetShadow:(UIColor *)shadowColor shadowOffset:(CGSize)offset shadowRadius:(CGFloat)radius shadowOpacity:(CGFloat)opacity;
+- (void)resetBorderWithBorderWidth:(CGFloat)borderWidth borderColor:(UIColor *)borderColor;
 
 - (void)updateIfNeed;
 - (void)cleanGradientColorIfNeed;
+- (void)cleanLayerContentsIfNeed;
 
 - (CGFloat)cornerRadius;
 - (CGFloat)cornerRadiusWithDirection:(MLNRectCorner)corner;
