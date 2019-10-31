@@ -21,6 +21,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) UIColor *shadowColor;
 @property (nonatomic, assign) CGFloat shadowOpcity;
 @property (nonatomic, assign) CGFloat shadowRadius;
+@property (nonatomic, assign) BOOL oval;
 @property (nonatomic, assign) MLNCornerRadius multiRadius;
 
 - (void)remakeIfNeed;

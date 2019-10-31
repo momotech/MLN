@@ -116,10 +116,8 @@ LUA_EXPORT_VIEW_METHOD(translation, "lua_translation:ty:notNeedAdding:", MLNView
 LUA_EXPORT_VIEW_METHOD(transformIdentity, "lua_transformIdentity", MLNView)
 // animation
 LUA_EXPORT_VIEW_METHOD(removeAllAnimation, "lua_removeAllAnimation",MLNView)
-
 LUA_EXPORT_VIEW_METHOD(startAnimation, "lua_startAnimation:",MLNView)
 LUA_EXPORT_VIEW_METHOD(clearAnimation, "lua_clearAnimation",MLNView)
-
 // screen capture
 LUA_EXPORT_VIEW_METHOD(snapshot, "lua_snapshotWithFileName:", MLNView)
 LUA_EXPORT_VIEW_METHOD(addBlurEffect, "lua_addBlurEffect", MLNView)
@@ -130,7 +128,9 @@ LUA_EXPORT_VIEW_METHOD(bringSubviewToFront, "lua_bringSubviewToFront:", MLNView)
 LUA_EXPORT_VIEW_METHOD(sendSubviewToBack, "lua_sendSubviewToBack:", MLNView)
 //view的背景图片
 LUA_EXPORT_VIEW_METHOD(bgImage, "lua_setBgImage:", MLNView)
-LUA_EXPORT_VIEW_METHOD(addShadow, "lua_addShadow:shadowOffset:shadowRadius:shadowOpacity:", MLNView)
+LUA_EXPORT_VIEW_METHOD(addShadow, "lua_addShadow:shadowOffset:shadowRadius:shadowOpacity:isOval:", MLNView)
+LUA_EXPORT_VIEW_METHOD(setShadow, "lua_setShadowWithShadowOffset:shadowRadius:shadowOpacity:", MLNView)
+LUA_EXPORT_VIEW_METHOD(onDetachedView, "lua_onDetachedFromWindowCallback:", MLNView)
 LUA_EXPORT_VIEW_END(MLNView, View, NO, NULL, NULL)
 
 @end
