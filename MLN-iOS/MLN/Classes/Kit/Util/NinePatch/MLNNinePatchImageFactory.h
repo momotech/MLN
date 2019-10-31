@@ -1,9 +1,8 @@
 //
-//  MDNinePatchImageFactory.h
-//  MomoChat
+//  MLNNinePatchImageFactory.h
+//  MoMo
 //
-//  Created by MoMo on 2019/3/19.
-//  Copyright © 2019年 wemomo.com. All rights reserved.
+//  Created by MOMO on 2019/3/19.
 //
 
 #import <UIKit/UIKit.h>
