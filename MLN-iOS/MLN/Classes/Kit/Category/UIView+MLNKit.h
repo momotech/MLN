@@ -67,6 +67,10 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)mln_updateGradientLayerIfNeed;
 
 #pragma mark - Focus
+
+/**
+ 请求焦点
+ */
 - (void)lua_requestFocus;
 
 #pragma mark - Keyboard
@@ -99,12 +103,21 @@ NS_ASSUME_NONNULL_BEGIN
  **/
 - (void)mln_in_setPositionAdjustForKeyboard:(BOOL)bAdjust offsetY:(CGFloat)offsetY;
 
+/**
+ 如果需要就重置Transform
+ */
 - (void)lua_resetTransformIfNeed;
 
 @end
 
 @interface UIView(Snapshot)
 
+/**
+ 对当前视图截图，并将图片按指定文件名称存贮。
+
+ @param fileName 截图存储的指定文件名称
+ @return 文件存储的路径
+ */
 - (NSString *)lua_snapshotWithFileName:(NSString *)fileName;
 
 @end
