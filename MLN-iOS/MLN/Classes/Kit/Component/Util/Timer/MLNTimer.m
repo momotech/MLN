@@ -8,6 +8,7 @@
 #import "MLNTimer.h"
 #import "MLNLuaCore.h"
 #import "MLNBlock.h"
+#import "MLNKitHeader.h"
 
 typedef enum : NSUInteger {
     MLNTimerStatusIdle = 0,
@@ -35,6 +36,7 @@ typedef enum : NSUInteger {
 
 - (void)startWithCallback:(MLNBlock *)callback
 {
+    MLNCheckTypeAndNilValue(callback, @"function", MLNBlock);
     if (!self.isIdle) {
         return;
     }
