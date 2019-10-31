@@ -646,13 +646,20 @@ static const void *kLuaBoarderWidth = &kLuaBoarderWidth;
 }
 
 #pragma mark - shadowLayer
-- (void)lua_addShadow:(UIColor *)shadowColor shadowOffset:(CGSize)offset shadowRadius:(CGFloat)radius shadowOpacity:(CGFloat)opacity
+- (void)lua_addShadow:(UIColor *)shadowColor shadowOffset:(CGSize)offset shadowRadius:(CGFloat)radius shadowOpacity:(CGFloat)opacity isOval:(BOOL)isOval
 {
     MLNKitLuaAssert(NO, @"The 'addShadow' method is deprected, use 'setShadow' method instead!");
     MLNKitLuaAssert(shadowColor && [shadowColor isKindOfClass:[UIColor class]], @"shadowColor must be type of UIColor");
     MLNKitLuaAssert(![self isKindOfClass:[UIImageView class]], @"ImageView does not support addShadow");
     if (![shadowColor isKindOfClass:[UIColor class]]) return;
-    [self.mln_in_renderContext resetShadow:shadowColor shadowOffset:offset shadowRadius:radius shadowOpacity:opacity];
+    [self.mln_in_renderContext resetShadow:shadowColor shadowOffset:offset shadowRadius:radius shadowOpacity:opacity isOval:isOval];
+}
+
+- (void)lua_setShadowWithShadowOffset:(CGSize)offset shadowRadius:(CGFloat)radius shadowOpacity:(CGFloat)opacity
+{
+    if ([self isKindOfClass:[UIImageView class]]) return;
+    UIColor *defaultShadowColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:0.215];
+    [self.mln_in_renderContext resetShadow:defaultShadowColor shadowOffset:offset shadowRadius:radius shadowOpacity:opacity isOval:false];
 }
 
 static const void *kLuaRenderContext = &kLuaRenderContext;

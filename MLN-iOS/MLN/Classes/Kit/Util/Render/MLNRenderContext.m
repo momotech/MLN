@@ -60,7 +60,7 @@
     [self.targetView mln_pushRenderTask:self.beforeWaitingTask];
 }
 
-- (void)resetShadow:(UIColor *)shadowColor shadowOffset:(CGSize)offset shadowRadius:(CGFloat)radius shadowOpacity:(CGFloat)opacity
+- (void)resetShadow:(UIColor *)shadowColor shadowOffset:(CGSize)offset shadowRadius:(CGFloat)radius shadowOpacity:(CGFloat)opacity isOval:(BOOL)isOval
 {
     __unsafe_unretained MLNShadowOperation *shadow = self.shadowOperation;
     shadow.shadowColor = shadowColor;

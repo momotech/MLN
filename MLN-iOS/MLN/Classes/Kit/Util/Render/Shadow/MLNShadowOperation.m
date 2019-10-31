@@ -57,6 +57,14 @@
     }
 }
 
+- (void)setOval:(BOOL)oval
+{
+    if (_oval != oval) {
+        _oval = oval;
+        _needRemake = YES;
+    }
+}
+
 - (void)remakeIfNeed
 {
     //属性修改或者尺寸修改，重绘
