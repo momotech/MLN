@@ -10,6 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class MLNKitInstance;
 @interface MLNStyleElement : NSObject<NSCopying>
 
 @property (nonatomic, copy) NSString *fontName;
@@ -26,7 +27,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, strong, readonly) NSDictionary *attributes;
 @property (nonatomic, assign) BOOL changed;
-
+@property (nonatomic, weak) MLNKitInstance *instance;
 
 @end
 

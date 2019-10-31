@@ -28,7 +28,7 @@ FOUNDATION_EXPORT NSString * const kTransform;
 typedef enum : NSUInteger {
     MLNAnimationRepeatTypeNone,
     MLNAnimationRepeatTypeBeginToEnd,
-    MLNAnimationRepeatTypeREVERSE,
+    MLNAnimationRepeatTypeReverse,
 } MLNAnimationRepeatType;
 
 typedef enum : NSUInteger {

@@ -50,7 +50,7 @@ NSString * const kTransform = @"transform";
 LUA_EXPORT_GLOBAL_VAR_BEGIN()
 LUA_EXPORT_GLOBAL_VAR(RepeatType, (@{@"NONE": @(MLNAnimationRepeatTypeNone),
                                      @"FROM_START": @(MLNAnimationRepeatTypeBeginToEnd),
-                                     @"REVERSE": @(MLNAnimationRepeatTypeREVERSE)}))
+                                     @"REVERSE": @(MLNAnimationRepeatTypeReverse)}))
 LUA_EXPORT_GLOBAL_VAR(InterpolatorType, (@{@"Linear": @(MLNAnimationInterpolatorTypeLinear),
                                            @"Accelerate": @(MLNAnimationInterpolatorTypeAccelerate),
                                            @"Decelerate": @(MLNAnimationInterpolatorTypeDecelerate),
