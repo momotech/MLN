@@ -582,7 +582,6 @@
 		9AF2FA23ACC95B0ACC7AE209C00D1FEB /* loslib.c in Sources */ = {isa = PBXBuildFile; fileRef = 64C96E362248A5A5001148025C723D78 /* loslib.c */; };
 		9B2174AD12FD4AD22E419BD5C1B0B7C8 /* MLNCollectionViewAutoFitAdapter.h in Headers */ = {isa = PBXBuildFile; fileRef = 4C52C0073BC8A5EF9F44993E2546D40F /* MLNCollectionViewAutoFitAdapter.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		9B8F04D82992E5AE7A77F8413A523DFD /* MLNGlobalFuncExportProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 821CBAAA587C94CE88391188307BA41E /* MLNGlobalFuncExportProtocol.h */; settings = {ATTRIBUTES = (Project, ); }; };
-		9BB1ABF684317125CF7AF18E1B51BA05 /* MLNBlock+MLNKit.m in Sources */ = {isa = PBXBuildFile; fileRef = D9605AA03309EF4BDCE10BB01D1C3488 /* MLNBlock+MLNKit.m */; };
 		9BC98F2A08CDD7A38613BF2863662172 /* MLNFile.h in Headers */ = {isa = PBXBuildFile; fileRef = 012F2016303E69AC6F4827598669B2B2 /* MLNFile.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		9BCC2584E324CF6020F71AFEA97A2411 /* MLNBorderLayerOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = CABB3F440BD3741235A07D68A4A0C9A0 /* MLNBorderLayerOperation.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		9C54059817C7E7A92AD974C99C3C8497 /* MLNQRCodeHistoryViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 5AAC1D9DCBC421BDC22B124FF8A388CC /* MLNQRCodeHistoryViewController.h */; settings = {ATTRIBUTES = (Project, ); }; };
@@ -595,7 +594,6 @@
 		9E6349047E73157B68D0B950B4DE3B60 /* ltablib.c in Sources */ = {isa = PBXBuildFile; fileRef = 160D946883A06AD0A02856B775C4CEEC /* ltablib.c */; };
 		9E75CD181E122D548AACCA6CE5BF8095 /* MLNLuaCore.m in Sources */ = {isa = PBXBuildFile; fileRef = C252DFDC1B97A7F24890EBF01DD05AB1 /* MLNLuaCore.m */; };
 		9EB5CA65FC6985058230C4986A1A7D80 /* MLNTabSegmentScrollHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = F11951FEAB73573E9B3FD13CDFFADBC6 /* MLNTabSegmentScrollHandler.h */; settings = {ATTRIBUTES = (Project, ); }; };
-		9EDCE780A369B4E567219A22C20EE12B /* MLNBlock+MLNKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 2BB15572743EE1A0E20C77C4C9463C89 /* MLNBlock+MLNKit.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		9FADF2B56E19F0708897F7EEF8F6BBFB /* MLNCollectionViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 939F6C0FBAE246E20B9E0D3D0FE36C16 /* MLNCollectionViewCell.m */; };
 		9FE5AF81E89B1AA334D82C5EE6A0DD7B /* MLNCollectionViewGridLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = DF07D5A13A3F891866A585F34B526B81 /* MLNCollectionViewGridLayout.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		A03C4BA61E88186DCE421A6350A04F74 /* MLNTranslateAnimation.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EAC2DD53DA21A6F091D9543DFE60D7B /* MLNTranslateAnimation.m */; };
@@ -1226,7 +1224,6 @@
 		2A3DEC3B19C46DA71769EBA35D8B0F8B /* PbcloseCommand.pbobjc.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = PbcloseCommand.pbobjc.m; path = "MLN-iOS/MLNDevTool/Classes/Protobuf/PbcloseCommand.pbobjc.m"; sourceTree = "<group>"; };
 		2AE241A6F02F16A9E08DD4BF71C478AA /* NSBundle+MLNDebugTool.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "NSBundle+MLNDebugTool.h"; sourceTree = "<group>"; };
 		2B1320E985C0EE86ADA6160B40EC9AA3 /* MLNTableViewAutoFitAdapter.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLNTableViewAutoFitAdapter.m; sourceTree = "<group>"; };
-		2BB15572743EE1A0E20C77C4C9463C89 /* MLNBlock+MLNKit.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "MLNBlock+MLNKit.h"; sourceTree = "<group>"; };
 		2BDE2BBBB9C94F4D5FC4D628F55BB7A3 /* history.png */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = image.png; name = history.png; path = "MLN-iOS/MLNDevTool/Classes/Offline/Assets/history.png"; sourceTree = "<group>"; };
 		2C3CE836FBF791817BCE5F85ECD35C58 /* MJRefreshFooter.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = MJRefreshFooter.m; path = MJRefresh/Base/MJRefreshFooter.m; sourceTree = "<group>"; };
 		2CB6F4CDDB5608CB62891C6C3B782B7F /* MLNKeyboardViewHandler.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLNKeyboardViewHandler.h; sourceTree = "<group>"; };
@@ -1891,7 +1888,6 @@
 		D8A5F45767BFAB085CB5111193062E69 /* LNTransporterListener.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = LNTransporterListener.h; sourceTree = "<group>"; };
 		D9406C7CCBC0A3C7C04EA13E33B13548 /* MLNStyleElement.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLNStyleElement.m; sourceTree = "<group>"; };
 		D94CA3D1E9241C5C6F19A1382BD77893 /* LNUsbTransporter.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = LNUsbTransporter.m; sourceTree = "<group>"; };
-		D9605AA03309EF4BDCE10BB01D1C3488 /* MLNBlock+MLNKit.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "MLNBlock+MLNKit.m"; sourceTree = "<group>"; };
 		DA0C15EF30DDFAAD0E72970BE502F1B3 /* ExpectaSupport.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = ExpectaSupport.h; path = Expecta/ExpectaSupport.h; sourceTree = "<group>"; };
 		DA5493A56B43C78403B585EF378EB333 /* MLNCollectionViewFlowLayout.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLNCollectionViewFlowLayout.m; sourceTree = "<group>"; };
 		DA716EB4D698716580745361B89DE9F2 /* MLNNinePatchImageFactory.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLNNinePatchImageFactory.h; sourceTree = "<group>"; };
@@ -3350,8 +3346,6 @@
 		ACE1F75DA87903DFB419E5CCE7F72065 /* Category */ = {
 			isa = PBXGroup;
 			children = (
-				2BB15572743EE1A0E20C77C4C9463C89 /* MLNBlock+MLNKit.h */,
-				D9605AA03309EF4BDCE10BB01D1C3488 /* MLNBlock+MLNKit.m */,
 				2141699C0C018636CB5023701A5C4792 /* NSArray+MLNSafety.h */,
 				497B2656B0F7EB2120AAD83EC46CF04A /* NSArray+MLNSafety.m */,
 				EBE5C99350C3E0F003DB0CE862588911 /* NSAttributedString+MLNKit.h */,
@@ -4522,7 +4516,6 @@
 				A5DE89E39D9664C836CDBCA471A54046 /* MLNBeforeWaitingTaskEngine.h in Headers */,
 				54ADEF9BC1E5A20704FE12861C9C8020 /* MLNBeforeWaitingTaskProtocol.h in Headers */,
 				799B7C68A8DCF12FF69415EC700551F8 /* MLNBit.h in Headers */,
-				9EDCE780A369B4E567219A22C20EE12B /* MLNBlock+MLNKit.h in Headers */,
 				669C1AE49160152434EF40658CF16F55 /* MLNBlock.h in Headers */,
 				9BCC2584E324CF6020F71AFEA97A2411 /* MLNBorderLayerOperation.h in Headers */,
 				47BF91E26D5D233ECA82E9A7FE7DC35D /* MLNBounceInterpolator.h in Headers */,
@@ -5234,7 +5227,6 @@
 				64D47E77CA8B0C4F5CDD00D91E0283AF /* MLNBeforeWaitingTask.m in Sources */,
 				D0B624A8B0548026DD8ADE2819E50F08 /* MLNBeforeWaitingTaskEngine.m in Sources */,
 				CBE4198441604CBCCFC85CCB87814EF4 /* MLNBit.m in Sources */,
-				9BB1ABF684317125CF7AF18E1B51BA05 /* MLNBlock+MLNKit.m in Sources */,
 				C8BD4585C7E303E21BCAED8FAAA737ED /* MLNBlock.m in Sources */,
 				937D71D0C575A2C493364E8ACA5EB661 /* MLNBorderLayerOperation.m in Sources */,
 				852E4615FCF4BC21E3F7DBF47577DD18 /* MLNBounceInterpolator.m in Sources */,
