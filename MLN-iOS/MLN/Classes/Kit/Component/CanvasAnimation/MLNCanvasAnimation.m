@@ -294,7 +294,27 @@
         default:
             break;
     }
-    [targetView mln_setAnchorPoint:CGPointMake(anchorX, anchorY)];
+    [self setAnchorPoint:CGPointMake(anchorX, anchorY) targetView:targetView];
+}
+
+- (void)setAnchorPoint:(CGPoint)point targetView:(UIView *)targetView
+{
+    CGPoint newPoint = CGPointMake(targetView.bounds.size.width * point.x, targetView.bounds.size.height * point.y);
+    CGPoint oldPoint = CGPointMake(targetView.bounds.size.width * targetView.layer.anchorPoint.x, targetView.bounds.size.height * targetView.layer.anchorPoint.y);
+    
+    newPoint = CGPointApplyAffineTransform(newPoint, targetView.transform);
+    oldPoint = CGPointApplyAffineTransform(oldPoint, targetView.transform);
+    
+    CGPoint position = targetView.layer.position;
+    
+    position.x -= oldPoint.x;
+    position.x += newPoint.x;
+    
+    position.y -= oldPoint.y;
+    position.y += newPoint.y;
+    
+    targetView.layer.position = position;
+    targetView.layer.anchorPoint = point;
 }
 
 #pragma mark - copy

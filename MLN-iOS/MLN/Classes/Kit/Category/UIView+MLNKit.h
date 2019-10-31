@@ -25,7 +25,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) CGFloat lua_right;
 @property (nonatomic, assign) CGRect lua_frame;
 
-- (void)mln_setAnchorPoint:(CGPoint)point;
 - (void)lua_layoutIfNeed;
 - (void)lua_sizeToFit;
 - (void)lua_resetOffsetStatus;
@@ -63,7 +62,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - Render
 - (void)lua_setCornerRadius:(CGFloat)cornerRadius;
-- (void)lua_addCornerMaskWithRadius:(CGFloat)cornerRadius maskColor:(UIColor *)maskColor corners:(NSNumber *)corners;
+- (void)lua_addCornerMaskWithRadius:(CGFloat)cornerRadius maskColor:(UIColor *)maskColor corners:(MLNRectCorner)corners;
 - (void)mln_updateCornersIfNeed;
 - (void)mln_updateGradientLayerIfNeed;
 
