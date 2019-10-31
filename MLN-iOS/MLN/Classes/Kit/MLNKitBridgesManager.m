@@ -33,6 +33,7 @@
 #import "MLNWaterfallAdapter.h"
 #import "MLNEditTextView.h"
 #import "MLNDialogView.h"
+#import "MLNContainerWindow.h"
 #import "MLNViewPager.h"
 #import "MLNViewPagerAdapter.h"
 #import "MLNTabSegmentView.h"
@@ -138,6 +139,7 @@ static NSArray<Class<MLNExportProtocol>> *viewClasses;
                         [MLNWaterfallAdapter class],
                         [MLNEditTextView class],
                         [MLNDialogView class],
+                        [MLNContainerWindow class],
                         [MLNViewPager class],
                         [MLNViewPagerAdapter class],
                         [MLNTabSegmentView class]];
