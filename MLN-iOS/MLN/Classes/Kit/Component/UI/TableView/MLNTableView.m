@@ -17,6 +17,7 @@
 #import "MLNLayoutNode.h"
 #import "MLNBeforeWaitingTask.h"
 #import "MLNSizeCahceManager.h"
+#import "MLNInnerTableView.h"
 
 @interface MLNTableView()
 @property (nonatomic, strong) MLNInnerTableView *innerTableView;
@@ -98,7 +99,9 @@
 
 - (void)lua_scrollToTop:(BOOL)animated
 {
-    [self.innerTableView setContentOffset:CGPointZero animated:animated];
+    if (self.innerTableView.scrollEnabled) {
+        [self.innerTableView setContentOffset:CGPointZero animated:animated];
+    }
 }
 
 - (BOOL)lua_scrollIsTop {
@@ -107,6 +110,9 @@
 
 - (void)lua_scrollToRow:(NSInteger)row section:(NSInteger)section animated:(BOOL)animated
 {
+    if (!self.innerTableView.scrollEnabled) {
+        return;
+    }
     NSInteger realSection = section - 1;
     NSInteger realRow = row - 1;
     NSInteger sectionCount = [self.innerTableView numberOfSections];
@@ -272,6 +278,11 @@
 
 #pragma mark - Override
 
+- (CGSize)lua_measureSizeWithMaxWidth:(CGFloat)maxWidth maxHeight:(CGFloat)maxHeight
+{
+    return CGSizeMake(maxWidth, maxHeight);
+}
+
 - (BOOL)lua_layoutEnable
 {
     return YES;
@@ -325,12 +336,20 @@
     }
 }
 
-#pragma - MLNPaddingViewProtocol
+- (void)handleSingleTap:(UIGestureRecognizer *)gesture
+{
+    CGPoint p = [gesture locationInView:self.innerTableView];
+    NSIndexPath *indexPath = [self.innerTableView indexPathForRowAtPoint:p];
+    if (indexPath && [self.adapter respondsToSelector:@selector(tableView:singleTapSelectRowAtIndexPath:)]) {
+        [self.adapter tableView:self.innerTableView singleTapSelectRowAtIndexPath:indexPath];
+    }
+}
+
+#pragma - MILPaddingViewProtocol
 - (UITableView *)innerTableView
 {
     if (!_innerTableView) {
         _innerTableView = [[MLNInnerTableView alloc] initWithFrame:CGRectZero style:UITableViewStylePlain];
-        _innerTableView.containerView = self;
         if (@available(iOS 11.0, *)) {
             _innerTableView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
             _innerTableView.estimatedRowHeight = 0.f;
@@ -340,15 +359,15 @@
         _innerTableView.separatorStyle = UITableViewCellSeparatorStyleNone;
         _innerTableView.backgroundColor = [UIColor clearColor];
         
-        // fix:父视图添加tapGesture、longPressGesture手势CollectionView点击、长按回调不响应的问题
         UILongPressGestureRecognizer *lpgr = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleLongPress:)];
         lpgr.minimumPressDuration  = 0.5;
+        lpgr.cancelsTouchesInView = NO;
         [_innerTableView addGestureRecognizer:lpgr];
-        UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:nil];
-        [tapGesture requireGestureRecognizerToFail:lpgr];
-        tapGesture.cancelsTouchesInView = NO;
-        [_innerTableView addGestureRecognizer:tapGesture];
         
+        UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleSingleTap:)];
+        tapGesture.cancelsTouchesInView = NO;
+        [tapGesture requireGestureRecognizerToFail:lpgr];
+        [_innerTableView addGestureRecognizer:tapGesture];
         
         [self addSubview:_innerTableView];
     }
@@ -384,6 +403,7 @@ LUA_EXPORT_VIEW_METHOD(insertRowsAtSection, "lua_insertRowsAtSection:startRow:en
 LUA_EXPORT_VIEW_METHOD(deleteRowsAtSection, "lua_deleteRowsAtSection:startRow:endRow:animated:", MLNTableView)
 LUA_EXPORT_VIEW_METHOD(isStartPosition, "lua_scrollIsTop", MLNTableView)
 LUA_EXPORT_VIEW_METHOD(cellWithSectionRow, "lua_cellAt:row:", MLNTableView)
+LUA_EXPORT_VIEW_METHOD(visibleCells, "lua_visibleCells", MLNTableView)
 // refresh header
 LUA_EXPORT_VIEW_PROPERTY(refreshEnable, "setLua_refreshEnable:", "lua_refreshEnable", MLNTableView)
 LUA_EXPORT_VIEW_METHOD(isRefreshing, "lua_isRefreshing", MLNTableView)
@@ -398,10 +418,8 @@ LUA_EXPORT_VIEW_METHOD(noMoreData, "lua_noMoreData", MLNTableView)
 LUA_EXPORT_VIEW_METHOD(resetLoading, "lua_resetLoading", MLNTableView)
 LUA_EXPORT_VIEW_METHOD(loadError, "lua_loadError", MLNTableView)
 LUA_EXPORT_VIEW_METHOD(setLoadingCallback, "setLua_loadCallback:", MLNTableView)
-LUA_EXPORT_VIEW_METHOD(visibleCells, "lua_visibleCells", MLNTableView)
 // scrollView callback
 LUA_EXPORT_VIEW_PROPERTY(loadThreshold, "setLua_loadahead:", "lua_loadahead", MLNTableView)
-LUA_EXPORT_VIEW_PROPERTY(contentOffset, "lua_setContentOffset:", "lua_contentOffset", MLNTableView)
 LUA_EXPORT_VIEW_METHOD(setScrollBeginCallback, "setLua_scrollBeginCallback:", MLNTableView)
 LUA_EXPORT_VIEW_METHOD(setScrollingCallback, "setLua_scrollingCallback:", MLNTableView)
 LUA_EXPORT_VIEW_METHOD(setEndDraggingCallback, "setLua_endDraggingCallback:", MLNTableView)
@@ -409,10 +427,12 @@ LUA_EXPORT_VIEW_METHOD(setStartDeceleratingCallback, "setLua_startDeceleratingCa
 LUA_EXPORT_VIEW_METHOD(setScrollEndCallback, "setLua_scrollEndCallback:",MLNTableView)
 LUA_EXPORT_VIEW_METHOD(setContentInset, "lua_setContentInset:right:bottom:left:", MLNTableView)
 LUA_EXPORT_VIEW_METHOD(getContentInset, "lua_getContetnInset:", MLNTableView)
-LUA_EXPORT_VIEW_METHOD(setScrollEnable, "mln_setLuaScrollEnable:", MLNTableView)
+LUA_EXPORT_VIEW_METHOD(setScrollEnable, "mil_setLuaScrollEnable:", MLNTableView)
 // deprected method
 LUA_EXPORT_VIEW_PROPERTY(contentSize, "lua_setContentSize:", "lua_contentSize", MLNTableView)
 LUA_EXPORT_VIEW_PROPERTY(scrollEnabled, "lua_setScrollEnabled:", "lua_scrollEnabled", MLNTableView)
+// private method
+LUA_EXPORT_VIEW_PROPERTY(contentOffset, "lua_setContentOffset:", "lua_contentOffset", MLNTableView)
 LUA_EXPORT_VIEW_PROPERTY(i_bounces, "lua_setBounces:", "lua_bounces", MLNTableView)
 LUA_EXPORT_VIEW_PROPERTY(i_bounceHorizontal, "lua_setAlwaysBounceHorizontal:", "lua_alwaysBounceHorizontal", MLNTableView)
 LUA_EXPORT_VIEW_PROPERTY(i_bounceVertical, "lua_setAlwaysBounceVertical:", "lua_alwaysBounceVertical", MLNTableView)
