@@ -237,13 +237,13 @@
             CGSize imgViewSize = self.frame.size;
             if (!synchronzied) {
                 dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-                    UIImage *resizedImage = [MLNNinePatchImageFactory mln_in_createResizableNinePatchImage:image imgViewSize:imgViewSize];
+                    UIImage *resizedImage = [MLNNinePatchImageFactory mln_createResizableNinePatchImage:image imgViewSize:imgViewSize];
                     dispatch_async(dispatch_get_main_queue(), ^{
                         [self setNineImageCheckContentMode:resizedImage];
                     });
                 });
             } else {
-                UIImage *resizedImage = [MLNNinePatchImageFactory mln_in_createResizableNinePatchImage:image imgViewSize:imgViewSize];
+                UIImage *resizedImage = [MLNNinePatchImageFactory mln_createResizableNinePatchImage:image imgViewSize:imgViewSize];
                 [self setNineImageCheckContentMode:resizedImage];
             }
         } else {
