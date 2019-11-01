@@ -642,6 +642,9 @@
 		B2D0AB49236BDC0100B1D349 /* MLNCollectionViewGridLayoutDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = B2D0AB48236BDC0100B1D349 /* MLNCollectionViewGridLayoutDelegate.h */; };
 		B2D0AB4C236BE99F00B1D349 /* MLNCollectionViewGridLayoutFix.h in Headers */ = {isa = PBXBuildFile; fileRef = B2D0AB4A236BE99F00B1D349 /* MLNCollectionViewGridLayoutFix.h */; };
 		B2D0AB4D236BE99F00B1D349 /* MLNCollectionViewGridLayoutFix.m in Sources */ = {isa = PBXBuildFile; fileRef = B2D0AB4B236BE99F00B1D349 /* MLNCollectionViewGridLayoutFix.m */; };
+		B2D0AB4F236BEF0000B1D349 /* MLNWaterfallLayoutDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = B2D0AB4E236BEF0000B1D349 /* MLNWaterfallLayoutDelegate.h */; };
+		B2D0AB52236C06CE00B1D349 /* MLNWaterfallLayoutFix.h in Headers */ = {isa = PBXBuildFile; fileRef = B2D0AB50236C06CE00B1D349 /* MLNWaterfallLayoutFix.h */; };
+		B2D0AB53236C06CE00B1D349 /* MLNWaterfallLayoutFix.m in Sources */ = {isa = PBXBuildFile; fileRef = B2D0AB51236C06CE00B1D349 /* MLNWaterfallLayoutFix.m */; };
 		B2DE87CBD2F37C3037D43B91C85293EE /* MLNQRCodeReader.m in Sources */ = {isa = PBXBuildFile; fileRef = 79B4130ECF7248648E48F9C315D2E1CB /* MLNQRCodeReader.m */; };
 		B33F6A04EDA3B1C6FA5DD6F6A2C5DB2A /* UIView+WebCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 07F2918195738BF9D62B462E1F723915 /* UIView+WebCache.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		B353DEE0F707A17093B0D8A5F53894D9 /* Expecta-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 072FA5FA38D7039F8E0191FDB6A42351 /* Expecta-dummy.m */; };
@@ -1763,6 +1766,9 @@
 		B2D0AB48236BDC0100B1D349 /* MLNCollectionViewGridLayoutDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNCollectionViewGridLayoutDelegate.h; sourceTree = "<group>"; };
 		B2D0AB4A236BE99F00B1D349 /* MLNCollectionViewGridLayoutFix.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNCollectionViewGridLayoutFix.h; sourceTree = "<group>"; };
 		B2D0AB4B236BE99F00B1D349 /* MLNCollectionViewGridLayoutFix.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNCollectionViewGridLayoutFix.m; sourceTree = "<group>"; };
+		B2D0AB4E236BEF0000B1D349 /* MLNWaterfallLayoutDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNWaterfallLayoutDelegate.h; sourceTree = "<group>"; };
+		B2D0AB50236C06CE00B1D349 /* MLNWaterfallLayoutFix.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNWaterfallLayoutFix.h; sourceTree = "<group>"; };
+		B2D0AB51236C06CE00B1D349 /* MLNWaterfallLayoutFix.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNWaterfallLayoutFix.m; sourceTree = "<group>"; };
 		B37DC7994835219AB24CD2B2FCC32CFE /* MLNUtilBundle.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLNUtilBundle.m; sourceTree = "<group>"; };
 		B3971AAEC56869DE1D3C4A434E1F1F59 /* PbcreateCommand.pbobjc.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = PbcreateCommand.pbobjc.m; path = MLNDevTool/Classes/Protobuf/PbcreateCommand.pbobjc.m; sourceTree = "<group>"; };
 		B3C4D01ED9BA90413780925A2110D648 /* EXPMatchers+beFalsy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "EXPMatchers+beFalsy.m"; path = "Expecta/Matchers/EXPMatchers+beFalsy.m"; sourceTree = "<group>"; };
@@ -2533,10 +2539,13 @@
 				7FC4336151370C6EE86739AB8EDCC633 /* MLNWaterfallAdapter.m */,
 				FA1734C74EE6929209AE740EEFDC4FC3 /* MLNWaterfallHeaderView.h */,
 				143B963869371D7AA0A7A3FBADCCE391 /* MLNWaterfallHeaderView.m */,
+				B2D0AB4E236BEF0000B1D349 /* MLNWaterfallLayoutDelegate.h */,
 				609E1AB656251E6E5B1B5ECF08B7BF96 /* MLNWaterfallLayout.h */,
 				7F48E57E1C846757EDE09389551170EB /* MLNWaterfallLayout.m */,
 				B47ADB463C4AE27C9768EADF7F89C094 /* MLNWaterfallView.h */,
 				8C27EA30B3E624A981ECD1EE2BC60C88 /* MLNWaterfallView.m */,
+				B2D0AB50236C06CE00B1D349 /* MLNWaterfallLayoutFix.h */,
+				B2D0AB51236C06CE00B1D349 /* MLNWaterfallLayoutFix.m */,
 			);
 			path = Waterfall;
 			sourceTree = "<group>";
@@ -4477,6 +4486,7 @@
 				9B36A2048585E23FDCE2AC077DD5D125 /* MLNBeforeWaitingTaskProtocol.h in Headers */,
 				B931F32BC1EB893C99CC77C2076968EC /* MLNBit.h in Headers */,
 				844646D7A6902E5405787C15242446D8 /* MLNBlock.h in Headers */,
+				B2D0AB52236C06CE00B1D349 /* MLNWaterfallLayoutFix.h in Headers */,
 				D1099943A744AE467C52A6DFBD2FA362 /* MLNBounceInterpolator.h in Headers */,
 				F7FB37C2A3FD99593A767929F011FEED /* MLNButton.h in Headers */,
 				E5E7D2E8E0B5C34276234234A7C2BE19 /* MLNCanvasAnimation.h in Headers */,
@@ -4647,6 +4657,7 @@
 				DE90451E39114681881DEA6F1B9879B5 /* NSArray+MLNSafety.h in Headers */,
 				D6EA572E39DF221BA9D15CD13E10473D /* NSAttributedString+MLNKit.h in Headers */,
 				C323E3B1E9D87A58EDB1B729DB005A7F /* NSDictionary+MLNCore.h in Headers */,
+				B2D0AB4F236BEF0000B1D349 /* MLNWaterfallLayoutDelegate.h in Headers */,
 				295CFEFA97BDAF91C8128B599F9EF2F1 /* NSDictionary+MLNSafety.h in Headers */,
 				2A4CE5EEC6883B1E292BDC18FC8856B1 /* NSError+MLNCore.h in Headers */,
 				158279D539F9E777884BEC7ABA4D76C9 /* NSMutableArray+MLNArray.h in Headers */,
@@ -5339,6 +5350,7 @@
 				E9E377070C22E2A4F4FB5814EEB3E8CA /* ldebug.c in Sources */,
 				98FFD331DAA9F44D1706556D930E1CC7 /* ldo.c in Sources */,
 				A115B4B645A24750043EB98C3C2DB7A3 /* ldump.c in Sources */,
+				B2D0AB53236C06CE00B1D349 /* MLNWaterfallLayoutFix.m in Sources */,
 				CB3297978B19A772894F00349674A247 /* lfunc.c in Sources */,
 				3D0762CB983A4E0329E6B326632D867A /* lgc.c in Sources */,
 				471CFF561BB636447D541D2B272479F1 /* linit.c in Sources */,

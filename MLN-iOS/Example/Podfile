@@ -1,7 +1,7 @@
 #use_frameworks!
 source 'https://github.com/CocoaPods/Specs.git'
-source 'https://git.wemomo.com/ios/Specs.git'
-source 'https://git.wemomo.com/alpha-ios/wemomo-alpha-podspecs.git'
+#source 'https://git.wemomo.com/ios/Specs.git'
+#source 'https://git.wemomo.com/alpha-ios/wemomo-alpha-podspecs.git'
 
 platform :ios, '8.0'
 

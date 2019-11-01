@@ -427,7 +427,7 @@ LUA_EXPORT_VIEW_METHOD(setStartDeceleratingCallback, "setLua_startDeceleratingCa
 LUA_EXPORT_VIEW_METHOD(setScrollEndCallback, "setLua_scrollEndCallback:",MLNTableView)
 LUA_EXPORT_VIEW_METHOD(setContentInset, "lua_setContentInset:right:bottom:left:", MLNTableView)
 LUA_EXPORT_VIEW_METHOD(getContentInset, "lua_getContetnInset:", MLNTableView)
-LUA_EXPORT_VIEW_METHOD(setScrollEnable, "mil_setLuaScrollEnable:", MLNTableView)
+LUA_EXPORT_VIEW_METHOD(setScrollEnable, "mln_setLuaScrollEnable:", MLNTableView)
 // deprected method
 LUA_EXPORT_VIEW_PROPERTY(contentSize, "lua_setContentSize:", "lua_contentSize", MLNTableView)
 LUA_EXPORT_VIEW_PROPERTY(scrollEnabled, "lua_setScrollEnabled:", "lua_scrollEnabled", MLNTableView)
