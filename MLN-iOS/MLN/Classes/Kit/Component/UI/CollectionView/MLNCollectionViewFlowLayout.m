@@ -35,8 +35,9 @@
     self.sectionInset = insets;
 }
 
-- (void)relayoutIfNeed {
-    
+- (void)relayoutIfNeed
+{
+    // @note: CollectionView 对于layout调用了此方法，此处空实现
 }
 
 #pragma mark - Export For Lua
@@ -44,6 +45,6 @@ LUA_EXPORT_BEGIN(MLNCollectionViewFlowLayout)
 LUA_EXPORT_PROPERTY(lineSpacing, "lua_setMinimumLineSpacing:","minimumLineSpacing", MLNCollectionViewFlowLayout)
 LUA_EXPORT_PROPERTY(itemSpacing, "lua_setMinimumInteritemSpacing:","minimumInteritemSpacing", MLNCollectionViewFlowLayout)
 LUA_EXPORT_PROPERTY(itemSize, "setItemSize:","itemSize", MLNCollectionViewFlowLayout)
-LUA_EXPORT_END(MLNCollectionViewFlowLayout, CollectionViewLayout, NO, NULL, NULL)
+LUA_EXPORT_END(MLNCollectionViewFlowLayout, CollectionViewLayout, YES, NULL, NULL)
 
 @end

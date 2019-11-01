@@ -639,6 +639,9 @@
 		B2D0AB43236BCCCC00B1D349 /* MLNLayoutImageViewNode.m in Sources */ = {isa = PBXBuildFile; fileRef = B2D0AB41236BCCCC00B1D349 /* MLNLayoutImageViewNode.m */; };
 		B2D0AB46236BCD4C00B1D349 /* MLNKitInstanceConsts.h in Headers */ = {isa = PBXBuildFile; fileRef = B2D0AB44236BCD4C00B1D349 /* MLNKitInstanceConsts.h */; };
 		B2D0AB47236BCD4C00B1D349 /* MLNKitInstanceConsts.m in Sources */ = {isa = PBXBuildFile; fileRef = B2D0AB45236BCD4C00B1D349 /* MLNKitInstanceConsts.m */; };
+		B2D0AB49236BDC0100B1D349 /* MLNCollectionViewGridLayoutDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = B2D0AB48236BDC0100B1D349 /* MLNCollectionViewGridLayoutDelegate.h */; };
+		B2D0AB4C236BE99F00B1D349 /* MLNCollectionViewGridLayoutFix.h in Headers */ = {isa = PBXBuildFile; fileRef = B2D0AB4A236BE99F00B1D349 /* MLNCollectionViewGridLayoutFix.h */; };
+		B2D0AB4D236BE99F00B1D349 /* MLNCollectionViewGridLayoutFix.m in Sources */ = {isa = PBXBuildFile; fileRef = B2D0AB4B236BE99F00B1D349 /* MLNCollectionViewGridLayoutFix.m */; };
 		B2DE87CBD2F37C3037D43B91C85293EE /* MLNQRCodeReader.m in Sources */ = {isa = PBXBuildFile; fileRef = 79B4130ECF7248648E48F9C315D2E1CB /* MLNQRCodeReader.m */; };
 		B33F6A04EDA3B1C6FA5DD6F6A2C5DB2A /* UIView+WebCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 07F2918195738BF9D62B462E1F723915 /* UIView+WebCache.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		B353DEE0F707A17093B0D8A5F53894D9 /* Expecta-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 072FA5FA38D7039F8E0191FDB6A42351 /* Expecta-dummy.m */; };
@@ -1757,6 +1760,9 @@
 		B2D0AB41236BCCCC00B1D349 /* MLNLayoutImageViewNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLNLayoutImageViewNode.m; sourceTree = "<group>"; };
 		B2D0AB44236BCD4C00B1D349 /* MLNKitInstanceConsts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MLNKitInstanceConsts.h; path = MLN/Classes/Kit/MLNKitInstanceConsts.h; sourceTree = "<group>"; };
 		B2D0AB45236BCD4C00B1D349 /* MLNKitInstanceConsts.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MLNKitInstanceConsts.m; path = MLN/Classes/Kit/MLNKitInstanceConsts.m; sourceTree = "<group>"; };
+		B2D0AB48236BDC0100B1D349 /* MLNCollectionViewGridLayoutDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNCollectionViewGridLayoutDelegate.h; sourceTree = "<group>"; };
+		B2D0AB4A236BE99F00B1D349 /* MLNCollectionViewGridLayoutFix.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNCollectionViewGridLayoutFix.h; sourceTree = "<group>"; };
+		B2D0AB4B236BE99F00B1D349 /* MLNCollectionViewGridLayoutFix.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNCollectionViewGridLayoutFix.m; sourceTree = "<group>"; };
 		B37DC7994835219AB24CD2B2FCC32CFE /* MLNUtilBundle.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLNUtilBundle.m; sourceTree = "<group>"; };
 		B3971AAEC56869DE1D3C4A434E1F1F59 /* PbcreateCommand.pbobjc.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = PbcreateCommand.pbobjc.m; path = MLNDevTool/Classes/Protobuf/PbcreateCommand.pbobjc.m; sourceTree = "<group>"; };
 		B3C4D01ED9BA90413780925A2110D648 /* EXPMatchers+beFalsy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "EXPMatchers+beFalsy.m"; path = "Expecta/Matchers/EXPMatchers+beFalsy.m"; sourceTree = "<group>"; };
@@ -3372,6 +3378,7 @@
 				16FCF3C2BE6D30E7A00DFC4B199B4B1E /* MLNCollectionViewAdapter.h */,
 				7D2812D19555EE847C67BBBA8EEB22CA /* MLNCollectionViewAdapter.m */,
 				868D668856B53B7E19FAF92AD1944A6E /* MLNCollectionViewAdapterProtocol.h */,
+				B2D0AB48236BDC0100B1D349 /* MLNCollectionViewGridLayoutDelegate.h */,
 				DD81736A5D7649156E1E7A567241423D /* MLNCollectionViewCell.h */,
 				7D3B718E86B3928667BE0BD545F8CCB5 /* MLNCollectionViewCell.m */,
 				A00E13F4A10BB032D6B648C52F24E3A4 /* MLNCollectionViewFlowLayout.h */,
@@ -3381,6 +3388,8 @@
 				DF57BBE5D7B17DAD86BEE2D6A0FF3DE9 /* MLNCollectionViewLayoutProtocol.h */,
 				839591382636EBB36DA0C687A0C076C4 /* MLNInnerCollectionView.h */,
 				37D7811360841749570CAEDE9D161619 /* MLNInnerCollectionView.m */,
+				B2D0AB4A236BE99F00B1D349 /* MLNCollectionViewGridLayoutFix.h */,
+				B2D0AB4B236BE99F00B1D349 /* MLNCollectionViewGridLayoutFix.m */,
 				CA96EFC0868A9F9F956EE93C3555A87E /* AutoFit */,
 			);
 			path = CollectionView;
@@ -4425,9 +4434,11 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B2D0AB49236BDC0100B1D349 /* MLNCollectionViewGridLayoutDelegate.h in Headers */,
 				AD85E68AC6801533B0A7BCF62EFE5B0F /* lapi.h in Headers */,
 				7A02B884AD04158E09261B08749979F9 /* lcode.h in Headers */,
 				7A49415F1A1B2040DFFD14F1667F3936 /* ldebug.h in Headers */,
+				B2D0AB4C236BE99F00B1D349 /* MLNCollectionViewGridLayoutFix.h in Headers */,
 				CAB4FB472FBBCD345D75378FB37450B9 /* ldo.h in Headers */,
 				B1CE732814DBD5AC6715E6DF106F2431 /* lfunc.h in Headers */,
 				BC48817E54A6755FB1223BE694009D79 /* lgc.h in Headers */,
@@ -5415,6 +5426,7 @@
 				D6F8446AD14B45C08CD3125DCB4273A6 /* MLNInnerCollectionView.m in Sources */,
 				33B0A2133982936ED0A8D0C86761EC0F /* MLNInnerTableView.m in Sources */,
 				2C71F0BFA7517A6AAE9581E7B3AD323A /* MLNInternalTextField.m in Sources */,
+				B2D0AB4D236BE99F00B1D349 /* MLNCollectionViewGridLayoutFix.m in Sources */,
 				4F95B10F55063C4AED45686438D40A93 /* MLNInternalTextView.m in Sources */,
 				DB0CC4825FE774BDACC2F6120505DF24 /* MLNInternalWaterfallView.m in Sources */,
 				C0965915E49E099EFED84C6C6B16B6AC /* MLNInvocation.m in Sources */,
