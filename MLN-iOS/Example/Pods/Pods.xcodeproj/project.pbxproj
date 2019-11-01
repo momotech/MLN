@@ -645,6 +645,8 @@
 		B2D0AB4F236BEF0000B1D349 /* MLNWaterfallLayoutDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = B2D0AB4E236BEF0000B1D349 /* MLNWaterfallLayoutDelegate.h */; };
 		B2D0AB52236C06CE00B1D349 /* MLNWaterfallLayoutFix.h in Headers */ = {isa = PBXBuildFile; fileRef = B2D0AB50236C06CE00B1D349 /* MLNWaterfallLayoutFix.h */; };
 		B2D0AB53236C06CE00B1D349 /* MLNWaterfallLayoutFix.m in Sources */ = {isa = PBXBuildFile; fileRef = B2D0AB51236C06CE00B1D349 /* MLNWaterfallLayoutFix.m */; };
+		B2D0AB56236C0C7300B1D349 /* MLNInnerScrollView.h in Headers */ = {isa = PBXBuildFile; fileRef = B2D0AB54236C0C7300B1D349 /* MLNInnerScrollView.h */; };
+		B2D0AB57236C0C7300B1D349 /* MLNInnerScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = B2D0AB55236C0C7300B1D349 /* MLNInnerScrollView.m */; };
 		B2DE87CBD2F37C3037D43B91C85293EE /* MLNQRCodeReader.m in Sources */ = {isa = PBXBuildFile; fileRef = 79B4130ECF7248648E48F9C315D2E1CB /* MLNQRCodeReader.m */; };
 		B33F6A04EDA3B1C6FA5DD6F6A2C5DB2A /* UIView+WebCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 07F2918195738BF9D62B462E1F723915 /* UIView+WebCache.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		B353DEE0F707A17093B0D8A5F53894D9 /* Expecta-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 072FA5FA38D7039F8E0191FDB6A42351 /* Expecta-dummy.m */; };
@@ -1769,6 +1771,8 @@
 		B2D0AB4E236BEF0000B1D349 /* MLNWaterfallLayoutDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNWaterfallLayoutDelegate.h; sourceTree = "<group>"; };
 		B2D0AB50236C06CE00B1D349 /* MLNWaterfallLayoutFix.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNWaterfallLayoutFix.h; sourceTree = "<group>"; };
 		B2D0AB51236C06CE00B1D349 /* MLNWaterfallLayoutFix.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNWaterfallLayoutFix.m; sourceTree = "<group>"; };
+		B2D0AB54236C0C7300B1D349 /* MLNInnerScrollView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNInnerScrollView.h; sourceTree = "<group>"; };
+		B2D0AB55236C0C7300B1D349 /* MLNInnerScrollView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNInnerScrollView.m; sourceTree = "<group>"; };
 		B37DC7994835219AB24CD2B2FCC32CFE /* MLNUtilBundle.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLNUtilBundle.m; sourceTree = "<group>"; };
 		B3971AAEC56869DE1D3C4A434E1F1F59 /* PbcreateCommand.pbobjc.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = PbcreateCommand.pbobjc.m; path = MLNDevTool/Classes/Protobuf/PbcreateCommand.pbobjc.m; sourceTree = "<group>"; };
 		B3C4D01ED9BA90413780925A2110D648 /* EXPMatchers+beFalsy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "EXPMatchers+beFalsy.m"; path = "Expecta/Matchers/EXPMatchers+beFalsy.m"; sourceTree = "<group>"; };
@@ -3487,6 +3491,8 @@
 				8C5FAF51C1C5D657D58A6AC7B2C619F2 /* TabSegmentView */,
 				5B02099A6E328750627F34AE7C0A14D4 /* ViewPager */,
 				298AAB7654AFEF14F6B55480FC49DEA7 /* Waterfall */,
+				B2D0AB54236C0C7300B1D349 /* MLNInnerScrollView.h */,
+				B2D0AB55236C0C7300B1D349 /* MLNInnerScrollView.m */,
 			);
 			path = UI;
 			sourceTree = "<group>";
@@ -4466,6 +4472,7 @@
 				FB6EB88C479CCA73AC091FAACB12527A /* lzio.h in Headers */,
 				A87DAFA35E4E6CD968860EA297C90307 /* mln_lauxlib.h in Headers */,
 				E4178E634E31479B1824BB75BA17F9B2 /* mln_lua.h in Headers */,
+				B2D0AB56236C0C7300B1D349 /* MLNInnerScrollView.h in Headers */,
 				596B4146BDB09CBBB94EA54EBE4B8C14 /* mln_luaconf.h in Headers */,
 				5134C4C1829CC5756EA59AC711DA370C /* mln_lualib.h in Headers */,
 				DA46F73383E8ADCCBF826482AFD505A3 /* MLNAdapterCachesManager.h in Headers */,
@@ -5381,6 +5388,7 @@
 				4905646C834C0C2AD0E4343CEAFE87B8 /* MLNAlphaAnimation.m in Sources */,
 				C97D5C52EA09DF4C41D233D73556A539 /* MLNAnimation.m in Sources */,
 				8C5AFD7C696B4B223403CBA953CC7E28 /* MLNAnimationConst.m in Sources */,
+				B2D0AB57236C0C7300B1D349 /* MLNInnerScrollView.m in Sources */,
 				09A1A23D13A17E9A58CE5E98A681E533 /* MLNAnimationDelegate.m in Sources */,
 				AB69C4B7FA62E2B55FF6EAC4592FFA18 /* MLNAnimationHandler.m in Sources */,
 				6348C10E21750DDEE047EE9F897C7152 /* MLNAnimationSet.m in Sources */,
