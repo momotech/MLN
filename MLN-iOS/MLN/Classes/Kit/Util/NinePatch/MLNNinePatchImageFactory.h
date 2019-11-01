@@ -11,18 +11,18 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface MLNNinePatchImageFactory : NSObject
 
-+ (UIImage *)mln_in_createResizableNinePatchImageNamed:(NSString *)name imgViewSize:(CGSize)imgViewSize;
-+ (UIImage *)mln_in_createResizableNinePatchImage:(UIImage *)image imgViewSize:(CGSize)imgViewSize;
++ (UIImage *)mln_createResizableNinePatchImageNamed:(NSString *)name imgViewSize:(CGSize)imgViewSize;
++ (UIImage *)mln_createResizableNinePatchImage:(UIImage *)image imgViewSize:(CGSize)imgViewSize;
 
 @end
 
 #pragma mark - UIImage Extension
 
-@interface UIImage (NineCrop)
+@interface UIImage (MLNNineCrop)
 
-- (UIImage *)mln_in_crop:(CGRect)rect;
-- (UIImage *)mln_in_stretchHorizontalWithContainerSize:(CGSize)imageViewSize image:(UIImage *)originImage topCap:(NSInteger)top leftCap:(NSInteger)left bottomCap:(NSInteger)bottom rightCap:(NSInteger)right;
-- (UIImage *)mln_in_stretchVerticalWithContainerSize:(CGSize)imageViewSize image:(UIImage *)originImage topCap:(NSInteger)top leftCap:(NSInteger)left bottomCap:(NSInteger)bottom rightCap:(NSInteger)right;
+- (UIImage *)mln_crop:(CGRect)rect;
+- (UIImage *)mln_stretchHorizontalWithContainerSize:(CGSize)imageViewSize image:(UIImage *)originImage topCap:(NSInteger)top leftCap:(NSInteger)left bottomCap:(NSInteger)bottom rightCap:(NSInteger)right;
+- (UIImage *)mln_stretchVerticalWithContainerSize:(CGSize)imageViewSize image:(UIImage *)originImage topCap:(NSInteger)top leftCap:(NSInteger)left bottomCap:(NSInteger)bottom rightCap:(NSInteger)right;
 
 @end
 
