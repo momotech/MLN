@@ -29,7 +29,7 @@
 - (instancetype)initWithLuaCore:(MLNLuaCore *)luaCore isHorizontal:(NSNumber *)isHorizontal isLinearContenView:(NSNumber *)isLinearContenView
 {
     if (self = [super initWithFrame:CGRectZero]) {
-        _innerScrollView = [[MLNInnerScrollView alloc] initWithLuaCore:luaCore direction:isHorizontal isLinearContenView:[isLinearContenView boolValue]];
+        _innerScrollView = [[MLNInnerScrollView alloc] initWithLuaCore:luaCore direction:[isHorizontal boolValue] isLinearContenView:[isLinearContenView boolValue]];
         [super lua_addSubview:_innerScrollView];
         _innerScrollView.lua_node.widthType = MLNLayoutMeasurementTypeMatchParent;
         _innerScrollView.lua_node.heightType = MLNLayoutMeasurementTypeMatchParent;
