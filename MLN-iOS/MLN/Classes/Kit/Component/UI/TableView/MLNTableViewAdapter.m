@@ -13,8 +13,9 @@
 #import "MLNTableViewCell.h"
 #import "MLNBlock.h"
 #import "NSDictionary+MLNSafety.h"
+#import "MLNTableViewCellSettingProtocol.h"
 
-#define kDefaultSelectionColor [UIColor colorWithRed:211/255.0 green:211/255.0 blue:211/255.0 alpha:1.0]
+#define kDefaultPressColor [UIColor colorWithRed:211/255.0 green:211/255.0 blue:211/255.0 alpha:1.0]
 
 @interface MLNTableViewAdapter()
 
@@ -25,10 +26,8 @@
 @property (nonatomic, strong) NSMutableDictionary<NSString *, MLNBlock *> *longPressRowCallbacks;
 @property (nonatomic, strong) NSMutableDictionary<NSString *, MLNBlock *> *cellWillAppearByReuseIdCallbacks;
 @property (nonatomic, strong) NSMutableDictionary<NSString *, MLNBlock *> *cellDidDisappearByReuseIdCallbacks;
-@property (nonatomic, strong) NSMutableSet<NSString *> *cellReuseIds;
-@property (nonatomic, assign) BOOL showSelection;
-@property (nonatomic, strong) UIColor* selectionColor;
-
+@property (nonatomic, assign, getter=isShowPressedColor) BOOL showPressedColor;
+@property (nonatomic, strong) UIColor *pressedColor;
 @end
 
 @implementation MLNTableViewAdapter
@@ -41,11 +40,10 @@
         _heightForRowCallbacks = [NSMutableDictionary dictionary];
         _selectedRowCallbacks = [NSMutableDictionary dictionary];
         _longPressRowCallbacks = [NSMutableDictionary dictionary];
-        _cellReuseIds = [NSMutableSet set];
         _cellWillAppearByReuseIdCallbacks = [NSMutableDictionary dictionary];
         _cellDidDisappearByReuseIdCallbacks = [NSMutableDictionary dictionary];
         _cachesManager = [[MLNAdapterCachesManager alloc] init];
-        _selectionColor = kDefaultSelectionColor;
+        _pressedColor = kDefaultPressColor;
     }
     return self;
 }
@@ -63,8 +61,8 @@
     [self.cellReuseIdCallback addIntArgument:(int)indexPath.section+1];
     [self.cellReuseIdCallback addIntArgument:(int)indexPath.item+1];
     reuseId = [self.cellReuseIdCallback callIfCan];
-    MLNKitLuaAssert((reuseId && [reuseId isKindOfClass:[NSString class]]), @"The reuse id must be a string!");
-    if (!reuseId) {
+    if (!(reuseId && [reuseId isKindOfClass:[NSString class]] && reuseId.length > 0)) {
+        MLNKitLuaError(@"The reuse id must be a string and length > 0!");
         return kMLNTableViewCellReuseID;
     }
     // 3. update cache
@@ -178,7 +176,7 @@
         return 1;
     }
     id numbers = [self.sectionsNumberCallback callIfCan];
-    MLNKitLuaAssert([numbers isKindOfClass:[NSNumber class]], @"The perameter must be a number!");
+    MLNKitLuaAssert(numbers && [numbers isMemberOfClass:NSClassFromString(@"__NSCFNumber")], @"The return value of method 'sectionCount' must be a number!");
     // 3. update cache
     sectionCount = [numbers integerValue];
     [self.cachesManager updateSectionCount:sectionCount];
@@ -198,7 +196,8 @@
     // 2. call lua
     [self.rowNumbersCallback addIntArgument:(int)section+1];
     id itemCountNumber = [self.rowNumbersCallback callIfCan];
-    MLNKitLuaAssert([itemCountNumber isKindOfClass:[NSNumber class]], @"The perameter must be a number!");
+    MLNKitLuaAssert(itemCountNumber && [itemCountNumber isMemberOfClass:NSClassFromString(@"__NSCFNumber")], @"The return value of method 'rowCount' must be a number!");
+    MLNKitLuaAssert([itemCountNumber integerValue] > 0, @"The return value of method 'sectionCount' must greater than 0!");
     // 3. update cache
     itemCount = [itemCountNumber integerValue];
     [self.cachesManager updateRowCount:itemCount section:section];
@@ -208,44 +207,36 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     NSString *reuseId = [self reuseIdAt:indexPath];
-    MLNTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:reuseId forIndexPath:indexPath];
-    if (!cell) {
-        [tableView registerClass:[MLNTableViewCell class] forCellReuseIdentifier:reuseId];
-        cell = [tableView dequeueReusableCellWithIdentifier:reuseId forIndexPath:indexPath];
+    MLNBlock *initCallback = [self initedCellCallbackByReuseId:reuseId];
+    MLNKitLuaAssert(initCallback, @"It must not be nil callback of cell init!");
+    if (!initCallback) {
+        [self.targetTableView registerClass:[MLNTableViewCell class] forCellReuseIdentifier:reuseId];
     }
+    MLNTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:reuseId forIndexPath:indexPath];
+    cell.delegate = self;
     [cell pushContentViewWithLuaCore:self.mln_luaCore];
     if (!cell.isInited) {
-        MLNBlock *initCallback = [self initedCellCallbackByReuseId:reuseId];
-        MLNKitLuaAssert(initCallback, @"It must not be nil callback of cell init!");
         [initCallback addLuaTableArgument:[cell getLuaTable]];
         [initCallback callIfCan];
         [cell initCompleted];
     }
     MLNBlock *reuseCallback = [self fillCellDataCallbackByReuseId:reuseId];
-    MLNKitLuaAssert(reuseCallback, @"It must not be nil callback of cell reuse!");
-    [reuseCallback addLuaTableArgument:[cell getLuaTable]];
-    [reuseCallback addIntArgument:(int)indexPath.section+1];
-    [reuseCallback addIntArgument:(int)indexPath.row+1];
-    [reuseCallback callIfCan];
+    if (reuseCallback) {
+        [reuseCallback addLuaTableArgument:[cell getLuaTable]];
+        [reuseCallback addIntArgument:(int)indexPath.section+1];
+        [reuseCallback addIntArgument:(int)indexPath.row+1];
+        [reuseCallback callIfCan];
+    }
     [cell requestLayoutIfNeed];
     return cell;
 }
 
 #pragma mark - UITableViewDelegate
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+- (void)tableView:(UITableView *)tableView singleTapSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     NSString *reuseId = [self reuseIdAt:indexPath];
     MLNBlock *callback = [self selectedRowCallbackByReuseId:reuseId];
     UITableViewCell<MLNReuseCellProtocol> *cell = [tableView cellForRowAtIndexPath:indexPath];
-    // highlight color
-    if (_showSelection) {
-        cell.selectionStyle = UITableViewCellSelectionStyleDefault;
-        cell.selectedBackgroundView = [[UIView alloc] init];
-        cell.selectedBackgroundView.backgroundColor = self.selectionColor ?: kDefaultSelectionColor;
-        [tableView deselectRowAtIndexPath:indexPath animated:YES];
-    } else {
-        cell.selectionStyle = UITableViewCellSelectionStyleNone;
-    }
     if (callback) {
         [callback addLuaTableArgument:[cell getLuaTable]];
         [callback addIntArgument:(int)indexPath.section+1];
@@ -259,9 +250,6 @@
     MLNBlock *callback = [self longPressRowCallbackByReuseId:reuseId];
     
     UITableViewCell<MLNReuseCellProtocol> *cell = [tableView cellForRowAtIndexPath:indexPath];
-    if (_showSelection) {
-        [tableView deselectRowAtIndexPath:indexPath animated:YES];
-    }
     if (callback) {
         [callback addLuaTableArgument:[cell getLuaTable]];
         [callback addIntArgument:(int)indexPath.section+1];
@@ -278,11 +266,14 @@
     }
     NSString *reuseId = [self reuseIdAt:indexPath];
     MLNBlock *reuseHeightForRowCallback = [self heightForRowCallbackByReuseId:reuseId];
+    MLNKitLuaAssert(reuseHeightForRowCallback, @"The 'heightForCell' callback must not be nil!");
     if (reuseHeightForRowCallback) {
         [reuseHeightForRowCallback addIntArgument:(int)indexPath.section+1];
         [reuseHeightForRowCallback addIntArgument:(int)indexPath.row+1];
         id heightValue = [reuseHeightForRowCallback callIfCan];
-        height = CGFloatValueFromNumber(heightValue);
+        MLNKitLuaAssert(heightValue && [heightValue isMemberOfClass:NSClassFromString(@"__NSCFNumber")], @"The return value of method 'heightForCell/heightForCellByReuseId' must be a number!");
+        height = [heightValue floatValue];
+        height = height < 0 ? 0 : height;
         [self.cachesManager updateLayoutInfo:heightValue forIndexPath:indexPath];
         return height;
     }
@@ -459,6 +450,7 @@
     [self lua_heightForRowBy:kMLNTableViewCellReuseID callback:callback];
 }
 
+
 #pragma mark - Setup For Lua
 LUA_EXPORT_BEGIN(MLNTableViewAdapter)
 LUA_EXPORT_METHOD(sectionCount, "lua_numbersOfSections:", MLNTableViewAdapter)
@@ -478,8 +470,8 @@ LUA_EXPORT_METHOD(cellWillAppear, "lua_cellWillAppearCallback:", MLNTableViewAda
 LUA_EXPORT_METHOD(cellDidDisappear, "lua_cellDidDisappearCallback:", MLNTableViewAdapter)
 LUA_EXPORT_METHOD(cellWillAppearByReuseId, "lua_cellWillAppear:callback:", MLNTableViewAdapter)
 LUA_EXPORT_METHOD(cellDidDisappearByReuseId, "lua_cellDidDisappear:callback:", MLNTableViewAdapter)
-LUA_EXPORT_PROPERTY(showPressed, "setShowSelection:", "showSelection",MLNTableViewAdapter)
-LUA_EXPORT_PROPERTY(pressedColor, "setSelectionColor:","selectionColor", MLNTableViewAdapter)
-LUA_EXPORT_END(MLNTableViewAdapter, TableViewAdapter, NO, NULL, NULL)
+LUA_EXPORT_PROPERTY(showPressed, "setShowPressedColor:", "showPressedColor",MLNTableViewAdapter)
+LUA_EXPORT_PROPERTY(pressedColor, "setPressedColor:","pressedColor", MLNTableViewAdapter)
+LUA_EXPORT_END(MLNTableViewAdapter, TableViewAdapter, YES, NULL, NULL)
 
 @end
