@@ -205,6 +205,6 @@ LUA_EXPORT_METHOD(headerValid, "lua_headValidCallback:", MLNWaterfallAdapter)
 LUA_EXPORT_METHOD(heightForCell, "setHeightForCellCallback:", MLNWaterfallAdapter)
 LUA_EXPORT_METHOD(headerWillAppear, "lua_headerWillAppearCallback:", MLNWaterfallAdapter)
 LUA_EXPORT_METHOD(headerDidDisappear, "lua_headerDidDisappearCallback:", MLNWaterfallAdapter)
-LUA_EXPORT_END(MLNWaterfallAdapter, WaterfallAdapter, NO, "MLNCollectionViewAdapter", NULL)
+LUA_EXPORT_END(MLNWaterfallAdapter, WaterfallAdapter, YES, "MLNCollectionViewAdapter", NULL)
 
 @end
