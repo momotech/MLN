@@ -516,7 +516,7 @@ LUA_EXPORT_VIEW_METHOD(insertRowsAtSection, "lua_insertRowsAtSection:startRow:en
 LUA_EXPORT_VIEW_METHOD(deleteRowsAtSection, "lua_deleteRowsAtSection:startRow:endRow:animated:", MLNCollectionView)
 LUA_EXPORT_VIEW_METHOD(cellWithSectionRow, "lua_cellAt:row:", MLNCollectionView)
 LUA_EXPORT_VIEW_METHOD(visibleCells, "lua_visibleCells", MLNCollectionView)
-LUA_EXPORT_VIEW_METHOD(setScrollEnable, "mil_setLuaScrollEnable:", MLNCollectionView)
+LUA_EXPORT_VIEW_METHOD(setScrollEnable, "mln_setLuaScrollEnable:", MLNCollectionView)
 // refresh header
 LUA_EXPORT_VIEW_PROPERTY(refreshEnable, "setLua_refreshEnable:", "lua_refreshEnable", MLNCollectionView)
 LUA_EXPORT_VIEW_METHOD(isRefreshing, "lua_isRefreshing", MLNCollectionView)

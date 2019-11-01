@@ -66,7 +66,7 @@
     return _lazyTask;
 }
 
-- (void)setAdapter:(id<MLNCollectionViewAdapterProtocol, MLNCollectionViewGridLayoutDelegate>)adapter
+- (void)setAdapter:(id<MLNCollectionViewAdapterProtocol>)adapter
 {
     MLNCheckTypeAndNilValue(adapter, @"WaterfallAdapter", [MLNWaterfallAdapter class])
     if (_adapter != adapter) {
@@ -109,6 +109,9 @@
 #pragma mark - Scroll
 - (void)lua_scrollToCell:(NSInteger)row section:(NSInteger)section animation:(BOOL)animate
 {
+    if (!self.innerWaterfallView.scrollEnabled) {
+        return;
+    }
     NSInteger realSection = section - 1;
     NSInteger realRow = row - 1;
     NSInteger sectionCount = [self.innerWaterfallView numberOfSections];
@@ -124,7 +127,9 @@
 
 - (void)lua_scrollToTop:(BOOL)animated
 {
-    [self.innerWaterfallView setContentOffset:CGPointZero animated:animated];
+    if (self.innerWaterfallView.scrollEnabled) {
+        [self.innerWaterfallView setContentOffset:CGPointZero animated:animated];
+    }
 }
 
 - (BOOL)lua_scrollIsTop
@@ -153,9 +158,11 @@
 #pragma mark - Relaod
 - (void)lua_reloadAtSection:(NSInteger)section animation:(BOOL)animation
 {
-    MLNKitLuaAssert(section > 0, @"This section number is wrong!");
-    if (section > 0) {
-        NSIndexSet *set = [NSIndexSet indexSetWithIndex:section-1];
+    NSInteger sectionCount = [self.innerWaterfallView numberOfSections];
+    NSInteger realSection = section - 1;
+    MLNKitLuaAssert(realSection >= 0 && realSection < sectionCount, @"This section number is wrong!");
+    if (realSection >= 0 && realSection < sectionCount) {
+        NSIndexSet *set = [NSIndexSet indexSetWithIndex:realSection];
         if ([self.adapter respondsToSelector:@selector(collectionView:reloadSections:)]) {
             [self.adapter collectionView:self.innerWaterfallView reloadSections:set];
         }
@@ -173,22 +180,28 @@
 
 - (void)lua_reloadAtRow:(NSInteger)row section:(NSInteger)section animation:(BOOL)animation
 {
-    MLNKitLuaAssert(section > 0, @"This section number is wrong!");
-    MLNKitLuaAssert(row > 0, @"This row number is wrong!");
-    if (section > 0 && row > 0) {
-        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row-1 inSection:section-1];
-        NSArray *indexPaths = @[indexPath];
-        if ([self.adapter respondsToSelector:@selector(collectionView:reloadItemsAtIndexPaths:)]) {
-            [self.adapter collectionView:self.innerWaterfallView reloadItemsAtIndexPaths:indexPaths];
-        }
-        if (animation) {
-            [self.innerWaterfallView performBatchUpdates:^{
-                [self.innerWaterfallView reloadItemsAtIndexPaths:indexPaths];
-            } completion:nil];
-        } else {
-            [UIView performWithoutAnimation:^{
-                [self.innerWaterfallView reloadItemsAtIndexPaths:indexPaths];
-            }];
+    NSInteger sectionCount = [self.innerWaterfallView numberOfSections];
+    NSInteger realSection = section - 1;
+    MLNKitLuaAssert(realSection >= 0 && realSection < sectionCount, @"This section number is wrong!");
+    if (realSection >= 0 && realSection < sectionCount) {
+        NSInteger rowCount = [self.innerWaterfallView numberOfItemsInSection:realSection];
+        NSInteger realRow = row - 1;
+        MLNKitLuaAssert(realRow >= 0 && realRow < rowCount, @"This row number is wrong!");
+        if (realRow >= 0 && realRow < rowCount) {
+            NSIndexPath *indexPath = [NSIndexPath indexPathForRow:realRow inSection:realSection];
+            NSArray *indexPaths = @[indexPath];
+            if ([self.adapter respondsToSelector:@selector(collectionView:reloadItemsAtIndexPaths:)]) {
+                [self.adapter collectionView:self.innerWaterfallView reloadItemsAtIndexPaths:indexPaths];
+            }
+            if (animation) {
+                [self.innerWaterfallView performBatchUpdates:^{
+                    [self.innerWaterfallView reloadItemsAtIndexPaths:indexPaths];
+                } completion:nil];
+            } else {
+                [UIView performWithoutAnimation:^{
+                    [self.innerWaterfallView reloadItemsAtIndexPaths:indexPaths];
+                }];
+            }
         }
     }
 }
@@ -406,7 +419,6 @@
         MLNWaterfallLayout *layout = [[MLNWaterfallLayout alloc] init];
         _innerWaterfallView = [[MLNInternalWaterfallView alloc] initWithFrame:CGRectZero collectionViewLayout:layout];
         _innerWaterfallView.backgroundColor = [UIColor clearColor];
-        _innerWaterfallView.containerView = self;
         if (@available(iOS 11.0, *)) {
             _innerWaterfallView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
         }

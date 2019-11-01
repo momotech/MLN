@@ -27,6 +27,7 @@
 
 - (void)lua_addSubview:(UIView *)view
 {
+    MLNCheckTypeAndNilValue(view, @"View", UIView)
     [self.luaContentView lua_addSubview:view];
 }
 
