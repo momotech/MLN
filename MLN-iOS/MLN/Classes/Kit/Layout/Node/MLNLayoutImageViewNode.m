@@ -116,7 +116,7 @@ MLN_FORCE_INLINE void measureImageViewAutoNodeSize (MLNLayoutNode __unsafe_unret
         }
     }
     node.measuredWidth = widthSize;
-    node.measuredHeight=  heightSize;
+    node.measuredHeight= heightSize;
 }
 
 MLN_FORCE_INLINE float resolveAdjustedSize(float desiredSize, float maxSize, float measureSize,MLNLayoutMeasurementType measureType)
