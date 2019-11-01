@@ -51,6 +51,7 @@
 #import "MLNViewPager.h"
 #import "MLNViewPagerAdapter.h"
 #import "MLNTabSegmentView.h"
+#import "MLNReuseContentView.h"
 
 // Kit Classes's Model
 #import "MLNRect.h"
@@ -111,6 +112,7 @@
 #import "MLNLayoutEngine.h"
 #import "MLNSizeCahceManager.h"
 #import "MLNFont.h"
+#import "MLNNinePatchImageFactory.h"
 
 // 分类
 #import "NSDictionary+MLNSafety.h"
