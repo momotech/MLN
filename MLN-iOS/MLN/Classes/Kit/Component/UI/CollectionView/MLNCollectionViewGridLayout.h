@@ -11,13 +11,6 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class MLNCollectionViewGridLayout;
-@protocol MLNCollectionViewGridLayoutDelegate <NSObject>
-
-- (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath;
-
-@end
-
 @interface MLNCollectionViewGridLayout : UICollectionViewLayout<MLNEntityExportProtocol>
 
 @property (nonatomic, assign) MLNScrollDirection scrollDirection;

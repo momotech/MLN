@@ -51,7 +51,7 @@
     return _lazyTask;
 }
 
-- (void)setAdapter:(id<MLNCollectionViewAdapterProtocol, MLNCollectionViewGridLayoutDelegate>)adapter
+- (void)setAdapter:(id<MLNCollectionViewAdapterProtocol>)adapter
 {
     MLNCheckTypeAndNilValue(adapter, @"CollectionViewAdapter", [MLNCollectionViewAdapter class])
     if (_adapter != adapter) {
@@ -141,6 +141,9 @@
         _missionAnimated = animate;
         return;
     }
+    if (!self.innerCollectionView.scrollEnabled) {
+        return;
+    }
     NSInteger realSection = section - 1;
     NSInteger realRow = row - 1;
     NSInteger sectionCount = [self.innerCollectionView numberOfSections];
@@ -156,7 +159,9 @@
 
 - (void)lua_scrollToTop:(BOOL)animated
 {
-    [self.innerCollectionView setContentOffset:CGPointZero animated:animated];
+    if (self.innerCollectionView.scrollEnabled) {
+        [self.innerCollectionView setContentOffset:CGPointZero animated:animated];
+    }
 }
 
 - (BOOL)lua_scrollIsTop
@@ -189,9 +194,11 @@
 #pragma mark - Relaod
 - (void)lua_reloadAtSection:(NSInteger)section animation:(BOOL)animation
 {
-    MLNKitLuaAssert(section > 0, @"This section number is wrong!");
-    if (section > 0) {
-        NSIndexSet *set = [NSIndexSet indexSetWithIndex:section-1];
+    NSInteger sectionCount = [self.innerCollectionView numberOfSections];
+    NSInteger realSection = section - 1;
+    MLNKitLuaAssert(realSection >= 0 && realSection < sectionCount, @"This section number is wrong!");
+    if (realSection >= 0 && realSection < sectionCount) {
+        NSIndexSet *set = [NSIndexSet indexSetWithIndex:realSection];
         if ([self.adapter respondsToSelector:@selector(collectionView:reloadSections:)]) {
             [self.adapter collectionView:self.innerCollectionView reloadSections:set];
         }
@@ -209,22 +216,28 @@
 
 - (void)lua_reloadAtRow:(NSInteger)row section:(NSInteger)section animation:(BOOL)animation
 {
-    MLNKitLuaAssert(section > 0, @"This section number is wrong!");
-    MLNKitLuaAssert(row > 0, @"This row number is wrong!");
-    if (section > 0 && row > 0) {
-        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row-1 inSection:section-1];
-        NSArray *indexPaths = @[indexPath];
-        if ([self.adapter respondsToSelector:@selector(collectionView:reloadItemsAtIndexPaths:)]) {
-            [self.adapter collectionView:self.innerCollectionView reloadItemsAtIndexPaths:indexPaths];
-        }
-        if (animation) {
-            [self.innerCollectionView performBatchUpdates:^{
-                [self.innerCollectionView reloadItemsAtIndexPaths:indexPaths];
-            } completion:nil];
-        } else {
-            [UIView performWithoutAnimation:^{
-                [self.innerCollectionView reloadItemsAtIndexPaths:indexPaths];
-            }];
+    NSInteger sectionCount = [self.innerCollectionView numberOfSections];
+    NSInteger realSection = section - 1;
+    MLNKitLuaAssert(realSection >= 0  && realSection < sectionCount, @"This section number is wrong!");
+    if (realSection >= 0  && realSection < sectionCount) {
+        NSInteger rowCount = [self.innerCollectionView numberOfItemsInSection:realSection];
+        NSInteger realRow = row - 1;
+        MLNKitLuaAssert(realRow >= 0 && realRow < rowCount, @"This row number is wrong!");
+        if (realRow >= 0 && realRow < rowCount) {
+            NSIndexPath *indexPath = [NSIndexPath indexPathForRow:realRow inSection:realSection];
+            NSArray *indexPaths = @[indexPath];
+            if ([self.adapter respondsToSelector:@selector(collectionView:reloadItemsAtIndexPaths:)]) {
+                [self.adapter collectionView:self.innerCollectionView reloadItemsAtIndexPaths:indexPaths];
+            }
+            if (animation) {
+                [self.innerCollectionView performBatchUpdates:^{
+                    [self.innerCollectionView reloadItemsAtIndexPaths:indexPaths];
+                } completion:nil];
+            } else {
+                [UIView performWithoutAnimation:^{
+                    [self.innerCollectionView reloadItemsAtIndexPaths:indexPaths];
+                }];
+            }
         }
     }
 }
@@ -348,7 +361,7 @@
     MLNCollectionViewCell* cell = (MLNCollectionViewCell*)[self.innerCollectionView cellForItemAtIndexPath:[NSIndexPath indexPathForRow:trueRow inSection:trueSection]];
     MLNKitLuaAssert([cell respondsToSelector:@selector(getLuaTable)], @"collection cell must realize gutLuaTable function");
     if (cell) {
-        MLNLuaTable *table = [cell getLuaTable];
+        MLNLuaTable* table = [cell getLuaTable];
         return table;
     }
     return nil;
@@ -430,13 +443,6 @@
     return NO;
 }
 
-- (void)lua_layoutCompleted
-{
-    [super lua_layoutCompleted];
-    id<MLNCollectionViewLayoutProtocol> layout = (id<MLNCollectionViewLayoutProtocol>)((UICollectionView *)self.lua_contentView).collectionViewLayout;
-    [layout relayoutIfNeed];
-}
-
 #pragma mark - Gesture
 - (void)handleLongPress:(UIGestureRecognizer *)gesture
 {
@@ -508,6 +514,9 @@ LUA_EXPORT_VIEW_METHOD(deleteRow, "lua_deleteRow:section:animated:", MLNCollecti
 LUA_EXPORT_VIEW_METHOD(insertRow, "lua_insertRow:section:animated:", MLNCollectionView)
 LUA_EXPORT_VIEW_METHOD(insertRowsAtSection, "lua_insertRowsAtSection:startRow:endRow:animated:", MLNCollectionView)
 LUA_EXPORT_VIEW_METHOD(deleteRowsAtSection, "lua_deleteRowsAtSection:startRow:endRow:animated:", MLNCollectionView)
+LUA_EXPORT_VIEW_METHOD(cellWithSectionRow, "lua_cellAt:row:", MLNCollectionView)
+LUA_EXPORT_VIEW_METHOD(visibleCells, "lua_visibleCells", MLNCollectionView)
+LUA_EXPORT_VIEW_METHOD(setScrollEnable, "mil_setLuaScrollEnable:", MLNCollectionView)
 // refresh header
 LUA_EXPORT_VIEW_PROPERTY(refreshEnable, "setLua_refreshEnable:", "lua_refreshEnable", MLNCollectionView)
 LUA_EXPORT_VIEW_METHOD(isRefreshing, "lua_isRefreshing", MLNCollectionView)
@@ -522,12 +531,8 @@ LUA_EXPORT_VIEW_METHOD(noMoreData, "lua_noMoreData", MLNCollectionView)
 LUA_EXPORT_VIEW_METHOD(resetLoading, "lua_resetLoading", MLNCollectionView)
 LUA_EXPORT_VIEW_METHOD(loadError, "lua_loadError", MLNCollectionView)
 LUA_EXPORT_VIEW_METHOD(setLoadingCallback, "setLua_loadCallback:", MLNCollectionView)
-LUA_EXPORT_VIEW_METHOD(cellWithSectionRow, "lua_cellAt:row:", MLNCollectionView)
-LUA_EXPORT_VIEW_METHOD(visibleCells, "lua_visibleCells", MLNCollectionView)
-LUA_EXPORT_VIEW_METHOD(setScrollEnable, "mln_setLuaScrollEnable:", MLNCollectionView)
 // ScrollView callback
 LUA_EXPORT_VIEW_METHOD(padding, "lua_setPaddingWithTop:right:bottom:left:", MLNCollectionView)
-LUA_EXPORT_VIEW_PROPERTY(contentOffset, "lua_setContentOffset:", "lua_contentOffset", MLNCollectionView)
 LUA_EXPORT_VIEW_PROPERTY(loadThreshold, "setLua_loadahead:", "lua_loadahead", MLNCollectionView)
 LUA_EXPORT_VIEW_METHOD(setScrollBeginCallback, "setLua_scrollBeginCallback:", MLNCollectionView)
 LUA_EXPORT_VIEW_METHOD(setScrollingCallback, "setLua_scrollingCallback:", MLNCollectionView)
@@ -536,10 +541,11 @@ LUA_EXPORT_VIEW_METHOD(setStartDeceleratingCallback, "setLua_startDeceleratingCa
 LUA_EXPORT_VIEW_METHOD(setScrollEndCallback, "setLua_scrollEndCallback:",MLNCollectionView)
 LUA_EXPORT_VIEW_METHOD(setContentInset, "lua_setContentInset:right:bottom:left:", MLNCollectionView)
 LUA_EXPORT_VIEW_METHOD(getContentInset, "lua_getContetnInset:", MLNCollectionView)
-LUA_EXPORT_VIEW_METHOD(setOffsetWithAnim, "lua_setContentOffsetWithAnimation:", MLNCollectionView)
 // deprected method
 LUA_EXPORT_VIEW_PROPERTY(contentSize, "lua_setContentSize:", "lua_contentSize", MLNCollectionView)
 LUA_EXPORT_VIEW_PROPERTY(scrollEnabled, "lua_setScrollEnabled:", "lua_scrollEnabled", MLNCollectionView)
+// private method
+LUA_EXPORT_VIEW_PROPERTY(contentOffset, "lua_setContentOffset:", "lua_contentOffset", MLNCollectionView)
 LUA_EXPORT_VIEW_PROPERTY(i_bounces, "lua_setBounces:", "lua_bounces", MLNCollectionView)
 LUA_EXPORT_VIEW_PROPERTY(i_bounceHorizontal, "lua_setAlwaysBounceHorizontal:", "lua_alwaysBounceHorizontal", MLNCollectionView)
 LUA_EXPORT_VIEW_PROPERTY(i_bounceVertical, "lua_setAlwaysBounceVertical:", "lua_alwaysBounceVertical", MLNCollectionView)

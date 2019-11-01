@@ -7,6 +7,7 @@
 
 #import "MLNCollectionViewCell.h"
 #import "UIView+MLNLayout.h"
+#import "MLNKitHeader.h"
 
 @interface MLNCollectionViewCell ()
 
@@ -36,6 +37,7 @@
 
 - (void)lua_addSubview:(UIView *)view
 {
+    MLNCheckTypeAndNilValue(view, @"View", [UIView class]);
     [self.luaContentView lua_addSubview:view];
 }
 
