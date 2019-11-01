@@ -54,21 +54,16 @@
 }
 
 - (IBAction)showDemoClick:(id)sender {
-        NSString *entryFile = @"moment.lua";
-        MLNLuaBundle *bundle = [MLNLuaBundle mainBundleWithPath:@"moment"];
-    
-    
-//        NSString *entryFile = @"foo.lua";
-//        MLNLuaBundle *bundle = [MLNLuaBundle mainBundle];
-    
-        MLNKitViewController *kcv = [[MLNKitViewController alloc] initWithEntryFilePath:entryFile];
-        [kcv regClasses:@[[MLNTestMe class],
-                          [MLNStaticTest class],
-                          [MLNGlobalVarTest class],
-                          [MLNGlobalFuncTest class]]];
-        [kcv changeCurrentBundlePath:bundle.bundlePath];
-        self.kcv = kcv;
-        [self presentViewController:kcv animated:YES completion:nil];
+    NSString *entryFile = @"Main.lua";
+    MLNLuaBundle *bundle = [MLNLuaBundle mainBundleWithPath:@"gallery"];
+    MLNKitViewController *kcv = [[MLNKitViewController alloc] initWithEntryFilePath:entryFile];
+    [kcv regClasses:@[[MLNTestMe class],
+                      [MLNStaticTest class],
+                      [MLNGlobalVarTest class],
+                      [MLNGlobalFuncTest class]]];
+    [kcv changeCurrentBundlePath:bundle.bundlePath];
+    self.kcv = kcv;
+    [self presentViewController:kcv animated:YES completion:nil];
 }
 
 
