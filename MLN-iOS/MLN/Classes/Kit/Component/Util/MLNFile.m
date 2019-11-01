@@ -254,6 +254,11 @@ static NSString *fileManagerRootPath = nil;
     fileManagerRootPath = rootPath;
 }
 
++ (NSString *)fileManagerRootPath
+{
+    return fileManagerRootPath;
+}
+
 + (NSString *)lua_getStorageDir
 {
     return fileManagerRootPath;
