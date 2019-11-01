@@ -157,11 +157,6 @@
     self.myContentSize = CGSizeMake(self.collectionView.frame.size.width, self.startY);
 }
 
-- (void)invalidateLayout {
-    _cellLayoutInfo = nil;
-}
-
-
 #pragma mark - collectionView delegate
 
 - (NSArray<UICollectionViewLayoutAttributes *> *)layoutAttributesForElementsInRect:(CGRect)rect
