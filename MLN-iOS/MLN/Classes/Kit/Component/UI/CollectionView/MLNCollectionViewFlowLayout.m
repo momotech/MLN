@@ -45,6 +45,6 @@ LUA_EXPORT_BEGIN(MLNCollectionViewFlowLayout)
 LUA_EXPORT_PROPERTY(lineSpacing, "lua_setMinimumLineSpacing:","minimumLineSpacing", MLNCollectionViewFlowLayout)
 LUA_EXPORT_PROPERTY(itemSpacing, "lua_setMinimumInteritemSpacing:","minimumInteritemSpacing", MLNCollectionViewFlowLayout)
 LUA_EXPORT_PROPERTY(itemSize, "setItemSize:","itemSize", MLNCollectionViewFlowLayout)
-LUA_EXPORT_END(MLNCollectionViewFlowLayout, CollectionViewLayout, YES, NULL, NULL)
+LUA_EXPORT_END(MLNCollectionViewFlowLayout, CollectionViewLayout, NO, NULL, NULL)
 
 @end
