@@ -197,7 +197,7 @@
     [self.rowNumbersCallback addIntArgument:(int)section+1];
     id itemCountNumber = [self.rowNumbersCallback callIfCan];
     MLNKitLuaAssert(itemCountNumber && [itemCountNumber isMemberOfClass:NSClassFromString(@"__NSCFNumber")], @"The return value of method 'rowCount' must be a number!");
-    MLNKitLuaAssert([itemCountNumber integerValue] > 0, @"The return value of method 'sectionCount' must greater than 0!");
+    MLNKitLuaAssert([itemCountNumber integerValue] >= 0, @"The return value of method 'rowCount' must greater or equal than 0!");
     // 3. update cache
     itemCount = [itemCountNumber integerValue];
     [self.cachesManager updateRowCount:itemCount section:section];
@@ -472,6 +472,6 @@ LUA_EXPORT_METHOD(cellWillAppearByReuseId, "lua_cellWillAppear:callback:", MLNTa
 LUA_EXPORT_METHOD(cellDidDisappearByReuseId, "lua_cellDidDisappear:callback:", MLNTableViewAdapter)
 LUA_EXPORT_PROPERTY(showPressed, "setShowPressedColor:", "showPressedColor",MLNTableViewAdapter)
 LUA_EXPORT_PROPERTY(pressedColor, "setPressedColor:","pressedColor", MLNTableViewAdapter)
-LUA_EXPORT_END(MLNTableViewAdapter, TableViewAdapter, YES, NULL, NULL)
+LUA_EXPORT_END(MLNTableViewAdapter, TableViewAdapter, NO, NULL, NULL)
 
 @end

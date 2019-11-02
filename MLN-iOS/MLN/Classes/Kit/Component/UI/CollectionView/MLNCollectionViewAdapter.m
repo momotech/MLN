@@ -504,6 +504,6 @@ LUA_EXPORT_METHOD(cellWillAppear, "lua_cellWillAppearCallback:", MLNCollectionVi
 LUA_EXPORT_METHOD(cellDidDisappear, "lua_cellDidDisappearCallback:", MLNCollectionViewAdapter)
 LUA_EXPORT_METHOD(cellWillAppearByReuseId, "lua_cellWillAppear:callback:", MLNCollectionViewAdapter)
 LUA_EXPORT_METHOD(cellDidDisappearByReuseId, "lua_cellDidDisappear:callback:", MLNCollectionViewAdapter)
-LUA_EXPORT_END(MLNCollectionViewAdapter, CollectionViewAdapter, YES, NULL, NULL)
+LUA_EXPORT_END(MLNCollectionViewAdapter, CollectionViewAdapter, NO, NULL, NULL)
 
 @end
