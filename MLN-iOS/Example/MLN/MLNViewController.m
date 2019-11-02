@@ -19,6 +19,7 @@
 #import "MLNNavigatorHandler.h"
 #import "MLNHotReloadViewController.h"
 #import "MLNOfflineViewController.h"
+#import "MLNFPSLabel.h"
 
 @interface MLNViewController () <MLNKitInstanceErrorHandlerProtocol, MLNViewControllerProtocol>
 
@@ -30,11 +31,14 @@
 @property (nonatomic, strong) MLNKitViewController *kcv;
 @property (nonatomic, strong) MLNHotReloadViewController *hotvc;
 @property (nonatomic, strong) MLNOfflineViewController *ovc;
-#import "MLNOfflineViewController.h"
+@property (nonatomic, strong) MLNFPSLabel *fpsLabel;
 
 @end
 
 @implementation MLNViewController
+{
+    NSTimeInterval _startTime;
+}
 
 - (void)viewDidLoad
 {
@@ -51,6 +55,15 @@
     handlersManager.scrollRefreshHandler = self.refreshHandler;
     handlersManager.imageLoader = self.imgLoader;
     handlersManager.navigatorHandler = self.navHandler;
+    
+    _startTime = [NSDate date].timeIntervalSince1970;
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    
+    NSLog(@"-------> %f", ([NSDate date].timeIntervalSince1970 - _startTime) * 1000);
 }
 
 - (IBAction)showDemoClick:(id)sender {
@@ -64,6 +77,10 @@
     [kcv changeCurrentBundlePath:bundle.bundlePath];
     self.kcv = kcv;
     [self presentViewController:kcv animated:YES completion:nil];
+    
+    CGFloat screenHeight = [UIScreen mainScreen].bounds.size.height;
+    self.fpsLabel = [[MLNFPSLabel alloc] initWithFrame:CGRectMake(10, screenHeight * 0.8, 50, 20)];
+    [self.kcv.view addSubview:self.fpsLabel];
 }
 
 

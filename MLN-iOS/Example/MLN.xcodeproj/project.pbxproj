@@ -37,6 +37,8 @@
 		8C5463BE1E8D8BA958F828ED /* libPods-MLN_Tests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A6E2454F7DDA4338383073BC /* libPods-MLN_Tests.a */; };
 		A94791C5348E1F8459BDC83E /* libPods-MLN_Example.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F449C1D4FDA5182F0D579269 /* libPods-MLN_Example.a */; };
 		B2D0AB85236C1F0A00B1D349 /* gallery in Resources */ = {isa = PBXBuildFile; fileRef = B2D0AB84236C1F0A00B1D349 /* gallery */; };
+		B2D0ABA0236D425000B1D349 /* MLNFPSLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = B2D0AB9C236D425000B1D349 /* MLNFPSLabel.m */; };
+		B2D0ABA1236D425000B1D349 /* MLNWeakTarget.m in Sources */ = {isa = PBXBuildFile; fileRef = B2D0AB9E236D425000B1D349 /* MLNWeakTarget.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -98,6 +100,10 @@
 		873B8AEA1B1F5CCA007FD442 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = Main.storyboard; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		A6E2454F7DDA4338383073BC /* libPods-MLN_Tests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-MLN_Tests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B2D0AB84236C1F0A00B1D349 /* gallery */ = {isa = PBXFileReference; lastKnownFileType = folder; path = gallery; sourceTree = "<group>"; };
+		B2D0AB9C236D425000B1D349 /* MLNFPSLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLNFPSLabel.m; sourceTree = "<group>"; };
+		B2D0AB9D236D425000B1D349 /* MLNFPSLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLNFPSLabel.h; sourceTree = "<group>"; };
+		B2D0AB9E236D425000B1D349 /* MLNWeakTarget.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLNWeakTarget.m; sourceTree = "<group>"; };
+		B2D0AB9F236D425000B1D349 /* MLNWeakTarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLNWeakTarget.h; sourceTree = "<group>"; };
 		C0FB2CAC8F9592C3092ACF62 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
 		F236AA5C6B666135B994F09B /* Pods-MLN_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MLN_Example.debug.xcconfig"; path = "Target Support Files/Pods-MLN_Example/Pods-MLN_Example.debug.xcconfig"; sourceTree = "<group>"; };
 		F449C1D4FDA5182F0D579269 /* libPods-MLN_Example.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-MLN_Example.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -202,6 +208,10 @@
 				3012BB0F2326822F00FA2BB2 /* MLNNavigatorHandler.m */,
 				30A4EB6B231F4FD400995416 /* MLNTestMe+Test.h */,
 				30A4EB6C231F4FD400995416 /* MLNTestMe+Test.m */,
+				B2D0AB9D236D425000B1D349 /* MLNFPSLabel.h */,
+				B2D0AB9C236D425000B1D349 /* MLNFPSLabel.m */,
+				B2D0AB9F236D425000B1D349 /* MLNWeakTarget.h */,
+				B2D0AB9E236D425000B1D349 /* MLNWeakTarget.m */,
 				71719F9D1E33DC2100824A3D /* LaunchScreen.storyboard */,
 				6003F5A8195388D20070C39A /* Images.xcassets */,
 				6003F594195388D20070C39A /* Supporting Files */,
@@ -437,7 +447,9 @@
 			files = (
 				30A4EB5A231CC5CD00995416 /* MLNMyHttpHandler.m in Sources */,
 				30E24E9422F3D74A00A0E78C /* MLNGlobalFuncTest.m in Sources */,
+				B2D0ABA1236D425000B1D349 /* MLNWeakTarget.m in Sources */,
 				30E24E9522F3D74A00A0E78C /* MLNStaticTest.m in Sources */,
+				B2D0ABA0236D425000B1D349 /* MLNFPSLabel.m in Sources */,
 				6003F59E195388D20070C39A /* MLNAppDelegate.m in Sources */,
 				30A4EB60231CD75200995416 /* MLNMyRefreshHandler.m in Sources */,
 				30A4EB5D231CC86B00995416 /* MLNMyImageHandler.m in Sources */,

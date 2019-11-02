@@ -660,6 +660,8 @@
 		B2C1063FBDD7B9FC0406C0BF962F71E1 /* MLNFileLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 78CFF3122ED21CC1F5D80A160DEC5023 /* MLNFileLoader.m */; };
 		B2D0AB94236D377400B1D349 /* MLNInnerScrollView.h in Headers */ = {isa = PBXBuildFile; fileRef = B2D0AB92236D377100B1D349 /* MLNInnerScrollView.h */; };
 		B2D0AB95236D377400B1D349 /* MLNInnerScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = B2D0AB93236D377300B1D349 /* MLNInnerScrollView.m */; };
+		B2D0ABA7236D680200B1D349 /* MLNLoadTimeTool.m in Sources */ = {isa = PBXBuildFile; fileRef = B2D0ABA5236D680100B1D349 /* MLNLoadTimeTool.m */; };
+		B2D0ABA8236D680200B1D349 /* MLNLoadTimeTool.h in Headers */ = {isa = PBXBuildFile; fileRef = B2D0ABA6236D680200B1D349 /* MLNLoadTimeTool.h */; };
 		B2DE87CBD2F37C3037D43B91C85293EE /* MLNQRCodeReader.m in Sources */ = {isa = PBXBuildFile; fileRef = 4F780F9288E792E2E6ECCEBA9E999C01 /* MLNQRCodeReader.m */; };
 		B3223A712119EB4AA1D8046CFA24630D /* MLNOfflineDevToolPresenter.m in Sources */ = {isa = PBXBuildFile; fileRef = F0DBAE022C40D89B528C67E61A747ACD /* MLNOfflineDevToolPresenter.m */; };
 		B33F6A04EDA3B1C6FA5DD6F6A2C5DB2A /* UIView+WebCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 07F2918195738BF9D62B462E1F723915 /* UIView+WebCache.h */; settings = {ATTRIBUTES = (Project, ); }; };
@@ -1754,6 +1756,8 @@
 		B2AC93831EAC49880BAD42F460FD2906 /* mln_lua.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = mln_lua.h; path = "MLN-iOS/MLN/Classes/LuaLib/mln_lua.h"; sourceTree = "<group>"; };
 		B2D0AB92236D377100B1D349 /* MLNInnerScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLNInnerScrollView.h; sourceTree = "<group>"; };
 		B2D0AB93236D377300B1D349 /* MLNInnerScrollView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLNInnerScrollView.m; sourceTree = "<group>"; };
+		B2D0ABA5236D680100B1D349 /* MLNLoadTimeTool.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLNLoadTimeTool.m; sourceTree = "<group>"; };
+		B2D0ABA6236D680200B1D349 /* MLNLoadTimeTool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLNLoadTimeTool.h; sourceTree = "<group>"; };
 		B2F6FF1ACEB94F32704BD656DBEA7690 /* MLNCanvasAnimationDelegate.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLNCanvasAnimationDelegate.m; sourceTree = "<group>"; };
 		B3314090966E1ACA5B644B642861226D /* MLNExporter.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLNExporter.m; sourceTree = "<group>"; };
 		B37830ED5D9559A89FA4AD04901AE845 /* MLNQRCodeScanView.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLNQRCodeScanView.m; sourceTree = "<group>"; };
@@ -3311,6 +3315,8 @@
 		A85E54809A5FE9F5CF7D97FE93609BA8 /* Util */ = {
 			isa = PBXGroup;
 			children = (
+				B2D0ABA6236D680200B1D349 /* MLNLoadTimeTool.h */,
+				B2D0ABA5236D680100B1D349 /* MLNLoadTimeTool.m */,
 				42F3663ABB15403C727FC5D4B3733852 /* MLNDevice.h */,
 				A2CEFA4CC170714102F2E5F1F4419931 /* MLNDevice.m */,
 				2CB6F4CDDB5608CB62891C6C3B782B7F /* MLNKeyboardViewHandler.h */,
@@ -4593,6 +4599,7 @@
 				D9DB08912A0954BBB79885E0261286C5 /* MLNEntityExporterMacro.h in Headers */,
 				EE39A951C6DA599703EBABD422191CAA /* MLNEntityExportProtocol.h in Headers */,
 				42991999625014442C074BD80D230015 /* MLNErrorHandlerProtocol.h in Headers */,
+				B2D0ABA8236D680200B1D349 /* MLNLoadTimeTool.h in Headers */,
 				82880EBBAEDF3A0355E6A1634E4FD8DD /* MLNExporter.h in Headers */,
 				AAA31CEFFE3DCEAEB7E599D0F2E3A367 /* MLNExporterMacro.h in Headers */,
 				4AB2C42B1B861D40C29391EF48FE7A88 /* MLNExporterManager.h in Headers */,
@@ -5399,6 +5406,7 @@
 				8AB604B89FDC66A8412FBC90C03E4099 /* MLNViewPagerAdapter.m in Sources */,
 				9A3630E53887E683E7CDC1ECCA7A5CB8 /* MLNWaterfallAdapter.m in Sources */,
 				A2AC90B37A93F489D99BE7D4D6A4A470 /* MLNWaterfallHeaderView.m in Sources */,
+				B2D0ABA7236D680200B1D349 /* MLNLoadTimeTool.m in Sources */,
 				84591A20FD15247B3E6676FF1AF470C8 /* MLNWaterfallLayout.m in Sources */,
 				FCD8B377830368C3F1AE6D17F28985DA /* MLNWaterfallView.m in Sources */,
 				1D90192560E261269F1A3FE061B0EC7A /* MLNWeakAssociatedObject.m in Sources */,
