@@ -642,7 +642,9 @@ const CGFloat kMILTabSegmentViewLabelOffsetWeight = 10.0f;
 }
 
 //bind viewPager
-- (void)lua_relatedToViewPager:(MLNViewPager*)viewPager animated:(BOOL)animated{
+- (void)lua_relatedToViewPager:(MLNViewPager*)viewPager animated:(NSNumber *)animatedValue
+{
+    BOOL animated = [animatedValue boolValue];
     MLNCheckTypeAndNilValue(viewPager, @"ViewPager", [MLNViewPager class])
     self.pageView = viewPager;
     _animated = animated;
@@ -654,7 +656,7 @@ const CGFloat kMILTabSegmentViewLabelOffsetWeight = 10.0f;
     if (viewPager.missionIndex == 0) {
         [viewPager scrollToPage:_currentIndex aniamted:animated];
     } else {
-        [self lua_setCurrentIndex:viewPager.missionIndex animated:viewPager.missionAnimated];
+        [self lua_setCurrentIndex:viewPager.missionIndex animated:@(viewPager.missionAnimated)];
     }
 }
 
@@ -728,7 +730,9 @@ const CGFloat kMILTabSegmentViewLabelOffsetWeight = 10.0f;
     }
 }
 
-- (void)lua_setCurrentIndex:(NSInteger)currentIndex animated:(BOOL)animated {
+- (void)lua_setCurrentIndex:(NSInteger)currentIndex animated:(NSNumber *)animatedValue
+{
+    BOOL animated = [animatedValue boolValue];
     if (currentIndex < 1 || currentIndex > self.segmentTitles.count) {
         return;
     }
@@ -792,7 +796,7 @@ const CGFloat kMILTabSegmentViewLabelOffsetWeight = 10.0f;
 }
 
 - (void)lua_setCurrentIndex:(NSInteger)currentIndex {
-    [self lua_setCurrentIndex:currentIndex animated:YES];
+    [self lua_setCurrentIndex:currentIndex animated:@(YES)];
 }
 
 - (NSInteger)lua_currentIndex {
