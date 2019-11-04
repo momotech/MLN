@@ -52,6 +52,7 @@
 #import "MLNViewPagerAdapter.h"
 #import "MLNTabSegmentView.h"
 #import "MLNReuseContentView.h"
+#import "MLNScrollCallbackView.h"
 
 // Kit Classes's Model
 #import "MLNRect.h"
