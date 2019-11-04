@@ -1,5 +1,5 @@
 //
-//  UIImage+MMILua.h
+//  UIImage+MLNKit.h
 //  MoMo
 //
 //  Created by MOMO on 2019/10/16.
@@ -12,9 +12,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface UIImage (MLNKit)
 
-+ (UIImage *)mln_in_imageWithColor:(UIColor *)color finalSize:(CGSize)size cornerRadius:(CGFloat)cornerRadius;
++ (UIImage *)mln_imageWithColor:(UIColor *)color finalSize:(CGSize)size cornerRadius:(CGFloat)cornerRadius;
 
-- (UIImage *)mln_in_ImageWithCornerRadius:(MLNCornerRadius)cornerRadius;
+- (UIImage *)mln_ImageWithCornerRadius:(MLNCornerRadius)cornerRadius;
 
 @end
 
