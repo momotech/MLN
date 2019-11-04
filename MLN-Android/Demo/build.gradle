@@ -1,0 +1,56 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+
+buildscript {
+    repositories {
+        maven {
+            url RELEASE_REPOSITORY_URL
+            credentials {
+                username NEXUS_USERNAME
+                password NEXUS_PASSWORD
+            }
+        }
+        google()
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:3.2.1'
+        classpath 'com.cosmos.baseutil:armeabicompat:1.0.7'
+        classpath 'com.cosmos.rifle:symbols:1.0.0.11011231'
+    }
+}
+
+apply from: "code_style/gitflow/gitflow.gradle"
+allprojects {
+    repositories {
+        maven {
+            url RELEASE_REPOSITORY_URL
+            credentials {
+                username NEXUS_USERNAME
+                password NEXUS_PASSWORD
+            }
+        }
+        google()
+        jcenter()
+    }
+
+    ext {
+        implementation_debug = true
+
+        compileSdkVersion = 28
+        buildToolsVersion = "28.0.3"
+        minSdkVersion = 19
+        targetSdkVersion = 26
+        androidxVersion = "1.1.0-alpha01"
+        protobufVersion = '3.0.1'
+
+        mlnCoreVersion = '1.4.1101_1511'
+        mlnsVersion = '1.5.0_beta_2'
+        processorVersion = '2.0.1010_1822'
+        annotationVersion = '2.0.0329_1143'
+        hotreloadVersion = '1.0.0829_1014'
+    }
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}

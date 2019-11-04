@@ -1,0 +1,47 @@
+package com.immomo.mls;
+
+import android.os.Bundle;
+import androidx.annotation.NonNull;
+
+/**
+ * Created by XiongFangyu on 2018/6/26.
+ */
+public class MLSBundleUtils {
+    public static final String KEY_URL = "LUA_URL";
+    public static final String KEY_INIT_DATA = "__INIT_DATA";
+
+    private MLSBundleUtils(){}
+
+    public static @NonNull InitData createInitData(@NonNull String luaUrl) {
+        InitData initData = new InitData(luaUrl);
+        return initData;
+    }
+
+    public static @NonNull InitData createInitData(@NonNull String luaUrl, boolean forceDownload) {
+        InitData initData = new InitData(luaUrl);
+        if (forceDownload) initData.forceDownload();
+        return initData;
+    }
+
+    public static @NonNull InitData parseFromBundle(Bundle bundle) {
+        InitData initData = bundle.getParcelable(KEY_INIT_DATA);
+        if (initData == null) {
+            initData = new InitData(bundle.getString(KEY_URL));
+        }
+        return initData;
+    }
+
+    public static @NonNull Bundle createBundle(@NonNull String url) {
+        return createBundle(url, false);
+    }
+
+    public static @NonNull Bundle createBundle(@NonNull String url, boolean forceDownload) {
+        return createBundle(createInitData(url, forceDownload));
+    }
+
+    public static @NonNull Bundle createBundle(InitData data) {
+        Bundle bundle = new Bundle();
+        bundle.putParcelable(KEY_INIT_DATA, data);
+        return bundle;
+    }
+}
