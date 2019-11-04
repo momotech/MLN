@@ -104,16 +104,14 @@ MLN_FORCE_INLINE void measureImageViewAutoNodeSize (MLNLayoutNode __unsafe_unret
     } else {
         if (!node.isWidthExcatly) {
             CGFloat width = imgSize.width + node.paddingLeft + node.paddingRight;
-            widthSize =  MAX(width, node.minWidth);
-            widthSize = resolveSizeAndState(width, node.width?:maxWidth, widthSpecMode);
+            widthSize = resolveSizeAndState(width, node.width > 0 ? node.width : maxWidth, widthSpecMode);
         } else {
             widthSize = maxWidth;
         }
         
         if (!node.isHeightExcatly) {
             CGFloat height = imgSize.height + node.paddingTop + node.paddingBottom;
-            heightSize = MAX(height, node.minHeight);
-            heightSize = resolveSizeAndState(height, node.height?:maxHeight, heightSpecMode);
+            heightSize = resolveSizeAndState(height, node.height > 0 ? node.height : maxHeight, heightSpecMode);
         } else {
             heightSize = maxHeight;
         }

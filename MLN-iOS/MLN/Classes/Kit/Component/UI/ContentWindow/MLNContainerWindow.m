@@ -28,7 +28,7 @@
 
 @implementation MLNContainerWindow
 
-- (instancetype)initWithFrame:(CGRect)frame
+- (instancetype)initWithLuaCore:(MLNLuaCore *)luaCore frame:(CGRect)frame
 {
     if (self = [super initWithFrame:frame]) {
         [self defaultSettingWith:frame];
@@ -66,9 +66,9 @@
     return self.cancelable;
 }
 
-- (void)lua_show:(BOOL)notKeyWindow
+- (void)lua_show
 {
-    [self mln_in_showContentWindow:notKeyWindow];
+    [self mln_in_showContentWindow:YES];
 }
 
 - (void)lua_dismiss
@@ -206,11 +206,11 @@
 
 #pragma mark - Export For Lua
 LUA_EXPORT_VIEW_BEGIN(MLNContainerWindow)
-LUA_EXPORT_VIEW_METHOD(show, "lua_show:", MLNContainerWindow)
+LUA_EXPORT_VIEW_METHOD(show, "lua_show", MLNContainerWindow)
 LUA_EXPORT_VIEW_METHOD(dismiss, "lua_dismiss", MLNContainerWindow)
 LUA_EXPORT_VIEW_METHOD(contentDisAppear, "lua_setDisappearBlock:", MLNContainerWindow)
 LUA_EXPORT_VIEW_METHOD(setContent, "lua_setContent:", MLNContainerWindow)
 LUA_EXPORT_VIEW_PROPERTY(cancelable, "setCancelable:", "cancelable", MLNContainerWindow)
-LUA_EXPORT_VIEW_END(MLNContainerWindow, ContentWindow, NO, "MLNBaseView", "initWithFrame:")
+LUA_EXPORT_VIEW_END(MLNContainerWindow, ContentWindow, YES, "MLNView", "initWithLuaCore:frame:")
 
 @end
