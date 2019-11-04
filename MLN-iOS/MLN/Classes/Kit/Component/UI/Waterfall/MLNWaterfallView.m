@@ -18,6 +18,7 @@
 #import "MLNKitHeader.h"
 #import "UIView+MLNLayout.h"
 #import "MLNCollectionViewLayoutProtocol.h"
+#import "UIView+MLNKit.h"
 
 @interface MLNWaterfallView()
 @property (nonatomic, strong, readwrite) MLNInternalWaterfallView *innerWaterfallView;
@@ -71,7 +72,7 @@
     MLNCheckTypeAndNilValue(adapter, @"WaterfallAdapter", [MLNWaterfallAdapter class])
     if (_adapter != adapter) {
         _adapter = adapter;
-        [MLN_KIT_INSTANCE(self.mln_luaCore) pushLazyTask:self.lazyTask];
+        [self mln_pushLazyTask:self.lazyTask];
     }
 }
 

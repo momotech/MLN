@@ -15,6 +15,7 @@
 
 @property (nonatomic, assign) NSInteger cellCounts;
 @property (nonatomic, weak) MLNViewPager *viewPager;
+@property (nonatomic, weak) UICollectionView *targetCollectionView;
 
 @end
 
@@ -27,6 +28,7 @@
 /** 目标索引 **/
 @property (nonatomic, assign) NSInteger missionIndex;
 @property (nonatomic, assign) BOOL missionAnimated;
+@property (nonatomic, assign) UIEdgeInsets padding;
 /** 是否开启预加载 **/
 @property (nonatomic, assign) BOOL aheadLoad;
 /** scroll to page **/

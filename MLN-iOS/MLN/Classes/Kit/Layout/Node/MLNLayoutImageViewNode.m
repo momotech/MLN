@@ -10,6 +10,9 @@
 #import "UIView+MLNLayout.h"
 #import "MLNLayoutContainerNode.h"
 #import "UIView+MLNKit.h"
+#import "MLNLayoutImageViewNode.h"
+#import "UIView+MLNLayout.h"
+#import "MLNKitHeader.h"
 
 @implementation MLNLayoutImageViewNode
 
@@ -61,13 +64,13 @@ MLN_FORCE_INLINE void measureImageViewAutoNodeSize (MLNLayoutNode __unsafe_unret
     }
     if (resizeWidth || resizeHeight) {
         if (!node.isWidthExcatly) {
-            widthSize = resolveAdjustedSize(imgSize.width, node.maxWidth, node.width?:maxWidth, widthSpecMode);
+            widthSize = resolveAdjustedSize(imgSize.width, node.maxWidth, node.width > 0 ? node.width : maxWidth, widthSpecMode);
         } else {
             widthSize = maxWidth;
         }
         
         if (!node.isHeightExcatly) {
-            heightSize = resolveAdjustedSize(imgSize.height,node.maxHeight, node.height?:maxHeight, heightSpecMode);
+            heightSize = resolveAdjustedSize(imgSize.height,node.maxHeight, node.height > 0 ? node.height : maxHeight, heightSpecMode);
         } else {
             heightSize = maxHeight;
         }
@@ -101,16 +104,14 @@ MLN_FORCE_INLINE void measureImageViewAutoNodeSize (MLNLayoutNode __unsafe_unret
     } else {
         if (!node.isWidthExcatly) {
             CGFloat width = imgSize.width + node.paddingLeft + node.paddingRight;
-            widthSize =  MAX(width, node.minWidth);
-            widthSize = resolveSizeAndState(width, node.width?:maxWidth, widthSpecMode);
+            widthSize = resolveSizeAndState(width, node.width > 0 ? node.width : maxWidth, widthSpecMode);
         } else {
             widthSize = maxWidth;
         }
         
         if (!node.isHeightExcatly) {
             CGFloat height = imgSize.height + node.paddingTop + node.paddingBottom;
-            heightSize = MAX(height, node.minHeight);
-            heightSize = resolveSizeAndState(height, node.height?:maxHeight, heightSpecMode);
+            heightSize = resolveSizeAndState(height, node.height > 0 ? node.height : maxHeight, heightSpecMode);
         } else {
             heightSize = maxHeight;
         }
