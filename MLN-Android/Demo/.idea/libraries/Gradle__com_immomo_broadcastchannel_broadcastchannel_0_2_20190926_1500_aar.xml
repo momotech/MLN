@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="Gradle: com.immomo.broadcastchannel:broadcastchannel:0.2.20190926.1500@aar">
+    <CLASSES>
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/broadcastchannel-0.2.20190926.1500.aar/638efc806522559440e8ebbbf6c783fc/res" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/broadcastchannel-0.2.20190926.1500.aar/638efc806522559440e8ebbbf6c783fc/jars/classes.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.immomo.broadcastchannel/broadcastchannel/0.2.20190926.1500/138c58263e01636d126926b70277c4c9528f237f/broadcastchannel-0.2.20190926.1500-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

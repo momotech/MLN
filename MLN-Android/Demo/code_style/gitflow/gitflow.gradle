@@ -1,0 +1,12 @@
+task copyPrePush {
+    copy {
+        from 'code_style/gitflow/'
+        into '.git/hooks/'
+        exclude '*.gradle'
+    }
+}
+
+
+afterEvaluate {
+    copyPrePush
+}

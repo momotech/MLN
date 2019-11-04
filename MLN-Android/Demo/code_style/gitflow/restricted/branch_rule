@@ -1,0 +1,13 @@
+# branch rule
+# +[group] allow group
+# -[group] forbid group
+# one preset group: all
+
+[master]
++maintainer
+
+[mm_release]
++maintainer
+
+[merge*]
++maintainer

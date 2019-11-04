@@ -1,0 +1,49 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion project.compileSdkVersion
+    buildToolsVersion project.buildToolsVersion
+    defaultConfig {
+        minSdkVersion project.minSdkVersion
+        targetSdkVersion project.targetSdkVersion
+        versionCode 1
+        versionName "1.0"
+
+        externalNativeBuild {
+            cmake {
+                cppFlags "-frtti -fexceptions"
+                cFlags "-pie -fPIE"
+                abiFilters  'armeabi-v7a'//, 'arm64-v8a'
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    externalNativeBuild {
+        cmake {
+            path file('src/main/jni/CMakeLists.txt')
+        }
+    }
+}
+
+dependencies {
+    compileOnly "androidx.appcompat:appcompat:$androidxVersion"
+    testImplementation 'junit:junit:4.12'
+    testImplementation 'org.mockito:mockito-core:2.23.0'
+}
+apply plugin: 'armeabi.compat'
+apply plugin: 'rifle.symbols'
+
+symbolsConfig {
+    appId = "157ddd13f75e8d7b926bbe3656dd83e4"
+    appKey = "3f7d1703d4872e886261cb76c760bf7f"
+}
+
+ext.versionForMomo=rootProject.ext.mlnCoreVersion
+apply from: '../upload_maven.gradle'

@@ -1,0 +1,41 @@
+
+local screen_w = window:size():width()
+local screen_h = window:size():height()
+
+
+labelOne = Label()
+labelOne:text("用户位置"):textColor(Color(0, 0, 0, 1)):width(MeasurementType.WRAP_CONTENT):height(30):marginLeft(10):marginTop(100)
+labelOne:onClick(function ()
+    pt = LocationManager:userLocation()
+    print(">>>>>>> 用户位置 ", pt:x(), pt:y())
+end)
+window:addView(labelOne)
+
+labelTwo = Label()
+labelTwo:text("更新位置"):textColor(Color(0, 0, 0, 1)):width(MeasurementType.WRAP_CONTENT):height(30):marginLeft(100):marginTop(100)
+labelTwo:onClick(function ()
+    LocationManager:updateLocation(function (map)
+        print(">>>>>>>>>更新位置信息：", map)
+    end)
+end)
+window:addView(labelTwo)
+
+
+labelThree = Label()
+labelThree:text("错误位置"):textColor(Color(0, 0, 0, 1)):width(MeasurementType.WRAP_CONTENT):height(30):marginLeft(180):marginTop(100)
+labelThree:onClick(function ()
+    LocationManager:showLocationErrorAlert()
+    LocationManager:showLocationErrorAlertWithMap(function (map)
+        print(">>>>>>> 展示错误定位信息", map)
+    end)
+end)
+window:addView(labelThree)
+
+labelFour = Label()
+labelFour:text("获取位置缓存"):textColor(Color(0, 0, 0, 1)):width(MeasurementType.WRAP_CONTENT):height(30):marginLeft(270):marginTop(100)
+labelFour:onClick(function ()
+    LocationManager:getLocationCacheWithTimeInterval(1, function (map)
+        print(">>>>>>> 用户位置", map)
+    end)
+end)
+window:addView(labelFour)
