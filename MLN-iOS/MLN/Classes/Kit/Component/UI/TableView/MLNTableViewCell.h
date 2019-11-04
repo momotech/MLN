@@ -1,6 +1,6 @@
 //
 //  MMTableViewCell.h
-//  MomoChat
+//  MLN
 //
 //  Created by MoMo on 28/02/2018.
 //  Copyright © 2018 wemomo.com. All rights reserved.

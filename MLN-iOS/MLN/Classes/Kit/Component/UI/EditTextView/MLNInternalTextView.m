@@ -17,6 +17,7 @@
 
 @property (nonatomic, assign) UIEdgeInsets defaultPlaceholderPadding;
 @property (nonatomic, assign) UIReturnKeyType returnType;
+@property (nonatomic, assign) UIKeyboardType mil_in_keyboardType;
 
 @end
 @implementation MLNInternalTextView
@@ -82,24 +83,39 @@
 }
 
 #pragma mark - Position
-- (UITextPosition *)positionFromPosition:(UITextPosition *)position inDirection:(UITextLayoutDirection)direction offset:(NSInteger)offset {
-    return [self.myTextView positionFromPosition:position inDirection:direction offset:offset];
+- (UITextRange *)textRangeFromPosition:(UITextPosition *)fromPosition toPosition:(UITextPosition *)toPosition
+{
+    return [self.myTextView textRangeFromPosition:fromPosition toPosition:toPosition];
 }
 
-- (UITextPosition *)positionFromPosition:(UITextPosition *)position offset:(NSInteger)offset {
+- (UITextPosition *)positionFromPosition:(UITextPosition *)position offset:(NSInteger)offset
+{
     return [self.myTextView positionFromPosition:position offset:offset];
 }
 
-#pragma mark - SecureTextEntry
-- (void)updatePasswordModeIfNeed
+- (UITextPosition *)positionFromPosition:(UITextPosition *)position inDirection:(UITextLayoutDirection)direction offset:(NSInteger)offset
 {
-    if (self.isSecureTextEntry && self.myTextView.text.length >0) {
-        NSMutableString * temp = [NSMutableString string];
-        for (NSUInteger i= 0; i < self.myTextView.text.length; i++) {
-            [temp appendString:@"•"];
-        }
-        self.myTextView.text = [temp copy];
-    }
+    return [self.myTextView positionFromPosition:position inDirection:direction offset:offset];
+}
+
+- (NSComparisonResult)comparePosition:(UITextPosition *)position toPosition:(UITextPosition *)other
+{
+    return [self.myTextView comparePosition:position toPosition:other];
+}
+
+- (NSInteger)offsetFromPosition:(UITextPosition *)from toPosition:(UITextPosition *)toPosition
+{
+    return [self.myTextView offsetFromPosition:from toPosition:toPosition];
+}
+
+- (UITextPosition *)beginningOfDocument
+{
+    return [self.myTextView beginningOfDocument];
+}
+
+- (UITextPosition *)endOfDocument
+{
+    return [self.myTextView endOfDocument];
 }
 
 - (void)placeholderHiddenIfNeed:(NSString *)text
@@ -130,23 +146,6 @@
     }
 }
 
-- (NSString *)recalculateRealText:(NSString *)text
-{
-    if (self.isSecureTextEntry) {
-        NSString *origText = self.text.length > 0 ? self.text : @"";
-        if (text.length > origText.length) {
-            NSMutableString *realText = [NSMutableString stringWithString:origText];
-            [realText appendString:[text substringFromIndex:origText.length]];
-            return realText.copy;
-        } else if (origText.length > text.length) {
-            NSMutableString *realText = [NSMutableString stringWithString:origText];
-            [realText deleteCharactersInRange:NSMakeRange(text.length, origText.length - text.length)];
-            return realText.copy;
-        }
-    }
-    return text;
-}
-
 #pragma mark - UITextViewDelegate
 - (void)textViewDidBeginEditing:(MLNInternalTextView *)textView
 {
@@ -166,9 +165,6 @@
 - (void)textViewDidChange:(MLNInternalTextView *)textView
 {
     [self placeholderHiddenIfNeed:textView.text];
-    if(textView.markedTextRange == nil){
-        [self replaceWithRealText:[self recalculateRealText:textView.text]];
-    }
     
     if ([self.internalTextViewDelegate respondsToSelector:@selector(internalTextViewDidChange:)]) {
         [self.internalTextViewDelegate internalTextViewDidChange:textView];
@@ -205,7 +201,6 @@
 {
     [self placeholderHiddenIfNeed:text];
     self.myTextView.text = text;
-    [self updatePasswordModeIfNeed];
     [self resetContentOffsetIfNeed];
 }
 
@@ -237,12 +232,12 @@
 
 - (void)setKeyboardType:(UIKeyboardType)keyboardType
 {
-    self.myTextView.keyboardType = keyboardType;
+    _mil_in_keyboardType = keyboardType;
 }
 
 - (UIKeyboardType)keyboardType
 {
-    return self.myTextView.keyboardType;
+    return _mil_in_keyboardType;
 }
 
 - (void)setReturnKeyType:(UIReturnKeyType)returnKeyType
@@ -258,7 +253,6 @@
 - (void)setSecureTextEntry:(BOOL)secureTextEntry
 {
     _secureTextEntry = secureTextEntry;
-    [self updatePasswordModeIfNeed];
 }
 
 - (void)setTintColor:(UIColor *)tintColor
@@ -284,7 +278,6 @@
 - (void)setAttributedText:(NSAttributedString *)attributedText
 {
     self.myTextView.attributedText = attributedText;
-    [self updatePasswordModeIfNeed];
     [self resetContentOffsetIfNeed];
 }
 
@@ -306,6 +299,16 @@
 - (UITextRange *)markedTextRange
 {
     return self.myTextView.markedTextRange;
+}
+
+- (void)setSelectedRange:(NSRange)selectedRange
+{
+    [self.myTextView setSelectedRange:selectedRange];
+}
+
+- (NSRange)selectedRange
+{
+    return self.myTextView.selectedRange;
 }
 
 #pragma mark - Lazy Load
