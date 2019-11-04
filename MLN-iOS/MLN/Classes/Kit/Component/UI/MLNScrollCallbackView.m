@@ -27,6 +27,16 @@ __VA_ARGS__;\
 
 @implementation MLNScrollCallbackView
 
+- (instancetype)initWithLuaCore:(MLNLuaCore *)luaCore refreshEnable:(NSNumber *)refreshEnable loadEnable:(NSNumber *)loadEnable
+{
+    if (self = [super initWithLuaCore:luaCore]) {
+        self.backgroundColor = [UIColor clearColor];
+        [(UIScrollView *)self.lua_contentView setLua_refreshEnable:[refreshEnable boolValue]];
+        [(UIScrollView *)self.lua_contentView setLua_loadEnable:[loadEnable boolValue]];
+    }
+    return self;
+}
+
 - (void)setLua_openReuseCell:(BOOL)openRuseCell
 {
     MLNKitLuaAssert(NO, @"The setter of 'openReuseCell' method is deprecated!");
