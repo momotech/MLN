@@ -44,7 +44,7 @@ static MLNCornerImageLoader *_shareInstance = nil;
             loadStatus += 1;
             if (loadStatus == 1 && image) {
                 dispatch_async(queue, ^{
-                    UIImage *cornerImage = [image mln_in_ImageWithCornerRadius:cornerRadius];
+                    UIImage *cornerImage = [image mln_ImageWithCornerRadius:cornerRadius];
                     dispatch_async(dispatch_get_main_queue(), ^{
                         if (loadStatus == 1) {
                             imageView.image = cornerImage;
@@ -60,7 +60,7 @@ static MLNCornerImageLoader *_shareInstance = nil;
             loadStatus += 1;
             if (image) {
                 dispatch_async(queue, ^{
-                    UIImage *cornerImage = [image mln_in_ImageWithCornerRadius:cornerRadius];
+                    UIImage *cornerImage = [image mln_ImageWithCornerRadius:cornerRadius];
                     dispatch_async(dispatch_get_main_queue(), ^{
                             imageView.image = cornerImage;
                     });
