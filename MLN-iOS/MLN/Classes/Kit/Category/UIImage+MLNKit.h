@@ -1,6 +1,6 @@
 //
 //  UIImage+MLNKit.h
-//  MoMo
+//  MLN
 //
 //  Created by MOMO on 2019/10/16.
 //

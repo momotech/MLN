@@ -129,7 +129,7 @@
     }
     self.effectView.hidden = NO;
     self.effectView.alpha = blurValue / MLN_BlurScope;
-    [MLN_KIT_INSTANCE(self.mln_luaCore) pushLazyTask:self.lazyTask];
+    [self mln_pushLazyTask:self.lazyTask];
 }
 
 
@@ -199,7 +199,7 @@
     if ([imageLoder respondsToSelector:@selector(imageView:setCornerImageWith:placeHolderImage:cornerRadius:dircetion:)]) {
         [imageLoder imageView:self setCornerImageWith:imageName placeHolderImage:placeHolder cornerRadius:radius dircetion:direction];
     } else {
-        [[MLNCornerImageLoader sharedInstance] imageView:self setCornerImageWith:imageName placeHolderImage:placeHolder cornerRadius:radius dircetion:direction];
+        [MLNCornerImageLoader imageView:self setCornerImageWith:imageName placeHolderImage:placeHolder cornerRadius:radius dircetion:direction];
     }
     
 }
@@ -213,7 +213,7 @@
         return;
     }
     
-    [MLN_KIT_INSTANCE(self.mln_luaCore) pushLazyTask:self.lazyTask];
+    [self mln_pushLazyTask:self.lazyTask];
 }
 
 - (void)mln_in_setNineImageWith:(nonnull NSString *)imageName synchronized:(BOOL)synchronzied
@@ -319,7 +319,7 @@
 {
     [super lua_changedLayout];
     if (_blurValue > 0) {
-        [MLN_KIT_INSTANCE(self.mln_luaCore) pushLazyTask:self.lazyTask];
+        [self mln_pushLazyTask:self.lazyTask];
     }
 }
 

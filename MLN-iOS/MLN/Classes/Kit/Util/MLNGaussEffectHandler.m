@@ -1,6 +1,6 @@
 //
 //  MLNGaussEffectHandler.m
-//  MoMo
+//  MLN
 //
 //  Created by MOMO on 2019/9/20.
 //

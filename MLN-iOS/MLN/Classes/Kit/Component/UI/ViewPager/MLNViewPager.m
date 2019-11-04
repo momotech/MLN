@@ -16,6 +16,7 @@
 #import "MLNTabSegmentScrollHandler.h"
 #import "MLNInnerCollectionView.h"
 #import "MLNBeforeWaitingTask.h"
+#import "UIView+MLNKit.h"
 
 #define kMILViewPagerCellReuseId @"kMILViewPagerCellReuseId"
 
@@ -111,7 +112,7 @@
     if (!newSuperview) {
         [self invalidateTimer];
     } else {
-        [MLN_KIT_INSTANCE(self.mln_luaCore) pushLazyTask:self.lazyTask];
+        [self mln_pushLazyTask:self.lazyTask];
     }
 }
 
@@ -131,7 +132,7 @@
         adapter.viewPager = self;
         adapter.targetCollectionView = self.mainView;
         if (self.superview) {
-            [MLN_KIT_INSTANCE(self.mln_luaCore) pushLazyTask:self.lazyTask];
+            [self mln_pushLazyTask:self.lazyTask];
         }
     }
 }
@@ -147,7 +148,7 @@
     }
     _recurrence = recurrence;
     if (self.superview) {
-        [MLN_KIT_INSTANCE(self.mln_luaCore) pushLazyTask:self.lazyTask];
+        [self mln_pushLazyTask:self.lazyTask];
     }
 }
 
@@ -368,7 +369,7 @@
 {
     _totalItemsCount = 0;
     if (self.superview) {
-        [MLN_KIT_INSTANCE(self.mln_luaCore) pushLazyTask:self.lazyTask];
+        [self mln_pushLazyTask:self.lazyTask];
     }
 }
 
@@ -376,7 +377,7 @@
 {
     self.reloadFinishedCallback = block;
     if (self.superview) {
-        [MLN_KIT_INSTANCE(self.mln_luaCore) pushLazyTask:self.lazyTask];
+        [self mln_pushLazyTask:self.lazyTask];
     }
 }
 
@@ -490,8 +491,13 @@
         if (fromIndex >= toIndex) {
             return;
         }
-        trueFromIndex = self.beginIndex == fromIndex ? fromIndex : toIndex;
-        trueToIndex = self.beginIndex == fromIndex ? toIndex : fromIndex;
+        if (self.beginIndex == fromIndex) {
+            trueFromIndex = fromIndex;
+            trueToIndex = toIndex;
+        } else {
+            trueFromIndex = toIndex;
+            trueToIndex = fromIndex;
+        }
         trueProgress = (trueFromIndex == fromIndex) ? progress : 1.0 - progress;
         [_scrollingListerCallback addFloatArgument:trueProgress];
         [_scrollingListerCallback addIntegerArgument:trueFromIndex + 1];
@@ -541,7 +547,7 @@
     int indexOnPageControl = [self pageControlIndexWithCurrentCellIndex:itemIndex];
     UIPageControl *pageControl = (UIPageControl *)_pageControl;
     pageControl.currentPage = indexOnPageControl;
-    if (_scrollToIndex == itemIndex && (int)floor(scrollView.contentOffset.x) % (int)floor(scrollView.frame.size.width) == 0) {
+    if (_scrollToIndex == itemIndex && (int)floor(scrollView.contentOffset.x) % (int)floor(scrollView.frame.size.width ?: 1) == 0) {
         [self didChangedPage];
         _scrollToIndex = -1;
     }
@@ -674,7 +680,7 @@
 {
     self.padding = UIEdgeInsetsMake(top, left, bottom, right);
     if (self.superview) {
-        [MLN_KIT_INSTANCE(self.mln_luaCore) pushLazyTask:self.lazyTask];
+        [self mln_pushLazyTask:self.lazyTask];
     }
 }
 
@@ -682,7 +688,7 @@
 {
     self.pageControlDotSize = dotSize;
     if (self.superview) {
-        [MLN_KIT_INSTANCE(self.mln_luaCore) pushLazyTask:self.lazyTask];
+        [self mln_pushLazyTask:self.lazyTask];
     }
 }
 

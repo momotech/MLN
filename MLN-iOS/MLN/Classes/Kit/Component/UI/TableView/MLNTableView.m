@@ -1,6 +1,6 @@
 //
 //  MMTableView.m
-//  MomoChat
+//  MLN
 //
 //  Created by MoMo on 27/02/2018.
 //  Copyright © 2018 wemomo.com. All rights reserved.
@@ -18,6 +18,7 @@
 #import "MLNBeforeWaitingTask.h"
 #import "MLNSizeCahceManager.h"
 #import "MLNInnerTableView.h"
+#import "UIView+MLNKit.h"
 
 @interface MLNTableView()
 @property (nonatomic, strong) MLNInnerTableView *innerTableView;
@@ -51,7 +52,7 @@
     if (_adapter != adapter) {
         _adapter = adapter;
         _adapter.targetTableView = self.innerTableView;
-        [MLN_KIT_INSTANCE(self.mln_luaCore) pushLazyTask:self.lazyTask];
+        [self mln_pushLazyTask:self.lazyTask];
     }
 }
 
