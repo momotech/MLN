@@ -48,14 +48,18 @@ static id<MLNHttpHandlerProtocol> defaultHttpHandler = nil;
 - (void)setBaseUrlString:(NSString *)baseUrlString
 {
     _baseUrlString = baseUrlString;
-    [[self getHandler] http:self setBaseUrlString:baseUrlString];
+    if ([[self getHandler] respondsToSelector:@selector(http:setBaseUrlString:)]) {
+        [[self getHandler] http:self setBaseUrlString:baseUrlString];
+    }
 }
 
 - (void)addCachePolicyFilterKey:(NSString *)key
 {
     NSParameterAssert(key);
     [self.mCachePolicyFilterKeySets addObject:key];
-    [[self getHandler] http:self addCachePolicyFilterKey:key];
+    if ([[self getHandler] respondsToSelector:@selector(http:addCachePolicyFilterKey:)]) {
+        [[self getHandler] http:self addCachePolicyFilterKey:key];
+    }
 }
 
 - (void)get:(NSString *)urlString params:(NSDictionary *)params completionHandler:(MLNBlock *)completionHandler
