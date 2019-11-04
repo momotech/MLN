@@ -1,6 +1,6 @@
 //
 //  UIImage+MMILua.m
-//  AFNetworking
+//  MoMo
 //
 //  Created by MOMO on 2019/10/16.
 //
@@ -10,7 +10,7 @@
 
 @implementation UIImage (MLNKit)
 
-- (UIImage *)mln_in_ImageWithCornerRadius:(MLNCornerRadius)cornerRadius
+- (UIImage *)mln_ImageWithCornerRadius:(MLNCornerRadius)cornerRadius
 {
     CGRect rect = (CGRect){0.f, 0.f, self.size};
     UIImage *image = nil;
@@ -42,7 +42,7 @@
     return image;
 }
 
-+ (UIImage *)mln_in_imageWithColor:(UIColor *)color finalSize:(CGSize)size cornerRadius:(CGFloat)cornerRadius
++ (UIImage *)mln_imageWithColor:(UIColor *)color finalSize:(CGSize)size cornerRadius:(CGFloat)cornerRadius
 {
     if (!color) {
         color = [UIColor clearColor];

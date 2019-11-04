@@ -9,17 +9,17 @@
 #import "MLNKitHeader.h"
 #import "MLNViewExporterMacro.h"
 #import "MLNBadgeView.h"
-#import "UIImage+MLN_IN_UTIL.h"
+#import "UIImage+MLNKit.h"
 #import "UIView+MLNLayout.h"
 #import "MLNLayoutNode.h"
 #import "MLNViewPager.h"
 #import "MLNViewConst.h"
 #import "MLNBlock.h"
 
-const CGFloat kMILTabSegmentViewDefaultHeight = 50.0f;
-const CGFloat kMILTabSegmentViewLabelOffsetWeight = 10.0f;
-#define kMILTabSegmentViewDefaultFontWeight UIFontWeightRegular
-#define kMILTabDefaultColor [UIColor colorWithRed:50/255.0 green:51/255.0 blue:51/255.0 alpha:1.0]
+const CGFloat kMLNTabSegmentViewDefaultHeight = 50.0f;
+const CGFloat kMLNTabSegmentViewLabelOffsetWeight = 10.0f;
+#define kMLNTabSegmentViewDefaultFontWeight UIFontWeightRegular
+#define kMLNTabDefaultColor [UIColor colorWithRed:50/255.0 green:51/255.0 blue:51/255.0 alpha:1.0]
 
 @interface MLNTabSegmentView() <MLNTabSegmentScrollHandlerDelegate>
 {
@@ -54,6 +54,7 @@ const CGFloat kMILTabSegmentViewLabelOffsetWeight = 10.0f;
 @property (nonatomic, assign) CGFloat selectScale;
 @property (nonatomic, strong) UIColor *customTintColor;
 @property (nonatomic, strong) UIColor *selectedTintColor;
+@property (nonatomic, strong) UIColor *indicatorColor;
 @property (nonatomic, assign) BOOL animated;
 
 @property (nonatomic, assign) MLNTabSegmentAlignment alignment;
@@ -61,6 +62,13 @@ const CGFloat kMILTabSegmentViewLabelOffsetWeight = 10.0f;
 @property (nonatomic, copy) void (^arrowTapBlock)(NSInteger index);
 
 @property (nonatomic, strong) NSMutableDictionary *itemsOffsetCache;
+
+@property (nonatomic, strong) NSMutableDictionary *itemBadgeInfo;
+
+@property (nonatomic, assign) BOOL ignoreTapCallbackToLua;
+
+@property (nonatomic, assign) NSUInteger missionIndex;
+@property (nonatomic, assign) NSUInteger missionAnimated;
 
 @end
 
@@ -109,17 +117,17 @@ const CGFloat kMILTabSegmentViewLabelOffsetWeight = 10.0f;
                              tapBlock:self.lua_tapBlock]) {
         self.segmentTitles = segmentTitles;
         __unsafe_unretained MLNLayoutNode *node = self.lua_node;
-        node.marginLeft=  frame.origin.x;
-        node.marginTop = frame.origin.y;
+        [node changeX:frame.origin.x];
+        [node changeY:frame.origin.y];
         MLNCheckWidth(frame.size.width);
         MLNCheckHeight(frame.size.height);
         [node changeWidth:frame.size.width];
         [node changeHeight:frame.size.height];
-        if (tintColor) {
-            self.configuration.customTiniColor = tintColor;
-            _customTintColor = tintColor;
-            _shouldReConfigure = YES;
-        }
+        tintColor = tintColor?:kMLNTabDefaultColor;
+        self.configuration.customTiniColor = tintColor;
+        _customTintColor = tintColor;
+        _shouldReConfigure = YES;
+        _missionIndex = -1;
     }
     return self;
 }
@@ -139,7 +147,7 @@ const CGFloat kMILTabSegmentViewLabelOffsetWeight = 10.0f;
     
     NSMutableArray *marr = [NSMutableArray array];
     
-   CGFloat  labelOffset = (self.configuration.selectScale - 1.0) * kMILTabSegmentViewLabelOffsetWeight;
+   CGFloat  labelOffset = (self.configuration.selectScale - 1.0) * kMLNTabSegmentViewLabelOffsetWeight;
     
     for (int i=0; i<segmentTitles.count; i++) {
         NSString *title = [segmentTitles objectAtIndex:i];
@@ -157,8 +165,9 @@ const CGFloat kMILTabSegmentViewLabelOffsetWeight = 10.0f;
         CGFloat height = ceil(size.height);
         MLNTabSegmentLabel *segmentLabel = [[MLNTabSegmentLabel alloc] initWithFrame:CGRectMake(left, (self.frame.size.height-height)/2.0 + labelOffset, width, height) fontSize:self.configuration.normalFontSize];
         segmentLabel.titleLabel.text = title;
+        [self setupTabLabeBadgeTitlel:segmentLabel withIndex:i];
         
-        segmentLabel.titleLabel.textColor = self.configuration.customTiniColor ? self.configuration.customTiniColor : kMILTabDefaultColor;
+        segmentLabel.titleLabel.textColor = self.configuration.customTiniColor ? self.configuration.customTiniColor : kMLNTabDefaultColor;
         segmentLabel.tag = i;
         segmentLabel.exclusiveTouch = YES;
         
@@ -186,7 +195,7 @@ const CGFloat kMILTabSegmentViewLabelOffsetWeight = 10.0f;
     if (segmentTitles.count == 0) {
         width = 0;
     }
-    self.bottomPointView.backgroundColor = self.configuration.selectedColor ?: self.configuration.customTiniColor;
+    self.bottomPointView.backgroundColor = self.configuration.indicatorColor?:(self.configuration.selectedColor ?: self.configuration.customTiniColor);
     self.contentScrollView.contentSize = CGSizeMake(width, 1);
     
     [self layoutSegmentTitle];
@@ -213,6 +222,13 @@ const CGFloat kMILTabSegmentViewLabelOffsetWeight = 10.0f;
     return _itemsOffsetCache;
 }
 
+- (NSMutableDictionary *)itemBadgeInfo
+{
+    if (!_itemBadgeInfo) {
+        _itemBadgeInfo = [NSMutableDictionary dictionary];
+    }
+    return _itemBadgeInfo;
+}
 
 #pragma mark - public
 
@@ -293,6 +309,15 @@ const CGFloat kMILTabSegmentViewLabelOffsetWeight = 10.0f;
     }
 }
 
+- (void)setCurrentLabelIndexWithoutCallback:(NSInteger)currentIndex
+{
+    [self removeAnimation];
+    [self animtionFromIndex:self.currentIndex toIndex:currentIndex progress:1];
+    self.currentIndex = currentIndex;
+    //滚动到当前tab使其显示
+    self.contentScrollView.contentOffset = CGPointMake([self calculateOffsetWithIndex:self.currentIndex], 0);
+}
+
 - (CGFloat)calculateOffsetWithIndex:(NSInteger)index{
     if (index < 0 || index >= self.segmentViews.count || self.currentIndex < 0 || self.currentIndex >= self.segmentViews.count) {
         return 0.0f;
@@ -300,7 +325,7 @@ const CGFloat kMILTabSegmentViewLabelOffsetWeight = 10.0f;
     
     NSNumber *cacheOffset = [self.itemsOffsetCache objectForKey:@(index)];
     if (cacheOffset) {
-        return CGFloatValueFromNumber(cacheOffset);
+        return [cacheOffset floatValue];
     }
     
     UIView *view = [self.segmentViews objectAtIndex:index];
@@ -346,6 +371,18 @@ const CGFloat kMILTabSegmentViewLabelOffsetWeight = 10.0f;
 {
     _currentIndex = currentIndex;
     _settingIndex = -1;
+}
+
+#pragma mark - private
+- (void)setupTabLabeBadgeTitlel:(MLNTabSegmentLabel *)tabLabel withIndex:(NSInteger)index
+{
+    NSString *key = [NSString stringWithFormat:@"%ld",index];
+    NSObject *obj = [self.itemBadgeInfo objectForKey:key];
+    if ([obj isKindOfClass:[NSString class]]) {
+        [tabLabel setBadgeTitle:(NSString *)obj];
+    } else if([obj isKindOfClass:[NSNumber class]]) {
+        [tabLabel setBadgeNum:[(NSNumber *)obj integerValue]];
+    }
 }
 
 #pragma mark - event
@@ -406,7 +443,7 @@ const CGFloat kMILTabSegmentViewLabelOffsetWeight = 10.0f;
                 segmentLabel.titleLabel.textColor = _customTintColor;
             }
         }
-        segmentLabel.titleLabel.textColor = self.configuration.customTiniColor ? self.configuration.customTiniColor : kMILTabDefaultColor;
+        segmentLabel.titleLabel.textColor = self.configuration.customTiniColor ? self.configuration.customTiniColor : kMLNTabDefaultColor;
     }
     [self layoutSegmentTitle];
     
@@ -416,7 +453,7 @@ const CGFloat kMILTabSegmentViewLabelOffsetWeight = 10.0f;
     CGPoint center = self.bottomPointView.center;
     center.x = CGRectGetMidX(currentLabel.frame);
     self.bottomPointView.center = center;
-    self.bottomPointView.backgroundColor = self.configuration.selectedColor?:self.configuration.customTiniColor;
+    self.bottomPointView.backgroundColor = self.configuration.indicatorColor?:(self.configuration.selectedColor?:self.configuration.customTiniColor);
 }
 
 - (void)startAnimationWithIndex:(NSInteger)toIndex {
@@ -582,15 +619,6 @@ const CGFloat kMILTabSegmentViewLabelOffsetWeight = 10.0f;
     self.differenceLength = 0;
 }
 
-- (void)scrollDidEndDragging {
-    
-}
-
-
-- (void)scrollDidFinished {
-    
-}
-
 #pragma mark - setup UI
 
 - (void)setupContentScrollView {
@@ -611,7 +639,7 @@ const CGFloat kMILTabSegmentViewLabelOffsetWeight = 10.0f;
     frame.origin.y =  self.frame.size.height - self.configuration.pointInsetBottom;
     self.bottomPointView.frame = frame;
     self.bottomPointView.layer.cornerRadius = self.configuration.pointSize.height/2.0;
-    self.bottomPointView.backgroundColor = self.configuration.selectedColor?:self.configuration.customTiniColor;
+    self.bottomPointView.backgroundColor =  self.configuration.indicatorColor?:(self.configuration.selectedColor?:self.configuration.customTiniColor);
     self.bottomPointView.layer.masksToBounds = YES;
     [self.contentScrollView addSubview:self.bottomPointView];
 }
@@ -629,13 +657,14 @@ const CGFloat kMILTabSegmentViewLabelOffsetWeight = 10.0f;
         __weak typeof(self) weakSelf = self;
         _lua_tapBlock =  ^(MLNTabSegmentView* view,NSInteger index) {
             __strong typeof(weakSelf) strongSelf = weakSelf;
-            if (strongSelf.lua_tapCallback) {
+            if (strongSelf.lua_tapCallback && !strongSelf.ignoreTapCallbackToLua) {
                 [strongSelf.lua_tapCallback addIntArgument:(int)index + 1];
                 [strongSelf.lua_tapCallback callIfCan];
             }
             if (strongSelf.pageView) {
                 [strongSelf.pageView scrollToPage:index aniamted:strongSelf.animated];
             }
+            strongSelf.ignoreTapCallbackToLua = NO;
         };
     }
     return _lua_tapBlock;
@@ -688,8 +717,7 @@ const CGFloat kMILTabSegmentViewLabelOffsetWeight = 10.0f;
     }
     _customTintColor = color;
     self.configuration.customTiniColor = color;
-    _shouldReConfigure = YES;
-    [self resetIfNeed];
+    [self colorSettingResetIfNeed];
 }
 
 - (void)lua_setSelectedColor:(UIColor *)color
@@ -701,7 +729,18 @@ const CGFloat kMILTabSegmentViewLabelOffsetWeight = 10.0f;
     _selectedTintColor = color;
     self.configuration.selectedColor = color;
     _shouldReConfigure = YES;
-    [self resetIfNeed];
+    [self colorSettingResetIfNeed];
+}
+
+- (void)lua_setIndicatorColor:(UIColor *)color
+{
+    MLNCheckTypeAndNilValue(color, @"Color", [UIColor class])
+    if (_indicatorColor == color) {
+        return;
+    }
+    _indicatorColor = color;
+    self.configuration.indicatorColor = color;
+    [self colorSettingResetIfNeed];
 }
 
 - (void)lua_setTabSpacing:(NSInteger)tabSpacing
@@ -719,13 +758,26 @@ const CGFloat kMILTabSegmentViewLabelOffsetWeight = 10.0f;
     [self resetIfNeed];
 }
 
+- (void)colorSettingResetIfNeed {
+    if (self.superview) {
+        self.bottomPointView.backgroundColor = self.configuration.indicatorColor?:(self.configuration.selectedColor?:self.configuration.customTiniColor);
+        for (int i=0; i<self.segmentViews.count; i++) {
+            MLNTabSegmentLabel *segmentLabel = [self.segmentViews objectAtIndex:i];
+            if (i == self.currentIndex) {
+                segmentLabel.titleLabel.textColor = self.configuration.selectedColor?:(self.configuration.customTiniColor?:kMLNTabDefaultColor);
+            }else {
+                segmentLabel.titleLabel.textColor = self.configuration.customTiniColor?:kMLNTabDefaultColor;
+            }
+        }
+    }
+}
+
 - (void)resetIfNeed {
     if (self.superview && _shouldReConfigure) {
-        if ([self respondsToSelector:@selector(refreshSegmentTitles:)] ) {
-            NSInteger currentIndex = _currentIndex;
-            [self refreshSegmentTitles:_segmentTitles];
-            [self setCurrentLabelIndex:currentIndex animated:NO];
-        }
+        NSInteger currentIndex = _currentIndex;
+        [self refreshSegmentTitles:_segmentTitles];
+        self.ignoreTapCallbackToLua = YES;
+        [self setCurrentLabelIndex:_missionIndex?:currentIndex animated:_missionIndex?_missionAnimated:NO];
         _shouldReConfigure = NO;
     }
 }
@@ -736,7 +788,13 @@ const CGFloat kMILTabSegmentViewLabelOffsetWeight = 10.0f;
     if (currentIndex < 1 || currentIndex > self.segmentTitles.count) {
         return;
     }
-    NSInteger trueIndex=  currentIndex - 1;
+    
+    NSInteger trueIndex =  currentIndex - 1;
+    if (self.superview == nil) {
+        _missionIndex = trueIndex;
+        _missionAnimated = animated;
+        return;
+    }
     [self setCurrentLabelIndex:trueIndex animated:animated];
     if (_pageView) {
         [_pageView scrollToPage:trueIndex aniamted:animated];
@@ -758,16 +816,17 @@ const CGFloat kMILTabSegmentViewLabelOffsetWeight = 10.0f;
         return;
     }
     NSInteger trueIndex=  index - 1;
-    
+    [self.itemBadgeInfo setObject:@(number) forKey:[NSString stringWithFormat:@"%ld",trueIndex]];
     [self setTapBadgeNum:number atIndex:trueIndex];
 }
 
 - (void)lua_setTapBadgeTitle:(NSString*)title atIndex:(NSInteger)index {
+    NSInteger trueIndex=  index - 1;
+    [self.itemBadgeInfo setObject:title?:@"" forKey:[NSString stringWithFormat:@"%ld",trueIndex]];
     MLNCheckTypeAndNilValue(title, @"string", [NSString class])
     if (index < 1 || index > self.segmentTitles.count) {
         return;
     }
-    NSInteger trueIndex=  index - 1;
     [self setTapBadgeTitle:title atIndex:trueIndex];
 }
 
@@ -841,6 +900,7 @@ LUA_EXPORT_VIEW_PROPERTY(normalFontSize, "lua_setNormalFontSize:","normalFontSiz
 LUA_EXPORT_VIEW_PROPERTY(selectScale, "lua_setSelectScale:","selectScale", MLNTabSegmentView)
 LUA_EXPORT_VIEW_PROPERTY(tintColor, "lua_setCustomTintColor:","customTintColor", MLNTabSegmentView)
 LUA_EXPORT_VIEW_PROPERTY(selectedColor, "lua_setSelectedColor:","selectedColor", MLNTabSegmentView)
+LUA_EXPORT_VIEW_PROPERTY(indicatorColor, "lua_setIndicatorColor:","indicatorColor", MLNTabSegmentView)
 LUA_EXPORT_VIEW_METHOD(relatedToViewPager, "lua_relatedToViewPager:animated:", MLNTabSegmentView)
 LUA_EXPORT_VIEW_METHOD(setCurrentIndexAnimated, "lua_setCurrentIndex:animated:", MLNTabSegmentView)
 LUA_EXPORT_VIEW_METHOD(setTapTitleAtIndex, "lua_setTapTitle:atIndex:", MLNTabSegmentView)
@@ -886,9 +946,9 @@ LUA_EXPORT_VIEW_END(MLNTabSegmentView,TabSegmentView, YES, "MLNView", "initWithL
     progress = MIN(1.0, MAX(0.0, progress));
     CGFloat fontWeight = 0;
     if (@available(iOS 8.2, *)) {
-        CGFloat weight = kMILTabSegmentViewDefaultFontWeight + (UIFontWeightHeavy - kMILTabSegmentViewDefaultFontWeight) * progress;
+        CGFloat weight = kMLNTabSegmentViewDefaultFontWeight + (UIFontWeightHeavy - kMLNTabSegmentViewDefaultFontWeight) * progress;
         
-        fontWeight = kMILTabSegmentViewDefaultFontWeight;
+        fontWeight = kMLNTabSegmentViewDefaultFontWeight;
         if (weight >= UIFontWeightRegular && weight < middleWeight(UIFontWeightRegular, UIFontWeightMedium)) {
             fontWeight = UIFontWeightRegular;
         }
@@ -1018,7 +1078,7 @@ static inline CGFloat middleWeight(CGFloat weightA, CGFloat weightB) {
 }
 
 - (void)setBadgeTitle:(NSString *)title {
-    if (title) {
+    if (title.length > 0) {
         [self createBadgeView];
         self.badgeView.hidden = NO;
         self.badgeView.badgeValue =title;
@@ -1077,7 +1137,7 @@ static inline CGFloat middleWeight(CGFloat weightA, CGFloat weightB) {
 
 - (UIImageView *)createRedDotView {
     if (!_redDotView) {
-        UIImage* image = [UIImage mln_in_imageWithColor:[UIColor colorWithRed:248/255.0 green:85/255.0 blue:67/255.0 alpha:1.0] finalSize:CGSizeMake(16, 16) cornerRadius:8];
+        UIImage* image = [UIImage mln_imageWithColor:[UIColor colorWithRed:248/255.0 green:85/255.0 blue:67/255.0 alpha:1.0] finalSize:CGSizeMake(16, 16) cornerRadius:8];
         _redDotView = [[UIImageView alloc] initWithImage:image];
         CGRect frame = _redDotView.frame;
         frame.size = CGSizeMake(8, 8);
