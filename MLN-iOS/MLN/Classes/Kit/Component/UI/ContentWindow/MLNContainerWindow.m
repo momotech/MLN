@@ -28,10 +28,11 @@
 
 @implementation MLNContainerWindow
 
-- (instancetype)initWithLuaCore:(MLNLuaCore *)luaCore frame:(CGRect)frame
+- (instancetype)initWithLuaCore:(MLNLuaCore *)luaCore rectValue:(NSValue *)rectValue
 {
+    CGRect frame = rectValue ? rectValue.CGRectValue : CGRectZero;
     if (self = [super initWithLuaCore:luaCore frame:frame]) {
-        [self defaultSettingWith:frame];
+        [self defaultSettingWith:rectValue];
         [self.virtualSuperNode addSubnode:self.lua_node];
         self.lua_node.supernode = self.virtualSuperNode;
         self.windowLevel = UIWindowLevelAlert - 10;
@@ -44,13 +45,15 @@
     return self;
 }
 
-- (void)defaultSettingWith:(CGRect)frame
+- (void)defaultSettingWith:(NSValue *)rectValue
 {
-    [self setLua_marginTop:frame.origin.y];
-    [self setLua_marginLeft:frame.origin.x];
-    [self setLua_width:frame.size.width];
-    [self setLua_height:frame.size.height];
-    if (CGRectEqualToRect(frame, CGRectZero)) {
+    if (rectValue) {
+        CGRect frame = rectValue.CGRectValue;
+        [self setLua_marginTop:frame.origin.y];
+        [self setLua_marginLeft:frame.origin.x];
+        [self setLua_width:frame.size.width];
+        [self setLua_height:frame.size.height];
+    } else {
         [self setLua_width:MLNLayoutMeasurementTypeWrapContent];
         [self setLua_height:MLNLayoutMeasurementTypeWrapContent];
     }
@@ -211,6 +214,6 @@ LUA_EXPORT_VIEW_METHOD(dismiss, "lua_dismiss", MLNContainerWindow)
 LUA_EXPORT_VIEW_METHOD(contentDisAppear, "lua_setDisappearBlock:", MLNContainerWindow)
 LUA_EXPORT_VIEW_METHOD(setContent, "lua_setContent:", MLNContainerWindow)
 LUA_EXPORT_VIEW_PROPERTY(cancelable, "setCancelable:", "cancelable", MLNContainerWindow)
-LUA_EXPORT_VIEW_END(MLNContainerWindow, ContentWindow, YES, "MLNView", "initWithLuaCore:frame:")
+LUA_EXPORT_VIEW_END(MLNContainerWindow, ContentWindow, YES, "MLNView", "initWithLuaCore:rectValue:")
 
 @end
