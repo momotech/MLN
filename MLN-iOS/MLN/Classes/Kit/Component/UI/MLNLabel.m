@@ -37,7 +37,7 @@
 
 - (instancetype)initWithLuaCore:(MLNLuaCore *)luaCore frame:(CGRect)frame
 {
-    if (self = [super initWithFrame:frame]) {
+    if (self = [super initWithLuaCore:luaCore frame:frame]) {
         self.labelBreakMode = NSLineBreakByTruncatingTail;
         self.userInteractionEnabled = YES;
     }

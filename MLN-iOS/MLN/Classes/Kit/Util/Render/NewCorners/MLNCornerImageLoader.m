@@ -1,6 +1,6 @@
 //
 //  MLNCornerImageLoader.m
-//  MoMo
+//  MLN
 //
 //  Created by MOMO on 2019/10/16.
 //
@@ -13,26 +13,14 @@
 
 @implementation MLNCornerImageLoader
 
-static MLNCornerImageLoader *_shareInstance = nil;
-
-+ (instancetype)sharedInstance
-{
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        _shareInstance = [[MLNCornerImageLoader alloc] init];
-    });
-    return _shareInstance;
-}
-
-- (void)imageView:(UIImageView<MLNEntityExportProtocol> *)imageView setCornerImageWith:(NSString *)imageName placeHolderImage:(NSString *)placeHolder cornerRadius:(NSInteger)radius dircetion:(MLNRectCorner)direction
++ (void)imageView:(UIImageView<MLNEntityExportProtocol> *)imageView setCornerImageWith:(NSString *)imageName placeHolderImage:(NSString *)placeHolder cornerRadius:(NSInteger)radius dircetion:(MLNRectCorner)direction
 {
     __block  NSUInteger loadStatus = 0;
     
     dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
     
     id<MLNImageLoaderProtocol> imageLoder = [self imageLoaderWithImageView:imageView];
-    MLNKitLuaAssert([imageLoder respondsToSelector:@selector(view:loadImageWithPath:completed:)], @"-[imageLoder view:loadImageWithPath:completed:] was not found!");
-    
+    MLNLuaAssert(imageView.mln_luaCore, [imageLoder respondsToSelector:@selector(view:loadImageWithPath:completed:)], @"-[imageLoder view:loadImageWithPath:completed:] was not found!");
     MLNCornerRadius cornerRadius = { .topLeft = 20, .topRight = 20, .bottomLeft = 20, .bottomRight = 20 };
     cornerRadius.topLeft = (direction & MLNRectCornerTopLeft) ? radius : 0;
     cornerRadius.topRight = (direction & MLNRectCornerTopRight) ? radius : 0;
@@ -73,7 +61,7 @@ static MLNCornerImageLoader *_shareInstance = nil;
     
 }
 
-- (id<MLNImageLoaderProtocol>)imageLoaderWithImageView:(UIImageView<MLNEntityExportProtocol> *)imageView
++ (id<MLNImageLoaderProtocol>)imageLoaderWithImageView:(UIImageView<MLNEntityExportProtocol> *)imageView
 {
     return MLN_KIT_INSTANCE(imageView.mln_luaCore).instanceHandlersManager.imageLoader;
 }

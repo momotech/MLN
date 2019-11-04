@@ -30,7 +30,7 @@
 
 - (instancetype)initWithLuaCore:(MLNLuaCore *)luaCore frame:(CGRect)frame
 {
-    if (self = [super initWithFrame:frame]) {
+    if (self = [super initWithLuaCore:luaCore frame:frame]) {
         [self defaultSettingWith:frame];
         [self.virtualSuperNode addSubnode:self.lua_node];
         self.lua_node.supernode = self.virtualSuperNode;

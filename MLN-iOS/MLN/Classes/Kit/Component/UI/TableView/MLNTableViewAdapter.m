@@ -1,6 +1,6 @@
 //
 //  MMTableViewAdpater.m
-//  MomoChat
+//  MLN
 //
 //  Created by MoMo on 27/02/2018.
 //  Copyright © 2018 wemomo.com. All rights reserved.

@@ -734,7 +734,7 @@ const CGFloat kMLNTabSegmentViewLabelOffsetWeight = 10.0f;
 
 - (void)lua_setIndicatorColor:(UIColor *)color
 {
-    MLNCheckTypeAndNilValue(color, @"Color", [UIColor class])
+    MLNCheckTypeAndNilValue(color, @"Color", UIColor)
     if (_indicatorColor == color) {
         return;
     }

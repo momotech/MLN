@@ -64,13 +64,13 @@ MLN_FORCE_INLINE void measureImageViewAutoNodeSize (MLNLayoutNode __unsafe_unret
     }
     if (resizeWidth || resizeHeight) {
         if (!node.isWidthExcatly) {
-            widthSize = resolveAdjustedSize(imgSize.width, node.maxWidth, node.width?:maxWidth, widthSpecMode);
+            widthSize = resolveAdjustedSize(imgSize.width, node.maxWidth, node.width > 0 ? node.width : maxWidth, widthSpecMode);
         } else {
             widthSize = maxWidth;
         }
         
         if (!node.isHeightExcatly) {
-            heightSize = resolveAdjustedSize(imgSize.height,node.maxHeight, node.height?:maxHeight, heightSpecMode);
+            heightSize = resolveAdjustedSize(imgSize.height,node.maxHeight, node.height > 0 ? node.height : maxHeight, heightSpecMode);
         } else {
             heightSize = maxHeight;
         }

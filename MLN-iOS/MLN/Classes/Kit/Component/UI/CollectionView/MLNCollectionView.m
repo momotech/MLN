@@ -19,6 +19,7 @@
 #import "MLNCollectionViewAdapter.h"
 #import "MLNInnerCollectionView.h"
 #import "MLNCollectionViewLayoutProtocol.h"
+#import "UIView+MLNKit.h"
 
 @interface MLNCollectionView()
 @property (nonatomic, strong) MLNInnerCollectionView *innerCollectionView;
@@ -56,7 +57,7 @@
     MLNCheckTypeAndNilValue(adapter, @"CollectionViewAdapter", [MLNCollectionViewAdapter class])
     if (_adapter != adapter) {
         _adapter = adapter;
-        [MLN_KIT_INSTANCE(self.mln_luaCore) pushLazyTask:self.lazyTask];
+        [self mln_pushLazyTask:self.lazyTask];
     }
 }
 

@@ -16,6 +16,7 @@
 #import "MLNLayoutNode.h"
 #import "MLNSizeCahceManager.h"
 #import "MLNBeforeWaitingTask.h"
+#import "UIView+MLNKit.h"
 
 @interface MLNEditTextView () <MLNTextViewDelegate>{
     BOOL _singleLine;
@@ -517,7 +518,7 @@
     if (self.type == MLNInternalTextViewTypeMultableLine && self.lua_node.isWrapContent) {
         [self lua_needLayoutAndSpread];
     }
-    [MLN_KIT_INSTANCE(self.mln_luaCore) pushLazyTask:self.lazyTask];
+    [self mln_pushLazyTask:self.lazyTask];
 }
 
 - (void)lua_dismissKeyboard
@@ -574,7 +575,7 @@
         }
         [preInternalTextView removeFromSuperview];
         [self lua_needLayoutAndSpread];
-        [MLN_KIT_INSTANCE(self.mln_luaCore) pushLazyTask:self.lazyTask];
+        [self mln_pushLazyTask:self.lazyTask];
         [self setupSwitchStatusWityType:type];
     }
 }
