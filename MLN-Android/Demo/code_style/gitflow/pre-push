@@ -1,0 +1,95 @@
+#!/bin/sh
+
+# An example hook script to verify what is about to be pushed.  Called by "git
+# push" after it has checked the remote status, but before anything has been
+# pushed.  If this script exits with a non-zero status nothing will be pushed.
+#
+# This hook is called with the following parameters:
+#
+# $1 -- Name of the remote to which the push is being done
+# $2 -- URL to which the push is being done
+#
+# If pushing without using a named remote those arguments will be equal.
+#
+# Information about the commits which are being pushed is supplied as lines to
+# the standard input in the form:
+#
+#   <local ref> <local sha1> <remote ref> <remote sha1>
+#
+# This sample shows how to prevent push of commits where the log message starts
+# with "WIP" (work in progress).
+
+email_pattern="^([a-zA-Z0-9_\-\.]+)@immomo\.com$"
+title_pattern="^\[.*\]$"
+comment_pattern="^#.*$"
+
+is_user_in_group() {
+    if [[ $1 = 'all' ]]; then
+        echo 1
+        return
+    fi
+
+    group_title=''
+    while IFS='' read -r line1 || [[ -n "$line1" ]]; do
+	    if [[ ${line1} =~ $title_pattern ]]; then
+            group_title=$(echo ${line1} | sed -e 's/\[\(.*\)\]/\1/')
+        elif [[ -n ${line1} ]] && [[ ! ${line1} =~ $comment_pattern ]]; then
+            if [[ ${group_title} = $1 ]] && [[ ${line1} = $2 ]]; then
+                echo 1
+                return
+            fi
+	    fi
+    done < '.git/hooks/restricted/branch_group'
+
+    echo 0
+}
+
+current_user=$(git config --local --get user.email)
+if [[ -z ${current_user} ]]; then
+	current_user=$(git config --get user.email)
+fi
+
+if [[ ! ${current_user} =~ $email_pattern ]]; then
+    echo "----------------------------------------------------------"
+    echo "Error! Invalid email format: $current_user.\nPlease config your email with valid format.\n\`git config user.email \"MY_NAME@immomo.com\"\`\n"
+    echo "----------------------------------------------------------"
+    exit 1
+fi
+
+current_branch=$(git symbolic-ref HEAD | sed -e 's,.*heads/\(.*\),\1,')
+restricted_branch=0
+while IFS='' read -r line || [[ -n "$line" ]]; do
+	if [[ ${line} =~ $title_pattern ]]; then
+        branch_name=$(echo ${line} | sed -e 's/\[\(.*\)\]/\1/')
+        if [[ ${current_branch} == ${branch_name} ]]; then
+            restricted_branch=1
+        elif [[ ${restricted_branch} -eq 1 ]]; then
+            break
+        fi
+    elif [[ -n ${line} ]] && [[ ! ${line} =~ $comment_pattern ]] && [[ ${restricted_branch} -eq 1 ]]
+    then
+        permission=$(echo ${line} | sed -e 's/\([\+\-]\)\(.*\)/\1/')
+        group=$(echo ${line} | sed -e 's/\([\+\-]\)\(.*\)/\2/')
+
+        user_in_group=$(is_user_in_group $group $current_user)
+        if [[ ${user_in_group} -eq 1 ]]; then
+            if [[ ${permission} = '+' ]]; then
+                exit 0
+            else
+                echo "----------------------------------------------------------"
+			    echo "Error! Current branch($current_branch) is protected."
+                echo "----------------------------------------------------------"
+                exit 1
+            fi
+        fi
+	fi
+done < '.git/hooks/restricted/branch_rule'
+
+if [[ ${restricted_branch} -eq 1 ]]; then
+    echo "----------------------------------------------------------"
+    echo "Error! Current branch($current_branch) is protected."
+    echo "----------------------------------------------------------"
+    exit 1
+else
+    exit 0
+fi

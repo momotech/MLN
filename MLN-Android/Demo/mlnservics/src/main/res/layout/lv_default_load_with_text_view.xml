@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="horizontal"
+    android:layout_width="wrap_content"
+    android:layout_height="100dp"
+    android:gravity="center"
+    android:layout_gravity="center"
+    tools:background="#fff">
+
+    <com.immomo.mls.weight.load.DefaultLoadView
+        android:id="@+id/lv_default_load_view"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_gravity="center_vertical"
+        android:background="@drawable/lv_default_progress"/>
+
+    <TextView
+        android:id="@+id/lv_default_load_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="正在加载"
+        android:layout_marginLeft="7dp"
+        android:layout_gravity="center_vertical"
+        android:textSize="16sp"
+        android:textColor="#000"/>
+</LinearLayout>
