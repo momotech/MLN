@@ -59,6 +59,7 @@ FOUNDATION_EXPORT const CGFloat kMILTabSegmentViewDefaultHeight;
 
 @property (nonatomic, strong) UIColor *customTiniColor;
 @property (nonatomic, strong) UIColor *selectedColor;
+@property (nonatomic, strong) UIColor *indicatorColor;
 @property (nonatomic, assign) CGFloat pointInsetBottom;
 @property (nonatomic, assign) CGSize pointSize;
 @property (nonatomic, assign) CGSize redDotSize;
