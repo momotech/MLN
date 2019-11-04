@@ -24,7 +24,7 @@
 
 @implementation MLNAnimationSet
 
-- (instancetype)initWith:(BOOL)shareInterpolator
+- (instancetype)initWithLuaCore:(MLNLuaCore *)luaCore shareInterpolator:(BOOL)shareInterpolator
 {
     if (self = [super init]) {
         _shareInterpolator = shareInterpolator;
@@ -88,5 +88,5 @@
 #pragma mark - Export To Lua
 LUA_EXPORT_BEGIN(MLNAnimationSet)
 LUA_EXPORT_METHOD(addAnimation, "lua_addAnimation:", MLNAnimationSet)
-LUA_EXPORT_END(MLNAnimationSet, AnimationSet, YES, "MLNCanvasAnimation", "initWith:")
+LUA_EXPORT_END(MLNAnimationSet, AnimationSet, YES, "MLNCanvasAnimation", "initWithLuaCore:shareInterpolator:")
 @end
