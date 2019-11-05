@@ -27,7 +27,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)lua_layoutIfNeed;
 - (void)lua_sizeToFit;
-- (void)lua_resetOffsetStatus;
 - (CGPoint)lua_convertRelativePointToView:(UIView *)view point:(CGPoint)point;
 
 #pragma mark - TouchEvent
