@@ -7,6 +7,7 @@
   */
 package com.immomo.mls.fun.ud.view.recycler;
 
+import com.immomo.mls.Environment;
 import com.immomo.mls.fun.other.GridLayoutItemDecoration;
 import com.immomo.mls.util.DimenUtil;
 
@@ -16,6 +17,10 @@ import org.luaj.vm2.utils.LuaApiUsed;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
+/**
+ * 原gridLayout，已废弃
+ */
+@Deprecated
 @LuaApiUsed
 public class UDCollectionGridLayout extends UDCollectionLayout {
     public static final String LUA_CLASS_NAME = "CollectionViewGridLayout";
@@ -58,8 +63,13 @@ public class UDCollectionGridLayout extends UDCollectionLayout {
 
     @Override
     public int getSpanCount() {
-        if (this.spanCount <= 0)
+        if (this.spanCount <= 0){
             this.spanCount = DEFAULT_SPAN_COUNT;
+            IllegalArgumentException e = new IllegalArgumentException("spanCount must > 0");
+            if (!Environment.hook(e, getGlobals())) {
+                throw e;
+            }
+        }
 
         return this.spanCount;
     }
@@ -84,7 +94,7 @@ public class UDCollectionGridLayout extends UDCollectionLayout {
     RecyclerView.ItemDecoration getItemDecoration() {
         if (itemDecoration == null) {
             setItemDecoration();
-        } else if (itemDecoration.isSame(itemSpacing, lineSpacing)) {
+        } else if (!itemDecoration.isSame(itemSpacing, lineSpacing)) {
             setItemDecoration();
         }
 

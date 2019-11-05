@@ -286,9 +286,11 @@ public class UDHttp {
                     public void run() {
                         if (globals.isDestroyed())
                             return;
-                        callback.call(response.isSuccess() ? LuaValue.True() : LuaValue.False(),
-                                new UDMap(globals, response.getMessageMap()),
-                                new UDMap(globals, response.getMessageMap()));
+                        if (response.isSuccess()) {
+                            callback.call(LuaValue.True(), new UDMap(globals, response.getMessageMap()));
+                        } else {
+                            callback.call(LuaValue.False(), LuaValue.Nil(), new UDMap(globals, response.getMessageMap()));
+                        }
                     }
                 });
             }

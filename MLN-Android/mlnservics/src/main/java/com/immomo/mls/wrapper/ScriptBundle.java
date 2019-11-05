@@ -56,27 +56,29 @@ public class ScriptBundle {
 
     }
 
-    private static String debug(int flag) {
-        switch (flag) {
+    public String debugType() {
+        int type = flag & TYPE_MASK;
+        switch (type) {
             case TYPE_NETWORK:
                 return "network";
             case TYPE_FILE:
                 return "file";
             case TYPE_ASSETS:
                 return "assets";
-            case BUNDLE:
-                return "bundle";
-            case SINGLE_FILE:
-                return "singleFile";
-            case ACTION_DOWNLOADED:
-                return "download";
-            case ACTION_UNZIP:
-                return "unzip";
-            case FROM_PRELOAD:
-                return "fromPreload";
             default:
                 return "";
         }
+    }
+
+    public String debugAction() {
+        StringBuilder sb = new StringBuilder();
+        if ((flag & ACTION_DOWNLOADED) == ACTION_DOWNLOADED) {
+            sb.append("download");
+        }
+        if ((flag & ACTION_UNZIP) == ACTION_UNZIP) {
+            sb.append("unzip");
+        }
+        return sb.toString();
     }
 
     private final String url;
@@ -165,9 +167,8 @@ public class ScriptBundle {
     }
 
     public String getFlagDebugString() {
-        return "type: " + debug(flag & TYPE_MASK) + "\t" +
-                "mode: " + debug(flag & MODE_MASK) + "\t" +
-                "action: " + debug(flag & ACTION_MASK) + "\t" +
+        return "type: " + debugType() + "\t" +
+                "action: " + debugAction() + "\t" +
                 "preload: " + ((flag & FROM_PRELOAD) == FROM_PRELOAD);
     }
 

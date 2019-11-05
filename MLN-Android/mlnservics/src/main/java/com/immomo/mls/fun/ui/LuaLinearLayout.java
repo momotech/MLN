@@ -8,12 +8,14 @@
 package com.immomo.mls.fun.ui;
 
 import android.content.Context;
+import android.view.MotionEvent;
 import android.view.ViewGroup;
 
 import com.immomo.mls.base.ud.lv.ILViewGroup;
 import com.immomo.mls.fun.ud.view.UDLinearLayout;
 import com.immomo.mls.fun.ud.view.UDView;
 import com.immomo.mls.fun.weight.BorderRadiusLinearLayout;
+import com.immomo.mls.utils.ErrorUtils;
 
 import androidx.annotation.NonNull;
 
@@ -26,17 +28,16 @@ public class LuaLinearLayout<U extends UDLinearLayout> extends BorderRadiusLinea
         userdata = ud;
         setViewLifeCycleCallback(userdata);
         setOrientation(type);
-        setClipChildren(false);
     }
 
     @Override
     public void bringSubviewToFront(UDView child) {
-
+        ErrorUtils.debugLuaError("LinearLayout does not support bringSubviewToFront method", userdata.getGlobals());
     }
 
     @Override
     public void sendSubviewToBack(UDView child) {
-
+        ErrorUtils.debugLuaError("LinearLayout does not support sendSubviewToBack method", userdata.getGlobals());
     }
 
     @NonNull
@@ -46,6 +47,7 @@ public class LuaLinearLayout<U extends UDLinearLayout> extends BorderRadiusLinea
         ret.setMargins(udLayoutParams.realMarginLeft, udLayoutParams.realMarginTop, udLayoutParams.realMarginRight, udLayoutParams.realMarginBottom);
         ret.gravity = udLayoutParams.gravity;
         ret.priority = udLayoutParams.priority;
+        ret.weight = udLayoutParams.weight;
         return ret;
     }
 
@@ -107,5 +109,10 @@ public class LuaLinearLayout<U extends UDLinearLayout> extends BorderRadiusLinea
     protected @NonNull
     ViewGroup.LayoutParams generateNewLayoutParams(ViewGroup.LayoutParams src) {
         return new LayoutParams(src);
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        return isEnabled() && super.dispatchTouchEvent(ev);
     }
 }

@@ -38,6 +38,10 @@ public class LuaViewManager implements IGlobalsUserdata{
     public final LuaCache luaCache;
     public String url;
     private SparseArray<OnActivityResultListener> onActivityResultListeners;
+    /**
+     * 虚拟机全局圆角配置
+     */
+    private boolean defaltCornerClip = false ;//全局默认属性：false
 
     public LuaViewManager(Context c) {
         context = c;
@@ -98,9 +102,17 @@ public class LuaViewManager implements IGlobalsUserdata{
     }
 
     public void showPrinterIfNot() {
-        if (instance != null && !instance.isShowPrinter()) {
+        if (instance != null && !instance.isShowPrinter() && !instance.hasClosePrinter()) {
             instance.showPrinter(true);
         }
+    }
+
+    public boolean getDefaltCornerClip() {
+        return defaltCornerClip;
+    }
+
+    public void setDefaltCornerClip(boolean defaltCornerClip) {
+        this.defaltCornerClip = defaltCornerClip;
     }
 
     /**

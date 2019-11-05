@@ -8,11 +8,14 @@
 package com.immomo.mls.fun.ui;
 
 import android.content.Context;
+import android.os.Handler;
+import android.os.Message;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.widget.FrameLayout;
+import android.widget.HorizontalScrollView;
 
 import com.immomo.mls.base.ud.lv.ILViewGroup;
 import com.immomo.mls.fun.other.Point;
@@ -21,28 +24,31 @@ import com.immomo.mls.fun.ud.view.UDLinearLayout;
 import com.immomo.mls.fun.ud.view.UDScrollView;
 import com.immomo.mls.fun.ud.view.UDView;
 import com.immomo.mls.fun.ud.view.UDViewGroup;
-import com.immomo.mls.fun.weight.BorderRadiusHorizontalScrollView;
 import com.immomo.mls.fun.weight.LinearLayout;
 import com.immomo.mls.util.DimenUtil;
+
+import java.lang.ref.WeakReference;
 
 import androidx.annotation.NonNull;
 
 /**
  * Created by XiongFangyu on 2018/8/3.
  */
-public class LuaHorizontalScrollView extends BorderRadiusHorizontalScrollView implements IScrollView<UDScrollView> {
+public class LuaHorizontalScrollView extends HorizontalScrollView implements IScrollView<UDScrollView> {
 
     private ILViewGroup mILViewGroup;
 
     private UDScrollView udScrollView;
     private OnScrollListener onScrollListener;
-    private boolean callbackEnd = false;
+    private touchActionListener mTouchActionListener;
+    private FlingListener mFlingListener;
     private ViewLifeCycleCallback cycleCallback;
+    public static final int HANDLER_DELAY_TIME = 16;
+    private long mScrollEndTime =0;
 
     public LuaHorizontalScrollView(Context context, UDScrollView userdata, boolean same) {
         super(context);
         udScrollView = userdata;
-        setViewLifeCycleCallback(udScrollView);
 
         setHorizontalScrollBarEnabled(true);
         // 是否在里面默认添加相同方向的 LinearLayout 布局
@@ -52,7 +58,6 @@ public class LuaHorizontalScrollView extends BorderRadiusHorizontalScrollView im
             mILViewGroup = (ILViewGroup) new UDViewGroup(userdata.getGlobals()).getView();
 
         addView(getContentView(), new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-
     }
 
     @Override
@@ -85,6 +90,7 @@ public class LuaHorizontalScrollView extends BorderRadiusHorizontalScrollView im
         if (cycleCallback != null) {
             cycleCallback.onDetached();
         }
+        scrollEndHandler.removeCallbacksAndMessages(null);
     }
 
     @Override
@@ -153,6 +159,11 @@ public class LuaHorizontalScrollView extends BorderRadiusHorizontalScrollView im
     }
 
     @Override
+    public ViewGroup getScrollView() {
+        return this;
+    }
+
+    @Override
     public void setContentOffset(Point p) {
         scrollTo((int) p.getXPx(), (int) p.getYPx());
     }
@@ -171,14 +182,60 @@ public class LuaHorizontalScrollView extends BorderRadiusHorizontalScrollView im
     public void setOnScrollListener(OnScrollListener l) {
         onScrollListener = l;
     }
+
+    public void setTouchActionListener(touchActionListener touchActionListener) {
+        mTouchActionListener = touchActionListener;
+    }
+
+    @Override
+    public void setFlingListener(FlingListener flingListener) {
+        mFlingListener = flingListener;
+    }
+
     //</editor-fold>
 
     //<editor-fold desc="View">
     @Override
     protected void onScrollChanged(int l, int t, int oldl, int oldt) {
         super.onScrollChanged(l, t, oldl, oldt);
+
+        if (l == oldl && t == oldt)
+            return;
+
+        if(!beginScroll &&  onScrollListener != null){
+
+            // 修复：某些机型横向滚动 多回调一次 问题，需要关注是否影响性能，纵向目前没有发现此问题
+            if (System.currentTimeMillis() - mScrollEndTime <= 200) {
+                mScrollEndTime = System.currentTimeMillis();
+                return;
+            }
+
+            onScrollListener.onBeginScroll();
+            beginScroll = true;
+        }
+
         if (onScrollListener != null)
             onScrollListener.onScrolling();
+
+        sendDelayMsg();
+    }
+
+    private void sendDelayMsg() {
+        scrollEndHandler.removeMessages(InnerHandler.touchEventId);
+        scrollEndHandler.sendMessageDelayed(scrollEndHandler.obtainMessage(InnerHandler.touchEventId, this), HANDLER_DELAY_TIME);
+    }
+
+    boolean beginScroll = false;
+
+    @Override
+    public boolean onInterceptTouchEvent(MotionEvent ev) {
+        switch (ev.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                if (mTouchActionListener != null)
+                    mTouchActionListener.onTouchDown();
+                break;
+        }
+        return super.onInterceptTouchEvent(ev);
     }
 
     @Override
@@ -187,25 +244,63 @@ public class LuaHorizontalScrollView extends BorderRadiusHorizontalScrollView im
             return false;
         switch (ev.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                callbackEnd = false;
                 break;
             case MotionEvent.ACTION_MOVE:
-                if (!callbackEnd && onScrollListener != null) {
-                    onScrollListener.onBeginScroll();
-                }
-                callbackEnd = true;
+                if (onScrollListener != null)
+                    onScrollListener.onScrolling();
                 break;
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
-                if (onScrollListener != null) {
-                    onScrollListener.onScrollEnd();
-                }
+
+                if (mTouchActionListener != null)
+                    mTouchActionListener.onActionUp();
                 break;
         }
         return super.onTouchEvent(ev);
     }
 
     //</editor-fold>
+
+    private WeakReference<LuaHorizontalScrollView> mScrollViewWeakReference = new WeakReference<>(this);
+
+    private final Handler scrollEndHandler = new InnerHandler(mScrollViewWeakReference);
+
+    private static class InnerHandler extends Handler {
+        WeakReference<LuaHorizontalScrollView> scrollViewWeakRef;
+
+        int lastX = 0;
+        static final int touchEventId = -9983761;
+
+        InnerHandler(WeakReference<LuaHorizontalScrollView> activityWeakReference) {
+            this.scrollViewWeakRef = activityWeakReference;
+        }
+
+        public void handleMessage(Message msg) {
+            LuaHorizontalScrollView scrollView = scrollViewWeakRef.get();
+            if (scrollView!= null) {
+                super.handleMessage(msg);
+
+                View scroller = (View) msg.obj;
+
+                if (msg.what == touchEventId) {
+                    if (lastX == scroller.getScrollX()) {
+                        scrollView.onScrollEnd();
+                        this.scrollViewWeakRef.get().beginScroll = false;
+                    } else {
+                        this.scrollViewWeakRef.get().sendDelayMsg();
+                        lastX = scroller.getScrollX();
+                    }
+                }
+            }
+        }
+    }
+
+    private void onScrollEnd(){
+        if (onScrollListener != null) {
+            onScrollListener.onScrollEnd();
+            mScrollEndTime = System.currentTimeMillis();
+        }
+    }
 
     @Override
     public void setScrollEnable(final boolean scrollEnable) {
@@ -217,5 +312,19 @@ public class LuaHorizontalScrollView extends BorderRadiusHorizontalScrollView im
                 return !scrollEnable;
             }
         });
+    }
+
+    float mFlingSpeed = 1;
+
+    @Override
+    public void setFlingSpeed(float speed) {
+        mFlingSpeed = speed;
+    }
+
+    @Override
+    public void fling(int velocityX) {
+        super.fling((int) (velocityX * mFlingSpeed));
+        if (mFlingListener != null)
+            mFlingListener.onFling();
     }
 }

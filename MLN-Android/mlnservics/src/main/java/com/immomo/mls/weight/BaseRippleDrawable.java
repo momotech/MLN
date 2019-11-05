@@ -258,7 +258,7 @@ public class BaseRippleDrawable extends Drawable {
         if (enable) {
             canvas.save();
             if (clipPath != null && isSupportClippath(canvas) && !clipPath.isEmpty()) {
-                canvas.clipPath(clipPath, Region.Op.REPLACE);
+//                canvas.clipPath(clipPath, Region.Op.REPLACE);
             }
             if (canDrawBackground) {
                 backPaint.setColor(backgroundColor);

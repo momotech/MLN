@@ -240,6 +240,7 @@ public class UDLuaView extends UDViewGroup<LuaView> implements ConnectionStateCh
         return rNumber(statusTextStyle);
     }
 
+    @Deprecated
     @LuaApiUsed
     public LuaValue[] stateBarHeight(LuaValue[] p) {
         return rNumber(0);
@@ -298,6 +299,7 @@ public class UDLuaView extends UDViewGroup<LuaView> implements ConnectionStateCh
     public void putExtras(Map extras) {
         if (extraData == null) {
             extraData = new UDMap(globals, extras);
+            extraData.onJavaRef();
         } else {
             extraData.getMap().putAll(extras);
         }

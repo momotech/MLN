@@ -33,11 +33,27 @@ char * copystr(const char *s)
  */
 char * joinstr(const char *a, const char *b)
 {
-    char *result = m_malloc(NULL, 0, (strlen(a)+strlen(b)+1) * sizeof(char));
+    size_t len = (strlen(a)+strlen(b)+1);
+    char *result = m_malloc(NULL, 0, len * sizeof(char));
     if (!result) return NULL;
+    memset(result, 0, len);
     strcpy(result, a);
     strcat(result, b);
     return result;
+}
+/**
+ * 拼接字符串，记得调用free
+ */
+char * join3str(const char *a, const char *b, const char *c) {
+    size_t len = (strlen(a) + strlen(b) + strlen(c) + 1);
+    char *ret = m_malloc(NULL, 0, len * sizeof(char));
+    if (!ret) return NULL;
+
+    memset(ret, 0, len);
+    strcpy(ret, a);
+    strcat(ret, b);
+    strcat(ret, c);
+    return ret;
 }
 
 /**

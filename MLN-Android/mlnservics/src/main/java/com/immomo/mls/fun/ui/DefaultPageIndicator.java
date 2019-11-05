@@ -446,11 +446,13 @@ public class DefaultPageIndicator extends View implements PageIndicator {
     @Override
     public void setCurrentItem(int item) {
         if (mViewPager == null) {
-            throw new IllegalStateException("ViewPager has not been bound.");
+            return;
+            // throw new IllegalStateException("ViewPager has not been bound.");
         }
 
         mViewPager.setCurrentItem(item);
         mCurrentPage = item;
+        mSnapPage = populateCurrentPosition(item);
         invalidate();
     }
 
@@ -461,7 +463,8 @@ public class DefaultPageIndicator extends View implements PageIndicator {
 
     @Override
     public void removeFromSuper() {
-        mViewPager.removeOnPageChangeListener(this);
+        if (mViewPager != null)
+            mViewPager.removeOnPageChangeListener(this);
         if (getParent() instanceof ViewGroup) {
             LuaViewUtil.removeView((ViewGroup) getParent(), this);
         }
@@ -618,7 +621,7 @@ public class DefaultPageIndicator extends View implements PageIndicator {
         };
     }
 
-    private void changeLayoutParams() {
+    public void changeLayoutParams() {
         ViewGroup.LayoutParams p = getLayoutParams();
 
         if (p == null) {

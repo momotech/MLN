@@ -7,10 +7,10 @@
   */
 package com.immomo.mls.processor;
 
+import com.squareup.javapoet.ClassName;
 import com.immomo.mls.annotation.BridgeType;
 import com.immomo.mls.annotation.LuaBridge;
 import com.immomo.mls.annotation.LuaClass;
-import com.squareup.javapoet.ClassName;
 
 import java.util.HashMap;
 import java.util.List;
@@ -45,10 +45,10 @@ class PreProcess {
     static Options options;
 
     static Map<TypeElement, Generator> process(Set<ClassName> skip,
-                                               Set<? extends TypeElement> annotations,
-                                               RoundEnvironment roundEnv,
-                                               Options options,
-                                               Logger logger) {
+                                                Set<? extends TypeElement> annotations,
+                                                RoundEnvironment roundEnv,
+                                                Options options,
+                                                Logger logger) {
         PreProcess.logger = logger;
         PreProcess.options = options;
         

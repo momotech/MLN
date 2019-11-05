@@ -13,8 +13,12 @@
 #define J_INFO_H
 
 #include "global_define.h"
+#include "juserdata.h"
+#include "map.h"
 
 #define USE_NDK_NEWSTRING_VERSION 23
+#define MAX_EXCEPTION_MSG 300
+#define EXCEPTION_STACK_LEN 20
 
 #define JAVA_CONSTRUCTOR "<init>"
 #define JAVA_VALUE_OF "valueOf"
@@ -28,7 +32,7 @@ jstring newJString(JNIEnv *, const char *);
 
 void initJavaInfo(JNIEnv *);
 
-void copyUDToGNV(JNIEnv *env, lua_State *L, UDjavaobject ud, int idx);
+void copyUDToGNV(JNIEnv *env, lua_State *L, UDjavaobject ud, int idx, jobject jobj);
 
 jobject newLuaNumber(JNIEnv *, jdouble);
 
@@ -39,6 +43,12 @@ jobject newLuaTable(JNIEnv *, lua_State *, int);
 jobject newLuaFunction(JNIEnv *, lua_State *, int);
 
 jobject newLuaUserdata(JNIEnv *, lua_State *, int, UDjavaobject);
+
+#if defined(JAVA_CACHE_UD)
+jlong getUserdataId(JNIEnv *env, jobject ud);
+#endif
+
+jobject getUserdata(JNIEnv *env, lua_State *L, UDjavaobject ud);
 
 jobject newLuaThread(JNIEnv *env, lua_State *L, int idx);
 
@@ -107,5 +117,66 @@ int getEnv(JNIEnv **out);
  * detach
  */
 void detachEnv();
+
+/**
+ * 获取异常信息
+ * @return 0 成功
+ */
+int getThrowableMsg(JNIEnv *, jthrowable, char *, size_t);
+
+/**
+ * 若java有异常，捕获，并在栈上增加异常信息
+ * @return 1: 有异常，0: 无异常
+ */
+int catchJavaException(JNIEnv *, lua_State *, const char *);
+
+/**
+ * 根据名称获取jclass对象
+ * 若有缓存，取缓存，若无，通过反射获取，并缓存
+ */
+jclass getClassByName(JNIEnv *, const char *);
+
+/**
+ * 获取构造函数
+ * 若有缓存，取缓存，若无，通过反射获取，并缓存
+ */
+jmethodID getConstructor(JNIEnv *env, jclass clz);
+
+/**
+ * 根据名称获取方法对象
+ * 若有缓存，取缓存，若无，通过反射获取，并缓存
+ */
+jmethodID getMethodByName(JNIEnv *env, jclass clz, const char *name);
+
+/**
+ * 根据名称获取静态方法对象
+ * 若有缓存，取缓存，若无，通过反射获取，并缓存
+ */
+jmethodID getStaticMethodByName(JNIEnv *env, jclass clz, const char *name);
+
+/**
+ * 遍历clz中所有的方法
+ */
+void traverseAllMethods(jclass clz, map_look_fun fun, void *ud);
+
+#define METHOD_INDEX    0
+#define METHOD_NEWINDEX 1
+#define METHOD_TOSTRING 2
+#define METHOD_EQAULS   3
+#define METHOD_GC       4
+
+static const char *special_methods[] = {
+        "__index", "__newindex", "toString", "__onLuaEq", "__onLuaGc", NULL
+};
+
+/**
+ * 获取特殊函数
+ */
+jmethodID getSpecialMethod(JNIEnv *env, jclass clz, int type);
+
+/**
+ * 获取静态index函数
+ */
+jmethodID getIndexStaticMethod(JNIEnv *env, jclass clz);
 
 #endif //J_INFO_H

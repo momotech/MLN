@@ -5,7 +5,6 @@
   * This source code is licensed under the MIT.
   * For the full copyright and license information,please view the LICENSE file in the root directory of this source tree.
   */
-
 /**
  * Created by Xiong.Fangyu 2019/03/13
  */
@@ -23,17 +22,24 @@
 /**
  * 从GNV表中移除native数据
  */
-static int removeValueFromGNV(JNIEnv *env, lua_State *L, ptrdiff_t key, int ltype);
+static int removeValueFromGNV(lua_State *L, ptrdiff_t key, int ltype);
+/**
+ * 判断GNV表中是否有相应对象
+ */
+static int hasNativeValue(lua_State *L, ptrdiff_t key, int ltype);
 
 jint jni_removeNativeValue(JNIEnv *env, jobject job, jlong L, jlong key, jint lt) {
     if (key) {
         lua_State *LS = (lua_State *) L;
-        lua_lock(LS);
-        int r = removeValueFromGNV(env, LS, (ptrdiff_t) key, lt);
-        lua_unlock(LS);
+        int r = removeValueFromGNV(LS, (ptrdiff_t) key, lt);
         return (jint) r;
     }
     return (jint) -1;
+}
+
+jboolean jni_hasNativeValue(JNIEnv *env, jobject obj, jlong L, jlong key, jint lt) {
+    lua_State *LS = (lua_State *) L;
+    return (jboolean) hasNativeValue(LS, (ptrdiff_t) key, lt);
 }
 
 static void init_map();
@@ -161,7 +167,23 @@ void getValueFromGNV(lua_State *L, ptrdiff_t key, int ltype) {
     lua_unlock(L);
 }
 
-static int removeValueFromGNV(JNIEnv *env, lua_State *L, ptrdiff_t key, int ltype) {
+static int hasNativeValue(lua_State *L, ptrdiff_t key, int ltype) {
+    lua_lock(L);
+    getGlobalNVTableForType(L, ltype);  //-1: table
+    lua_pushnumber(L, key);             //-1: key--table
+    lua_rawget(L, -2);                  //-1: newtable --table
+    if (lua_isnil(L, -1)) {
+        lua_pop(L, 2);
+        lua_unlock(L);
+        return 0;
+    }
+
+    lua_pop(L, 2);
+    lua_unlock(L);
+    return 1;
+}
+
+static int removeValueFromGNV(lua_State *L, ptrdiff_t key, int ltype) {
     if (!key) return -1;
 
     lua_lock(L);

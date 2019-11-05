@@ -6,12 +6,11 @@ android {
     defaultConfig {
         minSdkVersion project.minSdkVersion
         targetSdkVersion project.targetSdkVersion
-        minSdkVersion 21
-        targetSdkVersion 28
         versionCode 1
         versionName "1.0"
-        applicationId "com.immomo.mln"
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+//        ndk {
+//            abiFilters "armeabi-v7a"
+//        }
     }
     signingConfigs {
         release {
@@ -26,7 +25,7 @@ android {
         release {
             minifyEnabled true
             zipAlignEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.release
         }
     }
@@ -34,14 +33,23 @@ android {
         jniLibs.srcDir 'src/main/libs'
         jni.srcDirs = []
     }
+
+    defaultConfig {
+        ndk {
+            abiFilters "armeabi-v7a"
+        }
+    }
 }
 
 dependencies {
-    implementation "androidx.recyclerview:recyclerview:$androidxVersion"
-    implementation "androidx.appcompat:appcompat:$androidxVersion"
-    implementation 'com.github.bumptech.glide:glide:4.6.1'
-    implementation "com.google.protobuf:protobuf-lite:$protobufVersion"
     implementation project(':scan')
+    implementation 'com.alibaba:fastjson:1.1.46.android'
+    implementation 'com.github.bumptech.glide:glide:4.6.1'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation "androidx.recyclerview:recyclerview:$recyclerViewVersion"
+    implementation "androidx.appcompat:appcompat:$androidxVersion"
+    implementation "com.google.protobuf:protobuf-lite:$protobufVersion"
+    testImplementation 'junit:junit:4.12'
 
     if (implementation_debug) {
         implementation project(':mlncore')
@@ -55,8 +63,4 @@ dependencies {
         releaseImplementation "com.immomo.luanative:hotreload_empty:$hotreloadVersion"
         annotationProcessor "com.immomo.mls:processor:$processorVersion"
     }
-
-    testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'androidx.test:runner:1.2.0'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 }

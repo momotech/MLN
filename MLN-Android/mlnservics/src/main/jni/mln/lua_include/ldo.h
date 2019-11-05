@@ -1,10 +1,3 @@
-/**
-  * Created by MomoLuaNative.
-  * Copyright (c) 2019, Momo Group. All rights reserved.
-  *
-  * This source code is licensed under the MIT.
-  * For the full copyright and license information,please view the LICENSE file in the root directory of this source tree.
-  */
 /*
 ** $Id: ldo.h,v 2.20.1.1 2013/04/12 18:48:47 roberto Exp $
 ** Stack and Call structure of Lua
@@ -50,3 +43,4 @@ LUAI_FUNC l_noret luaD_throw (lua_State *L, int errcode);
 LUAI_FUNC int luaD_rawrunprotected (lua_State *L, Pfunc f, void *ud);
 
 #endif
+

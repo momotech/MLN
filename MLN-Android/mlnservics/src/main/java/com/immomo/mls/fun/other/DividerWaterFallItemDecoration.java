@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 
 /**
+ * {@link DividerWaterFallItemDecoration}有两端差异，使用{@link WaterFallItemDecoration}解决差异
  * Created by XiongFangyu on 2018/7/19.
  */
 public class DividerWaterFallItemDecoration extends RecyclerView.ItemDecoration {

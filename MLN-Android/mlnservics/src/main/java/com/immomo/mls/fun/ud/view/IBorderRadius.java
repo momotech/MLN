@@ -32,11 +32,10 @@ public interface IBorderRadius extends RectCorner{
 
     void setStrokeWidth(float width);
     void setStrokeColor(int color);
-    void setCornerRadius(float radius);
+    void setCornerRadius(float radius);//用于cornerRadius
     void setRadius(float topLeft, float topRight, float bottomLeft, float bottomRight);
-    void setRadius(@Direction int direction, float radius);
-
-    void setUDView(UDView udView);
+    void setRadius(@Direction int direction, float radius);//用于setCornerRadiusWithDirection
+    void setMaskRadius(@Direction int direction, float radius);//用于addCornerMask
 
     float getStrokeWidth();
     int getStrokeColor();

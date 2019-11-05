@@ -333,14 +333,14 @@ public abstract class LuaValue {
      * @see Globals#destroy()
      * @see #isDestroyed()
      */
-    public synchronized void destroy() {
+    public void destroy() {
 
     }
 
     /**
      * 判断当前类型是否可用
      */
-    public synchronized boolean isDestroyed() {
+    public boolean isDestroyed() {
         return destroyed;
     }
 

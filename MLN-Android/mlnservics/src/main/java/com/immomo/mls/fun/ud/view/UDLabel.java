@@ -29,14 +29,14 @@ import com.immomo.mls.fun.ud.UDColor;
 import com.immomo.mls.fun.ud.UDStyleString;
 import com.immomo.mls.fun.ui.LuaLabel;
 import com.immomo.mls.util.DimenUtil;
+import com.immomo.mls.util.LogUtil;
 import com.immomo.mls.utils.ErrorUtils;
 
+import org.luaj.vm2.LuaFunction;
 import org.luaj.vm2.LuaNumber;
 import org.luaj.vm2.LuaString;
-import org.luaj.vm2.LuaFunction;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.utils.LuaApiUsed;
-
 
 import java.util.List;
 
@@ -108,7 +108,12 @@ public class UDLabel<U extends TextView> extends UDView<U> {
         if (styleString != null)
             styleString.destroy();
         styleString = null;
-        getView().setText(text);
+
+        try {
+            getView().setText(text);
+        } catch (Exception e) {
+            LogUtil.w("Label text()  bridge   Exception ", e);
+        }
     }
 
     @LuaApiUsed
@@ -291,12 +296,18 @@ public class UDLabel<U extends TextView> extends UDView<U> {
         return null;
     }
 
+    @LuaApiUsed
+    public LuaValue[] notClip(LuaValue[] p) {
+        return null;
+    }
+
     // 设置为 false  可以修复文字内容偏下问题 安卓私有方法
     @LuaApiUsed
     public LuaValue[] a_setIncludeFontPadding(LuaValue[] values) {
         getView().setIncludeFontPadding(values[0].toBoolean());
         return null;
     }
+
     @LuaApiUsed
     public LuaValue[] addTapTexts(LuaValue[] vars) {
         UDArray targetTextsArray = vars.length > 0 ? (UDArray) vars[0] : null;

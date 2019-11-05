@@ -63,15 +63,25 @@ abstract class NLuaValue extends LuaValue {
      * @see Globals#removeStack(LuaValue)
      */
     public void destroy() {
-        if (destroyed || globals.destroyed)
+        if (notInGlobalTable() || destroyed || globals.isDestroyed())
             return;
         destroyed = globals.removeStack(this);
     }
 
     /**
+     * 检查GNV表中是否有相应对象
+     * 必须保证 {@link #globals} 没有销毁
+     * 且 {@link #nativeGlobalKey} 大于0
+     */
+    boolean checkStateByNative() {
+        destroyed = !LuaCApi._hasNativeValue(globals.L_State, nativeGlobalKey, type());
+        return !destroyed;
+    }
+
+    /**
      * 获取虚拟机信息
      */
-    public Globals getGlobals() {
+    public final Globals getGlobals() {
         return globals;
     }
 
@@ -104,6 +114,10 @@ abstract class NLuaValue extends LuaValue {
 
     @Override
     protected void finalize() throws Throwable {
+        if (this instanceof Globals) {
+            super.finalize();
+            return;
+        }
         try {
             destroy();
         } finally {

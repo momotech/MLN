@@ -31,8 +31,6 @@ public class UDRect extends LuaUserdata {
             "size",
     };
 
-    private UDSize udSize;
-    private UDPoint udPoint;
     private final Rect rect;
 
     public static final ILuaValueGetter<UDRect, Rect> G = new ILuaValueGetter<UDRect, Rect>() {
@@ -130,27 +128,22 @@ public class UDRect extends LuaUserdata {
     @LuaApiUsed
     public LuaValue[] point(LuaValue[] varargs) {
         if (varargs.length == 1) {
-            udPoint = (UDPoint) varargs[0];
+            UDPoint udPoint = (UDPoint) varargs[0];
             rect.setPoint(udPoint.getPoint());
             return null;
         }
-        if (udPoint == null) {
-            udPoint = new UDPoint(getGlobals(), rect.getPoint());
-        }
-        return varargsOf(udPoint);
+        return varargsOf(new UDPoint(getGlobals(), rect.getPoint()));
     }
 
     @LuaApiUsed
     public LuaValue[] size(LuaValue[] varargs) {
         if (varargs.length == 1) {
-            udSize = (UDSize) varargs[0];
+            UDSize udSize = (UDSize) varargs[0];
             rect.setSize(udSize.getSize());
             return null;
         }
 
-        udSize = new UDSize(getGlobals(), rect.getSize());
-
-        return varargsOf(udSize);
+        return varargsOf(new UDSize(getGlobals(), rect.getSize()));
     }
     //</editor-fold>
 

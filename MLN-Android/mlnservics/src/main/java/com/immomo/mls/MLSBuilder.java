@@ -9,8 +9,8 @@ package com.immomo.mls;
 
 import android.os.SystemClock;
 
+import com.immomo.mlncore.MLNCore;
 import com.immomo.mls.adapter.ConsoleLoggerAdapter;
-import com.immomo.mls.adapter.MLSAppForegroundAdapter;
 import com.immomo.mls.adapter.MLSEmptyViewAdapter;
 import com.immomo.mls.adapter.MLSGlobalEventAdapter;
 import com.immomo.mls.adapter.MLSGlobalStateListener;
@@ -19,6 +19,7 @@ import com.immomo.mls.adapter.MLSLoadViewAdapter;
 import com.immomo.mls.adapter.MLSQrCaptureAdapter;
 import com.immomo.mls.adapter.MLSResourceFinderAdapter;
 import com.immomo.mls.adapter.MLSThreadAdapter;
+import com.immomo.mls.adapter.OnRemovedUserdataAdapter;
 import com.immomo.mls.adapter.ScriptReaderCreator;
 import com.immomo.mls.adapter.ToastAdapter;
 import com.immomo.mls.adapter.TypeFaceAdapter;
@@ -137,8 +138,8 @@ public class MLSBuilder {
         return this;
     }
 
-    public MLSBuilder setAppForegroundAdapter(MLSAppForegroundAdapter appForegroundAdapter) {
-        MLSAdapterContainer.setAppForegroundAdapter(appForegroundAdapter);
+    public MLSBuilder setOnRemovedUserdataAdapter(OnRemovedUserdataAdapter onRemovedUserdataAdapter) {
+        MLSAdapterContainer.setOnRemovedUserdataAdapter(onRemovedUserdataAdapter);
         return this;
     }
     //</editor-fold>
@@ -392,6 +393,32 @@ public class MLSBuilder {
      */
     public MLSBuilder setPreGlobals(int n) {
         preGlobalNum = n;
+        return this;
+    }
+
+    /**
+     * 设置userdata 缓存类型
+     * @see com.immomo.mlncore.MLNCore#UserdataCacheType
+     */
+    public MLSBuilder setUserdataCacheType(byte type) {
+        if (MLNCore.UserdataCacheType != MLNCore.TYPE_NONE
+        && MLNCore.UserdataCacheType != MLNCore.TYPE_REMOVE
+        && MLNCore.UserdataCacheType != MLNCore.TYPE_REMOVE_CACHE) {
+            throw new IllegalArgumentException("type is invalid!");
+        }
+        MLNCore.UserdataCacheType = type;
+        return this;
+    }
+
+    /**
+     * 设置容器默认切割模式
+     * @param clipChildren 默认是否切割子视图
+     * @param clipToPadding 默认是否切割到padding
+     */
+    public MLSBuilder setDefaultClipState(boolean clipChildren, boolean clipToPadding, boolean forContainer) {
+        MLSConfigs.defaultClipChildren = clipChildren;
+        MLSConfigs.defaultClipToPadding = clipToPadding;
+        MLSConfigs.defaultClipContainer = forContainer;
         return this;
     }
     //</editor-fold>

@@ -19,6 +19,7 @@
 #include "saes.h"
 #include "llimits.h"
 #include "lfunc.h"
+#include "isolate.h"
 
 extern JavaVM *g_jvm;
 
@@ -187,6 +188,10 @@ extern void openlibs_forlua(lua_State *L, int debug) {
     lua_lock(L);
     L->l_G->gc_callback = NULL;
     luaL_openlibs(L);
+    luaL_getsubtable(L, LUA_REGISTRYINDEX, "_PRELOAD");
+    lua_pushcfunction(L, isolate_open);
+    lua_setfield(L, -2, ISOLATE_LIB_NAME);
+    lua_pop(L, 1);
 
     if (debug) {
         luaopen_socket_core(L);
@@ -359,14 +364,12 @@ jni_invoke(JNIEnv *env, jobject jobj, jlong L, jlong function, jobjectArray para
             errMsg = lua_tostring(LS, -1);
         lua_settop(LS, oldTop);
         throwInvokeError(env, errMsg);
-        lua_gc(LS, LUA_GCSTEP, 2);
         lua_unlock(LS);
         return NULL;
     }
     int returnCount = lua_gettop(LS) - oldTop;
     if (returnCount == 0) {
         lua_settop(LS, oldTop);
-        lua_gc(LS, LUA_GCSTEP, 2);
         // lua_pop(LS, 1);
         lua_unlock(LS);
         return NULL;
@@ -379,7 +382,6 @@ jni_invoke(JNIEnv *env, jobject jobj, jlong L, jlong function, jobjectArray para
         FREE(env, v);
     }
     lua_settop(LS, oldTop);
-    lua_gc(LS, LUA_GCSTEP, 2);
     lua_unlock(LS);
     return r;
 }

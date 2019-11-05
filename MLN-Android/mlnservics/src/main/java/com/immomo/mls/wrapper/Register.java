@@ -18,6 +18,7 @@ import org.luaj.vm2.LuaUserdata;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.utils.LuaApiUsed;
 import org.luaj.vm2.utils.SignatureUtils;
+import org.luaj.vm2.utils.SizeOfUtils;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -188,6 +189,7 @@ public class Register {
         if (UDView.class.isAssignableFrom(holder.clz)) {
             lvUserdataHolder.add(holder);
         } else {
+            SizeOfUtils.sizeof(holder.clz);
             allUserdataHolder.add(holder);
         }
     }

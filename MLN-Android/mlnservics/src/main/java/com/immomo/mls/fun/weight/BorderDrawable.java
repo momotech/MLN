@@ -17,7 +17,6 @@ import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 
 import com.immomo.mls.fun.ud.view.IBorderRadius;
-import com.immomo.mls.fun.ud.view.UDView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -34,19 +33,21 @@ public class BorderDrawable extends Drawable implements IBorderRadius {
     private final Paint borderPathPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 
     protected float borderWidth;
-    protected final float[] radii;
-    protected boolean hasRadii = false;
+    protected final float[] radii, radiiIn;//borderWith内圈;
+    protected boolean hasRadii = false;//统一：addCornerMask模式不处理背景。其余圆角方式处理圆角
+    protected boolean useAddMask = false;
 
     private int width, height;
 
     public BorderDrawable() {
         radii = new float[8];
+        radiiIn = new float[8];
     }
 
     //<editor-fold desc="Drawable">
     @Override
     public void draw(@NonNull Canvas canvas) {
-        drawBorder(canvas);
+//        drawBorder(canvas);
     }
 
     @Override
@@ -75,10 +76,7 @@ public class BorderDrawable extends Drawable implements IBorderRadius {
     //<editor-fold desc="Private">
     private boolean initialPaint() {
         if (borderWidth > 0) {
-            borderPathPaint.setStrokeWidth(borderWidth);
-            borderPathPaint.setStyle(Paint.Style.STROKE);
-            borderPathPaint.setStrokeJoin(Paint.Join.ROUND);
-            borderPathPaint.setStrokeCap(Paint.Cap.ROUND);
+            borderPathPaint.setStyle(Paint.Style.FILL);
             return true;
         }
         return false;
@@ -89,10 +87,21 @@ public class BorderDrawable extends Drawable implements IBorderRadius {
             borderPath.reset();
             return;
         }
-        float borderPathPadding = borderWidth * 1F / 2;
         borderPath.reset();
-        pathRect.set(borderPathPadding, borderPathPadding, w - borderPathPadding, h - borderPathPadding);
+        pathRect.set(0, 0, w, h);
         borderPath.addRoundRect(pathRect, radii, Path.Direction.CW);
+
+        if (borderWidth > w / 2 || borderWidth > h / 2) {
+            return;  //边框大于view宽高，效果异常
+        }
+
+        pathRect.set(borderWidth, borderWidth, w - borderWidth, h - borderWidth);
+
+        radiiIn[0] = radiiIn[1] = radii[0] - borderWidth > 0 ? radii[0] - borderWidth : 0;
+        radiiIn[2] = radiiIn[3] = radii[2] - borderWidth > 0 ? radii[2] - borderWidth : 0;
+        radiiIn[4] = radiiIn[5] = radii[4] - borderWidth > 0 ? radii[4] - borderWidth : 0;
+        radiiIn[6] = radiiIn[7] = radii[6] - borderWidth > 0 ? radii[6] - borderWidth : 0;
+        borderPath.addRoundRect(pathRect, radiiIn, Path.Direction.CCW);
     }
     //</editor-fold>
 
@@ -102,7 +111,7 @@ public class BorderDrawable extends Drawable implements IBorderRadius {
     public void setStrokeWidth(float strokeWidth) {
         borderWidth = strokeWidth;
         initialPaint();
-        updatePath(this.width,height);
+        updatePath(this.width, height);
         invalidateSelf();
     }
 
@@ -131,14 +140,23 @@ public class BorderDrawable extends Drawable implements IBorderRadius {
 
     @Override
     public void setRadius(@Direction int direction, float radius) {
-        if (direction == 0)
-            return;
         hasRadii = radius != 0;
-        if ((direction & D_ALL_CORNERS) == D_ALL_CORNERS) {
+        radius(direction, radius);
+    }
+
+    @Override
+    public void setMaskRadius(int direction, float radius) {
+        hasRadii = false;
+        radius(direction, radius);
+    }
+
+    private void radius(@Direction int direction, float radius) {
+        if ((direction & D_ALL_CORNERS) == D_ALL_CORNERS || direction == 0) {//统一direction == 0，为ALL_CORNERS
             radii[0] = radii[1] = radii[2] = radii[3] = radii[6] = radii[7] = radii[4] = radii[5] = radius;
         } else {
+//            radii[0] = radii[1] = radii[2] = radii[3] = radii[6] = radii[7] = radii[4] = radii[5] = 0;
             if ((direction & D_LEFT_TOP) == D_LEFT_TOP) {
-                 radii[0] = radii[1] = radius;
+                radii[0] = radii[1] = radius;
             }
             if ((direction & D_RIGHT_TOP) == D_RIGHT_TOP) {
                 radii[2] = radii[3] = radius;
@@ -153,11 +171,6 @@ public class BorderDrawable extends Drawable implements IBorderRadius {
         if (width != 0 && height != 0)
             updatePath(width, height);
         invalidateSelf();
-    }
-
-    @Override
-    public void setUDView(UDView udView) {
-
     }
 
     @Override

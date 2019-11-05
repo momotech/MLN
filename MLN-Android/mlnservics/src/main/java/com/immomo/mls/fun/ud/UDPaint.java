@@ -61,6 +61,7 @@ public class UDPaint extends LuaUserdata {
 
     private void init() {
         paint.setStyle(Paint.Style.STROKE);
+        paint.setStrokeWidth(DimenUtil.dpiToPx(1));
     }
 
     //<editor-fold desc="api">

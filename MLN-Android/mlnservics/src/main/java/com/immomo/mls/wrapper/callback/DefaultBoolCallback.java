@@ -36,16 +36,20 @@ public class DefaultBoolCallback implements IBoolCallback {
     };
 
     @Override
-    public boolean callback(Object... params) {
+    public boolean callback(Object... params) throws IllegalStateException {
         Utils.check(luaFunction);
         LuaValue[] r = Utils.invoke(luaFunction, params);
+        if (r.length == 0)
+            throw new IllegalStateException(luaFunction.getInvokeError());
         return r[0].toBoolean();
     }
 
     @Override
-    public boolean callbackAndDestroy(Object... params) {
+    public boolean callbackAndDestroy(Object... params) throws IllegalStateException {
         Utils.check(luaFunction);
         LuaValue[] r = Utils.invoke(luaFunction, params);
+        if (r.length == 0)
+            throw new IllegalStateException(luaFunction.getInvokeError());
         luaFunction.destroy();
         luaFunction = null;
         return r[0].toBoolean();

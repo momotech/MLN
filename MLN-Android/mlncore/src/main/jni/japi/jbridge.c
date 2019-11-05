@@ -16,13 +16,14 @@
 
 #define S_DEFAULT_SIG "(J[" LUAVALUE_CLASS ")[" LUAVALUE_CLASS
 
-static void pushStaticClosure(lua_State *L, jclass clz, jmethodID m, int pc);
+static void pushStaticClosure(lua_State *L, jclass clz, jmethodID m, const char *name, int pc);
 
 static int executeJavaStaticFunction(lua_State *L);
 
 typedef struct context {
     lua_State *L;
     jclass clz;
+    const char *className;
 } context;
 
 /**
@@ -38,7 +39,11 @@ static int traverse_listener(const void *key, const void *value, void *ud) {
     context *c = (context *) ud;
 
     lua_pushstring(c->L, methodName);
-    pushStaticClosure(c->L, c->clz, m, -1);
+    char *name = join3str(c->className, ".", methodName);
+    pushStaticClosure(c->L, c->clz, m, name, -1);
+    if (name) {
+        m_malloc(name, sizeof(char) * (strlen(name) + 1), 0);
+    }
     lua_rawset(c->L, -3);
     return 0;
 }
@@ -47,9 +52,10 @@ void jni_registerStaticClassSimple(JNIEnv *env, jobject jobj, jlong L, jstring j
                                    jstring lpcn) {
     const char *jclassname = GetString(env, jn);
     jclass clz = getClassByName(env, jclassname);
-    if (!clz)
+    if (!clz) {
+        ReleaseChar(env, jn, jclassname);
         return;
-    ReleaseChar(env, jn, jclassname);
+    }
 
     lua_State *LS = (lua_State *) L;
     lua_lock(LS);
@@ -65,8 +71,9 @@ void jni_registerStaticClassSimple(JNIEnv *env, jobject jobj, jlong L, jstring j
         ReleaseChar(env, lpcn, parent_name);
     }
 
-    context c = {LS, clz};
+    context c = {LS, clz, jclassname};
     traverseAllMethods(clz, traverse_listener, &c);
+    ReleaseChar(env, jn, jclassname);
 
     const char *lname = GetString(env, ln);
     lua_setglobal(LS, lname);
@@ -77,23 +84,29 @@ void jni_registerStaticClassSimple(JNIEnv *env, jobject jobj, jlong L, jstring j
 /**
  * 对应executeJavaStaticFunction
  */
-static void pushStaticClosure(lua_State *L, jclass clz, jmethodID m, int pc) {
+static void pushStaticClosure(lua_State *L, jclass clz, jmethodID m, const char *name, int pc) {
     UDjclass udclz = (UDjclass) lua_newuserdata(L, sizeof(jclass));
     *udclz = clz;
 
     UDjmethod udm = (UDjmethod) lua_newuserdata(L, sizeof(jmethodID));
     *udm = m;
 
+    if (name) {
+        lua_pushstring(L, name);
+    } else {
+        lua_pushstring(L, "unknown");
+    }
     lua_pushinteger(L, (lua_Integer) pc);
-    lua_pushcclosure(L, executeJavaStaticFunction, 3);
+    lua_pushcclosure(L, executeJavaStaticFunction, 4);
 }
 
 /**
  * 对应pushStaticClosure
  * upvalue顺序为:
  *              1:UDjclass, 
- *              2:UDjmethod, 
- *              3:parmaCount
+ *              2:UDjmethod,
+ *              3:name
+ *              4:parmaCount
  */
 static int executeJavaStaticFunction(lua_State *L) {
     JNIEnv *env;
@@ -108,9 +121,13 @@ static int executeJavaStaticFunction(lua_State *L) {
     idx = lua_upvalueindex(2);
     UDjmethod udmethod = (UDjmethod) lua_touserdata(L, idx);
 
+    /// 第2个参数为Java静态方法
+    idx = lua_upvalueindex(3);
+    const char *name = lua_tostring(L, idx);
+
     /// 第3个参数为方法需要的参数个数
     /// -1表示可变个数
-    int pc = lua_tointeger(L, lua_upvalueindex(3));
+    int pc = lua_tointeger(L, lua_upvalueindex(4));
     if (pc == -1) {
         pc = lua_gettop(L) - 1; ///去掉栈底的table
     }
@@ -126,7 +143,7 @@ static int executeJavaStaticFunction(lua_State *L) {
     jobjectArray result = (jobjectArray) (*env)->CallStaticObjectMethod(env, getuserdata(udclz),
                                                                         getuserdata(udmethod),
                                                                         (jlong) L, p);
-    if (catchJavaException(env, L)) {
+    if (catchJavaException(env, L, name)) {
         FREE(env, p);
         lua_error(L);
         lua_unlock(L);
@@ -314,7 +331,7 @@ static int executeJavaIndexFunction(lua_State *L) {
     jstring jmn = newJString(env, mn);
     jobjectArray result = (jobjectArray) (*env)->CallStaticObjectMethod(env, clz, method, (jlong) L,
                                                                         jmn, p);
-    if (catchJavaException(env, L)) {
+    if (catchJavaException(env, L, mn)) {
         FREE(env, p);
         FREE(env, jmn);
         const char *msg = lua_tostring(L, -1);

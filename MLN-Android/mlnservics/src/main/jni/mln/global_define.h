@@ -19,10 +19,10 @@
 #include "luaconf.h"
 
 #if defined(__arm64__) || defined(__aarch64__)
-/**
- * 64位机器
- */
-#define ENV_64
+    /**
+     * 64位机器
+     */
+    #define ENV_64
 #endif
 
 #define ERROR_FUN "__JAPI_ERROR_FUN"
@@ -31,14 +31,13 @@
 #define JAVA_PATH "org/luaj/vm2/"
 #define LUAVALUE_CLASS "L" JAVA_PATH "LuaValue;"
 
-#define GLOBAL_KEY "LUA_REGISTRYINDEX"
-#define isGlobal(k) (strstr(k, GLOBAL_KEY) != NULL)
+#define GLOBAL_KEY 0xffffffffffffffffL
+#define isGlobal(k) (k == GLOBAL_KEY)
 
 #define METATABLE_PREFIX "__M_"
 #define JAVA_INSTANCE_META METATABLE_PREFIX "__JavaInstance"
 #define JAVA_CLASS_META METATABLE_PREFIX "__JavaClass"
 #define METATABLE_FORMAT METATABLE_PREFIX "%s"
-#define isJavaUserdata(ud) ((ud) && (ud->jobj) && (strstr(ud->name, METATABLE_PREFIX)))
 
 #define DEFAULT_SIG "([" LUAVALUE_CLASS ")[" LUAVALUE_CLASS
 
@@ -65,27 +64,8 @@ typedef jclass *UDjclass;
 typedef jmethodID *UDjmethod;
 #define getuserdata(ud) (*ud)
 
-/// 是否为strong在第0位
-#define JUD_FLAG_STRONG 0
-/// 是否设置了key在第1位
-#define JUD_FLAG_SKEY   1
-
-struct javaUserdata {
-    jobject jobj;
-    int flag;
-    const char *name;
-    int refCount;
-};
-typedef struct javaUserdata javaUserdata;
-typedef javaUserdata *UDjavaobject;
-
-#define setUDFlag(ud, f) ud->flag = (ud->flag | (1 << (f)))
-#define clearUDFlag(ud, f) ud->flag = (ud->flag & ~(1 << (f)))
-#define udHasFlag(ud, f) (ud->flag & (1 << (f)))
-
 /**
  * 将src table中的数据拷贝到desc table中
  */
 void copyTable(lua_State *L, int src, int desc);
-
 #endif // GLOBAL_DEFINE_H

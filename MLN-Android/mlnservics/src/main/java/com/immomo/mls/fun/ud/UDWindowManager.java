@@ -74,7 +74,7 @@ public class UDWindowManager extends JavaUserdata {
     private WindowManager mWindowManager;
 
     private FrameLayout mContentFrameLayout;
-    private UDColor mBackGroundUDColor;
+    private Integer mBackGroundUDColor;
 
     private LuaFunction mDismissFunction;
     private LuaFunction mOnTouchFunction;
@@ -293,7 +293,7 @@ public class UDWindowManager extends JavaUserdata {
 
     @LuaApiUsed
     public LuaValue[] bgColor(LuaValue[] p) {
-        mBackGroundUDColor = (UDColor) p[0];
+        mBackGroundUDColor = ((UDColor) p[0]).getColor();
         return null;
     }
 
@@ -340,7 +340,7 @@ public class UDWindowManager extends JavaUserdata {
         lp.height = (int) this.height;
 
         if (mBackGroundUDColor != null) {
-            mContentFrameLayout.setBackgroundColor(mBackGroundUDColor.getColor());
+            mContentFrameLayout.setBackgroundColor(mBackGroundUDColor);
         }
 
         if (mAlpha >= 0 && mAlpha <= 1)

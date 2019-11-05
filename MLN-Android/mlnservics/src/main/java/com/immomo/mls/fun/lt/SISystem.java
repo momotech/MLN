@@ -11,8 +11,11 @@ import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.database.ContentObserver;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Handler;
+import android.os.Looper;
 import android.provider.Settings;
 import android.view.Window;
 import android.view.WindowManager;
@@ -20,6 +23,7 @@ import android.view.WindowManager;
 import com.immomo.mls.Constants;
 import com.immomo.mls.LuaViewManager;
 import com.immomo.mls.MLSConfigs;
+import com.immomo.mls.MLSEngine;
 import com.immomo.mls.annotation.LuaBridge;
 import com.immomo.mls.annotation.LuaClass;
 import com.immomo.mls.fun.constants.NetworkState;
@@ -36,7 +40,10 @@ import org.luaj.vm2.LuaFunction;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import java.lang.ref.WeakReference;
 
 /**
  * Created by XiongFangyu on 2018/8/6.
@@ -49,14 +56,18 @@ public class SISystem implements ConnectionStateChangeBroadcastReceiver.OnConnec
     protected Context context;
     private LuaFunction networkStateCallback;
     private final Object tag;
+    private static final int INVALIDA_BRIGHT_VALUE = -1;
+    private Observer mBrightnessObserver;
 
     public SISystem(Globals globals, LuaValue[] init) {
         this.globals = globals;
         context = ((LuaViewManager) globals.getJavaUserdata()).context;
         tag = new Object();
+        registerContentObserver();
     }
 
     public void __onLuaGc() {
+        unregisterContentObserver(context, mBrightnessObserver);
         MainThreadExecutor.cancelAllRunnable(getTag());
         NetworkUtil.unregisterConnectionChangeListener(getContext(), this);
         globals = null;
@@ -141,6 +152,7 @@ public class SISystem implements ConnectionStateChangeBroadcastReceiver.OnConnec
                 (int) DimenUtil.pxToDpi(AndroidUtil.getScreenHeight(getContext())));
     }
 
+    @Deprecated
     @LuaBridge
     public int navBarHeight() {
         if (getContext() != null) {
@@ -149,6 +161,7 @@ public class SISystem implements ConnectionStateChangeBroadcastReceiver.OnConnec
         return 0;
     }
 
+    @Deprecated
     @LuaBridge
     public int stateBarHeight() {
         if (MLSConfigs.noStateBarHeight)
@@ -159,11 +172,13 @@ public class SISystem implements ConnectionStateChangeBroadcastReceiver.OnConnec
         return 0;
     }
 
+    @Deprecated
     @LuaBridge
     public int homeIndicatorHeight() {
         return 0;
     }
 
+    @Deprecated
     @LuaBridge
     public int tabBarHeight() {
         return 0;
@@ -227,6 +242,7 @@ public class SISystem implements ConnectionStateChangeBroadcastReceiver.OnConnec
         return System.nanoTime();
     }
 
+    @Deprecated
     @LuaBridge
     public void switchFullscreen(boolean full) {
         Context c = getContext();
@@ -283,20 +299,10 @@ public class SISystem implements ConnectionStateChangeBroadcastReceiver.OnConnec
         if (!(context instanceof Activity))
             return;
 
-        Window window = ((Activity) context).getWindow();
-        WindowManager.LayoutParams lp = window.getAttributes();
+        brightness = setWindowBright(brightness);
 
-        if (lp == null)
+        if (brightness == INVALIDA_BRIGHT_VALUE)
             return;
-
-        if (brightness <= 1)
-            brightness = 1;
-
-        if (brightness >= 255)
-            brightness = 255;
-
-        lp.screenBrightness = brightness / 255f;
-        window.setAttributes(lp);
 
         if (saveBrightness != null && saveBrightness)
             saveBrightness(context, brightness);
@@ -305,12 +311,7 @@ public class SISystem implements ConnectionStateChangeBroadcastReceiver.OnConnec
     @LuaBridge
     public int getBright() {
 
-        int systemBrightness = 0;
-        try {
-            systemBrightness = Settings.System.getInt(getContext().getContentResolver(), Settings.System.SCREEN_BRIGHTNESS);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        int systemBrightness = getSystemBright();
 
         Context context = getContext();
         if (!(context instanceof Activity))
@@ -365,5 +366,75 @@ public class SISystem implements ConnectionStateChangeBroadcastReceiver.OnConnec
         context.startActivity(intent);
     }
 
+    private int setWindowBright(int brightness) {
+        if (context == null)
+            return INVALIDA_BRIGHT_VALUE;
 
+        Window window = ((Activity) context).getWindow();
+        WindowManager.LayoutParams lp = window.getAttributes();
+
+        if (lp == null)
+            return INVALIDA_BRIGHT_VALUE;
+
+        if (brightness <= 1)
+            brightness = 1;
+
+        if (brightness >= 255)
+            brightness = 255;
+
+        lp.screenBrightness = brightness / 255f;
+        window.setAttributes(lp);
+        return brightness;
+    }
+
+    private static class Observer extends ContentObserver {
+        private WeakReference<SISystem> sysRef;
+
+        public Observer(SISystem obj) {
+            super(new Handler(Looper.getMainLooper()));
+            sysRef = new WeakReference<>(obj);
+        }
+
+        @Override
+        public void onChange(boolean selfChange) {
+            SISystem obj = sysRef != null ? sysRef.get() : null;
+            if (obj == null) {
+                unregisterContentObserver(null, this);
+                return;
+            }
+            int systemBrightness = obj.getSystemBright();
+            obj.setWindowBright(systemBrightness);
+        }
+    }
+
+    private int getSystemBright() {
+        int systemBrightness = 0;
+        try {
+            systemBrightness = Settings.System.getInt(getContext().getContentResolver(), Settings.System.SCREEN_BRIGHTNESS);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return systemBrightness;
+    }
+
+    private void registerContentObserver() {
+        if (context == null)
+            return;
+
+        if (mBrightnessObserver == null) {
+            mBrightnessObserver = new Observer(this);
+            context.getContentResolver().registerContentObserver(
+                    Settings.System.getUriFor(Settings.System.SCREEN_BRIGHTNESS), true,
+                    mBrightnessObserver);
+        }
+    }
+
+    private static void unregisterContentObserver(Context context, ContentObserver observer) {
+        if (observer == null)
+            return;
+        if (context == null) {
+            context = MLSEngine.getContext();
+        }
+        context.getContentResolver().unregisterContentObserver(observer);
+    }
 }

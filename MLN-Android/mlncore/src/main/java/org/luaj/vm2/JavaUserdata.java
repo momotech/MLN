@@ -18,7 +18,7 @@ import org.luaj.vm2.utils.LuaApiUsed;
  * 若想让lua虚拟机管理userdata内存，可不继承此类或继承{@link JavaUserdata}
  */
 @LuaApiUsed
-public class JavaUserdata extends LuaUserdata {
+public class JavaUserdata<T> extends LuaUserdata<T> {
     /**
      * 必须有传入long和LuaValue[]的构造方法，且不可混淆
      * 由native创建
@@ -40,7 +40,7 @@ public class JavaUserdata extends LuaUserdata {
      * @param jud       java中保存的对象，可为空
      * @see #javaUserdata
      */
-    public JavaUserdata(Globals g, Object jud) {
+    public JavaUserdata(Globals g, T jud) {
         super(g, jud);
     }
 }

@@ -18,15 +18,15 @@
 
 #include <stdio.h>
 
-typedef void *(*list_alloc)(void *, size_t, size_t);
+typedef void* (*list_alloc) (void *, size_t, size_t);
 
-typedef int (*list_eqauls)(const void *, const void *);
+typedef int (*list_eqauls) (const void *, const void *);
 
 struct list_;
 
 typedef struct list_ List;
 
-List *list_new(list_alloc f, int init, int autoRelist);
+List * list_new(list_alloc f, int init, int autoRelist);
 
 int list_ero(List *);
 
@@ -40,11 +40,11 @@ void list_add(List *, void *);
 
 void list_relist(List *);
 
-void *list_get(List *, size_t);
+void * list_get(List *, size_t);
 
 size_t list_index(List *, void *);
 
-void *list_remove(List *, size_t);
+void * list_remove(List *, size_t);
 
 size_t list_size(List *);
 

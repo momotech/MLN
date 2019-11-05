@@ -10,6 +10,7 @@ package com.immomo.mls.fun.ud.view;
 import android.graphics.drawable.Drawable;
 
 import com.immomo.mls.fun.constants.GradientType;
+import com.immomo.mls.fun.other.Size;
 
 /**
  * Created by XiongFangyu on 2018/8/1.
@@ -17,6 +18,7 @@ import com.immomo.mls.fun.constants.GradientType;
 public interface IBorderRadiusView extends IBorderRadius, IRippleView, GradientType {
 
     void setBgColor(int color);
+
     void setBgDrawable(Drawable drawable);
 
     void setDrawRadiusBackground(boolean draw);
@@ -26,4 +28,6 @@ public interface IBorderRadiusView extends IBorderRadius, IRippleView, GradientT
     void setGradientColor(int start, int end, int type);
 
     void setRadiusColor(int color);
+
+    void setAddShadow(int color, Size offset, float shadowRadius, float alpha);
 }

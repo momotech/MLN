@@ -9,6 +9,8 @@ package org.luaj.vm2;
 
 import androidx.annotation.NonNull;
 
+import com.immomo.mlncore.MLNCore;
+
 import org.luaj.vm2.utils.DisposableIterator;
 import org.luaj.vm2.utils.LuaApiUsed;
 
@@ -202,7 +204,7 @@ public class LuaTable extends NLuaValue implements Iterable {
      * @param from 从下标为from开始
      * @param to   下标为to结束，包含
      */
-    public void clearArray(int from, int to) {
+    public final void clearArray(int from, int to) {
         if (!checkValid())
             return;
         LuaCApi._clearTableArray(globals.L_State, nativeGlobalKey, from, to);
@@ -212,7 +214,7 @@ public class LuaTable extends NLuaValue implements Iterable {
      * 直接使用{@link #newEntry()}获取所有key value，并获取长度
      */
     @Deprecated
-    public int size() {
+    public final int size() {
         return newEntry().length;
     }
 
@@ -222,7 +224,7 @@ public class LuaTable extends NLuaValue implements Iterable {
      * 长度不一定是table的真实长度
      * @return 长度
      */
-    public int getn() {
+    public final int getn() {
         return LuaCApi._getTableSize(globals.L_State, nativeGlobalKey);
     }
     //<editor-fold desc="Traverse">
@@ -232,7 +234,7 @@ public class LuaTable extends NLuaValue implements Iterable {
      * 不会返回Null
      * @see Entrys
      */
-    public Entrys newEntry() {
+    public final Entrys newEntry() {
         if (!checkValid())
             return EMPTY_ENTRYS;
         return (Entrys) LuaCApi._getTableEntry(globals.L_State, nativeGlobalKey);
@@ -257,7 +259,7 @@ public class LuaTable extends NLuaValue implements Iterable {
      *
      * @return 若当前表不存在，则返回false
      */
-    public boolean startTraverseTable() {
+    public final boolean startTraverseTable() {
         if (!checkValid())
             return false;
         return LuaCApi._startTraverseTable(globals.L_State, nativeGlobalKey);
@@ -269,7 +271,7 @@ public class LuaTable extends NLuaValue implements Iterable {
      *
      * @return 如果不存在，返回null
      */
-    public LuaValue[] next() {
+    public final LuaValue[] next() {
         return LuaCApi._nextEntry(globals.L_State, this == globals);
     }
 
@@ -277,7 +279,7 @@ public class LuaTable extends NLuaValue implements Iterable {
      * 结束遍历此table
      * 若{@link #startTraverseTable}返回true，此方法必须调用
      */
-    public void endTraverseTable() {
+    public final void endTraverseTable() {
         LuaCApi._endTraverseTable(globals.L_State);
     }
 
@@ -289,7 +291,7 @@ public class LuaTable extends NLuaValue implements Iterable {
      * @see DisposableIterator
      */
     @Override
-    public DisposableIterator<KV> iterator() {
+    public final DisposableIterator<KV> iterator() {
         if (!startTraverseTable())
             return null;
         return new DisposableIterator<KV>() {
@@ -416,9 +418,10 @@ public class LuaTable extends NLuaValue implements Iterable {
 
     private boolean checkValid() {
         globals.checkMainThread();
-        if (!destroyed && !globals.isDestroyed() && !notInGlobalTable())
+        if (!destroyed && !globals.isDestroyed() && !notInGlobalTable() && checkStateByNative())
             return true;
-        throwNotValid();
+        if (MLNCore.DEBUG)
+            throwNotValid();
         return false;
     }
 
@@ -429,18 +432,18 @@ public class LuaTable extends NLuaValue implements Iterable {
     }
 
     @Override
-    public int type() {
+    public final int type() {
         return LUA_TTABLE;
     }
 
     @Override
-    public LuaTable toLuaTable() {
+    public final LuaTable toLuaTable() {
         return this;
     }
 
     @Override
     public String toJavaString() {
-        if (destroyed)
+        if (destroyed || globals.isDestroyed() || !checkStateByNative())
             return "cannot find table by key: " + nativeGlobalKey;
         return newEntry().toString();
     }

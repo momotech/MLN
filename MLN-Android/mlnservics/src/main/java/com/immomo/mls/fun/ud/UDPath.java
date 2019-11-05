@@ -70,13 +70,13 @@ public class UDPath extends LuaUserdata {
 
     @LuaApiUsed
     LuaValue[] quadTo(LuaValue[] v) {
-        path.quadTo(DimenUtil.dpiToPx(v[0].toFloat()), DimenUtil.dpiToPx(v[1].toFloat()), DimenUtil.dpiToPx(v[2].toFloat()), DimenUtil.dpiToPx(v[3].toFloat()));
+        path.quadTo(DimenUtil.dpiToPx(v[2].toFloat()), DimenUtil.dpiToPx(v[3].toFloat()), DimenUtil.dpiToPx(v[0].toFloat()), DimenUtil.dpiToPx(v[1].toFloat()));
         return null;
     }
 
     @LuaApiUsed
     LuaValue[] cubicTo(LuaValue[] v) {
-        path.cubicTo(DimenUtil.dpiToPx(v[0].toFloat()), DimenUtil.dpiToPx(v[1].toFloat()), DimenUtil.dpiToPx(v[2].toFloat()), DimenUtil.dpiToPx(v[3].toFloat()), DimenUtil.dpiToPx(v[4].toFloat()), DimenUtil.dpiToPx(v[5].toFloat()));
+        path.cubicTo(DimenUtil.dpiToPx(v[2].toFloat()), DimenUtil.dpiToPx(v[3].toFloat()), DimenUtil.dpiToPx(v[4].toFloat()), DimenUtil.dpiToPx(v[5].toFloat()), DimenUtil.dpiToPx(v[0].toFloat()), DimenUtil.dpiToPx(v[1].toFloat()));
         return null;
     }
 

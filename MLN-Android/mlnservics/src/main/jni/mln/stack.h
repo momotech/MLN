@@ -28,7 +28,7 @@ typedef struct stack_symbol {
  * get_method_name: 是否获取函数名称，若为1，则out->method_name[n]不为空，且使用malloc申请内存；反之为空
  * return 1: 获取成功; 0: 获取失败
  */
-int get_call_stack(stack_symbol *out, int ignore, int get_method_name);
+int get_call_stack(stack_symbol * out, int ignore, int get_method_name);
 #endif  //MEM_INFO
 
 #endif

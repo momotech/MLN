@@ -16,11 +16,14 @@
 
 package com.google.zxing.client.android;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -62,6 +65,8 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.EnumSet;
 import java.util.Map;
+
+import androidx.core.app.ActivityCompat;
 
 
 /**
@@ -700,22 +705,13 @@ public final class CaptureActivity extends Activity implements
             decodeOrStoreSavedBitmap(null, null);
         } catch (IOException ioe) {
             Log.w(TAG, ioe);
-            displayFrameworkBugMessageAndExit();
+            verifyStoragePermissions(CaptureActivity.class);
         } catch (RuntimeException e) {
             // Barcode Scanner has seen crashes in the wild of this variety:
             // java.?lang.?RuntimeException: Fail to connect to camera service
             Log.w(TAG, "Unexpected error initializing camera", e);
-            displayFrameworkBugMessageAndExit();
+            verifyStoragePermissions(CaptureActivity.class);
         }
-    }
-
-    private void displayFrameworkBugMessageAndExit() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-//        builder.setTitle(getString(R.string.app_name));
-        builder.setMessage(getString(R.string.msg_camera_framework_bug));
-        builder.setPositiveButton(R.string.button_ok, new FinishListener(this));
-        builder.setOnCancelListener(new FinishListener(this));
-        builder.show();
     }
 
     public void restartPreviewAfterDelay(long delayMS) {
@@ -734,5 +730,75 @@ public final class CaptureActivity extends Activity implements
 
     public void drawViewfinder() {
         viewfinderView.drawViewfinder();
+    }
+
+    // zx add for camera permission 20190806
+    private static final int REQUEST_CAMERA = 1;
+    private boolean hasrefuse; //判断是否拒绝过申请相机权限
+    private static String[] PERMISSIONS_CAMERA = {
+            "android.permission.CAMERA"};
+    public void verifyStoragePermissions(Class<CaptureActivity> activity) {
+        try {
+            //检测是否有相机的权限
+            int permission = ActivityCompat.checkSelfPermission(CaptureActivity.this,
+                    "android.permission.CAMERA");
+            if (permission != PackageManager.PERMISSION_GRANTED) {
+                hasrefuse = ActivityCompat.shouldShowRequestPermissionRationale(CaptureActivity.this, Manifest.permission.CAMERA);
+                if(hasrefuse) {
+                    //当拒绝了授权后，为提升用户体验，可以以弹窗的方式引导用户到设置中去进行设置
+                    permissionDialog();
+                } else {
+                    // 没有相机的权限，去申请相机的权限，会弹出对话框
+                    ActivityCompat.requestPermissions(CaptureActivity.this, PERMISSIONS_CAMERA,REQUEST_CAMERA);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    // 相机权限获取状态监听
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults){
+        switch(requestCode){
+            case REQUEST_CAMERA:
+            {
+                if (grantResults.length > 0 && (grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+
+                } else {
+                    permissionDialog();
+                }
+            }
+            break;
+            default:
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+    }
+
+    // 创建弹窗，引导用户开启相机权限
+    private void permissionDialog() {
+        new AlertDialog.Builder(CaptureActivity.this)
+                .setMessage("需要开启相机权限才能使用此功能")
+                .setPositiveButton("设置", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        //引导用户到设置中去进行设置
+                        Intent intent = new Intent();
+                        intent.setAction("android.settings.APPLICATION_DETAILS_SETTINGS");
+                        intent.setData(Uri.fromParts("package", getPackageName(), null));
+                        startActivity(intent);
+
+                        finish();
+
+                    }
+                })
+                .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        finish();
+                    }
+                })
+                .create()
+                .show();
     }
 }

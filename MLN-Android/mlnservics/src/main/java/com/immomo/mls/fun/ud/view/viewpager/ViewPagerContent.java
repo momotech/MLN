@@ -9,8 +9,10 @@ package com.immomo.mls.fun.ud.view.viewpager;
 
 import android.content.Context;
 
+import com.immomo.mls.fun.ud.view.UDViewGroup;
 import com.immomo.mls.fun.ui.LuaViewGroup;
 
+import org.luaj.vm2.Globals;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
 
@@ -19,12 +21,8 @@ import org.luaj.vm2.LuaValue;
  * Created by XiongFangyu on 2018/9/27.
  */
 public class ViewPagerContent extends LuaViewGroup {
-
-    UDViewPagerCell mUDViewPagerCell;
-
-    public ViewPagerContent(Context context, UDViewPagerCell userdata, LuaValue[] init) {
+    public ViewPagerContent(Context context, UDViewGroup userdata, LuaValue[] init) {
         super(context, userdata);
-        mUDViewPagerCell = userdata;
     }
 
     private LuaTable cell;
@@ -35,10 +33,6 @@ public class ViewPagerContent extends LuaViewGroup {
 
     public void setCell(LuaTable cell) {
         this.cell = cell;
-    }
-
-    public UDViewPagerCell getUDViewPagerCell() {
-        return mUDViewPagerCell;
     }
 
     public boolean isInit() {

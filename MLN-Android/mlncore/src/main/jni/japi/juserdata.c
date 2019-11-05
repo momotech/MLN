@@ -32,6 +32,7 @@
 #define clearException(env) if ((*env)->ExceptionCheck(env)) (*env)->ExceptionClear(env);
 
 extern jclass JavaUserdata;
+extern jmethodID LuaUserdata_memoryCast;
 extern jclass StringClass;
 
 /**
@@ -263,7 +264,6 @@ jobject jni_createUserdataAndSet(JNIEnv *env, jobject jobj, jlong L, jstring key
         ReleaseChar(env, key, kstr);
         ReleaseChar(env, lcn, name);
         lua_pop(LS, 1);
-        lua_gc(LS, LUA_GCSTEP, 2);
         lua_unlock(LS);
         return NULL;
     }
@@ -279,7 +279,6 @@ jobject jni_createUserdataAndSet(JNIEnv *env, jobject jobj, jlong L, jstring key
     lua_setglobal(LS, kstr);
     ReleaseChar(env, key, kstr);
     ReleaseChar(env, lcn, name);
-    lua_gc(LS, LUA_GCSTEP, 2);
     lua_unlock(LS);
     return getUserdata(env, LS, ud);
 }
@@ -360,14 +359,24 @@ static int new_java_obj(JNIEnv *env, lua_State *L, jclass clz, jmethodID con, co
     int pc = lua_gettop(L) - offset;
     jobjectArray p = newLuaValueArrayFromStack(env, L, pc, 1);
     jobject javaObj = (*env)->NewObject(env, clz, con, (jlong) L, p);
-    if (catchJavaException(env, L)) {
+    char *info = joinstr(metaname + strlen(METATABLE_PREFIX), "<init>");
+    if (catchJavaException(env, L, info)) {
+        if (info)
+            m_malloc(info, sizeof(char) * (1 + strlen(info)), 0);
         FREE(env, p);
         FREE(env, javaObj);
         return 1;
     }
+    if (info)
+        m_malloc(info, sizeof(char) * (1 + strlen(info)), 0);
     FREE(env, p);
 
+    jlong mem = (*env)->CallLongMethod(env, javaObj, LuaUserdata_memoryCast);
+    clearException(env);
+    mem = mem < 0 ? 0 : (mem >> 10);
+
     UDjavaobject ud = (UDjavaobject) lua_newuserdata(L, sizeof(javaUserdata));
+    lua_gc(L, LUA_GCSTEP, (int) mem);
 #if defined(JAVA_CACHE_UD)
     ud->id = getUserdataId(env, javaObj);
 #else
@@ -767,7 +776,10 @@ executeJavaIndexOrNewindexFunction(JNIEnv *env, lua_State *L, jmethodID m, const
 #if defined(JAVA_CACHE_UD)
     FREE(env, jobj);
 #endif
-    if (catchJavaException(env, L)) {
+    char *info = join3str(udjobj->name + strlen(METATABLE_PREFIX), ".", mn);
+    if (catchJavaException(env, L, info)) {
+        if (info)
+            m_malloc(info, sizeof(char) * (strlen(info) + 1), 0);
         FREE(env, p);
         FREE(env, jmn);
         const char *msg = lua_tostring(L, -1);
@@ -776,6 +788,8 @@ executeJavaIndexOrNewindexFunction(JNIEnv *env, lua_State *L, jmethodID m, const
         lua_error(L);
         return 1;
     }
+    if (info)
+        m_malloc(info, sizeof(char) * (strlen(info) + 1), 0);
     FREE(env, p);
     FREE(env, jmn);
     if (!result) {
@@ -1004,9 +1018,9 @@ static int gc_userdata(lua_State *L) {
     jobject jobj = getUserdata(env, L, ud);
     if (!jobj) {
         if (need) detachEnv();
-        lua_pushfstring(L, "get java object from java failed, id: %d", ud->id);
-        lua_error(L);
-        return 1;
+//        lua_pushfstring(L, "get java object from java failed, id: %d", ud->id);
+//        lua_error(L);
+        return 0;
     }
 #else
     jobject jobj = ud->jobj;
@@ -1088,7 +1102,10 @@ static int executeJavaUDFunction(lua_State *L) {
 
     jobjectArray p = newLuaValueArrayFromStack(env, L, pc, 2);
     jobjectArray r = (*env)->CallObjectMethod(env, jobj, m, p);
-    if (catchJavaException(env, L)) {
+    char *info = join3str(ud->name + strlen(METATABLE_PREFIX), ".", n);
+    if (catchJavaException(env, L, info)) {
+        if (info)
+            m_malloc(info, sizeof(char) * (strlen(info) + 1), 0);
 #if defined(JAVA_CACHE_UD)
         FREE(env, jobj);
 #endif
@@ -1099,6 +1116,8 @@ static int executeJavaUDFunction(lua_State *L) {
         lua_error(L);
         return 1;
     }
+    if (info)
+        m_malloc(info, sizeof(char) * (strlen(info) + 1), 0);
 #if defined(JAVA_CACHE_UD)
     FREE(env, jobj);
 #endif

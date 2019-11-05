@@ -22,6 +22,6 @@ android {
 }
 
 dependencies {
-    implementation "androidx.appcompat:appcompat:$androidxVersion"
-    implementation "com.google.android.material:material:$androidxVersion"
+    compileOnly "androidx.appcompat:appcompat:$androidxVersion"
+    implementation "com.google.android.material:material:1.1.0-beta01"
 }

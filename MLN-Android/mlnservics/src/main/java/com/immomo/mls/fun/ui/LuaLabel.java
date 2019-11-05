@@ -11,11 +11,13 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.text.TextUtils;
+import android.view.MotionEvent;
 
 import com.immomo.mls.base.ud.lv.ILView;
 import com.immomo.mls.fun.constants.TextAlign;
 import com.immomo.mls.fun.ud.view.UDLabel;
 import com.immomo.mls.fun.weight.BorderRadiusTextView;
+import com.immomo.mls.fun.weight.ILimitSizeView;
 import com.immomo.mls.util.LogUtil;
 
 import org.luaj.vm2.LuaValue;
@@ -23,7 +25,7 @@ import org.luaj.vm2.LuaValue;
 /**
  * Created by XiongFangyu on 2018/8/1.
  */
-public class LuaLabel<U extends UDLabel> extends BorderRadiusTextView implements ILView<UDLabel> {
+public class LuaLabel<U extends UDLabel> extends BorderRadiusTextView implements ILView<UDLabel>, ILimitSizeView {
 
     private UDLabel udLabel;
     private ViewLifeCycleCallback cycleCallback;
@@ -31,13 +33,13 @@ public class LuaLabel<U extends UDLabel> extends BorderRadiusTextView implements
     public LuaLabel(Context context, U metaTable, LuaValue[] init) {
         super(context);
         this.udLabel = metaTable;
-
         setViewLifeCycleCallback(udLabel);
         setGravity(TextAlign.LEFT);//默认竖直居中
         setSingleLine();
         setTextSize(14);
         setTextColor(Color.BLACK);
         setEllipsize(TextUtils.TruncateAt.END);
+        setIncludeFontPadding(false);
     }
 
 
@@ -90,5 +92,22 @@ public class LuaLabel<U extends UDLabel> extends BorderRadiusTextView implements
     @Override
     public int getBaseline() {
         return -1;
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        return isEnabled() && super.dispatchTouchEvent(ev);
+    }
+
+    @Override
+    public void setMinWidth(int minPixels) {
+        super.setMinWidth(minPixels);
+        setMinimumWidth(minPixels);
+    }
+
+    @Override
+    public void setMinHeight(int minPixels) {
+        super.setMinHeight(minPixels);
+        setMinimumHeight(minPixels);
     }
 }

@@ -123,7 +123,7 @@ static int j_callback(lua_State *L, void *ud) {
     MessageEvent *event = args->event;
     lua_bc_ud_channel *channel = args->channel;
     free(args);
-    if (lua_bc_pushcallback(L, channel)) {
+    if (L && lua_bc_pushcallback(L, channel)) {
         lua_bc_ud_msgevent *ud_msgevent = (lua_bc_ud_msgevent *) lua_newuserdata(L,
                                                                                  sizeof(lua_bc_ud_msgevent));
         ud_msgevent->event = event;
@@ -131,10 +131,11 @@ static int j_callback(lua_State *L, void *ud) {
         lua_bc_setclass(L, LUA_MESSAGEEVENTMTLIBNAME, -1);
         int success = lua_pcall(L, 1, 1, 0);
         if (success != 0) {
-            cout << "lua callback error!" << lua_tostring(L, -1) << endl;
+            std::cout << "lua callback error!" << lua_tostring(L, -1) << std::endl;
         }
+    } else {
+        delete event;
     }
-    delete event;
     return 0;
 }
 }
@@ -142,7 +143,7 @@ static int j_callback(lua_State *L, void *ud) {
 
 static void lua_bc_callback (void * channel, MessageEvent *event_) {
     MessageEvent *event = new MessageEvent();
-    event->setData(event_->getData());
+    event->setStringData(event_->getStringData());
     event->setType(event_->getType());
 #if defined(JAVA_ENV)
     BroadcastChannel *ch = (BroadcastChannel *)channel;
@@ -189,7 +190,7 @@ static void lua_bc_callback (void * channel, MessageEvent *event_) {
 static int lua_bc_new_channel(lua_State *L) {
     const char *name = lua_tostring(L, 1);
     lua_bc_ud_channel *ud = (lua_bc_ud_channel *)lua_newuserdata(L, sizeof(lua_bc_ud_channel));
-    ud->channel = new BroadcastChannel((string)name);
+    ud->channel = new BroadcastChannel(name);
     ud->L = L;
     ud->channel->setExtraData(ud);
     lua_bc_setclass(L, LUA_BROADCASTCHANNEMTLLIBNAME, -1);
@@ -202,7 +203,9 @@ static int lua_bc_channel_gc(lua_State *L) {
     ud->L = NULL;
     ud->channel = NULL;
     lua_bc_removecallback(L, ud);
-    delete channel;
+    if (channel) {
+        delete channel;
+    }
     return 0;
 }
 
@@ -214,13 +217,13 @@ static int lua_bc_channel_tostring(lua_State *L) {
 static int lua_bc_channel_postMessage(lua_State *L) {
     if (lua_gettop(L) == 2) {
         lua_bc_ud_channel *ud = (lua_bc_ud_channel *)lua_touserdata(L, 1);
-        const char *data = lua_tostring(L, 2);
-        ud->channel->postMessage((void *)data);
+        std::string data = lua_tostring(L, 2);
+        ud->channel->postMessage(data);
     } else if(lua_gettop(L) == 3) {
         lua_bc_ud_channel *ud = (lua_bc_ud_channel *)lua_touserdata(L, 1);
-        const char *name = lua_tostring(L, 2);
-        const char *data = lua_tostring(L, 3);
-        ud->channel->postMessage((string)name, (void *)data);
+        std::string name = lua_tostring(L, 2);
+        std::string data = lua_tostring(L, 3);
+        ud->channel->postMessage(name, data);
     }
     return 0;
 }
@@ -272,22 +275,29 @@ static int lua_bc_new_messageEvent(lua_State *L) {
 
 static int lua_bc_messageEvent_gc(lua_State *L) {
     lua_bc_ud_msgevent *ud = (lua_bc_ud_msgevent *)lua_touserdata(L, 1);
+    MessageEvent *msgEvent = ud->event;
     ud->event = NULL;
     ud->L = NULL;
+    if (msgEvent) {
+        delete msgEvent;
+    }
     return 0;
 }
 
 static int lua_bc_messageEvent_tostring(lua_State *L) {
     lua_bc_ud_msgevent *ud = (lua_bc_ud_msgevent *)lua_touserdata(L, 1);
-    const char *data = (char *)ud->event->getData();
-    std::string msg = "<MessageEvent" + to_string((long)ud) + " type:" + ud->event->getType() + ", data:"+ data + " >";
+    std::string data = ud->event->getStringData();
+    if (data.empty()) {
+        data = "null";
+    }
+    std::string msg = "<MessageEvent" + std::to_string((long)ud) + " type:" + ud->event->getType() + ", data:"+ data + " >";
     lua_pushstring(L, msg.c_str());
     return 1;
 }
 
 static int lua_bc_msgevent_settype(lua_State *L) {
     lua_bc_ud_msgevent *ud = (lua_bc_ud_msgevent *)lua_touserdata(L, 1);
-    const char *name = lua_tostring(L, 2);
+    std::string name = lua_tostring(L, 2);
     ud->event->setType(name);
     return 0;
 }
@@ -301,15 +311,18 @@ static int lua_bc_msgevnet_gettype(lua_State *L) {
 
 static int lua_bc_msgevent_setdata(lua_State *L) {
     lua_bc_ud_msgevent *ud = (lua_bc_ud_msgevent *)lua_touserdata(L, 1);
-    const char *name = lua_tostring(L, 2);
-    ud->event->setData((void *)name);
+    std::string name = lua_tostring(L, 2);
+    ud->event->setStringData(name);
     return 0;
 }
 
 static int lua_bc_msgevnet_getdata(lua_State *L) {
     lua_bc_ud_msgevent *ud = (lua_bc_ud_msgevent *)lua_touserdata(L, 1);
-    const char *data = (char *)ud->event->getData();
-    lua_pushstring(L, data);
+    if (ud->event->getStringData().empty()) {
+        lua_pushnil(L);
+    } else {
+        lua_pushstring(L, ud->event->getStringData().c_str());
+    }
     return 1;
 }
 

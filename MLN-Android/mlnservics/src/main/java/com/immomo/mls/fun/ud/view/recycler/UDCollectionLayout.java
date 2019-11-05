@@ -8,6 +8,7 @@
 package com.immomo.mls.fun.ud.view.recycler;
 
 
+import com.immomo.mls.Environment;
 import com.immomo.mls.fun.other.NormalItemDecoration;
 import com.immomo.mls.fun.other.Size;
 import com.immomo.mls.fun.ud.UDSize;
@@ -46,7 +47,11 @@ public class UDCollectionLayout extends UDBaseRecyclerLayout {
     public LuaValue[] itemSize(LuaValue[] values) {
         LuaValue value = values[0];
         if (value != null) {
+            if (itemSize != null) {
+                itemSize.onJavaRecycle();
+            }
             itemSize = (UDSize) value.toUserdata();
+            itemSize.onJavaRef();
             spanCountInit = false;
             return null;
         }
@@ -73,7 +78,7 @@ public class UDCollectionLayout extends UDBaseRecyclerLayout {
     RecyclerView.ItemDecoration getItemDecoration() {
         if (itemDecoration == null) {
             itemDecoration = new NormalItemDecoration(itemSpacing, lineSpacing, orientation, spanCount);
-        } else if (itemDecoration.isSame(itemSpacing, lineSpacing)) {
+        } else if (!itemDecoration.isSame(itemSpacing, lineSpacing)) {
             itemDecoration = new NormalItemDecoration(itemSpacing, lineSpacing, orientation, spanCount);
         }
         return itemDecoration;
@@ -104,8 +109,13 @@ public class UDCollectionLayout extends UDBaseRecyclerLayout {
         } else {
             spanCount = getSpanCountForHeight();
         }
-        if (spanCount <= 0)
-            spanCount = DEFAULT_SPAN_COUNT;
+        if (this.spanCount <= 0){
+            this.spanCount = DEFAULT_SPAN_COUNT;
+            IllegalArgumentException e = new IllegalArgumentException("spanCount must > 0");
+            if (!Environment.hook(e, getGlobals())) {
+                throw e;
+            }
+        }
         spanCountInit = true;
     }
 

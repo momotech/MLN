@@ -47,7 +47,7 @@ public class ScriptLoader {
         try {
             CompileUtils.compile(scriptBundle, globals);
         } catch (ScriptLoadException e) {
-            callbackExecuted(callback, false, e.getMsg());
+            callbackExecuted(callback, Callback.COMPILE_FAILED, e.getMsg());
             return;
         }
         GlobalStateUtils.onScriptCompiled(scriptBundle.getUrl());
@@ -61,24 +61,27 @@ public class ScriptLoader {
             return;
         GlobalStateUtils.onScriptPrepared(scriptBundle.getUrl());
         if (globals.callLoadedData()) {
-            callbackExecuted(callback, true, null);
+            callbackExecuted(callback, Callback.SUCCESS, null);
         } else {
             String em = globals.getErrorMsg();
-            callbackExecuted(callback, false, em);
+            callbackExecuted(callback, Callback.EXE_FAILED, em);
         }
     }
 
-    private static void callbackExecuted(@Nullable Callback callback, boolean success, final String msg) {
+    private static void callbackExecuted(@Nullable Callback callback, int code, final String msg) {
         if (callback != null) {
-            callback.onScriptExecuted(success, msg);
+            callback.onScriptExecuted(code, msg);
         }
     }
 
     public static interface Callback {
+        int SUCCESS = 0;
+        int COMPILE_FAILED = 1;
+        int EXE_FAILED = 2;
 
         /**
          * 脚本执行完成，参数表示是否执行成功，保证一定被调用到
          */
-        void onScriptExecuted(boolean executedSuccess, @Nullable String msg);
+        void onScriptExecuted(int code, @Nullable String msg);
     }
 }

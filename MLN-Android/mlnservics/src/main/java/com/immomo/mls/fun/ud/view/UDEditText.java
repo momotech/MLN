@@ -11,6 +11,7 @@ import android.content.Context;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.InputType;
+import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.text.method.HideReturnsTransformationMethod;
@@ -18,12 +19,17 @@ import android.text.method.PasswordTransformationMethod;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.immomo.mls.MLSEngine;
+import com.immomo.mls.fun.constants.EditTextViewInputMode;
 import com.immomo.mls.fun.ud.UDColor;
 import com.immomo.mls.fun.ui.LuaEditText;
+import com.immomo.mls.util.LogUtil;
+import com.immomo.mls.utils.ErrorUtils;
 
 import org.luaj.vm2.LuaBoolean;
 import org.luaj.vm2.LuaFunction;
@@ -58,8 +64,10 @@ public class UDEditText<L extends EditText> extends UDLabel<L> implements TextWa
             "setCursorColor",
             "setCanEdit",
             "showKeyboard",
-            "dismissKeyboard"
+            "dismissKeyboard",
+            "setShouldChangeCallback"
     };
+    private static final String TAG = UDEditText.class.getSimpleName();
 
     private boolean passwordMode = false;
     private boolean singleLineMode = false;
@@ -69,6 +77,7 @@ public class UDEditText<L extends EditText> extends UDLabel<L> implements TextWa
     private LuaFunction changingCallback;
     private LuaFunction endChangedCallback;
     private LuaFunction returnCallback;
+    private LuaFunction mSetShouldChangeFunction;
 
     private boolean textWatcherAdded = false;
     private boolean editorActionSetted = false;
@@ -93,8 +102,13 @@ public class UDEditText<L extends EditText> extends UDLabel<L> implements TextWa
 
     @Override
     protected void setText(String text) {
-        super.setText(text);
-        getView().setSelection(text.length());
+        try {
+            super.setText(text);
+            getView().setSelection(text.length());
+        } catch (Exception e) {
+            if (MLSEngine.DEBUG)
+                e.printStackTrace();
+        }
     }
 
     @LuaApiUsed
@@ -133,10 +147,17 @@ public class UDEditText<L extends EditText> extends UDLabel<L> implements TextWa
             if (passwordMode) {
                 value = value | InputType.TYPE_TEXT_VARIATION_PASSWORD;
             }
-            getView().setInputType(value);
-            if (singleLineMode) {//两端统一：Android的Normal模式，会变成多行。这里检查单行模式，不改变
+
+            if (value == EditTextViewInputMode.Number) {//Number系统自动为单行，这里同步为lua的singleLine模式
+                getView().setInputType(value);
                 singleLineMode = false;
                 singleLine(LuaBoolean.rBoolean(true));
+            } else {
+                if (!singleLineMode) {//Normal模式，根据lua的singleLine，设置flag
+                    getView().setInputType(value | EditorInfo.TYPE_TEXT_FLAG_MULTI_LINE);
+                } else {
+                    getView().setInputType(value & ~EditorInfo.TYPE_TEXT_FLAG_MULTI_LINE);
+                }
             }
             return null;
         }
@@ -163,6 +184,14 @@ public class UDEditText<L extends EditText> extends UDLabel<L> implements TextWa
                     getView().setGravity(
                             Gravity.TOP | mTextAlign);
                 }
+                resetPassWordMode(passwordMode);
+            }
+
+            Editable editor = getView().getText();
+            if (editor != null && !TextUtils.isEmpty(editor.toString()) && singleLineMode) {
+                String text = editor.toString();
+                text = text.replace("\n", " ");
+                setText(text);
             }
             return null;
         }
@@ -184,11 +213,7 @@ public class UDEditText<L extends EditText> extends UDLabel<L> implements TextWa
         if (enable != null && enable.length >= 1) {
             int sectionStart = getView().getSelectionStart();
             passwordMode = enable[0].toBoolean();
-            if (enable[0].toBoolean()) {
-                getView().setTransformationMethod(PasswordTransformationMethod.getInstance());
-            } else {
-                getView().setTransformationMethod(HideReturnsTransformationMethod.getInstance());
-            }
+            resetPassWordMode(passwordMode);
             setSelectionPosition(sectionStart);
             return null;
         }
@@ -200,25 +225,33 @@ public class UDEditText<L extends EditText> extends UDLabel<L> implements TextWa
         if (lengths != null && lengths.length >= 1) {
             int length = lengths[0].toInt();
             this.maxlength = length;
-            InputFilter[] filters = getView().getFilters();
 
-            final int count = filters.length;
-            for (int i = 0; i < count; i++) {
-                if (filters[i] instanceof InputFilter.LengthFilter) {
-                    filters[i] = new InputFilter.LengthFilter(length);
-                    getView().setFilters(filters);
-                    return null;
-                }
-            }
-            final InputFilter[] newFilters = new InputFilter[filters.length + 1];
-            System.arraycopy(filters, 0, newFilters, 0, count);
-            newFilters[count] = new InputFilter.LengthFilter(length);
+            if (setLengthFilter(length))
+                return null;
 
-            getView().setFilters(newFilters);
             return null;
         }
 
         return varargsOf(LuaNumber.valueOf(maxlength));
+    }
+
+    private boolean setLengthFilter(int length) {
+        InputFilter[] filters = getView().getFilters();
+
+        final int count = filters.length;
+        for (int i = 0; i < count; i++) {
+            if (filters[i] instanceof InputFilter.LengthFilter) {
+                filters[i] = new InputFilter.LengthFilter(length);
+                getView().setFilters(filters);
+                return true;
+            }
+        }
+        final InputFilter[] newFilters = new InputFilter[filters.length + 1];
+        System.arraycopy(filters, 0, newFilters, 0, count);
+        newFilters[count] = new InputFilter.LengthFilter(length);
+
+        getView().setFilters(newFilters);
+        return false;
     }
 
     @LuaApiUsed
@@ -226,6 +259,7 @@ public class UDEditText<L extends EditText> extends UDLabel<L> implements TextWa
         if (lengths != null && lengths.length >= 1) {
             this.maxBytes = lengths[0].toInt();
 
+            setLengthFilter((this.maxBytes / 2));
             if (!hasMaxBytesLisenter) {
                 hasMaxBytesLisenter = true;
                 getView().addTextChangedListener(new LuaLimitTextWatcher());
@@ -322,6 +356,29 @@ public class UDEditText<L extends EditText> extends UDLabel<L> implements TextWa
     }
 
     @LuaApiUsed
+    public LuaValue[] setShouldChangeCallback(LuaValue[] p) {
+        if (mSetShouldChangeFunction != null)
+            mSetShouldChangeFunction.destroy();
+        mSetShouldChangeFunction = p[0].toLuaFunction();
+
+        InputFilter[] filters = getView().getFilters();
+        final int count = filters.length;
+        for (int i = 0; i < count; i++) {
+            if (filters[i] instanceof BlockingFilter) {
+                filters[i] = new BlockingFilter(mSetShouldChangeFunction, getView());
+                getView().setFilters(filters);
+                return null;
+            }
+        }
+        final InputFilter[] newFilters = new InputFilter[filters.length + 1];
+        System.arraycopy(filters, 0, newFilters, 0, count);
+        newFilters[count] = new BlockingFilter(mSetShouldChangeFunction, getView());
+
+        getView().setFilters(newFilters);
+        return null;
+    }
+
+    @LuaApiUsed
     public LuaValue[] showKeyboard(LuaValue[] v) {
         InputMethodManager im = ((InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE));
         if (!getView().isFocused()) {
@@ -332,6 +389,7 @@ public class UDEditText<L extends EditText> extends UDLabel<L> implements TextWa
                     InputMethodManager.SHOW_IMPLICIT);
         }
         getView().setCursorVisible(true);
+        callBeforeTextChanged();
         return null;
     }
 
@@ -373,7 +431,7 @@ public class UDEditText<L extends EditText> extends UDLabel<L> implements TextWa
     @Override
     public void onTextChanged(CharSequence s, int start, int before, int count) {
         if (changingCallback != null)
-            changingCallback.invoke(varargsOf(LuaString.valueOf(s.toString()), LuaNumber.valueOf(start), LuaNumber.valueOf(count)));
+            changingCallback.invoke(varargsOf(LuaString.valueOf(s.toString()), LuaNumber.valueOf(start + 1), LuaNumber.valueOf(count)));
     }
 
     @Override
@@ -434,9 +492,16 @@ public class UDEditText<L extends EditText> extends UDLabel<L> implements TextWa
                 editStart = text.getSelectionStart();
                 editEnd = text.getSelectionEnd();
                 if (countBytes(temp.toString()) > maxBytes) {
-                    s.delete(editStart - 1, editEnd);
-                    text.setText(s);
-                    text.setSelection(text.getText().length());
+
+                    try {
+                        s.delete(editStart - 1, editEnd);
+                        text.setText(s);
+                        text.setSelection(text.getText().length());
+                    } catch (Exception e) {
+                        if (MLSEngine.DEBUG)
+                            e.printStackTrace();
+                    }
+
                 }
             }
         }
@@ -473,6 +538,20 @@ public class UDEditText<L extends EditText> extends UDLabel<L> implements TextWa
     @Override
     public boolean showKeyboard() {
         return true;
+    }
+
+    //切换单行/多行，重置密码模式。密码模式仅单行生效
+    private void resetPassWordMode(boolean isPassWord) {
+        if (isPassWord) {
+            if (singleLineMode) {
+                getView().setTransformationMethod(PasswordTransformationMethod.getInstance());
+            } else {
+                getView().setTransformationMethod(HideReturnsTransformationMethod.getInstance());
+                ErrorUtils.debugLuaError("Multi-line mode does not support password mode and should be set to single-line mode", getGlobals());
+            }
+        } else {
+            getView().setTransformationMethod(HideReturnsTransformationMethod.getInstance());
+        }
     }
 
     /**
@@ -516,6 +595,54 @@ public class UDEditText<L extends EditText> extends UDLabel<L> implements TextWa
             if (sectionPosition < 0 || sectionPosition > editable.length())
                 return;
             getView().setSelection(sectionPosition);
+        }
+    }
+
+    public static class BlockingFilter implements InputFilter {
+
+        LuaFunction function;
+        EditText view;
+
+        public BlockingFilter(LuaFunction function, EditText editText) {
+            this.function = function;
+            this.view = editText;
+        }
+
+        /**
+         * @param source 输入的文字
+         * @param start  输入-0，删除-0
+         * @param end    输入-文字的长度，删除-0
+         * @param dest   原先显示的内容
+         * @param dstart 输入-原光标位置，删除-光标删除结束位置
+         * @param dend   输入-原光标位置，删除-光标删除开始位置
+         */
+        @Override
+        public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
+            if (MLSEngine.DEBUG)
+                LogUtil.d(TAG, "filter: " + "source  ==" + source + "  start=====" + start + "   end======" + end
+                        + "   dest====" + dest + "  dstart===" + dstart + "  dend==" + dend);
+
+            Editable editable = view.getText();
+            String beforeValue = "";
+            if (editable != null)
+                beforeValue = editable.toString();
+
+            // 和ios保持同步，当删除时，返回空串
+            if (start == 0 && end == 0)
+                source = "";
+
+            if (function != null) {
+                LuaValue[] resultValue = function.invoke(varargsOf(LuaString.valueOf(beforeValue), LuaString.valueOf(source.toString()),
+                        LuaNumber.valueOf(dstart + 1), LuaNumber.valueOf(source.length())));
+
+                if (resultValue.length >= 1) {
+                    boolean result = resultValue[0].toBoolean();
+                    if (!result)
+                        return ""; //标识不让输入此内容
+                }
+            }
+
+            return null;
         }
     }
 }

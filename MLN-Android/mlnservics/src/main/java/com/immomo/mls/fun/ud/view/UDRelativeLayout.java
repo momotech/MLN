@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
+import com.immomo.mls.MLSConfigs;
 import com.immomo.mls.fun.ui.LuaRelativeLayout;
 import com.immomo.mls.util.LuaViewUtil;
 
@@ -38,13 +39,23 @@ public class UDRelativeLayout extends UDViewGroup<LuaRelativeLayout> {
         super(L, v);
     }
 
-    public UDRelativeLayout(Globals g, View jud) {
+    public UDRelativeLayout(Globals g, LuaRelativeLayout jud) {
         super(g, jud);
     }
 
     @Override
     protected LuaRelativeLayout newView(LuaValue[] init) {
         return new LuaRelativeLayout(getContext(), this);
+    }
+
+    @Override
+    protected boolean clipToPadding() {
+        return MLSConfigs.defaultClipContainer;
+    }
+
+    @Override
+    protected boolean clipChildren() {
+        return MLSConfigs.defaultClipContainer;
     }
 
     //<editor-fold desc="not support method">

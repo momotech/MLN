@@ -25,6 +25,8 @@ public interface IScrollView<U extends UDScrollView> extends ILViewGroup<U> {
 
     Size getContentSize();
 
+    ViewGroup getScrollView();
+
     /**
      * 设置滚动位置
      * @param p
@@ -39,9 +41,15 @@ public interface IScrollView<U extends UDScrollView> extends ILViewGroup<U> {
      */
     void setOffsetWithAnim(Point p);
 
+    void setFlingSpeed(float speed);
+
     Point getContentOffset();
 
     void setOnScrollListener(OnScrollListener l);
+
+    void setTouchActionListener(touchActionListener l);
+
+    void setFlingListener(FlingListener flingListener);
 
     interface OnScrollListener {
         void onBeginScroll();
@@ -49,5 +57,14 @@ public interface IScrollView<U extends UDScrollView> extends ILViewGroup<U> {
         void onScrolling();
 
         void onScrollEnd();
+    }
+
+    interface touchActionListener {
+        void onActionUp();
+        void onTouchDown();
+    }
+
+    interface FlingListener {
+        void onFling();
     }
 }

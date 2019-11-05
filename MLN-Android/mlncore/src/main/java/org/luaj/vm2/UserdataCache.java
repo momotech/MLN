@@ -1,13 +1,17 @@
 /**
- * Created by MomoLuaNative.
- * Copyright (c) 2019, Momo Group. All rights reserved.
- *
- * This source code is licensed under the MIT.
- * For the full copyright and license information,please view the LICENSE file in the root directory of this source tree.
- */
+  * Created by MomoLuaNative.
+  * Copyright (c) 2019, Momo Group. All rights reserved.
+  *
+  * This source code is licensed under the MIT.
+  * For the full copyright and license information,please view the LICENSE file in the root directory of this source tree.
+  */
 package org.luaj.vm2;
 
 import android.util.LongSparseArray;
+
+import com.immomo.mlncore.MLNCore;
+
+import java.lang.ref.SoftReference;
 
 /**
  * Created by Xiong.Fangyu on 2019-08-28
@@ -29,6 +33,10 @@ class UserdataCache {
      * 缓存userdata
      */
     private final LongSparseArray<LuaUserdata> cache;
+    /**
+     * 已被删除缓存的userdata
+     */
+    private LongSparseArray<SoftReference<LuaUserdata>> removedCache;
     /**
      * 标记销毁状态
      */
@@ -62,15 +70,43 @@ class UserdataCache {
      * @return 返回缓存的userdata
      */
     LuaUserdata get(long id) {
-        return cache.get(id);
+        LuaUserdata ret = cache.get(id);
+        if (ret != null)
+            return ret;
+        if (MLNCore.UserdataCacheType == MLNCore.TYPE_REMOVE_CACHE) {
+            SoftReference<LuaUserdata> ref = removedCache != null ? removedCache.get(id) : null;
+            ret = ref != null ? ref.get() : null;
+            if (ret != null && MLNCore.DEBUG) {
+                return MLNCore.onNullGet(id, ret);
+            }
+            return ret;
+        }
+        return null;
     }
 
     /**
      * 当userdata gc时，清除相应缓存
      * @param ud
      */
-    void onUserdataGc(LuaUserdata ud) {
-        cache.remove(ud.id);
+    void onUserdataGc(LuaUserdata ud, boolean finalized) {
+        if (finalized) {
+            cache.remove(ud.id);
+            return;
+        }
+        switch (MLNCore.UserdataCacheType) {
+            case MLNCore.TYPE_REMOVE:
+                cache.remove(ud.id);
+                break;
+            case MLNCore.TYPE_REMOVE_CACHE:
+                cache.remove(ud.id);
+                if (removedCache == null) {
+                    removedCache = new LongSparseArray<>(50);
+                }
+                removedCache.put(ud.id, new SoftReference<LuaUserdata>(ud));
+                break;
+            default:
+                break;
+        }
     }
 
     /**
@@ -83,5 +119,8 @@ class UserdataCache {
             cache.valueAt(i).__onLuaGc();
         }
         cache.clear();
+        if (removedCache != null) {
+            removedCache.clear();
+        }
     }
 }

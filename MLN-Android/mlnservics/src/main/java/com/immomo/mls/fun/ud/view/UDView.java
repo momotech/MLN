@@ -11,21 +11,19 @@ import android.animation.Animator;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Outline;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewOutlineProvider;
 import android.view.ViewParent;
 import android.view.inputmethod.InputMethodManager;
 
 import com.immomo.mls.LuaViewManager;
 import com.immomo.mls.MLSAdapterContainer;
+import com.immomo.mls.MLSConfigs;
 import com.immomo.mls.MLSEngine;
 import com.immomo.mls.MLSInstance;
 import com.immomo.mls.base.ud.lv.ILView;
@@ -33,6 +31,7 @@ import com.immomo.mls.base.ud.lv.ILViewGroup;
 import com.immomo.mls.fun.constants.GradientType;
 import com.immomo.mls.fun.constants.MeasurementType;
 import com.immomo.mls.fun.constants.RectCorner;
+import com.immomo.mls.fun.lt.SICornerRadiusManager;
 import com.immomo.mls.fun.other.Point;
 import com.immomo.mls.fun.other.Rect;
 import com.immomo.mls.fun.other.Size;
@@ -72,11 +71,14 @@ import java.util.List;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import static com.immomo.mls.fun.ud.view.IClipRadius.LEVEL_FORCE_CLIP;
+import static com.immomo.mls.fun.ud.view.IClipRadius.LEVEL_FORCE_NOTCLIP;
+
 /**
  * Created by XiongFangyu on 2018/7/31.
  */
 @LuaApiUsed
-public abstract class UDView<V extends View> extends JavaUserdata implements ILView.ViewLifeCycleCallback {
+public abstract class UDView<V extends View> extends JavaUserdata<V> implements ILView.ViewLifeCycleCallback {
     public static final String LUA_CLASS_NAME = "__BaseView";
     public static final String[] methods = new String[]{
             "width",
@@ -91,6 +93,7 @@ public abstract class UDView<V extends View> extends JavaUserdata implements ILV
             "marginRight",
             "marginBottom",
             "priority",
+            "weight",
             "frame",
             "size",
             "point",
@@ -164,6 +167,7 @@ public abstract class UDView<V extends View> extends JavaUserdata implements ILV
             "bgImage",
             "getCornerRadiusWithDirection",
             "addShadow",
+            "setShadow",
             "removeAllAnimation",
             "onDraw",
             "onDetachedView",
@@ -221,6 +225,7 @@ public abstract class UDView<V extends View> extends JavaUserdata implements ILV
         super(L, v);
         view = newView(v);
         checkView();
+        initClipConfig();
         javaUserdata = view;
     }
 
@@ -231,10 +236,11 @@ public abstract class UDView<V extends View> extends JavaUserdata implements ILV
      * @param jud java中保存的对象，可为空
      * @see #javaUserdata
      */
-    public UDView(Globals g, View jud) {
+    public UDView(Globals g, @NonNull V jud) {
         super(g, jud);
-        this.view = (V) jud;
+        this.view = jud;
         checkView();
+        initClipConfig();
         javaUserdata = jud;
     }
 
@@ -247,17 +253,27 @@ public abstract class UDView<V extends View> extends JavaUserdata implements ILV
         super(g, null);
         this.view = newView(empty());
         checkView();
+        initClipConfig();
         javaUserdata = view;
     }
 
-    protected abstract V newView(LuaValue[] init);
+    protected @NonNull
+    abstract V newView(@NonNull LuaValue[] init);
 
     /**
      * 视图布局默认不切割子视图在padding区域
+     *
      * @return 是否切割
      */
     protected boolean clipToPadding() {
-        return false;
+        return MLSConfigs.defaultClipToPadding;
+    }
+
+    /**
+     * 默认布局要切割子视图
+     */
+    protected boolean clipChildren() {
+        return MLSConfigs.defaultClipChildren;
     }
 
     private void checkView() {
@@ -265,7 +281,24 @@ public abstract class UDView<V extends View> extends JavaUserdata implements ILV
             throw new NullPointerException("view is null!!!!");
         }
         if (view instanceof ViewGroup) {
-            ((ViewGroup) view).setClipToPadding(clipToPadding());
+            ViewGroup vg = (ViewGroup) view;
+            vg.setClipToPadding(clipToPadding());
+            vg.setClipChildren(clipChildren());
+        }
+    }
+
+    /**
+     * 初始化View的 辅助圆角切割开关。
+     * 开关保存在globals，虚拟机全局生效。
+     * 通过{@link SICornerRadiusManager}，在lua项目开始时设置。不能动态更改
+     */
+    private void initClipConfig() {
+        if (view instanceof IClipRadius) {
+            LuaViewManager m = (LuaViewManager) globals.getJavaUserdata();
+            if (m == null) {
+                return;
+            }
+            ((IClipRadius) view).initCornerManager(m.getDefaltCornerClip());
         }
     }
 
@@ -307,7 +340,7 @@ public abstract class UDView<V extends View> extends JavaUserdata implements ILV
     }
 
     protected void checkSize(double src) {
-        if (src > 0)
+        if (src >= 0)
             return;
         if (src == MeasurementType.MATCH_PARENT || src == MeasurementType.WRAP_CONTENT)
             return;
@@ -518,11 +551,15 @@ public abstract class UDView<V extends View> extends JavaUserdata implements ILV
     @LuaApiUsed
     public LuaValue[] marginRight(LuaValue[] var) {
         if (var.length == 1) {
-            udLayoutParams.realMarginRight = DimenUtil.dpiToPx(var[0]);
-            setRealMargins();
+            setMarginRight(DimenUtil.dpiToPx(var[0]));
             return null;
         }
         return varargsOf(LuaNumber.valueOf(DimenUtil.pxToDpi(udLayoutParams.realMarginRight)));
+    }
+
+    protected void setMarginRight(int right) {
+        udLayoutParams.realMarginRight = right;
+        setRealMargins();
     }
 
     @LuaApiUsed
@@ -548,6 +585,17 @@ public abstract class UDView<V extends View> extends JavaUserdata implements ILV
             return null;
         }
         return varargsOf(LuaNumber.valueOf(udLayoutParams.priority));
+    }
+
+    @LuaApiUsed
+    public LuaValue[] weight(LuaValue[] var) {
+        if (var.length == 1) {
+            int p = var[0].toInt();
+            udLayoutParams.weight = p;
+            setRealMargins();
+            return null;
+        }
+        return rNumber(udLayoutParams.weight);
     }
 
     private void setRealMargins() {
@@ -1064,6 +1112,7 @@ public abstract class UDView<V extends View> extends JavaUserdata implements ILV
         return varargsOf(LuaNumber.valueOf(DimenUtil.pxToDpi(getCornerRadiusWithDirections(direction))));
     }
 
+    @Deprecated
     @LuaApiUsed
     public LuaValue[] addShadow(LuaValue[] var) {
 
@@ -1073,32 +1122,27 @@ public abstract class UDView<V extends View> extends JavaUserdata implements ILV
         final float alpha = var[3].toFloat();
         final boolean isOval = var.length > 4 && var[4].toBoolean();
 
-        if (Build.VERSION.SDK_INT >= 21) {
-            view.setElevation(radius);
+        IBorderRadiusView iBorderRadiusView = getIBorderRadiusView();
+        if (iBorderRadiusView == null)
+            return null;
+        iBorderRadiusView.setAddShadow(color.getColor(), offset.getSize(), radius, alpha);
 
-            // 这个是加外边框，通过 setRoundRect 添加
-            view.setOutlineProvider(new ViewOutlineProvider() {
-                @Override
-                public void getOutline(View view, Outline outline) {
-                    if (isOval) {
-                        outline.setOval(0,
-                                0,
-                                view.getWidth(),
-                                view.getHeight());
-                    } else {
-                        outline.setRoundRect(0,
-                                0,
-                                view.getWidth(),
-                                view.getHeight(), radius);
-                    }
-                    if (Build.VERSION.SDK_INT >= 22)
-                        outline.offset((int) offset.getWidthPx(), (int) offset.getHeightPx());
-                    if (alpha >= 0 && alpha <= 1)
-                        outline.setAlpha(alpha);
-                }
-            });
-            view.setClipToOutline(true);
-        }
+        ErrorUtils.debugLuaError("The 'addShadow' method is deprected, use 'setShadow' method instead!", getGlobals());
+        return null;
+    }
+
+    @LuaApiUsed
+    public LuaValue[] setShadow(LuaValue[] var) {
+
+        final UDSize offset = (UDSize) var[0];
+        final float radius = DimenUtil.dpiToPx(var[1].toFloat());
+        final float alpha = var[2].toFloat();
+
+        IBorderRadiusView iBorderRadiusView = getIBorderRadiusView();
+        if (iBorderRadiusView == null)
+            return null;
+        iBorderRadiusView.setAddShadow(0, offset.getSize(), radius, alpha);
+
         return null;
     }
 
@@ -1112,15 +1156,18 @@ public abstract class UDView<V extends View> extends JavaUserdata implements ILV
 
     @LuaApiUsed
     public LuaValue[] setCornerRadiusWithDirection(LuaValue[] var) {
-        setCornerRadiusWithDirection(DimenUtil.dpiToPx(var[0]), var[1].toInt());
+        int direction = RectCorner.ALL_CORNERS;
+        if (var.length == 2) {
+            direction = var[1].toInt();
+        }
+        setCornerRadiusWithDirection(DimenUtil.dpiToPx(var[0]), direction);
         return null;
     }
 
-    public void setCornerRadiusWithDirection(float radius, int direcion) {
+    protected void setCornerRadiusWithDirection(float radius, int direcion) {
         IBorderRadiusView view = getIBorderRadiusView();
         if (view == null)
             return;
-        view.setUDView(this);
         //控制圆角半径小于view最小长度
         float minLength = (getWidth() <= getHeight()) ? getWidth() : getHeight();
         if (minLength > 0 && radius > minLength / 2) {
@@ -1143,11 +1190,12 @@ public abstract class UDView<V extends View> extends JavaUserdata implements ILV
         var[1].destroy();
         //控制圆角半径小于view最小长度
         float minLength = (getWidth() <= getHeight()) ? getWidth() : getHeight();
-        float radius = DimenUtil.dpiToPx(var[0]);
+        float radius = var[0].toFloat();
+        radius = radius <= 0 ? 0 : DimenUtil.dpiToPx(var[0]);
         if (minLength > 0 && radius > minLength / 2) {
             radius = minLength / 2;
         }
-        view.setRadius(direction, radius);
+        view.setMaskRadius(direction, radius);
         return null;
     }
 
@@ -1157,10 +1205,14 @@ public abstract class UDView<V extends View> extends JavaUserdata implements ILV
         ViewParent vp = view.getParent();
         if (view instanceof ViewGroup) {
             ((ViewGroup) view).setClipToPadding(clip);
+            ((ViewGroup) view).setClipChildren(clip);
         }
         if (vp instanceof ViewGroup) {
             ViewGroup vg = (ViewGroup) vp;
             vg.setClipChildren(clip);
+        }
+        if (view instanceof IClipRadius) {//统一：clipToBounds(true)，切割圆角
+            ((IClipRadius) view).forceClipLevel(clip ? LEVEL_FORCE_CLIP : LEVEL_FORCE_NOTCLIP);
         }
         return null;
     }
@@ -1238,7 +1290,6 @@ public abstract class UDView<V extends View> extends JavaUserdata implements ILV
     public void setCornerRadius(float r) {
         IBorderRadiusView view = getIBorderRadiusView();
         if (view != null) {
-            view.setUDView(this);
             view.setCornerRadius(r);
         }
     }
@@ -1277,6 +1328,7 @@ public abstract class UDView<V extends View> extends JavaUserdata implements ILV
         return null;
     }
 
+    @Deprecated
     @LuaApiUsed
     public LuaValue[] notClip(LuaValue[] p) {
         IBorderRadiusView view = getIBorderRadiusView();
@@ -1328,6 +1380,9 @@ public abstract class UDView<V extends View> extends JavaUserdata implements ILV
 
     @LuaApiUsed
     public LuaValue[] onClick(LuaValue[] var) {
+        if (clickCallback != null) {
+            clickCallback.destroy();
+        }
         clickCallback = var[0].isFunction() ? var[0].toLuaFunction() : null;
         if (clickCallback != null) {
             view.setOnClickListener(clickListener);
@@ -1491,6 +1546,12 @@ public abstract class UDView<V extends View> extends JavaUserdata implements ILV
                     break;
             }
 
+            //View的ACTION_DOWN如果不消费，ACTION_UP就不会回调。且ACTION_DOWN会在松开手指时回调。
+            //如果onTouch消费了事件，会拦截onClick事件。
+            //因此：lua如果用了onClick，就返回false，让click去消费事件。不影响ACTION_DOWN和ACTION_UP
+            if (clickCallback != null) {
+                return false;
+            }
             return true;
         }
 
@@ -1518,8 +1579,8 @@ public abstract class UDView<V extends View> extends JavaUserdata implements ILV
     private View.OnClickListener clickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (!canDoClick())
-                return;
+//            if (!canDoClick())//IOS没有防抖动，Android也去掉
+//                return;
             if (clickCallback != null) {
                 clickCallback.invoke(null);
             }
@@ -1639,10 +1700,10 @@ public abstract class UDView<V extends View> extends JavaUserdata implements ILV
     public void stopAnimation() {
         if (animatorCacheList != null) {
             final ArrayList<Animator> temp = new ArrayList<>(animatorCacheList);
-            for (Animator animator : temp) {
-                animator.end();
-            }
             animatorCacheList.clear();
+            for (Animator animator : temp) {
+                animator.cancel();
+            }
         }
     }
 
@@ -1762,6 +1823,14 @@ public abstract class UDView<V extends View> extends JavaUserdata implements ILV
 
     //<editor-fold desc="LayoutParams">
 
+    /**
+     * View 默认2K
+     */
+    @Override
+    protected long memoryCast() {
+        return 2 << 10;
+    }
+
 
     @Override
     public void onDrawCallback(Canvas canvas) {
@@ -1874,6 +1943,14 @@ public abstract class UDView<V extends View> extends JavaUserdata implements ILV
          * @see LuaLinearLayout
          */
         public int priority = 0;
+        /**
+         * 权重
+         *
+         * @see #weight(LuaValue[])
+         * @see UDLinearLayout
+         * @see LuaLinearLayout
+         */
+        public int weight = 0;
     }
     //</editor-fold>
 

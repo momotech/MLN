@@ -21,11 +21,11 @@ public interface IStringCallback extends Destroyable, GlobalsContainer {
      * 回调lua方法
      * @param params 参数
      */
-    String callback(Object... params);
+    String callback(Object... params) throws IllegalStateException;
 
     /**
      * 回调lua方法，调用之后，将不能再次使用此回调
      * @param params 参数
      */
-    String callbackAndDestroy(Object... params);
+    String callbackAndDestroy(Object... params) throws IllegalStateException;
 }

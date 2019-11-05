@@ -7,14 +7,40 @@
   */
 package com.immomo.mlncore;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import org.luaj.vm2.Globals;
+import org.luaj.vm2.LuaUserdata;
 
 /**
  * Created by Xiong.Fangyu on 2019-07-31
  */
 public class MLNCore {
+    /**
+     * remove阶段不做任何事情
+     */
+    public static final byte TYPE_NONE = 0;
+    /**
+     * 直接remove
+     */
+    public static final byte TYPE_REMOVE = 1;
+    /**
+     * remove后保存到新的cache里
+     */
+    public static final byte TYPE_REMOVE_CACHE = 2;
+    /**
+     * core debug控制
+     */
     public static boolean DEBUG = true;
-
+    /**
+     * cache类型
+     * @see org.luaj.vm2.UserdataCache
+     */
+    public static byte UserdataCacheType = TYPE_REMOVE;
+    /**
+     * 回调
+     */
     private static Callback callback;
 
     /**
@@ -46,6 +72,28 @@ public class MLNCore {
     }
 
     /**
+     * lua gc 耗时
+     * @param g 虚拟机
+     * @param ms 耗时，单位ms
+     */
+    public static void luaGcCast(Globals g, long ms) {
+        if (callback != null)
+            callback.luaGcCast(g, ms);
+    }
+
+    /**
+     * 通过id获取userdata为空，但removecache中不为空时回调
+     * @param id userdata对象id
+     * @param cache 已remove的对象
+     * @return 可返回空，或返回cache
+     */
+    public static LuaUserdata onNullGet(long id, @NonNull LuaUserdata cache) {
+        if (callback != null)
+            return callback.onNullGet(id, cache);
+        return cache;
+    }
+
+    /**
      * 可监听从native创建虚拟机的回调（isolate）
      * 或监听lua中的报错
      */
@@ -64,5 +112,20 @@ public class MLNCore {
          * @return true: 消费异常；false: 不消费，将抛出
          */
         boolean hookLuaError(Throwable t, Globals g);
+
+        /**
+         * 回调执行lua gc耗时
+         * @param g 虚拟机
+         * @param ms gc耗时，ms
+         */
+        void luaGcCast(Globals g, long ms);
+
+        /**
+         * 通过id获取userdata为空，但removecache中不为空时回调
+         * @param id userdata对象id
+         * @param cache 已remove的对象
+         * @return 可返回空，或返回cache
+         */
+        @Nullable LuaUserdata onNullGet(long id, @NonNull LuaUserdata cache);
     }
 }

@@ -88,7 +88,7 @@ public class AssertUtils {
 
     public static boolean assertUserData(LuaValue v, Class<? extends LuaUserdata> need, String caller, Globals globals) {
         if (v == null || !need.isInstance(v)) {
-            ReturnError error = new ReturnError(" return type invalid! need " + getUDName(need) + " instead of " + v + " in caller " + caller);
+            ReturnError error = new ReturnError(" setter type invalid! need " + getUDName(need) + " instead of " + v + " in caller " + caller);
             throwError(error, globals);
             return false;
         }

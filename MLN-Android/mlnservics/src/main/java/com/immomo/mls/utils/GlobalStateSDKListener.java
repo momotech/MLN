@@ -7,6 +7,7 @@
   */
 package com.immomo.mls.utils;
 
+import com.immomo.mls.MLSEngine;
 import com.immomo.mls.adapter.MLSGlobalStateListener;
 import com.immomo.mls.wrapper.ScriptBundle;
 
@@ -24,6 +25,8 @@ public class GlobalStateSDKListener implements MLSGlobalStateListener {
 
     @Override
     public void onStartLoadScript(String url) {
+        if (!MLSEngine.DEBUG)
+            return;
         if (debugLog == null) {
             debugLog = newLog();
         }
@@ -32,16 +35,22 @@ public class GlobalStateSDKListener implements MLSGlobalStateListener {
 
     @Override
     public void onGlobalPrepared(String url) {
+        if (!MLSEngine.DEBUG)
+            return;
         debugLog.onGlobalPrepared();
     }
 
     @Override
     public void onEnvPrepared(String url) {
+        if (!MLSEngine.DEBUG)
+            return;
         debugLog.envPrepared();
     }
 
     @Override
     public void onScriptLoaded(String url, ScriptBundle bundle) {
+        if (!MLSEngine.DEBUG)
+            return;
         if (debugLog != null)
             debugLog.loaded(bundle);
     }
@@ -53,16 +62,22 @@ public class GlobalStateSDKListener implements MLSGlobalStateListener {
 
     @Override
     public void onScriptCompiled(String url) {
+        if (!MLSEngine.DEBUG)
+            return;
         debugLog.compileEnd();
     }
 
     @Override
     public void onScriptPrepared(String url) {
+        if (!MLSEngine.DEBUG)
+            return;
         debugLog.prepared();
     }
 
     @Override
     public void onScriptExecuted(String url, boolean success) {
+        if (!MLSEngine.DEBUG)
+            return;
         debugLog.executedEnd(success);
         debugLog.log(STDOUT);
     }

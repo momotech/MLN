@@ -15,12 +15,14 @@ import com.immomo.mls.MLSAdapterContainer;
 import com.immomo.mls.MLSFlag;
 import com.immomo.mls.R;
 import com.immomo.mls.base.ud.lv.ILViewGroup;
+import com.immomo.mls.fun.other.Point;
 import com.immomo.mls.fun.ud.view.UDView;
 import com.immomo.mls.fun.ud.view.recycler.UDBaseRecyclerAdapter;
 import com.immomo.mls.fun.ud.view.recycler.UDBaseRecyclerLayout;
 import com.immomo.mls.fun.ud.view.recycler.UDRecyclerView;
 import com.immomo.mls.fun.weight.BorderRadiusSwipeRefreshLayout;
 import com.immomo.mls.fun.weight.MLSRecyclerView;
+import com.immomo.mls.util.DimenUtil;
 import com.immomo.mls.util.LuaViewUtil;
 import com.immomo.mls.utils.MainThreadExecutor;
 import com.immomo.mls.weight.load.ILoadViewDelegete;
@@ -250,6 +252,24 @@ public class LuaRecyclerView<A extends UDBaseRecyclerAdapter, L extends UDBaseRe
     @Override
     public void sendSubviewToBack(UDView child) {
 
+    }
+
+    /**
+     * 滑动rv到指定位置
+     */
+    @Override
+    public void smoothScrollTo(Point p) {
+        getRecyclerView().smoothScrollBy((int) p.getXPx() - getRecyclerView().computeHorizontalScrollOffset(), (int) p.getYPx() - getRecyclerView().computeVerticalScrollOffset());
+    }
+
+    @Override
+    public void setContentOffset(Point p) {
+        getRecyclerView().scrollBy((int) p.getXPx() - getRecyclerView().computeHorizontalScrollOffset(), (int) p.getYPx() - getRecyclerView().computeVerticalScrollOffset());
+    }
+
+    @Override
+    public Point getContentOffset() {
+        return new Point(DimenUtil.pxToDpi(getRecyclerView().computeHorizontalScrollOffset()), DimenUtil.pxToDpi(getRecyclerView().computeVerticalScrollOffset()));
     }
 
     @Override

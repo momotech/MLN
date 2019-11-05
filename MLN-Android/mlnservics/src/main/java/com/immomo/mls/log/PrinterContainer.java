@@ -15,6 +15,8 @@ public interface PrinterContainer {
 
     boolean isShowPrinter();
 
+    boolean hasClosePrinter();
+
     IPrinter getSTDPrinter();
 
     void onSTDPrinterCreated(IPrinter p);

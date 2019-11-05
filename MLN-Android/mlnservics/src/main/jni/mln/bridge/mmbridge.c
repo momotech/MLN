@@ -9,9 +9,9 @@
 // Created by XiongFangyu on 2019-07-04.
 //
 
+#include <jni.h>
 #include "mmbridge.h"
 #include "lauxlib.h"
-#include "isolate.h"
 #include "lua_broadcastchannel.h"
 #include "mmoslib.h"
 
@@ -28,7 +28,6 @@ static const luaL_Reg loadedlibs[] = {
 };
 
 static const luaL_Reg preloadedlibs[] = {
-        {ISOLATE_LIB_NAME, isolate_open},
         {NULL, NULL}
 };
 

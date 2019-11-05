@@ -59,3 +59,5 @@
 -dontwarn com.caverock.androidsvg.**
 -dontwarn com.bumptech.glide.load.resource.bitmap.VideoDecoder
 -keep class com.bumptech.glide.**{*;}
+
+-dontwarn com.google.protobuf.**

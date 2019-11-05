@@ -20,6 +20,10 @@ char * copystr(const char *s);
  */
 char * joinstr(const char *, const char *);
 /**
+ * 拼接字符串，记得调用free
+ */
+char * join3str(const char *, const char *, const char *);
+/**
  * 格式化字符串，记得调用free
  */
 char * formatstr(const char *fmt, ...);

@@ -12,7 +12,9 @@ import com.immomo.mls.annotation.LuaClass;
 
 import org.luaj.vm2.Globals;
 import org.luaj.vm2.LuaFunction;
-import org.luaj.vm2.LuaValue;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Author       :   wu.tianlong@immomo.com
@@ -22,23 +24,25 @@ import org.luaj.vm2.LuaValue;
  */
 
 @LuaClass
-public class SIApplication {
+public class SIApplication implements Globals.OnDestroyListener {
     public static final String LUA_CLASS_NAME = "Application";
-
-    private static LuaFunction mAppearFunction;
-    private static LuaFunction mDisappearFunction;
 
     public static boolean isColdBoot = false;
 
-    public void __onLuaGc() {
-        if (mAppearFunction != null) {
-            mAppearFunction.destroy();
-        }
-        mAppearFunction = null;
-        if (mDisappearFunction != null) {
-            mDisappearFunction.destroy();
-        }
-        mDisappearFunction = null;
+    private static final Map<Globals, SIApplication> instance = new HashMap<>();
+
+    private LuaFunction mAppearFunction;
+    private LuaFunction mDisappearFunction;
+    private Globals globals;
+
+    public SIApplication(Globals g) {
+        globals = g;
+        instance.put(g, this);
+    }
+
+    @Override
+    public void onDestroy(Globals g) {
+        instance.remove(g);
     }
 
     @LuaBridge
@@ -46,6 +50,10 @@ public class SIApplication {
         if (mDisappearFunction != null)
             mDisappearFunction.destroy();
         mDisappearFunction = fun;
+        if (fun != null) {
+            globals.removeOnDestroyListener(this);
+            globals.addOnDestroyListener(this);
+        }
     }
 
     @LuaBridge
@@ -53,6 +61,10 @@ public class SIApplication {
         if (mAppearFunction != null)
             mAppearFunction.destroy();
         mAppearFunction = fun;
+        if (fun != null) {
+            globals.removeOnDestroyListener(this);
+            globals.addOnDestroyListener(this);
+        }
     }
 
     // 文档 WIKI 上暂时没写这个方法，后续可能会加上
@@ -61,15 +73,26 @@ public class SIApplication {
        return isColdBoot;
     }
 
-    public static void enterForeGround() {
+    public void enterForeGround() {
         if (mAppearFunction != null)
             mAppearFunction.invoke(null);
-
     }
 
-    public static void enterBackGround() {
+    public void enterBackGround() {
         if (mDisappearFunction != null)
             mDisappearFunction.invoke(null);
+    }
+
+    public static void setIsForeground(boolean isForeground) {
+        for (SIApplication i : instance.values()) {
+            if (isForeground) {
+                i.enterForeGround();
+            } else {
+                i.enterBackGround();
+            }
+        }
+        if (!isForeground)
+            isColdBoot = false;
     }
 
     @Override

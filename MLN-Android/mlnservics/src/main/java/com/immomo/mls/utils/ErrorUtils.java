@@ -28,18 +28,6 @@ public class ErrorUtils {
         }
     }
 
-    public static void debugDeprecatedSetter(String s, Globals globals) {
-        if (MLSEngine.DEBUG) {
-            Environment.hook(new UnsupportedOperationException("The setter of '" + s + "' method is deprecated!"), globals);
-        }
-    }
-
-    public static void debugDeprecatedGetter(String s, Globals globals) {
-        if (MLSEngine.DEBUG) {
-            Environment.hook(new UnsupportedOperationException("The getter of '" + s + "' method is deprecated!"), globals);
-        }
-    }
-
     public static void debugDeprecatedMethod(String s) {
         if (MLSEngine.DEBUG) {
             unsupportError("The method '" + s + "' is deprecated!");
@@ -52,12 +40,44 @@ public class ErrorUtils {
         }
     }
 
+    //<editor-fold desc="不中断后续代码">
+    public static void debugDeprecatedSetter(String s, Globals globals) {
+        if (MLSEngine.DEBUG) {
+            Environment.error(new UnsupportedOperationException("The setter of '" + s + "' method is deprecated!"), globals);
+        }
+    }
+
+    public static void debugDeprecatedMethodHook(String method, Globals globals) {
+        if (MLSEngine.DEBUG) {
+            Environment.hook(new UnsupportedOperationException("The method '" + method + "' is deprecated!"), globals);
+        }
+    }
+
+    public static void debugDeprecatedGetter(String s, Globals globals) {
+        if (MLSEngine.DEBUG) {
+            Environment.error(new UnsupportedOperationException("The getter of '" + s + "' method is deprecated!"), globals);
+        }
+    }
+
     /**
      * 抛出强提醒，不抛出异常，不影响之后的代码逻辑
      */
     public static void debugLuaError(String msg, Globals g) {
         if (MLSEngine.DEBUG) {
-            Environment.hook(AlertForDebug.showInDebug(msg), g);
+            Environment.error(AlertForDebug.showInDebug(msg), g);
+        }
+    }
+    //</editor-fold>
+
+    /**
+     * 开发阶段报错
+     */
+    public static void debugEnvironmentError(String msg, Globals globals) {
+        if (MLSEngine.DEBUG) {
+            IllegalStateException e = new IllegalStateException(msg);
+            if (!Environment.hook(e, globals)) {
+                throw e;
+            }
         }
     }
 }

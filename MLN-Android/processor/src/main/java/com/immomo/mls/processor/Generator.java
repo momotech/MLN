@@ -54,6 +54,8 @@ class Generator {
 
 
     private static final TypeName UserdataTranslator = ClassName.get("com.immomo.mls.wrapper", "Translator");
+    private static final TypeName PrimitiveArrayUtils = ClassName.get("com.immomo.mls.utils.convert","PrimitiveArrayUtils");
+    private static final TypeName ObjectArrayUtils = ClassName.get("org.luaj.vm2.jse", "Utils");
 
     private static final TypeName LuaValue_Arr = ArrayTypeName.of(LuaValue);
 
@@ -523,6 +525,19 @@ class Generator {
                 mb.addStatement("(p.length > $L && p[$L].isString()) ? p[$L].toJavaString() : null", index, index, index);
             } else if (isLuaValue(vt)) {
                 mb.addStatement("($T)(p.length > $L ? p[$L] : null)", vt, index, index);
+            } else if (vt instanceof ArrayTypeName) {
+                /// array 类型
+                TypeName ct = ((ArrayTypeName) vt).componentType;
+                String tableCode = String.format("p.length > %d && p[%d].isTable() ? p[%d].toLuaTable() : null", index, index, index);
+                if (ct.isPrimitive()) {
+                    String word = ct.toString();
+                    char[] cs = word.toCharArray();
+                    cs[0] -= 'a' - 'A';
+                    word = new String(cs);
+                    mb.addStatement("$T.to" + word + "Array(" + tableCode + ")", PrimitiveArrayUtils);
+                } else {
+                    mb.addStatement("($T[])$T.toNativeArray(" + tableCode + ", $T.class)", ct, ObjectArrayUtils, ct);
+                }
             } else {
                 ClassName cn = getTopClassName(vt);
                 mb.addStatement("((p.length > $L && !p[$L].isNil()) ? ($T)$T.translateLuaToJava(p[$L], $T.class) : null)", index, index, vt, UserdataTranslator, index, cn);
@@ -577,6 +592,16 @@ class Generator {
         } else if (isLuaValue(returnType)) {
             mb.addCode("return ");
             LuaValue_varargsOf(mb, call);
+        } else if (returnType instanceof ArrayTypeName) {
+            TypeName ct = ((ArrayTypeName) returnType).componentType;
+            if (!initGlobals)
+                mb.addStatement("$T globals = $T.getGlobalsByLState(L)", Globals, Globals);
+            mb.addCode("return ");
+            if (ct.isPrimitive()) {
+                LuaValue_varargsOf(mb, "$T.toTable(globals, " + call + ")", PrimitiveArrayUtils);
+            } else {
+                LuaValue_varargsOf(mb, "$T.toLuaArray(globals, " + call + ")", ObjectArrayUtils);
+            }
         } else {
             if (!initGlobals)
                 mb.addStatement("$T globals = $T.getGlobalsByLState(L)", Globals, Globals);

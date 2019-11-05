@@ -82,8 +82,7 @@ public class LuaViewPager extends BorderRadiusViewPager implements IViewPager<UD
     //</editor-fold>
 
     //<editor-fold desc="VIEW">
-    @Override
-    public void onAttachedToWindow() {
+    public void callOnAttachedToWindow() {
         super.onAttachedToWindow();
         if (pageIndicator != null) {
             addIndicatorToParent();
@@ -98,6 +97,17 @@ public class LuaViewPager extends BorderRadiusViewPager implements IViewPager<UD
         if (mFirstAttach) {
             userdata.callbackCellWillAppear(0);
         }
+    }
+
+    public void callOnDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        // animHelper.stopAnim();
+        if (cycleCallback != null) {
+            cycleCallback.onDetached();
+        }
+
+        if (onlyOneItem())
+            userdata.callbackCellDidDisAppear(0);
     }
 
     private boolean onlyOneItem() {
@@ -144,6 +154,11 @@ public class LuaViewPager extends BorderRadiusViewPager implements IViewPager<UD
 
     //<editor-fold desc="IViewPager for ud">
 
+    @Override
+    public LuaViewPager getViewPager() {
+        return this;
+    }
+
     public boolean isAutoScroll() {
         return autoScroll;
     }
@@ -177,8 +192,9 @@ public class LuaViewPager extends BorderRadiusViewPager implements IViewPager<UD
     public void setPageIndicator(PageIndicator pageIndicator) {
         if (pageIndicator != null) {
             this.pageIndicator = pageIndicator;
-            bindIndicator();
             addIndicatorToParent();
+            bindIndicator();
+            this.pageIndicator.setCurrentItem(getCurrentItem());
         } else if (this.pageIndicator != null) {
             this.pageIndicator.removeFromSuper();
             this.pageIndicator = null;
@@ -280,12 +296,22 @@ public class LuaViewPager extends BorderRadiusViewPager implements IViewPager<UD
             this.lastPosition = lastPosition;
     }
 
+    // 处理回调多次appear 问题
+    private boolean isCallBackAppear = false;
+
     private ViewPager.OnPageChangeListener onPageChangeListener = new ViewPager.SimpleOnPageChangeListener() {
         private float lastValue = -1;
         private boolean doCallback = false;
 
         @Override
         public void onPageScrollStateChanged(int state) {
+            if (MLSEngine.DEBUG)
+                LogUtil.d(TAG, "state =  " + state);
+
+            if (state == ViewPager.SCROLL_STATE_IDLE ) {
+                isCallBackAppear = false;
+            }
+
             if (state == ViewPager.SCROLL_STATE_DRAGGING || state == ViewPager.SCROLL_STATE_SETTLING) {
                 animHelper.stopAnim();
             } else {
@@ -297,7 +323,10 @@ public class LuaViewPager extends BorderRadiusViewPager implements IViewPager<UD
         }
 
         @Override
-        public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+        public void onPageScrolled(int position,float positionOffset, int positionOffsetPixels) {
+            if (MLSEngine.DEBUG)
+                LogUtil.d(TAG, "scrolling   position =  " + position +"  offset = " + positionOffset +"   pixels = "+ positionOffsetPixels);
+
             tabProgressCallback(position,positionOffset, positionOffsetPixels);
 
             if (lastValue == -1) {
@@ -341,8 +370,12 @@ public class LuaViewPager extends BorderRadiusViewPager implements IViewPager<UD
 
         @Override
         public void onPageSelected(int position) {
+            if (MLSEngine.DEBUG)
+                LogUtil.d(TAG, " selected   = " + position);
 
             position = userdata.getRecurrencePosition(position);
+
+            userdata.pageSelectedCallback(position);
 
             if (callbacks != null) {
                 for (Callback callback : callbacks) {
@@ -354,8 +387,9 @@ public class LuaViewPager extends BorderRadiusViewPager implements IViewPager<UD
             if (lastValue == 0) {
                 doCallback = false;
             }
-            userdata.callbackCellWillAppear(position);
+
             userdata.callbackCellDidDisAppear(lastPosition);
+            userdata.callbackCellWillAppear(position);
 
             AppearUtils.appearOrDisappearMiddlePosition(userdata,lastPosition,position,autoScroll);
             lastPosition = position;
@@ -482,17 +516,18 @@ public class LuaViewPager extends BorderRadiusViewPager implements IViewPager<UD
     // 防止回调回去多次 1 的情况
     boolean isReturnOne = false;
     private float lastScrollingValue = -1;
+
     // 滚动过程中，回调给Lua 滚动进度，值在 0 到 1
     private void tabProgressCallback(int position, float positionOffset, int positionOffsetPixels) {
         if (lastScrollingValue == -1) {
-            lastScrollingValue = positionOffset;
+            lastScrollingValue = positionOffsetPixels;
             isReturnOne = false;
         }
 
         if (isReturnOne)
             return;
 
-        double finalProgress = 0;
+        float finalProgress = 0;
         int fromIndex = 0, toIndex = 0;
 
         if (positionOffset != 0) {
@@ -510,14 +545,26 @@ public class LuaViewPager extends BorderRadiusViewPager implements IViewPager<UD
                     LogUtil.d(TAG, "//右滑   position =  " + position);
             }
 
+
+
+
             if (finalProgress >= 0.99)
                 finalProgress = 1;
 
-            userdata.callTabScrollProgress(finalProgress, fromIndex, toIndex);
+            if (finalProgress != 0)
+                userdata.callTabScrollProgress(finalProgress, fromIndex, toIndex);
             if (finalProgress == 1)
                 isReturnOne = true;
         }
         lastScrollingValue = positionOffsetPixels;
     }
     // 滚动进度 回调 结束  ------
+
+
+    @Override
+    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+        super.onSizeChanged(w, h, oldw, oldh);
+        if (userdata.getDefaultPageIndicator() != null)
+            userdata.getDefaultPageIndicator().changeLayoutParams();
+    }
 }

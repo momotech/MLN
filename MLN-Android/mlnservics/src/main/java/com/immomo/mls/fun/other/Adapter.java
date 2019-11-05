@@ -68,6 +68,9 @@ public class Adapter extends RecyclerView.Adapter<ViewHolder> {
             } else {
                 notifyItemInserted(getItemCount() - 1);
             }
+            if (userData != null) {
+                userData.onFooterAdded(added);
+            }
         }
     }
 
@@ -192,7 +195,7 @@ public class Adapter extends RecyclerView.Adapter<ViewHolder> {
             return;
         }
         if (holder.isHeader()) {
-            if (userData.hasHeaderSize() && userData.hasHeaderDelegate()) {
+            if (userData.isNewHeaderValid()) {
                 Size size = userData.getHeaderSize(position);
 
                 View cellView = holder.getCellView();
@@ -261,7 +264,7 @@ public class Adapter extends RecyclerView.Adapter<ViewHolder> {
      * @return
      */
     private ViewHolder createItemViewHolder(final int viewType) {
-        final UDCell layout = new UDCell( userData.getGlobals(), userData);
+        final UDCell layout = new UDCell(userData.getGlobals(), userData);
 
 //        View itemView = generateCellView(layout);
         View itemView = layout.getView();
@@ -291,7 +294,9 @@ public class Adapter extends RecyclerView.Adapter<ViewHolder> {
 
         ViewGroup itemView = (ViewGroup) layout.getView();
 
-        userData.callInitHeader(layout.getCell());
+        if (userData.isNewHeaderValid()) {
+            userData.callInitHeader(layout.getCell());
+        }
         itemView.addView(headerView);
         itemView.setLayoutParams(userData.newLayoutParams(null, true));
         ViewHolder viewHolder = new ViewHolder(itemView, layout);
@@ -341,8 +346,8 @@ public class Adapter extends RecyclerView.Adapter<ViewHolder> {
 //        LogUtil.d(TAG, " width = " + size.getWidthPx() + "    height = " + size.getHeightPx());
 
         ViewGroup.LayoutParams params = view.getLayoutParams();
-        int w = size.getWidthPx() == 0 ? ViewGroup.LayoutParams.WRAP_CONTENT : size.getWidthPx();
-        int h = size.getHeightPx() == 0 ? ViewGroup.LayoutParams.WRAP_CONTENT : size.getHeightPx();
+        int w = size.getWidthPx();
+        int h = size.getHeightPx();
         boolean changed = false;
         if (params == null) {
             params = new ViewGroup.LayoutParams(w, h);

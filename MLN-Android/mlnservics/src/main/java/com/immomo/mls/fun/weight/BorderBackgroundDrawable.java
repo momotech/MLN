@@ -19,9 +19,8 @@ import android.graphics.drawable.Drawable;
 import android.view.MotionEvent;
 
 import com.immomo.mls.fun.constants.GradientType;
+import com.immomo.mls.fun.other.Size;
 import com.immomo.mls.fun.ud.view.IBorderRadiusView;
-import com.immomo.mls.fun.ud.view.UDImageView;
-import com.immomo.mls.fun.ud.view.UDView;
 import com.immomo.mls.weight.BaseRippleDrawable;
 
 import androidx.annotation.NonNull;
@@ -36,7 +35,6 @@ public class BorderBackgroundDrawable extends BorderDrawable implements IBorderR
 
     private final Path roundPath = new Path();
     private final RectF pathRect = new RectF();
-    private final RectF bgRect = new RectF();
     private int[] gradientColors;
     private int mGradientType;
     private boolean mGradientIsDirty = false;
@@ -44,8 +42,6 @@ public class BorderBackgroundDrawable extends BorderDrawable implements IBorderR
     private Drawable bgDrawable;
     private final float[] backRadii;
     private boolean drawRipple = false;
-
-    private UDImageView udSuperImageView;
 
     public BorderBackgroundDrawable() {
         backgroundPaint.setStyle(Paint.Style.FILL);
@@ -74,12 +70,6 @@ public class BorderBackgroundDrawable extends BorderDrawable implements IBorderR
     }
 
     @Override
-    public void setUDView(UDView udView) {
-        if (udView instanceof UDImageView)
-            this.udSuperImageView = (UDImageView) udView;
-    }
-
-    @Override
     public int getBgColor() {
         return color;
     }
@@ -105,6 +95,11 @@ public class BorderBackgroundDrawable extends BorderDrawable implements IBorderR
 
     @Override
     public void setRadiusColor(int color) {
+
+    }
+
+    @Override
+    public void setAddShadow(int color, Size offset, float radius, float alpha) {
 
     }
 
@@ -143,7 +138,7 @@ public class BorderBackgroundDrawable extends BorderDrawable implements IBorderR
         if (hasRadii) {
             for (int i = 0; i < radii.length; i++) {
                 float radiu = radii[i];
-                backRadii[i] = radiu > 0 ? radiu + borderWidth : 0;
+                backRadii[i] = radiu > 0 ? radiu  : 0;
             }
             roundPath.addRoundRect(pathRect, backRadii, Path.Direction.CW);
         }

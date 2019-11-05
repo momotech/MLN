@@ -36,14 +36,14 @@ public class App extends Application {
         super.onCreate();
         app = this;
         init();
-        log("scale Density: " + AndroidUtil.getScaleDensity(this));
-        log("Density: " + AndroidUtil.getDensity(this));
-        File soFile = new File(getDataDir(), "lib");
+        File cache = getCacheDir();
+        File soFile = new File(cache.getParent(), "lib");
 
         SIApplication.isColdBoot = true;
 
 //        MLSEngine.setOpenDebugInfo(true);
-        MLSEngine.init(this, BuildConfig.DEBUG)
+        registerActivityLifecycleCallbacks(new ActivityLifecycleMonitor());
+        MLSEngine.init(this, true)//BuildConfig.DEBUG)
                 .setLVConfig(new LVConfigBuilder(this)
                         .setRootDir(SD_CARD_PATH)
                         .setCacheDir(SD_CARD_PATH + "cache")
@@ -66,7 +66,6 @@ public class App extends Application {
                 .setLazyFillCellData(false)
                 .setReadScriptFileInJava(false)
                 .setOpenSAES(true)
-                .setPreGlobals(0)
                 .setGcOffset(0)
                 .setMemoryMonitorOffset(5000)
                 .setGlobalSoPath(soFile.getAbsolutePath() + "/lib?.so")

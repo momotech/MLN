@@ -2,6 +2,8 @@
 
     package="com.google.zxing">
 
+    <uses-permission android:name="android.permission.CAMERA" />
+
     <application>
 
         <!--capturestart-->

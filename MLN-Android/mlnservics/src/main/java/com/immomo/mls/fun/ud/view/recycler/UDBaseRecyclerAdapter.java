@@ -218,6 +218,7 @@ public abstract class UDBaseRecyclerAdapter<L extends UDBaseRecyclerLayout> exte
     }
 
     public void reloadAtSection(int section, boolean animate) {
+        initSection();
         if (!checkSectionInitStatus())
             return;
         int count = sections.length;
@@ -385,6 +386,7 @@ public abstract class UDBaseRecyclerAdapter<L extends UDBaseRecyclerLayout> exte
     public UDColor getPressedColor() {
         if (returnColor == null) {
             returnColor = new UDColor(globals, pressedColor);
+            returnColor.onJavaRef();
         }
         returnColor.setColor(pressedColor);
         return returnColor;
@@ -436,7 +438,6 @@ public abstract class UDBaseRecyclerAdapter<L extends UDBaseRecyclerLayout> exte
     public LuaValue[] headerValid(LuaValue[] values) {
         headerValidDelegate = values[0].toLuaFunction();
 
-        initWaterFallHeader();
         return null;
     }
 
@@ -449,7 +450,6 @@ public abstract class UDBaseRecyclerAdapter<L extends UDBaseRecyclerLayout> exte
     public LuaValue[] initHeader(LuaValue[] values) {
         initHeaderDelegate = values[0].toLuaFunction();
 
-        initWaterFallHeader();
         return null;
     }
 
@@ -462,17 +462,21 @@ public abstract class UDBaseRecyclerAdapter<L extends UDBaseRecyclerLayout> exte
     public LuaValue[] fillHeaderData(LuaValue[] values) {
         bindHeaderDelegate = values[0].toLuaFunction();
 
-        initWaterFallHeader();
         return null;
     }
 
     protected void initWaterFallHeader() {
-        if (headerValidDelegate != null && initHeaderDelegate != null && bindHeaderDelegate != null && mAdapter != null) {
+        if (headerValidDelegate != null) {
             LuaValue[] values = headerValidDelegate.invoke(null);
-            if (values.length > 0 && values[0].isBoolean() && values[0].toBoolean()) {
-                if (mAdapter.getHeaderCount() == 0)
+            boolean valid = (values != null && values.length > 0 && values[0].isBoolean()) && values[0].toBoolean();
+
+            if (valid) {
+                if (mAdapter != null && mAdapter.getHeaderCount() == 0) {
                     mAdapter.addHeaderView(new FrameLayout(getContext()));
-            } else if (mAdapter.getHeaderCount() > 0) {//两端协定，waterFall只能有一个header，所以可以removeAllHeader
+                }
+                return;
+            }
+            if (mAdapter.getHeaderCount() > 0) {//两端协定，waterFall只能有一个header，所以可以removeAllHeader
                 mAdapter.removeAllHeaderView();
             }
         }
@@ -747,8 +751,6 @@ public abstract class UDBaseRecyclerAdapter<L extends UDBaseRecyclerLayout> exte
      */
     public abstract boolean hasCellSize();
 
-    public abstract boolean hasHeaderSize();
-
     /**
      * 若定义了size相关函数，获取size
      * called when {@link #hasCellSize} return true
@@ -797,7 +799,8 @@ public abstract class UDBaseRecyclerAdapter<L extends UDBaseRecyclerLayout> exte
 
     /**
      * adapter onCreateViewHolder时调用
-     * <p>
+     * <p> 两端统一，initCell和initCellByReuseId,可以混用。
+     * 两端统一，initCell必须声明，否则报错
      * cell
      * viewType
      */
@@ -820,32 +823,35 @@ public abstract class UDBaseRecyclerAdapter<L extends UDBaseRecyclerLayout> exte
 
     /**
      * adapter onCreateViewHolder时调用
-     * <p>
+     * 两端统一，init不声明报错
      * cell
      * viewType
      */
     public void callInitHeader(LuaValue cell) {
         LuaFunction delegate;
         delegate = initHeaderDelegate;
-        if (delegate != null)
+        if (delegate != null) {
             delegate.invoke(varargsOf(cell));
+        } else {
+            ErrorUtils.debugLuaError(" It must not be nil callback of header init!", globals);
+        }
     }
 
     public void callFillDataHeader(LuaValue cell, int position) {
         LuaFunction delegate;
         delegate = bindHeaderDelegate;
-        if (delegate != null) {
+        if (delegate != null) {//fillHeader，不声明不用报错
             delegate.invoke(varargsOf(cell, toLuaInt(1), toLuaInt(position)));
         }
     }
 
-    /**
-     * 判断是否使用 新版瀑布流header
-     *
-     * @return
-     */
-    public boolean hasHeaderDelegate() {
-        return initHeaderDelegate != null && bindHeaderDelegate != null;
+    //判断新版Header是否可用(新版支持init,fill，heightforHeader)
+    public boolean isNewHeaderValid() {
+        if (headerValidDelegate != null) {
+            LuaValue[] values = headerValidDelegate.invoke(null);
+            return values.length > 0 && values[0].toBoolean();
+        }
+        return false;
     }
 
     public void callFillDataCell(LuaValue cell, int position) {
@@ -869,6 +875,7 @@ public abstract class UDBaseRecyclerAdapter<L extends UDBaseRecyclerLayout> exte
         if (cellDisappearDelegate == null && headerDisappearDelegate == null && cellDisappearTypeDelegate == null)
             return;
         int pos = holder.getAdapterPosition();
+        int sc = mAdapter.getHeaderCount();
 
         if (pos == RecyclerView.NO_POSITION) {
             if (holder.getCell() == null && headerDisappearDelegate != null) {
@@ -885,14 +892,19 @@ public abstract class UDBaseRecyclerAdapter<L extends UDBaseRecyclerLayout> exte
                 delegate = cellDisappearDelegate;
             }
 
+            //Returns the position of the ViewHolder in terms of the latest layout pass.
+            //mPreLayoutPosition == NO_POSITION ? mPosition : mPreLayoutPosition;
+            //下拉刷新时，cell的pos会被新的cell获取，变成NO_POSITION状态。这时通过getLayoutPosition()获取上一次的pos
             if (delegate != null) {
-                delegate.invoke(varargsOf(holder.getCell(), LuaNumber.valueOf(0), LuaNumber.valueOf(0)));
+                int[] sr = getSectionAndRowIn(holder.getLayoutPosition() - sc);
+                if (sr == null)
+                    return;
+                delegate.invoke(varargsOf(holder.getCell(), toLuaInt(sr[0]), toLuaInt(sr[1])));
             }
 
             return;
         }
 
-        int sc = mAdapter.getHeaderCount();
         if (pos < sc) {
             if (headerDisappearDelegate != null) {
                 headerDisappearDelegate.invoke(null);
@@ -951,11 +963,13 @@ public abstract class UDBaseRecyclerAdapter<L extends UDBaseRecyclerLayout> exte
     protected void notifyItemChanged(int index) {
         Adapter a = getAdapter();
         a.notifyItemChanged(index + a.getHeaderCount());
+        onClearFromIndex(index);
     }
 
     protected void notifyItemRangeChanged(int start, int count) {
         Adapter a = getAdapter();
         a.notifyItemRangeChanged(start + a.getHeaderCount(), count);
+        onClearFromIndex(start);
     }
 
     protected void notifyItemRemoved(int start) {
@@ -1052,13 +1066,21 @@ public abstract class UDBaseRecyclerAdapter<L extends UDBaseRecyclerLayout> exte
                 return null;
             }
             LuaValue[] lr = reuseIdDelegate.invoke(varargsOf(toLuaInt(sr[0]), toLuaInt(sr[1])));
-            LuaValue v = lr.length > 0 ? lr[0] : Nil();
+            LuaValue v = lr != null && lr.length > 0 ? lr[0] : Nil();//不return，返回null
             String result;
             if (AssertUtils.assertString(v, reuseIdDelegate, getGlobals())) {
                 result = v.toJavaString();
             } else {
                 result = v.toString();
             }
+
+            if (MLSEngine.DEBUG && "".equals(result)) {//统一报错，reuseid不能为""
+                IllegalArgumentException e = new IllegalArgumentException("reuseId  can`t be ”“");
+                if (!Environment.hook(e, getGlobals())) {
+                    throw e;
+                }
+            }
+
             if (reuseIdCache == null) {
                 reuseIdCache = new SparseArray<>();
             }
@@ -1090,7 +1112,7 @@ public abstract class UDBaseRecyclerAdapter<L extends UDBaseRecyclerLayout> exte
             return 0;
         }
 
-        if (MLSEngine.DEBUG && row >= (sections[index + 1] - sections[index])) {
+        if (MLSEngine.DEBUG && (row >= (sections[index + 1] - sections[index]) || row < 0)) {
             IndexOutOfBoundsException e = new IndexOutOfBoundsException("row  = " + row + "  IndexOutOfBoundsException ");
             if (!Environment.hook(e, getGlobals()))
                 throw e;
@@ -1155,6 +1177,7 @@ public abstract class UDBaseRecyclerAdapter<L extends UDBaseRecyclerLayout> exte
             viewTypeCache.clear();
         }*/
         initWaterFallHeader();
+        reLayoutInSet();
     }
 
     protected void onLayoutSet(L layout) {
@@ -1164,6 +1187,16 @@ public abstract class UDBaseRecyclerAdapter<L extends UDBaseRecyclerLayout> exte
     protected void onOrientationChanged() {
 
     }
+
+    public void onFooterAdded(boolean added) {
+        if (layout != null) {
+            layout.onFooterAdded(added);
+        }
+    }
+
+    ;//footer加载栏添加回调
+
+
     //</editor-fold>
 
     //<editor-fold desc="OnLoadListener">
@@ -1177,6 +1210,37 @@ public abstract class UDBaseRecyclerAdapter<L extends UDBaseRecyclerLayout> exte
         this.recycledViewPoolIdGenerator = idGenerator;
     }
     //</editor-fold>
+
+    /**
+     * 全局刷新时，重新设置layoutInset
+     */
+    private void reLayoutInSet() {
+        if (layout instanceof ILayoutInSet) {//修复原CollectionViewGridLayout 两端差异
+            if (mRecyclerView instanceof IRefreshRecyclerView) {
+                RecyclerView recyclerView = ((IRefreshRecyclerView) mRecyclerView).getRecyclerView();
+                setMarginForVerticalGridLayout(recyclerView);
+            }
+        }
+    }
+
+    // 针对 纵向且 网格布局，进行Padding设置，为了配合 CollectionViewGridLayoutNew 的layoutinset。
+    // 比如当 一排展示3个格子，但是格子间距是0，recyclerview左右二测有边距时，仅仅通过itemdecoration是无法让每个格子从预设位置开始布局，
+    protected void setMarginForVerticalGridLayout(RecyclerView recyclerView) {
+        int paddingValues[] = ((ILayoutInSet) layout).getPaddingValues();
+        if (paddingValues[0] > 0 || paddingValues[1] > 0 || paddingValues[2] > 0 || paddingValues[3] > 0) {
+//                recyclerView.setClipToPadding(false);
+        }
+
+        if (layout instanceof UDCollectionViewGridLayoutFix) {//grid布局layoutInSet {@link GridLayoutItemDecorationFix}
+            if (layout.orientation == RecyclerView.VERTICAL) {//bottom为0，是因为Footer也是个cell，需要特殊处理spacing
+                recyclerView.setPadding(paddingValues[0] - layout.getItemSpacingPx(), paddingValues[1], paddingValues[2] - layout.getItemSpacingPx(), 0);
+            } else {
+                recyclerView.setPadding(paddingValues[0], paddingValues[1] - layout.getlineSpacingPx(), 0, paddingValues[3] - layout.getlineSpacingPx());
+            }
+        } else if (layout instanceof UDWaterfallLayoutFix) {//瀑布流布局layoutInSet, outRect.left = horizontalSpace / 2
+            recyclerView.setPadding(paddingValues[0] - layout.getItemSpacingPx() / 2, paddingValues[1], paddingValues[2] - layout.getItemSpacingPx() / 2, 0);
+        }
+    }
 
     private final class ClickListener implements View.OnClickListener, ClickHelper {
         private int position;

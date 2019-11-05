@@ -19,17 +19,15 @@ add_definitions(-DJ_API_INFO)
 add_definitions(-DMEM_INFO)
 #add_definitions(-DMULTI_THREAD)
 
-set(LINKER_DIR ${CMAKE_SOURCE_DIR}/linker/${ANDROID_ABI})
-
 #------------------broadcast channel link---------------------
 add_library(libbroadcastchannel_so SHARED IMPORTED)
 set_target_properties(libbroadcastchannel_so PROPERTIES IMPORTED_LOCATION
-        ${LINKER_DIR}/libbroadcastchannel.so)
+        ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/libbroadcastchannel.so)
 
 #------------------luajapi link---------------------
 add_library(luajapi_so SHARED IMPORTED)
 set_target_properties(luajapi_so PROPERTIES IMPORTED_LOCATION
-        ${LINKER_DIR}/libluajapi.so)
+        ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/libluajapi.so)
 #------------------android log link---------------------
 find_library( log-lib log )
 

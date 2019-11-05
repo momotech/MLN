@@ -23,11 +23,11 @@ public class LuaThread extends NLuaValue {
     }
 
     @Override
-    public int type() {
+    public final int type() {
         return LUA_TTHREAD;
     }
 
-    public LuaThread toLuaThread() {
+    public final LuaThread toLuaThread() {
         return this;
     }
 }

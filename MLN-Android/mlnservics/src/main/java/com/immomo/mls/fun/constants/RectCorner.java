@@ -20,9 +20,9 @@ public interface RectCorner {
     @Constant
     int TOP_RIGHT = 2;
     @Constant
-    int BOTTOM_RIGHT = 4;
+    int BOTTOM_LEFT = 4;
     @Constant
-    int BOTTOM_LEFT = 8;
+    int BOTTOM_RIGHT = 8;
     @Constant
     int ALL_CORNERS = 15;
 }

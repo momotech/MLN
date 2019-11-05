@@ -12,7 +12,6 @@ import android.util.Xml;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewParent;
 
 import com.immomo.mls.R;
 import com.immomo.mls.base.ud.lv.ILViewGroup;
@@ -22,8 +21,7 @@ import com.immomo.mls.fun.other.Size;
 import com.immomo.mls.fun.ud.UDPoint;
 import com.immomo.mls.fun.ud.UDSize;
 import com.immomo.mls.fun.ui.IScrollView;
-import com.immomo.mls.fun.ui.LuaHorizontalScrollView;
-import com.immomo.mls.fun.ui.LuaVerticalScrollView;
+import com.immomo.mls.fun.ui.LuaScrollViewContainer;
 import com.immomo.mls.util.DimenUtil;
 import com.immomo.mls.util.LuaViewUtil;
 
@@ -34,13 +32,16 @@ import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.utils.LuaApiUsed;
 import org.xmlpull.v1.XmlPullParser;
 
+import static com.immomo.mls.fun.ud.view.IClipRadius.LEVEL_FORCE_CLIP;
+import static com.immomo.mls.fun.ud.view.IClipRadius.LEVEL_FORCE_NOTCLIP;
+
 
 /**
  * Created by XiongFangyu on 2018/8/3.
  */
 @LuaApiUsed
 public class UDScrollView<V extends ViewGroup & IScrollView> extends UDViewGroup<V>
-        implements IScrollView.OnScrollListener, View.OnTouchListener {
+        implements IScrollView.OnScrollListener,IScrollView.touchActionListener,IScrollView.FlingListener, View.OnTouchListener {
     public static final String LUA_CLASS_NAME = "ScrollView";
     public static final String[] methods = {
             "width",
@@ -63,12 +64,14 @@ public class UDScrollView<V extends ViewGroup & IScrollView> extends UDViewGroup
             "setStartDeceleratingCallback",
             "getContentInset",
             "removeAllSubviews",
+            "a_flingSpeed",
     };
 
     private LuaFunction scrollBeginCallback;
     private LuaFunction scrollingCallback;
     private LuaFunction scrollEndCallback;
     private LuaFunction endDraggingCallback;
+    private LuaFunction touchDownCallback;
     private LuaFunction startDeceleratingCallback;
     private boolean touchListenerAdded = false;
 
@@ -93,11 +96,8 @@ public class UDScrollView<V extends ViewGroup & IScrollView> extends UDViewGroup
             vertical = !init[0].toBoolean();
             linear = init[1].toBoolean();
         }
-        if (vertical) {
-            return (V) new LuaVerticalScrollView(getContext(), this, linear,getAttributeSet());
-        } else {
-            return (V) new LuaHorizontalScrollView(getContext(), this, linear);
-        }
+
+        return (V) new LuaScrollViewContainer(getContext(), this,vertical, linear,getAttributeSet());
     }
 
     private AttributeSet getAttributeSet() {
@@ -171,6 +171,16 @@ public class UDScrollView<V extends ViewGroup & IScrollView> extends UDViewGroup
         }
 
         return super.height(varargs);
+    }
+
+    @Override
+    public LuaValue[] padding(LuaValue[] p) {
+        getView().getScrollView().setPadding(
+                DimenUtil.dpiToPx((float) p[3].toDouble()),
+                DimenUtil.dpiToPx((float) p[0].toDouble()),
+                DimenUtil.dpiToPx((float) p[1].toDouble()),
+                DimenUtil.dpiToPx((float) p[2].toDouble()));
+        return null;
     }
 
     protected void setContentSize(Size size) {
@@ -299,7 +309,7 @@ public class UDScrollView<V extends ViewGroup & IScrollView> extends UDViewGroup
             scrollEndCallback.destroy();
         this.scrollEndCallback = p[0].toLuaFunction();
         if (scrollEndCallback != null)
-            getView().setOnScrollListener(this);
+             getView().setOnScrollListener(this);
         return null;
     }
 
@@ -321,9 +331,20 @@ public class UDScrollView<V extends ViewGroup & IScrollView> extends UDViewGroup
         if (endDraggingCallback != null)
             endDraggingCallback.destroy();
         endDraggingCallback = p[0].toLuaFunction();
-        if (!touchListenerAdded && endDraggingCallback != null) {
-            getView().setOnTouchListener(this);
-        }
+
+        if (endDraggingCallback != null)
+            getView().setTouchActionListener(this);
+        return null;
+    }
+
+    @LuaApiUsed
+    public LuaValue[] touchBegin(LuaValue[] p) {
+        if (touchDownCallback != null)
+            touchDownCallback.destroy();
+        touchDownCallback = p[0].toLuaFunction();
+
+        if (touchDownCallback != null)
+            getView().setTouchActionListener(this);
         return null;
     }
 
@@ -332,8 +353,8 @@ public class UDScrollView<V extends ViewGroup & IScrollView> extends UDViewGroup
         if (startDeceleratingCallback != null)
             startDeceleratingCallback.destroy();
         startDeceleratingCallback = p[0].toLuaFunction();
-        if (!touchListenerAdded && startDeceleratingCallback != null) {
-            getView().setOnTouchListener(this);
+        if (startDeceleratingCallback != null) {
+            getView().setFlingListener(this);
         }
         return null;
     }
@@ -352,6 +373,15 @@ public class UDScrollView<V extends ViewGroup & IScrollView> extends UDViewGroup
         return null;
     }
 
+    @LuaApiUsed
+    public LuaValue[] a_flingSpeed(LuaValue[] p) {
+        ViewGroup v = getView().getContentView();
+        if (v == null)
+            return null;
+        getView().setFlingSpeed(p[0].toFloat());
+        return null;
+    }
+
     @Override
     @LuaApiUsed
     public LuaValue[] clipToBounds(LuaValue[] p) {
@@ -359,6 +389,9 @@ public class UDScrollView<V extends ViewGroup & IScrollView> extends UDViewGroup
         view.setClipToPadding(clip);
         view.setClipChildren(clip);
         view.getContentView().setClipToPadding(clip);
+        if (view instanceof IClipRadius) {//统一：clipToBounds(true)，切割圆角
+            ((IClipRadius) view).forceClipLevel(clip ? LEVEL_FORCE_CLIP: LEVEL_FORCE_NOTCLIP);
+        }
         return null;
     }
     //</editor-fold>
@@ -367,8 +400,9 @@ public class UDScrollView<V extends ViewGroup & IScrollView> extends UDViewGroup
     //<editor-fold desc="OnScrollListener">
     @Override
     public void onBeginScroll() {
+
         if (scrollBeginCallback != null)
-            scrollBeginCallback.invoke(null);
+            callbackWithPoint(scrollBeginCallback);
     }
 
     @Override
@@ -381,19 +415,38 @@ public class UDScrollView<V extends ViewGroup & IScrollView> extends UDViewGroup
     @Override
     public void onScrollEnd() {
         if (scrollEndCallback != null)
-            scrollEndCallback.invoke(null);
+            callbackWithPoint(scrollEndCallback);
     }
+
+    @Override
+    public void onActionUp() {
+        if (endDraggingCallback != null)
+            callbackWithPoint(endDraggingCallback);
+    }
+
+    @Override
+    public void onTouchDown() {
+        if (touchDownCallback != null)
+            callbackWithPoint(touchDownCallback);
+    }
+
+    @Override
+    public void onFling() {
+        if (startDeceleratingCallback != null)
+            callbackWithPoint(startDeceleratingCallback);
+    }
+
     //</editor-fold>
 
     private void callbackWithPoint(LuaFunction c) {
-        View v = getView();
+        View v = getView().getScrollView();
         float sx = DimenUtil.pxToDpi(v.getScrollX());
         float sy = DimenUtil.pxToDpi(v.getScrollY());
         c.invoke(varargsOf(LuaNumber.valueOf(sx), LuaNumber.valueOf(sy)));
     }
 
     private void callbackWithPoint(LuaFunction c, boolean ecelerating) {
-        View v = getView();
+        View v = getView().getScrollView();
         float sx = DimenUtil.pxToDpi(v.getScrollX());
         float sy = DimenUtil.pxToDpi(v.getScrollY());
         c.invoke(varargsOf(LuaNumber.valueOf(sx), LuaNumber.valueOf(sy), LuaBoolean.valueOf(ecelerating)));
@@ -401,15 +454,6 @@ public class UDScrollView<V extends ViewGroup & IScrollView> extends UDViewGroup
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
-        int a = event.getAction();
-        if (a == MotionEvent.ACTION_CANCEL || a == MotionEvent.ACTION_UP) {
-            if (endDraggingCallback != null) {
-                callbackWithPoint(endDraggingCallback, true);
-            }
-            if (startDeceleratingCallback != null) {
-                callbackWithPoint(startDeceleratingCallback);
-            }
-        }
         return false;
     }
 }

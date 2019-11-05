@@ -24,7 +24,7 @@ import androidx.recyclerview.widget.RecyclerView;
  * Created by XiongFangyu on 2018/7/19.
  */
 @LuaApiUsed
-public abstract class UDBaseRecyclerLayout extends JavaUserdata {
+public abstract class UDBaseRecyclerLayout<A extends UDBaseRecyclerAdapter> extends JavaUserdata {
     public static final String LUA_CLASS_NAME = "__BaseRecyclerLayout";
     public static final String[] methods = new String[]{
             "lineSpacing",
@@ -38,6 +38,7 @@ public abstract class UDBaseRecyclerLayout extends JavaUserdata {
     protected int height;
 
     protected int orientation = RecyclerView.VERTICAL;
+    protected A adapter;
 
     @LuaApiUsed
     protected UDBaseRecyclerLayout(long L, LuaValue[] v) {
@@ -80,6 +81,10 @@ public abstract class UDBaseRecyclerLayout extends JavaUserdata {
         }
     }
 
+    public int getOrientation() {
+        return orientation;
+    }
+
     protected void onOrientationChanged(int now) {
 
     }
@@ -87,6 +92,11 @@ public abstract class UDBaseRecyclerLayout extends JavaUserdata {
     public int getItemSpacingPx() {
         return itemSpacing;
     }
+
+    public int getlineSpacingPx() {
+        return lineSpacing;
+    }
+
 
     public abstract int getSpanCount();
 
@@ -104,5 +114,12 @@ public abstract class UDBaseRecyclerLayout extends JavaUserdata {
 
     protected static int getScreenHeight() {
         return AndroidUtil.getScreenHeight(MLSEngine.getContext());
+    }
+
+    protected void onFooterAdded(boolean footerAdded) {//footer加载栏存在，layoutInSet、lineSpacing特殊处理
+    }
+
+    public void setAdapter(A adapter) {
+        this.adapter = adapter;
     }
 }
