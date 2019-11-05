@@ -36,6 +36,7 @@
         <activity android:name="com.mln.demo.activity.LuaViewActivity"
                   android:screenOrientation="portrait"
                   android:windowSoftInputMode="adjustPan|stateAlwaysHidden"
+                  android:theme="@style/AppTheme.StartingWindowTheme"
             >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

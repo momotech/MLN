@@ -43,6 +43,8 @@ public class App extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+
+        long start = System.currentTimeMillis();
         AnrWatchDog.startWatch();
         app = this;
         init();
@@ -108,6 +110,8 @@ public class App extends Application {
         MLSEngine.setDebugIp("172.16.39.13");
         OuterResultHandler.registerResultHandler(new QRResultHandler());
         Log.d("App", "onCreate: " + Globals.isInit() + " " + Globals.isIs32bit());
+
+        Log.d("App", "onCreate: init time = "+ (System.currentTimeMillis() - start));
     }
 
     public static App getApp() {
