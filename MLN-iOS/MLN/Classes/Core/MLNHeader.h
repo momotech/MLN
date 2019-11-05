@@ -79,7 +79,7 @@ __VA_ARGS__;\
 /**
  强制类型检查
  */
-#define mln_lua_checkType(L_T, idx, TYPE_T) mln_lua_assert(L_T, lua_type(L_T, idx) != TYPE_T, "%s expected, got %s", lua_typename(L_T, TYPE_T), luaL_typename(L_T, idx))
+#define mln_lua_checkType(L_T, idx, TYPE_T) mln_lua_assert(L_T, lua_type(L_T, idx) == TYPE_T, "%s expected, got %s", lua_typename(L_T, TYPE_T), luaL_typename(L_T, idx))
 #define mln_lua_checkboolean(L, idx) mln_lua_checkType(L, idx, LUA_TBOOLEAN);
 #define mln_lua_checkludata(L, idx) mln_lua_checkType(L, idx, LUA_TLIGHTUSERDATA);
 #define mln_lua_checknumber(L, idx) mln_lua_checkType(L, idx, LUA_TNUMBER);
