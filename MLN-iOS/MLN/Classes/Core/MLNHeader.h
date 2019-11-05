@@ -79,14 +79,15 @@ __VA_ARGS__;\
 /**
  强制类型检查
  */
-#define mln_lua_checkboolean(L, idx) luaL_checktype(L, idx, LUA_TBOOLEAN);
-#define mln_lua_checkludata(L, idx) luaL_checktype(L, idx, LUA_TLIGHTUSERDATA);
-#define mln_lua_checknumber(L, idx) luaL_checktype(L, idx, LUA_TNUMBER);
-#define mln_lua_checkstring(L, idx) luaL_checktype(L, idx, LUA_TSTRING);
-#define mln_lua_checktable(L, idx) luaL_checktype(L, idx, LUA_TTABLE);
-#define mln_lua_checkfunc(L, idx) luaL_checktype(L, idx, LUA_TFUNCTION);
-#define mln_lua_checkudata(L, idx) luaL_checktype(L, idx, LUA_TUSERDATA);
-#define mln_lua_checkthread(L, idx) luaL_checktype(L, idx, LUA_TTHREAD);
+#define mln_lua_checkType(L_T, idx, TYPE_T) mln_lua_assert(L_T, lua_type(L_T, idx) != TYPE_T, "%s expected, got %s", lua_typename(L_T, TYPE_T), luaL_typename(L_T, idx))
+#define mln_lua_checkboolean(L, idx) mln_lua_checkType(L, idx, LUA_TBOOLEAN);
+#define mln_lua_checkludata(L, idx) mln_lua_checkType(L, idx, LUA_TLIGHTUSERDATA);
+#define mln_lua_checknumber(L, idx) mln_lua_checkType(L, idx, LUA_TNUMBER);
+#define mln_lua_checkstring(L, idx) mln_lua_checkType(L, idx, LUA_TSTRING);
+#define mln_lua_checktable(L, idx) mln_lua_checkType(L, idx, LUA_TTABLE);
+#define mln_lua_checkfunc(L, idx) mln_lua_checkType(L, idx, LUA_TFUNCTION);
+#define mln_lua_checkudata(L, idx) mln_lua_checkType(L, idx, LUA_TUSERDATA);
+#define mln_lua_checkthread(L, idx) mln_lua_checkType(L, idx, LUA_TTHREAD);
 
 #define MLNValueIsType(VALUE, TYPE) strcmp((VALUE).objCType, @encode(TYPE)) == 0
 #define MLNValueIsCGRect(VALUE) MLNValueIsType(VALUE, CGRect)

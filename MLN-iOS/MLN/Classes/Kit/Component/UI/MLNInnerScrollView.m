@@ -18,6 +18,7 @@
 
 @interface MLNInnerScrollView()
 
+@property(nonatomic, weak) MLNLuaCore *mln_luaCore;
 @property (nonatomic, strong) MLNScrollViewDelegate *lua_delegate;
 @property (nonatomic, assign, getter=isLinearContenView, readonly) BOOL linearContenView;
 
