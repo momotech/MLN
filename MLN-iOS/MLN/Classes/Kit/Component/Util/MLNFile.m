@@ -427,8 +427,8 @@ static NSString *fileManagerRootPath = nil;
     NSError *error = nil;
     NSDictionary *fileAttributes = [[NSFileManager defaultManager] attributesOfItemAtPath:realFilePath error:&error];
     NSMutableDictionary *fileInfo = [NSMutableDictionary dictionary];
-    [fileInfo setObject:@([fileAttributes fileSize]) forKey:kMILFileSize];
-    [fileInfo setObject:@([fileAttributes fileModificationDate].timeIntervalSince1970)forKey:kMILModiDate];
+    [fileInfo setObject:@([fileAttributes fileSize]) forKey:kMLNFileSize];
+    [fileInfo setObject:@([fileAttributes fileModificationDate].timeIntervalSince1970)forKey:kMLNModiDate];
     return fileInfo;
 }
 

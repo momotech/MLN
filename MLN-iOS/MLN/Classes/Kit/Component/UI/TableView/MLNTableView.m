@@ -346,7 +346,7 @@
     }
 }
 
-#pragma - MILPaddingViewProtocol
+#pragma - MLNPaddingViewProtocol
 - (UITableView *)innerTableView
 {
     if (!_innerTableView) {
