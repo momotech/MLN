@@ -18,7 +18,7 @@
 #import "MLNBeforeWaitingTask.h"
 #import "UIView+MLNKit.h"
 
-#define kMILViewPagerCellReuseId @"kMILViewPagerCellReuseId"
+#define kMLNViewPagerCellReuseId @"kMLNViewPagerCellReuseId"
 
 @interface MLNViewPager() <UICollectionViewDelegate, MLNTabSegmentScrollHandlerDelegate>
 @property (nonatomic, weak) MLNInnerCollectionView *mainView; // 显示图片的collectionView
@@ -78,7 +78,7 @@
     mainView.pagingEnabled = YES;
     mainView.showsHorizontalScrollIndicator = NO;
     mainView.showsVerticalScrollIndicator = NO;
-    [mainView registerClass:[MLNCollectionViewCell class] forCellWithReuseIdentifier:kMILViewPagerCellReuseId];
+    [mainView registerClass:[MLNCollectionViewCell class] forCellWithReuseIdentifier:kMLNViewPagerCellReuseId];
     mainView.scrollsToTop = NO;
     mainView.bounces = NO;
     [self addSubview:mainView];

@@ -16,7 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 typedef void (^MLNTabSegmentViewTapActionBlock) (MLNTabSegmentView *tapView, NSInteger index);
 
-FOUNDATION_EXPORT const CGFloat kMILTabSegmentViewDefaultHeight;
+FOUNDATION_EXPORT const CGFloat kMLNTabSegmentViewDefaultHeight;
 #define kTabSegmentViewContentInset    (MDStatusBarAndNavigationBarHeight + kMDTabSegmentViewDefaultHeight)
 
 
