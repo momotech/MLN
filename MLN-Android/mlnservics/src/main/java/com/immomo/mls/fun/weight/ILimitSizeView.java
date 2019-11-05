@@ -12,7 +12,11 @@ package com.immomo.mls.fun.weight;
  */
 public interface ILimitSizeView {
 
-    void setMaxWidth(float maxWidth);
+    void setMaxWidth(int maxWidth);
 
-    void setMaxHeight(float maxHeight);
+    void setMaxHeight(int maxHeight);
+
+    int getMaxWidth();
+
+    int getMaxHeight();
 }

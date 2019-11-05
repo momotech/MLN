@@ -11,6 +11,7 @@ import android.content.ComponentCallbacks2;
 import android.content.Context;
 
 import com.immomo.mlncore.MLNCore;
+import com.immomo.mls.adapter.OnRemovedUserdataAdapter;
 import com.immomo.mls.fun.constants.BreakMode;
 import com.immomo.mls.fun.constants.ContentMode;
 import com.immomo.mls.fun.constants.DrawStyle;
@@ -36,11 +37,12 @@ import com.immomo.mls.fun.constants.TextAlign;
 import com.immomo.mls.fun.constants.UnderlineStyle;
 import com.immomo.mls.fun.globals.UDLuaView;
 import com.immomo.mls.fun.java.Alert;
-import com.immomo.mls.fun.java.Dialog;
 import com.immomo.mls.fun.java.Event;
 import com.immomo.mls.fun.java.JToast;
+import com.immomo.mls.fun.java.LuaDialog;
 import com.immomo.mls.fun.lt.LTFile;
 import com.immomo.mls.fun.lt.SClipboard;
+import com.immomo.mls.fun.lt.SICornerRadiusManager;
 import com.immomo.mls.fun.lt.SINavigator;
 import com.immomo.mls.fun.lt.LTPreferenceUtils;
 import com.immomo.mls.fun.lt.LTPrinter;
@@ -103,23 +105,27 @@ import com.immomo.mls.fun.ud.view.recycler.UDBaseRecyclerLayout;
 import com.immomo.mls.fun.ud.view.recycler.UDCollectionAdapter;
 import com.immomo.mls.fun.ud.view.recycler.UDCollectionAutoFitAdapter;
 import com.immomo.mls.fun.ud.view.recycler.UDCollectionGridLayout;
+import com.immomo.mls.fun.ud.view.recycler.UDCollectionViewGridLayoutFix;
 import com.immomo.mls.fun.ud.view.recycler.UDCollectionLayout;
 import com.immomo.mls.fun.ud.view.recycler.UDListAdapter;
 import com.immomo.mls.fun.ud.view.recycler.UDListAutoFitAdapter;
 import com.immomo.mls.fun.ud.view.recycler.UDRecyclerView;
 import com.immomo.mls.fun.ud.view.recycler.UDWaterFallAdapter;
 import com.immomo.mls.fun.ud.view.recycler.UDWaterFallLayout;
+import com.immomo.mls.fun.ud.view.recycler.UDWaterfallLayoutFix;
 import com.immomo.mls.fun.ud.view.viewpager.UDViewPagerAdapter;
 import com.immomo.mls.global.LVConfig;
 import com.immomo.mls.global.LuaViewConfig;
 import com.immomo.mls.util.DimenUtil;
 import com.immomo.mls.util.FileUtil;
+import com.immomo.mls.util.LogUtil;
 import com.immomo.mls.wrapper.AssetsResourceFinder;
 import com.immomo.mls.wrapper.IJavaObjectGetter;
 import com.immomo.mls.wrapper.ILuaValueGetter;
 import com.immomo.mls.wrapper.Register;
 
 import org.luaj.vm2.Globals;
+import org.luaj.vm2.LuaUserdata;
 import org.luaj.vm2.utils.IGlobalsUserdata;
 import org.luaj.vm2.utils.ILog;
 import org.luaj.vm2.utils.MemoryMonitor;
@@ -190,7 +196,7 @@ public class MLSEngine {
 
     private static MemoryListener memoryListener;
 
-    public static MLSBuilder init(Context context, boolean debug) {
+    public static MLSBuilder init(Context context, final boolean debug) {
         boolean firstInit = false;
         if (singleRegister == null) {
             synchronized (MLSEngine.class) {
@@ -201,6 +207,48 @@ public class MLSEngine {
             }
         }
         if (firstInit) {
+            MLNCore.setCallback(new MLNCore.Callback() {
+                @Override
+                public void onNativeCreateGlobals(Globals g, boolean isStatic) {
+                    if (isStatic) {
+                        g.setJavaUserdata(MLSEngine.getGlobalUD());
+                        g.setBasePath(MLSEngine.getGlobalPath(), false);
+                        g.setResourceFinders(MLSEngine.getGlobalResourceFinder());
+                    }
+                    singleRegister.install(g, false);
+                    NativeBridge.registerNativeBridge(g);
+                }
+
+                @Override
+                public boolean hookLuaError(Throwable t, Globals g) {
+                    return Environment.hook(t, g);
+                }
+
+                @Override
+                public void luaGcCast(Globals g, long ms) {
+                    if (debug)
+                        LogUtil.e("Lua Gc cast:", ms);
+                }
+
+                @Override
+                public LuaUserdata onNullGet(long id, @NonNull LuaUserdata cache) {
+                    OnRemovedUserdataAdapter adapter = MLSAdapterContainer.getOnRemovedUserdataAdapter();
+                    if (adapter != null)
+                        return adapter.onNullGet(id, cache);
+                    return cache;
+                }
+            });
+            NativeLog.setLogImpl(new ILog() {
+                @Override
+                public void l(long L, String tag, String log) {
+                    HotReloadHelper.log(log);
+                }
+
+                @Override
+                public void e(long L, String tag, String log) {
+                    HotReloadHelper.onError(log);
+                }
+            });
             MLSEngine.context = context;
             DEBUG = debug;
             MLNCore.DEBUG = debug;
@@ -226,34 +274,6 @@ public class MLSEngine {
             }
             globalResourceFinder.add(new AssetsResourceFinder(context));
             Globals.setAssetManagerForNative(context.getAssets());
-            MLNCore.setCallback(new MLNCore.Callback() {
-                @Override
-                public void onNativeCreateGlobals(Globals g, boolean isStatic) {
-                    if (isStatic) {
-                        g.setJavaUserdata(MLSEngine.getGlobalUD());
-                        g.setBasePath(MLSEngine.getGlobalPath(), false);
-                        g.setResourceFinders(MLSEngine.getGlobalResourceFinder());
-                    }
-                    singleRegister.install(g, false);
-                    NativeBridge.registerNativeBridge(g);
-                }
-
-                @Override
-                public boolean hookLuaError(Throwable t, Globals g) {
-                    return Environment.hook(t, g);
-                }
-            });
-            NativeLog.setLogImpl(new ILog() {
-                @Override
-                public void l(long L, String tag, String log) {
-                    HotReloadHelper.log(log);
-                }
-
-                @Override
-                public void e(long L, String tag, String log) {
-                    HotReloadHelper.onError(log);
-                }
-            });
             return newBuilder();
         }
         return new MLSBuilder(singleRegister);
@@ -363,8 +383,10 @@ public class MLSEngine {
                 Register.newUDHolder(UDCollectionAutoFitAdapter.LUA_CLASS_NAME, UDCollectionAutoFitAdapter.class, false, UDCollectionAutoFitAdapter.methods),
                 Register.newUDHolder(UDCollectionLayout.LUA_CLASS_NAME, UDCollectionLayout.class, false, UDCollectionLayout.methods),
                 Register.newUDHolder(UDCollectionGridLayout.LUA_CLASS_NAME, UDCollectionGridLayout.class, false, UDCollectionGridLayout.methods),
+                Register.newUDHolder(UDCollectionViewGridLayoutFix.LUA_CLASS_NAME, UDCollectionViewGridLayoutFix.class, false, UDCollectionViewGridLayoutFix.methods),
                 Register.newUDHolder(UDWaterFallAdapter.LUA_CLASS_NAME, UDWaterFallAdapter.class, false, UDWaterFallAdapter.methods),
                 Register.newUDHolder(UDWaterFallLayout.LUA_CLASS_NAME, UDWaterFallLayout.class, false, UDWaterFallLayout.methods),
+                Register.newUDHolder(UDWaterfallLayoutFix.LUA_CLASS_NAME, UDWaterfallLayoutFix.class, false, UDWaterfallLayoutFix.methods),
                 Register.newUDHolder(UDViewPagerAdapter.LUA_CLASS_NAME,UDViewPagerAdapter.class, false, UDViewPagerAdapter.methods),
                 Register.newUDHolder(UDPath.LUA_CLASS_NAME, UDPath.class, false, UDPath.methods),
                 Register.newUDHolder(UDPaint.LUA_CLASS_NAME, UDPaint.class, false, UDPaint.methods),
@@ -377,7 +399,7 @@ public class MLSEngine {
                 Register.newUDHolderWithLuaClass(JToast.LUA_CLASS_NAME, JToast.class, false),
                 Register.newUDHolderWithLuaClass(Event.LUA_CLASS_NAME, Event.class,false),
                 Register.newUDHolderWithLuaClass(Alert.LUA_CLASS_NAME, Alert.class,false),
-                Register.newUDHolderWithLuaClass(Dialog.LUA_CLASS_NAME, Dialog.class,false),
+                Register.newUDHolderWithLuaClass(LuaDialog.LUA_CLASS_NAME, LuaDialog.class,false),
 
                 /// Canvas Animations
                 Register.newUDHolderWithLuaClass(UDBaseAnimation.LUA_CLASS_NAME, UDBaseAnimation.class, false),
@@ -421,6 +443,7 @@ public class MLSEngine {
                 new MLSBuilder.SIHolder(SINetworkReachability.LUA_CLASS_NAME, SINetworkReachability.class),
                 new MLSBuilder.SIHolder(SILoading.LUA_CLASS_NAME, SILoading.class),
                 new MLSBuilder.SIHolder(SINavigator.LUA_CLASS_NAME, SINavigator.class),
+                new MLSBuilder.SIHolder(SICornerRadiusManager.LUA_CLASS_NAME, SICornerRadiusManager.class),
         };
     }
 

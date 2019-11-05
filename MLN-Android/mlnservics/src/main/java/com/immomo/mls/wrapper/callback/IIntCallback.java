@@ -21,11 +21,11 @@ public interface IIntCallback extends Destroyable, GlobalsContainer {
      * 回调lua方法
      * @param params 参数
      */
-    int callback(Object... params);
+    int callback(Object... params) throws IllegalStateException;
 
     /**
      * 回调lua方法，调用之后，将不能再次使用此回调
      * @param params 参数
      */
-    int callbackAndDestroy(Object... params);
+    int callbackAndDestroy(Object... params) throws IllegalStateException;
 }

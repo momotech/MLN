@@ -7,9 +7,9 @@
   */
 package com.immomo.mls.fun.ud.view;
 
-import android.os.Build;
 import android.widget.ImageView;
 
+import com.immomo.mls.fun.constants.ContentMode;
 import com.immomo.mls.fun.ud.UDArray;
 import com.immomo.mls.fun.ui.ILuaImageView;
 import com.immomo.mls.fun.ui.LuaImageView;
@@ -72,6 +72,7 @@ public class UDImageView<I extends ImageView & ILuaImageView> extends UDView<I> 
     public LuaValue[] image(LuaValue[] var) {
         if (var.length == 1) {
             cleanNineImage();
+            ((LuaImageView)getView()).addNotCallBackList(var[0].toJavaString());
             setImage(var[0].toJavaString());
             return null;
         }
@@ -81,6 +82,13 @@ public class UDImageView<I extends ImageView & ILuaImageView> extends UDView<I> 
         return rNil();
     }
 
+    @Override
+    public LuaValue[] setNineImage(LuaValue[] var) {
+        LuaValue[] luaValues = super.setNineImage(var);
+        ((LuaImageView) getView()).setImageUrlEmpty();
+        return luaValues;
+    }
+
     @LuaApiUsed
     public LuaValue[] contentMode(LuaValue[] var) {
         if (var.length == 1) {
@@ -88,7 +96,11 @@ public class UDImageView<I extends ImageView & ILuaImageView> extends UDView<I> 
                 ErrorUtils.debugUnsupportError("contentMode is nil. You must use 'ContentMode.XXXX'");
                 return null;
             }
-            getView().setScaleType(ImageView.ScaleType.values()[var[0].toInt()]);
+            int type = var[0].toInt();
+            if (type == ContentMode.CENTER) {
+                ErrorUtils.debugLuaError("ContentMode.CENTER is deprecated", globals);
+            }
+            getView().setScaleType(ImageView.ScaleType.values()[type]);
             return null;
         }
         return varargsOf(LuaNumber.valueOf(getView().getScaleType().ordinal()));
@@ -126,8 +138,8 @@ public class UDImageView<I extends ImageView & ILuaImageView> extends UDView<I> 
 
     @LuaApiUsed
     public LuaValue[] blurImage(LuaValue[] var) {
-
-        if (var.length == 1 && !var[0].isNil()) {
+        //ios新增参数2，Android不处理
+        if (var.length > 0 && !var[0].isNil()) {
 
             float blurValue = (float) var[0].toDouble();
             if (blurValue < 0)
@@ -170,14 +182,6 @@ public class UDImageView<I extends ImageView & ILuaImageView> extends UDView<I> 
 
     @LuaApiUsed
     public LuaValue[] borderWidth(LuaValue[] width) {
-        if (width != null) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                getView().setCropToPadding(getView().getScaleType() == ImageView.ScaleType.CENTER_CROP);
-            }
-            int topRight = width[0].toInt();
-            LuaValue rightvalue = LuaNumber.valueOf(topRight);
-            super.padding(varargsOf(rightvalue, rightvalue, rightvalue, rightvalue));
-        }
         return super.borderWidth(varargsOf(LuaNumber.valueOf((float) width[0].toDouble())));
     }
 
@@ -201,6 +205,7 @@ public class UDImageView<I extends ImageView & ILuaImageView> extends UDView<I> 
             setCornerRadius(DimenUtil.dpiToPx(radius));
         }
 
+        ((LuaImageView) getView()).setImageUrlEmpty();
         setImageUrl(url, placeHolder);
         return null;
     }

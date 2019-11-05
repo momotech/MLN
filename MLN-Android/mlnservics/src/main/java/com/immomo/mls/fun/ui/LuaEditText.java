@@ -47,6 +47,7 @@ public class LuaEditText extends BorderRadiusEditText implements ILView<UDEditTe
         // 默认多行模式对应左上起点
         setGravity(Gravity.TOP);
         setInputType(EditTextViewInputMode.Normal);
+        setSingleLine(false);
         setHintTextColor(Color.rgb(128, 128, 128));
         setTextColor(getResources().getColor(android.R.color.black));
         setCursorColor(getResources().getColor(android.R.color.black));
@@ -110,7 +111,6 @@ public class LuaEditText extends BorderRadiusEditText implements ILView<UDEditTe
         super.onFocusChanged(focused, direction, previouslyFocusedRect);
         if (focused) {
             setCursorVisible(true);
-            getUserdata().callBeforeTextChanged();
         }
     }
 
@@ -118,8 +118,10 @@ public class LuaEditText extends BorderRadiusEditText implements ILView<UDEditTe
     public boolean onTouchEvent(MotionEvent event) {
         if (!isEnabled())
             return false;
-        if (event != null && event.getAction() == MotionEvent.ACTION_DOWN)
+        if (event != null && event.getAction() == MotionEvent.ACTION_DOWN){
             setCursorVisible(true);
+            getUserdata().callBeforeTextChanged();
+        }
         return super.onTouchEvent(event);
     }
 

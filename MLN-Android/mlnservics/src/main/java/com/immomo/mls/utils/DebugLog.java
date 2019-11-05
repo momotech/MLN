@@ -98,6 +98,8 @@ public class DebugLog implements Cloneable {
     }
 
     protected void log(PrintStream ps) {
+        if (!MLSEngine.DEBUG)
+            return;
         log(createLog(), ps);
     }
 

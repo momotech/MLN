@@ -14,6 +14,8 @@ import com.immomo.mls.MLSEngine;
 import com.immomo.mls.fun.other.Adapter;
 import com.immomo.mls.fun.other.ViewHolder;
 import com.immomo.mls.fun.ud.UDArray;
+import com.immomo.mls.fun.ud.UDPoint;
+import com.immomo.mls.fun.ud.view.IClipRadius;
 import com.immomo.mls.fun.ud.view.UDView;
 import com.immomo.mls.fun.ud.view.UDViewGroup;
 import com.immomo.mls.fun.ui.IRefreshRecyclerView;
@@ -23,6 +25,8 @@ import com.immomo.mls.fun.ui.OnLoadListener;
 import com.immomo.mls.fun.ui.SizeChangedListener;
 import com.immomo.mls.fun.weight.MLSRecyclerView;
 import com.immomo.mls.util.DimenUtil;
+import com.immomo.mls.utils.ErrorUtils;
+import com.immomo.mls.utils.MainThreadExecutor;
 import com.immomo.mls.weight.load.ILoadViewDelegete;
 
 import org.luaj.vm2.LuaBoolean;
@@ -38,7 +42,9 @@ import androidx.annotation.CallSuper;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.StaggeredGridLayoutManager;
+
+import static com.immomo.mls.fun.ud.view.IClipRadius.LEVEL_FORCE_CLIP;
+import static com.immomo.mls.fun.ud.view.IClipRadius.LEVEL_FORCE_NOTCLIP;
 
 /**
  * Created by XiongFangyu
@@ -98,6 +104,7 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
             "visibleCells",
             "scrollEnabled",
             "setOffsetWithAnim",
+            "contentOffset",
     };
 
     private ILoadViewDelegete loadViewDelegete;
@@ -154,6 +161,7 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
     private int settedHeight;
 
     private boolean mAttachFirst = false;
+
     protected RecyclerView getRecyclerView() {
         return getView().getRecyclerView();
     }
@@ -174,12 +182,16 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
         view.setClipToPadding(clip);
         view.setClipChildren(clip);
         view.getRecyclerView().setClipToPadding(clip);
+        view.getRecyclerView().setClipChildren(clip);
+        if (view instanceof IClipRadius) {//统一：clipToBounds(true)，切割圆角
+            ((IClipRadius) view).forceClipLevel(clip ? LEVEL_FORCE_CLIP: LEVEL_FORCE_NOTCLIP);
+        }
         return null;
     }
 
     @LuaApiUsed
     public LuaValue[] refreshEnable(LuaValue[] values) {
-        if (values != null && values.length > 0 && values[0].isBoolean()) {
+        if (values.length > 0) {
             mRefreshEnabled = values[0].toBoolean();
             getView().setRefreshEnable(mRefreshEnabled);
             return null;
@@ -190,9 +202,8 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
 
     @LuaApiUsed
     public LuaValue[] loadEnable(LuaValue[] values) {
-        if (values.length != 0 && values[0].isBoolean()) {
-            LuaValue value = values[0];
-            boolean enable = value.toBoolean();
+        if (values.length > 0) {
+            boolean enable = values[0].toBoolean();
             getView().setLoadEnable(enable);
             if (getRecyclerView().getAdapter() instanceof Adapter) {
                 ((Adapter) getRecyclerView().getAdapter()).setFooterAdded(enable);
@@ -206,8 +217,20 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
     @LuaApiUsed
     public LuaValue[] scrollDirection(LuaValue[] values) {
         if (values.length > 0) {
-            orientation = parseDirection(values[0].toInt());
+            int newOrientation = parseDirection(values[0].toInt());
+            boolean change = orientation != newOrientation;
+            orientation = newOrientation;
+            //动态设置，需要重新计算inset和spacing，两端统一差异
+            if (change && adapter != null && layout != null) {
+                layout.setOrientation(orientation);
+                if (layout instanceof ILayoutInSet) {
+                    removeAllItemDecorations(getRecyclerView());//移除之前的decoration
+                    getRecyclerView().addItemDecoration(layout.getItemDecoration());
+                    adapter.setMarginForVerticalGridLayout(getRecyclerView());
+                }
+            }
             setOrientation(getRecyclerView().getLayoutManager());
+
             return null;
         }
         return varargsOf(LuaNumber.valueOf(parseDirection(orientation)));
@@ -221,7 +244,7 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
 
     @LuaApiUsed
     public LuaValue[] loadThreshold(LuaValue[] values) {
-        if (values.length != 0  && values[0].isNumber()) {
+        if (values.length > 0) {
             this.loadThreshold = (float) values[0].toDouble();
             ((MLSRecyclerView) getRecyclerView()).setLoadThreshold(loadThreshold);
             return null;
@@ -231,40 +254,49 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
 
     @LuaApiUsed
     public LuaValue[] openReuseCell(LuaValue[] values) {
-        LuaValue isOpenReuseCell = values[0];
-        if (isOpenReuseCell == null || !isOpenReuseCell.isBoolean()) {
+        if (values.length > 0) {
+            openReuseCell = values[0].toBoolean();
+            if (openReuseCell) {
+                poolManager = RecycledViewPoolManager.getInstance(getGlobals());
+                getRecyclerView().setRecycledViewPool(poolManager.getRecycleViewPoolInstance());
+                if (adapter != null) {
+                    RecyclerView.LayoutManager layoutManager = adapter.getLayoutManager();
+                    if (layoutManager instanceof LinearLayoutManager) {
+                        ((LinearLayoutManager) layoutManager).setRecycleChildrenOnDetach(true);
+                    }
+                    adapter.setRecycledViewPoolIDGenerator(poolManager.getIdGenerator());
+                }
+            } else {
+                poolManager = null;
+                if (adapter != null) {
+                    adapter.setRecycledViewPoolIDGenerator(null);
+                }
+            }
+            return null;
+        } else {
             return LuaValue.rBoolean(openReuseCell);
         }
-
-        openReuseCell = isOpenReuseCell.toBoolean();
-        if (openReuseCell) {
-            poolManager = RecycledViewPoolManager.getInstance(getGlobals());
-            getRecyclerView().setRecycledViewPool(poolManager.getRecycleViewPoolInstance());
-            if (adapter != null) {
-                RecyclerView.LayoutManager layoutManager = adapter.getLayoutManager();
-                if (layoutManager instanceof LinearLayoutManager) {
-                    ((LinearLayoutManager) layoutManager).setRecycleChildrenOnDetach(true);
-                }
-                adapter.setRecycledViewPoolIDGenerator(poolManager.getIdGenerator());
-            }
-        } else {
-            poolManager = null;
-            if (adapter != null) {
-                adapter.setRecycledViewPoolIDGenerator(null);
-            }
-        }
-        return null;
     }
 
     //滑动到指定位置
     @LuaApiUsed
     public LuaValue[] setOffsetWithAnim(LuaValue[] values) {
-//        Point point = ((UDPoint) values[0]).getPoint();
-//        if (getRecyclerView() instanceof MLSRecyclerView) {
-//            ((MLSRecyclerView) getRecyclerView()).smoothScrollTo((int) (point.getX()),
-//                    (int) (point.getY()));
-//        }
+        if (values.length == 1) {
+            UDPoint point = (UDPoint) values[0];
+            getView().smoothScrollTo(point.getPoint());
+            point.destroy();
+        }
         return null;
+    }
+
+    @LuaApiUsed
+    public LuaValue[] contentOffset(LuaValue[] p) {
+        if (p.length == 1) {
+            getView().setContentOffset(((UDPoint) p[0]).getPoint());
+            p[0].destroy();
+            return null;
+        }
+        return varargsOf(new UDPoint(globals, getView().getContentOffset()));
     }
 //</editor-fold>
 
@@ -348,7 +380,8 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
         if (values.length >= 1) {
             anim = values[0].toBoolean();
         }
-        callScrollToTop(anim);
+        if (mScrollEnabled)
+            callScrollToTop(anim);
         return null;
     }
 
@@ -362,6 +395,9 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
     @LuaApiUsed
     public LuaValue[] scrollToCell(LuaValue[] values) {
         if (adapter != null && values.length >= 2) {
+            if (!mScrollEnabled) {
+                return null;
+            }
             int position = adapter.getPositionBySectionAndRow(values[1].toInt() - 1, values[0].toInt() - 1);
             RecyclerView recyclerView = getRecyclerView();
             if (recyclerView instanceof MLSRecyclerView && values.length >= 3) {
@@ -377,7 +413,6 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
             adapter.setItemAnimated(false);
             adapter.insertCellAtRow(values[1].toInt() - 1, values[0].toInt() - 1);
         }
-        scroll2TopWhenInsertFirstPosition(values[1].toInt(), values[0].toInt());
         return null;
     }
 
@@ -392,7 +427,6 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
         }
 
         adapter.insertCellAtRowAnimated(values[1].toInt() - 1, values[0].toInt() - 1, animated);
-        scroll2TopWhenInsertFirstPosition(values[1].toInt(),values[0].toInt());
         return null;
     }
 
@@ -504,8 +538,13 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
         if (values.length > 0) {
             LuaValue value = values[0];
             if (value != null && value.isUserdata()) {
-                A a = (A) value.toUserdata();
-                onAdapterSet(a);
+                final A a = (A) value.toUserdata();
+                MainThreadExecutor.postAtFrontOfQueue(new Runnable() {
+                    @Override//解决adapter 与其他方法的时序问题
+                    public void run() {
+                        onAdapterSet(a);
+                    }
+                });
             }
             return null;
         }
@@ -659,7 +698,6 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
         if (adapter != null) {
             adapter.setItemAnimated(false);
             adapter.insertCellsAtSection(values[0].toInt() - 1, values[1].toInt() - 1, (values[2].toInt() - values[1].toInt()) + 1);
-            scroll2TopWhenInsertFirstPosition(values[0].toInt(), values[1].toInt());
         }
         return null;
     }
@@ -669,7 +707,6 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
         if (adapter != null) {
             adapter.setItemAnimated(values[3].toBoolean());
             adapter.insertCellsAtSection(values[0].toInt() - 1, values[1].toInt() - 1, (values[2].toInt() - values[1].toInt()) + 1);
-            scroll2TopWhenInsertFirstPosition(values[0].toInt(), values[1].toInt());
         }
         return null;
     }
@@ -697,6 +734,7 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
     @Deprecated
     @LuaApiUsed
     public LuaValue[] addHeaderView(LuaValue[] values) {
+        ErrorUtils.debugLuaError("WaterfallView:addHeaderView method is deprecated, use WaterfallAdapter:initHeader and WaterfallAdapter:fillHeaderData methods instead!", getGlobals());
         UDView v = (UDView) values[0];
         if (adapter == null) {
             if (headerViews == null) {
@@ -712,6 +750,7 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
     @Deprecated
     @LuaApiUsed
     public LuaValue[] removeHeaderView(LuaValue[] values) {
+        ErrorUtils.debugLuaError("WaterfallView:removeHeaderView method is deprecated, use WaterfallAdapter:initHeader and WaterfallAdapter:fillHeaderData methods instead!", getGlobals());
         if (headerViews != null) {
             headerViews.clear();
         }
@@ -795,17 +834,18 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
      */
     @LuaApiUsed
     public LuaValue[] visibleCells(LuaValue[] values) {
-        if (adapter == null) {
-            return null;
-        }
         List list = new ArrayList();
-        int firstPosition = ((MLSRecyclerView) getRecyclerView()).findFirstVisibleItemPosition();
-        int lastPosition = ((MLSRecyclerView) getRecyclerView()).findLastVisibleItemPosition();
+        if (adapter == null) {
+            return varargsOf(new UDArray(getGlobals(), list));
+        }
 
         RecyclerView.LayoutManager layoutManager = getRecyclerView().getLayoutManager();
         if (layoutManager == null) {
-            return null;
+            return varargsOf(new UDArray(getGlobals(), list));
         }
+
+        int firstPosition = ((MLSRecyclerView) getRecyclerView()).findFirstVisibleItemPosition();
+        int lastPosition = ((MLSRecyclerView) getRecyclerView()).findLastVisibleItemPosition();
         for (int i = firstPosition; i < lastPosition + 1; i++) {
             View view = layoutManager.findViewByPosition(i);
             if (view == null) {
@@ -855,22 +895,23 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
     //<editor-fold desc="OnScrollListener">
     private RecyclerView.OnScrollListener onScrollListener = new RecyclerView.OnScrollListener() {
         private boolean scrolling = false;
-
+        private boolean isDragging = false;
         private boolean newSettlingState;
 
         @Override
         public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
 
-            if (mLayoutManager instanceof StaggeredGridLayoutManager)
-                ((StaggeredGridLayoutManager) mLayoutManager).invalidateSpanAssignments();
+            //停止拖拽，触发时机：拖拽中-->非拖拽状态。
+            if (isDragging && newState != RecyclerView.SCROLL_STATE_DRAGGING) {
+                if (endDraggingCallback != null) {
+                    callbackWithPoint(endDraggingCallback, false);
+                }
+            }
+            isDragging = newState == RecyclerView.SCROLL_STATE_DRAGGING;//更新拖拽状态
 
             if (newState == RecyclerView.SCROLL_STATE_IDLE) {
                 newSettlingState = false;
                 scrolling = false;
-
-                if (endDraggingCallback != null) {
-                    callbackWithPoint(endDraggingCallback, false);
-                }
 
                 if (scrollEndCallback != null) {
 
@@ -969,6 +1010,36 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
         settedHeight = (int) h;
     }
 
+    @Override
+    public LuaValue[] setMinWidth(LuaValue[] p) {//两端统一，不支持宽高限制
+        ErrorUtils.debugLuaError("Not support 'setMinWidth'  method!", getGlobals());
+        return super.setMinWidth(p);
+    }
+
+    @Override
+    public LuaValue[] setMaxWidth(LuaValue[] pa) {
+        ErrorUtils.debugLuaError("Not support 'setMaxWidth'  method!", getGlobals());
+        return super.setMaxWidth(pa);
+    }
+
+    @Override
+    public LuaValue[] setMinHeight(LuaValue[] p) {
+        ErrorUtils.debugLuaError("Not support 'setMinHeight'  method!", getGlobals());
+        return super.setMinHeight(p);
+    }
+
+    @Override
+    public LuaValue[] setMaxHeight(LuaValue[] pa) {
+        ErrorUtils.debugLuaError("Not support 'setMaxHeight'  method!", getGlobals());
+        return super.setMaxHeight(pa);
+    }
+
+    @Override
+    public LuaValue[] addView(LuaValue[] var) {
+        ErrorUtils.debugLuaError("not support addView", getGlobals());
+        return super.addView(var);
+    }
+
     @CallSuper
     protected void onAdapterSet(A a) {
         this.adapter = a;
@@ -977,7 +1048,9 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
         final RecyclerView recyclerView = getRecyclerView();
         if (layout != null) {
             layout.setOrientation(orientation);
+            layout.setAdapter(adapter);
             adapter.setLayout(layout, getView());
+            removeAllItemDecorations(recyclerView);//移除之前的decoration
             recyclerView.addItemDecoration(layout.getItemDecoration());
 
             if (layout instanceof UDCollectionGridLayout) {
@@ -985,6 +1058,10 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
 
                 if (!((UDCollectionGridLayout) layout).isCanScrollTolScreenLeft())
                     recyclerView.setPadding(DimenUtil.dpiToPx((int) paddingValues[0]), DimenUtil.dpiToPx((int) paddingValues[1]), DimenUtil.dpiToPx((int) paddingValues[0]), DimenUtil.dpiToPx((int) paddingValues[3]));
+            }
+
+            if (layout instanceof ILayoutInSet) {//修复原CollectionViewGridLayout 两端差异
+                adapter.setMarginForVerticalGridLayout(recyclerView);
             }
         }
 
@@ -1027,18 +1104,19 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
         setScrollEnable(mScrollEnabled);
     }
 
+    //setApater前，移除所有decoration，防止重复设置添加多个
+    private void removeAllItemDecorations(RecyclerView recyclerView) {
+        for (int i = 0; i < recyclerView.getItemDecorationCount(); i++) {
+            recyclerView.removeItemDecorationAt(i);
+        }
+    }
+
     public void callScrollToTop(boolean anim) {
         if (!anim) {
             getRecyclerView().scrollToPosition(0);
         } else {
             getRecyclerView().smoothScrollToPosition(0);
         }
-    }
-
-    // 配合ios系统
-    private void scroll2TopWhenInsertFirstPosition(int section, int row) {
-        if (section == 1 && row == 1)
-            getRecyclerView().scrollToPosition(0);
     }
 
     private void setOrientation(RecyclerView.LayoutManager layoutManager) {

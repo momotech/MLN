@@ -11,22 +11,28 @@ import android.content.Context;
 
 import com.immomo.mls.base.ud.lv.ILView;
 import com.immomo.mls.fun.ud.view.UDTabLayout;
+import com.immomo.mls.fun.weight.BorderRadiusFrameLayout;
+import com.immomo.mls.util.LuaViewUtil;
 import com.immomo.mls.weight.BaseTabLayout;
 
 import org.luaj.vm2.LuaValue;
 
 /**
  * Created by fanqiang on 2018/9/14.
+ * 圆角切割，引起TabLayout屏幕外部分，不显示。
+ * 用FrameLayout包裹解决
  */
-public class LuaTabLayout extends BaseTabLayout implements ILView<UDTabLayout> {
+public class LuaTabLayout extends BorderRadiusFrameLayout implements ILView<UDTabLayout> {
     private final UDTabLayout userdata;
     private ViewLifeCycleCallback cycleCallback;
-
+    private BaseTabLayout baseTabLayout;
 
     public LuaTabLayout(Context context, UDTabLayout metaTable, LuaValue[] initParams) {
         super(context);
         userdata = metaTable;
+        baseTabLayout = new BaseTabLayout(context);
         setViewLifeCycleCallback(userdata);
+        addView(baseTabLayout, LuaViewUtil.createRelativeLayoutParamsMM());
     }
 
     @Override
@@ -34,6 +40,9 @@ public class LuaTabLayout extends BaseTabLayout implements ILView<UDTabLayout> {
         return userdata;
     }
 
+    public BaseTabLayout getTabLayout() {
+        return baseTabLayout;
+    }
 
     @Override
     public void setViewLifeCycleCallback(ViewLifeCycleCallback cycleCallback) {

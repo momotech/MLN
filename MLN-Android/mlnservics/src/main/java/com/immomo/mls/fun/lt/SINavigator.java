@@ -9,6 +9,7 @@ package com.immomo.mls.fun.lt;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.os.Bundle;
 import android.os.Parcelable;
 
@@ -42,7 +43,7 @@ public class SINavigator implements NavigatorAnimType {
 
     private int requestCode = Integer.MAX_VALUE;
 
-    private Globals globals;
+    protected Globals globals;
     public SINavigator(Globals g, LuaValue[] init) {
         globals = g;
     }
@@ -143,6 +144,16 @@ public class SINavigator implements NavigatorAnimType {
         return c instanceof Activity ? (Activity) c : null;
     }
 
+    protected int getActivityOpenExitAnimation() {
+        Activity a = getActivity();
+        if (a == null)
+            return 0;
+        TypedArray ta = a.obtainStyledAttributes(new int[] {android.R.attr.activityOpenExitAnimation});
+        int out = ta.getResourceId(0, 0);
+        ta.recycle();
+        return out;
+    }
+
     protected static int parseInAnim(int type) {
         switch (type) {
             case LeftToRight:
@@ -165,13 +176,13 @@ public class SINavigator implements NavigatorAnimType {
     protected static int parseOutAnim(int type) {
         switch (type) {
             case LeftToRight:
-                return R.anim.lv_slide_out_left;
-            case RightToLeft:
                 return R.anim.lv_slide_out_right;
+            case RightToLeft:
+                return R.anim.lv_slide_out_left;
             case TopToBottom:
-                return R.anim.lv_slide_out_top;
-            case BottomToTop:
                 return R.anim.lv_slide_out_bottom;
+            case BottomToTop:
+                return R.anim.lv_slide_out_top;
             case Scale:
                 return R.anim.lv_scale_out;
             case Fade:

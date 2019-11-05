@@ -26,6 +26,10 @@ import org.luaj.vm2.utils.LuaApiUsed;
 public class LuaFunction extends NLuaValue {
     // Lua返回可变参数个数
     private static final int LUA_MULTRET = -1;
+    /**
+     * 执行函数错误信息
+     */
+    private InvokeError invokeError;
 
     /**
      * Called by native method.
@@ -37,12 +41,12 @@ public class LuaFunction extends NLuaValue {
     }
 
     @Override
-    public int type() {
+    public final int type() {
         return LUA_TFUNCTION;
     }
 
     @Override
-    public LuaFunction toLuaFunction() {
+    public final LuaFunction toLuaFunction() {
         return this;
     }
 
@@ -53,15 +57,17 @@ public class LuaFunction extends NLuaValue {
      * @param returnCount 方法返回参数个数
      * @return 返回参数，若returnCount为0，返回空
      */
-    public LuaValue[] invoke(LuaValue[] params, int returnCount) throws InvokeError {
+    public final LuaValue[] invoke(LuaValue[] params, int returnCount) throws InvokeError {
         try {
             if (!checkStatus())
                 return empty();
+            invokeError = null;
             globals.calledFunction ++;
             LuaValue[] ret = LuaCApi._invoke(globals.L_State, nativeGlobalKey, params, returnCount);
             globals.calledFunction --;
             return ret;
         } catch (InvokeError e) {
+            invokeError = e;
             globals.calledFunction --;
             if (globals.getState() != Globals.LUA_CALLING && MLNCore.hookLuaError(e, globals))
                 return empty();
@@ -75,20 +81,8 @@ public class LuaFunction extends NLuaValue {
      * @param params 方法传入的参数，可为空
      * @return 返回参数，可为空
      */
-    public LuaValue[] invoke(LuaValue[] params) throws InvokeError {
-        try {
-            if (!checkStatus())
-                return empty();
-            globals.calledFunction ++;
-            LuaValue[] ret =  LuaCApi._invoke(globals.L_State, nativeGlobalKey, params, LUA_MULTRET);
-            globals.calledFunction --;
-            return ret;
-        } catch (InvokeError e) {
-            globals.calledFunction --;
-            if (globals.getState() != Globals.LUA_CALLING && MLNCore.hookLuaError(e, globals))
-                return empty();
-            throw e;
-        }
+    public final LuaValue[] invoke(LuaValue[] params) throws InvokeError {
+        return invoke(params, LUA_MULTRET);
     }
 
     /**
@@ -96,18 +90,28 @@ public class LuaFunction extends NLuaValue {
      * @return true: 可正常执行
      */
     private boolean checkStatus() {
-        if (destroyed) {
+        if (globals.isDestroyed()) {
+            invokeError = new InvokeError("globals is destroyed.", 2);
             if (MLNCore.DEBUG || globals.getState() == Globals.LUA_CALLING)
-                throw new InvokeError("function is destroyed.", 1);
+                throw invokeError;
             return false;
         }
-        if (globals.isDestroyed()) {
+        if (destroyed || !checkStateByNative()) {
+            invokeError = new InvokeError("function is destroyed.", 1);
             if (MLNCore.DEBUG || globals.getState() == Globals.LUA_CALLING)
-                throw new InvokeError("globals is destroyed.", 2);
+                throw invokeError;
             return false;
         }
         globals.checkMainThread();
         return true;
     }
 
+    @Override
+    public final boolean isDestroyed() {
+        return globals.isDestroyed() || super.isDestroyed() || !checkStateByNative();
+    }
+
+    public final InvokeError getInvokeError() {
+        return invokeError;
+    }
 }

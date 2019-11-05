@@ -8,7 +8,6 @@
 package com.immomo.mls;
 
 import com.immomo.mls.adapter.ConsoleLoggerAdapter;
-import com.immomo.mls.adapter.MLSAppForegroundAdapter;
 import com.immomo.mls.adapter.MLSEmptyViewAdapter;
 import com.immomo.mls.adapter.MLSGlobalEventAdapter;
 import com.immomo.mls.adapter.MLSGlobalStateListener;
@@ -17,6 +16,7 @@ import com.immomo.mls.adapter.MLSLoadViewAdapter;
 import com.immomo.mls.adapter.MLSQrCaptureAdapter;
 import com.immomo.mls.adapter.MLSResourceFinderAdapter;
 import com.immomo.mls.adapter.MLSThreadAdapter;
+import com.immomo.mls.adapter.OnRemovedUserdataAdapter;
 import com.immomo.mls.adapter.ScriptReaderCreator;
 import com.immomo.mls.adapter.ToastAdapter;
 import com.immomo.mls.adapter.TypeFaceAdapter;
@@ -50,7 +50,7 @@ public class MLSAdapterContainer {
     private static ImageProvider imageProvider;
     private static ScriptReaderCreator scriptReaderCreator = new DefaultScriptReaderCreatorImpl();
     private static MLSQrCaptureAdapter qrCaptureAdapter;
-    private static MLSAppForegroundAdapter appForegroundAdapter;
+    private static OnRemovedUserdataAdapter onRemovedUserdataAdapter;
 
     public static MLSThreadAdapter getThreadAdapter() {
         return threadAdapter;
@@ -156,11 +156,11 @@ public class MLSAdapterContainer {
         MLSAdapterContainer.scriptReaderCreator = scriptReaderCreator;
     }
 
-    public static MLSAppForegroundAdapter getAppForegroundAdapter() {
-        return appForegroundAdapter;
+    public static OnRemovedUserdataAdapter getOnRemovedUserdataAdapter() {
+        return onRemovedUserdataAdapter;
     }
 
-    public static void setAppForegroundAdapter(MLSAppForegroundAdapter appForegroundAdapter) {
-        MLSAdapterContainer.appForegroundAdapter = appForegroundAdapter;
+    public static void setOnRemovedUserdataAdapter(OnRemovedUserdataAdapter onRemovedUserdataAdapter) {
+        MLSAdapterContainer.onRemovedUserdataAdapter = onRemovedUserdataAdapter;
     }
 }

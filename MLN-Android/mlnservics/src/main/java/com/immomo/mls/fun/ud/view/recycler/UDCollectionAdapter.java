@@ -13,15 +13,14 @@ import android.view.ViewGroup;
 import com.immomo.mls.MLSEngine;
 
 
-import com.immomo.mls.annotation.LuaClass;
 import com.immomo.mls.fun.other.Size;
 import com.immomo.mls.fun.ud.UDSize;
 import com.immomo.mls.fun.ui.LuaGridLayoutManager;
 import com.immomo.mls.util.AndroidUtil;
 import com.immomo.mls.util.DimenUtil;
 import com.immomo.mls.utils.AssertUtils;
+import com.immomo.mls.utils.ErrorUtils;
 
-import org.luaj.vm2.Globals;
 import org.luaj.vm2.LuaFunction;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.utils.LuaApiUsed;
@@ -43,10 +42,12 @@ public class UDCollectionAdapter extends UDBaseRecyclerAdapter<UDCollectionLayou
     public static final String[] methods = new String[]{
             "sizeForCell",
             "sizeForCellByReuseId",
+            "setSpanSizeLookUp",
     };
 
     private LuaFunction cellSizeDelegate;
     private Map<String, LuaFunction> cellSizeDelegates;
+    private LuaFunction spanSizeLookUpDelegate;
     private GridLayoutManager layoutManager;
 
     private SparseArray<Size> sizeCache;
@@ -71,7 +72,7 @@ public class UDCollectionAdapter extends UDBaseRecyclerAdapter<UDCollectionLayou
      */
     @LuaApiUsed
     public LuaValue[] sizeForCell(LuaValue[] values) {
-        cellSizeDelegate = values[0] == null ? null : values[0].toLuaFunction();
+        cellSizeDelegate = values.length > 0 ? values[0].toLuaFunction() : null;
         return null;
     }
 
@@ -81,6 +82,12 @@ public class UDCollectionAdapter extends UDBaseRecyclerAdapter<UDCollectionLayou
             cellSizeDelegates = new HashMap<>();
         }
         cellSizeDelegates.put(values[0].toJavaString(), values[1].toLuaFunction());
+        return null;
+    }
+
+    @LuaApiUsed
+    public LuaValue[] setSpanSizeLookUp(LuaValue[] values) {
+        spanSizeLookUpDelegate = values.length > 0 ? values[0].toLuaFunction() : null;
         return null;
     }
     //</editor-fold>
@@ -114,11 +121,6 @@ public class UDCollectionAdapter extends UDBaseRecyclerAdapter<UDCollectionLayou
         return cellSizeDelegate != null || (layout != null && layout.getSize() != null);
     }
 
-    @Override
-    public boolean hasHeaderSize() {
-        return false;
-    }
-
     @NonNull
     @Override
     public Size getCellSize(int position) {
@@ -140,10 +142,8 @@ public class UDCollectionAdapter extends UDBaseRecyclerAdapter<UDCollectionLayou
         if (cellSizeDelegates != null) {
             String id = getReuseIdByType(getAdapter().getItemViewType(position));
             caller = cellSizeDelegates.get(id);
-            if (!AssertUtils.assertFunction(caller,
-                    "if sizeForCellByReuseId is setted once, all type must setted by invoke sizeForCellByReuseId",
-                    getGlobals())) {
-                return new Size(Size.MATCH_PARENT, Size.WRAP_CONTENT);
+            if (caller == null || !caller.isFunction()) {
+                caller = cellSizeDelegate;//两端统一，sizeForCell和byReuseId可以混用
             }
         } else if (cellSizeDelegate != null) {
             caller = cellSizeDelegate;
@@ -152,6 +152,11 @@ public class UDCollectionAdapter extends UDBaseRecyclerAdapter<UDCollectionLayou
             if (!AssertUtils.assertNull(layout, "must set layout before!", getGlobals())) {
                 return new Size(Size.WRAP_CONTENT, Size.WRAP_CONTENT);
             }
+
+            if (!(this instanceof UDCollectionAutoFitAdapter)) {
+                //两端在不声明size for cell时，有UI差异。统一报错处理
+                ErrorUtils.debugLuaError("size For Cell must be Called", getGlobals());
+            }
             return layout.getSize();
         }
         LuaValue a1 = caller.invoke(varargsOf(s, r))[0];
@@ -159,6 +164,15 @@ public class UDCollectionAdapter extends UDBaseRecyclerAdapter<UDCollectionLayou
             UDSize udSize = (UDSize) a1;
             cellSize = udSize.getSize();
             sizeCache.put(position, cellSize);
+
+            if (cellSize.getHeightPx() <= 0 || cellSize.getWidthPx() <= 0 || cellSize.getHeightPx() > mRecyclerView.getHeight() || cellSize.getWidthPx() > mRecyclerView.getWidth()) {
+                //size 高宽不能小于0
+                ErrorUtils.debugLuaError("size For Cell must be >0 and < View.getHeight()", getGlobals());
+                if (cellSize.getHeightPx() < 0)//两端统一返回高度<0,默认为0。
+                    cellSize.setHeight(0);
+                if (cellSize.getWidthPx() < 0)
+                    cellSize.setWidth(0);
+            }
             return cellSize;
         }
         return new Size(Size.WRAP_CONTENT, Size.WRAP_CONTENT);
@@ -193,7 +207,7 @@ public class UDCollectionAdapter extends UDBaseRecyclerAdapter<UDCollectionLayou
         @Override
         public int getSpanSize(int position) {
 
-            if (position == getTotalCount()) {
+            if (position == getTotalCount()) {//footer loading SpanSize
                 if (loadViewDelegete.useAllSpanCountInGrid() || getAdapter().isUseAllSpanForLoading()) {
                     return layoutManager.getSpanCount();
                 } else {
@@ -201,7 +215,23 @@ public class UDCollectionAdapter extends UDBaseRecyclerAdapter<UDCollectionLayou
                 }
             }
 
-            if (mLayout instanceof UDCollectionGridLayout) {
+            //暴露spanSize给lua层
+            if (spanSizeLookUpDelegate != null) {
+                int[] sr = getSectionAndRowIn(position);
+                LuaValue[] lr = spanSizeLookUpDelegate.invoke(varargsOf(toLuaInt(sr[0]), toLuaInt(sr[1])));
+
+                LuaValue v = lr != null && lr.length > 0 ? lr[0] : Nil();//不return，返回null
+                int size;
+                if (!v.isNil() && AssertUtils.assertNumber(v, spanSizeLookUpDelegate, getGlobals())) {
+                    size = v.toInt();
+                    if (size > 0) {//如果spanSize小于0，走下面的原有逻辑
+                        int spanCount = layoutManager.getSpanCount();
+                        return size > spanCount ? spanCount : size;//大于spanCount，取spanCount
+                    }
+                }
+            }
+
+            if (mLayout instanceof UDCollectionGridLayout || mLayout instanceof UDCollectionViewGridLayoutFix) {
                 return getGridLayoutSpanSize(position);
             }
 
@@ -249,18 +279,54 @@ public class UDCollectionAdapter extends UDBaseRecyclerAdapter<UDCollectionLayou
             int targetValue = 1;
             final Size realPositionSize = getCellSize(position);
 
-            if (orientation == GridLayoutManager.HORIZONTAL) {
+            if (mLayout instanceof UDCollectionGridLayout) {//原gridLayout，已废弃
+                if (orientation == GridLayoutManager.HORIZONTAL) {
 
-                float singleHeight = ((recyclerViewHeight - lineSpacing * (spanCount + 1)) / spanCount);
-                targetValue = (int) Math.ceil(((realPositionSize.getHeightPx()) / singleHeight));
-
-            } else {
-
-                float singleWidth = ((recyclerViewWidth - itemSpacing * (spanCount + 1)) / spanCount);
-
-                targetValue = (int) Math.ceil((realPositionSize.getWidthPx() - itemSpacing) / singleWidth);
+                    float singleHeight = ((recyclerViewHeight - lineSpacing * (spanCount + 1)) / spanCount);
+                    targetValue = (int) Math.ceil(((realPositionSize.getHeightPx()) / singleHeight));
+                } else {
+                    float singleWidth = ((recyclerViewWidth - itemSpacing * (spanCount + 1)) / spanCount);
+                    targetValue = (int) Math.ceil((realPositionSize.getWidthPx() - itemSpacing) / singleWidth);
+                }
             }
 
+            if (mLayout instanceof UDCollectionViewGridLayoutFix) {//修复gridLayout 两端差异
+                int[] paddingValues = ((UDCollectionViewGridLayoutFix) mLayout).getPaddingValues();
+                int realWidth = realPositionSize.getWidthPx();
+                int realHeight = realPositionSize.getHeightPx();
+                if (recyclerViewWidth < (paddingValues[0] + paddingValues[2] + realWidth) ||
+                        recyclerViewHeight < (paddingValues[1] + paddingValues[3] + realHeight)) {
+                    //layoutInset+cellSize 不能大于recyclerView宽高,两端统一报错
+                    ErrorUtils.debugLuaError("The sum of cellWidth，leftInset，rightInset should not bigger than the width of collectionView", getGlobals());
+                }
+
+                if (realWidth < 0 || realHeight < 0) {//两端统一报错效果
+                    ErrorUtils.debugLuaError("size for cell can`t < 0", getGlobals());
+                    realWidth = 0;
+                    realHeight = 0;
+                }
+
+                if (orientation == GridLayoutManager.HORIZONTAL) {
+                    float singleHeight;
+                    singleHeight = ((recyclerViewHeight - lineSpacing * (spanCount - 1) - paddingValues[1] - paddingValues[3]) / spanCount);//两端统一,GridLayout和waterFall四周无spacing,所以是(spanCount - 1)
+
+                    if (singleHeight > 0) {
+                        targetValue = (int) Math.ceil(((realHeight) / singleHeight));
+                    } else {
+                        targetValue = spanCount;//spanCount和lineSpacing过大时，singleHeight为负数，撑满一列
+                    }
+                } else {
+                    float singleWidth;
+                    singleWidth = ((recyclerViewWidth - itemSpacing * (spanCount - 1) - paddingValues[0] - paddingValues[2]) / spanCount);
+
+                    if (singleWidth > 0) {
+                        targetValue = (int) Math.ceil((realWidth) / singleWidth);
+                    } else {
+                        targetValue = spanCount;//spanCount和lineSpacing过大时，singleWidth为负数，撑满一行
+                    }
+                }
+                targetValue = targetValue == 0 ? 1 : targetValue;//两端统一，cell宽/高为0，至少占一格
+            }
 
             return targetValue > spanCount ? spanCount : targetValue;
         }
@@ -286,6 +352,13 @@ public class UDCollectionAdapter extends UDBaseRecyclerAdapter<UDCollectionLayou
         super.onReload();
         if (sizeCache != null)
             sizeCache.clear();
+    }
+
+    @Override
+    public void onFooterAdded(boolean added) {
+        if (layout != null) {
+            layout.onFooterAdded(added);
+        }
     }
 
     @Override

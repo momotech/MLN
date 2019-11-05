@@ -37,7 +37,7 @@ public class MLSRecyclerView extends RecyclerView implements ScrollableView {
     private ILoadViewDelegete loadViewDelegete;
     private OnLoadListener onLoadListener;
     private int[] staggeredGridCache = null;
-    private int loadThreshold = 0;
+    private float loadThreshold = 0;
     private int mToPosition; //记录scrollCellToPosition的 位置
     private ILView.ViewLifeCycleCallback cycleCallback;
 
@@ -99,11 +99,21 @@ public class MLSRecyclerView extends RecyclerView implements ScrollableView {
                         return;
                     int visibleItemCount = layoutManager.getChildCount();
                     if (visibleItemCount > 0) {
-                        int totalItemCount = layoutManager.getItemCount();
-                        int bottomOffset = (totalItemCount - findLastVisiblePosition() - 1) * recyclerView.getHeight() / visibleItemCount;
-                        if (bottomOffset <= loadThreshold && loadViewDelegete.onShowLoadView(false)) {
-                            if (onLoadListener != null)
-                                onLoadListener.onLoad();
+                        //loadThreshold统一为recyclerView高的比例，计算偏移量用以下方法：Range-(offset+height)
+                        int bottomOffset = recyclerView.computeVerticalScrollRange() - recyclerView.computeVerticalScrollOffset() - recyclerView.getHeight();
+                        int loadThresholdValue = (int) (loadThreshold * recyclerView.getHeight());
+
+                        if (bottomOffset <= loadThresholdValue) {
+                            if (loadViewDelegete.onShowLoadView(false)) {//STATE_INIT 走onShowLoadView()
+                                if (onLoadListener != null)
+                                    onLoadListener.onLoad();
+                            } else if (loadViewDelegete.getCurrentState() == LoadingState.STATE_ERROR //非STATE_INIT 走startLoading()
+                                    || loadViewDelegete.getCurrentState() == LoadingState.STATE_CLICK_TO_LOAD_MORE) {
+                                if (onLoadListener != null) {
+                                    loadViewDelegete.startLoading();
+                                    onLoadListener.onLoad();
+                                }
+                            }
                         }
                     }
                     return;
@@ -118,12 +128,14 @@ public class MLSRecyclerView extends RecyclerView implements ScrollableView {
                     }
                 }
 
-                // 修复： 出现“点击重试”  上下滑动列表都无法使列表底部自动加载
-                int lastCompletelyVisibleItemPosition = findLastVisibleItemPosition();
-                if (lastCompletelyVisibleItemPosition == layoutManager.getItemCount() - 1 && (loadViewDelegete.getCurrentState() == LoadingState.STATE_ERROR  || loadViewDelegete.getCurrentState() == LoadingState.STATE_CLICK_TO_LOAD_MORE )) {
-                    if (onLoadListener != null) {
-                        loadViewDelegete.startLoading();
-                        onLoadListener.onLoad();
+                if (loadViewDelegete.canCallback()) {
+                    // 修复： 出现“点击重试”  上下滑动列表都无法使列表底部自动加载
+                    int lastCompletelyVisibleItemPosition = findLastVisibleItemPosition();
+                    if (lastCompletelyVisibleItemPosition == layoutManager.getItemCount() - 1 && (loadViewDelegete.getCurrentState() == LoadingState.STATE_ERROR || loadViewDelegete.getCurrentState() == LoadingState.STATE_CLICK_TO_LOAD_MORE)) {
+                        if (onLoadListener != null) {
+                            loadViewDelegete.startLoading();
+                            onLoadListener.onLoad();
+                        }
                     }
                 }
             }
@@ -133,7 +145,7 @@ public class MLSRecyclerView extends RecyclerView implements ScrollableView {
     }
 
     public void setLoadThreshold(float loadThreshold) {
-        this.loadThreshold = (int) (loadThreshold * AndroidUtil.getScreenHeight(getContext()));
+        this.loadThreshold = loadThreshold;
     }
 
     public void setLoadViewDelegete(ILoadViewDelegete loadViewDelegete) {
@@ -256,7 +268,11 @@ public class MLSRecyclerView extends RecyclerView implements ScrollableView {
         } else if (n <= lastItem) {
             //当要置顶的项已经在屏幕上显示时
             int top = getChildAt(n - firstItem).getTop();
-            smoothScrollBy(0, top);
+            if (noSmooth) {
+                scrollBy(0, top);
+            } else {
+                smoothScrollBy(0, top);
+            }
         } else {
             //当要置顶的项在当前显示的最后一项的后面时
             if (noSmooth) {
@@ -264,28 +280,6 @@ public class MLSRecyclerView extends RecyclerView implements ScrollableView {
             } else {
                 smoothScrollToPosition(n);
             }
-        }
-    }
-
-    /**
-     * 滑动rv到指定位置
-     *
-     * @param x
-     * @param y
-     */
-    public void smoothScrollTo(int x, int y) {
-        int left = getChildAt(0).getLeft();
-        int top = getChildAt(0).getTop();
-        x = -x;
-        y = -y;
-        Log.e("smoothScrollTo", "***x" + x + "***y" + y + "***top" + top + "***left" + left);
-        if ((x < 0 && y < 0 && x > left && y > top) ||
-                (x < 0 && y > 0 && x > left && y < top) ||
-                (x > 0 && y < 0 && x < left && y > top) ||
-                (x > 0 && y > 0 && x < left && y < top)) {
-            smoothScrollBy(x + left, y + top);
-        } else {
-            smoothScrollBy(left - x, top - y);
         }
     }
 

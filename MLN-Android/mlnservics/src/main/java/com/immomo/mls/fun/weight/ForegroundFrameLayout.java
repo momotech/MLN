@@ -24,8 +24,8 @@ import com.immomo.mls.weight.IForeground;
 public class ForegroundFrameLayout extends FrameLayout implements IForeground , ILimitSizeView{
     private ForegroundDelegate mForegroundDelegate;
     private boolean enableForeground;
-    private float mMaxWidth = Integer.MAX_VALUE;
-    private float mMaxHeight = Integer.MAX_VALUE;
+    private int mMaxWidth = Integer.MAX_VALUE;
+    private int mMaxHeight = Integer.MAX_VALUE;
 
     public ForegroundFrameLayout(@NonNull Context context) {
         super(context);
@@ -160,13 +160,23 @@ public class ForegroundFrameLayout extends FrameLayout implements IForeground , 
     }
 
     @Override
-    public void setMaxWidth(float mMaxWidth) {
+    public void setMaxWidth(int mMaxWidth) {
         this.mMaxWidth = mMaxWidth;
     }
 
     @Override
-    public void setMaxHeight(float mMaxHeight) {
+    public void setMaxHeight(int mMaxHeight) {
         this.mMaxHeight = mMaxHeight;
+    }
+
+    @Override
+    public int getMaxWidth() {
+        return mMaxWidth;
+    }
+
+    @Override
+    public int getMaxHeight() {
+        return mMaxHeight;
     }
 
     private int getSpec(int src, int max) {

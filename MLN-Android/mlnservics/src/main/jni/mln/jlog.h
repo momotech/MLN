@@ -19,9 +19,7 @@
 #define MAX_STRING_LENGTH 1000
 
 void initlog(JNIEnv *env);
-
 void log2java(jlong, int, const char *, void *);
-
 #define JLOGI(L, s) log2java((jlong)L, 1, s, NULL)
 #define JLOGL(L)    log2java((jlong)L, -1, NULL, NULL)
 #define JLOGE(L, s, p) log2java((jlong)L, 2, s, ((void *)p))

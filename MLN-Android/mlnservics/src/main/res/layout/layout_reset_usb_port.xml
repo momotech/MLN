@@ -18,6 +18,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:hint="8173"
+        android:textColor="#080808"
         android:inputType="numberDecimal"/>
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -32,6 +33,7 @@
             android:id="@+id/btn_cancel_port"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginRight="5dp"
             android:layout_weight="1"
             android:text="取消"/>'
 

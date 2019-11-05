@@ -14,9 +14,8 @@ import android.graphics.drawable.Animatable;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
+import android.view.MotionEvent;
 import android.webkit.URLUtil;
-
-import androidx.annotation.NonNull;
 
 import com.immomo.mls.MLSAdapterContainer;
 import com.immomo.mls.MLSEngine;
@@ -37,11 +36,13 @@ import org.luaj.vm2.LuaBoolean;
 import org.luaj.vm2.LuaFunction;
 import org.luaj.vm2.LuaString;
 import org.luaj.vm2.LuaValue;
-import org.w3c.dom.Text;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import androidx.annotation.NonNull;
 
 /**
  * Created by XiongFangyu on 2018/8/1.
@@ -60,10 +61,12 @@ public class LuaImageView<U extends UDImageView> extends BorderRadiusImageView i
     private Bitmap mSourceBitmap;
     private final @NonNull AtomicInteger modiCount;
     private final @NonNull ImageProvider provider;
+    private List<String> mNotCallBackImageUrlList = new ArrayList<>();
 
     public LuaImageView(Context context, UDImageView metaTable, LuaValue[] initParams) {
         super(context);
         udImageView = metaTable;
+        forceClipLevel(LEVEL_FORCE_CLIP);//ImageView 需要强制切割图片，统一效果
         setLocalUrl(udImageView.getLuaViewManager().baseFilePath);
         setViewLifeCycleCallback(udImageView);
         setScaleType(ScaleType.values()[ContentMode.SCALE_ASPECT_FIT]);
@@ -84,6 +87,51 @@ public class LuaImageView<U extends UDImageView> extends BorderRadiusImageView i
         this.cycleCallback = cycleCallback;
     }
 
+    public void setImageUrlEmpty(){
+        this.image = "";
+    }
+
+    /**
+     * 宽（或高）设置固定值，高（或宽）设置为Wrap_Content，则高（或宽）根据宽（或高）等比缩放图片。
+     */
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        Drawable drawable = getDrawable();
+        if (drawable == null) {
+            return;
+        }
+        int wm = MeasureSpec.getMode(widthMeasureSpec);
+        int hm = MeasureSpec.getMode(heightMeasureSpec);
+        /// 其中一边不确定，另一边确定
+        if (wm == MeasureSpec.EXACTLY && hm != MeasureSpec.EXACTLY) {
+            int mw = getMeasuredWidth();
+            int mh = mw * drawable.getIntrinsicHeight() / drawable.getIntrinsicWidth();
+            if (hm == MeasureSpec.AT_MOST)
+                mh = Math.min(mh, MeasureSpec.getSize(heightMeasureSpec));
+            setMeasuredDimension(mw, mh);
+        } else if (wm != MeasureSpec.EXACTLY && hm == MeasureSpec.EXACTLY) {
+            int mh = getMeasuredHeight();
+            int mw = mh * drawable.getIntrinsicWidth() / drawable.getIntrinsicHeight();
+            if (wm == MeasureSpec.AT_MOST)
+                mw = Math.min(mw, MeasureSpec.getSize(widthMeasureSpec));
+            setMeasuredDimension(mw, mh);
+        }
+    }
+
+    @Override
+    public void setScaleType(ScaleType scaleType) {
+        ScaleType st = getScaleType();
+        if (st == scaleType)
+            return;
+        super.setScaleType(scaleType);
+        Drawable d = getDrawable();
+        if (d != null) {
+            setImageDrawable(null);
+            setImageDrawable(d);
+        }
+    }
+
     //<editor-fold desc="ILuaImageView">
     @Override
     public void setImage(final String url) {
@@ -94,7 +142,7 @@ public class LuaImageView<U extends UDImageView> extends BorderRadiusImageView i
         }
         image = url;
 
-        setImageWithoutCheck(url, null, changed, isNetworkUrl);
+        setImageWithoutCheck(url, null, changed, isNetworkUrl,false);
     }
 
     @Override
@@ -164,7 +212,7 @@ public class LuaImageView<U extends UDImageView> extends BorderRadiusImageView i
         }
         image = url;
         final boolean isNetworkUrl = URLUtil.isNetworkUrl(url);
-        setImageWithoutCheck(url, placeholder, false, isNetworkUrl);
+        setImageWithoutCheck(url, placeholder, false, isNetworkUrl,true);
     }
 
     //</editor-fold>
@@ -203,12 +251,15 @@ public class LuaImageView<U extends UDImageView> extends BorderRadiusImageView i
         return null;
     }
 
-    private void setImageWithoutCheck(String url, String placeHolder, final boolean changed, final boolean isNetworkUrl) {
+    private void setImageWithoutCheck(String url, String placeHolder, final boolean changed, final boolean isNetworkUrl,boolean isUsePlaceHolderWhenUrlEmpty) {
         if (changed && isNetworkUrl) {
             setImageDrawable(null);
         }
-        if (TextUtils.isEmpty(url))
+        if (TextUtils.isEmpty(url)) {
+            setPlaceHolderByParams(placeHolder, isUsePlaceHolderWhenUrlEmpty);
+            loadFailCallback2Lua("load url is empty");
             return;
+        }
         if (isNetworkUrl) {
             realLoad(url, placeHolder);
             return;
@@ -241,6 +292,27 @@ public class LuaImageView<U extends UDImageView> extends BorderRadiusImageView i
         realLoad(url, placeHolder);
     }
 
+    private void loadFailCallback2Lua(String error) {
+        LuaFunction function = getUserdata().getImageLoadCallback();
+        if (function != null && !mNotCallBackImageUrlList.contains(image)) {
+            function.invoke(LuaValue.varargsOf(LuaBoolean.False(), LuaString.valueOf(error), LuaString.valueOf(image)));
+        }
+    }
+
+    private void setPlaceHolderByParams(String placeHolder, boolean isUsePlaceHolderWhenUrlEmpty) {
+        if (isUsePlaceHolderWhenUrlEmpty) {
+            final boolean netUrl = URLUtil.isNetworkUrl(placeHolder);
+
+            if (!netUrl) {
+                final ImageProvider provider = MLSAdapterContainer.getImageProvider();
+                if (provider != null) {
+                    setImageDrawable(provider.loadProjectImage(getContext(), placeHolder));
+                }
+            }
+        } else
+            setImageDrawable(null);
+    }
+
     private void realLoad(String url, String placeHolder) {
         mSourceBitmap = null;
         modiCount.incrementAndGet();
@@ -260,10 +332,16 @@ public class LuaImageView<U extends UDImageView> extends BorderRadiusImageView i
         drawableLoadCallback = new DrawableLoadCallback() {
             @Override
             public void onLoadResult(final Drawable drawable) {
-                LuaFunction function = getUserdata().getImageLoadCallback();
-                if (function != null) {
-                    function.invoke(LuaValue.varargsOf(drawable != null ? LuaBoolean.True() : LuaBoolean.False(), LuaValue.Nil(), LuaString.valueOf(image)));
-                }
+
+                MainThreadExecutor.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        LuaFunction function = getUserdata().getImageLoadCallback();
+                        if (function != null && !mNotCallBackImageUrlList.contains(image)) {
+                            function.invoke(LuaValue.varargsOf(drawable != null ? LuaBoolean.True() : LuaBoolean.False(), LuaValue.Nil(), LuaString.valueOf(image)));
+                        }
+                    }
+                });
 
                 if (canBlurImageCondition() && drawable instanceof BitmapDrawable) {//判断，高斯模糊
                     MLSAdapterContainer.getThreadAdapter().execute(MLSThreadAdapter.Priority.HIGH, new Runnable() {
@@ -404,7 +482,7 @@ public class LuaImageView<U extends UDImageView> extends BorderRadiusImageView i
                 }
 
                 String url = list.get(nowIndex++);
-                setImageWithoutCheck(url, null, false, URLUtil.isNetworkUrl(url));
+                setImageWithoutCheck(url, null, false, URLUtil.isNetworkUrl(url),true);
 
                 preloadNextImageUrl();
 
@@ -426,7 +504,16 @@ public class LuaImageView<U extends UDImageView> extends BorderRadiusImageView i
         };
     }
 
+    public void addNotCallBackList(String url) {
+        mNotCallBackImageUrlList.add(url);
+    }
+
     private Object getTaskTag() {
         return hashCode();
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        return isEnabled() && super.dispatchTouchEvent(ev);
     }
 }

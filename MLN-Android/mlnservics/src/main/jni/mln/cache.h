@@ -30,12 +30,12 @@ void init_cache(lua_State *L);
  * idx: 存储的位置 see copyValueToGNV
  * ltype: lua类型 Table, Function, Userdata, Thread
  */
-void getValueFromGNV(lua_State *L, const char *key, int ltype);
+void getValueFromGNV(lua_State *L, ptrdiff_t key, int ltype);
 /**
  * 将idx位置的数据(Table, Function, Userdata, Thread)保存到GNV 表中
  * 返回表中位置
  */
-const char *copyValueToGNV(lua_State *L, int idx);
+ptrdiff_t copyValueToGNV(lua_State *L, int idx);
 
 ///---------------------------------------------------------------------------
 ///------------------------classname->jclass----------------------------------

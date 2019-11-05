@@ -15,7 +15,7 @@ import com.immomo.mls.fun.ud.view.recycler.UDCollectionLayout;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-
+@Deprecated
 public class GridLayoutItemDecoration extends RecyclerView.ItemDecoration {
 
     private static final String TAG = GridLayoutItemDecoration.class.getSimpleName();

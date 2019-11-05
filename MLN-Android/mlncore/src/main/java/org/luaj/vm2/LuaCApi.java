@@ -107,6 +107,8 @@ class LuaCApi {
     static native void _lgc(long L);
 
     static native int _removeNativeValue(long L, long k, int type);
+
+    static native boolean _hasNativeValue(long L, long key, int type);
     //</editor-fold>
 
     //<editor-fold desc="load and execute">

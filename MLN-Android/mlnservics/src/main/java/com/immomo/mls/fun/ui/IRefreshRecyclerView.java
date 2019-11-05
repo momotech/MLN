@@ -7,6 +7,8 @@
   */
 package com.immomo.mls.fun.ui;
 
+import com.immomo.mls.fun.other.Point;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -44,6 +46,18 @@ public interface IRefreshRecyclerView {
     void loadError();
 
     int getCurrentState();
+
+    /**
+     * 设置偏移位置
+     */
+    void setContentOffset(Point p);
+
+    Point getContentOffset();
+
+    /**
+     * 滑动到指定位置
+     */
+    void smoothScrollTo(Point p);
 
     void setSizeChangedListener(SizeChangedListener sizeChangedListener);
 }

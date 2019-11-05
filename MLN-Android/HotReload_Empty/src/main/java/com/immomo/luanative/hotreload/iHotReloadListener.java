@@ -54,7 +54,7 @@ public interface iHotReloadListener {
      * @param newFilePath         新的文件或文件夹绝对路径
      * @param relativeNewFilePath 新的文件或文件夹相对路径
      */
-    public void onFileMove(String filePath, String relativeFilePath, String newFilePath, String relativeNewFilePath);
+    public void onFileMove(String filePath, String relativeFilePath,  String newFilePath,  String relativeNewFilePath);
 
     /**
      * 删除文件或文件夹.

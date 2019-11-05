@@ -14,14 +14,9 @@ import com.immomo.mls.annotation.LuaBridge;
 import com.immomo.mls.annotation.LuaClass;
 import com.immomo.mls.utils.LVCallback;
 
-import org.luaj.vm2.Globals;
-import org.luaj.vm2.LuaValue;
-
 @LuaClass
-public class UDAnimator implements ValueAnimator.AnimatorUpdateListener, Animator.AnimatorListener {
+public class UDAnimator extends ValueAnimator implements ValueAnimator.AnimatorUpdateListener, Animator.AnimatorListener {
     public static final String LUA_CLASS_NAME = "Animator";
-
-    private final ValueAnimator mAnimator;
 
     private LVCallback
             startCallback,
@@ -30,21 +25,15 @@ public class UDAnimator implements ValueAnimator.AnimatorUpdateListener, Animato
             repeatCallback,
             updateCallback;
 
-    public UDAnimator(Globals globals, LuaValue[] varargs) {
-        mAnimator = new ValueAnimator();
-        init();
-    }
-
-    public UDAnimator(ValueAnimator animator) {
-        mAnimator = animator;
+    public UDAnimator() {
         init();
     }
 
     private void init() {
-        mAnimator.addUpdateListener(this);
-        mAnimator.setInterpolator(Utils.linear);
-        mAnimator.addListener(this);
-        mAnimator.setFloatValues(0, 1);
+        this.addUpdateListener(this);
+        this.setInterpolator(Utils.linear);
+        this.addListener(this);
+        this.setFloatValues(0, 1);
     }
 
     //<editor-fold desc="API">
@@ -66,33 +55,33 @@ public class UDAnimator implements ValueAnimator.AnimatorUpdateListener, Animato
                 break;
         }
 
-        mAnimator.setRepeatCount(count);
-        mAnimator.setRepeatMode(type);
+        this.setRepeatCount(count);
+        this.setRepeatMode(type);
     }
 
     @LuaBridge
     public void setDuration(float duration) {
-        mAnimator.setDuration((long) (duration * 1000));
+        this.setDuration((long) (duration * 1000));
     }
 
     @LuaBridge
     public void setDelay(float delay) {
-        mAnimator.setStartDelay((long) (delay * 1000));
+        this.setStartDelay((long) (delay * 1000));
     }
 
     @LuaBridge
     public void start() {
-        mAnimator.start();
+        super.start();
     }
 
     @LuaBridge
     public void stop() {
-        mAnimator.end();
+        this.end();
     }
 
     @LuaBridge
     public void cancel() {
-        mAnimator.cancel();
+        super.cancel();
     }
 
     @LuaBridge
@@ -132,17 +121,17 @@ public class UDAnimator implements ValueAnimator.AnimatorUpdateListener, Animato
 
     @LuaBridge
     public boolean isRunning() {
-        return mAnimator.isRunning();
+        return super.isRunning();
     }
 
     @LuaBridge
     public UDAnimator clone() {
-        Animator animator = new ValueAnimator();
-        ((ValueAnimator) animator).setRepeatCount(mAnimator.getRepeatCount());
-        ((ValueAnimator) animator).setRepeatMode(mAnimator.getRepeatMode());
-        animator.setDuration(mAnimator.getDuration());
-        animator.setStartDelay(mAnimator.getStartDelay());
-        return new UDAnimator((ValueAnimator) animator);
+        UDAnimator animator = new UDAnimator();
+        animator.setRepeatCount(this.getRepeatCount());
+        animator.setRepeatMode(this.getRepeatMode());
+        animator.setDuration(this.getDuration());
+        animator.setStartDelay(this.getStartDelay());
+        return animator;
     }
 
     //</editor-fold>
@@ -205,6 +194,6 @@ public class UDAnimator implements ValueAnimator.AnimatorUpdateListener, Animato
         stopCallback = null;
         cancelCallback = null;
         repeatCallback = null;
-        mAnimator.cancel();
+        this.cancel();
     }
 }

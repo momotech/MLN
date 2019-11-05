@@ -132,7 +132,6 @@ public class ColorUtils {
 
     /**
      * 计算动画使用
-     * @see com.immomo.mls.fun.ud.anim.UDFrameAnimation
      */
     public static int evaluate(float fraction, int startInt, int endInt) {
         float startA = ((startInt >> 24) & 0xff) / 255.0f;

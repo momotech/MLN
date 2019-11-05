@@ -7,7 +7,6 @@
   */
 package com.immomo.mls;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -15,6 +14,7 @@ import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.webkit.URLUtil;
 import android.widget.ImageView;
 
@@ -54,7 +54,6 @@ import com.immomo.mls.wrapper.ScriptBundle;
 import com.immomo.mls.wrapper.ScriptBundleResourceFinder;
 
 import org.luaj.vm2.Globals;
-import org.luaj.vm2.utils.MemoryMonitor;
 import org.luaj.vm2.utils.PathResourceFinder;
 
 import java.io.File;
@@ -147,6 +146,10 @@ public class MLSInstance implements ScriptLoader.Callback, Callback, PrinterCont
      * @see MLSReloadButtonGenerator
      */
     private DefaultPrintStream STDOUT;
+    /**
+     * 是否手动关闭过printer
+     */
+    private boolean closePrinterOnce = false;
     /**
      * 读脚本工具
      */
@@ -385,6 +388,16 @@ public class MLSInstance implements ScriptLoader.Callback, Callback, PrinterCont
         }
     };
 
+    private void dismissKeyboard() {
+        if (mContext instanceof Activity) {
+            View view = ((Activity) mContext).getCurrentFocus();
+            if (view != null) {
+                InputMethodManager inputMethodManager = (InputMethodManager) mContext.getSystemService(Activity.INPUT_METHOD_SERVICE);
+                inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+            }
+        }
+    }
+
     /**
      * 页面显示时调用；若在多tab的Fragment中，应该在Fragment被切换出来时才调用
      */
@@ -593,6 +606,7 @@ public class MLSInstance implements ScriptLoader.Callback, Callback, PrinterCont
         if (hasState(STATE_HOT_RELOADING))
             return;
 
+        dismissKeyboard();
         addState(STATE_HOT_RELOADING);
 
         if (hotReloadLuaViewManager == null) {
@@ -735,6 +749,7 @@ public class MLSInstance implements ScriptLoader.Callback, Callback, PrinterCont
         } else {
             scriptInfo.withGlobals(globals);
         }
+        closePrinterOnce = false;
         scriptReader.loadScriptImpl(scriptInfo);
     }
 
@@ -918,12 +933,12 @@ public class MLSInstance implements ScriptLoader.Callback, Callback, PrinterCont
      * 最后阶段，执行回调
      * 成功的话，在主线程回调，失败可能在其他线程
      *
-     * @param executedSuccess 结果
+     * @param code 结果
      */
     @Override
-    public void onScriptExecuted(final boolean executedSuccess, final @Nullable String em) {
+    public void onScriptExecuted(final int code, final @Nullable String em) {
         removeState(STATE_SCRIPT_LOADING);
-        if (!executedSuccess) {
+        if (code != SUCCESS) {
             LogUtil.e(null, em);
             addState(STATE_ERROR);
             if (scriptStateListener != null) {
@@ -950,6 +965,8 @@ public class MLSInstance implements ScriptLoader.Callback, Callback, PrinterCont
                         if (toggleEmptyViewShow(true))
                             setEmptyViewContent("执行失败", "点击重新加载");
                     } else {
+                        if (code == COMPILE_FAILED)
+                            HotReloadHelper.onError(em);
                         if (hotReloadLuaView != null) {
                             removeLuaView(hotReloadLuaView);
                             hotReloadLuaView = null;
@@ -966,7 +983,7 @@ public class MLSInstance implements ScriptLoader.Callback, Callback, PrinterCont
             addState(STATE_SCRIPT_EXECUTED);
             onLuaScriptExecutedSuccess();
         }
-        GlobalStateUtils.onScriptExecuted(initData.url, executedSuccess);
+        GlobalStateUtils.onScriptExecuted(initData.url, code == SUCCESS);
     }
     //</editor-fold>
 
@@ -1099,6 +1116,11 @@ public class MLSInstance implements ScriptLoader.Callback, Callback, PrinterCont
     }
 
     @Override
+    public boolean hasClosePrinter() {
+        return closePrinterOnce;
+    }
+
+    @Override
     public void showPrinter(boolean show) {
         IPrinter printer = getSTDPrinter();
         if (printer == null)
@@ -1110,6 +1132,7 @@ public class MLSInstance implements ScriptLoader.Callback, Callback, PrinterCont
             pvParent.bringToFront();
         } else {
             pvParent.setVisibility(View.INVISIBLE);
+            closePrinterOnce = true;
         }
     }
 

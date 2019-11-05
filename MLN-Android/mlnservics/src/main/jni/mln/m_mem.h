@@ -11,15 +11,13 @@
 
 #ifndef __M_MEM_H
 #define __M_MEM_H
-
 #include <stdlib.h>
 
 /**
  * ns > 0 malloc或realloc内存
  * ns == 0 free src
  */
-void *m_malloc(void *src, size_t os, size_t ns);
-
+void * m_malloc(void* src, size_t os, size_t ns);
 #if defined(J_API_INFO)
 /**
  * 通过m_malloc使用的内存

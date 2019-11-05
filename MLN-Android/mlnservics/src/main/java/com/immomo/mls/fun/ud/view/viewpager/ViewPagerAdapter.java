@@ -13,10 +13,8 @@ import android.view.ViewGroup;
 
 import com.immomo.mls.MLSConfigs;
 import com.immomo.mls.MLSEngine;
-import com.immomo.mls.fun.constants.RectCorner;
 import com.immomo.mls.fun.ud.view.UDViewPager;
 import com.immomo.mls.fun.ui.IViewPager;
-import com.immomo.mls.fun.ui.LuaViewPager;
 import com.immomo.mls.util.LogUtil;
 import com.immomo.mls.weight.BaseTabLayout;
 
@@ -139,42 +137,21 @@ public class ViewPagerAdapter extends PagerAdapter implements IViewPager.Callbac
             if (!ret.isInit())
                 userData.callInitView(ret.getCell(), reuseId, position);
             userData.callFillCellData(ret.getCell(), reuseId, position);
-        } else {
-            if (needCallFillCells == null) {
-                needCallFillCells = new SparseArray<>();
-            }
-            needCallFillCells.put(position, ret);
         }
 
-        setCellCorner(ret);
+        if (needCallFillCells == null) {
+            needCallFillCells = new SparseArray<>();
+        }
+        needCallFillCells.put(position, ret);
 
         ret.setOnClickListener(userData.getOnClickListener());
 
         container.addView(ret);
         cellInLayout.put(position, ret);
         viewPosition.put(position, ret);
-        ((LuaViewPager) userData.mUDViewPager.getView()).firstAttachAppearZeroPosition();
+        (userData.mUDViewPager.getViewPager()).firstAttachAppearZeroPosition();
         return ret;
     }
-
-    // 直接给 ViewPager 设置 圆角无效，需要为每个cell的 contentView来设置圆角
-    private void setCellCorner(ViewPagerContent ret) {
-        UDViewPagerCell pagerCell = ret.getUDViewPagerCell();
-        if (pagerCell == null)
-            return;
-
-        setCellCornerValue(pagerCell,RectCorner.TOP_LEFT);
-        setCellCornerValue(pagerCell,RectCorner.TOP_RIGHT);
-        setCellCornerValue(pagerCell,RectCorner.BOTTOM_LEFT);
-        setCellCornerValue(pagerCell,RectCorner.BOTTOM_RIGHT);
-    }
-
-    private void setCellCornerValue(UDViewPagerCell pagerCell, int direction) {
-        float targetValue = mUDViewPager.getCornerRadiusWithDirections(direction);
-        if (pagerCell.getCornerRadiusWithDirections(direction) != targetValue)
-            pagerCell.setCornerRadiusWithDirection(targetValue, direction);
-    }
-
 
     private void setLayoutParams(ViewGroup container, View view) {
         ViewGroup.LayoutParams parentParams = container.getLayoutParams();
@@ -244,6 +221,7 @@ public class ViewPagerAdapter extends PagerAdapter implements IViewPager.Callbac
             }
             needCallFillCells.remove(p);
         }
+
     }
 
     public void setSetupPageListener(BaseTabLayout.SetupViewPageListener setupPageListener) {

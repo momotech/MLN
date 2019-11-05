@@ -15,6 +15,9 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.immomo.mls.MLSEngine;
+import com.immomo.mls.util.LogUtil;
+
 /**
  * Author       :   wu.tianlong@immomo.com
  * Date         :   2019/2/12
@@ -60,5 +63,16 @@ public class LuaLinearLayoutManager extends LinearLayoutManager implements  IScr
     @Override
     public int computeVerticalScrollOffset(RecyclerView.State state) {
         return childrenStateHelper.computeVerticalScrollOffset(this);
+    }
+
+    @Override
+    public int scrollVerticallyBy(int dy, RecyclerView.Recycler recycler, RecyclerView.State state) {
+        try {
+            return super.scrollVerticallyBy(dy, recycler, state);
+        } catch (Throwable e) {
+            if (MLSEngine.DEBUG)
+                LogUtil.e(e);
+        }
+        return 0;
     }
 }

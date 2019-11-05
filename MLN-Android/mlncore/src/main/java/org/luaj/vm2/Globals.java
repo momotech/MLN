@@ -7,8 +7,8 @@
   */
 package org.luaj.vm2;
 
-import android.os.Build;
 import android.content.res.AssetManager;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -17,9 +17,6 @@ import android.util.LongSparseArray;
 import com.immomo.mlncore.MLNCore;
 
 import org.luaj.vm2.exception.UndumpError;
-import org.luaj.vm2.jse.JavaClass;
-import org.luaj.vm2.jse.JavaInstance;
-import org.luaj.vm2.jse.Luajava;
 import org.luaj.vm2.utils.IGlobalsUserdata;
 import org.luaj.vm2.utils.LuaApiUsed;
 import org.luaj.vm2.utils.NativeLog;
@@ -27,9 +24,11 @@ import org.luaj.vm2.utils.ResourceFinder;
 import org.luaj.vm2.utils.SignatureUtils;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -111,7 +110,7 @@ public final class Globals extends LuaTable {
     /**
      * 虚拟机native地址
      */
-    final long L_State;
+    long L_State;
     /**
      * 父虚拟机native地址
      * 若不为0，表示由isolate创建
@@ -162,13 +161,17 @@ public final class Globals extends LuaTable {
      */
     private IGlobalsUserdata javaUserdata;
     /**
+     * 虚拟机销毁监听
+     */
+    private List<OnDestroyListener> onDestroyListeners;
+    /**
      * 此虚拟机是否可debug
      */
     private boolean debuggable;
     /**
      * 创建线程
      */
-    Thread mainThread;
+    private Thread mainThread;
     /**
      * 若有消息队列，则创建handler
      */
@@ -254,8 +257,7 @@ public final class Globals extends LuaTable {
                 is32bit = LuaCApi.is32bit();
                 LuaCApi._setAndroidVersion(Build.VERSION.SDK_INT);
                 init = true;
-            } catch (Throwable e) {
-                e.printStackTrace();
+            } catch (Throwable ignore) {
                 init = false;
             }
         }
@@ -374,6 +376,7 @@ public final class Globals extends LuaTable {
         /// 全局Globals
         if (p_vm == 0) {
             g.isGlobal = true;
+            g.setBasePath(LuaConfigs.soPath, false);
             addAllPathRFFromGlobals(g);
         } else {
             Globals parent = getGlobalsByLState(p_vm);
@@ -503,7 +506,7 @@ public final class Globals extends LuaTable {
     /**
      * 是否由isolate 创建
      */
-    public boolean isIsolate() {
+    public final boolean isIsolate() {
         return parent_L_State != 0;
     }
 
@@ -516,7 +519,7 @@ public final class Globals extends LuaTable {
      *                       若不可用，查找lua相关文件是否可用，若可用，保存编译后二进制文件(luab)
      *                 false：native只查找已lua为后缀的相关文件
      */
-    public void setBasePath(String basePath, boolean autoSave) {
+    public final void setBasePath(String basePath, boolean autoSave) {
         checkDestroy();
         this.basePath = basePath == null ? "" : basePath;
         LuaCApi._setBasePath(L_State, this.basePath, autoSave);
@@ -527,10 +530,11 @@ public final class Globals extends LuaTable {
      * require时使用
      * @param path 路径，可使用;分割多个路径
      */
-    public void setSoPath(String path) {
+    public final void setSoPath(String path) {
         if (path == null)
             return;
         checkDestroy();
+        soPath = path;
         LuaCApi._setSoPath(L_State, path);
     }
 
@@ -541,7 +545,7 @@ public final class Globals extends LuaTable {
      * @param savePath  文件路径，必须保证父文件夹都存在
      * @return true 成功，false 为进行预加载，或存储出错，可能抛出异常
      */
-    public boolean savePreloadData(String chunkname, String savePath) throws RuntimeException {
+    public final boolean savePreloadData(String chunkname, String savePath) throws RuntimeException {
         checkDestroy();
         return LuaCApi._savePreloadData(L_State, savePath, chunkname) == LUA_OK;
     }
@@ -554,7 +558,7 @@ public final class Globals extends LuaTable {
      * @param port  port
      * @return true：开启成功
      */
-    public boolean startDebug(byte[] debug, String ip, int port) {
+    public final boolean startDebug(byte[] debug, String ip, int port) {
         checkDestroy();
         if (!debuggable) {
             throw new IllegalStateException("cannot start debug in a lvm without debug state.");
@@ -577,7 +581,7 @@ public final class Globals extends LuaTable {
      * @return 编译状态，true: 成功，可以通过{@link #callLoadedData()}执行
      * false: 失败，可通过{@link #getState()}获取加载状态
      */
-    public boolean loadString(String chunkName, String lua) {
+    public final boolean loadString(String chunkName, String lua) {
         return loadData(chunkName, lua.getBytes());
     }
 
@@ -590,7 +594,7 @@ public final class Globals extends LuaTable {
      * @return 是否成功
      * @note: 需要保证文件前的目录都存在
      */
-    public boolean compileAndSave(String file, String chunkName, byte[] data) {
+    public final boolean compileAndSave(String file, String chunkName, byte[] data) {
         checkDestroy();
         try {
             state = LuaCApi._compileAndSave(L_State, file, chunkName, data);
@@ -612,7 +616,7 @@ public final class Globals extends LuaTable {
      * @return 是否成功
      * @note: 需要保证文件前的目录都存在
      */
-    public boolean compileAndSave(String file, String path, String chunkName) {
+    public final boolean compileAndSave(String file, String path, String chunkName) {
         checkDestroy();
         try {
             state = LuaCApi._compilePathAndSave(L_State, file, path, chunkName);
@@ -634,7 +638,7 @@ public final class Globals extends LuaTable {
      * @return 编译状态，true: 成功，可以通过{@link #callLoadedData()}执行
      * false: 失败，可通过{@link #getState()}获取加载状态
      */
-    public boolean loadData(String chunkName, byte[] data) {
+    public final boolean loadData(String chunkName, byte[] data) {
         checkDestroy();
         try {
             state = LuaCApi._loadData(L_State, chunkName, data);
@@ -655,7 +659,7 @@ public final class Globals extends LuaTable {
      * @return 编译状态，true: 成功，可以通过{@link #callLoadedData()}执行
      * false: 失败，可通过{@link #getState()}获取加载状态
      */
-    public boolean loadFile(String path, String chunkName) {
+    public final boolean loadFile(String path, String chunkName) {
         checkDestroy();
         try {
             state = LuaCApi._loadFile(L_State, path, chunkName);
@@ -673,7 +677,7 @@ public final class Globals extends LuaTable {
      * @param data      源码或二进制码
      * @throws UndumpError 若编译出错，则抛出异常
      */
-    public void preloadData(String chunkName, byte[] data) throws UndumpError {
+    public final void preloadData(String chunkName, byte[] data) throws UndumpError {
         checkDestroy();
         LuaCApi._preloadData(L_State, chunkName, data);
     }
@@ -684,7 +688,7 @@ public final class Globals extends LuaTable {
      * @param path      脚本绝对路径
      * @throws UndumpError 若编译出错，则抛出异常
      */
-    public void preloadFile(String chunkName, String path) throws UndumpError {
+    public final void preloadFile(String chunkName, String path) throws UndumpError {
         checkDestroy();
         LuaCApi._preloadFile(L_State, chunkName, path);
     }
@@ -694,7 +698,7 @@ public final class Globals extends LuaTable {
      * @param chunkname 预加载时的米
      * @return true: 设置成功，可通过 {@link #callLoadedData()}执行
      */
-    public boolean setMainEntryFromPreload(String chunkname) {
+    public final boolean setMainEntryFromPreload(String chunkname) {
         checkDestroy();
         if (LuaCApi._setMainEntryFromPreload(L_State, chunkname)) {
             state = LUA_OK;
@@ -717,7 +721,7 @@ public final class Globals extends LuaTable {
      *
      * @return true: 成功，false: 失败，可通过{@link #getState()}查看执行状态
      */
-    public boolean callLoadedData() {
+    public final boolean callLoadedData() {
         checkDestroy();
         if (state != LUA_OK) {
             if (state == JUST_INIT) {
@@ -744,7 +748,7 @@ public final class Globals extends LuaTable {
      * @see #loadString(String, String)
      * @see #loadData(String, byte[])
      */
-    public int getState() {
+    public final int getState() {
         return state;
     }
 
@@ -754,7 +758,7 @@ public final class Globals extends LuaTable {
      *
      * @return 错误信息
      */
-    public String getErrorMsg() {
+    public final String getErrorMsg() {
         return errorMsg;
     }
 
@@ -764,7 +768,7 @@ public final class Globals extends LuaTable {
      *
      * @return 错误堆栈
      */
-    public Throwable getError() {
+    public final Throwable getError() {
         return error;
     }
     //</editor-fold>
@@ -782,7 +786,7 @@ public final class Globals extends LuaTable {
      * @param clz          java类
      * @param luaClassName lua中调用的名称
      */
-    public void registerStaticBridgeSimple(String luaClassName, Class clz) {
+    public final void registerStaticBridgeSimple(String luaClassName, Class clz) {
         checkDestroy();
         LuaCApi._registerStaticClassSimple(L_State,
                 SignatureUtils.getClassName(clz),
@@ -792,22 +796,12 @@ public final class Globals extends LuaTable {
     }
 
     /**
-     * 注册luajava库
-     * @see Luajava
+     * 注册只包含静态__index方法的类
      */
-    public void registerLuaJava() {
-        checkDestroy();
+    public final void registerJavaMetatable(Class clz, String name) {
         LuaCApi._registerJavaMetatable(L_State,
-                SignatureUtils.getClassName(Luajava.class),
-                Luajava.NAME);
-        LuaCApi._registerUserdata(L_State,
-                JavaInstance.LUA_CLASS_NAME,
-                null,
-                SignatureUtils.getClassName(JavaInstance.class));
-        LuaCApi._registerUserdata(L_State,
-                JavaClass.LUA_CLASS_NAME,
-                JavaInstance.LUA_CLASS_NAME,
-                SignatureUtils.getClassName(JavaClass.class));
+                SignatureUtils.getClassName(clz),
+                name);
     }
 
     /**
@@ -825,7 +819,7 @@ public final class Globals extends LuaTable {
      * @param luaClassName lua调用的类名
      * @param clz          java的class
      */
-    public void registerUserdataSimple(String luaClassName, Class<? extends LuaUserdata> clz) throws RuntimeException {
+    public final void registerUserdataSimple(String luaClassName, Class<? extends LuaUserdata> clz) throws RuntimeException {
         checkDestroy();
         LuaCApi._registerUserdata(L_State,
                 luaClassName,
@@ -850,7 +844,7 @@ public final class Globals extends LuaTable {
      * @param jcns          java的class {@link SignatureUtils#getClassName(Class)}
      * @param lazy          每个userdata是否是lazy
      */
-    public void registerAllUserdata(String[] lcns, String[] lpcns, String[] jcns, boolean[] lazy) throws RuntimeException {
+    public final void registerAllUserdata(String[] lcns, String[] lpcns, String[] jcns, boolean[] lazy) throws RuntimeException {
         checkDestroy();
         final int len = lcns.length;
         if (len != lpcns.length || len != jcns.length)
@@ -873,7 +867,7 @@ public final class Globals extends LuaTable {
      * @param luaClassName  lua调用的类名
      * @param clz           java的class
      */
-    public void registerLazyUserdataSimple(String luaClassName, Class<? extends LuaUserdata>  clz) throws RuntimeException {
+    public final void registerLazyUserdataSimple(String luaClassName, Class<? extends LuaUserdata>  clz) throws RuntimeException {
         checkDestroy();
         LuaCApi._registerUserdataLazy(L_State,
                 luaClassName,
@@ -888,7 +882,7 @@ public final class Globals extends LuaTable {
      * @param keys      枚举名称
      * @param values    数值
      */
-    public void registerNumberEnum(String lcn, String[] keys, double[] values) {
+    public final void registerNumberEnum(String lcn, String[] keys, double[] values) {
         checkDestroy();
         if (keys == null || values == null)
             return;
@@ -904,7 +898,7 @@ public final class Globals extends LuaTable {
      * @param keys      枚举名称
      * @param values    数值
      */
-    public void registerStringEnum(String lcn, String[] keys, String[] values) {
+    public final void registerStringEnum(String lcn, String[] keys, String[] values) {
         checkDestroy();
         if (keys == null || values == null)
             return;
@@ -997,8 +991,15 @@ public final class Globals extends LuaTable {
     /**
      * 设置是否正在使用中
      */
-    public void setRunning(boolean running) {
+    public final void setRunning(boolean running) {
         this.running = running;
+    }
+
+    /**
+     * 是否在使用中
+     */
+    public final boolean isRunning() {
+        return this.running;
     }
 
     /**
@@ -1006,7 +1007,7 @@ public final class Globals extends LuaTable {
      * @return 如果编译时，没有打开J_API_INFO编译选项，则返回为0
      * @see #getAllLVMMemUse() 获取所有虚拟机的内存使用量
      */
-    public long getLVMMemUse() {
+    public final long getLVMMemUse() {
         return LuaCApi._lvmMemUse(L_State);
     }
 
@@ -1016,7 +1017,7 @@ public final class Globals extends LuaTable {
      *
      * @return 堆栈信息
      */
-    public LuaValue[] dump() {
+    public final LuaValue[] dump() {
         checkDestroy();
         return LuaCApi._dumpStack(L_State);
     }
@@ -1025,7 +1026,7 @@ public final class Globals extends LuaTable {
      * post事件
      * @return true post成功
      */
-    public boolean post(Runnable r) {
+    public final boolean post(Runnable r) {
         if (handler != null) {
             return handler.post(r);
         }
@@ -1036,36 +1037,48 @@ public final class Globals extends LuaTable {
      * 延迟post事件
      * @return true post 成功
      */
-    public boolean postDelayed(Runnable r, long ms) {
+    public final boolean postDelayed(Runnable r, long ms) {
         Message message = Message.obtain(handler, r);
         message.obj = TAG;
 
         return handler.sendMessageDelayed(message, ms);
     }
 
+    @Override
+    public final boolean isDestroyed() {
+        return destroyed || L_State == 0;
+    }
+
     /**
      * 销毁当前虚拟机
      */
-    public void destroy() {
-        if (!destroyed && MLNCore.DEBUG && (state == LUA_CALLING || calledFunction > 0)) {
+    public final void destroy() {
+        checkMainThread();
+        if (!isDestroyed() && MLNCore.DEBUG && (state == LUA_CALLING || calledFunction > 0)) {
             throw new IllegalStateException("throw in debug mode, cannot destroy lua vm when lua function is calling!");
         }
-        synchronized (this) {
-            if (destroyed)
-                return;
-            destroyed = true;
+        if (isDestroyed())
+            return;
+        if (onDestroyListeners != null) {
+            for (OnDestroyListener l : onDestroyListeners) {
+                l.onDestroy(this);
+            }
+            onDestroyListeners.clear();
         }
+        destroyed = true;
+        final long pointer = L_State;
+        L_State = 0;
         if (handler != null) {
             handler.removeCallbacksAndMessages(TAG);
         }
-        if (!isIsolate()) LuaCApi._close(L_State);
+        if (!isIsolate()) LuaCApi._close(pointer);
         if (javaUserdata != null) {
             javaUserdata.onGlobalsDestroy(this);
         }
         javaUserdata = null;
-        NativeLog.release(L_State);
-        cache.remove(L_State);
-        g_cahce.remove(L_State);
+        NativeLog.release(pointer);
+        cache.remove(pointer);
+        g_cahce.remove(pointer);
         luaClassNameMap.clear();
         resourceFinder = null;
         if (resourceFinders != null)
@@ -1081,7 +1094,7 @@ public final class Globals extends LuaTable {
      * @param luaClassName lua类名
      * @return 创建的对象
      */
-    public Object createUserdataAndSet(String key, String luaClassName, LuaValue... params) throws RuntimeException {
+    public final Object createUserdataAndSet(String key, String luaClassName, LuaValue... params) throws RuntimeException {
         checkDestroy();
         return LuaCApi._createUserdataAndSet(L_State, key, luaClassName, params);
     }
@@ -1089,14 +1102,14 @@ public final class Globals extends LuaTable {
     /**
      * 获取虚拟机地址
      */
-    public long getL_State() {
+    public final long getL_State() {
         return L_State;
     }
 
     /**
      * 设置Java环境的用户数据
      */
-    public void setJavaUserdata(IGlobalsUserdata userdata) {
+    public final void setJavaUserdata(IGlobalsUserdata userdata) {
         this.javaUserdata = userdata;
         NativeLog.register(L_State, userdata);
     }
@@ -1104,7 +1117,7 @@ public final class Globals extends LuaTable {
     /**
      * 获取java环境的用户数据
      */
-    public IGlobalsUserdata getJavaUserdata() {
+    public final IGlobalsUserdata getJavaUserdata() {
         return javaUserdata;
     }
 
@@ -1115,15 +1128,35 @@ public final class Globals extends LuaTable {
      *
      * @see LuaUserdata
      */
-    public String getLuaClassName(Class c) {
+    public final String getLuaClassName(Class c) {
         return luaClassNameMap.get(c);
     }
 
     /**
      * 设置class和luaclassname的对应关系
      */
-    public void putLuaClassName(Map<Class, String> other) {
+    public final void putLuaClassName(Map<Class, String> other) {
         luaClassNameMap.putAll(other);
+    }
+
+    /**
+     * 增加销毁监听
+     */
+    public synchronized void addOnDestroyListener(OnDestroyListener l) {
+        if (l == null)
+            return;
+        if (onDestroyListeners == null) {
+            onDestroyListeners = new ArrayList<>();
+        }
+        onDestroyListeners.add(l);
+    }
+
+    /**
+     * 移除销毁监听
+     */
+    public synchronized void removeOnDestroyListener(OnDestroyListener l) {
+        if (onDestroyListeners != null)
+            onDestroyListeners.remove(l);
     }
 
     /**
@@ -1200,7 +1233,7 @@ public final class Globals extends LuaTable {
             handler.post(new Runnable() {
                 @Override
                 public void run() {
-                    if (destroyed) return;
+                    if (isDestroyed()) return;
                     value.destroyed = LuaCApi._removeNativeValue(L_State, key, value.type()) <= 0;
                     if (value.destroyed) {
                         destroyedValues++;
@@ -1225,7 +1258,7 @@ public final class Globals extends LuaTable {
      * 某个时间点上是否可以执行full gc
      */
     private boolean canGc(long time) {
-        if (inGC || state == JUST_INIT || destroyed) return false;
+        if (inGC || state == JUST_INIT || isDestroyed()) return false;
 
         return time - lastGcTime > LUA_GC_OFFSET;
     }
@@ -1241,6 +1274,7 @@ public final class Globals extends LuaTable {
             inGC = true;
             LuaCApi._lgc(L_State);
             lastGcTime = System.currentTimeMillis();
+            MLNCore.luaGcCast(this, lastGcTime - now);
             inGC = false;
             return true;
         }
@@ -1267,24 +1301,24 @@ public final class Globals extends LuaTable {
     //</editor-fold>
 
     //<editor-fold desc="Table unsupported set get">
-    public void set(int index, LuaValue value) {
+    public final void set(int index, LuaValue value) {
         unsupported();
     }
 
-    public void set(int index, double num) {
+    public final void set(int index, double num) {
         unsupported();
     }
 
-    public void set(int index, boolean b) {
+    public final void set(int index, boolean b) {
         unsupported();
     }
 
-    public void set(int index, String s) {
+    public final void set(int index, String s) {
         unsupported();
     }
 
     @Override
-    public LuaValue get(int index) {
+    public final LuaValue get(int index) {
         unsupported();
         return null;
     }
@@ -1383,7 +1417,7 @@ public final class Globals extends LuaTable {
     }
 
     private void checkDestroy() {
-        if (destroyed) {
+        if (isDestroyed()) {
             throw new IllegalStateException("this lua vm is destroyed!");
         }
     }
@@ -1406,6 +1440,28 @@ public final class Globals extends LuaTable {
 
     @Override
     public String toString() {
-        return "Globals" + super.toString();
+        return "Globals#" + hashCode();
+    }
+
+    @Override
+    public int hashCode() {
+        return (int)(L_State ^ (L_State >>> 32));
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return o == this;
+    }
+
+    /**
+     * 监听虚拟机销毁
+     */
+    public static interface OnDestroyListener {
+        /**
+         * 在虚拟机销毁前调用
+         * 可调用lua接口
+         * @param g 虚拟机
+         */
+        void onDestroy(Globals g);
     }
 }

@@ -10,13 +10,12 @@ package com.immomo.mls.fun.ud.view;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.immomo.mls.MLSEngine;
+import com.immomo.mls.MLSConfigs;
 import com.immomo.mls.base.ud.lv.ILViewGroup;
 import com.immomo.mls.fun.constants.LinearType;
 import com.immomo.mls.fun.ui.LuaLinearLayout;
 import com.immomo.mls.fun.weight.LinearLayout;
 import com.immomo.mls.util.LuaViewUtil;
-import com.immomo.mls.utils.LinearLayoutCheckUtils;
 
 import org.luaj.vm2.Globals;
 import org.luaj.vm2.LuaValue;
@@ -49,6 +48,16 @@ public class UDLinearLayout<V extends ViewGroup & ILViewGroup> extends UDViewGro
         return (V) new LuaLinearLayout<UDLinearLayout>(getContext(), this, type);
     }
 
+    @Override
+    protected boolean clipToPadding() {
+        return MLSConfigs.defaultClipContainer;
+    }
+
+    @Override
+    protected boolean clipChildren() {
+        return MLSConfigs.defaultClipContainer;
+    }
+
     //<editor-fold desc="API">
     @Override
     public void insertView(UDView view, int index) {
@@ -59,20 +68,14 @@ public class UDLinearLayout<V extends ViewGroup & ILViewGroup> extends UDViewGro
         if (sub == null)
             return;
         ViewGroup.LayoutParams layoutParams = sub.getLayoutParams();
-        if (v instanceof ILViewGroup) {
-            ILViewGroup g = (ILViewGroup) v;
-            layoutParams = g.applyLayoutParams(layoutParams,
-                    view.udLayoutParams);
-        }
+        layoutParams = v.applyLayoutParams(layoutParams,
+                view.udLayoutParams);
 
         if (index > getView().getChildCount()) {
             index = -1;//index越界时，View放在末尾
         }
 
         v.addView(LuaViewUtil.removeFromParent(sub), index, layoutParams);
-
-        if (MLSEngine.DEBUG)
-            LinearLayoutCheckUtils.checkLinearLayout((LinearLayout) v);
     }
     //</editor-fold>
 }

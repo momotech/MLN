@@ -21,20 +21,40 @@
 #include <string>
 #include <iostream>
 
-using namespace std;
-
 class MessageEvent {
 
 public:
+    enum DataType {
+        DataTypeNil,
+        DataTypeString,
+    };
+    
+public:
     MessageEvent();
-    void setType(string type);
-    string getType();
-    void setData(void *data);
-    void * getData();
+    
+    inline void setType(std::string &type) {
+        var_type = type;
+    };
+    inline std::string &getType() {
+        return var_type;
+    };
+    
+    inline void setStringData(std::string &data) {
+        _data_type = DataTypeString;
+        var_data = data;
+    };
+    inline std::string &getStringData() {
+        return var_data;
+    };
+    
+    inline DataType &getDataType() {
+        return _data_type;
+    }
     
 private:
-    string var_type;
-    void *var_data;
+    DataType _data_type;
+    std::string var_type;
+    std::string var_data;
 };
 
 #endif /* MessageEvent_hpp */

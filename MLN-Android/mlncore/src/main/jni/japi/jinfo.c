@@ -65,12 +65,13 @@ jmethodID LuaFunction_C = NULL;
 // ------------thread
 jmethodID LuaThread_C = NULL;
 // ------------userdata
-jmethodID LuaUserdata_C = NULL;
 jfieldID LuaUserdata_luaclassName = NULL;
+jmethodID LuaUserdata_memoryCast = NULL;
 // ------------exception
 // jmethodID InvokeError_C = NULL;
 // jmethodID InvokeError_CT = NULL;
-jmethodID Throwable_toString = NULL;
+jmethodID obj__toString = NULL;
+jmethodID Throwable_getStackTrace = NULL;
 #if defined(JAVA_CACHE_UD)
 jmethodID Globals__getUserdata = NULL;
 jfieldID LuaUserdata_id = NULL;
@@ -87,7 +88,11 @@ void initJavaInfo(JNIEnv *env) {
 
     StringClass = GLOBAL(env, (*env)->FindClass(env, "java/lang/String"));
     Throwable = GLOBAL(env, (*env)->FindClass(env, "java/lang/Throwable"));
-    Throwable_toString = (*env)->GetMethodID(env, Throwable, "toString", "()" STRING_CLASS);
+    jclass OBJECT = (*env)->FindClass(env, "java/lang/Object");
+    obj__toString = (*env)->GetMethodID(env, OBJECT, "toString", "()" STRING_CLASS);
+    Throwable_getStackTrace = (*env)->GetMethodID(env, Throwable, "getStackTrace", "()[Ljava/lang/StackTraceElement;");
+    if ((*env)->ExceptionCheck(env))
+        (*env)->ExceptionClear(env);
 
     Globals = GLOBAL(env, findTypeClass(env, "Globals"));
     Globals__onLuaRequire = (*env)->GetStaticMethodID(env, Globals, "__onLuaRequire",
@@ -127,8 +132,8 @@ void initJavaInfo(JNIEnv *env) {
     LuaFunction_C = findConstructor(env, LuaFunction, "JJ");
 
     LuaUserdata = GLOBAL(env, findTypeClass(env, "LuaUserdata"));
-    LuaUserdata_C = findConstructor(env, LuaUserdata, "JJ");
     LuaUserdata_luaclassName = (*env)->GetFieldID(env, LuaUserdata, "luaclassName", STRING_CLASS);
+    LuaUserdata_memoryCast = (*env)->GetMethodID(env, LuaUserdata, "memoryCast", "()J");
 #if defined(JAVA_CACHE_UD)
     LuaUserdata_id = (*env)->GetFieldID(env, LuaUserdata, "id", "J");
     LuaUserdata_addRef = (*env)->GetMethodID(env, LuaUserdata, "addRef", "()V");
@@ -435,34 +440,70 @@ void detachEnv() {
     LOGI("detach env result: %d", r);
 }
 
+size_t copy_string(JNIEnv *env, jstring src, char *out, size_t len) {
+    const char *cs = GetString(env, src);
+    if (!cs) return 0;
+    size_t slen = (size_t) (*env)->GetStringUTFLength(env, src);
+
+    size_t copy_len = slen >= len ? len - 1 : slen;
+    memcpy(out, cs, copy_len);
+    ReleaseChar(env, src, cs);
+    (*env)->DeleteLocalRef(env, src);
+    return copy_len;
+}
+
 int getThrowableMsg(JNIEnv *env, jthrowable t, char *out, size_t len) {
     if (!t) return -1;
 
-    jstring ret = (jstring) (*env)->CallObjectMethod(env, t, Throwable_toString);
+    jstring ret = (jstring) (*env)->CallObjectMethod(env, t, obj__toString);
     if ((*env)->ExceptionCheck(env) || !ret) return -2;
 
-    const char *cs = GetString(env, ret);
-    if (!cs) return -3;
-    size_t slen = (size_t) (*env)->GetStringUTFLength(env, ret);
+    size_t copy_len = copy_string(env, ret, out, len);
+    if (copy_len == 0)
+        return -3;
 
-    memset(out, 0, len);
-    len = slen >= len ? len - 1 : slen;
-    memcpy(out, cs, len);
+    if (len - copy_len > EXCEPTION_STACK_LEN && Throwable_getStackTrace) {
+        jobjectArray stacks = (*env)->CallObjectMethod(env, t,Throwable_getStackTrace);
+        if ((*env)->ExceptionCheck(env) || !stacks) {
+            return 0;
+        }
+        int stack_size = GetArrLen(env, stacks);
+        if (stack_size <= 0) {
+            (*env)->DeleteLocalRef(env, stacks);
+            return 0;
+        }
+        jobject stack1 = (*env)->GetObjectArrayElement(env, stacks, 0);
+        if ((*env)->ExceptionCheck(env) || !stack1) {
+            (*env)->DeleteLocalRef(env, stacks);
+            return 0;
+        }
+        ret = (jstring) (*env)->CallObjectMethod(env, stack1, obj__toString);
+        if ((*env)->ExceptionCheck(env) || !ret) {
+            (*env)->DeleteLocalRef(env, stack1);
+            (*env)->DeleteLocalRef(env, stacks);
+            return 0;
+        }
 
-    ReleaseChar(env, ret, cs);
-    (*env)->DeleteLocalRef(env, ret);
+        char *temp = out + copy_len;
+        memcpy(temp, "\n", 1);
+        temp += 1;
+        copy_string(env, ret, temp, len - copy_len - 1);
+        (*env)->DeleteLocalRef(env, stack1);
+        (*env)->DeleteLocalRef(env, stacks);
+    }
     return 0;
 }
 
-int catchJavaException(JNIEnv *env, lua_State *L) {
+int catchJavaException(JNIEnv *env, lua_State *L, const char * mn) {
     jthrowable thr = (*env)->ExceptionOccurred(env);
     if (thr) {
         (*env)->ExceptionClear(env);
-        char msg[MAX_EXCEPTION_MSG];
+        char msg[MAX_EXCEPTION_MSG] = {0};
+        if (!mn) mn = "unknown";
         if (getThrowableMsg(env, thr, msg, MAX_EXCEPTION_MSG) == 0) {
-            lua_pushfstring(L, "exception throws in java methods---%s", msg);
+            lua_pushfstring(L, "exception throws in java (%s)---%s", mn, msg);
         } else {
-            lua_pushstring(L, "exception throws in java methods!");
+            lua_pushfstring(L, "exception throws in java (%s)!", mn);
         }
         return 1;
     }

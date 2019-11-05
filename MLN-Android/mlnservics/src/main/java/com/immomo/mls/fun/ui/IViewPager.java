@@ -10,11 +10,15 @@ package com.immomo.mls.fun.ui;
 import com.immomo.mls.base.ud.lv.ILView;
 import com.immomo.mls.fun.ud.view.UDView;
 
+import androidx.viewpager.widget.ViewPager;
+
 /**
  * Created by XiongFangyu on 2018/9/27.
  */
 
 public interface IViewPager<V extends UDView> extends ILView<V> {
+    ViewPager getViewPager();
+
     boolean isAutoScroll();
 
     void setAutoScroll(boolean autoScroll);

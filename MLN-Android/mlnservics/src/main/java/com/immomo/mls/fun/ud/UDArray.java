@@ -9,6 +9,7 @@ package com.immomo.mls.fun.ud;
 
 
 import com.immomo.mls.MLSEngine;
+import com.immomo.mls.utils.ErrorUtils;
 import com.immomo.mls.utils.convert.ConvertUtils;
 import com.immomo.mls.wrapper.IJavaObjectGetter;
 import com.immomo.mls.wrapper.ILuaValueGetter;
@@ -156,7 +157,8 @@ public class UDArray extends LuaUserdata {
     public LuaValue[] get(LuaValue[] v) {
         int index = v[0].toInt() - 1;
         if (index < 0 || index >= array.size()) {
-            throw new IndexOutOfBoundsException("The index out of range!");
+            ErrorUtils.debugLuaError("The index out of range!",globals);
+            return rNil();
         }
         return varargsOf(ConvertUtils.toLuaValue(getGlobals(), array.get(index)));
     }

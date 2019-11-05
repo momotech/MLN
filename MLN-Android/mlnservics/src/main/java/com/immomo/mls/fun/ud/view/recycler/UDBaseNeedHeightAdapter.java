@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import com.immomo.mls.annotation.LuaClass;
 import com.immomo.mls.fun.other.Size;
 import com.immomo.mls.utils.AssertUtils;
+import com.immomo.mls.utils.ErrorUtils;
 
 import org.luaj.vm2.Globals;
 import org.luaj.vm2.LuaFunction;
@@ -39,7 +40,7 @@ public abstract class UDBaseNeedHeightAdapter<L extends UDBaseRecyclerLayout> ex
     };
     protected LuaFunction heightForCell, heightForHeader;
     protected Map<String, LuaFunction> heightDelegates;
-    private SparseArray<Size> sizeCache, sizeCacheHeader;
+    private SparseArray<Size> sizeCache;
 
     private Size initSize;
 
@@ -92,11 +93,6 @@ public abstract class UDBaseNeedHeightAdapter<L extends UDBaseRecyclerLayout> ex
     }
 
     @Override
-    public boolean hasHeaderSize() {
-        return heightForHeader != null;
-    }
-
-    @Override
     public int getCellViewHeight() {
         return ViewGroup.LayoutParams.WRAP_CONTENT;
     }
@@ -145,6 +141,7 @@ public abstract class UDBaseNeedHeightAdapter<L extends UDBaseRecyclerLayout> ex
         }
 
         int h = ret.toInt();
+        h = h < 0 ? 0 : h; //两端统一返回高度<0,默认为0。
 
         cellSize = new Size(Size.MATCH_PARENT, h);
 
@@ -156,16 +153,11 @@ public abstract class UDBaseNeedHeightAdapter<L extends UDBaseRecyclerLayout> ex
     @NonNull
     @Override
     public Size getHeaderSize(int position) {
-        if (sizeCacheHeader == null) {
-            sizeCacheHeader = new SparseArray<>();
-        }
-        Size cellSize = sizeCacheHeader.get(position);
-        if (cellSize != null)
-            return cellSize;
 
-        LuaFunction caller = null;
-        if (heightForHeader != null) {
-            caller = heightForHeader;
+        LuaFunction caller = heightForHeader;
+        if (caller == null) {
+            ErrorUtils.debugLuaError("The 'heightForHeader' callback must not be nil!", globals);
+            return new Size(Size.MATCH_PARENT, Size.WRAP_CONTENT);
         }
         LuaValue ret = caller.invoke(null)[0];
 
@@ -174,9 +166,10 @@ public abstract class UDBaseNeedHeightAdapter<L extends UDBaseRecyclerLayout> ex
         }
 
         int h = ret.toInt();
-        cellSize = new Size(Size.MATCH_PARENT, h);
+        h = h < 0 ? 0 : h; //两端统一返回高度<0,默认为0。
 
-        sizeCacheHeader.put(position, cellSize);
+        Size cellSize = new Size(Size.MATCH_PARENT, h);
+
         return cellSize;
     }
 

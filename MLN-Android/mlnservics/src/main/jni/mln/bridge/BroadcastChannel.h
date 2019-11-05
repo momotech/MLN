@@ -22,29 +22,28 @@
 #include <iostream>
 #include "MessageEvent.h"
 
-using namespace std;
 
 typedef void(*ON_MESSAGE_CALLBACK)(void *channel, MessageEvent *event); //定义函数指针类型
 
 class BroadcastChannel {
     
 public:
-    BroadcastChannel(string name);
+    BroadcastChannel(std::string name);
     ~BroadcastChannel();
-    void postMessage(void *msg);
-    void postMessage(string name, void *msg);
+    void postMessage(std::string msg);
+    void postMessage(std::string name, std::string msg);
     void onMessage(ON_MESSAGE_CALLBACK callback);
     void close();
     
-    void setName(string name);
-    string getName();
+    void setName(std::string name);
+    std::string getName();
     void setExtraData(void *extraData);
     void * getExtraData();
     
     void doAction(MessageEvent *event);
     
 private:
-    string var_name;
+    std::string var_name;
     ON_MESSAGE_CALLBACK var_callback;
     void *var_extraData;
 };

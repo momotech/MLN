@@ -37,16 +37,20 @@ public class DefaultIntCallback implements IIntCallback {
     };
 
     @Override
-    public int callback(Object... params) {
+    public int callback(Object... params) throws IllegalStateException {
         Utils.check(luaFunction);
         LuaValue[] r = Utils.invoke(luaFunction, params);
+        if (r.length == 0)
+            throw new IllegalStateException(luaFunction.getInvokeError());
         return r[0].toInt();
     }
 
     @Override
-    public int callbackAndDestroy(Object... params) {
+    public int callbackAndDestroy(Object... params) throws IllegalStateException {
         Utils.check(luaFunction);
         LuaValue[] r = Utils.invoke(luaFunction, params);
+        if (r.length == 0)
+            throw new IllegalStateException(luaFunction.getInvokeError());
         luaFunction.destroy();
         luaFunction = null;
         return r[0].toInt();

@@ -10,28 +10,35 @@ package com.immomo.mls.fun.weight;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.view.MotionEvent;
 
+import com.immomo.mls.fun.other.Size;
 import com.immomo.mls.fun.ud.view.IBorderRadiusView;
-import com.immomo.mls.fun.ud.view.UDView;
+import com.immomo.mls.fun.ud.view.IClipRadius;
 import com.immomo.mls.util.LuaViewUtil;
 import com.immomo.mls.utils.ViewClipHelper;
+import com.immomo.mls.utils.ViewShadowHelper;
 
 import androidx.annotation.NonNull;
 
 /**
  * Created by XiongFangyu on 2018/8/1.
+ * Label 不能切割圆角,文字会不显示
  */
-public class BorderRadiusTextView extends ForegroundTextView implements IBorderRadiusView, ViewClipHelper.SuperDrawAction {
+public class BorderRadiusTextView extends ForegroundTextView implements IBorderRadiusView, IClipRadius, ViewClipHelper.SuperDrawAction {
     private final @NonNull
     BorderBackgroundDrawable backgroundDrawable;
     private final @NonNull
     ViewClipHelper viewClipHelper;
+    private final @NonNull
+    ViewShadowHelper viewShadowHelper;
 
     public BorderRadiusTextView(Context context) {
         super(context);
         backgroundDrawable = new BorderBackgroundDrawable();
         viewClipHelper = new ViewClipHelper();
+        viewShadowHelper = new ViewShadowHelper();
     }
 
     //<editor-fold desc="IBorderRadiusView">
@@ -70,6 +77,15 @@ public class BorderRadiusTextView extends ForegroundTextView implements IBorderR
     }
 
     @Override
+    public void setAddShadow(int color, Size offset, float shadowRadius, float alpha) {
+        if (Build.VERSION.SDK_INT >= 21) {
+            // 这个是加外边框，通过 setRoundRect 添加
+            viewShadowHelper.setShadowData(color,offset,shadowRadius,alpha);
+            viewShadowHelper.setOutlineProvider(this);
+        }
+    }
+
+    @Override
     public void setStrokeWidth(float width) {
         backgroundDrawable.setStrokeWidth(width);
         LuaViewUtil.setBackground(this, backgroundDrawable);
@@ -86,6 +102,9 @@ public class BorderRadiusTextView extends ForegroundTextView implements IBorderR
         backgroundDrawable.setCornerRadius(radius);
         LuaViewUtil.setBackground(this, backgroundDrawable);
         viewClipHelper.setRadius(radius);
+        viewShadowHelper.setRadius(radius);
+        viewShadowHelper.setError(false);
+        viewClipHelper.setCornerType(TYPE_CORNER_RADIUS);
     }
 
     @Override
@@ -93,6 +112,7 @@ public class BorderRadiusTextView extends ForegroundTextView implements IBorderR
         backgroundDrawable.setRadius(topLeft, topRight, bottomLeft, bottomRight);
         LuaViewUtil.setBackground(this, backgroundDrawable);
         viewClipHelper.setRadius(topLeft, topRight, bottomLeft, bottomRight);
+        viewClipHelper.setCornerType(TYPE_CORNER_RADIUS);
     }
 
     @Override
@@ -100,11 +120,26 @@ public class BorderRadiusTextView extends ForegroundTextView implements IBorderR
         backgroundDrawable.setRadius(direction, radius);
         LuaViewUtil.setBackground(this, backgroundDrawable);
         viewClipHelper.setRadius(backgroundDrawable);
+        viewClipHelper.setCornerType(TYPE_CORNER_DIRECTION);
+        viewShadowHelper.setError(true);//阴影禁止和setCornerRadiusWithDirection()连用
     }
 
     @Override
-    public void setUDView(UDView udView) {
+    public void setMaskRadius(int direction, float radius) {
+        backgroundDrawable.setMaskRadius(direction, radius);
+        LuaViewUtil.setBackground(this, backgroundDrawable);
+        viewClipHelper.setRadius(backgroundDrawable);
+        viewShadowHelper.setError(false);//阴影可以和addCornerMask()连用
+    }
 
+    @Override
+    public void initCornerManager(boolean open) {
+        viewClipHelper.openDefaultClip(open);
+    }
+
+    @Override
+    public void forceClipLevel(int clipLevel) {
+        viewClipHelper.setForceClipLevel(clipLevel);
     }
 
     @Override
@@ -151,6 +186,7 @@ public class BorderRadiusTextView extends ForegroundTextView implements IBorderR
         } else {
             super.draw(canvas);
         }
+        drawBorder(canvas);
     }
 
     @Override

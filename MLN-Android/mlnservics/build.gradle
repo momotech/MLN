@@ -17,7 +17,7 @@ android {
             cmake {
                 cppFlags "-frtti -fexceptions"
                 cFlags "-pie -fPIE"
-                abiFilters  'armeabi-v7a'
+                abiFilters  'armeabi-v7a'//, 'arm64-v8a'
             }
         }
     }
@@ -40,18 +40,14 @@ android {
     testOptions {
         unitTests.returnDefaultValues = true
     }
-    lintOptions {
-        abortOnError false
-    }
 }
 
 dependencies {
     compileOnly 'androidx.legacy:legacy-support-v4:1.0.0'
-    compileOnly "androidx.recyclerview:recyclerview:$androidxVersion"
+    compileOnly "androidx.recyclerview:recyclerview:$recyclerViewVersion"
     compileOnly "androidx.appcompat:appcompat:$androidxVersion"
     testImplementation 'junit:junit:4.12'
     testImplementation 'org.mockito:mockito-core:2.23.0'
-
     if (implementation_debug) {
         compileOnly project(":mlncore")
         compileOnly project(':HotReload')
@@ -64,6 +60,7 @@ dependencies {
         annotationProcessor "com.immomo.mls:processor:$processorVersion"
     }
 }
+
 
 apply from: "../bintrayUpload.gradle"
 version=mlnsVersion

@@ -34,6 +34,16 @@ public class UDCollectionAutoFitAdapter extends UDCollectionAdapter {
        return new Size(Size.WRAP_CONTENT, Size.WRAP_CONTENT);
     }
 
+    /**
+     * autoFitAdapter 两端统一，cellSize用Wrap_Content
+     */
+    @Override
+    protected void onOrientationChanged() {
+        super.onOrientationChanged();
+        initSize.setHeight(Size.WRAP_CONTENT);
+        initSize.setWidth(Size.WRAP_CONTENT);
+    }
+
     @Override
     public boolean hasCellSize() {
         return false;

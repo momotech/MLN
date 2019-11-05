@@ -8,6 +8,7 @@
 package com.immomo.mls.fun.ud.view;
 
 import android.view.View;
+import android.widget.FrameLayout;
 
 import com.immomo.mls.Environment;
 import com.immomo.mls.MLSEngine;
@@ -18,6 +19,8 @@ import com.immomo.mls.fun.ud.view.viewpager.ViewPagerContent;
 import com.immomo.mls.fun.ui.DefaultPageIndicator;
 import com.immomo.mls.fun.ui.IViewPager;
 import com.immomo.mls.fun.ui.LuaViewPager;
+import com.immomo.mls.fun.weight.LuaViewPagerContainer;
+import com.immomo.mls.utils.ErrorUtils;
 
 import org.luaj.vm2.LuaFunction;
 import org.luaj.vm2.LuaNumber;
@@ -25,13 +28,12 @@ import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.utils.LuaApiUsed;
 
 import androidx.viewpager.widget.PagerAdapter;
-import androidx.viewpager.widget.ViewPager;
 
 /**
  * Created by fanqiang on 2018/8/30.
  */
 @LuaApiUsed
-public class UDViewPager<T extends ViewPager & IViewPager> extends UDViewGroup<T> implements View.OnClickListener {
+public class UDViewPager<T extends FrameLayout & IViewPager> extends UDViewGroup<T> implements View.OnClickListener {
     public static final String LUA_CLASS_NAME = "ViewPager";
     public static final String[] methods = new String[]{
             "frame",
@@ -52,7 +54,8 @@ public class UDViewPager<T extends ViewPager & IViewPager> extends UDViewGroup<T
             "setPageClickListener",
             "currentPageColor",
             "pageDotColor",
-            "setTabScrollingListener"
+            "setTabScrollingListener",
+            "onChangeSelected"
     };
     private UDViewPagerAdapter adapter;
     private LuaFunction endDragFun;
@@ -60,11 +63,12 @@ public class UDViewPager<T extends ViewPager & IViewPager> extends UDViewGroup<T
     private LuaFunction cellDidDisappearFun;
     private LuaFunction funOnPageClick;
     private LuaFunction mTabScrollingProgressFunction;
+    private LuaFunction mPageSelectedFunction;
     private int preRenderCount = 0;
     private int mIndicatorSelectedColor = DefaultPageIndicator.SELECTED_COLOR, mIndicatorDefaultColor = DefaultPageIndicator.DEFAULT_COLOR;
     private  DefaultPageIndicator  mDefaultPageIndicator;
 
-    private boolean mDefaultAddIndicator = true;
+    private boolean mDefaultAddIndicator;
 
     private IViewPager.Callback callback;
 
@@ -79,10 +83,18 @@ public class UDViewPager<T extends ViewPager & IViewPager> extends UDViewGroup<T
 
     @Override
     protected T newView(LuaValue[] init) {
-        LuaViewPager luaViewPager = new LuaViewPager(getContext(), this);
+        LuaViewPagerContainer luaViewPager = new LuaViewPagerContainer(getContext(), this);
         return (T) luaViewPager;
     }
 
+    @Override
+    public T getView() {
+        return super.getView();
+    }
+
+    public LuaViewPager getViewPager() {
+        return (LuaViewPager) getView().getViewPager();
+    }
     //<editor-fold desc="API">
 
     @Override
@@ -125,12 +137,12 @@ public class UDViewPager<T extends ViewPager & IViewPager> extends UDViewGroup<T
 
             a.setViewPager(this);
 
-            getView().setAdapter(a);
+            getViewPager().setAdapter(a);
             getView().addCallback(a);
 //        a.setViewPager(getView());
             a.setCanPreRenderCount(preRenderCount != 0);
 
-            ((LuaViewPager) getView()).setScrollable(checkSinglePage(a));
+            getViewPager().setScrollable(checkSinglePage(a));
             setPageIndicator();
         }
         return null;
@@ -141,7 +153,11 @@ public class UDViewPager<T extends ViewPager & IViewPager> extends UDViewGroup<T
         if (adapter != null) {
             adapter.reloadData();
         }
-        ((LuaViewPager) getView()).setScrollable(checkSinglePage(adapter.getAdapter()));
+        getViewPager().setScrollable(checkSinglePage(adapter.getAdapter()));
+
+        // 配合IOS 回调一致性
+        callbackCellDidDisAppear(getViewPager().getCurrentItem());
+        callbackCellWillAppear(getViewPager().getCurrentItem());
         return null;
     }
 
@@ -168,14 +184,14 @@ public class UDViewPager<T extends ViewPager & IViewPager> extends UDViewGroup<T
         if (values.length >= 1 && values[0] != null) {
             boolean repeat = values[0].toBoolean();
             // 如果同时设置 recurrence  和  TabSegment的 relatedToViewPager， 则将 recurrence设置为false无效,配合IOS
-            if (getView() instanceof LuaViewPager && ((LuaViewPager) getView()).isRelatedTabLayout() && repeat) {
+            if (getView() instanceof LuaViewPagerContainer && getViewPager().isRelatedTabLayout() && repeat) {
                 getView().setRepeat(false);
             } else {
                 getView().setRepeat(repeat);
             }
 
-            if (getView().getAdapter() != null) {
-                getView().getAdapter().notifyDataSetChanged();
+            if (getViewPager().getAdapter() != null) {
+                getViewPager().getAdapter().notifyDataSetChanged();
             }
 
             return null;
@@ -198,8 +214,11 @@ public class UDViewPager<T extends ViewPager & IViewPager> extends UDViewGroup<T
         return LuaValue.rNumber(getFrameInterval());
     }
 
+    @Deprecated
     @LuaApiUsed
     public LuaValue[] endDragging(LuaValue[] values) {
+        ErrorUtils.debugDeprecatedMethodHook("endDragging", getGlobals());
+
         endDragFun = values[0] == null ? null : values[0].toLuaFunction();
         if (endDragFun != null) {
             if (callback == null) {
@@ -228,7 +247,7 @@ public class UDViewPager<T extends ViewPager & IViewPager> extends UDViewGroup<T
 
     @LuaApiUsed
     public LuaValue[] scrollToPage(LuaValue[] values) {
-        if (getView().getAdapter() == null) {
+        if (getViewPager().getAdapter() == null) {
             mScrollToPage = values[0].toInt() - 1;
             mScrollToPageAnimated = values[1].toBoolean();
             return null;
@@ -236,15 +255,15 @@ public class UDViewPager<T extends ViewPager & IViewPager> extends UDViewGroup<T
         int position = values[0].toInt();
 
         // 判断是否 越界
-        PagerAdapter adapter = getView().getAdapter();
+        PagerAdapter adapter = getViewPager().getAdapter();
         if (MLSEngine.DEBUG && adapter != null && (position - 1 >= adapter.getCount() || position - 1 < 0)) {
             Exception exception = new IndexOutOfBoundsException("Page index out of range! ");
             Environment.hook(exception, globals);
             return null;
         }
 
-        getView().setCurrentItem(position - 1, values[1].toBoolean());
-        ((LuaViewPager) getView()).setLastPosition(position - 1);
+        getViewPager().setCurrentItem(position - 1, values[1].toBoolean());
+        getViewPager().setLastPosition(position - 1);
         return null;
     }
 
@@ -252,20 +271,20 @@ public class UDViewPager<T extends ViewPager & IViewPager> extends UDViewGroup<T
     public void onAttached() {
         super.onAttached();
         if (mScrollToPage != 0)
-            getView().setCurrentItem(mScrollToPage, mScrollToPageAnimated);
+            getViewPager().setCurrentItem(mScrollToPage, mScrollToPageAnimated);
     }
 
     @LuaApiUsed
     public LuaValue[] currentPage(LuaValue[] values) {
 
-        ViewPagerAdapter viewPagerAdapter = ((ViewPagerAdapter) getView().getAdapter());
+        ViewPagerAdapter viewPagerAdapter = ((ViewPagerAdapter) getViewPager().getAdapter());
 
         if (isRecurrenceRepeat(viewPagerAdapter)) {
 
-            return LuaValue.rNumber(getView().getCurrentItem() % viewPagerAdapter.getRealCount() + 1);
+            return LuaValue.rNumber(getViewPager().getCurrentItem() % viewPagerAdapter.getRealCount() + 1);
         }
 
-        return LuaValue.rNumber(getView().getCurrentItem() + 1);
+        return LuaValue.rNumber(getViewPager().getCurrentItem() + 1);
     }
 
     @LuaApiUsed
@@ -298,7 +317,7 @@ public class UDViewPager<T extends ViewPager & IViewPager> extends UDViewGroup<T
         if (count < 1)
             count = 1;
 
-        getView().setOffscreenPageLimit(count);
+        getViewPager().setOffscreenPageLimit(count);
 
         if (adapter != null) {
             adapter.getAdapter().setCanPreRenderCount(preRenderCount != 0);
@@ -308,7 +327,7 @@ public class UDViewPager<T extends ViewPager & IViewPager> extends UDViewGroup<T
 
     @LuaApiUsed
     public LuaValue[] setScrollEnable(LuaValue[] values) {
-        ((LuaViewPager) getView()).setScrollable(values[0].toBoolean());
+        getViewPager().setScrollable(values[0].toBoolean());
         return null;
     }
 
@@ -338,7 +357,7 @@ public class UDViewPager<T extends ViewPager & IViewPager> extends UDViewGroup<T
     @LuaApiUsed
     public LuaValue[] cellWillAppear(LuaValue[] values) {
         cellWillAppearFun = values[0].toLuaFunction();
-        ((LuaViewPager) getView()).firstAttachAppearZeroPosition();
+        getViewPager().firstAttachAppearZeroPosition();
         return null;
     }
 
@@ -365,6 +384,13 @@ public class UDViewPager<T extends ViewPager & IViewPager> extends UDViewGroup<T
         return null;
     }
 
+    @LuaApiUsed
+    public LuaValue[] onChangeSelected(LuaValue[] v) {
+        if (mPageSelectedFunction != null)
+            mPageSelectedFunction.destroy();
+        mPageSelectedFunction = v[0].toLuaFunction();
+        return null;
+    }
     //</editor-fold>
 
 
@@ -379,7 +405,6 @@ public class UDViewPager<T extends ViewPager & IViewPager> extends UDViewGroup<T
     public void resetPageIndicator() {
         getView().setPageIndicator(null);
         setPageIndicator();
-        mDefaultPageIndicator.invalidate();
     }
 
     private void setPageIndicator() {
@@ -390,13 +415,14 @@ public class UDViewPager<T extends ViewPager & IViewPager> extends UDViewGroup<T
                 mDefaultPageIndicator.setPageColor(mIndicatorDefaultColor);
                 getView().setPageIndicator(mDefaultPageIndicator);
             }
+            mDefaultPageIndicator.invalidate();
         } else
             getView().setPageIndicator(null);
     }
 
     @Override
     public void onClick(View v) {
-        callPageClick(getView().getCurrentItem() + 1);
+        callPageClick(getViewPager().getCurrentItem() + 1);
     }
 
     private final class C implements IViewPager.Callback {
@@ -419,7 +445,7 @@ public class UDViewPager<T extends ViewPager & IViewPager> extends UDViewGroup<T
     }
 
     public int getRecurrencePosition(int p) {
-        ViewPagerAdapter viewPagerAdapter = ((ViewPagerAdapter) getView().getAdapter());
+        ViewPagerAdapter viewPagerAdapter = ((ViewPagerAdapter) getViewPager().getAdapter());
 
         if (isRecurrenceRepeat(viewPagerAdapter)) {
             p = p % viewPagerAdapter.getRealCount();
@@ -439,7 +465,7 @@ public class UDViewPager<T extends ViewPager & IViewPager> extends UDViewGroup<T
             cellWillAppearFun.invoke(varargsOf(cellLuaValue, LuaNumber.valueOf(position + 1)));
 
             if (position == 0)
-                ((LuaViewPager) getView()).mFirstAttach = false;
+                getViewPager().mFirstAttach = false;
         }
 
 
@@ -450,17 +476,20 @@ public class UDViewPager<T extends ViewPager & IViewPager> extends UDViewGroup<T
 
             position = getRecurrencePosition(position);
 
-            cellDidDisappearFun.invoke(varargsOf(getCellAtPosition(position), LuaNumber.valueOf(position + 1)));
+            LuaValue cell = getCellAtPosition(position);
+            if (cell.isNil())
+                return;
+            cellDidDisappearFun.invoke(varargsOf(cell, LuaNumber.valueOf(position + 1)));
         }
     }
 
     public void callPageClick(int position) {
         if (funOnPageClick != null) {
 
-            ViewPagerAdapter viewPagerAdapter = ((ViewPagerAdapter) getView().getAdapter());
+            ViewPagerAdapter viewPagerAdapter = ((ViewPagerAdapter) getViewPager().getAdapter());
 
             if (isRecurrenceRepeat(viewPagerAdapter)) {
-                funOnPageClick.invoke(LuaValue.rNumber(getView().getCurrentItem() % viewPagerAdapter.getRealCount() + 1));
+                funOnPageClick.invoke(LuaValue.rNumber(getViewPager().getCurrentItem() % viewPagerAdapter.getRealCount() + 1));
             } else
                 funOnPageClick.invoke(LuaValue.rNumber(position));
         }
@@ -489,7 +518,7 @@ public class UDViewPager<T extends ViewPager & IViewPager> extends UDViewGroup<T
         return a.getRealCount() != 1;
     }
 
-    public void callTabScrollProgress(double progresss, int fromIndex,  int  toIndex) {
+    public void callTabScrollProgress(float progresss, int fromIndex, int toIndex) {
         if (mTabScrollingProgressFunction != null)
             mTabScrollingProgressFunction.invoke(varargsOf(LuaNumber.valueOf(progresss), LuaNumber.valueOf(fromIndex + 1), LuaNumber.valueOf(toIndex + 1)));
     }
@@ -497,4 +526,10 @@ public class UDViewPager<T extends ViewPager & IViewPager> extends UDViewGroup<T
     public DefaultPageIndicator getDefaultPageIndicator() {
         return mDefaultPageIndicator;
     }
+
+    public void pageSelectedCallback(int position) {
+        if (mPageSelectedFunction != null)
+            mPageSelectedFunction.invoke(varargsOf(LuaNumber.valueOf(position + 1)));
+    }
+
 }

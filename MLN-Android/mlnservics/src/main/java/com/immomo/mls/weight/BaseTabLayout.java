@@ -820,7 +820,7 @@ public class BaseTabLayout extends BorderRadiusHorizontalScrollView {
             viewPager.addOnPageChangeListener(mPageChangeListener);
 
             // Now we'll add a tab selected listener to set ViewPager's current item
-            mCurrentVpSelectedListener = new ViewPagerOnTabSelectedListener(viewPager);
+            mCurrentVpSelectedListener = new ViewPagerOnTabSelectedListener(viewPager,false);
             addOnTabSelectedListener(mCurrentVpSelectedListener);
 
 
@@ -2081,7 +2081,7 @@ public class BaseTabLayout extends BorderRadiusHorizontalScrollView {
                 if (finalProgress >= 0.99)
                     finalProgress = 1;
 
-                if (tabLayoutScrollProgress != null) {
+                if (tabLayoutScrollProgress != null && finalProgress != 0) {
                     tabLayoutScrollProgress.tabScrollProgress(finalProgress, fromIndex, toIndex);
                 }
 
@@ -2118,15 +2118,17 @@ public class BaseTabLayout extends BorderRadiusHorizontalScrollView {
      */
     public static class ViewPagerOnTabSelectedListener implements BaseTabLayout.OnTabSelectedListener {
         private final ViewPager mViewPager;
+        private boolean mAnimated ;
 
-        public ViewPagerOnTabSelectedListener(ViewPager viewPager) {
+        public ViewPagerOnTabSelectedListener(ViewPager viewPager, boolean animated) {
             mViewPager = viewPager;
+            mAnimated = animated;
         }
 
         @Override
         public void onTabSelected(BaseTabLayout.Tab tab) {
             if (mViewPager.getCurrentItem() != tab.mPosition) {
-                mViewPager.setCurrentItem(tab.getPosition(), false);
+                mViewPager.setCurrentItem(tab.getPosition(), mAnimated);
             }
         }
 
@@ -2269,6 +2271,6 @@ public class BaseTabLayout extends BorderRadiusHorizontalScrollView {
     }
 
     public  void setmITabLayoutScrollProgress(ITabLayoutScrollProgress mITabLayoutScrollProgress) {
-        mITabLayoutScrollProgress = mITabLayoutScrollProgress;
+        this.mITabLayoutScrollProgress = mITabLayoutScrollProgress;
     }
 }

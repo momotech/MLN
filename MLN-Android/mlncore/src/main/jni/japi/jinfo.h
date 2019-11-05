@@ -5,7 +5,6 @@
   * This source code is licensed under the MIT.
   * For the full copyright and license information,please view the LICENSE file in the root directory of this source tree.
   */
-
 //
 // Created by Xiong.Fangyu 2019/03/13.
 //
@@ -18,7 +17,8 @@
 #include "map.h"
 
 #define USE_NDK_NEWSTRING_VERSION 23
-#define MAX_EXCEPTION_MSG 100
+#define MAX_EXCEPTION_MSG 300
+#define EXCEPTION_STACK_LEN 20
 
 #define JAVA_CONSTRUCTOR "<init>"
 #define JAVA_VALUE_OF "valueOf"
@@ -128,7 +128,7 @@ int getThrowableMsg(JNIEnv *, jthrowable, char *, size_t);
  * 若java有异常，捕获，并在栈上增加异常信息
  * @return 1: 有异常，0: 无异常
  */
-int catchJavaException(JNIEnv *, lua_State *);
+int catchJavaException(JNIEnv *, lua_State *, const char *);
 
 /**
  * 根据名称获取jclass对象

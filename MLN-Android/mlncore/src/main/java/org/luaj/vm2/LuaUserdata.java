@@ -10,6 +10,7 @@ package org.luaj.vm2;
 import androidx.annotation.CallSuper;
 
 import org.luaj.vm2.utils.LuaApiUsed;
+import org.luaj.vm2.utils.SizeOfUtils;
 
 /**
  * Created by Xiong.Fangyu on 2019/2/22
@@ -31,7 +32,7 @@ import org.luaj.vm2.utils.LuaApiUsed;
  * </code>
  */
 @LuaApiUsed
-public class LuaUserdata extends NLuaValue {
+public class LuaUserdata<T> extends NLuaValue {
     /**
      * 由Native读取
      */
@@ -47,11 +48,19 @@ public class LuaUserdata extends NLuaValue {
     /**
      * 在java中保存的对象
      */
-    protected Object javaUserdata;
+    protected T javaUserdata;
     /**
      * Native引用计数
      */
     private long refCount;
+    /**
+     * Java引用计数
+     */
+    private long javaRefCount;
+    /**
+     * {@link #javaUserdata}消耗内存
+     */
+    protected long memoryCastCache = 0;
 
     /**
      * 由java层创建
@@ -59,7 +68,7 @@ public class LuaUserdata extends NLuaValue {
      * @param jud       java中保存的对象，可为空
      * @see #javaUserdata
      */
-    public LuaUserdata(Globals g, Object jud) {
+    public LuaUserdata(Globals g, T jud) {
         super(g, g.globalsIndex());
         luaclassName = initLuaClassName(g);
         javaUserdata = jud;
@@ -96,6 +105,27 @@ public class LuaUserdata extends NLuaValue {
     }
 
     /**
+     * 由java持有对象
+     * 防止只在java层有引用，但被lua释放了
+     * @see #__onLuaGc()
+     */
+    public void onJavaRef() {
+        javaRefCount ++;
+    }
+
+    /**
+     * java不持有
+     */
+    public void onJavaRecycle() {
+        javaRefCount --;
+        if (refCount > 0 || globals.isDestroyed()) {
+            return;
+        }
+        if (javaRefCount <= 0)
+            globals.userdataCache.onUserdataGc(this, false);
+    }
+
+    /**
      * 初始化{@link #luaclassName}
      * 默认从虚拟机中注册表中获取
      * 若没继承，子类需要自己实现
@@ -111,11 +141,11 @@ public class LuaUserdata extends NLuaValue {
     @CallSuper
     @LuaApiUsed
     protected void __onLuaGc() {
-        if (globals.destroyed)
-            return;
         refCount --;
+        if (javaRefCount > 0 || globals.isDestroyed())
+            return;
         if (refCount <= 0)
-            globals.userdataCache.onUserdataGc(this);
+            globals.userdataCache.onUserdataGc(this, false);
     }
 
     /**
@@ -134,13 +164,29 @@ public class LuaUserdata extends NLuaValue {
         super(L_state, stackIndex);
     }
 
+    /**
+     * 给底层获取当前userdata消耗的内存
+     * @return 内存 Byte
+     */
+    @LuaApiUsed
+    protected long memoryCast() {
+        if (memoryCastCache == 0) {
+            if (javaUserdata != null) {
+                memoryCastCache = SizeOfUtils.sizeof(javaUserdata.getClass());
+            }
+            if (memoryCastCache == 0)
+                memoryCastCache = 8;
+        }
+        return memoryCastCache;
+    }
+
     @Override
-    public int type() {
+    public final int type() {
         return LUA_TUSERDATA;
     }
 
     @Override
-    public LuaUserdata toUserdata() {
+    public final LuaUserdata toUserdata() {
         return this;
     }
 
@@ -148,7 +194,7 @@ public class LuaUserdata extends NLuaValue {
      * 返回java中保存的对象
      * @return Nullable
      */
-    public Object getJavaUserdata() {
+    public T getJavaUserdata() {
         return javaUserdata;
     }
 
@@ -157,5 +203,17 @@ public class LuaUserdata extends NLuaValue {
         if (javaUserdata != null)
             return javaUserdata.hashCode();
         return super.hashCode();
+    }
+
+    /**
+     * 对象走到finalize阶段，认为userdata在java层和lua层都无引用了，直接从cache中移除
+     */
+    @Override
+    protected void finalize() throws Throwable {
+        javaRefCount = 0;
+        refCount = 0;
+        if (globals != null)
+            globals.userdataCache.onUserdataGc(this, true);
+        super.finalize();
     }
 }

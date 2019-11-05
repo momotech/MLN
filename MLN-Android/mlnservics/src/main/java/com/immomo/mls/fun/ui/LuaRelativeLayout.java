@@ -30,7 +30,6 @@ public class LuaRelativeLayout<U extends UDRelativeLayout> extends BorderRadiusR
         super(context);
         this.userdata = userdata;
         setViewLifeCycleCallback(userdata);
-        setClipChildren(false);
     }
 
     @Override

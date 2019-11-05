@@ -25,8 +25,6 @@
 #include "BroadcastChannel.h"
 #include <pthread.h>
 
-using namespace std;
-
 class BroadcastDispatchCenter {
 public:
     void postMessage(BroadcastChannel *sourceChannel, MessageEvent *event);
@@ -39,11 +37,11 @@ public:
     };
     
 private:
-    std::map<string, std::vector<BroadcastChannel *> *> *var_channels;
+    std::map<std::string, std::vector<BroadcastChannel *> *> *var_channels;
     pthread_mutex_t var_mutex;
 private:
     BroadcastDispatchCenter(){
-        var_channels = new std::map<string, std::vector<BroadcastChannel *> *>();
+        var_channels = new std::map<std::string, std::vector<BroadcastChannel *> *>();
         pthread_mutex_init(&var_mutex, NULL);
     };
     

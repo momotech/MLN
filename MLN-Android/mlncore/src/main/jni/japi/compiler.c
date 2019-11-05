@@ -436,15 +436,25 @@ static int real_loadfile(lua_State *L, const char *filename, const char *chunkna
         int r = fread(lf.buff, HEADER_LEN + SOURCE_LEN, 1, lf.f);
         lf.aes = r && check_header(lf.buff) == (size - HEADER_LEN - SOURCE_LEN);
     }
+    /// 1: bytecode
+    /// 2: source code
+    /// 3: aes code
+    int codeType = 0;
     /// check end
     if (!lf.aes) {
         /// 源码的情况
         if (lf.buff[0] != LUA_SIGNATURE[0]) {
             lf.f = freopen(filename, "r", lf.f);
             if (!lf.f) return errfile(L, "reopen", filename);
-        } else {
-            lf.n = HEADER_LEN + SOURCE_LEN;
+            codeType = 2;
         }
+        /// bytecode
+        else {
+            lf.n = HEADER_LEN + SOURCE_LEN;
+            codeType = 1;
+        }
+    } else {
+        codeType = 4;
     }
     int state = lua_load(L, getF, &lf, lua_tostring(L, -1), NULL);
     LOGI("load %saes data", lf.aes ? " " : "none ");
@@ -452,7 +462,22 @@ static int real_loadfile(lua_State *L, const char *filename, const char *chunkna
     fclose(lf.f);
     if (readstatus) {
         lua_settop(L, oldTop);  /* ignore results from `lua_load' */
-        return errfile(L, "read", filename);
+        const char *info;
+        switch (codeType) {
+            case 1:
+                info = "read bytecode";
+                break;
+            case 2:
+                info = "read source code";
+                break;
+            case 3:
+                info = "read aes bytecode";
+                break;
+            default:
+                info = "read unknown code";
+                break;
+        }
+        return errfile(L, info, filename);
     }
     lua_remove(L, oldTop + 1);
     return state;
@@ -667,8 +692,9 @@ static int return_failed(lua_State *L, char *filename) {
     free(filename);
 #endif
     lua_pop(L, 1);
-    return luaL_error(L, "error loading module '%s' from file '%s':\n\t%s",
-                      lua_tostring(L, 1), fn, lua_tostring(L, -1));
+    lua_pushfstring(L, "error loading module '%s' from file '%s':\n\t%s",
+                    lua_tostring(L, 1), fn, lua_tostring(L, -1));
+    return 1;
 }
 
 /**
@@ -828,7 +854,8 @@ int searcher_Lua_asset(lua_State *L) {
         const char *preData = preReadData(&ad, HEADER_LEN + SOURCE_LEN, &preReadLen);
         if (!preData) {
             destroyAssetsData(&ad);
-            return luaL_error(L, "preload %s from native asset failed!", name);
+            lua_pushfstring(L, "preload %s from native asset failed!", name);
+            return 1;
         }
 
         size_t len = (size_t) ad.len;
@@ -854,6 +881,7 @@ int searcher_Lua_asset(lua_State *L) {
         lua_pushvalue(L, 1);
         return 2;
     }
-    return luaL_error(L, "error loading module '%s' from asset '%s', code: %d",
+    lua_pushfstring(L, "error loading module '%s' from asset '%s', code: %d",
                       name, name, code);
+    return 1;
 }

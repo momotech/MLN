@@ -14,6 +14,7 @@ import com.immomo.mls.base.ud.lv.ILViewGroup;
 import com.immomo.mls.fun.ui.LuaViewGroup;
 import com.immomo.mls.util.LuaViewUtil;
 import com.immomo.mls.utils.AssertUtils;
+import com.immomo.mls.utils.ErrorUtils;
 
 import org.luaj.vm2.Globals;
 import org.luaj.vm2.LuaValue;
@@ -33,7 +34,7 @@ public class UDViewGroup<V extends ViewGroup> extends UDView<V> {
         super(L, v);
     }
 
-    public UDViewGroup(Globals g, View jud) {
+    public UDViewGroup(Globals g, V jud) {
         super(g, jud);
     }
 
@@ -49,7 +50,7 @@ public class UDViewGroup<V extends ViewGroup> extends UDView<V> {
     //<editor-fold desc="API">
     @LuaApiUsed
     public LuaValue[] addView(LuaValue[] var) {
-        if (var.length == 1 && !var[0].isNil()) {
+        if (var.length == 1) {
             if (AssertUtils.assertUserData(var[0], UDView.class, "addView", getGlobals()))
                 insertView((UDView) var[0], -1);
         }
@@ -59,7 +60,7 @@ public class UDViewGroup<V extends ViewGroup> extends UDView<V> {
     @LuaApiUsed
     public LuaValue[] insertView(LuaValue[] var) {
         LuaValue v = var[0];
-        insertView(v.isNil() ? null : (UDView) v, var[1].toInt()-1);
+        insertView(v.isNil() ? null : (UDView) v, var[1].toInt() - 1);
         return null;
     }
 
@@ -82,6 +83,9 @@ public class UDViewGroup<V extends ViewGroup> extends UDView<V> {
             index = -1;//index越界时，View放在末尾
         }
 
+        if (sub.getParent() != null) {//和ios统一报错，如果addView的View有parent
+            ErrorUtils.debugLuaError("This child view has a parent view . It is recommended to removing it from the original parent view and then add it .", getGlobals());
+        }
         v.addView(LuaViewUtil.removeFromParent(sub), index, layoutParams);
     }
 

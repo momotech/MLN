@@ -27,6 +27,7 @@ android {
         }
     }
 }
+
 protobuf {
     protoc {
         artifact = 'com.google.protobuf:protoc:3.0.0'
@@ -49,7 +50,6 @@ protobuf {
         }
     }
 }
-
 
 dependencies {
     compileOnly "com.google.protobuf:protobuf-lite:$protobufVersion"

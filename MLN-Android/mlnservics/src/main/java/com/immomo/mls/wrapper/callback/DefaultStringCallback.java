@@ -36,16 +36,20 @@ public class DefaultStringCallback implements IStringCallback {
     };
 
     @Override
-    public String callback(Object... params) {
+    public String callback(Object... params) throws IllegalStateException {
         Utils.check(luaFunction);
         LuaValue[] r = Utils.invoke(luaFunction, params);
+        if (r.length == 0)
+            throw new IllegalStateException(luaFunction.getInvokeError());
         return r[0].toJavaString();
     }
 
     @Override
-    public String callbackAndDestroy(Object... params) {
+    public String callbackAndDestroy(Object... params) throws IllegalStateException {
         Utils.check(luaFunction);
         LuaValue[] r = Utils.invoke(luaFunction, params);
+        if (r.length == 0)
+            throw new IllegalStateException(luaFunction.getInvokeError());
         luaFunction.destroy();
         luaFunction = null;
         return r[0].toJavaString();

@@ -32,26 +32,29 @@ public class Environment {
                 return true;
         }
         if (DEBUG) {
-            String error = getErrorMsg(t);
-//            MLSAdapterContainer.getToastAdapter().toast(error, 1);
-            LuaViewManager m = (LuaViewManager) globals.getJavaUserdata();
-            if (m != null && m.STDOUT != null) {
-                PrintStream ps = m.STDOUT;
-                if (ps instanceof DefaultPrintStream) {
-                    ((DefaultPrintStream) ps).error(LUA_ERROR + error);
-                } else {
-                    ps.print(LUA_ERROR + error);
-                    ps.println();
-                }
-                m.showPrinterIfNot();
-            }
-
-            HotReloadHelper.onError(t != null ? t.getMessage() : "null");
+            error(t, globals);
         }
         if (uncatchExceptionListener != null) {
             return uncatchExceptionListener.onUncatch(globals, t);
         }
         return false;
+    }
+
+    public static void error(Throwable t, Globals globals) {
+        String error = getErrorMsg(t);
+        LuaViewManager m = (LuaViewManager) globals.getJavaUserdata();
+        if (m != null && m.STDOUT != null) {
+            PrintStream ps = m.STDOUT;
+            if (ps instanceof DefaultPrintStream) {
+                ((DefaultPrintStream) ps).error(LUA_ERROR + error);
+            } else {
+                ps.print(LUA_ERROR + error);
+                ps.println();
+            }
+            m.showPrinterIfNot();
+        }
+
+        HotReloadHelper.onError(t != null ? t.getMessage() : "null");
     }
 
     public static interface UncatchExceptionListener {

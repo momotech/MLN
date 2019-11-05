@@ -33,6 +33,10 @@ public class MLSConfigs {
      */
     public static long defaultLoadScriptTimeout = 20000;
 
+    public static boolean defaultClipChildren = true;
+    public static boolean defaultClipToPadding = true;
+    public static boolean defaultClipContainer = false;
+
     public static boolean catchOnLayoutException = false;
     public static OnLayoutException onLayoutException;
 

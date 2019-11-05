@@ -287,6 +287,7 @@ public class DefaultScriptReaderImpl implements ScriptReader {
             } catch (ScriptLoadException e) {
                 callbackError(callbackRef.get(), url, e);
             }
+            callbackRef.clear();
         }
 
         protected void initPath() {

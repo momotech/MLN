@@ -29,11 +29,8 @@ public class AppearUtils {
         int max = Math.max(lastPosition, currentSelectedPosition);
 
         for (int i = min + 1; i < max; i++) {
-            userdata.callbackCellDidDisAppear(i);
             userdata.callbackCellWillAppear(i);
+            userdata.callbackCellDidDisAppear(i);
         }
-
-        AppearUtils.sAnimatedToPage = false;
     }
-
 }

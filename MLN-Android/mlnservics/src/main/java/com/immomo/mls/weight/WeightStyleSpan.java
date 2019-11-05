@@ -30,4 +30,7 @@ public class WeightStyleSpan extends CharacterStyle {
         paint.setStrokeWidth(newStrokeWidth);
     }
 
+    public int getWeight() {
+        return mWeight;
+    }
 }

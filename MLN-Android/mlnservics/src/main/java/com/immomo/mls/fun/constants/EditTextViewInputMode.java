@@ -17,9 +17,8 @@ import com.immomo.mls.wrapper.Constant;
  */
 @ConstantClass
 public interface EditTextViewInputMode {
-    // 修改Lua编辑框默认为多行模式，避免Label中lines对于多行的影响
     @Constant
-    int Normal = InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_MULTI_LINE;
+    int Normal = InputType.TYPE_CLASS_TEXT;
     @Constant
-    int Number = InputType.TYPE_CLASS_NUMBER ;
+    int Number = InputType.TYPE_CLASS_NUMBER;
 }

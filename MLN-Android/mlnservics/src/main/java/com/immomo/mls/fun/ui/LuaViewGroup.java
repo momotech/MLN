@@ -9,6 +9,7 @@ package com.immomo.mls.fun.ui;
 
 import android.content.Context;
 import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -153,5 +154,10 @@ public class LuaViewGroup<U extends UDViewGroup> extends BorderRadiusFrameLayout
     protected @NonNull
     ViewGroup.LayoutParams generateNewLayoutParams(ViewGroup.LayoutParams src) {
         return new LayoutParams(src);
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        return isEnabled() && super.dispatchTouchEvent(ev);
     }
 }

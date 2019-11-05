@@ -8,11 +8,11 @@
 package com.immomo.mls.processor;
 
 import com.google.auto.service.AutoService;
+import com.squareup.javapoet.ClassName;
+import com.squareup.javapoet.JavaFile;
 import com.immomo.mls.annotation.CreatedByApt;
 import com.immomo.mls.annotation.LuaBridge;
 import com.immomo.mls.annotation.LuaClass;
-import com.squareup.javapoet.ClassName;
-import com.squareup.javapoet.JavaFile;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;

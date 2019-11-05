@@ -23,7 +23,11 @@ public class JToast {
     public static final String LUA_CLASS_NAME = "Toast";
 
     public JToast(Globals globals, LuaValue[] init) {
-        String msg = init[0].toJavaString();
+        String msg = "";
+
+        if (init[0].isString())
+            msg = init[0].toJavaString();
+
         int d = Toast.LENGTH_SHORT;
         if (init.length > 1) {
             d = init[1].toInt();

@@ -17,6 +17,7 @@ import com.immomo.mls.fun.constants.FileInfo;
 import com.immomo.mls.util.EncryptUtil;
 import com.immomo.mls.util.FileUtil;
 import com.immomo.mls.util.JsonUtil;
+import com.immomo.mls.util.LogUtil;
 import com.immomo.mls.utils.ErrorUtils;
 import com.immomo.mls.utils.LVCallback;
 import com.immomo.mls.utils.MainThreadExecutor;
@@ -24,6 +25,7 @@ import com.immomo.mls.utils.MainThreadExecutor;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.luaj.vm2.Globals;
 import org.luaj.vm2.LuaString;
 import org.luaj.vm2.LuaValue;
 
@@ -210,8 +212,8 @@ public class LTFile {
     }
 
     @LuaBridge
-    public static void asyncMd5File(String path, final LVCallback callback) {
-        MLSAdapterContainer.getThreadAdapter().execute(MLSThreadAdapter.Priority.HIGH, new FileMD5Task(path, callback));
+    public static void asyncMd5File(Globals g, String path, final LVCallback callback) {
+        MLSAdapterContainer.getThreadAdapter().execute(MLSThreadAdapter.Priority.HIGH, new FileMD5Task(g, path, callback));
     }
 
     @LuaBridge
@@ -276,6 +278,8 @@ public class LTFile {
             String md5 = EncryptUtil.md5Hex(datas);
             return LuaString.valueOf(md5);
         }
+
+        ErrorUtils.debugIllegalStateError("文件不存在 or 不是一个文件");
         return LuaValue.Nil();
     }
 
@@ -481,10 +485,12 @@ public class LTFile {
 
     private static class FileMD5Task extends BaseCallbackTask {
         private String path;
+        private Globals globals;
 
-        FileMD5Task(String path, LVCallback callback) {
+        FileMD5Task(Globals globals,String path, LVCallback callback) {
             super(callback);
             this.path = path;
+            this.globals=globals;
         }
 
         @Override
@@ -503,6 +509,7 @@ public class LTFile {
                 callbackInMain(md5);
                 return;
             }
+            ErrorUtils.debugLuaError("文件不存在 or 不是一个文件",globals);
             callbackInMain(LuaValue.Nil());
         }
     }
