@@ -8,17 +8,10 @@
 #import "MLNKitViewController.h"
 #import "MLNKitInstance.h"
 #import "MLNLuaBundle.h"
-#if defined(DEBUG) || defined(INHOSUE)
-#import "MLNLoadTimeTool.h"
-#endif
 
-@interface MLNKitViewController ()<MLNKitInstanceDelegate>
+@interface MLNKitViewController ()
 {
     MLNKitInstance *_luaInstance;
-#if defined(DEBUG) || defined(INHOSUE)
-    MLNLoadTimeTool *_loadTimeTool;
-    UILabel *_loadTimeLabel;
-#endif
 }
 
 @end
@@ -99,9 +92,6 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-#if defined(DEBUG) || defined(INHOSUE)
-    [self.loadTimeTool recordStartTime];
-#endif
     self.view.backgroundColor = [UIColor whiteColor];
     self.automaticallyAdjustsScrollViewInsets = NO;
     if ([self.delegate respondsToSelector:@selector(kitViewDidLoad:)]) {
@@ -132,10 +122,6 @@
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
-#if defined(DEBUG) || defined(INHOSUE)
-    [self.loadTimeTool recordEndTime];
-    [self showLuaScriptLoadTime];
-#endif
     
     if ([self.delegate respondsToSelector:@selector(kitViewController:viewDidAppear:)]) {
         [self.delegate kitViewController:self viewDidAppear:animated];
@@ -162,71 +148,12 @@
     [self.kitInstance doLuaWindowDidDisappear];
 }
 
-#pragma mark - MLNKitInstanceDelegate
-- (void)willSetupLuaCore:(MLNKitInstance *)instance
-{
-    
-}
-
-- (void)didSetupLuaCore:(MLNKitInstance *)instance
-{
-    
-}
-
-- (void)instance:(MLNKitInstance *)instance willLoad:(NSData *)data fileName:(NSString *)fileName
-{
-    
-}
-
-- (void)instance:(MLNKitInstance *)instance didLoad:(NSData *)data fileName:(NSString *)fileName
-{
-    
-}
-
-- (void)instance:(MLNKitInstance *)instance didFinishRun:(NSString *)entryFileName
-{
-    
-}
-
 - (MLNKitInstance *)kitInstance
 {
     if (!_luaInstance) {
         _luaInstance = [[MLNKitInstance alloc] initWithLuaBundle:[MLNLuaBundle mainBundle] rootView:nil viewController:self];
-        _luaInstance.delegate = self;
     }
     return _luaInstance;
 }
-
-#if defined(DEBUG) || defined(INHOSUE)
-- (MLNLoadTimeTool *)loadTimeTool
-{
-    if (!_loadTimeTool) {
-        _loadTimeTool = [[MLNLoadTimeTool alloc] init];
-    }
-    return _loadTimeTool;
-}
-
-- (void)showLuaScriptLoadTime
-{
-    if (!_loadTimeLabel) {
-        CGFloat loadTimeLabelY = [UIScreen mainScreen].bounds.size.height * 0.75;
-        _loadTimeLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, loadTimeLabelY, 50, 20)];
-        _loadTimeLabel.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:0.6];
-        _loadTimeLabel.textColor = [UIColor whiteColor];
-        _loadTimeLabel.font = [UIFont systemFontOfSize:12];
-        _loadTimeLabel.textAlignment = NSTextAlignmentCenter;
-        _loadTimeLabel.adjustsFontSizeToFitWidth = YES;
-        [self.view addSubview:_loadTimeLabel];
-    }
-    
-    self->_loadTimeLabel.hidden = NO;
-    self->_loadTimeLabel.text = [NSString stringWithFormat:@"%.0f ms", [self.loadTimeTool loadTime] * 1000];
-}
-
-- (void)hideLuaScriptLoadTime
-{
-    self->_loadTimeLabel.hidden = YES;
-}
-#endif
 
 @end
