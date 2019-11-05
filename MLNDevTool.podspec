@@ -42,6 +42,13 @@ Pod::Spec.new do |s|
         'MLNDevTool_UI' => 'MLN-iOS/MLNDevTool/Classes/DevTool/UI/**/Assets/*.{png,xib}'
       }
     end
+
+    s.subspec 'Performance' do |perf|
+      perf.name = 'Performance'
+      perf.framework = 'Foundation', 'UIKit', 'CoreGraphics', 'AVFoundation'
+      perf.source_files = 'MLN-iOS/MLNDevTool/Classes/Performance/**/*.{h,m,c}'
+      perf.public_header_files = 'MLN-iOS/MLNDevTool/Classes/Performance/**/*.h'
+    end
     
     s.subspec 'Conn' do |conn|
       conn.name = 'Conn'

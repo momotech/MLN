@@ -38,7 +38,7 @@ function _class:createSubviews()
 
     --表视图
     self.tableView = require('MMLuaKitGallery.MessageTableView'):new()
-    self.containerView:addView(self.tableView:tableView(self.navibar:y() + self.navibar:height()))
+    self.containerView:addView(self.tableView:tableView(self.navibar:marginTop() + self.navibar:height()))
 end
 
 return _class
