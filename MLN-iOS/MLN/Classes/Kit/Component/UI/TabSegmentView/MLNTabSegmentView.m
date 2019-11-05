@@ -776,8 +776,12 @@ const CGFloat kMLNTabSegmentViewLabelOffsetWeight = 10.0f;
     if (self.superview && _shouldReConfigure) {
         NSInteger currentIndex = _currentIndex;
         [self refreshSegmentTitles:_segmentTitles];
-        self.ignoreTapCallbackToLua = YES;
-        [self setCurrentLabelIndex:_missionIndex?:currentIndex animated:_missionIndex?_missionAnimated:NO];
+        NSInteger targetIndex = _missionIndex != -1 ? _missionIndex : currentIndex;
+        BOOL animated = _missionIndex != -1 ? _missionAnimated : NO;
+        //由于选中当前页动作，会触发点击回调，需要在这种情况下忽略回调
+        _ignoreTapCallbackToLua = YES;
+        [self setCurrentLabelIndex:targetIndex animated:animated];
+        _ignoreTapCallbackToLua = NO;
         _shouldReConfigure = NO;
     }
 }
