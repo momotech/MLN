@@ -145,23 +145,47 @@ end
 --- @param complete function 数据请求结束的回调
 --- @private
 function _class:request(first, complete)
-    local HTTPHandler = require("MMLuaKitGallery.HTTPHandler")
-    HTTPHandler:GET("http://v2.api.haodanku.com/itemlist/apikey/fashion/cid/1/back/20", {min_id = self.minId, cid = self.cid}, function(success, response, err)
-        if success then
-            local data = response:get("data")
+
+    File:asyncReadMapFile('file://android_asset/MMLuaKitGallery/fashion.json', function(codeNumber, fileArray)
+
+        -- print("codeNumber: " .. tostring(codeNumber))
+
+        if codeNumber == 0 then
+            local data = fileArray:get("data")
+
             if first then
                 self.minId = 1
                 self.dataList = data
             elseif data then
-                self.minId = response:get("min_id")
+                self.minId = fileArray:get("min_id")
                 self.dataList:addAll(data)
             end
-            complete(success, data)
+
+            complete(true, data)
         else
-            error(err:get("errmsg"))
+            -- error(err:get("errmsg"))
             complete(false, nil)
         end
     end)
+
+    --local HTTPHandler = require("MMLuaKitGallery.HTTPHandler")
+    --HTTPHandler:GET("http://v2.api.haodanku.com/itemlist/apikey/fashion/cid/1/back/20", {min_id = self.minId, cid = self.cid}, function(success, response, err)
+    --    if success then
+    --        local data = response:get("data")
+    --        if first then
+    --            self.minId = 1
+    --            self.dataList = data
+    --        elseif data then
+    --            self.minId = response:get("min_id")
+    --            self.dataList:addAll(data)
+    --        end
+    --        complete(success, data)
+    --    else
+    --        error(err:get("errmsg"))
+    --        complete(false, nil)
+    --    end
+    --end)
+
 end
 
 return _class
