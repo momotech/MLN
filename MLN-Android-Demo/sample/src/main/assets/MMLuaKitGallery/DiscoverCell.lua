@@ -27,9 +27,9 @@ function _class:setupCellSubviews(width)
     imageView:contentMode(ContentMode.SCALE_ASPECT_FIT)
     imageView:lazyLoad(false)
     imageView:cornerRadius(8)
-    imageView:onClick(function()
-        Toast(self.titleLabel:text(), 1)
-    end)
+    --imageView:onClick(function()
+    --    Toast(self.titleLabel:text(), 1)
+    --end)
     self.imageView = imageView
 
     --布局图片上的小图标

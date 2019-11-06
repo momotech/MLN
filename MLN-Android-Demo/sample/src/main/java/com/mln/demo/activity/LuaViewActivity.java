@@ -34,12 +34,16 @@ public class LuaViewActivity extends BaseActivity  {
 
         super.onCreate(savedInstanceState);
 
-        // String file = "file://android_asset/meilishuo.zip";
-        String file = "file://android_asset/MMLuaKitGallery/meilishuo.lua";
-        if (file == null)
-            return;
-        InitData initData = MLSBundleUtils.createInitData(file, false).showLoadingView(true);
-         instance.setData(initData);
+        Intent intent = getIntent();
+        if (intent.getExtras() == null) {
+            String file = "file://android_asset/MMLuaKitGallery/meilishuo.lua";
+            InitData initData = MLSBundleUtils.createInitData(file, false).showLoadingView(true);
+            instance.setData(initData);
+        } else {
+            InitData initData = MLSBundleUtils.parseFromBundle(intent.getExtras()).showLoadingView(true);
+            initData.forceDownload();
+            instance.setData(initData);
+        }
 
         //        File file = new File(FileUtil.getLuaDir(), "172.16.139.44/~XiongFangyu/UI_HScrollView.lua");
 //        instance.setUrl(file.getAbsolutePath());
