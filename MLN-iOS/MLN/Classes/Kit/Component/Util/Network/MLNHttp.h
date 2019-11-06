@@ -15,12 +15,12 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  网络请求的根地址
  */
-@property (nonatomic, copy, readonly) NSString *baseUrlString;
+@property (nonatomic, copy) NSString *baseUrlString;
 
 /**
  添加缓存策略需要过滤的参数Key
  */
-@property (nonatomic, strong, readonly) NSSet *CachePolicyFilterKeys;
+@property (nonatomic, strong) NSSet *CachePolicyFilterKeys;
 
 /**
  强关联对象，可以为任意值，也可以为空
