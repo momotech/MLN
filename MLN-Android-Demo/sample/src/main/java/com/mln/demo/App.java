@@ -14,18 +14,19 @@ import com.immomo.mls.wrapper.Register;
 import com.mln.demo.anr.AnrWatchDog;
 import com.mln.demo.common.GCTest;
 import com.mln.demo.common.GlobalRefTest;
+import com.mln.demo.common.LTFileExtends;
 import com.mln.demo.common.LazyChild;
 import com.mln.demo.common.LazyChild2;
 import com.mln.demo.common.LazyParent;
 import com.mln.demo.common.LazyRoot;
 import com.mln.demo.common.MLSLoadViewAdapterImpl;
 import com.mln.demo.common.NonlazyChild;
+import com.mln.demo.common.TestLazyHttp;
+import com.mln.demo.common.UDTest2;
 import com.mln.demo.common.demo.SBDemo;
 import com.mln.demo.common.demo.SimpleSBDemo;
-import com.mln.demo.common.TestLazyHttp;
-import com.mln.demo.common.demo.UDDemo;
 import com.mln.demo.common.demo.SimpleUDDemo;
-import com.mln.demo.common.UDTest2;
+import com.mln.demo.common.demo.UDDemo;
 import com.mln.demo.provider.GlideImageProvider;
 
 import org.luaj.vm2.Globals;
@@ -89,7 +90,8 @@ public class App extends Application {
                 .registerSC(
                         Register.newSHolder(SBDemo.LUA_CLASS_NAME, SBDemo.class, SBDemo.methods),
                         Register.newSHolderWithLuaClass(SimpleSBDemo.LUA_CLASS_NAME, SimpleSBDemo.class),
-                        Register.newSHolderWithLuaClass("GRTest", GlobalRefTest.class)
+                        Register.newSHolderWithLuaClass("GRTest", GlobalRefTest.class),
+                        Register.newSHolderWithLuaClass(LTFileExtends.LUA_CLASS_NAME, LTFileExtends.class)
                 )
                 .registerUD(
                         Register.newUDHolderWithLuaClass("SimpleUDDemo", SimpleUDDemo.class, true),
@@ -132,7 +134,7 @@ public class App extends Application {
             if (!SD_CARD_PATH.endsWith("/")) {
                 SD_CARD_PATH += "/";
             }
-            SD_CARD_PATH += "LUAVIEW/";
+            SD_CARD_PATH += "LUAVIEW_meilishuo/";
         } catch (Exception e) {
         }
     }
