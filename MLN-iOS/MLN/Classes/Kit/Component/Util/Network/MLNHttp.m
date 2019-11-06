@@ -45,9 +45,9 @@ static id<MLNHttpHandlerProtocol> defaultHttpHandler = nil;
     return _mCachePolicyFilterKeySets.copy;
 }
 
-- (void)setBaseUrlString:(NSString *)baseUrlString
+- (void)lua_setBaseUrlString:(NSString *)baseUrlString
 {
-    _baseUrlString = baseUrlString;
+    self.baseUrlString = baseUrlString;
     if ([[self getHandler] respondsToSelector:@selector(http:setBaseUrlString:)]) {
         [[self getHandler] http:self setBaseUrlString:baseUrlString];
     }
@@ -55,7 +55,7 @@ static id<MLNHttpHandlerProtocol> defaultHttpHandler = nil;
 
 - (void)addCachePolicyFilterKey:(NSString *)key
 {
-    NSParameterAssert(key);
+    MLNKitLuaAssert(key, @"CachePolicyFilterKey must not be nil!");
     [self.mCachePolicyFilterKeySets addObject:key];
     if ([[self getHandler] respondsToSelector:@selector(http:addCachePolicyFilterKey:)]) {
         [[self getHandler] http:self addCachePolicyFilterKey:key];
@@ -122,7 +122,7 @@ static id<MLNHttpHandlerProtocol> defaultHttpHandler = nil;
 
 #pragma mark - Setup For Lua
 LUA_EXPORT_BEGIN(MLNHttp)
-LUA_EXPORT_METHOD(setBaseUrl, "setBaseUrlString:", MLNHttp)
+LUA_EXPORT_METHOD(setBaseUrl, "lua_setBaseUrlString:", MLNHttp)
 LUA_EXPORT_METHOD(addCachePolicyFilterKey, "addCachePolicyFilterKey:", MLNHttp)
 LUA_EXPORT_METHOD(get, "get:params:completionHandler:", MLNHttp)
 LUA_EXPORT_METHOD(post, "post:params:completionHandler:", MLNHttp)
