@@ -1,7 +1,6 @@
 package com.immomo.mls.utils;
 
 import android.annotation.SuppressLint;
-import android.util.Log;
 
 import com.immomo.mls.MLSEngine;
 import com.immomo.mls.wrapper.ScriptBundle;
@@ -78,7 +77,6 @@ public class DebugLog implements Cloneable {
         executedTime = (now - startTime) / MS;
         // totalTime = executedTime + compileTime + prepareTime + loadTime + envPrepareTime;
         startTime = now;
-        Log.d("long", "executedEnd: ");
     }
 
     public void onDraw() {
