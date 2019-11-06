@@ -1,0 +1,33 @@
+{
+  "buildFiles": [
+    "/Users/momo/momo_codes/MLN/MLN-Android-Demo/mlncore/src/main/jni/luasocket/CMakeLists.txt",
+    "/Users/momo/android-sdks/android-ndk-r20/build/cmake/platforms.cmake",
+    "/Users/momo/momo_codes/MLN/MLN-Android-Demo/mlncore/src/main/jni/lua/CMakeLists.txt",
+    "/Users/momo/momo_codes/MLN/MLN-Android-Demo/mlncore/src/main/jni/CMakeLists.txt",
+    "/Users/momo/momo_codes/MLN/MLN-Android-Demo/mlncore/src/main/jni/japi/CMakeLists.txt",
+    "/Users/momo/android-sdks/android-ndk-r20/build/cmake/android.toolchain.cmake"
+  ],
+  "cleanCommands": [
+    "/Users/momo/android-sdks/cmake/3.10.2.4988404/bin/cmake --build /Users/momo/momo_codes/MLN/MLN-Android-Demo/mlncore/.externalNativeBuild/cmake/release/armeabi-v7a --target clean"
+  ],
+  "libraries": {
+    "luajapi-Release-armeabi-v7a": {
+      "artifactName": "luajapi",
+      "buildCommand": "/Users/momo/android-sdks/cmake/3.10.2.4988404/bin/cmake --build /Users/momo/momo_codes/MLN/MLN-Android-Demo/mlncore/.externalNativeBuild/cmake/release/armeabi-v7a --target luajapi",
+      "abi": "armeabi-v7a",
+      "output": "/Users/momo/momo_codes/MLN/MLN-Android-Demo/mlncore/src/main/libs/armeabi-v7a/libluajapi.so"
+    },
+    "lua-Release-armeabi-v7a": {
+      "artifactName": "lua",
+      "buildCommand": "/Users/momo/android-sdks/cmake/3.10.2.4988404/bin/cmake --build /Users/momo/momo_codes/MLN/MLN-Android-Demo/mlncore/.externalNativeBuild/cmake/release/armeabi-v7a --target lua",
+      "abi": "armeabi-v7a",
+      "output": "/Users/momo/momo_codes/MLN/MLN-Android-Demo/mlncore/.externalNativeBuild/cmake/release/armeabi-v7a/lua/liblua.a"
+    },
+    "mlsocket-Release-armeabi-v7a": {
+      "artifactName": "mlsocket",
+      "buildCommand": "/Users/momo/android-sdks/cmake/3.10.2.4988404/bin/cmake --build /Users/momo/momo_codes/MLN/MLN-Android-Demo/mlncore/.externalNativeBuild/cmake/release/armeabi-v7a --target mlsocket",
+      "abi": "armeabi-v7a",
+      "output": "/Users/momo/momo_codes/MLN/MLN-Android-Demo/mlncore/.externalNativeBuild/cmake/release/armeabi-v7a/luasocket/libmlsocket.a"
+    }
+  }
+}

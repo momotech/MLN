@@ -1,0 +1,15 @@
+# ninja log v5
+0	64	1573006821	bitmap/CMakeFiles/lblur.dir/bitmap_util.c.o	3a05f36014411040
+64	92	1573006821	/Users/momo/momo_codes/MLN/MLN-Android-Demo/mlnservics/src/main/libs/armeabi-v7a/liblblur.so	204e09791ca9ccce
+0	52	1573006821	mln/CMakeFiles/mlnbridge.dir/bridge/mmbridge.c.o	38fd05983ab90d5f
+0	53	1573006821	mln/CMakeFiles/mlnbridge.dir/bridge/mmoslib.c.o	4db51663668602c3
+0	56	1573006821	mln/CMakeFiles/mlnbridge.dir/bridge/mmbit.c.o	6c06a1e1bc08133f
+1	699	1573006822	mln/CMakeFiles/mlnbridge.dir/bridge/lua_broadcastchannel.cpp.o	945a07322b039ddd
+699	848	1573006822	/Users/momo/momo_codes/MLN/MLN-Android-Demo/mlnservics/src/main/libs/armeabi-v7a/libmlnbridge.so	e17c66a50ea09161
+0	72	1573006882	bitmap/CMakeFiles/lblur.dir/bitmap_util.c.o	3a05f36014411040
+72	103	1573006882	/Users/momo/momo_codes/MLN/MLN-Android-Demo/mlnservics/src/main/libs/armeabi-v7a/liblblur.so	204e09791ca9ccce
+2	58	1573006882	mln/CMakeFiles/mlnbridge.dir/bridge/mmbridge.c.o	38fd05983ab90d5f
+1	58	1573006882	mln/CMakeFiles/mlnbridge.dir/bridge/mmoslib.c.o	4db51663668602c3
+2	61	1573006882	mln/CMakeFiles/mlnbridge.dir/bridge/mmbit.c.o	6c06a1e1bc08133f
+2	591	1573006883	mln/CMakeFiles/mlnbridge.dir/bridge/lua_broadcastchannel.cpp.o	945a07322b039ddd
+591	693	1573006883	/Users/momo/momo_codes/MLN/MLN-Android-Demo/mlnservics/src/main/libs/armeabi-v7a/libmlnbridge.so	e17c66a50ea09161
