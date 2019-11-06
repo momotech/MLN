@@ -156,6 +156,12 @@ function _class:setupCollectionViewAdapter()
 
     end)
 
+    adapter:selectedRowByReuseId(cellReuseId,function(cell,section,row)
+
+        print('==== click ==',section,'  ',row)
+        Navigator:gotoPage("file://android_asset/MMLuaKitGallery/IdeaMassView.lua",Map(),1)
+    end)
+
     self.collectionView:adapter(adapter)
 end
 

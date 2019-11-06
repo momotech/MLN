@@ -42,7 +42,11 @@ public class SINavigatorExtend extends SINavigator {
             if (!action.endsWith(".lua")) {
                 action = action + ".lua";
             }
-            action = FileUtil.getAbsoluteUrl(action);//相对路径转化
+
+            if (!action.startsWith("file://android_asset/"))
+                action = FileUtil.getAbsoluteUrl(action);//相对路径转化
+
+
         } else if (action.endsWith(".lua")) {
             String localUrl = ((LuaViewManager) globals.getJavaUserdata()).baseFilePath;
             File entryFile = new File(localUrl, action);//入口文件路径
