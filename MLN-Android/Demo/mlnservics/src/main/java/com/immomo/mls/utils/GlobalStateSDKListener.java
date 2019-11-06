@@ -72,7 +72,6 @@ public class GlobalStateSDKListener implements MLSGlobalStateListener {
         if (!MLSEngine.DEBUG)
             return;
         debugLog.executedEnd(success);
-        debugLog.log(STDOUT);
     }
 
     @Override
