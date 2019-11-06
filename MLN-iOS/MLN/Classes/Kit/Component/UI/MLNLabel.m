@@ -449,6 +449,6 @@ LUA_EXPORT_VIEW_METHOD(setMinWidth, "setLua_minWidth:",MLNLabel) //SDK>=1.0.3，
 LUA_EXPORT_VIEW_METHOD(setMaxHeight, "lua_setMaxHeight:",MLNLabel) //SDK>=1.0.3，自适应时的限制
 LUA_EXPORT_VIEW_METHOD(setMinHeight, "lua_setMinHeight:",MLNLabel) //SDK>=1.0.3，自适应时的限制
 LUA_EXPORT_VIEW_METHOD(setLineSpacing, "lua_setLineSpacing:",MLNLabel) //SDK>=1.0.3，自适应时的限制
-LUA_EXPORT_VIEW_METHOD(a_setIncludeFontPadding, "lua_a_setIncludeFontPadding:", MILLabel)
+LUA_EXPORT_VIEW_METHOD(a_setIncludeFontPadding, "lua_a_setIncludeFontPadding:", MLNLabel)
 LUA_EXPORT_VIEW_END(MLNLabel, Label, YES, "MLNView", "initWithLuaCore:frame:")
 @end

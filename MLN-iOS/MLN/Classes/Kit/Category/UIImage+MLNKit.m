@@ -1,5 +1,5 @@
 //
-//  UIImage+MMILua.m
+//  UIImage+MLNKit.m
 //  MLN
 //
 //  Created by MOMO on 2019/10/16.

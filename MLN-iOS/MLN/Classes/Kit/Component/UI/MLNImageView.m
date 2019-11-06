@@ -403,7 +403,7 @@
 
 #pragma mark - Export For Lua
 LUA_EXPORT_VIEW_BEGIN(MLNImageView)
-LUA_EXPORT_VIEW_PROPERTY(contentMode, "setContentMode:","contentMode", MLNImageView)
+LUA_EXPORT_VIEW_PROPERTY(contentMode, "lua_setContentMode:","contentMode", MLNImageView)
 LUA_EXPORT_VIEW_PROPERTY(lazyLoad, "lua_setLazyLoad:","lua_lazyLoad", MLNImageView)
 LUA_EXPORT_VIEW_METHOD(startAnimationImages, "lua_startAnimation:duration:repeat:", MLNImageView)
 LUA_EXPORT_VIEW_METHOD(stopAnimationImages, "stopAnimating", MLNImageView)
@@ -413,7 +413,7 @@ LUA_EXPORT_VIEW_METHOD(setImageUrl, "lua_setImageWith:placeHolderImage:", MLNIma
 LUA_EXPORT_VIEW_METHOD(setCornerImage, "lua_setCornerImageWith:placeHolderImage:cornerRadius:direction:", MLNImageView)
 LUA_EXPORT_VIEW_METHOD(setImageWithCallback, "lua_setImageWith:placeHolderImage:callback:", MLNImageView)
 LUA_EXPORT_VIEW_METHOD(setNineImage, "lua_setNineImageWith:synchronized:", MLNImageView)
-LUA_EXPORT_VIEW_METHOD(blurImage, "lua_setBlurValue:", MLNImageView)
+LUA_EXPORT_VIEW_METHOD(blurImage, "lua_setBlurValue:processImage:", MLNImageView)
 LUA_EXPORT_VIEW_METHOD(addShadow, "lua_addShadow:shadowOffset:shadowRadius:shadowOpacity:isOval:", MLNImageView)
 LUA_EXPORT_VIEW_END(MLNImageView, ImageView, YES, "MLNView", NULL)
 
