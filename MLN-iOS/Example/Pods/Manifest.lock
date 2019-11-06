@@ -39,6 +39,7 @@ PODS:
     - MLNDevTool/DevTool (= 0.1.0)
     - MLNDevTool/HotReload (= 0.1.0)
     - MLNDevTool/Offline (= 0.1.0)
+    - MLNDevTool/Performance (= 0.1.0)
     - MLNDevTool/Protobuf (= 0.1.0)
   - MLNDevTool/Conn (0.1.0):
     - Protobuf (~> 3.6.0)
@@ -48,6 +49,7 @@ PODS:
     - MLNDevTool/DevTool
   - MLNDevTool/Offline (0.1.0):
     - MLNDevTool/DevTool
+  - MLNDevTool/Performance (0.1.0)
   - MLNDevTool/Protobuf (0.1.0):
     - Protobuf (~> 3.6.0)
   - Protobuf (3.6.1)
@@ -91,7 +93,7 @@ SPEC CHECKSUMS:
   FBSnapshotTestCase: 094f9f314decbabe373b87cc339bea235a63e07a
   MJRefresh: 7798e16e53a5ef7f332dd05b27664db4e29530fd
   MLN: 1b5205523f70ac341baed565dd0012ed35cc43a3
-  MLNDevTool: 1d3a5d3940f2b4b3744107cc2feab6232877c555
+  MLNDevTool: 24beb727ef032ef824aa7f45582f182778e34eab
   Protobuf: 1eb9700044745f00181c136ef21b8ff3ad5a0fd5
   SDWebImage: c10d14a8883ebd89664f02a422006f66a85c0c5d
   Specta: 3e1bd89c3517421982dc4d1c992503e48bd5fe66

@@ -30,6 +30,17 @@
       }
     },
     {
+      "name": "Performance",
+      "frameworks": [
+        "Foundation",
+        "UIKit",
+        "CoreGraphics",
+        "AVFoundation"
+      ],
+      "source_files": "MLN-iOS/MLNDevTool/Classes/Performance/**/*.{h,m,c}",
+      "public_header_files": "MLN-iOS/MLNDevTool/Classes/Performance/**/*.h"
+    },
+    {
       "name": "Conn",
       "frameworks": [
         "Foundation",
