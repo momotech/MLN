@@ -37,6 +37,7 @@
 		8C5463BE1E8D8BA958F828ED /* libPods-MLN_Tests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A6E2454F7DDA4338383073BC /* libPods-MLN_Tests.a */; };
 		A94791C5348E1F8459BDC83E /* libPods-MLN_Example.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F449C1D4FDA5182F0D579269 /* libPods-MLN_Example.a */; };
 		B2D0AB85236C1F0A00B1D349 /* gallery in Resources */ = {isa = PBXBuildFile; fileRef = B2D0AB84236C1F0A00B1D349 /* gallery */; };
+		B2D0ABB52370136000B1D349 /* MLNGalleryViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B2D0ABB42370136000B1D349 /* MLNGalleryViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -98,6 +99,8 @@
 		873B8AEA1B1F5CCA007FD442 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = Main.storyboard; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		A6E2454F7DDA4338383073BC /* libPods-MLN_Tests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-MLN_Tests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B2D0AB84236C1F0A00B1D349 /* gallery */ = {isa = PBXFileReference; lastKnownFileType = folder; path = gallery; sourceTree = "<group>"; };
+		B2D0ABB32370136000B1D349 /* MLNGalleryViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNGalleryViewController.h; sourceTree = "<group>"; };
+		B2D0ABB42370136000B1D349 /* MLNGalleryViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNGalleryViewController.m; sourceTree = "<group>"; };
 		C0FB2CAC8F9592C3092ACF62 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
 		F236AA5C6B666135B994F09B /* Pods-MLN_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MLN_Example.debug.xcconfig"; path = "Target Support Files/Pods-MLN_Example/Pods-MLN_Example.debug.xcconfig"; sourceTree = "<group>"; };
 		F449C1D4FDA5182F0D579269 /* libPods-MLN_Example.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-MLN_Example.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -205,6 +208,8 @@
 				71719F9D1E33DC2100824A3D /* LaunchScreen.storyboard */,
 				6003F5A8195388D20070C39A /* Images.xcassets */,
 				6003F594195388D20070C39A /* Supporting Files */,
+				B2D0ABB32370136000B1D349 /* MLNGalleryViewController.h */,
+				B2D0ABB42370136000B1D349 /* MLNGalleryViewController.m */,
 			);
 			name = "Example for MLN";
 			path = MLN;
@@ -446,6 +451,7 @@
 				3012BB102326822F00FA2BB2 /* MLNNavigatorHandler.m in Sources */,
 				6003F59A195388D20070C39A /* main.m in Sources */,
 				30E24E9322F3D74A00A0E78C /* MLNTestMe.m in Sources */,
+				B2D0ABB52370136000B1D349 /* MLNGalleryViewController.m in Sources */,
 				30A4EB6D231F4FD400995416 /* MLNTestMe+Test.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -573,6 +579,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = F236AA5C6B666135B994F09B /* Pods-MLN_Example.debug.xcconfig */;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=*]" = "iPhone Developer";
@@ -580,6 +587,20 @@
 				DEVELOPMENT_TEAM = 36WT396TPZ;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "MLN/MLN-Prefix.pch";
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"${PODS_ROOT}/Headers/Public\"",
+					"\"${PODS_ROOT}/Headers/Public/AFNetworking\"",
+					"\"${PODS_ROOT}/Headers/Public/Expecta\"",
+					"\"${PODS_ROOT}/Headers/Public/Expecta+Snapshots\"",
+					"\"${PODS_ROOT}/Headers/Public/FBSnapshotTestCase\"",
+					"\"${PODS_ROOT}/Headers/Public/MJRefresh\"",
+					"\"${PODS_ROOT}/Headers/Public/MLN\"",
+					"\"${PODS_ROOT}/Headers/Public/MLNDevTool\"",
+					"\"${PODS_ROOT}/Headers/Public/Protobuf\"",
+					"\"${PODS_ROOT}/Headers/Public/SDWebImage\"",
+					"\"${PODS_ROOT}/Headers/Public/Specta\"",
+				);
 				INFOPLIST_FILE = "MLN/MLN-Info.plist";
 				MODULE_NAME = ExampleApp;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.MMILua-Example";
@@ -594,12 +615,27 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 0BFEA11F75FC7C356E75DFD6 /* Pods-MLN_Example.release.xcconfig */;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = "";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "MLN/MLN-Prefix.pch";
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"${PODS_ROOT}/Headers/Public\"",
+					"\"${PODS_ROOT}/Headers/Public/AFNetworking\"",
+					"\"${PODS_ROOT}/Headers/Public/Expecta\"",
+					"\"${PODS_ROOT}/Headers/Public/Expecta+Snapshots\"",
+					"\"${PODS_ROOT}/Headers/Public/FBSnapshotTestCase\"",
+					"\"${PODS_ROOT}/Headers/Public/MJRefresh\"",
+					"\"${PODS_ROOT}/Headers/Public/MLN\"",
+					"\"${PODS_ROOT}/Headers/Public/MLNDevTool\"",
+					"\"${PODS_ROOT}/Headers/Public/Protobuf\"",
+					"\"${PODS_ROOT}/Headers/Public/SDWebImage\"",
+					"\"${PODS_ROOT}/Headers/Public/Specta\"",
+				);
 				INFOPLIST_FILE = "MLN/MLN-Info.plist";
 				MODULE_NAME = ExampleApp;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.MMILua-Example";
