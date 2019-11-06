@@ -43,8 +43,8 @@ allprojects {
         androidxVersion = "1.1.0-alpha01"
         protobufVersion = '3.0.1'
 
-        mlnCoreVersion = '1.4.1101_1511'
-        mlnsVersion = '1.5.0_beta_2'
+        mlnCoreVersion = '1.4.1104_1823'
+        mlnsVersion = '1.5.0_beta7'
         processorVersion = '2.0.1010_1822'
         annotationVersion = '2.0.0329_1143'
         hotreloadVersion = '1.0.0829_1014'

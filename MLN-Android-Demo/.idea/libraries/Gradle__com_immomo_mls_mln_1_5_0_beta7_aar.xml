@@ -1,0 +1,15 @@
+<component name="libraryTable">
+  <library name="Gradle: com.immomo.mls:mln:1.5.0_beta7@aar">
+    <ANNOTATIONS>
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/jetified-mln-1.5.0_beta7.aar/12fee68d9e24e01bcbcddc69210b3ef6/annotations.zip!/" />
+    </ANNOTATIONS>
+    <CLASSES>
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/jetified-mln-1.5.0_beta7.aar/12fee68d9e24e01bcbcddc69210b3ef6/res" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/jetified-mln-1.5.0_beta7.aar/12fee68d9e24e01bcbcddc69210b3ef6/jars/classes.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.immomo.mls/mln/1.5.0_beta7/7a32194b18db1427ebfc245eb4ac98c39a288348/mln-1.5.0_beta7-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

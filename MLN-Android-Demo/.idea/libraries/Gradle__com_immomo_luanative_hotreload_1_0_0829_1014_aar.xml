@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="Gradle: com.immomo.luanative:hotreload:1.0.0829_1014@aar">
+    <CLASSES>
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/hotreload-1.0.0829_1014.aar/df3933181449e15c6137fb5e09eae50d/res" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/hotreload-1.0.0829_1014.aar/df3933181449e15c6137fb5e09eae50d/jars/classes.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.immomo.luanative/hotreload/1.0.0829_1014/5b17d093405c5f341d4e25e0b78200599288480d/hotreload-1.0.0829_1014-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

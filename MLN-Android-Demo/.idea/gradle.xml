@@ -8,13 +8,9 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/HotReload" />
             <option value="$PROJECT_DIR$/HotReload_Empty" />
             <option value="$PROJECT_DIR$/annotation" />
             <option value="$PROJECT_DIR$/fileexplorer" />
-            <option value="$PROJECT_DIR$/mlncore" />
-            <option value="$PROJECT_DIR$/mlnservics" />
-            <option value="$PROJECT_DIR$/processor" />
             <option value="$PROJECT_DIR$/sample" />
             <option value="$PROJECT_DIR$/scan" />
           </set>

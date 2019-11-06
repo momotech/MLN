@@ -53,16 +53,10 @@ dependencies {
     implementation "com.immomo.broadcastchannel:broadcastchannel:0.2.20190926.1500"
     testImplementation 'junit:junit:4.12'
 
-    if (implementation_debug) {
-        implementation project(':mlncore')
-        implementation project(':mlnservics')
-        implementation project(':HotReload')
-        annotationProcessor project(':processor')
-    } else {
-        implementation "com.immomo.mlncore:core:$mlnCoreVersion"
-        implementation "com.immomo.mls:mln:$mlnsVersion"
-        debugImplementation "com.immomo.luanative:hotreload:$hotreloadVersion"
-        releaseImplementation "com.immomo.luanative:hotreload_empty:$hotreloadVersion"
-        annotationProcessor "com.immomo.mls:processor:$processorVersion"
-    }
+
+    implementation "com.immomo.mlncore:core:$mlnCoreVersion"
+    implementation "com.immomo.mls:mln:$mlnsVersion"
+    debugImplementation "com.immomo.luanative:hotreload:$hotreloadVersion"
+    releaseImplementation "com.immomo.luanative:hotreload_empty:$hotreloadVersion"
+    annotationProcessor "com.immomo.mls:processor:$processorVersion"
 }

@@ -1,9 +1,0 @@
-syntax = "proto3";
-
- option java_package = "com.immomo.luanative.codec.protobuf";
- option java_outer_classname = "PBPingCommand";
-
- message pbpingcommand {
-     int32 ip = 1;
-     int32 port = 2;
- }
