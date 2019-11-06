@@ -41,7 +41,7 @@
 MLN_FORCE_INLINE void measureImageViewAutoNodeSize (MLNLayoutNode __unsafe_unretained *node, CGFloat maxWidth, CGFloat maxHeight) {
     maxWidth = [node calculateWidthBaseOnWeightWithMaxWidth:maxWidth];
     maxHeight = [node calculateHeightBaseOnWeightWithMaxHeight:maxHeight];
-    if (!node.isDirty && (node.lastMeasuredMaxWidth==maxWidth && node.lastMeasuredMaxHeight==maxHeight)) {
+    if (!node.isDirty && (node.lastMeasuredMaxWidth==maxWidth && node.lastMeasuredMaxHeight==maxHeight) && !isLayoutNodeHeightNeedMerge(node) && !isLayoutNodeWidthNeedMerge(node)) {
         return;
     }
     node.lastMeasuredMaxWidth = maxWidth;
