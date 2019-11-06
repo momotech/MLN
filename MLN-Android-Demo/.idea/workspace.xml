@@ -1,0 +1,790 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AndroidLayouts">
+    <shared>
+      <config />
+    </shared>
+  </component>
+  <component name="AndroidLogFilters">
+    <option name="TOOL_WINDOW_LOG_LEVEL" value="verbose" />
+    <option name="TOOL_WINDOW_CONFIGURED_FILTER" value="Show only selected application" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="82182123-55d1-48f0-a840-645dd752b6f1" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
+    <ignored path="$PROJECT_DIR$/.gradle/" />
+    <ignored path="$PROJECT_DIR$/build/classes/" />
+    <ignored path="$PROJECT_DIR$/annotation/.gradle/" />
+    <ignored path="$PROJECT_DIR$/annotation/build/" />
+    <ignored path="$PROJECT_DIR$/HotReload_Empty/build/generated/not_namespaced_r_class_sources/" />
+    <ignored path="$PROJECT_DIR$/HotReload_Empty/build/generated/source/r/" />
+    <ignored path="$PROJECT_DIR$/HotReload_Empty/build/intermediates/aapt_friendly_merged_manifests/" />
+    <ignored path="$PROJECT_DIR$/HotReload_Empty/build/intermediates/annotation_processor_list/" />
+    <ignored path="$PROJECT_DIR$/HotReload_Empty/build/intermediates/annotations_typedef_file/" />
+    <ignored path="$PROJECT_DIR$/HotReload_Empty/build/intermediates/annotations_zip/" />
+    <ignored path="$PROJECT_DIR$/HotReload_Empty/build/intermediates/check-manifest/" />
+    <ignored path="$PROJECT_DIR$/HotReload_Empty/build/intermediates/incremental/" />
+    <ignored path="$PROJECT_DIR$/HotReload_Empty/build/intermediates/javac/" />
+    <ignored path="$PROJECT_DIR$/HotReload_Empty/build/intermediates/jniLibs/" />
+    <ignored path="$PROJECT_DIR$/HotReload_Empty/build/intermediates/library_and_local_jars_jni/" />
+    <ignored path="$PROJECT_DIR$/HotReload_Empty/build/intermediates/library_assets/" />
+    <ignored path="$PROJECT_DIR$/HotReload_Empty/build/intermediates/merged_manifests/" />
+    <ignored path="$PROJECT_DIR$/HotReload_Empty/build/intermediates/packaged-classes/" />
+    <ignored path="$PROJECT_DIR$/HotReload_Empty/build/intermediates/packaged_res/" />
+    <ignored path="$PROJECT_DIR$/HotReload_Empty/build/intermediates/public_res/" />
+    <ignored path="$PROJECT_DIR$/HotReload_Empty/build/intermediates/res/" />
+    <ignored path="$PROJECT_DIR$/HotReload_Empty/build/intermediates/rs/" />
+    <ignored path="$PROJECT_DIR$/HotReload_Empty/build/intermediates/shader_assets/" />
+    <ignored path="$PROJECT_DIR$/HotReload_Empty/build/intermediates/shaders/" />
+    <ignored path="$PROJECT_DIR$/HotReload_Empty/build/intermediates/symbols/" />
+    <ignored path="$PROJECT_DIR$/HotReload_Empty/build/intermediates/transforms/" />
+    <ignored path="$PROJECT_DIR$/HotReload_Empty/build/outputs/" />
+    <ignored path="$PROJECT_DIR$/HotReload_Empty/build/tmp/" />
+    <ignored path="$PROJECT_DIR$/HotReload/build/extracted-include-protos/" />
+    <ignored path="$PROJECT_DIR$/HotReload/build/extracted-protos/" />
+    <ignored path="$PROJECT_DIR$/HotReload/build/generated/not_namespaced_r_class_sources/" />
+    <ignored path="$PROJECT_DIR$/HotReload/build/generated/source/r/" />
+    <ignored path="$PROJECT_DIR$/HotReload/build/intermediates/aapt_friendly_merged_manifests/" />
+    <ignored path="$PROJECT_DIR$/HotReload/build/intermediates/annotation_processor_list/" />
+    <ignored path="$PROJECT_DIR$/HotReload/build/intermediates/annotations_typedef_file/" />
+    <ignored path="$PROJECT_DIR$/HotReload/build/intermediates/annotations_zip/" />
+    <ignored path="$PROJECT_DIR$/HotReload/build/intermediates/check-manifest/" />
+    <ignored path="$PROJECT_DIR$/HotReload/build/intermediates/incremental/" />
+    <ignored path="$PROJECT_DIR$/HotReload/build/intermediates/intermediate-jars/" />
+    <ignored path="$PROJECT_DIR$/HotReload/build/intermediates/javac/" />
+    <ignored path="$PROJECT_DIR$/HotReload/build/intermediates/jniLibs/" />
+    <ignored path="$PROJECT_DIR$/HotReload/build/intermediates/library_and_local_jars_jni/" />
+    <ignored path="$PROJECT_DIR$/HotReload/build/intermediates/library_assets/" />
+    <ignored path="$PROJECT_DIR$/HotReload/build/intermediates/merged_manifests/" />
+    <ignored path="$PROJECT_DIR$/HotReload/build/intermediates/packaged-classes/" />
+    <ignored path="$PROJECT_DIR$/HotReload/build/intermediates/packaged_res/" />
+    <ignored path="$PROJECT_DIR$/HotReload/build/intermediates/public_res/" />
+    <ignored path="$PROJECT_DIR$/HotReload/build/intermediates/res/" />
+    <ignored path="$PROJECT_DIR$/HotReload/build/intermediates/rs/" />
+    <ignored path="$PROJECT_DIR$/HotReload/build/intermediates/shader_assets/" />
+    <ignored path="$PROJECT_DIR$/HotReload/build/intermediates/shaders/" />
+    <ignored path="$PROJECT_DIR$/HotReload/build/intermediates/symbols/" />
+    <ignored path="$PROJECT_DIR$/HotReload/build/intermediates/transforms/" />
+    <ignored path="$PROJECT_DIR$/HotReload/build/outputs/" />
+    <ignored path="$PROJECT_DIR$/HotReload/build/tmp/" />
+    <ignored path="$PROJECT_DIR$/fileexplorer/build/generated/not_namespaced_r_class_sources/" />
+    <ignored path="$PROJECT_DIR$/fileexplorer/build/generated/source/r/" />
+    <ignored path="$PROJECT_DIR$/fileexplorer/build/intermediates/aapt_friendly_merged_manifests/" />
+    <ignored path="$PROJECT_DIR$/fileexplorer/build/intermediates/annotation_processor_list/" />
+    <ignored path="$PROJECT_DIR$/fileexplorer/build/intermediates/annotations_typedef_file/" />
+    <ignored path="$PROJECT_DIR$/fileexplorer/build/intermediates/annotations_zip/" />
+    <ignored path="$PROJECT_DIR$/fileexplorer/build/intermediates/check-manifest/" />
+    <ignored path="$PROJECT_DIR$/fileexplorer/build/intermediates/incremental/" />
+    <ignored path="$PROJECT_DIR$/fileexplorer/build/intermediates/intermediate-jars/" />
+    <ignored path="$PROJECT_DIR$/fileexplorer/build/intermediates/javac/" />
+    <ignored path="$PROJECT_DIR$/fileexplorer/build/intermediates/jniLibs/" />
+    <ignored path="$PROJECT_DIR$/fileexplorer/build/intermediates/library_and_local_jars_jni/" />
+    <ignored path="$PROJECT_DIR$/fileexplorer/build/intermediates/library_assets/" />
+    <ignored path="$PROJECT_DIR$/fileexplorer/build/intermediates/merged_manifests/" />
+    <ignored path="$PROJECT_DIR$/fileexplorer/build/intermediates/packaged-classes/" />
+    <ignored path="$PROJECT_DIR$/fileexplorer/build/intermediates/packaged_res/" />
+    <ignored path="$PROJECT_DIR$/fileexplorer/build/intermediates/public_res/" />
+    <ignored path="$PROJECT_DIR$/fileexplorer/build/intermediates/res/" />
+    <ignored path="$PROJECT_DIR$/fileexplorer/build/intermediates/rs/" />
+    <ignored path="$PROJECT_DIR$/fileexplorer/build/intermediates/shader_assets/" />
+    <ignored path="$PROJECT_DIR$/fileexplorer/build/intermediates/shaders/" />
+    <ignored path="$PROJECT_DIR$/fileexplorer/build/intermediates/symbols/" />
+    <ignored path="$PROJECT_DIR$/fileexplorer/build/intermediates/transforms/" />
+    <ignored path="$PROJECT_DIR$/fileexplorer/build/outputs/" />
+    <ignored path="$PROJECT_DIR$/fileexplorer/build/tmp/" />
+    <ignored path="$PROJECT_DIR$/processor/.gradle/" />
+    <ignored path="$PROJECT_DIR$/processor/build/" />
+    <ignored path="$PROJECT_DIR$/mlncore/.externalNativeBuild/" />
+    <ignored path="$PROJECT_DIR$/mlncore/build/generated/not_namespaced_r_class_sources/" />
+    <ignored path="$PROJECT_DIR$/mlncore/build/generated/source/r/" />
+    <ignored path="$PROJECT_DIR$/mlncore/build/intermediates/aapt_friendly_merged_manifests/" />
+    <ignored path="$PROJECT_DIR$/mlncore/build/intermediates/annotation_processor_list/" />
+    <ignored path="$PROJECT_DIR$/mlncore/build/intermediates/annotations_typedef_file/" />
+    <ignored path="$PROJECT_DIR$/mlncore/build/intermediates/annotations_zip/" />
+    <ignored path="$PROJECT_DIR$/mlncore/build/intermediates/check-manifest/" />
+    <ignored path="$PROJECT_DIR$/mlncore/build/intermediates/cmake/" />
+    <ignored path="$PROJECT_DIR$/mlncore/build/intermediates/incremental/" />
+    <ignored path="$PROJECT_DIR$/mlncore/build/intermediates/intermediate-jars/" />
+    <ignored path="$PROJECT_DIR$/mlncore/build/intermediates/javac/" />
+    <ignored path="$PROJECT_DIR$/mlncore/build/intermediates/jniLibs/" />
+    <ignored path="$PROJECT_DIR$/mlncore/build/intermediates/library_and_local_jars_jni/" />
+    <ignored path="$PROJECT_DIR$/mlncore/build/intermediates/library_assets/" />
+    <ignored path="$PROJECT_DIR$/mlncore/build/intermediates/lint_jar/" />
+    <ignored path="$PROJECT_DIR$/mlncore/build/intermediates/merged_manifests/" />
+    <ignored path="$PROJECT_DIR$/mlncore/build/intermediates/packaged-classes/" />
+    <ignored path="$PROJECT_DIR$/mlncore/build/intermediates/packaged_res/" />
+    <ignored path="$PROJECT_DIR$/mlncore/build/intermediates/public_res/" />
+    <ignored path="$PROJECT_DIR$/mlncore/build/intermediates/res/" />
+    <ignored path="$PROJECT_DIR$/mlncore/build/intermediates/rs/" />
+    <ignored path="$PROJECT_DIR$/mlncore/build/intermediates/shader_assets/" />
+    <ignored path="$PROJECT_DIR$/mlncore/build/intermediates/shaders/" />
+    <ignored path="$PROJECT_DIR$/mlncore/build/intermediates/symbols/" />
+    <ignored path="$PROJECT_DIR$/mlncore/build/intermediates/transforms/" />
+    <ignored path="$PROJECT_DIR$/mlncore/build/outputs/" />
+    <ignored path="$PROJECT_DIR$/mlncore/build/tmp/" />
+    <ignored path="$PROJECT_DIR$/scan/build/generated/not_namespaced_r_class_sources/" />
+    <ignored path="$PROJECT_DIR$/scan/build/generated/source/r/" />
+    <ignored path="$PROJECT_DIR$/scan/build/intermediates/aapt_friendly_merged_manifests/" />
+    <ignored path="$PROJECT_DIR$/scan/build/intermediates/annotation_processor_list/" />
+    <ignored path="$PROJECT_DIR$/scan/build/intermediates/annotations_typedef_file/" />
+    <ignored path="$PROJECT_DIR$/scan/build/intermediates/annotations_zip/" />
+    <ignored path="$PROJECT_DIR$/scan/build/intermediates/check-manifest/" />
+    <ignored path="$PROJECT_DIR$/scan/build/intermediates/consumer_proguard_file/" />
+    <ignored path="$PROJECT_DIR$/scan/build/intermediates/incremental/" />
+    <ignored path="$PROJECT_DIR$/scan/build/intermediates/intermediate-jars/" />
+    <ignored path="$PROJECT_DIR$/scan/build/intermediates/javac/" />
+    <ignored path="$PROJECT_DIR$/scan/build/intermediates/jniLibs/" />
+    <ignored path="$PROJECT_DIR$/scan/build/intermediates/library_and_local_jars_jni/" />
+    <ignored path="$PROJECT_DIR$/scan/build/intermediates/library_assets/" />
+    <ignored path="$PROJECT_DIR$/scan/build/intermediates/merged_manifests/" />
+    <ignored path="$PROJECT_DIR$/scan/build/intermediates/packaged-classes/" />
+    <ignored path="$PROJECT_DIR$/scan/build/intermediates/packaged_res/" />
+    <ignored path="$PROJECT_DIR$/scan/build/intermediates/public_res/" />
+    <ignored path="$PROJECT_DIR$/scan/build/intermediates/res/" />
+    <ignored path="$PROJECT_DIR$/scan/build/intermediates/rs/" />
+    <ignored path="$PROJECT_DIR$/scan/build/intermediates/shader_assets/" />
+    <ignored path="$PROJECT_DIR$/scan/build/intermediates/shaders/" />
+    <ignored path="$PROJECT_DIR$/scan/build/intermediates/symbols/" />
+    <ignored path="$PROJECT_DIR$/scan/build/intermediates/transforms/" />
+    <ignored path="$PROJECT_DIR$/scan/build/outputs/" />
+    <ignored path="$PROJECT_DIR$/scan/build/tmp/" />
+    <ignored path="$PROJECT_DIR$/mlnservics/.externalNativeBuild/" />
+    <ignored path="$PROJECT_DIR$/mlnservics/build/generated/not_namespaced_r_class_sources/" />
+    <ignored path="$PROJECT_DIR$/mlnservics/build/generated/source/r/" />
+    <ignored path="$PROJECT_DIR$/mlnservics/build/intermediates/aapt_friendly_merged_manifests/" />
+    <ignored path="$PROJECT_DIR$/mlnservics/build/intermediates/annotation_processor_list/" />
+    <ignored path="$PROJECT_DIR$/mlnservics/build/intermediates/annotations_typedef_file/" />
+    <ignored path="$PROJECT_DIR$/mlnservics/build/intermediates/annotations_zip/" />
+    <ignored path="$PROJECT_DIR$/mlnservics/build/intermediates/check-manifest/" />
+    <ignored path="$PROJECT_DIR$/mlnservics/build/intermediates/cmake/" />
+    <ignored path="$PROJECT_DIR$/mlnservics/build/intermediates/incremental/" />
+    <ignored path="$PROJECT_DIR$/mlnservics/build/intermediates/intermediate-jars/" />
+    <ignored path="$PROJECT_DIR$/mlnservics/build/intermediates/javac/" />
+    <ignored path="$PROJECT_DIR$/mlnservics/build/intermediates/jniLibs/" />
+    <ignored path="$PROJECT_DIR$/mlnservics/build/intermediates/library_and_local_jars_jni/" />
+    <ignored path="$PROJECT_DIR$/mlnservics/build/intermediates/library_assets/" />
+    <ignored path="$PROJECT_DIR$/mlnservics/build/intermediates/lint_jar/" />
+    <ignored path="$PROJECT_DIR$/mlnservics/build/intermediates/merged_manifests/" />
+    <ignored path="$PROJECT_DIR$/mlnservics/build/intermediates/packaged-classes/" />
+    <ignored path="$PROJECT_DIR$/mlnservics/build/intermediates/packaged_res/" />
+    <ignored path="$PROJECT_DIR$/mlnservics/build/intermediates/public_res/" />
+    <ignored path="$PROJECT_DIR$/mlnservics/build/intermediates/res/" />
+    <ignored path="$PROJECT_DIR$/mlnservics/build/intermediates/rs/" />
+    <ignored path="$PROJECT_DIR$/mlnservics/build/intermediates/shader_assets/" />
+    <ignored path="$PROJECT_DIR$/mlnservics/build/intermediates/shaders/" />
+    <ignored path="$PROJECT_DIR$/mlnservics/build/intermediates/symbols/" />
+    <ignored path="$PROJECT_DIR$/mlnservics/build/intermediates/transforms/" />
+    <ignored path="$PROJECT_DIR$/mlnservics/build/outputs/" />
+    <ignored path="$PROJECT_DIR$/mlnservics/build/tmp/" />
+    <ignored path="$PROJECT_DIR$/sample/build/generated/not_namespaced_r_class_sources/" />
+    <ignored path="$PROJECT_DIR$/sample/build/generated/source/r/" />
+    <ignored path="$PROJECT_DIR$/sample/build/intermediates/annotation_processor_list/" />
+    <ignored path="$PROJECT_DIR$/sample/build/intermediates/apk_list/" />
+    <ignored path="$PROJECT_DIR$/sample/build/intermediates/blame/" />
+    <ignored path="$PROJECT_DIR$/sample/build/intermediates/build-info/" />
+    <ignored path="$PROJECT_DIR$/sample/build/intermediates/builds/" />
+    <ignored path="$PROJECT_DIR$/sample/build/intermediates/check-libraries/" />
+    <ignored path="$PROJECT_DIR$/sample/build/intermediates/check-manifest/" />
+    <ignored path="$PROJECT_DIR$/sample/build/intermediates/checkDebugClasspath/" />
+    <ignored path="$PROJECT_DIR$/sample/build/intermediates/compatible_screen_manifest/" />
+    <ignored path="$PROJECT_DIR$/sample/build/intermediates/incremental/" />
+    <ignored path="$PROJECT_DIR$/sample/build/intermediates/incremental-classes/" />
+    <ignored path="$PROJECT_DIR$/sample/build/intermediates/incremental-runtime-classes/" />
+    <ignored path="$PROJECT_DIR$/sample/build/intermediates/incremental-verifier/" />
+    <ignored path="$PROJECT_DIR$/sample/build/intermediates/instant-run-apk/" />
+    <ignored path="$PROJECT_DIR$/sample/build/intermediates/instant_run_main_apk_resources/" />
+    <ignored path="$PROJECT_DIR$/sample/build/intermediates/instant_run_merged_manifests/" />
+    <ignored path="$PROJECT_DIR$/sample/build/intermediates/instant_run_split_apk_resources/" />
+    <ignored path="$PROJECT_DIR$/sample/build/intermediates/javac/" />
+    <ignored path="$PROJECT_DIR$/sample/build/intermediates/jniLibs/" />
+    <ignored path="$PROJECT_DIR$/sample/build/intermediates/manifest-checker/" />
+    <ignored path="$PROJECT_DIR$/sample/build/intermediates/merged_assets/" />
+    <ignored path="$PROJECT_DIR$/sample/build/intermediates/merged_manifests/" />
+    <ignored path="$PROJECT_DIR$/sample/build/intermediates/prebuild/" />
+    <ignored path="$PROJECT_DIR$/sample/build/intermediates/processed_res/" />
+    <ignored path="$PROJECT_DIR$/sample/build/intermediates/reload-dex/" />
+    <ignored path="$PROJECT_DIR$/sample/build/intermediates/res/" />
+    <ignored path="$PROJECT_DIR$/sample/build/intermediates/resources/" />
+    <ignored path="$PROJECT_DIR$/sample/build/intermediates/rs/" />
+    <ignored path="$PROJECT_DIR$/sample/build/intermediates/shader_assets/" />
+    <ignored path="$PROJECT_DIR$/sample/build/intermediates/shaders/" />
+    <ignored path="$PROJECT_DIR$/sample/build/intermediates/split-apk/" />
+    <ignored path="$PROJECT_DIR$/sample/build/intermediates/split_list/" />
+    <ignored path="$PROJECT_DIR$/sample/build/intermediates/symbols/" />
+    <ignored path="$PROJECT_DIR$/sample/build/intermediates/transforms/" />
+    <ignored path="$PROJECT_DIR$/sample/build/outputs/" />
+    <ignored path="$PROJECT_DIR$/sample/build/tmp/" />
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ExternalProjectsManager">
+    <system id="GRADLE">
+      <state>
+        <projects_view />
+      </state>
+    </system>
+  </component>
+  <component name="FileEditorManager">
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/sample/src/main/java/com/mln/demo/activity/LuaViewActivity.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="378">
+              <caret line="21" selection-start-line="21" selection-end-line="21" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/sample/src/main/java/com/mln/demo/App.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="160">
+              <caret line="104" column="40" selection-start-line="104" selection-start-column="40" selection-end-line="104" selection-end-column="40" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/mlnservics/src/main/java/com/immomo/mls/utils/DebugLog.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="625">
+              <caret line="146" column="31" selection-start-line="146" selection-start-column="31" selection-end-line="146" selection-end-column="31" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/mlnservics/src/main/java/com/immomo/mls/Environment.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="387">
+              <caret line="44" column="16" selection-start-line="44" selection-start-column="16" selection-end-line="44" selection-end-column="16" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$USER_HOME$/android-sdks/sources/android-28/java/lang/System.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="269">
+              <caret line="344" column="30" selection-start-line="344" selection-start-column="30" selection-end-line="344" selection-end-column="30" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/sample/src/main/java/com/mln/demo/GlobalStateListener.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="300">
+              <caret line="22" column="18" selection-start-line="22" selection-start-column="18" selection-end-line="22" selection-end-column="18" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/mlnservics/src/main/java/com/immomo/mls/utils/GlobalStateSDKListener.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="445">
+              <caret line="73" column="25" selection-start-line="73" selection-start-column="25" selection-end-line="73" selection-end-column="25" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/mlnservics/src/main/java/com/immomo/mls/fun/globals/LuaView.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="270">
+              <caret line="152" column="39" selection-start-line="152" selection-start-column="39" selection-end-line="152" selection-end-column="39" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/mlnservics/src/main/java/com/immomo/mls/utils/GlobalStateUtils.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="330">
+              <caret line="62" column="29" selection-start-line="62" selection-start-column="29" selection-end-line="62" selection-end-column="29" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/mlnservics/src/main/java/com/immomo/mls/adapter/MLSGlobalStateListener.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="350">
+              <caret line="28" column="20" selection-start-line="28" selection-start-column="20" selection-end-line="28" selection-end-column="20" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
+  </component>
+  <component name="FindInProjectRecents">
+    <findStrings>
+      <find>versionForMomo</find>
+      <find>meilishuo</find>
+      <find>showloading</find>
+      <find>createInitData</find>
+      <find>compile cas</find>
+      <find>android:windowBackground</find>
+      <find>AppTheme</find>
+      <find>loading</find>
+      <find>mls_load_demo</find>
+      <find>ndk-bundle</find>
+      <find>ndk</find>
+      <find>targetSdkVersion</find>
+      <find>appcompat-v7</find>
+      <find>implementation 'com.android.support:appcompat-v7:28.0.3'</find>
+      <find>support:design</find>
+      <find>build:gradle</find>
+      <find>udviewpagera</find>
+      <find>luaview</find>
+      <find>androidx</find>
+      <find>setCustomView</find>
+      <find>TAB_FRAGMENTS</find>
+      <find>compile cast</find>
+      <find>R</find>
+      <find>setData</find>
+      <find>executedTime =</find>
+      <find>globalPrepareTime</find>
+      <find>executedTime</find>
+      <find>print</find>
+      <find>ps.println()</find>
+      <find>long</find>
+    </findStrings>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../.." />
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="CHANGED_PATHS">
+      <list>
+        <option value="$PROJECT_DIR$/sample/src/main/java/com/mln/demo/activity/LuaViewActivity.java" />
+        <option value="$PROJECT_DIR$/mlnservics/src/main/java/com/immomo/mls/utils/GlobalStateSDKListener.java" />
+        <option value="$PROJECT_DIR$/mlnservics/src/main/java/com/immomo/mls/utils/DebugLog.java" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectFrameBounds">
+    <option name="x" value="87" />
+    <option name="y" value="48" />
+    <option name="width" value="1696" />
+    <option name="height" value="990" />
+  </component>
+  <component name="ProjectView">
+    <navigator currentView="ProjectPane" proportions="" version="1">
+      <foldersAlwaysOnTop value="true" />
+    </navigator>
+    <panes>
+      <pane id="AndroidView" />
+      <pane id="ProjectPane">
+        <subPane>
+          <expand>
+            <path>
+              <item name="Demo" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Demo" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+            </path>
+            <path>
+              <item name="Demo" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Demo" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="sample" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+            </path>
+            <path>
+              <item name="Demo" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Demo" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="sample" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="build" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Demo" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Demo" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="sample" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="build" type="462c0819:PsiDirectoryNode" />
+              <item name="intermediates" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Demo" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Demo" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="sample" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="build" type="462c0819:PsiDirectoryNode" />
+              <item name="outputs" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Demo" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Demo" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="sample" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="build" type="462c0819:PsiDirectoryNode" />
+              <item name="outputs" type="462c0819:PsiDirectoryNode" />
+              <item name="apk" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Demo" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Demo" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="sample" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="build" type="462c0819:PsiDirectoryNode" />
+              <item name="outputs" type="462c0819:PsiDirectoryNode" />
+              <item name="apk" type="462c0819:PsiDirectoryNode" />
+              <item name="debug" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Demo" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Demo" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="sample" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Demo" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Demo" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="sample" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Demo" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Demo" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="sample" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="assets" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Demo" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Demo" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="sample" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="assets" type="462c0819:PsiDirectoryNode" />
+              <item name="MMLuaKitGallery" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Demo" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Demo" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="sample" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Demo" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Demo" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="sample" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="com" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Demo" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Demo" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="sample" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="com" type="462c0819:PsiDirectoryNode" />
+              <item name="mln" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Demo" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Demo" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="sample" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="com" type="462c0819:PsiDirectoryNode" />
+              <item name="mln" type="462c0819:PsiDirectoryNode" />
+              <item name="demo" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Demo" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Demo" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="sample" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="com" type="462c0819:PsiDirectoryNode" />
+              <item name="mln" type="462c0819:PsiDirectoryNode" />
+              <item name="demo" type="462c0819:PsiDirectoryNode" />
+              <item name="activity" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Demo" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Demo" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="sample" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="com" type="462c0819:PsiDirectoryNode" />
+              <item name="mln" type="462c0819:PsiDirectoryNode" />
+              <item name="demo" type="462c0819:PsiDirectoryNode" />
+              <item name="performance" type="462c0819:PsiDirectoryNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+      <pane id="PackagesPane" />
+      <pane id="Scope" />
+    </panes>
+  </component>
+  <component name="PropertiesComponent">
+    <property name="android.project.structure.last.selected" value="SDK Location" />
+    <property name="android.project.structure.proportion" value="0.15" />
+    <property name="android.sdk.path" value="$USER_HOME$/android-sdks" />
+    <property name="device.picker.selection" value="0123456789ABCDEF" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="not.eligible.for.single.variant.sync" value="true" />
+    <property name="settings.editor.selected.configurable" value="AndroidSdkUpdater" />
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="RunManager">
+    <configuration name="&lt;template&gt;" type="Applet" default="true" selected="false">
+      <option name="MAIN_CLASS_NAME" />
+      <option name="HTML_FILE_NAME" />
+      <option name="HTML_USED" value="false" />
+      <option name="WIDTH" value="400" />
+      <option name="HEIGHT" value="300" />
+      <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
+      <option name="VM_PARAMETERS" />
+    </configuration>
+    <configuration default="true" type="JUnit" factoryName="JUnit">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
+      <module name="" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="PACKAGE_NAME" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="METHOD_NAME" />
+      <option name="TEST_OBJECT" value="class" />
+      <option name="VM_PARAMETERS" value="-ea" />
+      <option name="PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$MODULE_DIR$" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="TEST_SEARCH_SCOPE">
+        <value defaultName="singleModule" />
+      </option>
+      <envs />
+      <patterns />
+      <method />
+    </configuration>
+    <configuration name="&lt;template&gt;" type="#org.jetbrains.idea.devkit.run.PluginConfigurationType" default="true" selected="false">
+      <option name="VM_PARAMETERS" value="-Xmx512m -Xms256m -XX:MaxPermSize=250m -ea" />
+    </configuration>
+    <configuration default="true" type="AndroidJUnit" factoryName="Android JUnit">
+      <option name="TEST_OBJECT" value="class" />
+      <option name="WORKING_DIRECTORY" value="$MODULE_DIR$" />
+      <method v="2">
+        <option name="Android.Gradle.BeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="sample" type="AndroidRunConfigurationType" factoryName="Android App" activateToolWindowBeforeRun="false">
+      <module name="sample" />
+      <option name="DEPLOY" value="true" />
+      <option name="DEPLOY_APK_FROM_BUNDLE" value="false" />
+      <option name="DEPLOY_AS_INSTANT" value="false" />
+      <option name="ARTIFACT_NAME" value="" />
+      <option name="PM_INSTALL_OPTIONS" value="" />
+      <option name="DYNAMIC_FEATURES_DISABLED_LIST" value="" />
+      <option name="ACTIVITY_EXTRA_FLAGS" value="" />
+      <option name="MODE" value="default_activity" />
+      <option name="CLEAR_LOGCAT" value="false" />
+      <option name="SHOW_LOGCAT_AUTOMATICALLY" value="false" />
+      <option name="SKIP_NOOP_APK_INSTALLATIONS" value="true" />
+      <option name="FORCE_STOP_RUNNING_APP" value="true" />
+      <option name="TARGET_SELECTION_MODE" value="SHOW_DIALOG" />
+      <option name="USE_LAST_SELECTED_DEVICE" value="true" />
+      <option name="PREFERRED_AVD" value="" />
+      <option name="SELECTED_CLOUD_MATRIX_CONFIGURATION_ID" value="-1" />
+      <option name="SELECTED_CLOUD_MATRIX_PROJECT_ID" value="" />
+      <option name="DEBUGGER_TYPE" value="Auto" />
+      <Auto>
+        <option name="USE_JAVA_AWARE_DEBUGGER" value="false" />
+        <option name="SHOW_STATIC_VARS" value="true" />
+        <option name="WORKING_DIR" value="" />
+        <option name="TARGET_LOGGING_CHANNELS" value="lldb process:gdb-remote packets" />
+        <option name="SHOW_OPTIMIZED_WARNING" value="true" />
+      </Auto>
+      <Hybrid>
+        <option name="USE_JAVA_AWARE_DEBUGGER" value="false" />
+        <option name="SHOW_STATIC_VARS" value="true" />
+        <option name="WORKING_DIR" value="" />
+        <option name="TARGET_LOGGING_CHANNELS" value="lldb process:gdb-remote packets" />
+        <option name="SHOW_OPTIMIZED_WARNING" value="true" />
+      </Hybrid>
+      <Java />
+      <Native>
+        <option name="USE_JAVA_AWARE_DEBUGGER" value="false" />
+        <option name="SHOW_STATIC_VARS" value="true" />
+        <option name="WORKING_DIR" value="" />
+        <option name="TARGET_LOGGING_CHANNELS" value="lldb process:gdb-remote packets" />
+        <option name="SHOW_OPTIMIZED_WARNING" value="true" />
+      </Native>
+      <Profilers>
+        <option name="ADVANCED_PROFILING_ENABLED" value="false" />
+        <option name="STARTUP_CPU_PROFILING_ENABLED" value="false" />
+        <option name="STARTUP_CPU_PROFILING_CONFIGURATION_NAME" value="Sample Java Methods" />
+      </Profilers>
+      <option name="DEEP_LINK" value="" />
+      <option name="ACTIVITY_CLASS" value="" />
+      <method v="2">
+        <option name="Android.Gradle.BeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="Application" factoryName="Application">
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration>$USER_HOME$/.subversion</configuration>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="82182123-55d1-48f0-a840-645dd752b6f1" name="Default Changelist" comment="" />
+      <created>1572922300236</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1572922300236</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="87" y="48" width="1696" height="990" extended-state="0" />
+    <layout>
+      <window_info id="Capture Tool" />
+      <window_info content_ui="combo" id="Project" weight="0.32960597" />
+      <window_info id="Structure" side_tool="true" />
+      <window_info id="Favorites" side_tool="true" />
+      <window_info id="Build Variants" side_tool="true" />
+      <window_info id="Image Layers" />
+      <window_info id="Designer" />
+      <window_info id="Resources Explorer" />
+      <window_info id="Captures" order="0" side_tool="true" weight="0.25" />
+      <window_info anchor="bottom" id="Run" />
+      <window_info anchor="bottom" id="LuaCheck" />
+      <window_info anchor="bottom" id="Logcat" weight="0.7467072" />
+      <window_info anchor="bottom" id="TODO" />
+      <window_info anchor="bottom" id="Find" weight="0.37922987" />
+      <window_info active="true" anchor="bottom" id="Terminal" visible="true" weight="0.50514287" />
+      <window_info anchor="bottom" id="Event Log" side_tool="true" />
+      <window_info anchor="bottom" id="Version Control" weight="0.32934132" />
+      <window_info anchor="bottom" id="Debug" />
+      <window_info anchor="bottom" id="Build" weight="0.32934132" />
+      <window_info anchor="bottom" id="Android Profiler" />
+      <window_info anchor="right" id="Device File Explorer" side_tool="true" />
+      <window_info anchor="right" id="Capture Analysis" />
+      <window_info anchor="right" id="Gradle" />
+      <window_info anchor="right" id="Theme Preview" />
+      <window_info anchor="right" id="Palette&#9;" />
+    </layout>
+    <layout-to-restore>
+      <window_info id="Designer" order="0" />
+      <window_info content_ui="combo" id="Project" order="1" weight="0.32960597" />
+      <window_info id="Structure" order="2" side_tool="true" />
+      <window_info id="Image Layers" order="3" />
+      <window_info id="Capture Tool" order="4" />
+      <window_info id="Build Variants" order="5" side_tool="true" />
+      <window_info id="Resources Explorer" order="6" />
+      <window_info id="Favorites" order="7" side_tool="true" />
+      <window_info id="Captures" order="8" side_tool="true" weight="0.25" />
+      <window_info anchor="bottom" id="LuaCheck" order="0" />
+      <window_info anchor="bottom" id="Run" order="1" />
+      <window_info anchor="bottom" id="TODO" order="2" />
+      <window_info anchor="bottom" id="Android Profiler" order="3" />
+      <window_info anchor="bottom" id="Logcat" order="4" weight="0.7467072" />
+      <window_info active="true" anchor="bottom" id="Find" order="5" visible="true" weight="0.37922987" />
+      <window_info anchor="bottom" id="Terminal" order="6" weight="0.60385007" />
+      <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" />
+      <window_info anchor="bottom" id="Version Control" order="8" weight="0.32934132" />
+      <window_info anchor="bottom" id="Debug" order="9" />
+      <window_info anchor="bottom" id="Build" order="10" weight="0.32934132" />
+      <window_info anchor="right" id="Device File Explorer" order="0" side_tool="true" />
+      <window_info anchor="right" id="Capture Analysis" order="1" />
+      <window_info anchor="right" id="Gradle" order="2" />
+      <window_info anchor="right" id="Theme Preview" order="3" />
+      <window_info anchor="right" id="Palette&#9;" order="4" />
+    </layout-to-restore>
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/mlnservics/src/main/java/com/immomo/mls/utils/DebugLog.java</url>
+          <line>104</line>
+          <properties />
+          <option name="timeStamp" value="3" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/mlnservics/src/main/java/com/immomo/mls/Environment.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="387">
+          <caret line="44" column="16" selection-start-line="44" selection-start-column="16" selection-end-line="44" selection-end-column="16" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/sample/src/main/java/com/mln/demo/GlobalStateListener.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="300">
+          <caret line="22" column="18" selection-start-line="22" selection-start-column="18" selection-end-line="22" selection-end-column="18" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/mlnservics/src/main/java/com/immomo/mls/utils/GlobalStateSDKListener.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="445">
+          <caret line="73" column="25" selection-start-line="73" selection-start-column="25" selection-end-line="73" selection-end-column="25" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/mlnservics/src/main/java/com/immomo/mls/utils/DebugLog.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="625">
+          <caret line="146" column="31" selection-start-line="146" selection-start-column="31" selection-end-line="146" selection-end-column="31" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/sample/src/main/java/com/mln/demo/App.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="160">
+          <caret line="104" column="40" selection-start-line="104" selection-start-column="40" selection-end-line="104" selection-end-column="40" />
+        </state>
+      </provider>
+    </entry>
+  </component>
+  <component name="masterDetails">
+    <states>
+      <state key="ProjectJDKs.UI">
+        <settings>
+          <last-edited>1.8</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+    </states>
+  </component>
+</project>

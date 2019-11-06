@@ -1,0 +1,26 @@
+{
+  "buildFiles": [
+    "/Users/momo/momo_codes/MLN/MLN-Android-Demo/mlnservics/src/main/jni/mln/CMakeLists.txt",
+    "/Users/momo/momo_codes/MLN/MLN-Android-Demo/mlnservics/src/main/jni/bitmap/CMakeLists.txt",
+    "/Users/momo/android-sdks/android-ndk-r20/build/cmake/platforms.cmake",
+    "/Users/momo/momo_codes/MLN/MLN-Android-Demo/mlnservics/src/main/jni/CMakeLists.txt",
+    "/Users/momo/android-sdks/android-ndk-r20/build/cmake/android.toolchain.cmake"
+  ],
+  "cleanCommands": [
+    "/Users/momo/android-sdks/cmake/3.10.2.4988404/bin/cmake --build /Users/momo/momo_codes/MLN/MLN-Android-Demo/mlnservics/.externalNativeBuild/cmake/release/armeabi-v7a --target clean"
+  ],
+  "libraries": {
+    "lblur-Release-armeabi-v7a": {
+      "artifactName": "lblur",
+      "buildCommand": "/Users/momo/android-sdks/cmake/3.10.2.4988404/bin/cmake --build /Users/momo/momo_codes/MLN/MLN-Android-Demo/mlnservics/.externalNativeBuild/cmake/release/armeabi-v7a --target lblur",
+      "abi": "armeabi-v7a",
+      "output": "/Users/momo/momo_codes/MLN/MLN-Android-Demo/mlnservics/src/main/libs/armeabi-v7a/liblblur.so"
+    },
+    "mlnbridge-Release-armeabi-v7a": {
+      "artifactName": "mlnbridge",
+      "buildCommand": "/Users/momo/android-sdks/cmake/3.10.2.4988404/bin/cmake --build /Users/momo/momo_codes/MLN/MLN-Android-Demo/mlnservics/.externalNativeBuild/cmake/release/armeabi-v7a --target mlnbridge",
+      "abi": "armeabi-v7a",
+      "output": "/Users/momo/momo_codes/MLN/MLN-Android-Demo/mlnservics/src/main/libs/armeabi-v7a/libmlnbridge.so"
+    }
+  }
+}
