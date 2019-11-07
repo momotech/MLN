@@ -61,11 +61,20 @@ public class SINavigatorExtend extends SINavigator {
             initData.extras = new HashMap();
         }
         initData.extras.putAll(params);
-        intent.putExtras(MLSBundleUtils.createBundle(initData));
+
+         intent.putExtras(createBundle(initData,action));
+
         if (a != null) {
             a.startActivity(intent);
             a.overridePendingTransition(parseInAnim(animType), parseOutAnim(animType));
         }
+    }
+
+    public static Bundle createBundle(InitData data, String action) {
+        Bundle bundle = new Bundle();
+        bundle.putParcelable("__INIT_DATA", data);
+        bundle.putString("LUA_URL", action);
+        return bundle;
     }
 
     @Override
