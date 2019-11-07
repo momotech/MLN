@@ -18,11 +18,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy) NSString *baseUrlString;
 
 /**
- 添加缓存策略需要过滤的参数Key
- */
-@property (nonatomic, strong) NSSet *CachePolicyFilterKeys;
-
-/**
  强关联对象，可以为任意值，也可以为空
  */
 @property (nonatomic, strong) id strongAssociatedObject;
