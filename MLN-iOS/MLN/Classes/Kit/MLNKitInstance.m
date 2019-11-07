@@ -38,7 +38,8 @@
 @property (nonatomic, strong) MLNWindow *luaWindow;
 @property (nonatomic, assign) BOOL isLuaWindowSetup;
 @property (nonatomic, strong) NSMutableArray *onDestroyCallbacks;
-@property (nonatomic, assign) BOOL needCallApper;
+@property (nonatomic, assign) BOOL didViewAppear;
+@property (nonatomic, assign) BOOL needCallAppear;
 
 @end
 
@@ -68,23 +69,25 @@
 
 - (void)doLuaWindowDidAppear
 {
+    self.didViewAppear = YES;
     if (self.luaWindow && [self.luaWindow canDoLuaViewDidAppear]) {
         [self.luaWindow doLuaViewDidAppear];
-        self.needCallApper = NO;
+        self.needCallAppear = NO;
         return;
     }
-    self.needCallApper = YES;
+    self.needCallAppear = YES;
 }
 
 - (void)redoLuaViewDidAppearIfNeed
 {
-    if (self.needCallApper) {
+    if (self.needCallAppear && self.didViewAppear) {
         [self.luaWindow doLuaViewDidAppear];
     }
 }
 
 - (void)doLuaWindowDidDisappear
 {
+    self.didViewAppear = NO;
     if (self.luaWindow && [self.luaWindow canDoLuaViewDidDisappear]) {
         [self.luaWindow doLuaViewDidDisappear];
     }
@@ -232,7 +235,7 @@
     MLNAssert(self.luaCore, (entryFilePath && entryFilePath.length >0), @"entry file is nil!");
     // 释放当前环境
     [self releaseAll];
-    self.needCallApper = YES;
+    self.needCallAppear = YES;
     // 更新参数配置
     _windowExtra = [NSMutableDictionary dictionaryWithDictionary:windowExtra];
     _entryFilePath = entryFilePath;
@@ -243,7 +246,12 @@
         return NO;
     }
     // 执行
-    return [self runWithEntryFile:entryFilePath error:error];
+    if ([self runWithEntryFile:entryFilePath error:error]) {
+        [self redoLuaViewDidAppearIfNeed];
+        return YES;
+    }
+    return NO;
+    
 }
 
 - (BOOL)registerClazz:(Class<MLNExportProtocol>)clazz error:(NSError * _Nullable __autoreleasing *)error
@@ -376,7 +384,6 @@
     if ([self.delegate respondsToSelector:@selector(didSetupLuaCore:)]) {
         [self.delegate didSetupLuaCore:self];
     }
-    [self redoLuaViewDidAppearIfNeed];
 }
 
 - (void)createLuaCore
