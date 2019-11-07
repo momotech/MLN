@@ -36,6 +36,24 @@
 		873B8AEB1B1F5CCA007FD442 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 873B8AEA1B1F5CCA007FD442 /* Main.storyboard */; };
 		8C5463BE1E8D8BA958F828ED /* libPods-MLN_Tests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A6E2454F7DDA4338383073BC /* libPods-MLN_Tests.a */; };
 		A94791C5348E1F8459BDC83E /* libPods-MLN_Example.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F449C1D4FDA5182F0D579269 /* libPods-MLN_Example.a */; };
+		B29500B72371A3ED00F48F09 /* MLNGalleryMainViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B29500B62371A3ED00F48F09 /* MLNGalleryMainViewController.m */; };
+		B29500BA2371A68300F48F09 /* MLNGalleryHomeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B29500B92371A68300F48F09 /* MLNGalleryHomeViewController.m */; };
+		B29500BD2371AFCB00F48F09 /* MLNGalleryDiscoverViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B29500BC2371AFCB00F48F09 /* MLNGalleryDiscoverViewController.m */; };
+		B29500C02371B11E00F48F09 /* MLNGalleryPlusViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B29500BF2371B11E00F48F09 /* MLNGalleryPlusViewController.m */; };
+		B29500C32371B13F00F48F09 /* MLNGalleryMessageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B29500C22371B13F00F48F09 /* MLNGalleryMessageViewController.m */; };
+		B29500C62371B14F00F48F09 /* MLNGalleryMineViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B29500C52371B14F00F48F09 /* MLNGalleryMineViewController.m */; };
+		B29500CA23725EB800F48F09 /* UIImage+MLNResize.m in Sources */ = {isa = PBXBuildFile; fileRef = B29500C923725EB800F48F09 /* UIImage+MLNResize.m */; };
+		B29500D62372627000F48F09 /* MLNNativeTabSegmentView.m in Sources */ = {isa = PBXBuildFile; fileRef = B29500CD2372627000F48F09 /* MLNNativeTabSegmentView.m */; };
+		B29500D82372627000F48F09 /* MLNNativeBadgeView.m in Sources */ = {isa = PBXBuildFile; fileRef = B29500CF2372627000F48F09 /* MLNNativeBadgeView.m */; };
+		B29500D92372627000F48F09 /* MLNNativeTabSegmentScrollHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = B29500D52372627000F48F09 /* MLNNativeTabSegmentScrollHandler.m */; };
+		B29500E0237274E800F48F09 /* MLNNativeViewPager.m in Sources */ = {isa = PBXBuildFile; fileRef = B29500DE237274E800F48F09 /* MLNNativeViewPager.m */; };
+		B29500E1237274E800F48F09 /* MLNNativeViewPagerAdapter.m in Sources */ = {isa = PBXBuildFile; fileRef = B29500DF237274E800F48F09 /* MLNNativeViewPagerAdapter.m */; };
+		B29500E723727C2900F48F09 /* MLNNativeViewPagerCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B29500E623727C2900F48F09 /* MLNNativeViewPagerCell.m */; };
+		B29500EA2372A3A400F48F09 /* MLNSimpleViewPager.m in Sources */ = {isa = PBXBuildFile; fileRef = B29500E92372A3A400F48F09 /* MLNSimpleViewPager.m */; };
+		B29500F12372BA0000F48F09 /* MLNHomeTableView.m in Sources */ = {isa = PBXBuildFile; fileRef = B29500F02372BA0000F48F09 /* MLNHomeTableView.m */; };
+		B29500F42372BA9000F48F09 /* MLNHomeTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B29500F32372BA9000F48F09 /* MLNHomeTableViewCell.m */; };
+		B29500F72372D5B400F48F09 /* MLNSimpleViewPagerCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B29500F62372D5B400F48F09 /* MLNSimpleViewPagerCell.m */; };
+		B29500FA2373016500F48F09 /* UIAlertController+MLNAlert.m in Sources */ = {isa = PBXBuildFile; fileRef = B29500F92373016500F48F09 /* UIAlertController+MLNAlert.m */; };
 		B2D0AB85236C1F0A00B1D349 /* gallery in Resources */ = {isa = PBXBuildFile; fileRef = B2D0AB84236C1F0A00B1D349 /* gallery */; };
 		B2D0ABB52370136000B1D349 /* MLNGalleryViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B2D0ABB42370136000B1D349 /* MLNGalleryViewController.m */; };
 /* End PBXBuildFile section */
@@ -98,6 +116,44 @@
 		71719F9E1E33DC2100824A3D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		873B8AEA1B1F5CCA007FD442 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = Main.storyboard; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		A6E2454F7DDA4338383073BC /* libPods-MLN_Tests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-MLN_Tests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B29500B52371A3ED00F48F09 /* MLNGalleryMainViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNGalleryMainViewController.h; sourceTree = "<group>"; };
+		B29500B62371A3ED00F48F09 /* MLNGalleryMainViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNGalleryMainViewController.m; sourceTree = "<group>"; };
+		B29500B82371A68300F48F09 /* MLNGalleryHomeViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNGalleryHomeViewController.h; sourceTree = "<group>"; };
+		B29500B92371A68300F48F09 /* MLNGalleryHomeViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNGalleryHomeViewController.m; sourceTree = "<group>"; };
+		B29500BB2371AFCB00F48F09 /* MLNGalleryDiscoverViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNGalleryDiscoverViewController.h; sourceTree = "<group>"; };
+		B29500BC2371AFCB00F48F09 /* MLNGalleryDiscoverViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNGalleryDiscoverViewController.m; sourceTree = "<group>"; };
+		B29500BE2371B11E00F48F09 /* MLNGalleryPlusViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNGalleryPlusViewController.h; sourceTree = "<group>"; };
+		B29500BF2371B11E00F48F09 /* MLNGalleryPlusViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNGalleryPlusViewController.m; sourceTree = "<group>"; };
+		B29500C12371B13F00F48F09 /* MLNGalleryMessageViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNGalleryMessageViewController.h; sourceTree = "<group>"; };
+		B29500C22371B13F00F48F09 /* MLNGalleryMessageViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNGalleryMessageViewController.m; sourceTree = "<group>"; };
+		B29500C42371B14F00F48F09 /* MLNGalleryMineViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNGalleryMineViewController.h; sourceTree = "<group>"; };
+		B29500C52371B14F00F48F09 /* MLNGalleryMineViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNGalleryMineViewController.m; sourceTree = "<group>"; };
+		B29500C823725EB800F48F09 /* UIImage+MLNResize.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIImage+MLNResize.h"; sourceTree = "<group>"; };
+		B29500C923725EB800F48F09 /* UIImage+MLNResize.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIImage+MLNResize.m"; sourceTree = "<group>"; };
+		B29500CD2372627000F48F09 /* MLNNativeTabSegmentView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLNNativeTabSegmentView.m; sourceTree = "<group>"; };
+		B29500CF2372627000F48F09 /* MLNNativeBadgeView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLNNativeBadgeView.m; sourceTree = "<group>"; };
+		B29500D02372627000F48F09 /* MLNNativeTabSegmentViewDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLNNativeTabSegmentViewDelegate.h; sourceTree = "<group>"; };
+		B29500D12372627000F48F09 /* MLNNativeTabSegmentScrollHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLNNativeTabSegmentScrollHandler.h; sourceTree = "<group>"; };
+		B29500D22372627000F48F09 /* MLNNativeBadgeView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLNNativeBadgeView.h; sourceTree = "<group>"; };
+		B29500D42372627000F48F09 /* MLNNativeTabSegmentView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLNNativeTabSegmentView.h; sourceTree = "<group>"; };
+		B29500D52372627000F48F09 /* MLNNativeTabSegmentScrollHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLNNativeTabSegmentScrollHandler.m; sourceTree = "<group>"; };
+		B29500DA23726F9100F48F09 /* MLNGalleryNative.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNGalleryNative.h; sourceTree = "<group>"; };
+		B29500DC237274E800F48F09 /* MLNNativeViewPager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLNNativeViewPager.h; sourceTree = "<group>"; };
+		B29500DD237274E800F48F09 /* MLNNativeViewPagerAdapter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLNNativeViewPagerAdapter.h; sourceTree = "<group>"; };
+		B29500DE237274E800F48F09 /* MLNNativeViewPager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLNNativeViewPager.m; sourceTree = "<group>"; };
+		B29500DF237274E800F48F09 /* MLNNativeViewPagerAdapter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLNNativeViewPagerAdapter.m; sourceTree = "<group>"; };
+		B29500E523727C2900F48F09 /* MLNNativeViewPagerCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNNativeViewPagerCell.h; sourceTree = "<group>"; };
+		B29500E623727C2900F48F09 /* MLNNativeViewPagerCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNNativeViewPagerCell.m; sourceTree = "<group>"; };
+		B29500E82372A3A400F48F09 /* MLNSimpleViewPager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNSimpleViewPager.h; sourceTree = "<group>"; };
+		B29500E92372A3A400F48F09 /* MLNSimpleViewPager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNSimpleViewPager.m; sourceTree = "<group>"; };
+		B29500EF2372BA0000F48F09 /* MLNHomeTableView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNHomeTableView.h; sourceTree = "<group>"; };
+		B29500F02372BA0000F48F09 /* MLNHomeTableView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNHomeTableView.m; sourceTree = "<group>"; };
+		B29500F22372BA9000F48F09 /* MLNHomeTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNHomeTableViewCell.h; sourceTree = "<group>"; };
+		B29500F32372BA9000F48F09 /* MLNHomeTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNHomeTableViewCell.m; sourceTree = "<group>"; };
+		B29500F52372D5B400F48F09 /* MLNSimpleViewPagerCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNSimpleViewPagerCell.h; sourceTree = "<group>"; };
+		B29500F62372D5B400F48F09 /* MLNSimpleViewPagerCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNSimpleViewPagerCell.m; sourceTree = "<group>"; };
+		B29500F82373016500F48F09 /* UIAlertController+MLNAlert.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIAlertController+MLNAlert.h"; sourceTree = "<group>"; };
+		B29500F92373016500F48F09 /* UIAlertController+MLNAlert.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIAlertController+MLNAlert.m"; sourceTree = "<group>"; };
 		B2D0AB84236C1F0A00B1D349 /* gallery */ = {isa = PBXFileReference; lastKnownFileType = folder; path = gallery; sourceTree = "<group>"; };
 		B2D0ABB32370136000B1D349 /* MLNGalleryViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNGalleryViewController.h; sourceTree = "<group>"; };
 		B2D0ABB42370136000B1D349 /* MLNGalleryViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNGalleryViewController.m; sourceTree = "<group>"; };
@@ -180,6 +236,7 @@
 		6003F593195388D20070C39A /* Example for MLN */ = {
 			isa = PBXGroup;
 			children = (
+				B29500B42371855900F48F09 /* Gallery_Native */,
 				B2D0AB84236C1F0A00B1D349 /* gallery */,
 				30A4EB54231CBF7800995416 /* moment */,
 				6003F59C195388D20070C39A /* MLNAppDelegate.h */,
@@ -254,6 +311,91 @@
 				C0FB2CAC8F9592C3092ACF62 /* LICENSE */,
 			);
 			name = "Podspec Metadata";
+			sourceTree = "<group>";
+		};
+		B29500B42371855900F48F09 /* Gallery_Native */ = {
+			isa = PBXGroup;
+			children = (
+				B29500CB2372619800F48F09 /* Gui */,
+				B29500C723725E8300F48F09 /* Util */,
+				B29500B52371A3ED00F48F09 /* MLNGalleryMainViewController.h */,
+				B29500B62371A3ED00F48F09 /* MLNGalleryMainViewController.m */,
+				B29500B82371A68300F48F09 /* MLNGalleryHomeViewController.h */,
+				B29500B92371A68300F48F09 /* MLNGalleryHomeViewController.m */,
+				B29500BB2371AFCB00F48F09 /* MLNGalleryDiscoverViewController.h */,
+				B29500BC2371AFCB00F48F09 /* MLNGalleryDiscoverViewController.m */,
+				B29500BE2371B11E00F48F09 /* MLNGalleryPlusViewController.h */,
+				B29500BF2371B11E00F48F09 /* MLNGalleryPlusViewController.m */,
+				B29500C12371B13F00F48F09 /* MLNGalleryMessageViewController.h */,
+				B29500C22371B13F00F48F09 /* MLNGalleryMessageViewController.m */,
+				B29500C42371B14F00F48F09 /* MLNGalleryMineViewController.h */,
+				B29500C52371B14F00F48F09 /* MLNGalleryMineViewController.m */,
+			);
+			path = Gallery_Native;
+			sourceTree = "<group>";
+		};
+		B29500C723725E8300F48F09 /* Util */ = {
+			isa = PBXGroup;
+			children = (
+				B29500C823725EB800F48F09 /* UIImage+MLNResize.h */,
+				B29500C923725EB800F48F09 /* UIImage+MLNResize.m */,
+				B29500DA23726F9100F48F09 /* MLNGalleryNative.h */,
+				B29500F82373016500F48F09 /* UIAlertController+MLNAlert.h */,
+				B29500F92373016500F48F09 /* UIAlertController+MLNAlert.m */,
+			);
+			path = Util;
+			sourceTree = "<group>";
+		};
+		B29500CB2372619800F48F09 /* Gui */ = {
+			isa = PBXGroup;
+			children = (
+				B29500EE2372A90D00F48F09 /* Home */,
+				B29500DB237274E800F48F09 /* ViewPager */,
+				B29500CC2372627000F48F09 /* TabSegmentView */,
+			);
+			path = Gui;
+			sourceTree = "<group>";
+		};
+		B29500CC2372627000F48F09 /* TabSegmentView */ = {
+			isa = PBXGroup;
+			children = (
+				B29500D02372627000F48F09 /* MLNNativeTabSegmentViewDelegate.h */,
+				B29500D22372627000F48F09 /* MLNNativeBadgeView.h */,
+				B29500CF2372627000F48F09 /* MLNNativeBadgeView.m */,
+				B29500D42372627000F48F09 /* MLNNativeTabSegmentView.h */,
+				B29500CD2372627000F48F09 /* MLNNativeTabSegmentView.m */,
+				B29500D12372627000F48F09 /* MLNNativeTabSegmentScrollHandler.h */,
+				B29500D52372627000F48F09 /* MLNNativeTabSegmentScrollHandler.m */,
+			);
+			path = TabSegmentView;
+			sourceTree = "<group>";
+		};
+		B29500DB237274E800F48F09 /* ViewPager */ = {
+			isa = PBXGroup;
+			children = (
+				B29500DC237274E800F48F09 /* MLNNativeViewPager.h */,
+				B29500DE237274E800F48F09 /* MLNNativeViewPager.m */,
+				B29500DD237274E800F48F09 /* MLNNativeViewPagerAdapter.h */,
+				B29500DF237274E800F48F09 /* MLNNativeViewPagerAdapter.m */,
+				B29500E523727C2900F48F09 /* MLNNativeViewPagerCell.h */,
+				B29500E623727C2900F48F09 /* MLNNativeViewPagerCell.m */,
+				B29500E82372A3A400F48F09 /* MLNSimpleViewPager.h */,
+				B29500E92372A3A400F48F09 /* MLNSimpleViewPager.m */,
+				B29500F52372D5B400F48F09 /* MLNSimpleViewPagerCell.h */,
+				B29500F62372D5B400F48F09 /* MLNSimpleViewPagerCell.m */,
+			);
+			path = ViewPager;
+			sourceTree = "<group>";
+		};
+		B29500EE2372A90D00F48F09 /* Home */ = {
+			isa = PBXGroup;
+			children = (
+				B29500EF2372BA0000F48F09 /* MLNHomeTableView.h */,
+				B29500F02372BA0000F48F09 /* MLNHomeTableView.m */,
+				B29500F22372BA9000F48F09 /* MLNHomeTableViewCell.h */,
+				B29500F32372BA9000F48F09 /* MLNHomeTableViewCell.m */,
+			);
+			path = Home;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -444,15 +586,33 @@
 				30E24E9422F3D74A00A0E78C /* MLNGlobalFuncTest.m in Sources */,
 				30E24E9522F3D74A00A0E78C /* MLNStaticTest.m in Sources */,
 				6003F59E195388D20070C39A /* MLNAppDelegate.m in Sources */,
+				B29500F72372D5B400F48F09 /* MLNSimpleViewPagerCell.m in Sources */,
+				B29500BA2371A68300F48F09 /* MLNGalleryHomeViewController.m in Sources */,
+				B29500FA2373016500F48F09 /* UIAlertController+MLNAlert.m in Sources */,
+				B29500D92372627000F48F09 /* MLNNativeTabSegmentScrollHandler.m in Sources */,
+				B29500D62372627000F48F09 /* MLNNativeTabSegmentView.m in Sources */,
+				B29500EA2372A3A400F48F09 /* MLNSimpleViewPager.m in Sources */,
 				30A4EB60231CD75200995416 /* MLNMyRefreshHandler.m in Sources */,
 				30A4EB5D231CC86B00995416 /* MLNMyImageHandler.m in Sources */,
 				30E24E9622F3D74A00A0E78C /* MLNGlobalVarTest.m in Sources */,
 				6003F5A7195388D20070C39A /* MLNViewController.m in Sources */,
 				3012BB102326822F00FA2BB2 /* MLNNavigatorHandler.m in Sources */,
+				B29500C02371B11E00F48F09 /* MLNGalleryPlusViewController.m in Sources */,
+				B29500CA23725EB800F48F09 /* UIImage+MLNResize.m in Sources */,
+				B29500C32371B13F00F48F09 /* MLNGalleryMessageViewController.m in Sources */,
+				B29500F12372BA0000F48F09 /* MLNHomeTableView.m in Sources */,
+				B29500BD2371AFCB00F48F09 /* MLNGalleryDiscoverViewController.m in Sources */,
 				6003F59A195388D20070C39A /* main.m in Sources */,
+				B29500B72371A3ED00F48F09 /* MLNGalleryMainViewController.m in Sources */,
 				30E24E9322F3D74A00A0E78C /* MLNTestMe.m in Sources */,
+				B29500F42372BA9000F48F09 /* MLNHomeTableViewCell.m in Sources */,
 				B2D0ABB52370136000B1D349 /* MLNGalleryViewController.m in Sources */,
+				B29500C62371B14F00F48F09 /* MLNGalleryMineViewController.m in Sources */,
 				30A4EB6D231F4FD400995416 /* MLNTestMe+Test.m in Sources */,
+				B29500D82372627000F48F09 /* MLNNativeBadgeView.m in Sources */,
+				B29500E1237274E800F48F09 /* MLNNativeViewPagerAdapter.m in Sources */,
+				B29500E0237274E800F48F09 /* MLNNativeViewPager.m in Sources */,
+				B29500E723727C2900F48F09 /* MLNNativeViewPagerCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -617,7 +777,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "iPhone Distribution";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = "";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;

@@ -15,16 +15,20 @@
 #import "MLNOfflineViewController.h"
 #import <MLNDevTool/MLNFPSLabel.h>
 #import <MLNDevTool/MLNLoadTimeStatistics.h>
+#import "MLNGalleryMainViewController.h"
 
 @interface MLNGalleryViewController () <MLNKitInstanceErrorHandlerProtocol, MLNKitInstanceDelegate>
 
 @property (nonatomic, strong) MLNKitViewController *kcv;
 @property (nonatomic, strong) MLNHotReloadViewController *hotvc;
 @property (nonatomic, strong) MLNOfflineViewController *ovc;
+@property (nonatomic, strong) MLNGalleryMainViewController *galleryMainVc;
 
 @property (nonatomic, strong) UIButton *showDemoButton;
 @property (nonatomic, strong) UIButton *showHotReloadButton;
 @property (nonatomic, strong) UIButton *showOfflineButton;
+@property (nonatomic, strong) UIButton *showNativeDemoButton;
+
 @property (nonatomic, strong) MLNFPSLabel *fpsLabel;
 @property (nonatomic, strong) UILabel *loadTimeLabel;
 @property (nonatomic, strong) MLNLoadTimeStatistics *loadTimeStatistics;
@@ -80,6 +84,13 @@
     self.ovc = [[MLNOfflineViewController alloc] init];
     [self presentViewController:self.ovc animated:YES completion:nil];
 }
+
+- (void)showNativeDemo:(id)sender
+{
+    self.galleryMainVc = [[MLNGalleryMainViewController alloc] init];
+    [self presentViewController:self.galleryMainVc animated:YES completion:nil];
+}
+
 
 #pragma mark - MLNUIInStanceErrorHandlerProtocol
 - (BOOL)canHandleAssert:(MLNKitInstance *)instance
@@ -174,6 +185,12 @@
     self.showOfflineButton = [self createButtonWithTitle:@"离线加载" action:@selector(showOfflineButton)];
     self.showOfflineButton.frame = CGRectMake(showOfflineButtonX, showOfflineButtonY, buttonW, buttonH);
     [self.view addSubview:self.showOfflineButton];
+    
+    CGFloat showNativeDemoButtonX = showDemoButtonX;
+    CGFloat showNativeDemoButtonY = showOfflineButtonY + buttonH + space;
+    self.showNativeDemoButton = [self createButtonWithTitle:@"Native Demo展示" action:@selector(showNativeDemo:)];
+    self.showNativeDemoButton.frame = CGRectMake(showNativeDemoButtonX, showNativeDemoButtonY, buttonW, buttonH);
+    [self.view addSubview:self.showNativeDemoButton];
     
     CGFloat screenHeight = [UIScreen mainScreen].bounds.size.height;
     self.fpsLabel = [[MLNFPSLabel alloc] initWithFrame:CGRectMake(10, screenHeight * 0.8, 50, 20)];
