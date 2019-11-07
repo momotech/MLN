@@ -15,6 +15,10 @@
 @interface MLNSimpleViewPager()<UICollectionViewDataSource, UIScrollViewDelegate>
 @property (nonatomic, strong) UICollectionView *mainView;
 @property (nonatomic, strong) NSArray *dataList;
+
+@property (nonatomic, copy) RefreshBlock refreshBlock;
+@property (nonatomic, copy) LoadingBlock loadingBlock;
+@property (nonatomic, copy) SearchBlock searchBlock;
 @end
 
 @implementation MLNSimpleViewPager
@@ -36,8 +40,23 @@
 }
 
 - (void)scrollToPage:(NSUInteger)index aniamted:(BOOL)animated {
-    
     [self.mainView scrollToItemAtIndexPath:[NSIndexPath indexPathForRow:index inSection:0] atScrollPosition:UICollectionViewScrollPositionLeft animated:YES];
+}
+
+
+- (void)setRefreshBlock:(RefreshBlock)refreshBlock
+{
+    _refreshBlock = refreshBlock;
+}
+
+- (void)setLoadingBlock:(LoadingBlock)loadingBlock
+{
+    _loadingBlock = loadingBlock;
+}
+
+- (void)setSearchBlock:(SearchBlock)searchBlock
+{
+    _searchBlock = searchBlock;
 }
 
 #pragma mark - ScrollViewDelegate
@@ -59,6 +78,9 @@
         cell.mainTableView.tableType = @"recommend";
     }
     [cell.mainTableView reloadTableWithDataList:self.dataList];
+    [cell.mainTableView setRefreshBlock:_refreshBlock];
+    [cell.mainTableView setLoadingBlock:_loadingBlock];
+    [cell.mainTableView setSearchBlock:_searchBlock];
     
     return cell;
 }

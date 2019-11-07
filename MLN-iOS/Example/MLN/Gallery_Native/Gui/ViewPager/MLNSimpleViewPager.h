@@ -7,13 +7,28 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "MLNHomeTableView.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface MLNSimpleViewPager : UIView
+@class MLNSimpleViewPager;
+@class MLNTabSegmentView;
+@protocol MLNCycleScrollViewDelegate <NSObject>
+
+@property (nonatomic, assign) NSInteger cellCounts;
+@property (nonatomic, weak) MLNSimpleViewPager *viewPager;
+@property (nonatomic, weak) UICollectionView *targetCollectionView;
+
+@end
+
+
+@interface MLNSimpleViewPager : UIView<MLNCycleScrollViewDelegate>
 
 - (void)reloadWithDataList:(NSArray *)dataList;
 - (void)scrollToPage:(NSUInteger)index aniamted:(BOOL)animated;
+- (void)setRefreshBlock:(RefreshBlock)refreshBlock;
+- (void)setLoadingBlock:(LoadingBlock)loadingBlock;
+- (void)setSearchBlock:(SearchBlock)searchBlock;
 
 @end
 

@@ -9,16 +9,18 @@
 #import "MLNHomeTableViewCell.h"
 #import "MLNGalleryNative.h"
 #import <UIImageView+WebCache.h>
+#import <SDCycleScrollView/SDCycleScrollView.h>
+#import "MLNHomeDataHandler.h"
+#import <UIView+Toast.h>
 
 @interface MLNHomeTableViewCell()
+@property (nonatomic, strong) UIView *containerView;
 @property (nonatomic, strong) UIView *topContainerView;
 @property (nonatomic, strong) UIImageView *avtarImageView;
 @property (nonatomic, strong) UILabel *shopLabel;
 @property (nonatomic, strong) UIButton *followButton;
-//轮播图
-//@property (nonatomic, strong) UIImageView *viewPagerY;
+@property (nonatomic, strong) SDCycleScrollView *viewPager;
 @property (nonatomic, strong) UILabel *descLabel;
-
 @property (nonatomic, strong) UIView *inspirContainerView;
 @property (nonatomic, strong) UIImageView *inspirImageView;
 @property (nonatomic, strong) UILabel *titleLabel;
@@ -31,9 +33,9 @@
 @property (nonatomic, strong) UIImageView *mesageImageView;
 @property (nonatomic, strong) UILabel *messageCountLabel;
 @property (nonatomic, strong) UIImageView *collectImageView;
-
 @property (nonatomic, assign) CGFloat cellHeight;
-
+@property (nonatomic, assign) BOOL hasLiked;
+@property (nonatomic, assign) BOOL hasCollect;
 @end
 
 @implementation MLNHomeTableViewCell
@@ -49,23 +51,20 @@
 - (void)setupSubviews
 {
     self.selectionStyle = UITableViewCellSelectionStyleNone;
-    
-    [self addSubview:self.topContainerView];
+    self.backgroundColor = [UIColor colorWithRed:245/255.0 green:245/255.0 blue:245/255.0 alpha:1.0];
+    [self addSubview:self.containerView];
+    [self.containerView addSubview:self.topContainerView];
     [self.topContainerView addSubview:self.avtarImageView];
     [self.topContainerView addSubview:self.shopLabel];
     [self.topContainerView addSubview:self.followButton];
-    
-    // 轮播图
-    // ...
-    
-    [self addSubview:self.descLabel];
-    [self addSubview:self.inspirContainerView];
+    [self.containerView addSubview:self.viewPager];
+    [self.containerView addSubview:self.descLabel];
+    [self.containerView addSubview:self.inspirContainerView];
     [self.inspirContainerView addSubview:self.inspirImageView];
     [self.inspirContainerView addSubview:self.titleLabel];
     [self.inspirContainerView addSubview:self.subTitleLabel];
     [self.inspirContainerView addSubview:self.linkLabel];
-    
-    [self addSubview:self.bottomContainerView];
+    [self.containerView addSubview:self.bottomContainerView];
     [self.bottomContainerView addSubview:self.ellipsisImageView];
     [self.bottomContainerView addSubview:self.likeImageView];
     [self.bottomContainerView addSubview:self.likeCountLabel];
@@ -81,25 +80,21 @@
 
 - (void)reloadCellWithData:(NSDictionary *)dict
 {
-//    self.nameLabel:text(item:get("sellernick")) --名字
-//    self.avatarView:image(item:get("itempic")) --头像
-//
-//    self.cellItems:insert(1, item:get("itempic")) --图片
-//    local count = self.cellItems:size()
-//    if count > 10 then --设置cell上的图片滑动展示数量最多10个
-//        self.cellItems:removeObjectsAtRange(10, count)
-//        end
-//        self.viewPager:reloadData()
-//
-//        self.descLabel:text(item:get("itemdesc")) --简介
-//        self.detailImageView:image(item:get("itempic"))  --小图片
-//        self.detailSubTitleLabel:text(item:get("itemshorttitle")) --副标题
-//        self.detailCountLabel:text(string.format("%d篇内容>", item:get("couponmoney"))) --内容数量
-//        self.likeCountLabel:text(item:get("itemsale")) --点赞数量
-//        self.commentCountLabel:text(item:get("general_index")) --评论数量
-//    [self.avtarImageView sd_setImageWithURL:[dict valueForKey:@"itempic"]];
     [self.avtarImageView sd_setImageWithURL:[NSURL URLWithString:[dict valueForKey:@"itempic"]]];
     self.shopLabel.text = [dict valueForKey:@"sellernick"];
+    NSMutableArray *pictureArray = [NSMutableArray new];
+    NSInteger picCount = [MLNHomeDataHandler handler].dataList.count;
+    for (NSInteger i = 0; i < picCount; i++) {
+        if (i >= 9) {
+            break;
+        }
+        NSDictionary *dict = [MLNHomeDataHandler handler].dataList[i];
+        NSString *picUrlString = [dict valueForKey:@"itempic"];
+        if (picUrlString) {
+            [pictureArray addObject:picUrlString];
+        }
+    }
+    [self.viewPager setImageURLStringsGroup:pictureArray];
     self.descLabel.text = [dict valueForKey:@"itemshorttitle"];
     [self.inspirImageView sd_setImageWithURL:[NSURL URLWithString:[dict valueForKey:@"itempic"]]];
     self.subTitleLabel.text = [dict valueForKey:@"itemshorttitle"];
@@ -131,13 +126,15 @@
     CGFloat followButtonY = (topContainerViewH - followButtonH) / 2.0;
     self.followButton.frame = CGRectMake(followButtonX, followButtonY, followButtonW, followButtonH);
     
-    // 轮播图
-    CGFloat viewPagerY = 100;
-    // ...
+    CGFloat viewPagerX = 0;
+    CGFloat viewPagerY = topContainerViewH + 10;
+    CGFloat viewPagerHeight = 320;
+//    CGFloat viewPagerHeight = self.avtarImageView.image.size.height/self.avtarImageView.image.size.width * kScreenWidth;
+    self.viewPager.frame = CGRectMake(viewPagerX, viewPagerY, kScreenWidth, viewPagerHeight);
     
     CGFloat descLabelX = 10;
     CGSize descLabelSize = [self.descLabel.text boundingRectWithSize:CGSizeMake(kScreenWidth - 20, CGFLOAT_MAX) options:NSStringDrawingUsesLineFragmentOrigin|NSStringDrawingUsesFontLeading attributes:@{NSFontAttributeName : self.descLabel.font} context:nil].size;
-    CGFloat descLabelY = viewPagerY + self.descLabel.frame.size.height + 10;
+    CGFloat descLabelY = viewPagerY + viewPagerHeight + 10;
     self.descLabel.frame = CGRectMake(descLabelX, descLabelY, descLabelSize.width, descLabelSize.height);
     
     CGFloat inspirContainerViewW = kScreenWidth - 20;
@@ -196,9 +193,10 @@
     CGFloat likeCountLabelY = messageImageViewY;
     self.likeCountLabel.frame = CGRectMake(likeCountLabelX, likeCountLabelY, countLabelW, countLabelH);
     
-    self.cellHeight = bottomContainerViewY + bottomContainerViewH + 8;
+    CGFloat containerViewHeight = bottomContainerViewY + bottomContainerViewH;
+    self.containerView.frame = CGRectMake(0, 0, kScreenWidth, containerViewHeight);
+    self.cellHeight = containerViewHeight + 8;
 }
-
 
 #pragma mark - Action
 - (void)followButtonClicked:(UIButton *)sender
@@ -210,8 +208,72 @@
     }
 }
 
+- (void)ellipsisImageViewClicked:(UIGestureRecognizer *)gesture
+{
+    [self makeToast:@"分享给你的好友哦" duration:2.0 position:CSToastPositionCenter];
+}
+
+- (void)inspirContainerViewClicked:(UIGestureRecognizer *)gesture
+{
+    [self makeToast:@"灵感集里面还有更多内容哦" duration:2.0 position:CSToastPositionCenter];
+}
+
+- (void)likeImageViewClicked:(UIGestureRecognizer *)gesture
+{
+    if (self.hasLiked)
+    {
+        [self.likeImageView sd_setImageWithURL:[NSURL URLWithString:@"https://s.momocdn.com/w/u/others/2019/08/31/1567257871136-like.png"]];
+        self.likeCountLabel.text = [NSString stringWithFormat:@"%@", @(self.likeCountLabel.text.integerValue - 1)];
+        self.hasLiked = NO;
+    } else {
+        [self makeToast:@"点赞成功，购物基金+1" duration:1.0 position:CSToastPositionCenter];
+        [self.likeImageView sd_setImageWithURL:[NSURL URLWithString:@"https://s.momocdn.com/w/u/others/2019/08/31/1567257871172-liked.png"]];
+        self.likeCountLabel.text = [NSString stringWithFormat:@"%@", @(self.likeCountLabel.text.integerValue + 1)];
+        self.hasLiked = YES;
+    }
+    [self scaleAnimationWithView:self.likeImageView];
+}
+
+- (void)messageImageViewClicked:(UIGestureRecognizer *)gesture
+{
+    NSString *message = [NSString stringWithFormat:@"%@条评论", self.messageCountLabel.text];
+    [self makeToast:message duration:2.0 position:CSToastPositionCenter];
+}
+
+- (void)collectImageViewClicked:(UIGestureRecognizer *)gesture
+{
+    if (self.hasCollect)
+    {
+        [self.collectImageView sd_setImageWithURL:[NSURL URLWithString:@"https://s.momocdn.com/w/u/others/2019/08/31/1567258988643-collect.png"]];
+        self.hasCollect = NO;
+    } else {
+        [self makeToast:@"收藏成功" duration:1.0 position:CSToastPositionCenter];
+        [self.collectImageView sd_setImageWithURL:[NSURL URLWithString:@"https://s.momocdn.com/w/u/others/2019/08/31/1567258988643-collected.png"]];
+        self.hasCollect = YES;
+    }
+    [self scaleAnimationWithView:self.collectImageView];
+}
+
+#pragma mark - Interaction button animation
+- (void)scaleAnimationWithView:(UIView *)animationView
+{
+    CABasicAnimation *animation = [CABasicAnimation animationWithKeyPath:@"transform.scale"];
+    animation.toValue = [NSNumber numberWithFloat:1.2];
+    animation.duration = 0.25;
+    animation.autoreverses = YES;
+    [animationView.layer addAnimation:animation forKey:@"ScaleAnimaiton"];
+}
 
 #pragma mark - Private method
+- (UIView *)containerView
+{
+    if (!_containerView) {
+        _containerView = [[UIView alloc] init];
+        _containerView.backgroundColor = [UIColor whiteColor];
+    }
+    return _containerView;
+}
+
 - (UIView *)topContainerView
 {
     if (!_topContainerView) {
@@ -255,6 +317,15 @@
     return _followButton;
 }
 
+- (SDCycleScrollView *)viewPager
+{
+    if (!_viewPager) {
+        _viewPager = [SDCycleScrollView cycleScrollViewWithFrame:CGRectZero imageURLStringsGroup:nil];
+    }
+    return _viewPager;
+}
+
+
 - (UILabel *)descLabel
 {
     if (!_descLabel) {
@@ -272,6 +343,8 @@
     if (!_inspirContainerView) {
         _inspirContainerView = [[UIView alloc] init];
         _inspirContainerView.backgroundColor = [UIColor colorWithRed:245/255.0 green:245/255.0 blue:245/255.0 alpha:1.0];
+        UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(inspirContainerViewClicked:)];
+        [_inspirContainerView addGestureRecognizer:tapGesture];
     }
     return _inspirContainerView;
 }
@@ -334,6 +407,9 @@
     if (!_ellipsisImageView) {
         _ellipsisImageView = [[UIImageView alloc] init];
         [_ellipsisImageView sd_setImageWithURL:[NSURL URLWithString:@"https://s.momocdn.com/w/u/others/2019/08/28/1566958902005-share.png"]];
+        _ellipsisImageView.userInteractionEnabled = YES;
+        UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(ellipsisImageViewClicked:)];
+        [_ellipsisImageView addGestureRecognizer:tapGesture];
     }
     return _ellipsisImageView;
 }
@@ -343,6 +419,9 @@
     if (!_likeImageView) {
         _likeImageView = [[UIImageView alloc] init];
         [_likeImageView sd_setImageWithURL:[NSURL URLWithString:@"https://s.momocdn.com/w/u/others/2019/08/31/1567257871136-like.png"]];
+        _likeImageView.userInteractionEnabled = YES;
+        UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(likeImageViewClicked:)];
+        [_likeImageView addGestureRecognizer:tapGesture];
     }
     return _likeImageView;
 }
@@ -363,6 +442,9 @@
     if (!_mesageImageView) {
         _mesageImageView = [[UIImageView alloc] init];
         [_mesageImageView sd_setImageWithURL:[NSURL URLWithString:@"https://s.momocdn.com/w/u/others/2019/08/28/1566958902036-comment.png"]];
+        _mesageImageView.userInteractionEnabled = YES;
+        UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(messageImageViewClicked:)];
+        [_mesageImageView addGestureRecognizer:tapGesture];
     }
     return _mesageImageView;
 }
@@ -383,6 +465,9 @@
     if (!_collectImageView) {
         _collectImageView = [[UIImageView alloc] init];
         [_collectImageView sd_setImageWithURL:[NSURL URLWithString:@"https://s.momocdn.com/w/u/others/2019/08/31/1567258988643-collect.png"]];
+        _collectImageView.userInteractionEnabled = YES;
+        UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(collectImageViewClicked:)];
+        [_collectImageView addGestureRecognizer:tapGesture];
     }
     return _collectImageView;
 }

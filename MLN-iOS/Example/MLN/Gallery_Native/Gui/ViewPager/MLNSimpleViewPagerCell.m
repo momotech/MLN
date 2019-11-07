@@ -22,6 +22,22 @@
     self.mainTableView.frame = self.contentView.bounds;
 }
 
+
+- (void)setRefreshBlock:(RefreshBlock)refreshBlock
+{
+    [self.mainTableView setRefreshBlock:refreshBlock];
+}
+
+- (void)setLoadingBlock:(LoadingBlock)loadingBlock
+{
+    [self.mainTableView setLoadingBlock:loadingBlock];
+}
+
+- (void)setSearchBlock:(SearchBlock)searchBlock
+{
+    [self.mainTableView setSearchBlock:searchBlock];
+}
+
 - (MLNHomeTableView *)mainTableView
 {
     if (!_mainTableView) {
