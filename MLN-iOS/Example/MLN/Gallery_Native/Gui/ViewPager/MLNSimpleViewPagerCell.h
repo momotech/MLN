@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "MLNHomeTableView.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -15,6 +16,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, strong, readonly) MLNHomeTableView *mainTableView;
 
+- (void)setRefreshBlock:(RefreshBlock)refreshBlock;
+- (void)setLoadingBlock:(LoadingBlock)loadingBlock;
+- (void)setSearchBlock:(SearchBlock)searchBlock;
 
 @end
 

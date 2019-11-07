@@ -54,6 +54,7 @@
 		B29500F42372BA9000F48F09 /* MLNHomeTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B29500F32372BA9000F48F09 /* MLNHomeTableViewCell.m */; };
 		B29500F72372D5B400F48F09 /* MLNSimpleViewPagerCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B29500F62372D5B400F48F09 /* MLNSimpleViewPagerCell.m */; };
 		B29500FA2373016500F48F09 /* UIAlertController+MLNAlert.m in Sources */ = {isa = PBXBuildFile; fileRef = B29500F92373016500F48F09 /* UIAlertController+MLNAlert.m */; };
+		B29500FD2373BB3000F48F09 /* MLNHomeDataHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = B29500FC2373BB3000F48F09 /* MLNHomeDataHandler.m */; };
 		B2D0AB85236C1F0A00B1D349 /* gallery in Resources */ = {isa = PBXBuildFile; fileRef = B2D0AB84236C1F0A00B1D349 /* gallery */; };
 		B2D0ABB52370136000B1D349 /* MLNGalleryViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B2D0ABB42370136000B1D349 /* MLNGalleryViewController.m */; };
 /* End PBXBuildFile section */
@@ -154,6 +155,8 @@
 		B29500F62372D5B400F48F09 /* MLNSimpleViewPagerCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNSimpleViewPagerCell.m; sourceTree = "<group>"; };
 		B29500F82373016500F48F09 /* UIAlertController+MLNAlert.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIAlertController+MLNAlert.h"; sourceTree = "<group>"; };
 		B29500F92373016500F48F09 /* UIAlertController+MLNAlert.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIAlertController+MLNAlert.m"; sourceTree = "<group>"; };
+		B29500FB2373BB3000F48F09 /* MLNHomeDataHandler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNHomeDataHandler.h; sourceTree = "<group>"; };
+		B29500FC2373BB3000F48F09 /* MLNHomeDataHandler.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNHomeDataHandler.m; sourceTree = "<group>"; };
 		B2D0AB84236C1F0A00B1D349 /* gallery */ = {isa = PBXFileReference; lastKnownFileType = folder; path = gallery; sourceTree = "<group>"; };
 		B2D0ABB32370136000B1D349 /* MLNGalleryViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNGalleryViewController.h; sourceTree = "<group>"; };
 		B2D0ABB42370136000B1D349 /* MLNGalleryViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNGalleryViewController.m; sourceTree = "<group>"; };
@@ -394,6 +397,8 @@
 				B29500F02372BA0000F48F09 /* MLNHomeTableView.m */,
 				B29500F22372BA9000F48F09 /* MLNHomeTableViewCell.h */,
 				B29500F32372BA9000F48F09 /* MLNHomeTableViewCell.m */,
+				B29500FB2373BB3000F48F09 /* MLNHomeDataHandler.h */,
+				B29500FC2373BB3000F48F09 /* MLNHomeDataHandler.m */,
 			);
 			path = Home;
 			sourceTree = "<group>";
@@ -605,6 +610,7 @@
 				6003F59A195388D20070C39A /* main.m in Sources */,
 				B29500B72371A3ED00F48F09 /* MLNGalleryMainViewController.m in Sources */,
 				30E24E9322F3D74A00A0E78C /* MLNTestMe.m in Sources */,
+				B29500FD2373BB3000F48F09 /* MLNHomeDataHandler.m in Sources */,
 				B29500F42372BA9000F48F09 /* MLNHomeTableViewCell.m in Sources */,
 				B2D0ABB52370136000B1D349 /* MLNGalleryViewController.m in Sources */,
 				B29500C62371B14F00F48F09 /* MLNGalleryMineViewController.m in Sources */,

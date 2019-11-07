@@ -11,6 +11,9 @@
 #import "MLNGalleryNative.h"
 #import "MLNSimpleViewPager.h"
 #import "MLNMyHttpHandler.h"
+#import "MLNHomeDataHandler.h"
+#import "UIView+Toast.h"
+#import <MJRefresh.h>
 
 @interface MLNGalleryHomeViewController ()
 @property (nonatomic, strong) MLNNativeTabSegmentView *segementView;
@@ -29,7 +32,6 @@
     [super viewDidLoad];
 
     [self setupSubviews];
-    
     [self requestData];
 }
 
@@ -45,9 +47,23 @@
     [self.view addSubview:self.segementView];
     
     self.viewPager = [[MLNSimpleViewPager alloc] initWithFrame:CGRectMake(0, kNaviBarHeight, kScreenWidth, kScreenHeight - kNaviBarHeight - kTabbBarHeight)];
+    
+    [self.viewPager setRefreshBlock:^(UITableView *tableView){
+        [tableView.mj_header endRefreshing];
+    }];
+    
+    [self.viewPager setLoadingBlock:^(UITableView *tableView){
+    
+    }];
+    
+    __weak typeof(self) weakSelf = self;
+    [self.viewPager setSearchBlock:^{
+        [weakSelf.view makeToast:@"网红咖啡馆"
+                        duration:2.0
+                        position:CSToastPositionCenter];
+    }];
     [self.view addSubview:self.viewPager];
 }
-
 
 - (void)requestData
 {
@@ -57,14 +73,13 @@
     [self.myHttpHandler http:nil get:requestUrlString params:@{@"mid":@(self.mid), @"cid":@(self.cid)} completionHandler:^(BOOL success, NSDictionary * _Nonnull respose, NSDictionary * _Nonnull error) {
         NSLog(@"-------> response:%@", respose);
         if (!success) {
-            UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Title"
-                                                                           message:nil
-                                                                    preferredStyle:UIAlertControllerStyleAlert];
-            [self presentViewController:alert animated:YES completion:nil];
+            [self.view makeToast:error.description
+                        duration:3.0
+                        position:CSToastPositionCenter];
             return;
         }
-        
         self.dataList = [respose valueForKey:@"data"];
+        [[MLNHomeDataHandler handler] updateDataList:self.dataList];
         [self.viewPager reloadWithDataList:self.dataList];
     }];
 #pragma clang diagnostic pop

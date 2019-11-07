@@ -9,11 +9,15 @@
 #import "MLNHomeTableView.h"
 #import "MLNHomeTableViewCell.h"
 #import "MLNGalleryNative.h"
+#import <MJRefresh.h>
 
 @interface MLNHomeTableView()<UITableViewDataSource, UITableViewDelegate>
 
 @property (nonatomic, strong) UITableView *tableView;
 @property (nonatomic, strong) NSArray *dataList;
+@property (nonatomic, copy) RefreshBlock refreshBlock;
+@property (nonatomic, copy) LoadingBlock loadingBlock;
+@property (nonatomic, copy) SearchBlock searchBlock;
 
 @end
 
@@ -35,11 +39,46 @@ static NSString *kHomeTableViewCell = @"kHomeTableViewCell";
     self.tableView.frame = self.bounds;
 }
 
+- (void)setRefreshBlock:(RefreshBlock)refreshBlock
+{
+    _refreshBlock = refreshBlock;
+}
+
+- (void)setLoadingBlock:(LoadingBlock)loadingBlock
+{
+    _loadingBlock = loadingBlock;
+}
+
+- (void)setSearchBlock:(SearchBlock)searchBlock
+{
+    _searchBlock = searchBlock;
+}
+
 #pragma mark - Action
 - (void)search:(UIGestureRecognizer *)gesture
 {
-    
+    if (self.searchBlock) {
+        self.searchBlock();
+    }
 }
+
+- (void)refresh
+{
+    if (self.refreshBlock) {
+        self.refreshBlock(self.tableView);
+    }
+}
+
+- (void)loading
+{
+    if (self.loadingBlock) {
+        self.loadingBlock(self.tableView);
+    }
+}
+
+
+
+
 
 
 #pragma mark -
@@ -61,6 +100,7 @@ static NSString *kHomeTableViewCell = @"kHomeTableViewCell";
     label.textAlignment = NSTextAlignmentCenter;
     label.layer.cornerRadius = 18;
     label.layer.masksToBounds = YES;
+    label.userInteractionEnabled = YES;
     UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(search:)];
     [label addGestureRecognizer:tapGesture];
     [headerView addSubview:label];
@@ -103,6 +143,14 @@ static NSString *kHomeTableViewCell = @"kHomeTableViewCell";
         _tableView.dataSource = self;
         _tableView.delegate = self;
         _tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+        _tableView.mj_header = [MJRefreshNormalHeader headerWithRefreshingTarget:self refreshingAction:@selector(refresh)];
+        _tableView.mj_footer = [MJRefreshAutoFooter footerWithRefreshingTarget:self refreshingAction:@selector(loading)];
+        if (@available(iOS 11.0, *)) {
+            _tableView.estimatedRowHeight = 0;
+            _tableView.estimatedSectionFooterHeight = 0;
+            _tableView.estimatedSectionHeaderHeight = 0;
+            _tableView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
+        }
         [self addSubview:_tableView];
     }
     return _tableView;
