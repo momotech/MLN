@@ -41,7 +41,6 @@ const CGFloat kMLNNativeTabSegmentViewLabelOffsetWeight = 10.0f;
 @property (nonatomic, assign) CGFloat differenceLength;
 
 @property (nonatomic, strong) MLNNativeTabSegmentViewConfiguration *configuration;
-@property (nonatomic, strong) MLNNativeTabSegmentScrollHandler *scrollHandler;
 
 @property (nonatomic, copy) MLNNativeTabSegmentViewTapActionBlock  tapBlock;
 @property (nonatomic, copy) MLNNativeTabSegmentViewTapActionBlock lua_tapBlock;
