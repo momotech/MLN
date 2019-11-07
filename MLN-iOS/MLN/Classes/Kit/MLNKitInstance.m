@@ -38,6 +38,7 @@
 @property (nonatomic, strong) MLNWindow *luaWindow;
 @property (nonatomic, assign) BOOL isLuaWindowSetup;
 @property (nonatomic, strong) NSMutableArray *onDestroyCallbacks;
+@property (nonatomic, assign) BOOL needCallApper;
 
 @end
 
@@ -67,12 +68,26 @@
 
 - (void)doLuaWindowDidAppear
 {
-    [self.luaWindow doLuaViewDidAppear];
+    if (self.luaWindow && [self.luaWindow canDoLuaViewDidAppear]) {
+        [self.luaWindow doLuaViewDidAppear];
+        self.needCallApper = NO;
+        return;
+    }
+    self.needCallApper = YES;
+}
+
+- (void)redoLuaViewDidAppearIfNeed
+{
+    if (self.needCallApper) {
+        [self.luaWindow doLuaViewDidAppear];
+    }
 }
 
 - (void)doLuaWindowDidDisappear
 {
-    [self.luaWindow doLuaViewDidDisappear];
+    if (self.luaWindow && [self.luaWindow canDoLuaViewDidDisappear]) {
+        [self.luaWindow doLuaViewDidDisappear];
+    }
 }
 
 - (void)changeLuaWindowSize:(CGSize)newSize
@@ -217,6 +232,7 @@
     MLNAssert(self.luaCore, (entryFilePath && entryFilePath.length >0), @"entry file is nil!");
     // 释放当前环境
     [self releaseAll];
+    self.needCallApper = YES;
     // 更新参数配置
     _windowExtra = [NSMutableDictionary dictionaryWithDictionary:windowExtra];
     _entryFilePath = entryFilePath;
@@ -360,6 +376,7 @@
     if ([self.delegate respondsToSelector:@selector(didSetupLuaCore:)]) {
         [self.delegate didSetupLuaCore:self];
     }
+    [self redoLuaViewDidAppearIfNeed];
 }
 
 - (void)createLuaCore
