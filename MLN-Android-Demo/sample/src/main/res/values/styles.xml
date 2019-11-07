@@ -22,7 +22,6 @@
         <!-- 可以设置成纯颜色（设置一个和Activity UI相似的背景） -->
         <!--<item name="android:windowBackground">@color/colorAccent</item>-->
         <!--也可以设置成一张图片 -->
-        <item name="android:windowBackground">@drawable/mls_load_demo</item>
     </style>
 
 </resources>
