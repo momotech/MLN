@@ -8,9 +8,13 @@
 
 #import <UIKit/UIKit.h>
 
+@class MLNGalleryMineInfoNumberViewModel;
+
 NS_ASSUME_NONNULL_BEGIN
 
 @interface MLNGalleryInfoNumberView : UIView
+
+@property (nonatomic, strong) MLNGalleryMineInfoNumberViewModel *infoNumberModel;
 
 @end
 
