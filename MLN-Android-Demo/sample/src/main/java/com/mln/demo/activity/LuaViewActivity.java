@@ -35,7 +35,7 @@ public class LuaViewActivity extends BaseActivity  {
         super.onCreate(savedInstanceState);
 
         Intent intent = getIntent();
-        if (intent.getExtras() == null) {
+         if (intent.getExtras() == null) {
             String file = "file://android_asset/MMLuaKitGallery/meilishuo.lua";
             InitData initData = MLSBundleUtils.createInitData(file, false).showLoadingView(true);
             instance.setData(initData);

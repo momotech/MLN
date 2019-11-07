@@ -152,9 +152,13 @@ function _class:setupTableView(top)
 
     self.adapter:selectedRow(function(cell, section, row)
         if row == 1 then
-            Toast("客服当前时间不在线哦")
+            --Toast("客服当前时间不在线哦")
+            Navigator:gotoPage("file://android_asset/MMLuaKitGallery/CustomerService.lua",Map(),1)
+
         elseif row == 2 then
-            Toast("官方尚未发布通知")
+            --Toast("官方尚未发布通知")
+            Navigator:gotoPage("file://android_asset/MMLuaKitGallery/Notification.lua",Map(),1)
+
         else
             Toast(cell.titleLabel:text(), 1)
         end

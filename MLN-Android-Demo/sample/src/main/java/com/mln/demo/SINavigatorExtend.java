@@ -12,7 +12,6 @@ import com.immomo.mls.annotation.LuaClass;
 import com.immomo.mls.fun.lt.SINavigator;
 import com.immomo.mls.util.FileUtil;
 import com.mln.demo.activity.LuaViewActivity;
-import com.mln.fileexplorer.ChooseFileActivity;
 
 import org.luaj.vm2.Globals;
 import org.luaj.vm2.LuaValue;
@@ -88,6 +87,6 @@ public class SINavigatorExtend extends SINavigator {
     @Override
     protected void internalGotoPage(String action, Bundle bundle, @AnimType int at, int l) {
         Activity a = getActivity();
-        ChooseFileActivity.startChooseFile(a, l, ChooseFileActivity.TYPE_SDCARD, FileUtil.getRootDir().getAbsolutePath());
+        // ChooseFileActivity.startChooseFile(a, l, ChooseFileActivity.TYPE_SDCARD, FileUtil.getRootDir().getAbsolutePath());
     }
 }

@@ -19,8 +19,8 @@ function _class:contentView()
     self.noContentLinear = LinearLayout(LinearType.VERTICAL):width(MeasurementType.WRAP_CONTENT):height(MeasurementType.WRAP_CONTENT)
                                                             :setGravity( Gravity.CENTER)
 
-    self.noContentImage = ImageView():width(22):height(22):marginLeft(20)
-    self.noContentImage:image("https://s.momocdn.com/w/u/others/2019/09/01/1567316383505-minmore.png")
+    self.noContentImage = ImageView():width(22):height(22)  --:marginLeft(20)
+    self.noContentImage:image("http://cdnst.momocdn.com/w/u/others/2019/11/07/1573101273153-bv.png"):marginLeft(30)--:setGravity(Gravity.CENTER)
     self.noContentLinear:addView(self.noContentImage)
 
 
