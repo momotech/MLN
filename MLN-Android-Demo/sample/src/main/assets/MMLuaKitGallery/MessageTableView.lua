@@ -229,17 +229,34 @@ function _class:request(first, complete)
         self.requestIndex = self.requestIndex + 1
     end
 
-    local HTTPHandler = require("MMLuaKitGallery.HTTPHandler")
-    HTTPHandler:GET("https://www.apiopen.top/femaleNameApi", {page = self.requestIndex}, function(success, response, err)
-        if success then
+    File:asyncReadMapFile('file://android_asset/MMLuaKitGallery/message.json', function(codeNumber, response)
+
+        print("codeNumber: " .. tostring(codeNumber))
+
+        if codeNumber == 0 then
             local data = response:get("data")
             self:constructData(first, data)
-            complete(success, data)
+            complete(true, data)
         else
-            error(err:get("errmsg"))
+            --error(err:get("errmsg"))
             complete(false, nil)
         end
     end)
+
+
+    --local HTTPHandler = require("MMLuaKitGallery.HTTPHandler")
+    --HTTPHandler:GET("https://www.apiopen.top/femaleNameApi", {page = self.requestIndex}, function(success, response, err)
+    --    if success then
+    --        local data = response:get("data")
+    --        self:constructData(first, data)
+    --        complete(success, data)
+    --    else
+    --        error(err:get("errmsg"))
+    --        complete(false, nil)
+    --    end
+    --end)
+
+
 end
 
 ---@private
