@@ -8,9 +8,12 @@
 
 #import <UIKit/UIKit.h>
 
+@class MLNGalleryMineInfoViewModel;
 NS_ASSUME_NONNULL_BEGIN
 
 @interface MLNGalleryMineViewController : UIViewController
+
+@property (nonatomic, strong) MLNGalleryMineInfoViewModel *mineInfoModel;
 
 @end
 
