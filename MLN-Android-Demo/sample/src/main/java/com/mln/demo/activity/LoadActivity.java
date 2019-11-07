@@ -17,7 +17,6 @@ import com.immomo.mls.MLSBundleUtils;
 import com.immomo.mls.MLSEngine;
 import com.mln.demo.App;
 import com.mln.demo.R;
-import com.mln.fileexplorer.ChooseFileActivity;
 
 import androidx.annotation.Nullable;
 
@@ -84,12 +83,6 @@ public class LoadActivity extends BaseActivity implements View.OnClickListener{
                 break;
             case R.id.test_lua_sdk:
                 startActivity(new Intent(this, LuaSDKTestActivity.class));
-                break;
-            case R.id.choose_assets:
-                ChooseFileActivity.startChooseFile(this, CHOOSE_ASSETS, ChooseFileActivity.TYPE_ASSETS, "");
-                break;
-            case R.id.choose_sd_file:
-                ChooseFileActivity.startChooseFile(this, CHOOSE_SDCARD, ChooseFileActivity.TYPE_SDCARD, App.getApp().SD_CARD_PATH);
                 break;
         }
     }
