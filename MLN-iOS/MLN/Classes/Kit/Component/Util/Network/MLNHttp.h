@@ -25,7 +25,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  弱关联对象，可以为任意值，也可以为空
  */
-@property (nonatomic, strong) id weakAssociatedObject;
+@property (nonatomic, weak) id weakAssociatedObject;
 
 @end
 
