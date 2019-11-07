@@ -62,15 +62,16 @@ MLN_FORCE_INLINE void measureImageViewAutoNodeSize (MLNLayoutNode __unsafe_unret
         resizeHeight = heightSpecMode == MLNLayoutMeasurementTypeWrapContent;
         desiredAspect = imgSize.width / imgSize.height;
     }
+    //两边至少有一边是WRAP_CONTENT的，需要根据实际内容计算
     if (resizeWidth || resizeHeight) {
         if (!node.isWidthExcatly) {
-            widthSize = resolveAdjustedSize(imgSize.width, node.maxWidth, node.width > 0 ? node.width : maxWidth, widthSpecMode);
+            widthSize = resolveAdjustedSize(imgSize.width, maxWidth, node.width>=0 ? node.width : 0, widthSpecMode);
         } else {
             widthSize = maxWidth;
         }
         
         if (!node.isHeightExcatly) {
-            heightSize = resolveAdjustedSize(imgSize.height,node.maxHeight, node.height > 0 ? node.height : maxHeight, heightSpecMode);
+            heightSize = resolveAdjustedSize(imgSize.height, maxHeight, node.height>=0 ? node.height : 0, heightSpecMode);
         } else {
             heightSize = maxHeight;
         }
@@ -83,7 +84,7 @@ MLN_FORCE_INLINE void measureImageViewAutoNodeSize (MLNLayoutNode __unsafe_unret
             if (resizeWidth && heightSpecMode != MLNLayoutMeasurementTypeWrapContent) {
                 CGFloat newWidth = desiredAspect * heightSize;
                 if (!resizeHeight) {
-                    widthSize = resolveAdjustedSize(newWidth, node.maxWidth?:MAXFLOAT, maxWidth, widthSpecMode);
+                    widthSize = resolveAdjustedSize(newWidth, maxWidth, node.width>=0 ? node.width : 0 , widthSpecMode);
                 }
                 if (newWidth <= widthSize) {
                     widthSize = newWidth;
@@ -94,7 +95,7 @@ MLN_FORCE_INLINE void measureImageViewAutoNodeSize (MLNLayoutNode __unsafe_unret
             if (!done && resizeHeight && widthSpecMode != MLNLayoutMeasurementTypeWrapContent) {
                 CGFloat newHeight = widthSize / desiredAspect;
                 if (!resizeWidth) {
-                    heightSize = resolveAdjustedSize(newHeight, node.maxHeight?:MAXFLOAT, maxHeight, heightSpecMode);
+                    heightSize = resolveAdjustedSize(newHeight,  maxHeight, node.height>=0 ? node.height : 0, heightSpecMode);
                 }
                 if (newHeight <= heightSize) {
                     heightSize = newHeight;
@@ -103,21 +104,19 @@ MLN_FORCE_INLINE void measureImageViewAutoNodeSize (MLNLayoutNode __unsafe_unret
         }
     } else {
         if (!node.isWidthExcatly) {
-            CGFloat width = imgSize.width + node.paddingLeft + node.paddingRight;
-            widthSize = resolveSizeAndState(width, node.width > 0 ? node.width : maxWidth, widthSpecMode);
+            widthSize = resolveSizeAndState(node.width >= 0 ? node.width : 0 , maxWidth, widthSpecMode);
         } else {
             widthSize = maxWidth;
         }
         
         if (!node.isHeightExcatly) {
-            CGFloat height = imgSize.height + node.paddingTop + node.paddingBottom;
-            heightSize = resolveSizeAndState(height, node.height > 0 ? node.height : maxHeight, heightSpecMode);
+            heightSize = resolveSizeAndState(node.height >= 0 ? node.height : 0, maxHeight, heightSpecMode);
         } else {
             heightSize = maxHeight;
         }
     }
     node.measuredWidth = widthSize;
-    node.measuredHeight= heightSize;
+    node.measuredHeight=  heightSize;
 }
 
 MLN_FORCE_INLINE float resolveAdjustedSize(float desiredSize, float maxSize, float measureSize,MLNLayoutMeasurementType measureType)
@@ -125,10 +124,11 @@ MLN_FORCE_INLINE float resolveAdjustedSize(float desiredSize, float maxSize, flo
     CGFloat result = desiredSize;
     switch (measureType) {
         case MLNLayoutMeasurementTypeWrapContent:
-            result = MIN(desiredSize, measureSize);
-            result = maxSize?MIN(result, maxSize):result;
+            result = MIN(desiredSize, maxSize);
             break;
         case MLNLayoutMeasurementTypeMatchParent:
+            result = maxSize;
+            break;
         case MLNLayoutMeasurementTypeIdle:
             result = measureSize;
             break;
@@ -136,17 +136,13 @@ MLN_FORCE_INLINE float resolveAdjustedSize(float desiredSize, float maxSize, flo
     return result;
 }
 
-MLN_FORCE_INLINE float resolveSizeAndState(float desiredSize, float measureSize,MLNLayoutMeasurementType measureType) {
-    CGFloat result = desiredSize;
+MLN_FORCE_INLINE float resolveSizeAndState(float measureSize, float maxSize  , MLNLayoutMeasurementType measureType) {
+    CGFloat result = measureSize;
     switch (measureType) {
-        case MLNLayoutMeasurementTypeWrapContent:
-            if (measureSize < desiredSize) {
-                result = measureSize;
-            } else {
-                result = desiredSize;
-            }
-            break;
         case MLNLayoutMeasurementTypeMatchParent:
+            result = maxSize;
+            break;
+        case MLNLayoutMeasurementTypeWrapContent:
         case MLNLayoutMeasurementTypeIdle:
         default:
             result = measureSize;
