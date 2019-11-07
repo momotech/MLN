@@ -141,7 +141,15 @@ end
 function _class:setupTapListView()
     self.tapTableView = CollectionView(false, false):width(MeasurementType.MATCH_PARENT):height(MeasurementType.WRAP_CONTENT):scrollDirection(ScrollDirection.HORIZONTAL)
     self.tapLayout = CollectionViewGridLayoutFix():itemSpacing(10):spanCount(1)
+
     self.tapAdapter = CollectionViewAutoFitAdapter()
+
+    --self.tapAdapter = CollectionViewAdapter()
+    --self.tapAdapter:sizeForCell(function(section, row)
+    --    return Size(70, 30)
+    --end)
+
+
     self.tapAdapter:initCell(function(cell)
         cell.tapLabel = Label():text(""):textColor(_Color.White):fontSize(12):padding(6, 15, 6, 15):bgColor(Color(70, 70, 70, 0.5)):cornerRadius(40)
         cell.contentView:addView(cell.tapLabel)

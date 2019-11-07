@@ -49,7 +49,9 @@ public class App extends Application {
         AnrWatchDog.startWatch();
         app = this;
         init();
-        final boolean debug = true;
+
+        final boolean debug = BuildConfig.DEBUG;
+
         log("scale Density: " + AndroidUtil.getScaleDensity(this));
         log("Density: " + AndroidUtil.getDensity(this));
 
