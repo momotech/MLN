@@ -152,6 +152,7 @@ function _class:setupCollectionViewAdapter()
         if item:get("rank") < "2" then
             return cellWidth + 75
         end
+
         return cellWidth + 90
 
     end)
@@ -210,21 +211,41 @@ function _class:requestNetwork(first, complete)
         self.requestPageIndex = self.requestPageIndex + 1
     end
 
-    local HTTPHandler = require("MMLuaKitGallery.HTTPHandler")
-    HTTPHandler:GET("https://api.apiopen.top/musicRankingsDetails", {type = self.requestPageIndex}, function(success, response, err)
-        if success then
+    File:asyncReadMapFile('file://android_asset/MMLuaKitGallery/discoverry.json', function(codeNumber, response)
+
+         print("codeNumber: " .. tostring(codeNumber))
+
+        if codeNumber == 0 then
             local data = response:get("result")
             if first then
                 self.dataList = data
             elseif data then
                 self.dataList:addAll(data)
             end
-            complete(success, data)
+            complete(true, self.dataList)
         else
-            error(err:get("errmsg"))
+            --error(err:get("errmsg"))
             complete(false, nil)
         end
     end)
+
+
+    --local HTTPHandler = require("MMLuaKitGallery.HTTPHandler")
+    --HTTPHandler:GET("https://api.apiopen.top/musicRankingsDetails", {type = self.requestPageIndex}, function(success, response, err)
+    --    if success then
+    --        local data = response:get("result")
+    --        if first then
+    --            self.dataList = data
+    --        elseif data then
+    --            self.dataList:addAll(data)
+    --        end
+    --        complete(success, data)
+    --    else
+    --        error(err:get("errmsg"))
+    --        complete(false, nil)
+    --    end
+    --end)
+
 end
 
 ---创建搜索框

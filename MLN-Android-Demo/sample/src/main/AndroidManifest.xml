@@ -15,6 +15,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:theme="@style/AppTheme"
         android:screenOrientation="portrait"
+        android:networkSecurityConfig="@xml/network_security_config"
         android:name="com.mln.demo.App">
         <meta-data
             android:name="android.max_aspect"
