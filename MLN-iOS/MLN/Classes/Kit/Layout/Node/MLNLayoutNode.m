@@ -47,17 +47,13 @@
     _mergedHeightType = self.heightType;
     if (self.supernode) {
         // width
-        if (self.widthType == MLNLayoutMeasurementTypeMatchParent &&
-            (self.supernode.mergedWidthType == MLNLayoutMeasurementTypeWrapContent ||
-             self.supernode.isHorizontalMaxMode)) {
-                _mergedWidthType = MLNLayoutMeasurementTypeWrapContent;
-            }
+        if (isLayoutNodeWidthNeedMerge(self)) {
+            _mergedWidthType = MLNLayoutMeasurementTypeWrapContent;
+        }
         // height
-        if (self.heightType == MLNLayoutMeasurementTypeMatchParent &&
-            (self.supernode.mergedHeightType == MLNLayoutMeasurementTypeWrapContent ||
-             self.supernode.isVerticalMaxMode)) {
-                _mergedHeightType = MLNLayoutMeasurementTypeWrapContent;
-            }
+        if (isLayoutNodeHeightNeedMerge(self)) {
+            _mergedHeightType = MLNLayoutMeasurementTypeWrapContent;
+        }
     }
 }
 
@@ -117,7 +113,7 @@ MLN_FORCE_INLINE void measureSimapleAutoNodeSize(MLNLayoutNode __unsafe_unretain
     // 权重
     maxWidth = [node calculateWidthBaseOnWeightWithMaxWidth:maxWidth];
     maxHeight = [node calculateHeightBaseOnWeightWithMaxHeight:maxHeight];
-    if (!node.isDirty && (node.lastMeasuredMaxWidth==maxWidth && node.lastMeasuredMaxHeight==maxHeight)) {
+    if (!node.isDirty && (node.lastMeasuredMaxWidth==maxWidth && node.lastMeasuredMaxHeight==maxHeight) && !isLayoutNodeHeightNeedMerge(node) && !isLayoutNodeWidthNeedMerge(node)) {
         return;
     }
     node.lastMeasuredMaxWidth = maxWidth;
