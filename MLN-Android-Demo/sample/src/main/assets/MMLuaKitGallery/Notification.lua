@@ -59,14 +59,14 @@ function _class:setupTitleView()
 
     --返回
     self.backBtn = ImageView():width(22):height(22):marginLeft(20):setGravity(MBit:bor(Gravity.LEFT, Gravity.CENTER_VERTICAL))
-    self.backBtn:image("https://s.momocdn.com/w/u/others/2019/09/01/1567316383505-minmore.png")
+    self.backBtn:image("https://s.momocdn.com/w/u/others/custom/20191107/wutianlong/x9.png")
     self.navibar:addView(self.backBtn)
 
 end
 
 -- 没有内容 视图
 function _class:contentView()
-    self.noContentView = require("noContentView"):new()
+    self.noContentView = require("MMLuaKitGallery.NoContentView"):new()
     self.containerView:addView(self.noContentView:contentView())
 end
 

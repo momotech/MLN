@@ -15,7 +15,6 @@ import com.immomo.mls.HotReloadHelper;
 import com.immomo.mls.InitData;
 import com.immomo.mls.MLSBundleUtils;
 import com.immomo.mls.MLSEngine;
-import com.mln.demo.App;
 import com.mln.demo.R;
 
 import androidx.annotation.Nullable;
@@ -93,10 +92,10 @@ public class LoadActivity extends BaseActivity implements View.OnClickListener{
             String file = null;
             switch (requestCode) {
                 case CHOOSE_ASSETS:
-                    file = "file://android_asset/" + data.getStringExtra(ChooseFileActivity.KEY_FILE);
+                    //file = "file://android_asset/" + data.getStringExtra(ChooseFileActivity.KEY_FILE);
                     break;
                 case CHOOSE_SDCARD:
-                    file = data.getStringExtra(ChooseFileActivity.KEY_FILE);
+                    //file = data.getStringExtra(ChooseFileActivity.KEY_FILE);
                     break;
             }
             if (file == null)
