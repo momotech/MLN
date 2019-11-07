@@ -32,19 +32,6 @@ static id<MLNHttpHandlerProtocol> defaultHttpHandler = nil;
     return handler;
 }
 
-- (NSMutableSet *)mCachePolicyFilterKeySets
-{
-    if (!_mCachePolicyFilterKeySets) {
-        _mCachePolicyFilterKeySets = [NSMutableSet setWithCapacity:5];
-    }
-    return _mCachePolicyFilterKeySets;
-}
-
-- (NSSet *)CachePolicyFilterKeys
-{
-    return _mCachePolicyFilterKeySets.copy;
-}
-
 - (void)lua_setBaseUrlString:(NSString *)baseUrlString
 {
     self.baseUrlString = baseUrlString;
@@ -56,7 +43,6 @@ static id<MLNHttpHandlerProtocol> defaultHttpHandler = nil;
 - (void)addCachePolicyFilterKey:(NSString *)key
 {
     MLNKitLuaAssert(key, @"CachePolicyFilterKey must not be nil!");
-    [self.mCachePolicyFilterKeySets addObject:key];
     if ([[self getHandler] respondsToSelector:@selector(http:addCachePolicyFilterKey:)]) {
         [[self getHandler] http:self addCachePolicyFilterKey:key];
     }
