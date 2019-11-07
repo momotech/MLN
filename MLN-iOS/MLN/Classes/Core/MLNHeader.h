@@ -97,9 +97,9 @@ __VA_ARGS__;\
 //@note ⚠️在Native->Lua类型转换时，默认将char类型当做数字来处理，而BOOL类型在32位手机上编码为'c',
 //      如果返回NO，则为'\0'，Lua接收到的值为0,而Lua语法规定0也为true，所以这里对于char做一个特殊处理
 #if __LP64__ || (TARGET_OS_EMBEDDED && !TARGET_OS_IPHONE) || TARGET_OS_WIN32 || NS_BUILD_32_LIKE_64
-#define MLNNumberIsBool(NUMBER) MLNValueIsType(NUMBER, BOOL)
+#define MLNNumberIsBool(NUMBER) MLNValueIsType(NUMBER, BOOL) || [number isKindOfClass:[@(YES) class]]
 #else
-#define MLNNumberIsBool(NUMBER) (MLNValueIsType(NUMBER, BOOL) || ((MLNValueIsType(NUMBER, char)) && NUMBER.charValue =='\0'))
+#define MLNNumberIsBool(NUMBER) (MLNValueIsType(NUMBER, BOOL) || [number isKindOfClass:[@(YES) class]] || ((MLNValueIsType(NUMBER, char)) && NUMBER.charValue =='\0'))
 #endif
 /**
  Lua 相关断言
@@ -111,7 +111,7 @@ __VA_ARGS__;\
  */
 #define mln_lua_assert(L, condition, format, ...)\
 if ([MLN_LUA_CORE((L)).errorHandler canHandleAssert:MLN_LUA_CORE((L))] && !(condition)) {\
-    luaL_error(L, format, ##__VA_ARGS__);\
+luaL_error(L, format, ##__VA_ARGS__);\
 }
 
 /**
@@ -134,10 +134,10 @@ luaL_error(L, format, ##__VA_ARGS__);\
  */
 #define MLNLuaAssert(LUA_CORE, CONDITION, FORMAT, ...) \
 if ([(LUA_CORE).errorHandler canHandleAssert:(LUA_CORE)] && !(CONDITION)) {\
-    NSString *error_t = [NSString stringWithFormat:FORMAT, ##__VA_ARGS__];\
-    if ((LUA_CORE).state) { \
-        mln_lua_error((LUA_CORE).state, error_t.UTF8String) \
-    }\
+NSString *error_t = [NSString stringWithFormat:FORMAT, ##__VA_ARGS__];\
+if ((LUA_CORE).state) { \
+mln_lua_error((LUA_CORE).state, error_t.UTF8String) \
+}\
 }
 
 /**
@@ -150,7 +150,7 @@ if ([(LUA_CORE).errorHandler canHandleAssert:(LUA_CORE)] && !(CONDITION)) {\
 #define MLNLuaError(LUA_CORE, FORMAT, ...) \
 NSString *error_t = [NSString stringWithFormat:FORMAT, ##__VA_ARGS__];\
 if ((LUA_CORE).state) { \
-    mln_lua_error((LUA_CORE).state, error_t.UTF8String) \
+mln_lua_error((LUA_CORE).state, error_t.UTF8String) \
 }
 
 /**
@@ -174,7 +174,7 @@ NSString *error_t = [NSString stringWithFormat:FORMAT, ##__VA_ARGS__];\
  */
 #define MLNAssert(LUA_CORE, CONDITION, FORMAT, ...) \
 if ([(LUA_CORE).errorHandler canHandleAssert:(LUA_CORE)] && !(CONDITION)) {\
-    MLNCallErrorHandler(LUA_CORE, FORMAT, ##__VA_ARGS__)\
+MLNCallErrorHandler(LUA_CORE, FORMAT, ##__VA_ARGS__)\
 }
 
 /**

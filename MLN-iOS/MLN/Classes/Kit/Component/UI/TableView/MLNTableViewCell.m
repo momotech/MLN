@@ -9,6 +9,7 @@
 #import "MLNTableViewCell.h"
 #import "UIView+MLNLayout.h"
 #import "MLNKitHeader.h"
+#import "MLNLuaTable.h"
 
 @interface MLNTableViewCell ()
 @property (nonatomic, strong) UIColor *lastBackgroundColor;
@@ -148,6 +149,11 @@
         [self.contentView addSubview:_luaContentView];
     }
     return _luaContentView;
+}
+
+- (MLNLuaCore *)mln_luaCore
+{
+    return self.luaContentView.luaTable.luaCore;
 }
 
 @end

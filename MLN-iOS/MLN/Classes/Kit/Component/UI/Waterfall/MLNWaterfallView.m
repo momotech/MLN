@@ -419,6 +419,7 @@
     if (!_innerWaterfallView) {
         MLNWaterfallLayout *layout = [[MLNWaterfallLayout alloc] init];
         _innerWaterfallView = [[MLNInternalWaterfallView alloc] initWithFrame:CGRectZero collectionViewLayout:layout];
+        _innerWaterfallView.containerView = self;
         _innerWaterfallView.backgroundColor = [UIColor clearColor];
         if (@available(iOS 11.0, *)) {
             _innerWaterfallView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
