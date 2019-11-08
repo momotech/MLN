@@ -25,6 +25,7 @@
     if (!_infoLabel) {
         _infoLabel = [[UILabel alloc] init];
     }
+    return _infoLabel;
 }
 
 

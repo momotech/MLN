@@ -24,6 +24,7 @@
 #import "MLNKitViewController.h"
 #import <MLNDevTool/MLNFPSLabel.h>
 #import <MLNDevTool/MLNLoadTimeStatistics.h>
+#import "MLNGalleryNative.h"
 
 @interface MLNViewController () <MLNKitInstanceErrorHandlerProtocol, MLNViewControllerProtocol, MLNKitInstanceDelegate>
 
@@ -82,7 +83,7 @@
 {
     CGFloat galleryButtonW = 80;
     CGFloat galleryButtonH = 30;
-    CGFloat galleryButtonX = [UIScreen mainScreen].bounds.size.width - galleryButtonW - 10;
+    CGFloat galleryButtonX = kScreenWidth - galleryButtonW - 10;
     CGFloat galleryButtonY = 22;
     self.galleryButton = [UIButton buttonWithType:UIButtonTypeCustom];
     self.galleryButton.frame = CGRectMake(galleryButtonX, galleryButtonY, galleryButtonW, galleryButtonH);
@@ -106,6 +107,7 @@
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
+    
     
     [self showLuaScriptLoadTime];
 }

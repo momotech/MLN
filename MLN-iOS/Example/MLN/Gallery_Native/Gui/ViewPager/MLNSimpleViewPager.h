@@ -11,18 +11,18 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class MLNSimpleViewPager;
-@class MLNTabSegmentView;
-@protocol MLNCycleScrollViewDelegate <NSObject>
+//@class MLNSimpleViewPager;
+//@class MLNTabSegmentView;
+//@protocol MLNCycleScrollViewDelegate <NSObject>
+//
+//@property (nonatomic, assign) NSInteger cellCounts;
+//@property (nonatomic, weak) MLNSimpleViewPager *viewPager;
+//@property (nonatomic, weak) UICollectionView *targetCollectionView;
+//
+//@end
 
-@property (nonatomic, assign) NSInteger cellCounts;
-@property (nonatomic, weak) MLNSimpleViewPager *viewPager;
-@property (nonatomic, weak) UICollectionView *targetCollectionView;
 
-@end
-
-
-@interface MLNSimpleViewPager : UIView<MLNCycleScrollViewDelegate>
+@interface MLNSimpleViewPager : UIView
 
 - (void)reloadWithDataList:(NSArray *)dataList;
 - (void)scrollToPage:(NSUInteger)index aniamted:(BOOL)animated;

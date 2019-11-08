@@ -164,7 +164,7 @@
 
 - (void)setupSubviews
 {
-    CGFloat buttonW = 100;
+    CGFloat buttonW = 120;
     CGFloat buttonH = 40;
     CGFloat screenW = [UIScreen mainScreen].bounds.size.width;
     CGFloat screenH = [UIScreen mainScreen].bounds.size.height;
