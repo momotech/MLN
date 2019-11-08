@@ -32,35 +32,36 @@
 
 - (void)setupTabbarItems
 {
-    UIViewController *homeVc = [self createControllerWithClass:@"MLNGalleryHomeViewController" normalImage:self.normalImage[0] selectedImage:self.selectedImage[0]];
-    [self addChildViewController:homeVc];
+    UIViewController *homeNavi = [self createControllerWithClass:@"MLNGalleryHomeViewController" normalImage:self.normalImage[0] selectedImage:self.selectedImage[0]];
+    [self addChildViewController:homeNavi];
     
-    UIViewController *discoverVc = [self createControllerWithClass:@"MLNGalleryDiscoverViewController" normalImage:self.normalImage[1] selectedImage:self.selectedImage[1]];
-    [self addChildViewController:discoverVc];
+    UIViewController *discoverNav = [self createControllerWithClass:@"MLNGalleryDiscoverViewController" normalImage:self.normalImage[1] selectedImage:self.selectedImage[1]];
+    [self addChildViewController:discoverNav];
 
-    UIViewController *plusVc = [self createControllerWithClass:@"MLNGalleryPlusViewController" normalImage:self.normalImage[2] selectedImage:self.selectedImage[2]];
-    [self addChildViewController:plusVc];
+    UIViewController *plusNavi = [self createControllerWithClass:@"MLNGalleryPlusViewController" normalImage:self.normalImage[2] selectedImage:self.selectedImage[2]];
+    [self addChildViewController:plusNavi];
 
-    UIViewController *messageVc = [self createControllerWithClass:@"MLNGalleryMessageViewController" normalImage:self.normalImage[3] selectedImage:self.selectedImage[3]];
-    [self addChildViewController:messageVc];
+    UIViewController *messageNavi = [self createControllerWithClass:@"MLNGalleryMessageViewController" normalImage:self.normalImage[3] selectedImage:self.selectedImage[3]];
+    [self addChildViewController:messageNavi];
 
-    UIViewController *mineVc = [self createControllerWithClass:@"MLNGalleryMineViewController" normalImage:self.normalImage[4] selectedImage:self.selectedImage[4]];
-    [self addChildViewController:mineVc];
+    UIViewController *mineNavi = [self createControllerWithClass:@"MLNGalleryMineViewController" normalImage:self.normalImage[4] selectedImage:self.selectedImage[4]];
+    [self addChildViewController:mineNavi];
 }
 
 - (UIViewController *)createControllerWithClass:(NSString *)clazzString normalImage:(NSString *)normalImageString selectedImage:(NSString *)selectedImageString
 {
     UIViewController *controller = [NSClassFromString(clazzString) new];
+    UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:controller];
+    [navigationController setNavigationBarHidden:YES];
     [[SDWebImageDownloader sharedDownloader] downloadImageWithURL:[NSURL URLWithString:normalImageString] completed:^(UIImage * _Nullable image, NSData * _Nullable data, NSError * _Nullable error, BOOL finished) {
         UIImage *newImage = [UIImage imageWithImage:image scaledToSize:CGSizeMake(30, 30)];
-        controller.tabBarItem.image = [newImage imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+        navigationController.tabBarItem.image = [newImage imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
     }];
     [[SDWebImageDownloader sharedDownloader] downloadImageWithURL:[NSURL URLWithString:selectedImageString] completed:^(UIImage * _Nullable image, NSData * _Nullable data, NSError * _Nullable error, BOOL finished) {
         UIImage *newImage = [UIImage imageWithImage:image scaledToSize:CGSizeMake(30, 30)];
-        controller.tabBarItem.selectedImage = [newImage imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+        navigationController.tabBarItem.selectedImage = [newImage imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
     }];
-    
-    return controller;
+    return navigationController;
 }
 
 #pragma mark -

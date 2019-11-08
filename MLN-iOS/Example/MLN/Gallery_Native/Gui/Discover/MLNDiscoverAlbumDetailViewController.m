@@ -1,42 +1,40 @@
 //
-//  MLNGalleryDiscoverViewController.m
+//  MLNDiscoverAlbumDetailViewController.m
 //  MLN_Example
 //
-//  Created by Feng on 2019/11/5.
+//  Created by Feng on 2019/11/8.
 //  Copyright © 2019 liu.xu_1586. All rights reserved.
 //
 
-#import "MLNGalleryDiscoverViewController.h"
+#import "MLNDiscoverAlbumDetailViewController.h"
 #import "MLNNativeWaterfallView.h"
 #import "MLNNativeWaterfallLayout.h"
-#import "MLNNativeWaterfallViewCell.h"
 #import "MLNGalleryNative.h"
 #import "MLNNativeWaterfallLayoutDelegate.h"
 #import "MLNGalleryNavigationBar.h"
-#import "MLNNativeWaterfallHeaderView.h"
+#import "MLNDiscoverAblbumDeatilHeaderView.h"
 #import "MLNMyHttpHandler.h"
 #import <UIView+Toast.h>
-#import "MLNDiscoverAlbumDetailViewController.h"
+#import "MLNDiscoverAlbumDetailCell.h"
 
-@interface MLNGalleryDiscoverViewController ()<UICollectionViewDataSource, UICollectionViewDelegate, MLNNativeWaterfallLayoutDelegate>
+@interface MLNDiscoverAlbumDetailViewController ()<UICollectionViewDataSource, UICollectionViewDelegate, MLNNativeWaterfallLayoutDelegate>
 @property (nonatomic, strong) MLNGalleryNavigationBar *navigationBar;
 @property (nonatomic, strong) MLNNativeWaterfallView *waterfallView;
-@property (nonatomic, strong) MLNNativeWaterfallHeaderView *waterfallHeaderView;
 @property (nonatomic, strong) MLNMyHttpHandler *myHttpHandler;
 @property (nonatomic, assign) NSInteger requestPageIndex;
 @property (nonatomic, strong) NSMutableArray *dataList;
 @end
 
-static NSString *kMLNNativeWaterfallViewHeaderID = @"kMLNNativeWaterfallViewHeaderID";
-static NSString *kMLNNativeWaterfallViewCellID = @"kMLNNativeWaterfallViewCellID";
+static NSString *kMLNDiscoverDetailHeaderID = @"kMLNDiscoverDetailHeaderID";
+static NSString *kMLNDiscoverDetailCellID = @"kMLNDiscoverDetailCellID";
 
-@implementation MLNGalleryDiscoverViewController
+@implementation MLNDiscoverAlbumDetailViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-
-    [self.navigationBar setTitle:@"发现"];
-    [self requestDiscoverData];
+    
+    [self.navigationBar setTitle:@"灵感集"];
+    [self requestInspirData];
     [self waterfallView];
 }
 
@@ -48,38 +46,31 @@ static NSString *kMLNNativeWaterfallViewCellID = @"kMLNNativeWaterfallViewCellID
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    MLNNativeWaterfallViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:kMLNNativeWaterfallViewCellID forIndexPath:indexPath];
+    MLNDiscoverAlbumDetailCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:kMLNDiscoverDetailCellID forIndexPath:indexPath];
     [cell reloadWithData:self.dataList[indexPath.row]];
-    
     return cell;
-}
-
-- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
-{
-    MLNDiscoverAlbumDetailViewController *detailViewController = [[MLNDiscoverAlbumDetailViewController alloc] init];
-    [self.navigationController pushViewController:detailViewController animated:YES];
 }
 
 
 #pragma mark - MLNNativeWaterfallLayoutDelegate
 - (CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout heightForItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    if (indexPath.row == 0) {
-        return 280;
-    }
-    
     return 300;
 }
 
 - (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout referenceSizeForHeaderInSection:(NSInteger)section
 {
-    return CGSizeMake(kScreenWidth, 310);
+    return CGSizeMake(kScreenWidth, 200);
 }
 
 - (UICollectionReusableView *)collectionView:(UICollectionView *)collectionView viewForSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath
 {
-    MLNNativeWaterfallHeaderView *headerView = [collectionView dequeueReusableSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:kMLNNativeWaterfallViewHeaderID forIndexPath:indexPath];
-    [headerView reloadWithData:@{}];
+    MLNDiscoverAblbumDeatilHeaderView *headerView = [collectionView dequeueReusableSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:kMLNDiscoverDetailHeaderID forIndexPath:indexPath];
+    [headerView reloadWithData:self.dataList];
+    __weak typeof(self) weakSelf = self;
+    headerView.selectBlock = ^{
+        [weakSelf requestInspirData];
+    };
     return headerView;
 }
 
@@ -95,30 +86,20 @@ static NSString *kMLNNativeWaterfallViewCellID = @"kMLNNativeWaterfallViewCellID
         _waterfallView.backgroundColor = [UIColor whiteColor];
         _waterfallView.dataSource = self;
         _waterfallView.delegate = self;
-        [_waterfallView registerClass:[MLNNativeWaterfallViewCell class] forCellWithReuseIdentifier:kMLNNativeWaterfallViewCellID];
-        [_waterfallView registerClass:[MLNNativeWaterfallHeaderView class] forSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:kMLNNativeWaterfallViewHeaderID];
+        [_waterfallView registerClass:[MLNDiscoverAlbumDetailCell class] forCellWithReuseIdentifier:kMLNDiscoverDetailCellID];
+        [_waterfallView registerClass:[MLNDiscoverAblbumDeatilHeaderView class] forSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:kMLNDiscoverDetailHeaderID];
         [self.view addSubview:_waterfallView];
     }
-    
     return _waterfallView;
-}
-
-- (MLNNativeWaterfallHeaderView *)waterfallHeaderView
-{
-    if (!_waterfallHeaderView) {
-        _waterfallHeaderView = [[MLNNativeWaterfallHeaderView alloc] init];
-    }
-    return _waterfallHeaderView;
 }
 
 
 #pragma mark - request
-- (void)requestDiscoverData
+- (void)requestInspirData
 {
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wnonnull"
     NSString *requestUrlString = @"https://api.apiopen.top/musicRankingsDetails";
-    
     NSArray *pageIdx = @[@13, @9, @11, @12, @6];
     NSInteger requestPageIdx = random()%5;
     self.requestPageIndex = [pageIdx[requestPageIdx] integerValue];
@@ -158,6 +139,20 @@ static NSString *kMLNNativeWaterfallViewCellID = @"kMLNNativeWaterfallViewCellID
 {
     if (!_navigationBar) {
         _navigationBar = [[MLNGalleryNavigationBar alloc] initWithFrame:CGRectMake(0, 0, kScreenWidth, kNaviBarHeight)];
+        MLNGalleryNavigationBarItem *leftItem = [[MLNGalleryNavigationBarItem alloc] init];
+        leftItem.image = [UIImage imageNamed:@"1567316383505-minmore"];
+        [self.navigationBar setLeftItem:leftItem];
+        __weak typeof(self) weakSelf = self;
+        leftItem.clickActionBlock = ^{
+            [weakSelf.navigationController popViewControllerAnimated:YES];
+        };
+        
+        MLNGalleryNavigationBarItem *rightItem = [[MLNGalleryNavigationBarItem alloc] init];
+        rightItem.image = [UIImage imageNamed:@"1567316383469-minshare"];
+        [self.navigationBar setRightItem:rightItem];
+        rightItem.clickActionBlock = ^{
+            NSLog(@"点击了分享按钮！！");
+        };
         [self.view addSubview:_navigationBar];
     }
     return _navigationBar;
