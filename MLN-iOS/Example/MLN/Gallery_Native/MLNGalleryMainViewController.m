@@ -14,8 +14,9 @@
 #import "MLNGalleryMessageViewController.h"
 #import "MLNGalleryMineViewController.h"
 #import "UIImage+MLNResize.h"
+#import <UIView+Toast.h>
 
-@interface MLNGalleryMainViewController ()
+@interface MLNGalleryMainViewController ()<UITabBarControllerDelegate>
 
 @end
 
@@ -24,6 +25,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    self.delegate = self;
     self.view.backgroundColor = [UIColor whiteColor];
     [self setupTabbarItems];
 }
@@ -59,6 +61,16 @@
     }];
     
     return controller;
+}
+
+#pragma mark -
+- (BOOL)tabBarController:(UITabBarController *)tabBarController shouldSelectViewController:(UIViewController *)viewController
+{
+    if ([viewController isKindOfClass:[MLNGalleryPlusViewController class]]) {
+        [self.view makeToast:@"打开照相机📷" duration:1.0 position:CSToastPositionCenter];
+        return NO;
+    }
+    return YES;
 }
 
 #pragma mark -

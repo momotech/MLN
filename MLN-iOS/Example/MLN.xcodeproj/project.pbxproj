@@ -41,7 +41,6 @@
 		B29500BD2371AFCB00F48F09 /* MLNGalleryDiscoverViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B29500BC2371AFCB00F48F09 /* MLNGalleryDiscoverViewController.m */; };
 		B29500C02371B11E00F48F09 /* MLNGalleryPlusViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B29500BF2371B11E00F48F09 /* MLNGalleryPlusViewController.m */; };
 		B29500C32371B13F00F48F09 /* MLNGalleryMessageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B29500C22371B13F00F48F09 /* MLNGalleryMessageViewController.m */; };
-		B29500C62371B14F00F48F09 /* MLNGalleryMineViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B29500C52371B14F00F48F09 /* MLNGalleryMineViewController.m */; };
 		B29500CA23725EB800F48F09 /* UIImage+MLNResize.m in Sources */ = {isa = PBXBuildFile; fileRef = B29500C923725EB800F48F09 /* UIImage+MLNResize.m */; };
 		B29500D62372627000F48F09 /* MLNNativeTabSegmentView.m in Sources */ = {isa = PBXBuildFile; fileRef = B29500CD2372627000F48F09 /* MLNNativeTabSegmentView.m */; };
 		B29500D82372627000F48F09 /* MLNNativeBadgeView.m in Sources */ = {isa = PBXBuildFile; fileRef = B29500CF2372627000F48F09 /* MLNNativeBadgeView.m */; };
@@ -55,11 +54,19 @@
 		B29500F72372D5B400F48F09 /* MLNSimpleViewPagerCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B29500F62372D5B400F48F09 /* MLNSimpleViewPagerCell.m */; };
 		B29500FA2373016500F48F09 /* UIAlertController+MLNAlert.m in Sources */ = {isa = PBXBuildFile; fileRef = B29500F92373016500F48F09 /* UIAlertController+MLNAlert.m */; };
 		B29500FD2373BB3000F48F09 /* MLNHomeDataHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = B29500FC2373BB3000F48F09 /* MLNHomeDataHandler.m */; };
+		B295010523740AA700F48F09 /* MLNNativeWaterfallView.m in Sources */ = {isa = PBXBuildFile; fileRef = B295010423740AA700F48F09 /* MLNNativeWaterfallView.m */; };
+		B295010823740ABB00F48F09 /* MLNNativeWaterfallLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = B295010723740ABB00F48F09 /* MLNNativeWaterfallLayout.m */; };
+		B295010B23740AEF00F48F09 /* MLNNativeWaterfallViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B295010A23740AEF00F48F09 /* MLNNativeWaterfallViewCell.m */; };
+		B295011123740E4200F48F09 /* MLNNativeWaterfallHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = B295011023740E4200F48F09 /* MLNNativeWaterfallHeaderView.m */; };
+		B295011B2374137600F48F09 /* MLNGalleryInfoNumberView.m in Sources */ = {isa = PBXBuildFile; fileRef = B29501172374137600F48F09 /* MLNGalleryInfoNumberView.m */; };
+		B295011C2374137600F48F09 /* MLNGalleryNavigationBar.m in Sources */ = {isa = PBXBuildFile; fileRef = B29501182374137600F48F09 /* MLNGalleryNavigationBar.m */; };
+		B295011D2374137600F48F09 /* MLNGalleryMineViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B29501192374137600F48F09 /* MLNGalleryMineViewController.m */; };
+		B295011E2374137600F48F09 /* MLNGalleryMineHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = B295011A2374137600F48F09 /* MLNGalleryMineHeaderView.m */; };
+		B295012223742AD200F48F09 /* MLNDiscoverInspirCategoryView.m in Sources */ = {isa = PBXBuildFile; fileRef = B295012123742AD200F48F09 /* MLNDiscoverInspirCategoryView.m */; };
+		B295012523750F1900F48F09 /* MLNDiscoverAlbumDetailCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B295012423750F1900F48F09 /* MLNDiscoverAlbumDetailCell.m */; };
+		B295012823750F8900F48F09 /* MLNDiscoverAblbumDeatilHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = B295012723750F8900F48F09 /* MLNDiscoverAblbumDeatilHeaderView.m */; };
 		B2D0AB85236C1F0A00B1D349 /* gallery in Resources */ = {isa = PBXBuildFile; fileRef = B2D0AB84236C1F0A00B1D349 /* gallery */; };
 		B2D0ABB52370136000B1D349 /* MLNGalleryViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B2D0ABB42370136000B1D349 /* MLNGalleryViewController.m */; };
-		FADC40372373D5E6002249D4 /* MLNGalleryNavigationBar.m in Sources */ = {isa = PBXBuildFile; fileRef = FADC40362373D5E6002249D4 /* MLNGalleryNavigationBar.m */; };
-		FADC404C2373FE48002249D4 /* MLNGalleryMineHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = FADC404B2373FE48002249D4 /* MLNGalleryMineHeaderView.m */; };
-		FADC404F237406BE002249D4 /* MLNGalleryInfoNumberView.m in Sources */ = {isa = PBXBuildFile; fileRef = FADC404E237406BE002249D4 /* MLNGalleryInfoNumberView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -130,8 +137,6 @@
 		B29500BF2371B11E00F48F09 /* MLNGalleryPlusViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNGalleryPlusViewController.m; sourceTree = "<group>"; };
 		B29500C12371B13F00F48F09 /* MLNGalleryMessageViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNGalleryMessageViewController.h; sourceTree = "<group>"; };
 		B29500C22371B13F00F48F09 /* MLNGalleryMessageViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNGalleryMessageViewController.m; sourceTree = "<group>"; };
-		B29500C42371B14F00F48F09 /* MLNGalleryMineViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNGalleryMineViewController.h; sourceTree = "<group>"; };
-		B29500C52371B14F00F48F09 /* MLNGalleryMineViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNGalleryMineViewController.m; sourceTree = "<group>"; };
 		B29500C823725EB800F48F09 /* UIImage+MLNResize.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIImage+MLNResize.h"; sourceTree = "<group>"; };
 		B29500C923725EB800F48F09 /* UIImage+MLNResize.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIImage+MLNResize.m"; sourceTree = "<group>"; };
 		B29500CD2372627000F48F09 /* MLNNativeTabSegmentView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLNNativeTabSegmentView.m; sourceTree = "<group>"; };
@@ -160,18 +165,35 @@
 		B29500F92373016500F48F09 /* UIAlertController+MLNAlert.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIAlertController+MLNAlert.m"; sourceTree = "<group>"; };
 		B29500FB2373BB3000F48F09 /* MLNHomeDataHandler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNHomeDataHandler.h; sourceTree = "<group>"; };
 		B29500FC2373BB3000F48F09 /* MLNHomeDataHandler.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNHomeDataHandler.m; sourceTree = "<group>"; };
+		B295010323740AA700F48F09 /* MLNNativeWaterfallView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLNNativeWaterfallView.h; sourceTree = "<group>"; };
+		B295010423740AA700F48F09 /* MLNNativeWaterfallView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLNNativeWaterfallView.m; sourceTree = "<group>"; };
+		B295010623740ABB00F48F09 /* MLNNativeWaterfallLayout.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNNativeWaterfallLayout.h; sourceTree = "<group>"; };
+		B295010723740ABB00F48F09 /* MLNNativeWaterfallLayout.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNNativeWaterfallLayout.m; sourceTree = "<group>"; };
+		B295010923740AEF00F48F09 /* MLNNativeWaterfallViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNNativeWaterfallViewCell.h; sourceTree = "<group>"; };
+		B295010A23740AEF00F48F09 /* MLNNativeWaterfallViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNNativeWaterfallViewCell.m; sourceTree = "<group>"; };
+		B295010F23740E4200F48F09 /* MLNNativeWaterfallHeaderView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNNativeWaterfallHeaderView.h; sourceTree = "<group>"; };
+		B295011023740E4200F48F09 /* MLNNativeWaterfallHeaderView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNNativeWaterfallHeaderView.m; sourceTree = "<group>"; };
+		B29501132374137600F48F09 /* MLNGalleryNavigationBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLNGalleryNavigationBar.h; sourceTree = "<group>"; };
+		B29501142374137600F48F09 /* MLNGalleryInfoNumberView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLNGalleryInfoNumberView.h; sourceTree = "<group>"; };
+		B29501152374137600F48F09 /* MLNGalleryMineViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLNGalleryMineViewController.h; sourceTree = "<group>"; };
+		B29501162374137600F48F09 /* MLNGalleryMineHeaderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLNGalleryMineHeaderView.h; sourceTree = "<group>"; };
+		B29501172374137600F48F09 /* MLNGalleryInfoNumberView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLNGalleryInfoNumberView.m; sourceTree = "<group>"; };
+		B29501182374137600F48F09 /* MLNGalleryNavigationBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLNGalleryNavigationBar.m; sourceTree = "<group>"; };
+		B29501192374137600F48F09 /* MLNGalleryMineViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLNGalleryMineViewController.m; sourceTree = "<group>"; };
+		B295011A2374137600F48F09 /* MLNGalleryMineHeaderView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLNGalleryMineHeaderView.m; sourceTree = "<group>"; };
+		B295011F2374157200F48F09 /* MLNNativeWaterfallLayoutDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNNativeWaterfallLayoutDelegate.h; sourceTree = "<group>"; };
+		B295012023742AD200F48F09 /* MLNDiscoverInspirCategoryView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNDiscoverInspirCategoryView.h; sourceTree = "<group>"; };
+		B295012123742AD200F48F09 /* MLNDiscoverInspirCategoryView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNDiscoverInspirCategoryView.m; sourceTree = "<group>"; };
+		B295012323750F1900F48F09 /* MLNDiscoverAlbumDetailCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNDiscoverAlbumDetailCell.h; sourceTree = "<group>"; };
+		B295012423750F1900F48F09 /* MLNDiscoverAlbumDetailCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNDiscoverAlbumDetailCell.m; sourceTree = "<group>"; };
+		B295012623750F8900F48F09 /* MLNDiscoverAblbumDeatilHeaderView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNDiscoverAblbumDeatilHeaderView.h; sourceTree = "<group>"; };
+		B295012723750F8900F48F09 /* MLNDiscoverAblbumDeatilHeaderView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNDiscoverAblbumDeatilHeaderView.m; sourceTree = "<group>"; };
 		B2D0AB84236C1F0A00B1D349 /* gallery */ = {isa = PBXFileReference; lastKnownFileType = folder; path = gallery; sourceTree = "<group>"; };
 		B2D0ABB32370136000B1D349 /* MLNGalleryViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNGalleryViewController.h; sourceTree = "<group>"; };
 		B2D0ABB42370136000B1D349 /* MLNGalleryViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNGalleryViewController.m; sourceTree = "<group>"; };
 		C0FB2CAC8F9592C3092ACF62 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
 		F236AA5C6B666135B994F09B /* Pods-MLN_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MLN_Example.debug.xcconfig"; path = "Target Support Files/Pods-MLN_Example/Pods-MLN_Example.debug.xcconfig"; sourceTree = "<group>"; };
 		F449C1D4FDA5182F0D579269 /* libPods-MLN_Example.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-MLN_Example.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		FADC40352373D5E6002249D4 /* MLNGalleryNavigationBar.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNGalleryNavigationBar.h; sourceTree = "<group>"; };
-		FADC40362373D5E6002249D4 /* MLNGalleryNavigationBar.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNGalleryNavigationBar.m; sourceTree = "<group>"; };
-		FADC404A2373FE48002249D4 /* MLNGalleryMineHeaderView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNGalleryMineHeaderView.h; sourceTree = "<group>"; };
-		FADC404B2373FE48002249D4 /* MLNGalleryMineHeaderView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNGalleryMineHeaderView.m; sourceTree = "<group>"; };
-		FADC404D237406BD002249D4 /* MLNGalleryInfoNumberView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNGalleryInfoNumberView.h; sourceTree = "<group>"; };
-		FADC404E237406BE002249D4 /* MLNGalleryInfoNumberView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNGalleryInfoNumberView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -359,7 +381,8 @@
 		B29500CB2372619800F48F09 /* Gui */ = {
 			isa = PBXGroup;
 			children = (
-				FADC40342373D230002249D4 /* Mine */,
+				B29501122374137600F48F09 /* Mine */,
+				B295010223740AA700F48F09 /* Discover */,
 				B29500EE2372A90D00F48F09 /* Home */,
 				B29500DB237274E800F48F09 /* ViewPager */,
 				B29500CC2372627000F48F09 /* TabSegmentView */,
@@ -411,17 +434,39 @@
 			path = Home;
 			sourceTree = "<group>";
 		};
-		FADC40342373D230002249D4 /* Mine */ = {
+		B295010223740AA700F48F09 /* Discover */ = {
 			isa = PBXGroup;
 			children = (
-				B29500C42371B14F00F48F09 /* MLNGalleryMineViewController.h */,
-				B29500C52371B14F00F48F09 /* MLNGalleryMineViewController.m */,
-				FADC40352373D5E6002249D4 /* MLNGalleryNavigationBar.h */,
-				FADC40362373D5E6002249D4 /* MLNGalleryNavigationBar.m */,
-				FADC404A2373FE48002249D4 /* MLNGalleryMineHeaderView.h */,
-				FADC404B2373FE48002249D4 /* MLNGalleryMineHeaderView.m */,
-				FADC404D237406BD002249D4 /* MLNGalleryInfoNumberView.h */,
-				FADC404E237406BE002249D4 /* MLNGalleryInfoNumberView.m */,
+				B295010323740AA700F48F09 /* MLNNativeWaterfallView.h */,
+				B295010423740AA700F48F09 /* MLNNativeWaterfallView.m */,
+				B295010623740ABB00F48F09 /* MLNNativeWaterfallLayout.h */,
+				B295010723740ABB00F48F09 /* MLNNativeWaterfallLayout.m */,
+				B295010923740AEF00F48F09 /* MLNNativeWaterfallViewCell.h */,
+				B295010A23740AEF00F48F09 /* MLNNativeWaterfallViewCell.m */,
+				B295010F23740E4200F48F09 /* MLNNativeWaterfallHeaderView.h */,
+				B295011023740E4200F48F09 /* MLNNativeWaterfallHeaderView.m */,
+				B295011F2374157200F48F09 /* MLNNativeWaterfallLayoutDelegate.h */,
+				B295012023742AD200F48F09 /* MLNDiscoverInspirCategoryView.h */,
+				B295012123742AD200F48F09 /* MLNDiscoverInspirCategoryView.m */,
+				B295012323750F1900F48F09 /* MLNDiscoverAlbumDetailCell.h */,
+				B295012423750F1900F48F09 /* MLNDiscoverAlbumDetailCell.m */,
+				B295012623750F8900F48F09 /* MLNDiscoverAblbumDeatilHeaderView.h */,
+				B295012723750F8900F48F09 /* MLNDiscoverAblbumDeatilHeaderView.m */,
+			);
+			path = Discover;
+			sourceTree = "<group>";
+		};
+		B29501122374137600F48F09 /* Mine */ = {
+			isa = PBXGroup;
+			children = (
+				B29501132374137600F48F09 /* MLNGalleryNavigationBar.h */,
+				B29501142374137600F48F09 /* MLNGalleryInfoNumberView.h */,
+				B29501152374137600F48F09 /* MLNGalleryMineViewController.h */,
+				B29501162374137600F48F09 /* MLNGalleryMineHeaderView.h */,
+				B29501172374137600F48F09 /* MLNGalleryInfoNumberView.m */,
+				B29501182374137600F48F09 /* MLNGalleryNavigationBar.m */,
+				B29501192374137600F48F09 /* MLNGalleryMineViewController.m */,
+				B295011A2374137600F48F09 /* MLNGalleryMineHeaderView.m */,
 			);
 			path = Mine;
 			sourceTree = "<group>";
@@ -610,26 +655,31 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FADC404C2373FE48002249D4 /* MLNGalleryMineHeaderView.m in Sources */,
 				30A4EB5A231CC5CD00995416 /* MLNMyHttpHandler.m in Sources */,
 				30E24E9422F3D74A00A0E78C /* MLNGlobalFuncTest.m in Sources */,
+				B295011C2374137600F48F09 /* MLNGalleryNavigationBar.m in Sources */,
+				B295012523750F1900F48F09 /* MLNDiscoverAlbumDetailCell.m in Sources */,
 				30E24E9522F3D74A00A0E78C /* MLNStaticTest.m in Sources */,
 				6003F59E195388D20070C39A /* MLNAppDelegate.m in Sources */,
 				B29500F72372D5B400F48F09 /* MLNSimpleViewPagerCell.m in Sources */,
 				B29500BA2371A68300F48F09 /* MLNGalleryHomeViewController.m in Sources */,
 				B29500FA2373016500F48F09 /* UIAlertController+MLNAlert.m in Sources */,
 				B29500D92372627000F48F09 /* MLNNativeTabSegmentScrollHandler.m in Sources */,
+				B295011E2374137600F48F09 /* MLNGalleryMineHeaderView.m in Sources */,
 				B29500D62372627000F48F09 /* MLNNativeTabSegmentView.m in Sources */,
 				B29500EA2372A3A400F48F09 /* MLNSimpleViewPager.m in Sources */,
+				B295010523740AA700F48F09 /* MLNNativeWaterfallView.m in Sources */,
+				B295010B23740AEF00F48F09 /* MLNNativeWaterfallViewCell.m in Sources */,
 				30A4EB60231CD75200995416 /* MLNMyRefreshHandler.m in Sources */,
+				B295011123740E4200F48F09 /* MLNNativeWaterfallHeaderView.m in Sources */,
 				30A4EB5D231CC86B00995416 /* MLNMyImageHandler.m in Sources */,
 				30E24E9622F3D74A00A0E78C /* MLNGlobalVarTest.m in Sources */,
 				6003F5A7195388D20070C39A /* MLNViewController.m in Sources */,
 				3012BB102326822F00FA2BB2 /* MLNNavigatorHandler.m in Sources */,
 				B29500C02371B11E00F48F09 /* MLNGalleryPlusViewController.m in Sources */,
+				B295011B2374137600F48F09 /* MLNGalleryInfoNumberView.m in Sources */,
 				B29500CA23725EB800F48F09 /* UIImage+MLNResize.m in Sources */,
 				B29500C32371B13F00F48F09 /* MLNGalleryMessageViewController.m in Sources */,
-				FADC40372373D5E6002249D4 /* MLNGalleryNavigationBar.m in Sources */,
 				B29500F12372BA0000F48F09 /* MLNHomeTableView.m in Sources */,
 				B29500BD2371AFCB00F48F09 /* MLNGalleryDiscoverViewController.m in Sources */,
 				6003F59A195388D20070C39A /* main.m in Sources */,
@@ -638,12 +688,14 @@
 				B29500FD2373BB3000F48F09 /* MLNHomeDataHandler.m in Sources */,
 				B29500F42372BA9000F48F09 /* MLNHomeTableViewCell.m in Sources */,
 				B2D0ABB52370136000B1D349 /* MLNGalleryViewController.m in Sources */,
-				B29500C62371B14F00F48F09 /* MLNGalleryMineViewController.m in Sources */,
-				FADC404F237406BE002249D4 /* MLNGalleryInfoNumberView.m in Sources */,
 				30A4EB6D231F4FD400995416 /* MLNTestMe+Test.m in Sources */,
+				B295012823750F8900F48F09 /* MLNDiscoverAblbumDeatilHeaderView.m in Sources */,
+				B295010823740ABB00F48F09 /* MLNNativeWaterfallLayout.m in Sources */,
 				B29500D82372627000F48F09 /* MLNNativeBadgeView.m in Sources */,
+				B295011D2374137600F48F09 /* MLNGalleryMineViewController.m in Sources */,
 				B29500E1237274E800F48F09 /* MLNNativeViewPagerAdapter.m in Sources */,
 				B29500E0237274E800F48F09 /* MLNNativeViewPager.m in Sources */,
+				B295012223742AD200F48F09 /* MLNDiscoverInspirCategoryView.m in Sources */,
 				B29500E723727C2900F48F09 /* MLNNativeViewPagerCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
