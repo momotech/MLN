@@ -63,8 +63,11 @@
 		B295011D2374137600F48F09 /* MLNGalleryMineViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B29501192374137600F48F09 /* MLNGalleryMineViewController.m */; };
 		B295011E2374137600F48F09 /* MLNGalleryMineHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = B295011A2374137600F48F09 /* MLNGalleryMineHeaderView.m */; };
 		B295012223742AD200F48F09 /* MLNDiscoverInspirCategoryView.m in Sources */ = {isa = PBXBuildFile; fileRef = B295012123742AD200F48F09 /* MLNDiscoverInspirCategoryView.m */; };
-		B295012523750F1900F48F09 /* MLNDiscoverAlbumDetailCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B295012423750F1900F48F09 /* MLNDiscoverAlbumDetailCell.m */; };
 		B295012823750F8900F48F09 /* MLNDiscoverAblbumDeatilHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = B295012723750F8900F48F09 /* MLNDiscoverAblbumDeatilHeaderView.m */; };
+		B295012E237519AB00F48F09 /* MLNDiscoverTagView.m in Sources */ = {isa = PBXBuildFile; fileRef = B295012D237519AB00F48F09 /* MLNDiscoverTagView.m */; };
+		B295014823755CBA00F48F09 /* MLNDiscoverAlbumDetailCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B295014723755CBA00F48F09 /* MLNDiscoverAlbumDetailCell.m */; };
+		B295014B2375628400F48F09 /* MLNDiscoverAlbumDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B295014A2375628400F48F09 /* MLNDiscoverAlbumDetailViewController.m */; };
+		B29501632375A70A00F48F09 /* MLNMessageDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B29501622375A70A00F48F09 /* MLNMessageDetailViewController.m */; };
 		B2D0AB85236C1F0A00B1D349 /* gallery in Resources */ = {isa = PBXBuildFile; fileRef = B2D0AB84236C1F0A00B1D349 /* gallery */; };
 		B2D0ABB52370136000B1D349 /* MLNGalleryViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B2D0ABB42370136000B1D349 /* MLNGalleryViewController.m */; };
 /* End PBXBuildFile section */
@@ -184,10 +187,16 @@
 		B295011F2374157200F48F09 /* MLNNativeWaterfallLayoutDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNNativeWaterfallLayoutDelegate.h; sourceTree = "<group>"; };
 		B295012023742AD200F48F09 /* MLNDiscoverInspirCategoryView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNDiscoverInspirCategoryView.h; sourceTree = "<group>"; };
 		B295012123742AD200F48F09 /* MLNDiscoverInspirCategoryView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNDiscoverInspirCategoryView.m; sourceTree = "<group>"; };
-		B295012323750F1900F48F09 /* MLNDiscoverAlbumDetailCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNDiscoverAlbumDetailCell.h; sourceTree = "<group>"; };
-		B295012423750F1900F48F09 /* MLNDiscoverAlbumDetailCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNDiscoverAlbumDetailCell.m; sourceTree = "<group>"; };
 		B295012623750F8900F48F09 /* MLNDiscoverAblbumDeatilHeaderView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNDiscoverAblbumDeatilHeaderView.h; sourceTree = "<group>"; };
 		B295012723750F8900F48F09 /* MLNDiscoverAblbumDeatilHeaderView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNDiscoverAblbumDeatilHeaderView.m; sourceTree = "<group>"; };
+		B295012C237519AB00F48F09 /* MLNDiscoverTagView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNDiscoverTagView.h; sourceTree = "<group>"; };
+		B295012D237519AB00F48F09 /* MLNDiscoverTagView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNDiscoverTagView.m; sourceTree = "<group>"; };
+		B295014623755CBA00F48F09 /* MLNDiscoverAlbumDetailCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNDiscoverAlbumDetailCell.h; sourceTree = "<group>"; };
+		B295014723755CBA00F48F09 /* MLNDiscoverAlbumDetailCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNDiscoverAlbumDetailCell.m; sourceTree = "<group>"; };
+		B29501492375628400F48F09 /* MLNDiscoverAlbumDetailViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNDiscoverAlbumDetailViewController.h; sourceTree = "<group>"; };
+		B295014A2375628400F48F09 /* MLNDiscoverAlbumDetailViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNDiscoverAlbumDetailViewController.m; sourceTree = "<group>"; };
+		B29501612375A70A00F48F09 /* MLNMessageDetailViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNMessageDetailViewController.h; sourceTree = "<group>"; };
+		B29501622375A70A00F48F09 /* MLNMessageDetailViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNMessageDetailViewController.m; sourceTree = "<group>"; };
 		B2D0AB84236C1F0A00B1D349 /* gallery */ = {isa = PBXFileReference; lastKnownFileType = folder; path = gallery; sourceTree = "<group>"; };
 		B2D0ABB32370136000B1D349 /* MLNGalleryViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNGalleryViewController.h; sourceTree = "<group>"; };
 		B2D0ABB42370136000B1D349 /* MLNGalleryViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNGalleryViewController.m; sourceTree = "<group>"; };
@@ -386,6 +395,8 @@
 				B29500EE2372A90D00F48F09 /* Home */,
 				B29500DB237274E800F48F09 /* ViewPager */,
 				B29500CC2372627000F48F09 /* TabSegmentView */,
+				B29501612375A70A00F48F09 /* MLNMessageDetailViewController.h */,
+				B29501622375A70A00F48F09 /* MLNMessageDetailViewController.m */,
 			);
 			path = Gui;
 			sourceTree = "<group>";
@@ -448,10 +459,14 @@
 				B295011F2374157200F48F09 /* MLNNativeWaterfallLayoutDelegate.h */,
 				B295012023742AD200F48F09 /* MLNDiscoverInspirCategoryView.h */,
 				B295012123742AD200F48F09 /* MLNDiscoverInspirCategoryView.m */,
-				B295012323750F1900F48F09 /* MLNDiscoverAlbumDetailCell.h */,
-				B295012423750F1900F48F09 /* MLNDiscoverAlbumDetailCell.m */,
 				B295012623750F8900F48F09 /* MLNDiscoverAblbumDeatilHeaderView.h */,
 				B295012723750F8900F48F09 /* MLNDiscoverAblbumDeatilHeaderView.m */,
+				B295012C237519AB00F48F09 /* MLNDiscoverTagView.h */,
+				B295012D237519AB00F48F09 /* MLNDiscoverTagView.m */,
+				B295014623755CBA00F48F09 /* MLNDiscoverAlbumDetailCell.h */,
+				B295014723755CBA00F48F09 /* MLNDiscoverAlbumDetailCell.m */,
+				B29501492375628400F48F09 /* MLNDiscoverAlbumDetailViewController.h */,
+				B295014A2375628400F48F09 /* MLNDiscoverAlbumDetailViewController.m */,
 			);
 			path = Discover;
 			sourceTree = "<group>";
@@ -655,11 +670,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B295012E237519AB00F48F09 /* MLNDiscoverTagView.m in Sources */,
+				B295014823755CBA00F48F09 /* MLNDiscoverAlbumDetailCell.m in Sources */,
 				30A4EB5A231CC5CD00995416 /* MLNMyHttpHandler.m in Sources */,
 				30E24E9422F3D74A00A0E78C /* MLNGlobalFuncTest.m in Sources */,
 				B295011C2374137600F48F09 /* MLNGalleryNavigationBar.m in Sources */,
-				B295012523750F1900F48F09 /* MLNDiscoverAlbumDetailCell.m in Sources */,
 				30E24E9522F3D74A00A0E78C /* MLNStaticTest.m in Sources */,
+				B295014B2375628400F48F09 /* MLNDiscoverAlbumDetailViewController.m in Sources */,
 				6003F59E195388D20070C39A /* MLNAppDelegate.m in Sources */,
 				B29500F72372D5B400F48F09 /* MLNSimpleViewPagerCell.m in Sources */,
 				B29500BA2371A68300F48F09 /* MLNGalleryHomeViewController.m in Sources */,
@@ -678,6 +695,7 @@
 				3012BB102326822F00FA2BB2 /* MLNNavigatorHandler.m in Sources */,
 				B29500C02371B11E00F48F09 /* MLNGalleryPlusViewController.m in Sources */,
 				B295011B2374137600F48F09 /* MLNGalleryInfoNumberView.m in Sources */,
+				B29501632375A70A00F48F09 /* MLNMessageDetailViewController.m in Sources */,
 				B29500CA23725EB800F48F09 /* UIImage+MLNResize.m in Sources */,
 				B29500C32371B13F00F48F09 /* MLNGalleryMessageViewController.m in Sources */,
 				B29500F12372BA0000F48F09 /* MLNHomeTableView.m in Sources */,

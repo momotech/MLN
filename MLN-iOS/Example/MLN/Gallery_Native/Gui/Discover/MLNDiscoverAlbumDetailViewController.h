@@ -1,5 +1,5 @@
 //
-//  MLNDiscoverAlbumDetailCell.h
+//  MLNDiscoverAlbumDetailViewController.h
 //  MLN_Example
 //
 //  Created by Feng on 2019/11/8.
@@ -10,9 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface MLNDiscoverAlbumDetailCell : UICollectionViewCell
-
-- (void)reloadWithData:(NSDictionary *)data;
+@interface MLNDiscoverAlbumDetailViewController : UIViewController
 
 @end
 
