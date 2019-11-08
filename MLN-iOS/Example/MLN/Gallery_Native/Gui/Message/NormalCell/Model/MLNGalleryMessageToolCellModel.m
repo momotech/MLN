@@ -21,4 +21,14 @@
     return [MLNGalleryMessageToolCell class];
 }
 
+- (CGFloat)cellHeight
+{
+    return 45.0f;
+}
+
+- (void)setValue:(id)value forUndefinedKey:(NSString *)key
+{
+    
+}
+
 @end

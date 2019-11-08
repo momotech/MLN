@@ -12,6 +12,7 @@
 #import "MLNGalleryMessageBaseCell.h"
 #import "MLNGalleryMessageToolCellModel.h"
 #import "MLNGalleryMessageDescCellModel.h"
+#import <MJRefresh.h>
 
 #define kMLNTabBarHeight 44
 
@@ -21,7 +22,7 @@
 
 @property (nonatomic, strong) UITableView *mainView;
 
-@property (nonatomic, strong) NSArray <MLNGalleryMessageBaseCellModel *>* models;
+@property (nonatomic, strong) NSMutableArray <MLNGalleryMessageBaseCellModel *>* models;
 
 @end
 
@@ -42,6 +43,32 @@
 
 - (void)setupMainView
 {
+    [self reloadData];
+    [self loadMoreData];
+    
+    __weak typeof(self) weakSelf = self;
+    self.mainView.mj_header = [MJRefreshHeader headerWithRefreshingBlock:^{
+        __strong typeof(weakSelf) strongSelf = weakSelf;
+        [strongSelf reloadData];
+        [strongSelf loadMoreData];
+        [strongSelf.mainView.mj_header endRefreshing];
+        [strongSelf.mainView reloadData];
+    }];
+    
+    self.mainView.mj_footer = [MJRefreshFooter footerWithRefreshingBlock:^{
+        __strong typeof(weakSelf) strongSelf = weakSelf;
+        [strongSelf.mainView.mj_footer endRefreshing];
+        [strongSelf loadMoreData];
+        [strongSelf.mainView reloadData];
+    }];
+    
+    [self.mainView reloadData];
+}
+
+- (void)reloadData
+{
+    [self.models removeAllObjects];
+    
     MLNGalleryMessageToolCellModel *tool1 = [[MLNGalleryMessageToolCellModel alloc] init];
     tool1.leftIcon = @"https://s.momocdn.com/w/u/others/2019/08/31/1567263950353-service.png";
     tool1.title = @"私信/客服";
@@ -52,21 +79,25 @@
     tool2.title = @"官方通知";
     tool2.rightIcon = @"https://s.momocdn.com/w/u/others/2019/08/31/1567264720561-rightarrow.png";
     
-    MLNGalleryMessageDescCellModel *msg1 = [[MLNGalleryMessageDescCellModel alloc] init];
-    msg1.avatar = @"";
-    msg1.name = @"";
-    msg1.time = @"";
-    msg1.desc = @"关注了我";
-    msg1.type = MLNGalleryMessageDescCellModelTypeAttentionYou;
+    self.models = [@[tool1, tool2] mutableCopy];
+}
+
+- (void)loadMoreData
+{
+    NSDictionary *dataMap = [self readLocalFileWithName:@"message"];
     
+    NSInteger code = [[dataMap objectForKey:@"code"] integerValue];
+    if (code != 200) {
+        return;
+    }
     
-    self.models = @[tool1, tool2];
-    
-    
-    
-    
-    [self mainView];
-    [self.mainView reloadData];
+    NSArray *dataArray = [dataMap objectForKey:@"data"];
+    for (NSDictionary *itemDict in dataArray) {
+        if ([itemDict isKindOfClass:[NSDictionary class]]) {
+            MLNGalleryMessageDescCellModel *cellModel = [[MLNGalleryMessageDescCellModel alloc] initWithDict:itemDict];
+            [self.models addObject:cellModel];
+        }
+    }
 }
 
 #pragma mark - getter
@@ -83,6 +114,7 @@
 {
     if (!_mainView) {
         _mainView = [[UITableView alloc] initWithFrame:CGRectMake(0, kMLNNavigatorHeight, self.view.frame.size.width, self.view.frame.size.height - kMLNNavigatorHeight - kMLNTabBarHeight) style:UITableViewStylePlain];
+        _mainView.separatorStyle = UITableViewCellEditingStyleNone;
         _mainView.delegate = self;
         _mainView.dataSource = self;
         [self.view addSubview:_mainView];
@@ -118,5 +150,26 @@
     return cell;
 }
 
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    MLNGalleryMessageBaseCellModel *model = nil;
+    if (indexPath.row < self.models.count) {
+        model = [self.models objectAtIndex:indexPath.row];
+    } else {
+        model = [MLNGalleryMessageBaseCellModel new];
+    }
+    return model.cellHeight;
+}
+
+
+// 读取本地JSON文件
+- (NSDictionary *)readLocalFileWithName:(NSString *)name {
+    // 获取文件路径
+    NSString *path = [[NSBundle mainBundle] pathForResource:name ofType:@"json"];
+    // 将文件数据化
+    NSData *data = [[NSData alloc] initWithContentsOfFile:path];
+    // 对数据进行JSON格式化并返回字典形式
+    return [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:nil];
+}
 
 @end
