@@ -7,6 +7,7 @@
 
 #import "MLNKitBridgesManager.h"
 #import "MLNKitInstance.h"
+#import "MLNLuaCore.h"
 // Kit Classes's View
 #import "MLNView.h"
 #import "MLNWindow.h"
@@ -69,6 +70,7 @@
 #import "MLNTypeUtil.h"
 #import "MLNApplication.h"
 #import "MLNNetworkReachability.h"
+#import "mmoslib.h"
 // Animations
 #import "MLNAnimator.h"
 #import "MLNAnimation.h"
@@ -105,6 +107,8 @@
     [self.instance registerClasses:self.gvarClasses error:NULL];
     // 注册工具
     [self.instance registerClasses:self.utilClasses error:NULL];
+    // 注册C工具库
+    luaopen_mmos(self.instance.luaCore.state);
     // 注册动画相关
     [self.instance registerClasses:self.animationClasses error:NULL];
     // 注册绘图相关
