@@ -26,7 +26,6 @@
             android:name="com.immomo.demo.provider.GlideConfiguration"
             android:value="GlideModule"/>
 
-        <activity android:name="com.immomo.demo.activity.LuaViewActivity"/>
         <activity android:name="com.immomo.demo.activity.AssetsChooserActivity"/>
         <activity
             android:name="com.immomo.demo.activity.WebActivity"

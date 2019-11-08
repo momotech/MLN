@@ -17,6 +17,7 @@ import com.immomo.mls.HotReloadHelper;
 import com.immomo.mls.InitData;
 import com.immomo.mls.MLSBundleUtils;
 import com.immomo.mls.MLSEngine;
+import com.immomo.mls.activity.LuaViewActivity;
 import com.immomo.mls.utils.MainThreadExecutor;
 
 public class BaseActivity extends Activity implements HotReloadHelper.ConnectListener {

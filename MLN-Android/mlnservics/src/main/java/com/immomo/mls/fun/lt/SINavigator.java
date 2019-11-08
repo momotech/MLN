@@ -9,26 +9,32 @@ package com.immomo.mls.fun.lt;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.TypedArray;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.text.TextUtils;
 
 import com.immomo.mls.Constants;
 import com.immomo.mls.DefaultOnActivityResultListener;
+import com.immomo.mls.InitData;
 import com.immomo.mls.LuaViewManager;
+import com.immomo.mls.MLSBundleUtils;
 import com.immomo.mls.OnActivityResultListener;
 import com.immomo.mls.R;
+import com.immomo.mls.activity.LuaViewActivity;
 import com.immomo.mls.annotation.LuaBridge;
 import com.immomo.mls.annotation.LuaClass;
 import com.immomo.mls.fun.constants.NavigatorAnimType;
+import com.immomo.mls.util.FileUtil;
 import com.immomo.mls.wrapper.callback.IVoidCallback;
 
 import org.luaj.vm2.Globals;
 import org.luaj.vm2.LuaValue;
-import org.luaj.vm2.utils.IGlobalsUserdata;
 
 import java.io.File;
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -39,6 +45,7 @@ import androidx.annotation.Nullable;
  */
 @LuaClass
 public class SINavigator implements NavigatorAnimType {
+    private final String ASSETS_PREFIX = "file://android_asset/";
     public static final String LUA_CLASS_NAME = "Navigator";
 
     private int requestCode = Integer.MAX_VALUE;
@@ -64,13 +71,13 @@ public class SINavigator implements NavigatorAnimType {
 
     @LuaBridge
     public void gotoPage(String action, Map params, @AnimType int animType) {
-        internalGotoPage(action, parseBundle(params), animType);
+        internalGotoPage(action, params, animType);
     }
 
     @LuaBridge
     public void gotoAndCloseSelf(String action, Map params, @AnimType int animType) {
         closeSelf(animType);
-        internalGotoPage(action, parseBundle(params), animType);
+        internalGotoPage(action, params, animType);
     }
 
     @LuaBridge
@@ -98,9 +105,48 @@ public class SINavigator implements NavigatorAnimType {
     }
     //</editor-fold>
 
-    protected void internalGotoPage(String action, Bundle bundle, @AnimType int at) {}
+    protected void internalGotoPage(String action, Bundle bundle, @AnimType int at) {
 
-    protected void internalGotoPage(String action, Bundle bundle, @AnimType int at, int requestCode) { }
+    }
+
+    protected void internalGotoPage(String action, Map params, @AnimType int animType) {
+        if (TextUtils.isEmpty(action)) {
+            return;
+        }
+        if (FileUtil.isLocalUrl(action)) {//相对路径转化
+            if (!action.endsWith(".lua")) {
+                action = action + ".lua";
+            }
+            if (!action.startsWith(ASSETS_PREFIX)) {//Android的asset目录，不作为相对路径
+                action = FileUtil.getAbsoluteUrl(action);
+            }
+        } else if (!action.startsWith("http")) {//绝对路径、单文件名，判断后缀
+            if (!action.endsWith(".lua")) {
+                action = action + ".lua";
+            }
+            String localUrl = ((LuaViewManager) globals.getJavaUserdata()).baseFilePath;
+            File entryFile = new File(localUrl, action);//入口文件路径
+            if (entryFile.exists()) {
+                action = entryFile.getAbsolutePath();
+            }
+        }
+
+        Activity a = getActivity();
+        Intent intent = new Intent(a, LuaViewActivity.class);
+        InitData initData = MLSBundleUtils.createInitData(action);
+        if (initData.extras == null) {
+            initData.extras = new HashMap();
+        }
+        initData.extras.putAll(params);
+        intent.putExtras(MLSBundleUtils.createBundle(initData));
+        if (a != null) {
+            a.startActivity(intent);
+            a.overridePendingTransition(parseInAnim(animType), parseOutAnim(animType));
+        }
+    }
+
+    protected void internalGotoPage(String action, Bundle bundle, @AnimType int at, int requestCode) {
+    }
 
     protected int generateRequestCode() {
         return --requestCode;
