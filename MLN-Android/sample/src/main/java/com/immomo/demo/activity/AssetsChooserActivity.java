@@ -18,6 +18,7 @@ import android.widget.ArrayAdapter;
 
 import com.immomo.mls.InitData;
 import com.immomo.mls.MLSBundleUtils;
+import com.immomo.mls.activity.LuaViewActivity;
 import com.immomo.mls.utils.MLSUtils;
 
 import java.io.File;

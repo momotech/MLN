@@ -22,7 +22,6 @@
 #include <iostream>
 #include "MessageEvent.h"
 
-
 typedef void(*ON_MESSAGE_CALLBACK)(void *channel, MessageEvent *event); //定义函数指针类型
 
 class BroadcastChannel {
@@ -32,6 +31,11 @@ public:
     ~BroadcastChannel();
     void postMessage(std::string msg);
     void postMessage(std::string name, std::string msg);
+    
+    void postStickyMessage(std::string msg);
+    void postStickyMessage(std::string name, std::string msg);
+    void removeStickyMessage();
+    
     void onMessage(ON_MESSAGE_CALLBACK callback);
     void close();
     
@@ -46,6 +50,8 @@ private:
     std::string var_name;
     ON_MESSAGE_CALLBACK var_callback;
     void *var_extraData;
+    void updateCachedEvents(MessageEvent *newEvent);
+    std::vector<MessageEvent *> *cacheEventsWithChannelName(std::string name);
 };
 
 

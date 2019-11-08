@@ -96,10 +96,24 @@ bool lua_bc_pushcallback(lua_State *L, void *key) {
  * UserData.
  \*-------------------------------------------------------------------------*/
 
-typedef struct lua_bc_ud_channel {
+typedef struct lua_bc_ud_channel lua_bc_ud_channel;
+
+typedef struct lua_bc_ud_channel_ref {
+    void *channel;
+    lua_bc_ud_channel_ref(void *p) {
+        channel = p;
+    }
+} lua_bc_ud_channel_ref;
+
+typedef struct lua_bc_ud_channel_shared_ref {
+    std::shared_ptr<lua_bc_ud_channel_ref> ref;
+} lua_bc_ud_channel_shared_ref;
+
+struct lua_bc_ud_channel {
     BroadcastChannel *channel;
     lua_State *L;
-} lua_bc_ud_channel;
+    lua_bc_ud_channel_shared_ref *shared_ref;
+};
 
 typedef struct lua_bc_ud_event {
     MessageEvent *event;
@@ -123,7 +137,11 @@ static int j_callback(lua_State *L, void *ud) {
     MessageEvent *event = args->event;
     lua_bc_ud_channel *channel = args->channel;
     free(args);
-    if (L && lua_bc_pushcallback(L, channel)) {
+    std::weak_ptr<lua_bc_ud_channel_ref> wref = channel->shared_ref->ref;
+    std::shared_ptr<lua_bc_ud_channel_ref> sref = wref.lock();
+    if (!sref) {
+        delete event;
+    } else if (L && lua_bc_pushcallback(L, channel)) {
         lua_bc_ud_msgevent *ud_msgevent = (lua_bc_ud_msgevent *) lua_newuserdata(L,
                                                                                  sizeof(lua_bc_ud_msgevent));
         ud_msgevent->event = event;
@@ -142,45 +160,52 @@ static int j_callback(lua_State *L, void *ud) {
 #endif
 
 static void lua_bc_callback (void * channel, MessageEvent *event_) {
-    MessageEvent *event = new MessageEvent();
-    event->setStringData(event_->getStringData());
-    event->setType(event_->getType());
+    if (!channel || !event_)
+        return;
+    MessageEvent *event = new MessageEvent(*event_);
+
 #if defined(JAVA_ENV)
     BroadcastChannel *ch = (BroadcastChannel *)channel;
+    lua_bc_ud_channel *ud = (lua_bc_ud_channel *)ch->getExtraData();
+    if (!ud)
+        return;
     JNIEnv * env;
     int need = getEnv(&env);
-    if (ch) {
-        lua_bc_ud_channel *ud = (lua_bc_ud_channel *)ch->getExtraData();
-        if (ud->L) {
-            ARGS * args = (ARGS *)malloc(sizeof(ARGS));
-            args->channel = ud;
-            args->event = event;
-            int ret = postCallback(env, ud->L, j_callback, (void *)args);
-            if (ret != 0) {
-                free(args);
-                delete event;
-            }
+    if (ud->L) {
+        ARGS * args = (ARGS *)malloc(sizeof(ARGS));
+        args->channel = ud;
+        args->event = event;
+        int ret = postCallback(env, ud->L, j_callback, (void *)args);
+        if (ret != 0) {
+            free(args);
+            delete event;
         }
     }
     if (need) detachEnv();
 #else
+    BroadcastChannel *ch = (BroadcastChannel *)channel;
+    lua_bc_ud_channel *ud = (lua_bc_ud_channel *)ch->getExtraData();
+    std::weak_ptr<lua_bc_ud_channel_ref> wref = ud->shared_ref->ref;
     dispatch_async(dispatch_get_main_queue(), ^{
-        BroadcastChannel *ch = (BroadcastChannel *)channel;
-        if (event != NULL && ch != NULL) {
-            cout << "lua : " << event->getType() << (string)(char *)event->getData() << endl;
+        std::shared_ptr<lua_bc_ud_channel_ref> sref = wref.lock();
+        if (sref) {
+#if DEBUG
+            std::cout << "lua : " << event->getType() << event->getStringData() << std::endl;
+#endif
             lua_bc_ud_channel *ud = (lua_bc_ud_channel *)ch->getExtraData();
-            if (ud->L != NULL && lua_bc_pushcallback(ud->L, ud)) {
+            if (ud != NULL && ud->L != NULL && lua_bc_pushcallback(ud->L, ud)) {
                 lua_bc_ud_msgevent *ud_msgevent = (lua_bc_ud_msgevent *)lua_newuserdata(ud->L, sizeof(lua_bc_ud_msgevent));
                 ud_msgevent->event = event;
                 ud_msgevent->L = ud->L;
                 lua_bc_setclass(ud->L, LUA_MESSAGEEVENTMTLIBNAME, -1);
                 int success = lua_pcall(ud->L, 1, 1, 0);
+#if DEBUG
                 if (success!=0) {
-                    cout << "lua callback error!" << lua_tostring(ud->L, -1) << endl;
+                    std::cout << "lua callback error!" << lua_tostring(ud->L, -1) << std::endl;
                 }
+#endif
+                return;
             }
-        } else {
-            cout << "not found!" << endl;
         }
         delete event;
     });
@@ -193,6 +218,8 @@ static int lua_bc_new_channel(lua_State *L) {
     ud->channel = new BroadcastChannel(name);
     ud->L = L;
     ud->channel->setExtraData(ud);
+    ud->shared_ref = new lua_bc_ud_channel_shared_ref;
+    ud->shared_ref->ref = std::make_shared<lua_bc_ud_channel_ref>(new lua_bc_ud_channel_ref(ud));
     lua_bc_setclass(L, LUA_BROADCASTCHANNEMTLLIBNAME, -1);
     return 1;
 }
@@ -202,6 +229,7 @@ static int lua_bc_channel_gc(lua_State *L) {
     BroadcastChannel *channel = ud->channel;
     ud->L = NULL;
     ud->channel = NULL;
+    delete ud->shared_ref;
     lua_bc_removecallback(L, ud);
     if (channel) {
         delete channel;
@@ -225,6 +253,27 @@ static int lua_bc_channel_postMessage(lua_State *L) {
         std::string data = lua_tostring(L, 3);
         ud->channel->postMessage(name, data);
     }
+    return 0;
+}
+
+static int lua_bc_channel_postSticky(lua_State *L) {
+    if (lua_gettop(L) == 2) {
+        lua_bc_ud_channel *ud = (lua_bc_ud_channel *)lua_touserdata(L, 1);
+        std::string data = lua_tostring(L, 2);
+        ud->channel->postStickyMessage(data);
+    } else if(lua_gettop(L) == 3) {
+        lua_bc_ud_channel *ud = (lua_bc_ud_channel *)lua_touserdata(L, 1);
+        std::string name = lua_tostring(L, 2);
+        std::string data = lua_tostring(L, 3);
+        ud->channel->postStickyMessage(name, data);
+    }
+    return 0;
+}
+
+static int lua_bc_channel_removeSticky(lua_State *L) {
+    lua_bc_ud_channel *ud = (lua_bc_ud_channel *)lua_touserdata(L, 1);
+    if (!ud || !ud->channel) return 0;
+    ud->channel->removeStickyMessage();
     return 0;
 }
 
@@ -253,6 +302,8 @@ static int lua_bc_channel_getName(lua_State *L) {
 
 static const luaL_Reg bc_channel_funcs[] = {
         {"postMessage", lua_bc_channel_postMessage},
+        {"postSticky", lua_bc_channel_postSticky},
+        {"removeSticky", lua_bc_channel_removeSticky},
         {"onMessage", lua_bc_channel_onMessage},
         {"close", lua_bc_channel_close},
         {"getName", lua_bc_channel_getName},
