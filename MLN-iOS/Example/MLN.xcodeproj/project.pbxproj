@@ -80,6 +80,7 @@
 		FADC4073237465EA002249D4 /* MLNGalleryMessageDescCellModel.m in Sources */ = {isa = PBXBuildFile; fileRef = FADC4072237465EA002249D4 /* MLNGalleryMessageDescCellModel.m */; };
 		FADC407623746D91002249D4 /* MLNGalleryMessageBaseCellModel.m in Sources */ = {isa = PBXBuildFile; fileRef = FADC407523746D91002249D4 /* MLNGalleryMessageBaseCellModel.m */; };
 		FADC407923746F6C002249D4 /* MLNGalleryMessageBaseCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FADC407823746F6C002249D4 /* MLNGalleryMessageBaseCell.m */; };
+		FADC4090237555E4002249D4 /* message.json in Resources */ = {isa = PBXBuildFile; fileRef = FADC408F237555E4002249D4 /* message.json */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -233,6 +234,7 @@
 		FADC407523746D91002249D4 /* MLNGalleryMessageBaseCellModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNGalleryMessageBaseCellModel.m; sourceTree = "<group>"; };
 		FADC407723746F6C002249D4 /* MLNGalleryMessageBaseCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNGalleryMessageBaseCell.h; sourceTree = "<group>"; };
 		FADC407823746F6C002249D4 /* MLNGalleryMessageBaseCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNGalleryMessageBaseCell.m; sourceTree = "<group>"; };
+		FADC408F237555E4002249D4 /* message.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = message.json; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -552,6 +554,7 @@
 		FADC4062237462E4002249D4 /* Message */ = {
 			isa = PBXGroup;
 			children = (
+				FADC408F237555E4002249D4 /* message.json */,
 				FADC4063237463B7002249D4 /* NormalCell */,
 				B29500C12371B13F00F48F09 /* MLNGalleryMessageViewController.h */,
 				B29500C22371B13F00F48F09 /* MLNGalleryMessageViewController.m */,
@@ -675,6 +678,7 @@
 				30CB3BFB23684CD400AB90C6 /* MLN.podspec in Resources */,
 				873B8AEB1B1F5CCA007FD442 /* Main.storyboard in Resources */,
 				30CB3BF923684B7F00AB90C6 /* MLNDevTool.podspec in Resources */,
+				FADC4090237555E4002249D4 /* message.json in Resources */,
 				71719F9F1E33DC2100824A3D /* LaunchScreen.storyboard in Resources */,
 				6003F5A9195388D20070C39A /* Images.xcassets in Resources */,
 				6003F598195388D20070C39A /* InfoPlist.strings in Resources */,

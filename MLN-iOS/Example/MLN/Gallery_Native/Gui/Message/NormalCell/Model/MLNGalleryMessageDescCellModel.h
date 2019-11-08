@@ -11,21 +11,17 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-typedef enum : NSUInteger
-{
-    MLNGalleryMessageDescCellModelTypeLoveYou = 0,
-    MLNGalleryMessageDescCellModelTypeAttentionYou,
-} MLNGalleryMessageDescCellModelType;
-
-
 @interface MLNGalleryMessageDescCellModel : MLNGalleryMessageBaseCellModel
 
 @property (nonatomic, copy) NSString *avatar;
+@property (nonatomic, copy) NSString *attach;
 @property (nonatomic, copy) NSString *name;
 @property (nonatomic, copy) NSString *time;
 @property (nonatomic, copy) NSString *desc;
 
-@property (nonatomic, assign) MLNGalleryMessageDescCellModelType type;
+@property (nonatomic, assign) NSInteger follow;
+
+- (instancetype)initWithDict:(NSDictionary *)dict;
 
 @end
 

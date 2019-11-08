@@ -18,7 +18,17 @@
 
 - (Class)cellClass
 {
-    return NSStringFromClass([MLNGalleryMessageBaseCell class]);
+    return [MLNGalleryMessageBaseCell class];
+}
+
+- (CGFloat)cellHeight
+{
+    return 45.0f;
+}
+
+- (void)setValue:(id)value forUndefinedKey:(NSString *)key
+{
+    
 }
 
 @end

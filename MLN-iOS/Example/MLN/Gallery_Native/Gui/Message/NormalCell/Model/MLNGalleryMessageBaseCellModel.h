@@ -16,6 +16,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, strong) Class cellClass;
 
+@property (nonatomic, assign) CGFloat cellHeight;
+
 @end
 
 NS_ASSUME_NONNULL_END
