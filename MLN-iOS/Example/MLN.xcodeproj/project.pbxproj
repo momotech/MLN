@@ -68,7 +68,6 @@
 		B2D0AB85236C1F0A00B1D349 /* gallery in Resources */ = {isa = PBXBuildFile; fileRef = B2D0AB84236C1F0A00B1D349 /* gallery */; };
 		B2D0ABB52370136000B1D349 /* MLNGalleryViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B2D0ABB42370136000B1D349 /* MLNGalleryViewController.m */; };
 		FADC40372373D5E6002249D4 /* MLNGalleryNavigationBar.m in Sources */ = {isa = PBXBuildFile; fileRef = FADC40362373D5E6002249D4 /* MLNGalleryNavigationBar.m */; };
-		FADC404C2373FE48002249D4 /* MLNGalleryMineHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = FADC404B2373FE48002249D4 /* MLNGalleryMineHeaderView.m */; };
 		FADC404F237406BE002249D4 /* MLNGalleryInfoNumberView.m in Sources */ = {isa = PBXBuildFile; fileRef = FADC404E237406BE002249D4 /* MLNGalleryInfoNumberView.m */; };
 		FADC40562374404D002249D4 /* MLNGalleryMineInfoViewModel.m in Sources */ = {isa = PBXBuildFile; fileRef = FADC40552374404D002249D4 /* MLNGalleryMineInfoViewModel.m */; };
 		FADC405A237457EC002249D4 /* MLNGalleryMineBottomPage.m in Sources */ = {isa = PBXBuildFile; fileRef = FADC4059237457EC002249D4 /* MLNGalleryMineBottomPage.m */; };
@@ -509,8 +508,6 @@
 				B295011A2374137600F48F09 /* MLNGalleryMineHeaderView.m */,
 				FADC4057237457B4002249D4 /* BottomPage */,
 				FADC405023744007002249D4 /* Model */,
-				B29500C42371B14F00F48F09 /* MLNGalleryMineViewController.h */,
-				B29500C52371B14F00F48F09 /* MLNGalleryMineViewController.m */,
 				FADC40352373D5E6002249D4 /* MLNGalleryNavigationBar.h */,
 				FADC40362373D5E6002249D4 /* MLNGalleryNavigationBar.m */,
 				FADC404A2373FE48002249D4 /* MLNGalleryMineHeaderView.h */,
@@ -555,6 +552,7 @@
 			isa = PBXGroup;
 			children = (
 				FADC408F237555E4002249D4 /* message.json */,
+				FADC40672374651F002249D4 /* Model */,
 				FADC4063237463B7002249D4 /* NormalCell */,
 				B29500C12371B13F00F48F09 /* MLNGalleryMessageViewController.h */,
 				B29500C22371B13F00F48F09 /* MLNGalleryMessageViewController.m */,
@@ -565,7 +563,6 @@
 		FADC4063237463B7002249D4 /* NormalCell */ = {
 			isa = PBXGroup;
 			children = (
-				FADC40672374651F002249D4 /* Model */,
 				FADC407723746F6C002249D4 /* MLNGalleryMessageBaseCell.h */,
 				FADC407823746F6C002249D4 /* MLNGalleryMessageBaseCell.m */,
 				FADC406423746519002249D4 /* MLNGalleryMessageToolCell.h */,
@@ -817,7 +814,6 @@
 				FADC4073237465EA002249D4 /* MLNGalleryMessageDescCellModel.m in Sources */,
 				B2D0ABB52370136000B1D349 /* MLNGalleryViewController.m in Sources */,
 				FADC406623746519002249D4 /* MLNGalleryMessageToolCell.m in Sources */,
-				B29500C62371B14F00F48F09 /* MLNGalleryMineViewController.m in Sources */,
 				FADC404F237406BE002249D4 /* MLNGalleryInfoNumberView.m in Sources */,
 				30A4EB6D231F4FD400995416 /* MLNTestMe+Test.m in Sources */,
 				B295012823750F8900F48F09 /* MLNDiscoverAblbumDeatilHeaderView.m in Sources */,
