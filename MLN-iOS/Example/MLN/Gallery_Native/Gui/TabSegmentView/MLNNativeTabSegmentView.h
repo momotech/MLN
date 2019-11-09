@@ -54,6 +54,10 @@ typedef enum : NSUInteger {
 - (instancetype)initWithFrame:(CGRect)frame
                   segmentTitles:(NSArray<NSString*> *)segmentTitles
                        tapBlock:(MLNNativeTabSegmentViewTapActionBlock)block;
+- (instancetype)initWithFrame:(CGRect)frame
+                segmentTitles:(NSArray<NSString*> *)segmentTitles
+                configuration:(MLNNativeTabSegmentViewConfiguration *)configuration
+                     tapBlock:(MLNNativeTabSegmentViewTapActionBlock)block;
 - (void)lua_setAlignment:(MLNNativeTabSegmentAlignment)alignment;
 - (void)lua_relatedToViewPager:(MLNNativeViewPager*)viewPager animated:(NSNumber *)animatedValue;
 
