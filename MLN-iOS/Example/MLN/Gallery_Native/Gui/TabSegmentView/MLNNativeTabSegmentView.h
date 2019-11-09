@@ -35,6 +35,7 @@ typedef enum : NSUInteger {
 @property (nonatomic, strong, readonly) UIScrollView      *contentScrollView;
 @property (nonatomic, strong, readonly) NSArray<MLNNativeTabSegmentLabel *> *segmentViews;
 @property (nonatomic, strong, readonly) UIImageView       *bottomPointView;
+@property (nonatomic, strong) MLNNativeTabSegmentScrollHandler *scrollHandler;
 
 - (void)refreshSegmentTitles:(NSArray<NSString*> *)segmentTitles;
 - (void)setCurrentLabelIndex:(NSInteger)currentIndex animated:(BOOL)animated;
