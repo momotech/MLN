@@ -12,6 +12,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface MLNDiscoverAblbumDeatilHeaderView : UICollectionReusableView
 
+@property (nonatomic, copy) dispatch_block_t selectBlock;
+
+- (void)reloadWithData:(NSArray *)dataList;
+
 @end
 
 NS_ASSUME_NONNULL_END
