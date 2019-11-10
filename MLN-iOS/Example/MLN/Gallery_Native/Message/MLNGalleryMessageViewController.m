@@ -14,6 +14,8 @@
 #import "MLNGalleryMessageDescCellModel.h"
 #import <MJRefresh.h>
 #import "MLNGalleryMessageDetailViewController.h"
+#import "MLNMyHttpHandler.h"
+#import <UIView+Toast.h>
 
 #define kMLNTabBarHeight 44
 
@@ -25,6 +27,8 @@
 
 @property (nonatomic, strong) NSMutableArray <MLNGalleryMessageBaseCellModel *>* models;
 
+@property (nonatomic, strong) MLNMyHttpHandler *myHttpHandler;
+
 @end
 
 @implementation MLNGalleryMessageViewController
@@ -33,8 +37,7 @@
     [super viewDidLoad];
     
     [self setupNavigation];
-    
-    [self setupMainView];
+    [self requestMessageData:YES];
 }
 
 - (void)setupNavigation
@@ -42,85 +45,16 @@
     [self.navigationBar setTitle:@"消息"];
 }
 
-- (void)setupMainView
-{
-    [self reloadData];
-    [self loadMoreData];
-    
-    __weak typeof(self) weakSelf = self;
-    self.mainView.mj_header = [MJRefreshHeader headerWithRefreshingBlock:^{
-        __strong typeof(weakSelf) strongSelf = weakSelf;
-        [strongSelf reloadData];
-        [strongSelf loadMoreData];
-        [strongSelf.mainView.mj_header endRefreshing];
-        [strongSelf.mainView reloadData];
-    }];
-    
-    self.mainView.mj_footer = [MJRefreshFooter footerWithRefreshingBlock:^{
-        __strong typeof(weakSelf) strongSelf = weakSelf;
-        [strongSelf.mainView.mj_footer endRefreshing];
-        [strongSelf loadMoreData];
-        [strongSelf.mainView reloadData];
-    }];
-    
-    [self.mainView reloadData];
-}
 
-- (void)reloadData
+#pragma mark - Actions
+- (void)loadNewData
 {
-    [self.models removeAllObjects];
-    
-    MLNGalleryMessageToolCellModel *tool1 = [[MLNGalleryMessageToolCellModel alloc] init];
-    tool1.leftIcon = @"https://s.momocdn.com/w/u/others/2019/08/31/1567263950353-service.png";
-    tool1.title = @"私信/客服";
-    tool1.rightIcon = @"https://s.momocdn.com/w/u/others/2019/08/31/1567264720561-rightarrow.png";
-    
-    MLNGalleryMessageToolCellModel *tool2 = [[MLNGalleryMessageToolCellModel alloc] init];
-    tool2.leftIcon = @"https://s.momocdn.com/w/u/others/2019/08/31/1567263950294-notice.png";
-    tool2.title = @"官方通知";
-    tool2.rightIcon = @"https://s.momocdn.com/w/u/others/2019/08/31/1567264720561-rightarrow.png";
-    
-    self.models = [@[tool1, tool2] mutableCopy];
+    [self requestMessageData:YES];
 }
 
 - (void)loadMoreData
 {
-    NSDictionary *dataMap = [self readLocalFileWithName:@"message"];
-    
-    NSInteger code = [[dataMap objectForKey:@"code"] integerValue];
-    if (code != 200) {
-        return;
-    }
-    
-    NSArray *dataArray = [dataMap objectForKey:@"data"];
-    for (NSDictionary *itemDict in dataArray) {
-        if ([itemDict isKindOfClass:[NSDictionary class]]) {
-            MLNGalleryMessageDescCellModel *cellModel = [[MLNGalleryMessageDescCellModel alloc] initWithDict:itemDict];
-            [self.models addObject:cellModel];
-        }
-    }
-}
-
-#pragma mark - getter
-- (MLNGalleryNavigationBar *)navigationBar
-{
-    if (!_navigationBar) {
-        _navigationBar = [[MLNGalleryNavigationBar alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, kMLNNavigatorHeight)];
-        [self.view addSubview:_navigationBar];
-    }
-    return _navigationBar;
-}
-
-- (UITableView *)mainView
-{
-    if (!_mainView) {
-        _mainView = [[UITableView alloc] initWithFrame:CGRectMake(0, kMLNNavigatorHeight, self.view.frame.size.width, self.view.frame.size.height - kMLNNavigatorHeight - kMLNTabBarHeight) style:UITableViewStylePlain];
-        _mainView.separatorStyle = UITableViewCellEditingStyleNone;
-        _mainView.delegate = self;
-        _mainView.dataSource = self;
-        [self.view addSubview:_mainView];
-    }
-    return _mainView;
+    [self requestMessageData:NO];
 }
 
 #pragma mark - delegate
@@ -175,14 +109,107 @@
 }
 
 
-// 读取本地JSON文件
-- (NSDictionary *)readLocalFileWithName:(NSString *)name {
-    // 获取文件路径
-    NSString *path = [[NSBundle mainBundle] pathForResource:name ofType:@"json"];
-    // 将文件数据化
-    NSData *data = [[NSData alloc] initWithContentsOfFile:path];
-    // 对数据进行JSON格式化并返回字典形式
-    return [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:nil];
+#pragma mark - Private method
+
+- (void)requestMessageData:(BOOL)firstRequest
+{
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wnonnull"
+    NSString *requestUrlString = @"https://api.apiopen.top/message";
+    [self.myHttpHandler http:nil get:requestUrlString params:nil completionHandler:^(BOOL success, NSDictionary * _Nonnull respose, NSDictionary * _Nonnull error) {
+        if (!success) {
+            [self.view makeToast:error.description
+                        duration:3.0
+                        position:CSToastPositionCenter];
+            return;
+        }
+        NSDictionary *result = [respose valueForKey:@"result"];
+        if (firstRequest) {
+            [self.models removeAllObjects];
+            [self.mainView.mj_header endRefreshing];
+            // 解析数据
+            NSArray *tools = [result valueForKey:@"tools"];
+            NSMutableArray *toolsArray = [NSMutableArray array];
+            for (NSDictionary *itemDict in tools) {
+                if ([itemDict isKindOfClass:[NSDictionary class]]) {
+                    MLNGalleryMessageToolCellModel *toolModel = [[MLNGalleryMessageToolCellModel alloc] init];
+                    toolModel.leftIcon = [itemDict valueForKey:@"leftIcon"];
+                    toolModel.title = [itemDict valueForKey:@"title"];
+                    toolModel.rightIcon = [itemDict valueForKey:@"rightIcon"];
+                    [toolsArray addObject:toolModel];
+                }
+            }
+            [self.models addObjectsFromArray:toolsArray];
+
+            NSArray *dataArray = [result valueForKey:@"data"];
+            NSMutableArray *models = [NSMutableArray array];
+            for (NSDictionary *itemDict in dataArray) {
+                if ([itemDict isKindOfClass:[NSDictionary class]]) {
+                    MLNGalleryMessageDescCellModel *cellModel = [[MLNGalleryMessageDescCellModel alloc] initWithDict:itemDict];
+                    [models addObject:cellModel];
+                }
+            }
+            [self.models addObjectsFromArray:models];
+            [self.mainView reloadData];
+        } else if (self.models.count >= 20) {
+            [self.mainView.mj_footer endRefreshingWithNoMoreData];
+        } else {
+            [self.mainView.mj_footer endRefreshing];
+            NSArray *dataArray = [respose valueForKey:@"data"];
+            NSMutableArray *models = [NSMutableArray array];
+            for (NSDictionary *itemDict in dataArray) {
+                if ([itemDict isKindOfClass:[NSDictionary class]]) {
+                    MLNGalleryMessageDescCellModel *cellModel = [[MLNGalleryMessageDescCellModel alloc] initWithDict:itemDict];
+                    [models addObject:cellModel];
+                }
+            }
+            [self.models addObjectsFromArray:models];
+            [self.mainView reloadData];
+        }
+    }];
+#pragma clang diagnostic pop
 }
+
+
+#pragma mark - getter
+- (MLNGalleryNavigationBar *)navigationBar
+{
+    if (!_navigationBar) {
+        _navigationBar = [[MLNGalleryNavigationBar alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, kMLNNavigatorHeight)];
+        [self.view addSubview:_navigationBar];
+    }
+    return _navigationBar;
+}
+
+- (UITableView *)mainView
+{
+    if (!_mainView) {
+        _mainView = [[UITableView alloc] initWithFrame:CGRectMake(0, kMLNNavigatorHeight, self.view.frame.size.width, self.view.frame.size.height - kMLNNavigatorHeight - kMLNTabBarHeight) style:UITableViewStylePlain];
+        _mainView.separatorStyle = UITableViewCellEditingStyleNone;
+        _mainView.delegate = self;
+        _mainView.dataSource = self;
+        _mainView.mj_header = [MJRefreshNormalHeader headerWithRefreshingTarget:self refreshingAction:@selector(loadNewData)];
+        _mainView.mj_footer = [MJRefreshAutoNormalFooter footerWithRefreshingTarget:self refreshingAction:@selector(loadMoreData)];
+        [self.view addSubview:_mainView];
+    }
+    return _mainView;
+}
+
+- (NSMutableArray<MLNGalleryMessageBaseCellModel *> *)models
+{
+    if (!_models) {
+        _models = [NSMutableArray array];
+    }
+    return _models;
+}
+
+- (MLNMyHttpHandler *)myHttpHandler
+{
+    if (!_myHttpHandler) {
+        _myHttpHandler = [[MLNMyHttpHandler alloc] init];
+    }
+    return _myHttpHandler;
+}
+
 
 @end

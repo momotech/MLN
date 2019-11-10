@@ -23,7 +23,7 @@
 
 - (CGFloat)cellHeight
 {
-    return 70.0f;
+    return 50.0f;
 }
 
 - (void)setValue:(id)value forUndefinedKey:(NSString *)key

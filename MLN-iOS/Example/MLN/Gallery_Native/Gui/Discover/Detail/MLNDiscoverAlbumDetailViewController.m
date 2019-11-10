@@ -16,6 +16,7 @@
 #import "MLNMyHttpHandler.h"
 #import <UIView+Toast.h>
 #import "MLNDiscoverAlbumDetailCell.h"
+#import <MJRefresh.h>
 
 @interface MLNDiscoverAlbumDetailViewController ()<UICollectionViewDataSource, UICollectionViewDelegate, MLNNativeWaterfallLayoutDelegate>
 @property (nonatomic, strong) MLNGalleryNavigationBar *navigationBar;
@@ -34,8 +35,14 @@ static NSString *kMLNDiscoverDetailCellID = @"kMLNDiscoverDetailCellID";
     [super viewDidLoad];
     
     [self.navigationBar setTitle:@"灵感集"];
-    [self requestInspirData];
+    [self requestInspirData:YES];
     [self waterfallView];
+}
+
+#pragma mark - Actions
+- (void)loadMoreData
+{
+    [self requestInspirData:NO];
 }
 
 #pragma mark - UICollectionViewDataSource
@@ -69,7 +76,7 @@ static NSString *kMLNDiscoverDetailCellID = @"kMLNDiscoverDetailCellID";
     [headerView reloadWithData:self.dataList];
     __weak typeof(self) weakSelf = self;
     headerView.selectBlock = ^{
-        [weakSelf requestInspirData];
+        [weakSelf requestInspirData:YES];
     };
     return headerView;
 }
@@ -88,6 +95,7 @@ static NSString *kMLNDiscoverDetailCellID = @"kMLNDiscoverDetailCellID";
         _waterfallView.delegate = self;
         [_waterfallView registerClass:[MLNDiscoverAlbumDetailCell class] forCellWithReuseIdentifier:kMLNDiscoverDetailCellID];
         [_waterfallView registerClass:[MLNDiscoverAblbumDeatilHeaderView class] forSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:kMLNDiscoverDetailHeaderID];
+        _waterfallView.mj_footer = [MJRefreshAutoNormalFooter footerWithRefreshingTarget:self refreshingAction:@selector(loadMoreData)];
         [self.view addSubview:_waterfallView];
     }
     return _waterfallView;
@@ -95,7 +103,7 @@ static NSString *kMLNDiscoverDetailCellID = @"kMLNDiscoverDetailCellID";
 
 
 #pragma mark - request
-- (void)requestInspirData
+- (void)requestInspirData:(BOOL)firstRequest
 {
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wnonnull"
@@ -112,12 +120,21 @@ static NSString *kMLNDiscoverDetailCellID = @"kMLNDiscoverDetailCellID";
             return;
         }
         
-        NSArray *dataArray = [respose valueForKey:@"result"];
-        [self.dataList addObjectsFromArray:dataArray];
+        if (firstRequest) {
+            NSArray *dataArray = [respose valueForKey:@"result"];
+            self.dataList = [NSMutableArray arrayWithArray:dataArray];
+        } else if(self.dataList.count >= 40) {
+            [self.waterfallView.mj_footer endRefreshingWithNoMoreData];
+        } else {
+            [self.waterfallView.mj_footer endRefreshing];
+            NSArray *dataArray = [respose valueForKey:@"result"];
+            [self.dataList addObjectsFromArray:dataArray];
+        }
         [self.waterfallView reloadData];
     }];
 #pragma clang diagnostic pop
 }
+
 
 - (MLNMyHttpHandler *)myHttpHandler
 {

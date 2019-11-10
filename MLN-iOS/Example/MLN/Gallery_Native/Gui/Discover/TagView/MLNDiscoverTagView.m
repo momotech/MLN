@@ -49,6 +49,7 @@
 
 - (void)reCreateCategoryButtons
 {
+    [self.tagButtons makeObjectsPerformSelector:@selector(removeFromSuperview) withObject:nil];
     [self.tagButtons removeAllObjects];
     
     for (NSInteger i = 0; i < self.dataList.count; i++) {

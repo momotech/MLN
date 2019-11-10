@@ -42,7 +42,23 @@
 - (void)http:(MLNHttp *)http get:(NSString *)urlString params:(NSDictionary *)params completionHandler:(void (^)(BOOL, NSDictionary *, NSDictionary *))completionHandler {
     
     // Mock数据
-    if ([urlString hasPrefix:@"http://v2.api.haodanku.com/itemlist/apikey/fashion/cid/1/back/20"]) {
+    if ([urlString hasPrefix:@"https://api.apiopen.top/message"]) {
+        NSString *messagePath = [[NSBundle mainBundle] pathForResource:@"gallery/message.json" ofType:nil];
+        NSData *data = [NSData dataWithContentsOfFile:messagePath];
+        NSDictionary *info = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:NULL];
+        if (completionHandler) {
+            completionHandler(YES, info, @{@"error":@"wrong"});
+        }
+        return;
+    }else if ([urlString hasPrefix:@"https://api.apiopen.top/musicRankingsDetails"]) {
+        NSString *musicRankPath = [[NSBundle mainBundle] pathForResource:@"gallery/musicRank.json" ofType:nil];
+        NSData *data = [NSData dataWithContentsOfFile:musicRankPath];
+        NSDictionary *info = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:NULL];
+        if (completionHandler) {
+            completionHandler(YES, info, @{@"error":@"wrong"});
+        }
+        return;
+    } else if ([urlString hasPrefix:@"http://v2.api.haodanku.com/itemlist/apikey/fashion/cid/1/back/20"]) {
         NSString *fashionlistPath = [[NSBundle mainBundle] pathForResource:@"gallery/fashion.json" ofType:nil];
         NSData *data = [NSData dataWithContentsOfFile:fashionlistPath];
         NSDictionary *info = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:NULL];

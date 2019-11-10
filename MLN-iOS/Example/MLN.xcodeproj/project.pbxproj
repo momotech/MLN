@@ -57,7 +57,6 @@
 		B27F65C62377AAAE00F2D341 /* MLNGalleryMessageToolCellModel.m in Sources */ = {isa = PBXBuildFile; fileRef = B27F65B52377AAAD00F2D341 /* MLNGalleryMessageToolCellModel.m */; };
 		B27F65C72377AAAE00F2D341 /* MLNGalleryMessageDescCellModel.m in Sources */ = {isa = PBXBuildFile; fileRef = B27F65B72377AAAD00F2D341 /* MLNGalleryMessageDescCellModel.m */; };
 		B27F65C82377AAAE00F2D341 /* MLNGalleryMessageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B27F65BA2377AAAD00F2D341 /* MLNGalleryMessageViewController.m */; };
-		B27F65C92377AAAE00F2D341 /* message.json in Resources */ = {isa = PBXBuildFile; fileRef = B27F65BB2377AAAE00F2D341 /* message.json */; };
 		B27F65CA2377AAAE00F2D341 /* MLNGalleryMessageBaseCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B27F65BE2377AAAE00F2D341 /* MLNGalleryMessageBaseCell.m */; };
 		B27F65CB2377AAAE00F2D341 /* MLNGalleryMessageDescCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B27F65C12377AAAE00F2D341 /* MLNGalleryMessageDescCell.m */; };
 		B27F65CC2377AAAE00F2D341 /* MLNGalleryMessageToolCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B27F65C32377AAAE00F2D341 /* MLNGalleryMessageToolCell.m */; };
@@ -183,7 +182,6 @@
 		B27F65B82377AAAD00F2D341 /* MLNGalleryMessageToolCellModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLNGalleryMessageToolCellModel.h; sourceTree = "<group>"; };
 		B27F65B92377AAAD00F2D341 /* MLNGalleryMessageDetailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MLNGalleryMessageDetailViewController.h; path = MLN/Gallery_Native/Message/MLNGalleryMessageDetailViewController.h; sourceTree = SOURCE_ROOT; };
 		B27F65BA2377AAAD00F2D341 /* MLNGalleryMessageViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MLNGalleryMessageViewController.m; path = MLN/Gallery_Native/Message/MLNGalleryMessageViewController.m; sourceTree = SOURCE_ROOT; };
-		B27F65BB2377AAAE00F2D341 /* message.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = message.json; path = MLN/Gallery_Native/Message/message.json; sourceTree = SOURCE_ROOT; };
 		B27F65BC2377AAAE00F2D341 /* MLNGalleryMessageViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MLNGalleryMessageViewController.h; path = MLN/Gallery_Native/Message/MLNGalleryMessageViewController.h; sourceTree = SOURCE_ROOT; };
 		B27F65BE2377AAAE00F2D341 /* MLNGalleryMessageBaseCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLNGalleryMessageBaseCell.m; sourceTree = "<group>"; };
 		B27F65BF2377AAAE00F2D341 /* MLNGalleryMessageDescCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLNGalleryMessageDescCell.h; sourceTree = "<group>"; };
@@ -626,7 +624,6 @@
 		FADC4062237462E4002249D4 /* Message */ = {
 			isa = PBXGroup;
 			children = (
-				B27F65BB2377AAAE00F2D341 /* message.json */,
 				B27F65B92377AAAD00F2D341 /* MLNGalleryMessageDetailViewController.h */,
 				B27F65C42377AAAE00F2D341 /* MLNGalleryMessageDetailViewController.m */,
 				B27F65BC2377AAAE00F2D341 /* MLNGalleryMessageViewController.h */,
@@ -727,7 +724,6 @@
 				30CB3BFB23684CD400AB90C6 /* MLN.podspec in Resources */,
 				873B8AEB1B1F5CCA007FD442 /* Main.storyboard in Resources */,
 				30CB3BF923684B7F00AB90C6 /* MLNDevTool.podspec in Resources */,
-				B27F65C92377AAAE00F2D341 /* message.json in Resources */,
 				71719F9F1E33DC2100824A3D /* LaunchScreen.storyboard in Resources */,
 				6003F5A9195388D20070C39A /* Images.xcassets in Resources */,
 				6003F598195388D20070C39A /* InfoPlist.strings in Resources */,

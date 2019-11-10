@@ -41,6 +41,8 @@
         self.name = value;
     } else if ([key isEqualToString:@"icon"]) {
         self.avatar = value;
+    } else if ([key isEqualToString:@"attach"]) {
+        self.attach = value;
     }
 }
 

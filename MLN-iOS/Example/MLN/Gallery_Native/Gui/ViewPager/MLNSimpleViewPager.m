@@ -9,11 +9,12 @@
 #import "MLNSimpleViewPager.h"
 #import "MLNSimpleViewPagerCell.h"
 #import "MLNHomeTableView.h"
+#import <MJRefresh.h>
 
 #define kMLNSimpleViewPagerCell  @"kMLNSimpleViewPagerCell"
 
-@interface MLNSimpleViewPager()<UICollectionViewDataSource, UIScrollViewDelegate>
-@property (nonatomic, strong) UICollectionView *mainView;
+@interface MLNSimpleViewPager()<UICollectionViewDataSource, UICollectionViewDelegate>
+@property (nonatomic, strong, readwrite) UICollectionView *mainView;
 @property (nonatomic, strong) NSArray *dataList;
 
 @property (nonatomic, copy) RefreshBlock refreshBlock;
@@ -31,7 +32,6 @@
     return self;
 }
 
-
 - (void)reloadWithDataList:(NSArray *)dataList
 {
     _dataList = dataList;
@@ -42,7 +42,6 @@
 - (void)scrollToPage:(NSUInteger)index aniamted:(BOOL)animated {
     [self.mainView scrollToItemAtIndexPath:[NSIndexPath indexPathForRow:index inSection:0] atScrollPosition:UICollectionViewScrollPositionLeft animated:YES];
 }
-
 
 - (void)setRefreshBlock:(RefreshBlock)refreshBlock
 {
@@ -58,6 +57,7 @@
 {
     _searchBlock = searchBlock;
 }
+
 
 #pragma mark - UIScrollViewDelegate
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView
@@ -95,8 +95,6 @@
     }
 }
 
-
-
 #pragma mark -
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
 {
@@ -128,26 +126,24 @@
         flowLayout.minimumLineSpacing = 0;
         flowLayout.scrollDirection = UICollectionViewScrollDirectionHorizontal;
         flowLayout.itemSize = self.bounds.size;
-        UICollectionView *mainView = [[UICollectionView alloc] initWithFrame:self.bounds collectionViewLayout:flowLayout];
-        mainView.dataSource = self;
-        mainView.backgroundColor = [UIColor clearColor];
-        mainView.pagingEnabled = YES;
-        mainView.showsHorizontalScrollIndicator = NO;
-        mainView.showsVerticalScrollIndicator = NO;
-        [mainView registerClass:[MLNSimpleViewPagerCell class] forCellWithReuseIdentifier:kMLNSimpleViewPagerCell];
-        mainView.scrollsToTop = NO;
-        mainView.bounces = NO;
-        mainView.delegate = self;
-        [self addSubview:mainView];
-        mainView.backgroundColor = [UIColor clearColor];
+        _mainView = [[UICollectionView alloc] initWithFrame:self.bounds collectionViewLayout:flowLayout];
+        _mainView.backgroundColor = [UIColor whiteColor];
+        _mainView.pagingEnabled = YES;
+        _mainView.scrollsToTop = NO;
+        _mainView.bounces = NO;
+        _mainView.showsHorizontalScrollIndicator = NO;
+        _mainView.showsVerticalScrollIndicator = NO;
+        _mainView.dataSource = self;
+        _mainView.delegate = self;
+        [_mainView registerClass:[MLNSimpleViewPagerCell class] forCellWithReuseIdentifier:kMLNSimpleViewPagerCell];
         if (@available(iOS 11.0, *)) {
-            mainView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
+            _mainView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
+//            _mainView.contentInset = UIEdgeInsetsMake(44, 0, 0, 0);
         }
         if (@available(iOS 10.0, *)) {
-            mainView.prefetchingEnabled = NO;
+            _mainView.prefetchingEnabled = NO;
         }
-        _mainView = mainView;
-        [self addSubview:self.mainView];
+        [self addSubview:_mainView];
     }
     return _mainView;
 }

@@ -17,6 +17,7 @@
 #import "MLNMyHttpHandler.h"
 #import <UIView+Toast.h>
 #import "MLNDiscoverAlbumDetailViewController.h"
+#import <MJRefresh.h>
 
 @interface MLNGalleryDiscoverViewController ()<UICollectionViewDataSource, UICollectionViewDelegate, MLNNativeWaterfallLayoutDelegate>
 @property (nonatomic, strong) MLNGalleryNavigationBar *navigationBar;
@@ -36,8 +37,14 @@ static NSString *kMLNNativeWaterfallViewCellID = @"kMLNNativeWaterfallViewCellID
     [super viewDidLoad];
 
     [self.navigationBar setTitle:@"发现"];
-    [self requestDiscoverData];
+    [self requestDiscoverData:YES];
     [self waterfallView];
+}
+
+#pragma mark - Actions
+- (void)loadMoreData
+{
+    [self requestDiscoverData:NO];
 }
 
 #pragma mark - UICollectionViewDataSource
@@ -97,6 +104,7 @@ static NSString *kMLNNativeWaterfallViewCellID = @"kMLNNativeWaterfallViewCellID
         _waterfallView.delegate = self;
         [_waterfallView registerClass:[MLNNativeWaterfallViewCell class] forCellWithReuseIdentifier:kMLNNativeWaterfallViewCellID];
         [_waterfallView registerClass:[MLNNativeWaterfallHeaderView class] forSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:kMLNNativeWaterfallViewHeaderID];
+        _waterfallView.mj_footer = [MJRefreshAutoNormalFooter footerWithRefreshingTarget:self refreshingAction:@selector(loadMoreData)];
         [self.view addSubview:_waterfallView];
     }
     
@@ -113,7 +121,7 @@ static NSString *kMLNNativeWaterfallViewCellID = @"kMLNNativeWaterfallViewCellID
 
 
 #pragma mark - request
-- (void)requestDiscoverData
+- (void)requestDiscoverData:(BOOL)firstRequest
 {
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wnonnull"
@@ -131,8 +139,19 @@ static NSString *kMLNNativeWaterfallViewCellID = @"kMLNNativeWaterfallViewCellID
             return;
         }
         
-        NSArray *dataArray = [respose valueForKey:@"result"];
-        [self.dataList addObjectsFromArray:dataArray];
+        if (firstRequest) {
+            NSArray *dataArray = [respose valueForKey:@"result"];
+            self.dataList = [NSMutableArray arrayWithArray:dataArray];
+        } else if (self.dataList.count >= 40) {
+            [self.waterfallView.mj_footer endRefreshingWithNoMoreData];
+        } else {
+            [self.waterfallView.mj_footer endRefreshing];
+            NSArray *dataArray = [respose valueForKey:@"result"];
+            [self.dataList addObjectsFromArray:dataArray];
+        }
+        
+        
+        
         [self.waterfallView reloadData];
     }];
 #pragma clang diagnostic pop
