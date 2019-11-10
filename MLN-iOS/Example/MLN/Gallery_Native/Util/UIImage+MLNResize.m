@@ -2,8 +2,8 @@
 //  UIImage+MLNResize.m
 //  MLN_Example
 //
-//  Created by Feng on 2019/11/6.
-//  Copyright © 2019 liu.xu_1586. All rights reserved.
+//  Created by MoMo on 2019/11/6.
+//  Copyright (c) 2019 MoMo. All rights reserved.
 //
 
 #import "UIImage+MLNResize.h"
