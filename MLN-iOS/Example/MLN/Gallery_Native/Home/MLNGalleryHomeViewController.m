@@ -21,16 +21,19 @@
 @property (nonatomic, strong) MLNMyHttpHandler *myHttpHandler;
 @property (nonatomic, assign) NSInteger mid;
 @property (nonatomic, assign) NSInteger cid;
-@property (nonatomic, strong) NSArray *dataList;
 @end
 
 @implementation MLNGalleryHomeViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    UIView *redView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 100, 100)];
+    redView.backgroundColor = [UIColor redColor];
+    [self.view addSubview:redView];
 
     [self setupSubviews];
-    [self requestData];
+    [self requestData:YES];
 }
 
 - (void)setupSubviews
@@ -46,14 +49,8 @@
     
     self.viewPager = [[MLNSimpleViewPager alloc] initWithFrame:CGRectMake(0, kNaviBarHeight, kScreenWidth, kScreenHeight - kNaviBarHeight - kTabbBarHeight)];
     self.viewPager.segmentViewHandler = (id<UIScrollViewDelegate>)self.segementView.scrollHandler;;
-    
-    [self.viewPager setRefreshBlock:^(UITableView *tableView){
-        [tableView.mj_header endRefreshing];
-    }];
-    
-    [self.viewPager setLoadingBlock:^(UITableView *tableView){
-    
-    }];
+//    self.viewPager.mainView.mj_header = [MJRefreshNormalHeader headerWithRefreshingTarget:self refreshingAction:@selector(loadNewData)];
+//    self.viewPager.mainView.mj_footer = [MJRefreshAutoNormalFooter footerWithRefreshingTarget:self refreshingAction:@selector(loadMoreData)];
     
     __weak typeof(self) weakSelf = self;
     [self.viewPager setSearchBlock:^{
@@ -64,7 +61,18 @@
     [self.view addSubview:self.viewPager];
 }
 
-- (void)requestData
+
+- (void)loadMoreData
+{
+    [self requestData:NO];
+}
+
+- (void)loadNewData
+{
+    [self requestData:YES];
+}
+
+- (void)requestData:(BOOL)firstRequest
 {
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wnonnull"
@@ -77,9 +85,18 @@
                         position:CSToastPositionCenter];
             return;
         }
-        self.dataList = [respose valueForKey:@"data"];
-        [[MLNHomeDataHandler handler] updateDataList:self.dataList];
-        [self.viewPager reloadWithDataList:self.dataList];
+        if (firstRequest) {
+            NSArray *dataList = [respose valueForKey:@"data"];
+            [[MLNHomeDataHandler handler] updateDataList:dataList];
+            [self.viewPager.mainView.mj_header endRefreshing];
+        } else if ([MLNHomeDataHandler handler].dataList.count >= 40) {
+            [self.viewPager.mainView.mj_footer endRefreshingWithNoMoreData];
+        } else {
+            NSArray *dataList = [respose valueForKey:@"data"];
+            [[MLNHomeDataHandler handler] insertDataList:dataList];
+            [self.viewPager.mainView.mj_header endRefreshing];
+        }
+        [self.viewPager reloadWithDataList:[MLNHomeDataHandler handler].dataList];
     }];
 #pragma clang diagnostic pop
 }

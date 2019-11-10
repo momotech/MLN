@@ -17,6 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (MLNHomeDataHandler *)handler;
 
 - (void)updateDataList:(NSArray *)dataList;
+- (void)insertDataList:(NSArray *)dataList;
 
 @end
 

@@ -9,6 +9,7 @@
 #import "MLNGalleryMessageDetailViewController.h"
 #import "MLNGalleryNative.h"
 #import "MLNGalleryNavigationBar.h"
+#import "MLNGalleryNative.h"
 
 @interface MLNGalleryMessageDetailViewController ()
 @property (nonatomic, strong) MLNGalleryNavigationBar *navigationBar;
@@ -29,6 +30,12 @@
     [super viewDidLayoutSubviews];
     
     self.navigationBar.frame = CGRectMake(0, 0, kScreenWidth, kNaviBarHeight);
+    
+    CGFloat contentLabelW = 100;
+    CGFloat contentLabelH = 30;
+    CGFloat contentLabelX = (kScreenWidth - contentLabelW)/2.0;
+    CGFloat contentLabelY = (kScreenHeight - contentLabelH)/2.0;
+    self.contentLabel.frame = CGRectMake(contentLabelX, contentLabelY, contentLabelW, contentLabelH);
 }
 
 
@@ -53,8 +60,9 @@
 {
     if (!_contentLabel) {
         _contentLabel = [[UILabel alloc] init];
-        _contentLabel.font = [UIFont systemFontOfSize:12];
+        _contentLabel.font = [UIFont boldSystemFontOfSize:14];
         _contentLabel.textColor = [UIColor blackColor];
+        _contentLabel.textAlignment = NSTextAlignmentCenter;
         _contentLabel.text = @"没有内容";
         [self.view addSubview:_contentLabel];
     }
