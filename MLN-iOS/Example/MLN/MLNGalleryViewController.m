@@ -3,7 +3,7 @@
 //  MLN_Example
 //
 //  Created by MoMo on 2019/11/4.
-//  Copyright © 2019 liu.xu_1586. All rights reserved.
+//  Copyright (c) 2019 MoMo. All rights reserved.
 //
 
 #import "MLNGalleryViewController.h"
@@ -164,7 +164,7 @@
 
 - (void)setupSubviews
 {
-    CGFloat buttonW = 120;
+    CGFloat buttonW = 140;
     CGFloat buttonH = 40;
     CGFloat screenW = [UIScreen mainScreen].bounds.size.width;
     CGFloat screenH = [UIScreen mainScreen].bounds.size.height;
@@ -188,7 +188,7 @@
     
     CGFloat showNativeDemoButtonX = showDemoButtonX;
     CGFloat showNativeDemoButtonY = showOfflineButtonY + buttonH + space;
-    self.showNativeDemoButton = [self createButtonWithTitle:@"Native Demo展示" action:@selector(showNativeDemo:)];
+    self.showNativeDemoButton = [self createButtonWithTitle:@"NativeDemo展示" action:@selector(showNativeDemo:)];
     self.showNativeDemoButton.frame = CGRectMake(showNativeDemoButtonX, showNativeDemoButtonY, buttonW, buttonH);
     [self.view addSubview:self.showNativeDemoButton];
     

@@ -2,8 +2,8 @@
 //  MLNGalleryMainViewController.m
 //  MLN_Example
 //
-//  Created by Feng on 2019/11/5.
-//  Copyright © 2019 liu.xu_1586. All rights reserved.
+//  Created by MoMo on 2019/11/5.
+//  Copyright (c) 2019 MoMo. All rights reserved.
 //
 
 #import "MLNGalleryMainViewController.h"
@@ -17,17 +17,23 @@
 #import <UIView+Toast.h>
 
 @interface MLNGalleryMainViewController ()<UITabBarControllerDelegate>
-
+@property (nonatomic, strong) UIButton *backButton;
 @end
 
 @implementation MLNGalleryMainViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
     self.delegate = self;
     self.view.backgroundColor = [UIColor whiteColor];
+    [self setupBackButton];
     [self setupTabbarItems];
+}
+
+
+- (void)setupBackButton
+{
+    [self backButton];
 }
 
 - (void)setupTabbarItems
@@ -64,17 +70,23 @@
     return navigationController;
 }
 
-#pragma mark -
+#pragma mark - Action
 - (BOOL)tabBarController:(UITabBarController *)tabBarController shouldSelectViewController:(UIViewController *)viewController
 {
-    if ([viewController isKindOfClass:[MLNGalleryPlusViewController class]]) {
+    if (viewController == [tabBarController.viewControllers objectAtIndex:2]) {
         [self.view makeToast:@"打开照相机📷" duration:1.0 position:CSToastPositionCenter];
         return NO;
     }
     return YES;
 }
 
-#pragma mark -
+- (void)backButtonClicked:(id)sender
+{
+    [self dismissViewControllerAnimated:YES completion:nil];
+}
+
+#pragma mark - Private method
+
 - (NSArray *)normalImage {
     return @[@"https://s.momocdn.com/w/u/others/2019/08/27/1566877829621-hom.png",
              @"https://s.momocdn.com/w/u/others/2019/08/27/1566877829567-disc.png",
@@ -91,7 +103,22 @@
              @"https://s.momocdn.com/w/u/others/2019/08/27/1566877767564-min_d.png"];
 }
 
-
-
+- (UIButton *)backButton
+{
+    if (!_backButton) {
+        CGFloat buttonW = 80;
+        CGFloat buttonH = 30;
+        CGFloat buttonX = 10;
+        CGFloat buttonY = 22;
+        _backButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        _backButton.frame = CGRectMake(buttonX, buttonY, buttonW, buttonH);
+        [_backButton setTitle:@"返回点我" forState:UIControlStateNormal];
+        _backButton.backgroundColor = [UIColor orangeColor];
+        [_backButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+        [_backButton addTarget:self action:@selector(backButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
+        [self.view addSubview:_backButton];
+    }
+    return _backButton;
+}
 
 @end
