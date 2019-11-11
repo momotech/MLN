@@ -29,7 +29,7 @@
     // 权重
     maxWidth = [self calculateWidthBaseOnWeightWithMaxWidth:maxWidth];
     maxHeight = [self calculateHeightBaseOnWeightWithMaxHeight:maxHeight];
-    if (!self.isDirty && (self.lastMeasuredMaxWidth==maxWidth && self.lastMeasuredMaxHeight==maxHeight)) {
+    if (!self.isDirty && (self.lastMeasuredMaxWidth==maxWidth && self.lastMeasuredMaxHeight==maxHeight) && !isLayoutNodeHeightNeedMerge(self) && !isLayoutNodeWidthNeedMerge(self)) {
         return CGSizeMake(self.measuredWidth, self.measuredHeight);
     }
     self.lastMeasuredMaxWidth = maxWidth;

@@ -1,5 +1,2 @@
 include ':sample'
-include ':HotReload_Empty'
-include ':fileexplorer'
-include ':annotation'
 include ':scan'

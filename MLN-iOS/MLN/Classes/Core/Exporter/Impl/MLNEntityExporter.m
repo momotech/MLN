@@ -87,8 +87,10 @@ static const struct luaL_Reg MLNUserDataBaseFuncs [] = {
 
 - (BOOL)openlib:(const mln_objc_class *)libInfo error:(NSError **)error
 {
+    NSParameterAssert(libInfo != NULL);
     if (MLNHasSuperClass(libInfo)) {
         MLNAssert(self.luaCore, charpNotEmpty(libInfo->supreClz), @"%s's super not found!", libInfo->clz);
+        NSAssert(libInfo->supreClz != NULL, @"%s'super class must not be null!", libInfo->clz);
         Class<MLNEntityExportProtocol> superClass = NSClassFromString([NSString stringWithUTF8String:libInfo->supreClz]);
         if (![self openlib:[superClass mln_clazzInfo] error:error]) {
             return NO;

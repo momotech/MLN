@@ -28,7 +28,7 @@ end
 ---@private
 function _class:createSubviews()
     --容器视图
-    self.containerView = View():width(MeasurementType.MATCH_PARENT):height(MeasurementType.MATCH_PARENT)
+    self.containerView = LinearLayout(LinearType.VERTICAL):width(MeasurementType.MATCH_PARENT):height(MeasurementType.MATCH_PARENT)
 
     --导航栏
     self.navigation = require("MMLuaKitGallery.NavigationBar"):new()
@@ -56,7 +56,7 @@ function _class:createSubviews()
     self.navibar:addView(self.shareButton)
 
     --布局除导航栏外所有子视图
-    self.contentLayout = LinearLayout(LinearType.VERTICAL):width(MeasurementType.WRAP_CONTENT):height(MeasurementType.WRAP_CONTENT):marginTop(_NaviBarHeight)
+    self.contentLayout = LinearLayout(LinearType.VERTICAL):width(MeasurementType.WRAP_CONTENT):height(MeasurementType.WRAP_CONTENT)
     self.containerView:addView(self.contentLayout)
 
     --头部控件布局
@@ -67,7 +67,7 @@ function _class:createSubviews()
     self:setupHeaderView()
 
     --tabSegment以及滚动视图布局
-    self.segmentAndPagerBaseView = View():width(window:width()):height(MeasurementType.MATCH_PARENT)
+    self.segmentAndPagerBaseView = LinearLayout(LinearType.VERTICAL):width(window:width()):height(MeasurementType.MATCH_PARENT)
     self.contentLayout:addView(self.segmentAndPagerBaseView)
 
     --添加tabSegment以及滚动视图到segmentAndPagerBaseView上
@@ -116,7 +116,7 @@ function _class:setupHeaderView()
     local editLabelWidth = window:width() - self.avatarView:width() - 2 * gapToScreen
     self.editLabel = Label():marginTop(0):width(editLabelWidth):height(30)
     self.editLabel:text("编辑资料"):fontSize(15):textAlign(TextAlign.CENTER):textColor(_Color.LightBlack):cornerRadius(3)
-    self.editLabel:bgColor(_Color.White):borderWidth(0.5):borderColor(Color(200,200,200))
+    self.editLabel:borderWidth(0.5):borderColor(Color(200,200,200))
     self.editLabel:onClick(function()
         Toast("编辑资料", 1)
     end)
@@ -169,7 +169,6 @@ function _class:setupSegmentView()
     titles:add("主页"):add("动态"):add("收藏")
     self.tabSegment = TabSegmentView(Rect(0, self.headerLayout:height() +  1, window:width(), 50), titles, _Color.Black)
     self.tabSegment:width(MeasurementType.MATCH_PARENT):setGravity(Gravity.CENTER_HORIZONTAL):selectScale(1.0)
-    self.tabSegment:bgColor(_Color.White)
     self.tabSegment:setAlignment(TabSegmentAlignment.CENTER)
     self.segmentAndPagerBaseView:addView(self.tabSegment)
 end
@@ -177,7 +176,6 @@ end
 ---创建滚动视图
 ---@private
 function _class:setupViewPager()
-    local top =0 + self.tabSegment:height()
     local cellIDs = {"homeCellId", "momentCellId", "collectCellId"}
 
     self.adapter = ViewPagerAdapter()
@@ -219,9 +217,9 @@ function _class:setupViewPager()
         --must implement this method
     end)
 
-    self.viewPager = ViewPager():bgColor(_Color.White)
+    self.viewPager = ViewPager()
     self.viewPager:scrollToPage(1, false):showIndicator(false)
-    self.viewPager:marginTop(top):width(window:width()):height(window:height() - top):setGravity(Gravity.CENTER_HORIZONTAL)
+    self.viewPager:width(window:width()):height(MeasurementType.MATCH_PARENT):setGravity(Gravity.CENTER_HORIZONTAL)
     self.viewPager:adapter(self.adapter)
     self.tabSegment:relatedToViewPager(self.viewPager, true)
     self.segmentAndPagerBaseView:addView(self.viewPager)
@@ -231,7 +229,6 @@ end
 ---@private
 function _class:setupHomeContentView()
     self.homeContentView = View():width(MeasurementType.MATCH_PARENT):height(MeasurementType.MATCH_PARENT)
-    self.homeContentView:bgColor(_Color.White)
 
     self.homeAvatarView = ImageView():marginLeft(0):width(140):height(160)
     self.homeAvatarView:contentMode(ContentMode.SCALE_ASPECT_FILL)
@@ -242,7 +239,7 @@ end
 ---动态
 ---@private
 function _class:setupMomentContentView()
-    self.momentContentView = View():width(MeasurementType.MATCH_PARENT):height(MeasurementType.MATCH_PARENT)
+    self.momentContentView = LinearLayout(LinearType.VERTICAL):width(MeasurementType.MATCH_PARENT):height(MeasurementType.MATCH_PARENT)
 
     self.momentLabelLayout = LinearLayout(LinearType.HORIZONTAL)
     self.momentLabelLayout:marginLeft(30):marginTop(10):marginRight(30):width(MeasurementType.MATCH_PARENT):height(50)
@@ -259,7 +256,7 @@ function _class:setupMomentContentView()
     self.momentLabelLayout:addView(self.momentTimeLabel)
 
     self.momentImageView = ImageView()
-    self.momentImageView:marginLeft(30):marginTop(self.momentLabelLayout:marginTop() + self.momentLabelLayout:height()):marginRight(30):width(MeasurementType.MATCH_PARENT):height(350)
+    self.momentImageView:marginLeft(30):marginRight(30):width(MeasurementType.MATCH_PARENT):height(MeasurementType.MATCH_PARENT)
     self.momentImageView:contentMode(ContentMode.SCALE_ASPECT_FILL)
     self.momentImageView:image("https://s.momocdn.com/w/u/others/2019/09/01/1567317657445-dilireba.jpeg")
     self.momentContentView:addView(self.momentImageView)
@@ -269,7 +266,6 @@ end
 ---@private
 function _class:setupCollectContentView()
     self.collectCollectionView = View():width(MeasurementType.MATCH_PARENT):height(MeasurementType.MATCH_PARENT)
-    self.collectCollectionView:bgColor(_Color.White)
 
     self.collectLine = View():width(MeasurementType.MATCH_PARENT):height(10)
     self.collectLine:bgColor(_Color.LightGray)
@@ -284,7 +280,6 @@ function _class:setupCollectContentView()
     local createLabelWidth = 70
     self.collectCreateLabel = Label():marginLeft(window:width() - createLabelWidth):marginTop(labelTop):width(createLabelWidth):height(labelHeight)
     self.collectCreateLabel:text("+新建"):fontSize(16)
-    self.collectCreateLabel:bgColor(_Color.White)
     self.collectCreateLabel:onClick(function()
         Toast("新建灵感集", 1)
     end)
@@ -309,7 +304,6 @@ function _class:setupCollectContentView()
 
     adapter:initCell(function(cell)
         cell.contentView:addView(self:collectCell())
-        cell.contentView:bgColor(_Color.White)
     end)
 
     adapter:fillCellData(function (_, _, _)
