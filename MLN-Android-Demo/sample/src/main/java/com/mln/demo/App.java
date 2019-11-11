@@ -72,6 +72,7 @@ public class App extends Application {
                 .setUseStandardSyntax(false)
                 .setLazyFillCellData(false)
                 .setReadScriptFileInJava(false)
+                .setPreGlobals(1)
                 .setOpenSAES(true)
                 .setGcOffset(0)
                 .setMemoryMonitorOffset(5000)
