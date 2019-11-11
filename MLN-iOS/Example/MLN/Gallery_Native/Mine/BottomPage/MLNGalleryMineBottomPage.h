@@ -8,12 +8,12 @@
 
 #import <UIKit/UIKit.h>
 
-@class MLNGalleryMineBottomCellModel;
+@class MLNGalleryMinePageCellBaseModel;
 NS_ASSUME_NONNULL_BEGIN
 
 @interface MLNGalleryMineBottomPage : UIView
 
-@property (nonatomic, strong) NSArray<MLNGalleryMineBottomCellModel*>* bottomModels;
+@property (nonatomic, strong) NSArray<MLNGalleryMinePageCellBaseModel*>* bottomModels;
 @property (nonatomic, weak) id<UIScrollViewDelegate> segmentViewHandler;
 
 - (void)scrollToPage:(NSInteger)index;
