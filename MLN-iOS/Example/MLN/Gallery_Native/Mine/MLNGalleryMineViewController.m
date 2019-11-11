@@ -12,8 +12,10 @@
 #import "MLNGalleryMineHeaderView.h"
 #import "MLNNativeTabSegmentView.h"
 #import "MLNGalleryMineBottomPage.h"
-#import "MLNGalleryMineBottomCellModel.h"
 #import "MLNLoadTimeStatistics.h"
+#import "MLNGalleryMinePageCellHomeModel.h"
+#import "MLNGalleryMinePageCellDynamicModel.h"
+#import "MLNGalleryMinePageCellCollectModel.h"
 
 @interface MLNGalleryMineViewController ()
 
@@ -93,13 +95,26 @@
 
 - (void)setupPageView
 {
-    MLNGalleryMineBottomCellModel *info1 = [[MLNGalleryMineBottomCellModel alloc] init];
-    info1.picture = @"https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1573142564082&di=b8df1e2ef7c0a46b04cfffcb05f9c73d&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201807%2F28%2F20180728175640_ejtpq.thumb.700_0.jpg";
-    MLNGalleryMineBottomCellModel *info2 = [[MLNGalleryMineBottomCellModel alloc] init];
-    info2.picture = @"https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1573142564082&di=2c6b33191e2d1c2c68c8dbed87133836&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201803%2F09%2F20180309131557_lhpgm.thumb.700_0.jpg";
-    MLNGalleryMineBottomCellModel *info3 = [[MLNGalleryMineBottomCellModel alloc] init];
-    info3.picture = @"https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1573142564081&di=1f3f6e1f96dcf84bdf5d60745e8894d5&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201808%2F22%2F20180822135332_evddv.thumb.700_0.jpg";
-    self.pageView.bottomModels = @[info1, info2, info3];
+    MLNGalleryMinePageCellHomeModel *homeModel = [[MLNGalleryMinePageCellHomeModel alloc] init];
+    homeModel.picture = @"https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1573142564082&di=b8df1e2ef7c0a46b04cfffcb05f9c73d&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201807%2F28%2F20180728175640_ejtpq.thumb.700_0.jpg";
+    
+    MLNGalleryMinePageCellDynamicModel *dynamicModel = [[MLNGalleryMinePageCellDynamicModel alloc] init];
+    dynamicModel.day = @"2019-11-11";
+    dynamicModel.date = @"10:06";
+    dynamicModel.picture = @"http://www.xiangxiangmf.com/uploads/2018-01/12-200106_404.jpg";
+    
+    MLNGalleryMinePageCellCollectModel *collectModel = [[MLNGalleryMinePageCellCollectModel alloc] init];
+    collectModel.title = @"我的灵感集";
+    collectModel.buttonTitle = @"+新建";
+    
+    MLNGalleryMinePageCellCollectCellModel *model1 = [[MLNGalleryMinePageCellCollectCellModel alloc] init];
+    model1.avatar = @"https://ss0.bdstatic.com/94oJfD_bAAcT8t7mm9GUKT-xh_/timg?image&quality=100&size=b4000_4000&sec=1573132480&di=98ea17c8ac6593b08325a14dcb4eea53&src=http://pic.qqtn.com/up/2017-12/2017120108345974006.jpg";
+    model1.title = @"美丽";
+    model1.desc = @"1篇内容 | 1人浏览";
+    model1.righticon  = @"https://s.momocdn.com/w/u/others/2019/08/31/1567264720561-rightarrow.png";
+    collectModel.dataCellModels = @[model1];
+    
+    self.pageView.bottomModels = @[homeModel, dynamicModel, collectModel];
 }
 
 
