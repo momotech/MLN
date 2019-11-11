@@ -35,7 +35,7 @@ allprojects {
         protobufVersion = '3.0.1'
 
         mlnCoreVersion = '1.5.0'
-        mlnsVersion = '1.5.3'
+        mlnsVersion = '1.5.4'
         processorVersion = '1.5.0'
         annotationVersion = '1.0.0'
         hotreloadVersion = '1.5.0'

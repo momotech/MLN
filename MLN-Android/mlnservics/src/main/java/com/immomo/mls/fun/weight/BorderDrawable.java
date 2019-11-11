@@ -36,6 +36,7 @@ public class BorderDrawable extends Drawable implements IBorderRadius {
     protected final float[] radii, radiiIn;//borderWith内圈;
     protected boolean hasRadii = false;//统一：addCornerMask模式不处理背景。其余圆角方式处理圆角
     protected boolean useAddMask = false;
+    protected boolean isBorderBackground = true;//先绘制borderWidth(边框默认最后绘制，防止被挡住。部分View如Label，需要先绘制，不然被Gravity影响)
 
     private int width, height;
 
@@ -47,7 +48,9 @@ public class BorderDrawable extends Drawable implements IBorderRadius {
     //<editor-fold desc="Drawable">
     @Override
     public void draw(@NonNull Canvas canvas) {
-//        drawBorder(canvas);
+        if (!isBorderBackground) {//先绘制border，作为背景drawable
+            drawBorder(canvas);
+        }
     }
 
     @Override
@@ -219,4 +222,9 @@ public class BorderDrawable extends Drawable implements IBorderRadius {
         }
     }
     //</editor-fold>
+
+
+    public void setBorderForceGround(boolean borderBackGround) {
+        this.isBorderBackground = borderBackGround;
+    }
 }
