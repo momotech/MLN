@@ -14,22 +14,6 @@
 
 #define kRelativeHeader @"file://"
 
-typedef NS_ENUM(NSInteger, MLNFileErrorCode) {
-    MLNFileErrorCodeFileNotExist = -1,
-    MLNFileErrorCodeNotFile = -2,
-    MLNFileErrorCodeReadFailed = -3,
-    MLNFileErrorCodeParseJsonFailed = -4,
-    MLNFileErrorCodeCreateDirFailed = -5,
-    MLNFileErrorCodeWriteFailed = -6,
-    MLNFileErrorCodeSourceFileNotExist = -7,
-    MLNFileErrorCodeCreateFileFailed = -8,
-    MLNFileErrorCodeDeleteFileFailed = -9,
-    MLNFileErrorCodeMoveFileFailed = -10,
-    MLNFileErrorCodeCopyFileFailed = -11,
-    MLNFileErrorCodeGetFileListFailed = -12,
-    MLNFileErrorCodeGetFileMD5ParseFailed = -13
-};
-
 static dispatch_queue_t file_operation_completion_queue() {
     static dispatch_queue_t mm_file_operation_completion_queue;
     static dispatch_once_t onceToken;
@@ -223,7 +207,11 @@ static dispatch_queue_t file_operation_completion_queue() {
             if (callback) {
                 int errCode = ret != nil ? 0 : MLNFileErrorCodeReadFailed;
                 [callback addIntegerArgument:errCode];
-                [callback addMapArgument:[NSMutableDictionary dictionaryWithDictionary:ret]];
+                if (ret) {
+                   [callback addMapArgument:[NSMutableDictionary dictionaryWithDictionary:ret]];
+                } else {
+                    [callback addObjArgument:nil];
+                }
                 [callback callIfCan];
             }
         });
@@ -237,7 +225,11 @@ static dispatch_queue_t file_operation_completion_queue() {
             if (callback) {
                 int errCode = ret != nil ? 0 : MLNFileErrorCodeReadFailed;
                 [callback addIntegerArgument:errCode];
-                [callback addArrayArgument:[NSMutableArray arrayWithArray:ret]];
+                if (ret) {
+                    [callback addArrayArgument:[NSMutableArray arrayWithArray:ret]];
+                } else {
+                    [callback addObjArgument:nil];
+                }
                 [callback callIfCan];
             }
         });
