@@ -9,6 +9,8 @@
 #import "MLNCornerManagerTool.h"
 #import "MLNLayoutNode.h"
 #import "UIView+MLNLayout.h"
+#import "UIView+MLNKit.h"
+#import "MLNRenderContext.h"
 
 @interface MLNCornerMaskLayerHndler()
 
@@ -70,7 +72,7 @@
 }
 
 - (void)clean {
-    _targetView.clipsToBounds = _targetView.lua_node.clipToBounds;
+    _targetView.clipsToBounds = _targetView.mln_renderContext.clipToBounds;
     _targetView.layer.mask = nil;
     _needRemake = NO;
 }

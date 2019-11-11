@@ -8,8 +8,8 @@
 #import <Foundation/Foundation.h>
 #import "MLNGlobalVarExportProtocol.h"
 
-static NSString const *kMILFileSize = @"kMILFileSize";
-static NSString const *kMILModiDate = @"kMILModiDate";
+static NSString const *kMLNFileSize = @"kMLNFileSize";
+static NSString const *kMLNModiDate = @"kMLNModiDate";
 
 NS_ASSUME_NONNULL_BEGIN
 

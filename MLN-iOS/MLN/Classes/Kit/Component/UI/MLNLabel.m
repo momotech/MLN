@@ -30,10 +30,19 @@
 @property (nonatomic, assign) CGFloat lineSpacing;
 @property (nonatomic, copy) NSString *originText;
 @property (nonatomic, assign) MLNLabelMaxMode limitMode;
-
+@property (nonatomic, assign) NSLineBreakMode labelBreakMode;
 @end
 
 @implementation MLNLabel
+
+- (instancetype)initWithLuaCore:(MLNLuaCore *)luaCore frame:(CGRect)frame
+{
+    if (self = [super initWithLuaCore:luaCore frame:frame]) {
+        self.labelBreakMode = NSLineBreakByTruncatingTail;
+        self.userInteractionEnabled = YES;
+    }
+    return self;
+}
 
 - (void)willMoveToSuperview:(UIView *)newSuperview
 {
@@ -51,6 +60,17 @@
         frame.size.width = frame.size.width + self.lua_paddingLeft + self.lua_paddingRight;
         frame.size.height = frame.size.height + self.lua_paddingTop + self.lua_paddingBottom;
         self.frame = frame;
+    }
+}
+
+- (void)setupBreakMode
+{
+    if (self.innerLabel.numberOfLines == 1) {
+        self.innerLabel.lineBreakMode  = self.labelBreakMode;
+    } else if(self.innerLabel.numberOfLines != 0 && (self.labelBreakMode == NSLineBreakByTruncatingTail || self.labelBreakMode == NSLineBreakByClipping)){
+        self.innerLabel.lineBreakMode = self.labelBreakMode;
+    } else {
+        self.innerLabel.lineBreakMode = NSLineBreakByClipping;
     }
 }
 
@@ -172,6 +192,7 @@
     [self lua_needLayoutAndSpread];
     self.innerLabel.numberOfLines = numberOfLines;
     [self mln_handleSingleLineBreakLineWithLine:numberOfLines];
+    [self setupBreakMode];
 }
 
 - (NSInteger)numberOfLines
@@ -215,7 +236,8 @@
 
 - (void)setLineBreakMode:(NSLineBreakMode)lineBreakMode
 {
-    self.innerLabel.lineBreakMode = lineBreakMode;
+    self.labelBreakMode = lineBreakMode;
+    [self setupBreakMode];
 }
 
 - (NSLineBreakMode)lineBreakMode
@@ -279,7 +301,7 @@
     }
     self.fontStyle = style;
     [self lua_needLayoutAndSpread];
-    self.font = [MLNFont fontWithFontName:nil fontStyle:style fontSize:self.fontSize];
+    self.font = [MLNFont fontWithFontName:nil fontStyle:style fontSize:self.fontSize instance:MLN_KIT_INSTANCE(self.mln_luaCore)];
     [self handleLineSpacing];
 }
 
@@ -402,6 +424,11 @@
     return self.innerLabel;
 }
 
+- (void)lua_a_setIncludeFontPadding:(BOOL)isIncludepadding
+{
+    //Android方法 iOS空实现
+}
+
 #pragma mark - Export To Lua
 LUA_EXPORT_VIEW_BEGIN(MLNLabel)
 LUA_EXPORT_VIEW_PROPERTY(text, "lua_setText:", "text", MLNLabel)
@@ -422,6 +449,6 @@ LUA_EXPORT_VIEW_METHOD(setMinWidth, "setLua_minWidth:",MLNLabel) //SDK>=1.0.3，
 LUA_EXPORT_VIEW_METHOD(setMaxHeight, "lua_setMaxHeight:",MLNLabel) //SDK>=1.0.3，自适应时的限制
 LUA_EXPORT_VIEW_METHOD(setMinHeight, "lua_setMinHeight:",MLNLabel) //SDK>=1.0.3，自适应时的限制
 LUA_EXPORT_VIEW_METHOD(setLineSpacing, "lua_setLineSpacing:",MLNLabel) //SDK>=1.0.3，自适应时的限制
-LUA_EXPORT_VIEW_END(MLNLabel, Label, YES, "MLNView", NULL)
-
+LUA_EXPORT_VIEW_METHOD(a_setIncludeFontPadding, "lua_a_setIncludeFontPadding:", MLNLabel)
+LUA_EXPORT_VIEW_END(MLNLabel, Label, YES, "MLNView", "initWithLuaCore:frame:")
 @end

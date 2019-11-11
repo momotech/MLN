@@ -10,7 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-#define kMILWaterfallHeaderViewReuseID @"kMILWaterfallHeaderViewReuseID"
+#define kMLNWaterfallHeaderViewReuseID @"kMLNWaterfallHeaderViewReuseID"
 
 @interface MLNWaterfallHeaderView : UICollectionReusableView <MLNReuseCellProtocol>
 

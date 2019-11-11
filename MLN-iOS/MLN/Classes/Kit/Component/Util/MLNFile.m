@@ -9,7 +9,6 @@
 #import "MLNKitHeader.h"
 #import "MLNStaticExporterMacro.h"
 #import "MLNBlock.h"
-//#import "LVZipArchive.h"
 #import "MLNFileConst.h"
 #import <CommonCrypto/CommonDigest.h>
 
@@ -123,8 +122,8 @@ static dispatch_queue_t file_operation_completion_queue() {
     return errCode;
 }
 
-+ (NSInteger)lua_unzipFile:(NSString*)sourcePath targetPath:(NSString*)targetPath {
-    MLNKitLuaStaticAssert([self lua_fileExistAtPath:sourcePath], @"zip file does not exist");
++ (NSInteger)lua_unzipFile:(NSString*)sourcePath targetPath:(NSString*)targetPath
+{
     sourcePath = [self realFilePath:sourcePath createDirIfNeed:YES];
     int ret = MLNFileErrorCodeSourceFileNotExist;
     if ([self existAtPath:sourcePath]) {
@@ -136,8 +135,9 @@ static dispatch_queue_t file_operation_completion_queue() {
     return ret;
 }
 
-+ (void)lua_asyncUnzipFile:(NSString*)sourcePath targetPath:(NSString*)targetPath callback:(MLNBlock *)callback{
-    MLNKitLuaStaticAssert([self lua_fileExistAtPath:sourcePath], @"zip file does not exist");
++ (void)lua_asyncUnzipFile:(NSString*)sourcePath targetPath:(NSString*)targetPath callback:(MLNBlock *)callback
+{
+    MLNStaticCheckTypeAndNilValue(callback, @"callback", MLNBlock);
     dispatch_async(file_operation_completion_queue(), ^{
         NSInteger ret = [self lua_unzipFile:sourcePath targetPath:targetPath];
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -150,7 +150,8 @@ static dispatch_queue_t file_operation_completion_queue() {
     });
 }
 
-+ (void)lua_asyncWriteArray:(NSString*)targetPath array:(NSArray*)array callback:(MLNBlock*)callback {
++ (void)lua_asyncWriteArray:(NSString*)targetPath array:(NSArray*)array callback:(MLNBlock*)callback
+{
     NSString* realPath = [self realFilePath:targetPath createDirIfNeed:YES];
     if ([self lua_fileExistAtPath:realPath]) {
         [[NSFileManager defaultManager] removeItemAtPath:realPath error:nil];
@@ -217,12 +218,12 @@ static dispatch_queue_t file_operation_completion_queue() {
 
 + (void)lua_asyncReadMapFile:(NSString*)sourcePath callback:(MLNBlock*)callback {
     dispatch_async(file_operation_completion_queue(), ^{
-        NSDictionary* ret = [self lua_fileReadMap:sourcePath];
+        NSDictionary *ret = [self lua_fileReadMap:sourcePath];
         dispatch_async(dispatch_get_main_queue(), ^{
             if (callback) {
                 int errCode = ret != nil ? 0 : MLNFileErrorCodeReadFailed;
                 [callback addIntegerArgument:errCode];
-                [callback addMapArgument:ret];
+                [callback addMapArgument:[NSMutableDictionary dictionaryWithDictionary:ret]];
                 [callback callIfCan];
             }
         });
@@ -236,7 +237,7 @@ static dispatch_queue_t file_operation_completion_queue() {
             if (callback) {
                 int errCode = ret != nil ? 0 : MLNFileErrorCodeReadFailed;
                 [callback addIntegerArgument:errCode];
-                [callback addArrayArgument:ret];
+                [callback addArrayArgument:[NSMutableArray arrayWithArray:ret]];
                 [callback callIfCan];
             }
         });
@@ -253,6 +254,11 @@ static NSString *fileManagerRootPath = nil;
     fileManagerRootPath = rootPath;
 }
 
++ (NSString *)fileManagerRootPath
+{
+    return fileManagerRootPath;
+}
+
 + (NSString *)lua_getStorageDir
 {
     return fileManagerRootPath;
@@ -261,6 +267,7 @@ static NSString *fileManagerRootPath = nil;
 + (void)lua_asyncCreateFile:(NSString *)filePath completionBlock:(MLNBlock *)completion
 {
     MLNKitLuaStaticAssert(filePath && filePath.length >0, @"The path of file creation must not be nil!");
+    MLNStaticCheckTypeAndNilValue(completion, @"callback", MLNBlock);
     NSString *realFilePath = [self realFilePath:filePath createDirIfNeed:YES];
     if ([self existAtPath:realFilePath]) {
         if (completion) {
@@ -286,6 +293,7 @@ static NSString *fileManagerRootPath = nil;
 + (void)lua_asyncCreateDirectory:(NSString *)directoryPath completionBlock:(MLNBlock *)completion
 {
     MLNKitLuaStaticAssert(directoryPath && directoryPath.length >0, @"The path of directory creation must not be nil!");
+    MLNStaticCheckTypeAndNilValue(completion, @"callback", MLNBlock);
     NSString *realDirectoryPath = [self realPath:directoryPath];
     if ([self existAtPath:realDirectoryPath]) {
         if (completion) {
@@ -312,6 +320,7 @@ static NSString *fileManagerRootPath = nil;
 + (void)lua_asyncDelete:(NSString *)path completionBlock:(MLNBlock *)completion
 {
     MLNKitLuaStaticAssert(path && path.length >0, @"The path of deletion must not be nil!");
+    MLNStaticCheckTypeAndNilValue(completion, @"callback", MLNBlock);
     NSString *realPath = [self realFilePath:path createDirIfNeed:YES];
     dispatch_async(file_operation_completion_queue(), ^{
         NSError *error = nil;
@@ -331,6 +340,7 @@ static NSString *fileManagerRootPath = nil;
 {
     MLNKitLuaStaticAssert(srcPath && srcPath.length >0, @"The source path of move must not be nil!");
     MLNKitLuaStaticAssert(dstPath && dstPath.length >0, @"The destination path of move must not be nil!");
+    MLNStaticCheckTypeAndNilValue(completion, @"callback", MLNBlock);
     NSString *realSrcPath = [self realFilePath:srcPath createDirIfNeed:YES];
     NSString *realDstPath = [self realFilePath:dstPath createDirIfNeed:YES];
     dispatch_async(file_operation_completion_queue(), ^{
@@ -351,6 +361,7 @@ static NSString *fileManagerRootPath = nil;
 {
     MLNKitLuaStaticAssert(srcPath && srcPath.length >0, @"The source path of move must not be nil!");
     MLNKitLuaStaticAssert(dstPath && dstPath.length >0, @"The destination path of move must not be nil!");
+    MLNStaticCheckTypeAndNilValue(completion, @"callback", MLNBlock);
     NSString *realSrcPath = [self realFilePath:srcPath createDirIfNeed:YES];
     NSString *realDstPath = [self realFilePath:dstPath createDirIfNeed:YES];
     dispatch_async(file_operation_completion_queue(), ^{
@@ -370,6 +381,7 @@ static NSString *fileManagerRootPath = nil;
 + (void)lua_getFileList:(NSString *)dstPath recursive:(BOOL)recursive completionBlock:(MLNBlock *)completion
 {
     MLNKitLuaStaticAssert(dstPath && dstPath.length > 0, @"The path must not be nil!");
+    MLNStaticCheckTypeAndNilValue(completion, @"callback", MLNBlock);
     if (!(dstPath && dstPath.length > 0)) {
         return;
     }
@@ -415,14 +427,15 @@ static NSString *fileManagerRootPath = nil;
     NSError *error = nil;
     NSDictionary *fileAttributes = [[NSFileManager defaultManager] attributesOfItemAtPath:realFilePath error:&error];
     NSMutableDictionary *fileInfo = [NSMutableDictionary dictionary];
-    [fileInfo setObject:@([fileAttributes fileSize]) forKey:kMILFileSize];
-    [fileInfo setObject:@([fileAttributes fileModificationDate].timeIntervalSince1970)forKey:kMILModiDate];
+    [fileInfo setObject:@([fileAttributes fileSize]) forKey:kMLNFileSize];
+    [fileInfo setObject:@([fileAttributes fileModificationDate].timeIntervalSince1970)forKey:kMLNModiDate];
     return fileInfo;
 }
 
 + (void)lua_asyncReadFileMD5With:(NSString *)filePath completion:(MLNBlock *)completion
 {
     MLNKitLuaStaticAssert(filePath && filePath.length > 0, @"The path must not be nil!");
+    MLNStaticCheckTypeAndNilValue(completion, @"callback", MLNBlock);
     if (!(filePath && filePath.length > 0)) {
         return;
     }
@@ -562,17 +575,17 @@ LUA_EXPORT_STATIC_METHOD(asyncWriteFile, "lua_asyncWriteFile:text:callback:", ML
 LUA_EXPORT_STATIC_METHOD(asyncReadFile, "lua_asyncReadFile:callback:", MLNFile)
 LUA_EXPORT_STATIC_METHOD(asyncReadMapFile, "lua_asyncReadMapFile:callback:", MLNFile)
 LUA_EXPORT_STATIC_METHOD(asyncReadArrayFile, "lua_asyncReadArrayFile:callback:", MLNFile)
-LUA_EXPORT_STATIC_METHOD(getStorageDir, "lua_getStorageDir", MLNFile)                       // 1.2.11
-LUA_EXPORT_STATIC_METHOD(asyncCreateFile, "lua_asyncCreateFile:completionBlock:", MLNFile)  // 1.2.11
-LUA_EXPORT_STATIC_METHOD(asyncCreateDirs, "lua_asyncCreateDirectory:completionBlock:", MLNFile) // 1.2.11
-LUA_EXPORT_STATIC_METHOD(asyncDelete, "lua_asyncDelete:completionBlock:", MLNFile)          // 1.2.11
-LUA_EXPORT_STATIC_METHOD(asyncMoveFile, "lua_asyncMoveFile:destPath:completionBlock:", MLNFile)      // 1.2.11
-LUA_EXPORT_STATIC_METHOD(asyncCopyFile, "lua_asyncCopyFile:destPath:completionBlock:", MLNFile)      // 1.2.11
-LUA_EXPORT_STATIC_METHOD(asyncGetFileList, "lua_getFileList:recursive:completionBlock:", MLNFile)          // 1.2.11
-LUA_EXPORT_STATIC_METHOD(getFileInfo, "lua_getFileInfo:", MLNFile)          // 1.2.11
-LUA_EXPORT_STATIC_METHOD(asyncMd5File, "lua_asyncReadFileMD5With:completion:", MLNFile)          // 1.4.0
-LUA_EXPORT_STATIC_METHOD(syncMd5File, "lua_syncReadFileMD5With:", MLNFile)          // 1.4.0
-LUA_EXPORT_STATIC_METHOD(rootPath, "lua_applicationRootPath", MLNFile)              // 1.4.0
+LUA_EXPORT_STATIC_METHOD(getStorageDir, "lua_getStorageDir", MLNFile)
+LUA_EXPORT_STATIC_METHOD(asyncCreateFile, "lua_asyncCreateFile:completionBlock:", MLNFile)
+LUA_EXPORT_STATIC_METHOD(asyncCreateDirs, "lua_asyncCreateDirectory:completionBlock:", MLNFile)
+LUA_EXPORT_STATIC_METHOD(asyncDelete, "lua_asyncDelete:completionBlock:", MLNFile)
+LUA_EXPORT_STATIC_METHOD(asyncMoveFile, "lua_asyncMoveFile:destPath:completionBlock:", MLNFile)
+LUA_EXPORT_STATIC_METHOD(asyncCopyFile, "lua_asyncCopyFile:destPath:completionBlock:", MLNFile)
+LUA_EXPORT_STATIC_METHOD(asyncGetFileList, "lua_getFileList:recursive:completionBlock:", MLNFile)
+LUA_EXPORT_STATIC_METHOD(getFileInfo, "lua_getFileInfo:", MLNFile)
+LUA_EXPORT_STATIC_METHOD(asyncMd5File, "lua_asyncReadFileMD5With:completion:", MLNFile)
+LUA_EXPORT_STATIC_METHOD(syncMd5File, "lua_syncReadFileMD5With:", MLNFile)
+LUA_EXPORT_STATIC_METHOD(rootPath, "lua_applicationRootPath", MLNFile)
 LUA_EXPORT_STATIC_END(MLNFile, File, NO, NULL)
 
 @end

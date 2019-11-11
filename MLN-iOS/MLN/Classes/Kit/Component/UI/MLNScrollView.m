@@ -13,12 +13,14 @@
 #import "UIView+MLNLayout.h"
 #import "MLNLinearLayout.h"
 #import "UIView+MLNKit.h"
+#import "MLNLuaCore.h"
 #import "MLNLayoutScrollContainerNode.h"
+#import "MLNInnerScrollView.h"
+#import "MLNViewConst.h"
 
 @interface MLNScrollView()
 
-@property (nonatomic, strong) MLNScrollViewDelegate *lua_delegate;
-@property (nonatomic, assign, getter=isLinearContenView, readonly) BOOL linearContenView;
+@property (nonatomic, strong) MLNInnerScrollView *innerScrollView;
 
 @end
 
@@ -26,85 +28,200 @@
 
 - (instancetype)initWithLuaCore:(MLNLuaCore *)luaCore isHorizontal:(NSNumber *)isHorizontal isLinearContenView:(NSNumber *)isLinearContenView
 {
-    if (self = [self initWithLuaCore:luaCore isHorizontal:[isHorizontal boolValue]]) {
-        _linearContenView = [isLinearContenView boolValue];
-        self.lua_delegate = [[MLNScrollViewDelegate alloc] init];
-        self.delegate = self.lua_delegate;
-        if (@available(iOS 11.0, *)) {
-            self.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
-        }
-        [self createLinearLayoutIfNeed];
+    if (self = [super initWithFrame:CGRectZero]) {
+        _innerScrollView = [[MLNInnerScrollView alloc] initWithLuaCore:luaCore direction:[isHorizontal boolValue] isLinearContenView:[isLinearContenView boolValue]];
+        [super lua_addSubview:_innerScrollView];
+        _innerScrollView.lua_node.widthType = MLNLayoutMeasurementTypeMatchParent;
+        _innerScrollView.lua_node.heightType = MLNLayoutMeasurementTypeMatchParent;
     }
     return self;
 }
 
-- (void)layoutSubviews
+- (void)lua_addSubview:(UIView *)view
 {
-    [super layoutSubviews];
-    [self recalculContentSizeIfNeed];
+    [self.innerScrollView lua_addSubview:view];
 }
 
-- (void)willMoveToSuperview:(UIView *)newSuperview
+- (void)setLua_width:(CGFloat)lua_width
 {
-    [super willMoveToSuperview:newSuperview];
-    if (newSuperview && self.mln_contentView) {
-        [self lua_addSubview:self.mln_contentView];
+    [super setLua_width:lua_width];
+    if (self.lua_node.isDirty) {
+        [self.innerScrollView lua_needLayout];
+        [self.innerScrollView updateContentViewLayoutIfNeed];
     }
 }
 
-- (void)createLinearLayoutIfNeed
+- (void)setLua_height:(CGFloat)lua_height
 {
-    if (self.isLinearContenView && !self.mln_contentView) {
-        self.mln_contentView = [self createLLinearLayoutWithDirection:self.mln_horizontal];
-        self.mln_contentView.clipsToBounds = YES;
+    [super setLua_height:lua_height];
+    if (self.lua_node.isDirty) {
+        [self.innerScrollView lua_needLayout];
+        [self.innerScrollView updateContentViewLayoutIfNeed];
     }
 }
 
-- (MLNLinearLayout *)createLLinearLayoutWithDirection:(MLNScrollDirection)direction
-{
-    switch (direction) {
-        case MLNScrollDirectionHorizontal: {
-            MLNLinearLayout *linear = [[MLNLinearLayout alloc] initWithLayoutDirection:MLNLayoutDirectionHorizontal];
-            linear.lua_height = MLNLayoutMeasurementTypeMatchParent;
-            return linear;
-        }
-        default: {
-            MLNLinearLayout *linear = [[MLNLinearLayout alloc] initWithLayoutDirection:MLNLayoutDirectionVertical];
-            linear.lua_width = MLNLayoutMeasurementTypeMatchParent;
-            return linear;
-        }
-    }
-}
-
-- (void)lua_setContentSize:(CGSize)contentSize
+- (void)setLua_ContentSize:(CGSize)contentSize
 {
     MLNKitLuaAssert(NO, @"ScrollView 'contentSize' setter is deprecated");
-    self.contentSize = contentSize;
-    [self recalculContentSizeIfNeed];
+    self.innerScrollView.contentSize = contentSize;
+    [self.innerScrollView recalculContentSizeIfNeed];
 }
 
-- (void)recalculContentSizeIfNeed
+- (CGSize)lua_contentSize
 {
-    CGSize contentSize = self.contentSize;
-    if (!self.mln_horizontal) {
-        if (contentSize.width > self.frame.size.width && self.frame.size.width != 0) {
-            contentSize.width = self.frame.size.width;
-            self.contentSize = contentSize;
-        }
-    }
-    else {
-        if (contentSize.height > self.frame.size.height && self.frame.size.height != 0) {
-            contentSize.height = self.frame.size.height;
-            self.contentSize = contentSize;
-        }
-    }
+    return self.innerScrollView.contentSize;
 }
 
-- (void)lua_changedLayout
+- (void)setLua_loadahead:(CGFloat)loadahead
 {
-    [super lua_changedLayout];
-    // 重置宽高
+    [self.innerScrollView setLua_loadahead:loadahead];
 }
+
+- (CGFloat)lua_loadahead
+{
+    return self.innerScrollView.lua_loadahead;
+}
+
+- (void)setLua_ContentOffset:(CGPoint)point
+{
+    [self.innerScrollView lua_setContentOffset:point];
+}
+
+- (CGPoint)lua_contentOffset
+{
+    return [self.innerScrollView lua_contentOffset];
+}
+
+- (void)setLua_ScrollEnabled:(BOOL)scrollEnable
+{
+    [self.innerScrollView setScrollEnabled:scrollEnable];
+}
+
+- (BOOL)lua_isScrollEnabled
+{
+    return self.innerScrollView.isScrollEnabled;
+}
+
+- (void)setLua_Bounces:(BOOL)bounces
+{
+    [self.innerScrollView setBounces:bounces];
+}
+
+- (BOOL)lua_bounces
+{
+    return self.innerScrollView.bounces;
+}
+
+- (void)setLua_showsHorizontalScrollIndicator:(BOOL)show
+{
+    self.innerScrollView.showsHorizontalScrollIndicator = show;
+}
+
+- (BOOL)lua_showsHorizontalScrollIndicator
+{
+    return self.innerScrollView.showsHorizontalScrollIndicator;
+}
+
+- (void)setLua_showsVerticalScrollIndicator:(BOOL)show
+{
+    self.innerScrollView.showsVerticalScrollIndicator = show;
+}
+
+- (BOOL)lua_showsVerticalScrollIndicator
+{
+    return self.innerScrollView.showsVerticalScrollIndicator;
+}
+
+- (void)setLua_alwaysBounceHorizontal:(BOOL)alwaysBounceHorizontal
+{
+    self.innerScrollView.alwaysBounceHorizontal = alwaysBounceHorizontal;
+}
+
+- (BOOL)lua_alwaysBounceHorizontal
+{
+    return self.innerScrollView.alwaysBounceHorizontal;
+}
+
+- (void)setLua_alwaysBounceVertical:(BOOL)alwaysBounceVertical
+{
+    self.innerScrollView.alwaysBounceVertical = alwaysBounceVertical;
+}
+
+- (BOOL)lua_alwaysBounceVertical
+{
+    return self.innerScrollView.alwaysBounceVertical;
+}
+
+- (void)setLua_scrollBeginCallback:(MLNBlock *)callback
+{
+    self.innerScrollView.lua_scrollBeginCallback = callback;
+}
+
+- (void)setLua_scrollingCallback:(MLNBlock *)callback
+{
+    self.innerScrollView.lua_scrollingCallback = callback;
+}
+
+- (void)setLua_endDraggingCallback:(MLNBlock *)callback
+{
+    self.innerScrollView.lua_endDraggingCallback = callback;
+}
+
+- (void)setLua_startDeceleratingCallback:(MLNBlock *)callback
+{
+    self.innerScrollView.lua_startDeceleratingCallback = callback;
+}
+
+- (void)setLua_scrollEndCallback:(MLNBlock *)callback
+{
+    self.innerScrollView.lua_scrollEndCallback = callback;
+}
+
+- (void)lua_setContentInset:(CGFloat)top right:(CGFloat)right bottom:(CGFloat)bottom left:(CGFloat)left
+{
+    [self.innerScrollView lua_setContentInset:top right:right bottom:bottom left:left];
+}
+
+- (void)lua_getContetnInset:(MLNBlock*)block
+{
+    [self.innerScrollView lua_getContetnInset:block];
+}
+
+- (void)lua_setScrollIndicatorInset:(CGFloat)top right:(CGFloat)right bottom:(CGFloat)bottom  left:(CGFloat)left
+{
+    [self.innerScrollView lua_setScrollIndicatorInset:top right:right bottom:bottom left:left];
+}
+
+- (void)lua_setContentOffsetWithAnimation:(CGPoint)point
+{
+    [self.innerScrollView lua_setContentOffsetWithAnimation:point];
+}
+
+- (void)mln_setLuaScrollEnable:(BOOL)scrollEnable
+{
+    [self.innerScrollView mln_setLuaScrollEnable:scrollEnable];
+}
+
+- (void)mln_setFlingSpeed:(CGFloat)speed
+{
+    self.innerScrollView.decelerationRate = speed;
+}
+
+- (CGFloat)mln_flingSpeed
+{
+    return self.innerScrollView.decelerationRate;
+}
+
+- (void)mln_setPagingEnable:(BOOL)pagingEnabled
+{
+    self.innerScrollView.pagingEnabled = pagingEnabled;
+}
+
+- (BOOL)mln_pagingEnabled
+{
+    return self.innerScrollView.pagingEnabled;
+}
+
 
 #pragma mark - Override
 - (BOOL)lua_layoutEnable
@@ -119,15 +236,17 @@
 
 #pragma mark - Export For Lua
 LUA_EXPORT_VIEW_BEGIN(MLNScrollView)
-LUA_EXPORT_VIEW_PROPERTY(contentSize, "lua_setContentSize:", "contentSize", MLNScrollView)
+LUA_EXPORT_VIEW_PROPERTY(contentSize, "setLua_ContentSize:", "lua_contentSize", MLNScrollView)
 LUA_EXPORT_VIEW_PROPERTY(loadThreshold, "setLua_loadahead:", "lua_loadahead", MLNScrollView)
-LUA_EXPORT_VIEW_PROPERTY(contentOffset, "setContentOffset:", "contentOffset", MLNScrollView)
-LUA_EXPORT_VIEW_PROPERTY(scrollEnabled, "setScrollEnabled:", "isScrollEnabled", MLNScrollView)
-LUA_EXPORT_VIEW_PROPERTY(i_bounces, "setBounces:", "bounces", MLNScrollView)
-LUA_EXPORT_VIEW_PROPERTY(showsHorizontalScrollIndicator, "setShowsHorizontalScrollIndicator:", "showsHorizontalScrollIndicator", MLNScrollView)
-LUA_EXPORT_VIEW_PROPERTY(showsVerticalScrollIndicator, "setShowsVerticalScrollIndicator:", "showsVerticalScrollIndicator", MLNScrollView)
-LUA_EXPORT_VIEW_PROPERTY(i_bounceHorizontal, "setAlwaysBounceHorizontal:", "alwaysBounceHorizontal", MLNScrollView)
-LUA_EXPORT_VIEW_PROPERTY(i_bounceVertical, "setAlwaysBounceVertical:", "alwaysBounceVertical", MLNScrollView)
+LUA_EXPORT_VIEW_PROPERTY(contentOffset, "setLua_ContentOffset:", "lua_contentOffset", MLNScrollView)
+LUA_EXPORT_VIEW_PROPERTY(scrollEnabled, "setLua_ScrollEnabled:", "lua_isScrollEnabled", MLNScrollView)
+LUA_EXPORT_VIEW_PROPERTY(i_bounces, "setLua_Bounces:", "lua_bounces", MLNScrollView)
+LUA_EXPORT_VIEW_PROPERTY(showsHorizontalScrollIndicator, "setLua_showsHorizontalScrollIndicator:", "lua_showsHorizontalScrollIndicator", MLNScrollView)
+LUA_EXPORT_VIEW_PROPERTY(showsVerticalScrollIndicator, "setLua_showsVerticalScrollIndicator:", "lua_showsVerticalScrollIndicator", MLNScrollView)
+LUA_EXPORT_VIEW_PROPERTY(i_bounceHorizontal, "setLua_alwaysBounceHorizontal:", "lua_alwaysBounceHorizontal", MLNScrollView)
+LUA_EXPORT_VIEW_PROPERTY(i_bounceVertical, "setLua_alwaysBounceVertical:", "lua_alwaysBounceVertical", MLNScrollView)
+LUA_EXPORT_VIEW_PROPERTY(a_flingSpeed, "mln_setFlingSpeed:", "mln_flingSpeed" , MLNScrollView)
+LUA_EXPORT_VIEW_PROPERTY(i_pagingEnabled, "mln_setPagingEnable:", "mln_pagingEnabled" , MLNScrollView)
 LUA_EXPORT_VIEW_METHOD(setScrollBeginCallback, "setLua_scrollBeginCallback:",MLNScrollView)
 LUA_EXPORT_VIEW_METHOD(setScrollingCallback, "setLua_scrollingCallback:",MLNScrollView)
 LUA_EXPORT_VIEW_METHOD(setEndDraggingCallback, "setLua_endDraggingCallback:",MLNScrollView)

@@ -53,11 +53,11 @@ static NSValue *kSizeValueZero = nil;
 
 - (void)registerCellClassIfNeed:(UICollectionView *)collectionView  reuseId:(NSString *)reuseId
 {
-    MLNKitLuaAssert(collectionView, @"table view must not be nil!");
-    MLNKitLuaAssert(reuseId && reuseId.length >0 , @"The reuse id must be nil!");
+    MLNKitLuaAssert(collectionView, @"collectionView view must not be nil!");
+    MLNKitLuaAssert(reuseId && reuseId.length > 0 , @"The reuse id must not be nil!");
     
     NSMutableDictionary* classDict = [self collectionViewRegisterCellClassDict:collectionView];
-    if (reuseId && ![classDict valueForKey:reuseId] ) {
+    if (reuseId && reuseId.length > 0 && ![classDict valueForKey:reuseId]) {
         [collectionView registerClass:[MLNCollectionViewCell class] forCellWithReuseIdentifier:reuseId];
         //[self.cellReuseIds addObject:reuseId];
     }
@@ -82,8 +82,8 @@ static NSValue *kSizeValueZero = nil;
     [self.cellReuseIdCallback addIntArgument:(int)indexPath.section+1];
     [self.cellReuseIdCallback addIntArgument:(int)indexPath.item+1];
     reuseId = [self.cellReuseIdCallback callIfCan];
-    MLNKitLuaAssert((reuseId && [reuseId isKindOfClass:[NSString class]]), @"The reuse id must be a string!");
-    if (!reuseId) {
+    if (!(reuseId && [reuseId isKindOfClass:[NSString class]] && reuseId.length > 0)) {
+        MLNKitLuaError(@"The reuse id must be a string and length > 0!");
         return kMLNCollectionViewCellReuseID;
     }
     // 3. update cache
@@ -204,7 +204,8 @@ static NSValue *kSizeValueZero = nil;
         return 1;
     }
     id numbers = [self.sectionCountCallback callIfCan];
-    MLNKitLuaAssert([numbers isKindOfClass:[NSNumber class]], @"The perameter must be a number!");
+    MLNKitLuaAssert(numbers && [numbers isMemberOfClass:NSClassFromString(@"__NSCFNumber")], @"The return value of method 'sectionCount' must be a number!");
+    MLNKitLuaAssert([numbers integerValue] > 0, @"The return value of method 'sectionCount' must greater than 0!");
     // 3. update cache
     sectionCount = [numbers integerValue];
     [self.cachesManager updateSectionCount:sectionCount];
@@ -224,7 +225,7 @@ static NSValue *kSizeValueZero = nil;
     // 2. call lua
     [self.itemCountCallback addIntArgument:(int)section+1];
     id itemCountNumber = [self.itemCountCallback callIfCan];
-    MLNKitLuaAssert([itemCountNumber isKindOfClass:[NSNumber class]], @"The perameter must be a number!");
+    MLNKitLuaAssert(itemCountNumber && [itemCountNumber isMemberOfClass:NSClassFromString(@"__NSCFNumber")], @"The return value of method 'rowCount' must be a number!");
     // 3. update cache
     itemCount = [itemCountNumber integerValue];
     [self.cachesManager updateRowCount:itemCount section:section];
@@ -343,7 +344,12 @@ static NSValue *kSizeValueZero = nil;
     [sizeForCellCallback addIntArgument:(int)section+1];
     [sizeForCellCallback addIntArgument:(int)item+1];
     sizeValue = [sizeForCellCallback callIfCan];
-    MLNKitLuaAssert(sizeValue && [sizeValue isKindOfClass:[NSValue class]], @"The perameter must be a size!");
+    MLNKitLuaAssert(sizeValue && [sizeValue isKindOfClass:[NSValue class]] &&
+              ![sizeValue isMemberOfClass:NSClassFromString(@"__NSCFBoolean")] &&
+              ![sizeValue isMemberOfClass:NSClassFromString(@"__NSCFNumber")], @"The return value of method 'sizeForCell/sizeForCellByReuseId' must be a Size!");
+    MLNKitLuaAssert([sizeValue CGSizeValue].width > 0 && [sizeValue CGSizeValue].height > 0, @"The width and height of cell must greater than 0!");
+    // 处理边界值
+    sizeValue = [self handleCellBoundaryValueWithSize:[sizeValue CGSizeValue]];
     if (!sizeValue) {
         return CGSizeZero;
     }
@@ -355,16 +361,19 @@ static NSValue *kSizeValueZero = nil;
 #pragma mark - Save UICollectionViewDataSource Callback
 - (void)lua_numbersOfSections:(MLNBlock *)callback
 {
+    MLNCheckTypeAndNilValue(callback, @"function", MLNBlock);
     self.sectionCountCallback = callback;
 }
 
 - (void)lua_numberOfRowsInSection:(MLNBlock *)callback
 {
+    MLNCheckTypeAndNilValue(callback, @"function", MLNBlock);
     self.itemCountCallback = callback;
 }
 
 - (void)lua_reuseIdWithCallback:(MLNBlock *)callback
 {
+    MLNCheckTypeAndNilValue(callback, @"function", MLNBlock);
     self.cellReuseIdCallback = callback;
 }
 
@@ -372,6 +381,7 @@ static NSValue *kSizeValueZero = nil;
 {
     MLNKitLuaAssert(callback , @"The callback must not be nil!");
     MLNKitLuaAssert(reuseId && reuseId.length >0 , @"The reuse id must not be nil!");
+    MLNCheckTypeAndNilValue(callback, @"function", MLNBlock);
     if (reuseId && reuseId.length >0) {
         [self.initedCellCallbacks mln_setObject:callback forKey:reuseId];
     }
@@ -381,6 +391,7 @@ static NSValue *kSizeValueZero = nil;
 {
     MLNKitLuaAssert(callback , @"The callback must not be nil!");
     MLNKitLuaAssert(reuseId && reuseId.length >0 , @"The reuse id must not be nil!");
+    MLNCheckTypeAndNilValue(callback, @"function", MLNBlock);
     if (reuseId && reuseId.length >0) {
         [self.reuseCellCallbacks mln_setObject:callback forKey:reuseId];
     }
@@ -464,6 +475,14 @@ static NSValue *kSizeValueZero = nil;
     MLNKitLuaAssert(callback , @"The callback must not be nil!");
     MLNKitLuaAssert(reuseId && reuseId.length >0 , @"The reuse id must not be nil!");
     [self.sizeForCellCallbacks setObject:callback forKey:reuseId];
+}
+
+#pragma mark -
+- (NSValue *)handleCellBoundaryValueWithSize:(CGSize)size
+{
+    size.width = size.width < 0 ? 0 : size.width;
+    size.height = size.height < 0 ? 0 : size.height;
+    return [NSValue valueWithCGSize:size];
 }
 
 #pragma mark - Export For Lua

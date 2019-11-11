@@ -97,6 +97,7 @@ typedef id(^MLNCallback)(id result);
 static MLN_FORCE_INLINE BOOL __mln_lua_setinvocation (lua_State *L, NSInvocation *invocation, NSInteger index, int stackID, NSMutableArray *retainArray) {
     const char *type = [invocation.methodSignature getArgumentTypeAtIndex:index];
     if (!charpNotEmpty(type)) {
+        mln_lua_error(L, "Undefined parameter type！");
         return NO;
     }
     switch (mln_objctype(type)) {
@@ -277,6 +278,7 @@ static MLN_FORCE_INLINE BOOL __mln_lua_setinvocation (lua_State *L, NSInvocation
 static MLN_FORCE_INLINE int __mln_lua_pushinvocation_return(NSInvocation* invocation, lua_State* L, BOOL needReturnSelf, BOOL isInit) {
     const char *type = [invocation.methodSignature methodReturnType];
     if (!charpNotEmpty(type)) {
+        mln_lua_error(L, "Undefined parameter type！");
         return 0;
     }
     switch (mln_objctype(type)) {
@@ -454,7 +456,7 @@ static MLN_FORCE_INLINE int __mln_lua_objc_invoke (lua_State *L, int statrtStack
         NSString *targetMsg = s_clazz;
         NSString *selMsg = NSStringFromSelector(selector);
         NSString *errmsg = [NSString stringWithFormat:@"The method signature cannot be nil! \n taget : %@ \n selector : %@",targetMsg, selMsg];
-        mln_lua_assert(L, NO, errmsg.UTF8String);
+        mln_lua_error(L, errmsg.UTF8String);
         return 0;
     }
     // 当方法为init...初始化方法时，默认传递参数的个数为3，其他情况为2
@@ -477,7 +479,7 @@ static MLN_FORCE_INLINE int __mln_lua_objc_invoke (lua_State *L, int statrtStack
             NSString *targetMsg = target ? (isclass ? NSStringFromClass(target) : target) : @"<nil>";
             NSString *selMsg = selector ? NSStringFromSelector(selector) : @"<nil>";
             NSString *errmsg = [NSString stringWithFormat:@"The method signature cannot be nil! \n taget : %@ \n selector : %@",targetMsg, selMsg];
-            mln_lua_assert(L, NO, errmsg.UTF8String);
+            mln_lua_error(L, errmsg.UTF8String);
             return 0;
         }
         stackIdx++;

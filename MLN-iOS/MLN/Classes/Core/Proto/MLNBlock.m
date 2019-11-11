@@ -194,7 +194,7 @@ static int mln_errorFunc_traceback (lua_State *L) {
     [self.arguments addObject:argument];
 }
 
-- (void)addMapArgument:(NSMutableDictionary *)argument
+- (void)addMapArgument:(NSDictionary *)argument
 {
     NSAssert([NSThread isMainThread], @"This method to be executed in the main thread!");
     if (!argument) {
@@ -207,7 +207,7 @@ static int mln_errorFunc_traceback (lua_State *L) {
     [self.arguments addObject:argument];
 }
 
-- (void)addArrayArgument:(NSMutableArray *)argument
+- (void)addArrayArgument:(NSArray *)argument
 {
     NSAssert([NSThread isMainThread], @"This method to be executed in the main thread!");
     if (!argument) {

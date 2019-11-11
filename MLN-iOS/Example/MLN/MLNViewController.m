@@ -19,19 +19,25 @@
 #import "MLNNavigatorHandler.h"
 #import "MLNHotReloadViewController.h"
 #import "MLNOfflineViewController.h"
+#import <MLNDevTool/MLNFloatingMenu.h>
+#import "MLNGalleryViewController.h"
+#import "MLNKitViewController.h"
+#import <MLNDevTool/MLNFPSLabel.h>
+#import <MLNDevTool/MLNLoadTimeStatistics.h>
 
-@interface MLNViewController () <MLNKitInstanceErrorHandlerProtocol, MLNViewControllerProtocol>
+@interface MLNViewController () <MLNKitInstanceErrorHandlerProtocol, MLNViewControllerProtocol, MLNKitInstanceDelegate>
 
 @property (nonatomic, strong) MLNKitInstance *kitInstance;
 @property (nonatomic, strong) id<MLNHttpHandlerProtocol> httpHandler;
 @property (nonatomic, strong) id<MLNRefreshDelegate> refreshHandler;
 @property (nonatomic, strong) id<MLNImageLoaderProtocol> imgLoader;
 @property (nonatomic, strong) id<MLNNavigatorHandlerProtocol> navHandler;
-@property (nonatomic, strong) MLNKitViewController *kcv;
-@property (nonatomic, strong) MLNHotReloadViewController *hotvc;
-@property (nonatomic, strong) MLNOfflineViewController *ovc;
-#import "MLNOfflineViewController.h"
 
+@property (nonatomic, strong) MLNKitViewController *kcv;
+@property (nonatomic, strong) UIButton *galleryButton;
+@property (nonatomic, strong) MLNFPSLabel *fpsLabel;
+@property (nonatomic, strong) UILabel *loadTimeLabel;
+@property (nonatomic, strong) MLNLoadTimeStatistics *loadTimeStatistics;
 @end
 
 @implementation MLNViewController
@@ -51,35 +57,57 @@
     handlersManager.scrollRefreshHandler = self.refreshHandler;
     handlersManager.imageLoader = self.imgLoader;
     handlersManager.navigatorHandler = self.navHandler;
+    
+    [self setupSubController];
+    [self setupSubviews];
 }
 
-- (IBAction)showDemoClick:(id)sender {
-        NSString *entryFile = @"moment.lua";
-        MLNLuaBundle *bundle = [MLNLuaBundle mainBundleWithPath:@"moment"];
-    
-    
-//        NSString *entryFile = @"foo.lua";
-//        MLNLuaBundle *bundle = [MLNLuaBundle mainBundle];
-    
-        MLNKitViewController *kcv = [[MLNKitViewController alloc] initWithEntryFilePath:entryFile];
-        [kcv regClasses:@[[MLNTestMe class],
-                          [MLNStaticTest class],
-                          [MLNGlobalVarTest class],
-                          [MLNGlobalFuncTest class]]];
-        [kcv changeCurrentBundlePath:bundle.bundlePath];
-        self.kcv = kcv;
-        [self presentViewController:kcv animated:YES completion:nil];
+- (void)setupSubController
+{
+    NSString *entryFile = @"Main.lua";
+    MLNLuaBundle *bundle = [MLNLuaBundle mainBundleWithPath:@"gallery"];
+    MLNKitViewController *kcv = [[MLNKitViewController alloc] initWithEntryFilePath:entryFile];
+    kcv.kitInstance.delegate = self;
+    [kcv regClasses:@[[MLNTestMe class],
+                      [MLNStaticTest class],
+                      [MLNGlobalVarTest class],
+                      [MLNGlobalFuncTest class]]];
+    [kcv changeCurrentBundlePath:bundle.bundlePath];
+    [self addChildViewController:kcv];
+    [self.view addSubview:kcv.view];
+    self.kcv = kcv;
 }
 
-
-- (IBAction)showHotReload:(id)sender {
-    self.hotvc = [[MLNHotReloadViewController alloc] init];
-    [self presentViewController:self.hotvc animated:YES completion:nil];
+- (void)setupSubviews
+{
+    CGFloat galleryButtonW = 80;
+    CGFloat galleryButtonH = 30;
+    CGFloat galleryButtonX = [UIScreen mainScreen].bounds.size.width - galleryButtonW - 10;
+    CGFloat galleryButtonY = 22;
+    self.galleryButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    self.galleryButton.frame = CGRectMake(galleryButtonX, galleryButtonY, galleryButtonW, galleryButtonH);
+    [self.galleryButton setTitle:@"调试点我" forState:UIControlStateNormal];
+    self.galleryButton.backgroundColor = [UIColor orangeColor];
+    [self.galleryButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [self.galleryButton addTarget:self action:@selector(galleryButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:self.galleryButton];
+    
+    CGFloat screenHeight = [UIScreen mainScreen].bounds.size.height;
+    self.fpsLabel = [[MLNFPSLabel alloc] initWithFrame:CGRectMake(10, screenHeight * 0.8, 50, 20)];
+    [self.kcv.view addSubview:self.fpsLabel];
 }
 
-- (IBAction)showOffline:(id)sender {
-    self.ovc = [[MLNOfflineViewController alloc] init];
-    [self presentViewController:self.ovc animated:YES completion:nil];
+- (void)galleryButtonClicked:(id)sender
+{
+    MLNGalleryViewController *galleryVc = [[MLNGalleryViewController alloc] init];
+    [self presentViewController:galleryVc animated:YES completion:nil];
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    
+    [self showLuaScriptLoadTime];
 }
 
 #pragma mark - MLNUIInStanceErrorHandlerProtocol
@@ -97,5 +125,72 @@
 {
     NSLog(@"%@%@",instance,error);
 }
+
+#pragma mark - MLNKitInstanceDelegate
+- (void)willSetupLuaCore:(MLNKitInstance *)instance
+{
+    [self.loadTimeStatistics recordStartTime];
+    [self.loadTimeStatistics recordLuaCoreCreateStartTime];
+}
+
+- (void)didSetupLuaCore:(MLNKitInstance *)instance
+{
+    [self.loadTimeStatistics recordLuaCoreCreateEndTime];
+}
+
+- (void)instance:(MLNKitInstance *)instance willLoad:(NSData *)data fileName:(NSString *)fileName
+{
+    [self.loadTimeStatistics recordLoadScriptStartTimeWithFileName:fileName];
+}
+
+- (void)instance:(MLNKitInstance *)instance didLoad:(NSData *)data fileName:(NSString *)fileName
+{
+    [self.loadTimeStatistics recordLoadScriptEndTimeWithFileName:fileName];
+}
+
+- (void)instance:(MLNKitInstance *)instance didFinishRun:(NSString *)entryFileName
+{
+    [self.loadTimeStatistics recordEndTime];
+}
+
+
+#pragma mark - Private method
+
+- (void)showLuaScriptLoadTime
+{
+    [self.kcv.view addSubview:self.loadTimeLabel];
+    self.loadTimeLabel.hidden = NO;
+    self.loadTimeLabel.text = [NSString stringWithFormat:@"%.0f ms\n%.4f ms\n%.0f ms\n", [self.loadTimeStatistics luaCoreCreateTime] * 1000, [self.loadTimeStatistics loadScriptTime] * 1000, [self.loadTimeStatistics allLoadTime] * 1000];
+}
+
+- (void)hideLuaScriptLoadTime
+{
+    self.loadTimeLabel.hidden = YES;
+}
+
+- (MLNLoadTimeStatistics *)loadTimeStatistics
+{
+    if (!_loadTimeStatistics) {
+        _loadTimeStatistics = [[MLNLoadTimeStatistics alloc] init];
+    }
+    return _loadTimeStatistics;
+}
+
+
+- (UILabel *)loadTimeLabel
+{
+    if (!_loadTimeLabel) {
+        CGFloat loadTimeLabelY = [UIScreen mainScreen].bounds.size.height * 0.7;
+        _loadTimeLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, loadTimeLabelY, 50, 40)];
+        _loadTimeLabel.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:0.6];
+        _loadTimeLabel.textColor = [UIColor whiteColor];
+        _loadTimeLabel.font = [UIFont systemFontOfSize:12];
+        _loadTimeLabel.textAlignment = NSTextAlignmentCenter;
+        _loadTimeLabel.adjustsFontSizeToFitWidth = YES;
+        _loadTimeLabel.numberOfLines = 0;
+    }
+    return _loadTimeLabel;
+}
+
 
 @end

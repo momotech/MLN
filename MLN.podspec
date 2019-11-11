@@ -34,23 +34,23 @@ Pod::Spec.new do |s|
     
     s.subspec 'LuaLib' do |lua|
         lua.name = 'LuaLib'
-        lua.source_files = 'MLN-iOS/**/Classes/LuaLib/**/*.{h,m,c}'
-        lua.public_header_files = 'MLN-iOS/**/Classes/LuaLib/**/*.h'
+        lua.source_files = 'MLN-iOS/MLN/Classes/LuaLib/**/*.{h,m,c}'
+        lua.public_header_files = 'MLN-iOS/MLN/Classes/LuaLib/**/*.h'
     end
     
     s.subspec 'Core' do |c|
         c.name = 'Core'
         c.framework = 'Foundation', 'UIKit'
-        c.source_files = 'MLN-iOS/**/Classes/Core/**/*.{h,m,c}'
-        c.public_header_files = 'MLN-iOS/**/Classes/Core/**/*.h'
+        c.source_files = 'MLN-iOS/MLN/Classes/Core/**/*.{h,m,c}'
+        c.public_header_files = 'MLN-iOS/MLN/Classes/Core/**/*.h'
         c.dependency  'MLN/LuaLib'
     end
     
     s.subspec 'Kit' do |k|
         k.name = 'Kit'
         k.framework = 'Foundation', 'UIKit', 'CoreGraphics', 'AVFoundation'
-        k.source_files = 'MLN-iOS/**/Classes/Kit/**/*.{h,m,c}'
-        k.public_header_files = 'MLN-iOS/**/Classes/Kit/**/*.h'
+        k.source_files = 'MLN-iOS/MLN/Classes/Kit/**/*.{h,m,c}'
+        k.public_header_files = 'MLN-iOS/MLN/Classes/Kit/**/*.h'
         k.dependency  'MLN/Core'
     end
     

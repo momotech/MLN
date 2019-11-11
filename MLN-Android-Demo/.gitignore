@@ -1,0 +1,6 @@
+.gradle/
+.idea/
+local.properties
+*.iml
+sample/*.iml
+scan/*.iml

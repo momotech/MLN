@@ -1,12 +1,14 @@
 //
 //  MLNCollectionViewCell.m
-//  
+//
 //
 //  Created by MoMo on 2018/7/17.
 //
 
 #import "MLNCollectionViewCell.h"
 #import "UIView+MLNLayout.h"
+#import "MLNKitHeader.h"
+#import "MLNLuaTable.h"
 
 @interface MLNCollectionViewCell ()
 
@@ -36,6 +38,7 @@
 
 - (void)lua_addSubview:(UIView *)view
 {
+    MLNCheckTypeAndNilValue(view, @"View", [UIView class]);
     [self.luaContentView lua_addSubview:view];
 }
 
@@ -104,6 +107,11 @@
         [self.contentView addSubview:_luaContentView];
     }
     return _luaContentView;
+}
+
+- (MLNLuaCore *)mln_luaCore
+{
+    return self.luaContentView.luaTable.luaCore;
 }
 
 @end

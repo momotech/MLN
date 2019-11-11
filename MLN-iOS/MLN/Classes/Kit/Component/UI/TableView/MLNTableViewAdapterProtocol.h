@@ -14,7 +14,7 @@
 @property (nonatomic, weak) UITableView *targetTableView;
 
 @optional
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath;
+- (void)tableView:(UITableView *)tableView singleTapSelectRowAtIndexPath:(NSIndexPath *)indexPath;
 - (void)tableView:(UITableView *)tableView longPressRowAtIndexPath:(NSIndexPath *)indexPath;
 - (void)tableViewReloadData:(UITableView *)tableView;
 - (void)tableView:(UITableView *)tableView reloadRowsAtIndexPaths:(NSArray<NSIndexPath *> *)indexPaths;

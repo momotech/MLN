@@ -10,6 +10,7 @@
 #import "MLNEntityExportProtocol.h"
 #import "MLNCollectionViewGridLayout.h"
 #import "MLNCollectionViewAdapterProtocol.h"
+#import "MLNCollectionViewGridLayoutDelegate.h"
 #import "MLNAdapterCachesManager.h"
 
 @interface MLNCollectionViewAdapter : MLNScrollViewDelegate <MLNCollectionViewAdapterProtocol, UICollectionViewDelegateFlowLayout, MLNCollectionViewGridLayoutDelegate, MLNEntityExportProtocol>

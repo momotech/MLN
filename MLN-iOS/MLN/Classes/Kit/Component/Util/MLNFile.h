@@ -20,4 +20,11 @@
  */
 + (void)setFileManagerRootPath:(NSString *)rootPath;
 
+/**
+ 获取文件管理的根路径
+ 
+ @return 路径地址
+ */
++ (NSString *)fileManagerRootPath;
+
 @end

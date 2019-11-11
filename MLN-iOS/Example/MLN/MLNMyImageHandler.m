@@ -9,6 +9,7 @@
 #import "MLNMyImageHandler.h"
 #import <SDWebImage/UIImageView+WebCache.h>
 #import <SDWebImage/UIButton+WebCache.h>
+#import <MLNCornerImageLoader.h>
 
 @implementation MLNMyImageHandler
 
@@ -31,7 +32,7 @@
 }
 
 - (void)imageView:(UIImageView<MLNEntityExportProtocol> *)imageView setCornerImageWith:(NSString *)imageName placeHolderImage:(NSString *)placeHolder cornerRadius:(NSInteger)radius dircetion:(MLNRectCorner)direction {
-    [imageView sd_setImageWithURL:[NSURL URLWithString:imageName] placeholderImage:[UIImage imageNamed:placeHolder]];
+    [MLNCornerImageLoader imageView:imageView setCornerImageWith:imageName placeHolderImage:placeHolder cornerRadius:radius dircetion:direction];
 }
 
 - (void)button:(UIButton<MLNEntityExportProtocol> *)button setImageWithPath:(NSString *)path forState:(UIControlState)state

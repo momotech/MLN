@@ -8,7 +8,12 @@
 #import <UIKit/UIKit.h>
 #import "MLNViewConst.h"
 
-#define kMLNLayoutRootNodeTag 0
+#define isLayoutNodeWidthNeedMerge(NODE) (NODE.widthType == MLNLayoutMeasurementTypeMatchParent &&\
+                                   (NODE.supernode.mergedWidthType == MLNLayoutMeasurementTypeWrapContent || \
+                                    NODE.supernode.isHorizontalMaxMode))
+#define isLayoutNodeHeightNeedMerge(NODE) (NODE.heightType == MLNLayoutMeasurementTypeMatchParent &&\
+                                    (NODE.supernode.mergedHeightType == MLNLayoutMeasurementTypeWrapContent || \
+                                     NODE.supernode.isVerticalMaxMode))
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -98,10 +103,19 @@ typedef enum : NSUInteger {
 @property (nonatomic, assign) BOOL isVerticalMaxMode;
 @property (nonatomic, assign) BOOL isHorizontalMaxMode;
 @property (nonatomic, assign, getter=isGone) BOOL gone;
-@property (nonatomic, assign) BOOL clipToBounds;
 - (BOOL)isDirty;
 - (BOOL)hasNewLayout;
 - (void)changeLayoutStrategyTo:(MLNLayoutStrategy)layoutStrategy;
+//*******
+//******                weight
+//*****
+@property (nonatomic, assign) int weight;
+@property (nonatomic, assign) CGFloat widthProportion;
+@property (nonatomic, assign) CGFloat heightProportion;
+@property (nonatomic, assign) BOOL isWidthExcatly;
+@property (nonatomic, assign) BOOL isHeightExcatly;
+- (CGFloat)calculateWidthBaseOnWeightWithMaxWidth:(CGFloat)maxWidth;
+- (CGFloat)calculateHeightBaseOnWeightWithMaxHeight:(CGFloat)maxHeight;
 //*******
 //******                Node
 //*****

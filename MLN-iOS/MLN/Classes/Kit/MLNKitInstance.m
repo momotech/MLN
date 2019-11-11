@@ -16,6 +16,7 @@
 #import "MLNKitInstanceHandlersManager.h"
 #import "MLNKitBridgesManager.h"
 #import "MLNWindow.h"
+#import "MLNKitInstanceConsts.h"
 
 #define kMLNRunLoopBeforeWaitingLazyTaskOrder   1
 #define kMLNRunLoopBeforeWaitingRenderOrder     2
@@ -37,6 +38,8 @@
 @property (nonatomic, strong) MLNWindow *luaWindow;
 @property (nonatomic, assign) BOOL isLuaWindowSetup;
 @property (nonatomic, strong) NSMutableArray *onDestroyCallbacks;
+@property (nonatomic, assign) BOOL didViewAppear;
+@property (nonatomic, assign) BOOL needCallAppear;
 
 @end
 
@@ -66,12 +69,28 @@
 
 - (void)doLuaWindowDidAppear
 {
-    [self.luaWindow doLuaViewDidAppear];
+    self.didViewAppear = YES;
+    if (self.luaWindow && [self.luaWindow canDoLuaViewDidAppear]) {
+        [self.luaWindow doLuaViewDidAppear];
+        self.needCallAppear = NO;
+        return;
+    }
+    self.needCallAppear = YES;
+}
+
+- (void)redoLuaViewDidAppearIfNeed
+{
+    if (self.needCallAppear && self.didViewAppear) {
+        [self.luaWindow doLuaViewDidAppear];
+    }
 }
 
 - (void)doLuaWindowDidDisappear
 {
-    [self.luaWindow doLuaViewDidDisappear];
+    self.didViewAppear = NO;
+    if (self.luaWindow && [self.luaWindow canDoLuaViewDidDisappear]) {
+        [self.luaWindow doLuaViewDidDisappear];
+    }
 }
 
 - (void)changeLuaWindowSize:(CGSize)newSize
@@ -153,6 +172,7 @@
         _viewController = viewController;
         _instanceHandlersManager = [[MLNKitInstanceHandlersManager alloc] initWithUIInstance:self];
         _bridgesManager = [[MLNKitBridgesManager alloc] initWithUIInstance:self];
+        _instanceConsts = [[MLNKitInstanceConsts alloc] init];
     }
     return self;
 }
@@ -215,6 +235,7 @@
     MLNAssert(self.luaCore, (entryFilePath && entryFilePath.length >0), @"entry file is nil!");
     // 释放当前环境
     [self releaseAll];
+    self.needCallAppear = YES;
     // 更新参数配置
     _windowExtra = [NSMutableDictionary dictionaryWithDictionary:windowExtra];
     _entryFilePath = entryFilePath;
@@ -225,7 +246,12 @@
         return NO;
     }
     // 执行
-    return [self runWithEntryFile:entryFilePath error:error];
+    if ([self runWithEntryFile:entryFilePath error:error]) {
+        [self redoLuaViewDidAppearIfNeed];
+        return YES;
+    }
+    return NO;
+    
 }
 
 - (BOOL)registerClazz:(Class<MLNExportProtocol>)clazz error:(NSError * _Nullable __autoreleasing *)error

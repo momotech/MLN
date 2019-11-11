@@ -16,11 +16,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 typedef void (^MLNTabSegmentViewTapActionBlock) (MLNTabSegmentView *tapView, NSInteger index);
 
-FOUNDATION_EXPORT const CGFloat kMILTabSegmentViewDefaultHeight;
-#define kTabSegmentViewContentInset    (MDStatusBarAndNavigationBarHeight + kMDTabSegmentViewDefaultHeight)
-
-
-
 @interface MLNTabSegmentView : MLNView
 
 @property (nonatomic, weak) id<MLNTabSegmentViewDelegate> delegate;
@@ -59,6 +54,7 @@ FOUNDATION_EXPORT const CGFloat kMILTabSegmentViewDefaultHeight;
 
 @property (nonatomic, strong) UIColor *customTiniColor;
 @property (nonatomic, strong) UIColor *selectedColor;
+@property (nonatomic, strong) UIColor *indicatorColor;
 @property (nonatomic, assign) CGFloat pointInsetBottom;
 @property (nonatomic, assign) CGSize pointSize;
 @property (nonatomic, assign) CGSize redDotSize;
