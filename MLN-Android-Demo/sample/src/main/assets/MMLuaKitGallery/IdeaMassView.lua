@@ -42,7 +42,7 @@ end
 ---@public
 function _class:setupContainerView()
     self.containerView = LinearLayout(LinearType.VERTICAL)
-    self.containerView:width(MeasurementType.MATCH_PARENT):height(MeasurementType.MATCH_PARENT):bgColor(_Color.White)
+    self.containerView:width(MeasurementType.MATCH_PARENT):height(MeasurementType.MATCH_PARENT)
 end
 
 ---导航栏视图
@@ -83,12 +83,14 @@ function _class:setupHeaderView()
 end
 ---header视图
 function _class:setupTopView()
-    self.HeaderView = LinearLayout(LinearType.VERTICAL):width(MeasurementType.MATCH_PARENT):height(MeasurementType.MATCH_PARENT):bgColor(_Color.Gray)
+    self.HeaderView = LinearLayout(LinearType.VERTICAL):width(MeasurementType.MATCH_PARENT):height(MeasurementType.MATCH_PARENT)
+
 
     self.topView = View():width(MeasurementType.MATCH_PARENT):height(MeasurementType.WRAP_CONTENT):padding(20, 10, 10, 10)
+            :bgColor(_Color.Gray)
     self.HeaderView:addView(self.topView)
 
-    self.iv = ImageView():width(100):height(100):cornerRadius(6)
+    self.iv = ImageView():width(100):height(100):addCornerMask(6,_Color.Gray,RectCorner.ALL_CORNERS)
     self.topView:addView(self.iv)
 
     self.attention = Label():text("+ 关注"):textColor(_Color.White):fontSize(12):borderWidth(1):borderColor(_Color.White):padding(6, 12, 6, 12):cornerRadius(2):setGravity(Gravity.RIGHT)
@@ -121,6 +123,7 @@ function _class:setupTopView()
 
     --相关灵感集栏
     self.aboutLinear = LinearLayout(LinearType.HORIZONTAL):width(MeasurementType.MATCH_PARENT):height(50):padding(10, 10, 10, 10)
+            :bgColor(_Color.Gray)
     self.HeaderView:addView(self.aboutLinear)
     self.about = Label():text("相关灵感集："):textColor(_Color.White):fontSize(12):setGravity(Gravity.CENTER_VERTICAL)
     self.aboutLinear:addView(self.about)
@@ -128,7 +131,7 @@ function _class:setupTopView()
     self:setupTapListView():setGravity(Gravity.CENTER_VERTICAL)
     self.aboutLinear:addView(self:setupTapListView())
     self.bottomView = LinearLayout(LinearType.VERTICAL):width(MeasurementType.MATCH_PARENT):height(MeasurementType.MATCH_PARENT)
-    self.bottomView:bgColor(_Color.White):setCornerRadiusWithDirection(10, MBit:bor(RectCorner.TOP_LEFT, RectCorner.TOP_RIGHT))
+    self.bottomView:bgColor(_Color.White):addCornerMask(10,_Color.Gray, MBit:bor(RectCorner.TOP_LEFT, RectCorner.TOP_RIGHT))
     self.HeaderView:addView(self.bottomView)
     --tabSegment
     self.tabSegment = self:setupTabSegment()
