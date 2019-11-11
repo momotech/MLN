@@ -117,7 +117,7 @@ function _class:setupViewPagerForCell()
     self.adapter:initCell(function(cell, _)
         cell.imageView = ImageView()
         cell.imageView:contentMode(ContentMode.SCALE_ASPECT_FIT)
-        cell.imageView:height(MeasurementType.WRAP_CONTENT):width(MeasurementType.WRAP_CONTENT)
+        cell.imageView:height(MeasurementType.MATCH_PARENT):width(MeasurementType.MATCH_PARENT)
         cell.contentView:addView(cell.imageView)
     end)
 
