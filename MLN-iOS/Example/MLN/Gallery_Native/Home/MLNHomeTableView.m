@@ -132,7 +132,6 @@ static NSString *kHomeTableViewCell = @"kHomeTableViewCell";
 {
     MLNHomeTableViewCell *cell = [[MLNHomeTableViewCell alloc] init];
     [cell reloadCellWithData:self.dataList[indexPath.row]];
-    NSLog(@"===========>%f", cell.cellHeight);
     return cell.cellHeight;
 }
 

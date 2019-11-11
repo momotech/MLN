@@ -15,6 +15,7 @@
 #import "MLNGalleryMineViewController.h"
 #import "UIImage+MLNResize.h"
 #import <UIView+Toast.h>
+#import "MLNLoadTimeStatistics.h"
 
 @interface MLNGalleryMainViewController ()<UITabBarControllerDelegate>
 @property (nonatomic, strong) UIButton *backButton;
@@ -77,6 +78,8 @@
         [self.view makeToast:@"打开照相机📷" duration:1.0 position:CSToastPositionCenter];
         return NO;
     }
+    
+    [[MLNLoadTimeStatistics sharedInstance] recordStartTime];
     return YES;
 }
 

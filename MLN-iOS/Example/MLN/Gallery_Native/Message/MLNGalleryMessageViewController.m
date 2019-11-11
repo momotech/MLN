@@ -16,6 +16,7 @@
 #import "MLNGalleryMessageDetailViewController.h"
 #import "MLNMyHttpHandler.h"
 #import <UIView+Toast.h>
+#import "MLNLoadTimeStatistics.h"
 
 #define kMLNTabBarHeight 44
 
@@ -45,6 +46,12 @@
     [self.navigationBar setTitle:@"消息"];
 }
 
+- (void)viewDidLayoutSubviews
+{
+    [super viewDidLayoutSubviews];
+    [[MLNLoadTimeStatistics sharedInstance] recordEndTime];
+    NSLog(@">>>>>>>>>>>>>消息布局完成：%@", @([[MLNLoadTimeStatistics sharedInstance] allLoadTime] * 1000));
+}
 
 #pragma mark - Actions
 - (void)loadNewData

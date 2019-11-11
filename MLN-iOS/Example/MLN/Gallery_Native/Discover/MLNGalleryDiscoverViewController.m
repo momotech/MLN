@@ -18,6 +18,7 @@
 #import <UIView+Toast.h>
 #import "MLNDiscoverAlbumDetailViewController.h"
 #import <MJRefresh.h>
+#import "MLNLoadTimeStatistics.h"
 
 @interface MLNGalleryDiscoverViewController ()<UICollectionViewDataSource, UICollectionViewDelegate, MLNNativeWaterfallLayoutDelegate>
 @property (nonatomic, strong) MLNGalleryNavigationBar *navigationBar;
@@ -39,6 +40,14 @@ static NSString *kMLNNativeWaterfallViewCellID = @"kMLNNativeWaterfallViewCellID
     [self.navigationBar setTitle:@"发现"];
     [self requestDiscoverData:YES];
     [self waterfallView];
+}
+
+- (void)viewDidLayoutSubviews
+{
+    [super viewDidLayoutSubviews];
+    
+    [[MLNLoadTimeStatistics sharedInstance] recordEndTime];
+    NSLog(@">>>>>>>>>>>>>发现布局完成：%@", @([[MLNLoadTimeStatistics sharedInstance] allLoadTime] * 1000));
 }
 
 #pragma mark - Actions

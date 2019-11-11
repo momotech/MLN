@@ -13,6 +13,7 @@
 #import "MLNNativeTabSegmentView.h"
 #import "MLNGalleryMineBottomPage.h"
 #import "MLNGalleryMineBottomCellModel.h"
+#import "MLNLoadTimeStatistics.h"
 
 @interface MLNGalleryMineViewController ()
 
@@ -38,6 +39,13 @@
     [self segementView];
 //    初始化page页
     [self setupPageView];
+}
+
+- (void)viewDidLayoutSubviews
+{
+    [super viewDidLayoutSubviews];
+    [[MLNLoadTimeStatistics sharedInstance] recordEndTime];
+    NSLog(@">>>>>>>>>>>>>个人中心布局完成：%@", @([[MLNLoadTimeStatistics sharedInstance] allLoadTime] * 1000));
 }
 
 - (void)setupNavigation
