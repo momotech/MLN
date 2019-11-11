@@ -161,7 +161,7 @@ function _class:setupCollectionViewAdapter()
         --Toast(self.dataList:get(row):get("title"), 1)
         --self:gotoDetailView()
         if System:Android() then
-            Navigator:gotoPage("file://android_asset/MMLuaKitGallery/IdeaMassView.lua",Map(),1)
+            Navigator:gotoPage("file://android_asset/MMLuaKitGallery/IdeaMassView.lua",Map(),AnimType.RightToLeft)
         end
     end)
     self.collectionView:adapter(adapter)
