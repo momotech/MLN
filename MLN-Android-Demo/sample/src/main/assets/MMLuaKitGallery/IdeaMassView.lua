@@ -263,7 +263,7 @@ function _class:requestNetwork(first, complete)
     if System:Android() then
         File:asyncReadMapFile('file://android_asset/discoverry_detail.json', function(codeNumber, response)
 
-            print("codeNumber: " .. tostring(codeNumber))
+            --print("codeNumber: " .. tostring(codeNumber))
             if codeNumber == 0 then
                 local data = response:get("result")
                 if first then

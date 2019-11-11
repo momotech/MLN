@@ -154,13 +154,13 @@ function _class:setupTableView()
         if row == 1 then
             --Toast("客服当前时间不在线哦")
             if System:Android() then
-                Navigator:gotoPage("file://android_asset/MMLuaKitGallery/CustomerService.lua",Map(),1)
+                Navigator:gotoPage("file://android_asset/MMLuaKitGallery/CustomerService.lua",Map(),AnimType.RightToLeft)
             end
         elseif row == 2 then
             Toast("官方尚未发布通知")
 
             if  System:Android() then
-                Navigator:gotoPage("file://android_asset/MMLuaKitGallery/Notification.lua",Map(),1)
+                Navigator:gotoPage("file://android_asset/MMLuaKitGallery/Notification.lua",Map(),AnimType.RightToLeft)
             end
         else
             --Toast(cell.titleLabel:text(), 1)
@@ -274,9 +274,8 @@ function _class:constructData(remove, data)
         local item = Map(1)
         item:put("title", data:get(i):get("femalename"))
         item:put("desc", os.date("%m-%d %H:%M:%S", os.time()))
-        item:put("icon", string.format("https://api.ooopn.com/image/beauty/api.php/%d", math.random(0, 10000)))
-        item:put("attach", string.format("https://api.ooopn.com/image/beauty/api.php/%d", math.random(0, 10000)))
-        item:put("follow", (math.random(0, 10000) % 2 == 0))
+        item:put("icon", data:get(i):get("icon"))
+        --item:put("follow", (math.random(0, 10000) % 2 == 0))
         self.dataList:add(item)
     end
 end
