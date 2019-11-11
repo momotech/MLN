@@ -20,13 +20,12 @@ end
 function _class:setupCellSubviews(width)
     self.baseLayout = LinearLayout(LinearType.VERTICAL)
     self.baseLayout:width(width):height(MeasurementType.MATCH_PARENT)
-    self.baseLayout:bgColor(_Color.White)
 
     --图片
     local imageView = ImageView():width(width):height(width)
     imageView:contentMode(ContentMode.SCALE_ASPECT_FIT)
     imageView:lazyLoad(false)
-    imageView:cornerRadius(8)
+    imageView:addCornerMask(8,_Color.White,RectCorner.ALL_CORNERS)
     --imageView:onClick(function()
     --    Toast(self.titleLabel:text(), 1)
     --end)
@@ -65,45 +64,43 @@ function _class:setupCellSubviews(width)
     local titleLabel = Label()
     titleLabel:marginTop(20):width(width):height(30)
     titleLabel:textColor(_Color.Black):fontSize(14):setTextFontStyle(FontStyle.BOLD)
-    titleLabel:bgColor(self.baseLayout:bgColor())
     self.titleLabel = titleLabel
 
     --更新内容提示
     local iconHeight = 15
     local updateLayout = LinearLayout(LinearType.HORIZONTAL)
     updateLayout:marginLeft(0):marginTop(0):width(width):height(iconHeight):setGravity(Gravity.CENTER)
-    updateLayout:bgColor(_Color.Clear)
+    local imagesLayout = View():width(MeasurementType.WRAP_CONTENT):height(iconHeight)
     self.updateLayout = updateLayout
 
     self.iconViews = {}
     local iconView1 = ImageView()
-    iconView1:width(iconHeight):height(iconHeight):setGravity(Gravity.CENTER):cornerRadius(iconHeight / 2)
-    iconView1:bgColor(updateLayout:bgColor())
+    iconView1:width(iconHeight):height(iconHeight):cornerRadius(iconHeight / 2)
+             :gone(true)
     table.insert(self.iconViews, iconView1)
-    updateLayout:addView(iconView1)
+    imagesLayout:addView(iconView1)
 
     local iconView2 = ImageView()
-    iconView2:marginLeft(-5):width(iconHeight):height(iconHeight):setGravity(Gravity.CENTER):cornerRadius(iconHeight / 2)
-    iconView2:bgColor(updateLayout:bgColor())
+    iconView2:marginLeft(5):width(iconHeight):height(iconHeight):cornerRadius(iconHeight / 2)
+             :gone(true)
     table.insert(self.iconViews, iconView2)
-    updateLayout:addView(iconView2)
+    imagesLayout:addView(iconView2)
 
     local iconView3 = ImageView()
-    iconView3:marginLeft(-5):width(iconHeight):height(iconHeight):setGravity(Gravity.CENTER):cornerRadius(iconHeight / 2)
-    iconView3:bgColor(updateLayout:bgColor())
+    iconView3:marginLeft(10):width(iconHeight):height(iconHeight):cornerRadius(iconHeight / 2)
+             :gone(true)
     table.insert(self.iconViews, iconView3)
-    updateLayout:addView(iconView3)
+    imagesLayout:addView(iconView3)
 
     local iconLabel = Label()
-    iconLabel:marginLeft(5):width(MeasurementType.WRAP_CONTENT):height(iconHeight):setGravity(Gravity.CENTER)
-    iconLabel:bgColor(updateLayout:bgColor())
+    iconLabel:marginLeft(5):width(MeasurementType.WRAP_CONTENT):height(iconHeight)
     self.iconLabel = iconLabel
+    updateLayout:addView(imagesLayout)
     updateLayout:addView(iconLabel)
 
     --添加显示
     self.baseLayout:addView(imageView):addView(imageViewLayout):addView(titleLabel):addView(updateLayout)
 end
-
 
 ---@public
 ---@param count string
@@ -123,7 +120,7 @@ end
 ---@vararg string 图标urlString
 function _class:updateContentIcons(...)
     local urls = { ... }
-    local count = #urls
+    local count = #urls or 0
     if count > #self.iconViews then
         count = self.iconViews
     end
@@ -132,14 +129,16 @@ function _class:updateContentIcons(...)
         self.updateLayout:hidden(true)
     else
         self.updateLayout:hidden(false)
-        for i = 1, count do
+        for i = 1, #self.iconViews do
             local iconView = self.iconViews[i]
-            iconView:image(urls[i])
+            if i <= count then
+                iconView:gone(false)
+                iconView:image(urls[i])
+            else
+                iconView:gone(true)
+            end
         end
-        local offset = (#self.iconViews - count) * 10
-        self.iconLabel:marginLeft(-offset + 5)
     end
 end
-
 
 return _class
