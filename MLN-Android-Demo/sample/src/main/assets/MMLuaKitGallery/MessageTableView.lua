@@ -235,7 +235,7 @@ function _class:request(first, complete)
 
     if System:Android() then
 
-        File:asyncReadMapFile('file://android_asset/MMLuaKitGallery/message.json', function(codeNumber, response)
+        File:asyncReadMapFile('file://android_asset/message.json', function(codeNumber, response)
 
             print("codeNumber: " .. tostring(codeNumber))
 

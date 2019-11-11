@@ -215,7 +215,7 @@ function _class:requestNetwork(first, complete)
 
     if System:Android() then
 
-        File:asyncReadMapFile('file://android_asset/MMLuaKitGallery/discoverry.json', function(codeNumber, response)
+        File:asyncReadMapFile('file://android_asset/discoverry.json', function(codeNumber, response)
 
             print("codeNumber: " .. tostring(codeNumber))
 
