@@ -3,7 +3,7 @@
 //  MLN_Example
 //
 //  Created by MoMo on 2018/8/15.
-//  Copyright © 2018 LiuToTo. All rights reserved.
+//  Copyright © 2018 MOMO. All rights reserved.
 //
 
 #import "MLNFloatingMenu.h"

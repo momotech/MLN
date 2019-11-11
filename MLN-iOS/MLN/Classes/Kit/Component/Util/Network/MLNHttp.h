@@ -27,6 +27,8 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, weak) id weakAssociatedObject;
 
+- (void)mln_download:(NSString *)urlString params:(NSDictionary *)params progressHandler:(void(^)(float progress, float total))progressHandler completionHandler:(void(^)(BOOL success, NSDictionary *respInfo, id respData, NSDictionary *errorInfo))completionHandler;
+
 @end
 
 NS_ASSUME_NONNULL_END
