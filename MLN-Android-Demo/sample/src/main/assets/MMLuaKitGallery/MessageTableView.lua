@@ -19,17 +19,17 @@ function _class:new()
 end
 
 ---@public
-function _class:tableView(top)
+function _class:tableView()
     self:setupDataSource()
-    self:setupTableView(top)
+    self:setupTableView()
     self:setupRefreshLoadData()
     return self.tableView
 end
 
 ---@private
-function _class:setupTableView(top)
+function _class:setupTableView()
     self.tableView = TableView(true, true)
-    self.tableView:marginTop(top):width(window:width()):height(window:height() - top - _TabbarHeight)
+    self.tableView:width(window:width()):height(MeasurementType.MATCH_PARENT)
     self.tableView:showScrollIndicator(true)
 
     self.cellHeight = 70
@@ -103,15 +103,14 @@ function _class:setupTableView(top)
         cell.attachImageView = ImageView():width(45):height(45):setGravity(Gravity.CENTER_VERTICAL)
         cell.attachImageView:marginLeft( window:width() - cell.attachImageView:width() - 10)
         cell.attachImageView:contentMode(ContentMode.SCALE_ASPECT_FILL)
-        cell.attachImageView:bgColor(_Color.White)
         cell.contentView:addView(cell.attachImageView)
 
         --附件按钮
         cell.attachButton = Label():width(55):height(30):setGravity(Gravity.CENTER_VERTICAL)
         cell.attachButton:marginLeft( window:width() - cell.attachButton:width() - 10)
-        cell.attachButton:cornerRadius(3):borderWidth(1):borderColor(Color(200,200,200))
+        cell.attachButton:cornerRadius(3)
+                :borderWidth(1):borderColor(Color(200,200,200))
         cell.attachButton:text("+关注"):textAlign(TextAlign.CENTER):fontSize(13):textColor(_Color.Black)
-        cell.attachButton:bgColor(_Color.White)
         cell.attachButton:onClick(function()
             if cell.attachButton:text() == "+关注" then
                 cell.attachButton:text("已关注")
@@ -135,16 +134,17 @@ function _class:setupTableView(top)
         cell.imageView:image(item:get("icon"))
         cell.descLabel:text(item:get("desc"))
         if item:get("follow") == true then
-            cell.attachButton:hidden(true)
-            cell.attachImageView:hidden(false)
+            cell.attachButton:gone(true)
+            cell.attachImageView:gone(false)
             cell.attachImageView:image(item:get("attach"))
             cell.textLabel:text("喜欢了你")
         else
-            cell.attachButton:hidden(false)
-            cell.attachImageView:hidden(true)
+            cell.attachButton:gone(false)
+            cell.attachImageView:gone(true)
             cell.textLabel:text("关注了你")
         end
     end)
+
 
     self.adapter:heightForCell(function(_, _)
         return self.cellHeight
@@ -153,14 +153,18 @@ function _class:setupTableView(top)
     self.adapter:selectedRow(function(cell, section, row)
         if row == 1 then
             --Toast("客服当前时间不在线哦")
-            Navigator:gotoPage("file://android_asset/MMLuaKitGallery/CustomerService.lua",Map(),1)
-
+            if System:Android() then
+                Navigator:gotoPage("file://android_asset/MMLuaKitGallery/CustomerService.lua",Map(),1)
+            end
         elseif row == 2 then
-            --Toast("官方尚未发布通知")
-            Navigator:gotoPage("file://android_asset/MMLuaKitGallery/Notification.lua",Map(),1)
+            Toast("官方尚未发布通知")
 
+            if  System:Android() then
+                Navigator:gotoPage("file://android_asset/MMLuaKitGallery/Notification.lua",Map(),1)
+            end
         else
-            Toast(cell.titleLabel:text(), 1)
+            --Toast(cell.titleLabel:text(), 1)
+           -- Navigator:gotoPage("file://android_asset/MMLuaKitGallery/Notification.lua",Map(),1)
         end
     end)
 
@@ -229,34 +233,36 @@ function _class:request(first, complete)
         self.requestIndex = self.requestIndex + 1
     end
 
-    File:asyncReadMapFile('file://android_asset/MMLuaKitGallery/message.json', function(codeNumber, response)
+    if System:Android() then
 
-        print("codeNumber: " .. tostring(codeNumber))
+        File:asyncReadMapFile('file://android_asset/MMLuaKitGallery/message.json', function(codeNumber, response)
 
-        if codeNumber == 0 then
+            print("codeNumber: " .. tostring(codeNumber))
+
+            if codeNumber == 0 then
+                local data = response:get("data")
+                self:constructData(first, data)
+                complete(true, data)
+            else
+                --error(err:get("errmsg"))
+                complete(false, nil)
+            end
+        end)
+
+        return
+    end
+
+    local HTTPHandler = require("MMLuaKitGallery.HTTPHandler")
+    HTTPHandler:GET("https://www.apiopen.top/femaleNameApi", {page = self.requestIndex}, function(success, response, err)
+        if success then
             local data = response:get("data")
             self:constructData(first, data)
-            complete(true, data)
+            complete(success, data)
         else
-            --error(err:get("errmsg"))
+            error(err:get("errmsg"))
             complete(false, nil)
         end
     end)
-
-
-    --local HTTPHandler = require("MMLuaKitGallery.HTTPHandler")
-    --HTTPHandler:GET("https://www.apiopen.top/femaleNameApi", {page = self.requestIndex}, function(success, response, err)
-    --    if success then
-    --        local data = response:get("data")
-    --        self:constructData(first, data)
-    --        complete(success, data)
-    --    else
-    --        error(err:get("errmsg"))
-    --        complete(false, nil)
-    --    end
-    --end)
-
-
 end
 
 ---@private
