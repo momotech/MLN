@@ -8,11 +8,11 @@ local _class = {
     _name = "TabContainerView",
     _version = "1.0",
     _subViews = { },
-    _subViewNames = {'MMLuaKitGallery.HomePagerView',
-                     'MMLuaKitGallery.DiscoverPagerView',
-                     'MMLuaKitGallery.PlaceholderPagerView',
-                     'MMLuaKitGallery.MessagePagerView',
-                     'MMLuaKitGallery.MinePagerView'},
+    _subViewNames = { 'MMLuaKitGallery.HomePagerView',
+                      'MMLuaKitGallery.DiscoverPagerView',
+                      'MMLuaKitGallery.PlaceholderPagerView',
+                      'MMLuaKitGallery.MessagePagerView',
+                      'MMLuaKitGallery.MinePagerView' },
 }
 
 ---入口
@@ -32,14 +32,16 @@ end
 ---布局view
 ---@private
 function _class:setupContainerView()
-    local containerView = View()
-    containerView:bgColor(Color(255,255,255,1)):width(MeasurementType.MATCH_PARENT):height(MeasurementType.MATCH_PARENT)
+    local containerView = LinearLayout(LinearType.VERTICAL)
+            :width(MeasurementType.MATCH_PARENT):height(MeasurementType.MATCH_PARENT)
     self.containerView = containerView
     window:addView(containerView)
 
-    local contentView = View()
-    contentView:bgColor(Color(255,255,255,1))
-    contentView:width(MeasurementType.MATCH_PARENT):height(MeasurementType.MATCH_PARENT):setGravity(Gravity.CENTER_HORIZONTAL):marginTop(window:statusBarHeight())
+    local contentView = View():width(MeasurementType.MATCH_PARENT):height(MeasurementType.MATCH_PARENT):setGravity(Gravity.CENTER_HORIZONTAL)
+    if System:iOS() then
+        contentView:marginTop(window:statusBarHeight())
+    end
+
     self.contentView = contentView
     containerView:addView(contentView)
 
