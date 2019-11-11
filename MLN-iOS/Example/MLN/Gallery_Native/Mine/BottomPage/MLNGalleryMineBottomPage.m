@@ -7,7 +7,8 @@
 //
 
 #import "MLNGalleryMineBottomPage.h"
-#import "MLNGalleryMineBottomCell.h"
+#import "MLNGalleryMinePageCellBaseModel.h"
+#import "MLNGalleryMineBottomPageBaseCell.h"
 
 #define kMLNMinePageIdentifier @"kMLNMinePageIdentifier"
 
@@ -40,9 +41,12 @@
     }
 }
 
-- (void)setBottomModels:(NSArray<MLNGalleryMineBottomCellModel *> *)bottomModels
+- (void)setBottomModels:(NSArray<MLNGalleryMinePageCellBaseModel *> *)bottomModels
 {
     _bottomModels = bottomModels;
+    for (MLNGalleryMinePageCellBaseModel *baseModel in bottomModels) {
+        [self.mainView registerClass:baseModel.cellClass forCellWithReuseIdentifier:baseModel.identifier];
+    }
     if (self.superview != nil) {
         [self.mainView reloadData];
     }
@@ -65,7 +69,6 @@
         flowLayout.itemSize = self.bounds.size;
         _flowLayout = flowLayout;
         _mainView = [[UICollectionView alloc] initWithFrame:self.bounds collectionViewLayout:flowLayout];
-        [_mainView registerClass:[MLNGalleryMineBottomCell class] forCellWithReuseIdentifier:kMLNMinePageIdentifier];
         _mainView.delegate = self;
         _mainView.dataSource = self;
         _mainView.pagingEnabled = YES;
@@ -87,10 +90,14 @@
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    MLNGalleryMineBottomCell *cell = (MLNGalleryMineBottomCell*)[collectionView dequeueReusableCellWithReuseIdentifier:kMLNMinePageIdentifier forIndexPath:indexPath];
+    MLNGalleryMinePageCellBaseModel *baseModel = nil;
     if (indexPath.row < self.bottomModels.count) {
-        cell.infoModel = [self.bottomModels objectAtIndex:indexPath.row];
+        baseModel = [self.bottomModels objectAtIndex:indexPath.row];
+    } else {
+        baseModel = [MLNGalleryMinePageCellBaseModel new];
     }
+    MLNGalleryMineBottomPageBaseCell *cell = (MLNGalleryMineBottomPageBaseCell*)[collectionView dequeueReusableCellWithReuseIdentifier:baseModel.identifier forIndexPath:indexPath];
+    cell.cellModel = baseModel;
     return cell;
 }
 
