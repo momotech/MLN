@@ -28,8 +28,7 @@ end
 ---@private
 function _class:createSubviews()
     --容器视图
-    self.containerView = View():width(MeasurementType.MATCH_PARENT):height(MeasurementType.MATCH_PARENT)
-    self.containerView:bgColor(_Color.White)
+    self.containerView = LinearLayout(LinearType.VERTICAL):width(MeasurementType.MATCH_PARENT):height(MeasurementType.MATCH_PARENT)
 
     --导航栏
     self.navigation = require("MMLuaKitGallery.NavigationBar"):new()
@@ -38,7 +37,7 @@ function _class:createSubviews()
 
     --表视图
     self.tableView = require('MMLuaKitGallery.MessageTableView'):new()
-    self.containerView:addView(self.tableView:tableView(self.navibar:marginTop() + self.navibar:height()))
+    self.containerView:addView(self.tableView:tableView())
 end
 
 return _class
