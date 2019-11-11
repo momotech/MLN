@@ -42,10 +42,6 @@
             </intent-filter>
         </activity>
 
-        <!--config for Glide-->
-        <meta-data
-            android:name="com.mln.demo.provider.GlideConfiguration"
-            android:value="GlideModule"/>
     </application>
 
 </manifest>
