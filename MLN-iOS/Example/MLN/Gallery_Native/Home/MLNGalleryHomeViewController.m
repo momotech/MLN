@@ -14,6 +14,7 @@
 #import "MLNHomeDataHandler.h"
 #import "UIView+Toast.h"
 #import <MJRefresh.h>
+#import <MLNLoadTimeStatistics.h>
 
 @interface MLNGalleryHomeViewController ()
 @property (nonatomic, strong) MLNNativeTabSegmentView *segementView;
@@ -59,6 +60,14 @@
                         position:CSToastPositionCenter];
     }];
     [self.view addSubview:self.viewPager];
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    
+    [[MLNLoadTimeStatistics sharedInstance] recordEndTime];
+    NSLog(@">>>>>>>>>>>>>>>>>loadTime:%@", @([[MLNLoadTimeStatistics sharedInstance] allLoadTime] * 1000));
 }
 
 

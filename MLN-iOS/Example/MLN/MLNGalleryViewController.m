@@ -17,7 +17,7 @@
 #import <MLNDevTool/MLNLoadTimeStatistics.h>
 #import "MLNGalleryMainViewController.h"
 
-@interface MLNGalleryViewController () <MLNKitInstanceErrorHandlerProtocol, MLNKitInstanceDelegate>
+@interface MLNGalleryViewController () <MLNKitInstanceErrorHandlerProtocol, MLNKitInstanceDelegate, MLNKitViewControllerDelegate>
 
 @property (nonatomic, strong) MLNKitViewController *kcv;
 @property (nonatomic, strong) MLNHotReloadViewController *hotvc;
@@ -62,9 +62,11 @@
 }
 
 - (void)showDemoClick:(id)sender {
+    [[MLNLoadTimeStatistics sharedInstance] recordStartTime];
     NSString *entryFile = @"Main.lua";
     MLNLuaBundle *bundle = [MLNLuaBundle mainBundleWithPath:@"gallery"];
     MLNKitViewController *kcv = [[MLNKitViewController alloc] initWithEntryFilePath:entryFile];
+    kcv.delegate = self;
     [kcv regClasses:@[[MLNTestMe class],
                       [MLNStaticTest class],
                       [MLNGlobalVarTest class],
@@ -87,54 +89,23 @@
 
 - (void)showNativeDemo:(id)sender
 {
+    [[MLNLoadTimeStatistics sharedInstance] recordStartTime];
     self.galleryMainVc = [[MLNGalleryMainViewController alloc] init];
     [self presentViewController:self.galleryMainVc animated:YES completion:nil];
 }
 
-
-#pragma mark - MLNUIInStanceErrorHandlerProtocol
-- (BOOL)canHandleAssert:(MLNKitInstance *)instance
+#pragma mark - MLNKitViewControllerDelegate
+- (void)kitViewController:(MLNKitViewController *)viewController didFinishRun:(NSString *)entryFileName
 {
-    return YES;
+    NSLog(@">>>>>>>>>>>>>Lua viewDidAppear：%@", @([[MLNLoadTimeStatistics sharedInstance] allLoadTime] * 1000));
 }
 
-- (void)instance:(MLNKitInstance *)instance error:(NSString *)error
+- (void)kitViewController:(MLNKitViewController *)viewController viewDidAppear:(BOOL)animated
 {
-    NSLog(@"%@%@",instance,error);
+    [[MLNLoadTimeStatistics sharedInstance] recordEndTime];
+    NSLog(@">>>>>>>>>>>>>Lua viewDidAppear：%@", @([[MLNLoadTimeStatistics sharedInstance] allLoadTime] * 1000));
 }
 
-- (void)instance:(MLNKitInstance *)instance luaError:(NSString *)error luaTraceback:(NSString *)luaTraceback
-{
-    NSLog(@"%@%@",instance,error);
-}
-
-
-#pragma mark - MLNKitInstanceDelegate
-- (void)willSetupLuaCore:(MLNKitInstance *)instance
-{
-    [self.loadTimeStatistics recordStartTime];
-    [self.loadTimeStatistics recordLuaCoreCreateStartTime];
-}
-
-- (void)didSetupLuaCore:(MLNKitInstance *)instance
-{
-    [self.loadTimeStatistics recordLuaCoreCreateEndTime];
-}
-
-- (void)instance:(MLNKitInstance *)instance willLoad:(NSData *)data fileName:(NSString *)fileName
-{
-    [self.loadTimeStatistics recordLoadScriptStartTimeWithFileName:fileName];
-}
-
-- (void)instance:(MLNKitInstance *)instance didLoad:(NSData *)data fileName:(NSString *)fileName
-{
-    [self.loadTimeStatistics recordLoadScriptEndTimeWithFileName:fileName];
-}
-
-- (void)instance:(MLNKitInstance *)instance didFinishRun:(NSString *)entryFileName
-{
-    [self.loadTimeStatistics recordEndTime];
-}
 
 #pragma mark - Private method
 
