@@ -12,7 +12,7 @@ local _class = {
 ---@public
 function _class:new()
     local o = {}
-    setmetatable(o, {__index = self})
+    setmetatable(o, { __index = self })
     self.dataList = Array()
     self.requestPageIndex = 1
     return o
@@ -40,8 +40,8 @@ end
 ---创建容器视图
 ---@private
 function _class:setupContainerView()
-    self.containerView = View()
-    self.containerView:bgColor(_Color.White):width(MeasurementType.MATCH_PARENT):height(MeasurementType.MATCH_PARENT)
+    self.containerView = LinearLayout(LinearType.VERTICAL)
+            :width(MeasurementType.MATCH_PARENT):height(MeasurementType.MATCH_PARENT)
 end
 
 ---创建导航栏
@@ -55,7 +55,8 @@ function _class:setupTabSegmentView()
     --签到
     self.signin = Label()
     self.signin:width(60):height(25):setGravity(MBit:bor(Gravity.RIGHT, Gravity.CENTER_VERTICAL)):marginRight(10)
-    self.signin:bgColor(Color(204, 137, 24)):cornerRadius(self.signin:height() / 2)
+    self.signin:bgColor(Color(204, 137, 24))--ok
+        :cornerRadius(self.signin:height() / 2)
     self.signin:text("签到"):textAlign(TextAlign.CENTER):fontSize(11):textColor(_Color.White)
     self.signin:onClick(function()
         if self.signin:text() == "签到" then
@@ -70,20 +71,19 @@ end
 ---创建collectionView
 ---@private
 function _class:setupCollectionView()
-    local top = self.navibar:height()
-    local height = window:height() - top - _TabbarHeight - window:statusBarHeight()
     self.headerViewHeight = 420
 
-    self.collectionView = WaterfallView(true, true):marginTop(top):width(MeasurementType.MATCH_PARENT):height(height)
+    self.collectionView = WaterfallView(true, true):width(MeasurementType.MATCH_PARENT):height(MeasurementType.MATCH_PARENT)
     self.collectionView:useAllSpanForLoading(true)
     self.collectionView:showScrollIndicator(true)
     self.containerView:addView(self.collectionView)
 
-    self.layout = WaterfallLayout()
+    self.layout = WaterfallLayoutFix()
     --self.layout:lineSpacing(30)
     self.layout:lineSpacing(0)
-    self.layout:itemSpacing(10)
-    self.layout:spanCount(2)
+        :itemSpacing(10)
+        :spanCount(2)
+        :layoutInset(0, 10, 0, 10)
     self.collectionView:layout(self.layout)
 
     self:setupCollectionViewAdapter()
@@ -105,10 +105,11 @@ function _class:setupCollectionViewAdapter()
     end)
 
     adapter:initHeader(function(header)
+        header.contentView:removeAllSubviews()
         header.contentView:addView(self:headerView())
     end)
 
-    adapter:fillHeaderData(function (_, _, _)
+    adapter:fillHeaderData(function(_, _, _)
         --do nothing
     end)
 
@@ -120,7 +121,7 @@ function _class:setupCollectionViewAdapter()
         return self.dataList:size()
     end)
 
-    adapter:reuseId(function (_, _)
+    adapter:reuseId(function(_, _)
         return cellReuseId
     end)
 
@@ -131,15 +132,15 @@ function _class:setupCollectionViewAdapter()
         cell.contentView:addView(internalCell.baseLayout)
     end)
 
-    adapter:fillCellDataByReuseId(cellReuseId, function (cell, _, row)
+    adapter:fillCellDataByReuseId(cellReuseId, function(cell, _, row)
         local item = self.dataList:get(row)
-        local rank = item:get("rank")
+        local rank = item:get("rank") or 0
         cell._cell.imageView:image(item:get("album_500_500"))
         cell._cell.titleLabel:text(item:get("title"))
         cell._cell.countLabel:text(string.format("%s篇", rank + 1))
         cell._cell.lookLabel:text(string.format("%d", item:get("file_duration")))
 
-        if rank < "2" then
+        if rank and tonumber(rank) < 2 then
             cell._cell:updateContentIcons(nil)
         else
             cell._cell:updateContentCountText(rank)
@@ -149,19 +150,20 @@ function _class:setupCollectionViewAdapter()
 
     adapter:heightForCell(function(_, row)
         local item = self.dataList:get(row)
-        if item:get("rank") < "2" then
+        local rank = item:get("rank") or 0
+        if rank and tonumber(rank) < 2 then
             return cellWidth + 75
         end
-
         return cellWidth + 90
 
     end)
-
-    adapter:selectedRowByReuseId(cellReuseId,function(cell,section,row)
-
-        Navigator:gotoPage("file://android_asset/MMLuaKitGallery/IdeaMassView.lua",Map(),1)
+    adapter:selectedRowByReuseId(cellReuseId, function(cell, _, row)
+        --Toast(self.dataList:get(row):get("title"), 1)
+        --self:gotoDetailView()
+        if System:Android() then
+            Navigator:gotoPage("file://android_asset/MMLuaKitGallery/IdeaMassView.lua",Map(),1)
+        end
     end)
-
     self.collectionView:adapter(adapter)
 end
 
@@ -169,15 +171,15 @@ end
 ---@private
 function _class:setupDataSource()
     --首先展示第一页数据
-    self:requestNetwork(true,function(success, _)
+    self:requestNetwork(true, function(success, _)
         if success then
             self.collectionView:reloadData()
         end
     end)
 
     --下拉刷新
-    self.collectionView:setRefreshingCallback(function ()
-        self:requestNetwork(true,function(success, _)
+    self.collectionView:setRefreshingCallback(function()
+        self:requestNetwork(true, function(success, _)
             self.collectionView:stopRefreshing()
             self.collectionView:resetLoading()
             if success then
@@ -187,8 +189,8 @@ function _class:setupDataSource()
     end)
 
     --上拉加载
-    self.collectionView:setLoadingCallback(function ()
-        self:requestNetwork(false,function(success, data)
+    self.collectionView:setLoadingCallback(function()
+        self:requestNetwork(false, function(success, data)
             self.collectionView:stopLoading()
             if not data then
                 self.collectionView:noMoreData()
@@ -204,48 +206,51 @@ end
 ---@private
 function _class:requestNetwork(first, complete)
     if first then
-        local pageIndexs = {13, 9, 11, 12, 6}
+        local pageIndexs = { 13, 9, 11, 12, 6 }
         local index = math.random(0, 6)
         self.requestPageIndex = pageIndexs[index] --随机一个index请求不同的数据
     else
         self.requestPageIndex = self.requestPageIndex + 1
     end
 
-    File:asyncReadMapFile('file://android_asset/MMLuaKitGallery/discoverry.json', function(codeNumber, response)
+    if System:Android() then
 
-         print("codeNumber: " .. tostring(codeNumber))
+        File:asyncReadMapFile('file://android_asset/discoverry.json', function(codeNumber, response)
 
-        if codeNumber == 0 then
+            print("codeNumber: " .. tostring(codeNumber))
+
+            if codeNumber == 0 then
+                local data = response:get("result")
+                if first then
+                    self.dataList = data
+                elseif data then
+                    self.dataList:addAll(data)
+                end
+                complete(true, self.dataList)
+            else
+                --error(err:get("errmsg"))
+                complete(false, nil)
+            end
+        end)
+
+        return
+    end
+
+    local HTTPHandler = require("MMLuaKitGallery.HTTPHandler")
+    HTTPHandler:GET("https://api.apiopen.top/musicRankingsDetails", { type = self.requestPageIndex }, function(success, response, err)
+        if success then
             local data = response:get("result")
             if first then
                 self.dataList = data
             elseif data then
                 self.dataList:addAll(data)
             end
-            complete(true, self.dataList)
+            complete(success, data)
         else
-            --error(err:get("errmsg"))
+            error(err:get("errmsg"))
             complete(false, nil)
         end
     end)
-
-
-    --local HTTPHandler = require("MMLuaKitGallery.HTTPHandler")
-    --HTTPHandler:GET("https://api.apiopen.top/musicRankingsDetails", {type = self.requestPageIndex}, function(success, response, err)
-    --    if success then
-    --        local data = response:get("result")
-    --        if first then
-    --            self.dataList = data
-    --        elseif data then
-    --            self.dataList:addAll(data)
-    --        end
-    --        complete(success, data)
-    --    else
-    --        error(err:get("errmsg"))
-    --        complete(false, nil)
-    --    end
-    --end)
-
 end
 
 ---创建搜索框
@@ -261,7 +266,6 @@ end
 function _class:headerView()
     local width = self.collectionView:width() - 20
     self.headerView = View():width(width):height(self.headerViewHeight)
-    self.headerView:bgColor(_Color.White)
 
     --线性布局
     self.headerViewLayout = LinearLayout(LinearType.VERTICAL):width(MeasurementType.WRAP_CONTENT):height(MeasurementType.WRAP_CONTENT)
@@ -272,8 +276,8 @@ function _class:headerView()
     self.headerViewLayout:addView(searchBar)
 
     --使用指南
-    self.guideImageView = ImageView():marginTop(10):width(width):height(155)
-    self.guideImageView:cornerRadius(5)
+    self.guideImageView = ImageView():marginTop(10):width(width):height(MeasurementType.WRAP_CONTENT)
+    self.guideImageView:addCornerMask(5, _Color.White, RectCorner.ALL_CORNERS)
     self.guideImageView:image('https://s.momocdn.com/w/u/others/2019/08/27/1566877265808-meilishuoguide.png')
     self.guideImageView:onClick(function()
         ---加载webview http://act.meilishuo.com/wap/0118huya?acm=3.mce.2_10_1lpd6.130069.0.j5klrrAfO3TFd.pos_0-m_506297-sd_119
@@ -282,8 +286,8 @@ function _class:headerView()
     self.headerViewLayout:addView(self.guideImageView)
 
     --福利社
-    self.welfareImageView = ImageView():marginTop(10):width(width):height(100)
-    self.welfareImageView:cornerRadius(5)
+    self.welfareImageView = ImageView():marginTop(10):width(width):height(MeasurementType.WRAP_CONTENT)
+    self.welfareImageView:addCornerMask(5, _Color.White, RectCorner.ALL_CORNERS)
     self.welfareImageView:image("https://s.momocdn.com/w/u/others/2019/08/27/1566877691900-welfare.png")
     self.welfareImageView:onClick(function()
         Toast("直接去福利社换取福利哦", 1)
@@ -303,7 +307,6 @@ function _class:headerView()
 
     --去点赞
     self.likeButton = Label():width(54):height(18):setGravity(MBit:bor(Gravity.RIGHT, Gravity.CENTER_VERTICAL))
-    self.likeButton:bgColor(_Color.White)
     self.likeButton:cornerRadius(self.likeButton:height() / 2):borderWidth(0.5):borderColor(Color(204, 137, 24))
     self.likeButton:text("去点赞"):fontSize(10):textColor(Color(204, 137, 24)):textAlign(TextAlign.CENTER)
     self.likeButton:onClick(function()
@@ -317,7 +320,7 @@ function _class:headerView()
 
     --分割线
     self.line = View():marginTop(10):width(width):height(0.5)
-    self.line:bgColor(Color(230, 230, 230, 1))
+    self.line:bgColor(Color(230, 230, 230, 1))--ok
     self.headerViewLayout:addView(self.line)
 
     --灵感集
@@ -331,18 +334,17 @@ function _class:headerView()
 
     --线性布局分类按钮
     local buttonLayout = LinearLayout(LinearType.HORIZONTAL)
-    buttonLayout:width(width):setGravity(Gravity.BOTTOM)
-    buttonLayout:bgColor(self.headerView:bgColor())
+    buttonLayout:width(width):setGravity(Gravity.BOTTOM):marginBottom(5)
     self.buttonLayout = buttonLayout
     self.headerView:addView(buttonLayout)
 
     self.categButtons = {}
-    local titles = {"推荐", "穿搭", "美妆", "探店", "旅行"}
+    local titles = { "推荐", "穿搭", "美妆", "探店", "旅行" }
     for i = 1, #titles do
         local button = Label()
         local offset = i > 1 and 10 or 0
         button:marginLeft(offset):width(38):height(25):cornerRadius(12)
-        button:bgColor(_Color.LightGray)
+        button:bgColor(_Color.LightGray)--ok
         button:text(titles[i]):fontSize(12):textColor(_Color.Gray):textAlign(TextAlign.CENTER)
         button:onClick(function()
             self:clickCategoryButton(button)
@@ -368,10 +370,17 @@ end
 ---@private
 function _class:updateCategoryButtonUI(button)
     if self.preCategButton then
-        self.preCategButton:textColor(_Color.Gray):bgColor(_Color.LightGray):setTextFontStyle(FontStyle.NORMAL)
+        self.preCategButton:textColor(_Color.Gray)
+            :bgColor(_Color.LightGray)--ok
+            :setTextFontStyle(FontStyle.NORMAL)
     end
-    button:textColor(_Color.White):bgColor(Color(253, 74, 63)):setTextFontStyle(FontStyle.BOLD)
+    button:textColor(_Color.White):setTextFontStyle(FontStyle.BOLD)
+          :bgColor(Color(253, 74, 63))--ok
     self.preCategButton = button
 end
+function _class:gotoDetailView()
+    require("lua_pods.LuaPageManager.LuaPageManager")
+    LuaPageManager:gotoPage("ideaMassEntryFile", Map(), AnimType.BottomToTop, 1)
 
+end
 return _class
