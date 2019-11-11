@@ -46,7 +46,7 @@ function _class:setupContainerView()
     containerView:addView(contentView)
 
     --默认展示第一页
-    self:display(5)
+    self:display(1)
 end
 
 ---配置tabBar

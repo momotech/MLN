@@ -42,7 +42,7 @@
 - (void)http:(MLNHttp *)http get:(NSString *)urlString params:(NSDictionary *)params completionHandler:(void (^)(BOOL, NSDictionary *, NSDictionary *))completionHandler {
     
     // Mock数据
-    if ([urlString hasPrefix:@"https://api.apiopen.top/message"]) {
+    if ([urlString hasPrefix:@"https://www.apiopen.top/femaleNameApi"]) {
         NSString *messagePath = [[NSBundle mainBundle] pathForResource:@"gallery/message.json" ofType:nil];
         NSData *data = [NSData dataWithContentsOfFile:messagePath];
         NSDictionary *info = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:NULL];

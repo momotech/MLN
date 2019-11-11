@@ -43,6 +43,10 @@ end
 function _class:setupContainerView()
     self.containerView = LinearLayout(LinearType.VERTICAL)
     self.containerView:width(MeasurementType.MATCH_PARENT):height(MeasurementType.MATCH_PARENT):bgColor(_Color.White)
+
+    if System:iOS() then
+        self.containerView:marginTop(window:statusBarHeight())
+    end
 end
 
 ---导航栏视图
@@ -213,7 +217,7 @@ function _class:setupWaterfallView()
         end
         cell.CELL.authorhead:image(item:get("pic_small"))
         cell.CELL.authorName:text(item:get("artist_name"))
-        cell.CELL.likeCount:text(item:get("file_duration"))
+        cell.CELL.likeCount:text(tostring(item:get("file_duration")))
     end)
     self.waterfallAdapter:rowCount(function()
         return self.dataList:size()
@@ -278,31 +282,24 @@ function _class:requestNetwork(first, complete)
                 complete(false, nil)
             end
         end)
-
         return
+    else
+        HTTPHandler = require("MMLuaKitGallery.HTTPHandler")
+        HTTPHandler:GET("https://api.apiopen.top/musicRankingsDetails", { type = self.pageIndex }, function(success, response, err)
+            if success then
+                local data = response:get("result")
+                if first then
+                    self.dataList = data
+                elseif data then
+                    self.dataList:addAll(data)
+                end
+                complete(success, data)
+            else
+                error(err:get("errmsg"))
+                complete(false, nil)
+            end
+        end)
     end
-
-
-
-
-    --local HTTPHandler = require("MMLuaKitGallery.HTTPHandler")
-    --HTTPHandler:GET("https://api.apiopen.top/musicRankingsDetails", { type = self.pageIndex }, function(success, response, err)
-    --    if success then
-    --        local data = response:get("result")
-    --        if first then
-    --            self.dataList = data
-    --        elseif data then
-    --            self.dataList:addAll(data)
-    --        end
-    --
-    --        complete(success, data)
-    --    else
-    --        error(err:get("errmsg"))
-    --        complete(false, nil)
-    --    end
-    --end)
-
-
 end
 
 function _class:setupDataSource()

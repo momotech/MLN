@@ -105,6 +105,7 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    [[MLNLoadTimeStatistics sharedInstance] recordStartTime];
     MLNGalleryMessageDetailViewController *messageDetailController = [[MLNGalleryMessageDetailViewController alloc] init];
     if (indexPath.row == 0) {
         messageDetailController.titleString = @"私信";
@@ -122,7 +123,7 @@
 {
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wnonnull"
-    NSString *requestUrlString = @"https://api.apiopen.top/message";
+    NSString *requestUrlString = @"https://www.apiopen.top/femaleNameApi";
     [self.myHttpHandler http:nil get:requestUrlString params:nil completionHandler:^(BOOL success, NSDictionary * _Nonnull respose, NSDictionary * _Nonnull error) {
         if (!success) {
             [self.view makeToast:error.description

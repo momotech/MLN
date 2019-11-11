@@ -17,6 +17,7 @@
 #import <UIView+Toast.h>
 #import "MLNDiscoverAlbumDetailCell.h"
 #import <MJRefresh.h>
+#import "MLNLoadTimeStatistics.h"
 
 @interface MLNDiscoverAlbumDetailViewController ()<UICollectionViewDataSource, UICollectionViewDelegate, MLNNativeWaterfallLayoutDelegate>
 @property (nonatomic, strong) MLNGalleryNavigationBar *navigationBar;
@@ -37,6 +38,14 @@ static NSString *kMLNDiscoverDetailCellID = @"kMLNDiscoverDetailCellID";
     [self.navigationBar setTitle:@"灵感集"];
     [self requestInspirData:YES];
     [self waterfallView];
+}
+
+- (void)viewDidLayoutSubviews
+{
+    [super viewDidLayoutSubviews];
+    
+    [[MLNLoadTimeStatistics sharedInstance] recordEndTime];
+    NSLog(@">>>>>>>>>二级页面灵感集页面加载时间:%@", @([[MLNLoadTimeStatistics sharedInstance] allLoadTime] * 1000));
 }
 
 #pragma mark - Actions
@@ -112,7 +121,6 @@ static NSString *kMLNDiscoverDetailCellID = @"kMLNDiscoverDetailCellID";
     NSInteger requestPageIdx = random()%5;
     self.requestPageIndex = [pageIdx[requestPageIdx] integerValue];
     [self.myHttpHandler http:nil get:requestUrlString params:@{@"type":@(self.requestPageIndex)} completionHandler:^(BOOL success, NSDictionary * _Nonnull respose, NSDictionary * _Nonnull error) {
-        NSLog(@"-------> response:%@", respose);
         if (!success) {
             [self.view makeToast:error.description
                         duration:3.0
@@ -123,7 +131,7 @@ static NSString *kMLNDiscoverDetailCellID = @"kMLNDiscoverDetailCellID";
         if (firstRequest) {
             NSArray *dataArray = [respose valueForKey:@"result"];
             self.dataList = [NSMutableArray arrayWithArray:dataArray];
-        } else if(self.dataList.count >= 40) {
+        } else if(self.dataList.count >= 200) {
             [self.waterfallView.mj_footer endRefreshingWithNoMoreData];
         } else {
             [self.waterfallView.mj_footer endRefreshing];
@@ -157,7 +165,7 @@ static NSString *kMLNDiscoverDetailCellID = @"kMLNDiscoverDetailCellID";
     if (!_navigationBar) {
         _navigationBar = [[MLNGalleryNavigationBar alloc] initWithFrame:CGRectMake(0, 0, kScreenWidth, kNaviBarHeight)];
         MLNGalleryNavigationBarItem *leftItem = [[MLNGalleryNavigationBarItem alloc] init];
-        leftItem.image = [UIImage imageNamed:@"1567316383505-minmore"];
+        leftItem.image = [UIImage imageNamed:@"icon_back"];
         [self.navigationBar setLeftItem:leftItem];
         __weak typeof(self) weakSelf = self;
         leftItem.clickActionBlock = ^{
