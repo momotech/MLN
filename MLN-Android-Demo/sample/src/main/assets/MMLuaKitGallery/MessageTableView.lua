@@ -154,13 +154,13 @@ function _class:setupTableView()
         if row == 1 then
             --Toast("客服当前时间不在线哦")
             if System:Android() then
-                Navigator:gotoPage("file://android_asset/MMLuaKitGallery/CustomerService.lua",Map(),1)
+                Navigator:gotoPage("file://android_asset/MMLuaKitGallery/CustomerService.lua",Map(),AnimType.RightToLeft)
             end
         elseif row == 2 then
             Toast("官方尚未发布通知")
 
             if  System:Android() then
-                Navigator:gotoPage("file://android_asset/MMLuaKitGallery/Notification.lua",Map(),1)
+                Navigator:gotoPage("file://android_asset/MMLuaKitGallery/Notification.lua",Map(),AnimType.RightToLeft)
             end
         else
             --Toast(cell.titleLabel:text(), 1)
@@ -235,7 +235,7 @@ function _class:request(first, complete)
 
     if System:Android() then
 
-        File:asyncReadMapFile('file://android_asset/MMLuaKitGallery/message.json', function(codeNumber, response)
+        File:asyncReadMapFile('file://android_asset/message.json', function(codeNumber, response)
 
             print("codeNumber: " .. tostring(codeNumber))
 
