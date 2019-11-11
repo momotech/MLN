@@ -12,7 +12,6 @@ import com.immomo.mls.annotation.LuaClass;
 import com.immomo.mls.fun.lt.SINavigator;
 import com.immomo.mls.util.FileUtil;
 import com.mln.demo.activity.LuaViewActivity;
-import com.mln.fileexplorer.ChooseFileActivity;
 
 import org.luaj.vm2.Globals;
 import org.luaj.vm2.LuaValue;
@@ -42,7 +41,11 @@ public class SINavigatorExtend extends SINavigator {
             if (!action.endsWith(".lua")) {
                 action = action + ".lua";
             }
-            action = FileUtil.getAbsoluteUrl(action);//相对路径转化
+
+            if (!action.startsWith("file://android_asset/"))
+                action = FileUtil.getAbsoluteUrl(action);//相对路径转化
+
+
         } else if (action.endsWith(".lua")) {
             String localUrl = ((LuaViewManager) globals.getJavaUserdata()).baseFilePath;
             File entryFile = new File(localUrl, action);//入口文件路径
@@ -58,11 +61,20 @@ public class SINavigatorExtend extends SINavigator {
             initData.extras = new HashMap();
         }
         initData.extras.putAll(params);
-        intent.putExtras(MLSBundleUtils.createBundle(initData));
+
+         intent.putExtras(createBundle(initData,action));
+
         if (a != null) {
             a.startActivity(intent);
             a.overridePendingTransition(parseInAnim(animType), parseOutAnim(animType));
         }
+    }
+
+    public static Bundle createBundle(InitData data, String action) {
+        Bundle bundle = new Bundle();
+        bundle.putParcelable("__INIT_DATA", data);
+        bundle.putString("LUA_URL", action);
+        return bundle;
     }
 
     @Override
@@ -84,6 +96,6 @@ public class SINavigatorExtend extends SINavigator {
     @Override
     protected void internalGotoPage(String action, Bundle bundle, @AnimType int at, int l) {
         Activity a = getActivity();
-        ChooseFileActivity.startChooseFile(a, l, ChooseFileActivity.TYPE_SDCARD, FileUtil.getRootDir().getAbsolutePath());
+        // ChooseFileActivity.startChooseFile(a, l, ChooseFileActivity.TYPE_SDCARD, FileUtil.getRootDir().getAbsolutePath());
     }
 }

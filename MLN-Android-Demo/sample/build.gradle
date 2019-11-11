@@ -43,14 +43,12 @@ android {
 
 dependencies {
     implementation project(':scan')
-    implementation project(':fileexplorer')
     implementation 'com.alibaba:fastjson:1.1.46.android'
     implementation 'com.github.bumptech.glide:glide:4.6.1'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation "androidx.recyclerview:recyclerview:$androidxVersion"
     implementation "androidx.appcompat:appcompat:$androidxVersion"
     implementation "com.google.protobuf:protobuf-lite:$protobufVersion"
-    implementation "com.immomo.broadcastchannel:broadcastchannel:0.2.20190926.1500"
     testImplementation 'junit:junit:4.12'
 
 

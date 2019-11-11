@@ -12,21 +12,8 @@ import com.immomo.mls.global.LVConfigBuilder;
 import com.immomo.mls.util.AndroidUtil;
 import com.immomo.mls.wrapper.Register;
 import com.mln.demo.anr.AnrWatchDog;
-import com.mln.demo.common.GCTest;
-import com.mln.demo.common.GlobalRefTest;
 import com.mln.demo.common.LTFileExtends;
-import com.mln.demo.common.LazyChild;
-import com.mln.demo.common.LazyChild2;
-import com.mln.demo.common.LazyParent;
-import com.mln.demo.common.LazyRoot;
 import com.mln.demo.common.MLSLoadViewAdapterImpl;
-import com.mln.demo.common.NonlazyChild;
-import com.mln.demo.common.TestLazyHttp;
-import com.mln.demo.common.UDTest2;
-import com.mln.demo.common.demo.SBDemo;
-import com.mln.demo.common.demo.SimpleSBDemo;
-import com.mln.demo.common.demo.SimpleUDDemo;
-import com.mln.demo.common.demo.UDDemo;
 import com.mln.demo.provider.GlideImageProvider;
 
 import org.luaj.vm2.Globals;
@@ -49,7 +36,9 @@ public class App extends Application {
         AnrWatchDog.startWatch();
         app = this;
         init();
-        final boolean debug = true;
+
+        final boolean debug = BuildConfig.DEBUG;
+
         log("scale Density: " + AndroidUtil.getScaleDensity(this));
         log("Density: " + AndroidUtil.getDensity(this));
 
@@ -88,23 +77,9 @@ public class App extends Application {
                 .setMemoryMonitorOffset(5000)
                 .setGlobalSoPath(soFile.getAbsolutePath() + "/lib?.so")
                 .registerSC(
-                        Register.newSHolder(SBDemo.LUA_CLASS_NAME, SBDemo.class, SBDemo.methods),
-                        Register.newSHolderWithLuaClass(SimpleSBDemo.LUA_CLASS_NAME, SimpleSBDemo.class),
-                        Register.newSHolderWithLuaClass("GRTest", GlobalRefTest.class),
                         Register.newSHolderWithLuaClass(LTFileExtends.LUA_CLASS_NAME, LTFileExtends.class)
                 )
                 .registerUD(
-                        Register.newUDHolderWithLuaClass("SimpleUDDemo", SimpleUDDemo.class, true),
-                        Register.newUDHolderWithLuaClass("UDTest2", UDTest2.class, true),
-                        Register.newUDHolderWithLuaClass("LazyRoot", LazyRoot.class, true),
-                        Register.newUDHolderWithLuaClass("LazyParent", LazyParent.class, true),
-                        Register.newUDHolderWithLuaClass("LazyChild", LazyChild.class, true),
-                        Register.newUDHolderWithLuaClass("NonlazyChild", NonlazyChild.class, false),
-                        Register.newUDHolderWithLuaClass("LazyChild2", LazyChild2.class, true),
-//                        Register.newUDHolderWithLuaClass(TestHttpExtends.LUA_CLASS_NAME, TestHttpExtends.class, false),
-                        Register.newUDHolderWithLuaClass("LHttp", TestLazyHttp.class, true),
-                        Register.newUDHolderWithLuaClass("GCTest", GCTest.class, true),
-                        Register.newUDHolder("UDIndex", UDDemo.class, false)
                 )
                 .registerSingleInsance(new MLSBuilder.SIHolder(SINavigatorExtend.LUA_CLASS_NAME, SINavigatorExtend.class))
 //                .clearAll()

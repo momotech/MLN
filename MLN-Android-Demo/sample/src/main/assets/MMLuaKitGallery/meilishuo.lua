@@ -5,7 +5,12 @@
 ---
 
 --- 暂时设置为全局，避免被gc
-MeiLiShuoMainView = require("MMLuaKitGallery.TabContainerView")
-MeiLiShuoMainView:setup()
+ MeiLiShuoMainView = require("MMLuaKitGallery.TabContainerView")
+ MeiLiShuoMainView:setup()
+
+
+
+
+
 
 
