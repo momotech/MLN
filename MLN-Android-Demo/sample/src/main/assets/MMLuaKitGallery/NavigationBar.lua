@@ -19,7 +19,6 @@ end
 ---@public
 function _class:bar(title, fontSize)
     self.navibar = View():width(window:width()):height(_NaviBarHeight)
-    self.navibar:bgColor(_Color.White)
 
     self.titleLabel = Label()
     self.titleLabel:width(MeasurementType.WRAP_CONTENT):height(MeasurementType.WRAP_CONTENT):setGravity(Gravity.CENTER)
