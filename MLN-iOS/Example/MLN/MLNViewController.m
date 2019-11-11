@@ -162,7 +162,10 @@
 {
     [self.kcv.view addSubview:self.loadTimeLabel];
     self.loadTimeLabel.hidden = NO;
-    self.loadTimeLabel.text = [NSString stringWithFormat:@"%.0f ms\n%.4f ms\n%.0f ms\n", [self.loadTimeStatistics luaCoreCreateTime] * 1000, [self.loadTimeStatistics loadScriptTime] * 1000, [self.loadTimeStatistics allLoadTime] * 1000];
+    self.loadTimeLabel.text = [NSString stringWithFormat:@"%.0f ms", [self.loadTimeStatistics luaCoreCreateTime] * 1000];
+    CGSize loadTimeLabelSize = [self.loadTimeLabel.text sizeWithAttributes:@{NSFontAttributeName:[UIFont systemFontOfSize:12]}];
+    CGFloat loadTimeLabelY = [UIScreen mainScreen].bounds.size.height * 0.75;
+    self.loadTimeLabel.frame = CGRectMake(10, loadTimeLabelY, loadTimeLabelSize.width + 10, loadTimeLabelSize.height + 10);
 }
 
 - (void)hideLuaScriptLoadTime
@@ -182,8 +185,7 @@
 - (UILabel *)loadTimeLabel
 {
     if (!_loadTimeLabel) {
-        CGFloat loadTimeLabelY = [UIScreen mainScreen].bounds.size.height * 0.7;
-        _loadTimeLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, loadTimeLabelY, 50, 40)];
+        _loadTimeLabel = [[UILabel alloc] initWithFrame:CGRectZero];
         _loadTimeLabel.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:0.6];
         _loadTimeLabel.textColor = [UIColor whiteColor];
         _loadTimeLabel.font = [UIFont systemFontOfSize:12];
