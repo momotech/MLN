@@ -8,6 +8,13 @@
 #import <UIKit/UIKit.h>
 #import "MLNViewConst.h"
 
+#define isLayoutNodeWidthNeedMerge(NODE) (NODE.widthType == MLNLayoutMeasurementTypeMatchParent &&\
+                                   (NODE.supernode.mergedWidthType == MLNLayoutMeasurementTypeWrapContent || \
+                                    NODE.supernode.isHorizontalMaxMode))
+#define isLayoutNodeHeightNeedMerge(NODE) (NODE.heightType == MLNLayoutMeasurementTypeMatchParent &&\
+                                    (NODE.supernode.mergedHeightType == MLNLayoutMeasurementTypeWrapContent || \
+                                     NODE.supernode.isVerticalMaxMode))
+
 NS_ASSUME_NONNULL_BEGIN
 
 typedef enum : NSUInteger {

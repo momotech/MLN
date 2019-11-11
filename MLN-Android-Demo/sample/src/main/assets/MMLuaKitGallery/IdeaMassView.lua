@@ -259,22 +259,50 @@ function _class:requestNetwork(first, complete)
             self.pageIndex = 9
         end
     end
-    local HTTPHandler = require("MMLuaKitGallery.HTTPHandler")
-    HTTPHandler:GET("https://api.apiopen.top/musicRankingsDetails", { type = self.pageIndex }, function(success, response, err)
-        if success then
-            local data = response:get("result")
-            if first then
-                self.dataList = data
-            elseif data then
-                self.dataList:addAll(data)
-            end
 
-            complete(success, data)
-        else
-            error(err:get("errmsg"))
-            complete(false, nil)
-        end
-    end)
+    if System:Android() then
+        File:asyncReadMapFile('file://android_asset/MMLuaKitGallery/discoverry_detail.json', function(codeNumber, response)
+
+            print("codeNumber: " .. tostring(codeNumber))
+            if codeNumber == 0 then
+                local data = response:get("result")
+                if first then
+                    self.dataList = data
+                elseif data then
+                    self.dataList:addAll(data)
+                end
+
+                complete(true, data)
+            else
+                --error(err:get("errmsg"))
+                complete(false, nil)
+            end
+        end)
+
+        return
+    end
+
+
+
+
+    --local HTTPHandler = require("MMLuaKitGallery.HTTPHandler")
+    --HTTPHandler:GET("https://api.apiopen.top/musicRankingsDetails", { type = self.pageIndex }, function(success, response, err)
+    --    if success then
+    --        local data = response:get("result")
+    --        if first then
+    --            self.dataList = data
+    --        elseif data then
+    --            self.dataList:addAll(data)
+    --        end
+    --
+    --        complete(success, data)
+    --    else
+    --        error(err:get("errmsg"))
+    --        complete(false, nil)
+    --    end
+    --end)
+
+
 end
 
 function _class:setupDataSource()

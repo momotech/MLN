@@ -12,7 +12,7 @@ local _class = {
 ---@public
 function _class:new()
     local o = {}
-    setmetatable(o, {__index = self})
+    setmetatable(o, { __index = self })
     return o
 end
 
@@ -32,21 +32,24 @@ function _class:createBarButtonItems(normalImages, selectImages)
     local itemCount = normalImages:size()
 
     local tabToolBarHeight = 60
+    local marginBottom = 0
     local info = System:deviceInfo()
     if System:iOS() and ((string.len(info) > 9 and info > "iPhone10,5") or info == "iPhone10,3") then
-        tabToolBarHeight = tabToolBarHeight + 34 --适配iPhoneX及以上机型
+        marginBottom = 34 --适配iPhoneX及以上机型
     end
 
     local barItemHeight = 30
-    local barItemWidth = 30
-    local barItemSpacing = (window:width() - barItemWidth * itemCount) / (itemCount + 1)
+    local barItemWidth = (window:width()) / (itemCount)
 
-    self.contentView = View():bgColor(Color(255,255,255,1)):width(MeasurementType.MATCH_PARENT):height(tabToolBarHeight):marginBottom(0):setGravity(Gravity.BOTTOM)
+    self.contentView = View()
+            :width(MeasurementType.MATCH_PARENT):height(tabToolBarHeight):priority(1):marginBottom(marginBottom)
+
     self.tabToolBar = LinearLayout(LinearType.HORIZONTAL)
-    self.tabToolBar:bgColor(Color(255,255,255,1)):width(MeasurementType.MATCH_PARENT):height(tabToolBarHeight):marginBottom(0):setGravity(Gravity.BOTTOM)
+    self.tabToolBar:width(MeasurementType.MATCH_PARENT):height(tabToolBarHeight)
 
     for i = 1, itemCount do
-        local barItem = ImageView():marginLeft(barItemSpacing):marginTop(10):width(barItemWidth):height(barItemHeight)
+        local itemView = View():width(barItemWidth):height(MeasurementType.MATCH_PARENT):priority(1)
+        local barItem = ImageView():width(barItemWidth):height(barItemHeight):setGravity(Gravity.CENTER)
         barItem:onClick(function()
             self:updateBarItemImages(barItem, i)
             self.clickCallback(i)
@@ -58,7 +61,8 @@ function _class:createBarButtonItems(normalImages, selectImages)
         else
             barItem:image(normalImages:get(i))
         end
-        self.tabToolBar:addView(barItem)
+        itemView:addView(barItem)
+        self.tabToolBar:addView(itemView)
     end
 
     self.contentView:addView(self.tabToolBar)
