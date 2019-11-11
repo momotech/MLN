@@ -2,8 +2,10 @@ package com.mln.demo.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
@@ -20,11 +22,14 @@ import androidx.annotation.Nullable;
  */
 public class LuaViewActivity extends BaseActivity  {
 
+    private static final String TAG = LuaViewActivity.class.getSimpleName();
     private MLSInstance instance;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-        FrameLayout frameLayout = new FrameLayout(this);
+        final long startTime = System.currentTimeMillis();
+
+        final FrameLayout frameLayout = new FrameLayout(this);
 //        frameLayout.setFitsSystemWindows(true);
 
         setContentView(frameLayout, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
@@ -33,6 +38,26 @@ public class LuaViewActivity extends BaseActivity  {
         instance.setBackgroundRes(R.drawable.ic_launcher_background);
 
         super.onCreate(savedInstanceState);
+
+
+
+
+        frameLayout.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            //当layout结束后回调此方法
+            @Override
+            public void onGlobalLayout() {
+                long endTime = System.currentTimeMillis();
+
+                Log.d(TAG, "onGlobalLayout:  layout cast = " + (endTime - startTime));
+
+                //删除监听
+                frameLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);  //api16以上才能用（4.1）
+
+            }
+        });
+
+
+
 
         Intent intent = getIntent();
         if (intent.getExtras() == null || intent.getExtras().getString("LUA_URL") == null) {

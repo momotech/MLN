@@ -72,8 +72,10 @@ public class App extends Application {
                 .setUseStandardSyntax(false)
                 .setLazyFillCellData(false)
                 .setReadScriptFileInJava(false)
+                .setPreGlobals(1)
                 .setOpenSAES(true)
                 .setGcOffset(0)
+                .setLazyFillCellData(false)
                 .setMemoryMonitorOffset(5000)
                 .setGlobalSoPath(soFile.getAbsolutePath() + "/lib?.so")
                 .registerSC(
