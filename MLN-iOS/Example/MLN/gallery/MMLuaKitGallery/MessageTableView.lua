@@ -155,12 +155,15 @@ function _class:setupTableView()
             --Toast("客服当前时间不在线哦")
             if System:Android() then
                 Navigator:gotoPage("file://android_asset/MMLuaKitGallery/CustomerService.lua",Map(),1)
+            else
+                Navigator:gotoPage("CustomerService",Map(),0)
             end
         elseif row == 2 then
-            Toast("官方尚未发布通知")
-
+            --Toast("官方尚未发布通知")
             if  System:Android() then
                 Navigator:gotoPage("file://android_asset/MMLuaKitGallery/Notification.lua",Map(),1)
+            else
+                Navigator:gotoPage("Notification",Map(),0)
             end
         else
             --Toast(cell.titleLabel:text(), 1)
@@ -252,10 +255,11 @@ function _class:request(first, complete)
         return
     end
 
-    local HTTPHandler = require("MMLuaKitGallery.HTTPHandler")
+    HTTPHandler = require("MMLuaKitGallery.HTTPHandler")
     HTTPHandler:GET("https://www.apiopen.top/femaleNameApi", {page = self.requestIndex}, function(success, response, err)
         if success then
-            local data = response:get("data")
+            result = response:get('result')
+            data = result:get("data")
             self:constructData(first, data)
             complete(success, data)
         else
@@ -272,7 +276,7 @@ function _class:constructData(remove, data)
     end
     for i = 1, data:size() do
         local item = Map(1)
-        item:put("title", data:get(i):get("femalename"))
+        item:put("title", data:get(i):get("title"))
         item:put("desc", os.date("%m-%d %H:%M:%S", os.time()))
         item:put("icon", data:get(i):get("icon"))
         --item:put("follow", (math.random(0, 10000) % 2 == 0))

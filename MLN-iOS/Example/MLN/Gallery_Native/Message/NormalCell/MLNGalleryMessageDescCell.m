@@ -36,7 +36,7 @@
     self.descLabel.frame = (CGRect){CGPointMake(CGRectGetMaxX(self.nameLabel.frame) + 5, self.nameLabel.frame.origin.y) , self.descLabel.frame.size};
     
     [self.timeLabel sizeToFit];
-    self.timeLabel.frame = (CGRect){CGPointMake(self.nameLabel.frame.origin.x, CGRectGetMaxY(self.nameLabel.frame) + 10), self.timeLabel.frame.size};
+    self.timeLabel.frame = (CGRect){CGPointMake(self.nameLabel.frame.origin.x, CGRectGetMaxY(self.nameLabel.frame) + 5), self.timeLabel.frame.size};
     
     _attentionButton.frame = CGRectMake(contentFrame.size.width - 60 - 20, (contentFrame.size.height - 30)/2.0 , 60, 30);
     _pictureImageView.frame = CGRectMake(contentFrame.size.width - 40 - 20 , (contentFrame.size.height - 40)/2.0, 40, 40);
@@ -51,16 +51,8 @@
     self.descLabel.text = model.desc;
     self.timeLabel.text = model.time;
     
-    _pictureImageView.hidden = YES;
-    _attentionButton.hidden = YES;
-    if (model.follow == 1) {
-        self.pictureImageView.hidden = NO;
-        [self.pictureImageView setImageWithURL:[NSURL URLWithString:model.attach]];
-        _attentionButton.hidden = YES;
-    } else if(model.follow == 0){
-        self.attentionButton.hidden = NO;
-        _pictureImageView.hidden = YES;
-    }
+    self.attentionButton.hidden = NO;
+    self.pictureImageView.hidden = YES;
 }
 
 
@@ -80,6 +72,7 @@
 {
     if (!_nameLabel) {
         _nameLabel = [[UILabel alloc] init];
+        _nameLabel.font = [UIFont systemFontOfSize:13];
         [self.contentView addSubview:_nameLabel];
     }
     return _nameLabel;
@@ -100,7 +93,7 @@
 {
     if (!_timeLabel) {
         _timeLabel = [[UILabel alloc] init];
-        _timeLabel.font = [UIFont systemFontOfSize:13];
+        _timeLabel.font = [UIFont systemFontOfSize:12];
         _timeLabel.textColor = [UIColor lightGrayColor];
         [self.contentView addSubview:_timeLabel];
     }
@@ -121,10 +114,11 @@
 {
     if (!_attentionButton) {
         _attentionButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 55, 30)];
+        _attentionButton.titleLabel.font = [UIFont systemFontOfSize:12];
         [_attentionButton addTarget:self action:@selector(clickAction:) forControlEvents:UIControlEventTouchUpInside];
-        [_attentionButton setTitle:@"关注" forState:UIControlStateNormal];
+        [_attentionButton setTitle:@"+关注" forState:UIControlStateNormal];
         [_attentionButton setTitle:@"已关注" forState:UIControlStateSelected];
-        [_attentionButton setTitleColor:[UIColor lightGrayColor] forState:UIControlStateNormal];
+        [_attentionButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
         _attentionButton.layer.borderColor = [UIColor lightGrayColor].CGColor;
         _attentionButton.layer.borderWidth = 0.5;
         [self.contentView addSubview:_attentionButton];

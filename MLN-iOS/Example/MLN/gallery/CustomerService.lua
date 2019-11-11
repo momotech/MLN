@@ -45,6 +45,10 @@ end
 function _class:setupContainerView()
     self.containerView = LinearLayout(LinearType.VERTICAL)
     self.containerView:width(MeasurementType.MATCH_PARENT):height(MeasurementType.MATCH_PARENT):bgColor(_Color.White)
+
+    if System:iOS() then
+        self.containerView:marginTop(window:statusBarHeight())
+    end
 end
 
 
@@ -60,6 +64,10 @@ function _class:setupTitleView()
     self.backBtn = ImageView():width(22):height(22):marginLeft(20):setGravity(MBit:bor(Gravity.LEFT, Gravity.CENTER_VERTICAL))
     self.backBtn:image("https://s.momocdn.com/w/u/others/custom/20191107/wutianlong/x9.png")
     self.navibar:addView(self.backBtn)
+
+    self.backBtn:onClick(function()
+        Navigator:closeSelf(AnimType.Default)
+    end)
 
     --客服
     self.customer = ImageView():width(22):height(22):marginRight(20):setGravity(MBit:bor(Gravity.RIGHT, Gravity.CENTER_VERTICAL))

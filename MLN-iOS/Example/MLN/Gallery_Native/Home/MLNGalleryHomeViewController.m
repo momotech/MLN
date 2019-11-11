@@ -87,7 +87,6 @@
 #pragma clang diagnostic ignored "-Wnonnull"
     NSString *requestUrlString = @"http://v2.api.haodanku.com/itemlist/apikey/fashion/cid/1/back/20";
     [self.myHttpHandler http:nil get:requestUrlString params:@{@"mid":@(self.mid), @"cid":@(self.cid)} completionHandler:^(BOOL success, NSDictionary * _Nonnull respose, NSDictionary * _Nonnull error) {
-        NSLog(@"-------> response:%@", respose);
         if (!success) {
             [self.view makeToast:error.description
                         duration:3.0
@@ -98,7 +97,7 @@
             NSArray *dataList = [respose valueForKey:@"data"];
             [[MLNHomeDataHandler handler] updateDataList:dataList];
             [self.viewPager.mainView.mj_header endRefreshing];
-        } else if ([MLNHomeDataHandler handler].dataList.count >= 40) {
+        } else if ([MLNHomeDataHandler handler].dataList.count >= 200) {
             [self.viewPager.mainView.mj_footer endRefreshingWithNoMoreData];
         } else {
             NSArray *dataList = [respose valueForKey:@"data"];

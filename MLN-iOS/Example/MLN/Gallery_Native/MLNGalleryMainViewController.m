@@ -16,9 +16,12 @@
 #import "UIImage+MLNResize.h"
 #import <UIView+Toast.h>
 #import "MLNLoadTimeStatistics.h"
+#import <MLNDevTool/MLNFPSLabel.h>
+#import "MLNGalleryNative.h"
 
 @interface MLNGalleryMainViewController ()<UITabBarControllerDelegate>
 @property (nonatomic, strong) UIButton *backButton;
+@property (nonatomic, strong) MLNFPSLabel *fpsLabel;
 @end
 
 @implementation MLNGalleryMainViewController
@@ -35,6 +38,10 @@
 - (void)setupBackButton
 {
     [self backButton];
+    
+    CGFloat screenHeight = [UIScreen mainScreen].bounds.size.height;
+    self.fpsLabel = [[MLNFPSLabel alloc] initWithFrame:CGRectMake(10, screenHeight * 0.8, 50, 20)];
+    [self.view addSubview:self.fpsLabel];
 }
 
 - (void)setupTabbarItems
@@ -111,7 +118,7 @@
     if (!_backButton) {
         CGFloat buttonW = 80;
         CGFloat buttonH = 30;
-        CGFloat buttonX = 10;
+        CGFloat buttonX = kScreenWidth - buttonW - 10;
         CGFloat buttonY = 22;
         _backButton = [UIButton buttonWithType:UIButtonTypeCustom];
         _backButton.frame = CGRectMake(buttonX, buttonY, buttonW, buttonH);

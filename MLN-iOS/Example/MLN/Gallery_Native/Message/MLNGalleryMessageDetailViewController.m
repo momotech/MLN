@@ -10,6 +10,7 @@
 #import "MLNGalleryNative.h"
 #import "MLNGalleryNavigationBar.h"
 #import "MLNGalleryNative.h"
+#import "MLNLoadTimeStatistics.h"
 
 @interface MLNGalleryMessageDetailViewController ()
 @property (nonatomic, strong) MLNGalleryNavigationBar *navigationBar;
@@ -36,6 +37,9 @@
     CGFloat contentLabelX = (kScreenWidth - contentLabelW)/2.0;
     CGFloat contentLabelY = (kScreenHeight - contentLabelH)/2.0;
     self.contentLabel.frame = CGRectMake(contentLabelX, contentLabelY, contentLabelW, contentLabelH);
+    
+    [[MLNLoadTimeStatistics sharedInstance] recordEndTime];
+    NSLog(@">>>>>>>>消息二级页面加载时间：%@", @([[MLNLoadTimeStatistics sharedInstance]allLoadTime] * 1000));
 }
 
 

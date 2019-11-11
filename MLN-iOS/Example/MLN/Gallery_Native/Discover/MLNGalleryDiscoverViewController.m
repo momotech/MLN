@@ -72,6 +72,7 @@ static NSString *kMLNNativeWaterfallViewCellID = @"kMLNNativeWaterfallViewCellID
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
+    [[MLNLoadTimeStatistics sharedInstance] recordStartTime];
     MLNDiscoverAlbumDetailViewController *detailViewController = [[MLNDiscoverAlbumDetailViewController alloc] init];
     [self.navigationController pushViewController:detailViewController animated:YES];
 }
@@ -140,7 +141,6 @@ static NSString *kMLNNativeWaterfallViewCellID = @"kMLNNativeWaterfallViewCellID
     NSInteger requestPageIdx = random()%5;
     self.requestPageIndex = [pageIdx[requestPageIdx] integerValue];
     [self.myHttpHandler http:nil get:requestUrlString params:@{@"type":@(self.requestPageIndex)} completionHandler:^(BOOL success, NSDictionary * _Nonnull respose, NSDictionary * _Nonnull error) {
-        NSLog(@"-------> response:%@", respose);
         if (!success) {
             [self.view makeToast:error.description
                         duration:3.0
@@ -151,7 +151,7 @@ static NSString *kMLNNativeWaterfallViewCellID = @"kMLNNativeWaterfallViewCellID
         if (firstRequest) {
             NSArray *dataArray = [respose valueForKey:@"result"];
             self.dataList = [NSMutableArray arrayWithArray:dataArray];
-        } else if (self.dataList.count >= 40) {
+        } else if (self.dataList.count >= 200) {
             [self.waterfallView.mj_footer endRefreshingWithNoMoreData];
         } else {
             [self.waterfallView.mj_footer endRefreshing];

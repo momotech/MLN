@@ -105,7 +105,7 @@ function _class:setupCollectionViewAdapter()
     end)
 
     adapter:initHeader(function(header)
-        header.contentView:removeAllSubviews()
+        --header.contentView:removeAllSubviews()
         header.contentView:addView(self:headerView())
     end)
 
@@ -163,7 +163,7 @@ function _class:setupCollectionViewAdapter()
         if System:Android() then
             Navigator:gotoPage("file://android_asset/MMLuaKitGallery/IdeaMassView.lua",Map(),1)
         else
-            Navigator:gotoPage("file://MMLuaKitGallery/IdeaMassView.lua",Map(),1)
+            Navigator:gotoPage("IdeaMassView",Map(),0)
         end
     end)
     self.collectionView:adapter(adapter)

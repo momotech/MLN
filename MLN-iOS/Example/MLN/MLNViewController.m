@@ -66,6 +66,7 @@
 
 - (void)setupSubController
 {
+    [[MLNLoadTimeStatistics sharedInstance] recordStartTime];
     NSString *entryFile = @"Main.lua";
     MLNLuaBundle *bundle = [MLNLuaBundle mainBundleWithPath:@"gallery"];
     MLNLuaPageViewController *kcv = [[MLNLuaPageViewController alloc] initWithEntryFilePath:entryFile];
@@ -130,30 +131,10 @@
 }
 
 #pragma mark - MLNKitInstanceDelegate
-- (void)willSetupLuaCore:(MLNKitInstance *)instance
-{
-    [self.loadTimeStatistics recordStartTime];
-    [self.loadTimeStatistics recordLuaCoreCreateStartTime];
-}
-
-- (void)didSetupLuaCore:(MLNKitInstance *)instance
-{
-    [self.loadTimeStatistics recordLuaCoreCreateEndTime];
-}
-
-- (void)instance:(MLNKitInstance *)instance willLoad:(NSData *)data fileName:(NSString *)fileName
-{
-    [self.loadTimeStatistics recordLoadScriptStartTimeWithFileName:fileName];
-}
-
-- (void)instance:(MLNKitInstance *)instance didLoad:(NSData *)data fileName:(NSString *)fileName
-{
-    [self.loadTimeStatistics recordLoadScriptEndTimeWithFileName:fileName];
-}
-
 - (void)instance:(MLNKitInstance *)instance didFinishRun:(NSString *)entryFileName
 {
-    [self.loadTimeStatistics recordEndTime];
+    [[MLNLoadTimeStatistics sharedInstance] recordEndTime];
+//    NSLog(@"------->布局完成：%@", @([[MLNLoadTimeStatistics sharedInstance] allLoadTime] * 1000));
 }
 
 
@@ -173,15 +154,6 @@
 {
     self.loadTimeLabel.hidden = YES;
 }
-
-- (MLNLoadTimeStatistics *)loadTimeStatistics
-{
-    if (!_loadTimeStatistics) {
-        _loadTimeStatistics = [[MLNLoadTimeStatistics alloc] init];
-    }
-    return _loadTimeStatistics;
-}
-
 
 - (UILabel *)loadTimeLabel
 {
