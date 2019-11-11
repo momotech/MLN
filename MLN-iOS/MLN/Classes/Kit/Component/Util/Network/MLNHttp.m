@@ -106,6 +106,15 @@ static id<MLNHttpHandlerProtocol> defaultHttpHandler = nil;
     }];
 }
 
+#pragma mark - Public method
+- (void)mln_download:(NSString *)urlString params:(NSDictionary *)params progressHandler:(void(^)(float progress, float total))progressHandler completionHandler:(void(^)(BOOL success, NSDictionary *respInfo, id respData, NSDictionary *errorInfo))completionHandler
+{
+    MLNLuaAssert(self.mln_luaCore, stringNotEmpty(urlString), @"url must not  be null");
+    if ([[self getHandler] respondsToSelector:@selector(http:download:params:progressHandler:completionHandler:)]) {
+        [[self getHandler] http:self download:urlString params:params progressHandler:progressHandler completionHandler:completionHandler];
+    }
+}
+
 #pragma mark - Setup For Lua
 LUA_EXPORT_BEGIN(MLNHttp)
 LUA_EXPORT_METHOD(setBaseUrl, "lua_setBaseUrlString:", MLNHttp)
