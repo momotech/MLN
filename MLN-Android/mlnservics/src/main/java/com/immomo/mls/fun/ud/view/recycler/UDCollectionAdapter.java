@@ -153,7 +153,7 @@ public class UDCollectionAdapter extends UDBaseRecyclerAdapter<UDCollectionLayou
                 return new Size(Size.WRAP_CONTENT, Size.WRAP_CONTENT);
             }
 
-            if (!(this instanceof UDCollectionAutoFitAdapter)) {
+            if (!(UDCollectionAdapter.this instanceof UDCollectionAutoFitAdapter)) {
                 //两端在不声明size for cell时，有UI差异。统一报错处理
                 ErrorUtils.debugLuaError("size For Cell must be Called", getGlobals());
             }
@@ -296,8 +296,11 @@ public class UDCollectionAdapter extends UDBaseRecyclerAdapter<UDCollectionLayou
                 int realHeight = realPositionSize.getHeightPx();
                 if (recyclerViewWidth < (paddingValues[0] + paddingValues[2] + realWidth) ||
                         recyclerViewHeight < (paddingValues[1] + paddingValues[3] + realHeight)) {
-                    //layoutInset+cellSize 不能大于recyclerView宽高,两端统一报错
-                    ErrorUtils.debugLuaError("The sum of cellWidth，leftInset，rightInset should not bigger than the width of collectionView", getGlobals());
+
+                    if (!(UDCollectionAdapter.this instanceof UDCollectionAutoFitAdapter)) {
+                        //layoutInset+cellSize 不能大于recyclerView宽高,两端统一报错
+                        ErrorUtils.debugLuaError("The sum of cellWidth，leftInset，rightInset should not bigger than the width of collectionView", getGlobals());
+                    }
                 }
 
                 if (realWidth < 0 || realHeight < 0) {//两端统一报错效果

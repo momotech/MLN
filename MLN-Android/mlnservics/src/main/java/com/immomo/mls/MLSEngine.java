@@ -29,6 +29,7 @@ import com.immomo.mls.fun.constants.NetworkState;
 import com.immomo.mls.fun.constants.RectCorner;
 import com.immomo.mls.fun.constants.ResultType;
 import com.immomo.mls.fun.constants.ReturnType;
+import com.immomo.mls.fun.constants.SafeAreaConstants;
 import com.immomo.mls.fun.constants.ScrollDirection;
 import com.immomo.mls.fun.constants.StatusBarStyle;
 import com.immomo.mls.fun.constants.StyleImageAlign;
@@ -491,7 +492,8 @@ public class MLSEngine {
                 DrawStyle.class,
                 FillType.class,
                 StyleImageAlign.class,
-                MotionEvent.class
+                MotionEvent.class,
+                SafeAreaConstants.class,
         };
     }
 

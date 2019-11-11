@@ -37,7 +37,6 @@ public class SIApplication implements Globals.OnDestroyListener {
 
     public SIApplication(Globals g) {
         globals = g;
-        instance.put(g, this);
     }
 
     @Override
@@ -51,6 +50,7 @@ public class SIApplication implements Globals.OnDestroyListener {
             mDisappearFunction.destroy();
         mDisappearFunction = fun;
         if (fun != null) {
+            instance.put(globals, this);
             globals.removeOnDestroyListener(this);
             globals.addOnDestroyListener(this);
         }
@@ -62,6 +62,7 @@ public class SIApplication implements Globals.OnDestroyListener {
             mAppearFunction.destroy();
         mAppearFunction = fun;
         if (fun != null) {
+            instance.put(globals, this);
             globals.removeOnDestroyListener(this);
             globals.addOnDestroyListener(this);
         }
