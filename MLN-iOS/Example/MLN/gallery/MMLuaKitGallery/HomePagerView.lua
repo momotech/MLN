@@ -37,6 +37,8 @@ function _class:setupTabSegmentView()
     titles:add("关注")
     titles:add("推荐")
 
+    self.placeHolderView = View():bgColor(Color(255, 255, 255, 0.0)):width(window:width()):height(0.5)
+    self.containerView:addView(self.placeHolderView)
     self.tabSegment = TabSegmentView(Rect(0, 0, window:width(),_NaviBarHeight), titles, _Color.Black)
     self.tabSegment:selectScale(1.0):width(MeasurementType.MATCH_PARENT):setAlignment(TabSegmentAlignment.CENTER):setGravity(Gravity.CENTER_HORIZONTAL)
     self.tabSegment:bgColor(_Color.White)

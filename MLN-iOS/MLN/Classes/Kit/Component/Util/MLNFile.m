@@ -256,12 +256,16 @@ static NSString *fileManagerRootPath = nil;
 
 + (NSString *)fileManagerRootPath
 {
+    if (!fileManagerRootPath) {
+        NSString *docDir = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject];
+        fileManagerRootPath = [docDir stringByAppendingPathComponent:@"MLNLua"];// 获取Documents目录路径
+    }
     return fileManagerRootPath;
 }
 
 + (NSString *)lua_getStorageDir
 {
-    return fileManagerRootPath;
+    return [self fileManagerRootPath];
 }
 
 + (void)lua_asyncCreateFile:(NSString *)filePath completionBlock:(MLNBlock *)completion
