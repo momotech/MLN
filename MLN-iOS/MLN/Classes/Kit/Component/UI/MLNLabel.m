@@ -40,6 +40,7 @@
     if (self = [super initWithLuaCore:luaCore frame:frame]) {
         self.labelBreakMode = NSLineBreakByTruncatingTail;
         self.userInteractionEnabled = YES;
+        self.fontSize = kLuaDefaultFontSize;
     }
     return self;
 }
