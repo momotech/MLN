@@ -58,7 +58,6 @@ function _class:setupTableView()
         --图标
         cell.imageView  = ImageView():width(25):height(25):marginLeft( 30):setGravity(Gravity.CENTER)
         cell.imageView:contentMode(ContentMode.SCALE_ASPECT_FIT):cornerRadius(cell.imageView:height() / 2)
-        cell.imageView:lazyLoad(false)
         cell.layout:addView(cell.imageView)
 
         --标题
@@ -69,7 +68,6 @@ function _class:setupTableView()
         --附件图片
         cell.attachImageView = ImageView():width(22):height(22):marginLeft( window:width() - 32):setGravity(Gravity.CENTER_VERTICAL)
         cell.attachImageView:contentMode(ContentMode.SCALE_ASPECT_FIT)
-        cell.attachImageView:lazyLoad(false)
         cell.contentView:addView(cell.attachImageView)
     end)
 
@@ -81,7 +79,6 @@ function _class:setupTableView()
         --图标
         cell.imageView  = ImageView():width(40):height(40):marginLeft( 20):setGravity(Gravity.CENTER_VERTICAL)
         cell.imageView:contentMode(ContentMode.SCALE_ASPECT_FILL):cornerRadius(20)
-        cell.imageView:lazyLoad(false)
         cell.imageView:bgColor(_Color.LightGray)
         cell.layout:addView(cell.imageView)
 
@@ -105,7 +102,6 @@ function _class:setupTableView()
         --附件图片
         cell.attachImageView = ImageView():width(45):height(45):setGravity(Gravity.CENTER_VERTICAL)
         cell.attachImageView:marginLeft( window:width() - cell.attachImageView:width() - 10)
-        cell.attachImageView:lazyLoad(false)
         cell.attachImageView:contentMode(ContentMode.SCALE_ASPECT_FILL)
         cell.contentView:addView(cell.attachImageView)
 
