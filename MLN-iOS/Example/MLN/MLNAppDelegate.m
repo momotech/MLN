@@ -13,6 +13,7 @@
 #import <UIImageView+AFNetworking.h>
 #import "MLNViewController.h"
 #import "MLNGalleryMainViewController.h"
+#import <MLNFile.h>
 
 @implementation MLNAppDelegate
 
@@ -24,6 +25,9 @@
         method_exchangeImplementations(class_getInstanceMethod([UIImageView class], @selector(sd_setImageWithURL:placeholderImage:)), class_getInstanceMethod([self class], @selector(sd_setImageWithURL:placeholderImage:)));
     }
     
+    // copy 主bundle中文件到沙盒中
+    [self copyJsonFilesToSandbox];
+    
     // 主页面展示
     self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
     UIViewController *rootViewController = [[MLNViewController alloc] init];
@@ -34,6 +38,37 @@
 
     return YES;
 }
+
+- (void)copyJsonFilesToSandbox
+{
+    NSString *jsonDirectoryPath = [[[NSBundle mainBundle] bundlePath] stringByAppendingPathComponent:@"/gallery/json"];
+    NSError *error = nil;
+    NSArray *jsonFilePaths = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:jsonDirectoryPath error:&error];
+    NSString *destFileDirectory = [[MLNFile fileManagerRootPath] stringByAppendingPathComponent:@"gallery/json"];
+    BOOL isDir = NO;
+    BOOL exist = [[NSFileManager defaultManager] fileExistsAtPath:destFileDirectory isDirectory:&isDir];
+    if (!exist) {
+        [[NSFileManager defaultManager] createDirectoryAtPath:destFileDirectory withIntermediateDirectories:YES attributes:nil error:nil];
+    } else {
+        for (NSString *filePath in jsonFilePaths) {
+            NSString *oldFilePath = [jsonDirectoryPath stringByAppendingPathComponent:filePath];
+            NSError *error = nil;
+            BOOL success = [[NSFileManager defaultManager] removeItemAtPath:oldFilePath error:&error];
+            if (!success) {
+                NSLog(@"-----> error:%@", error);
+            }
+        }
+    }
+    for (NSString *filePath in jsonFilePaths) {
+        NSString *srcFilePath = [jsonDirectoryPath stringByAppendingPathComponent:filePath];
+        NSString *dstFilePath = [destFileDirectory stringByAppendingPathComponent:filePath];
+        BOOL success = [[NSFileManager defaultManager] copyItemAtPath:srcFilePath toPath:dstFilePath error:NULL];
+        if (success) {
+            NSLog(@"------> %@", dstFilePath);
+        }
+    }
+}
+
 
 - (void)sd_setImageWithURL:(NSURL *)url
 {
