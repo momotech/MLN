@@ -24,6 +24,7 @@
 #import "MLNKitViewController.h"
 #import <MLNDevTool/MLNFPSLabel.h>
 #import <MLNDevTool/MLNLoadTimeStatistics.h>
+#import "MLNLuaPageViewController.h"
 
 @interface MLNViewController () <MLNKitInstanceErrorHandlerProtocol, MLNViewControllerProtocol, MLNKitInstanceDelegate>
 
@@ -33,7 +34,7 @@
 @property (nonatomic, strong) id<MLNImageLoaderProtocol> imgLoader;
 @property (nonatomic, strong) id<MLNNavigatorHandlerProtocol> navHandler;
 
-@property (nonatomic, strong) MLNKitViewController *kcv;
+@property (nonatomic, strong) MLNLuaPageViewController *kcv;
 @property (nonatomic, strong) UIButton *galleryButton;
 @property (nonatomic, strong) MLNFPSLabel *fpsLabel;
 @property (nonatomic, strong) UILabel *loadTimeLabel;
@@ -50,14 +51,14 @@
     self.refreshHandler = [[MLNMyRefreshHandler alloc] init];
     self.imgLoader = [[MLNMyImageHandler alloc] init];
     self.navHandler = [[MLNNavigatorHandler alloc] init];
-    
+
     MLNKitInstanceHandlersManager *handlersManager = [MLNKitInstanceHandlersManager defaultManager];
     handlersManager.errorHandler = self;
     handlersManager.httpHandler = self.httpHandler;
     handlersManager.scrollRefreshHandler = self.refreshHandler;
     handlersManager.imageLoader = self.imgLoader;
     handlersManager.navigatorHandler = self.navHandler;
-    
+
     [self setupSubController];
     [self setupSubviews];
 }
