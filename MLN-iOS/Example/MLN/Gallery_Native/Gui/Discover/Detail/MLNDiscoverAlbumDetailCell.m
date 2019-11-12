@@ -36,6 +36,9 @@
     [self.avatarImageView sd_setImageWithURL:[NSURL URLWithString:avatarImageString]];
     self.nameLabel.text = [NSString stringWithFormat:@"%@", [data valueForKey:@"artist_name"]];
     self.likeCountLabel.text = [NSString stringWithFormat:@"%@", [data valueForKey:@"file_duration"]];
+    
+    [self setNeedsLayout];
+    [self layoutIfNeeded];
 }
 
 - (void)layoutSubviews
@@ -47,7 +50,7 @@
     self.albumImageView.frame = CGRectMake(0, 0, cellWidth, albumImageViewH);
     
     CGFloat titleLabelY = albumImageViewH + 5;
-    CGSize titleLabelSize = [self.titleLabel.text sizeWithAttributes:@{NSFontAttributeName:[UIFont systemFontOfSize:10]}];
+    CGSize titleLabelSize = [self.titleLabel.text boundingRectWithSize:CGSizeMake(cellWidth, CGFLOAT_MAX) options:NSStringDrawingUsesFontLeading|NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName:[UIFont systemFontOfSize:12]} context:nil].size;
     self.titleLabel.frame = CGRectMake(0, titleLabelY, cellWidth, titleLabelSize.height);
     
     CGFloat avatarImageViewWH = 20;
@@ -60,6 +63,7 @@
     CGFloat nameLabelY = (avatarImageViewWH - nameLabelSize.height)/2.0 + avatarImageViewY;
     self.nameLabel.frame = CGRectMake(nameLabelX, nameLabelY, nameLabelSize.width, nameLabelSize.height);
     
+    [self.likeCountLabel sizeToFit];
     CGSize likeCountLabelSize = [self.likeCountLabel.text sizeWithAttributes:@{NSFontAttributeName:[UIFont systemFontOfSize:10]}];
     CGFloat likeCountLabelY = nameLabelY;
     CGFloat likeCountLabelX = cellWidth - likeCountLabelSize.width - 5;
@@ -89,7 +93,7 @@
     if (!_titleLabel) {
         _titleLabel = [[UILabel alloc] init];
         _titleLabel.font = [UIFont systemFontOfSize:12];
-        _titleLabel.numberOfLines = 3;
+        _titleLabel.numberOfLines = 0;
         _titleLabel.textColor = kTextColor;
         [self addSubview:_titleLabel];
     }

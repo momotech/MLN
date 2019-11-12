@@ -25,6 +25,7 @@
 @property (nonatomic, strong) MLNMyHttpHandler *myHttpHandler;
 @property (nonatomic, assign) NSInteger requestPageIndex;
 @property (nonatomic, strong) NSMutableArray *dataList;
+@property (nonatomic, strong) MLNDiscoverAblbumDeatilHeaderView *headerView;
 @end
 
 static NSString *kMLNDiscoverDetailHeaderID = @"kMLNDiscoverDetailHeaderID";
@@ -34,9 +35,10 @@ static NSString *kMLNDiscoverDetailCellID = @"kMLNDiscoverDetailCellID";
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
+    self.view.backgroundColor = [UIColor whiteColor];
     [self.navigationBar setTitle:@"灵感集"];
     [self requestInspirData:YES];
+    [self headerView];
     [self waterfallView];
 }
 
@@ -76,7 +78,7 @@ static NSString *kMLNDiscoverDetailCellID = @"kMLNDiscoverDetailCellID";
 
 - (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout referenceSizeForHeaderInSection:(NSInteger)section
 {
-    return CGSizeMake(kScreenWidth, 200);
+    return CGSizeMake(kScreenWidth, 0);
 }
 
 - (UICollectionReusableView *)collectionView:(UICollectionView *)collectionView viewForSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath
@@ -91,14 +93,25 @@ static NSString *kMLNDiscoverDetailCellID = @"kMLNDiscoverDetailCellID";
 }
 
 #pragma mark - Private method
+
+- (MLNDiscoverAblbumDeatilHeaderView *)headerView
+{
+    if (!_headerView) {
+        _headerView = [[MLNDiscoverAblbumDeatilHeaderView alloc] initWithFrame:CGRectMake(0, kNaviBarHeight, kScreenWidth, 200)];
+        [self.view addSubview:_headerView];
+    }
+    return _headerView;
+}
+
 - (MLNNativeWaterfallView *)waterfallView
 {
     if (!_waterfallView) {
         MLNNativeWaterfallLayout *layout = [[MLNNativeWaterfallLayout alloc] init];
+        layout.layoutInset = UIEdgeInsetsMake(10, 10, 10, 10);
         layout.itemSpacing = 10;
         layout.lineSpacing = 10;
         layout.delegate = self;
-        _waterfallView = [[MLNNativeWaterfallView alloc] initWithFrame:CGRectMake(0, kNaviBarHeight, kScreenWidth, kScreenHeight - kNaviBarHeight) collectionViewLayout:layout];
+        _waterfallView = [[MLNNativeWaterfallView alloc] initWithFrame:CGRectMake(0, kNaviBarHeight + 220, kScreenWidth, kScreenHeight - kNaviBarHeight - 200 - kTabbBarHeight) collectionViewLayout:layout];
         _waterfallView.backgroundColor = [UIColor whiteColor];
         _waterfallView.dataSource = self;
         _waterfallView.delegate = self;
@@ -138,6 +151,7 @@ static NSString *kMLNDiscoverDetailCellID = @"kMLNDiscoverDetailCellID";
             NSArray *dataArray = [respose valueForKey:@"result"];
             [self.dataList addObjectsFromArray:dataArray];
         }
+        [self.headerView reloadWithData:self.dataList];
         [self.waterfallView reloadData];
     }];
 #pragma clang diagnostic pop

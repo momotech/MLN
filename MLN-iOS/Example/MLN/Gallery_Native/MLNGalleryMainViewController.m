@@ -72,7 +72,7 @@
 {
     UIViewController *controller = [NSClassFromString(clazzString) new];
     UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:controller];
-    [navigationController setNavigationBarHidden:YES];
+    [navigationController setNavigationBarHidden:YES animated:YES];
     [[SDWebImageDownloader sharedDownloader] downloadImageWithURL:[NSURL URLWithString:normalImageString] completed:^(UIImage * _Nullable image, NSData * _Nullable data, NSError * _Nullable error, BOOL finished) {
         UIImage *newImage = [UIImage imageWithImage:image scaledToSize:CGSizeMake(30, 30)];
         navigationController.tabBarItem.image = [newImage imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];

@@ -28,17 +28,16 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
-    UIView *redView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 100, 100)];
-    redView.backgroundColor = [UIColor redColor];
-    [self.view addSubview:redView];
-
     [self setupSubviews];
     [self requestData:YES];
 }
 
 - (void)setupSubviews
 {
+    UIView *placeholderView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 100, 1)];
+    placeholderView.backgroundColor = [UIColor clearColor];
+    [self.view addSubview:placeholderView];
+    
     NSArray *tiltles = @[@"关注",@"推荐"];
     self.segementView = [[MLNNativeTabSegmentView alloc] initWithFrame:CGRectMake(0, 0, kScreenWidth, kNaviBarHeight) segmentTitles:tiltles tapBlock:^(MLNNativeTabSegmentView * _Nonnull tapView, NSInteger index) {
         [self.viewPager scrollToPage:index aniamted:YES];
