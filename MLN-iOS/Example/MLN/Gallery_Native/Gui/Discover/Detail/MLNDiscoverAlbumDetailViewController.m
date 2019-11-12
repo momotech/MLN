@@ -45,7 +45,7 @@ static NSString *kMLNDiscoverDetailCellID = @"kMLNDiscoverDetailCellID";
     [super viewDidLayoutSubviews];
     
     [[MLNLoadTimeStatistics sharedInstance] recordEndTime];
-    NSLog(@">>>>>>>>>二级页面灵感集页面加载时间:%@", @([[MLNLoadTimeStatistics sharedInstance] allLoadTime] * 1000));
+    NSLog(@"<<<<<<<<<<<<<<<<<<原生二级页面布局完成:%@", @([[MLNLoadTimeStatistics sharedInstance] allLoadTime] * 1000));
 }
 
 #pragma mark - Actions

@@ -62,15 +62,6 @@
     [self.view addSubview:self.viewPager];
 }
 
-- (void)viewDidAppear:(BOOL)animated
-{
-    [super viewDidAppear:animated];
-    
-    [[MLNLoadTimeStatistics sharedInstance] recordEndTime];
-    NSLog(@">>>>>>>>>>>>>>>>>loadTime:%@", @([[MLNLoadTimeStatistics sharedInstance] allLoadTime] * 1000));
-}
-
-
 - (void)loadMoreData
 {
     [self requestData:NO];

@@ -42,14 +42,6 @@ static NSString *kMLNNativeWaterfallViewCellID = @"kMLNNativeWaterfallViewCellID
     [self waterfallView];
 }
 
-- (void)viewDidLayoutSubviews
-{
-    [super viewDidLayoutSubviews];
-    
-    [[MLNLoadTimeStatistics sharedInstance] recordEndTime];
-    NSLog(@">>>>>>>>>>>>>发现布局完成：%@", @([[MLNLoadTimeStatistics sharedInstance] allLoadTime] * 1000));
-}
-
 #pragma mark - Actions
 - (void)loadMoreData
 {
@@ -72,6 +64,7 @@ static NSString *kMLNNativeWaterfallViewCellID = @"kMLNNativeWaterfallViewCellID
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
+    NSLog(@"<<<<<<<<<<<<<<<<<<原生创建Controller");
     [[MLNLoadTimeStatistics sharedInstance] recordStartTime];
     MLNDiscoverAlbumDetailViewController *detailViewController = [[MLNDiscoverAlbumDetailViewController alloc] init];
     [self.navigationController pushViewController:detailViewController animated:YES];

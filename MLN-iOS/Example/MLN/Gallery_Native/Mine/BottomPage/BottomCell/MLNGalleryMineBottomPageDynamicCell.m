@@ -8,7 +8,7 @@
 
 #import "MLNGalleryMineBottomPageDynamicCell.h"
 #import "MLNGalleryMinePageCellDynamicModel.h"
-#import <AFNetworking/UIImageView+AFNetworking.h>
+#import <UIImageView+WebCache.h>
 
 @interface MLNGalleryMineBottomPageDynamicCell()
 
@@ -41,7 +41,7 @@
     
     self.dayLabel.text = model.day;
     self.dateLabel.text = model.date;
-    [self.imageView setImageWithURL:[NSURL URLWithString:model.picture]];
+    [self.imageView sd_setImageWithURL:[NSURL URLWithString:model.picture]];
 }
 
 - (UILabel *)dayLabel

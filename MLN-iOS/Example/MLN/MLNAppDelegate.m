@@ -7,13 +7,42 @@
 //
 
 #import "MLNAppDelegate.h"
+#import "MLNGalleryNative.h"
+#import <objc/runtime.h>
+#import <UIImageView+WebCache.h>
+#import <UIImageView+AFNetworking.h>
+#import "MLNViewController.h"
+#import "MLNGalleryMainViewController.h"
 
 @implementation MLNAppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    // Override point for customization after application launch.
+    // 根据标志位判断是否禁用图片加载功能
+    if (kDisableImageLoad) {
+        method_exchangeImplementations(class_getInstanceMethod([UIImageView class], @selector(sd_setImageWithURL:)), class_getInstanceMethod([self class], @selector(sd_setImageWithURL:)));
+        method_exchangeImplementations(class_getInstanceMethod([UIImageView class], @selector(sd_setImageWithURL:placeholderImage:)), class_getInstanceMethod([self class], @selector(sd_setImageWithURL:placeholderImage:)));
+    }
+    
+    // 主页面展示
+    self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
+    UIViewController *rootViewController = [[MLNViewController alloc] init];
+    UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:rootViewController];
+    [navigationController.navigationBar setHidden:YES];
+    self.window.rootViewController = navigationController;
+    [self.window makeKeyAndVisible];
+
     return YES;
+}
+
+- (void)sd_setImageWithURL:(NSURL *)url
+{
+    // @note: 测试内存占用时候去掉图片
+}
+
+- (void)sd_setImageWithURL:(NSURL *)url placeholderImage:(nullable UIImage *)placeholder
+{
+    // @note: 测试内存占用时候去掉图片
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application

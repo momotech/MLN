@@ -8,7 +8,7 @@
 
 #import "MLNGalleryMessageDescCell.h"
 #import "MLNGalleryMessageDescCellModel.h"
-#import <AFNetworking/UIImageView+AFNetworking.h>
+#import <UIImageView+WebCache.h>
 
 @interface MLNGalleryMessageDescCell()
 
@@ -45,7 +45,7 @@
 - (void)setModel:(MLNGalleryMessageDescCellModel *)model
 {
     [super setModel:model];
-    [self.avatarIcon setImageWithURL:[NSURL URLWithString:model.avatar]];
+    [self.avatarIcon sd_setImageWithURL:[NSURL URLWithString:model.avatar]];
     
     self.nameLabel.text = model.name;
     self.descLabel.text = model.desc;

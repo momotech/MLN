@@ -43,13 +43,6 @@
     [self setupPageView];
 }
 
-- (void)viewDidLayoutSubviews
-{
-    [super viewDidLayoutSubviews];
-    [[MLNLoadTimeStatistics sharedInstance] recordEndTime];
-    NSLog(@">>>>>>>>>>>>>个人中心布局完成：%@", @([[MLNLoadTimeStatistics sharedInstance] allLoadTime] * 1000));
-}
-
 - (void)setupNavigation
 {
     [self.navigationBar setTitle:@"我的"];

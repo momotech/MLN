@@ -50,6 +50,7 @@
             }
         }
     }
+    NSLog(@">>>>>>>>>>>>>创建Lua页面");
     [[MLNLoadTimeStatistics sharedInstance] recordStartTime];
     UIViewController *topViewController = [MLNControlContext mln_topViewController];
     MLNLuaPageViewController *controller = [[MLNLuaPageViewController alloc] initWithActionItem:actionItem];
@@ -101,7 +102,7 @@
 - (void)instance:(MLNKitInstance *)instance didFinishRun:(NSString *)entryFileName
 {
     [[MLNLoadTimeStatistics sharedInstance] recordEndTime];
-    NSLog(@"------->布局完成：%@", @([[MLNLoadTimeStatistics sharedInstance] allLoadTime] * 1000));
+    NSLog(@">>>>>>>>>>>>>Lua页面布局完成：%@", @([[MLNLoadTimeStatistics sharedInstance] allLoadTime] * 1000));
 }
 
 - (void)checkPackage

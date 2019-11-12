@@ -62,7 +62,6 @@
 }
 
 - (void)showDemoClick:(id)sender {
-    [[MLNLoadTimeStatistics sharedInstance] recordStartTime];
     NSString *entryFile = @"Main.lua";
     MLNLuaBundle *bundle = [MLNLuaBundle mainBundleWithPath:@"gallery"];
     MLNKitViewController *kcv = [[MLNKitViewController alloc] initWithEntryFilePath:entryFile];
@@ -92,18 +91,6 @@
     [[MLNLoadTimeStatistics sharedInstance] recordStartTime];
     self.galleryMainVc = [[MLNGalleryMainViewController alloc] init];
     [self presentViewController:self.galleryMainVc animated:YES completion:nil];
-}
-
-#pragma mark - MLNKitViewControllerDelegate
-- (void)kitViewController:(MLNKitViewController *)viewController didFinishRun:(NSString *)entryFileName
-{
-    NSLog(@">>>>>>>>>>>>>Lua viewDidAppear：%@", @([[MLNLoadTimeStatistics sharedInstance] allLoadTime] * 1000));
-}
-
-- (void)kitViewController:(MLNKitViewController *)viewController viewDidAppear:(BOOL)animated
-{
-    [[MLNLoadTimeStatistics sharedInstance] recordEndTime];
-    NSLog(@">>>>>>>>>>>>>Lua viewDidAppear：%@", @([[MLNLoadTimeStatistics sharedInstance] allLoadTime] * 1000));
 }
 
 

@@ -26,8 +26,9 @@
 #import <MLNDevTool/MLNLoadTimeStatistics.h>
 #import "MLNGalleryNative.h"
 #import "MLNLuaPageViewController.h"
+#import "MLNGalleryMainViewController.h"
 
-@interface MLNViewController () <MLNKitInstanceErrorHandlerProtocol, MLNViewControllerProtocol, MLNKitInstanceDelegate>
+@interface MLNViewController () <MLNViewControllerProtocol, MLNKitInstanceDelegate>
 
 @property (nonatomic, strong) MLNKitInstance *kitInstance;
 @property (nonatomic, strong) id<MLNHttpHandlerProtocol> httpHandler;
@@ -35,7 +36,7 @@
 @property (nonatomic, strong) id<MLNImageLoaderProtocol> imgLoader;
 @property (nonatomic, strong) id<MLNNavigatorHandlerProtocol> navHandler;
 
-@property (nonatomic, strong) MLNLuaPageViewController *kcv;
+@property (nonatomic, strong) UIViewController *contentViewController;
 @property (nonatomic, strong) UIButton *galleryButton;
 @property (nonatomic, strong) MLNFPSLabel *fpsLabel;
 @property (nonatomic, strong) UILabel *loadTimeLabel;
@@ -54,31 +55,41 @@
     self.navHandler = [[MLNNavigatorHandler alloc] init];
 
     MLNKitInstanceHandlersManager *handlersManager = [MLNKitInstanceHandlersManager defaultManager];
-    handlersManager.errorHandler = self;
     handlersManager.httpHandler = self.httpHandler;
     handlersManager.scrollRefreshHandler = self.refreshHandler;
     handlersManager.imageLoader = self.imgLoader;
     handlersManager.navigatorHandler = self.navHandler;
 
     [self setupSubController];
-    [self setupSubviews];
+    
+    if (!kMemoryTest) {
+        [self setupSubviews];
+    }
 }
 
 - (void)setupSubController
 {
     [[MLNLoadTimeStatistics sharedInstance] recordStartTime];
-    NSString *entryFile = @"Main.lua";
-    MLNLuaBundle *bundle = [MLNLuaBundle mainBundleWithPath:@"gallery"];
-    MLNLuaPageViewController *kcv = [[MLNLuaPageViewController alloc] initWithEntryFilePath:entryFile];
-    kcv.kitInstance.delegate = self;
-    [kcv regClasses:@[[MLNTestMe class],
-                      [MLNStaticTest class],
-                      [MLNGlobalVarTest class],
-                      [MLNGlobalFuncTest class]]];
-    [kcv changeCurrentBundlePath:bundle.bundlePath];
-    [self addChildViewController:kcv];
-    [self.view addSubview:kcv.view];
-    self.kcv = kcv;
+    
+    if (kLuaPage) {
+        NSString *entryFile = @"Main.lua";
+        MLNLuaBundle *bundle = [MLNLuaBundle mainBundleWithPath:@"gallery"];
+        MLNLuaPageViewController *kcv = [[MLNLuaPageViewController alloc] initWithEntryFilePath:entryFile];
+        kcv.kitInstance.delegate = self;
+        [kcv regClasses:@[[MLNTestMe class],
+                          [MLNStaticTest class],
+                          [MLNGlobalVarTest class],
+                          [MLNGlobalFuncTest class]]];
+        [kcv changeCurrentBundlePath:bundle.bundlePath];
+        [self addChildViewController:kcv];
+        [self.view addSubview:kcv.view];
+        self.contentViewController = kcv;
+    } else {
+        MLNGalleryMainViewController *mainVc = [[MLNGalleryMainViewController alloc] init];
+        [self addChildViewController:mainVc];
+        [self.view addSubview:mainVc.view];
+        self.contentViewController = mainVc;
+    }
 }
 
 - (void)setupSubviews
@@ -97,7 +108,7 @@
     
     CGFloat screenHeight = [UIScreen mainScreen].bounds.size.height;
     self.fpsLabel = [[MLNFPSLabel alloc] initWithFrame:CGRectMake(10, screenHeight * 0.8, 50, 20)];
-    [self.kcv.view addSubview:self.fpsLabel];
+    [self.contentViewController.view addSubview:self.fpsLabel];
 }
 
 - (void)galleryButtonClicked:(id)sender
@@ -110,39 +121,16 @@
 {
     [super viewDidAppear:animated];
     
-    
-    [self showLuaScriptLoadTime];
+    if (!kMemoryTest) {
+        [self showLuaScriptLoadTime];
+    }
 }
-
-#pragma mark - MLNUIInStanceErrorHandlerProtocol
-- (BOOL)canHandleAssert:(MLNKitInstance *)instance
-{
-    return YES;
-}
-
-- (void)instance:(MLNKitInstance *)instance error:(NSString *)error
-{
-    NSLog(@"%@%@",instance,error);
-}
-
-- (void)instance:(MLNKitInstance *)instance luaError:(NSString *)error luaTraceback:(NSString *)luaTraceback
-{
-    NSLog(@"%@%@",instance,error);
-}
-
-#pragma mark - MLNKitInstanceDelegate
-- (void)instance:(MLNKitInstance *)instance didFinishRun:(NSString *)entryFileName
-{
-    [[MLNLoadTimeStatistics sharedInstance] recordEndTime];
-//    NSLog(@"------->布局完成：%@", @([[MLNLoadTimeStatistics sharedInstance] allLoadTime] * 1000));
-}
-
 
 #pragma mark - Private method
 
 - (void)showLuaScriptLoadTime
 {
-    [self.kcv.view addSubview:self.loadTimeLabel];
+    [self.contentViewController.view addSubview:self.loadTimeLabel];
     self.loadTimeLabel.hidden = NO;
     self.loadTimeLabel.text = [NSString stringWithFormat:@"%.0f ms", [self.loadTimeStatistics luaCoreCreateTime] * 1000];
     CGSize loadTimeLabelSize = [self.loadTimeLabel.text sizeWithAttributes:@{NSFontAttributeName:[UIFont systemFontOfSize:12]}];
