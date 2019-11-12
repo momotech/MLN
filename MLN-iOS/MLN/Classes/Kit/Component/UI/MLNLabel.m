@@ -260,7 +260,6 @@
     if (!_innerLabel) {
         _innerLabel = [[UILabel alloc] init];
         _innerLabel.font = kLuaDefaultFont;
-        _fontSize = kLuaDefaultFontSize;
     }
     return _innerLabel;
 }
