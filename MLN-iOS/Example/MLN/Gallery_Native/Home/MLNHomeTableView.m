@@ -139,6 +139,7 @@ static NSString *kHomeTableViewCell = @"kHomeTableViewCell";
 {
     if (!_tableView) {
         _tableView = [[UITableView alloc] initWithFrame:self.bounds style:UITableViewStyleGrouped];
+        _tableView.backgroundColor = [UIColor whiteColor];
         _tableView.dataSource = self;
         _tableView.delegate = self;
         _tableView.separatorStyle = UITableViewCellSeparatorStyleNone;

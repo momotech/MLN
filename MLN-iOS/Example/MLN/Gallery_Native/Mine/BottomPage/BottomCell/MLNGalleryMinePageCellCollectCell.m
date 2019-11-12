@@ -28,7 +28,6 @@
     self.titleLabel.frame = CGRectMake(CGRectGetMaxX(self.avatarView.frame) + 10, 5, 100, 18);
     [self.descLabel sizeToFit];
     self.descLabel.frame = CGRectMake(CGRectGetMaxX(self.avatarView.frame) + 10 , CGRectGetMaxY(self.titleLabel.frame) + 5 , self.descLabel.frame.size.width, self.descLabel.frame.size.height);
-    
     self.rightIcon.center = CGPointMake(self.contentView.frame.size.width - 40, self.contentView.frame.size.height /2.0);
 }
 

@@ -21,7 +21,7 @@
 #define kMemoryTest NO
 
 // 主页面展示：yes:主页面展示lua no:主页面展示native
-#define kLuaPage YES
+#define kLuaPage NO
 
 #endif /* MLNGalleryNative_h */
 

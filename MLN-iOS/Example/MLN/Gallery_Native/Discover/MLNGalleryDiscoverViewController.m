@@ -75,10 +75,10 @@ static NSString *kMLNNativeWaterfallViewCellID = @"kMLNNativeWaterfallViewCellID
 - (CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout heightForItemAtIndexPath:(NSIndexPath *)indexPath
 {
     if (indexPath.row == 0) {
-        return 280;
+        return 260;
     }
     
-    return 300;
+    return 280;
 }
 
 - (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout referenceSizeForHeaderInSection:(NSInteger)section
@@ -98,6 +98,7 @@ static NSString *kMLNNativeWaterfallViewCellID = @"kMLNNativeWaterfallViewCellID
 {
     if (!_waterfallView) {
         MLNNativeWaterfallLayout *layout = [[MLNNativeWaterfallLayout alloc] init];
+        layout.layoutInset = UIEdgeInsetsMake(10, 10, 10, 10);
         layout.itemSpacing = 10;
         layout.lineSpacing = 10;
         layout.delegate = self;

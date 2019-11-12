@@ -52,7 +52,7 @@
 {
     if (!_lightGrayView) {
         _lightGrayView = [[UIView alloc] init];
-        _lightGrayView.backgroundColor = [UIColor colorWithRed:121/255.0 green:121/255.0 blue:121/255.0 alpha:0.4];
+        _lightGrayView.backgroundColor = [UIColor colorWithRed:245/255.0 green:245/255.0 blue:245/255.0 alpha:1.0];
         [self.contentView addSubview:_lightGrayView];
     }
     return _lightGrayView;

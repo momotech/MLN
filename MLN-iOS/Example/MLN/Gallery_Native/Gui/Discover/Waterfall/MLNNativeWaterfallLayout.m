@@ -64,18 +64,22 @@
         NSIndexPath *supplementaryViewIndexPath = [NSIndexPath indexPathForRow:0 inSection:section];
         CGSize size = CGSizeZero;
         if (section == 0) {
-            size = [self.delegate collectionView:self.collectionView layout:self referenceSizeForHeaderInSection:section];
-            size.height = size.height < 0 ? 0 : size.height;
-            //头视图的高度不为0并且根据代理方法能取到对应的头视图的时候，添加对应头视图的布局对象
-            UICollectionViewLayoutAttributes *attribute = [UICollectionViewLayoutAttributes layoutAttributesForSupplementaryViewOfKind:UICollectionElementKindSectionHeader withIndexPath:supplementaryViewIndexPath];
-            attribute.frame = CGRectMake(self.layoutInset.left, self.startY, self.collectionView.frame.size.width - self.layoutInset.left - self.layoutInset.right, size.height);
-            
-            //保存布局对象
-            self.headLayoutInfo[supplementaryViewIndexPath] = attribute;
-            //设置下个布局对象的开始Y值
-            self.startY = self.startY + size.height;
-            
-            self.startY += self.lineSpacing;
+            if ([self.delegate respondsToSelector:@selector(collectionView:layout:referenceSizeForHeaderInSection:)]) {
+                size = [self.delegate collectionView:self.collectionView layout:self referenceSizeForHeaderInSection:section];
+            }
+            if (size.height > 0) {
+                size.height = size.height < 0 ? 0 : size.height;
+                //头视图的高度不为0并且根据代理方法能取到对应的头视图的时候，添加对应头视图的布局对象
+                UICollectionViewLayoutAttributes *attribute = [UICollectionViewLayoutAttributes layoutAttributesForSupplementaryViewOfKind:UICollectionElementKindSectionHeader withIndexPath:supplementaryViewIndexPath];
+                attribute.frame = CGRectMake(self.layoutInset.left, self.startY, self.collectionView.frame.size.width - self.layoutInset.left - self.layoutInset.right, size.height);
+                
+                //保存布局对象
+                self.headLayoutInfo[supplementaryViewIndexPath] = attribute;
+                //设置下个布局对象的开始Y值
+                self.startY = self.startY + size.height;
+                
+                self.startY += self.lineSpacing;
+            }
         }
         
         //将Section第一排cell的frame的Y值进行设置
