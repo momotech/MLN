@@ -33,10 +33,10 @@ end
 function _class:createSubviews()
     self:setupContainerView()
     self:setupTitleView()
+    self:setupHeaderView()
     --waterfallview
     self.waterfall = self:setupWaterfallView()
     self.containerView:addView(self.waterfall)
-    self:setupHeaderView()
 end
 ---容器视图
 ---@public
@@ -59,18 +59,23 @@ function _class:setupTitleView()
 
     --返回
     self.backBtn = ImageView():width(22):height(22):marginLeft(20):setGravity(MBit:bor(Gravity.LEFT, Gravity.CENTER_VERTICAL))
-    self.backBtn:image("https://s.momocdn.com/w/u/others/2019/09/01/1567316383505-minmore.png")
+    self.backBtn:image("icon_back")
     self.navibar:addView(self.backBtn)
+    self.backBtn:onClick(function()
+        Navigator:closeSelf()
+    end)
 
     --分享
     self.shareBtn = ImageView():width(22):height(22):marginRight(20):setGravity(MBit:bor(Gravity.RIGHT, Gravity.CENTER_VERTICAL))
-    self.shareBtn:image("https://s.momocdn.com/w/u/others/2019/09/01/1567316383469-minshare.png")
+    self.shareBtn:image("1567316383469-minshare")
     self.navibar:addView(self.shareBtn)
 
 end
 ---header设置
 function _class:setupHeaderView()
     self:setupTopView()
+    self.containerView:addView(self.HeaderView)
+--[[
     self.waterfallAdapter:initHeader(function(header)
         header.contentView:addView(self.HeaderView)
     end)
@@ -84,10 +89,11 @@ function _class:setupHeaderView()
     self.waterfallAdapter:heightForHeader(function()
         return 250
     end)
+--]]
 end
 ---header视图
 function _class:setupTopView()
-    self.HeaderView = LinearLayout(LinearType.VERTICAL):width(MeasurementType.MATCH_PARENT):height(MeasurementType.MATCH_PARENT):bgColor(_Color.Gray)
+    self.HeaderView = LinearLayout(LinearType.VERTICAL):width(MeasurementType.MATCH_PARENT):height(231):bgColor(_Color.Gray)
 
     self.topView = View():width(MeasurementType.MATCH_PARENT):height(MeasurementType.WRAP_CONTENT):padding(20, 10, 10, 10)
     self.HeaderView:addView(self.topView)
@@ -139,7 +145,6 @@ function _class:setupTopView()
     --line
     self.line = View():width(MeasurementType.MATCH_PARENT):height(1):bgColor(_Color.LightGray)
     self.bottomView:addView(self.line)
-
 end
 ---灵感集标签列表
 function _class:setupTapListView()
@@ -194,7 +199,7 @@ end
 
 function _class:setupWaterfallView()
     self.waterfall = WaterfallView(false, true):width(MeasurementType.MATCH_PARENT):height(MeasurementType.MATCH_PARENT)
-    self.waterfallLayout = WaterfallLayoutFix():itemSpacing(12):lineSpacing(18):spanCount(2)
+    self.waterfallLayout = WaterfallLayoutFix():itemSpacing(12):lineSpacing(18):spanCount(2):layoutInset(10)
     self.waterfallAdapter = WaterfallAdapter()
     self.waterfallAdapter:initCell(function(cell)
         local REQCELL = require("MMLuaKitGallery.IdeaWaterfallCell"):new()
@@ -282,21 +287,21 @@ function _class:requestNetwork(first, complete)
                 complete(false, nil)
             end
         end)
-        return
     else
-        HTTPHandler = require("MMLuaKitGallery.HTTPHandler")
-        HTTPHandler:GET("https://api.apiopen.top/musicRankingsDetails", { type = self.pageIndex }, function(success, response, err)
-            if success then
-                local data = response:get("result")
-                if first then
-                    self.dataList = data
-                elseif data then
-                    self.dataList:addAll(data)
-                end
-                complete(success, data)
-            else
-                error(err:get("errmsg"))
-                complete(false, nil)
+        File:asyncReadFile('file://gallery/json/musicRank.json', function(codeNumber, response)
+            print("codeNumber: " .. tostring(codeNumber))
+            map = StringUtil:jsonToMap(response)
+            if codeNumber == 0 then
+            local data = map:get("result")
+            if first then
+                self.dataList = data
+            elseif data then
+                self.dataList:addAll(data)
+            end
+            complete(true, data)
+        else
+            --error(err:get("errmsg"))
+            complete(false, nil)
             end
         end)
     end
@@ -314,11 +319,5 @@ function _class:setupDataSource()
         end
     end)
 end
-
-
-
-_class:new()
-window:addView(_class:rootView())
-
 
 return _class

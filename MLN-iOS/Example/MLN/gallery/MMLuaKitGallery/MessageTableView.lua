@@ -252,21 +252,19 @@ function _class:request(first, complete)
             end
         end)
 
-        return
+    else
+        File:asyncReadFile('file://gallery/json/message.json', function(codeNumber, response)
+            map = StringUtil:jsonToMap(response)
+            if codeNumber == 0 then
+                local data = map:get("result"):get('data')
+                self:constructData(first, data)
+                complete(true, data)
+            else
+                --error(err:get("errmsg"))
+                complete(false, nil)
+            end
+        end)
     end
-
-    HTTPHandler = require("MMLuaKitGallery.HTTPHandler")
-    HTTPHandler:GET("https://www.apiopen.top/femaleNameApi", {page = self.requestIndex}, function(success, response, err)
-        if success then
-            result = response:get('result')
-            data = result:get("data")
-            self:constructData(first, data)
-            complete(success, data)
-        else
-            error(err:get("errmsg"))
-            complete(false, nil)
-        end
-    end)
 end
 
 ---@private
