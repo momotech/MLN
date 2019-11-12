@@ -37,17 +37,23 @@
 
 - (void)setupBackButton
 {
-    [self backButton];
-    
-    CGFloat screenHeight = [UIScreen mainScreen].bounds.size.height;
-    self.fpsLabel = [[MLNFPSLabel alloc] initWithFrame:CGRectMake(10, screenHeight * 0.8, 50, 20)];
-    [self.view addSubview:self.fpsLabel];
+    if (!kMemoryTest) {
+        [self backButton];
+        
+        CGFloat screenHeight = [UIScreen mainScreen].bounds.size.height;
+        self.fpsLabel = [[MLNFPSLabel alloc] initWithFrame:CGRectMake(10, screenHeight * 0.8, 50, 20)];
+        [self.view addSubview:self.fpsLabel];
+    }
 }
 
 - (void)setupTabbarItems
 {
     UIViewController *homeNavi = [self createControllerWithClass:@"MLNGalleryHomeViewController" normalImage:self.normalImage[0] selectedImage:self.selectedImage[0]];
     [self addChildViewController:homeNavi];
+    
+    if (kMemoryTest) { // 开启主页内存测试，仅加载home页面
+        return;
+    }
     
     UIViewController *discoverNav = [self createControllerWithClass:@"MLNGalleryDiscoverViewController" normalImage:self.normalImage[1] selectedImage:self.selectedImage[1]];
     [self addChildViewController:discoverNav];

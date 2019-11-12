@@ -8,7 +8,7 @@
 
 #import "MLNGalleryMineBottomPageHomeCell.h"
 #import "MLNGalleryMinePageCellHomeModel.h"
-#import <AFNetworking/UIImageView+AFNetworking.h>
+#import <UIImageView+WebCache.h>
 
 @interface MLNGalleryMineBottomPageHomeCell()
 
@@ -27,12 +27,7 @@
 - (void)setCellModel:(MLNGalleryMinePageCellHomeModel *)cellModel
 {
     [super setCellModel:(MLNGalleryMinePageCellBaseModel *)cellModel];
-    
-    UIImage *placeholder = nil;
-    if (cellModel.placeholder) {
-        placeholder = [UIImage imageNamed:cellModel.placeholder];
-    }
-    [self.infoImageView setImageWithURL:[NSURL URLWithString:cellModel.picture] placeholderImage:placeholder];
+    [self.infoImageView sd_setImageWithURL:[NSURL URLWithString:cellModel.picture]];
     
 }
 

@@ -39,7 +39,7 @@
     self.contentLabel.frame = CGRectMake(contentLabelX, contentLabelY, contentLabelW, contentLabelH);
     
     [[MLNLoadTimeStatistics sharedInstance] recordEndTime];
-    NSLog(@">>>>>>>>消息二级页面加载时间：%@", @([[MLNLoadTimeStatistics sharedInstance]allLoadTime] * 1000));
+    NSLog(@"<<<<<<<<<<<<<<<<<<原生消息二级页面私信布局完成：%@", @([[MLNLoadTimeStatistics sharedInstance]allLoadTime] * 1000));
 }
 
 

@@ -8,7 +8,7 @@
 
 #import "MLNGalleryMinePageCellCollectCell.h"
 #import "MLNGalleryMinePageCellCollectModel.h"
-#import <AFNetworking/UIImageView+AFNetworking.h>
+#import <UIImageView+WebCache.h>
 
 @interface MLNGalleryMinePageCellCollectCell()
 
@@ -36,10 +36,10 @@
 - (void)setCellModel:(MLNGalleryMinePageCellCollectCellModel *)cellModel
 {
     _cellModel = cellModel;
-    [self.avatarView setImageWithURL:[NSURL URLWithString:cellModel.avatar]];
+    [self.avatarView sd_setImageWithURL:[NSURL URLWithString:cellModel.avatar]];
     self.titleLabel.text = cellModel.title;
     self.descLabel.text = cellModel.desc;
-    [self.rightIcon setImageWithURL:[NSURL URLWithString:cellModel.righticon]];
+    [self.rightIcon sd_setImageWithURL:[NSURL URLWithString:cellModel.righticon]];
 }
 
 - (UIImageView *)avatarView

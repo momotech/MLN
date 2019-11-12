@@ -8,7 +8,7 @@
 
 #import "MLNGalleryMessageToolCell.h"
 #import "MLNGalleryMessageToolCellModel.h"
-#import <AFNetworking/UIImageView+AFNetworking.h>
+#import <UIImageView+WebCache.h>
 
 @interface MLNGalleryMessageToolCell()
 
@@ -36,8 +36,8 @@
     [super setModel:model];
     
     self.titleLabel.text = model.title;
-    [self.leftView setImageWithURL:[NSURL URLWithString:model.leftIcon]];
-    [self.rightView setImageWithURL:[NSURL URLWithString:model.rightIcon]];
+    [self.leftView sd_setImageWithURL:[NSURL URLWithString:model.leftIcon]];
+    [self.rightView sd_setImageWithURL:[NSURL URLWithString:model.rightIcon]];
 }
 
 #pragma mark - getter

@@ -9,7 +9,7 @@
 #import "MLNGalleryMineHeaderView.h"
 #import "MLNGalleryInfoNumberView.h"
 #import "MLNGalleryMineInfoViewModel.h"
-#import <AFNetworking/UIImageView+AFNetworking.h>
+#import <UIImageView+WebCache.h>
 
 @interface MLNGalleryMineHeaderView()
 
@@ -70,11 +70,7 @@
 - (void)setMineInfoModel:(MLNGalleryMineInfoViewModel *)mineInfoModel
 {
     _mineInfoModel = mineInfoModel;
-    UIImage *placeholder = nil;
-    if (mineInfoModel.placeholder != nil) {
-        placeholder  = [UIImage imageNamed:mineInfoModel.placeholder];
-    }
-    [self.avatarImageView setImageWithURL:[NSURL URLWithString:mineInfoModel.avatar] placeholderImage:placeholder];
+    [self.avatarImageView sd_setImageWithURL:[NSURL URLWithString:mineInfoModel.avatar]];
     
     self.nameLabel.text = mineInfoModel.name;
     self.locationLabel.text = mineInfoModel.location;
