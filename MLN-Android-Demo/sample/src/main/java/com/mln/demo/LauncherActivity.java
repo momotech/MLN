@@ -7,6 +7,7 @@ import android.view.View;
 import com.immomo.mls.InitData;
 import com.immomo.mls.MLSBundleUtils;
 import com.mln.demo.android.activity.MainTabActivity;
+import com.mln.demo.mln.activity.LuaViewActivity;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -31,7 +32,7 @@ public class LauncherActivity extends AppCompatActivity implements View.OnClickL
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.mln_btn:
-                Intent intent = new Intent(this, com.immomo.mls.activity.LuaViewActivity.class);
+                Intent intent = new Intent(this, LuaViewActivity.class);
                 String file = "file://android_asset/MMLuaKitGallery/meilishuo.lua";
                 InitData initData = MLSBundleUtils.createInitData(file);
                 intent.putExtras(MLSBundleUtils.createBundle(initData));

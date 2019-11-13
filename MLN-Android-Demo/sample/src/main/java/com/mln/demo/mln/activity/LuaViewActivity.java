@@ -4,15 +4,17 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
+import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.immomo.mls.InitData;
 import com.immomo.mls.MLSBundleUtils;
 import com.immomo.mls.MLSInstance;
 import com.immomo.mls.ScriptStateListener;
+import com.mln.demo.LauncherActivity;
+import com.mln.demo.R;
 
 import androidx.annotation.Nullable;
 
@@ -23,24 +25,25 @@ import androidx.annotation.Nullable;
 public class LuaViewActivity extends BaseActivity {
 
     private MLSInstance instance;
-    private static boolean isGotoMeilishuo = true;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         final long startTime = System.currentTimeMillis();
         Log.d("keye", "onCreate:   cast = " + startTime);
-        FrameLayout frameLayout = new FrameLayout(this);
+//        FrameLayout frameLayout = new FrameLayout(this);
 //        frameLayout.setFitsSystemWindows(true);
 
-        getWindow().getDecorView().getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            //当layout结束后回调此方法
-            @Override
-            public void onGlobalLayout() {
-                Log.d("keye", "onGlobalLayout:  layout cast = " + (System.currentTimeMillis() - startTime));
-            }
-        });
+//        getWindow().getDecorView().getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+//            //当layout结束后回调此方法
+//            @Override
+//            public void onGlobalLayout() {
+//                Log.d("keye", "onGlobalLayout:  layout cast = " + (System.currentTimeMillis() - startTime));
+//            }
+//        });
 
-        setContentView(frameLayout, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+//        setContentView(frameLayout, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        setContentView(R.layout.activity_luaview);
+        FrameLayout frameLayout = findViewById(R.id.container);
         instance = new MLSInstance(this);
         instance.setContainer(frameLayout);
         instance.setScriptStateListener(new ScriptStateListener() {
@@ -57,24 +60,31 @@ public class LuaViewActivity extends BaseActivity {
         });
         super.onCreate(savedInstanceState);
 
-        if (isGotoMeilishuo) {
+        Intent intent = getIntent();
+        if (intent != null && intent.getExtras() != null) {
+            InitData initData = MLSBundleUtils.parseFromBundle(intent.getExtras()).showLoadingView(true);
+            this.instance.setData(initData);
+        } else {
             String file = "file://android_asset/MMLuaKitGallery/meilishuo.lua";
             InitData initData = MLSBundleUtils.createInitData(file, false).showLoadingView(true);
             this.instance.setData(initData);
-            isGotoMeilishuo = false;
-        } else {
-            Intent intent = getIntent();
-            if (intent != null) {
-                InitData initData = MLSBundleUtils.parseFromBundle(intent.getExtras()).showLoadingView(true);
-                this.instance.setData(initData);
-            }
+        }
 
-            if (!instance.isValid()) {
-                Toast.makeText(this, "something wrong", Toast.LENGTH_SHORT).show();
-            }
+        if (!instance.isValid()) {
+            Toast.makeText(this, "something wrong", Toast.LENGTH_SHORT).show();
         }
 
 //        storageAndCameraPermission();
+        TextView menuBtn = findViewById(R.id.menu_btn);//返回首页
+        menuBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(LuaViewActivity.this, LauncherActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+                finish();
+            }
+        });
     }
 
     @Override
