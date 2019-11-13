@@ -409,7 +409,7 @@
 
 - (void)forceLayoutLuaWindow
 {
-    [_luaWindow lua_requestLayout];
+   [self.luaWindow lua_requestLayout];
 }
 
 - (void)releaseAll
@@ -449,12 +449,12 @@
 
 - (void)releaseLuaWindow
 {
-    // 通知Lua，Window即将释放
-    [_luaWindow doLuaViewDestroy];
+   // 通知Lua，Window即将释放
+    [self.luaWindow doLuaViewDestroy];
     // 释放Lua Window
-    [_luaWindow lua_removeAllSubViews];
-    [_luaWindow removeFromSuperview];
-    _luaWindow = nil;
+    [self.luaWindow  lua_removeAllSubViews];
+    [self.luaWindow  removeFromSuperview];
+    self.luaWindow  = nil;
     self.isLuaWindowSetup = NO;
 }
 
