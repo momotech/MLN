@@ -72,25 +72,25 @@
                       [MLNGlobalFuncTest class]]];
     [kcv changeCurrentBundlePath:bundle.bundlePath];
     self.kcv = kcv;
-    [self presentViewController:kcv animated:YES completion:nil];
+    [self.navigationController pushViewController:self.kcv animated:YES];
 }
 
 
 - (void)showHotReload:(id)sender {
     self.hotvc = [[MLNHotReloadViewController alloc] init];
-    [self presentViewController:self.hotvc animated:YES completion:nil];
+    [self.navigationController pushViewController:self.hotvc animated:YES];
 }
 
 - (void)showOffline:(id)sender {
     self.ovc = [[MLNOfflineViewController alloc] init];
-    [self presentViewController:self.ovc animated:YES completion:nil];
+    [self.navigationController pushViewController:self.ovc animated:YES];
 }
 
 - (void)showNativeDemo:(id)sender
 {
     [[MLNLoadTimeStatistics sharedInstance] recordStartTime];
     self.galleryMainVc = [[MLNGalleryMainViewController alloc] init];
-    [self presentViewController:self.galleryMainVc animated:YES completion:nil];
+    [self.navigationController pushViewController:self.galleryMainVc animated:YES];
 }
 
 

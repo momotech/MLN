@@ -42,6 +42,7 @@
         
         CGFloat screenHeight = [UIScreen mainScreen].bounds.size.height;
         self.fpsLabel = [[MLNFPSLabel alloc] initWithFrame:CGRectMake(10, screenHeight * 0.8, 50, 20)];
+        self.fpsLabel.hidden = YES;
         [self.view addSubview:self.fpsLabel];
     }
 }
@@ -132,6 +133,7 @@
         _backButton.backgroundColor = [UIColor orangeColor];
         [_backButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
         [_backButton addTarget:self action:@selector(backButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
+        _backButton.hidden = YES;
         [self.view addSubview:_backButton];
     }
     return _backButton;
