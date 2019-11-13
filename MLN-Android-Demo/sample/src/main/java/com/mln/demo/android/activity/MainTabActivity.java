@@ -21,13 +21,13 @@ import androidx.fragment.app.FragmentTransaction;
 
 public class MainTabActivity extends BaseActivity {
 
-    ImageView ivHome;
-    ImageView ivDesc;
-    ImageView ivPlus;
-    ImageView ivMsg;
-    ImageView ivMine;
-    LinearLayout llTab;
-    FrameLayout fragment;
+    private ImageView ivHome;
+    private ImageView ivDesc;
+    private ImageView ivPlus;
+    private ImageView ivMsg;
+    private ImageView ivMine;
+    private LinearLayout llTab;
+    private FrameLayout fragment;
     private Activity activity;
     private Fragment[] fragments;
 
