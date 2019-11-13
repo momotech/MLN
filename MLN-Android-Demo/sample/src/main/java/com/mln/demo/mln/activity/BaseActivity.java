@@ -16,9 +16,10 @@ import com.immomo.mls.MLSEngine;
 import com.immomo.mls.utils.MainThreadExecutor;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
-public abstract class BaseActivity extends Activity implements HotReloadHelper.ConnectListener {
+public abstract class BaseActivity extends AppCompatActivity implements HotReloadHelper.ConnectListener {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
