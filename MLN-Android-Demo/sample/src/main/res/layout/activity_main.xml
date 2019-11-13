@@ -21,34 +21,25 @@
             android:minHeight="100dp"
             android:src="@drawable/main_logo" />
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/mln_btn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:paddingTop="10dp"
-                android:paddingBottom="10dp"
-                android:text="切换MLN/原生：" />
-
-            <Switch
-                android:id="@+id/mln_native_switch"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center" />
-
-        </LinearLayout>
 
         <TextView
-            android:id="@+id/mln_native_btn"
+            android:id="@+id/mln_btn"
             android:layout_width="100dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
+            android:background="@drawable/btn_selector_noborder"
+            android:gravity="center"
+            android:layout_marginTop="5dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:text="MLN 美丽说" />
+
+
+        <TextView
+            android:id="@+id/native_btn"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
+            android:layout_marginTop="20dp"
             android:background="@drawable/btn_selector_noborder"
             android:gravity="center"
             android:paddingTop="10dp"
