@@ -8,7 +8,6 @@
 
 #import "MLNSimpleViewPager.h"
 #import "MLNSimpleViewPagerCell.h"
-#import "MLNHomeTableView.h"
 #import <MJRefresh.h>
 
 #define kMLNSimpleViewPagerCell  @"kMLNSimpleViewPagerCell"
@@ -16,10 +15,6 @@
 @interface MLNSimpleViewPager()<UICollectionViewDataSource, UICollectionViewDelegate>
 @property (nonatomic, strong, readwrite) UICollectionView *mainView;
 @property (nonatomic, strong) NSArray *dataList;
-
-@property (nonatomic, copy) RefreshBlock refreshBlock;
-@property (nonatomic, copy) LoadingBlock loadingBlock;
-@property (nonatomic, copy) SearchBlock searchBlock;
 @end
 
 @implementation MLNSimpleViewPager
@@ -41,21 +36,6 @@
 
 - (void)scrollToPage:(NSUInteger)index aniamted:(BOOL)animated {
     [self.mainView scrollToItemAtIndexPath:[NSIndexPath indexPathForRow:index inSection:0] atScrollPosition:UICollectionViewScrollPositionLeft animated:YES];
-}
-
-- (void)setRefreshBlock:(RefreshBlock)refreshBlock
-{
-    _refreshBlock = refreshBlock;
-}
-
-- (void)setLoadingBlock:(LoadingBlock)loadingBlock
-{
-    _loadingBlock = loadingBlock;
-}
-
-- (void)setSearchBlock:(SearchBlock)searchBlock
-{
-    _searchBlock = searchBlock;
 }
 
 
@@ -101,18 +81,20 @@
     return 2;
 }
 
+- (void)collectionView:(UICollectionView *)collectionView willDisplayCell:(UICollectionViewCell *)cell forItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    MLNSimpleViewPagerCell *viewPagerCell = (MLNSimpleViewPagerCell *)cell;
+    [viewPagerCell requestData:YES];
+}
+
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
     MLNSimpleViewPagerCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:kMLNSimpleViewPagerCell forIndexPath:indexPath];
     if (indexPath.row == 0) {
-        cell.mainTableView.tableType = @"follow";
+        cell.tableType = @"follow";
     } else {
-        cell.mainTableView.tableType = @"recommend";
+        cell.tableType = @"recommend";
     }
-    [cell.mainTableView reloadTableWithDataList:self.dataList];
-    [cell.mainTableView setRefreshBlock:_refreshBlock];
-    [cell.mainTableView setLoadingBlock:_loadingBlock];
-    [cell.mainTableView setSearchBlock:_searchBlock];
     
     return cell;
 }
@@ -138,7 +120,6 @@
         [_mainView registerClass:[MLNSimpleViewPagerCell class] forCellWithReuseIdentifier:kMLNSimpleViewPagerCell];
         if (@available(iOS 11.0, *)) {
             _mainView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
-//            _mainView.contentInset = UIEdgeInsetsMake(44, 0, 0, 0);
         }
         if (@available(iOS 10.0, *)) {
             _mainView.prefetchingEnabled = NO;

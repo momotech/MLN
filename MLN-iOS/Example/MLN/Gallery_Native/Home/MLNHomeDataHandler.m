@@ -9,7 +9,8 @@
 #import "MLNHomeDataHandler.h"
 
 @interface MLNHomeDataHandler()
-@property (nonatomic, strong, readwrite) NSMutableArray *dataList;
+@property (nonatomic, strong, readwrite) NSMutableArray *dataList1;
+@property (nonatomic, strong, readwrite) NSMutableArray *dataList2;
 @end
 
 @implementation MLNHomeDataHandler
@@ -24,23 +25,41 @@
     return _handler;
 }
 
-- (void)updateDataList:(NSArray *)dataList
+- (void)updateDataList1:(NSArray *)dataList
 {
-    _dataList = [dataList mutableCopy];
+    _dataList1 = [dataList mutableCopy];
 }
 
-- (void)insertDataList:(NSArray *)dataList
+- (void)insertDataList1:(NSArray *)dataList
 {
-    [_dataList addObjectsFromArray:dataList];
+    [_dataList1 addObjectsFromArray:dataList];
+}
+
+- (void)updateDataList2:(NSArray *)dataList
+{
+    _dataList2 = [dataList mutableCopy];
+}
+
+- (void)insertDataList2:(NSArray *)dataList
+{
+    [_dataList2 addObjectsFromArray:dataList];
 }
 
 
-- (NSMutableArray *)dataList
+- (NSMutableArray *)dataList1
 {
-    if (!_dataList) {
-        _dataList = [[NSMutableArray alloc] init];
+    if (!_dataList1) {
+        _dataList1 = [[NSMutableArray alloc] init];
     }
-    return _dataList;
+    return _dataList1;
+}
+
+- (NSMutableArray *)dataList2
+{
+    if (!_dataList2) {
+        _dataList2 = [[NSMutableArray alloc] init];
+    }
+    return _dataList2;
 }
 
 @end

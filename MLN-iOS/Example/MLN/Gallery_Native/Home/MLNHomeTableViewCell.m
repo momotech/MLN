@@ -78,17 +78,27 @@
     self.followButton.hidden = !show;
 }
 
-- (void)reloadCellWithData:(NSDictionary *)dict
+- (void)reloadCellWithData:(NSDictionary *)dict tableType:(NSString *)tableType
 {
     [self.avtarImageView sd_setImageWithURL:[NSURL URLWithString:[dict valueForKey:@"itempic"]]];
     self.shopLabel.text = [dict valueForKey:@"sellernick"];
     NSMutableArray *pictureArray = [NSMutableArray new];
-    NSInteger picCount = [MLNHomeDataHandler handler].dataList.count;
+    NSInteger picCount = 0;
+    if ([tableType isEqualToString:@"follow"]) {
+        picCount = [MLNHomeDataHandler handler].dataList1.count;
+    } else {
+        picCount = [MLNHomeDataHandler handler].dataList2.count;
+    }
     for (NSInteger i = 0; i < picCount; i++) {
         if (i >= 9) {
             break;
         }
-        NSDictionary *dict = [MLNHomeDataHandler handler].dataList[i];
+        NSDictionary *dict = nil;
+        if ([tableType isEqualToString:@"follow"]) {
+            dict = [MLNHomeDataHandler handler].dataList1[i];
+        } else {
+            dict = [MLNHomeDataHandler handler].dataList2[i];
+        }
         NSString *picUrlString = [dict valueForKey:@"itempic"];
         if (picUrlString) {
             [pictureArray addObject:picUrlString];

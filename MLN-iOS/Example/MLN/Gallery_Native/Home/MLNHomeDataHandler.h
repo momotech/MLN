@@ -12,12 +12,15 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface MLNHomeDataHandler : NSObject
 
-@property (nonatomic, strong, readonly) NSArray *dataList;
+@property (nonatomic, strong, readonly) NSArray *dataList1;
+@property (nonatomic, strong, readonly) NSArray *dataList2;
 
 + (MLNHomeDataHandler *)handler;
 
-- (void)updateDataList:(NSArray *)dataList;
-- (void)insertDataList:(NSArray *)dataList;
+- (void)updateDataList1:(NSArray *)dataList;
+- (void)insertDataList1:(NSArray *)dataList;
+- (void)updateDataList2:(NSArray *)dataList;
+- (void)insertDataList2:(NSArray *)dataList;
 
 @end
 

@@ -14,7 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, assign, readonly) CGFloat cellHeight;
 
-- (void)reloadCellWithData:(NSDictionary *)dict;
+- (void)reloadCellWithData:(NSDictionary *)dict tableType:(NSString *)tableType;
 - (void)updateFollowButtonState:(BOOL)show;
 
 @end

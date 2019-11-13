@@ -7,7 +7,6 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "MLNHomeTableView.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -18,9 +17,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)reloadWithDataList:(NSArray *)dataList;
 - (void)scrollToPage:(NSUInteger)index aniamted:(BOOL)animated;
-- (void)setRefreshBlock:(RefreshBlock)refreshBlock;
-- (void)setLoadingBlock:(LoadingBlock)loadingBlock;
-- (void)setSearchBlock:(SearchBlock)searchBlock;
 
 @end
 
