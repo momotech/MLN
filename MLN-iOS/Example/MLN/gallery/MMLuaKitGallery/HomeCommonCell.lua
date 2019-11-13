@@ -128,7 +128,7 @@ function _class:setupViewPagerForCell()
 
     --让cell上的图片支持滑动
     self.viewPager = ViewPager()
-    self.viewPager:width(MeasurementType.MATCH_PARENT):height(400)
+    self.viewPager:width(MeasurementType.MATCH_PARENT):height(380)
     self.viewPager:adapter(self.adapter)
     self.cellContentView:addView(self.viewPager)
 end

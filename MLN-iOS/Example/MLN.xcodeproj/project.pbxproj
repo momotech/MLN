@@ -68,9 +68,6 @@
 		B29500D62372627000F48F09 /* MLNNativeTabSegmentView.m in Sources */ = {isa = PBXBuildFile; fileRef = B29500CD2372627000F48F09 /* MLNNativeTabSegmentView.m */; };
 		B29500D82372627000F48F09 /* MLNNativeBadgeView.m in Sources */ = {isa = PBXBuildFile; fileRef = B29500CF2372627000F48F09 /* MLNNativeBadgeView.m */; };
 		B29500D92372627000F48F09 /* MLNNativeTabSegmentScrollHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = B29500D52372627000F48F09 /* MLNNativeTabSegmentScrollHandler.m */; };
-		B29500E0237274E800F48F09 /* MLNNativeViewPager.m in Sources */ = {isa = PBXBuildFile; fileRef = B29500DE237274E800F48F09 /* MLNNativeViewPager.m */; };
-		B29500E1237274E800F48F09 /* MLNNativeViewPagerAdapter.m in Sources */ = {isa = PBXBuildFile; fileRef = B29500DF237274E800F48F09 /* MLNNativeViewPagerAdapter.m */; };
-		B29500E723727C2900F48F09 /* MLNNativeViewPagerCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B29500E623727C2900F48F09 /* MLNNativeViewPagerCell.m */; };
 		B29500EA2372A3A400F48F09 /* MLNSimpleViewPager.m in Sources */ = {isa = PBXBuildFile; fileRef = B29500E92372A3A400F48F09 /* MLNSimpleViewPager.m */; };
 		B29500F72372D5B400F48F09 /* MLNSimpleViewPagerCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B29500F62372D5B400F48F09 /* MLNSimpleViewPagerCell.m */; };
 		B2D0AB85236C1F0A00B1D349 /* gallery in Resources */ = {isa = PBXBuildFile; fileRef = B2D0AB84236C1F0A00B1D349 /* gallery */; };
@@ -218,12 +215,6 @@
 		B29500D42372627000F48F09 /* MLNNativeTabSegmentView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLNNativeTabSegmentView.h; sourceTree = "<group>"; };
 		B29500D52372627000F48F09 /* MLNNativeTabSegmentScrollHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLNNativeTabSegmentScrollHandler.m; sourceTree = "<group>"; };
 		B29500DA23726F9100F48F09 /* MLNGalleryNative.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNGalleryNative.h; sourceTree = "<group>"; };
-		B29500DC237274E800F48F09 /* MLNNativeViewPager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLNNativeViewPager.h; sourceTree = "<group>"; };
-		B29500DD237274E800F48F09 /* MLNNativeViewPagerAdapter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLNNativeViewPagerAdapter.h; sourceTree = "<group>"; };
-		B29500DE237274E800F48F09 /* MLNNativeViewPager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLNNativeViewPager.m; sourceTree = "<group>"; };
-		B29500DF237274E800F48F09 /* MLNNativeViewPagerAdapter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLNNativeViewPagerAdapter.m; sourceTree = "<group>"; };
-		B29500E523727C2900F48F09 /* MLNNativeViewPagerCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNNativeViewPagerCell.h; sourceTree = "<group>"; };
-		B29500E623727C2900F48F09 /* MLNNativeViewPagerCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNNativeViewPagerCell.m; sourceTree = "<group>"; };
 		B29500E82372A3A400F48F09 /* MLNSimpleViewPager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNSimpleViewPager.h; sourceTree = "<group>"; };
 		B29500E92372A3A400F48F09 /* MLNSimpleViewPager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNSimpleViewPager.m; sourceTree = "<group>"; };
 		B29500F52372D5B400F48F09 /* MLNSimpleViewPagerCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNSimpleViewPagerCell.h; sourceTree = "<group>"; };
@@ -605,12 +596,6 @@
 		B29500DB237274E800F48F09 /* ViewPager */ = {
 			isa = PBXGroup;
 			children = (
-				B29500DC237274E800F48F09 /* MLNNativeViewPager.h */,
-				B29500DE237274E800F48F09 /* MLNNativeViewPager.m */,
-				B29500DD237274E800F48F09 /* MLNNativeViewPagerAdapter.h */,
-				B29500DF237274E800F48F09 /* MLNNativeViewPagerAdapter.m */,
-				B29500E523727C2900F48F09 /* MLNNativeViewPagerCell.h */,
-				B29500E623727C2900F48F09 /* MLNNativeViewPagerCell.m */,
 				B29500E82372A3A400F48F09 /* MLNSimpleViewPager.h */,
 				B29500E92372A3A400F48F09 /* MLNSimpleViewPager.m */,
 				B29500F52372D5B400F48F09 /* MLNSimpleViewPagerCell.h */,
@@ -956,19 +941,16 @@
 				30A4EB6D231F4FD400995416 /* MLNTestMe+Test.m in Sources */,
 				B27F65A92377AA9700F2D341 /* MLNNativeWaterfallViewCell.m in Sources */,
 				B29500D82372627000F48F09 /* MLNNativeBadgeView.m in Sources */,
-				B29500E1237274E800F48F09 /* MLNNativeViewPagerAdapter.m in Sources */,
 				B27F65CB2377AAAE00F2D341 /* MLNGalleryMessageDescCell.m in Sources */,
 				B2DD3E5D237990E9002AB6AD /* MLNLuaPageViewController.m in Sources */,
 				B27F65922377AA6C00F2D341 /* MLNGalleryInfoNumberView.m in Sources */,
 				B27F65C82377AAAE00F2D341 /* MLNGalleryMessageViewController.m in Sources */,
 				FA4EE310237909BC00449250 /* MLNGalleryMineBottomPageCollectCell.m in Sources */,
-				B29500E0237274E800F48F09 /* MLNNativeViewPager.m in Sources */,
 				B27F65912377AA6C00F2D341 /* MLNGalleryMineViewController.m in Sources */,
 				B27F65CA2377AAAE00F2D341 /* MLNGalleryMessageBaseCell.m in Sources */,
 				B2DD3E5F237990E9002AB6AD /* MLNPackageManager.m in Sources */,
 				B27F65E12377AB1600F2D341 /* MLNGalleryPlusViewController.m in Sources */,
 				B27F65A82377AA9700F2D341 /* MLNGalleryDiscoverViewController.m in Sources */,
-				B29500E723727C2900F48F09 /* MLNNativeViewPagerCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

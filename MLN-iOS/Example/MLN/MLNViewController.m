@@ -108,13 +108,14 @@
     
     CGFloat screenHeight = [UIScreen mainScreen].bounds.size.height;
     self.fpsLabel = [[MLNFPSLabel alloc] initWithFrame:CGRectMake(10, screenHeight * 0.8, 50, 20)];
+    self.fpsLabel.hidden = YES;
     [self.contentViewController.view addSubview:self.fpsLabel];
 }
 
 - (void)galleryButtonClicked:(id)sender
 {
     MLNGalleryViewController *galleryVc = [[MLNGalleryViewController alloc] init];
-    [self presentViewController:galleryVc animated:YES completion:nil];
+    [self.navigationController pushViewController:galleryVc animated:YES];
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -130,8 +131,7 @@
 
 - (void)showLuaScriptLoadTime
 {
-    [self.contentViewController.view addSubview:self.loadTimeLabel];
-    self.loadTimeLabel.hidden = NO;
+//    [self.contentViewController.view addSubview:self.loadTimeLabel];
     self.loadTimeLabel.text = [NSString stringWithFormat:@"%.0f ms", [self.loadTimeStatistics luaCoreCreateTime] * 1000];
     CGSize loadTimeLabelSize = [self.loadTimeLabel.text sizeWithAttributes:@{NSFontAttributeName:[UIFont systemFontOfSize:12]}];
     CGFloat loadTimeLabelY = [UIScreen mainScreen].bounds.size.height * 0.75;
