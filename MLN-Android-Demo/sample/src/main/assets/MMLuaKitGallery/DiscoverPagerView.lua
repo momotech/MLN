@@ -161,7 +161,9 @@ function _class:setupCollectionViewAdapter()
         --Toast(self.dataList:get(row):get("title"), 1)
         --self:gotoDetailView()
         if System:Android() then
-            Navigator:gotoPage("file://android_asset/MMLuaKitGallery/IdeaMassView.lua",Map(),AnimType.RightToLeft)
+            Navigator:gotoPage("file://android_asset/MMLuaKitGallery/IdeaMassView.lua", Map(),AnimType.RightToLeft)
+        else
+            Navigator:gotoPage("IdeaMassMainView.lua", nil, 0)
         end
     end)
     self.collectionView:adapter(adapter)
@@ -233,24 +235,23 @@ function _class:requestNetwork(first, complete)
             end
         end)
 
-        return
-    end
-
-    local HTTPHandler = require("MMLuaKitGallery.HTTPHandler")
-    HTTPHandler:GET("https://api.apiopen.top/musicRankingsDetails", { type = self.requestPageIndex }, function(success, response, err)
-        if success then
-            local data = response:get("result")
+    else
+        File:asyncReadFile('file://gallery/json/musicRank.json', function(codeNumber, response)
+            map = StringUtil:jsonToMap(response)
+            if codeNumber == 0 then
+            local data = map:get("result")
             if first then
                 self.dataList = data
             elseif data then
                 self.dataList:addAll(data)
             end
-            complete(success, data)
-        else
-            error(err:get("errmsg"))
-            complete(false, nil)
-        end
-    end)
+            complete(true, data)
+            else
+                --error(err:get("errmsg"))
+                complete(false, nil)
+            end
+        end)
+    end
 end
 
 ---创建搜索框
@@ -381,6 +382,5 @@ end
 function _class:gotoDetailView()
     require("lua_pods.LuaPageManager.LuaPageManager")
     LuaPageManager:gotoPage("ideaMassEntryFile", Map(), AnimType.BottomToTop, 1)
-
 end
 return _class

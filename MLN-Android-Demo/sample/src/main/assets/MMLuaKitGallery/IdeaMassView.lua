@@ -42,7 +42,11 @@ end
 ---@public
 function _class:setupContainerView()
     self.containerView = LinearLayout(LinearType.VERTICAL)
-    self.containerView:width(MeasurementType.MATCH_PARENT):height(MeasurementType.MATCH_PARENT)
+    self.containerView:width(MeasurementType.MATCH_PARENT):height(MeasurementType.MATCH_PARENT):bgColor(_Color.White)
+
+    if System:iOS() then
+        self.containerView:marginTop(window:statusBarHeight())
+    end
 end
 
 ---导航栏视图
@@ -57,6 +61,9 @@ function _class:setupTitleView()
     self.backBtn = ImageView():width(22):height(22):marginLeft(20):setGravity(MBit:bor(Gravity.LEFT, Gravity.CENTER_VERTICAL))
     self.backBtn:image("https://s.momocdn.com/w/u/others/2019/09/01/1567316383505-minmore.png")
     self.navibar:addView(self.backBtn)
+    self.backBtn:onClick(function()
+        Navigator:closeSelf()
+    end)
 
     --分享
     self.shareBtn = ImageView():width(22):height(22):marginRight(20):setGravity(MBit:bor(Gravity.RIGHT, Gravity.CENTER_VERTICAL))
@@ -193,7 +200,7 @@ end
 
 function _class:setupWaterfallView()
     self.waterfall = WaterfallView(false, true):width(MeasurementType.MATCH_PARENT):height(MeasurementType.MATCH_PARENT)
-    self.waterfallLayout = WaterfallLayoutFix():itemSpacing(12):lineSpacing(18):spanCount(2)
+    self.waterfallLayout = WaterfallLayoutFix():itemSpacing(12):lineSpacing(18):spanCount(2):layoutInset(10)
     self.waterfallAdapter = WaterfallAdapter()
     self.waterfallAdapter:initCell(function(cell)
         local REQCELL = require("MMLuaKitGallery.IdeaWaterfallCell"):new()
@@ -281,31 +288,24 @@ function _class:requestNetwork(first, complete)
                 complete(false, nil)
             end
         end)
-
-        return
+    else
+        File:asyncReadFile('file://gallery/json/musicRank.json', function(codeNumber, response)
+            print("codeNumber: " .. tostring(codeNumber))
+            map = StringUtil:jsonToMap(response)
+            if codeNumber == 0 then
+            local data = map:get("result")
+            if first then
+                self.dataList = data
+            elseif data then
+                self.dataList:addAll(data)
+            end
+            complete(true, data)
+        else
+            --error(err:get("errmsg"))
+            complete(false, nil)
+            end
+        end)
     end
-
-
-
-
-    --local HTTPHandler = require("MMLuaKitGallery.HTTPHandler")
-    --HTTPHandler:GET("https://api.apiopen.top/musicRankingsDetails", { type = self.pageIndex }, function(success, response, err)
-    --    if success then
-    --        local data = response:get("result")
-    --        if first then
-    --            self.dataList = data
-    --        elseif data then
-    --            self.dataList:addAll(data)
-    --        end
-    --
-    --        complete(success, data)
-    --    else
-    --        error(err:get("errmsg"))
-    --        complete(false, nil)
-    --    end
-    --end)
-
-
 end
 
 function _class:setupDataSource()

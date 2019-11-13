@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="20dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:orientation="vertical">
+
+        <!--    发现、赚基金-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tv_discovery"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="发现"
+                android:textSize="18dp" />
+
+            <TextView
+                android:id="@+id/tv_makeMoney"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:background="@drawable/search_background"
+                android:padding="3dp"
+                android:text="赚基金"
+                android:textSize="10dp" />
+        </LinearLayout>
+
+        <!--    搜索栏-->
+        <SearchView
+            android:id="@+id/sv_search"
+            android:layout_width="300dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center"
+            android:background="@drawable/search_background"
+            android:queryHint="大家都在搜网红咖啡馆" />
+
+        <!--    使用指南-->
+        <ImageView
+            android:id="@+id/use_img"
+            android:layout_width="match_parent"
+            android:layout_height="120dip"
+            android:layout_marginTop="10dp"
+            android:scaleType="fitXY"
+            android:src="@mipmap/use_img" />
+        <!--    福利社-->
+        <ImageView
+            android:id="@+id/welfare_img"
+            android:layout_width="match_parent"
+            android:layout_height="100dip"
+            android:layout_marginTop="10dip"
+            android:scaleType="fitXY"
+            android:src="@mipmap/fulishe" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="30dip"
+            android:layout_marginTop="8dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tv_task"
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:text="日常任务：点亮爱心，为内容点赞" />
+
+            <TextView
+                android:id="@+id/tv_like"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:background="@drawable/search_background"
+                android:padding="3dp"
+                android:text="去点赞"
+                android:textSize="10dp" />
+        </LinearLayout>
+
+        <!--    横线-->
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginRight="5dp"
+            android:background="#aa000000" />
+
+        <TextView
+            android:id="@+id/tv_inspiration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="灵感集 / 探索更有趣的生活" />
+
+
+        <!--    推荐、穿搭、美妆、探店、旅行-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal">
+
+            <CheckBox
+                android:id="@+id/sug_btn"
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/btn_selector"
+                android:button="@null"
+                android:gravity="center"
+                android:text="推荐"
+                android:textSize="10sp" />
+
+            <CheckBox
+                android:id="@+id/outfit_btn"
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="3dp"
+                android:background="@drawable/btn_selector"
+                android:button="@null"
+                android:gravity="center"
+                android:text="穿搭"
+                android:textSize="10dp" />
+
+            <CheckBox
+                android:id="@+id/makeup_btn"
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="3dp"
+                android:background="@drawable/btn_selector"
+                android:button="@null"
+                android:gravity="center"
+                android:text="美妆"
+                android:textSize="10dp" />
+
+            <CheckBox
+                android:id="@+id/shop_btn"
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="3dp"
+                android:background="@drawable/btn_selector"
+                android:button="@null"
+                android:gravity="center"
+                android:text="探店"
+                android:textSize="10dp" />
+
+            <CheckBox
+                android:id="@+id/travel_btn"
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="3dp"
+                android:background="@drawable/btn_selector"
+                android:button="@null"
+                android:gravity="center"
+                android:text="旅行"
+                android:textSize="10dp" />
+        </LinearLayout>
+    </LinearLayout>
+
+
+</LinearLayout>
