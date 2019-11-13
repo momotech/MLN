@@ -71,7 +71,7 @@ end
 ---创建collectionView
 ---@private
 function _class:setupCollectionView()
-    self.headerViewHeight = 420
+    self.headerViewHeight = 400
 
     self.collectionView = WaterfallView(true, true):width(MeasurementType.MATCH_PARENT):height(MeasurementType.MATCH_PARENT)
     self.collectionView:useAllSpanForLoading(true)
@@ -105,7 +105,6 @@ function _class:setupCollectionViewAdapter()
     end)
 
     adapter:initHeader(function(header)
-        --header.contentView:removeAllSubviews()
         header.contentView:addView(self:headerView())
     end)
 
@@ -215,30 +214,9 @@ function _class:requestNetwork(first, complete)
         self.requestPageIndex = self.requestPageIndex + 1
     end
 
-    if System:Android() then
-
-        File:asyncReadMapFile('file://android_asset/MMLuaKitGallery/discoverry.json', function(codeNumber, response)
-
-            print("codeNumber: " .. tostring(codeNumber))
-
-            if codeNumber == 0 then
-                local data = response:get("result")
-                if first then
-                    self.dataList = data
-                elseif data then
-                    self.dataList:addAll(data)
-                end
-                complete(true, self.dataList)
-            else
-                --error(err:get("errmsg"))
-                complete(false, nil)
-            end
-        end)
-
-    else
-        File:asyncReadFile('file://gallery/json/musicRank.json', function(codeNumber, response)
-            map = StringUtil:jsonToMap(response)
-            if codeNumber == 0 then
+    File:asyncReadFile('file://gallery/json/musicRank.json', function(codeNumber, response)
+        map = StringUtil:jsonToMap(response)
+        if codeNumber == 0 then
             local data = map:get("result")
             if first then
                 self.dataList = data
@@ -250,8 +228,7 @@ function _class:requestNetwork(first, complete)
                 --error(err:get("errmsg"))
                 complete(false, nil)
             end
-        end)
-    end
+    end)
 end
 
 ---创建搜索框
@@ -379,8 +356,5 @@ function _class:updateCategoryButtonUI(button)
           :bgColor(Color(253, 74, 63))--ok
     self.preCategButton = button
 end
-function _class:gotoDetailView()
-    require("lua_pods.LuaPageManager.LuaPageManager")
-    LuaPageManager:gotoPage("ideaMassEntryFile", Map(), AnimType.BottomToTop, 1)
-end
+
 return _class

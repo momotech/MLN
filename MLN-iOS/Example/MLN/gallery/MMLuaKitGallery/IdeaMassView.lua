@@ -62,7 +62,7 @@ function _class:setupTitleView()
     self.backBtn:image("icon_back")
     self.navibar:addView(self.backBtn)
     self.backBtn:onClick(function()
-        Navigator:closeSelf()
+        Navigator:closeSelf(AnimType.Default)
     end)
 
     --分享
@@ -75,21 +75,6 @@ end
 function _class:setupHeaderView()
     self:setupTopView()
     self.containerView:addView(self.HeaderView)
---[[
-    self.waterfallAdapter:initHeader(function(header)
-        header.contentView:addView(self.HeaderView)
-    end)
-
-    self.waterfallAdapter:fillHeaderData(function(header)
-        --header.contentView:addView(self.HeaderView)
-    end)
-    self.waterfallAdapter:headerValid(function()
-        return true
-    end)
-    self.waterfallAdapter:heightForHeader(function()
-        return 250
-    end)
---]]
 end
 ---header视图
 function _class:setupTopView()
@@ -153,12 +138,6 @@ function _class:setupTapListView()
 
     self.tapAdapter = CollectionViewAutoFitAdapter()
 
-    --self.tapAdapter = CollectionViewAdapter()
-    --self.tapAdapter:sizeForCell(function(section, row)
-    --    return Size(70, 30)
-    --end)
-
-
     self.tapAdapter:initCell(function(cell)
         cell.tapLabel = Label():text(""):textColor(_Color.White):fontSize(12):padding(6, 15, 6, 15):bgColor(Color(70, 70, 70, 0.5)):cornerRadius(40)
         cell.contentView:addView(cell.tapLabel)
@@ -199,7 +178,7 @@ end
 
 function _class:setupWaterfallView()
     self.waterfall = WaterfallView(false, true):width(MeasurementType.MATCH_PARENT):height(MeasurementType.MATCH_PARENT)
-    self.waterfallLayout = WaterfallLayoutFix():itemSpacing(12):lineSpacing(18):spanCount(2):layoutInset(10)
+    self.waterfallLayout = WaterfallLayoutFix():itemSpacing(12):lineSpacing(18):spanCount(2):layoutInset(10, 0, 0, 0)
     self.waterfallAdapter = WaterfallAdapter()
     self.waterfallAdapter:initCell(function(cell)
         local REQCELL = require("MMLuaKitGallery.IdeaWaterfallCell"):new()
@@ -228,7 +207,6 @@ function _class:setupWaterfallView()
         return self.dataList:size()
     end)
 
-    --bug 希望支持瀑布流自适应
     self.waterfallAdapter:heightForCell(function(section, row)
         local str = self.dataList:get(row):get("si_proxycompany")
         if string.len(str) > 15 then
@@ -269,29 +247,10 @@ function _class:requestNetwork(first, complete)
         end
     end
 
-    if System:Android() then
-        File:asyncReadMapFile('file://android_asset/MMLuaKitGallery/discoverry_detail.json', function(codeNumber, response)
-
-            print("codeNumber: " .. tostring(codeNumber))
-            if codeNumber == 0 then
-                local data = response:get("result")
-                if first then
-                    self.dataList = data
-                elseif data then
-                    self.dataList:addAll(data)
-                end
-
-                complete(true, data)
-            else
-                --error(err:get("errmsg"))
-                complete(false, nil)
-            end
-        end)
-    else
-        File:asyncReadFile('file://gallery/json/musicRank.json', function(codeNumber, response)
-            print("codeNumber: " .. tostring(codeNumber))
-            map = StringUtil:jsonToMap(response)
-            if codeNumber == 0 then
+    File:asyncReadFile('file://gallery/json/musicRank.json', function(codeNumber, response)
+        print("codeNumber: " .. tostring(codeNumber))
+        map = StringUtil:jsonToMap(response)
+        if codeNumber == 0 then
             local data = map:get("result")
             if first then
                 self.dataList = data
@@ -302,9 +261,8 @@ function _class:requestNetwork(first, complete)
         else
             --error(err:get("errmsg"))
             complete(false, nil)
-            end
-        end)
-    end
+        end
+    end)
 end
 
 function _class:setupDataSource()

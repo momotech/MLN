@@ -132,23 +132,27 @@
     CGFloat showDemoButtonY = (screenH - buttonH) / 2.0 - space - buttonH;
     self.showDemoButton = [self createButtonWithTitle:@"Demo 展示" action:@selector(showDemoClick:)];
     self.showDemoButton.frame = CGRectMake(showDemoButtonX, showDemoButtonY, buttonW, buttonH);
+    self.showDemoButton.hidden = YES;
     [self.view addSubview:self.showDemoButton];
+    
     CGFloat showHotReloadButtonX = showDemoButtonX;
     CGFloat showHotReloadButtonY = (screenH - buttonH) / 2.0;
     self.showHotReloadButton = [self createButtonWithTitle:@"热重载" action:@selector(showHotReload:)];
     self.showHotReloadButton.frame = CGRectMake(showHotReloadButtonX, showHotReloadButtonY, buttonW, buttonH);
     [self.view addSubview:self.showHotReloadButton];
-    CGFloat showOfflineButtonX = showDemoButtonX;
-    CGFloat showOfflineButtonY = (screenH - buttonH) / 2.0 + space + buttonH;
-    self.showOfflineButton = [self createButtonWithTitle:@"离线加载" action:@selector(showOfflineButton)];
-    self.showOfflineButton.frame = CGRectMake(showOfflineButtonX, showOfflineButtonY, buttonW, buttonH);
-    [self.view addSubview:self.showOfflineButton];
     
     CGFloat showNativeDemoButtonX = showDemoButtonX;
-    CGFloat showNativeDemoButtonY = showOfflineButtonY + buttonH + space;
+    CGFloat showNativeDemoButtonY = (screenH - buttonH) / 2.0 + space + buttonH;
     self.showNativeDemoButton = [self createButtonWithTitle:@"NativeDemo展示" action:@selector(showNativeDemo:)];
     self.showNativeDemoButton.frame = CGRectMake(showNativeDemoButtonX, showNativeDemoButtonY, buttonW, buttonH);
     [self.view addSubview:self.showNativeDemoButton];
+    
+    CGFloat showOfflineButtonX = showDemoButtonX;
+    CGFloat showOfflineButtonY = showNativeDemoButtonY + buttonH + space;
+    self.showOfflineButton = [self createButtonWithTitle:@"离线加载" action:@selector(showOfflineButton)];
+    self.showOfflineButton.frame = CGRectMake(showOfflineButtonX, showOfflineButtonY, buttonW, buttonH);
+    self.showOfflineButton.hidden = YES;
+    [self.view addSubview:self.showOfflineButton];
     
     CGFloat screenHeight = [UIScreen mainScreen].bounds.size.height;
     self.fpsLabel = [[MLNFPSLabel alloc] initWithFrame:CGRectMake(10, screenHeight * 0.8, 50, 20)];

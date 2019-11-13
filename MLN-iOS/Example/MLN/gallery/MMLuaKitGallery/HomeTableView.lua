@@ -142,46 +142,21 @@ end
 --- @param complete function 数据请求结束的回调
 --- @private
 function _class:request(first, complete)
-
-    if System:Android() then
-        File:asyncReadMapFile('file://android_asset/MMLuaKitGallery/fashion.json', function(codeNumber, fileArray)
-
-            -- print("codeNumber: " .. tostring(codeNumber))
-
-            if codeNumber == 0 then
-                local data = fileArray:get("data")
-
-                if first then
-                    self.minId = 1
-                    self.dataList = data
-                elseif data then
-                    self.minId = fileArray:get("min_id")
-                    self.dataList:addAll(data)
-                end
-
-                complete(true, data)
-            else
-                -- error(err:get("errmsg"))
-                complete(false, nil)
+    File:asyncReadFile('file://gallery/json/fashion.json', function(codeNumber, response)
+        map = StringUtil:jsonToMap(response)
+        if codeNumber == 0 then
+            local data = map:get("data")
+            if first then
+                self.dataList = data
+            elseif data then
+                self.dataList:addAll(data)
             end
-        end)
-    else
-        File:asyncReadFile('file://gallery/json/fashion.json', function(codeNumber, response)
-            map = StringUtil:jsonToMap(response)
-            if codeNumber == 0 then
-                local data = map:get("data")
-                if first then
-                    self.dataList = data
-                elseif data then
-                    self.dataList:addAll(data)
-                end
-                complete(true, data)
-            else
-                --error(err:get("errmsg"))
-                complete(false, nil)
-            end
-        end)
-    end
+            complete(true, data)
+        else
+            --error(err:get("errmsg"))
+            complete(false, nil)
+        end
+    end)
 end
 
 return _class
