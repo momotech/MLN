@@ -353,7 +353,7 @@
         __weak typeof(self) wself = self;
         _lazyTask = [MLNBeforeWaitingTask taskWithCallback:^{
             __strong typeof(wself) sself = wself;
-            if (sself.blurValue > 0 && !self.processImage) {
+            if (sself.blurValue > 0 && !sself.processImage) {
                 sself.effectView.frame = sself.bounds;
             }
             if (sself.nineImageName.length > 0) {
