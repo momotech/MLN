@@ -44,7 +44,7 @@ public class HomePresenter extends BasePresenter<HomeRvEntity> {
         String res = null;
         InputStream is = null;
         try {
-            is = context.getAssets().open("home.json");
+            is = context.getAssets().open("fashion.json");
             int lenght = is.available();
             byte[] buffer = new byte[lenght];
             is.read(buffer);
