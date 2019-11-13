@@ -20,8 +20,7 @@
 @property (nonatomic, strong) MLNNativeTabSegmentView *segementView;
 @property (nonatomic, strong) MLNSimpleViewPager *viewPager;
 @property (nonatomic, strong) MLNMyHttpHandler *myHttpHandler;
-@property (nonatomic, assign) NSInteger mid;
-@property (nonatomic, assign) NSInteger cid;
+
 @end
 
 @implementation MLNGalleryHomeViewController
@@ -29,7 +28,6 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self setupSubviews];
-    [self requestData:YES];
 }
 
 - (void)setupSubviews
@@ -49,62 +47,7 @@
     
     self.viewPager = [[MLNSimpleViewPager alloc] initWithFrame:CGRectMake(0, kNaviBarHeight, kScreenWidth, kScreenHeight - kNaviBarHeight - kTabbBarHeight)];
     self.viewPager.segmentViewHandler = (id<UIScrollViewDelegate>)self.segementView.scrollHandler;;
-//    self.viewPager.mainView.mj_header = [MJRefreshNormalHeader headerWithRefreshingTarget:self refreshingAction:@selector(loadNewData)];
-//    self.viewPager.mainView.mj_footer = [MJRefreshAutoNormalFooter footerWithRefreshingTarget:self refreshingAction:@selector(loadMoreData)];
-    
-    __weak typeof(self) weakSelf = self;
-    [self.viewPager setSearchBlock:^{
-        [weakSelf.view makeToast:@"网红咖啡馆"
-                        duration:2.0
-                        position:CSToastPositionCenter];
-    }];
     [self.view addSubview:self.viewPager];
-}
-
-- (void)loadMoreData
-{
-    [self requestData:NO];
-}
-
-- (void)loadNewData
-{
-    [self requestData:YES];
-}
-
-- (void)requestData:(BOOL)firstRequest
-{
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wnonnull"
-    NSString *requestUrlString = @"http://v2.api.haodanku.com/itemlist/apikey/fashion/cid/1/back/20";
-    [self.myHttpHandler http:nil get:requestUrlString params:@{@"mid":@(self.mid), @"cid":@(self.cid)} completionHandler:^(BOOL success, NSDictionary * _Nonnull respose, NSDictionary * _Nonnull error) {
-        if (!success) {
-            [self.view makeToast:error.description
-                        duration:3.0
-                        position:CSToastPositionCenter];
-            return;
-        }
-        if (firstRequest) {
-            NSArray *dataList = [respose valueForKey:@"data"];
-            [[MLNHomeDataHandler handler] updateDataList:dataList];
-            [self.viewPager.mainView.mj_header endRefreshing];
-        } else if ([MLNHomeDataHandler handler].dataList.count >= 200) {
-            [self.viewPager.mainView.mj_footer endRefreshingWithNoMoreData];
-        } else {
-            NSArray *dataList = [respose valueForKey:@"data"];
-            [[MLNHomeDataHandler handler] insertDataList:dataList];
-            [self.viewPager.mainView.mj_header endRefreshing];
-        }
-        [self.viewPager reloadWithDataList:[MLNHomeDataHandler handler].dataList];
-    }];
-#pragma clang diagnostic pop
-}
-
-- (MLNMyHttpHandler *)myHttpHandler
-{
-    if (!_myHttpHandler) {
-        _myHttpHandler = [[MLNMyHttpHandler alloc] init];
-    }
-    return _myHttpHandler;
 }
 
 @end

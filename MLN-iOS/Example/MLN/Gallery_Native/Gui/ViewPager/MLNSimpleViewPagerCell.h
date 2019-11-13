@@ -7,18 +7,16 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "MLNHomeTableView.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 @class MLNHomeTableView;
 @interface MLNSimpleViewPagerCell : UICollectionViewCell
 
-@property (nonatomic, strong, readonly) MLNHomeTableView *mainTableView;
+@property (nonatomic, copy) NSString *tableType;
+@property (nonatomic, strong, readonly) UITableView *mainTableView;
 
-- (void)setRefreshBlock:(RefreshBlock)refreshBlock;
-- (void)setLoadingBlock:(LoadingBlock)loadingBlock;
-- (void)setSearchBlock:(SearchBlock)searchBlock;
+- (void)requestData:(BOOL)firstRequest;
 
 @end
 

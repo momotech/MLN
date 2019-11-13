@@ -60,7 +60,6 @@
 		B27F65CD2377AAAE00F2D341 /* MLNGalleryMessageDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B27F65C42377AAAE00F2D341 /* MLNGalleryMessageDetailViewController.m */; };
 		B27F65D62377AAC400F2D341 /* MLNHomeDataHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = B27F65CF2377AAC400F2D341 /* MLNHomeDataHandler.m */; };
 		B27F65D72377AAC400F2D341 /* MLNGalleryHomeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B27F65D12377AAC400F2D341 /* MLNGalleryHomeViewController.m */; };
-		B27F65D82377AAC400F2D341 /* MLNHomeTableView.m in Sources */ = {isa = PBXBuildFile; fileRef = B27F65D42377AAC400F2D341 /* MLNHomeTableView.m */; };
 		B27F65D92377AAC400F2D341 /* MLNHomeTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B27F65D52377AAC400F2D341 /* MLNHomeTableViewCell.m */; };
 		B27F65DD2377AB0700F2D341 /* MLNGalleryNavigationBar.m in Sources */ = {isa = PBXBuildFile; fileRef = B27F65DC2377AB0700F2D341 /* MLNGalleryNavigationBar.m */; };
 		B27F65E12377AB1600F2D341 /* MLNGalleryPlusViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B27F65E02377AB1600F2D341 /* MLNGalleryPlusViewController.m */; };
@@ -197,13 +196,11 @@
 		B27F65C22377AAAE00F2D341 /* MLNGalleryMessageBaseCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLNGalleryMessageBaseCell.h; sourceTree = "<group>"; };
 		B27F65C32377AAAE00F2D341 /* MLNGalleryMessageToolCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLNGalleryMessageToolCell.m; sourceTree = "<group>"; };
 		B27F65C42377AAAE00F2D341 /* MLNGalleryMessageDetailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MLNGalleryMessageDetailViewController.m; path = MLN/Gallery_Native/Message/MLNGalleryMessageDetailViewController.m; sourceTree = SOURCE_ROOT; };
-		B27F65CE2377AAC400F2D341 /* MLNHomeTableView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MLNHomeTableView.h; path = MLN/Gallery_Native/Home/MLNHomeTableView.h; sourceTree = SOURCE_ROOT; };
 		B27F65CF2377AAC400F2D341 /* MLNHomeDataHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MLNHomeDataHandler.m; path = MLN/Gallery_Native/Home/MLNHomeDataHandler.m; sourceTree = SOURCE_ROOT; };
 		B27F65D02377AAC400F2D341 /* MLNHomeTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MLNHomeTableViewCell.h; path = MLN/Gallery_Native/Home/MLNHomeTableViewCell.h; sourceTree = SOURCE_ROOT; };
 		B27F65D12377AAC400F2D341 /* MLNGalleryHomeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MLNGalleryHomeViewController.m; path = MLN/Gallery_Native/Home/MLNGalleryHomeViewController.m; sourceTree = SOURCE_ROOT; };
 		B27F65D22377AAC400F2D341 /* MLNGalleryHomeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MLNGalleryHomeViewController.h; path = MLN/Gallery_Native/Home/MLNGalleryHomeViewController.h; sourceTree = SOURCE_ROOT; };
 		B27F65D32377AAC400F2D341 /* MLNHomeDataHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MLNHomeDataHandler.h; path = MLN/Gallery_Native/Home/MLNHomeDataHandler.h; sourceTree = SOURCE_ROOT; };
-		B27F65D42377AAC400F2D341 /* MLNHomeTableView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MLNHomeTableView.m; path = MLN/Gallery_Native/Home/MLNHomeTableView.m; sourceTree = SOURCE_ROOT; };
 		B27F65D52377AAC400F2D341 /* MLNHomeTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MLNHomeTableViewCell.m; path = MLN/Gallery_Native/Home/MLNHomeTableViewCell.m; sourceTree = SOURCE_ROOT; };
 		B27F65DB2377AB0700F2D341 /* MLNGalleryNavigationBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLNGalleryNavigationBar.h; sourceTree = "<group>"; };
 		B27F65DC2377AB0700F2D341 /* MLNGalleryNavigationBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLNGalleryNavigationBar.m; sourceTree = "<group>"; };
@@ -629,8 +626,6 @@
 				B27F65D12377AAC400F2D341 /* MLNGalleryHomeViewController.m */,
 				B27F65D32377AAC400F2D341 /* MLNHomeDataHandler.h */,
 				B27F65CF2377AAC400F2D341 /* MLNHomeDataHandler.m */,
-				B27F65CE2377AAC400F2D341 /* MLNHomeTableView.h */,
-				B27F65D42377AAC400F2D341 /* MLNHomeTableView.m */,
 				B27F65D02377AAC400F2D341 /* MLNHomeTableViewCell.h */,
 				B27F65D52377AAC400F2D341 /* MLNHomeTableViewCell.m */,
 			);
@@ -924,7 +919,6 @@
 				B27F65DD2377AB0700F2D341 /* MLNGalleryNavigationBar.m in Sources */,
 				B29500F72372D5B400F48F09 /* MLNSimpleViewPagerCell.m in Sources */,
 				B29500D92372627000F48F09 /* MLNNativeTabSegmentScrollHandler.m in Sources */,
-				B27F65D82377AAC400F2D341 /* MLNHomeTableView.m in Sources */,
 				B27F65AE2377AA9700F2D341 /* MLNDiscoverInspirCategoryView.m in Sources */,
 				B27F65AB2377AA9700F2D341 /* MLNDiscoverAlbumDetailCell.m in Sources */,
 				B27F65AA2377AA9700F2D341 /* MLNDiscoverAlbumDetailViewController.m in Sources */,
