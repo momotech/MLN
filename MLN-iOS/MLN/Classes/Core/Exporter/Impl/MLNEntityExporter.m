@@ -82,21 +82,21 @@ static const struct luaL_Reg MLNUserDataBaseFuncs [] = {
         return ret;
     }
     // 注册方法
-    return [self openlib:classInfo error:error];
+    return [self openlib:classInfo nativeClassName:classInfo->clz error:error];
 }
 
-- (BOOL)openlib:(const mln_objc_class *)libInfo error:(NSError **)error
+- (BOOL)openlib:(const mln_objc_class *)libInfo nativeClassName:(const char *)nativeClassName error:(NSError **)error
 {
     NSParameterAssert(libInfo != NULL);
     if (MLNHasSuperClass(libInfo)) {
         MLNAssert(self.luaCore, charpNotEmpty(libInfo->supreClz), @"%s's super not found!", libInfo->clz);
         NSAssert(libInfo->supreClz != NULL, @"%s'super class must not be null!", libInfo->clz);
         Class<MLNEntityExportProtocol> superClass = NSClassFromString([NSString stringWithUTF8String:libInfo->supreClz]);
-        if (![self openlib:[superClass mln_clazzInfo] error:error]) {
+        if (![self openlib:[superClass mln_clazzInfo] nativeClassName:nativeClassName error:error]) {
             return NO;
         }
     }
-    return [self.luaCore openLib:NULL methodList:libInfo->methods nup:0 error:error];
+    return [self.luaCore openLib:NULL nativeClassName:nativeClassName methodList:libInfo->methods nup:0 error:error];
 }
 
 - (BOOL)registerConstructor:(lua_CFunction)cfunc clazz:(const char *)nativeClazzName constructor:(const char *)nativeConstructorName luaName:(const char *)luaName error:(NSError **)error
