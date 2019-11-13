@@ -165,27 +165,23 @@ function _class:request(first, complete)
                 complete(false, nil)
             end
         end)
-        return
-    end
-
-
-    local HTTPHandler = require("MMLuaKitGallery.HTTPHandler")
-    HTTPHandler:GET("http://v2.api.haodanku.com/itemlist/apikey/fashion/cid/1/back/20", {min_id = self.minId, cid = self.cid}, function(success, response, err)
-        if success then
-            local data = response:get("data")
-            if first then
-                self.minId = 1
-                self.dataList = data
-            elseif data then
-                self.minId = response:get("min_id")
-                self.dataList:addAll(data)
+    else
+        File:asyncReadFile('file://gallery/json/fashion.json', function(codeNumber, response)
+            map = StringUtil:jsonToMap(response)
+            if codeNumber == 0 then
+                local data = map:get("data")
+                if first then
+                    self.dataList = data
+                elseif data then
+                    self.dataList:addAll(data)
+                end
+                complete(true, data)
+            else
+                --error(err:get("errmsg"))
+                complete(false, nil)
             end
-            complete(success, data)
-        else
-            error(err:get("errmsg"))
-            complete(false, nil)
-        end
-    end)
+        end)
+    end
 end
 
 return _class
