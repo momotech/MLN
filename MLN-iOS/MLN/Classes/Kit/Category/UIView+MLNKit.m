@@ -1094,9 +1094,6 @@ static const void *kLuaOnDetachedFromWindowCallback = &kLuaOnDetachedFromWindowC
 //开启高亮
 - (void)lua_openRipple:(BOOL)open
 {
-    if (!self.userInteractionEnabled && open) {
-        self.userInteractionEnabled = YES;
-    }
     [self openRipple:open];
 }
 
