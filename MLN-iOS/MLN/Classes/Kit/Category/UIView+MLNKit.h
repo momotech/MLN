@@ -24,6 +24,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) CGFloat lua_bottom;
 @property (nonatomic, assign) CGFloat lua_right;
 @property (nonatomic, assign) CGRect lua_frame;
+@property (nonatomic, assign) BOOL lua_enable;
 
 - (void)lua_layoutIfNeed;
 - (void)lua_sizeToFit;
