@@ -3,7 +3,7 @@
 //  MLN_Example
 //
 //  Created by MoMo on 2019/11/2.
-//  Copyright © 2019 liu.xu_1586. All rights reserved.
+//  Copyright (c) 2019 MoMo. All rights reserved.
 //
 
 #import "MLNFPSLabel.h"
