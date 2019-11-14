@@ -12,7 +12,7 @@ local _class = {
 ---@public
 function _class:new()
     local o = {}
-    setmetatable(o, {__index = self})
+    setmetatable(o, { __index = self })
     return o
 end
 
@@ -41,7 +41,8 @@ function _class:updateCellContentWithItem(item)
 
     self.cellItems:insert(1, item:get("itempic")) --图片
     local count = self.cellItems:size()
-    if count > 10 then --设置cell上的图片滑动展示数量最多10个
+    if count > 10 then
+        --设置cell上的图片滑动展示数量最多10个
         self.cellItems:removeObjectsAtRange(10, count)
     end
     self.viewPager:reloadData()
@@ -56,20 +57,22 @@ end
 
 ---@private
 function _class:setupCellContentView()
-    local cellContentView = LinearLayout(LinearType.VERTICAL):bgColor(_Color.White):width(MeasurementType.MATCH_PARENT):height(MeasurementType.WRAP_CONTENT)
+    local cellContentView = LinearLayout(LinearType.VERTICAL)
+            :width(MeasurementType.MATCH_PARENT):height(MeasurementType.WRAP_CONTENT)
     self.cellContentView = cellContentView
 
     --layout
     local personInfoView = LinearLayout(LinearType.HORIZONTAL)
     personInfoView:width(MeasurementType.MATCH_PARENT):height(56)
-    personInfoView:bgColor(_Color.White)
     cellContentView:addView(personInfoView)
     self.personInfoView = personInfoView
 
     --头像
     local avatarView = ImageView()
-    avatarView:width(36):height(36):setGravity(Gravity.CENTER_VERTICAL):cornerRadius(18):marginLeft(10)
-    avatarView:bgColor(_Color.LightGray)
+    avatarView:width(36):height(36):setGravity(Gravity.CENTER_VERTICAL)
+              :cornerRadius(18)
+              :marginLeft(10)
+    avatarView:bgColor(_Color.LightGray)--ok
     avatarView:contentMode(ContentMode.SCALE_ASPECT_FILL)
     personInfoView:addView(avatarView)
     self.avatarView = avatarView
@@ -77,20 +80,18 @@ function _class:setupCellContentView()
     --名字
     local nameLabel = Label()
     nameLabel:height(MeasurementType.WRAP_CONTENT):setGravity(Gravity.CENTER_VERTICAL):marginLeft(8)
-    nameLabel:bgColor(_Color.White)
     nameLabel:fontSize(14):textAlign(TextAlign.CENTER)
     personInfoView:addView(nameLabel)
     self.nameLabel = nameLabel
 
     --关注按钮
     local followLabelPlaceholder = Label():height(MeasurementType.MATCH_PARENT):width(MeasurementType.MATCH_PARENT):setGravity(Gravity.CENTER)
-    followLabelPlaceholder:bgColor(personInfoView:bgColor())
     self.followLabelPlaceholder = followLabelPlaceholder
     personInfoView:addView(followLabelPlaceholder)
 
     local followLabel = Label()
     followLabel:marginLeft(-70):width(55):height(30):setGravity(Gravity.CENTER)
-    followLabel:bgColor(personInfoView:bgColor()):cornerRadius(3):borderWidth(1):borderColor(Color(200,200,200))
+               :cornerRadius(3):borderWidth(1):borderColor(Color(200, 200, 200))
     followLabel:text("+关注"):textAlign(TextAlign.CENTER):fontSize(13):textColor(_Color.Black)
     followLabel:onClick(function()
         if self.followLabel:text() == "+关注" then
@@ -116,8 +117,7 @@ function _class:setupViewPagerForCell()
     self.adapter:initCell(function(cell, _)
         cell.imageView = ImageView()
         cell.imageView:contentMode(ContentMode.SCALE_ASPECT_FIT)
-        cell.imageView:height(MeasurementType.WRAP_CONTENT):width(System:screenSize():width())
-        cell.imageView:bgColor(_Color.White)
+        cell.imageView:height(MeasurementType.MATCH_PARENT):width(MeasurementType.MATCH_PARENT)
         cell.contentView:addView(cell.imageView)
     end)
 
@@ -128,7 +128,7 @@ function _class:setupViewPagerForCell()
 
     --让cell上的图片支持滑动
     self.viewPager = ViewPager()
-    self.viewPager:width(MeasurementType.MATCH_PARENT):height(400)
+    self.viewPager:width(MeasurementType.MATCH_PARENT):height(380)
     self.viewPager:adapter(self.adapter)
     self.cellContentView:addView(self.viewPager)
 end
@@ -136,7 +136,6 @@ end
 ---@private
 function _class:setupDetailDescViewForCell()
     self.descLabel = Label()
-    self.descLabel:bgColor(_Color.White)
     self.descLabel:marginLeft(10):marginRight(10):marginTop(10):height(MeasurementType.WRAP_CONTENT):width(MeasurementType.MATCH_PARENT)
     self.descLabel:fontSize(15):textAlign(TextAlign.LEFT):lines(3)
     self.cellContentView:addView(self.descLabel)
@@ -144,40 +143,36 @@ function _class:setupDetailDescViewForCell()
     local detailViewHeight = 50
     local detailLayout = LinearLayout(LinearType.HORIZONTAL):marginTop(10):marginLeft(10):marginRight(10):height(detailViewHeight):width(MeasurementType.MATCH_PARENT)
     detailLayout:cornerRadius(3)
-    detailLayout:bgColor(_Color.LightGray)
+    detailLayout:bgColor(_Color.LightGray)--OK
     detailLayout:onClick(function()
         Toast("灵感集里还有更多内容哦", 1)
     end)
     self.detailLayout = detailLayout
 
     local detailImageView = ImageView():width(detailViewHeight):height(detailViewHeight):setGravity(Gravity.CENTER_VERTICAL)
-    detailImageView:bgColor(detailLayout:bgColor())
     detailImageView:contentMode(ContentMode.SCALE_ASPECT_FILL)
     self.detailImageView = detailImageView
 
     --布局label
     local labelLayout = LinearLayout(LinearType.VERTICAL):marginLeft(10):marginTop(10):width(MeasurementType.WRAP_CONTENT):height(MeasurementType.WRAP_CONTENT)
-    labelLayout:bgColor(detailLayout:bgColor())
     self.labelLayout = labelLayout
 
     local detailTitleLabel = Label():height(MeasurementType.WRAP_CONTENT):width(MeasurementType.WRAP_CONTENT)
-    detailTitleLabel:bgColor(_Color.Clear)
     detailTitleLabel:text("来自灵感集"):fontSize(12):textAlign(TextAlign.LEFT):lines(1)
     labelLayout:addView(detailTitleLabel)
     self.detailTitleLabel = detailTitleLabel
 
     --布局居右显示label
-    local rightLayout = LinearLayout(LinearType.HORIZONTAL):width(MeasurementType.MATCH_PARENT):setGravity(Gravity.CENTER):marginRight(0):bgColor(detailLayout:bgColor())
+    local rightLayout = LinearLayout(LinearType.HORIZONTAL):width(MeasurementType.MATCH_PARENT):setGravity(Gravity.CENTER):marginRight(0)
     self.rightLayout = rightLayout
 
     local placeholderLayout = Label():height(26):width(MeasurementType.MATCH_PARENT):setGravity(Gravity.CENTER):marginLeft(0):marginRight(0)
-    placeholderLayout:bgColor(detailLayout:bgColor())
     self.placeholderLayout = placeholderLayout
     rightLayout:addView(placeholderLayout)
 
     local detailCountLabelWidth = 85
     local detailCountLabel = Label():marginLeft(-detailCountLabelWidth):height(26):width(detailCountLabelWidth):setGravity(Gravity.CENTER)
-    detailCountLabel:bgColor(Color(210,210,210,1))
+    detailCountLabel:bgColor(Color(210, 210, 210, 1))--ok
     detailCountLabel:cornerRadius(detailCountLabel:height() / 2)
     detailCountLabel:fontSize(12):textAlign(TextAlign.CENTER):lines(1):textColor(_Color.White)
     self.detailCountLabel = detailCountLabel
@@ -200,13 +195,11 @@ end
 function _class:setupInteractionViewsForCell()
     local height = 50
     local interactionLayout = LinearLayout(LinearType.HORIZONTAL):marginTop(10):marginLeft(10):marginRight(10):height(height):width(MeasurementType.MATCH_PARENT)
-    interactionLayout:bgColor(_Color.White)
     self.interactionLayout = interactionLayout
     self.cellContentView:addView(interactionLayout)
 
     --分享
     local shareView = ImageView():height(25):width(25):setGravity(Gravity.CENTER_VERTICAL)
-    shareView:bgColor(interactionLayout:bgColor())
     shareView:image("https://s.momocdn.com/w/u/others/2019/08/28/1566958902005-share.png")
     shareView:onClick(function()
         Toast("可分享到微信朋友圈哦")
@@ -216,13 +209,11 @@ function _class:setupInteractionViewsForCell()
 
     --布局点赞、评论、收藏
     local buttonsLayout = LinearLayout(LinearType.HORIZONTAL):height(height):width(MeasurementType.MATCH_PARENT)
-    buttonsLayout:bgColor(interactionLayout:bgColor())
     self.buttonsLayout = buttonsLayout
     interactionLayout:addView(buttonsLayout)
 
     --收藏
     local collectButton = ImageView():marginLeft(-30):marginTop(-3):width(30):height(30):setGravity(Gravity.CENTER_VERTICAL)
-    collectButton:bgColor(interactionLayout:bgColor())
     collectButton:image("https://s.momocdn.com/w/u/others/2019/08/31/1567258988643-collect.png")
     collectButton:onClick(function()
         self:handleClickCollectEvent()
@@ -232,7 +223,6 @@ function _class:setupInteractionViewsForCell()
 
     --评论数量
     local commentCountLabel = Label():marginLeft(-60):marginTop(-8):width(30):height(15):setGravity(Gravity.CENTER)
-    commentCountLabel:bgColor(interactionLayout:bgColor())
     commentCountLabel:fontSize(11):textColor(_Color.LightBlack)
     commentCountLabel:text("5")
     self.commentCountLabel = commentCountLabel
@@ -240,7 +230,6 @@ function _class:setupInteractionViewsForCell()
 
     --评论
     local messageButton = ImageView():marginLeft(-60):width(25):height(25):setGravity(Gravity.CENTER_VERTICAL)
-    messageButton:bgColor(interactionLayout:bgColor())
     messageButton:image("https://s.momocdn.com/w/u/others/2019/08/28/1566958902036-comment.png")
     messageButton:onClick(function()
         Toast("还没有评论，赶快抢个沙发吧")
@@ -250,7 +239,6 @@ function _class:setupInteractionViewsForCell()
 
     --点赞数量
     local likeCountLabel = Label():marginLeft(-60):marginTop(-8):width(35):height(15):setGravity(Gravity.CENTER)
-    likeCountLabel:bgColor(interactionLayout:bgColor())
     likeCountLabel:fontSize(11):textColor(_Color.LightBlack)
     likeCountLabel:text("3")
     self.likeCountLabel = likeCountLabel
@@ -258,7 +246,6 @@ function _class:setupInteractionViewsForCell()
 
     --点赞
     local likeButton = ImageView():marginLeft(-65):width(30):height(25):setGravity(Gravity.CENTER_VERTICAL)
-    likeButton:bgColor(interactionLayout:bgColor())
     likeButton:image("https://s.momocdn.com/w/u/others/2019/08/31/1567257871136-like.png")
     likeButton:onClick(function()
         self:handleClickLikeEvent()
@@ -268,7 +255,7 @@ function _class:setupInteractionViewsForCell()
 
     --分割线
     local line = View():width(MeasurementType.MATCH_PARENT):height(10)
-    line:bgColor(_Color.LightGray)
+    line:bgColor(_Color.LightGray)--ok
     self.line = line
     self.cellContentView:addView(line)
 end

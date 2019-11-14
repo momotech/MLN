@@ -11,6 +11,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface MLNLoadTimeStatistics : NSObject
 
++ (instancetype)sharedInstance;
+
 - (void)resetAllTimeRecord;
 - (void)recordStartTime;
 - (void)recordEndTime;
