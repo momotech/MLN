@@ -48,6 +48,8 @@ static MLN_FORCE_INLINE void __mln_lua_pushentity(lua_State *L, id<MLNEntityExpo
     lua_setmetatable(L, -2);
 }
 
+static MLN_FORCE_INLINE BOOL __mln_lua_pushtable(lua_State *L, __unsafe_unretained id obj, NSError **error);
+
 static MLN_FORCE_INLINE int __mln_lua_pushobj(lua_State *L, __unsafe_unretained id obj, NSError **error) {
     int ret = 1;
     lua_checkstack(L, 4);
@@ -91,26 +93,15 @@ static MLN_FORCE_INLINE int __mln_lua_pushobj(lua_State *L, __unsafe_unretained 
         }
         case MLNNativeTypeArray:
         {
-            NSArray *array = obj;
-            lua_newtable(L);
-            for (int i=0; i<array.count; i++) {
-                id value = array[i];
-                lua_pushnumber(L, i+1);
-                __mln_lua_pushobj(L, value, error);
-                lua_settable(L, -3);
+            if (!__mln_lua_pushtable(L, obj, error)) {
+                return 0;
             }
             break;
         }
         case MLNNativeTypeDictionary:
         {
-            NSDictionary* dictionary = obj;
-            lua_newtable(L);
-            for (NSString *key in dictionary) {
-                NSString* value = dictionary[key];
-                lua_checkstack(L, 4);
-                lua_pushstring(L, key.UTF8String);
-                __mln_lua_pushobj(L,value, error);
-                lua_settable(L, -3);
+            if (!__mln_lua_pushtable(L, obj, error)) {
+                return 0;
             }
             break;
         }
