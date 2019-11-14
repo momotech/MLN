@@ -371,7 +371,7 @@ static int mln_errorFunc_traceback (lua_State *L) {
     return YES;
 }
 
-- (BOOL)openLib:(const char *)libName methodList:(const struct mln_objc_method *)list nup:(int)nup error:(NSError **)error
+- (BOOL)openLib:(const char *)libName nativeClassName:(const char *)nativeClassName methodList:(const struct mln_objc_method *)list nup:(int)nup error:(NSError **)error
 {
     lua_State *L = self.state;
     if (!L) {
@@ -413,7 +413,7 @@ static int mln_errorFunc_traceback (lua_State *L) {
             return NO;
         }
         int extraCount = 0;
-        lua_pushstring(L, list->clz); // class
+        lua_pushstring(L, nativeClassName); // class
         lua_pushboolean(L, list->isProperty);
         if (list->isProperty) {
             lua_pushstring(L, list->setter_n); // setter

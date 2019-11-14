@@ -101,6 +101,7 @@
         [self.reuseHeaderCallback addLuaTableArgument:[waterfallHeaderView getLuaTable]];
         [self.reuseHeaderCallback addIntArgument:(int)indexPath.section+1];
         [self.reuseHeaderCallback addIntArgument:(int)indexPath.row+1];
+        [self.reuseHeaderCallback callIfCan];
         [waterfallHeaderView requestLayoutIfNeed];
         return waterfallHeaderView;
     } else {

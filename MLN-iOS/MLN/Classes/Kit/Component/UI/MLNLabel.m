@@ -40,6 +40,7 @@
     if (self = [super initWithLuaCore:luaCore frame:frame]) {
         self.labelBreakMode = NSLineBreakByTruncatingTail;
         self.userInteractionEnabled = YES;
+        self.fontSize = kLuaDefaultFontSize;
     }
     return self;
 }
@@ -260,7 +261,6 @@
     if (!_innerLabel) {
         _innerLabel = [[UILabel alloc] init];
         _innerLabel.font = kLuaDefaultFont;
-        _fontSize = kLuaDefaultFontSize;
     }
     return _innerLabel;
 }

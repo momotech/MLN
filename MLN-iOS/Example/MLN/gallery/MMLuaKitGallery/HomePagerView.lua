@@ -22,8 +22,7 @@ function _class:rootView()
     if self.containerView then
         return self.containerView
     end
-    self.containerView = View()
-    self.containerView:bgColor(_Color.White)
+    self.containerView = LinearLayout(LinearType.VERTICAL)
     self.containerView:width(MeasurementType.MATCH_PARENT):height(MeasurementType.MATCH_PARENT)
     self:setupTabSegmentView()
     self:setupViewPager()
@@ -37,9 +36,10 @@ function _class:setupTabSegmentView()
     titles:add("关注")
     titles:add("推荐")
 
+    self.placeHolderView = View():bgColor(Color(255, 255, 255, 0.0)):width(window:width()):height(0.5)
+    self.containerView:addView(self.placeHolderView)
     self.tabSegment = TabSegmentView(Rect(0, 0, window:width(),_NaviBarHeight), titles, _Color.Black)
     self.tabSegment:selectScale(1.0):width(MeasurementType.MATCH_PARENT):setAlignment(TabSegmentAlignment.CENTER):setGravity(Gravity.CENTER_HORIZONTAL)
-    self.tabSegment:bgColor(_Color.White)
     self.tabSegment:setAlignment(TabSegmentAlignment.CENTER)
     self.containerView:addView(self.tabSegment)
 end
@@ -61,10 +61,10 @@ function _class:setupViewPager()
         cell._tableView = tableView --需持有tableView，否则会被GC
         if pos == 1 then
             cell._tableView:updateCategoryId(1)
-            cell.contentView:addView(tableView:tableView(tableView.TYPE_FOLLOW, top + statusBarHeight))
+            cell.contentView:addView(tableView:tableView(tableView.TYPE_FOLLOW))
         else
             cell._tableView:updateCategoryId(4)
-            cell.contentView:addView(tableView:tableView(tableView.TYPE_RECOMMEND, top + statusBarHeight))
+            cell.contentView:addView(tableView:tableView(tableView.TYPE_RECOMMEND))
         end
     end)
 
@@ -77,9 +77,8 @@ function _class:setupViewPager()
     end)
 
     self.viewPager = ViewPager()
-    self.viewPager:bgColor(_Color.White)
     self.viewPager:scrollToPage(1,false)
-    self.viewPager:marginTop(top):width(window:width()):height(window:height() - top):setGravity(Gravity.CENTER_HORIZONTAL)
+    self.viewPager:width(window:width()):height(MeasurementType.MATCH_PARENT):setGravity(Gravity.CENTER_HORIZONTAL)
     self.viewPager:showIndicator(false)
     self.viewPager:adapter(self.adapter)
     self.tabSegment:relatedToViewPager(self.viewPager, true)

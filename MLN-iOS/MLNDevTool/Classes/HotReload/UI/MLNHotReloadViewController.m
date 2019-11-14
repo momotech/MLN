@@ -3,7 +3,7 @@
 //  MLNDebugger_Example
 //
 //  Created by MoMo on 2019/6/14.
-//  Copyright © 2019 feng.xiaoning. All rights reserved.
+//  Copyright © 2019 MoMo.xiaoning. All rights reserved.
 //
 
 #import "MLNHotReloadViewController.h"

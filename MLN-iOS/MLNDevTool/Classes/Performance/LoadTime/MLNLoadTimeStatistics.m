@@ -21,6 +21,17 @@
     CFTimeInterval _loadScriptEndTime;
 }
 
+static MLNLoadTimeStatistics *_instance = nil;
+
++ (instancetype)sharedInstance
+{
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        _instance = [[MLNLoadTimeStatistics alloc] init];
+    });
+    return _instance;
+}
+
 - (NSString *)description
 {
     NSString *descriptMessage = [NSString stringWithFormat:@"/********** MLN LoadTime Statistics ******/\n%@\n%@\n%@\n", \
