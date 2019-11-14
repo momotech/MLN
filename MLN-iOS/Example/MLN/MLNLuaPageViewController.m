@@ -14,8 +14,10 @@
 #import "MLNPackage.h"
 #import "MLNPackageManager.h"
 #import <NSString+MLNKit.h>
+#import <MLNLoadTimeStatistics.h>
+#import <MLNKitInstance.h>
 
-@interface MLNLuaPageViewController ()
+@interface MLNLuaPageViewController ()<MLNKitInstanceDelegate>
 
 @end
 
@@ -48,8 +50,11 @@
             }
         }
     }
+    NSLog(@">>>>>>>>>>>>>创建Lua页面");
+    [[MLNLoadTimeStatistics sharedInstance] recordStartTime];
     UIViewController *topViewController = [MLNControlContext mln_topViewController];
     MLNLuaPageViewController *controller = [[MLNLuaPageViewController alloc] initWithActionItem:actionItem];
+    controller.kitInstance.delegate = controller;
     switch (gotoValue) {
         case 0: {
             [topViewController.navigationController pushViewController:controller animated:animated];
@@ -91,6 +96,13 @@
     if (_package.needReload || _package.needDownload) {
         [self checkPackage];
     }
+}
+
+#pragma mark - MLNKitInstanceDelegate
+- (void)instance:(MLNKitInstance *)instance didFinishRun:(NSString *)entryFileName
+{
+    [[MLNLoadTimeStatistics sharedInstance] recordEndTime];
+    NSLog(@">>>>>>>>>>>>>Lua页面布局完成：%@", @([[MLNLoadTimeStatistics sharedInstance] allLoadTime] * 1000));
 }
 
 - (void)checkPackage

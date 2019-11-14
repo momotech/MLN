@@ -10,11 +10,16 @@
 #import <SDWebImage/UIImageView+WebCache.h>
 #import <SDWebImage/UIButton+WebCache.h>
 #import <MLNCornerImageLoader.h>
+#import "MLNGalleryNative.h"
 
 @implementation MLNMyImageHandler
 
 - (void)imageView:(UIImageView<MLNEntityExportProtocol> *)imageView setImageWithPath:(NSString *)path
 {
+    if (kDisableImageLoad)  {
+        return;
+    }
+    
     if ([self isHttpURL:path]) {
         NSURL *imgURL = [NSURL URLWithString:path];
         [imageView sd_setImageWithURL:imgURL];
@@ -28,6 +33,7 @@
 
 - (void)imageView:(UIImageView<MLNEntityExportProtocol> *)imageView setImageWithPath:(NSString *)path placeHolderImage:(NSString *)placeHolder
 {
+    
     [imageView sd_setImageWithURL:[NSURL URLWithString:path] placeholderImage:[UIImage imageNamed:placeHolder]];
 }
 

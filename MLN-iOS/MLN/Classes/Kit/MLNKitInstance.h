@@ -18,6 +18,7 @@ typedef void (^MLNOnDestroyCallback)(void);
 
 NS_ASSUME_NONNULL_BEGIN
 @class MLNLuaCore;
+@class MLNWindow;
 @class MLNLuaTable;
 @class MLNLuaBundle;
 @class MLNExporter;
@@ -28,12 +29,17 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  承载Kit库bridge和LuaCore的实例，用来运行Lua文件。
  */
-@interface MLNKitInstance : NSObject <NSKeyedArchiverDelegate>
+@interface MLNKitInstance : NSObject <NSKeyedArchiverDelegate> 
 
 /**
  Lua 内核，每一个Instance都对应一个Lua 内核。
  */
 @property (nonatomic, strong, readonly) MLNLuaCore *luaCore;
+
+/**
+Lua中的根视图。
+*/
+@property (nonatomic, strong, readonly) MLNWindow *luaWindow;
 
 /**
  LuaWindowd所在的视图控制器

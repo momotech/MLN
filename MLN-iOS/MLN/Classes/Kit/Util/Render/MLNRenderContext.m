@@ -109,7 +109,7 @@
 #pragma mark - Layer
 - (void)cleanLayerContentsIfNeed
 {
-    if (self.targetView.layer.contents) {
+    if (![self.targetView isKindOfClass:[UIImageView class]] && self.targetView.layer.contents) {
         self.targetView.layer.contents = nil;
     }
 }
