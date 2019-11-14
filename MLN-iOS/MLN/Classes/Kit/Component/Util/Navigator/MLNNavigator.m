@@ -17,7 +17,6 @@
 
 + (void)lua_gotoPage:(NSString *)action params:(NSDictionary *)params animType:(MLNAnimationAnimType)animType
 {
-    
     MLNStaticCheckStringTypeAndNilValue(action)
     id<MLNNavigatorHandlerProtocol> delegate = [self navigatorHandler];
     MLNKitLuaStaticAssert([delegate respondsToSelector:@selector(viewController:gotoPage:params:animType:)], @"-[MLNNavigator viewController:gotoPage:params:animType:] was not found!");

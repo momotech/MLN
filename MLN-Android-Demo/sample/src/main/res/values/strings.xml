@@ -1,7 +1,14 @@
 <resources>
-    <string name="app_name">MLNDemo</string>
+    <string name="app_name" translatable="false">MLNDemo</string>
 
-    <string name="btn_scan_qr">离线预览</string>
-    <string name="wait">请稍后</string>
-    <string name="dev_debug_tv_value">热重载</string>
+    <string name="btn_scan_qr" translatable="false">离线预览</string>
+    <string name="wait" translatable="false">请稍后</string>
+    <string name="dev_debug_tv_value" translatable="false">热重载</string>
+
+    <string name="footer_tips" translatable="false">正在加载更多...</string>
+    <string name="message_title" translatable="false">消息</string>
+    <string-array name="items">
+        <item>私信/客服</item>
+        <item>官方通知</item>
+    </string-array>
 </resources>

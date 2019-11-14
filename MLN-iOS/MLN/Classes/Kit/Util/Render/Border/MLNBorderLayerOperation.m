@@ -42,19 +42,15 @@
 
 - (void)remakeIfNeed
 {
+    if (self.borderLayer && self.targetView && !CGRectEqualToRect(self.borderLayer.bounds, self.targetView.bounds)) {
+        self.needRemake = YES;
+    }
     if (self.needRemake) {
         [self remake];
         self.needRemake = NO;
         return;
     }
     
-    CGRect frame = self.targetView.bounds;
-    if (self.targetView && !CGRectEqualToRect(frame, self.borderLayer.frame)) {
-        [CATransaction begin];
-        [CATransaction setDisableActions:YES];
-        self.borderLayer.frame = frame;
-        [CATransaction commit];
-    }
     CALayer *targetLayer = self.targetView.layer;
     CGFloat cornerRadius = targetLayer.cornerRadius;
     if (self.borderLayer.cornerRadius != cornerRadius) {
