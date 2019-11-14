@@ -159,7 +159,7 @@ static MLNHotReload *sharedInstance;
 #pragma mark - MLNServerHandlerDelegate
 - (void)reload:(NSString * )bundlePath entryFilePath:(NSString * _Nonnull)entryFilePath params:(NSDictionary * _Nonnull )params
 {
-    if (!_running || stringNotEmpty(bundlePath)) {
+    if (!_running || !stringNotEmpty(bundlePath)) {
         return;
     }
     dispatch_async(dispatch_get_main_queue(), ^{
