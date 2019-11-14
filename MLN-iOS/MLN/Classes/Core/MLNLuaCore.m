@@ -413,7 +413,7 @@ static int mln_errorFunc_traceback (lua_State *L) {
             return NO;
         }
         int extraCount = 0;
-        lua_pushstring(L, list->clz); // class
+        lua_pushstring(L, nativeClassName); // class
         lua_pushboolean(L, list->isProperty);
         if (list->isProperty) {
             lua_pushstring(L, list->setter_n); // setter
