@@ -773,6 +773,16 @@ static const void *kLuaRenderContext = &kLuaRenderContext;
 }
 
 #pragma mark - Gesture
+- (BOOL)lua_enable
+{
+    return self.userInteractionEnabled;
+}
+
+- (void)setLua_enable:(BOOL)lua_enable
+{
+    self.userInteractionEnabled = lua_enable;
+}
+
 - (BOOL)lua_canClick
 {
     return NO;
@@ -806,6 +816,9 @@ static const void *kLuaRenderContext = &kLuaRenderContext;
 
 - (void)mln_in_tapClickAction:(UIGestureRecognizer *)gesture
 {
+    if (!self.lua_enable) {
+        return;
+    }
     if (self.mln_tapClickBlock) {
         [self.mln_tapClickBlock callIfCan];
     }
@@ -833,6 +846,9 @@ static const void *kLuaRenderContext = &kLuaRenderContext;
 
 - (void)mln_in_longPressAction:(UIGestureRecognizer *)gesture
 {
+    if (!self.lua_enable) {
+        return;
+    }
     if (!self.mln_longPressBlock) return;
     if (gesture.state == UIGestureRecognizerStateBegan) {
         CGPoint point = [gesture locationInView:self];
