@@ -505,10 +505,17 @@ int mln_lua_constructor (lua_State *L) {
         mln_lua_assert(L, NO, errmsg.UTF8String);
         return 0;
     }
-    // 模拟ARC，手动添加retain
-    CFBridgingRetain(target);
+    BOOL isInitSel = NO;
+    if (selector) {
+        NSString *selectorName = NSStringFromSelector(selector);
+        if ([selectorName hasPrefix:@"init"]) {
+            isInitSel = YES;
+            // 模拟ARC，手动添加retain
+            CFBridgingRetain(target);
+        }
+    }
     // call
-    return __mln_lua_objc_invoke(L, 1, target, selector, NO, NO, YES);
+    return __mln_lua_objc_invoke(L, 1, target, selector, NO, NO, isInitSel);
 }
 
 int mln_lua_obj_method (lua_State *L) {

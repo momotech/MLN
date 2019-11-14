@@ -3,7 +3,7 @@
 //  MLN_Example
 //
 //  Created by MoMo on 2019/11/4.
-//  Copyright © 2019 liu.xu_1586. All rights reserved.
+//  Copyright (c) 2019 MoMo. All rights reserved.
 //
 
 #import "MLNGalleryViewController.h"
@@ -15,16 +15,21 @@
 #import "MLNOfflineViewController.h"
 #import <MLNDevTool/MLNFPSLabel.h>
 #import <MLNDevTool/MLNLoadTimeStatistics.h>
+#import "MLNGalleryMainViewController.h"
 
-@interface MLNGalleryViewController () <MLNKitInstanceErrorHandlerProtocol, MLNKitInstanceDelegate>
+@interface MLNGalleryViewController () <MLNKitInstanceDelegate, MLNKitViewControllerDelegate>
 
 @property (nonatomic, strong) MLNKitViewController *kcv;
 @property (nonatomic, strong) MLNHotReloadViewController *hotvc;
 @property (nonatomic, strong) MLNOfflineViewController *ovc;
+@property (nonatomic, strong) MLNGalleryMainViewController *galleryMainVc;
 
+@property (nonatomic, strong) UIButton *backButton;
 @property (nonatomic, strong) UIButton *showDemoButton;
 @property (nonatomic, strong) UIButton *showHotReloadButton;
 @property (nonatomic, strong) UIButton *showOfflineButton;
+@property (nonatomic, strong) UIButton *showNativeDemoButton;
+
 @property (nonatomic, strong) MLNFPSLabel *fpsLabel;
 @property (nonatomic, strong) UILabel *loadTimeLabel;
 @property (nonatomic, strong) MLNLoadTimeStatistics *loadTimeStatistics;
@@ -61,69 +66,34 @@
     NSString *entryFile = @"Main.lua";
     MLNLuaBundle *bundle = [MLNLuaBundle mainBundleWithPath:@"gallery"];
     MLNKitViewController *kcv = [[MLNKitViewController alloc] initWithEntryFilePath:entryFile];
+    kcv.delegate = self;
     [kcv regClasses:@[[MLNTestMe class],
                       [MLNStaticTest class],
                       [MLNGlobalVarTest class],
                       [MLNGlobalFuncTest class]]];
     [kcv changeCurrentBundlePath:bundle.bundlePath];
     self.kcv = kcv;
-    [self presentViewController:kcv animated:YES completion:nil];
+    [self.navigationController pushViewController:self.kcv animated:YES];
 }
 
 
 - (void)showHotReload:(id)sender {
     self.hotvc = [[MLNHotReloadViewController alloc] init];
-    [self presentViewController:self.hotvc animated:YES completion:nil];
+    [self.navigationController pushViewController:self.hotvc animated:YES];
 }
 
 - (void)showOffline:(id)sender {
     self.ovc = [[MLNOfflineViewController alloc] init];
-    [self presentViewController:self.ovc animated:YES completion:nil];
+    [self.navigationController pushViewController:self.ovc animated:YES];
 }
 
-#pragma mark - MLNUIInStanceErrorHandlerProtocol
-- (BOOL)canHandleAssert:(MLNKitInstance *)instance
+- (void)showNativeDemo:(id)sender
 {
-    return YES;
+    [[MLNLoadTimeStatistics sharedInstance] recordStartTime];
+    self.galleryMainVc = [[MLNGalleryMainViewController alloc] init];
+    [self.navigationController pushViewController:self.galleryMainVc animated:YES];
 }
 
-- (void)instance:(MLNKitInstance *)instance error:(NSString *)error
-{
-    NSLog(@"%@%@",instance,error);
-}
-
-- (void)instance:(MLNKitInstance *)instance luaError:(NSString *)error luaTraceback:(NSString *)luaTraceback
-{
-    NSLog(@"%@%@",instance,error);
-}
-
-
-#pragma mark - MLNKitInstanceDelegate
-- (void)willSetupLuaCore:(MLNKitInstance *)instance
-{
-    [self.loadTimeStatistics recordStartTime];
-    [self.loadTimeStatistics recordLuaCoreCreateStartTime];
-}
-
-- (void)didSetupLuaCore:(MLNKitInstance *)instance
-{
-    [self.loadTimeStatistics recordLuaCoreCreateEndTime];
-}
-
-- (void)instance:(MLNKitInstance *)instance willLoad:(NSData *)data fileName:(NSString *)fileName
-{
-    [self.loadTimeStatistics recordLoadScriptStartTimeWithFileName:fileName];
-}
-
-- (void)instance:(MLNKitInstance *)instance didLoad:(NSData *)data fileName:(NSString *)fileName
-{
-    [self.loadTimeStatistics recordLoadScriptEndTimeWithFileName:fileName];
-}
-
-- (void)instance:(MLNKitInstance *)instance didFinishRun:(NSString *)entryFileName
-{
-    [self.loadTimeStatistics recordEndTime];
-}
 
 #pragma mark - Private method
 
@@ -153,7 +123,9 @@
 
 - (void)setupSubviews
 {
-    CGFloat buttonW = 100;
+    [self backButton];
+    
+    CGFloat buttonW = 140;
     CGFloat buttonH = 40;
     CGFloat screenW = [UIScreen mainScreen].bounds.size.width;
     CGFloat screenH = [UIScreen mainScreen].bounds.size.height;
@@ -163,16 +135,26 @@
     CGFloat showDemoButtonY = (screenH - buttonH) / 2.0 - space - buttonH;
     self.showDemoButton = [self createButtonWithTitle:@"Demo 展示" action:@selector(showDemoClick:)];
     self.showDemoButton.frame = CGRectMake(showDemoButtonX, showDemoButtonY, buttonW, buttonH);
+    self.showDemoButton.hidden = YES;
     [self.view addSubview:self.showDemoButton];
+    
     CGFloat showHotReloadButtonX = showDemoButtonX;
     CGFloat showHotReloadButtonY = (screenH - buttonH) / 2.0;
     self.showHotReloadButton = [self createButtonWithTitle:@"热重载" action:@selector(showHotReload:)];
     self.showHotReloadButton.frame = CGRectMake(showHotReloadButtonX, showHotReloadButtonY, buttonW, buttonH);
     [self.view addSubview:self.showHotReloadButton];
+    
+    CGFloat showNativeDemoButtonX = showDemoButtonX;
+    CGFloat showNativeDemoButtonY = (screenH - buttonH) / 2.0 + space + buttonH;
+    self.showNativeDemoButton = [self createButtonWithTitle:@"NativeDemo展示" action:@selector(showNativeDemo:)];
+    self.showNativeDemoButton.frame = CGRectMake(showNativeDemoButtonX, showNativeDemoButtonY, buttonW, buttonH);
+    [self.view addSubview:self.showNativeDemoButton];
+    
     CGFloat showOfflineButtonX = showDemoButtonX;
-    CGFloat showOfflineButtonY = (screenH - buttonH) / 2.0 + space + buttonH;
+    CGFloat showOfflineButtonY = showNativeDemoButtonY + buttonH + space;
     self.showOfflineButton = [self createButtonWithTitle:@"离线加载" action:@selector(showOfflineButton)];
     self.showOfflineButton.frame = CGRectMake(showOfflineButtonX, showOfflineButtonY, buttonW, buttonH);
+    self.showOfflineButton.hidden = YES;
     [self.view addSubview:self.showOfflineButton];
     
     CGFloat screenHeight = [UIScreen mainScreen].bounds.size.height;
@@ -189,6 +171,24 @@
     [button addTarget:self action:aSelector forControlEvents:UIControlEventTouchUpInside];
     
     return button;
+}
+
+- (void)back:(UIButton *)button
+{
+    [self.navigationController popViewControllerAnimated:YES];
+}
+
+- (UIButton *)backButton
+{
+    if (!_backButton) {
+        _backButton = [[UIButton alloc] initWithFrame:CGRectMake(10, 20, 120, 30)];
+        _backButton.backgroundColor = [UIColor orangeColor];
+        [_backButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+        [_backButton setTitle:@"点我/侧滑返回" forState:UIControlStateNormal];
+        [_backButton addTarget:self action:@selector(back:) forControlEvents:UIControlEventTouchUpInside];
+        [self.view addSubview:_backButton];
+    }
+    return _backButton;
 }
 
 - (MLNLoadTimeStatistics *)loadTimeStatistics

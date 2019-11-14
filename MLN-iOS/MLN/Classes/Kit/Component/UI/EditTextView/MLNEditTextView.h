@@ -11,7 +11,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface MLNEditTextView : UIView <MLNEntityExportProtocol>
+@interface MLNEditTextView : UIView <MLNEntityExportProtocol, UIResponderStandardEditActions>
 
 @property (nonatomic, strong) UIImageView *backgroundImageView;
 @property (nonatomic, assign) UIEdgeInsets padding;
