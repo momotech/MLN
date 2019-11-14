@@ -17,13 +17,14 @@
 #import <MLNDevTool/MLNLoadTimeStatistics.h>
 #import "MLNGalleryMainViewController.h"
 
-@interface MLNGalleryViewController () <MLNKitInstanceErrorHandlerProtocol, MLNKitInstanceDelegate, MLNKitViewControllerDelegate>
+@interface MLNGalleryViewController () <MLNKitInstanceDelegate, MLNKitViewControllerDelegate>
 
 @property (nonatomic, strong) MLNKitViewController *kcv;
 @property (nonatomic, strong) MLNHotReloadViewController *hotvc;
 @property (nonatomic, strong) MLNOfflineViewController *ovc;
 @property (nonatomic, strong) MLNGalleryMainViewController *galleryMainVc;
 
+@property (nonatomic, strong) UIButton *backButton;
 @property (nonatomic, strong) UIButton *showDemoButton;
 @property (nonatomic, strong) UIButton *showHotReloadButton;
 @property (nonatomic, strong) UIButton *showOfflineButton;
@@ -122,6 +123,8 @@
 
 - (void)setupSubviews
 {
+    [self backButton];
+    
     CGFloat buttonW = 140;
     CGFloat buttonH = 40;
     CGFloat screenW = [UIScreen mainScreen].bounds.size.width;
@@ -168,6 +171,24 @@
     [button addTarget:self action:aSelector forControlEvents:UIControlEventTouchUpInside];
     
     return button;
+}
+
+- (void)back:(UIButton *)button
+{
+    [self.navigationController popViewControllerAnimated:YES];
+}
+
+- (UIButton *)backButton
+{
+    if (!_backButton) {
+        _backButton = [[UIButton alloc] initWithFrame:CGRectMake(10, 20, 120, 30)];
+        _backButton.backgroundColor = [UIColor orangeColor];
+        [_backButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+        [_backButton setTitle:@"点我/侧滑返回" forState:UIControlStateNormal];
+        [_backButton addTarget:self action:@selector(back:) forControlEvents:UIControlEventTouchUpInside];
+        [self.view addSubview:_backButton];
+    }
+    return _backButton;
 }
 
 - (MLNLoadTimeStatistics *)loadTimeStatistics
