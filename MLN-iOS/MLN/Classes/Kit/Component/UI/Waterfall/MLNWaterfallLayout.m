@@ -92,7 +92,7 @@
         if (section == 0) {
             size = [(id<MLNWaterfallLayoutDelegate>)self.collectionView.delegate collectionView:self.collectionView layout:self referenceSizeForHeaderInSection:section];
             //头视图的高度不为0并且根据代理方法能取到对应的头视图的时候，添加对应头视图的布局对象
-            if (size.height >= 0) { //只有header高度大于0情况下，才保存header布局属性
+            if (size.height > 0) { //只有header高度大于0情况下，才保存header布局属性
                 UICollectionViewLayoutAttributes *attribute = [UICollectionViewLayoutAttributes layoutAttributesForSupplementaryViewOfKind:UICollectionElementKindSectionHeader withIndexPath:supplementaryViewIndexPath];
                 UIView *headerView = [MLNInternalWaterfallView headerViewInWaterfall:self.collectionView];
                 //设置frame
