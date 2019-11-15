@@ -20,6 +20,7 @@
 #import "MLNInnerCollectionView.h"
 #import "MLNCollectionViewLayoutProtocol.h"
 #import "UIView+MLNKit.h"
+#import "MLNCollectionViewLayoutProtocol.h"
 
 @interface MLNCollectionView()
 @property (nonatomic, strong) MLNInnerCollectionView *innerCollectionView;
@@ -397,6 +398,13 @@
 }
 
 #pragma mark - Override
+- (void)lua_layoutCompleted
+{
+    [super lua_layoutCompleted];
+    id<MLNCollectionViewLayoutProtocol> layout = (id<MLNCollectionViewLayoutProtocol>)((UICollectionView *)self.lua_contentView).collectionViewLayout;
+    [layout relayoutIfNeed];
+}
+
 - (CGSize)lua_measureSizeWithMaxWidth:(CGFloat)maxWidth maxHeight:(CGFloat)maxHeight
 {
     return CGSizeMake(maxWidth, maxHeight);
