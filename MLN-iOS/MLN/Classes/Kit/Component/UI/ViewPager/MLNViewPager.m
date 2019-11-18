@@ -697,6 +697,12 @@
     [self invalidateTimer];
 }
 
+- (void)lua_changedLayout
+{
+    [super lua_changedLayout];
+    [self setupMainViewFrame];
+}
+
 LUA_EXPORT_VIEW_BEGIN(MLNViewPager)
 LUA_EXPORT_VIEW_PROPERTY(adapter, "setAdapter:","adapter", MLNViewPager)
 LUA_EXPORT_VIEW_PROPERTY(autoScroll, "setAutoScroll:", "autoScroll", MLNViewPager)
