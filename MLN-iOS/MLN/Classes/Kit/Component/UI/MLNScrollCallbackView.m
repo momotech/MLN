@@ -372,10 +372,8 @@ __VA_ARGS__;\
 - (void)lua_setContentOffset:(CGPoint)point
 {
     SCROLLVIEW_DO(if(scrollView.mln_horizontal) {
-        point.x = point.x < 0 ? 0 : point.x;
         [scrollView setContentOffset:CGPointMake(point.x, 0)];
     } else {
-        point.y = point.y < 0 ? 0 : point.y;
         [scrollView setContentOffset:CGPointMake(0, point.y)];
     })
 }
@@ -421,10 +419,8 @@ __VA_ARGS__;\
 - (void)lua_setContentOffsetWithAnimation:(CGPoint)point
 {
     SCROLLVIEW_DO(if(scrollView.mln_horizontal) {
-        point.x = point.x < 0 ? 0 : point.x;
         [scrollView setContentOffset:CGPointMake(point.x, 0) animated:YES];
     } else {
-        point.y = point.y < 0 ? 0 : point.y;
         [scrollView setContentOffset:CGPointMake(0, point.y) animated:YES];
     })
 }
