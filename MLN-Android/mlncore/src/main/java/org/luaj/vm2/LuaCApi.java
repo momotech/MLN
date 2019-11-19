@@ -118,6 +118,8 @@ class LuaCApi {
 
     static native int _loadFile(long L_state, String path, String chunkName);
 
+    static native int _loadAssetsFile(long L_state, String path, String chunkName);
+
     static native int _doLoadedData(long L_state);
 
     static native boolean _setMainEntryFromPreload(long L, String chunkname);

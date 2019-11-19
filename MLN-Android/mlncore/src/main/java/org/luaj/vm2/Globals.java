@@ -672,6 +672,27 @@ public final class Globals extends LuaTable {
     }
 
     /**
+     * 加载Assets目录下，Lua源码或二进制码
+     * 二进制码必须由本机通过{@link #compileAndSave}编译
+     * 其他机器编译出的二进制码不一定可用
+     *
+     * @param path 脚本绝对路径
+     * @return 编译状态，true: 成功，可以通过{@link #callLoadedData()}执行
+     * false: 失败，可通过{@link #getState()}获取加载状态
+     */
+    public final boolean loadAssetsFile(String path, String chunkName) {
+        checkDestroy();
+        try {
+            state = LuaCApi._loadAssetsFile(L_State, path, chunkName);
+        } catch (Throwable e) {
+            error = e;
+            errorMsg = e.getMessage();
+            state = LUA_ERRINJAVA;
+        }
+        return state == LUA_OK;
+    }
+
+    /**
      * 预加载Lua脚本
      * @param chunkName 脚本名称，Lua代码中require()时使用
      * @param data      源码或二进制码

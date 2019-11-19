@@ -899,7 +899,7 @@ public abstract class UDBaseRecyclerAdapter<L extends UDBaseRecyclerLayout> exte
                 int[] sr = getSectionAndRowIn(holder.getLayoutPosition() - sc);
                 if (sr == null)
                     return;
-                delegate.invoke(varargsOf(holder.getCell(), toLuaInt(sr[0]), toLuaInt(sr[1])));
+                delegate.invoke(varargsOf(holder.getCell(), LuaNumber.valueOf(sr[0]), LuaNumber.valueOf(sr[1])));
             }
 
             return;

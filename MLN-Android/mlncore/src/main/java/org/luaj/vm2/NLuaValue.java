@@ -27,6 +27,10 @@ abstract class NLuaValue extends LuaValue {
      * 虚拟机
      */
     protected Globals globals;
+    /**
+     * 此对象是否已经调用过destroy
+     */
+    volatile boolean calledDestroy = false;
 
     /**
      * 创建Table or UserData时使用
@@ -59,10 +63,18 @@ abstract class NLuaValue extends LuaValue {
      * 销毁native状态
      * table、function、userdata将从GVN表中移除
      * globals将销毁虚拟机
+     *
+     * 由于{@link #finalize()}会调用此方法，所以此方法线程不安全
+     * 不希望destroy调用多次，所以增加{@link #calledDestroy}判断
      * @see Globals#destroy()
      * @see Globals#removeStack(LuaValue)
      */
     public void destroy() {
+        synchronized (this) {
+            if (calledDestroy)
+                return;
+            calledDestroy = true;
+        }
         if (notInGlobalTable() || destroyed || globals.isDestroyed())
             return;
         destroyed = globals.removeStack(this);
@@ -109,7 +121,7 @@ abstract class NLuaValue extends LuaValue {
     @LuaApiUsed
     @Override
     public String toString() {
-        return LUA_TYPE_NAME[type()] + "#(" + nativeGlobalKey + ")";
+        return LUA_TYPE_NAME[type()] + "#(" + Long.toHexString(nativeGlobalKey) + ")";
     }
 
     @Override

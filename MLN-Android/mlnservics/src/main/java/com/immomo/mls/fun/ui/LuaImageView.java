@@ -332,16 +332,15 @@ public class LuaImageView<U extends UDImageView> extends BorderRadiusImageView i
         drawableLoadCallback = new DrawableLoadCallback() {
             @Override
             public void onLoadResult(final Drawable drawable) {
-
-                MainThreadExecutor.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        LuaFunction function = getUserdata().getImageLoadCallback();
-                        if (function != null && !mNotCallBackImageUrlList.contains(image)) {
+                final LuaFunction function = getUserdata().getImageLoadCallback();
+                if (function != null && !mNotCallBackImageUrlList.contains(image)) {
+                    MainThreadExecutor.post(new Runnable() {
+                        @Override
+                        public void run() {
                             function.invoke(LuaValue.varargsOf(drawable != null ? LuaBoolean.True() : LuaBoolean.False(), LuaValue.Nil(), LuaString.valueOf(image)));
                         }
-                    }
-                });
+                    });
+                }
 
                 if (canBlurImageCondition() && drawable instanceof BitmapDrawable) {//判断，高斯模糊
                     MLSAdapterContainer.getThreadAdapter().execute(MLSThreadAdapter.Priority.HIGH, new Runnable() {

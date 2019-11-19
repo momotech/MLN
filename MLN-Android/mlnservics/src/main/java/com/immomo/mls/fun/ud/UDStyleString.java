@@ -197,7 +197,7 @@ public class UDStyleString extends JavaUserdata implements UrlImageSpan.ILoadDra
             if (styleSpan != null) {
                 removeSpan(styleSpan);
             }
-            removeStyleForRange();
+            removeStyleForRange(text);
 
             styleSpan = new StyleSpan(p[0].toInt());
             setSpan(styleSpan);
@@ -365,11 +365,11 @@ public class UDStyleString extends JavaUserdata implements UrlImageSpan.ILoadDra
             SpannableStringBuilder before = null;
             if (start > 0) {
                 before = (SpannableStringBuilder) text.subSequence(0, start);
-                before.clearSpans();
+                removeStyleForRange(before);
             }
 
             SpannableStringBuilder target = (SpannableStringBuilder) text.subSequence(start, end);
-            target.clearSpans();
+            removeStyleForRange(target);
             StyleSpan styleSpan = new StyleSpan(p[0].toInt());
             target.setSpan(styleSpan, 0, target.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
@@ -379,7 +379,7 @@ public class UDStyleString extends JavaUserdata implements UrlImageSpan.ILoadDra
             SpannableStringBuilder after = null;
             if (end < text.length()) {
                 after = (SpannableStringBuilder) text.subSequence(end, text.length());
-                after.clearSpans();
+                removeStyleForRange(after);
             }
 
             SpannableStringBuilder newtext = new SpannableStringBuilder();
@@ -578,7 +578,7 @@ public class UDStyleString extends JavaUserdata implements UrlImageSpan.ILoadDra
             mFontStyleForRangeList = new ArrayList<>();
     }
 
-    private void removeStyleForRange() {
+    private void removeStyleForRange(SpannableStringBuilder text) {
         if (mFontStyleForRangeList != null && mFontStyleForRangeList.size() > 0) {
             for (StyleSpan sty : mFontStyleForRangeList) {
                 text.removeSpan(sty);

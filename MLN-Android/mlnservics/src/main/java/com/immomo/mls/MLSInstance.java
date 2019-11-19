@@ -981,7 +981,13 @@ public class MLSInstance implements ScriptLoader.Callback, Callback, PrinterCont
             });
         } else {
             addState(STATE_SCRIPT_EXECUTED);
-            onLuaScriptExecutedSuccess();
+            /// 调用appear事件延后
+            MainThreadExecutor.post(new Runnable() {
+                @Override
+                public void run() {
+                    onLuaScriptExecutedSuccess();
+                }
+            });
         }
         GlobalStateUtils.onScriptExecuted(initData.url, code == SUCCESS);
     }

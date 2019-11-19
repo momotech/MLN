@@ -62,7 +62,7 @@ import androidx.annotation.Nullable;
  */
 public class DefaultScriptReaderImpl implements ScriptReader {
     private static final String TAG = "ScriptReader";
-    public static final String ASSETS = "android_asset";
+    private static final String ASSETS = "android_asset";
 
     private final Object tag = TAG + hashCode();
     protected String srcUrl;
@@ -194,6 +194,9 @@ public class DefaultScriptReaderImpl implements ScriptReader {
 
         @Override
         protected void download() throws ScriptLoadException {
+            if (isAssetsSingleLua(url)) {
+                return;//assets目录的.lua单文件，拷贝至sd卡
+            }
             copyAssetsToSDCard(url.getAssetsPath(), path, name);
         }
 
@@ -310,11 +313,15 @@ public class DefaultScriptReaderImpl implements ScriptReader {
          * 查找文件，并回调
          */
         protected ScriptBundle afterDownload() throws ScriptLoadException {
-            final String file = checkFilePath(path, name);
-            if (file == null)
-                throw new ScriptLoadException(ERROR.UNKNOWN_ERROR,
-                        new IllegalStateException(String.format("can not find %s from path: %s", name, path)));
-            return parseToBundle(url.toString(), file);
+            if (isAssetsSingleLua(url)) {//assets目录.lua单文件。直接读取
+                return parseAssetsToBundle(url);
+            } else {
+                final String file = checkFilePath(path, name);
+                if (file == null)
+                    throw new ScriptLoadException(ERROR.UNKNOWN_ERROR,
+                            new IllegalStateException(String.format("can not find %s from path: %s", name, path)));
+                return parseToBundle(url.toString(), file);
+            }
         }
 
         protected boolean callbackErrorIfTimeout() {
@@ -349,11 +356,15 @@ public class DefaultScriptReaderImpl implements ScriptReader {
      * 若不存在返回空
      */
     protected ScriptBundle check(final ParsedUrl url) throws ScriptLoadException {
-        String[] pn = getPathName(url);
-        final String file = checkFilePath(pn[0], pn[1]);
-        if (file == null)
-            return null;
-        return parseToBundle(url.toString(), file);
+        if (isAssetsSingleLua(url)) {//assets单lua文件
+            return parseAssetsToBundle(url);
+        } else {
+            String[] pn = getPathName(url);
+            String file = checkFilePath(pn[0], pn[1]);
+            if (file == null)
+                return null;
+            return parseToBundle(url.toString(), file);
+        }
     }
 
     /**
@@ -370,6 +381,21 @@ public class DefaultScriptReaderImpl implements ScriptReader {
         ScriptFile main = PreloadUtils.parseMainScript(f);
         ret.setMain(main);
         ret.addFlag(ScriptBundle.TYPE_FILE | ScriptBundle.SINGLE_FILE);
+        return ret;
+    }
+
+    /**
+     * 生成ASSETS文件的{@link ScriptBundle}
+     *
+     * @throws ScriptLoadException 文件不可读取
+     */
+    @SuppressLint("WrongConstant")
+    protected ScriptBundle parseAssetsToBundle(ParsedUrl parsedUrl) throws ScriptLoadException {
+        String url = parsedUrl.toString();
+        ScriptBundle ret = new ScriptBundle(url, url);
+        ScriptFile main = PreloadUtils.parseAssetMainScript(parsedUrl);//asset解析scriptFile
+        ret.setMain(main);
+        ret.addFlag(ScriptBundle.TYPE_ASSETS | ScriptBundle.SINGLE_FILE);
         return ret;
     }
 
@@ -459,6 +485,14 @@ public class DefaultScriptReaderImpl implements ScriptReader {
             b = b.substring(0, index);
         }
         return a.equals(b);
+    }
+
+    /**
+     * 判断是assets目录.lua单文件
+     */
+    private static boolean isAssetsSingleLua(ParsedUrl url) {
+        String assetsPath = url.toString();
+        return url.isAssetsPath() && !TextUtils.isEmpty(assetsPath) && FileUtil.isSuffix(assetsPath, Constants.POSTFIX_LUA);
     }
     //</editor-fold>
 
