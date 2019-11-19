@@ -39,7 +39,7 @@ public class LuaLabel<U extends UDLabel> extends BorderRadiusTextView implements
         setTextSize(14);
         setTextColor(Color.BLACK);
         setEllipsize(TextUtils.TruncateAt.END);
-        setIncludeFontPadding(false);
+//        setIncludeFontPadding(false);
     }
 
 

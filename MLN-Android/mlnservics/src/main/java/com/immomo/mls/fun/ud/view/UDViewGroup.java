@@ -51,6 +51,10 @@ public class UDViewGroup<V extends ViewGroup> extends UDView<V> {
     @LuaApiUsed
     public LuaValue[] addView(LuaValue[] var) {
         if (var.length == 1) {
+            if (var[0].isNil()) {
+                ErrorUtils.debugLuaError("call addView(nil)!", globals);
+                return null;
+            }
             if (AssertUtils.assertUserData(var[0], UDView.class, "addView", getGlobals()))
                 insertView((UDView) var[0], -1);
         }

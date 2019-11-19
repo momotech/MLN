@@ -51,6 +51,10 @@ public interface IScrollView<U extends UDScrollView> extends ILViewGroup<U> {
 
     void setFlingListener(FlingListener flingListener);
 
+    void setHorizontalScrollBarEnabled(boolean enabled);
+
+    void setVerticalScrollBarEnabled(boolean enabled);
+
     interface OnScrollListener {
         void onBeginScroll();
 

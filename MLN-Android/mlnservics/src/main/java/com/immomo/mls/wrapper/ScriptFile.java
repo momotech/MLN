@@ -12,7 +12,6 @@ import android.content.Context;
 import com.immomo.mls.Constants;
 
 import org.luaj.vm2.Globals;
-import org.luaj.vm2.utils.LuaBinaryUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -112,6 +111,15 @@ public class ScriptFile {
         }
     }
 
+    public boolean isAssetsPath() {
+        return path != null && path.startsWith(Constants.ASSETS_PREFIX);
+    }
+
+    public String getAssetsPath() {
+        if (path == null || !path.startsWith(Constants.ASSETS_PREFIX))
+            return path;
+        return path.substring(Constants.ASSETS_PREFIX.length());
+    }
     /**
      * 设置assets目录下文件，并读入内存中
      * @return true 读取成功

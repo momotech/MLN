@@ -40,6 +40,7 @@ public interface Constants {
     String POSTFIX_B_LUA = POSTFIX_LUA + POSTFIX_BIN;
     String POSTFIX_LV_ZIP = ".zip";//lua的zip包
     String POSTFIX_SIGN = ".sign";
+    String ASSETS_PREFIX = "file://android_asset/";
 
     /**
      * Load Type

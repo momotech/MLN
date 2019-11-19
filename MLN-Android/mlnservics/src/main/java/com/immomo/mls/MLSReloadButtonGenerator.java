@@ -87,7 +87,7 @@ public class MLSReloadButtonGenerator {
         });
 
         main.setOnTouchListener(new TouchMoveListener(ret, true));
-        ret.setOnTouchListener(new TouchMoveListener());
+//        ret.setOnTouchListener(new TouchMoveListener());
         container.addView(ret);
         return ret;
     }

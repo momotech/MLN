@@ -64,6 +64,10 @@ static int loadfile(JNIEnv *env, lua_State *L, jstring path, jstring chunkname);
 
 static int real_loadfile(lua_State *L, const char *filename, const char *chunkname);
 
+static int loadAssetsfile(JNIEnv *env, lua_State *L, jstring path, jstring chunkname);
+
+static int real_loadassetsfile(lua_State *L, const char *filename, const char *chunkname);
+
 static int errfile(lua_State *L, const char *what, const char *filename);
 
 static SIZE get_file_size(const char *__restrict file);
@@ -179,6 +183,15 @@ jni_loadFile(JNIEnv *env, jobject jobj, jlong L_state_pointer, jstring path, jst
     lua_State *L = (lua_State *) L_state_pointer;
     lua_lock(L);
     jint r = (jint) loadfile(env, L, path, chunkname);
+    lua_unlock(L);
+    return r;
+}
+
+jint
+jni_loadAssetsFile(JNIEnv *env, jobject jobj, jlong L_state_pointer, jstring path, jstring chunkname) {
+    lua_State *L = (lua_State *) L_state_pointer;
+    lua_lock(L);
+    jint r = (jint) loadAssetsfile(env, L, path, chunkname);
     lua_unlock(L);
     return r;
 }
@@ -396,6 +409,27 @@ static const char *getES(lua_State *L, void *ud, size_t *size) {
     return ls->s + SOURCE_LEN + HEADER_LEN;
 }
 
+static int loadAssetsfile(JNIEnv *env, lua_State *L, jstring path, jstring chunkname) {
+    const char *p = GetString(env, path);
+    const char *cn = GetString(env, chunkname);
+    lua_lock(L);
+    int ret = real_loadassetsfile(L, p, cn);
+    ReleaseChar(env, path, p);
+    if (cn)
+        ReleaseChar(env, chunkname, cn);
+    if (ret) {
+        const char *errmsg;
+        if (lua_isstring(L, -1))
+            errmsg = lua_tostring(L, -1);
+        else
+            errmsg = "unkonw error";
+        lua_pop(L, 1);
+        throwUndumpError(env, errmsg);
+    }
+    lua_unlock(L);
+    return ret;
+}
+
 static int loadfile(JNIEnv *env, lua_State *L, jstring path, jstring chunkname) {
     const char *p = GetString(env, path);
     const char *cn = GetString(env, chunkname);
@@ -415,6 +449,54 @@ static int loadfile(JNIEnv *env, lua_State *L, jstring path, jstring chunkname) 
     }
     lua_unlock(L);
     return ret;
+}
+
+static int real_loadassetsfile(lua_State *L, const char *filename, const char *chunkname) {
+    int oldTop = lua_gettop(L);
+    if (chunkname)
+        lua_pushstring(L, chunkname);
+    else
+        lua_pushfstring(L, "@%s", filename);
+
+    AD ad;
+    int code = initAssetsData(&ad, filename);
+    if (code != AR_OK) {
+        lua_pushfstring(L, "find %s from native asset failed, code: %d", lua_tostring(L, -1), code);
+        return 1;
+    }
+    if (opensaes) {
+        unsigned short preReadLen;
+        const char *preData = preReadData(&ad, HEADER_LEN + SOURCE_LEN, &preReadLen);
+        if (!preData) {
+            destroyAssetsData(&ad);
+            lua_pushfstring(L, "preload %s from native asset failed!", lua_tostring(L, -1));
+            return 1;
+        }
+
+        size_t len = (size_t) ad.len;
+
+        if (preReadLen < (HEADER_LEN + SOURCE_LEN)) {
+            /// 非加密
+            ad.aes = 0;
+            ad.remain = preReadLen;
+        } else {
+            int aes = check_header(preData) == (len - HEADER_LEN - SOURCE_LEN);
+            ad.aes = aes;
+            ad.remain = aes ? 0 : preReadLen;
+        }
+    } else {
+        ad.aes = 0;
+        ad.remain = 0;
+    }
+    code = lua_load(L, getFromAssets, &ad, lua_tostring(L, -1), NULL);
+    destroyAssetsData(&ad);
+    lua_remove(L, oldTop + 1);
+
+    if (code != LUA_OK) {
+        lua_pushfstring(L, "error loading '%s' from asset, code: %d",
+                        lua_tostring(L, -1), code);
+    }
+    return code;
 }
 
 static int real_loadfile(lua_State *L, const char *filename, const char *chunkname) {

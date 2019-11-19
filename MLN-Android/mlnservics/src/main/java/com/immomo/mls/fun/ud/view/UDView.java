@@ -344,7 +344,7 @@ public abstract class UDView<V extends View> extends JavaUserdata<V> implements 
             return;
         if (src == MeasurementType.MATCH_PARENT || src == MeasurementType.WRAP_CONTENT)
             return;
-        throw new IllegalArgumentException("size must be set with positive number, error number: " + src + ".");
+        ErrorUtils.debugLuaError("size must be set with positive number, error number: " + src + ".", getGlobals());
     }
 
     protected void setWidth(float w) {
@@ -1345,28 +1345,9 @@ public abstract class UDView<V extends View> extends JavaUserdata<V> implements 
         if (var.length == 1 && var[0].isBoolean()) {
             boolean enable = var[0].toBoolean();
             view.setEnabled(enable);
-            if (view instanceof ViewGroup) {
-                disableEnableControls(enable, (ViewGroup) view);
-            }
             return null;
         }
         return view.isEnabled() ? rTrue() : rFalse();
-    }
-
-    /**
-     * enable效果与IOS统一，ViewGroup禁用时，其子View都禁用
-     *
-     * @param enable
-     * @param vg
-     */
-    private void disableEnableControls(boolean enable, ViewGroup vg) {
-        for (int i = 0; i < vg.getChildCount(); i++) {
-            View child = vg.getChildAt(i);
-            child.setEnabled(enable);
-            if (child instanceof ViewGroup) {
-                disableEnableControls(enable, (ViewGroup) child);
-            }
-        }
     }
 
     @Deprecated

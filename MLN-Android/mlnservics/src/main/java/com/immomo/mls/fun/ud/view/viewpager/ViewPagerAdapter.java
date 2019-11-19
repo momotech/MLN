@@ -177,7 +177,7 @@ public class ViewPagerAdapter extends PagerAdapter implements IViewPager.Callbac
     @Override
     public void destroyItem(ViewGroup container, int position, Object object) {
         container.removeView((View) object);
-        if (needCallFillCells != null)
+        if (needCallFillCells != null && needCallFillCells.size() >= getRealCount())
             needCallFillCells.remove(position);
         String id = userData.callGetReuseId(position);
         if (!validReuseId(id)) {

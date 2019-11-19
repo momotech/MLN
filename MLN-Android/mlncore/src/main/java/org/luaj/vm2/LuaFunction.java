@@ -96,7 +96,7 @@ public class LuaFunction extends NLuaValue {
                 throw invokeError;
             return false;
         }
-        if (destroyed || !checkStateByNative()) {
+        if (!checkStateByNative()) {
             invokeError = new InvokeError("function is destroyed.", 1);
             if (MLNCore.DEBUG || globals.getState() == Globals.LUA_CALLING)
                 throw invokeError;
@@ -108,7 +108,7 @@ public class LuaFunction extends NLuaValue {
 
     @Override
     public final boolean isDestroyed() {
-        return globals.isDestroyed() || super.isDestroyed() || !checkStateByNative();
+        return globals.isDestroyed() || !checkStateByNative();
     }
 
     public final InvokeError getInvokeError() {

@@ -54,8 +54,9 @@ public class CompileUtils {
         }
         if (scriptFile.isMain) {
             String chunkname = scriptFile.getChunkName();
-            boolean compiled = scriptFile.pathType ? globals.loadFile(scriptFile.path, chunkname) :
-                    globals.loadData(chunkname, scriptFile.getSourceData());
+            boolean compiled = scriptFile.pathType ?
+                    (scriptFile.isAssetsPath() ? globals.loadAssetsFile(scriptFile.getAssetsPath(), chunkname) : globals.loadFile(scriptFile.path, chunkname))
+                    : globals.loadData(chunkname, scriptFile.getSourceData());
             scriptFile.setCompiled(compiled);
             scriptFile.setSourceData(null);
             if (!compiled) {

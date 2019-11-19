@@ -200,7 +200,7 @@ public class SINavigator implements NavigatorAnimType {
         return out;
     }
 
-    protected static int parseInAnim(int type) {
+    protected int parseInAnim(int type) {
         switch (type) {
             case LeftToRight:
                 return R.anim.lv_slide_in_left;
@@ -219,7 +219,7 @@ public class SINavigator implements NavigatorAnimType {
         }
     }
 
-    protected static int parseOutAnim(int type) {
+    protected int parseOutAnim(int type) {
         switch (type) {
             case LeftToRight:
                 return R.anim.lv_slide_out_right;

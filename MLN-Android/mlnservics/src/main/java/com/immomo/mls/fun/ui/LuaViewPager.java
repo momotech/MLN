@@ -296,8 +296,6 @@ public class LuaViewPager extends BorderRadiusViewPager implements IViewPager<UD
             this.lastPosition = lastPosition;
     }
 
-    // 处理回调多次appear 问题
-    private boolean isCallBackAppear = false;
 
     private ViewPager.OnPageChangeListener onPageChangeListener = new ViewPager.SimpleOnPageChangeListener() {
         private float lastValue = -1;
@@ -307,10 +305,6 @@ public class LuaViewPager extends BorderRadiusViewPager implements IViewPager<UD
         public void onPageScrollStateChanged(int state) {
             if (MLSEngine.DEBUG)
                 LogUtil.d(TAG, "state =  " + state);
-
-            if (state == ViewPager.SCROLL_STATE_IDLE ) {
-                isCallBackAppear = false;
-            }
 
             if (state == ViewPager.SCROLL_STATE_DRAGGING || state == ViewPager.SCROLL_STATE_SETTLING) {
                 animHelper.stopAnim();

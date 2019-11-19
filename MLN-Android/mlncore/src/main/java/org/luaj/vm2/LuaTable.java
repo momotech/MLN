@@ -418,7 +418,7 @@ public class LuaTable extends NLuaValue implements Iterable {
 
     private boolean checkValid() {
         globals.checkMainThread();
-        if (!destroyed && !globals.isDestroyed() && !notInGlobalTable() && checkStateByNative())
+        if (!isDestroyed() && !notInGlobalTable())
             return true;
         if (MLNCore.DEBUG)
             throwNotValid();
@@ -443,8 +443,13 @@ public class LuaTable extends NLuaValue implements Iterable {
 
     @Override
     public String toJavaString() {
-        if (destroyed || globals.isDestroyed() || !checkStateByNative())
-            return "cannot find table by key: " + nativeGlobalKey;
+        if (isDestroyed())
+            return "table(" + nativeGlobalKey + ") is destroyed!";
         return newEntry().toString();
+    }
+
+    @Override
+    public boolean isDestroyed() {
+        return globals.isDestroyed() || !checkStateByNative();
     }
 }
