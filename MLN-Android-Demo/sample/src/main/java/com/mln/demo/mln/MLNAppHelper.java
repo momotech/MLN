@@ -36,7 +36,7 @@ public class MLNAppHelper {
         AnrWatchDog.startWatch();
         init();
 
-        final boolean debug = false;
+        final boolean debug = BuildConfig.DEBUG;
 
         log("scale Density: " + AndroidUtil.getScaleDensity(app));
         log("Density: " + AndroidUtil.getDensity(app));
