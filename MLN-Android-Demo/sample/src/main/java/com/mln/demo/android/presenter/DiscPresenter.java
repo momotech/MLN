@@ -64,6 +64,7 @@ public class DiscPresenter extends BasePresenter<DiscoverCellEntity> {
                             JSONObject item = array.getJSONObject(i);
                             DiscoverCellEntity data = new DiscoverCellEntity();
                             data.setImgUrl(item.getString("pic_huge"));
+                            data.setPicSmall(item.optString("pic_small"));
                             data.setName(item.getString("album_title"));
                             data.setContent("更新了" + item.getString("rank") + "篇内容");
                             list.add(data);
