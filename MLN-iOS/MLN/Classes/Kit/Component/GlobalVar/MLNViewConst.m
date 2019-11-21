@@ -44,6 +44,12 @@ LUA_EXPORT_GLOBAL_VAR(GradientType, (@{@"LEFT_TO_RIGHT":@(MLNGradientTypeLeftToR
 LUA_EXPORT_GLOBAL_VAR(TabSegmentAlignment, (@{@"LEFT":@(MLNTabSegmentAlignmentLeft),
                                               @"CENTER":@(MLNTabSegmentAlignmentCenter),
                                               @"RIGHT":@(MLNTabSegmentAlignmentRight)}))
+LUA_EXPORT_GLOBAL_VAR(SafeArea, (@{@"CLOSE":@(MLNSafeAreaClose),
+                                   @"LEFT":@(MLNSafeAreaLeft),
+                                   @"TOP":@(MLNSafeAreaTop),
+                                   @"RIGHT":@(MLNSafeAreaRight),
+                                   @"BOTTOM":@(MLNSafeAreaBottom)}))
+
 LUA_EXPORT_GLOBAL_VAR_END()
 
 
