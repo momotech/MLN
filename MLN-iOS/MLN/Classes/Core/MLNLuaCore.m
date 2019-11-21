@@ -401,14 +401,14 @@ static int mln_errorFunc_traceback (lua_State *L) {
         if (!charpNotEmpty(list->clz)) {
             if (error) {
                 *error = [NSError mln_errorOpenLib:@"The class name must not be nil!"];
-                mln_lua_error(L, "The class name must not be nil!");
+                mln_lua_error(L, @"The class name must not be nil!");
             }
             return NO;
         }
         if (list->func == NULL) {
             if (error) {
                 *error = [NSError mln_errorOpenLib:@"The C function must not be NULL!"];
-                mln_lua_error(L, "The C function must not be NULL!");
+                mln_lua_error(L, @"The C function must not be NULL!");
             }
             return NO;
         }
@@ -519,14 +519,14 @@ static int mln_errorFunc_traceback (lua_State *L) {
         if (!charpNotEmpty(list->clz)) {
             if (error) {
                 *error = [NSError mln_errorOpenLib:@"The class name must not be nil!"];
-                mln_lua_error(L, "The class name must not be nil!");
+                mln_lua_error(L, @"The class name must not be nil!");
             }
             return NO;
         }
         if (list->func == NULL) {
             if (error) {
                 *error = [NSError mln_errorOpenLib:@"The C function must not be NULL!"];
-                mln_lua_error(L, "The C function must not be NULL!");
+                mln_lua_error(L, @"The C function must not be NULL!");
             }
             return NO;
         }
