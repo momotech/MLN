@@ -940,6 +940,8 @@
 		F9AD2CFBEDD600706B921428D25DFA3A /* UIImageView+AFNetworking.h in Headers */ = {isa = PBXBuildFile; fileRef = B59D2AE16B55878A31418B7491BA7DE7 /* UIImageView+AFNetworking.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		FA3D4183B36A98812B4C02626C1B3D99 /* MLNShadowOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 8E804044A46434288880C0553EE0522E /* MLNShadowOperation.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		FAC38D4963CE1FEDD771692D04865DB5 /* MLNWindowContext.h in Headers */ = {isa = PBXBuildFile; fileRef = F7ABFE07F88F2395EA8B492FB28F678E /* MLNWindowContext.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		FADB8F9A238682600072C904 /* MLNLayoutWindowNode.m in Sources */ = {isa = PBXBuildFile; fileRef = FADB8F98238682600072C904 /* MLNLayoutWindowNode.m */; };
+		FADB8F9B238682610072C904 /* MLNLayoutWindowNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FADB8F99238682600072C904 /* MLNLayoutWindowNode.h */; };
 		FB1C83E1248A145E1FFEFF1E83D84FDB /* MLNTabSegmentView.m in Sources */ = {isa = PBXBuildFile; fileRef = A77857ACA433CBE8950A8170124A7707 /* MLNTabSegmentView.m */; };
 		FB2F8761212D4F60B6032413B84AFC51 /* MLNAnimator.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D6D6A6C6CBAC16AC30332FA3F435594 /* MLNAnimator.m */; };
 		FB3F56579C08A7727580414698889477 /* MLNCanvasPath.m in Sources */ = {isa = PBXBuildFile; fileRef = F333D0174E9F784399EDD1A85A2D01E6 /* MLNCanvasPath.m */; };
@@ -2129,6 +2131,8 @@
 		FA23B7E9004DE84332843D7BDEFB7157 /* PbdeviceCommand.pbobjc.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = PbdeviceCommand.pbobjc.h; path = "MLN-iOS/MLNDevTool/Classes/Protobuf/PbdeviceCommand.pbobjc.h"; sourceTree = "<group>"; };
 		FA832098753454D34C603AFC86D900DC /* MLNCanvasPaint.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLNCanvasPaint.m; sourceTree = "<group>"; };
 		FAB2CFFCBCDBB20EA7345EF0031057DE /* NSArray+MLNCore.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "NSArray+MLNCore.h"; sourceTree = "<group>"; };
+		FADB8F98238682600072C904 /* MLNLayoutWindowNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLNLayoutWindowNode.m; sourceTree = "<group>"; };
+		FADB8F99238682600072C904 /* MLNLayoutWindowNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLNLayoutWindowNode.h; sourceTree = "<group>"; };
 		FB3B7235DB7D3BD17C7FEE1302DCCC17 /* lundump.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = lundump.c; path = "MLN-iOS/MLN/Classes/LuaLib/lundump.c"; sourceTree = "<group>"; };
 		FBA8501DBF907865342112EAC0C53C87 /* MLNRect.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLNRect.m; sourceTree = "<group>"; };
 		FC5F376113F85E190B3702A48C800F51 /* MJRefreshAutoStateFooter.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = MJRefreshAutoStateFooter.h; path = MJRefresh/Custom/Footer/Auto/MJRefreshAutoStateFooter.h; sourceTree = "<group>"; };
@@ -2732,6 +2736,8 @@
 				91632AF16D2FF0EA7C265FF5BB0DC313 /* MLNLayoutScrollContainerNode.m */,
 				1847633BCE7744B5373A5F1852F473F6 /* MLNLinearLayoutNode.h */,
 				C4E38E41FC90C10970A42CCEFAC6B528 /* MLNLinearLayoutNode.m */,
+				FADB8F99238682600072C904 /* MLNLayoutWindowNode.h */,
+				FADB8F98238682600072C904 /* MLNLayoutWindowNode.m */,
 			);
 			path = Node;
 			sourceTree = "<group>";
@@ -4578,6 +4584,7 @@
 				05AB469F0F79C648F8E637F88CDB9E97 /* AFURLSessionManager.h in Headers */,
 				418985D1EA0253EAA3C02FC1F31CA5E8 /* UIActivityIndicatorView+AFNetworking.h in Headers */,
 				0C26E8CE5202114A92A9CFFBA1A9CE88 /* UIButton+AFNetworking.h in Headers */,
+				FADB8F9B238682610072C904 /* MLNLayoutWindowNode.h in Headers */,
 				B27878E3B8F8ADB1FE01DBD6CB5812E7 /* UIImage+AFNetworking.h in Headers */,
 				F9AD2CFBEDD600706B921428D25DFA3A /* UIImageView+AFNetworking.h in Headers */,
 				C1EE07F0E0B54668574633B545FBCE48 /* UIKit+AFNetworking.h in Headers */,
@@ -5516,6 +5523,7 @@
 				551EDABAFCE6F89BB75C7174D4D9D059 /* UIActivityIndicatorView+AFNetworking.m in Sources */,
 				A16187923EA1A156F18C909206809C30 /* UIButton+AFNetworking.m in Sources */,
 				40F9C3B7C0CCD0982FD14728F2595632 /* UIImageView+AFNetworking.m in Sources */,
+				FADB8F9A238682600072C904 /* MLNLayoutWindowNode.m in Sources */,
 				894126828AF68F98598CA7B53E737AEF /* UIProgressView+AFNetworking.m in Sources */,
 				304FB2F3CB19F5C44D812D90AA2F1121 /* UIRefreshControl+AFNetworking.m in Sources */,
 				5671A72ECAB90A855ECF6F69B750B4E1 /* UIWebView+AFNetworking.m in Sources */,

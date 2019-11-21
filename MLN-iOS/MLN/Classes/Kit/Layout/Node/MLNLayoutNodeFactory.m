@@ -13,6 +13,8 @@
 #import "MLNLayoutScrollContainerNode.h"
 #import "MLNLinearLayout.h"
 #import "MLNLayoutImageViewNode.h"
+#import "MLNWindow.h"
+#import "MLNLayoutWindowNode.h"
 
 @implementation MLNLayoutNodeFactory
 
@@ -37,6 +39,8 @@
         ![aView isKindOfClass:UITableView.class]&&
         ![aView isKindOfClass:UITextView.class]) {
         return [[MLNLayoutScrollContainerNode alloc] initWithTargetView:aView];
+    } else if ([aView isKindOfClass:[MLNWindow class]]) {
+        return [[MLNLayoutWindowNode alloc] initWithTargetView:aView];
     }
     return [[MLNLayoutContainerNode alloc] initWithTargetView:aView];
 }
