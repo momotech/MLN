@@ -14,29 +14,10 @@
     if (self.isGone) {
         return CGSizeZero;
     }
-    BOOL isWidthExcatly = NO;
-    BOOL isHeightExcatly = NO;
     // 权重
-    if (self.mergedWidthType != MLNLayoutMeasurementTypeIdle) {
-        if (self.widthProportion > 0) {
-            maxWidth = maxWidth * self.widthProportion;
-            // min
-            maxWidth = MAX(maxWidth, self.minWidth);
-            // max
-            maxWidth = self.maxWidth > 0 ? MIN(maxWidth, self.maxWidth) : maxWidth;
-            isWidthExcatly = YES;
-        }
-        if (self.heightProportion > 0) {
-            maxHeight = maxHeight * self.heightProportion;
-            // min
-            maxHeight = MAX(maxHeight, self.minHeight);
-            // max
-            maxHeight = self.maxHeight > 0 ? MIN(maxHeight, self.maxHeight) : maxHeight;
-            isHeightExcatly = YES;
-        }
-    }
-    
-    if (!self.isDirty && (self.lastMeasuredMaxWidth==maxWidth && self.lastMeasuredMaxHeight==maxHeight)) {
+    maxWidth = [self calculateWidthBaseOnWeightWithMaxWidth:maxWidth];
+    maxHeight = [self calculateHeightBaseOnWeightWithMaxHeight:maxHeight];
+    if (!self.isDirty && (self.lastMeasuredMaxWidth==maxWidth && self.lastMeasuredMaxHeight==maxHeight) && !isLayoutNodeHeightNeedMerge(self) && !isLayoutNodeWidthNeedMerge(self)) {
         return CGSizeMake(self.measuredWidth, self.measuredHeight);
     }
     self.lastMeasuredMaxWidth = maxWidth;
@@ -90,10 +71,10 @@
         }
     }
     // width
-    if (!isWidthExcatly) {
+    if (!self.isWidthExcatly) {
         switch (self.mergedWidthType) {
             case MLNLayoutMeasurementTypeWrapContent:
-                myMeasuredWidth = self.minWidth > 0 ? MAX(self.minWidth, myMeasuredWidth) : myMeasuredWidth;
+                myMeasuredWidth = MAX(self.minWidth, myMeasuredWidth);
                 myMeasuredWidth = self.maxWidth > 0 ? MIN(myMeasuredWidth, self.maxWidth) : myMeasuredWidth;
                 self.measuredWidth = myMeasuredWidth;
                 break;
@@ -109,7 +90,7 @@
     
     
     // height
-    if (!isHeightExcatly) {
+    if (!self.isHeightExcatly) {
         switch (self.mergedHeightType) {
             case MLNLayoutMeasurementTypeWrapContent:
                 myMeasuredHeight = self.minHeight > 0 ? MAX(self.minHeight, myMeasuredHeight) : myMeasuredHeight;
