@@ -103,6 +103,15 @@ typedef enum : NSUInteger {
     MLNImageViewModeNine,
 } MLNImageViewMode;
 
+typedef enum : NSUInteger {
+    MLNSafeAreaClose = 0,
+    MLNSafeAreaLeft = 1,
+    MLNSafeAreaTop = 2,
+    MLNSafeAreaRight = 4,
+    MLNSafeAreaBottom = 8
+} MLNSafeArea;
+
+
 NS_ASSUME_NONNULL_BEGIN
 
 @interface MLNViewConst : NSObject <MLNGlobalVarExportProtocol>
