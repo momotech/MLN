@@ -11,6 +11,15 @@
 
 @implementation MLNView
 
+- (instancetype)init
+{
+    self = [super init];
+    if (self) {
+        
+    }
+    return self;
+}
+
 #pragma mark - Override
 - (BOOL)lua_canClick
 {
