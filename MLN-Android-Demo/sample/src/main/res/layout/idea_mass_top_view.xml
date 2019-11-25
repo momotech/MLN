@@ -2,7 +2,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/colorPrimaryDark"
     android:orientation="vertical">
 
     <!--title-->
@@ -15,7 +14,7 @@
             android:layout_width="45dp"
             android:layout_height="45dp"
             android:padding="12dp"
-            android:src="@drawable/idea_back" />
+            android:src="@drawable/back" />
 
         <ImageView
             android:id="@+id/iv_share"
@@ -23,27 +22,28 @@
             android:layout_height="45dp"
             android:layout_alignParentRight="true"
             android:padding="12dp"
-            android:src="@drawable/idea_share" />
+            android:src="@drawable/share" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:text="灵感集"
-            android:textColor="@color/white"
+            android:textColor="@color/black"
             android:textSize="16sp" />
     </RelativeLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/gray"
         android:padding="12dp">
 
         <ImageView
             android:id="@+id/iv_img"
             android:layout_width="80dp"
             android:layout_height="80dp"
-            android:background="@drawable/idea_header" />
+            />
 
         <TextView
             android:id="@+id/tv_attention"
@@ -147,6 +147,7 @@
         android:layout_gravity="center_vertical"
         android:orientation="horizontal"
         android:paddingLeft="12dp"
+        android:background="@color/gray"
         android:paddingBottom="12dp">
 
         <TextView

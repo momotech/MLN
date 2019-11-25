@@ -49,7 +49,6 @@ public class DiscPresenter extends BasePresenter<DiscoverCellEntity> {
             byte[] buffer = new byte[length];
             is.read(buffer);
             res = new String(buffer, "utf8");
-            Log.e("data", "res=" + res);
         } catch (IOException e) {
             e.printStackTrace();
         }

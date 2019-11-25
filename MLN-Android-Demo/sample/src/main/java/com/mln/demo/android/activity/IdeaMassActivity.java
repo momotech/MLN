@@ -14,6 +14,7 @@ import com.mln.demo.android.adapter.IdeaLabelRvAdapter;
 import com.mln.demo.android.adapter.InspirPagerAdapter;
 import com.mln.demo.android.entity.InspirHotEntity;
 import com.mln.demo.android.fragment.InspirPagerFragment;
+import com.mln.demo.android.interfaceview.InspirView;
 import com.mln.demo.android.presenter.InspirPresenter;
 
 import java.util.ArrayList;
@@ -29,13 +30,13 @@ import androidx.viewpager.widget.ViewPager;
  * Created by xu.jingyu
  * DateTime: 2019-11-08 15:46
  */
-public class IdeaMassActivity extends AppCompatActivity implements View.OnClickListener  {
+public class IdeaMassActivity extends AppCompatActivity implements View.OnClickListener, InspirView {
     private static final String TAG_ = IdeaMassActivity.class.getSimpleName();
 
     private Context context;
     private IdeaLabelRvAdapter labelRvAdapter;
+    private InspirPagerAdapter pagerAdapter;
     private InspirPresenter presenter;
-    private List<InspirHotEntity> inspirDatas;
     private ImageView ivBack;
     private ImageView ivShare;
     private ImageView ivImg;
@@ -64,12 +65,8 @@ public class IdeaMassActivity extends AppCompatActivity implements View.OnClickL
 
     void initData() {
         context = this;
-        inspirDatas = new ArrayList<>();
-        presenter = new InspirPresenter(context, null);
-
+        presenter = new InspirPresenter(context, this);
         fragments = new ArrayList<>();
-        fragments.add(new InspirPagerFragment());
-        fragments.add(new InspirPagerFragment());
     }
 
     void initView() {
@@ -86,21 +83,21 @@ public class IdeaMassActivity extends AppCompatActivity implements View.OnClickL
         rvLabels = findViewById(R.id.rv_labels);
 
         //fragment
-        tvHot=findViewById(R.id.tv_hot);
-        tvRecent=findViewById(R.id.tv_recent);
-        inspirTab=findViewById(R.id.inspir_tab);
-        inspirPager=findViewById(R.id.inspirPager);
+        tvHot = findViewById(R.id.tv_hot);
+        tvRecent = findViewById(R.id.tv_recent);
+        inspirTab = findViewById(R.id.inspir_tab);
+        inspirPager = findViewById(R.id.inspirPager);
 
-        labelRvAdapter = new IdeaLabelRvAdapter(context, inspirDatas);
+        labelRvAdapter = new IdeaLabelRvAdapter(context);
         LinearLayoutManager manager = new LinearLayoutManager(context);
         manager.setOrientation(RecyclerView.HORIZONTAL);
         rvLabels.setLayoutManager(manager);
-        rvLabels.setAdapter(labelRvAdapter);
+//
         //请求数据
         presenter.syncGetData();
 
         inspirTab.getChildAt(0).setSelected(true);
-        inspirPager.setAdapter(new InspirPagerAdapter(getSupportFragmentManager(), fragments));
+        pagerAdapter = new InspirPagerAdapter(getSupportFragmentManager(), fragments);
     }
 
     void setListener() {
@@ -127,6 +124,7 @@ public class IdeaMassActivity extends AppCompatActivity implements View.OnClickL
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         final long startTime = System.currentTimeMillis();
+        Log.d("keye", "oncreate: " + startTime);
         getWindow().getDecorView().getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             //当layout结束后回调此方法
             @Override
@@ -169,5 +167,32 @@ public class IdeaMassActivity extends AppCompatActivity implements View.OnClickL
                 resetTab(1);
                 break;
         }
+    }
+
+    @Override
+    public void refreshUI(List<InspirHotEntity> list) {
+        if (labelRvAdapter != null) {
+            if (rvLabels.getAdapter() == null) {
+                rvLabels.setAdapter(labelRvAdapter);
+            }
+            labelRvAdapter.updateList(list);
+        }
+
+        if (fragments.size() == 0 && pagerAdapter != null) {
+            fragments.add(new InspirPagerFragment(list));
+            fragments.add(new InspirPagerFragment(list));
+            if (inspirPager.getAdapter() == null) {
+                inspirPager.setAdapter(pagerAdapter);
+            } else {
+                pagerAdapter.notifyDataSetChanged();
+            }
+        }
+        if (ivImg != null)
+            ivImg.setBackgroundResource(R.drawable.idea_header);
+    }
+
+    @Override
+    public void fetchUI(List<InspirHotEntity> list) {
+
     }
 }

@@ -28,7 +28,7 @@ import androidx.recyclerview.widget.RecyclerView;
  * DateTime: 2019-11-08 14:09
  * 灵感集-热门fragment
  */
-public class InspirPagerFragment extends BaseFragment implements InspirView {
+public class InspirPagerFragment extends BaseFragment {
 
 
     private RecyclerView recycleView;
@@ -39,6 +39,13 @@ public class InspirPagerFragment extends BaseFragment implements InspirView {
     private List<InspirHotEntity> inspirDatas;
     private InspirPresenter presenter;
     private int mLastCompletelyVisibleItemPosition;
+
+    public InspirPagerFragment() {
+    }
+
+    public InspirPagerFragment(List<InspirHotEntity> inspirDatas) {
+        this.inspirDatas = inspirDatas;
+    }
 
     @Nullable
     @Override
@@ -56,8 +63,9 @@ public class InspirPagerFragment extends BaseFragment implements InspirView {
     @Override
     void initData() {
         context = getActivity();
-        inspirDatas = new ArrayList<>();
-        presenter = new InspirPresenter(context, this);
+        if (inspirDatas == null)
+            inspirDatas = new ArrayList<>();
+//        presenter = new InspirPresenter(context, this);
     }
 
     @Override
@@ -118,13 +126,15 @@ public class InspirPagerFragment extends BaseFragment implements InspirView {
         recycleView.setAdapter(adapter);
 
         //请求数据
-        presenter.syncGetData();
+//        presenter.syncGetData();
 
     }
 
     //加载更多
     private void loadMoreData() {
-        presenter.syncFetchData();
+//        presenter.syncFetchData();
+        inspirDatas.addAll(inspirDatas.size(),inspirDatas );
+        adapter.notifyDataSetChanged();
     }
 
     @Override
@@ -137,16 +147,16 @@ public class InspirPagerFragment extends BaseFragment implements InspirView {
         super.onDestroyView();
     }
 
-    @Override
-    public void refreshUI(List<InspirHotEntity> list) {
-        inspirDatas.clear();
-        inspirDatas.addAll(list);
-        adapter.notifyDataSetChanged();
-    }
-
-    @Override
-    public void fetchUI(List<InspirHotEntity> list) {
-        inspirDatas.addAll(inspirDatas.size(), list);
-        adapter.notifyDataSetChanged();
-    }
+//    @Override
+//    public void refreshUI(List<InspirHotEntity> list) {
+//        inspirDatas.clear();
+//        inspirDatas.addAll(list);
+//        adapter.notifyDataSetChanged();
+//    }
+//
+//    @Override
+//    public void fetchUI(List<InspirHotEntity> list) {
+//        inspirDatas.addAll(inspirDatas.size(), list);
+//        adapter.notifyDataSetChanged();
+//    }
 }

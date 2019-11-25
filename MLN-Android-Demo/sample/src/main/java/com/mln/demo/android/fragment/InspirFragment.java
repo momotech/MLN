@@ -54,8 +54,8 @@ public class InspirFragment extends BaseFragment {
     @Override
     void initData() {
         fragments = new ArrayList<>();
-        fragments.add(new InspirPagerFragment());
-        fragments.add(new InspirPagerFragment());
+//        fragments.add(new InspirPagerFragment());
+//        fragments.add(new InspirPagerFragment());
     }
 
     @Override
