@@ -13,10 +13,6 @@
 #import "MLNGlobalFuncTest.h"
 #import "MLNKitInstance.h"
 #import "MLNKitInstanceHandlersManager.h"
-#import "MLNMyHttpHandler.h"
-#import "MLNMyRefreshHandler.h"
-#import "MLNMyImageHandler.h"
-#import "MLNNavigatorHandler.h"
 #import "MLNHotReloadViewController.h"
 #import "MLNOfflineViewController.h"
 #import <MLNDevTool/MLNFloatingMenu.h>
@@ -31,10 +27,6 @@
 @interface MLNViewController () <MLNViewControllerProtocol, MLNKitInstanceDelegate>
 
 @property (nonatomic, strong) MLNKitInstance *kitInstance;
-@property (nonatomic, strong) id<MLNHttpHandlerProtocol> httpHandler;
-@property (nonatomic, strong) id<MLNRefreshDelegate> refreshHandler;
-@property (nonatomic, strong) id<MLNImageLoaderProtocol> imgLoader;
-@property (nonatomic, strong) id<MLNNavigatorHandlerProtocol> navHandler;
 
 @property (nonatomic, strong) UIViewController *contentViewController;
 @property (nonatomic, strong) UIButton *galleryButton;

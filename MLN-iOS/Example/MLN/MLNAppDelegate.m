@@ -14,11 +14,27 @@
 #import "MLNViewController.h"
 #import "MLNGalleryMainViewController.h"
 #import <MLNFile.h>
+#import <MLNKitEnvironment.h>
+
+#import "MLNMyHttpHandler.h"
+#import "MLNMyRefreshHandler.h"
+#import "MLNMyImageHandler.h"
+#import "MLNNavigatorHandler.h"
+
+@interface MLNAppDelegate ()
+
+@property (nonatomic, strong) id<MLNHttpHandlerProtocol> httpHandler;
+@property (nonatomic, strong) id<MLNRefreshDelegate> refreshHandler;
+@property (nonatomic, strong) id<MLNImageLoaderProtocol> imgLoader;
+@property (nonatomic, strong) id<MLNNavigatorHandlerProtocol> navHandler;
+
+@end
 
 @implementation MLNAppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+    [self setupMLNKitEnvironment];
     // 根据标志位判断是否禁用图片加载功能
     if (kDisableImageLoad) {
         method_exchangeImplementations(class_getInstanceMethod([UIImageView class], @selector(sd_setImageWithURL:)), class_getInstanceMethod([self class], @selector(sd_setImageWithURL:)));
@@ -37,6 +53,21 @@
     [self.window makeKeyAndVisible];
 
     return YES;
+}
+
+- (void)setupMLNKitEnvironment
+{
+    // 初始化handlers
+    self.httpHandler = [[MLNMyHttpHandler alloc] init];
+    self.refreshHandler = [[MLNMyRefreshHandler alloc] init];
+    self.imgLoader = [[MLNMyImageHandler alloc] init];
+    self.navHandler = [[MLNNavigatorHandler alloc] init];
+    
+    [MLNKitEnvironment instancePreload];
+    [MLNKitEnvironment setDefaultHttpHandler:self.httpHandler];
+    [MLNKitEnvironment setDefaultScrollRefreshHandler:self.refreshHandler];
+    [MLNKitEnvironment setDefaultImageLoader:self.imgLoader];
+    [MLNKitEnvironment setDefaultNavigatorHandler:self.navHandler];
 }
 
 - (void)copyJsonFilesToSandbox

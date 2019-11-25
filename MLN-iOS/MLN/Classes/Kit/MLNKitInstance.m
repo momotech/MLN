@@ -14,7 +14,6 @@
 #import "UIView+MLNLayout.h"
 #import "MLNLayoutContainerNode.h"
 #import "MLNKitInstanceHandlersManager.h"
-#import "MLNKitBridgesManager.h"
 #import "MLNWindow.h"
 #import "MLNKitInstanceConsts.h"
 
@@ -27,15 +26,12 @@
     MLNLayoutEngine *_layoutEngine;
     MLNWindow *_luaWindow;
 }
-
-@property (nonatomic) Class<MLNConvertorProtocol> convertorClass;
-@property (nonatomic) Class<MLNExporterProtocol> exporterClass;
+@property (nonatomic, strong) id<MLNKitLuaCoeBuilderProtocol> luaCoreBuilder;
 @property (nonatomic, strong) NSMutableDictionary *windowExtra;
 @property (nonatomic, strong) NSMutableArray<Class<MLNExportProtocol>> *classes;
 @property (nonatomic, strong) MLNBeforeWaitingTaskEngine *lazyTaskEngine;
 @property (nonatomic, strong) MLNBeforeWaitingTaskEngine *animationEngine;
 @property (nonatomic, strong) MLNBeforeWaitingTaskEngine *renderEngine;
-@property (nonatomic, strong) MLNKitBridgesManager *bridgesManager;
 @property (nonatomic, strong) NSMutableArray *onDestroyCallbacks;
 @property (nonatomic, assign) BOOL didViewAppear;
 @property (nonatomic, assign) BOOL needCallAppear;
@@ -150,34 +146,29 @@
 }
 
 #pragma mark - Public For LuaCore
-- (instancetype)initWithLuaBundlePath:(NSString *)luaBundlePath viewController:(nonnull UIViewController<MLNViewControllerProtocol> *)viewController
+- (instancetype)initWithLuaCoreBuilder:(id<MLNKitLuaCoeBuilderProtocol>)luaCoreBuilder viewController:(UIViewController<MLNViewControllerProtocol> *)viewController
 {
-    return [self initWithLuaBundle:[MLNLuaBundle bundleCachesWithPath:luaBundlePath] viewController:viewController];
+    return [self initWithLuaBundle:[MLNLuaBundle mainBundle] luaCoreBuilder:luaCoreBuilder viewController:viewController];
 }
 
-- (instancetype)initWithLuaBundle:(MLNLuaBundle *)bundle viewController:(nonnull UIViewController<MLNViewControllerProtocol> *)viewController
+- (instancetype)initWithLuaBundlePath:(NSString *__nullable)luaBundlePath luaCoreBuilder:(id<MLNKitLuaCoeBuilderProtocol>)luaCoreBuilder viewController:(UIViewController<MLNViewControllerProtocol> *)viewController
 {
-    return [self initWithLuaBundle:bundle convertor:nil exporter:nil rootView:viewController.view viewController:viewController];
+    return [self initWithLuaBundle:[MLNLuaBundle mainBundleWithPath:luaBundlePath] luaCoreBuilder:luaCoreBuilder viewController:viewController];
 }
 
-- (instancetype)initWithLuaBundle:(MLNLuaBundle *)bundle rootView:(UIView * _Nullable)rootView viewController:(nonnull UIViewController<MLNViewControllerProtocol> *)viewController
+- (instancetype)initWithLuaBundle:(MLNLuaBundle *__nullable)luaBundle luaCoreBuilder:(id<MLNKitLuaCoeBuilderProtocol>)luaCoreBuilder viewController:(UIViewController<MLNViewControllerProtocol> *)viewController
 {
-    return [self initWithLuaBundle:bundle convertor:nil exporter:nil rootView:rootView viewController:viewController];
+    return [self initWithLuaBundle:luaBundle luaCoreBuilder:luaCoreBuilder rootView:nil viewController:viewController];
 }
 
-- (instancetype)initWithLuaBundle:(MLNLuaBundle *__nullable)luaBundle convertor:(Class<MLNConvertorProtocol> __nullable)convertorClass exporter:(Class<MLNExporterProtocol> __nullable)exporterClass rootView:(UIView *)rootView viewController:(UIViewController<MLNViewControllerProtocol> *)viewController
+- (instancetype)initWithLuaBundle:(MLNLuaBundle *__nullable)luaBundle luaCoreBuilder:(id<MLNKitLuaCoeBuilderProtocol>)luaCoreBuilder rootView:(UIView *)rootView viewController:(UIViewController<MLNViewControllerProtocol> *)viewController
 {
     if (self = [super init]) {
         _currentBundle = luaBundle;
-        if (!convertorClass) {
-            convertorClass = MLNKiConvertor.class;
-        }
-        _convertorClass = convertorClass;
-        _exporterClass = exporterClass;
+        _luaCoreBuilder = luaCoreBuilder;
         _rootView = rootView;
         _viewController = viewController;
         _instanceHandlersManager = [[MLNKitInstanceHandlersManager alloc] initWithUIInstance:self];
-        _bridgesManager = [[MLNKitBridgesManager alloc] initWithUIInstance:self];
         _instanceConsts = [[MLNKitInstanceConsts alloc] init];
     }
     return self;
@@ -380,8 +371,6 @@
     }
     // 创建新的LuaCore
     [self luaCore];
-    // 注册Kit所有Bridge
-    [self registerKitClasses];
     // 开启所有处理引擎
     [self startAllEngines];
     // 创建LuaWindow
@@ -396,7 +385,8 @@
 
 - (void)createLuaCore
 {
-    _luaCore = [[MLNLuaCore alloc] initWithLuaBundle:_currentBundle convertor:_convertorClass exporter:_exporterClass];
+    _luaCore = [self.luaCoreBuilder getLuaCore];
+    [_luaCore changeLuaBundle:self.currentBundle];
     _luaCore.weakAssociatedObject = self;
     _luaCore.errorHandler = self;
     _luaCore.delegate = self;
@@ -409,11 +399,6 @@
     [self.lazyTaskEngine start];
     [self.animationEngine start];
     [self.renderEngine start];
-}
-
-- (void)registerKitClasses
-{
-    [self.bridgesManager registerKit];
 }
 
 - (void)forceLayoutLuaWindow

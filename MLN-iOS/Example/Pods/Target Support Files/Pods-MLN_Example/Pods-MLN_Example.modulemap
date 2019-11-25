@@ -1,6 +1,0 @@
-framework module Pods_MLN_Example {
-  umbrella header "Pods-MLN_Example-umbrella.h"
-
-  export *
-  module * { export * }
-}
