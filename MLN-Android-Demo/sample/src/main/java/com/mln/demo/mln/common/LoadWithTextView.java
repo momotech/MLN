@@ -8,6 +8,7 @@ import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.RotateAnimation;
@@ -15,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.immomo.mls.util.DimenUtil;
 import com.immomo.mls.weight.load.ILoadWithTextView;
 import com.mln.demo.R;
 
@@ -39,13 +41,25 @@ public class LoadWithTextView extends LinearLayout implements ILoadWithTextView 
     private TextView textView;
 
     private void init(Context context) {
-        LayoutInflater.from(context).inflate(R.layout.layout_lua_common_load_more, this, true);
+        LinearLayout.LayoutParams lp=new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        imageView =new ImageView(context);
+        imageView.setLayoutParams(lp);
+        imageView.setBackgroundResource(R.drawable.lv_default_progress);
+        imageView.setVisibility(GONE);
+        addView(imageView);
+
+        textView=new TextView(context);
+        lp.leftMargin= DimenUtil.dpiToPx(6);
+        textView.setLayoutParams(lp);
+        textView.setSingleLine();
+        textView.setTextColor(context.getResources().getColor(R.color.load_color));
+        textView.setTextSize(13);
+        addView(textView);
+
         setOrientation(HORIZONTAL);
         setGravity(Gravity.CENTER);
         int dp16 = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 16, getResources().getDisplayMetrics());
         setPadding(dp16, dp16, dp16, dp16);
-        imageView = findView(R.id.loading_more_icon);
-        textView = findView(R.id.loading_more_text);
     }
 
     @Override

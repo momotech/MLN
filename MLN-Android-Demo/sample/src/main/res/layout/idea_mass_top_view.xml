@@ -42,8 +42,7 @@
         <ImageView
             android:id="@+id/iv_img"
             android:layout_width="80dp"
-            android:layout_height="80dp"
-            />
+            android:layout_height="80dp" />
 
         <TextView
             android:id="@+id/tv_attention"
@@ -145,9 +144,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
+        android:background="@color/gray"
         android:orientation="horizontal"
         android:paddingLeft="12dp"
-        android:background="@color/gray"
         android:paddingBottom="12dp">
 
         <TextView
@@ -159,12 +158,18 @@
             android:textColor="@color/white"
             android:textSize="12sp" />
 
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/label_swipe"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_labels"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
         </androidx.recyclerview.widget.RecyclerView>
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
     </LinearLayout>
 
     <LinearLayout
@@ -188,7 +193,7 @@
                 android:textColor="@drawable/inspir_tab_selector"
                 android:textSize="16sp" />
 
-            <ImageView
+            <View
                 android:layout_width="6dp"
                 android:layout_height="2dp"
                 android:background="@drawable/inspir_tab_line_selector" />
@@ -210,7 +215,7 @@
                 android:textColor="@drawable/inspir_tab_selector"
                 android:textSize="16sp" />
 
-            <ImageView
+            <View
                 android:layout_width="6dp"
                 android:layout_height="2dp"
                 android:background="@drawable/inspir_tab_line_selector" />
@@ -218,12 +223,21 @@
         </LinearLayout>
     </LinearLayout>
 
-    <androidx.viewpager.widget.ViewPager
-        android:id="@+id/inspirPager"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-    </androidx.viewpager.widget.ViewPager>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/inspirPagerRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_height="match_parent"
+            android:scrollbars="horizontal|vertical">
+
+        </androidx.recyclerview.widget.RecyclerView>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
     <!--    <fragment-->
     <!--        android:id="@+id/fragmentTest"-->
     <!--        android:name="com.example.meilishuo.fragment.InspirFragment"-->
