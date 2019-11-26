@@ -113,8 +113,8 @@
 		30A4EB5F231CD75200995416 /* MLNMyRefreshHandler.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNMyRefreshHandler.m; sourceTree = "<group>"; };
 		30A4EB6B231F4FD400995416 /* MLNTestMe+Test.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MLNTestMe+Test.h"; sourceTree = "<group>"; };
 		30A4EB6C231F4FD400995416 /* MLNTestMe+Test.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "MLNTestMe+Test.m"; sourceTree = "<group>"; };
-		30CB3BF823684B7F00AB90C6 /* MLNDevTool.podspec */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = MLNDevTool.podspec; path = ../../MLNDevTool.podspec; sourceTree = "<group>"; };
-		30CB3BFA23684CD400AB90C6 /* MLN.podspec */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = MLN.podspec; path = ../../MLN.podspec; sourceTree = "<group>"; };
+		30CB3BF823684B7F00AB90C6 /* MLNDevTool.podspec */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = MLNDevTool.podspec; path = ../../MLNDevTool.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		30CB3BFA23684CD400AB90C6 /* MLN.podspec */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = MLN.podspec; path = ../../MLN.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		30E24E8B22F3D74900A0E78C /* MLNTestMe.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLNTestMe.m; sourceTree = "<group>"; };
 		30E24E8C22F3D74900A0E78C /* MLNGlobalFuncTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLNGlobalFuncTest.h; sourceTree = "<group>"; };
 		30E24E8D22F3D74900A0E78C /* MLNGlobalFuncTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLNGlobalFuncTest.m; sourceTree = "<group>"; };
