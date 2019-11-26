@@ -101,6 +101,18 @@ __VA_ARGS__;\
 #else
 #define MLNNumberIsBool(NUMBER) (MLNValueIsType(NUMBER, BOOL) || [number isKindOfClass:[@(YES) class]] || ((MLNValueIsType(NUMBER, char)) && NUMBER.charValue =='\0'))
 #endif
+
+/**
+ 通知Handler处理Error
+ 
+ @param LUA_CORE MLNLuaCore 虚拟机内核
+ @param FORMAT 字符拼接格式
+ @param ... 可变参数
+ */
+#define MLNCallErrorHandler(LUA_CORE, FORMAT, ...) \
+NSString *error_tt = [NSString stringWithFormat:FORMAT, ##__VA_ARGS__];\
+[(LUA_CORE).errorHandler luaCore:(LUA_CORE) error:error_tt]; \
+
 /**
  Lua 相关断言
  
@@ -122,7 +134,7 @@ luaL_error(L, format, ##__VA_ARGS__);\
  @param ... 可变参数
  */
 #define mln_lua_error(L, format, ...)\
-luaL_error(L, format, ##__VA_ARGS__);\
+MLNCallErrorHandler(MLN_LUA_CORE((L)), format, ##__VA_ARGS__)\
 
 /**
  Lua相关断言
@@ -136,7 +148,7 @@ luaL_error(L, format, ##__VA_ARGS__);\
 if ([(LUA_CORE).errorHandler canHandleAssert:(LUA_CORE)] && !(CONDITION)) {\
 NSString *error_t = [NSString stringWithFormat:FORMAT, ##__VA_ARGS__];\
 if ((LUA_CORE).state) { \
-mln_lua_error((LUA_CORE).state, error_t.UTF8String) \
+luaL_error((LUA_CORE).state, error_t.UTF8String);\
 }\
 }
 
@@ -148,21 +160,7 @@ mln_lua_error((LUA_CORE).state, error_t.UTF8String) \
  @param ... 可变参数
  */
 #define MLNLuaError(LUA_CORE, FORMAT, ...) \
-NSString *error_t = [NSString stringWithFormat:FORMAT, ##__VA_ARGS__];\
-if ((LUA_CORE).state) { \
-mln_lua_error((LUA_CORE).state, error_t.UTF8String) \
-}
-
-/**
- 通知Handler处理Error
- 
- @param LUA_CORE MLNLuaCore 虚拟机内核
- @param FORMAT 字符拼接格式
- @param ... 可变参数
- */
-#define MLNCallErrorHandler(LUA_CORE, FORMAT, ...) \
-NSString *error_t = [NSString stringWithFormat:FORMAT, ##__VA_ARGS__];\
-[(LUA_CORE).errorHandler luaCore:(LUA_CORE) error:error_t]; \
+MLNCallErrorHandler(LUA_CORE, FORMAT, ##__VA_ARGS__)\
 
 /**
  原生相关断言

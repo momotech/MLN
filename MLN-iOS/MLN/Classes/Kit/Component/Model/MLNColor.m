@@ -64,9 +64,10 @@ static int lua_color_init(lua_State *L) {
         case 0:
             color = [[MLNColor alloc] initWithR:0 g:0 b:0 a:1.0];
             break;
-        default:
-            mln_lua_error(L, "number of arguments must be 3 or 4 or 0!");
+        default: {
+            mln_lua_error(L, @"number of arguments must be 3 or 4 or 0!");
             break;
+        }
     }
     
     if (color) {
