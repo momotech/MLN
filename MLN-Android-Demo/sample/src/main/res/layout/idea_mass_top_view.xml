@@ -157,7 +157,7 @@
             android:text="相关灵感集："
             android:textColor="@color/white"
             android:textSize="12sp" />
-
+        <!-- 这里添加swiperefreshlayout，是为了和MLN原生桥接保持一致布局，测量sdk耗时 -->
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             android:id="@+id/label_swipe"
             android:layout_width="match_parent"
