@@ -33,10 +33,10 @@ end
 function _class:createSubviews()
     self:setupContainerView()
     self:setupTitleView()
+    self:setupHeaderView()
     --waterfallview
     self.waterfall = self:setupWaterfallView()
     self.containerView:addView(self.waterfall)
-    self:setupHeaderView()
 end
 ---容器视图
 ---@public
@@ -74,30 +74,17 @@ end
 ---header设置
 function _class:setupHeaderView()
     self:setupTopView()
-    self.waterfallAdapter:initHeader(function(header)
-        header.contentView:addView(self.HeaderView)
-    end)
-
-    self.waterfallAdapter:fillHeaderData(function(header)
-        --header.contentView:addView(self.HeaderView)
-    end)
-    self.waterfallAdapter:headerValid(function()
-        return true
-    end)
-    self.waterfallAdapter:heightForHeader(function()
-        return 250
-    end)
+    self.containerView:addView(self.HeaderView)
 end
 ---header视图
 function _class:setupTopView()
-    self.HeaderView = LinearLayout(LinearType.VERTICAL):width(MeasurementType.MATCH_PARENT):height(MeasurementType.MATCH_PARENT)
-
+    self.HeaderView = LinearLayout(LinearType.VERTICAL):width(MeasurementType.MATCH_PARENT):height(MeasurementType.WRAP_CONTENT)
 
     self.topView = View():width(MeasurementType.MATCH_PARENT):height(MeasurementType.WRAP_CONTENT):padding(20, 10, 10, 10)
                          :bgColor(ColorConstants.Gray)
     self.HeaderView:addView(self.topView)
 
-    self.iv = ImageView():width(100):height(100):addCornerMask(6,ColorConstants.Gray,RectCorner.ALL_CORNERS)
+    self.iv = ImageView():width(100):height(100):addCornerMask(6, ColorConstants.Gray, RectCorner.ALL_CORNERS)
     self.topView:addView(self.iv)
 
     self.attention = Label():text("+ 关注"):textColor(ColorConstants.White):fontSize(12):borderWidth(1):borderColor(ColorConstants.White):padding(6, 12, 6, 12):cornerRadius(2):setGravity(Gravity.RIGHT)
@@ -110,12 +97,13 @@ function _class:setupTopView()
     self.countLinear = LinearLayout(LinearType.HORIZONTAL):marginLeft(120):marginTop(28)
     self.topView:addView(self.countLinear)
 
-    self.pageLogo = ImageView():width(15):height(15):cornerRadius(6):image("https://s.momocdn.com/w/u/others/2019/10/18/1571393657050-mls_star.png")
+    self.pageLogo = ImageView():width(15):height(15):cornerRadius(6)
+
     self.countLinear:addView(self.pageLogo)
     self.pageCount = Label():text("200篇"):textColor(ColorConstants.White):fontSize(12):marginLeft(3)
     self.countLinear:addView(self.pageCount)
 
-    self.scanLogo = ImageView():width(15):height(15):marginLeft(8):image("https://s.momocdn.com/w/u/others/2019/10/18/1571393656549-mls_scan.png")
+    self.scanLogo = ImageView():width(15):height(15):marginLeft(8)
     self.countLinear:addView(self.scanLogo)
     self.scanCount = Label():text("6790"):textColor(ColorConstants.White):fontSize(12):marginLeft(3)
     self.countLinear:addView(self.scanCount)
@@ -123,7 +111,8 @@ function _class:setupTopView()
     --话题创建者
     self.autoLinear = LinearLayout(LinearType.HORIZONTAL):marginLeft(120):setGravity(Gravity.BOTTOM):marginBottom(5)
     self.topView:addView(self.autoLinear)
-    self.authorHeader = ImageView():width(25):height(25):image("https://s.momocdn.com/w/u/others/2019/10/18/1571393657050-mls_header.png")
+    self.authorHeader = ImageView():width(25):height(25)
+
     self.autoLinear:addView(self.authorHeader)
     self.authorName = Label():text("小美酱Pick榜 创建"):textColor(ColorConstants.White):fontSize(12):setGravity(Gravity.CENTER_VERTICAL):marginLeft(5)
     self.autoLinear:addView(self.authorName)
@@ -136,15 +125,15 @@ function _class:setupTopView()
     self.aboutLinear:addView(self.about)
     --标签列表视图
     self:setupTapListView():setGravity(Gravity.CENTER_VERTICAL)
-    self.aboutLinear:addView(self:setupTapListView())
-    self.bottomView = LinearLayout(LinearType.VERTICAL):width(MeasurementType.MATCH_PARENT):height(MeasurementType.MATCH_PARENT)
-    self.bottomView:addCornerMask(10,ColorConstants.Gray, MBit:bor(RectCorner.TOP_LEFT, RectCorner.TOP_RIGHT))
+    self.aboutLinear:addView(self.tapTableView)
+    self.bottomView = LinearLayout(LinearType.HORIZONTAL):width(MeasurementType.MATCH_PARENT):height(MeasurementType.MATCH_PARENT)
+    self.bottomView:addCornerMask(10, ColorConstants.Gray, MBit:bor(RectCorner.TOP_LEFT, RectCorner.TOP_RIGHT))
     self.HeaderView:addView(self.bottomView)
     --tabSegment
-    self.tabSegment = self:setupTabSegment()
+    self:setupTabSegment()
     --line
     self.line = View():width(MeasurementType.MATCH_PARENT):height(1):bgColor(ColorConstants.LightGray)
-    self.bottomView:addView(self.line)
+    self.HeaderView:addView(self.line)
 
 end
 ---灵感集标签列表
@@ -172,15 +161,25 @@ function _class:setupTapListView()
         return self.dataList:size()
     end)
     self.tapTableView:layout(self.tapLayout)
-    self.tapTableView:adapter(self.tapAdapter)
+
     return self.tapTableView
 end
 
 function _class:setupTabSegment()
-    titles = Array():add("热门"):add("最新")
-    self.tabSegment = TabSegmentView(Rect(0, 400, window:width(), 50), titles, ColorConstants.Black)
-    self.tabSegment:normalFontSize(14):tintColor(ColorConstants.Gray):selectedColor(ColorConstants.DeepGray):setAlignment(TabSegmentAlignment.LEFT):selectScale(1)
-    self.tabSegment:setItemTabClickListener(function(index)
+    self.tabContainerHot = LinearLayout(LinearType.VERTICAL)
+    self.tabContainerNew = LinearLayout(LinearType.VERTICAL)
+
+    self.tabHotLabel = Label():fontSize(14):padding(12, 12, 12, 12):text("热门")
+    self.tabNewLabel = Label():fontSize(14):padding(12, 12, 12, 12):text("最新")
+    self.indicatorHot = View():height(2):width(6):setGravity(Gravity.CENTER_HORIZONTAL)
+    self.indicatorNew = View():height(2):width(6):setGravity(Gravity.CENTER_HORIZONTAL)
+
+    self.tabContainerHot:addView(self.tabHotLabel):addView(self.indicatorHot)
+    self.tabContainerNew:addView(self.tabNewLabel):addView(self.indicatorNew)
+
+    self.bottomView:addView(self.tabContainerHot):addView(self.tabContainerNew)
+
+    self.tabsListener = function(index)
         if self.type ~= index then
             self.waterfall:resetLoading()
             self.dataList:removeAll()
@@ -193,9 +192,31 @@ function _class:setupTabSegment()
                 end
             end)
         end
+    end
+
+    self.updataFunction = function(index)
+        if index == 1 then
+            self.indicatorHot:bgColor(ColorConstants.Black)
+            self.tabHotLabel:textColor(ColorConstants.Black)
+            self.indicatorNew:bgColor(ColorConstants.Gray)
+            self.tabNewLabel:textColor(ColorConstants.Gray)
+        else
+            self.indicatorHot:bgColor(ColorConstants.Gray)
+            self.tabHotLabel:textColor(ColorConstants.Gray)
+            self.indicatorNew:bgColor(ColorConstants.Black)
+            self.tabNewLabel:textColor(ColorConstants.Black)
+        end
+    end
+    self.updataFunction(1)
+
+    self.tabContainerHot:onClick(function()
+        self.updataFunction(1)
+        self.tabsListener(1)
     end)
-    self.bottomView:addView(self.tabSegment)
-    return self.tabSegment
+    self.tabContainerNew:onClick(function()
+        self.updataFunction(2)
+        self.tabsListener(2)
+    end)
 end
 
 function _class:setupWaterfallView()
@@ -239,7 +260,7 @@ function _class:setupWaterfallView()
         end
     end)
     self.waterfall:layout(self.waterfallLayout)
-    self.waterfall:adapter(self.waterfallAdapter)
+
     self.waterfall:setLoadingCallback(function()
         self:requestNetwork(false, function(success, data)
             if success then
@@ -310,21 +331,32 @@ end
 
 function _class:setupDataSource()
     --首先展示第一页数据
-    self:requestNetwork(true, function(success, _)
-        if success then
-            if self.dataList:size() > 0 then
-                self.iv:image(self.dataList:get(1):get("pic_radio"))
-                self.tapTableView:reloadData()
-                self.waterfall:reloadData()
+    ----延迟加载，为了列表适配和加载时间分开
+    System:setTimeOut(function()
+
+        self:requestNetwork(true, function(success, _)
+            if success then
+                if not self.isInit then
+                    self.isInit = true
+                    self.waterfall:adapter(self.waterfallAdapter)
+                    self.tapTableView:adapter(self.tapAdapter)
+                    self.authorHeader:image("https://s.momocdn.com/w/u/others/2019/10/18/1571393657050-mls_header.png")
+                    self.pageLogo:image("https://s.momocdn.com/w/u/others/2019/10/18/1571393657050-mls_star.png")
+                    self.scanLogo:image("https://s.momocdn.com/w/u/others/2019/10/18/1571393656549-mls_scan.png")
+
+                end
+
+                if self.dataList:size() > 0 then
+                    self.iv:image(self.dataList:get(1):get("pic_radio"))
+                    self.tapTableView:reloadData()
+                    self.waterfall:reloadData()
+                end
             end
-        end
-    end)
+        end)
+    end, 0.5)
 end
-
-
 
 _class:new()
 window:addView(_class:rootView())
-
 
 return _class

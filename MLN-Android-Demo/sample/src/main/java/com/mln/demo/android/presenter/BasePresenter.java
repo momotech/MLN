@@ -22,6 +22,10 @@ public abstract class BasePresenter<T> {
         MLSAdapterContainer.getThreadAdapter().executeTaskByTag(hashCode(), new Runnable() {
             @Override
             public void run() {
+                try {//TODO sleep...... 为了列表适配与加载分离
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                }
                 final List<T> datalist = getData();
 
                 final BaseView<T> baseView = getBaseView();
@@ -44,7 +48,6 @@ public abstract class BasePresenter<T> {
                 try {//TODO sleep......
                     Thread.sleep(500);
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
                 }
                 final List<T> datalist = fetchData();
 
