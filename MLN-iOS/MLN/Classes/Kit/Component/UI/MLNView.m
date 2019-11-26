@@ -88,7 +88,7 @@ LUA_EXPORT_VIEW_METHOD(addCornerMask, "lua_addCornerMaskWithRadius:maskColor:cor
 LUA_EXPORT_VIEW_METHOD(setGradientColor, "lua_setGradientColor:endColor:vertical:",MLNView)
 LUA_EXPORT_VIEW_METHOD(setGradientColorWithDirection, "lua_setGradientColor:endColor:direction:",MLNView)
 // user interaction
-LUA_EXPORT_VIEW_PROPERTY(enabled, "setUserInteractionEnabled:","isUserInteractionEnabled", MLNView)
+LUA_EXPORT_VIEW_PROPERTY(enabled, "setLua_enable:","lua_enable", MLNView)
 LUA_EXPORT_VIEW_METHOD(onClick, "lua_addClick:",MLNView)
 LUA_EXPORT_VIEW_METHOD(onLongPress, "lua_addLongPress:",MLNView)
 LUA_EXPORT_VIEW_METHOD(onTouch, "lua_addTouch:",MLNView)

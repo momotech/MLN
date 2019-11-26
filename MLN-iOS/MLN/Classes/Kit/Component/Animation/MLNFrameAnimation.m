@@ -187,8 +187,8 @@
     // do
     [UIView animateWithDuration:self.duration delay:self.delay options:self.options animations:^{
         BOOL repeatIndefinitely = self.options & UIViewAnimationOptionRepeat;
-        if (self.lua_repeatCount || repeatIndefinitely) {
-            [UIView setAnimationRepeatCount:(self.lua_repeatCount == -1 || repeatIndefinitely? MAX_INT:self.lua_repeatCount)];
+        if (repeatIndefinitely) {
+            [UIView setAnimationRepeatCount:(self.lua_repeatCount == -1 ? MAX_INT:self.lua_repeatCount)];
         }
         view.frame = endFrame;
         view.alpha = endAlpha;

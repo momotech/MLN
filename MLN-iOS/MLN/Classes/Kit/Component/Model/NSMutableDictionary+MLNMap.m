@@ -11,7 +11,7 @@
 
 #define LUA_ARG_CHECK(TOP) \
 if (lua_gettop(L) != (TOP)) {\
-mln_lua_error(L, "number of argments must be %d!", (TOP));\
+mln_lua_error(L,  @"number of argments must be %d!", (TOP));\
 return 0;\
 }
 
@@ -30,7 +30,7 @@ key = [NSString stringWithUTF8String:lua_tostring(L, IDX)];\
 break;\
 }\
 default: {\
-mln_lua_error(L, "The key must be a string!");\
+mln_lua_error(L,  @"The key must be a string!");\
 lua_pushvalue(L, 1);\
 return 1;\
 }\
@@ -57,12 +57,13 @@ static int lua_newMap(lua_State *L) {
                 [MLN_LUA_CORE(L) pushNativeObject:map error:nil];
                 return 1;
             }
-            mln_lua_error(L, "error type of argment, capacity must be number");
+            mln_lua_error(L, @"error type of argment, capacity must be number");
             break;
         }
-        default:
-            mln_lua_error(L, "number of argment more than 1");
+        default: {
+            mln_lua_error(L, @"number of argment more than 1");
             break;
+        }
     }
     return 0;
 }
@@ -89,7 +90,7 @@ static int lua_map_objectForKey(lua_State *L) {
         [MLN_LUA_CORE(L) pushNativeObject:value error:NULL];
         return 1;
     } else {
-        mln_lua_error(L, "The key must be a string!");
+        mln_lua_error(L,  @"The key must be a string!");
         mln_lua_pushnil(L);
         return 1;
     })
@@ -120,7 +121,7 @@ static int lua_map_setObjectForKey(lua_State *L) {
                        break;
                    }
                    default: {
-                       mln_lua_error(L, "The value type must be one of types, as string, number, map or array!");
+                       mln_lua_error(L,  @"The value type must be one of types, as string, number, map or array!");
                        break;
                    }
                }
@@ -141,7 +142,7 @@ static int lua_map_addEntriesFromDictionary(lua_State *L) {
                        break;
                    }
                    default: {
-                       mln_lua_error(L, "The argment must be a array!");
+                       mln_lua_error(L,  @"The argment must be a array!");
                        break;
                    }
                }
@@ -169,7 +170,7 @@ static int lua_map_removeObjects(lua_State *L) {
                        break;
                    }
                    default: {
-                       mln_lua_error(L, "The argument must be an array");
+                       mln_lua_error(L,  @"The argument must be an array");
                        break;
                    }
                }
