@@ -206,7 +206,11 @@
         }
         MLNError(self.luaCore, @"entry file is nil!");
         if ([self.delegate respondsToSelector:@selector(instance:didFailRun:error:)]) {
-            [self.delegate instance:self didFailRun:entryFilePath error:*error];
+            if (error) {
+                [self.delegate instance:self didFailRun:entryFilePath error:*error];
+            } else {
+                [self.delegate instance:self didFailRun:entryFilePath error:nil];
+            }
         }
         return NO;
     }
