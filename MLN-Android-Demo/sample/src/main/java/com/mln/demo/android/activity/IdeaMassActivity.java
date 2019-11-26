@@ -1,6 +1,7 @@
 package com.mln.demo.android.activity;
 
 import android.content.Context;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -11,31 +12,30 @@ import android.widget.TextView;
 
 import com.mln.demo.R;
 import com.mln.demo.android.adapter.IdeaLabelRvAdapter;
-import com.mln.demo.android.adapter.InspirPagerAdapter;
+import com.mln.demo.android.adapter.InspirRvAdapter;
 import com.mln.demo.android.entity.InspirHotEntity;
-import com.mln.demo.android.fragment.InspirPagerFragment;
 import com.mln.demo.android.interfaceview.InspirView;
 import com.mln.demo.android.presenter.InspirPresenter;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.viewpager.widget.ViewPager;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 /**
  * Created by xu.jingyu
  * DateTime: 2019-11-08 15:46
  */
-public class IdeaMassActivity extends AppCompatActivity implements View.OnClickListener, InspirView {
+public class IdeaMassActivity extends AppCompatActivity implements View.OnClickListener, InspirView, SwipeRefreshLayout.OnRefreshListener {
     private static final String TAG_ = IdeaMassActivity.class.getSimpleName();
 
     private Context context;
     private IdeaLabelRvAdapter labelRvAdapter;
-    private InspirPagerAdapter pagerAdapter;
+    private InspirRvAdapter adapter;
     private InspirPresenter presenter;
     private ImageView ivBack;
     private ImageView ivShare;
@@ -52,11 +52,16 @@ public class IdeaMassActivity extends AppCompatActivity implements View.OnClickL
     private TextView tvHot;
     private TextView tvRecent;
     private LinearLayout inspirTab;
-    private ViewPager inspirPager;
+    private RecyclerView recycleView;
+
+    private int mLastCompletelyVisibleItemPosition;
 
 
-    private List<Fragment> fragments;
     private int curTab;
+    private SwipeRefreshLayout swipLayout;
+
+    public IdeaMassActivity() {
+    }
 
 
     int getConvertViewId() {
@@ -66,11 +71,9 @@ public class IdeaMassActivity extends AppCompatActivity implements View.OnClickL
     void initData() {
         context = this;
         presenter = new InspirPresenter(context, this);
-        fragments = new ArrayList<>();
     }
 
     void initView() {
-
         ivBack = findViewById(R.id.iv_back);
         ivShare = findViewById(R.id.iv_share);
         ivImg = findViewById(R.id.iv_img);
@@ -81,44 +84,93 @@ public class IdeaMassActivity extends AppCompatActivity implements View.OnClickL
         llNum = findViewById(R.id.ll_num);
         ivLogo = findViewById(R.id.iv_logo);
         rvLabels = findViewById(R.id.rv_labels);
+        View rvLabelsSwipe = findViewById(R.id.label_swipe);
+        rvLabelsSwipe.setEnabled(false);
 
         //fragment
         tvHot = findViewById(R.id.tv_hot);
         tvRecent = findViewById(R.id.tv_recent);
         inspirTab = findViewById(R.id.inspir_tab);
-        inspirPager = findViewById(R.id.inspirPager);
+        swipLayout = findViewById(R.id.swipLayout);
+        recycleView = findViewById(R.id.inspirPagerRecyclerView);
 
         labelRvAdapter = new IdeaLabelRvAdapter(context);
         LinearLayoutManager manager = new LinearLayoutManager(context);
         manager.setOrientation(RecyclerView.HORIZONTAL);
         rvLabels.setLayoutManager(manager);
+
+        swipLayout.setOnRefreshListener(this);
+        swipLayout.setEnabled(false);
+
+        recycleView.setVerticalScrollBarEnabled(false);
+        recycleView.setHorizontalScrollBarEnabled(false);
+        adapter = new InspirRvAdapter(context);
+        GridLayoutManager layoutManager = new GridLayoutManager(context, 2);
+        layoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+            @Override
+            public int getSpanSize(int i) {
+                if (i == adapter.getItemCount()-1) {
+                    return 2;
+                }
+                return 1;
+            }
+        });
+        recycleView.addItemDecoration(new RecyclerView.ItemDecoration() {
+            @Override
+            public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
+                super.getItemOffsets(outRect, view, parent, state);
+                outRect.set(20, 20, 20, 20);
+            }
+        });
+        recycleView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                mLastCompletelyVisibleItemPosition = lastCompletelyVisibleItemPosition(recyclerView);
+            }
+
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+
+                if (canLoadMoreData(recyclerView, newState)) {
+                    presenter.syncFetchData();
+                }
+            }
+
+            private boolean canLoadMoreData(@NonNull RecyclerView recyclerView, int newState) {
+                return didStopScroll(recyclerView, newState) && onBottom(recyclerView);
+            }
+
+            private boolean didStopScroll(@NonNull RecyclerView recyclerView, int newState) {
+                return newState == RecyclerView.SCROLL_STATE_IDLE;
+            }
+
+            private boolean onBottom(@NonNull RecyclerView recyclerView) {
+                return mLastCompletelyVisibleItemPosition >= ((LinearLayoutManager) recyclerView.getLayoutManager()).getItemCount() - 1;
+            }
+
+            private int lastCompletelyVisibleItemPosition(@NonNull RecyclerView recyclerView) {
+                RecyclerView.LayoutManager lm = recyclerView.getLayoutManager();
+                if (lm instanceof LinearLayoutManager) {
+                    return ((LinearLayoutManager) lm).findLastVisibleItemPosition();
+                }
+                return -1;
+            }
+        });
+        recycleView.setLayoutManager(layoutManager);
+        recycleView.setAdapter(adapter);
+
 //
         //请求数据
         presenter.syncGetData();
 
         inspirTab.getChildAt(0).setSelected(true);
-        pagerAdapter = new InspirPagerAdapter(getSupportFragmentManager(), fragments);
     }
 
     void setListener() {
         tvHot.setOnClickListener(this);
         tvRecent.setOnClickListener(this);
-        inspirPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-                resetTab(position);
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-
-            }
-        });
     }
 
     @Override
@@ -151,7 +203,6 @@ public class IdeaMassActivity extends AppCompatActivity implements View.OnClickL
         if (index != curTab) {
             inspirTab.getChildAt(0).setSelected(index == 0);
             inspirTab.getChildAt(1).setSelected(index == 1);
-            inspirPager.setCurrentItem(index);
             curTab = index;
         }
     }
@@ -178,13 +229,11 @@ public class IdeaMassActivity extends AppCompatActivity implements View.OnClickL
             labelRvAdapter.updateList(list);
         }
 
-        if (fragments.size() == 0 && pagerAdapter != null) {
-            fragments.add(new InspirPagerFragment(list));
-            fragments.add(new InspirPagerFragment(list));
-            if (inspirPager.getAdapter() == null) {
-                inspirPager.setAdapter(pagerAdapter);
+        if (adapter != null) {
+            if (recycleView.getAdapter() == null) {
+                recycleView.setAdapter(adapter);
             } else {
-                pagerAdapter.notifyDataSetChanged();
+                adapter.updateList(list);
             }
         }
         if (ivImg != null)
@@ -193,6 +242,17 @@ public class IdeaMassActivity extends AppCompatActivity implements View.OnClickL
 
     @Override
     public void fetchUI(List<InspirHotEntity> list) {
+        if (adapter != null) {
+            if (recycleView.getAdapter() == null) {
+                recycleView.setAdapter(adapter);
+            } else {
+                adapter.loadMore(list);
+            }
+        }
+    }
+
+    @Override
+    public void onRefresh() {
 
     }
 }
