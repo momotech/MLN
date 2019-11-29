@@ -27,7 +27,7 @@ public class MLSConfigs {
     public static int viewPagerConfig = 1;      //0 | 1
 
     public static int maxLoadCount = 2;
-    public static boolean readScriptFileInJava = true;
+    public static boolean readScriptFileInJava = false;
     /**
      * 默认加载超时为20s
      */

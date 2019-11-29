@@ -352,7 +352,18 @@ public class PreloadUtils {
         } else if (name.endsWith(Constants.POSTFIX_B_LUA)) {
             name = name.substring(0, name.length() - Constants.POSTFIX_B_LUA.length());
         }
-        ScriptFile sf = createAssetsScriptFile(name, parsedUrl.toString(), true);
+        final ScriptFile sf;
+        if (MLSConfigs.readScriptFileInJava) {
+            byte[] data;
+            data = getAssetsData(parsedUrl.getAssetsPath());
+            if (data == null) {
+                sf = null;
+            } else {
+                sf = new ScriptFile(name, data, true);
+            }
+        } else {
+            sf = new ScriptFile(name, parsedUrl.toString(), true);
+        }
         if (sf == null)
             throw new ScriptLoadException(ERROR.READ_FILE_FAILED, null);
         return sf;
