@@ -7,8 +7,6 @@
   */
 package com.immomo.mls.wrapper;
 
-import android.util.Log;
-
 import com.immomo.mls.MLSEngine;
 import com.immomo.mls.fun.ud.view.UDView;
 
@@ -472,18 +470,12 @@ public class Register {
      * @param installView 是否注册View
      */
     public void install(Globals g, boolean installView) {
-        long now = System.nanoTime();
         allUserdataHolder.install(g);
         if (installView)
             lvUserdataHolder.install(g);
-        long end = System.nanoTime();
-        Log.d("Register", String.format("install ud cast: %.2fms", (end - now) / 1000000f));
-        now = end;
         for (SHolder h : sHolders) {
             g.registerStaticBridgeSimple(h.luaClassName, h.clz);
         }
-        end = System.nanoTime();
-        Log.d("Register", String.format("install static cast: %.2fms", (end - now) / 1000000f));
         for (StringEnumHolder h : seHolders) {
             g.registerStringEnum(h.luaClassName, h.keys, h.values);
         }
