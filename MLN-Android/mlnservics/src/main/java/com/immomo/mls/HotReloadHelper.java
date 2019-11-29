@@ -24,6 +24,7 @@ import java.lang.annotation.Retention;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -71,7 +72,7 @@ public class HotReloadHelper {
 
     public static final int DEFAULT_USB_PORT = 8176;
 
-    private static final HashMap<String, Callback> callbacks = new HashMap<>();
+    private static final List<Callback> callbacks = new ArrayList<>();
 
     private static HotReloadImpl hotReload;
 
@@ -87,76 +88,12 @@ public class HotReloadHelper {
 
     private static ConnectListener connectListener;
 
-    private static String tryGetProjectString(String path, String rPath) {
-        int i = path.lastIndexOf(rPath);
-        if (i > 0) {
-            path = path.substring(0, i - 1);
+    private static File getHotReloadPath() {
+        File f = new File(FileUtil.getCacheDir(), "LuaHotReload");
+        if (!f.exists()) {
+            f.mkdirs();
         }
-        if (path.endsWith("src")) {
-            path = path.substring(0, path.length() - 4);
-        }
-        i = path.lastIndexOf('/');
-        if (i > 0) {
-            return path.substring(i + 1);
-        }
-        return null;
-    }
-
-    private static String findBestPath(String projectName) {
-        if (projectName == null) return null;
-
-        int minScole = Integer.MAX_VALUE;
-        String bestKey = null;
-        for (String e : callbacks.keySet()) {
-            String path = e;
-            if (path.equalsIgnoreCase(projectName)) return path;
-            int index = path.lastIndexOf('/');
-            if (index < 0) continue;
-
-            path = path.substring(index + 1);
-            if (path.equalsIgnoreCase(projectName)) return e;
-
-            index = projectName.indexOf(path);
-            if (index < 0) continue;
-            int s = 10;
-            if (index == 0) {
-                int off = projectName.length() - index - path.length();
-                if (off == DEBUG_LENGTH || off == RELEASE_LENGTH) {
-                    s = 1;
-                } else {
-                    s = 5;
-                }
-            } else if (index + path.length() == projectName.length()){
-                s = 4;
-            }
-            if (s < minScole) {
-                minScole = s;
-                bestKey = e;
-            }
-        }
-        return bestKey;
-    }
-
-    private static Collection<String> getBasePath(String originPath, String relativePath) {
-        String key = findBestPath(tryGetProjectString(originPath, relativePath));
-        if (key == null) {
-            return callbacks.keySet();
-        }
-        ArrayList<String> r = new ArrayList<>(1);
-        r.add(key);
-        return r;
-    }
-
-    private static Collection<Callback> getCallbacks(String originPath, String relativePath) {
-        String key = findBestPath(tryGetProjectString(originPath, relativePath));
-        Collection<Callback> cs;
-        if (key == null) {
-            cs = callbacks.values();
-        } else {
-            cs = new ArrayList<>(1);
-            ((ArrayList<Callback>) cs).add(callbacks.get(key));
-        }
-        return cs;
+        return f;
     }
 
     public static HashMap<String, String> parseParams(String p) {
@@ -253,10 +190,11 @@ public class HotReloadHelper {
                     while (changeFiles.get() > 0);
                     reloadState.set(RELOADING);
                     HashMap<String, String> p = parseParams(params);
-                    Collection<Callback> cs = getCallbacks(entryFilePath, relativeEntryFilePath);
+                    Collection<Callback> cs = new ArrayList<>(callbacks);
+                    File file = new File(getHotReloadPath(), relativeEntryFilePath);
                     try {
                         for (Callback cb : cs) {
-                            cb.onReload(relativeEntryFilePath, p, STATE_NORMAL);
+                            cb.onReload(file.getAbsolutePath(), p, STATE_NORMAL);
                             do {
                                 Thread.sleep(100);
                             } while (!cb.reloadFinish());
@@ -291,36 +229,25 @@ public class HotReloadHelper {
                 @Override
                 public void run() {
                     waitReloading();
-                    Collection<String> path = getBasePath(filePath, relativeFilePath);
-                    File firstFile = null;
-                    for (String p : path) {
-                        File f = new File(p, relativeFilePath);
-                        File parent = f.getParentFile();
-                        if (!parent.isDirectory() && !parent.mkdirs()) {
-                            continue;
-                        }
-                        boolean exists = true;
-                        if (!f.exists()) {
-                            exists = false;
-                            File parentDir = f.getParentFile();
-                            if (!parentDir.isDirectory()) parentDir.mkdirs();
-                            try {
-                                exists = f.createNewFile();
-                            } catch (IOException ignore) {}
-                        }
-                        if (!exists) continue;
-
-                        if (firstFile == null) {
-                            try {
-                                if (FileUtil.save(f, is))
-                                    firstFile = f;
-                            } finally {
-                                IOUtil.closeQuietly(is);
-                            }
-                        } else {
-                            FileUtil.fastCopy(firstFile, f);
-                        }
+                    File f = new File(getHotReloadPath(), relativeFilePath);
+                    File parent = f.getParentFile();
+                    if (!parent.isDirectory()) {
+                        parent.mkdirs();
                     }
+                    boolean exists = true;
+                    if (!f.exists()) {
+                        exists = false;
+                        try {
+                            exists = f.createNewFile();
+                        } catch (IOException ignore) {}
+                    }
+                    if (!exists) {
+                        changeFiles.decrementAndGet();
+                        return;
+                    }
+                    FileUtil.save(f, is);
+                    IOUtil.closeQuietly(is);
+
                     changeFiles.decrementAndGet();
                 }
             });
@@ -334,33 +261,28 @@ public class HotReloadHelper {
                 @Override
                 public void run() {
                     waitReloading();
-                    Collection<String> path = getBasePath(filePath, relativeFilePath);
-                    File firstFile = null;
-                    for (String p : path) {
-                        File f = new File(p, relativeFilePath);
-                        File parentDir = f.getParentFile();
-                        if (!parentDir.isDirectory()) parentDir.mkdirs();
-                        if (!f.exists()) {
-                            try {
-                                f.createNewFile();
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                        if (!f.exists()) continue;
 
-                        FileUtil.clearFile(f);
-                        if (firstFile == null) {
-                            try {
-                                if (FileUtil.save(f, is))
-                                    firstFile = f;
-                            } finally {
-                                IOUtil.closeQuietly(is);
-                            }
-                        } else {
-                            FileUtil.fastCopy(firstFile, f);
-                        }
+                    File f = new File(getHotReloadPath(), relativeFilePath);
+                    File parent = f.getParentFile();
+                    if (!parent.isDirectory()) {
+                        parent.mkdirs();
                     }
+                    boolean exists = true;
+                    if (!f.exists()) {
+                        exists = false;
+                        try {
+                            exists = f.createNewFile();
+                        } catch (IOException ignore) {}
+                    }
+                    if (!exists) {
+                        changeFiles.decrementAndGet();
+                        return;
+                    }
+
+                    FileUtil.clearFile(f);
+                    FileUtil.save(f, is);
+                    IOUtil.closeQuietly(is);
+
                     changeFiles.decrementAndGet();
                 }
             });
@@ -374,13 +296,12 @@ public class HotReloadHelper {
                 @Override
                 public void run() {
                     waitReloading();
-                    Collection<String> path = getBasePath(filePath, relativeFilePath);
-                    for (String p : path) {
-                        File f = new File(p, relativeFilePath);
-                        if (!f.exists()) continue;
 
-                        f.renameTo(new File(p, relativeNewFilePath));
+                    File f = new File(getHotReloadPath(), relativeFilePath);
+                    if (f.exists()) {
+                        f.renameTo(new File(getHotReloadPath(), relativeNewFilePath));
                     }
+
                     changeFiles.decrementAndGet();
                 }
             });
@@ -394,13 +315,12 @@ public class HotReloadHelper {
                 @Override
                 public void run() {
                     waitReloading();
-                    Collection<String> path = getBasePath(filePath, relativeFilePath);
-                    for (String p : path) {
-                        File f = new File(p, relativeFilePath);
-                        if (!f.exists()) continue;
 
-                        f.renameTo(new File(p, relativeNewFilePath));
+                    File f = new File(getHotReloadPath(), relativeFilePath);
+                    if (f.exists()) {
+                        f.renameTo(new File(getHotReloadPath(), relativeNewFilePath));
                     }
+
                     changeFiles.decrementAndGet();
                 }
             });
@@ -414,13 +334,12 @@ public class HotReloadHelper {
                 @Override
                 public void run() {
                     waitReloading();
-                    Collection<String> path = getBasePath(filePath, relativeFilePath);
-                    for (String p : path) {
-                        File f = new File(p, relativeFilePath);
-                        if (!f.exists()) continue;
 
+                    File f = new File(getHotReloadPath(), relativeFilePath);
+                    if (f.exists()) {
                         f.delete();
                     }
+
                     changeFiles.decrementAndGet();
                 }
             });
@@ -470,15 +389,15 @@ public class HotReloadHelper {
         return wifiPort;
     }
 
-    public static void addCallback(String path, Callback c) {
+    public static void addCallback(Callback c) {
         if (!MLSEngine.DEBUG) return;
-        callbacks.put(path, c);
+        callbacks.add(c);
         connect(true);
     }
 
-    public static void removeCallback(String path) {
+    public static void removeCallback(Callback cb) {
         if (!MLSEngine.DEBUG) return;
-        callbacks.remove(path);
+        callbacks.remove(cb);
     }
 
     public static void setUseUSB(int port) {

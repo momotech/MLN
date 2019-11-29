@@ -365,20 +365,19 @@ public class MLSInstance implements ScriptLoader.Callback, Callback, PrinterCont
         public void onReload(final String path, final HashMap<String, String> params, int state) {
             if (globals.isDestroyed()) {
                 if (luaViewManager != null)
-                    HotReloadHelper.removeCallback(luaViewManager.baseFilePath);
+                    HotReloadHelper.removeCallback(this);
                 return;
             }
 
-            final String p = new File(luaViewManager.baseFilePath, path).getAbsolutePath();
             if (!MainThreadExecutor.isMainThread()) {
                 MainThreadExecutor.post(new Runnable() {
                     @Override
                     public void run() {
-                        reloadByHotReload(p, LoadTypeUtils.add(initData.loadType, Constants.LT_MAIN_THREAD), params);
+                        reloadByHotReload(path, LoadTypeUtils.add(initData.loadType, Constants.LT_MAIN_THREAD), params);
                     }
                 });
             } else {
-                reloadByHotReload(p, LoadTypeUtils.add(initData.loadType, Constants.LT_MAIN_THREAD), params);
+                reloadByHotReload(path, LoadTypeUtils.add(initData.loadType, Constants.LT_MAIN_THREAD), params);
             }
         }
 
@@ -408,7 +407,7 @@ public class MLSInstance implements ScriptLoader.Callback, Callback, PrinterCont
         if (mLuaView != null)
             mLuaView.onResume();
         if (MLSEngine.DEBUG && luaViewManager != null && luaViewManager.baseFilePath != null)
-            HotReloadHelper.addCallback(luaViewManager.baseFilePath, callback);
+            HotReloadHelper.addCallback(callback);
     }
 
     /**
@@ -419,7 +418,7 @@ public class MLSInstance implements ScriptLoader.Callback, Callback, PrinterCont
         if (mLuaView != null)
             mLuaView.onPause();
         if (MLSEngine.DEBUG && luaViewManager != null)
-            HotReloadHelper.removeCallback(luaViewManager.baseFilePath);
+            HotReloadHelper.removeCallback(callback);
     }
 
     /**
@@ -464,7 +463,7 @@ public class MLSInstance implements ScriptLoader.Callback, Callback, PrinterCont
      */
     public void onDestroy() {
         if (MLSEngine.DEBUG && luaViewManager != null){
-            HotReloadHelper.removeCallback(luaViewManager.baseFilePath);
+            HotReloadHelper.removeCallback(callback);
         }
         setState(STATE_DESTROY);
         if (mLuaView != null) {
@@ -712,7 +711,13 @@ public class MLSInstance implements ScriptLoader.Callback, Callback, PrinterCont
             hotReloadLuaViewManager = null;
         }
         if (isResume() && mLuaView != null) {
-            mLuaView.onResume();
+            /// 调用appear事件延后
+            MainThreadExecutor.post(new Runnable() {
+                @Override
+                public void run() {
+                    mLuaView.onResume();
+                }
+            });
         }
         removeState(STATE_HOT_RELOADING);
     }
@@ -981,13 +986,7 @@ public class MLSInstance implements ScriptLoader.Callback, Callback, PrinterCont
             });
         } else {
             addState(STATE_SCRIPT_EXECUTED);
-            /// 调用appear事件延后
-            MainThreadExecutor.post(new Runnable() {
-                @Override
-                public void run() {
-                    onLuaScriptExecutedSuccess();
-                }
-            });
+            onLuaScriptExecutedSuccess();
         }
         GlobalStateUtils.onScriptExecuted(initData.url, code == SUCCESS);
     }
@@ -1045,7 +1044,7 @@ public class MLSInstance implements ScriptLoader.Callback, Callback, PrinterCont
                 ScriptLoader.loadScriptBundle(luaView.getUserdata(), scriptBundle, g, MLSInstance.this);
                 if (MLSEngine.DEBUG) {
                     LogUtil.d(TAG, "dump: \n" + Arrays.toString(g.dump()));
-                    HotReloadHelper.addCallback(lvm.baseFilePath, callback);
+                    HotReloadHelper.addCallback(callback);
                 }
             }
         };
