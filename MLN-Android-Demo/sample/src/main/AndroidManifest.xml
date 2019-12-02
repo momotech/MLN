@@ -48,7 +48,9 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".android.activity.MainTabActivity" />
+        <activity android:name=".android.activity.MainTabActivity">
+
+        </activity>
         <activity android:name=".android.activity.IdeaMassActivity" />
         <activity android:name=".android.fragment.message.controller.MessageDetailNotificationActivity" />
         <activity android:name=".android.fragment.message.controller.MessageDetailActivity" />

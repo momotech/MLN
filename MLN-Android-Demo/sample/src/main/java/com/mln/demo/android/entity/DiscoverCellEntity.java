@@ -7,11 +7,20 @@ package com.mln.demo.android.entity;
 
 public class DiscoverCellEntity {
     private String imgUrl;
+    private String picSmall;
     private String name;
     private String content;
 
     public DiscoverCellEntity() {
 
+    }
+
+    public String getPicSmall() {
+        return picSmall;
+    }
+
+    public void setPicSmall(String picSmall) {
+        this.picSmall = picSmall;
     }
 
     public String getImgUrl() {

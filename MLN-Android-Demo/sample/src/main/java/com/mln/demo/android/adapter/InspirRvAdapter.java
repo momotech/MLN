@@ -13,7 +13,9 @@ import com.bumptech.glide.request.RequestOptions;
 import com.mln.demo.R;
 import com.mln.demo.android.entity.InspirHotEntity;
 import com.mln.demo.android.util.Constant;
+import com.mln.demo.mln.common.LoadWithTextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import androidx.annotation.NonNull;
@@ -24,44 +26,77 @@ import androidx.recyclerview.widget.RecyclerView;
  * Created by zhangxin
  * DateTime: 2019-11-08 14:22
  */
-public class InspirRvAdapter extends RecyclerView.Adapter<InspirRvAdapter.InspirRvHolder> {
+public class InspirRvAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+    private final static int ViewTypeFooter = 0;
+    private final static int ViewTypeNormal = 1;
 
+    private final LoadWithTextView loadView;
     private Context context;
-    private FragmentManager manager;
     private List<InspirHotEntity> list;
-    private List<View> vpImgs;
 
-    public InspirRvAdapter(Context context, List<InspirHotEntity> list, FragmentManager manager) {
+    public InspirRvAdapter(Context context) {
         this.context = context;
-        this.list = list;
-        this.manager = manager;
+        list = new ArrayList<>();
+        loadView = new LoadWithTextView(context);
+    }
+
+    public void updateList(List<InspirHotEntity> data) {
+        list.clear();
+        list.addAll(data);
+        notifyDataSetChanged();
+    }
+
+    public void loadMore(List<InspirHotEntity> data) {
+        list.addAll(list.size(), data);
+        notifyDataSetChanged();
     }
 
     @NonNull
     @Override
-    public InspirRvHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.inspir_list_item, null);
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        if (viewType == ViewTypeFooter) {
+            return new RecyclerViewFooterHolder(loadView);
+        }
+        View view = LayoutInflater.from(context).inflate(R.layout.inspir_list_item, parent,false);
         InspirRvHolder viewHolder = new InspirRvHolder(view);
         Glide.with(context).load(Constant.homeLoveImg).into(viewHolder.ivGood);
         return viewHolder;
     }
 
     @Override
-    public void onBindViewHolder(@NonNull InspirRvHolder holder, int position) {
-        InspirHotEntity item = list.get(position);
-        Glide.with(context).load(item.getImgUrl()).into(holder.ivHot);
-        holder.tvContent.setText(item.getContent());
-        Glide.with(context).load(item.getIconUrl()).apply(RequestOptions.bitmapTransform(new CircleCrop())).into(holder.ivIcon);
-        holder.tvName.setText(item.getName());
-        holder.tvNum.setText(item.getNum());
-
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+        if (holder instanceof RecyclerViewFooterHolder) {
+            ((RecyclerViewFooterHolder) holder).loadView.setLoadText("加载更多");
+            return;
+        }
+        if (holder instanceof InspirRvHolder) {
+            InspirRvHolder inspirRvHolder = ((InspirRvHolder) holder);
+            InspirHotEntity item = list.get(position);
+            Glide.with(context).load(item.getImgUrl()).into(inspirRvHolder.ivHot);
+            inspirRvHolder.tvContent.setText(item.getContent());
+            Glide.with(context).load(item.getIconUrl()).apply(RequestOptions.bitmapTransform(new CircleCrop())).into(inspirRvHolder.ivIcon);
+            inspirRvHolder.tvName.setText(item.getName());
+            inspirRvHolder.tvNum.setText(item.getNum());
+        }
     }
 
     @Override
     public int getItemCount() {
-        return list.size();
+        return list.size()+1;
     }
 
+    @Override
+    public int getItemViewType(int position) {
+        if (isFooterPosition(position)) {
+            return ViewTypeFooter;
+        }
+
+        return ViewTypeNormal;
+    }
+
+    private boolean isFooterPosition(int position) {
+        return position == list.size();
+    }
     public class InspirRvHolder extends RecyclerView.ViewHolder {
 
         ImageView ivHot;
@@ -82,4 +117,12 @@ public class InspirRvAdapter extends RecyclerView.Adapter<InspirRvAdapter.Inspir
         }
     }
 
+    public static class RecyclerViewFooterHolder extends RecyclerView.ViewHolder {
+        private LoadWithTextView loadView;
+
+        public RecyclerViewFooterHolder(@NonNull LoadWithTextView itemView) {
+            super(itemView);
+            this.loadView= itemView;
+        }
+    }
 }

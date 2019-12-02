@@ -11,5 +11,7 @@
     <color name="line">#EEEEEE</color>
     <color name="light_gray">#DDDDDD</color>
     <color name="deep_gray">#CCCCCC</color>
+    <color name="gray">#8F8F8F</color>
     <color name="tran_black">#55000000</color>
+    <color name="load_color">#969696</color>
 </resources>

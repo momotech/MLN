@@ -81,7 +81,7 @@ public class MLNAppHelper {
                 )
                 .registerUD(
                 )
-                .registerSingleInsance()
+                .registerSingleInsance(new MLSBuilder.SIHolder(SINavigatorExtend.LUA_CLASS_NAME, SINavigatorExtend.class))
 //                .clearAll()
                 .build(true);
         MLSEngine.setDebugIp("172.16.39.13");

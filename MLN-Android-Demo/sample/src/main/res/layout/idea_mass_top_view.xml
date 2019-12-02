@@ -2,7 +2,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/colorPrimaryDark"
     android:orientation="vertical">
 
     <!--title-->
@@ -15,7 +14,7 @@
             android:layout_width="45dp"
             android:layout_height="45dp"
             android:padding="12dp"
-            android:src="@drawable/idea_back" />
+            android:src="@drawable/back" />
 
         <ImageView
             android:id="@+id/iv_share"
@@ -23,27 +22,27 @@
             android:layout_height="45dp"
             android:layout_alignParentRight="true"
             android:padding="12dp"
-            android:src="@drawable/idea_share" />
+            android:src="@drawable/share" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:text="灵感集"
-            android:textColor="@color/white"
+            android:textColor="@color/black"
             android:textSize="16sp" />
     </RelativeLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/gray"
         android:padding="12dp">
 
         <ImageView
             android:id="@+id/iv_img"
             android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:background="@drawable/idea_header" />
+            android:layout_height="80dp" />
 
         <TextView
             android:id="@+id/tv_attention"
@@ -145,6 +144,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
+        android:background="@color/gray"
         android:orientation="horizontal"
         android:paddingLeft="12dp"
         android:paddingBottom="12dp">
@@ -157,6 +157,11 @@
             android:text="相关灵感集："
             android:textColor="@color/white"
             android:textSize="12sp" />
+        <!-- 这里添加swiperefreshlayout，是为了和MLN原生桥接保持一致布局，测量sdk耗时 -->
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/label_swipe"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_labels"
@@ -164,6 +169,7 @@
             android:layout_height="wrap_content">
 
         </androidx.recyclerview.widget.RecyclerView>
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
     </LinearLayout>
 
     <LinearLayout
@@ -187,7 +193,7 @@
                 android:textColor="@drawable/inspir_tab_selector"
                 android:textSize="16sp" />
 
-            <ImageView
+            <View
                 android:layout_width="6dp"
                 android:layout_height="2dp"
                 android:background="@drawable/inspir_tab_line_selector" />
@@ -209,7 +215,7 @@
                 android:textColor="@drawable/inspir_tab_selector"
                 android:textSize="16sp" />
 
-            <ImageView
+            <View
                 android:layout_width="6dp"
                 android:layout_height="2dp"
                 android:background="@drawable/inspir_tab_line_selector" />
@@ -217,12 +223,21 @@
         </LinearLayout>
     </LinearLayout>
 
-    <androidx.viewpager.widget.ViewPager
-        android:id="@+id/inspirPager"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-    </androidx.viewpager.widget.ViewPager>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/inspirPagerRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_height="match_parent"
+            android:scrollbars="horizontal|vertical">
+
+        </androidx.recyclerview.widget.RecyclerView>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
     <!--    <fragment-->
     <!--        android:id="@+id/fragmentTest"-->
     <!--        android:name="com.example.meilishuo.fragment.InspirFragment"-->
