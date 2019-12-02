@@ -49,7 +49,6 @@ public class InspirPresenter extends BasePresenter<InspirHotEntity> {
             byte[] buffer = new byte[lenght];
             is.read(buffer);
             res = new String(buffer, "utf8");
-            Log.e("data", "res=" + res);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -69,7 +68,6 @@ public class InspirPresenter extends BasePresenter<InspirHotEntity> {
                             data.setName(item.getString("author"));
                             data.setNum(item.getString("file_duration"));
                             list.add(data);
-                            IdeaLabelRvAdapter.list0.add(data);
 //                            Log.e("data", data.toString());
                         }
                         return list;

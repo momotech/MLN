@@ -49,7 +49,6 @@ public class HomePresenter extends BasePresenter<HomeRvEntity> {
             byte[] buffer = new byte[lenght];
             is.read(buffer);
             res = new String(buffer, "utf8");
-            Log.e("data", "res=" + res);
         } catch (IOException e) {
             e.printStackTrace();
         }

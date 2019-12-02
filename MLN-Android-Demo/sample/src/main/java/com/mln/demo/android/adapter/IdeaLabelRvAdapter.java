@@ -8,7 +8,9 @@ import android.widget.TextView;
 
 import com.mln.demo.R;
 import com.mln.demo.android.entity.InspirHotEntity;
+import com.mln.demo.mln.common.LoadWithTextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import androidx.annotation.NonNull;
@@ -20,12 +22,20 @@ import androidx.recyclerview.widget.RecyclerView;
  */
 public class IdeaLabelRvAdapter extends RecyclerView.Adapter<IdeaLabelRvAdapter.LabelViewHolder> {
 
+    private final LoadWithTextView loadView;
     private Context context;
-    public static List<InspirHotEntity> list0;
+    public List<InspirHotEntity> list0;
 
-    public IdeaLabelRvAdapter(Context context, List<InspirHotEntity> list) {
+    public IdeaLabelRvAdapter(Context context) {
         this.context = context;
-        this.list0 = list;
+        list0 = new ArrayList<>();
+        loadView = new LoadWithTextView(context);
+    }
+
+    public void updateList(List<InspirHotEntity> data) {
+        list0.clear();
+        list0.addAll(data);
+        notifyDataSetChanged();
     }
 
     @NonNull

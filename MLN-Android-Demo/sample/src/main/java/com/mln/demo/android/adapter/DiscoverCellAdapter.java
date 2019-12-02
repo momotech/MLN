@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Typeface;
 import android.text.Spannable;
 import android.text.SpannableString;
+import android.text.TextUtils;
 import android.text.style.AbsoluteSizeSpan;
 import android.text.style.StyleSpan;
 import android.view.LayoutInflater;
@@ -17,6 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.mln.demo.R;
 import com.mln.demo.android.activity.IdeaMassActivity;
 import com.mln.demo.android.entity.DiscoverCellEntity;
@@ -55,10 +57,10 @@ public class DiscoverCellAdapter extends RecyclerView.Adapter implements View.On
     }
 
     public void notifyDataFetchUI(List<DiscoverCellEntity> list) {
-        int position=mDiscoverCellEntityList.size();
+        int position = mDiscoverCellEntityList.size();
         mDiscoverCellEntityList.addAll(mDiscoverCellEntityList.size(), list);
-        notifyItemRangeInserted(position,list.size());
-        notifyItemRangeChanged(position,list.size());
+        notifyItemRangeInserted(position, list.size());
+        notifyItemRangeChanged(position, list.size());
     }
 
     @Override
@@ -110,6 +112,12 @@ public class DiscoverCellAdapter extends RecyclerView.Adapter implements View.On
             DiscoverCellEntity discoverCellEntity = mDiscoverCellEntityList.get(position - 1);
 
             Glide.with(holder.itemView).load(discoverCellEntity.getImgUrl()).into(((ListHolder) holder).titleImage);
+            if (!TextUtils.isEmpty(discoverCellEntity.getPicSmall())) {
+                ((ListHolder) holder).iconImage1.setVisibility(View.VISIBLE);
+                Glide.with(holder.itemView).load(discoverCellEntity.getPicSmall()).apply(RequestOptions.circleCropTransform()).into(((ListHolder) holder).iconImage1);
+            } else {
+                ((ListHolder) holder).iconImage1.setVisibility(View.GONE);
+            }
             ((ListHolder) holder).shopName.setText(discoverCellEntity.getName());
             ((ListHolder) holder).content.setText(discoverCellEntity.getContent());
         } else if (getItemViewType(position) == TYPE_HEADER) {
@@ -120,7 +128,7 @@ public class DiscoverCellAdapter extends RecyclerView.Adapter implements View.On
     @Override
     public void onClick(View view) {
         int position = (int) view.getTag();
-        DiscoverCellEntity discoverCellEntity = mDiscoverCellEntityList.get(position-1);
+        DiscoverCellEntity discoverCellEntity = mDiscoverCellEntityList.get(position - 1);
         Intent intent = new Intent(view.getContext(), IdeaMassActivity.class);
 
         Activity a = (Activity) view.getContext();

@@ -11,12 +11,15 @@ import com.mln.demo.mln.MLNAppHelper;
 public class App extends Application {
     private static App app;
     private MLNAppHelper mlnAppHelper;
+    public static boolean isMLN = true;
 
     @Override
     public void onCreate() {
         super.onCreate();
         app = this;
-        initMLN();
+        if (isMLN) {
+            initMLN();
+        }
     }
 
     public static App getApp() {
