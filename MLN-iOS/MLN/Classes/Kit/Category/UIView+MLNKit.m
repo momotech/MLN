@@ -1162,43 +1162,59 @@ static const void *kLuaOnDetachedFromWindowCallback = &kLuaOnDetachedFromWindowC
     [self.lua_node changeAnchorPoint:CGPointMake(x, y)];
 }
 
-- (void)lua_transform:(CGFloat)angle adding:(BOOL)add
+- (void)lua_transform:(CGFloat)angle adding:(NSNumber *)add
 {
+    BOOL needAdd = YES;
+    if ([add isKindOfClass:[NSNumber class]]) {
+        needAdd = [add boolValue];
+    }
     MLNKitLuaAssert(NO, @"View:transform method is deprecated , please use View:rotation method to achieve the same effect");
     MLNTransformTask *myTransform = [self mln_in_getTransform];
     angle = angle / 360.0 * M_PI * 2;
-    if (!add) {
+    if (!needAdd) {
         myTransform.transform = CGAffineTransformMakeRotation(angle);
     } else   {
         myTransform.transform = CGAffineTransformRotate(myTransform.transform, angle);
     }
 }
 
-- (void)lua_rotation:(CGFloat)angle notNeedAdding:(BOOL)notNeedAdding
+- (void)lua_rotation:(CGFloat)angle notNeedAdding:(NSNumber *)notNeedAdding
 {
+    BOOL needAdd = YES;
+    if ([notNeedAdding isKindOfClass:[NSNumber class]]) {
+        needAdd = ![notNeedAdding boolValue];
+    }
     MLNTransformTask *myTransform = [self mln_in_getTransform];
     angle = angle / 360.0 * M_PI * 2;
-    if (notNeedAdding) {
+    if (!needAdd) {
         myTransform.transform = CGAffineTransformMakeRotation(angle);
     } else   {
         myTransform.transform = CGAffineTransformRotate(myTransform.transform, angle);
     }
 }
 
-- (void)lua_scale:(CGFloat)sx sy:(CGFloat)sy notNeedAdding:(BOOL)notNeedAdding
+- (void)lua_scale:(CGFloat)sx sy:(CGFloat)sy notNeedAdding:(NSNumber *)notNeedAdding
 {
+    BOOL needAdd = YES;
+    if ([notNeedAdding isKindOfClass:[NSNumber class]]) {
+        needAdd = ![notNeedAdding boolValue];
+    }
     MLNTransformTask *myTransform = [self mln_in_getTransform];
-    if (notNeedAdding) {
+    if (!needAdd) {
         myTransform.transform = CGAffineTransformMakeScale(sx, sy);
     } else   {
         myTransform.transform = CGAffineTransformScale(myTransform.transform, sx, sy);
     }
 }
 
-- (void)lua_translation:(CGFloat)tx ty:(CGFloat)ty notNeedAdding:(BOOL)notNeedAdding
+- (void)lua_translation:(CGFloat)tx ty:(CGFloat)ty notNeedAdding:(NSNumber *)notNeedAdding
 {
+    BOOL needAdd = YES;
+    if ([notNeedAdding isKindOfClass:[NSNumber class]]) {
+        needAdd = ![notNeedAdding boolValue];
+    }
     MLNTransformTask *myTransform = [self mln_in_getTransform];
-    if (notNeedAdding) {
+    if (!needAdd) {
         myTransform.transform = CGAffineTransformMakeTranslation(tx, ty);
     } else   {
         myTransform.transform = CGAffineTransformTranslate(myTransform.transform, tx, ty);
