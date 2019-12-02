@@ -194,7 +194,7 @@ static int mln_errorFunc_traceback (lua_State *L) {
     [self.arguments addObject:argument];
 }
 
-- (void)addMapArgument:(NSMutableDictionary *)argument
+- (void)addMapArgument:(NSDictionary *)argument
 {
     NSAssert([NSThread isMainThread], @"This method to be executed in the main thread!");
     if (!argument) {
@@ -207,7 +207,7 @@ static int mln_errorFunc_traceback (lua_State *L) {
     [self.arguments addObject:argument];
 }
 
-- (void)addArrayArgument:(NSMutableArray *)argument
+- (void)addArrayArgument:(NSArray *)argument
 {
     NSAssert([NSThread isMainThread], @"This method to be executed in the main thread!");
     if (!argument) {
@@ -250,20 +250,34 @@ static int mln_errorFunc_traceback (lua_State *L) {
     [self.arguments addObject:argument];
 }
 
-static void releaseAllInMainQueue (lua_State *L, void * selfp) {
-    doInMainQueue(if (L) {
-        lua_checkstack(L, 4);
-        lua_pushlightuserdata(L, selfp);
-        lua_pushnil(L);
-        lua_settable(L, LUA_REGISTRYINDEX);
-    });
+static void releaseAllInMainQueue (MLNLuaCore *luaCore, void * selfp) {
+    if (isMainQueue) {
+        lua_State *L = luaCore.state;
+        if (L) {
+            lua_checkstack(L, 4);
+            lua_pushlightuserdata(L, selfp);
+            lua_pushnil(L);
+            lua_settable(L, LUA_REGISTRYINDEX);
+        }
+    } else {
+        __weak typeof(luaCore) wLuaCore = luaCore;
+        dispatch_async(dispatch_get_main_queue(), ^{
+            __strong typeof(wLuaCore) sLuaCore = wLuaCore;
+            lua_State *L = sLuaCore.state;
+            if (L) {
+                lua_checkstack(L, 4);
+                lua_pushlightuserdata(L, selfp);
+                lua_pushnil(L);
+                lua_settable(L, LUA_REGISTRYINDEX);
+            }
+        });
+    }
 }
 
 #pragma mark - Remove Lua Function
 - (void)dealloc
 {
-    releaseAllInMainQueue(self.luaCore.state, (__bridge void *)self);
-    
+    releaseAllInMainQueue(self.luaCore, (__bridge void *)self);
 }
 
 @end

@@ -16,6 +16,7 @@
 #import "MLNLayoutNode.h"
 #import "MLNSizeCahceManager.h"
 #import "MLNBeforeWaitingTask.h"
+#import "UIView+MLNKit.h"
 
 @interface MLNEditTextView () <MLNTextViewDelegate>{
     BOOL _singleLine;
@@ -27,11 +28,20 @@
 @property (nonatomic, assign) MLNInternalTextViewType originType;
 
 @property (nonatomic, strong) MLNBlock *beginChangingCallback;
+@property (nonatomic, strong) MLNBlock *shouldChangeCallback;
 @property (nonatomic, strong) MLNBlock *didChangingCallback;
 @property (nonatomic, strong) MLNBlock *endChangedCallback;
 @property (nonatomic, strong) MLNBlock *returnCallback;
 
 @property (nonatomic, strong) MLNBeforeWaitingTask *lazyTask;
+
+@property (nonatomic, copy) NSString *originString;
+@property (nonatomic, copy) NSString *changedString;
+@property (nonatomic, assign) NSRange newRange;
+@property (nonatomic, assign) NSRange originSelectedRange;
+@property (nonatomic, assign) BOOL switchToSecure;
+@property (nonatomic, copy) NSString *cacheText;
+
 @end
 @implementation MLNEditTextView
 
@@ -113,13 +123,9 @@
 
 - (BOOL)internalTextView:(UIView<MLNTextViewProtocol> *)internalTextView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text
 {
-    if ([@"\n" isEqualToString:text]) {
-        if (self.returnCallback) {
-            [self.returnCallback callIfCan];
-        }
-        if (self.internalTextView.isSecureTextEntry) {
-            return NO;
-        }
+    if ([@"\n" isEqualToString:text] && _type == MLNInternalTextViewTypeSingleLine) {
+        [self callReturnCallbackIfNeed];
+        return NO;
     }
     if (self.internalTextView.keyboardType == UIKeyboardTypeNumberPad && text != nil) {
         NSCharacterSet *cs = [[NSCharacterSet characterSetWithCharactersInString:@"0123456789."] invertedSet];
@@ -129,17 +135,8 @@
             return NO;
         }
     }
-    BOOL shouldChange = [self myTextView:internalTextView shouldReturnWithRange:range replacementString:text];
-    if (self.didChangingCallback && shouldChange && range.location <= internalTextView.text.length) {
-        NSString *newString = [internalTextView.text stringByReplacingCharactersInRange:range withString:text];
-        if (internalTextView.text.length > 0 || text.length > 0) {
-            [self.didChangingCallback addStringArgument:newString];
-            [self.didChangingCallback addUIntegerArgument:range.location];
-            [self.didChangingCallback addUIntegerArgument:text.length];
-            [self.didChangingCallback callIfCan];
-        }
-    }
-    return shouldChange;
+    _originSelectedRange = [internalTextView selectedRange];
+    return YES;
 }
 
 - (void)internalTextViewDidChange:(UIView<MLNTextViewProtocol> *)internalTextView
@@ -147,52 +144,59 @@
     if (self.type == MLNInternalTextViewTypeMultableLine && self.lua_node.isWrapContent) {
         [self lua_needLayoutAndSpread];
     }
-    
-    // bind each other , the key must be attrs
-    if (!_maxBytes && !_maxLength) {
-        if (self.endChangedCallback) {
-            [self.endChangedCallback addStringArgument:internalTextView.text];
-            [self.endChangedCallback callIfCan];
-        }
-        return;
+    //触发回调
+    if ([_changedString isEqualToString:@"\n"]) {
+        [self callReturnCallbackIfNeed];
     }
-    NSString *language =  [internalTextView.textInputMode primaryLanguage];
-    if([language isEqualToString:@"zh-Hans"]){ //简体中文输入，包括简体拼音，健体五笔，简体手写
-        UITextRange *selectedRange = [internalTextView markedTextRange];
-        UITextPosition *position = [internalTextView positionFromPosition:selectedRange.start offset:0];
-        
-        if (!position){//非高亮
-            if (_maxBytes) {
-                BOOL needSplice = [MLNStringUtil constraintString:[internalTextView text] specifiedLength:_maxBytes];
-                if (needSplice) {
-                    internalTextView.text = [MLNStringUtil constrainString:[internalTextView text] toMaxLength:_maxBytes];
-                }
-            } else {
-                BOOL needSplice = [internalTextView text].length > _maxLength;
-                if (needSplice) {
-                    NSRange range = [internalTextView.text rangeOfComposedCharacterSequenceAtIndex:_maxLength];
-                    internalTextView.text = [internalTextView.text substringToIndex:range.location];
-                }
-            }
-        }
-    } else {
-        if (_maxBytes) {
-            BOOL needSplice = [MLNStringUtil constraintString:[internalTextView text] specifiedLength:_maxBytes];
-            if (needSplice) {
-                internalTextView.text = [MLNStringUtil constrainString:[internalTextView text] toMaxLength:_maxBytes];
+    //   刚切换密码模式的情况，需要将原始文本重新赋值，保持两端一致
+    if (self.switchToSecure && self.cacheText) {
+        self.text = self.cacheText;
+        self.cacheText = nil;
+    }
+    UITextRange *markedTextRange = [internalTextView markedTextRange];
+    //    有裁剪必要，先对设置限制数进行裁剪
+    if (_maxBytes || _maxLength) {
+        NSString *language =  [internalTextView.textInputMode primaryLanguage];
+        if([language isEqualToString:@"zh-Hans"]){ //简体中文输入，包括简体拼音，健体五笔，简体手写
+            UITextPosition *position = [internalTextView positionFromPosition:markedTextRange.start offset:0];
+            if (!position){//非高亮
+                [self clipBeyondTextIfNeed:internalTextView];
             }
         } else {
-            BOOL needSplice = [internalTextView text].length > _maxLength;
-            if (needSplice) {
-                NSRange range = [internalTextView.text rangeOfComposedCharacterSequenceAtIndex:_maxLength];
-                internalTextView.text = [internalTextView.text substringToIndex:range.location];
-            }
+            [self clipBeyondTextIfNeed:internalTextView];
         }
     }
-    if (self.endChangedCallback) {
-        [self.endChangedCallback addStringArgument:internalTextView.text];
-        [self.endChangedCallback callIfCan];
+    BOOL shouldChange = YES;
+    [self calculateNewStringWhenSingleLineAndZHMode];
+    if (_shouldChangeCallback && self.internalTextView.text.length - _originString.length > 0 && !markedTextRange) {
+        NSString *currentText = [self.internalTextView text];
+        NSRange currentRange = [self.internalTextView selectedRange];
+        self.internalTextView.text = _originString;
+        shouldChange = [self shouldChangeTextWith:_originString new:_changedString start:_newRange.location count:_newRange.length];
+        if (shouldChange) {
+            self.internalTextView.text = currentText;
+            self.internalTextView.selectedRange = currentRange;
+        } else {
+            self.internalTextView.selectedRange = NSMakeRange(_newRange.location, 0);
+        }
     }
+    //  当没有高亮文本且有修改内容时，回调编辑
+    if (_didChangingCallback && _changedString && !markedTextRange) {
+        [self.didChangingCallback addStringArgument:shouldChange?_changedString:@""];
+        [self.didChangingCallback addUIntegerArgument:_newRange.location + 1];
+        [self.didChangingCallback addUIntegerArgument:shouldChange?_changedString.length:0];
+        [self.didChangingCallback callIfCan];
+    }
+    //    当没有高亮文本时，回调编辑结束
+    if (!markedTextRange) {
+        [self callbackDidEndEditing:internalTextView];
+        //     清空修改文本，在有待选文本的情况下,didChange会再次回调一次，需要使用这个文本
+        _changedString = nil;
+    }
+    //    记录无高亮文本，处理UITextField无汉字shouldChange回调的问题
+    _originString = [self unmarkedText];
+    //    系统键盘替换多选文本内容会有一次删除了选中内容的回调，所以不需要加上选中长度，此处经过即清空。第三方键盘只会在shouldChange中回调修改了的文本，此处只走一次
+    _originSelectedRange = NSMakeRange(0, 0);
 }
 
 - (BOOL)myTextView:(UIView<MLNTextViewProtocol> *)textView shouldReturnWithRange:(NSRange)range replacementString:(NSString *)string
@@ -224,6 +228,102 @@
     return YES;
 }
 
+#pragma mark - Private func
+
+- (void)callReturnCallbackIfNeed
+{
+    if (_returnCallback) {
+        [_returnCallback callIfCan];
+    }
+}
+
+- (void)callbackDidEndEditing:(UIView<MLNTextViewProtocol> *)internalTextView
+{
+    if (_endChangedCallback) {
+        [_endChangedCallback addStringArgument:[internalTextView text]?:@""];
+        [_endChangedCallback callIfCan];
+    }
+}
+
+- (void)clipBeyondTextIfNeed:(UIView<MLNTextViewProtocol> *)internalTextView
+{
+    if (_maxBytes) {
+        BOOL needSplice = [MLNStringUtil constraintString:[internalTextView text] specifiedLength:_maxBytes];
+        if (needSplice) {
+            internalTextView.text = [MLNStringUtil constrainString:[internalTextView text] toMaxLength:_maxBytes];
+        }
+    } else if(_maxLength){
+        BOOL needSplice = [internalTextView text].length > _maxLength;
+        if (needSplice) {
+            NSRange range = [internalTextView.text rangeOfComposedCharacterSequenceAtIndex:_maxLength];
+            internalTextView.text = [internalTextView.text substringToIndex:range.location];
+        }
+    }
+}
+
+- (BOOL)shouldChangeTextWith:(NSString *)now new:(NSString *)new start:(NSUInteger)start count:(NSUInteger)count
+{
+    if (_shouldChangeCallback) {
+        [_shouldChangeCallback addStringArgument:now?:@""];
+        [_shouldChangeCallback addStringArgument:new?:@""];
+        [_shouldChangeCallback addUIntegerArgument:start + 1];
+        [_shouldChangeCallback addUIntegerArgument:count];
+        id result = [_shouldChangeCallback callIfCan];
+        if ([result isKindOfClass:[NSNumber class]] && ![result boolValue]) {
+            return NO;
+        }
+    }
+    return YES;
+}
+
+- (void)setupSwitchStatusWityType:(MLNInternalTextViewType)type
+{
+    if (type == MLNInternalTextViewTypeSingleLine) {
+        self.switchToSecure = [self passwordMode];
+        self.cacheText = self.text;
+    } else {
+        self.switchToSecure = NO;
+        self.cacheText = nil;
+    }
+}
+
+- (NSString *)unmarkedText
+{
+    NSString *originText = self.internalTextView.text;
+    UITextRange *range = [self.internalTextView markedTextRange];
+    if (range) {
+        // 获取以from为基准的to的偏移
+        UITextPosition *selectionStart = range.start;
+        UITextPosition *selectionEnd = range.end;
+        NSInteger location = [self.internalTextView offsetFromPosition:0 toPosition:selectionStart];
+        NSInteger length = [self.internalTextView offsetFromPosition:selectionStart toPosition:selectionEnd];
+        originText = [self.internalTextView.text stringByReplacingCharactersInRange:NSMakeRange(location, length) withString:@""];
+    }
+    return originText;
+}
+
+//当单行模式中文输入时，存在_changedString异常情况，此时根据_originString和新的文本来计算出来_changedString和_newRange
+- (void)calculateNewStringWhenSingleLineAndZHMode
+{
+    if (self.internalTextView.markedTextRange != nil) {
+        return;
+    }
+    NSRange currentRange = self.internalTextView.selectedRange;
+    NSInteger newLength = self.internalTextView.text.length - _originString.length;
+    if (newLength < 0) {
+        _changedString = @"";
+        currentRange.length = -newLength;
+        _newRange = currentRange;
+    } else {
+        //        这里增加选中长度是为了修复当用户多选了文本并替换时，系统键盘会先回调一次删除后的文本再回调，第三方键盘会在shouldChange中回调选中文本位置
+        newLength += _originSelectedRange.length;
+        currentRange.location -= newLength;
+        currentRange.length = newLength;
+        _changedString = [self.internalTextView.text substringWithRange:currentRange];
+        _newRange = NSMakeRange(currentRange.location, _changedString.length);
+    }
+}
+
 #pragma mark - Exporter
 - (BOOL)canEdit
 {
@@ -245,10 +345,23 @@
     if (self.type == MLNInternalTextViewTypeSingleLine) {
         text = [text stringByReplacingOccurrencesOfString:@"\n" withString:@""];
     }
+    if (![self shouldChangeTextWith:self.internalTextView.text?:@"" new:text start:0 count:text.length]) {
+        return;
+    }
     self.internalTextView.text = text;
+    [self clipBeyondTextIfNeed:self.internalTextView];
+    text = self.internalTextView.text;
     if (self.type == MLNInternalTextViewTypeMultableLine && self.lua_node.isWrapContent) {
         [self lua_needLayoutAndSpread];
     }
+    if (_didChangingCallback) {
+        [_didChangingCallback addStringArgument:text?:@""];
+        [_didChangingCallback addIntArgument:1];
+        [_didChangingCallback addUIntegerArgument:text.length];
+        [_didChangingCallback callIfCan];
+    }
+    [self callbackDidEndEditing:self.internalTextView];
+    _originString = text;
 }
 
 - (NSString *)text
@@ -327,13 +440,17 @@
 - (void)setInputMode:(MLNEditTextViewInputMode)inputMode
 {
     switch (inputMode) {
-        case MLNEditTextViewInputModeNumber:
+        case MLNEditTextViewInputModeNumber://数字模式，强行设置为单行模式
             [self setType:MLNInternalTextViewTypeSingleLine];
             self.internalTextView.keyboardType = UIKeyboardTypeNumberPad;
             break;
         default:
             self.internalTextView.keyboardType = UIKeyboardTypeDefault;
             break;
+    }
+    if ([self.internalTextView isFirstResponder] && _type == MLNInternalTextViewTypeSingleLine) {
+        [self.internalTextView resignFirstResponder];
+        [self.internalTextView becomeFirstResponder];
     }
 }
 
@@ -352,14 +469,10 @@
 - (void)setPasswordMode:(BOOL)passwordMode
 {
     if (_type == MLNInternalTextViewTypeMultableLine && passwordMode) {
-        _originType = _type;
-        [self lua_setSingleLine:YES];
+        MLNKitLuaAssert(NO, @"Multi-line mode does not support password mode and should be set to single-line mode");
     }
     self.internalTextView.secureTextEntry = passwordMode;
-    if(_originType == MLNInternalTextViewTypeMultableLine && !passwordMode){
-        _originType = MLNInternalTextViewTypeSingleLine;
-        [self lua_setSingleLine:NO];
-    }
+    [self setupSwitchStatusWityType:_type];
 }
 
 - (BOOL)passwordMode
@@ -405,7 +518,7 @@
     if (self.type == MLNInternalTextViewTypeMultableLine && self.lua_node.isWrapContent) {
         [self lua_needLayoutAndSpread];
     }
-    [MLN_KIT_INSTANCE(self.mln_luaCore) pushLazyTask:self.lazyTask];
+    [self mln_pushLazyTask:self.lazyTask];
 }
 
 - (void)lua_dismissKeyboard
@@ -462,7 +575,8 @@
         }
         [preInternalTextView removeFromSuperview];
         [self lua_needLayoutAndSpread];
-        [MLN_KIT_INSTANCE(self.mln_luaCore) pushLazyTask:self.lazyTask];
+        [self mln_pushLazyTask:self.lazyTask];
+        [self setupSwitchStatusWityType:type];
     }
 }
 
@@ -510,6 +624,7 @@
     BOOL shouldReload = _maxBytes > 0;
     self.maxBytes = bytes;
     shouldReload?[self internalTextViewDidChange:_internalTextView]:"";
+    _maxLength = 0;
 }
 
 - (void)lua_setMaxLength:(NSInteger)length
@@ -518,6 +633,7 @@
     BOOL shouldReload = _maxLength > 0;
     self.maxLength = length;
     shouldReload?[self internalTextViewDidChange:_internalTextView]:"";
+    _maxBytes = 0;
 }
 
 #pragma mark - Override
@@ -557,6 +673,7 @@ LUA_EXPORT_VIEW_PROPERTY(text, "setText:","text", MLNEditTextView)
 LUA_EXPORT_VIEW_PROPERTY(singleLine, "lua_setSingleLine:","lua_SingleLineType", MLNEditTextView)
 LUA_EXPORT_VIEW_METHOD(fontNameSize, "lua_fontName:size:", MLNEditTextView)
 LUA_EXPORT_VIEW_METHOD(setBeginChangingCallback, "setBeginChangingCallback:", MLNEditTextView)
+LUA_EXPORT_VIEW_METHOD(setShouldChangeCallback, "setShouldChangeCallback:", MLNEditTextView)
 LUA_EXPORT_VIEW_METHOD(setDidChangingCallback, "setDidChangingCallback:", MLNEditTextView)
 LUA_EXPORT_VIEW_METHOD(setEndChangedCallback, "setEndChangedCallback:", MLNEditTextView)
 LUA_EXPORT_VIEW_METHOD(setReturnCallback, "setReturnCallback:", MLNEditTextView)

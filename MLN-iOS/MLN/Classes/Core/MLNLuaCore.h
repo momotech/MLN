@@ -164,7 +164,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param error 错误信息
  @return 注册是否成功
  */
-- (BOOL)openLib:(const char * __nullable)libName methodList:(const struct mln_objc_method *)list nup:(int)nup error:(NSError ** __nullable)error;
+- (BOOL)openLib:(const char * __nullable)libName nativeClassName:(const char *)nativeClassName methodList:(const struct mln_objc_method *)list nup:(int)nup error:(NSError **)error;
 
 /**
  注册类到状态机

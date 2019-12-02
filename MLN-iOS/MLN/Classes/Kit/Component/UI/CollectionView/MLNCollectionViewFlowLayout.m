@@ -35,8 +35,9 @@
     self.sectionInset = insets;
 }
 
-- (void)relayoutIfNeed {
-    
+- (void)relayoutIfNeed
+{
+    // @note: CollectionView 对于layout调用了此方法，此处空实现
 }
 
 #pragma mark - Export For Lua

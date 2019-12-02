@@ -9,7 +9,6 @@
 
 NS_ASSUME_NONNULL_BEGIN
 @class MLNLuaTable;
-@class MLNLuaTable;
 @protocol MLNReuseCellProtocol <NSObject>
 
 @required

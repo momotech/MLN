@@ -1,6 +1,6 @@
 //
 //  MLNTranslateAnimation.m
-//  AFNetworking
+//  MLN
 //
 //  Created by MoMo on 2019/5/16.
 //
@@ -92,9 +92,10 @@ static int lua_animation_init(lua_State *L) {
             animation = [[MLNTranslateAnimation alloc] init];
         }
             break;
-        default:
-            mln_lua_error(L, "number of arguments must be 0 or 4 or 6 or 8!");
+        default: {
+            mln_lua_error(L, @"number of arguments must be 0 or 4 or 6 or 8!");
             break;
+        }
     }
     
     if (animation) {

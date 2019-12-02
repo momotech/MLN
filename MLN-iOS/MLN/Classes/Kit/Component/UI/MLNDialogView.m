@@ -16,6 +16,11 @@
 #import "MLNWindowContext.h"
 
 @interface MLNDialogView()
+{
+    //  标记设置过Gravity，在setContent时，可以取改值
+    BOOL _didSetGravity;
+    MLNGravity _contentGravity;
+}
 
 @property (nonatomic, assign) BOOL cancelable;
 
@@ -70,7 +75,11 @@
 - (void)lua_setContent:(UIView *)view
 {
     MLNCheckTypeAndNilValue(view, @"View", [UIView class])
+    [self lua_removeAllSubViews];
     _fromLuaView = view;
+    if (_didSetGravity) {
+        view.lua_gravity = _contentGravity;
+    }
     if (view.lua_node.gravity == MLNGravityNone) {
         view.lua_node.gravity = MLNGravityCenter;
     }
@@ -172,6 +181,13 @@
     self.contentWindow.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:amount];
 }
 
+- (void)lua_setContentGravity:(MLNGravity)gravity
+{
+    _didSetGravity = YES;
+    _contentGravity = gravity;
+    self.fromLuaView.lua_gravity = gravity;
+}
+
 - (void)_lua_didDisappear
 {
     _fromLuaView.lua_keyboardViewHandler.alwaysAdjustPositionKeyboardCoverView = NO;
@@ -220,6 +236,7 @@ LUA_EXPORT_VIEW_METHOD(dismiss, "lua_dismiss", MLNDialogView)
 LUA_EXPORT_VIEW_METHOD(dialogDisAppear, "lua_setDisappearBlock:", MLNDialogView)
 LUA_EXPORT_VIEW_METHOD(setContent, "lua_setContent:", MLNDialogView)
 LUA_EXPORT_VIEW_METHOD(setDimAmount, "lua_setDimAmount:", MLNDialogView)
+LUA_EXPORT_VIEW_METHOD(setContentGravity, "lua_setContentGravity:", MLNDialogView)
 LUA_EXPORT_VIEW_END(MLNDialogView, Dialog, YES, "MLNView", "initWithLuaCore:frame:")
 
 @end

@@ -16,6 +16,10 @@
 #import "MLNKeyboardViewHandler.h"
 #import "MLNTransformTask.h"
 #import "MLNSnapshotManager.h"
+#import "MLNCanvasAnimation.h"
+#import "MLNKitInstanceHandlersManager.h"
+
+#define kMLNDefaultRippleColor [UIColor colorWithRed:247/255.0 green:246/255.0 blue:244/255.0 alpha:1.0]
 
 static IMP __mln_in_UIView_Origin_TouchesBegan_Method_Imp;
 static IMP __mln_in_UIView_Origin_TouchesMoved_Method_Imp;
@@ -58,7 +62,19 @@ static const void *kNeedEndEditing = &kNeedEndEditing;
         
         __mln_in_UIView_Origin_TouchesCancelled_Method_Imp = method_getImplementation(origMethod4);
         method_exchangeImplementations(origMethod4, swizzledMethod4);
+        
+        Method origMethod5 = class_getInstanceMethod([self class], @selector(removeFromSuperview));
+        Method swizzledMethod5 = class_getInstanceMethod([self class], @selector(mln_in_removeFromSuperview));
+        method_exchangeImplementations(origMethod5, swizzledMethod5);
     });
+}
+
+- (void)mln_in_removeFromSuperview
+{
+    if ([self mln_isConvertible]) {
+        [self mln_in_traverseAllSubviewsCallbackDetached];
+    }
+    [self mln_in_removeFromSuperview];
 }
 
 - (void)mln_in_touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
@@ -73,7 +89,7 @@ static const void *kNeedEndEditing = &kNeedEndEditing;
             [self setOldColor:self.backgroundColor];
             [self lua_setDidSetOldColor:YES];
         }
-        self.backgroundColor = [UIColor colorWithRed:247/255.0 green:246/255.0 blue:244/255.0 alpha:1.0];
+        self.backgroundColor = kMLNDefaultRippleColor;
     }
     if ([self needEndEditing]) {
         [self endEditing:YES];
@@ -191,12 +207,13 @@ static const void *kNeedEndEditing = &kNeedEndEditing;
 #pragma mark - Geometry
 - (void)setLua_x:(CGFloat)lua_x
 {
+    MLNKitLuaAssert(NO, @"The setter of 'x' method is deprecated!");
     [self.lua_node changeX:lua_x];
-    [self lua_resetOffsetStatus];
 }
 
 - (CGFloat)lua_x
 {
+    MLNKitLuaAssert(NO, @"The getter of 'x' method is deprecated!");
     MLNLayoutNode *node = self.lua_node;
     switch (node.layoutStrategy) {
         case MLNLayoutStrategyNativeFrame:
@@ -208,12 +225,13 @@ static const void *kNeedEndEditing = &kNeedEndEditing;
 
 - (void)setLua_y:(CGFloat)lua_y
 {
+    MLNKitLuaAssert(NO, @"The setter of 'y' method is deprecated!");
     [self.lua_node changeY:lua_y];
-    [self lua_resetOffsetStatus];
 }
 
 - (CGFloat)lua_y
 {
+    MLNKitLuaAssert(NO, @"The getter of 'y' method is deprecated!");
     MLNLayoutNode *node = self.lua_node;
     switch (node.layoutStrategy) {
         case MLNLayoutStrategyNativeFrame:
@@ -227,7 +245,6 @@ static const void *kNeedEndEditing = &kNeedEndEditing;
 {
     MLNCheckWidth(lua_width);
     [self.lua_node changeWidth:lua_width];
-    [self lua_resetOffsetStatus];
 }
 
 - (CGFloat)lua_width
@@ -245,7 +262,6 @@ static const void *kNeedEndEditing = &kNeedEndEditing;
 {
     MLNCheckWidth(lua_Height);
     [self.lua_node changeHeight:lua_Height];
-    [self lua_resetOffsetStatus];
 }
 
 - (CGFloat)lua_height
@@ -261,14 +277,15 @@ static const void *kNeedEndEditing = &kNeedEndEditing;
 
 - (void)setLua_right:(CGFloat)lua_right
 {
+    MLNKitLuaAssert(NO, @"The setter of 'right' method is deprecated!");
     MLNLayoutNode *node = self.lua_node;
     CGFloat x = lua_right - [self lua_width];
     [node changeX:x];
-    [self lua_resetOffsetStatus];
 }
 
 - (CGFloat)lua_right
 {
+    MLNKitLuaAssert(NO, @"The getter of 'right' method is deprecated!");
     MLNLayoutNode *node = self.lua_node;
     switch (node.layoutStrategy) {
         case MLNLayoutStrategyNativeFrame:
@@ -280,14 +297,15 @@ static const void *kNeedEndEditing = &kNeedEndEditing;
 
 - (void)setLua_bottom:(CGFloat)lua_bottom
 {
+    MLNKitLuaAssert(NO, @"The setter of 'bottom' method is deprecated!");
     MLNLayoutNode *node = self.lua_node;
     CGFloat y = lua_bottom - [self lua_height];
     [node changeY:y];
-    [self lua_resetOffsetStatus];
 }
 
 - (CGFloat)lua_bottom
 {
+    MLNKitLuaAssert(NO, @"The getter of 'bottom' method is deprecated!");
     MLNLayoutNode *node = self.lua_node;
     switch (node.layoutStrategy) {
         case MLNLayoutStrategyNativeFrame:
@@ -299,14 +317,15 @@ static const void *kNeedEndEditing = &kNeedEndEditing;
 
 - (void)lua_setSize:(CGSize)size
 {
+    MLNKitLuaAssert(NO, @"The setter of 'size' method is deprecated!");
     MLNLayoutNode *node = self.lua_node;
     [node changeWidth:size.width];
     [node changeHeight:size.height];
-    [self lua_resetOffsetStatus];
 }
 
 - (CGSize )lua_size
 {
+    MLNKitLuaAssert(NO, @"The getter of 'size' method is deprecated!");
     MLNLayoutNode *node = self.lua_node;
     CGFloat width = 0.f;
     switch (node.widthType) {
@@ -331,14 +350,15 @@ static const void *kNeedEndEditing = &kNeedEndEditing;
 
 - (void)lua_setOrigin:(CGPoint)point
 {
+    MLNKitLuaAssert(NO, @"The setter of 'point' method is deprecated!");
     MLNLayoutNode *node = self.lua_node;
     [node changeX:point.x];
     [node changeY:point.y];
-    [self lua_resetOffsetStatus];
 }
 
 - (CGPoint)lua_origin
 {
+    MLNKitLuaAssert(NO, @"The getter of 'point' method is deprecated!");
     MLNLayoutNode *node = self.lua_node;
     CGFloat x = 0.f;
     CGFloat y = 0.f;
@@ -357,6 +377,7 @@ static const void *kNeedEndEditing = &kNeedEndEditing;
 
 - (CGFloat)lua_centerX
 {
+    MLNKitLuaAssert(NO, @"The getter of 'centerX' method is deprecated!");
     MLNLayoutNode *node = self.lua_node;
     switch (node.layoutStrategy) {
         case MLNLayoutStrategyNativeFrame:
@@ -368,6 +389,7 @@ static const void *kNeedEndEditing = &kNeedEndEditing;
 
 - (CGFloat)lua_centerY
 {
+    MLNKitLuaAssert(NO, @"The getter of 'centerY' method is deprecated!");
     MLNLayoutNode *node = self.lua_node;
     switch (node.layoutStrategy) {
         case MLNLayoutStrategyNativeFrame:
@@ -379,6 +401,7 @@ static const void *kNeedEndEditing = &kNeedEndEditing;
 
 - (void)lua_setCenterX:(CGFloat)centerX
 {
+    MLNKitLuaAssert(NO, @"The setter of 'centerX' method is deprecated!");
     MLNLayoutNode *node = self.lua_node;
     CGFloat x = centerX - [self lua_width] * .5f;
     [node changeX:x];
@@ -386,27 +409,31 @@ static const void *kNeedEndEditing = &kNeedEndEditing;
 
 - (void)lua_setCenterY:(CGFloat)centerY
 {
+    MLNKitLuaAssert(NO, @"The setter of 'centerY' method is deprecated!");
     MLNLayoutNode *node = self.lua_node;
     CGFloat y = centerY - [self lua_height] * .5f;
     [node changeY:y];
 }
 
-- (void)lua_setBackgroundColor:(UIColor*)color
+- (void)lua_setBackgroundColor:(UIColor *)color
 {
+    MLNCheckTypeAndNilValue(color, @"Color", UIColor);
     [self setOldColor:color];
     self.backgroundColor = color;
     [self.mln_in_renderContext  cleanGradientColorIfNeed];
+    [self.mln_in_renderContext cleanLayerContentsIfNeed];
 }
 
 - (void)lua_layoutIfNeed
 {
-//    MLNLuaAssert(NO, @"View:layoutIfNeeded method is deprecated!");
+    MLNKitLuaAssert(NO, @"View:layoutIfNeeded method is deprecated!");
     [self layoutIfNeeded];
     self.lua_node.enable = NO;
 }
 
 - (void)lua_setNeedsDisplay
 {
+    MLNKitLuaAssert(NO, @"View:refresh method is deprecated!");
     [self setNeedsDisplay];
 }
 
@@ -416,26 +443,19 @@ static const void *kNeedEndEditing = &kNeedEndEditing;
     self.lua_node.enable = NO;
 }
 
-- (void)lua_resetOffsetStatus
-{
-    self.lua_node.offsetX = 0.f;
-    self.lua_node.offsetY = 0.f;
-    self.lua_node.offsetWidth = 0.f;
-    self.lua_node.offsetHeight = 0.f;
-}
-
 - (void)setLua_frame:(CGRect)lua_frame
 {
+    MLNKitLuaAssert(NO, @"The setter of 'frame' method is deprecated!");
     MLNLayoutNode *node = self.lua_node;
     [node changeX:lua_frame.origin.x];
     [node changeY:lua_frame.origin.y];
     [node changeWidth:lua_frame.size.width];
     [node changeHeight:lua_frame.size.height];
-    [self lua_resetOffsetStatus];
 }
 
 - (CGRect)lua_frame
 {
+    MLNKitLuaAssert(NO, @"The getter of 'frame' method is deprecated!");
     MLNLayoutNode *node = self.lua_node;
     CGFloat x = 0.f;
     CGFloat y = 0.f;
@@ -472,11 +492,13 @@ static const void *kNeedEndEditing = &kNeedEndEditing;
 
 - (CGPoint)lua_convertToView:(UIView *)view point:(CGPoint)point
 {
+    MLNCheckTypeAndNilValue(view, @"View", UIView);
     return [self convertPoint:point toView:view];
 }
 
 - (CGPoint)lua_convertRelativePointToView:(UIView *)view point:(CGPoint)point
 {
+    MLNCheckTypeAndNilValue(view, @"View", UIView);
     CGPoint retPoint = [self convertPoint:point toView:view];
 #if defined(__LP64__) && __LP64__
     CGFloat x = fmod(retPoint.x, view.frame.size.width);
@@ -490,6 +512,7 @@ static const void *kNeedEndEditing = &kNeedEndEditing;
 
 - (CGPoint)lua_convertFromView:(UIView *)view point:(CGPoint)point
 {
+    MLNCheckTypeAndNilValue(view, @"View", UIView);
     return [self convertPoint:point fromView:view];
 }
 
@@ -503,48 +526,30 @@ static const void *kNeedEndEditing = &kNeedEndEditing;
     return self.layer.anchorPoint;
 }
 
-- (void)mln_setAnchorPoint:(CGPoint)point
-{
-    CGPoint newPoint = CGPointMake(self.bounds.size.width * point.x, self.bounds.size.height * point.y);
-    CGPoint oldPoint = CGPointMake(self.bounds.size.width * self.layer.anchorPoint.x, self.bounds.size.height * self.layer.anchorPoint.y);
-    
-    newPoint = CGPointApplyAffineTransform(newPoint, self.transform);
-    oldPoint = CGPointApplyAffineTransform(oldPoint, self.transform);
-    
-    CGPoint position = self.layer.position;
-    
-    position.x -= oldPoint.x;
-    position.x += newPoint.x;
-    
-    position.y -= oldPoint.y;
-    position.y += newPoint.y;
-    
-    self.layer.position = position;
-    self.layer.anchorPoint = point;
-}
-
 #pragma mark - Render
+static const void *kLuaBoarderColor = &kLuaBoarderColor;
 - (void)lua_setBorderColor:(UIColor *)color
 {
-    self.layer.borderColor = color.CGColor;
+    MLNCheckTypeAndNilValue(color, @"Color", UIColor);
+    objc_setAssociatedObject(self, kLuaBoarderColor, color, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    [self.mln_in_renderContext resetBorderWithBorderWidth:[self lua_borderWidth] borderColor:[self lua_borderColor]];
 }
 
 - (UIColor *)lua_borderColor
 {
-    if (!self.layer.borderColor) {
-        return nil;
-    }
-    return [UIColor colorWithCGColor:self.layer.borderColor];
+    return objc_getAssociatedObject(self, kLuaBoarderColor);
 }
 
+static const void *kLuaBoarderWidth = &kLuaBoarderWidth;
 - (void)lua_setBorderWidth:(CGFloat)borderWidth
 {
-    self.layer.borderWidth = borderWidth;
+    objc_setAssociatedObject(self, kLuaBoarderWidth, @(borderWidth), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    [self.mln_in_renderContext resetBorderWithBorderWidth:borderWidth borderColor:[self lua_borderColor]];
 }
 
 - (CGFloat)lua_borderWidth
 {
-    return self.layer.borderWidth;
+    return CGFloatValueFromNumber(objc_getAssociatedObject(self, kLuaBoarderWidth));
 }
 
 - (void)lua_showShadowPath
@@ -575,7 +580,9 @@ static const void *kNeedEndEditing = &kNeedEndEditing;
 - (void)lua_setClipsToBounds:(BOOL)clipsToBounds
 {
     self.clipsToBounds = clipsToBounds;
-    self.lua_node.clipToBounds = clipsToBounds;
+    MLNRenderContext *renderContext = [self mln_in_renderContext];
+    renderContext.clipToBounds = clipsToBounds;
+    renderContext.didSetClipToBounds = YES;
 }
 
 #pragma mark - Corner Radius
@@ -602,13 +609,13 @@ static const void *kNeedEndEditing = &kNeedEndEditing;
     [self.mln_in_renderContext resetCornerRadius:cornerRadius byRoundingCorners:corners];
 }
 
-- (void)lua_addCornerMaskWithRadius:(CGFloat)cornerRadius maskColor:(UIColor *)maskColor corners:(NSNumber *)corners
+- (void)lua_addCornerMaskWithRadius:(CGFloat)cornerRadius maskColor:(UIColor *)maskColor corners:(MLNRectCorner)corners
 {
-    MLNRectCorner cornerType = [corners unsignedIntegerValue];
-    if (cornerType == MLNRectCornerNone) {
-        cornerType = MLNRectCornerAllCorners;
+    MLNCheckTypeAndNilValue(maskColor, @"Color", UIColor);
+    if (corners == MLNRectCornerNone) {
+        corners = MLNRectCornerAllCorners;
     }
-    [self.mln_in_renderContext resetCornerMaskViewWithRadius:cornerRadius maskColor:maskColor corners:(UIRectCorner)cornerType];
+    [self.mln_in_renderContext resetCornerMaskViewWithRadius:cornerRadius maskColor:maskColor corners:(UIRectCorner)corners];
 }
 
 - (void)mln_updateCornersIfNeed
@@ -616,12 +623,11 @@ static const void *kNeedEndEditing = &kNeedEndEditing;
     [self.mln_in_renderContext updateIfNeed];
 }
 
-
 #pragma mark - gradientLayer
 - (void)lua_setGradientColor:(UIColor *)startColor endColor:(UIColor *)endColor vertical:(BOOL)isVertical
 {
-//    MLNLuaAssert(startColor && [startColor isKindOfClass:[UIColor class]], @"startColor must be type of UIColor");
-//    MLNLuaAssert(endColor MLNRectCorner&& [endColor isKindOfClass:[UIColor class]], @"endColor must be type of UIColor");
+    MLNKitLuaAssert(startColor && [startColor isKindOfClass:[UIColor class]], @"startColor must be type of UIColor");
+    MLNKitLuaAssert(endColor && [endColor isKindOfClass:[UIColor class]], @"endColor must be type of UIColor");
     if (![startColor isKindOfClass:[UIColor class]] || ![endColor isKindOfClass:[UIColor class]]) return;
     MLNGradientType type = isVertical ? MLNGradientTypeTopToBottom : MLNGradientTypeLeftToRight;
     [self.mln_in_renderContext resetGradientColor:startColor endColor:endColor direction:type];
@@ -629,8 +635,8 @@ static const void *kNeedEndEditing = &kNeedEndEditing;
 
 - (void)lua_setGradientColor:(UIColor *)startColor endColor:(UIColor *)endColor direction:(MLNGradientType)direction
 {
-//    MLNLuaAssert(startColor && [startColor isKindOfClass:[UIColor class]], @"startColor must be type of UIColor");
-//    MLNLuaAssert(endColor && [endColor isKindOfClass:[UIColor class]], @"endColor must be type of UIColor");
+    MLNKitLuaAssert(startColor && [startColor isKindOfClass:[UIColor class]], @"startColor must be type of UIColor");
+    MLNKitLuaAssert(endColor && [endColor isKindOfClass:[UIColor class]], @"endColor must be type of UIColor");
     [self.mln_in_renderContext resetGradientColor:startColor endColor:endColor direction:direction];
 }
 
@@ -640,11 +646,20 @@ static const void *kNeedEndEditing = &kNeedEndEditing;
 }
 
 #pragma mark - shadowLayer
-- (void)lua_addShadow:(UIColor *)shadowColor shadowOffset:(CGSize)offset shadowRadius:(CGFloat)radius shadowOpacity:(CGFloat)opacity
+- (void)lua_addShadow:(UIColor *)shadowColor shadowOffset:(CGSize)offset shadowRadius:(CGFloat)radius shadowOpacity:(CGFloat)opacity isOval:(BOOL)isOval
 {
-//    MLNLuaAssert(shadowColor && [shadowColor isKindOfClass:[UIColor class]], @"shadowColor must be type of UIColor");
+    MLNKitLuaAssert(NO, @"The 'addShadow' method is deprected, use 'setShadow' method instead!");
+    MLNKitLuaAssert(shadowColor && [shadowColor isKindOfClass:[UIColor class]], @"shadowColor must be type of UIColor");
+    MLNKitLuaAssert(![self isKindOfClass:[UIImageView class]], @"ImageView does not support addShadow");
     if (![shadowColor isKindOfClass:[UIColor class]]) return;
-    [self.mln_in_renderContext resetShadow:shadowColor shadowOffset:offset shadowRadius:radius shadowOpacity:opacity];
+    [self.mln_in_renderContext resetShadow:shadowColor shadowOffset:offset shadowRadius:radius shadowOpacity:opacity isOval:isOval];
+}
+
+- (void)lua_setShadowWithShadowOffset:(CGSize)offset shadowRadius:(CGFloat)radius shadowOpacity:(CGFloat)opacity
+{
+    if ([self isKindOfClass:[UIImageView class]]) return;
+    UIColor *defaultShadowColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:0.215];
+    [self.mln_in_renderContext resetShadow:defaultShadowColor shadowOffset:offset shadowRadius:radius shadowOpacity:opacity isOval:false];
 }
 
 static const void *kLuaRenderContext = &kLuaRenderContext;
@@ -656,6 +671,11 @@ static const void *kLuaRenderContext = &kLuaRenderContext;
         objc_setAssociatedObject(self, kLuaRenderContext, cxt, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     }
     return cxt;
+}
+
+- (MLNRenderContext *)mln_renderContext
+{
+    return [self mln_in_renderContext];
 }
 
 #pragma mark - blurEffect
@@ -753,6 +773,16 @@ static const void *kLuaRenderContext = &kLuaRenderContext;
 }
 
 #pragma mark - Gesture
+- (BOOL)lua_enable
+{
+    return self.userInteractionEnabled;
+}
+
+- (void)setLua_enable:(BOOL)lua_enable
+{
+    self.userInteractionEnabled = lua_enable;
+}
+
 - (BOOL)lua_canClick
 {
     return NO;
@@ -765,7 +795,7 @@ static const void *kLuaRenderContext = &kLuaRenderContext;
 
 - (void)lua_addTouch:(MLNBlock *)touchCallBack
 {
-//    MLNLuaAssert(NO, @"View:onTouch method is deprecated");
+    MLNKitLuaAssert(NO, @"View:onTouch method is deprecated");
     [self mln_in_addTapGestureIfNeed];
     self.mln_touchClickBlock = touchCallBack;
 }
@@ -780,13 +810,15 @@ static const void *kLuaRenderContext = &kLuaRenderContext;
 {
     if (!self.mln_tapClickBlock && [self lua_canClick]) {
         UITapGestureRecognizer *gesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(mln_in_tapClickAction:)];
-        self.userInteractionEnabled = YES;
         [self addGestureRecognizer:gesture];
     }
 }
 
 - (void)mln_in_tapClickAction:(UIGestureRecognizer *)gesture
 {
+    if (!self.lua_enable) {
+        return;
+    }
     if (self.mln_tapClickBlock) {
         [self.mln_tapClickBlock callIfCan];
     }
@@ -808,13 +840,15 @@ static const void *kLuaRenderContext = &kLuaRenderContext;
 {
     if (!self.mln_longPressBlock && [self lua_canLongPress]) {
         UILongPressGestureRecognizer *gesture = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(mln_in_longPressAction:)];
-        self.userInteractionEnabled = YES;
         [self addGestureRecognizer:gesture];
     }
 }
 
 - (void)mln_in_longPressAction:(UIGestureRecognizer *)gesture
 {
+    if (!self.lua_enable) {
+        return;
+    }
     if (!self.mln_longPressBlock) return;
     if (gesture.state == UIGestureRecognizerStateBegan) {
         CGPoint point = [gesture locationInView:self];
@@ -827,6 +861,7 @@ static const void *kLuaRenderContext = &kLuaRenderContext;
 static const void *kLuaTapGesture = &kLuaTapGesture;
 - (void)setMln_tapClickBlock:(MLNBlock *)tapClickBlock
 {
+    MLNCheckTypeAndNilValue(tapClickBlock, @"function", MLNBlock);
     objc_setAssociatedObject(self, kLuaTapGesture, tapClickBlock, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
@@ -837,6 +872,7 @@ static const void *kLuaTapGesture = &kLuaTapGesture;
 
 static const void *kLuaTouchGesture = &kLuaTouchGesture;
 - (void)setMln_touchClickBlock:(MLNBlock *)mln_touchClickBlock {
+    MLNCheckTypeAndNilValue(mln_touchClickBlock, @"function", MLNBlock);
     objc_setAssociatedObject(self, kLuaTouchGesture, mln_touchClickBlock, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
@@ -847,6 +883,7 @@ static const void *kLuaTouchGesture = &kLuaTouchGesture;
 static const void *kLuaLongPressGesture = &kLuaLongPressGesture;
 - (void)setMln_longPressBlock:(MLNBlock *)longPressBlock
 {
+    MLNCheckTypeAndNilValue(longPressBlock, @"function", MLNBlock);
     objc_setAssociatedObject(self, kLuaLongPressGesture, longPressBlock, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
@@ -858,6 +895,7 @@ static const void *kLuaLongPressGesture = &kLuaLongPressGesture;
 static const void *kLuaTouchesBeganEvent = &kLuaTouchesBeganEvent;
 - (void)setMln_touchesBeganCallback:(MLNBlock *)callback
 {
+    MLNCheckTypeAndNilValue(callback, @"function", MLNBlock);
     objc_setAssociatedObject(self, kLuaTouchesBeganEvent, callback, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
@@ -869,6 +907,7 @@ static const void *kLuaTouchesBeganEvent = &kLuaTouchesBeganEvent;
 static const void *kLuaTouchesMovedEvent = &kLuaTouchesMovedEvent;
 - (void)setMln_touchesMovedCallback:(MLNBlock *)callback
 {
+    MLNCheckTypeAndNilValue(callback, @"function", MLNBlock);
     objc_setAssociatedObject(self, kLuaTouchesMovedEvent, callback, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
@@ -880,6 +919,7 @@ static const void *kLuaTouchesMovedEvent = &kLuaTouchesMovedEvent;
 static const void *kLuaTouchesEndedEvent = &kLuaTouchesEndedEvent;
 - (void)setMln_touchesEndedCallback:(MLNBlock *)callback
 {
+    MLNCheckTypeAndNilValue(callback, @"function", MLNBlock);
     objc_setAssociatedObject(self, kLuaTouchesEndedEvent, callback, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
@@ -891,6 +931,7 @@ static const void *kLuaTouchesEndedEvent = &kLuaTouchesEndedEvent;
 static const void *kLuaTouchesCancelledEvent = &kLuaTouchesCancelledEvent;
 - (void)setMln_touchesCancelledCallback:(MLNBlock *)callback
 {
+    MLNCheckTypeAndNilValue(callback, @"function", MLNBlock);
     objc_setAssociatedObject(self, kLuaTouchesCancelledEvent, callback, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
@@ -902,6 +943,7 @@ static const void *kLuaTouchesCancelledEvent = &kLuaTouchesCancelledEvent;
 static const void *kLuaTouchesBeganExtensionEvent = &kLuaTouchesBeganExtensionEvent;
 - (void)setMln_touchesBeganExtensionCallback:(MLNBlock *)callback
 {
+    MLNCheckTypeAndNilValue(callback, @"function", MLNBlock);
     objc_setAssociatedObject(self, kLuaTouchesBeganExtensionEvent, callback, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
@@ -913,6 +955,7 @@ static const void *kLuaTouchesBeganExtensionEvent = &kLuaTouchesBeganExtensionEv
 static const void *kLuaTouchesMovedExtensionEvent = &kLuaTouchesMovedExtensionEvent;
 - (void)setMln_touchesMovedExtensionCallback:(MLNBlock *)callback
 {
+    MLNCheckTypeAndNilValue(callback, @"function", MLNBlock);
     objc_setAssociatedObject(self, kLuaTouchesMovedExtensionEvent, callback, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
@@ -924,6 +967,7 @@ static const void *kLuaTouchesMovedExtensionEvent = &kLuaTouchesMovedExtensionEv
 static const void *kLuaTouchesEndedExtensionEvent = &kLuaTouchesEndedExtensionEvent;
 - (void)setMln_touchesEndedExtensionCallback:(MLNBlock *)callback
 {
+    MLNCheckTypeAndNilValue(callback, @"function", MLNBlock);
     objc_setAssociatedObject(self, kLuaTouchesEndedExtensionEvent, callback, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
@@ -935,12 +979,25 @@ static const void *kLuaTouchesEndedExtensionEvent = &kLuaTouchesEndedExtensionEv
 static const void *kLuaTouchesCancelledExtensionEvent = &kLuaTouchesCancelledExtensionEvent;
 - (void)setMln_touchesCancelledExtensionCallback:(MLNBlock *)callback
 {
+    MLNCheckTypeAndNilValue(callback, @"function", MLNBlock);
     objc_setAssociatedObject(self, kLuaTouchesCancelledExtensionEvent, callback, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
 - (MLNBlock *)mln_touchesCancelledExtensionCallback
 {
     return objc_getAssociatedObject(self, kLuaTouchesCancelledExtensionEvent);
+}
+
+static const void *kLuaOnDetachedFromWindowCallback = &kLuaOnDetachedFromWindowCallback;
+- (void)setMln_onDetachedFromWindowCallback:(MLNBlock *)callback
+{
+    MLNCheckTypeAndNilValue(callback, @"callback", MLNBlock);
+    objc_setAssociatedObject(self, kLuaOnDetachedFromWindowCallback, callback, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+
+- (MLNBlock *)mln_onDetachedFromWindowCallback
+{
+    return objc_getAssociatedObject(self, kLuaOnDetachedFromWindowCallback);
 }
 
 #pragma mark - Utils
@@ -978,9 +1035,9 @@ static const void *kLuaTouchesCancelledExtensionEvent = &kLuaTouchesCancelledExt
 - (void)lua_setPositionAdjustForKeyboard:(BOOL)bAdjust offsetY:(CGFloat)offsetY
 {
     if (offsetY != 0.0) {
-//        MLNLuaAssert(NO, @"View:setPositionAdjustForKeyboardOffsetY method is deprecated!");
+        MLNKitLuaAssert(NO, @"View:setPositionAdjustForKeyboardOffsetY method is deprecated!");
     } else {
-//        MLNLuaAssert(NO, @"View:setPositionAdjustForKeyboard method is deprecated!");
+        MLNKitLuaAssert(NO, @"View:setPositionAdjustForKeyboard method is deprecated!");
     }
     [self mln_in_setPositionAdjustForKeyboard:bAdjust offsetY:offsetY];
 }
@@ -1061,12 +1118,32 @@ static const void *kLuaTouchesCancelledExtensionEvent = &kLuaTouchesCancelledExt
 
 - (void)lua_bringSubviewToFront:(UIView*)view
 {
+    MLNCheckTypeAndNilValue(view, @"View", UIView);
     [self bringSubviewToFront:view];
 }
 
 - (void)lua_sendSubviewToBack:(UIView*)view
 {
+    MLNCheckTypeAndNilValue(view, @"View", UIView)
     [self sendSubviewToBack:view];
+}
+
+#pragma mark - Life Cycle
+- (void)lua_onDetachedFromWindowCallback:(MLNBlock *)callback
+{
+    [self setMln_onDetachedFromWindowCallback:callback];
+}
+
+#pragma mark - Detached
+- (void)mln_in_traverseAllSubviewsCallbackDetached
+{
+    if (![self mln_isConvertible] || !self.superview) {
+        return;
+    }
+    for (UIView *subView in self.subviews) {
+        [subView mln_in_traverseAllSubviewsCallbackDetached];
+    }
+    [self.mln_onDetachedFromWindowCallback callIfCan];
 }
 
 #pragma mark - Transform
@@ -1080,14 +1157,14 @@ static const void *kLuaTouchesCancelledExtensionEvent = &kLuaTouchesCancelledExt
 
 - (void)lua_anchorPoint:(CGFloat)x y:(CGFloat)y
 {
-//    MLNLuaAssert(x >= 0.0f && x <= 1.0f, @"param x should bigger or equal than 0.0 and smaller or equal than 1.0!");
-//    MLNLuaAssert(y >= 0.0f && y <= 1.0f, @"param y should bigger or equal than 0.0 and smaller or equal than 1.0!");
+    MLNKitLuaAssert(x >= 0.0f && x <= 1.0f, @"param x should bigger or equal than 0.0 and smaller or equal than 1.0!");
+    MLNKitLuaAssert(y >= 0.0f && y <= 1.0f, @"param y should bigger or equal than 0.0 and smaller or equal than 1.0!");
     [self.lua_node changeAnchorPoint:CGPointMake(x, y)];
 }
 
 - (void)lua_transform:(CGFloat)angle adding:(BOOL)add
 {
-//    MLNLuaAssert(NO, @"View:transform method is deprecated , please use View:rotation method to achieve the same effect");
+    MLNKitLuaAssert(NO, @"View:transform method is deprecated , please use View:rotation method to achieve the same effect");
     MLNTransformTask *myTransform = [self mln_in_getTransform];
     angle = angle / 360.0 * M_PI * 2;
     if (!add) {
@@ -1151,16 +1228,17 @@ static const void *kViewTransform = &kViewTransform;
     [self.layer removeAllAnimations];
 }
 
-//- (void)lua_startAnimation:(MLNCanvasAnimation *)animation
-//{
-////    MLNLuaAssert([animation isKindOfClass:[MLNCanvasAnimation class]], @"animation must be type CanvasAnimation!");
-//    if ([animation isKindOfClass:[MLNCanvasAnimation class]]) {
-//        [animation startWithView:self];
-//    }
-//}
+- (void)lua_startAnimation:(MLNCanvasAnimation *)animation
+{
+    MLNKitLuaAssert([animation isKindOfClass:[MLNCanvasAnimation class]], @"animation must be type CanvasAnimation!");
+    if ([animation isKindOfClass:[MLNCanvasAnimation class]]) {
+        [animation startWithView:self];
+    }
+}
 
 - (NSString *)lua_snapshotWithFileName:(NSString *)fileName
 {
+    MLNCheckStringTypeAndNilValue(fileName);
     UIImage *image = nil;
     if ([self isKindOfClass:[UIScrollView class]]) {
         image = [MLNSnapshotManager mln_captureScrollView:(UIScrollView *)self];
@@ -1168,7 +1246,7 @@ static const void *kViewTransform = &kViewTransform;
         image = [MLNSnapshotManager mln_captureNormalView:self];
     }
     
-    return [MLNSnapshotManager image:image mln_saveWithFileName:fileName];
+    return [MLNSnapshotManager mln_image:image saveWithFileName:fileName];
 }
 
 - (void)lua_setBgImage:(NSString *)imageName
@@ -1177,16 +1255,18 @@ static const void *kViewTransform = &kViewTransform;
         self.layer.contents = nil;
         return;
     }
-//    id<MLNImageLoaderDelegate> imageLoader =  [MLNContext sharedContext].imageLoader;
-//    MLNLuaAssert([imageLoader respondsToSelector:@selector(loadImageWithPath:completed:)], @"-[imageLoader loadImageWithPath:completed:] was not found!");
-//    [imageLoader loadImageWithPath:imageName completed:^(UIImage *image, NSError *error, NSString *imagePath) {
-//        if (image) {
-//            self.layer.contentsScale = [UIScreen mainScreen].scale;
-//            self.layer.contents = (__bridge id)image.CGImage;
-//        } else {
-//            self.layer.contents = nil;
-//        }
-//    }];
+    if ([self mln_isConvertible]) {
+        UIView<MLNEntityExportProtocol> *obj = (UIView<MLNEntityExportProtocol> *)self;
+        id<MLNImageLoaderProtocol> imageLoader = MLN_KIT_INSTANCE(obj.mln_luaCore).instanceHandlersManager.imageLoader;
+        [imageLoader view:obj loadImageWithPath:imageName completed:^(UIImage * _Nullable image, NSError * _Nullable error, NSString * _Nullable imagePath) {
+            if (image) {
+                self.layer.contentsScale = [UIScreen mainScreen].scale;
+                self.layer.contents = (__bridge id)image.CGImage;
+            } else {
+                self.layer.contents = nil;
+            }
+        }];
+    }
 }
 
 @end

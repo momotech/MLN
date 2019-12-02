@@ -8,6 +8,6 @@
 #import <UIKit/UIKit.h>
 #import "MLNEntityExportProtocol.h"
 
-@interface MLNScrollView : UIScrollView <MLNEntityExportProtocol>
+@interface MLNScrollView : UIView <MLNEntityExportProtocol>
 
 @end

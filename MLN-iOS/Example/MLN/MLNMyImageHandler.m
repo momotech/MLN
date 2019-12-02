@@ -9,11 +9,17 @@
 #import "MLNMyImageHandler.h"
 #import <SDWebImage/UIImageView+WebCache.h>
 #import <SDWebImage/UIButton+WebCache.h>
+#import <MLNCornerImageLoader.h>
+#import "MLNGalleryNative.h"
 
 @implementation MLNMyImageHandler
 
 - (void)imageView:(UIImageView<MLNEntityExportProtocol> *)imageView setImageWithPath:(NSString *)path
 {
+    if (kDisableImageLoad)  {
+        return;
+    }
+    
     if ([self isHttpURL:path]) {
         NSURL *imgURL = [NSURL URLWithString:path];
         [imageView sd_setImageWithURL:imgURL];
@@ -27,11 +33,12 @@
 
 - (void)imageView:(UIImageView<MLNEntityExportProtocol> *)imageView setImageWithPath:(NSString *)path placeHolderImage:(NSString *)placeHolder
 {
+    
     [imageView sd_setImageWithURL:[NSURL URLWithString:path] placeholderImage:[UIImage imageNamed:placeHolder]];
 }
 
 - (void)imageView:(UIImageView<MLNEntityExportProtocol> *)imageView setCornerImageWith:(NSString *)imageName placeHolderImage:(NSString *)placeHolder cornerRadius:(NSInteger)radius dircetion:(MLNRectCorner)direction {
-    [imageView sd_setImageWithURL:[NSURL URLWithString:imageName] placeholderImage:[UIImage imageNamed:placeHolder]];
+    [MLNCornerImageLoader imageView:imageView setCornerImageWith:imageName placeHolderImage:placeHolder cornerRadius:radius dircetion:direction];
 }
 
 - (void)button:(UIButton<MLNEntityExportProtocol> *)button setImageWithPath:(NSString *)path forState:(UIControlState)state

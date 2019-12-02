@@ -10,7 +10,7 @@
   },
   "authors": "MoMo",
   "source": {
-    "git": "https://github.com/wemomo/MLN.git",
+    "git": "https://github.com/momotech/MLN.git",
     "tag": "0.1.0"
   },
   "platforms": {
@@ -21,8 +21,8 @@
   "subspecs": [
     {
       "name": "LuaLib",
-      "source_files": "MLN/Classes/LuaLib/**/*.{h,m,c}",
-      "public_header_files": "MLN/Classes/LuaLib/**/*.h"
+      "source_files": "MLN-iOS/MLN/Classes/LuaLib/**/*.{h,m,c}",
+      "public_header_files": "MLN-iOS/MLN/Classes/LuaLib/**/*.h"
     },
     {
       "name": "Core",
@@ -30,8 +30,8 @@
         "Foundation",
         "UIKit"
       ],
-      "source_files": "MLN/Classes/Core/**/*.{h,m,c}",
-      "public_header_files": "MLN/Classes/Core/**/*.h",
+      "source_files": "MLN-iOS/MLN/Classes/Core/**/*.{h,m,c}",
+      "public_header_files": "MLN-iOS/MLN/Classes/Core/**/*.h",
       "dependencies": {
         "MLN/LuaLib": [
 
@@ -46,8 +46,8 @@
         "CoreGraphics",
         "AVFoundation"
       ],
-      "source_files": "MLN/Classes/Kit/**/*.{h,m,c}",
-      "public_header_files": "MLN/Classes/Kit/**/*.h",
+      "source_files": "MLN-iOS/MLN/Classes/Kit/**/*.{h,m,c}",
+      "public_header_files": "MLN-iOS/MLN/Classes/Kit/**/*.h",
       "dependencies": {
         "MLN/Core": [
 

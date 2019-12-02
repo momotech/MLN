@@ -1,7 +1,7 @@
 #use_frameworks!
 source 'https://github.com/CocoaPods/Specs.git'
-source 'https://git.wemomo.com/ios/Specs.git'
-source 'https://git.wemomo.com/alpha-ios/wemomo-alpha-podspecs.git'
+#source 'https://git.wemomo.com/ios/Specs.git'
+#source 'https://git.wemomo.com/alpha-ios/wemomo-alpha-podspecs.git'
 
 platform :ios, '8.0'
 
@@ -11,6 +11,8 @@ target 'MLN_Example' do
   pod 'SDWebImage', '~> 4.0'
   pod 'AFNetworking', '~> 3.0'
   pod 'MJRefresh', '3.1.16'
+  pod 'SDCycleScrollView','>= 1.3'
+  pod 'Toast', '~> 4.0.0'
 end
 
 target 'MLN_Tests' do

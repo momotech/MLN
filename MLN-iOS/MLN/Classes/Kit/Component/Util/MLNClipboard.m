@@ -7,6 +7,7 @@
 
 #import "MLNClipboard.h"
 #import "MLNStaticExporterMacro.h"
+#import "MLNKitHeader.h"
 
 @implementation MLNClipboard
 
@@ -22,6 +23,8 @@
 
 + (void)lua_setText:(NSString *)text clipboardName:(NSString *)name
 {
+    MLNStaticCheckStringTypeAndNilValue(text)
+    MLNStaticCheckStringTypeAndNilValue(name)
     UIPasteboard *clipboard = nil;
     if (name.length > 0) {
         clipboard = [UIPasteboard pasteboardWithName:name create:YES];
@@ -34,6 +37,7 @@
 
 + (NSString *)lua_getTextWithClipboardName:(NSString *)name
 {
+    MLNStaticCheckStringTypeAndNilValue(name)
     UIPasteboard *clipboard = nil;
     if (name.length > 0) {
         clipboard = [UIPasteboard pasteboardWithName:name create:NO];

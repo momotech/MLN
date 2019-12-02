@@ -17,7 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 
 // 文件保存
-+ (NSString *)image:(UIImage *)image mln_saveWithFileName:(NSString *)fileName;
++ (NSString *)mln_image:(UIImage *)image saveWithFileName:(NSString *)fileName;
 
 @end
 
