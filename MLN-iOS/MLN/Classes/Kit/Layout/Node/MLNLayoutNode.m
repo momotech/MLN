@@ -29,7 +29,7 @@
         _widthType = MLNLayoutMeasurementTypeWrapContent;
         _wrapContent = YES;
         _layoutStrategy = MLNLayoutStrategySimapleAuto;
-        _anchorPoint = CGPointMake(0.5f, 0.5f);
+        _anchorPoint = targetView.layer.anchorPoint;
         _paddingNeedUpdated = YES;
     }
     return self;
@@ -47,17 +47,13 @@
     _mergedHeightType = self.heightType;
     if (self.supernode) {
         // width
-        if (self.widthType == MLNLayoutMeasurementTypeMatchParent &&
-            (self.supernode.mergedWidthType == MLNLayoutMeasurementTypeWrapContent ||
-             self.supernode.isHorizontalMaxMode)) {
-                _mergedWidthType = MLNLayoutMeasurementTypeWrapContent;
-            }
+        if (isLayoutNodeWidthNeedMerge(self)) {
+            _mergedWidthType = MLNLayoutMeasurementTypeWrapContent;
+        }
         // height
-        if (self.heightType == MLNLayoutMeasurementTypeMatchParent &&
-            (self.supernode.mergedHeightType == MLNLayoutMeasurementTypeWrapContent ||
-             self.supernode.isVerticalMaxMode)) {
-                _mergedHeightType = MLNLayoutMeasurementTypeWrapContent;
-            }
+        if (isLayoutNodeHeightNeedMerge(self)) {
+            _mergedHeightType = MLNLayoutMeasurementTypeWrapContent;
+        }
     }
 }
 
@@ -83,8 +79,41 @@
     return CGSizeMake(self.measuredWidth, self.measuredHeight);
 }
 
+- (CGFloat)calculateWidthBaseOnWeightWithMaxWidth:(CGFloat)maxWidth
+{
+    if (self.widthType != MLNLayoutMeasurementTypeIdle && self.widthProportion > 0.f) {
+        maxWidth = maxWidth * self.widthProportion;
+        // min
+        maxWidth = MAX(maxWidth, self.minWidth);
+        // max
+        maxWidth = self.maxWidth > 0.f ? MIN(maxWidth, self.maxWidth) : maxWidth;
+        self.isWidthExcatly = YES;
+    }  else {
+        self.isWidthExcatly = NO;
+    }
+    return maxWidth;
+}
+
+- (CGFloat)calculateHeightBaseOnWeightWithMaxHeight:(CGFloat)maxHeight
+{
+    if (self.heightType != MLNLayoutMeasurementTypeIdle && self.heightProportion > 0.f) {
+        maxHeight = maxHeight * self.heightProportion;
+        // min
+        maxHeight = MAX(maxHeight, self.minHeight);
+        // max
+        maxHeight = self.maxHeight > 0.f ? MIN(maxHeight, self.maxHeight) : maxHeight;
+        self.isHeightExcatly = YES;
+    } else {
+        self.isHeightExcatly = NO;
+    }
+    return maxHeight;
+}
+
 MLN_FORCE_INLINE void measureSimapleAutoNodeSize(MLNLayoutNode __unsafe_unretained *node, CGFloat maxWidth, CGFloat maxHeight) {
-    if (!node.isDirty && (node.lastMeasuredMaxWidth==maxWidth && node.lastMeasuredMaxHeight==maxHeight)) {
+    // 权重
+    maxWidth = [node calculateWidthBaseOnWeightWithMaxWidth:maxWidth];
+    maxHeight = [node calculateHeightBaseOnWeightWithMaxHeight:maxHeight];
+    if (!node.isDirty && (node.lastMeasuredMaxWidth==maxWidth && node.lastMeasuredMaxHeight==maxHeight) && !isLayoutNodeHeightNeedMerge(node) && !isLayoutNodeWidthNeedMerge(node)) {
         return;
     }
     node.lastMeasuredMaxWidth = maxWidth;
@@ -101,31 +130,38 @@ MLN_FORCE_INLINE void measureSimapleAutoNodeSize(MLNLayoutNode __unsafe_unretain
         measuredHeight = measureSize.height;
     }
     // width
-    switch (node.mergedWidthType) {
-        case MLNLayoutMeasurementTypeWrapContent:
-            measuredWidth = MIN(myMaxWidth, measuredWidth);
-            node.measuredWidth = MAX(node.minWidth, measuredWidth);
-            break;
-        case MLNLayoutMeasurementTypeMatchParent:
-            node.measuredWidth = MAX(node.minWidth, myMaxWidth);
-            break;
-        default:
-            node.measuredWidth = myMaxWidth;
-            break;
+    if (!node.isWidthExcatly) {
+        switch (node.mergedWidthType) {
+            case MLNLayoutMeasurementTypeWrapContent:
+                measuredWidth = MIN(myMaxWidth, measuredWidth);
+                node.measuredWidth = MAX(node.minWidth, measuredWidth);
+                break;
+            case MLNLayoutMeasurementTypeMatchParent:
+                node.measuredWidth = MAX(node.minWidth, myMaxWidth);
+                break;
+            default:
+                node.measuredWidth = myMaxWidth;
+                break;
+        }
+    } else {
+        node.measuredWidth = maxWidth;
     }
-    
     // height
-    switch (node.mergedHeightType) {
-        case MLNLayoutMeasurementTypeWrapContent:
-            measuredHeight = MIN(myMaxHeight, measuredHeight);
-            node.measuredHeight = MAX(node.minHeight, measuredHeight);
-            break;
-        case MLNLayoutMeasurementTypeMatchParent:
-            node.measuredHeight = MAX(node.minHeight, myMaxHeight);
-            break;
-        default:
-            node.measuredHeight = myMaxHeight;
-            break;
+    if (!node.isHeightExcatly) {
+        switch (node.mergedHeightType) {
+            case MLNLayoutMeasurementTypeWrapContent:
+                measuredHeight = MIN(myMaxHeight, measuredHeight);
+                node.measuredHeight = MAX(node.minHeight, measuredHeight);
+                break;
+            case MLNLayoutMeasurementTypeMatchParent:
+                node.measuredHeight = MAX(node.minHeight, myMaxHeight);
+                break;
+            default:
+                node.measuredHeight = myMaxHeight;
+                break;
+        }
+    } else {
+        node.measuredHeight = maxHeight;
     }
 }
 
@@ -156,7 +192,7 @@ MLN_FORCE_INLINE void measureSimapleAutoNodeSize(MLNLayoutNode __unsafe_unretain
         case MLNLayoutMeasurementTypeIdle:
             return self.width;
         default:
-            return self.maxWidth > 0 ? MIN(self.maxWidth, maxWidth) : maxWidth;
+            return self.maxWidth > 0.f ? MIN(self.maxWidth, maxWidth) : maxWidth;
     }
 }
 
@@ -166,7 +202,7 @@ MLN_FORCE_INLINE void measureSimapleAutoNodeSize(MLNLayoutNode __unsafe_unretain
         case MLNLayoutMeasurementTypeIdle:
             return self.height;
         default:
-            return self.maxHeight > 0 ? MIN(self.maxHeight, maxHeight) : maxHeight;
+            return self.maxHeight > 0.f ? MIN(self.maxHeight, maxHeight) : maxHeight;
     }
 }
 
@@ -175,8 +211,9 @@ MLN_FORCE_INLINE void measureSimapleAutoNodeSize(MLNLayoutNode __unsafe_unretain
 {
     [self changeLayoutStrategyTo:MLNLayoutStrategyNativeFrame];
     self.enable = NO;
-    if (_x != x) {
+    if (_x != x || _offsetX != 0.f) {
         _x = x;
+        _offsetX = 0.f;
         [self needLayoutAndSpread];
     }
 }
@@ -185,8 +222,9 @@ MLN_FORCE_INLINE void measureSimapleAutoNodeSize(MLNLayoutNode __unsafe_unretain
 {
     [self changeLayoutStrategyTo:MLNLayoutStrategyNativeFrame];
     self.enable = NO;
-    if (_y != y) {
+    if (_y != y || _offsetY != 0.f) {
         _y = y;
+        _offsetY = 0.f;
         [self needLayoutAndSpread];
     }
 }
@@ -194,14 +232,17 @@ MLN_FORCE_INLINE void measureSimapleAutoNodeSize(MLNLayoutNode __unsafe_unretain
 - (void)changeWidth:(CGFloat)width
 {
     MLNLayoutMeasurementType type = width;
-    if (width >= 0) {
+    //⚠️ 小于0且不等于MLNLayoutMeasurementTypeWrapContent和MLNLayoutMeasurementTypeMatchParent
+    //   认为是绝对宽度0
+    if (width != MLNLayoutMeasurementTypeWrapContent &&
+        width != MLNLayoutMeasurementTypeMatchParent) {
         type = MLNLayoutMeasurementTypeIdle;
-    } else {
-        width = 0;
+        width = width < 0.f ? 0.f : width;
     }
     BOOL needLayout = NO;
-    if (_width != width) {
+    if (_width != width  || _offsetWidth != 0.f) {
         _width = width;
+        _offsetWidth = 0.f;
         needLayout = YES;
     }
     if (_widthType != type) {
@@ -216,14 +257,17 @@ MLN_FORCE_INLINE void measureSimapleAutoNodeSize(MLNLayoutNode __unsafe_unretain
 - (void)changeHeight:(CGFloat)height
 {
     MLNLayoutMeasurementType type = height;
-    if (height >= 0) {
+    //⚠️ 小于0且不等于MLNLayoutMeasurementTypeWrapContent和MLNLayoutMeasurementTypeMatchParent
+    //   认为是绝对高度0
+    if (height != MLNLayoutMeasurementTypeWrapContent &&
+        height != MLNLayoutMeasurementTypeMatchParent) {
         type = MLNLayoutMeasurementTypeIdle;
-    } else {
-        height = 0;
+        height = height < 0.f ? 0.f : height;
     }
     BOOL needLayout = NO;
-    if (_height != height) {
+    if (_height != height || _offsetHeight != 0.f) {
         _height = height;
+        _offsetHeight = 0.f;
         needLayout = YES;
     }
     if (_heightType != type) {
@@ -274,7 +318,7 @@ MLN_FORCE_INLINE void measureSimapleAutoNodeSize(MLNLayoutNode __unsafe_unretain
 - (void)updateTargetViewFrameIfNeed
 {
     if ([self hasNewLayout]) {
-        CGRect newFrame = CGRectMake(self.measuredX + self.offsetX, self.measuredY + self.offsetY, self.measuredWidth + + self.offsetWidth, self.measuredHeight + self.offsetHeight);
+        CGRect newFrame = CGRectMake(self.measuredX + self.offsetX, self.measuredY + self.offsetY, self.measuredWidth + self.offsetWidth, self.measuredHeight + self.offsetHeight);
         if (!CGRectEqualToRect(self.targetView.frame, newFrame)) {
             self.targetView.transform = CGAffineTransformIdentity;
             self.targetView.frame = newFrame;
@@ -302,7 +346,6 @@ MLN_FORCE_INLINE void resetArchpointIfNeed(MLNLayoutNode __unsafe_unretained *no
 
 - (void)removeFromSupernode
 {
-//    MLNLuaAssert([NSThread isMainThread], @"This application is modifying the layout from a background thread!");
     [(MLNLayoutContainerNode *)self.supernode removeSubnode:self];
     [self resetStatus];
 }
@@ -373,7 +416,10 @@ MLN_FORCE_INLINE void resetArchpointIfNeed(MLNLayoutNode __unsafe_unretained *no
 
 - (void)setWidthType:(MLNLayoutMeasurementType)widthType
 {
-    widthType = widthType >= 0 ? MLNLayoutMeasurementTypeIdle : widthType;
+    if (widthType != MLNLayoutMeasurementTypeWrapContent &&
+        widthType != MLNLayoutMeasurementTypeMatchParent) {
+        widthType = MLNLayoutMeasurementTypeIdle;
+    }
     if (_widthType != widthType) {
         [self needLayoutAndSpread];
         _widthType = widthType;
@@ -382,7 +428,10 @@ MLN_FORCE_INLINE void resetArchpointIfNeed(MLNLayoutNode __unsafe_unretained *no
 
 - (void)setHeightType:(MLNLayoutMeasurementType)heightType
 {
-    heightType = heightType >= 0 ? MLNLayoutMeasurementTypeIdle : heightType;
+    if (heightType != MLNLayoutMeasurementTypeWrapContent &&
+        heightType != MLNLayoutMeasurementTypeMatchParent) {
+        heightType = MLNLayoutMeasurementTypeIdle;
+    }
     if (_heightType != heightType) {
         [self needLayoutAndSpread];
         _heightType = heightType;
@@ -400,11 +449,20 @@ MLN_FORCE_INLINE void resetArchpointIfNeed(MLNLayoutNode __unsafe_unretained *no
     }
 }
 
+- (void)setWeight:(int)weight
+{
+    if (_weight != weight) {
+        _weight = weight;
+        [self needLayoutAndSpread];
+    }
+}
+
 #pragma mark - Setter Of Size
 - (void)setWidth:(CGFloat)width
 {
-    if (_width != width) {
+    if (_width != width || _offsetWidth != 0.0) {
         [self needLayoutAndSpread];
+        _offsetWidth = 0.0;
         _width = width;
     }
 }
@@ -444,32 +502,36 @@ MLN_FORCE_INLINE void resetArchpointIfNeed(MLNLayoutNode __unsafe_unretained *no
 #pragma mark - Setter Of Margin
 - (void)setMarginTop:(CGFloat)marginTop
 {
-    if (_marginTop != marginTop) {
+    if (_marginTop != marginTop || _offsetY != 0) {
         [self needLayoutAndSpread];
+        _offsetY = 0.0;
         _marginTop = marginTop;
     }
 }
 
 - (void)setMarginBottom:(CGFloat)marginBottom
 {
-    if (_marginBottom != marginBottom) {
+    if (_marginBottom != marginBottom || _offsetY != 0) {
         [self needLayoutAndSpread];
+        _offsetY = 0.0;
         _marginBottom = marginBottom;
     }
 }
 
 - (void)setMarginLeft:(CGFloat)marginLeft
 {
-    if (_marginLeft != marginLeft) {
+    if (_marginLeft != marginLeft || _offsetX != 0) {
         [self needLayoutAndSpread];
+        _offsetX = 0.0;
         _marginLeft = marginLeft;
     }
 }
 
 - (void)setMarginRight:(CGFloat)marginRight
 {
-    if (_marginRight != marginRight) {
+    if (_marginRight != marginRight || _offsetX != 0) {
         [self needLayoutAndSpread];
+        _offsetX = 0.0;
         _marginRight = marginRight;
     }
 }

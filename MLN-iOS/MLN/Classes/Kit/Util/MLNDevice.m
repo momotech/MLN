@@ -13,7 +13,7 @@
 
 @implementation MLNDevice
 
-+ (NSString *) getSysInfoByName:(char *)typeSpecifier
++ (NSString *)getSysInfoByName:(char *)typeSpecifier
 {
     size_t size;
     sysctlbyname(typeSpecifier, NULL, &size, NULL, 0);
@@ -46,6 +46,9 @@
         [platform isEqualToString:@"iPhone11,4"] ||
         [platform isEqualToString:@"iPhone11,6"] ||
         [platform isEqualToString:@"iPhone11,8"] ||
+        [platform isEqualToString:@"iPhone12,1"] ||
+        [platform isEqualToString:@"iPhone12,3"] ||
+        [platform isEqualToString:@"iPhone12,5"] ||
         ([self isiPhoneSimulator] && (CGSizeEqualToSize([[UIScreen mainScreen] bounds].size, CGSizeMake(375.f, 812.f))
                                       || CGSizeEqualToSize([[UIScreen mainScreen] bounds].size, CGSizeMake(414.f, 896.f)))))
         return YES;

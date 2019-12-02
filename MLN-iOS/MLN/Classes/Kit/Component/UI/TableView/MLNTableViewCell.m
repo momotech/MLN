@@ -1,6 +1,6 @@
 //
 //  MMTableViewCell.m
-//  MomoChat
+//  MLN
 //
 //  Created by MoMo on 28/02/2018.
 //  Copyright © 2018 wemomo.com. All rights reserved.
@@ -8,6 +8,12 @@
 
 #import "MLNTableViewCell.h"
 #import "UIView+MLNLayout.h"
+#import "MLNKitHeader.h"
+#import "MLNLuaTable.h"
+
+@interface MLNTableViewCell ()
+@property (nonatomic, strong) UIColor *lastBackgroundColor;
+@end
 
 @implementation MLNTableViewCell
 
@@ -32,7 +38,44 @@
 
 - (void)lua_addSubview:(UIView *)view
 {
+    MLNCheckTypeAndNilValue(view, @"View", UIView);
     [self.luaContentView lua_addSubview:view];
+}
+
+#pragma mark - highlightColor
+- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
+{
+    [super touchesBegan:touches withEvent:event];
+    [self highlightCell:YES];
+}
+
+- (void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
+{
+    [super touchesEnded:touches withEvent:event];
+    [self highlightCell:NO];
+}
+
+- (void)touchesCancelled:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
+{
+    [super touchesCancelled:touches withEvent:event];
+    [self highlightCell:NO];
+}
+
+- (void)highlightCell:(BOOL)highlighted
+{
+    if (!self.delegate.isShowPressedColor) {
+        return;
+    }
+    if (highlighted) {
+        self.lastBackgroundColor = self.luaContentView.backgroundColor;
+        self.luaContentView.backgroundColor = [self.delegate pressedColor];
+    } else {
+        if (self.lastBackgroundColor) {
+            [UIView animateWithDuration:0.05 animations:^{
+                self.luaContentView.backgroundColor = self.lastBackgroundColor;
+            }];
+        }
+    }
 }
 
 #pragma mark - MLNReuseCellProtocol
@@ -106,6 +149,11 @@
         [self.contentView addSubview:_luaContentView];
     }
     return _luaContentView;
+}
+
+- (MLNLuaCore *)mln_luaCore
+{
+    return self.luaContentView.luaTable.luaCore;
 }
 
 @end

@@ -11,7 +11,7 @@
 
 #define lua_CheckIndexZero(INDEX)\
 if ((INDEX) < 0) {\
-    mln_lua_error(L, "The number of index must be greater than 0!");\
+    mln_lua_error(L, @"The number of index must be greater than 0!");\
     return 0;\
 }
 
@@ -24,12 +24,12 @@ static MLN_FORCE_INLINE BOOL __mln_lua_in_checkParams(lua_State *L, int countOfP
             if (ud) {
                 id array = (__bridge __unsafe_unretained id )ud->object;
                 if ([array mln_nativeType] != MLNNativeTypeMArray) {
-                    mln_lua_error(L, "Must use ':' to call this method！\n number of argments must be %d!", countOfParams);
+                    mln_lua_error(L, @"Must use ':' to call this method！\n number of argments must be %d!", countOfParams);
                     return NO;
                 }
             }
         }
-        mln_lua_error(L, "number of argments must be %d!", countOfParams);
+        mln_lua_error(L, @"number of argments must be %d!", countOfParams);
         return NO;
     }
     return YES;
@@ -52,12 +52,13 @@ static int lua_newArray(lua_State *L) {
                 [MLN_LUA_CORE(L) pushNativeObject:array error:nil];
                 return 1;
             }
-            mln_lua_error(L, "error type of argment, capacity must be number");
+            mln_lua_error(L, @"error type of argment, capacity must be number");
             break;
         }
-        default:
-            mln_lua_error(L, "number of argment more than 1");
+        default: {
+            mln_lua_error(L, @"number of argment more than 1");
             break;
+        }
     }
     return 0;
 }
@@ -86,7 +87,7 @@ static int lua_array_addObject(lua_State *L) {
             case MLNNativeTypeMArray:
                 break;
             default: {
-                mln_lua_error(L, "The value type must be one of types, as string, number, map or array!");
+                mln_lua_error(L, @"The value type must be one of types, as string, number, map or array!");
                 break;
             }
         }
@@ -116,7 +117,7 @@ static int lua_array_addObjectsFromArray(lua_State *L) {
                 break;
             }
             default: {
-                mln_lua_error(L, "The argment must be a array!");
+                mln_lua_error(L, @"The argment must be a array!");
                 break;
             }
         }
@@ -304,7 +305,7 @@ static int lua_array_insertObject(lua_State *L) {
             case MLNNativeTypeMArray:
                 break;
             default: {
-                mln_lua_error(L, "The value type must be one of types, as string, number, map or array!");
+                mln_lua_error(L, @"The value type must be one of types, as string, number, map or array!");
                 break;
             }
         }
@@ -326,7 +327,7 @@ static int lua_array_insertObjects(lua_State *L) {
     // index 为零校验
     NSInteger fromIndex = lua_tonumber(L, 2) - 1;
     if (fromIndex < 0) {
-        mln_lua_error(L, "The number of index must be greater than 0!");
+        mln_lua_error(L, @"The number of index must be greater than 0!");
         return 0;
     }
     MLNUserData *ud = (MLNUserData *)lua_touserdata(L, 1);
@@ -335,12 +336,12 @@ static int lua_array_insertObjects(lua_State *L) {
         NSUInteger count = array.count;
         // index 越界检查
         if (fromIndex > count) {
-            mln_lua_error(L, "The number of index [%ld] out of array count [%lu]!", fromIndex + 1, (unsigned long)count);
+            mln_lua_error(L, @"The number of index [%ld] out of array count [%lu]!", fromIndex + 1, (unsigned long)count);
             return 0;
         }
         NSArray *items = [MLN_LUA_CORE(L) toNativeObject:3 error:nil];
         if (!(items && items.count > 0)) {
-            mln_lua_error(L, "The array must not be empty!");
+            mln_lua_error(L, @"The array must not be empty!");
             return 0;
         }
         [array mln_insertObjects:items fromIndex:fromIndex];
@@ -375,7 +376,7 @@ static int lua_array_replaceObject(lua_State *L) {
             case MLNNativeTypeMArray:
                 break;
             default: {
-                mln_lua_error(L, "The value type must be one of types, as string, number, map or array!");
+                mln_lua_error(L, @"The value type must be one of types, as string, number, map or array!");
                 break;
             }
         }
@@ -397,7 +398,7 @@ static int lua_array_replaceObjects(lua_State *L) {
     // index 为零校验
     NSInteger fromIndex = lua_tonumber(L, 2) - 1;
     if (fromIndex < 0) {
-        mln_lua_error(L, "The number of index must be greater than 0!");
+        mln_lua_error(L, @"The number of index must be greater than 0!");
         return 0;
     }
     MLNUserData *ud = (MLNUserData *)lua_touserdata(L, 1);
@@ -406,16 +407,16 @@ static int lua_array_replaceObjects(lua_State *L) {
         NSUInteger count = array.count;
         // index 越界检查
         if (fromIndex >= count) {
-            mln_lua_error(L, "The number of index [%ld] out of array count [%lu]!", fromIndex + 1, (unsigned long)count);
+            mln_lua_error(L, @"The number of index [%ld] out of array count [%lu]!", fromIndex + 1, (unsigned long)count);
             return 0;
         }
         NSArray *items = [MLN_LUA_CORE(L) toNativeObject:3 error:nil];
         if (!(items && items.count > 0)) {
-             mln_lua_error(L, "The objects must not be empty!");
+             mln_lua_error(L, @"The objects must not be empty!");
             return 0;
         }
         if (!(items.count <= count - fromIndex)) {
-            mln_lua_error(L, "The cout of objects [%lu] out of array count [%lu]!", (unsigned long)items.count, count - fromIndex);
+            mln_lua_error(L, @"The cout of objects [%lu] out of array count [%lu]!", (unsigned long)items.count, count - fromIndex);
             return 0;
         }
         [array mln_replaceObjects:items fromIndex:fromIndex];
@@ -446,6 +447,40 @@ static int lua_array_exchange(lua_State *L) {
     return 0;
 }
 
+static int lua_array_sub(lua_State *L) {
+    if (!__mln_lua_in_checkParams(L, 2)) {
+        return 0;
+    }
+    MLNUserData *ud = (MLNUserData *)lua_touserdata(L, 1);
+    if (ud) {
+        NSMutableArray *resultArray = nil;
+        NSMutableArray *array = (__bridge __unsafe_unretained NSMutableArray *)ud->object;
+        NSInteger fromIndex = lua_tonumber(L, 2) - 1;
+        lua_CheckIndexZero(fromIndex);
+        NSInteger toIndex = lua_tonumber(L, 3) - 1;
+        lua_CheckIndexZero(toIndex);
+        mln_lua_assert(L, (array.count > fromIndex && array.count > toIndex), "The index out of range!");
+        if (array.count > fromIndex && array.count > toIndex) {
+            NSInteger length = toIndex - fromIndex + 1;
+            resultArray = [NSMutableArray arrayWithArray:[array subarrayWithRange:NSMakeRange(fromIndex, length)]];
+        }
+        [MLN_LUA_CORE(L) pushNativeObject:resultArray error:nil];
+        return 1;
+    }
+    return 0;
+}
+
+static int lua_array_copy(lua_State *L) {
+    MLNUserData *ud = (MLNUserData *)lua_touserdata(L, 1);
+    if (ud) {
+        NSMutableArray *array = (__bridge __unsafe_unretained NSMutableArray *)ud->object;
+        NSMutableArray *resultArray = [NSMutableArray arrayWithArray:array];
+        [MLN_LUA_CORE(L) pushNativeObject:resultArray error:nil];
+        return 1;
+    }
+    return 0;
+}
+
 LUA_EXPORT_BEGIN(NSMutableArray)
 LUA_EXPORT_METHOD_WITH_CFUNC(add, lua_array_addObject, NSMutableArray)
 LUA_EXPORT_METHOD_WITH_CFUNC(addAll, lua_array_addObjectsFromArray, NSMutableArray)
@@ -462,6 +497,8 @@ LUA_EXPORT_METHOD_WITH_CFUNC(insertObjects, lua_array_insertObjects, NSMutableAr
 LUA_EXPORT_METHOD_WITH_CFUNC(replace, lua_array_replaceObject, NSMutableArray)
 LUA_EXPORT_METHOD_WITH_CFUNC(replaceObjects, lua_array_replaceObjects, NSMutableArray)
 LUA_EXPORT_METHOD_WITH_CFUNC(exchange, lua_array_exchange, NSMutableArray)
+LUA_EXPORT_METHOD_WITH_CFUNC(subArray, lua_array_sub, NSMutableArray)
+LUA_EXPORT_METHOD_WITH_CFUNC(copyArray, lua_array_copy, NSMutableArray)
 LUA_EXPORT_END_WITH_CFUNC(NSMutableArray, Array, NO, NULL, lua_newArray)
 
 @end

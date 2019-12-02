@@ -1,6 +1,6 @@
 //
 //  MMLuaBit.m
-//  MomoChat
+//  MLN
 //
 //  Created by MoMo on 03/05/2018.
 //  Copyright © 2018 wemomo.com. All rights reserved.
@@ -15,7 +15,7 @@
 static int lua_bor(lua_State *L) {
     int argCount = lua_gettop(L);
     if (argCount < 3) {
-        mln_lua_error(L, "Must use ':' to call this method！\n The number of parameter must be greater than 2!");
+        mln_lua_error(L, @"Must use ':' to call this method！\n The number of parameter must be greater than 2!");
         return 0;
     }
     NSInteger ret = lua_tonumber(L, 2);
@@ -30,7 +30,7 @@ static int lua_bor(lua_State *L) {
 static int lua_band(lua_State *L) {
     int argCount = lua_gettop(L);
     if (argCount < 3) {
-        mln_lua_error(L, "Must use ':' to call this method！\n The number of parameter must be greater than 2!");
+        mln_lua_error(L, @"Must use ':' to call this method！\n The number of parameter must be greater than 2!");
         return 0;
     }
     NSInteger ret = lua_tonumber(L, 2);
@@ -45,7 +45,7 @@ static int lua_band(lua_State *L) {
 static int lua_bxor(lua_State *L) {
     int argCount = lua_gettop(L);
     if (argCount < 3) {
-        mln_lua_error(L, "Must use ':' to call this method！\n The number of parameter must be greater than 2!");
+        mln_lua_error(L, @"Must use ':' to call this method！\n The number of parameter must be greater than 2!");
         return 0;
     }
     NSInteger ret = lua_tonumber(L, 2);

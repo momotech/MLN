@@ -10,7 +10,7 @@
 
 @implementation MLNFont
 
-+ (UIFont *)fontWithFontName:(NSString *)fontName fontStyle:(MLNFontStyle)style fontSize:(CGFloat)fontSize
++ (UIFont *)fontWithFontName:(NSString *)fontName fontStyle:(MLNFontStyle)style fontSize:(CGFloat)fontSize instance:(MLNKitInstance *)instance
 {
     UIFont *font = [UIFont preferredFontForTextStyle:UIFontTextStyleBody];
     UIFontDescriptor *fontDescriptor = nil;
@@ -18,7 +18,7 @@
     if (!fontName) {
         fontDescriptor = [font fontDescriptor];
     } else {
-//        MLNLuaAssert(<#LUA_CORE#>, <#CONDITION#>, <#FORMAT, ...#>)([self isFontRegistered:fontName], @"Font is not registered! ! !");
+        MLNLuaAssert(instance.luaCore, [self isFontRegistered:fontName], @"Font is not registered! ! !");
         if ([self isFontRegistered:fontName]) {
             fontDescriptor = [UIFontDescriptor fontDescriptorWithName:fontName size:fontSize];
         } else {
@@ -53,7 +53,7 @@
     if (@available(iOS 7.0, *)) {
         font = [UIFont fontWithDescriptor:fontDescriptor size:fontSize];
     } else {
-//        MLNLuaAssert(NO, @"Unsupported version of the system below 7.0！！！");
+        MLNLuaAssert(instance.luaCore,NO, @"Unsupported version of the system below 7.0！！！");
     }
     
     return font;

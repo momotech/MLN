@@ -371,7 +371,7 @@ static int mln_errorFunc_traceback (lua_State *L) {
     return YES;
 }
 
-- (BOOL)openLib:(const char *)libName methodList:(const struct mln_objc_method *)list nup:(int)nup error:(NSError **)error
+- (BOOL)openLib:(const char *)libName nativeClassName:(const char *)nativeClassName methodList:(const struct mln_objc_method *)list nup:(int)nup error:(NSError **)error
 {
     lua_State *L = self.state;
     if (!L) {
@@ -401,19 +401,19 @@ static int mln_errorFunc_traceback (lua_State *L) {
         if (!charpNotEmpty(list->clz)) {
             if (error) {
                 *error = [NSError mln_errorOpenLib:@"The class name must not be nil!"];
-                mln_lua_error(L, "The class name must not be nil!");
+                mln_lua_error(L, @"The class name must not be nil!");
             }
             return NO;
         }
         if (list->func == NULL) {
             if (error) {
                 *error = [NSError mln_errorOpenLib:@"The C function must not be NULL!"];
-                mln_lua_error(L, "The C function must not be NULL!");
+                mln_lua_error(L, @"The C function must not be NULL!");
             }
             return NO;
         }
         int extraCount = 0;
-        lua_pushstring(L, list->clz); // class
+        lua_pushstring(L, nativeClassName); // class
         lua_pushboolean(L, list->isProperty);
         if (list->isProperty) {
             lua_pushstring(L, list->setter_n); // setter
@@ -519,14 +519,14 @@ static int mln_errorFunc_traceback (lua_State *L) {
         if (!charpNotEmpty(list->clz)) {
             if (error) {
                 *error = [NSError mln_errorOpenLib:@"The class name must not be nil!"];
-                mln_lua_error(L, "The class name must not be nil!");
+                mln_lua_error(L, @"The class name must not be nil!");
             }
             return NO;
         }
         if (list->func == NULL) {
             if (error) {
                 *error = [NSError mln_errorOpenLib:@"The C function must not be NULL!"];
-                mln_lua_error(L, "The C function must not be NULL!");
+                mln_lua_error(L, @"The C function must not be NULL!");
             }
             return NO;
         }

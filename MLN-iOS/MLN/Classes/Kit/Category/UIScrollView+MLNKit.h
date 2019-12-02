@@ -49,7 +49,12 @@
 
 - (void)lua_setContentInset:(CGFloat)top right:(CGFloat)right bottom:(CGFloat)bottom left:(CGFloat)left;
 - (void)lua_getContetnInset:(MLNBlock*)block;
+- (void)lua_setScrollIndicatorInset:(CGFloat)top right:(CGFloat)right bottom:(CGFloat)bottom  left:(CGFloat)left;
 - (void)lua_setContentOffsetWithAnimation:(CGPoint)point;
+- (void)mln_setLuaScrollEnable:(BOOL)enable;
+- (void)lua_addSubview:(UIView *)view;
+- (void)lua_setContentOffset:(CGPoint)point;
+- (CGPoint)lua_contentOffset;
 
 @end
 

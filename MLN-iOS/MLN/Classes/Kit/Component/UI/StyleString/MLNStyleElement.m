@@ -37,13 +37,14 @@
     copy.image = _image;
     copy.imagePath = _imagePath;
     copy.imageSize = _imageSize;
+    copy.instance = _instance;
     
     return copy;
 }
 
 - (NSDictionary *)attributes
 {
-    UIFont *font = [MLNFont fontWithFontName:_fontName fontStyle:_fontStyle fontSize:_fontSize];
+    UIFont *font = [MLNFont fontWithFontName:_fontName fontStyle:_fontStyle fontSize:_fontSize instance:self.instance];
     NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithCapacity:3];
     [dict setObject:font forKey:NSFontAttributeName];
     if (_fontColor) {

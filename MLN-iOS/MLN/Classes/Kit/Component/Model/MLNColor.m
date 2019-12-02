@@ -7,6 +7,7 @@
 
 #import "MLNColor.h"
 #import "MLNLuaCore.h"
+#import "MLNKitHeader.h"
 
 #define kColorComponentValue(value) ((value) < 0? 0 : ((value) > 255? 255 : (value)))
 #define kColorAlphaComponentValue(value) ((value) < 0.0? 0.0 : ((value) > 1.0? 1.0 : (value)))
@@ -63,9 +64,10 @@ static int lua_color_init(lua_State *L) {
         case 0:
             color = [[MLNColor alloc] initWithR:0 g:0 b:0 a:1.0];
             break;
-        default:
-            mln_lua_error(L, "number of arguments must be 3 or 4 or 0!");
+        default: {
+            mln_lua_error(L, @"number of arguments must be 3 or 4 or 0!");
             break;
+        }
     }
     
     if (color) {
@@ -232,7 +234,8 @@ static int lua_color_init(lua_State *L) {
 }
 
 //设置颜色RGBA
-- (void)lua_setColorWithHex:(NSString*)hex {
+- (void)lua_setColorWithHex:(NSString *)hex {
+    MLNCheckStringTypeAndNilValue(hex);
     NSString *cString = [[hex stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] uppercaseString];
     
     if ([cString length] < 6)
@@ -271,7 +274,8 @@ static int lua_color_init(lua_State *L) {
 }
 
 //设置颜色ARGB
-- (void)lua_setAHex:(NSString*)aHex {
+- (void)lua_setAHex:(NSString *)aHex {
+    MLNCheckStringTypeAndNilValue(aHex);
     NSString *cString = [[aHex stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] uppercaseString];
     
     if ([cString length] < 6)

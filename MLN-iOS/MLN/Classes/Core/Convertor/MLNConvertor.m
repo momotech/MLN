@@ -48,6 +48,8 @@ static MLN_FORCE_INLINE void __mln_lua_pushentity(lua_State *L, id<MLNEntityExpo
     lua_setmetatable(L, -2);
 }
 
+static MLN_FORCE_INLINE BOOL __mln_lua_pushtable(lua_State *L, __unsafe_unretained id obj, NSError **error);
+
 static MLN_FORCE_INLINE int __mln_lua_pushobj(lua_State *L, __unsafe_unretained id obj, NSError **error) {
     int ret = 1;
     lua_checkstack(L, 4);
@@ -56,7 +58,7 @@ static MLN_FORCE_INLINE int __mln_lua_pushobj(lua_State *L, __unsafe_unretained 
         for (id param in [obj mln_multipleParams]) {
             BOOL ret = __mln_lua_pushobj(L, param, error);
             if (!ret) {
-                mln_lua_error(L, "An error occurred about %@ parameter type！", obj);
+                mln_lua_error(L, @"An error occurred about %@ parameter type！", obj);
                 return 0;
             }
         }
@@ -91,26 +93,15 @@ static MLN_FORCE_INLINE int __mln_lua_pushobj(lua_State *L, __unsafe_unretained 
         }
         case MLNNativeTypeArray:
         {
-            NSArray *array = obj;
-            lua_newtable(L);
-            for (int i=0; i<array.count; i++) {
-                id value = array[i];
-                lua_pushnumber(L, i+1);
-                __mln_lua_pushobj(L, value, error);
-                lua_settable(L, -3);
+            if (!__mln_lua_pushtable(L, obj, error)) {
+                return 0;
             }
             break;
         }
         case MLNNativeTypeDictionary:
         {
-            NSDictionary* dictionary = obj;
-            lua_newtable(L);
-            for (NSString *key in dictionary) {
-                NSString* value = dictionary[key];
-                lua_checkstack(L, 4);
-                lua_pushstring(L, key.UTF8String);
-                __mln_lua_pushobj(L,value, error);
-                lua_settable(L, -3);
+            if (!__mln_lua_pushtable(L, obj, error)) {
+                return 0;
             }
             break;
         }
@@ -122,7 +113,7 @@ static MLN_FORCE_INLINE int __mln_lua_pushobj(lua_State *L, __unsafe_unretained 
                 ret = 0;
                 if (error) {
                     *error = [NSError mln_errorConvert:@"An error occurred about the parameter type！"];
-                    mln_lua_error(L, "An error occurred about the parameter type！");
+                    mln_lua_error(L, @"An error occurred about the parameter type！");
                 }
             }
             break;
@@ -178,7 +169,7 @@ static MLN_FORCE_INLINE BOOL __mln_lua_pushtable(lua_State *L, __unsafe_unretain
             ret = NO;
             if (error) {
                 *error = [NSError mln_errorConvert:@"An error occurred about the parameter type！"];
-                mln_lua_error(L, "An error occurred about the parameter type！");
+                mln_lua_error(L, @"An error occurred about the parameter type！");
             }
             break;
         }
@@ -195,7 +186,7 @@ static MLN_FORCE_INLINE CGRect __mln_lua__tocgrect(lua_State *L, int idx,  NSErr
         if(strcmp(value.objCType, @encode(CGRect)) != 0){
             if (error) {
                 *error = [NSError mln_errorConvert:@"Rect not found！"];
-                mln_lua_error(L, "Rect not found！");
+                mln_lua_error(L, @"Rect not found！");
             }
             return CGRectZero;
         }
@@ -232,7 +223,7 @@ static MLN_FORCE_INLINE CGRect __mln_lua__tocgrect(lua_State *L, int idx,  NSErr
     }
     if (error) {
         *error = [NSError mln_errorConvert:@"Rect not found！"];
-        mln_lua_error(L, "Rect not found！");
+        mln_lua_error(L, @"Rect not found！");
     }
     return CGRectZero;
 }
@@ -244,7 +235,7 @@ static MLN_FORCE_INLINE CGPoint __mln_lua__tocgpoint(lua_State *L, int idx,  NSE
         if(strcmp(value.objCType, @encode(CGPoint)) != 0){
             if (error) {
                 *error = [NSError mln_errorConvert:@"Point not found！"];
-                mln_lua_error(L, "Point not found！");
+                mln_lua_error(L, @"Point not found！");
             }
             return CGPointZero;
         }
@@ -277,7 +268,7 @@ static MLN_FORCE_INLINE CGPoint __mln_lua__tocgpoint(lua_State *L, int idx,  NSE
     }
     if (error) {
         *error = [NSError mln_errorConvert:@"Point not found！"];
-        mln_lua_error(L, "Point not found！");
+        mln_lua_error(L, @"Point not found！");
     }
     return CGPointZero;
 }
@@ -286,10 +277,10 @@ static MLN_FORCE_INLINE CGSize __mln_lua_tocgsize(lua_State *L, int idx, NSError
     if (lua_isuserdata(L, idx)) {
         MLNUserData* user = lua_touserdata(L, idx);
         NSValue *value = (__bridge NSValue *)(user->object);
-        if(strcmp(value.objCType, @encode(CGRect)) != 0){
+        if(strcmp(value.objCType, @encode(CGSize)) != 0){
             if (error) {
                 *error = [NSError mln_errorConvert:@"Size not found！"];
-                mln_lua_error(L, "Size not found！");
+                mln_lua_error(L, @"Size not found！");
             }
             return CGSizeZero;
         }
@@ -322,7 +313,7 @@ static MLN_FORCE_INLINE CGSize __mln_lua_tocgsize(lua_State *L, int idx, NSError
     }
     if (error) {
         *error = [NSError mln_errorConvert:@"Size not found！"];
-        mln_lua_error(L, "Size not found！");
+        mln_lua_error(L, @"Size not found！");
     }
     return CGSizeZero;
 }
@@ -338,7 +329,7 @@ static MLN_FORCE_INLINE NSString * __mln_lua_tonsstring (lua_State *L, int idx, 
     } else {
         if (error) {
             *error = [NSError mln_errorConvert:@"string not found！"];
-            mln_lua_error(L, "string not found！");
+            mln_lua_error(L, @"string not found！");
         }
     }
     return nil;
@@ -420,7 +411,7 @@ static MLN_FORCE_INLINE id __mln_lua_toobj(lua_State* L, int idx, NSError **erro
         default: {
             if (error) {
                 *error = [NSError mln_errorConvert:@"The type is not defined！"];
-                mln_lua_error(L, "he type is not defined！");
+                mln_lua_error(L, @"he type is not defined！");
             }
             return nil;
         }

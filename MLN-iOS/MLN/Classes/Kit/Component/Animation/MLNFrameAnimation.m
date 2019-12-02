@@ -143,6 +143,7 @@
 - (void)lua_repeatCount:(NSInteger)repeatCount
 {
     self.lua_repeatCount = repeatCount;
+    self.options = self.options & ~UIViewAnimationOptionRepeat;
 }
 
 - (void)lua_startWithView:(UIView *)view
@@ -187,13 +188,14 @@
     // do
     [UIView animateWithDuration:self.duration delay:self.delay options:self.options animations:^{
         BOOL repeatIndefinitely = self.options & UIViewAnimationOptionRepeat;
-        if (self.lua_repeatCount || repeatIndefinitely) {
-            [UIView setAnimationRepeatCount:(self.lua_repeatCount == -1 || repeatIndefinitely? MAX_INT:self.lua_repeatCount)];
+        if (repeatIndefinitely || self.lua_repeatCount) {
+            [UIView setAnimationRepeatCount:(self.lua_repeatCount == -1 || repeatIndefinitely ? MAX_INT:self.lua_repeatCount)];
         }
         view.frame = endFrame;
         view.alpha = endAlpha;
         view.backgroundColor = endColor;
         [view lua_needLayoutAndSpread];
+        [view lua_changedLayout];
     } completion:^(BOOL finished) {
         BOOL repeatIndefinitely = self.options & UIViewAnimationOptionRepeat;
         if (CGRectEqualToRect(startFrame, endFrame) && startAlpha == endAlpha && CGColorEqualToColor(startColor.CGColor, endColor.CGColor) && !repeatIndefinitely) {

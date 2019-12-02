@@ -23,7 +23,7 @@
 @property (nonatomic, strong) UIColor *backgroundColor;
 @property (nonatomic, assign) BOOL statusChanged;
 @property (nonatomic, assign) MLNStyleImageAlignType imageAlign;
-@property (nonatomic, strong) NSMutableDictionary  *styleElementsDictM;
+@property (nonatomic, strong) NSMutableDictionary *styleElementsDictM;
 
 @end
 @implementation MLNStyleString
@@ -193,6 +193,7 @@
     MLNStyleElement* element = [self.styleElementsDictM objectForKey:key];
     if (!element) {
         element = [[MLNStyleElement alloc] init];
+        element.instance = [self myKitInstance];
         [self.styleElementsDictM setObject:element forKey:key];
     }
     return element;
@@ -233,7 +234,7 @@
         id<MLNImageLoaderProtocol> imageLoader = [self imageLoader];
         for (MLNStyleElement *element in imageElementArray) {
             dispatch_group_enter(imagesGroup);
-            [imageLoader view:self loadImageWithPath:element.imagePath completed:^(UIImage *image, NSError *error, NSString *imagePath) {
+            [imageLoader view:(UIView<MLNEntityExportProtocol> *)self loadImageWithPath:element.imagePath completed:^(UIImage *image, NSError *error, NSString *imagePath) {
                 if (image) {
                     element.image = image;
                     element.changed = NO;
@@ -519,6 +520,7 @@
     element.range = NSMakeRange(0, 1);
     element.imageSize = size;
     element.imagePath = imagePathString;
+    element.instance = [self myKitInstance];
     
     [self.styleElementsDictM removeAllObjects];
     [_styleElementsDictM setObject:element forKey:NSStringFromRange(element.range)];
@@ -558,7 +560,12 @@
     if (!styleElement) {
         styleElement = element;
     }
-    return [MLNFont fontWithFontName:styleElement.fontName fontStyle:styleElement.fontStyle fontSize:styleElement.fontSize];
+    return [MLNFont fontWithFontName:styleElement.fontName fontStyle:styleElement.fontStyle fontSize:styleElement.fontSize instance:[self myKitInstance]];
+}
+
+- (MLNKitInstance *)myKitInstance
+{
+    return MLN_KIT_INSTANCE(self.mln_luaCore);
 }
 
 #pragma mark - Export For Lua

@@ -14,16 +14,14 @@ NS_ASSUME_NONNULL_BEGIN
 @interface MLNSizeCahceManager<KeyType, ObjectType> : NSObject
 
 @property (nonatomic, weak, readonly) MLNKitInstance *instance;
+@property (nonatomic) NSUInteger countLimit;
 
 - (instancetype)initWithInstance:(MLNKitInstance *)instance;
 
 - (nullable ObjectType)objectForKey:(KeyType)key;
 - (void)setObject:(ObjectType)obj forKey:(KeyType)key;
 - (void)removeObjectForKey:(KeyType)key;
-
 - (void)removeAllObjects;
-
-@property NSUInteger countLimit;
 
 @end
 

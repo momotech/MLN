@@ -8,8 +8,9 @@
 #import <UIKit/UIKit.h>
 #import "MLNTextConst.h"
 
+@class MLNKitInstance;
 @interface MLNFont : NSObject
 
-+ (UIFont *)fontWithFontName:(NSString *)fontName fontStyle:(MLNFontStyle)style fontSize:(CGFloat)fontSize;
++ (UIFont *)fontWithFontName:(NSString *)fontName fontStyle:(MLNFontStyle)style fontSize:(CGFloat)fontSize instance:(MLNKitInstance *)instance;
 
 @end

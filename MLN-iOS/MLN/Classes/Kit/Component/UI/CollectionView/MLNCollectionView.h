@@ -13,7 +13,7 @@
 
 @interface MLNCollectionView : MLNScrollCallbackView <MLNEntityExportProtocol>
 
-@property (nonatomic, weak) id<MLNCollectionViewAdapterProtocol, MLNCollectionViewGridLayoutDelegate> adapter;
+@property (nonatomic, weak) id<MLNCollectionViewAdapterProtocol> adapter;
 
 @end
 

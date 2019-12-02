@@ -37,6 +37,7 @@
 
 + (void)lua_setOnNetworkStateChange:(MLNBlock *)callback
 {
+    MLNStaticCheckTypeAndNilValue(callback, @"callback", MLNBlock);
     MLNNetworkReachability *networkReachability = MLN_KIT_INSTANCE(self.mln_currentLuaCore).instanceHandlersManager.networkReachability;
     // clear
     if (networkReachability.reachabilityStatusBlock) {

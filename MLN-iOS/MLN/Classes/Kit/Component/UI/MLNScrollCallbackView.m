@@ -48,6 +48,26 @@ __VA_ARGS__;\
     return NO;
 }
 
+- (void)setLua_minWidth:(CGFloat)lua_minWidth
+{
+    MLNKitLuaAssert(NO, @"Not support 'setMinWidth' method!");
+}
+
+- (void)setLua_maxWidth:(CGFloat)lua_maxWidth
+{
+    MLNKitLuaAssert(NO, @"Not support 'setMaxWidth' method!");
+}
+
+- (void)setLua_minHeight:(CGFloat)lua_minHeight
+{
+    MLNKitLuaAssert(NO, @"Not support 'setMinHeight' method!");
+}
+
+- (void)setLua_maxHieght:(CGFloat)lua_maxHieght
+{
+    MLNKitLuaAssert(NO, @"Not support 'setMaxHeight' method!");
+}
+
 #pragma mark - ScrollView Callback
 - (void)mln_setLuaScrollEnable:(BOOL)enable
 {
@@ -57,8 +77,8 @@ __VA_ARGS__;\
 - (void)setLua_refreshEnable:(BOOL)lua_refreshEnable
 {
     SCROLLVIEW_DO(if (scrollView.lua_refreshEnable == lua_refreshEnable) {
-                    return;
-                  }
+        return;
+    }
                   scrollView.lua_refreshEnable = lua_refreshEnable;
                   id<MLNRefreshDelegate> delegate = [self getRefreshDelegate];
                   if (lua_refreshEnable) {
@@ -110,6 +130,7 @@ __VA_ARGS__;\
 
 - (void)setLua_refreshCallback:(MLNBlock *)lua_refreshCallback
 {
+    MLNCheckTypeAndNilValue(lua_refreshCallback, @"callback", MLNBlock);
     SCROLLVIEW_DO(scrollView.lua_refreshCallback = lua_refreshCallback;)
 }
 
@@ -201,6 +222,7 @@ __VA_ARGS__;\
 
 - (void)setLua_loadCallback:(MLNBlock *)lua_loadCallback
 {
+    MLNCheckTypeAndNilValue(lua_loadCallback, @"function", MLNBlock);
     SCROLLVIEW_DO(scrollView.lua_loadCallback = lua_loadCallback;)
 }
 
@@ -227,6 +249,7 @@ __VA_ARGS__;\
 
 - (void)setLua_scrollingCallback:(MLNBlock *)lua_scrollingCallback
 {
+    MLNCheckTypeAndNilValue(lua_scrollingCallback, @"function", MLNBlock);
     SCROLLVIEW_DO(scrollView.lua_scrollingCallback = lua_scrollingCallback;)
 }
 
@@ -238,6 +261,7 @@ __VA_ARGS__;\
 
 - (void)setLua_scrollEndCallback:(MLNBlock *)lua_scrollEndCallback
 {
+    MLNCheckTypeAndNilValue(lua_scrollEndCallback, @"function", MLNBlock);
     SCROLLVIEW_DO(scrollView.lua_scrollEndCallback = lua_scrollEndCallback;)
 }
 
@@ -249,6 +273,7 @@ __VA_ARGS__;\
 
 - (void)setLua_startDeceleratingCallback:(MLNBlock *)lua_startDeceleratingCallback
 {
+    MLNCheckTypeAndNilValue(lua_startDeceleratingCallback, @"function", MLNBlock);
     SCROLLVIEW_DO(scrollView.lua_startDeceleratingCallback = lua_startDeceleratingCallback;)
 }
 
@@ -260,6 +285,7 @@ __VA_ARGS__;\
 
 - (void)setLua_endDraggingCallback:(MLNBlock *)lua_endDraggingCallback
 {
+    MLNCheckTypeAndNilValue(lua_endDraggingCallback, @"function", MLNBlock);
     SCROLLVIEW_DO(scrollView.lua_endDraggingCallback = lua_endDraggingCallback;)
 }
 
@@ -277,7 +303,7 @@ __VA_ARGS__;\
                   })
 }
 
-- (void)lua_getContetnInset:(MLNBlock *)block
+- (void)lua_getContetnInset:(MLNBlock*)block
 {
     SCROLLVIEW_DO(if(block) {
         [block addFloatArgument:scrollView.contentInset.top];
@@ -288,19 +314,8 @@ __VA_ARGS__;\
     })
 }
 
-- (CGPoint)lua_contentOffset
-{
-    SCROLLVIEW_DO(return scrollView.contentOffset;)
-    return CGPointZero;
-}
-
-- (void)lua_setContentOffset:(CGPoint)contentOffset
-{
-    SCROLLVIEW_DO([scrollView setContentOffset:contentOffset];)
-}
-
-
 #pragma mark - Privious scrollView  method
+
 - (void)lua_setContentSize:(CGSize)contentSize
 {
     MLNKitLuaAssert(NO, @"The setter of 'contentSize' method is deprecated!");
@@ -345,55 +360,69 @@ __VA_ARGS__;\
     return NO;
 }
 
+
+
+#pragma mark - iOS私有方法
+- (CGPoint)lua_contentOffset
+{
+    SCROLLVIEW_DO(return scrollView.contentOffset;)
+    return CGPointZero;
+}
+
+- (void)lua_setContentOffset:(CGPoint)point
+{
+    SCROLLVIEW_DO(if(scrollView.mln_horizontal) {
+        [scrollView setContentOffset:CGPointMake(point.x, 0)];
+    } else {
+        [scrollView setContentOffset:CGPointMake(0, point.y)];
+    })
+}
+
 - (void)lua_setBounces:(BOOL)bouces
 {
-    MLNKitLuaAssert(NO, @"The 'setBounces' method is deprecated!");
     SCROLLVIEW_DO(scrollView.bounces = bouces;)
 }
 
 - (BOOL)lua_bounces
 {
-    MLNKitLuaAssert(NO, @"The 'bounces' method is deprecated!");
     SCROLLVIEW_DO(return scrollView.bounces);
     return NO;
 }
 
 - (void)lua_setAlwaysBounceHorizontal:(BOOL)bouces
 {
-    MLNKitLuaAssert(NO, @"The setter of 'alwaysBounceHorizontal' method is deprecated!");
     SCROLLVIEW_DO(scrollView.alwaysBounceHorizontal = bouces;)
 }
 
 - (BOOL)lua_alwaysBounceHorizontal
 {
-    MLNKitLuaAssert(NO, @"The getter of 'alwaysBounceHorizontal' method is deprecated!");
     SCROLLVIEW_DO(return scrollView.alwaysBounceHorizontal);
     return NO;
 }
 
 - (void)lua_setAlwaysBounceVertical:(BOOL)bouces
 {
-    MLNKitLuaAssert(NO, @"The setter of 'i_bounceVertical' method is deprecated!");
     SCROLLVIEW_DO(scrollView.alwaysBounceVertical = bouces;)
 }
 
 - (BOOL)lua_alwaysBounceVertical
 {
-    MLNKitLuaAssert(NO, @"The getter of 'i_bounceVertical' method is deprecated!");
     SCROLLVIEW_DO(return scrollView.alwaysBounceVertical);
     return NO;
 }
 
 - (void)lua_setScrollIndicatorInset:(CGFloat)top right:(CGFloat)right bottom:(CGFloat)bottom  left:(CGFloat)left
 {
-    MLNKitLuaAssert(NO, @"The 'setScrollIndicatorInset' method is deprecated!");
     SCROLLVIEW_DO(scrollView.scrollIndicatorInsets = UIEdgeInsetsMake(top, left, bottom, right);)
 }
 
 - (void)lua_setContentOffsetWithAnimation:(CGPoint)point
 {
-    MLNKitLuaAssert(NO, @"The 'setOffsetWithAnim' method is deprecated!");
-    SCROLLVIEW_DO([scrollView setContentOffset:point animated:YES];)
+    SCROLLVIEW_DO(if(scrollView.mln_horizontal) {
+        [scrollView setContentOffset:CGPointMake(point.x, 0) animated:YES];
+    } else {
+        [scrollView setContentOffset:CGPointMake(0, point.y) animated:YES];
+    })
 }
 
 @end

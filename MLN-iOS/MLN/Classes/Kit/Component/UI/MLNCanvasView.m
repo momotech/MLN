@@ -64,13 +64,13 @@
 - (void)lua_setDrawCallback:(MLNBlock *)block
 {
     self.mln_drawRectCallback = block;
-    [MLN_KIT_INSTANCE(self.mln_luaCore) pushLazyTask:self.lazyTask];
+    [self mln_pushLazyTask:self.lazyTask];
 }
 
 - (void)lua_refresh
 {
     if (self.mln_drawRectCallback) {
-        [MLN_KIT_INSTANCE(self.mln_luaCore) pushLazyTask:self.lazyTask];
+        [self mln_pushLazyTask:self.lazyTask];
     }
 }
 

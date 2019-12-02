@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="10dp">
+
+    <TextView
+        android:id="@+id/tvIp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="IP:"/>
+
+    <EditText
+        android:id="@+id/ip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="192.168.1.1"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Port:"/>
+
+    <EditText
+        android:id="@+id/port"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="numberDecimal"
+        android:hint="8173"/>
+</LinearLayout>

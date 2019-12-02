@@ -13,5 +13,6 @@
 
 @property (nonatomic, weak) MLNViewPager *viewPager;
 @property (nonatomic, assign) NSInteger cellCounts;
+@property (nonatomic, weak) UICollectionView *targetCollectionView;
 
 @end
