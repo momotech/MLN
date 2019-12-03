@@ -137,31 +137,19 @@ function _class:setupCollectionViewAdapter()
         local rank = item:get("rank") or 0
         cell._cell.imageView:image(item:get("album_500_500"))
         cell._cell.titleLabel:text(item:get("title"))
-        cell._cell.countLabel:text(string.format("%s篇", rank + 1))
-        cell._cell.lookLabel:text(string.format("%d", item:get("file_duration")))
 
-        if rank and tonumber(rank) < 2 then
-            cell._cell:updateContentIcons(nil)
-        else
-            cell._cell:updateContentCountText(rank)
-            cell._cell:updateContentIcons(item:get("pic_small"))
-        end
+        cell._cell:updateContentCountText(rank)
+        cell._cell:updateContentIcons(item:get("pic_small"))
     end)
 
     adapter:heightForCell(function(_, row)
-        local item = self.dataList:get(row)
-        local rank = item:get("rank") or 0
-        if rank and tonumber(rank) < 2 then
-            return cellWidth + 75
-        end
-        return cellWidth + 90
-
+        return cellWidth + 60
     end)
     adapter:selectedRowByReuseId(cellReuseId, function(cell, _, row)
         --Toast(self.dataList:get(row):get("title"), 1)
         --self:gotoDetailView()
         if System:Android() then
-            Navigator:gotoPage("file://android_asset/MMLuaKitGallery/IdeaMassView.lua", Map(),AnimType.RightToLeft)
+            Navigator:gotoPage("file://android_asset/MMLuaKitGallery/IdeaMassView.lua", Map(), AnimType.RightToLeft)
         else
             Navigator:gotoPage("IdeaMassMainView.lua", nil, 0)
         end
@@ -239,13 +227,13 @@ function _class:requestNetwork(first, complete)
         File:asyncReadFile('file://gallery/json/musicRank.json', function(codeNumber, response)
             map = StringUtil:jsonToMap(response)
             if codeNumber == 0 then
-            local data = map:get("result")
-            if first then
-                self.dataList = data
-            elseif data then
-                self.dataList:addAll(data)
-            end
-            complete(true, data)
+                local data = map:get("result")
+                if first then
+                    self.dataList = data
+                elseif data then
+                    self.dataList:addAll(data)
+                end
+                complete(true, data)
             else
                 --error(err:get("errmsg"))
                 complete(false, nil)
