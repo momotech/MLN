@@ -33,6 +33,14 @@ Pod::Spec.new do |s|
     s.requires_arc = true
     s.public_header_files = 'MLN-iOS/MLNDevTool/Classes/*.h'
     
+    s.subspec 'Protobuf' do |pb|
+      pb.name = 'Protobuf'
+      pb.source_files = 'MLN-iOS/MLNDevTool/Classes/Protobuf/**/*.{h,m,c}'
+      pb.public_header_files = 'MLN-iOS/MLNDevTool/Classes/Protobuf/**/*.h'
+      pb.dependency 'Protobuf', '~> 3.6.0'
+      pb.requires_arc = false
+    end
+    
     s.subspec 'DevTool' do |d|
       d.name = 'DevTool'
       d.source_files = 'MLN-iOS/MLNDevTool/Classes/DevTool/**/*.{h,m,c}'
@@ -41,6 +49,7 @@ Pod::Spec.new do |s|
         'MLNDevTool_Util' => 'MLN-iOS/MLNDevTool/Classes/DevTool/Util/**/Assets/*.{png,lua,xib,storyboard}',
         'MLNDevTool_UI' => 'MLN-iOS/MLNDevTool/Classes/DevTool/UI/**/Assets/*.{png,xib}'
       }
+      d.dependency 'MLN'
     end
 
     s.subspec 'Performance' do |perf|
@@ -55,15 +64,8 @@ Pod::Spec.new do |s|
       conn.framework = 'Foundation', 'UIKit', 'CoreGraphics', 'AVFoundation'
       conn.source_files = 'MLN-iOS/MLNDevTool/Classes/Conn/**/*.{h,m,c}'
       conn.public_header_files = 'MLN-iOS/MLNDevTool/Classes/Conn/**/*.h'
+      conn.dependency  'MLNDevTool/Protobuf'
       conn.dependency 'Protobuf', '~> 3.6.0'
-    end
-    
-    s.subspec 'Protobuf' do |pb|
-      pb.name = 'Protobuf'
-      pb.source_files = 'MLN-iOS/MLNDevTool/Classes/Protobuf/**/*.{h,m,c}'
-      pb.public_header_files = 'MLN-iOS/MLNDevTool/Classes/Protobuf/**/*.h'
-      pb.dependency 'Protobuf', '~> 3.6.0'
-      pb.requires_arc = false
     end
     
     s.subspec 'Offline' do |o|
@@ -74,6 +76,7 @@ Pod::Spec.new do |s|
           'MLNDevTool_Offline' => 'MLN-iOS/MLNDevTool/Classes/Offline/**/Assets/*.{png,lua,xib}'
         }
         o.dependency  'MLNDevTool/DevTool'
+        o.dependency 'MLN'
     end
     
     s.subspec 'HotReload' do |h|
@@ -82,6 +85,7 @@ Pod::Spec.new do |s|
         h.source_files = 'MLN-iOS/MLNDevTool/Classes/HotReload/**/*.{h,m,c}'
         h.public_header_files = 'MLN-iOS/MLNDevTool/Classes/HotReload/**/*.h'
         h.dependency  'MLNDevTool/DevTool'
+        h.dependency  'MLNDevTool/Conn'
         h.resource_bundles = {
           'MLNDevTool_HotReload' => 'MLN-iOS/MLNDevTool/Classes/HotReload/**/Assets/*.{png,xib}'
         }
