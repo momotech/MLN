@@ -11,8 +11,7 @@ MLN是一个移动跨平台开发框架，让开发者用一套代码构建Andro
 1. 获取库文件  
 ```
 git clone https://github.com/momotech/MLN
-```  
-或者直接[下载](https://github.com/momotech/MLN/archive/master.zip)并解压
+``` 
 
 2. 目录结构介绍  
 
@@ -27,29 +26,29 @@ git clone https://github.com/momotech/MLN
 4. 运行效果如图所示  
 
 <p>
-    <img src="/attach/5dcd3319052c7.png" width="200"/>
+    <img src="https://s.momocdn.com/w/u/others/custom/LuaNative/readme1.png" width="200"/>
 	<p>iOS</p>
 </p>
 <p>
-    <img src="/attach/5dcd35266c0c4.png" width="200"/>
+    <img src="https://s.momocdn.com/w/u/others/custom/LuaNative/readme2.png" width="200"/>
 	<p>Android</p>
 </p>
 
 ## 开发环境搭建
 MLN推荐使用IDEA进行开发，IDEA安装插件后可以使用热重载方式进行页面预览
-[配置指南](https://moji.wemomo.com/doc#/detail/93755)
+[配置指南](https://github.com/momotech/MLN/wiki/MLN%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA)
 
 ## SDK接入
-* [iOS](https://moji.wemomo.com/doc#/detail/93928)
-* [Android](https://mln.immomo.com/zh-cn/docs/Android%E6%8E%A5%E5%85%A5%E6%96%B9%E6%B3%95.html)
+* [iOS](https://github.com/momotech/MLN/wiki/sdk%E6%8E%A5%E5%85%A5)
+* [Android](https://github.com/momotech/MLN/wiki/sdk%E6%8E%A5%E5%85%A5)
 
 ## IDE插件、Demo和开发工具
 [IDEA](http://www.jetbrains.com/idea/download/#section=mac)
-[IDEA热重载插件](https://github.com/dingpuyu/MLN_Toolkit/blob/master_image_source/component/LuaNative.zip?raw=true)
+[IDEA热重载插件](https://s.momocdn.com/w/u/others/custom/LuaNative/MomoLuaNative.zip)
 
 ## 开发体验
 MLN支持热重载开发方式，修改代码，立即生效，免去编译等待阶段
-![热重载.gif](/attach/5dc9229e796d9.gif)
+![热重载.gif](https://s.momocdn.com/w/u/others/custom/LuaNative/readme3.gif)
 
 ## 如何交流
 
