@@ -41,7 +41,7 @@ public class LoadWithTextView extends LinearLayout implements ILoadWithTextView 
     private TextView textView;
 
     private void init(Context context) {
-        LinearLayout.LayoutParams lp=new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        LayoutParams lp=new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         imageView =new ImageView(context);
         imageView.setLayoutParams(lp);
         imageView.setBackgroundResource(R.drawable.lv_default_progress);

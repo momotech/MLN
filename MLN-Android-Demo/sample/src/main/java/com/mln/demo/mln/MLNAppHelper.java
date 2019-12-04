@@ -11,7 +11,6 @@ import com.immomo.mls.global.LVConfigBuilder;
 import com.immomo.mls.util.AndroidUtil;
 import com.immomo.mls.wrapper.Register;
 import com.mln.demo.App;
-import com.mln.demo.BuildConfig;
 import com.mln.demo.mln.anr.AnrWatchDog;
 import com.mln.demo.mln.common.LTFileExtends;
 import com.mln.demo.mln.common.MLSLoadViewAdapterImpl;
@@ -20,8 +19,6 @@ import com.mln.demo.mln.provider.GlideImageProvider;
 import org.luaj.vm2.Globals;
 
 import java.io.File;
-
-import static com.immomo.mls.util.FileUtil.getCacheDir;
 
 /**
  * Created by zhang.ke

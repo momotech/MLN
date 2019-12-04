@@ -4,13 +4,16 @@ android {
     compileSdkVersion project.compileSdkVersion
     buildToolsVersion project.buildToolsVersion
     defaultConfig {
+        multiDexEnabled true
         minSdkVersion project.minSdkVersion
         targetSdkVersion project.targetSdkVersion
         versionCode 1
         versionName "1.0"
-//        ndk {
-//            abiFilters "armeabi-v7a"
-//        }
+        if (!getBuildConfigFields()?.containsKey('externalLibraryName')) {
+            buildConfigField "String", "externalLibraryName", "\"\""
+            buildConfigField "String", "sdkType", "\"" + project.sdkType + "\""
+        }
+
     }
     signingConfigs {
         release {
@@ -33,11 +36,18 @@ android {
         jniLibs.srcDir 'src/main/libs'
         jni.srcDirs = []
     }
-
     defaultConfig {
         ndk {
-            abiFilters "armeabi-v7a"
+            if (project.sdkType == "weex") {
+                abiFilters "arm64-v8a", "armeabi-v7a"
+            } else {
+                abiFilters "armeabi-v7a"
+            }
         }
+    }
+
+    aaptOptions {
+        noCompress 'wasm'
     }
 }
 
@@ -51,10 +61,28 @@ dependencies {
     implementation "com.google.protobuf:protobuf-lite:$protobufVersion"
     testImplementation 'junit:junit:4.12'
 
-
     implementation "com.immomo.mlncore:core:$mlnCoreVersion"
     implementation "com.immomo.mls:mln:$mlnsVersion"
     debugImplementation "com.immomo.luanative:hotreload:$hotreloadVersion"
     releaseImplementation "com.immomo.luanative:hotreload_empty:$hotreloadVersion"
     annotationProcessor "com.immomo.mls:processor:$processorVersion"
+
+    implementation 'com.squareup.picasso:picasso:2.5.2'
+    implementation 'com.facebook.fresco:fresco:0.12.0+'
+    implementation 'com.facebook.fresco:animated-gif:0.12.0'
+
+    implementation "com.android.support:support-v4:${project.supportLibVersion}"
+    implementation 'com.taobao.android.weex_inspection:urlconnection_interceptor:1.0.0'
+    implementation 'com.taobao.android.weex_inspection:protocol:1.1.4.1'
+    implementation 'com.android.support.test.espresso:espresso-idling-resource:2.2.2'
+    implementation 'com.taobao.android:weex_inspector:0.24.2.4'
+
+    implementation 'com.alibaba.android:bindingx-core:1.1.1.2@aar'
+    implementation 'com.alibaba.android:bindingx_weex_plugin:1.1.1@aar'
+    implementation "org.apache.weex:sdk_legacy:${project.weexSdkVersion}"
+
+    implementation 'com.taobao.android:weex_analyzer:0.1.0.5'
+    implementation 'com.squareup.okhttp:okhttp:2.3.0'
+    implementation 'com.squareup.okhttp:okhttp-ws:2.3.0'
 }
+
