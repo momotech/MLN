@@ -8,7 +8,7 @@ MLN是一个移动跨平台开发框架，让开发者用一套代码构建Andro
 * 真正的原生性能。跨平台往往意味着性能受损，得益于lua虚拟机的高性能和MLN优化，我们极大减少了中间介质影响，即使在低端安卓手机加载页面也极快。
 
 ## Demo运行
-*[Demo运行](https://github.com/momotech/MLN/wiki/Demo%E8%BF%90%E8%A1%8C)
+通过Demo了解MLN，前往[Demo运行](https://github.com/momotech/MLN/wiki/Demo%E8%BF%90%E8%A1%8C)
 
 ## 开发环境搭建
 MLN推荐使用IDEA进行开发，IDEA安装插件后可以使用热重载方式进行页面预览
@@ -19,8 +19,8 @@ MLN推荐使用IDEA进行开发，IDEA安装插件后可以使用热重载方式
 * [Android](https://github.com/momotech/MLN/wiki/sdk%E6%8E%A5%E5%85%A5)
 
 ## IDE插件、Demo和开发工具
-*[IDEA](http://www.jetbrains.com/idea/download/#section=mac)
-*[IDEA热重载插件](https://s.momocdn.com/w/u/others/custom/LuaNative/MomoLuaNative.zip)
+* [IDEA](http://www.jetbrains.com/idea/download/#section=mac)
+* [IDEA热重载插件](https://s.momocdn.com/w/u/others/custom/LuaNative/MomoLuaNative.zip)
 
 ## 开发体验
 MLN支持热重载开发方式，修改代码，立即生效，免去编译等待阶段
