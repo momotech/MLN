@@ -55,6 +55,7 @@ typedef enum : NSUInteger {
 {
     MLNCheckTypeAndNilValue(titles, @"Array", [NSMutableArray class])
     MLNCheckTypeAndNilValue(callback, @"function", MLNBlock)
+    MLNLuaAssert(self.mln_luaCore, titles && titles.count >= 1, @"The number of button titles must be no less than one！");
     self.type = MLNAlertTypeMultiple;
     self.multipleTitles = titles;
     self.callback = callback;
