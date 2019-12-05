@@ -55,7 +55,6 @@ typedef enum : NSUInteger {
 {
     MLNCheckTypeAndNilValue(titles, @"Array", [NSMutableArray class])
     MLNCheckTypeAndNilValue(callback, @"function", MLNBlock)
-    MLNLuaAssert(self.mln_luaCore, titles && titles.count > 1, @"The number of button titles must be no less than one！");
     self.type = MLNAlertTypeMultiple;
     self.multipleTitles = titles;
     self.callback = callback;
@@ -79,7 +78,7 @@ typedef enum : NSUInteger {
             break;
         }
         case MLNAlertTypeMultiple:{
-            MLNLuaAssert(self.mln_luaCore, self.multipleTitles.count > 1, @"The number of button titles must be no less than one！");
+            MLNLuaAssert(self.mln_luaCore, self.multipleTitles.count >= 1, @"The number of button titles must be no less than one！");
             alertView = [[UIAlertView alloc] initWithTitle:self.title message:self.message delegate:self cancelButtonTitle:nil otherButtonTitles:nil];
             for (NSString *title in self.multipleTitles) {
                 [alertView addButtonWithTitle:title];
