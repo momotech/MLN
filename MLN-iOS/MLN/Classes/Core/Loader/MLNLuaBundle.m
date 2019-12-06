@@ -68,7 +68,11 @@
 
 - (NSString *)filePathWithName:(NSString *)name
 {
-    return [self.currentBundle pathForResource:name ofType:nil];
+    NSString *filePath = [self.currentBundle pathForResource:name ofType:nil];
+    if (filePath == nil && name != nil) {
+        filePath = [[self bundlePath] stringByAppendingPathComponent:name];
+    }
+    return filePath;
 }
 
 - (NSString *)bundlePath
