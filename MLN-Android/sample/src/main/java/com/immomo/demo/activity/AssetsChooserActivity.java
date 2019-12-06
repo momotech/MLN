@@ -16,6 +16,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 
+import com.immomo.mls.Constants;
 import com.immomo.mls.InitData;
 import com.immomo.mls.MLSBundleUtils;
 import com.immomo.mls.activity.LuaViewActivity;
@@ -89,6 +90,6 @@ public class AssetsChooserActivity extends ListActivity {
     }
 
     private String getFileName(String n) {
-        return "file://android_asset/" + (TextUtils.isEmpty(folderName) ? n : '/' + n);
+        return Constants.ASSETS_PREFIX + (TextUtils.isEmpty(folderName) ? n : folderName + File.separator + n);
     }
 }
