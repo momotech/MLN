@@ -32,7 +32,12 @@
         <activity
             android:name=".LauncherActivity"
             android:theme="@style/AppTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.VIEW" />
 
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
         <!-- .performance.EmptyActivity    .activity.LuaViewActivity -->
         <activity
@@ -40,12 +45,7 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.StartingWindowTheme"
             android:windowSoftInputMode="adjustPan|stateAlwaysHidden">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <action android:name="android.intent.action.VIEW" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
 
         <activity android:name=".android.activity.MainTabActivity">
