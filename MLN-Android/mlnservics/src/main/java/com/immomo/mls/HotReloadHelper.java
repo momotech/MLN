@@ -391,7 +391,8 @@ public class HotReloadHelper {
 
     public static void addCallback(Callback c) {
         if (!MLSEngine.DEBUG) return;
-        callbacks.add(c);
+        if (!callbacks.contains(c))
+            callbacks.add(c);
         connect(true);
     }
 
