@@ -1,8 +1,8 @@
 <resources>
     <string name="app_name">LuaNative</string>
 
-    <string name="btn_inner_instance">内部实例</string>
-    <string name="btn_demo">Demo</string>
+    <string name="btn_inner_instance">例子</string>
+    <string name="btn_demo">Demo工程</string>
     <string name="wait">请稍后</string>
     <string name="dev_debug_tv_value">热重载</string>
 </resources>
