@@ -15,16 +15,19 @@ import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.os.Build;
+import android.view.SurfaceView;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import com.immomo.mls.MLSConfigs;
 import com.immomo.mls.fun.ud.view.IBorderRadius;
 import com.immomo.mls.fun.ud.view.IClipRadius.ClipLevel;
 import com.immomo.mls.fun.ud.view.IClipRadius.CornerType;
 
+import static android.graphics.Path.FillType.INVERSE_EVEN_ODD;
 import static com.immomo.mls.fun.ud.view.IClipRadius.LEVEL_FORCE_CLIP;
 import static com.immomo.mls.fun.ud.view.IClipRadius.LEVEL_FORCE_NOTCLIP;
 import static com.immomo.mls.fun.ud.view.IClipRadius.LEVEL_NORMAL_CLIP;
@@ -50,16 +53,37 @@ public class ViewClipHelper {
     private static final Rect canvasBounds = new Rect();
 
     @NonNull
-    private final Path clipPath = new Path();
-    @NonNull
     private final RectF clipRect = new RectF();
     @NonNull
     private final float[] radii = new float[8];
     @NonNull
     private final RadiusDrawer radiusDrawer;
 
-    private final Paint clipPaint;
-    private final PorterDuffXfermode duffXfermode;
+    @NonNull
+    private final Path clipPath = new Path();
+    @NonNull
+    private final Path surfaceViewClipPath = new Path();
+
+    @NonNull
+    private static final Paint clipPaint;
+    @NonNull
+    private static final Paint surfaceViewClipPaint;
+    static {
+        final PorterDuffXfermode CLEAR = new PorterDuffXfermode(PorterDuff.Mode.CLEAR);
+        final PorterDuffXfermode mode;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            mode = CLEAR;
+        } else {
+            mode = new PorterDuffXfermode(PorterDuff.Mode.DST_IN);
+        }
+        clipPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        clipPaint.setStyle(Paint.Style.FILL_AND_STROKE);
+        clipPaint.setXfermode(mode);
+
+        surfaceViewClipPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        surfaceViewClipPaint.setStyle(Paint.Style.FILL_AND_STROKE);
+        surfaceViewClipPaint.setXfermode(CLEAR);
+    }
 
     private boolean doNotClip = MLSConfigs.defaultNotClip;
     /**
@@ -70,22 +94,15 @@ public class ViewClipHelper {
     private boolean hasRadius = false;//是否设置了圆角，默认false
     private int forceClipLevel = LEVEL_NORMAL_CLIP;//切割等级
     private int cornerType = TYPE_CORNER_NONE;//圆角类型
+    private boolean isTextView;
 
     public ViewClipHelper() {
         this(null);
     }
 
-    public ViewClipHelper(@Nullable View view) {
+    public ViewClipHelper(View v) {
         radiusDrawer = new RadiusDrawer();
-        //先绘制imageView本身，后绘制clipPath,所以选择DST_IN模式
-        duffXfermode = new PorterDuffXfermode(PorterDuff.Mode.DST_IN);
-        clipPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        clipPaint.setAntiAlias(true);
-        clipPaint.setStyle(Paint.Style.FILL);
-        clipPaint.setXfermode(duffXfermode);//DST_IN模式
-        if (view != null)
-            view.setLayerType(View.LAYER_TYPE_HARDWARE, clipPaint);
-
+        isTextView = (v instanceof TextView);
     }
 
     public void setDrawRadiusBackground(boolean draw) {
@@ -136,6 +153,7 @@ public class ViewClipHelper {
         lastExtraRadius = extraRadius;
         if (lastWidth == 0 || lastHeight == 0) {
             clipPath.reset();
+            surfaceViewClipPath.reset();
             return;
         }
         float clipTLRadius = topLeftRadius;
@@ -147,12 +165,17 @@ public class ViewClipHelper {
             return;
         }
         clipPath.reset();
+        surfaceViewClipPath.reset();
         clipRect.set(0, 0, w, h);
         radii[0] = radii[1] = clipTLRadius;
         radii[2] = radii[3] = clipTRRadius;
         radii[4] = radii[5] = clipBRRadius;
         radii[6] = radii[7] = clipBLRadius;
         clipPath.addRoundRect(clipRect, radii, Path.Direction.CW);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            this.clipPath.setFillType(INVERSE_EVEN_ODD);
+        }
+        surfaceViewClipPath.addRoundRect(clipRect, radii, Path.Direction.CW);
     }
 
     public boolean needClicp() {
@@ -161,6 +184,10 @@ public class ViewClipHelper {
     }
 
     public void clip(@NonNull Canvas canvas, SuperDrawAction action) {
+        clip(canvas, action, false);
+    }
+
+    public void clip(@NonNull Canvas canvas, SuperDrawAction action, boolean containSurface) {
         if (cornerType == TYPE_CORNER_MASK) {
             action.innerDraw(canvas);
             radiusDrawer.clip(canvas);
@@ -187,7 +214,17 @@ public class ViewClipHelper {
             action.innerDraw(canvas);
             return;
         }
-        // 使用离屏缓存，新建一个srcRectF区域大小的图层
+
+        if (containSurface) {
+            canvas.drawPath(surfaceViewClipPath, surfaceViewClipPaint);
+        }
+        if (isTextView && Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            canvas.save();
+            canvas.clipPath(clipPath);
+            action.innerDraw(canvas);
+            canvas.restore();
+            return;
+        }
         canvas.getClipBounds(canvasBounds); /// 某些view(textview且设置了setGravity)，canvas的原点不在(0,0)
         clipRect.offset(canvasBounds.left, canvasBounds.top);
         int sc = canvas.saveLayer(clipRect, null, Canvas.ALL_SAVE_FLAG);
@@ -199,5 +236,25 @@ public class ViewClipHelper {
 
     public interface SuperDrawAction {
         void innerDraw(Canvas canvas);
+    }
+
+    private static boolean containsSurfaceView(@NonNull ViewGroup parent, boolean detectOnlyChild) {
+        int childCount = parent.getChildCount();
+        for (int i = 0; i < childCount; i = i + 1) {
+            if (parent.getChildAt(i) instanceof SurfaceView) {
+                return true;
+            }
+        }
+        if (childCount == 1 && detectOnlyChild) {
+            View onlyChild = parent.getChildAt(0);
+            if (onlyChild instanceof ViewGroup) {
+                return containsSurfaceView((ViewGroup) onlyChild, false);
+            }
+        }
+        return false;
+    }
+
+    public static boolean containsSurfaceView(@NonNull ViewGroup parent) {
+        return containsSurfaceView(parent, true);
     }
 }

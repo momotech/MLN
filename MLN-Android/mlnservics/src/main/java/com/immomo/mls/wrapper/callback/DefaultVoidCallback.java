@@ -9,7 +9,6 @@ package com.immomo.mls.wrapper.callback;
 
 import com.immomo.mls.wrapper.IJavaObjectGetter;
 
-import org.luaj.vm2.Globals;
 import org.luaj.vm2.LuaFunction;
 
 /**
@@ -19,12 +18,10 @@ import org.luaj.vm2.LuaFunction;
  *
  * 回调Lua方法，不关心返回值
  */
-public class DefaultVoidCallback implements IVoidCallback {
-
-    protected LuaFunction luaFunction;
+public class DefaultVoidCallback extends BaseCallback implements IVoidCallback {
 
     public DefaultVoidCallback(LuaFunction f) {
-        luaFunction = f;
+        super(f);
     }
 
     public static final IJavaObjectGetter<LuaFunction, IVoidCallback> G = new IJavaObjectGetter<LuaFunction, IVoidCallback>() {
@@ -36,27 +33,12 @@ public class DefaultVoidCallback implements IVoidCallback {
 
     @Override
     public void callback(Object... params) {
-        Utils.check(luaFunction);
-        Utils.invoke(luaFunction, params);
+        invoke(params);
     }
 
     @Override
     public void callbackAndDestroy(Object... params) {
-        Utils.check(luaFunction);
-        Utils.invoke(luaFunction, params);
-        luaFunction.destroy();
-        luaFunction = null;
-    }
-
-    @Override
-    public void destroy() {
-        if (luaFunction != null)
-            luaFunction.destroy();
-        luaFunction = null;
-    }
-
-    @Override
-    public Globals getGlobals() {
-        return luaFunction != null ? luaFunction.getGlobals() : null;
+        invoke(params);
+        destroy();
     }
 }

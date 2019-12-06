@@ -16,7 +16,7 @@ import com.immomo.mls.wrapper.GlobalsContainer;
  * <p>
  * 回调Lua方法，不关心返回值
  */
-public interface IVoidCallback extends Destroyable, GlobalsContainer {
+public interface IVoidCallback extends Destroyable, ICheckDestroy, GlobalsContainer {
     /**
      * 回调lua方法
      *

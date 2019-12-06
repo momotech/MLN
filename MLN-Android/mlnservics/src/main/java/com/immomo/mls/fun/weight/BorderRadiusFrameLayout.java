@@ -181,7 +181,7 @@ public class BorderRadiusFrameLayout extends ForegroundFrameLayout implements IB
     @Override
     public void draw(Canvas canvas) {
         if (viewClipHelper.needClicp()) {
-            viewClipHelper.clip(canvas, this);
+            viewClipHelper.clip(canvas, this, ViewClipHelper.containsSurfaceView(this));
         } else {
             super.draw(canvas);
         }

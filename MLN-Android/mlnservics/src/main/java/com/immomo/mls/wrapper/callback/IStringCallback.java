@@ -16,7 +16,7 @@ import com.immomo.mls.wrapper.GlobalsContainer;
  *
  * 回调Lua方法，返回值为String类型
  */
-public interface IStringCallback extends Destroyable, GlobalsContainer {
+public interface IStringCallback extends Destroyable, ICheckDestroy,  GlobalsContainer {
     /**
      * 回调lua方法
      * @param params 参数

@@ -42,29 +42,55 @@ public class ErrorUtils {
 
     //<editor-fold desc="不中断后续代码">
     public static void debugDeprecatedSetter(String s, Globals globals) {
+        Throwable t = new UnsupportedOperationException("The setter of '" + s + "' method is deprecated!");
         if (MLSEngine.DEBUG) {
-            Environment.error(new UnsupportedOperationException("The setter of '" + s + "' method is deprecated!"), globals);
+            Environment.error(t, globals);
+        } else {
+            Environment.callbackError(t, globals);
         }
     }
 
     public static void debugDeprecatedMethodHook(String method, Globals globals) {
+        Throwable t = new UnsupportedOperationException("The method '" + method + "' is deprecated!");
         if (MLSEngine.DEBUG) {
-            Environment.hook(new UnsupportedOperationException("The method '" + method + "' is deprecated!"), globals);
+            Environment.error(t, globals);
+        } else {
+            Environment.callbackError(t, globals);
+        }
+    }
+
+    public static void debugDeprecateMethod(String old, String newMethod, Globals globals) {
+        Throwable t = new UnsupportedOperationException("The method '" + old + "' is deprecated, use " + newMethod + " instead!");
+        if (MLSEngine.DEBUG) {
+            Environment.error(t, globals);
+        } else {
+            Environment.callbackError(t, globals);
         }
     }
 
     public static void debugDeprecatedGetter(String s, Globals globals) {
+        Throwable t = new UnsupportedOperationException("The getter of '" + s + "' method is deprecated!");
         if (MLSEngine.DEBUG) {
-            Environment.error(new UnsupportedOperationException("The getter of '" + s + "' method is deprecated!"), globals);
+            Environment.error(t, globals);
+        } else {
+            Environment.callbackError(t, globals);
+        }
+    }
+
+    public static void debugLuaError(String msg, Globals g) {
+        if (MLSEngine.DEBUG) {
+            Environment.error(AlertForDebug.showInDebug(msg), g);
+        } else {
+            Environment.callbackError(AlertForDebug.showInDebug(msg), g);
         }
     }
 
     /**
-     * 抛出强提醒，不抛出异常，不影响之后的代码逻辑
+     * 抛出强提醒，不抛出异常
      */
-    public static void debugLuaError(String msg, Globals g) {
+    public static void debugAlert(String msg, Globals g) {
         if (MLSEngine.DEBUG) {
-            Environment.error(AlertForDebug.showInDebug(msg), g);
+            Environment.error(AlertForDebug.showInDebug("DEBUG⚠️: " + msg), g);
         }
     }
     //</editor-fold>

@@ -132,9 +132,10 @@ public class TextDotTabInfoLua extends BaseTabLayout.TabInfo {
     }
 
     public void setTitleColor(int color) {
-        if (titleTextView == null) {
+        if (titleTextView == null || color == titleTextView.getTextColors().getDefaultColor()) {
             return;
         }
+
         titleTextView.setTextColor(color);
     }
 }

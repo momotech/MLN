@@ -27,6 +27,7 @@ import com.immomo.mls.annotation.LuaBridge;
 import com.immomo.mls.annotation.LuaClass;
 import com.immomo.mls.fun.constants.NavigatorAnimType;
 import com.immomo.mls.util.FileUtil;
+import com.immomo.mls.util.RelativePathUtils;
 import com.immomo.mls.wrapper.callback.IVoidCallback;
 
 import org.luaj.vm2.Globals;
@@ -45,7 +46,6 @@ import androidx.annotation.Nullable;
  */
 @LuaClass
 public class SINavigator implements NavigatorAnimType {
-    private final String ASSETS_PREFIX = "file://android_asset/";
     public static final String LUA_CLASS_NAME = "Navigator";
 
     private int requestCode = Integer.MAX_VALUE;
@@ -113,17 +113,16 @@ public class SINavigator implements NavigatorAnimType {
         if (TextUtils.isEmpty(action)) {
             return;
         }
-        if (FileUtil.isLocalUrl(action)) {//相对路径转化
-            if (!action.endsWith(".lua")) {
-                action = action + ".lua";
+        if (!action.endsWith(Constants.POSTFIX_LUA)) {
+            action = action + Constants.POSTFIX_LUA;
+        }
+        if (RelativePathUtils.isLocalUrl(action)) {//相对路径转化
+            if (!action.startsWith(Constants.ASSETS_PREFIX)) {//Android的asset目录，不作为相对路径
+                action = RelativePathUtils.getAbsoluteUrl(action);
             }
-            if (!action.startsWith(ASSETS_PREFIX)) {//Android的asset目录，不作为相对路径
-                action = FileUtil.getAbsoluteUrl(action);
-            }
+        } else if (RelativePathUtils.isAssetUrl(action)) {
+            action = Constants.ASSETS_PREFIX + RelativePathUtils.getAbsoluteAssetUrl(action);
         } else if (!action.startsWith("http")) {//绝对路径、单文件名，判断后缀
-            if (!action.endsWith(".lua")) {
-                action = action + ".lua";
-            }
             String localUrl = ((LuaViewManager) globals.getJavaUserdata()).baseFilePath;
             File entryFile = new File(localUrl, action);//入口文件路径
             if (entryFile.exists()) {

@@ -7,28 +7,23 @@
   */
 package com.immomo.demo.activity;
 
-import android.Manifest;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.View;
 
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-
-import com.google.zxing.client.android.CaptureActivity;
 import com.immomo.mln.R;
+import com.immomo.mls.Constants;
 import com.immomo.mls.HotReloadHelper;
+import com.immomo.mls.InitData;
+import com.immomo.mls.MLSBundleUtils;
 import com.immomo.mls.MLSEngine;
+import com.immomo.mls.activity.LuaViewActivity;
 
 public class MainActivity extends BaseActivity implements View.OnClickListener{
     private static final String URL_COURSE = "https://mln.immomo.com/zh-cn/docs/build_dev_environment.html";
     private static final String URL_INSTANCE = "https://mln.immomo.com/zh-cn/api/NewListView.lua.html";
-    private static final String URL_CONSULT = "https://github.com/wemomo";
+    private static final String URL_CONSULT = "https://github.com/momotech/MLN";
     private static final String URL_ABOUT = "https://mln.immomo.com/zh-cn/";
-
-    private static final long DOUBLE_TIME = 1000;
-    private static long lastClickTime = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,43 +31,24 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
         setContentView(R.layout.activity_main);
         initView();
 
-        if (MLSEngine.DEBUG)
-            findViewById(R.id.tvDevDebug).setVisibility(View.VISIBLE);
+        findViewById(R.id.tvDevDebug).setVisibility(MLSEngine.DEBUG ? View.VISIBLE : View.GONE);
     }
 
     private void initView() {
-        findViewById(R.id.btnOpenQr).setOnClickListener(this);
+        findViewById(R.id.tvInnerDemo).setOnClickListener(this);
         findViewById(R.id.tvCourse).setOnClickListener(this);
         findViewById(R.id.tvInstance).setOnClickListener(this);
         findViewById(R.id.tvConsult).setOnClickListener(this);
         findViewById(R.id.tvAbout).setOnClickListener(this);
         findViewById(R.id.tvDevDebug).setOnClickListener(this);
-        findViewById(R.id.imgLogo).setOnClickListener(this);
+        findViewById(R.id.tvDemo).setOnClickListener(this);
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.imgLogo:
-                if (!MLSEngine.DEBUG)
-                    return;
-
-                long currentTimeMillis = System.currentTimeMillis();
-                if (currentTimeMillis - lastClickTime < DOUBLE_TIME) {
-
-                }
-                lastClickTime = currentTimeMillis;
-                break;
-
-            case R.id.btnOpenQr:
-                if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.CAMERA,Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
-                } else if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
-                } else {
-                    HotReloadHelper.setConnectListener(this);
-                    startActivity(new Intent(MainActivity.this, CaptureActivity.class));
-                }
+            case R.id.tvInnerDemo:
+                AssetsChooserActivity.startActivity(this, "inner_demo");
                 break;
             case R.id.tvCourse:
                 WebActivity.startActivity(this,URL_COURSE);
@@ -86,10 +62,15 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
             case R.id.tvAbout:
                 WebActivity.startActivity(this,URL_ABOUT);
                 break;
-
             case R.id.tvDevDebug:
                 HotReloadHelper.setConnectListener(this);
                 startTeach(true);
+                break;
+            case R.id.tvDemo:
+                Intent intent = new Intent(this, LuaViewActivity.class);
+                InitData initData = MLSBundleUtils.createInitData(Constants.ASSETS_PREFIX + "MMLuaKitGallery/meilishuo.lua");
+                intent.putExtras(MLSBundleUtils.createBundle(initData));
+                startActivity(intent);
                 break;
         }
     }

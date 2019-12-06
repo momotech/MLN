@@ -1,0 +1,51 @@
+
+local timer = Timer()
+timer:interval(1)
+timer:repeatCount(100)
+
+local count = 0
+Color_White = Color(255, 255, 255, 1)
+Color_Gray = Color(105, 105, 105, 1)
+
+local label1 = Label()
+label1:frame(Rect(10, 20, 200, 50))
+label1:text("start - 定时器开始")
+label1:bgColor(Color_Gray):textColor(Color_White)
+window:addView(label1)
+label1:onClick(function()
+    timer:start(function()
+        print(count)
+        count = count+1
+    end)
+end)
+
+local label2 = Label()
+label2:frame(Rect(10, 80, 200, 50))
+label2:text("pause - 暂停")
+label2:bgColor(Color_Gray):textColor(Color_White)
+window:addView(label2)
+label2:onClick(function()
+    print("暂停定时器")
+    timer:pause()
+end)
+
+local label3 = Label()
+label3:frame(Rect(10, 140, 200, 50))
+label3:text("resume - 恢复")
+label3:bgColor(Color_Gray):textColor(Color_White)
+window:addView(label3)
+label3:onClick(function()
+    print("恢复定时器")
+    timer:resume()
+end)
+
+local label4 = Label()
+label4:frame(Rect(10, 200, 200, 50))
+label4:text("stop - 停止")
+label4:bgColor(Color_Gray):textColor(Color_White)
+window:addView(label4)
+label4:onClick(function()
+    print("停止定时器，并且重置count=0")
+    count = 0
+    timer:stop()
+end)

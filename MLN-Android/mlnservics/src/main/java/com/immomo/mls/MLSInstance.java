@@ -844,7 +844,9 @@ public class MLSInstance implements ScriptLoader.Callback, Callback, PrinterCont
     private void initBackGroundView() {
         if (backGroundView == null) {
             backGroundView = new ImageView(mContext);
-            backGroundView.setImageResource(mBackgroundRes);
+            try {
+                backGroundView.setImageResource(mBackgroundRes);
+            } catch (Throwable ignore) {}
             backGroundView.setScaleType(ImageView.ScaleType.FIT_XY);
             backGroundView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         }

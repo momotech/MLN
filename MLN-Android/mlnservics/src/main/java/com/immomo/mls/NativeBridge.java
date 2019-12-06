@@ -30,6 +30,7 @@ public class NativeBridge {
         if (!init)
             return;
         _openLib(g.getL_State());
+        NativeBroadcastChannel.register(g);
     }
 
     private static native void _openLib(long l);
