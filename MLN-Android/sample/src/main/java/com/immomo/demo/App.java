@@ -13,20 +13,15 @@ import android.util.Log;
 
 import com.google.zxing.OuterResultHandler;
 import com.immomo.demo.provider.GlideImageProvider;
-import com.immomo.mls.BuildConfig;
 import com.immomo.mls.MLSEngine;
 import com.immomo.mls.fun.lt.SIApplication;
 import com.immomo.mls.global.LVConfigBuilder;
-import com.immomo.mls.util.AndroidUtil;
 
 import org.luaj.vm2.Globals;
-
-import java.io.File;
 
 /**
  * Created by XiongFangyu on 2018/6/19.
  */
-@SuppressWarnings("ALL")
 public class App extends Application {
     public String SD_CARD_PATH;
     private static App app;
@@ -36,13 +31,12 @@ public class App extends Application {
         super.onCreate();
         app = this;
         init();
-        File cache = getCacheDir();
-        File soFile = new File(cache.getParent(), "lib");
 
+        /// -----------配合 Application 使用------------
         SIApplication.isColdBoot = true;
-
-//        MLSEngine.setOpenDebugInfo(true);
         registerActivityLifecycleCallbacks(new ActivityLifecycleMonitor());
+        /// ---------------------END-------------------
+
         MLSEngine.init(this, true)//BuildConfig.DEBUG)
                 .setLVConfig(new LVConfigBuilder(this)
                         .setRootDir(SD_CARD_PATH)
@@ -50,36 +44,22 @@ public class App extends Application {
                         .setImageDir(SD_CARD_PATH + "image")
                         .setGlobalResourceDir(SD_CARD_PATH + "g_res")
                         .build())
-                .setUncatchExceptionListener(new com.immomo.mls.Environment.UncatchExceptionListener() {
-                    @Override
-                    public boolean onUncatch(boolean fatal, Globals globals, Throwable e) {
-                        e.printStackTrace();
-                        return true;
-                    }
-                })
-//                .setHttpAdapter(new HttpAdapterImpl())
-                .setImageProvider(new GlideImageProvider())
-                .setGlobalStateListener(new GlobalStateListener())
-                .setQrCaptureAdapter(new MLSQrCaptureImpl())
-                .setLoadViewAdapter(new MLSLoadViewAdapterImpl())
-                .setUseStandardSyntax(false)
-                .setLazyFillCellData(false)
-                .setReadScriptFileInJava(false)
-                .setOpenSAES(true)
-                .setGcOffset(0)
-                .setMemoryMonitorOffset(5000)
-                .setGlobalSoPath(soFile.getAbsolutePath() + "/lib?.so")
+                .setImageProvider(new GlideImageProvider())             //设置图片加载器，若不设置，则不能显示图片
+                .setGlobalStateListener(new GlobalStateListener())      //设置全局脚本加载监听，可不设置
+                .setQrCaptureAdapter(new MLSQrCaptureImpl())            //设置二维码工具，可不设置
+                ///注册静态Bridge
                 .registerSC(
                 )
+                ///注册Userdata
                 .registerUD(
                 )
+                ///注册单例
                 .registerSingleInsance(
                 )
-//                .clearAll()
                 .build(true);
-        MLSEngine.setDebugIp("172.16.39.13");
+        /// 设置二维码扫描结果处理工具
         OuterResultHandler.registerResultHandler(new QRResultHandler());
-        Log.d("App", "onCreate: " + Globals.isInit() + " " + Globals.isIs32bit());
+        log("onCreate: " + Globals.isInit() + " " + Globals.isIs32bit());
     }
 
     public static App getApp() {
