@@ -286,7 +286,7 @@ static MLN_FORCE_INLINE CGSize __mln_lua_tocgsize(lua_State *L, int idx, NSError
     if (lua_isuserdata(L, idx)) {
         MLNUserData* user = lua_touserdata(L, idx);
         NSValue *value = (__bridge NSValue *)(user->object);
-        if(strcmp(value.objCType, @encode(CGRect)) != 0){
+        if(strcmp(value.objCType, @encode(CGSize)) != 0){
             if (error) {
                 *error = [NSError mln_errorConvert:@"Size not found！"];
                 mln_lua_error(L, "Size not found！");

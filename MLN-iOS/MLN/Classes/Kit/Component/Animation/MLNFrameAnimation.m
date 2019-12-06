@@ -194,6 +194,7 @@
         view.alpha = endAlpha;
         view.backgroundColor = endColor;
         [view lua_needLayoutAndSpread];
+        [view lua_changedLayout];
     } completion:^(BOOL finished) {
         BOOL repeatIndefinitely = self.options & UIViewAnimationOptionRepeat;
         if (CGRectEqualToRect(startFrame, endFrame) && startAlpha == endAlpha && CGColorEqualToColor(startColor.CGColor, endColor.CGColor) && !repeatIndefinitely) {

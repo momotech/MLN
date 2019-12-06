@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="5dp"
+    android:layout_marginRight="5dp"
+    android:orientation="vertical">
+
+    <!--热门信息cell-->
+    <ImageView
+        android:id="@+id/iv_hot"
+        android:layout_width="match_parent"
+        android:layout_height="130dp"
+        android:scaleType="fitXY" />
+    <TextView
+        android:id="@+id/tv_content"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:text="哈哈哈哈哈"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/iv_icon"
+            android:layout_width="20dp"
+            android:layout_height="20dp" />
+
+        <TextView
+            android:id="@+id/tv_name"
+            android:layout_width="30dp"
+            android:layout_height="match_parent" />
+
+
+        <ImageView
+            android:id="@+id/iv_good"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginLeft="20dp" />
+        <TextView
+            android:id="@+id/tv_num"
+            android:layout_width="30dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="10dp"
+            android:text="15" />
+
+    </LinearLayout>
+</LinearLayout>

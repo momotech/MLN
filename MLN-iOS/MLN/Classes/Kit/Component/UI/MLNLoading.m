@@ -36,6 +36,7 @@ static MLNLoading *_loading = nil;
     if (loading.state == LoadingStateShow) return;
     loading.state = LoadingStateShow;
     [loading setupViews];
+    loading.backgroundView.hidden = NO;
     [loading layoutMaskAndIndicatorView];
     [loading addOnInstanceDestroyCallback:MLN_KIT_INSTANCE([self mln_currentLuaCore])];
     [loading.indicatorView startAnimating];
@@ -47,6 +48,7 @@ static MLNLoading *_loading = nil;
     if (_loading.state != LoadingStateIdle) {
         [_loading.indicatorView stopAnimating];
         [_loading.backgroundView removeFromSuperview];
+        _loading.backgroundView.hidden = YES;
         [_loading removeOnInstanceDestroyCallback:MLN_KIT_INSTANCE([self mln_currentLuaCore])];
         _loading = nil;
     }

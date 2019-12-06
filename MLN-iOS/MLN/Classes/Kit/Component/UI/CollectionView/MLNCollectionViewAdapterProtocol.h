@@ -8,10 +8,11 @@
 #ifndef MLNCollectionViewAdapterProtocol_h
 #define MLNCollectionViewAdapterProtocol_h
 #import <UIKit/UIKit.h>
+#import "MLNCollectionViewGridLayoutDelegate.h"
 
 @class MLNBlock;
 
-@protocol MLNCollectionViewAdapterProtocol <UICollectionViewDataSource, UICollectionViewDelegate>
+@protocol MLNCollectionViewAdapterProtocol <UICollectionViewDataSource, UICollectionViewDelegate, MLNCollectionViewGridLayoutDelegate>
 
 @property (nonatomic, weak) UICollectionView *collectionView;
 

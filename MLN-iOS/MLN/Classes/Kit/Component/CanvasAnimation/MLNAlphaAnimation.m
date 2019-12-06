@@ -1,6 +1,6 @@
 //
 //  MLNAlphaAnimation.m
-//  AFNetworking
+//  MLN
 //
 //  Created by MoMo on 2019/5/16.
 //
@@ -20,7 +20,7 @@
 
 @implementation MLNAlphaAnimation
 
-- (instancetype)initWith:(CGFloat)fromAlpha toAlpha:(CGFloat)toAlpha
+- (instancetype)initWithLuaCore:(MLNLuaCore *)luaCore fromAlpha:(CGFloat)fromAlpha toAlpha:(CGFloat)toAlpha
 {
     if (self = [super init]) {
         [self setFromAlpha:fromAlpha];
@@ -57,5 +57,5 @@
 LUA_EXPORT_BEGIN(MLNAlphaAnimation)
 LUA_EXPORT_PROPERTY(setFromAlpha, "setFromAlpha:", "fromAlpha", MLNAlphaAnimation)
 LUA_EXPORT_PROPERTY(setToAlpha, "setToAlpha:", "toAlpha", MLNAlphaAnimation)
-LUA_EXPORT_END(MLNAlphaAnimation, AlphaAnimation, YES, "MLNCanvasAnimation", "initWith:toAlpha:")
+LUA_EXPORT_END(MLNAlphaAnimation, AlphaAnimation, YES, "MLNCanvasAnimation", "initWithLuaCore:fromAlpha:toAlpha:")
 @end

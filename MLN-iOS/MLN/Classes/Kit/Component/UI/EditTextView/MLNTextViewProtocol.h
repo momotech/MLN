@@ -39,9 +39,15 @@
 @property (nonatomic, getter=isEditable) BOOL editable;
 @property (nonatomic, copy) NSAttributedString *attributedText;
 @property (nonatomic, readonly) UITextRange *markedTextRange;
+@property (nonatomic, readonly) UITextPosition *beginningOfDocument;
+@property (nonatomic, readonly) UITextPosition *endOfDocument;
+@property (nonatomic, assign) NSRange selectedRange;
 
+- (UITextRange *)textRangeFromPosition:(UITextPosition *)fromPosition toPosition:(UITextPosition *)toPosition;
 - (UITextPosition *)positionFromPosition:(UITextPosition *)position offset:(NSInteger)offset;
 - (UITextPosition *)positionFromPosition:(UITextPosition *)position inDirection:(UITextLayoutDirection)direction offset:(NSInteger)offset;
+- (NSComparisonResult)comparePosition:(UITextPosition *)position toPosition:(UITextPosition *)other;
+- (NSInteger)offsetFromPosition:(UITextPosition *)from toPosition:(UITextPosition *)toPosition;
 
 @end
 

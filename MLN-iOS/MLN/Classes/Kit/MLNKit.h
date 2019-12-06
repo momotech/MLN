@@ -48,9 +48,12 @@
 #import "MLNWaterfallAdapter.h"
 #import "MLNEditTextView.h"
 #import "MLNDialogView.h"
+#import "MLNContainerWindow.h"
 #import "MLNViewPager.h"
 #import "MLNViewPagerAdapter.h"
 #import "MLNTabSegmentView.h"
+#import "MLNReuseContentView.h"
+#import "MLNScrollCallbackView.h"
 
 // Kit Classes's Model
 #import "MLNRect.h"
@@ -107,6 +110,11 @@
 #import "MLNTypeUtil.h"
 #import "MLNApplication.h"
 #import "MLNNetworkReachability.h"
+#import "MLNNetworkReachabilityManager.h"
+#import "MLNLayoutEngine.h"
+#import "MLNSizeCahceManager.h"
+#import "MLNFont.h"
+#import "MLNNinePatchImageFactory.h"
 
 // 分类
 #import "NSDictionary+MLNSafety.h"

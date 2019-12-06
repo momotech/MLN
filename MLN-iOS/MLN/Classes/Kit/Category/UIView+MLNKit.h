@@ -1,5 +1,5 @@
 //
-//  UIView+MLNCore.h
+//  UIView+MLNKit.h
 //  MLNCore
 //
 //  Created by MoMo on 2019/7/23.
@@ -14,7 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @class MLNBlock;
 @class MLNKeyboardViewHandler;
-
+@class MLNRenderContext;
 @interface UIView (MLNKit)
 
 @property (nonatomic, assign) CGFloat lua_x;
@@ -25,10 +25,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) CGFloat lua_right;
 @property (nonatomic, assign) CGRect lua_frame;
 
-- (void)mln_setAnchorPoint:(CGPoint)point;
 - (void)lua_layoutIfNeed;
 - (void)lua_sizeToFit;
-- (void)lua_resetOffsetStatus;
 - (CGPoint)lua_convertRelativePointToView:(UIView *)view point:(CGPoint)point;
 
 #pragma mark - TouchEvent
@@ -40,6 +38,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) MLNBlock *mln_touchesMovedExtensionCallback;
 @property (nonatomic, strong) MLNBlock *mln_touchesEndedExtensionCallback;
 @property (nonatomic, strong) MLNBlock *mln_touchesCancelledExtensionCallback;
+
+#pragma mark - render
+@property (nonatomic, strong, readonly) MLNRenderContext *mln_renderContext;
 
 #pragma mark - Gesture
 @property (nonatomic, strong) MLNBlock * mln_tapClickBlock;
@@ -60,11 +61,15 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - Render
 - (void)lua_setCornerRadius:(CGFloat)cornerRadius;
-- (void)lua_addCornerMaskWithRadius:(CGFloat)cornerRadius maskColor:(UIColor *)maskColor corners:(NSNumber *)corners;
+- (void)lua_addCornerMaskWithRadius:(CGFloat)cornerRadius maskColor:(UIColor *)maskColor corners:(MLNRectCorner)corners;
 - (void)mln_updateCornersIfNeed;
 - (void)mln_updateGradientLayerIfNeed;
 
 #pragma mark - Focus
+
+/**
+ 请求焦点
+ */
 - (void)lua_requestFocus;
 
 #pragma mark - Keyboard
@@ -97,12 +102,21 @@ NS_ASSUME_NONNULL_BEGIN
  **/
 - (void)mln_in_setPositionAdjustForKeyboard:(BOOL)bAdjust offsetY:(CGFloat)offsetY;
 
+/**
+ 如果需要就重置Transform
+ */
 - (void)lua_resetTransformIfNeed;
 
 @end
 
 @interface UIView(Snapshot)
 
+/**
+ 对当前视图截图，并将图片按指定文件名称存贮。
+
+ @param fileName 截图存储的指定文件名称
+ @return 文件存储的路径
+ */
 - (NSString *)lua_snapshotWithFileName:(NSString *)fileName;
 
 @end

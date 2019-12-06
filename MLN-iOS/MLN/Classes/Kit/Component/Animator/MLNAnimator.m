@@ -172,7 +172,7 @@
 
 - (float)percentageWithCurrentDuration:(NSTimeInterval)duration
 {
-    if (self.repeatMode == MLNAnimationRepeatTypeREVERSE &&
+    if (self.repeatMode == MLNAnimationRepeatTypeReverse &&
         self.doCount % 2 == 1) {
         if (duration >= self.duration) {
             return 0.f;

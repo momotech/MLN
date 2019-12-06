@@ -9,6 +9,7 @@
 #import "MLNViewExporterMacro.h"
 #import "UIView+MLNKit.h"
 #import "UIView+MLNLayout.h"
+#import "MLNKitHeader.h"
 
 #define isGravityType(v,t) (((v).lua_gravity&(t)) == (t))
 
@@ -32,6 +33,17 @@
         _direction = direction ? direction : MLNLayoutDirectionHorizontal;
     }
     return self;
+}
+
+#pragma mark - Override
+- (void)lua_bringSubviewToFront:(UIView *)view
+{
+    MLNKitLuaAssert(NO, @"LinearLayout does not support bringSubviewToFront method");
+}
+
+- (void)lua_sendSubviewToBack:(UIView *)view
+{
+    MLNKitLuaAssert(NO, @"LinearLayout does not support sendSubviewToBack method");
 }
 
 #pragma mark - Export For Lua

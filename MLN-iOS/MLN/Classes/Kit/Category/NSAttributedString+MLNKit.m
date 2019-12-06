@@ -1,5 +1,5 @@
 //
-//  NSAttributedString+MMILua.m
+//  NSAttributedString+MLNKit.m
 //
 //
 //  Created by MoMo on 2019/4/26.
@@ -18,7 +18,7 @@ static const void *kLuaStyleString = &kLuaStyleString;
 
 @end
 
-@implementation NSAttributedString (MMILua)
+@implementation NSAttributedString (MLNKit)
 
 - (void)setLua_styleString:(MLNStyleString *)lua_styleString
 {

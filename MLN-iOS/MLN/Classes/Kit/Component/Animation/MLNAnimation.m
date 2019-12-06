@@ -279,7 +279,7 @@ typedef enum : NSUInteger {
             self.animationGroup.repeatCount = count;
             self.animationGroup.autoreverses = NO;
             break;
-        case MLNAnimationRepeatTypeREVERSE:
+        case MLNAnimationRepeatTypeReverse:
             self.animationGroup.repeatCount = count;
             self.animationGroup.autoreverses = YES;
             break;

@@ -1,9 +1,8 @@
 //
-//  MLNNinePatchImageFactory
-//  MomoChat
+//  MLNNinePatchImageFactory.h
+//  MLN
 //
-//  Created by MoMo on 2019/3/19.
-//  Copyright © 2019年 wemomo.com. All rights reserved.
+//  Created by MOMO on 2019/3/19.
 //
 
 #import "MLNNinePatchImageFactory.h"
@@ -17,15 +16,15 @@ typedef enum NSInteger{
 
 @interface MLNNinePatchImageFactory()
 
-+ (NSArray*)mln_in_getRGBAsFromImage:(UIImage*)image atX:(int)xx andY:(int)yy count:(int)count;
-+ (UIImage*)mln_in_createResizableImageFromNinePatchImage:(UIImage*)ninePatchImage imgViewSize:(CGSize)imgViewSize;
++ (NSArray*)mln_getRGBAsFromImage:(UIImage*)image atX:(int)xx andY:(int)yy count:(int)count;
++ (UIImage*)mln_createResizableImageFromNinePatchImage:(UIImage*)ninePatchImage imgViewSize:(CGSize)imgViewSize;
 
 @end
 
 @implementation MLNNinePatchImageFactory
 
 
-+ (NSArray*)mln_in_getRGBAsFromImage:(UIImage*)image atX:(int)xx andY:(int)yy count:(int)count
++ (NSArray*)mln_getRGBAsFromImage:(UIImage*)image atX:(int)xx andY:(int)yy count:(int)count
 {
     NSMutableArray* result = [NSMutableArray arrayWithCapacity:count];
     
@@ -47,7 +46,7 @@ typedef enum NSInteger{
     CGContextRelease(context);
     
     // Now your rawData contains the image data in the RGBA8888 pixel format.
-    int byteIndex = ((bytesPerRow * yy) + xx * bytesPerPixel);
+    NSUInteger byteIndex = ((bytesPerRow * yy) + xx * bytesPerPixel);
     for (int ii = 0; ii < count; ++ii) {
         CGFloat red = (rawData[byteIndex] * 1.0) / 255.0;
         CGFloat green = (rawData[byteIndex + 1] * 1.0) / 255.0;
@@ -64,7 +63,7 @@ typedef enum NSInteger{
     return result;
 }
 
-+ (UIImage*)mln_in_createResizableNinePatchImageNamed:(NSString*)name  imgViewSize:(CGSize)imgViewSize
++ (UIImage*)mln_createResizableNinePatchImageNamed:(NSString*)name  imgViewSize:(CGSize)imgViewSize
 {
 //    MLNLuaAssert([name hasSuffix:@".9"],@"The image name is not ended with .9");
     NSString* fixedImageFilename = [NSString stringWithFormat:@"%@%@", name, @".png"];
@@ -78,21 +77,21 @@ typedef enum NSInteger{
         oriImage = ori2xImage;
     }
     
-    return [self mln_in_createResizableImageFromNinePatchImage:oriImage imgViewSize:(CGSize)imgViewSize];
+    return [self mln_createResizableImageFromNinePatchImage:oriImage imgViewSize:(CGSize)imgViewSize];
 }
 
-+ (UIImage *)mln_in_createResizableNinePatchImage:(UIImage*)image imgViewSize:(CGSize)imgViewSize
++ (UIImage *)mln_createResizableNinePatchImage:(UIImage*)image imgViewSize:(CGSize)imgViewSize
 {
-    return [self mln_in_createResizableImageFromNinePatchImage:image imgViewSize:(CGSize)imgViewSize];
+    return [self mln_createResizableImageFromNinePatchImage:image imgViewSize:(CGSize)imgViewSize];
 }
 
-+ (UIImage *)mln_in_createResizableImageFromNinePatchImage:(UIImage*)ninePatchImage imgViewSize:(CGSize)imgViewSize
++ (UIImage *)mln_createResizableImageFromNinePatchImage:(UIImage*)ninePatchImage imgViewSize:(CGSize)imgViewSize
 {
     NSInteger scale = ninePatchImage.scale;
     CGSize realSize = CGSizeMake(ninePatchImage.size.width * scale, ninePatchImage.size.height * scale);
     
     MLNNinePathTpe type = MLNNinePathTpeNormal;
-    NSArray* rgbaImage = [self mln_in_getRGBAsFromImage:ninePatchImage atX:0 andY:0 count:realSize.width * realSize.height];
+    NSArray* rgbaImage = [self mln_getRGBAsFromImage:ninePatchImage atX:0 andY:0 count:realSize.width * realSize.height];
     NSArray* topBarRgba = [rgbaImage subarrayWithRange:NSMakeRange(1, realSize.width - 2)];
     NSMutableArray* leftBarRgba = [NSMutableArray arrayWithCapacity:0];
     int count = (int)[rgbaImage count];
@@ -158,16 +157,16 @@ typedef enum NSInteger{
     left /= scale;
     bottom  /= scale;
     right /= scale;
-    UIImage* cropImage = [ninePatchImage mln_in_crop:CGRectMake(1, 1, ninePatchImage.size.width - 2, ninePatchImage.size.height - 2)];
+    UIImage* cropImage = [ninePatchImage mln_crop:CGRectMake(1, 1, ninePatchImage.size.width - 2, ninePatchImage.size.height - 2)];
     switch (type) {
         case MLNNinePathTpeVerticalCenter:
         {
-            return [cropImage mln_in_stretchVerticalWithContainerSize:imgViewSize image:cropImage topCap:top leftCap:left bottomCap:bottom rightCap:right];
+            return [cropImage mln_stretchVerticalWithContainerSize:imgViewSize image:cropImage topCap:top leftCap:left bottomCap:bottom rightCap:right];
              break;
         }
            case MLNNinePathTpeHorizontalCenter:
         {
-            return [cropImage mln_in_stretchHorizontalWithContainerSize:imgViewSize image:cropImage topCap:top leftCap:left bottomCap:bottom rightCap:right];
+            return [cropImage mln_stretchHorizontalWithContainerSize:imgViewSize image:cropImage topCap:top leftCap:left bottomCap:bottom rightCap:right];
             break;
         }
         default:
@@ -175,6 +174,65 @@ typedef enum NSInteger{
             break;
     }
     return cropImage;
+}
+
+@end
+
+@implementation UIImage (MLNNineCrop)
+
+- (UIImage*)mln_crop:(CGRect)rect
+{
+    rect = CGRectMake(rect.origin.x * self.scale,
+                      rect.origin.y * self.scale,
+                      rect.size.width * self.scale,
+                      rect.size.height * self.scale);
+    
+    CGImageRef imageRef = CGImageCreateWithImageInRect([self CGImage], rect);
+    UIImage* result = [UIImage imageWithCGImage:imageRef
+                                          scale:self.scale
+                                    orientation:self.imageOrientation];
+    CGImageRelease(imageRef);
+    return result;
+}
+
+- (UIImage *)mln_stretchHorizontalWithContainerSize:(CGSize)imageViewSize image:(UIImage *)originImage topCap:(NSInteger)top leftCap:(NSInteger)left bottomCap:(NSInteger)bottom rightCap:(NSInteger)right {
+    
+    CGSize imageSize = originImage.size;
+    CGSize bgSize = CGSizeMake(imageViewSize.width, imageViewSize.height); //imageView的宽高取整，否则会出现横竖两条缝
+    //先往右边拉伸，保护左边
+    UIImage *image = [originImage stretchableImageWithLeftCapWidth:floorf(right) topCapHeight:top];
+    CGFloat tempWidth = (bgSize.width)/2 + (imageSize.width)/2;
+    
+    //绘制出一张右边拉伸为目标尺寸一半的图片
+    UIGraphicsBeginImageContextWithOptions(CGSizeMake((NSInteger)tempWidth, (NSInteger)bgSize.height), NO,self.scale);
+    [image drawInRect:CGRectMake(0, 0, (NSInteger)tempWidth, (NSInteger)bgSize.height)];
+    UIImage *firstStrechImage = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    
+    //此时拉伸左边，展示后即为中部不拉伸的图片
+    UIImage *secondStrechImage = [firstStrechImage stretchableImageWithLeftCapWidth:left topCapHeight:top];
+    
+    return secondStrechImage;
+}
+
+- (UIImage *)mln_stretchVerticalWithContainerSize:(CGSize)imageViewSize image:(UIImage *)originImage topCap:(NSInteger)top leftCap:(NSInteger)left bottomCap:(NSInteger)bottom rightCap:(NSInteger)right {
+    
+    CGSize imageSize = originImage.size;
+    CGSize bgSize = CGSizeMake(imageViewSize.width, imageViewSize.height); //imageView的宽高取整，否则会出现横竖两条缝
+    //先往下边拉伸，保护上边
+    UIImage *image = [originImage stretchableImageWithLeftCapWidth:floorf(left) topCapHeight:bottom];
+    CGFloat tempHeight = (bgSize.height)/2 + (imageSize.height)/2;
+    
+    //绘制出一张下边拉伸为目标尺寸一半的图片
+    UIGraphicsBeginImageContextWithOptions(CGSizeMake((NSInteger)bgSize.width, (NSInteger)tempHeight), NO,self.scale);
+    [image drawInRect:CGRectMake(0, 0, (NSInteger)bgSize.width, (NSInteger)tempHeight)];
+    UIImage *firstStrechImage = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    
+    //此时拉伸上部，展示后即为中部不拉伸的图片
+    UIImage *secondStrechImage = [firstStrechImage stretchableImageWithLeftCapWidth:left topCapHeight:top];
+    
+    return secondStrechImage;
 }
 
 @end
