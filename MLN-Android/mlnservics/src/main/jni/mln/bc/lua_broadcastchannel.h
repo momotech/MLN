@@ -50,6 +50,9 @@ extern "C"{
  \*-------------------------------------------------------------------------*/
 LUABROADCASTCHANNEL_API int luaopen_broadcastchannel(lua_State *L);
 
+JNIEXPORT void JNICALL Java_com_immomo_mls_NativeBroadcastChannel__1openLib
+(JNIEnv *env, jclass cls, jlong l);
+
 #endif /* lua_broadcastchannel_h */
 
 #ifdef __cplusplus
