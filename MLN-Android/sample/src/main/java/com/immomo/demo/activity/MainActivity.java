@@ -7,9 +7,13 @@
   */
 package com.immomo.demo.activity;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.View;
+
+import androidx.core.app.ActivityCompat;
 
 import com.immomo.mln.R;
 import com.immomo.mls.Constants;
@@ -28,6 +32,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        storageAndCameraPermission();
         setContentView(R.layout.activity_main);
         initView();
 
@@ -36,12 +41,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
 
     private void initView() {
         findViewById(R.id.tvInnerDemo).setOnClickListener(this);
+        findViewById(R.id.tvDevDebug).setOnClickListener(this);
+        findViewById(R.id.tvDemo).setOnClickListener(this);
         findViewById(R.id.tvCourse).setOnClickListener(this);
         findViewById(R.id.tvInstance).setOnClickListener(this);
         findViewById(R.id.tvConsult).setOnClickListener(this);
         findViewById(R.id.tvAbout).setOnClickListener(this);
-        findViewById(R.id.tvDevDebug).setOnClickListener(this);
-        findViewById(R.id.tvDemo).setOnClickListener(this);
     }
 
     @Override
@@ -72,6 +77,26 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
                 intent.putExtras(MLSBundleUtils.createBundle(initData));
                 startActivity(intent);
                 break;
+        }
+    }
+    // zx add for storage permission 20190806
+    private static final int REQUEST_EXTERNAL_STORAGE = 1;
+    private static String[] PERMISSIONS_STORAGE = {
+            "android.permission.READ_EXTERNAL_STORAGE",
+            "android.permission.WRITE_EXTERNAL_STORAGE",
+            Manifest.permission.CAMERA};
+
+    public void storageAndCameraPermission() {
+        try {
+            //检测是否有写的权限
+            int permission = ActivityCompat.checkSelfPermission(this,
+                    "android.permission.WRITE_EXTERNAL_STORAGE");
+            if (permission != PackageManager.PERMISSION_GRANTED) {
+                // 没有写的权限，去申请写的权限，会弹出对话框
+                ActivityCompat.requestPermissions(this, PERMISSIONS_STORAGE, REQUEST_EXTERNAL_STORAGE);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }
