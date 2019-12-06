@@ -13,7 +13,7 @@ package com.immomo.mls.utils;
 public class AlertForDebug extends Exception {
 
     public static AlertForDebug showInDebug(String s) {
-        return new AlertForDebug("show in Debug Mode: " + s);
+        return new AlertForDebug(s);
     }
 
     public AlertForDebug(String s) {

@@ -157,7 +157,7 @@ public class UDLabel<U extends TextView> extends UDView<U> {
         if (var.length == 1) {
             int i = var[0].toInt();
             if (i == 0) {
-                ErrorUtils.debugLuaError("警告：设置lines为0，breakMode只能表现出CLIPPING模式", globals);
+                ErrorUtils.debugAlert("警告：设置lines为0，breakMode只能表现出CLIPPING模式", globals);
             }
             setLines(i);
             return null;
@@ -179,7 +179,7 @@ public class UDLabel<U extends TextView> extends UDView<U> {
                 getView().setEllipsize(null);
             } else {
                 if (i != BreakMode.TAIL) {
-                    ErrorUtils.debugLuaError("警告：多行情况下，不支持非TAIL的模式", globals);
+                    ErrorUtils.debugAlert("警告：多行情况下，不支持非TAIL的模式", globals);
                 }
                 getView().setEllipsize(TextUtils.TruncateAt.values()[i]);
             }

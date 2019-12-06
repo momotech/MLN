@@ -547,7 +547,7 @@ public class UDEditText<L extends EditText> extends UDLabel<L> implements TextWa
                 getView().setTransformationMethod(PasswordTransformationMethod.getInstance());
             } else {
                 getView().setTransformationMethod(HideReturnsTransformationMethod.getInstance());
-                ErrorUtils.debugLuaError("Multi-line mode does not support password mode and should be set to single-line mode", getGlobals());
+                ErrorUtils.debugAlert("Multi-line mode does not support password mode and should be set to single-line mode", getGlobals());
             }
         } else {
             getView().setTransformationMethod(HideReturnsTransformationMethod.getInstance());

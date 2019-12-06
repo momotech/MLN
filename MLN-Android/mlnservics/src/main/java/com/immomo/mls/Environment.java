@@ -35,7 +35,7 @@ public class Environment {
             error(t, globals);
         }
         if (uncatchExceptionListener != null) {
-            return uncatchExceptionListener.onUncatch(globals, t);
+            return uncatchExceptionListener.onUncatch(true, globals, t);
         }
         return false;
     }
@@ -57,6 +57,13 @@ public class Environment {
         HotReloadHelper.onError(t != null ? t.getMessage() : "null");
     }
 
+    public static boolean callbackError(Throwable t, Globals g) {
+        if (uncatchExceptionListener != null) {
+            return uncatchExceptionListener.onUncatch(false, g, t);
+        }
+        return false;
+    }
+
     public static interface UncatchExceptionListener {
         /**
          * called when some throwable is not caught in lua sdk
@@ -64,7 +71,7 @@ public class Environment {
          * @param e
          * @return true to handle uncatch throwable, false otherwise.
          */
-        boolean onUncatch(Globals globals, Throwable e);
+        boolean onUncatch(boolean fatal, Globals globals, Throwable e);
     }
 
 

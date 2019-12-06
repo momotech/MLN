@@ -377,27 +377,48 @@ class Generator {
     private void addPropertyImpl(MethodSpec.Builder mb, VariableElement e, boolean sb) {
         TypeName type = TypeName.get(e.asType());
 
-        mb.addCode("if (p == null || p.length == 0) \n\treturn LuaValue.varargsOf");
         final String call = String.format(!sb ? "((%s)javaUserdata).%s" : "%s.%s", typeElement.getSimpleName().toString(), e.getSimpleName().toString());
         if (isLuaValue(type)) {
+            mb.addCode("if (p == null || p.length == 0) \n\treturn LuaValue.varargsOf");
             mb.addStatement("($N)", call)
                     .addStatement("$N = ($T) p[0]", call, type);
         } else if (isBoolean(type)) {
+            mb.addCode("if (p == null || p.length == 0) \n\treturn LuaValue.varargsOf");
             mb.addStatement("($N ? $T.True() : $T.False())", call, LuaValue, LuaValue)
                     .addStatement("$N = p[0].toBoolean()", call);
         } else if (isInt(type)) {
+            mb.addCode("if (p == null || p.length == 0) \n\treturn LuaValue.varargsOf");
             mb.addStatement("($T.valueOf($N))", LuaNumber, call)
                     .addStatement("$N = p[0].toInt()", call);
         } else if (isDouble(type)) {
+            mb.addCode("if (p == null || p.length == 0) \n\treturn LuaValue.varargsOf");
             mb.addStatement("($T.valueOf($N))", LuaNumber, call)
                     .addStatement("$N = ($T)p[0].toDouble()", call, type);
         } else if (isString(type)) {
+            mb.addCode("if (p == null || p.length == 0) \n\treturn LuaValue.varargsOf");
             mb.addStatement("($T.valueOf($N))", LuaString, call)
                     .addStatement("$N = p[0].toJavaString()", call);
+        } else if (type instanceof ArrayTypeName) {
+            if (sb)
+                mb.addStatement("$T globals = $T.getGlobalsByLState(L)", Globals, Globals);
+            mb.addCode("if (p == null || p.length == 0) \n\treturn LuaValue.varargsOf");
+            mb.addStatement("($T.toLuaArray(globals, $N))", ObjectArrayUtils, call);
+            TypeName ct = ((ArrayTypeName) type).componentType;
+            if (ct.isPrimitive()) {
+                String word = ct.toString();
+                char[] cs = word.toCharArray();
+                cs[0] -= 'a' - 'A';
+                word = new String(cs);
+                //(Utils.toLuaArray(globals, call)
+                mb.addStatement("$N = $T.to" + word + "Array(p[0].toLuaTable())", call, PrimitiveArrayUtils);
+            } else {
+                mb.addStatement("$N = ($T[])$T.toNativeArray(p[0].toLuaTable(), $T.class)",call,  ct, ObjectArrayUtils, ct);
+            }
         } else {
             ClassName cn = getTopClassName(type);
             if (sb)
                 mb.addStatement("$T globals = $T.getGlobalsByLState(L)", Globals, Globals);
+            mb.addCode("if (p == null || p.length == 0) \n\treturn LuaValue.varargsOf");
             mb.addStatement("($T.translateJavaToLua(globals, $N))", UserdataTranslator, call)
                     .addStatement("$N = ($T)$T.translateLuaToJava(p[0], $T.class)", call, type, UserdataTranslator, cn);
         }

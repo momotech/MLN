@@ -182,7 +182,7 @@ public class BorderRadiusHorizontalScrollView extends HorizontalScrollView imple
     @Override
     public void draw(Canvas canvas) {
         if (viewClipHelper.needClicp()) {
-            viewClipHelper.clip(canvas, this);
+            viewClipHelper.clip(canvas, this, false);
         } else {
             super.draw(canvas);
         }

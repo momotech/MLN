@@ -72,8 +72,8 @@ public class UDImageView<I extends ImageView & ILuaImageView> extends UDView<I> 
     public LuaValue[] image(LuaValue[] var) {
         if (var.length == 1) {
             cleanNineImage();
-            ((LuaImageView)getView()).addNotCallBackList(var[0].toJavaString());
-            setImage(var[0].toJavaString());
+            final String url = var[0].toJavaString();
+            setImage(url);
             return null;
         }
         String i = getImage();
@@ -288,8 +288,15 @@ public class UDImageView<I extends ImageView & ILuaImageView> extends UDView<I> 
         return ret;
     }
 
-    public LuaFunction getImageLoadCallback() {
-        return imageLoadCallback;
+    public void callback(boolean success, String url, String msg) {
+        if (imageLoadCallback == null)
+            return;
+        imageLoadCallback.invoke(LuaValue.varargsOf(LuaBoolean.valueOf(success),
+                LuaString.valueOf(msg), LuaString.valueOf(url)));
+    }
+
+    public boolean hasCallback() {
+        return imageLoadCallback != null;
     }
 
     private String getTaskTag() {
