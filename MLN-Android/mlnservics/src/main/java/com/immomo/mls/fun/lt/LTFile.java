@@ -10,12 +10,14 @@ package com.immomo.mls.fun.lt;
 import android.text.TextUtils;
 
 import com.immomo.mls.MLSAdapterContainer;
+import com.immomo.mls.MLSEngine;
 import com.immomo.mls.adapter.MLSThreadAdapter;
 import com.immomo.mls.annotation.LuaBridge;
 import com.immomo.mls.annotation.LuaClass;
 import com.immomo.mls.fun.constants.FileInfo;
 import com.immomo.mls.util.EncryptUtil;
 import com.immomo.mls.util.FileUtil;
+import com.immomo.mls.util.IOUtil;
 import com.immomo.mls.util.JsonUtil;
 import com.immomo.mls.util.LogUtil;
 import com.immomo.mls.util.RelativePathUtils;
@@ -34,6 +36,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -166,63 +169,38 @@ public class LTFile {
 
     @LuaBridge
     public static void asyncReadFile(String path, final LVCallback callback) {
-        if (RelativePathUtils.isLocalUrl(path)) {
-            path = RelativePathUtils.getAbsoluteUrl(path);
-        }
         MLSAdapterContainer.getThreadAdapter().execute(MLSThreadAdapter.Priority.HIGH, new StringReadTask(path, callback));
     }
 
     @LuaBridge
     public static void asyncReadMapFile(String path, LVCallback callback) {
-        if (RelativePathUtils.isLocalUrl(path)) {
-            path = RelativePathUtils.getAbsoluteUrl(path);
-        }
         MLSAdapterContainer.getThreadAdapter().execute(MLSThreadAdapter.Priority.HIGH, new JSONReadTask(path, callback));
     }
 
     @LuaBridge
     public static void asyncReadArrayFile(String path, LVCallback callback) {
-        if (RelativePathUtils.isLocalUrl(path)) {
-            path = RelativePathUtils.getAbsoluteUrl(path);
-        }
         MLSAdapterContainer.getThreadAdapter().execute(MLSThreadAdapter.Priority.HIGH, new JSONArrayTask(path, callback));
     }
 
     @LuaBridge
     public static void asyncWriteFile(String path, String str, LVCallback callback) {
-        if (RelativePathUtils.isLocalUrl(path)) {
-            path = RelativePathUtils.getAbsoluteUrl(path);
-        }
         MLSAdapterContainer.getThreadAdapter().execute(MLSThreadAdapter.Priority.HIGH, new WriteStringTask(path, callback, str));
     }
 
     @LuaBridge
     public static void asyncWriteMap(String path, Map map, LVCallback callback) {
-        if (RelativePathUtils.isLocalUrl(path)) {
-            path = RelativePathUtils.getAbsoluteUrl(path);
-        }
         MLSAdapterContainer.getThreadAdapter().execute(MLSThreadAdapter.Priority.HIGH, new WriteJsonTask(path, callback, map));
     }
 
     @LuaBridge
     public static void asyncWriteArray(String path, List array, LVCallback callback) {
-        if (RelativePathUtils.isLocalUrl(path)) {
-            path = RelativePathUtils.getAbsoluteUrl(path);
-        }
         MLSAdapterContainer.getThreadAdapter().execute(MLSThreadAdapter.Priority.HIGH, new WriteArrayTask(path, callback, array));
     }
 
     @LuaBridge
     public static void asyncUnzipFile(String sourcePath, String targetPath, LVCallback callback) {
-        String returnPath = sourcePath;
-        if (RelativePathUtils.isLocalUrl(sourcePath)) {
-            sourcePath = RelativePathUtils.getAbsoluteUrl(sourcePath);
-        }
-        if (RelativePathUtils.isLocalUrl(targetPath)) {
-            targetPath = RelativePathUtils.getAbsoluteUrl(targetPath);
-        }
         MLSAdapterContainer.getThreadAdapter().execute(MLSThreadAdapter.Priority.HIGH,
-                new UnZipTask(sourcePath, targetPath, returnPath, callback));
+                new UnZipTask(sourcePath, targetPath, sourcePath, callback));
     }
 
     @LuaBridge
@@ -370,21 +348,47 @@ public class LTFile {
 
         @Override
         public void run() {
+            if (RelativePathUtils.isAssetUrl(path)) {
+                path = RelativePathUtils.getAbsoluteAssetUrl(path);
+            } else if (RelativePathUtils.isLocalUrl(path)) {
+                path = RelativePathUtils.getAbsoluteUrl(path);
+            }
+            byte[] data;
             File target = new File(path);
             if (!target.exists()) {
-                callbackError(CODE_NOT_EXIST);
-                return;
+                data = tryReadFromAssets();
+                if (data == null) {
+                    callbackError(CODE_NOT_EXIST);
+                    return;
+                } else {
+                    callback(new String(data));
+                    return;
+                }
             }
+
             if (!target.isFile()) {
                 callbackError(CODE_NOT_FILE);
                 return;
             }
-            byte[] data = FileUtil.fastReadBytes(target);
+            data = FileUtil.fastReadBytes(target);
             if (data == null) {
                 callbackError(CODE_READ_ERROR);
                 return;
             }
             callback(new String(data));
+        }
+
+        private byte[] tryReadFromAssets() {
+            InputStream is = null;
+            try {
+                is = MLSEngine.getContext().getAssets().open(path);
+                return IOUtil.toBytes(is);
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                IOUtil.closeQuietly(is);
+            }
+            return null;
         }
 
         protected void callback(String result) {
@@ -449,6 +453,11 @@ public class LTFile {
 
         @Override
         public void run() {
+            if (RelativePathUtils.isAssetUrl(path)) {
+                path = RelativePathUtils.getAbsoluteAssetUrl(path);
+            } else if (RelativePathUtils.isLocalUrl(path)) {
+                path = RelativePathUtils.getAbsoluteUrl(path);
+            }
             File target = new File(path);
             if (!target.getParentFile().exists()) {
                 if (!target.getParentFile().mkdirs()) {
@@ -491,6 +500,12 @@ public class LTFile {
 
         @Override
         public void run() {
+            if (RelativePathUtils.isLocalUrl(sourcePath)) {
+                sourcePath = RelativePathUtils.getAbsoluteUrl(sourcePath);
+            }
+            if (RelativePathUtils.isLocalUrl(targetPath)) {
+                targetPath = RelativePathUtils.getAbsoluteUrl(targetPath);
+            }
             int code = unZipFile(sourcePath, targetPath);
             callbackInMain(code, returnPath);
         }
