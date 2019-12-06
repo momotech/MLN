@@ -168,7 +168,6 @@ module.exports = {
     "width": "50",
     "height": "50",
     "borderRadius": "25",
-    "backgroundColor": "#717171"
   },
   "waterfall-avatar-title": {
     "alignItems": "center",
