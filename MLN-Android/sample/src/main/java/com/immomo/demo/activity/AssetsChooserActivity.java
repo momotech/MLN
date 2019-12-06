@@ -59,7 +59,7 @@ public class AssetsChooserActivity extends ListActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 final String fileName = getFileName(adapter.getItem(position - getListView().getHeaderViewsCount()));
-                final Intent intent = new Intent(AssetsChooserActivity.this, LuaViewActivity.class);//DemoLuaViewActivity.class);
+                final Intent intent = new Intent(AssetsChooserActivity.this, LuaViewActivity.class);
                 InitData initData = MLSBundleUtils.createInitData(fileName, false);
                 initData.forceNotUseX64();
                 intent.putExtras(MLSBundleUtils.createBundle(initData));

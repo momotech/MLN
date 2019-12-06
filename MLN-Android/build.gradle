@@ -24,7 +24,7 @@ allprojects {
     }
 
     ext {
-        implementation_debug = false
+        implementation_debug = true
 
         compileSdkVersion = 28
         buildToolsVersion = "28.0.3"
