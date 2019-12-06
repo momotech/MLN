@@ -139,8 +139,8 @@ public class UDLabel<U extends TextView> extends UDView<U> {
         if (var.length == 1 && var[0] instanceof UDColor) {
             UDColor color = (UDColor) var[0];
             if (styleString != null) {
-                LuaValue[] varargs = styleString.fontColor(var);
-                styleText((varargsOf(varargs)));
+                styleString.fontColor(var);
+                getView().setText(styleString.getText());
             }
 
             getView().setTextColor(color.getColor());
