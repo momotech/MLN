@@ -29,14 +29,6 @@ allprojects {
         processorVersion = '1.0.0'
         annotationVersion = '1.0.0'
         hotreloadVersion = '1.0.0'
-
-        supportLibVersion="26.0.2"
-        weexSdkVersion="0.28.0"
-
-        //切换sdkType，切换不同测试Demo
-        sdkType = "android"
-//        sdkType = "mln"
-//        sdkType = "weex"
     }
 }
 
