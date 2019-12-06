@@ -87,7 +87,8 @@ function _class:setupTopView()
     self.iv = ImageView():width(100):height(100):addCornerMask(6, ColorConstants.Gray, RectCorner.ALL_CORNERS)
     self.topView:addView(self.iv)
 
-    self.attention = Label():text("+ 关注"):textColor(ColorConstants.White):fontSize(12):borderWidth(1):borderColor(ColorConstants.White):padding(6, 12, 6, 12):cornerRadius(2):setGravity(Gravity.RIGHT)
+    self.attention = Label():text("+ 关注"):textColor(ColorConstants.White):fontSize(12):borderWidth(1):borderColor(ColorConstants.White):padding(6, 12, 6, 12)
+                            :cornerRadius(2):setGravity(Gravity.RIGHT)
     self.topView:addView(self.attention)
 
     self.title = Label():marginLeft(120):text("一周穿搭不重样"):textColor(ColorConstants.White):fontSize(16):setTextFontStyle(FontStyle.BOLD)
@@ -97,7 +98,7 @@ function _class:setupTopView()
     self.countLinear = LinearLayout(LinearType.HORIZONTAL):marginLeft(120):marginTop(28)
     self.topView:addView(self.countLinear)
 
-    self.pageLogo = ImageView():width(15):height(15):cornerRadius(6)
+    self.pageLogo = ImageView():width(15):height(15):addCornerMask(6, ColorConstants.Gray, RectCorner.ALL_CORNERS)
 
     self.countLinear:addView(self.pageLogo)
     self.pageCount = Label():text("200篇"):textColor(ColorConstants.White):fontSize(12):marginLeft(3)
@@ -150,7 +151,8 @@ function _class:setupTapListView()
 
 
     self.tapAdapter:initCell(function(cell)
-        cell.tapLabel = Label():text(""):textColor(ColorConstants.White):fontSize(12):padding(6, 15, 6, 15):bgColor(Color(70, 70, 70, 0.5)):cornerRadius(40)
+        cell.tapLabel = Label():text(""):textColor(ColorConstants.White):fontSize(12):padding(6, 15, 6, 15):bgColor(Color(70, 70, 70, 0.5))
+                               :cornerRadius(12)
         cell.contentView:addView(cell.tapLabel)
     end)
     self.tapAdapter:fillCellData(function(cell, _, row)
@@ -220,28 +222,22 @@ function _class:setupTabSegment()
 end
 
 function _class:setupWaterfallView()
+    self.width=  (window:width() - 30) / 2
     self.waterfall = WaterfallView(false, true):width(MeasurementType.MATCH_PARENT):height(MeasurementType.MATCH_PARENT)
-    self.waterfallLayout = WaterfallLayoutFix():itemSpacing(12):lineSpacing(18):spanCount(2)
+                                               :marginLeft(10):marginRight(10)
+    self.waterfallLayout = WaterfallLayoutFix():itemSpacing(12):lineSpacing(5):spanCount(2)
     self.waterfallAdapter = WaterfallAdapter()
     self.waterfallAdapter:initCell(function(cell)
         local REQCELL = require("MMLuaKitGallery.IdeaWaterfallCell"):new()
-        REQCELL:cellView()
+        REQCELL:cellView( self.width)
         cell.CELL = REQCELL
         cell.contentView:addView(REQCELL.cellLayout)
     end)
     self.waterfallAdapter:fillCellData(function(cell, _, row)
-        if row % 2 == 0 then
-            cell.contentView:padding(0, 12, 0, 0)
-        else
-            cell.contentView:padding(0, 0, 0, 12)
-        end
         local item = self.dataList:get(row)
 
         cell.CELL.image:image(item:get("pic_big"))
-        cell.CELL.desc:text(tostring(item:get("title") .. " " .. tostring(item:get("si_proxycompany"))))
-        if item:get("album_title") ~= nil then
-            cell.CELL.desc:text(tostring(cell.CELL.desc:text() .. "  " .. tostring(item:get("album_title"))))
-        end
+        cell.CELL.desc:text(item:get("title") )
         cell.CELL.authorhead:image(item:get("pic_small"))
         cell.CELL.authorName:text(item:get("artist_name"))
         cell.CELL.likeCount:text(item:get("file_duration"))
@@ -252,12 +248,7 @@ function _class:setupWaterfallView()
 
     --bug 希望支持瀑布流自适应
     self.waterfallAdapter:heightForCell(function(section, row)
-        local str = self.dataList:get(row):get("si_proxycompany")
-        if string.len(str) > 15 then
-            return 280
-        else
-            return 250
-        end
+        return 210
     end)
     self.waterfall:layout(self.waterfallLayout)
 
@@ -265,8 +256,8 @@ function _class:setupWaterfallView()
         self:requestNetwork(false, function(success, data)
             if success then
                 self.waterfall:stopLoading()
+                self.waterfall:resetLoading()
                 self.waterfall:reloadData()
-                self.waterfall:noMoreData()
             end
         end)
     end)

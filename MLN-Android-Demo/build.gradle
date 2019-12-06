@@ -24,11 +24,11 @@ allprojects {
         androidxVersion = "1.1.0-alpha01"
         protobufVersion = '3.0.1'
 
-        mlnCoreVersion = '1.6.0'
-        mlnsVersion = '1.6.0_1'
-        processorVersion = '1.5.0'
+        mlnCoreVersion = '1.0.0'
+        mlnsVersion = '1.0.0'
+        processorVersion = '1.0.0'
         annotationVersion = '1.0.0'
-        hotreloadVersion = '1.5.0'
+        hotreloadVersion = '1.0.0'
     }
 }
 
