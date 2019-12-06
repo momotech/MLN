@@ -9,7 +9,6 @@ package com.immomo.mls.wrapper.callback;
 
 import com.immomo.mls.wrapper.IJavaObjectGetter;
 
-import org.luaj.vm2.Globals;
 import org.luaj.vm2.LuaFunction;
 import org.luaj.vm2.LuaValue;
 
@@ -20,12 +19,11 @@ import org.luaj.vm2.LuaValue;
  *
  * 原始回调Lua方法，返回值为boolean类型
  */
-public class DefaultBoolCallback implements IBoolCallback {
+public class DefaultBoolCallback extends BaseCallback implements IBoolCallback {
 
-    protected LuaFunction luaFunction;
 
     public DefaultBoolCallback(LuaFunction f) {
-        luaFunction = f;
+        super(f);
     }
 
     public static final IJavaObjectGetter<LuaFunction, IBoolCallback> G = new IJavaObjectGetter<LuaFunction, IBoolCallback>() {
@@ -37,33 +35,18 @@ public class DefaultBoolCallback implements IBoolCallback {
 
     @Override
     public boolean callback(Object... params) throws IllegalStateException {
-        Utils.check(luaFunction);
-        LuaValue[] r = Utils.invoke(luaFunction, params);
+        LuaValue[] r = invoke(params);
         if (r.length == 0)
-            throw new IllegalStateException(luaFunction.getInvokeError());
+            throw new IllegalStateException(function.getInvokeError());
         return r[0].toBoolean();
     }
 
     @Override
     public boolean callbackAndDestroy(Object... params) throws IllegalStateException {
-        Utils.check(luaFunction);
-        LuaValue[] r = Utils.invoke(luaFunction, params);
+        LuaValue[] r = invoke(params);
         if (r.length == 0)
-            throw new IllegalStateException(luaFunction.getInvokeError());
-        luaFunction.destroy();
-        luaFunction = null;
+            throw new IllegalStateException(function.getInvokeError());
+        destroy();
         return r[0].toBoolean();
-    }
-
-    @Override
-    public void destroy() {
-        if (luaFunction != null)
-            luaFunction.destroy();
-        luaFunction = null;
-    }
-
-    @Override
-    public Globals getGlobals() {
-        return luaFunction != null ? luaFunction.getGlobals() : null;
     }
 }

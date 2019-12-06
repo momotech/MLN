@@ -11,15 +11,17 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.RectF;
-import com.immomo.mls.weight.BaseTabLayout;
 import android.util.TypedValue;
+
+import com.immomo.mls.fun.ud.view.UDTabLayout;
+import com.immomo.mls.weight.BaseTabLayout;
 
 public class DefaultSlidingIndicator implements BaseTabLayout.ISlidingIndicator {
     private Paint paint;
     private int width;
     private int height;
     private int radius;
-    private int color = 0xff4a4a4a;
+    private int color = UDTabLayout.DEFAULT_COLOR;
 
     private int paddingBottom;
     private Context context;

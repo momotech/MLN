@@ -8,7 +8,9 @@
 package com.immomo.mls.fun.weight;
 
 import android.content.Context;
+
 import androidx.annotation.IntDef;
+
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -217,12 +219,14 @@ public class LinearLayout extends ViewGroup implements ILimitSizeView, IPriority
 
     private void measureVertical(int widthMeasureSpec, int heightMeasureSpec) {
         int usedHeight = 0;
+        final int widthMode = MeasureSpec.getMode(widthMeasureSpec);
         final int mPaddingTop = getPaddingTop();
         final int mPaddingBottom = getPaddingBottom();
         final int mPaddingLeft = getPaddingLeft();
         final int mPaddingRight = getPaddingRight();
         int maxWidth = 0;
         int childState = 0;
+        boolean matchWidth = false;
 
         int totalWeight = 0;
         int weightViewLen = 0;
@@ -251,10 +255,11 @@ public class LinearLayout extends ViewGroup implements ILimitSizeView, IPriority
             nonWeightViewHeight += lp.topMargin + lp.bottomMargin;
             if (lp.weight > 0 && lp.height < 0) {
                 totalWeight += lp.weight;
-                weightViewLen ++;
+                weightViewLen++;
             } else {
                 nonWeightViewHeight += childHeight;
             }
+            matchWidth = matchWidth || (widthMode != MeasureSpec.EXACTLY && lp.width == LayoutParams.MATCH_PARENT);
         }
 
         usedHeight += mPaddingTop + mPaddingBottom;
@@ -267,41 +272,67 @@ public class LinearLayout extends ViewGroup implements ILimitSizeView, IPriority
         int measuredHeight = resolveSizeAndState(usedHeight, heightMeasureSpec, 0);
         setMeasuredDimension(resolveSizeAndState(maxWidth, widthMeasureSpec, childState), measuredHeight);
 
-        if (weightViewLen <= 0)
-            return;
-        int mh = getMeasuredHeight() - nonWeightViewHeight - mPaddingTop - mPaddingBottom;
-        if (mh <= 0)
-            return;
-        float piece = ((float) mh) / totalWeight;
-        for (int i = 0; i < count; i ++) {
-            final View child = getPriorityChildAt(i);
-            if (child == null || child.getVisibility() == View.GONE) {
-                continue;
-            }
-            final LayoutParams lp = (LayoutParams) child.getLayoutParams();
-            if (lp.weight > 0 && lp.height < 0) {
-                int h = (int) (piece * lp.weight);
-                h = Math.max(h, child.getMinimumHeight());
-                if (child instanceof ILimitSizeView) {
-                    h = Math.min(h, (int) ((ILimitSizeView) child).getMaxHeight());
+        if (weightViewLen > 0) {
+            int mh = getMeasuredHeight() - nonWeightViewHeight - mPaddingTop - mPaddingBottom;
+            if (mh > 0) {
+                float piece = ((float) mh) / totalWeight;
+                for (int i = 0; i < count; i++) {
+                    final View child = getPriorityChildAt(i);
+                    if (child == null || child.getVisibility() == View.GONE) {
+                        continue;
+                    }
+                    final LayoutParams lp = (LayoutParams) child.getLayoutParams();
+                    if (lp.weight > 0 && lp.height < 0) {
+                        int h = (int) (piece * lp.weight);
+                        h = Math.max(h, child.getMinimumHeight());
+                        if (child instanceof ILimitSizeView) {
+                            h = Math.min(h, ((ILimitSizeView) child).getMaxHeight());
+                        }
+                        child.measure(getChildMeasureSpec(widthMeasureSpec, mPaddingLeft + mPaddingRight + lp.leftMargin + lp.rightMargin, lp.width),
+                                MeasureSpec.makeMeasureSpec(h, MeasureSpec.EXACTLY));
+                        maxChildWidth = Math.max(maxChildWidth, child.getMeasuredWidth() + lp.leftMargin + lp.rightMargin);
+                    }
                 }
-                child.measure(getChildMeasureSpec(widthMeasureSpec, mPaddingLeft + mPaddingRight + lp.leftMargin + lp.rightMargin, lp.width),
-                        MeasureSpec.makeMeasureSpec(h, MeasureSpec.EXACTLY));
-                maxChildWidth = Math.max(maxChildWidth, child.getMeasuredWidth() + lp.leftMargin + lp.rightMargin);
+                maxChildWidth += mPaddingLeft + mPaddingRight;
+                setMeasuredDimension(resolveSizeAndState(maxChildWidth, widthMeasureSpec, 0), measuredHeight);
             }
         }
-        maxChildWidth += mPaddingLeft + mPaddingRight;
-        setMeasuredDimension(resolveSizeAndState(maxChildWidth, widthMeasureSpec, 0), measuredHeight);
+
+        if (matchWidth) {
+            forceUniformWidth(childCount, heightMeasureSpec);
+        }
+    }
+
+    private void forceUniformWidth(int count, int heightMeasureSpec) {
+        int uniformMeasureSpec = MeasureSpec.makeMeasureSpec(getMeasuredWidth(),
+                MeasureSpec.EXACTLY);
+        for (int i = 0; i < count; ++i) {
+            final View child = getPriorityChildAt(i);
+            if (child != null && child.getVisibility() != GONE) {
+                LinearLayout.LayoutParams lp = ((LinearLayout.LayoutParams) child.getLayoutParams());
+
+                if (lp.width == LayoutParams.MATCH_PARENT) {
+                    int oldHeight = lp.height;
+                    lp.height = child.getMeasuredHeight();
+
+                    // Remeasue with new dimensions
+                    measureChildWithMargins(child, uniformMeasureSpec, 0, heightMeasureSpec, 0);
+                    lp.height = oldHeight;
+                }
+            }
+        }
     }
 
     private void measureHorizontal(int widthMeasureSpec, int heightMeasureSpec) {
         int usedWidth = 0;
+        final int heightMode = MeasureSpec.getMode(heightMeasureSpec);
         final int mPaddingTop = getPaddingTop();
         final int mPaddingBottom = getPaddingBottom();
         final int mPaddingLeft = getPaddingLeft();
         final int mPaddingRight = getPaddingRight();
         int maxHeight = 0;
         int childState = 0;
+        boolean matchHeight = false;
 
         int totalWeight = 0;
         int weightViewLen = 0;
@@ -329,10 +360,11 @@ public class LinearLayout extends ViewGroup implements ILimitSizeView, IPriority
             nonWeightViewWidth += lp.leftMargin + lp.rightMargin;
             if (lp.weight > 0 && lp.width < 0) {
                 totalWeight += lp.weight;
-                weightViewLen ++;
+                weightViewLen++;
             } else {
                 nonWeightViewWidth += childWidth;
             }
+            matchHeight = matchHeight || (heightMode != MeasureSpec.EXACTLY && lp.height == LayoutParams.MATCH_PARENT);
         }
 
         usedWidth += mPaddingLeft + mPaddingRight;
@@ -344,32 +376,56 @@ public class LinearLayout extends ViewGroup implements ILimitSizeView, IPriority
 
         int measuredWidth = resolveSizeAndState(usedWidth, widthMeasureSpec, 0);
         setMeasuredDimension(measuredWidth, resolveSizeAndState(maxHeight, heightMeasureSpec, childState));
-        if (weightViewLen <= 0)
-            return;
-        int mw = getMeasuredWidth() - nonWeightViewWidth - mPaddingLeft - mPaddingRight;
-        if (mw <= 0)
-            return;
-        float piece = ((float) mw) / totalWeight;
-        for (int i = 0; i < count; i ++) {
-            final View child = getPriorityChildAt(i);
-            if (child == null || child.getVisibility() == View.GONE) {
-                continue;
-            }
-            final LayoutParams lp = (LayoutParams) child.getLayoutParams();
-            if (lp.weight > 0 && lp.width < 0) {
-                int w = (int) (piece * lp.weight);
-                w = Math.max(w, child.getMinimumWidth());
-                if (child instanceof ILimitSizeView) {
-                    w = Math.min(w, (int) ((ILimitSizeView) child).getMaxWidth());
+        if (weightViewLen > 0) {
+            int mw = getMeasuredWidth() - nonWeightViewWidth - mPaddingLeft - mPaddingRight;
+            if (mw > 0) {
+                float piece = ((float) mw) / totalWeight;
+                for (int i = 0; i < count; i++) {
+                    final View child = getPriorityChildAt(i);
+                    if (child == null || child.getVisibility() == View.GONE) {
+                        continue;
+                    }
+                    final LayoutParams lp = (LayoutParams) child.getLayoutParams();
+                    if (lp.weight > 0 && lp.width < 0) {
+                        int w = (int) (piece * lp.weight);
+                        w = Math.max(w, child.getMinimumWidth());
+                        if (child instanceof ILimitSizeView) {
+                            w = Math.min(w, ((ILimitSizeView) child).getMaxWidth());
+                        }
+                        child.measure(MeasureSpec.makeMeasureSpec(w, MeasureSpec.EXACTLY),
+                                getChildMeasureSpec(heightMeasureSpec,
+                                        mPaddingTop + mPaddingBottom + lp.topMargin + lp.bottomMargin, lp.height));
+                        maxChildHeight = Math.max(maxChildHeight, child.getMeasuredHeight() + lp.topMargin + lp.bottomMargin);
+                    }
                 }
-                child.measure(MeasureSpec.makeMeasureSpec(w, MeasureSpec.EXACTLY),
-                        getChildMeasureSpec(heightMeasureSpec,
-                                mPaddingTop + mPaddingBottom + lp.topMargin + lp.bottomMargin, lp.height));
-                maxChildHeight = Math.max(maxChildHeight, child.getMeasuredHeight() + lp.topMargin + lp.bottomMargin);
+                maxChildHeight += mPaddingTop + mPaddingBottom;
+                setMeasuredDimension(measuredWidth, resolveSizeAndState(maxChildHeight, heightMeasureSpec, 0));
             }
         }
-        maxChildHeight += mPaddingTop + mPaddingBottom;
-        setMeasuredDimension(measuredWidth, resolveSizeAndState(maxChildHeight, heightMeasureSpec, 0));
+
+        if (matchHeight) {
+            forceUniformHeight(childCount, widthMeasureSpec);
+        }
+    }
+
+    private void forceUniformHeight(int count, int widthMeasureSpec) {
+        int uniformMeasureSpec = MeasureSpec.makeMeasureSpec(getMeasuredHeight(),
+                MeasureSpec.EXACTLY);
+        for (int i = 0; i < count; ++i) {
+            final View child = getPriorityChildAt(i);
+            if (child != null && child.getVisibility() != GONE) {
+                LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) child.getLayoutParams();
+
+                if (lp.height == LayoutParams.MATCH_PARENT) {
+                    int oldWidth = lp.width;
+                    lp.width = child.getMeasuredWidth();
+
+                    // Remeasure with new dimensions
+                    measureChildWithMargins(child, widthMeasureSpec, 0, uniformMeasureSpec, 0);
+                    lp.width = oldWidth;
+                }
+            }
+        }
     }
 
     void measureChildBeforeLayout(View child, int childIndex,
@@ -400,11 +456,9 @@ public class LinearLayout extends ViewGroup implements ILimitSizeView, IPriority
     }
 
     void layoutVertical(int left, int top, int right, int bottom) {
-        final int mPaddingLeft = getPaddingLeft();
+        final int paddingLeft = getPaddingLeft();
         final int mPaddingRight = getPaddingRight();
         final int minorGravity = Gravity.TOP | Gravity.LEFT;
-
-        final int paddingLeft = mPaddingLeft;
 
         int childTop = getPaddingTop();
         int childLeft;

@@ -16,6 +16,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 
+import com.immomo.mls.Constants;
 import com.immomo.mls.InitData;
 import com.immomo.mls.MLSBundleUtils;
 import com.immomo.mls.activity.LuaViewActivity;
@@ -59,7 +60,7 @@ public class AssetsChooserActivity extends ListActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 final String fileName = getFileName(adapter.getItem(position - getListView().getHeaderViewsCount()));
-                final Intent intent = new Intent(AssetsChooserActivity.this, LuaViewActivity.class);//DemoLuaViewActivity.class);
+                final Intent intent = new Intent(AssetsChooserActivity.this, LuaViewActivity.class);
                 InitData initData = MLSBundleUtils.createInitData(fileName, false);
                 initData.forceNotUseX64();
                 intent.putExtras(MLSBundleUtils.createBundle(initData));
@@ -89,6 +90,6 @@ public class AssetsChooserActivity extends ListActivity {
     }
 
     private String getFileName(String n) {
-        return "file://android_asset/" + (TextUtils.isEmpty(folderName) ? n : '/' + n);
+        return Constants.ASSETS_PREFIX + (TextUtils.isEmpty(folderName) ? n : folderName + File.separator + n);
     }
 }

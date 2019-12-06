@@ -16,6 +16,7 @@ import com.immomo.mls.MLSEngine;
 import com.immomo.mls.adapter.ScriptReader;
 import com.immomo.mls.util.FileUtil;
 import com.immomo.mls.util.IOUtil;
+import com.immomo.mls.util.LogUtil;
 import com.immomo.mls.util.PreloadUtils;
 import com.immomo.mls.utils.ERROR;
 import com.immomo.mls.utils.GlobalStateUtils;
@@ -300,8 +301,13 @@ public class DefaultScriptReaderImpl implements ScriptReader {
         }
 
         protected void before() {
-            if (forceDownload)
-                FileUtil.delete(path);
+            if (forceDownload) {
+                try {
+                    FileUtil.delete(path);
+                } catch (Throwable t) {
+                    LogUtil.e(t);
+                }
+            }
         }
 
         /**

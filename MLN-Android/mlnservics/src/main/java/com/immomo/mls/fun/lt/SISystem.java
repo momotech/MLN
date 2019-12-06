@@ -57,17 +57,17 @@ public class SISystem implements ConnectionStateChangeBroadcastReceiver.OnConnec
     private LuaFunction networkStateCallback;
     private final Object tag;
     private static final int INVALIDA_BRIGHT_VALUE = -1;
-    private Observer mBrightnessObserver;
+    protected Observer mBrightnessObserver;
 
     public SISystem(Globals globals, LuaValue[] init) {
         this.globals = globals;
         context = ((LuaViewManager) globals.getJavaUserdata()).context;
         tag = new Object();
-        registerContentObserver();
+//        registerContentObserver();
     }
 
     public void __onLuaGc() {
-        unregisterContentObserver(context, mBrightnessObserver);
+//        unregisterContentObserver(context, mBrightnessObserver);
         MainThreadExecutor.cancelAllRunnable(getTag());
         NetworkUtil.unregisterConnectionChangeListener(getContext(), this);
         globals = null;
@@ -367,7 +367,7 @@ public class SISystem implements ConnectionStateChangeBroadcastReceiver.OnConnec
     }
 
     private int setWindowBright(int brightness) {
-        if (context == null)
+        if (context == null || !(context instanceof Activity))
             return INVALIDA_BRIGHT_VALUE;
 
         Window window = ((Activity) context).getWindow();

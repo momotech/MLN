@@ -50,6 +50,7 @@ import com.immomo.mls.util.DimenUtil;
 import com.immomo.mls.util.FileUtil;
 import com.immomo.mls.util.LogUtil;
 import com.immomo.mls.util.LuaViewUtil;
+import com.immomo.mls.util.RelativePathUtils;
 import com.immomo.mls.utils.AssertUtils;
 import com.immomo.mls.utils.ErrorUtils;
 import com.immomo.mls.utils.convert.ConvertUtils;
@@ -932,9 +933,15 @@ public abstract class UDView<V extends View> extends JavaUserdata<V> implements 
     @LuaApiUsed
     public LuaValue[] rotation(LuaValue[] var) {
         float angle = (float) var[0].toDouble();
+        boolean notNeedAdding = var.length > 1 && var[1].toBoolean();
 
         getInitValue();
-        view.setRotation(view.getRotation() + angle);
+
+        if (notNeedAdding) {
+            view.setRotation(angle);
+        } else {
+            view.setRotation(view.getRotation() + angle);
+        }
         return null;
     }
 
@@ -1432,8 +1439,8 @@ public abstract class UDView<V extends View> extends JavaUserdata<V> implements 
             }
 
             // 陌陌主工程中本地图片路径，getAbsoluteUrl( file://avatar/large/2/2ur6wxA-4.jpg_ )  = /storage/emulated/0/immomo/avatar/large/2/2ur6wxA-4.jpg_
-            if (FileUtil.isLocalUrl(url)) {
-                url = FileUtil.getAbsoluteUrl(url);
+            if (RelativePathUtils.isLocalUrl(url)) {
+                url = RelativePathUtils.getAbsoluteUrl(url);
                 provider.preload(getContext(), url, null, initLoadCallback());
                 return null;
             }

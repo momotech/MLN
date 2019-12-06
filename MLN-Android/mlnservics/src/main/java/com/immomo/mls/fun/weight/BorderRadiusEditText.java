@@ -37,7 +37,7 @@ public class BorderRadiusEditText extends androidx.appcompat.widget.AppCompatEdi
     public BorderRadiusEditText(Context context) {
         super(context);
         backgroundDrawable = new BorderBackgroundDrawable();
-        viewClipHelper = new ViewClipHelper();
+        viewClipHelper = new ViewClipHelper(this);
         viewShadowHelper = new ViewShadowHelper();
     }
 
@@ -182,7 +182,7 @@ public class BorderRadiusEditText extends androidx.appcompat.widget.AppCompatEdi
     @Override
     public void draw(Canvas canvas) {
         if (viewClipHelper.needClicp()) {
-            viewClipHelper.clip(canvas, this);
+            viewClipHelper.clip(canvas, this, false);
         } else {
             super.draw(canvas);
         }
