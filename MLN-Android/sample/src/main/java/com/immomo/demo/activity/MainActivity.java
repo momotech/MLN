@@ -7,12 +7,17 @@
   */
 package com.immomo.demo.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
 import com.immomo.mln.R;
+import com.immomo.mls.Constants;
 import com.immomo.mls.HotReloadHelper;
+import com.immomo.mls.InitData;
+import com.immomo.mls.MLSBundleUtils;
 import com.immomo.mls.MLSEngine;
+import com.immomo.mls.activity.LuaViewActivity;
 
 public class MainActivity extends BaseActivity implements View.OnClickListener{
     private static final String URL_COURSE = "https://mln.immomo.com/zh-cn/docs/build_dev_environment.html";
@@ -62,7 +67,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
                 startTeach(true);
                 break;
             case R.id.tvDemo:
-
+                Intent intent = new Intent(this, LuaViewActivity.class);
+                InitData initData = MLSBundleUtils.createInitData(Constants.ASSETS_PREFIX + "MMLuaKitGallery/meilishuo.lua");
+                intent.putExtras(MLSBundleUtils.createBundle(initData));
+                startActivity(intent);
                 break;
         }
     }
