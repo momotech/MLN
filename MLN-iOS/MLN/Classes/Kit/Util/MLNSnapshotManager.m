@@ -41,19 +41,18 @@
 
 #pragma mark - 文件保存
 
-+ (NSString *)image:(UIImage *)image mln_saveWithFileName:(NSString *)fileName
++ (NSString *)mln_image:(UIImage *)image saveWithFileName:(NSString *)fileName
 {
     NSString *tempPngDir = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) firstObject];
     NSString *path = [tempPngDir stringByAppendingPathComponent:@"MMILuaTempImage"];
     BOOL isDirectory = NO;
     BOOL isDirectoryExist = [[NSFileManager defaultManager] fileExistsAtPath:path isDirectory:&isDirectory];
     if (!(isDirectoryExist && isDirectory)) {
-        BOOL bCreateDirectoy = [[NSFileManager defaultManager] createDirectoryAtPath:path withIntermediateDirectories:YES attributes:nil error:nil];
-//        MLNLuaAssert(bCreateDirectoy, @"MMILuaTempImage directory create failed!");
+        [[NSFileManager defaultManager] createDirectoryAtPath:path withIntermediateDirectories:YES attributes:nil error:nil];
+        return nil;
     }
     NSString *filePath = [path stringByAppendingPathComponent:fileName];
     BOOL bSaveResult = [UIImagePNGRepresentation(image) writeToFile:filePath atomically:YES];
-//    MLNLuaAssert(bSaveResult, @"MMILua screen capture save failed!");
     return bSaveResult? filePath : nil;
 }
 

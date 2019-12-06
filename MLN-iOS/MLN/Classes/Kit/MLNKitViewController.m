@@ -9,7 +9,8 @@
 #import "MLNKitInstance.h"
 #import "MLNLuaBundle.h"
 
-@interface MLNKitViewController () {
+@interface MLNKitViewController ()
+{
     MLNKitInstance *_luaInstance;
 }
 

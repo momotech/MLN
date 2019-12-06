@@ -74,11 +74,6 @@
     self.layoutInset = UIEdgeInsetsMake(top, left, bottom, right);
 }
 
-- (UIEdgeInsets)lua_layoutInset
-{
-    return self.layoutInset;
-}
-
 - (void)lua_setSpanCount:(NSUInteger)spanCount
 {
     self.spanCount = spanCount;
@@ -328,6 +323,7 @@ static MLN_FORCE_INLINE bool currentIndexGridIsEnoughForCellSize(const __unsafe_
 #pragma mark - Layout Length
 - (void)initLayoutLength
 {
+    MLNKitLuaAssert(_spanCount > 0, @"The spanCount must greater than 0!");
     if (self.isScrollHorizontal) {
         [self initHorizontalLayoutHeight];
     } else {
@@ -369,7 +365,7 @@ static MLN_FORCE_INLINE bool currentIndexGridIsEnoughForCellSize(const __unsafe_
 - (NSArray<UICollectionViewLayoutAttributes *> *)layoutAttributesForElementsInRect:(CGRect)rect
 {
     NSMutableArray *allAttributes = [NSMutableArray array];
-
+    
     for (UICollectionViewLayoutAttributes *attribute in self.cellLayoutInfo.allValues) {
         if (CGRectIntersectsRect(rect, attribute.frame)) {
             [allAttributes addObject:attribute];

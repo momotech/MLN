@@ -1,6 +1,6 @@
 //
 //  MLNCanvasAnimation.m
-//  AFNetworking
+//  MLN
 //
 //  Created by MoMo on 2019/5/13.
 //
@@ -197,7 +197,7 @@
     if ([self remainingDelay] > FLT_EPSILON) {
         return;
     }
-    CGFloat percent = (CACurrentMediaTime() - self.startTime - self.delay) / (self.duration * (_repeatType == MLNAnimationRepeatTypeREVERSE?2:1));
+    CGFloat percent = (CACurrentMediaTime() - self.startTime - self.delay) / (self.duration * (_repeatType == MLNAnimationRepeatTypeReverse?2:1));
    
     NSInteger repeatCount = (NSUInteger)percent;
     percent = percent - repeatCount;
@@ -294,7 +294,27 @@
         default:
             break;
     }
-    [targetView mln_setAnchorPoint:CGPointMake(anchorX, anchorY)];
+    [self setAnchorPoint:CGPointMake(anchorX, anchorY) targetView:targetView];
+}
+
+- (void)setAnchorPoint:(CGPoint)point targetView:(UIView *)targetView
+{
+    CGPoint newPoint = CGPointMake(targetView.bounds.size.width * point.x, targetView.bounds.size.height * point.y);
+    CGPoint oldPoint = CGPointMake(targetView.bounds.size.width * targetView.layer.anchorPoint.x, targetView.bounds.size.height * targetView.layer.anchorPoint.y);
+    
+    newPoint = CGPointApplyAffineTransform(newPoint, targetView.transform);
+    oldPoint = CGPointApplyAffineTransform(oldPoint, targetView.transform);
+    
+    CGPoint position = targetView.layer.position;
+    
+    position.x -= oldPoint.x;
+    position.x += newPoint.x;
+    
+    position.y -= oldPoint.y;
+    position.y += newPoint.y;
+    
+    targetView.layer.position = position;
+    targetView.layer.anchorPoint = point;
 }
 
 #pragma mark - copy
@@ -495,7 +515,7 @@
 - (void)setRepeatType:(MLNAnimationRepeatType)repeatType
 {
     _repeatType = repeatType;
-    self.animationGroup.autoreverses = repeatType == MLNAnimationRepeatTypeREVERSE;
+    self.animationGroup.autoreverses = repeatType == MLNAnimationRepeatTypeReverse;
 }
 
 - (MLNBeforeWaitingTask *)lazyTask
@@ -557,7 +577,7 @@
             self.animationGroup.repeatCount = count;
             self.animationGroup.autoreverses = NO;
             break;
-        case MLNAnimationRepeatTypeREVERSE:
+        case MLNAnimationRepeatTypeReverse:
             self.animationGroup.repeatCount = count;
             self.animationGroup.autoreverses = YES;
             break;

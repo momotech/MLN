@@ -25,6 +25,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) BOOL lua_gone;
 @property (nonatomic, assign) MLNGravity lua_gravity;
 @property (nonatomic, assign) CGFloat lua_priority;
+@property (nonatomic, assign) int lua_weight;
 @property (nonatomic, assign, getter=isLua_wrapContent) BOOL lua_wrapContent;
 @property (nonatomic, assign) BOOL lua_layoutEnable; // defualt is NO
 @property (nonatomic, assign, readonly) BOOL lua_isContainer; // defualt is NO

@@ -55,6 +55,7 @@
 
 - (void)lua_setSwitchChangedCallback:(MLNBlock *)callback
 {
+    MLNCheckTypeAndNilValue(callback, @"function", MLNBlock);
     self.switchChangedCallback = callback;
 }
 

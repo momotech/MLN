@@ -70,8 +70,22 @@
     }
 }
 
+- (void)deleteBackward
+{
+    BOOL shouldChange = YES;
+    if ([self.internalTextViewDelegate respondsToSelector:@selector(internalTextView:shouldChangeTextInRange:replacementText:)]) {
+        shouldChange = [self.internalTextViewDelegate internalTextView:self shouldChangeTextInRange:[self mln_in_selectedRange] replacementText:@""];
+    }
+    if (shouldChange) {
+        [super deleteBackward];
+    }
+}
+
 - (BOOL)textField:(MLNInternalTextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
 {
+    if (string.length == 0) {
+        return YES;
+    }
     if ([self.internalTextViewDelegate respondsToSelector:@selector(internalTextView:shouldChangeTextInRange:replacementText:)]) {
         return [self.internalTextViewDelegate internalTextView:textField shouldChangeTextInRange:range replacementText:string];
     }
@@ -94,5 +108,38 @@
                                 NSForegroundColorAttributeName : self.placeholderColor? self.placeholderColor : kLuaDefaultPlaceHolderColor};
     NSMutableAttributedString *placeholder = [[NSMutableAttributedString alloc] initWithString:self.placeholder attributes:attribute];
     self.attributedPlaceholder = placeholder;
+    
 }
+
+- (NSRange)mln_in_selectedRange
+{
+    UITextPosition* beginning = self.beginningOfDocument;
+    
+    UITextRange* selectedRange = self.selectedTextRange;
+    UITextPosition* selectionStart = selectedRange.start;
+    UITextPosition* selectionEnd = selectedRange.end;
+    
+    const NSInteger location = [self offsetFromPosition:beginning toPosition:selectionStart];
+    const NSInteger length = [self offsetFromPosition:selectionStart toPosition:selectionEnd];
+    
+    return NSMakeRange(location, length);
+}
+
+- (void)setSelectedRange:(NSRange)selectedRange
+{
+    UITextPosition* beginning = self.beginningOfDocument;
+    
+    UITextPosition* startPosition = [self positionFromPosition:beginning offset:selectedRange.location];
+    UITextPosition* endPosition = [self positionFromPosition:beginning offset:selectedRange.location + selectedRange.length];
+    UITextRange* selectionRange = [self textRangeFromPosition:startPosition toPosition:endPosition];
+    
+    [self setSelectedTextRange:selectionRange];
+}
+
+- (NSRange)selectedRange
+{
+    return [self mln_in_selectedRange];
+}
+
+
 @end

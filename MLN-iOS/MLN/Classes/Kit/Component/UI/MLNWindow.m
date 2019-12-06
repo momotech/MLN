@@ -7,6 +7,7 @@
 
 #import "MLNWindow.h"
 #import "MLNViewExporterMacro.h"
+#import "MLNKitHeader.h"
 #import "UIView+MLNKit.h"
 #import "UIView+MLNLayout.h"
 #import "MLNBlock.h"
@@ -20,6 +21,7 @@
 @property (nonatomic, strong) MLNBlock *onSizeChangedCallback;
 @property (nonatomic, strong) MLNBlock *onDestroyCallback;
 @property (nonatomic, strong) MLNBlock *keyboardStatusCallback;
+@property (nonatomic, strong) MLNBlock *keyboardFrameChangeCallback;
 @property (nonatomic, assign) BOOL isAppear;
 @property (nonatomic, assign) BOOL autoDoLuaViewDidDisappear;
 @property (nonatomic, assign) BOOL autoDoSizeChanged;
@@ -48,6 +50,7 @@
     // Keyboard
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWasShown:) name:UIKeyboardWillShowNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillBeHiden:) name:UIKeyboardWillHideNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardFrameChanged:) name:UIKeyboardWillChangeFrameNotification object:nil];
     // Enter Foreground | Background
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(enterForground:) name:UIApplicationWillEnterForegroundNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(enterBackground:) name:UIApplicationDidEnterBackgroundNotification object:nil];
@@ -91,6 +94,17 @@
         [_keyboardStatusCallback addBOOLArgument:NO];
         [_keyboardStatusCallback addFloatArgument:0];
         [_keyboardStatusCallback callIfCan];
+    }
+}
+
+- (void)keyboardFrameChanged:(NSNotification *)notification
+{
+    if (self.keyboardFrameChangeCallback) {
+        CGFloat oldHeight = [[notification.userInfo objectForKey:UIKeyboardFrameBeginUserInfoKey] CGRectValue].size.height;
+        CGFloat newHeight = [[notification.userInfo objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue].size.height;
+        [self.keyboardFrameChangeCallback addFloatArgument:oldHeight];
+        [self.keyboardFrameChangeCallback addFloatArgument:newHeight];
+        [self.keyboardFrameChangeCallback callIfCan];
     }
 }
 
@@ -198,11 +212,13 @@
 
 - (void)lua_setViewAppearCallback:(MLNBlock *)callback
 {
+    MLNCheckTypeAndNilValue(callback, @"function", MLNBlock);
     self.viewAppearCallback = callback;
 }
 
 - (void)lua_setViewDidDisappear:(MLNBlock *)callback
 {
+    MLNCheckTypeAndNilValue(callback, @"function", MLNBlock);
     self.viewDisappearCallback = callback;
     if (self.autoDoLuaViewDidDisappear) {
         [self doLuaViewDidDisappear];
@@ -211,6 +227,7 @@
 
 - (void)lua_setOnSizeChanged:(MLNBlock *)callback
 {
+    MLNCheckTypeAndNilValue(callback, @"function", MLNBlock);
     self.onSizeChangedCallback = callback;
     if (self.autoDoSizeChanged) {
         [self doSizeChanged];
@@ -219,10 +236,17 @@
 
 - (void)lua_setOnDestroy:(MLNBlock *)callback
 {
+    MLNCheckTypeAndNilValue(callback, @"function", MLNBlock);
     self.onDestroyCallback = callback;
     if (self.autoDoDestroy) {
         [self doLuaViewDestroy];
     }
+}
+
+- (void)lua_setKeyBoardFrameChangeCallback:(MLNBlock *)callback
+{
+    MLNCheckTypeAndNilValue(callback, @"function", MLNBlock);
+    self.keyboardFrameChangeCallback = callback;
 }
 
 #pragma mark - Override
@@ -290,7 +314,6 @@ LUA_EXPORT_VIEW_METHOD(viewAppear, "lua_setViewAppearCallback:", MLNWindow)
 LUA_EXPORT_VIEW_METHOD(viewDisappear, "lua_setViewDidDisappear:", MLNWindow)
 LUA_EXPORT_VIEW_METHOD(sizeChanged, "lua_setOnSizeChanged:", MLNWindow)
 LUA_EXPORT_VIEW_METHOD(onDestroy, "lua_setOnDestroy:", MLNWindow)
-LUA_EXPORT_VIEW_METHOD(onDestroy, "lua_setOnDestroy:", MLNWindow)
 LUA_EXPORT_VIEW_METHOD(getExtra, "lua_getExtraData", MLNWindow)
 LUA_EXPORT_VIEW_METHOD(keyboardShowing, "lua_setKeyboardStatusCallback:", MLNWindow)
 LUA_EXPORT_VIEW_METHOD(setPageColor, "lua_setBackgroundColor:", MLNWindow)
@@ -304,6 +327,7 @@ LUA_EXPORT_VIEW_METHOD(backKeyPressed, "lua_backKeyPressed:", MLNWindow)
 LUA_EXPORT_VIEW_METHOD(backKeyEnabled, "lua_backKeyEnabled:", MLNWindow)
 LUA_EXPORT_VIEW_METHOD(getStatusBarStyle, "lua_getStatusBarStyle", MLNWindow)
 LUA_EXPORT_VIEW_METHOD(setStatusBarStyle, "lua_setStatusBarStyle:", MLNWindow)
+LUA_EXPORT_VIEW_METHOD(i_keyBoardFrameChangeCallback, "lua_setKeyBoardFrameChangeCallback:", MLNWindow)
 LUA_EXPORT_VIEW_END(MLNWindow, Window, YES, "MLNView", NULL)
 
 @end

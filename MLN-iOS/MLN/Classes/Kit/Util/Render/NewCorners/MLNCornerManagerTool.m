@@ -92,20 +92,13 @@
 
 + (UIBezierPath *)bezierPathWithRect:(CGRect)frame multiRadius:(MLNCornerRadius)multiRadius
 {
-    UIBezierPath *path = [UIBezierPath bezierPath];
-    
-    if (multiRadius.topLeft == multiRadius.topRight && multiRadius.bottomLeft == multiRadius.bottomRight && multiRadius.topLeft == multiRadius.bottomLeft) {
-        return [UIBezierPath bezierPathWithRoundedRect:frame byRoundingCorners:UIRectCornerAllCorners cornerRadii:CGSizeMake(multiRadius.topLeft, multiRadius.topLeft)];
-    }
-    
     CGFloat width = frame.size.width;
     CGFloat height = frame.size.height;
-    
     CGFloat minRadius = MIN(width * .5f,height * .5f);
-    
     CGFloat radius = multiRadius.topLeft;
     radius = MAX(MIN(minRadius, radius),0);
     
+    UIBezierPath *path = [UIBezierPath bezierPath];
     [path moveToPoint:CGPointMake(0, height/2.0)];
     if (radius > 0) {
         [path addLineToPoint:CGPointMake(0, radius)];
@@ -144,6 +137,61 @@
         [path addLineToPoint:CGPointMake(0, height)];
     }
     [path addLineToPoint:CGPointMake(0, height / 2.0)];
+    
+    return path;
+}
+
++ (UIBezierPath *)bezierPathWithRect:(CGRect)frame multiRadius:(MLNCornerRadius)multiRadius lineWidth:(CGFloat)lineWidth
+{
+    UIBezierPath *path = [UIBezierPath bezierPath];
+    path.lineWidth = lineWidth;
+    
+    CGFloat width = frame.size.width;
+    CGFloat height = frame.size.height;
+    
+    CGFloat minRadius = MIN(width * .5f,height * .5f);
+    
+    CGFloat radius = multiRadius.topLeft;
+    radius = MAX(MIN(minRadius, radius),0);
+    
+    [path moveToPoint:CGPointMake(lineWidth/2.0, height/2.0)];
+    if (radius > 0) {
+        [path addLineToPoint:CGPointMake(lineWidth/2.0, radius)];
+        [path addArcWithCenter:CGPointMake(radius, radius) radius:radius - lineWidth/2.0 startAngle:-M_PI endAngle:-M_PI_2 clockwise:YES];
+    } else {
+        [path addLineToPoint:CGPointMake(lineWidth/2.0, lineWidth/2.0)];
+    }
+    [path addLineToPoint:CGPointMake(width/2.0, lineWidth/2.0)];
+    
+    radius = multiRadius.topRight;
+    radius = MAX(MIN(minRadius, radius),0);
+    if (radius > 0) {
+        [path addLineToPoint:CGPointMake(width - radius, lineWidth/2.0)];
+        [path addArcWithCenter:CGPointMake(width - radius , radius) radius:radius - lineWidth/2.0 startAngle:-M_PI_2 endAngle:0 clockwise:YES];
+    } else {
+        [path addLineToPoint:CGPointMake(width - lineWidth/2.0, lineWidth/2.0)];
+    }
+    [path addLineToPoint:CGPointMake(width - lineWidth/2.0, height/2.0)];
+    
+    radius = multiRadius.bottomRight;
+    radius = MAX(MIN(minRadius, radius), 0);
+    if (radius > 0) {
+        [path addLineToPoint:CGPointMake(width - lineWidth/2.0, height - radius)];
+        [path addArcWithCenter:CGPointMake(width - radius, height - radius) radius:radius - lineWidth/2.0 startAngle:0 endAngle:M_PI_2 clockwise:YES];
+    } else {
+        [path addLineToPoint:CGPointMake(width - lineWidth/2.0, height - lineWidth/2.0)];
+    }
+    [path addLineToPoint:CGPointMake(width / 2.0 - lineWidth/2.0, height - lineWidth/2.0)];
+    
+    radius = multiRadius.bottomLeft;
+    radius = MAX(MIN(minRadius, radius),0);
+    if (radius > 0) {
+        [path addLineToPoint:CGPointMake(radius, height - lineWidth/2.0)];
+        [path addArcWithCenter:CGPointMake(radius, height - radius) radius:radius - lineWidth/2.0 startAngle:M_PI_2 endAngle:M_PI clockwise:YES];
+    } else {
+        [path addLineToPoint:CGPointMake(lineWidth/2.0, height - lineWidth/2.0)];
+    }
+    [path addLineToPoint:CGPointMake(lineWidth/2.0, height / 2.0)];
     
     return path;
 }

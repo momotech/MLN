@@ -131,18 +131,18 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)addStringArgument:(NSString * __nullable)argument;
 
 /**
- 添加NSMutableDictionary类型参数
+ 添加Map类型参数，传入不可变类型会被转换为可变类型
  
- @param argument NSMutableDictionary类型参数
+ @param argument NSDictionary类型参数
  */
-- (void)addMapArgument:(NSMutableDictionary *)argument;
+- (void)addMapArgument:(NSDictionary *)argument;
 
 /**
- 添加NSMutableArray类型参数
+ 添加Array类型参数 传入不可变类型会被转换为可变类型
  
- @param argument NSMutableArray类型参数
+ @param argument NSArray类型参数
  */
-- (void)addArrayArgument:(NSMutableArray *)argument;
+- (void)addArrayArgument:(NSArray *)argument;
 
 /**
  添加NSDictionary类型参数

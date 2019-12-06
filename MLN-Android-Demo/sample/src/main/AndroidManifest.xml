@@ -1,0 +1,60 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.mln.demo">
+
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+
+    <!--
+        android:networkSecurityConfig="@xml/network_security_config"
+        android:theme="@style/AppTheme"
+    -->
+
+    <application
+        android:name=".App"
+        android:allowBackup="true"
+        android:icon="@drawable/main_logo"
+        android:label="@string/app_name"
+        android:screenOrientation="portrait"
+        android:theme="@style/AppTheme">
+        <meta-data
+            android:name="android.max_aspect"
+            android:value="2.34" />
+        <meta-data
+            android:name="notch.config"
+            android:value="portrait|landscape" />
+        <meta-data
+            android:name="android.notch_support"
+            android:value="true" />
+
+        <activity
+            android:name=".LauncherActivity"
+            android:theme="@style/AppTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <!-- .performance.EmptyActivity    .activity.LuaViewActivity -->
+        <activity
+            android:name="com.mln.demo.mln.activity.LuaViewActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.StartingWindowTheme"
+            android:windowSoftInputMode="adjustPan|stateAlwaysHidden">
+
+        </activity>
+
+        <activity android:name=".android.activity.MainTabActivity">
+
+        </activity>
+        <activity android:name=".android.activity.IdeaMassActivity" />
+        <activity android:name=".android.fragment.message.controller.MessageDetailNotificationActivity" />
+        <activity android:name=".android.fragment.message.controller.MessageDetailActivity" />
+
+    </application>
+
+</manifest>

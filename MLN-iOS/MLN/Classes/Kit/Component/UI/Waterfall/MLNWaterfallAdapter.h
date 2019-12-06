@@ -6,6 +6,7 @@
 //
 
 #import "MLNCollectionViewAdapter.h"
+#import "MLNWaterfallLayoutDelegate.h"
 #import "MLNWaterfallLayout.h"
 
 @interface MLNWaterfallAdapter : MLNCollectionViewAdapter <MLNWaterfallLayoutDelegate>
