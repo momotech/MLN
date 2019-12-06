@@ -122,6 +122,8 @@ class LuaCApi {
 
     static native int _doLoadedData(long L_state);
 
+    static native LuaValue[] _doLoadedDataAndGetResult(long L_state);
+
     static native boolean _setMainEntryFromPreload(long L, String chunkname);
 
     static native void _preloadData(long L, String chunkName, byte[] data);

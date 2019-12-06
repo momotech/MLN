@@ -52,7 +52,7 @@ public class App extends Application {
                         .build())
                 .setUncatchExceptionListener(new com.immomo.mls.Environment.UncatchExceptionListener() {
                     @Override
-                    public boolean onUncatch(Globals globals, Throwable e) {
+                    public boolean onUncatch(boolean fatal, Globals globals, Throwable e) {
                         e.printStackTrace();
                         return true;
                     }

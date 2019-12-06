@@ -38,7 +38,7 @@ public class BorderRadiusTextView extends ForegroundTextView implements IBorderR
         super(context);
         backgroundDrawable = new BorderBackgroundDrawable();
         backgroundDrawable.setBorderForceGround(false);//border绘制在背景
-        viewClipHelper = new ViewClipHelper();
+        viewClipHelper = new ViewClipHelper(this);
         viewShadowHelper = new ViewShadowHelper();
     }
 
@@ -183,7 +183,7 @@ public class BorderRadiusTextView extends ForegroundTextView implements IBorderR
     @Override
     public void draw(Canvas canvas) {
         if (viewClipHelper.needClicp()) {
-            viewClipHelper.clip(canvas, this);
+            viewClipHelper.clip(canvas, this, false);
         } else {
             super.draw(canvas);
         }

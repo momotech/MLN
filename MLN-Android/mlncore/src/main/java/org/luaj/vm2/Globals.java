@@ -16,6 +16,7 @@ import android.util.LongSparseArray;
 
 import com.immomo.mlncore.MLNCore;
 
+import org.luaj.vm2.exception.InvokeError;
 import org.luaj.vm2.exception.UndumpError;
 import org.luaj.vm2.utils.IGlobalsUserdata;
 import org.luaj.vm2.utils.LuaApiUsed;
@@ -760,6 +761,31 @@ public final class Globals extends LuaTable {
             errorMsg = t.getMessage();
         }
         return state == LUA_OK;
+    }
+
+    /**
+     * 若已通过
+     *      {@link #loadString}
+     *      {@link #loadData}
+     *      {@link #compileAndSave}
+     *      {@link #setMainEntryFromPreload}
+     * 加载成功，可通过此方法执行加载脚本，并返回执行状态
+     * @return lua执行结果，可能为空
+     * @throws IllegalStateException 当前虚拟机状态不可用时，抛出
+     * @throws InvokeError 执行出错，抛出（由C层）
+     */
+    public final LuaValue[] callLoadedDataAndGetResult() throws IllegalStateException, InvokeError {
+        checkDestroy();
+        if (state != LUA_OK) {
+            if (state == JUST_INIT) {
+                throw new IllegalStateException("Lua script is not loaded!");
+            }
+            throw new IllegalStateException("state of loading lua script is not ok, code: " + state);
+        }
+        state = LUA_CALLING;
+        LuaValue[] ret = LuaCApi._doLoadedDataAndGetResult(L_State);
+        state = LUA_OK;
+        return ret;
     }
 
     /**

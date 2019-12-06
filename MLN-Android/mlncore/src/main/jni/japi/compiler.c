@@ -277,6 +277,40 @@ jint jni_doLoadedData(JNIEnv *env, jobject jobj, jlong L_state_pointer) {
     return ret;
 }
 
+extern jclass LuaValue;
+jobjectArray jni_doLoadedDataAndGetResult(JNIEnv *env, jobject jobj, jlong LS) {
+    lua_State *L = (lua_State *) LS;
+    lua_lock(L);
+    int err = lua_iscfunction(L, 1) ? 1 : 0;
+    int oldTop = lua_gettop(L) - 1;
+    jint ret = (jint) lua_pcall(L, 0, LUA_MULTRET, err);
+    if (ret) {
+        const char *errmsg;
+        if (lua_isstring(L, -1))
+            errmsg = lua_tostring(L, -1);
+        else
+            errmsg = "unkonw error";
+        throwInvokeError(env, errmsg);
+        lua_unlock(L);
+        return NULL;
+    }
+    int returnCount = lua_gettop(L) - oldTop;
+    if (returnCount == 0) {
+        lua_unlock(L);
+        return NULL;
+    }
+    int i;
+    jobjectArray r = (*env)->NewObjectArray(env, returnCount, LuaValue, NULL);
+    for (i = returnCount - 1; i >= 0; i--) {
+        jobject v = toJavaValue(env, L, oldTop + i + 1);
+        (*env)->SetObjectArrayElement(env, r, i, v);
+        FREE(env, v);
+    }
+    lua_settop(L, oldTop);
+    lua_unlock(L);
+    return r;
+}
+
 jint jni_startDebug(JNIEnv *env, jobject jobj, jlong LS, jbyteArray data, jstring ip, jint port) {
     lua_State *L = (lua_State *) LS;
     lua_lock(L);
