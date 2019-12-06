@@ -22,7 +22,13 @@ public class Environment {
 
     public static final String LUA_ERROR = "[LUA_ERROR] ";
 
-    public static UncatchExceptionListener uncatchExceptionListener;
+    public static UncatchExceptionListener uncatchExceptionListener = new UncatchExceptionListener() {
+        @Override
+        public boolean onUncatch(boolean fatal, Globals globals, Throwable e) {
+            e.printStackTrace();
+            return true;
+        }
+    };
     public static boolean hook(Throwable t, Globals globals) {
         if (globals.getState() == Globals.LUA_CALLING)
             return false;
