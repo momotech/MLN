@@ -402,3 +402,8 @@ LUABROADCASTCHANNEL_API int luaopen_broadcastchannel(lua_State *L) {
     lua_bc_newclass(L, LUA_MESSAGEEVENTMTLIBNAME, bc_msgevent_funcs);
     return 1;
 }
+
+JNIEXPORT void JNICALL Java_com_immomo_mls_NativeBroadcastChannel__1openLib
+(JNIEnv *env, jclass cls, jlong l) {
+    luaopen_broadcastchannel((lua_State *) l);
+}

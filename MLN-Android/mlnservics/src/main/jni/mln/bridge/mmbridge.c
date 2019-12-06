@@ -12,7 +12,6 @@
 #include <jni.h>
 #include "mmbridge.h"
 #include "lauxlib.h"
-#include "lua_broadcastchannel.h"
 #include "mmoslib.h"
 
 #define MM_BIT "MBit"
@@ -45,7 +44,6 @@ void mm_openlibs(lua_State *L) {
         lua_setfield(L, -2, lib->name);
     }
     lua_pop(L, 1);  /* remove _PRELOAD table */
-    luaopen_broadcastchannel(L);
     luaopen_mmos(L);
 }
 
