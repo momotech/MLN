@@ -1,5 +1,4 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     package="com.mln.demo">
 
     <uses-permission android:name="android.permission.CAMERA" />
@@ -32,13 +31,8 @@
 
         <activity
             android:name=".LauncherActivity"
-           >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <action android:name="android.intent.action.VIEW" />
+            android:theme="@style/AppTheme">
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <!-- .performance.EmptyActivity    .activity.LuaViewActivity -->
         <activity
@@ -46,7 +40,12 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.StartingWindowTheme"
             android:windowSoftInputMode="adjustPan|stateAlwaysHidden">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.VIEW" />
 
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
 
         <activity android:name=".android.activity.MainTabActivity">
@@ -56,39 +55,6 @@
         <activity android:name=".android.fragment.message.controller.MessageDetailNotificationActivity" />
         <activity android:name=".android.fragment.message.controller.MessageDetailActivity" />
 
-
-        <!--        WEEX Demo-->
-        <activity
-            android:name=".weex.WXPageActivity"
-            android:label="@string/app_name"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar">
-            <intent-filter>
-
-                <action android:name="com.taobao.android.intent.action.WEEX" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="com.taobao.android.intent.category.WEEX" />
-
-
-                <!--
-                <data android:scheme="http"/>
-                <data android:scheme="https"/>
-                <data android:scheme="file"/>
-                <data android:scheme="wxpage" />
-                -->
-            </intent-filter>
-        </activity>
-
-<!--        <provider-->
-<!--            android:name="androidx.core.content.FileProvider"-->
-<!--            android:authorities="org.apache.weex.fileprovider"-->
-<!--            android:exported="false"-->
-<!--            android:grantUriPermissions="true">-->
-<!--        <meta-data-->
-<!--            android:name="android.support.FILE_PROVIDER_PATHS"-->
-<!--            android:resource="@xml/filepaths" /></provider>-->
     </application>
 
 </manifest>

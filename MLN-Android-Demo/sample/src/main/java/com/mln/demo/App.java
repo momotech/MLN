@@ -4,7 +4,6 @@ import android.app.Application;
 import android.util.Log;
 
 import com.mln.demo.mln.MLNAppHelper;
-import com.mln.demo.weex.WeexAppHelper;
 
 /**
  * Created by XiongFangyu on 2018/6/19.
@@ -12,30 +11,19 @@ import com.mln.demo.weex.WeexAppHelper;
 public class App extends Application {
     private static App app;
     private MLNAppHelper mlnAppHelper;
-    private WeexAppHelper weexAppHelper;
+    public static boolean isMLN = true;
 
     @Override
     public void onCreate() {
         super.onCreate();
         app = this;
-        if ("weex".equals(BuildConfig.sdkType)) {
-            initWeex();
-        } else if ("mln".equals(BuildConfig.sdkType)) {
+        if (isMLN) {
             initMLN();
         }
     }
 
     public static App getApp() {
         return app;
-    }
-
-    public void initWeex() {
-        if (weexAppHelper == null) {
-            long start = System.currentTimeMillis();
-            weexAppHelper = new WeexAppHelper();
-            weexAppHelper.onCreate(app);
-            Log.d("App", "onCreate: init time = " + (System.currentTimeMillis() - start));
-        }
     }
 
     public void initMLN() {
