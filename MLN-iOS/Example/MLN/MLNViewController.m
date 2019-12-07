@@ -28,7 +28,7 @@
 #import "MLNLuaPageViewController.h"
 #import "MLNGalleryMainViewController.h"
 
-@interface MLNViewController () <MLNViewControllerProtocol, MLNKitInstanceDelegate>
+@interface MLNViewController () <MLNViewControllerProtocol, MLNKitInstanceDelegate, UINavigationControllerDelegate>
 
 @property (nonatomic, strong) MLNKitInstance *kitInstance;
 @property (nonatomic, strong) id<MLNHttpHandlerProtocol> httpHandler;
@@ -48,6 +48,8 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    self.view.backgroundColor = [UIColor whiteColor];
+    
     // 初始化handlers
     self.httpHandler = [[MLNMyHttpHandler alloc] init];
     self.refreshHandler = [[MLNMyRefreshHandler alloc] init];
@@ -104,7 +106,7 @@
     self.galleryButton.backgroundColor = [UIColor orangeColor];
     [self.galleryButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [self.galleryButton addTarget:self action:@selector(galleryButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:self.galleryButton];
+//    [self.view addSubview:self.galleryButton];
     
     CGFloat screenHeight = [UIScreen mainScreen].bounds.size.height;
     self.fpsLabel = [[MLNFPSLabel alloc] initWithFrame:CGRectMake(10, screenHeight * 0.8, 50, 20)];
@@ -116,6 +118,12 @@
 {
     MLNGalleryViewController *galleryVc = [[MLNGalleryViewController alloc] init];
     [self.navigationController pushViewController:galleryVc animated:YES];
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    self.navigationController.navigationBar.alpha = 0.0;
 }
 
 - (void)viewDidAppear:(BOOL)animated
