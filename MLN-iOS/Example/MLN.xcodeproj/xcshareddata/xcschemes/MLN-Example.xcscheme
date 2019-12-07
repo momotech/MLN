@@ -15,8 +15,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "6003F589195388D20070C39A"
-               BuildableName = "MLN_Example.app"
-               BlueprintName = "MLN_Example"
+               BuildableName = "LuaNative.app"
+               BlueprintName = "LuaNative"
                ReferencedContainer = "container:MLN.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -43,8 +43,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "6003F589195388D20070C39A"
-            BuildableName = "MLN_Example.app"
-            BlueprintName = "MLN_Example"
+            BuildableName = "LuaNative.app"
+            BlueprintName = "LuaNative"
             ReferencedContainer = "container:MLN.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -66,8 +66,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "6003F589195388D20070C39A"
-            BuildableName = "MLN_Example.app"
-            BlueprintName = "MLN_Example"
+            BuildableName = "LuaNative.app"
+            BlueprintName = "LuaNative"
             ReferencedContainer = "container:MLN.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -85,8 +85,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "6003F589195388D20070C39A"
-            BuildableName = "MLN_Example.app"
-            BlueprintName = "MLN_Example"
+            BuildableName = "LuaNative.app"
+            BlueprintName = "LuaNative"
             ReferencedContainer = "container:MLN.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
