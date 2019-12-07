@@ -12,8 +12,15 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface MLNActionItem : NSObject
 
+/**
+ * 事件类型
+ **/
 @property (nonatomic, copy) NSString *actionType;
-@property (nonatomic, copy) NSString *action;
+
+/**
+ * 事件json
+ **/
+ @property (nonatomic, copy) NSString *action;
 //格式化action，合并参数params以及action的prm数据
 @property (nonatomic, strong) NSDictionary *actionInfo;
 
