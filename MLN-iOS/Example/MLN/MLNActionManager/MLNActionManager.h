@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "MLNAnimationConst.h"
+#import "MLNActionDefine.h"
 
 @class MLNActionItem;
 
