@@ -72,12 +72,6 @@ public class GlideImageProvider implements ImageProvider {
         }
     }
 
-    private MultiRoundedCorners parse(ImageView iv, RectF radius) {
-        MultiRoundedCorners c = new MultiRoundedCorners((int) radius.left, (int) radius.top, (int) radius.right, (int) radius.bottom,
-                iv != null ? iv.getScaleType() : ImageView.ScaleType.FIT_CENTER);
-        return c;
-    }
-
     /**
      * load url
      *  @param url
@@ -109,10 +103,6 @@ public class GlideImageProvider implements ImageProvider {
                 });
             } else {
                 builder = Glide.with(context).load(url);
-            }
-            if (radius != null) {
-                builder = builder.apply(
-                        RequestOptions.bitmapTransform((parse(imageView, radius))));
             }
             if (placeHolder != null) {
                 int id = ResourcesUtils.getResourceIdByUrl(placeHolder, null, ResourcesUtils.TYPE.DRAWABLE);
@@ -175,10 +165,6 @@ public class GlideImageProvider implements ImageProvider {
             });
         } else {
             builder = Glide.with(context).load(url);
-        }
-        if (radius != null) {
-            builder = builder.apply(
-                    RequestOptions.bitmapTransform((parse(null, radius))));
         }
         builder.preload();
     }
