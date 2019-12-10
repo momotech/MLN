@@ -14,6 +14,7 @@ import com.immomo.mls.adapter.MLSGlobalStateListener;
 import com.immomo.mls.adapter.MLSHttpAdapter;
 import com.immomo.mls.adapter.MLSLoadViewAdapter;
 import com.immomo.mls.adapter.MLSQrCaptureAdapter;
+import com.immomo.mls.adapter.MLSReloadButtonCreator;
 import com.immomo.mls.adapter.MLSResourceFinderAdapter;
 import com.immomo.mls.adapter.MLSThreadAdapter;
 import com.immomo.mls.adapter.OnRemovedUserdataAdapter;
@@ -29,7 +30,9 @@ import com.immomo.mls.adapter.impl.DefaultScriptReaderCreatorImpl;
 import com.immomo.mls.adapter.impl.DefaultThreadAdapter;
 import com.immomo.mls.adapter.impl.DefaultToastAdapter;
 import com.immomo.mls.adapter.impl.DefaultTypeFaceAdapter;
+import com.immomo.mls.adapter.impl.MLSReloadButtonCreatorImpl;
 import com.immomo.mls.provider.ImageProvider;
+import com.immomo.mls.utils.AssertUtils;
 
 import androidx.annotation.NonNull;
 
@@ -51,6 +54,7 @@ public class MLSAdapterContainer {
     private static ScriptReaderCreator scriptReaderCreator = new DefaultScriptReaderCreatorImpl();
     private static MLSQrCaptureAdapter qrCaptureAdapter;
     private static OnRemovedUserdataAdapter onRemovedUserdataAdapter;
+    private static MLSReloadButtonCreator reloadButtonCreator = new MLSReloadButtonCreatorImpl();
 
     public static MLSThreadAdapter getThreadAdapter() {
         return threadAdapter;
@@ -162,5 +166,14 @@ public class MLSAdapterContainer {
 
     public static void setOnRemovedUserdataAdapter(OnRemovedUserdataAdapter onRemovedUserdataAdapter) {
         MLSAdapterContainer.onRemovedUserdataAdapter = onRemovedUserdataAdapter;
+    }
+
+    public static MLSReloadButtonCreator getReloadButtonCreator() {
+        return reloadButtonCreator;
+    }
+
+    public static void setReloadButtonCreator(MLSReloadButtonCreator reloadButtonCreator) {
+        AssertUtils.assertNullForce(reloadButtonCreator);
+        MLSAdapterContainer.reloadButtonCreator = reloadButtonCreator;
     }
 }
