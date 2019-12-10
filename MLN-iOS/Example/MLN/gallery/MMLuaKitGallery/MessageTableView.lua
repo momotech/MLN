@@ -79,7 +79,7 @@ function _class:setupTableView()
         --图标
         cell.imageView  = ImageView():width(40):height(40):marginLeft( 20):setGravity(Gravity.CENTER_VERTICAL)
         cell.imageView:contentMode(ContentMode.SCALE_ASPECT_FILL):cornerRadius(20)
-        cell.imageView:bgColor(_Color.LightGray)
+        cell.imageView:bgColor(ColorConstants.LightGray)
         cell.layout:addView(cell.imageView)
 
         --标题与副标题布局
@@ -110,7 +110,7 @@ function _class:setupTableView()
         cell.attachButton:marginLeft( window:width() - cell.attachButton:width() - 10)
         cell.attachButton:cornerRadius(3)
                 :borderWidth(1):borderColor(Color(200,200,200))
-        cell.attachButton:text("+关注"):textAlign(TextAlign.CENTER):fontSize(13):textColor(_Color.Black)
+        cell.attachButton:text("+关注"):textAlign(TextAlign.CENTER):fontSize(13):textColor(ColorConstants.Black)
         cell.attachButton:onClick(function()
             if cell.attachButton:text() == "+关注" then
                 cell.attachButton:text("已关注")
@@ -154,20 +154,20 @@ function _class:setupTableView()
         if row == 1 then
             --Toast("客服当前时间不在线哦")
             if System:Android() then
-                Navigator:gotoPage("file://android_asset/MMLuaKitGallery/CustomerService.lua",Map(),1)
+                Navigator:gotoPage("assets://MMLuaKitGallery/CustomerService.lua",Map(),AnimType.RightToLeft)
             else
                 Navigator:gotoPage("CustomerService",Map(),0)
             end
         elseif row == 2 then
             --Toast("官方尚未发布通知")
             if  System:Android() then
-                Navigator:gotoPage("file://android_asset/MMLuaKitGallery/Notification.lua",Map(),1)
+                Navigator:gotoPage("assets://MMLuaKitGallery/Notification.lua",Map(),AnimType.RightToLeft)
             else
                 Navigator:gotoPage("Notification",Map(),0)
             end
         else
             --Toast(cell.titleLabel:text(), 1)
-           -- Navigator:gotoPage("file://android_asset/MMLuaKitGallery/Notification.lua",Map(),1)
+           -- Navigator:gotoPage("assets://MMLuaKitGallery/Notification.lua",Map(),1)
         end
     end)
 
@@ -235,36 +235,23 @@ function _class:request(first, complete)
     else
         self.requestIndex = self.requestIndex + 1
     end
-
+    local filepath = 'gallery/json/message.json'
     if System:Android() then
-
-        File:asyncReadMapFile('file://android_asset/MMLuaKitGallery/message.json', function(codeNumber, response)
-
-            print("codeNumber: " .. tostring(codeNumber))
-
-            if codeNumber == 0 then
-                local data = response:get("data")
-                self:constructData(first, data)
-                complete(true, data)
-            else
-                --error(err:get("errmsg"))
-                complete(false, nil)
-            end
-        end)
-
+        filepath = 'assets://'..filepath
     else
-        File:asyncReadFile('file://gallery/json/message.json', function(codeNumber, response)
-            map = StringUtil:jsonToMap(response)
-            if codeNumber == 0 then
-                local data = map:get("result"):get('data')
-                self:constructData(first, data)
-                complete(true, data)
-            else
-                --error(err:get("errmsg"))
-                complete(false, nil)
-            end
-        end)
+        filepath = 'file://'..filepath
     end
+    File:asyncReadFile(filepath, function(codeNumber, response)
+        map = StringUtil:jsonToMap(response)
+        if codeNumber == 0 then
+            local data = map:get("result"):get('data')
+            self:constructData(first, data)
+            complete(true, data)
+        else
+            --error(err:get("errmsg"))
+            complete(false, nil)
+        end
+    end)
 end
 
 ---@private
