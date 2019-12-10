@@ -25,6 +25,7 @@
 @interface MLNKitInstance ()<MLNErrorHandlerProtocol, MLNLuaCoreDelegate> {
     MLNLuaCore *_luaCore;
     MLNLayoutEngine *_layoutEngine;
+    MLNWindow *_luaWindow;
 }
 
 @property (nonatomic) Class<MLNConvertorProtocol> convertorClass;
@@ -35,8 +36,6 @@
 @property (nonatomic, strong) MLNBeforeWaitingTaskEngine *animationEngine;
 @property (nonatomic, strong) MLNBeforeWaitingTaskEngine *renderEngine;
 @property (nonatomic, strong) MLNKitBridgesManager *bridgesManager;
-@property (nonatomic, strong) MLNWindow *luaWindow;
-@property (nonatomic, assign) BOOL isLuaWindowSetup;
 @property (nonatomic, strong) NSMutableArray *onDestroyCallbacks;
 @property (nonatomic, assign) BOOL didViewAppear;
 @property (nonatomic, assign) BOOL needCallAppear;
@@ -45,9 +44,16 @@
 
 @implementation MLNKitInstance (LuaWindow)
 
+- (MLNWindow *)createLuaWindow
+{
+    return [[MLNWindow alloc] initWithFrame:self.rootView.bounds];
+}
+
 - (void)setupLuaWindow:(NSMutableDictionary *)windowExtra
 {
-    self.isLuaWindowSetup = YES;
+    if (!self.luaWindow) {
+        _luaWindow = [self createLuaWindow];
+    }
     self.luaWindow.extraInfo = windowExtra;
     [self.luaCore registerGlobalVar:self.luaWindow globalName:@"window" error:nil];
     self.luaWindow.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
@@ -200,7 +206,11 @@
         }
         MLNError(self.luaCore, @"entry file is nil!");
         if ([self.delegate respondsToSelector:@selector(instance:didFailRun:error:)]) {
-            [self.delegate instance:self didFailRun:entryFilePath error:*error];
+            if (error) {
+                [self.delegate instance:self didFailRun:entryFilePath error:*error];
+            } else {
+                [self.delegate instance:self didFailRun:entryFilePath error:nil];
+            }
         }
         return NO;
     }
@@ -375,9 +385,7 @@
     // 开启所有处理引擎
     [self startAllEngines];
     // 创建LuaWindow
-    if (!self.isLuaWindowSetup) {
-        [self setupLuaWindow:_windowExtra];
-    }
+    [self setupLuaWindow:_windowExtra];
     // 将LuaWindow加入到Layout引擎
     [self pushWindowToLayoutEngine];
     // 回调代理
@@ -394,6 +402,7 @@
     _luaCore.delegate = self;
 }
 
+
 - (void)startAllEngines
 {
     [self.layoutEngine start];
@@ -409,7 +418,7 @@
 
 - (void)forceLayoutLuaWindow
 {
-    [_luaWindow lua_requestLayout];
+   [self.luaWindow lua_requestLayout];
 }
 
 - (void)releaseAll
@@ -449,13 +458,12 @@
 
 - (void)releaseLuaWindow
 {
-    // 通知Lua，Window即将释放
-    [_luaWindow doLuaViewDestroy];
+   // 通知Lua，Window即将释放
+    [self.luaWindow doLuaViewDestroy];
     // 释放Lua Window
-    [_luaWindow lua_removeAllSubViews];
-    [_luaWindow removeFromSuperview];
-    _luaWindow = nil;
-    self.isLuaWindowSetup = NO;
+    [self.luaWindow  lua_removeAllSubViews];
+    [self.luaWindow  removeFromSuperview];
+    _luaWindow  = nil;
 }
 
 #pragma mark - Getter
@@ -465,14 +473,6 @@
         [self createLuaCore];
     }
     return _luaCore;
-}
-
-- (MLNWindow *)luaWindow
-{
-    if (!_luaWindow) {
-        _luaWindow = [[MLNWindow alloc] initWithFrame:self.rootView.bounds];
-    }
-    return _luaWindow;
 }
 
 - (MLNLayoutEngine *)layoutEngine

@@ -13,24 +13,12 @@
         android:paddingBottom="100dp">
 
         <ImageView
-            android:id="@+id/imgLogo"
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:layout_gravity="center"
             android:minWidth="100dp"
             android:minHeight="100dp"
             android:src="@drawable/main_logo"/>
-
-        <TextView
-            android:id="@+id/btnOpenQr"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:background="@drawable/btn_selector_noborder"
-            android:gravity="center"
-            android:paddingTop="10dp"
-            android:paddingBottom="10dp"
-            android:text="@string/btn_scan_qr"/>
 
         <TextView
             android:id="@+id/tvDevDebug"
@@ -41,16 +29,38 @@
             android:gravity="center"
             android:paddingTop="10dp"
             android:paddingBottom="10dp"
-            android:text="@string/dev_debug_tv_value"
-            android:visibility="gone"
-            tools:visibility="visible"/>
+            android:text="@string/dev_debug_tv_value"/>
+
+        <TextView
+            android:id="@+id/tvInnerDemo"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/btn_selector_noborder"
+            android:gravity="center"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:text="@string/btn_inner_instance"/>
+
+        <TextView
+            android:id="@+id/tvDemo"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/btn_selector_noborder"
+            android:gravity="center"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:text="@string/btn_demo"/>
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:visibility="gone">
 
         <LinearLayout
             android:layout_width="match_parent"

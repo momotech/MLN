@@ -408,7 +408,7 @@ public class AndroidUtil {
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
             window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
             window.setStatusBarColor(color);
-            if (Color.alpha(color) < 255) {
+            if (Color.alpha(color) < 255) {//沉浸式
                 View decor = window.getDecorView();
                 if (decor != null) {
                     decor.setSystemUiVisibility(
@@ -416,6 +416,20 @@ public class AndroidUtil {
                 }
             }
         }
+    }
+
+    public static boolean isLayoutStable(Activity activity) {//判断沉浸式，依据
+        Window window = activity.getWindow();
+        if (window == null) {
+            return false;
+        }
+        View decor = window.getDecorView();
+        if (decor != null) {
+            int flag = decor.getSystemUiVisibility();
+            return (flag & (View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN))
+                    == (View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+        }
+        return false;
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)

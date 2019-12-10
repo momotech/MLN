@@ -123,11 +123,6 @@ static MLNHotReload *sharedInstance;
     luaInstance.instanceHandlersManager.errorHandler = self;
     [luaInstance changeLuaBundleWithPath:bundlePath];
     [luaInstance changeRootView:self.benchLuaContentView];
-    // 注册print
-    [luaInstance registerClazz:[MLNDebugPrintFunction class] error:NULL];
-    if (self.registerBridgeClassesCallback) {
-        self.registerBridgeClassesCallback(luaInstance);
-    }
     return luaInstance;
 }
 
@@ -159,7 +154,7 @@ static MLNHotReload *sharedInstance;
 #pragma mark - MLNServerHandlerDelegate
 - (void)reload:(NSString * )bundlePath entryFilePath:(NSString * _Nonnull)entryFilePath params:(NSDictionary * _Nonnull )params
 {
-    if (!_running) {
+    if (!_running || !stringNotEmpty(bundlePath)) {
         return;
     }
     dispatch_async(dispatch_get_main_queue(), ^{
@@ -232,6 +227,16 @@ static MLNHotReload *sharedInstance;
 }
 
 #pragma mark - MLNKitInstanceDelegate
+- (void)didSetupLuaCore:(MLNKitInstance *)luaInstance
+{
+    // 注册print
+    [luaInstance registerClazz:[MLNDebugPrintFunction class] error:NULL];
+    // 注册外部bridge
+    if (self.registerBridgeClassesCallback) {
+        self.registerBridgeClassesCallback(luaInstance);
+    }
+}
+
 - (void)instance:(MLNKitInstance *)instance didFinishRun:(NSString *)entryFileName
 {
     if (instance == self.benchLuaInstance) {

@@ -9,6 +9,7 @@ package com.immomo.mls.util;
 
 import android.content.Context;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
 import androidx.annotation.NonNull;
 import android.text.TextUtils;
@@ -40,7 +41,6 @@ import java.util.zip.ZipInputStream;
  */
 public class FileUtil {
     private static final String DIR_MODIFY_FILE = ".lastModify__time";
-    private static final String LOCAL_SCHEME = "file://";
     private static final int BUFFER = 8 << 10;
     /**
      * 默认支持使用内存映射的方式读取或写文件
@@ -230,48 +230,30 @@ public class FileUtil {
 
     /**
      * 是否是相对路径
-     * @param url
-     * @return
+     * @see RelativePathUtils#isLocalUrl
      */
+    @Deprecated
     public static boolean isLocalUrl(String url) {
-        return url.startsWith(LOCAL_SCHEME);
+        return RelativePathUtils.isLocalUrl(url);
     }
 
     /**
      * 将相对路径转换成绝对路径
-     * @param url
-     * @return
+     *
+     * @see RelativePathUtils#getAbsoluteUrl(String)
      */
+    @Deprecated
     public static String getAbsoluteUrl(String url) {
-        File root = getRootDir();
-        if (root == null)
-            return null;
-        String rootPath = root.getAbsolutePath();
-        if (TextUtils.isEmpty(rootPath))
-            return null;
-        url = getUrlPath(url);
-        File file = new File(rootPath, url);
-        return file.getAbsolutePath();
+        return RelativePathUtils.getAbsoluteUrl(url);
     }
 
     /**
      * 将绝对路径转换为相对路径
-     * @param absoluteUrl
-     * @return
+     * @see RelativePathUtils#getLocalUrl
      */
+    @Deprecated
     public static String getLocalUrl(String absoluteUrl) {
-        if (absoluteUrl == null || !absoluteUrl.startsWith("/"))
-            return absoluteUrl;
-        File root = getRootDir();
-        if (root == null)
-            return absoluteUrl;
-        String rootPath = root.getAbsolutePath();
-        if (TextUtils.isEmpty(rootPath))
-            return absoluteUrl;
-        if (!absoluteUrl.startsWith(rootPath))
-            return absoluteUrl;
-        String url = absoluteUrl.replace(rootPath, "").substring(1);
-        return LOCAL_SCHEME + url;
+        return RelativePathUtils.getLocalUrl(absoluteUrl);
     }
 
     public static String getUrlPath(String url) {
@@ -818,15 +800,12 @@ public class FileUtil {
      *
      * @param filePath
      */
-    public static void delete(final String filePath) {
+    public static boolean delete(final String filePath) throws IOException {
         if (filePath != null) {
             File file = new File(filePath);
-            try {
-                delete(file);
-            } catch (Exception e) {
-                logError(e);
-            }
+            return delete(file);
         }
+        return false;
     }
 
     /**
@@ -834,20 +813,31 @@ public class FileUtil {
      *
      * @param file
      */
-    public static void delete(File file) {
+    public static boolean delete(File file) throws IOException {
         if (file != null && file.exists()) {
             if (file.isDirectory()) {
                 File[] children = file.listFiles();
                 if (children != null) {
                     for (File child : children) {
-                        delete(child);
+                        if (!delete(child))
+                            return false;
                     }
                 }
-                file.delete();
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    Files.deleteIfExists(file.toPath());
+                } else {
+                    return !file.delete();
+                }
             } else {
-                file.delete();
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    Files.deleteIfExists(file.toPath());
+                } else {
+                    return !file.delete();
+                }
             }
+            return true;
         }
+        return false;
     }
     //------------------------------------sdcard operations-----------------------------------------
 

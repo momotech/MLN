@@ -18,6 +18,7 @@ import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaUserdata;
 import org.luaj.vm2.LuaValue;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.List;
@@ -45,17 +46,17 @@ public class Utils {
      * 基本数据类型可使用
      * @see com.immomo.mls.utils.convert.PrimitiveArrayUtils#toTable
      * @param g 虚拟机
-     * @param objs 数组
+     * @param arr 数组
      * @return lua数组
      */
-    public static @Nullable LuaTable toLuaArray(@NonNull Globals g, @Nullable Object[] objs) {
+    public static @Nullable LuaTable toLuaArray(@NonNull Globals g, @Nullable Object arr) {
         if (g.isDestroyed())
             return null;
-        int len = objs == null ? 0 : objs.length;
+        int len = arr == null ? 0 : Array.getLength(arr);
         if (len == 0) return null;
         LuaTable table = LuaTable.create(g);
         for (int i = 0; i < len; i ++) {
-            table.set(i + 1, toLuaValue(g, objs[i]));
+            table.set(i + 1, toLuaValue(g, Array.get(arr, i)));
         }
         return table;
     }
@@ -78,12 +79,13 @@ public class Utils {
      * @param need 类型
      * @return 原生数组
      */
-    public static @Nullable Object[] toNativeArray(@Nullable LuaTable t, @NonNull Class need) {
+    public static @Nullable Object toNativeArray(@Nullable LuaTable t, @NonNull Class need) {
         int len = t == null ? 0 : t.getn();
         if (len == 0) return null;
-        Object[] ret = new Object[len];
+
+        Object ret = Array.newInstance(need, len);
         for (int i = 0; i < len; i ++) {
-            ret[i] = toNativeValue(t.get(i + 1), need);
+            Array.set(ret, i, toNativeValue(t.get(i + 1), need));
         }
         return ret;
     }

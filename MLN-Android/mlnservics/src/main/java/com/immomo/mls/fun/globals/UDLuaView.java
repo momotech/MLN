@@ -18,6 +18,7 @@ import com.immomo.mls.fun.constants.StatusBarStyle;
 import com.immomo.mls.fun.ud.UDColor;
 import com.immomo.mls.fun.ud.UDMap;
 import com.immomo.mls.fun.ud.view.UDViewGroup;
+import com.immomo.mls.fun.ui.SafeAreaManager;
 import com.immomo.mls.receiver.ConnectionStateChangeBroadcastReceiver;
 import com.immomo.mls.util.AndroidUtil;
 import com.immomo.mls.util.DimenUtil;
@@ -67,6 +68,7 @@ public class UDLuaView extends UDViewGroup<LuaView> implements ConnectionStateCh
             "canEndEditing",
             "sizeChangeEnable",
             "backKeyEnabled",
+            "safeArea",
             "i_keyBoardFrameChangeCallback",
     };
 
@@ -80,6 +82,7 @@ public class UDLuaView extends UDViewGroup<LuaView> implements ConnectionStateCh
 
     private UDMap extraData;
     private int statusTextStyle = -1;
+    private SafeAreaManager safeAreaManager;
 
     @LuaApiUsed
     protected UDLuaView(long L, LuaValue[] v) {
@@ -269,6 +272,17 @@ public class UDLuaView extends UDViewGroup<LuaView> implements ConnectionStateCh
     @LuaApiUsed
     public LuaValue[] homeBarHeight(LuaValue[] p) {
         return rNumber(DimenUtil.pxToDpi(AndroidUtil.getNavigationBarHeight(getContext())));
+    }
+
+    @LuaApiUsed
+    public LuaValue[] safeArea(LuaValue[] v) {
+        int safeArea = v.length > 0 ? v[0].toInt() : SafeAreaManager.CLOSE;
+
+        if (safeAreaManager == null) {
+            safeAreaManager = new SafeAreaManager();
+        }
+        safeAreaManager.safeArea(safeArea, this);
+        return null;
     }
 
 //    @LuaApiUsed

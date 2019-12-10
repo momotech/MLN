@@ -17,6 +17,7 @@ import com.immomo.mls.HotReloadHelper;
 import com.immomo.mls.InitData;
 import com.immomo.mls.MLSBundleUtils;
 import com.immomo.mls.MLSEngine;
+import com.immomo.mls.activity.LuaViewActivity;
 import com.immomo.mls.utils.MainThreadExecutor;
 
 public class BaseActivity extends Activity implements HotReloadHelper.ConnectListener {
@@ -37,10 +38,7 @@ public class BaseActivity extends Activity implements HotReloadHelper.ConnectLis
     }
 
     protected void startTeach(boolean usb) {
-        InitData initData = MLSBundleUtils.createInitData("http://cdnst.momocdn.com/w/u/others/2019/08/21/1566360807746-HotReload.lua?ct=" + (usb ? HotReloadServer.USB_CONNECTION : HotReloadServer.NET_CONNECTION)).forceNotUseX64();
-        Intent intent = new Intent(BaseActivity.this, LuaViewActivity.class);
-        intent.putExtras(MLSBundleUtils.createBundle(initData));
-        startActivity(intent);
+        LuaViewActivity.startHotReload(this, usb);
     }
 
     @Override

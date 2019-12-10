@@ -29,7 +29,7 @@
                                                         options:NSJSONReadingMutableContainers
                                                           error:&err];
     if(err) {
-        MLNKitLuaStaticError(@"json解析失败：%@",err);
+        MLNKitLuaStaticAssert(NO, @"json解析失败：%@",err);
         return nil;
     }
     return dic.mutableCopy;
@@ -48,7 +48,7 @@
     if (jsonData) {
         jsonString = [[NSString alloc]initWithData:jsonData encoding:NSUTF8StringEncoding];
     } else {
-        MLNKitLuaStaticError(@"%@",error);
+        MLNKitLuaStaticAssert(NO, @"%@",error);
     }
     return jsonString;
 }
@@ -63,7 +63,7 @@
     NSError *err;
     id tmp = [NSJSONSerialization JSONObjectWithData:jsonData options:NSJSONReadingMutableContainers error:nil];
     if(err) {
-        MLNKitLuaStaticError(@"json解析失败：%@",err);
+        MLNKitLuaStaticAssert(NO, @"json解析失败：%@",err);
         return nil;
     }
     if (tmp) {
@@ -90,7 +90,7 @@
     if (jsonData) {
         jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
     } else {
-        MLNKitLuaStaticError(@"json解析失败：%@", error);
+        MLNKitLuaStaticAssert(NO, @"json解析失败：%@", error);
     }
     return jsonString;
 }

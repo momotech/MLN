@@ -34,6 +34,7 @@
 @property (nonatomic, assign) MLNImageViewMode imageViewMode;
 @property (nonatomic, assign) UIViewContentMode imageContentMode;
 @property (nonatomic, strong) UIImage *rawImage;
+@property (nonatomic, assign) BOOL enable;
 @end
 
 @implementation MLNImageView
@@ -45,9 +46,38 @@
         self.imageContentMode = UIViewContentModeScaleAspectFit;
         self.imageViewMode = MLNImageViewModeNone;
         self.clipsToBounds = YES;
-        self.userInteractionEnabled = YES;
+        _enable = YES;
     }
     return self;
+}
+
+- (BOOL)lua_enable
+{
+    return self.enable;
+}
+
+- (void)setLua_enable:(BOOL)lua_enable
+{
+    [super setLua_enable:lua_enable];
+    self.enable = lua_enable;
+}
+
+- (void)lua_addClick:(MLNBlock *)clickCallback
+{
+    [super lua_addClick:clickCallback];
+    self.userInteractionEnabled = clickCallback != nil;
+}
+
+- (void)lua_addTouch:(MLNBlock *)touchCallBack
+{
+    [super lua_addTouch:touchCallBack];
+    self.userInteractionEnabled = touchCallBack != nil;
+}
+
+- (void)lua_addLongPress:(MLNBlock *)longPressCallback
+{
+    [super lua_addLongPress:longPressCallback];
+    self.userInteractionEnabled = longPressCallback != nil;
 }
 
 - (void)setImage:(UIImage *)image
@@ -353,7 +383,7 @@
         __weak typeof(self) wself = self;
         _lazyTask = [MLNBeforeWaitingTask taskWithCallback:^{
             __strong typeof(wself) sself = wself;
-            if (sself.blurValue > 0 && !self.processImage) {
+            if (sself.blurValue > 0 && !sself.processImage) {
                 sself.effectView.frame = sself.bounds;
             }
             if (sself.nineImageName.length > 0) {

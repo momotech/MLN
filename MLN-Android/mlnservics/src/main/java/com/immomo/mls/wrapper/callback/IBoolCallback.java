@@ -16,7 +16,7 @@ import com.immomo.mls.wrapper.GlobalsContainer;
  *
  * 回调Lua方法，返回值为boolean类型
  */
-public interface IBoolCallback extends Destroyable, GlobalsContainer {
+public interface IBoolCallback extends Destroyable, ICheckDestroy, GlobalsContainer {
     /**
      * 回调lua方法
      * @param params 参数

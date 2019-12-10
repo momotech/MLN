@@ -29,6 +29,7 @@ import com.immomo.mls.provider.ImageProvider;
 import com.immomo.mls.util.BitmapUtil;
 import com.immomo.mls.util.FileUtil;
 import com.immomo.mls.util.LogUtil;
+import com.immomo.mls.util.RelativePathUtils;
 import com.immomo.mls.utils.AssertUtils;
 import com.immomo.mls.utils.MainThreadExecutor;
 
@@ -61,7 +62,6 @@ public class LuaImageView<U extends UDImageView> extends BorderRadiusImageView i
     private Bitmap mSourceBitmap;
     private final @NonNull AtomicInteger modiCount;
     private final @NonNull ImageProvider provider;
-    private List<String> mNotCallBackImageUrlList = new ArrayList<>();
 
     public LuaImageView(Context context, UDImageView metaTable, LuaValue[] initParams) {
         super(context);
@@ -142,7 +142,7 @@ public class LuaImageView<U extends UDImageView> extends BorderRadiusImageView i
         }
         image = url;
 
-        setImageWithoutCheck(url, null, changed, isNetworkUrl,false);
+        setImageWithoutCheck(url, null, changed, isNetworkUrl,false, false);
     }
 
     @Override
@@ -212,7 +212,7 @@ public class LuaImageView<U extends UDImageView> extends BorderRadiusImageView i
         }
         image = url;
         final boolean isNetworkUrl = URLUtil.isNetworkUrl(url);
-        setImageWithoutCheck(url, placeholder, false, isNetworkUrl,true);
+        setImageWithoutCheck(url, placeholder, false, isNetworkUrl,true, true);
     }
 
     //</editor-fold>
@@ -251,17 +251,21 @@ public class LuaImageView<U extends UDImageView> extends BorderRadiusImageView i
         return null;
     }
 
-    private void setImageWithoutCheck(String url, String placeHolder, final boolean changed, final boolean isNetworkUrl,boolean isUsePlaceHolderWhenUrlEmpty) {
+    private void setImageWithoutCheck(String url, String placeHolder, final boolean changed,
+                                      final boolean isNetworkUrl, boolean isUsePlaceHolderWhenUrlEmpty,
+                                      boolean needCallback) {
         if (changed && isNetworkUrl) {
             setImageDrawable(null);
         }
         if (TextUtils.isEmpty(url)) {
             setPlaceHolderByParams(placeHolder, isUsePlaceHolderWhenUrlEmpty);
-            loadFailCallback2Lua("load url is empty");
+            if (needCallback && udImageView.hasCallback()) {
+                udImageView.callback(false,"load url is empty", url);
+            }
             return;
         }
         if (isNetworkUrl) {
-            realLoad(url, placeHolder);
+            realLoad(url, placeHolder, needCallback);
             return;
         }
         Drawable d = provider.loadProjectImage(getContext(), url);
@@ -271,9 +275,9 @@ public class LuaImageView<U extends UDImageView> extends BorderRadiusImageView i
         }
 
         // 解析file://开头的url
-        if (FileUtil.isLocalUrl(url)) {
-            url = FileUtil.getAbsoluteUrl(url);
-            realLoad(url, placeHolder);
+        if (RelativePathUtils.isLocalUrl(url)) {
+            url = RelativePathUtils.getAbsoluteUrl(url);
+            realLoad(url, placeHolder, needCallback);
             return;
         }
 
@@ -283,20 +287,13 @@ public class LuaImageView<U extends UDImageView> extends BorderRadiusImageView i
             File imgFile = new File(localUrl, url);
             if (imgFile.exists()) {
                 url = imgFile.getAbsolutePath();
-                realLoad(url, placeHolder);
+                realLoad(url, placeHolder, needCallback);
                 return;
             }
         }
 
         // 其他情况，尝试直接load
-        realLoad(url, placeHolder);
-    }
-
-    private void loadFailCallback2Lua(String error) {
-        LuaFunction function = getUserdata().getImageLoadCallback();
-        if (function != null && !mNotCallBackImageUrlList.contains(image)) {
-            function.invoke(LuaValue.varargsOf(LuaBoolean.False(), LuaString.valueOf(error), LuaString.valueOf(image)));
-        }
+        realLoad(url, placeHolder, needCallback);
     }
 
     private void setPlaceHolderByParams(String placeHolder, boolean isUsePlaceHolderWhenUrlEmpty) {
@@ -313,54 +310,53 @@ public class LuaImageView<U extends UDImageView> extends BorderRadiusImageView i
             setImageDrawable(null);
     }
 
-    private void realLoad(String url, String placeHolder) {
+    private void realLoad(String url, String placeHolder, boolean needCallback) {
         mSourceBitmap = null;
         modiCount.incrementAndGet();
         if (lazyLoad) {
-            provider.load(getContext(), this, url, placeHolder, getRadius(), initLoadCallback());
+            provider.load(getContext(), this, url, placeHolder, getRadius(), newCallback(url, needCallback));
         } else {
-            provider.loadWithoutInterrupt(getContext(), this, url, placeHolder, getRadius(), initLoadCallback());
+            provider.loadWithoutInterrupt(getContext(), this, url, placeHolder, getRadius(), newCallback(url, needCallback));
         }
     }
 
-    DrawableLoadCallback drawableLoadCallback;
-
-    private DrawableLoadCallback initLoadCallback() {
-        if (drawableLoadCallback != null)
-            return drawableLoadCallback;
-
-        drawableLoadCallback = new DrawableLoadCallback() {
-            @Override
-            public void onLoadResult(final Drawable drawable) {
-
-                MainThreadExecutor.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        LuaFunction function = getUserdata().getImageLoadCallback();
-                        if (function != null && !mNotCallBackImageUrlList.contains(image)) {
-                            function.invoke(LuaValue.varargsOf(drawable != null ? LuaBoolean.True() : LuaBoolean.False(), LuaValue.Nil(), LuaString.valueOf(image)));
-                        }
-                    }
-                });
-
-                if (canBlurImageCondition() && drawable instanceof BitmapDrawable) {//判断，高斯模糊
-                    MLSAdapterContainer.getThreadAdapter().execute(MLSThreadAdapter.Priority.HIGH, new Runnable() {
+    protected DrawableLoadCallback newCallback(final String url, boolean needCallback) {
+        if (needCallback) {
+            return new DrawableLoadCallback() {
+                @Override
+                public void onLoadResult(final Drawable drawable) {
+                    MainThreadExecutor.post(new Runnable() {
                         @Override
-                        public void run() {//图片加载回调
-                            blur(drawable);
+                        public void run() {
+                            udImageView.callback(drawable != null, url, null);
                         }
                     });
+                    if (canBlurImageCondition() && drawable instanceof BitmapDrawable) {//判断，高斯模糊
+                        MLSAdapterContainer.getThreadAdapter().execute(MLSThreadAdapter.Priority.HIGH, new Runnable() {
+                            @Override
+                            public void run() {//图片加载回调
+                                blur(drawable);
+                            }
+                        });
+                    }
                 }
-            }
-        };
-        return drawableLoadCallback;
-    }
-
-    private void preloadPlaceHolder(String placeHolder, ImageProvider provider) {
-        if (!TextUtils.isEmpty(placeHolder)) {
-            Drawable holderDrawable = provider.loadProjectImage(getContext(), placeHolder);
-            setImageDrawable(holderDrawable);
+            };
+        } else if (canBlurImageCondition()) {
+            return new DrawableLoadCallback() {
+                @Override
+                public void onLoadResult(final Drawable drawable) {
+                    if (canBlurImageCondition() && drawable instanceof BitmapDrawable) {//判断，高斯模糊
+                        MLSAdapterContainer.getThreadAdapter().execute(MLSThreadAdapter.Priority.HIGH, new Runnable() {
+                            @Override
+                            public void run() {//图片加载回调
+                                blur(drawable);
+                            }
+                        });
+                    }
+                }
+            };
         }
+        return null;
     }
 
     private boolean canBlurImageCondition() {
@@ -482,7 +478,7 @@ public class LuaImageView<U extends UDImageView> extends BorderRadiusImageView i
                 }
 
                 String url = list.get(nowIndex++);
-                setImageWithoutCheck(url, null, false, URLUtil.isNetworkUrl(url),true);
+                setImageWithoutCheck(url, null, false, URLUtil.isNetworkUrl(url),true, false);
 
                 preloadNextImageUrl();
 
@@ -502,10 +498,6 @@ public class LuaImageView<U extends UDImageView> extends BorderRadiusImageView i
             }
 
         };
-    }
-
-    public void addNotCallBackList(String url) {
-        mNotCallBackImageUrlList.add(url);
     }
 
     private Object getTaskTag() {

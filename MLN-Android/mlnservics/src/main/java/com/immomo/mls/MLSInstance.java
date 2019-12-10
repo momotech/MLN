@@ -130,20 +130,16 @@ public class MLSInstance implements ScriptLoader.Callback, Callback, PrinterCont
      *
      * @see #isDebugUrl()
      * @see #initReloadButton()
-     * @see MLSReloadButtonGenerator
      */
     private View debugButton;
     /**
      * 3D视图，debug使用
      *
-     * @see MLSReloadButtonGenerator
      */
-    ScalpelFrameLayout scalpelFrameLayout;
+    public ScalpelFrameLayout scalpelFrameLayout;
     /**
      * 调试用，普通输出
      * lua 中调用print()方法可在屏幕上输出
-     *
-     * @see MLSReloadButtonGenerator
      */
     private DefaultPrintStream STDOUT;
     /**
@@ -228,8 +224,16 @@ public class MLSInstance implements ScriptLoader.Callback, Callback, PrinterCont
      * debug开关监听
      */
     private DebugButtonOpenListener debugButtonOpenListener;
+    /**
+     * 是否是热重载页面
+     */
+    private final boolean isHotReloadPage;
 
     public MLSInstance(@NonNull Context context) {
+        this(context,  false);
+    }
+
+    public MLSInstance(@NonNull Context context, boolean isHotReloadPage) {
         AssertUtils.assertNullForce(context);
         mContext = context;
         createLuaViewManager();
@@ -238,6 +242,7 @@ public class MLSInstance implements ScriptLoader.Callback, Callback, PrinterCont
             debugButtonOpenListener = new DebugButtonOpenListener();
             adapter.addEventListener(Constants.KEY_DEBUG_BUTTON_EVENT, debugButtonOpenListener);
         }
+        this.isHotReloadPage = isHotReloadPage;
     }
 
     //<editor-fold desc="public method">
@@ -365,20 +370,19 @@ public class MLSInstance implements ScriptLoader.Callback, Callback, PrinterCont
         public void onReload(final String path, final HashMap<String, String> params, int state) {
             if (globals.isDestroyed()) {
                 if (luaViewManager != null)
-                    HotReloadHelper.removeCallback(luaViewManager.baseFilePath);
+                    HotReloadHelper.removeCallback(this);
                 return;
             }
 
-            final String p = new File(luaViewManager.baseFilePath, path).getAbsolutePath();
             if (!MainThreadExecutor.isMainThread()) {
                 MainThreadExecutor.post(new Runnable() {
                     @Override
                     public void run() {
-                        reloadByHotReload(p, LoadTypeUtils.add(initData.loadType, Constants.LT_MAIN_THREAD), params);
+                        reloadByHotReload(path, LoadTypeUtils.add(initData.loadType, Constants.LT_MAIN_THREAD), params);
                     }
                 });
             } else {
-                reloadByHotReload(p, LoadTypeUtils.add(initData.loadType, Constants.LT_MAIN_THREAD), params);
+                reloadByHotReload(path, LoadTypeUtils.add(initData.loadType, Constants.LT_MAIN_THREAD), params);
             }
         }
 
@@ -407,8 +411,8 @@ public class MLSInstance implements ScriptLoader.Callback, Callback, PrinterCont
         addState(STATE_RESUME);
         if (mLuaView != null)
             mLuaView.onResume();
-        if (MLSEngine.DEBUG && luaViewManager != null && luaViewManager.baseFilePath != null)
-            HotReloadHelper.addCallback(luaViewManager.baseFilePath, callback);
+        if (MLSEngine.DEBUG)
+            HotReloadHelper.addCallback(callback);
     }
 
     /**
@@ -418,8 +422,8 @@ public class MLSInstance implements ScriptLoader.Callback, Callback, PrinterCont
         removeState(STATE_RESUME);
         if (mLuaView != null)
             mLuaView.onPause();
-        if (MLSEngine.DEBUG && luaViewManager != null)
-            HotReloadHelper.removeCallback(luaViewManager.baseFilePath);
+        if (MLSEngine.DEBUG)
+            HotReloadHelper.removeCallback(callback);
     }
 
     /**
@@ -463,9 +467,8 @@ public class MLSInstance implements ScriptLoader.Callback, Callback, PrinterCont
      * 销毁时调用
      */
     public void onDestroy() {
-        if (MLSEngine.DEBUG && luaViewManager != null){
-            HotReloadHelper.removeCallback(luaViewManager.baseFilePath);
-        }
+        if (MLSEngine.DEBUG)
+            HotReloadHelper.removeCallback(callback);
         setState(STATE_DESTROY);
         if (mLuaView != null) {
             mLuaView.onDestroy();
@@ -664,7 +667,8 @@ public class MLSInstance implements ScriptLoader.Callback, Callback, PrinterCont
         }
         if (STDOUT != null) {
             lvm.STDOUT = STDOUT;
-            MLSReloadButtonGenerator.bringPrinterToFront(STDOUT.getPrinter());
+            View v = (View) ((View) STDOUT.getPrinter()).getParent();
+            v.bringToFront();
 
             if (MLSEngine.DEBUG) {
                 MLSGlobalStateListener adapter = MLSAdapterContainer.getGlobalStateListener();
@@ -712,7 +716,13 @@ public class MLSInstance implements ScriptLoader.Callback, Callback, PrinterCont
             hotReloadLuaViewManager = null;
         }
         if (isResume() && mLuaView != null) {
-            mLuaView.onResume();
+            /// 调用appear事件延后
+            MainThreadExecutor.post(new Runnable() {
+                @Override
+                public void run() {
+                    mLuaView.onResume();
+                }
+            });
         }
         removeState(STATE_HOT_RELOADING);
     }
@@ -769,7 +779,7 @@ public class MLSInstance implements ScriptLoader.Callback, Callback, PrinterCont
 
     private void initReloadButton() {
         if (debugButton == null) {
-            debugButton = MLSReloadButtonGenerator.generateReloadButton(mContainer, this);
+            debugButton = MLSAdapterContainer.getReloadButtonCreator().newGenerator(mContainer, this).generateReloadButton(isHotReloadPage);
         }
         initScalpeLayout();
     }
@@ -839,7 +849,9 @@ public class MLSInstance implements ScriptLoader.Callback, Callback, PrinterCont
     private void initBackGroundView() {
         if (backGroundView == null) {
             backGroundView = new ImageView(mContext);
-            backGroundView.setImageResource(mBackgroundRes);
+            try {
+                backGroundView.setImageResource(mBackgroundRes);
+            } catch (Throwable ignore) {}
             backGroundView.setScaleType(ImageView.ScaleType.FIT_XY);
             backGroundView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         }
@@ -913,7 +925,7 @@ public class MLSInstance implements ScriptLoader.Callback, Callback, PrinterCont
         emptyView.setMessage(msg);
     }
 
-    View.OnClickListener reloadClickListener = new View.OnClickListener() {
+    public View.OnClickListener reloadClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             if (isDestroy())
@@ -965,7 +977,7 @@ public class MLSInstance implements ScriptLoader.Callback, Callback, PrinterCont
                         if (toggleEmptyViewShow(true))
                             setEmptyViewContent("执行失败", "点击重新加载");
                     } else {
-                        if (code == COMPILE_FAILED)
+                        if (MLSEngine.DEBUG && code == COMPILE_FAILED)
                             HotReloadHelper.onError(em);
                         if (hotReloadLuaView != null) {
                             removeLuaView(hotReloadLuaView);
@@ -1037,10 +1049,8 @@ public class MLSInstance implements ScriptLoader.Callback, Callback, PrinterCont
                 lvm.baseFilePath = scriptBundle.getBasePath();
                 GlobalStateUtils.onScriptLoaded(initData.url, scriptBundle);
                 ScriptLoader.loadScriptBundle(luaView.getUserdata(), scriptBundle, g, MLSInstance.this);
-                if (MLSEngine.DEBUG) {
-                    LogUtil.d(TAG, "dump: \n" + Arrays.toString(g.dump()));
-                    HotReloadHelper.addCallback(lvm.baseFilePath, callback);
-                }
+                if (MLSEngine.DEBUG)
+                    HotReloadHelper.addCallback(callback);
             }
         };
         if (MainThreadExecutor.isMainThread()) {

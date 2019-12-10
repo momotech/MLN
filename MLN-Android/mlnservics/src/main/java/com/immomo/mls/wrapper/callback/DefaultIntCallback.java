@@ -7,10 +7,8 @@
   */
 package com.immomo.mls.wrapper.callback;
 
-
 import com.immomo.mls.wrapper.IJavaObjectGetter;
 
-import org.luaj.vm2.Globals;
 import org.luaj.vm2.LuaFunction;
 import org.luaj.vm2.LuaValue;
 
@@ -21,12 +19,10 @@ import org.luaj.vm2.LuaValue;
  *
  * 原始回调Lua方法，返回值为int数字类型
  */
-public class DefaultIntCallback implements IIntCallback {
-
-    private LuaFunction luaFunction;
+public class DefaultIntCallback extends BaseCallback implements IIntCallback {
 
     public DefaultIntCallback(LuaFunction f) {
-        luaFunction = f;
+        super(f);
     }
 
     public static final IJavaObjectGetter<LuaFunction, IIntCallback> G = new IJavaObjectGetter<LuaFunction, IIntCallback>() {
@@ -38,33 +34,18 @@ public class DefaultIntCallback implements IIntCallback {
 
     @Override
     public int callback(Object... params) throws IllegalStateException {
-        Utils.check(luaFunction);
-        LuaValue[] r = Utils.invoke(luaFunction, params);
+        LuaValue[] r = invoke(params);
         if (r.length == 0)
-            throw new IllegalStateException(luaFunction.getInvokeError());
+            throw new IllegalStateException(function.getInvokeError());
         return r[0].toInt();
     }
 
     @Override
     public int callbackAndDestroy(Object... params) throws IllegalStateException {
-        Utils.check(luaFunction);
-        LuaValue[] r = Utils.invoke(luaFunction, params);
+        LuaValue[] r = invoke(params);
         if (r.length == 0)
-            throw new IllegalStateException(luaFunction.getInvokeError());
-        luaFunction.destroy();
-        luaFunction = null;
+            throw new IllegalStateException(function.getInvokeError());
+        destroy();
         return r[0].toInt();
-    }
-
-    @Override
-    public void destroy() {
-        if (luaFunction != null)
-            luaFunction.destroy();
-        luaFunction = null;
-    }
-
-    @Override
-    public Globals getGlobals() {
-        return luaFunction != null ? luaFunction.getGlobals() : null;
     }
 }

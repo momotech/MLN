@@ -13,6 +13,7 @@ import android.text.TextUtils;
 import android.webkit.URLUtil;
 
 import com.immomo.mls.util.FileUtil;
+import com.immomo.mls.util.RelativePathUtils;
 
 
 import static com.immomo.mls.utils.MLSUtils.isLuaBytecode;
@@ -130,8 +131,8 @@ public class ParsedUrl {
 
     public String getFilePath() {
         String url = urlWithoutParams;
-        if (FileUtil.isLocalUrl(url))
-            url = FileUtil.getAbsoluteUrl(url);
+        if (RelativePathUtils.isLocalUrl(url))
+            url = RelativePathUtils.getAbsoluteUrl(url);
         if (url.startsWith("/"))
             return url;
         return null;

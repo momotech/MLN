@@ -1,6 +1,6 @@
 //
 //  MLNCollectionViewAdapter.m
-//  
+//
 //
 //  Created by MoMo on 2018/7/9.
 //
@@ -324,7 +324,7 @@ static NSValue *kSizeValueZero = nil;
     if (!sizeForCellCallback) {
         if (!sizeForCellCallback) {
             if ([collectionView.collectionViewLayout isKindOfClass:[UICollectionViewFlowLayout class]]) {
-                return ((UICollectionViewFlowLayout *)collectionView.collectionViewLayout).itemSize;
+                return ((UICollectionViewFlowLayout *)collectionViewLayout).itemSize;
             } else {
                 return CGSizeZero;
             }

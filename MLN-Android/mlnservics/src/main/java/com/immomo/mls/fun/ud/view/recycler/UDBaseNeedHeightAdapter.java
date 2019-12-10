@@ -134,7 +134,11 @@ public abstract class UDBaseNeedHeightAdapter<L extends UDBaseRecyclerLayout> ex
             return new Size(Size.MATCH_PARENT, Size.WRAP_CONTENT);
         }
 
-        LuaValue ret = caller.invoke(varargsOf(s, r))[0];
+        LuaValue[] rets = caller.invoke(varargsOf(s, r));
+        if (rets == null || rets.length == 0) {
+            return new Size(Size.MATCH_PARENT, Size.WRAP_CONTENT);
+        }
+        LuaValue ret = rets[0];
 
         if (!AssertUtils.assertNumber(ret, caller, getGlobals())) {
             return new Size(Size.MATCH_PARENT, Size.WRAP_CONTENT);

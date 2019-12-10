@@ -79,11 +79,13 @@ public class UDTabLayout<T extends LuaTabLayout> extends UDViewGroup<T> implemen
     private LuaFunction itemClickCallBackFunction;
     private LuaFunction mTabScrollingProgressFunction;
 
-    private static final int DEFAULT_COLOR = Color.argb(255, 50, 51, 51);
+    public static final int DEFAULT_COLOR = Color.argb(255, 50, 51, 51);
 
     private int textColor = DEFAULT_COLOR;
     private int selectTextColor = DEFAULT_COLOR;
     private int indicatorColor = DEFAULT_COLOR;
+
+    private boolean mLuaSetIndicatorColor = false;
 
     private ViewPager mViewPager = null;
 
@@ -112,7 +114,6 @@ public class UDTabLayout<T extends LuaTabLayout> extends UDViewGroup<T> implemen
         if (varargs.length > 2) {
             UDColor color = (UDColor) varargs[2];
             textColor = color.getColor();
-            indicator.setColor(textColor);
         }
         getTabLayout().setTabTextColors(textColor, textColor);
 
@@ -228,7 +229,6 @@ public class UDTabLayout<T extends LuaTabLayout> extends UDViewGroup<T> implemen
         // getTabLayout().setTabTextColors(this.textColor, this.textColor);
 
         setSelectedColor(getTabLayout().getSelectedTabPosition());
-        setIndicatorColor();
         return null;
     }
 
@@ -242,7 +242,10 @@ public class UDTabLayout<T extends LuaTabLayout> extends UDViewGroup<T> implemen
         this.selectTextColor = ((UDColor) v[0]).getColor();
 
         setSelectedColor(getTabLayout().getSelectedTabPosition());
-        setIndicatorColor();
+
+        if (!mLuaSetIndicatorColor) {
+            setIndicatorColor(this.selectTextColor);
+        }
         return null;
     }
 
@@ -254,9 +257,14 @@ public class UDTabLayout<T extends LuaTabLayout> extends UDViewGroup<T> implemen
         }
 
         this.indicatorColor = ((UDColor) v[0]).getColor();
-
-        setIndicatorColor();
+        setIndicatorColor(this.indicatorColor);
+        mLuaSetIndicatorColor = true;
         return null;
+    }
+
+    private void setIndicatorColor(int color) {
+        indicator.setColor(color);
+        (getView()).getTabLayout().getTabStrip().invalidate();
     }
 
     @LuaApiUsed
@@ -453,17 +461,6 @@ public class UDTabLayout<T extends LuaTabLayout> extends UDViewGroup<T> implemen
 
     //</editor-fold>
 
-    public void setIndicatorColor() {
-        if (indicatorColor != DEFAULT_COLOR)
-            indicator.setColor(indicatorColor);
-        else if (selectTextColor != DEFAULT_COLOR)
-            indicator.setColor(selectTextColor);
-        else
-            indicator.setColor(textColor);
-
-        getView().invalidate();
-    }
-
     private void addTabs(List<String> array) {
         if (array == null || array.size() == 0) {
             return;
@@ -555,7 +552,7 @@ public class UDTabLayout<T extends LuaTabLayout> extends UDViewGroup<T> implemen
         for (int i = 0; i < getTabLayout().getTabCount(); i++) {
             BaseTabLayout.Tab tab1 = getTabLayout().getTabAt(i);
             TextDotTabInfoLua info1 = tab1.getTabInfo();
-            if (position == i && selectTextColor != DEFAULT_COLOR) {
+            if (position == i ) {
                 info1.setTitleColor(selectTextColor);
             } else
                 info1.setTitleColor(textColor);

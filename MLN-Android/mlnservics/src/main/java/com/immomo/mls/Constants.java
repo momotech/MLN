@@ -31,8 +31,8 @@ public interface Constants {
     /**
      * 适当的时候，更新sdk版本，更新需记录文档，并同步iOS
      */
-    String SDK_VERSION = "1.5.0";
-    int SDK_VERSION_INT = 40;
+    String SDK_VERSION = "1.5.1";
+    int SDK_VERSION_INT = 41;
     //Bundle encrypt and decrypt
     String POSTFIX_LUA = ".lua";
     String POSTFIX_X64 = "64";
@@ -40,6 +40,7 @@ public interface Constants {
     String POSTFIX_B_LUA = POSTFIX_LUA + POSTFIX_BIN;
     String POSTFIX_LV_ZIP = ".zip";//lua的zip包
     String POSTFIX_SIGN = ".sign";
+    String ASSETS_PREFIX = "file://android_asset/";
 
     /**
      * Load Type

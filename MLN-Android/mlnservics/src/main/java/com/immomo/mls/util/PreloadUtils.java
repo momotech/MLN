@@ -17,7 +17,6 @@ import com.immomo.mls.MLSEngine;
 import com.immomo.mls.adapter.MLSThreadAdapter;
 import com.immomo.mls.global.LuaViewConfig;
 import com.immomo.mls.utils.ERROR;
-import com.immomo.mls.utils.MainThreadExecutor;
 import com.immomo.mls.utils.ParsedUrl;
 import com.immomo.mls.utils.ScriptLoadException;
 import com.immomo.mls.wrapper.ScriptBundle;
@@ -346,6 +345,30 @@ public class PreloadUtils {
         return sf;
     }
 
+    public static ScriptFile parseAssetMainScript(ParsedUrl parsedUrl) throws ScriptLoadException {
+        String name = parsedUrl.getName();
+        if (name.endsWith(Constants.POSTFIX_LUA)) {
+            name = name.substring(0, name.length() - Constants.POSTFIX_LUA.length());
+        } else if (name.endsWith(Constants.POSTFIX_B_LUA)) {
+            name = name.substring(0, name.length() - Constants.POSTFIX_B_LUA.length());
+        }
+        final ScriptFile sf;
+        if (MLSConfigs.readScriptFileInJava) {
+            byte[] data;
+            data = getAssetsData(parsedUrl.getAssetsPath());
+            if (data == null) {
+                sf = null;
+            } else {
+                sf = new ScriptFile(name, data, true);
+            }
+        } else {
+            sf = new ScriptFile(name, parsedUrl.toString(), true);
+        }
+        if (sf == null)
+            throw new ScriptLoadException(ERROR.READ_FILE_FAILED, null);
+        return sf;
+    }
+
     private static ScriptFile createScriptFile(String cn, File f, boolean isMain) {
         if (MLSConfigs.readScriptFileInJava) {
             byte[] data = FileUtil.fastReadBytes(f);
@@ -354,6 +377,33 @@ public class PreloadUtils {
             return new ScriptFile(cn, data, isMain);
         }
         return new ScriptFile(cn, f.getAbsolutePath(), isMain);
+    }
+
+    private static ScriptFile createAssetsScriptFile(String cn, String assetsPath, boolean isMain) {
+        if (MLSConfigs.readScriptFileInJava) {
+            byte[] data;
+            data = getAssetsData(assetsPath);
+            if (data == null)
+                return null;
+            return new ScriptFile(cn, data, isMain);
+        }
+        return new ScriptFile(cn, assetsPath, isMain);
+    }
+
+    private static byte[] getAssetsData(String name) {
+        InputStream is = null;
+        try {
+            is = MLSEngine.getContext().getAssets().open(name);
+            byte[] data = new byte[is.available()];
+            if (is.read(data) == data.length)
+                return data;
+        } catch (Throwable t) {
+            if (MLSEngine.DEBUG)
+                LogUtil.e(t);
+        } finally {
+            IOUtil.closeQuietly(is);
+        }
+        return null;
     }
 
     private static boolean checkFile(File f) {

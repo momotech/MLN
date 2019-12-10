@@ -47,6 +47,18 @@ public class LuaScrollViewContainer extends BorderRadiusFrameLayout implements I
     }
 
     @Override
+    public void setHorizontalScrollBarEnabled(boolean horizontalScrollBarEnabled) {
+        super.setHorizontalScrollBarEnabled(horizontalScrollBarEnabled);
+        iScrollView.setHorizontalScrollBarEnabled(horizontalScrollBarEnabled);
+    }
+
+    @Override
+    public void setVerticalScrollBarEnabled(boolean verticalScrollBarEnabled) {
+        super.setVerticalScrollBarEnabled(verticalScrollBarEnabled);
+        iScrollView.setVerticalScrollBarEnabled(verticalScrollBarEnabled);
+    }
+
+    @Override
     public UDScrollView getUserdata() {
         return userdata;
     }

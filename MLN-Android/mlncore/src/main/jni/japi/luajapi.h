@@ -64,7 +64,9 @@ void jni_lgc(JNIEnv *env, jobject jobj, jlong L);
 // --------------------------load execute--------------------------
 jint jni_loadData(JNIEnv *env, jobject jobj, jlong L_state_pointer, jstring name, jbyteArray data);
 jint jni_loadFile(JNIEnv *env, jobject jobj, jlong L_state_pointer, jstring path, jstring chunkname);
+jint jni_loadAssetsFile(JNIEnv *env, jobject jobj, jlong L_state_pointer, jstring path, jstring chunkname);
 jint jni_doLoadedData(JNIEnv *env, jobject jobj, jlong L_state_pointer);
+jobjectArray jni_doLoadedDataAndGetResult(JNIEnv *env, jobject jobj, jlong LS);
 jint jni_startDebug(JNIEnv *env, jobject jobj, jlong LS, jbyteArray data, jstring ip, jint port);
 jboolean jni_setMainEntryFromPreload(JNIEnv *env, jobject jobj, jlong L, jstring name);
 void jni_preloadData(JNIEnv *env, jobject jobj, jlong L, jstring name, jbyteArray data);
@@ -152,7 +154,9 @@ static JNINativeMethod jni_methods[] = {
 
     {"_loadData", "(J" STRING_CLASS "[B)I", (void *)jni_loadData},
     {"_loadFile", "(J" STRING_CLASS "" STRING_CLASS ")I", (void *)jni_loadFile},
+    {"_loadAssetsFile", "(J" STRING_CLASS "" STRING_CLASS ")I", (void *)jni_loadAssetsFile},
     {"_doLoadedData", "(J)I", (void *)jni_doLoadedData},
+    {"_doLoadedDataAndGetResult", "(J)[" LUAVALUE_CLASS, (void *)jni_doLoadedDataAndGetResult},
     {"_startDebug", "(J[B" STRING_CLASS "I)I", (void *)jni_startDebug},
     {"_setMainEntryFromPreload", "(J" STRING_CLASS ")Z", (void *)jni_setMainEntryFromPreload},
     {"_preloadData", "(J" STRING_CLASS "[B)V", (void *)jni_preloadData},

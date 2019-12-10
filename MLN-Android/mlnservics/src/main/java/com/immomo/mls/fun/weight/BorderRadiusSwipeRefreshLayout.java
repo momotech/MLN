@@ -182,7 +182,7 @@ public class BorderRadiusSwipeRefreshLayout extends SwipeRefreshLayout implement
     @Override
     public void draw(Canvas canvas) {
         if (viewClipHelper.needClicp()) {
-            viewClipHelper.clip(canvas, this);
+            viewClipHelper.clip(canvas, this, false);
         } else {
             super.draw(canvas);
         }

@@ -50,13 +50,13 @@ end
 
 function _class:configContainerView()
     local focusContainerView = View()
-    focusContainerView:bgColor(Color(255,255,255,1)):width(MeasurementType.MATCH_PARENT):height(MeasurementType.MATCH_PARENT):marginTop(0)
+    focusContainerView
+            :width(MeasurementType.MATCH_PARENT):height(MeasurementType.MATCH_PARENT):marginTop(0)
     self.containerView = focusContainerView
 end
 
 function _class:configTabSegmentView(rectX, rectY, width, height, titles)
     tabSegment = TabSegmentView(Rect(rectX, rectY, width, height),titles,Color(0,0,0,1.0)):selectScale(1.0):width(MeasurementType.MATCH_PARENT):setAlignment(TabSegmentAlignment.CENTER):setGravity(Gravity.CENTER_HORIZONTAL)
-    tabSegment:bgColor(Color(255,255,255,1.0))
     tabSegment:setAlignment(TabSegmentAlignment.CENTER)
 
     self.tabSegment = tabSegment;
@@ -78,7 +78,6 @@ function _class:configViewPagerAdapter()
 
     adapter:initCell(function(cell,row)
         local contentView = cell.contentView
-        contentView:bgColor(Color(255, 255, 255, 1))
     end)
     adapter:fillCellData(function(cell,row)
         local contentView = cell.contentView

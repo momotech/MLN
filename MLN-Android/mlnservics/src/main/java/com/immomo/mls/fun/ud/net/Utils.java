@@ -8,6 +8,7 @@
 package com.immomo.mls.fun.ud.net;
 
 import com.immomo.mls.util.FileUtil;
+import com.immomo.mls.util.RelativePathUtils;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -40,7 +41,7 @@ final class Utils {
                         progressCallback.onProgress(p, total);
                     }
                 });
-                response.setPath(FileUtil.getLocalUrl(path));
+                response.setPath(RelativePathUtils.getLocalUrl(path));
             }
         });
     }

@@ -97,7 +97,7 @@ typedef id(^MLNCallback)(id result);
 static MLN_FORCE_INLINE BOOL __mln_lua_setinvocation (lua_State *L, NSInvocation *invocation, NSInteger index, int stackID, NSMutableArray *retainArray) {
     const char *type = [invocation.methodSignature getArgumentTypeAtIndex:index];
     if (!charpNotEmpty(type)) {
-        mln_lua_error(L, "Undefined parameter type！");
+        mln_lua_error(L, @"Undefined parameter type！");
         return NO;
     }
     switch (mln_objctype(type)) {
@@ -114,7 +114,7 @@ static MLN_FORCE_INLINE BOOL __mln_lua_setinvocation (lua_State *L, NSInvocation
                 Class clazz = NSClassFromString(clazzName);
                 [invocation setArgument:&clazz atIndex:index];
             } else {
-                mln_lua_error(L, "class name must be null");
+                mln_lua_error(L, @"class name must be null");
             }
             break;
         }
@@ -136,7 +136,7 @@ static MLN_FORCE_INLINE BOOL __mln_lua_setinvocation (lua_State *L, NSInvocation
                 SEL selector = NSSelectorFromString(selName);
                 [invocation setArgument:&selector atIndex:index];
             } else {
-                mln_lua_error(L, "method name must be null");
+                mln_lua_error(L, @"method name must be null");
             }
             break;
         }
@@ -268,7 +268,7 @@ static MLN_FORCE_INLINE BOOL __mln_lua_setinvocation (lua_State *L, NSInvocation
             break;
         }
         default: {
-            mln_lua_error(L, "Undefined parameter type！");
+            mln_lua_error(L, @"Undefined parameter type！");
             return NO; // 参数类型不支持
         }
     }
@@ -278,7 +278,7 @@ static MLN_FORCE_INLINE BOOL __mln_lua_setinvocation (lua_State *L, NSInvocation
 static MLN_FORCE_INLINE int __mln_lua_pushinvocation_return(NSInvocation* invocation, lua_State* L, BOOL needReturnSelf, BOOL isInit) {
     const char *type = [invocation.methodSignature methodReturnType];
     if (!charpNotEmpty(type)) {
-        mln_lua_error(L, "Undefined parameter type！");
+        mln_lua_error(L, @"Undefined parameter type！");
         return 0;
     }
     switch (mln_objctype(type)) {
@@ -440,11 +440,11 @@ static MLN_FORCE_INLINE int __mln_lua_pushinvocation_return(NSInvocation* invoca
             return [MLN_LUA_CORE(L) pushCGPoint:point error:NULL];
         }
         default: {
-            mln_lua_error(L, "Undefined parameter type！");
+            mln_lua_error(L, @"Undefined parameter type！");
             return 0; // 参数类型不支持
         }
     }
-    mln_lua_error(L, "Undefined parameter type！");
+    mln_lua_error(L, @"Undefined parameter type！");
     return 0;
 }
 
@@ -456,7 +456,7 @@ static MLN_FORCE_INLINE int __mln_lua_objc_invoke (lua_State *L, int statrtStack
         NSString *targetMsg = s_clazz;
         NSString *selMsg = NSStringFromSelector(selector);
         NSString *errmsg = [NSString stringWithFormat:@"The method signature cannot be nil! \n taget : %@ \n selector : %@",targetMsg, selMsg];
-        mln_lua_error(L, errmsg.UTF8String);
+        mln_lua_error(L, errmsg);
         return 0;
     }
     // 当方法为init...初始化方法时，默认传递参数的个数为3，其他情况为2
@@ -479,7 +479,7 @@ static MLN_FORCE_INLINE int __mln_lua_objc_invoke (lua_State *L, int statrtStack
             NSString *targetMsg = target ? (isclass ? NSStringFromClass(target) : target) : @"<nil>";
             NSString *selMsg = selector ? NSStringFromSelector(selector) : @"<nil>";
             NSString *errmsg = [NSString stringWithFormat:@"The method signature cannot be nil! \n taget : %@ \n selector : %@",targetMsg, selMsg];
-            mln_lua_error(L, errmsg.UTF8String);
+            mln_lua_error(L, errmsg);
             return 0;
         }
         stackIdx++;
@@ -505,10 +505,17 @@ int mln_lua_constructor (lua_State *L) {
         mln_lua_assert(L, NO, errmsg.UTF8String);
         return 0;
     }
-    // 模拟ARC，手动添加retain
-    CFBridgingRetain(target);
+    BOOL isInitSel = NO;
+    if (selector) {
+        NSString *selectorName = NSStringFromSelector(selector);
+        if ([selectorName hasPrefix:@"init"]) {
+            isInitSel = YES;
+            // 模拟ARC，手动添加retain
+            CFBridgingRetain(target);
+        }
+    }
     // call
-    return __mln_lua_objc_invoke(L, 1, target, selector, NO, NO, YES);
+    return __mln_lua_objc_invoke(L, 1, target, selector, NO, NO, isInitSel);
 }
 
 int mln_lua_obj_method (lua_State *L) {
