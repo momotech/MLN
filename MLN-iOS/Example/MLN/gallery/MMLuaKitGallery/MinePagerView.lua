@@ -115,7 +115,7 @@ function _class:setupHeaderView()
     local gapToScreen = 40
     local editLabelWidth = window:width() - self.avatarView:width() - 2 * gapToScreen
     self.editLabel = Label():marginTop(0):width(editLabelWidth):height(30)
-    self.editLabel:text("编辑资料"):fontSize(15):textAlign(TextAlign.CENTER):textColor(_Color.LightBlack):cornerRadius(3)
+    self.editLabel:text("编辑资料"):fontSize(15):textAlign(TextAlign.CENTER):textColor(ColorConstants.LightBlack):cornerRadius(3)
     self.editLabel:borderWidth(0.5):borderColor(Color(200,200,200))
     self.editLabel:onClick(function()
         Toast("编辑资料", 1)
@@ -129,7 +129,7 @@ function _class:setupHeaderView()
 
     --地区
     self.areaLabel = Label():marginLeft(20):marginTop(5):width(MeasurementType.WRAP_CONTENT):height(MeasurementType.WRAP_CONTENT)
-    self.areaLabel:text("北京"):fontSize(13):textColor(_Color.LightBlack)
+    self.areaLabel:text("北京"):fontSize(13):textColor(ColorConstants.LightBlack)
     self.headerLayout:addView(self.areaLabel)
 
     --分割线
@@ -167,7 +167,7 @@ end
 function _class:setupSegmentView()
     local titles = Array()
     titles:add("主页"):add("动态"):add("收藏")
-    self.tabSegment = TabSegmentView(Rect(0, self.headerLayout:height() +  1, window:width(), 50), titles, _Color.Black)
+    self.tabSegment = TabSegmentView(Rect(0, self.headerLayout:height() +  1, window:width(), 50), titles, ColorConstants.Black)
     self.tabSegment:width(MeasurementType.MATCH_PARENT):setGravity(Gravity.CENTER_HORIZONTAL):selectScale(1.0)
     self.tabSegment:setAlignment(TabSegmentAlignment.CENTER)
     self.segmentAndPagerBaseView:addView(self.tabSegment)
@@ -251,7 +251,7 @@ function _class:setupMomentContentView()
     self.momentLabelLayout:addView(self.momentDateLabel)
 
     self.momentTimeLabel = Label():marginLeft(5):width(MeasurementType.WRAP_CONTENT):setGravity(Gravity.CENTER)
-    self.momentTimeLabel:fontSize(19):textColor(_Color.Gray)
+    self.momentTimeLabel:fontSize(19):textColor(ColorConstants.Gray)
     self.momentTimeLabel:text("10:43")
     self.momentLabelLayout:addView(self.momentTimeLabel)
 
@@ -268,7 +268,7 @@ function _class:setupCollectContentView()
     self.collectCollectionView = View():width(MeasurementType.MATCH_PARENT):height(MeasurementType.MATCH_PARENT)
 
     self.collectLine = View():width(MeasurementType.MATCH_PARENT):height(10)
-    self.collectLine:bgColor(_Color.LightGray)
+    self.collectLine:bgColor(ColorConstants.LightGray)
     self.collectCollectionView:addView(self.collectLine)
 
     local labelTop = 30
@@ -335,7 +335,7 @@ function _class:collectCell()
     self.cellLabelLayout:addView(self.cellTitleLabel)
 
     self.cellDescLabel = Label():width(MeasurementType.WRAP_CONTENT):height(MeasurementType.WRAP_CONTENT):marginTop(5)
-    self.cellDescLabel:text("1篇内容 | 1人浏览"):textColor(_Color.MediumGray):fontSize(12)
+    self.cellDescLabel:text("1篇内容 | 1人浏览"):textColor(ColorConstants.MediumGray):fontSize(12)
     self.cellLabelLayout:addView(self.cellDescLabel)
 
     self.cellArrowView = ImageView():width(20):height(20):setGravity(MBit:bor(Gravity.RIGHT, Gravity.CENTER_VERTICAL)):marginRight(20)

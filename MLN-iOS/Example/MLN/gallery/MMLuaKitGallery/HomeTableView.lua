@@ -63,9 +63,9 @@ function _class:setupContainerView()
         cell.contentView:addView(cell._cell:contentView())
 
         if self._type == self.TYPE_FOLLOW then
-            cell._cell:updateFollowLabel(false, nil)
-        elseif self._type == self.TYPE_RECOMMEND then
             cell._cell:updateFollowLabel(true, nil)
+        elseif self._type == self.TYPE_RECOMMEND then
+            cell._cell:updateFollowLabel(false, nil)
         end
     end)
 
@@ -142,7 +142,14 @@ end
 --- @param complete function 数据请求结束的回调
 --- @private
 function _class:request(first, complete)
-    File:asyncReadFile('file://gallery/json/fashion.json', function(codeNumber, response)
+
+    local filepath = 'gallery/json/fashion.json'
+    if System:Android() then
+        filepath = 'assets://'..filepath
+    else
+        filepath = 'file://'..filepath
+    end
+    File:asyncReadFile(filepath, function(codeNumber, response)
         map = StringUtil:jsonToMap(response)
         if codeNumber == 0 then
             local data = map:get("data")

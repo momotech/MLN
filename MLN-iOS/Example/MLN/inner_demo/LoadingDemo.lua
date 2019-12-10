@@ -1,0 +1,21 @@
+
+timer = Timer()
+timer:repeatCount(1)
+timer:interval(3.0)
+
+startView = Label()
+startView:text('开始')
+startView:textAlign(TextAlign.CENTER)
+startView:bgColor(Color(222, 20, 232, 1))
+startView:marginTop(100):setGravity(Gravity.CENTER_HORIZONTAL):width(200):height(100)
+startView:onClick(function()
+    print('timer ---- start')
+    Loading:show()
+
+    timer:start(function()
+        Loading:hide()
+        timer:stop()
+        print('timer ----- stop')
+    end)
+end)
+window:addView(startView)
