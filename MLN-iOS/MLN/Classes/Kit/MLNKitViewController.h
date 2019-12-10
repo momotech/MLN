@@ -16,7 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
 @class MLNKitInstanceHandlersManager;
 @class MLNLuaBundle;
 /**
- 提供一个默认的包含MLNKitInstance的试图控制器
+ 提供一个默认的包含MLNKitInstance的视图控制器
  */
 @interface MLNKitViewController : UIViewController <MLNViewControllerProtocol>
 

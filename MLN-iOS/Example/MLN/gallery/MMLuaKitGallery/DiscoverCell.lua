@@ -12,7 +12,7 @@ local _class = {
 ---@public
 function _class:new()
     local o = {}
-    setmetatable(o, {__index = self})
+    setmetatable(o, { __index = self })
     return o
 end
 
@@ -25,10 +25,7 @@ function _class:setupCellSubviews(width)
     local imageView = ImageView():width(width):height(width)
     imageView:contentMode(ContentMode.SCALE_ASPECT_FIT)
     imageView:lazyLoad(false)
-    imageView:addCornerMask(8,_Color.White,RectCorner.ALL_CORNERS)
-    --imageView:onClick(function()
-    --    Toast(self.titleLabel:text(), 1)
-    --end)
+    --imageView:addCornerMask(8,ColorConstants.White,RectCorner.ALL_CORNERS)
     self.imageView = imageView
 
     --布局图片上的小图标
@@ -36,64 +33,40 @@ function _class:setupCellSubviews(width)
     imageViewLayout:marginTop(-30):width(width):height(25):setGravity(Gravity.CENTER)
     self.imageViewLayout = imageViewLayout
 
-    local favorImageView = ImageView()
-    favorImageView:marginLeft(10):width(16):height(16):setGravity(Gravity.CENTER)
-    favorImageView:image("https://s.momocdn.com/w/u/others/2019/08/28/1566999785245-favor.png")
-    self.favorImageView = favorImageView
-    imageViewLayout:addView(favorImageView)
-
-    local countLabel = Label()
-    countLabel:marginLeft(2):width(MeasurementType.WRAP_CONTENT):height(20):setGravity(Gravity.CENTER)
-    countLabel:text("53篇"):textColor(_Color.White):textAlign(TextAlign.LEFT):fontSize(10)
-    self.countLabel = countLabel
-    imageViewLayout:addView(countLabel)
-
-    local lookImageView = ImageView()
-    lookImageView:marginLeft(5):width(16):height(16):setGravity(Gravity.CENTER)
-    lookImageView:image("https://s.momocdn.com/w/u/others/2019/08/28/1566999801782-look.png")
-    self.lookImageView = lookImageView
-    imageViewLayout:addView(lookImageView)
-
-    local lookLabel = Label()
-    lookLabel:marginLeft(2):width(MeasurementType.WRAP_CONTENT):height(20):setGravity(Gravity.CENTER)
-    lookLabel:text("4301"):textColor(_Color.White):textAlign(TextAlign.LEFT):fontSize(10)
-    self.lookLabel = lookLabel
-    imageViewLayout:addView(lookLabel)
-
     --标题
     local titleLabel = Label()
-    titleLabel:marginTop(20):width(width):height(30)
-    titleLabel:textColor(_Color.Black):fontSize(14):setTextFontStyle(FontStyle.BOLD)
+    titleLabel:marginTop(5):width(width):height(30)
+    titleLabel:textColor(ColorConstants.Black):fontSize(14):setTextFontStyle(FontStyle.BOLD)
     self.titleLabel = titleLabel
 
     --更新内容提示
     local iconHeight = 15
     local updateLayout = LinearLayout(LinearType.HORIZONTAL)
-    updateLayout:marginLeft(0):marginTop(0):width(width):height(iconHeight):setGravity(Gravity.CENTER)
+    updateLayout:width(width):height(iconHeight)
     local imagesLayout = View():width(MeasurementType.WRAP_CONTENT):height(iconHeight)
     self.updateLayout = updateLayout
 
     self.iconViews = {}
     local iconView1 = ImageView()
-    iconView1:width(iconHeight):height(iconHeight):cornerRadius(iconHeight / 2)
-             :gone(true)
+    iconView1:width(iconHeight):height(iconHeight)
+             :gone(true):lazyLoad(false):addCornerMask(iconHeight / 2, ColorConstants.White, RectCorner.ALL_CORNERS)
     table.insert(self.iconViews, iconView1)
     imagesLayout:addView(iconView1)
 
     local iconView2 = ImageView()
-    iconView2:marginLeft(5):width(iconHeight):height(iconHeight):cornerRadius(iconHeight / 2)
-             :gone(true)
+    iconView2:marginLeft(5):width(iconHeight):height(iconHeight)
+             :gone(true):lazyLoad(false)
     table.insert(self.iconViews, iconView2)
     imagesLayout:addView(iconView2)
 
     local iconView3 = ImageView()
-    iconView3:marginLeft(10):width(iconHeight):height(iconHeight):cornerRadius(iconHeight / 2)
-             :gone(true)
+    iconView3:marginLeft(10):width(iconHeight):height(iconHeight)
+             :gone(true):lazyLoad(false)
     table.insert(self.iconViews, iconView3)
     imagesLayout:addView(iconView3)
 
     local iconLabel = Label()
-    iconLabel:marginLeft(5):width(MeasurementType.WRAP_CONTENT):height(iconHeight)
+    iconLabel:marginLeft(5):width(MeasurementType.WRAP_CONTENT):height(iconHeight):fontSize(11)
     self.iconLabel = iconLabel
     updateLayout:addView(imagesLayout)
     updateLayout:addView(iconLabel)
@@ -108,36 +81,18 @@ function _class:updateContentCountText(count)
     if not count then
         return
     end
-    local text = StyleString(string.format("更新了%s篇内容", count))
-    text:fontColor(_Color.Black):fontSize(10):fontStyle(FontStyle.BOLD)
-    local textColor = _Color.MediumGray
-    text:setFontColorForRange(textColor, 1, 3)
-    text:setFontColorForRange(textColor, 4 + string.len(count), 3)
-    self.iconLabel:styleText(text)
+    self.iconLabel:text(string.format("更新了%s篇内容", count))
 end
 
 ---@public
 ---@vararg string 图标urlString
-function _class:updateContentIcons(...)
-    local urls = { ... }
-    local count = #urls or 0
-    if count > #self.iconViews then
-        count = self.iconViews
-    end
-
-    if count == 0 then
-        self.updateLayout:hidden(true)
+function _class:updateContentIcons(url)
+    local iconView = self.iconViews[1]
+    if url then
+        iconView:gone(false)
+        iconView:image(url)
     else
-        self.updateLayout:hidden(false)
-        for i = 1, #self.iconViews do
-            local iconView = self.iconViews[i]
-            if i <= count then
-                iconView:gone(false)
-                iconView:image(urls[i])
-            else
-                iconView:gone(true)
-            end
-        end
+        iconView:gone(true)
     end
 end
 

@@ -4,12 +4,12 @@ local height = window:height()
 
 local color_Gray = Color(105, 105, 105, 1)
 local contentView = View()
-contentView:frame(Rect(0, 0, width, height))
+contentView:marginTop(80):width(MeasurementType.MATCH_PARENT):marginBottom(0)
 contentView:bgColor(color_Gray)
 window:addView(contentView)
 
 
-local scrollView = ScrollView():height(height - 30):width(width):marginTop(60)
+local scrollView = ScrollView():width(width):marginTop(50)
 local showLabel = Label()--显示结果
 showLabel:height(height - 30):lines(0):fontSize(20):textAlign(TextAlign.LEFT):textColor(Color(0, 0, 0, 1)):bgColor(Color(222, 222, 222, 1)):marginLeft(8):textColor(Color(0, 0, 0, 1))
 showLabel:width(width - 16)
@@ -48,6 +48,7 @@ end, 3)
 
 
 ----以下代码不用管，显示UI用的
+---- showStatusBar和hideStatusBar需要在info.plist中配置View controller-based status bar appearance为NO
 local btnInfo = { "showStatusBar", "hideStatusBar" }
 
 local btnScrollView = ScrollView(true):height(50):width(width):padding(4, 0, 4, 0)

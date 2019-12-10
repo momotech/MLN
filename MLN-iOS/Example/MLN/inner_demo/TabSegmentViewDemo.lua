@@ -46,8 +46,6 @@ end
 setupViewPager()
 
 -----------以下为创建tab segment--------------
-
-Toast("IOS:请用陌陌客户端扫码",1)
 local array = Array()
 array:add('附近动态')
 array:add('附近的人')
