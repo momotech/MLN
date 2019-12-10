@@ -7,6 +7,7 @@
  */
 package com.immomo.mls.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.KeyEvent;
@@ -14,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
+import com.immomo.luanative.hotreload.HotReloadServer;
 import com.immomo.mls.InitData;
 import com.immomo.mls.MLSBundleUtils;
 import com.immomo.mls.MLSInstance;
@@ -22,24 +24,33 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class LuaViewActivity extends AppCompatActivity {
+    public static final String KEY_HOT_RELOAD = "KEY_HOTRELOAD";
 
     private MLSInstance instance;
     private InitData initData;
+
+    public static void startHotReload(Context context, boolean usb) {
+        InitData initData = MLSBundleUtils.createInitData("http://cdnst.momocdn.com/w/u/others/2019/09/23/1569224693764-HotReload.lua?ct=" + (usb ? HotReloadServer.USB_CONNECTION : HotReloadServer.NET_CONNECTION)).forceNotUseX64();
+        Intent intent = new Intent(context, LuaViewActivity.class);
+        intent.putExtras(MLSBundleUtils.createBundle(initData));
+        intent.putExtra(KEY_HOT_RELOAD, true);
+
+        context.startActivity(intent);
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         FrameLayout frameLayout = new FrameLayout(this);
         setContentView(frameLayout, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-        instance = new MLSInstance(this);
-        instance.setContainer(frameLayout);
         Intent intent = getIntent();
-        if (intent != null) {
-            InitData initData = MLSBundleUtils.parseFromBundle(intent.getExtras()).showLoadingView(true);
-            instance.setData(initData);
-        }
+        boolean hr = intent.getBooleanExtra(KEY_HOT_RELOAD, false);
+        InitData initData = MLSBundleUtils.parseFromBundle(intent.getExtras()).showLoadingView(true);
+        instance = new MLSInstance(this, hr);
+        instance.setContainer(frameLayout);
+        instance.setData(initData);
 
-        if (!instance.isValid()) {
+        if (instance == null || !instance.isValid()) {
             Toast.makeText(this, "something wrong", Toast.LENGTH_SHORT).show();
         }
     }

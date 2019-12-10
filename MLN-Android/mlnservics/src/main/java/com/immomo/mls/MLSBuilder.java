@@ -17,6 +17,7 @@ import com.immomo.mls.adapter.MLSGlobalStateListener;
 import com.immomo.mls.adapter.MLSHttpAdapter;
 import com.immomo.mls.adapter.MLSLoadViewAdapter;
 import com.immomo.mls.adapter.MLSQrCaptureAdapter;
+import com.immomo.mls.adapter.MLSReloadButtonCreator;
 import com.immomo.mls.adapter.MLSResourceFinderAdapter;
 import com.immomo.mls.adapter.MLSThreadAdapter;
 import com.immomo.mls.adapter.OnRemovedUserdataAdapter;
@@ -140,6 +141,11 @@ public class MLSBuilder {
 
     public MLSBuilder setOnRemovedUserdataAdapter(OnRemovedUserdataAdapter onRemovedUserdataAdapter) {
         MLSAdapterContainer.setOnRemovedUserdataAdapter(onRemovedUserdataAdapter);
+        return this;
+    }
+
+    public MLSBuilder setReloadButtonCreator(MLSReloadButtonCreator creator) {
+        MLSAdapterContainer.setReloadButtonCreator(creator);
         return this;
     }
     //</editor-fold>
