@@ -57,7 +57,7 @@ function _class:setupTabSegmentView()
     self.signin:width(60):height(25):setGravity(MBit:bor(Gravity.RIGHT, Gravity.CENTER_VERTICAL)):marginRight(10)
     self.signin:bgColor(Color(204, 137, 24))--ok
         :cornerRadius(self.signin:height() / 2)
-    self.signin:text("签到"):textAlign(TextAlign.CENTER):fontSize(11):textColor(_Color.White)
+    self.signin:text("签到"):textAlign(TextAlign.CENTER):fontSize(11):textColor(ColorConstants.White)
     self.signin:onClick(function()
         if self.signin:text() == "签到" then
             self.signin:text("已签到")
@@ -71,7 +71,7 @@ end
 ---创建collectionView
 ---@private
 function _class:setupCollectionView()
-    self.headerViewHeight = 400
+    self.headerViewHeight = 420
 
     self.collectionView = WaterfallView(true, true):width(MeasurementType.MATCH_PARENT):height(MeasurementType.MATCH_PARENT)
     self.collectionView:useAllSpanForLoading(true)
@@ -105,6 +105,7 @@ function _class:setupCollectionViewAdapter()
     end)
 
     adapter:initHeader(function(header)
+        header.contentView:removeAllSubviews()
         header.contentView:addView(self:headerView())
     end)
 
@@ -136,31 +137,19 @@ function _class:setupCollectionViewAdapter()
         local rank = item:get("rank") or 0
         cell._cell.imageView:image(item:get("album_500_500"))
         cell._cell.titleLabel:text(item:get("title"))
-        cell._cell.countLabel:text(string.format("%s篇", rank + 1))
-        cell._cell.lookLabel:text(string.format("%d", item:get("file_duration")))
 
-        if rank and tonumber(rank) < 2 then
-            cell._cell:updateContentIcons(nil)
-        else
-            cell._cell:updateContentCountText(rank)
-            cell._cell:updateContentIcons(item:get("pic_small"))
-        end
+        cell._cell:updateContentCountText(rank)
+        cell._cell:updateContentIcons(item:get("pic_small"))
     end)
 
     adapter:heightForCell(function(_, row)
-        local item = self.dataList:get(row)
-        local rank = item:get("rank") or 0
-        if rank and tonumber(rank) < 2 then
-            return cellWidth + 75
-        end
-        return cellWidth + 90
-
+        return cellWidth + 60
     end)
     adapter:selectedRowByReuseId(cellReuseId, function(cell, _, row)
         --Toast(self.dataList:get(row):get("title"), 1)
         --self:gotoDetailView()
         if System:Android() then
-            Navigator:gotoPage("file://android_asset/MMLuaKitGallery/IdeaMassView.lua", nil, 0)
+            Navigator:gotoPage("assets://MMLuaKitGallery/IdeaMassView.lua", Map(), AnimType.RightToLeft)
         else
             Navigator:gotoPage("IdeaMassMainView.lua", nil, 0)
         end
@@ -214,7 +203,13 @@ function _class:requestNetwork(first, complete)
         self.requestPageIndex = self.requestPageIndex + 1
     end
 
-    File:asyncReadFile('file://gallery/json/musicRank.json', function(codeNumber, response)
+    local filepath = 'gallery/json/musicRank.json'
+    if System:Android() then
+        filepath = 'assets://'..filepath
+    else
+        filepath = 'file://'..filepath
+    end
+    File:asyncReadFile(filepath, function(codeNumber, response)
         map = StringUtil:jsonToMap(response)
         if codeNumber == 0 then
             local data = map:get("result")
@@ -224,10 +219,10 @@ function _class:requestNetwork(first, complete)
                 self.dataList:addAll(data)
             end
             complete(true, data)
-            else
-                --error(err:get("errmsg"))
-                complete(false, nil)
-            end
+        else
+            --error(err:get("errmsg"))
+            complete(false, nil)
+        end
     end)
 end
 
@@ -255,7 +250,7 @@ function _class:headerView()
 
     --使用指南
     self.guideImageView = ImageView():marginTop(10):width(width):height(MeasurementType.WRAP_CONTENT)
-    self.guideImageView:addCornerMask(5, _Color.White, RectCorner.ALL_CORNERS)
+    self.guideImageView:addCornerMask(5, ColorConstants.White, RectCorner.ALL_CORNERS)
     self.guideImageView:image('https://s.momocdn.com/w/u/others/2019/08/27/1566877265808-meilishuoguide.png')
     self.guideImageView:onClick(function()
         ---加载webview http://act.meilishuo.com/wap/0118huya?acm=3.mce.2_10_1lpd6.130069.0.j5klrrAfO3TFd.pos_0-m_506297-sd_119
@@ -265,7 +260,7 @@ function _class:headerView()
 
     --福利社
     self.welfareImageView = ImageView():marginTop(10):width(width):height(MeasurementType.WRAP_CONTENT)
-    self.welfareImageView:addCornerMask(5, _Color.White, RectCorner.ALL_CORNERS)
+    self.welfareImageView:addCornerMask(5, ColorConstants.White, RectCorner.ALL_CORNERS)
     self.welfareImageView:image("https://s.momocdn.com/w/u/others/2019/08/27/1566877691900-welfare.png")
     self.welfareImageView:onClick(function()
         Toast("直接去福利社换取福利哦", 1)
@@ -278,8 +273,8 @@ function _class:headerView()
 
     --日常任务
     local text = StyleString("日常任务：点亮爱心，为内容点赞")
-    text:fontSize(12):fontColor(_Color.DeepGray)
-    text:setFontColorForRange(_Color.Black, 1, 5):setFontStyleForRange(FontStyle.BOLD, 1, 5)
+    text:fontSize(12):fontColor(ColorConstants.DeepGray)
+    text:setFontColorForRange(ColorConstants.Black, 1, 5):setFontStyleForRange(FontStyle.BOLD, 1, 5)
     self.dailyTaskLabel = Label():setGravity(Gravity.CENTER_VERTICAL):styleText(text)
     self.dailyLayoutView:addView(self.dailyTaskLabel)
 
@@ -303,9 +298,9 @@ function _class:headerView()
 
     --灵感集
     local text = StyleString("灵感集 / 探索更有趣的时髦生活")
-    text:fontSize(13):fontColor(_Color.MediumGray)
+    text:fontSize(13):fontColor(ColorConstants.MediumGray)
     text:setFontSizeForRange(20, 1, 5)
-    text:setFontColorForRange(_Color.Black, 1, 4):setFontStyleForRange(FontStyle.BOLD, 1, 4)
+    text:setFontColorForRange(ColorConstants.Black, 1, 4):setFontStyleForRange(FontStyle.BOLD, 1, 4)
     self.descLabel = Label():width(MeasurementType.WRAP_CONTENT):height(50)
     self.descLabel:styleText(text)
     self.headerViewLayout:addView(self.descLabel)
@@ -322,8 +317,8 @@ function _class:headerView()
         local button = Label()
         local offset = i > 1 and 10 or 0
         button:marginLeft(offset):width(38):height(25):cornerRadius(12)
-        button:bgColor(_Color.LightGray)--ok
-        button:text(titles[i]):fontSize(12):textColor(_Color.Gray):textAlign(TextAlign.CENTER)
+        button:bgColor(ColorConstants.LightGray)--ok
+        button:text(titles[i]):fontSize(12):textColor(ColorConstants.Gray):textAlign(TextAlign.CENTER)
         button:onClick(function()
             self:clickCategoryButton(button)
         end)
@@ -348,13 +343,16 @@ end
 ---@private
 function _class:updateCategoryButtonUI(button)
     if self.preCategButton then
-        self.preCategButton:textColor(_Color.Gray)
-            :bgColor(_Color.LightGray)--ok
+        self.preCategButton:textColor(ColorConstants.Gray)
+            :bgColor(ColorConstants.LightGray)--ok
             :setTextFontStyle(FontStyle.NORMAL)
     end
-    button:textColor(_Color.White):setTextFontStyle(FontStyle.BOLD)
+    button:textColor(ColorConstants.White):setTextFontStyle(FontStyle.BOLD)
           :bgColor(Color(253, 74, 63))--ok
     self.preCategButton = button
 end
-
+function _class:gotoDetailView()
+    require("lua_pods.LuaPageManager.LuaPageManager")
+    LuaPageManager:gotoPage("ideaMassEntryFile", Map(), AnimType.BottomToTop, 1)
+end
 return _class

@@ -25,8 +25,8 @@ function _class:contentView()
 
 
     self.attention = Label():text("没有内容")
-                            :textColor(_Color.Black):fontSize(15)
-                            :borderWidth(1):borderColor(_Color.White):padding(6, 12, 6, 12)
+                            :textColor(ColorConstants.Black):fontSize(15)
+                            :borderWidth(1):borderColor(ColorConstants.White):padding(6, 12, 6, 12)
                             :cornerRadius(2)
     self.noContentLinear:addView(self.attention)
 
