@@ -3,8 +3,8 @@
     <string name="str_touch_move">长按拖动，点击清除</string>
     <string name="debug_tip">debug状态:</string>
     <string name="debug_scan">扫码获取ip</string>
-    <string name="debug_ip">ip:</string>
-    <string name="debug_port">port:</string>
+    <string name="debug_ip">debug ip:</string>
+    <string name="debug_port">debug port:</string>
     <string name="debug_open">开</string>
     <string name="debug_close">关</string>
     <string name="hot_reload_tip">USB连接</string>

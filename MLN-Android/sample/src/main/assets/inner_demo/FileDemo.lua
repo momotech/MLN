@@ -115,8 +115,6 @@ local btnInfo = { "exist", "isDir", "isFile", "asyncReadFile", "asyncReadMapFile
                   "syncReadString", "syncWriteFile", "syncWriteMap", "syncWriteArray", "syncUnzipFile" }
 
 --初始化view
-local Desc = Label():text("请用陌陌客户端扫码测试"):fontSize(19):setWrapContent(true):height(40):textAlign(TextAlign.CENTER):textColor(Color(0, 0, 0, 1)):marginLeft(10):marginTop(50)
-contentView:addView(Desc)
 local editLabal = EditTextView():text("file://LuaView"):fontSize(19):width(width - 20):textAlign(TextAlign.LEFT):textColor(Color(0, 0, 0, 1)):marginLeft(10):marginTop(75)
 contentView:addView(editLabal)
 local msgEdit = EditTextView():text("momo.lua"):fontSize(19):width(width - 20):textAlign(TextAlign.LEFT):textColor(Color(0, 0, 0, 1)):marginLeft(10):marginTop(105)
