@@ -24,7 +24,7 @@ MLN是一个移动跨平台开发框架，让开发者用一套代码构建Andro
 
 ## 新增Bridge 
 * [Android](https://github.com/momotech/MLN/wiki/新增Bridge#Android原生Bridge编写)
-* [iOS](https://github.com/momotech/MLN/wiki/新增Bridge#iOS原生Bridge编写)) 
+* [iOS](https://github.com/momotech/MLN/wiki/新增Bridge#iOS原生Bridge编写)
 
 ## 开发体验
 MLN支持热重载开发方式，修改代码，立即生效，免去编译等待阶段
