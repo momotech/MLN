@@ -4,7 +4,6 @@ _class._version = '1.0'
 _class._classname = ''
 
 _class.http = Http()
-_class.http:setBaseUrl("http://api.immomo.com")
 _class.isCache = false
 _class.isRequesting = false
 
@@ -45,15 +44,16 @@ function _class:setupTestUI()
     height = contentView:height()
     
     showLabel = Label()--显示结果
-    
+
+    contentScrollView = ScrollView():width(MeasurementType.MATCH_PARENT):height(MeasurementType.MATCH_PARENT)
+    window:addView(contentScrollView)
+
     --初始化view
-    Desc = Label():text("请用陌陌客户端扫码测试"):fontSize(19):setWrapContent(true):height(40):textAlign(TextAlign.CENTER):textColor(Color(0, 0, 0, 1)):marginLeft(10):marginTop(50)
-    contentView:addView(Desc)
-    showLabel:width(width - 16):height(height - (16 + (40 + 5) * 3) - 8):lines(0):fontSize(20):textAlign(TextAlign.LEFT):textColor(Color(0, 0, 0, 1)):bgColor(Color(222, 222, 222, 1)):marginTop(16 + (40 + 5) * 3):marginLeft(8):textColor(Color(0, 0, 0, 1))
-    contentView:addView(showLabel)
+    showLabel:width(width - 16):lines(0):fontSize(20):textAlign(TextAlign.LEFT):textColor(Color(0, 0, 0, 1)):bgColor(Color(222, 222, 222, 1)):marginTop(16 + (40 + 5) * 3):marginLeft(8):textColor(Color(0, 0, 0, 1))
+    contentScrollView:addView(showLabel)
     
     btnScrollView = ScrollView(true):height(50):width(width):padding(4, 0, 4, 0)
-    contentView:addView(btnScrollView)
+    contentScrollView:addView(btnScrollView)
     local tabsContainer = LinearLayout(LinearType.HORIZONTAL):height(50):setWrapContent(true)
     btnScrollView:addView(tabsContainer)
     
@@ -76,7 +76,7 @@ function _class:setupTestUI()
         if i == btnInfo[1] then
             v:onClick(function()
                 showLabel:text("请求中...." .. tostring(_class.postParams))
-                _class:requestHttp("v1/nearby/index")
+                _class:requestHttp("https://suggest.taobao.com/sug?code=utf-8&q=%E5%A4%A7%E5%AE%9D&callback=cb")
             end)
         elseif i == btnInfo[2] then
             v:onClick(function()
