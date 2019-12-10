@@ -3,7 +3,7 @@
 //  LuaNative
 //
 //  Created by MOMO on 2019/12/7.
-//  Copyright © 2019年 liu.xu_1586. All rights reserved.
+//  Copyright © 2019年 MoMo. All rights reserved.
 //
 
 #import "MLNDemoListViewController.h"

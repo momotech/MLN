@@ -27,14 +27,6 @@
     
     // copy 主bundle中文件到沙盒中
     [self copyJsonFilesToSandbox];
-    
-//    // 主页面展示
-//    self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
-//    UIViewController *rootViewController = [[MLNViewController alloc] init];
-//    UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:rootViewController];
-//    [navigationController.navigationBar setHidden:YES];
-//    self.window.rootViewController = navigationController;
-//    [self.window makeKeyAndVisible];
 
     return YES;
 }
