@@ -1,9 +1,9 @@
 //
-//  MLNHomeViewController.h
-//  MLN_Example
+//  MLNViewController.h
+//  MLN
 //
-//  Created by MOMO on 2019/12/6.
-//  Copyright © 2019年 liu.xu_1586. All rights reserved.
+//  Created by MoMo on 12/06/2019.
+//  Copyright (c) 2019 MoMo. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
