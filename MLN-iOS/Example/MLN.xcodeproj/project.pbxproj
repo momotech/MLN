@@ -81,35 +81,6 @@
 		FA383453239A4C61000F900E /* MLNHomeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FA383452239A4C61000F900E /* MLNHomeViewController.m */; };
 		FA383456239A6357000F900E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FA383454239A6356000F900E /* Main.storyboard */; };
 		FA383459239A64AF000F900E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FA383457239A64AF000F900E /* LaunchScreen.storyboard */; };
-		FA38347A239A9DA3000F900E /* ToastDemo.lua in Resources */ = {isa = PBXBuildFile; fileRef = FA38345B239A9DA2000F900E /* ToastDemo.lua */; };
-		FA38347B239A9DA3000F900E /* windowDemo.lua in Resources */ = {isa = PBXBuildFile; fileRef = FA38345C239A9DA2000F900E /* windowDemo.lua */; };
-		FA38347C239A9DA3000F900E /* LoadingDemo.lua in Resources */ = {isa = PBXBuildFile; fileRef = FA38345D239A9DA2000F900E /* LoadingDemo.lua */; };
-		FA38347D239A9DA3000F900E /* EditTextViewDemo.lua in Resources */ = {isa = PBXBuildFile; fileRef = FA38345E239A9DA2000F900E /* EditTextViewDemo.lua */; };
-		FA38347E239A9DA3000F900E /* TableViewDemo.lua in Resources */ = {isa = PBXBuildFile; fileRef = FA38345F239A9DA2000F900E /* TableViewDemo.lua */; };
-		FA38347F239A9DA3000F900E /* WaterfallViewDemo.lua in Resources */ = {isa = PBXBuildFile; fileRef = FA383460239A9DA2000F900E /* WaterfallViewDemo.lua */; };
-		FA383480239A9DA3000F900E /* DialogDemo.lua in Resources */ = {isa = PBXBuildFile; fileRef = FA383461239A9DA2000F900E /* DialogDemo.lua */; };
-		FA383481239A9DA3000F900E /* AlertDemo.lua in Resources */ = {isa = PBXBuildFile; fileRef = FA383462239A9DA2000F900E /* AlertDemo.lua */; };
-		FA383482239A9DA3000F900E /* SystemDemo.lua in Resources */ = {isa = PBXBuildFile; fileRef = FA383463239A9DA2000F900E /* SystemDemo.lua */; };
-		FA383483239A9DA3000F900E /* window-self-viewDisappear-functionDemo.lua in Resources */ = {isa = PBXBuildFile; fileRef = FA383464239A9DA2000F900E /* window-self-viewDisappear-functionDemo.lua */; };
-		FA383484239A9DA3000F900E /* StyleString-boolean-showAsImage-SizeDemo.lua in Resources */ = {isa = PBXBuildFile; fileRef = FA383465239A9DA2000F900E /* StyleString-boolean-showAsImage-SizeDemo.lua */; };
-		FA383485239A9DA3000F900E /* CollectionViewDemo.lua in Resources */ = {isa = PBXBuildFile; fileRef = FA383466239A9DA2000F900E /* CollectionViewDemo.lua */; };
-		FA383486239A9DA3000F900E /* TabSegmentViewDemo.lua in Resources */ = {isa = PBXBuildFile; fileRef = FA383467239A9DA2000F900E /* TabSegmentViewDemo.lua */; };
-		FA383487239A9DA3000F900E /* View-boolean-goneDemo.lua in Resources */ = {isa = PBXBuildFile; fileRef = FA383468239A9DA2000F900E /* View-boolean-goneDemo.lua */; };
-		FA383488239A9DA3000F900E /* ScrollViewDemo.lua in Resources */ = {isa = PBXBuildFile; fileRef = FA383469239A9DA2000F900E /* ScrollViewDemo.lua */; };
-		FA383489239A9DA3000F900E /* AnimatorDemo.lua in Resources */ = {isa = PBXBuildFile; fileRef = FA38346A239A9DA2000F900E /* AnimatorDemo.lua */; };
-		FA38348A239A9DA3000F900E /* PreferenceUtilsDemo.lua in Resources */ = {isa = PBXBuildFile; fileRef = FA38346B239A9DA2000F900E /* PreferenceUtilsDemo.lua */; };
-		FA38348B239A9DA3000F900E /* LabelDemo.lua in Resources */ = {isa = PBXBuildFile; fileRef = FA38346C239A9DA2000F900E /* LabelDemo.lua */; };
-		FA38348D239A9DA3000F900E /* window-self-viewAppear-functionDemo.lua in Resources */ = {isa = PBXBuildFile; fileRef = FA38346E239A9DA2000F900E /* window-self-viewAppear-functionDemo.lua */; };
-		FA38348E239A9DA3000F900E /* FileDemo.lua in Resources */ = {isa = PBXBuildFile; fileRef = FA38346F239A9DA2000F900E /* FileDemo.lua */; };
-		FA383490239A9DA3000F900E /* window-self-backKeyPressed-functionDemo.lua in Resources */ = {isa = PBXBuildFile; fileRef = FA383471239A9DA2000F900E /* window-self-backKeyPressed-functionDemo.lua */; };
-		FA383491239A9DA3000F900E /* CollectionViewGridLayoutDemo.lua in Resources */ = {isa = PBXBuildFile; fileRef = FA383472239A9DA2000F900E /* CollectionViewGridLayoutDemo.lua */; };
-		FA383492239A9DA3000F900E /* TimerDemo.lua in Resources */ = {isa = PBXBuildFile; fileRef = FA383473239A9DA2000F900E /* TimerDemo.lua */; };
-		FA383493239A9DA3000F900E /* View-self-requestLayoutDemo.lua in Resources */ = {isa = PBXBuildFile; fileRef = FA383474239A9DA2000F900E /* View-self-requestLayoutDemo.lua */; };
-		FA383494239A9DA3000F900E /* ImageButtonDemo.lua in Resources */ = {isa = PBXBuildFile; fileRef = FA383475239A9DA2000F900E /* ImageButtonDemo.lua */; };
-		FA383495239A9DA3000F900E /* SwitchDemo.lua in Resources */ = {isa = PBXBuildFile; fileRef = FA383476239A9DA2000F900E /* SwitchDemo.lua */; };
-		FA383496239A9DA3000F900E /* LinearLayoutDemo.lua in Resources */ = {isa = PBXBuildFile; fileRef = FA383477239A9DA2000F900E /* LinearLayoutDemo.lua */; };
-		FA383497239A9DA3000F900E /* ViewPagerDemo.lua in Resources */ = {isa = PBXBuildFile; fileRef = FA383478239A9DA2000F900E /* ViewPagerDemo.lua */; };
-		FA383498239A9DA3000F900E /* HttpDemo.lua in Resources */ = {isa = PBXBuildFile; fileRef = FA383479239A9DA2000F900E /* HttpDemo.lua */; };
 		FA38349B239B5A4C000F900E /* MLNDemoListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FA38349A239B5A4C000F900E /* MLNDemoListViewController.m */; };
 		FA4EE2FA2379067000449250 /* MLNGalleryMinePageCellBaseModel.m in Sources */ = {isa = PBXBuildFile; fileRef = FA4EE2F92379067000449250 /* MLNGalleryMinePageCellBaseModel.m */; };
 		FA4EE2FD237907B000449250 /* MLNGalleryMinePageCellHomeModel.m in Sources */ = {isa = PBXBuildFile; fileRef = FA4EE2FC237907B000449250 /* MLNGalleryMinePageCellHomeModel.m */; };
@@ -120,6 +91,14 @@
 		FA4EE30D237909AB00449250 /* MLNGalleryMineBottomPageDynamicCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FA4EE30C237909AB00449250 /* MLNGalleryMineBottomPageDynamicCell.m */; };
 		FA4EE310237909BC00449250 /* MLNGalleryMineBottomPageCollectCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FA4EE30F237909BC00449250 /* MLNGalleryMineBottomPageCollectCell.m */; };
 		FA4EE313237917E500449250 /* MLNGalleryMinePageCellCollectCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FA4EE312237917E500449250 /* MLNGalleryMinePageCellCollectCell.m */; };
+		FA53B1A823A0FABA006E3FC2 /* EditTextViewDemo.lua in Resources */ = {isa = PBXBuildFile; fileRef = FA53B1A023A0FABA006E3FC2 /* EditTextViewDemo.lua */; };
+		FA53B1A923A0FABA006E3FC2 /* LinearLayoutDemo.lua in Resources */ = {isa = PBXBuildFile; fileRef = FA53B1A123A0FABA006E3FC2 /* LinearLayoutDemo.lua */; };
+		FA53B1AA23A0FABA006E3FC2 /* CollectionViewDemo.lua in Resources */ = {isa = PBXBuildFile; fileRef = FA53B1A223A0FABA006E3FC2 /* CollectionViewDemo.lua */; };
+		FA53B1AB23A0FABA006E3FC2 /* LabelDemo.lua in Resources */ = {isa = PBXBuildFile; fileRef = FA53B1A323A0FABA006E3FC2 /* LabelDemo.lua */; };
+		FA53B1AC23A0FABA006E3FC2 /* TableViewDemo.lua in Resources */ = {isa = PBXBuildFile; fileRef = FA53B1A423A0FABA006E3FC2 /* TableViewDemo.lua */; };
+		FA53B1AD23A0FABA006E3FC2 /* WaterfallViewDemo.lua in Resources */ = {isa = PBXBuildFile; fileRef = FA53B1A523A0FABA006E3FC2 /* WaterfallViewDemo.lua */; };
+		FA53B1AE23A0FABA006E3FC2 /* DialogDemo.lua in Resources */ = {isa = PBXBuildFile; fileRef = FA53B1A623A0FABA006E3FC2 /* DialogDemo.lua */; };
+		FA53B1B023A0FB02006E3FC2 /* ViewPagerDemo.lua in Resources */ = {isa = PBXBuildFile; fileRef = FA53B1AF23A0FB02006E3FC2 /* ViewPagerDemo.lua */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -277,35 +256,6 @@
 		FA383452239A4C61000F900E /* MLNHomeViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNHomeViewController.m; sourceTree = "<group>"; };
 		FA383455239A6356000F900E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		FA383458239A64AF000F900E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
-		FA38345B239A9DA2000F900E /* ToastDemo.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ToastDemo.lua; sourceTree = "<group>"; };
-		FA38345C239A9DA2000F900E /* windowDemo.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = windowDemo.lua; sourceTree = "<group>"; };
-		FA38345D239A9DA2000F900E /* LoadingDemo.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LoadingDemo.lua; sourceTree = "<group>"; };
-		FA38345E239A9DA2000F900E /* EditTextViewDemo.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = EditTextViewDemo.lua; sourceTree = "<group>"; };
-		FA38345F239A9DA2000F900E /* TableViewDemo.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = TableViewDemo.lua; sourceTree = "<group>"; };
-		FA383460239A9DA2000F900E /* WaterfallViewDemo.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WaterfallViewDemo.lua; sourceTree = "<group>"; };
-		FA383461239A9DA2000F900E /* DialogDemo.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DialogDemo.lua; sourceTree = "<group>"; };
-		FA383462239A9DA2000F900E /* AlertDemo.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AlertDemo.lua; sourceTree = "<group>"; };
-		FA383463239A9DA2000F900E /* SystemDemo.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SystemDemo.lua; sourceTree = "<group>"; };
-		FA383464239A9DA2000F900E /* window-self-viewDisappear-functionDemo.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "window-self-viewDisappear-functionDemo.lua"; sourceTree = "<group>"; };
-		FA383465239A9DA2000F900E /* StyleString-boolean-showAsImage-SizeDemo.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "StyleString-boolean-showAsImage-SizeDemo.lua"; sourceTree = "<group>"; };
-		FA383466239A9DA2000F900E /* CollectionViewDemo.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CollectionViewDemo.lua; sourceTree = "<group>"; };
-		FA383467239A9DA2000F900E /* TabSegmentViewDemo.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = TabSegmentViewDemo.lua; sourceTree = "<group>"; };
-		FA383468239A9DA2000F900E /* View-boolean-goneDemo.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "View-boolean-goneDemo.lua"; sourceTree = "<group>"; };
-		FA383469239A9DA2000F900E /* ScrollViewDemo.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ScrollViewDemo.lua; sourceTree = "<group>"; };
-		FA38346A239A9DA2000F900E /* AnimatorDemo.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AnimatorDemo.lua; sourceTree = "<group>"; };
-		FA38346B239A9DA2000F900E /* PreferenceUtilsDemo.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = PreferenceUtilsDemo.lua; sourceTree = "<group>"; };
-		FA38346C239A9DA2000F900E /* LabelDemo.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LabelDemo.lua; sourceTree = "<group>"; };
-		FA38346E239A9DA2000F900E /* window-self-viewAppear-functionDemo.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "window-self-viewAppear-functionDemo.lua"; sourceTree = "<group>"; };
-		FA38346F239A9DA2000F900E /* FileDemo.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = FileDemo.lua; sourceTree = "<group>"; };
-		FA383471239A9DA2000F900E /* window-self-backKeyPressed-functionDemo.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "window-self-backKeyPressed-functionDemo.lua"; sourceTree = "<group>"; };
-		FA383472239A9DA2000F900E /* CollectionViewGridLayoutDemo.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CollectionViewGridLayoutDemo.lua; sourceTree = "<group>"; };
-		FA383473239A9DA2000F900E /* TimerDemo.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = TimerDemo.lua; sourceTree = "<group>"; };
-		FA383474239A9DA2000F900E /* View-self-requestLayoutDemo.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "View-self-requestLayoutDemo.lua"; sourceTree = "<group>"; };
-		FA383475239A9DA2000F900E /* ImageButtonDemo.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ImageButtonDemo.lua; sourceTree = "<group>"; };
-		FA383476239A9DA2000F900E /* SwitchDemo.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SwitchDemo.lua; sourceTree = "<group>"; };
-		FA383477239A9DA2000F900E /* LinearLayoutDemo.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LinearLayoutDemo.lua; sourceTree = "<group>"; };
-		FA383478239A9DA2000F900E /* ViewPagerDemo.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ViewPagerDemo.lua; sourceTree = "<group>"; };
-		FA383479239A9DA2000F900E /* HttpDemo.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HttpDemo.lua; sourceTree = "<group>"; };
 		FA383499239B5A4C000F900E /* MLNDemoListViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNDemoListViewController.h; sourceTree = "<group>"; };
 		FA38349A239B5A4C000F900E /* MLNDemoListViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNDemoListViewController.m; sourceTree = "<group>"; };
 		FA4EE2F82379067000449250 /* MLNGalleryMinePageCellBaseModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNGalleryMinePageCellBaseModel.h; sourceTree = "<group>"; };
@@ -326,6 +276,14 @@
 		FA4EE30F237909BC00449250 /* MLNGalleryMineBottomPageCollectCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNGalleryMineBottomPageCollectCell.m; sourceTree = "<group>"; };
 		FA4EE311237917E500449250 /* MLNGalleryMinePageCellCollectCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNGalleryMinePageCellCollectCell.h; sourceTree = "<group>"; };
 		FA4EE312237917E500449250 /* MLNGalleryMinePageCellCollectCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNGalleryMinePageCellCollectCell.m; sourceTree = "<group>"; };
+		FA53B1A023A0FABA006E3FC2 /* EditTextViewDemo.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = EditTextViewDemo.lua; sourceTree = "<group>"; };
+		FA53B1A123A0FABA006E3FC2 /* LinearLayoutDemo.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LinearLayoutDemo.lua; sourceTree = "<group>"; };
+		FA53B1A223A0FABA006E3FC2 /* CollectionViewDemo.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CollectionViewDemo.lua; sourceTree = "<group>"; };
+		FA53B1A323A0FABA006E3FC2 /* LabelDemo.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LabelDemo.lua; sourceTree = "<group>"; };
+		FA53B1A423A0FABA006E3FC2 /* TableViewDemo.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = TableViewDemo.lua; sourceTree = "<group>"; };
+		FA53B1A523A0FABA006E3FC2 /* WaterfallViewDemo.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WaterfallViewDemo.lua; sourceTree = "<group>"; };
+		FA53B1A623A0FABA006E3FC2 /* DialogDemo.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DialogDemo.lua; sourceTree = "<group>"; };
+		FA53B1AF23A0FB02006E3FC2 /* ViewPagerDemo.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ViewPagerDemo.lua; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -754,35 +712,14 @@
 		FA38345A239A9DA2000F900E /* inner_demo */ = {
 			isa = PBXGroup;
 			children = (
-				FA38345B239A9DA2000F900E /* ToastDemo.lua */,
-				FA38345C239A9DA2000F900E /* windowDemo.lua */,
-				FA38345D239A9DA2000F900E /* LoadingDemo.lua */,
-				FA38345E239A9DA2000F900E /* EditTextViewDemo.lua */,
-				FA38345F239A9DA2000F900E /* TableViewDemo.lua */,
-				FA383460239A9DA2000F900E /* WaterfallViewDemo.lua */,
-				FA383461239A9DA2000F900E /* DialogDemo.lua */,
-				FA383462239A9DA2000F900E /* AlertDemo.lua */,
-				FA383463239A9DA2000F900E /* SystemDemo.lua */,
-				FA383464239A9DA2000F900E /* window-self-viewDisappear-functionDemo.lua */,
-				FA383465239A9DA2000F900E /* StyleString-boolean-showAsImage-SizeDemo.lua */,
-				FA383466239A9DA2000F900E /* CollectionViewDemo.lua */,
-				FA383467239A9DA2000F900E /* TabSegmentViewDemo.lua */,
-				FA383468239A9DA2000F900E /* View-boolean-goneDemo.lua */,
-				FA383469239A9DA2000F900E /* ScrollViewDemo.lua */,
-				FA38346A239A9DA2000F900E /* AnimatorDemo.lua */,
-				FA38346B239A9DA2000F900E /* PreferenceUtilsDemo.lua */,
-				FA38346C239A9DA2000F900E /* LabelDemo.lua */,
-				FA38346E239A9DA2000F900E /* window-self-viewAppear-functionDemo.lua */,
-				FA38346F239A9DA2000F900E /* FileDemo.lua */,
-				FA383471239A9DA2000F900E /* window-self-backKeyPressed-functionDemo.lua */,
-				FA383472239A9DA2000F900E /* CollectionViewGridLayoutDemo.lua */,
-				FA383473239A9DA2000F900E /* TimerDemo.lua */,
-				FA383474239A9DA2000F900E /* View-self-requestLayoutDemo.lua */,
-				FA383475239A9DA2000F900E /* ImageButtonDemo.lua */,
-				FA383476239A9DA2000F900E /* SwitchDemo.lua */,
-				FA383477239A9DA2000F900E /* LinearLayoutDemo.lua */,
-				FA383478239A9DA2000F900E /* ViewPagerDemo.lua */,
-				FA383479239A9DA2000F900E /* HttpDemo.lua */,
+				FA53B1AF23A0FB02006E3FC2 /* ViewPagerDemo.lua */,
+				FA53B1A223A0FABA006E3FC2 /* CollectionViewDemo.lua */,
+				FA53B1A623A0FABA006E3FC2 /* DialogDemo.lua */,
+				FA53B1A023A0FABA006E3FC2 /* EditTextViewDemo.lua */,
+				FA53B1A323A0FABA006E3FC2 /* LabelDemo.lua */,
+				FA53B1A123A0FABA006E3FC2 /* LinearLayoutDemo.lua */,
+				FA53B1A423A0FABA006E3FC2 /* TableViewDemo.lua */,
+				FA53B1A523A0FABA006E3FC2 /* WaterfallViewDemo.lua */,
 			);
 			path = inner_demo;
 			sourceTree = "<group>";
@@ -903,43 +840,22 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FA383491239A9DA3000F900E /* CollectionViewGridLayoutDemo.lua in Resources */,
+				FA53B1B023A0FB02006E3FC2 /* ViewPagerDemo.lua in Resources */,
 				30A4EB55231CBF7900995416 /* moment in Resources */,
-				FA383484239A9DA3000F900E /* StyleString-boolean-showAsImage-SizeDemo.lua in Resources */,
 				FA383459239A64AF000F900E /* LaunchScreen.storyboard in Resources */,
-				FA38348D239A9DA3000F900E /* window-self-viewAppear-functionDemo.lua in Resources */,
-				FA38347E239A9DA3000F900E /* TableViewDemo.lua in Resources */,
-				FA38348A239A9DA3000F900E /* PreferenceUtilsDemo.lua in Resources */,
-				FA383490239A9DA3000F900E /* window-self-backKeyPressed-functionDemo.lua in Resources */,
+				FA53B1A923A0FABA006E3FC2 /* LinearLayoutDemo.lua in Resources */,
+				FA53B1AE23A0FABA006E3FC2 /* DialogDemo.lua in Resources */,
+				FA53B1AC23A0FABA006E3FC2 /* TableViewDemo.lua in Resources */,
+				FA53B1A823A0FABA006E3FC2 /* EditTextViewDemo.lua in Resources */,
 				30CB3BFB23684CD400AB90C6 /* MLN.podspec in Resources */,
-				FA38347B239A9DA3000F900E /* windowDemo.lua in Resources */,
-				FA383496239A9DA3000F900E /* LinearLayoutDemo.lua in Resources */,
-				FA383492239A9DA3000F900E /* TimerDemo.lua in Resources */,
-				FA383498239A9DA3000F900E /* HttpDemo.lua in Resources */,
-				FA383486239A9DA3000F900E /* TabSegmentViewDemo.lua in Resources */,
-				FA38347F239A9DA3000F900E /* WaterfallViewDemo.lua in Resources */,
-				FA38348E239A9DA3000F900E /* FileDemo.lua in Resources */,
 				30CB3BF923684B7F00AB90C6 /* MLNDevTool.podspec in Resources */,
-				FA38348B239A9DA3000F900E /* LabelDemo.lua in Resources */,
 				FA383456239A6357000F900E /* Main.storyboard in Resources */,
-				FA383483239A9DA3000F900E /* window-self-viewDisappear-functionDemo.lua in Resources */,
-				FA38347C239A9DA3000F900E /* LoadingDemo.lua in Resources */,
-				FA383493239A9DA3000F900E /* View-self-requestLayoutDemo.lua in Resources */,
-				FA383480239A9DA3000F900E /* DialogDemo.lua in Resources */,
-				FA383481239A9DA3000F900E /* AlertDemo.lua in Resources */,
+				FA53B1AD23A0FABA006E3FC2 /* WaterfallViewDemo.lua in Resources */,
 				6003F5A9195388D20070C39A /* Images.xcassets in Resources */,
-				FA38347A239A9DA3000F900E /* ToastDemo.lua in Resources */,
-				FA383494239A9DA3000F900E /* ImageButtonDemo.lua in Resources */,
-				FA383489239A9DA3000F900E /* AnimatorDemo.lua in Resources */,
 				6003F598195388D20070C39A /* InfoPlist.strings in Resources */,
-				FA383488239A9DA3000F900E /* ScrollViewDemo.lua in Resources */,
+				FA53B1AB23A0FABA006E3FC2 /* LabelDemo.lua in Resources */,
+				FA53B1AA23A0FABA006E3FC2 /* CollectionViewDemo.lua in Resources */,
 				B2D0AB85236C1F0A00B1D349 /* gallery in Resources */,
-				FA383487239A9DA3000F900E /* View-boolean-goneDemo.lua in Resources */,
-				FA383482239A9DA3000F900E /* SystemDemo.lua in Resources */,
-				FA383497239A9DA3000F900E /* ViewPagerDemo.lua in Resources */,
-				FA383495239A9DA3000F900E /* SwitchDemo.lua in Resources */,
-				FA383485239A9DA3000F900E /* CollectionViewDemo.lua in Resources */,
-				FA38347D239A9DA3000F900E /* EditTextViewDemo.lua in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
