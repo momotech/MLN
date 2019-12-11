@@ -98,7 +98,7 @@ function _class:setupTopView()
     self.countLinear = LinearLayout(LinearType.HORIZONTAL):marginLeft(120):marginTop(28)
     self.topView:addView(self.countLinear)
 
-    self.pageLogo = ImageView():width(15):height(15):addCornerMask(6, ColorConstants.Gray, RectCorner.ALL_CORNERS)
+    self.pageLogo = ImageView():width(15):height(15)
 
     self.countLinear:addView(self.pageLogo)
     self.pageCount = Label():text("200篇"):textColor(ColorConstants.White):fontSize(12):marginLeft(3)
@@ -222,14 +222,14 @@ function _class:setupTabSegment()
 end
 
 function _class:setupWaterfallView()
-    self.width=  (window:width() - 30) / 2
+    self.width = (window:width() - 30) / 2
     self.waterfall = WaterfallView(false, true):width(MeasurementType.MATCH_PARENT):height(MeasurementType.MATCH_PARENT)
                                                :marginLeft(10):marginRight(10)
     self.waterfallLayout = WaterfallLayoutFix():itemSpacing(12):lineSpacing(5):spanCount(2)
     self.waterfallAdapter = WaterfallAdapter()
     self.waterfallAdapter:initCell(function(cell)
         local REQCELL = require("MMLuaKitGallery.IdeaWaterfallCell"):new()
-        REQCELL:cellView( self.width)
+        REQCELL:cellView(self.width)
         cell.CELL = REQCELL
         cell.contentView:addView(REQCELL.cellLayout)
     end)
@@ -237,10 +237,10 @@ function _class:setupWaterfallView()
         local item = self.dataList:get(row)
 
         cell.CELL.image:image(item:get("pic_big"))
-        cell.CELL.desc:text(item:get("title") )
+        cell.CELL.desc:text(item:get("title"))
         cell.CELL.authorhead:image(item:get("pic_small"))
         cell.CELL.authorName:text(item:get("artist_name"))
-        cell.CELL.likeCount:text(item:get("file_duration"))
+        cell.CELL.likeCount:text(tostring(item:get("file_duration")))
     end)
     self.waterfallAdapter:rowCount(function()
         return self.dataList:size()
@@ -253,14 +253,17 @@ function _class:setupWaterfallView()
     self.waterfall:layout(self.waterfallLayout)
 
     self.waterfall:setLoadingCallback(function()
-        self:requestNetwork(false, function(success, data)
-            if success then
-                self.waterfall:stopLoading()
-                self.waterfall:resetLoading()
-                self.waterfall:reloadData()
-            end
-        end)
-    end)
+            System:setTimeOut(function()
+                self:requestNetwork(false, function(success, data)
+                    if success then
+                        self.waterfall:stopLoading()
+                        self.waterfall:resetLoading()
+                        self.waterfall:reloadData()
+                    end
+                end)
+            end,0.1)
+      end)
+
     return self.waterfall
 end
 ---请求接口
@@ -283,9 +286,9 @@ function _class:requestNetwork(first, complete)
     end
     local filepath = 'gallery/json/musicRank.json'
     if System:Android() then
-        filepath = 'assets://'..filepath
+        filepath = 'assets://' .. filepath
     else
-        filepath = 'file://'..filepath
+        filepath = 'file://' .. filepath
     end
     File:asyncReadFile(filepath, function(codeNumber, response)
         print("codeNumber: " .. tostring(codeNumber))
@@ -303,33 +306,34 @@ function _class:requestNetwork(first, complete)
             complete(false, nil)
         end
     end)
+
 end
 
 function _class:setupDataSource()
     --首先展示第一页数据
     ----延迟加载，为了列表适配和加载时间分开
-    System:setTimeOut(function()
 
-        self:requestNetwork(true, function(success, _)
-            if success then
-                if not self.isInit then
-                    self.isInit = true
-                    self.waterfall:adapter(self.waterfallAdapter)
-                    self.tapTableView:adapter(self.tapAdapter)
-                    self.authorHeader:image("https://s.momocdn.com/w/u/others/2019/10/18/1571393657050-mls_header.png")
-                    self.pageLogo:image("https://s.momocdn.com/w/u/others/2019/10/18/1571393657050-mls_star.png")
-                    self.scanLogo:image("https://s.momocdn.com/w/u/others/2019/10/18/1571393656549-mls_scan.png")
 
-                end
+    self:requestNetwork(true, function(success, _)
+        if success then
+            if not self.isInit then
+                self.isInit = true
+                self.waterfall:adapter(self.waterfallAdapter)
+                self.tapTableView:adapter(self.tapAdapter)
+                self.authorHeader:image("https://s.momocdn.com/w/u/others/2019/10/18/1571393657050-mls_header.png")
+                self.pageLogo:image("https://s.momocdn.com/w/u/others/2019/10/18/1571393657050-mls_star.png")
+                self.scanLogo:image("https://s.momocdn.com/w/u/others/2019/10/18/1571393656549-mls_scan.png")
 
-                if self.dataList:size() > 0 then
-                    self.iv:image(self.dataList:get(1):get("pic_radio"))
-                    self.tapTableView:reloadData()
-                    self.waterfall:reloadData()
-                end
             end
-        end)
-    end, 0.5)
+
+            if self.dataList:size() > 0 then
+                self.iv:image(self.dataList:get(1):get("pic_radio"))
+                self.tapTableView:reloadData()
+                self.waterfall:reloadData()
+            end
+        end
+    end)
+
 end
 
 _class:new()
