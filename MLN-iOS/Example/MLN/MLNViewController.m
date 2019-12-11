@@ -74,7 +74,7 @@
     [[MLNLoadTimeStatistics sharedInstance] recordStartTime];
     
     if (kLuaPage) {
-        NSString *entryFile = @"Main.lua";
+        NSString *entryFile = @"meilishuo.lua";
         MLNLuaBundle *bundle = [MLNLuaBundle mainBundleWithPath:@"gallery"];
         MLNLuaPageViewController *kcv = [[MLNLuaPageViewController alloc] initWithEntryFilePath:entryFile];
         kcv.kitInstance.delegate = self;
