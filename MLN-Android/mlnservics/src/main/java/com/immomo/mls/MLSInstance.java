@@ -228,12 +228,16 @@ public class MLSInstance implements ScriptLoader.Callback, Callback, PrinterCont
      * 是否是热重载页面
      */
     private final boolean isHotReloadPage;
+    /**
+     * 是否展示debug button
+     */
+    private final boolean showDebugButton;
 
     public MLSInstance(@NonNull Context context) {
-        this(context,  false);
+        this(context,  false, MLSEngine.DEBUG);
     }
 
-    public MLSInstance(@NonNull Context context, boolean isHotReloadPage) {
+    public MLSInstance(@NonNull Context context, boolean isHotReloadPage, boolean showDebugButton) {
         AssertUtils.assertNullForce(context);
         mContext = context;
         createLuaViewManager();
@@ -243,6 +247,7 @@ public class MLSInstance implements ScriptLoader.Callback, Callback, PrinterCont
             adapter.addEventListener(Constants.KEY_DEBUG_BUTTON_EVENT, debugButtonOpenListener);
         }
         this.isHotReloadPage = isHotReloadPage;
+        this.showDebugButton = showDebugButton;
     }
 
     //<editor-fold desc="public method">
@@ -770,11 +775,9 @@ public class MLSInstance implements ScriptLoader.Callback, Callback, PrinterCont
      * @return
      */
     private boolean isDebugUrl() {
-        if (MLSEngine.DEBUG)
+        if (showDebugButton)
             return true;
-        if (initData != null && initData.hasType(Constants.LT_FORCE_DEBUG))
-            return true;
-        return false;
+        return initData != null && initData.hasType(Constants.LT_FORCE_DEBUG);
     }
 
     private void initReloadButton() {

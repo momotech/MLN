@@ -46,7 +46,7 @@ public class LuaViewActivity extends AppCompatActivity {
         Intent intent = getIntent();
         boolean hr = intent.getBooleanExtra(KEY_HOT_RELOAD, false);
         InitData initData = MLSBundleUtils.parseFromBundle(intent.getExtras()).showLoadingView(true);
-        instance = new MLSInstance(this, hr);
+        instance = new MLSInstance(this, hr, hr);
         instance.setContainer(frameLayout);
         instance.setData(initData);
 
