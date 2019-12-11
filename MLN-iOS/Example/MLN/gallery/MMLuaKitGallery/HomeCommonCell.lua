@@ -72,7 +72,7 @@ function _class:setupCellContentView()
     --头像
     local avatarView = ImageView()
     avatarView:width(35):height(35):setGravity(Gravity.CENTER_VERTICAL)
-              :cornerRadius(18)
+              :addCornerMask(18,ColorConstants.White, RectCorner.ALL_CORNERS)
     avatarView:bgColor(ColorConstants.LightGray)--ok
     avatarView:contentMode(ContentMode.SCALE_ASPECT_FILL)
     personInfoView:addView(avatarView)
@@ -140,7 +140,7 @@ function _class:setupDetailDescViewForCell()
 
     local detailViewHeight = 50
     local detailLayout = LinearLayout(LinearType.HORIZONTAL):marginTop(10):marginLeft(10):marginRight(10):height(detailViewHeight):width(MeasurementType.MATCH_PARENT)
-    detailLayout:cornerRadius(3)
+    detailLayout:addCornerMask(3,ColorConstants.White, RectCorner.ALL_CORNERS)
     detailLayout:bgColor(ColorConstants.LightGray)--OK
     detailLayout:onClick(function()
         Toast("灵感集里还有更多内容哦", 1)
