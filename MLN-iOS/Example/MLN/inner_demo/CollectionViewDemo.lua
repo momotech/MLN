@@ -1,102 +1,160 @@
+local W = window:width()
+local H = window:height()
+local topHeight
+if System:iOS() then
+    topHeight = window:statusBarHeight() + window:navBarHeight()
+end
+--初始化CollectionView
+local function initCollectionView()
+    collectionView = CollectionView(true, true)
+            :marginTop(topHeight)
+            :width(MeasurementType.MATCH_PARENT)
+            :height(H - 100)
+            :scrollDirection(ScrollDirection.VERTICAL)--竖直方向滑动
+    --        :scrollDirection(ScrollDirection.HORIZONTAL)--水平方向滑动
+            :showScrollIndicator(true)--是否显示滑动指示器
+            :bgColor(Color(255, 255, 0, 0.5))
+    --下拉刷新事件回调
+    collectionView:setRefreshingCallback(
+            function()
+                print("开始刷新")
+                System:setTimeOut(function()
+                    --2秒后结束刷新
+                    print("结束刷新了")
+                    collectionView:stopRefreshing()
+                end, 2)
+            end)
+    --上拉加载事件回调
+    collectionView:setLoadingCallback(function()
+        print("开始加载")
+        System:setTimeOut(function()
+            --2秒后结束加载
+            print("结束加载")
+            collectionView:stopLoading()
+            --已加载全部
+            collectionView:noMoreData()
+        end, 2)
 
---数据源
-dataSource = {
-items = {
-{
-icon = "http://s.momocdn.com/w/u/others/2019/01/16/1547610372024-01.png",
-text = "11111"
-},
-{
-icon = "http://s.momocdn.com/w/u/others/2019/01/16/1547610372064-02.png",
-text = "22222"
-},
-{
-icon = "http://s.momocdn.com/w/u/others/2019/01/16/1547610372063-3.png",
-text = "33333"
-},
-{
-icon = "http://s.momocdn.com/w/u/others/2019/01/16/1547610372137-4.png",
-text = "44444"
-},
-{
-icon = "http://s.momocdn.com/w/u/others/2019/01/16/1547610372063-5.png",
-text = "55555"
-}
-}
-}
+    end)
+    --开始滑动的回调事件
+    collectionView:setScrollBeginCallback(function()
+        print("开始滑动")
+    end)
+    --滑动中的回调事件
+    collectionView:setScrollingCallback(function()
+        print("滑动中")
+    end)
+    --结束滑动的回调事件
+    collectionView:setScrollEndCallback(function()
+        print("结束滑动")
+    end)
+    return collectionView
+end
+--初始化CollectionViewGridLayout
+local function initCollectionViewGridLayout()
 
-local size = window:size()
-screen_w = size:width()
-screen_h = size:height()
-local stateBar = window:stateBarHeight()  --获取状态栏高度
+    collectionLayout = CollectionViewGridLayout()
+    collectionLayout:itemSpacing(5)--间隔大小
+                    :lineSpacing(5)
+    --竖直滑动代表显示列数；水平滑动代表显示行数
+    collectionLayout:spanCount(3)
+    return collectionLayout
+end
+--初始化适配器
+local function initAdapter()
 
-local collectionView = CollectionView()
-collectionView:scrollDirection(ScrollDirection.HORIZONTAL)  --水平视图
-collectionView:width(screen_w):height(screen_h/2):marginTop(stateBar)
-window:addView(collectionView)
+    adapter = CollectionViewAdapter()
 
-local layout = CollectionViewLayout()
---layout:lineSpacing(10)  --设置cell之间的水平距离
-layout:itemSpacing(10)  --设置cell之间的垂直距离
-layout:itemSize(Size(100, screen_h/2))  --设置cell大小
-collectionView:layout(layout)
+    adapter:sectionCount(function()
+        return 1
+    end)
 
+    -----------------------------设置子view个数---------------------------------------
+    count = 5
+    adapter:rowCount(function(section)
+        return count
+    end)
+    ------------------------------设置cell宽高----------------------------------------
+    --根据类型标识设置对应子view的宽高
+    adapter:sizeForCellByReuseId("CellId", function(section, row)
+        return Size(100, 100)
+    end)
+    -------------------------------子view类型-----------------------------------------
+    --返回当前位置子view的类型标识
+    adapter:reuseId(function(section, row)
+        return "CellId"
+    end)
+    -------------------------------创建子view-----------------------------------------
+    adapter:initCellByReuseId("CellId", function(cell)
 
-local adapter = CollectionViewAdapter()
+        cell.userView = LinearLayout(LinearType.VERTICAL)
+                :setGravity(Gravity.CENTER)
+        --头像
+        cell.imageView = ImageView():width(50):height(50):cornerRadius(45)
+                                    :priority(1):bgColor(Color(255, 0, 0, 0.5))
+                                    :setGravity(Gravity.CENTER)
+        cell.userView:addView(cell.imageView)
+        --昵称
+        cell.nameLabel = Label():fontSize(14):textColor(Color(0, 0, 0, 1))
+                                :text("昵称"):setGravity(Gravity.CENTER)
+                                :marginTop(5)
+        cell.contentView:bgColor(Color(255, 255, 255, 1))
+        cell.userView:addView(cell.nameLabel)
+        cell.contentView:addView(cell.userView)
+    end)
+    --------------------------将子view与数据进行绑定赋值----------------------------------
+    adapter:fillCellDataByReuseId("CellId", function(cell, section, row)
+        cell.nameLabel:text("盖世英雄")
+    end)
+    --cell点击事件
+    adapter:selectedRowByReuseId("CellId", function(cell, section, row)
+        print("点击了cell", row)
+    end)
+    --cell被滑出屏幕可见区域的回调
+    adapter:cellDidDisappear(function(cell, section, row)
+        print("cell不见了", row)
+    end)
+    --cell出现在屏幕可见区域的回调
+    adapter:cellWillAppear(function(cell, section, row)
+        print("cell出现了", row)
+    end)
 
-adapter:sectionCount(function ()  --设置section数量回调
-return 1
-end)
+    return adapter
+end
 
-adapter:rowCount(function (_)  --根据section设置row数量回调
-local sections = dataSource.items
-return #sections
-end)
-
-adapter:reuseId(function (_, _)  --设置不同类型cell的id回调
-return "cellID"
-end)
-
-adapter:sizeForCell(function ()  --设置cell大小的回调
-return Size(screen_w/2, screen_h/2)
-end)
-
-adapter:cellWillAppear(function (cell, section, row)
-local str = string.format("cell appear, section = %d, row = %d", section, row)
-print(str)
-end)
-
-adapter:cellDidDisappear(function (cell, section, row)
-local str = string.format("cell disappear, section = %d, row = %d", section, row)
-print(str)
-end)
-
-adapter:initCellByReuseId("cellID", function(cell)  --根据reuseId设置初始化cell的回调
-cell.bgImage = ImageView():width(screen_w/4):height(screen_w/4):marginTop(50):marginLeft(50)
-cell.bgImage:contentMode(ContentMode.SCALE_TO_FILL)  --直接拉伸到View大小， 有可能会变形
-
-cell.titleLabel = Label():width(MeasurementType.MATCH_PARENT):height(MeasurementType.MATCH_PARENT)
-cell.titleLabel:textColor(Color(245, 150, 170, 1))
-cell.titleLabel:fontSize(14)
-cell.titleLabel:height(screen_w/4):marginLeft(20):marginTop(50)
-
-cell.contentView:bgColor(Color(0,170,144,1))
-cell.contentView:cornerRadius(10):clipToBounds(true)  --设置圆角
-cell.contentView:addView(cell.bgImage):addView(cell.titleLabel)
-end)
-
-adapter:fillCellDataByReuseId("cellID", function (cell, _, row)  --根据reuseId设置初始化cell数据的回调
-local item = dataSource.items[row]
-cell.bgImage:image(item.icon)
-cell.titleLabel:text(item.text)
-end)
-
+contentView = LinearLayout(LinearType.VERTICAL)
+contentView:width(W):height(H)
+           :bgColor(Color(255, 255, 255, 1))
+--初始化CollectionView
+collectionView = initCollectionView()
+--初始化CollectionViewGridLayout
+collectionLayout = initCollectionViewGridLayout()
+--初始化CollectionViewAdapter
+adapter = initAdapter()
+collectionView:layout(collectionLayout)
 collectionView:adapter(adapter)
-
-local label = Label():frame(Rect(10, 400, 100, 50)):bgColor(Color(90, 90, 90, 1))
-label:text("reloadData")
-window:addView(label)
-label:onClick(function ()
-print("reload Data")
-collectionView:reloadData()
+contentView:addView(collectionView)
+--操作栏
+operLayout = LinearLayout(LinearType.HORIZONTAL):height(100)
+addLabel = Label():width(W / 2):height(100):text("点我新增cell")
+                  :bgColor(Color(255, 255, 255, 1)):fontSize(16)
+                  :setGravity(Gravity.CENTER):textAlign(TextAlign.CENTER)
+addLabel:onClick(function()
+    --在指定位置插入cell
+    count = count + 2
+    collectionView:insertCellsAtSection(1, 1, 2)
+    --collectionView:insertRowsAtSection(1, 1, 2,true)
 end)
+subLabel = Label():width(W / 2):height(100):text("点我删除cell")
+                  :bgColor(Color(255, 255, 255, 1)):fontSize(16)
+                  :setGravity(Gravity.CENTER):textAlign(TextAlign.CENTER)
+subLabel:onClick(function()
+    --在指定位置删除cell
+    count = count - 2
+    collectionView:deleteCellsAtSection(1, 1, 2)
+    --collectionView:deleteRowsAtSection(1, 1, 2,true)
+end)
+operLayout:addView(addLabel)
+operLayout:addView(subLabel)
+contentView:addView(operLayout)
+window:addView(contentView)
