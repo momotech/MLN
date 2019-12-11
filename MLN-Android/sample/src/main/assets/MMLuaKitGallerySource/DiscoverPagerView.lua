@@ -146,11 +146,11 @@ function _class:setupCollectionViewAdapter()
         return cellWidth + 60
     end)
     adapter:selectedRowByReuseId(cellReuseId, function(cell, _, row)
-        local filepath = 'MMLuaKitGallery/IdeaMassView.lua'
+        local filepath = 'IdeaMassView.lua'
         if System:Android() then
-            filepath = 'assets://' .. filepath
+            filepath = 'assets://MMLuaKitGallery/' .. filepath
         else
-            filepath = 'file://' .. filepath
+            filepath =  filepath
         end
 
         Navigator:gotoPage(filepath, Map(), AnimType.RightToLeft)

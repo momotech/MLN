@@ -98,7 +98,7 @@ function _class:setupTopView()
     self.countLinear = LinearLayout(LinearType.HORIZONTAL):marginLeft(120):marginTop(28)
     self.topView:addView(self.countLinear)
 
-    self.pageLogo = ImageView():width(15):height(15):addCornerMask(6, ColorConstants.Gray, RectCorner.ALL_CORNERS)
+    self.pageLogo = ImageView():width(15):height(15)
 
     self.countLinear:addView(self.pageLogo)
     self.pageCount = Label():text("200篇"):textColor(ColorConstants.White):fontSize(12):marginLeft(3)
