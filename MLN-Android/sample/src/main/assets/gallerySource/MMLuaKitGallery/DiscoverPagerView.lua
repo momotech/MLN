@@ -71,7 +71,7 @@ end
 ---创建collectionView
 ---@private
 function _class:setupCollectionView()
-    self.headerViewHeight = 420
+    self.headerViewHeight = 410
 
     self.collectionView = WaterfallView(true, true):width(MeasurementType.MATCH_PARENT):height(MeasurementType.MATCH_PARENT)
     self.collectionView:useAllSpanForLoading(true)
@@ -146,13 +146,14 @@ function _class:setupCollectionViewAdapter()
         return cellWidth + 60
     end)
     adapter:selectedRowByReuseId(cellReuseId, function(cell, _, row)
-        --Toast(self.dataList:get(row):get("title"), 1)
-        --self:gotoDetailView()
+        local filepath = 'IdeaMassMainView.lua'
         if System:Android() then
-            Navigator:gotoPage("assets://MMLuaKitGallery/IdeaMassView.lua", Map(), AnimType.RightToLeft)
+            filepath = 'assets://gallery/' .. filepath
         else
-            Navigator:gotoPage("IdeaMassMainView.lua", nil, 0)
+            filepath =  filepath
         end
+
+        Navigator:gotoPage(filepath, Map(), AnimType.RightToLeft)
     end)
     self.collectionView:adapter(adapter)
 end
@@ -205,25 +206,27 @@ function _class:requestNetwork(first, complete)
 
     local filepath = 'gallery/json/musicRank.json'
     if System:Android() then
-        filepath = 'assets://'..filepath
+        filepath = 'assets://' .. filepath
     else
-        filepath = 'file://'..filepath
+        filepath = 'file://' .. filepath
     end
-    File:asyncReadFile(filepath, function(codeNumber, response)
-        map = StringUtil:jsonToMap(response)
-        if codeNumber == 0 then
-            local data = map:get("result")
-            if first then
-                self.dataList = data
-            elseif data then
-                self.dataList:addAll(data)
+    System:setTimeOut(function()
+        File:asyncReadFile(filepath, function(codeNumber, response)
+            map = StringUtil:jsonToMap(response)
+            if codeNumber == 0 then
+                local data = map:get("result")
+                if first then
+                    self.dataList = data
+                elseif data then
+                    self.dataList:addAll(data)
+                end
+                complete(true, data)
+            else
+                --error(err:get("errmsg"))
+                complete(false, nil)
             end
-            complete(true, data)
-        else
-            --error(err:get("errmsg"))
-            complete(false, nil)
-        end
-    end)
+        end)
+    end, 0.1)
 end
 
 ---创建搜索框
