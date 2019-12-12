@@ -73,7 +73,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
                 break;
             case R.id.tvDemo:
                 Intent intent = new Intent(this, LuaViewActivity.class);
-                InitData initData = MLSBundleUtils.createInitData(Constants.ASSETS_PREFIX + "MMLuaKitGallery/meilishuo.lua");
+                InitData initData = MLSBundleUtils.createInitData(Constants.ASSETS_PREFIX + "gallery/meilishuo.lua");
                 intent.putExtras(MLSBundleUtils.createBundle(initData));
                 startActivity(intent);
                 break;
