@@ -18,6 +18,7 @@ import android.view.MotionEvent;
 import android.webkit.URLUtil;
 
 import com.immomo.mls.MLSAdapterContainer;
+import com.immomo.mls.MLSConfigs;
 import com.immomo.mls.MLSEngine;
 import com.immomo.mls.adapter.MLSThreadAdapter;
 import com.immomo.mls.base.ud.lv.ILView;
@@ -56,7 +57,7 @@ public class LuaImageView<U extends UDImageView> extends BorderRadiusImageView i
     private String localUrl;
     float mBlureVaue = -1;
     private AnimationTask task;
-    private boolean lazyLoad = true;
+    private boolean lazyLoad = MLSConfigs.defaultLazyLoadImage;
     private RectF radiusRect;
     private ViewLifeCycleCallback cycleCallback;
     private Bitmap mSourceBitmap;
