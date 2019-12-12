@@ -1,5 +1,5 @@
 //
-//  MLNViewController.h
+//  MLNLuaGalleryViewController.h
 //  MLN
 //
 //  Created by MoMo on 08/02/2019.
@@ -8,6 +8,6 @@
 
 @import UIKit;
 
-@interface MLNViewController : UIViewController
+@interface MLNLuaGalleryViewController : UIViewController
 
 @end
