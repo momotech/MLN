@@ -76,16 +76,16 @@
     if (kLuaPage) {
         NSString *entryFile = @"meilishuo.lua";
         MLNLuaBundle *bundle = [MLNLuaBundle mainBundleWithPath:@"gallery"];
-        MLNLuaPageViewController *kcv = [[MLNLuaPageViewController alloc] initWithEntryFilePath:entryFile];
-        kcv.kitInstance.delegate = self;
-        [kcv regClasses:@[[MLNTestMe class],
+        MLNLuaPageViewController *viewController = [[MLNLuaPageViewController alloc] initWithEntryFilePath:entryFile];
+        viewController.kitInstance.delegate = self;
+        [viewController regClasses:@[[MLNTestMe class],
                           [MLNStaticTest class],
                           [MLNGlobalVarTest class],
                           [MLNGlobalFuncTest class]]];
-        [kcv changeCurrentBundlePath:bundle.bundlePath];
-        [self addChildViewController:kcv];
-        [self.view addSubview:kcv.view];
-        self.contentViewController = kcv;
+        [viewController changeCurrentBundle:bundle];
+        [self addChildViewController:viewController];
+        [self.view addSubview:viewController.view];
+        self.contentViewController = viewController;
     } else {
         MLNGalleryMainViewController *mainVc = [[MLNGalleryMainViewController alloc] init];
         [self addChildViewController:mainVc];
