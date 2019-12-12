@@ -15,6 +15,7 @@
 @interface MLNAnimator ()
 
 @property (nonatomic, assign, getter=isRunning) BOOL running;
+@property (nonatomic, assign, getter=isStarted) BOOL started;
 @property (nonatomic, assign) MLNAnimationRepeatType repeatMode;
 @property (nonatomic, assign) NSInteger repeatCount;
 @property (nonatomic, assign) NSTimeInterval duration;
@@ -53,9 +54,6 @@
     [[self animationHandler] resume];
     [self setup];
     [[self animationHandler] addCallback:self];
-    if (self.startCallback) {
-        [self.startCallback callIfCan];
-    }
 }
 
 - (void)setup
@@ -73,6 +71,7 @@
     }
     [[self animationHandler] removeCallback:self];
     self.running = NO;
+    self.started = NO;
     if (self.cancelCallback) {
         [self.cancelCallback callIfCan];
     }
@@ -90,6 +89,7 @@
     }
     [[self animationHandler] removeCallback:self];
     [self percentageWithCurrentDuration:1.f];
+    self.started = NO;
     self.running = NO;
     if (self.endCallback) {
         [self.endCallback callIfCan];
@@ -112,6 +112,15 @@
 - (void)doAnimationFrame:(NSTimeInterval)frameTime
 {
     NSTimeInterval durationTime = frameTime - self.startTime - self.delay;
+    // 处理延时
+    if (durationTime <0) {
+        return;
+    }
+    //
+    if (!self.isStarted && self.startCallback) {
+        self.isStarted = YES;
+        [self.startCallback callIfCan];
+    }
     // 矫正当前重复次数，避免阻塞时间过长导致的次数记录错误问题
     if (frameTime - self.lastTime >= self.duration) {
         self.doCount = (NSInteger)(durationTime *1000) / (NSInteger)(self.duration *1000);
@@ -128,7 +137,7 @@
             return;
         }
         // 剩余次数大于零，则表示还未结束，重复动画
-        NSInteger remainCount = self.repeatCount - self.doCount;
+        NSInteger remainCount = self.repeatCount - self.doCount - 1;
         if (remainCount > 0) {
             [self doAnimationRepeat];
             return;
