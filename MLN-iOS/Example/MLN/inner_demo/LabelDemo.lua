@@ -1,4 +1,4 @@
-local topHeight
+local topHeight = 0
 if System:iOS() then
     topHeight = window:statusBarHeight() + window:navBarHeight()
 end
@@ -35,13 +35,6 @@ linear:addView(action4)
 action4:textColor(Color(255, 0, 0, 1.0))
 action4:text("textColor(Color(255,0,0,1.0)) 红色")
 
--- 测试换行功能
-action5 = Label():marginTop(5):marginBottom(5):bgColor(Color(121, 45, 122, 1.0)):setGravity(Gravity.CENTER_HORIZONTAL):setMaxWidth(100)
-linear:addView(action5)
-action5:lines(0)
-action5:text("setMaxWidth(100)，lines(0),填充字体填充字体，填充字体填充字体,填充字体填充字体")
-
-
 --error:两端差异，iOS fontStyle(FontStyle.BOLD_ITALIC) 无效 且 setFontSizeForRange 起始位置不对 且 设置fontStyle后会导致字体尺寸都改变
 action6 = Label():marginTop(5):marginBottom(5):bgColor(Color(121, 45, 122, 1.0)):setGravity(Gravity.CENTER_HORIZONTAL):setMaxWidth(100)
 linear:addView(action6)
@@ -63,28 +56,6 @@ action9 = Label():marginTop(5):marginBottom(5):bgColor(Color(121, 45, 122, 1.0))
 linear:addView(action9)
 action9:text("setMinWidth(200) 看我宽度")
 
---error:两端差异，Android setMaxHeight 无效
-linear10 = LinearLayout():width(MeasurementType.WRAP_CONTENT):height(MeasurementType.WRAP_CONTENT):setGravity(Gravity.CENTER_HORIZONTAL)
-action10 = Label():marginTop(5):marginBottom(5):bgColor(Color(121, 45, 122, 1.0)):setMaxWidth(100)
-action10:setMaxHeight(60)
-linear10:addView(action10)
-
-linear:addView(linear10)
-
-switch10 = Switch():width(100):height(50)
-switch10:setSwitchChangedCallback(function(isOn)
-    if isOn then
-        action10:lines(1)
-    else
-        action10:setMaxHeight(60)
-    end
-end)
-
-linear10:addView(switch10)
-
-action10:text("setMaxHeight(50) 看我超出了吗,到哪里啦，哈哈哈哈哈哈哈哈哈哈，1234567890")
-
---error:两端差异，Android setMinHeight 无效
 linear11 = LinearLayout():width(MeasurementType.WRAP_CONTENT):height(MeasurementType.WRAP_CONTENT):setGravity(Gravity.CENTER_HORIZONTAL)
 action11 = Label():marginTop(5):marginBottom(5):bgColor(Color(121, 45, 122, 1.0)):setGravity(Gravity.CENTER_HORIZONTAL):setMaxWidth(150):setMinHeight(100)
 linear11:addView(action11)
@@ -101,11 +72,4 @@ switch11:setSwitchChangedCallback(function(isOn)
 end)
 
 linear11:addView(switch11)
-
-action12 = Label():marginTop(5):marginBottom(5):bgColor(Color(121, 45, 122, 1.0)):setGravity(Gravity.CENTER_HORIZONTAL):setMaxWidth(200)
-linear:addView(action12)
-action12:lines(0)
-action12:setLineSpacing(20)
-action12:text("setLineSpacing(20) 行间距，行间距，行间距，行间距，行间距，行间距，行间距，行间距，行间距，行间距，行间距")
-
 window:addView(linear)
