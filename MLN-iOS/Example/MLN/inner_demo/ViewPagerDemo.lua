@@ -1,9 +1,9 @@
 ---数据
-dataSource = { "http://s.momocdn.com/w/u/others/2019/01/16/1547610372024-01.png",
-               "http://s.momocdn.com/w/u/others/2019/01/16/1547610372064-02.png",
-               "http://s.momocdn.com/w/u/others/2019/01/16/1547610372063-3.png",
-               "http://s.momocdn.com/w/u/others/2019/01/16/1547610372137-4.png",
-               "http://s.momocdn.com/w/u/others/2019/01/16/1547610372063-5.png" }
+dataSource = { "https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=619938825,3320299346&fm=26&gp=0.jpg",
+               "https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=3388258119,3115603131&fm=26&gp=0.jpg",
+               "https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=1062551846,664581458&fm=26&gp=0.jpg",
+               "http://img4.imgtn.bdimg.com/it/u=2853553659,1775735885&fm=26&gp=0.jpg",
+               "https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=2387449900,2074518915&fm=11&gp=0.jpg" }
 
 local titles = Array()
 titles:add("标题1")
@@ -11,11 +11,13 @@ titles:add("标题二")
 titles:add("标题三")
 titles:add("标题四")
 titles:add("标题五")
-
-tabSegment = TabSegmentView(Rect(0, 80, window:width() - 100, 50), titles)
-tabSegment:bgColor(Color(0, 255, 1, 1.0))
+local topHeight = 0
+if System:iOS() then
+    topHeight = window:statusBarHeight() + window:navBarHeight()
+end
+tabSegment = TabSegmentView(Rect(0, topHeight, window:width(), 50), titles)
+tabSegment:bgColor(Color(120, 120, 120, 0.3))
 tabSegment:setAlignment(TabSegmentAlignment.RIGHT)
-tabSegment:cornerRadius(50)--:clipToBounds(true)
 tabSegment:selectedColor(Color(255, 0, 0, 1))
 tabSegment:tintColor(Color(0, 120, 120, 1))
 window:addView(tabSegment)
@@ -26,28 +28,17 @@ adapter:getCount(function(section)
 end)
 
 adapter:initCell(function(cell, row)
-    local contentView = cell.contentView
-    contentView:bgColor(Color(255, 255, 255, 1))
-    cell.imageView = ImageView()
-    cell.imageView:width(width):height(height)
-    contentView:addView(cell.imageView)
+    cell.contentView:bgColor(Color(255, 255, 255, 1))
+    cell.imageView = ImageView():width(MeasurementType.MATCH_PARENT):height(300)
+    cell.imageView:contentMode(ContentMode.SCALE_TO_FILL)
+    cell.contentView:addView(cell.imageView)
 end)
 adapter:fillCellData(function(cell, row)
-    local contentView = cell.contentView
-    local width = contentView:width()
-    local height = contentView:height()
-    cell.imageView:width(width):height(height)
     local item = dataSource[row]
     cell.imageView:image(item)
 end)
 
-viewPager = ViewPager()
-window:addView(viewPager)
-width = window:width()
-height = window:height()
-viewPager:marginTop(130):width(window:width() - 100):height(window:height() - 130)
-
---viewPager:autoScroll(false)
+viewPager = ViewPager():width(MeasurementType.MATCH_PARENT):height(MeasurementType.MATCH_PARENT):marginTop(topHeight + 60)
 viewPager:showIndicator(true)
 
 viewPager:adapter(adapter)

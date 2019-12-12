@@ -1,35 +1,35 @@
 local W = window:width()
 local H = window:height()
-local topHeight
+local topHeight = 0
 if System:iOS() then
     topHeight = window:statusBarHeight() + window:navBarHeight()
 end
 --初始化CollectionView
 local function initCollectionView()
     collectionView = CollectionView(true, true)
-            :marginTop(topHeight)
             :width(MeasurementType.MATCH_PARENT)
             :height(H - 100)
             :scrollDirection(ScrollDirection.VERTICAL)--竖直方向滑动
-    --        :scrollDirection(ScrollDirection.HORIZONTAL)--水平方向滑动
+    --:scrollDirection(ScrollDirection.HORIZONTAL)--水平方向滑动
             :showScrollIndicator(true)--是否显示滑动指示器
             :bgColor(Color(255, 255, 0, 0.5))
+            :marginTop(topHeight)
     --下拉刷新事件回调
     collectionView:setRefreshingCallback(
             function()
-                print("开始刷新")
+                --print("开始刷新")
                 System:setTimeOut(function()
                     --2秒后结束刷新
-                    print("结束刷新了")
+                    --print("结束刷新了")
                     collectionView:stopRefreshing()
                 end, 2)
             end)
     --上拉加载事件回调
     collectionView:setLoadingCallback(function()
-        print("开始加载")
+        --print("开始加载")
         System:setTimeOut(function()
             --2秒后结束加载
-            print("结束加载")
+            --print("结束加载")
             collectionView:stopLoading()
             --已加载全部
             collectionView:noMoreData()
@@ -38,15 +38,15 @@ local function initCollectionView()
     end)
     --开始滑动的回调事件
     collectionView:setScrollBeginCallback(function()
-        print("开始滑动")
+        --print("开始滑动")
     end)
     --滑动中的回调事件
     collectionView:setScrollingCallback(function()
-        print("滑动中")
+        --print("滑动中")
     end)
     --结束滑动的回调事件
     collectionView:setScrollEndCallback(function()
-        print("结束滑动")
+        --print("结束滑动")
     end)
     return collectionView
 end
@@ -70,7 +70,7 @@ local function initAdapter()
     end)
 
     -----------------------------设置子view个数---------------------------------------
-    count = 5
+    count = 20
     adapter:rowCount(function(section)
         return count
     end)
@@ -108,15 +108,15 @@ local function initAdapter()
     end)
     --cell点击事件
     adapter:selectedRowByReuseId("CellId", function(cell, section, row)
-        print("点击了cell", row)
+        --print("点击了cell", row)
     end)
     --cell被滑出屏幕可见区域的回调
     adapter:cellDidDisappear(function(cell, section, row)
-        print("cell不见了", row)
+        --print("cell不见了", row)
     end)
     --cell出现在屏幕可见区域的回调
     adapter:cellWillAppear(function(cell, section, row)
-        print("cell出现了", row)
+        --print("cell出现了", row)
     end)
 
     return adapter

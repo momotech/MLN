@@ -1,9 +1,10 @@
-local imageUrl = "http://img.momocdn.com/album/4F/CF/4FCFA0D2-95E8-3C09-3760-142E6916CA1B20170701_S.jpg"
+local imageUrl = "http://img0.imgtn.bdimg.com/it/u=383546810,2079334210&fm=26&gp=0.jpg"
 contentView = View():setGravity(Gravity.CENTER)
 contentView:bgColor(Color(34, 66, 121, 1)):width(MeasurementType.MATCH_PARENT):height(88)
 window:addView(contentView)
 
-imageView = ImageView():width(70):height(70):setGravity(Gravity.CENTER_VERTICAL):cornerRadius(35):marginLeft(10)
+imageView = ImageView():width(60):height(60)
+imageView:contentMode(ContentMode.SCALE_TO_FILL):setGravity(Gravity.CENTER_VERTICAL):cornerRadius(35):marginLeft(10)
 imageView:setImageUrl(imageUrl)
 contentView:addView(imageView)
 

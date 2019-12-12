@@ -2,7 +2,7 @@
 dialog =  Dialog()
 ----将dialog隐藏
 dialog:dialogDisAppear(function()
-    print("我隐藏啦，dialog！！！")
+    --print(("我隐藏啦，dialog！！！")
 end)
 ---dialog点击蒙层隐层
 dialog:cancelable(true)
@@ -90,7 +90,7 @@ backView:addView(editView)
 
 editView:setReturnCallback(function()
     editView:dismissKeyboard()
-    print("return callBack")
+    --print(("return callBack")
 end)
 
 baseView:addView(backView)
@@ -111,7 +111,7 @@ sureB:marginTop(0):width(MeasurementType.MATCH_PARENT):height(49)
 baseView:addView(sureB)
 
 sureB:onClick(function()
-    print("输入了",editView:text())
+    --print(("输入了",editView:text())
     disMiss()
 end)
 

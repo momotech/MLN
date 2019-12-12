@@ -14,11 +14,11 @@ datas = {
     },
     {
         theme = 201,
-        img_url = "http://img.momocdn.com/album/4F/CF/4FCFA0D2-95E8-3C09-3760-142E6916CA1B20170701_S.jpg"
+        img_url = "http://img0.imgtn.bdimg.com/it/u=383546810,2079334210&fm=26&gp=0.jpg"
     },
     {
         theme = 201,
-        img_url = "http://img.momocdn.com/album/4F/CF/4FCFA0D2-95E8-3C09-3760-142E6916CA1B20170701_S.jpg"
+        img_url = "http://img0.imgtn.bdimg.com/it/u=383546810,2079334210&fm=26&gp=0.jpg"
     },
     {
         theme = 101,
@@ -26,7 +26,7 @@ datas = {
     },
     {
         theme = 201,
-        img_url = "http://img.momocdn.com/album/4F/CF/4FCFA0D2-95E8-3C09-3760-142E6916CA1B20170701_S.jpg"
+        img_url = "http://img0.imgtn.bdimg.com/it/u=383546810,2079334210&fm=26&gp=0.jpg"
     }
 }
 --adapter初始化
@@ -95,6 +95,7 @@ local function initAdapter()
                                   :setGravity(Gravity.CENTER)
         cell.iv = ImageView():width(60):height(60)
                              :cornerRadius(45)
+                             :contentMode(ContentMode.SCALE_TO_FILL)
                              :setGravity(Gravity.CENTER)
         cell.rowContainer:addView(cell.iv)
 
@@ -116,35 +117,39 @@ local function initAdapter()
 
     -- 设置指定类型：TYPE_CELL.TEXT的子View在点击时的回调
     adapter:selectedRowByReuseId(TYPE_CELL.TEXT, function(cell, section, row)
-        print("点击了：" .. TYPE_CELL.TEXT .. "-" .. tostring(row))
+        --print("点击了：" .. TYPE_CELL.TEXT .. "-" .. tostring(row))
     end)
 
     -- 设置指定类型：TYPE_CELL.IMG的子View在点击时的回调
     adapter:selectedRowByReuseId(TYPE_CELL.IMG, function(cell, section, row)
-        print("点击了：" .. TYPE_CELL.IMG .. "-" .. tostring(row))
+        --print("点击了：" .. TYPE_CELL.IMG .. "-" .. tostring(row))
     end)
     return adapter
 end
 
+local topHeight = 0
+if System:iOS() then
+    topHeight = window:statusBarHeight() + window:navBarHeight()
+end
 --tableview初始化
 tableView = TableView(true, true)
-        :width(MeasurementType.MATCH_PARENT):height(MeasurementType.MATCH_PARENT)
+tableView:width(MeasurementType.MATCH_PARENT):height(MeasurementType.MATCH_PARENT):marginTop(topHeight)
 --下拉刷新事件回调
 tableView:setRefreshingCallback(
         function()
-            print("开始刷新")
+            --print("开始刷新")
             System:setTimeOut(function()
                 --2秒后结束刷新
-                print("结束刷新了")
+                --print("结束刷新了")
                 tableView:stopRefreshing()
             end, 2)
         end)
 --上拉加载事件回调
 tableView:setLoadingCallback(function()
-    print("开始加载")
+    --print("开始加载")
     System:setTimeOut(function()
         --2秒后结束加载
-        print("结束加载")
+        --print("结束加载")
         tableView:stopLoading()
         --已加载全部
         tableView:noMoreData()
