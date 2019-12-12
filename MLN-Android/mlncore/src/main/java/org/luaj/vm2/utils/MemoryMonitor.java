@@ -16,7 +16,7 @@ import java.util.Map;
  * Created by Xiong.Fangyu on 2019-05-17
  */
 public class MemoryMonitor {
-    private static int OFFSET = 1000;
+    private static int OFFSET = 5000;
 
     private static T globalMonitor;
     private final static Map<Globals, T> luaVmMonitors = new HashMap<>();

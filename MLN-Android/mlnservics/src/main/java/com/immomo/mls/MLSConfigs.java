@@ -37,10 +37,11 @@ public class MLSConfigs {
     public static boolean defaultClipToPadding = true;
     public static boolean defaultClipContainer = false;
 
+    public static boolean defaultLazyLoadImage = true;
+
     public static boolean catchOnLayoutException = false;
     public static OnLayoutException onLayoutException;
 
-    static boolean useStandardSyntax = true;
     static boolean openDebug = false;
     static CharSequence uninitTitle = "当前版本不支持";
     static CharSequence uninitMsg = "";
