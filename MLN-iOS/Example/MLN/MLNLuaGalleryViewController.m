@@ -6,7 +6,7 @@
 //  Copyright (c) 2019 MoMo. All rights reserved.
 //
 
-#import "MLNViewController.h"
+#import "MLNLuaGalleryViewController.h"
 #import "MLNTestMe.h"
 #import "MLNStaticTest.h"
 #import "MLNGlobalVarTest.h"
@@ -28,7 +28,7 @@
 #import "MLNLuaPageViewController.h"
 #import "MLNGalleryMainViewController.h"
 
-@interface MLNViewController () <MLNViewControllerProtocol, MLNKitInstanceDelegate, UINavigationControllerDelegate>
+@interface MLNLuaGalleryViewController () <MLNViewControllerProtocol, MLNKitInstanceDelegate, UINavigationControllerDelegate>
 
 @property (nonatomic, strong) MLNKitInstance *kitInstance;
 @property (nonatomic, strong) id<MLNHttpHandlerProtocol> httpHandler;
@@ -43,7 +43,7 @@
 @property (nonatomic, strong) MLNLoadTimeStatistics *loadTimeStatistics;
 @end
 
-@implementation MLNViewController
+@implementation MLNLuaGalleryViewController
 
 - (void)viewDidLoad
 {
@@ -75,7 +75,7 @@
     
     if (kLuaPage) {
         NSString *entryFile = @"meilishuo.lua";
-        MLNLuaBundle *bundle = [MLNLuaBundle mainBundleWithPath:@"gallery"];
+        MLNLuaBundle *bundle = [MLNLuaBundle mainBundleWithPath:@"gallery.bundle"];
         MLNLuaPageViewController *viewController = [[MLNLuaPageViewController alloc] initWithEntryFilePath:entryFile];
         viewController.kitInstance.delegate = self;
         [viewController regClasses:@[[MLNTestMe class],

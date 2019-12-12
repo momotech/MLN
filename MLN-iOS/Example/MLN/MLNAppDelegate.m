@@ -11,7 +11,6 @@
 #import <objc/runtime.h>
 #import <UIImageView+WebCache.h>
 #import <UIImageView+AFNetworking.h>
-#import "MLNViewController.h"
 #import "MLNGalleryMainViewController.h"
 #import <MLNFile.h>
 
