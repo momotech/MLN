@@ -118,7 +118,7 @@
     }
     //
     if (!self.isStarted && self.startCallback) {
-        self.isStarted = YES;
+        self.started = YES;
         [self.startCallback callIfCan];
     }
     // 矫正当前重复次数，避免阻塞时间过长导致的次数记录错误问题
