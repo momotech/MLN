@@ -213,8 +213,9 @@ public class MLSBuilder {
         MLSEngine.globalResourceFinder.add(rf);
         return this;
     }
+
+    @Deprecated
     public MLSBuilder setUseStandardSyntax(boolean standardSyntax) {
-        MLSConfigs.useStandardSyntax = standardSyntax;
         return this;
     }
 
@@ -425,6 +426,14 @@ public class MLSBuilder {
         MLSConfigs.defaultClipChildren = clipChildren;
         MLSConfigs.defaultClipToPadding = clipToPadding;
         MLSConfigs.defaultClipContainer = forContainer;
+        return this;
+    }
+
+    /**
+     * 设置是否默认蓝加载图片，默认true
+     */
+    public MLSBuilder setDefaultLazyLoadImage(boolean load) {
+        MLSConfigs.defaultLazyLoadImage = load;
         return this;
     }
     //</editor-fold>

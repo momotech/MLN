@@ -47,6 +47,7 @@ public class App extends Application {
                 .setImageProvider(new GlideImageProvider())             //设置图片加载器，若不设置，则不能显示图片
                 .setGlobalStateListener(new GlobalStateListener())      //设置全局脚本加载监听，可不设置
                 .setQrCaptureAdapter(new MLSQrCaptureImpl())            //设置二维码工具，可不设置
+                .setDefaultLazyLoadImage(false)
                 ///注册静态Bridge
                 .registerSC(
                 )

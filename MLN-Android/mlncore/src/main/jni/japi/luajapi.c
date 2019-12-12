@@ -90,7 +90,7 @@ void jni_setDatabasePath(JNIEnv *env, jobject jobj, jstring path) {
 
 #define GC_OFFSET_TIME (CLOCKS_PER_SEC >> 3)
 static clock_t last_gc_time = 0;
-static int gc_offset_time = GC_OFFSET_TIME;
+static int gc_offset_time = 0;
 
 static void gc_cb(lua_State *L, int type) {
     if (gc_offset_time <= 0) return;
