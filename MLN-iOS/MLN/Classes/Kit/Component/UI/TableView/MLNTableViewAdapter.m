@@ -17,7 +17,7 @@
 
 #define kDefaultPressColor [UIColor colorWithRed:211/255.0 green:211/255.0 blue:211/255.0 alpha:1.0]
 
-@interface MLNTableViewAdapter()
+@interface MLNTableViewAdapter()<MLNTableViewCellSettingProtocol>
 
 @property (nonatomic, strong) MLNBlock *sectionsNumberCallback;
 @property (nonatomic, strong) MLNBlock *rowNumbersCallback;

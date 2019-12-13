@@ -136,7 +136,7 @@ static int lua_array_removeObjectAtIndex(lua_State *L) {
         NSMutableArray *array = (__bridge __unsafe_unretained NSMutableArray *)ud->object;
         NSInteger realIndex = lua_tonumber(L, 2) -1;
         lua_CheckIndexZero(realIndex);
-        mln_lua_assert(L, (realIndex < array.count), "The index out of range!");
+        mln_lua_assert(L, (realIndex < array.count), @"The index out of range!");
         if (realIndex < array.count) {
             [array removeObjectAtIndex:realIndex];
         }
@@ -154,7 +154,7 @@ static int lua_array_removeObject(lua_State *L) {
     if (ud) {
         NSMutableArray *array = (__bridge __unsafe_unretained NSMutableArray *)ud->object;
         id obj = [MLN_LUA_CORE(L) toNativeObject:2 error:nil];
-        mln_lua_assert(L, obj, "The argment must not be nil!");
+        mln_lua_assert(L, obj, @"The argment must not be nil!");
         if (obj) {
             [array removeObject:obj];
         }
@@ -172,7 +172,7 @@ static int lua_array_removeObjects(lua_State *L) {
     if (ud) {
         NSMutableArray *array = (__bridge __unsafe_unretained NSMutableArray *)ud->object;
         id objs = [MLN_LUA_CORE(L) toNativeObject:2 error:nil];
-        mln_lua_assert(L, objs, "The argment must not be nil!");
+        mln_lua_assert(L, objs, @"The argment must not be nil!");
         if (objs && [objs isKindOfClass:[NSArray class]]) {
             [array removeObjectsInArray:objs];
         }
@@ -194,7 +194,7 @@ static int lua_array_removeObjectsAtRange(lua_State *L) {
         NSInteger realTo = lua_tonumber(L, 3) - 1;
         lua_CheckIndexZero(realTo);
         
-        mln_lua_assert(L, array.count > realTo && realTo >= realFrom && realFrom >=0, "The index out of range!");
+        mln_lua_assert(L, array.count > realTo && realTo >= realFrom && realFrom >=0, @"The index out of range!");
         if (array.count > realTo && realTo >= realFrom && realFrom >=0) {
             [array mln_removeObjectsFromIndex:realFrom toIndex:realTo];
         }
@@ -227,7 +227,7 @@ static int lua_array_objectAtIndex(lua_State *L) {
         NSMutableArray *array = (__bridge __unsafe_unretained NSMutableArray *)ud->object;
         NSInteger realIndex = lua_tonumber(L, 2) -1;
         lua_CheckIndexZero(realIndex);
-        mln_lua_assert(L, (realIndex < array.count), "The index out of range!");
+        mln_lua_assert(L, (realIndex < array.count), @"The index out of range!");
         id value = nil;
         if (realIndex < array.count) {
             value = [array objectAtIndex:realIndex];
@@ -309,7 +309,7 @@ static int lua_array_insertObject(lua_State *L) {
                 break;
             }
         }
-        mln_lua_assert(L, (obj && (realIndex <= array.count)), "The index out of range!");
+        mln_lua_assert(L, (obj && (realIndex <= array.count)), @"The index out of range!");
         if ((obj && (realIndex <= array.count))) {
             [array insertObject:obj atIndex:realIndex];
         }
@@ -380,7 +380,7 @@ static int lua_array_replaceObject(lua_State *L) {
                 break;
             }
         }
-        mln_lua_assert(L, (obj && (realIndex < array.count)), "The index out of range!");
+        mln_lua_assert(L, (obj && (realIndex < array.count)), @"The index out of range!");
         if ((obj && (realIndex < array.count))) {
             [array replaceObjectAtIndex:realIndex withObject:obj];
         }
@@ -437,7 +437,7 @@ static int lua_array_exchange(lua_State *L) {
         lua_CheckIndexZero(realIndex1);
         NSInteger realIndex2 = lua_tonumber(L, 3) - 1;
         lua_CheckIndexZero(realIndex2);
-        mln_lua_assert(L, (array.count > realIndex1 && array.count > realIndex2), "The index out of range!");
+        mln_lua_assert(L, (array.count > realIndex1 && array.count > realIndex2), @"The index out of range!");
         if (array.count > realIndex1 && array.count > realIndex2) {
             [array exchangeObjectAtIndex:realIndex1 withObjectAtIndex:realIndex2];
         }
@@ -459,7 +459,7 @@ static int lua_array_sub(lua_State *L) {
         lua_CheckIndexZero(fromIndex);
         NSInteger toIndex = lua_tonumber(L, 3) - 1;
         lua_CheckIndexZero(toIndex);
-        mln_lua_assert(L, (array.count > fromIndex && array.count > toIndex), "The index out of range!");
+        mln_lua_assert(L, (array.count > fromIndex && array.count > toIndex), @"The index out of range!");
         if (array.count > fromIndex && array.count > toIndex) {
             NSInteger length = toIndex - fromIndex + 1;
             resultArray = [NSMutableArray arrayWithArray:[array subarrayWithRange:NSMakeRange(fromIndex, length)]];

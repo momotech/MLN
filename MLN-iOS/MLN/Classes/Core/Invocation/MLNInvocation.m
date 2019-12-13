@@ -17,14 +17,14 @@
 static MLN_FORCE_INLINE Class __mln_lua_getclass (lua_State *L) {
     mln_lua_checkstring(L, lua_upvalueindex(1));
     NSString *clazzString = [NSString stringWithUTF8String:lua_tostring(L, lua_upvalueindex(1))];
-    mln_lua_assert(L, (clazzString && clazzString.length > 0), "The first upvalue must be a string of class name!");
+    mln_lua_assert(L, (clazzString && clazzString.length > 0), @"The first upvalue must be a string of class name!");
     return NSClassFromString(clazzString);
 }
 
 static MLN_FORCE_INLINE SEL __mln_lua_getselector_at_index (lua_State *L, int idx) {
     mln_lua_checkstring(L, lua_upvalueindex(idx));
     NSString *selectorString = [NSString stringWithUTF8String:lua_tostring(L, lua_upvalueindex(idx))];
-    mln_lua_assert(L, (selectorString && selectorString.length > 0), "The selector name must not be nil!!");
+    mln_lua_assert(L, (selectorString && selectorString.length > 0), @"The selector name must not be nil!!");
     return NSSelectorFromString(selectorString);
 }
 
@@ -63,7 +63,7 @@ static MLN_FORCE_INLINE id __mln_lua_getuserdata_target (lua_State *L) {
             return obj;
         }
     }
-    mln_lua_assert(L, NO, "The target must not be nil!, you must use “:” to call a method!");
+    mln_lua_assert(L, NO, @"The target must not be nil!, you must use “:” to call a method!");
     return nil;
 }
 
@@ -491,7 +491,7 @@ static MLN_FORCE_INLINE int __mln_lua_objc_invoke (lua_State *L, int statrtStack
 #pragma mark - Public Functions
 
 int mln_lua_constructor (lua_State *L) {
-    mln_lua_assert(L, isMainQueue,  "only be called in main thread!");
+    mln_lua_assert(L, isMainQueue,  @"only be called in main thread!");
     // class
     Class clazz = __mln_lua_getclass(L);
     // selector
@@ -502,7 +502,7 @@ int mln_lua_constructor (lua_State *L) {
         NSString *targetMsg = NSStringFromClass(clazz);
         NSString *selMsg = selector ? NSStringFromSelector(selector) : @"<nil>";
         NSString *errmsg = [NSString stringWithFormat:@"The method signature cannot be nil! \n taget : %@ \n selector : %@",targetMsg, selMsg];
-        mln_lua_assert(L, NO, errmsg.UTF8String);
+        mln_lua_assert(L, NO, @"%@", errmsg);
         return 0;
     }
     BOOL isInitSel = NO;
