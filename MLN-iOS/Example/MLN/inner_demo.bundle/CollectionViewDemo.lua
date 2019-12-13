@@ -8,7 +8,7 @@ end
 local function initCollectionView()
     collectionView = CollectionView(true, true)
             :width(MeasurementType.MATCH_PARENT)
-            :height(H - 100)
+            :height(H - 100 - topHeight)
             :scrollDirection(ScrollDirection.VERTICAL)--竖直方向滑动
     --:scrollDirection(ScrollDirection.HORIZONTAL)--水平方向滑动
             :showScrollIndicator(true)--是否显示滑动指示器
