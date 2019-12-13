@@ -1,84 +1,47 @@
+---数据
+dataSource = { "https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=619938825,3320299346&fm=26&gp=0.jpg",
+               "https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=3388258119,3115603131&fm=26&gp=0.jpg",
+               "https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=1062551846,664581458&fm=26&gp=0.jpg",
+               "http://img4.imgtn.bdimg.com/it/u=2853553659,1775735885&fm=26&gp=0.jpg",
+               "https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=2387449900,2074518915&fm=11&gp=0.jpg" }
 
-dataSource = {
-items = {
-{
-icon = "http://s.momocdn.com/w/u/others/2019/01/16/1547610372024-01.png",
-text = "11111"
-},
-{
-icon = "http://s.momocdn.com/w/u/others/2019/01/16/1547610372064-02.png",
-text = "22222"
-},
-{
-icon = "http://s.momocdn.com/w/u/others/2019/01/16/1547610372063-3.png",
-text = "33333"
-},
-{
-icon = "http://s.momocdn.com/w/u/others/2019/01/16/1547610372137-4.png",
-text = "44444"
-},
-{
-icon = "http://s.momocdn.com/w/u/others/2019/01/16/1547610372063-5.png",
-text = "55555"
-}
-}
-}
+local titles = Array()
+titles:add("标题1")
+titles:add("标题二")
+titles:add("标题三")
+titles:add("标题四")
+titles:add("标题五")
+local topHeight = 0
+if System:iOS() then
+    topHeight = window:statusBarHeight() + window:navBarHeight()
+end
+tabSegment = TabSegmentView(Rect(0, topHeight, window:width(), 50), titles)
+tabSegment:bgColor(Color(120, 120, 120, 0.3))
+tabSegment:setAlignment(TabSegmentAlignment.RIGHT)
+tabSegment:selectedColor(Color(255, 0, 0, 1))
+tabSegment:tintColor(Color(0, 120, 120, 1))
+window:addView(tabSegment)
 
-local viewPager = ViewPager()
-viewPager:frame(Rect(0, 50, window:width(), window:height() - 50))
-local adapter = ViewPagerAdapter()
-
-adapter:getCount(function()  --设置cell数量回调
-return #dataSource.items
+adapter = ViewPagerAdapter()
+adapter:getCount(function(section)
+    return #dataSource
 end)
 
-adapter:initCell(function (cell)  --设置初始化cell的回调
-cell.bgImage = ImageView():contentMode(ContentMode.SCALE_ASPECT_FIT):width(200):height(200)
-cell.bgImage:marginTop(200):marginLeft(80)
-cell.contentView:cornerRadius(10):clipToBounds(true)  --圆角
-cell.contentView:bgColor(Color(255, 0, 0, 0.5))
-cell.contentView:addView(cell.bgImage)
+adapter:initCell(function(cell, row)
+    cell.contentView:bgColor(Color(255, 255, 255, 1))
+    cell.imageView = ImageView():width(MeasurementType.MATCH_PARENT):height(300)
+    cell.imageView:contentMode(ContentMode.SCALE_TO_FILL)
+    cell.contentView:addView(cell.imageView)
+end)
+adapter:fillCellData(function(cell, row)
+    local item = dataSource[row]
+    cell.imageView:image(item)
 end)
 
-adapter:fillCellData(function (cell, position)  --设置初始化cell数据的回调
-local items = dataSource.items[position]
-cell.bgImage:image(items.icon)
-end)
-
-viewPager:setPageClickListener(function (position)  --设置点击指定页的回调
-Toast("Click position: "..tostring(position),1)
-end)
-
-viewPager:autoScroll(true)  --是否自动滚动
-viewPager:frameInterval(5)  --播放的周期
+viewPager = ViewPager():width(MeasurementType.MATCH_PARENT):height(MeasurementType.MATCH_PARENT):marginTop(topHeight + 60)
 viewPager:showIndicator(true)
 
 viewPager:adapter(adapter)
+
+tabSegment:relatedToViewPager(viewPager, true)
 window:addView(viewPager)
-
-local array = Array()
-for _,v in ipairs(dataSource.items) do
-array:add(v.text)
-end
-
-tabLayout = TabSegmentView(Rect(0,0,window:width(),50), array)
-tabLayout:relatedToViewPager(viewPager, true)  --实现联动效果
-tabLayout:setTabSelectedListener(function (index)  --设置tab选中的索引
-Toast("select "..index,1)
-end)
-tabLayout:selectScale(1.6)  --选中时缩放比例
-tabLayout:normalFontSize(15)  --默认字体大小
-tabLayout:setTapBadgeNumAtIndex(30, 3)  --设置标注数
-
-window:addView(tabLayout)
-
-local label = Label():x(100):y(100):width(100):height(100):fontSize(16):textAlign(TextAlign.CENTER)
-label:text("click"):bgColor(Color():hex(0xffff00):alpha(1))
-label:onClick(function ()
-tabLayout:setCurrentIndexAnimated(2)  --滚动到指定标签
-tabLayout:setTapBadgeNumAtIndex(20, 4)  --设置标注数
-tabLayout:setTapBadgeNumAtIndex(0, 3)  --隐藏标注
-end)
-
-window:addView(label)
-

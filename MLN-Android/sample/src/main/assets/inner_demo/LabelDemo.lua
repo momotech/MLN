@@ -1,114 +1,75 @@
+local topHeight = 0
+if System:iOS() then
+    topHeight = window:statusBarHeight() + window:navBarHeight()
+end
+linear = ScrollView(false, true):width(MeasurementType.MATCH_PARENT):marginTop(topHeight)
+-- 默认状态，Label输入文字样式
+action1 = Label():marginTop(5):marginBottom(5):bgColor(Color(121, 45, 122, 1.0)):setGravity(Gravity.CENTER_HORIZONTAL)
+action1:width(200)
+linear:addView(action1)
+action1:text("默认状态 fontSize:14 TextAlign.LEFT")
 
+-- 文本居中样式
+action2c = Label():marginTop(5):marginBottom(5):bgColor(Color(121, 45, 122, 1.0)):setGravity(Gravity.CENTER_HORIZONTAL)
+linear:addView(action2c)
+action2c:width(200)
+action2c:textAlign(TextAlign.CENTER)
+action2c:text("TextAlign.CENTER")
 
-local stateBar = window:stateBarHeight()  --状态栏高度
-local label_1 = Label()
-local str = StyleString('aaa')
-label_1:width(50):height(50):marginTop(stateBar)
-label_1:bgColor(Color(0,0,255,1))
-label_1:cornerRadius(8):clipToBounds(true)  --圆角
-str:underline(1)  --下划线
-str:fontColor(Color(0,0,0,1))
-label_1:styleText(str)
-label_1:textColor(Color(255,255,255,1))
-label_1:textAlign(TextAlign.CENTER)  --居中显示
-window:addView(label_1)
+-- 文本居右样式
+action2r = Label():marginTop(5):marginBottom(5):bgColor(Color(121, 45, 122, 1.0)):setGravity(Gravity.CENTER_HORIZONTAL)
+linear:addView(action2r)
+action2r:width(200)
+action2r:textAlign(TextAlign.RIGHT)
+action2r:text("TextAlign.RIGHT")
 
+-- 字体22
+action3 = Label():marginTop(5):marginBottom(5):bgColor(Color(121, 45, 122, 1.0)):setGravity(Gravity.CENTER_HORIZONTAL)
+action3:fontSize(22)
+linear:addView(action3)
+action3:text("fontSize:22")
 
-local Label_2 = Label()
-Label_2:text('bbb')
-Label_2:x(120):y(stateBar)
-Label_2:width(50):height(20)
-Label_2:lines(0)  --0表示无限行
-Label_2:bgColor(Color(255,0,0,0.1))
-print(Label_2:height())
-print(Label_2:width())
-window:addView(Label_2)
+-- 设置文本为红色
+action4 = Label():marginTop(5):marginBottom(5):bgColor(Color(121, 45, 122, 1.0)):setGravity(Gravity.CENTER_HORIZONTAL)
+linear:addView(action4)
+action4:textColor(Color(255, 0, 0, 1.0))
+action4:text("textColor(Color(255,0,0,1.0)) 红色")
 
+--error:两端差异，iOS fontStyle(FontStyle.BOLD_ITALIC) 无效 且 setFontSizeForRange 起始位置不对 且 设置fontStyle后会导致字体尺寸都改变
+action6 = Label():marginTop(5):marginBottom(5):bgColor(Color(121, 45, 122, 1.0)):setGravity(Gravity.CENTER_HORIZONTAL):setMaxWidth(100)
+linear:addView(action6)
+styleT = StyleString("我变22我是富文本啦(两端差异)"):setFontSizeForRange(22, 1, 4)
+action6:styleText(styleT)
 
-local label = Label()
-label:width(100):height(50):y(300)
-label:text("alert"):fontSize(16):textAlign(TextAlign.CENTER)
-label:addCornerMask(10, Color(255,255,255,1))
-label:onClick(function ()
-    Alert():title("title"):message("msg"):setOk("", function ()
-        print("ok")
-    end):setCancel("", function ()
-        print("cancel")
-    end):show()
-    print(screen_h)
-    print(window:height())
-end)
-label:bgColor(Color(125,125,125,1))
-window:addView(label)
+-- 粗体
+action7 = Label():marginTop(5):marginBottom(5):bgColor(Color(121, 45, 122, 1.0)):setGravity(Gravity.CENTER_HORIZONTAL)
+linear:addView(action7)
+action7:setTextFontStyle(FontStyle.BOLD_ITALIC)
+action7:text("setTextFontStyle FontStyle.BOLD_ITALIC")
 
+-- 限制宽度，单行
+action8 = Label():marginTop(5):marginBottom(5):bgColor(Color(121, 45, 122, 1.0)):setGravity(Gravity.CENTER_HORIZONTAL):setMaxWidth(140)
+linear:addView(action8)
+action8:text("setMaxWidth(140) 看我超出了吗")
 
-local label_3 = Label()
-label_3:width(100):height(50):y(360)
-label_3:text("list"):fontSize(16):textAlign(TextAlign.CENTER)
-label_3:bgColor(Color(125,125,125,1))
-label_3:onClick(function ()
-    Alert():title("list title"):message("list msg"):setButtonList(Array():add("a1"):add("a2"):add("a3"),
-            function (n)
-                print("click", n)
-            end):show()
-end)
-window:addView(label_3)
+action9 = Label():marginTop(5):marginBottom(5):bgColor(Color(121, 45, 122, 1.0)):setGravity(Gravity.CENTER_HORIZONTAL):setMinWidth(200)
+linear:addView(action9)
+action9:text("setMinWidth(200) 看我宽度")
 
+linear11 = LinearLayout():width(MeasurementType.WRAP_CONTENT):height(MeasurementType.WRAP_CONTENT):setGravity(Gravity.CENTER_HORIZONTAL)
+action11 = Label():marginTop(5):marginBottom(5):bgColor(Color(121, 45, 122, 1.0)):setGravity(Gravity.CENTER_HORIZONTAL):setMaxWidth(150):setMinHeight(100)
+linear11:addView(action11)
+linear:addView(linear11)
+action11:text("setMinHeight(100) 我高不")
 
-local label_4 = Label()
-label_4:width(300):height(50):y(420)
-label_4:styleText(StyleString("style"):append(StyleString("ic_launcher"):append(StyleString(" call nil"))))
-label_4:fontSize(16):textAlign(TextAlign.CENTER)
-label_4:bgColor(Color(125,125,125,1))
-label_4:onClick(function ()
-    Toast("after nil call", 1)
-end)
-window:addView(label_4)
-
-
-local label_5 = Label()
-label_5:width(100):height(50):y(480)
-label_5:text("anim"):fontSize(16):textAlign(TextAlign.CENTER)
-label_5:openRipple(true)  --高亮
-label_5:bgColor(Color():hex(0xffff00):alpha(1))
-label_5:onClick(function ()
-    Animation()
-    :setTranslateX(0, 100)
-    :setTranslateY(0, 100)
-    :setRotate(0, 180)
-    :setScaleX(1, 1.5)
-    :setScaleY(1, 1.5)
-    :setAlpha(1, 0)
-    :setDuration(1)
-    :setDelay(0.5)
-    :setAutoBack(true)
-    :setInterpolator(InterpolatorType.Linear)
-    :start(label_5)
-end)
-window:addView(label_5)
-
-
-local label_6 = Label()
-label_6:width(150):height(50):x(200):y(540)
-label_6:text("GradientColor"):fontSize(16):textAlign(TextAlign.CENTER)
-label_6:cornerRadius(10)
-label_6:setGradientColor(Color(255,0,0,1), Color(0,0,255,1), true)
-window:addView(label_6)
-
-
-local label_7 = Label()
-local str7 = StyleString("哈哈哈")
-label_7:width(100):height(100):centerX(100):centerY(590)
-str7:fontStyle(FontStyle.BOLD):fontColor(Color(255,0,0,1))
-label_7:textAlign(TextAlign.LEFT)
-label_7:styleText(str7)
-label_7:bgColor(Color():hex(0xffe00e):alpha(0.5)):lines(1)
-label_7:onClick(function ()
-    if label_7:cornerRadius() > 0 then
-        label_7:cornerRadius(0)
+switch11 = Switch():width(100):height(50)
+switch11:setSwitchChangedCallback(function(isOn)
+    if isOn then
+        action11:lines(1)
     else
-        label_7:cornerRadius(20)
+        action11:lines(2)
     end
 end)
-window:addView(label_7)
 
+linear11:addView(switch11)
+window:addView(linear)
