@@ -10,13 +10,12 @@
 #import <MLNKit.h>
 #import "MLNOfflineViewController.h"
 #import "MLNHotReloadViewController.h"
-#import "WebViewController.h"
 #import "MLNMyRefreshHandler.h"
 #import "MLNMyHttpHandler.h"
 #import "MLNMyImageHandler.h"
 #import <SDWebImage/SDImageCodersManager.h>
 #import "MLNNavigatorHandler.h"
-#import "MLNViewController.h"
+#import "MLNLuaGalleryViewController.h"
 #import "MLNDemoListViewController.h"
 
 #define kConsoleWidth 250.f
@@ -65,6 +64,7 @@ static NSInteger kButtonTagOffset = 1001;
 
 - (void)viewWillDisappear:(BOOL)animated {
     [self.navigationController setNavigationBarHidden:NO animated:animated];
+    self.navigationController.navigationBar.alpha = 0;
     [super viewWillDisappear:animated];
 }
 
@@ -118,7 +118,7 @@ static NSInteger kButtonTagOffset = 1001;
 }
 
 - (IBAction)meilishuoButtonAction:(id)sender {
-    MLNViewController *viewController = [[MLNViewController alloc] init];
+    MLNLuaGalleryViewController *viewController = [[MLNLuaGalleryViewController alloc] init];
     [self.navigationController pushViewController:viewController animated:YES];
 }
 
