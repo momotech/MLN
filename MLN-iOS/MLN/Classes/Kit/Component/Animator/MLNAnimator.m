@@ -47,7 +47,6 @@
 - (void)start
 {
     if (self.isRunning) {
-        MLNLuaError(self.mln_luaCore, @"The animtor is running!");
         return;
     }
     self.running = YES;
@@ -65,35 +64,22 @@
 - (void)cancel
 {
     if (!self.isRunning) {
-        if (self.startCallback) {
-            [self.startCallback callIfCan];
-        }
+        return;
     }
-    [[self animationHandler] removeCallback:self];
-    self.running = NO;
-    self.started = NO;
     if (self.cancelCallback) {
         [self.cancelCallback callIfCan];
     }
-    if (self.endCallback) {
-        [self.endCallback callIfCan];
-    }
+    [self doAnimationEnd];
 }
 
 - (void)end
 {
     if (!self.isRunning) {
-        if (self.startCallback) {
-            [self.startCallback callIfCan];
-        }
+        return;
     }
-    [[self animationHandler] removeCallback:self];
-    [self percentageWithCurrentDuration:1.f];
-    self.started = NO;
-    self.running = NO;
-    if (self.endCallback) {
-        [self.endCallback callIfCan];
-    }
+    CGFloat percentage = (self.repeatMode == MLNAnimationRepeatTypeReverse && self.repeatCount >= 0) ? ((self.repeatCount + 1) % 2): 1.f;
+    [self doUpdateFrameWithPercentage:percentage];
+    [self doAnimationEnd];
 }
 
 - (void)setRepeat:(MLNAnimationRepeatType)repeatMode count:(NSInteger)count
@@ -116,7 +102,7 @@
     if (durationTime <0) {
         return;
     }
-    //
+    // 开始动画
     if (!self.isStarted && self.startCallback) {
         self.started = YES;
         [self.startCallback callIfCan];
@@ -137,8 +123,7 @@
             return;
         }
         // 剩余次数大于零，则表示还未结束，重复动画
-        NSInteger remainCount = self.repeatCount - self.doCount - 1;
-        if (remainCount > 0) {
+        if (self.repeatCount - self.doCount > 0) {
             [self doAnimationRepeat];
             return;
         }
@@ -165,6 +150,7 @@
 - (void)doAnimationEnd
 {
     self.running = NO;
+    self.started = NO;
     [[self animationHandler] removeCallback:self];
     if (self.endCallback) {
         [self.endCallback callIfCan];
