@@ -12,7 +12,7 @@
 
 - (void)errorLuaCall
 {
-    MLNLuaError(self.luaCore, @"error call, check argment type!");
+    MLNLuaError(self.luaCore, @"error call, check argument type!");
 }
 
 - (NSMethodSignature *)methodSignatureForSelector:(SEL)aSelector
