@@ -79,7 +79,7 @@ __VA_ARGS__;\
 /**
  强制类型检查
  */
-#define mln_lua_checkType(L_T, idx, TYPE_T) mln_lua_assert(L_T, lua_type(L_T, idx) == TYPE_T, "%s expected, got %s", lua_typename(L_T, TYPE_T), luaL_typename(L_T, idx))
+#define mln_lua_checkType(L_T, idx, TYPE_T) mln_lua_assert(L_T, lua_type(L_T, idx) == TYPE_T, @"%s expected, got %s", lua_typename(L_T, TYPE_T), luaL_typename(L_T, idx))
 #define mln_lua_checkboolean(L, idx) mln_lua_checkType(L, idx, LUA_TBOOLEAN);
 #define mln_lua_checkludata(L, idx) mln_lua_checkType(L, idx, LUA_TLIGHTUSERDATA);
 #define mln_lua_checknumber(L, idx) mln_lua_checkType(L, idx, LUA_TNUMBER);
@@ -123,7 +123,7 @@ NSString *error_tt = [NSString stringWithFormat:FORMAT, ##__VA_ARGS__];\
  */
 #define mln_lua_assert(L, condition, format, ...)\
 if ([MLN_LUA_CORE((L)).errorHandler canHandleAssert:MLN_LUA_CORE((L))] && !(condition)) {\
-luaL_error(L, format, ##__VA_ARGS__);\
+MLNCallErrorHandler(MLN_LUA_CORE((L)), format, ##__VA_ARGS__)\
 }
 
 /**
@@ -146,10 +146,7 @@ MLNCallErrorHandler(MLN_LUA_CORE((L)), format, ##__VA_ARGS__)\
  */
 #define MLNLuaAssert(LUA_CORE, CONDITION, FORMAT, ...) \
 if ([(LUA_CORE).errorHandler canHandleAssert:(LUA_CORE)] && !(CONDITION)) {\
-NSString *error_t = [NSString stringWithFormat:FORMAT, ##__VA_ARGS__];\
-if ((LUA_CORE).state) { \
-luaL_error((LUA_CORE).state, error_t.UTF8String);\
-}\
+MLNCallErrorHandler(LUA_CORE, FORMAT, ##__VA_ARGS__)\
 }
 
 /**

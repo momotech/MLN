@@ -133,7 +133,7 @@
     MLNStaticCheckTypeAndNilValue(callback, @"callback", MLNBlock);
     [[MLNNetworkReachabilityManager sharedManager] addNetworkChangedCallback:^(MLNNetworkStatus status) {
         if (callback) {
-            [callback addIntArgument:status];
+            [callback addIntArgument:(int)status];
             [callback callIfCan];
         }
     }];

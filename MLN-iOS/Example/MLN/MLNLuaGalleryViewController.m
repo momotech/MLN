@@ -13,10 +13,6 @@
 #import "MLNGlobalFuncTest.h"
 #import "MLNKitInstance.h"
 #import "MLNKitInstanceHandlersManager.h"
-#import "MLNMyHttpHandler.h"
-#import "MLNMyRefreshHandler.h"
-#import "MLNMyImageHandler.h"
-#import "MLNNavigatorHandler.h"
 #import "MLNHotReloadViewController.h"
 #import "MLNOfflineViewController.h"
 #import <MLNDevTool/MLNFloatingMenu.h>
@@ -31,10 +27,6 @@
 @interface MLNLuaGalleryViewController () <MLNViewControllerProtocol, MLNKitInstanceDelegate, UINavigationControllerDelegate>
 
 @property (nonatomic, strong) MLNKitInstance *kitInstance;
-@property (nonatomic, strong) id<MLNHttpHandlerProtocol> httpHandler;
-@property (nonatomic, strong) id<MLNRefreshDelegate> refreshHandler;
-@property (nonatomic, strong) id<MLNImageLoaderProtocol> imgLoader;
-@property (nonatomic, strong) id<MLNNavigatorHandlerProtocol> navHandler;
 
 @property (nonatomic, strong) UIViewController *contentViewController;
 @property (nonatomic, strong) UIButton *galleryButton;
@@ -48,20 +40,6 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    self.view.backgroundColor = [UIColor whiteColor];
-    
-    // 初始化handlers
-    self.httpHandler = [[MLNMyHttpHandler alloc] init];
-    self.refreshHandler = [[MLNMyRefreshHandler alloc] init];
-    self.imgLoader = [[MLNMyImageHandler alloc] init];
-    self.navHandler = [[MLNNavigatorHandler alloc] init];
-
-    MLNKitInstanceHandlersManager *handlersManager = [MLNKitInstanceHandlersManager defaultManager];
-    handlersManager.httpHandler = self.httpHandler;
-    handlersManager.scrollRefreshHandler = self.refreshHandler;
-    handlersManager.imageLoader = self.imgLoader;
-    handlersManager.navigatorHandler = self.navHandler;
-
     [self setupSubController];
     
     if (!kMemoryTest) {

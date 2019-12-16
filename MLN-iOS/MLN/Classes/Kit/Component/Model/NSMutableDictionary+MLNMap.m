@@ -11,7 +11,7 @@
 
 #define LUA_ARG_CHECK(TOP) \
 if (lua_gettop(L) != (TOP)) {\
-mln_lua_error(L,  @"number of argments must be %d!", (TOP));\
+mln_lua_error(L,  @"number of arguments must be %d!", (TOP));\
 return 0;\
 }
 
@@ -57,11 +57,11 @@ static int lua_newMap(lua_State *L) {
                 [MLN_LUA_CORE(L) pushNativeObject:map error:nil];
                 return 1;
             }
-            mln_lua_error(L, @"error type of argment, capacity must be number");
+            mln_lua_error(L, @"error type of argument, capacity must be number");
             break;
         }
         default: {
-            mln_lua_error(L, @"number of argment more than 1");
+            mln_lua_error(L, @"number of argument more than 1");
             break;
         }
     }
@@ -142,7 +142,7 @@ static int lua_map_addEntriesFromDictionary(lua_State *L) {
                        break;
                    }
                    default: {
-                       mln_lua_error(L,  @"The argment must be a array!");
+                       mln_lua_error(L,  @"The argument must be a array!");
                        break;
                    }
                }

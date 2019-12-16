@@ -21,8 +21,6 @@
 #define kConsoleWidth 250.f
 #define kConsoleHeight 280.f
 
-static NSInteger kButtonTagOffset = 1001;
-
 @interface MLNHomeViewController ()
 
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView *loadingIndicator;
@@ -38,11 +36,6 @@ static NSInteger kButtonTagOffset = 1001;
 @property (nonatomic, strong) MLNHotReloadViewController *luaVC;
 @property (nonatomic, strong) MLNOfflineViewController *offlineViewController;
 
-@property (nonatomic, strong) MLNMyImageHandler *imageHandler;
-@property (nonatomic, strong) MLNMyRefreshHandler *refreshHandler;
-@property (nonatomic, strong) MLNMyHttpHandler *httpHandler;
-@property (nonatomic, strong) MLNNavigatorHandler *navHandler;
-
 @end
 
 @implementation MLNHomeViewController
@@ -50,11 +43,6 @@ static NSInteger kButtonTagOffset = 1001;
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
-    MLNKitInstanceHandlersManager *handlersManager = [MLNKitInstanceHandlersManager defaultManager];
-    handlersManager.httpHandler = self.httpHandler;
-    handlersManager.scrollRefreshHandler = self.refreshHandler;
-    handlersManager.imageLoader = self.imageHandler;
-    handlersManager.navigatorHandler = self.navHandler;
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -69,38 +57,6 @@ static NSInteger kButtonTagOffset = 1001;
 }
 
 #pragma mark - accessor
-- (MLNMyHttpHandler *)httpHandler
-{
-    if (!_httpHandler) {
-        _httpHandler = [[MLNMyHttpHandler alloc] init];
-    }
-    return _httpHandler;
-}
-
-- (MLNMyImageHandler *)imageHandler
-{
-    if (!_imageHandler) {
-        _imageHandler = [[MLNMyImageHandler alloc] init];
-    }
-    return _imageHandler;
-}
-
-- (MLNMyRefreshHandler *)refreshHandler
-{
-    if (!_refreshHandler) {
-        _refreshHandler = [[MLNMyRefreshHandler alloc] init];
-    }
-    return _refreshHandler;
-}
-
-- (MLNNavigatorHandler *)navHandler
-{
-    if (!_navHandler) {
-        _navHandler = [[MLNNavigatorHandler alloc] init];
-    }
-    return _navHandler;
-}
-
 - (void)hideToast {
     self.toastBgView.hidden = YES;
 }
@@ -121,7 +77,5 @@ static NSInteger kButtonTagOffset = 1001;
     MLNLuaGalleryViewController *viewController = [[MLNLuaGalleryViewController alloc] init];
     [self.navigationController pushViewController:viewController animated:YES];
 }
-
-
 
 @end

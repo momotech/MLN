@@ -6,13 +6,13 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "MLNExportProtocol.h"
 #import "MLNConvertorProtocol.h"
 #import "MLNExporterProtocol.h"
 #import "MLNBeforeWaitingTaskProtocol.h"
 #import "MLNViewControllerProtocol.h"
 #import "MLNKitInstanceDelegate.h"
 #import "MLNEntityExportProtocol.h"
+#import "MLNKitLuaCoeBuilderProtocol.h"
 
 typedef void (^MLNOnDestroyCallback)(void);
 
@@ -92,53 +92,45 @@ Lua中的根视图。
 @property (nonatomic, strong, readonly) MLNKitInstanceConsts *instanceConsts;
 
 /**
+ 初始化方法, 默认运行的Lua bundle环境为Main Bundle.
+ 
+ @param luaCoreBuilder LuaCore构建器
+ @param viewController LuaWindow所在的视图控制器，并使用viewController.view作为承载LuaWindow的根视图
+ @return Lua Core 实例
+ */
+- (instancetype)initWithLuaCoreBuilder:(id<MLNKitLuaCoeBuilderProtocol>)luaCoreBuilder viewController:(UIViewController<MLNViewControllerProtocol> *)viewController;
+
+/**
  初始化方法
  
  @param luaBundlePath Lua core运行的Lua bundle环境，为空时默认为Main Bundle
+ @param luaCoreBuilder LuaCore构建器
  @param viewController LuaWindow所在的视图控制器，并使用viewController.view作为承载LuaWindow的根视图
  @return LuaInstance实例
  */
-- (instancetype)initWithLuaBundlePath:(NSString *__nullable)luaBundlePath viewController:(UIViewController<MLNViewControllerProtocol> *)viewController;
+- (instancetype)initWithLuaBundlePath:(NSString *__nullable)luaBundlePath luaCoreBuilder:(id<MLNKitLuaCoeBuilderProtocol>)luaCoreBuilder viewController:(UIViewController<MLNViewControllerProtocol> *)viewController;
 
 /**
  初始化方法
  
  @param luaBundle Lua Core运行的Lua bundle环境, 为空时默认为Main Bundle
+ @param luaCoreBuilder LuaCore构建器
  @param viewController LuaWindow所在的视图控制器，并使用viewController.view作为承载LuaWindow的根视图
  @return Lua Core 实例
  */
-- (instancetype)initWithLuaBundle:(MLNLuaBundle *__nullable)luaBundle viewController:(UIViewController<MLNViewControllerProtocol> *)viewController;
-
-/**
- 初始化方法
- 
- @param luaBundle Lua Core运行的Lua bundle环境, 为空时默认为Main Bundle
- @param viewController LuaWindow所在的视图控制器，并使用viewController.view作为承载LuaWindow的根视图
- @return Lua Core 实例
- */
-
-/**
- 初始化方法
-
- @param luaBundle Lua Core运行的Lua bundle环境, 为空时默认为Main Bundle
- @param rootView 承载LuaWindow的根视图
- @param viewController LuaWindow所在的视图控制器，并使用viewController.view作为承载LuaWindow的根视图
- @return Lua Core 实例
- */
-- (instancetype)initWithLuaBundle:(MLNLuaBundle *__nullable)luaBundle rootView:(UIView * __nullable)rootView viewController:(UIViewController<MLNViewControllerProtocol> *)viewController;
+- (instancetype)initWithLuaBundle:(MLNLuaBundle *__nullable)luaBundle luaCoreBuilder:(id<MLNKitLuaCoeBuilderProtocol>)luaCoreBuilder viewController:(UIViewController<MLNViewControllerProtocol> *)viewController;
 
 /**
  默认的初始化方法
  
  @param luaBundle Lua Core运行的Lua bundle环境，为空时默认为Main Bundle
- @param convertorClass Lua 与Native的类型转换工具的Class，为空时则使用默认的
- @param exporterClass 原生类的注册导出工具的Class，为空时则使用默认的
+ @param luaCoreBuilder LuaCore构建器
  @return Lua Core 实例
  @param rootView 承载LuaWindow的根视图
  @param viewController LuaWindowd所在的视图控制器
  @return LuaInstance实例
  */
-- (instancetype)initWithLuaBundle:(MLNLuaBundle *__nullable)luaBundle convertor:(Class<MLNConvertorProtocol> __nullable)convertorClass exporter:(Class<MLNExporterProtocol> __nullable)exporterClass rootView:(UIView * __nullable)rootView viewController:(UIViewController<MLNViewControllerProtocol> *)viewController NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithLuaBundle:(MLNLuaBundle *__nullable)luaBundle luaCoreBuilder:(id<MLNKitLuaCoeBuilderProtocol>)luaCoreBuilder rootView:(UIView * __nullable)rootView viewController:(UIViewController<MLNViewControllerProtocol> *)viewController NS_DESIGNATED_INITIALIZER;
 
 + (instancetype)new NS_UNAVAILABLE;
 - (instancetype)init NS_UNAVAILABLE; 
