@@ -1138,6 +1138,7 @@
 					"\"${PODS_ROOT}/Headers/Public/Specta\"",
 				);
 				INFOPLIST_FILE = "MLN/MLN-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_GENERATE_MAP_FILE = YES;
 				MODULE_NAME = ExampleApp;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.MMILua-Example";
@@ -1174,6 +1175,7 @@
 					"\"${PODS_ROOT}/Headers/Public/Specta\"",
 				);
 				INFOPLIST_FILE = "MLN/MLN-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_GENERATE_MAP_FILE = YES;
 				MODULE_NAME = ExampleApp;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.MMILua-Example";
