@@ -92,8 +92,8 @@ static MLNHotReload *sharedInstance;
     _running = NO;
     self.luaInstance = nil;
     self.benchLuaInstance = nil;
-    [self.luaContentView lua_removeAllSubViews];
-    [self.benchLuaContentView lua_removeAllSubViews];
+    self.luaContentView = nil;
+    self.benchLuaContentView = nil;
 }
 
 - (void)error:(NSString *)error
@@ -235,6 +235,9 @@ static MLNHotReload *sharedInstance;
     // 注册外部bridge
     if (self.registerBridgeClassesCallback) {
         self.registerBridgeClassesCallback(luaInstance);
+    }
+    if (self.setupInstanceCallback) {
+        self.setupInstanceCallback(luaInstance);
     }
 }
 
