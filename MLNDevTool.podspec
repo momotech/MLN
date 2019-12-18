@@ -49,7 +49,7 @@ Pod::Spec.new do |s|
         'MLNDevTool_Util' => 'MLN-iOS/MLNDevTool/Classes/DevTool/Util/**/Assets/*.{png,lua,xib,storyboard}',
         'MLNDevTool_UI' => 'MLN-iOS/MLNDevTool/Classes/DevTool/UI/**/Assets/*.{png,xib}'
       }
-      d.dependency 'MLN'
+      d.dependency 'MLN', '<= 1.0.0.1'
     end
 
     s.subspec 'Performance' do |perf|
@@ -76,7 +76,7 @@ Pod::Spec.new do |s|
           'MLNDevTool_Offline' => 'MLN-iOS/MLNDevTool/Classes/Offline/**/Assets/*.{png,lua,xib}'
         }
         o.dependency  'MLNDevTool/DevTool'
-        o.dependency 'MLN'
+        o.dependency 'MLN', '<= 1.0.0.1'
     end
     
     s.subspec 'HotReload' do |h|
@@ -89,7 +89,7 @@ Pod::Spec.new do |s|
         h.resource_bundles = {
           'MLNDevTool_HotReload' => 'MLN-iOS/MLNDevTool/Classes/HotReload/**/Assets/*.{png,xib}'
         }
-        h.dependency 'MLN'
+        h.dependency 'MLN', '<= 1.0.0.1'
     end
     
 end
