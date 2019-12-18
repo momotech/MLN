@@ -37,7 +37,8 @@ MLN支持热重载开发方式，修改代码，立即生效，免去编译等�
 + 4小时内给出响应
 + 一个工作日内给出解决时间点
 
-[MLN项目计划](https://github.com/momotech/MLN/projects/1)
+Projects里有 [MLN项目近期开发计划](https://github.com/momotech/MLN/projects/1)， 如果你有更好的想法
+请在issue里提建议，我们一起讨论下一步该做什么。
 
 ## 如何贡献代码
 
