@@ -11,11 +11,11 @@
 #import "PBCommandBuilder.h"
 #import "MLNDebugPrintFunction.h"
 
-@interface MLNHotReloadViewController () 
+@interface MLNHotReloadViewController ()
 
 @property (nonatomic, copy) NSArray<Class<MLNExportProtocol>> *regClasses;
 @property (nonatomic, copy, readonly) NSDictionary *extraInfo;
-@property (nonatomic, weak) MLNKitInstance *kitInstance;
+@property (nonatomic, strong) MLNKitInstance *kitInstance;
 // NavigationBar
 @property (nonatomic, assign) BOOL navigationBarTransparent;
 @property (nonatomic, strong) UIImage *backgroundImageForBarMetrics;
