@@ -78,7 +78,7 @@
 
 - (CGFloat)__statusBarMaxY
 {
-    if ([self.viewController prefersStatusBarHidden] || [[UIApplication sharedApplication] isStatusBarHidden]) {
+    if (([self.viewController prefersStatusBarHidden] || [[UIApplication sharedApplication] isStatusBarHidden]) && ![MLNDevice isIPHX]) {
         return 0.f;
     }
     CGRect frame = [UIApplication sharedApplication].statusBarFrame;
