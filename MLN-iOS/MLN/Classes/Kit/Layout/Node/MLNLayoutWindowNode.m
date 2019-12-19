@@ -93,7 +93,7 @@
     if (!self.isHeightExcatly) {
         switch (self.mergedHeightType) {
             case MLNLayoutMeasurementTypeWrapContent:
-                myMeasuredHeight = self.minHeight > 0 ? MAX(self.minHeight, myMeasuredHeight) : myMeasuredHeight;
+                myMeasuredHeight = MAX(self.minHeight, myMeasuredHeight);
                 myMeasuredHeight = self.maxHeight > 0 ? MIN(myMeasuredHeight, self.maxHeight) : myMeasuredHeight;
                 self.measuredHeight = myMeasuredHeight;
                 break;
