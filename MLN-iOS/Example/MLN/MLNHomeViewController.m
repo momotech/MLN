@@ -17,6 +17,7 @@
 #import "MLNNavigatorHandler.h"
 #import "MLNLuaGalleryViewController.h"
 #import "MLNDemoListViewController.h"
+#import "MLNStaticTest.h"
 
 #define kConsoleWidth 250.f
 #define kConsoleHeight 280.f
@@ -64,7 +65,7 @@
 #pragma mark - action
 
 - (IBAction)hotReloadAction:(id)sender {
-    MLNHotReloadViewController  *hotReloadVC = [[MLNHotReloadViewController alloc] init];
+    MLNHotReloadViewController  *hotReloadVC = [[MLNHotReloadViewController alloc] initWithRegisterClasses:@[[MLNStaticTest class]] extraInfo:nil];
     [self.navigationController pushViewController:hotReloadVC animated:YES];
 }
 
