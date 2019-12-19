@@ -1,6 +1,6 @@
 {
   "name": "MLN",
-  "version": "1.0.0",
+  "version": "1.0.0.2",
   "summary": "A lib of Momo Lua Native.",
   "description": "A lib of Momo Lua Native Core.",
   "homepage": "https://mln.immomo.com",
@@ -11,7 +11,7 @@
   "authors": "MoMo",
   "source": {
     "git": "https://github.com/momotech/MLN.git",
-    "tag": "1.0.0"
+    "tag": "1.0.0.2"
   },
   "platforms": {
     "ios": "8.0"

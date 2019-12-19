@@ -1,8 +1,8 @@
 //
-//  MLNNavigationBarObserver.m
+//  MLNSafeAreaProxy.m
 //  MLN
 //
-//  Created by tamer on 2019/12/19.
+//  Created by MoMo on 2019/12/19.
 //
 
 #import "MLNSafeAreaProxy.h"
