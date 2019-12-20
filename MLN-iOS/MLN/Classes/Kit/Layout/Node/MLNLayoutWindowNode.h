@@ -12,7 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface MLNLayoutWindowNode : MLNLayoutContainerNode
 
-@property (nonatomic, assign) UIEdgeInsets safeAreaInset;
+@property (nonatomic, assign) UIEdgeInsets safeAreaInsets;
 
 @end
 

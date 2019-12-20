@@ -6,17 +6,20 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "MLNSafeAreaViewProtocol.h"
 
 NS_ASSUME_NONNULL_BEGIN
-
+@class MLNSafeAreaAdapter;
 @interface MLNSafeAreaProxy : NSObject
 
+@property (nonatomic, weak) UIView<MLNSafeAreaViewProtocol> *safeAreaView;
 @property (nonatomic, weak, readonly) UINavigationBar *navigationBar;
 @property (nonatomic, weak, readonly) UIViewController *viewController;
 
-- (instancetype)initWithNavigationBar:(UINavigationBar *)navigationBar viewController:(UIViewController *)viewController;
+@property (nonatomic, assign) MLNSafeArea safeArea;
+@property (nonatomic, strong) MLNSafeAreaAdapter *adapter;
 
-- (void)safeAreaTopDidChanged:(void(^)(CGFloat safeAreaTop))callback;
+- (instancetype)initWithSafeAreaView:(UIView<MLNSafeAreaViewProtocol> *)safeAreaView navigationBar:(UINavigationBar *)navigationBar viewController:(UIViewController *)viewController;
 
 - (CGFloat)safeAreaTop;
 - (CGFloat)safeAreaBottom;
