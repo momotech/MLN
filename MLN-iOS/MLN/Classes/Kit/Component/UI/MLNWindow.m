@@ -16,6 +16,7 @@
 #import "MLNLayoutWindowNode.h"
 #import "MLNDevice.h"
 #import "MLNSafeAreaProxy.h"
+#import "MLNSafeAreaAdapter.h"
 
 @interface MLNWindow ()
 
@@ -30,7 +31,6 @@
 @property (nonatomic, assign) BOOL autoDoSizeChanged;
 @property (nonatomic, assign) BOOL autoDoDestroy;
 
-@property (nonatomic, assign) MLNSafeArea safeArea;
 @property (nonatomic, strong) MLNSafeAreaProxy *safeAreaProxy;
 
 @end
@@ -62,12 +62,7 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(enterBackground:) name:UIApplicationDidEnterBackgroundNotification object:nil];
     // Safe Area
     UINavigationBar *navbar = MLN_KIT_INSTANCE(self.mln_luaCore).viewController.navigationController.navigationBar;
-    self.safeAreaProxy = [[MLNSafeAreaProxy alloc] initWithNavigationBar:navbar viewController:MLN_KIT_INSTANCE(self.mln_luaCore).viewController];
-    __weak typeof(self) wself = self;
-    [self.safeAreaProxy safeAreaTopDidChanged:^(CGFloat bottom) {
-        __strong typeof(wself) sself = wself;
-        [sself setupWindowSafeAreaInset];
-    }];
+    self.safeAreaProxy = [[MLNSafeAreaProxy alloc] initWithSafeAreaView:self navigationBar:navbar viewController:MLN_KIT_INSTANCE(self.mln_luaCore).viewController];
 }
 
 - (void)enterForground:(NSNotification *)notification
@@ -123,17 +118,25 @@
 }
 
 #pragma mark - luaSafeArea
+- (void)updateSafeAreaInsets:(UIEdgeInsets)safeAreaInsets
+{
+    MLNLayoutWindowNode *node  = (MLNLayoutWindowNode *)self.lua_node;
+    node.safeAreaInsets = safeAreaInsets;
+}
+
+- (void)lua_setSafeAreaAdapter:(MLNSafeAreaAdapter *)adapter
+{
+    self.safeAreaProxy.adapter = adapter;
+}
+
 - (void)lua_setSafeArea:(MLNSafeArea)safeArea
 {
-    if (_safeArea != safeArea) {
-        _safeArea = safeArea;
-        [self setupWindowSafeAreaInset];
-    }
+    self.safeAreaProxy.safeArea = safeArea;
 }
 
 - (MLNSafeArea)lua_getSafeArea
 {
-    return _safeArea;
+    return self.safeAreaProxy.safeArea;
 }
 
 - (CGFloat)lua_safeAreaInsetsTop
@@ -155,28 +158,6 @@
 {
     return self.safeAreaProxy.safeAreaRight;
 }
-
-- (void)setupWindowSafeAreaInset
-{
-    UIEdgeInsets safeAreaInset = UIEdgeInsetsZero;
-    if (CGRectEqualToRect(self.frame, [UIScreen mainScreen].bounds)) {
-        if (_safeArea & MLNSafeAreaTop) {
-            safeAreaInset.top = [self lua_safeAreaInsetsTop];
-        }
-        if (_safeArea & MLNSafeAreaBottom) {
-            safeAreaInset.bottom = [self lua_safeAreaInsetsBottom];
-        }
-        if (_safeArea & MLNSafeAreaLeft) {
-            safeAreaInset.left = [self lua_safeAreaInsetsLeft];
-        }
-        if (_safeArea & MLNSafeAreaRight) {
-            safeAreaInset.right = [self lua_safeAreaInsetsRight];
-        }
-    }
-    MLNLayoutWindowNode *node  = (MLNLayoutWindowNode *)self.lua_node;
-    node.safeAreaInset = safeAreaInset;
-}
-
 
 #pragma mark - Export for lua
 - (NSMutableDictionary *)lua_getExtraData
@@ -323,13 +304,13 @@
 - (CGFloat)lua_height
 {
     MLNLayoutWindowNode *node  = (MLNLayoutWindowNode *)self.lua_node;
-    return node.height - node.safeAreaInset.top - node.safeAreaInset.bottom;
+    return node.height - node.safeAreaInsets.top - node.safeAreaInsets.bottom;
 }
 
 - (CGFloat)lua_width
 {
     MLNLayoutWindowNode *node  = (MLNLayoutWindowNode *)self.lua_node;
-    return node.width - node.safeAreaInset.left - node.safeAreaInset.right;
+    return node.width - node.safeAreaInsets.left - node.safeAreaInsets.right;
 }
 
 - (void)setFrame:(CGRect)frame
@@ -337,7 +318,6 @@
     BOOL isSizeChange = !CGSizeEqualToSize(self.frame.size, frame.size);
     [super setFrame:frame];
     if (isSizeChange) {
-        [self setupWindowSafeAreaInset];
         MLNLayoutNode *node = self.lua_node;
         [node changeWidth:frame.size.width];
         [node changeHeight:frame.size.height];
@@ -394,6 +374,7 @@
 #pragma mark - Export
 LUA_EXPORT_VIEW_BEGIN(MLNWindow)
 LUA_EXPORT_VIEW_PROPERTY(safeArea, "lua_setSafeArea:", "lua_getSafeArea", MILWindow)
+LUA_EXPORT_VIEW_METHOD(safeAreaAdapter, "lua_setSafeAreaAdapter:", MLNWindow)
 LUA_EXPORT_VIEW_METHOD(safeAreaInsetsTop, "lua_safeAreaInsetsTop", MLNWindow)
 LUA_EXPORT_VIEW_METHOD(safeAreaInsetsBottom, "lua_safeAreaInsetsBottom", MLNWindow)
 LUA_EXPORT_VIEW_METHOD(safeAreaInsetsTop, "lua_safeAreaInsetsLeft", MLNWindow)
