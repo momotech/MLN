@@ -6,10 +6,11 @@
 //
 
 #import "MLNView.h"
+#import "MLNSafeAreaViewProtocol.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface MLNWindow : MLNView
+@interface MLNWindow : MLNView <MLNSafeAreaViewProtocol>
 
 @property (nonatomic, strong) NSMutableDictionary *extraInfo;
 

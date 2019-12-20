@@ -81,7 +81,9 @@ static MLNHotReload *sharedInstance;
     self.rootView = rootView;
     self.viewController = viewController;
     self.luaContentView = [[UIView alloc] initWithFrame:rootView.bounds];
+    self.luaContentView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     self.benchLuaContentView = [[UIView alloc] initWithFrame:rootView.bounds];
+    self.benchLuaContentView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     [self.presenter openUI];
     [self.serverManager startUSB];
 }
