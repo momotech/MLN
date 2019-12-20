@@ -941,10 +941,13 @@
 		FA3D4183B36A98812B4C02626C1B3D99 /* MLNShadowOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 8E804044A46434288880C0553EE0522E /* MLNShadowOperation.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		FA993D41244D773800350724 /* MLNCollectionLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = FA993D3F244D773800350724 /* MLNCollectionLayout.m */; };
 		FA993D42244D773800350724 /* MLNCollectionLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = FA993D40244D773800350724 /* MLNCollectionLayout.h */; };
-		FA993D4F244DB35400350724 /* MLNSafeAreaProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = FA993D4D244DB35400350724 /* MLNSafeAreaProxy.m */; };
-		FA993D50244DB35400350724 /* MLNSafeAreaProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = FA993D4E244DB35400350724 /* MLNSafeAreaProxy.h */; };
 		FA993D53244DB3E100350724 /* MLNLayoutWindowNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FA993D51244DB3E100350724 /* MLNLayoutWindowNode.h */; };
 		FA993D54244DB3E100350724 /* MLNLayoutWindowNode.m in Sources */ = {isa = PBXBuildFile; fileRef = FA993D52244DB3E100350724 /* MLNLayoutWindowNode.m */; };
+		FA993D66244DB60F00350724 /* MLNSafeAreaViewProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = FA993D61244DB60E00350724 /* MLNSafeAreaViewProtocol.h */; };
+		FA993D67244DB60F00350724 /* MLNSafeAreaAdapter.m in Sources */ = {isa = PBXBuildFile; fileRef = FA993D62244DB60E00350724 /* MLNSafeAreaAdapter.m */; };
+		FA993D68244DB60F00350724 /* MLNSafeAreaProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = FA993D63244DB60E00350724 /* MLNSafeAreaProxy.h */; };
+		FA993D69244DB60F00350724 /* MLNSafeAreaAdapter.h in Headers */ = {isa = PBXBuildFile; fileRef = FA993D64244DB60E00350724 /* MLNSafeAreaAdapter.h */; };
+		FA993D6A244DB60F00350724 /* MLNSafeAreaProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = FA993D65244DB60E00350724 /* MLNSafeAreaProxy.m */; };
 		FAC38D4963CE1FEDD771692D04865DB5 /* MLNWindowContext.h in Headers */ = {isa = PBXBuildFile; fileRef = F7ABFE07F88F2395EA8B492FB28F678E /* MLNWindowContext.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		FB1C83E1248A145E1FFEFF1E83D84FDB /* MLNTabSegmentView.m in Sources */ = {isa = PBXBuildFile; fileRef = A77857ACA433CBE8950A8170124A7707 /* MLNTabSegmentView.m */; };
 		FB2F8761212D4F60B6032413B84AFC51 /* MLNAnimator.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D6D6A6C6CBAC16AC30332FA3F435594 /* MLNAnimator.m */; };
@@ -2136,10 +2139,13 @@
 		FA832098753454D34C603AFC86D900DC /* MLNCanvasPaint.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLNCanvasPaint.m; sourceTree = "<group>"; };
 		FA993D3F244D773800350724 /* MLNCollectionLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLNCollectionLayout.m; sourceTree = "<group>"; };
 		FA993D40244D773800350724 /* MLNCollectionLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLNCollectionLayout.h; sourceTree = "<group>"; };
-		FA993D4D244DB35400350724 /* MLNSafeAreaProxy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLNSafeAreaProxy.m; sourceTree = "<group>"; };
-		FA993D4E244DB35400350724 /* MLNSafeAreaProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLNSafeAreaProxy.h; sourceTree = "<group>"; };
 		FA993D51244DB3E100350724 /* MLNLayoutWindowNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLNLayoutWindowNode.h; sourceTree = "<group>"; };
 		FA993D52244DB3E100350724 /* MLNLayoutWindowNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLNLayoutWindowNode.m; sourceTree = "<group>"; };
+		FA993D61244DB60E00350724 /* MLNSafeAreaViewProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLNSafeAreaViewProtocol.h; sourceTree = "<group>"; };
+		FA993D62244DB60E00350724 /* MLNSafeAreaAdapter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLNSafeAreaAdapter.m; sourceTree = "<group>"; };
+		FA993D63244DB60E00350724 /* MLNSafeAreaProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLNSafeAreaProxy.h; sourceTree = "<group>"; };
+		FA993D64244DB60E00350724 /* MLNSafeAreaAdapter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLNSafeAreaAdapter.h; sourceTree = "<group>"; };
+		FA993D65244DB60E00350724 /* MLNSafeAreaProxy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLNSafeAreaProxy.m; sourceTree = "<group>"; };
 		FAB2CFFCBCDBB20EA7345EF0031057DE /* NSArray+MLNCore.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "NSArray+MLNCore.h"; sourceTree = "<group>"; };
 		FB3B7235DB7D3BD17C7FEE1302DCCC17 /* lundump.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = lundump.c; path = "MLN-iOS/MLN/Classes/LuaLib/lundump.c"; sourceTree = "<group>"; };
 		FBA8501DBF907865342112EAC0C53C87 /* MLNRect.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLNRect.m; sourceTree = "<group>"; };
@@ -2487,8 +2493,7 @@
 				F64C7277BA0704E8BC749A34B2AE71AF /* MLNSystem.m */,
 				942DAAD4BA7770248DB367D1B1474BCB /* MLNTypeUtil.h */,
 				E8C0DF6B0C26E203881663B4EACA46F7 /* MLNTypeUtil.m */,
-				FA993D4E244DB35400350724 /* MLNSafeAreaProxy.h */,
-				FA993D4D244DB35400350724 /* MLNSafeAreaProxy.m */,
+				FA993D60244DB60E00350724 /* SafeArea */,
 				70BD04E8F5AD3F198B8049A8B467EFC5 /* Mmoslib */,
 				72113B187D800109F2C55C23D8DDD6AF /* Navigator */,
 				C27D9A68E9367741BBA40CBCCE1147BD /* Network */,
@@ -4405,6 +4410,18 @@
 			path = "../Target Support Files/FBSnapshotTestCase";
 			sourceTree = "<group>";
 		};
+		FA993D60244DB60E00350724 /* SafeArea */ = {
+			isa = PBXGroup;
+			children = (
+				FA993D64244DB60E00350724 /* MLNSafeAreaAdapter.h */,
+				FA993D62244DB60E00350724 /* MLNSafeAreaAdapter.m */,
+				FA993D63244DB60E00350724 /* MLNSafeAreaProxy.h */,
+				FA993D65244DB60E00350724 /* MLNSafeAreaProxy.m */,
+				FA993D61244DB60E00350724 /* MLNSafeAreaViewProtocol.h */,
+			);
+			path = SafeArea;
+			sourceTree = "<group>";
+		};
 		FC6FC42B62EB37F3A224FFA4C875E9F4 /* MLNDevTool */ = {
 			isa = PBXGroup;
 			children = (
@@ -4702,6 +4719,7 @@
 				06E9F3C182D800B5B7DE649BD8C1BF8E /* MLNCanvasConst.h in Headers */,
 				15CF9D4D1243939509EC4F6C5802E4AE /* MLNCanvasPaint.h in Headers */,
 				D53862B8CF8218C65EFF07056A308DF8 /* MLNCanvasPath.h in Headers */,
+				FA993D66244DB60F00350724 /* MLNSafeAreaViewProtocol.h in Headers */,
 				98AA4B0E32052D225420169ADD63163C /* MLNCanvasView.h in Headers */,
 				99DFC0A0037F1F4850D31043BA96C07C /* MLNClipboard.h in Headers */,
 				60DC755A1A07BFB772FA31A3EB8C2620 /* MLNCollectionView.h in Headers */,
@@ -4745,7 +4763,6 @@
 				BE365F5C536B25497A6A95C4E1FD7A0A /* MLNExportProtocol.h in Headers */,
 				A5FF6A5EBD88BA62A0FFE43486FE74B3 /* MLNFile.h in Headers */,
 				D47BCECAE661EDD43025AA8A4457EE6E /* MLNFileConst.h in Headers */,
-				FA993D50244DB35400350724 /* MLNSafeAreaProxy.h in Headers */,
 				B697C656BF2BBC7261533867903AC427 /* MLNFileLoader.h in Headers */,
 				519F46F5629D3434DAEAB221BD2AE550 /* MLNFont.h in Headers */,
 				4055614F1CE48F9C7E62405879BD0311 /* MLNFrameAnimation.h in Headers */,
@@ -4811,6 +4828,7 @@
 				1AC8D0895760595452E42A5006E672D8 /* MLNPaddingContainerViewProtocol.h in Headers */,
 				F1D63D0862E005C268077B49C548EC49 /* MLNPoint.h in Headers */,
 				76C20A9C9BFB4C7264F6F61620CAFFAB /* MLNPreferenceUtils.h in Headers */,
+				FA993D68244DB60F00350724 /* MLNSafeAreaProxy.h in Headers */,
 				7CEE480A086E4F7E1B5AC6FC747735D1 /* MLNRect.h in Headers */,
 				7E85999A9A0C257A5EBAC20515C1AE0F /* MLNRefreshDelegate.h in Headers */,
 				390DA82545C9B165DDB981322C39203C /* MLNRenderContext.h in Headers */,
@@ -4843,6 +4861,7 @@
 				8D59FE72C924403F65A10E9C66CAB798 /* MLNTableViewCell.h in Headers */,
 				D0481B17BB6293232C0C7BBBBF11D028 /* MLNTableViewCellSettingProtocol.h in Headers */,
 				DA44829BD2D3C1EAA845999CF754D0E8 /* MLNTabSegmentScrollHandler.h in Headers */,
+				FA993D69244DB60F00350724 /* MLNSafeAreaAdapter.h in Headers */,
 				8E94EA39F7BD7C4740050A13FE58E385 /* MLNTabSegmentView.h in Headers */,
 				DB2821A706F5AC1AF55835EF8042F0DE /* MLNTabSegmentViewDelegate.h in Headers */,
 				ADA001582B9FA576D339FFF5B8ADB508 /* MLNTextConst.h in Headers */,
@@ -5846,12 +5865,14 @@
 				F888C2B252F9A9AAAEDE4E7DDEE74D05 /* MLNKeyboardViewHandler.m in Sources */,
 				5AE00A91C7D2AEE52AEA4AF0158E5364 /* MLNKeyframeAnimation.m in Sources */,
 				E4BFF19A9536C317A338048C80CBED97 /* MLNKeyframeAnimationBuilder.m in Sources */,
+				FA993D67244DB60F00350724 /* MLNSafeAreaAdapter.m in Sources */,
 				34F94757EBEE6131EF58C788428934C1 /* MLNKeyframeArray.m in Sources */,
 				67AECFE6D2D3B40FC511B0416E9ED8C6 /* MLNKiConvertor.m in Sources */,
 				CC6171D8BEAA07F82AC18D5622D33162 /* MLNKitBridgesManager.m in Sources */,
 				CE0B960A8BB9A664AC99417C644AFC8D /* MLNKitInstance.m in Sources */,
 				DCBF226937F5202EB8E820111377A151 /* MLNKitInstanceConsts.m in Sources */,
 				1E4A25125C65A33FFEFFFAE927C0854D /* MLNKitInstanceHandlersManager.m in Sources */,
+				FA993D6A244DB60F00350724 /* MLNSafeAreaProxy.m in Sources */,
 				280E52D9344BDA4D1C19B7631C5408AA /* MLNKitViewController.m in Sources */,
 				94DD31D22B183969A81D2FB9B0EB2D3C /* MLNLabel.m in Sources */,
 				3A4C7ADDB9C0D566A3D356C233D2FDCC /* MLNLayoutContainerNode.m in Sources */,
@@ -5886,7 +5907,6 @@
 				62A0D240EB12787CE300C75008545DD9 /* MLNScrollViewDelegate.m in Sources */,
 				371AA0169F17FB040BFF173F82CCF237 /* MLNShadowOperation.m in Sources */,
 				77464FBB346EE06CFB04B84A838103EE /* MLNShapeContext.m in Sources */,
-				FA993D4F244DB35400350724 /* MLNSafeAreaProxy.m in Sources */,
 				F2A1314F096D8970D2C624116FC18B82 /* MLNSize.m in Sources */,
 				7915B333A5168148BCE5A77125232D6A /* MLNSizeCahceManager.m in Sources */,
 				E1375700E7F3B06B1A2D0419AACF7F5A /* MLNSnapshotManager.m in Sources */,
