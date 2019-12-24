@@ -153,6 +153,9 @@
 {
     if (!_luaInstance) {
         _luaInstance = [[MLNKitInstanceFactory defaultFactory] createKitInstanceWithViewController:self];
+        if (_regClasses && _regClasses.count > 0) {
+            [_luaInstance registerClasses:_regClasses error:NULL];
+        }
     }
     return _luaInstance;
 }
