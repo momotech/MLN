@@ -9,6 +9,7 @@
 #import "MLNServer.h"
 #import "PBCommandBuilder.h"
 #import "MLNDebugPrintFunction.h"
+#import "MLNDebugCodeCoverageFunction.h"
 #import "NSDictionary+MLNSafety.h"
 #import "MLNHotReloadPresenter.h"
 #import "MLNServerManager.h"
@@ -185,6 +186,20 @@ static MLNHotReload *sharedInstance;
     });
 }
 
+- (void)startToGenerateCodeCoverageReportFile {
+    lua_State *L = self.luaInstance.luaCore.state;
+    if (L) {
+        lua_getglobal(L, "gencoveragereport");
+        if (lua_isfunction(L, -1)) {
+            lua_pcall(L, 0, 0, 0);
+        } else {
+            [self print:@"请先开启覆盖率统计，然后跑一遍项目，才可以生成统计报告"];
+        }
+    } else {
+        [self print:@"请先跑一遍项目，再点击生成报告按钮"];
+    }
+}
+
 #pragma mark - MLNServerListenerProtocol
 - (void)server:(MLNServer *)server beginCheckUSBReachable:(int)port
 {
@@ -233,7 +248,8 @@ static MLNHotReload *sharedInstance;
 - (void)didSetupLuaCore:(MLNKitInstance *)luaInstance
 {
     // 注册print
-    [luaInstance registerClazz:[MLNDebugPrintFunction class] error:NULL];
+    [luaInstance registerClasses:@[[MLNDebugPrintFunction class],
+                                   [MLNDebugCodeCoverageFunction class]] error:NULL];
     // 注册外部bridge
     if (self.registerBridgeClassesCallback) {
         self.registerBridgeClassesCallback(luaInstance);

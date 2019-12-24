@@ -26,6 +26,10 @@ NS_ASSUME_NONNULL_BEGIN
 + (pblogcommand *)buildLogCmdNotUUID:(NSString *)log entryFilePath:(NSString *)entryFilePath;
 + (pberrorcommand *)buildErrorCmdNotUUID:(NSString *)error entryFilePath:(NSString *)entryFilePath;
 
++ (pbcoveragesummarycommand *)buildCoverageSummaryCmd:(NSData *)fileData filePath:(NSString *)filePath;
++ (pbcoveragedetailcommand *)buildCoverageDetailCmd:(NSData *)fileData filePath:(NSString *)filePath;
++ (pbcoveragevisualcommand *)buildCoverageVisualCmd;
+
 @end
 
 NS_ASSUME_NONNULL_END

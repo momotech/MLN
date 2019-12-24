@@ -66,7 +66,7 @@
     NSString *jsonDirectoryPath = [[[NSBundle mainBundle] bundlePath] stringByAppendingPathComponent:@"/gallery.bundle/json"];
     NSError *error = nil;
     NSArray *jsonFilePaths = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:jsonDirectoryPath error:&error];
-    NSString *destFileDirectory = [[MLNFile fileManagerRootPath] stringByAppendingPathComponent:@"gallery/json"];
+    NSString *destFileDirectory = [[MLNFile fileManagerRootPath] stringByAppendingPathComponent:@"gallery.bundle/json"];
     BOOL isDir = NO;
     BOOL exist = [[NSFileManager defaultManager] fileExistsAtPath:destFileDirectory isDirectory:&isDir];
     if (!exist) {

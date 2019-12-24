@@ -284,7 +284,7 @@ function _class:requestNetwork(first, complete)
             self.pageIndex = 9
         end
     end
-    local filepath = 'gallery/json/musicRank.json'
+    local filepath = 'gallery.bundle/json/musicRank.json'
     if System:Android() then
         filepath = 'assets://' .. filepath
     else
