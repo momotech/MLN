@@ -29,6 +29,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)log:(NSString *)log entryFilePath:(NSString *)entryFilePath;
 - (void)error:(NSString *)error entryFilePath:(NSString *)entryFilePath;
 
+- (void)reportCodeCoverageSummary:(NSString *)filePath;
+- (void)reportCodeCoverageDetail:(NSString *)filePath;
+
 @end
 
 NS_ASSUME_NONNULL_END

@@ -76,6 +76,15 @@ typedef GPB_ENUM(pbbasecommand_InstructionType) {
 
   /** 创建文件指令 */
   pbbasecommand_InstructionType_Create = 12,
+    
+  /** 代码覆盖率汇总文件指令*/
+  pbbasecommand_InstructionType_Coveragesummary = 13,
+    
+  /** 获取代码覆盖率详细报告指令 */
+  pbbasecommand_InstructionType_CoverageDetail = 14,
+    
+  /** 代码覆盖率报告可视化指令 */
+  pbbasecommand_InstructionType_CoverageVisual = 15,
 };
 
 GPBEnumDescriptor *pbbasecommand_InstructionType_EnumDescriptor(void);

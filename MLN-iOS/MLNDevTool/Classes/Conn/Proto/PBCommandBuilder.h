@@ -20,6 +20,9 @@
 #import "PbrenameCommand.pbobjc.h"
 #import "PbmoveCommand.pbobjc.h"
 #import "PbcreateCommand.pbobjc.h"
+#import "PbcoverageSummaryCommand.pbobjc.h"
+#import "PbdetailReportCommand.pbobjc.h"
+#import "PbgenerateReportCommand.pbobjc.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -38,6 +41,10 @@ NS_ASSUME_NONNULL_BEGIN
 + (pbdevicecommand *)buildDeviceCmdNotUUID;
 + (pblogcommand *)buildLogCmdNotUUID:(NSString *)log entryFilePath:(NSString *)entryFilePath;
 + (pberrorcommand *)buildErrorCmdNotUUID:(NSString *)error entryFilePath:(NSString *)entryFilePath;
+
++ (pbcoveragesummarycommand *)buildCoverageSummaryCmd:(NSData *)fileData filePath:(NSString *)filePath;
++ (pbcoveragedetailcommand *)buildCoverageDetailCmd:(NSData *)fileData filePath:(NSString *)filePath;
++ (pbcoveragevisualcommand *)buildCoverageVisualCmd;
 
 @end
 

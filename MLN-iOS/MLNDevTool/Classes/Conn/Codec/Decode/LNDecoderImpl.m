@@ -66,6 +66,18 @@
             clazz = pbcreatecommand.class;
             break;
         }
+        case pbbasecommand_InstructionType_Coveragesummary: {
+            clazz = pbcoveragesummarycommand.class;
+            break;
+        }
+        case pbbasecommand_InstructionType_CoverageDetail: {
+            clazz = pbcoveragedetailcommand.class;
+            break;
+        }
+        case pbbasecommand_InstructionType_CoverageVisual: {
+            clazz = pbcoveragevisualcommand.class;
+            break;
+        }
         default:
             break;
     }
