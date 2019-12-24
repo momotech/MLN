@@ -14,6 +14,7 @@
 @interface MLNLayoutNode ()
 
 @property (nonatomic, assign) BOOL needUpdateAnchorPoint;
+@property (nonatomic, assign) BOOL didSetAnchorPoint;
 
 @end
 @implementation MLNLayoutNode
@@ -283,7 +284,11 @@ MLN_FORCE_INLINE void measureSimapleAutoNodeSize(MLNLayoutNode __unsafe_unretain
 {
     if (!CGPointEqualToPoint(self.anchorPoint, point)) {
         self.needUpdateAnchorPoint = YES;
+        self.didSetAnchorPoint = YES;
         _anchorPoint = point;
+        if (!CGSizeEqualToSize(self.targetView.frame.size, CGSizeZero)) {
+            [self setAnchorPoint:point targetView:self.targetView];
+        }
     }
 }
 
@@ -324,6 +329,9 @@ MLN_FORCE_INLINE void measureSimapleAutoNodeSize(MLNLayoutNode __unsafe_unretain
             self.targetView.frame = newFrame;
             [self.targetView lua_resetTransformIfNeed];
             [self.targetView lua_changedLayout];
+            if (self.didSetAnchorPoint) {
+                self.needUpdateAnchorPoint = YES;
+            }
         }
     }
     [self updatedLayout];
@@ -333,7 +341,7 @@ MLN_FORCE_INLINE void measureSimapleAutoNodeSize(MLNLayoutNode __unsafe_unretain
 
 MLN_FORCE_INLINE void resetArchpointIfNeed(MLNLayoutNode __unsafe_unretained *node) {
     if (node.needUpdateAnchorPoint) {
-        node.targetView.layer.anchorPoint = node.anchorPoint;
+        [node setAnchorPoint:node.anchorPoint targetView:node.targetView];
         node.needUpdateAnchorPoint = NO;
     }
 }
@@ -654,6 +662,26 @@ MLN_FORCE_INLINE void resetArchpointIfNeed(MLNLayoutNode __unsafe_unretained *no
 - (NSString *)description
 {
     return [NSString stringWithFormat:@"<%@: %p , diryt : %d,  target view: %@>",NSStringFromClass([self class]), self, self.isDirty, self.targetView];
+}
+
+- (void)setAnchorPoint:(CGPoint)point targetView:(UIView *)targetView
+{
+    CGPoint newPoint = CGPointMake(targetView.bounds.size.width * point.x, targetView.bounds.size.height * point.y);
+    CGPoint oldPoint = CGPointMake(targetView.bounds.size.width * targetView.layer.anchorPoint.x, targetView.bounds.size.height * targetView.layer.anchorPoint.y);
+    
+    newPoint = CGPointApplyAffineTransform(newPoint, CGAffineTransformIdentity);
+    oldPoint = CGPointApplyAffineTransform(oldPoint, CGAffineTransformIdentity);
+    
+    CGPoint position = targetView.layer.position;
+    
+    position.x -= oldPoint.x;
+    position.x += newPoint.x;
+    
+    position.y -= oldPoint.y;
+    position.y += newPoint.y;
+    
+    targetView.layer.position = position;
+    targetView.layer.anchorPoint = point;
 }
 
 @end
