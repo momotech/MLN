@@ -43,7 +43,7 @@
     
     // Mock数据
     if ([urlString hasPrefix:@"https://www.apiopen.top/femaleNameApi"]) {
-        NSString *messagePath = [[NSBundle mainBundle] pathForResource:@"gallery/json/message.json" ofType:nil];
+        NSString *messagePath = [[NSBundle mainBundle] pathForResource:@"gallery.bundle/json/message.json" ofType:nil];
         NSData *data = [NSData dataWithContentsOfFile:messagePath];
         NSDictionary *info = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:NULL];
         if (completionHandler) {
@@ -51,7 +51,7 @@
         }
         return;
     }else if ([urlString hasPrefix:@"https://api.apiopen.top/musicRankingsDetails"]) {
-        NSString *musicRankPath = [[NSBundle mainBundle] pathForResource:@"gallery/json/musicRank.json" ofType:nil];
+        NSString *musicRankPath = [[NSBundle mainBundle] pathForResource:@"gallery.bundle/json/musicRank.json" ofType:nil];
         NSData *data = [NSData dataWithContentsOfFile:musicRankPath];
         NSDictionary *info = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:NULL];
         if (completionHandler) {
@@ -59,7 +59,7 @@
         }
         return;
     } else if ([urlString hasPrefix:@"http://v2.api.haodanku.com/itemlist/apikey/fashion/cid/1/back/20"]) {
-        NSString *fashionlistPath = [[NSBundle mainBundle] pathForResource:@"gallery/json/fashion.json" ofType:nil];
+        NSString *fashionlistPath = [[NSBundle mainBundle] pathForResource:@"gallery.bundle/json/fashion.json" ofType:nil];
         NSData *data = [NSData dataWithContentsOfFile:fashionlistPath];
         NSDictionary *info = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:NULL];
         if (completionHandler) {

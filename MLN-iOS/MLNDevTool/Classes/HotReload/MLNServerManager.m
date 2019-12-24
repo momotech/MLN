@@ -195,6 +195,8 @@
         if ([self.delegate respondsToSelector:@selector(reload:entryFilePath:params:)]) {
             [self.delegate reload:self.fileManager.luaBundlePath entryFilePath:self.fileManager.relativeEntryFilePath params:self.params];
         }
+    } else if ([message isKindOfClass:[pbcoveragevisualcommand class]]) {
+        [self.delegate startToGenerateCodeCoverageReportFile];
     }
     if ([self.listener respondsToSelector:@selector(server:onMessage:)]) {
         [self.listener server:server onMessage:message];
