@@ -35,10 +35,8 @@ Pod::Spec.new do |s|
     
     s.subspec 'Protobuf' do |pb|
       pb.name = 'Protobuf'
-      pb.source_files = 'MLN-iOS/MLNDevTool/Classes/Protobuf/**/*.{h,m,c}'
-      pb.public_header_files = 'MLN-iOS/MLNDevTool/Classes/Protobuf/**/*.h'
-      pb.dependency 'Protobuf', '~> 3.6.0'
-      pb.requires_arc = false
+      pb.source_files = 'MLN-iOS/MLNDevTool/Classes/Protobuf/**/*.{h,m,c,a}'
+      pb.vendored_libraries = 'MLN-iOS/MLNDevTool/Classes/Protobuf/**/*.a'
     end
     
     s.subspec 'DevTool' do |d|
@@ -65,7 +63,6 @@ Pod::Spec.new do |s|
       conn.source_files = 'MLN-iOS/MLNDevTool/Classes/Conn/**/*.{h,m,c}'
       conn.public_header_files = 'MLN-iOS/MLNDevTool/Classes/Conn/**/*.h'
       conn.dependency  'MLNDevTool/Protobuf'
-      conn.dependency 'Protobuf', '~> 3.6.0'
     end
     
     s.subspec 'Offline' do |o|

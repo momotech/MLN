@@ -7,16 +7,7 @@
 
 #import "LNEncoderImpl.h"
 #import "NSMutableData+LuaNative.h"
-#import "PbbaseCommand.pbobjc.h"
-#import "PbdeviceCommand.pbobjc.h"
-#import "PbupdateCommand.pbobjc.h"
-#import "PbentryFileCommand.pbobjc.h"
-#import "PblogCommand.pbobjc.h"
-#import "PberrorCommand.pbobjc.h"
-#import "PbcloseCommand.pbobjc.h"
-#import "PbreloadCommand.pbobjc.h"
-#import "PbpingCommand.pbobjc.h"
-#import "PbpongCommand.pbobjc.h"
+#import "MLNProtobuf.h"
 
 @implementation LNEncoderImpl
 

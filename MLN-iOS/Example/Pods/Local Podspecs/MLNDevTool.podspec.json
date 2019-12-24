@@ -1,6 +1,6 @@
 {
   "name": "MLNDevTool",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "summary": "Debug Tool of MLN.",
   "description": "Debug Tool of MLN.",
   "homepage": "https://mln.immomo.com",
@@ -11,7 +11,7 @@
   "authors": "MoMo",
   "source": {
     "git": "https://github.com/momotech/MLN.git",
-    "tag": "devtool-0.1.0"
+    "tag": "devtool-0.1.1"
   },
   "platforms": {
     "ios": "8.0"
@@ -22,14 +22,8 @@
   "subspecs": [
     {
       "name": "Protobuf",
-      "source_files": "MLN-iOS/MLNDevTool/Classes/Protobuf/**/*.{h,m,c}",
-      "public_header_files": "MLN-iOS/MLNDevTool/Classes/Protobuf/**/*.h",
-      "dependencies": {
-        "Protobuf": [
-          "~> 3.6.0"
-        ]
-      },
-      "requires_arc": false
+      "source_files": "MLN-iOS/MLNDevTool/Classes/Protobuf/**/*.{h,m,c,a}",
+      "vendored_libraries": "MLN-iOS/MLNDevTool/Classes/Protobuf/**/*.a"
     },
     {
       "name": "DevTool",
@@ -41,7 +35,7 @@
       },
       "dependencies": {
         "MLN": [
-
+          "~> 1.0.0.2"
         ]
       }
     },
@@ -69,9 +63,6 @@
       "dependencies": {
         "MLNDevTool/Protobuf": [
 
-        ],
-        "Protobuf": [
-          "~> 3.6.0"
         ]
       }
     },
@@ -87,7 +78,7 @@
 
         ],
         "MLN": [
-
+          "~> 1.0.0.2"
         ]
       }
     },
@@ -107,7 +98,7 @@
 
         ],
         "MLN": [
-
+          "~> 1.0.0.2"
         ]
       },
       "resource_bundles": {
