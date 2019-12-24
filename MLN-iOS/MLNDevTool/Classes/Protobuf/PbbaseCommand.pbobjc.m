@@ -168,7 +168,7 @@ GPBEnumDescriptor *pbbasecommand_InstructionType_EnumDescriptor(void) {
     static const char *valueNames =
         "Ping\000Pong\000EntryFile\000Update\000Reload\000Device"
         "\000Log\000Error\000Close\000Move\000Rename\000Remove\000Crea"
-        "te\000";
+        "te\000Coveragesummary\000CoverageDetail\000CoverageVisual\000";
     static const int32_t values[] = {
         pbbasecommand_InstructionType_Ping,
         pbbasecommand_InstructionType_Pong,
@@ -183,6 +183,9 @@ GPBEnumDescriptor *pbbasecommand_InstructionType_EnumDescriptor(void) {
         pbbasecommand_InstructionType_Rename,
         pbbasecommand_InstructionType_Remove,
         pbbasecommand_InstructionType_Create,
+        pbbasecommand_InstructionType_Coveragesummary,
+        pbbasecommand_InstructionType_CoverageDetail,
+        pbbasecommand_InstructionType_CoverageVisual,
     };
     GPBEnumDescriptor *worker =
         [GPBEnumDescriptor allocDescriptorForName:GPBNSStringifySymbol(pbbasecommand_InstructionType)
@@ -213,6 +216,9 @@ BOOL pbbasecommand_InstructionType_IsValidValue(int32_t value__) {
     case pbbasecommand_InstructionType_Rename:
     case pbbasecommand_InstructionType_Remove:
     case pbbasecommand_InstructionType_Create:
+    case pbbasecommand_InstructionType_Coveragesummary:
+    case pbbasecommand_InstructionType_CoverageDetail:
+    case pbbasecommand_InstructionType_CoverageVisual:
       return YES;
     default:
       return NO;

@@ -17,6 +17,9 @@
 #import "PbreloadCommand.pbobjc.h"
 #import "PbpingCommand.pbobjc.h"
 #import "PbpongCommand.pbobjc.h"
+#import "PbcoverageSummaryCommand.pbobjc.h"
+#import "PbgenerateReportCommand.pbobjc.h"
+#import "PbdetailReportCommand.pbobjc.h"
 
 @implementation LNEncoderImpl
 
@@ -38,6 +41,12 @@
         type = pbbasecommand_InstructionType_Update;
     } else if ([msg isKindOfClass:[pbclosecommand class]]){
         type = pbbasecommand_InstructionType_Close;
+    } else if ([msg isKindOfClass:[pbcoveragesummarycommand class]]) {
+        type = pbbasecommand_InstructionType_Coveragesummary;
+    } else if ([msg isKindOfClass:[pbcoveragedetailcommand class]]) {
+        type = pbbasecommand_InstructionType_CoverageDetail;
+    } else if ([msg isKindOfClass:[pbcoveragevisualcommand class]]) {
+        type = pbbasecommand_InstructionType_CoverageVisual;
     }  else if ([msg isKindOfClass:[pbpingcommand class]]) {
         [data appendChar:0x02];
         [data appendInt32:[(pbpingcommand *)msg ip]];

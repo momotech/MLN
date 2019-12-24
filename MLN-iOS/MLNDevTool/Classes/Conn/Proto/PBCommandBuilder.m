@@ -111,4 +111,27 @@
     return errCmd;
 }
 
++ (pbcoveragesummarycommand *)buildCoverageSummaryCmd:(NSData *)fileData filePath:(NSString *)filePath {
+    pbcoveragesummarycommand *covCmd = [[pbcoveragesummarycommand alloc] init];
+    covCmd.basecommand = [self buildBaseCmdNotUUID:pbbasecommand_InstructionType_Coveragesummary];
+    covCmd.fileData = fileData;
+    covCmd.filePath = filePath;
+    return covCmd;
+}
+
++ (pbcoveragedetailcommand *)buildCoverageDetailCmd:(NSData *)fileData filePath:(NSString *)filePath {
+    pbcoveragedetailcommand *covCmd = [[pbcoveragedetailcommand alloc] init];
+    covCmd.basecommand = [self buildBaseCmdNotUUID:pbbasecommand_InstructionType_CoverageDetail];
+    covCmd.fileData = fileData;
+    covCmd.filePath = filePath;
+    return covCmd;
+}
+
++ (pbcoveragevisualcommand *)buildCoverageVisualCmd {
+    pbcoveragevisualcommand *covCmd = [[pbcoveragevisualcommand alloc] init];
+    covCmd.basecommand = [self buildBaseCmdNotUUID:pbbasecommand_InstructionType_CoverageVisual];
+    return covCmd;
+}
+
+
 @end
