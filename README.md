@@ -30,6 +30,9 @@ MLN是一个移动跨平台开发框架，让开发者用一套代码构建Andro
 MLN支持热重载开发方式，修改代码，立即生效，免去编译等待阶段
 ![热重载.gif](https://s.momocdn.com/w/u/others/custom/LuaNative/readme3.gif)
 
+## MLN在陌陌内部的应用
+陌陌首页、直播帧、更多帧部分内容、附近群组、狼人圈等一系列功能都是用MLN开发的。MLN的稳定性和性能在一年多的时间里，经受住了陌陌过亿量级MAU的考验。
+![](https://s.momocdn.com/w/u/others/2019/12/23/1577096701198-mln.png)
 ## 如何交流
 
 我们正在把陌陌内部MLN社区迁移到github，不管是公司内部还是外部提出的issue，开发组都会做到高效支持。
