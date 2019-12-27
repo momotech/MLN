@@ -13,11 +13,7 @@
   <key>CFBundlePackageType</key>
   <string>BNDL</string>
   <key>CFBundleShortVersionString</key>
-<<<<<<< HEAD
   <string>0.1.3</string>
-=======
-  <string>0.1.2</string>
->>>>>>> 添加安全区域测试
   <key>CFBundleSignature</key>
   <string>????</string>
   <key>CFBundleVersion</key>

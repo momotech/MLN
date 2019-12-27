@@ -2,7 +2,7 @@
 //  MLNLayoutImageViewNode.m
 //  MLN
 //
-//  Created by tamer on 2019/10/29.
+//  Created by MoMo on 2019/10/29.
 //
 
 #import "MLNLayoutImageViewNode.h"
