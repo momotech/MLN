@@ -63,7 +63,7 @@ LUA_EXPORT_BEGIN(MLNSafeAreaAdapter)
 LUA_EXPORT_PROPERTY(insetsTop, "setInsetsTop:", "insetsTop", MLNSafeAreaAdapter)
 LUA_EXPORT_PROPERTY(insetsBottom, "setInsetsBottom:", "insetsBottom", MLNSafeAreaAdapter)
 LUA_EXPORT_PROPERTY(insetsLeft, "setInsetsLeft:", "insetsLeft", MLNSafeAreaAdapter)
-LUA_EXPORT_PROPERTY(insetsRight, "setInsetsRight", "insetsRight", MLNSafeAreaAdapter)
+LUA_EXPORT_PROPERTY(insetsRight, "setInsetsRight:", "insetsRight", MLNSafeAreaAdapter)
 LUA_EXPORT_END(MLNSafeAreaAdapter, SafeAreaAdapter, NO, NULL, NULL)
 
 @end
