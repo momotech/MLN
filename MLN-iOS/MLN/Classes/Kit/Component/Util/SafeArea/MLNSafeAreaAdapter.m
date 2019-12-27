@@ -33,8 +33,8 @@
 
 - (void)setInsetsLeft:(CGFloat)insetsLeft
 {
-    if (_insetsBottom != insetsLeft) {
-        _insetsBottom = insetsLeft;
+    if (_insetsLeft != insetsLeft) {
+        _insetsLeft = insetsLeft;
         [self didUpdateInsets];
     }
 }
