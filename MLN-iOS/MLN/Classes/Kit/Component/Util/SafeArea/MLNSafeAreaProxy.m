@@ -169,7 +169,7 @@
         
         if (CGRectGetMaxX(frame) >= window.frame.size.width) {
             if (_safeArea & MLNSafeAreaRight) {
-                safeAreaInset.bottom = [self safeAreaRight];
+                safeAreaInset.right = [self safeAreaRight];
                 hasUpdated = YES;
             }
         }
