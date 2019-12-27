@@ -315,10 +315,10 @@ static const void *kLuaStartDeceleratingCallback = &kLuaStartDeceleratingCallbac
 {
     if(self.mln_horizontal) {
         point.x = point.x < 0 ? 0 : point.x;
-        [self setContentOffset:CGPointMake(point.x, 0)];
+        [self setContentOffset:CGPointMake(point.x, 0) animated:NO];
     } else {
         point.y = point.y < 0 ? 0 : point.y;
-        [self setContentOffset:CGPointMake(0, point.y)];
+        [self setContentOffset:CGPointMake(0, point.y) animated:NO];
     }
 }
 
