@@ -13,7 +13,11 @@
   <key>CFBundlePackageType</key>
   <string>BNDL</string>
   <key>CFBundleShortVersionString</key>
+<<<<<<< HEAD
   <string>0.1.0</string>
+=======
+  <string>0.1.3</string>
+>>>>>>> 4f8c74f... Pod install
   <key>CFBundleSignature</key>
   <string>????</string>
   <key>CFBundleVersion</key>
