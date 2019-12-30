@@ -6,11 +6,13 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <MLN/MLNKit.h>
+#import "MLNKit.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface MLNDebugCodeCoverageFunction : NSObject<MLNGlobalFuncExportProtocol>
+
++ (void)updateLuaBundlePath:(NSString *)luaBundlePath;
 
 @end
 

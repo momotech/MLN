@@ -6,7 +6,6 @@
 //
 
 #import "MLNDebugCodeCoverageFunction.h"
-#import "MLNHotReload.h"
 #import "MLNExporter.h"
 #import "MLNServer.h"
 
@@ -38,20 +37,27 @@ static int mln_clearCodeCoverageResult(lua_State *L) {
         const char *fileName = lua_tostring(L, -1);
         lua_pop(L, 1); // remove value and reserve key
         if (!fileName) continue;
-        NSString *path = [[MLNHotReload getInstance].luaBundlePath stringByAppendingPathComponent:[NSString stringWithUTF8String:fileName]];
-        if ([[NSFileManager defaultManager] fileExistsAtPath:path]) {
-            NSError *error = nil;
-            [[NSFileManager defaultManager] removeItemAtPath:path error:&error];
-            NSCAssert(error == nil, error.localizedDescription);
+        if (_luaBundlePath) {
+            NSString *path = [_luaBundlePath stringByAppendingPathComponent:[NSString stringWithUTF8String:fileName]];
+            if ([[NSFileManager defaultManager] fileExistsAtPath:path]) {
+                NSError *error = nil;
+                [[NSFileManager defaultManager] removeItemAtPath:path error:&error];
+                NSCAssert(error == nil, error.localizedDescription);
+            }
         }
     }
     return 0;
 }
 
 static int mln_luaBundlePath(lua_State *L) {
-    NSString *path = [MLNHotReload getInstance].luaBundlePath;
-    lua_pushstring(L, path.UTF8String);
+    lua_pushstring(L, _luaBundlePath.UTF8String);
     return 1;
+}
+
+static NSString *_luaBundlePath = nil;
++ (void)updateLuaBundlePath:(NSString *)luaBundlePath
+{
+    _luaBundlePath = luaBundlePath;
 }
 
 #pragma mark - Export

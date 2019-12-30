@@ -39,6 +39,14 @@ Pod::Spec.new do |s|
       pb.vendored_libraries = 'MLN-iOS/MLNDevTool/Classes/Protobuf/**/*.a'
     end
     
+    s.subspec 'Conn' do |conn|
+      conn.name = 'Conn'
+      conn.framework = 'Foundation', 'UIKit', 'CoreGraphics', 'AVFoundation'
+      conn.source_files = 'MLN-iOS/MLNDevTool/Classes/Conn/**/*.{h,m,c}'
+      conn.public_header_files = 'MLN-iOS/MLNDevTool/Classes/Conn/**/*.h'
+      conn.dependency  'MLNDevTool/Protobuf'
+    end
+    
     s.subspec 'DevTool' do |d|
       d.name = 'DevTool'
       d.source_files = 'MLN-iOS/MLNDevTool/Classes/DevTool/**/*.{h,m,c}'
@@ -48,6 +56,7 @@ Pod::Spec.new do |s|
         'MLNDevTool_UI' => 'MLN-iOS/MLNDevTool/Classes/DevTool/UI/**/Assets/*.{png,xib}'
       }
       d.dependency 'MLN', '~> 1.0.0.2'
+      d.dependency  'MLNDevTool/Conn'
     end
 
     s.subspec 'Performance' do |perf|
@@ -56,15 +65,7 @@ Pod::Spec.new do |s|
       perf.source_files = 'MLN-iOS/MLNDevTool/Classes/Performance/**/*.{h,m,c}'
       perf.public_header_files = 'MLN-iOS/MLNDevTool/Classes/Performance/**/*.h'
     end
-    
-    s.subspec 'Conn' do |conn|
-      conn.name = 'Conn'
-      conn.framework = 'Foundation', 'UIKit', 'CoreGraphics', 'AVFoundation'
-      conn.source_files = 'MLN-iOS/MLNDevTool/Classes/Conn/**/*.{h,m,c}'
-      conn.public_header_files = 'MLN-iOS/MLNDevTool/Classes/Conn/**/*.h'
-      conn.dependency  'MLNDevTool/Protobuf'
-    end
-    
+        
     s.subspec 'Offline' do |o|
         o.name = 'Offline'
         o.source_files = 'MLN-iOS/MLNDevTool/Classes/Offline/**/*.{h,m,c}'

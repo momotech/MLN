@@ -14,6 +14,7 @@
 #import "MLNHotReloadPresenter.h"
 #import "MLNServerManager.h"
 #import "MLNKitInstanceFactory.h"
+#import "MLNDebugCodeCoverageFunction.h"
 
 @interface MLNHotReload () <MLNKitInstanceErrorHandlerProtocol, MLNKitInstanceDelegate, MLNServerManagerDelegate, MLNDebugPrintObserver, MLNServerListenerProtocol, MLNHotReloadPresenterDelegate> {
     int _usbPort;
@@ -62,7 +63,7 @@ static MLNHotReload *sharedInstance;
 
 - (void)willEnterForeground:(NSNotification *)notification
 {
-   [UIApplication sharedApplication].idleTimerDisabled = YES;
+    [UIApplication sharedApplication].idleTimerDisabled = YES;
 }
 
 - (void)didEnterBackground:(NSNotification *)notification
@@ -220,6 +221,11 @@ static MLNHotReload *sharedInstance;
 - (void)server:(MLNServer *)server onDisconnected:(NSString *)ip port:(int)port error:(NSError *)error
 {
     [self.presenter tip:@"连接断开" duration:0.3 delay:1.f];
+}
+
+- (void)server:(MLNServer *)server onMessage:(id)message
+{
+    [MLNDebugCodeCoverageFunction updateLuaBundlePath:self.luaBundlePath];
 }
 
 #pragma mark - MLNLogDelegate

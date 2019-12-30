@@ -6,7 +6,7 @@
 //
 
 #import "MLNBlock+HotReload.h"
-#import <MLN/MLNKit.h>
+#import "MLNKit.h"
 
 @implementation MLNBlock (HotReload)
 

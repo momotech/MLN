@@ -6,7 +6,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <MLN/MLNKit.h>
+#import "MLNKit.h"
 
 @protocol MLNDebugPrintObserver <NSObject>
 
