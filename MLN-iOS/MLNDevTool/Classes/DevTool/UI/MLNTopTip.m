@@ -6,7 +6,7 @@
 //
 
 #import "MLNTopTip.h"
-#import <MLNKit.h>
+#import "MLNKit.h"
 
 #define kTopTipLabelHeight 24
 #define kStatusBarHeight [MLNSystem lua_stateBarHeight]

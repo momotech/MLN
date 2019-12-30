@@ -1,1 +1,0 @@
-../../../../../MLNDevTool/Classes/DevTool/Util/QRCode/MLNQRCodeHistoryViewControllerAdapter.h

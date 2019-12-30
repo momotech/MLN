@@ -23,7 +23,11 @@
     {
       "name": "Protobuf",
       "source_files": "MLN-iOS/MLNDevTool/Classes/Protobuf/**/*.{h,m,c,a}",
-      "vendored_libraries": "MLN-iOS/MLNDevTool/Classes/Protobuf/**/*.a"
+      "vendored_libraries": "MLN-iOS/MLNDevTool/Classes/Protobuf/**/*.a",
+      "pod_target_xcconfig": {
+        "HEADER_SEARCH_PATHS": "\"$(SRCROOT)/../../MLNDevTool/Classes/Protobuf/include\"",
+        "ENABLE_BITCODE": "NO"
+      }
     },
     {
       "name": "Conn",

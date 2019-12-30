@@ -1,4 +1,4 @@
-module Pods_MLN_Tests {
+framework module Pods_MLN_Tests {
   umbrella header "Pods-MLN_Tests-umbrella.h"
 
   export *

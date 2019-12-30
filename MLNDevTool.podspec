@@ -37,6 +37,9 @@ Pod::Spec.new do |s|
       pb.name = 'Protobuf'
       pb.source_files = 'MLN-iOS/MLNDevTool/Classes/Protobuf/**/*.{h,m,c,a}'
       pb.vendored_libraries = 'MLN-iOS/MLNDevTool/Classes/Protobuf/**/*.a'
+      pb.pod_target_xcconfig = { 'HEADER_SEARCH_PATHS' => '"$(SRCROOT)/../../MLNDevTool/Classes/Protobuf/include"',
+          'ENABLE_BITCODE' => 'NO'
+      }
     end
     
     s.subspec 'Conn' do |conn|

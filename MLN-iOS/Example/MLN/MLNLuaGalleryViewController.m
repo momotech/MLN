@@ -15,11 +15,11 @@
 #import "MLNKitInstanceHandlersManager.h"
 #import "MLNHotReloadViewController.h"
 #import "MLNOfflineViewController.h"
-#import <MLNDevTool/MLNFloatingMenu.h>
+#import "MLNFloatingMenu.h"
 #import "MLNGalleryViewController.h"
 #import "MLNKitViewController.h"
-#import <MLNDevTool/MLNFPSLabel.h>
-#import <MLNDevTool/MLNLoadTimeStatistics.h>
+#import "MLNFPSLabel.h"
+#import "MLNLoadTimeStatistics.h"
 #import "MLNGalleryNative.h"
 #import "MLNLuaPageViewController.h"
 #import "MLNGalleryMainViewController.h"

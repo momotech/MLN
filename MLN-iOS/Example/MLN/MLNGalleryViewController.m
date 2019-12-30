@@ -13,8 +13,8 @@
 #import "MLNGlobalFuncTest.h"
 #import "MLNHotReloadViewController.h"
 #import "MLNOfflineViewController.h"
-#import <MLNDevTool/MLNFPSLabel.h>
-#import <MLNDevTool/MLNLoadTimeStatistics.h>
+#import "MLNFPSLabel.h"
+#import "MLNLoadTimeStatistics.h"
 #import "MLNGalleryMainViewController.h"
 
 @interface MLNGalleryViewController () <MLNKitInstanceDelegate, MLNKitViewControllerDelegate>

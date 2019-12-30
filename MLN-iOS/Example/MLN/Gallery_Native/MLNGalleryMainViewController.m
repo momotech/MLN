@@ -16,7 +16,7 @@
 #import "UIImage+MLNResize.h"
 #import <UIView+Toast.h>
 #import "MLNLoadTimeStatistics.h"
-#import <MLNDevTool/MLNFPSLabel.h>
+#import "MLNFPSLabel.h"
 #import "MLNGalleryNative.h"
 
 @interface MLNGalleryMainViewController ()<UITabBarControllerDelegate>
