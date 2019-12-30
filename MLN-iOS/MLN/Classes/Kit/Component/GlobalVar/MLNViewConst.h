@@ -7,6 +7,7 @@
 
 #import <Foundation/Foundation.h>
 #import "MLNGlobalVarExportProtocol.h"
+#import "MLNSafeAreaViewProtocol.h"
 #import "llimits.h"
 
 typedef NS_OPTIONS(NSUInteger, MLNRectCorner)  {
@@ -102,6 +103,7 @@ typedef enum : NSUInteger {
     //    点9图模式，需要忽略contentMode设置
     MLNImageViewModeNine,
 } MLNImageViewMode;
+
 
 NS_ASSUME_NONNULL_BEGIN
 

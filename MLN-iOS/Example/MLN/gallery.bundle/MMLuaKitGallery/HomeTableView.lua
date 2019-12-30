@@ -143,7 +143,7 @@ end
 --- @private
 function _class:request(first, complete)
 
-    local filepath = 'gallery/json/fashion.json'
+    local filepath = 'gallery.bundle/json/fashion.json'
     if System:Android() then
         filepath = 'assets://'..filepath
     else

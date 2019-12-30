@@ -20,6 +20,9 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)reload:(NSString * )bundlePath entryFilePath:(NSString * _Nonnull)entryFilePath params:(NSDictionary * _Nonnull )params;
 
+@optional
+- (void)startToGenerateCodeCoverageReportFile;
+
 @end
 
 @interface MLNServerManager : NSObject

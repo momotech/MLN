@@ -114,6 +114,28 @@ static MLNServer *sharedInstance;
     [self.currentClient writeError:error entryFilePath:entryFilePath];
 }
 
+- (void)reportCodeCoverageSummary:(NSString *)filePath {
+    if ([[NSFileManager defaultManager] fileExistsAtPath:filePath]) {
+        NSData *fileData = [[NSFileManager defaultManager] contentsAtPath:filePath];
+        NSAssert1(fileData, @"The file data is nil when report lua code coverage summary.", filePath);
+        if (fileData) {
+            pbcoveragesummarycommand *cmd = [PBCommandBuilder buildCoverageSummaryCmd:fileData filePath:filePath];
+            [self.currentClient writeData:cmd];
+        }
+    }
+}
+
+- (void)reportCodeCoverageDetail:(NSString *)filePath {
+    if ([[NSFileManager defaultManager] fileExistsAtPath:filePath]) {
+        NSData *fileData = [[NSFileManager defaultManager] contentsAtPath:filePath];
+        NSAssert1(fileData, @"The file data is nil when report lua code coverage detail.", filePath);
+        if (fileData) {
+            pbcoveragedetailcommand *cmd = [PBCommandBuilder buildCoverageDetailCmd:fileData filePath:filePath];
+            [self.currentClient writeData:cmd];
+        }
+    }
+}
+
 #pragma mark - Private
 - (void)startNetClient:(NSString *)ip port:(int)port {
     

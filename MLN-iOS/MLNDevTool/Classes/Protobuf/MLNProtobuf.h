@@ -2,19 +2,11 @@
 //  MLNProtobuf.h
 //  MLNProtobuf
 //
-//  Created by tamer on 2019/12/24.
+//  Created by MoMo on 2019/12/24.
 //  Copyright © 2019 momo. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
-
-//! Project version number for MLNProtobuf.
-FOUNDATION_EXPORT double MLNProtobufVersionNumber;
-
-//! Project version string for MLNProtobuf.
-FOUNDATION_EXPORT const unsigned char MLNProtobufVersionString[];
-
-// In this header, you should import all the public headers of your framework using statements like #import <MLNProtobuf/PublicHeader.h>
 
 #import "PbbaseCommand.pbobjc.h"
 #import "PbdeviceCommand.pbobjc.h"
@@ -30,3 +22,6 @@ FOUNDATION_EXPORT const unsigned char MLNProtobufVersionString[];
 #import "PbrenameCommand.pbobjc.h"
 #import "PbmoveCommand.pbobjc.h"
 #import "PbcreateCommand.pbobjc.h"
+#import "PbcoverageSummaryCommand.pbobjc.h"
+#import "PbgenerateReportCommand.pbobjc.h"
+#import "PbdetailReportCommand.pbobjc.h"
