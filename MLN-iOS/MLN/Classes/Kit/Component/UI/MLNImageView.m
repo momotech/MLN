@@ -293,25 +293,32 @@
     MLNKitLuaAssert(imageLoder, @"The image delegate must not be nil!");
     MLNKitLuaAssert([imageLoder respondsToSelector:@selector(view:loadImageWithPath:completed:)], @"-[imageLoder view:loadImageWithPath:completed:] was not found!");
     NSMutableArray *imageArray = [NSMutableArray arrayWithCapacity:urlArray.count];
+    NSMutableArray *failImageArray = [NSMutableArray arrayWithCapacity:urlArray.count];
+    for (NSUInteger i = 0; i < urlArray.count; i++) {
+        [imageArray addObject:[NSNull null]];
+        [failImageArray addObject:[urlArray objectAtIndex:i]];
+    }
     dispatch_group_t imagesGroup = dispatch_group_create();
-    for (NSString *urlStr in urlArray) {
+    for (NSUInteger i = 0; i < urlArray.count; i++) {
+        NSString *urlStr = [urlArray objectAtIndex:i];
         dispatch_group_enter(imagesGroup);
         [imageLoder view:self loadImageWithPath:urlStr completed:^(UIImage *image, NSError *error, NSString *imagePath) {
-            if (image) {
-                [imageArray addObject:image];
+            doInMainQueue(if (image) {
+                [imageArray replaceObjectAtIndex:i withObject:image];
+                [failImageArray removeObjectAtIndex:i];
             }
-            dispatch_group_leave(imagesGroup);
+                          dispatch_group_leave(imagesGroup);)
         }];
     }
     dispatch_group_notify(imagesGroup, dispatch_get_main_queue(), ^{
-        if (imageArray.count == urlArray.count) {
+        if (failImageArray.count <= 0) {
             [self setImage:imageArray.lastObject];
             [self setAnimationImages:imageArray];
             [self setAnimationDuration:duration];
             [self setAnimationRepeatCount:repeat?0:1];
             [self startAnimating];
         } else {
-            MLNKitLuaAssert(NO, @"Some images download failed!");
+            MLNKitLuaAssert(NO, @"images: %@ download failed!", failImageArray);
         }
     });
 }
