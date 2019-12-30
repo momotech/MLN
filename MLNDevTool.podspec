@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
     s.name             = 'MLNDevTool'
-    s.version          = '0.1.5'
+    s.version          = '0.1.6'
     s.summary          = 'Debug Tool of MLN.'
     
     # This description is used to generate tags and improve search results.
@@ -37,7 +37,7 @@ Pod::Spec.new do |s|
       pb.name = 'Protobuf'
       pb.source_files = 'MLN-iOS/MLNDevTool/Classes/Protobuf/**/*.{h,m,c,a}'
       pb.vendored_libraries = 'MLN-iOS/MLNDevTool/Classes/Protobuf/**/*.a'
-      pb.pod_target_xcconfig = { 'HEADER_SEARCH_PATHS' => '"$(SRCROOT)/../../MLNDevTool/Classes/Protobuf/include"'
+      pb.pod_target_xcconfig = { 'HEADER_SEARCH_PATHS' => '"$(SRCROOT)/../../MLNDevTool/Classes/Protobuf/include" "$(SRCROOT)/MLNDevTool/MLN-iOS/MLNDevTool/Classes/Protobuf/include"'
       }
     end
     
