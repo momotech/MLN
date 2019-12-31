@@ -305,7 +305,7 @@
         [imageLoder view:self loadImageWithPath:urlStr completed:^(UIImage *image, NSError *error, NSString *imagePath) {
             doInMainQueue(if (image) {
                 [imageArray replaceObjectAtIndex:i withObject:image];
-                [failImageArray removeObjectAtIndex:i];
+                [failImageArray removeObject:urlStr];
             }
                           dispatch_group_leave(imagesGroup);)
         }];
