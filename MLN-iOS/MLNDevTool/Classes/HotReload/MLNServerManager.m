@@ -6,7 +6,7 @@
 //
 
 #import "MLNServerManager.h"
-#import "MLNKit.h"
+#import <MLN/MLNKit.h>
 #import "LNFileManager.h"
 #import "MLNServer.h"
 #import "PBCommandBuilder.h"

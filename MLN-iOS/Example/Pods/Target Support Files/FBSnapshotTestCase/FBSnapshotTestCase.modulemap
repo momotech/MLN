@@ -1,4 +1,4 @@
-framework module FBSnapshotTestCase {
+module FBSnapshotTestCase {
   umbrella header "FBSnapshotTestCase-umbrella.h"
 
   export *

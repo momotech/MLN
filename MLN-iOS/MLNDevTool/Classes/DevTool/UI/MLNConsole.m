@@ -6,7 +6,7 @@
 //
 
 #import "MLNConsole.h"
-#import "MLNKit.h"
+#import <MLN/MLNKit.h>
 #import "MLNUIBundle.h"
 
 // Close

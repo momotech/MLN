@@ -6,7 +6,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "MLNKit.h"
+#import <MLN/MLNKit.h>
 #import "MLNDevToolProtocol.h"
 #define kLuaHotReloadHost  @"https://hotreload.com"
 

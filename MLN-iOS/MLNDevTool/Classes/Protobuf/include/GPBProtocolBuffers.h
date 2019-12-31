@@ -63,14 +63,14 @@
  #import <Protobuf/Type.pbobjc.h>
  #import <Protobuf/Wrappers.pbobjc.h>
 #else
- #import "google/protobuf/Any.pbobjc.h"
- #import "google/protobuf/Api.pbobjc.h"
- #import "google/protobuf/Duration.pbobjc.h"
- #import "google/protobuf/Empty.pbobjc.h"
- #import "google/protobuf/FieldMask.pbobjc.h"
- #import "google/protobuf/SourceContext.pbobjc.h"
- #import "google/protobuf/Struct.pbobjc.h"
- #import "google/protobuf/Timestamp.pbobjc.h"
- #import "google/protobuf/Type.pbobjc.h"
- #import "google/protobuf/Wrappers.pbobjc.h"
+ #import "Any.pbobjc.h"
+ #import "Api.pbobjc.h"
+ #import "Duration.pbobjc.h"
+ #import "Empty.pbobjc.h"
+ #import "FieldMask.pbobjc.h"
+ #import "SourceContext.pbobjc.h"
+ #import "Struct.pbobjc.h"
+ #import "Timestamp.pbobjc.h"
+ #import "Type.pbobjc.h"
+ #import "Wrappers.pbobjc.h"
 #endif

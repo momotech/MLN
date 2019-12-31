@@ -8,7 +8,7 @@
 #ifndef MLNDevToolProtocol_h
 #define MLNDevToolProtocol_h
 
-#import "MLNKit.h"
+#import <MLN/MLNKit.h>
 
 @protocol MLNDevToolProtocol <NSObject>
 

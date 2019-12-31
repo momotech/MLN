@@ -34,27 +34,27 @@ PODS:
   - MLN/Kit (1.0.0.2):
     - MLN/Core
   - MLN/LuaLib (1.0.0.2)
-  - MLNDevTool (0.1.5):
-    - MLNDevTool/Conn (= 0.1.5)
-    - MLNDevTool/DevTool (= 0.1.5)
-    - MLNDevTool/HotReload (= 0.1.5)
-    - MLNDevTool/Offline (= 0.1.5)
-    - MLNDevTool/Performance (= 0.1.5)
-    - MLNDevTool/Protobuf (= 0.1.5)
-  - MLNDevTool/Conn (0.1.5):
+  - MLNDevTool (0.1.7):
+    - MLNDevTool/Conn (= 0.1.7)
+    - MLNDevTool/DevTool (= 0.1.7)
+    - MLNDevTool/HotReload (= 0.1.7)
+    - MLNDevTool/Offline (= 0.1.7)
+    - MLNDevTool/Performance (= 0.1.7)
+    - MLNDevTool/Protobuf (= 0.1.7)
+  - MLNDevTool/Conn (0.1.7):
     - MLNDevTool/Protobuf
-  - MLNDevTool/DevTool (0.1.5):
+  - MLNDevTool/DevTool (0.1.7):
     - MLN (~> 1.0.0.2)
     - MLNDevTool/Conn
-  - MLNDevTool/HotReload (0.1.5):
+  - MLNDevTool/HotReload (0.1.7):
     - MLN (~> 1.0.0.2)
     - MLNDevTool/Conn
     - MLNDevTool/DevTool
-  - MLNDevTool/Offline (0.1.5):
+  - MLNDevTool/Offline (0.1.7):
     - MLN (~> 1.0.0.2)
     - MLNDevTool/DevTool
-  - MLNDevTool/Performance (0.1.5)
-  - MLNDevTool/Protobuf (0.1.5)
+  - MLNDevTool/Performance (0.1.7)
+  - MLNDevTool/Protobuf (0.1.7)
   - SDCycleScrollView (1.80):
     - SDWebImage (>= 5.0.0)
   - SDWebImage (5.3.3):
@@ -100,12 +100,12 @@ SPEC CHECKSUMS:
   FBSnapshotTestCase: 094f9f314decbabe373b87cc339bea235a63e07a
   MJRefresh: 7798e16e53a5ef7f332dd05b27664db4e29530fd
   MLN: 85551f25e4862be5609d90743fd344d830e6dc93
-  MLNDevTool: be3d1343cb60cd9dd804a6539c1c9baa5f1814cd
+  MLNDevTool: 315a2b1a7739c7e0e3b20e5275bcba9d0c57634b
   SDCycleScrollView: b3c9a5ed840c771c4938978174c7c9d9feefeb96
   SDWebImage: 51ab1ce3ebd20dec6665ae8ba25c928da323db41
   Specta: 3e1bd89c3517421982dc4d1c992503e48bd5fe66
   Toast: 91b396c56ee72a5790816f40d3a94dd357abc196
 
-PODFILE CHECKSUM: f68e1a2c41420310043c70a87bfcf75344554914
+PODFILE CHECKSUM: bc865b6497324af73b09eb479514b3c55ff1419c
 
 COCOAPODS: 1.7.5

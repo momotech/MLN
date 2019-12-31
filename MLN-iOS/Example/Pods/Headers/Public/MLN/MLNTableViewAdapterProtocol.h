@@ -1,0 +1,1 @@
+../../../../../MLN/Classes/Kit/Component/UI/TableView/MLNTableViewAdapterProtocol.h

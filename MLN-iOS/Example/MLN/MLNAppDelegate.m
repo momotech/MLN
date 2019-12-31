@@ -12,8 +12,8 @@
 #import <UIImageView+WebCache.h>
 #import <UIImageView+AFNetworking.h>
 #import "MLNGalleryMainViewController.h"
-#import <MLNFile.h>
-#import <MLNKitEnvironment.h>
+#import <MLN/MLNFile.h>
+#import <MLN/MLNKitEnvironment.h>
 
 #import "MLNMyHttpHandler.h"
 #import "MLNMyRefreshHandler.h"

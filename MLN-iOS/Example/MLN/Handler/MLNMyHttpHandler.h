@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "MLNKit.h"
+#import <MLN/MLNKit.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

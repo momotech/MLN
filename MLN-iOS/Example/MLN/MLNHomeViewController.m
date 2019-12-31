@@ -7,7 +7,7 @@
 //
 
 #import "MLNHomeViewController.h"
-#import "MLNKit.h"
+#import <MLN/MLNKit.h>
 #import "MLNOfflineViewController.h"
 #import "MLNHotReloadViewController.h"
 #import "MLNMyRefreshHandler.h"
