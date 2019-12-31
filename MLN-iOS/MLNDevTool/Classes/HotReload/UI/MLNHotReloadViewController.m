@@ -55,9 +55,20 @@
             [instance registerClasses:sself.regClasses error:NULL];
         }
     };
-    [MLNHotReload getInstance].extraInfoCallback = ^NSDictionary * _Nonnull{
+    [MLNHotReload getInstance].extraInfoCallback = ^NSDictionary * _Nonnull(NSDictionary * _Nonnull params) {
         __strong typeof(wself) sself = wself;
-        return sself.extraInfo;
+         NSMutableDictionary *extraInfo = nil;
+        if (params) {
+            extraInfo = [NSMutableDictionary dictionaryWithDictionary:params];
+        }
+        if (sself.extraInfo) {
+            if (extraInfo) {
+                [extraInfo setDictionary:sself.extraInfo];
+            } else {
+                extraInfo = [NSMutableDictionary dictionaryWithDictionary:sself.extraInfo];
+            }
+        }
+        return extraInfo;
     };
     [[MLNHotReload getInstance] setUpdateCallback:^(MLNKitInstance * _Nonnull instance) {
         __strong typeof(wself) sself = wself;
