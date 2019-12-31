@@ -23,6 +23,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy, readonly) NSString *luaBundlePath;
 @property (nonatomic, copy, readonly) NSString *entryFilePath;
 @property (nonatomic, copy, readonly) NSString *relativeEntryFilePath;
+@property (nonatomic, assign, getter=isOpenAssert) BOOL openAssert;
 
 @end
 
