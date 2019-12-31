@@ -142,7 +142,10 @@ public class UDViewPager<T extends FrameLayout & IViewPager> extends UDViewGroup
 //        a.setViewPager(getView());
             a.setCanPreRenderCount(preRenderCount != 0);
 
-            getViewPager().setScrollable(checkSinglePage(a));
+            if(!checkSinglePage(adapter.getAdapter())) {
+                getViewPager().setScrollable(false);
+            }
+
             setPageIndicator();
         }
         return null;
@@ -153,7 +156,9 @@ public class UDViewPager<T extends FrameLayout & IViewPager> extends UDViewGroup
         if (adapter != null) {
             adapter.reloadData();
         }
-        getViewPager().setScrollable(checkSinglePage(adapter.getAdapter()));
+        if(!checkSinglePage(adapter.getAdapter())) {
+            getViewPager().setScrollable(false);
+        }
 
         // 配合IOS 回调一致性
         callbackCellDidDisAppear(getViewPager().getCurrentItem());
