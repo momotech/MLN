@@ -51,6 +51,7 @@ static MLNHotReload *sharedInstance;
         _serverManager = [[MLNServerManager alloc] initWithDelegate:self listener:self];
         _presenter = [[MLNHotReloadPresenter alloc] init];
         _presenter.delegate = self;
+        _openAssert = YES;
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(willEnterForeground:) name:UIApplicationWillEnterForegroundNotification object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didEnterBackground:) name:UIApplicationDidEnterBackgroundNotification object:nil];
         [MLNDebugPrintFunction addObserver:self];
@@ -204,7 +205,7 @@ static MLNHotReload *sharedInstance;
 #pragma mark - MLNLogDelegate
 - (BOOL)canHandleAssert:(MLNKitInstance *)instance
 {
-    return YES;
+    return self.isOpenAssert;
 }
 
 - (void)instance:(MLNKitInstance *)instance error:(NSString *)error
