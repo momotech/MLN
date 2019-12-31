@@ -167,14 +167,11 @@ static MLNHotReload *sharedInstance;
         // 参数
         NSMutableDictionary *extraInfo = nil;
         if (self.extraInfoCallback) {
-            NSDictionary *tmp =  self.extraInfoCallback();
+            NSDictionary *tmp =  self.extraInfoCallback(params);
             if (tmp) {
                 extraInfo = [NSMutableDictionary dictionaryWithDictionary:tmp];
             } else {
                 extraInfo = [NSMutableDictionary dictionary];
-            }
-            if (params) {
-                [extraInfo setValuesForKeysWithDictionary:params];
             }
         }
         //TODO: - 设置Lua源

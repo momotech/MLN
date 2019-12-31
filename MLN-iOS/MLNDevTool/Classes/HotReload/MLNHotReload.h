@@ -15,7 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface MLNHotReload : NSObject <MLNDevToolProtocol>
 
 @property (nonatomic, copy) void(^registerBridgeClassesCallback)(MLNKitInstance *instance);
-@property (nonatomic, copy) NSDictionary *(^extraInfoCallback)(void);
+@property (nonatomic, copy) NSDictionary *(^extraInfoCallback)(NSDictionary *params);
 @property (nonatomic, copy) void(^setupInstanceCallback)(MLNKitInstance *instance);
 @property (nonatomic, copy) void(^updateCallback)(MLNKitInstance *instance);
 @property (nonatomic, weak) UIViewController<MLNViewControllerProtocol> *viewController;
