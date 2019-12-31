@@ -9,7 +9,7 @@
 #import "UIImage+MLNKit.h"
 #import "MLNKitHeader.h"
 #import "MLNImageLoaderProtocol.h"
-#import "MLNKit.h"
+#import <MLN/MLNKit.h>
 
 @implementation MLNCornerImageLoader
 
