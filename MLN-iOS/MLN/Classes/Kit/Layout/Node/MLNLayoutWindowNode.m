@@ -119,24 +119,6 @@
     return CGSizeMake(self.measuredWidth, self.measuredHeight);
 }
 
-- (void)onMeasure
-{
-    CGFloat superWidth = self.supernode.width > 0 ? self.supernode.width : (self.targetView.superview.frame.size.width - self.supernode.offsetWidth);
-    CGFloat superHeight = self.supernode.height > 0 ? self.supernode.height : (self.targetView.superview.frame.size.height - self.supernode.offsetWidth);
-    CGFloat usableZoneWidth = superWidth - self.supernode.paddingLeft - self.supernode.paddingRight;
-    CGFloat usableZoneHeight = superHeight - self.supernode.paddingTop - self.supernode.paddingBottom;
-    [self onMeasureWithMaxWidth:usableZoneWidth maxHeight:usableZoneHeight];
-}
-
-- (void)onMeasureWithMaxWidth:(CGFloat)maxWidth maxHeight:(CGFloat)maxHeight
-{
-    if (self.enable) {
-        maxWidth -= self.marginLeft + self.marginRight;
-        maxHeight -= self.marginTop + self.marginBottom;
-    }
-    [self measureSizeWithMaxWidth:maxWidth maxHeight:maxHeight];
-}
-
 - (void)layoutSubnodes
 {
     CGFloat layoutZoneWidth = self.measuredWidth - self.paddingLeft - self.paddingRight - self.safeAreaInsets.left - self.safeAreaInsets.right;
