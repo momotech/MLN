@@ -50,8 +50,9 @@
     for (NSUInteger i = 0; i < subnodes_t.count; i++) {
         MLNLayoutNode *subnode = subnodes_t[i];
         // need resize for match parent node
-        if (subnode.widthType == MLNLayoutMeasurementTypeMatchParent ||
-            subnode.heightType == MLNLayoutMeasurementTypeMatchParent) {
+        if ((subnode.widthType == MLNLayoutMeasurementTypeMatchParent ||
+            subnode.heightType == MLNLayoutMeasurementTypeMatchParent) &&
+            !subnode.isGone) {
             [measureMatchParentNodes addObject:subnode];
         }
         CGFloat subMaxWidth = usableZoneWidth - subnode.marginLeft - subnode.marginRight;
