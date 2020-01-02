@@ -8,14 +8,15 @@
 #import "MLNSafeAreaProxy.h"
 #import "MLNDevice.h"
 #import "MLNSafeAreaAdapter.h"
+#import "UIView+MLNLayout.h"
 
 #define kStatusBarDefaultHeight 20.f
 #define kStatusBarBusyHeight 40.f
 #define kIphoneXStatusBarDefaultHeight 44.f
 #define kIphoneXHomeIndicatorHeight 34.f
-#define kNavigationBarFrame @"frame"
-#define kNavigationBarHidden @"hidden"
-#define kNavigationBarAlpha @"alpha"
+#define kViewrFrame @"frame"
+#define kViewHidden @"hidden"
+#define kViewAlpha @"alpha"
 
 @interface MLNSafeAreaProxy ()
 {
@@ -95,19 +96,19 @@
 - (void)dealloc
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-    [_navigationBar removeObserver:self forKeyPath:kNavigationBarFrame context:nil];
-    [_navigationBar removeObserver:self forKeyPath:kNavigationBarHidden context:nil];
-    [_navigationBar removeObserver:self forKeyPath:kNavigationBarAlpha context:nil];
-    [_safeAreaView removeObserver:self forKeyPath:kNavigationBarFrame context:nil];
+    [_navigationBar removeObserver:self forKeyPath:kViewrFrame context:nil];
+    [_navigationBar removeObserver:self forKeyPath:kViewHidden context:nil];
+    [_navigationBar removeObserver:self forKeyPath:kViewAlpha context:nil];
+    [_safeAreaView removeObserver:self forKeyPath:kViewrFrame context:nil];
 }
 
 - (void)__addObserverWithNavigationBar:(UINavigationBar *)navigationBar safeAreaView:(UIView<MLNSafeAreaViewProtocol> *)safeAreaView
 {
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(resestSafeAreaInsets) name:UIApplicationDidChangeStatusBarFrameNotification object:nil];
-    [safeAreaView addObserver:self forKeyPath:kNavigationBarFrame options:NSKeyValueObservingOptionOld|NSKeyValueObservingOptionNew context:nil];
-    [navigationBar addObserver:self forKeyPath:kNavigationBarFrame options:NSKeyValueObservingOptionOld|NSKeyValueObservingOptionNew context:nil];
-    [navigationBar addObserver:self forKeyPath:kNavigationBarHidden options:NSKeyValueObservingOptionOld|NSKeyValueObservingOptionNew context:nil];
-    [navigationBar addObserver:self forKeyPath:kNavigationBarAlpha options:NSKeyValueObservingOptionOld|NSKeyValueObservingOptionNew context:nil];
+    [safeAreaView addObserver:self forKeyPath:kViewrFrame options:NSKeyValueObservingOptionOld|NSKeyValueObservingOptionNew context:nil];
+    [navigationBar addObserver:self forKeyPath:kViewrFrame options:NSKeyValueObservingOptionOld|NSKeyValueObservingOptionNew context:nil];
+    [navigationBar addObserver:self forKeyPath:kViewHidden options:NSKeyValueObservingOptionOld|NSKeyValueObservingOptionNew context:nil];
+    [navigationBar addObserver:self forKeyPath:kViewAlpha options:NSKeyValueObservingOptionOld|NSKeyValueObservingOptionNew context:nil];
 }
 
 - (CGFloat)__statusBarMaxY
@@ -182,11 +183,12 @@
 #pragma mark - KVO
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context
 {
-    if ((object == self.safeAreaView && [keyPath isEqualToString:kNavigationBarFrame]) ||
-        (object == self.navigationBar && ([keyPath isEqualToString:kNavigationBarFrame] ||
-                                          [keyPath isEqualToString:kNavigationBarHidden] ||
-                                          [keyPath isEqualToString:kNavigationBarAlpha]))) {
+    if ((object == self.safeAreaView && [keyPath isEqualToString:kViewrFrame]) ||
+        (object == self.navigationBar && ([keyPath isEqualToString:kViewrFrame] ||
+                                          [keyPath isEqualToString:kViewHidden] ||
+                                          [keyPath isEqualToString:kViewAlpha]))) {
         [self resestSafeAreaInsets];
+        [self.safeAreaView lua_requestLayout];
     }
 }
 
