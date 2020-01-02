@@ -34,12 +34,12 @@ static int mln_errorFunc_traceback (lua_State *L) {
     if(!lua_isstring(L,1))
         return 1;
     lua_getfield(L,LUA_GLOBALSINDEX,"debug");
-    if(lua_istable(L,-1)) {
+    if(!lua_istable(L,-1)) {
         lua_pop(L,1);
         return 1;
     }
     lua_getfield(L,-1,"traceback");
-    if(lua_isfunction(L,-1)) {
+    if(!lua_isfunction(L,-1)) {
         lua_pop(L,2);
         return 1;
     }
@@ -160,12 +160,31 @@ static int mln_errorFunc_traceback (lua_State *L) {
 {
     lua_State *L = self.state;
     if (L) {
-        lua_getglobal(L, "debug");
-        lua_getfield(L, -1, "traceback");
+        int base = lua_gettop(L);
+         lua_getglobal(L, "debug");
+         if(!lua_istable(L,-1)) {
+             lua_settop(L, base);
+             return @"\ntraceback not found!";
+         }
+         lua_getfield(L,-1,"traceback");
+         if(!lua_isfunction(L,-1)) {
+             lua_settop(L, base);
+             return @"\ntraceback not found!";
+         }
         int iError = lua_pcall(L, 0, 1, 0);
-        return [NSString stringWithFormat:@"Error Code For Traceback: %d \n %s", iError, lua_tostring(L, -1)];
+        if (!lua_isstring(L, -1)) {
+            lua_settop(L, base);
+            return @"\ntraceback not found!";
+        }
+        NSString *msg = nil;
+        const char *s = lua_tostring(L, -1);
+        if (s) {
+            msg = [NSString stringWithFormat:@"\nError Code For Traceback: %d \n %s", iError, lua_tostring(L, -1)];
+        }
+        lua_settop(L, base);
+        return msg;
     }
-    return @"The lua state is released";
+    return @"\nThe lua state is released";
 }
 
 - (int)tracebackCount
