@@ -37,13 +37,10 @@
 
 - (void)lua_addSubview:(UIView *)view
 {
-//    MLNCheckTypeAndNilValue(view, @"View", UIView);
+    //    MLNCheckTypeAndNilValue(view, @"View", UIView);
     [self addSubview:view];
-    if ([view mln_isConvertible]) {
-        // 添加Lua强引用
-        id<MLNEntityExportProtocol> obj = (id<MLNEntityExportProtocol>)view;
-        [obj.mln_luaCore setStrongObjectWithIndex:2 cKey:(__bridge void *)view];
-    }
+    // 添加Lua强引用
+    MLN_Lua_UserData_Retain_With_Index(2, view);
     if (view.lua_node) {
         [(MLNLayoutContainerNode *)self.lua_node addSubnode:view.lua_node];
     }
@@ -54,11 +51,8 @@
     index = index - 1;
     index = index >= 0 && index < self.subviews.count? index : self.subviews.count;
     [self insertSubview:view atIndex:index];
-    if ([view mln_isConvertible]) {
-        // 添加Lua强引用
-        id<MLNEntityExportProtocol> obj = (id<MLNEntityExportProtocol>)view;
-        [obj.mln_luaCore setStrongObjectWithIndex:2 cKey:(__bridge void *)view];
-    }
+    // 添加Lua强引用
+    MLN_Lua_UserData_Retain_With_Index(2, view);
     if (view.lua_node) {
         [(MLNLayoutContainerNode *)self.lua_node insertSubnode:view.lua_node atIndex:index];
     }
@@ -67,11 +61,8 @@
 - (void)lua_removeFromSuperview
 {
     [self removeFromSuperview];
-    if ([self mln_isConvertible]) {
-        // 删除Lua强引用
-        id<MLNEntityExportProtocol> obj = (id<MLNEntityExportProtocol>)self;
-        [obj.mln_luaCore removeStrongObjectForCKey:(__bridge void *)self];
-    }
+    // 删除Lua强引用
+    MLN_Lua_UserData_Release(self);
     if (self.lua_node) {
         [self.lua_node removeFromSupernode];
     }

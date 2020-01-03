@@ -15,7 +15,6 @@
 #import "MLNSizeCahceManager.h"
 #import "MLNCollectionViewCell.h"
 #import "MLNCollectionViewFlowLayout.h"
-#import "MLNCollectionViewGridLayout.h"
 #import "MLNCollectionViewAdapter.h"
 #import "MLNInnerCollectionView.h"
 #import "MLNCollectionViewLayoutProtocol.h"
@@ -25,6 +24,7 @@
 @interface MLNCollectionView()
 @property (nonatomic, strong) MLNInnerCollectionView *innerCollectionView;
 @property (nonatomic, assign) MLNScrollDirection scrollDirection;
+@property (nonatomic, strong) UICollectionViewLayout<MLNCollectionViewLayoutProtocol> *layout;
 @property (nonatomic, assign) NSInteger missionRow;
 @property (nonatomic, assign) NSInteger missionSection;
 @property (nonatomic, assign) BOOL missionAnimated;
@@ -33,6 +33,14 @@
 @end
 
 @implementation MLNCollectionView
+
+- (void)mln_user_data_dealloc
+{
+    // 去除强引用
+    MLN_Lua_UserData_Release(self.adapter);
+    // 去除强引用
+    MLN_Lua_UserData_Release(self.layout);
+}
 
 #pragma mark - Getter & setter
 - (MLNBeforeWaitingTask *)lazyTask
@@ -57,31 +65,32 @@
 {
     MLNCheckTypeAndNilValue(adapter, @"CollectionViewAdapter", [MLNCollectionViewAdapter class])
     if (_adapter != adapter) {
+        // 去除强引用
+        MLN_Lua_UserData_Release(_adapter);
+        // 添加强引用
+        MLN_Lua_UserData_Retain_With_Index(2, adapter);
         _adapter = adapter;
         [self mln_pushLazyTask:self.lazyTask];
     }
 }
 
-- (void)lua_setCollectionViewLayout:(UICollectionViewLayout *)layout
+- (void)lua_setCollectionViewLayout:(UICollectionViewLayout<MLNCollectionViewLayoutProtocol> *)layout
 {
     MLNCheckTypeAndNilValue(layout, @"CollectionViewGridLayout", [UICollectionViewLayout class])
-    if ([layout isKindOfClass:[UICollectionViewFlowLayout class]]) {
-        UICollectionViewFlowLayout *flowLayout = (UICollectionViewFlowLayout *)layout;
-        UICollectionViewScrollDirection scrollDirection = self.innerCollectionView.mln_horizontal? UICollectionViewScrollDirectionHorizontal : UICollectionViewScrollDirectionVertical;
-        flowLayout.scrollDirection = scrollDirection;
+    if (_layout != layout) {
+        // 去除强引用
+        MLN_Lua_UserData_Release(_layout);
+        // 添加强引用
+        MLN_Lua_UserData_Retain_With_Index(2, layout);
+        layout.scrollDirection = self.innerCollectionView.mln_horizontal? MLNScrollDirectionHorizontal : MLNScrollDirectionVertical;
+        _layout = layout;
+        self.innerCollectionView.collectionViewLayout = layout;
     }
-    
-    if ([layout isKindOfClass:[MLNCollectionViewGridLayout class]]) {
-        MLNCollectionViewGridLayout *gridLayout = (MLNCollectionViewGridLayout *)layout;
-        gridLayout.scrollDirection = self.innerCollectionView.mln_horizontal? MLNScrollDirectionHorizontal : MLNScrollDirectionVertical;
-    }
-    
-    self.innerCollectionView.collectionViewLayout = layout;
 }
 
-- (UICollectionViewLayout *)lua_collectionViewLayout
+- (UICollectionViewLayout<MLNCollectionViewLayoutProtocol> *)lua_collectionViewLayout
 {
-    return self.innerCollectionView.collectionViewLayout;
+    return (UICollectionViewLayout<MLNCollectionViewLayoutProtocol> *)self.innerCollectionView.collectionViewLayout;
 }
 
 - (void)lua_setScrollDirection:(MLNScrollDirection)scrollDirection
@@ -109,29 +118,15 @@
 
 - (void)mln_in_setScrollDirection:(MLNScrollDirection)scrollDirection
 {
-    if ([self.innerCollectionView.collectionViewLayout isKindOfClass:[UICollectionViewFlowLayout class]]) {
-        ((UICollectionViewFlowLayout *)self.innerCollectionView.collectionViewLayout).scrollDirection = (UICollectionViewScrollDirection)scrollDirection;
-    }
-    
-    if ([self.innerCollectionView.collectionViewLayout isKindOfClass:[MLNCollectionViewGridLayout class]]) {
-        ((MLNCollectionViewGridLayout *)self.innerCollectionView.collectionViewLayout).scrollDirection = scrollDirection;
-    }
-    
+    UICollectionViewLayout<MLNCollectionViewLayoutProtocol> *layout = (UICollectionViewLayout<MLNCollectionViewLayoutProtocol> *)self.innerCollectionView.collectionViewLayout;
+    layout.scrollDirection = scrollDirection;
     self.innerCollectionView.mln_horizontal = scrollDirection == MLNScrollDirectionHorizontal;
 }
 
 - (MLNScrollDirection)mln_in_scrollDirection
 {
-    MLNScrollDirection scrollDirection = MLNScrollDirectionVertical;
-    if ([self.innerCollectionView.collectionViewLayout isKindOfClass:[UICollectionViewFlowLayout class]]) {
-        scrollDirection = (MLNScrollDirection)((UICollectionViewFlowLayout *)self.innerCollectionView.collectionViewLayout).scrollDirection;
-    }
-    
-    if ([self.innerCollectionView.collectionViewLayout isKindOfClass:[MLNCollectionViewGridLayout class]]) {
-        scrollDirection = ((MLNCollectionViewGridLayout *)self.innerCollectionView.collectionViewLayout).scrollDirection;
-    }
-    
-    return scrollDirection;
+   UICollectionViewLayout<MLNCollectionViewLayoutProtocol> *layout = (UICollectionViewLayout<MLNCollectionViewLayoutProtocol> *)self.innerCollectionView.collectionViewLayout;
+    return layout.scrollDirection;
 }
 
 #pragma mark - Scroll
