@@ -20,6 +20,27 @@
 #import "MLNGlobalFuncExporterMacro.h"
 #import "MLNGlobalVarExporterMacro.h"
 
+/**
+Lua强引用栈上指定位置的UserData
+
+@param INDEX UserData在Lua虚拟机栈上的位置
+@param USER_DATA UserData对应的原生对象
+*/
+#define MLN_Lua_UserData_Retain_With_Index(INDEX, USER_DATA) \
+if ([((NSObject *)(USER_DATA)) mln_isConvertible]) {\
+    [((id<MLNEntityExportProtocol>)(USER_DATA)).mln_luaCore setStrongObjectWithIndex:(INDEX) cKey:(__bridge void *)(USER_DATA)];\
+}
+
+/**
+释放原生对象所关联UserData的强引用
+
+@param USER_DATA UserData对应的原生对象
+*/
+#define MLN_Lua_UserData_Release(USER_DATA) \
+if ([((NSObject *)(USER_DATA)) mln_isConvertible]) {\
+    [((id<MLNEntityExportProtocol>)(USER_DATA)).mln_luaCore removeStrongObjectForCKey:(__bridge void *)(USER_DATA)];\
+}
+
 #if defined(__LP64__) && __LP64__
 #define CGFloatValueFromNumber(NUMBER) \
 [(NUMBER) doubleValue]

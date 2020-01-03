@@ -1,6 +1,10 @@
 {
   "name": "MLNDevTool",
+<<<<<<< HEAD
   "version": "0.1.0",
+=======
+  "version": "0.1.7.1",
+>>>>>>> a7e14a6... Fix: local 的Adapter和Layout等对象，设置给CollectionView后，会被GC #
   "summary": "Debug Tool of MLN.",
   "description": "Debug Tool of MLN.",
   "homepage": "https://mln.immomo.com",
@@ -11,7 +15,11 @@
   "authors": "MoMo",
   "source": {
     "git": "https://github.com/momotech/MLN.git",
+<<<<<<< HEAD
     "tag": "0.1.0"
+=======
+    "tag": "devtool-0.1.7.1"
+>>>>>>> a7e14a6... Fix: local 的Adapter和Layout等对象，设置给CollectionView后，会被GC #
   },
   "platforms": {
     "ios": "8.0"

@@ -9,7 +9,6 @@
 #import "MLNEntityExportProtocol.h"
 #import "MLNScrollCallbackView.h"
 #import "MLNCollectionViewAdapterProtocol.h"
-#import "MLNCollectionViewGridLayout.h"
 
 @interface MLNCollectionView : MLNScrollCallbackView <MLNEntityExportProtocol>
 

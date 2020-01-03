@@ -19,6 +19,7 @@
 #import "MLNSizeCahceManager.h"
 #import "MLNInnerTableView.h"
 #import "UIView+MLNKit.h"
+#import "NSObject+MLNCore.h"
 
 @interface MLNTableView()
 @property (nonatomic, strong) MLNInnerTableView *innerTableView;
@@ -26,6 +27,12 @@
 @end
 
 @implementation MLNTableView
+
+- (void)mln_user_data_dealloc
+{
+    // 去除强引用
+    MLN_Lua_UserData_Release(self.adapter);
+}
 
 #pragma mark - Getter
 - (MLNBeforeWaitingTask *)lazyTask
@@ -50,6 +57,10 @@
 - (void)setAdapter:(id<UITableViewDelegate,UITableViewDataSource, MLNTableViewAdapterProtocol>)adapter
 {
     if (_adapter != adapter) {
+        // 去除强引用
+        MLN_Lua_UserData_Release(_adapter);
+        // 添加强引用
+        MLN_Lua_UserData_Retain_With_Index(2, adapter);
         _adapter = adapter;
         _adapter.targetTableView = self.innerTableView;
         [self mln_pushLazyTask:self.lazyTask];
