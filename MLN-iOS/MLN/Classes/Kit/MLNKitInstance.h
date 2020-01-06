@@ -369,4 +369,10 @@ Lua中的根视图。
 
 @end
 
+@interface MLNKitInstance (Debug)
+
+- (NSString *)loadDebugModelIfNeed;
+
+@end
+
 NS_ASSUME_NONNULL_END
