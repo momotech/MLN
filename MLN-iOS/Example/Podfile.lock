@@ -34,27 +34,27 @@ PODS:
   - MLN/Kit (1.0.0):
     - MLN/Core
   - MLN/LuaLib (1.0.0)
-  - MLNDevTool (0.1.0.1):
-    - MLNDevTool/Conn (= 0.1.0.1)
-    - MLNDevTool/DevTool (= 0.1.0.1)
-    - MLNDevTool/HotReload (= 0.1.0.1)
-    - MLNDevTool/Offline (= 0.1.0.1)
-    - MLNDevTool/Performance (= 0.1.0.1)
-    - MLNDevTool/Protobuf (= 0.1.0.1)
-  - MLNDevTool/Conn (0.1.0.1):
+  - MLNDevTool (0.1.0.3):
+    - MLNDevTool/Conn (= 0.1.0.3)
+    - MLNDevTool/DevTool (= 0.1.0.3)
+    - MLNDevTool/HotReload (= 0.1.0.3)
+    - MLNDevTool/Offline (= 0.1.0.3)
+    - MLNDevTool/Performance (= 0.1.0.3)
+    - MLNDevTool/Protobuf (= 0.1.0.3)
+  - MLNDevTool/Conn (0.1.0.3):
     - MLNDevTool/Protobuf
     - Protobuf (~> 3.6.0)
-  - MLNDevTool/DevTool (0.1.0.1):
-    - MLN
-  - MLNDevTool/HotReload (0.1.0.1):
-    - MLN
+  - MLNDevTool/DevTool (0.1.0.3):
+    - MLN (<= 1.0.0.1)
+  - MLNDevTool/HotReload (0.1.0.3):
+    - MLN (<= 1.0.0.1)
     - MLNDevTool/Conn
     - MLNDevTool/DevTool
-  - MLNDevTool/Offline (0.1.0.1):
-    - MLN
+  - MLNDevTool/Offline (0.1.0.3):
+    - MLN (<= 1.0.0.1)
     - MLNDevTool/DevTool
-  - MLNDevTool/Performance (0.1.0.1)
-  - MLNDevTool/Protobuf (0.1.0.1):
+  - MLNDevTool/Performance (0.1.0.3)
+  - MLNDevTool/Protobuf (0.1.0.3):
     - Protobuf (~> 3.6.0)
   - Protobuf (3.6.1)
   - SDCycleScrollView (1.75):
@@ -79,7 +79,7 @@ DEPENDENCIES:
   - Toast (~> 4.0.0)
 
 SPEC REPOS:
-  https://github.com/cocoapods/specs.git:
+  https://github.com/CocoaPods/Specs.git:
     - AFNetworking
     - Expecta
     - "Expecta+Snapshots"
@@ -104,7 +104,7 @@ SPEC CHECKSUMS:
   FBSnapshotTestCase: 094f9f314decbabe373b87cc339bea235a63e07a
   MJRefresh: 7798e16e53a5ef7f332dd05b27664db4e29530fd
   MLN: 1ed0b78bd3d553b3dedcdb24065fea0a9d506600
-  MLNDevTool: 6b355d4731154a3523d16803778fbf8d1ff943b0
+  MLNDevTool: dbbaf03196a3bcf42b2d1d56330f10cc8a1c852e
   Protobuf: 1eb9700044745f00181c136ef21b8ff3ad5a0fd5
   SDCycleScrollView: 884b88f0266dd4708a0e1934975c69cb971707b1
   SDWebImage: c10d14a8883ebd89664f02a422006f66a85c0c5d
@@ -113,4 +113,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: 01d1cac9959e8fc522b115a872ac12d1517294a0
 
-COCOAPODS: 1.7.5
+COCOAPODS: 1.8.4

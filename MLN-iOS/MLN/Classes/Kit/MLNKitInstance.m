@@ -17,6 +17,7 @@
 #import "MLNKitBridgesManager.h"
 #import "MLNWindow.h"
 #import "MLNKitInstanceConsts.h"
+#import "MLNDebugContext.h"
 
 #define kMLNRunLoopBeforeWaitingLazyTaskOrder   1
 #define kMLNRunLoopBeforeWaitingRenderOrder     2
@@ -577,6 +578,26 @@
 - (void)doGC
 {
     [_luaCore doGC];
+}
+
+@end
+
+@implementation MLNKitInstance (Debug)
+
+- (NSString *)loadDebugModelIfNeed {
+    NSString *backupBundlePath = [self.luaCore.currentBundle bundlePath];
+    [self changeLuaBundleWithPath:[MLNDebugContext debugBundle].bundlePath];
+    NSString *mlndebugPath = [[MLNDebugContext debugBundle] pathForResource:@"mlndebug.lua" ofType:nil];
+    NSError *error = nil;
+    NSData *data = [NSData dataWithContentsOfFile:mlndebugPath];
+    
+    BOOL ret = [self.luaCore runData:data name:@"mlndebug.lua" error:&error];
+    NSAssert(ret, @"%@", [error.userInfo objectForKey:@"message"]);
+    if (!ret) {
+        return [error.userInfo objectForKey:@"message"];
+    }
+    [self changeLuaBundleWithPath:backupBundlePath];
+    return nil;
 }
 
 @end

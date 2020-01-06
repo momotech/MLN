@@ -12,6 +12,8 @@
 #import "NSDictionary+MLNSafety.h"
 #import "MLNHotReloadPresenter.h"
 #import "MLNServerManager.h"
+#import "MLNDebugContext.h"
+#import "mln_luasocket.h"
 
 @interface MLNHotReload () <MLNKitInstanceErrorHandlerProtocol, MLNKitInstanceDelegate, MLNServerManagerDelegate, MLNDebugPrintObserver, MLNServerListenerProtocol, MLNHotReloadPresenterDelegate> {
     int _usbPort;
@@ -257,6 +259,12 @@ static MLNHotReload *sharedInstance;
         [self.luaInstance doLuaWindowDidAppear];
         [self.presenter tip:@"内容已刷新" duration:0.3 delay:1];
     }
+}
+
+- (void)willSetupLuaCore:(MLNKitInstance *)instance {
+    [instance registerClasses:@[[MLNDebugContext class]] error:NULL];
+    mln_luaopen_socket_core(instance.luaCore.state);
+    [instance loadDebugModelIfNeed];
 }
 
 #pragma mark - Getter

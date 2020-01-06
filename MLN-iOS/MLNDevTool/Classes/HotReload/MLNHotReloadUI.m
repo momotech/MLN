@@ -10,10 +10,12 @@
 #import "MLNFloatingMenu.h"
 #import "MLNHotReloadBundle.h"
 #import "MLNQRCodeHistoryViewController.h"
+#import "MLNDebugContext.h"
 
 #define kQRCoderIdx 0
 #define kChangePortAlertIdx 1
 #define kChangeNavBarAlertIdx 2
+#define kSetDebugIPAndPortIdx 3
 
 #define kInset 35.f
 #define kMenuWidth 100.f
@@ -83,6 +85,9 @@
         case kChangeNavBarAlertIdx:
             [self openChangeNavBarAlert];
             break;
+        case kSetDebugIPAndPortIdx:
+            [self showIPAlertView];
+            break;
         default:
             break;
     }
@@ -93,7 +98,7 @@
     if (!_floatingMenu) {
         CGSize size = [UIScreen mainScreen].bounds.size;
         _floatingMenu = [[MLNFloatingMenu alloc] initWithFrame:CGRectMake(size.width - kMenuWidth -kInset, size.height - kMenuWidth - kInset, kMenuWidth, kMenuWidth)];
-        _floatingMenu.iconNames = @[@"scanme", @"setting",@"right"];
+        _floatingMenu.iconNames = @[@"scanme", @"setting", @"right", @"debug"];
         _floatingMenu.delegate = self;
     }
     return _floatingMenu;
@@ -148,6 +153,72 @@
     [alert addAction:cancleAction];
     self.alert = alert;
     [[self getTopViewController] presentViewController:alert animated:YES completion:nil];
+}
+
+#pragma mark - Debug
+
+- (void)showIPAlertView {
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"设置IP和端口号" message:nil preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction *cancleAction = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleDefault handler:nil];
+    [alert addAction:cancleAction];
+    
+    UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        UITextField *ipTextField = alert.textFields.firstObject;
+        if (ipTextField.text.length >0) {
+            [MLNDebugContext sharedContext].ipAddress = ipTextField.text;
+        } else {
+            [MLNToast toastWithMessage:@"请输入正确的IP地址" duration:2.5f];
+        }
+        UITextField *portTextField = alert.textFields.lastObject;
+        if (portTextField.text.length >0) {
+            [MLNDebugContext sharedContext].port = portTextField.text.intValue;
+        } else {
+            [MLNToast toastWithMessage:@"请输入正确的端口号" duration:2.5f];
+        }
+    }];
+    [alert addAction:okAction];
+    
+    UIAlertAction *scanAction = [UIAlertAction actionWithTitle:@"扫描二维码来获取IP地址" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        UITextField *portTextField = alert.textFields.lastObject;
+        if (portTextField.text.length >0) {
+            [MLNDebugContext sharedContext].port = portTextField.text.integerValue;
+        }
+        [self openQRCoderToGetIPAddress];
+    }];
+    [alert addAction:scanAction];
+    
+    [alert addTextFieldWithConfigurationHandler:^(UITextField * _Nonnull textField) {
+        if ([MLNDebugContext sharedContext].ipAddress.length > 0) {
+            textField.text = [MLNDebugContext sharedContext].ipAddress;
+        } else {
+            textField.placeholder = @" IP : 192.168.1.1";
+        }
+        textField.keyboardType = UIKeyboardTypeNumbersAndPunctuation;
+    }];
+    [alert addTextFieldWithConfigurationHandler:^(UITextField * _Nonnull textField) {
+        if ([MLNDebugContext sharedContext].port > 0) {
+            textField.text = [NSString stringWithFormat:@"%ld", (long)[MLNDebugContext sharedContext].port];
+        } else {
+            textField.text = @"8172";
+        }
+        textField.keyboardType = UIKeyboardTypeNumbersAndPunctuation;
+    }];
+    
+    [[self getTopViewController] presentViewController:alert animated:YES completion:nil];
+}
+
+- (void)openQRCoderToGetIPAddress {
+    MLNQRCodeViewController *qrController = [[MLNQRCodeViewController alloc] init];
+    __weak MLNQRCodeViewController *weakQRController = qrController;
+    qrController.complete = ^(NSString * _Nonnull data) {
+        [weakQRController dismissViewControllerAnimated:YES completion:^{
+            self->_floatingMenu.hidden = NO;
+            self->_isUtilViewControllerShow = NO;
+            NSArray *ipports = [data componentsSeparatedByString:@":"];
+            [MLNDebugContext sharedContext].ipAddress = ipports[0];
+        }];
+    };
+    [[self getTopViewController] presentViewController:qrController animated:YES completion:nil];
 }
 
 #pragma mark - MLNQRCodeViewControllerDelegate
