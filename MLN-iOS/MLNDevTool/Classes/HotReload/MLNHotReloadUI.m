@@ -14,8 +14,8 @@
 
 #define kQRCoderIdx 0
 #define kChangePortAlertIdx 1
-#define kChangeNavBarAlertIdx 2
-#define kSetDebugIPAndPortIdx 3
+#define kSetDebugIPAndPortIdx 2
+#define kChangeNavBarAlertIdx 3
 
 #define kInset 35.f
 #define kMenuWidth 100.f
@@ -82,11 +82,11 @@
         case kChangePortAlertIdx:
             [self openChangePortAlert];
             break;
-        case kChangeNavBarAlertIdx:
-            [self openChangeNavBarAlert];
-            break;
         case kSetDebugIPAndPortIdx:
             [self showIPAlertView];
+            break;
+        case kChangeNavBarAlertIdx:
+            [self openChangeNavBarAlert];
             break;
         default:
             break;
@@ -98,7 +98,7 @@
     if (!_floatingMenu) {
         CGSize size = [UIScreen mainScreen].bounds.size;
         _floatingMenu = [[MLNFloatingMenu alloc] initWithFrame:CGRectMake(size.width - kMenuWidth -kInset, size.height - kMenuWidth - kInset, kMenuWidth, kMenuWidth)];
-        _floatingMenu.iconNames = @[@"scanme", @"setting", @"right", @"debug"];
+        _floatingMenu.iconNames = @[@"scanme", @"setting", @"debug", @"right"];
         _floatingMenu.delegate = self;
     }
     return _floatingMenu;
