@@ -79,7 +79,6 @@ static int MLN_package_loader(lua_State *L) {
     NSString *fileName = [NSString stringWithUTF8String:lua_tostring(L, 1)];
     if (fileName && fileName.length >0) {
         NSString *filePath = [fileName stringByReplacingOccurrencesOfString:@"." withString:@"/"];
-        
         NSString *fullPath = [MLN_LUA_CORE(L).currentBundle filePathWithName:[NSString stringWithFormat:@"%@.lua",filePath]];
         BOOL success = [MLN_LUA_CORE(L) loadFile:fullPath error:nil];
         return success ? 1 : 0;
