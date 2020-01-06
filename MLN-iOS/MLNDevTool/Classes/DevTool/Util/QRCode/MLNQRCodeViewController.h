@@ -9,6 +9,8 @@
 #import "MLNQRCodesScanViewProtocol.h"
 
 NS_ASSUME_NONNULL_BEGIN
+typedef void(^MLNQRCodeReadDataComplete)(NSString *data);
+
 @class MLNQRCodeViewController;
 @protocol MLNQRCodeViewControllerDelegate <NSObject>
 
@@ -23,6 +25,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface MLNQRCodeViewController : UIViewController
 
 @property (nonatomic, weak) id<MLNQRCodeViewControllerDelegate> delegate;
+@property (nonatomic, strong) MLNQRCodeReadDataComplete complete;
 - (void)setupScanView:(UIView<MLNQRCodesScanViewProtocol> *)scanView;
 
 @end
