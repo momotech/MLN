@@ -1,6 +1,3 @@
-//
-// Created by Xiong.Fangyu 2019/06/17.
-//
 
 #include <string.h>
 #include <pthread.h>
