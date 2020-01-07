@@ -1,6 +1,4 @@
-/**
- * Created by Xiong.fangyu 2019/05/21
- */
+
 #ifndef MAP_H
 #define MAP_H
 
