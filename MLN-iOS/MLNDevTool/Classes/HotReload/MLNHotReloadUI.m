@@ -13,7 +13,8 @@
 
 #define kQRCoderIdx 0
 #define kChangePortAlertIdx 1
-#define kChangeNavBarAlertIdx 2
+#define kSetDebugIPAndPortIdx 2
+#define kChangeNavBarAlertIdx 3
 
 #define kInset 35.f
 #define kMenuWidth 100.f
@@ -30,6 +31,7 @@
 @property (nonatomic, strong) MLNQRCodeViewController *QRReader;
 @property (nonatomic, strong) MLNQRCodeHistoryViewController *historyViewController;
 @property (nonatomic, strong) UIAlertController *alert;
+@property (nonatomic, assign) BOOL isDebugMode;
 
 @end
 @implementation MLNHotReloadUI
@@ -75,10 +77,14 @@
 {
     switch (index) {
         case kQRCoderIdx:
+            self.isDebugMode = NO;
             [self openQRCoder];
             break;
         case kChangePortAlertIdx:
             [self openChangePortAlert];
+            break;
+        case kSetDebugIPAndPortIdx:
+            [self showIPAlertView];
             break;
         case kChangeNavBarAlertIdx:
             [self openChangeNavBarAlert];
@@ -93,7 +99,7 @@
     if (!_floatingMenu) {
         CGSize size = [UIScreen mainScreen].bounds.size;
         _floatingMenu = [[MLNFloatingMenu alloc] initWithFrame:CGRectMake(size.width - kMenuWidth -kInset, size.height - kMenuWidth - kInset, kMenuWidth, kMenuWidth)];
-        _floatingMenu.iconNames = @[@"scanme", @"setting",@"right"];
+        _floatingMenu.iconNames = @[@"scanme", @"setting", @"debug", @"right"];
         _floatingMenu.delegate = self;
     }
     return _floatingMenu;
@@ -147,6 +153,45 @@
     UIAlertAction *cancleAction = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleDefault handler:nil];
     [alert addAction:cancleAction];
     self.alert = alert;
+    [[self getTopViewController] presentViewController:alert animated:YES completion:nil];
+}
+
+#pragma mark - Debug
+
+- (void)showIPAlertView {
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"设置IP和端口号" message:nil preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction *cancleAction = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleDefault handler:nil];
+    [alert addAction:cancleAction];
+    
+    UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        UITextField *ipTextField = alert.textFields.firstObject;
+        UITextField *portTextField = alert.textFields.lastObject;
+        if ([self.delegate respondsToSelector:@selector(hotReloadUI:setupDebugIP:port:)]) {
+            [self.delegate hotReloadUI:self setupDebugIP:ipTextField.text port:portTextField.text.integerValue];
+        }
+    }];
+    [alert addAction:okAction];
+    
+    UIAlertAction *scanAction = [UIAlertAction actionWithTitle:@"扫描二维码来获取IP地址" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        self.isDebugMode = YES;
+        [self openQRCoder];
+    }];
+    [alert addAction:scanAction];
+    
+    [alert addTextFieldWithConfigurationHandler:^(UITextField * _Nonnull textField) {
+        if ([self.delegate respondsToSelector:@selector(hotReloadUIGetDebugIP:)]) {
+            textField.text = [self.delegate hotReloadUIGetDebugIP:self];
+        }
+        textField.placeholder = @"192.168.1.1";
+        textField.keyboardType = UIKeyboardTypeNumbersAndPunctuation;
+    }];
+    [alert addTextFieldWithConfigurationHandler:^(UITextField * _Nonnull textField) {
+        if ([self.delegate respondsToSelector:@selector(hotReloadUIGetDebugPort:)]) {
+            textField.text = [self.delegate hotReloadUIGetDebugPort:self];
+        }
+        textField.keyboardType = UIKeyboardTypeNumbersAndPunctuation;
+    }];
+    
     [[self getTopViewController] presentViewController:alert animated:YES completion:nil];
 }
 

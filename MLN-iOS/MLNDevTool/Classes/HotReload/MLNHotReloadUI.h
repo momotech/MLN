@@ -20,6 +20,10 @@ NS_ASSUME_NONNULL_BEGIN
 - (int)currentPortHotReloadUI:(MLNHotReloadUI *)hotReloadUI;
 - (void)hotReloadUI:(MLNHotReloadUI *)hotReloadUI hiddenNavBar:(BOOL)hidden;
 
+- (void)hotReloadUI:(MLNHotReloadUI *)hotReloadUI setupDebugIP:(NSString *)ip port:(NSInteger)port;
+- (NSString *)hotReloadUIGetDebugIP:(MLNHotReloadUI *)hotReloadUI;
+- (NSString *)hotReloadUIGetDebugPort:(MLNHotReloadUI *)hotReloadUI;
+
 @end
 
 @interface MLNHotReloadUI : NSObject
@@ -27,6 +31,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, weak) id<MLNHotReloadUIDelegate> delegate;
 @property (nonatomic, weak) id<MLNQRCodeHistoryViewControllerAdapter> adapter;
 @property (nonatomic, assign, readonly) BOOL isUtilViewControllerShow;
+@property (nonatomic, assign, readonly) BOOL isDebugMode;
 
 - (void)openUI;
 - (void)closeUI;
