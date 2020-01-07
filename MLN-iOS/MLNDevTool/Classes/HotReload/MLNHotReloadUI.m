@@ -10,7 +10,6 @@
 #import "MLNFloatingMenu.h"
 #import "MLNHotReloadBundle.h"
 #import "MLNQRCodeHistoryViewController.h"
-#import "MLNDebugContext.h"
 
 #define kQRCoderIdx 0
 #define kChangePortAlertIdx 1
@@ -32,6 +31,7 @@
 @property (nonatomic, strong) MLNQRCodeViewController *QRReader;
 @property (nonatomic, strong) MLNQRCodeHistoryViewController *historyViewController;
 @property (nonatomic, strong) UIAlertController *alert;
+@property (nonatomic, assign) BOOL isDebugMode;
 
 @end
 @implementation MLNHotReloadUI
@@ -77,6 +77,7 @@
 {
     switch (index) {
         case kQRCoderIdx:
+            self.isDebugMode = NO;
             [self openQRCoder];
             break;
         case kChangePortAlertIdx:
@@ -164,61 +165,34 @@
     
     UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         UITextField *ipTextField = alert.textFields.firstObject;
-        if (ipTextField.text.length >0) {
-            [MLNDebugContext sharedContext].ipAddress = ipTextField.text;
-        } else {
-            [MLNToast toastWithMessage:@"请输入正确的IP地址" duration:2.5f];
-        }
         UITextField *portTextField = alert.textFields.lastObject;
-        if (portTextField.text.length >0) {
-            [MLNDebugContext sharedContext].port = portTextField.text.intValue;
-        } else {
-            [MLNToast toastWithMessage:@"请输入正确的端口号" duration:2.5f];
+        if ([self.delegate respondsToSelector:@selector(hotReloadUI:setupDebugIP:port:)]) {
+            [self.delegate hotReloadUI:self setupDebugIP:ipTextField.text port:portTextField.text.integerValue];
         }
     }];
     [alert addAction:okAction];
     
     UIAlertAction *scanAction = [UIAlertAction actionWithTitle:@"扫描二维码来获取IP地址" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        UITextField *portTextField = alert.textFields.lastObject;
-        if (portTextField.text.length >0) {
-            [MLNDebugContext sharedContext].port = portTextField.text.integerValue;
-        }
-        [self openQRCoderToGetIPAddress];
+        self.isDebugMode = YES;
+        [self openQRCoder];
     }];
     [alert addAction:scanAction];
     
     [alert addTextFieldWithConfigurationHandler:^(UITextField * _Nonnull textField) {
-        if ([MLNDebugContext sharedContext].ipAddress.length > 0) {
-            textField.text = [MLNDebugContext sharedContext].ipAddress;
-        } else {
-            textField.placeholder = @" IP : 192.168.1.1";
+        if ([self.delegate respondsToSelector:@selector(hotReloadUIGetDebugIP:)]) {
+            textField.text = [self.delegate hotReloadUIGetDebugIP:self];
         }
+        textField.placeholder = @"192.168.1.1";
         textField.keyboardType = UIKeyboardTypeNumbersAndPunctuation;
     }];
     [alert addTextFieldWithConfigurationHandler:^(UITextField * _Nonnull textField) {
-        if ([MLNDebugContext sharedContext].port > 0) {
-            textField.text = [NSString stringWithFormat:@"%ld", (long)[MLNDebugContext sharedContext].port];
-        } else {
-            textField.text = @"8172";
+        if ([self.delegate respondsToSelector:@selector(hotReloadUIGetDebugPort:)]) {
+            textField.text = [self.delegate hotReloadUIGetDebugPort:self];
         }
         textField.keyboardType = UIKeyboardTypeNumbersAndPunctuation;
     }];
     
     [[self getTopViewController] presentViewController:alert animated:YES completion:nil];
-}
-
-- (void)openQRCoderToGetIPAddress {
-    MLNQRCodeViewController *qrController = [[MLNQRCodeViewController alloc] init];
-    __weak MLNQRCodeViewController *weakQRController = qrController;
-    qrController.complete = ^(NSString * _Nonnull data) {
-        [weakQRController dismissViewControllerAnimated:YES completion:^{
-            self->_floatingMenu.hidden = NO;
-            self->_isUtilViewControllerShow = NO;
-            NSArray *ipports = [data componentsSeparatedByString:@":"];
-            [MLNDebugContext sharedContext].ipAddress = ipports[0];
-        }];
-    };
-    [[self getTopViewController] presentViewController:qrController animated:YES completion:nil];
 }
 
 #pragma mark - MLNQRCodeViewControllerDelegate
