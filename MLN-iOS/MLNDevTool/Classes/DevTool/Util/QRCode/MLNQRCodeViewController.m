@@ -57,9 +57,6 @@
                 [sself.delegate QRCodeViewController:sself error:error];
             }
         } else {
-            if (sself.complete) {
-                sself.complete(result);
-            }
             if ([sself.delegate respondsToSelector:@selector(QRCodeViewController:readData:)]) {
                 [sself.delegate QRCodeViewController:sself readData:result];
             }

@@ -9,6 +9,7 @@
 #import "MLNHotReloadUI.h"
 #import "MLNTopTip.h"
 #import "MLNQRCodeResultManager.h"
+#import "MLNDebugContext.h"
 
 @interface MLNHotReloadPresenter () <MLNHotReloadUIDelegate, MLNQRCodeHistoryViewControllerAdapter>
 
@@ -55,8 +56,14 @@
     NSArray *subStrs = [result componentsSeparatedByString:@":"];
     NSString *ip = subStrs[0];
     int port = [subStrs[1] intValue];
-    if ([self.delegate respondsToSelector:@selector(hotReloadPresenter:readDataFromQRCode:port:)]) {
-        [self.delegate hotReloadPresenter:self readDataFromQRCode:ip port:port];
+    
+    if (self.hotReloadUI.isDebugMode) {
+        [MLNDebugContext sharedContext].ipAddress = ip;
+        [MLNToast toastWithMessage:@"IP地址获取成功" duration:1.5f];
+    } else {
+        if ([self.delegate respondsToSelector:@selector(hotReloadPresenter:readDataFromQRCode:port:)]) {
+            [self.delegate hotReloadPresenter:self readDataFromQRCode:ip port:port];
+        }
     }
 }
 
@@ -94,6 +101,30 @@
     if ([self.delegate respondsToSelector:@selector(hotReloadPresenter:hiddenNavBar:)]) {
         return [self.delegate hotReloadPresenter:self hiddenNavBar:hidden];
     }
+}
+
+- (void)hotReloadUI:(MLNHotReloadUI *)hotReloadUI setupDebugIP:(NSString *)ip port:(NSInteger)port {
+    if (ip.length >0) {
+        [MLNDebugContext sharedContext].ipAddress = ip;
+    } else {
+        [MLNToast toastWithMessage:@"请输入正确的IP地址" duration:2.5f];
+    }
+    if (port >0) {
+        [MLNDebugContext sharedContext].port = port;
+    } else {
+        [MLNToast toastWithMessage:@"请输入正确的端口号" duration:2.5f];
+    }
+}
+
+- (NSString *)hotReloadUIGetDebugIP:(MLNHotReloadUI *)hotReloadUI {
+    return [MLNDebugContext sharedContext].ipAddress;
+}
+
+- (NSString *)hotReloadUIGetDebugPort:(MLNHotReloadUI *)hotReloadUI {
+    if ([MLNDebugContext sharedContext].port > 0) {
+        return [NSString stringWithFormat:@"%ld", (long)[MLNDebugContext sharedContext].port];
+    }
+    return @"8172";
 }
 
 #pragma mark - MLNQRCodeHistoryViewControllerAdapter
