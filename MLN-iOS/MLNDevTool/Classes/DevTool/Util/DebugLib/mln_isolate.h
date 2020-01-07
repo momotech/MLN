@@ -1,6 +1,3 @@
-//
-// Created by Xiong.Fangyu 2019/06/17.
-//
 
 #ifndef ISOLATE_H
 #define ISOLATE_H
