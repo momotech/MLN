@@ -58,7 +58,7 @@
     int port = [subStrs[1] intValue];
     
     if (self.hotReloadUI.isDebugMode) {
-        [MLNDebugContext sharedContext].ipAddress = ip;
+        [self setupDebugIP:ip port:8172];
         [MLNToast toastWithMessage:@"IP地址获取成功" duration:1.5f];
     } else {
         if ([self.delegate respondsToSelector:@selector(hotReloadPresenter:readDataFromQRCode:port:)]) {
@@ -104,16 +104,18 @@
 }
 
 - (void)hotReloadUI:(MLNHotReloadUI *)hotReloadUI setupDebugIP:(NSString *)ip port:(NSInteger)port {
-    if (ip.length >0) {
-        [MLNDebugContext sharedContext].ipAddress = ip;
+    if (ip.length == 0) {
+        [MLNToast toastWithMessage:@"请输入正确的IP地址" duration:1.5f];
+    } else if (port <= 0) {
+        [MLNToast toastWithMessage:@"请输入正确的端口号" duration:1.5f];
     } else {
-        [MLNToast toastWithMessage:@"请输入正确的IP地址" duration:2.5f];
+        [self setupDebugIP:ip port:port];
     }
-    if (port >0) {
-        [MLNDebugContext sharedContext].port = port;
-    } else {
-        [MLNToast toastWithMessage:@"请输入正确的端口号" duration:2.5f];
-    }
+}
+
+- (void)setupDebugIP:(NSString *)ip port:(NSInteger)port {
+    [MLNDebugContext sharedContext].ipAddress = ip;
+    [MLNDebugContext sharedContext].port = port;
 }
 
 - (NSString *)hotReloadUIGetDebugIP:(MLNHotReloadUI *)hotReloadUI {
