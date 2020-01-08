@@ -510,6 +510,7 @@
 */
 #define LUAI_UACNUMBER	double
 
+#define LUAI_UACINT long long
 
 /*
 @@ LUA_NUMBER_SCAN is the format for reading numbers.
