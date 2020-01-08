@@ -660,6 +660,10 @@ local function debug_hook(event, line)
       seen_hook = true
       lastfile = file
     end
+    
+    if file == "mobdebug.lua" or file == "mobdebug" then
+       return
+    end
 
     if is_pending(server) then handle_breakpoint(server) end
 
@@ -960,7 +964,10 @@ local function debugger_loop(sev, svars, sfile, sline)
     elseif command == "STEP" then
       server:send("200 OK\n")
       step_into = true
-
+      
+      main_thread_should_continue_run(eval_env)
+     
+      --[[
       local ev, vars, file, line, idx_watch = coroyield()
       eval_env = vars
       if ev == events.BREAK then
@@ -973,6 +980,8 @@ local function debugger_loop(sev, svars, sfile, sline)
         server:send("401 Error in Execution " .. tostring(#file) .. "\n")
         server:send(file)
       end
+      ]]--
+      
     elseif command == "OVER" or command == "OUT" then
       server:send("200 OK\n")
       step_over = true
@@ -981,7 +990,10 @@ local function debugger_loop(sev, svars, sfile, sline)
       -- the stack level value at which to stop
       if command == "OUT" then step_level = stack_level - 1
       else step_level = stack_level end
+      
+      main_thread_should_continue_run(eval_env)
 
+      --[[
       local ev, vars, file, line, idx_watch = coroyield()
       eval_env = vars
       if ev == events.BREAK then
@@ -994,6 +1006,8 @@ local function debugger_loop(sev, svars, sfile, sline)
         server:send("401 Error in Execution " .. tostring(#file) .. "\n")
         server:send(file)
       end
+      ]]--
+      
     elseif command == "BASEDIR" then
       local _, _, dir = string.find(line, "^[A-Z]+%s+(.+)%s*$")
       if dir then
