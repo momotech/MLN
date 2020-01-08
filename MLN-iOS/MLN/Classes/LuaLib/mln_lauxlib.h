@@ -59,6 +59,9 @@ LUALIB_API int (luaL_argerror) (lua_State *L, int numarg, const char *extramsg);
 #define luaL_checklstring mln_luaL_checklstring
 LUALIB_API const char *(luaL_checklstring) (lua_State *L, int numArg,
                                                           size_t *l);
+#define luaL_tolstring mln_luaL_tolstring
+LUALIB_API const char *(luaL_tolstring) (lua_State *L, int numArg,
+                                            size_t *l);
 #define luaL_optlstring mln_luaL_optlstring
 LUALIB_API const char *(luaL_optlstring) (lua_State *L, int numArg,
                                           const char *def, size_t *l);
