@@ -143,8 +143,7 @@ LUA_API void  (lua_xmove) (lua_State *from, lua_State *to, int n);
 /*
 ** access functions (stack -> C)
 */
-#define lua_isinteger mln_lua_isinteger
-LUA_API int             (lua_isinteger) (lua_State *L, int idx);
+
 #define lua_isnumber mln_lua_isnumber
 LUA_API int             (lua_isnumber) (lua_State *L, int idx);
 #define lua_isstring mln_lua_isstring
