@@ -256,6 +256,10 @@ LUA_API int lua_iscfunction (lua_State *L, int idx) {
   return iscfunction(o);
 }
 
+LUA_API int lua_isinteger (lua_State *L, int idx) {
+    StkId o = index2adr(L, idx);
+    return ttisinteger(o);
+}
 
 LUA_API int lua_isnumber (lua_State *L, int idx) {
   TValue n;
