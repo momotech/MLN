@@ -8,7 +8,16 @@
 #import "MLNDebugContext.h"
 #import "NSBundle+MLNDebugTool.h"
 
+#define MLNDEBUG_IP_KEY   @"MLNDebugContextDebugIPAddressKey"
+#define MLNDEBUG_PORT_KEY @"MLNDebugContextDebugPortKey"
+
+@interface MLNDebugContext ()
+
+@end
+
 @implementation MLNDebugContext
+
+#pragma mark - Public
 
 + (MLNDebugContext *)sharedContext {
     static MLNDebugContext *context = nil;
@@ -27,6 +36,34 @@
     });
     return bundle;
 }
+
+#pragma mark - Private
+
+- (instancetype)init {
+    if (self = [super init]) {
+        _ipAddress = [[NSUserDefaults standardUserDefaults] stringForKey:MLNDEBUG_IP_KEY];
+        _port = [[NSUserDefaults standardUserDefaults] integerForKey:MLNDEBUG_PORT_KEY];
+    }
+    return self;
+}
+
+- (void)setIpAddress:(NSString *)ipAddress {
+    _ipAddress = ipAddress;
+    if (ipAddress.length) {
+        [[NSUserDefaults standardUserDefaults] setObject:ipAddress forKey:MLNDEBUG_IP_KEY];
+        [[NSUserDefaults standardUserDefaults] synchronize];
+    }
+}
+
+- (void)setPort:(NSInteger)port {
+    _port = port;
+    if (port > 0) {
+        [[NSUserDefaults standardUserDefaults] setInteger:port forKey:MLNDEBUG_PORT_KEY];
+        [[NSUserDefaults standardUserDefaults] synchronize];
+    }
+}
+
+#pragma mark - Lua
 
 + (NSString *)mln_debugIp {
     return [MLNDebugContext sharedContext].ipAddress;
