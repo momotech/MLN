@@ -9,6 +9,7 @@
 #import "MLNDevice.h"
 #import "MLNSafeAreaAdapter.h"
 #import "UIView+MLNLayout.h"
+#import "MLNKitEnvironment.h"
 
 #define kStatusBarDefaultHeight 20.f
 #define kStatusBarBusyHeight 40.f
@@ -143,7 +144,10 @@
 - (void)resestSafeAreaInsets
 {
     UIEdgeInsets safeAreaInset = UIEdgeInsetsZero;
-    UIWindow *window = [UIApplication sharedApplication].keyWindow;
+    UIWindow *window = [MLNKitEnvironment mainWindow];
+    if (!window) {
+        window = [UIApplication sharedApplication].keyWindow;
+    }
     if (window) {
         CGRect frame = [self.safeAreaView convertRect:self.safeAreaView.frame toView:window];
         BOOL hasUpdated = NO;

@@ -46,4 +46,15 @@
     [MLNKitInstanceHandlersManager defaultManager].navigatorHandler = navigatorHandler;
 }
 
+static __weak UIWindow *_mainWindow = nil;
++ (void)setMainWindow:(UIWindow *)mainWindow
+{
+    _mainWindow = mainWindow;
+}
+
++ (UIWindow *)mainWindow
+{
+    return _mainWindow;
+}
+
 @end
