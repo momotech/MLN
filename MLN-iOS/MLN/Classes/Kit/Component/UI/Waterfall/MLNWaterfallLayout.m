@@ -1,8 +1,8 @@
 //
 //  MLNWaterfallLayout.m
-//  
+//  MLN
 //
-//  Created by MoMo on 2018/7/18.
+//  Created by MoMo on 2019/11/1.
 //
 
 #import "MLNWaterfallLayout.h"
@@ -18,11 +18,10 @@
 @property (nonatomic, assign) CGFloat lineSpacing;
 @property (nonatomic, assign) CGFloat itemSpacing;
 @property (nonatomic, assign) CGSize myContentSize;
-
+@property (nonatomic, assign) UIEdgeInsets layoutInset;
 @property (nonatomic, strong) NSMutableDictionary *colunMaxYDic;
 @property (strong, nonatomic) NSMutableDictionary *cellLayoutInfo;//保存cell的布局
 @property (strong, nonatomic) NSMutableDictionary *headLayoutInfo;//保存头视图的布局
-
 @property (assign, nonatomic) CGFloat startY;   //记录开始的Y
 @property (nonatomic, assign) BOOL needRelayout;
 
@@ -37,7 +36,6 @@
     }
     return self;
 }
-
 
 - (void)relayoutIfNeed
 {
@@ -62,7 +60,6 @@
     [self _in_prepareLayout];
 }
 
-
 - (void)_in_prepareLayout
 {
     [super prepareLayout];
@@ -71,7 +68,7 @@
     [_cellLayoutInfo removeAllObjects];
     [_headLayoutInfo removeAllObjects];
     [_colunMaxYDic removeAllObjects];
-    self.startY = 0;
+    self.startY = self.layoutInset.top;
     
     //列数
     MLNKitLuaAssert(_columnCount > 0, @"The spanCount must greater than 0!");
@@ -81,8 +78,10 @@
     NSAssert([self.collectionView.delegate respondsToSelector:@selector(collectionView:layout:referenceSizeForHeaderInSection:)], @"The delegate of Waterfall must implement 'collectionView:layout:referenceSizeForHeaderInSection:' method!");
     NSAssert([self.collectionView.delegate respondsToSelector:@selector(collectionView:layout:heightForItemAtIndexPath:)], @"The delegate of Waterfall must implement 'collectionView:layout:heightForItemAtIndexPath:' method!");
     NSAssert([self.collectionView.dataSource respondsToSelector:@selector(collectionView:viewForSupplementaryElementOfKind:atIndexPath:)], @"The delegate of Waterfall must implement 'collectionView:viewForSupplementaryElementOfKind:atIndexPath:' method!");
+    NSAssert([self.collectionView.delegate respondsToSelector:@selector(headerIsSettingInNewWayWithWaterfallView:)], @"The delegate of Waterfall must implement 'headerIsSettingInNewWayWithWaterfallView:' method!");
+    NSAssert([self.collectionView.delegate respondsToSelector:@selector(headerIsValidWithWaterfallView:)], @"The delegate of Waterfall must implement 'headerIsValidWithWaterfallView:' method!");
     
-    CGFloat itemWidth = (self.collectionView.frame.size.width - ((columnCount + 1) * self.itemSpacing)) / columnCount;
+    CGFloat itemWidth = (self.collectionView.frame.size.width - self.layoutInset.left - self.layoutInset.right - ((columnCount - 1) * self.itemSpacing)) / columnCount;
     //取有多少个section
     NSInteger sectionsCount = [self.collectionView numberOfSections];
     for (NSInteger section = 0; section < sectionsCount; section++) {
@@ -91,21 +90,18 @@
         CGSize size = CGSizeZero;
         if (section == 0) {
             size = [(id<MLNWaterfallLayoutDelegate>)self.collectionView.delegate collectionView:self.collectionView layout:self referenceSizeForHeaderInSection:section];
+            size.height = size.height < 0 ? 0 : size.height;
             //头视图的高度不为0并且根据代理方法能取到对应的头视图的时候，添加对应头视图的布局对象
-            if (size.height > 0) { //只有header高度大于0情况下，才保存header布局属性
-                UICollectionViewLayoutAttributes *attribute = [UICollectionViewLayoutAttributes layoutAttributesForSupplementaryViewOfKind:UICollectionElementKindSectionHeader withIndexPath:supplementaryViewIndexPath];
-                UIView *headerView = [MLNInternalWaterfallView headerViewInWaterfall:self.collectionView];
-                //设置frame
-                if (!headerView) {
-                    self.startY = self.lineSpacing;
-                    attribute.frame = CGRectMake(self.itemSpacing, self.startY, self.collectionView.frame.size.width - 2 * self.itemSpacing, size.height);
-                } else {
-                    attribute.frame = CGRectMake(0, self.startY, self.collectionView.frame.size.width, size.height);
-                }
-                //保存布局对象
-                self.headLayoutInfo[supplementaryViewIndexPath] = attribute;
-                //设置下个布局对象的开始Y值
-                self.startY = self.startY + size.height + self.lineSpacing;
+            UICollectionViewLayoutAttributes *attribute = [UICollectionViewLayoutAttributes layoutAttributesForSupplementaryViewOfKind:UICollectionElementKindSectionHeader withIndexPath:supplementaryViewIndexPath];
+            attribute.frame = CGRectMake(self.layoutInset.left, self.startY, self.collectionView.frame.size.width - self.layoutInset.left - self.layoutInset.right, size.height);
+            
+            //保存布局对象
+            self.headLayoutInfo[supplementaryViewIndexPath] = attribute;
+            //设置下个布局对象的开始Y值
+            self.startY = self.startY + size.height;
+            
+            if ([self isHeaderSettingInNewWay] && [self isHeaderValidInNewWay]) {
+                self.startY += self.lineSpacing;
             }
         }
         
@@ -123,20 +119,20 @@
             UICollectionViewLayoutAttributes *attribute = [UICollectionViewLayoutAttributes layoutAttributesForCellWithIndexPath:cellIndePath];
             
             //计算当前的cell加到哪一列（瀑布流是加载到最短的一列）
-            CGFloat y = CGFloatValueFromNumber(self.colunMaxYDic[@(0)]);
+            CGFloat y = [self.colunMaxYDic[@(0)] floatValue];
             NSInteger currentRow = 0;
-            for (int i = 1; i < self.columnCount; i++) {
-                CGFloat tmp = CGFloatValueFromNumber(self.colunMaxYDic[@(i)]);
-                if (tmp < y) {
-                    y = tmp;
+            for (int i = 1; i < columnCount; i++) {
+                if ([self.colunMaxYDic[@(i)] floatValue] < y) {
+                    y = [self.colunMaxYDic[@(i)] floatValue];
                     currentRow = i;
                 }
             }
             //计算x值
-            CGFloat x = self.itemSpacing+(currentRow *(itemWidth + self.itemSpacing));
+            CGFloat x = self.layoutInset.left + (currentRow *(itemWidth + self.itemSpacing));
             //根据代理去当前cell的高度  因为当前是采用通过列数计算的宽度，高度根据图片的原始宽高比进行设置的
-            //高度
+            //    高度
             CGFloat height = [(id<MLNWaterfallLayoutDelegate>)self.collectionView.delegate collectionView:self.collectionView layout:self heightForItemAtIndexPath:cellIndePath];
+            
             //设置当前cell布局对象的frame
             attribute.frame = CGRectMake(x, y, itemWidth, height);
             //重新设置当前列的Y值
@@ -147,17 +143,17 @@
             
             //当是section的最后一个cell是，取出最后一排cell的底部Y值   设置startY 决定下个视图对象的起始Y值
             if (row == rowsCount -1) {
-                CGFloat maxY = CGFloatValueFromNumber(self.colunMaxYDic[@(0)]);
-                for (int i = 1; i < self.columnCount; i++) {
-                    CGFloat tmp = CGFloatValueFromNumber(self.colunMaxYDic[@(i)]);
-                    if ( tmp > maxY) {
-                        maxY = tmp;
+                CGFloat maxY = [self.colunMaxYDic[@(0)] floatValue];
+                for (int i = 1; i < columnCount; i++) {
+                    if ([self.colunMaxYDic[@(i)] floatValue] > maxY) {
+                        maxY = [self.colunMaxYDic[@(i)] floatValue];
                     }
                 }
                 self.startY = maxY - self.lineSpacing;
             }
         }
     }
+    self.startY = self.startY + self.layoutInset.bottom;
     self.myContentSize = CGSizeMake(self.collectionView.frame.size.width, self.startY);
 }
 
@@ -198,10 +194,30 @@
     return attribute;
 }
 
+- (void)lua_setlayoutInset:(CGFloat)top left:(CGFloat)left bottom:(CGFloat)bottom  right:(CGFloat)right
+{
+    self.layoutInset = UIEdgeInsetsMake(top, left, bottom, right);
+}
+
 - (CGSize)collectionViewContentSize
 {
     return self.myContentSize;
 }
+
+#pragma mark -
+- (BOOL)isHeaderSettingInNewWay
+{
+    BOOL isHeaderSettingInNewWay = [(id<MLNWaterfallLayoutDelegate>)self.collectionView.delegate headerIsSettingInNewWayWithWaterfallView:self.collectionView];
+    return isHeaderSettingInNewWay;
+}
+
+- (BOOL)isHeaderValidInNewWay
+{
+    BOOL isHeaderValid = [(id<MLNWaterfallLayoutDelegate>)self.collectionView.delegate headerIsValidWithWaterfallView:self.collectionView];
+    return isHeaderValid;
+}
+
+
 
 - (NSMutableDictionary *)cellLayoutInfo
 {
@@ -233,6 +249,8 @@ LUA_EXPORT_BEGIN(MLNWaterfallLayout)
 LUA_EXPORT_PROPERTY(spanCount, "setColumnCount:", "columnCount", MLNWaterfallLayout)
 LUA_EXPORT_PROPERTY(lineSpacing, "setLineSpacing:","lineSpacing", MLNWaterfallLayout)
 LUA_EXPORT_PROPERTY(itemSpacing, "setItemSpacing:","itemSpacing", MLNWaterfallLayout)
+LUA_EXPORT_METHOD(layoutInset, "lua_setlayoutInset:left:bottom:right:", MLNWaterfallLayout)
 LUA_EXPORT_END(MLNWaterfallLayout, WaterfallLayout, NO, NULL, NULL)
 
 @end
+

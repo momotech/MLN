@@ -76,7 +76,7 @@ DEPENDENCIES:
   - Toast (~> 4.0.0)
 
 SPEC REPOS:
-  https://github.com/CocoaPods/Specs.git:
+  https://github.com/cocoapods/specs.git:
     - AFNetworking
     - Expecta
     - "Expecta+Snapshots"
@@ -108,4 +108,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: bc865b6497324af73b09eb479514b3c55ff1419c
 
-COCOAPODS: 1.8.4
+COCOAPODS: 1.7.5
