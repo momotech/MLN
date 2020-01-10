@@ -145,9 +145,6 @@
 {
     UIEdgeInsets safeAreaInset = UIEdgeInsetsZero;
     UIWindow *window = [MLNKitEnvironment mainWindow];
-    if (!window) {
-        window = [UIApplication sharedApplication].keyWindow;
-    }
     if (window) {
         CGRect frame = [self.safeAreaView convertRect:self.safeAreaView.frame toView:window];
         BOOL hasUpdated = NO;

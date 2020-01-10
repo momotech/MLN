@@ -54,6 +54,9 @@ static __weak UIWindow *_mainWindow = nil;
 
 + (UIWindow *)mainWindow
 {
+    if (!_mainWindow) {
+        _mainWindow = [UIApplication sharedApplication].keyWindow;
+    }
     return _mainWindow;
 }
 
