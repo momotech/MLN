@@ -493,7 +493,7 @@ static int global_connect(lua_State *L) {
     return 1;
 }
 
-
+#pragma mark - Poll socket in background thread
 /*-------------------------------------------------------------------------*\
 * Poll socket in background thread
 \*-------------------------------------------------------------------------*/
@@ -501,6 +501,8 @@ typedef struct poll_thread_ctx {
     lua_State *L;
     mln_t_socket socket;
 } poll_thread_ctx;
+
+static lua_State* _current_main_state = NULL; // main thread state
 
 static double _begin = 0;
 static double mln_current_time(void) {
@@ -522,6 +524,9 @@ static void* mln_handle_socket_command_message(void *data) {
     double time = mln_current_time() - _begin; // ms (0.02ms ~ 100ms)
     const char *retvalue = NULL;
     lua_State *L = (lua_State *)data;
+    if (_current_main_state != L) {
+        return "dead";
+    }
     if (time < 900) {
         lua_getglobal(L, "handle_socket_command_message");
         if (lua_isfunction(L, -1)) {
@@ -589,6 +594,7 @@ static void setup_poll_socket_runloop(lua_State *L, mln_t_socket socket) {
 }
 
 static int meth_async_poll(lua_State *L) {
+    _current_main_state = L;
     mln_p_tcp tcp = (mln_p_tcp)mln_auxiliar_checkgroup(L, "tcp{any}", 1);
     setup_poll_socket_runloop(L, tcp->sock);
     return 0;
