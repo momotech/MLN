@@ -39,6 +39,7 @@
     MLN_Lua_UserData_Release(self.adapter);
     // 去除强引用
     MLN_Lua_UserData_Release(self.layout);
+    [super mln_user_data_dealloc];
 }
 
 #pragma mark - Getter & setter

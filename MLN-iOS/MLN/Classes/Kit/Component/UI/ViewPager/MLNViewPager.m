@@ -120,6 +120,7 @@
 {
     // 去除强引用
     MLN_Lua_UserData_Release(self.adapter);
+    [super mln_user_data_dealloc];
 }
 
 - (void)dealloc
