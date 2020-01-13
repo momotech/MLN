@@ -562,7 +562,9 @@ static void* mln_poll_socket_func(void *ctx) {
         ret = poll(&pfd, 1, timeout);
         if (ret == 0) continue; // timeout should continue and if error will break
         if (ret == -1 && errno == EINTR) continue;
-        if (ret == 1 && errno == ETIMEDOUT) break;
+        if (pfd.revents == (POLLHUP | POLLIN) && ret == 1 && errno == ETIMEDOUT) {
+            break;
+        }
         if (ret < 0 || pfd.revents == POLLNVAL) break;
         _begin = mln_current_time();
         const char *retvalue = (const char *)mln_thread_sync_to_main(L, mln_handle_socket_command_message);
