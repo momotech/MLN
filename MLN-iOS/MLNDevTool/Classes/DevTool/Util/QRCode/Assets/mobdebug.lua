@@ -665,7 +665,7 @@ local function debug_hook(event, line)
        return
     end
 
-    if is_pending(server) then handle_breakpoint(server) end
+    --if is_pending(server) then handle_breakpoint(server) end
 
     local vars, status, res
     if (watchescnt > 0) then
