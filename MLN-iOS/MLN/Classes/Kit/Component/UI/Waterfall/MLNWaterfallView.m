@@ -8,7 +8,6 @@
 #import "MLNWaterfallView.h"
 #import "MLNViewExporterMacro.h"
 #import "MLNCollectionViewCell.h"
-#import "MLNCollectionViewFlowLayout.h"
 #import "MLNWaterfallLayout.h"
 #import "MLNInternalWaterfallView.h"
 #import "MLNWaterfallAdapter.h"

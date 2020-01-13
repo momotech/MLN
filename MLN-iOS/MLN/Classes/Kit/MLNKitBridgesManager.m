@@ -26,7 +26,6 @@
 #import "MLNCollectionView.h"
 #import "MLNCollectionViewAdapter.h"
 #import "MLNCollectionViewAutoFitAdapter.h"
-#import "MLNCollectionViewFlowLayout.h"
 #import "MLNCollectionViewGridLayout.h"
 #import "MLNWaterfallView.h"
 #import "MLNWaterfallLayout.h"
@@ -128,7 +127,6 @@ static NSArray<Class<MLNExportProtocol>> *viewClasses;
                         [MLNTableViewAutoFitAdapter class],
                         [MLNCollectionView class],
                         [MLNCollectionViewAdapter class],
-                        [MLNCollectionViewFlowLayout class],
                         [MLNCollectionViewAutoFitAdapter class],
                         [MLNCollectionViewGridLayout class],
                         [MLNWaterfallView class],

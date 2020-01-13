@@ -14,7 +14,6 @@
 #import "MLNBeforeWaitingTask.h"
 #import "MLNSizeCahceManager.h"
 #import "MLNCollectionViewCell.h"
-#import "MLNCollectionViewFlowLayout.h"
 #import "MLNCollectionViewAdapter.h"
 #import "MLNInnerCollectionView.h"
 #import "MLNCollectionViewLayoutProtocol.h"
@@ -465,7 +464,7 @@
 - (UICollectionView *)innerCollectionView
 {
     if (!_innerCollectionView) {
-        MLNCollectionViewFlowLayout *layout = [[MLNCollectionViewFlowLayout alloc] init];
+        UICollectionViewFlowLayout *layout = [[UICollectionViewFlowLayout alloc] init];
         _innerCollectionView = [[MLNInnerCollectionView alloc] initWithFrame:CGRectZero collectionViewLayout:layout];
         _innerCollectionView.containerView = self;
         if (@available(iOS 11.0, *)) {
