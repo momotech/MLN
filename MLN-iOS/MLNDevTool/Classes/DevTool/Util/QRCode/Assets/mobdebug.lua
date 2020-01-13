@@ -807,7 +807,19 @@ local function debugger_loop(sev, svars, sfile, sline)
     local wx = rawget(genv, "wx") -- use rawread to make strict.lua happy
     if (wx or mobdebug.yield) and server.settimeout then server:settimeout(mobdebug.yieldtimeout) end
     while true do
-      line, err = server:receive()
+      
+      if mobdebug.shouldcontinuerun then
+         server:settimeout(0) --no poll
+         line, err = server:receive()
+         server:settimeout() --resume to poll
+
+         if not line and err == "timeout" then
+           main_thread_should_continue_run(eval_env)
+         end
+      else
+         line, err = server:receive()
+      end
+      
       if not line and err == "timeout" then
         -- yield for wx GUI applications if possible to avoid "busyness"
         app = app or (wx and wx.wxGetApp and wx.wxGetApp())
