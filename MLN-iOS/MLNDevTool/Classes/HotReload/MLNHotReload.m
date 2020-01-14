@@ -168,20 +168,20 @@ static MLNHotReload *sharedInstance;
     dispatch_async(dispatch_get_main_queue(), ^{
         self.benchLuaInstance = [self createLuaInstance:bundlePath entryFilePath:entryFilePath params:params];
         // 参数
-        NSMutableDictionary *extraInfo = nil;
-        if (self.extraInfoCallback) {
-            NSDictionary *tmp =  self.extraInfoCallback(params);
-            if (tmp) {
-                extraInfo = [NSMutableDictionary dictionaryWithDictionary:tmp];
-            } else {
-                extraInfo = [NSMutableDictionary dictionary];
-            }
-        }
-        //TODO: - 设置Lua源
+        NSMutableDictionary *extraInfo = params ? [NSMutableDictionary dictionaryWithDictionary:params] : [NSMutableDictionary dictionary];
+        // -设置Lua源
         NSString *relativePath = [bundlePath stringByReplacingOccurrencesOfString:[self hotReloadBundlePath] withString:@""];
         relativePath = [relativePath stringByAppendingPathComponent:entryFilePath];
         NSString *resouce = [kLuaHotReloadHost stringByAppendingString:relativePath];
         [extraInfo mln_setObject:resouce forKey:@"LuaSource"];
+        [extraInfo mln_setObject:kLuaDebugModeHotReload forKey:kLuaDebugModeKey];
+        // -请求外部参数
+        if (self.extraInfoCallback) {
+            NSDictionary *tmp =  self.extraInfoCallback(extraInfo);
+            if (tmp) {
+                [extraInfo addEntriesFromDictionary:tmp];
+            }
+        }
         // 更新bundlePath
         [self.benchLuaInstance runWithEntryFile:entryFilePath windowExtra:extraInfo error:NULL];
     });

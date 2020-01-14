@@ -28,8 +28,7 @@
     MLNWindow *_luaWindow;
 }
 @property (nonatomic, strong) id<MLNKitLuaCoeBuilderProtocol> luaCoreBuilder;
-@property (nonatomic, strong) NSMutableDictionary *windowExtra;
-@property (nonatomic, strong) NSMutableArray<Class<MLNExportProtocol>> *classes;
+@property (nonatomic, strong) NSMutableArray<Class<MLNExportProtocol>> *innerRegisterClasses;
 @property (nonatomic, strong) MLNBeforeWaitingTaskEngine *lazyTaskEngine;
 @property (nonatomic, strong) MLNBeforeWaitingTaskEngine *animationEngine;
 @property (nonatomic, strong) MLNBeforeWaitingTaskEngine *renderEngine;
@@ -244,7 +243,7 @@
     // 准备环境
     [self setup];
     // 注册bridge
-    if (![self.luaCore registerClasses:_classes error:error]) {
+    if (![self.luaCore registerClasses:_innerRegisterClasses error:error]) {
         return NO;
     }
     // 执行
@@ -258,13 +257,13 @@
 
 - (BOOL)registerClazz:(Class<MLNExportProtocol>)clazz error:(NSError * _Nullable __autoreleasing *)error
 {
-    [self.classes addObject:clazz];
+    [self.innerRegisterClasses addObject:clazz];
     return [self.luaCore registerClazz:clazz error:error];
 }
 
 - (BOOL)registerClasses:(NSArray<Class<MLNExportProtocol>> *)classes error:(NSError * _Nullable __autoreleasing *)error
 {
-    [self.classes addObjectsFromArray:classes];
+    [self.innerRegisterClasses addObjectsFromArray:classes];
     return [self.luaCore registerClasses:classes error:error];
 }
 
@@ -493,12 +492,17 @@
     return _renderEngine;
 }
 
-- (NSMutableArray<Class<MLNExportProtocol>> *)classes
+- (NSMutableArray<Class<MLNExportProtocol>> *)innerRegisterClasses
 {
-    if (!_classes) {
-        _classes = [NSMutableArray arrayWithArray:@[[MLNWindow class]]];
+    if (!_innerRegisterClasses) {
+        _innerRegisterClasses = [NSMutableArray arrayWithArray:@[[MLNWindow class]]];
     }
-    return _classes;
+    return _innerRegisterClasses;
+}
+
+- (NSArray<Class<MLNExportProtocol>> *)registerClasses
+{
+    return self.innerRegisterClasses.copy;
 }
 
 @end

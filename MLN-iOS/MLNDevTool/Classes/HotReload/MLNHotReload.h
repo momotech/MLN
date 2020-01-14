@@ -8,7 +8,10 @@
 #import <Foundation/Foundation.h>
 #import <MLN/MLNKit.h>
 #import "MLNDevToolProtocol.h"
+
 #define kLuaHotReloadHost  @"https://hotreload.com"
+#define kLuaDebugModeKey  @"kLuaDebugModeKey"
+#define kLuaDebugModeHotReload  @"kLuaDebugModeHotReload"
 
 NS_ASSUME_NONNULL_BEGIN
 @class MLNKitInstance;

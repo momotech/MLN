@@ -11,9 +11,6 @@
 #import "MLNKitInstanceFactory.h"
 
 @interface MLNKitViewController ()
-{
-    MLNKitInstance *_luaInstance;
-}
 
 @end
 
@@ -151,13 +148,13 @@
 
 - (MLNKitInstance *)kitInstance
 {
-    if (!_luaInstance) {
-        _luaInstance = [[MLNKitInstanceFactory defaultFactory] createKitInstanceWithViewController:self];
+    if (!_kitInstance) {
+        _kitInstance = [[MLNKitInstanceFactory defaultFactory] createKitInstanceWithViewController:self];
         if (_regClasses && _regClasses.count > 0) {
-            [_luaInstance registerClasses:_regClasses error:NULL];
+            [_kitInstance registerClasses:_regClasses error:NULL];
         }
     }
-    return _luaInstance;
+    return _kitInstance;
 }
 
 @end

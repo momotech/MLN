@@ -11,11 +11,7 @@
 #import "PBCommandBuilder.h"
 #import "MLNDebugPrintFunction.h"
 
-@interface MLNHotReloadViewController () 
-
-@property (nonatomic, copy) NSArray<Class<MLNExportProtocol>> *regClasses;
-@property (nonatomic, copy, readonly) NSDictionary *extraInfo;
-@property (nonatomic, strong) MLNKitInstance *kitInstance;
+@interface MLNHotReloadViewController ()
 // NavigationBar
 @property (nonatomic, assign) BOOL navigationBarTransparent;
 @property (nonatomic, strong) UIImage *backgroundImageForBarMetrics;
@@ -37,12 +33,20 @@
 
 - (instancetype)initWithRegisterClasses:(nullable NSArray<Class<MLNExportProtocol>> *)regClasses extraInfo:(nullable NSDictionary *)extraInfo navigationBarTransparent:(BOOL)transparent
 {
-    if (self = [super initWithNibName:nil bundle:nil]) {
-        _extraInfo = extraInfo;
-        _regClasses = regClasses;
+    return [self initWithEntryFilePath:@"" extraInfo:extraInfo regClasses:regClasses navigationBarTransparent:transparent];
+}
+
+- (instancetype)initWithEntryFilePath:(NSString *)entryFilePath extraInfo:(nullable NSDictionary *)extraInfo regClasses:(nullable NSArray<Class<MLNExportProtocol>> *)regClasses navigationBarTransparent:(BOOL)transparent
+{
+    if (self = [super initWithEntryFilePath:entryFilePath extraInfo:extraInfo regClasses:regClasses]) {
         _navigationBarTransparent = transparent;
     }
     return self;
+}
+
+- (instancetype)init
+{
+    return [self initWithNavigationBarTransparent:YES];
 }
 
 - (void)viewDidLoad {
@@ -72,7 +76,7 @@
     };
     [[MLNHotReload getInstance] setUpdateCallback:^(MLNKitInstance * _Nonnull instance) {
         __strong typeof(wself) sself = wself;
-        sself.kitInstance = instance;
+        sself->_kitInstance = instance;
     }];
 }
 

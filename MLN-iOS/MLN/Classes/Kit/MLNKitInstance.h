@@ -57,6 +57,16 @@ Lua中的根视图。
 @property (nonatomic, copy, readonly) NSString *entryFilePath;
 
 /**
+传递参数
+*/
+@property (nonatomic, strong, readonly) NSMutableDictionary *windowExtra;
+
+/**
+注册的bridge集合
+*/
+@property (nonatomic, strong) NSArray<Class<MLNExportProtocol>> *registerClasses;
+
+/**
  代理对象
  */
 @property (nonatomic, weak) id<MLNKitInstanceDelegate> delegate;
