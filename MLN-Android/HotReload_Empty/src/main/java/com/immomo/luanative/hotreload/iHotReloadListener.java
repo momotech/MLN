@@ -83,4 +83,9 @@ public interface iHotReloadListener {
      */
     public void disconnecte(int type, String ip, int port, String error);
 
+    /**
+     * 其他消息
+     */
+    public void onGencoveragereport();
+
 }

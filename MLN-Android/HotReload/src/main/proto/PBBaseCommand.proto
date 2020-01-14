@@ -33,5 +33,8 @@ message pbbasecommand {
                 RENAME = 10; // 文件重命名指令
                 REMOVE = 11; // 删除文件指令
                 CREATE = 12; // 创建文件指令
+                COVERAGESUMMARY = 13;
+                COVERAGEDETAIL = 14;
+                COVREAGEVISUAL = 15;
             }
 }

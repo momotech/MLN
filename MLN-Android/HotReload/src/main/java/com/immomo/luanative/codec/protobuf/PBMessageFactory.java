@@ -46,6 +46,15 @@ public class PBMessageFactory {
             case PackageConst.TYPE_REMOVE: {
                 return PBRemoveCommand.pbremovecommand.parseFrom(data);
             }
+            case PackageConst.TYPE_CSUMMER: {
+                return PBCoverageSummaryCommand.pbcoveragesummarycommand.parseFrom(data);
+            }
+            case PackageConst.TYPE_CDETAIL: {
+                return PBCoverageDetailCommand.pbcoveragedetailcommand.parseFrom(data);
+            }
+            case PackageConst.TYPE_CVISUAL: {
+                return PBCoverageVisualCommand.pbcoveragevisualcommand.parseFrom(data);
+            }
             default: {
                 throw new Exception("未知类型的消息");
             }
