@@ -16,6 +16,7 @@ add_library( luajapi SHARED
             jinfo.c
             assets_reader.c
             cache.c
+            jfunction.c
             jbridge.c
             jtable.c
             juserdata.c

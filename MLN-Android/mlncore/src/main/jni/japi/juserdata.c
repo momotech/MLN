@@ -377,20 +377,12 @@ static int new_java_obj(JNIEnv *env, lua_State *L, jclass clz, jmethodID con, co
 
     UDjavaobject ud = (UDjavaobject) lua_newuserdata(L, sizeof(javaUserdata));
     lua_gc(L, LUA_GCSTEP, (int) mem);
-#if defined(JAVA_CACHE_UD)
     ud->id = getUserdataId(env, javaObj);
-#else
-    ud->jobj = GLOBAL(env, javaObj);
-    FREE(env, javaObj);
-    javaObj = ud->jobj;
-#endif
     if (IS_STRONG_REF(env, clz)) {
         setUDFlag(ud, JUD_FLAG_STRONG);
         copyUDToGNV(env, L, ud, -1, javaObj);
     }
-#if defined(JAVA_CACHE_UD)
     FREE(env, javaObj);
-#endif
     ud->refCount = 0;
 
     ud->name = lua_pushstring(L, metaname);
@@ -752,16 +744,12 @@ static int
 executeJavaIndexOrNewindexFunction(JNIEnv *env, lua_State *L, jmethodID m, const char *mn,
                                    int getter) {
     UDjavaobject udjobj = (UDjavaobject) lua_touserdata(L, 1);
-#if defined(JAVA_CACHE_UD)
     jobject jobj = getUserdata(env, L, udjobj);
     if (!jobj) {
         lua_pushfstring(L, "get java object from java failed, id: %d", udjobj->id);
         lua_error(L);
         return 1;
     }
-#else
-    jobject jobj = udjobj->jobj;
-#endif
     int paramCount = lua_gettop(L) - 1;
     jobject p = NULL;
     jstring jmn = newJString(env, mn);
@@ -773,9 +761,7 @@ executeJavaIndexOrNewindexFunction(JNIEnv *env, lua_State *L, jmethodID m, const
         p = toJavaValue(env, L, 2);
         (*env)->CallVoidMethod(env, jobj, m, jmn, p);
     }
-#if defined(JAVA_CACHE_UD)
     FREE(env, jobj);
-#endif
     char *info = join3str(udjobj->name + strlen(METATABLE_PREFIX), ".", mn);
     if (catchJavaException(env, L, info)) {
         if (info)
@@ -877,23 +863,18 @@ static int userdata_tostring_fun(lua_State *L) {
     int need = getEnv(&env);
 
     UDjavaobject ud = (UDjavaobject) lua_touserdata(L, 1);
-#if defined(JAVA_CACHE_UD)
     jobject jobj = getUserdata(env, L, ud);
     if (!jobj) {
         lua_pushfstring(L, "get java object from java failed, id: %d", ud->id);
         lua_error(L);
         return 1;
     }
-#else
-    jobject jobj = ud->jobj;
-#endif
 
     jmethodID m = getuserdata((UDjmethod) lua_touserdata(L, lua_upvalueindex(1)));
 
     jstring r = (*env)->CallObjectMethod(env, jobj, m);
-#if defined(JAVA_CACHE_UD)
+
     FREE(env, jobj);
-#endif
     clearException(env);
     const char *str = GetString(env, r);
     if (str) {
@@ -948,7 +929,6 @@ static int userdata_bool_fun(lua_State *L) {
 
     JNIEnv *env;
     int need = getEnv(&env);
-#if defined(JAVA_CACHE_UD)
     jobject jobj1 = getUserdata(env, L, ud);
     if (!jobj1) {
         lua_pushfstring(L, "get java object from java failed, id: %d", ud->id);
@@ -961,18 +941,12 @@ static int userdata_bool_fun(lua_State *L) {
         lua_error(L);
         return 1;
     }
-#else
-    jobject jobj1 = ud->jobj;
-    jobject jobj2 = other->jobj;
-#endif
 
     jmethodID m = getuserdata((UDjmethod) lua_touserdata(L, lua_upvalueindex(1)));
 
     jboolean r = (*env)->CallBooleanMethod(env, jobj1, m, jobj2);
-#if defined(JAVA_CACHE_UD)
     FREE(env, jobj1);
     FREE(env, jobj2);
-#endif
     clearException(env);
     lua_pushboolean(L, r);
 
@@ -1014,17 +988,11 @@ static int gc_userdata(lua_State *L) {
     int need = getEnv(&env);
 
     UDjavaobject ud = (UDjavaobject) lua_touserdata(L, 1);
-#if defined(JAVA_CACHE_UD)
     jobject jobj = getUserdata(env, L, ud);
     if (!jobj) {
         if (need) detachEnv();
-//        lua_pushfstring(L, "get java object from java failed, id: %d", ud->id);
-//        lua_error(L);
         return 0;
     }
-#else
-    jobject jobj = ud->jobj;
-#endif
 
     int idx = lua_upvalueindex(1);
     jmethodID gcm = getuserdata((UDjmethod) lua_touserdata(L, idx));
@@ -1032,11 +1000,7 @@ static int gc_userdata(lua_State *L) {
 
     (*env)->CallVoidMethod(env, jobj, gcm);
     clearException(env);
-#if defined(JAVA_CACHE_UD)
     FREE(env, jobj);
-#else
-    UNGLOBAL(env, jobj);
-#endif
     if (need) detachEnv();
     return 0;
 }
@@ -1089,16 +1053,12 @@ static int executeJavaUDFunction(lua_State *L) {
 
     int pc = lua_gettop(L) - 1; //去掉底部userdata
     UDjavaobject ud = (UDjavaobject) lua_touserdata(L, 1);
-#if defined(JAVA_CACHE_UD)
     jobject jobj = getUserdata(env, L, ud);
     if (!jobj) {
         lua_pushfstring(L, "get java object from java failed, id: %d", ud->id);
         lua_error(L);
         return 1;
     }
-#else
-    jobject jobj = ud->jobj;
-#endif
 
     jobjectArray p = newLuaValueArrayFromStack(env, L, pc, 2);
     jobjectArray r = (*env)->CallObjectMethod(env, jobj, m, p);
@@ -1106,9 +1066,7 @@ static int executeJavaUDFunction(lua_State *L) {
     if (catchJavaException(env, L, info)) {
         if (info)
             m_malloc(info, sizeof(char) * (strlen(info) + 1), 0);
-#if defined(JAVA_CACHE_UD)
         FREE(env, jobj);
-#endif
         FREE(env, r);
         FREE(env, p);
         if (need) detachEnv();
@@ -1118,9 +1076,7 @@ static int executeJavaUDFunction(lua_State *L) {
     }
     if (info)
         m_malloc(info, sizeof(char) * (strlen(info) + 1), 0);
-#if defined(JAVA_CACHE_UD)
     FREE(env, jobj);
-#endif
 
     FREE(env, p);
     if (!r) {

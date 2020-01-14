@@ -114,4 +114,18 @@ public class LuaFunction extends NLuaValue {
     public final InvokeError getInvokeError() {
         return invokeError;
     }
+
+    public String getSource() {
+        if (isDestroyed())
+            return null;
+        return LuaCApi._getFunctionSource(globals.L_State, nativeGlobalKey);
+    }
+
+    @Override
+    public String toString() {
+        if (MLNCore.DEBUG) {
+            return super.toString() + "--" + getSource();
+        }
+        return super.toString();
+    }
 }

@@ -9,8 +9,6 @@
 #include <string.h>
 #include "map.h"
 
-#define ER_MEM 1
-
 #define map_index(map, hash) (unsigned int)(hash % map->_len)
 
 #define map_error(map) (map->_c)

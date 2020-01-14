@@ -21,6 +21,7 @@
 
 /**
  * 从GNV表中移除native数据
+ * @return 返回引用计数
  */
 static int removeValueFromGNV(lua_State *L, ptrdiff_t key, int ltype);
 /**

@@ -31,8 +31,6 @@ extern jclass Globals;
 extern jclass StringClass;
 extern jmethodID Globals__onLuaRequire;
 
-#define AUTO_SAVE "__autosave"
-
 #define FILE_NOT_FOUND -404
 #define WRITE_FILE_ERROR -300
 #define CLOSE_FILE_ERROR -301
@@ -85,89 +83,6 @@ static void throwUndumpError(JNIEnv *env, const char *msg);
 /// ------------------------jni methods------------------------
 void jni_openSAES(JNIEnv *env, jobject jobj, jboolean open) {
     opensaes = (int) open;
-}
-
-void jni_setBasePath(JNIEnv *env, jobject jobj, jlong LS, jstring path, jboolean autosave) {
-    lua_State *L = (lua_State *) LS;
-    lua_lock(L);
-    const char *bp = GetString(env, path);
-    lua_getglobal(L, LUA_LOADLIBNAME); //-1 package table
-    lua_pushstring(L, bp);             //-1 bp -- table
-    lua_setfield(L, -2, "path");       //-1 table
-    lua_pushboolean(L, (int) autosave); //-1 bool --table
-    lua_setfield(L, -2, AUTO_SAVE);    //-1 table
-    lua_pop(L, 1);
-    ReleaseChar(env, path, bp);
-    lua_unlock(L);
-}
-
-void jni_setSoPath(JNIEnv *env, jobject jobj, jlong LS, jstring path) {
-    lua_State *L = (lua_State *) LS;
-    lua_lock(L);
-    const char *bp = GetString(env, path);
-    lua_getglobal(L, LUA_LOADLIBNAME); //-1 package table
-    lua_pushstring(L, bp);             //-1 bp -- table
-    lua_setfield(L, -2, "cpath");      //-1 table
-    lua_pop(L, 1);
-    ReleaseChar(env, path, bp);
-    lua_unlock(L);
-}
-
-jint jni_compileAndSave(JNIEnv *env, jobject jobj, jlong L, jstring fn, jstring chunkname,
-                        jbyteArray data) {
-    lua_State *LS = (lua_State *) L;
-
-    lua_lock(LS);
-    int ret = loadbuffer(env, LS, chunkname, data);
-    if (ret) {
-        lua_unlock(LS);
-        return ret;
-    }
-    const Proto *f = GET_PROTO(LS);
-    const char *filename = GetString(env, fn);
-    ret = saveProto(LS, f, filename);
-    // lua_pop(LS, 1);
-    ReleaseChar(env, fn, filename);
-    checkSaveError(env, ret);
-    lua_unlock(LS);
-    return (jint) ret;
-}
-
-jint jni_compilePathAndSave(JNIEnv *env, jobject jobj, jlong L, jstring fn, jstring src,
-                            jstring chunkname) {
-    lua_State *LS = (lua_State *) L;
-    lua_lock(LS);
-    int ret = loadfile(env, LS, src, chunkname);
-    if (ret) {
-        lua_unlock(LS);
-        return ret;
-    }
-    const Proto *f = GET_PROTO(LS);
-    const char *filename = GetString(env, fn);
-    ret = saveProto(LS, f, filename);
-    // lua_pop(LS, 1);
-    ReleaseChar(env, fn, filename);
-    checkSaveError(env, ret);
-    lua_unlock(LS);
-    return (jint) ret;
-}
-
-jint jni_savePreloadData(JNIEnv *env, jobject jobj, jlong LS, jstring savePath, jstring chunkname) {
-    lua_State *L = (lua_State *) LS;
-    lua_lock(L);
-    luaL_getsubtable(L, LUA_REGISTRYINDEX, "_PRELOAD"); // -1: _PRELOAD table
-    jint r = (jint) getLuaClosureAndSave(env, L, savePath, chunkname);
-    lua_unlock(L);
-    return r;
-}
-
-jint jni_saveChunk(JNIEnv *env, jobject jobj, jlong LS, jstring savePath, jstring chunkname) {
-    lua_State *L = (lua_State *) LS;
-    lua_lock(L);
-    luaL_getsubtable(L, LUA_REGISTRYINDEX, "_LOADED");
-    jint r = (jint) getLuaClosureAndSave(env, L, savePath, chunkname);
-    lua_unlock(L);
-    return r;
 }
 
 jint jni_loadData(JNIEnv *env, jobject jobj, jlong L_state_pointer, jstring name, jbyteArray data) {

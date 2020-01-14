@@ -45,15 +45,9 @@
 #define ReleaseChar(env, js, c) ((js && c) ? (*env)->ReleaseStringUTFChars(env, js, c) : (void *)c)
 
 #define FREE(env, obj) if ((obj) && (*env)->GetObjectRefType(env, obj) == JNILocalRefType) (*env)->DeleteLocalRef(env, obj);
-#if defined(J_API_INFO)
-jobject _global(JNIEnv *, jobject);
-void _unglobal(JNIEnv *, jobject);
-#define GLOBAL(env, obj) _global(env, obj)
-#define UNGLOBAL(env, obj) _unglobal(env, obj)
-#else
+
 #define GLOBAL(env, obj) (*env)->NewGlobalRef(env, obj)
-#define UNGLOBAL(env, obj) (*env)->DeleteGlobalRef(env, obj)
-#endif
+
 #define ExceptionDescribe(env) (*env)->ExceptionDescribe(env)
 #define ClearException(env)     if ((*env)->ExceptionCheck(env)) {  \
                                     ExceptionDescribe(env);         \
@@ -63,9 +57,4 @@ void _unglobal(JNIEnv *, jobject);
 typedef jclass *UDjclass;
 typedef jmethodID *UDjmethod;
 #define getuserdata(ud) (*ud)
-
-/**
- * 将src table中的数据拷贝到desc table中
- */
-void copyTable(lua_State *L, int src, int desc);
 #endif // GLOBAL_DEFINE_H

@@ -84,6 +84,32 @@ const char *l_db_path = NULL;
 void jni_setDatabasePath(JNIEnv *env, jobject jobj, jstring path) {
     l_db_path = GetString(env, path);
 }
+
+void jni_setBasePath(JNIEnv *env, jobject jobj, jlong LS, jstring path, jboolean autosave) {
+    lua_State *L = (lua_State *) LS;
+    lua_lock(L);
+    const char *bp = GetString(env, path);
+    lua_getglobal(L, LUA_LOADLIBNAME); //-1 package table
+    lua_pushstring(L, bp);             //-1 bp -- table
+    lua_setfield(L, -2, "path");       //-1 table
+    lua_pushboolean(L, (int) autosave); //-1 bool --table
+    lua_setfield(L, -2, AUTO_SAVE);    //-1 table
+    lua_pop(L, 1);
+    ReleaseChar(env, path, bp);
+    lua_unlock(L);
+}
+
+void jni_setSoPath(JNIEnv *env, jobject jobj, jlong LS, jstring path) {
+    lua_State *L = (lua_State *) LS;
+    lua_lock(L);
+    const char *bp = GetString(env, path);
+    lua_getglobal(L, LUA_LOADLIBNAME); //-1 package table
+    lua_pushstring(L, bp);             //-1 bp -- table
+    lua_setfield(L, -2, "cpath");      //-1 table
+    lua_pop(L, 1);
+    ReleaseChar(env, path, bp);
+    lua_unlock(L);
+}
 /// ------------------------------------------------------------------
 // ---------------------------------gc--------------------------------
 /// ------------------------------------------------------------------
@@ -113,42 +139,6 @@ void jni_setGcOffset(JNIEnv *env, jobject jobj, int offset) {
 /// ------------------------------------------------------------------
 /// -------------------------------debug------------------------------
 /// ------------------------------------------------------------------
-#if defined(J_API_INFO)
-static size_t all_size = 0;
-
-void *m_alloc(void *ud, void *ptr, size_t osize, size_t nsize) {
-    size_t *sp = (size_t *) ud;
-    if (nsize == 0) {
-        free(ptr);
-        if (ptr) {
-            *sp = *sp - osize;
-            all_size -= osize;
-        }
-        return NULL;
-    } else {
-        void *nb = realloc(ptr, nsize);
-        if (nb) {
-            size_t of = (ptr) ? (nsize - osize) : nsize;
-            *sp = *sp + of;
-            all_size += of;
-        }
-        return nb;
-    }
-}
-
-static size_t all_global_obj = 0;
-
-jobject _global(JNIEnv *env, jobject obj) {
-    all_global_obj++;
-    return (*env)->NewGlobalRef(env, obj);
-}
-
-void _unglobal(JNIEnv *env, jobject obj) {
-    all_global_obj--;
-    (*env)->DeleteGlobalRef(env, obj);
-}
-
-#endif
 
 jlong jni_lvmMemUse(JNIEnv *env, jobject jobj, jlong L) {
 #if defined(J_API_INFO)
@@ -156,28 +146,6 @@ jlong jni_lvmMemUse(JNIEnv *env, jobject jobj, jlong L) {
     return *(size_t *) (G(LS)->ud);
 #else
     return 0;
-#endif
-}
-
-jlong jni_allLvmMemUse(JNIEnv *env, jobject jobj) {
-#if defined(J_API_INFO)
-    return (jlong) (all_size + m_mem_use());
-#else
-    return 0;
-#endif
-}
-
-jlong jni_globalObjectSize(JNIEnv *env, jobject jobj) {
-#if defined(J_API_INFO)
-    return (jlong) all_global_obj;
-#else
-    return 0;
-#endif
-}
-
-void jni_logMemoryInfo(JNIEnv *env, jobject jobj) {
-#if defined(J_API_INFO) && defined(MEM_INFO)
-    m_log_mem_infos();
 #endif
 }
 
@@ -235,50 +203,9 @@ jlong jni_createLState(JNIEnv *env, jobject jobj, jboolean debug) {
     return (jlong) L;
 }
 
-void jni_reset(JNIEnv *env, jobject jobj, jlong L) {
-    static const char *save_table[] = {
-            "io","package","bit32","MBit","_G","os","coroutine","table","debug","string","math"
-    };
-    static const int size = 11;
-
-    lua_State *LS = (lua_State *) L;
-    luaF_close(LS, LS->stack);
-    lua_settop(LS, 1);
-
-    lua_getglobal(LS, "package");
-    if (lua_isnil(LS, -1)) {
-        lua_pop(LS, 1);
-        return;
-    }
-    lua_getfield(LS, -1, "loaded");
-    lua_remove(LS, -2);
-    if (lua_isnil(LS, -1)) {
-        lua_pop(LS, 1);
-        return;
-    }
-    // -1: loadedtable
-    lua_pushnil(LS);                // -1: nil   loadedtable
-    const char *key = NULL;
-    while (lua_next(LS, -2)) {      // -1: value  key  loadedtable
-        if (lua_isstring(LS, -2)) {
-            key = lua_tostring(LS, -2);
-        }
-        lua_pop(LS, 1);             // -1: key loadedtable
-        if (!key) {
-            continue;
-        }
-        int i;
-        for (i = 0; i < size; ++i) {
-            if (strcmp(key, save_table[i]) == 0) {
-                continue;
-            }
-        }
-
-        lua_pushvalue(LS, -1);      // -1 key   key   loadedtable
-        lua_pushnil(LS);            // -1 nil   key   key   loadedtable
-        lua_rawset(LS, -4);         // -1 key   loadedtable
-    }
-    lua_pop(LS, 1);
+void jni_openDebug(JNIEnv *env, jobject jobj, jlong L) {
+    luaopen_socket_core((lua_State *) L);
+    lua_pop((lua_State *) L, 1);
 }
 
 void jni_close(JNIEnv *env, jobject jobj, jlong L) {
@@ -296,10 +223,6 @@ void jni_close(JNIEnv *env, jobject jobj, jlong L) {
 /// ------------------------------------------------------------------
 /// --------------------------stack for java--------------------------
 /// ------------------------------------------------------------------
-jint jni_registerIndex(JNIEnv *env, jobject jobj) {
-    return (jint) LUA_REGISTRYINDEX;
-}
-
 jobjectArray jni_dumpStack(JNIEnv *env, jobject jobj, jlong L) {
     lua_State *LS = (lua_State *) L;
     lua_lock(LS);
@@ -316,75 +239,12 @@ jobjectArray jni_dumpStack(JNIEnv *env, jobject jobj, jlong L) {
     return arr;
 }
 
-void jni_removeStack(JNIEnv *env, jobject jobj, jlong L, jint idx) {
-    lua_State *LS = (lua_State *) L;
-    lua_lock(LS);
-    if (idx == lua_gettop(LS)) {
-        lua_pop(LS, 1);
-    } else {
-        lua_remove(LS, (int) idx);
-    }
-    lua_unlock(LS);
-}
-
-void jni_pop(JNIEnv *env, jobject jobj, jlong L, jint c) {
-    lua_State *LS = (lua_State *) L;
-    lua_pop(LS, (int) c);
-}
-
-jint jni_getTop(JNIEnv *env, jobject jobj, jlong L) {
-    return (jint) lua_gettop((lua_State *) L);
-}
-
 void jni_lgc(JNIEnv *env, jobject jobj, jlong L) {
     lua_State * LS = (lua_State *)L;
     lua_gc(LS, LUA_GCCOLLECT, 0);
 }
 
 // --------------------------function--------------------------
-jobjectArray
-jni_invoke(JNIEnv *env, jobject jobj, jlong L, jlong function, jobjectArray params, jint rc) {
-    lua_State *LS = (lua_State *) L;
-    lua_lock(LS);
-    int erridx = getErrorFunctionIndex(LS);
-    int oldTop = lua_gettop(LS);
-    getValueFromGNV(LS, (ptrdiff_t) function, LUA_TFUNCTION);
-    if (lua_isnil(LS, -1)) {
-        throwInvokeError(env, "function is destroyed.");
-        lua_pop(LS, 1);
-        lua_unlock(LS);
-        return NULL;
-    }
-
-    int len = pushJavaArray(env, LS, params);
-    int ret = lua_pcall(LS, len, (int) rc, erridx);
-    if (ret != 0) {
-        const char *errMsg = NULL;
-        if (lua_isstring(LS, -1))
-            errMsg = lua_tostring(LS, -1);
-        lua_settop(LS, oldTop);
-        throwInvokeError(env, errMsg);
-        lua_unlock(LS);
-        return NULL;
-    }
-    int returnCount = lua_gettop(LS) - oldTop;
-    if (returnCount == 0) {
-        lua_settop(LS, oldTop);
-        // lua_pop(LS, 1);
-        lua_unlock(LS);
-        return NULL;
-    }
-    int i;
-    jobjectArray r = (*env)->NewObjectArray(env, returnCount, LuaValue, NULL);
-    for (i = returnCount - 1; i >= 0; i--) {
-        jobject v = toJavaValue(env, LS, oldTop + i + 1);
-        (*env)->SetObjectArrayElement(env, r, i, v);
-        FREE(env, v);
-    }
-    lua_settop(LS, oldTop);
-    lua_unlock(LS);
-    return r;
-}
 
 void jni_callMethod(JNIEnv *env, jobject jobj, jlong L, jlong method, jlong arg) {
     lua_State *LS = (lua_State *) L;

@@ -17,7 +17,7 @@ package org.luaj.vm2.utils;
 public interface ResourceFinder {
     /**
      * 预处理模块名称
-     * eg: return name.replaceAll("\\.", "/") + ".lua";
+     * eg: return StringReplaceUtils.replaceAllChar(name, '.', '/') + ".lua";
      *
      * @param name 名称中一般不带后缀，且文件夹用.表示
      *             eg: path.moduleA

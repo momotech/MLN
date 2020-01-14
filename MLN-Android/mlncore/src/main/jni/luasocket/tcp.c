@@ -40,6 +40,7 @@ static int meth_getfd(lua_State *L);
 static int meth_setfd(lua_State *L);
 static int meth_dirty(lua_State *L);
 
+static int meth_async_poll(lua_State *L);
 /* tcp object methods */
 static luaL_Reg tcp_methods[] = {
     {"__gc",        meth_close},
@@ -66,6 +67,7 @@ static luaL_Reg tcp_methods[] = {
     {"settimeout",  meth_settimeout},
     {"gettimeout",  meth_gettimeout},
     {"shutdown",    meth_shutdown},
+    {"asyncpoll",   meth_async_poll},
     {NULL,          NULL}
 };
 
@@ -468,4 +470,123 @@ static int global_connect(lua_State *L) {
     }
     auxiliar_setclass(L, "tcp{client}", -1);
     return 1;
+}
+
+#include <pthread.h>
+#include <poll.h>
+#include "isolate.h"
+
+/*-------------------------------------------------------------------------*\
+* Poll socket in background thread
+\*-------------------------------------------------------------------------*/
+typedef struct poll_thread_ctx {
+    lua_State *L;
+    t_socket socket;
+} poll_thread_ctx;
+
+static lua_State* _current_main_state = NULL; // main thread state
+
+static double _begin = 0;
+static double mln_current_time(void) {
+    struct timeval time;
+    gettimeofday(&time, NULL);
+    return (time.tv_sec * 1000 + time.tv_usec / 1000.0);
+}
+
+static int handle_socket_command_error(lua_State *L) {
+    if (lua_isstring(L, -1)) {
+        const char *errmsg = lua_tostring(L, -1);
+        printf("%s\n", errmsg);
+    }
+    return 0;
+}
+
+static void* mln_handle_socket_command_message(void *data) {
+    if (!data) return NULL;
+    double time = mln_current_time() - _begin; // ms (0.02ms ~ 100ms)
+    const char *retvalue = NULL;
+    lua_State *L = (lua_State *)data;
+    if (_current_main_state != L) {
+        return "dead";
+    }
+    if (time < 900) {
+        lua_getglobal(L, "handle_socket_command_message");
+        if (lua_isfunction(L, -1)) {
+            lua_pushcfunction(L, handle_socket_command_error);
+            lua_insert(L, -2);
+            lua_pcall(L, 0, 1, -2); // receive socket data to handle breakpoints.
+            retvalue = lua_tostring(L, -1);
+            lua_pop(L, 1); // remove return value
+        } else {
+            retvalue = "dead";
+            lua_pop(L, 1); // remove it if it is not function which we need.
+        }
+    }
+    return (void *)retvalue;
+}
+
+static void* mln_poll_socket_func(void *ctx) {
+    if (!ctx) return NULL;
+    const char *tname = "com.mln.poll.socket.thread";
+#if defined(JAVA_ENV)
+    pthread_t pt = pthread_self();
+    pthread_setname_np(pt, tname);
+#else
+    pthread_setname_np(tname);
+#endif
+    poll_thread_ctx *context = (poll_thread_ctx *)ctx;
+    lua_State *L = context->L;
+
+    int ret;
+    struct pollfd pfd;
+    pfd.fd = context->socket;
+    pfd.events = POLLIN;
+    pfd.revents = 0;
+
+    sleep(2); // filter first message. (the first message should be polled by main thread in lua, rather than current thread)
+    while (1) {
+        int timeout = 5 * 1000; // ms
+        ret = poll(&pfd, 1, timeout);
+        if (ret == 0) continue; // timeout should continue and if error will break
+        if (ret == -1 && errno == EINTR) continue;
+        if (pfd.revents == (POLLHUP | POLLIN) && ret == 1 && errno == ETIMEDOUT) {
+            break;
+        }
+        if (ret < 0 || pfd.revents == POLLNVAL) break;
+        _begin = mln_current_time();
+        const char *retvalue = (const char *)mln_thread_sync_to_main(L, mln_handle_socket_command_message);
+        if (retvalue && strcmp(retvalue, "dead") == 0) {
+            break;
+        }
+    }
+
+    if (ret == 0) {
+        printf("[%s] poll timeout and nothing happend, will quit current thread.\n", tname);
+    } else if (ret < 0) {
+        printf("[%s] poll error and will quit current thread. \n", tname);
+    }
+
+    free(ctx);
+    return NULL;
+}
+
+static void setup_poll_socket_runloop(lua_State *L, t_socket socket) {
+    pthread_t threadId = 0;
+
+    poll_thread_ctx *ctx = (poll_thread_ctx *)malloc(sizeof(poll_thread_ctx));
+    ctx->L = L;
+    ctx->socket = socket;
+    int res = pthread_create(&threadId, NULL, mln_poll_socket_func, ctx);
+    if (res == 0) { // success
+        pthread_detach(threadId);
+    } else {
+        printf("setup_poll_socket_runloop error: %d", res);
+    }
+}
+
+static int meth_async_poll(lua_State *L) {
+    _current_main_state = L;
+    p_tcp tcp = (p_tcp)auxiliar_checkgroup(L, "tcp{any}", 1);
+    setup_poll_socket_runloop(L, tcp->sock);
+    return 0;
 }
