@@ -12,6 +12,7 @@ import android.content.Context;
 import com.immomo.mls.Constants;
 
 import org.luaj.vm2.Globals;
+import org.luaj.vm2.utils.StringReplaceUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -142,21 +143,6 @@ public class ScriptFile {
     }
 
     /**
-     * 如果该文件由{@link Globals#preloadData(String, byte[])} or {@link Globals#preloadFile(String, String)}预加载过
-     * 则保存已编译的二进制数据到文件中
-     * @param g         虚拟机
-     * @param basePath  根目录，将通过{@link #getPath(String)}方法拼接成绝对路径
-     * @return true 保存成功
-     */
-    public boolean saveIfPreloaded(Globals g, String basePath) {
-        try {
-            return g.savePreloadData(chunkName, getPath(basePath));
-        } catch (RuntimeException ignore) {
-            return false;
-        }
-    }
-
-    /**
      * 将{@link #chunkName}拼接到给定的跟目录下，创建需要的目录，并返回绝对路径
      * @param basePath 根目录
      */
@@ -187,11 +173,11 @@ public class ScriptFile {
             if (name.endsWith(Constants.POSTFIX_LUA)) {
                 /// 不用判断equals
                 if (suffix != Constants.POSTFIX_LUA) {
-                    name = name.replaceAll("\\.", "/");
+                    name = StringReplaceUtils.replaceAllChar(name, '.', '/');
                     name = name.replace("/lua", suffix);
                 }
             } else {
-                name = name.replaceAll("\\.", "/") + suffix;
+                name = StringReplaceUtils.replaceAllChar(name, '.', '/') + suffix;
             }
         } else {
             name = name + suffix;

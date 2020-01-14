@@ -72,11 +72,9 @@ jmethodID LuaUserdata_memoryCast = NULL;
 // jmethodID InvokeError_CT = NULL;
 jmethodID obj__toString = NULL;
 jmethodID Throwable_getStackTrace = NULL;
-#if defined(JAVA_CACHE_UD)
 jmethodID Globals__getUserdata = NULL;
 jfieldID LuaUserdata_id = NULL;
 jmethodID LuaUserdata_addRef = NULL;
-#endif
 
 jclass Entrys = NULL;
 jmethodID Entrys_C = NULL;
@@ -104,9 +102,7 @@ void initJavaInfo(JNIEnv *env) {
                                                                   "__onGlobalsDestroyInNative",
                                                                   "(J)V");
     Globals__postCallback = (*env)->GetStaticMethodID(env, Globals, "__postCallback", "(JJJ)I");
-#if defined(JAVA_CACHE_UD)
     Globals__getUserdata = (*env)->GetStaticMethodID(env, Globals, "__getUserdata", "(JJ)" OBJECT_CLASS);
-#endif
 
     LuaValue = GLOBAL(env, findTypeClass(env, "LuaValue"));
     LuaValue_type = (*env)->GetMethodID(env, LuaValue, "type", "()I");
@@ -134,10 +130,8 @@ void initJavaInfo(JNIEnv *env) {
     LuaUserdata = GLOBAL(env, findTypeClass(env, "LuaUserdata"));
     LuaUserdata_luaclassName = (*env)->GetFieldID(env, LuaUserdata, "luaclassName", STRING_CLASS);
     LuaUserdata_memoryCast = (*env)->GetMethodID(env, LuaUserdata, "memoryCast", "()J");
-#if defined(JAVA_CACHE_UD)
     LuaUserdata_id = (*env)->GetFieldID(env, LuaUserdata, "id", "J");
     LuaUserdata_addRef = (*env)->GetMethodID(env, LuaUserdata, "addRef", "()V");
-#endif
     JavaUserdata = GLOBAL(env, findTypeClass(env, "JavaUserdata"));
 
     LuaThread = GLOBAL(env, findTypeClass(env, "LuaThread"));
@@ -234,7 +228,6 @@ jobject newLuaUserdata(JNIEnv *env, lua_State *L, int idx, UDjavaobject ud) {
     return NULL;
 }
 
-#if defined(JAVA_CACHE_UD)
 jlong getUserdataId(JNIEnv *env, jobject ud) {
     return (*env)->GetLongField(env, ud, LuaUserdata_id);
 }
@@ -242,23 +235,13 @@ jlong getUserdataId(JNIEnv *env, jobject ud) {
 void addUserdataRefCount(JNIEnv *env, jobject ud) {
     (*env)->CallVoidMethod(env, ud, LuaUserdata_addRef);
 }
-#endif
 
 jobject getUserdata(JNIEnv *env, lua_State *L, UDjavaobject ud) {
-#if defined(JAVA_CACHE_UD)
     return (*env)->CallStaticObjectMethod(env, Globals, Globals__getUserdata, (jlong) L, ud->id);
-#else
-    return ud->jobj;
-#endif
 }
 
 jobject newLuaThread(JNIEnv *env, lua_State *L, int idx) {
-    lua_lock(L);
-    jstring s = newJString(env, copyValueToGNV(L, idx));
-    jobject ret = (*env)->NewObject(env, LuaThread, LuaThread_C, (jlong) L, s);
-    FREE(env, s);
-    lua_unlock(L);
-    return ret;
+    return NULL;
 }
 
 jobject toJavaValue(JNIEnv *env, lua_State *L, int idx) {
@@ -317,12 +300,8 @@ void pushUserdataFromJUD(JNIEnv *env, lua_State *L, jobject obj) {
 
     UDjavaobject ud = (UDjavaobject) lua_newuserdata(L, sizeof(javaUserdata));
     ud->flag = 0;
-#if defined(JAVA_CACHE_UD)
     addUserdataRefCount(env, obj);
     ud->id = getUserdataId(env, obj);
-#else
-    ud->jobj = GLOBAL(env, obj);
-#endif
     const char *udname = lua_pushfstring(L, METATABLE_FORMAT, luaclassname);
     ReleaseChar(env, lcn, luaclassname);
     FREE(env, lcn);

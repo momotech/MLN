@@ -40,15 +40,21 @@ public class SafeAreaManager implements SafeAreaConstants {
     private boolean isTranslucent = false;//是否沉浸式
     private boolean isFullScreen = false;//是否全屏
     private int[] areas;
+    private int area = SafeAreaConstants.CLOSE;//默认关闭
 
     public SafeAreaManager() {
         areas = new int[4];
+    }
+
+    public void updataArea(UDLuaView window) {
+        safeArea(this.area, window);
     }
 
     public void safeArea(@SafeArea int area, UDLuaView window) {
         if (window == null) {
             return;
         }
+        this.area = area;
         Context context = ((LuaViewManager) window.getGlobals().getJavaUserdata()).context;
 
         if (context instanceof Activity) {
@@ -56,22 +62,22 @@ public class SafeAreaManager implements SafeAreaConstants {
             isFullScreen = AndroidUtil.isFullScreen(((Activity) context));
         }
 
-        areas[0] = window.getView().getPaddingLeft();
-        areas[1] = window.getView().getPaddingTop();
-        areas[2] = window.getView().getPaddingRight();
-        areas[3] = window.getView().getPaddingBottom();
+        areas[0] = window.getPaddingLeft();
+        areas[1] = window.getPaddingTop();
+        areas[2] = window.getPaddingRight();
+        areas[3] = window.getPaddingBottom();
 
         if ((area & LEFT) == LEFT) {
-            areas[0] = 0;/*预留*/
+            /*预留*/
         }
         if ((area & TOP) == TOP) {
-            areas[1] = (isTranslucent && !isFullScreen) ? AndroidUtil.getStatusBarHeight(context) : 0;
+            areas[1] = (isTranslucent && !isFullScreen) ? AndroidUtil.getStatusBarHeight(context) + areas[1] :  areas[1];
         }
         if ((area & RIGHT) == RIGHT) {
-            areas[2] = 0;/*预留*/
+            /*预留*/
         }
-        if ((area & BOTTOM) == BOTTOM) {//LuaSDk目前的沉浸式，不会隐藏底部导航栏，所以BOTTOM区域不需要
-            areas[3] = 0;
+        if ((area & BOTTOM) == BOTTOM) {
+            //LuaSDk目前的沉浸式，不会隐藏底部导航栏，所以BOTTOM区域不需要
         }
 
 

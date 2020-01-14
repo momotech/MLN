@@ -9,12 +9,13 @@
 // Created by Xiong.Fangyu 2019/03/13.
 //
 
-#include "luajapi.h"
+#include "jtable.h"
 #include "debug_info.h"
 #include "luaconf.h"
 #include "m_mem.h"
 #include "llimits.h"
 #include "jinfo.h"
+#include "cache.h"
 
 extern jclass LuaValue;
 extern jclass Entrys;

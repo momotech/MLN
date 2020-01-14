@@ -16,7 +16,7 @@ import java.util.Map;
  * Created by Xiong.Fangyu on 2019-05-17
  */
 public class MemoryMonitor {
-    private static int OFFSET = 5000;
+    private static int OFFSET = 0;
 
     private static T globalMonitor;
     private final static Map<Globals, T> luaVmMonitors = new HashMap<>();
@@ -204,7 +204,7 @@ public class MemoryMonitor {
                     try {
                         sleep(OFFSET);
                     } catch (Throwable ignore) { }
-                    globalMemoryListener.onInfo(Globals.getAllLVMMemUse(), Globals.globalObjectSize());
+                    globalMemoryListener.onInfo(Globals.getAllLVMMemUse());
                 }
             }
         }
@@ -231,8 +231,7 @@ public class MemoryMonitor {
          * 回调所有虚拟机使用内存量
          * Called in other Thread
          * @param memSize  内存总量，单位Byte
-         * @param globalObjSize
          */
-        void onInfo(long memSize, long globalObjSize);
+        void onInfo(long memSize);
     }
 }

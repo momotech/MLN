@@ -25,14 +25,6 @@ import org.luaj.vm2.utils.LuaApiUsed;
 class LuaCApi {
     private static Boolean is32bit;
 
-    static {
-        try {
-            System.loadLibrary("luajapi");
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
-    }
-
     static boolean is32bit() {
         if (is32bit == null) {
             is32bit = _check32bit();
@@ -40,14 +32,10 @@ class LuaCApi {
         return is32bit;
     }
 
-    static native void _setAndroidVersion(int v);
-
     private static native boolean _check32bit();
 
     //<editor-fold desc="isolate">
     static native void _callMethod(long L, long method, long args);
-
-//    static native void _isolateOnThreadRun(long args);
     //</editor-fold>
 
     //<editor-fold desc="Pre register">
@@ -56,56 +44,48 @@ class LuaCApi {
     static native void _preRegisterStatic(String className, String[] methods);
     //</editor-fold>
 
+    //<editor-fold desc="debug">
+    static native LuaValue[] _dumpStack(long L_state);
+
+    //<editor-fold desc="debug mem">
     static native long _lvmMemUse(long L);
 
     static native long _allLvmMemUse();
 
-    static native long _globalObjectSize();
-
     static native void _logMemoryInfo();
+    //</editor-fold>
+    //</editor-fold>
+
+    //<editor-fold desc="Setting">
+    static native void _setAndroidVersion(int v);
 
     static native void _setGcOffset(int offset);
 
     static native void _setDatabasePath(String s);
 
     static native void _setAssetManager(AssetManager as);
+
+    static native void _setBasePath(long L, String basePath, boolean autoSave);
+
+    static native void _setSoPath(long L, String path);
     //<editor-fold desc="saes">
     static native boolean _isSAESFile(String path);
 
     static native void _openSAES(boolean open);
     //</editor-fold>
+    //</editor-fold>
 
     //<editor-fold desc="for Globals">
-    static native int _compileAndSave(long L, String file, String chunkName, byte[] data);
-
-    static native int _compilePathAndSave(long L, String file, String src, String chunkName);
-
-    static native int _savePreloadData(long L, String savePath, String chunkname);
-
-    static native int _saveChunk(long L, String savePath, String chunkname);
-
     static native long _createLState(boolean debug);
 
-    static native void _setBasePath(long L, String basePath, boolean autoSave);
-
-    static native void _setSoPath(long L, String path);
+    static native void _openDebug(long L);
 
     static native void _close(long L_state);
 
-    static native void _reset(long L_state);
-
-    static native int _registerIndex();
-
-    static native LuaValue[] _dumpStack(long L_state);
-
-    static native void _removeStack(long L, int stackIndex);
-
-    static native void _pop(long L, int num);
-
-    static native int _getTop(long L);
-
     static native void _lgc(long L);
+    //</editor-fold>
 
+    //<editor-fold desc="GNV">
     static native int _removeNativeValue(long L, long k, int type);
 
     static native boolean _hasNativeValue(long L, long key, int type);
@@ -181,8 +161,14 @@ class LuaCApi {
     //<editor-fold desc="function">
     static native LuaValue[] _invoke(long global, long gk, LuaValue[] params, int returnCount);
 
-    static native void _registerStaticClassSimple(long L, String javaClassName, String luaClassName, String lpcn);
+    static native String _getFunctionSource(long global, long gk);
+    //</editor-fold>
 
+    //<editor-fold desc="Static Bridge">
+    static native void _registerStaticClassSimple(long L, String javaClassName, String luaClassName, String lpcn);
+    //</editor-fold>
+
+    //<editor-fold desc="userdata">
     static native void _registerJavaMetatable(long L, String jcn, String lcn);
 
     static native void _registerUserdata(long L, String lcn, String lpcn, String jcn);
@@ -190,10 +176,6 @@ class LuaCApi {
     static native void _registerAllUserdata(long L, String[] lcns, String[] lpcns, String[] jcns, boolean[] lazy);
 
     static native void _registerUserdataLazy(long L, String lcn, String lpcn, String jcn);
-
-    static native void _registerNumberEnum(long L, String lcn, String[] keys, double[] values);
-
-    static native void _registerStringEnum(long L, String lcn, String[] keys, String[] values);
 
     /**
      * Global使用，创建一个userdata，并加入到Global表里
@@ -203,5 +185,11 @@ class LuaCApi {
      * @return 对应userdata实例
      */
     static native Object _createUserdataAndSet(long L, String name, String luaName, LuaValue[] params);
+    //</editor-fold>
+
+    //<editor-fold desc="Enum">
+    static native void _registerNumberEnum(long L, String lcn, String[] keys, double[] values);
+
+    static native void _registerStringEnum(long L, String lcn, String[] keys, String[] values);
     //</editor-fold>
 }

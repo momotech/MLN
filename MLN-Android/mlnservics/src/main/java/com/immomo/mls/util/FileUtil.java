@@ -10,9 +10,9 @@ package com.immomo.mls.util;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Build;
-import android.os.Environment;
-import androidx.annotation.NonNull;
 import android.text.TextUtils;
+
+import androidx.annotation.NonNull;
 
 import com.immomo.mls.global.LuaViewConfig;
 
@@ -276,16 +276,20 @@ public class FileUtil {
         return path;
     }
 
+    public static File getSdcardDir() {
+        return LuaViewConfig.getLvConfig().getSdcardDir();
+    }
+
     public static File getRootDir() {
-        return new File(LuaViewConfig.getLvConfig().getRootDir());
+        return LuaViewConfig.getLvConfig().getRootDir();
     }
 
     public static File getCacheDir() {
-        return new File(LuaViewConfig.getLvConfig().getCacheDir());
+        return LuaViewConfig.getLvConfig().getCacheDir();
     }
 
     public static File getImageDir() {
-        return new File(LuaViewConfig.getLvConfig().getImageDir());
+        return LuaViewConfig.getLvConfig().getImageDir();
     }
 
     public static File getLuaDir() {
@@ -838,44 +842,6 @@ public class FileUtil {
             return true;
         }
         return false;
-    }
-    //------------------------------------sdcard operations-----------------------------------------
-
-    /**
-     * is sdacard writeable
-     *
-     * @return
-     */
-    public static boolean isSdcardWritable() {
-        String state = Environment.getExternalStorageState();
-        if (Environment.MEDIA_MOUNTED.equals(state)) {
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * is sccard readable
-     *
-     * @return
-     */
-    public static boolean isSdcardReadable() {
-        String state = Environment.getExternalStorageState();
-        if (Environment.MEDIA_MOUNTED.equals(state) || Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * get sdcard path
-     * 使用该类函数，某些手机系统或者杀毒软件会将应用识别为恶意软件，所以该类函数慎用
-     *
-     * @return
-     */
-    @Deprecated
-    public static String getSdcardPath() {
-        return Environment.getExternalStorageDirectory().getAbsolutePath();
     }
 
     /**

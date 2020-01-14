@@ -8,11 +8,11 @@
 package com.immomo.mls.fun.ud.anim.canvasanim;
 
 import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.view.animation.Interpolator;
 
 import com.immomo.mls.annotation.LuaBridge;
 import com.immomo.mls.annotation.LuaClass;
+import com.immomo.mls.fun.ud.anim.InterpolatorType;
 import com.immomo.mls.fun.ud.anim.RepeatType;
 import com.immomo.mls.fun.ud.anim.Utils;
 import com.immomo.mls.util.DimenUtil;
@@ -41,13 +41,15 @@ public abstract class UDBaseAnimation implements Animation.AnimationListener {
 
     protected int delay;
 
-    protected Interpolator interpolator;
+    protected Interpolator interpolator = Utils.parse(InterpolatorType.Linear);
 
     protected LVCallback startCallback;
     protected LVCallback endCallback;
     protected LVCallback repeatCallback;
 
     protected Animation animation;
+
+    protected boolean cancelCalled = false;
 
     public UDBaseAnimation(Globals g, LuaValue[] init) {
         globals = g;
@@ -86,7 +88,7 @@ public abstract class UDBaseAnimation implements Animation.AnimationListener {
 
     @LuaBridge
     public void setDelay(double d) {
-        delay= (int) (d * 1000);
+        delay = (int) (d * 1000);
     }
 
     @LuaBridge
@@ -96,6 +98,7 @@ public abstract class UDBaseAnimation implements Animation.AnimationListener {
 
     @LuaBridge
     public void cancel() {
+        cancelCalled = true;
         if (animation != null)
             animation.cancel();
     }
@@ -143,7 +146,7 @@ public abstract class UDBaseAnimation implements Animation.AnimationListener {
     @Override
     public void onAnimationEnd(Animation animation) {
         if (endCallback != null)
-            endCallback.call(true);
+            endCallback.call(!cancelCalled);
     }
 
     @Override
@@ -153,27 +156,20 @@ public abstract class UDBaseAnimation implements Animation.AnimationListener {
     }
 
     public Animation getAnimation() {
-        if (animation != null) {
-            animation.reset();
-            if (delay != 0)
-                animation.setStartTime(AnimationUtils.currentAnimationTimeMillis() + delay);
-            else
-                animation.setStartTime(Animation.START_ON_FIRST_FRAME);
-            return animation;
+        cancelCalled = false;
+        if (animation == null) {
+            animation = build();
         }
-        Animation anim = build();
-        animation = anim;
-        anim.setRepeatMode(repeatMode);
-        anim.setRepeatCount(repeatCount);
-        anim.setFillAfter(!autoBack);
-        anim.setInterpolator(interpolator);
-        anim.setDuration(duration);
-        if (delay != 0)
-            anim.setStartTime(AnimationUtils.currentAnimationTimeMillis() + delay);
-        else
-            anim.setStartTime(Animation.START_ON_FIRST_FRAME);
-        anim.setAnimationListener(this);
-        return anim;
+        animation.setRepeatMode(repeatMode);
+        animation.setRepeatCount(repeatCount);
+        animation.setFillAfter(!autoBack);
+        animation.setFillEnabled(false);
+        animation.setFillBefore(false);
+        animation.setInterpolator(interpolator);
+        animation.setDuration(duration);
+        animation.setStartOffset(delay);
+        animation.setAnimationListener(this);
+        return animation;
     }
 
     protected static float getRealValue(int type, float value) {

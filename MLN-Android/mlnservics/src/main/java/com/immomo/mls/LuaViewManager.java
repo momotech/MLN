@@ -152,6 +152,7 @@ public class LuaViewManager implements IGlobalsUserdata{
         if (MLSEngine.DEBUG) {
             MLSAdapterContainer.getConsoleLoggerAdapter().d("LuaViewManager", "init cast: " + t);
         }
+        if (MLSEngine.isInit())
         NativeBridge.registerNativeBridge(globals);
     }
 

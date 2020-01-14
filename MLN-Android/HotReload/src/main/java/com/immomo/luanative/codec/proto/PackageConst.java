@@ -93,6 +93,18 @@ public class PackageConst {
      */
     public static final int TYPE_CREATE = PBBaseCommand.pbbasecommand.InstructionType.CREATE_VALUE;
     /**
+     * <code>COVERAGESUMMARY = 13;</code>
+     */
+    public static final int TYPE_CSUMMER = PBBaseCommand.pbbasecommand.InstructionType.COVERAGESUMMARY_VALUE;
+    /**
+     * <code>COVERAGEDETAIL = 14;</code>
+     */
+    public static final int TYPE_CDETAIL = PBBaseCommand.pbbasecommand.InstructionType.COVERAGEDETAIL_VALUE;
+    /**
+     * <code>COVREAGEVISUAL = 15;</code>
+     */
+    public static final int TYPE_CVISUAL = PBBaseCommand.pbbasecommand.InstructionType.COVREAGEVISUAL_VALUE;
+    /**
      * The constant TYPE_PING.
      */
     public static final int TYPE_PING = PBBaseCommand.pbbasecommand.InstructionType.PING_VALUE;

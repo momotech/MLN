@@ -14,6 +14,7 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.graphics.Region;
 import android.os.Build;
 import android.view.SurfaceView;
 import android.view.View;
@@ -218,14 +219,16 @@ public class ViewClipHelper {
         if (containSurface) {
             canvas.drawPath(surfaceViewClipPath, surfaceViewClipPaint);
         }
+        canvas.getClipBounds(canvasBounds); /// 某些view(textview且设置了setGravity)，canvas的原点不在(0,0)
         if (isTextView && Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             canvas.save();
-            canvas.clipPath(clipPath);
+            canvas.translate(canvasBounds.left, canvasBounds.top);
+            canvas.clipPath(clipPath, Region.Op.DIFFERENCE);
+            canvas.translate(-canvasBounds.left, -canvasBounds.top);
             action.innerDraw(canvas);
             canvas.restore();
             return;
         }
-        canvas.getClipBounds(canvasBounds); /// 某些view(textview且设置了setGravity)，canvas的原点不在(0,0)
         clipRect.offset(canvasBounds.left, canvasBounds.top);
         int sc = canvas.saveLayer(clipRect, null, Canvas.ALL_SAVE_FLAG);
         clipRect.offset(-canvasBounds.left, - canvasBounds.top);

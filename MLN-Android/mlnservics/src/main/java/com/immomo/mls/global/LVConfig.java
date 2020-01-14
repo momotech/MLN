@@ -9,15 +9,18 @@ package com.immomo.mls.global;
 
 import android.content.Context;
 
+import java.io.File;
+
 /**
  * Created by XiongFangyu on 2018/6/19.
  */
 
 public class LVConfig {
     Context context;
-    String rootDir;
-    String cacheDir;
-    String imageDir;
+    File sdcardDir;
+    File rootDir;
+    File cacheDir;
+    File imageDir;
     String globalResourceDir;
 
     LVConfig() {
@@ -27,15 +30,19 @@ public class LVConfig {
         return context;
     }
 
-    public String getRootDir() {
+    public File getSdcardDir() {
+        return sdcardDir;
+    }
+
+    public File getRootDir() {
         return rootDir;
     }
 
-    public String getCacheDir() {
+    public File getCacheDir() {
         return cacheDir;
     }
 
-    public String getImageDir() {
+    public File getImageDir() {
         return imageDir;
     }
 

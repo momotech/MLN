@@ -66,9 +66,14 @@ public class SettingDialog extends AppCompatDialog implements View.OnClickListen
 
         if (!showHotReload) {
             hotReloadContainer.setVisibility(View.GONE);
+        } else {
+            hr_use_port.setText("" + HotReloadHelper.getUsbPort());
         }
         if (!showDebug) {
             debugContainer.setVisibility(View.GONE);
+        } else {
+            etDebugIp.setText(MLSEngine.getDebugIp());
+            edDebugPort.setText(MLSEngine.getDebugPort() + "");
         }
     }
 

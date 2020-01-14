@@ -15,10 +15,10 @@ import java.io.File;
  * 寻找存在的文件绝对路径
  */
 public class PathResourceFinder implements ResourceFinder {
-    private static final String LUA_SUFFIX          = ".lua";
-    private static final String LUA_BINSP           = "b";
-    private static final String LUA_PATH_SEPARATOR  = "\\.";
-    private static final String PARENT_PATH         = "..";
+    private static final String LUA_SUFFIX = ".lua";
+    private static final String LUA_BINSP = "b";
+    private static final char LUA_PATH_SEPARATOR = '.';
+    private static final String PARENT_PATH = "..";
 
     private final String basePath;
 
@@ -34,7 +34,7 @@ public class PathResourceFinder implements ResourceFinder {
         if (name.endsWith(LUA_SUFFIX))
             name = name.substring(0, name.length() - 4);
         if (!name.contains(PARENT_PATH))
-            return name.replaceAll(LUA_PATH_SEPARATOR, File.separator) + LUA_SUFFIX;
+            return StringReplaceUtils.replaceAllChar(name, LUA_PATH_SEPARATOR, File.separatorChar) + LUA_SUFFIX;
         return name + LUA_SUFFIX;
     }
 

@@ -1053,13 +1053,6 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
             removeAllItemDecorations(recyclerView);//移除之前的decoration
             recyclerView.addItemDecoration(layout.getItemDecoration());
 
-            if (layout instanceof UDCollectionGridLayout) {
-                int paddingValues[] = ((UDCollectionGridLayout) layout).getPaddingValues();
-
-                if (!((UDCollectionGridLayout) layout).isCanScrollTolScreenLeft())
-                    recyclerView.setPadding(DimenUtil.dpiToPx((int) paddingValues[0]), DimenUtil.dpiToPx((int) paddingValues[1]), DimenUtil.dpiToPx((int) paddingValues[0]), DimenUtil.dpiToPx((int) paddingValues[3]));
-            }
-
             if (layout instanceof ILayoutInSet) {//修复原CollectionViewGridLayout 两端差异
                 adapter.setMarginForVerticalGridLayout(recyclerView);
             }

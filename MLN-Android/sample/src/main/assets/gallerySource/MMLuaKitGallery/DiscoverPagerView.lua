@@ -78,7 +78,7 @@ function _class:setupCollectionView()
     self.collectionView:showScrollIndicator(true)
     self.containerView:addView(self.collectionView)
 
-    self.layout = WaterfallLayoutFix()
+    self.layout = WaterfallLayout()
     --self.layout:lineSpacing(30)
     self.layout:lineSpacing(0)
         :itemSpacing(10)

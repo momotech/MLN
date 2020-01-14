@@ -26,10 +26,8 @@ public class UDScaleAnimation extends UDBaseAnimation {
     private float fromX, tox;
     private float fromY, toY;
 
-    private int pivotXType = AnimationValueType.ABSOLUTE;
-    private float pivotXValue = 0;
-    private int pivotYType = AnimationValueType.ABSOLUTE;
-    private float pivotYValue = 0;
+    private float pivotXValue = 0.5f;
+    private float pivotYValue = 0.5f;
 
     public UDScaleAnimation(Globals g, LuaValue[] init) {
         super(g, init);
@@ -42,11 +40,6 @@ public class UDScaleAnimation extends UDBaseAnimation {
             if (len == 6) {
                 pivotXValue = (float) init[4].toDouble();
                 pivotYValue = (int) init[5].toDouble();
-            } else if (len == 8) {
-                pivotXType = init[4].toInt();
-                pivotXValue = (float) init[5].toDouble();
-                pivotYType = init[6].toInt();
-                pivotYValue = (int) init[7].toDouble();
             }
         }
     }
@@ -73,18 +66,8 @@ public class UDScaleAnimation extends UDBaseAnimation {
     }
 
     @LuaBridge
-    public void setPivotXType(int xt) {
-        pivotXType = xt;
-    }
-
-    @LuaBridge
     public void setPivotX(float x) {
         pivotXValue = x;
-    }
-
-    @LuaBridge
-    public void setPivotYType(int yt) {
-        pivotYType = yt;
     }
 
     @LuaBridge
@@ -97,8 +80,8 @@ public class UDScaleAnimation extends UDBaseAnimation {
     protected Animation build() {
         return new ScaleAnimation(fromX, tox,
                 fromY, toY,
-                pivotXType, getRealValue(pivotXType, pivotXValue),
-                pivotYType, getRealValue(pivotYType, pivotYValue));
+                Animation.RELATIVE_TO_SELF, pivotXValue,
+                Animation.RELATIVE_TO_SELF, pivotYValue);
     }
 
     @Override
@@ -108,9 +91,7 @@ public class UDScaleAnimation extends UDBaseAnimation {
         anim.tox = tox;
         anim.fromY = fromY;
         anim.toY = toY;
-        anim.pivotXType = pivotXType;
         anim.pivotXValue = pivotXValue;
-        anim.pivotYType = pivotYType;
         anim.pivotYValue = pivotYValue;
         return anim;
     }

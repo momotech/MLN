@@ -77,7 +77,7 @@ public class LuaImageButton<U extends UDImageButton> extends LuaImageView<U> imp
         }
 
         @Override
-        public void onLoadResult(Drawable drawable) {
+        public void onLoadResult(Drawable drawable, String errMsg) {
             updateDrawable(isNormal(), drawable);
         }
 

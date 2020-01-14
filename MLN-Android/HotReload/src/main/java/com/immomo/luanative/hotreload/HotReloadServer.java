@@ -7,6 +7,10 @@
   */
 package com.immomo.luanative.hotreload;
 
+import com.immomo.luanative.codec.PBCommandFactory;
+import com.immomo.luanative.codec.encode.EncoderFactory;
+import com.immomo.luanative.codec.encode.iEncoder;
+import com.immomo.luanative.codec.protobuf.PBCoverageVisualCommand;
 import com.immomo.luanative.codec.protobuf.PBCreateCommand;
 import com.immomo.luanative.codec.protobuf.PBEntryFileCommand;
 import com.immomo.luanative.codec.protobuf.PBMoveCommand;
@@ -18,6 +22,12 @@ import com.immomo.luanative.hotreload.client.ClientFactory;
 import com.immomo.luanative.hotreload.client.iClient;
 import com.immomo.luanative.hotreload.client.iClientListener;
 import com.immomo.luanative.hotreload.io.iMessageListener;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * The type Hot reload server.
@@ -135,6 +145,14 @@ public class HotReloadServer implements IHotReloadServer {
         }
     }
 
+    private iEncoder encoder = EncoderFactory.getInstance();
+
+    private void writeMsg(Object msg) {
+        if (currentClient != null) {
+            currentClient.writeData(encoder.encode(msg));
+        }
+    }
+
     /**
      * 获取入口文件的相对路径.
      *
@@ -191,6 +209,49 @@ public class HotReloadServer implements IHotReloadServer {
                 listener.disconnecte(NET_CONNECTION, ip, port, null);
             }
             return;
+        }
+    }
+
+    private byte[] readFile(File file) {
+        InputStream inputStream = null;
+        try {
+            inputStream = new FileInputStream(file);
+            byte[] buffer = new byte[2048];
+            int bytesRead;
+            final ByteArrayOutputStream output = new ByteArrayOutputStream();
+            while ((bytesRead = inputStream.read(buffer)) != -1) {
+                output.write(buffer, 0, bytesRead);
+            }
+            return output.toByteArray();
+        } catch (IOException ignore) {
+        } finally {
+            if (inputStream != null) {
+                try {
+                    inputStream.close();
+                } catch (Throwable ignore) {}
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public void onReport(String summaryPath, String detailPath) {
+        if (summaryPath != null) {
+            File file = new File(summaryPath);
+            if (file.isFile()) {
+                byte[] data = readFile(file);
+                if (data != null) {
+                    writeMsg(PBCommandFactory.getSummaryCommand(summaryPath, data));
+                }
+            }
+        }
+        if (detailPath != null) {
+            File file = new File(detailPath);
+            if (file.isFile()) {
+                byte[] data = readFile(file);
+                if (data != null)
+                    writeMsg(PBCommandFactory.getDetailCommand(detailPath, data));
+            }
         }
     }
 
@@ -254,6 +315,8 @@ public class HotReloadServer implements IHotReloadServer {
             // 刷新
             PBReloadCommand.pbreloadcommand cmd = (PBReloadCommand.pbreloadcommand) msg;
             listener.onReload(getEntryFilePath(), getRelativeEntryFilePath(), getParams());
+        } else if (msg instanceof PBCoverageVisualCommand.pbcoveragevisualcommand) {
+            listener.onGencoveragereport();
         }
     }
 

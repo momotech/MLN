@@ -138,6 +138,7 @@ public class UDLuaView extends UDViewGroup<LuaView> implements ConnectionStateCh
 
         return null;
     }
+
     @LuaApiUsed
     public LuaValue[] sizeChanged(LuaValue[] p) {
         sizeChangedCallback = p[0].toLuaFunction();
@@ -285,7 +286,16 @@ public class UDLuaView extends UDViewGroup<LuaView> implements ConnectionStateCh
         return null;
     }
 
-//    @LuaApiUsed
+    @Override
+    public LuaValue[] padding(LuaValue[] p) {
+        LuaValue[] result = super.padding(p);
+        if (safeAreaManager != null) {
+            safeAreaManager.updataArea(this);
+        }
+        return result;
+    }
+
+    //    @LuaApiUsed
 //    public LuaValue[] canEndEditing(LuaValue[] p) {
 //        return null;
 //    }

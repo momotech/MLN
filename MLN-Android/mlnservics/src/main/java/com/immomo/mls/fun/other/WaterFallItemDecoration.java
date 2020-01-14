@@ -10,14 +10,12 @@ package com.immomo.mls.fun.other;
 import android.graphics.Rect;
 import android.view.View;
 
-import com.immomo.mls.fun.ud.view.recycler.UDWaterfallLayoutFix;
+import com.immomo.mls.fun.ud.view.recycler.UDWaterFallLayout;
 import com.immomo.mls.fun.ui.LuaStaggeredGridLayoutManager;
 
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 /**
- * {@link DividerWaterFallItemDecoration}有两端差异，避免影响现有业务，新建{@link WaterFallItemDecoration}解决差异
  * Created by zhang.ke on 2019/9/14.
  */
 public class WaterFallItemDecoration extends RecyclerView.ItemDecoration {
@@ -25,14 +23,14 @@ public class WaterFallItemDecoration extends RecyclerView.ItemDecoration {
     public int horizontalSpace;
     public int verticalSpace;
 
-    private UDWaterfallLayoutFix layout;
+    private UDWaterFallLayout layout;
     private boolean hasFooter = false;//两端footer实现不同，Android的footer受Spacing影响。因此需要判断有无
 
     public void setHasFooter(boolean hasFooter) {
         this.hasFooter = hasFooter;
     }
 
-    public WaterFallItemDecoration(UDWaterfallLayoutFix layout) {
+    public WaterFallItemDecoration(UDWaterFallLayout layout) {
         this.layout = layout;
         this.horizontalSpace = layout.getItemSpacingPx();
         this.verticalSpace = layout.getlineSpacingPx();
@@ -42,7 +40,6 @@ public class WaterFallItemDecoration extends RecyclerView.ItemDecoration {
      * WaterFall的item布局方式：
      * 因为有layoutInset, RecyclerView四周的itemSpacing、lineSpacing统一为0
      * 思路：
-     * 在{@link com.immomo.mls.fun.ud.view.recycler.UDBaseRecyclerAdapter#setMarginForVerticalGridLayout(RecyclerView)}
      * 方法中给layoutInset的padding减去itemSpacing，使边缘item的itemSpacing为0
      * <p>
      * item水平之间用：horizontalSpace/2
@@ -78,7 +75,6 @@ public class WaterFallItemDecoration extends RecyclerView.ItemDecoration {
 
     /**
      * 获取行数，参考方法：
-     * {@link GridLayoutManager#getSpanGroupIndex(RecyclerView.Recycler, RecyclerView.State, int)}
      *
      * @param adapterPosition
      * @param spanCount

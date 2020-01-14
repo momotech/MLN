@@ -216,4 +216,10 @@ public class LuaUserdata<T> extends NLuaValue {
             globals.userdataCache.onUserdataGc(this, true);
         super.finalize();
     }
+
+    @Override
+    public void destroy() {
+        if (this instanceof JavaUserdata)
+            super.destroy();
+    }
 }

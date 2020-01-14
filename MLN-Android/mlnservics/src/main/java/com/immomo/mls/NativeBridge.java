@@ -12,26 +12,18 @@ import org.luaj.vm2.Globals;
 /**
  * Created by Xiong.Fangyu on 2019-08-28
  */
-public class NativeBridge {
+class NativeBridge {
 
-    private static boolean init = false;
-
-    static {
-        try {
-            System.loadLibrary("mlnbridge");
-            init = true;
-        } catch (Throwable t) {
-            init = false;
-            t.printStackTrace();
-        }
-    }
-
-    public static void registerNativeBridge(Globals g) {
-        if (!init)
-            return;
-        _openLib(g.getL_State());
+    static void registerNativeBridge(Globals g) {
+        _openLib(g.getL_State(), MLSEngine.DEBUG);
         NativeBroadcastChannel.register(g);
     }
 
-    private static native void _openLib(long l);
+    static int callGencoveragereport(Globals g) {
+        return _callGencoveragereport(g.getL_State());
+    }
+
+    private static native void _openLib(long l, boolean debug);
+
+    private static native int _callGencoveragereport(long L);
 }

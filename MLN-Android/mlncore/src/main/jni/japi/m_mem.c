@@ -28,6 +28,20 @@ static void init_map();
 #endif
 #endif
 
+jlong jni_allLvmMemUse(JNIEnv *env, jobject jobj) {
+#if defined(J_API_INFO)
+    return (jlong) (all_size);
+#else
+    return 0;
+#endif
+}
+
+void jni_logMemoryInfo(JNIEnv *env, jobject jobj) {
+#if defined(J_API_INFO) && defined(MEM_INFO)
+    m_log_mem_infos();
+#endif
+}
+
 void * m_malloc(void* src, size_t os, size_t ns) {
     if (ns == 0) {
         #if defined(J_API_INFO)
@@ -51,6 +65,26 @@ void * m_malloc(void* src, size_t os, size_t ns) {
 }
 
 #if defined(J_API_INFO)
+
+void *m_alloc(void *ud, void *ptr, size_t osize, size_t nsize) {
+    size_t *sp = (size_t *) ud;
+    if (nsize == 0) {
+        free(ptr);
+        if (ptr) {
+            *sp = *sp - osize;
+            all_size -= osize;
+        }
+        return NULL;
+    } else {
+        void *nb = realloc(ptr, nsize);
+        if (nb) {
+            size_t of = (ptr) ? (nsize - osize) : nsize;
+            *sp = *sp + of;
+            all_size += of;
+        }
+        return nb;
+    }
+}
 size_t m_mem_use() {
     return all_size;
 }

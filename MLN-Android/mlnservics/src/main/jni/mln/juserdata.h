@@ -19,11 +19,7 @@
 #define JUD_FLAG_SKEY   1
 
 struct javaUserdata {
-#if defined(JAVA_CACHE_UD)
     jlong id;
-#else
-    jobject jobj;
-#endif
     int flag;
     const char *name;
     int refCount;
@@ -35,10 +31,24 @@ typedef javaUserdata *UDjavaobject;
 #define clearUDFlag(ud, f) ud->flag = (ud->flag & ~(1 << (f)))
 #define udHasFlag(ud, f) (ud->flag & (1 << (f)))
 
-#if defined(JAVA_CACHE_UD)
 #define isJavaUserdata(ud) ((ud) && (ud->id) && (strstr(ud->name, METATABLE_PREFIX)))
-#else
-#define isJavaUserdata(ud) ((ud) && (ud->jobj) && (strstr(ud->name, METATABLE_PREFIX)))
-#endif
-
+/**
+ * 注册所有的userdata
+ * @param lcns  lua类名数组
+ * @param lpcns lua父类名数组
+ * @param jcns  java类名数组
+ * @param lazy  是否lazy数组
+ */
+void jni_registerAllUserdata(JNIEnv *env, jobject jobj, jlong L, jobjectArray lcns, jobjectArray lpcns, jobjectArray jcns, jbooleanArray lazy);
+void jni_registerUserdata(JNIEnv *env, jobject jobj, jlong L, jstring lcn, jstring lpcn, jstring jcn);
+void jni_registerUserdataLazy(JNIEnv *env, jobject jobj, jlong L, jstring lcn, jstring lpcn, jstring jcn);
+/**
+ * 创建userdata，然后设置到global表里
+ * 用来创建单例，Lua代码中可直接用 ObjectName:method()调用
+ * @param key global表里的键，lua代码可用 key:method 调用相关函数
+ * @param lcn lua类名
+ * @param p 初始化参数
+ * @return 原生LuaUserdata对象
+ */
+jobject jni_createUserdataAndSet(JNIEnv *env, jobject jobj, jlong L, jstring key, jstring lcn, jobjectArray p);
 #endif //MMLUA4ANDROID_JUSERDATA_H

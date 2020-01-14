@@ -148,7 +148,9 @@ LUALIB_API void luaL_setfuncs (lua_State *L, const luaL_Reg *l, int nup) {
 #define STATE_DUMP_FAILED   -7
 #define STATE_THREAD_FAILED -8
 #define ISOLATE_OK          0
+#ifndef POST_SUCCESS
 #define POST_SUCCESS        ISOLATE_OK
+#endif
 
 static int check_lua_type(lua_State *L, int idx, int type, int code, const char *m) {
     if (lua_type(L, idx) != type) {
@@ -167,6 +169,7 @@ typedef int (*_inner_callback)(lua_State *L, void *ud);
 
 #if defined(iOS_ENV)        /**if (ios){ */
 extern lua_State *mm_lua_create_vm_in_subthread(void);
+extern void mm_lua_set_vm_bundle_path(lua_State *PL, lua_State *L);
 extern void mm_lua_release_vm_in_subthread(lua_State *L);
 static FORCE_INLIEN int _post(lua_State * parentL, _inner_callback f, void * args) {
     dispatch_async(dispatch_get_main_queue(), ^{
@@ -1445,6 +1448,9 @@ static int post_action(lua_State *L) {
         lua_pushfstring(L, "no isolate named %s", name);
         return 2;
     }
+#if defined(iOS_ENV)
+    mm_lua_set_vm_bundle_path(L, child->L);
+#endif
 
     Thread_Arg *arg = copy_upvalues_and_deal_with_error(L, 3);
     if (!arg) {
@@ -1503,3 +1509,58 @@ int luaopen_isolate(lua_State *L) {
     lua_pop(L, 1);
     return 0;
 }
+
+#pragma mark - Thread
+
+#if defined(JAVA_ENV)
+typedef struct mln_java_thread_ctx {
+    void *(*callback)(void *);
+    void **retbuffer;
+    void *condition;
+} mln_java_thread_ctx;
+
+static int mln_thread_java_main(lua_State *L, void *ud) {
+    if (!ud) return -1;
+    mln_java_thread_ctx *ctx = (mln_java_thread_ctx *)ud;
+    void *(*callback)(void *) = ctx->callback;
+    void *retvalue = callback(L);
+    *(ctx->retbuffer) = retvalue;
+    pthread_cond_signal(ctx->condition);
+    return 0;
+}
+#endif
+
+void* mln_thread_sync_to_main(lua_State *L, void*(*callback)(void *)) {
+#if defined(iOS_ENV)
+    __block void *retvalue = NULL;
+    dispatch_sync(dispatch_get_main_queue(), ^{
+        retvalue = callback(L);
+    });
+    return retvalue;
+#elif defined(JAVA_ENV)
+    pthread_mutex_t lock;
+    pthread_cond_t condition = PTHREAD_COND_INITIALIZER;
+    pthread_mutex_init(&lock, NULL);
+    pthread_mutex_lock(&lock);
+
+    void *retvalue = NULL;
+    mln_java_thread_ctx *ctx = (mln_java_thread_ctx *)malloc(sizeof(mln_java_thread_ctx));
+    ctx->callback = callback;
+    ctx->retbuffer = &retvalue;
+    ctx->condition = &condition;
+
+    JNIEnv *env;
+    getEnv(&env);
+    postCallback(env, L, mln_thread_java_main, ctx);
+    pthread_cond_wait(&condition, &lock); // sync
+
+    pthread_mutex_unlock(&lock);
+    pthread_mutex_destroy(&lock);
+    pthread_cond_destroy(&condition);
+
+    retvalue = *(ctx->retbuffer);
+    free(ctx);
+    return retvalue;
+#endif
+}
+
