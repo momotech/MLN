@@ -6,14 +6,20 @@
   * For the full copyright and license information,please view the LICENSE file in the root directory of this source tree.
   */
 //
-// Created by XiongFangyu on 2019-07-04.
+//  mln_coverage.h
+//  MLNDebugger
+//
+//  Created by xindong on 2019/11/14.
+//  Copyright © 2019 com.test. All rights reserved.
 //
 
-#ifndef MMLUA4ANDROID_MMBRIDGE_H
-#define MMLUA4ANDROID_MMBRIDGE_H
+#ifndef mln_coverage_h
+#define mln_coverage_h
+
+#include <stdio.h>
 
 #include "lua.h"
 
-void mm_openlibs(lua_State *L, int debug);
+void mln_opencoveragec(struct lua_State *L);
 
-#endif //MMLUA4ANDROID_MMBRIDGE_H
+#endif /* mln_coverage_h */

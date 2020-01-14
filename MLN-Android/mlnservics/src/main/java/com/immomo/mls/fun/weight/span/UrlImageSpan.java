@@ -57,7 +57,7 @@ public class UrlImageSpan extends ImageSpan implements DrawableLoadCallback{
     }
 
     @Override
-    public void onLoadResult(Drawable drawable) {
+    public void onLoadResult(Drawable drawable, String errMsg) {
         mDrawable = drawable;
         if (drawable == null)
             return;

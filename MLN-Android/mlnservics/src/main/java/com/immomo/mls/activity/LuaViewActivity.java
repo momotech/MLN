@@ -27,7 +27,6 @@ public class LuaViewActivity extends AppCompatActivity {
     public static final String KEY_HOT_RELOAD = "KEY_HOTRELOAD";
 
     private MLSInstance instance;
-    private InitData initData;
 
     public static void startHotReload(Context context, boolean usb) {
         InitData initData = MLSBundleUtils.createInitData("http://cdnst.momocdn.com/w/u/others/2019/09/23/1569224693764-HotReload.lua?ct=" + (usb ? HotReloadServer.USB_CONNECTION : HotReloadServer.NET_CONNECTION)).forceNotUseX64();
@@ -46,7 +45,7 @@ public class LuaViewActivity extends AppCompatActivity {
         Intent intent = getIntent();
         boolean hr = intent.getBooleanExtra(KEY_HOT_RELOAD, false);
         InitData initData = MLSBundleUtils.parseFromBundle(intent.getExtras()).showLoadingView(true);
-        instance = new MLSInstance(this, hr, hr);
+        instance = new MLSInstance(this, hr, true);
         instance.setContainer(frameLayout);
         instance.setData(initData);
 

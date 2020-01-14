@@ -14,12 +14,25 @@
 
 #include "global_define.h"
 #include "map.h"
+/**
+ * Java调用，从GNV表中移除相关数据
+ * @param k key，see copyValueToGNV
+ * @param lt lua数据类型 Table, Function, Userdata, Thread
+ * @return 相关对象引用计数
+ */
+jint jni_removeNativeValue(JNIEnv *env, jobject job, jlong L, jlong k, jint lt);
+/**
+ * Java调用，判断GNV表中是否又相关数据
+ * @param key see copyValueToGNV
+ * @param lt lua数据类型 Table, Function, Userdata, Thread
+ */
+jboolean jni_hasNativeValue(JNIEnv *env, jobject obj, jlong L, jlong key, jint lt);
 
 /// GNV表，存放lua变量，防止被lua虚拟机回收
 #define GNV "___Global_Native_Value"
 
 /**
- * 初始化表
+ * 初始化缓存相关工具，在创建新虚拟机后调用
  */
 void init_cache(lua_State *L);
 ///---------------------------------------------------------------------------
@@ -27,13 +40,14 @@ void init_cache(lua_State *L);
 ///---------------------------------------------------------------------------
 /**
  * 获取保存在GNV表中的数据
- * idx: 存储的位置 see copyValueToGNV
- * ltype: lua类型 Table, Function, Userdata, Thread
+ * @param key 键 see copyValueToGNV
+ * @param ltype lua类型 Table, Function, Userdata, Thread
  */
 void getValueFromGNV(lua_State *L, ptrdiff_t key, int ltype);
+
 /**
  * 将idx位置的数据(Table, Function, Userdata, Thread)保存到GNV 表中
- * 返回表中位置
+ * @return 表中的键
  */
 ptrdiff_t copyValueToGNV(lua_State *L, int idx);
 
@@ -41,23 +55,32 @@ ptrdiff_t copyValueToGNV(lua_State *L, int idx);
 ///------------------------classname->jclass----------------------------------
 ///---------------------------------------------------------------------------
 /**
- * 存储类名对应的jclass(global变量)
+ * 存储类名对应的jclass
+ * @param name 类名
+ * @param obj  jclass对象（global变量）
  */
-void cj_put(const char * name, void* obj);
+void cj_put(const char *name, void *obj);
+
 /**
- * 取出类名name 对应的jclass(global变量)
+ * 取出类名name 对应的jclass
+ * @param name 类名
+ * @return 对应的jclass(global变量)
  */
-void* cj_get(const char * name);
-#if defined(J_API_INFO)
+void *cj_get(const char *name);
+
+#if defined(J_API_INFO) /// { //debug情况下，获取内存泄漏
+
 /**
  * 打印map中内容
  */
 void cj_log();
+
 /**
  * 获取map消耗的内存
  */
 size_t cj_mem_size();
-#endif  //J_API_INFO
+
+#endif  /// } //J_API_INFO
 
 ///---------------------------------------------------------------------------
 ///------------------------jclsss->constructor--------------------------------
@@ -66,10 +89,11 @@ size_t cj_mem_size();
  * 存储类对应的构造函数
  */
 void jc_put(jclass, jmethodID);
+
 /**
  * 获取类对应的构造函数
  */
-void* jc_get(jclass);
+void *jc_get(jclass);
 ///---------------------------------------------------------------------------
 ///------------------------name->method---------------------------------------
 ///---------------------------------------------------------------------------
@@ -77,10 +101,12 @@ void* jc_get(jclass);
  * 存储类对应的方法
  */
 void jm_put(jclass, const char *, jmethodID);
+
 /**
  * 获取类对应的方法
  */
-void* jm_get(jclass, const char *);
+void *jm_get(jclass, const char *);
+
 /**
  * 遍历所有的方法，并回调给fun
  */

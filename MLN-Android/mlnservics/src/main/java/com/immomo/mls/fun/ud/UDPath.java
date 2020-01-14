@@ -7,11 +7,9 @@
   */
 package com.immomo.mls.fun.ud;
 
-import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.RectF;
 
-import com.immomo.mls.fun.other.Point;
 import com.immomo.mls.util.DimenUtil;
 
 import org.luaj.vm2.LuaUserdata;
@@ -22,7 +20,7 @@ import org.luaj.vm2.utils.LuaApiUsed;
  * Created by Xiong.Fangyu on 2019-05-27
  */
 @LuaApiUsed
-public class UDPath extends LuaUserdata {
+public class UDPath extends LuaUserdata<Path> {
     public static final String LUA_CLASS_NAME = "Path";
 
     public static final String[] methods = {
@@ -40,43 +38,40 @@ public class UDPath extends LuaUserdata {
             "addCircle",
     };
 
-    private final Path path;
-
     @LuaApiUsed
     protected UDPath(long L, LuaValue[] v) {
         super(L, v);
-        path = new Path();
-        javaUserdata = path;
+        javaUserdata = new Path();
     }
 
     //<editor-fold desc="api">
     @LuaApiUsed
     LuaValue[] reset(LuaValue[] v) {
-        path.reset();
+        javaUserdata.reset();
         return null;
     }
 
     @LuaApiUsed
     LuaValue[] moveTo(LuaValue[] v) {
-        path.moveTo(DimenUtil.dpiToPx(v[0].toFloat()), DimenUtil.dpiToPx(v[1].toFloat()));
+        javaUserdata.moveTo(DimenUtil.dpiToPx(v[0].toFloat()), DimenUtil.dpiToPx(v[1].toFloat()));
         return null;
     }
 
     @LuaApiUsed
     LuaValue[] lineTo(LuaValue[] v) {
-        path.lineTo(DimenUtil.dpiToPx(v[0].toFloat()), DimenUtil.dpiToPx(v[1].toFloat()));
+        javaUserdata.lineTo(DimenUtil.dpiToPx(v[0].toFloat()), DimenUtil.dpiToPx(v[1].toFloat()));
         return null;
     }
 
     @LuaApiUsed
     LuaValue[] quadTo(LuaValue[] v) {
-        path.quadTo(DimenUtil.dpiToPx(v[2].toFloat()), DimenUtil.dpiToPx(v[3].toFloat()), DimenUtil.dpiToPx(v[0].toFloat()), DimenUtil.dpiToPx(v[1].toFloat()));
+        javaUserdata.quadTo(DimenUtil.dpiToPx(v[2].toFloat()), DimenUtil.dpiToPx(v[3].toFloat()), DimenUtil.dpiToPx(v[0].toFloat()), DimenUtil.dpiToPx(v[1].toFloat()));
         return null;
     }
 
     @LuaApiUsed
     LuaValue[] cubicTo(LuaValue[] v) {
-        path.cubicTo(DimenUtil.dpiToPx(v[2].toFloat()), DimenUtil.dpiToPx(v[3].toFloat()), DimenUtil.dpiToPx(v[4].toFloat()), DimenUtil.dpiToPx(v[5].toFloat()), DimenUtil.dpiToPx(v[0].toFloat()), DimenUtil.dpiToPx(v[1].toFloat()));
+        javaUserdata.cubicTo(DimenUtil.dpiToPx(v[2].toFloat()), DimenUtil.dpiToPx(v[3].toFloat()), DimenUtil.dpiToPx(v[4].toFloat()), DimenUtil.dpiToPx(v[5].toFloat()), DimenUtil.dpiToPx(v[0].toFloat()), DimenUtil.dpiToPx(v[1].toFloat()));
         return null;
     }
 
@@ -84,7 +79,7 @@ public class UDPath extends LuaUserdata {
     LuaValue[] addPath(LuaValue[] v) {
         UDPath udPath = v.length > 0 ? (UDPath) v[0].toUserdata() : null;
         if (udPath != null) {
-            path.addPath(udPath.path);
+            javaUserdata.addPath(udPath.javaUserdata);
             udPath.destroy();
         }
         return null;
@@ -92,7 +87,7 @@ public class UDPath extends LuaUserdata {
 
     @LuaApiUsed
     LuaValue[] close(LuaValue[] v) {
-        path.close();
+        javaUserdata.close();
         return null;
     }
 
@@ -115,7 +110,7 @@ public class UDPath extends LuaUserdata {
                     type = Path.FillType.INVERSE_EVEN_ODD;
                     break;
             }
-            path.setFillType(type);
+            javaUserdata.setFillType(type);
         }
         return null;
     }
@@ -132,7 +127,7 @@ public class UDPath extends LuaUserdata {
         if (clockwise) {
             direction = Path.Direction.CW;
         }
-        path.addRect(left, top, right, bottom, direction);
+        javaUserdata.addRect(left, top, right, bottom, direction);
 
         return null;
     }
@@ -144,10 +139,10 @@ public class UDPath extends LuaUserdata {
         int radius = values.length > 2 ? DimenUtil.dpiToPx(values[2].toInt()) : 0;
         int startAngle = values.length > 3 ? values[3].toInt() : 0;
         int endAngle = values.length > 4 ? values[4].toInt() : 0;
-        boolean clockwise = values.length > 5 && values[5].toBoolean();
+//        boolean clockwise = values.length > 5 && values[5].toBoolean();
 
 
-        path.addArc(new RectF(centerX - radius, centerY - radius, centerX + radius,
+        javaUserdata.addArc(new RectF(centerX - radius, centerY - radius, centerX + radius,
                 centerY + radius), startAngle, endAngle - startAngle);
         return null;
     }
@@ -163,7 +158,7 @@ public class UDPath extends LuaUserdata {
         if (clockwise) {
             direction = Path.Direction.CW;
         }
-        path.addCircle(x, y, radius, direction);
+        javaUserdata.addCircle(x, y, radius, direction);
 
         return null;
     }

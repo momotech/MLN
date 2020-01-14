@@ -10,6 +10,7 @@ package com.immomo.mls.utils;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.Rect;
 import android.graphics.RectF;
 import androidx.annotation.NonNull;
 
@@ -20,6 +21,7 @@ public class RadiusDrawer {
     private final RectF[] radius;
     @NonNull
     private final Paint drawRadiusPaint;
+    private static final Rect canvasBounds = new Rect();
 
     public RadiusDrawer() {
         drawRadiusPath = new Path[4];
@@ -65,6 +67,9 @@ public class RadiusDrawer {
         int w = canvas.getWidth();
         int h = canvas.getHeight();
         int tx, ty;
+        canvas.getClipBounds(canvasBounds); /// 某些view(textview且设置了setGravity)，canvas的原点不在(0,0)
+        canvas.save();
+        canvas.translate(canvasBounds.left, canvasBounds.top);
         for (int i = 0; i < 4; i ++) {
             Path p = drawRadiusPath[i];
             if (p != null) {
@@ -76,5 +81,6 @@ public class RadiusDrawer {
                 canvas.restore();
             }
         }
+        canvas.restore();
     }
 }

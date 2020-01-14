@@ -11,20 +11,33 @@
 
 #ifndef __M_MEM_H
 #define __M_MEM_H
+
 #include <stdlib.h>
+#include <jni.h>
+
+jlong jni_allLvmMemUse(JNIEnv *env, jobject jobj);
+void jni_logMemoryInfo(JNIEnv *env, jobject jobj);
 
 /**
+ * 申请和释放内存入口，使用此函数能在开启 J_API_INFO 和 MEM_INFO 时
+ * 记录内存使用和调用栈信息，方便查找内存泄漏
  * ns > 0 malloc或realloc内存
  * ns == 0 free src
  */
 void * m_malloc(void* src, size_t os, size_t ns);
+
 #if defined(J_API_INFO)
+/**
+ * lua的内存申请释放入口
+ * @param ud size_t
+ */
+void *m_alloc(void *ud, void *ptr, size_t osize, size_t nsize);
 /**
  * 通过m_malloc使用的内存
  */
 size_t m_mem_use();
 /**
- * 删除标记
+ * 删除内存标记
  */
 void remove_by_pointer(void *p, size_t size);
 

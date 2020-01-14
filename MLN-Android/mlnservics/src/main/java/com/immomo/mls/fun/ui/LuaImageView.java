@@ -197,6 +197,9 @@ public class LuaImageView<U extends UDImageView> extends BorderRadiusImageView i
     public void setImageUrlWithPlaceHolder(final String url, final String placeholder) {
         final boolean changed = !TextUtils.equals(url, image);
         if (!changed) {
+            if (TextUtils.isEmpty(url) && udImageView.hasCallback()) {
+                udImageView.callback(false, url, getEmtpyMsg(url));
+            }
             return;
         }
         if (TextUtils.isEmpty(url)) {
@@ -252,6 +255,12 @@ public class LuaImageView<U extends UDImageView> extends BorderRadiusImageView i
         return null;
     }
 
+    private String getEmtpyMsg(String url) {
+        if (url == null)
+            return "Image url is nil";
+        return "Image url is empty";
+    }
+
     private void setImageWithoutCheck(String url, String placeHolder, final boolean changed,
                                       final boolean isNetworkUrl, boolean isUsePlaceHolderWhenUrlEmpty,
                                       boolean needCallback) {
@@ -261,7 +270,7 @@ public class LuaImageView<U extends UDImageView> extends BorderRadiusImageView i
         if (TextUtils.isEmpty(url)) {
             setPlaceHolderByParams(placeHolder, isUsePlaceHolderWhenUrlEmpty);
             if (needCallback && udImageView.hasCallback()) {
-                udImageView.callback(false,"load url is empty", url);
+                udImageView.callback(false, url, getEmtpyMsg(url));
             }
             return;
         }
@@ -325,11 +334,11 @@ public class LuaImageView<U extends UDImageView> extends BorderRadiusImageView i
         if (needCallback) {
             return new DrawableLoadCallback() {
                 @Override
-                public void onLoadResult(final Drawable drawable) {
+                public void onLoadResult(final Drawable drawable, final String errMsg) {
                     MainThreadExecutor.post(new Runnable() {
                         @Override
                         public void run() {
-                            udImageView.callback(drawable != null, url, null);
+                            udImageView.callback(drawable != null, url, errMsg);
                         }
                     });
                     if (canBlurImageCondition() && drawable instanceof BitmapDrawable) {//判断，高斯模糊
@@ -345,7 +354,7 @@ public class LuaImageView<U extends UDImageView> extends BorderRadiusImageView i
         } else if (canBlurImageCondition()) {
             return new DrawableLoadCallback() {
                 @Override
-                public void onLoadResult(final Drawable drawable) {
+                public void onLoadResult(final Drawable drawable, String errMsg) {
                     if (canBlurImageCondition() && drawable instanceof BitmapDrawable) {//判断，高斯模糊
                         MLSAdapterContainer.getThreadAdapter().execute(MLSThreadAdapter.Priority.HIGH, new Runnable() {
                             @Override

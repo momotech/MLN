@@ -51,9 +51,9 @@ local function initCollectionView()
     return collectionView
 end
 --初始化CollectionViewGridLayout
-local function initCollectionViewGridLayout()
+local function initCollectionViewLayout()
 
-    collectionLayout = CollectionViewGridLayout()
+    collectionLayout = CollectionViewLayout()
     collectionLayout:itemSpacing(5)--间隔大小
                     :lineSpacing(5)
     --竖直滑动代表显示列数；水平滑动代表显示行数
@@ -128,7 +128,7 @@ contentView:width(W):height(H)
 --初始化CollectionView
 collectionView = initCollectionView()
 --初始化CollectionViewGridLayout
-collectionLayout = initCollectionViewGridLayout()
+collectionLayout = initCollectionViewLayout()
 --初始化CollectionViewAdapter
 adapter = initAdapter()
 collectionView:layout(collectionLayout)

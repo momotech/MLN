@@ -57,9 +57,11 @@ public class PreGlobalInitUtils {
         AssertUtils.assetTrue(MainThreadExecutor.isMainThread());
         if (num > 10) num = 10;
         preInitSize += num;
-        MLSEngine.singleRegister.preInstall();
 
         if (!MLSEngine.isInit() || !Globals.isInit())
+            return;
+        MLSEngine.singleRegister.preInstall();
+        if (!MLSEngine.singleRegister.isPreInstall())
             return;
         while (num -- > 0) {
             preInit();

@@ -28,12 +28,21 @@
 
 #define GetArrLen(env, arr) (int)((*env)->GetArrayLength(env, arr))
 
+void jni_preRegisterUD(JNIEnv *env, jobject jobj, jstring className, jobjectArray methods);
+void jni_preRegisterStatic(JNIEnv *env, jobject jobj, jstring className, jobjectArray methods);
+
+/**
+ * 初始化，在加载so时调用
+ */
+void initJavaInfo(JNIEnv *);
+/**
+ * 创建java string
+ * 如果当前Android版本号小于USE_NDK_NEWSTRING_VERSION，使用utf工具生成String
+ * @return java对象
+ */
 jstring newJString(JNIEnv *, const char *);
 
-void initJavaInfo(JNIEnv *);
-
-void copyUDToGNV(JNIEnv *env, lua_State *L, UDjavaobject ud, int idx, jobject jobj);
-
+//// -----------------------Lua数据类型转换成Java数据类型-----------------------
 jobject newLuaNumber(JNIEnv *, jdouble);
 
 jobject newLuaString(JNIEnv *, const char *);
@@ -44,13 +53,25 @@ jobject newLuaFunction(JNIEnv *, lua_State *, int);
 
 jobject newLuaUserdata(JNIEnv *, lua_State *, int, UDjavaobject);
 
-#if defined(JAVA_CACHE_UD)
-jlong getUserdataId(JNIEnv *env, jobject ud);
-#endif
-
-jobject getUserdata(JNIEnv *env, lua_State *L, UDjavaobject ud);
-
 jobject newLuaThread(JNIEnv *env, lua_State *L, int idx);
+//// -----------------------Lua数据类型转换成Java数据类型 end-----------------------
+/**
+ * 把userdata拷贝到GNV表中
+ * @param ud 不可为空
+ * @param jobj java对象可为空
+ */
+void copyUDToGNV(JNIEnv *env, lua_State *L, UDjavaobject ud, int idx, jobject jobj);
+/**
+ * 获取Java userdata对象的id属性
+ * @see LuaUserdata#id
+ * @param ud LuaUserdata对象
+ */
+jlong getUserdataId(JNIEnv *env, jobject ud);
+/**
+ * 通过Java的缓存获取对应的LuaUserdata对象
+ * @see UserdataCache
+ */
+jobject getUserdata(JNIEnv *env, lua_State *L, UDjavaobject ud);
 
 /**
  * 把java的userdata对象push到栈上
@@ -65,6 +86,10 @@ jobject toJavaValue(JNIEnv *env, lua_State *L, int idx);
 
 /**
  * 调用函数时使用，将栈中所有的数据读成LuaValue，并保存为对象
+ * 从栈底读取，并跳过栈底stackoffset-1个数据（Lua栈从1开始）
+ * @param count 读取个数
+ * @param stackoffset 跳过栈底个数+1
+ * @return Java对象数组
  */
 jobjectArray newLuaValueArrayFromStack(JNIEnv *env, lua_State *L, int count, int stackoffset);
 
@@ -120,6 +145,7 @@ void detachEnv();
 
 /**
  * 获取异常信息
+ * @see catchJavaException
  * @return 0 成功
  */
 int getThrowableMsg(JNIEnv *, jthrowable, char *, size_t);

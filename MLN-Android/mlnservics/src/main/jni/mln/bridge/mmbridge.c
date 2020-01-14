@@ -13,8 +13,11 @@
 #include "mmbridge.h"
 #include "lauxlib.h"
 #include "mmoslib.h"
+#include "mln_coverage.h"
 
 #define MM_BIT "MBit"
+
+#define NOT_FOUND_FUNCTION -404
 
 /**
  * mmbit.c
@@ -30,7 +33,7 @@ static const luaL_Reg preloadedlibs[] = {
         {NULL, NULL}
 };
 
-void mm_openlibs(lua_State *L) {
+void mm_openlibs(lua_State *L, int debug) {
     const luaL_Reg *lib;
     /* call open functions from 'loadedlibs' and set results to global table */
     for (lib = loadedlibs; lib->func; lib++) {
@@ -45,9 +48,33 @@ void mm_openlibs(lua_State *L) {
     }
     lua_pop(L, 1);  /* remove _PRELOAD table */
     luaopen_mmos(L);
+#if defined(J_API_INFO)
+    if (debug)
+        mln_opencoveragec(L);
+#endif
 }
 
 JNIEXPORT void JNICALL Java_com_immomo_mls_NativeBridge__1openLib
+        (JNIEnv *env, jclass cls, jlong l, jboolean debug) {
+    mm_openlibs((lua_State *) l, debug);
+}
+
+#include "../mlog.h"
+JNIEXPORT jint JNICALL Java_com_immomo_mls_NativeBridge__1callGencoveragereport
         (JNIEnv *env, jclass cls, jlong l) {
-    mm_openlibs((lua_State *) l);
+    lua_State *L = (lua_State *) l;
+    lua_getglobal(L, "gencoveragereport");
+    if (lua_isfunction(L, -1)) {
+        int code = lua_pcall(L, 0, 0, 1);
+        if (code) {
+            const char *errmsg;
+            if (lua_isstring(L, -1))
+                errmsg = lua_tostring(L, -1);
+            else
+                errmsg = "unknown msg";
+            LOGE("gencoveragereport failed: %s", errmsg);
+        }
+        return code;
+    }
+    return NOT_FOUND_FUNCTION;
 }

@@ -154,18 +154,6 @@ public class ScriptBundle {
         return children != null;
     }
 
-    /**
-     * 保存所有已预加载过的子文件
-     * @param g 在此虚拟机中预加载
-     */
-    public void saveAllLoadedFile(Globals g) {
-        if (children == null)
-            return;
-        for (Map.Entry<String, ScriptFile> e : children.entrySet()) {
-            e.getValue().saveIfPreloaded(g, basePath);
-        }
-    }
-
     public String getFlagDebugString() {
         return "type: " + debugType() + "\t" +
                 "action: " + debugAction() + "\t" +

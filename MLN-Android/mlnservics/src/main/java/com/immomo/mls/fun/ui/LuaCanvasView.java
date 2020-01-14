@@ -59,7 +59,7 @@ public class LuaCanvasView<U extends UDCanvasView> extends BorderRadiusView  imp
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        if (getUserdata() instanceof ILView.ICanvasView) {
+        if (getUserdata() != null) {
             ((ICanvasView) getUserdata()).onDrawCallback(canvas);
         }
     }

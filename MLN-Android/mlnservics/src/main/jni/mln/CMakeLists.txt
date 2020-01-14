@@ -8,6 +8,9 @@ cmake_minimum_required(VERSION 3.4.1)
 #设置头文件搜索路径（和此txt同个路径的头文件无需设置）
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/lua_include)
 
+add_library(mln_coverage STATIC
+        bridge/mln_coverage.c)
+
 add_library( mlnbridge SHARED
         bridge/mmoslib.c
         bridge/mmbit.c
@@ -25,6 +28,8 @@ set_target_properties(luajapi_so PROPERTIES IMPORTED_LOCATION
 #------------------android log link---------------------
 find_library( log-lib log )
 
-target_link_libraries( mlnbridge ${log-lib} luajapi_so)
+target_link_libraries( mlnbridge ${log-lib}
+mln_coverage
+        luajapi_so)
 
 ADD_SUBDIRECTORY(${CMAKE_CURRENT_SOURCE_DIR}/bc)

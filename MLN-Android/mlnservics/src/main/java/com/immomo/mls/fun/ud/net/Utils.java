@@ -11,8 +11,10 @@ import com.immomo.mls.util.FileUtil;
 import com.immomo.mls.util.RelativePathUtils;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Map;
@@ -23,11 +25,11 @@ import java.util.Set;
  */
 final class Utils {
 
-    static void post(String url, Map params, HttpResponse response) throws Exception{
+    static void post(String url, Map params, HttpResponse response) throws Exception {
         doMethod("POST", url, params, response, null);
     }
 
-    static void get(String url, Map params, HttpResponse response) throws Exception{
+    static void get(String url, Map params, HttpResponse response) throws Exception {
         doMethod("GET", url, params, response, null);
     }
 
@@ -46,24 +48,27 @@ final class Utils {
         });
     }
 
-    private static void doMethod(String method, String url, Map params, HttpResponse response, IReadData readData) throws Exception{
+    private static void doMethod(String method, String url, Map params, HttpResponse response, IReadData readData) throws Exception {
         HttpURLConnection connection = null;
         try {
-
-            if ("GET".equals(method)) {
-                url = addParamsToUrl(url,params);
+            boolean post = "POST".equals(method);
+            if (!post && "GET".equals(method)) {
+                url = addParamsToUrl(url, params);
             }
 
             final URL URL = new URL(url);
             connection = (HttpURLConnection) URL.openConnection();
             connection.setRequestMethod(method);
             connection.setConnectTimeout(30000);
-
-            if ("POST".equals(method)) {
-                addParamsToHeader(params, connection);
+            connection.setDoInput(true);
+            if (post) {
+                connection.setDoOutput(true);
             }
 
             connection.connect();
+            if (post) {
+                writeParams(params, connection);
+            }
             int code = connection.getResponseCode();
 
             response.setStatusCode(code);
@@ -80,7 +85,6 @@ final class Utils {
             response.setResponseMsg(reponseBuilder.toString());
             response.setError(!(code == HttpURLConnection.HTTP_OK));
 
-
             if (readData != null && code == HttpURLConnection.HTTP_OK) {
                 readData.readData(connection.getInputStream(), connection.getContentLength());
             }
@@ -92,25 +96,16 @@ final class Utils {
         }
     }
 
-    // 向 header 中添加 参数
-    private static void addParamsToHeader(Map params, HttpURLConnection connection) {
-        if (params != null) {
-            Set<Map.Entry> entrySet = params.entrySet();
-            for (Map.Entry e : entrySet) {
-                Object k = e.getKey();
-                Object v = e.getValue();
-                if (k == null || v == null)
-                    continue;
-                connection.setRequestProperty(k.toString(), v.toString());
-            }
-        }
+    private static void writeParams(Map params, HttpURLConnection connection) throws IOException {
+        String str = paramsToString(params);
+        OutputStream out = connection.getOutputStream();
+        out.write(str.getBytes());
+        out.flush();
+        out.close();
     }
 
-    private static String addParamsToUrl(String url, Map params) {
-        StringBuffer stringBuffer = new StringBuffer(url);
-
-        stringBuffer.append("?");
-
+    private static String paramsToString(Map params) {
+        StringBuilder sb = new StringBuilder();
         Set<Map.Entry> entrySet = params.entrySet();
         for (Map.Entry e : entrySet) {
             Object k = e.getKey();
@@ -119,13 +114,18 @@ final class Utils {
             if (k == null || v == null)
                 continue;
 
-            stringBuffer.append(k);
-            stringBuffer.append("=");
-            stringBuffer.append(v);
-            stringBuffer.append("&");
+            sb.append(k)
+                    .append('=')
+                    .append(v)
+                    .append('&');
         }
+        return sb.toString();
+    }
 
-        return stringBuffer.toString();
+    private static String addParamsToUrl(String url, Map params) {
+        if (params != null && !params.isEmpty())
+            return url + "?" + paramsToString(params);
+        return url;
     }
 
     interface ProgressCallback {

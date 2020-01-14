@@ -54,7 +54,7 @@ public class LTFile {
 
     //<editor-fold desc="API-1.5.1">
     @LuaBridge
-    public static int moveTo(String old, String newPath) {
+    public static int syncMoveFile(String old, String newPath) {
         File oldFile = new File(old);
         if (!oldFile.exists()) {
             return CODE_SOURCE_NOT_EXIST;
@@ -71,11 +71,7 @@ public class LTFile {
     @Deprecated
     @LuaBridge
     public static String getStorageDir() {
-        try {
-            return FileUtil.getSdcardPath();
-        } catch (Exception ignored) {
-        }
-        return "";
+        return FileUtil.getSdcardDir().getAbsolutePath();
     }
 
     @LuaBridge
@@ -290,7 +286,7 @@ public class LTFile {
     private static final int CODE_MOVE_FAILED = -10;
     private static final int CODE_COPY_FAILED = -11;
     private static final int CODE_GET_FILELIST_FAILED = -12;
-    private static final int CODE_SAME_FILE = -13;
+    private static final int CODE_SAME_FILE = -14;
 
     private static final class JSONArrayTask extends BaseReadTask {
 

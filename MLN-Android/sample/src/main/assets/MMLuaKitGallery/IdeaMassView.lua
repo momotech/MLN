@@ -140,7 +140,7 @@ end
 ---灵感集标签列表
 function _class:setupTapListView()
     self.tapTableView = CollectionView(false, false):width(MeasurementType.MATCH_PARENT):height(MeasurementType.WRAP_CONTENT):scrollDirection(ScrollDirection.HORIZONTAL)
-    self.tapLayout = CollectionViewGridLayoutFix():itemSpacing(10):spanCount(1)
+    self.tapLayout = CollectionViewLayout():itemSpacing(10):spanCount(1)
 
     self.tapAdapter = CollectionViewAutoFitAdapter()
 
@@ -225,7 +225,7 @@ function _class:setupWaterfallView()
     self.width=  (window:width() - 30) / 2
     self.waterfall = WaterfallView(false, true):width(MeasurementType.MATCH_PARENT):height(MeasurementType.MATCH_PARENT)
                                                :marginLeft(10):marginRight(10)
-    self.waterfallLayout = WaterfallLayoutFix():itemSpacing(12):lineSpacing(5):spanCount(2)
+    self.waterfallLayout = WaterfallLayout():itemSpacing(12):lineSpacing(5):spanCount(2)
     self.waterfallAdapter = WaterfallAdapter()
     self.waterfallAdapter:initCell(function(cell)
         local REQCELL = require("MMLuaKitGallery.IdeaWaterfallCell"):new()

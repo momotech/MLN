@@ -39,22 +39,11 @@ public class UDAnimator extends ValueAnimator implements ValueAnimator.AnimatorU
     //<editor-fold desc="API">
     @LuaBridge
     public void setRepeat(@RepeatType.RepeatMode int type, int count) {
-
-        switch (type) {
-            case RepeatType.NONE:
-                count = 0;
-                break;
-
-            case RepeatType.REVERSE:
-                count = 2 * count - 1;
-                break;
-
-            case RepeatType.FROM_START:
-                if (count >= 1)
-                    count = count - 1;
-                break;
+        if (RepeatType.NONE == type) {
+            count = 0;
         }
-
+        if (count < 0)
+            count = INFINITE;
         this.setRepeatCount(count);
         this.setRepeatMode(type);
     }
@@ -71,11 +60,16 @@ public class UDAnimator extends ValueAnimator implements ValueAnimator.AnimatorU
 
     @LuaBridge
     public void start() {
+        if (super.isRunning()) {
+            return;
+        }
         super.start();
     }
 
     @LuaBridge
     public void stop() {
+        if (!isStarted())
+            return;
         this.end();
     }
 

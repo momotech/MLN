@@ -23,6 +23,7 @@ import com.immomo.mls.wrapper.ScriptBundle;
 import com.immomo.mls.wrapper.ScriptFile;
 
 import org.luaj.vm2.Globals;
+import org.luaj.vm2.utils.StringReplaceUtils;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -320,7 +321,7 @@ public class PreloadUtils {
         } else if (name.endsWith(Constants.POSTFIX_B_LUA)) {
             name = name.substring(0, name.length() - Constants.POSTFIX_B_LUA.length());
         }
-        name = name.replaceAll("/", ".");
+        name = StringReplaceUtils.replaceAllChar(name, File.separatorChar, '.');
         return createScriptFile(name, file, false);
     }
 

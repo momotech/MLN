@@ -16,6 +16,9 @@ import com.immomo.mls.annotation.LuaClass;
 import org.luaj.vm2.Globals;
 import org.luaj.vm2.LuaValue;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by Xiong.Fangyu on 2019-05-28
  */
@@ -27,6 +30,8 @@ public class UDAnimationSet extends UDBaseAnimation {
 
     private final boolean shareInterpolator;
 
+    private final List<UDBaseAnimation> animations;
+
     public UDAnimationSet(Globals g, LuaValue[] init) {
         super(g, init);
         if (init != null && init.length == 1) {
@@ -35,20 +40,44 @@ public class UDAnimationSet extends UDBaseAnimation {
             shareInterpolator = false;
         }
         animationSet = new AnimationSet(shareInterpolator);
+        animations = new ArrayList<>();
     }
 
     private UDAnimationSet(Globals g, UDAnimationSet src) {
         super(g, null);
         shareInterpolator = src.shareInterpolator;
         animationSet = new AnimationSet(shareInterpolator);
+        animations = new ArrayList<>(src.animations.size());
+        for (UDBaseAnimation uda : src.animations) {
+            addAnimation(uda.clone());
+        }
     }
 
     //<editor-fold desc="api">
     @LuaBridge
     public void addAnimation(UDBaseAnimation animation) {
+        animations.add(animation);
         animationSet.addAnimation(animation.getAnimation());
     }
     //</editor-fold>
+
+    @Override
+    public Animation getAnimation() {
+        cancelCalled = false;
+        if (animation == null) {
+            animation = build();
+        }
+
+        animation.setRepeatMode(repeatMode);
+        animation.setRepeatCount(repeatCount);
+        animation.setFillAfter(!autoBack);
+        animation.setFillEnabled(false);
+        animation.setFillBefore(false);
+        animation.setInterpolator(interpolator);
+        animation.setStartOffset(delay);
+        animation.setAnimationListener(this);
+        return animation;
+    }
 
     @Override
     protected Animation build() {
@@ -58,5 +87,13 @@ public class UDAnimationSet extends UDBaseAnimation {
     @Override
     protected UDAnimationSet cloneObj() {
         return new UDAnimationSet(globals, this);
+    }
+
+    @Override
+    public void cancel() {
+        for (UDBaseAnimation child : animations) {
+            child.cancel();
+        }
+        super.cancel();
     }
 }

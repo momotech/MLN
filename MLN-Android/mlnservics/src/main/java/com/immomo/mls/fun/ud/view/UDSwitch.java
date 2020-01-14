@@ -7,8 +7,14 @@
   */
 package com.immomo.mls.fun.ud.view;
 
+import android.content.res.ColorStateList;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.widget.CompoundButton;
+import android.widget.Switch;
 
+import com.immomo.mls.fun.ud.UDColor;
 import com.immomo.mls.fun.ui.LuaSwitch;
 
 import org.luaj.vm2.LuaBoolean;
@@ -28,9 +34,19 @@ public class UDSwitch<L extends CompoundButton> extends UDView<L> implements Com
     public static final String[] methods = {
             "on",
             "setSwitchChangedCallback",
+            "setThumbColor",
+            "setNormalColor",
+            "setSelectedColor"
     };
 
     private LuaFunction switchChangedCallback;
+
+    private static final int[] CHECKED_STATE_SET = {
+            android.R.attr.state_checked
+    };
+
+    private int defaultColor = Color.BLACK;
+    private int selectColor = Color.RED;
 
     @LuaApiUsed
     public UDSwitch(long L, LuaValue[] v) {
@@ -54,12 +70,55 @@ public class UDSwitch<L extends CompoundButton> extends UDView<L> implements Com
     @LuaApiUsed
     public LuaValue[] setSwitchChangedCallback(LuaValue[] fun) {
         switchChangedCallback = fun[0].toLuaFunction();
-        if (fun != null) {
+        if (switchChangedCallback != null) {
             getView().setOnCheckedChangeListener(this);
         } else {
             getView().setOnCheckedChangeListener(null);
         }
         return null;
+    }
+
+    @LuaApiUsed
+    public LuaValue[] setThumbColor(LuaValue[] args) {
+        int color = ((UDColor)args[0]).getColor();
+        setThumbColor(color);
+        return null;
+    }
+
+    @LuaApiUsed
+    public LuaValue[] setNormalColor(LuaValue[] args) {
+        defaultColor = ((UDColor)args[0]).getColor();
+        setTrickColor();
+        return null;
+    }
+
+    @LuaApiUsed
+    public LuaValue[] setSelectedColor(LuaValue[] args) {
+        selectColor = ((UDColor)args[0]).getColor();
+        setTrickColor();
+        return null;
+    }
+
+    protected void setThumbColor(int color) {
+        if (getView() instanceof Switch) {
+            Switch s = (Switch) getView();
+            Drawable thumb = s.getThumbDrawable();
+            thumb.setColorFilter(color, PorterDuff.Mode.SRC_ATOP);
+        }
+    }
+
+    protected void setTrickColor() {
+        if (!(getView() instanceof Switch))
+            return;
+
+        Switch s = (Switch) getView();
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            ColorStateList stateList = new ColorStateList(
+                    new int[][]{CHECKED_STATE_SET, new int[0]},
+                    new int[] {selectColor, defaultColor});
+            s.setTrackTintList(stateList);
+            s.setTrackTintMode(PorterDuff.Mode.SRC);
+        }
     }
 
     @Override

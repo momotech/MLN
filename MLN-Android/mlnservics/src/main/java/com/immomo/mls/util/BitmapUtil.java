@@ -11,6 +11,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 
+import com.immomo.mls.MLSEngine;
+
 import java.io.ByteArrayOutputStream;
 
 /**
@@ -21,16 +23,6 @@ import java.io.ByteArrayOutputStream;
  */
 
 public class BitmapUtil {
-    private static boolean init = false;
-
-    static {
-        try {
-            System.loadLibrary("lblur");
-            init = true;
-        } catch (Throwable ex) {
-            init = false;
-        }
-    }
 
     /**
      * 生成一张高斯模糊的图片
@@ -40,7 +32,7 @@ public class BitmapUtil {
      * @return
      */
     public static Bitmap blurBitmap(Bitmap src, int radius) {
-        if (src == null || radius <= 1 || !init) {
+        if (src == null || radius <= 1 || !MLSEngine.isLibInit("lblur")) {
             return src;
         }
         nativeBlurBitmap(src, radius);
