@@ -10,7 +10,7 @@ MLN是一个移动跨平台开发框架，让开发者用一套代码构建Andro
 * 支持热更新。  
 
 ## 开发环境搭建
-  * IntelliJ IDEA(推荐使用2018.3版本或是2019.1版本)：MLN推荐使用IDEA进行开发，IDEA安装插件后可以使用热重载方式进行页面预览
+  * IntelliJ IDEA：MLN推荐使用IDEA进行开发，IDEA安装插件后可以使用热重载方式进行页面预览
   [配置指南](https://github.com/momotech/MLN/wiki/MLN开发环境搭建)  
   * Android Studio(推荐使用3.5版本)：[下载地址](https://developer.android.com/studio/?gclid=EAIaIQobChMIoceaiI-q5gIVwWkqCh3nmAMREAAYASAAEgLoYfD_BwE)    
   * Xcode：可在App Store中搜索下载  
