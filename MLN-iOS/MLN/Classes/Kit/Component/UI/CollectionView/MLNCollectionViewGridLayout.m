@@ -399,6 +399,6 @@ LUA_EXPORT_PROPERTY(lineSpacing, "lua_setLineSpacing:","lua_lineSpacing", MLNCol
 LUA_EXPORT_PROPERTY(itemSpacing, "lua_setItemSpacing:","lua_itemSpacing", MLNCollectionViewGridLayout)
 LUA_EXPORT_PROPERTY(spanCount, "lua_setSpanCount:","lua_spanCount", MLNCollectionViewGridLayout)
 LUA_EXPORT_METHOD(layoutInset, "lua_setlayoutInset:left:bottom:right:", MLNCollectionViewGridLayout)
-LUA_EXPORT_END(MLNCollectionViewGridLayout, CollectionViewGridLayout, NO, NULL, NULL)
+LUA_EXPORT_END(MLNCollectionViewGridLayout, CollectionViewLayout, NO, NULL, NULL)
 
 @end

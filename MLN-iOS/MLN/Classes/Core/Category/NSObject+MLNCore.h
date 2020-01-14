@@ -43,6 +43,11 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)initWithLuaCore:(MLNLuaCore *)luaCore;
 
 /**
+ lua 释放该UserData时，会回调该方法，你可以实现该方法来做一些自定义释放操作。
+ */
+- (void)mln_user_data_dealloc NS_REQUIRES_SUPER;
+
+/**
  是否可以转换成lua中的user data，默认为NO.
 
  @return 是否可转换，YES 为可以转换。

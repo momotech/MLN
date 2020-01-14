@@ -41,7 +41,6 @@
 #import "MLNCollectionView.h"
 #import "MLNCollectionViewAdapter.h"
 #import "MLNCollectionViewAutoFitAdapter.h"
-#import "MLNCollectionViewFlowLayout.h"
 #import "MLNCollectionViewGridLayout.h"
 #import "MLNWaterfallView.h"
 #import "MLNWaterfallLayout.h"

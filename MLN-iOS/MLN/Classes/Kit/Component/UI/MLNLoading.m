@@ -137,7 +137,7 @@ static MLNLoading *_loading = nil;
 - (UIActivityIndicatorView *)indicatorView
 {
     if (!_indicatorView) {
-        _indicatorView = [[UIActivityIndicatorView alloc] init];
+        _indicatorView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
         _indicatorView.frame = CGRectMake(0, 0, 45, 45);
     }
     return _indicatorView;

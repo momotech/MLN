@@ -9,6 +9,7 @@
 #import "MLNHotReloadUI.h"
 #import "MLNTopTip.h"
 #import "MLNQRCodeResultManager.h"
+#import "MLNDebugContext.h"
 
 @interface MLNHotReloadPresenter () <MLNHotReloadUIDelegate, MLNQRCodeHistoryViewControllerAdapter>
 
@@ -55,8 +56,14 @@
     NSArray *subStrs = [result componentsSeparatedByString:@":"];
     NSString *ip = subStrs[0];
     int port = [subStrs[1] intValue];
-    if ([self.delegate respondsToSelector:@selector(hotReloadPresenter:readDataFromQRCode:port:)]) {
-        [self.delegate hotReloadPresenter:self readDataFromQRCode:ip port:port];
+    
+    if (self.hotReloadUI.isDebugMode) {
+        [self setupDebugIP:ip port:8172];
+        [MLNToast toastWithMessage:@"IP地址获取成功" duration:1.5f];
+    } else {
+        if ([self.delegate respondsToSelector:@selector(hotReloadPresenter:readDataFromQRCode:port:)]) {
+            [self.delegate hotReloadPresenter:self readDataFromQRCode:ip port:port];
+        }
     }
 }
 
@@ -94,6 +101,32 @@
     if ([self.delegate respondsToSelector:@selector(hotReloadPresenter:hiddenNavBar:)]) {
         return [self.delegate hotReloadPresenter:self hiddenNavBar:hidden];
     }
+}
+
+- (void)hotReloadUI:(MLNHotReloadUI *)hotReloadUI setupDebugIP:(NSString *)ip port:(NSInteger)port {
+    if (ip.length == 0) {
+        [MLNToast toastWithMessage:@"请输入正确的IP地址" duration:1.5f];
+    } else if (port <= 0) {
+        [MLNToast toastWithMessage:@"请输入正确的端口号" duration:1.5f];
+    } else {
+        [self setupDebugIP:ip port:port];
+    }
+}
+
+- (void)setupDebugIP:(NSString *)ip port:(NSInteger)port {
+    [MLNDebugContext sharedContext].ipAddress = ip;
+    [MLNDebugContext sharedContext].port = port;
+}
+
+- (NSString *)hotReloadUIGetDebugIP:(MLNHotReloadUI *)hotReloadUI {
+    return [MLNDebugContext sharedContext].ipAddress;
+}
+
+- (NSString *)hotReloadUIGetDebugPort:(MLNHotReloadUI *)hotReloadUI {
+    if ([MLNDebugContext sharedContext].port > 0) {
+        return [NSString stringWithFormat:@"%ld", (long)[MLNDebugContext sharedContext].port];
+    }
+    return @"8172";
 }
 
 #pragma mark - MLNQRCodeHistoryViewControllerAdapter

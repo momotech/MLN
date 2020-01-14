@@ -29,6 +29,7 @@
 #define LUA_TUPVAL	(LAST_TAG+2)
 #define LUA_TDEADKEY	(LAST_TAG+3)
 
+#define LUA_TNUMINT    (LUA_TNUMBER | (1 << 4))
 
 /*
 ** Union of all collectable objects
@@ -85,6 +86,9 @@ typedef struct lua_TValue {
 #define ttisuserdata(o)	(ttype(o) == LUA_TUSERDATA)
 #define ttisthread(o)	(ttype(o) == LUA_TTHREAD)
 #define ttislightuserdata(o)	(ttype(o) == LUA_TLIGHTUSERDATA)
+
+#define checktag(o,t)        (ttype(o) == (t))
+#define ttisinteger(o)        checktag((o), LUA_TNUMINT)
 
 /* Macros to access values */
 #define ttype(o)	((o)->tt)

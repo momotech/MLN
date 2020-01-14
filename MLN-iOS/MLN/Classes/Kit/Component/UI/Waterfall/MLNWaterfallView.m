@@ -8,7 +8,6 @@
 #import "MLNWaterfallView.h"
 #import "MLNViewExporterMacro.h"
 #import "MLNCollectionViewCell.h"
-#import "MLNCollectionViewFlowLayout.h"
 #import "MLNWaterfallLayout.h"
 #import "MLNInternalWaterfallView.h"
 #import "MLNWaterfallAdapter.h"
@@ -23,10 +22,20 @@
 @interface MLNWaterfallView()
 @property (nonatomic, strong, readwrite) MLNInternalWaterfallView *innerWaterfallView;
 @property (nonatomic, strong) MLNBeforeWaitingTask *lazyTask;
+@property (nonatomic, strong) UICollectionViewLayout *layout;
 @end
 
 @implementation MLNWaterfallView
 @synthesize adapter = _adapter;
+
+- (void)mln_user_data_dealloc
+{
+    // 去除强引用
+    MLN_Lua_UserData_Release(self.adapter);
+    // 去除强引用
+    MLN_Lua_UserData_Release(self.layout);
+    [super mln_user_data_dealloc];
+}
 
 #pragma mark - Header
 - (void)lua_addHeaderView:(UIView *)headerview
@@ -71,6 +80,10 @@
 {
     MLNCheckTypeAndNilValue(adapter, @"WaterfallAdapter", [MLNWaterfallAdapter class])
     if (_adapter != adapter) {
+        // 去除强引用
+        MLN_Lua_UserData_Release(_adapter);
+        // 添加强引用
+        MLN_Lua_UserData_Retain_With_Index(2, adapter);
         _adapter = adapter;
         [self mln_pushLazyTask:self.lazyTask];
     }
@@ -78,7 +91,15 @@
 
 - (void)lua_setCollectionViewLayout:(UICollectionViewLayout *)layout
 {
-    self.innerWaterfallView.collectionViewLayout = layout;
+    if (_layout != layout) {
+        // 去除强引用
+        MLN_Lua_UserData_Release(_layout);
+        // 添加强引用
+        MLN_Lua_UserData_Retain_With_Index(2, layout);
+        _layout = layout;
+        self.innerWaterfallView.collectionViewLayout = layout;
+    }
+    
 }
 
 - (UICollectionViewLayout *)lua_collectionViewLayout

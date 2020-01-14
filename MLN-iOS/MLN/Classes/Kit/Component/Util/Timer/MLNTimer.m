@@ -32,6 +32,7 @@ typedef enum : NSUInteger {
 - (void)mln_user_data_dealloc
 {
     [self stop];
+    [super mln_user_data_dealloc];
 }
 
 - (void)startWithCallback:(MLNBlock *)callback

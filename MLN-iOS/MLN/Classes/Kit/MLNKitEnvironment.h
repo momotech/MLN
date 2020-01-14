@@ -45,6 +45,13 @@ NS_ASSUME_NONNULL_BEGIN
 /// @param navigatorHandler 页面跳转处理句柄
 + (void)setDefaultNavigatorHandler:(id<MLNNavigatorHandlerProtocol>)navigatorHandler;
 
+/// 设置应用的主window
+/// @param mainWindow 应用的主window
++ (void)setMainWindow:(UIWindow *)mainWindow;
+
+/// 获取应用的主window
++ (UIWindow *)mainWindow;
+
 @end
 
 NS_ASSUME_NONNULL_END

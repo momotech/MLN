@@ -20,6 +20,27 @@
 #import "MLNGlobalFuncExporterMacro.h"
 #import "MLNGlobalVarExporterMacro.h"
 
+/**
+Lua强引用栈上指定位置的UserData
+
+@param INDEX UserData在Lua虚拟机栈上的位置
+@param USER_DATA UserData对应的原生对象
+*/
+#define MLN_Lua_UserData_Retain_With_Index(INDEX, USER_DATA) \
+if ([((NSObject *)(USER_DATA)) mln_isConvertible]) {\
+    [((id<MLNEntityExportProtocol>)(USER_DATA)).mln_luaCore setStrongObjectWithIndex:(INDEX) cKey:(__bridge void *)(USER_DATA)];\
+}
+
+/**
+释放原生对象所关联UserData的强引用
+
+@param USER_DATA UserData对应的原生对象
+*/
+#define MLN_Lua_UserData_Release(USER_DATA) \
+if ([((NSObject *)(USER_DATA)) mln_isConvertible]) {\
+    [((id<MLNEntityExportProtocol>)(USER_DATA)).mln_luaCore removeStrongObjectForCKey:(__bridge void *)(USER_DATA)];\
+}
+
 #if defined(__LP64__) && __LP64__
 #define CGFloatValueFromNumber(NUMBER) \
 [(NUMBER) doubleValue]
@@ -114,6 +135,18 @@ NSString *error_tt = [NSString stringWithFormat:FORMAT, ##__VA_ARGS__];\
 [(LUA_CORE).errorHandler luaCore:(LUA_CORE) error:error_tt]; \
 
 /**
+ 通知Handler处理Error
+ 
+ @param LUA_CORE MLNLuaCore 虚拟机内核
+ @param FORMAT 字符拼接格式
+ @param ... 可变参数
+ */
+#define MLNCallAssertHandler(LUA_CORE, FORMAT, ...) \
+NSString *error_tt = [NSString stringWithFormat:FORMAT, ##__VA_ARGS__];\
+error_tt = [error_tt stringByAppendingString:[LUA_CORE traceback]];\
+[(LUA_CORE).errorHandler luaCore:(LUA_CORE) error:error_tt]; \
+
+/**
  Lua 相关断言
  
  @param L Lua状态机
@@ -123,7 +156,7 @@ NSString *error_tt = [NSString stringWithFormat:FORMAT, ##__VA_ARGS__];\
  */
 #define mln_lua_assert(L, condition, format, ...)\
 if ([MLN_LUA_CORE((L)).errorHandler canHandleAssert:MLN_LUA_CORE((L))] && !(condition)) {\
-MLNCallErrorHandler(MLN_LUA_CORE((L)), format, ##__VA_ARGS__)\
+MLNCallAssertHandler(MLN_LUA_CORE((L)), format, ##__VA_ARGS__)\
 }
 
 /**
@@ -146,7 +179,7 @@ MLNCallErrorHandler(MLN_LUA_CORE((L)), format, ##__VA_ARGS__)\
  */
 #define MLNLuaAssert(LUA_CORE, CONDITION, FORMAT, ...) \
 if ([(LUA_CORE).errorHandler canHandleAssert:(LUA_CORE)] && !(CONDITION)) {\
-MLNCallErrorHandler(LUA_CORE, FORMAT, ##__VA_ARGS__)\
+MLNCallAssertHandler(LUA_CORE, FORMAT, ##__VA_ARGS__)\
 }
 
 /**
@@ -169,7 +202,7 @@ MLNCallErrorHandler(LUA_CORE, FORMAT, ##__VA_ARGS__)\
  */
 #define MLNAssert(LUA_CORE, CONDITION, FORMAT, ...) \
 if ([(LUA_CORE).errorHandler canHandleAssert:(LUA_CORE)] && !(CONDITION)) {\
-MLNCallErrorHandler(LUA_CORE, FORMAT, ##__VA_ARGS__)\
+MLNCallAssertHandler(LUA_CORE, FORMAT, ##__VA_ARGS__)\
 }
 
 /**

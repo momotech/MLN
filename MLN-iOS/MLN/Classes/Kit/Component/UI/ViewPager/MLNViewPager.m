@@ -116,6 +116,13 @@
     }
 }
 
+- (void)mln_user_data_dealloc
+{
+    // 去除强引用
+    MLN_Lua_UserData_Release(self.adapter);
+    [super mln_user_data_dealloc];
+}
+
 - (void)dealloc
 {
     _mainView.delegate = nil;
@@ -127,6 +134,10 @@
 {
     MLNCheckTypeAndNilValue(adapter, @"ViewPagerAdapter", [MLNViewPagerAdapter class])
     if (_adapter != adapter) {
+        // 去除强引用
+          MLN_Lua_UserData_Release(_adapter);
+          // 添加强引用
+          MLN_Lua_UserData_Retain_With_Index(2, adapter);
         _adapter = adapter;
         _mainView.delegate = self;
         adapter.viewPager = self;

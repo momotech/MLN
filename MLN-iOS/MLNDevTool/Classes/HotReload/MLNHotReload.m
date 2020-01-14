@@ -15,6 +15,8 @@
 #import "MLNServerManager.h"
 #import "MLNKitInstanceFactory.h"
 #import "MLNDebugCodeCoverageFunction.h"
+#import "MLNDebugContext.h"
+#import "mln_luasocket.h"
 
 @interface MLNHotReload () <MLNKitInstanceErrorHandlerProtocol, MLNKitInstanceDelegate, MLNServerManagerDelegate, MLNDebugPrintObserver, MLNServerListenerProtocol, MLNHotReloadPresenterDelegate> {
     int _usbPort;
@@ -54,6 +56,7 @@ static MLNHotReload *sharedInstance;
         _serverManager = [[MLNServerManager alloc] initWithDelegate:self listener:self];
         _presenter = [[MLNHotReloadPresenter alloc] init];
         _presenter.delegate = self;
+        _openAssert = YES;
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(willEnterForeground:) name:UIApplicationWillEnterForegroundNotification object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didEnterBackground:) name:UIApplicationDidEnterBackgroundNotification object:nil];
         [MLNDebugPrintFunction addObserver:self];
@@ -165,23 +168,20 @@ static MLNHotReload *sharedInstance;
     dispatch_async(dispatch_get_main_queue(), ^{
         self.benchLuaInstance = [self createLuaInstance:bundlePath entryFilePath:entryFilePath params:params];
         // 参数
-        NSMutableDictionary *extraInfo = nil;
-        if (self.extraInfoCallback) {
-            NSDictionary *tmp =  self.extraInfoCallback();
-            if (tmp) {
-                extraInfo = [NSMutableDictionary dictionaryWithDictionary:tmp];
-            } else {
-                extraInfo = [NSMutableDictionary dictionary];
-            }
-            if (params) {
-                [extraInfo setValuesForKeysWithDictionary:params];
-            }
-        }
-        //TODO: - 设置Lua源
+        NSMutableDictionary *extraInfo = params ? [NSMutableDictionary dictionaryWithDictionary:params] : [NSMutableDictionary dictionary];
+        // -设置Lua源
         NSString *relativePath = [bundlePath stringByReplacingOccurrencesOfString:[self hotReloadBundlePath] withString:@""];
         relativePath = [relativePath stringByAppendingPathComponent:entryFilePath];
         NSString *resouce = [kLuaHotReloadHost stringByAppendingString:relativePath];
         [extraInfo mln_setObject:resouce forKey:@"LuaSource"];
+        [extraInfo mln_setObject:kLuaDebugModeHotReload forKey:kLuaDebugModeKey];
+        // -请求外部参数
+        if (self.extraInfoCallback) {
+            NSDictionary *tmp =  self.extraInfoCallback(extraInfo);
+            if (tmp) {
+                [extraInfo addEntriesFromDictionary:tmp];
+            }
+        }
         // 更新bundlePath
         [self.benchLuaInstance runWithEntryFile:entryFilePath windowExtra:extraInfo error:NULL];
     });
@@ -231,7 +231,7 @@ static MLNHotReload *sharedInstance;
 #pragma mark - MLNLogDelegate
 - (BOOL)canHandleAssert:(MLNKitInstance *)instance
 {
-    return YES;
+    return self.isOpenAssert;
 }
 
 - (void)instance:(MLNKitInstance *)instance error:(NSString *)error
@@ -284,6 +284,12 @@ static MLNHotReload *sharedInstance;
         [self.luaInstance doLuaWindowDidAppear];
         [self.presenter tip:@"内容已刷新" duration:0.3 delay:1];
     }
+}
+
+- (void)willSetupLuaCore:(MLNKitInstance *)instance {
+    [instance registerClasses:@[[MLNDebugContext class]] error:NULL];
+    mln_luaopen_socket_core(instance.luaCore.state);
+    [instance loadDebugModelIfNeed];
 }
 
 #pragma mark - Getter
