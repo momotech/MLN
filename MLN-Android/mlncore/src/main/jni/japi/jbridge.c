@@ -9,16 +9,35 @@
 // Created by Xiong.Fangyu 2019/03/13.
 //
 
-#include "luajapi.h"
+#include "global_define.h"
 #include "m_mem.h"
 #include "llimits.h"
 #include "debug_info.h"
+#include "jbridge.h"
+#include "jinfo.h"
+#include "jtable.h"
 
 #define S_DEFAULT_SIG "(J[" LUAVALUE_CLASS ")[" LUAVALUE_CLASS
 
 static void pushStaticClosure(lua_State *L, jclass clz, jmethodID m, const char *name, int pc);
 
 static int executeJavaStaticFunction(lua_State *L);
+
+static int executeJavaIndexFunction(lua_State *L);
+
+static void pushLuaIndexClosure(lua_State *L, jclass clz, jmethodID m);
+
+static int executeLuaIndexFunction(lua_State *L);
+
+static inline void findOrCreateTable(lua_State *L, const char *name, int len) {
+    lua_getglobal(L, name);
+    if (lua_isnil(L, -1)) {
+        lua_pop(L, 1);
+        lua_createtable(L, 0, len);
+        lua_pushvalue(L, -1);
+        lua_setglobal(L, name);
+    }
+}
 
 typedef struct context {
     lua_State *L;
@@ -79,6 +98,91 @@ void jni_registerStaticClassSimple(JNIEnv *env, jobject jobj, jlong L, jstring j
     lua_setglobal(LS, lname);
     ReleaseChar(env, ln, lname);
     lua_unlock(LS);
+}
+
+void jni_registerJavaMetatable(JNIEnv *env, jobject jobj, jlong LS, jstring jn, jstring ln) {
+    const char *jclassname = GetString(env, jn);
+    jclass clz = getClassByName(env, jclassname);
+    if (!clz) {
+        return;
+    }
+    ReleaseChar(env, jn, jclassname);
+
+    jmethodID jmethod = getIndexStaticMethod(env, clz);
+    if (!jmethod) {
+        return;
+    }
+
+    lua_State *L = (lua_State *) LS;
+    lua_lock(L);
+    lua_newtable(L);                // -1: table
+    lua_createtable(L, 0, 1);       // -1: mt --table
+    lua_pushstring(L, "__index");   // -1: "__index" --mt-table
+    pushLuaIndexClosure(L, clz, jmethod);  // -1: closure --"__index"-mt-table
+    lua_rawset(L, -3);              // mt[__index]=closure  -1: mt --table
+    lua_setmetatable(L, -2);        // -1: table
+
+    const char *lname = GetString(env, ln);
+    lua_setglobal(L, lname);
+    ReleaseChar(env, ln, lname);
+    lua_unlock(LS);
+}
+
+void jni_registerNumberEnum(JNIEnv *env, jobject jobj, jlong LS, jstring lcn, jobjectArray keys,
+                            jdoubleArray values) {
+    lua_State *L = (lua_State *) LS;
+    lua_lock(L);
+    const char *name = GetString(env, lcn);
+    int len = GetArrLen(env, keys);
+    findOrCreateTable(L, name, len);        // -1: table
+    ReleaseChar(env, lcn, name);
+
+    int i;
+    jstring jk;
+    const char *k;
+    jdouble *vs = (*env)->GetDoubleArrayElements(env, values, 0);
+    for (i = 0; i < len; i++) {
+        jk = (*env)->GetObjectArrayElement(env, keys, i);
+        k = GetString(env, jk);
+        lua_pushstring(L, k);                   // -1:key --table
+        ReleaseChar(env, jk, k);
+        FREE(env, jk);
+        lua_pushnumber(L, (lua_Number) vs[i]);  // -1:num --key-table
+        lua_rawset(L, -3);                      // -1:table
+    }
+    lua_pop(L, 1);
+    (*env)->ReleaseDoubleArrayElements(env, values, vs, 0);
+    lua_unlock(L);
+}
+
+void jni_registerStringEnum(JNIEnv *env, jobject jobj, jlong LS, jstring lcn, jobjectArray keys,
+                            jobjectArray values) {
+    lua_State *L = (lua_State *) LS;
+    lua_lock(L);
+    const char *name = GetString(env, lcn);
+    int len = GetArrLen(env, keys);
+    findOrCreateTable(L, name, len);
+    ReleaseChar(env, lcn, name);
+
+    int i;
+    jstring jk, jv;
+    const char *k;
+    const char *v;
+    for (i = 0; i < len; i++) {
+        jk = (*env)->GetObjectArrayElement(env, keys, i);
+        k = GetString(env, jk);
+        lua_pushstring(L, k);
+        ReleaseChar(env, jk, k);
+        FREE(env, jk);
+        jv = (*env)->GetObjectArrayElement(env, values, i);
+        v = GetString(env, jv);
+        lua_pushstring(L, v);
+        ReleaseChar(env, jv, v);
+        FREE(env, jv);
+        lua_rawset(L, -3);
+    }
+    lua_pop(L, 1);
+    lua_unlock(L);
 }
 
 /**
@@ -160,107 +264,6 @@ static int executeJavaStaticFunction(lua_State *L) {
     FREE(env, result);
     lua_unlock(L);
     return rc;
-}
-
-static inline void findOrCreateTable(lua_State *L, const char *name, int len) {
-    lua_getglobal(L, name);
-    if (lua_isnil(L, -1)) {
-        lua_pop(L, 1);
-        lua_createtable(L, 0, len);
-        lua_pushvalue(L, -1);
-        lua_setglobal(L, name);
-    }
-}
-
-void jni_registerNumberEnum(JNIEnv *env, jobject jobj, jlong LS, jstring lcn, jobjectArray keys,
-                            jdoubleArray values) {
-    lua_State *L = (lua_State *) LS;
-    lua_lock(L);
-    const char *name = GetString(env, lcn);
-    int len = GetArrLen(env, keys);
-    findOrCreateTable(L, name, len);        // -1: table
-    ReleaseChar(env, lcn, name);
-
-    int i;
-    jstring jk;
-    const char *k;
-    jdouble *vs = (*env)->GetDoubleArrayElements(env, values, 0);
-    for (i = 0; i < len; i++) {
-        jk = (*env)->GetObjectArrayElement(env, keys, i);
-        k = GetString(env, jk);
-        lua_pushstring(L, k);                   // -1:key --table
-        ReleaseChar(env, jk, k);
-        FREE(env, jk);
-        lua_pushnumber(L, (lua_Number) vs[i]);  // -1:num --key-table
-        lua_rawset(L, -3);                      // -1:table
-    }
-    lua_pop(L, 1);
-    (*env)->ReleaseDoubleArrayElements(env, values, vs, 0);
-    lua_unlock(L);
-}
-
-void jni_registerStringEnum(JNIEnv *env, jobject jobj, jlong LS, jstring lcn, jobjectArray keys,
-                            jobjectArray values) {
-    lua_State *L = (lua_State *) LS;
-    lua_lock(L);
-    const char *name = GetString(env, lcn);
-    int len = GetArrLen(env, keys);
-    findOrCreateTable(L, name, len);
-    ReleaseChar(env, lcn, name);
-
-    int i;
-    jstring jk, jv;
-    const char *k;
-    const char *v;
-    for (i = 0; i < len; i++) {
-        jk = (*env)->GetObjectArrayElement(env, keys, i);
-        k = GetString(env, jk);
-        lua_pushstring(L, k);
-        ReleaseChar(env, jk, k);
-        FREE(env, jk);
-        jv = (*env)->GetObjectArrayElement(env, values, i);
-        v = GetString(env, jv);
-        lua_pushstring(L, v);
-        ReleaseChar(env, jv, v);
-        FREE(env, jv);
-        lua_rawset(L, -3);
-    }
-    lua_pop(L, 1);
-    lua_unlock(L);
-}
-
-static int executeJavaIndexFunction(lua_State *L);
-
-static void pushLuaIndexClosure(lua_State *L, jclass clz, jmethodID m);
-
-static int executeLuaIndexFunction(lua_State *L);
-
-void jni_registerJavaMetatable(JNIEnv *env, jobject jobj, jlong LS, jstring jn, jstring ln) {
-    const char *jclassname = GetString(env, jn);
-    jclass clz = getClassByName(env, jclassname);
-    if (!clz) {
-        return;
-    }
-    ReleaseChar(env, jn, jclassname);
-
-    jmethodID jmethod = getIndexStaticMethod(env, clz);
-    if (!jmethod) {
-        return;
-    }
-
-    lua_State *L = (lua_State *) LS;
-    lua_lock(L);
-    lua_newtable(L);                // -1: table
-    lua_createtable(L, 0, 1);       // -1: mt --table
-    lua_pushstring(L, "__index");   // -1: "__index" --mt-table
-    pushLuaIndexClosure(L, clz, jmethod);  // -1: closure --"__index"-mt-table
-    lua_rawset(L, -3);              // mt[__index]=closure  -1: mt --table
-    lua_setmetatable(L, -2);        // -1: table
-
-    const char *lname = GetString(env, ln);
-    lua_setglobal(L, lname);
-    ReleaseChar(env, ln, lname);
-    lua_unlock(LS);
 }
 
 static void pushLuaIndexClosure(lua_State *L, jclass clz, jmethodID m) {

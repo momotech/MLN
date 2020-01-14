@@ -19,15 +19,19 @@ void _printTable(lua_State *L, int idx);    // for test
 void _dumpStack(lua_State *L);              // for test
 void _startTick();                          // for test
 void _endTick();                            // for test
+/// 打印table
 #define printTable(L, idx) _printTable(L, idx)
+/// 打印当前栈
 #define dumpStack(L) _dumpStack(L)
+/// 计时开始
 #define startTick() _startTick()
+/// 计时结束
 #define endTick()   _endTick()
 #else
 #define printTable(L, idx)
 #define dumpStack(L)
 #define startTick()
 #define endTick()
-#endif
+#endif //J_API_INFO
 
 #endif //DEBUG_INFO_H

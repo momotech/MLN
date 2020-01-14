@@ -398,7 +398,7 @@ public class DefaultScriptReaderImpl implements ScriptReader {
     @SuppressLint("WrongConstant")
     protected ScriptBundle parseAssetsToBundle(ParsedUrl parsedUrl) throws ScriptLoadException {
         String url = parsedUrl.toString();
-        ScriptBundle ret = new ScriptBundle(url, url);
+        ScriptBundle ret = new ScriptBundle(url, FileUtil.getCacheDir().getAbsolutePath());
         ScriptFile main = PreloadUtils.parseAssetMainScript(parsedUrl);//asset解析scriptFile
         ret.setMain(main);
         ret.addFlag(ScriptBundle.TYPE_ASSETS | ScriptBundle.SINGLE_FILE);

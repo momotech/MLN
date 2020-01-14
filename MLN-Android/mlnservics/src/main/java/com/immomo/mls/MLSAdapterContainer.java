@@ -18,6 +18,7 @@ import com.immomo.mls.adapter.MLSReloadButtonCreator;
 import com.immomo.mls.adapter.MLSResourceFinderAdapter;
 import com.immomo.mls.adapter.MLSThreadAdapter;
 import com.immomo.mls.adapter.OnRemovedUserdataAdapter;
+import com.immomo.mls.adapter.PreinstallError;
 import com.immomo.mls.adapter.ScriptReaderCreator;
 import com.immomo.mls.adapter.ToastAdapter;
 import com.immomo.mls.adapter.TypeFaceAdapter;
@@ -55,6 +56,7 @@ public class MLSAdapterContainer {
     private static MLSQrCaptureAdapter qrCaptureAdapter;
     private static OnRemovedUserdataAdapter onRemovedUserdataAdapter;
     private static MLSReloadButtonCreator reloadButtonCreator = new MLSReloadButtonCreatorImpl();
+    private static PreinstallError preinstallError;
 
     public static MLSThreadAdapter getThreadAdapter() {
         return threadAdapter;
@@ -175,5 +177,13 @@ public class MLSAdapterContainer {
     public static void setReloadButtonCreator(MLSReloadButtonCreator reloadButtonCreator) {
         AssertUtils.assertNullForce(reloadButtonCreator);
         MLSAdapterContainer.reloadButtonCreator = reloadButtonCreator;
+    }
+
+    public static PreinstallError getPreinstallError() {
+        return preinstallError;
+    }
+
+    public static void setPreinstallError(PreinstallError preinstallError) {
+        MLSAdapterContainer.preinstallError = preinstallError;
     }
 }

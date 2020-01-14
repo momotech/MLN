@@ -11,7 +11,9 @@ import android.content.ComponentCallbacks2;
 import android.content.Context;
 
 import com.immomo.mlncore.MLNCore;
+import com.immomo.mls.adapter.ILoadLibAdapter;
 import com.immomo.mls.adapter.OnRemovedUserdataAdapter;
+import com.immomo.mls.adapter.impl.LoadLibAdapterImpl;
 import com.immomo.mls.fun.constants.BreakMode;
 import com.immomo.mls.fun.constants.ContentMode;
 import com.immomo.mls.fun.constants.DrawStyle;
@@ -105,15 +107,12 @@ import com.immomo.mls.fun.ud.view.recycler.UDBaseRecyclerAdapter;
 import com.immomo.mls.fun.ud.view.recycler.UDBaseRecyclerLayout;
 import com.immomo.mls.fun.ud.view.recycler.UDCollectionAdapter;
 import com.immomo.mls.fun.ud.view.recycler.UDCollectionAutoFitAdapter;
-import com.immomo.mls.fun.ud.view.recycler.UDCollectionGridLayout;
-import com.immomo.mls.fun.ud.view.recycler.UDCollectionViewGridLayoutFix;
 import com.immomo.mls.fun.ud.view.recycler.UDCollectionLayout;
 import com.immomo.mls.fun.ud.view.recycler.UDListAdapter;
 import com.immomo.mls.fun.ud.view.recycler.UDListAutoFitAdapter;
 import com.immomo.mls.fun.ud.view.recycler.UDRecyclerView;
 import com.immomo.mls.fun.ud.view.recycler.UDWaterFallAdapter;
 import com.immomo.mls.fun.ud.view.recycler.UDWaterFallLayout;
-import com.immomo.mls.fun.ud.view.recycler.UDWaterfallLayoutFix;
 import com.immomo.mls.fun.ud.view.viewpager.UDViewPagerAdapter;
 import com.immomo.mls.global.LVConfig;
 import com.immomo.mls.global.LuaViewConfig;
@@ -135,6 +134,7 @@ import org.luaj.vm2.utils.ResourceFinder;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -144,6 +144,24 @@ import androidx.annotation.NonNull;
  * Created by XiongFangyu on 2018/6/26.
  */
 public class MLSEngine {
+    /**
+     * 必须初始化的库
+     */
+    private static final String[] coreLibs = {
+            "luajapi",
+            "mlnbridge",
+    };
+
+    private static final Map<String, Boolean> otherLibs;
+
+    static {
+        otherLibs = new HashMap<>(2);
+        otherLibs.put("mlnbc", false);
+        otherLibs.put("lblur", false);
+    }
+
+    private static boolean init = false;
+
     private static Context context;
     public static boolean DEBUG;
 
@@ -197,7 +215,41 @@ public class MLSEngine {
 
     private static MemoryListener memoryListener;
 
+    /**
+     * 初始化核心库
+     */
+    public static void initCoreLibs(ILoadLibAdapter loadLibAdapter) {
+        boolean init = true;
+        for (String s : coreLibs) {
+            init = loadLibAdapter.load(s) && init;
+        }
+        MLSEngine.init = init;
+    }
+
+    /**
+     * 初始化非核心库
+     */
+    public static void initOtherLibs(ILoadLibAdapter libAdapter) {
+        Map<String, Boolean> temp = new HashMap<>(otherLibs);
+        for (Map.Entry<String, Boolean> e : temp.entrySet()) {
+            if (!e.getValue()) {
+                otherLibs.put(e.getKey(), libAdapter.load(e.getKey()));
+            }
+        }
+    }
+
+    public static boolean isLibInit(String libName) {
+        return otherLibs.get(libName);
+    }
+
     public static MLSBuilder init(Context context, final boolean debug) {
+        return init(context, LoadLibAdapterImpl.getInstance(), debug);
+    }
+
+    public static MLSBuilder init(Context context, @NonNull ILoadLibAdapter adapter, final boolean debug) {
+        if (!init) {
+            initCoreLibs(adapter);
+        }
         boolean firstInit = false;
         if (singleRegister == null) {
             synchronized (MLSEngine.class) {
@@ -208,6 +260,7 @@ public class MLSEngine {
             }
         }
         if (firstInit) {
+            initOtherLibs(adapter);
             MLNCore.setCallback(new MLNCore.Callback() {
                 @Override
                 public void onNativeCreateGlobals(Globals g, boolean isStatic) {
@@ -217,7 +270,8 @@ public class MLSEngine {
                         g.setResourceFinders(MLSEngine.getGlobalResourceFinder());
                     }
                     singleRegister.install(g, false);
-                    NativeBridge.registerNativeBridge(g);
+                    if (init)
+                        NativeBridge.registerNativeBridge(g);
                 }
 
                 @Override
@@ -383,11 +437,8 @@ public class MLSEngine {
                 Register.newUDHolder(UDCollectionAdapter.LUA_CLASS_NAME, UDCollectionAdapter.class, false, UDCollectionAdapter.methods),
                 Register.newUDHolder(UDCollectionAutoFitAdapter.LUA_CLASS_NAME, UDCollectionAutoFitAdapter.class, false, UDCollectionAutoFitAdapter.methods),
                 Register.newUDHolder(UDCollectionLayout.LUA_CLASS_NAME, UDCollectionLayout.class, false, UDCollectionLayout.methods),
-                Register.newUDHolder(UDCollectionGridLayout.LUA_CLASS_NAME, UDCollectionGridLayout.class, false, UDCollectionGridLayout.methods),
-                Register.newUDHolder(UDCollectionViewGridLayoutFix.LUA_CLASS_NAME, UDCollectionViewGridLayoutFix.class, false, UDCollectionViewGridLayoutFix.methods),
                 Register.newUDHolder(UDWaterFallAdapter.LUA_CLASS_NAME, UDWaterFallAdapter.class, false, UDWaterFallAdapter.methods),
                 Register.newUDHolder(UDWaterFallLayout.LUA_CLASS_NAME, UDWaterFallLayout.class, false, UDWaterFallLayout.methods),
-                Register.newUDHolder(UDWaterfallLayoutFix.LUA_CLASS_NAME, UDWaterfallLayoutFix.class, false, UDWaterfallLayoutFix.methods),
                 Register.newUDHolder(UDViewPagerAdapter.LUA_CLASS_NAME,UDViewPagerAdapter.class, false, UDViewPagerAdapter.methods),
                 Register.newUDHolder(UDPath.LUA_CLASS_NAME, UDPath.class, false, UDPath.methods),
                 Register.newUDHolder(UDPaint.LUA_CLASS_NAME, UDPaint.class, false, UDPaint.methods),
@@ -422,6 +473,7 @@ public class MLSEngine {
                 new MLSBuilder.CHolder(Map.class, UDMap.J, UDMap.G),
                 new MLSBuilder.CHolder(List.class, UDArray.G, true),
 
+                new MLSBuilder.CHolder(UDAnimator.class),
                 /// Canvas Animations
                 new MLSBuilder.CHolder(UDBaseAnimation.class, (ILuaValueGetter) null, true),
                 new MLSBuilder.CHolder(UDAlphaAnimation.class, (IJavaObjectGetter) null, true),

@@ -7,39 +7,45 @@
   */
 package com.immomo.mls.fun.ud.view.recycler;
 
-
-import com.immomo.mls.Environment;
-import com.immomo.mls.fun.other.NormalItemDecoration;
-import com.immomo.mls.fun.other.Size;
-import com.immomo.mls.fun.ud.UDSize;
-
-import org.luaj.vm2.Globals;
-import org.luaj.vm2.LuaValue;
-import org.luaj.vm2.utils.LuaApiUsed;
-
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.immomo.mls.Environment;
+import com.immomo.mls.fun.other.GridLayoutItemDecoration;
+import com.immomo.mls.fun.other.Size;
+import com.immomo.mls.fun.ud.UDSize;
+import com.immomo.mls.util.DimenUtil;
+
+import org.luaj.vm2.LuaValue;
+import org.luaj.vm2.utils.LuaApiUsed;
 
 /**
  * Created by XiongFangyu on 2018/7/19.
  */
 @LuaApiUsed
-public class UDCollectionLayout extends UDBaseRecyclerLayout {
+public class UDCollectionLayout extends UDBaseRecyclerLayout implements ILayoutInSet {
     public static final String LUA_CLASS_NAME = "CollectionViewLayout";
     public static final String[] methods = new String[]{
             "itemSize",
+            "spanCount",
+            "layoutInset",
+            "canScroll2Screen",
     };
 
+    public static final int DEFAULT_ITEM_SIZE = 100;
     public static final int DEFAULT_SPAN_COUNT = 1;
 
     private UDSize itemSize;
     private int spanCount;
-    private NormalItemDecoration itemDecoration;
+    private GridLayoutItemDecoration itemDecoration;
+    private boolean mIsCanScrollTolScreenLeft = true;
+    private final int[] paddingValues;
     private boolean spanCountInit = false;
 
     @LuaApiUsed
     public UDCollectionLayout(long L, LuaValue[] v) {
         super(L, v);
+        paddingValues = new int[4];
     }
 
     //<editor-fold desc="api">
@@ -57,6 +63,32 @@ public class UDCollectionLayout extends UDBaseRecyclerLayout {
         }
         return varargsOf(getitemSize());
     }
+
+    @LuaApiUsed
+    public LuaValue[] spanCount(LuaValue[] values) {
+        if (values != null && values.length > 0) {
+            this.spanCount = values[0].toInt();
+            return null;
+        }
+        if (this.spanCount <= 0)
+            this.spanCount = DEFAULT_SPAN_COUNT;
+        return LuaValue.rNumber(spanCount);
+    }
+
+    @LuaApiUsed
+    public LuaValue[] layoutInset(LuaValue[] values) {
+        paddingValues[0] = DimenUtil.dpiToPx(values[1].toDouble());//left
+        paddingValues[1] = DimenUtil.dpiToPx(values[0].toDouble());//top
+        paddingValues[2] = DimenUtil.dpiToPx(values[3].toDouble());//right
+        paddingValues[3] = DimenUtil.dpiToPx(values[2].toDouble());//bottom
+        return null;
+    }
+
+    @LuaApiUsed
+    public LuaValue[] canScroll2Screen(LuaValue[] values) {
+        this.mIsCanScrollTolScreenLeft = values[0].toBoolean();
+        return null;
+    }
     //</editor-fold>
 
     public LuaValue getitemSize() {
@@ -69,18 +101,26 @@ public class UDCollectionLayout extends UDBaseRecyclerLayout {
 
     @Override
     public int getSpanCount() {
-        initSpanCount();
-        return spanCount;
+        if (this.spanCount <= 0){
+            this.spanCount = DEFAULT_SPAN_COUNT;
+            IllegalArgumentException e = new IllegalArgumentException("spanCount must > 0");
+            if (!Environment.hook(e, getGlobals())) {
+                throw e;
+            }
+        }
+
+        return this.spanCount;
     }
 
     @Override
     public @Nullable
     RecyclerView.ItemDecoration getItemDecoration() {
         if (itemDecoration == null) {
-            itemDecoration = new NormalItemDecoration(itemSpacing, lineSpacing, orientation, spanCount);
+            setItemDecoration();
         } else if (!itemDecoration.isSame(itemSpacing, lineSpacing)) {
-            itemDecoration = new NormalItemDecoration(itemSpacing, lineSpacing, orientation, spanCount);
+            setItemDecoration();
         }
+
         return itemDecoration;
     }
 
@@ -142,5 +182,25 @@ public class UDCollectionLayout extends UDBaseRecyclerLayout {
             }
         }
         return c;
+    }
+
+    public boolean isCanScrollTolScreenLeft() {
+        return mIsCanScrollTolScreenLeft;
+    }
+
+    private void setItemDecoration() {
+        itemDecoration = new GridLayoutItemDecoration(orientation, this);
+    }
+
+    @Override
+    protected void onFooterAdded(boolean footerAdded) {
+        if (itemDecoration != null) {
+            itemDecoration.setHasFooter(footerAdded);
+        }
+    }
+
+    @Override
+    public int[] getPaddingValues() {
+        return paddingValues;
     }
 }

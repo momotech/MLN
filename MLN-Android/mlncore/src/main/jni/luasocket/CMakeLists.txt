@@ -21,5 +21,5 @@ add_library( mlsocket STATIC
             tcp.c
             udp.c )
 
-add_definitions(-DLUA_DL_DLOPEN -DLUA_USE_C89 -DLUA_COMPAT_5_1 -DLUA_COMPAT_5_2 -DLUA_USE_LINUX -DANDROID -DLUA_COMPAT_ALL)
+add_definitions(-DLUA_DL_DLOPEN -DLUA_USE_C89 -DLUA_COMPAT_5_1 -DLUA_COMPAT_5_2 -DLUA_USE_LINUX -DJAVA_ENV -DANDROID -DLUA_COMPAT_ALL)
 #add_definitions(-DMULTI_THREAD)

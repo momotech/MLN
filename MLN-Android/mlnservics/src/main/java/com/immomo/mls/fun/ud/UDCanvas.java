@@ -7,7 +7,6 @@
   */
 package com.immomo.mls.fun.ud;
 
-import android.graphics.BlurMaskFilter;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.LinearGradient;
@@ -30,7 +29,7 @@ import org.luaj.vm2.utils.LuaApiUsed;
  * on 2019/7/18
  */
 @LuaApiUsed
-public class UDCanvas extends LuaUserdata {
+public class UDCanvas extends LuaUserdata<Canvas> {
     public static final String LUA_CLASS_NAME = "Canvas";
 
     public static final String[] methods = {
@@ -46,50 +45,48 @@ public class UDCanvas extends LuaUserdata {
             "drawRect",
             "drawOval",
             "drawGradientColor",
-
-            "translate"
     };
-
-    private Canvas canvas;
 
     private RectF rectFTemp;
 
     @LuaApiUsed
     public UDCanvas(long L, LuaValue[] v) {
         super(L, v);
-        this.canvas = null;
     }
 
-    public UDCanvas(Globals g, Object jud) {
+    public UDCanvas(Globals g, Canvas jud) {
         super(g, jud);
-        this.canvas = (Canvas) jud;
     }
 
-    public void resetCanvas(Canvas canvas) {
-        this.canvas = canvas;
+    public void resetCanvas(Canvas javaUserdata) {
+        this.javaUserdata = javaUserdata;
     }
 
     //<editor-fold desc="api">
 
     @LuaApiUsed
     public LuaValue[] save(LuaValue[] values) {
-        if (canvas != null) {
-            canvas.save();
+        if (javaUserdata != null) {
+            return rNumber(javaUserdata.save());
         }
         return null;
     }
 
     @LuaApiUsed
     public LuaValue[] restore(LuaValue[] values) {
-        if (canvas != null) {
-            canvas.restore();
+        if (javaUserdata != null) {
+            if (values.length > 0 && values[0].isNumber()) {
+                javaUserdata.restoreToCount(values[0].toInt());
+            } else {
+                javaUserdata.restore();
+            }
         }
         return null;
     }
 
     @LuaApiUsed
     public LuaValue[] drawArc(LuaValue[] v) {
-        if (canvas == null)
+        if (javaUserdata == null)
             return null;
         if (rectFTemp == null) {
             rectFTemp = new RectF();
@@ -97,7 +94,7 @@ public class UDCanvas extends LuaUserdata {
         rectFTemp.set(DimenUtil.dpiToPx(v[0].toFloat()), DimenUtil.dpiToPx(v[1].toFloat()), DimenUtil.dpiToPx(v[2].toFloat()), DimenUtil.dpiToPx(v[3].toFloat()));
         UDPaint udPaint = v.length > 6 ? (UDPaint) v[6].toUserdata() : null;
         if (udPaint != null) {
-            canvas.drawArc(rectFTemp, v[4].toFloat(), v[5].toFloat(), false, (Paint) udPaint.getJavaUserdata());
+            javaUserdata.drawArc(rectFTemp, v[4].toFloat(), v[5].toFloat(), false, udPaint.getJavaUserdata());
             udPaint.destroy();
         }
         return null;
@@ -105,14 +102,14 @@ public class UDCanvas extends LuaUserdata {
 
     @LuaApiUsed
     public LuaValue[] drawColor(LuaValue[] values) {
-        if (canvas == null)
+        if (javaUserdata == null)
             return null;
         LuaValue value = values[0];
         if (value.isNumber()) {
-            canvas.drawColor(value.toInt());
+            javaUserdata.drawColor(value.toInt());
         } else {
             UDColor color = (UDColor) value.toUserdata();
-            canvas.drawColor(color.getColor());
+            javaUserdata.drawColor(color.getColor());
             color.destroy();
         }
         return null;
@@ -120,12 +117,12 @@ public class UDCanvas extends LuaUserdata {
 
     @LuaApiUsed
     public LuaValue[] drawLine(LuaValue[] v) {
-        if (canvas == null)
+        if (javaUserdata == null)
             return null;
         UDPaint udPaint = v.length > 4 ? (UDPaint) v[4].toUserdata() : null;
         if (udPaint != null) {
-            canvas.drawLine(DimenUtil.dpiToPx(v[0].toFloat()), DimenUtil.dpiToPx(v[1].toFloat()),
-                    DimenUtil.dpiToPx(v[2].toFloat()), DimenUtil.dpiToPx(v[3].toFloat()), (Paint) udPaint.getJavaUserdata());
+            javaUserdata.drawLine(DimenUtil.dpiToPx(v[0].toFloat()), DimenUtil.dpiToPx(v[1].toFloat()),
+                    DimenUtil.dpiToPx(v[2].toFloat()), DimenUtil.dpiToPx(v[3].toFloat()), udPaint.getJavaUserdata());
             udPaint.destroy();
         }
         return null;
@@ -133,11 +130,11 @@ public class UDCanvas extends LuaUserdata {
 
     @LuaApiUsed
     public LuaValue[] drawPath(LuaValue[] v) {
-        if (canvas == null)
+        if (javaUserdata == null)
             return null;
         UDPaint udPaint = v.length > 1 ? (UDPaint) v[1].toUserdata() : null;
         if (udPaint != null) {
-            canvas.drawPath((Path) v[0].toUserdata().getJavaUserdata(), (Paint) udPaint.getJavaUserdata());
+            javaUserdata.drawPath((Path) v[0].toUserdata().getJavaUserdata(), udPaint.getJavaUserdata());
             udPaint.destroy();
         }
         return null;
@@ -145,12 +142,12 @@ public class UDCanvas extends LuaUserdata {
 
     @LuaApiUsed
     public LuaValue[] drawPoint(LuaValue[] v) {
-        if (canvas == null)
+        if (javaUserdata == null)
             return null;
         UDPaint udPaint = v.length > 2 ? (UDPaint) v[2].toUserdata() : null;
         if (udPaint != null) {
-            canvas.drawPoint(DimenUtil.dpiToPx(v[0].toFloat()), DimenUtil.dpiToPx(v[1].toFloat()),
-                    (Paint) udPaint.getJavaUserdata());
+            javaUserdata.drawPoint(DimenUtil.dpiToPx(v[0].toFloat()), DimenUtil.dpiToPx(v[1].toFloat()),
+                    udPaint.getJavaUserdata());
             udPaint.destroy();
         }
         return null;
@@ -158,12 +155,12 @@ public class UDCanvas extends LuaUserdata {
 
     @LuaApiUsed
     public LuaValue[] drawText(LuaValue[] v) {
-        if (canvas == null)
+        if (javaUserdata == null)
             return null;
         UDPaint udPaint = v.length > 3 ? (UDPaint) v[3].toUserdata() : null;
         if (udPaint != null) {
-            canvas.drawText(v[0].toJavaString(), DimenUtil.dpiToPx(v[1].toFloat()),
-                    DimenUtil.dpiToPx(v[2].toFloat()), (Paint) udPaint.getJavaUserdata());
+            javaUserdata.drawText(v[0].toJavaString(), DimenUtil.dpiToPx(v[1].toFloat()),
+                    DimenUtil.dpiToPx(v[2].toFloat()), udPaint.getJavaUserdata());
             udPaint.destroy();
         }
         return null;
@@ -171,12 +168,12 @@ public class UDCanvas extends LuaUserdata {
 
     @LuaApiUsed
     public LuaValue[] drawCircle(LuaValue[] v) {
-        if (canvas == null)
+        if (javaUserdata == null)
             return null;
         UDPaint udPaint = v.length > 3 ? (UDPaint) v[3].toUserdata() : null;
         if (udPaint != null) {
-            canvas.drawCircle(DimenUtil.dpiToPx(v[0].toFloat()), DimenUtil.dpiToPx(v[1].toFloat()),
-                    DimenUtil.dpiToPx(v[2].toFloat()), (Paint) udPaint.getJavaUserdata());
+            javaUserdata.drawCircle(DimenUtil.dpiToPx(v[0].toFloat()), DimenUtil.dpiToPx(v[1].toFloat()),
+                    DimenUtil.dpiToPx(v[2].toFloat()), udPaint.getJavaUserdata());
             udPaint.destroy();
         }
         return null;
@@ -184,12 +181,12 @@ public class UDCanvas extends LuaUserdata {
 
     @LuaApiUsed
     public LuaValue[] drawRect(LuaValue[] v) {
-        if (canvas == null)
+        if (javaUserdata == null)
             return null;
         UDPaint udPaint = v.length > 4 ? (UDPaint) v[4].toUserdata() : null;
         if (udPaint != null) {
-            canvas.drawRect(DimenUtil.dpiToPx(v[0].toFloat()), DimenUtil.dpiToPx(v[1].toFloat()),
-                    DimenUtil.dpiToPx(v[2].toFloat()), DimenUtil.dpiToPx(v[3].toFloat()), (Paint) udPaint.getJavaUserdata());
+            javaUserdata.drawRect(DimenUtil.dpiToPx(v[0].toFloat()), DimenUtil.dpiToPx(v[1].toFloat()),
+                    DimenUtil.dpiToPx(v[2].toFloat()), DimenUtil.dpiToPx(v[3].toFloat()), udPaint.getJavaUserdata());
             udPaint.destroy();
         }
         return null;
@@ -197,7 +194,7 @@ public class UDCanvas extends LuaUserdata {
 
     @LuaApiUsed
     public LuaValue[] drawOval(LuaValue[] v) {
-        if (canvas == null)
+        if (javaUserdata == null)
             return null;
         UDPaint udPaint = v.length > 4 ? (UDPaint) v[4].toUserdata() : null;
         if (udPaint != null) {
@@ -205,7 +202,7 @@ public class UDCanvas extends LuaUserdata {
                 rectFTemp = new RectF();
             }
             rectFTemp.set(DimenUtil.dpiToPx(v[0].toFloat()), DimenUtil.dpiToPx(v[1].toFloat()), DimenUtil.dpiToPx(v[2].toFloat()), DimenUtil.dpiToPx(v[3].toFloat()));
-            canvas.drawOval(rectFTemp, (Paint) udPaint.getJavaUserdata());
+            javaUserdata.drawOval(rectFTemp, udPaint.getJavaUserdata());
             udPaint.destroy();
         }
         return null;
@@ -213,7 +210,7 @@ public class UDCanvas extends LuaUserdata {
 
     @LuaApiUsed
     public LuaValue[] drawGradientColor(LuaValue[] v) {
-        if (canvas == null)
+        if (javaUserdata == null)
             return null;
         float startX = v.length > 0 ? DimenUtil.dpiToPx(v[0].toFloat()) : 0;
         float startY = v.length > 1 ? DimenUtil.dpiToPx(v[1].toFloat()) : 0;
@@ -237,26 +234,12 @@ public class UDCanvas extends LuaUserdata {
         LinearGradient gradient = new LinearGradient(DimenUtil.dpiToPx(startX), DimenUtil.dpiToPx(startY)
                 , DimenUtil.dpiToPx(endX), DimenUtil.dpiToPx(endY), intColors, null, Shader.TileMode.CLAMP);
 
-        Paint backgroundPaint = (Paint) pait.getJavaUserdata();
+        Paint backgroundPaint = pait.getJavaUserdata();
         backgroundPaint.setStyle(Paint.Style.FILL);
         backgroundPaint.setShader(gradient);
-        canvas.drawPath((Path) path.getJavaUserdata(), backgroundPaint);
+        javaUserdata.drawPath(path.getJavaUserdata(), backgroundPaint);
         path.destroy();
         pait.destroy();
-        return null;
-    }
-
-    /**
-     * Android Test Only
-     * translate(x, y)
-     */
-    @LuaApiUsed
-    public LuaValue[] translate(LuaValue[] v) {
-        if (canvas == null)
-            return null;
-        float dx = DimenUtil.dpiToPx(v[0].toDouble());
-        float dy = DimenUtil.dpiToPx(v[1].toDouble());
-        canvas.translate(dx, dy);
         return null;
     }
     //</editor-fold>

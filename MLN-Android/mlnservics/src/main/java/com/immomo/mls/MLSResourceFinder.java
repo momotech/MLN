@@ -14,6 +14,7 @@ import com.immomo.mls.utils.LuaUrlUtils;
 import com.immomo.mls.utils.ParsedUrl;
 
 import org.luaj.vm2.utils.ResourceFinder;
+import org.luaj.vm2.utils.StringReplaceUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -87,7 +88,7 @@ public class MLSResourceFinder implements ResourceFinder {
         if (name.endsWith(".lua"))
             name = name.substring(0, name.length() - 4);
         if (!name.contains(".."))
-            return name.replaceAll("\\.", File.separator) + ".lua";
+            return StringReplaceUtils.replaceAllChar(name, '.', File.separatorChar) + ".lua";
         return name + ".lua";
     }
 

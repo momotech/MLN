@@ -27,7 +27,7 @@ import org.luaj.vm2.utils.LuaApiUsed;
  * on 2019/7/18
  */
 @LuaApiUsed
-public class UDPaint extends LuaUserdata {
+public class UDPaint extends LuaUserdata<Paint> {
     public static final String LUA_CLASS_NAME = "Paint";
 
     public static final String[] methods = {
@@ -43,32 +43,28 @@ public class UDPaint extends LuaUserdata {
             "setBlurMask",
     };
 
-    private final Paint paint;
-
     @LuaApiUsed
     protected UDPaint(long L, LuaValue[] v) {
         super(L, v);
-        this.paint = new Paint();
+        javaUserdata = new Paint();
         init();
-        javaUserdata = this.paint;
     }
 
-    public UDPaint(Globals g, Object jud) {
+    public UDPaint(Globals g, Paint jud) {
         super(g, jud);
-        this.paint = (Paint) jud;
         init();
     }
 
     private void init() {
-        paint.setStyle(Paint.Style.STROKE);
-        paint.setStrokeWidth(DimenUtil.dpiToPx(1));
+        javaUserdata.setStyle(Paint.Style.STROKE);
+        javaUserdata.setStrokeWidth(DimenUtil.dpiToPx(1));
     }
 
     //<editor-fold desc="api">
     @LuaApiUsed
     public LuaValue[] fontSize(LuaValue[] values) {
-        if (paint != null)
-            paint.setTextSize(DimenUtil.spToPx(values[0].toFloat()));
+        if (javaUserdata != null)
+            javaUserdata.setTextSize(DimenUtil.spToPx(values[0].toFloat()));
         return null;
     }
 
@@ -77,13 +73,13 @@ public class UDPaint extends LuaUserdata {
         String fontName = values.length > 0 ? values[0].toJavaString() : null;
         int size = values.length > 1 ? DimenUtil.spToPx(values[1].toInt()) : 0;
 
-        if (paint != null) {
+        if (javaUserdata != null) {
             if (!TextUtils.isEmpty(fontName)) {
                 TypeFaceAdapter a = MLSAdapterContainer.getTypeFaceAdapter();
                 if (a != null)
-                    paint.setTypeface(a.create(fontName));
+                    javaUserdata.setTypeface(a.create(fontName));
             }
-            paint.setTextSize(size);
+            javaUserdata.setTextSize(size);
         }
         return null;
     }
@@ -95,7 +91,7 @@ public class UDPaint extends LuaUserdata {
         int dy = values.length > 2 ? DimenUtil.spToPx(values[2].toInt()) : 0;
         UDColor shadowColor = values.length > 3 ? (UDColor) values[3].toUserdata() : null;
         if (shadowColor != null) {
-            paint.setShadowLayer(raduis, dx, dy, shadowColor.getColor());
+            javaUserdata.setShadowLayer(raduis, dx, dy, shadowColor.getColor());
             shadowColor.destroy();
         }
 
@@ -112,7 +108,7 @@ public class UDPaint extends LuaUserdata {
                 fDashs[i] = DimenUtil.dpiToPx(dashsArray.get(i + 1).toFloat());
             }
             DashPathEffect pathEffect = new DashPathEffect(fDashs, phase);
-            paint.setPathEffect(pathEffect);
+            javaUserdata.setPathEffect(pathEffect);
         }
         return null;
     }
@@ -122,35 +118,35 @@ public class UDPaint extends LuaUserdata {
         if (values.length > 0) {
             LuaValue value = values[0];
             if (value.isNumber()) {
-                paint.setColor(value.toInt());
+                javaUserdata.setColor(value.toInt());
             } else {
                 UDColor color = (UDColor) values[0].toUserdata();
-                paint.setColor(color.getColor());
+                javaUserdata.setColor(color.getColor());
                 color.destroy();
             }
             return null;
         }
-        return varargsOf(new UDColor(getGlobals(), paint.getColor()));
+        return varargsOf(new UDColor(getGlobals(), javaUserdata.getColor()));
     }
 
     @LuaApiUsed
     public LuaValue[] width(LuaValue[] values) {
         int width = values.length > 0 ? DimenUtil.dpiToPx(values[0].toInt()) : -1;
         if (width != -1) {
-            paint.setStrokeWidth(width);
+            javaUserdata.setStrokeWidth(width);
             return null;
         }
-        return varargsOf(LuaValue.rNumber(paint.getStrokeWidth()));
+        return varargsOf(LuaValue.rNumber(javaUserdata.getStrokeWidth()));
     }
 
     @LuaApiUsed
     public LuaValue[] alpha(LuaValue[] values) {
         int alpha = values.length > 0 ? (int) (values[0].toFloat() * 255) : -1;
         if (alpha != -1) {
-            paint.setAlpha(alpha);
+            javaUserdata.setAlpha(alpha);
             return null;
         }
-        return varargsOf(LuaValue.rNumber(paint.getAlpha()));
+        return varargsOf(LuaValue.rNumber(javaUserdata.getAlpha()));
     }
 
     @LuaApiUsed
@@ -170,11 +166,11 @@ public class UDPaint extends LuaUserdata {
                     break;
             }
             if (style != null) {
-                paint.setStyle(style);
+                javaUserdata.setStyle(style);
             }
             return null;
         }
-        return varargsOf(LuaValue.rNumber(paint.getStyle().ordinal()));
+        return varargsOf(LuaValue.rNumber(javaUserdata.getStyle().ordinal()));
     }
 
 
@@ -196,11 +192,11 @@ public class UDPaint extends LuaUserdata {
                     break;
             }
             if (cap != null) {
-                paint.setStrokeCap(cap);
+                javaUserdata.setStrokeCap(cap);
             }
             return null;
         }
-        return varargsOf(LuaValue.rNumber(paint.getStrokeCap().ordinal()));
+        return varargsOf(LuaValue.rNumber(javaUserdata.getStrokeCap().ordinal()));
     }
 
     @LuaApiUsed
@@ -223,11 +219,11 @@ public class UDPaint extends LuaUserdata {
                 code = BlurMaskFilter.Blur.INNER;
                 break;
         }
-        if (paint.getAlpha() == 255) {//255透明度，会黑屏。
-            paint.setAlpha(254);
+        if (javaUserdata.getAlpha() == 255) {//255透明度，会黑屏。
+            javaUserdata.setAlpha(254);
         }
         if (radius > 0) {
-            paint.setMaskFilter(new BlurMaskFilter(radius, code));
+            javaUserdata.setMaskFilter(new BlurMaskFilter(radius, code));
         }
         return null;
     }

@@ -26,6 +26,7 @@ import com.immomo.mls.adapter.ScriptReader;
 import com.immomo.mls.fun.constants.StatusBarStyle;
 import com.immomo.mls.fun.globals.LuaView;
 import com.immomo.mls.fun.globals.UDLuaView;
+import com.immomo.mls.global.LuaViewConfig;
 import com.immomo.mls.global.ScriptLoader;
 import com.immomo.mls.log.DefaultPrintStream;
 import com.immomo.mls.log.IPrinter;
@@ -50,13 +51,13 @@ import com.immomo.mls.utils.loader.ScriptInfo;
 import com.immomo.mls.weight.RefreshView;
 import com.immomo.mls.weight.ScalpelFrameLayout;
 import com.immomo.mls.wrapper.AssetsResourceFinder;
+import com.immomo.mls.wrapper.GlobalsContainer;
 import com.immomo.mls.wrapper.ScriptBundle;
 import com.immomo.mls.wrapper.ScriptBundleResourceFinder;
 
 import org.luaj.vm2.Globals;
 import org.luaj.vm2.utils.PathResourceFinder;
 
-import java.io.File;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -78,7 +79,8 @@ import androidx.annotation.Nullable;
  * @see #onPause()
  * @see #onDestroy()
  */
-public class MLSInstance implements ScriptLoader.Callback, Callback, PrinterContainer {
+public class MLSInstance implements ScriptLoader.Callback, Callback, PrinterContainer,
+        GlobalsContainer, HotReloadHelper.Callback {
     private static final String TAG = "MLSInstance";
     /**
      * @see #mState
@@ -261,7 +263,7 @@ public class MLSInstance implements ScriptLoader.Callback, Callback, PrinterCont
     public void setContainer(@NonNull ViewGroup container) {
         AssertUtils.assertNullForce(container);
         mContainer = container;
-        if (!MLSEngine.isInit()) {
+        if (!isInit()) {
             toggleEmptyViewShow(true);
             setEmptyViewContent(MLSConfigs.uninitTitle, MLSConfigs.uninitMsg);
             return;
@@ -278,7 +280,7 @@ public class MLSInstance implements ScriptLoader.Callback, Callback, PrinterCont
      * @param data
      */
     public void setData(InitData data) {
-        if (!MLSEngine.isInit())
+        if (!isInit())
             return;
         AssertUtils.assertNullForce(data);
         if (data.extras != null) {
@@ -359,7 +361,7 @@ public class MLSInstance implements ScriptLoader.Callback, Callback, PrinterCont
      * @return
      */
     public boolean isValid() {
-        if (!Globals.isInit() || !MLSEngine.isInit())
+        if (!isInit())
             return false;
         if (initData == null || TextUtils.isEmpty(initData.url) || scriptReader == null)
             return false;
@@ -370,32 +372,33 @@ public class MLSInstance implements ScriptLoader.Callback, Callback, PrinterCont
         this.scriptStateListener = scriptStateListener;
     }
 
-    private final HotReloadHelper.Callback callback = new HotReloadHelper.Callback() {
-        @Override
-        public void onReload(final String path, final HashMap<String, String> params, int state) {
-            if (globals.isDestroyed()) {
-                if (luaViewManager != null)
-                    HotReloadHelper.removeCallback(this);
-                return;
-            }
-
-            if (!MainThreadExecutor.isMainThread()) {
-                MainThreadExecutor.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        reloadByHotReload(path, LoadTypeUtils.add(initData.loadType, Constants.LT_MAIN_THREAD), params);
-                    }
-                });
-            } else {
-                reloadByHotReload(path, LoadTypeUtils.add(initData.loadType, Constants.LT_MAIN_THREAD), params);
-            }
+    //<editor-fold desc="HotReloadHelper.Callback">
+    @Override
+    public void onReload(final String path, final HashMap<String, String> params, int state) {
+        if (globals.isDestroyed()) {
+            if (luaViewManager != null)
+                HotReloadHelper.removeCallback(this);
+            return;
         }
 
-        @Override
-        public boolean reloadFinish() {
-            return !hasState(STATE_HOT_RELOADING);
+        if (!MainThreadExecutor.isMainThread()) {
+            MainThreadExecutor.post(new Runnable() {
+                @Override
+                public void run() {
+                    reloadByHotReload(path, LoadTypeUtils.add(initData.loadType, Constants.LT_MAIN_THREAD), params);
+                }
+            });
+        } else {
+            reloadByHotReload(path, LoadTypeUtils.add(initData.loadType, Constants.LT_MAIN_THREAD), params);
         }
-    };
+    }
+
+    @Override
+    public boolean reloadFinish() {
+        return !hasState(STATE_HOT_RELOADING);
+    }
+
+    //</editor-fold>
 
     private void dismissKeyboard() {
         if (mContext instanceof Activity) {
@@ -417,7 +420,7 @@ public class MLSInstance implements ScriptLoader.Callback, Callback, PrinterCont
         if (mLuaView != null)
             mLuaView.onResume();
         if (MLSEngine.DEBUG)
-            HotReloadHelper.addCallback(callback);
+            HotReloadHelper.addCallback(this);
     }
 
     /**
@@ -428,7 +431,7 @@ public class MLSInstance implements ScriptLoader.Callback, Callback, PrinterCont
         if (mLuaView != null)
             mLuaView.onPause();
         if (MLSEngine.DEBUG)
-            HotReloadHelper.removeCallback(callback);
+            HotReloadHelper.removeCallback(this);
     }
 
     /**
@@ -472,8 +475,9 @@ public class MLSInstance implements ScriptLoader.Callback, Callback, PrinterCont
      * 销毁时调用
      */
     public void onDestroy() {
-        if (MLSEngine.DEBUG)
-            HotReloadHelper.removeCallback(callback);
+        if (MLSEngine.DEBUG){
+            HotReloadHelper.removeCallback(this);
+        }
         setState(STATE_DESTROY);
         if (mLuaView != null) {
             mLuaView.onDestroy();
@@ -515,7 +519,7 @@ public class MLSInstance implements ScriptLoader.Callback, Callback, PrinterCont
      * 刷新，重新下载包，并渲染
      */
     public void reload(int type) {
-        if (!MLSEngine.isInit())
+        if (!isInit())
             return;
         if (!renderFinish() && !isError())
             return;
@@ -607,7 +611,7 @@ public class MLSInstance implements ScriptLoader.Callback, Callback, PrinterCont
      * 使用插件热更新时进入
      */
     private void reloadByHotReload(String url, int type, HashMap<String, String> params) {
-        if (!MLSEngine.isInit())
+        if (!isInit())
             return;
         if (!renderFinish() && !isError())
             return;
@@ -655,7 +659,14 @@ public class MLSInstance implements ScriptLoader.Callback, Callback, PrinterCont
                 setEmptyViewContent("非法链接", "点击重新加载");
             return null;
         }
-        LuaView mLuaView = ((UDLuaView) globals.createUserdataAndSet(UDLuaView.LUA_SINGLE_NAME, UDLuaView.LUA_CLASS_NAME)).getView();
+        LuaView mLuaView;
+        try {
+            mLuaView = ((UDLuaView) globals.createUserdataAndSet(UDLuaView.LUA_SINGLE_NAME, UDLuaView.LUA_CLASS_NAME)).getView();
+        } catch (RuntimeException e) {
+            if (toggleEmptyViewShow(true))
+                setEmptyViewContent("初始化出错", "点击重新加载");
+            return null;
+        }
         mLuaView.putExtras(extraData);
         if (reloadExtraData != null) {
             mLuaView.putExtras(reloadExtraData);
@@ -887,6 +898,14 @@ public class MLSInstance implements ScriptLoader.Callback, Callback, PrinterCont
         mState = state;
     }
 
+    private boolean isInit() {
+        if (!Globals.isInit() || !LuaViewConfig.isInit()
+                || MLSEngine.singleRegister == null || !MLSEngine.singleRegister.isInit())
+            return false;
+        MLSEngine.singleRegister.preInstall();
+        return MLSEngine.singleRegister.isPreInstall();
+    }
+
     /**
      * 改变empty view的状态
      *
@@ -1052,8 +1071,9 @@ public class MLSInstance implements ScriptLoader.Callback, Callback, PrinterCont
                 lvm.baseFilePath = scriptBundle.getBasePath();
                 GlobalStateUtils.onScriptLoaded(initData.url, scriptBundle);
                 ScriptLoader.loadScriptBundle(luaView.getUserdata(), scriptBundle, g, MLSInstance.this);
-                if (MLSEngine.DEBUG)
-                    HotReloadHelper.addCallback(callback);
+                if (MLSEngine.DEBUG) {
+                    HotReloadHelper.addCallback(MLSInstance.this);
+                }
             }
         };
         if (MainThreadExecutor.isMainThread()) {
@@ -1162,6 +1182,11 @@ public class MLSInstance implements ScriptLoader.Callback, Callback, PrinterCont
 
     private Object getTaskTag() {
         return TAG + hashCode();
+    }
+
+    @Override
+    public Globals getGlobals() {
+        return globals;
     }
 
     /**

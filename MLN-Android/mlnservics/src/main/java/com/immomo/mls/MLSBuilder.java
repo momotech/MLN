@@ -21,6 +21,7 @@ import com.immomo.mls.adapter.MLSReloadButtonCreator;
 import com.immomo.mls.adapter.MLSResourceFinderAdapter;
 import com.immomo.mls.adapter.MLSThreadAdapter;
 import com.immomo.mls.adapter.OnRemovedUserdataAdapter;
+import com.immomo.mls.adapter.PreinstallError;
 import com.immomo.mls.adapter.ScriptReaderCreator;
 import com.immomo.mls.adapter.ToastAdapter;
 import com.immomo.mls.adapter.TypeFaceAdapter;
@@ -146,6 +147,11 @@ public class MLSBuilder {
 
     public MLSBuilder setReloadButtonCreator(MLSReloadButtonCreator creator) {
         MLSAdapterContainer.setReloadButtonCreator(creator);
+        return this;
+    }
+
+    public MLSBuilder setPreinstallError(PreinstallError error) {
+        MLSAdapterContainer.setPreinstallError(error);
         return this;
     }
     //</editor-fold>

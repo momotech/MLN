@@ -75,6 +75,9 @@ public class UDLabel<U extends TextView> extends UDView<U> {
     private SpannableStringBuilder mSpannableStringBuilder;
     LuaFunction selectedFunction;
 
+    private int breakMode = BreakMode.CLIPPING;
+
+
     @LuaApiUsed
     public UDLabel(long L, LuaValue[] v) {
         super(L, v);
@@ -156,7 +159,7 @@ public class UDLabel<U extends TextView> extends UDView<U> {
     public LuaValue[] lines(LuaValue[] var) {
         if (var.length == 1) {
             int i = var[0].toInt();
-            if (i == 0) {
+            if (i == 0 && breakMode != BreakMode.CLIPPING) {
                 ErrorUtils.debugAlert("警告：设置lines为0，breakMode只能表现出CLIPPING模式", globals);
             }
             setLines(i);
@@ -175,12 +178,18 @@ public class UDLabel<U extends TextView> extends UDView<U> {
     public LuaValue[] breakMode(LuaValue[] var) {
         if (var.length == 1) {
             int i = var[0].toInt();
+            breakMode = i;
             if (i < 0) {
                 getView().setEllipsize(null);
             } else {
-                if (i != BreakMode.TAIL) {
+                if (maxLines > 1 && i == BreakMode.TAIL) {
                     ErrorUtils.debugAlert("警告：多行情况下，不支持非TAIL的模式", globals);
                 }
+
+                if(maxLines == Integer.MAX_VALUE && breakMode != BreakMode.CLIPPING) {
+                    ErrorUtils.debugAlert("警告：设置lines为0，breakMode只能表现出CLIPPING模式", globals);
+                }
+
                 getView().setEllipsize(TextUtils.TruncateAt.values()[i]);
             }
             return null;

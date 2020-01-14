@@ -39,4 +39,6 @@ public interface IHotReloadServer {
     public String getParams();
 
     public void startNetClient(String ip, int port);
+
+    public void onReport(String summaryPath, String detailPath);
 }

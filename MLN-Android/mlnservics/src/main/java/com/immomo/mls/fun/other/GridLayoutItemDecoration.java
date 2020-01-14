@@ -9,13 +9,14 @@ package com.immomo.mls.fun.other;
 
 import android.view.View;
 
-import com.immomo.mls.fun.ud.view.recycler.UDCollectionGridLayout;
 import com.immomo.mls.fun.ud.view.recycler.UDCollectionLayout;
 
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-@Deprecated
+/**
+ * 修复原UDCollectionGridLayout 两端差异
+ */
 public class GridLayoutItemDecoration extends RecyclerView.ItemDecoration {
 
     private static final String TAG = GridLayoutItemDecoration.class.getSimpleName();
@@ -23,20 +24,17 @@ public class GridLayoutItemDecoration extends RecyclerView.ItemDecoration {
     public int horizontalSpace;
     public int verticalSpace;
 
-    private int orientation = RecyclerView.VERTICAL;
-    private int spanCount = UDCollectionLayout.DEFAULT_SPAN_COUNT;
 
-    UDCollectionGridLayout mUDCollectionGridLayout;
+    UDCollectionLayout mUDCollectionGridLayout;
+    private boolean hasFooter = false;//两端footer实现不同，Android的footer受Spacing影响。因此需要判断有无
 
-   /* public GridLayoutItemDecoration(int d) {
-        this(d, d, RecyclerView.VERTICAL, UDCollectionLayout.DEFAULT_SPAN_COUNT);
-    }*/
+    public void setHasFooter(boolean hasFooter) {
+        this.hasFooter = hasFooter;
+    }
 
-    public GridLayoutItemDecoration(int hs, int vs, int orientation, int spanCount, UDCollectionGridLayout udCollectionGridLayout) {
-        this.horizontalSpace = hs;
-        this.verticalSpace = vs;
-        this.orientation = orientation;
-        this.spanCount = spanCount;
+    public GridLayoutItemDecoration(int orientation, UDCollectionLayout udCollectionGridLayout) {
+        this.horizontalSpace = udCollectionGridLayout.getItemSpacingPx();
+        this.verticalSpace = udCollectionGridLayout.getlineSpacingPx();
 
         this.mUDCollectionGridLayout = udCollectionGridLayout;
     }
@@ -46,8 +44,19 @@ public class GridLayoutItemDecoration extends RecyclerView.ItemDecoration {
                 && ((v) == verticalSpace);
     }
 
+    /**
+     * GridLayout的item布局方式：
+     * 因为有layoutInset, RecyclerView四周的itemSpacing、lineSpacing统一为0
+     * 思路：
+     * 方法中给layoutInset的padding减去spacing，使边缘的item，spacing为0
+     * <p>
+     * footer才是最后1行，所以最后2行bottom都需要为0
+     */
     @Override
     public void getItemOffsets(android.graphics.Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+        int horizontalSpace = mUDCollectionGridLayout.getItemSpacingPx();
+        int verticalSpace = mUDCollectionGridLayout.getlineSpacingPx();
+        int orientation = mUDCollectionGridLayout.getOrientation();
 
         GridLayoutManager layoutManager = (GridLayoutManager) parent.getLayoutManager();
         final GridLayoutManager.LayoutParams lp = (GridLayoutManager.LayoutParams) view.getLayoutParams();
@@ -55,87 +64,62 @@ public class GridLayoutItemDecoration extends RecyclerView.ItemDecoration {
 
         super.getItemOffsets(outRect, view, parent, state);
         int childPosition = parent.getChildAdapterPosition(view);
-
+        //当前行
         int currentColumn = layoutManager.getSpanSizeLookup().getSpanGroupIndex(childPosition, spanCount);
-        boolean canScroll2ScreenLeft = mUDCollectionGridLayout.isCanScrollTolScreenLeft();
-
+        //总行数
         int totalColumn = layoutManager.getSpanSizeLookup().getSpanGroupIndex(parent.getAdapter().getItemCount() - 1, spanCount);
 
-        int layoutInSetLeft = (int) mUDCollectionGridLayout.getPaddingValues()[0];
-        int layoutInSetTop = (int) mUDCollectionGridLayout.getPaddingValues()[1];
-        int layoutInSetRight = (int) mUDCollectionGridLayout.getPaddingValues()[2];
         int layoutInSetBottom = (int) mUDCollectionGridLayout.getPaddingValues()[3];
+        int layoutInSetRight = (int) mUDCollectionGridLayout.getPaddingValues()[2];
 
-
+        //因为有layoutInset, RecyclerView四周的itemSpacing、lineSpacing统一为0
         if (orientation == RecyclerView.VERTICAL) {
-
-            if (layoutManager.getSpanSizeLookup().getSpanGroupIndex(childPosition, spanCount) == 0) {   //第一行
-                outRect.top = verticalSpace;
-            }
-
             outRect.bottom = verticalSpace;
+
+            if (hasFooter) {
+                if (currentColumn == totalColumn - 1) {
+                    outRect.bottom = layoutInSetBottom;
+                }
+                if (currentColumn == totalColumn) {//footer才是最后1行，所以最后2行bottom都需要为0
+                    outRect.bottom = 0;
+                }
+            } else {
+                if (currentColumn == totalColumn) {
+                    outRect.bottom = layoutInSetBottom;
+                }
+            }
 
             if (lp.getSpanSize() == spanCount) {  //占满
                 outRect.left = horizontalSpace;
                 outRect.right = horizontalSpace;
             } else {
-
-                outRect.left = Math.abs((int) (((float) (spanCount - lp.getSpanIndex())) / spanCount * horizontalSpace) );
-
-                if (lp.getSpanIndex() != 0) { //  不是最左侧一列
-                    outRect.left = Math.abs((int) (((float) (spanCount - lp.getSpanIndex())) / spanCount * horizontalSpace)    + layoutInSetLeft - horizontalSpace );
-                }
-
+                outRect.left = (int) (((float) (spanCount - lp.getSpanIndex())) / spanCount * horizontalSpace);
                 outRect.right = (int) (((float) horizontalSpace * (spanCount + 1) / spanCount) - outRect.left);
             }
-
-            if (lp.getSpanIndex() == spanCount - 1 || lp.getSpanSize() == spanCount)
-                outRect.right = layoutInSetRight;
-
-            if (lp.getSpanIndex() == 0 || lp.getSpanSize() == spanCount) {
-                outRect.left = layoutInSetLeft;
-            }
-
-
-            if (currentColumn == 0 && canScroll2ScreenLeft) {           // 第一行
-                outRect.top = layoutInSetTop;
-            } else if (currentColumn == totalColumn && canScroll2ScreenLeft) {    // 最后一行
-                outRect.bottom = layoutInSetBottom;
-            }
-
-
         } else {
-
             outRect.right = horizontalSpace;
+
+            if (hasFooter) {
+                if (currentColumn == totalColumn - 1) {
+                    outRect.right = layoutInSetRight;
+                }
+                if (currentColumn == totalColumn) {//footer才是最后1行，所以最后2行bottom都需要为0
+                    outRect.right = 0;
+                }
+            } else {
+                if (currentColumn == totalColumn) {
+                    outRect.right = layoutInSetRight;
+                }
+            }
+
 
             if (lp.getSpanSize() == spanCount) {   //占满
                 outRect.top = verticalSpace;
                 outRect.bottom = verticalSpace;
             } else {
                 outRect.top = (int) (((float) (spanCount - lp.getSpanIndex())) / spanCount * verticalSpace);
-                outRect.bottom = (int) (((float) verticalSpace * (spanCount + 1) / spanCount) - outRect.top) + verticalSpace / 2;
+                outRect.bottom = (int) (((float) verticalSpace * (spanCount + 1) / spanCount) - outRect.top);
             }
-
-           /* if (lp.getSpanIndex() == 0 || lp.getSpanSize() == spanCount) {
-                outRect.left = layoutInSetLeft;
-            }*/
-
-            if (currentColumn == 0 && canScroll2ScreenLeft) {           // 第一列
-                outRect.left = layoutInSetLeft;
-                //outRect.top = layoutInSetTop;
-            } else if (currentColumn == totalColumn && canScroll2ScreenLeft) {    // 最后一列
-                outRect.right = layoutInSetRight;
-            }
-
         }
-
-
-//        LogUtil.d(TAG, " columns = " + layoutManager.getSpanSizeLookup().getSpanGroupIndex(childPosition, spanCount));
-//
-//        LogUtil.d(TAG, "childPosition =  " + childPosition + "     left = " + outRect.left + "      " +
-//                "     right = " + outRect.right + "  itemCount = " + spanCount);
-//
-//        LogUtil.d(TAG, "childPosition =  " + childPosition + "     top = " + outRect.top + "      " +
-//                "     bottom = " + outRect.bottom + "  itemCount = " + spanCount);
     }
 }

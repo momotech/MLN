@@ -14,22 +14,9 @@ import org.luaj.vm2.Globals;
  */
 final class NativeBroadcastChannel {
 
-    private static boolean init = false;
-
-    static {
-        try {
-            System.loadLibrary("mlnbc");
-            init = true;
-        } catch (Throwable t) {
-            init = false;
-            t.printStackTrace();
-        }
-    }
-
     static void register(Globals g) {
-        if (!init)
-            return;
-        _openLib(g.getL_State());
+        if (MLSEngine.isLibInit("mlnbc"))
+            _openLib(g.getL_State());
     }
 
     private static native void _openLib(long l);

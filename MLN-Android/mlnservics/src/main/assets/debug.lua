@@ -1,6 +1,6 @@
 --
 -- MobDebug -- Lua remote debugger
--- Copyright 2011-18 Paul Kulchenko
+-- Copyright 2011-15 Paul Kulchenko
 -- Based on RemDebug 1.0 Copyright Kepler Project 2005
 --
 
@@ -19,13 +19,14 @@ end)("os")
 
 local mobdebug = {
     _NAME = "mobdebug",
-    _VERSION = "0.705",
+    _VERSION = "0.70",
     _COPYRIGHT = "Paul Kulchenko",
     _DESCRIPTION = "Mobile Remote Debugger for the Lua programming language",
     port = os and os.getenv and tonumber((os.getenv("MOBDEBUG_PORT"))) or 8172,
     checkcount = 200,
     yieldtimeout = 0.02, -- yield timeout (s)
     connecttimeout = 2, -- connect timeout (s)
+    shouldcontinuerun = false, --indicate the main thread should continue running
 }
 
 local HOOKMASK = "lcr"
@@ -103,7 +104,7 @@ local socket = require "socket"
 local coro_debugger
 local coro_debugee
 local coroutines = {}; setmetatable(coroutines, {__mode = "k"}) -- "weak" keys
-local events = { BREAK = 1, WATCH = 2, RESTART = 3, STACK = 4 }
+local events = { BREAK = 1, WATCH = 2, RESTART = 3, STACK = 4, RECEIVE = 5 }
 local breakpoints = {}
 local watches = {}
 local lastsource
@@ -122,7 +123,6 @@ local outputs = {}
 local iobase = {print = print}
 local basedir = ""
 local deferror = "execution aborted at default debugee"
-local first_handle_break = true
 local debugee = function ()
     local a = 1
     for _ = 1, 10 do a = a + 1 end
@@ -131,7 +131,7 @@ end
 local function q(s) return string.gsub(s, '([%(%)%.%%%+%-%*%?%[%^%$%]])','%%%1') end
 
 local serpent = (function() ---- include Serpent module for serialization
-local n, v = "serpent", "0.302" -- (C) 2012-18 Paul Kulchenko; MIT License
+local n, v = "serpent", "0.30" -- (C) 2012-17 Paul Kulchenko; MIT License
     local c, d = "Paul Kulchenko", "Lua serializer and pretty printer"
     local snum = {[tostring(1/0)]='1/0 --[[math.huge]]',[tostring(-1/0)]='-1/0 --[[-math.huge]]',[tostring(0/0)]='0/0'}
     local badtype = {thread = true, userdata = true, cdata = true}
@@ -184,10 +184,10 @@ local n, v = "serpent", "0.302" -- (C) 2012-18 Paul Kulchenko; MIT License
                 sref[#sref+1] = spath..space..'='..space..seen[t]
                 return tag..'nil'..comment('ref', level) end
             -- protect from those cases where __tostring may fail
-            if type(mt) == 'table' and metatostring ~= false then
+            if type(mt) == 'table' then
                 local to, tr = pcall(function() return mt.__tostring(t) end)
                 local so, sr = pcall(function() return mt.__serialize(t) end)
-                if (to or so) then -- knows how to serialize itself
+                if (opts.metatostring ~= false and to or so) then -- knows how to serialize itself
                     seen[t] = insref or spath
                     t = so and sr or tr
                     ttype = type(t)
@@ -222,7 +222,7 @@ local n, v = "serpent", "0.302" -- (C) 2012-18 Paul Kulchenko; MIT License
                         local path = seen[t]..'['..tostring(seen[key] or globals[key] or gensym(key))..']'
                         sref[#sref] = path..space..'='..space..tostring(seen[value] or val2str(value,nil,indent,path))
                     else
-                        out[#out+1] = val2str(value,key,indent,nil,seen[t],plainindex,level+1)
+                        out[#out+1] = val2str(value,key,indent,insref,seen[t],plainindex,level+1)
                         if maxlen then
                             maxlen = maxlen - #out[#out]
                             if maxlen < 0 then break end
@@ -455,7 +455,7 @@ local function capture_vars(level, thread)
     -- including access to globals, but this causes vars[name] to fail in
     -- restore_vars on local variables or upvalues with `nil` values when
     -- 'strict' is in effect. To avoid this `rawget` is used in restore_vars.
-    setmetatable(vars, { __index = getfenv(func), __newindex = getfenv(func), __mode = "v" })
+    setmetatable(vars, { __index = getfenv(func), __newindex = getfenv(func) })
     return vars
 end
 
@@ -529,11 +529,7 @@ local function handle_breakpoint(peer)
 
     local _, _, cmd, file, line = (buf..res):find("^([A-Z]+)%s+(.-)%s+(%d+)%s*$")
     if cmd == 'SETB' then set_breakpoint(file, tonumber(line))
-        if first_handle_break then peer:send("200 OK\n") end
-        first_handle_break = false
     elseif cmd == 'DELB' then remove_breakpoint(file, tonumber(line))
-        if first_handle_break then peer:send("200 OK\n") end
-        first_handle_break = false
     else
         -- this looks like a breakpoint command, but something went wrong;
         -- return here to let the "normal" processing to handle,
@@ -665,7 +661,11 @@ local function debug_hook(event, line)
             lastfile = file
         end
 
-        if is_pending(server) then handle_breakpoint(server) end
+        if file == "debug.lua" or file == "debug" then
+            return
+        end
+
+        --if is_pending(server) then handle_breakpoint(server) end
 
         local vars, status, res
         if (watchescnt > 0) then
@@ -766,6 +766,34 @@ local function done()
     abort = nil -- to make sure that callback calls use proper "abort" value
 end
 
+function handle_socket_command_message()
+    local status, res = cororesume(coro_debugger, events.RECEIVE)
+    return corostatus(coro_debugger)
+end
+
+local function main_thread_should_continue_run(eval_env)
+    mobdebug.shouldcontinuerun = false
+    local ev, vars, file, line, idx_watch = coroyield()
+
+    eval_env = vars
+    if ev == events.BREAK then
+        server:send("202 " .. file .. " " .. tostring(line) .. "\n")
+
+    elseif ev == events.WATCH then
+        server:send("203 Paused " .. file .. " " .. tostring(line) .. " " .. tostring(idx_watch) .. "\n")
+
+    elseif ev == events.RESTART then
+        -- nothing to do
+
+    elseif ev == events.RECEIVE then
+        mobdebug.shouldcontinuerun = true --mark to continue run main thread
+
+    else
+        server:send("401 Error in Execution " .. tostring(#file) .. "\n")
+        server:send(file)
+    end
+end
+
 local function debugger_loop(sev, svars, sfile, sline)
     local command
     local app, osname
@@ -779,7 +807,19 @@ local function debugger_loop(sev, svars, sfile, sline)
         local wx = rawget(genv, "wx") -- use rawread to make strict.lua happy
         if (wx or mobdebug.yield) and server.settimeout then server:settimeout(mobdebug.yieldtimeout) end
         while true do
-            line, err = server:receive()
+
+            if mobdebug.shouldcontinuerun then
+                server:settimeout(0) --no poll
+                line, err = server:receive()
+                server:settimeout() --resume to poll
+
+                if not line and err == "timeout" then
+                    main_thread_should_continue_run(eval_env)
+                end
+            else
+                line, err = server:receive()
+            end
+
             if not line and err == "timeout" then
                 -- yield for wx GUI applications if possible to avoid "busyness"
                 app = app or (wx and wx.wxGetApp and wx.wxGetApp())
@@ -803,7 +843,8 @@ local function debugger_loop(sev, svars, sfile, sline)
                 elseif mobdebug.yield then mobdebug.yield()
                 end
             elseif not line and err == "closed" then
-                error("Debugger connection closed", 0)
+                --error("Debugger connection closed", 0)
+                mobdebug.done()
             else
                 -- if there is something in the pending buffer, prepend it to the line
                 if buf then line = buf .. line; buf = nil end
@@ -820,6 +861,9 @@ local function debugger_loop(sev, svars, sfile, sline)
             else
                 server:send("400 Bad Request\n")
             end
+            if mobdebug.shouldcontinuerun then
+                main_thread_should_continue_run(eval_env)
+            end
         elseif command == "DELB" then
             local _, _, _, file, line = string.find(line, "^([A-Z]+)%s+(.-)%s+(%d+)%s*$")
             if file and line then
@@ -827,6 +871,9 @@ local function debugger_loop(sev, svars, sfile, sline)
                 server:send("200 OK\n")
             else
                 server:send("400 Bad Request\n")
+            end
+            if mobdebug.shouldcontinuerun then
+                main_thread_should_continue_run(eval_env)
             end
         elseif command == "EXEC" then
             -- extract any optional parameters
@@ -926,35 +973,28 @@ local function debugger_loop(sev, svars, sfile, sline)
             end
         elseif command == "RUN" then
             server:send("200 OK\n")
-
-            local ev, vars, file, line, idx_watch = coroyield()
-            eval_env = vars
-            if ev == events.BREAK then
-                server:send("202 Paused " .. file .. " " .. tostring(line) .. "\n")
-            elseif ev == events.WATCH then
-                server:send("203 Paused " .. file .. " " .. tostring(line) .. " " .. tostring(idx_watch) .. "\n")
-            elseif ev == events.RESTART then
-                -- nothing to do
-            else
-                server:send("401 Error in Execution " .. tostring(#file) .. "\n")
-                server:send(file)
-            end
+            main_thread_should_continue_run(eval_env)
         elseif command == "STEP" then
             server:send("200 OK\n")
             step_into = true
 
+            main_thread_should_continue_run(eval_env)
+
+            --[[
             local ev, vars, file, line, idx_watch = coroyield()
             eval_env = vars
             if ev == events.BREAK then
-                server:send("202 Paused " .. file .. " " .. tostring(line) .. "\n")
+              server:send("202 Paused " .. file .. " " .. tostring(line) .. "\n")
             elseif ev == events.WATCH then
-                server:send("203 Paused " .. file .. " " .. tostring(line) .. " " .. tostring(idx_watch) .. "\n")
+              server:send("203 Paused " .. file .. " " .. tostring(line) .. " " .. tostring(idx_watch) .. "\n")
             elseif ev == events.RESTART then
-                -- nothing to do
+              -- nothing to do
             else
-                server:send("401 Error in Execution " .. tostring(#file) .. "\n")
-                server:send(file)
+              server:send("401 Error in Execution " .. tostring(#file) .. "\n")
+              server:send(file)
             end
+            ]]--
+
         elseif command == "OVER" or command == "OUT" then
             server:send("200 OK\n")
             step_over = true
@@ -964,18 +1004,23 @@ local function debugger_loop(sev, svars, sfile, sline)
             if command == "OUT" then step_level = stack_level - 1
             else step_level = stack_level end
 
+            main_thread_should_continue_run(eval_env)
+
+            --[[
             local ev, vars, file, line, idx_watch = coroyield()
             eval_env = vars
             if ev == events.BREAK then
-                server:send("202 Paused " .. file .. " " .. tostring(line) .. "\n")
+              server:send("202 Paused " .. file .. " " .. tostring(line) .. "\n")
             elseif ev == events.WATCH then
-                server:send("203 Paused " .. file .. " " .. tostring(line) .. " " .. tostring(idx_watch) .. "\n")
+              server:send("203 Paused " .. file .. " " .. tostring(line) .. " " .. tostring(idx_watch) .. "\n")
             elseif ev == events.RESTART then
-                -- nothing to do
+              -- nothing to do
             else
-                server:send("401 Error in Execution " .. tostring(#file) .. "\n")
-                server:send(file)
+              server:send("401 Error in Execution " .. tostring(#file) .. "\n")
+              server:send(file)
             end
+            ]]--
+
         elseif command == "BASEDIR" then
             local _, _, dir = string.find(line, "^[A-Z]+%s+(.+)%s*$")
             if dir then
@@ -1067,6 +1112,7 @@ local function connect(controller_host, controller_port)
     if sock.settimeout then sock:settimeout() end
 
     if not res then return nil, err end
+    if sock.asyncpoll then sock:asyncpoll() end
     return sock
 end
 
@@ -1168,12 +1214,8 @@ local function controller(controller_host, controller_port, scratchpad)
             if abort then
                 if tostring(abort) == 'exit' then break end
             else
-                if status then -- no errors
-                    if corostatus(coro_debugee) == "suspended" then
-                        -- the script called `coroutine.yield` in the "main" thread
-                        error("attempt to yield from the main thread", 3)
-                    end
-                    break -- normal execution is done
+                if status then -- normal execution is done
+                    break
                 elseif err and not string.find(tostring(err), deferror) then
                     -- report the error back
                     -- err is not necessarily a string, so convert to string to report
@@ -1410,9 +1452,9 @@ local function handle(params, client, options)
             elseif command == "reload" then
                 client:send("LOAD 0 -\n")
             elseif command == "loadstring" then
-                local _, _, _, file, lines = string.find(exp, "^([\"'])(.-)%1%s(.+)")
+                local _, _, _, file, lines = string.find(exp, "^([\"'])(.-)%1%s+(.+)")
                 if not file then
-                    _, _, file, lines = string.find(exp, "^(%S+)%s(.+)")
+                    _, _, file, lines = string.find(exp, "^(%S+)%s+(.+)")
                 end
                 client:send("LOAD " .. tostring(#lines) .. " " .. file .. "\n")
                 client:send(lines)

@@ -8,6 +8,7 @@
 package com.immomo.mls.adapter;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.view.Gravity;
 import android.view.View;
@@ -18,6 +19,7 @@ import android.widget.TextView;
 
 import com.immomo.mls.Constants;
 import com.immomo.mls.MLSAdapterContainer;
+import com.immomo.mls.MLSEngine;
 import com.immomo.mls.MLSInstance;
 import com.immomo.mls.R;
 import com.immomo.mls.debug.SettingDialog;
@@ -128,10 +130,13 @@ public class MLSReloadButtonGenerator implements View.OnClickListener {
             center.setOnClickListener(this);
         }
 
+        if (!isHotReloadPage)
         log = logView();
         if (log != null) {
             log.setOnClickListener(this);
             root.addView(log);
+
+            instance.onSTDPrinterCreated(createPrinterLayout(container));
         }
 
         reload = reloadView();
@@ -165,8 +170,6 @@ public class MLSReloadButtonGenerator implements View.OnClickListener {
             version.setOnClickListener(this);
             root.addView(version);
         }
-
-        instance.onSTDPrinterCreated(createPrinterLayout(container));
 
         container.addView(root);
 
@@ -236,7 +239,17 @@ public class MLSReloadButtonGenerator implements View.OnClickListener {
     protected void onSettingClick() {
         Context context = container.getContext();
 
-        new SettingDialog(context, !isHotReloadPage, isHotReloadPage).show();
+        SettingDialog d = new SettingDialog(context, true, isHotReloadPage);
+        final boolean openDebug = MLSEngine.isOpenDebugger();
+        d.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                if (openDebug != MLSEngine.isOpenDebugger() && !openDebug) {
+                    instance.getGlobals().openDebug();
+                }
+            }
+        });
+        d.show();
     }
 
     protected static IPrinter createPrinterLayout(ViewGroup container) {

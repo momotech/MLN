@@ -21,46 +21,42 @@ import java.util.concurrent.LinkedBlockingDeque;
 public class WriterImpl implements iWriter {
 
     private iEncoder encoder = EncoderFactory.getInstance();
-    private BlockingQueue<Object> msgQueue = new LinkedBlockingDeque<>();
+    private BlockingQueue<byte[]> msgQueue = new LinkedBlockingDeque<>();
 
     private byte[] popMsg() {
         try {
-            return (byte[])msgQueue.take();
+            return msgQueue.take();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
         return null;
     }
 
-    private void pushMsg(byte[] msg) {
+    @Override
+    public void writeData(byte[] data) {
         try {
-            msgQueue.put(msg);
+            msgQueue.put(data);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
     }
 
     @Override
-    public void writeData(byte[] data) {
-
-    }
-
-    @Override
     public void writeLog(String log, String entryFilePath) {
         PBLogCommand.pblogcommand cmd = (PBLogCommand.pblogcommand) PBCommandFactory.getLogCommand(log, entryFilePath);
-        pushMsg(encoder.encode(cmd));
+        writeData(encoder.encode(cmd));
     }
 
     @Override
     public void writeError(String error, String entryFilePath) {
         PBErrorCommand.pberrorcommand cmd = (PBErrorCommand.pberrorcommand) PBCommandFactory.getErrorCommand(error, entryFilePath);
-        pushMsg(encoder.encode(cmd));
+        writeData(encoder.encode(cmd));
     }
 
     @Override
     public void writeDevice() {
         PBDeviceCommand.pbdevicecommand cmd = (PBDeviceCommand.pbdevicecommand) PBCommandFactory.getDeviceCommand();
-        pushMsg(encoder.encode(cmd));
+        writeData(encoder.encode(cmd));
     }
 
     @Override

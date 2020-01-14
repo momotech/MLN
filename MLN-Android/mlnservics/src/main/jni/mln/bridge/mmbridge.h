@@ -14,6 +14,6 @@
 
 #include "lua.h"
 
-void mm_openlibs(lua_State *L);
+void mm_openlibs(lua_State *L, int debug);
 
 #endif //MMLUA4ANDROID_MMBRIDGE_H

@@ -9,6 +9,8 @@ package com.immomo.mls;
 
 import android.text.TextUtils;
 
+import androidx.annotation.IntDef;
+
 import com.immomo.luanative.hotreload.HotReloadServer;
 import com.immomo.luanative.hotreload.IHotReloadServer;
 import com.immomo.luanative.hotreload.iHotReloadListener;
@@ -16,6 +18,11 @@ import com.immomo.mls.util.FileUtil;
 import com.immomo.mls.util.IOUtil;
 import com.immomo.mls.util.LogUtil;
 import com.immomo.mls.utils.MainThreadExecutor;
+import com.immomo.mls.wrapper.GlobalsContainer;
+
+import org.luaj.vm2.Globals;
+import org.luaj.vm2.utils.LuaApiUsed;
+import org.luaj.vm2.utils.StringReplaceUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -33,13 +40,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import androidx.annotation.IntDef;
-
 import static java.lang.annotation.RetentionPolicy.SOURCE;
 
 /**
  * Created by Xiong.Fangyu on 2019-07-16
  */
+@LuaApiUsed
 public class HotReloadHelper {
     private static final String TAG = "HotReloadHelper";
     /**
@@ -119,6 +125,7 @@ public class HotReloadHelper {
     }
 
     private static Pattern errorPattern;
+
     public static String parseErrorString(String s) {
         if (TextUtils.isEmpty(s)) return s;
 
@@ -135,7 +142,7 @@ public class HotReloadHelper {
             sb.append(s.substring(index, start));
             String g = m.group();
 
-            sb.append(g.substring(0, g.length() - 2).replaceAll("\\.", "/")).append(".lua\"]");
+            sb.append(StringReplaceUtils.replaceAllChar(g.substring(0, g.length() - 2), '.', File.separatorChar)).append(".lua\"]");
             index = m.end();
         }
         sb.append(s.substring(index));
@@ -159,8 +166,8 @@ public class HotReloadHelper {
         private static final int PRE_RELOAD = 1;
         private static final int WAIT_FILE = 1 << 1;
         private static final int RELOADING = 1 << 2;
-        private static final int FILE_CHANGE_WHEN_RELOADING = 1<<3;
-        private static final int RELOAD_AGAIN = 1<<4;
+        private static final int FILE_CHANGE_WHEN_RELOADING = 1 << 3;
+        private static final int RELOAD_AGAIN = 1 << 4;
         private final AtomicInteger reloadState = new AtomicInteger(0);
 
         @Override
@@ -186,8 +193,9 @@ public class HotReloadHelper {
                     reloadState.set(WAIT_FILE);
                     try {
                         Thread.sleep(50);
-                    } catch (InterruptedException ignore) {}
-                    while (changeFiles.get() > 0);
+                    } catch (InterruptedException ignore) {
+                    }
+                    while (changeFiles.get() > 0) ;
                     reloadState.set(RELOADING);
                     HashMap<String, String> p = parseParams(params);
                     Collection<Callback> cs = new ArrayList<>(callbacks);
@@ -239,7 +247,8 @@ public class HotReloadHelper {
                         exists = false;
                         try {
                             exists = f.createNewFile();
-                        } catch (IOException ignore) {}
+                        } catch (IOException ignore) {
+                        }
                     }
                     if (!exists) {
                         changeFiles.decrementAndGet();
@@ -272,7 +281,8 @@ public class HotReloadHelper {
                         exists = false;
                         try {
                             exists = f.createNewFile();
-                        } catch (IOException ignore) {}
+                        } catch (IOException ignore) {
+                        }
                     }
                     if (!exists) {
                         changeFiles.decrementAndGet();
@@ -366,6 +376,36 @@ public class HotReloadHelper {
             connectType &= ~type;
             HotReloadServer.getInstance().stop();
         }
+
+        @Override
+        public void onGencoveragereport() {
+            final Globals g = getGlobals();
+            if (g != null) {
+                g.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (g.isDestroyed())
+                            return;
+                        if (!MLSEngine.isInit()) {
+                            MLSAdapterContainer.getToastAdapter().toast("未初始化");
+                            return;
+                        }
+                        int c = NativeBridge.callGencoveragereport(g);
+                        if (c != Globals.LUA_OK) {
+                            MLSAdapterContainer.getToastAdapter().toast("callGencoveragereport failed, code: " + c);
+                        }
+                    }
+                });
+            }
+        }
+
+        private Globals getGlobals() {
+            for (Callback c : callbacks) {
+                if (c instanceof GlobalsContainer)
+                    return ((GlobalsContainer) c).getGlobals();
+            }
+            return null;
+        }
     }
 
     private static void toast(final String s) {
@@ -414,6 +454,7 @@ public class HotReloadHelper {
 
     public static void setUseWifi(String ip, int port) {
         if (!MLSEngine.DEBUG) return;
+        MLSEngine.setDebugIp(ip);
         if (ip.equals(wifiIp) && port == wifiPort && hasConnect(false)) {
             if (connectListener != null)
                 connectListener.onConnected(!callbacks.isEmpty());
@@ -490,6 +531,12 @@ public class HotReloadHelper {
 
     public static interface ConnectListener {
         void onConnected(boolean hasCallback);
+
         void onDisConnected();
+    }
+
+    @LuaApiUsed
+    private static void onReportFromLua(long L, String summaryPath, String detailPath) {
+        HotReloadServer.getInstance().onReport(summaryPath, detailPath);
     }
 }

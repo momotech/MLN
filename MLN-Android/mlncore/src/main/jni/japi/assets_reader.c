@@ -20,7 +20,7 @@ void jni_setAssetManager(JNIEnv *env, jobject jobj, jobject am) {
     assetManager = AAssetManager_fromJava(env, am);
 }
 
-long readFromAssets(const char *name, char *out, size_t max, int *error) {
+int readFromAssets(const char *name, char *out, size_t max, int *error) {
     if (!assetManager) {
         if (error) *error = AR_NOT_INIT;
         return 0;

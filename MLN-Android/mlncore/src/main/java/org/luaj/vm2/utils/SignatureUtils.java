@@ -57,7 +57,7 @@ public class SignatureUtils {
      * 获取jni可识别的类名
      */
     public static String getClassName(Class clz) {
-        return clz.getName().replaceAll("\\.", "/");
+        return StringReplaceUtils.replaceAllChar(clz.getName(), '.', '/');
     }
 
     /**
@@ -69,12 +69,12 @@ public class SignatureUtils {
             if (clz.getComponentType().isPrimitive()) {
                 return name;
             }
-            return name.replaceAll("\\.", "/");
+            return StringReplaceUtils.replaceAllChar(name, '.', '/');
         }
         if (clz.isPrimitive()) {
             return primitive.get(clz);
         }
-        String name = clz.getName().replaceAll("\\.", "/");
+        String name = StringReplaceUtils.replaceAllChar(clz.getName(), '.', '/');
         return "L" + name + ";";
     }
 
