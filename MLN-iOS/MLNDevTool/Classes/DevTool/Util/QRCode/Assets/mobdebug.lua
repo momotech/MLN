@@ -845,6 +845,7 @@ local function debugger_loop(sev, svars, sfile, sline)
       elseif not line and err == "closed" then
         --error("Debugger connection closed", 0)
         mobdebug.done()
+        break
       else
         -- if there is something in the pending buffer, prepend it to the line
         if buf then line = buf .. line; buf = nil end
