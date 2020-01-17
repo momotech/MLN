@@ -72,6 +72,19 @@
 
 - (void)doLuaWindowDidAppear
 {
+    if (self.needCallRenderFinished) {
+        // 执行
+        NSError *error = nil;
+        [self runWithEntryFile:self.entryFilePath error:&error];
+        if (error) {
+            // 回调代理
+            if ([self.delegate respondsToSelector:@selector(instance:didFailRun:error:)]) {
+                [self.delegate instance:self didFailRun:self.entryFilePath error:error];
+            }
+        }
+        [self.luaWindow doRenderFinished];
+        self.needCallRenderFinished = NO;
+    }
     self.didViewAppear = YES;
     if (self.luaWindow && [self.luaWindow canDoLuaViewDidAppear]) {
         [self.luaWindow doLuaViewDidAppear];
@@ -79,10 +92,6 @@
         return;
     }
     self.needCallAppear = YES;
-    if (self.needCallRenderFinished) {
-        [self.luaWindow doRenderFinished];
-        self.needCallRenderFinished = NO;
-    }
 }
 
 - (void)redoLuaViewDidAppearIfNeed
@@ -192,11 +201,14 @@
     [self setup];
     // 运行主页面布局文件
     BOOL success = [self runLayoutFileWithEntryFilePath:entryFilePath error:error];
-    // 执行
-    dispatch_async(dispatch_get_main_queue(), ^{
+    // 加载布局文件成功，标记渲染结束需要回调执行，否则直接加载入口文件
+    if (success) {
         self.needCallRenderFinished = YES;
-        [self runWithEntryFile:entryFilePath error:error];
-    });
+    } else {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self runWithEntryFile:entryFilePath error:error];
+        });
+    }
     
     return success;
 }

@@ -147,6 +147,15 @@ Lua中的根视图。
 
 /**
  加载并执行数据
+ 
+ @param entryFilePath 当前执行模块的入口文件
+ @param error 错误信息
+ @return 加载并执行是否成功
+ */
+- (BOOL)runWithEntryFile:(NSString *)entryFilePath error:(NSError * _Nullable __autoreleasing * _Nullable)error;
+
+/**
+ 加载并执行数据
 
  @param entryFilePath 当前执行模块的入口文件
  @param windowExtra 传递给LuaWindow的参数，用来给页面传参
