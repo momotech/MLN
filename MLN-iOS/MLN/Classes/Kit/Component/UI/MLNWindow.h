@@ -20,6 +20,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)doLuaViewDidDisappear;
 - (void)doLuaViewDestroy;
 - (void)doSizeChanged;
+- (void)doRenderFinished;
 
 @end
 

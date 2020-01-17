@@ -26,6 +26,7 @@
 @property (nonatomic, strong) MLNBlock *onDestroyCallback;
 @property (nonatomic, strong) MLNBlock *keyboardStatusCallback;
 @property (nonatomic, strong) MLNBlock *keyboardFrameChangeCallback;
+@property (nonatomic, strong) MLNBlock *renderFinishedCallback;
 @property (nonatomic, assign) BOOL isAppear;
 @property (nonatomic, assign) BOOL autoDoLuaViewDidDisappear;
 @property (nonatomic, assign) BOOL autoDoSizeChanged;
@@ -225,6 +226,13 @@
     }
 }
 
+- (void)doRenderFinished
+{
+    if (_renderFinishedCallback) {
+        [_renderFinishedCallback callIfCan];
+    }
+}
+
 - (BOOL)canDoLuaViewDidDisappear
 {
     return self.viewDisappearCallback!=nil;
@@ -380,6 +388,7 @@ LUA_EXPORT_VIEW_METHOD(safeAreaInsetsBottom, "lua_safeAreaInsetsBottom", MLNWind
 LUA_EXPORT_VIEW_METHOD(safeAreaInsetsLeft, "lua_safeAreaInsetsLeft", MLNWindow)
 LUA_EXPORT_VIEW_METHOD(safeAreaInsetsRight, "lua_safeAreaInsetsRight", MLNWindow)
 LUA_EXPORT_VIEW_METHOD(viewAppear, "lua_setViewAppearCallback:", MLNWindow)
+LUA_EXPORT_VIEW_METHOD(renderFinished, "setRenderFinishedCallback:", MLNWindow)
 LUA_EXPORT_VIEW_METHOD(viewDisappear, "lua_setViewDidDisappear:", MLNWindow)
 LUA_EXPORT_VIEW_METHOD(sizeChanged, "lua_setOnSizeChanged:", MLNWindow)
 LUA_EXPORT_VIEW_METHOD(onDestroy, "lua_setOnDestroy:", MLNWindow)

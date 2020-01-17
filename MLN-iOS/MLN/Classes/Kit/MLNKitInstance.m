@@ -35,6 +35,7 @@
 @property (nonatomic, strong) NSMutableArray *onDestroyCallbacks;
 @property (nonatomic, assign) BOOL didViewAppear;
 @property (nonatomic, assign) BOOL needCallAppear;
+@property (nonatomic, assign) BOOL needCallRenderFinished;
 
 @end
 
@@ -78,6 +79,10 @@
         return;
     }
     self.needCallAppear = YES;
+    if (self.needCallRenderFinished) {
+        [self.luaWindow doRenderFinished];
+        self.needCallRenderFinished = NO;
+    }
 }
 
 - (void)redoLuaViewDidAppearIfNeed
@@ -189,6 +194,7 @@
     BOOL success = [self runLayoutFileWithEntryFilePath:entryFilePath error:error];
     // 执行
     dispatch_async(dispatch_get_main_queue(), ^{
+        self.needCallRenderFinished = YES;
         [self runWithEntryFile:entryFilePath error:error];
     });
     
