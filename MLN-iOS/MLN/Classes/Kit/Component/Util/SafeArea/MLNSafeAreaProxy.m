@@ -148,37 +148,30 @@
     UIWindow *window = [MLNKitEnvironment mainWindow];
     if (window) {
         CGRect frame = [self.safeAreaView convertRect:self.safeAreaView.frame toView:window];
-        BOOL hasUpdated = NO;
         if (frame.origin.y <= 0 || ([self isIphoneBusy] && frame.origin.y <= kStatusBarBusyHeight - kStatusBarDefaultHeight)) {
             if (_safeArea & MLNSafeAreaTop) {
                 safeAreaInset.top = [self safeAreaTop];
-                hasUpdated = YES;
             }
         }
         
         if (CGRectGetMaxY(frame) >= window.frame.size.height) {
             if (_safeArea & MLNSafeAreaBottom) {
                 safeAreaInset.bottom = [self safeAreaBottom];
-                hasUpdated = YES;
             }
         }
         
         if (frame.origin.x <= 0) {
             if (_safeArea & MLNSafeAreaLeft) {
                 safeAreaInset.left = [self safeAreaLeft];
-                hasUpdated = YES;
             }
         }
         
         if (CGRectGetMaxX(frame) >= window.frame.size.width) {
             if (_safeArea & MLNSafeAreaRight) {
                 safeAreaInset.right = [self safeAreaRight];
-                hasUpdated = YES;
             }
         }
-        if (hasUpdated) {
-            [self.safeAreaView updateSafeAreaInsets:safeAreaInset];
-        }
+        [self.safeAreaView updateSafeAreaInsets:safeAreaInset];
     }
 }
 
