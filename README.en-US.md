@@ -1,4 +1,4 @@
-English | [简体中文](./README.md)
+[简体中文](./README.md) | English
 # MLN
 MLN is a mobile cross-platform development framework that allows developers to build Android and iOS applications with a set of code. MLN design ideas are close to native development. The experience of client developers can be quickly migrated to MLN to easily build cross-platform mobile applications.
 
