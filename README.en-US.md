@@ -17,7 +17,7 @@ MLN is a mobile cross-platform development framework that allows developers to b
 * Xcode: Search and download in App Store
 
 ## Demo run
-Learn about MLN through Demo, go to [Demo Run](https://github.com/momotech/MLN/wiki/Demo运行)
+Learn about MLN through Demo, go to [Demo Run](https://github.com/momotech/MLN/wiki/Demo-run)
 
 ## SDK Access
 * [Android](https://github.com/momotech/MLN/wiki/sdk-access#1-android-access)
