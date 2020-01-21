@@ -767,6 +767,9 @@ local function done()
 end
 
 function handle_socket_command_message()
+  if not coro_debugger then
+    return "dead"
+  end
   local status, res = cororesume(coro_debugger, events.RECEIVE)
   return corostatus(coro_debugger)
 end
@@ -845,14 +848,16 @@ local function debugger_loop(sev, svars, sfile, sline)
       elseif not line and err == "closed" then
         --error("Debugger connection closed", 0)
         mobdebug.done()
-        break
+        return
       else
         -- if there is something in the pending buffer, prepend it to the line
         if buf then line = buf .. line; buf = nil end
         break
       end
     end
+
     if server.settimeout then server:settimeout() end -- back to blocking
+
     command = string.sub(line, string.find(line, "^[A-Z]+"))
     if command == "SETB" then
       local _, _, _, file, line = string.find(line, "^([A-Z]+)%s+(.-)%s+(%d+)%s*$")
@@ -1753,3 +1758,4 @@ mobdebug.onscratch = nil -- callback
 mobdebug.basedir = function(b) if b then basedir = b end return basedir end
 
 return mobdebug
+
