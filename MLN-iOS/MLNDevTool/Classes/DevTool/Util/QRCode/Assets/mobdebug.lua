@@ -694,7 +694,9 @@ local function debug_hook(event, line)
       vars = vars or capture_vars(1)
       step_into = false
       step_over = false
-      status, res = cororesume(coro_debugger, events.BREAK, vars, file, line)
+      if coro_debugger then
+        status, res = cororesume(coro_debugger, events.BREAK, vars, file, line)
+      end
     end
 
     -- handle 'stack' command that provides stack() information to the debugger
