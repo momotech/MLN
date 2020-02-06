@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
     s.name             = 'MLNDevTool'
-    s.version          = '0.1.0.3'
+    s.version          = '0.1.0.4'
     s.summary          = 'Debug Tool of MLN.'
     
     # This description is used to generate tags and improve search results.
