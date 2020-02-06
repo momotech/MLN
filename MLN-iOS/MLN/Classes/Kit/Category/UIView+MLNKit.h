@@ -54,6 +54,10 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)lua_addTouch:(MLNBlock *)touchCallBack;
 - (void)lua_addLongPress:(MLNBlock *)longPressCallback;
 /**
+ Return YES if it can consume events. Default is NO
+ */
+- (BOOL)lua_consumeEvent;
+/**
  Return YES if it can respond to tap events. Default is NO
  */
 - (BOOL)lua_canClick;

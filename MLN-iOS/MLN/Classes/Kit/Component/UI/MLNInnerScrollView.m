@@ -21,7 +21,6 @@
 @property(nonatomic, weak) MLNLuaCore *mln_luaCore;
 @property (nonatomic, strong) MLNScrollViewDelegate *lua_delegate;
 @property (nonatomic, assign, getter=isLinearContenView, readonly) BOOL linearContenView;
-@property (nonatomic, weak) UITapGestureRecognizer *innerTapGesture;
 
 @end
 
@@ -117,31 +116,9 @@
     return YES;
 }
 
-- (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event
+- (BOOL)lua_consumeEvent
 {
-    if (self.superview.userInteractionEnabled) {
-        UIView *superview = self.mln_contentView ?: self;
-        for (UIView *subview in superview.subviews) {
-            if (CGRectContainsPoint(subview.frame, point)) {
-                return [super hitTest:point withEvent:event];
-            }
-        }
-        self.innerTapGesture.enabled = YES;
-        return self;
-    }
-    self.innerTapGesture.enabled = NO;
-    return [super hitTest:point withEvent:event];
-}
-
-
-- (UITapGestureRecognizer *)innerTapGesture
-{
-    if (!_innerTapGesture) {
-        UITapGestureRecognizer *gesture = [[UITapGestureRecognizer  alloc] init];
-        [self addGestureRecognizer:gesture];
-        _innerTapGesture = gesture;
-    }
-    return _innerTapGesture;
+    return self.superview.userInteractionEnabled;
 }
 
 

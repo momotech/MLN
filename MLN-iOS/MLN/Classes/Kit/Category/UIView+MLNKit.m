@@ -773,7 +773,7 @@ static const void *kLuaRenderContext = &kLuaRenderContext;
 
 - (void)mln_in_addGestureIfNeed
 {
-    if ([self lua_canClick] && self.mln_gesture == nil) {
+    if ([self lua_canClick] && [self mln_gesture] == nil) {
         MLNGestureRecognizer *gesture = [[MLNGestureRecognizer alloc] init];
         gesture.mln_delegate = (id<MLNGestureRecognizerDelegate>)self;
         [self setMln_gesture:gesture];
@@ -802,6 +802,11 @@ static const void *kLuaRenderContext = &kLuaRenderContext;
 {
     [self mln_in_addLongPressGestureIfNeed];
     self.mln_longPressBlock = longPressCallback;
+}
+
+- (BOOL)lua_consumeEvent
+{
+    return [self mln_gesture] != nil || self.userInteractionEnabled == YES;
 }
 
 - (void)mln_in_addLongPressGestureIfNeed
