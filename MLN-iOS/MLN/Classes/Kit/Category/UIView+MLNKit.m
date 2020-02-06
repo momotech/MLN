@@ -18,6 +18,8 @@
 #import "MLNSnapshotManager.h"
 #import "MLNCanvasAnimation.h"
 #import "MLNKitInstanceHandlersManager.h"
+#import "MLNGestureRecognizer.h"
+
 
 #define kMLNDefaultRippleColor [UIColor colorWithRed:247/255.0 green:246/255.0 blue:244/255.0 alpha:1.0]
 
@@ -40,29 +42,6 @@ static const void *kNeedEndEditing = &kNeedEndEditing;
 {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        Method origMethod1 = class_getInstanceMethod([self class], @selector(touchesBegan:withEvent:));
-        Method swizzledMethod1 = class_getInstanceMethod([self class], @selector(mln_in_touchesBegan:withEvent:));
-        __mln_in_UIView_Origin_TouchesBegan_Method_Imp = method_getImplementation(origMethod1);
-        method_exchangeImplementations(origMethod1, swizzledMethod1);
-        
-        Method origMethod2 = class_getInstanceMethod([self class], @selector(touchesMoved:withEvent:));
-        Method swizzledMethod2 = class_getInstanceMethod([self class], @selector(mln_in_touchesMoved:withEvent:));
-        
-        __mln_in_UIView_Origin_TouchesMoved_Method_Imp = method_getImplementation(origMethod2);
-        method_exchangeImplementations(origMethod2, swizzledMethod2);
-        
-        Method origMethod3 = class_getInstanceMethod([self class], @selector(touchesEnded:withEvent:));
-        Method swizzledMethod3 = class_getInstanceMethod([self class], @selector(mln_in_touchesEnded:withEvent:));
-        
-        __mln_in_UIView_Origin_TouchesEnded_Method_Imp = method_getImplementation(origMethod3);
-        method_exchangeImplementations(origMethod3, swizzledMethod3);
-        
-        Method origMethod4 = class_getInstanceMethod([self class], @selector(touchesCancelled:withEvent:));
-        Method swizzledMethod4 = class_getInstanceMethod([self class], @selector(mln_in_touchesCancelled:withEvent:));
-        
-        __mln_in_UIView_Origin_TouchesCancelled_Method_Imp = method_getImplementation(origMethod4);
-        method_exchangeImplementations(origMethod4, swizzledMethod4);
-        
         Method origMethod5 = class_getInstanceMethod([self class], @selector(removeFromSuperview));
         Method swizzledMethod5 = class_getInstanceMethod([self class], @selector(mln_in_removeFromSuperview));
         method_exchangeImplementations(origMethod5, swizzledMethod5);
@@ -77,13 +56,8 @@ static const void *kNeedEndEditing = &kNeedEndEditing;
     [self mln_in_removeFromSuperview];
 }
 
-- (void)mln_in_touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
+- (void)mln_touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
 {
-    void (*functionPointer)(id, SEL, NSSet<UITouch *> *, UIEvent *) = (void (*)(id, SEL, NSSet<UITouch *> *, UIEvent *))__mln_in_UIView_Origin_TouchesBegan_Method_Imp;
-    functionPointer(self, _cmd, touches, event);
-    if (![self isKindOfClass:[UIView class]]) {
-        return;
-    }
     if([self isOpenRipple]) {
         if (![self oldColor] && ![self lua_didSetOldColor]) {
             [self setOldColor:self.backgroundColor];
@@ -113,14 +87,8 @@ static const void *kNeedEndEditing = &kNeedEndEditing;
     }
 }
 
-- (void)mln_in_touchesMoved:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
+- (void)mln_touchesMoved:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
 {
-    void (*functionPointer)(id, SEL, NSSet<UITouch *> *, UIEvent *) = (void (*)(id, SEL, NSSet<UITouch *> *, UIEvent *))__mln_in_UIView_Origin_TouchesMoved_Method_Imp;
-    functionPointer(self, _cmd, touches, event);
-    if (![self isKindOfClass:[UIView class]]) {
-        return;
-    }
-    
     if (self.mln_touchesMovedCallback) {
         UITouch *touch = [touches anyObject];
         CGPoint point = [touch locationInView:self];
@@ -139,14 +107,8 @@ static const void *kNeedEndEditing = &kNeedEndEditing;
     }
 }
 
-- (void)mln_in_touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
+- (void)mln_touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
 {
-    void (*functionPointer)(id, SEL, NSSet<UITouch *> *, UIEvent *) = (void (*)(id, SEL, NSSet<UITouch *> *, UIEvent *))__mln_in_UIView_Origin_TouchesEnded_Method_Imp;
-    functionPointer(self, _cmd, touches, event);
-    
-    if (![self isKindOfClass:[UIView class]]) {
-        return;
-    }
     if([self isOpenRipple]) {
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             self.backgroundColor = [self oldColor];
@@ -172,13 +134,8 @@ static const void *kNeedEndEditing = &kNeedEndEditing;
     }
 }
 
-- (void)mln_in_touchesCancelled:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
+- (void)mln_touchesCancelled:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
 {
-    void (*functionPointer)(id, SEL, NSSet<UITouch *> *, UIEvent *) = (void (*)(id, SEL, NSSet<UITouch *> *, UIEvent *))__mln_in_UIView_Origin_TouchesCancelled_Method_Imp;
-    functionPointer(self, _cmd, touches, event);
-    if (![self isKindOfClass:[UIView class]]) {
-        return;
-    }
     if([self isOpenRipple]) {
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             self.backgroundColor = [self oldColor];
@@ -734,41 +691,49 @@ static const void *kLuaRenderContext = &kLuaRenderContext;
 #pragma mark - TouchEvent
 - (void)lua_setTouchesBeganCallback:(MLNBlock *)callback
 {
+    [self mln_in_addGestureIfNeed];
     self.mln_touchesBeganCallback = callback;
 }
 
 - (void)lua_setTouchesMovedCallback:(MLNBlock *)callback
 {
+    [self mln_in_addGestureIfNeed];
     self.mln_touchesMovedCallback = callback;
 }
 
 - (void)lua_setTouchesEndedCallback:(MLNBlock *)callback
 {
+    [self mln_in_addGestureIfNeed];
     self.mln_touchesEndedCallback = callback;
 }
 
 - (void)lua_setTouchesCancelledCallback:(MLNBlock *)callback
 {
+    [self mln_in_addGestureIfNeed];
     self.mln_touchesCancelledCallback = callback;
 }
 
 - (void)lua_setTouchesBeganExtensionCallback:(MLNBlock *)callback
 {
+    [self mln_in_addGestureIfNeed];
     self.mln_touchesBeganExtensionCallback = callback;
 }
 
 - (void)lua_setTouchesMovedExtensionCallback:(MLNBlock *)callback
 {
+    [self mln_in_addGestureIfNeed];
     self.mln_touchesMovedExtensionCallback = callback;
 }
 
 - (void)lua_setTouchesEndedExtensionCallback:(MLNBlock *)callback
 {
+    [self mln_in_addGestureIfNeed];
     self.mln_touchesEndedExtensionCallback = callback;
 }
 
 - (void)lua_setTouchesCancelledExtensionCallback:(MLNBlock *)callback
 {
+    [self mln_in_addGestureIfNeed];
     self.mln_touchesCancelledExtensionCallback = callback;
 }
 
@@ -796,26 +761,29 @@ static const void *kLuaRenderContext = &kLuaRenderContext;
 - (void)lua_addTouch:(MLNBlock *)touchCallBack
 {
     MLNKitLuaAssert(NO, @"View:onTouch method is deprecated");
-    [self mln_in_addTapGestureIfNeed];
+    [self mln_in_addGestureIfNeed];
     self.mln_touchClickBlock = touchCallBack;
 }
 
 - (void)lua_addClick:(MLNBlock *)clickCallback
 {
-    [self mln_in_addTapGestureIfNeed];
+    [self mln_in_addGestureIfNeed];
     self.mln_tapClickBlock = clickCallback;
 }
 
-- (void)mln_in_addTapGestureIfNeed
+- (void)mln_in_addGestureIfNeed
 {
-    if (!self.mln_tapClickBlock && [self lua_canClick]) {
-        UITapGestureRecognizer *gesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(mln_in_tapClickAction:)];
+    if ([self lua_canClick] && self.mln_gesture == nil) {
+        MLNGestureRecognizer *gesture = [[MLNGestureRecognizer alloc] init];
+        gesture.mln_delegate = (id<MLNGestureRecognizerDelegate>)self;
+        [self setMln_gesture:gesture];
         [self addGestureRecognizer:gesture];
     }
 }
 
-- (void)mln_in_tapClickAction:(UIGestureRecognizer *)gesture
+- (void)mln_tapAction:(UIGestureRecognizer *)gesture
 {
+    NSLog(@"mln_in_tapClickAction:%@", self);
     if (!self.lua_enable) {
         return;
     }
@@ -868,6 +836,19 @@ static const void *kLuaTapGesture = &kLuaTapGesture;
 - (MLNBlock *)mln_tapClickBlock
 {
     return objc_getAssociatedObject(self, kLuaTapGesture);
+}
+
+static const void *kMLNGesture = &kMLNGesture;
+- (void)setMln_gesture:(MLNGestureRecognizer *)mln_gesture
+{
+    MLNGestureHoldObject *holObject = [[MLNGestureHoldObject alloc] initWithGesture:mln_gesture];
+    objc_setAssociatedObject(self, kMLNGesture, holObject, OS_OBJECT_USE_OBJC_RETAIN_RELEASE);
+}
+
+- (MLNGestureRecognizer *)mln_gesture
+{
+    MLNGestureHoldObject *holObject = objc_getAssociatedObject(self, kMLNGesture);
+    return (MLNGestureRecognizer *)holObject.mln_gesture;
 }
 
 static const void *kLuaTouchGesture = &kLuaTouchGesture;

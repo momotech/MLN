@@ -15,6 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 @class MLNBlock;
 @class MLNKeyboardViewHandler;
 @class MLNRenderContext;
+@class MLNGestureRecognizer;
 @interface UIView (MLNKit)
 
 @property (nonatomic, assign) CGFloat lua_x;
@@ -47,6 +48,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) MLNBlock * mln_tapClickBlock;
 @property (nonatomic, strong) MLNBlock * mln_touchClickBlock;
 @property (nonatomic, strong) MLNBlock * mln_longPressBlock;
+@property (nonatomic, weak) MLNGestureRecognizer *mln_gesture;
 
 - (void)lua_addClick:(MLNBlock *)clickCallback;
 - (void)lua_addTouch:(MLNBlock *)touchCallBack;
