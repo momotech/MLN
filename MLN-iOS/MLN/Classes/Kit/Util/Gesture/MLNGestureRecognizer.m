@@ -80,8 +80,10 @@
             if ( [subview lua_consumeEvent]) {
                 return YES;
             }
-            point = [superView convertPoint:point toView:subview];
-            return [self mln_findCousumeView:subview pointInside:point];
+            BOOL result = [self mln_findCousumeView:subview pointInside:[superView convertPoint:point toView:subview]];
+            if (result) {
+                return YES;
+            }
         }
     }
     return NO;
