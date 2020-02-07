@@ -72,14 +72,17 @@
     }
 }
 
+//递归查找消费事件的子视图
 - (BOOL)mln_findCousumeView:(UIView *)superView pointInside:(CGPoint)point
 {
     for (UIView *subview in superView.subviews)
     {
+        //当触摸点在子视图上时，才做处理
         if (CGRectContainsPoint(subview.frame, point)) {
             if ( [subview lua_consumeEvent]) {
                 return YES;
             }
+            //只有子视图消费事件时，才返回YES，否则需要判断其他的子视图
             BOOL result = [self mln_findCousumeView:subview pointInside:[superView convertPoint:point toView:subview]];
             if (result) {
                 return YES;
