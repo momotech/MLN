@@ -12,6 +12,7 @@
 
 @interface MLNGestureRecognizer()
 {
+    BOOL _ignoreEvent;
     BOOL _shouldCancelClick;
 }
 
@@ -22,23 +23,21 @@
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
 {
     CGPoint point = [[touches anyObject] locationInView:self.view];
-    UIView *view = [self.view hitTest:point withEvent:event];
-    if (view != self.view && [view lua_consumeEvent]) {
+    _ignoreEvent = [self mln_findCousumeView:self.view pointInside:point];
+    if (_ignoreEvent) {
         return;
     }
     _shouldCancelClick = NO;
     if (_mln_delegate && [_mln_delegate respondsToSelector:@selector(mln_touchesBegan:withEvent:)]) {
         [_mln_delegate mln_touchesBegan:touches withEvent:event];
     }
-    NSLog(@"custom---touchesBegan:%@ %ld", self, self.state);
 }
 
 - (void)touchesMoved:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
 {
     // When you leave the view, cancel the response to the click event
     CGPoint point = [[touches anyObject] locationInView:self.view];
-    UIView *view = [self.view hitTest:point withEvent:event];
-    if (view != self.view && [view lua_consumeEvent]) {
+    if (_ignoreEvent) {
         return;
     }
     if (!CGRectContainsPoint(self.view.bounds, point)) {
@@ -52,9 +51,7 @@
 
 - (void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
 {
-    CGPoint point = [[touches anyObject] locationInView:self.view];
-    UIView *view = [self.view hitTest:point withEvent:event];
-    if (view != self.view && [view lua_consumeEvent]) {
+    if (_ignoreEvent) {
         return;
     }
     if (_mln_delegate && [_mln_delegate respondsToSelector:@selector(mln_touchesEnded:withEvent:)]) {
@@ -67,14 +64,27 @@
 
 - (void)touchesCancelled:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
 {
-    CGPoint point = [[touches anyObject] locationInView:self.view];
-    UIView *view = [self.view hitTest:point withEvent:event];
-    if (view != self.view && [view lua_consumeEvent]) {
+    if (_ignoreEvent) {
         return;
     }
     if (_mln_delegate && [_mln_delegate respondsToSelector:@selector(mln_touchesCancelled:withEvent:)]) {
         [_mln_delegate mln_touchesCancelled:touches withEvent:event];
     }
+}
+
+- (BOOL)mln_findCousumeView:(UIView *)superView pointInside:(CGPoint)point
+{
+    for (UIView *subview in superView.subviews)
+    {
+        if (CGRectContainsPoint(subview.frame, point)) {
+            if ( [subview lua_consumeEvent]) {
+                return YES;
+            }
+            point = [superView convertPoint:point toView:subview];
+            return [self mln_findCousumeView:subview pointInside:point];
+        }
+    }
+    return NO;
 }
 
 @end

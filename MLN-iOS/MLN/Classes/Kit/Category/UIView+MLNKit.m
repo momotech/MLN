@@ -23,11 +23,6 @@
 
 #define kMLNDefaultRippleColor [UIColor colorWithRed:247/255.0 green:246/255.0 blue:244/255.0 alpha:1.0]
 
-static IMP __mln_in_UIView_Origin_TouchesBegan_Method_Imp;
-static IMP __mln_in_UIView_Origin_TouchesMoved_Method_Imp;
-static IMP __mln_in_UIView_Origin_TouchesEnded_Method_Imp;
-static IMP __mln_in_UIView_Origin_TouchesCancelled_Method_Imp;
-
 static const void *kLuaGradientLayer = &kLuaGradientLayer;
 static const void *kLuaKeyboardViewHandlerKey = &kLuaKeyboardViewHandlerKey;
 static const void *kLuaBlurEffectView = &kLuaBlurEffectView;
@@ -806,7 +801,7 @@ static const void *kLuaRenderContext = &kLuaRenderContext;
 
 - (BOOL)lua_consumeEvent
 {
-    return [self mln_gesture] != nil || self.userInteractionEnabled == YES;
+    return [self mln_gesture] != nil;
 }
 
 - (void)mln_in_addLongPressGestureIfNeed
