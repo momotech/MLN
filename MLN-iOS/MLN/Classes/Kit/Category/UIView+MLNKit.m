@@ -778,7 +778,6 @@ static const void *kLuaRenderContext = &kLuaRenderContext;
 
 - (void)mln_tapAction:(UIGestureRecognizer *)gesture
 {
-    NSLog(@"mln_in_tapClickAction:%@", self);
     if (!self.lua_enable) {
         return;
     }
@@ -795,7 +794,7 @@ static const void *kLuaRenderContext = &kLuaRenderContext;
 
 - (void)lua_addLongPress:(MLNBlock *)longPressCallback
 {
-    [self mln_in_addLongPressGestureIfNeed];
+    [self mln_in_addGestureIfNeed];
     self.mln_longPressBlock = longPressCallback;
 }
 
@@ -804,26 +803,19 @@ static const void *kLuaRenderContext = &kLuaRenderContext;
     return [self mln_gesture] != nil;
 }
 
-- (void)mln_in_addLongPressGestureIfNeed
-{
-    if (!self.mln_longPressBlock && [self lua_canLongPress]) {
-        UILongPressGestureRecognizer *gesture = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(mln_in_longPressAction:)];
-        [self addGestureRecognizer:gesture];
-    }
-}
-
-- (void)mln_in_longPressAction:(UIGestureRecognizer *)gesture
+- (BOOL)mln_longPressAction:(UIGestureRecognizer *)gesture
 {
     if (!self.lua_enable) {
-        return;
+        return NO;
     }
-    if (!self.mln_longPressBlock) return;
-    if (gesture.state == UIGestureRecognizerStateBegan) {
+    if (self.mln_longPressBlock) {
         CGPoint point = [gesture locationInView:self];
         [self.mln_longPressBlock addFloatArgument:point.x];
         [self.mln_longPressBlock addFloatArgument:point.y];
         [self.mln_longPressBlock callIfCan];
+        return YES;
     }
+    return NO;
 }
 
 static const void *kLuaTapGesture = &kLuaTapGesture;

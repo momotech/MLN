@@ -13,8 +13,9 @@
 @interface MLNGestureRecognizer()
 {
     BOOL _ignoreEvent;
-    BOOL _shouldCancelClick;
 }
+
+@property (nonatomic, strong) dispatch_source_t gcdTimer;
 
 @end
 
@@ -31,6 +32,21 @@
     if (_mln_delegate && [_mln_delegate respondsToSelector:@selector(mln_touchesBegan:withEvent:)]) {
         [_mln_delegate mln_touchesBegan:touches withEvent:event];
     }
+    _gcdTimer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, dispatch_get_global_queue(0, 0));
+    //开始时间，0.5s后
+    dispatch_time_t start = dispatch_time(DISPATCH_TIME_NOW, 0.5 * NSEC_PER_SEC);
+    //间隔时间
+    uint64_t interval = 0 * NSEC_PER_SEC;
+    dispatch_source_set_timer(_gcdTimer, start, interval, 0);
+    dispatch_source_set_event_handler(_gcdTimer, ^{
+        dispatch_cancel(self.gcdTimer);
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (self.mln_delegate && [self.mln_delegate respondsToSelector:@selector(mln_longPressAction:)]) {
+              self.shouldCancelClick =  [self.mln_delegate mln_longPressAction:self];
+            }
+        });
+    });
+    dispatch_resume(_gcdTimer);
 }
 
 - (void)touchesMoved:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
@@ -54,6 +70,7 @@
     if (_ignoreEvent) {
         return;
     }
+    dispatch_cancel(_gcdTimer);
     if (_mln_delegate && [_mln_delegate respondsToSelector:@selector(mln_touchesEnded:withEvent:)]) {
         [_mln_delegate mln_touchesEnded:touches withEvent:event];
     }
@@ -67,6 +84,7 @@
     if (_ignoreEvent) {
         return;
     }
+    dispatch_cancel(_gcdTimer);
     if (_mln_delegate && [_mln_delegate respondsToSelector:@selector(mln_touchesCancelled:withEvent:)]) {
         [_mln_delegate mln_touchesCancelled:touches withEvent:event];
     }

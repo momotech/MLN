@@ -34,6 +34,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)mln_tapAction:(MLNGestureRecognizer *)gesture;
 
+/**
+ * gesture: MLNGestureRecognizer
+ * return: 是否处理事件
+ **/
+- (BOOL)mln_longPressAction:(MLNGestureRecognizer *)gesture;
+
 @end
 
 NS_ASSUME_NONNULL_END
