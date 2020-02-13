@@ -7,6 +7,7 @@
   */
 package com.immomo.mls.wrapper;
 
+import com.immomo.mls.Environment;
 import com.immomo.mls.MLSAdapterContainer;
 import com.immomo.mls.MLSEngine;
 import com.immomo.mls.fun.ud.view.UDView;
@@ -40,6 +41,8 @@ public class Register {
     private static final String UD_CLASS_SUFFIX = "_udwrapper";
     private static final String SB_CLASS_SUFFIX = "_sbwrapper";
     private static final String METHODS_FIELD = "methods";
+    private static final String NEW_UD_INIT = "_init";
+    private static final String NEW_UD_REGISTER = "_register";
     private static final Map<Class, Class<? extends LuaUserdata>> udClassMap = new HashMap<>(20);
 
     private final List<SHolder> sHolders = new ArrayList<>(20);
@@ -50,6 +53,7 @@ public class Register {
     private final HashMap<Class, String> luaClassNameMap = new HashMap<>();
     private final AllUserdataHolder allUserdataHolder = new AllUserdataHolder();
     private final AllUserdataHolder lvUserdataHolder = new AllUserdataHolder();
+    private final List<NewUDHolder> newUDHolders = new ArrayList<>();
 
     private boolean preInstall = false;
     /**
@@ -64,6 +68,7 @@ public class Register {
         luaClassNameMap.clear();
         allUserdataHolder.clear();
         lvUserdataHolder.clear();
+        newUDHolders.clear();
     }
 
     /**
@@ -198,6 +203,21 @@ public class Register {
             SizeOfUtils.sizeof(holder.clz);
             allUserdataHolder.add(holder);
         }
+    }
+
+    /**
+     * 注册高性能，新版userdata
+     * 其中必须有两个native函数:
+     *  static native void _init()
+     *  static native void _register(long l)
+     *
+     * 写法可参照{@link com.immomo.mls.fun.ud.UDCCanvas}，且需要在c层注册文件
+     * 建议使用Android Studio的模板生成java代码，实现完java层逻辑后，使用mlncgen.jar生成c层注册文件
+     */
+    public void registerNewUserdata(Class<? extends LuaUserdata> clz) {
+        NewUDHolder holder = new NewUDHolder(clz);
+        holder.init();
+        newUDHolders.add(holder);
     }
 
     /**
@@ -525,6 +545,9 @@ public class Register {
      * @param installView 是否注册View
      */
     public void install(Globals g, boolean installView) {
+        for (NewUDHolder h : newUDHolders) {
+            h.register(g);
+        }
         allUserdataHolder.install(g);
         if (installView)
             lvUserdataHolder.install(g);
@@ -777,6 +800,43 @@ public class Register {
         NumberEnumHolder(String luaClassName, String[] keys, double[] values) {
             super(luaClassName, keys);
             this.values = values;
+        }
+    }
+
+    private static final class NewUDHolder {
+        private final Class<? extends LuaUserdata> clz;
+        private final Method registerMethod;
+        private Method initMethod;
+
+        private NewUDHolder(Class<? extends LuaUserdata> clz) {
+            this.clz = clz;
+            try {
+                initMethod = clz.getDeclaredMethod(NEW_UD_INIT);
+                registerMethod = clz.getDeclaredMethod(NEW_UD_REGISTER, long.class);
+                initMethod.setAccessible(true);
+                registerMethod.setAccessible(true);
+            } catch (Throwable t) {
+                throw new RegisterError("register " + clz.getName() + " failed!", t);
+            }
+        }
+
+        private void init() {
+            if (initMethod == null)
+                return;
+            try {
+                initMethod.invoke(null);
+                initMethod = null;
+            } catch (Throwable t) {
+                throw new RegisterError("init " + clz.getName() + " failed!", t);
+            }
+        }
+
+        private void register(Globals g) {
+            try {
+                registerMethod.invoke(null, g.getL_State());
+            } catch (Throwable e) {
+                Environment.callbackError(e, g);
+            }
         }
     }
 }

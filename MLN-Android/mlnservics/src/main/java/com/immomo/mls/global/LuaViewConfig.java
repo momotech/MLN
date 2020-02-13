@@ -8,6 +8,9 @@
 package com.immomo.mls.global;
 
 
+import com.immomo.mls.MLSAdapterContainer;
+import com.immomo.mls.adapter.IFileCache;
+
 /**
  * LuaView 全局设置
  *
@@ -15,17 +18,25 @@ package com.immomo.mls.global;
  * @date 15/9/9
  */
 public class LuaViewConfig {
+    public static final String IP_KEY = "debugIp";
+    public static final String PORT_KEY = "debugPort";
     private static boolean isOpenDebugger = false;//目前只支持模拟器下断点调试Lua，不支持真机，真机环境关闭该功能
     private static String debugIp = null;
-    private static int port = 8173;
+    private static int port = 8172;
     private static LVConfig lvConfig;
 
     public static String getDebugIp() {
+        if (debugIp == null) {
+            IFileCache fileCache = MLSAdapterContainer.getFileCache();
+            debugIp = fileCache.get(IP_KEY, "172.16.39.13");
+            port = Integer.parseInt(fileCache.get(PORT_KEY, port + ""));
+        }
         return debugIp;
     }
 
     public static void setDebugIp(String debugIp) {
         LuaViewConfig.debugIp = debugIp;
+        MLSAdapterContainer.getFileCache().save(IP_KEY, debugIp);
     }
 
     public static int getPort() {
@@ -34,6 +45,7 @@ public class LuaViewConfig {
 
     public static void setPort(int port) {
         LuaViewConfig.port = port;
+        MLSAdapterContainer.getFileCache().save(PORT_KEY, port + "");
     }
 
     public static boolean isOpenDebugger() {
@@ -46,6 +58,8 @@ public class LuaViewConfig {
      * @param openDebugger
      */
     public static void setOpenDebugger(boolean openDebugger) {
+        if (openDebugger)
+            MLSAdapterContainer.getToastAdapter().toast("Debug可能会导致热重载不可使用");
         isOpenDebugger = openDebugger;
     }
 

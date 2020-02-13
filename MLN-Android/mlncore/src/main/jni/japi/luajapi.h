@@ -12,16 +12,9 @@
 #ifndef LUA_J_API_H
 #define LUA_J_API_H
 
-#include "global_define.h"
-#include "jlog.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "lauxlib.h"
-#include "lualib.h"
-#include "lobject.h"
-#include "lstate.h"
-#include "mlog.h"
 #include "jinfo.h"
 #include "cache.h"
 #include "assets_reader.h"

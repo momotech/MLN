@@ -13,22 +13,14 @@
 #include "m_mem.h"
 #include "llimits.h"
 #include "jinfo.h"
-#include "luajapi.h"
+#include "lauxlib.h"
 #include "juserdata.h"
+#include "jtable.h"
 
-#define LUA_INDEX "__index"
 #define LUA_NEWINDEX "__newindex"
-
-/// 设置metatable
-#define SET_METATABLE(L)          \
-    lua_pushstring(L, LUA_INDEX); \
-    lua_pushvalue(L, -2);         \
-    lua_rawset(L, -3);
 
 /// 判断是否是JavaUserdata的子类，由java控制内存(存储在)
 #define IS_STRONG_REF(env, clz) (*env)->IsAssignableFrom(env, clz, JavaUserdata)
-/// 通过lua class name获取metatable名称，记得free
-#define getUDMetaname(n) joinstr(METATABLE_PREFIX, n)
 #define clearException(env) if ((*env)->ExceptionCheck(env)) (*env)->ExceptionClear(env);
 
 extern jclass JavaUserdata;
@@ -55,11 +47,6 @@ static int executeLuaIndexFunction(lua_State *L);
 static int executeJavaIndexFunction(lua_State *L);
 
 /**
- * 对应userdata_tostring_fun
- */
-static void pushUserdataTostringClosure(JNIEnv *env, lua_State *L, jclass clz);
-
-/**
  * 对应pushUserdataTostringClosure
  * upvalue顺序为:
  *              1:UDjmethod
@@ -67,21 +54,11 @@ static void pushUserdataTostringClosure(JNIEnv *env, lua_State *L, jclass clz);
 static int userdata_tostring_fun(lua_State *L);
 
 /**
- * 对应userdata_bool_fun
- */
-static void pushUserdataBoolClosure(JNIEnv *env, lua_State *L, jclass clz);
-
-/**
  * 对应pushUserdataBoolClosure
  * upvalue顺序为:
  *              1:UDjmethod
  */
 static int userdata_bool_fun(lua_State *L);
-
-/**
- * 对应gc_userdata
- */
-static void pushUserdataGcClosure(JNIEnv *env, lua_State *L, jclass clz);
 
 /**
  * 对应pushUserdataGcClosure
@@ -508,17 +485,22 @@ push_init(JNIEnv *env, lua_State *L, jclass clz, const char *metaname, const cha
         lua_pushnil(L);
         return;
     }
+
+    u_newmetatable(L, metaname);
+    fillUDMetatable(env, L, clz, p_metaname);
+    lua_pop(L, 1);
+
+    jmethodID cons = getConstructor(env, clz);
+    pushConstructorMethod(L, clz, cons, metaname);
+}
+
+void pushConstructorMethod(lua_State *L, jclass clz, jmethodID con, const char *metaname) {
     UDjclass udclz = (UDjclass) lua_newuserdata(L, sizeof(jclass));      // clz
     *udclz = clz;
 
-    jmethodID cons = getConstructor(env, clz);
     UDjmethod udm = (UDjmethod) lua_newuserdata(L, sizeof(jmethodID));   // con,clz
-    *udm = cons;
+    *udm = con;
 
-    u_newmetatable(L, metaname);                                        // table, con,clz
-    fillUDMetatable(env, L, clz, p_metaname);
-
-    lua_pop(L, 1);                                                      // con,clz
     lua_pushstring(L, metaname);                                        // metaname,con,clz
     lua_pushcclosure(L, execute_new_ud, 3);
 }
@@ -833,7 +815,7 @@ static int executeJavaIndexFunction(lua_State *L) {
 /**
  * 对应userdata_tostring_fun
  */
-static void pushUserdataTostringClosure(JNIEnv *env, lua_State *L, jclass clz) {
+void pushUserdataTostringClosure(JNIEnv *env, lua_State *L, jclass clz) {
     jmethodID m = getSpecialMethod(env, clz, METHOD_TOSTRING);
     lua_pushstring(L, "__tostring");
 
@@ -894,7 +876,7 @@ static int userdata_tostring_fun(lua_State *L) {
 /**
  * 对应userdata_bool_fun
  */
-static void pushUserdataBoolClosure(JNIEnv *env, lua_State *L, jclass clz) {
+void pushUserdataBoolClosure(JNIEnv *env, lua_State *L, jclass clz) {
     jmethodID m = getSpecialMethod(env, clz, METHOD_EQAULS);
     lua_pushstring(L, "__eq");
     UDjmethod udm = (UDjmethod) lua_newuserdata(L, sizeof(jmethodID));
@@ -958,7 +940,7 @@ static int userdata_bool_fun(lua_State *L) {
 /**
  * 对应gc_userdata
  */
-static void pushUserdataGcClosure(JNIEnv *env, lua_State *L, jclass clz) {
+void pushUserdataGcClosure(JNIEnv *env, lua_State *L, jclass clz) {
     lua_pushstring(L, "__gc");
 
     jmethodID gc = getSpecialMethod(env, clz, METHOD_GC);

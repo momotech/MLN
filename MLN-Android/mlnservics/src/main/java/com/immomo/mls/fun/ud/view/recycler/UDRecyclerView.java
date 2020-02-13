@@ -777,7 +777,7 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
     public LuaValue[] getContentInset(LuaValue[] values) {
         if (values.length >= 1 && values[0].isFunction()) {
             if (mContentInsetLuaValue != null)
-                values[0].toLuaFunction().invoke(mContentInsetLuaValue, 4);
+                values[0].toLuaFunction().invoke(mContentInsetLuaValue);
             else {
                 LuaValue zero = LuaNumber.valueOf(0);
                 values[0].toLuaFunction().invoke(varargsOf(zero, zero, zero, zero));

@@ -159,7 +159,8 @@ public class UDCollectionAdapter extends UDBaseRecyclerAdapter<UDCollectionLayou
             }
             return layout.getSize();
         }
-        LuaValue a1 = caller.invoke(varargsOf(s, r))[0];
+        LuaValue[] rets = caller.invoke(varargsOf(s, r));
+        LuaValue a1 = rets == null || rets.length == 0 ? Nil() : rets[0];
         if (AssertUtils.assertUserData(a1, UDSize.class, caller, getGlobals())) {
             UDSize udSize = (UDSize) a1;
             cellSize = udSize.getSize();

@@ -135,6 +135,12 @@ public final class Globals extends LuaTable {
      */
     private Throwable error = null;
     /**
+     * require错误信息
+     * @see #__onLuaRequire(long, String)
+     * @see #onRequire
+     */
+    private StringBuilder requireErrorMsg = null;
+    /**
      * 资源寻找器，Lua脚本调用require时需要
      * 优先级比{@link #resourceFinders}高
      *
@@ -169,6 +175,10 @@ public final class Globals extends LuaTable {
      * 此虚拟机是否可debug
      */
     private boolean debuggable;
+    /**
+     * 此虚拟机是否已经加载了debug文件
+     */
+    private boolean debugOpened;
     /**
      * 创建线程
      */
@@ -551,6 +561,8 @@ public final class Globals extends LuaTable {
      */
     public final boolean startDebug(byte[] debug, String ip, int port) {
         checkDestroy();
+        if (debugOpened)
+            return true;
         if (!debuggable) {
             openDebug();
         }
@@ -561,7 +573,8 @@ public final class Globals extends LuaTable {
             errorMsg = t.getMessage();
             state = LUA_ERRINJAVA;
         }
-        return state == LUA_OK;
+        debugOpened = state == LUA_OK;
+        return debugOpened;
     }
 
     /**
@@ -978,6 +991,13 @@ public final class Globals extends LuaTable {
     //</editor-fold>
 
     /**
+     * 是否加载了debug脚本
+     */
+    public final boolean isDebugOpened() {
+        return debugOpened;
+    }
+
+    /**
      * 设置是否正在使用中
      */
     public final void setRunning(boolean running) {
@@ -1313,6 +1333,16 @@ public final class Globals extends LuaTable {
     }
 
     /**
+     * Lua脚本调用require时，获取错误信息
+     * @param L Lua虚拟机地址
+     * @return 可为空
+     */
+    @LuaApiUsed
+    private static String __getRequireError(long L) {
+        return getGlobalsByLState(L).getRequireErrorMsg();
+    }
+
+    /**
      * Lua脚本执行GC时调用
      *
      * @see #setGcOffset(int)
@@ -1358,18 +1388,40 @@ public final class Globals extends LuaTable {
      * @see #__onLuaRequire
      */
     private Object onRequire(String name) {
+        if (requireErrorMsg != null) {
+            requireErrorMsg.setLength(0);
+        }
         Object ret = findResource(resourceFinder, name);
         if (ret != null)
             return ret;
+        combineErrorMessage(resourceFinder);
         if (resourceFinders != null) {
             for (ResourceFinder rf : resourceFinders) {
                 ret = findResource(rf, name);
                 if (ret != null) {
                     return ret;
+                } else {
+                    combineErrorMessage(rf);
                 }
             }
         }
         return null;
+    }
+
+    private String getRequireErrorMsg() {
+        if (requireErrorMsg == null || requireErrorMsg.length() == 0)
+            return null;
+        return requireErrorMsg.toString();
+    }
+
+    private void combineErrorMessage(ResourceFinder rf) {
+        String error = rf.getError();
+        if (error == null || error.length() == 0)
+            return;
+        if (requireErrorMsg == null) {
+            requireErrorMsg = new StringBuilder();
+        }
+        requireErrorMsg.append("\n\t\t").append(error);
     }
 
     /**
