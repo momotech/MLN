@@ -3,7 +3,6 @@ package ${packageName};
 import android.content.Context;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import com.immomo.mls.LuaViewManager;
 import com.immomo.mls.MLSBuilder;
@@ -16,21 +15,23 @@ import org.luaj.vm2.utils.LuaApiUsed;
 /**
  * Created by MLN Template
  * 注册方法：
- * Register.newUDHolder(${ClassName}.LUA_CLASS_NAME, ${ClassName}.class, true)
+ * registerNewUD(${ClassName}.class);
  */
 @LuaApiUsed
 public class ${ClassName} extends LuaUserdata<${WrapClass}> {
+    //<editor-fold desc="native method">
     /**
-     * Lua类名
+     * 初始化方法
      */
-    public static final String LUA_CLASS_NAME = "${LuaClassName}";
+    public static native void _init();
+
     /**
-     * 所有Bridge的名称
-     * 且Java方法必须有{@link LuaApiUsed}注解
+     * 注册到虚拟机方法
+     * @param l 虚拟机C层地址
+     * @see Globals#getL_State()
      */
-    public static final String[] methods = {
-            "methodA"
-    };
+    public static native void _register(long l);
+    //</editor-fold>
 
     //<editor-fold desc="Constructors">
 
@@ -69,17 +70,12 @@ public class ${ClassName} extends LuaUserdata<${WrapClass}> {
     //<editor-fold desc="Bridge API">
 
     /**
-     * 增加Bridge，Lua可通过 obj:methodA(params)调用
-     * @param params 非空，但长度可能为0
+     * 增加Bridge，并在C层中调用
+     * 使用
      */
     @LuaApiUsed
-    protected @Nullable LuaValue[] methodA(@NonNull LuaValue[] params) {
-//        return rBoolean(true);  //返回true
-//        return rNumber(1);      //返回数字
-//        return rString("a");    //返回String
-//        return rNil();          //返回nil
-//        return varargsOf(new ${ClassName}(getGlobals(), "other"));//返回一个userdata
-        return null;            //等同于返回this：varargsOf(this)
+    protected int methodA(int a) {
+        return 0;
     }
     //</editor-fold>
 

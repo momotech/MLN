@@ -15,7 +15,7 @@ import org.luaj.vm2.LuaValue;
 /**
  * Created by MLN Template
  * 注册方法:
- * Register.newUDHolderWithLuaClass(Dialog.LUA_CLASS_NAME, ${ClassName}.class, true)
+ * Register.newUDHolderWithLuaClass(${ClassName}.LUA_CLASS_NAME, ${ClassName}.class, true)
  * 若想在Java层实现参数自动转换，则增加注册:
  * @see com.immomo.mls.MLSBuilder#registerCovert
  * @see com.immomo.mls.MLSBuilder.CHolder
