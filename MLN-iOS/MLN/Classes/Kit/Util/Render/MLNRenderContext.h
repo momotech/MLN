@@ -16,6 +16,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, weak, readonly) UIView *targetView;
 @property (nonatomic, assign) BOOL clipToBounds;
+@property (nonatomic, assign) BOOL didSetClipToChildren;
+@property (nonatomic, assign) BOOL clipToChildren;
 @property (nonatomic, assign) BOOL didSetClipToBounds;
 
 - (void)resetCornerRadius:(CGFloat)cornerRadius;

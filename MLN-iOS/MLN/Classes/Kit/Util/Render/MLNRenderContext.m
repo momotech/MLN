@@ -106,6 +106,16 @@
     self.lastCornerMode = self.newCornerMode;
 }
 
+- (void)doClipCheck
+{
+    if (!self.targetView.mln_renderContext.didSetClipToBounds && [self.targetView.superview lua_enable]) {
+        MLNRenderContext *superContenx = [self.targetView.superview mln_renderContext];
+        if (superContenx.didSetClipToChildren) {
+            self.targetView.clipsToBounds = superContenx.clipToChildren;
+        }
+    }
+}
+
 #pragma mark - Layer
 - (void)cleanLayerContentsIfNeed
 {
@@ -139,6 +149,7 @@
 - (void)doTask
 {
     [self doCornerTask];
+    [self doClipCheck];
     [self.gradientLayerOperation remakeIfNeed];
     MLNCornerRadius radius = [self currentCornerRadiusWithCornerMode:self.newCornerMode];
     [self.borderOperation updateCornerRadiusAndRemake:radius];
