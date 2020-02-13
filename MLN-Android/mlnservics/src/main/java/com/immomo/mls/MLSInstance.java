@@ -157,6 +157,10 @@ public class MLSInstance implements ScriptLoader.Callback, Callback, PrinterCont
      */
     private volatile Globals globals;
     /**
+     * globals创建完成回调
+     */
+    private OnGlobalsCreateListener onGlobalsCreateListener;
+    /**
      * lua 容器
      */
     volatile LuaView mLuaView;
@@ -368,48 +372,6 @@ public class MLSInstance implements ScriptLoader.Callback, Callback, PrinterCont
         return true;
     }
 
-    public void setScriptStateListener(ScriptStateListener scriptStateListener) {
-        this.scriptStateListener = scriptStateListener;
-    }
-
-    //<editor-fold desc="HotReloadHelper.Callback">
-    @Override
-    public void onReload(final String path, final HashMap<String, String> params, int state) {
-        if (globals.isDestroyed()) {
-            if (luaViewManager != null)
-                HotReloadHelper.removeCallback(this);
-            return;
-        }
-
-        if (!MainThreadExecutor.isMainThread()) {
-            MainThreadExecutor.post(new Runnable() {
-                @Override
-                public void run() {
-                    reloadByHotReload(path, LoadTypeUtils.add(initData.loadType, Constants.LT_MAIN_THREAD), params);
-                }
-            });
-        } else {
-            reloadByHotReload(path, LoadTypeUtils.add(initData.loadType, Constants.LT_MAIN_THREAD), params);
-        }
-    }
-
-    @Override
-    public boolean reloadFinish() {
-        return !hasState(STATE_HOT_RELOADING);
-    }
-
-    //</editor-fold>
-
-    private void dismissKeyboard() {
-        if (mContext instanceof Activity) {
-            View view = ((Activity) mContext).getCurrentFocus();
-            if (view != null) {
-                InputMethodManager inputMethodManager = (InputMethodManager) mContext.getSystemService(Activity.INPUT_METHOD_SERVICE);
-                inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-            }
-        }
-    }
-
     /**
      * 页面显示时调用；若在多tab的Fragment中，应该在Fragment被切换出来时才调用
      */
@@ -514,6 +476,14 @@ public class MLSInstance implements ScriptLoader.Callback, Callback, PrinterCont
     }
     //</editor-fold>
 
+    public void setOnGlobalsCreateListener(OnGlobalsCreateListener l) {
+        onGlobalsCreateListener = l;
+    }
+
+    public void setScriptStateListener(ScriptStateListener scriptStateListener) {
+        this.scriptStateListener = scriptStateListener;
+    }
+
     /**
      * call in main thread
      * 刷新，重新下载包，并渲染
@@ -605,6 +575,16 @@ public class MLSInstance implements ScriptLoader.Callback, Callback, PrinterCont
             return;
         }
         luaViewManager.url = initData != null ? initData.url : null;
+    }
+
+    private void dismissKeyboard() {
+        if (mContext instanceof Activity) {
+            View view = ((Activity) mContext).getCurrentFocus();
+            if (view != null) {
+                InputMethodManager inputMethodManager = (InputMethodManager) mContext.getSystemService(Activity.INPUT_METHOD_SERVICE);
+                inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+            }
+        }
     }
 
     /**
@@ -750,6 +730,9 @@ public class MLSInstance implements ScriptLoader.Callback, Callback, PrinterCont
             LuaViewManager.setupGlobals(globals);
         }
         globals.setJavaUserdata(luaViewManager);
+        if (onGlobalsCreateListener != null) {
+            onGlobalsCreateListener.onCreate(globals);
+        }
         return globals;
     }
 
@@ -959,6 +942,48 @@ public class MLSInstance implements ScriptLoader.Callback, Callback, PrinterCont
             }
         }
     };
+    //</editor-fold>
+
+    //<editor-fold desc="HotReloadHelper.Callback">
+    @Override
+    public void onReload(final String path, final HashMap<String, String> params, int state) {
+        if (globals.isDestroyed()) {
+            if (luaViewManager != null)
+                HotReloadHelper.removeCallback(this);
+            return;
+        }
+
+        if (!MainThreadExecutor.isMainThread()) {
+            MainThreadExecutor.post(new Runnable() {
+                @Override
+                public void run() {
+                    reloadByHotReload(path, LoadTypeUtils.add(initData.loadType, Constants.LT_MAIN_THREAD), params);
+                }
+            });
+        } else {
+            reloadByHotReload(path, LoadTypeUtils.add(initData.loadType, Constants.LT_MAIN_THREAD), params);
+        }
+    }
+
+    @Override
+    public boolean reloadFinish() {
+        return !hasState(STATE_HOT_RELOADING);
+    }
+
+    @Override
+    public void onDisconnected(final int type, final String error) {
+        if (globals.isDebugOpened())
+            return;
+        MainThreadExecutor.post(new Runnable() {
+            @Override
+            public void run() {
+                MLSAdapterContainer.getToastAdapter().toast(
+                        String.format("断开与HotReload插件的%s连接，error: %s",
+                                (type == HotReloadHelper.NET_CONNECTION ? "wifi, 检查是否与电脑在同一个网络环境下" : "usb"),
+                                error));
+            }
+        });
+    }
     //</editor-fold>
 
     //<editor-fold desc="ScriptLoader.Callback">

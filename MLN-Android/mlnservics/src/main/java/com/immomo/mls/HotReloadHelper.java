@@ -527,6 +527,8 @@ public class HotReloadHelper {
         void onReload(String path, HashMap<String, String> params, @STATE int state);
 
         boolean reloadFinish();
+
+        void onDisconnected(int type, String error);
     }
 
     public static interface ConnectListener {

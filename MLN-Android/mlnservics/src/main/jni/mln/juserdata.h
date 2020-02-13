@@ -13,10 +13,20 @@
 #define MMLUA4ANDROID_JUSERDATA_H
 
 #include <jni.h>
+#include "utils.h"
 /// 是否为strong在第0位
 #define JUD_FLAG_STRONG 0
 /// 是否设置了key在第1位
 #define JUD_FLAG_SKEY   1
+/// 通过lua class name获取metatable名称，记得free
+#define getUDMetaname(n) joinstr(METATABLE_PREFIX, n)
+
+#define LUA_INDEX "__index"
+/// 设置metatable
+#define SET_METATABLE(L)          \
+    lua_pushstring(L, LUA_INDEX); \
+    lua_pushvalue(L, -2);         \
+    lua_rawset(L, -3);
 
 struct javaUserdata {
     jlong id;
@@ -32,6 +42,27 @@ typedef javaUserdata *UDjavaobject;
 #define udHasFlag(ud, f) (ud->flag & (1 << (f)))
 
 #define isJavaUserdata(ud) ((ud) && (ud->id) && (strstr(ud->name, METATABLE_PREFIX)))
+/**
+ * push构造函数
+ * @param clz 类
+ * @param con java构造函数
+ * @param metaname 对应的meta name
+ */
+void pushConstructorMethod(lua_State *L, jclass clz, jmethodID con, const char *metaname);
+/**
+ * 对应userdata_tostring_fun
+ */
+void pushUserdataTostringClosure(JNIEnv *env, lua_State *L, jclass clz);
+
+/**
+ * 对应userdata_bool_fun
+ */
+void pushUserdataBoolClosure(JNIEnv *env, lua_State *L, jclass clz);
+
+/**
+ * 对应gc_userdata
+ */
+void pushUserdataGcClosure(JNIEnv *env, lua_State *L, jclass clz);
 /**
  * 注册所有的userdata
  * @param lcns  lua类名数组
