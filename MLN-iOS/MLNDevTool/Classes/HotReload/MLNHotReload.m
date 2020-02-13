@@ -291,7 +291,18 @@ static MLNHotReload *sharedInstance;
 - (void)willSetupLuaCore:(MLNKitInstance *)instance {
     [instance registerClasses:@[[MLNDebugContext class]] error:NULL];
     mln_luaopen_socket_core(instance.luaCore.state);
-    [instance loadDebugModelIfNeed];
+    
+    NSString *backupBundlePath = [instance.luaCore.currentBundle bundlePath];
+    [instance changeLuaBundleWithPath:[MLNDebugContext debugBundle].bundlePath];
+    NSString *mlndebugPath = [[MLNDebugContext debugBundle] pathForResource:@"mlndebug.lua" ofType:nil];
+    NSError *error = nil;
+    NSData *data = [NSData dataWithContentsOfFile:mlndebugPath];
+    
+    BOOL ret = [instance.luaCore runData:data name:@"mlndebug.lua" error:&error];
+    NSAssert(ret, @"%@", [error.userInfo objectForKey:@"message"]);
+    if (ret) {
+        [instance changeLuaBundleWithPath:backupBundlePath];
+    }
 }
 
 #pragma mark - Getter
