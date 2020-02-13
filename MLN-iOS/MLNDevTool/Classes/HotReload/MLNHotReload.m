@@ -121,7 +121,7 @@ static MLNHotReload *sharedInstance;
 
 - (MLNKitInstance *)createLuaInstance:(NSString * )bundlePath entryFilePath:(NSString * _Nonnull)entryFilePath params:(NSDictionary * _Nonnull )params
 {
-    MLNKitInstance *luaInstance = [[MLNKitInstance alloc] initWithLuaBundle:nil viewController:self.viewController];
+    MLNKitInstance *luaInstance = [[MLNKitInstance alloc] initWithLuaBundle:nil luaCoreBuilder:nil viewController:self.viewController];
     luaInstance.delegate = self;
     luaInstance.instanceHandlersManager.errorHandler = self;
     [luaInstance changeLuaBundleWithPath:bundlePath];
