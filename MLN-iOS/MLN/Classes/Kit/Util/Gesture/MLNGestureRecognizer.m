@@ -96,7 +96,7 @@
     for (UIView *subview in superView.subviews)
     {
         //当触摸点在子视图上时，才做处理
-        if (subview.hidden == NO && subview.lua_enable && subview.alpha > 0.01 && CGRectContainsPoint(subview.frame, point)) {
+        if (subview.mln_isConvertible && subview.hidden == NO && subview.lua_enable && subview.alpha > 0.01 && CGRectContainsPoint(subview.frame, point)) {
             if ( [subview lua_consumeEvent]) {
                 return YES;
             }

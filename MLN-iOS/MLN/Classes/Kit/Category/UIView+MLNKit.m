@@ -37,9 +37,13 @@ static const void *kNeedEndEditing = &kNeedEndEditing;
 {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        Method origMethod5 = class_getInstanceMethod([self class], @selector(removeFromSuperview));
-        Method swizzledMethod5 = class_getInstanceMethod([self class], @selector(mln_in_removeFromSuperview));
-        method_exchangeImplementations(origMethod5, swizzledMethod5);
+        Method origMethod1 = class_getInstanceMethod([self class], @selector(hitTest:withEvent:));
+        Method swizzledMethod1 = class_getInstanceMethod([self class], @selector(mln_hitTest:withEvent:));
+        method_exchangeImplementations(origMethod1, swizzledMethod1);
+        
+        Method origMethod2 = class_getInstanceMethod([self class], @selector(removeFromSuperview));
+        Method swizzledMethod2 = class_getInstanceMethod([self class], @selector(mln_in_removeFromSuperview));
+        method_exchangeImplementations(origMethod2, swizzledMethod2);
     });
 }
 
@@ -49,6 +53,22 @@ static const void *kNeedEndEditing = &kNeedEndEditing;
         [self mln_in_traverseAllSubviewsCallbackDetached];
     }
     [self mln_in_removeFromSuperview];
+}
+
+- (UIView *)mln_hitTest:(CGPoint)point withEvent:(UIEvent *)event
+{
+    if (self.mln_isConvertible && self.userInteractionEnabled && self.hidden == NO && self.alpha > 0.01 && ![self lua_consumeEvent]) {
+        for (UIView *levelView in self.superview.subviews) {
+            if (levelView.hidden == YES || levelView.alpha <= 0.01 || levelView.userInteractionEnabled == NO || levelView == self) {
+                break;
+            }
+            BOOL isInside = [levelView pointInside:point withEvent:event];
+            if (isInside && [levelView lua_consumeEvent]) {
+                return nil;
+            }
+        }
+    }
+    return [self mln_hitTest:point withEvent:event];
 }
 
 - (void)mln_touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
