@@ -57,7 +57,8 @@ static const void *kNeedEndEditing = &kNeedEndEditing;
 
 - (UIView *)mln_hitTest:(CGPoint)point withEvent:(UIEvent *)event
 {
-    if (self.mln_isConvertible && self.userInteractionEnabled && self.hidden == NO && self.alpha > 0.01 && ![self lua_consumeEvent]) {
+    UIView *hitView = [self mln_hitTest:point withEvent:event];
+    if (hitView == self && hitView.gestureRecognizers == nil && self.mln_isConvertible && self.userInteractionEnabled && self.hidden == NO && self.alpha > 0.01 && ![self lua_consumeEvent]) {
         for (UIView *levelView in self.superview.subviews) {
             if (levelView.hidden == YES || levelView.alpha <= 0.01 || levelView.userInteractionEnabled == NO || levelView == self) {
                 break;
@@ -68,7 +69,7 @@ static const void *kNeedEndEditing = &kNeedEndEditing;
             }
         }
     }
-    return [self mln_hitTest:point withEvent:event];
+    return hitView;
 }
 
 - (void)mln_touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
