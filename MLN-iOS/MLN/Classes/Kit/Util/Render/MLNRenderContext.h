@@ -30,6 +30,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)updateIfNeed;
 - (void)cleanGradientColorIfNeed;
 - (void)cleanLayerContentsIfNeed;
+- (void)resetClipWithTask;
 
 - (CGFloat)cornerRadius;
 - (CGFloat)cornerRadiusWithDirection:(MLNRectCorner)corner;
