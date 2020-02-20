@@ -63,7 +63,7 @@ static const void *kNeedEndEditing = &kNeedEndEditing;
             if (levelView.hidden == YES || levelView.alpha <= 0.01 || levelView.userInteractionEnabled == NO || levelView == self) {
                 break;
             }
-            BOOL isInside = [levelView pointInside:point withEvent:event];
+            BOOL isInside = [levelView pointInside:[self convertPoint:point toView:levelView] withEvent:event];
             if (isInside && [levelView lua_consumeEvent]) {
                 return nil;
             }
