@@ -57,19 +57,36 @@ static const void *kNeedEndEditing = &kNeedEndEditing;
 
 - (UIView *)mln_hitTest:(CGPoint)point withEvent:(UIEvent *)event
 {
-    UIView *hitView = [self mln_hitTest:point withEvent:event];
-    if (hitView == self && hitView.gestureRecognizers == nil && self.mln_isConvertible && self.userInteractionEnabled && self.hidden == NO && self.alpha > 0.01 && ![self lua_consumeEvent]) {
-        for (UIView *levelView in self.superview.subviews) {
-            if (levelView.hidden == YES || levelView.alpha <= 0.01 || levelView.userInteractionEnabled == NO || levelView == self) {
-                break;
-            }
-            BOOL isInside = [levelView pointInside:[self convertPoint:point toView:levelView] withEvent:event];
-            if (isInside && [levelView lua_consumeEvent]) {
-                return nil;
+    if (![self mln_isConvertible]) {
+        return [self mln_hitTest:point withEvent:event];
+    }
+    // 如果交互未打开，或者透明度小于0.05 或者 视图被隐藏
+    if (self.userInteractionEnabled == NO || self.alpha < 0.05 || self.hidden == YES)
+    {
+        return nil;
+    }
+    // 如果 touch 的point 在 self 的bounds 内
+    if ([self pointInside:point withEvent:event])
+    {
+        NSInteger count = self.subviews.count;
+        for ( NSInteger i = count - 1; i >= 0; i--)
+        {
+            UIView* subView = self.subviews[i];
+            //进行坐标转化
+            CGPoint coverPoint = [subView convertPoint:point fromView:self];
+            // 调用子视图的 hitTest 重复上面的步骤。找到了，返回hitTest view ,没找到返回有自身处理
+            UIView *hitTestView = [subView hitTest:coverPoint withEvent:event];
+            if (hitTestView && (![self mln_isConvertible] || hitTestView.gestureRecognizers != nil || [hitTestView lua_hasTouchesEvent]))
+            {
+                return hitTestView;
             }
         }
+        if (![self mln_isConvertible] || self.gestureRecognizers != nil || [self lua_hasTouchesEvent])
+        {
+            return self;
+        }
     }
-    return hitView;
+    return nil;
 }
 
 - (void)mln_touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
@@ -822,6 +839,27 @@ static const void *kLuaRenderContext = &kLuaRenderContext;
 - (BOOL)lua_consumeEvent
 {
     return [self mln_gesture] != nil;
+}
+
+- (BOOL)lua_hasTouchesEvent
+{
+    unsigned int methodCount =0;
+    Method* methodList = class_copyMethodList([self class],&methodCount);
+    for(int i=0;i<methodCount;i++)
+    {
+        Method temp = methodList[i];
+        const char* name_s =sel_getName(method_getName(temp));
+        NSString *methodName = [NSString stringWithUTF8String:name_s];
+        if ([methodName isEqualToString:@"touchesBegan:withEvent:"] ||
+            [methodName isEqualToString:@"touchesMoved:withEvent:"] ||
+            [methodName isEqualToString:@"touchesEnded:withEvent:"] ||
+            [methodName isEqualToString:@"touchesCancelled:withEvent:"]) {
+            free(methodList);
+            return YES;
+        }
+    }
+    free(methodList);
+    return NO;
 }
 
 - (BOOL)mln_longPressAction:(UIGestureRecognizer *)gesture
