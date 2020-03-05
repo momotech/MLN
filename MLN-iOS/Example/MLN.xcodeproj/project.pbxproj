@@ -7,6 +7,19 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0011BBB32410AC3F003AE819 /* MLNDatabindingTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 0011BBB22410AC3F003AE819 /* MLNDatabindingTests.m */; };
+		0011BBB72410AC6F003AE819 /* MLNTestModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 0011BBB62410AC6F003AE819 /* MLNTestModel.m */; };
+		009DD8D524114B9600452458 /* MLNArrayBindingTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 009DD8D424114B9600452458 /* MLNArrayBindingTests.m */; };
+
+		00A0C999243C180500F0D003 /* MLNPerformanceTestController.m in Sources */ = {isa = PBXBuildFile; fileRef = 00A0C998243C180500F0D003 /* MLNPerformanceTestController.m */; };
+		00A0C9A1243C3C0500F0D003 /* LuaNativeUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00A0C9A0243C3C0500F0D003 /* LuaNativeUITests.m */; };
+		00DA72B9243ED12700981719 /* MLNReflectTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00DA72B8243ED12700981719 /* MLNReflectTests.m */; };
+		00DA72BC243F011700981719 /* DataBindTest.lua in Resources */ = {isa = PBXBuildFile; fileRef = 00DA72BA243F011100981719 /* DataBindTest.lua */; };
+		00E652532417695900A878B8 /* MLNDataBindHotReload.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E652522417695900A878B8 /* MLNDataBindHotReload.m */; };
+		00E6525624176A0F00A878B8 /* MLNDataBindModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E6525524176A0F00A878B8 /* MLNDataBindModel.m */; };
+		00E6525C2418EFF200A878B8 /* MLNDictionaryTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E6525B2418EFF200A878B8 /* MLNDictionaryTests.m */; };
+		00E6526B2420AD1800A878B8 /* MLNBindModelViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E6526A2420AD1800A878B8 /* MLNBindModelViewController.m */; };
+		00E6526E2420BCCE00A878B8 /* MLNBindTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E6526D2420BCCE00A878B8 /* MLNBindTableViewController.m */; };
 		112C50D76F2A49BC8742D484 /* libPods-LuaNative.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F690E0F94A4E45F3BA4BF4B2 /* libPods-LuaNative.a */; };
 		3012BB102326822F00FA2BB2 /* MLNNavigatorHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 3012BB0F2326822F00FA2BB2 /* MLNNavigatorHandler.m */; };
 		30A4EB5A231CC5CD00995416 /* MLNMyHttpHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 30A4EB59231CC5CD00995416 /* MLNMyHttpHandler.m */; };
@@ -102,6 +115,27 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		0011BBB22410AC3F003AE819 /* MLNDatabindingTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNDatabindingTests.m; sourceTree = "<group>"; };
+		0011BBB52410AC6F003AE819 /* MLNTestModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNTestModel.h; sourceTree = "<group>"; };
+		0011BBB62410AC6F003AE819 /* MLNTestModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNTestModel.m; sourceTree = "<group>"; };
+		009DD8D424114B9600452458 /* MLNArrayBindingTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNArrayBindingTests.m; sourceTree = "<group>"; };
+
+		00A0C997243C180500F0D003 /* MLNPerformanceTestController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNPerformanceTestController.h; sourceTree = "<group>"; };
+		00A0C998243C180500F0D003 /* MLNPerformanceTestController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNPerformanceTestController.m; sourceTree = "<group>"; };
+		00A0C99E243C3C0400F0D003 /* LuaNativeUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = LuaNativeUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		00A0C9A0243C3C0500F0D003 /* LuaNativeUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LuaNativeUITests.m; sourceTree = "<group>"; };
+		00A0C9A2243C3C0500F0D003 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		00DA72B8243ED12700981719 /* MLNReflectTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNReflectTests.m; sourceTree = "<group>"; };
+		00DA72BA243F011100981719 /* DataBindTest.lua */ = {isa = PBXFileReference; lastKnownFileType = text; path = DataBindTest.lua; sourceTree = "<group>"; };
+		00E652512417695900A878B8 /* MLNDataBindHotReload.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNDataBindHotReload.h; sourceTree = "<group>"; };
+		00E652522417695900A878B8 /* MLNDataBindHotReload.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNDataBindHotReload.m; sourceTree = "<group>"; };
+		00E6525424176A0F00A878B8 /* MLNDataBindModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNDataBindModel.h; sourceTree = "<group>"; };
+		00E6525524176A0F00A878B8 /* MLNDataBindModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNDataBindModel.m; sourceTree = "<group>"; };
+		00E6525B2418EFF200A878B8 /* MLNDictionaryTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNDictionaryTests.m; sourceTree = "<group>"; };
+		00E652692420AD1800A878B8 /* MLNBindModelViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNBindModelViewController.h; sourceTree = "<group>"; };
+		00E6526A2420AD1800A878B8 /* MLNBindModelViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNBindModelViewController.m; sourceTree = "<group>"; };
+		00E6526C2420BCCE00A878B8 /* MLNBindTableViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNBindTableViewController.h; sourceTree = "<group>"; };
+		00E6526D2420BCCE00A878B8 /* MLNBindTableViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNBindTableViewController.m; sourceTree = "<group>"; };
 		02612459D91635274DB7C591 /* libPods-MLN_Tests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-MLN_Tests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		0BFEA11F75FC7C356E75DFD6 /* Pods-MLN_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MLN_Example.release.xcconfig"; path = "Target Support Files/Pods-MLN_Example/Pods-MLN_Example.release.xcconfig"; sourceTree = "<group>"; };
 		1018AD05C0E113C32A1AD38C /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
@@ -292,6 +326,35 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0011BBB42410AC46003AE819 /* DataBinding */ = {
+			isa = PBXGroup;
+			children = (
+				0011BBB52410AC6F003AE819 /* MLNTestModel.h */,
+				0011BBB62410AC6F003AE819 /* MLNTestModel.m */,
+				0011BBB22410AC3F003AE819 /* MLNDatabindingTests.m */,
+				009DD8D424114B9600452458 /* MLNArrayBindingTests.m */,
+				00E6525B2418EFF200A878B8 /* MLNDictionaryTests.m */,
+				00DA72B8243ED12700981719 /* MLNReflectTests.m */,
+				00DA72BA243F011100981719 /* DataBindTest.lua */,
+			);
+			path = DataBinding;
+			sourceTree = "<group>";
+		};
+		00E652502417693600A878B8 /* DataBind */ = {
+			isa = PBXGroup;
+			children = (
+				00E652512417695900A878B8 /* MLNDataBindHotReload.h */,
+				00E652522417695900A878B8 /* MLNDataBindHotReload.m */,
+				00E6525424176A0F00A878B8 /* MLNDataBindModel.h */,
+				00E6525524176A0F00A878B8 /* MLNDataBindModel.m */,
+				00E652692420AD1800A878B8 /* MLNBindModelViewController.h */,
+				00E6526A2420AD1800A878B8 /* MLNBindModelViewController.m */,
+				00E6526C2420BCCE00A878B8 /* MLNBindTableViewController.h */,
+				00E6526D2420BCCE00A878B8 /* MLNBindTableViewController.m */,
+			);
+			path = DataBind;
+			sourceTree = "<group>";
+		};
 		4DADC4E2A37EF6A986E99F07 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
@@ -361,6 +424,7 @@
 				B2DD3E54237990E9002AB6AD /* MLNActionManager */,
 				B2DD3E4F237990E9002AB6AD /* MLNPackageManager */,
 				B29500B42371855900F48F09 /* Gallery_Native */,
+				00E652502417693600A878B8 /* DataBind */,
 				FA383454239A6356000F900E /* Main.storyboard */,
 				FA383457239A64AF000F900E /* LaunchScreen.storyboard */,
 				6003F5A8195388D20070C39A /* Images.xcassets */,
@@ -384,6 +448,7 @@
 		6003F5B5195388D20070C39A /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				0011BBB42410AC46003AE819 /* DataBinding */,
 				6003F5BB195388D20070C39A /* Tests.m */,
 				6003F5B6195388D20070C39A /* Supporting Files */,
 			);
@@ -782,7 +847,7 @@
 			attributes = {
 				CLASSPREFIX = MLN;
 				LastUpgradeCheck = 0720;
-				ORGANIZATIONNAME = liu.xu_1586;
+				ORGANIZATIONNAME = MoMo;
 				TargetAttributes = {
 					6003F589195388D20070C39A = {
 						DevelopmentTeam = 36WT396TPZ;
@@ -834,6 +899,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				6003F5BA195388D20070C39A /* InfoPlist.strings in Resources */,
+				00DA72BC243F011700981719 /* DataBindTest.lua in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -939,6 +1005,7 @@
 				FA4EE3072379095700449250 /* MLNGalleryMineBottomPageBaseCell.m in Sources */,
 				FA4EE313237917E500449250 /* MLNGalleryMinePageCellCollectCell.m in Sources */,
 				FA4EE30D237909AB00449250 /* MLNGalleryMineBottomPageDynamicCell.m in Sources */,
+				00E6526E2420BCCE00A878B8 /* MLNBindTableViewController.m in Sources */,
 				B29500D62372627000F48F09 /* MLNNativeTabSegmentView.m in Sources */,
 				B29500EA2372A3A400F48F09 /* MLNSimpleViewPager.m in Sources */,
 				B27F65C52377AAAE00F2D341 /* MLNGalleryMessageBaseCellModel.m in Sources */,
@@ -946,8 +1013,10 @@
 				B27F65AC2377AA9700F2D341 /* MLNNativeWaterfallHeaderView.m in Sources */,
 				30A4EB60231CD75200995416 /* MLNMyRefreshHandler.m in Sources */,
 				30A4EB5D231CC86B00995416 /* MLNMyImageHandler.m in Sources */,
+				00E652532417695900A878B8 /* MLNDataBindHotReload.m in Sources */,
 				30E24E9622F3D74A00A0E78C /* MLNGlobalVarTest.m in Sources */,
 				B27F65C62377AAAE00F2D341 /* MLNGalleryMessageToolCellModel.m in Sources */,
+				00E6525624176A0F00A878B8 /* MLNDataBindModel.m in Sources */,
 				6003F5A7195388D20070C39A /* MLNLuaGalleryViewController.m in Sources */,
 				3012BB102326822F00FA2BB2 /* MLNNavigatorHandler.m in Sources */,
 				B2DD3E5E237990E9002AB6AD /* MLNPackage.m in Sources */,
@@ -956,6 +1025,7 @@
 				B27F658C2377AA6C00F2D341 /* MLNGalleryMineBottomPage.m in Sources */,
 				6003F59A195388D20070C39A /* main.m in Sources */,
 				B29500B72371A3ED00F48F09 /* MLNGalleryMainViewController.m in Sources */,
+				00E6526B2420AD1800A878B8 /* MLNBindModelViewController.m in Sources */,
 				B27F65D62377AAC400F2D341 /* MLNHomeDataHandler.m in Sources */,
 				30E24E9322F3D74A00A0E78C /* MLNTestMe.m in Sources */,
 				FA4EE2FD237907B000449250 /* MLNGalleryMinePageCellHomeModel.m in Sources */,
@@ -989,6 +1059,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				6003F5BC195388D20070C39A /* Tests.m in Sources */,
+				00DA72B9243ED12700981719 /* MLNReflectTests.m in Sources */,
+				009DD8D524114B9600452458 /* MLNArrayBindingTests.m in Sources */,
+				0011BBB32410AC3F003AE819 /* MLNDatabindingTests.m in Sources */,
+				0011BBB72410AC6F003AE819 /* MLNTestModel.m in Sources */,
+				00E6525C2418EFF200A878B8 /* MLNDictionaryTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1208,7 +1283,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MLN_Example.app/MLN_Example";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/LuaNative.app/LuaNative";
 				WRAPPER_EXTENSION = xctest;
 			};
 			name = Debug;
@@ -1229,7 +1304,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MLN_Example.app/MLN_Example";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/LuaNative.app/LuaNative";
 				WRAPPER_EXTENSION = xctest;
 			};
 			name = Release;
