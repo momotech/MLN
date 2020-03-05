@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0011BBB32410AC3F003AE819 /* MLNDatabindingTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 0011BBB22410AC3F003AE819 /* MLNDatabindingTests.m */; };
+		0011BBB72410AC6F003AE819 /* MLNTestModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 0011BBB62410AC6F003AE819 /* MLNTestModel.m */; };
 		112C50D76F2A49BC8742D484 /* libPods-LuaNative.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F690E0F94A4E45F3BA4BF4B2 /* libPods-LuaNative.a */; };
 		3012BB102326822F00FA2BB2 /* MLNNavigatorHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 3012BB0F2326822F00FA2BB2 /* MLNNavigatorHandler.m */; };
 		30A4EB5A231CC5CD00995416 /* MLNMyHttpHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 30A4EB59231CC5CD00995416 /* MLNMyHttpHandler.m */; };
@@ -102,6 +104,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		0011BBB22410AC3F003AE819 /* MLNDatabindingTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNDatabindingTests.m; sourceTree = "<group>"; };
+		0011BBB52410AC6F003AE819 /* MLNTestModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNTestModel.h; sourceTree = "<group>"; };
+		0011BBB62410AC6F003AE819 /* MLNTestModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNTestModel.m; sourceTree = "<group>"; };
 		02612459D91635274DB7C591 /* libPods-MLN_Tests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-MLN_Tests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		0BFEA11F75FC7C356E75DFD6 /* Pods-MLN_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MLN_Example.release.xcconfig"; path = "Target Support Files/Pods-MLN_Example/Pods-MLN_Example.release.xcconfig"; sourceTree = "<group>"; };
 		1018AD05C0E113C32A1AD38C /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
@@ -292,6 +297,16 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0011BBB42410AC46003AE819 /* DataBinding */ = {
+			isa = PBXGroup;
+			children = (
+				0011BBB22410AC3F003AE819 /* MLNDatabindingTests.m */,
+				0011BBB52410AC6F003AE819 /* MLNTestModel.h */,
+				0011BBB62410AC6F003AE819 /* MLNTestModel.m */,
+			);
+			path = DataBinding;
+			sourceTree = "<group>";
+		};
 		4DADC4E2A37EF6A986E99F07 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
@@ -384,6 +399,7 @@
 		6003F5B5195388D20070C39A /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				0011BBB42410AC46003AE819 /* DataBinding */,
 				6003F5BB195388D20070C39A /* Tests.m */,
 				6003F5B6195388D20070C39A /* Supporting Files */,
 			);
@@ -989,6 +1005,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				6003F5BC195388D20070C39A /* Tests.m in Sources */,
+				0011BBB32410AC3F003AE819 /* MLNDatabindingTests.m in Sources */,
+				0011BBB72410AC6F003AE819 /* MLNTestModel.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1208,7 +1226,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MLN_Example.app/MLN_Example";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/LuaNative.app/LuaNative";
 				WRAPPER_EXTENSION = xctest;
 			};
 			name = Debug;
@@ -1229,7 +1247,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MLN_Example.app/MLN_Example";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/LuaNative.app/LuaNative";
 				WRAPPER_EXTENSION = xctest;
 			};
 			name = Release;
