@@ -8,6 +8,7 @@
 #import "MLNKitViewController.h"
 #import "MLNKitInstance.h"
 #import "MLNLuaBundle.h"
+#import "MLNKitViewController+DataBinding.h"
 
 @interface MLNKitViewController ()
 {
@@ -155,5 +156,4 @@
     }
     return _luaInstance;
 }
-
 @end

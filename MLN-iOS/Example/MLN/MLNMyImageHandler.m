@@ -21,7 +21,7 @@
     }
     
     if ([self isHttpURL:path]) {
-        NSURL *imgURL = [NSURL URLWithString:path];
+        NSURL *imgURL = [NSURL URLWithString:[path stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]]];
         [imageView sd_setImageWithURL:imgURL];
     } else {
         UIImage *image =  [self imageWithLocalPath:path instance:MLN_KIT_INSTANCE(imageView.mln_luaCore)];
@@ -34,7 +34,7 @@
 - (void)imageView:(UIImageView<MLNEntityExportProtocol> *)imageView setImageWithPath:(NSString *)path placeHolderImage:(NSString *)placeHolder
 {
     
-    [imageView sd_setImageWithURL:[NSURL URLWithString:path] placeholderImage:[UIImage imageNamed:placeHolder]];
+    [imageView sd_setImageWithURL:[NSURL URLWithString:path] placeholderImage:placeHolder.length > 0 ? [UIImage imageNamed:placeHolder] : nil];
 }
 
 - (void)imageView:(UIImageView<MLNEntityExportProtocol> *)imageView setCornerImageWith:(NSString *)imageName placeHolderImage:(NSString *)placeHolder cornerRadius:(NSInteger)radius dircetion:(MLNRectCorner)direction {

@@ -52,6 +52,7 @@ Pod::Spec.new do |s|
         k.source_files = 'MLN-iOS/MLN/Classes/Kit/**/*.{h,m,c}'
         k.public_header_files = 'MLN-iOS/MLN/Classes/Kit/**/*.h'
         k.dependency  'MLN/Core'
+        k.dependency  'KVOController'
     end
     
 end

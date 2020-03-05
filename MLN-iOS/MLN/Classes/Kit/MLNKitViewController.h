@@ -143,6 +143,31 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (BOOL)regClasses:(NSArray<Class<MLNExportProtocol>> *)registerClasses;
 
+/**
+声明访问某个Lua的视图
+
+@param LUA_VIEW_CONTROLLER  Lua所属的视图控制器
+@param VIEW_ID 访问视图的ID
+*/
+#define MLN_VIEW_IMPORT(LUA_VIEW_CONTROLLER, VIEW_ID)\
+- (UIView *)VIEW_ID\
+{\
+return [(LUA_VIEW_CONTROLLER) findViewById: @#VIEW_ID];\
+}
+
+/**
+声明访问某个Lua的视图,并声明别名。之后Native可以通过别名访问
+
+@param LUA_VIEW_CONTROLLER  Lua所属的视图控制器
+@param VIEW_ID 访问视图的ID
+@param VIEW_ALIAS 访问视图的别名
+*/
+#define MLN_VIEW_IMPORT_WITH_ALIAS(LUA_VIEW_CONTROLLER, VIEW_ID, VIEW_ALIAS)\
+- (UIView *)VIEW_ALIAS\
+{\
+return [(LUA_VIEW_CONTROLLER) findViewById: @#VIEW_ID];\
+}
+
 @end
 
 NS_ASSUME_NONNULL_END
