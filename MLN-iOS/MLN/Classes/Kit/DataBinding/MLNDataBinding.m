@@ -1,0 +1,216 @@
+//
+//  MLNDataBinding.m
+//  AFNetworking
+//
+//  Created by Dai Dongpeng on 2020/3/3.
+//
+
+#import "MLNDataBinding.h"
+#import <pthread.h>
+#import "KVOController.h"
+#import "NSMutableArray+MLNKVO.h"
+
+@interface MLNDataBinding() {
+    pthread_mutex_t _lock;
+}
+@property (nonatomic, strong) NSMutableDictionary *dataMap;
+@property (nonatomic, strong) NSMapTable *observerMap;
+@end
+
+@implementation MLNDataBinding
+
+#pragma mark - Data
+- (instancetype)init
+{
+    self = [super init];
+    if (self) {
+        self.dataMap = [NSMutableDictionary dictionary];
+        self.observerMap =  [NSMapTable strongToWeakObjectsMapTable];
+        LOCK_INIT();
+        NSLog(@"---- init : %s %p",__FUNCTION__, self);
+    }
+    return self;
+}
+
+- (void)bindData:(NSObject *)data forKey:(NSString *)key {
+    NSParameterAssert(data && key);
+    if (data && key) {
+        LOCK();
+        if (![self.dataMap.allKeys containsObject:key]) {
+            [self.dataMap setObject:data forKey:key];
+        }
+        UNLOCK();
+    }
+}
+
+- (void)updateDataForKeyPath:(NSString *)keyPath value:(id)value {
+    NSParameterAssert(keyPath);
+    NSString *key, *path;
+    [self extractFirstKey:&key path:&path from:keyPath];
+    if (!key || !path) {
+        return;
+    }
+    LOCK();
+    NSObject *object = [self.dataMap objectForKey:key];
+    UNLOCK();
+    @try {
+        [object setValue:value forKeyPath:path];
+    } @catch (NSException *exception) {
+        NSLog(@"exception: %s %@",__func__, exception);
+    }
+}
+
+- (id)dataForKeyPath:(NSString *)keyPath {
+    NSParameterAssert(keyPath);
+    NSString *key, *path;
+    [self extractFirstKey:&key path:&path from:keyPath];
+    if (!key || !path) {
+        return nil;
+    }
+    LOCK();
+    NSObject *object = [self.dataMap objectForKey:key];
+    UNLOCK();
+    NSObject *res;
+    @try {
+        res = [object valueForKeyPath:path];
+    } @catch (NSException *exception) {
+        NSLog(@"exception: %s %@",__func__, exception);
+    }
+    return res;
+}
+
+- (void)addDataObserver:(NSObject<MLNKVOObserverProtol> *)observer forKeyPath:(NSString *)keyPath {
+    [self _realAddObserver:observer forKeyPath:keyPath isArray:NO];
+}
+
+- (void)removeDataObserver:(NSObject<MLNKVOObserverProtol> *)observer forKeyPath:(NSString *)keyPath {
+    NSParameterAssert(observer && keyPath);
+    if(!observer || !keyPath) return;
+    
+    LOCK();
+    NSMutableArray *observers = [self.observerMap objectForKey:keyPath];
+    [observers removeObject:observer];
+    UNLOCK();
+}
+
+#pragma mark - Array
+
+- (void)bindArray:(NSArray *)array forKey:(NSString *)key {
+    [self bindData:array forKey:key];
+}
+
+- (void)addArrayObserver:(NSObject<MLNKVOObserverProtol> *)observer forKey:(NSString *)key {
+    [self _realAddObserver:observer forKeyPath:key isArray:YES];
+}
+
+- (void)removeArrayObserver:(NSObject<MLNKVOObserverProtol> *)observer forKey:(NSString *)key {
+    
+}
+
+#pragma mark - Util
+// eg: form="userdata.a.b" -> key = "userdata", path = "a.b"
+- (void)extractFirstKey:(NSString **)firstKey path:(NSString **)path from:(NSString *)from {
+    NSMutableArray *coms = [from componentsSeparatedByString:@"."].mutableCopy;
+    if (coms.count >= 2) {
+        *firstKey = coms.firstObject;
+        [coms removeObjectAtIndex:0];
+        *path = [coms componentsJoinedByString:@"."];
+    }
+}
+
+- (void)_realAddObserver:(NSObject<MLNKVOObserverProtol> *)observer forKeyPath:(NSString *)keyPath isArray:(BOOL)isArray {
+    NSParameterAssert(observer && keyPath);
+    if (!observer || !keyPath) return;
+    NSString *key, *path;
+    if (!isArray) {
+        [self extractFirstKey:&key path:&path from:keyPath];
+        if (!key || !path) {
+            NSLog(@"key: %@ and path: %@ should not be nil",key,path);
+            return;
+        }
+    } else {
+        key = keyPath;
+    }
+
+    LOCK();
+    NSObject *object = [self.dataMap objectForKey:key];
+    // 只有NSMutableArray才有必要添加observer
+    if (isArray && ![object isKindOfClass:[NSMutableArray class]]) {
+        UNLOCK();
+        NSLog(@"expect NSMutableArray, object is %@",object);
+        return;
+    }
+    NSMutableArray *observerArray = [self.observerMap objectForKey:keyPath];
+    if (!observerArray) {
+        observerArray = [NSMutableArray array];
+        [self.observerMap setObject:observerArray forKey:keyPath];
+        __weak __typeof(self)weakSelf = self;
+        void(^obBlock)(NSString*,NSObject*,NSDictionary*) = ^(NSString *kp, NSObject *object, NSDictionary *change) {
+            __strong __typeof(weakSelf)self = weakSelf;
+            if (self) {
+                pthread_mutex_lock(&self->_lock);
+                NSArray *obsCopy = observerArray.copy;
+                pthread_mutex_unlock(&self->_lock);
+                for (NSObject<MLNKVOObserverProtol> *ob in obsCopy) {
+                    [ob mln_observeValueForKeyPath:kp ofObject:object change:change];
+                }
+            }
+        };
+        
+        if (!isArray) {
+            [self.KVOController observe:object keyPath:path options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld block:^(id  _Nullable obs, id  _Nonnull object, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
+                obBlock(path, object, change);
+            }];
+        } else {
+            [(NSMutableArray *)object mln_addObserverHandler:^(NSMutableArray * _Nonnull array, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
+                obBlock(nil, array, change);
+            }];
+        }
+    }
+    
+    if (![observerArray containsObject:observer]) {
+        [observerArray addObject:observer];
+    }
+    UNLOCK();
+}
+
+- (void)_addDataObserver:(NSObject<MLNKVOObserverProtol> *)observer forPath:(NSString *)path ofObject:(id)object to:(NSMutableArray *)observerArray {
+    //        NSObject *hold = observer.objectRetainingObserver ? observer.objectRetainingObserver : self;
+    __weak __typeof(self)weakSelf = self;
+    void(^obBlock)(NSString*,NSObject*,NSDictionary*) = ^(NSString *kp, NSObject *object, NSDictionary *change) {
+        __strong __typeof(weakSelf)self = weakSelf;
+        if (self) {
+            pthread_mutex_lock(&self->_lock);
+            NSArray *obsCopy = observerArray.copy;
+            pthread_mutex_unlock(&self->_lock);
+            for (NSObject<MLNKVOObserverProtol> *ob in obsCopy) {
+                [ob mln_observeValueForKeyPath:kp ofObject:object change:change];
+            }
+        }
+    };
+    
+    [self.KVOController observe:object keyPath:path options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld block:^(id  _Nullable obs, id  _Nonnull object, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
+        obBlock(path, object, change);
+    }];
+}
+
+- (void)_addArrayObserver:(NSObject<MLNKVOObserverProtol> *)observer forArray:(NSMutableArray *)array to:(NSMutableArray *)observerArray {
+    __weak __typeof(self)weakSelf = self;
+    [array mln_addObserverHandler:^(NSMutableArray * _Nonnull array, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
+        __strong __typeof(weakSelf)self = weakSelf;
+        if (self) {
+            pthread_mutex_lock(&self->_lock);
+            NSArray *obsCopy = observerArray.copy;
+            pthread_mutex_unlock(&self->_lock);
+            for (NSObject<MLNKVOObserverProtol> *ob in obsCopy) {
+                [ob mln_observeValueForKeyPath:nil ofObject:array change:change];
+            }
+        }
+    }];
+}
+
+- (void)dealloc {
+    NSLog(@"---- dealloc : %s %p",__FUNCTION__, self);
+}
+
+@end
