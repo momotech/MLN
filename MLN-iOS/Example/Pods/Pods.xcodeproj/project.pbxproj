@@ -4059,7 +4059,6 @@
 				6E8D65C21E675FFEEFC96B599FB9EAA5 /* MLNZStackNode.h */,
 				A6155817D4D8DDD5E42F23D9F940E1B3 /* MLNZStackNode.m */,
 			);
-			name = Node;
 			path = Node;
 			sourceTree = "<group>";
 		};
@@ -4714,7 +4713,6 @@
 			children = (
 				27AA11F139DA564486171B58BED0C4A1 /* Assets */,
 			);
-			name = QRCode;
 			path = QRCode;
 			sourceTree = "<group>";
 		};
@@ -4799,7 +4797,6 @@
 				B43C507B3BC6675C210B8EB9992A9E16 /* LNUsbClientImpl.h */,
 				589C4CFE8B8C440B5093C4923EA91639 /* LNUsbClientImpl.m */,
 			);
-			name = MainRunLoopObserver;
 			path = MainRunLoopObserver;
 			sourceTree = "<group>";
 		};
@@ -4821,7 +4818,6 @@
 				27EB50793AEC9DE51983C23B5512D577 /* MLNInnerCollectionView.m */,
 				6D82DE3A627AC69C8D77F871C8F0FC62 /* AutoFit */,
 			);
-			name = CollectionView;
 			path = CollectionView;
 			sourceTree = "<group>";
 		};
@@ -4857,7 +4853,6 @@
 				7F362876076FBB940133A82F323B1C51 /* Timer */,
 				F7731794E0E7DDB97EFA9528345065D4 /* WindowManager */,
 			);
-			name = Util;
 			path = Util;
 			sourceTree = "<group>";
 		};
@@ -4910,7 +4905,6 @@
 				94D7363AF0A7E859C2086390333559F2 /* MLNWindowContext.h */,
 				E468EF3257EC25B3061FA7D3CDFC57BB /* MLNWindowContext.m */,
 			);
-			name = WindowManager;
 			path = WindowManager;
 			sourceTree = "<group>";
 		};
@@ -4944,7 +4938,6 @@
 				0F0644A082F0F98BAD6C378E26B5E7F4 /* NSError+MLNCore.h */,
 				02A9BF3584C5C9E8A1E58AE2A5FBACCB /* NSError+MLNCore.m */,
 			);
-			name = Render;
 			path = Render;
 			sourceTree = "<group>";
 		};
@@ -5270,6 +5263,7 @@
 				4B770CDC97ECE850B6371E585E5BC18F /* MLNGaussEffectHandler.h in Headers */,
 				9B79DEE20A37D07077821040BA9EB9A6 /* MLNGlobalFuncExporterMacro.h in Headers */,
 				5202D53074EA3CE5F6AD588DBA1042E3 /* MLNGlobalFuncExportProtocol.h in Headers */,
+				009DD8EC241370DE00452458 /* NSObject+MLNSwizzle.h in Headers */,
 				F8ECE9C7CF58CB087D9F3359DFACA289 /* MLNGlobalFuntionExporter.h in Headers */,
 				4B83BDA882AC2A12A7D0A3AA65370A16 /* MLNGlobalVarExporter.h in Headers */,
 				1A08F556BDFA53EE8ADF896F134F687F /* MLNGlobalVarExporterMacro.h in Headers */,
@@ -6737,6 +6731,7 @@
 				EC55BBFD7CA1914120589868E6E8C3BA /* MLNColor.m in Sources */,
 				07B0A623F82A1914A6461469C5CFF0B8 /* MLNContainerWindow.m in Sources */,
 				A1F54A14611CC4DECFC5F0E9CC7D308A /* MLNContentMode.m in Sources */,
+				009DD8ED241370E200452458 /* NSObject+MLNSwizzle.m in Sources */,
 				5D3C50FA4DB56BB202CCB6DB32AEDA7E /* MLNConvertor.m in Sources */,
 				B9DF3BD643F428443D786909B44D42BC /* MLNCornerImageLoader.m in Sources */,
 				5B4078A77A51500CB1C9B640D18A6728 /* MLNCornerLayerHandler.m in Sources */,

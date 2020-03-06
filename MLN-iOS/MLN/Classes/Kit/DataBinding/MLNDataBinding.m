@@ -47,10 +47,15 @@
     NSParameterAssert(keyPath);
     NSString *key, *path;
     [self extractFirstKey:&key path:&path from:keyPath];
-    if (!key || !path) {
+    if (!key) {
         return;
     }
     LOCK();
+    if (!path) {
+        [self.dataMap setValue:value forKey:key];
+        UNLOCK();
+        return;
+    }
     NSObject *object = [self.dataMap objectForKey:key];
     UNLOCK();
     @try {
@@ -64,12 +69,15 @@
     NSParameterAssert(keyPath);
     NSString *key, *path;
     [self extractFirstKey:&key path:&path from:keyPath];
-    if (!key || !path) {
+    if (!key) {
         return nil;
     }
     LOCK();
     NSObject *object = [self.dataMap objectForKey:key];
     UNLOCK();
+    if (!path) {
+        return object;
+    }
     NSObject *res;
     @try {
         res = [object valueForKeyPath:path];
@@ -96,6 +104,9 @@
 #pragma mark - Array
 
 - (void)bindArray:(NSArray *)array forKey:(NSString *)key {
+    if ([array isKindOfClass:[NSMutableArray class]]) {
+        [(NSMutableArray *)array mln_startKVO];
+    }
     [self bindData:array forKey:key];
 }
 
@@ -111,8 +122,8 @@
 // eg: form="userdata.a.b" -> key = "userdata", path = "a.b"
 - (void)extractFirstKey:(NSString **)firstKey path:(NSString **)path from:(NSString *)from {
     NSMutableArray *coms = [from componentsSeparatedByString:@"."].mutableCopy;
+    *firstKey = coms.firstObject;
     if (coms.count >= 2) {
-        *firstKey = coms.firstObject;
         [coms removeObjectAtIndex:0];
         *path = [coms componentsJoinedByString:@"."];
     }

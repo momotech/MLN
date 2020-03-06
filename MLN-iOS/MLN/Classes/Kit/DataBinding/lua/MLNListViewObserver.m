@@ -31,7 +31,10 @@
 
 - (void)notifyKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change {
     [super notifyKeyPath:keyPath ofObject:object change:change];
-    [(UITableView *)self.listView reloadData];
+    MLNTableView *table = (MLNTableView *)self.listView;
+    
+    [table.adapter tableViewReloadData:table.adapter.targetTableView];
+    [table.adapter.targetTableView reloadData];
     
     NSLog(@"keypath %@, object %@ change %@",keyPath, object, change);
     
