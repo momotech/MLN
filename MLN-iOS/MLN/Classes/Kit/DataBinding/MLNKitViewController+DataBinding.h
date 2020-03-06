@@ -25,7 +25,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param data 要绑定的数据
  @param key 访问数据的Key
  */
-- (void)bindData:(NSObject *)data key:(NSString *)key;
+- (void)bindData:(NSObject *)data forKey:(NSString *)key;
 
 /**
  更新绑定的模型数据
@@ -60,6 +60,10 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)removeDataObserver:(NSObject<MLNKVOObserverProtol> *)observer forKeyPath:(NSString *)keyPath;
 
 @end
+
+//@interface MLNKitViewController (ArrayBinding)
+//
+//@end
 
 @class MLNDataBinding;
 @interface MLNKitViewController () {
