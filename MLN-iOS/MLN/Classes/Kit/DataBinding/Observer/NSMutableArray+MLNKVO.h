@@ -19,6 +19,16 @@ typedef void(^MLNKVOArrayHandler)(NSMutableArray *array,NSDictionary<NSKeyValueC
 - (void)mln_removeObserverHandler:(MLNKVOArrayHandler)handler;
 - (void)mln_clearObserverHandlers;
 
+- (void)mln_startKVO;
+- (void)mln_stopKVO;
+
+@end
+
+@interface NSMutableArray (MLNKVOListener)
+
++ (void)swizzleArray:(NSMutableArray *)array;
++ (void)swizzleWithClass:(Class)cls;
+
 @end
 
 NS_ASSUME_NONNULL_END

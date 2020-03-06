@@ -35,7 +35,7 @@
     return view;
 }
 
-- (void)bindData:(NSObject *)data key:(NSString *)key {
+- (void)bindData:(NSObject *)data forKey:(NSString *)key {
     [self.dataBinding bindData:data forKey:key];
 }
 
@@ -63,3 +63,7 @@
 }
 
 @end
+
+//@implementation MLNKitViewController (ArrayBinding)
+//
+//@end
