@@ -24,11 +24,5 @@ typedef void(^MLNKVOArrayHandler)(NSMutableArray *array,NSDictionary<NSKeyValueC
 
 @end
 
-@interface NSMutableArray (MLNKVOListener)
-
-+ (void)swizzleArray:(NSMutableArray *)array;
-+ (void)swizzleWithClass:(Class)cls;
-
-@end
 
 NS_ASSUME_NONNULL_END

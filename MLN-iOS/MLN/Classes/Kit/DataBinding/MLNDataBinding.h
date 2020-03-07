@@ -28,7 +28,6 @@ NS_ASSUME_NONNULL_BEGIN
 @interface MLNDataBinding ()
 - (void)updateDataForKeyPath:(NSString *)keyPath value:(id)value;
 - (id __nullable)dataForKeyPath:(NSString *)keyPath;
-
 @end
 
 

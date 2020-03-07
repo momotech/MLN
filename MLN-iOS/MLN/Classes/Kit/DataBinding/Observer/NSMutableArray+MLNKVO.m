@@ -10,17 +10,26 @@
 #import "NSObject+MLNSwizzle.h"
 
 @interface NSObject (MLNKVOListener)
-@property (nonatomic, strong) Class mln_originClass;
+@property (nonatomic, strong) Class mlnkvo_originClass;
+@property (nonatomic, assign) BOOL mlnkvo_isObervering;
 @end
 
 @implementation NSObject (MLNKVOListener)
 
-- (Class)mln_originClass {
-    return objc_getAssociatedObject(self, @selector(mln_originClass));
+- (Class)mlnkvo_originClass {
+    return objc_getAssociatedObject(self, @selector(mlnkvo_originClass));
 }
 
-- (void)setMln_originClass:(Class)mln_originClass {
-    objc_setAssociatedObject(self, @selector(mln_originClass), mln_originClass, OBJC_ASSOCIATION_RETAIN);
+- (void)setMlnkvo_originClass:(Class)mlnkvo_originClass {
+    objc_setAssociatedObject(self, @selector(mlnkvo_originClass), mlnkvo_originClass, OBJC_ASSOCIATION_RETAIN);
+}
+
+- (BOOL)mlnkvo_isObervering {
+    return [objc_getAssociatedObject(self, @selector(mlnkvo_isObervering)) boolValue];
+}
+
+- (void)setMlnkvo_isObervering:(BOOL)mlnkvo_isObervering {
+    objc_setAssociatedObject(self, @selector(mlnkvo_isObervering), @(mlnkvo_isObervering), OBJC_ASSOCIATION_RETAIN);
 }
 
 @end
@@ -36,12 +45,14 @@
 //    }
 //}
 
-- (void)mln_notifyAllObserver:(NSKeyValueChange)type indexSet:(NSIndexSet *)indexSet {
+- (void)mln_notifyAllObserver:(NSKeyValueChange)type indexSet:(NSIndexSet *)indexSet newValue:(id)newValue oldValue:(id)oldValue {
     NSMutableArray<MLNKVOArrayHandler> *obs = objc_getAssociatedObject(self, kMLNKVOArrayHandlers);
     if (obs && obs.count > 0) {
         NSMutableDictionary *change = @{}.mutableCopy;
         [change setValue:@(type) forKey:NSKeyValueChangeKindKey];
         [change setValue:indexSet forKey:NSKeyValueChangeIndexesKey];
+        [change setValue:newValue forKey:NSKeyValueChangeNewKey];
+        [change setValue:oldValue forKey:NSKeyValueChangeOldKey];
         for (MLNKVOArrayHandler handler in obs) {
             handler(self, change);
         }
@@ -90,12 +101,12 @@ NS_INLINE  Class MLNCreateSubClass(Class class, NSString *subName) {
     NSString *className = NSStringFromClass(class);
     BOOL isStart = [className containsString:kMLNKVO];
     if (!isStart) {
-        self.mln_originClass = class;
+        self.mlnkvo_originClass = class;
         NSString *subName = [className stringByAppendingString:kMLNKVO];
         Class subClass = objc_getClass(subName.UTF8String);
         if (!subClass) {
             subClass = MLNCreateSubClass(class, subName);
-            [NSMutableArray swizzleWithClass:subClass];
+            [NSMutableArray mlnkvo_swizzleWithClass:subClass];
         };
         object_setClass(self, subClass);
     }
@@ -104,66 +115,121 @@ NS_INLINE  Class MLNCreateSubClass(Class class, NSString *subName) {
 - (void)mln_stopKVO {
     Class cls = object_getClass(self);
     BOOL isStart = [NSStringFromClass(cls) containsString:kMLNKVO];
-    Class originClass = self.mln_originClass;
-    if (isStart && self.mln_originClass) {
+    Class originClass = self.mlnkvo_originClass;
+    if (isStart && originClass) {
         object_setClass(self, originClass);
     }
 }
-
-@end
-
-@implementation NSMutableArray (MLNKVOListener)
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wundeclared-selector"
 #pragma clang diagnostic ignored "-Warc-performSelector-leaks"
 
-//+ (void)mlnkvo_addNecessaryMethodForClass:(Class)cls {
-//    SEL sel_arr[] = {
-//        @selector(insertObject:atIndex:)
-//    };
-//    IMP imp = imp_implementationWithBlock(^{});
-//    for (int i = 0; i < sizeof(sel_arr) / sizeof(SEL); i++) {
-//        SEL sel = sel_arr[i];
-//        Method originMethod = class_getInstanceMethod(cls, sel);
-//    }
-//}
+#define GetIMP() \
+Class super = class_getSuperclass(object_getClass(self)); \
+Method m = class_getInstanceMethod(super, origin); \
+IMP imp = method_getImplementation(m)
 
-+ (void)swizzleWithClass:(Class)cls {
-    SEL origin = @selector(insertObject:atIndex:);
-    SEL swizzle = @selector(mlnkvo_insertObject:atIndex:);
+#define CallIMP(A) \
+BOOL isOberversing = self.mlnkvo_isObervering; \
+if (!isOberversing) { \
+    self.mlnkvo_isObervering = YES; \
+} \
+GetIMP(); \
+A; \
+
+#define AfterIMP(A)\
+if (!isOberversing) { \
+    self.mlnkvo_isObervering = NO; \
+    A; \
+}
+
++ (void)mlnkvo_swizzleWithClass:(Class)cls {
+/****************************************
+according to: https://developer.apple.com/documentation/foundation/nsmutablearray#//apple_ref/doc/uid/TP40003688
+shold override five primitive methods
+    insertObject:atIndex:
+    removeObjectAtIndex:
+    addObject:
+    removeLastObject
+    replaceObjectAtIndex:withObject:
+ ************************************************/
     dispatch_block_t placeholderBlock = ^{};
-
+    SEL origin, swizzle;
+    
+    origin = @selector(insertObject:atIndex:);
+    swizzle = @selector(mlnkvo_insertObject:atIndex:);
     [cls mln_swizzleInstanceSelector:origin withNewSelector:swizzle newImpBlock:^(NSMutableArray *self, id object, NSUInteger index) {
+        id oldValue;
+        if (index < self.count) {
+            oldValue = [self objectAtIndex:index];
+        }
         // call real imp
-        Class super = class_getSuperclass(object_getClass(self));
-        Method m = class_getInstanceMethod(super, origin);
-        IMP imp = method_getImplementation(m);
+        GetIMP();
         ((void(*)(id,SEL,id,NSUInteger))imp)(self, origin, object,index);
         // call observer
-        NSIndexSet *set = [NSIndexSet indexSetWithIndex:self.count];
-        [self mln_notifyAllObserver:NSKeyValueChangeInsertion indexSet:set];
+        NSIndexSet *set = [NSIndexSet indexSetWithIndex:index];
+        [self mln_notifyAllObserver:NSKeyValueChangeInsertion indexSet:set newValue:object oldValue:oldValue];
     } forceAddOriginImpBlock:placeholderBlock];
     
+    origin = @selector(removeObjectAtIndex:);
+    swizzle = @selector(mlnkvo_removeObjectAtIndex:);
+    [cls mln_swizzleInstanceSelector:origin withNewSelector:swizzle newImpBlock:^(NSMutableArray *self, NSUInteger index) {
+        id oldValue;
+        if (index < self.count) {
+            oldValue = [self objectAtIndex:index];
+        }
+        
+        GetIMP();
+        ((void(*)(id,SEL,NSUInteger))imp)(self, origin, index);
+        
+        NSIndexSet *set = [NSIndexSet indexSetWithIndex:index];
+        [self mln_notifyAllObserver:NSKeyValueChangeRemoval indexSet:set newValue:nil oldValue:oldValue];
+    } forceAddOriginImpBlock:placeholderBlock];
+    
+    // iOS13: addobject: will call insertObject:atIndex:
 //    origin = @selector(addObject:);
 //    swizzle = @selector(mlnkvo_addObject:);
 //    [cls mln_swizzleInstanceSelector:origin withNewSelector:swizzle newImpBlock:^(NSMutableArray *self, id object) {
 //        // call real imp
-//        Class super = class_getSuperclass(object_getClass(self));
-//        Method m = class_getInstanceMethod(super, origin);
-//        IMP imp = method_getImplementation(m);
+//        GetIMP();
 //        ((void(*)(id,SEL,id))imp)(self, origin, object);
 //        // call observer
-//        NSIndexSet *set = [NSIndexSet indexSetWithIndex:self.count];
-//        [self mln_notifyAllObserver:NSKeyValueChangeInsertion indexSet:set];
+//        NSIndexSet *set = [NSIndexSet indexSetWithIndex:self.count - 1];
+//        [self mln_notifyAllObserver:NSKeyValueChangeInsertion indexSet:set newValue:object oldValue:nil];
 //    } forceAddOriginImpBlock:placeholderBlock];
+    
+//    origin = @selector(removeLastObject);
+//    swizzle = @selector(mlnkvo_removeLastObject);
+//    [cls mln_swizzleInstanceSelector:origin withNewSelector:swizzle newImpBlock:^(NSMutableArray *self) {
+//        NSIndexSet *set = self.count > 0 ? [NSIndexSet indexSetWithIndex:self.count - 1] : nil;
+//        id oldValue = self.lastObject;
+//        // call real imp
+//        GetIMP();
+//        ((void(*)(id,SEL))imp)(self, origin);
+//        // call observer
+//        [self mln_notifyAllObserver:NSKeyValueChangeInsertion indexSet:set newValue:nil oldValue:oldValue];
+//    } forceAddOriginImpBlock:placeholderBlock];
+    
+    origin = @selector(replaceObjectAtIndex:withObject:);
+    swizzle = @selector(mlnkvo_replaceObjectAtIndex:withObject:);
+    [cls mln_swizzleInstanceSelector:origin withNewSelector:swizzle newImpBlock:^(NSMutableArray *self, NSUInteger index, id object) {
+        id oldValue;
+        if (index < self.count) {
+            oldValue = [self objectAtIndex:index];
+        }
+        CallIMP(
+                NSIndexSet *set = [NSIndexSet indexSetWithIndex:index];
+                ((void(*)(id,SEL,NSUInteger,id))imp)(self, origin,index,object)
+                )
+        AfterIMP(
+                 [self mln_notifyAllObserver:NSKeyValueChangeReplacement indexSet:set newValue:object oldValue:oldValue]
+                 )
+
+    } forceAddOriginImpBlock:placeholderBlock];
 }
 
 #pragma clang diagnostic pop
-
-+ (void)swizzleArray:(NSMutableArray *)array {
-    
-}
 
 @end
 

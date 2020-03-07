@@ -115,7 +115,7 @@
 }
 
 - (void)removeArrayObserver:(NSObject<MLNKVOObserverProtol> *)observer forKey:(NSString *)key {
-    
+    [self removeDataObserver:observer forKeyPath:key];
 }
 
 #pragma mark - Util
@@ -183,41 +183,6 @@
         [observerArray addObject:observer];
     }
     UNLOCK();
-}
-
-- (void)_addDataObserver:(NSObject<MLNKVOObserverProtol> *)observer forPath:(NSString *)path ofObject:(id)object to:(NSMutableArray *)observerArray {
-    //        NSObject *hold = observer.objectRetainingObserver ? observer.objectRetainingObserver : self;
-    __weak __typeof(self)weakSelf = self;
-    void(^obBlock)(NSString*,NSObject*,NSDictionary*) = ^(NSString *kp, NSObject *object, NSDictionary *change) {
-        __strong __typeof(weakSelf)self = weakSelf;
-        if (self) {
-            pthread_mutex_lock(&self->_lock);
-            NSArray *obsCopy = observerArray.copy;
-            pthread_mutex_unlock(&self->_lock);
-            for (NSObject<MLNKVOObserverProtol> *ob in obsCopy) {
-                [ob mln_observeValueForKeyPath:kp ofObject:object change:change];
-            }
-        }
-    };
-    
-    [self.KVOController observe:object keyPath:path options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld block:^(id  _Nullable obs, id  _Nonnull object, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
-        obBlock(path, object, change);
-    }];
-}
-
-- (void)_addArrayObserver:(NSObject<MLNKVOObserverProtol> *)observer forArray:(NSMutableArray *)array to:(NSMutableArray *)observerArray {
-    __weak __typeof(self)weakSelf = self;
-    [array mln_addObserverHandler:^(NSMutableArray * _Nonnull array, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
-        __strong __typeof(weakSelf)self = weakSelf;
-        if (self) {
-            pthread_mutex_lock(&self->_lock);
-            NSArray *obsCopy = observerArray.copy;
-            pthread_mutex_unlock(&self->_lock);
-            for (NSObject<MLNKVOObserverProtol> *ob in obsCopy) {
-                [ob mln_observeValueForKeyPath:nil ofObject:array change:change];
-            }
-        }
-    }];
 }
 
 - (void)dealloc {

@@ -28,7 +28,7 @@
       }
     MLNUserData *ud = (MLNUserData *)lua_touserdata(L, -1);
     UIView *view = nil;
-    if (ud) {\
+    if (ud) {
         view = (__bridge __unsafe_unretained UIView *)ud->object;
     }
     lua_settop(L, base);
