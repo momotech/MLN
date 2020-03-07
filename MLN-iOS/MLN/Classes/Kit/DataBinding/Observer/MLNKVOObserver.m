@@ -66,7 +66,12 @@
 - (void)setActive:(BOOL)active {
     _active = active;
     if (active && self.notifyLiveStickyBlock) {
-        self.notifyLiveStickyBlock();
+        LOCK();
+        dispatch_block_t block = self.notifyLiveStickyBlock;
+        UNLOCK();
+        
+        block();
+        
         LOCK();
         self.notifyLiveStickyBlock = nil;
         UNLOCK();
