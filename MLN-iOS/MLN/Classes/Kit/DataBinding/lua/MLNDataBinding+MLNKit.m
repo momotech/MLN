@@ -52,11 +52,24 @@
 }
 
 + (NSUInteger)lua_sectionCountForKey:(NSString *)key {
+    NSArray *arr = [self lua_dataForKeyPath:key];
+    NSArray *first = arr.firstObject;
+    if ([first isKindOfClass:[NSArray class]]) {
+        return arr.count;
+    }
     return 1;
 }
 
-+ (NSUInteger)lua_rowCountForKey:(NSString *)key {
++ (NSUInteger)lua_rowCountForKey:(NSString *)key section:(NSUInteger)section{
     NSArray *arr = [self lua_dataForKeyPath:key];
+    if (section > arr.count || section == 0) {
+        return 0;
+    }
+    
+    NSArray *first = arr[section - 1];
+    if ([first isKindOfClass:[NSArray class]]) {
+        return first.count;
+    }
     return arr.count;
 }
 
@@ -74,7 +87,7 @@ LUA_EXPORT_STATIC_METHOD(get, "lua_dataForKeyPath:", MLNDataBinding)
 
 LUA_EXPORT_STATIC_METHOD(bindListView, "lua_bindListViewForKey:listView:", MLNDataBinding)
 LUA_EXPORT_STATIC_METHOD(getSectionCount, "lua_sectionCountForKey:", MLNDataBinding)
-LUA_EXPORT_STATIC_METHOD(getRowCount, "lua_rowCountForKey:", MLNDataBinding)
+LUA_EXPORT_STATIC_METHOD(getRowCount, "lua_rowCountForKey:section:", MLNDataBinding)
 LUA_EXPORT_STATIC_METHOD(getModel, "lua_modelForKey:section:row:path:", MLNDataBinding)
 
 LUA_EXPORT_STATIC_END(MLNDataBinding, DataBinding, NO, NULL)
