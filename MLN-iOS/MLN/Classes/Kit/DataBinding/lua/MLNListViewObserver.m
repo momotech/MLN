@@ -29,12 +29,17 @@
     assert(false);
 }
 
+- (void)mergeAction:(MLNTableView *)table {
+    [table.adapter tableViewReloadData:table.adapter.targetTableView];
+    [table.adapter.targetTableView reloadData];
+}
+
 - (void)notifyKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change {
     [super notifyKeyPath:keyPath ofObject:object change:change];
     MLNTableView *table = (MLNTableView *)self.listView;
     
-    [table.adapter tableViewReloadData:table.adapter.targetTableView];
-    [table.adapter.targetTableView reloadData];
+    [self.class cancelPreviousPerformRequestsWithTarget:self selector:@selector(mergeAction:) object:table];
+    [self performSelector:@selector(mergeAction:) withObject:table afterDelay:0];
     
     NSLog(@"keypath %@, object %@ change %@",keyPath, object, change);
     
