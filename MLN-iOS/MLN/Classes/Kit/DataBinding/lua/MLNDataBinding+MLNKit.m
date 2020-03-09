@@ -39,17 +39,8 @@
 + (void)lua_bindListViewForKey:(NSString *)key listView:(UIView *)listView
 {
     MLNKitViewController *kitViewController = (MLNKitViewController *)MLN_KIT_INSTANCE([self mln_currentLuaCore]).viewController;
-//    NSObject<MLNKVObserverProtocol> *observer = [[MLNListViewObserver alloc] initWithListView:listView];
-//    [kitViewController addDataObserver:observer forKeyPath:keyPath];
     MLNListViewObserver *observer = [MLNListViewObserver observerWithListView:listView keyPath:key];
     [kitViewController.dataBinding addArrayObserver:observer forKey:key];
-}
-
-+ (void)lua_bindDataListForKeyPath:(NSString *)keyPath handler:(MLNBlock *)handler
-{
-//    MLNKitViewController *kitViewController = (MLNKitViewController *)MLN_KIT_INSTANCE([self mln_currentLuaCore]).viewController;
-//    NSObject<MLNKVObserverProtocol> *observer = [[MLNBlockObserver alloc] initWithBloclk:handler];
-//    [kitViewController addDataObserver:observer forKeyPath:keyPath];
 }
 
 + (NSUInteger)lua_sectionCountForKey:(NSString *)key {
