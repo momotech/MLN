@@ -148,7 +148,7 @@
     // 只有NSMutableArray才有必要添加observer
     if (isArray && ![object isKindOfClass:[NSMutableArray class]]) {
         UNLOCK();
-        NSLog(@"expect NSMutableArray, object is %@",object);
+        NSLog(@"binded object %@, is not KindOf NSMutableArray",object);
         return;
     }
     NSMutableArray *observerArray = [self.observerMap objectForKey:keyPath];

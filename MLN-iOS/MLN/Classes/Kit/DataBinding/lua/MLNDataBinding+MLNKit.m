@@ -13,6 +13,7 @@
 #import "MLNBlockObserver.h"
 #import "MLNKitViewController+DataBinding.h"
 #import "MLNListViewObserver.h"
+#import "NSArray+MLNKVO.h"
 
 @implementation MLNDataBinding (MLNKit)
 
@@ -79,6 +80,23 @@
     return resust;
 }
 
++ (NSString *)lua_reuseIdForKey:(NSString *)key section:(NSUInteger)section row:(NSUInteger)row {
+    NSArray *array = [self lua_dataForKeyPath:key];
+    if (array.mln_resueIdBlock) {
+        return array.mln_resueIdBlock(array, section, row);
+    }
+    return @"Cell";
+}
+
++ (NSUInteger)lua_heightForKey:(NSString *)key section:(NSUInteger)section row:(NSUInteger)row {
+    NSArray *array = [self lua_dataForKeyPath:key];
+    if (array.mln_heightBlock) {
+        return array.mln_heightBlock(array, section, row);
+    }
+    NSAssert(array.mln_heightBlock, @"mln_heightBlock of binded array should not be nil");
+    return 0;
+}
+
 #pragma mark - Setup For Lua
 LUA_EXPORT_STATIC_BEGIN(MLNDataBinding)
 LUA_EXPORT_STATIC_METHOD(bind, "lua_bindDataForKeyPath:handler:", MLNDataBinding)
@@ -89,6 +107,8 @@ LUA_EXPORT_STATIC_METHOD(bindListView, "lua_bindListViewForKey:listView:", MLNDa
 LUA_EXPORT_STATIC_METHOD(getSectionCount, "lua_sectionCountForKey:", MLNDataBinding)
 LUA_EXPORT_STATIC_METHOD(getRowCount, "lua_rowCountForKey:section:", MLNDataBinding)
 LUA_EXPORT_STATIC_METHOD(getModel, "lua_modelForKey:section:row:path:", MLNDataBinding)
+LUA_EXPORT_STATIC_METHOD(getReuseId, "lua_reuseIdForKey:section:row:", MLNDataBinding)
+LUA_EXPORT_STATIC_METHOD(getHeight, "lua_heightForKey:section:row:", MLNDataBinding)
 
 LUA_EXPORT_STATIC_END(MLNDataBinding, DataBinding, NO, NULL)
 
