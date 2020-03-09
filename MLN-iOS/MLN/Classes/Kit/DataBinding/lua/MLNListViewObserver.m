@@ -36,8 +36,8 @@
 
 - (void)notifyKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change {
     [super notifyKeyPath:keyPath ofObject:object change:change];
-    MLNTableView *table = (MLNTableView *)self.listView;
     
+    MLNTableView *table = (MLNTableView *)self.listView;
     [self.class cancelPreviousPerformRequestsWithTarget:self selector:@selector(mergeAction:) object:table];
     [self performSelector:@selector(mergeAction:) withObject:table afterDelay:0];
     
