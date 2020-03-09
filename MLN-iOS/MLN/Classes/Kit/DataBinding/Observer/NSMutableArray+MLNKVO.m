@@ -118,6 +118,7 @@ NS_INLINE  Class MLNCreateSubClass(Class class, NSString *subName) {
     Class originClass = self.mlnkvo_originClass;
     if (isStart && originClass) {
         object_setClass(self, originClass);
+        self.mlnkvo_originClass = nil;
     }
 }
 
@@ -218,13 +219,14 @@ shold override five primitive methods
         if (index < self.count) {
             oldValue = [self objectAtIndex:index];
         }
-        CallIMP(
-                NSIndexSet *set = [NSIndexSet indexSetWithIndex:index];
-                ((void(*)(id,SEL,NSUInteger,id))imp)(self, origin,index,object)
-                )
-        AfterIMP(
-                 [self mln_notifyAllObserver:NSKeyValueChangeReplacement indexSet:set newValue:object oldValue:oldValue]
-                 )
+        GetIMP();
+//        CallIMP(
+        NSIndexSet *set = [NSIndexSet indexSetWithIndex:index];
+        ((void(*)(id,SEL,NSUInteger,id))imp)(self, origin,index,object);
+//                )
+//        AfterIMP(
+        [self mln_notifyAllObserver:NSKeyValueChangeReplacement indexSet:set newValue:object oldValue:oldValue];
+//                 )
 
     } forceAddOriginImpBlock:placeholderBlock];
 }
@@ -233,87 +235,3 @@ shold override five primitive methods
 
 @end
 
-/*
-@implementation NSMutableArray (MLNListener)
-
-+ (void)load {
-    
-    Class cls = NSClassFromString(@"__NSArrayM");
-//    cls = [self class];
-    Method origMethod1 = class_getInstanceMethod(cls, @selector(addObject:));
-    Method swizzledMethod1 = class_getInstanceMethod([self class], @selector(mln_listener_addObject:));
-//    method_exchangeImplementations(origMethod1, swizzledMethod1);
-    
-    origMethod1 = class_getInstanceMethod(cls, @selector(insertObject:atIndex:));
-    swizzledMethod1 = class_getInstanceMethod([self class], @selector(mln_listener_insertObject:atIndex:));
-    method_exchangeImplementations(origMethod1, swizzledMethod1);
-    
-    origMethod1 = class_getInstanceMethod(cls, @selector(setObject:atIndexedSubscript:));
-    swizzledMethod1 = class_getInstanceMethod([self class], @selector(mln_listener_setObject:atIndexedSubscript:));
-    method_exchangeImplementations(origMethod1, swizzledMethod1);
-    
-    origMethod1 = class_getInstanceMethod(cls, @selector(setObject:atIndex:));
-    swizzledMethod1 = class_getInstanceMethod([self class], @selector(mln_listener_setObject:atIndex:));
-    method_exchangeImplementations(origMethod1, swizzledMethod1);
-}
-
-- (void)mln_listener_addObject:(id)anObject {
-    NSIndexSet *set = [NSIndexSet indexSetWithIndex:self.count];
-    [self mln_listener_addObject:anObject];
-    [self mln_notifyAllObserver:NSKeyValueChangeInsertion indexSet:set];
-}
-
-- (void)mln_listener_insertObject:(id)anObject atIndex:(NSUInteger)index {
-    NSIndexSet *set = [NSIndexSet indexSetWithIndex:index];
-    [self mln_listener_insertObject:anObject atIndex:index];
-    [self mln_notifyAllObserver:NSKeyValueChangeInsertion indexSet:set];
-    int cnt = 0;
-    NSArray *calls = [NSThread callStackSymbols];
-    for (NSString *stack in calls) {
-        if ([stack containsString:@"[NSMutableArray(MLNListener) mln_listener_"]) {
-            cnt++;
-        }
-    }
-//    NSAssert(cnt < 2, calls.description);
-}
-
-- (void)mln_listener_setObject:(id)obj atIndexedSubscript:(NSUInteger)idx {
-    NSIndexSet *set = [NSIndexSet indexSetWithIndex:idx];
-    [self mln_listener_setObject:obj atIndexedSubscript:idx];
-    [self mln_notifyAllObserver:NSKeyValueChangeInsertion indexSet:set];
-}
-
-- (void)mln_listener_setObject:(id)obj atIndex:(NSUInteger)idx {
-    NSIndexSet *set = [NSIndexSet indexSetWithIndex:idx];
-    [self mln_listener_setObject:obj atIndex:idx];
-    [self mln_notifyAllObserver:NSKeyValueChangeInsertion indexSet:set];
-}
-
-/// -------------------------------- 待实现接口 -----------
-//- (void)removeLastObject;
-//- (void)removeObjectAtIndex:(NSUInteger)index;
-//- (void)replaceObjectAtIndex:(NSUInteger)index withObject:(ObjectType)anObject;
-//- (void)addObjectsFromArray:(NSArray<ObjectType> *)otherArray;
-//- (void)exchangeObjectAtIndex:(NSUInteger)idx1 withObjectAtIndex:(NSUInteger)idx2;
-//- (void)removeAllObjects;
-//- (void)removeObject:(ObjectType)anObject inRange:(NSRange)range;
-//- (void)removeObject:(ObjectType)anObject;
-//- (void)removeObjectIdenticalTo:(ObjectType)anObject inRange:(NSRange)range;
-//- (void)removeObjectIdenticalTo:(ObjectType)anObject;
-//- (void)removeObjectsFromIndices:(NSUInteger *)indices numIndices:(NSUInteger)cnt API_DEPRECATED("Not supported", macos(10.0,10.6), ios(2.0,4.0), watchos(2.0,2.0), tvos(9.0,9.0));
-//- (void)removeObjectsInArray:(NSArray<ObjectType> *)otherArray;
-//- (void)removeObjectsInRange:(NSRange)range;
-//- (void)replaceObjectsInRange:(NSRange)range withObjectsFromArray:(NSArray<ObjectType> *)otherArray range:(NSRange)otherRange;
-//- (void)replaceObjectsInRange:(NSRange)range withObjectsFromArray:(NSArray<ObjectType> *)otherArray;
-//- (void)setArray:(NSArray<ObjectType> *)otherArray;
-//- (void)sortUsingFunction:(NSInteger (NS_NOESCAPE *)(ObjectType,  ObjectType, void * _Nullable))compare context:(nullable void *)context;
-//- (void)sortUsingSelector:(SEL)comparator;
-//
-//- (void)insertObjects:(NSArray<ObjectType> *)objects atIndexes:(NSIndexSet *)indexes;
-//- (void)removeObjectsAtIndexes:(NSIndexSet *)indexes;
-//- (void)replaceObjectsAtIndexes:(NSIndexSet *)indexes withObjects:(NSArray<ObjectType> *)objects;
-
-
-@end
-
-*/

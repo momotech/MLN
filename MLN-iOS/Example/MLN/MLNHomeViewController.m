@@ -20,6 +20,7 @@
 #import "MLNStaticTest.h"
 #import "MLNTestMe.h"
 #import <MLNDataBinding.h>
+#import <NSArray+MLNKVO.h>
 
 #define kConsoleWidth 250.f
 #define kConsoleHeight 280.f
@@ -105,7 +106,16 @@
 - (IBAction)hotReloadAction:(id)sender {
     MLNHotReloadViewController  *hotReloadVC = [[MLNHotReloadViewController alloc] initWithRegisterClasses:@[[MLNStaticTest class]] extraInfo:nil];
     [hotReloadVC bindData:self.model forKey:@"userData"];
-    [hotReloadVC.dataBinding bindArray:self.modelArray forKey:@"source"];
+    
+    
+    NSMutableArray *models = self.modelArray;
+    models.mln_resueIdBlock = ^NSString * _Nonnull(NSArray * _Nonnull items, NSUInteger section, NSUInteger row) {
+        return @"TYPE_CELL_TEXT";
+    };
+    models.mln_heightBlock = ^NSUInteger(NSArray * _Nonnull items, NSUInteger section, NSUInteger row) {
+        return 50;
+    };
+    [hotReloadVC.dataBinding bindArray:models forKey:@"source"];
     
     [self.navigationController pushViewController:hotReloadVC animated:YES];
 }

@@ -2400,13 +2400,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		341351E327B522DA9DBDF48B63775BAA /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		36EF198B414F70DB6E8D8D3E3EEBF86A /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -2429,6 +2422,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		4BE7CFE67F061D9078B374DDBE07AF90 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		591373CE82910DB11A9B62AC92E95B53 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -2879,7 +2879,8 @@
 				7B5C8FA05CBD36F5B07ECE0890D4E910 /* Protocol */,
 				4D3BE74A9C90FC8F3C308ACFA5BE2914 /* Util */,
 			);
-			name = Core;
+			name = Gradient;
+			path = Gradient;
 			sourceTree = "<group>";
 		};
 		243ED47775D4D29D53128DED47721C9E /* Category */ = {
@@ -3084,13 +3085,27 @@
 			path = Expecta;
 			sourceTree = "<group>";
 		};
-		31D454C7BE10995A713F31F59744803E /* Targets Support Files */ = {
+		40899E2670874DC02868CDC202F33FA0 /* SDCycleScrollView */ = {
 			isa = PBXGroup;
 			children = (
-				6A67CAC50894153455E780C18ED231F8 /* Pods-LuaNative */,
-				C2F76716F85276DD0F096EEF35166499 /* Pods-MLN_Tests */,
+				3E3CB3DA3BD6507D6EB27DD233405032 /* SDCollectionViewCell.h */,
+				F81EAC5D2BC50FFB19E986B1A5DB7D89 /* SDCollectionViewCell.m */,
+				091F75F5D900447AB179EB77CC2E35D8 /* SDCycleScrollView.h */,
+				0EE5F64714D1400AFB33D7538D33F490 /* SDCycleScrollView.m */,
+				010C2D222809E4E50B63A23380B477EF /* TAAbstractDotView.h */,
+				6C352E2B82339035272E5679E57BEBE0 /* TAAbstractDotView.m */,
+				79A1B47978E13C96CEFB5CC45EBBF70D /* TAAnimatedDotView.h */,
+				E5DE603B8C2AD1A1566726291B0A50C1 /* TAAnimatedDotView.m */,
+				FD5E8443099BF2F6C846A8C6E408EE82 /* TADotView.h */,
+				482671EB932747C850D0D163E5BA1C74 /* TADotView.m */,
+				926AE1BB35EAA17757EC8D056079CA4F /* TAPageControl.h */,
+				C942666EB09E3FD62DF013E2B55D4819 /* TAPageControl.m */,
+				BEB613C767D682197F485C50509AF2C4 /* UIView+SDExtension.h */,
+				72EC4EA94AE9CC1936B0B0BDB612EDFB /* UIView+SDExtension.m */,
+				CA00263A36CFDE90990B05F192393FD0 /* Support Files */,
 			);
-			name = "Targets Support Files";
+			name = SDCycleScrollView;
+			path = SDCycleScrollView;
 			sourceTree = "<group>";
 		};
 		3300582FD58C7862F292031B45608054 /* Support Files */ = {
@@ -4797,63 +4812,8 @@
 				B43C507B3BC6675C210B8EB9992A9E16 /* LNUsbClientImpl.h */,
 				589C4CFE8B8C440B5093C4923EA91639 /* LNUsbClientImpl.m */,
 			);
-			path = MainRunLoopObserver;
-			sourceTree = "<group>";
-		};
-		E9E91F385673C954DCA1183785F27ABC /* CollectionView */ = {
-			isa = PBXGroup;
-			children = (
-				F4BDD1A27D4ABE203629C4AD0280205A /* MLNCollectionView.h */,
-				99E2565BCCA6A904A7B373D0A04D76F0 /* MLNCollectionView.m */,
-				1B7F9C24603106ED8D5F94C53823CFAE /* MLNCollectionViewAdapter.h */,
-				F041EE0BD619F802864287D6DFF36673 /* MLNCollectionViewAdapter.m */,
-				9157FB5DC2C8B5067B90F8B06FCF35EE /* MLNCollectionViewAdapterProtocol.h */,
-				7318E91C1E61FBE3B45F0A1ADC7278CF /* MLNCollectionViewCell.h */,
-				A6CB0B9F829B8F1EDBB5C5B98EC7CB37 /* MLNCollectionViewCell.m */,
-				628BE3286C61A652135C4F1670CB6C6F /* MLNCollectionViewGridLayout.h */,
-				2DF339FD142488B163601C780641A033 /* MLNCollectionViewGridLayout.m */,
-				F6A6D5D7EBC180E02792E04A95D4613F /* MLNCollectionViewGridLayoutDelegate.h */,
-				1EFA73FA3872236D23D1CE1B58E90FD1 /* MLNCollectionViewLayoutProtocol.h */,
-				80676E255E8F236AAE20F23369AF0FA5 /* MLNInnerCollectionView.h */,
-				27EB50793AEC9DE51983C23B5512D577 /* MLNInnerCollectionView.m */,
-				6D82DE3A627AC69C8D77F871C8F0FC62 /* AutoFit */,
-			);
-			path = CollectionView;
-			sourceTree = "<group>";
-		};
-		EA21576D96167649050888CFA80B1A3A /* Util */ = {
-			isa = PBXGroup;
-			children = (
-				7CA41D42EF5247018A2B6A03C9774EF1 /* MLNApplication.h */,
-				2F4B90C6E87347CE2021016EA62AD89A /* MLNApplication.m */,
-				8F2DF13DAB46E3988F28318CD26FE26A /* MLNBit.h */,
-				49F2E5A55CD77F29ECEC3062F7BAC4E6 /* MLNBit.m */,
-				686812B83D9F60BFAD404D5ACFBB9508 /* MLNClipboard.h */,
-				5CCD8D30B7C8D6EAE5010A48816EA09F /* MLNClipboard.m */,
-				FC7912A631E4336CBBDE3AB344A3EACD /* MLNCornerUtil.h */,
-				1FF03012B7D6CE2228D22C8BDA2F6086 /* MLNCornerUtil.m */,
-				47CF071BBA3D9DF35DBE0BFA84177102 /* MLNFile.h */,
-				CD4D888D87FEAE80F78B42AB85A8FC91 /* MLNFile.m */,
-				D08E88B5B7C79CE3674335BB15E9700E /* MLNFont.h */,
-				1CA3E3BC370FAABBD1552A92389FE137 /* MLNFont.m */,
-				7DC1DA6A5E1AAE9D41617102AB3B2E62 /* MLNNetworkReachability.h */,
-				593F76559C17D9A03373F3A1D43D4219 /* MLNNetworkReachability.m */,
-				5FEA1AF270F410191FEF9FF23629631C /* MLNPreferenceUtils.h */,
-				31DB5B2545AF117494429AF7EFA07A97 /* MLNPreferenceUtils.m */,
-				523CFD66117170267C4CD60D672BB813 /* MLNStringUtil.h */,
-				9BF53B98B20E3B4D0C706AAF1EB74AFC /* MLNStringUtil.m */,
-				9810ABFB3524766B7E4EF0FD6500CF64 /* MLNSystem.h */,
-				62CF310A5CE97A75356AD4C8FB7498B4 /* MLNSystem.m */,
-				B781BA04BF863C14C496F9087E68870B /* MLNTypeUtil.h */,
-				6492E4E16D8CCC5EC53B4221BA531781 /* MLNTypeUtil.m */,
-				B17E6FFF73DC152FC5EFB7A80AF56F0B /* Mmoslib */,
-				95F66C0EC44C784C701F02C58D4E034F /* Navigator */,
-				B912B35933C8092C310F792ABBFBD3F6 /* Network */,
-				6D454A1193F3EA2589C716017EBB4278 /* SafeArea */,
-				7F362876076FBB940133A82F323B1C51 /* Timer */,
-				F7731794E0E7DDB97EFA9528345065D4 /* WindowManager */,
-			);
-			path = Util;
+			name = Impl;
+			path = Impl;
 			sourceTree = "<group>";
 		};
 		F13AF3B0D885EAC62D5D12D037FCB379 /* Util */ = {
@@ -4867,6 +4827,27 @@
 			);
 			name = Util;
 			path = "MLN-iOS/MLNDevTool/Classes/DevTool/Util";
+			sourceTree = "<group>";
+		};
+		F1D8051F600B901502A27B6842499336 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				4163E7EF7299075BFBD30ED00CDADDD2 /* MJRefresh.bundle */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		F13AF3B0D885EAC62D5D12D037FCB379 /* Util */ = {
+			isa = PBXGroup;
+			children = (
+				8420184FCB0AFED55085245EACBE7344 /* MLNUtilBundle.h */,
+				4F1588C3EC883351AE9958A634919CE0 /* MLNUtilBundle.m */,
+				056CC05991955DF5CC84F882985FAD67 /* DebugLib */,
+				6BCB50F2589713F3B1D3A011A87198B8 /* MLNZipArchive */,
+				13A28319F5565FA6A23C79D6AC23B1F8 /* QRCode */,
+			);
+			name = Protocol;
+			path = "MLN-iOS/MLN/Classes/Core/Protocol";
 			sourceTree = "<group>";
 		};
 		F1D8051F600B901502A27B6842499336 /* Resources */ = {
@@ -4899,13 +4880,24 @@
 			path = "MLN-iOS/MLNDevTool/Classes/Conn/Conn";
 			sourceTree = "<group>";
 		};
-		F7731794E0E7DDB97EFA9528345065D4 /* WindowManager */ = {
+		F4618B2CAFF1C3B888F26A62D6B65701 /* Core */ = {
 			isa = PBXGroup;
 			children = (
-				94D7363AF0A7E859C2086390333559F2 /* MLNWindowContext.h */,
-				E468EF3257EC25B3061FA7D3CDFC57BB /* MLNWindowContext.m */,
+				E615FBC3263176B10D2A41E20449336E /* MLNCore.h */,
+				9A8C14537136A71586559B0B705EC9F0 /* MLNHeader.h */,
+				2EAC39BE3B4D0E3E491C748D6BD28878 /* MLNLuaCore.h */,
+				C02D18F9D0651C6C405E0159C8F89D1A /* MLNLuaCore.m */,
+				06C3453C91625433AE42C2FEFC8E8A9F /* Category */,
+				F39B7CDA41557CE364EEAA733A0D9588 /* Convertor */,
+				E6343E1C43DFC45530097786DF0E0EB8 /* Error */,
+				7BC9C1FD92FEB50EF6BD36B5E66604F8 /* Exporter */,
+				5E283B2B32971D895B99551B72938A49 /* Invocation */,
+				5A7B95ADA18822D41F86E7FEA90C0821 /* Loader */,
+				23F6085000B5A15A46BC17A719674436 /* Proto */,
+				F2138695A03DB6648C57E3924EBCFFB3 /* Protocol */,
+				699D4B7192787BC1E8980A63FE2B0435 /* Util */,
 			);
-			path = WindowManager;
+			name = Core;
 			sourceTree = "<group>";
 		};
 		F8839E2B0C103643EB855BCDCC7185E7 /* Products */ = {
@@ -4938,7 +4930,22 @@
 				0F0644A082F0F98BAD6C378E26B5E7F4 /* NSError+MLNCore.h */,
 				02A9BF3584C5C9E8A1E58AE2A5FBACCB /* NSError+MLNCore.m */,
 			);
-			path = Render;
+			name = IO;
+			path = "MLN-iOS/MLNDevTool/Classes/Conn/IO";
+			sourceTree = "<group>";
+		};
+		FFD057522E6663496DB66EBCE9086C44 /* lua */ = {
+			isa = PBXGroup;
+			children = (
+				5D184E8D56BD6CFCDB4B2009EE4528D6 /* MLNBlockObserver.h */,
+				957B5EE35FBE4C2D2FD7309F6ECC4E1B /* MLNBlockObserver.m */,
+				7F365EEB3CFAFF422F5872396DA200DA /* MLNDataBinding+MLNKit.h */,
+				6D9B916E428A720A6BBFFD3A496CBBD7 /* MLNDataBinding+MLNKit.m */,
+				CD11B97CA9E83164B066BD8CAE1F59C6 /* MLNListViewObserver.h */,
+				907A189F1C2E974A07A6E4B23817FFB0 /* MLNListViewObserver.m */,
+			);
+			name = lua;
+			path = lua;
 			sourceTree = "<group>";
 		};
 		FE2E6465693253E4E8632F71E6CE020F /* IO */ = {
@@ -5155,271 +5162,6 @@
 				D3DC240631E1FA883A5604B3E99BAE2B /* UIProgressView+AFNetworking.h in Headers */,
 				A845819E8332E3CA279E6B00EAA55366 /* UIRefreshControl+AFNetworking.h in Headers */,
 				337C8A9592224E2629F71F4759AE0DF2 /* UIWebView+AFNetworking.h in Headers */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		2DC71EE654808446731FA77520763299 /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				8A66D0CA02B715A46E22C7B003A11D4C /* FBKVOController.h in Headers */,
-				DC037ABED21B2F433D276DB93DD65FE4 /* KVOController.h in Headers */,
-				7DD7625DC59E14F400E9C4E8CCBDB65E /* lapi.h in Headers */,
-				DEC1A6E5E8EA1420679B867CD7A520CA /* lcode.h in Headers */,
-				3EC100AF99BF3C81801696047EFC915A /* ldebug.h in Headers */,
-				E4A0F4802399006D4A711271A52AE28C /* ldo.h in Headers */,
-				D90F7D9487C13CA82503A007B2D2D91A /* lfunc.h in Headers */,
-				2AEB977B2DADC67FBF37750AB65A8272 /* lgc.h in Headers */,
-				B5EDB3656A21FAE2F5416298BBC7490C /* llex.h in Headers */,
-				0A7DAE701E7C5CAD955749349C5B7265 /* llimits.h in Headers */,
-				D173DBA4034BB7146E62A16FDFA7C89F /* lmem.h in Headers */,
-				48289FDE05F7A0A1020A5BD23D1F1F14 /* lobject.h in Headers */,
-				12282586C2BECEA9F2C42D0344AF5990 /* lopcodes.h in Headers */,
-				825F10BD8A53BB63ED5C71CF87C11C9B /* lparser.h in Headers */,
-				2401562A75AA43094A55A2ADB4577AEE /* lstate.h in Headers */,
-				466389519A31DBC40A9A0EE7AA3C8FDB /* lstring.h in Headers */,
-				8473C010D6242FD37AF3AF38E4904762 /* ltable.h in Headers */,
-				54A135D83176CFFE2825A607E382101E /* ltm.h in Headers */,
-				135414250D7DD4940F7995E7393C56E9 /* lundump.h in Headers */,
-				EA4EFFDB53787BABBDC82C09EBFB24A7 /* lvm.h in Headers */,
-				F2024FE5C7E7642CCED71E293A987BED /* lzio.h in Headers */,
-				84B6B5EE30CAA2972C4634C3A612387D /* mln_lauxlib.h in Headers */,
-				E81B43B299F2F1BBB017FB362AA9452B /* mln_lua.h in Headers */,
-				A8C80FEB995DEDA539E494DD89F5F991 /* mln_luaconf.h in Headers */,
-				5E8F42E62607CED2DD9CFEBB04FD823B /* mln_lualib.h in Headers */,
-				4AA7153502FB9963D9AA579DBD115C14 /* MLNAdapterCachesManager.h in Headers */,
-				DE9F0FA38E8E4C273543D45ECB3365FF /* MLNAlert.h in Headers */,
-				A67DA8CC3ED1A6576740A044EFC99B07 /* MLNAlphaAnimation.h in Headers */,
-				F27A26B9F162871942B840383C91CC16 /* MLNAnimation.h in Headers */,
-				FE49E612818CE03DA3AD534E2575C01F /* MLNAnimationConst.h in Headers */,
-				BA890F55896C8EB65EF4297903AB4F1B /* MLNAnimationDelegate.h in Headers */,
-				DEDA2B9B3772B4FBDE1B60AEC9DDA4F8 /* MLNAnimationHandler.h in Headers */,
-				239D322A37A75A1FE598764ECC579A8D /* MLNAnimationHandlerCallbackProtocol.h in Headers */,
-				B258FD7BA11E63932CE16D55259F4C3D /* MLNAnimationSet.h in Headers */,
-				B1A00AB2962976D36698DC9F24D47328 /* MLNAnimationZoneView.h in Headers */,
-				7C2A3BC4FE3651E92B767C3F42DC183F /* MLNAnimator.h in Headers */,
-				30044DF868AF99D5A75F6608E289A596 /* MLNApplication.h in Headers */,
-				51DB1B2D0EACDC9B5A485EFF19B2CB4A /* MLNBadgeView.h in Headers */,
-				BF2287A2AB17750908BD8E7C633675D0 /* MLNBeforeWaitingTask.h in Headers */,
-				C10C75ACEBFEAF6AE87296F03DF76163 /* MLNBeforeWaitingTaskEngine.h in Headers */,
-				A99ED252B90E487D3387E3DBE25C4496 /* MLNBeforeWaitingTaskProtocol.h in Headers */,
-				C938D8B4E9CD4A95E6DFBF1E2D1D799D /* MLNBit.h in Headers */,
-				FB7937DAFBDC58CF66F5438465817FD6 /* MLNBlock.h in Headers */,
-				122605CE17A2D34FA8305EBDDAAF9329 /* MLNBlockObserver.h in Headers */,
-				65852F574E58A4AEFA80BEAD97BF2050 /* MLNBorderLayerOperation.h in Headers */,
-				35F6A35268D8D19F0F7E3976A4510FBE /* MLNBounceInterpolator.h in Headers */,
-				AE5CF4145EA94B4819FE6D2531CA2686 /* MLNButton.h in Headers */,
-				1E1C0CB3668B301EB2E805FB2967BFAB /* MLNCanvasAnimation.h in Headers */,
-				BFD171731532BD81D5CA0B281A0829A2 /* MLNCanvasAnimationDelegate.h in Headers */,
-				1E05B080D1A26BC5D1B11026B5BC92C9 /* MLNCanvasConst.h in Headers */,
-				07C7A41BFF1D568B5FF280955E0822B3 /* MLNCanvasPaint.h in Headers */,
-				F421A50CC4D5C062E8C9EFC1F4ABE93B /* MLNCanvasPath.h in Headers */,
-				19A1F2D2B30F362C02F812C49C369040 /* MLNCanvasView.h in Headers */,
-				A6ABA823F87C0E413FFEFFE952B27705 /* MLNClipboard.h in Headers */,
-				044CE62F5BBE187C2602C0A475DE7F82 /* MLNCollectionView.h in Headers */,
-				6B30071E6CA8EB48231E3ACD5A2A3F25 /* MLNCollectionViewAdapter.h in Headers */,
-				6B9B7B9A0B85239B07B066940D2D140E /* MLNCollectionViewAdapterProtocol.h in Headers */,
-				09687B4A70E815AF66720FA3AE51AF96 /* MLNCollectionViewAutoFitAdapter.h in Headers */,
-				5FBA21CD497BADFF168442AD5CB8B6B0 /* MLNCollectionViewCell.h in Headers */,
-				3E943E9D3E6FABF693DBBE548F433CF9 /* MLNCollectionViewGridLayout.h in Headers */,
-				2BA670C5583A31BE8E7DAEEAE3C538C0 /* MLNCollectionViewGridLayoutDelegate.h in Headers */,
-				DF088A63639CBCA55FA13DB857E9F8B7 /* MLNCollectionViewLayoutProtocol.h in Headers */,
-				BA1AC5F35ECAF108430EDB71CB0248A1 /* MLNColor.h in Headers */,
-				63D12F9B7BD64E30E30F29A6183A1D74 /* MLNContainerWindow.h in Headers */,
-				46263F47438D6A5F599C4E3353E8D9C6 /* MLNContentMode.h in Headers */,
-				3DFAEE0D16104D15A9851846DF7DEDBC /* MLNConvertor.h in Headers */,
-				B6CC2230B3F3BD99EE79341F2DFB3D0E /* MLNConvertorProtocol.h in Headers */,
-				8982457B3030AB295C4C70F96660F652 /* MLNCore.h in Headers */,
-				29355B269FB636AC258222DEF4B5BC6C /* MLNCornerHandlerPotocol.h in Headers */,
-				4972F3C1FDC396F0843623ED7BA327D7 /* MLNCornerImageLoader.h in Headers */,
-				B6E298231F752BD0D7F42AEFB52F630E /* MLNCornerLayerHandler.h in Headers */,
-				3F526DD541B57FCEB1C1D4A2D20534B6 /* MLNCornerManagerFactory.h in Headers */,
-				9671573CF23DB506BAF40ABEEB2A5D5A /* MLNCornerManagerTool.h in Headers */,
-				936D1FBC88A5165AD94C3775327FAC74 /* MLNCornerMaskImageManager.h in Headers */,
-				83FA8CABB06ADFF091EFE448DC24A53C /* MLNCornerMaskLayerHndler.h in Headers */,
-				E1FA61A3938396CF00D0ECBDF524D3AA /* MLNCornerMaskViewHandler.h in Headers */,
-				6D1AE29CBE2A3328DB9CE71CC9FADA92 /* MLNCornerUtil.h in Headers */,
-				B899517B7A9F58E217F5A32891BEDB03 /* MLNDataBinding+MLNKit.h in Headers */,
-				D85402AA0E84E35BEBB29B5D41909573 /* MLNDataBinding.h in Headers */,
-				1346DC0E5C360B3CADD0FEC05043ADFA /* MLNDevice.h in Headers */,
-				7DFEC54BD3E9301280E2CF3E547A80AD /* MLNDialogView.h in Headers */,
-				1EA075ACC10F6A1F6AA109DE7FF90596 /* MLNEditTextView.h in Headers */,
-				B6F3E73299A17DB56A3D054B7985AE88 /* MLNEditTextViewConst.h in Headers */,
-				494976B384047DD6E36E1678DC648E1C /* MLNEntityExporter.h in Headers */,
-				43D390AED13D99E71F11431AB5709934 /* MLNEntityExporterMacro.h in Headers */,
-				FC433E73905553EE22A74F23410B1F14 /* MLNEntityExportProtocol.h in Headers */,
-				EB28C648446C32D66374E31440E392A3 /* MLNErrorHandlerProtocol.h in Headers */,
-				2BCA90793884B7F15AFB6864EAB0CDB0 /* MLNExporter.h in Headers */,
-				ECD25B0B294ABD8B303C3837A769DFB3 /* MLNExporterMacro.h in Headers */,
-				C6CE2D9F744F68B2C2A59217DE8F9B0C /* MLNExporterManager.h in Headers */,
-				DD0F5DFC2C46B42FADBF3426FE3EDC66 /* MLNExporterProtocol.h in Headers */,
-				EBC4B5F18689063504211D9BAEFDCDF7 /* MLNExportInfo.h in Headers */,
-				AB274A75D110212F89CD977117122C33 /* MLNExportProtocol.h in Headers */,
-				151BA92DF3CE067F43354700840DB379 /* MLNFile.h in Headers */,
-				38ABFD4448368FA6171C3833A7AA9731 /* MLNFileConst.h in Headers */,
-				43556D148FEDC412C6710D79AC88356B /* MLNFileLoader.h in Headers */,
-				0934A104E6C433A5766483B11378AADE /* MLNFont.h in Headers */,
-				9D405F11B0ADCD3E57BCE779C9699262 /* MLNFrameAnimation.h in Headers */,
-				4B770CDC97ECE850B6371E585E5BC18F /* MLNGaussEffectHandler.h in Headers */,
-				9B79DEE20A37D07077821040BA9EB9A6 /* MLNGlobalFuncExporterMacro.h in Headers */,
-				5202D53074EA3CE5F6AD588DBA1042E3 /* MLNGlobalFuncExportProtocol.h in Headers */,
-				009DD8EC241370DE00452458 /* NSObject+MLNSwizzle.h in Headers */,
-				F8ECE9C7CF58CB087D9F3359DFACA289 /* MLNGlobalFuntionExporter.h in Headers */,
-				4B83BDA882AC2A12A7D0A3AA65370A16 /* MLNGlobalVarExporter.h in Headers */,
-				1A08F556BDFA53EE8ADF896F134F687F /* MLNGlobalVarExporterMacro.h in Headers */,
-				D965B59094FC644D7D5A6FF351242B1B /* MLNGlobalVarExportProtocol.h in Headers */,
-				3B56AE423BC3432E9FC374F32DD5BE7F /* MLNGradientLayerOperation.h in Headers */,
-				69A7CF0453777D485656B26AE09AEEA4 /* MLNHeader.h in Headers */,
-				268B91F3C0A0EFD33F8AC347F8AE8475 /* MLNHttp.h in Headers */,
-				11B682022C0B0E3F5D8C8E53C0A7291A /* MLNHTTPConst.h in Headers */,
-				2AE5BF15F1DEB6BC8BA1BE218192901C /* MLNHttpDefaultHandler.h in Headers */,
-				E8C6F8EB719764CC8F932D1816F4A262 /* MLNHttpHandlerProtocol.h in Headers */,
-				74BDD2AC1459F983C1DD563674218115 /* MLNImageLoaderProtocol.h in Headers */,
-				5285EB855854E0604452A1B9286ECB22 /* MLNImageView.h in Headers */,
-				A86F8C93B45BD02ACEACE03BD2886AB1 /* MLNInnerCollectionView.h in Headers */,
-				CE27CC13E5A9A18497ECB259DD21D21C /* MLNInnerScrollView.h in Headers */,
-				CACBBAAB8994A3E49F7CD62056E9D453 /* MLNInnerTableView.h in Headers */,
-				986133E99CF18445B0B6C7237860465E /* MLNInternalTextField.h in Headers */,
-				F774FEA6603AFA14680E4D812C429380 /* MLNInternalTextView.h in Headers */,
-				0D97A97AFAA8B58D8FB9039308DF6751 /* MLNInternalWaterfallView.h in Headers */,
-				44E86438C7EFCC78452CB08D41D4C17E /* MLNInterpolatorProtocol.h in Headers */,
-				CEC2595E831CDB486B5A3A477E8AF0F2 /* MLNInvocation.h in Headers */,
-				4D5CED078EEDC29EC564F5F63D83E7F8 /* MLNKeyboardViewHandler.h in Headers */,
-				071FD8E898D7728C56BD9A612126D1AE /* MLNKeyframeAnimation.h in Headers */,
-				663FEA024CC6FDEC02CCE4F98A67A4E9 /* MLNKeyframeAnimationBuilder.h in Headers */,
-				4092CD9CE12F27A7053E15FAFB67DA9E /* MLNKeyframeArray.h in Headers */,
-				7C79FFCD949C0B4DF684E63952EFBA4D /* MLNKiConvertor.h in Headers */,
-				123481C64694EE119454FC6C19FB0D18 /* MLNKit.h in Headers */,
-				323E34EF1965B5476188DFFAADCEECA5 /* MLNKitBridgesManager.h in Headers */,
-				6E8DC03E191EA8EB7CE9EE2790D10581 /* MLNKitEnvironment.h in Headers */,
-				23056F3ACB2CCF2B986A1058B98A4993 /* MLNKitHeader.h in Headers */,
-				94D4F124A16BB489F8D41D591B653316 /* MLNKitInstance.h in Headers */,
-				F5704704D723FA3C93E553FDAAEA1FFC /* MLNKitInstanceConsts.h in Headers */,
-				65B7C09329AB63BAB8CC15603048DEA0 /* MLNKitInstanceDelegate.h in Headers */,
-				DA52E8ABC8770AF8049F7709BD0F46BE /* MLNKitInstanceErrorHandlerProtocol.h in Headers */,
-				0654C7BAB873D40BFC377C587B67E901 /* MLNKitInstanceFactory.h in Headers */,
-				0BF74632781E7731CF41D99E245E084B /* MLNKitInstanceHandlersManager.h in Headers */,
-				B193918C381B6D5AB8E0618274A6CEF4 /* MLNKitLuaCoeBuilderProtocol.h in Headers */,
-				E489A0488D64C6792212324A0B998EF3 /* MLNKitLuaCorePool.h in Headers */,
-				F1396C880BC502A1328A0BB3413082B9 /* MLNKitViewController+DataBinding.h in Headers */,
-				9818FAB1FBDD85814B5C3104374A1CE1 /* MLNKitViewController.h in Headers */,
-				92AEEA4538FF2DA324104DF24988F0A1 /* MLNKitViewControllerDelegate.h in Headers */,
-				BF7BE5184BBFBDCA0581B3AF94053C5C /* MLNKVOObserver.h in Headers */,
-				EAA7B2AB215F0937DF8CC58E251C9D3D /* MLNKVOObserverProtocol.h in Headers */,
-				075865443485EF1B25F8F70B3824FA0A /* MLNLabel.h in Headers */,
-				F92FB9F615DD74C3C34A90DC2AC2CFCF /* MLNLayoutContainerNode.h in Headers */,
-				091F26360E590F9882A91B027E5E45C5 /* MLNLayoutEngine.h in Headers */,
-				23115829390DEA9780D8B6DE92AD9000 /* MLNLayoutImageViewNode.h in Headers */,
-				9124E49C2DEA6AA3066A380B959ACA12 /* MLNLayoutNode.h in Headers */,
-				5AC7F88A77BFAC042E22992C9F69D2EA /* MLNLayoutNodeFactory.h in Headers */,
-				2CB65CE3DC3B7C3D94719F4F6D607D45 /* MLNLayoutScrollContainerNode.h in Headers */,
-				B2DBB78B8244E7EB019D4DA9C3A80FFB /* MLNLayoutWindowNode.h in Headers */,
-				66C2F528C120B1F96F3DE66E6FBA05CD /* MLNLinearLayout.h in Headers */,
-				9CAFE0677949171B08628BDAF0ABA5EA /* MLNLinearLayoutNode.h in Headers */,
-				E6DA1389AB7F7D014DB9E3A39E4C8FDB /* MLNListViewObserver.h in Headers */,
-				11C44CD1DF435C6DA13B9E86BAFF3BAC /* MLNLoading.h in Headers */,
-				4B86EA58A886B214835C0FD2AF5EF686 /* MLNLuaBundle.h in Headers */,
-				F1F716A6C21EF707426909D6269CA962 /* MLNLuaCore.h in Headers */,
-				74E8B52186EA2727EDFAD089B00BED42 /* MLNLuaCoreDelegate.h in Headers */,
-				9275657F16800B5AA5A9AB121A3A9E0C /* MLNLuaTable.h in Headers */,
-				97A83CA923173DC6BBBAA54D09A363D0 /* MLNMainRunLoopObserver.h in Headers */,
-				68B2335F0BBCD9674D9D2E6E7BF93FD9 /* MLNNavigator.h in Headers */,
-				D571109180F935113D459611848018A0 /* MLNNavigatorHandlerProtocol.h in Headers */,
-				48B5FFC5233CA9B944BAEC80768D7AA1 /* MLNNetworkReachability.h in Headers */,
-				7E1E86399BF362545EBE54AD591419A8 /* MLNNetworkReachabilityManager.h in Headers */,
-				B91410EF45DFF8C1141CD545CBC50245 /* MLNNinePatchImageFactory.h in Headers */,
-				D3E9C10A465DC262105F977803CEBDAD /* MLNOvershotInterpolater.h in Headers */,
-				536F7F7B1E4524AA38BFA6A6450CF62C /* MLNPaddingContainerViewProtocol.h in Headers */,
-				BF860564E099088C3424F7C5955A925C /* MLNPoint.h in Headers */,
-				9028F502137B0D067491838855A70280 /* MLNPreferenceUtils.h in Headers */,
-				4631D4FA352A2C5423A9274F90A85135 /* MLNRect.h in Headers */,
-				3DC3236B90FFB23D2F2FD89F8E72E35E /* MLNRefreshDelegate.h in Headers */,
-				1EEF494C928F240EC5B645F6E2C75653 /* MLNRenderContext.h in Headers */,
-				A958EF38074A30C9FF53821C3316E4A9 /* MLNReuseContentView.h in Headers */,
-				10ECBFBDD87FBEDB03C7119AEBBFCAFA /* MLNRotateAnimation.h in Headers */,
-				8199720D69B88C7C2F3BD746D44B618D /* MLNSafeAreaAdapter.h in Headers */,
-				7FDDEDAC54F99772C5FEA01A9A92FF51 /* MLNSafeAreaProxy.h in Headers */,
-				6BBCE43531CA81465CC31318949F0B7F /* MLNSafeAreaViewProtocol.h in Headers */,
-				577DC332EA4A1AEA8D590EF752E79907 /* MLNScaleAnimation.h in Headers */,
-				932E8946FF0A6D749C7897380F28BEAC /* MLNScrollCallbackView.h in Headers */,
-				E428744CC42C4AA4A7307AE9B1557E32 /* MLNScrollView.h in Headers */,
-				B1B2F8D3AE1B12F61601CC3FF79DFABA /* MLNScrollViewConst.h in Headers */,
-				237A17C4F6D2CA1592B35A0D37621D18 /* MLNScrollViewDelegate.h in Headers */,
-				4974A6B108078B1FAB9DA51B587B7121 /* MLNShadowOperation.h in Headers */,
-				48D265447C92823E27B561F5C6638786 /* MLNShapeContext.h in Headers */,
-				42E870FDBA8B1B8C326BDD2D27A0D0BF /* MLNSize.h in Headers */,
-				4DDD036927B18E61663F37FAE8CA1E44 /* MLNSizeCahceManager.h in Headers */,
-				B03B68B71404F3B0511ACCE385115634 /* MLNSnapshotManager.h in Headers */,
-				55FF48AB9EEB2ABA9FBFC9EDB65FA608 /* MLNStaticExporter.h in Headers */,
-				2C4948EEABF02E579A510450033BA24E /* MLNStaticExporterMacro.h in Headers */,
-				8B98350BF3E5E326054226D257B7E8FE /* MLNStaticExportProtocol.h in Headers */,
-				D42B757DA979D2BB4EF9EBA4273621E8 /* MLNStringUtil.h in Headers */,
-				BA1515F8BF6F2F30D04A7A53258DCA86 /* MLNStyleElement.h in Headers */,
-				872D4BA5525B5EDB9D1CB3D4E55C9032 /* MLNStyleString.h in Headers */,
-				CAEE960A64923895174A9DD348C2E0CA /* MLNStyleStringConst.h in Headers */,
-				5E588AD2A26CF40879A92044A8EBF30E /* MLNSwitch.h in Headers */,
-				C6B90FB58341A7C417276D791B9B6ACF /* MLNSystem.h in Headers */,
-				370187A7B02FC5CA2171C6E410B29A50 /* MLNSystemConst.h in Headers */,
-				8D69341FA18A91ABECB82A3642ACC1A8 /* MLNTableView.h in Headers */,
-				0A1AD5EF7807A46676C9E9E6B9B44750 /* MLNTableViewAdapter.h in Headers */,
-				10332A631E71D20C2DF7CE6CB6DB90FD /* MLNTableViewAdapterProtocol.h in Headers */,
-				60D1774B543A5AB779C39CF1CB27535E /* MLNTableViewAutoFitAdapter.h in Headers */,
-				E66B919E75149593F28F87A53D4A5335 /* MLNTableViewCell.h in Headers */,
-				C4EE31717D17D30470E750E92EE5EF83 /* MLNTableViewCellSettingProtocol.h in Headers */,
-				8AACAA2FAFCC865EA31869DA514C7FE9 /* MLNTabSegmentScrollHandler.h in Headers */,
-				BAEF88C19EEC211E092D94A8FD324CA0 /* MLNTabSegmentView.h in Headers */,
-				21E8DB1F92CE63A0BA513F608DD4BE5A /* MLNTabSegmentViewDelegate.h in Headers */,
-				0A573E195885E664F45E178DD23AC3E9 /* MLNTextConst.h in Headers */,
-				2EC0F0BDBD45EAD23F518763AAB178BE /* MLNTextViewFactory.h in Headers */,
-				0C16B2C1B6466E8BB9CE336A2A26C6D1 /* MLNTextViewProtocol.h in Headers */,
-				2E62A9F5012B683DDED160997383B2D1 /* MLNTimer.h in Headers */,
-				F656075BA4BEFF65BDE4A2C9DA6F3D7E /* MLNToast.h in Headers */,
-				442814D7DE8CEFDDE9F24617CDB2F819 /* MLNTransformTask.h in Headers */,
-				E0403DAFDA69BD605B7D5AD54B06D762 /* MLNTranslateAnimation.h in Headers */,
-				0F8471903419C75BAA50E09CF9933F7F /* MLNTypeUtil.h in Headers */,
-				E42CF59355768661DE3AB1BCBDC5380D /* MLNValueCalculator.h in Headers */,
-				49B3EE9FF7EA96549B62EC17AFE3E3B4 /* MLNValueCalculatorProtocol.h in Headers */,
-				7F194BCE408E96A386CE052C262B1239 /* MLNVersion.h in Headers */,
-				5EF170FE7F5E833D9BADFED0513C673C /* MLNView.h in Headers */,
-				339424E1AFB97A15929A2D4B2C1F9E57 /* MLNViewConst.h in Headers */,
-				BB2C48959BB9326BE53A7A71AA16E3A0 /* MLNViewControllerProtocol.h in Headers */,
-				C2A58B84DF647970B78FBD71871B2781 /* MLNViewExporterMacro.h in Headers */,
-				8AB09C850294E452EA4F597C955491BB /* MLNViewPager.h in Headers */,
-				94674039CEE8C3878939E78FD5F37425 /* MLNViewPagerAdapter.h in Headers */,
-				780E512F61ADA5D4F8A12F16FC3F7EC1 /* MLNWaterfallAdapter.h in Headers */,
-				05544BFCF12F0BCF1CE46B0ADFD5558E /* MLNWaterfallHeaderView.h in Headers */,
-				35C9ECF1AFFE857A227130E81DB4E8A8 /* MLNWaterfallLayout.h in Headers */,
-				4AE7E78E6900701D40AA88E86722D8FD /* MLNWaterfallLayoutDelegate.h in Headers */,
-				04C371B1022C5F0D79C55175CA0E87FE /* MLNWaterfallView.h in Headers */,
-				CFC7C94AA40CBC139EE7A50859FE0391 /* MLNWeakAssociatedObject.h in Headers */,
-				31654F0D16AA57C70FB5D83C0146E02A /* MLNWindow.h in Headers */,
-				88E2CEF185FFAD425F4C6231260F430D /* MLNWindowContext.h in Headers */,
-				07A8FCE06726A290F2EE0961E8E518B3 /* mmoslib.h in Headers */,
-				A9CBF2F00F8B914E4C19255A0213CABC /* NSArray+MLNCore.h in Headers */,
-				03C5BDB4001809D9BF92B2BC8CD1FD83 /* NSArray+MLNSafety.h in Headers */,
-				82D8DFCB629F16D101483FD36F4CEDFC /* NSAttributedString+MLNKit.h in Headers */,
-				A0D22BBFA0D8D33407DFB34944DF0339 /* NSDictionary+MLNCore.h in Headers */,
-				12EA65CBE8C9A512B9ED5F02D484173F /* NSDictionary+MLNSafety.h in Headers */,
-				3A9C9AF5A806E05BCA6255072173EB99 /* NSError+MLNCore.h in Headers */,
-				FC7011FE854A92C0EE9AE65EDF578978 /* NSMutableArray+MLNArray.h in Headers */,
-				F31BE8A3A34AF1A80EA8341AF345394F /* NSMutableArray+MLNCore.h in Headers */,
-				CB49A6297951414FBC416068C36703C1 /* NSMutableArray+MLNKVO.h in Headers */,
-				127B1029BA86B6C08BE6028CE15174EF /* NSMutableDictionary+MLNCore.h in Headers */,
-				862C24BF8FC3C7A13E5FDCBBB86DED5A /* NSMutableDictionary+MLNMap.h in Headers */,
-				EBFBE58BE96CB52B4D0714747050F3C2 /* NSNumber+MLNCore.h in Headers */,
-				42F422855A77FAA0F68459699C4CA535 /* NSObject+FBKVOController.h in Headers */,
-				4DCA81ED481C6596827AC7DECAF65141 /* NSObject+MLNCore.h in Headers */,
-				02A69F29CD52940C7ABEB18B5641308E /* NSString+MLNCore.h in Headers */,
-				38BB78169FC68C0325864349D9E55AC7 /* NSString+MLNKit.h in Headers */,
-				F49920A5F329599B715F09606AEECDFC /* NSValue+MLNCore.h in Headers */,
-				E50A3D376E7D1FC38C1CF0583600F573 /* UIColor+MLNCore.h in Headers */,
-				A068EA5E75912EF39633EECD6871BBC8 /* UIImage+MLN_IN_UTIL.h in Headers */,
-				FFE3F3893185085CA579E55F05FEE5EC /* UIImage+MLNKit.h in Headers */,
-				515AA710E464CA4699BB5C5547CC9EBE /* UIScrollView+MLNKit.h in Headers */,
-				DC11320CF62B34CD4432DC1809E098F6 /* UIView+MLNCore.h in Headers */,
-				BE077B116C1888DDABC731F9A7BF571E /* UIView+MLNKit.h in Headers */,
-				19AE4EC933311BCB654887E3E8561F7B /* UIView+MLNLayout.h in Headers */,
-				9F75ABD0EDC726EE5862FB1A3C4F00F8 /* UIViewController+MLNKVO.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6659,234 +6401,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		46D999F342AEA1F119F20E802CE5783E /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				5A867437EB8F507D04F3253BEE6A8DBF /* FBKVOController.m in Sources */,
-				EB649C88E789582ADB8DD6417608065B /* lapi.c in Sources */,
-				6721F66713E7B401E8E804B12E7929F2 /* lauxlib.c in Sources */,
-				B51A94AB8A847D07461D4028256F4B2C /* lbaselib.c in Sources */,
-				9443DA9F0A239A9B96784E32D3A00367 /* lcode.c in Sources */,
-				9006A7FEA0E5ADCBE152759B26FFE921 /* ldblib.c in Sources */,
-				AA03E7523221946A07D11C5D3414796F /* ldebug.c in Sources */,
-				BD62E076990D94B5FAC74C981E83E29E /* ldo.c in Sources */,
-				BEFEBE06189C26E17EC770ECB74FD2E5 /* ldump.c in Sources */,
-				9A87C22FB99AB5AE0384B0E8816062F1 /* lfunc.c in Sources */,
-				39E09FCAE6FB7B0962A6F56B8F7C28A2 /* lgc.c in Sources */,
-				0FB1994834A5BB18542AFB42C94439AF /* linit.c in Sources */,
-				BBBB53EC1374A3E3A87C0BB88FC3600F /* liolib.c in Sources */,
-				DDFDC0BC4FE979F836264AF131DD2350 /* llex.c in Sources */,
-				F183EF6B91A943736F2B5B15F5382AC8 /* lmathlib.c in Sources */,
-				AB32DA5744554AB67A651B4B0FA2AD66 /* lmem.c in Sources */,
-				72D9A89E2385C5A45A3A1C3AB356EDB9 /* loadlib.c in Sources */,
-				39AD3B8A7B1E7F42BDB77241AC73AA2E /* lobject.c in Sources */,
-				D2E78492A9C5A5BF69527A06EF027EA3 /* lopcodes.c in Sources */,
-				7CDEA810794E32630F755FCAD5D6152E /* loslib.c in Sources */,
-				E437A427A442A5821DF1902196D601BA /* lparser.c in Sources */,
-				B4053B128E953E308866F08AEA023960 /* lstate.c in Sources */,
-				35F532107CE2ADBAB1BD1D7E31E47DA5 /* lstring.c in Sources */,
-				08ED0B08A5DA2A4A2B8165A246E4AA8F /* lstrlib.c in Sources */,
-				20E2B71D0AA1FEBB9524D2B13A7DD033 /* ltable.c in Sources */,
-				FEA6A74911481CAD8200268F92DDFCDC /* ltablib.c in Sources */,
-				B278DD586744977400045F7C1EE58704 /* ltm.c in Sources */,
-				9A6D59B08F83A23F1780C45E3F4CFF74 /* lua.c in Sources */,
-				A3C27D48D7A872F44A8B940925C1119C /* luac.c in Sources */,
-				31287D08D1B4DC56577B5B840093AF77 /* lundump.c in Sources */,
-				09264F5480BBAEE260991E7CFC9B8A79 /* lvm.c in Sources */,
-				209ED8F5C90B18857CE35E5E7E07CF39 /* lzio.c in Sources */,
-				B1542F631EC3021518D27DD5E519C48C /* MLN-dummy.m in Sources */,
-				40997C4E38B3048812BFF058DA85CF7D /* MLNAdapterCachesManager.m in Sources */,
-				9B21B0848188AC815FCBA17B046A6F37 /* MLNAlert.m in Sources */,
-				2875F14F8B5079B04B6B2526C14BCBB0 /* MLNAlphaAnimation.m in Sources */,
-				F906C09988D585E842EFD58B0B2E4C26 /* MLNAnimation.m in Sources */,
-				A22B5E4D0138186445BCC529E47F5EDA /* MLNAnimationConst.m in Sources */,
-				156CC6FC747004B176513A316C9B35AF /* MLNAnimationDelegate.m in Sources */,
-				92F07BB2E9E30242BC681D7F51FD25A7 /* MLNAnimationHandler.m in Sources */,
-				07368468277F3AD0CC2E2759E54B668B /* MLNAnimationSet.m in Sources */,
-				0E6DA394C7D5801892D218C32549158F /* MLNAnimationZoneView.m in Sources */,
-				BB828344B9E5433496BF901F993BB321 /* MLNAnimator.m in Sources */,
-				EC8A5CDB1570EB851AB5D41D4A68236E /* MLNApplication.m in Sources */,
-				8529895B8E455A327ADF57D7041B3185 /* MLNBadgeView.m in Sources */,
-				AF93B66DD6A940B17DF03F7A0B2F5F76 /* MLNBeforeWaitingTask.m in Sources */,
-				51FFF104447C0017F551911E14790AD7 /* MLNBeforeWaitingTaskEngine.m in Sources */,
-				6DEFD324587946FA008F5D3209AAE116 /* MLNBit.m in Sources */,
-				4F141508088F5FBF9ADCA3FE85F11C2B /* MLNBlock.m in Sources */,
-				7904992030024D12A606F243BAC4C304 /* MLNBlockObserver.m in Sources */,
-				1370A9BED0489EA970D433FB15E847D7 /* MLNBorderLayerOperation.m in Sources */,
-				298D38DF248354ACBCB7FB76A101D520 /* MLNBounceInterpolator.m in Sources */,
-				703676985F599199644185772B62D984 /* MLNButton.m in Sources */,
-				9B2B80DAAA1CFC7130960A483EC3E274 /* MLNCanvasAnimation.m in Sources */,
-				8380A5BE635A0EF2469928548A2E4CAD /* MLNCanvasAnimationDelegate.m in Sources */,
-				85AABE924E22CDCB83E0B2C7185A0F09 /* MLNCanvasConst.m in Sources */,
-				D6CCD9F8F82263E536F6913E8EA8FCD1 /* MLNCanvasPaint.m in Sources */,
-				FCF68DE46926263F9F32BBBCF9D679CF /* MLNCanvasPath.m in Sources */,
-				A1D96230A033A6FBF8E1EDDE8F3BDAB1 /* MLNCanvasView.m in Sources */,
-				EEC2C7BCAAA0D8646E1C7919FFAF7992 /* MLNClipboard.m in Sources */,
-				E77C91E2EE6D5698A9B13BEEFBE06966 /* MLNCollectionView.m in Sources */,
-				8DF4D994E5CD928963ED616ECD4D4ABD /* MLNCollectionViewAdapter.m in Sources */,
-				0FC9A93292FA8DB7FBD803D998EA3DE4 /* MLNCollectionViewAutoFitAdapter.m in Sources */,
-				553AF23605DCC13578A2EBA4B59BFA2F /* MLNCollectionViewCell.m in Sources */,
-				FD31F6D65C0D276147168A93529FA9A9 /* MLNCollectionViewGridLayout.m in Sources */,
-				EC55BBFD7CA1914120589868E6E8C3BA /* MLNColor.m in Sources */,
-				07B0A623F82A1914A6461469C5CFF0B8 /* MLNContainerWindow.m in Sources */,
-				A1F54A14611CC4DECFC5F0E9CC7D308A /* MLNContentMode.m in Sources */,
-				009DD8ED241370E200452458 /* NSObject+MLNSwizzle.m in Sources */,
-				5D3C50FA4DB56BB202CCB6DB32AEDA7E /* MLNConvertor.m in Sources */,
-				B9DF3BD643F428443D786909B44D42BC /* MLNCornerImageLoader.m in Sources */,
-				5B4078A77A51500CB1C9B640D18A6728 /* MLNCornerLayerHandler.m in Sources */,
-				A7C450F8870A4F73A5870EDFD7393E19 /* MLNCornerManagerFactory.m in Sources */,
-				536192CD6AEDCBB49BBB7EF466A6D986 /* MLNCornerManagerTool.m in Sources */,
-				4DD230C84D3CB90E18C405A19EDF5A48 /* MLNCornerMaskImageManager.m in Sources */,
-				4DA2B38911B15FD9CD58CC313693C05C /* MLNCornerMaskLayerHndler.m in Sources */,
-				DE8255E3FD1EBB3B954C0F0840671B60 /* MLNCornerMaskViewHandler.m in Sources */,
-				ED7CE791419B36B692CA99F67B9EBEAA /* MLNCornerUtil.m in Sources */,
-				695AB0E712EDE28CE16E6DFBFEB83291 /* MLNDataBinding+MLNKit.m in Sources */,
-				FDBDFB2EF90536499449F1231561114E /* MLNDataBinding.m in Sources */,
-				A30F36EEFDD3F898B5DACC1D0210894F /* MLNDevice.m in Sources */,
-				B36C34F9CE2B64FACFB88EF9F0C03AA0 /* MLNDialogView.m in Sources */,
-				ED1853DECC6489E51B3FB5E1FFF49847 /* MLNEditTextView.m in Sources */,
-				FC189FFBBA78E73AD5D730A14825314C /* MLNEditTextViewConst.m in Sources */,
-				0C737F5CF46BAB32201119DD76E337B7 /* MLNEntityExporter.m in Sources */,
-				1C0715890D3E34ED354327BB308D8C6D /* MLNExporter.m in Sources */,
-				2B0BB945AFB957756304F08395B6E14B /* MLNExporterManager.m in Sources */,
-				1DB25C2A4337C6E685FF6B2B2B4746D7 /* MLNFile.m in Sources */,
-				FD7793F18F3353289108A74D7500150A /* MLNFileConst.m in Sources */,
-				007C657527664FA8533D73748702D36D /* MLNFileLoader.m in Sources */,
-				28ED709736CF35868E6E32EBBA0E4D96 /* MLNFont.m in Sources */,
-				5CFB0F165F00A3FFAC24BD1CC18B4875 /* MLNFrameAnimation.m in Sources */,
-				41F1557283C7B2B9C38E6AA72B685CBA /* MLNGaussEffectHandler.m in Sources */,
-				829B4AB9E3CAA88D65941442D72E224F /* MLNGlobalFuntionExporter.m in Sources */,
-				22ED37EFBACBBAC115961F75326C8414 /* MLNGlobalVarExporter.m in Sources */,
-				B4A9484E12ABD682C8FE4C8B1E0EE98D /* MLNGradientLayerOperation.m in Sources */,
-				DF6BE9BCACDD270AA10B8CF29BAB400C /* MLNHttp.m in Sources */,
-				9F500DE20702686AC7296307788070AC /* MLNHTTPConst.m in Sources */,
-				22CBF798D5331E700B188ECAD3199D3C /* MLNHttpDefaultHandler.m in Sources */,
-				3FF2CDDC78277B4B19225C06B1775E3C /* MLNImageView.m in Sources */,
-				63DCDF0163BDA00610587A4F22515A47 /* MLNInnerCollectionView.m in Sources */,
-				9244C59535E8892F3C29F92DD4A7EC92 /* MLNInnerScrollView.m in Sources */,
-				2A70704D9147F0539EB6C5D318C55E09 /* MLNInnerTableView.m in Sources */,
-				62518F3A979449734FAF2D738B456816 /* MLNInternalTextField.m in Sources */,
-				4E590D26CBF89417097C67E716E0213F /* MLNInternalTextView.m in Sources */,
-				C3948DC3225FD91A5735953E143A87F4 /* MLNInternalWaterfallView.m in Sources */,
-				A6CF39F73A6C34C52FAB2A328E5CB41F /* MLNInvocation.m in Sources */,
-				E7A8D060E1874989518BF6A33664956B /* MLNKeyboardViewHandler.m in Sources */,
-				F6F9B4014879EB866D97CEA1EA804AC0 /* MLNKeyframeAnimation.m in Sources */,
-				31CB3C4ACA5F7BD82A2CFC559CEE0D57 /* MLNKeyframeAnimationBuilder.m in Sources */,
-				3D6FD0ED7E3D5F8FD73327AB60CA5282 /* MLNKeyframeArray.m in Sources */,
-				F4CB72F0519F8189A6A8A84C7BF7E9B6 /* MLNKiConvertor.m in Sources */,
-				E149DE25C0FCB85D355919D3384ECF5D /* MLNKitBridgesManager.m in Sources */,
-				6060EAA96987C844FCFDF0E6EFB309C1 /* MLNKitEnvironment.m in Sources */,
-				50A7E7CD19D4249E4A5874AA14CDE1DC /* MLNKitInstance.m in Sources */,
-				5E471AF0C5B791FB2496E23928FD79FF /* MLNKitInstanceConsts.m in Sources */,
-				6AE45E5B83A7B22893016F57B56A2A96 /* MLNKitInstanceFactory.m in Sources */,
-				97D3219BBC38BCB967ECBD9ECC02B806 /* MLNKitInstanceHandlersManager.m in Sources */,
-				1B5AFB28AC28CC090738B3EDD1EA7BC6 /* MLNKitLuaCorePool.m in Sources */,
-				962CD13316BA6743BEB998D1C138273E /* MLNKitViewController+DataBinding.m in Sources */,
-				74206D46DE67324FFED1EAA053BCFE64 /* MLNKitViewController.m in Sources */,
-				148986D9C122D170A3F412EEA03B2877 /* MLNKVOObserver.m in Sources */,
-				550C34258F760371B9A3121DB1CE1871 /* MLNLabel.m in Sources */,
-				C34D7C840FDB301F4DC07B5C116C0604 /* MLNLayoutContainerNode.m in Sources */,
-				E1EA62F813C012F45E7F87398676F14B /* MLNLayoutEngine.m in Sources */,
-				22652CC1E989C1D34B62636B5E42840D /* MLNLayoutImageViewNode.m in Sources */,
-				06E69C3B4F14807A429D46164E719877 /* MLNLayoutNode.m in Sources */,
-				09EBC5A2C336EFB872FF03338F04A004 /* MLNLayoutNodeFactory.m in Sources */,
-				3F25EF6B17C1216B57CEEF53517EEB70 /* MLNLayoutScrollContainerNode.m in Sources */,
-				648C6E510399D2D467AB43F1F59524A3 /* MLNLayoutWindowNode.m in Sources */,
-				DA08274D9A2EAB7CC3BB76786791463F /* MLNLinearLayout.m in Sources */,
-				AC7796C5A9A355245DBDA793C85ED27E /* MLNLinearLayoutNode.m in Sources */,
-				0C72642A34BC6E1FEF797B98847F9A5A /* MLNListViewObserver.m in Sources */,
-				373BB39C9E0C61F0FAD26C4AC19CC986 /* MLNLoading.m in Sources */,
-				7B28C076EACAAF5307CB25377D8EB425 /* MLNLuaBundle.m in Sources */,
-				437E1F8882B88439805D007FC6ACCCDA /* MLNLuaCore.m in Sources */,
-				7112204ED24D0DA7C13DE43A7DB94740 /* MLNLuaTable.m in Sources */,
-				C922AB49E8D963AEAC608E0E8AB601B4 /* MLNMainRunLoopObserver.m in Sources */,
-				75890D835404A87D57B33624C8E094A0 /* MLNNavigator.m in Sources */,
-				0A8E668BB43DE2D8EF3460B32C0C22ED /* MLNNetworkReachability.m in Sources */,
-				05BD742060877413E749A162A343EB89 /* MLNNetworkReachabilityManager.m in Sources */,
-				E4E9F972BC4B350045370CB6EE3780A5 /* MLNNinePatchImageFactory.m in Sources */,
-				9D132D7D913C04F56CBC7C0230178B3A /* MLNOvershotInterpolater.m in Sources */,
-				026E3BDC92C550D8DC166256256B7F76 /* MLNPoint.m in Sources */,
-				A112377B7D7FDB747E227B9144CB8D05 /* MLNPreferenceUtils.m in Sources */,
-				442A48D84A52BFE8BEC2A6F93CB0318E /* MLNRect.m in Sources */,
-				CB697737E2F2BAE3A10DE406AAB98EE9 /* MLNRenderContext.m in Sources */,
-				1C4A0BF20579E2D34993B79B8F61DB1F /* MLNReuseContentView.m in Sources */,
-				6A404893511546A4057EEE9427731FBD /* MLNRotateAnimation.m in Sources */,
-				58F8BF99C7DCCA73FBD8E1EBBD0EF59D /* MLNSafeAreaAdapter.m in Sources */,
-				1987C512346A139DDC9B5121789D10D9 /* MLNSafeAreaProxy.m in Sources */,
-				FD2548C9A91A0706B1F2836EC2FB51EF /* MLNScaleAnimation.m in Sources */,
-				08D712D5E57F19383D8805E732EA6D05 /* MLNScrollCallbackView.m in Sources */,
-				B54803495C29375F1A0B1A80B3D225FE /* MLNScrollView.m in Sources */,
-				A892B12B3F3F007E10390EEBD0728C90 /* MLNScrollViewConst.m in Sources */,
-				C942F94E53CBB0D08D73699E922A01B2 /* MLNScrollViewDelegate.m in Sources */,
-				FC8BB5B85D61ABAA9DD71288044B8616 /* MLNShadowOperation.m in Sources */,
-				12DFCB60E3ED99E812A224C130FEC210 /* MLNShapeContext.m in Sources */,
-				BD7DACD740248C742B067C664E660CCA /* MLNSize.m in Sources */,
-				2A92497D866958C5AEB6EACE0B5B90D5 /* MLNSizeCahceManager.m in Sources */,
-				B50031D68CE1293F951B33FC610039B4 /* MLNSnapshotManager.m in Sources */,
-				8FAC4512D3A0A0695776DAAABA8B928D /* MLNStaticExporter.m in Sources */,
-				2EF173635345DBCC24943A5DC4BBD7F0 /* MLNStringUtil.m in Sources */,
-				A7E15D5E3FE38B1436C2D546DBF02CC3 /* MLNStyleElement.m in Sources */,
-				ADA5F7551CB3804875675F24A782F96F /* MLNStyleString.m in Sources */,
-				411EE2589A1FD8F0D187C25180C44910 /* MLNStyleStringConst.m in Sources */,
-				3A4BD1CED55552F2C6E3898B0C67D121 /* MLNSwitch.m in Sources */,
-				402DBF346F78AF7F7ACAF40E79C5C61F /* MLNSystem.m in Sources */,
-				48B084B846CFC3B681E36923B84BB656 /* MLNSystemConst.m in Sources */,
-				44C766E2A218C4C907ABD82F0D68C27F /* MLNTableView.m in Sources */,
-				79AA9EC0A2A7D3A0F0BD024B283D2D87 /* MLNTableViewAdapter.m in Sources */,
-				6196F594D5E43543EA100B523909FE0D /* MLNTableViewAutoFitAdapter.m in Sources */,
-				35BE87ECF3D2EAC07950C5FB9059F150 /* MLNTableViewCell.m in Sources */,
-				781BA6F10771BE5F54C83782E2AF3147 /* MLNTabSegmentScrollHandler.m in Sources */,
-				0A9A734A1F56F1254811C51562B6E5FB /* MLNTabSegmentView.m in Sources */,
-				3AF37CBCE1C17203878A905A4708C2B6 /* MLNTextConst.m in Sources */,
-				31D9EAACA29FD590A207BCC118751CE1 /* MLNTextViewFactory.m in Sources */,
-				AE15B7EB2037457A04E46C913E94168D /* MLNTimer.m in Sources */,
-				39C589460D80AD457133C1ED479C4886 /* MLNToast.m in Sources */,
-				BA0B2AB83797A829AB40A38AB26EFC17 /* MLNTransformTask.m in Sources */,
-				7A14B0B24B2B25FF1051E954FDCAB7D6 /* MLNTranslateAnimation.m in Sources */,
-				A4194822F0B6EB057257739E1ACD2B51 /* MLNTypeUtil.m in Sources */,
-				A58B2CE9739A08F493FE738943BB1E53 /* MLNValueCalculator.m in Sources */,
-				9E5B2EB2B780ADBD828F821FE109270D /* MLNView.m in Sources */,
-				5AEA23C5F7CDE68ED27AAF1B066EF272 /* MLNViewConst.m in Sources */,
-				14A4E9C369CEEB20B1E188C7CB2AC5A5 /* MLNViewPager.m in Sources */,
-				943CE3167C2515B9E717FACB2416B7A3 /* MLNViewPagerAdapter.m in Sources */,
-				F6202061D69C0C923636691E776E8F5F /* MLNWaterfallAdapter.m in Sources */,
-				89BBD5341B0B7DE34781B2B61639A12A /* MLNWaterfallHeaderView.m in Sources */,
-				F7D023E9F68F93AF1C69BEAF2D65F378 /* MLNWaterfallLayout.m in Sources */,
-				E01C335AF730F3AAE3D05B1DFA6D31BF /* MLNWaterfallView.m in Sources */,
-				A29DE23559CDCE37B871EF68917E4321 /* MLNWeakAssociatedObject.m in Sources */,
-				8098EAE9EF002A4EE05DFAD31406402C /* MLNWindow.m in Sources */,
-				696DAA57FE74F8F0C3993449B7AC5474 /* MLNWindowContext.m in Sources */,
-				E1039892914E9D2758C0FC09D652004D /* mmoslib.c in Sources */,
-				5FB5825CC8DCBE0C44846C59D979F0D2 /* NSArray+MLNCore.m in Sources */,
-				424731A562FD9BC85C7E132661BC7B71 /* NSArray+MLNSafety.m in Sources */,
-				137B70CBE1BE5278389DF1CFE6602FE2 /* NSAttributedString+MLNKit.m in Sources */,
-				53F772F52E069B8A8345EF1F51CCC843 /* NSDictionary+MLNCore.m in Sources */,
-				92F22E333D06E33D740A920E8903C85B /* NSDictionary+MLNSafety.m in Sources */,
-				A011D0BE748920A7E704D89A77681970 /* NSError+MLNCore.m in Sources */,
-				C0F099F1DD0E0974B8609ED4494981D1 /* NSMutableArray+MLNArray.m in Sources */,
-				EE569E1E147BF0172EEEBFBDF26AD346 /* NSMutableArray+MLNCore.m in Sources */,
-				4D8B1740EEA675CDFABE23DAECFE61C3 /* NSMutableArray+MLNKVO.m in Sources */,
-				8D580548F19305D4E65F675629E8736F /* NSMutableDictionary+MLNCore.m in Sources */,
-				5D01675822DB6A3DC7D9B466FBB8040C /* NSMutableDictionary+MLNMap.m in Sources */,
-				5AEA0B2C16C12BBA695778F7EE94F9F0 /* NSNumber+MLNCore.m in Sources */,
-				FE9054F4169EC5F7531A746688CFF6A6 /* NSObject+FBKVOController.m in Sources */,
-				AB9A8DDFFE9D54A8B9EF5A202A0392FE /* NSObject+MLNCore.m in Sources */,
-				05D0DE293A3BD2927AC140BD5A0D17F5 /* NSString+MLNCore.m in Sources */,
-				479E57A9E35F6D2F6460044042ABF9FB /* NSString+MLNKit.m in Sources */,
-				9754C15FC3020B36000CD1F903B2423E /* NSValue+MLNCore.m in Sources */,
-				A9C628C58BB938670EDE8F856F7B3673 /* print.c in Sources */,
-				715980ACC4E35A57AFE34084AF1F4075 /* UIColor+MLNCore.m in Sources */,
-				3AC09B7E1384D9DED513AF8DCABCD7DF /* UIImage+MLN_IN_UTIL.m in Sources */,
-				89FACAAD289E1AF1AF8E6EC02564B985 /* UIImage+MLNKit.m in Sources */,
-				ADB560B744B41071A94A0B1ABEBFF10D /* UIScrollView+MLNKit.m in Sources */,
-				A2209637CEC476E933B00BC1EE68A6DA /* UIView+MLNCore.m in Sources */,
-				F2FFDF4B63E5DFAAB6628DDB202DDFED /* UIView+MLNKit.m in Sources */,
-				1C8D403BC89D7851C34DBD156BB7654C /* UIView+MLNLayout.m in Sources */,
-				47335407FCD2845B3E2709BDEE405E16 /* UIViewController+MLNKVO.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		4EA9191C5A0D57CF95312FB0B8F15057 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -7350,11 +6864,10 @@
 				PUBLIC_HEADERS_FOLDER_PATH = "";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
 			};
-			name = Debug;
+			name = Release;
 		};
 		09043F3F61F6CF14DABE6724F0403F0B /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -7364,13 +6877,13 @@
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				GCC_PREFIX_HEADER = "Target Support Files/MJRefresh/MJRefresh-prefix.pch";
-				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				GCC_PREFIX_HEADER = "Target Support Files/SDWebImage/SDWebImage-prefix.pch";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				OTHER_LDFLAGS = "";
 				OTHER_LIBTOOLFLAGS = "";
 				PRIVATE_HEADERS_FOLDER_PATH = "";
-				PRODUCT_MODULE_NAME = MJRefresh;
-				PRODUCT_NAME = MJRefresh;
+				PRODUCT_MODULE_NAME = SDWebImage;
+				PRODUCT_NAME = SDWebImage;
 				PUBLIC_HEADERS_FOLDER_PATH = "";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -7402,9 +6915,8 @@
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				VALIDATE_PRODUCT = YES;
 			};
-			name = Release;
+			name = Debug;
 		};
 		4BE66A09A74FD25164AAB3C2645B9B93 /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -7439,13 +6951,16 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				ENABLE_NS_ASSERTIONS = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
-					"POD_CONFIGURATION_RELEASE=1",
+					"POD_CONFIGURATION_DEBUG=1",
+					"DEBUG=1",
 					"$(inherited)",
 				);
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -7455,8 +6970,9 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
-				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRIP_INSTALLED_PRODUCT = NO;
 				SWIFT_COMPILATION_MODE = wholemodule;
@@ -7464,7 +6980,7 @@
 				SWIFT_VERSION = 5.0;
 				SYMROOT = "${SRCROOT}/../build";
 			};
-			name = Release;
+			name = Debug;
 		};
 		4BFEB5FE8BB2577EF9BA088DE26A7E0B /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -7568,6 +7084,8 @@
 				PRODUCT_NAME = MLNDevTool_Util;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				WRAPPER_EXTENSION = bundle;
 			};
@@ -7641,73 +7159,33 @@
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		BBA89BACF131AB5A3ADAD7BCBCE81F50 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 9585B086AB002C554D45E002CDEC15FE /* Expecta.release.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				GCC_PREFIX_HEADER = "Target Support Files/Expecta/Expecta-prefix.pch";
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PRIVATE_HEADERS_FOLDER_PATH = "";
+				PRODUCT_MODULE_NAME = Expecta;
+				PRODUCT_NAME = Expecta;
+				PUBLIC_HEADERS_FOLDER_PATH = "";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
-		};
-		7EF7227D9B20A1D549000096ACCB23D7 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_COMMA = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INFINITE_RECURSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
-				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
-				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
-				CLANG_WARN_STRICT_PROTOTYPES = YES;
-				CLANG_WARN_SUSPICIOUS_MOVE = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_TESTABILITY = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"POD_CONFIGURATION_DEBUG=1",
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
-				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
-				MTL_FAST_MATH = YES;
-				ONLY_ACTIVE_ARCH = YES;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				STRIP_INSTALLED_PRODUCT = NO;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
-				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 5.0;
-				SYMROOT = "${SRCROOT}/../build";
-			};
-			name = Debug;
 		};
 		82D891EBEC40642820B154518B6F5CCF /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -7779,33 +7257,50 @@
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				VALIDATE_PRODUCT = YES;
+			};
+			name = Debug;
+		};
+		BE000F37575453F50F8E512285BB4E28 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = EAF52E1E382767DC15E0B651F5BAAB15 /* MLNDevTool.release.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/MLNDevTool";
+				IBSC_MODULE = MLNDevTool;
+				INFOPLIST_FILE = "Target Support Files/MLNDevTool/ResourceBundle-MLNDevTool_Offline-MLNDevTool-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				PRODUCT_NAME = MLNDevTool_Offline;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				WRAPPER_EXTENSION = bundle;
 			};
 			name = Release;
 		};
-		8A64B4DF8A93C8B17F90599634A052E6 /* Debug */ = {
+		D5181868A97E6E13A2EA0F71EF4DF314 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5B85B76C8F149122D31E85962529A224 /* MLN.xcconfig */;
+			baseConfigurationReference = EA7FB449923FC674E0771E7FB825753A /* AFNetworking.release.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				GCC_PREFIX_HEADER = "Target Support Files/MLN/MLN-prefix.pch";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				GCC_PREFIX_HEADER = "Target Support Files/AFNetworking/AFNetworking-prefix.pch";
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				OTHER_LDFLAGS = "";
 				OTHER_LIBTOOLFLAGS = "";
 				PRIVATE_HEADERS_FOLDER_PATH = "";
-				PRODUCT_MODULE_NAME = MLN;
-				PRODUCT_NAME = MLN;
+				PRODUCT_MODULE_NAME = AFNetworking;
+				PRODUCT_NAME = AFNetworking;
 				PUBLIC_HEADERS_FOLDER_PATH = "";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
 			};
-			name = Debug;
+			name = Release;
 		};
 		94DBEBFEE584BC191A81D4EB0A21F07E /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -7882,7 +7377,7 @@
 				IBSC_MODULE = MLNDevTool;
 				INFOPLIST_FILE = "Target Support Files/MLNDevTool/ResourceBundle-MLNDevTool_HotReload-MLNDevTool-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
-				PRODUCT_NAME = MLNDevTool_HotReload;
+				PRODUCT_NAME = MLNDevTool_Offline;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -7961,8 +7456,9 @@
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
 			};
-			name = Debug;
+			name = Release;
 		};
 		BE000F37575453F50F8E512285BB4E28 /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -8022,10 +7518,8 @@
 				PUBLIC_HEADERS_FOLDER_PATH = "";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				VALIDATE_PRODUCT = YES;
+				WRAPPER_EXTENSION = bundle;
 			};
 			name = Release;
 		};
@@ -8112,9 +7606,8 @@
 				PUBLIC_HEADERS_FOLDER_PATH = "";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				WRAPPER_EXTENSION = bundle;
 			};
 			name = Debug;
 		};
