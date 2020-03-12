@@ -25,4 +25,9 @@
 - (void)setMln_heightBlock:(NSUInteger (^)(NSArray * _Nonnull, NSUInteger, NSUInteger))mln_heightBlock {
     objc_setAssociatedObject(self, @selector(mln_heightBlock), mln_heightBlock, OBJC_ASSOCIATION_COPY);
 }
+
+- (BOOL)mln_is2D {
+    NSObject *first = self.firstObject;
+    return [first isKindOfClass:[NSArray class]];
+}
 @end

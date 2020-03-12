@@ -26,10 +26,11 @@
 }
 
 - (void)viewDidLoad {
-    [super viewDidLoad];
     [self createModel];
     [self createModelArray];
-    [self testDataBind];
+//    [self testDataBind];
+    
+    [super viewDidLoad];
 }
 
 - (void)createModel {
@@ -53,11 +54,14 @@
     };
     
     [self.dataBinding bindArray:arr forKey:@"source"];
+    self.modelArray = arr;
 }
 
 - (void)testDataBind {
     static int cnt = 1;
+    __weak typeof(self) weakSelf = self;
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        __strong typeof(weakSelf) self = weakSelf;
         self.model.open = !self.model.open;
         self.model.title = [NSString stringWithFormat:@"title %d",cnt];
         self.model.name = [NSString stringWithFormat:@"name %d",cnt];
@@ -72,6 +76,10 @@
         cnt++;
         [self testDataBind];
     });
+}
+
+- (void)dealloc {
+    NSLog(@"---- dealloc : %s ",__func__);
 }
 
 @end
