@@ -96,7 +96,7 @@
                        @"TableViewDemo.lua",
                        @"ViewPagerDemo.lua",
                        @"WaterfallViewDemo.lua",
-//                       @"MLNDataBindViewController"
+                       @"MLNDataBindViewController"
                        ];
     }
     return _demoArray;
