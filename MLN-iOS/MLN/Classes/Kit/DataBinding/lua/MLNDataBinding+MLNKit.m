@@ -14,6 +14,7 @@
 #import "MLNKitViewController+DataBinding.h"
 #import "MLNListViewObserver.h"
 #import "NSArray+MLNKVO.h"
+#import "NSDictionary+MLNKVO.h"
 
 @implementation MLNDataBinding (MLNKit)
 
@@ -23,21 +24,74 @@
     [kitViewController addDataObserver:observer forKeyPath:keyPath];
 }
 
-+ (id __nullable)lua_dataForKeyPath:(NSString *)keyPath
-{
-    MLNKitViewController *kitViewController = (MLNKitViewController *)MLN_KIT_INSTANCE([self mln_currentLuaCore]).viewController;
-    return [kitViewController dataForKeyPath:keyPath];
-}
-
-+ (void)lua_updateDataForKeyPath:(NSString *)keyPath value:(id)value
-{
++ (void)lua_updateDataForKeyPath:(NSString *)keyPath value:(id)value {
     MLNKitViewController *kitViewController = (MLNKitViewController *)MLN_KIT_INSTANCE([self mln_currentLuaCore]).viewController;
     [kitViewController updateDataForKeyPath:keyPath value:value];
 }
 
++ (id __nullable)lua_dataForKeyPath:(NSString *)keyPath {
+    MLNKitViewController *kitViewController = (MLNKitViewController *)MLN_KIT_INSTANCE([self mln_currentLuaCore]).viewController;
+    return [kitViewController dataForKeyPath:keyPath];
+}
+
++ (id __nullable)lua_mockForKey:(NSString *)key data:(NSDictionary *)dic {
+    MLNKitViewController *kitViewController = (MLNKitViewController *)MLN_KIT_INSTANCE([self mln_currentLuaCore]).viewController;
+//    if ([dic isKindOfClass:[NSArray class]]) {
+//        return [self lua_mockArrayForKey:key data:(NSArray *)dic callbackDic:nil];
+//    }
+    if (![dic isKindOfClass:[NSDictionary class]]) {
+        NSLog(@"error %s, should be NSDictionary",__func__);
+        return nil;
+    }
+    NSMutableDictionary *map = dic.mln_mutalbeCopy;
+    [kitViewController.dataBinding bindData:map forKey:key];
+    return map;
+}
+
++ (id __nullable)lua_mockArrayForKey:(NSString *)key data:(NSArray *)data callbackDic:(NSDictionary *)callbackDic {
+    MLNKitViewController *kitViewController = (MLNKitViewController *)MLN_KIT_INSTANCE([self mln_currentLuaCore]).viewController;
+    NSMutableArray *arr = data.mutableCopy;
+    
+    MLNBlock *reuseIdBlock = [callbackDic objectForKey:@"reuseId"];
+    MLNBlock *height = [callbackDic objectForKey:@"height"];
+    arr.mln_resueIdBlock = ^NSString * _Nonnull(NSArray * _Nonnull items, NSUInteger section, NSUInteger row) {
+        if (reuseIdBlock) {
+            NSDictionary *item;
+            @try {
+                item = (items.mln_is2D) ? items[section - 1][row - 1] : items[row - 1];
+                [reuseIdBlock addMapArgument:item];
+                [reuseIdBlock addUIntegerArgument:section];
+                [reuseIdBlock addUIntegerArgument:row];
+                NSString *cellId = [reuseIdBlock callIfCan];
+                return cellId;
+            } @catch (NSException *exception) {
+                NSLog(@"error %s exception %@",__func__, exception);
+            }
+        }
+        return nil;
+    };
+    arr.mln_heightBlock = ^NSUInteger(NSArray * _Nonnull items, NSUInteger section, NSUInteger row) {
+        if (height) {
+            NSDictionary *item;
+            @try {
+                item = (items.mln_is2D) ? items[section - 1][row - 1] : items[row - 1];
+                [height addMapArgument:item];
+                [height addUIntegerArgument:section];
+                [height addUIntegerArgument:row];
+                NSUInteger h = [[height callIfCan] unsignedIntegerValue];
+                return h;
+            } @catch (NSException *exception) {
+                NSLog(@"error %s exception %@",__func__, exception);
+            }
+        }
+        return 0;
+    };
+    [kitViewController.dataBinding bindArray:arr forKey:key];
+    return arr;
+}
+
 #pragma mark - ListView
-+ (void)lua_bindListViewForKey:(NSString *)key listView:(UIView *)listView
-{
++ (void)lua_bindListViewForKey:(NSString *)key listView:(UIView *)listView {
     MLNKitViewController *kitViewController = (MLNKitViewController *)MLN_KIT_INSTANCE([self mln_currentLuaCore]).viewController;
     MLNListViewObserver *observer = [MLNListViewObserver observerWithListView:listView keyPath:key];
     [kitViewController.dataBinding addArrayObserver:observer forKey:key];
@@ -67,7 +121,12 @@
 
 + (id)lua_modelForKey:(NSString *)key section:(NSUInteger)section row:(NSUInteger)row path:(NSString *)path {
     NSArray *array = [self lua_dataForKeyPath:key];
-    id resust = [[array objectAtIndex:row - 1] valueForKeyPath:path];
+    id resust;
+    @try {
+        resust = [[array objectAtIndex:row - 1] valueForKeyPath:path];
+    } @catch (NSException *exception) {
+        NSLog(@"%s exception: %@",__func__, exception);
+    }
     return resust;
 }
 
@@ -93,6 +152,8 @@ LUA_EXPORT_STATIC_BEGIN(MLNDataBinding)
 LUA_EXPORT_STATIC_METHOD(bind, "lua_bindDataForKeyPath:handler:", MLNDataBinding)
 LUA_EXPORT_STATIC_METHOD(update, "lua_updateDataForKeyPath:value:", MLNDataBinding)
 LUA_EXPORT_STATIC_METHOD(get, "lua_dataForKeyPath:", MLNDataBinding)
+LUA_EXPORT_STATIC_METHOD(mock, "lua_mockForKey:data:", MLNDataBinding)
+LUA_EXPORT_STATIC_METHOD(mockArray, "lua_mockArrayForKey:data:callbackDic:", MLNDataBinding)
 
 LUA_EXPORT_STATIC_METHOD(bindListView, "lua_bindListViewForKey:listView:", MLNDataBinding)
 LUA_EXPORT_STATIC_METHOD(getSectionCount, "lua_sectionCountForKey:", MLNDataBinding)

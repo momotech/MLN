@@ -16,6 +16,8 @@ NS_ASSUME_NONNULL_BEGIN
 // AutoFitAdaper 会自动计算行高，所以不需要.
 @property (nonatomic, copy, nullable)NSUInteger(^mln_heightBlock)(NSArray *items, NSUInteger section, NSUInteger row);
 
+// 是否二维数组
+- (BOOL)mln_is2D;
 @end
 
 NS_ASSUME_NONNULL_END
