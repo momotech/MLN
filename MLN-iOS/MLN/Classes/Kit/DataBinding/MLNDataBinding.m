@@ -33,12 +33,10 @@
 }
 
 - (void)bindData:(NSObject *)data forKey:(NSString *)key {
-    NSParameterAssert(data && key);
-    if (data && key) {
+    NSParameterAssert(key);
+    if (key) {
         LOCK();
-        if (![self.dataMap.allKeys containsObject:key]) {
-            [self.dataMap setObject:data forKey:key];
-        }
+        [self.dataMap setValue:data forKey:key];
         UNLOCK();
     }
 }
