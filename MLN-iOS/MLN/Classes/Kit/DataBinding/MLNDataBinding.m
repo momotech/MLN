@@ -99,6 +99,17 @@
     UNLOCK();
 }
 
+- (NSArray<NSObject<MLNKVOObserverProtol> *> *)observersForKeyPath:(NSString *)keyPath {
+    NSParameterAssert(keyPath);
+    if (!keyPath) {
+        return nil;
+    }
+    LOCK();
+    NSMutableArray *observers = [self.observerMap objectForKey:keyPath];
+    UNLOCK();
+    return observers;
+}
+
 #pragma mark - Array
 
 - (void)bindArray:(NSArray *)array forKey:(NSString *)key {
