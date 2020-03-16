@@ -431,6 +431,7 @@ const CGFloat kMLNTabSegmentViewLabelOffsetWeight = 10.0f;
     MLNTabSegmentLabel *currentLabel = nil;
     for (int i=0; i<self.segmentViews.count; i++) {
         MLNTabSegmentLabel *segmentLabel = [self.segmentViews objectAtIndex:i];
+        segmentLabel.titleLabel.textColor = self.configuration.customTiniColor ? self.configuration.customTiniColor : kMLNTabDefaultColor;
         if (i == currentIndex) {
             currentLabel = segmentLabel;
             [segmentLabel setLabelScale:self.configuration.selectScale fontWeight:[MLNTabSegmentViewConfiguration getFontWeightWithProgress:1.0]];
@@ -443,7 +444,6 @@ const CGFloat kMLNTabSegmentViewLabelOffsetWeight = 10.0f;
                 segmentLabel.titleLabel.textColor = _customTintColor;
             }
         }
-        segmentLabel.titleLabel.textColor = self.configuration.customTiniColor ? self.configuration.customTiniColor : kMLNTabDefaultColor;
     }
     [self layoutSegmentTitle];
     
