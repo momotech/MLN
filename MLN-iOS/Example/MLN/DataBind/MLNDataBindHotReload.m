@@ -78,7 +78,7 @@
     __weak typeof(self) weakSelf = self;
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         __strong typeof(weakSelf) self = weakSelf;
-        self.model.open = !self.model.open;
+        self.model.hideIcon = !self.model.hideIcon;
         self.model.title = [NSString stringWithFormat:@"title %d",cnt];
         self.model.name = [NSString stringWithFormat:@"name %d",cnt];
         self.model.detail = [NSString stringWithFormat:@"detail %d",cnt];
