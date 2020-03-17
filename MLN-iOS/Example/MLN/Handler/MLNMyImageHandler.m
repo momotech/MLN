@@ -34,7 +34,7 @@
 - (void)imageView:(UIImageView<MLNEntityExportProtocol> *)imageView setImageWithPath:(NSString *)path placeHolderImage:(NSString *)placeHolder
 {
     
-    [imageView sd_setImageWithURL:[NSURL URLWithString:path] placeholderImage:[UIImage imageNamed:placeHolder]];
+    [imageView sd_setImageWithURL:[NSURL URLWithString:path] placeholderImage:placeHolder.length > 0 ? [UIImage imageNamed:placeHolder] : nil];
 }
 
 - (void)imageView:(UIImageView<MLNEntityExportProtocol> *)imageView setCornerImageWith:(NSString *)imageName placeHolderImage:(NSString *)placeHolder cornerRadius:(NSInteger)radius dircetion:(MLNRectCorner)direction {
