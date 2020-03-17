@@ -1,22 +1,22 @@
 //
-//  MLNDataBindViewController.m
+//  MLNDataBindHotReload.m
 //  LuaNative
 //
 //  Created by Dai Dongpeng on 2020/3/10.
 //  Copyright © 2020 MoMo. All rights reserved.
 //
 
-#import "MLNDataBindViewController.h"
+#import "MLNDataBindHotReload.h"
 #import "MLNStaticTest.h"
 #import "MLNDataBindModel.h"
 #import <NSArray+MLNKVO.h>
 
-@interface MLNDataBindViewController ()
+@interface MLNDataBindHotReload ()
 @property (nonatomic, strong) MLNDataBindModel *model;
 @property (nonatomic, strong) NSMutableArray <MLNDataBindModel *> *modelArray;
 @end
 
-@implementation MLNDataBindViewController
+@implementation MLNDataBindHotReload
 
 - (instancetype)init {
     self = [super initWithRegisterClasses:@[[MLNStaticTest class]] extraInfo:nil];
