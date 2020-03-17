@@ -157,5 +157,4 @@
     }
     return _kitInstance;
 }
-
 @end
