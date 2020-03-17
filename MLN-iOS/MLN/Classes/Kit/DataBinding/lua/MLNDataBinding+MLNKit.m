@@ -61,10 +61,10 @@
         if (reuseIdBlock) {
             NSDictionary *item;
             @try {
-                item = (items.mln_is2D) ? items[section - 1][row - 1] : items[row - 1];
+                item = (items.mln_is2D) ? items[section][row] : items[row];
                 [reuseIdBlock addMapArgument:item];
-                [reuseIdBlock addUIntegerArgument:section];
-                [reuseIdBlock addUIntegerArgument:row];
+                [reuseIdBlock addUIntegerArgument:section + 1];
+                [reuseIdBlock addUIntegerArgument:row + 1];
                 NSString *cellId = [reuseIdBlock callIfCan];
                 return cellId;
             } @catch (NSException *exception) {
@@ -77,10 +77,10 @@
         if (height) {
             NSDictionary *item;
             @try {
-                item = (items.mln_is2D) ? items[section - 1][row - 1] : items[row - 1];
+                item = (items.mln_is2D) ? items[section][row] : items[row];
                 [height addMapArgument:item];
-                [height addUIntegerArgument:section];
-                [height addUIntegerArgument:row];
+                [height addUIntegerArgument:section + 1];
+                [height addUIntegerArgument:row + 1];
                 NSUInteger h = [[height callIfCan] unsignedIntegerValue];
                 return h;
             } @catch (NSException *exception) {
@@ -136,7 +136,7 @@
 + (NSString *)lua_reuseIdForKey:(NSString *)key section:(NSUInteger)section row:(NSUInteger)row {
     NSArray *array = [self lua_dataForKeyPath:key];
     if (array.mln_resueIdBlock) {
-        return array.mln_resueIdBlock(array, section, row);
+        return array.mln_resueIdBlock(array, section - 1, row - 1);
     }
     return @"Cell";
 }
@@ -144,7 +144,7 @@
 + (NSUInteger)lua_heightForKey:(NSString *)key section:(NSUInteger)section row:(NSUInteger)row {
     NSArray *array = [self lua_dataForKeyPath:key];
     if (array.mln_heightBlock) {
-        return array.mln_heightBlock(array, section, row);
+        return array.mln_heightBlock(array, section - 1, row - 1);
     }
     NSAssert(array.mln_heightBlock, @"mln_heightBlock of binded array should not be nil");
     return 0;
@@ -154,18 +154,18 @@
     MLNKitViewController *kitViewController = (MLNKitViewController *)MLN_KIT_INSTANCE([self mln_currentLuaCore]).viewController;
 
     NSArray *array = [self lua_dataForKeyPath:key];
-    MLNListViewObserver *observer = (MLNListViewObserver *)[kitViewController.dataBinding observersForKeyPath:key].firstObject;
-    if (![observer isKindOfClass:[MLNListViewObserver class]]) {
+    MLNListViewObserver *listObserver = (MLNListViewObserver *)[kitViewController.dataBinding observersForKeyPath:key].firstObject;
+    if (![listObserver isKindOfClass:[MLNListViewObserver class]]) {
         NSLog(@"error: not found observer for key %@",key);
         return;
     }
     
     NSObject *model = [array mln_objectAtIndex:row - 1];
-    [model.KVOControllerNonRetaining observe:model keyPaths:paths options:NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew block:^(id  _Nullable observer, id  _Nonnull object, NSDictionary<NSString *,id> * _Nonnull change) {
-        UIView *listView = [observer listView];
+    [kitViewController.dataBinding.KVOController observe:model keyPaths:paths options:NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew block:^(id  _Nullable observer, id  _Nonnull object, NSDictionary<NSString *,id> * _Nonnull change) {
+        UIView *listView = [listObserver listView];
         if ([listView isKindOfClass:[MLNTableView class]]) {
             MLNTableView *table = (MLNTableView *)listView;
-            NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row inSection:section];
+            NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row - 1 inSection:section - 1];
             [table.adapter tableView:table.adapter.targetTableView reloadRowsAtIndexPaths:@[indexPath]];
             [table.adapter.targetTableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
             
@@ -189,7 +189,7 @@ LUA_EXPORT_STATIC_METHOD(getRowCount, "lua_rowCountForKey:section:", MLNDataBind
 LUA_EXPORT_STATIC_METHOD(getModel, "lua_modelForKey:section:row:path:", MLNDataBinding)
 LUA_EXPORT_STATIC_METHOD(getReuseId, "lua_reuseIdForKey:section:row:", MLNDataBinding)
 LUA_EXPORT_STATIC_METHOD(getHeight, "lua_heightForKey:section:row:", MLNDataBinding)
-LUA_EXPORT_STATIC_METHOD(bindCell, "lua_bindCellForKey:section:row:paths", MLNDataBinding)
+LUA_EXPORT_STATIC_METHOD(bindCell, "lua_bindCellForKey:section:row:paths:", MLNDataBinding)
 
 LUA_EXPORT_STATIC_END(MLNDataBinding, DataBinding, NO, NULL)
 
