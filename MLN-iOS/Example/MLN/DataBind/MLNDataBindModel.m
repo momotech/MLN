@@ -20,4 +20,7 @@
     return model;
 }
 
+- (NSString *)debugDescription {
+    return [NSString stringWithFormat:@" name: %@ \n title: %@ \n detail: %@ \n hideIcon: %d \n iconUrl: %@ \n", self.name, self.title, self.detail, self.hideIcon, self.iconUrl];
+}
 @end
