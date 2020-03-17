@@ -15,7 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy) NSString *title;
 @property (nonatomic, copy) NSString *detail;
 
-@property (nonatomic, assign) BOOL open;
+@property (nonatomic, assign) BOOL hideIcon;
 @property (nonatomic, copy) NSString *iconUrl;
 
 + (instancetype)testModel;

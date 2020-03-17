@@ -59,6 +59,7 @@ NS_ASSUME_NONNULL_BEGIN
 */
 - (void)removeDataObserver:(NSObject<MLNKVOObserverProtol> *)observer forKeyPath:(NSString *)keyPath;
 
+- (void)addToSuperViewController:(UIViewController *)superVC frame:(CGRect)frame;
 @end
 
 //@interface MLNKitViewController (ArrayBinding)
