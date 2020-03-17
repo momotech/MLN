@@ -14,6 +14,7 @@
 		00E6525624176A0F00A878B8 /* MLNDataBindModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E6525524176A0F00A878B8 /* MLNDataBindModel.m */; };
 		00E6525C2418EFF200A878B8 /* MLNDictionaryTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E6525B2418EFF200A878B8 /* MLNDictionaryTests.m */; };
 		00E6526B2420AD1800A878B8 /* MLNBindModelViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E6526A2420AD1800A878B8 /* MLNBindModelViewController.m */; };
+		00E6526E2420BCCE00A878B8 /* MLNBindTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E6526D2420BCCE00A878B8 /* MLNBindTableViewController.m */; };
 		112C50D76F2A49BC8742D484 /* libPods-LuaNative.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F690E0F94A4E45F3BA4BF4B2 /* libPods-LuaNative.a */; };
 		3012BB102326822F00FA2BB2 /* MLNNavigatorHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 3012BB0F2326822F00FA2BB2 /* MLNNavigatorHandler.m */; };
 		30A4EB5A231CC5CD00995416 /* MLNMyHttpHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 30A4EB59231CC5CD00995416 /* MLNMyHttpHandler.m */; };
@@ -120,6 +121,8 @@
 		00E6525B2418EFF200A878B8 /* MLNDictionaryTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNDictionaryTests.m; sourceTree = "<group>"; };
 		00E652692420AD1800A878B8 /* MLNBindModelViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNBindModelViewController.h; sourceTree = "<group>"; };
 		00E6526A2420AD1800A878B8 /* MLNBindModelViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNBindModelViewController.m; sourceTree = "<group>"; };
+		00E6526C2420BCCE00A878B8 /* MLNBindTableViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNBindTableViewController.h; sourceTree = "<group>"; };
+		00E6526D2420BCCE00A878B8 /* MLNBindTableViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNBindTableViewController.m; sourceTree = "<group>"; };
 		02612459D91635274DB7C591 /* libPods-MLN_Tests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-MLN_Tests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		0BFEA11F75FC7C356E75DFD6 /* Pods-MLN_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MLN_Example.release.xcconfig"; path = "Target Support Files/Pods-MLN_Example/Pods-MLN_Example.release.xcconfig"; sourceTree = "<group>"; };
 		1018AD05C0E113C32A1AD38C /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
@@ -331,6 +334,8 @@
 				00E6525524176A0F00A878B8 /* MLNDataBindModel.m */,
 				00E652692420AD1800A878B8 /* MLNBindModelViewController.h */,
 				00E6526A2420AD1800A878B8 /* MLNBindModelViewController.m */,
+				00E6526C2420BCCE00A878B8 /* MLNBindTableViewController.h */,
+				00E6526D2420BCCE00A878B8 /* MLNBindTableViewController.m */,
 			);
 			path = DataBind;
 			sourceTree = "<group>";
@@ -984,6 +989,7 @@
 				FA4EE3072379095700449250 /* MLNGalleryMineBottomPageBaseCell.m in Sources */,
 				FA4EE313237917E500449250 /* MLNGalleryMinePageCellCollectCell.m in Sources */,
 				FA4EE30D237909AB00449250 /* MLNGalleryMineBottomPageDynamicCell.m in Sources */,
+				00E6526E2420BCCE00A878B8 /* MLNBindTableViewController.m in Sources */,
 				B29500D62372627000F48F09 /* MLNNativeTabSegmentView.m in Sources */,
 				B29500EA2372A3A400F48F09 /* MLNSimpleViewPager.m in Sources */,
 				B27F65C52377AAAE00F2D341 /* MLNGalleryMessageBaseCellModel.m in Sources */,

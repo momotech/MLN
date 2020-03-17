@@ -7,9 +7,7 @@
 //
 
 #import "MLNBindModelViewController.h"
-#import "MLNKitViewController.h"
-#import "MLNLuaBundle.h"
-#import "MLNKitViewController+DataBinding.h"
+#import "MLNKit.h"
 #import "MLNDataBindModel.h"
 
 @interface MLNBindModelViewController ()
