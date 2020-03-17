@@ -15,7 +15,7 @@
     model.name = @"name";
     model.title = @"title";
     model.detail = @"detail";
-    model.open = YES;
+    model.hideIcon = NO;
     model.iconUrl = @"http://img0.imgtn.bdimg.com/it/u=383546810,2079334210&fm=26&gp=0.jpg";
     return model;
 }
