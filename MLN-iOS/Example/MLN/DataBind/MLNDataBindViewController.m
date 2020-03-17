@@ -21,6 +21,7 @@
 - (instancetype)init {
     self = [super initWithRegisterClasses:@[[MLNStaticTest class]] extraInfo:nil];
     if (self) {
+        NSLog(@"---- %s",__FUNCTION__);
     }
     return self;
 }
@@ -55,6 +56,21 @@
     
     [self.dataBinding bindArray:arr forKey:@"source"];
     self.modelArray = arr;
+    [self testModel];
+}
+
+- (void)testModel {
+    __weak typeof(self) weakSelf = self;
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        __strong typeof(weakSelf) self = weakSelf;
+        if (!self) {
+            return ;
+        }
+        MLNDataBindModel *m = self.modelArray.firstObject;
+        static int cnt = 1;
+        m.title = [NSString stringWithFormat:@"title %d",cnt++];
+        [self testModel];
+    });
 }
 
 - (void)testDataBind {
