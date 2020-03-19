@@ -203,7 +203,8 @@
     NSError *innerError = nil;
     if (!layoutFilePath || ![MLNFile existAtPath:layoutFilePath]) {
         innerError = [NSError mln_errorLoad:[NSString stringWithFormat:@"The layout file path of entry file doesn't exist, and the entryFilePath is %@", entryFilePath ?: @"(null)"]];
-        MLNError(self.luaCore, @"%@", [innerError mln_errorMessage]);
+//        MLNError(self.luaCore, @"%@", [innerError mln_errorMessage]);
+        NSLog(@"%@",[innerError mln_errorMessage]);
         [self handleLayoutFileError:innerError errorBuffer:error filePath:entryFilePath];
         return NO;
     }
