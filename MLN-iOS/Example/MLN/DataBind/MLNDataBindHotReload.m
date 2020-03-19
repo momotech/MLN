@@ -47,31 +47,71 @@
         [arr addObject:model];
     }
     
-    arr.mln_resueIdBlock = ^NSString * _Nonnull(NSArray * _Nonnull items, NSUInteger section, NSUInteger row) {
+    NSMutableArray *models = @[arr].mutableCopy;
+    
+    models.mln_resueIdBlock = ^NSString * _Nonnull(NSArray * _Nonnull items, NSUInteger section, NSUInteger row) {
         return @"Cell_1";
     };
-    arr.mln_heightBlock = ^NSUInteger(NSArray * _Nonnull items, NSUInteger section, NSUInteger row) {
-        return 150;
+    models.mln_heightBlock = ^NSUInteger(NSArray * _Nonnull items, NSUInteger section, NSUInteger row) {
+        return 120;
     };
     
-    [self.dataBinding bindArray:arr forKey:@"source"];
-    self.modelArray = arr;
+    [self.dataBinding bindArray:models forKey:@"source"];
+    self.modelArray = models;
     [self testModel];
 }
 
 - (void)testModel {
+    static int cnt = 1;
     __weak typeof(self) weakSelf = self;
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         __strong typeof(weakSelf) self = weakSelf;
         if (!self) {
             return ;
         }
-        MLNDataBindModel *m = self.modelArray.firstObject;
-        static int cnt = 1;
-        m.title = [NSString stringWithFormat:@"title %d",cnt++];
+        NSMutableArray *models = self.modelArray;
+        if (models.mln_is2D) {
+            if (models.count < 3) {
+                MLNDataBindModel *model = [MLNDataBindModel testModel];
+                model.name = [NSString stringWithFormat:@"section 2"];
+                model.title = [NSString stringWithFormat:@"s2 title %zd",models.count];
+                [models addObject:@[model]];
+            }
+            
+            models = [models firstObject];
+        }
+        if (models.count < 5) {
+            MLNDataBindModel *model = [MLNDataBindModel testModel];
+            [models addObject:model];
+        } else {
+            MLNDataBindModel *m = models.firstObject;
+            m.title = [NSString stringWithFormat:@"change title %d",cnt];
+            m.name = [NSString stringWithFormat:@"change name %d",cnt];
+            cnt++;
+            [models removeObjectAtIndex:0];
+            [models addObject:m];
+        }
+        
         [self testModel];
     });
 }
+
+//- (void)testModel {
+//    __weak typeof(self) weakSelf = self;
+//    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+//        __strong typeof(weakSelf) self = weakSelf;
+//        if (!self) {
+//            return ;
+//        }
+//        MLNDataBindModel *m = self.modelArray.firstObject;
+//        if ([m isKindOfClass:[NSMutableArray class]]) {
+//            m = [(NSMutableArray *)m firstObject];
+//        }
+//        static int cnt = 1;
+//        m.title = [NSString stringWithFormat:@"title %d",cnt++];
+//        [self testModel];
+//    });
+//}
 
 - (void)testDataBind {
     static int cnt = 1;
@@ -88,7 +128,12 @@
         m.title = self.model.title;
         m.name = self.model.name;
         m.detail = self.model.detail;
-        [self.modelArray addObject:m];
+        
+        NSMutableArray *arr = self.modelArray.firstObject;
+        if (![arr isKindOfClass:[NSMutableArray class]]) {
+            arr = self.modelArray;
+        }
+        [arr addObject:m];
         cnt++;
         [self testDataBind];
     });
