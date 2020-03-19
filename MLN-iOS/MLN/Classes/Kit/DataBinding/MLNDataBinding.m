@@ -9,6 +9,7 @@
 #import <pthread.h>
 #import "KVOController.h"
 #import "NSMutableArray+MLNKVO.h"
+#import "NSArray+MLNKVO.h"
 
 @interface MLNDataBinding() {
     pthread_mutex_t _lock;
@@ -116,6 +117,14 @@
     if ([array isKindOfClass:[NSMutableArray class]]) {
         [(NSMutableArray *)array mln_startKVO];
     }
+    
+    if (array.mln_is2D) {
+        [array enumerateObjectsUsingBlock:^(NSMutableArray*  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            if ([obj isKindOfClass:[NSMutableArray class]]) {
+                [obj mln_startKVO];
+            }
+        }];
+    }
     [self bindData:array forKey:key];
 }
 
@@ -182,9 +191,20 @@
                 obBlock(path, object, change);
             }];
         } else {
-            [(NSMutableArray *)object mln_addObserverHandler:^(NSMutableArray * _Nonnull array, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
+            NSMutableArray *bindArray = (NSMutableArray *)object;
+            [bindArray mln_addObserverHandler:^(NSMutableArray * _Nonnull array, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
                 obBlock(nil, array, change);
             }];
+            
+            if ([bindArray mln_is2D]) {
+                [bindArray enumerateObjectsUsingBlock:^(NSMutableArray* _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                    if ([obj isKindOfClass:[NSMutableArray class]]) {
+                        [obj mln_addObserverHandler:^(NSMutableArray * _Nonnull array, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
+                            obBlock(nil, obj, change);
+                        }];
+                    }
+                }];
+            }
         }
     }
     
