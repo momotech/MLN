@@ -102,8 +102,7 @@
 
 + (NSUInteger)lua_sectionCountForKey:(NSString *)key {
     NSArray *arr = [self lua_dataForKeyPath:key];
-    NSArray *first = arr.firstObject;
-    if ([first isKindOfClass:[NSArray class]]) {
+    if (arr.mln_is2D) {
         return arr.count;
     }
     return 1;
@@ -115,10 +114,10 @@
         return 0;
     }
     
-    NSArray *first = arr[section - 1];
-    if ([first isKindOfClass:[NSArray class]]) {
-        return first.count;
+    if (arr.mln_is2D) {
+        return [[arr mln_objectAtIndex:section - 1] count];
     }
+
     return arr.count;
 }
 
@@ -126,7 +125,11 @@
     NSArray *array = [self lua_dataForKeyPath:key];
     id resust;
     @try {
-        resust = [[array objectAtIndex:row - 1] valueForKeyPath:path];
+        if (array.mln_is2D) {
+            resust = [[[array mln_objectAtIndex:section - 1] mln_objectAtIndex:row - 1] valueForKeyPath:path];
+        } else {
+            resust = [[array mln_objectAtIndex:row - 1] valueForKeyPath:path];
+        }
     } @catch (NSException *exception) {
         NSLog(@"%s exception: %@",__func__, exception);
     }
@@ -160,7 +163,13 @@
         return;
     }
     
-    NSObject *model = [array mln_objectAtIndex:row - 1];
+    NSObject *model;
+    if (array.mln_is2D) {
+        model = [[array mln_objectAtIndex:section - 1] mln_objectAtIndex:row - 1];
+    } else {
+        model = [array mln_objectAtIndex:row - 1];
+    }
+    
     [kitViewController.dataBinding.KVOController observe:model keyPaths:paths options:NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew block:^(id  _Nullable observer, id  _Nonnull object, NSDictionary<NSString *,id> * _Nonnull change) {
         UIView *listView = [listObserver listView];
         if ([listView isKindOfClass:[MLNTableView class]]) {
