@@ -74,7 +74,7 @@
 		0DA50E72EC1295A9189FD406DC3FCCE5 /* SDDeviceHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = DFB09C74339B707DD802A917256A9C27 /* SDDeviceHelper.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		0E66A0F36DD725E82041A51F593EA534 /* EXPMatchers+conformTo.h in Headers */ = {isa = PBXBuildFile; fileRef = B48F02E021080F8F387C22740954B4A9 /* EXPMatchers+conformTo.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		0F326333E0E1A5898F81EB2C8F3D7215 /* mln_options.h in Headers */ = {isa = PBXBuildFile; fileRef = C1C7294737C2FD15B6817E26A6074C23 /* mln_options.h */; settings = {ATTRIBUTES = (Project, ); }; };
-		0F4F6DC9DEC20C41AABA260D6D2509A7 /* MLNCanvasConst.m in Sources */ = {isa = PBXBuildFile; fileRef = A7CB9A9DFF0FE2186085E210982984DE /* MLNCanvasConst.m */; };
+		0F5A75666215BAEB5E575F0306A5809E /* MLNKitLuaCoeBuilderProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = CBFFA5A65D24059E221D6DA6C9DAA317 /* MLNKitLuaCoeBuilderProtocol.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		0FE656D9F89D78B538081E4C4032A703 /* LNClientListener.h in Headers */ = {isa = PBXBuildFile; fileRef = DB946B212A5C2D13E9BFA503A5AEEB06 /* LNClientListener.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		10B320645982B481D026D252158928E1 /* MJRefreshAutoNormalFooter.h in Headers */ = {isa = PBXBuildFile; fileRef = 09A0FCD7CB21A1F3E295FCC63F0F3BB5 /* MJRefreshAutoNormalFooter.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		10D39B58C01277E270DF018FCE5CF5BF /* NSArray+MLNCore.h in Headers */ = {isa = PBXBuildFile; fileRef = DD629E3D0572332269EE290035527159 /* NSArray+MLNCore.h */; settings = {ATTRIBUTES = (Project, ); }; };
@@ -85,12 +85,12 @@
 		11CED46253E14679E5E4B1B88972F726 /* MLNFont.m in Sources */ = {isa = PBXBuildFile; fileRef = 1E97DDE3CA7D187A43770EE8C8E29E53 /* MLNFont.m */; };
 		1222560B913CB9C9C0D14221D02C8306 /* EXPMatchers+beTruthy.m in Sources */ = {isa = PBXBuildFile; fileRef = 61EE5BDD4B286DDACC73B0C8B07DB70E /* EXPMatchers+beTruthy.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		12F97336FFE941A05F4EA0ED7C4CC8CE /* MLNQRCodeResultManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 3DAB24C55F35EF003003F0BB655D6547 /* MLNQRCodeResultManager.h */; settings = {ATTRIBUTES = (Project, ); }; };
-		132C54079441B4074B457C20AB4116B0 /* NSMutableArray+MLNArray.m in Sources */ = {isa = PBXBuildFile; fileRef = B1CAA34389150626E91CA9FCE8C685C5 /* NSMutableArray+MLNArray.m */; };
-		1342BAD6C1B5EBF22C72BD9E24F6C4F0 /* MLNClipboard.m in Sources */ = {isa = PBXBuildFile; fileRef = EC3846DCD34DA0A539DDFF4166D05E3B /* MLNClipboard.m */; };
+		130ACBEB996C704BBA1B101B2F638BAE /* MLNWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = ADB5FAA380430A8C52B59F719CE2B7F6 /* MLNWindow.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		1339E3CE3E864DA88AAB331631B612F5 /* MLNLayoutNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 9292D69595F37959E8F9C93B5E7AAEB5 /* MLNLayoutNode.m */; };
+		13574629AAC675CF40B7503A7F3A6407 /* MLNGradientLayerOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 4A1163B3C6C6A31A870824F4015911FE /* MLNGradientLayerOperation.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		139697D9E4AC066C9F1F60627027D6C5 /* MJRefreshBackFooter.m in Sources */ = {isa = PBXBuildFile; fileRef = A856E79429A27FAC712939F91EA963D5 /* MJRefreshBackFooter.m */; };
-		13C38BF0C406EBCB1C4B3706C586D780 /* MLNSystem.h in Headers */ = {isa = PBXBuildFile; fileRef = 9472D7360141A5E79B3FC8B758F830D1 /* MLNSystem.h */; settings = {ATTRIBUTES = (Project, ); }; };
-		13D03AB1499CF1508793D7543D1BD4BB /* MLNToast.m in Sources */ = {isa = PBXBuildFile; fileRef = D337781CF43DD3C30CB8E9EE25F9C13F /* MLNToast.m */; };
 		13F324F925E4B6FFB71234CA605CA630 /* UIDevice+HotReload.m in Sources */ = {isa = PBXBuildFile; fileRef = 5052699E502435EE0C5103EDD472AEAF /* UIDevice+HotReload.m */; };
+		142C00C2CF465B5607E49666E3EA9EB3 /* MLNScrollViewDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D5C9F07484F6202CA349B7C9CB7FD6A /* MLNScrollViewDelegate.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		14438CF621F0259E644BC8E640F1B6FC /* LNReaderFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A1D04C56B6F76DDE806957C027D642B /* LNReaderFactory.m */; };
 		1486BD554442E539EEEA99F494646925 /* SPTTestSuite.m in Sources */ = {isa = PBXBuildFile; fileRef = CF5C92EED1E16A3456F29372B524DB62 /* SPTTestSuite.m */; };
 		1493E7DB72B0EA8DBC98A06A848B3ADB /* MLNBorderLayerOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 0531F46FBBA3F4A38E1FC3879C941C62 /* MLNBorderLayerOperation.m */; };
@@ -107,7 +107,6 @@
 		1779E69169B262E102A56F437A348432 /* MLNAdapterCachesManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 3524D378E271E148C5F43C424F3B578D /* MLNAdapterCachesManager.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		1790006747448B875371CE82850E23EC /* UIButton+WebCache.m in Sources */ = {isa = PBXBuildFile; fileRef = EBF5D1C94771A3509C56CBD02F61FC42 /* UIButton+WebCache.m */; };
 		179124EF09DEB788E0A36B555DF17CE3 /* LNNetTransporter.m in Sources */ = {isa = PBXBuildFile; fileRef = 80C29C925A0A40D4D0698B02645A816C /* LNNetTransporter.m */; };
-		179A6A1713651C728E730DB3C780AB3F /* MLNSizeCahceManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 203A7BAB7900F9B31F9A8AFF9A583F9A /* MLNSizeCahceManager.m */; };
 		17E617FE2ACACD1C03E6FA3EC9FADA83 /* PbremoveCommand.pbobjc.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F771D33C67288B6E97F0610F687D7A0 /* PbremoveCommand.pbobjc.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		18167DC758C38507425D7D43D697FCD1 /* SDWebImageDownloader.h in Headers */ = {isa = PBXBuildFile; fileRef = EE443E1EA90664710F50DFBC0C9C49DD /* SDWebImageDownloader.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		18331E5D1ADA95F69565460F883FB7F7 /* UIView+MLNCore.m in Sources */ = {isa = PBXBuildFile; fileRef = ECC1328D9064F1245F215E0E14C3CAD3 /* UIView+MLNCore.m */; };
@@ -130,6 +129,7 @@
 		1C3055BA60E7C671F91E42036E3F7EE1 /* MLNExporterManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 399560467908FA1A20059EA35445A5A3 /* MLNExporterManager.m */; };
 		1C6FA0C1F5D24B7BDFA7934CF3E8F04B /* MLNQRCodeHistoryViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = E0851B9EC32EE08BA488C6934E2C6229 /* MLNQRCodeHistoryViewController.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		1C70A7CC57B14011CC5E0013E29A2F57 /* MLN_GCDAsyncSocket.h in Headers */ = {isa = PBXBuildFile; fileRef = 00076D8D5766531350D8C9D4F199D276 /* MLN_GCDAsyncSocket.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		1C984D1F4D75AB5F1508C1362663B27F /* MLNHttpDefaultHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 061DDA84C18BCFEE51247C1BE57FF30F /* MLNHttpDefaultHandler.m */; };
 		1CD9E1052E45AC2E94FD774911B98AB1 /* scan_line.png in Resources */ = {isa = PBXBuildFile; fileRef = 2A0DE315688FD52E53D5CE8BBCD14AB5 /* scan_line.png */; };
 		1CE288226DA4D5164FDE93288F20616B /* EXPMatchers+beNil.m in Sources */ = {isa = PBXBuildFile; fileRef = 7ED8150F7DAE05B4A011754507BFD431 /* EXPMatchers+beNil.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		1D48C981A15CE2AEDE50AD2FED97B5BB /* libMLNProtobuf.a in Sources */ = {isa = PBXBuildFile; fileRef = 905873FE0096A300CD2FC6B6F8DACBE3 /* libMLNProtobuf.a */; };
@@ -154,6 +154,7 @@
 		212EDCE73A332ED6444E201F91D6E11C /* MLNQRCodeHistoryCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B4301F8132E9D1F402AAE3D7C382D3E9 /* MLNQRCodeHistoryCell.m */; };
 		21A7CBB7E80ED624770B4FE034C6FD21 /* MLNExporterProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 44A34D85965EBCC81E17FF104AA579B8 /* MLNExporterProtocol.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		21BEEA23DEA06892F1838392055BFD6D /* NSBundle+MLNDebugTool.m in Sources */ = {isa = PBXBuildFile; fileRef = F4C43CECD5C6E12437090D1D34B31EAA /* NSBundle+MLNDebugTool.m */; };
+		21BF7CABEEF9C0A4C3AE2A12C6A3EB56 /* ltm.h in Headers */ = {isa = PBXBuildFile; fileRef = 2986460224E002DCB392A643EBCE68EC /* ltm.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		21C9600B837479B3D90EEF07737F4FCA /* mln_inet.h in Headers */ = {isa = PBXBuildFile; fileRef = 784CAFF999A624FDEC0D0B8B92DD8604 /* mln_inet.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		21D97B29CD24881CDB275150FFACB46C /* EXPMatchers+raiseWithReason.h in Headers */ = {isa = PBXBuildFile; fileRef = E29743E1FDA33EB7A3657432CC491829 /* EXPMatchers+raiseWithReason.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		21E538A4F9E94A923BDC182326D2AB84 /* MLNLayoutNodeFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = E1A7313B64D248A03BEDEBBF91DD79DE /* MLNLayoutNodeFactory.h */; settings = {ATTRIBUTES = (Project, ); }; };
@@ -216,7 +217,7 @@
 		337C8A9592224E2629F71F4759AE0DF2 /* UIWebView+AFNetworking.h in Headers */ = {isa = PBXBuildFile; fileRef = EDB479A6B92B6C0853B188C303C9C048 /* UIWebView+AFNetworking.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		34ACAE48FF1A51A19F3C378299E54BE4 /* GPBArray_PackagePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 49CA9BD62038606AD444C7825DCB1EE3 /* GPBArray_PackagePrivate.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		34B4E69F9EAF72FCBD14411886F8540B /* SDImageCacheDefine.h in Headers */ = {isa = PBXBuildFile; fileRef = 01FD915FD110C395DECE9B8ED57FFB56 /* SDImageCacheDefine.h */; settings = {ATTRIBUTES = (Project, ); }; };
-		34C9308CA30876DFE6B58F2A60FB74CF /* MLNKitBridgesManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 90FA8115FDFDC5767BE4626013F4BFF7 /* MLNKitBridgesManager.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		34F1BECA4C558013E7896093714F0E80 /* MLNValueCalculatorProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 9CA16094D9299B20FDBDC08676B81BFE /* MLNValueCalculatorProtocol.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		351B09B6405E5862542B18DDBD0E0F36 /* MLNDebugPrintFunction.m in Sources */ = {isa = PBXBuildFile; fileRef = A7BD290CB1FFB78551F9946029217838 /* MLNDebugPrintFunction.m */; };
 		352D303E862FC715A79CAFD5F45D0DCF /* lzio.c in Sources */ = {isa = PBXBuildFile; fileRef = E703CB9554A531C734C8615D98936ACD /* lzio.c */; };
 		35542375CC21FE8EDAACB09EB698B737 /* GPBProtocolBuffers.h in Headers */ = {isa = PBXBuildFile; fileRef = 624FD90FDEDF06B90B222FE9EE692E6B /* GPBProtocolBuffers.h */; settings = {ATTRIBUTES = (Project, ); }; };
@@ -282,10 +283,8 @@
 		435E0DF822A3AB8CAE81C93A84D033E2 /* MLNLoading.h in Headers */ = {isa = PBXBuildFile; fileRef = EDED815F211B3CD87AFF33E78DD865FD /* MLNLoading.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		43E9607163E93FA0B668529F5E21139C /* MLNKitViewControllerDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 8028936FE0710DFEC88FB7819FF91A30 /* MLNKitViewControllerDelegate.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		4487DF9FE305DD7EB02A9F939BF5CAD0 /* MLNQRCodeResultManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 0DC9927FC6FBCDC01C8CF99914DF033D /* MLNQRCodeResultManager.m */; };
-		4493E4BE13989B8E4DAD3A303E4EB8B0 /* NSDictionary+MLNCore.h in Headers */ = {isa = PBXBuildFile; fileRef = FD5CE2BF5D17F89B332797A81100CFC2 /* NSDictionary+MLNCore.h */; settings = {ATTRIBUTES = (Project, ); }; };
-		44AEC51EA427747659A63FB5CE9E3342 /* MLNTabSegmentViewDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 6CB5BDFCCD02A4EAB61189DC075052D8 /* MLNTabSegmentViewDelegate.h */; settings = {ATTRIBUTES = (Project, ); }; };
-		44C0D8D715FF93F454E6E53AE00C7BF4 /* MLNShapeContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 684D28B44F9923A08F237A548FF84152 /* MLNShapeContext.h */; settings = {ATTRIBUTES = (Project, ); }; };
-		4527EC1FD407771DF13C508605B5B5C9 /* MLNLuaBundle.m in Sources */ = {isa = PBXBuildFile; fileRef = 18EBF6415AEB2F21CB0AAB5A789D97F7 /* MLNLuaBundle.m */; };
+		449778599E3BDEB0D5863CBB0E97BCEB /* NSDictionary+MLNKVO.m in Sources */ = {isa = PBXBuildFile; fileRef = E930D315DCFAA6EE35F954C78EA9DE16 /* NSDictionary+MLNKVO.m */; };
+		451C149D8F1E15C031F31B4D139FBB02 /* MLNKitInstanceFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = 291BEA3D83EC6346E818FE505A008FBC /* MLNKitInstanceFactory.m */; };
 		4542C473CCE226B04E2769ED39C00F8B /* SDAsyncBlockOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 9E80FFC380443757B842F3651A952FB0 /* SDAsyncBlockOperation.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		4556181A14694182ACEE9D5475137A99 /* MLNUtilBundle.h in Headers */ = {isa = PBXBuildFile; fileRef = 8420184FCB0AFED55085245EACBE7344 /* MLNUtilBundle.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		457A94D6289849AD310A7E1549061D91 /* mln_inet.c in Sources */ = {isa = PBXBuildFile; fileRef = 18B434D7B75B01523059B56CB1D2A2F7 /* mln_inet.c */; };
@@ -298,8 +297,7 @@
 		477C77170BBEBE5DA4591B9C45A375B4 /* EXPMatchers+postNotification.m in Sources */ = {isa = PBXBuildFile; fileRef = C9FE9F6A1C22D87474C977154E0AA6DB /* EXPMatchers+postNotification.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		477E7FD45E71B3DC68C7BE15A3354EFA /* MJRefreshAutoNormalFooter.m in Sources */ = {isa = PBXBuildFile; fileRef = 91D0DA3B66FB5A2EF7BFF0225BE2A619 /* MJRefreshAutoNormalFooter.m */; };
 		47D1D1DCB586E86B7E090D4625EEF7E1 /* LNUsbTransporter.h in Headers */ = {isa = PBXBuildFile; fileRef = 3F0899BEB092E5226C03FF16B2575F05 /* LNUsbTransporter.h */; settings = {ATTRIBUTES = (Project, ); }; };
-		47E028B748E2DFF1653DEA89198142F1 /* MLNRefreshDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F4C3B9A0F71A6E9724EBC9E4F7FC8F6 /* MLNRefreshDelegate.h */; settings = {ATTRIBUTES = (Project, ); }; };
-		47E51AB96A80D41B8C74A31C7CF6C72B /* MLNCornerMaskImageManager.h in Headers */ = {isa = PBXBuildFile; fileRef = DD58757BF1A132672F66D42846D05554 /* MLNCornerMaskImageManager.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		480171298C5A779C7794285F7CE91349 /* NSArray+MLNCore.m in Sources */ = {isa = PBXBuildFile; fileRef = 530C6AE74766314C3C118C0537378B1D /* NSArray+MLNCore.m */; };
 		4806785DEEFB719E58B74D0B2B244D99 /* MLNConsole.m in Sources */ = {isa = PBXBuildFile; fileRef = 915701C103861678CA9F76D1A25A6412 /* MLNConsole.m */; };
 		48729F67B48BFA3B0BDDB7519E7DA5D1 /* MLNWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EE02A2A08F4127F15EAE6418095F777 /* MLNWindow.m */; };
 		4895607C0C5B2BA05C150E40CC1BCBCA /* ltablib.c in Sources */ = {isa = PBXBuildFile; fileRef = 43328D8B4C470476E73786F37D9960CF /* ltablib.c */; };
@@ -350,6 +348,7 @@
 		53F605A8BD070B475B63CBA72CA9D3CD /* MLNWeakAssociatedObject.h in Headers */ = {isa = PBXBuildFile; fileRef = DC818E2D869CF0C501F8FD240AA1F9A1 /* MLNWeakAssociatedObject.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		5436B99797A00BC782D500883C311666 /* SourceContext.pbobjc.h in Headers */ = {isa = PBXBuildFile; fileRef = D4CF682A691979738F0BDB2A79E32884 /* SourceContext.pbobjc.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		544DE511A06DF824E159FE28E77019E0 /* mln_luasocket.h in Headers */ = {isa = PBXBuildFile; fileRef = ADE4FE0AFC3EE1B999E8F4429C114556 /* mln_luasocket.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		5451A374A1B24803700AEB8252A4F4DF /* MLNDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = 9119B8A6CD1E835B527FEAE1EECCCFFF /* MLNDevice.m */; };
 		545DB2A6E6A21DA2AD08257AF42C94C4 /* SDWebImageDownloaderResponseModifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 2418A9E318ED9A80647DE318B15C314F /* SDWebImageDownloaderResponseModifier.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		545ECD239FD4EF5EBED7154655D67906 /* mln_usocket.c in Sources */ = {isa = PBXBuildFile; fileRef = CD9D22E5F5792913B3BAD24A5A702A7E /* mln_usocket.c */; };
 		5480D9C3181184D105782CAF46DFD794 /* FBSnapshotTestController.m in Sources */ = {isa = PBXBuildFile; fileRef = C26F5211CBFA30EB3816DBE68E5F0753 /* FBSnapshotTestController.m */; };
@@ -365,7 +364,6 @@
 		563F0A91948FF743408E064DF193AEC9 /* TAAbstractDotView.m in Sources */ = {isa = PBXBuildFile; fileRef = F6D8F40B2015FDA051E89A043508A4AC /* TAAbstractDotView.m */; };
 		5652864A4036BFF3F3692C034B4ABD49 /* MLN_GCDAsyncUdpSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = 6C811C9D0F6335D927227BE2249B3315 /* MLN_GCDAsyncUdpSocket.m */; };
 		5671A72ECAB90A855ECF6F69B750B4E1 /* UIWebView+AFNetworking.m in Sources */ = {isa = PBXBuildFile; fileRef = 62E192E79AA3723597533604C4F6DC8F /* UIWebView+AFNetworking.m */; };
-		567BDF5ADC8B0DEBC1A5432D1C45B02B /* ldo.h in Headers */ = {isa = PBXBuildFile; fileRef = A481F11E726FD2C003FBB3335116DDC1 /* ldo.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		569A6552560A17659363517B6EEC43E5 /* LNWriterFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = CB1C89F2A9A5AD9BE5A515722B8F7959 /* LNWriterFactory.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		56AECA6D0A5E4B1980CD91FCB92EDCE8 /* MLNContentMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 40CC61661FC71F86FD3CBA54BB279C55 /* MLNContentMode.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		56B0F34BC6C170991B7BCB6A2EE56D94 /* MLNAnimationZoneView.h in Headers */ = {isa = PBXBuildFile; fileRef = 9C2428CEFA518E32CE07238A0C6EA2FC /* MLNAnimationZoneView.h */; settings = {ATTRIBUTES = (Project, ); }; };
@@ -462,7 +460,7 @@
 		6B5B030904BA451F4FFE3AF2FD28D2DA /* AFImageDownloader.h in Headers */ = {isa = PBXBuildFile; fileRef = 48F568D908FAD7D8C5FFF054675ACA89 /* AFImageDownloader.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		6B69E339B5F76DEC5A4D5CD85035D3F5 /* UIImage+MultiFormat.m in Sources */ = {isa = PBXBuildFile; fileRef = 113CF029D3DDAC9797E08181B80DC112 /* UIImage+MultiFormat.m */; };
 		6B8CEE176B04199B8D91B7F81CD75D82 /* LNEncoderFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 2AA60E0636777789032BD14F290AE41A /* LNEncoderFactory.h */; settings = {ATTRIBUTES = (Project, ); }; };
-		6BBCBEADD62B05F994E83A6344FE8342 /* lapi.c in Sources */ = {isa = PBXBuildFile; fileRef = C7D6357D70AC728A5AF3E3657FE4403A /* lapi.c */; };
+		6BAF45FFF38E504B0658AAF50123D47C /* MLNFrameAnimation.m in Sources */ = {isa = PBXBuildFile; fileRef = 6BE0A87B7B399F6623B54CA825EB60F0 /* MLNFrameAnimation.m */; };
 		6BC40BBD05A03EDBFAE69F68A787053C /* PbupdateCommand.pbobjc.h in Headers */ = {isa = PBXBuildFile; fileRef = AA1A16053285B231D2D72012DA0A69A1 /* PbupdateCommand.pbobjc.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		6BCE94CD5A808FB67F8260E42C2AA228 /* GPBCodedInputStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 397AA1D6D1ED372BA1B8FF7437EFF00E /* GPBCodedInputStream.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		6BD7E04AC87F25B044003F83EA912094 /* MLNZipArchive.m in Sources */ = {isa = PBXBuildFile; fileRef = 384399DCB293409CA2400F0C08DF5090 /* MLNZipArchive.m */; };
@@ -486,8 +484,8 @@
 		6F4BCC1EE7647AA2C2F4756FAF93F06C /* MLNCollectionViewCell.h in Headers */ = {isa = PBXBuildFile; fileRef = 148896D6E3FF1E7CD0F001C3A092F8F9 /* MLNCollectionViewCell.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		6F7950AA582B1DB759716CE630341EB2 /* lundump.c in Sources */ = {isa = PBXBuildFile; fileRef = B906AEF6480EDB8EBAC5D3242FEA6958 /* lundump.c */; };
 		6F9FA0BFA6769583BBD1DCCE02B0503B /* MLNDebugCodeCoverageFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = F2C0C7B6EBA7A6AC0CD10BC6371750A9 /* MLNDebugCodeCoverageFunction.h */; settings = {ATTRIBUTES = (Project, ); }; };
-		6FA08955602FD71B1DB4114F8F7B6552 /* MLNSizeCahceManager.h in Headers */ = {isa = PBXBuildFile; fileRef = ABB005F8CF0FDEF71F99EA3B922757DD /* MLNSizeCahceManager.h */; settings = {ATTRIBUTES = (Project, ); }; };
-		6FF63C1E370139A468A46C70A4232B42 /* luac.c in Sources */ = {isa = PBXBuildFile; fileRef = F9927D479E605097281EDA80A1AD726D /* luac.c */; };
+		6FFBAC7681332D2AB81DE86854253072 /* NSMutableArray+MLNArray.m in Sources */ = {isa = PBXBuildFile; fileRef = B1CAA34389150626E91CA9FCE8C685C5 /* NSMutableArray+MLNArray.m */; };
+		7003B7FAAE31F2F9F925F9528D65F0CD /* MLNEditTextView.h in Headers */ = {isa = PBXBuildFile; fileRef = A74BB944B759569B4AA59C28B4369EE6 /* MLNEditTextView.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		701401EB3065F4FB59E50486393D8F1A /* MLNOfflineDevToolUI.h in Headers */ = {isa = PBXBuildFile; fileRef = 8DF8078EC0299120F60CFB180321A10F /* MLNOfflineDevToolUI.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		7021D3AF25EC280F69E49EC9FBE59484 /* EXPMatchers+contain.h in Headers */ = {isa = PBXBuildFile; fileRef = 22DF89D9DEEAE5385D66E020166CC530 /* EXPMatchers+contain.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		70384A05DD64D46FE1E31969F1C4F88D /* EXPMatchers+beGreaterThan.m in Sources */ = {isa = PBXBuildFile; fileRef = 076FEE41802D96A440940C1B9EB3F1C8 /* EXPMatchers+beGreaterThan.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
@@ -502,12 +500,14 @@
 		72797BC85469FCE7E6198B67EC88E851 /* AFURLRequestSerialization.m in Sources */ = {isa = PBXBuildFile; fileRef = D31BCB7BA58286797071B67E1BCB0ED2 /* AFURLRequestSerialization.m */; };
 		72A10BDAEACF8F92EF7B0080DC0C378C /* SPTExampleGroup.h in Headers */ = {isa = PBXBuildFile; fileRef = 71860B617EFB42F8AA8498C8B06401BB /* SPTExampleGroup.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		72B942322208C4D0969601AC306506ED /* MLNHotReloadViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 829872C3D65572464AA3E162D503C1EE /* MLNHotReloadViewController.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		72B9ABE2002008E47E22CA16271A2F6F /* MLNGlobalFuncExporterMacro.h in Headers */ = {isa = PBXBuildFile; fileRef = AFDDA212DC6644E4909E3020D050350D /* MLNGlobalFuncExporterMacro.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		72EB69721F59A740B606FE53423A1DB9 /* GPBUnknownFieldSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FC96058ABD696B11FCA8ED34FE46E96 /* GPBUnknownFieldSet.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		73127EEB8C94CFA5561BA1363A901A8F /* MLNCanvasPaint.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CC94720DE3F73CBFB799ED7488BE10D /* MLNCanvasPaint.m */; };
 		737572CC035536A93B542AF5C65062ED /* SDWebImageDownloaderRequestModifier.m in Sources */ = {isa = PBXBuildFile; fileRef = 9783B4EDBB453BCAB465F55F20619102 /* SDWebImageDownloaderRequestModifier.m */; };
 		738AEB8BE42C4EC431EDF16266AE8F06 /* TAAbstractDotView.h in Headers */ = {isa = PBXBuildFile; fileRef = 010C2D222809E4E50B63A23380B477EF /* TAAbstractDotView.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		738B88E8018D3400546022C0A2641846 /* EXPMatchers+beNil.h in Headers */ = {isa = PBXBuildFile; fileRef = BDA0ECE1D53F2B834951FFCF28E354E8 /* EXPMatchers+beNil.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		738D4E3FE285D4D2C5855C23425BB759 /* PbdeviceCommand.pbobjc.h in Headers */ = {isa = PBXBuildFile; fileRef = 7738544362AAD6469A5E55F92A26A1FD /* PbdeviceCommand.pbobjc.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		739BC583690ABEDE842199735A933BF7 /* MLNInvocation.m in Sources */ = {isa = PBXBuildFile; fileRef = 53C3CBB4ECDFF7F7073D6BAF88DE9CB7 /* MLNInvocation.m */; };
 		73A51B6DD53E1652646C90D836531C8D /* MLNLoadTimeStatistics.m in Sources */ = {isa = PBXBuildFile; fileRef = 1C1565944B13A4A037760619D296F8D6 /* MLNLoadTimeStatistics.m */; };
 		73FF0D7B0987252C714ED182B06895C5 /* MLNView.h in Headers */ = {isa = PBXBuildFile; fileRef = 23128EBB589A15A45C2EA0BAF10C80F0 /* MLNView.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		742FC1FAC5AD1A25A993232EBDF5EA49 /* MLNTypeUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = A44380D5C391811A2D8A7DED05BF5418 /* MLNTypeUtil.m */; };
@@ -544,10 +544,11 @@
 		7D886D5754A653DF7DFD288397B3CC7C /* MLNCanvasPath.h in Headers */ = {isa = PBXBuildFile; fileRef = E2C36B42D42B5B5D3C21AD5CD0D75140 /* MLNCanvasPath.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		7E2964A554255B47AFD804F45B8C4920 /* MLNStaticExporter.h in Headers */ = {isa = PBXBuildFile; fileRef = 259C7CE46A4E475D78F3501B648A33A5 /* MLNStaticExporter.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		7E38A78E5AE5E95DC085D52350176FA5 /* left.png in Resources */ = {isa = PBXBuildFile; fileRef = 31CAC28DAE6511158D6387C88702E2E7 /* left.png */; };
+		7E5E8710E0725504752006B3A73148DD /* MLNLuaTable.m in Sources */ = {isa = PBXBuildFile; fileRef = 186761D11285148893ED9D77881C7CDB /* MLNLuaTable.m */; };
+		7E7C8EAEA16CAF818290538E2CEC2D74 /* MLNStaticExporterMacro.h in Headers */ = {isa = PBXBuildFile; fileRef = B5FBC3F487D2436BC168C0D0D8001CA5 /* MLNStaticExporterMacro.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		7E8CE4189B86E32C6F2C994871C65531 /* MJRefreshBackStateFooter.m in Sources */ = {isa = PBXBuildFile; fileRef = BCC72BBF112522CCAFBABCC4B4983697 /* MJRefreshBackStateFooter.m */; };
 		7E92196E1F5F3DFB3AEC643C23E674C8 /* MJRefreshAutoStateFooter.m in Sources */ = {isa = PBXBuildFile; fileRef = FE0919F86656B49FFD94FC477D0D0641 /* MJRefreshAutoStateFooter.m */; };
 		7EBDEC63DC5A5DB73FD7BAD0F9D5EC0D /* SDImageAPNGCoder.m in Sources */ = {isa = PBXBuildFile; fileRef = F4EFE8EAFB9880E3E8F6FEC7097DC1FA /* SDImageAPNGCoder.m */; };
-		7EE5B4A1322517C66B00798319B79BEF /* MLNDataBinding.h in Headers */ = {isa = PBXBuildFile; fileRef = BABB469465F39B520A8DD8CF868FCDB7 /* MLNDataBinding.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		7F25F944B928CA09B53A983244487D7F /* LNFileManager.h in Headers */ = {isa = PBXBuildFile; fileRef = C7D04DF79C8B244ACFC8F52DF5DA06A7 /* LNFileManager.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		7F4F306C4722E0127E7AC2FD33FEE3F1 /* MLNGlobalVarExporterMacro.h in Headers */ = {isa = PBXBuildFile; fileRef = 3442897A8355639F60DF9F26CA9208BE /* MLNGlobalVarExporterMacro.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		7F570C00011281C6DA093217BE97BDF4 /* MLNQRCodeHistoryCell.h in Headers */ = {isa = PBXBuildFile; fileRef = 860F92C33984E14CF4811D7BDF48B0CB /* MLNQRCodeHistoryCell.h */; settings = {ATTRIBUTES = (Project, ); }; };
@@ -617,6 +618,8 @@
 		8C869DC803F59661FF9ADB200D9EF173 /* NSString+MLNKit.h in Headers */ = {isa = PBXBuildFile; fileRef = DBBE34E6485DECECEFE3CC992B8BD2F8 /* NSString+MLNKit.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		8CB779E83EDED2FD03E23A4C3C8CC24F /* SDImageGraphics.m in Sources */ = {isa = PBXBuildFile; fileRef = 52872078AB83A8BCCF2B7423C7938B3B /* SDImageGraphics.m */; };
 		8CE05C18A19EE1D8752E34EB385FEAC1 /* LNDecoderFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = C36C6912B8A632736CE095FFB042B1F2 /* LNDecoderFactory.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		8D1F2AE5C060B116F6B00DE4D7FD4B5D /* MLNBeforeWaitingTask.h in Headers */ = {isa = PBXBuildFile; fileRef = 286F18F358C3AFB9D4716258CAF4FC29 /* MLNBeforeWaitingTask.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		8D483F870F40CF73D7DFFF5FA71A4662 /* MLNKitInstanceHandlersManager.m in Sources */ = {isa = PBXBuildFile; fileRef = C0E59F1A0C0C6278B9F58304E87D02B4 /* MLNKitInstanceHandlersManager.m */; };
 		8DA24766901DD17FC1F3B468FF9F620D /* Duration.pbobjc.h in Headers */ = {isa = PBXBuildFile; fileRef = 813CA7B514D9A964329AF6777AB9A837 /* Duration.pbobjc.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		8DC798BE7EDE2468ED93536D9AF13DD1 /* SDWebImageOptionsProcessor.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B7AAF2EF66C5B62680B21D77B7D30D9 /* SDWebImageOptionsProcessor.m */; };
 		8DFB2F507ED8A81F46F88E78339A574B /* SDImageCoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 52F45FF80EB37C3A22720DCC7C6DE0D6 /* SDImageCoder.h */; settings = {ATTRIBUTES = (Project, ); }; };
@@ -659,7 +662,6 @@
 		9678C2DA98E6142550F0E056A5D1109B /* MLNBlock+HotReload.h in Headers */ = {isa = PBXBuildFile; fileRef = BC806D49987645D9B431C45487389097 /* MLNBlock+HotReload.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		9683D7B4DC74AA706F8982ED8DBAD7FA /* MLNWeakAssociatedObject.m in Sources */ = {isa = PBXBuildFile; fileRef = C408F24148BA073604947A38765C5E96 /* MLNWeakAssociatedObject.m */; };
 		968A11D52D6DFB9828E935DCF569AAFA /* mln_buffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 114E9066651F24E0409DA3433EEFBBB9 /* mln_buffer.h */; settings = {ATTRIBUTES = (Project, ); }; };
-		96901823A849E24F232EF2BA5CA8D4F4 /* MLNButton.m in Sources */ = {isa = PBXBuildFile; fileRef = A6F6F76E7BEEC0B1AE62726342B985B6 /* MLNButton.m */; };
 		96A6CE751451F38D2B02E8AE1425E540 /* GPBDictionary_PackagePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 931F3A3AABB5261C46CC1E9225472B3F /* GPBDictionary_PackagePrivate.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		96B2EDE2620451D00EFB59A2A1954136 /* SDImageCachesManagerOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = FC3E4B8B76EAC2793AD6B24DBCCF0174 /* SDImageCachesManagerOperation.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		96C728FE909EA867D800A48869BFA133 /* NSDictionary+MLNCore.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FC52317CA79DF5239891472C473BF73 /* NSDictionary+MLNCore.m */; };
@@ -731,6 +733,8 @@
 		A66F761904B5D319FAC32A424120FB3F /* MLNUIBundle.h in Headers */ = {isa = PBXBuildFile; fileRef = C6C832AE8E70A50A3D5F041CE11175B0 /* MLNUIBundle.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		A687F5FD225B8D4CB25FAC5D05BF0390 /* MLNStaticExportProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = C93E9983A28C03B8C53F48EA4AECB387 /* MLNStaticExportProtocol.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		A6D4F515333623B7F81508FEA527F73A /* MLN_GCDAsyncSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = E52F78A62C7CF2CCEE28FD9937850B19 /* MLN_GCDAsyncSocket.m */; };
+		A7204A2E1BF47B2CB7273B7C4F51776C /* MLNSystemConst.h in Headers */ = {isa = PBXBuildFile; fileRef = FCC4F4859C8714364FC8EE80413FF60D /* MLNSystemConst.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		A72E2A1614B2A7D18797F624CC757B8F /* MLNCornerManagerFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = E4DE9CB89E374DAB658DC192A32BFB3B /* MLNCornerManagerFactory.m */; };
 		A749927CD2C90F672FF44BF062380040 /* clean.png in Resources */ = {isa = PBXBuildFile; fileRef = C4261C31EB6048F980CF761B99627DAE /* clean.png */; };
 		A7AFF805552754168FE472102902BEE8 /* EXPExpect.h in Headers */ = {isa = PBXBuildFile; fileRef = 500EE77B95AEB4ABFC59ECA14B086124 /* EXPExpect.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		A7FE42354C50F1A96F427385E201DDAA /* MLNHotReloadBundle.m in Sources */ = {isa = PBXBuildFile; fileRef = 6544C7A05354BE7AF18A8F658E182652 /* MLNHotReloadBundle.m */; };
@@ -752,6 +756,8 @@
 		AE27FE8438D28A27E822EF13B8062F02 /* NSBundle+MJRefresh.h in Headers */ = {isa = PBXBuildFile; fileRef = 08A238CB49D6705B9F6E43058E8E821F /* NSBundle+MJRefresh.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		AE7C3576C2940639569A239D48AB0A8D /* MLNOfflineDevTool.m in Sources */ = {isa = PBXBuildFile; fileRef = E219D623C61C153FC14EADF177B7B6BD /* MLNOfflineDevTool.m */; };
 		AE81A27791BC7B82E0042D278D12BEA3 /* SwiftSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5ACF6442B04AD7757CDE2A5D0122CFD1 /* SwiftSupport.swift */; };
+		AE8B6694CA3DDF051E3EF9C457144C76 /* MLNLinearLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = F5BB509A64DDC71C1EBC122F6054F9E9 /* MLNLinearLayout.m */; };
+		AEA28D1F227C4F7A17BA1E2A753B1025 /* NSObject+MLNKVO.h in Headers */ = {isa = PBXBuildFile; fileRef = A96A90D9BB42C09A827DB5659177FEB4 /* NSObject+MLNKVO.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		AEBE3163FFB6EE184A13238F2343B5B7 /* MLNOfflineDevToolUI.m in Sources */ = {isa = PBXBuildFile; fileRef = 94201C87CF566392A80B184DA76CAEB5 /* MLNOfflineDevToolUI.m */; };
 		AEBFCD60D316911D54797AA8CD5E7804 /* MJRefreshHeader.m in Sources */ = {isa = PBXBuildFile; fileRef = F37B8AF3FEE49F244697DD0787211290 /* MJRefreshHeader.m */; };
 		AEDDBFAA923302D698260D5B9AC86106 /* MLNLayoutNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 35E69E1DFB22D44C6F3502ECD721EC38 /* MLNLayoutNode.h */; settings = {ATTRIBUTES = (Project, ); }; };
@@ -811,6 +817,7 @@
 		B891203953CAEE01BD5E414A8438C7FB /* MLNKitLuaCorePool.m in Sources */ = {isa = PBXBuildFile; fileRef = 920DBA71C4910C78A50DECE243B66B4E /* MLNKitLuaCorePool.m */; };
 		B8927861B9DA23DDADCC8AC016667FEB /* UIImage+Transform.m in Sources */ = {isa = PBXBuildFile; fileRef = 4249E616ED53608D5EABD6C348C9B2C6 /* UIImage+Transform.m */; };
 		B8B33319C87885B15A9F6DFF0E782BF6 /* LNUSBWriterImpl.m in Sources */ = {isa = PBXBuildFile; fileRef = A9345C32A615845A81028D73377871E7 /* LNUSBWriterImpl.m */; };
+		B8B385E8304D6129B02879BAF0BF2DBA /* MLNLinearLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = 9E8873EB5632341C58D542F384706EAC /* MLNLinearLayout.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		B8BEA3420E76CFE04DE52B0145233846 /* UIDevice+HotReload.h in Headers */ = {isa = PBXBuildFile; fileRef = 79D156A6C119F2AB4A7BE3147738D2EB /* UIDevice+HotReload.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		B8E11A342A39F62AD3A94F2BB6066BDE /* TADotView.m in Sources */ = {isa = PBXBuildFile; fileRef = 482671EB932747C850D0D163E5BA1C74 /* TADotView.m */; };
 		B901695204B1B2E59072DB6F243001EC /* UIScrollView+MJExtension.m in Sources */ = {isa = PBXBuildFile; fileRef = 9A724E364312F6F5729EC18E391809F3 /* UIScrollView+MJExtension.m */; };
@@ -918,7 +925,7 @@
 		D33C600E6B5E582C65F3EF397CAD3338 /* EXPMatchers+raise.m in Sources */ = {isa = PBXBuildFile; fileRef = 2C086529208E04B0B5A3751A4574DE10 /* EXPMatchers+raise.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		D360D5910193C90C55A40B0DA182EB78 /* MLNTableViewAdapter.h in Headers */ = {isa = PBXBuildFile; fileRef = CBA8748409B201187F35F0C5A678EE3C /* MLNTableViewAdapter.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		D3735EB8ED19646507D8F4E1FC10654B /* MLNHotReloadBundle.h in Headers */ = {isa = PBXBuildFile; fileRef = E29E8F1E1A5D671CD288419DD5B49C31 /* MLNHotReloadBundle.h */; settings = {ATTRIBUTES = (Project, ); }; };
-		D398D9FBA1510649B6268014A2C21077 /* MLNRotateAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = A581AF58B3699083F126AC5F7E475FB6 /* MLNRotateAnimation.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		D3CDD662D846E02CDBA628DDF484F73D /* MLNApplication.h in Headers */ = {isa = PBXBuildFile; fileRef = 193B915BEF0D89E511B978ABDC0DEA46 /* MLNApplication.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		D3DB79815BA8F2B51322C8B1840BA6B1 /* MLNQRCodeDefaultInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 941663D7B2981AA608FDE72CF8192706 /* MLNQRCodeDefaultInfo.m */; };
 		D3DC240631E1FA883A5604B3E99BAE2B /* UIProgressView+AFNetworking.h in Headers */ = {isa = PBXBuildFile; fileRef = 6FD4E5A7022C50251D8D4C9E078E94F8 /* UIProgressView+AFNetworking.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		D44BA87AF16DF1A8A40A1D7AABF5E78F /* MLNToast.m in Sources */ = {isa = PBXBuildFile; fileRef = 143A0287583D14B9B58B4796609E8BE3 /* MLNToast.m */; };
@@ -966,7 +973,11 @@
 		E0A88D11CE019335E64CF7E2C81CB7DA /* SDWebImagePrefetcher.m in Sources */ = {isa = PBXBuildFile; fileRef = 205F90A2822BC3ECFB2DF3D2D03AD643 /* SDWebImagePrefetcher.m */; };
 		E0B7D9B713B7D22EAE3E1D5777766F5D /* SDWebImageError.h in Headers */ = {isa = PBXBuildFile; fileRef = 35A1FCEFF0F5C90A0F61CA22648D8F26 /* SDWebImageError.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		E0B8EA93EFF7D57517CBA5B27CACBEEE /* MLNQRCodeHistoryViewController.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1B375DCDEE0B67CCB694BAC627A56CBD /* MLNQRCodeHistoryViewController.storyboard */; };
+		E0C79D64BD0D04C44A5118F13AB27993 /* UIScrollView+MLNKit.m in Sources */ = {isa = PBXBuildFile; fileRef = DC4BD803CABCA186C1F0C2F0834F3357 /* UIScrollView+MLNKit.m */; };
+		E0CE62793E7624A07BCEDB6B00B28A75 /* MLNHTTPConst.h in Headers */ = {isa = PBXBuildFile; fileRef = FDCB46B5A50D18E36EEE35D41B88EA2F /* MLNHTTPConst.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		E0E61F27213E70E73CAF0BA9C5A576A5 /* MLNCanvasConst.h in Headers */ = {isa = PBXBuildFile; fileRef = 6FD9CB30ACCF89A54F9AB78ADD5AC1AA /* MLNCanvasConst.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		E106183139222EFBF2CC763725DB5541 /* MLNHotReloadViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1847B7CD62800D21BB23E0FE98468FC0 /* MLNHotReloadViewController.m */; };
+		E116678E65872ABE973ADE8855C40995 /* MLNGlobalFuntionExporter.m in Sources */ = {isa = PBXBuildFile; fileRef = 4FB34453C71528A630347B355CF8BF86 /* MLNGlobalFuntionExporter.m */; };
 		E11DCD0400121C2608E675183ACE746D /* MLNDebugPrintFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = 61C5CF37ED50932BD077E01848BF1CB4 /* MLNDebugPrintFunction.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		E14F3EC4E687268A35CCE55D337B7BA2 /* MJRefreshBackNormalFooter.m in Sources */ = {isa = PBXBuildFile; fileRef = 9E9D0DF2E9DB23C7C14DFEBFD42C571B /* MJRefreshBackNormalFooter.m */; };
 		E153741D7F5F3C840B7C7CE5D31C0DCB /* MLNGlobalVarExporter.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FF05C53F19AB1583F1AA0763974512E /* MLNGlobalVarExporter.m */; };
@@ -974,8 +985,8 @@
 		E2087D355B2997A925C73DD593F15022 /* MLNLayoutContainerNode.h in Headers */ = {isa = PBXBuildFile; fileRef = BB3D0748A5196643B3362C7D2F24E8A2 /* MLNLayoutContainerNode.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		E2E0C432144584F2786448CD8CF21943 /* MLNLayoutImageViewNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 7261F19B0AA6E67E27E1C1DB6F42D7FC /* MLNLayoutImageViewNode.m */; };
 		E30503421534D84B880CDA2B6428CA74 /* MLNFloatingMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = 6847365F1570E565573DA4197CC39191 /* MLNFloatingMenu.m */; };
-		E3699C57DFCAB883189C67FCBC940F1D /* MLNCornerLayerHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D331C84E832F32EEB5D3EA27EC67DD7 /* MLNCornerLayerHandler.m */; };
-		E39067464908839ED3C29A445BD1BE88 /* MLNKitBridgesManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 75AD3727EA68C0E4E48E481CC62286E5 /* MLNKitBridgesManager.m */; };
+		E3512CCB8C5388D12BDA8663D35A1CF4 /* NSDictionary+MLNCore.m in Sources */ = {isa = PBXBuildFile; fileRef = 5366C79C42493E37B53E0E703E9C6E9A /* NSDictionary+MLNCore.m */; };
+		E38352A0E5E142BC8DF5416FE3BA92D6 /* MLNSafeAreaProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D29A41F1EA00716466D0EB81FF4F8A8 /* MLNSafeAreaProxy.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		E39108047AC7E1A264C5DCDCBF779461 /* mln_select.h in Headers */ = {isa = PBXBuildFile; fileRef = D65D2A6DC280DF46FBA1A5C3DE1CDAC1 /* mln_select.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		E3E933D67CECF88AC04118160857E44C /* MLNCornerManagerFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 367DB1ACCDE2E0D3ADFCBDE45090E462 /* MLNCornerManagerFactory.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		E4BA1E30409473575812484CEC66C7D8 /* MJRefreshAutoGifFooter.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D6BD9C22BE73E2E5B9AF6A4983C29CE /* MJRefreshAutoGifFooter.m */; };
@@ -1079,7 +1090,6 @@
 		FB6A6E89BFFB7CE0DB0D7E33FCA3E997 /* MLNPaddingContainerViewProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 7694AC27DDBEEC88E2BEFAFA698C17A8 /* MLNPaddingContainerViewProtocol.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		FC03EE048F70F1E14A2F78836CA26D49 /* EXPMatchers+raiseWithReason.m in Sources */ = {isa = PBXBuildFile; fileRef = 13707110C45171B645B881D13425E299 /* EXPMatchers+raiseWithReason.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		FC68CD6B792F383F1B8FB9E6058B7654 /* GPBRootObject_PackagePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = B3D28AB81DCF7423BCA6258C332AE9C8 /* GPBRootObject_PackagePrivate.h */; settings = {ATTRIBUTES = (Project, ); }; };
-		FC69CDAB79D12BEE6CD6588C8E16BB4A /* MLNViewControllerProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = EC92117C265D3DBF1E663ACDFC8696A0 /* MLNViewControllerProtocol.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		FC6C1565D7B8EBE84BECD717A4D7840A /* GPBRuntimeTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = E8EE1DABF743B3C347B9FA699E41698F /* GPBRuntimeTypes.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		FC905DACACA2ECB8D3AB23A1C5C078D6 /* MLNOfflineBundle.m in Sources */ = {isa = PBXBuildFile; fileRef = 7CF05FEB55B6609524AB43B7B581E353 /* MLNOfflineBundle.m */; };
 		FCC7474AE27ABC57F57254D16AAE281D /* MLNCanvasConst.h in Headers */ = {isa = PBXBuildFile; fileRef = 3FD280CED69D89020D3A494536D1821E /* MLNCanvasConst.h */; settings = {ATTRIBUTES = (Project, ); }; };
@@ -1103,6 +1113,7 @@
 		FFB8D1DD39D5B7AF3FC50F6BC702C234 /* SDImageAssetManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 58C8C4E8CF28B9FDBC546FC762368053 /* SDImageAssetManager.m */; };
 		FFD55A71CDE851A0F0E92629DC00C4C0 /* NSMutableData+LuaNative.m in Sources */ = {isa = PBXBuildFile; fileRef = 0390CACEFF40F4D6AEDF5CC64725822E /* NSMutableData+LuaNative.m */; };
 		FFD58B3EB34387EB7969A5C8C6845627 /* MLNUIBundle.m in Sources */ = {isa = PBXBuildFile; fileRef = 906F6DADA0AA2EF26BF1E5E88BA355F4 /* MLNUIBundle.m */; };
+		FFE8C40735BC24F5BCAD0489258072D5 /* MLNCanvasPath.m in Sources */ = {isa = PBXBuildFile; fileRef = BCFF7A43133D467AC6EE0A6A0DFE41CE /* MLNCanvasPath.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1133,6 +1144,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = F8676010755CF1530FC02DA9A0D8822B;
 			remoteInfo = Specta;
+		};
+		59AFB08DE0A0B623B12BD449D784BE86 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BFDFE7DC352907FC980B868725387E98 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2568F753F09C4DFFD8770DCC78EDAEAE;
+			remoteInfo = KVOController;
 		};
 		5C410FD4B36FF16C73E62DF0F661045E /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -1266,13 +1284,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 1E9F7CDAD209067F29338190BB05E054;
 			remoteInfo = "MLNDevTool-MLNDevTool_HotReload";
-		};
-		FDA9796C4055303DC739A479580F91E0 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = BFDFE7DC352907FC980B868725387E98 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 2568F753F09C4DFFD8770DCC78EDAEAE;
-			remoteInfo = KVOController;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -2471,14 +2482,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		4BE7CFE67F061D9078B374DDBE07AF90 /* Frameworks */ = {
+		47227B5055DE1C1351FF256772683AE9 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		54D143DA304FF6A42696A95F7C748DCB /* Frameworks */ = {
+		4BE7CFE67F061D9078B374DDBE07AF90 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -5933,6 +5944,271 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		9520091C594C6C535B53EF5309D369D5 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D5CCA6BAF524C90F70CB642E9733743C /* lapi.h in Headers */,
+				41F7EC05A769AAF99D2A4703D257DD08 /* lcode.h in Headers */,
+				67D3ADE455D0A0E38018DF6DB9035237 /* ldebug.h in Headers */,
+				921D638E6046BA6F7F95432B99DF68F7 /* ldo.h in Headers */,
+				6C11541BA02021DEFC2B6E5703DD0452 /* lfunc.h in Headers */,
+				02F9EE530BEC84D314CD5980AA5AFF79 /* lgc.h in Headers */,
+				382D9D72C602399BA79A896E7B5987F2 /* llex.h in Headers */,
+				51E50F50D8540842B14D5A3C81E826E1 /* llimits.h in Headers */,
+				C30D5D8C2222BC6F093F28112D716E62 /* lmem.h in Headers */,
+				B96CCEA44BC77972C2FE64DA960126EA /* lobject.h in Headers */,
+				02181D9C6BF08C1E99EF11DEE488EF10 /* lopcodes.h in Headers */,
+				9854F76C990CFA9BABC349E3822951E6 /* lparser.h in Headers */,
+				A158B627988F5AA7E94CE86E058668A2 /* lstate.h in Headers */,
+				425130585C8E2E32CA94D93C2F0FC51D /* lstring.h in Headers */,
+				7A5B4A3E3EED0ECAAB4C2D0A58EDCA62 /* ltable.h in Headers */,
+				21BF7CABEEF9C0A4C3AE2A12C6A3EB56 /* ltm.h in Headers */,
+				4ACA3BF502C7D7EB3995AB98263FE95D /* lundump.h in Headers */,
+				D2C76B76042144764AC902F4441EFC87 /* lvm.h in Headers */,
+				B62C1117B730A5E4A81B530B8D43B184 /* lzio.h in Headers */,
+				8036C0E3D81AC4A24ACB73DEC3EE6BD0 /* mln_lauxlib.h in Headers */,
+				0706545FCB66CDB48DABB0AC8AF7C2AB /* mln_lua.h in Headers */,
+				E4D50415C6BD69C32B953C0CAF6E3BD2 /* mln_luaconf.h in Headers */,
+				27FA6D093AF89FC6DDDC2E57FA2F8C35 /* mln_lualib.h in Headers */,
+				43C0B0577F5DB43991912EF83E374B4D /* MLNAdapterCachesManager.h in Headers */,
+				9A8A319B14DF5D9A9AA278B08B8C69E2 /* MLNAlert.h in Headers */,
+				6362FEEE8EA5C62B51545D642298F77B /* MLNAlphaAnimation.h in Headers */,
+				E7CCA2FF6A974BAC352193AE97271FDA /* MLNAnimation.h in Headers */,
+				86E83C3A2884A6D04C69176314CC8B3D /* MLNAnimationConst.h in Headers */,
+				DAFB2DBEBD1E3519E5EFB9A83F08DCB3 /* MLNAnimationDelegate.h in Headers */,
+				B9F83BD74A9CB984123107EDEC6D811D /* MLNAnimationHandler.h in Headers */,
+				81B3D476049EBF10616B40F5095901D7 /* MLNAnimationHandlerCallbackProtocol.h in Headers */,
+				0863E5780F35BE1B2CA8BC3B6881BC71 /* MLNAnimationSet.h in Headers */,
+				DF4389A6EBAC10D4B16001D20361AE36 /* MLNAnimationZoneView.h in Headers */,
+				950F7CF9D3D975C87C4D1012A135F695 /* MLNAnimator.h in Headers */,
+				D3CDD662D846E02CDBA628DDF484F73D /* MLNApplication.h in Headers */,
+				633A2061ABF9739A5D669B27623AD03D /* MLNBadgeView.h in Headers */,
+				8D1F2AE5C060B116F6B00DE4D7FD4B5D /* MLNBeforeWaitingTask.h in Headers */,
+				AEFE84434DE96F10C2E1C336C9CEA893 /* MLNBeforeWaitingTaskEngine.h in Headers */,
+				95F7E0A8C7700F9E161E94452CFBD0AA /* MLNBeforeWaitingTaskProtocol.h in Headers */,
+				FC1076775F19DDC8B55E9D57882BCCAB /* MLNBit.h in Headers */,
+				740FB2994F9488E7DCA00AAFDE382105 /* MLNBlock.h in Headers */,
+				1D43D54A79180BA1108E6EE61FFB6BC2 /* MLNBlockObserver.h in Headers */,
+				A4AD3B77456E4012FD18FE19107E905C /* MLNBorderLayerOperation.h in Headers */,
+				5AF0EA8A6B516AF487E2D7E10932032A /* MLNBounceInterpolator.h in Headers */,
+				0021C4F393EEE21335ACA2FDA960FB1C /* MLNButton.h in Headers */,
+				DBE0560EEBB4062E28A9803C44B702F7 /* MLNCanvasAnimation.h in Headers */,
+				92B678390EF651E3B99B1AB298B271C7 /* MLNCanvasAnimationDelegate.h in Headers */,
+				E0E61F27213E70E73CAF0BA9C5A576A5 /* MLNCanvasConst.h in Headers */,
+				02DAAC2B001AE20C05418C15CACEE46D /* MLNCanvasPaint.h in Headers */,
+				6576CD7CDABD2A7328A014F8C1803CEC /* MLNCanvasPath.h in Headers */,
+				AD791DFB6118A63EE89BFB75BD9F56A5 /* MLNCanvasView.h in Headers */,
+				4E47FCB77C0870AF26988C0308BC2CBD /* MLNClipboard.h in Headers */,
+				E6EB8417D8457A6098BF53494F42BF19 /* MLNCollectionView.h in Headers */,
+				7E1D0C3FD8725CA1F2FA98F185FE5B99 /* MLNCollectionViewAdapter.h in Headers */,
+				B31A96B204EA5BF21686C942F8914970 /* MLNCollectionViewAdapterProtocol.h in Headers */,
+				11F9A4AF00245FEA25BEEF48126650A7 /* MLNCollectionViewAutoFitAdapter.h in Headers */,
+				51FF64ABECF43EEE34E1E85C6547AD1E /* MLNCollectionViewCell.h in Headers */,
+				D10B771EAF2D35B68C4A02CAB59E568A /* MLNCollectionViewGridLayout.h in Headers */,
+				A38350A54C3F657A0FC4CD39996CB0DF /* MLNCollectionViewGridLayoutDelegate.h in Headers */,
+				FA5D1CAE49E3BE194989ED2C869CB78C /* MLNCollectionViewLayoutProtocol.h in Headers */,
+				35C797829812F301EFB1F29D7675E289 /* MLNColor.h in Headers */,
+				12F124A9855A04D9F809E12FA4147016 /* MLNContainerWindow.h in Headers */,
+				D9CC379F6F5231F6980EDB938DDFA412 /* MLNContentMode.h in Headers */,
+				E8225B6248F9F1F4A68A9AD7815D92FA /* MLNConvertor.h in Headers */,
+				6A754081B43BF71CF84262F3383600C1 /* MLNConvertorProtocol.h in Headers */,
+				C1D9B27E612BC795DA04680353460A99 /* MLNCore.h in Headers */,
+				67D664A72807E46976C7AD4F628BED86 /* MLNCornerHandlerPotocol.h in Headers */,
+				472E1ACD14B8387B328EE23E06F938BB /* MLNCornerImageLoader.h in Headers */,
+				0CD07AD3A8C3AB390AB348FDB89F91BA /* MLNCornerLayerHandler.h in Headers */,
+				2439E93B260244DE72AA30E1B8C94703 /* MLNCornerManagerFactory.h in Headers */,
+				9ED7CB7B4B35D8504C0674397F83C321 /* MLNCornerManagerTool.h in Headers */,
+				2C4B4E77E1622B483B611126B2AB6E81 /* MLNCornerMaskImageManager.h in Headers */,
+				4E146B91174D9D9378B5A76D38866C26 /* MLNCornerMaskLayerHndler.h in Headers */,
+				B894831B20BFFA6AE67F037BFA42E231 /* MLNCornerMaskViewHandler.h in Headers */,
+				FD772B459AD28C90D1C72E14E30ECA1B /* MLNCornerUtil.h in Headers */,
+				E8C7B7F7C82B48ADB3EBA328A5B39823 /* MLNDataBinding+MLNKit.h in Headers */,
+				99BEB2AA243BDD49E94D38ED02C55055 /* MLNDataBinding.h in Headers */,
+				C9E47313BE354D93CA4983691D491B33 /* MLNDevice.h in Headers */,
+				1BDE694947160493E949BC30B94EC8E5 /* MLNDialogView.h in Headers */,
+				7003B7FAAE31F2F9F925F9528D65F0CD /* MLNEditTextView.h in Headers */,
+				8951EC16C3E5AA6425C29AC933ED5E6B /* MLNEditTextViewConst.h in Headers */,
+				6CD11E4D364AEAD2303696B970CEEBE8 /* MLNEntityExporter.h in Headers */,
+				175E77666A97FCD1355C041F91A87C47 /* MLNEntityExporterMacro.h in Headers */,
+				EC3133622280CA12D50A08D7240F582A /* MLNEntityExportProtocol.h in Headers */,
+				303E25564AF24B6203BE7D61F66DB543 /* MLNErrorHandlerProtocol.h in Headers */,
+				5E1B7A248946C1513EB0C9D4F6F6C910 /* MLNExporter.h in Headers */,
+				088E86D8A3C51965B3C15624A9B5131A /* MLNExporterMacro.h in Headers */,
+				EDAB06FA1D44F1CDA2AFFBC1B662F35C /* MLNExporterManager.h in Headers */,
+				A7B891CBDE6BCAEA4C47EF29E598931A /* MLNExporterProtocol.h in Headers */,
+				2DE6A8FCBB16EDB0A43788D027D7F73B /* MLNExportInfo.h in Headers */,
+				0AC7F2825DC6C0219B665FB1961A96EA /* MLNExportProtocol.h in Headers */,
+				CDCB0A2AEF1838903A9F004F2E8D8002 /* MLNFile.h in Headers */,
+				431CB83AFBDF96F52CF4EF33DD3D67D5 /* MLNFileConst.h in Headers */,
+				4D9732191A60964FF983C9F6E48999C9 /* MLNFileLoader.h in Headers */,
+				11134B5A6505EB28759BE59FD67DFCDA /* MLNFont.h in Headers */,
+				877398756EBD1D41DD959A6F0535D1A2 /* MLNFrameAnimation.h in Headers */,
+				C20422DA8ECF3DA0AE3E1C39FEEF288B /* MLNGaussEffectHandler.h in Headers */,
+				72B9ABE2002008E47E22CA16271A2F6F /* MLNGlobalFuncExporterMacro.h in Headers */,
+				3BEB5BBB22BD771C4CAA8A1B05360BE6 /* MLNGlobalFuncExportProtocol.h in Headers */,
+				119BAA89AB098865A904F978175E7490 /* MLNGlobalFuntionExporter.h in Headers */,
+				E954F047840AB7A7F300C8A5F785EEFD /* MLNGlobalVarExporter.h in Headers */,
+				9ACE650AEE04D29A08C8CC219C3DBE2B /* MLNGlobalVarExporterMacro.h in Headers */,
+				68C795EBA9D412B1894C3D9FDA0B17AD /* MLNGlobalVarExportProtocol.h in Headers */,
+				13574629AAC675CF40B7503A7F3A6407 /* MLNGradientLayerOperation.h in Headers */,
+				2D526F587B60948A742F6F66227A25A7 /* MLNHeader.h in Headers */,
+				92D1133744CFA4055AACF64570B778A1 /* MLNHttp.h in Headers */,
+				E0CE62793E7624A07BCEDB6B00B28A75 /* MLNHTTPConst.h in Headers */,
+				42EDE86A54EDC25242A91185E70BC254 /* MLNHttpDefaultHandler.h in Headers */,
+				584125E8237DCF9338FF8B0413CF32C2 /* MLNHttpHandlerProtocol.h in Headers */,
+				CBCC7AF92A7B7CB306A565AB527D508F /* MLNImageLoaderProtocol.h in Headers */,
+				0AA05CBB608C135582E6CD47CAEF9ABF /* MLNImageView.h in Headers */,
+				68F508B842A29D708BC1C11281DEB8A9 /* MLNInnerCollectionView.h in Headers */,
+				6BF3FA7F31B8665FC5160D40E7F84E52 /* MLNInnerScrollView.h in Headers */,
+				1DE5CBCEAE90077A7FBB32829892D57E /* MLNInnerTableView.h in Headers */,
+				9AA2E7BC36CAC6F0455DD302F0095F87 /* MLNInternalTextField.h in Headers */,
+				FCC74CD228C60AB0A72E355C8B54F6F7 /* MLNInternalTextView.h in Headers */,
+				20D75E18DF9F6F8A248858842B126298 /* MLNInternalWaterfallView.h in Headers */,
+				FCBE7FEA3E0F5738BD42D23A3D9C7E4E /* MLNInterpolatorProtocol.h in Headers */,
+				0442E2D551B061441A88729CA9DE926C /* MLNInvocation.h in Headers */,
+				ECB6BA43021CFFC282DFF1C00DEDC861 /* MLNKeyboardViewHandler.h in Headers */,
+				7A29CF28950A67D7B986883DDEB33127 /* MLNKeyframeAnimation.h in Headers */,
+				64189D35BE8898C042683165CFE5D868 /* MLNKeyframeAnimationBuilder.h in Headers */,
+				7FE8A86A90C3CCE181F64BD29BD8CD83 /* MLNKeyframeArray.h in Headers */,
+				EF91561939FE390393E18870FC8C63DF /* MLNKiConvertor.h in Headers */,
+				765F768524560623B9DDEF083B6B9404 /* MLNKit.h in Headers */,
+				18D37AA9CEB321192840D6E8C4DEF3F0 /* MLNKitBridgesManager.h in Headers */,
+				C7104621AB58E29C91DFCD2E89CB069A /* MLNKitEnvironment.h in Headers */,
+				B638F1AD4F9EA950A4AEC40D5711F92F /* MLNKitHeader.h in Headers */,
+				4CCD1D94F33AF83FB21A7523890DC491 /* MLNKitInstance.h in Headers */,
+				B547544AFE12E918E0B11D2F00531678 /* MLNKitInstanceConsts.h in Headers */,
+				241CE202BF461AC6BEE0C23664B24124 /* MLNKitInstanceDelegate.h in Headers */,
+				1A9635891C8075BF395AAA2BF38E64E4 /* MLNKitInstanceErrorHandlerProtocol.h in Headers */,
+				BDC0252AF376EF374E64B24E6147224B /* MLNKitInstanceFactory.h in Headers */,
+				4A18B21398CC98A5279EB9FDFB3448A0 /* MLNKitInstanceHandlersManager.h in Headers */,
+				0F5A75666215BAEB5E575F0306A5809E /* MLNKitLuaCoeBuilderProtocol.h in Headers */,
+				F061AF6F5CF72B9EEEC44D1DE796354F /* MLNKitLuaCorePool.h in Headers */,
+				A0ECA389AF26F1B75CDFAA84B336A8F3 /* MLNKitViewController+DataBinding.h in Headers */,
+				49F94D96102EB3EEB05DCE671FF689CC /* MLNKitViewController.h in Headers */,
+				A3A0FEC14730A5D4FB8BE3D11A1E6E48 /* MLNKitViewControllerDelegate.h in Headers */,
+				14F5217A4FEEE988E949983CA59D42E7 /* MLNKVOObserver.h in Headers */,
+				C119E4B7D0B869D5CE9E2EB11614ED33 /* MLNKVOObserverProtocol.h in Headers */,
+				0A5DFFBB2707D7D3FCF408BD6240EC94 /* MLNLabel.h in Headers */,
+				394FE142453213C63E0FF975C26925D3 /* MLNLayoutContainerNode.h in Headers */,
+				791B7238278A9AF5BACD82FD75F062BB /* MLNLayoutEngine.h in Headers */,
+				4CF5BC6F06810AC4F2CF2FD2EA601A9B /* MLNLayoutImageViewNode.h in Headers */,
+				99238419C7C4E2571650EC9F3AF628CE /* MLNLayoutNode.h in Headers */,
+				BBB827421AC834792D754654C4AC4E4B /* MLNLayoutNodeFactory.h in Headers */,
+				F49B08F75539872832EB44CB47C50FF9 /* MLNLayoutScrollContainerNode.h in Headers */,
+				86C1C75E4612A6E71D9D84033B5AB0E7 /* MLNLayoutWindowNode.h in Headers */,
+				B8B385E8304D6129B02879BAF0BF2DBA /* MLNLinearLayout.h in Headers */,
+				D6B6BF041176C277F9DFDE44B1A39898 /* MLNLinearLayoutNode.h in Headers */,
+				1C5D5E830F8D1170985D3463CC75152D /* MLNListViewObserver.h in Headers */,
+				648CFDEA695E3896D3E84FFF1C68AEA8 /* MLNLoading.h in Headers */,
+				8149813A64A8D88F5AA92895EE09079E /* MLNLuaBundle.h in Headers */,
+				82FA9142A62429A24A5FD93E3249F1ED /* MLNLuaCore.h in Headers */,
+				92116E1C1E1AE65480772CD70B56B29E /* MLNLuaCoreDelegate.h in Headers */,
+				6D4C31405E60EA3BA6E7CCD1969F24CE /* MLNLuaTable.h in Headers */,
+				4D465D6F0B1A87672F66BF19D7B19A15 /* MLNMainRunLoopObserver.h in Headers */,
+				A4CA478D91C21D0743F197C6FE9E410E /* MLNNavigator.h in Headers */,
+				1946BC3749A98E53AA68C2DFEB391312 /* MLNNavigatorHandlerProtocol.h in Headers */,
+				01F4C900FC1B3300DF1B0800CF8AB9C0 /* MLNNetworkReachability.h in Headers */,
+				B95D5758797C5F46555AA47156D9799B /* MLNNetworkReachabilityManager.h in Headers */,
+				296D7FB0C5683E1A8455FAB0EED52775 /* MLNNinePatchImageFactory.h in Headers */,
+				3B91F920E0D0FF1538C6DBEA0A06252D /* MLNOvershotInterpolater.h in Headers */,
+				ADC5BAF9E984408235219AF3655F58EC /* MLNPaddingContainerViewProtocol.h in Headers */,
+				1B399D062356BB155CACF47F11527BAD /* MLNPoint.h in Headers */,
+				7904138C4E5D456A754821AE2C731E5D /* MLNPreferenceUtils.h in Headers */,
+				F109C3A96E6BF8E82813F47E0F4DDB3A /* MLNRect.h in Headers */,
+				B3A40E21C7D00DC0A89B3C00FAF53720 /* MLNRefreshDelegate.h in Headers */,
+				7B40EA94C8559ABA216F469B301C20E6 /* MLNRenderContext.h in Headers */,
+				BE27914DCCEFC625E896B6A50659ED3B /* MLNReuseContentView.h in Headers */,
+				869DA41482FE8C71DB615259B10FE15E /* MLNRotateAnimation.h in Headers */,
+				51FF7586CD49E883C3FB7AA3E08D0F7C /* MLNSafeAreaAdapter.h in Headers */,
+				E38352A0E5E142BC8DF5416FE3BA92D6 /* MLNSafeAreaProxy.h in Headers */,
+				9408E9ECFC15D01D2C13D10B84B06EA6 /* MLNSafeAreaViewProtocol.h in Headers */,
+				CF0F482CB6E3EB0AEE24A01F74D5FCD6 /* MLNScaleAnimation.h in Headers */,
+				FDFC67436883502B3AA786E564C54A6E /* MLNScrollCallbackView.h in Headers */,
+				6A39112F4A931B323A111541342282EF /* MLNScrollView.h in Headers */,
+				D1EA990655C66D8666C2D957A46A6627 /* MLNScrollViewConst.h in Headers */,
+				142C00C2CF465B5607E49666E3EA9EB3 /* MLNScrollViewDelegate.h in Headers */,
+				B1175B1A59BDCF8AEF64E92128529DD6 /* MLNShadowOperation.h in Headers */,
+				1812EF8CF0F253B481B09997E303B6E3 /* MLNShapeContext.h in Headers */,
+				FE0E3538D90A055E4BC3A26C0C76B8C1 /* MLNSize.h in Headers */,
+				0B56A6528A55E7CD4B31703A5923866B /* MLNSizeCahceManager.h in Headers */,
+				703A6CD08D3B4AAF043A9297A99E07AA /* MLNSnapshotManager.h in Headers */,
+				096718AEDCB65129E2055F62AC319DF3 /* MLNStaticExporter.h in Headers */,
+				7E7C8EAEA16CAF818290538E2CEC2D74 /* MLNStaticExporterMacro.h in Headers */,
+				F63FE22E287FBC96102C350627596865 /* MLNStaticExportProtocol.h in Headers */,
+				9007F2B3FF77E3934415A5947D84180A /* MLNStringUtil.h in Headers */,
+				0921DDD3A097B4AAE290F5D74BB9AA59 /* MLNStyleElement.h in Headers */,
+				7921ACA518A60136343B9C41768F75FE /* MLNStyleString.h in Headers */,
+				C22A2926EBCEEA87E8F3B722651A4BD7 /* MLNStyleStringConst.h in Headers */,
+				4DF48E61CAC8D585C270EF82A16E57EB /* MLNSwitch.h in Headers */,
+				41F6642260AF532FF81419924E451200 /* MLNSystem.h in Headers */,
+				A7204A2E1BF47B2CB7273B7C4F51776C /* MLNSystemConst.h in Headers */,
+				D7C9579E921C4E728F7BC6FFFD458FEB /* MLNTableView.h in Headers */,
+				147A2AF6C88A20E928E75DFA572AFE02 /* MLNTableViewAdapter.h in Headers */,
+				FA3E3DD62038CC71CE57B96859C86018 /* MLNTableViewAdapterProtocol.h in Headers */,
+				C7BBE1A645C8F11AE2928C1755DD48AC /* MLNTableViewAutoFitAdapter.h in Headers */,
+				A0DC72FE7E7804EC79C6DBE3E4BEA6FE /* MLNTableViewCell.h in Headers */,
+				EF563E4B30B893826693DB7D70418110 /* MLNTableViewCellSettingProtocol.h in Headers */,
+				3667F71DA37EFEBA18169D84F207BD15 /* MLNTabSegmentScrollHandler.h in Headers */,
+				3D78F655894339E9AE9739B79605C56C /* MLNTabSegmentView.h in Headers */,
+				73ABDBEB22B6BCE84AA9A963B944AB9A /* MLNTabSegmentViewDelegate.h in Headers */,
+				4DCB9E1EEF6B33E9B53F0068DE0E783F /* MLNTextConst.h in Headers */,
+				9052603108E2E4E3BDB464CAFF566CB6 /* MLNTextViewFactory.h in Headers */,
+				CE46F24FEBC24AD29E5CA1D8EA899D16 /* MLNTextViewProtocol.h in Headers */,
+				BF312597DDC6B804961E2CC850B5AD0F /* MLNTimer.h in Headers */,
+				08030D2831B9F672754618D8ABF5533F /* MLNToast.h in Headers */,
+				3D60ED7EAD0181010DA04E7255593894 /* MLNTransformTask.h in Headers */,
+				0812CAA1E3A728E5DCADC03D92FA7AC7 /* MLNTranslateAnimation.h in Headers */,
+				2B398F37FFC76942D8D78AC8E4EBAB20 /* MLNTypeUtil.h in Headers */,
+				12D79DBCBE38A217C41BD6AE71A87541 /* MLNValueCalculator.h in Headers */,
+				34F1BECA4C558013E7896093714F0E80 /* MLNValueCalculatorProtocol.h in Headers */,
+				E880244792C696DD7FE4717725EA0177 /* MLNVersion.h in Headers */,
+				72864991E6FD0FAAC7B82B4ABA5A1DD3 /* MLNView.h in Headers */,
+				402774A420C79776A8D615A1065AB523 /* MLNViewConst.h in Headers */,
+				FC61CBB5113B3F90D1A57A5FF9EF51BA /* MLNViewControllerProtocol.h in Headers */,
+				58EB0389B5BE47BBFD7F716380799A49 /* MLNViewExporterMacro.h in Headers */,
+				3FAF6C0DB2863B1C8536CC00E8121685 /* MLNViewPager.h in Headers */,
+				A3920040AC000468D89BF681E31CCF14 /* MLNViewPagerAdapter.h in Headers */,
+				04ACBBB0D7C049C3B1CD66E6B7F491F9 /* MLNWaterfallAdapter.h in Headers */,
+				61FC0D47AE70918D783CE667361709A5 /* MLNWaterfallHeaderView.h in Headers */,
+				41FD99F69AA6B4B6F8A89037EE8E4FE1 /* MLNWaterfallLayout.h in Headers */,
+				CA99120A1E9FE5040B5023FADE6AFC37 /* MLNWaterfallLayoutDelegate.h in Headers */,
+				9B1C94CF0A11342F35BFF74C6BE7DDF8 /* MLNWaterfallView.h in Headers */,
+				C700105ADB68222A8C2BA057FCBE8A9B /* MLNWeakAssociatedObject.h in Headers */,
+				130ACBEB996C704BBA1B101B2F638BAE /* MLNWindow.h in Headers */,
+				62C8E4583CA92C35C950E23D4A49AD4B /* MLNWindowContext.h in Headers */,
+				DBE8874E0CA8F0435A42441774FD5370 /* mmoslib.h in Headers */,
+				3BCB9C5E37BF59D78ADF506467980309 /* NSArray+MLNCore.h in Headers */,
+				F3678096E6D2BC47F77975C4D49E7478 /* NSArray+MLNKVO.h in Headers */,
+				222B8A2D8292469735025761A7E09D08 /* NSArray+MLNSafety.h in Headers */,
+				5298E9E014494C0392C8BB5C80C1A810 /* NSAttributedString+MLNKit.h in Headers */,
+				17366ABAB3EC8A26A24F004A0C14C6A0 /* NSDictionary+MLNCore.h in Headers */,
+				1B956AF872FEE22A19BA8C8AD1B35E28 /* NSDictionary+MLNKVO.h in Headers */,
+				0D2895DCFF0A7AB136BAB8FBA9F2F1CF /* NSDictionary+MLNSafety.h in Headers */,
+				9FBF8F1FB0B84EA9BFD402A2387D2FB8 /* NSError+MLNCore.h in Headers */,
+				485DB010194D18974E75E1BD5AE6F9BE /* NSMutableArray+MLNArray.h in Headers */,
+				39426C76E4CE5E2724C1655DE412AD30 /* NSMutableArray+MLNCore.h in Headers */,
+				C3C9A6B7F457FB5855A3827C155637EB /* NSMutableArray+MLNKVO.h in Headers */,
+				A1056D224BDA3A0CD126DBBC4F8BEAC2 /* NSMutableDictionary+MLNCore.h in Headers */,
+				BBB8313F3F95BF95EFB643A19DF5EA04 /* NSMutableDictionary+MLNMap.h in Headers */,
+				E4477704E50340AB6541E8D836B4DA33 /* NSNumber+MLNCore.h in Headers */,
+				657875BABDC93641E564767EC254F3DF /* NSObject+MLNCore.h in Headers */,
+				AEA28D1F227C4F7A17BA1E2A753B1025 /* NSObject+MLNKVO.h in Headers */,
+				35FEFA3314CF94B70395B2AE7F11AA16 /* NSObject+MLNSwizzle.h in Headers */,
+				6EF11A2301355B0E0A64AD95B0096E48 /* NSString+MLNCore.h in Headers */,
+				B7E6BD4B144B20E818639909FDCD24F9 /* NSString+MLNKit.h in Headers */,
+				AD7E3BBD30E7E874D9554479A6636A8A /* NSValue+MLNCore.h in Headers */,
+				FE33DD4404B302D80DA6F5338EC4AAF7 /* UIColor+MLNCore.h in Headers */,
+				29816FD23093B831A4D5F83610AD2438 /* UIImage+MLN_IN_UTIL.h in Headers */,
+				E1F7B9311197E6B62CD38CAFFD9D4318 /* UIImage+MLNKit.h in Headers */,
+				A629C8EB58215903903C97667F681240 /* UIScrollView+MLNKit.h in Headers */,
+				C616092C318122086847966579898011 /* UIView+MLNCore.h in Headers */,
+				D6D83F14D54BB4D3CCF08840AA3A900A /* UIView+MLNKit.h in Headers */,
+				B582CE11C55EF6C945A616D4268F0681 /* UIView+MLNLayout.h in Headers */,
+				287F48DADC439E477E84576FBA189F03 /* UIViewController+MLNKVO.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B04424C88C0BDD2BB82BB1DD77EF8E40 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -5944,270 +6220,6 @@
 				B1AD4F8EABEC316975F56573AFC13249 /* TADotView.h in Headers */,
 				7FAFF4D9AC56D3A90E4C742E81340260 /* TAPageControl.h in Headers */,
 				DBF3F4574BD278EAECE44F9EE9206FFA /* UIView+SDExtension.h in Headers */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		C174913095FEB541BD45714A4FBAC3B6 /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				91842402446221E93299D997721B076D /* lapi.h in Headers */,
-				1DA9E51E778C2BD475C490F91CE90563 /* lcode.h in Headers */,
-				4D2481C7C11DF0614E4BD1A0706A3979 /* ldebug.h in Headers */,
-				567BDF5ADC8B0DEBC1A5432D1C45B02B /* ldo.h in Headers */,
-				964332C69CD75D7494CED9783CE625C1 /* lfunc.h in Headers */,
-				CCF87692B09EF0C38024E3A39E0052E8 /* lgc.h in Headers */,
-				2E254BC2CF8A6532300308124AD04E93 /* llex.h in Headers */,
-				3050687013CB736134C3D683BC3B25F8 /* llimits.h in Headers */,
-				7139BF035F549855CEAEA570F3E340D9 /* lmem.h in Headers */,
-				1CFF2928211D8776B82A2CE14960DE14 /* lobject.h in Headers */,
-				4DE1407A8DDCFEB00E0B2C54761E2E94 /* lopcodes.h in Headers */,
-				E8392F73428A595A6C89468AD2D1AE3B /* lparser.h in Headers */,
-				59520425A79EE72120F9CA54728B54E6 /* lstate.h in Headers */,
-				C001A831703B0A5479025554CD7BA1AD /* lstring.h in Headers */,
-				35320862AF71BD68223DD5EF9D0E351D /* ltable.h in Headers */,
-				223B8DE7F502854579C5F5BB233C8392 /* ltm.h in Headers */,
-				F087D6B1CFC81FCEB02D9EB4CD1F3EA9 /* lundump.h in Headers */,
-				0D07ED89A684DACEE1FFB677A2883ECE /* lvm.h in Headers */,
-				EC05652D4C44FD955B1092D7EA747C02 /* lzio.h in Headers */,
-				E6FE3C0A75793E9B4231EDABBF21326E /* mln_lauxlib.h in Headers */,
-				1A43159ACE454502370F3CD51E509B61 /* mln_lua.h in Headers */,
-				EA9F8213D0C8D86E55657957FBA09716 /* mln_luaconf.h in Headers */,
-				C35D00286E92BD651AE5DBCD3A2F46C8 /* mln_lualib.h in Headers */,
-				4486629F8BFF01C26B76AB95C41BA7C1 /* MLNAdapterCachesManager.h in Headers */,
-				A8A0094C8FF1615179FDAE2566E2B040 /* MLNAlert.h in Headers */,
-				E1C919EF648A6AA76DCC48C4309DADD0 /* MLNAlphaAnimation.h in Headers */,
-				C604F7E0794D6A936B7451D496CD7496 /* MLNAnimation.h in Headers */,
-				3773D3599B1287C7B76416586751121A /* MLNAnimationConst.h in Headers */,
-				10F91F8C57E2DA18D943026FFDCCAF85 /* MLNAnimationDelegate.h in Headers */,
-				ACEF622E4FE04B6C5909C144AB6EE99A /* MLNAnimationHandler.h in Headers */,
-				41CCE16D538816451CE9BB186161C7B9 /* MLNAnimationHandlerCallbackProtocol.h in Headers */,
-				A74BA57787C169E3DC53AA011CEB1297 /* MLNAnimationSet.h in Headers */,
-				22F1CEE662DE5E47F435133D6EB22155 /* MLNAnimationZoneView.h in Headers */,
-				4D047D283C28EE7A499387C7A78C04C2 /* MLNAnimator.h in Headers */,
-				B89DB0C68818C53965E06726F43102CE /* MLNApplication.h in Headers */,
-				2A8A184EA6ED0B301E1DDF654AA9E5C1 /* MLNBadgeView.h in Headers */,
-				AC037D2861B5FA0969C8D0CEFD96078D /* MLNBeforeWaitingTask.h in Headers */,
-				3C13D12A3E75F329C6D1129DB8CE21CF /* MLNBeforeWaitingTaskEngine.h in Headers */,
-				9511030058AA5892A313547761A6A9D1 /* MLNBeforeWaitingTaskProtocol.h in Headers */,
-				9156F0E49798F2EE137748B86BB0A0B2 /* MLNBit.h in Headers */,
-				8354FE0F727B7B01FF0DDC5607A6AA42 /* MLNBlock.h in Headers */,
-				D64C42DA2C4329DAE8A659E3D01F8544 /* MLNBlockObserver.h in Headers */,
-				D18E553C04DD8FC92198274B8FA66503 /* MLNBorderLayerOperation.h in Headers */,
-				BE5BDF3F2FC783D2B10B40BE5B52F680 /* MLNBounceInterpolator.h in Headers */,
-				6EC122215AACD42E32F35E6B3B18E3AC /* MLNButton.h in Headers */,
-				FD4FF10258CD92CF7E8B9332600F543F /* MLNCanvasAnimation.h in Headers */,
-				B0239B3E7FA8DED48D172B73E00DAFCD /* MLNCanvasAnimationDelegate.h in Headers */,
-				05903ED3A706FD089106EB90DF3B9BF8 /* MLNCanvasConst.h in Headers */,
-				BCEA0BAC9071CB0DC346F882A9DA741E /* MLNCanvasPaint.h in Headers */,
-				D8728343A308574262246C6F524EAADB /* MLNCanvasPath.h in Headers */,
-				B78ACBACB4A6FE94833CAD0AAEA4E1F9 /* MLNCanvasView.h in Headers */,
-				178C79B2636DABCBEEF8F67B8D652304 /* MLNClipboard.h in Headers */,
-				97ACFCC1AF5A658BB59A98356CA336EB /* MLNCollectionView.h in Headers */,
-				BE42C109E1089DB332C853FAA82A5FDC /* MLNCollectionViewAdapter.h in Headers */,
-				E3C0C3DCF0392B4D387FAB2684E443F7 /* MLNCollectionViewAdapterProtocol.h in Headers */,
-				6104E77C65A086767A13E05FFB2786E3 /* MLNCollectionViewAutoFitAdapter.h in Headers */,
-				3783DAB21877F059A9355C0010954C92 /* MLNCollectionViewCell.h in Headers */,
-				BDE77074FD484E318E7FA463090A378F /* MLNCollectionViewGridLayout.h in Headers */,
-				C5CC68FFF8F6D7595241942B6A96052B /* MLNCollectionViewGridLayoutDelegate.h in Headers */,
-				4133EC97F1B920150DA21885BDF28614 /* MLNCollectionViewLayoutProtocol.h in Headers */,
-				AE71F7D864CA44236BBA8333C55C4A82 /* MLNColor.h in Headers */,
-				C8189AB8E4A638F43D4BF1E85D9A82FA /* MLNContainerWindow.h in Headers */,
-				1BFDCAB65F600A4284AC2BA6F8BBB47D /* MLNContentMode.h in Headers */,
-				CD575BCF48568E609DD547AF710CE9A8 /* MLNConvertor.h in Headers */,
-				702C78649D8CD27F9CC6B6FCA86B67B1 /* MLNConvertorProtocol.h in Headers */,
-				1044C7E31BFBA21A1D2FCD1DFC0E8D9F /* MLNCore.h in Headers */,
-				D59BF2BC179DE4158D91695103A2EE71 /* MLNCornerHandlerPotocol.h in Headers */,
-				B64B5755E7CA84B67AD5B40AD98FBB05 /* MLNCornerImageLoader.h in Headers */,
-				A48E61E99F7867E2C88B1C6CE719DED3 /* MLNCornerLayerHandler.h in Headers */,
-				9323C2F24DACA0CB62875D51152700B1 /* MLNCornerManagerFactory.h in Headers */,
-				DD1FC29FB74C1BC77A5C0527DB912D1D /* MLNCornerManagerTool.h in Headers */,
-				47E51AB96A80D41B8C74A31C7CF6C72B /* MLNCornerMaskImageManager.h in Headers */,
-				9B02865B4D82CE2DE572F10B6E344FAA /* MLNCornerMaskLayerHndler.h in Headers */,
-				D1B9915245A1334BFADFD83D38184ED6 /* MLNCornerMaskViewHandler.h in Headers */,
-				B67FB429FC7BF1FDFB698A913B0FD374 /* MLNCornerUtil.h in Headers */,
-				1C36A45B9BEAAA26BE8F973DEE9AB9AA /* MLNDataBinding+MLNKit.h in Headers */,
-				7EE5B4A1322517C66B00798319B79BEF /* MLNDataBinding.h in Headers */,
-				268EBB0E2D5C371F7A36F9A8464250E9 /* MLNDevice.h in Headers */,
-				52CAB7DD9E9B75291F4917E1301EF953 /* MLNDialogView.h in Headers */,
-				9EBC995ACC48F6A4F0EC53F6C1DDF837 /* MLNEditTextView.h in Headers */,
-				39B9DEA8FD786DDF9204BFDDE50591EE /* MLNEditTextViewConst.h in Headers */,
-				6EEEE2D1F070E02F53C6B9C503D07D27 /* MLNEntityExporter.h in Headers */,
-				3FB6AEF220046A92FD4F93236874C5C2 /* MLNEntityExporterMacro.h in Headers */,
-				F9F5E4C1DE04576E0B38644016CAAE6B /* MLNEntityExportProtocol.h in Headers */,
-				B84595E3B29F6D9681CC88A1AECEC146 /* MLNErrorHandlerProtocol.h in Headers */,
-				74D082D2EC028A77986E4FB13206E56F /* MLNExporter.h in Headers */,
-				457F310D7019CEE90A3C317510EE387B /* MLNExporterMacro.h in Headers */,
-				74D088C343BB6C9EBF82FDE162055595 /* MLNExporterManager.h in Headers */,
-				F1DE9655A458B96E9F894D8A5542B6B9 /* MLNExporterProtocol.h in Headers */,
-				5956A305613CBABF59836B5847BB184C /* MLNExportInfo.h in Headers */,
-				4F7EE4AEE2C5752F82DA3D81D72883A6 /* MLNExportProtocol.h in Headers */,
-				6D54662A07B9F6F07B740CFFA0CD2482 /* MLNFile.h in Headers */,
-				572BCC898B7FC78BEAEFB72FDEFC0E1A /* MLNFileConst.h in Headers */,
-				48DF1DE8EA99CD01D05C9B214709065B /* MLNFileLoader.h in Headers */,
-				9F4215BE18352674D6F382EC0F945167 /* MLNFont.h in Headers */,
-				26F6361E663DB15990162F4E5F7F5CD0 /* MLNFrameAnimation.h in Headers */,
-				26CA2FD6EE24F96E3BDD5CBC5291F6BE /* MLNGaussEffectHandler.h in Headers */,
-				C77AE314C938C16091BBE16DA8A1867E /* MLNGlobalFuncExporterMacro.h in Headers */,
-				4C95805CAEEC5B285EA2E33F62A3380A /* MLNGlobalFuncExportProtocol.h in Headers */,
-				75804315EFBADFCBCCFB1C374E59210C /* MLNGlobalFuntionExporter.h in Headers */,
-				A2CE32A4C83C46165927D463037ADE01 /* MLNGlobalVarExporter.h in Headers */,
-				AF2CE415779361C012A5A68BC7DADD08 /* MLNGlobalVarExporterMacro.h in Headers */,
-				100CA0ADFDC367F575D9AB5DE301E7D5 /* MLNGlobalVarExportProtocol.h in Headers */,
-				7D97F9E6BF221D32016C62CE96EA8A17 /* MLNGradientLayerOperation.h in Headers */,
-				7415DB4C3B796B948EC4E9859A197530 /* MLNHeader.h in Headers */,
-				68494FD9AD8A2343034E01D772FC174B /* MLNHttp.h in Headers */,
-				6DDA7A057D231D4FDC69D6F0200B5B6F /* MLNHTTPConst.h in Headers */,
-				E930A1A5B13F94E6CC8E51A2C66A0A2A /* MLNHttpDefaultHandler.h in Headers */,
-				53E76876D7F9D8D28FBDC23A02DFF963 /* MLNHttpHandlerProtocol.h in Headers */,
-				BD48080D01D21AD1110C792C0FB2D5B7 /* MLNImageLoaderProtocol.h in Headers */,
-				43277FF800C64AC193560BC3BE59FDDC /* MLNImageView.h in Headers */,
-				6CA21CCE0815862CB1576656DCBC515A /* MLNInnerCollectionView.h in Headers */,
-				FF5D9150CB72E0BFEC7AE857FC98B374 /* MLNInnerScrollView.h in Headers */,
-				56D28965E95C1EAEB452CE3373CFB9D2 /* MLNInnerTableView.h in Headers */,
-				0961A1A9483C873C39ADC5E2CB9F1B3E /* MLNInternalTextField.h in Headers */,
-				E96DBF280FBC9DAA09FA94094573EA46 /* MLNInternalTextView.h in Headers */,
-				BC23B198679C3BACED7C66B086790D36 /* MLNInternalWaterfallView.h in Headers */,
-				2F062B487F96296FA0ED2B920AF02CD9 /* MLNInterpolatorProtocol.h in Headers */,
-				BFB8DDB7DC4AD3A87DD920DD40A100AC /* MLNInvocation.h in Headers */,
-				ACBB2243082A70E30E141CA058A79CE4 /* MLNKeyboardViewHandler.h in Headers */,
-				0E41C829234915E855EE1B4BE963624A /* MLNKeyframeAnimation.h in Headers */,
-				397B8F06ED89191BC408FB4C6121B195 /* MLNKeyframeAnimationBuilder.h in Headers */,
-				D918C59346E3EDC1EF59B7750D88DC66 /* MLNKeyframeArray.h in Headers */,
-				3C380427ACB8AD87DF4F9DDF657C23F2 /* MLNKiConvertor.h in Headers */,
-				7D28E2E4710ABA798B012EBE840128D4 /* MLNKit.h in Headers */,
-				34C9308CA30876DFE6B58F2A60FB74CF /* MLNKitBridgesManager.h in Headers */,
-				C8FAB477CE2C9AD2489E7696918401B8 /* MLNKitEnvironment.h in Headers */,
-				41120EB75AA2F409212C8B9B13D49B9F /* MLNKitHeader.h in Headers */,
-				7B697CFF033EC9E0DEE4471E473D7626 /* MLNKitInstance.h in Headers */,
-				3F5D58E76C51412F72A085FF4EF598B3 /* MLNKitInstanceConsts.h in Headers */,
-				FB799A88301740515E5CBD305F5A6687 /* MLNKitInstanceDelegate.h in Headers */,
-				43CF6A7CDC92E32E4CD6F4BF59655C5D /* MLNKitInstanceErrorHandlerProtocol.h in Headers */,
-				24F162B882F09160F2122DD74404B18A /* MLNKitInstanceFactory.h in Headers */,
-				86AEB49E6504FBB1E4218898F14AE2BF /* MLNKitInstanceHandlersManager.h in Headers */,
-				AC0F783D5C1DBFFAB98866674F9419D7 /* MLNKitLuaCoeBuilderProtocol.h in Headers */,
-				E432C4C8AD28E7A74D7610FA4EE47A64 /* MLNKitLuaCorePool.h in Headers */,
-				649E2E77E563BE2FEFB1186EE7B5FB2C /* MLNKitViewController+DataBinding.h in Headers */,
-				BAFF40F4696E87AD7CEE29BB54187EB5 /* MLNKitViewController.h in Headers */,
-				77F58CE8736634AA7667C3F0C9DAB494 /* MLNKitViewControllerDelegate.h in Headers */,
-				27066C60FD77450B8404EEC9C0508D02 /* MLNKVOObserver.h in Headers */,
-				0A34EE4138F81FB9F518F9F59CE4F850 /* MLNKVOObserverProtocol.h in Headers */,
-				013D2F543A2E3CD481F3EF6109D5212C /* MLNLabel.h in Headers */,
-				FA916DDAAF2DBE968E53E964777FB086 /* MLNLayoutContainerNode.h in Headers */,
-				CCC3F41A17A1181C36E29EB503634F67 /* MLNLayoutEngine.h in Headers */,
-				DDE8A2A827B5156B861304484290ED83 /* MLNLayoutImageViewNode.h in Headers */,
-				AB618C04A63BB3B56C949C26843C91CB /* MLNLayoutNode.h in Headers */,
-				9665E09718D381448D680123DA3F376B /* MLNLayoutNodeFactory.h in Headers */,
-				689EA3D5A453617E655A30B17625E9CF /* MLNLayoutScrollContainerNode.h in Headers */,
-				A6A90F4F63D298988A060BA30203D7CC /* MLNLayoutWindowNode.h in Headers */,
-				5D2F59E067092E61B189E34F29DACA41 /* MLNLinearLayout.h in Headers */,
-				63E514787C993CDB7C1D2EE93A2FD409 /* MLNLinearLayoutNode.h in Headers */,
-				16F61FA33D4B1F5B196A1E2EE9EB2A82 /* MLNListViewObserver.h in Headers */,
-				EEB87311B8E4D094C1665D1300C93D25 /* MLNLoading.h in Headers */,
-				490072EE01AB598C1530172E62610A72 /* MLNLuaBundle.h in Headers */,
-				2E05D900DF1980B2AEE8E52848DDCFB6 /* MLNLuaCore.h in Headers */,
-				A2F9F104AD7B660622B0112558EAEA5D /* MLNLuaCoreDelegate.h in Headers */,
-				083455EEE42D718C596727B53C1063F6 /* MLNLuaTable.h in Headers */,
-				1E53414F2F46D73668A44B6BC7D2C5AA /* MLNMainRunLoopObserver.h in Headers */,
-				1966C1D5943D0FCA8CEB773A843CCDA2 /* MLNNavigator.h in Headers */,
-				CE2F8E89241C108D8D7ECCEFD8CD3912 /* MLNNavigatorHandlerProtocol.h in Headers */,
-				7A109EF604D67FCEDCF8B9BE4A2B97D0 /* MLNNetworkReachability.h in Headers */,
-				14CC3EE7EDB189EAE36AE57C2947CC11 /* MLNNetworkReachabilityManager.h in Headers */,
-				2734CF0E82DA779A7AB1B83D9E8ABAC1 /* MLNNinePatchImageFactory.h in Headers */,
-				E9F7FA24F5AD7D70ADA37B963150DB31 /* MLNOvershotInterpolater.h in Headers */,
-				C01A9C5AE952AB8F18700AB8E26D6859 /* MLNPaddingContainerViewProtocol.h in Headers */,
-				57BF9418CA27ACF3F9C450713B57F75E /* MLNPoint.h in Headers */,
-				DBB2A885A964F08603E924F761A4D1FE /* MLNPreferenceUtils.h in Headers */,
-				5421A944E75DE3F0E7EB9C55614173AB /* MLNRect.h in Headers */,
-				47E028B748E2DFF1653DEA89198142F1 /* MLNRefreshDelegate.h in Headers */,
-				8190EE9DC6E3B781BB80419A39D4CDAA /* MLNRenderContext.h in Headers */,
-				2875CB39933601BF54D20B5CDB33D444 /* MLNReuseContentView.h in Headers */,
-				D398D9FBA1510649B6268014A2C21077 /* MLNRotateAnimation.h in Headers */,
-				84F264E3D54730B21A3856D81079D7CB /* MLNSafeAreaAdapter.h in Headers */,
-				223CD396E32C9107B68F7339C01EF6B3 /* MLNSafeAreaProxy.h in Headers */,
-				116554D66A0376BE1F5E32E097049C75 /* MLNSafeAreaViewProtocol.h in Headers */,
-				DF2577613588139C10E19AA858B96D6F /* MLNScaleAnimation.h in Headers */,
-				ED1CADB662B43E9E41DF82D2AEE20CDA /* MLNScrollCallbackView.h in Headers */,
-				3DB49C49C290000C3122E7329F4096A4 /* MLNScrollView.h in Headers */,
-				DE507C512F3B5AF6DA71825FAED0F417 /* MLNScrollViewConst.h in Headers */,
-				E442AEA985C1180DB6732766901E723B /* MLNScrollViewDelegate.h in Headers */,
-				66933834BA17BB63DA1C0954D7515296 /* MLNShadowOperation.h in Headers */,
-				44C0D8D715FF93F454E6E53AE00C7BF4 /* MLNShapeContext.h in Headers */,
-				8C43BF9B063BF2249C0E87A77CE15413 /* MLNSize.h in Headers */,
-				6FA08955602FD71B1DB4114F8F7B6552 /* MLNSizeCahceManager.h in Headers */,
-				D54A997A84FC9BD3CBEE49230C2FC0F1 /* MLNSnapshotManager.h in Headers */,
-				70B497F210268185304D83A03E3A249F /* MLNStaticExporter.h in Headers */,
-				83BCC93A03F4E77F086896AE053B89B8 /* MLNStaticExporterMacro.h in Headers */,
-				6E5783B9D929D274E8A4D1A84F6C7175 /* MLNStaticExportProtocol.h in Headers */,
-				CE11AFE398D8200B681AA6307152FE90 /* MLNStringUtil.h in Headers */,
-				8C2C2784E10908ABC160D622514CF988 /* MLNStyleElement.h in Headers */,
-				96E450A15910B81BAF5A87791A4CABEC /* MLNStyleString.h in Headers */,
-				6A69B21046F4AD92160698A35AA51550 /* MLNStyleStringConst.h in Headers */,
-				BB5B7FDCC8924DDAF0C2E5E0FB8D8C0C /* MLNSwitch.h in Headers */,
-				13C38BF0C406EBCB1C4B3706C586D780 /* MLNSystem.h in Headers */,
-				11ADC5E8C41C88226431278F86CBF82A /* MLNSystemConst.h in Headers */,
-				06F6E42A28E4F5AD3B6000CEA9234900 /* MLNTableView.h in Headers */,
-				A4CDD4BF00730448B7A8D5A786969A2B /* MLNTableViewAdapter.h in Headers */,
-				23144160C9A8168C5EFB6CB87BCE24B8 /* MLNTableViewAdapterProtocol.h in Headers */,
-				65D2AE6FB654A3B02EDDABE55DA0854C /* MLNTableViewAutoFitAdapter.h in Headers */,
-				2E278F56C35B88D0E846DAB23754F599 /* MLNTableViewCell.h in Headers */,
-				03C7E543FB7985DFA3A90B411966683A /* MLNTableViewCellSettingProtocol.h in Headers */,
-				E41A542E0D6909DF338ECD56B1D6B044 /* MLNTabSegmentScrollHandler.h in Headers */,
-				E86C6DD36E951EA726AD9913FC1C7AFB /* MLNTabSegmentView.h in Headers */,
-				44AEC51EA427747659A63FB5CE9E3342 /* MLNTabSegmentViewDelegate.h in Headers */,
-				340C4994DA4D37B3EF0BE3B867C50DAE /* MLNTextConst.h in Headers */,
-				CB8FF8E956FCC06C60E1FD3B34449563 /* MLNTextViewFactory.h in Headers */,
-				ACB56523B7455F83096CDACD4AD92023 /* MLNTextViewProtocol.h in Headers */,
-				08B957B1D3D91E3C1A1B4906E7924693 /* MLNTimer.h in Headers */,
-				2D37F45B1E00ADFD2E538A1EE24E4F54 /* MLNToast.h in Headers */,
-				D516242D2F56770FC592D3F3B1B24B69 /* MLNTransformTask.h in Headers */,
-				CC3A3BC0B76C6E2664BAE093DFA748C3 /* MLNTranslateAnimation.h in Headers */,
-				B782FA53988D32F38505B319153125AF /* MLNTypeUtil.h in Headers */,
-				0CFF8B9D159B8F648D938E7AB1D81C7D /* MLNValueCalculator.h in Headers */,
-				57A2856332AB5153D6393579DAFF70C9 /* MLNValueCalculatorProtocol.h in Headers */,
-				E1238CE675DCD2B5315CA2E4413F8AFC /* MLNVersion.h in Headers */,
-				8A54A997A7A5C810FCDDD3C4EBA86AC7 /* MLNView.h in Headers */,
-				3851FBA4A7AF23FB74E89DA3E8E2F696 /* MLNViewConst.h in Headers */,
-				FC69CDAB79D12BEE6CD6588C8E16BB4A /* MLNViewControllerProtocol.h in Headers */,
-				30473168A2632D6B58F0B0CE013D4E4B /* MLNViewExporterMacro.h in Headers */,
-				4867EEC6C752ABF1A20ED31126E797B2 /* MLNViewPager.h in Headers */,
-				1DEEFBBF9ECCC15DDE7B253393D4221C /* MLNViewPagerAdapter.h in Headers */,
-				5E7680F191862F74C9560A5457858FF6 /* MLNWaterfallAdapter.h in Headers */,
-				770CA74F594A545A6465C5BDD8FB94CD /* MLNWaterfallHeaderView.h in Headers */,
-				B8750FE14390BBB88680966E0523D2E7 /* MLNWaterfallLayout.h in Headers */,
-				AA6A51F0718B87DE8B8D7CF7DA509B62 /* MLNWaterfallLayoutDelegate.h in Headers */,
-				E19E6EBA1E2070D65B22736EAA4BE35A /* MLNWaterfallView.h in Headers */,
-				6757468E69B2411D9C8FCC167CDBC2B1 /* MLNWeakAssociatedObject.h in Headers */,
-				006EEABDA7633BB34CAF275E5C61D95D /* MLNWindow.h in Headers */,
-				F7DE2D1044672B9D5907AE258E044005 /* MLNWindowContext.h in Headers */,
-				B4A315793A2A469248F5E5B165CDF430 /* mmoslib.h in Headers */,
-				5B254DC7774C7B14F99CCE8BDC96568B /* NSArray+MLNCore.h in Headers */,
-				A18173A23C6B5F939909B65C58B0F344 /* NSArray+MLNKVO.h in Headers */,
-				513ACEA8D3D1FE8E0CA97476C9D34876 /* NSArray+MLNSafety.h in Headers */,
-				CB273BB5098C2B8147F26CBCF61EBE00 /* NSAttributedString+MLNKit.h in Headers */,
-				4493E4BE13989B8E4DAD3A303E4EB8B0 /* NSDictionary+MLNCore.h in Headers */,
-				B8BF5BEF21FE4F9208E1D7A67915B966 /* NSDictionary+MLNKVO.h in Headers */,
-				D57C0FC6696D4FA4057F9B01E479A95B /* NSDictionary+MLNSafety.h in Headers */,
-				37FCD31764050397B29B3CF67BC4CDC9 /* NSError+MLNCore.h in Headers */,
-				D1AE191D63833ACC9F6E5AE1625E91C4 /* NSMutableArray+MLNArray.h in Headers */,
-				A016B8991051C49626844C6CCBDC964B /* NSMutableArray+MLNCore.h in Headers */,
-				5410E08A83638ADD71FE0514C8702528 /* NSMutableArray+MLNKVO.h in Headers */,
-				91506E204522BEE317553BC8188E290F /* NSMutableDictionary+MLNCore.h in Headers */,
-				C40EA5DBF35C75317B49B483B17FB270 /* NSMutableDictionary+MLNMap.h in Headers */,
-				C0CBA81EE119D9755020BF1A572A4A00 /* NSNumber+MLNCore.h in Headers */,
-				2F7796F2704B4F4E36407C01046A1A7D /* NSObject+MLNCore.h in Headers */,
-				7AE8B3EFDCC5DE57E1BF6A9186AE5105 /* NSObject+MLNSwizzle.h in Headers */,
-				58CD03C0152CCF1E1C90F27825E3A287 /* NSString+MLNCore.h in Headers */,
-				18A450A79CF8A5A7B4F472FAEA4D56A0 /* NSString+MLNKit.h in Headers */,
-				4B92A5F3A267316511B7B12AD57B599C /* NSValue+MLNCore.h in Headers */,
-				F93C2785E7D778AFFC859E57584CEE84 /* UIColor+MLNCore.h in Headers */,
-				1D33D0B6A89EA01D64C23A3120527169 /* UIImage+MLN_IN_UTIL.h in Headers */,
-				8F984624802F956792F0288D94DC29CB /* UIImage+MLNKit.h in Headers */,
-				D291948787F459712FD3E91A567586EE /* UIScrollView+MLNKit.h in Headers */,
-				3BACA8D712B7F9AD036A125142F108EE /* UIView+MLNCore.h in Headers */,
-				CC6551ECBC28D4F97D6169A3F60BDD7E /* UIView+MLNKit.h in Headers */,
-				A52250B98C508D8415B4903F5BD21E52 /* UIView+MLNLayout.h in Headers */,
-				9571F9E4A34CB8C8B51FCF61DB998952 /* UIViewController+MLNKVO.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6387,7 +6399,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				5FABBC38985D9B6C0F1ECA88554CAC60 /* PBXTargetDependency */,
+				A1546B2F81211F0A3CA8913DE697AFF7 /* PBXTargetDependency */,
 			);
 			name = MLN;
 			productName = MLN;
@@ -7441,12 +7453,6 @@
 			target = 1E9F7CDAD209067F29338190BB05E054 /* MLNDevTool-MLNDevTool_HotReload */;
 			targetProxy = F51A3E65645CF70429D85CC1C4D8C1F6 /* PBXContainerItemProxy */;
 		};
-		5FABBC38985D9B6C0F1ECA88554CAC60 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = KVOController;
-			target = 2568F753F09C4DFFD8770DCC78EDAEAE /* KVOController */;
-			targetProxy = FDA9796C4055303DC739A479580F91E0 /* PBXContainerItemProxy */;
-		};
 		6389E17337884A21125277C5AFE93E9A /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = SDWebImage;
@@ -7470,6 +7476,12 @@
 			name = "Expecta+Snapshots";
 			target = 8B98F09738742E4D780D1B20B468CD95 /* Expecta+Snapshots */;
 			targetProxy = 645AD5D6A816505464039D0D74CC2456 /* PBXContainerItemProxy */;
+		};
+		A1546B2F81211F0A3CA8913DE697AFF7 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = KVOController;
+			target = 2568F753F09C4DFFD8770DCC78EDAEAE /* KVOController */;
+			targetProxy = 59AFB08DE0A0B623B12BD449D784BE86 /* PBXContainerItemProxy */;
 		};
 		A2118D6750734614B44862B14F52863B /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -7584,6 +7596,30 @@
 				PRIVATE_HEADERS_FOLDER_PATH = "";
 				PRODUCT_MODULE_NAME = SDWebImage;
 				PRODUCT_NAME = SDWebImage;
+				PUBLIC_HEADERS_FOLDER_PATH = "";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		0F2AD4A2795CD70EE91B30759D001353 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = DBD20499E6E690D92CCF95D67C685A65 /* MLN.debug.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				GCC_PREFIX_HEADER = "Target Support Files/MLN/MLN-prefix.pch";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PRIVATE_HEADERS_FOLDER_PATH = "";
+				PRODUCT_MODULE_NAME = MLN;
+				PRODUCT_NAME = MLN;
 				PUBLIC_HEADERS_FOLDER_PATH = "";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -7745,30 +7781,6 @@
 				WRAPPER_EXTENSION = bundle;
 			};
 			name = Release;
-		};
-		5421BAA0A79D0852A1926AA3744415A8 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = DBD20499E6E690D92CCF95D67C685A65 /* MLN.debug.xcconfig */;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				GCC_PREFIX_HEADER = "Target Support Files/MLN/MLN-prefix.pch";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
-				OTHER_LDFLAGS = "";
-				OTHER_LIBTOOLFLAGS = "";
-				PRIVATE_HEADERS_FOLDER_PATH = "";
-				PRODUCT_MODULE_NAME = MLN;
-				PRODUCT_NAME = MLN;
-				PUBLIC_HEADERS_FOLDER_PATH = "";
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_VERSION = 4.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Debug;
 		};
 		564787227DB335628B538E7549A6FF75 /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -8474,20 +8486,20 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		0CD98EB46975E8B815616256DEB12470 /* Build configuration list for PBXNativeTarget "MLN" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				5421BAA0A79D0852A1926AA3744415A8 /* Debug */,
-				785DF23A7E741E5D68FAC85F8E33E4F0 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		2F01552A42F1F96581CF64226060AC2C /* Build configuration list for PBXNativeTarget "KVOController" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				EC7ADBD3233F877F1565F9ED93D21549 /* Debug */,
 				63898D0D9D67C89588B7F178EB011B19 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		36D50A1D6B0FEE03B6B7F2404DE905B1 /* Build configuration list for PBXNativeTarget "MLN" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0F2AD4A2795CD70EE91B30759D001353 /* Debug */,
+				759EAC7F79336622B7979C2EBE772FBD /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
