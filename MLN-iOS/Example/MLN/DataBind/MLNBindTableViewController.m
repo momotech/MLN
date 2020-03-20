@@ -29,7 +29,9 @@
     [viewController changeCurrentBundle:bundle];
     
     [self createModelArray];
+    
     [viewController.dataBinding bindArray:self.modelArray forKey:@"source"];
+    
     [viewController addToSuperViewController:self frame:self.view.bounds];
 }
 
