@@ -13,7 +13,7 @@
     NSMutableDictionary *copy = [NSMutableDictionary dictionaryWithCapacity:self.count];
     for (NSString *key in self.allKeys) {
         NSDictionary *value = [self objectForKey:key];
-        if ([value isKindOfClass:[NSDictionary class]]) {
+        if ([value respondsToSelector:@selector(mln_mutalbeCopy)]) {
             [copy setObject:value.mln_mutalbeCopy forKey:key];
         } else {
             [copy setObject:value forKey:key];
