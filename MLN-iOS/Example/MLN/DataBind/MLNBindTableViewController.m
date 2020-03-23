@@ -54,6 +54,10 @@
         return 120;
     };
     
+    tableModel.source.mln_subscribeItem(^(NSObject * _Nonnull item, NSString * _Nonnull keyPath, NSObject * _Nonnull oldValue, NSObject * _Nonnull newValue) {
+        NSLog(@"item  %@ keypath %@ old %@ new %@",item,keyPath,oldValue,newValue);
+    });
+    
     self.tableModel =  tableModel;
     [self testModel];
 }

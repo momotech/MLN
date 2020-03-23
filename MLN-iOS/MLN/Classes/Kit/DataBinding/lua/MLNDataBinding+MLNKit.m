@@ -147,6 +147,29 @@
     return resust;
 }
 
++ (void)lua_updateModelForKey:(NSString *)key section:(NSUInteger)section row:(NSUInteger)row path:(NSString *)path value:(id)value {
+    NSArray *array = [self lua_dataForKeyPath:key];
+    @try {
+        NSObject *object;
+        if (array.mln_is2D) {
+            object = [[array mln_objectAtIndex:section - 1] mln_objectAtIndex:row - 1];
+        } else {
+            object = [array mln_objectAtIndex:row - 1];
+        }
+        
+        id oldValue = [object valueForKeyPath:path];
+        [object setValue:value forKeyPath:path];
+        
+        NSArray *blocks = array.mln_itemKVOBlocks.copy;
+        for (MLNItemKVOBlock block in blocks) {
+            block(object, path, oldValue, value);
+        }
+        
+    } @catch (NSException *exception) {
+        NSLog(@"%s exception: %@",__func__, exception);
+    }
+}
+
 + (NSString *)lua_reuseIdForKey:(NSString *)key section:(NSUInteger)section row:(NSUInteger)row {
     NSArray *array = [self lua_dataForKeyPath:key];
     if (array.mln_resueIdBlock) {
@@ -193,6 +216,10 @@
         model = [array mln_objectAtIndex:row - 1];
     }
     
+    for (NSString *k in paths) {
+        [kitViewController.dataBinding.KVOController unobserve:model keyPath:k];
+    }
+    
     [kitViewController.dataBinding.KVOController observe:model keyPaths:paths options:NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew block:^(id  _Nullable observer, id  _Nonnull object, NSDictionary<NSString *,id> * _Nonnull change) {
         UIView *listView = [listObserver listView];
         if ([listView isKindOfClass:[MLNTableView class]]) {
@@ -219,6 +246,7 @@ LUA_EXPORT_STATIC_METHOD(bindListView, "lua_bindListViewForKey:listView:", MLNDa
 LUA_EXPORT_STATIC_METHOD(getSectionCount, "lua_sectionCountForKey:", MLNDataBinding)
 LUA_EXPORT_STATIC_METHOD(getRowCount, "lua_rowCountForKey:section:", MLNDataBinding)
 LUA_EXPORT_STATIC_METHOD(getModel, "lua_modelForKey:section:row:path:", MLNDataBinding)
+LUA_EXPORT_STATIC_METHOD(updateModel, "lua_updateModelForKey:section:row:path:value:", MLNDataBinding)
 LUA_EXPORT_STATIC_METHOD(getReuseId, "lua_reuseIdForKey:section:row:", MLNDataBinding)
 LUA_EXPORT_STATIC_METHOD(getHeight, "lua_heightForKey:section:row:", MLNDataBinding)
 LUA_EXPORT_STATIC_METHOD(bindCell, "lua_bindCellForKey:section:row:paths:", MLNDataBinding)

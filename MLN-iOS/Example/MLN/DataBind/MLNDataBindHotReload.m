@@ -48,17 +48,21 @@
         [arr addObject:model];
     }
     
+    self.tableModel = [MLNDatabindTableViewModel testModel];
     NSMutableArray *models = @[arr].mutableCopy;
-    
-    models.mln_resueIdBlock = ^NSString * _Nonnull(NSArray * _Nonnull items, NSUInteger section, NSUInteger row) {
+    self.tableModel.source = models;
+
+    self.tableModel.mln_resueIdBlock = ^NSString * _Nonnull(NSArray * _Nonnull items, NSUInteger section, NSUInteger row) {
         return @"Cell_1";
     };
-    models.mln_heightBlock = ^NSUInteger(NSArray * _Nonnull items, NSUInteger section, NSUInteger row) {
+    self.tableModel.mln_heightBlock = ^NSUInteger(NSArray * _Nonnull items, NSUInteger section, NSUInteger row) {
         return 120;
     };
     
-    self.tableModel = [MLNDatabindTableViewModel testModel];
-    self.tableModel.source = models;
+    self.tableModel.source.mln_subscribeItem(^(NSObject * _Nonnull item, NSString * _Nonnull keyPath, NSObject * _Nullable oldValue, NSObject * _Nullable newValue) {
+        NSLog(@"item  %@ keypath %@ old %@ new %@",item,keyPath,oldValue,newValue);
+    });
+    
 //    [self.dataBinding bindArray:models forKey:@"source"];
     [self.dataBinding bindData:self.tableModel forKey:@"tableModel"];
     
@@ -97,6 +101,7 @@
         }
         
         [self testModel];
+
     });
 }
 
