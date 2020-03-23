@@ -114,17 +114,7 @@
 #pragma mark - Array
 
 - (void)bindArray:(NSArray *)array forKey:(NSString *)key {
-    if ([array isKindOfClass:[NSMutableArray class]]) {
-        [(NSMutableArray *)array mln_startKVO];
-    }
-    
-    if (array.mln_is2D) {
-        [array enumerateObjectsUsingBlock:^(NSMutableArray*  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-            if ([obj isKindOfClass:[NSMutableArray class]]) {
-                [obj mln_startKVO];
-            }
-        }];
-    }
+    [array mln_startKVOIfMutableble];
     [self bindData:array forKey:key];
 }
 
@@ -150,6 +140,7 @@
 - (void)_realAddObserver:(NSObject<MLNKVOObserverProtol> *)observer forKeyPath:(NSString *)keyPath isArray:(BOOL)isArray {
     NSParameterAssert(observer && keyPath);
     if (!observer || !keyPath) return;
+    
     NSString *key, *path;
     if (!isArray) {
         [self extractFirstKey:&key path:&path from:keyPath];
@@ -161,14 +152,14 @@
         key = keyPath;
     }
 
-    LOCK();
-    NSObject *object = [self.dataMap objectForKey:key];
+    NSObject *object = [self dataForKeyPath:key];
     // 只有NSMutableArray才有必要添加observer
     if (isArray && ![object isKindOfClass:[NSMutableArray class]]) {
-        UNLOCK();
         NSLog(@"binded object %@, is not KindOf NSMutableArray",object);
         return;
     }
+
+    LOCK();
     NSMutableArray *observerArray = [self.observerMap objectForKey:keyPath];
     if (!observerArray) {
         observerArray = [NSMutableArray array];
@@ -192,6 +183,8 @@
             }];
         } else {
             NSMutableArray *bindArray = (NSMutableArray *)object;
+            [bindArray mln_startKVOIfMutableble];
+            
             [bindArray mln_addObserverHandler:^(NSMutableArray * _Nonnull array, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
                 obBlock(nil, array, change);
             }];

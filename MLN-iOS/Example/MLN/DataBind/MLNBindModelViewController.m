@@ -29,6 +29,11 @@
     [viewController changeCurrentBundle:bundle];
     
     self.model = [MLNDataBindModel testModel];
+    
+    self.model.mln_subscribe(@"name", ^(id  _Nonnull oldValue, id  _Nonnull newValue) {
+        NSLog(@"name has changed from  %@ to %@",oldValue, newValue);
+    });
+    
     [viewController bindData:self.model forKey:@"userData"];
     [viewController addToSuperViewController:self frame:self.view.bounds];
 }

@@ -13,7 +13,8 @@
 
 @interface MLNDataBindHotReload ()
 @property (nonatomic, strong) MLNDataBindModel *model;
-@property (nonatomic, strong) NSMutableArray <MLNDataBindModel *> *modelArray;
+//@property (nonatomic, strong) NSMutableArray <MLNDataBindModel *> *modelArray;
+@property (nonatomic, strong) MLNDatabindTableViewModel *tableModel;
 @end
 
 @implementation MLNDataBindHotReload
@@ -56,8 +57,11 @@
         return 120;
     };
     
-    [self.dataBinding bindArray:models forKey:@"source"];
-    self.modelArray = models;
+    self.tableModel = [MLNDatabindTableViewModel testModel];
+    self.tableModel.source = models;
+//    [self.dataBinding bindArray:models forKey:@"source"];
+    [self.dataBinding bindData:self.tableModel forKey:@"tableModel"];
+    
     [self testModel];
 }
 
@@ -69,12 +73,12 @@
         if (!self) {
             return ;
         }
-        NSMutableArray *models = self.modelArray;
+        NSMutableArray *models = self.tableModel.source;
         if (models.mln_is2D) {
             if (models.count < 3) {
                 MLNDataBindModel *model = [MLNDataBindModel testModel];
-                model.name = [NSString stringWithFormat:@"section 2"];
-                model.title = [NSString stringWithFormat:@"s2 title %zd",models.count];
+                model.name = [NSString stringWithFormat:@"section %zd",models.count];
+                model.title = [NSString stringWithFormat:@"section %zd title %zd",models.count,models.count];
                 [models addObject:@[model]];
             }
             
@@ -129,9 +133,9 @@
         m.name = self.model.name;
         m.detail = self.model.detail;
         
-        NSMutableArray *arr = self.modelArray.firstObject;
+        NSMutableArray *arr = self.tableModel.source.firstObject;
         if (![arr isKindOfClass:[NSMutableArray class]]) {
-            arr = self.modelArray;
+            arr = self.tableModel.source;
         }
         [arr addObject:m];
         cnt++;

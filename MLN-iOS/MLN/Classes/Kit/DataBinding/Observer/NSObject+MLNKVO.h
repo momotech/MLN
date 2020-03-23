@@ -13,6 +13,11 @@ typedef void(^MLNKVOBlock)(id oldValue, id newValue);
 
 @interface NSObject (MLNKVO)
 
+@property (nonatomic, copy)NSString *(^mln_resueIdBlock)(NSArray *items, NSUInteger section, NSUInteger row);
+
+// AutoFitAdaper 会自动计算行高，所以不需要.
+@property (nonatomic, copy, nullable)NSUInteger(^mln_heightBlock)(NSArray *items, NSUInteger section, NSUInteger row);
+
 @property(nonatomic, copy, readonly) NSObject *(^mln_subscribe)(NSString *keyPath, MLNKVOBlock block);
 
 @end

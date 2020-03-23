@@ -20,6 +20,7 @@
 #import "MLNKitViewController+DataBinding.h"
 #import "MLNDataBinding.h"
 #import "NSArray+MLNKVO.h"
+#import "NSObject+MLNKVO.h"
 #import "MLNKitInstanceHandlersManager.h"
 
 // View导出工具
