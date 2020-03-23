@@ -12,6 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
 //typedef void(^MLNKVOObserverHandler)(NSKeyValueChange type, NSMutableArray *newArray, NSDictionary<NSKeyValueChangeKey, id> *change);
 
 typedef void(^MLNKVOArrayHandler)(NSMutableArray *array,NSDictionary<NSKeyValueChangeKey, id> *change);
+//typedef void(^MLNKVOSubcribeArray)(NSDictionary<NSKeyValueChangeKey, id> *change);
 
 @interface NSMutableArray (MLNKVO)
 

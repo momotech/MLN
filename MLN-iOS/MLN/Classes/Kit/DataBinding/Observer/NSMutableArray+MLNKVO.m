@@ -59,8 +59,19 @@
     }
 }
 
+//- (NSMutableArray * _Nonnull (^)(MLNKVOSubcribeArray _Nonnull))mln_subscribeArray {
+//    __weak __typeof(self)weakSelf = self;
+//    return ^(MLNKVOSubcribeArray block) {
+//        __strong __typeof(weakSelf)self = weakSelf;
+//        [self mln_addObserverHandler:^(NSMutableArray * _Nonnull array, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
+//            block(change);
+//        }];
+//        return self;
+//    };
+//}
+
 - (void)mln_addObserverHandler:(MLNKVOArrayHandler)handler {
-    NSMutableArray<MLNKVOArrayHandler> *obs = [self observerHandlers];
+    NSMutableArray<MLNKVOArrayHandler> *obs = [self mln_observerHandlers];
     if (![obs containsObject:handler]) {
         [obs addObject:handler];
     }
@@ -79,7 +90,7 @@
 }
 
 static const void *kMLNKVOArrayHandlers = &kMLNKVOArrayHandlers;
-- (NSMutableArray<MLNKVOArrayHandler> *)observerHandlers {
+- (NSMutableArray<MLNKVOArrayHandler> *)mln_observerHandlers {
     NSMutableArray *obs = objc_getAssociatedObject(self, kMLNKVOArrayHandlers);
     if (!obs) {
         obs = [NSMutableArray array];
