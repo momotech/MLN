@@ -1,5 +1,5 @@
-
 local timeDistance = "1.02km 4分钟前"
+local cnt = 1
 local window_1 = View()
                 :setGravity(Gravity.CENTER)
                 :width(MeasurementType.MATCH_PARENT)
@@ -12,6 +12,10 @@ local window_1_1 = ImageView()
                   :setGravity(Gravity.CENTER_VERTICAL)
                   :cornerRadius(35)
                   :marginLeft(10)
+window_1_1:onClick(function()
+cnt=cnt+1
+DataBinding:update("userData.name", "click " .. cnt)
+end)
 window_1_1:image(DataBinding:get("userData.iconUrl"))
 DataBinding:bind("userData.iconUrl", function(new, old)
     window_1_1:image(new)
@@ -44,9 +48,9 @@ window_1_2_1:addView(window_1_2_1_1)
 local window_1_2_1_2 = Label()
                       :setGravity(MBit:bor(Gravity.CENTER_VERTICAL, Gravity.RIGHT))
 local window_1_2_1_2_bindFunc = function()
-if DataBinding:get("userData.hideIcon") then 
+if DataBinding:get("userData.hideIcon") then
 window_1_2_1_2:text(timeDistance)
-else 
+else
 window_1_2_1_2:text(DataBinding:get("userData.title"))
 end
 end
@@ -61,5 +65,11 @@ window_1_2_1:addView(window_1_2_1_2)
 window_1_2:addView(window_1_2_1)
 window_1:addView(window_1_2)
 window:addView(window_1)
-
+ui_views = {}
+ui_views.window_1 = window_1
+ui_views.window_1_2_1_2 = window_1_2_1_2
+ui_views.window_1_2_1 = window_1_2_1
+ui_views.window_1_2_1_1 = window_1_2_1_1
+ui_views.window_1_1 = window_1_1
+ui_views.window_1_2 = window_1_2
 return {}, true

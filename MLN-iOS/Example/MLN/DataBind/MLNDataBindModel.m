@@ -28,3 +28,14 @@
     NSLog(@"%s",__func__);
 }
 @end
+
+@implementation MLNDatabindTableViewModel
+
++ (instancetype)testModel {
+    MLNDatabindTableViewModel *m = [MLNDatabindTableViewModel new];
+    m.source = @[].mutableCopy;
+    m.tableHeight = 1000;
+    return m;
+}
+
+@end

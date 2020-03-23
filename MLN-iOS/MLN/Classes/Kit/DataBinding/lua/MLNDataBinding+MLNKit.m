@@ -13,6 +13,7 @@
 #import "MLNBlockObserver.h"
 #import "MLNKitViewController+DataBinding.h"
 #import "MLNListViewObserver.h"
+#import "NSObject+MLNKVO.h"
 #import "NSArray+MLNKVO.h"
 #import "NSDictionary+MLNKVO.h"
 #import <KVOController/KVOController.h>
@@ -53,7 +54,9 @@
 
 + (id __nullable)lua_mockArrayForKey:(NSString *)key data:(NSArray *)data callbackDic:(NSDictionary *)callbackDic {
     MLNKitViewController *kitViewController = (MLNKitViewController *)MLN_KIT_INSTANCE([self mln_currentLuaCore]).viewController;
-    NSMutableArray *arr = data.mutableCopy;
+    
+    NSMutableArray *arr = [[kitViewController dataForKeyPath:key] mutableCopy];
+    [kitViewController updateDataForKeyPath:key value:arr];
     
     MLNBlock *reuseIdBlock = [callbackDic objectForKey:@"reuseId"];
     MLNBlock *height = [callbackDic objectForKey:@"height"];
@@ -89,14 +92,22 @@
         }
         return 0;
     };
-    [kitViewController.dataBinding bindArray:arr forKey:key];
+    [arr mln_startKVOIfMutableble];
     return arr;
 }
 
 #pragma mark - ListView
+//+ (void)lua_bindListViewForKey:(NSString *)key listView:(UIView *)listView {
+//    MLNKitViewController *kitViewController = (MLNKitViewController *)MLN_KIT_INSTANCE([self mln_currentLuaCore]).viewController;
+//    MLNListViewObserver *observer = [MLNListViewObserver observerWithListView:listView keyPath:key];
+//    [kitViewController.dataBinding addArrayObserver:observer forKey:key];
+//}
+
+// userData.source
 + (void)lua_bindListViewForKey:(NSString *)key listView:(UIView *)listView {
     MLNKitViewController *kitViewController = (MLNKitViewController *)MLN_KIT_INSTANCE([self mln_currentLuaCore]).viewController;
     MLNListViewObserver *observer = [MLNListViewObserver observerWithListView:listView keyPath:key];
+    
     [kitViewController.dataBinding addArrayObserver:observer forKey:key];
 }
 
@@ -141,6 +152,12 @@
     if (array.mln_resueIdBlock) {
         return array.mln_resueIdBlock(array, section - 1, row - 1);
     }
+    
+    NSString *firstKey = [[key componentsSeparatedByString:@"."] firstObject];
+    NSObject *obj = [self lua_dataForKeyPath:firstKey];
+    if (obj.mln_resueIdBlock) {
+        return obj.mln_resueIdBlock(array, section - 1, row - 1);
+    }
     return @"Cell";
 }
 
@@ -149,7 +166,13 @@
     if (array.mln_heightBlock) {
         return array.mln_heightBlock(array, section - 1, row - 1);
     }
-    NSAssert(array.mln_heightBlock, @"mln_heightBlock of binded array should not be nil");
+    
+    NSString *firstKey = [[key componentsSeparatedByString:@"."] firstObject];
+    NSObject *obj = [self lua_dataForKeyPath:firstKey];
+    if (obj.mln_heightBlock) {
+        return obj.mln_heightBlock(array, section - 1, row - 1);
+    }
+    NSAssert(array.mln_heightBlock || obj.mln_heightBlock, @"mln_heightBlock of binded array should not be nil");
     return 0;
 }
 
