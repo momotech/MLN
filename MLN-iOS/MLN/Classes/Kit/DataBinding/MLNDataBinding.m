@@ -164,40 +164,41 @@
     if (!observerArray) {
         observerArray = [NSMutableArray array];
         [self.observerMap setObject:observerArray forKey:keyPath];
-        __weak __typeof(self)weakSelf = self;
-        void(^obBlock)(NSString*,NSObject*,NSDictionary*) = ^(NSString *kp, NSObject *object, NSDictionary *change) {
-            __strong __typeof(weakSelf)self = weakSelf;
-            if (self) {
-                pthread_mutex_lock(&self->_lock);
-                NSArray *obsCopy = observerArray.copy;
-                pthread_mutex_unlock(&self->_lock);
-                for (NSObject<MLNKVOObserverProtol> *ob in obsCopy) {
-                    [ob mln_observeValueForKeyPath:kp ofObject:object change:change];
-                }
+    }
+    
+    __weak __typeof(self)weakSelf = self;
+    void(^obBlock)(NSString*,NSObject*,NSDictionary*) = ^(NSString *kp, NSObject *object, NSDictionary *change) {
+        __strong __typeof(weakSelf)self = weakSelf;
+        if (self) {
+            pthread_mutex_lock(&self->_lock);
+            NSArray *obsCopy = observerArray.copy;
+            pthread_mutex_unlock(&self->_lock);
+            for (NSObject<MLNKVOObserverProtol> *ob in obsCopy) {
+                [ob mln_observeValueForKeyPath:kp ofObject:object change:change];
             }
-        };
+        }
+    };
+    
+    if (!isArray) {
+        [self.KVOController observe:object keyPath:path options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld block:^(id  _Nullable obs, id  _Nonnull object, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
+            obBlock(path, object, change);
+        }];
+    } else {
+        NSMutableArray *bindArray = (NSMutableArray *)object;
+        [bindArray mln_startKVOIfMutableble];
         
-        if (!isArray) {
-            [self.KVOController observe:object keyPath:path options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld block:^(id  _Nullable obs, id  _Nonnull object, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
-                obBlock(path, object, change);
+        [bindArray mln_addObserverHandler:^(NSMutableArray * _Nonnull array, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
+            obBlock(nil, array, change);
+        }];
+        
+        if ([bindArray mln_is2D]) {
+            [bindArray enumerateObjectsUsingBlock:^(NSMutableArray* _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                if ([obj isKindOfClass:[NSMutableArray class]]) {
+                    [obj mln_addObserverHandler:^(NSMutableArray * _Nonnull array, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
+                        obBlock(nil, obj, change);
+                    }];
+                }
             }];
-        } else {
-            NSMutableArray *bindArray = (NSMutableArray *)object;
-            [bindArray mln_startKVOIfMutableble];
-            
-            [bindArray mln_addObserverHandler:^(NSMutableArray * _Nonnull array, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
-                obBlock(nil, array, change);
-            }];
-            
-            if ([bindArray mln_is2D]) {
-                [bindArray enumerateObjectsUsingBlock:^(NSMutableArray* _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-                    if ([obj isKindOfClass:[NSMutableArray class]]) {
-                        [obj mln_addObserverHandler:^(NSMutableArray * _Nonnull array, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
-                            obBlock(nil, obj, change);
-                        }];
-                    }
-                }];
-            }
         }
     }
     
