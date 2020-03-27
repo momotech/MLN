@@ -29,31 +29,11 @@
 
 #pragma mark - Export Lua
 
-- (void)lua_stack_addSubview:(UIView *)view {
-    MLNKitLuaAssert(NO, @"The \"addView\" method is invalid in HStack、VStack and ZStack.");
-}
-
-- (void)lua_stack_insertSubview:(UIView *)view atIndex:(NSInteger)index {
-    MLNKitLuaAssert(NO, @"The \"insertView\" method is invalid in HStack、VStack and ZStack.");
-}
-
-- (void)lua_stack_removeFromSuperview {
-    MLNKitLuaAssert(NO, @"The \"removeFromSuper\" method is invalid in HStack、VStack and ZStack.");
-}
-
-- (void)lua_stack_removeAllSubViews{
-    MLNKitLuaAssert(NO, @"The \"removeAllSubviews\" method is invalid in HStack、VStack and ZStack.");
-}
-
 - (void)lua_children:(NSArray *)subviews {
     // do nothing
 }
 
 LUA_EXPORT_VIEW_BEGIN(MLNStack)
-LUA_EXPORT_VIEW_METHOD(addView, "lua_stack_addSubview:", MLNStack)
-LUA_EXPORT_VIEW_METHOD(insertView, "lua_stack_insertSubview:atIndex:", MLNStack)
-LUA_EXPORT_VIEW_METHOD(removeFromSuper, "lua_stack_removeFromSuperview", MLNStack)
-LUA_EXPORT_VIEW_METHOD(removeAllSubviews, "lua_stack_removeAllSubViews", MLNStack)
 LUA_EXPORT_VIEW_METHOD(children, "lua_children:", MLNStack)
 LUA_EXPORT_VIEW_END(MLNStack, Stack, YES, "MLNView", "initWithLuaCore:frame:")
 
