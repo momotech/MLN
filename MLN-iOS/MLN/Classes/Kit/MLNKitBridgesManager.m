@@ -55,6 +55,7 @@
 #import "MLNHTTPConst.h"
 #import "MLNFileConst.h"
 #import "MLNContentMode.h"
+#import "MLNStackConst.h"
 // Utils
 #import "MLNSystem.h"
 #import "MLNHttp.h"
@@ -86,6 +87,11 @@
 #import "MLNCanvasConst.h"
 #import "MLNCanvasPath.h"
 #import "MLNShapeContext.h"
+// Stack
+#import "MLNStack.h"
+#import "MLNVStack.h"
+#import "MLNZStack.h"
+#import "MLNHStack.h"
 
 @implementation MLNKitBridgesManager
 
@@ -105,6 +111,8 @@
     [luaCore registerClasses:self.animationClasses error:NULL];
     // 注册绘图相关
     [luaCore registerClasses:self.canvasClasses error:NULL];
+    // 注册新布局相关
+    [luaCore registerClasses:self.stackClasses error:NULL];
 }
 
 static NSArray<Class<MLNExportProtocol>> *viewClasses;
@@ -169,7 +177,8 @@ static NSArray<Class<MLNExportProtocol>> *gvarClasses;
                         [MLNEditTextViewConst class],
                         [MLNHTTPConst class],
                         [MLNFileConst class],
-                        [MLNContentMode class]];
+                        [MLNContentMode class],
+                        [MLNStackConst class]];
     }
     return gvarClasses;
 }
@@ -225,6 +234,18 @@ static NSArray<Class<MLNExportProtocol>> *canvasClasses;
                           [MLNShapeContext class]];
     }
     return canvasClasses;
+}
+
+static NSArray<Class<MLNExportProtocol>> *stackClasses;
+- (NSArray<Class<MLNExportProtocol>> *)stackClasses
+{
+    if (!stackClasses) {
+        stackClasses = @[[MLNStack class],
+                         [MLNVStack class],
+                         [MLNHStack class],
+                         [MLNZStack class]];
+    }
+    return stackClasses;
 }
 
 @end
