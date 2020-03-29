@@ -20,6 +20,8 @@ typedef void(^MLNKVOBlock)(id oldValue, id newValue);
 
 @property(nonatomic, copy, readonly) NSObject *(^mln_subscribe)(NSString *keyPath, MLNKVOBlock block);
 
+@property (nonatomic, copy, nullable)CGSize(^mln_sizeBlock)(NSArray *items, NSUInteger section, NSUInteger row);
+
 @end
 
 NS_ASSUME_NONNULL_END

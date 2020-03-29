@@ -60,6 +60,7 @@
     
     MLNBlock *reuseIdBlock = [callbackDic objectForKey:@"reuseId"];
     MLNBlock *height = [callbackDic objectForKey:@"height"];
+    MLNBlock *size = [callbackDic objectForKey:@"size"];
     arr.mln_resueIdBlock = ^NSString * _Nonnull(NSArray * _Nonnull items, NSUInteger section, NSUInteger row) {
         if (reuseIdBlock) {
             NSDictionary *item;
@@ -91,6 +92,22 @@
             }
         }
         return 0;
+    };
+    arr.mln_sizeBlock = ^CGSize(NSArray * _Nonnull items, NSUInteger section, NSUInteger row) {
+        if (size) {
+            NSDictionary *item;
+            @try {
+                item = (items.mln_is2D) ? items[section][row] : items[row];
+                [size addMapArgument:item];
+                [size addUIntegerArgument:section + 1];
+                [size addUIntegerArgument:row + 1];
+                CGSize s = [[size callIfCan] CGSizeValue];
+                return s;
+            } @catch (NSException *exception) {
+                NSLog(@"error %s exception %@",__func__, exception);
+            }
+        }
+        return CGSizeZero;
     };
     [arr mln_startKVOIfMutableble];
     return arr;
@@ -199,6 +216,21 @@
     return 0;
 }
 
++ (CGSize)lua_sizeForKey:(NSString *)key section:(NSUInteger)section row:(NSUInteger)row {
+    NSArray *array = [self lua_dataForKeyPath:key];
+    if (array.mln_sizeBlock) {
+        return array.mln_sizeBlock(array, section - 1, row - 1);
+    }
+    
+    NSString *firstKey = [[key componentsSeparatedByString:@"."] firstObject];
+    NSObject *obj = [self lua_dataForKeyPath:firstKey];
+    if (obj.mln_sizeBlock) {
+        return obj.mln_sizeBlock(array, section - 1, row - 1);
+    }
+    NSAssert(array.mln_sizeBlock || obj.mln_sizeBlock, @"mln_sizeBlock of binded array should not be nil");
+    return CGSizeZero;
+}
+
 + (void)lua_bindCellForKey:(NSString *)key section:(NSUInteger)section row:(NSUInteger)row paths:(NSArray *)paths {
     MLNKitViewController *kitViewController = (MLNKitViewController *)MLN_KIT_INSTANCE([self mln_currentLuaCore]).viewController;
 
@@ -250,6 +282,8 @@ LUA_EXPORT_STATIC_METHOD(updateModel, "lua_updateModelForKey:section:row:path:va
 LUA_EXPORT_STATIC_METHOD(getReuseId, "lua_reuseIdForKey:section:row:", MLNDataBinding)
 LUA_EXPORT_STATIC_METHOD(getHeight, "lua_heightForKey:section:row:", MLNDataBinding)
 LUA_EXPORT_STATIC_METHOD(bindCell, "lua_bindCellForKey:section:row:paths:", MLNDataBinding)
+
+LUA_EXPORT_STATIC_METHOD(getSize, "lua_sizeForKey:section:row:", MLNDataBinding)
 
 LUA_EXPORT_STATIC_END(MLNDataBinding, DataBinding, NO, NULL)
 
