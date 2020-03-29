@@ -9,6 +9,7 @@
 #import "MLNTableView.h"
 #import "MLNKitViewController.h"
 #import "MLNKitHeader.h"
+#import "MLNCollectionView.h"
 
 @interface MLNListViewObserver ()
 @property (nonatomic, strong, readwrite) UIView *listView;
@@ -18,7 +19,7 @@
 
 + (instancetype)observerWithListView:(UIView *)listView keyPath:(NSString *)keyPath {
     
-    if ([listView isKindOfClass:[MLNTableView class]]) {
+    if ([listView isKindOfClass:[MLNTableView class]] || [listView isKindOfClass:[MLNCollectionView class]]) {
         MLNTableView *table = (MLNTableView *)listView;
         
         MLNKitViewController *kitViewController = (MLNKitViewController *)MLN_KIT_INSTANCE([table mln_luaCore]).viewController;
