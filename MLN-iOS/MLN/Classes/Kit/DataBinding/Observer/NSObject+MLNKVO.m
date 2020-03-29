@@ -28,6 +28,14 @@
     objc_setAssociatedObject(self, @selector(mln_heightBlock), mln_heightBlock, OBJC_ASSOCIATION_COPY);
 }
 
+- (CGSize (^)(NSArray * _Nonnull, NSUInteger, NSUInteger))mln_sizeBlock {
+    return objc_getAssociatedObject(self, @selector(mln_sizeBlock));
+}
+
+- (void)setMln_sizeBlock:(CGSize (^)(NSArray * _Nonnull, NSUInteger, NSUInteger))mln_sizeBlock {
+    objc_setAssociatedObject(self, @selector(mln_sizeBlock), mln_sizeBlock, OBJC_ASSOCIATION_COPY_NONATOMIC);
+}
+
 - (NSObject * _Nonnull (^)(NSString * _Nonnull, MLNKVOBlock _Nonnull))mln_subscribe {
     __weak typeof (self) weakSelf = self;
     return ^(NSString *keyPath, MLNKVOBlock block){
