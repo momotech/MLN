@@ -29,8 +29,12 @@
 
 #pragma mark - Export Lua
 
-- (void)lua_children:(NSArray *)subviews {
-    // do nothing
+- (void)lua_children:(NSArray<UIView *> *)subviews {
+    [subviews enumerateObjectsUsingBlock:^(UIView *_Nonnull view, NSUInteger idx, BOOL *_Nonnull stop) {
+        if ([view isKindOfClass:[UIView class]]) {
+            [self lua_addSubview:view];
+        }
+    }];
 }
 
 LUA_EXPORT_VIEW_BEGIN(MLNStack)

@@ -6,6 +6,7 @@
 //
 
 #import "MLNHStackNode.h"
+#import "MLNSpacerNode.h"
 #import "MLNHeader.h"
 
 @implementation MLNHStackNode
@@ -112,51 +113,68 @@
 
     CGFloat space = 0.0; // subNode之间的间隔
     CGFloat vernierX = 0.0; // 游标, 用于设置每个subNode的x坐标
-    GetFirstSubNodeXAndSubNodeSpace(self, &vernierX, &space);
+    CGFloat spacerWidth = 0.0; // spacer的宽度
+    GetFirstSubNodeXAndSubNodeSpace(self, &vernierX, &space, &spacerWidth);
     
     CGFloat childX, childY = 0.0;
     NSArray *subNodes = self.subnodes;
     
-    for (NSUInteger i = 0; i < subNodes.count; i++) {
-        MLNLayoutNode *subnode = subNodes[i];
-        if (subnode.isGone) continue;
+    for (MLNLayoutNode *subNode in subNodes) {
+        if (subNode.isGone) continue;
+        if (MLN_IS_EXPANDED_SPACER_NODE_IN_HSTACK(subNode)) {
+            subNode.measuredWidth = spacerWidth;
+        }
 
         // 布局主轴(X-axis)
-        vernierX += subnode.marginLeft;
+        vernierX += subNode.marginLeft;
         childX = vernierX;
-        vernierX += subnode.measuredWidth + subnode.marginRight + space;
+        vernierX += subNode.measuredWidth + subNode.marginRight + space;
         
         // 布局交叉轴(Y-axis)
-        childY = GetSubNodeY(self, subnode, layoutZoneHeight, layoutZoneBottom);
+        childY = GetSubNodeY(self, subNode, layoutZoneHeight, layoutZoneBottom);
         
         // set frame
-        subnode.measuredX = childX;
-        subnode.measuredY = childY;
-        [subnode updateTargetViewFrameIfNeed];
+        subNode.measuredX = childX;
+        subNode.measuredY = childY;
+        [subNode updateTargetViewFrameIfNeed];
         
-        if (subnode.isContainer) {
-            [(MLNLayoutContainerNode *)subnode layoutSubnodes];
+        if (subNode.isContainer) {
+            [(MLNLayoutContainerNode *)subNode layoutSubnodes];
         }
     }
 }
 
 #pragma mark -
 
-static MLN_FORCE_INLINE void GetFirstSubNodeXAndSubNodeSpace(MLNHStackNode __unsafe_unretained *self, CGFloat *firstSubNodeX, CGFloat *subNodeSpace) {
-    if (self.mergedWidthType == MLNLayoutMeasurementTypeWrapContent || self.mainAxisAlignment == MLNStackMainAlignmentStart) {
+static MLN_FORCE_INLINE void GetFirstSubNodeXAndSubNodeSpace(MLNHStackNode __unsafe_unretained *self, CGFloat *firstSubNodeX, CGFloat *subNodeSpace, CGFloat *spacerWidth) {
+    if (self.mergedWidthType == MLNLayoutMeasurementTypeWrapContent) {
         *firstSubNodeX = self.paddingLeft;
         return;
     }
     
+    int validSpacerCount = 0; // 没有设置width的spacerNode
     CGFloat totalWidth = 0.0;
     NSArray *subNodes = self.subnodes;
     for (MLNLayoutNode *node in subNodes) {
         totalWidth += node.marginLeft + node.measuredWidth + node.marginRight;
+        if (MLN_IS_EXPANDED_SPACER_NODE_IN_HSTACK(node)) {
+            validSpacerCount++;
+        }
     }
     CGFloat maxWidth = self.measuredWidth - self.paddingLeft - self.paddingRight;
     CGFloat unusedWidth = MAX(0, (maxWidth - totalWidth));
     
-    switch (self.mainAxisAlignment) {
+    MLNStackMainAlignment mainAlignment = self.mainAxisAlignment;
+    if (validSpacerCount > 0) { // 如果有Spacer, 则主轴上AxisAlignment均无效
+        mainAlignment = MLNStackMainAlignmentInvalid;
+        *spacerWidth = unusedWidth / validSpacerCount;
+    }
+    
+    switch (mainAlignment) {
+        case MLNStackMainAlignmentStart:
+            *firstSubNodeX = self.paddingLeft;
+            break;
+            
         case MLNStackMainAlignmentCenter:
             *firstSubNodeX = unusedWidth / 2.0;
             break;

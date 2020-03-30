@@ -8,6 +8,11 @@
 #import "MLNLayoutContainerNode.h"
 #import "MLNStackConst.h"
 
+#define MLN_IS_EXPANDED_SPACER_NODE_IN_HSTACK(node) \
+        (node.isSpacerNode && ((MLNSpacerNode *)node).changedWidth == NO)
+#define MLN_IS_EXPANDED_SPACER_NODE_IN_VSTACK(node) \
+        (node.isSpacerNode && ((MLNSpacerNode *)node).changedHeight == NO)
+
 NS_ASSUME_NONNULL_BEGIN
 
 @interface MLNStackNode : MLNLayoutContainerNode

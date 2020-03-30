@@ -103,6 +103,7 @@ typedef enum : NSUInteger {
 @property (nonatomic, assign) BOOL isVerticalMaxMode;
 @property (nonatomic, assign) BOOL isHorizontalMaxMode;
 @property (nonatomic, assign, getter=isGone) BOOL gone;
+@property (nonatomic, assign, readonly) BOOL isSpacerNode;
 - (BOOL)isDirty;
 - (BOOL)hasNewLayout;
 - (void)changeLayoutStrategyTo:(MLNLayoutStrategy)layoutStrategy;
