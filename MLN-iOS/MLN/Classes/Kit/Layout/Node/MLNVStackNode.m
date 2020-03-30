@@ -6,6 +6,7 @@
 //
 
 #import "MLNVStackNode.h"
+#import "MLNSpacerNode.h"
 #import "MLNHeader.h"
 
 @implementation MLNVStackNode
@@ -113,14 +114,17 @@
     
     CGFloat space = 0.0; // subNode之间的间隔
     CGFloat vernierY = 0.0; // 游标, 用于设置每个subNode的y坐标
-    GetFirstSubNodeYAndSubNodeSpace(self, &vernierY, &space);
+    CGFloat spacerHeight = 0.0; // spacer的高度
+    GetFirstSubNodeYAndSubNodeSpace(self, &vernierY, &space, &spacerHeight);
     
     CGFloat childX, childY = 0.0f;
     NSArray<MLNLayoutNode *> *subNodes = self.subnodes;
     
-    for (NSUInteger i = 0; i < subNodes.count; i++) {
-        MLNLayoutNode *subNode = subNodes[i];
+    for (MLNLayoutNode *subNode in subNodes) {
         if (subNode.isGone) continue;
+        if (MLN_IS_EXPANDED_SPACER_NODE_IN_VSTACK(subNode)) {
+            subNode.measuredHeight = spacerHeight;
+        }
         
         // 布局主轴(Y-axis)
         vernierY += subNode.marginTop;
@@ -129,7 +133,7 @@
         
         // 布局交叉轴(X-axis)
         childX = GetSubNodeX(self, subNode, layoutZoneWidth, layoutZoneRight);
-
+        
         // set frame
         subNode.measuredX = childX;
         subNode.measuredY = childY;
@@ -143,21 +147,35 @@
 
 #pragma mark -
 
-static MLN_FORCE_INLINE void GetFirstSubNodeYAndSubNodeSpace(MLNVStackNode __unsafe_unretained *self, CGFloat *firstSubNodeY, CGFloat *subNodeSpace) {
-    if (self.mergedHeightType == MLNLayoutMeasurementTypeWrapContent || self.mainAxisAlignment == MLNStackMainAlignmentStart) {
+static MLN_FORCE_INLINE void GetFirstSubNodeYAndSubNodeSpace(MLNVStackNode __unsafe_unretained *self, CGFloat *firstSubNodeY, CGFloat *subNodeSpace, CGFloat *spacerHeight) {
+    if (self.mergedHeightType == MLNLayoutMeasurementTypeWrapContent) {
         *firstSubNodeY = self.paddingTop;
         return;
     }
-    
+
+    int validSpacerCount = 0; // 没有设置height的spacerNode
     CGFloat totalHeight = 0.0;
     NSArray *subNodes = self.subnodes;
     for (MLNLayoutNode *node in subNodes) {
         totalHeight += node.marginTop + node.measuredHeight + node.marginBottom;
+        if (MLN_IS_EXPANDED_SPACER_NODE_IN_VSTACK(node)) {
+            validSpacerCount++;
+        }
     }
     CGFloat maxHeight = self.measuredHeight - self.paddingTop - self.paddingBottom;
     CGFloat unusedHeight = MAX(0, (maxHeight - totalHeight));
     
-    switch (self.mainAxisAlignment) {
+    MLNStackMainAlignment mainAlignment = self.mainAxisAlignment;
+    if (validSpacerCount > 0) { // 如果有Spacer, 则主轴上AxisAlignment均无效
+        mainAlignment = MLNStackMainAlignmentInvalid;
+        *spacerHeight = unusedHeight / validSpacerCount;
+    }
+    
+    switch (mainAlignment) {
+        case MLNStackMainAlignmentStart:
+            *firstSubNodeY = self.paddingLeft;
+            break;
+            
         case MLNStackMainAlignmentCenter:
             *firstSubNodeY = unusedHeight / 2.0;
             break;

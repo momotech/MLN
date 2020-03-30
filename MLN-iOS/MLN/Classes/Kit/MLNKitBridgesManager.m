@@ -92,6 +92,7 @@
 #import "MLNVStack.h"
 #import "MLNZStack.h"
 #import "MLNHStack.h"
+#import "MLNSpacer.h"
 
 @implementation MLNKitBridgesManager
 
@@ -243,7 +244,8 @@ static NSArray<Class<MLNExportProtocol>> *stackClasses;
         stackClasses = @[[MLNStack class],
                          [MLNVStack class],
                          [MLNHStack class],
-                         [MLNZStack class]];
+                         [MLNZStack class],
+                         [MLNSpacer class]];
     }
     return stackClasses;
 }
