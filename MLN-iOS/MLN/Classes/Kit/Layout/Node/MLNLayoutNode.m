@@ -638,6 +638,10 @@ MLN_FORCE_INLINE void resetArchpointIfNeed(MLNLayoutNode __unsafe_unretained *no
     return self.priority - (self.idx * 0.001f);
 }
 
+- (BOOL)isSpacerNode {
+    return NO;
+}
+
 #pragma mark - bind & unbind
 - (void)bindSuper:(MLNLayoutNode *)supernode
 {

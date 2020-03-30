@@ -10,15 +10,12 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class MLNLayoutNode, MLNStackNode;
+@class MLNLayoutNode;
 
 @interface MLNStack : MLNView
 
 // subclass should override
 - (MLNLayoutNode *)createStackNodeWithTargetView:(UIView *)targetView;
-
-// subclass should override
-- (void)lua_children:(NSArray *)subviews;
 
 @end
 

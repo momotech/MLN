@@ -16,6 +16,8 @@
 #import "MLNWindow.h"
 #import "MLNLayoutWindowNode.h"
 #import "MLNStack.h"
+#import "MLNSpacer.h"
+#import "MLNSpacerNode.h"
 
 @implementation MLNLayoutNodeFactory
 
@@ -25,6 +27,8 @@
         return [self internalCreateContainerNodeWithTargetView:aView];
     } else if([aView isKindOfClass:[UIImageView class]]) {
         return [[MLNLayoutImageViewNode alloc] initWithTargetView:aView];
+    } else if ([aView isKindOfClass:[MLNSpacer class]]) {
+        return [[MLNSpacerNode alloc] initWithTargetView:aView];
     }
     return [[MLNLayoutNode alloc] initWithTargetView:aView];
 }

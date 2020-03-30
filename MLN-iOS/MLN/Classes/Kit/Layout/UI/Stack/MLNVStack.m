@@ -30,12 +30,6 @@
     return [[MLNVStackNode alloc] initWithTargetView:targetView];
 }
 
-- (void)lua_children:(NSArray<UIView *> *)subviews {
-    [subviews enumerateObjectsUsingBlock:^(UIView *_Nonnull view, NSUInteger idx, BOOL *_Nonnull stop) {
-        [self lua_addSubview:view];
-    }];
-}
-
 #pragma mark - Export Lua
 
 - (void)lua_setMainAxisAlignment:(MLNStackMainAlignment)alignment {

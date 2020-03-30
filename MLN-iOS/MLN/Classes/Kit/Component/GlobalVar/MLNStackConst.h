@@ -11,7 +11,8 @@
 NS_ASSUME_NONNULL_BEGIN
 
 typedef NS_ENUM(NSInteger, MLNStackMainAlignment) {
-    MLNStackMainAlignmentStart = 0,
+    MLNStackMainAlignmentInvalid = 0,
+    MLNStackMainAlignmentStart, ///< default value.
     MLNStackMainAlignmentCenter,
     MLNStackMainAlignmentEnd,
     MLNStackMainAlignmentSpaceBetween,

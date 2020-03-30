@@ -20,6 +20,16 @@
     return CGSizeZero;
 }
 
+#pragma mark - Override (Init)
+
+- (instancetype)initWithTargetView:(UIView *)targetView {
+    if (self = [super initWithTargetView:targetView]) {
+        _mainAxisAlignment = MLNStackMainAlignmentStart;
+        _crossAxisAlignment = MLNStackCrossAlignmentStart;
+    }
+    return self;
+}
+
 #pragma mark - Override (Measure)
 
 - (CGSize)measureSizeWithMaxWidth:(CGFloat)maxWidth maxHeight:(CGFloat)maxHeight {
