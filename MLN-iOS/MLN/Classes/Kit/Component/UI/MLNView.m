@@ -71,6 +71,7 @@ LUA_EXPORT_VIEW_METHOD(convertPointFrom, "lua_convertFromView:point:",MLNView)
 LUA_EXPORT_VIEW_METHOD(setGravity, "setLua_gravity:",MLNView)
 LUA_EXPORT_VIEW_METHOD(requestLayout, "lua_requestLayout", MLNView)
 LUA_EXPORT_VIEW_METHOD(convertRelativePointTo, "lua_convertRelativePointToView:point:",MLNView)
+LUA_EXPORT_VIEW_METHOD(overlay, "lua_overlay:", MLNView)
 // render
 LUA_EXPORT_VIEW_PROPERTY(alpha, "setAlpha:","alpha", MLNView)
 LUA_EXPORT_VIEW_PROPERTY(hidden, "setHidden:","isHidden", MLNView)
