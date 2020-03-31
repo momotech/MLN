@@ -47,7 +47,13 @@
     [self mergeMeasurementTypes];
     resortingSubnodesIfNeed(self);
     
-    return [self measureSubNodes:self.prioritySubnodes maxWidth:maxWidth maxHeight:maxHeight];
+    CGSize size = [self measureSubNodes:self.prioritySubnodes maxWidth:maxWidth maxHeight:maxHeight];
+    if (self.overlayNode) {
+        CGFloat overlayMaxWidth = size.width - self.overlayNode.marginLeft - self.overlayNode.marginRight;
+        CGFloat overlayMaxHeight = size.height - self.overlayNode.marginTop - self.overlayNode.marginBottom;
+        [self.overlayNode measureSizeWithMaxWidth:overlayMaxWidth maxHeight:overlayMaxHeight];
+    }
+    return size;
 }
 
 #pragma mark - Sort

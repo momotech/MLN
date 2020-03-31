@@ -9,8 +9,6 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class MLNLayoutNode;
-
 @interface MLNSpacer : MLNView
 
 @end

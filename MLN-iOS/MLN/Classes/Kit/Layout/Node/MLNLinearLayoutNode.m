@@ -48,6 +48,11 @@
             measureHorizontal(self, maxWidth, maxHeight);
             break;
     }
+    if (self.overlayNode) {
+        CGFloat overlayMaxWidth = self.measuredWidth - self.overlayNode.marginLeft - self.overlayNode.marginRight;
+        CGFloat overlayMaxHeight = self.measuredHeight - self.overlayNode.marginTop - self.overlayNode.marginBottom;
+        [self.overlayNode measureSizeWithMaxWidth:overlayMaxWidth maxHeight:overlayMaxHeight];
+    }
     return CGSizeMake(self.measuredWidth, self.measuredHeight);
 }
 
@@ -448,6 +453,9 @@ MLN_FORCE_INLINE void layoutHorizontal(MLNLinearLayoutNode __unsafe_unretained *
         if (subnode.isContainer) {
             [(MLNLayoutContainerNode *)subnode layoutSubnodes];
         }
+        if (subnode.overlayNode) {
+            [subnode layoutOverlayNode];
+        }
     }
 }
 
@@ -488,6 +496,9 @@ MLN_FORCE_INLINE void layoutVertical(MLNLinearLayoutNode __unsafe_unretained *no
         [subnode updateTargetViewFrameIfNeed];
         if (subnode.isContainer) {
             [(MLNLayoutContainerNode *)subnode layoutSubnodes];
+        }
+        if (subnode.overlayNode) {
+            [subnode layoutOverlayNode];
         }
     }
 }
