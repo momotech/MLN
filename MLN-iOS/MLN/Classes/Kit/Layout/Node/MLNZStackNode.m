@@ -114,6 +114,9 @@
         if (subNode.isContainer) {
             [(MLNLayoutContainerNode *)subNode layoutSubnodes];
         }
+        if (subNode.overlayNode) {
+            [subNode layoutOverlayNode];
+        }
     }
 }
 
