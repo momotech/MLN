@@ -698,17 +698,11 @@ static int mln_errorFunc_traceback (lua_State *L) {
 
 - (void)releaseLuaCore
 {
-    doInMainQueue([self __releaseLuaState];);
-}
-
-- (void)__releaseLuaState
-{
     lua_State *l = self.state;
     if (l) {
-        lua_close(l);
-        l = NULL;
+        _state = NULL;
+        doInMainQueue(lua_close(l));
     }
-    _state = NULL;
 }
 
 @end
