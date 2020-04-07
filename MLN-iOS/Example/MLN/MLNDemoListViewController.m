@@ -96,9 +96,10 @@
                        @"TableViewDemo.lua",
                        @"ViewPagerDemo.lua",
                        @"WaterfallViewDemo.lua",
-                       @"MLNDataBindHotReload",
+//                       @"MLNDataBindHotReload",
                        @"MLNBindModelViewController",
-                       @"MLNBindTableViewController"
+                       @"MLNBindTableViewController",
+                       @"MLNPerformanceTestController"
                        ];
     }
     return _demoArray;
