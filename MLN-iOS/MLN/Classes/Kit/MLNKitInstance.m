@@ -188,10 +188,14 @@
     // 运行主页面布局文件
     BOOL success = [self runLayoutFileWithEntryFilePath:entryFilePath error:error];
     // 执行
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [self runWithEntryFile:entryFilePath error:error];
-    });
-    
+    if (success) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self runWithEntryFile:entryFilePath error:error];
+        });
+    } else { // 文件
+        success = [self runWithEntryFile:entryFilePath error:error];
+    }
+
     return success;
 }
 
