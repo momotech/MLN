@@ -939,6 +939,8 @@
 		F9A2722A53EE28D06BA19C9FA850A056 /* ldo.c in Sources */ = {isa = PBXBuildFile; fileRef = CA2BEF81C0632F7A97AEA12244ECFE57 /* ldo.c */; };
 		F9AD2CFBEDD600706B921428D25DFA3A /* UIImageView+AFNetworking.h in Headers */ = {isa = PBXBuildFile; fileRef = B59D2AE16B55878A31418B7491BA7DE7 /* UIImageView+AFNetworking.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		FA3D4183B36A98812B4C02626C1B3D99 /* MLNShadowOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 8E804044A46434288880C0553EE0522E /* MLNShadowOperation.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		FA993D41244D773800350724 /* MLNCollectionLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = FA993D3F244D773800350724 /* MLNCollectionLayout.m */; };
+		FA993D42244D773800350724 /* MLNCollectionLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = FA993D40244D773800350724 /* MLNCollectionLayout.h */; };
 		FAC38D4963CE1FEDD771692D04865DB5 /* MLNWindowContext.h in Headers */ = {isa = PBXBuildFile; fileRef = F7ABFE07F88F2395EA8B492FB28F678E /* MLNWindowContext.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		FB1C83E1248A145E1FFEFF1E83D84FDB /* MLNTabSegmentView.m in Sources */ = {isa = PBXBuildFile; fileRef = A77857ACA433CBE8950A8170124A7707 /* MLNTabSegmentView.m */; };
 		FB2F8761212D4F60B6032413B84AFC51 /* MLNAnimator.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D6D6A6C6CBAC16AC30332FA3F435594 /* MLNAnimator.m */; };
@@ -2128,6 +2130,8 @@
 		FA216FDC7E0A967544D087BD0409F6EF /* GPBExtensionRegistry.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = GPBExtensionRegistry.h; path = objectivec/GPBExtensionRegistry.h; sourceTree = "<group>"; };
 		FA23B7E9004DE84332843D7BDEFB7157 /* PbdeviceCommand.pbobjc.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = PbdeviceCommand.pbobjc.h; path = "MLN-iOS/MLNDevTool/Classes/Protobuf/PbdeviceCommand.pbobjc.h"; sourceTree = "<group>"; };
 		FA832098753454D34C603AFC86D900DC /* MLNCanvasPaint.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLNCanvasPaint.m; sourceTree = "<group>"; };
+		FA993D3F244D773800350724 /* MLNCollectionLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLNCollectionLayout.m; sourceTree = "<group>"; };
+		FA993D40244D773800350724 /* MLNCollectionLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLNCollectionLayout.h; sourceTree = "<group>"; };
 		FAB2CFFCBCDBB20EA7345EF0031057DE /* NSArray+MLNCore.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "NSArray+MLNCore.h"; sourceTree = "<group>"; };
 		FB3B7235DB7D3BD17C7FEE1302DCCC17 /* lundump.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = lundump.c; path = "MLN-iOS/MLN/Classes/LuaLib/lundump.c"; sourceTree = "<group>"; };
 		FBA8501DBF907865342112EAC0C53C87 /* MLNRect.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLNRect.m; sourceTree = "<group>"; };
@@ -2362,6 +2366,8 @@
 				4FAD7088A98E6A1B0F335A63EB4AC115 /* MLNCollectionViewLayoutProtocol.h */,
 				BA2FA21E58E0FF9764C779A7A3834C65 /* MLNInnerCollectionView.h */,
 				3D67BDC9E4E67611DF211FE97C0CCBEB /* MLNInnerCollectionView.m */,
+				FA993D40244D773800350724 /* MLNCollectionLayout.h */,
+				FA993D3F244D773800350724 /* MLNCollectionLayout.m */,
 				25774BE2F7048CFCBD885AFF28090776 /* AutoFit */,
 			);
 			path = CollectionView;
@@ -4651,6 +4657,7 @@
 				9A85C52568F2E334719E25B2A11E515B /* ltm.h in Headers */,
 				C81D763E8EE050BAA210ECA70AAFC5F2 /* lundump.h in Headers */,
 				5EB84B6CCDF872925A1C7C15C946A6EF /* lvm.h in Headers */,
+				FA993D42244D773800350724 /* MLNCollectionLayout.h in Headers */,
 				4C9040584D9F859256B102A298BECB30 /* lzio.h in Headers */,
 				2A4FB8E4279FF23FB41A4E9EB09D8DB9 /* mln_lauxlib.h in Headers */,
 				27CA61D31800D7933B7E61CD55221436 /* mln_lua.h in Headers */,
@@ -5911,6 +5918,7 @@
 				79A393BC27EADF8D26A3ADF890084760 /* NSMutableArray+MLNArray.m in Sources */,
 				18482DDB326E98D6101E1D525F28D7F9 /* NSMutableArray+MLNCore.m in Sources */,
 				69278217ED6E8682E08CC6E72466A890 /* NSMutableDictionary+MLNCore.m in Sources */,
+				FA993D41244D773800350724 /* MLNCollectionLayout.m in Sources */,
 				A70E5C4B3D0452FFEB957932873B7BDA /* NSMutableDictionary+MLNMap.m in Sources */,
 				E50A90AC76DEC9CA14FDC4E1BD44EEDC /* NSNumber+MLNCore.m in Sources */,
 				B7E18020B65AA1B779670AD87227DAB3 /* NSObject+MLNCore.m in Sources */,
