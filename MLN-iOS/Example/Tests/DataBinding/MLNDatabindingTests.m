@@ -10,24 +10,73 @@
 #import "MLNTestModel.h"
 #import <MLNKVOObserver.h>
 #import <NSObject+MLNKVO.h>
+#import "MLNKitViewController.h"
+#import "MLNKitViewController+DataBinding.h"
+#import "MLNLuaBundle.h"
+#import "MLNKitInstance.h"
 
 SpecBegin(MLNDatabinding)
 
 __block MLNDataBinding *dataBinding;
 __block MLNTestModel *model;
+__block MLNKitViewController *vc;
+
 
 beforeEach(^{
-           dataBinding = [[MLNDataBinding alloc] init];
+           NSBundle *bundle = [NSBundle bundleForClass:[self class]];
+           MLNLuaBundle *luaB = [[MLNLuaBundle alloc] initWithBundle:bundle];
+           vc = [[MLNKitViewController alloc] initWithEntryFilePath:@"DataBindTest.lua"];
+           [vc changeCurrentBundle:luaB];
+           [vc view];
+           
+           dataBinding = [vc dataBinding];
+           [MLNDataBinding performSelector:NSSelectorFromString(@"mln_updateCurrentLuaCore:") withObject:vc.kitInstance.luaCore];
+           
            model = [MLNTestModel new];
            model.open = true;
            model.text =  @"init";
+           NSMutableArray *s = [NSMutableArray array];
+           for(int i = 0; i < 9; i++) {
+               MLNTestChildModel *m = [MLNTestChildModel model];
+               [s addObject:m];
+           }
+           MLNTestReflectModel *m = [MLNTestReflectModel new];
+           m.title = @"title";
+           m.count = 11;
+           m.color = [UIColor redColor];
+           m.rect = CGRectMake(10, 10, 11, 11);
+           [s addObject:m];
+           
+           model.source = s;
            [dataBinding bindData:model forKey:@"userData"];
-           });
+        
+    });
 
 it(@"get data", ^{
    expect([dataBinding dataForKeyPath:@"userData.open"]).to.equal(@(true));
    expect([dataBinding dataForKeyPath:@"userData.text"]).to.equal(@"init");
    expect([dataBinding dataForKeyPath:@"userData.isOpen"]).to.equal(@(true));
+   });
+
+it(@"get table data", ^{
+   NSArray *source = [MLNDataBinding performSelector:NSSelectorFromString(@"lua_dataForKeyPath:") withObject:@"userData.source"];
+   
+   expect(source.count == 10).to.beTruthy();
+   expect([source isKindOfClass:[NSArray class]]).to.beTruthy();
+   expect([source isKindOfClass:[NSMutableArray class]]).to.beFalsy();
+   NSDictionary *first = source.firstObject;
+   
+   expect([first isKindOfClass:[NSDictionary class]]).to.beTruthy();
+   expect([first isKindOfClass:[NSMutableDictionary class]]).to.beFalsy();
+   expect(first[@"name"]).equal(@"nn");
+   
+   NSDictionary *last = source.lastObject;
+   expect([last isKindOfClass:[NSDictionary class]]).to.beTruthy();
+   expect([last isKindOfClass:[NSMutableDictionary class]]).to.beFalsy();
+   expect(last[@"title"]).equal(@"title");
+   expect(last[@"count"]).equal(@(11));
+   expect(last[@"color"]).equal([UIColor redColor]);
+   expect(last[@"rect"]).equal(@(CGRectMake(10, 10, 11, 11)));
    });
 
 it(@"update data", ^{
