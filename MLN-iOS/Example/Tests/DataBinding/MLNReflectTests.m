@@ -37,7 +37,7 @@ context(@"Dictionary", ^{
        expect([set containsObject:@"text"]).to.beTruthy();
     });
 
-    it(@"dictionary", ^{
+    it(@"to_dic", ^{
        expect(dic.count == 1).to.beTruthy();
        expect(dic[@"name"]).equal(@"nn");
        dic = [tModel mln_toDictionary];

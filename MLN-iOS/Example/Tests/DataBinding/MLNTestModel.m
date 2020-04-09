@@ -7,9 +7,9 @@
 //
 
 #import "MLNTestModel.h"
+#import "NSObject+MLNKVO.h"
 
 @implementation MLNTestModel
-
 
 @end
 
@@ -23,4 +23,17 @@
     m->_num = @11;
     return m;
 }
+@end
+
+@implementation MLNTestReflectModel
+
+- (NSDictionary *)mln_toDictionary {
+    NSMutableDictionary *dic = [NSMutableDictionary dictionary];
+    [dic setValue:self.title forKey:@"title"];
+    [dic setValue:@(self.count) forKey:@"count"];
+    [dic setValue:self.color forKey:@"color"];
+    [dic setValue:@(self.rect) forKey:@"rect"];
+    return dic.copy;
+}
+
 @end

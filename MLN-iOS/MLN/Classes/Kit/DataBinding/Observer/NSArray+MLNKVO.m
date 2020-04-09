@@ -8,6 +8,8 @@
 #import "NSArray+MLNKVO.h"
 #import "NSMutableArray+MLNKVO.h"
 #import "MLNExtScope.h"
+#import "NSObject+MLNCore.h"
+#import "NSObject+MLNKVO.h"
 
 @import ObjectiveC;
 
@@ -71,5 +73,23 @@
     }
 }
 
-
+- (instancetype)mln_convertToLuaTableAvailable {
+    __block NSMutableArray *arr;
+    [self enumerateObjectsUsingBlock:^(NSObject *  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        MLNNativeType type = [obj mln_nativeType];
+        if (type == MLNNativeTypeMArray ||
+            type == MLNNativeTypeMDictionary ||
+            type == MLNNativeTypeObject) {
+            if (!arr) {
+                arr = [NSMutableArray array];
+            }
+            if (type == MLNNativeTypeObject) {
+                [arr addObject:[obj mln_toDictionary].copy];
+            } else {
+                [arr addObject:obj.copy];
+            }
+        }
+    }];
+    return arr ? arr.copy : self.copy;
+}
 @end

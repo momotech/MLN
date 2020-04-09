@@ -22,6 +22,8 @@ typedef void (^MLNItemKVOBlock)(NSObject *item,NSString *keyPath, NSObject * _Nu
 @property (nonatomic, copy, readonly)NSArray * (^mln_subscribeItem)(MLNItemKVOBlock);
 @property (nonatomic, strong, readonly) NSMutableArray *mln_itemKVOBlocks;
 
+- (instancetype)mln_convertToLuaTableAvailable;
+
 @end
 
 NS_ASSUME_NONNULL_END
