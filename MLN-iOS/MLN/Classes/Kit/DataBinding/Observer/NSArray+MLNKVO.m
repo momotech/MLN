@@ -7,14 +7,16 @@
 
 #import "NSArray+MLNKVO.h"
 #import "NSMutableArray+MLNKVO.h"
+#import "MLNExtScope.h"
+
 @import ObjectiveC;
 
 @implementation NSArray (MLNKVO)
 
 - (NSArray * _Nonnull (^)(MLNItemKVOBlock _Nonnull))mln_subscribeItem {
-    __weak __typeof(self)weakSelf = self;
+    @weakify(self);
      return ^(MLNItemKVOBlock block) {
-         __strong __typeof(weakSelf)self = weakSelf;
+         @strongify(self);
          if (block) {
              [self.mln_itemKVOBlocks addObject:block];
          }

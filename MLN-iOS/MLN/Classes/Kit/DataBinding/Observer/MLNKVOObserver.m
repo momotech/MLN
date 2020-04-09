@@ -10,6 +10,7 @@
 //#import "MLNKitHeader.h"
 //#import "MLNKitViewController.h"
 #import <pthread.h>
+#import "MLNExtScope.h"
 
 @interface MLNKVOObserver () {
     pthread_mutex_t _lock;
@@ -46,13 +47,13 @@
 }
 
 - (void)addViewControllerObserver:(UIViewController *)viewController {
-    __weak typeof(self) wself = self;
+    @weakify(self);
     self.observer = ^(MLNViewControllerLifeCycle state) {
-        __strong typeof(wself) sself = wself;
+        @strongify(self);
         if (state == MLNViewControllerLifeCycleViewDidDisappear) {
-            sself.active = NO;
+            self.active = NO;
         } else if (state == MLNViewControllerLifeCycleViewDidAppear) {
-            sself.active = YES;
+            self.active = YES;
         }
     };
     [viewController mln_addLifeCycleObserver:self.observer];
