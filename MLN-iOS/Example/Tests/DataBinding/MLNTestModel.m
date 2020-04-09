@@ -12,3 +12,15 @@
 
 
 @end
+
+@implementation MLNTestChildModel
+
++ (instancetype)model {
+    MLNTestChildModel *m = [MLNTestChildModel new];
+    m.text = @"tt";
+    m.name = @"nn";
+    m.open = YES;
+    m->_num = @11;
+    return m;
+}
+@end
