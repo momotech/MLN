@@ -7,14 +7,18 @@
 
 #import "NSArray+MLNKVO.h"
 #import "NSMutableArray+MLNKVO.h"
+#import "MLNExtScope.h"
+#import "NSObject+MLNCore.h"
+#import "NSObject+MLNKVO.h"
+
 @import ObjectiveC;
 
 @implementation NSArray (MLNKVO)
 
 - (NSArray * _Nonnull (^)(MLNItemKVOBlock _Nonnull))mln_subscribeItem {
-    __weak __typeof(self)weakSelf = self;
+    @weakify(self);
      return ^(MLNItemKVOBlock block) {
-         __strong __typeof(weakSelf)self = weakSelf;
+         @strongify(self);
          if (block) {
              [self.mln_itemKVOBlocks addObject:block];
          }
@@ -69,5 +73,23 @@
     }
 }
 
-
+- (instancetype)mln_convertToLuaTableAvailable {
+    __block NSMutableArray *arr;
+    [self enumerateObjectsUsingBlock:^(NSObject *  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        MLNNativeType type = [obj mln_nativeType];
+        if (type == MLNNativeTypeMArray ||
+            type == MLNNativeTypeMDictionary ||
+            type == MLNNativeTypeObject) {
+            if (!arr) {
+                arr = [NSMutableArray array];
+            }
+            if (type == MLNNativeTypeObject) {
+                [arr addObject:[obj mln_toDictionary].copy];
+            } else {
+                [arr addObject:obj.copy];
+            }
+        }
+    }];
+    return arr ? arr.copy : self.copy;
+}
 @end

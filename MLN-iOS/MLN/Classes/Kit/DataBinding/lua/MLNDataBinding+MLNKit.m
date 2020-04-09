@@ -35,7 +35,11 @@
 
 + (id __nullable)lua_dataForKeyPath:(NSString *)keyPath {
     MLNKitViewController *kitViewController = (MLNKitViewController *)MLN_KIT_INSTANCE([self mln_currentLuaCore]).viewController;
-    return [kitViewController dataForKeyPath:keyPath];
+    NSObject *obj = [kitViewController dataForKeyPath:keyPath];
+    if ([obj isKindOfClass:[NSArray class]]) {
+        return [(NSArray *)obj mln_convertToLuaTableAvailable];
+    }
+    return obj;
 }
 
 + (id __nullable)lua_mockForKey:(NSString *)key data:(NSDictionary *)dic {

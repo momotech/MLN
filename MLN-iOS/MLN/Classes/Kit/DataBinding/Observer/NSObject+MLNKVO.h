@@ -24,4 +24,9 @@ typedef void(^MLNKVOBlock)(id oldValue, id newValue);
 
 @end
 
+@interface NSObject (MLNReflect)
++ (NSArray <NSString *> *)mln_propertyKeys;
+- (NSDictionary *)mln_toDictionary;
+@end
+
 NS_ASSUME_NONNULL_END
