@@ -53,7 +53,7 @@ end
 --初始化CollectionViewLayout
 local function initCollectionViewLayout()
 
-    collectionLayout = CollectionViewLayout()
+    collectionLayout = CollectionLayout()
     collectionLayout:itemSpacing(5)--间隔大小
                     :lineSpacing(5)
     --竖直滑动代表显示列数；水平滑动代表显示行数
