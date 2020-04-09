@@ -15,4 +15,13 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy) NSString *text;
 @end
 
+
+@interface MLNTestChildModel : MLNTestModel {
+    NSNumber *_num;
+}
+
+@property (nonatomic, copy) NSString *name;
++ (instancetype)model;
+@end
+
 NS_ASSUME_NONNULL_END
