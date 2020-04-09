@@ -8,6 +8,8 @@
 #import "NSObject+MLNKVO.h"
 #import "KVOController.h"
 #import "MLNKVOObserver.h"
+#import "MLNExtScope.h"
+
 @import ObjectiveC;
 
 @implementation NSObject (MLNKVO)
@@ -37,9 +39,9 @@
 }
 
 - (NSObject * _Nonnull (^)(NSString * _Nonnull, MLNKVOBlock _Nonnull))mln_subscribe {
-    __weak typeof (self) weakSelf = self;
+    @weakify(self);
     return ^(NSString *keyPath, MLNKVOBlock block){
-        __strong typeof (weakSelf) self = weakSelf;
+        @strongify(self);
         if (self && block) {
 //            [self.KVOControllerNonRetaining observe:self keyPath:keyPath options:NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew block:^(id  _Nullable observer, id  _Nonnull object, NSDictionary<NSString *,id> * _Nonnull change) {
 //                id oldValue = [change objectForKey:NSKeyValueChangeOldKey];

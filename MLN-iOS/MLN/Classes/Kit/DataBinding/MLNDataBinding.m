@@ -10,6 +10,7 @@
 #import "KVOController.h"
 #import "NSMutableArray+MLNKVO.h"
 #import "NSArray+MLNKVO.h"
+#import "MLNExtScope.h"
 
 @interface MLNDataBinding() {
     pthread_mutex_t _lock;
@@ -166,9 +167,9 @@
         [self.observerMap setObject:observerArray forKey:keyPath];
     }
     
-    __weak __typeof(self)weakSelf = self;
+    @weakify(self);
     void(^obBlock)(NSString*,NSObject*,NSDictionary*) = ^(NSString *kp, NSObject *object, NSDictionary *change) {
-        __strong __typeof(weakSelf)self = weakSelf;
+        @strongify(self);
         if (self) {
             pthread_mutex_lock(&self->_lock);
             NSArray *obsCopy = observerArray.copy;

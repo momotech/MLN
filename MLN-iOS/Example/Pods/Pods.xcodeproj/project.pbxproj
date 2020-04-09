@@ -1946,7 +1946,7 @@
 		8D64B081848BC95DE8B39B2C5C6FBCD0 /* SDImageFrame.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = SDImageFrame.m; path = SDWebImage/Core/SDImageFrame.m; sourceTree = "<group>"; };
 		8D793AD33D1D99A7BBA87593A7E85804 /* MLNConvertor.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLNConvertor.h; sourceTree = "<group>"; };
 		8D99FF51AD90BD684B769476C9468757 /* GPBRootObject.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = GPBRootObject.h; sourceTree = "<group>"; };
-		8DDC775D4FC72E62E8CE9A455AF92AD4 /* mln_tcp.c */ = {isa = PBXFileReference; includeInIndex = 1; path = mln_tcp.c; sourceTree = "<group>"; };
+		8DDC775D4FC72E62E8CE9A455AF92AD4 /* mln_tcp.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; path = mln_tcp.c; sourceTree = "<group>"; };
 		8DF8078EC0299120F60CFB180321A10F /* MLNOfflineDevToolUI.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = MLNOfflineDevToolUI.h; path = "MLN-iOS/MLNDevTool/Classes/Offline/MLNOfflineDevToolUI.h"; sourceTree = "<group>"; };
 		8E270343AA0AE683AD0B1050B96951E0 /* MLNQRCodeViewController.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLNQRCodeViewController.m; sourceTree = "<group>"; };
 		8F3DF3469FEEDABB2807D50FE92B3D37 /* UIView+MLNLayout.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "UIView+MLNLayout.m"; sourceTree = "<group>"; };
@@ -2378,7 +2378,7 @@
 		F076D367A593ED8007DBF43F98FB76E8 /* MLNInternalTextView.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLNInternalTextView.h; sourceTree = "<group>"; };
 		F07DB3B535EFE0CA39A0A9589B782F19 /* MLNHotReloadPresenter.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = MLNHotReloadPresenter.m; path = "MLN-iOS/MLNDevTool/Classes/HotReload/MLNHotReloadPresenter.m"; sourceTree = "<group>"; };
 		F0A466C994D19198071487D7464C15A8 /* LNDecoderImpl.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = LNDecoderImpl.m; sourceTree = "<group>"; };
-		F0D4D03F4148FE2168E6864245A8417C /* mln_map.c */ = {isa = PBXFileReference; includeInIndex = 1; path = mln_map.c; sourceTree = "<group>"; };
+		F0D4D03F4148FE2168E6864245A8417C /* mln_map.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; path = mln_map.c; sourceTree = "<group>"; };
 		F0FBD364CA610585954D87318C4072A1 /* GPBBootstrap.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = GPBBootstrap.h; sourceTree = "<group>"; };
 		F12582DC720064379E9C6D8A4A509429 /* NSArray+MLNSafety.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "NSArray+MLNSafety.m"; sourceTree = "<group>"; };
 		F19BD51C94DC564ECE0489E3E34AB746 /* UIImageView+AFNetworking.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "UIImageView+AFNetworking.h"; path = "UIKit+AFNetworking/UIImageView+AFNetworking.h"; sourceTree = "<group>"; };
@@ -2619,7 +2619,6 @@
 				870BC0779AAFF3E7EE9302BFD8312A48 /* MLNThread.h */,
 				5C40A794B99B50AB636DA73E2CC51E9A /* MLNThread.m */,
 			);
-			name = DebugLib;
 			path = DebugLib;
 			sourceTree = "<group>";
 		};
@@ -2701,7 +2700,6 @@
 				11BB5AAB10C9C16858886554B3E8208F /* NSValue+Expecta.m */,
 				64A0C03EA363482BCAE98D2B4DF191C8 /* Support Files */,
 			);
-			name = Expecta;
 			path = Expecta;
 			sourceTree = "<group>";
 		};
@@ -2784,7 +2782,6 @@
 				7D2D11C2587624E59FBD694A1E0A6F54 /* MLNStyleString.h */,
 				1BD3581D96B34FD69EE4B1DF972DF5D5 /* MLNStyleString.m */,
 			);
-			name = StyleString;
 			path = StyleString;
 			sourceTree = "<group>";
 		};
@@ -2893,7 +2890,6 @@
 				CBAB569F5DD1B1BC42B733E00C1E8649 /* MLNQRCodeViewController.h */,
 				8E270343AA0AE683AD0B1050B96951E0 /* MLNQRCodeViewController.m */,
 			);
-			name = QRCode;
 			path = QRCode;
 			sourceTree = "<group>";
 		};
@@ -3090,7 +3086,6 @@
 				89FBBD3B07EFFCE26C3E3ADE44AA3B15 /* MLNContainerWindow.h */,
 				0E995239753277A29D6DC19627A0BD59 /* MLNContainerWindow.m */,
 			);
-			name = ContentWindow;
 			path = ContentWindow;
 			sourceTree = "<group>";
 		};
@@ -3119,7 +3114,6 @@
 				15E3A46435535C4CAD6C1DE2FF5CFAFD /* scan_corner.png */,
 				2A0DE315688FD52E53D5CE8BBCD14AB5 /* scan_line.png */,
 			);
-			name = Assets;
 			path = Assets;
 			sourceTree = "<group>";
 		};
@@ -3196,7 +3190,6 @@
 				13E3D4EC50000D4F12C2C1141D89DE39 /* LNReaderImpl.m */,
 				D73F6562F075AB6BAE7B97EE65A7F213 /* LNReaderProtocol.h */,
 			);
-			name = Read;
 			path = Read;
 			sourceTree = "<group>";
 		};
@@ -3215,7 +3208,6 @@
 				73918A10865BF458DB83D77AABBE1E20 /* MLNTableViewCellSettingProtocol.h */,
 				9573720354E503595680C215F5D38BC6 /* AutoFit */,
 			);
-			name = TableView;
 			path = TableView;
 			sourceTree = "<group>";
 		};
@@ -3480,7 +3472,6 @@
 			children = (
 				E50890A4B77130898F08223CB1100A6A /* MLNViewExporterMacro.h */,
 			);
-			name = Caches;
 			path = Caches;
 			sourceTree = "<group>";
 		};
@@ -3709,7 +3700,6 @@
 				2A04394AAAFE0A395F591ADAE122C47E /* MLNCollectionViewAutoFitAdapter.h */,
 				7BD2C4845CB8BC058FAAD99297DE22F5 /* MLNCollectionViewAutoFitAdapter.m */,
 			);
-			name = AutoFit;
 			path = AutoFit;
 			sourceTree = "<group>";
 		};
@@ -3718,7 +3708,6 @@
 			children = (
 				5D6D5023CDF615DACBD6D736FEDECBE9 /* protobuf */,
 			);
-			name = google;
 			path = google;
 			sourceTree = "<group>";
 		};
@@ -3749,7 +3738,6 @@
 				2E418CA49017D1785FA91C726390C1E1 /* Type.pbobjc.h */,
 				6262F0F5438878B3F98B805307B351F2 /* Wrappers.pbobjc.h */,
 			);
-			name = protobuf;
 			path = protobuf;
 			sourceTree = "<group>";
 		};
@@ -3777,7 +3765,6 @@
 				366D8301BF0DFBC4D2261B46663B749B /* MLNShadowOperation.h */,
 				98D62149C1FEF9D93E1BD8E5CCB8CBC8 /* MLNShadowOperation.m */,
 			);
-			name = Shadow;
 			path = Shadow;
 			sourceTree = "<group>";
 		};
@@ -3822,7 +3809,6 @@
 				F53665B561E8BE71CB325C0EA2FA0375 /* MLNZipArchive.h */,
 				384399DCB293409CA2400F0C08DF5090 /* MLNZipArchive.m */,
 			);
-			name = MLNZipArchive;
 			path = MLNZipArchive;
 			sourceTree = "<group>";
 		};
@@ -3904,7 +3890,6 @@
 				0A8EF5A173224E73C7C735D22EFE7136 /* UIView+SDExtension.m */,
 				4F964A3CB5877BFF988E4212500DC955 /* Support Files */,
 			);
-			name = SDCycleScrollView;
 			path = SDCycleScrollView;
 			sourceTree = "<group>";
 		};
@@ -4354,7 +4339,6 @@
 				488A5B2012790BDD2A75F6201695EAEB /* MLNViewConst.h */,
 				CC4F87C509E99978866855BBE4874CDD /* MLNViewConst.m */,
 			);
-			name = GlobalVar;
 			path = GlobalVar;
 			sourceTree = "<group>";
 		};
@@ -4435,7 +4419,6 @@
 				1D3B63E7670406C9B97DB32C166E8C52 /* MLNTableViewAutoFitAdapter.h */,
 				2AF09B5C4AC6CA96C77E7BF4DA464D5A /* MLNTableViewAutoFitAdapter.m */,
 			);
-			name = AutoFit;
 			path = AutoFit;
 			sourceTree = "<group>";
 		};
@@ -4498,7 +4481,6 @@
 				2A2784366C544B7DD216570153583A00 /* LNEncoderImpl.m */,
 				35DE9490451810D6A8662001944336F3 /* LNEncoderProtocol.h */,
 			);
-			name = Encode;
 			path = Encode;
 			sourceTree = "<group>";
 		};
@@ -4567,7 +4549,6 @@
 				9A2439C9F02B6CB3D43B55AC0DF2FD60 /* UIView+MLNLayout.h */,
 				2AEBD220E348382AE501BDC130EBB146 /* UIView+MLNLayout.m */,
 			);
-			name = UI;
 			path = UI;
 			sourceTree = "<group>";
 		};
@@ -4577,7 +4558,6 @@
 				7C93D967F5AE004D84361C574090B08E /* MLNWindowContext.h */,
 				EC1B42021C9E1843FA858CD8E0B10044 /* MLNWindowContext.m */,
 			);
-			name = WindowManager;
 			path = WindowManager;
 			sourceTree = "<group>";
 		};
@@ -4589,7 +4569,6 @@
 				2483C9EB56FEF4C8B95E1B05719A8B24 /* UIView+Toast.m */,
 				727F6BAF4BD507486E55804F1B1B3832 /* Support Files */,
 			);
-			name = Toast;
 			path = Toast;
 			sourceTree = "<group>";
 		};
@@ -4681,7 +4660,6 @@
 				C61624F3DE78258A242718421D3AE8AB /* MLNNavigator.h */,
 				B9A146B90B44F2B06CF8E968D19296B6 /* MLNNavigator.m */,
 			);
-			name = Navigator;
 			path = Navigator;
 			sourceTree = "<group>";
 		};
@@ -4790,7 +4768,6 @@
 				EF16CBB852AF88C466180CDC6CE679EF /* MLNLinearLayoutNode.h */,
 				E0920C604EF90D1E2A60ABDAD7961486 /* MLNLinearLayoutNode.m */,
 			);
-			name = Node;
 			path = Node;
 			sourceTree = "<group>";
 		};
@@ -4823,7 +4800,6 @@
 				25A9124E45605A59541A3F2B6091AD74 /* Support Files */,
 				87CF2A06969794328A178BB3A29E2365 /* SwiftSupport */,
 			);
-			name = FBSnapshotTestCase;
 			path = FBSnapshotTestCase;
 			sourceTree = "<group>";
 		};
@@ -4835,7 +4811,6 @@
 				2B2C865B58A7113C5240D7A2EBB1153F /* LNWirterImpl.h */,
 				FA789C17E520D6877767C4A1A339D93E /* LNWirterImpl.m */,
 			);
-			name = Impl;
 			path = Impl;
 			sourceTree = "<group>";
 		};
@@ -4858,7 +4833,6 @@
 				EED9026E70B65BEE2A9987E3A2FE8073 /* MLNCornerMaskViewHandler.h */,
 				E3C3CF4323536C0AE7AD50FA72BFC92A /* MLNCornerMaskViewHandler.m */,
 			);
-			name = NewCorners;
 			path = NewCorners;
 			sourceTree = "<group>";
 		};
@@ -4940,7 +4914,6 @@
 				F81948BDD3114755F7B8523CC1457CB0 /* mmoslib.c */,
 				27DD7F198386658F4550B931B9B89C6C /* mmoslib.h */,
 			);
-			name = Mmoslib;
 			path = Mmoslib;
 			sourceTree = "<group>";
 		};
@@ -5060,7 +5033,6 @@
 				1387BACC447DC4D05BE7260A3845C252 /* MLNHttpDefaultHandler.h */,
 				061DDA84C18BCFEE51247C1BE57FF30F /* MLNHttpDefaultHandler.m */,
 			);
-			name = Network;
 			path = Network;
 			sourceTree = "<group>";
 		};
@@ -5074,7 +5046,6 @@
 				CDDA5D36A3D58BFE8A0656730D2EE654 /* NewCorners */,
 				5FA2380CD6BF2AF280D9CEF972F608E1 /* Shadow */,
 			);
-			name = Render;
 			path = Render;
 			sourceTree = "<group>";
 		};
@@ -5136,7 +5107,6 @@
 				5FB14F400B88ADB81812149A53F8ED80 /* MLNTextViewFactory.m */,
 				E680D5A74D24B16FD82F0DFC87F5DB64 /* MLNTextViewProtocol.h */,
 			);
-			name = EditTextView;
 			path = EditTextView;
 			sourceTree = "<group>";
 		};
@@ -5149,7 +5119,6 @@
 				2B84B6F687510CB189DC57166D6A3A78 /* EXPMatchers+FBSnapshotTest.m */,
 				4BE3CDDC97693D9250912B89BDE81ED7 /* Support Files */,
 			);
-			name = "Expecta+Snapshots";
 			path = "Expecta+Snapshots";
 			sourceTree = "<group>";
 		};
@@ -5185,7 +5154,6 @@
 				B43C507B3BC6675C210B8EB9992A9E16 /* LNUsbClientImpl.h */,
 				589C4CFE8B8C440B5093C4923EA91639 /* LNUsbClientImpl.m */,
 			);
-			name = Impl;
 			path = Impl;
 			sourceTree = "<group>";
 		};
@@ -5300,7 +5268,6 @@
 				00B23D903645AEC67772C9B55374198C /* MLNInnerCollectionView.m */,
 				5CBBE81E9DD354645B648AD82AE0437E /* AutoFit */,
 			);
-			name = CollectionView;
 			path = CollectionView;
 			sourceTree = "<group>";
 		};
@@ -5338,7 +5305,6 @@
 				B62642D43E2C1CD94110D6D1B90E98BA /* MLNMainRunLoopObserver.m */,
 				356D95A83A1E9530288AB55A926BFC15 /* Task */,
 			);
-			name = MainRunLoopObserver;
 			path = MainRunLoopObserver;
 			sourceTree = "<group>";
 		};
@@ -5363,7 +5329,6 @@
 				B850407F8460485DEC44123928477680 /* Support Files */,
 				28ABAF294C0C3FBFFD5130C868549B8F /* UIKit */,
 			);
-			name = AFNetworking;
 			path = AFNetworking;
 			sourceTree = "<group>";
 		};
@@ -6028,6 +5993,7 @@
 				C9E47313BE354D93CA4983691D491B33 /* MLNDevice.h in Headers */,
 				1BDE694947160493E949BC30B94EC8E5 /* MLNDialogView.h in Headers */,
 				7003B7FAAE31F2F9F925F9528D65F0CD /* MLNEditTextView.h in Headers */,
+				00DA72B7243EC87200981719 /* MLNMetamacros.h in Headers */,
 				8951EC16C3E5AA6425C29AC933ED5E6B /* MLNEditTextViewConst.h in Headers */,
 				6CD11E4D364AEAD2303696B970CEEBE8 /* MLNEntityExporter.h in Headers */,
 				175E77666A97FCD1355C041F91A87C47 /* MLNEntityExporterMacro.h in Headers */,
@@ -6080,6 +6046,7 @@
 				B547544AFE12E918E0B11D2F00531678 /* MLNKitInstanceConsts.h in Headers */,
 				241CE202BF461AC6BEE0C23664B24124 /* MLNKitInstanceDelegate.h in Headers */,
 				1A9635891C8075BF395AAA2BF38E64E4 /* MLNKitInstanceErrorHandlerProtocol.h in Headers */,
+				00DA72B5243EC86C00981719 /* MLNExtScope.h in Headers */,
 				BDC0252AF376EF374E64B24E6147224B /* MLNKitInstanceFactory.h in Headers */,
 				4A18B21398CC98A5279EB9FDFB3448A0 /* MLNKitInstanceHandlersManager.h in Headers */,
 				0F5A75666215BAEB5E575F0306A5809E /* MLNKitLuaCoeBuilderProtocol.h in Headers */,
@@ -7734,8 +7701,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRIP_INSTALLED_PRODUCT = NO;
-				SWIFT_COMPILATION_MODE = wholemodule;
-				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 				SWIFT_VERSION = 5.0;
 				SYMROOT = "${SRCROOT}/../build";
 			};
