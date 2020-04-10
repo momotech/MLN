@@ -114,8 +114,13 @@
             m.title = [NSString stringWithFormat:@"change title %d",cnt];
             m.name = [NSString stringWithFormat:@"change name %d",cnt];
             cnt++;
-            [models removeObjectAtIndex:0];
-            [models addObject:m];
+            if (cnt % 2) {
+                [models removeObjectAtIndex:0];
+                [models addObject:m];
+            } else {
+                [models replaceObjectAtIndex:0 withObject:m];
+            }
+
         }
         
         [self testModel];
