@@ -17,6 +17,15 @@
 
 @implementation MLNBindTableViewController
 
+- (instancetype)init
+{
+    self = [super init];
+    if (self) {
+        NSLog(@">>>>mem alloc %@",self);
+    }
+    return self;
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
@@ -127,5 +136,7 @@
     });
 }
 
-
+- (void)dealloc {
+    NSLog(@">>>>mem dealloc %@",self);
+}
 @end

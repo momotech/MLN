@@ -55,4 +55,17 @@
     return self.block.luaCore;
 }
 
+- (instancetype)initWithViewController:(UIViewController *)viewController callback:(MLNKVOCallback)callback keyPath:(NSString *)keyPath
+{
+    self = [super initWithViewController:viewController callback:callback keyPath:keyPath];
+    if (self) {
+        NSLog(@">>>>mem alloc %@",self);
+    }
+    return self;
+}
+
+- (void)dealloc {
+    NSLog(@">>>>mem dealloc %@",self);
+}
+
 @end
