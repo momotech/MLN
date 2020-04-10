@@ -59,8 +59,13 @@ typedef BOOL(^ActionBlock)(void);
 - (instancetype)initWithViewController:(UIViewController *)viewController callback:(MLNKVOCallback)callback keyPath:(NSString *)keyPath {
     if (self = [super initWithViewController:viewController callback:callback keyPath:keyPath]) {
         self.actions = [NSMutableArray array];
+        NSLog(@">>>>mem alloc %@",self);
     }
     return self;
+}
+
+- (void)dealloc {
+    NSLog(@">>>>mem dealloc %@",self);
 }
 
 - (void)mergeAction {
@@ -194,7 +199,4 @@ typedef BOOL(^ActionBlock)(void);
     action();
 }
 
-- (void)dealloc {
-    NSLog(@"---- %s",__FUNCTION__);
-}
 @end
