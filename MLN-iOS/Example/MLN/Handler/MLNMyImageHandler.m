@@ -21,7 +21,7 @@
     }
     
     if ([self isHttpURL:path]) {
-        NSURL *imgURL = [NSURL URLWithString:path];
+        NSURL *imgURL = [NSURL URLWithString:[path stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]]];
         [imageView sd_setImageWithURL:imgURL];
     } else {
         UIImage *image =  [self imageWithLocalPath:path instance:MLN_KIT_INSTANCE(imageView.mln_luaCore)];
