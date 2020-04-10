@@ -29,7 +29,7 @@
         self.dataMap = [NSMutableDictionary dictionary];
         self.observerMap =  [NSMapTable strongToWeakObjectsMapTable];
         LOCK_INIT();
-        NSLog(@"---- init : %s %p",__FUNCTION__, self);
+        NSLog(@">>>>mem alloc %@",self);
     }
     return self;
 }
@@ -196,7 +196,7 @@
             [bindArray enumerateObjectsUsingBlock:^(NSMutableArray* _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
                 if ([obj isKindOfClass:[NSMutableArray class]]) {
                     [obj mln_addObserverHandler:^(NSMutableArray * _Nonnull array, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
-                        obBlock(nil, obj, change);
+                        obBlock(nil, array, change);
                     }];
                 }
             }];
@@ -210,7 +210,6 @@
 }
 
 - (void)dealloc {
-    NSLog(@"---- dealloc : %s %p",__FUNCTION__, self);
+    NSLog(@">>>>mem dealloc %@",self);
 }
-
 @end
