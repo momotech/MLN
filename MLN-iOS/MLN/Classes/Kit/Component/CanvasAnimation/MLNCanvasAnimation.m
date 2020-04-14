@@ -30,7 +30,7 @@
     NSUInteger _repeatCounting;
 }
 
-@property (nonatomic, weak) UIView *targetView;
+@property (nonatomic, weak, readwrite) UIView *targetView;
 @property (nonatomic, strong) NSMutableDictionary<NSString *, MLNBlock *> *animationCallbacks;
 @property (nonatomic, strong) MLNBeforeWaitingTask *lazyTask;
 @property (nonatomic, weak) MLNCanvasAnimationDelegate *animationDelegate;
