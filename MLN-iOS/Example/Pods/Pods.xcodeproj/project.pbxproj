@@ -941,10 +941,6 @@
 		FA3D4183B36A98812B4C02626C1B3D99 /* MLNShadowOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 8E804044A46434288880C0553EE0522E /* MLNShadowOperation.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		FA993D41244D773800350724 /* MLNCollectionLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = FA993D3F244D773800350724 /* MLNCollectionLayout.m */; };
 		FA993D42244D773800350724 /* MLNCollectionLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = FA993D40244D773800350724 /* MLNCollectionLayout.h */; };
-		FA993D47244D788400350724 /* MLNRepeatAnimation.m in Sources */ = {isa = PBXBuildFile; fileRef = FA993D43244D788400350724 /* MLNRepeatAnimation.m */; };
-		FA993D48244D788400350724 /* MLNRepeatAnimationGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = FA993D44244D788400350724 /* MLNRepeatAnimationGroup.m */; };
-		FA993D49244D788400350724 /* MLNRepeatAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = FA993D45244D788400350724 /* MLNRepeatAnimation.h */; };
-		FA993D4A244D788400350724 /* MLNRepeatAnimationGroup.h in Headers */ = {isa = PBXBuildFile; fileRef = FA993D46244D788400350724 /* MLNRepeatAnimationGroup.h */; };
 		FAC38D4963CE1FEDD771692D04865DB5 /* MLNWindowContext.h in Headers */ = {isa = PBXBuildFile; fileRef = F7ABFE07F88F2395EA8B492FB28F678E /* MLNWindowContext.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		FB1C83E1248A145E1FFEFF1E83D84FDB /* MLNTabSegmentView.m in Sources */ = {isa = PBXBuildFile; fileRef = A77857ACA433CBE8950A8170124A7707 /* MLNTabSegmentView.m */; };
 		FB2F8761212D4F60B6032413B84AFC51 /* MLNAnimator.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D6D6A6C6CBAC16AC30332FA3F435594 /* MLNAnimator.m */; };
@@ -2136,10 +2132,6 @@
 		FA832098753454D34C603AFC86D900DC /* MLNCanvasPaint.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLNCanvasPaint.m; sourceTree = "<group>"; };
 		FA993D3F244D773800350724 /* MLNCollectionLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLNCollectionLayout.m; sourceTree = "<group>"; };
 		FA993D40244D773800350724 /* MLNCollectionLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLNCollectionLayout.h; sourceTree = "<group>"; };
-		FA993D43244D788400350724 /* MLNRepeatAnimation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLNRepeatAnimation.m; sourceTree = "<group>"; };
-		FA993D44244D788400350724 /* MLNRepeatAnimationGroup.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLNRepeatAnimationGroup.m; sourceTree = "<group>"; };
-		FA993D45244D788400350724 /* MLNRepeatAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLNRepeatAnimation.h; sourceTree = "<group>"; };
-		FA993D46244D788400350724 /* MLNRepeatAnimationGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLNRepeatAnimationGroup.h; sourceTree = "<group>"; };
 		FAB2CFFCBCDBB20EA7345EF0031057DE /* NSArray+MLNCore.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "NSArray+MLNCore.h"; sourceTree = "<group>"; };
 		FB3B7235DB7D3BD17C7FEE1302DCCC17 /* lundump.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = lundump.c; path = "MLN-iOS/MLN/Classes/LuaLib/lundump.c"; sourceTree = "<group>"; };
 		FBA8501DBF907865342112EAC0C53C87 /* MLNRect.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLNRect.m; sourceTree = "<group>"; };
@@ -3336,10 +3328,6 @@
 				3C3D98B5E8AC31B921A68692FFEC597C /* MLNCanvasAnimation.m */,
 				0D8C0E8A7013CF27CC73387CA8F80C3F /* MLNCanvasAnimationDelegate.h */,
 				C8A37F49025964BA878E16B87048830A /* MLNCanvasAnimationDelegate.m */,
-				FA993D45244D788400350724 /* MLNRepeatAnimation.h */,
-				FA993D43244D788400350724 /* MLNRepeatAnimation.m */,
-				FA993D46244D788400350724 /* MLNRepeatAnimationGroup.h */,
-				FA993D44244D788400350724 /* MLNRepeatAnimationGroup.m */,
 				729E5BDC9F242FE845810F8AAE570FAA /* MLNRotateAnimation.h */,
 				6E2ABE1DC82FBC3C5E4E9AF52CC3112E /* MLNRotateAnimation.m */,
 				699BBCD1C29AD43F92E0F1A1853E4280 /* MLNScaleAnimation.h */,
@@ -4761,7 +4749,6 @@
 				218A89291D6824D8872AFAB6614B386D /* MLNHttpDefaultHandler.h in Headers */,
 				058FE553A9D962E4676533DC20AB6C5C /* MLNHttpHandlerProtocol.h in Headers */,
 				F3B8C8E6B373AF2D36F2AD1028C2F4EE /* MLNImageLoaderProtocol.h in Headers */,
-				FA993D49244D788400350724 /* MLNRepeatAnimation.h in Headers */,
 				134BF0B4C18340A705125AB841A33E5C /* MLNImageView.h in Headers */,
 				919DE45155F400071A4AC2C66D09AAEF /* MLNInnerCollectionView.h in Headers */,
 				BF935679C959DD9509465513B68FA830 /* MLNInnerScrollView.h in Headers */,
@@ -4806,7 +4793,6 @@
 				442B2F31845B0FDE814A9DA360E56D5C /* MLNNetworkReachability.h in Headers */,
 				2BE74BE5B5D532E80F4BD76611517DA6 /* MLNNetworkReachabilityManager.h in Headers */,
 				9ACE05D8CADCB5965AEA18577C3C5EF7 /* MLNNinePatchImageFactory.h in Headers */,
-				FA993D4A244D788400350724 /* MLNRepeatAnimationGroup.h in Headers */,
 				32C1D14E07374AE3824EC6DB4451475C /* MLNOvershotInterpolater.h in Headers */,
 				1AC8D0895760595452E42A5006E672D8 /* MLNPaddingContainerViewProtocol.h in Headers */,
 				F1D63D0862E005C268077B49C548EC49 /* MLNPoint.h in Headers */,
@@ -5749,7 +5735,6 @@
 				EA6EF7ABC4F9802BA46AD9CEBE606262 /* ldump.c in Sources */,
 				C4844F2E1589E2C45EC0D02292AE979C /* lfunc.c in Sources */,
 				7744A88A7E966F750B40237D90231DDD /* lgc.c in Sources */,
-				FA993D47244D788400350724 /* MLNRepeatAnimation.m in Sources */,
 				25DF6DBBE953F481C8F58858EE41E543 /* linit.c in Sources */,
 				26F0597632DD8B09C9071E2EC7DD7AC6 /* liolib.c in Sources */,
 				0DDDE0074A4EA848A9E02F3C5982EC63 /* llex.c in Sources */,
@@ -5936,7 +5921,6 @@
 				FA993D41244D773800350724 /* MLNCollectionLayout.m in Sources */,
 				A70E5C4B3D0452FFEB957932873B7BDA /* NSMutableDictionary+MLNMap.m in Sources */,
 				E50A90AC76DEC9CA14FDC4E1BD44EEDC /* NSNumber+MLNCore.m in Sources */,
-				FA993D48244D788400350724 /* MLNRepeatAnimationGroup.m in Sources */,
 				B7E18020B65AA1B779670AD87227DAB3 /* NSObject+MLNCore.m in Sources */,
 				57248133661723D3D29309C1605CC557 /* NSString+MLNCore.m in Sources */,
 				1A9EF4B6413FAF5AC535C1B0FA3CBD88 /* NSString+MLNKit.m in Sources */,
