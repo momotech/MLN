@@ -587,6 +587,11 @@
     }
 }
 
+- (void)lua_setAutoBack:(BOOL)autoBack
+{
+    _autoBack = autoBack;
+}
+
 #pragma mark - Export To Lua
 LUA_EXPORT_BEGIN(MLNCanvasAnimation)
 LUA_EXPORT_PROPERTY(setPivotXType, "setPivotXType:", "pivotXType", MLNCanvasAnimation)
@@ -606,6 +611,7 @@ LUA_EXPORT_METHOD(setStartCallback, "lua_setStartCallback:", MLNCanvasAnimation)
 LUA_EXPORT_METHOD(setEndCallback, "lua_setEndCallback:", MLNCanvasAnimation)
 LUA_EXPORT_METHOD(setRepeatCallback, "lua_setRepeatCallback:", MLNCanvasAnimation)
 LUA_EXPORT_METHOD(clone, "lua_clone", MLNCanvasAnimation)
+LUA_EXPORT_METHOD(setAutoBack, "lua_setAutoBack:", MLNCanvasAnimation)
 LUA_EXPORT_END(MLNCanvasAnimation, CanvasAnimation, NO, NULL, NULL)
 
 @end
