@@ -916,10 +916,6 @@
 		DE8EF08F4267FFB935DD9B9C90078652 /* MLNHotReloadUI.h in Headers */ = {isa = PBXBuildFile; fileRef = F54DF995AC9872CD0263031FA90B2FD5 /* MLNHotReloadUI.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		DE9D22762C1B90EB59DFF520E389F1E1 /* MLNGaussEffectHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 0E0BD44229E34137E816B34A2BC78B58 /* MLNGaussEffectHandler.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		DF1E5C5712871055949A66ABEE52B5BE /* MJRefreshAutoFooter.m in Sources */ = {isa = PBXBuildFile; fileRef = A31DFB4D0E125D0B32C4827F7F879E93 /* MJRefreshAutoFooter.m */; };
-		DF2D1F17244469EE007DFD6A /* MLNRepeatAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = DF2D1F15244469EE007DFD6A /* MLNRepeatAnimation.h */; };
-		DF2D1F18244469EE007DFD6A /* MLNRepeatAnimation.m in Sources */ = {isa = PBXBuildFile; fileRef = DF2D1F16244469EE007DFD6A /* MLNRepeatAnimation.m */; };
-		DF2D1F1B24457DB0007DFD6A /* MLNRepeatAnimationGroup.h in Headers */ = {isa = PBXBuildFile; fileRef = DF2D1F1924457DB0007DFD6A /* MLNRepeatAnimationGroup.h */; };
-		DF2D1F1C24457DB0007DFD6A /* MLNRepeatAnimationGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = DF2D1F1A24457DB0007DFD6A /* MLNRepeatAnimationGroup.m */; };
 		DF2F1F168A68F226FDD4C5EEB310B638 /* MLNAnimationDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 0477B703DAEB311522E3C26201651678 /* MLNAnimationDelegate.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		DF623671F95245E2B1AFE5DC98FA68D3 /* SDAnimatedImagePlayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 9E982DF893E741C723541D8A0ACB2197 /* SDAnimatedImagePlayer.m */; };
 		DFEEB75EA1B2172C382FA8594ADA0241 /* EXPMatchers+beLessThan.m in Sources */ = {isa = PBXBuildFile; fileRef = A6995C685BC367F63BE3A9BA855AF21C /* EXPMatchers+beLessThan.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
@@ -2170,10 +2166,6 @@
 		DEB8565FE974649B1C06555AD2044020 /* MLNDebugContext.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLNDebugContext.m; sourceTree = "<group>"; };
 		DEBC4D8F1DDEFD836B41B3257FD70AD7 /* mln_select.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; path = mln_select.c; sourceTree = "<group>"; };
 		DEE7C2EEB4AC2B8758B2C190BDD139A8 /* lmem.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = lmem.c; path = "MLN-iOS/MLN/Classes/LuaLib/lmem.c"; sourceTree = "<group>"; };
-		DF2D1F15244469EE007DFD6A /* MLNRepeatAnimation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNRepeatAnimation.h; sourceTree = "<group>"; };
-		DF2D1F16244469EE007DFD6A /* MLNRepeatAnimation.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNRepeatAnimation.m; sourceTree = "<group>"; };
-		DF2D1F1924457DB0007DFD6A /* MLNRepeatAnimationGroup.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNRepeatAnimationGroup.h; sourceTree = "<group>"; };
-		DF2D1F1A24457DB0007DFD6A /* MLNRepeatAnimationGroup.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNRepeatAnimationGroup.m; sourceTree = "<group>"; };
 		DFC8A8CAA99305E3A5D43A3E31B45B10 /* SDAnimatedImage.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = SDAnimatedImage.m; path = SDWebImage/Core/SDAnimatedImage.m; sourceTree = "<group>"; };
 		E03EEA512279003DCE5FE260F3270B38 /* SDWebImageDownloaderConfig.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = SDWebImageDownloaderConfig.h; path = SDWebImage/Core/SDWebImageDownloaderConfig.h; sourceTree = "<group>"; };
 		E07670B494A46978D352A6936F73B970 /* ResourceBundle-MLNDevTool_UI-MLNDevTool-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "ResourceBundle-MLNDevTool_UI-MLNDevTool-Info.plist"; sourceTree = "<group>"; };
@@ -3650,10 +3642,6 @@
 				2131041B6676CE4A13B4192D309DB04E /* MLNScaleAnimation.m */,
 				7ADA5ADFBC4889A1531E63D1F1927867 /* MLNTranslateAnimation.h */,
 				B1D393B7693D42AFF1552464763762E3 /* MLNTranslateAnimation.m */,
-				DF2D1F15244469EE007DFD6A /* MLNRepeatAnimation.h */,
-				DF2D1F16244469EE007DFD6A /* MLNRepeatAnimation.m */,
-				DF2D1F1924457DB0007DFD6A /* MLNRepeatAnimationGroup.h */,
-				DF2D1F1A24457DB0007DFD6A /* MLNRepeatAnimationGroup.m */,
 			);
 			path = CanvasAnimation;
 			sourceTree = "<group>";
@@ -5210,7 +5198,6 @@
 				270CD59BC4AD319602787D39AFF00D92 /* MLNShadowOperation.h in Headers */,
 				F03B0D92AD7482CF06CC6C2D72D3F54B /* MLNShapeContext.h in Headers */,
 				C52918242AF361C6531A936593B896DE /* MLNSize.h in Headers */,
-				DF2D1F17244469EE007DFD6A /* MLNRepeatAnimation.h in Headers */,
 				1CA1CB027536A9B7C22CFCA6C8778D50 /* MLNSizeCahceManager.h in Headers */,
 				9B4A513102BB6A7059EC9EAF676B305B /* MLNSnapshotManager.h in Headers */,
 				B908B499874BD296A402A3B3A683377D /* MLNStaticExporter.h in Headers */,
@@ -5252,7 +5239,6 @@
 				56FBC2790410AE20EEA0FDA068826492 /* MLNWaterfallAdapter.h in Headers */,
 				CFF7D88A8903D69FC61C58F6CC4812B9 /* MLNWaterfallHeaderView.h in Headers */,
 				EECCE46BBCA297E7FC35E93E00BDEB81 /* MLNWaterfallLayout.h in Headers */,
-				DF2D1F1B24457DB0007DFD6A /* MLNRepeatAnimationGroup.h in Headers */,
 				FE0B00300313167CF27CBDC76FB2B02B /* MLNWaterfallLayoutDelegate.h in Headers */,
 				3D4FA3AD64C541AF6CCD47E331BD0FFF /* MLNWaterfallView.h in Headers */,
 				EC195E221DDFB71DA9E0A6342997AE87 /* MLNWeakAssociatedObject.h in Headers */,
@@ -6042,7 +6028,6 @@
 				50657AD2531BFAAB70B9F2129885D650 /* loslib.c in Sources */,
 				AF2B861815EC73F43FEDA8630E3EE10A /* lparser.c in Sources */,
 				9C51321B7E30D7B5799744253218F24B /* lstate.c in Sources */,
-				DF2D1F1C24457DB0007DFD6A /* MLNRepeatAnimationGroup.m in Sources */,
 				2D86C3EFF9083265E724EA79C3C37F76 /* lstring.c in Sources */,
 				2C766E091DE6F4087D9800D3044C8483 /* lstrlib.c in Sources */,
 				BD9EF38316AB9995FE27A843C707A646 /* ltable.c in Sources */,
@@ -6165,7 +6150,6 @@
 				0A3754104B4D6DF9B4E33CAA2551ED59 /* MLNRotateAnimation.m in Sources */,
 				AD0DE245E3BBA89E986F7D5735E3DD19 /* MLNSafeAreaAdapter.m in Sources */,
 				CBCF435255D85D52CFE243E98DEACD9B /* MLNSafeAreaProxy.m in Sources */,
-				DF2D1F18244469EE007DFD6A /* MLNRepeatAnimation.m in Sources */,
 				209B4D7477FF3FB77D7E6106474C7CA7 /* MLNScaleAnimation.m in Sources */,
 				4396AF9727444A5F116856528365D7DD /* MLNScrollCallbackView.m in Sources */,
 				F91C7E028B47248E5288A287F17D6AD0 /* MLNScrollView.m in Sources */,

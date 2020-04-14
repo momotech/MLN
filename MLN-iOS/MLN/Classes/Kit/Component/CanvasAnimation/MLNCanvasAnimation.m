@@ -583,7 +583,7 @@
             self.animationGroup.autoreverses = NO;
             break;
         case MLNAnimationRepeatTypeReverse:
-            self.animationGroup.repeatCount = count;
+            self.animationGroup.repeatCount = count * 1.0 / 2;
             self.animationGroup.autoreverses = YES;
             break;
         default:
