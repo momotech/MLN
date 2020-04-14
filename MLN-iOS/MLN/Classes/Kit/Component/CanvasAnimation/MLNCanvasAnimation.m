@@ -65,9 +65,9 @@
             targetView.layer.timeOffset = .0f;
             targetView.layer.beginTime = .0f;
             [targetView.layer removeAnimationForKey:self.animationKey];
-            CAAnimation *animation = nil;
-            [self animationDidStop:animation finished:NO];
-            _animationDelegate.ignoreAnimationCallback = YES;
+//            CAAnimation *animation = nil;
+//            [self animationDidStop:animation finished:NO];
+//            _animationDelegate.ignoreAnimationCallback = YES;
         }
             break;
         default:
@@ -81,6 +81,7 @@
 - (void)cancel
 {
     [_targetView.layer removeAnimationForKey:self.animationKey];
+    [[MLNAnimationHandler sharedHandler] removeCallback:self];
     self.status = MLNCanvasAnimationStatusNone;
 }
 
@@ -241,6 +242,15 @@
     }
 }
 
+- (void)animationStopCallback:(BOOL)finishedFlag
+{
+    MLNBlock *callback = [self.animationCallbacks objectForKey:kAnimationEnd];
+    if (callback) {
+        [callback addBOOLArgument:finishedFlag];
+        [callback callIfCan];
+    }
+}
+
 #pragma mark - CAAnimationDelegate
 - (void)animationDidStart:(CAAnimation *)anim
 {
@@ -254,11 +264,7 @@
 - (void)animationDidStop:(CAAnimation *)anim finished:(BOOL)flag
 {
     // callback
-    MLNBlock *callback = [self.animationCallbacks objectForKey:kAnimationEnd];
-    if (callback) {
-        [callback addBOOLArgument:flag];
-        [callback callIfCan];
-    }
+    [self animationStopCallback:flag];
     [[MLNAnimationHandler sharedHandler] removeCallback:self];
 }
 
