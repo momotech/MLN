@@ -159,14 +159,11 @@
             self.animationGroup.animations = [self animationValues];
             for (CABasicAnimation *anim in self.animationGroup.animations) {
                 anim.removedOnCompletion =  _autoBack;
-                if (!_autoBack) {
-                    anim.fillMode = kCAFillModeForwards;
-                }
+                anim.fillMode = _autoBack ? kCAFillModeBackwards : kCAFillModeBoth;
             }
             self.animationGroup.removedOnCompletion = _autoBack;
-            if (!_autoBack) {
-                self.animationGroup.fillMode = kCAFillModeForwards;
-            }
+            self.animationGroup.fillMode = _autoBack ? kCAFillModeBackwards : kCAFillModeBoth;
+            
             self.status = MLNCanvasAnimationStatusRunning;
             [self animationRealStart];
             if (self.repeatCount) {
