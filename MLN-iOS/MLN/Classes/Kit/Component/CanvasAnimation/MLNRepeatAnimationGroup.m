@@ -2,7 +2,7 @@
 //  MLNRepeatAnimationGroup.m
 //  MLN
 //
-//  Created by asnail on 2020/4/14.
+//  Created by MoMo on 2020/4/14.
 //
 
 #import "MLNRepeatAnimationGroup.h"
@@ -11,7 +11,7 @@
 
 @interface MLNRepeatAnimationGroup ()
 
-@property (nonatomic, strong) NSMutableDictionary<NSString *,MLNRepeatAnimation *> *animations;
+@property (nonatomic, strong) NSMutableDictionary<NSString *,MLNRepeatAnimation *> *mln_animations;
 
 @end
 

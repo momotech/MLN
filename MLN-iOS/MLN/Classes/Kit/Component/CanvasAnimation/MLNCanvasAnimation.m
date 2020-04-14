@@ -566,9 +566,12 @@
 #pragma mark - Export Method
 - (void)lua_setRepeat:(MLNAnimationRepeatType)type count:(float)count
 {
-    if (count == -1) {
+    if (count < 0) {
         count = MAX_INT;
+    }else {
+        count ++;
     }
+    
     self.repeatType = type;
     self.repeatCount = count;
     switch (type) {
