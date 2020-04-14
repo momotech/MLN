@@ -81,7 +81,6 @@
 - (void)cancel
 {
     [_targetView.layer removeAnimationForKey:self.animationKey];
-    [[MLNAnimationHandler sharedHandler] removeCallback:self];
     self.status = MLNCanvasAnimationStatusNone;
 }
 
