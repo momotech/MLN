@@ -157,6 +157,7 @@
     switch (_status) {
         case MLNCanvasAnimationStatusReadyToPlay:{
             self.animationGroup.animations = [self animationValues];
+            self.animationGroup.beginTime = CACurrentMediaTime() + _delay;
             for (CABasicAnimation *anim in self.animationGroup.animations) {
                 anim.removedOnCompletion =  _autoBack;
                 anim.fillMode = _autoBack ? kCAFillModeBackwards : kCAFillModeBoth;
@@ -398,7 +399,7 @@
 {
     if (_delay) {
         for (CABasicAnimation *animation in self.animations.allValues) {
-            animation.beginTime = _delay;
+            animation.duration = _duration;
         }
     }
     return self.animations.allValues;
@@ -505,7 +506,6 @@
 - (void)setDelay:(CGFloat)delay
 {
     _delay = delay;
-//    self.animationGroup.beginTime = delay;
 }
 
 - (void)setRepeatCount:(NSInteger)repeatCount

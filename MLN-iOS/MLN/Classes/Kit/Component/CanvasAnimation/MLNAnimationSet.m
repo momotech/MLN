@@ -85,6 +85,11 @@
     [self.animationsGroupArray addObject:animation.animationGroup];
 }
 
+- (void)setDuration:(CGFloat)duration
+{
+}
+
+
 #pragma mark - Export To Lua
 LUA_EXPORT_BEGIN(MLNAnimationSet)
 LUA_EXPORT_METHOD(addAnimation, "lua_addAnimation:", MLNAnimationSet)
