@@ -667,6 +667,46 @@ local function debug_hook(event, line)
 
     --if is_pending(server) then handle_breakpoint(server) end
 
+    --- MLNUI声明式断点 Begin ---
+    local models = mobdebug.commandmodels
+    local shouldreturn = (models ~= nil) and true or false
+
+    if models ~= nil and type(models) == "table" then
+      local filename = file
+      if string.find(file, ".") then
+        _, _, filename = string.find(file, "(%a+)")
+      end
+
+      local filemodel = models[filename]
+      if filemodel ~= nil and type(filemodel) == "table" then
+        for _, cmds in pairs(filemodel) do
+          local from, to, cmd
+          for k, v in pairs(cmds) do
+            if k == "from" then
+              from = v
+            elseif k == "to" then
+              to = v
+            elseif k == "cmd" then
+              cmd = v
+            end
+          end
+          if line >= from and line <= to then
+             shouldreturn = false
+             local func = loadstring(cmd)
+             if func and type(func) == "function" then
+                func()
+             end
+          end
+        end
+      end
+
+    end
+
+    if shouldreturn then
+       return
+    end
+    --- MLNUI声明式断点 End ---
+
     local vars, status, res
     if (watchescnt > 0) then
       vars = capture_vars(1)
@@ -1096,12 +1136,23 @@ local function debugger_loop(sev, svars, sfile, sline)
       else
         server:send("400 Bad Request\n")
       end
+
+    elseif command == "MODELS" then
+      local params = string.match(line, "--%s*(%b{})%s*$")
+      local pfunc = params and loadstring("return "..params)
+      params = pfunc and pfunc() --got table
+      params = (type(params) == "table" and params or {}) --校验，确保是table类型
+      mobdebug.commandmodels = params
+      server:send("200 OK\n") --直接当做成功处理
+    
     elseif command == "EXIT" then
       server:send("200 OK\n")
       coroyield("exit")
+
     else
       server:send("400 Bad Request\n")
     end
+
   end
 end
 
@@ -1756,6 +1807,8 @@ mobdebug.output = output
 mobdebug.onexit = os and os.exit or done
 mobdebug.onscratch = nil -- callback
 mobdebug.basedir = function(b) if b then basedir = b end return basedir end
+mobdebug.commandmodels = nil
 
 return mobdebug
+
 
