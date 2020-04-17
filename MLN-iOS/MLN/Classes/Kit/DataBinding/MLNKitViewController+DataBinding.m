@@ -15,7 +15,7 @@
 - (UIView *)findViewById:(NSString *)identifier {
     lua_State *L = self.kitInstance.luaCore.state;
     int base = lua_gettop(L);
-    lua_getglobal(L, "layout");
+    lua_getglobal(L, "ui_views");
     if (!lua_istable(L, -1)) {
         lua_settop(L, base);
         return nil;
