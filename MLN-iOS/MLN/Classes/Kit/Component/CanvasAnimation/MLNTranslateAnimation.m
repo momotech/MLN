@@ -107,6 +107,27 @@ static int lua_animation_init(lua_State *L) {
     return 0;
 }
 
+- (void)startWithView:(UIView *)targetView
+{
+    [self resetRelativeValuesWithTargetView:targetView];
+    [super startWithView:targetView];
+}
+
+- (void)resetRelativeValuesWithTargetView:(UIView *)targetView
+{
+    CABasicAnimation *xAnimation = [self animationForKey:kTranslationX];
+    CGFloat fromX = [self relativeValue:YES targetView:targetView relativeType:_fromXType value:_fromX];
+    xAnimation.fromValue = @(fromX);
+    CGFloat toX = [self relativeValue:YES targetView:targetView relativeType:_toXType value:_toX];
+    xAnimation.toValue = @(toX);
+    
+    CABasicAnimation *yAnimation = [self animationForKey:kTranslationY];
+    CGFloat fromY = [self relativeValue:YES targetView:targetView relativeType:_fromYType value:_fromY];
+    yAnimation.fromValue = @(fromY);
+    CGFloat toY = [self relativeValue:YES targetView:targetView relativeType:_toYType value:_toY];
+    yAnimation.toValue = @(toY);
+}
+
 #pragma mark - copy
 - (id)copyWithZone:(NSZone *)zone
 {
@@ -123,6 +144,19 @@ static int lua_animation_init(lua_State *L) {
 }
 
 #pragma mark - getter & setter
+- (CGFloat)relativeValue:(BOOL)xAxis
+              targetView:(UIView *)targetView
+            relativeType:(MLNAnimationValueType)rType
+                   value:(CGFloat)value
+{
+    if (rType == MLNAnimationValueTypeAbsolute) {
+        return value;
+    }
+    
+    UIView *relativeView = rType == MLNAnimationValueTypeRelativeToSelf ? targetView : targetView.superview;
+    return xAxis ? relativeView.frame.size.width * value : relativeView.frame.size.height * value;
+}
+
 - (void)setFromXType:(MLNAnimationValueType)fromXType
 {
     _fromXType = fromXType;
@@ -131,8 +165,6 @@ static int lua_animation_init(lua_State *L) {
 - (void)setFromX:(CGFloat)fromX
 {
     _fromX = fromX;
-    CABasicAnimation *animation = [self animationForKey:kTranslationX];
-    animation.fromValue = @(fromX);
 }
 
 - (void)setToXType:(MLNAnimationValueType)toXType
@@ -143,8 +175,6 @@ static int lua_animation_init(lua_State *L) {
 - (void)setToX:(CGFloat)toX
 {
     _toX = toX;
-    CABasicAnimation *animation = [self animationForKey:kTranslationX];
-    animation.toValue = @(toX);
 }
 
 - (void)setFromYType:(MLNAnimationValueType)fromYType
@@ -155,8 +185,6 @@ static int lua_animation_init(lua_State *L) {
 - (void)setFromY:(CGFloat)fromY
 {
     _fromY = fromY;
-    CABasicAnimation *animation = [self animationForKey:kTranslationY];
-    animation.fromValue = @(fromY);
 }
 
 - (void)setToYType:(MLNAnimationValueType)toYType
@@ -167,8 +195,6 @@ static int lua_animation_init(lua_State *L) {
 - (void)setToY:(CGFloat)toY
 {
     _toY = toY;
-    CABasicAnimation *animation = [self animationForKey:kTranslationY];
-    animation.toValue = @(toY);
 }
 
 #pragma mark - Export To Lua
