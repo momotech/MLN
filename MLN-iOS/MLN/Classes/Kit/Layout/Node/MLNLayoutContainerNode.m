@@ -130,6 +130,12 @@
         }
     }
     
+    if (self.overlayNode) {
+        CGFloat overlayMaxWidth = self.measuredWidth - self.overlayNode.marginLeft - self.overlayNode.marginRight;
+        CGFloat overlayMaxHeight = self.measuredHeight - self.overlayNode.marginTop - self.overlayNode.marginBottom;
+        [self.overlayNode measureSizeWithMaxWidth:overlayMaxWidth maxHeight:overlayMaxHeight];
+    }
+    
     return CGSizeMake(self.measuredWidth, self.measuredHeight);
 }
 
@@ -214,6 +220,7 @@
 {
     [self updateTargetViewFrameIfNeed];
     [self layoutSubnodes];
+    [self layoutOverlayNode];
 }
 
 - (void)layoutSubnodes
@@ -238,6 +245,9 @@
         [subnode updateTargetViewFrameIfNeed];
         if (subnode.isContainer) {
             [(MLNLayoutContainerNode *)subnode layoutSubnodes];
+        }
+        if (subnode.overlayNode) {
+            [subnode layoutOverlayNode];
         }
     }
 }

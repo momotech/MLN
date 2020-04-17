@@ -103,6 +103,7 @@ typedef enum : NSUInteger {
 @property (nonatomic, assign) BOOL isVerticalMaxMode;
 @property (nonatomic, assign) BOOL isHorizontalMaxMode;
 @property (nonatomic, assign, getter=isGone) BOOL gone;
+@property (nonatomic, assign, readonly) BOOL isSpacerNode;
 - (BOOL)isDirty;
 - (BOOL)hasNewLayout;
 - (void)changeLayoutStrategyTo:(MLNLayoutStrategy)layoutStrategy;
@@ -120,6 +121,7 @@ typedef enum : NSUInteger {
 //******                Node
 //*****
 @property (nonatomic, weak) MLNLayoutNode *supernode;
+@property (nonatomic, strong) MLNLayoutNode *overlayNode;
 //*******
 //******                Root Node
 //*****
@@ -161,6 +163,7 @@ typedef enum : NSUInteger {
 - (void)needUpdateLayout;
 - (void)updatedLayout;
 - (void)requestLayout;
+- (void)layoutOverlayNode;
 
 //*******
 //******                bind and unbind

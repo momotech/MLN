@@ -38,6 +38,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)lua_insertSubview:(UIView *)view atIndex:(NSInteger)index;
 - (void)lua_removeFromSuperview;
 - (void)lua_removeAllSubViews;
+- (void)lua_overlay:(UIView *)overlay;
 
 /**
  标注当前视图需要重新布局，只影响当前视图。

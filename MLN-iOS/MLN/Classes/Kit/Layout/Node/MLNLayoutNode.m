@@ -76,6 +76,11 @@
             break;
         }
     }
+    if (self.overlayNode) {
+        CGFloat overlayMaxWidth = self.measuredWidth - self.overlayNode.marginLeft - self.overlayNode.marginRight;
+        CGFloat overlayMaxHeight = self.measuredHeight - self.overlayNode.marginTop - self.overlayNode.marginBottom;
+        [self.overlayNode measureSizeWithMaxWidth:overlayMaxWidth maxHeight:overlayMaxHeight];
+    }
     return CGSizeMake(self.measuredWidth, self.measuredHeight);
 }
 
@@ -335,6 +340,60 @@ MLN_FORCE_INLINE void resetArchpointIfNeed(MLNLayoutNode __unsafe_unretained *no
     if (node.needUpdateAnchorPoint) {
         node.targetView.layer.anchorPoint = node.anchorPoint;
         node.needUpdateAnchorPoint = NO;
+    }
+}
+
+- (void)layoutOverlayNode {
+    MLNLayoutNode *overlayNode = self.overlayNode;
+    if (overlayNode == nil) return;
+    if (overlayNode.isGone) return;
+    
+    switch (overlayNode.layoutStrategy) {
+        case MLNLayoutStrategyNativeFrame:
+            overlayNode.measuredX = overlayNode.x;
+            overlayNode.measuredY = overlayNode.y;
+            break;
+            
+        case MLNLayoutStrategySimapleAuto: {
+            CGFloat availableWidth = self.measuredWidth - self.paddingLeft - self.paddingRight;
+            CGFloat availableHeight = self.measuredHeight - self.paddingTop - self.paddingBottom;
+            switch (overlayNode.gravity & MLNGravityHorizontalMask) {
+                case MLNGravityCenterHorizontal:
+                    overlayNode.measuredX = self.paddingLeft + (availableWidth - overlayNode.measuredWidth) / 2.0 + overlayNode.marginLeft - overlayNode.marginRight;
+                    break;
+                case MLNGravityRight:
+                    overlayNode.measuredX = self.measuredWidth - self.paddingRight - overlayNode.measuredWidth - overlayNode.marginRight;
+                    break;
+                case MLNGravityLeft:
+                default:
+                    overlayNode.measuredX = self.paddingLeft + overlayNode.marginLeft;
+                    break;
+            }
+            switch (overlayNode.gravity & MLNGravityVerticalMask) {
+                case MLNGravityCenterVertical:
+                    overlayNode.measuredY = self.paddingTop + (availableHeight - overlayNode.measuredHeight) / 2.0 + overlayNode.marginTop - overlayNode.marginBottom;
+                    break;
+                case MLNGravityBottom:
+                    overlayNode.measuredY = self.measuredHeight - self.paddingBottom - overlayNode.measuredHeight - overlayNode.marginBottom;
+                    break;
+                case MLNGravityTop:
+                default:
+                    overlayNode.measuredY = self.paddingTop + overlayNode.marginTop;
+                    break;
+            }
+            break;
+        }
+            
+        default:
+            break;
+    }
+
+    [overlayNode updateTargetViewFrameIfNeed];
+    if (overlayNode.isContainer) {
+        [(MLNLayoutContainerNode *)overlayNode layoutSubnodes];
+    }
+    if (overlayNode.overlayNode) {
+        [overlayNode layoutOverlayNode];
     }
 }
 
@@ -636,6 +695,10 @@ MLN_FORCE_INLINE void resetArchpointIfNeed(MLNLayoutNode __unsafe_unretained *no
 - (CGFloat)measurePriority
 {
     return self.priority - (self.idx * 0.001f);
+}
+
+- (BOOL)isSpacerNode {
+    return NO;
 }
 
 #pragma mark - bind & unbind

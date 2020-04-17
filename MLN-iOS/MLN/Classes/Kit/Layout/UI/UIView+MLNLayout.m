@@ -77,6 +77,19 @@
     [subViews makeObjectsPerformSelector:@selector(lua_removeFromSuperview)];
 }
 
+- (void)lua_overlay:(UIView *)overlay {
+    if ([overlay isKindOfClass:[UIView class]]) {
+        MLNLayoutNode *oldOverlay = self.lua_node.overlayNode;
+        if (oldOverlay) {
+            [oldOverlay.targetView removeFromSuperview];
+            MLN_Lua_UserData_Release(oldOverlay.targetView);
+        }
+        [self addSubview:overlay];
+        MLN_Lua_UserData_Retain_With_Index(2, overlay);
+        self.lua_node.overlayNode = overlay.lua_node;
+    }
+}
+
 #pragma mark - Layout
 - (void)lua_needLayout
 {

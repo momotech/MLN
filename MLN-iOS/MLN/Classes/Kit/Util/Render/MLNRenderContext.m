@@ -106,6 +106,33 @@
     self.lastCornerMode = self.newCornerMode;
 }
 
+#pragma mark clipToBoundspo
+- (void)resetClipWithTask
+{
+    [self.targetView mln_pushRenderTask:self.beforeWaitingTask];
+}
+
+- (void)doClipCheck
+{
+    if (!self.targetView.mln_renderContext.didSetClipToBounds && [self.targetView.superview lua_enable]) {
+        MLNRenderContext *superContenx = [self.targetView.superview mln_renderContext];
+        if (superContenx.didSetClipToChildren) {
+            self.targetView.clipsToBounds = superContenx.clipToChildren;
+        }
+    }
+}
+
+#pragma mark - setter
+- (void)setDidSetClipToChildren:(BOOL)didSetClipToChildren
+{
+    _didSetClipToChildren = didSetClipToChildren;
+    if (!CGRectEqualToRect(self.targetView.frame, CGRectZero)) {
+        for (UIView *subview in self.targetView.subviews) {
+            [subview.mln_renderContext resetClipWithTask];
+        }
+    }
+}
+
 #pragma mark - Layer
 - (void)cleanLayerContentsIfNeed
 {
@@ -139,6 +166,7 @@
 - (void)doTask
 {
     [self doCornerTask];
+    [self doClipCheck];
     [self.gradientLayerOperation remakeIfNeed];
     MLNCornerRadius radius = [self currentCornerRadiusWithCornerMode:self.newCornerMode];
     [self.borderOperation updateCornerRadiusAndRemake:radius];

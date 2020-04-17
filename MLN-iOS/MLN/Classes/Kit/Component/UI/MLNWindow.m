@@ -371,6 +371,11 @@
     return (MLNStatusBarStyle)[[UIApplication sharedApplication] statusBarStyle];
 }
 
+- (void)lua_overlay:(UIView *)overlay {
+    [super lua_overlay:overlay];
+    [self.lua_node needLayout]; // window的测量和布局操作执行时机比较早, 故对window调用overlay需要重新layout
+}
+
 #pragma mark - Export
 LUA_EXPORT_VIEW_BEGIN(MLNWindow)
 LUA_EXPORT_VIEW_PROPERTY(safeArea, "lua_setSafeArea:", "lua_getSafeArea", MILWindow)
