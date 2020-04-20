@@ -46,7 +46,7 @@
 
 - (MLNWindow *)createLuaWindow
 {
-    return [[MLNWindow alloc] initWithFrame:self.rootView.bounds];
+    return [[MLNWindow alloc] initWithLuaCore:self.luaCore frame:self.rootView.bounds];
 }
 
 - (void)setupLuaWindow:(NSMutableDictionary *)windowExtra
