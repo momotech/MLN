@@ -36,7 +36,6 @@
 
 @property (nonatomic, strong) MLNHotReloadViewController *luaVC;
 @property (nonatomic, strong) MLNOfflineViewController *offlineViewController;
-
 @end
 
 @implementation MLNHomeViewController
