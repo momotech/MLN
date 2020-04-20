@@ -61,7 +61,7 @@
     
     NSMutableArray *arr = [[kitViewController dataForKeyPath:key] mutableCopy];
     [kitViewController updateDataForKeyPath:key value:arr];
-    
+    /*
     MLNBlock *reuseIdBlock = [callbackDic objectForKey:@"reuseId"];
     MLNBlock *height = [callbackDic objectForKey:@"height"];
     MLNBlock *size = [callbackDic objectForKey:@"size"];
@@ -113,6 +113,7 @@
         }
         return CGSizeZero;
     };
+     */
     [arr mln_startKVOIfMutableble];
     return arr;
 }
@@ -190,7 +191,7 @@
         NSLog(@"%s exception: %@",__func__, exception);
     }
 }
-
+/*
 + (NSString *)lua_reuseIdForKey:(NSString *)key section:(NSUInteger)section row:(NSUInteger)row {
     NSArray *array = [self lua_dataForKeyPath:key];
     if (array.mln_resueIdBlock) {
@@ -234,7 +235,7 @@
     NSAssert(array.mln_sizeBlock || obj.mln_sizeBlock, @"mln_sizeBlock of binded array should not be nil");
     return CGSizeZero;
 }
-
+*/
 + (void)lua_bindCellForKey:(NSString *)key section:(NSUInteger)section row:(NSUInteger)row paths:(NSArray *)paths {
     MLNKitViewController *kitViewController = (MLNKitViewController *)MLN_KIT_INSTANCE([self mln_currentLuaCore]).viewController;
 
@@ -283,11 +284,11 @@ LUA_EXPORT_STATIC_METHOD(getSectionCount, "lua_sectionCountForKey:", MLNDataBind
 LUA_EXPORT_STATIC_METHOD(getRowCount, "lua_rowCountForKey:section:", MLNDataBinding)
 LUA_EXPORT_STATIC_METHOD(getModel, "lua_modelForKey:section:row:path:", MLNDataBinding)
 LUA_EXPORT_STATIC_METHOD(updateModel, "lua_updateModelForKey:section:row:path:value:", MLNDataBinding)
-LUA_EXPORT_STATIC_METHOD(getReuseId, "lua_reuseIdForKey:section:row:", MLNDataBinding)
-LUA_EXPORT_STATIC_METHOD(getHeight, "lua_heightForKey:section:row:", MLNDataBinding)
+//LUA_EXPORT_STATIC_METHOD(getReuseId, "lua_reuseIdForKey:section:row:", MLNDataBinding)
+//LUA_EXPORT_STATIC_METHOD(getHeight, "lua_heightForKey:section:row:", MLNDataBinding)
 LUA_EXPORT_STATIC_METHOD(bindCell, "lua_bindCellForKey:section:row:paths:", MLNDataBinding)
 
-LUA_EXPORT_STATIC_METHOD(getSize, "lua_sizeForKey:section:row:", MLNDataBinding)
+//LUA_EXPORT_STATIC_METHOD(getSize, "lua_sizeForKey:section:row:", MLNDataBinding)
 
 LUA_EXPORT_STATIC_END(MLNDataBinding, DataBinding, NO, NULL)
 

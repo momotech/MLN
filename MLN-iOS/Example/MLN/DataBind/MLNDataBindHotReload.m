@@ -52,13 +52,6 @@
     NSMutableArray *models = @[arr].mutableCopy;
     self.tableModel.source = models;
 
-    self.tableModel.mln_resueIdBlock = ^NSString * _Nonnull(NSArray * _Nonnull items, NSUInteger section, NSUInteger row) {
-        return @"Cell_1";
-    };
-    self.tableModel.mln_heightBlock = ^NSUInteger(NSArray * _Nonnull items, NSUInteger section, NSUInteger row) {
-        return 120;
-    };
-    
     self.tableModel.source.mln_subscribeItem(^(NSObject * _Nonnull item, NSString * _Nonnull keyPath, NSObject * _Nullable oldValue, NSObject * _Nullable newValue) {
         NSLog(@"item  %@ keypath %@ old %@ new %@",item,keyPath,oldValue,newValue);
     });

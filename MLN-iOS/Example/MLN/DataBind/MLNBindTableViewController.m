@@ -48,20 +48,16 @@
 
 - (void)createModelArray {
     NSMutableArray *arr = @[].mutableCopy;
-    for (int i = 0; i < 2; i++) {
+    for (int i = 0; i < 3; i++) {
         MLNDataBindModel *model = [MLNDataBindModel testModel];
+        if (i == 0) {
+            model.type = @"AD";
+        }
         [arr addObject:model];
     }
     
     MLNDatabindTableViewModel *tableModel = [MLNDatabindTableViewModel testModel];
     tableModel.source = @[arr].mutableCopy;
-    
-    tableModel.mln_resueIdBlock = ^NSString * _Nonnull(NSArray * _Nonnull items, NSUInteger section, NSUInteger row) {
-        return @"Cell_1";
-    };
-    tableModel.mln_heightBlock = ^NSUInteger(NSArray * _Nonnull items, NSUInteger section, NSUInteger row) {
-        return 120;
-    };
     
     tableModel.source.mln_subscribeItem(^(NSObject * _Nonnull item, NSString * _Nonnull keyPath, NSObject * _Nonnull oldValue, NSObject * _Nonnull newValue) {
         NSLog(@"item  %@ keypath %@ old %@ new %@",item,keyPath,oldValue,newValue);

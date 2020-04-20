@@ -18,6 +18,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) BOOL hideIcon;
 @property (nonatomic, copy) NSString *iconUrl;
 
+@property (nonatomic, copy) NSString *type;
 + (instancetype)testModel;
 
 @end
