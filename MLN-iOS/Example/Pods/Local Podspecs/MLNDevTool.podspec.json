@@ -1,10 +1,6 @@
 {
   "name": "MLNDevTool",
-<<<<<<< HEAD
   "version": "0.1.0",
-=======
-  "version": "0.1.7.1",
->>>>>>> a7e14a6... Fix: local 的Adapter和Layout等对象，设置给CollectionView后，会被GC #
   "summary": "Debug Tool of MLN.",
   "description": "Debug Tool of MLN.",
   "homepage": "https://mln.immomo.com",
@@ -15,11 +11,7 @@
   "authors": "MoMo",
   "source": {
     "git": "https://github.com/momotech/MLN.git",
-<<<<<<< HEAD
-    "tag": "0.1.0"
-=======
-    "tag": "devtool-0.1.7.1"
->>>>>>> a7e14a6... Fix: local 的Adapter和Layout等对象，设置给CollectionView后，会被GC #
+    "tag": "devtool-0.1.0"
   },
   "platforms": {
     "ios": "8.0"
@@ -29,12 +21,28 @@
   "public_header_files": "MLN-iOS/MLNDevTool/Classes/*.h",
   "subspecs": [
     {
+      "name": "Protobuf",
+      "source_files": "MLN-iOS/MLNDevTool/Classes/Protobuf/**/*.{h,m,c}",
+      "public_header_files": "MLN-iOS/MLNDevTool/Classes/Protobuf/**/*.h",
+      "dependencies": {
+        "Protobuf": [
+          "~> 3.6.0"
+        ]
+      },
+      "requires_arc": false
+    },
+    {
       "name": "DevTool",
       "source_files": "MLN-iOS/MLNDevTool/Classes/DevTool/**/*.{h,m,c}",
       "public_header_files": "MLN-iOS/MLNDevTool/Classes/DevTool/**/*.h",
       "resource_bundles": {
         "MLNDevTool_Util": "MLN-iOS/MLNDevTool/Classes/DevTool/Util/**/Assets/*.{png,lua,xib,storyboard}",
         "MLNDevTool_UI": "MLN-iOS/MLNDevTool/Classes/DevTool/UI/**/Assets/*.{png,xib}"
+      },
+      "dependencies": {
+        "MLN": [
+
+        ]
       }
     },
     {
@@ -59,21 +67,13 @@
       "source_files": "MLN-iOS/MLNDevTool/Classes/Conn/**/*.{h,m,c}",
       "public_header_files": "MLN-iOS/MLNDevTool/Classes/Conn/**/*.h",
       "dependencies": {
+        "MLNDevTool/Protobuf": [
+
+        ],
         "Protobuf": [
           "~> 3.6.0"
         ]
       }
-    },
-    {
-      "name": "Protobuf",
-      "source_files": "MLN-iOS/MLNDevTool/Classes/Protobuf/**/*.{h,m,c}",
-      "public_header_files": "MLN-iOS/MLNDevTool/Classes/Protobuf/**/*.h",
-      "dependencies": {
-        "Protobuf": [
-          "~> 3.6.0"
-        ]
-      },
-      "requires_arc": false
     },
     {
       "name": "Offline",
@@ -84,6 +84,9 @@
       },
       "dependencies": {
         "MLNDevTool/DevTool": [
+
+        ],
+        "MLN": [
 
         ]
       }
@@ -98,6 +101,9 @@
       "public_header_files": "MLN-iOS/MLNDevTool/Classes/HotReload/**/*.h",
       "dependencies": {
         "MLNDevTool/DevTool": [
+
+        ],
+        "MLNDevTool/Conn": [
 
         ],
         "MLN": [
