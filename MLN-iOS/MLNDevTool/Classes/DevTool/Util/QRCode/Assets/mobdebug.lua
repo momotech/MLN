@@ -669,8 +669,6 @@ local function debug_hook(event, line)
 
     --- MLNUI声明式断点 Begin ---
     local models = mobdebug.commandmodels
-    local shouldreturn = (models ~= nil) and true or false
-
     if models ~= nil and type(models) == "table" then
       local filename = file
       if string.find(file, ".") then
@@ -691,7 +689,6 @@ local function debug_hook(event, line)
             end
           end
           if line >= from and line <= to then
-             shouldreturn = false
              local func = loadstring(cmd)
              if func and type(func) == "function" then
                 func()
@@ -700,10 +697,6 @@ local function debug_hook(event, line)
         end
       end
 
-    end
-
-    if shouldreturn then
-       return
     end
     --- MLNUI声明式断点 End ---
 
@@ -937,7 +930,7 @@ local function debugger_loop(sev, svars, sfile, sline)
           -- with a specific stack frame: `capture_vars(0, coro_debugee)`
           local env = stack and coro_debugee and capture_vars(stack-1, coro_debugee) or eval_env
           setfenv(func, env)
-          status, res = stringify_results(params, pcall(func, unpack(env['...'] or {})))
+          status, res = stringify_results(params, pcall(func, unpack(env['...'] or {}))) -- pcall will return true if no error.
         end
         if status then
           if mobdebug.onscratch then mobdebug.onscratch(res) end
@@ -1049,7 +1042,7 @@ local function debugger_loop(sev, svars, sfile, sline)
       -- the stack level value at which to stop
       if command == "OUT" then step_level = stack_level - 1
       else step_level = stack_level end
-      
+
       main_thread_should_continue_run(eval_env)
 
       --[[
