@@ -830,6 +830,22 @@ local function main_thread_should_continue_run(eval_env)
   end
 end
 
+-- 根据分析，局部变量存储在 vars[1][2] 这个表中，格式为：变量名={"变量值", "变量类型"}
+-- 这里暂时把全局变量也存储到这里，统一显示在 idea frame 面板上
+local function mln_append_global_values(vars)
+  for k, v in pairs(_G) do
+    if type(v) == "string" or 
+       type(v) == "userdata" or
+       type(v) == "number" then --暂时只显示这三种类型的全局变量
+        if string.sub(k, 1, 1) ~= "_" then --过滤掉下划线开头的全局变量（为了idea面板展示更友好）
+          local name = tostring(k) .. " [global]"
+          vars[1][2][name] = {v, v}
+        end
+    end
+  end
+  return vars
+end
+
 local function debugger_loop(sev, svars, sfile, sline)
   local command
   local app, osname
@@ -1096,7 +1112,7 @@ local function debugger_loop(sev, svars, sfile, sline)
         if params.sparse == nil then params.sparse = false end
         -- take into account additional levels for the stack frames and data management
         if tonumber(params.maxlevel) then params.maxlevel = tonumber(params.maxlevel)+4 end
-
+        vars = mln_append_global_values(vars)
         local ok, res = pcall(mobdebug.dump, vars, params)
         if ok then
           server:send("200 OK " .. tostring(res) .. "\n")
@@ -1105,6 +1121,7 @@ local function debugger_loop(sev, svars, sfile, sline)
           server:send(res)
         end
       end
+
     elseif command == "OUTPUT" then
       local _, _, stream, mode = string.find(line, "^[A-Z]+%s+(%w+)%s+([dcr])%s*$")
       if stream and mode and stream == "stdout" then
