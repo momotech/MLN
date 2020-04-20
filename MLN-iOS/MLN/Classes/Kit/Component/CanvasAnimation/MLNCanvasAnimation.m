@@ -195,7 +195,7 @@
     if ([self remainingDelay] > FLT_EPSILON) {
         return;
     }
-    CGFloat percent = (CACurrentMediaTime() - self.startTime - self.delay) / (self.duration * (_repeatType == MLNAnimationRepeatTypeReverse?2:1));
+    CGFloat percent = (CACurrentMediaTime() - self.startTime - self.delay) / (self.duration * 1);
    
     NSInteger repeatCount = (NSUInteger)percent;
     percent = percent - repeatCount;
