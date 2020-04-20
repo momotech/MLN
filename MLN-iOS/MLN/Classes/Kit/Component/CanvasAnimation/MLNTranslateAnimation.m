@@ -70,20 +70,20 @@ static int lua_animation_init(lua_State *L) {
         case 8: {
             CGFloat fromXType          = lua_tonumber(L, 1);
             CGFloat fromX              = lua_tonumber(L, 2);
-            CGFloat toXType             = lua_tonumber(L, 3);
-            CGFloat toX                    = lua_tonumber(L, 4);
-            CGFloat fromYType             = lua_tonumber(L, 5);
-            CGFloat fromY                    = lua_tonumber(L, 6);
-            CGFloat toYType             = lua_tonumber(L, 7);
-            CGFloat toY                    = lua_tonumber(L, 8);
+            CGFloat toXType            = lua_tonumber(L, 3);
+            CGFloat toX                = lua_tonumber(L, 4);
+            CGFloat fromYType          = lua_tonumber(L, 5);
+            CGFloat fromY              = lua_tonumber(L, 6);
+            CGFloat toYType            = lua_tonumber(L, 7);
+            CGFloat toY                = lua_tonumber(L, 8);
             animation = [[MLNTranslateAnimation alloc] initWith:fromXType fromX:fromX toXType:toXType toX:toX fromYType:fromYType fromY:fromY toYType:toYType toY:toY];
         }
             break;
         case 4: {
-            CGFloat fromX          = lua_tonumber(L, 1);
-            CGFloat toX              = lua_tonumber(L, 2);
-            CGFloat fromY                    = lua_tonumber(L, 3);
-            CGFloat toY                    = lua_tonumber(L, 4);
+            CGFloat fromX             = lua_tonumber(L, 1);
+            CGFloat toX               = lua_tonumber(L, 2);
+            CGFloat fromY             = lua_tonumber(L, 3);
+            CGFloat toY               = lua_tonumber(L, 4);
             animation = [[MLNTranslateAnimation alloc] initWith:fromX toX:toX fromY:fromY toY:toY];
         }
             break;
