@@ -79,7 +79,7 @@
     animation = [animation copy];
     [self.animationsArray addObject:animation];
     animation.animationGroup.animations = [animation animationValues];
-    self.duration = MAX(self.duration, animation.duration + animation.delay);
+    self.duration = MAX(self.duration, animation.duration * animation.repeatCount + animation.delay);
     self.animationGroup.duration = self.duration;
     self.pivotX = animation.pivotX;
     self.pivotXType = animation.pivotXType;
@@ -90,6 +90,7 @@
 
 - (void)setDuration:(CGFloat)duration
 {
+    [super setDuration:duration];
 }
 
 
