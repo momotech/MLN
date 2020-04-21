@@ -70,7 +70,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface MLNKitViewController () {
     MLNDataBinding *_dataBinding;
 }
-@property (nonatomic, strong, readonly) MLNDataBinding *dataBinding;
+//@property (nonatomic, strong, readonly) MLNDataBinding *dataBinding;
 @end
 
 NS_ASSUME_NONNULL_END
