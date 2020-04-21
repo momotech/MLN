@@ -43,7 +43,7 @@
 //    [viewController.dataBinding bindArray:self.modelArray forKey:@"source"];
     [viewController bindData:self.tableModel forKey:@"tableModel"];
     
-    [viewController addToSuperViewController:self frame:self.view.bounds];
+    [viewController mln_addToSuperViewController:self frame:self.view.bounds];
 }
 
 - (void)createModelArray {

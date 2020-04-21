@@ -35,7 +35,7 @@
     });
     
     [viewController bindData:self.model forKey:@"userData"];
-    [viewController addToSuperViewController:self frame:self.view.bounds];
+    [viewController mln_addToSuperViewController:self frame:self.view.bounds];
 }
 
 - (void)testChangeModel:(int)cnt {
