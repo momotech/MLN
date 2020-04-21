@@ -57,7 +57,7 @@
     });
     
 //    [self.dataBinding bindArray:models forKey:@"source"];
-    [self.dataBinding bindData:self.tableModel forKey:@"tableModel"];
+    [self.mln_dataBinding bindData:self.tableModel forKey:@"tableModel"];
     
     [self testModel];
 }

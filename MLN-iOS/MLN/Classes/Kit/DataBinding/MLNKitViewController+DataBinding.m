@@ -36,23 +36,23 @@
 }
 
 - (void)bindData:(NSObject *)data forKey:(NSString *)key {
-    [self.dataBinding bindData:data forKey:key];
+    [self.mln_dataBinding bindData:data forKey:key];
 }
 
 - (void)updateDataForKeyPath:(NSString *)keyPath value:(id)value {
-    [self.dataBinding updateDataForKeyPath:keyPath value:value];
+    [self.mln_dataBinding updateDataForKeyPath:keyPath value:value];
 }
 
 - (id __nullable)dataForKeyPath:(NSString *)keyPath {
-    return [self.dataBinding dataForKeyPath:keyPath];
+    return [self.mln_dataBinding dataForKeyPath:keyPath];
 }
 
 - (void)addDataObserver:(NSObject<MLNKVOObserverProtol> *)observer forKeyPath:(NSString *)keyPath {
-    [self.dataBinding addDataObserver:observer forKeyPath:keyPath];
+    [self.mln_dataBinding addDataObserver:observer forKeyPath:keyPath];
 }
 
 - (void)removeDataObserver:(NSObject<MLNKVOObserverProtol> *)observer forKeyPath:(NSString *)keyPath {
-    [self.dataBinding removeDataObserver:observer forKeyPath:keyPath];
+    [self.mln_dataBinding removeDataObserver:observer forKeyPath:keyPath];
 }
 
 - (void)addToSuperViewController:(UIViewController *)superVC frame:(CGRect) frame {
@@ -62,7 +62,14 @@
     [self didMoveToParentViewController:superVC];
 }
 
-- (MLNDataBinding *)dataBinding {
+//- (MLNDataBinding *)dataBinding {
+//    if (!_dataBinding) {
+//        _dataBinding = [[MLNDataBinding alloc] init];
+//    }
+//    return _dataBinding;
+//}
+
+- (MLNDataBinding *)mln_dataBinding {
     if (!_dataBinding) {
         _dataBinding = [[MLNDataBinding alloc] init];
     }
@@ -74,3 +81,16 @@
 //@implementation MLNKitViewController (ArrayBinding)
 //
 //@end
+
+@implementation UIViewController (MLNDataBinding)
+
+- (MLNDataBinding *)mln_dataBinding {
+    MLNDataBinding *obj = objc_getAssociatedObject(self, _cmd);
+    if (!obj) {
+        obj = [[MLNDataBinding alloc] init];
+        objc_setAssociatedObject(self, _cmd, obj, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    }
+    return obj;
+}
+
+@end

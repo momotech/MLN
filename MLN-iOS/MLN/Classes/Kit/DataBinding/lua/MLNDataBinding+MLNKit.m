@@ -23,19 +23,19 @@
 @implementation MLNDataBinding (MLNKit)
 
 + (void)lua_bindDataForKeyPath:(NSString *)keyPath handler:(MLNBlock *)handler {
-    MLNKitViewController *kitViewController = (MLNKitViewController *)MLN_KIT_INSTANCE([self mln_currentLuaCore]).viewController;
+    UIViewController *kitViewController = (MLNKitViewController *)MLN_KIT_INSTANCE([self mln_currentLuaCore]).viewController;
     NSObject<MLNKVOObserverProtol> *observer = [MLNBlockObserver observerWithBlock:handler keyPath:keyPath];
-    [kitViewController addDataObserver:observer forKeyPath:keyPath];
+    [kitViewController.mln_dataBinding addDataObserver:observer forKeyPath:keyPath];
 }
 
 + (void)lua_updateDataForKeyPath:(NSString *)keyPath value:(id)value {
-    MLNKitViewController *kitViewController = (MLNKitViewController *)MLN_KIT_INSTANCE([self mln_currentLuaCore]).viewController;
-    [kitViewController updateDataForKeyPath:keyPath value:value];
+    UIViewController *kitViewController = (MLNKitViewController *)MLN_KIT_INSTANCE([self mln_currentLuaCore]).viewController;
+    [kitViewController.mln_dataBinding updateDataForKeyPath:keyPath value:value];
 }
 
 + (id __nullable)lua_dataForKeyPath:(NSString *)keyPath {
-    MLNKitViewController *kitViewController = (MLNKitViewController *)MLN_KIT_INSTANCE([self mln_currentLuaCore]).viewController;
-    NSObject *obj = [kitViewController dataForKeyPath:keyPath];
+    UIViewController *kitViewController = (MLNKitViewController *)MLN_KIT_INSTANCE([self mln_currentLuaCore]).viewController;
+    NSObject *obj = [kitViewController.mln_dataBinding dataForKeyPath:keyPath];
     if ([obj isKindOfClass:[NSArray class]]) {
         return [(NSArray *)obj mln_convertToLuaTableAvailable];
     }
@@ -43,7 +43,7 @@
 }
 
 + (id __nullable)lua_mockForKey:(NSString *)key data:(NSDictionary *)dic {
-    MLNKitViewController *kitViewController = (MLNKitViewController *)MLN_KIT_INSTANCE([self mln_currentLuaCore]).viewController;
+    UIViewController *kitViewController = (MLNKitViewController *)MLN_KIT_INSTANCE([self mln_currentLuaCore]).viewController;
 //    if ([dic isKindOfClass:[NSArray class]]) {
 //        return [self lua_mockArrayForKey:key data:(NSArray *)dic callbackDic:nil];
 //    }
@@ -52,15 +52,15 @@
         return nil;
     }
     NSMutableDictionary *map = dic.mln_mutalbeCopy;
-    [kitViewController.dataBinding bindData:map forKey:key];
+    [kitViewController.mln_dataBinding bindData:map forKey:key];
     return map;
 }
 
 + (id __nullable)lua_mockArrayForKey:(NSString *)key data:(NSArray *)data callbackDic:(NSDictionary *)callbackDic {
-    MLNKitViewController *kitViewController = (MLNKitViewController *)MLN_KIT_INSTANCE([self mln_currentLuaCore]).viewController;
+    UIViewController *kitViewController = (MLNKitViewController *)MLN_KIT_INSTANCE([self mln_currentLuaCore]).viewController;
     
-    NSMutableArray *arr = [[kitViewController dataForKeyPath:key] mutableCopy];
-    [kitViewController updateDataForKeyPath:key value:arr];
+    NSMutableArray *arr = [[kitViewController.mln_dataBinding dataForKeyPath:key] mutableCopy];
+    [kitViewController.mln_dataBinding updateDataForKeyPath:key value:arr];
     /*
     MLNBlock *reuseIdBlock = [callbackDic objectForKey:@"reuseId"];
     MLNBlock *height = [callbackDic objectForKey:@"height"];
@@ -127,10 +127,10 @@
 
 // userData.source
 + (void)lua_bindListViewForKey:(NSString *)key listView:(UIView *)listView {
-    MLNKitViewController *kitViewController = (MLNKitViewController *)MLN_KIT_INSTANCE([self mln_currentLuaCore]).viewController;
+    UIViewController *kitViewController = (MLNKitViewController *)MLN_KIT_INSTANCE([self mln_currentLuaCore]).viewController;
     MLNListViewObserver *observer = [MLNListViewObserver observerWithListView:listView keyPath:key];
     
-    [kitViewController.dataBinding addArrayObserver:observer forKey:key];
+    [kitViewController.mln_dataBinding addArrayObserver:observer forKey:key];
 }
 
 + (NSUInteger)lua_sectionCountForKey:(NSString *)key {
@@ -237,10 +237,10 @@
 }
 */
 + (void)lua_bindCellForKey:(NSString *)key section:(NSUInteger)section row:(NSUInteger)row paths:(NSArray *)paths {
-    MLNKitViewController *kitViewController = (MLNKitViewController *)MLN_KIT_INSTANCE([self mln_currentLuaCore]).viewController;
+    UIViewController *kitViewController = (MLNKitViewController *)MLN_KIT_INSTANCE([self mln_currentLuaCore]).viewController;
 
     NSArray *array = [self lua_dataForKeyPath:key];
-    MLNListViewObserver *listObserver = (MLNListViewObserver *)[kitViewController.dataBinding observersForKeyPath:key].firstObject;
+    MLNListViewObserver *listObserver = (MLNListViewObserver *)[kitViewController.mln_dataBinding observersForKeyPath:key].firstObject;
     if (![listObserver isKindOfClass:[MLNListViewObserver class]]) {
         NSLog(@"error: not found observer for key %@",key);
         return;
@@ -254,10 +254,10 @@
     }
     
     for (NSString *k in paths) {
-        [kitViewController.dataBinding.KVOController unobserve:model keyPath:k];
+        [kitViewController.mln_dataBinding.KVOController unobserve:model keyPath:k];
     }
     
-    [kitViewController.dataBinding.KVOController observe:model keyPaths:paths options:NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew block:^(id  _Nullable observer, id  _Nonnull object, NSDictionary<NSString *,id> * _Nonnull change) {
+    [kitViewController.mln_dataBinding.KVOController observe:model keyPaths:paths options:NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew block:^(id  _Nullable observer, id  _Nonnull object, NSDictionary<NSString *,id> * _Nonnull change) {
         UIView *listView = [listObserver listView];
         if ([listView isKindOfClass:[MLNTableView class]]) {
             MLNTableView *table = (MLNTableView *)listView;
