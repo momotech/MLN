@@ -79,9 +79,9 @@
     [self.bezierPath addArcWithCenter:CGPointMake(centerX, centerY) radius:radius startAngle:startAngle endAngle:endAngle clockwise:endAngle - startAngle];
 }
 
-- (void)lua_addRect:(CGFloat)left top:(CGFloat)top right:(CGFloat)right bottom:(CGFloat)bottom clockwise:(BOOL)clockwise
+- (void)lua_addRect:(CGFloat)left top:(CGFloat)top right:(CGFloat)right bottom:(CGFloat)bottom clockwise:(NSNumber *)clockwise
 {
-    if (clockwise) {
+    if (clockwise != nil && clockwise.boolValue == YES) {
         [self.bezierPath moveToPoint:CGPointMake(left, top)];
         [self.bezierPath addLineToPoint:CGPointMake(right, top)];
         [self.bezierPath addLineToPoint:CGPointMake(right, bottom)];
