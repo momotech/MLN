@@ -69,25 +69,25 @@ static int lua_animation_init(lua_State *L) {
     switch (argCount) {
         case 6: {
             CGFloat fromDegress          = lua_tonumber(L, 1);
-            CGFloat toDegress              = lua_tonumber(L, 2);
-            CGFloat pivotXType             = lua_tonumber(L, 3);
-            CGFloat pivotX                    = lua_tonumber(L, 4);
-            CGFloat pivotYType             = lua_tonumber(L, 5);
-            CGFloat pivotY                    = lua_tonumber(L, 6);
+            CGFloat toDegress            = lua_tonumber(L, 2);
+            CGFloat pivotXType           = lua_tonumber(L, 3);
+            CGFloat pivotX               = lua_tonumber(L, 4);
+            CGFloat pivotYType           = lua_tonumber(L, 5);
+            CGFloat pivotY               = lua_tonumber(L, 6);
             animation = [[MLNRotateAnimation alloc] initWith:fromDegress toDegress:toDegress pivotXType:pivotXType pivotX:pivotX pivotYType:pivotYType pivotY:pivotY];
         }
             break;
         case 4: {
             CGFloat fromDegress          = lua_tonumber(L, 1);
-            CGFloat toDegress              = lua_tonumber(L, 2);
-            CGFloat pivotX                    = lua_tonumber(L, 3);
-            CGFloat pivotY                    = lua_tonumber(L, 4);
+            CGFloat toDegress            = lua_tonumber(L, 2);
+            CGFloat pivotX               = lua_tonumber(L, 3);
+            CGFloat pivotY               = lua_tonumber(L, 4);
             animation = [[MLNRotateAnimation alloc] initWith:fromDegress toDegress:toDegress pivotX:pivotX pivotY:pivotY];
         }
             break;
         case 2: {
             CGFloat fromDegress          = lua_tonumber(L, 1);
-            CGFloat toDegress              = lua_tonumber(L, 2);
+            CGFloat toDegress            = lua_tonumber(L, 2);
             animation = [[MLNRotateAnimation alloc] initWith:fromDegress toDegress:toDegress];
         }
             break;

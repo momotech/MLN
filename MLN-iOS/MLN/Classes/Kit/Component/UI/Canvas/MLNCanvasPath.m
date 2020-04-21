@@ -79,13 +79,21 @@
     [self.bezierPath addArcWithCenter:CGPointMake(centerX, centerY) radius:radius startAngle:startAngle endAngle:endAngle clockwise:endAngle - startAngle];
 }
 
-- (void)lua_addRect:(CGFloat)left top:(CGFloat)top right:(CGFloat)right bottom:(CGFloat)bottom
+- (void)lua_addRect:(CGFloat)left top:(CGFloat)top right:(CGFloat)right bottom:(CGFloat)bottom clockwise:(NSNumber *)clockwise
 {
-    [self.bezierPath moveToPoint:CGPointMake(left, top)];
-    [self.bezierPath addLineToPoint:CGPointMake(left, bottom)];
-    [self.bezierPath addLineToPoint:CGPointMake(right, bottom)];
-    [self.bezierPath addLineToPoint:CGPointMake(right, top)];
-    [self.bezierPath closePath];
+    if (clockwise != nil && clockwise.boolValue == YES) {
+        [self.bezierPath moveToPoint:CGPointMake(left, top)];
+        [self.bezierPath addLineToPoint:CGPointMake(right, top)];
+        [self.bezierPath addLineToPoint:CGPointMake(right, bottom)];
+        [self.bezierPath addLineToPoint:CGPointMake(left, bottom)];
+        [self.bezierPath closePath];
+    } else {
+        [self.bezierPath moveToPoint:CGPointMake(left, top)];
+        [self.bezierPath addLineToPoint:CGPointMake(left, bottom)];
+        [self.bezierPath addLineToPoint:CGPointMake(right, bottom)];
+        [self.bezierPath addLineToPoint:CGPointMake(right, top)];
+        [self.bezierPath closePath];
+    }
 }
 
 - (void)lua_addCircle:(CGFloat)cx y:(CGFloat)cy radius:(CGFloat)radius clockwise:(BOOL)clockwise
@@ -129,7 +137,7 @@ LUA_EXPORT_METHOD(cubicTo, "lua_cubicTo:endY:controlX1:controlY1:controlX2:contr
 LUA_EXPORT_METHOD(arcTo, "lua_addArcWith:centerY:radius:startAngle:endAngle:", MLNCanvasPath)
 LUA_EXPORT_METHOD(addArc, "lua_addArcWith:centerY:radius:startAngle:endAngle:clockwise:", MLNCanvasPath)
 LUA_EXPORT_METHOD(addPath, "lua_addPath:", MLNCanvasPath)
-LUA_EXPORT_METHOD(addRect, "lua_addRect:top:right:bottom:", MLNCanvasPath)
+LUA_EXPORT_METHOD(addRect, "lua_addRect:top:right:bottom:clockwise:", MLNCanvasPath)
 LUA_EXPORT_METHOD(addCircle, "lua_addCircle:y:radius:clockwise:", MLNCanvasPath)
 LUA_EXPORT_METHOD(lineWidth, "lua_lineWidth:", MLNCanvasPath)
 LUA_EXPORT_METHOD(stroke, "lua_stroke", MLNCanvasPath)

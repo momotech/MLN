@@ -24,10 +24,13 @@
 
 @implementation MLNAnimationSet
 
-- (instancetype)initWithLuaCore:(MLNLuaCore *)luaCore shareInterpolator:(BOOL)shareInterpolator
+- (instancetype)initWithLuaCore:(MLNLuaCore *)luaCore shareInterpolator:(NSNumber *)shareInterpolator
 {
     if (self = [super init]) {
-        _shareInterpolator = shareInterpolator;
+        if (shareInterpolator) {
+            _shareInterpolator = shareInterpolator.boolValue;
+        }
+        
     }
     return self;
 }

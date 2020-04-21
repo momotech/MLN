@@ -20,11 +20,15 @@
 
 @implementation MLNAlphaAnimation
 
-- (instancetype)initWithLuaCore:(MLNLuaCore *)luaCore fromAlpha:(CGFloat)fromAlpha toAlpha:(CGFloat)toAlpha
+- (instancetype)initWithLuaCore:(MLNLuaCore *)luaCore fromAlpha:(NSNumber *)fromAlpha toAlpha:(NSNumber *)toAlpha
 {
     if (self = [super init]) {
-        [self setFromAlpha:fromAlpha];
-        [self setToAlpha:toAlpha];
+        if (fromAlpha) {
+            [self setFromAlpha:fromAlpha.floatValue];
+        }
+        if (toAlpha) {
+            [self setToAlpha:toAlpha.floatValue];
+        }
     }
     return self;
 }
