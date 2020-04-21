@@ -278,8 +278,9 @@
     CGFloat anchorX = 0.5;
     CGFloat anchorY = 0.5;
     switch (_pivotXType) {
-        case MLNAnimationValueTypeAbsolute:
-            anchorX = _targetView.frame.size.width * _pivotX;
+        case MLNAnimationValueTypeAbsolute:{
+            anchorX = _pivotX / _targetView.frame.size.width ;
+        }
             break;
         case MLNAnimationValueTypeRelativeToSelf:
             anchorX = _pivotX;
