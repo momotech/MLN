@@ -45,9 +45,9 @@
 - (instancetype)init
 {
     if (self = [super init]) {
-        _pivotX = 0;
+        _pivotX = 0.5;
         _pivotXType = MLNAnimationValueTypeRelativeToSelf;
-        _pivotY = 0;
+        _pivotY = 0.5;
         _pivotYType = MLNAnimationValueTypeRelativeToSelf;
     }
     return self;
