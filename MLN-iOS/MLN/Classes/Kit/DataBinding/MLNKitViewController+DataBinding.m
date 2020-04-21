@@ -55,12 +55,6 @@
     [self.mln_dataBinding removeDataObserver:observer forKeyPath:keyPath];
 }
 
-- (void)addToSuperViewController:(UIViewController *)superVC frame:(CGRect) frame {
-    [superVC addChildViewController:self];
-    self.view.frame = frame;
-    [superVC.view addSubview:self.view];
-    [self didMoveToParentViewController:superVC];
-}
 
 //- (MLNDataBinding *)dataBinding {
 //    if (!_dataBinding) {
@@ -93,4 +87,12 @@
     return obj;
 }
 
+- (void)mln_addToSuperViewController:(UIViewController *)superVC frame:(CGRect) frame {
+    if (superVC) {
+        [superVC addChildViewController:self];
+        self.view.frame = frame;
+        [superVC.view addSubview:self.view];
+        [self didMoveToParentViewController:superVC];
+    }
+}
 @end

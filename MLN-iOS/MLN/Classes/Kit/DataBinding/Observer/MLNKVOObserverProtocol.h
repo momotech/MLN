@@ -27,6 +27,8 @@
 @class MLNDataBinding;
 @interface UIViewController (MLNDataBinding)
 @property (nonatomic, strong, readonly) MLNDataBinding * _Nonnull mln_dataBinding;
+- (void)mln_addToSuperViewController:(UIViewController *_Nonnull)superVC frame:(CGRect) frame;
+
 @end
 
 #define LOCK_INIT() pthread_mutex_init(&_lock, NULL)
