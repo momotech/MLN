@@ -64,6 +64,12 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     NSString *demoName = [self.demoArray objectAtIndex:indexPath.row];
+    Class cls = NSClassFromString(demoName);
+    if (cls) {
+        UIViewController *vc = [cls new];
+        [self.navigationController pushViewController:vc animated:YES];
+        return;
+    }
     MLNKitViewController *viewController = [[MLNKitViewController alloc] initWithEntryFilePath:demoName];
     MLNLuaBundle *bundle = [MLNLuaBundle mainBundleWithPath:@"inner_demo.bundle"];
     [viewController changeCurrentBundle:bundle];
@@ -90,6 +96,10 @@
                        @"TableViewDemo.lua",
                        @"ViewPagerDemo.lua",
                        @"WaterfallViewDemo.lua",
+//                       @"MLNDataBindHotReload",
+                       @"MLNBindModelViewController",
+                       @"MLNBindTableViewController",
+                       @"MLNPerformanceTestController"
                        ];
     }
     return _demoArray;

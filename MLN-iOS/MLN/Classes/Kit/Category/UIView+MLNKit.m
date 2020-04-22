@@ -585,6 +585,13 @@ static const void *kLuaBoarderWidth = &kLuaBoarderWidth;
     renderContext.didSetClipToBounds = YES;
 }
 
+- (void)lua_setClipsToChildren:(BOOL)clipsToChildren
+{
+    MLNRenderContext *renderContext = [self mln_in_renderContext];
+    renderContext.clipToChildren = clipsToChildren;
+    renderContext.didSetClipToChildren = YES;
+}
+
 #pragma mark - Corner Radius
 - (void)lua_setCornerRadius:(CGFloat)cornerRadius
 {

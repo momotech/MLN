@@ -27,6 +27,7 @@
 #import "MLNCollectionViewAdapter.h"
 #import "MLNCollectionViewAutoFitAdapter.h"
 #import "MLNCollectionViewGridLayout.h"
+#import "MLNCollectionLayout.h"
 #import "MLNWaterfallView.h"
 #import "MLNWaterfallLayout.h"
 #import "MLNWaterfallAdapter.h"
@@ -55,6 +56,7 @@
 #import "MLNHTTPConst.h"
 #import "MLNFileConst.h"
 #import "MLNContentMode.h"
+#import "MLNStackConst.h"
 // Utils
 #import "MLNSystem.h"
 #import "MLNHttp.h"
@@ -71,6 +73,7 @@
 #import "mmoslib.h"
 #import "MLNCornerUtil.h"
 #import "MLNSafeAreaAdapter.h"
+#import "MLNDataBinding.h"
 // Animations
 #import "MLNAnimator.h"
 #import "MLNAnimation.h"
@@ -86,6 +89,12 @@
 #import "MLNCanvasConst.h"
 #import "MLNCanvasPath.h"
 #import "MLNShapeContext.h"
+// Stack
+#import "MLNStack.h"
+#import "MLNVStack.h"
+#import "MLNZStack.h"
+#import "MLNHStack.h"
+#import "MLNSpacer.h"
 
 @implementation MLNKitBridgesManager
 
@@ -105,6 +114,8 @@
     [luaCore registerClasses:self.animationClasses error:NULL];
     // 注册绘图相关
     [luaCore registerClasses:self.canvasClasses error:NULL];
+    // 注册新布局相关
+    [luaCore registerClasses:self.stackClasses error:NULL];
 }
 
 static NSArray<Class<MLNExportProtocol>> *viewClasses;
@@ -129,6 +140,7 @@ static NSArray<Class<MLNExportProtocol>> *viewClasses;
                         [MLNCollectionViewAdapter class],
                         [MLNCollectionViewAutoFitAdapter class],
                         [MLNCollectionViewGridLayout class],
+                        [MLNCollectionLayout class],
                         [MLNWaterfallView class],
                         [MLNWaterfallLayout class],
                         [MLNWaterfallAdapter class],
@@ -169,7 +181,8 @@ static NSArray<Class<MLNExportProtocol>> *gvarClasses;
                         [MLNEditTextViewConst class],
                         [MLNHTTPConst class],
                         [MLNFileConst class],
-                        [MLNContentMode class]];
+                        [MLNContentMode class],
+                        [MLNStackConst class]];
     }
     return gvarClasses;
 }
@@ -191,7 +204,8 @@ static NSArray<Class<MLNExportProtocol>> *utilClasses;
                         [MLNApplication class],
                         [MLNNetworkReachability class],
                         [MLNCornerUtil class],
-                        [MLNSafeAreaAdapter class]];
+                        [MLNSafeAreaAdapter class],
+                        [MLNDataBinding class]];
     }
     return utilClasses;
 }
@@ -225,6 +239,19 @@ static NSArray<Class<MLNExportProtocol>> *canvasClasses;
                           [MLNShapeContext class]];
     }
     return canvasClasses;
+}
+
+static NSArray<Class<MLNExportProtocol>> *stackClasses;
+- (NSArray<Class<MLNExportProtocol>> *)stackClasses
+{
+    if (!stackClasses) {
+        stackClasses = @[[MLNStack class],
+                         [MLNVStack class],
+                         [MLNHStack class],
+                         [MLNZStack class],
+                         [MLNSpacer class]];
+    }
+    return stackClasses;
 }
 
 @end

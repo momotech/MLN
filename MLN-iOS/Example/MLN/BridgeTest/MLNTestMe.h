@@ -12,6 +12,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface MLNTestMe : NSObject <MLNEntityExportProtocol>
 
+@property (nonatomic, copy) NSString *text;
+@property (nonatomic, assign) BOOL open;
+
 @end
 
 NS_ASSUME_NONNULL_END

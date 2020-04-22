@@ -51,6 +51,9 @@
       "dependencies": {
         "MLN/Core": [
 
+        ],
+        "KVOController": [
+
         ]
       }
     }
