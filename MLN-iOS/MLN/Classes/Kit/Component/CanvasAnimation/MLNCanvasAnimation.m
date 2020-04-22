@@ -195,7 +195,7 @@
     if ([self remainingDelay] > FLT_EPSILON) {
         return;
     }
-    CGFloat percent = (CACurrentMediaTime() - self.startTime - self.delay) / (self.duration * (_repeatType == MLNAnimationRepeatTypeReverse?2:1));
+    CGFloat percent = (CACurrentMediaTime() - self.startTime - self.delay) / (self.duration * 1);
    
     NSInteger repeatCount = (NSUInteger)percent;
     percent = percent - repeatCount;
@@ -278,8 +278,9 @@
     CGFloat anchorX = 0.5;
     CGFloat anchorY = 0.5;
     switch (_pivotXType) {
-        case MLNAnimationValueTypeAbsolute:
-            anchorX = _targetView.frame.size.width * _pivotX;
+        case MLNAnimationValueTypeAbsolute:{
+            anchorX = _pivotX / _targetView.frame.size.width ;
+        }
             break;
         case MLNAnimationValueTypeRelativeToSelf:
             anchorX = _pivotX;
