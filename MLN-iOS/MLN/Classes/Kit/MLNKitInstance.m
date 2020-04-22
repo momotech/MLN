@@ -26,6 +26,7 @@
 #import "MLNKitInstanceHandlersManager.h"
 #import "MLNWindow.h"
 #import "MLNKitInstanceConsts.h"
+#import "MLNFile.h"
 
 #define kMLNRunLoopBeforeWaitingLazyTaskOrder   1
 #define kMLNRunLoopBeforeWaitingRenderOrder     2
