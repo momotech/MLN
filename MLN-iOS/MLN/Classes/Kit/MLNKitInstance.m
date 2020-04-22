@@ -5,6 +5,16 @@
 //  Created by MoMo on 2019/8/3.
 //
 
+#if __has_include("MLNDebugContext.h")
+    #import "MLNDebugContext.h"
+    #define MLN_COULD_LOAD_DEBUG_CONTEXT 1
+#elif __has_include(<MLNDebugContext.h>)
+    #import <MLNDebugContext.h>
+    #define MLN_COULD_LOAD_DEBUG_CONTEXT 1
+#else
+    #define MLN_COULD_LOAD_DEBUG_CONTEXT 0
+#endif
+
 #import "MLNKitInstance.h"
 #import "MLNLuaCore.h"
 #import "MLNLuaTable.h"
@@ -16,7 +26,6 @@
 #import "MLNKitInstanceHandlersManager.h"
 #import "MLNWindow.h"
 #import "MLNKitInstanceConsts.h"
-#import "MLNDebugContext.h"
 
 #define kMLNRunLoopBeforeWaitingLazyTaskOrder   1
 #define kMLNRunLoopBeforeWaitingRenderOrder     2
@@ -620,6 +629,7 @@
 @implementation MLNKitInstance (Debug)
 
 - (NSString *)loadDebugModelIfNeed {
+#if MLN_COULD_LOAD_DEBUG_CONTEXT
     NSString *backupBundlePath = [self.luaCore.currentBundle bundlePath];
     [self changeLuaBundleWithPath:[MLNDebugContext debugBundle].bundlePath];
     NSString *mlndebugPath = [[MLNDebugContext debugBundle] pathForResource:@"mlndebug.lua" ofType:nil];
@@ -632,6 +642,7 @@
         return [error.userInfo objectForKey:@"message"];
     }
     [self changeLuaBundleWithPath:backupBundlePath];
+#endif
     return nil;
 }
 
