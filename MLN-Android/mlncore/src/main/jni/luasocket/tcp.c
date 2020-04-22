@@ -543,7 +543,6 @@ static void* mln_poll_socket_func(void *ctx) {
     pfd.events = POLLIN;
     pfd.revents = 0;
 
-    sleep(2); // filter first message. (the first message should be polled by main thread in lua, rather than current thread)
     while (1) {
         int timeout = 5 * 1000; // ms
         ret = poll(&pfd, 1, timeout);

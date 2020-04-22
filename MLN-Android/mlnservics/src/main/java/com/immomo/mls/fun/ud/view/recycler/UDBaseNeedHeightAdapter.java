@@ -163,7 +163,14 @@ public abstract class UDBaseNeedHeightAdapter<L extends UDBaseRecyclerLayout> ex
             ErrorUtils.debugLuaError("The 'heightForHeader' callback must not be nil!", globals);
             return new Size(Size.MATCH_PARENT, Size.WRAP_CONTENT);
         }
-        LuaValue ret = caller.invoke(null)[0];
+        LuaValue[] rets = caller.invoke(null);
+
+        final LuaValue ret;
+        if (rets == null || rets.length == 0) {
+            ret = Nil();
+        } else {
+            ret = rets[0];
+        }
 
         if (!AssertUtils.assertNumber(ret, caller, getGlobals())) {
             return new Size(Size.MATCH_PARENT, Size.WRAP_CONTENT);
@@ -172,9 +179,7 @@ public abstract class UDBaseNeedHeightAdapter<L extends UDBaseRecyclerLayout> ex
         int h = ret.toInt();
         h = h < 0 ? 0 : h; //两端统一返回高度<0,默认为0。
 
-        Size cellSize = new Size(Size.MATCH_PARENT, h);
-
-        return cellSize;
+        return new Size(Size.MATCH_PARENT, h);
     }
 
     @NonNull

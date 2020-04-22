@@ -9,7 +9,6 @@ package com.immomo.mls;
 
 import com.immomo.mls.util.FileUtil;
 import com.immomo.mls.util.IOUtil;
-import com.immomo.mls.util.LogUtil;
 import com.immomo.mls.utils.LuaUrlUtils;
 import com.immomo.mls.utils.ParsedUrl;
 
@@ -17,7 +16,6 @@ import org.luaj.vm2.utils.ResourceFinder;
 import org.luaj.vm2.utils.StringReplaceUtils;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 
 /**
@@ -28,11 +26,13 @@ public class MLSResourceFinder implements ResourceFinder {
     protected String assetsPath;
     protected String src;
     protected ParsedUrl parsedUrl;
+    protected final StringBuilder errorMsg;
 
     public MLSResourceFinder(String src, ParsedUrl url) {
         this.src = src;
         this.parsedUrl = url;
         path = LuaUrlUtils.getUrlPath(url.toString());
+        errorMsg = new StringBuilder();
         if (!path.endsWith(File.separator)) {
             path += File.separator;
         }
@@ -49,36 +49,20 @@ public class MLSResourceFinder implements ResourceFinder {
     }
 
     protected byte[] getAssetsData(String name) {
+        if (assetsPath == null) {
+            errorMsg.append("\tAnd ").append("assetsPath is null.");
+            return null;
+        }
         InputStream is = null;
         try {
-            is = openAssetsByName(name);
-            if (is != null) {
-                byte[] data = new byte[is.available()];
-                if (is.read(data) == data.length)
-                    return data;
-            }
+            is = MLSEngine.getContext().getAssets().open(FileUtil.dealRelativePath(assetsPath, name));
+            byte[] data = new byte[is.available()];
+            if (is.read(data) == data.length)
+                return data;
         } catch (Throwable t) {
-            if (MLSEngine.DEBUG)
-                LogUtil.e(t);
+            errorMsg.append("\tAnd ").append(t.toString());
         } finally {
             IOUtil.closeQuietly(is);
-        }
-        return null;
-    }
-
-    private InputStream openAssetsByName(String name) {
-        if (assetsPath != null) {
-            return openAssets(FileUtil.dealRelativePath(assetsPath, name));
-        }
-        return null;
-    }
-
-    private static InputStream openAssets(String filename) {
-        try {
-            return MLSEngine.getContext().getAssets().open(filename);
-        } catch (IOException e) {
-            if (MLSEngine.DEBUG)
-                LogUtil.e(e);
         }
         return null;
     }
@@ -98,6 +82,8 @@ public class MLSResourceFinder implements ResourceFinder {
         File f = new File(name);
         if (f.exists()) {
             return name;
+        } else {
+            errorMsg.append("file ").append(name).append(" not exists.");
         }
         return null;
     }
@@ -110,5 +96,12 @@ public class MLSResourceFinder implements ResourceFinder {
     @Override
     public void afterContentUse(String name) {
 
+    }
+
+    @Override
+    public String getError() {
+        if (errorMsg.length() == 0)
+            return null;
+        return "MLSRF: " + errorMsg.toString();
     }
 }

@@ -9,6 +9,10 @@
  * Created by Xiong.Fangyu 2019/02/22
  */
 
+#include "lauxlib.h"
+#include "lualib.h"
+#include "lobject.h"
+#include "lstate.h"
 #include "luajapi.h"
 #include "debug_info.h"
 #include "mlog.h"

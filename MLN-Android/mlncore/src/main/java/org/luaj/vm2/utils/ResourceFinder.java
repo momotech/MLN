@@ -47,4 +47,10 @@ public interface ResourceFinder {
      * @param name 名称
      */
     void afterContentUse(String name);
+
+    /**
+     * 若获取有错误，返回错误信息
+     * @return 可为空
+     */
+    String getError();
 }
