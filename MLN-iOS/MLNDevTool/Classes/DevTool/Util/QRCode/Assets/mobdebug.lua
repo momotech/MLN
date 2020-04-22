@@ -671,11 +671,12 @@ local function debug_hook(event, line)
     local models = mobdebug.commandmodels
     if models ~= nil and type(models) == "table" then
       local filename = file
-      if string.find(file, ".") then
-        _, _, filename = string.find(file, "(%a+)")
+      if string.find(file, "%.") then
+        _, _, filename = string.find(file, "([%a+_*%a+]+)")
       end
 
       local filemodel = models[filename]
+
       if filemodel ~= nil and type(filemodel) == "table" then
         for _, cmds in pairs(filemodel) do
           local from, to, cmd
@@ -688,6 +689,7 @@ local function debug_hook(event, line)
               cmd = v
             end
           end
+          
           if line >= from and line <= to then
              local func = loadstring(cmd)
              if func and type(func) == "function" then
