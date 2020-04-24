@@ -29,7 +29,6 @@
         self.dataMap = [NSMutableDictionary dictionary];
         self.observerMap =  [NSMapTable strongToWeakObjectsMapTable];
         LOCK_INIT();
-        NSLog(@">>>>mem alloc %@",self);
     }
     return self;
 }
@@ -209,7 +208,4 @@
     UNLOCK();
 }
 
-- (void)dealloc {
-    NSLog(@">>>>mem dealloc %@",self);
-}
 @end

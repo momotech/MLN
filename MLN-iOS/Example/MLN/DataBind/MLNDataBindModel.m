@@ -21,19 +21,6 @@
     return model;
 }
 
-- (instancetype)init
-{
-    self = [super init];
-    if (self) {
-        NSLog(@">>>>me_model alloc %@",self);
-    }
-    return self;
-}
-
-- (void)dealloc {
-    NSLog(@">>>>me_model dealloc %@",self);
-}
-
 - (NSString *)debugDescription {
     return [NSString stringWithFormat:@" name: %@ \n title: %@ \n detail: %@ \n hideIcon: %d \n iconUrl: %@ \n", self.name, self.title, self.detail, self.hideIcon, self.iconUrl];
 }
@@ -48,19 +35,6 @@
     m.source = @[].mutableCopy;
     m.tableHeight = 1000;
     return m;
-}
-
-- (instancetype)init
-{
-    self = [super init];
-    if (self) {
-        NSLog(@">>>>me_model alloc %@",self);
-    }
-    return self;
-}
-
-- (void)dealloc {
-    NSLog(@">>>>me_model dealloc %@",self);
 }
 
 @end
