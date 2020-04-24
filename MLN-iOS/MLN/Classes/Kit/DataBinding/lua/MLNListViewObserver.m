@@ -12,7 +12,6 @@
 #import "MLNCollectionView.h"
 #import <pthread.h>
 #import "MLNExtScope.h"
-#import "MLNKitViewController+DataBinding.h"
 #import "MLNDataBinding.h"
 #import "NSArray+MLNKVO.h"
 

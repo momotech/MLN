@@ -209,6 +209,15 @@
     return success;
 }
 
+- (BOOL)runWithMLNUIEntryFile:(NSString *)entryFileName windowExtra:(NSDictionary *)windowExtra error:(NSError *__autoreleasing  _Nullable *)error {
+    _windowExtra = [NSMutableDictionary dictionaryWithDictionary:windowExtra];
+    _entryFilePath = entryFileName;
+    // 准备环境
+    [self setup];
+    // 执行
+    return [self runWithEntryFile:entryFileName error:error];
+}
+
 - (BOOL)runLayoutFileWithEntryFilePath:(NSString *)entryFilePath error:(NSError * _Nullable __autoreleasing * _Nullable)error {
     NSString *fileName = [[entryFilePath lastPathComponent] stringByDeletingPathExtension];
     NSString *layoutFileName = [NSString stringWithFormat:@"%@Layout.lua", fileName ?: @""];
