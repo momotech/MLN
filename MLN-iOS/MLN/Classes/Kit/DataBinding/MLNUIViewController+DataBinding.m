@@ -1,17 +1,16 @@
 //
-//  MLNKitViewController+DataBinding.m
-// MLN
+//  MLNUIViewController+DataBinding.m
+//  AFNetworking
 //
-//  Created by Dai Dongpeng on 2020/3/3.
+//  Created by Dai Dongpeng on 2020/4/24.
 //
 
-#import "MLNKitViewController+DataBinding.h"
+#import "MLNUIViewController+DataBinding.h"
 #import "MLNDataBinding.h"
 #import "MLNLuaCore.h"
 #import "MLNKitInstance.h"
 
-@implementation MLNKitViewController (DataBinding)
-
+@implementation MLNUIViewController (DataBinding)
 - (UIView *)findViewById:(NSString *)identifier {
     lua_State *L = self.kitInstance.luaCore.state;
     int base = lua_gettop(L);
@@ -39,22 +38,6 @@
     [self.mln_dataBinding bindData:data forKey:key];
 }
 
-//- (void)updateDataForKeyPath:(NSString *)keyPath value:(id)value {
-//    [self.mln_dataBinding updateDataForKeyPath:keyPath value:value];
-//}
-//
-//- (id __nullable)dataForKeyPath:(NSString *)keyPath {
-//    return [self.mln_dataBinding dataForKeyPath:keyPath];
-//}
-//
-//- (void)addDataObserver:(NSObject<MLNKVOObserverProtol> *)observer forKeyPath:(NSString *)keyPath {
-//    [self.mln_dataBinding addDataObserver:observer forKeyPath:keyPath];
-//}
-//
-//- (void)removeDataObserver:(NSObject<MLNKVOObserverProtol> *)observer forKeyPath:(NSString *)keyPath {
-//    [self.mln_dataBinding removeDataObserver:observer forKeyPath:keyPath];
-//}
-
 - (MLNDataBinding *)mln_dataBinding {
     if (!_dataBinding) {
         _dataBinding = [[MLNDataBinding alloc] init];
@@ -67,14 +50,14 @@
 
 @implementation UIViewController (MLNDataBinding)
 
-//- (MLNDataBinding *)mln_dataBinding {
-//    MLNDataBinding *obj = objc_getAssociatedObject(self, _cmd);
-//    if (!obj) {
-//        obj = [[MLNDataBinding alloc] init];
-//        objc_setAssociatedObject(self, _cmd, obj, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-//    }
-//    return obj;
-//}
+- (MLNDataBinding *)mln_dataBinding {
+    MLNDataBinding *obj = objc_getAssociatedObject(self, _cmd);
+    if (!obj) {
+        obj = [[MLNDataBinding alloc] init];
+        objc_setAssociatedObject(self, _cmd, obj, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    }
+    return obj;
+}
 
 - (void)mln_addToSuperViewController:(UIViewController *)superVC frame:(CGRect) frame {
     if (superVC) {
@@ -85,6 +68,7 @@
     }
 }
 @end
+
 
 
 ///**

@@ -9,7 +9,6 @@
 #import "MLNBlock.h"
 #import "MLNKitHeader.h"
 #import "MLNKitViewController.h"
-#import "MLNKitViewController+DataBinding.h"
 #import "KVOController.h"
 #import "MLNDataBinding.h"
 
@@ -40,7 +39,7 @@
 - (void)notifyKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change {
     [super notifyKeyPath:keyPath ofObject:object change:change];
     if (!self.block.luaCore) {
-        [((MLNKitViewController *)self.viewController).mln_dataBinding removeDataObserver:self forKeyPath:self.keyPath];
+        [((id<MLNDataBindingProtocol>)self.viewController).mln_dataBinding removeDataObserver:self forKeyPath:self.keyPath];
         return;
     }
     

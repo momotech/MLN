@@ -146,6 +146,16 @@ Lua中的根视图。
 - (BOOL)runWithEntryFile:(NSString *)entryFilePath windowExtra:(NSDictionary * __nullable)windowExtra error:(NSError ** __nullable)error;
 
 /**
+加载MLNUI文件并执行
+
+@param entryFileName 当前执行模块的入口文件名
+@param windowExtra 传递给LuaWindow的参数，用来给页面传参
+@param error 错误信息
+@return 加载并执行是否成功
+*/
+- (BOOL)runWithMLNUIEntryFile:(NSString *)entryFileName windowExtra:(NSDictionary *)windowExtra error:(NSError *__autoreleasing  _Nullable *)error;
+
+/**
  重新加载执行
 
  @param error 错误信息

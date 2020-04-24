@@ -11,7 +11,6 @@
 #import "MLNKitViewController.h"
 #import "MLNBlock.h"
 #import "MLNBlockObserver.h"
-#import "MLNKitViewController+DataBinding.h"
 #import "MLNListViewObserver.h"
 #import "NSObject+MLNKVO.h"
 #import "NSArray+MLNKVO.h"
