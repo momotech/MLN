@@ -59,13 +59,8 @@ typedef BOOL(^ActionBlock)(void);
 - (instancetype)initWithViewController:(UIViewController *)viewController callback:(MLNKVOCallback)callback keyPath:(NSString *)keyPath {
     if (self = [super initWithViewController:viewController callback:callback keyPath:keyPath]) {
         self.actions = [NSMutableArray array];
-        NSLog(@">>>>mem alloc %@",self);
     }
     return self;
-}
-
-- (void)dealloc {
-    NSLog(@">>>>mem dealloc %@",self);
 }
 
 - (void)mergeAction {
@@ -93,7 +88,6 @@ typedef BOOL(^ActionBlock)(void);
 }
 
 - (void)listViewReload:(UIView *)list {
-    NSLog(@">>>>  %s",__FUNCTION__);
     MLNTableView *table = (MLNTableView *)list;
     SEL sel = @selector(lua_reloadData);
     if ([table respondsToSelector:sel]) {
@@ -102,7 +96,6 @@ typedef BOOL(^ActionBlock)(void);
 }
 
 - (void)listView:(UIView *)list reloadAtRow:(NSUInteger)row section:(NSUInteger)section {
-    NSLog(@">>>>  %s",__FUNCTION__);
     MLNTableView *table = (MLNTableView *)list;
     SEL sel = @selector(lua_reloadAtRow:section:animation:);
     if ([table respondsToSelector:sel]) { // + 1 模拟lua层调用
@@ -111,7 +104,6 @@ typedef BOOL(^ActionBlock)(void);
 }
 
 - (void)listView:(UIView *)list insertRowsAtSection:(NSUInteger)section startRow:(NSUInteger)startRow endRow:(NSUInteger)endRow object:(NSObject *)object {
-    NSLog(@">>>>  %s",__FUNCTION__);
 
     MLNTableView *table = (MLNTableView *)list;
     SEL sel = @selector(lua_insertRowsAtSection:startRow:endRow:animated:);
@@ -121,7 +113,6 @@ typedef BOOL(^ActionBlock)(void);
 }
 
 - (void)listView:(UIView *)list deleteRowsAtSection:(NSUInteger)section startRow:(NSUInteger)startRow endRow:(NSUInteger)endRow object:(NSObject *)object {
-    NSLog(@">>>>  %s",__FUNCTION__);
 
     MLNTableView *table = (MLNTableView *)list;
     SEL sel = @selector(lua_deleteRowsAtSection:startRow:endRow:animated:);
@@ -156,7 +147,6 @@ typedef BOOL(^ActionBlock)(void);
     NSObject *old = [change objectForKey:NSKeyValueChangeOldKey];
     NSIndexSet *indexSet = [change objectForKey:NSKeyValueChangeIndexesKey];
     NSObject *tmp = new ? new : old;
-    NSLog(@">>>> type %zd",type);
     
     @weakify(self);
     ActionBlock action = ^BOOL{
