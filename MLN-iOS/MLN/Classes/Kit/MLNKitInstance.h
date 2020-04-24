@@ -381,7 +381,8 @@ Lua中的根视图。
 
 @interface MLNKitInstance (Debug)
 
-- (NSString *)loadDebugModelIfNeed;
+/// 断点调试
+- (void)openBreakpointDebugIfNeeded;
 
 @end
 

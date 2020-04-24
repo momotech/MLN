@@ -781,6 +781,11 @@ local function isrunning()
   return coro_debugger and (corostatus(coro_debugger) == 'suspended' or corostatus(coro_debugger) == 'running')
 end
 
+local function finish()
+  if not (isrunning() and server) then return end
+  server:send("EOF \n") --客户端close后，插件端未收到FIN包，原因未知，故主动发送一个关闭连接的标志
+end
+
 -- this is a function that removes all hooks and closes the socket to
 -- report back to the controller that the debugging is done.
 -- the script that called `done` can still continue.
@@ -1813,6 +1818,7 @@ mobdebug.off = off
 mobdebug.moai = moai
 mobdebug.coro = coro
 mobdebug.done = done
+mobdebug.finish = finish
 mobdebug.pause = function() step_into = true end
 mobdebug.yield = nil -- callback
 mobdebug.output = output
