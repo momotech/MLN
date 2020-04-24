@@ -39,28 +39,20 @@
     [self.mln_dataBinding bindData:data forKey:key];
 }
 
-- (void)updateDataForKeyPath:(NSString *)keyPath value:(id)value {
-    [self.mln_dataBinding updateDataForKeyPath:keyPath value:value];
-}
-
-- (id __nullable)dataForKeyPath:(NSString *)keyPath {
-    return [self.mln_dataBinding dataForKeyPath:keyPath];
-}
-
-- (void)addDataObserver:(NSObject<MLNKVOObserverProtol> *)observer forKeyPath:(NSString *)keyPath {
-    [self.mln_dataBinding addDataObserver:observer forKeyPath:keyPath];
-}
-
-- (void)removeDataObserver:(NSObject<MLNKVOObserverProtol> *)observer forKeyPath:(NSString *)keyPath {
-    [self.mln_dataBinding removeDataObserver:observer forKeyPath:keyPath];
-}
-
-
-//- (MLNDataBinding *)dataBinding {
-//    if (!_dataBinding) {
-//        _dataBinding = [[MLNDataBinding alloc] init];
-//    }
-//    return _dataBinding;
+//- (void)updateDataForKeyPath:(NSString *)keyPath value:(id)value {
+//    [self.mln_dataBinding updateDataForKeyPath:keyPath value:value];
+//}
+//
+//- (id __nullable)dataForKeyPath:(NSString *)keyPath {
+//    return [self.mln_dataBinding dataForKeyPath:keyPath];
+//}
+//
+//- (void)addDataObserver:(NSObject<MLNKVOObserverProtol> *)observer forKeyPath:(NSString *)keyPath {
+//    [self.mln_dataBinding addDataObserver:observer forKeyPath:keyPath];
+//}
+//
+//- (void)removeDataObserver:(NSObject<MLNKVOObserverProtol> *)observer forKeyPath:(NSString *)keyPath {
+//    [self.mln_dataBinding removeDataObserver:observer forKeyPath:keyPath];
 //}
 
 - (MLNDataBinding *)mln_dataBinding {
@@ -72,20 +64,17 @@
 
 @end
 
-//@implementation MLNKitViewController (ArrayBinding)
-//
-//@end
 
 @implementation UIViewController (MLNDataBinding)
 
-- (MLNDataBinding *)mln_dataBinding {
-    MLNDataBinding *obj = objc_getAssociatedObject(self, _cmd);
-    if (!obj) {
-        obj = [[MLNDataBinding alloc] init];
-        objc_setAssociatedObject(self, _cmd, obj, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-    }
-    return obj;
-}
+//- (MLNDataBinding *)mln_dataBinding {
+//    MLNDataBinding *obj = objc_getAssociatedObject(self, _cmd);
+//    if (!obj) {
+//        obj = [[MLNDataBinding alloc] init];
+//        objc_setAssociatedObject(self, _cmd, obj, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+//    }
+//    return obj;
+//}
 
 - (void)mln_addToSuperViewController:(UIViewController *)superVC frame:(CGRect) frame {
     if (superVC) {
@@ -96,3 +85,36 @@
     }
 }
 @end
+
+
+///**
+//通过id获取视图
+//
+//@param identifier 视图对应的id
+//*/
+//- (UIView *)findViewById:(NSString *)identifier;
+
+/**
+声明访问某个Lua的视图
+
+@param LUA_VIEW_CONTROLLER  Lua所属的视图控制器
+@param VIEW_ID 访问视图的ID
+*/
+#define MLN_VIEW_IMPORT(LUA_VIEW_CONTROLLER, VIEW_ID)\
+- (UIView *)VIEW_ID\
+{\
+return [(LUA_VIEW_CONTROLLER) findViewById: @#VIEW_ID];\
+}
+
+/**
+声明访问某个Lua的视图,并声明别名。之后Native可以通过别名访问
+
+@param LUA_VIEW_CONTROLLER  Lua所属的视图控制器
+@param VIEW_ID 访问视图的ID
+@param VIEW_ALIAS 访问视图的别名
+*/
+#define MLN_VIEW_IMPORT_WITH_ALIAS(LUA_VIEW_CONTROLLER, VIEW_ID, VIEW_ALIAS)\
+- (UIView *)VIEW_ALIAS\
+{\
+return [(LUA_VIEW_CONTROLLER) findViewById: @#VIEW_ID];\
+}
