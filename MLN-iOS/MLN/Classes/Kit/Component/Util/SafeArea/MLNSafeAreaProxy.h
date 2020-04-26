@@ -8,6 +8,8 @@
 #import <Foundation/Foundation.h>
 #import "MLNSafeAreaViewProtocol.h"
 
+#define kViewFrame @"frame"
+
 NS_ASSUME_NONNULL_BEGIN
 @class MLNSafeAreaAdapter;
 @interface MLNSafeAreaProxy : NSObject
