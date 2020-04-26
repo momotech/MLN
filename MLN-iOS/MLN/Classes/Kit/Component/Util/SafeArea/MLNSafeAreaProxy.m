@@ -143,7 +143,10 @@
 - (void)resestSafeAreaInsets
 {
     UIEdgeInsets safeAreaInset = UIEdgeInsetsZero;
-    UIWindow *window = [UIApplication sharedApplication].keyWindow;
+    UIWindow *window = [UIApplication sharedApplication].delegate.window;
+    if (window == NULL) {
+        window = [UIApplication sharedApplication].keyWindow;
+    }
     if (window) {
         CGRect frame = [self.safeAreaView convertRect:self.safeAreaView.frame toView:window];
         BOOL hasUpdated = NO;
