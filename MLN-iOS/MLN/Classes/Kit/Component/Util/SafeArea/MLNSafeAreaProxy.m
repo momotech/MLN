@@ -36,7 +36,7 @@
         _navigationBar = navigationBar;
         _viewController = viewController;
         _safeAreaBottom = [MLNDevice isIPHX] ? kIphoneXHomeIndicatorHeight : 0.f;
-        [self __addObserverWithNavigationBar:navigationBar safeAreaView:safeAreaView];
+        [self __addObserverWithNavigationBar:navigationBar];
         [self resestSafeAreaInsets];
     }
     return self;
@@ -100,13 +100,11 @@
     [_navigationBar removeObserver:self forKeyPath:kViewrFrame context:nil];
     [_navigationBar removeObserver:self forKeyPath:kViewHidden context:nil];
     [_navigationBar removeObserver:self forKeyPath:kViewAlpha context:nil];
-    [_safeAreaView removeObserver:self forKeyPath:kViewrFrame context:nil];
 }
 
-- (void)__addObserverWithNavigationBar:(UINavigationBar *)navigationBar safeAreaView:(UIView<MLNSafeAreaViewProtocol> *)safeAreaView
+- (void)__addObserverWithNavigationBar:(UINavigationBar *)navigationBar
 {
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(resestSafeAreaInsets) name:UIApplicationDidChangeStatusBarFrameNotification object:nil];
-    [safeAreaView addObserver:self forKeyPath:kViewrFrame options:NSKeyValueObservingOptionOld|NSKeyValueObservingOptionNew context:nil];
     [navigationBar addObserver:self forKeyPath:kViewrFrame options:NSKeyValueObservingOptionOld|NSKeyValueObservingOptionNew context:nil];
     [navigationBar addObserver:self forKeyPath:kViewHidden options:NSKeyValueObservingOptionOld|NSKeyValueObservingOptionNew context:nil];
     [navigationBar addObserver:self forKeyPath:kViewAlpha options:NSKeyValueObservingOptionOld|NSKeyValueObservingOptionNew context:nil];
@@ -177,8 +175,7 @@
 #pragma mark - KVO
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context
 {
-    if ((object == self.safeAreaView && [keyPath isEqualToString:kViewrFrame]) ||
-        (object == self.navigationBar && ([keyPath isEqualToString:kViewrFrame] ||
+    if ((object == self.navigationBar && ([keyPath isEqualToString:kViewrFrame] ||
                                           [keyPath isEqualToString:kViewHidden] ||
                                           [keyPath isEqualToString:kViewAlpha]))) {
         [self resestSafeAreaInsets];

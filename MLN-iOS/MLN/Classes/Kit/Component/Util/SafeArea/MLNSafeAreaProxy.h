@@ -26,6 +26,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (CGFloat)safeAreaLeft;
 - (CGFloat)safeAreaRight;
 
+- (void)resestSafeAreaInsets;
+
 @end
 
 NS_ASSUME_NONNULL_END

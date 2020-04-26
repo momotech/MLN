@@ -315,9 +315,10 @@
 
 - (void)setFrame:(CGRect)frame
 {
-    BOOL isSizeChange = !CGSizeEqualToSize(self.frame.size, frame.size);
+    BOOL isFrameChange = !CGRectEqualToRect(self.frame, frame);
     [super setFrame:frame];
-    if (isSizeChange) {
+    if (isFrameChange) {
+        [self.safeAreaProxy resestSafeAreaInsets];
         MLNLayoutNode *node = self.lua_node;
         [node changeWidth:frame.size.width];
         [node changeHeight:frame.size.height];
