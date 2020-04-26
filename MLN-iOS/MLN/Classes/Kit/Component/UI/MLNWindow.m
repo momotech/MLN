@@ -318,6 +318,7 @@
     BOOL isSizeChange = !CGSizeEqualToSize(self.frame.size, frame.size);
     [super setFrame:frame];
     if (isSizeChange) {
+        [self.safeAreaProxy resestSafeAreaInsets];
         MLNLayoutNode *node = self.lua_node;
         [node changeWidth:frame.size.width];
         [node changeHeight:frame.size.height];
