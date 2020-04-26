@@ -39,7 +39,7 @@
     [self.kitInstance changeLuaBundle:[[MLNLuaBundle alloc] initWithBundle:self.bundle]];
     
     NSError *error = nil;
-    BOOL ret = [self.kitInstance runWithMLNUIEntryFile:self.entryFileName windowExtra:self.extraInfo error:&error];
+    BOOL ret = [self.kitInstance runWithEntryFile:self.entryFileName windowExtra:self.extraInfo error:&error];
     if (ret) {
         if ([self.delegate respondsToSelector:@selector(viewController:didFinishRun:)]) {
             [self.delegate viewController:self didFinishRun:self.entryFileName];

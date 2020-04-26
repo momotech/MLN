@@ -195,63 +195,8 @@
     _entryFilePath = entryFilePath;
     // 准备环境
     [self setup];
-    // 运行主页面布局文件
-    BOOL success = [self runLayoutFileWithEntryFilePath:entryFilePath error:error];
     // 执行
-    if (success) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self runWithEntryFile:entryFilePath error:error];
-        });
-    } else { // 文件
-        success = [self runWithEntryFile:entryFilePath error:error];
-    }
-
-    return success;
-}
-
-- (BOOL)runWithMLNUIEntryFile:(NSString *)entryFileName windowExtra:(NSDictionary *)windowExtra error:(NSError *__autoreleasing  _Nullable *)error {
-    _windowExtra = [NSMutableDictionary dictionaryWithDictionary:windowExtra];
-    _entryFilePath = entryFileName;
-    // 准备环境
-    [self setup];
-    // 执行
-    return [self runWithEntryFile:entryFileName error:error];
-}
-
-- (BOOL)runLayoutFileWithEntryFilePath:(NSString *)entryFilePath error:(NSError * _Nullable __autoreleasing * _Nullable)error {
-    NSString *fileName = [[entryFilePath lastPathComponent] stringByDeletingPathExtension];
-    NSString *layoutFileName = [NSString stringWithFormat:@"%@Layout.lua", fileName ?: @""];
-    NSString *layoutFilePath = [self.currentBundle filePathWithName:layoutFileName];
-    
-    NSError *innerError = nil;
-    if (!layoutFilePath || ![MLNFile existAtPath:layoutFilePath]) {
-        innerError = [NSError mln_errorLoad:[NSString stringWithFormat:@"The layout file path of entry file doesn't exist, and the entryFilePath is %@", entryFilePath ?: @"(null)"]];
-//        MLNError(self.luaCore, @"%@", [innerError mln_errorMessage]);
-        NSLog(@"%@",[innerError mln_errorMessage]);
-        [self handleLayoutFileError:innerError errorBuffer:error filePath:entryFilePath];
-        return NO;
-    }
-    
-    BOOL success = [self.luaCore runFile:layoutFileName error:&innerError];
-    if (!success) {
-        [self handleLayoutFileError:innerError errorBuffer:error filePath:entryFilePath];
-        return NO;
-    }
-    
-    [self forceLayoutLuaWindow];
-    if ([self.delegate respondsToSelector:@selector(instance:didFinishRun:)]) {
-        [self.delegate instance:self didFinishRun:entryFilePath];
-    }
-    return YES;
-}
-
-- (void)handleLayoutFileError:(NSError *)error errorBuffer:(NSError **)errorBuffer filePath:(NSString *)filePath {
-    if (errorBuffer) {
-        *errorBuffer = error;
-    }
-    if ([self.delegate respondsToSelector:@selector(instance:didFailRun:error:)]) {
-        [self.delegate instance:self didFailRun:filePath error:error];
-    }
+    return [self runWithEntryFile:entryFilePath error:error];
 }
 
 - (BOOL)runWithEntryFile:(NSString *)entryFilePath error:(NSError * _Nullable __autoreleasing * _Nullable)error
