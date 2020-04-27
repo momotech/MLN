@@ -29,7 +29,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  MLNUIViewController的代理
  */
-@property (nonatomic, weak) id<MLNUIViewControllerDelegatee> delegate;
+@property (nonatomic, weak) id<MLNViewControllerDelegate> delegate;
 
 - (instancetype)initWithEntryFileName:(NSString *)entryFileName;
 - (instancetype)initWithEntryFileName:(NSString *)entryFileName bundle:(nullable NSBundle *)bundle NS_DESIGNATED_INITIALIZER;
