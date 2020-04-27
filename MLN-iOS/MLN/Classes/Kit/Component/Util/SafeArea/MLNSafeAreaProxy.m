@@ -93,6 +93,11 @@
     return 0.f;
 }
 
+- (void)detachSafeAreaView:(UIView<MLNSafeAreaViewProtocol> *)safeAreaView {
+    [safeAreaView removeObserver:self forKeyPath:kViewrFrame context:nil];
+    self.safeAreaView = nil;
+}
+
 #pragma mark - Private Method
 - (void)dealloc
 {
@@ -100,7 +105,6 @@
     [_navigationBar removeObserver:self forKeyPath:kViewrFrame context:nil];
     [_navigationBar removeObserver:self forKeyPath:kViewHidden context:nil];
     [_navigationBar removeObserver:self forKeyPath:kViewAlpha context:nil];
-    [_safeAreaView removeObserver:self forKeyPath:kViewrFrame context:nil];
 }
 
 - (void)__addObserverWithNavigationBar:(UINavigationBar *)navigationBar safeAreaView:(UIView<MLNSafeAreaViewProtocol> *)safeAreaView
