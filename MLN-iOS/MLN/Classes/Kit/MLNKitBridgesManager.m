@@ -118,7 +118,7 @@
     // 注册绘图相关
     [luaCore registerClasses:self.canvasClasses error:NULL];
     // 注册新布局相关
-    [luaCore] registerClasses:self.stackClasses error:NULL];
+    [luaCore registerClasses:self.stackClasses error:NULL];
 }
 
 static NSArray<Class<MLNExportProtocol>> *viewClasses;

@@ -41,16 +41,16 @@
 {
     [super viewDidLoad];
     // 初始化handlers
-    self.httpHandler = [[MLNMyHttpHandler alloc] init];
-    self.refreshHandler = [[MLNMyRefreshHandler alloc] init];
-    self.imgLoader = [[MLNMyImageHandler alloc] init];
-    self.navHandler = [[MLNNavigatorHandler alloc] init];
-
-    MLNKitInstanceHandlersManager *handlersManager = [MLNKitInstanceHandlersManager defaultManager];
-    handlersManager.httpHandler = self.httpHandler;
-    handlersManager.scrollRefreshHandler = self.refreshHandler;
-    handlersManager.imageLoader = self.imgLoader;
-    handlersManager.navigatorHandler = self.navHandler;
+//    self.httpHandler = [[MLNMyHttpHandler alloc] init];
+//    self.refreshHandler = [[MLNMyRefreshHandler alloc] init];
+//    self.imgLoader = [[MLNMyImageHandler alloc] init];
+//    self.navHandler = [[MLNNavigatorHandler alloc] init];
+//
+//    MLNKitInstanceHandlersManager *handlersManager = [MLNKitInstanceHandlersManager defaultManager];
+//    handlersManager.httpHandler = self.httpHandler;
+//    handlersManager.scrollRefreshHandler = self.refreshHandler;
+//    handlersManager.imageLoader = self.imgLoader;
+//    handlersManager.navigatorHandler = self.navHandler;
 
     [self setupSubController];
     
