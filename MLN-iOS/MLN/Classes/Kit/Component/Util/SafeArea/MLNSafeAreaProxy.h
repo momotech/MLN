@@ -26,6 +26,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (CGFloat)safeAreaLeft;
 - (CGFloat)safeAreaRight;
 
+- (void)detachSafeAreaView:(UIView<MLNSafeAreaViewProtocol> *)safeAreaView;
+
 @end
 
 NS_ASSUME_NONNULL_END
