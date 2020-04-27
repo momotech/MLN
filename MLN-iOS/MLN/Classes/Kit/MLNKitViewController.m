@@ -9,6 +9,7 @@
 #import "MLNKitInstance.h"
 #import "MLNLuaBundle.h"
 #import "MLNKitViewController+DataBinding.h"
+#import "MLNKitInstanceFactory.h"
 
 @interface MLNKitViewController ()
 {
@@ -152,7 +153,7 @@
 - (MLNKitInstance *)kitInstance
 {
     if (!_luaInstance) {
-        _luaInstance = [[MLNKitInstance alloc] initWithLuaBundle:[MLNLuaBundle mainBundle] rootView:nil viewController:self];
+        _luaInstance = [[MLNKitInstanceFactory defaultFactory] createKitInstanceWithViewController:self];
     }
     return _luaInstance;
 }

@@ -12,6 +12,7 @@
 #import "NSDictionary+MLNSafety.h"
 #import "MLNHotReloadPresenter.h"
 #import "MLNServerManager.h"
+#import "MLNKitInstanceFactory.h"
 
 @interface MLNHotReload () <MLNKitInstanceErrorHandlerProtocol, MLNKitInstanceDelegate, MLNServerManagerDelegate, MLNDebugPrintObserver, MLNServerListenerProtocol, MLNHotReloadPresenterDelegate> {
     int _usbPort;
@@ -120,7 +121,7 @@ static MLNHotReload *sharedInstance;
 
 - (MLNKitInstance *)createLuaInstance:(NSString * )bundlePath entryFilePath:(NSString * _Nonnull)entryFilePath params:(NSDictionary * _Nonnull )params
 {
-    MLNKitInstance *luaInstance = [[MLNKitInstance alloc] initWithLuaBundle:nil viewController:self.viewController];
+    MLNKitInstance *luaInstance = [[MLNKitInstanceFactory defaultFactory] createKitInstanceWithViewController:self.viewController];
     luaInstance.delegate = self;
     luaInstance.instanceHandlersManager.errorHandler = self;
     [luaInstance changeLuaBundleWithPath:bundlePath];

@@ -9,17 +9,12 @@
 #import "MLNExportProtocol.h"
 
 NS_ASSUME_NONNULL_BEGIN
-@class MLNKitInstance;
+
+@class MLNLuaCore;
 @interface MLNKitBridgesManager : NSObject
 
-/**
- 承载Kit库bridge和LuaCore实例
- */
-@property (nonatomic, weak, readonly) MLNKitInstance *instance;
+- (void)registerKitForLuaCore:(MLNLuaCore *)luaCore;
 
-- (instancetype)initWithUIInstance:(MLNKitInstance *)instance;
-
-- (void)registerKit;
 @end
 
 NS_ASSUME_NONNULL_END

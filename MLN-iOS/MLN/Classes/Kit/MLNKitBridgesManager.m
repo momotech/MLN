@@ -6,7 +6,6 @@
 //
 
 #import "MLNKitBridgesManager.h"
-#import "MLNKitInstance.h"
 #import "MLNLuaCore.h"
 // Kit Classes's View
 #import "MLNView.h"
@@ -102,32 +101,24 @@
 
 @implementation MLNKitBridgesManager
 
-- (instancetype)initWithUIInstance:(MLNKitInstance *)instance
-{
-    if (self = [super init]) {
-        _instance = instance;
-    }
-    return self;
-}
-
-- (void)registerKit
+- (void)registerKitForLuaCore:(MLNLuaCore *)luaCore
 {
     // 注册视图
-    [self.instance registerClasses:self.viewClasses error:NULL];
+    [luaCore registerClasses:self.viewClasses error:NULL];
     // 注册数据模型
-    [self.instance registerClasses:self.modelClasses error:NULL];
+    [luaCore registerClasses:self.modelClasses error:NULL];
     // 注册全局变量
-    [self.instance registerClasses:self.gvarClasses error:NULL];
+    [luaCore registerClasses:self.gvarClasses error:NULL];
     // 注册工具
-    [self.instance registerClasses:self.utilClasses error:NULL];
+    [luaCore registerClasses:self.utilClasses error:NULL];
     // 注册C工具库
-    luaopen_mmos(self.instance.luaCore.state);
+    luaopen_mmos(luaCore.state);
     // 注册动画相关
-    [self.instance registerClasses:self.animationClasses error:NULL];
+    [luaCore registerClasses:self.animationClasses error:NULL];
     // 注册绘图相关
-    [self.instance registerClasses:self.canvasClasses error:NULL];
+    [luaCore registerClasses:self.canvasClasses error:NULL];
     // 注册新布局相关
-    [self.instance registerClasses:self.stackClasses error:NULL];
+    [luaCore registerClasses:self.stackClasses error:NULL];
 }
 
 static NSArray<Class<MLNExportProtocol>> *viewClasses;
