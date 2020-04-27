@@ -121,7 +121,7 @@ typedef enum : NSUInteger {
 //******                Node
 //*****
 @property (nonatomic, weak) MLNLayoutNode *supernode;
-@property (nonatomic, strong) MLNLayoutNode *overlayNode;
+@property (nonatomic, strong, nullable) MLNLayoutNode *overlayNode;
 //*******
 //******                Root Node
 //*****
