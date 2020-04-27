@@ -49,7 +49,7 @@ static MLNKitInstanceFactory *_defaultFactory = nil;
 
 - (MLNKitInstance *)createKitInstanceWithLuaBundle:(MLNLuaBundle *)luaBundle viewController:(UIViewController<MLNViewControllerProtocol> *)viewController
 {
-    return [self createKitInstanceWithLuaBundle:luaBundle rootView:viewController.view viewController:viewController];
+    return [self createKitInstanceWithLuaBundle:luaBundle rootView:nil viewController:viewController];
 }
 
 - (MLNKitInstance *)createKitInstanceWithLuaBundle:(MLNLuaBundle *__nullable)luaBundle rootView:(UIView *__nullable)rootView viewController:(UIViewController<MLNViewControllerProtocol> *)viewController
