@@ -203,6 +203,7 @@ static MLN_FORCE_INLINE void GetFirstSubNodeYAndSubNodeSpace(MLNVStackNode __uns
             break;
             
         default:
+            *firstSubNodeY = self.paddingTop;
             break;
     }
 }
