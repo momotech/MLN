@@ -188,8 +188,10 @@
 - (void)requestLayout
 {
     if (self.isRoot) {
-        [self onMeasure];
-        [self onLayout];
+        if (self.isDirty) {
+            [self onMeasure];
+            [self onLayout];
+        }
     } else {
         [super requestLayout];
     }
