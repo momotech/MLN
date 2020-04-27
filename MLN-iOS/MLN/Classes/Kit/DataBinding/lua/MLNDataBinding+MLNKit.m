@@ -11,7 +11,6 @@
 #import "MLNKitViewController.h"
 #import "MLNBlock.h"
 #import "MLNBlockObserver.h"
-#import "MLNKitViewController+DataBinding.h"
 #import "MLNListViewObserver.h"
 #import "NSObject+MLNKVO.h"
 #import "NSArray+MLNKVO.h"
@@ -23,18 +22,18 @@
 @implementation MLNDataBinding (MLNKit)
 
 + (void)lua_bindDataForKeyPath:(NSString *)keyPath handler:(MLNBlock *)handler {
-    UIViewController *kitViewController = (MLNKitViewController *)MLN_KIT_INSTANCE([self mln_currentLuaCore]).viewController;
+    UIViewController<MLNDataBindingProtocol> *kitViewController = (MLNKitViewController *)MLN_KIT_INSTANCE([self mln_currentLuaCore]).viewController;
     NSObject<MLNKVOObserverProtol> *observer = [MLNBlockObserver observerWithBlock:handler keyPath:keyPath];
     [kitViewController.mln_dataBinding addDataObserver:observer forKeyPath:keyPath];
 }
 
 + (void)lua_updateDataForKeyPath:(NSString *)keyPath value:(id)value {
-    UIViewController *kitViewController = (MLNKitViewController *)MLN_KIT_INSTANCE([self mln_currentLuaCore]).viewController;
+    UIViewController<MLNDataBindingProtocol> *kitViewController = (MLNKitViewController *)MLN_KIT_INSTANCE([self mln_currentLuaCore]).viewController;
     [kitViewController.mln_dataBinding updateDataForKeyPath:keyPath value:value];
 }
 
 + (id __nullable)lua_dataForKeyPath:(NSString *)keyPath {
-    UIViewController *kitViewController = (MLNKitViewController *)MLN_KIT_INSTANCE([self mln_currentLuaCore]).viewController;
+    UIViewController<MLNDataBindingProtocol> *kitViewController = (MLNKitViewController *)MLN_KIT_INSTANCE([self mln_currentLuaCore]).viewController;
     NSObject *obj = [kitViewController.mln_dataBinding dataForKeyPath:keyPath];
     if ([obj isKindOfClass:[NSArray class]]) {
         return [(NSArray *)obj mln_convertToLuaTableAvailable];
@@ -43,7 +42,7 @@
 }
 
 + (id __nullable)lua_mockForKey:(NSString *)key data:(NSDictionary *)dic {
-    UIViewController *kitViewController = (MLNKitViewController *)MLN_KIT_INSTANCE([self mln_currentLuaCore]).viewController;
+    UIViewController<MLNDataBindingProtocol> *kitViewController = (MLNKitViewController *)MLN_KIT_INSTANCE([self mln_currentLuaCore]).viewController;
 //    if ([dic isKindOfClass:[NSArray class]]) {
 //        return [self lua_mockArrayForKey:key data:(NSArray *)dic callbackDic:nil];
 //    }
@@ -57,7 +56,7 @@
 }
 
 + (id __nullable)lua_mockArrayForKey:(NSString *)key data:(NSArray *)data callbackDic:(NSDictionary *)callbackDic {
-    UIViewController *kitViewController = (MLNKitViewController *)MLN_KIT_INSTANCE([self mln_currentLuaCore]).viewController;
+    UIViewController<MLNDataBindingProtocol> *kitViewController = (MLNKitViewController *)MLN_KIT_INSTANCE([self mln_currentLuaCore]).viewController;
     
     NSMutableArray *arr = [[kitViewController.mln_dataBinding dataForKeyPath:key] mutableCopy];
     [kitViewController.mln_dataBinding updateDataForKeyPath:key value:arr];
@@ -127,7 +126,7 @@
 
 // userData.source
 + (void)lua_bindListViewForKey:(NSString *)key listView:(UIView *)listView {
-    UIViewController *kitViewController = (MLNKitViewController *)MLN_KIT_INSTANCE([self mln_currentLuaCore]).viewController;
+    UIViewController<MLNDataBindingProtocol> *kitViewController = (MLNKitViewController *)MLN_KIT_INSTANCE([self mln_currentLuaCore]).viewController;
     MLNListViewObserver *observer = [MLNListViewObserver observerWithListView:listView keyPath:key];
     
     [kitViewController.mln_dataBinding addArrayObserver:observer forKey:key];
@@ -237,7 +236,7 @@
 }
 */
 + (void)lua_bindCellForKey:(NSString *)key section:(NSUInteger)section row:(NSUInteger)row paths:(NSArray *)paths {
-    UIViewController *kitViewController = (MLNKitViewController *)MLN_KIT_INSTANCE([self mln_currentLuaCore]).viewController;
+    UIViewController<MLNDataBindingProtocol> *kitViewController = (MLNKitViewController *)MLN_KIT_INSTANCE([self mln_currentLuaCore]).viewController;
 
     NSArray *array = [self lua_dataForKeyPath:key];
     MLNListViewObserver *listObserver = (MLNListViewObserver *)[kitViewController.mln_dataBinding observersForKeyPath:key].firstObject;

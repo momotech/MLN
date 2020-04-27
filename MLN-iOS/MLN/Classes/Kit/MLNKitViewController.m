@@ -8,7 +8,6 @@
 #import "MLNKitViewController.h"
 #import "MLNKitInstance.h"
 #import "MLNLuaBundle.h"
-#import "MLNKitViewController+DataBinding.h"
 #import "MLNKitInstanceFactory.h"
 
 @interface MLNKitViewController ()
