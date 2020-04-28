@@ -605,6 +605,11 @@
 
 @implementation MLNKitInstance (Deprecated)
 
+- (instancetype)initWithLuaBundle:(MLNLuaBundle *)bundle rootView:(UIView * _Nullable)rootView viewController:(nonnull UIViewController<MLNViewControllerProtocol> *)viewController
+{
+    return [self initWithLuaBundle:bundle convertor:nil exporter:nil rootView:rootView viewController:viewController];
+}
+
 - (instancetype)initWithLuaBundle:(MLNLuaBundle *__nullable)luaBundle convertor:(Class<MLNConvertorProtocol> __nullable)convertorClass exporter:(Class<MLNExporterProtocol> __nullable)exporterClass rootView:(UIView *)rootView viewController:(UIViewController<MLNViewControllerProtocol> *)viewController
 {
     if (self = [super init]) {
