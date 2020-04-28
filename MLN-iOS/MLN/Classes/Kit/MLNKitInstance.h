@@ -387,6 +387,16 @@ Lua中的根视图。
 
 @interface MLNKitInstance (Deprecated)
 /**
+ 初始化方法
+
+ @param luaBundle Lua Core运行的Lua bundle环境, 为空时默认为Main Bundle
+ @param rootView 承载LuaWindow的根视图
+ @param viewController LuaWindow所在的视图控制器，并使用viewController.view作为承载LuaWindow的根视图
+ @return Lua Core 实例
+ */
+- (instancetype)initWithLuaBundle:(MLNLuaBundle *__nullable)luaBundle rootView:(UIView * __nullable)rootView viewController:(UIViewController<MLNViewControllerProtocol> *)viewController;
+
+/**
  废弃的初始化方法
  
  @param luaBundle Lua Core运行的Lua bundle环境，为空时默认为Main Bundle
@@ -398,6 +408,7 @@ Lua中的根视图。
  @return LuaInstance实例
  */
 - (instancetype)initWithLuaBundle:(MLNLuaBundle *__nullable)luaBundle convertor:(Class<MLNConvertorProtocol> __nullable)convertorClass exporter:(Class<MLNExporterProtocol> __nullable)exporterClass rootView:(UIView * __nullable)rootView viewController:(UIViewController<MLNViewControllerProtocol> *)viewController;
+
 - (void)registerKitClasses;
 @end
 
