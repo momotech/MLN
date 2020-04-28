@@ -27,6 +27,7 @@
 #import "MLNWindow.h"
 #import "MLNKitInstanceConsts.h"
 #import "MLNFile.h"
+#import "MLNKitBridgesManager.h"
 
 #define kMLNRunLoopBeforeWaitingLazyTaskOrder   1
 #define kMLNRunLoopBeforeWaitingRenderOrder     2
@@ -45,6 +46,14 @@
 @property (nonatomic, strong) NSMutableArray *onDestroyCallbacks;
 @property (nonatomic, assign) BOOL didViewAppear;
 @property (nonatomic, assign) BOOL needCallAppear;
+
+@end
+
+// Deprecated
+@interface MLNKitInstance ()
+@property (nonatomic) Class<MLNConvertorProtocol> convertorClass;
+@property (nonatomic) Class<MLNExporterProtocol> exporterClass;
+@property (nonatomic, strong) MLNKitBridgesManager *bridgesManager;
 
 @end
 
@@ -381,6 +390,8 @@
     }
     // 创建新的LuaCore
     [self luaCore];
+    // 注册Kit所有Bridge, 兼容老代码
+    [self registerKitClasses];
     // 开启所有处理引擎
     [self startAllEngines];
     // 创建LuaWindow
@@ -396,6 +407,9 @@
 - (void)createLuaCore
 {
     _luaCore = [self.luaCoreBuilder getLuaCore];
+    if (!self.luaCore) {
+        _luaCore = [[MLNLuaCore alloc] initWithLuaBundle:_currentBundle convertor:_convertorClass exporter:_exporterClass];
+    }
     [_luaCore changeLuaBundle:self.currentBundle];
     _luaCore.weakAssociatedObject = self;
     _luaCore.errorHandler = self;
@@ -601,4 +615,30 @@
     return nil;
 }
 
+@end
+
+@implementation MLNKitInstance (Deprecated)
+
+- (instancetype)initWithLuaBundle:(MLNLuaBundle *__nullable)luaBundle convertor:(Class<MLNConvertorProtocol> __nullable)convertorClass exporter:(Class<MLNExporterProtocol> __nullable)exporterClass rootView:(UIView *)rootView viewController:(UIViewController<MLNViewControllerProtocol> *)viewController
+{
+    if (self = [super init]) {
+        _currentBundle = luaBundle;
+        if (!convertorClass) {
+            convertorClass = MLNKiConvertor.class;
+        }
+        _convertorClass = convertorClass;
+        _exporterClass = exporterClass;
+        _rootView = rootView;
+        _viewController = viewController;
+        _instanceHandlersManager = [[MLNKitInstanceHandlersManager alloc] initWithUIInstance:self];
+        _bridgesManager = [[MLNKitBridgesManager alloc] initWithUIInstance:self];
+        _instanceConsts = [[MLNKitInstanceConsts alloc] init];
+    }
+    return self;
+}
+
+- (void)registerKitClasses
+{
+    [self.bridgesManager registerKit];
+}
 @end
