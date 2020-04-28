@@ -397,8 +397,9 @@
 
 - (void)createLuaCore
 {
-    _luaCore = [self.luaCoreBuilder getLuaCore];
-    if (!self.luaCore) {
+    if (self.luaCoreBuilder) {
+        _luaCore = [self.luaCoreBuilder getLuaCore];
+    } else {
         _luaCore = [[MLNLuaCore alloc] initWithLuaBundle:_currentBundle convertor:_convertorClass exporter:_exporterClass];
     }
     [_luaCore changeLuaBundle:self.currentBundle];
