@@ -31,6 +31,7 @@
         _layoutStrategy = MLNLayoutStrategySimapleAuto;
         _anchorPoint = targetView.layer.anchorPoint;
         _paddingNeedUpdated = YES;
+        _belongLineNode = NULL;
     }
     return self;
 }

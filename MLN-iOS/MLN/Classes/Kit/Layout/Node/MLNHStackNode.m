@@ -9,24 +9,43 @@
 #import "MLNSpacerNode.h"
 #import "MLNHeader.h"
 
+@interface MLNHStackNode ()
+
+@property (nonatomic, assign) CGFloat subNodeTotalHeight;
+@property (nonatomic, strong) NSMutableArray<NSArray<MLNLayoutNode *> *> *wrapLineNodes;
+
+@end
+
 @implementation MLNHStackNode
+
+- (NSMutableArray<NSArray<MLNLayoutNode *> *> *)wrapLineNodes {
+    if (!_wrapLineNodes) {
+        _wrapLineNodes = [NSMutableArray array];
+    }
+    return _wrapLineNodes;
+}
 
 #pragma mark - Override
 
 - (CGSize)measureSubNodes:(NSArray<MLNLayoutNode *> *)subNods maxWidth:(CGFloat)maxWidth maxHeight:(CGFloat)maxHeight {
-    
     CGFloat myMaxWidth = [self myMaxWidthWithMaxWidth:maxWidth];
     CGFloat myMaxHeight = [self myMaxHeightWithMaxHeight:maxHeight];
     
     CGFloat usableZoneWidth = myMaxWidth - self.paddingLeft - self.paddingRight;
     CGFloat usableZoneHeight = myMaxHeight - self.paddingTop - self.paddingBottom;
     
-    int totalWidth = 0;
-    int needMaxHeight = 0;
+    CGFloat totalWidth = 0;
+    CGFloat totalHeight = 0;
     BOOL needDirty = NO;
     int totalWeight = 0;
     
-    for (NSUInteger i  = 0; i < subNods.count; i++) {
+    CGFloat currentLineWidth = 0.0f;
+    CGFloat currentLineHeight = 0.0f;
+    MLNLayoutNode *belongLineNode = [MLNLayoutNode new];
+    
+    NSMutableArray<MLNLayoutNode *> *lineNodes = [NSMutableArray array];
+   
+    for (NSUInteger i = 0; i < subNods.count; i++) {
         MLNLayoutNode *subnode = subNods[i];
         if (subnode.isGone) {
             if (subnode.isDirty) {
@@ -45,18 +64,52 @@
         CGFloat subMaxWidth = usableZoneWidth - totalWidth - subnode.marginLeft - subnode.marginRight;
         CGFloat subMaxHeight = usableZoneHeight - subnode.marginTop - subnode.marginBottom;
         CGSize subMeasuredSize = [subnode measureSizeWithMaxWidth:subMaxWidth maxHeight:subMaxHeight]; // 计算子节点
-        switch (subnode.layoutStrategy) {
-            case MLNLayoutStrategyNativeFrame:
-                totalWidth = MAX(totalWidth, totalWidth + subMeasuredSize.width);
-                needMaxHeight = MAX(needMaxHeight, subMeasuredSize.height);
-                break;
-            default: {
-                totalWidth = MAX(totalWidth, totalWidth + subMeasuredSize.width + subnode.marginLeft + subnode.marginRight);
-                needMaxHeight = MAX(needMaxHeight, subMeasuredSize.height + subnode.marginTop + subnode.marginBottom);
-                break;
-            }
+        
+        // 处理换行
+        CGFloat subNodeWidth = subMeasuredSize.width;
+        CGFloat subNodeHeight = subMeasuredSize.height;
+        if (subnode.layoutStrategy == MLNLayoutStrategySimapleAuto) {
+            subNodeWidth += (subnode.marginLeft + subnode.marginRight);
+            subNodeHeight += (subnode.marginTop + subnode.marginBottom);
         }
+        
+        if (self.wrapType == MLNStackWrapTypeWrap) {
+            if ((usableZoneWidth - currentLineWidth > subNodeWidth) && self.mergedWidthType != MLNLayoutMeasurementTypeWrapContent) { // 判断当前行剩余宽度是否可容纳下一个子view && 如果是WrapContent则每个子view单独占一行
+                [lineNodes addObject:subnode];
+                
+                currentLineWidth += subNodeWidth;
+                currentLineHeight = MAX(currentLineHeight, subNodeHeight);
+                
+                belongLineNode.belongLineHeight = currentLineHeight;
+                subnode.belongLineNode = belongLineNode; // 每一行的行高取决于当前行最大高度的subNode，遍历过程中为了使每一行的所有subNode所属行高都能及时更新
+            } else {
+                [self.wrapLineNodes addObject:[lineNodes copy]];
+                [lineNodes removeAllObjects];
+                [lineNodes addObject:subnode];
+                
+                currentLineWidth = subNodeWidth;
+                currentLineHeight = subNodeHeight;
+                totalHeight += currentLineHeight;
+                
+                belongLineNode = [MLNLayoutNode new]; // 换行后重新分配行高
+                belongLineNode.belongLineHeight = currentLineHeight;
+                subnode.belongLineNode = belongLineNode;
+            }
+            totalWidth = MAX(totalWidth, currentLineWidth);
+            totalHeight = MAX(totalHeight, currentLineHeight);
+            
+        } else {
+            totalWidth = MAX(totalWidth, totalWidth + subNodeWidth);
+            totalHeight = MAX(totalHeight, subNodeHeight);
+            [lineNodes addObject:subnode];
+        }
+    };
+    
+    if (lineNodes.count > 0) {
+        [self.wrapLineNodes addObject:lineNodes];
     }
+    
+    self.subNodeTotalHeight = MIN(myMaxHeight, MAX(self.minHeight, totalHeight));
     
     CGFloat measuredWidth = myMaxWidth;
     CGFloat measuredHeight = myMaxHeight;
@@ -84,12 +137,12 @@
         switch (self.mergedHeightType) {
             case MLNLayoutMeasurementTypeWrapContent:
                 // padding
-                needMaxHeight += self.paddingTop + self.paddingBottom;
+                totalHeight += self.paddingTop + self.paddingBottom;
                 // min
-                needMaxHeight = self.minHeight > 0 ? MAX(needMaxHeight, self.minHeight) : needMaxHeight; // 保证比最小值大
+                totalHeight = self.minHeight > 0 ? MAX(totalHeight, self.minHeight) : totalHeight; // 保证比最小值大
                 // max
-                needMaxHeight = MIN(myMaxHeight, needMaxHeight); // 保证比最大值小
-                measuredHeight = needMaxHeight;
+                totalHeight = MIN(myMaxHeight, totalHeight); // 保证比最大值小
+                measuredHeight = totalHeight;
                 break;
             case MLNLayoutMeasurementTypeMatchParent:
                 measuredHeight = MAX(self.minHeight, myMaxHeight);
@@ -110,46 +163,58 @@
 - (void)layoutSubnodes {
     CGFloat layoutZoneHeight = self.measuredHeight - self.paddingTop - self.paddingBottom;
     CGFloat layoutZoneBottom = self.measuredHeight - self.paddingBottom;
-
-    CGFloat space = 0.0; // subNode之间的间隔
-    CGFloat vernierX = 0.0; // 游标, 用于设置每个subNode的x坐标
-    CGFloat spacerWidth = 0.0; // spacer的宽度
-    GetFirstSubNodeXAndSubNodeSpace(self, &vernierX, &space, &spacerWidth);
+    CGFloat previousLineHeight = 0.0;
     
-    CGFloat childX, childY = 0.0;
-    NSArray *subNodes = self.subnodes;
+    for (NSArray<MLNLayoutNode *> *subNodes in self.wrapLineNodes) {
+        CGFloat space = 0.0; // subNode之间的间隔
+        CGFloat vernierX = 0.0; // 游标, 用于设置每个subNode的x坐标
+        CGFloat spacerWidth = 0.0; // spacer的宽度
+        GetFirstSubNodeXAndSubNodeSpace(self, &vernierX, &space, &spacerWidth, subNodes);
     
-    for (MLNLayoutNode *subNode in subNodes) {
-        if (subNode.isGone) continue;
-        if (MLN_IS_EXPANDED_SPACER_NODE_IN_HSTACK(subNode)) {
-            subNode.measuredWidth = spacerWidth;
-        }
+        CGFloat childX, childY = 0.0;
+        for (MLNLayoutNode *subNode in subNodes) {
+            if (subNode.isGone) continue;
+            if (MLN_IS_EXPANDED_SPACER_NODE_IN_HSTACK(subNode)) {
+                subNode.measuredWidth = spacerWidth;
+            }
 
-        // 布局主轴(X-axis)
-        vernierX += subNode.marginLeft;
-        childX = vernierX;
-        vernierX += subNode.measuredWidth + subNode.marginRight + space;
-        
-        // 布局交叉轴(Y-axis)
-        childY = GetSubNodeY(self, subNode, layoutZoneHeight, layoutZoneBottom);
-        
-        // set frame
-        subNode.measuredX = childX;
-        subNode.measuredY = childY;
-        [subNode updateTargetViewFrameIfNeed];
-        
-        if (subNode.isContainer) {
-            [(MLNLayoutContainerNode *)subNode layoutSubnodes];
+            // 布局主轴(X-axis)
+            vernierX += subNode.marginLeft;
+            childX = vernierX;
+            vernierX += subNode.measuredWidth + subNode.marginRight + space;
+            
+            // 布局交叉轴(Y-axis)
+            CGFloat maxHeight = layoutZoneHeight;
+            CGFloat maxY = layoutZoneBottom;
+            if (self.wrapType == MLNStackWrapTypeWrap) {
+                maxHeight = subNode.belongLineNode.belongLineHeight;
+                maxY = maxHeight;
+            }
+            childY = GetSubNodeGravityY(self, subNode, maxHeight, maxY);
+            childY = GetSubNodeCrossAxisAlignmentY(self, subNode, childY, layoutZoneHeight, layoutZoneBottom);
+ 
+            // set frame
+            subNode.measuredX = childX;
+            subNode.measuredY = childY + previousLineHeight;
+            [subNode updateTargetViewFrameIfNeed];
+            
+            if (subNode.isContainer) {
+                [(MLNLayoutContainerNode *)subNode layoutSubnodes];
+            }
+            if (subNode.overlayNode) {
+                [subNode layoutOverlayNode];
+            }
         }
-        if (subNode.overlayNode) {
-            [subNode layoutOverlayNode];
+        
+        if (subNodes[0].belongLineNode) {
+            previousLineHeight += subNodes[0].belongLineNode.belongLineHeight;
         }
     }
 }
 
 #pragma mark -
 
-static MLN_FORCE_INLINE void GetFirstSubNodeXAndSubNodeSpace(MLNHStackNode __unsafe_unretained *self, CGFloat *firstSubNodeX, CGFloat *subNodeSpace, CGFloat *spacerWidth) {
+static MLN_FORCE_INLINE void GetFirstSubNodeXAndSubNodeSpace(MLNHStackNode __unsafe_unretained *self, CGFloat *firstSubNodeX, CGFloat *subNodeSpace, CGFloat *spacerWidth, NSArray<MLNLayoutNode *> *subNodes) {
     if (self.mergedWidthType == MLNLayoutMeasurementTypeWrapContent) {
         *firstSubNodeX = self.paddingLeft;
         return;
@@ -157,7 +222,6 @@ static MLN_FORCE_INLINE void GetFirstSubNodeXAndSubNodeSpace(MLNHStackNode __uns
     
     int validSpacerCount = 0; // 没有设置width的spacerNode
     CGFloat totalWidth = 0.0;
-    NSArray *subNodes = self.subnodes;
     for (MLNLayoutNode *node in subNodes) {
         totalWidth += node.marginLeft + node.measuredWidth + node.marginRight;
         if (MLN_IS_EXPANDED_SPACER_NODE_IN_HSTACK(node)) {
@@ -207,7 +271,7 @@ static MLN_FORCE_INLINE void GetFirstSubNodeXAndSubNodeSpace(MLNHStackNode __uns
     }
 }
 
-static MLN_FORCE_INLINE CGFloat GetSubNodeY(MLNHStackNode __unsafe_unretained *self, MLNLayoutNode __unsafe_unretained *subNode, CGFloat maxHeight, CGFloat maxY) {
+static MLN_FORCE_INLINE CGFloat GetSubNodeGravityY(MLNHStackNode __unsafe_unretained *self, MLNLayoutNode __unsafe_unretained *subNode, CGFloat maxHeight, CGFloat maxY) {
     CGFloat y = 0.0;
     switch (subNode.gravity & MLNGravityVerticalMask) { // 交叉轴方向布局优先以Gravity为准
         case MLNGravityTop:
@@ -223,20 +287,52 @@ static MLN_FORCE_INLINE CGFloat GetSubNodeY(MLNHStackNode __unsafe_unretained *s
             break;
             
         default:
-            switch (self.crossAxisAlignment) {
-                case MLNStackCrossAlignmentStart:
-                    y = self.paddingTop + subNode.marginTop;
-                    break;
-                case MLNStackCrossAlignmentCenter:
-                    y = self.paddingTop + (maxHeight - subNode.measuredHeight) / 2.0f + subNode.marginTop - subNode.marginBottom;
-                    break;
-                case MLNStackCrossAlignmentEnd:
-                    y = maxY - subNode.measuredHeight - subNode.marginBottom;
-                    break;
-                default:
-                    y = self.paddingTop + subNode.marginTop;
-                    break;
-            }
+            y = -1;
+            break;
+            
+    }
+    return y;
+}
+
+static MLN_FORCE_INLINE CGFloat GetSubNodeCrossAxisAlignmentY(MLNHStackNode __unsafe_unretained *self, MLNLayoutNode __unsafe_unretained *subNode, CGFloat y, CGFloat maxHeight, CGFloat maxY) {
+    if (self.wrapType != MLNStackWrapTypeWrap) {
+        if (y >= 0) return y; // 如果非换行模式，交叉轴方向布局优先以Gravity为准，若未设置Gravity，则以crossAxisAlignment为准.
+        switch (self.crossAxisAlignment) {
+            case MLNStackCrossAlignmentStart:
+                y = self.paddingTop + subNode.marginTop;
+                break;
+                
+            case MLNStackCrossAlignmentCenter:
+                y = self.paddingTop + (maxHeight - subNode.measuredHeight) / 2.0f + subNode.marginTop - subNode.marginBottom;
+                break;
+                
+            case MLNStackCrossAlignmentEnd:
+                y = maxY - subNode.measuredHeight - subNode.marginBottom;
+                break;
+                
+            default:
+                y = self.paddingTop + subNode.marginTop;
+                break;
+        }
+        return y;
+    }
+    
+    // 换行模式下Gravity只针对每一行生效，而crossAxisAlignment对所有行作为一个整体生效
+    if (y < 0) {
+        y = self.paddingTop + subNode.marginTop;
+    }
+    switch (self.crossAxisAlignment) {
+        case MLNStackCrossAlignmentCenter:
+            y += (maxHeight - self.subNodeTotalHeight) / 2.0f;
+            break;
+            
+        case MLNStackCrossAlignmentEnd:
+            y += (maxY - self.subNodeTotalHeight);
+            break;
+            
+        case MLNStackCrossAlignmentStart:
+        default:
+            // do nothing
             break;
     }
     return y;
@@ -275,7 +371,7 @@ static MLN_FORCE_INLINE void MeasureHeightForWeightHorizontal(MLNStackNode __uns
         totalWeight -= subnode.weight;
     }
     
-    CGFloat needMaxHeight = 0.f;
+    CGFloat totalHeight = 0.f;
     
     for (MLNLayoutNode *subnode in proportionNodes) {
         CGFloat subMaxWidth = usableZoneWidth;
@@ -287,10 +383,10 @@ static MLN_FORCE_INLINE void MeasureHeightForWeightHorizontal(MLNStackNode __uns
         usableZoneWidth -= subMeasuredSize.width;
         switch (subnode.layoutStrategy) {
             case MLNLayoutStrategyNativeFrame:
-                needMaxHeight = MAX(needMaxHeight, subMeasuredSize.height);
+                totalHeight = MAX(totalHeight, subMeasuredSize.height);
                 break;
             default: {
-                needMaxHeight = MAX(needMaxHeight, subMeasuredSize.height +subnode.marginTop +subnode.marginBottom);
+                totalHeight = MAX(totalHeight, subMeasuredSize.height +subnode.marginTop +subnode.marginBottom);
                 break;
             }
         }
@@ -300,12 +396,12 @@ static MLN_FORCE_INLINE void MeasureHeightForWeightHorizontal(MLNStackNode __uns
         switch (node.mergedHeightType) {
             case MLNLayoutMeasurementTypeWrapContent:
                 // padding
-                needMaxHeight += node.paddingTop +node.paddingBottom;
+                totalHeight += node.paddingTop +node.paddingBottom;
                 // min
-                needMaxHeight = MAX(needMaxHeight, node.minHeight);
+                totalHeight = MAX(totalHeight, node.minHeight);
                 // max
-                needMaxHeight = node.maxHeight > 0 ? MIN(node.maxHeight, needMaxHeight) : needMaxHeight;
-                measuredHeight = needMaxHeight;
+                totalHeight = node.maxHeight > 0 ? MIN(node.maxHeight, totalHeight) : totalHeight;
+                measuredHeight = totalHeight;
                 break;
             case MLNLayoutMeasurementTypeMatchParent:
                 measuredHeight = MAX(node.minHeight, maxHeight);
