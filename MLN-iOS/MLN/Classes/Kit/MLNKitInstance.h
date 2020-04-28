@@ -392,3 +392,4 @@ Lua中的根视图。
 - (void)registerKitClasses;
 @end
 
+NS_ASSUME_NONNULL_END
