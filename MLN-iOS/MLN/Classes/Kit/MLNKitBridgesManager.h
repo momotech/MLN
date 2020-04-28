@@ -17,4 +17,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
+@class MLNKitInstance;
+@interface MLNKitBridgesManager (Deprecated)
+- (instancetype)initWithUIInstance:(MLNKitInstance *)instance;
+- (void)registerKit;
+@end
 NS_ASSUME_NONNULL_END
