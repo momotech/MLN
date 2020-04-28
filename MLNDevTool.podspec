@@ -76,7 +76,7 @@ Pod::Spec.new do |s|
           'MLNDevTool_Offline' => 'MLN-iOS/MLNDevTool/Classes/Offline/**/Assets/*.{png,lua,xib}'
         }
         o.dependency  'MLNDevTool/DevTool'
-        o.dependency 'MLN', '~> 1.0.0.2'
+        o.dependency 'MLN'
     end
     
     s.subspec 'HotReload' do |h|
@@ -89,7 +89,7 @@ Pod::Spec.new do |s|
         h.resource_bundles = {
           'MLNDevTool_HotReload' => 'MLN-iOS/MLNDevTool/Classes/HotReload/**/Assets/*.{png,xib}'
         }
-        h.dependency 'MLN', '~> 1.0.0.2'
+        h.dependency 'MLN'
     end
     
 end
