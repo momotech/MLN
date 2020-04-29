@@ -29,74 +29,110 @@ beforeEach(^{
     tModel.open = true;
     tModel.text = @"tt";
     model.tm = tModel;
+    model.name = @"name";
     weakTmodel = tModel;
 });
         
     it(@"mln_observe", ^{
-        [model mln_observeProperty:@"tm.text" withBlock:^(id  _Nonnull oldValue, id  _Nonnull newValue) {
-            r1 = YES;
-            NSLog(@"%@",model.tm);
-            expect(oldValue).equal(@"tt");
-            expect(newValue).equal(newText);
-        }];
-        [model mln_observeProperty:@"tm.text" withBlock:^(id  _Nonnull oldValue, id  _Nonnull newValue) {
-            r2 = YES;
-            NSLog(@"%@",model.tm);
-
-            expect(oldValue).equal(@"tt");
-            expect(newValue).equal(newText);
-        }];
+//    __weak typeof (self) wself = self;
+    __weak typeof(model) weakModel = model;
+    [self mln_observeObject:model property:@"tm.text" withBlock:^(id  _Nonnull observer, id  _Nonnull object, id  _Nonnull oldValue, id  _Nonnull newValue) {
+        r1 = YES;
+        NSLog(@"%@",model.tm);
+        expect(oldValue).equal(@"tt");
+        expect(newValue).equal(newText);
         
-        [model.tm mln_observeProperty:@"text" withBlock:^(id  _Nonnull oldValue, id  _Nonnull newValue) {
-            r3 = YES;
-            NSLog(@"%@",model.tm);
-            expect(oldValue).equal(@"tt");
-            expect(newValue).equal(newText);
-        }];
-        [model.tm mln_observeProperty:@"text" withBlock:^(id  _Nonnull oldValue, id  _Nonnull newValue) {
-            r4 = YES;
-            NSLog(@"%@",model.tm);
-
-            expect(oldValue).equal(@"tt");
-            expect(newValue).equal(newText);
-        }];
+        expect(observer == self).beTruthy();
+        expect(object == weakModel).beTruthy();
+    }];
+    [self mln_observeObject:model property:@"tm.text" withBlock:^(id  _Nonnull observer, id  _Nonnull object, id  _Nonnull oldValue, id  _Nonnull newValue) {
+        r2 = YES;
+        NSLog(@"%@",model.tm);
+        expect(oldValue).equal(@"tt");
+        expect(newValue).equal(newText);
+        
+        expect(observer == self).beTruthy();
+        expect(object == weakModel).beTruthy();
+    }];
+    
+    [self mln_observeObject:model.tm property:@"text" withBlock:^(id  _Nonnull observer, id  _Nonnull object, id  _Nonnull oldValue, id  _Nonnull newValue) {
+        r3 = YES;
+        NSLog(@"%@",model.tm);
+        expect(oldValue).equal(@"tt");
+        expect(newValue).equal(newText);
+        
+        expect(observer == self).beTruthy();
+        expect(object == weakModel.tm).beTruthy();
+    }];
+    
+    [self mln_observeObject:model.tm property:@"text" withBlock:^(id  _Nonnull observer, id  _Nonnull object, id  _Nonnull oldValue, id  _Nonnull newValue) {
+        r4 = YES;
+        NSLog(@"%@",model.tm);
+        expect(oldValue).equal(@"tt");
+        expect(newValue).equal(newText);
+        
+        expect(observer == self).beTruthy();
+        expect(object == weakModel.tm).beTruthy();
+    }];
+    
         weakTmodel.text = @"tt2";
 
     });
     
-        it(@"mln_watch", ^{
-    model.mln_watch(@"tm.text", ^(id  _Nonnull oldValue, id  _Nonnull newValue) {
-        r1 = YES;
-        NSLog(@"%@",model.tm);
+    it(@"mln_watch", ^{
+model.mln_watch(@"tm.text", ^(id  _Nonnull oldValue, id  _Nonnull newValue) {
+    r1 = YES;
+    NSLog(@"%@",model.tm);
 
-        expect(oldValue).equal(@"tt");
-        expect(newValue).equal(newText);
-    });
-    model.mln_watch(@"tm.text", ^(id  _Nonnull oldValue, id  _Nonnull newValue) {
-        r2 = YES;
-        NSLog(@"%@",model.tm);
-
-        expect(oldValue).equal(@"tt");
-        expect(newValue).equal(newText);
-    });
-    
-    model.tm.mln_watch(@"text", ^(id  _Nonnull oldValue, id  _Nonnull newValue) {
-        r3 = YES;
-        NSLog(@"%@",model.tm);
-
-        expect(oldValue).equal(@"tt");
-        expect(newValue).equal(newText);
-    });
-    model.tm.mln_watch(@"text", ^(id  _Nonnull oldValue, id  _Nonnull newValue) {
-        r4 = YES;
-        NSLog(@"%@",model.tm);
-
-        expect(oldValue).equal(@"tt");
-        expect(newValue).equal(newText);
-    });
-    model.tm.text = newText;
+    expect(oldValue).equal(@"tt");
+    expect(newValue).equal(newText);
 });
+model.mln_watch(@"tm.text", ^(id  _Nonnull oldValue, id  _Nonnull newValue) {
+    r2 = YES;
+    NSLog(@"%@",model.tm);
+
+    expect(oldValue).equal(@"tt");
+    expect(newValue).equal(newText);
+});
+
+model.tm.mln_watch(@"text", ^(id  _Nonnull oldValue, id  _Nonnull newValue) {
+    r3 = YES;
+    NSLog(@"%@",model.tm);
+
+    expect(oldValue).equal(@"tt");
+    expect(newValue).equal(newText);
+});
+model.tm.mln_watch(@"text", ^(id  _Nonnull oldValue, id  _Nonnull newValue) {
+    r4 = YES;
+    NSLog(@"%@",model.tm);
+
+    expect(oldValue).equal(@"tt");
+    expect(newValue).equal(newText);
+});
+model.tm.text = newText;
+});
+    
+    it(@"mln_properties", ^{
+    
+    __weak typeof(model) weakModel = model;
+    [self mln_observeObject:model properties:@[@"tm.text", @"name"] withBlock:^(id  _Nonnull observer, id  _Nonnull object, NSString * _Nonnull keyPath, id  _Nonnull oldValue, id  _Nonnull newValue) {
+        expect(self == observer);
+        expect(weakModel == object);
         
+        if([keyPath isEqualToString:@"tm.text"]) {
+            r1 = r2 = YES;
+            expect(oldValue).equal(@"tt");
+            expect(newValue).equal(@"tt2");
+        } else if ([keyPath isEqualToString:@"name"]) {
+            r3 = r4 = YES;
+            expect(oldValue).equal(@"name");
+            expect(newValue).equal(@"name2");
+        }
+    }];
+    
+    model.tm.text = @"tt2";
+    model.name = @"name2";
+    });
 afterEach(^{
     expect(r1).beTruthy();
     expect(r2).beTruthy();

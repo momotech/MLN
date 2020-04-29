@@ -6,7 +6,6 @@
 //
 
 #import "NSObject+MLNKVO.h"
-#import "KVOController.h"
 #import "MLNKVOObserver.h"
 #import "MLNExtScope.h"
 
@@ -51,7 +50,7 @@
 @implementation NSObject (MLNKVO)
 
 #pragma mark - Public
-- (NSObject * _Nonnull (^)(NSString * _Nonnull, MLNBlockChange _Nonnull))mln_watch {
+- (NSObject * _Nonnull (^)(NSString * _Nonnull, MLNKVOBlock _Nonnull))mln_watch {
         @weakify(self);
         return ^(NSString *keyPath, MLNKVOBlock block){
             @strongify(self);
@@ -66,7 +65,8 @@
 //                [self.KVOControllerNonRetaining observe:self keyPath:keyPath options:NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew block:^(id  _Nullable observer, id  _Nonnull object, NSDictionary<NSString *,id> * _Nonnull change) {
 //                    [ob mln_observeValueForKeyPath:keyPath ofObject:object change:change];
 //                }];
-                [self mln_observeProperty:keyPath withBlock:^(id  _Nonnull oldValue, id  _Nonnull newValue) {
+                
+                [self mln_observeProperty:keyPath withBlock:^(id  _Nonnull observer, id  _Nonnull object, id  _Nonnull oldValue, id  _Nonnull newValue) {
                     block(oldValue, newValue);
                 }];
 
@@ -130,10 +130,18 @@ static const void *MLNDeallocatorAssociationKey = &MLNDeallocatorAssociationKey;
         observer = [object mln_observerForKeyPath:keyPath owner:self];
     }
     __weak __typeof(self)weakSelf = self;
-    [observer addSettingObservationBlock:^(id  _Nonnull oldValue, id  _Nonnull newValue) {
-        __unused __strong __typeof(weakSelf)strongSelf = weakSelf;
-        observationBlock(oldValue, newValue);
+    [observer addSettingObservationBlock:^(id  _Nonnull observer, id  _Nonnull object, id  _Nonnull oldValue, id  _Nonnull newValue) {
+        __strong __typeof(weakSelf)strongSelf = weakSelf;
+        observationBlock(strongSelf, object, oldValue, newValue);
     }];
+}
+
+- (void)mln_observeObject:(id)object properties:(NSArray <NSString *> *)keyPaths withBlock:(MLNBlockChangeMany)observationBlock {
+    for (NSString *keyPath in keyPaths) {
+        [self mln_observeObject:object property:keyPath withBlock:^(id  _Nonnull observer, id  _Nonnull object, id  _Nonnull oldValue, id  _Nonnull newValue) {
+            observationBlock(observer, object, keyPath, oldValue, newValue);
+        }];
+    }
 }
 
 - (MLNObserver *)mln_observerForKeyPath:(NSString *)keyPath owner:(id)owner {
@@ -209,28 +217,6 @@ static const void *MLNDeallocatorAssociationKey = &MLNDeallocatorAssociationKey;
 
 @implementation NSObject (MLNDeprecated)
 - (NSObject * _Nonnull (^)(NSString * _Nonnull, MLNKVOBlock _Nonnull))mln_subscribe {
-    @weakify(self);
-    return ^(NSString *keyPath, MLNKVOBlock block){
-        @strongify(self);
-        if (self && block) {
-//            [self.KVOControllerNonRetaining observe:self keyPath:keyPath options:NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew block:^(id  _Nullable observer, id  _Nonnull object, NSDictionary<NSString *,id> * _Nonnull change) {
-//                id oldValue = [change objectForKey:NSKeyValueChangeOldKey];
-//                id newValue = [change objectForKey:NSKeyValueChangeNewKey];
-//                block(oldValue, newValue);
-//            }];
-            
-            MLNKVOObserver *ob = [[MLNKVOObserver alloc] initWithViewController:nil callback:^(NSString * _Nonnull keyPath, id  _Nonnull object, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
-                id oldValue = [change objectForKey:NSKeyValueChangeOldKey];
-                id newValue = [change objectForKey:NSKeyValueChangeNewKey];
-                block(oldValue, newValue);
-            } keyPath:keyPath];
-            
-            [self.KVOControllerNonRetaining observe:self keyPath:keyPath options:NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew block:^(id  _Nullable observer, id  _Nonnull object, NSDictionary<NSString *,id> * _Nonnull change) {
-                [ob mln_observeValueForKeyPath:keyPath ofObject:object change:change];
-            }];
-
-        }
-        return self;
-    };
+    return self.mln_watch;
 }
 @end
