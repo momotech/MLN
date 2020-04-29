@@ -7,34 +7,44 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0011BBB32410AC3F003AE819 /* MLNDatabindingTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 0011BBB22410AC3F003AE819 /* MLNDatabindingTests.m */; };
+		0011BBB72410AC6F003AE819 /* MLNTestModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 0011BBB62410AC6F003AE819 /* MLNTestModel.m */; };
+		009DD8D524114B9600452458 /* MLNArrayBindingTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 009DD8D424114B9600452458 /* MLNArrayBindingTests.m */; };
+		00A0C999243C180500F0D003 /* MLNPerformanceTestController.m in Sources */ = {isa = PBXBuildFile; fileRef = 00A0C998243C180500F0D003 /* MLNPerformanceTestController.m */; };
+		00A0C9A1243C3C0500F0D003 /* LuaNativeUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00A0C9A0243C3C0500F0D003 /* LuaNativeUITests.m */; };
+		00DA72B9243ED12700981719 /* MLNReflectTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00DA72B8243ED12700981719 /* MLNReflectTests.m */; };
+		00DA72BC243F011700981719 /* DataBindTest.lua in Resources */ = {isa = PBXBuildFile; fileRef = 00DA72BA243F011100981719 /* DataBindTest.lua */; };
+		00E652532417695900A878B8 /* MLNDataBindHotReload.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E652522417695900A878B8 /* MLNDataBindHotReload.m */; };
+		00E6525624176A0F00A878B8 /* MLNDataBindModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E6525524176A0F00A878B8 /* MLNDataBindModel.m */; };
+		00E6525C2418EFF200A878B8 /* MLNDictionaryTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E6525B2418EFF200A878B8 /* MLNDictionaryTests.m */; };
+		00E6526B2420AD1800A878B8 /* MLNBindModelViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E6526A2420AD1800A878B8 /* MLNBindModelViewController.m */; };
+		00E6526E2420BCCE00A878B8 /* MLNBindTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E6526D2420BCCE00A878B8 /* MLNBindTableViewController.m */; };
+		00FDB74E24591C3300D4A211 /* MLNBlockKVOTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00FDB74D24591C3300D4A211 /* MLNBlockKVOTests.m */; };
+		112C50D76F2A49BC8742D484 /* libPods-LuaNative.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F690E0F94A4E45F3BA4BF4B2 /* libPods-LuaNative.a */; };
 		3012BB102326822F00FA2BB2 /* MLNNavigatorHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 3012BB0F2326822F00FA2BB2 /* MLNNavigatorHandler.m */; };
-		30A4EB55231CBF7900995416 /* moment in Resources */ = {isa = PBXBuildFile; fileRef = 30A4EB54231CBF7800995416 /* moment */; };
 		30A4EB5A231CC5CD00995416 /* MLNMyHttpHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 30A4EB59231CC5CD00995416 /* MLNMyHttpHandler.m */; };
 		30A4EB5D231CC86B00995416 /* MLNMyImageHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 30A4EB5C231CC86B00995416 /* MLNMyImageHandler.m */; };
 		30A4EB60231CD75200995416 /* MLNMyRefreshHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 30A4EB5F231CD75200995416 /* MLNMyRefreshHandler.m */; };
-		30A4EB6D231F4FD400995416 /* MLNTestMe+Test.m in Sources */ = {isa = PBXBuildFile; fileRef = 30A4EB6C231F4FD400995416 /* MLNTestMe+Test.m */; };
 		30CB3BF923684B7F00AB90C6 /* MLNDevTool.podspec in Resources */ = {isa = PBXBuildFile; fileRef = 30CB3BF823684B7F00AB90C6 /* MLNDevTool.podspec */; };
 		30CB3BFB23684CD400AB90C6 /* MLN.podspec in Resources */ = {isa = PBXBuildFile; fileRef = 30CB3BFA23684CD400AB90C6 /* MLN.podspec */; };
 		30E24E9322F3D74A00A0E78C /* MLNTestMe.m in Sources */ = {isa = PBXBuildFile; fileRef = 30E24E8B22F3D74900A0E78C /* MLNTestMe.m */; };
 		30E24E9422F3D74A00A0E78C /* MLNGlobalFuncTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 30E24E8D22F3D74900A0E78C /* MLNGlobalFuncTest.m */; };
 		30E24E9522F3D74A00A0E78C /* MLNStaticTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 30E24E8E22F3D74900A0E78C /* MLNStaticTest.m */; };
 		30E24E9622F3D74A00A0E78C /* MLNGlobalVarTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 30E24E9022F3D74900A0E78C /* MLNGlobalVarTest.m */; };
-		5E740E03B5A697160E6189EA /* libPods-MLN_Example.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C07B748CD58AF4FC11C54582 /* libPods-MLN_Example.a */; };
+		4CAD03B4DD715C926B9EEAFB /* libPods-MLN_Tests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 02612459D91635274DB7C591 /* libPods-MLN_Tests.a */; };
 		6003F58E195388D20070C39A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F58D195388D20070C39A /* Foundation.framework */; };
 		6003F590195388D20070C39A /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F58F195388D20070C39A /* CoreGraphics.framework */; };
 		6003F592195388D20070C39A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F591195388D20070C39A /* UIKit.framework */; };
 		6003F598195388D20070C39A /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6003F596195388D20070C39A /* InfoPlist.strings */; };
 		6003F59A195388D20070C39A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 6003F599195388D20070C39A /* main.m */; };
 		6003F59E195388D20070C39A /* MLNAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 6003F59D195388D20070C39A /* MLNAppDelegate.m */; };
-		6003F5A7195388D20070C39A /* MLNViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6003F5A6195388D20070C39A /* MLNViewController.m */; };
+		6003F5A7195388D20070C39A /* MLNLuaGalleryViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6003F5A6195388D20070C39A /* MLNLuaGalleryViewController.m */; };
 		6003F5A9195388D20070C39A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6003F5A8195388D20070C39A /* Images.xcassets */; };
 		6003F5B0195388D20070C39A /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F5AF195388D20070C39A /* XCTest.framework */; };
 		6003F5B1195388D20070C39A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F58D195388D20070C39A /* Foundation.framework */; };
 		6003F5B2195388D20070C39A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F591195388D20070C39A /* UIKit.framework */; };
 		6003F5BA195388D20070C39A /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6003F5B8195388D20070C39A /* InfoPlist.strings */; };
 		6003F5BC195388D20070C39A /* Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6003F5BB195388D20070C39A /* Tests.m */; };
-		71719F9F1E33DC2100824A3D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 71719F9D1E33DC2100824A3D /* LaunchScreen.storyboard */; };
-		8C5463BE1E8D8BA958F828ED /* libPods-MLN_Tests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A6E2454F7DDA4338383073BC /* libPods-MLN_Tests.a */; };
 		B27F658C2377AA6C00F2D341 /* MLNGalleryMineBottomPage.m in Sources */ = {isa = PBXBuildFile; fileRef = B27F657C2377AA6B00F2D341 /* MLNGalleryMineBottomPage.m */; };
 		B27F658F2377AA6C00F2D341 /* MLNGalleryMineInfoViewModel.m in Sources */ = {isa = PBXBuildFile; fileRef = B27F65842377AA6B00F2D341 /* MLNGalleryMineInfoViewModel.m */; };
 		B27F65902377AA6C00F2D341 /* MLNGalleryMineHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = B27F65862377AA6B00F2D341 /* MLNGalleryMineHeaderView.m */; };
@@ -70,7 +80,6 @@
 		B29500D92372627000F48F09 /* MLNNativeTabSegmentScrollHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = B29500D52372627000F48F09 /* MLNNativeTabSegmentScrollHandler.m */; };
 		B29500EA2372A3A400F48F09 /* MLNSimpleViewPager.m in Sources */ = {isa = PBXBuildFile; fileRef = B29500E92372A3A400F48F09 /* MLNSimpleViewPager.m */; };
 		B29500F72372D5B400F48F09 /* MLNSimpleViewPagerCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B29500F62372D5B400F48F09 /* MLNSimpleViewPagerCell.m */; };
-		B2D0AB85236C1F0A00B1D349 /* gallery in Resources */ = {isa = PBXBuildFile; fileRef = B2D0AB84236C1F0A00B1D349 /* gallery */; };
 		B2D0ABB52370136000B1D349 /* MLNGalleryViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B2D0ABB42370136000B1D349 /* MLNGalleryViewController.m */; };
 		B2DD3E5D237990E9002AB6AD /* MLNLuaPageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B2DD3E4E237990E8002AB6AD /* MLNLuaPageViewController.m */; };
 		B2DD3E5E237990E9002AB6AD /* MLNPackage.m in Sources */ = {isa = PBXBuildFile; fileRef = B2DD3E51237990E9002AB6AD /* MLNPackage.m */; };
@@ -78,6 +87,10 @@
 		B2DD3E60237990E9002AB6AD /* MLNActionItem.m in Sources */ = {isa = PBXBuildFile; fileRef = B2DD3E55237990E9002AB6AD /* MLNActionItem.m */; };
 		B2DD3E61237990E9002AB6AD /* MLNControlContext.m in Sources */ = {isa = PBXBuildFile; fileRef = B2DD3E56237990E9002AB6AD /* MLNControlContext.m */; };
 		B2DD3E62237990E9002AB6AD /* MLNActionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = B2DD3E58237990E9002AB6AD /* MLNActionManager.m */; };
+		FA383453239A4C61000F900E /* MLNHomeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FA383452239A4C61000F900E /* MLNHomeViewController.m */; };
+		FA383456239A6357000F900E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FA383454239A6356000F900E /* Main.storyboard */; };
+		FA383459239A64AF000F900E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FA383457239A64AF000F900E /* LaunchScreen.storyboard */; };
+		FA38349B239B5A4C000F900E /* MLNDemoListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FA38349A239B5A4C000F900E /* MLNDemoListViewController.m */; };
 		FA4EE2FA2379067000449250 /* MLNGalleryMinePageCellBaseModel.m in Sources */ = {isa = PBXBuildFile; fileRef = FA4EE2F92379067000449250 /* MLNGalleryMinePageCellBaseModel.m */; };
 		FA4EE2FD237907B000449250 /* MLNGalleryMinePageCellHomeModel.m in Sources */ = {isa = PBXBuildFile; fileRef = FA4EE2FC237907B000449250 /* MLNGalleryMinePageCellHomeModel.m */; };
 		FA4EE3002379080100449250 /* MLNGalleryMinePageCellDynamicModel.m in Sources */ = {isa = PBXBuildFile; fileRef = FA4EE2FF2379080100449250 /* MLNGalleryMinePageCellDynamicModel.m */; };
@@ -87,9 +100,18 @@
 		FA4EE30D237909AB00449250 /* MLNGalleryMineBottomPageDynamicCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FA4EE30C237909AB00449250 /* MLNGalleryMineBottomPageDynamicCell.m */; };
 		FA4EE310237909BC00449250 /* MLNGalleryMineBottomPageCollectCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FA4EE30F237909BC00449250 /* MLNGalleryMineBottomPageCollectCell.m */; };
 		FA4EE313237917E500449250 /* MLNGalleryMinePageCellCollectCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FA4EE312237917E500449250 /* MLNGalleryMinePageCellCollectCell.m */; };
+		FAE9C59323A250CD002C830D /* gallery.bundle in Resources */ = {isa = PBXBuildFile; fileRef = FAE9C59223A250CD002C830D /* gallery.bundle */; };
+		FAE9C59523A2529C002C830D /* inner_demo.bundle in Resources */ = {isa = PBXBuildFile; fileRef = FAE9C59423A2529C002C830D /* inner_demo.bundle */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		00A0C9A3243C3C0500F0D003 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6003F582195388D10070C39A /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 6003F589195388D20070C39A;
+			remoteInfo = LuaNative;
+		};
 		6003F5B3195388D20070C39A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 6003F582195388D10070C39A /* Project object */;
@@ -100,19 +122,38 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		0011BBB22410AC3F003AE819 /* MLNDatabindingTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNDatabindingTests.m; sourceTree = "<group>"; };
+		0011BBB52410AC6F003AE819 /* MLNTestModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNTestModel.h; sourceTree = "<group>"; };
+		0011BBB62410AC6F003AE819 /* MLNTestModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNTestModel.m; sourceTree = "<group>"; };
+		009DD8D424114B9600452458 /* MLNArrayBindingTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNArrayBindingTests.m; sourceTree = "<group>"; };
+		00A0C997243C180500F0D003 /* MLNPerformanceTestController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNPerformanceTestController.h; sourceTree = "<group>"; };
+		00A0C998243C180500F0D003 /* MLNPerformanceTestController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNPerformanceTestController.m; sourceTree = "<group>"; };
+		00A0C99E243C3C0400F0D003 /* LuaNativeUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = LuaNativeUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		00A0C9A0243C3C0500F0D003 /* LuaNativeUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LuaNativeUITests.m; sourceTree = "<group>"; };
+		00A0C9A2243C3C0500F0D003 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		00DA72B8243ED12700981719 /* MLNReflectTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNReflectTests.m; sourceTree = "<group>"; };
+		00DA72BA243F011100981719 /* DataBindTest.lua */ = {isa = PBXFileReference; lastKnownFileType = text; path = DataBindTest.lua; sourceTree = "<group>"; };
+		00E652512417695900A878B8 /* MLNDataBindHotReload.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNDataBindHotReload.h; sourceTree = "<group>"; };
+		00E652522417695900A878B8 /* MLNDataBindHotReload.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNDataBindHotReload.m; sourceTree = "<group>"; };
+		00E6525424176A0F00A878B8 /* MLNDataBindModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNDataBindModel.h; sourceTree = "<group>"; };
+		00E6525524176A0F00A878B8 /* MLNDataBindModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNDataBindModel.m; sourceTree = "<group>"; };
+		00E6525B2418EFF200A878B8 /* MLNDictionaryTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNDictionaryTests.m; sourceTree = "<group>"; };
+		00E652692420AD1800A878B8 /* MLNBindModelViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNBindModelViewController.h; sourceTree = "<group>"; };
+		00E6526A2420AD1800A878B8 /* MLNBindModelViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNBindModelViewController.m; sourceTree = "<group>"; };
+		00E6526C2420BCCE00A878B8 /* MLNBindTableViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNBindTableViewController.h; sourceTree = "<group>"; };
+		00E6526D2420BCCE00A878B8 /* MLNBindTableViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNBindTableViewController.m; sourceTree = "<group>"; };
+		00FDB74D24591C3300D4A211 /* MLNBlockKVOTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNBlockKVOTests.m; sourceTree = "<group>"; };
+		02612459D91635274DB7C591 /* libPods-MLN_Tests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-MLN_Tests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		0BFEA11F75FC7C356E75DFD6 /* Pods-MLN_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MLN_Example.release.xcconfig"; path = "Target Support Files/Pods-MLN_Example/Pods-MLN_Example.release.xcconfig"; sourceTree = "<group>"; };
 		1018AD05C0E113C32A1AD38C /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
 		3012BB0E2326822F00FA2BB2 /* MLNNavigatorHandler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNNavigatorHandler.h; sourceTree = "<group>"; };
 		3012BB0F2326822F00FA2BB2 /* MLNNavigatorHandler.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNNavigatorHandler.m; sourceTree = "<group>"; };
-		30A4EB54231CBF7800995416 /* moment */ = {isa = PBXFileReference; lastKnownFileType = folder; path = moment; sourceTree = "<group>"; };
 		30A4EB58231CC5CD00995416 /* MLNMyHttpHandler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNMyHttpHandler.h; sourceTree = "<group>"; };
 		30A4EB59231CC5CD00995416 /* MLNMyHttpHandler.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNMyHttpHandler.m; sourceTree = "<group>"; };
 		30A4EB5B231CC86B00995416 /* MLNMyImageHandler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNMyImageHandler.h; sourceTree = "<group>"; };
 		30A4EB5C231CC86B00995416 /* MLNMyImageHandler.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNMyImageHandler.m; sourceTree = "<group>"; };
 		30A4EB5E231CD75200995416 /* MLNMyRefreshHandler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNMyRefreshHandler.h; sourceTree = "<group>"; };
 		30A4EB5F231CD75200995416 /* MLNMyRefreshHandler.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNMyRefreshHandler.m; sourceTree = "<group>"; };
-		30A4EB6B231F4FD400995416 /* MLNTestMe+Test.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MLNTestMe+Test.h"; sourceTree = "<group>"; };
-		30A4EB6C231F4FD400995416 /* MLNTestMe+Test.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "MLNTestMe+Test.m"; sourceTree = "<group>"; };
 		30CB3BF823684B7F00AB90C6 /* MLNDevTool.podspec */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = MLNDevTool.podspec; path = ../../MLNDevTool.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		30CB3BFA23684CD400AB90C6 /* MLN.podspec */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = MLN.podspec; path = ../../MLN.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		30E24E8B22F3D74900A0E78C /* MLNTestMe.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLNTestMe.m; sourceTree = "<group>"; };
@@ -123,7 +164,7 @@
 		30E24E9022F3D74900A0E78C /* MLNGlobalVarTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLNGlobalVarTest.m; sourceTree = "<group>"; };
 		30E24E9122F3D74900A0E78C /* MLNTestMe.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLNTestMe.h; sourceTree = "<group>"; };
 		30E24E9222F3D74900A0E78C /* MLNGlobalVarTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLNGlobalVarTest.h; sourceTree = "<group>"; };
-		6003F58A195388D20070C39A /* MLN_Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MLN_Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		6003F58A195388D20070C39A /* LuaNative.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LuaNative.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6003F58D195388D20070C39A /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		6003F58F195388D20070C39A /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		6003F591195388D20070C39A /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
@@ -133,8 +174,8 @@
 		6003F59B195388D20070C39A /* MLN-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MLN-Prefix.pch"; sourceTree = "<group>"; };
 		6003F59C195388D20070C39A /* MLNAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNAppDelegate.h; sourceTree = "<group>"; };
 		6003F59D195388D20070C39A /* MLNAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNAppDelegate.m; sourceTree = "<group>"; };
-		6003F5A5195388D20070C39A /* MLNViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNViewController.h; sourceTree = "<group>"; };
-		6003F5A6195388D20070C39A /* MLNViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNViewController.m; sourceTree = "<group>"; };
+		6003F5A5195388D20070C39A /* MLNLuaGalleryViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNLuaGalleryViewController.h; sourceTree = "<group>"; };
+		6003F5A6195388D20070C39A /* MLNLuaGalleryViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNLuaGalleryViewController.m; sourceTree = "<group>"; };
 		6003F5A8195388D20070C39A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		6003F5AE195388D20070C39A /* MLN_Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MLN_Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		6003F5AF195388D20070C39A /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
@@ -146,8 +187,6 @@
 		614D6372A3D812E53BAA054F /* Pods-MLN_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MLN_Tests.release.xcconfig"; path = "Target Support Files/Pods-MLN_Tests/Pods-MLN_Tests.release.xcconfig"; sourceTree = "<group>"; };
 		6ABC029A38FCC0A39C207FA6 /* Pods-MLN_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MLN_Tests.debug.xcconfig"; path = "Target Support Files/Pods-MLN_Tests/Pods-MLN_Tests.debug.xcconfig"; sourceTree = "<group>"; };
 		6ED891C3203090F5CB5310E5 /* Pods-LuaNative.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LuaNative.debug.xcconfig"; path = "Target Support Files/Pods-LuaNative/Pods-LuaNative.debug.xcconfig"; sourceTree = "<group>"; };
-		71719F9E1E33DC2100824A3D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
-		A6E2454F7DDA4338383073BC /* libPods-MLN_Tests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-MLN_Tests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B27F657C2377AA6B00F2D341 /* MLNGalleryMineBottomPage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLNGalleryMineBottomPage.m; sourceTree = "<group>"; };
 		B27F657E2377AA6B00F2D341 /* MLNGalleryMineBottomPage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLNGalleryMineBottomPage.h; sourceTree = "<group>"; };
 		B27F65842377AA6B00F2D341 /* MLNGalleryMineInfoViewModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLNGalleryMineInfoViewModel.m; sourceTree = "<group>"; };
@@ -221,7 +260,6 @@
 		B29500E92372A3A400F48F09 /* MLNSimpleViewPager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNSimpleViewPager.m; sourceTree = "<group>"; };
 		B29500F52372D5B400F48F09 /* MLNSimpleViewPagerCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNSimpleViewPagerCell.h; sourceTree = "<group>"; };
 		B29500F62372D5B400F48F09 /* MLNSimpleViewPagerCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNSimpleViewPagerCell.m; sourceTree = "<group>"; };
-		B2D0AB84236C1F0A00B1D349 /* gallery */ = {isa = PBXFileReference; lastKnownFileType = folder; path = gallery; sourceTree = "<group>"; };
 		B2D0ABB32370136000B1D349 /* MLNGalleryViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNGalleryViewController.h; sourceTree = "<group>"; };
 		B2D0ABB42370136000B1D349 /* MLNGalleryViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNGalleryViewController.m; sourceTree = "<group>"; };
 		B2DD3E4D237990E8002AB6AD /* MLNLuaPageViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLNLuaPageViewController.h; sourceTree = "<group>"; };
@@ -238,9 +276,15 @@
 		B2DD3E5A237990E9002AB6AD /* MLNActionDefine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLNActionDefine.h; sourceTree = "<group>"; };
 		B2DD3E5B237990E9002AB6AD /* MLNControlContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLNControlContext.h; sourceTree = "<group>"; };
 		B2DD3E5C237990E9002AB6AD /* MLNActionManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLNActionManager.h; sourceTree = "<group>"; };
-		C07B748CD58AF4FC11C54582 /* libPods-MLN_Example.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-MLN_Example.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		C0FB2CAC8F9592C3092ACF62 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
 		F236AA5C6B666135B994F09B /* Pods-MLN_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MLN_Example.debug.xcconfig"; path = "Target Support Files/Pods-MLN_Example/Pods-MLN_Example.debug.xcconfig"; sourceTree = "<group>"; };
+		F690E0F94A4E45F3BA4BF4B2 /* libPods-LuaNative.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-LuaNative.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		FA383451239A4C61000F900E /* MLNHomeViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNHomeViewController.h; sourceTree = "<group>"; };
+		FA383452239A4C61000F900E /* MLNHomeViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNHomeViewController.m; sourceTree = "<group>"; };
+		FA383455239A6356000F900E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		FA383458239A64AF000F900E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		FA383499239B5A4C000F900E /* MLNDemoListViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNDemoListViewController.h; sourceTree = "<group>"; };
+		FA38349A239B5A4C000F900E /* MLNDemoListViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNDemoListViewController.m; sourceTree = "<group>"; };
 		FA4EE2F82379067000449250 /* MLNGalleryMinePageCellBaseModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNGalleryMinePageCellBaseModel.h; sourceTree = "<group>"; };
 		FA4EE2F92379067000449250 /* MLNGalleryMinePageCellBaseModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNGalleryMinePageCellBaseModel.m; sourceTree = "<group>"; };
 		FA4EE2FB237907B000449250 /* MLNGalleryMinePageCellHomeModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNGalleryMinePageCellHomeModel.h; sourceTree = "<group>"; };
@@ -259,9 +303,18 @@
 		FA4EE30F237909BC00449250 /* MLNGalleryMineBottomPageCollectCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNGalleryMineBottomPageCollectCell.m; sourceTree = "<group>"; };
 		FA4EE311237917E500449250 /* MLNGalleryMinePageCellCollectCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNGalleryMinePageCellCollectCell.h; sourceTree = "<group>"; };
 		FA4EE312237917E500449250 /* MLNGalleryMinePageCellCollectCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNGalleryMinePageCellCollectCell.m; sourceTree = "<group>"; };
+		FAE9C59223A250CD002C830D /* gallery.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = gallery.bundle; sourceTree = "<group>"; };
+		FAE9C59423A2529C002C830D /* inner_demo.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = inner_demo.bundle; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		00A0C99B243C3C0400F0D003 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		6003F587195388D20070C39A /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -269,7 +322,7 @@
 				6003F590195388D20070C39A /* CoreGraphics.framework in Frameworks */,
 				6003F592195388D20070C39A /* UIKit.framework in Frameworks */,
 				6003F58E195388D20070C39A /* Foundation.framework in Frameworks */,
-				5E740E03B5A697160E6189EA /* libPods-MLN_Example.a in Frameworks */,
+				112C50D76F2A49BC8742D484 /* libPods-LuaNative.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -280,13 +333,52 @@
 				6003F5B0195388D20070C39A /* XCTest.framework in Frameworks */,
 				6003F5B2195388D20070C39A /* UIKit.framework in Frameworks */,
 				6003F5B1195388D20070C39A /* Foundation.framework in Frameworks */,
-				8C5463BE1E8D8BA958F828ED /* libPods-MLN_Tests.a in Frameworks */,
+				4CAD03B4DD715C926B9EEAFB /* libPods-MLN_Tests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0011BBB42410AC46003AE819 /* DataBinding */ = {
+			isa = PBXGroup;
+			children = (
+				0011BBB52410AC6F003AE819 /* MLNTestModel.h */,
+				0011BBB62410AC6F003AE819 /* MLNTestModel.m */,
+				0011BBB22410AC3F003AE819 /* MLNDatabindingTests.m */,
+				009DD8D424114B9600452458 /* MLNArrayBindingTests.m */,
+				00E6525B2418EFF200A878B8 /* MLNDictionaryTests.m */,
+				00DA72B8243ED12700981719 /* MLNReflectTests.m */,
+				00DA72BA243F011100981719 /* DataBindTest.lua */,
+				00FDB74D24591C3300D4A211 /* MLNBlockKVOTests.m */,
+			);
+			path = DataBinding;
+			sourceTree = "<group>";
+		};
+		00A0C99F243C3C0500F0D003 /* LuaNativeUITests */ = {
+			isa = PBXGroup;
+			children = (
+				00A0C9A0243C3C0500F0D003 /* LuaNativeUITests.m */,
+				00A0C9A2243C3C0500F0D003 /* Info.plist */,
+			);
+			path = LuaNativeUITests;
+			sourceTree = "<group>";
+		};
+		00E652502417693600A878B8 /* DataBind */ = {
+			isa = PBXGroup;
+			children = (
+				00E652512417695900A878B8 /* MLNDataBindHotReload.h */,
+				00E652522417695900A878B8 /* MLNDataBindHotReload.m */,
+				00E6525424176A0F00A878B8 /* MLNDataBindModel.h */,
+				00E6525524176A0F00A878B8 /* MLNDataBindModel.m */,
+				00E652692420AD1800A878B8 /* MLNBindModelViewController.h */,
+				00E6526A2420AD1800A878B8 /* MLNBindModelViewController.m */,
+				00E6526C2420BCCE00A878B8 /* MLNBindTableViewController.h */,
+				00E6526D2420BCCE00A878B8 /* MLNBindTableViewController.m */,
+			);
+			path = DataBind;
+			sourceTree = "<group>";
+		};
 		4DADC4E2A37EF6A986E99F07 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
@@ -306,6 +398,7 @@
 				60FF7A9C1954A5C5007DD14C /* Podspec Metadata */,
 				6003F593195388D20070C39A /* Example for MLN */,
 				6003F5B5195388D20070C39A /* Tests */,
+				00A0C99F243C3C0500F0D003 /* LuaNativeUITests */,
 				6003F58C195388D20070C39A /* Frameworks */,
 				6003F58B195388D20070C39A /* Products */,
 				4DADC4E2A37EF6A986E99F07 /* Pods */,
@@ -315,8 +408,9 @@
 		6003F58B195388D20070C39A /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				6003F58A195388D20070C39A /* MLN_Example.app */,
+				6003F58A195388D20070C39A /* LuaNative.app */,
 				6003F5AE195388D20070C39A /* MLN_Tests.xctest */,
+				00A0C99E243C3C0400F0D003 /* LuaNativeUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -328,8 +422,8 @@
 				6003F58F195388D20070C39A /* CoreGraphics.framework */,
 				6003F591195388D20070C39A /* UIKit.framework */,
 				6003F5AF195388D20070C39A /* XCTest.framework */,
-				A6E2454F7DDA4338383073BC /* libPods-MLN_Tests.a */,
-				C07B748CD58AF4FC11C54582 /* libPods-MLN_Example.a */,
+				F690E0F94A4E45F3BA4BF4B2 /* libPods-LuaNative.a */,
+				02612459D91635274DB7C591 /* libPods-MLN_Tests.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -337,40 +431,32 @@
 		6003F593195388D20070C39A /* Example for MLN */ = {
 			isa = PBXGroup;
 			children = (
+				FAE9C59223A250CD002C830D /* gallery.bundle */,
+				FAE9C59423A2529C002C830D /* inner_demo.bundle */,
+				6003F59C195388D20070C39A /* MLNAppDelegate.h */,
+				6003F59D195388D20070C39A /* MLNAppDelegate.m */,
+				FA383451239A4C61000F900E /* MLNHomeViewController.h */,
+				FA383452239A4C61000F900E /* MLNHomeViewController.m */,
+				B2D0ABB32370136000B1D349 /* MLNGalleryViewController.h */,
+				B2D0ABB42370136000B1D349 /* MLNGalleryViewController.m */,
+				6003F5A5195388D20070C39A /* MLNLuaGalleryViewController.h */,
+				6003F5A6195388D20070C39A /* MLNLuaGalleryViewController.m */,
+				FA383499239B5A4C000F900E /* MLNDemoListViewController.h */,
+				FA38349A239B5A4C000F900E /* MLNDemoListViewController.m */,
 				B2DD3E4D237990E8002AB6AD /* MLNLuaPageViewController.h */,
 				B2DD3E4E237990E8002AB6AD /* MLNLuaPageViewController.m */,
+				00A0C997243C180500F0D003 /* MLNPerformanceTestController.h */,
+				00A0C998243C180500F0D003 /* MLNPerformanceTestController.m */,
+				FAE9C59723A2603F002C830D /* Handler */,
+				FAE9C59623A2600B002C830D /* BridgeTest */,
 				B2DD3E54237990E9002AB6AD /* MLNActionManager */,
 				B2DD3E4F237990E9002AB6AD /* MLNPackageManager */,
 				B29500B42371855900F48F09 /* Gallery_Native */,
-				B2D0AB84236C1F0A00B1D349 /* gallery */,
-				30A4EB54231CBF7800995416 /* moment */,
-				6003F59C195388D20070C39A /* MLNAppDelegate.h */,
-				6003F59D195388D20070C39A /* MLNAppDelegate.m */,
-				6003F5A5195388D20070C39A /* MLNViewController.h */,
-				6003F5A6195388D20070C39A /* MLNViewController.m */,
-				30E24E8C22F3D74900A0E78C /* MLNGlobalFuncTest.h */,
-				30E24E8D22F3D74900A0E78C /* MLNGlobalFuncTest.m */,
-				30E24E9222F3D74900A0E78C /* MLNGlobalVarTest.h */,
-				30E24E9022F3D74900A0E78C /* MLNGlobalVarTest.m */,
-				30E24E8F22F3D74900A0E78C /* MLNStaticTest.h */,
-				30E24E8E22F3D74900A0E78C /* MLNStaticTest.m */,
-				30E24E9122F3D74900A0E78C /* MLNTestMe.h */,
-				30E24E8B22F3D74900A0E78C /* MLNTestMe.m */,
-				30A4EB58231CC5CD00995416 /* MLNMyHttpHandler.h */,
-				30A4EB59231CC5CD00995416 /* MLNMyHttpHandler.m */,
-				30A4EB5E231CD75200995416 /* MLNMyRefreshHandler.h */,
-				30A4EB5F231CD75200995416 /* MLNMyRefreshHandler.m */,
-				30A4EB5B231CC86B00995416 /* MLNMyImageHandler.h */,
-				30A4EB5C231CC86B00995416 /* MLNMyImageHandler.m */,
-				3012BB0E2326822F00FA2BB2 /* MLNNavigatorHandler.h */,
-				3012BB0F2326822F00FA2BB2 /* MLNNavigatorHandler.m */,
-				30A4EB6B231F4FD400995416 /* MLNTestMe+Test.h */,
-				30A4EB6C231F4FD400995416 /* MLNTestMe+Test.m */,
-				71719F9D1E33DC2100824A3D /* LaunchScreen.storyboard */,
+				00E652502417693600A878B8 /* DataBind */,
+				FA383454239A6356000F900E /* Main.storyboard */,
+				FA383457239A64AF000F900E /* LaunchScreen.storyboard */,
 				6003F5A8195388D20070C39A /* Images.xcassets */,
 				6003F594195388D20070C39A /* Supporting Files */,
-				B2D0ABB32370136000B1D349 /* MLNGalleryViewController.h */,
-				B2D0ABB42370136000B1D349 /* MLNGalleryViewController.m */,
 			);
 			name = "Example for MLN";
 			path = MLN;
@@ -390,6 +476,7 @@
 		6003F5B5195388D20070C39A /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				0011BBB42410AC46003AE819 /* DataBinding */,
 				6003F5BB195388D20070C39A /* Tests.m */,
 				6003F5B6195388D20070C39A /* Supporting Files */,
 			);
@@ -655,10 +742,10 @@
 		B2DD3E4F237990E9002AB6AD /* MLNPackageManager */ = {
 			isa = PBXGroup;
 			children = (
-				B2DD3E50237990E9002AB6AD /* MLNPackageManager.h */,
-				B2DD3E51237990E9002AB6AD /* MLNPackage.m */,
-				B2DD3E52237990E9002AB6AD /* MLNPackageManager.m */,
 				B2DD3E53237990E9002AB6AD /* MLNPackage.h */,
+				B2DD3E51237990E9002AB6AD /* MLNPackage.m */,
+				B2DD3E50237990E9002AB6AD /* MLNPackageManager.h */,
+				B2DD3E52237990E9002AB6AD /* MLNPackageManager.m */,
 			);
 			path = MLNPackageManager;
 			sourceTree = "<group>";
@@ -666,14 +753,14 @@
 		B2DD3E54237990E9002AB6AD /* MLNActionManager */ = {
 			isa = PBXGroup;
 			children = (
-				B2DD3E55237990E9002AB6AD /* MLNActionItem.m */,
-				B2DD3E56237990E9002AB6AD /* MLNControlContext.m */,
-				B2DD3E57237990E9002AB6AD /* MLNActionProtocol.h */,
-				B2DD3E58237990E9002AB6AD /* MLNActionManager.m */,
-				B2DD3E59237990E9002AB6AD /* MLNActionItem.h */,
 				B2DD3E5A237990E9002AB6AD /* MLNActionDefine.h */,
-				B2DD3E5B237990E9002AB6AD /* MLNControlContext.h */,
+				B2DD3E59237990E9002AB6AD /* MLNActionItem.h */,
+				B2DD3E55237990E9002AB6AD /* MLNActionItem.m */,
 				B2DD3E5C237990E9002AB6AD /* MLNActionManager.h */,
+				B2DD3E58237990E9002AB6AD /* MLNActionManager.m */,
+				B2DD3E57237990E9002AB6AD /* MLNActionProtocol.h */,
+				B2DD3E5B237990E9002AB6AD /* MLNControlContext.h */,
+				B2DD3E56237990E9002AB6AD /* MLNControlContext.m */,
 			);
 			path = MLNActionManager;
 			sourceTree = "<group>";
@@ -709,26 +796,74 @@
 			path = Gui/Message;
 			sourceTree = "<group>";
 		};
+		FAE9C59623A2600B002C830D /* BridgeTest */ = {
+			isa = PBXGroup;
+			children = (
+				30E24E8C22F3D74900A0E78C /* MLNGlobalFuncTest.h */,
+				30E24E8D22F3D74900A0E78C /* MLNGlobalFuncTest.m */,
+				30E24E9222F3D74900A0E78C /* MLNGlobalVarTest.h */,
+				30E24E9022F3D74900A0E78C /* MLNGlobalVarTest.m */,
+				30E24E8F22F3D74900A0E78C /* MLNStaticTest.h */,
+				30E24E8E22F3D74900A0E78C /* MLNStaticTest.m */,
+				30E24E9122F3D74900A0E78C /* MLNTestMe.h */,
+				30E24E8B22F3D74900A0E78C /* MLNTestMe.m */,
+			);
+			path = BridgeTest;
+			sourceTree = "<group>";
+		};
+		FAE9C59723A2603F002C830D /* Handler */ = {
+			isa = PBXGroup;
+			children = (
+				30A4EB58231CC5CD00995416 /* MLNMyHttpHandler.h */,
+				30A4EB59231CC5CD00995416 /* MLNMyHttpHandler.m */,
+				30A4EB5E231CD75200995416 /* MLNMyRefreshHandler.h */,
+				30A4EB5F231CD75200995416 /* MLNMyRefreshHandler.m */,
+				30A4EB5B231CC86B00995416 /* MLNMyImageHandler.h */,
+				30A4EB5C231CC86B00995416 /* MLNMyImageHandler.m */,
+				3012BB0E2326822F00FA2BB2 /* MLNNavigatorHandler.h */,
+				3012BB0F2326822F00FA2BB2 /* MLNNavigatorHandler.m */,
+			);
+			path = Handler;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		6003F589195388D20070C39A /* MLN_Example */ = {
+		00A0C99D243C3C0400F0D003 /* LuaNativeUITests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 6003F5BF195388D20070C39A /* Build configuration list for PBXNativeTarget "MLN_Example" */;
+			buildConfigurationList = 00A0C9A5243C3C0500F0D003 /* Build configuration list for PBXNativeTarget "LuaNativeUITests" */;
+			buildPhases = (
+				00A0C99A243C3C0400F0D003 /* Sources */,
+				00A0C99B243C3C0400F0D003 /* Frameworks */,
+				00A0C99C243C3C0400F0D003 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				00A0C9A4243C3C0500F0D003 /* PBXTargetDependency */,
+			);
+			name = LuaNativeUITests;
+			productName = LuaNativeUITests;
+			productReference = 00A0C99E243C3C0400F0D003 /* LuaNativeUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+		6003F589195388D20070C39A /* LuaNative */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 6003F5BF195388D20070C39A /* Build configuration list for PBXNativeTarget "LuaNative" */;
 			buildPhases = (
 				63C64F46C736492FFA2811DA /* [CP] Check Pods Manifest.lock */,
 				6003F586195388D20070C39A /* Sources */,
 				6003F587195388D20070C39A /* Frameworks */,
 				6003F588195388D20070C39A /* Resources */,
-				58850F41C2B4222942A33A73 /* [CP] Copy Pods Resources */,
+				C053D690A51B9995AD12003C /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
-			name = MLN_Example;
+			name = LuaNative;
 			productName = MLN;
-			productReference = 6003F58A195388D20070C39A /* MLN_Example.app */;
+			productReference = 6003F58A195388D20070C39A /* LuaNative.app */;
 			productType = "com.apple.product-type.application";
 		};
 		6003F5AD195388D20070C39A /* MLN_Tests */ = {
@@ -758,8 +893,14 @@
 			attributes = {
 				CLASSPREFIX = MLN;
 				LastUpgradeCheck = 0720;
-				ORGANIZATIONNAME = liu.xu_1586;
+				ORGANIZATIONNAME = MoMo;
 				TargetAttributes = {
+					00A0C99D243C3C0400F0D003 = {
+						CreatedOnToolsVersion = 11.3;
+						DevelopmentTeam = E5SS7YSZ2F;
+						ProvisioningStyle = Automatic;
+						TestTargetID = 6003F589195388D20070C39A;
+					};
 					6003F589195388D20070C39A = {
 						DevelopmentTeam = 36WT396TPZ;
 						ProvisioningStyle = Manual;
@@ -783,24 +924,33 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				6003F589195388D20070C39A /* MLN_Example */,
+				6003F589195388D20070C39A /* LuaNative */,
 				6003F5AD195388D20070C39A /* MLN_Tests */,
+				00A0C99D243C3C0400F0D003 /* LuaNativeUITests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		00A0C99C243C3C0400F0D003 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		6003F588195388D20070C39A /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				30A4EB55231CBF7900995416 /* moment in Resources */,
+				FA383459239A64AF000F900E /* LaunchScreen.storyboard in Resources */,
+				FAE9C59323A250CD002C830D /* gallery.bundle in Resources */,
 				30CB3BFB23684CD400AB90C6 /* MLN.podspec in Resources */,
 				30CB3BF923684B7F00AB90C6 /* MLNDevTool.podspec in Resources */,
-				71719F9F1E33DC2100824A3D /* LaunchScreen.storyboard in Resources */,
+				FA383456239A6357000F900E /* Main.storyboard in Resources */,
 				6003F5A9195388D20070C39A /* Images.xcassets in Resources */,
 				6003F598195388D20070C39A /* InfoPlist.strings in Resources */,
-				B2D0AB85236C1F0A00B1D349 /* gallery in Resources */,
+				FAE9C59523A2529C002C830D /* inner_demo.bundle in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -809,19 +959,42 @@
 			buildActionMask = 2147483647;
 			files = (
 				6003F5BA195388D20070C39A /* InfoPlist.strings in Resources */,
+				00DA72BC243F011700981719 /* DataBindTest.lua in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		58850F41C2B4222942A33A73 /* [CP] Copy Pods Resources */ = {
+		63C64F46C736492FFA2811DA /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-LuaNative-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		C053D690A51B9995AD12003C /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-MLN_Example/Pods-MLN_Example-resources.sh",
+				"${PODS_ROOT}/Target Support Files/Pods-LuaNative/Pods-LuaNative-resources.sh",
 				"${PODS_ROOT}/MJRefresh/MJRefresh/MJRefresh.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/MLNDevTool/MLNDevTool_Util.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/MLNDevTool/MLNDevTool_UI.bundle",
@@ -838,29 +1011,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-MLN_Example/Pods-MLN_Example-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		63C64F46C736492FFA2811DA /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-MLN_Example-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-LuaNative/Pods-LuaNative-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		CD649900956A4B50787A9D5F /* [CP] Check Pods Manifest.lock */ = {
@@ -888,6 +1039,14 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		00A0C99A243C3C0400F0D003 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				00A0C9A1243C3C0500F0D003 /* LuaNativeUITests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		6003F586195388D20070C39A /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -914,6 +1073,7 @@
 				FA4EE3072379095700449250 /* MLNGalleryMineBottomPageBaseCell.m in Sources */,
 				FA4EE313237917E500449250 /* MLNGalleryMinePageCellCollectCell.m in Sources */,
 				FA4EE30D237909AB00449250 /* MLNGalleryMineBottomPageDynamicCell.m in Sources */,
+				00E6526E2420BCCE00A878B8 /* MLNBindTableViewController.m in Sources */,
 				B29500D62372627000F48F09 /* MLNNativeTabSegmentView.m in Sources */,
 				B29500EA2372A3A400F48F09 /* MLNSimpleViewPager.m in Sources */,
 				B27F65C52377AAAE00F2D341 /* MLNGalleryMessageBaseCellModel.m in Sources */,
@@ -921,9 +1081,11 @@
 				B27F65AC2377AA9700F2D341 /* MLNNativeWaterfallHeaderView.m in Sources */,
 				30A4EB60231CD75200995416 /* MLNMyRefreshHandler.m in Sources */,
 				30A4EB5D231CC86B00995416 /* MLNMyImageHandler.m in Sources */,
+				00E652532417695900A878B8 /* MLNDataBindHotReload.m in Sources */,
 				30E24E9622F3D74A00A0E78C /* MLNGlobalVarTest.m in Sources */,
 				B27F65C62377AAAE00F2D341 /* MLNGalleryMessageToolCellModel.m in Sources */,
-				6003F5A7195388D20070C39A /* MLNViewController.m in Sources */,
+				00E6525624176A0F00A878B8 /* MLNDataBindModel.m in Sources */,
+				6003F5A7195388D20070C39A /* MLNLuaGalleryViewController.m in Sources */,
 				3012BB102326822F00FA2BB2 /* MLNNavigatorHandler.m in Sources */,
 				B2DD3E5E237990E9002AB6AD /* MLNPackage.m in Sources */,
 				B27F65B02377AA9700F2D341 /* MLNDiscoverAblbumDeatilHeaderView.m in Sources */,
@@ -931,18 +1093,21 @@
 				B27F658C2377AA6C00F2D341 /* MLNGalleryMineBottomPage.m in Sources */,
 				6003F59A195388D20070C39A /* main.m in Sources */,
 				B29500B72371A3ED00F48F09 /* MLNGalleryMainViewController.m in Sources */,
+				00E6526B2420AD1800A878B8 /* MLNBindModelViewController.m in Sources */,
 				B27F65D62377AAC400F2D341 /* MLNHomeDataHandler.m in Sources */,
 				30E24E9322F3D74A00A0E78C /* MLNTestMe.m in Sources */,
 				FA4EE2FD237907B000449250 /* MLNGalleryMinePageCellHomeModel.m in Sources */,
+				00A0C999243C180500F0D003 /* MLNPerformanceTestController.m in Sources */,
+				FA383453239A4C61000F900E /* MLNHomeViewController.m in Sources */,
 				B27F65CC2377AAAE00F2D341 /* MLNGalleryMessageToolCell.m in Sources */,
 				B27F658F2377AA6C00F2D341 /* MLNGalleryMineInfoViewModel.m in Sources */,
 				B27F65CD2377AAAE00F2D341 /* MLNGalleryMessageDetailViewController.m in Sources */,
 				B2D0ABB52370136000B1D349 /* MLNGalleryViewController.m in Sources */,
 				B27F65D72377AAC400F2D341 /* MLNGalleryHomeViewController.m in Sources */,
+				FA38349B239B5A4C000F900E /* MLNDemoListViewController.m in Sources */,
 				FA4EE2FA2379067000449250 /* MLNGalleryMinePageCellBaseModel.m in Sources */,
 				B27F65AF2377AA9700F2D341 /* MLNNativeWaterfallLayout.m in Sources */,
 				B27F65AD2377AA9700F2D341 /* MLNNativeWaterfallView.m in Sources */,
-				30A4EB6D231F4FD400995416 /* MLNTestMe+Test.m in Sources */,
 				B27F65A92377AA9700F2D341 /* MLNNativeWaterfallViewCell.m in Sources */,
 				B29500D82372627000F48F09 /* MLNNativeBadgeView.m in Sources */,
 				B27F65CB2377AAAE00F2D341 /* MLNGalleryMessageDescCell.m in Sources */,
@@ -963,15 +1128,26 @@
 			buildActionMask = 2147483647;
 			files = (
 				6003F5BC195388D20070C39A /* Tests.m in Sources */,
+				00DA72B9243ED12700981719 /* MLNReflectTests.m in Sources */,
+				009DD8D524114B9600452458 /* MLNArrayBindingTests.m in Sources */,
+				0011BBB32410AC3F003AE819 /* MLNDatabindingTests.m in Sources */,
+				0011BBB72410AC6F003AE819 /* MLNTestModel.m in Sources */,
+				00E6525C2418EFF200A878B8 /* MLNDictionaryTests.m in Sources */,
+				00FDB74E24591C3300D4A211 /* MLNBlockKVOTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		00A0C9A4243C3C0500F0D003 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 6003F589195388D20070C39A /* LuaNative */;
+			targetProxy = 00A0C9A3243C3C0500F0D003 /* PBXContainerItemProxy */;
+		};
 		6003F5B4195388D20070C39A /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 6003F589195388D20070C39A /* MLN_Example */;
+			target = 6003F589195388D20070C39A /* LuaNative */;
 			targetProxy = 6003F5B3195388D20070C39A /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -993,10 +1169,18 @@
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
 		};
-		71719F9D1E33DC2100824A3D /* LaunchScreen.storyboard */ = {
+		FA383454239A6356000F900E /* Main.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
-				71719F9E1E33DC2100824A3D /* Base */,
+				FA383455239A6356000F900E /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		FA383457239A64AF000F900E /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				FA383458239A64AF000F900E /* Base */,
 			);
 			name = LaunchScreen.storyboard;
 			sourceTree = "<group>";
@@ -1004,6 +1188,83 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		00A0C9A6243C3C0500F0D003 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = E5SS7YSZ2F;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				INFOPLIST_FILE = LuaNativeUITests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.momo.rifle.LuaNativeUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = LuaNative;
+			};
+			name = Debug;
+		};
+		00A0C9A7243C3C0500F0D003 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = E5SS7YSZ2F;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				INFOPLIST_FILE = LuaNativeUITests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.momo.rifle.LuaNativeUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = LuaNative;
+			};
+			name = Release;
+		};
 		6003F5BD195388D20070C39A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1079,7 +1340,7 @@
 		};
 		6003F5C0195388D20070C39A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F236AA5C6B666135B994F09B /* Pods-MLN_Example.debug.xcconfig */;
+			baseConfigurationReference = 6ED891C3203090F5CB5310E5 /* Pods-LuaNative.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -1087,6 +1348,7 @@
 				"CODE_SIGN_IDENTITY[sdk=*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = 36WT396TPZ;
+				ENABLE_BITCODE = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "MLN/MLN-Prefix.pch";
 				HEADER_SEARCH_PATHS = (
@@ -1104,6 +1366,7 @@
 					"\"${PODS_ROOT}/Headers/Public/Specta\"",
 				);
 				INFOPLIST_FILE = "MLN/MLN-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_GENERATE_MAP_FILE = YES;
 				MODULE_NAME = ExampleApp;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.MMILua-Example";
@@ -1116,13 +1379,14 @@
 		};
 		6003F5C1195388D20070C39A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 0BFEA11F75FC7C356E75DFD6 /* Pods-MLN_Example.release.xcconfig */;
+			baseConfigurationReference = 60CB3A6486D530BC91B53B3C /* Pods-LuaNative.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = 36WT396TPZ;
+				ENABLE_BITCODE = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "MLN/MLN-Prefix.pch";
 				HEADER_SEARCH_PATHS = (
@@ -1140,6 +1404,7 @@
 					"\"${PODS_ROOT}/Headers/Public/Specta\"",
 				);
 				INFOPLIST_FILE = "MLN/MLN-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_GENERATE_MAP_FILE = YES;
 				MODULE_NAME = ExampleApp;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.MMILua-Example";
@@ -1170,7 +1435,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MLN_Example.app/MLN_Example";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/LuaNative.app/LuaNative";
 				WRAPPER_EXTENSION = xctest;
 			};
 			name = Debug;
@@ -1191,7 +1456,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MLN_Example.app/MLN_Example";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/LuaNative.app/LuaNative";
 				WRAPPER_EXTENSION = xctest;
 			};
 			name = Release;
@@ -1199,6 +1464,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		00A0C9A5243C3C0500F0D003 /* Build configuration list for PBXNativeTarget "LuaNativeUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				00A0C9A6243C3C0500F0D003 /* Debug */,
+				00A0C9A7243C3C0500F0D003 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		6003F585195388D10070C39A /* Build configuration list for PBXProject "MLN" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -1208,7 +1482,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		6003F5BF195388D20070C39A /* Build configuration list for PBXNativeTarget "MLN_Example" */ = {
+		6003F5BF195388D20070C39A /* Build configuration list for PBXNativeTarget "LuaNative" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				6003F5C0195388D20070C39A /* Debug */,

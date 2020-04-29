@@ -8,6 +8,7 @@
 
 #import "MLNTestModel.h"
 #import <NSObject+MLNKVO.h>
+#import <NSObject+MLNReflect.h>
 
 SpecBegin(Reflect)
 
@@ -28,13 +29,15 @@ context(@"Dictionary", ^{
         dic = [model mln_toDictionary];
     });
     it(@"properties", ^{
-       expect(set.count == 1).to.beTruthy();
+       expect(@(set.count)).equal(@1);
        expect([set containsObject:@"name"]).to.beTruthy();
        
        set = [MLNTestModel mln_propertyKeys];
-       expect(set.count == 2).to.beTruthy();
+       expect(@(set.count)).equal(@3);
        expect([set containsObject:@"open"]).to.beTruthy();
        expect([set containsObject:@"text"]).to.beTruthy();
+       expect([set containsObject:@"source"]).to.beTruthy();
+
     });
 
     it(@"to_dic", ^{

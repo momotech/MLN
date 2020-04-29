@@ -33,4 +33,10 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) CGRect rect;
 @end
 
+
+@interface MLNCombineModel : NSObject
+@property (nonatomic, copy) NSString *name;
+@property (nonatomic, strong) MLNTestModel *tm;
+@end
+
 NS_ASSUME_NONNULL_END
