@@ -10,11 +10,14 @@
 #import "MLNExporter.h"
 #import "MLNKitInstance.h"
 #import "MLNLuaBundle.h"
+#import "MLNLuaCore.h"
+#import "MLNUIViewController+DataBinding.h"
 
 @interface MLNUIViewController ()
 @property (nonatomic, copy, readwrite) NSString *entryFileName;
 @property (nonatomic, copy, readonly) NSDictionary *extraInfo;
 @property (nonatomic, strong) NSBundle *bundle;
+@property (nonatomic, strong) NSMutableDictionary *globalModel;
 @end
 
 @implementation MLNUIViewController
@@ -35,8 +38,7 @@
     [super viewDidLoad];
     self.view.backgroundColor = [UIColor whiteColor];
     self.automaticallyAdjustsScrollViewInsets = NO;
-    [self.kitInstance changeRootView:self.view];
-    [self.kitInstance changeLuaBundle:[[MLNLuaBundle alloc] initWithBundle:self.bundle]];
+    [self prepareForLoadEntryFile];
     
     NSError *error = nil;
     BOOL ret = [self.kitInstance runWithEntryFile:self.entryFileName windowExtra:self.extraInfo error:&error];
@@ -49,6 +51,14 @@
             [self.delegate viewController:self didFailRun:self.entryFileName error:error];
         }
     }
+}
+
+- (void)prepareForLoadEntryFile {
+    [self.kitInstance changeRootView:self.view];
+    [self.kitInstance changeLuaBundle:[[MLNLuaBundle alloc] initWithBundle:self.bundle]];
+    
+    self.globalModel = [NSMutableDictionary dictionary];
+    [self bindData:self.globalModel forKey:@"Global"];
 }
 
 - (BOOL)regClasses:(NSArray<Class<MLNExportProtocol>> *)registerClasses {

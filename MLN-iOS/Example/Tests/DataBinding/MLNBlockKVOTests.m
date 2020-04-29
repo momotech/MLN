@@ -15,6 +15,28 @@ SpecBegin(BlockKVO)
 __block MLNCombineModel *model;
 __block __weak  MLNTestModel *weakTmodel;
 
+context(@"Dictionary", ^{
+        __block BOOL r1 = NO;
+        __block BOOL r2 = NO;
+
+        NSMutableDictionary *dic = [NSMutableDictionary dictionary];
+        dic.mln_watch(@"name", ^(id  _Nonnull oldValue, id  _Nonnull newValue) {
+        r1 = YES;
+        expect(oldValue).beNil();
+        expect(newValue).equal(@"hello");
+        });
+        
+        dic.mln_watch(@"name", ^(id  _Nonnull oldValue, id  _Nonnull newValue) {
+        r2 = YES;
+        expect(oldValue).beNil();
+        expect(newValue).equal(@"hello");
+        });
+     
+        [dic setObject:@"hello" forKey:@"name"];
+        expect(r1).beTruthy();
+        expect(r2).beTruthy();
+});
+
 context(@"Block", ^{
         __block BOOL r1 = NO;
         __block BOOL r2 = NO;
