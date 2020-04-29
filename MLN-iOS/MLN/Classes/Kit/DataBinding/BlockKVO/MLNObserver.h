@@ -8,7 +8,8 @@
 #import <Foundation/Foundation.h>
 
 NS_ASSUME_NONNULL_BEGIN
-typedef void(^MLNBlockChange)           (id oldValue, id newValue);
+typedef void(^MLNBlockChange)           (id observer, id object, id oldValue, id newValue);
+typedef void(^MLNBlockChangeMany)           (id observer, id object, NSString *keyPath,id oldValue, id newValue);
 
 @interface MLNObserver : NSObject
 

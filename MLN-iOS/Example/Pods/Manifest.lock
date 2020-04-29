@@ -24,7 +24,6 @@ PODS:
   - FBSnapshotTestCase/Core (2.1.4)
   - FBSnapshotTestCase/SwiftSupport (2.1.4):
     - FBSnapshotTestCase/Core
-  - KVOController (1.2.0)
   - MJRefresh (3.1.16)
   - MLN (1.0.0.5.beta):
     - MLN/Core (= 1.0.0.5.beta)
@@ -33,7 +32,6 @@ PODS:
   - MLN/Core (1.0.0.5.beta):
     - MLN/LuaLib
   - MLN/Kit (1.0.0.5.beta):
-    - KVOController
     - MLN/Core
   - MLN/LuaLib (1.0.0.5.beta)
   - MLNDevTool (0.1.7.1):
@@ -83,7 +81,6 @@ SPEC REPOS:
     - Expecta
     - "Expecta+Snapshots"
     - FBSnapshotTestCase
-    - KVOController
     - MJRefresh
     - SDCycleScrollView
     - SDWebImage
@@ -101,9 +98,8 @@ SPEC CHECKSUMS:
   Expecta: 3b6bd90a64b9a1dcb0b70aa0e10a7f8f631667d5
   "Expecta+Snapshots": dcff217eef506dabd6dfdc7864ea2da321fafbb8
   FBSnapshotTestCase: 094f9f314decbabe373b87cc339bea235a63e07a
-  KVOController: d72ace34afea42468329623b3379ab3cd1d286b6
   MJRefresh: 7798e16e53a5ef7f332dd05b27664db4e29530fd
-  MLN: e763228620cf35037bed5ed00a09fafbc398aae1
+  MLN: 49df7e1c471ef6147ad3bd1f08ee804e402bb104
   MLNDevTool: 64edf6852c43078a30efb5dff19ba536900cb0ac
   SDCycleScrollView: b3c9a5ed840c771c4938978174c7c9d9feefeb96
   SDWebImage: 51ab1ce3ebd20dec6665ae8ba25c928da323db41

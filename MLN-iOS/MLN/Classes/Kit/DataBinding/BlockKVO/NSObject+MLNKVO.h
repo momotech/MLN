@@ -14,15 +14,18 @@ typedef void(^MLNDeallocatorCallback)(id receiver);
 
 @interface NSObject (MLNKVO)
 
-@property (nonatomic, copy, readonly) NSObject *(^mln_watch)(NSString *keyPath, MLNBlockChange block);
+@property (nonatomic, copy, readonly) NSObject *(^mln_watch)(NSString *keyPath, MLNKVOBlock block);
 
-//- (void)mln_observeProperty:(NSString *)keyPath withBlock:(MLNBlockChange)observationBlock;
 - (void)mln_observeObject:(id)object property:(NSString *)keyPath withBlock:(MLNBlockChange)observationBlock;
+- (void)mln_observeObject:(id)object properties:(NSArray <NSString *> *)keyPaths withBlock:(MLNBlockChangeMany)observationBlock;
+
+- (void)mln_removeObervationsForOwner:(id)owner keyPath:(NSString *)keyPath;
+- (void)mln_removeAllObservations;
 
 @end
 
 @interface NSObject (MLNDeprecated)
-//@property (nonatomic, copy, readonly) NSObject *(^mln_subscribe)(NSString *keyPath, MLNKVOBlock block);
+@property (nonatomic, copy, readonly) NSObject *(^mln_subscribe)(NSString *keyPath, MLNKVOBlock block);
 @end
 
 NS_ASSUME_NONNULL_END

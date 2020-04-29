@@ -15,7 +15,6 @@
 #import "NSObject+MLNKVO.h"
 #import "NSArray+MLNKVO.h"
 #import "NSDictionary+MLNKVO.h"
-#import <KVOController/KVOController.h>
 #import "NSArray+MLNSafety.h"
 #import "MLNTableView.h"
 
@@ -253,17 +252,16 @@
     }
     
     for (NSString *k in paths) {
-        [kitViewController.mln_dataBinding.KVOController unobserve:model keyPath:k];
+        [model mln_removeObervationsForOwner:kitViewController.mln_dataBinding keyPath:k];
     }
     
-    [kitViewController.mln_dataBinding.KVOController observe:model keyPaths:paths options:NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew block:^(id  _Nullable observer, id  _Nonnull object, NSDictionary<NSString *,id> * _Nonnull change) {
+    [kitViewController.mln_dataBinding mln_observeObject:model properties:paths withBlock:^(id  _Nonnull observer, id  _Nonnull object, NSString * _Nonnull keyPath, id  _Nonnull oldValue, id  _Nonnull newValue) {
         UIView *listView = [listObserver listView];
         if ([listView isKindOfClass:[MLNTableView class]]) {
             MLNTableView *table = (MLNTableView *)listView;
             NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row - 1 inSection:section - 1];
             [table.adapter tableView:table.adapter.targetTableView reloadRowsAtIndexPaths:@[indexPath]];
             [table.adapter.targetTableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
-            
         } else {
             
         }

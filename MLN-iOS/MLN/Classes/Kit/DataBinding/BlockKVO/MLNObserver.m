@@ -86,7 +86,7 @@
     if (old == new || (old && [new isEqual:old])) return;
     
     for (MLNBlockChange block in self.afterSettingBlocks.copy) {
-        block(old, new);
+        block(nil, self.target, old, new);
     }
 }
 @end
