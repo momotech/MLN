@@ -10,8 +10,9 @@
 #import "MLNTestModel.h"
 #import <MLNKVOObserver.h>
 #import <NSObject+MLNKVO.h>
-#import "MLNKitViewController.h"
-#import "MLNKitViewController+DataBinding.h"
+#import "MLNUIViewController.h"
+#import "MLNUIViewController+DataBinding.h"
+//#import "MLNKitViewController+DataBinding.h"
 #import "MLNLuaBundle.h"
 #import "MLNKitInstance.h"
 
@@ -19,17 +20,18 @@ SpecBegin(MLNDatabinding)
 
 __block MLNDataBinding *dataBinding;
 __block MLNTestModel *model;
-__block MLNKitViewController *vc;
+__block MLNUIViewController *vc;
 
 
 beforeEach(^{
            NSBundle *bundle = [NSBundle bundleForClass:[self class]];
            MLNLuaBundle *luaB = [[MLNLuaBundle alloc] initWithBundle:bundle];
-           vc = [[MLNKitViewController alloc] initWithEntryFilePath:@"DataBindTest.lua"];
-           [vc changeCurrentBundle:luaB];
+//           vc = [[MLNUIViewController alloc] initWithEntryFilePath:@"DataBindTest.lua"];
+//           [vc changeCurrentBundle:luaB];
+           vc = [[MLNUIViewController alloc] initWithEntryFileName:@"DataBindTest.lua" bundle:bundle];
            [vc view];
            
-           dataBinding = [vc dataBinding];
+           dataBinding = [vc mln_dataBinding];
            [MLNDataBinding performSelector:NSSelectorFromString(@"mln_updateCurrentLuaCore:") withObject:vc.kitInstance.luaCore];
            
            model = [MLNTestModel new];
