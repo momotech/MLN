@@ -8,7 +8,6 @@
 
 #import "UIImage+Metadata.h"
 #import "NSImage+Compatibility.h"
-#import "SDInternalMacros.h"
 #import "objc/runtime.h"
 
 @implementation UIImage (Metadata)
@@ -32,32 +31,6 @@
 - (BOOL)sd_isAnimated {
     return (self.images != nil);
 }
-
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
-- (BOOL)sd_isVector {
-    if (@available(iOS 13.0, tvOS 13.0, watchOS 6.0, *)) {
-        // Xcode 11 supports symbol image, keep Xcode 10 compatible currently
-        SEL SymbolSelector = NSSelectorFromString(@"isSymbolImage");
-        if ([self respondsToSelector:SymbolSelector] && [self performSelector:SymbolSelector]) {
-            return YES;
-        }
-        // SVG
-        SEL SVGSelector = SD_SEL_SPI(CGSVGDocument);
-        if ([self respondsToSelector:SVGSelector] && [self performSelector:SVGSelector]) {
-            return YES;
-        }
-    }
-    if (@available(iOS 11.0, tvOS 11.0, watchOS 4.0, *)) {
-        // PDF
-        SEL PDFSelector = SD_SEL_SPI(CGPDFPage);
-        if ([self respondsToSelector:PDFSelector] && [self performSelector:PDFSelector]) {
-            return YES;
-        }
-    }
-    return NO;
-}
-#pragma clang diagnostic pop
 
 #else
 
@@ -88,7 +61,7 @@
 }
 
 - (BOOL)sd_isAnimated {
-    BOOL isAnimated = NO;
+    BOOL isGIF = NO;
     NSRect imageRect = NSMakeRect(0, 0, self.size.width, self.size.height);
     NSImageRep *imageRep = [self bestRepresentationForRect:imageRect context:nil hints:nil];
     NSBitmapImageRep *bitmapImageRep;
@@ -97,24 +70,9 @@
     }
     if (bitmapImageRep) {
         NSUInteger frameCount = [[bitmapImageRep valueForProperty:NSImageFrameCount] unsignedIntegerValue];
-        isAnimated = frameCount > 1 ? YES : NO;
+        isGIF = frameCount > 1 ? YES : NO;
     }
-    return isAnimated;
-}
-
-- (BOOL)sd_isVector {
-    NSRect imageRect = NSMakeRect(0, 0, self.size.width, self.size.height);
-    NSImageRep *imageRep = [self bestRepresentationForRect:imageRect context:nil hints:nil];
-    if ([imageRep isKindOfClass:[NSPDFImageRep class]]) {
-        return YES;
-    }
-    if ([imageRep isKindOfClass:[NSEPSImageRep class]]) {
-        return YES;
-    }
-    if ([NSStringFromClass(imageRep.class) hasSuffix:@"NSSVGImageRep"]) {
-        return YES;
-    }
-    return NO;
+    return isGIF;
 }
 
 #endif

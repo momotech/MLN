@@ -80,6 +80,7 @@ const int64_t SDWebImageProgressUnitCountUnknown = 1LL;
         [self sd_startImageIndicator];
         id<SDWebImageIndicator> imageIndicator = self.sd_imageIndicator;
 #endif
+        
         SDWebImageManager *manager = context[SDWebImageContextCustomManager];
         if (!manager) {
             manager = [SDWebImageManager sharedManager];

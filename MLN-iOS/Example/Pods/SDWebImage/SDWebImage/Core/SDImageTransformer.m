@@ -7,7 +7,7 @@
  */
 
 #import "SDImageTransformer.h"
-#import "UIColor+SDHexString.h"
+#import "UIColor+HexString.h"
 #if SD_UIKIT || SD_MAC
 #import <CoreImage/CoreImage.h>
 #endif
@@ -36,11 +36,6 @@ NSString * _Nullable SDTransformedKeyForKey(NSString * _Nullable key, NSString *
     } else {
         return [[key stringByAppendingString:SDImageTransformerKeySeparator] stringByAppendingString:transformerKey];
     }
-}
-
-NSString * _Nullable SDThumbnailedKeyForKey(NSString * _Nullable key, CGSize thumbnailPixelSize, BOOL preserveAspectRatio) {
-    NSString *thumbnailKey = [NSString stringWithFormat:@"Thumbnail({%f,%f},%d)", thumbnailPixelSize.width, thumbnailPixelSize.height, preserveAspectRatio];
-    return SDTransformedKeyForKey(key, thumbnailKey);
 }
 
 @interface SDImagePipelineTransformer ()

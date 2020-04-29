@@ -24,7 +24,6 @@ PODS:
   - FBSnapshotTestCase/Core (2.1.4)
   - FBSnapshotTestCase/SwiftSupport (2.1.4):
     - FBSnapshotTestCase/Core
-  - KVOController (1.2.0)
   - MJRefresh (3.1.16)
   - MLN (1.0.0.1.fix):
     - MLN/Core (= 1.0.0.1.fix)
@@ -33,7 +32,6 @@ PODS:
   - MLN/Core (1.0.0.1.fix):
     - MLN/LuaLib
   - MLN/Kit (1.0.0.1.fix):
-    - KVOController
     - MLN/Core
   - MLN/LuaLib (1.0.0.1.fix)
   - MLNDevTool (0.1.0):
@@ -61,9 +59,9 @@ PODS:
   - Protobuf (3.6.1)
   - SDCycleScrollView (1.80):
     - SDWebImage (>= 5.0.0)
-  - SDWebImage (5.7.3):
-    - SDWebImage/Core (= 5.7.3)
-  - SDWebImage/Core (5.7.3)
+  - SDWebImage (5.3.3):
+    - SDWebImage/Core (= 5.3.3)
+  - SDWebImage/Core (5.3.3)
   - Specta (1.0.7)
   - Toast (4.0.0)
 
@@ -85,7 +83,6 @@ SPEC REPOS:
     - Expecta
     - "Expecta+Snapshots"
     - FBSnapshotTestCase
-    - KVOController
     - MJRefresh
     - Protobuf
     - SDCycleScrollView
@@ -104,16 +101,15 @@ SPEC CHECKSUMS:
   Expecta: 3b6bd90a64b9a1dcb0b70aa0e10a7f8f631667d5
   "Expecta+Snapshots": dcff217eef506dabd6dfdc7864ea2da321fafbb8
   FBSnapshotTestCase: 094f9f314decbabe373b87cc339bea235a63e07a
-  KVOController: d72ace34afea42468329623b3379ab3cd1d286b6
   MJRefresh: 7798e16e53a5ef7f332dd05b27664db4e29530fd
-  MLN: 33e71d84cd2bbb25ac654acdf3ee76ba499742f6
+  MLN: e4101e335dc7af5e228ff1e60041904e292d9930
   MLNDevTool: c597173d62e892ba72b0c735b539375e31c28d19
   Protobuf: 1eb9700044745f00181c136ef21b8ff3ad5a0fd5
   SDCycleScrollView: b3c9a5ed840c771c4938978174c7c9d9feefeb96
-  SDWebImage: 97351f6582ceca541ea294ba66a1fcb342a331c2
+  SDWebImage: 51ab1ce3ebd20dec6665ae8ba25c928da323db41
   Specta: 3e1bd89c3517421982dc4d1c992503e48bd5fe66
   Toast: 91b396c56ee72a5790816f40d3a94dd357abc196
 
-PODFILE CHECKSUM: 9f7d74bf50d91829c0d01c25c6a59926cbc650d8
+PODFILE CHECKSUM: 6704ccdefb9a27fb1f1a2a5857a02bc7bea0b3e3
 
 COCOAPODS: 1.9.1

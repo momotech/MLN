@@ -9,7 +9,6 @@
 #import "MLNBlock.h"
 #import "MLNKitHeader.h"
 #import "MLNKitViewController.h"
-#import "KVOController.h"
 #import "MLNDataBinding.h"
 
 @interface MLNBlockObserver ()

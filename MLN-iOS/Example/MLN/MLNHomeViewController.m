@@ -7,7 +7,7 @@
 //
 
 #import "MLNHomeViewController.h"
-#import <MLNKit.h>
+#import <MLN/MLNKit.h>
 #import "MLNOfflineViewController.h"
 #import "MLNHotReloadViewController.h"
 #import "MLNMyRefreshHandler.h"
@@ -17,6 +17,7 @@
 #import "MLNNavigatorHandler.h"
 #import "MLNLuaGalleryViewController.h"
 #import "MLNDemoListViewController.h"
+#import "MLNStaticTest.h"
 
 #define kConsoleWidth 250.f
 #define kConsoleHeight 280.f
@@ -35,7 +36,6 @@
 
 @property (nonatomic, strong) MLNHotReloadViewController *luaVC;
 @property (nonatomic, strong) MLNOfflineViewController *offlineViewController;
-
 @end
 
 @implementation MLNHomeViewController
@@ -64,7 +64,7 @@
 #pragma mark - action
 
 - (IBAction)hotReloadAction:(id)sender {
-    MLNHotReloadViewController  *hotReloadVC = [[MLNHotReloadViewController alloc] init];
+    MLNHotReloadViewController  *hotReloadVC = [[MLNHotReloadViewController alloc] initWithRegisterClasses:@[[MLNStaticTest class]] extraInfo:nil];
     [self.navigationController pushViewController:hotReloadVC animated:YES];
 }
 

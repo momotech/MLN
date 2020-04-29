@@ -10,6 +10,7 @@
 #import "MLNExtScope.h"
 #import "NSObject+MLNCore.h"
 #import "NSObject+MLNKVO.h"
+#import "NSObject+MLNReflect.h"
 
 @import ObjectiveC;
 

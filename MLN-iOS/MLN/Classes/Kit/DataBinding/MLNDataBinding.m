@@ -7,10 +7,10 @@
 
 #import "MLNDataBinding.h"
 #import <pthread.h>
-#import "KVOController.h"
 #import "NSMutableArray+MLNKVO.h"
 #import "NSArray+MLNKVO.h"
 #import "MLNExtScope.h"
+#import "NSObject+MLNKVO.h"
 
 @interface MLNDataBinding() {
     pthread_mutex_t _lock;
@@ -180,8 +180,14 @@
     };
     
     if (!isArray) {
-        [self.KVOController observe:object keyPath:path options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld block:^(id  _Nullable obs, id  _Nonnull object, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
-            obBlock(path, object, change);
+//        [self.KVOController observe:object keyPath:path options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld block:^(id  _Nullable obs, id  _Nonnull object, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
+//            obBlock(path, object, change);
+//        }];
+        [self mln_observeObject:object property:path withBlock:^(id  _Nonnull observer, id  _Nonnull object, id  _Nonnull oldValue, id  _Nonnull newValue) {
+            NSMutableDictionary *change = [NSMutableDictionary dictionary];
+            [change setValue:oldValue forKey:NSKeyValueChangeOldKey];
+            [change setValue:newValue forKey:NSKeyValueChangeNewKey];
+            obBlock(path,object, change);
         }];
     } else {
         NSMutableArray *bindArray = (NSMutableArray *)object;
