@@ -41,6 +41,10 @@
     return YES;
 }
 
+- (BOOL)lua_supportOverlay {
+    return YES;
+}
+
 #pragma mark - Export For Lua
 LUA_EXPORT_VIEW_BEGIN(MLNView)
 // layout

@@ -78,9 +78,15 @@
 }
 
 - (void)lua_overlay:(UIView *)overlay {
+    if (self.lua_supportOverlay == NO) {
+        return;
+    }
     if ([overlay isKindOfClass:[UIView class]]) {
         [self removeOverlayIfNeeded]; // 移除旧的(若有)
         self.lua_node.overlayNode = overlay.lua_node;
+        if (self.superview) { // 先将视图添加到父视图后设置overlay的情况
+            [self addOverlayIfNeeded];
+        }
     }
 }
 
@@ -219,6 +225,10 @@ static const void *kLuaLayoutEnable = &kLuaLayoutEnable;
 
 - (BOOL)lua_isContainer
 {
+    return NO;
+}
+
+- (BOOL)lua_supportOverlay {
     return NO;
 }
 
