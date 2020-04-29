@@ -1,0 +1,6 @@
+framework module Pods_LuaNative {
+  umbrella header "Pods-LuaNative-umbrella.h"
+
+  export *
+  module * { export * }
+}

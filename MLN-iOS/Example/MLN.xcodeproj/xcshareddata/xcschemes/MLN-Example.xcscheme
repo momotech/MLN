@@ -47,6 +47,16 @@
                ReferencedContainer = "container:MLN.xcodeproj">
             </BuildableReference>
          </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "00A0C99D243C3C0400F0D003"
+               BuildableName = "LuaNativeUITests.xctest"
+               BlueprintName = "LuaNativeUITests"
+               ReferencedContainer = "container:MLN.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction

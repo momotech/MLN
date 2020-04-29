@@ -11,10 +11,9 @@
 #import <objc/runtime.h>
 #import <UIImageView+WebCache.h>
 #import <UIImageView+AFNetworking.h>
-#import "MLNViewController.h"
 #import "MLNGalleryMainViewController.h"
-#import <MLNFile.h>
-#import <MLNKitEnvironment.h>
+#import <MLN/MLNFile.h>
+#import <MLN/MLNKitEnvironment.h>
 
 #import "MLNMyHttpHandler.h"
 #import "MLNMyRefreshHandler.h"
@@ -43,14 +42,6 @@
     
     // copy 主bundle中文件到沙盒中
     [self copyJsonFilesToSandbox];
-    
-    // 主页面展示
-    self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
-    UIViewController *rootViewController = [[MLNViewController alloc] init];
-    UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:rootViewController];
-    [navigationController.navigationBar setHidden:YES];
-    self.window.rootViewController = navigationController;
-    [self.window makeKeyAndVisible];
 
     return YES;
 }
@@ -72,10 +63,10 @@
 
 - (void)copyJsonFilesToSandbox
 {
-    NSString *jsonDirectoryPath = [[[NSBundle mainBundle] bundlePath] stringByAppendingPathComponent:@"/gallery/json"];
+    NSString *jsonDirectoryPath = [[[NSBundle mainBundle] bundlePath] stringByAppendingPathComponent:@"/gallery.bundle/json"];
     NSError *error = nil;
     NSArray *jsonFilePaths = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:jsonDirectoryPath error:&error];
-    NSString *destFileDirectory = [[MLNFile fileManagerRootPath] stringByAppendingPathComponent:@"gallery/json"];
+    NSString *destFileDirectory = [[MLNFile fileManagerRootPath] stringByAppendingPathComponent:@"gallery.bundle/json"];
     BOOL isDir = NO;
     BOOL exist = [[NSFileManager defaultManager] fileExistsAtPath:destFileDirectory isDirectory:&isDir];
     if (!exist) {

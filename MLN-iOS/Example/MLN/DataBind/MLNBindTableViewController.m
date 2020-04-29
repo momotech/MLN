@@ -25,16 +25,14 @@
 
 - (void)createController {
     NSString *demoName = @"layout_DataBindTable.lua";
-    MLNKitViewController *viewController = [[MLNKitViewController alloc] initWithEntryFilePath:demoName];
-    MLNLuaBundle *bundle = [MLNLuaBundle mainBundleWithPath:@"inner_demo.bundle"];
-    [viewController changeCurrentBundle:bundle];
-    
+    NSString *path = [[NSBundle mainBundle] pathForResource:@"inner_demo" ofType:@"bundle"];
+    NSBundle *bundle = [NSBundle bundleWithPath:path];
+    MLNUIViewController *viewController = [[MLNUIViewController alloc] initWithEntryFileName:demoName bundle:bundle];
+
     [self createModelArray];
     
-//    [viewController.dataBinding bindArray:self.modelArray forKey:@"source"];
     [viewController bindData:self.tableModel forKey:@"tableModel"];
-    
-    [viewController addToSuperViewController:self frame:self.view.bounds];
+    [viewController mln_addToSuperViewController:self frame:self.view.bounds];
 }
 
 - (void)createModelArray {
