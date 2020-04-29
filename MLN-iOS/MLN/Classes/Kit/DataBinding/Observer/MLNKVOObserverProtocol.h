@@ -38,6 +38,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface UIViewController (MLNDataBinding)
 
+@property (nonatomic, strong, readonly) MLNDataBinding * _Nonnull mln_dataBinding;
 - (void)mln_addToSuperViewController:(UIViewController *_Nonnull)superVC frame:(CGRect) frame;
 
 @end
