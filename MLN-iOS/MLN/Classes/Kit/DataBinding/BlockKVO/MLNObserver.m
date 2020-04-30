@@ -6,9 +6,10 @@
 //
 
 #import "MLNObserver.h"
+#import <pthread.h>
+#import "MLNKVOObserverProtocol.h"
+
 @interface MLNObserver()
-@property (nonatomic, readwrite, assign) BOOL attached;
-@property (nonatomic, strong) NSMutableArray *afterSettingBlocks;
 @end
 
 @implementation MLNObserver
@@ -18,13 +19,15 @@
         _target = target;
         _keyPath = keyPath;
         _owner = owner;
-        _afterSettingBlocks = [NSMutableArray array];
+        _observationBlocks = [NSMutableArray array];
+        LOCK_INIT();
     }
     return self;
 }
 
 - (void)dealloc {
     [self detach];
+    LOCK_DESTROY();
 }
 
 - (void)attach {
@@ -49,9 +52,11 @@
     }
 }
 
-- (void)addSettingObservationBlock:(MLNBlockChange)block {
+- (void)addObservationBlock:(MLNBlockChange)block {
     if (block) {
-        [self.afterSettingBlocks addObject:block];
+        LOCK();
+        [_observationBlocks addObject:block];
+        UNLOCK();
     }
 }
 
@@ -73,7 +78,7 @@
         } else {
             switch (changeKind) {
                 case NSKeyValueChangeSetting:
-                    [self executeAfterSettingBlocksWithOld:old new:new];
+                    [self executeBlocksWithOld:old new:new change:change];
                     break;
                 default:
                     break;
@@ -82,11 +87,15 @@
     }
 }
 
-- (void)executeAfterSettingBlocksWithOld:(id)old new:(id)new {
-    if (old == new || (old && [new isEqual:old])) return;
-    
-    for (MLNBlockChange block in self.afterSettingBlocks.copy) {
-        block(nil, self.target, old, new);
+- (void)executeBlocksWithOld:(id)old new:(id)new change:(NSDictionary *)change{
+//    if (old == new || (old && [new isEqual:old])) return;
+    LOCK();
+    NSArray *copys = _observationBlocks.copy;
+    UNLOCK();
+    for (MLNBlockChange block in copys) {
+        block(nil, self.target, old, new, change);
     }
 }
+
 @end
+

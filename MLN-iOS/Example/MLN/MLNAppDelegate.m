@@ -19,6 +19,7 @@
 #import "MLNMyRefreshHandler.h"
 #import "MLNMyImageHandler.h"
 #import "MLNNavigatorHandler.h"
+#import "MLNKVOObserver.h"
 
 @interface MLNAppDelegate ()
 
@@ -33,6 +34,29 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+    NSMutableArray *arr = [NSMutableArray array];
+    MLNDataBinding *db = [MLNDataBinding new];
+    [db bindArray:arr forKey:@"array"];
+    
+    MLNKVOObserver *ob1 = [[MLNKVOObserver alloc] initWithViewController:nil callback:^(NSString * _Nonnull keyPath, id  _Nonnull object, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
+        NSLog(@"");
+    } keyPath:@"array"];
+    
+    MLNKVOObserver *ob2 = [[MLNKVOObserver alloc] initWithViewController:nil callback:^(NSString * _Nonnull keyPath, id  _Nonnull object, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
+        NSLog(@"");
+    } keyPath:@"array"];
+    
+    [db addArrayObserver:ob1 forKey:@"array"];
+    [db addArrayObserver:ob2 forKey:@"array"];
+    
+    [arr addObject:@11];
+    [arr removeObject:@11];
+    
+    [db removeArrayObserver:ob1 forKey:@"array"];
+    [arr addObject:@22];
+    [db removeArrayObserver:ob2 forKey:@"array"];
+    [arr addObject:@22];
+
     [self setupMLNKitEnvironment];
     // 根据标志位判断是否禁用图片加载功能
     if (kDisableImageLoad) {

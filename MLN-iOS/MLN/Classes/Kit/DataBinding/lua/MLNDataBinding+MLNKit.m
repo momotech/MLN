@@ -112,7 +112,7 @@
         return CGSizeZero;
     };
      */
-    [arr mln_startKVOIfMutableble];
+    [arr mln_startKVOIfMutable];
     return arr;
 }
 
@@ -254,8 +254,8 @@
     for (NSString *k in paths) {
         [model mln_removeObervationsForOwner:kitViewController.mln_dataBinding keyPath:k];
     }
-    
-    [kitViewController.mln_dataBinding mln_observeObject:model properties:paths withBlock:^(id  _Nonnull observer, id  _Nonnull object, NSString * _Nonnull keyPath, id  _Nonnull oldValue, id  _Nonnull newValue) {
+
+    [kitViewController.mln_dataBinding mln_observeObject:model properties:paths withBlock:^(id  _Nonnull observer, id  _Nonnull object, NSString * _Nonnull keyPath, id  _Nonnull oldValue, id  _Nonnull newValue, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
         UIView *listView = [listObserver listView];
         if ([listView isKindOfClass:[MLNTableView class]]) {
             MLNTableView *table = (MLNTableView *)listView;

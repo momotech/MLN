@@ -8,6 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		00951873181FD2D3FF5C33A7006A0319 /* NSButton+WebCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A39F0B17E7C7F8E149722468559398B /* NSButton+WebCache.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		00AFD4F2245AF9BC0060C885 /* NSObject+MLNDealloctor.h in Headers */ = {isa = PBXBuildFile; fileRef = 00AFD4F0245AF9BC0060C885 /* NSObject+MLNDealloctor.h */; };
+		00AFD4F3245AF9BC0060C885 /* NSObject+MLNDealloctor.m in Sources */ = {isa = PBXBuildFile; fileRef = 00AFD4F1245AF9BC0060C885 /* NSObject+MLNDealloctor.m */; };
+		00AFD4F6245AFE680060C885 /* MLNArrayObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = 00AFD4F4245AFE680060C885 /* MLNArrayObserver.h */; };
+		00AFD4F7245AFE680060C885 /* MLNArrayObserver.m in Sources */ = {isa = PBXBuildFile; fileRef = 00AFD4F5245AFE680060C885 /* MLNArrayObserver.m */; };
 		0124AAC65FBFB7DF1B117BEC460DC2BB /* NSArray+MLNCore.m in Sources */ = {isa = PBXBuildFile; fileRef = CC287B3C332EC4AF74C245ED89497ACC /* NSArray+MLNCore.m */; };
 		01BDEF6F53582A4A0420DF308C2B8575 /* MLNDialogView.m in Sources */ = {isa = PBXBuildFile; fileRef = 90F5B0A1B30E241FD90BCA6DAE293FE4 /* MLNDialogView.m */; };
 		01C98CCE584126BB969BC835C73FF695 /* ldebug.h in Headers */ = {isa = PBXBuildFile; fileRef = BEA2F9EB619F570335B5A39A66556318 /* ldebug.h */; settings = {ATTRIBUTES = (Project, ); }; };
@@ -1268,8 +1272,12 @@
 
 /* Begin PBXFileReference section */
 		00076D8D5766531350D8C9D4F199D276 /* MLN_GCDAsyncSocket.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLN_GCDAsyncSocket.h; sourceTree = "<group>"; };
-		00116D7141139B475EA479BA2FF239E5 /* mln_timeout.c */ = {isa = PBXFileReference; includeInIndex = 1; path = mln_timeout.c; sourceTree = "<group>"; };
+		00116D7141139B475EA479BA2FF239E5 /* mln_timeout.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; path = mln_timeout.c; sourceTree = "<group>"; };
 		006771FC992340C3AD833F4D22EF3348 /* mln_tcp.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = mln_tcp.h; sourceTree = "<group>"; };
+		00AFD4F0245AF9BC0060C885 /* NSObject+MLNDealloctor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSObject+MLNDealloctor.h"; sourceTree = "<group>"; };
+		00AFD4F1245AF9BC0060C885 /* NSObject+MLNDealloctor.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSObject+MLNDealloctor.m"; sourceTree = "<group>"; };
+		00AFD4F4245AFE680060C885 /* MLNArrayObserver.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNArrayObserver.h; sourceTree = "<group>"; };
+		00AFD4F5245AFE680060C885 /* MLNArrayObserver.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNArrayObserver.m; sourceTree = "<group>"; };
 		00C9843FAB1090451669CEFF854AAB59 /* LNClientProtocol.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = LNClientProtocol.h; sourceTree = "<group>"; };
 		00E9A50A84CBC360E40449E9C098014D /* AFAutoPurgingImageCache.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = AFAutoPurgingImageCache.m; path = "UIKit+AFNetworking/AFAutoPurgingImageCache.m"; sourceTree = "<group>"; };
 		00F01304C6CA6D52DCA95E0A612FEF96 /* NSDictionary+MLNSafety.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "NSDictionary+MLNSafety.m"; sourceTree = "<group>"; };
@@ -1295,11 +1303,11 @@
 		04DD73CB1332F6E4FDF7D42144A07EF1 /* MLNInternalTextView.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLNInternalTextView.m; sourceTree = "<group>"; };
 		0553CF72A37B1C89A2B46D7642C1573B /* lzio.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = lzio.h; path = "MLN-iOS/MLN/Classes/LuaLib/lzio.h"; sourceTree = "<group>"; };
 		055C560D5E55C00661DD14CA26DCA912 /* SDImageAPNGCoder.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = SDImageAPNGCoder.h; path = SDWebImage/Core/SDImageAPNGCoder.h; sourceTree = "<group>"; };
-		056983D429A11CB70E0678411F55AD26 /* lua.c */ = {isa = PBXFileReference; includeInIndex = 1; name = lua.c; path = "MLN-iOS/MLN/Classes/LuaLib/lua.c"; sourceTree = "<group>"; };
+		056983D429A11CB70E0678411F55AD26 /* lua.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = lua.c; path = "MLN-iOS/MLN/Classes/LuaLib/lua.c"; sourceTree = "<group>"; };
 		059C2C643EB3F2343A27E567F60B527A /* SDImageCachesManager.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = SDImageCachesManager.h; path = SDWebImage/Core/SDImageCachesManager.h; sourceTree = "<group>"; };
 		059EE7A9A6327719EF188F6E2CB46956 /* UIRefreshControl+AFNetworking.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "UIRefreshControl+AFNetworking.m"; path = "UIKit+AFNetworking/UIRefreshControl+AFNetworking.m"; sourceTree = "<group>"; };
 		05BF508598FC8B0392D29947F00F88A8 /* MLNUIViewController.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = MLNUIViewController.m; path = "MLN-iOS/MLN/Classes/Kit/MLNUIViewController.m"; sourceTree = "<group>"; };
-		0607DC332B77C1B70B8D84C72E8A43A0 /* ldo.c */ = {isa = PBXFileReference; includeInIndex = 1; name = ldo.c; path = "MLN-iOS/MLN/Classes/LuaLib/ldo.c"; sourceTree = "<group>"; };
+		0607DC332B77C1B70B8D84C72E8A43A0 /* ldo.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = ldo.c; path = "MLN-iOS/MLN/Classes/LuaLib/ldo.c"; sourceTree = "<group>"; };
 		0608253CA93A1F654B9FF5BBB45BD150 /* MLNBeforeWaitingTaskEngine.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLNBeforeWaitingTaskEngine.m; sourceTree = "<group>"; };
 		0635CC2D878ED8D6839CA442FB47DD56 /* SDImageLoader.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = SDImageLoader.m; path = SDWebImage/Core/SDImageLoader.m; sourceTree = "<group>"; };
 		0652FF592BA20D9E37205C2132767839 /* MLNQRCodeHistoryViewControllerAdapter.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLNQRCodeHistoryViewControllerAdapter.h; sourceTree = "<group>"; };
@@ -1312,7 +1320,7 @@
 		089FFAE881B046ED20EA15064DF62A87 /* NSDictionary+MLNCore.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "NSDictionary+MLNCore.m"; sourceTree = "<group>"; };
 		08A238CB49D6705B9F6E43058E8E821F /* NSBundle+MJRefresh.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "NSBundle+MJRefresh.h"; path = "MJRefresh/NSBundle+MJRefresh.h"; sourceTree = "<group>"; };
 		08EAA03D17FD4490AE8AD33AF4FB9C41 /* UIScrollView+MJRefresh.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "UIScrollView+MJRefresh.m"; path = "MJRefresh/UIScrollView+MJRefresh.m"; sourceTree = "<group>"; };
-		08F7F0770B4878B9883B87DCD8569CB4 /* libExpecta.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; name = libExpecta.a; path = libExpecta.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		08F7F0770B4878B9883B87DCD8569CB4 /* libExpecta.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libExpecta.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		0910384BD46EBC290C820FBFD6B6A6F1 /* ExpectaObject+FBSnapshotTest.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "ExpectaObject+FBSnapshotTest.m"; sourceTree = "<group>"; };
 		091F75F5D900447AB179EB77CC2E35D8 /* SDCycleScrollView.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = SDCycleScrollView.h; path = SDCycleScrollView/Lib/SDCycleScrollView/SDCycleScrollView.h; sourceTree = "<group>"; };
 		097DD0152CE58A62EF3C215D9B742282 /* EXPMatchers+raise.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "EXPMatchers+raise.h"; path = "Expecta/Matchers/EXPMatchers+raise.h"; sourceTree = "<group>"; };
@@ -1320,7 +1328,7 @@
 		09B004C524563A12EE63AC7A6C55F427 /* MLNInnerCollectionView.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLNInnerCollectionView.m; sourceTree = "<group>"; };
 		0A1D04C56B6F76DDE806957C027D642B /* LNReaderFactory.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = LNReaderFactory.m; sourceTree = "<group>"; };
 		0A568B3F2EF8A94115C7F13B9D6FD4D5 /* lua.png */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = image.png; path = lua.png; sourceTree = "<group>"; };
-		0B124A1D265DDC2B094B1F054CD06718 /* lzio.c */ = {isa = PBXFileReference; includeInIndex = 1; name = lzio.c; path = "MLN-iOS/MLN/Classes/LuaLib/lzio.c"; sourceTree = "<group>"; };
+		0B124A1D265DDC2B094B1F054CD06718 /* lzio.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = lzio.c; path = "MLN-iOS/MLN/Classes/LuaLib/lzio.c"; sourceTree = "<group>"; };
 		0B3240D87FAB74C4BC130B744B70BE27 /* MLNScaleAnimation.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLNScaleAnimation.h; sourceTree = "<group>"; };
 		0B535EF788FAAD12603E1869C1D422A1 /* EXPMatchers+beCloseTo.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "EXPMatchers+beCloseTo.m"; path = "Expecta/Matchers/EXPMatchers+beCloseTo.m"; sourceTree = "<group>"; };
 		0BEB3D1965FD171A13C752BACC4E57B3 /* SDAnimatedImageRep.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = SDAnimatedImageRep.h; path = SDWebImage/Core/SDAnimatedImageRep.h; sourceTree = "<group>"; };
@@ -1366,28 +1374,28 @@
 		14EDFA407AC7ABACDE9F134113461014 /* MLNCollectionLayout.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLNCollectionLayout.h; sourceTree = "<group>"; };
 		1533F14A3C884767BEC93A0847DD01C8 /* Expecta+Snapshots.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Expecta+Snapshots.debug.xcconfig"; sourceTree = "<group>"; };
 		1564A71F58604228C8A1A683045DD648 /* MLNContainerWindow.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLNContainerWindow.h; sourceTree = "<group>"; };
-		15B13B063AA97C48C9010C298AECBDDA /* libSpecta.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; name = libSpecta.a; path = libSpecta.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		15B13B063AA97C48C9010C298AECBDDA /* libSpecta.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libSpecta.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		15E2052701C793D9C3E36E5FFD6725B0 /* MLNToast.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLNToast.h; sourceTree = "<group>"; };
 		15E3A46435535C4CAD6C1DE2FF5CFAFD /* scan_corner.png */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = image.png; path = scan_corner.png; sourceTree = "<group>"; };
-		165FFEACACF8966DED5C97CC86BAC0DB /* print.c */ = {isa = PBXFileReference; includeInIndex = 1; name = print.c; path = "MLN-iOS/MLN/Classes/LuaLib/print.c"; sourceTree = "<group>"; };
+		165FFEACACF8966DED5C97CC86BAC0DB /* print.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = print.c; path = "MLN-iOS/MLN/Classes/LuaLib/print.c"; sourceTree = "<group>"; };
 		16678244305166A444A65DEFC4252C22 /* MLNKitInstanceFactory.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = MLNKitInstanceFactory.m; path = "MLN-iOS/MLN/Classes/Kit/MLNKitInstanceFactory.m"; sourceTree = "<group>"; };
 		16CA30FCF999480F4C8805E217EAAB77 /* AFURLResponseSerialization.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = AFURLResponseSerialization.h; path = AFNetworking/AFURLResponseSerialization.h; sourceTree = "<group>"; };
 		17FE19243FFD8585AD5562B7012B92D9 /* MLNKitBridgesManager.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = MLNKitBridgesManager.h; path = "MLN-iOS/MLN/Classes/Kit/MLNKitBridgesManager.h"; sourceTree = "<group>"; };
 		1847B7CD62800D21BB23E0FE98468FC0 /* MLNHotReloadViewController.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLNHotReloadViewController.m; sourceTree = "<group>"; };
-		18B434D7B75B01523059B56CB1D2A2F7 /* mln_inet.c */ = {isa = PBXFileReference; includeInIndex = 1; path = mln_inet.c; sourceTree = "<group>"; };
+		18B434D7B75B01523059B56CB1D2A2F7 /* mln_inet.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; path = mln_inet.c; sourceTree = "<group>"; };
 		18F8E991DB4AE8AB0BC8C69B7154C738 /* NSBezierPath+RoundedCorners.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "NSBezierPath+RoundedCorners.m"; path = "SDWebImage/Private/NSBezierPath+RoundedCorners.m"; sourceTree = "<group>"; };
 		1907EE692E02F66D9B9C62AA7B53EE6C /* MLNDebugContext.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLNDebugContext.h; sourceTree = "<group>"; };
 		196EA0DF821817A311B19325DCBD6573 /* Expecta.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = Expecta.debug.xcconfig; sourceTree = "<group>"; };
 		19A3B4B40E04C480A273F236FFF89422 /* MLNStringUtil.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLNStringUtil.m; sourceTree = "<group>"; };
-		19F12B9F9CB0B8004891DA3DE123074B /* lparser.c */ = {isa = PBXFileReference; includeInIndex = 1; name = lparser.c; path = "MLN-iOS/MLN/Classes/LuaLib/lparser.c"; sourceTree = "<group>"; };
+		19F12B9F9CB0B8004891DA3DE123074B /* lparser.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = lparser.c; path = "MLN-iOS/MLN/Classes/LuaLib/lparser.c"; sourceTree = "<group>"; };
 		1A19E0E4F2DCD236624752CD431B417D /* SDWebImageDownloaderConfig.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = SDWebImageDownloaderConfig.h; path = SDWebImage/Core/SDWebImageDownloaderConfig.h; sourceTree = "<group>"; };
-		1A5F4BE71859F58D58F52A3E512629ED /* libPods-MLN_Tests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; name = "libPods-MLN_Tests.a"; path = "libPods-MLN_Tests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		1A6A92670F3D645CB88CCA09CB49D3D7 /* llex.c */ = {isa = PBXFileReference; includeInIndex = 1; name = llex.c; path = "MLN-iOS/MLN/Classes/LuaLib/llex.c"; sourceTree = "<group>"; };
+		1A5F4BE71859F58D58F52A3E512629ED /* libPods-MLN_Tests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-MLN_Tests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		1A6A92670F3D645CB88CCA09CB49D3D7 /* llex.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = llex.c; path = "MLN-iOS/MLN/Classes/LuaLib/llex.c"; sourceTree = "<group>"; };
 		1A877EA2746040F5027992EB7C292152 /* Pods-LuaNative-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-LuaNative-dummy.m"; sourceTree = "<group>"; };
 		1A8B383105FDDF25EFC05E7BB0D3A29B /* MLNGaussEffectHandler.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLNGaussEffectHandler.m; sourceTree = "<group>"; };
 		1AE638F7A8C5F0244F11DA2FD50A4956 /* NSMutableArray+MLNKVO.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "NSMutableArray+MLNKVO.m"; sourceTree = "<group>"; };
 		1AFC992ADF37E14AD6A9FF6DEE1DD9B5 /* UIImageView+WebCache.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "UIImageView+WebCache.h"; path = "SDWebImage/Core/UIImageView+WebCache.h"; sourceTree = "<group>"; };
-		1B2632BCD4752FC8F3DE429A5B7E02FC /* lundump.c */ = {isa = PBXFileReference; includeInIndex = 1; name = lundump.c; path = "MLN-iOS/MLN/Classes/LuaLib/lundump.c"; sourceTree = "<group>"; };
+		1B2632BCD4752FC8F3DE429A5B7E02FC /* lundump.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = lundump.c; path = "MLN-iOS/MLN/Classes/LuaLib/lundump.c"; sourceTree = "<group>"; };
 		1B2E65442CBFA40082EF7F20EB47C6DF /* MLNWeakAssociatedObject.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLNWeakAssociatedObject.m; sourceTree = "<group>"; };
 		1B326E9AF623F1EE98AF1542874BA7D0 /* mmoslib.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = mmoslib.h; sourceTree = "<group>"; };
 		1B375DCDEE0B67CCB694BAC627A56CBD /* MLNQRCodeHistoryViewController.storyboard */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = file.storyboard; path = MLNQRCodeHistoryViewController.storyboard; sourceTree = "<group>"; };
@@ -1398,7 +1406,7 @@
 		1BBB7842B39776DAFC585E0B9E50D9EE /* UIView+Toast.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "UIView+Toast.m"; path = "Toast/UIView+Toast.m"; sourceTree = "<group>"; };
 		1C1565944B13A4A037760619D296F8D6 /* MLNLoadTimeStatistics.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLNLoadTimeStatistics.m; sourceTree = "<group>"; };
 		1C5FA88EE641484D6AFA817378A7685A /* MLNCanvasPaint.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLNCanvasPaint.h; sourceTree = "<group>"; };
-		1C7D1915DC20FABBE56F80E79257B1DE /* lmathlib.c */ = {isa = PBXFileReference; includeInIndex = 1; name = lmathlib.c; path = "MLN-iOS/MLN/Classes/LuaLib/lmathlib.c"; sourceTree = "<group>"; };
+		1C7D1915DC20FABBE56F80E79257B1DE /* lmathlib.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = lmathlib.c; path = "MLN-iOS/MLN/Classes/LuaLib/lmathlib.c"; sourceTree = "<group>"; };
 		1D7FB54407454B940AC196B3361E10D5 /* MLNKiConvertor.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLNKiConvertor.m; sourceTree = "<group>"; };
 		1DD4E2B9416103BD1100AADB69F392EB /* MLNReuseContentView.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLNReuseContentView.h; sourceTree = "<group>"; };
 		1E2BBC26235C1CF95F519F3F1E126889 /* SDAnimatedImagePlayer.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = SDAnimatedImagePlayer.h; path = SDWebImage/Core/SDAnimatedImagePlayer.h; sourceTree = "<group>"; };
@@ -1414,12 +1422,12 @@
 		201C8C138053A732E75AC2A2B8AD2946 /* UIImage+GIF.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "UIImage+GIF.h"; path = "SDWebImage/Core/UIImage+GIF.h"; sourceTree = "<group>"; };
 		205F90A2822BC3ECFB2DF3D2D03AD643 /* SDWebImagePrefetcher.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = SDWebImagePrefetcher.m; path = SDWebImage/Core/SDWebImagePrefetcher.m; sourceTree = "<group>"; };
 		209F953381434A375E1716C7BA64C4B3 /* SDWebImageDownloaderRequestModifier.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = SDWebImageDownloaderRequestModifier.h; path = SDWebImage/Core/SDWebImageDownloaderRequestModifier.h; sourceTree = "<group>"; };
-		20B68C9269B45825E82F4F5ECE0EB27C /* libExpecta+Snapshots.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; name = "libExpecta+Snapshots.a"; path = "libExpecta+Snapshots.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		20B68C9269B45825E82F4F5ECE0EB27C /* libExpecta+Snapshots.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libExpecta+Snapshots.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		20FA4C74FB252FE3DF3497B5865BA320 /* MLNAnimationConst.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLNAnimationConst.m; sourceTree = "<group>"; };
 		2143631273422701CF5D14EC67517581 /* SDWebImage-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "SDWebImage-prefix.pch"; sourceTree = "<group>"; };
-		214DDA25DC894C3F6AD37462E412A111 /* linit.c */ = {isa = PBXFileReference; includeInIndex = 1; name = linit.c; path = "MLN-iOS/MLN/Classes/LuaLib/linit.c"; sourceTree = "<group>"; };
+		214DDA25DC894C3F6AD37462E412A111 /* linit.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = linit.c; path = "MLN-iOS/MLN/Classes/LuaLib/linit.c"; sourceTree = "<group>"; };
 		2169D7E794874F1C1C7E2ADF9301D00F /* MLNZStack.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLNZStack.h; sourceTree = "<group>"; };
-		219250BBAC3EE26678A968FA56C5B46A /* mln_options.c */ = {isa = PBXFileReference; includeInIndex = 1; path = mln_options.c; sourceTree = "<group>"; };
+		219250BBAC3EE26678A968FA56C5B46A /* mln_options.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; path = mln_options.c; sourceTree = "<group>"; };
 		22071363B68EA4418A786959E10348E9 /* MLNUIViewController+DataBinding.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "MLNUIViewController+DataBinding.h"; sourceTree = "<group>"; };
 		229FE29222C5B796CAF219401085AE03 /* NSMutableDictionary+MLNMap.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "NSMutableDictionary+MLNMap.m"; sourceTree = "<group>"; };
 		22DF89D9DEEAE5385D66E020166CC530 /* EXPMatchers+contain.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "EXPMatchers+contain.h"; path = "Expecta/Matchers/EXPMatchers+contain.h"; sourceTree = "<group>"; };
@@ -1436,7 +1444,7 @@
 		2490C63E229112B41D9FA48C0B7D93F1 /* MLNKitInstanceHandlersManager.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = MLNKitInstanceHandlersManager.m; path = "MLN-iOS/MLN/Classes/Kit/MLNKitInstanceHandlersManager.m"; sourceTree = "<group>"; };
 		249225E2CD264E7316B8F5F75EE33F8E /* SDImageTransformer.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = SDImageTransformer.m; path = SDWebImage/Core/SDImageTransformer.m; sourceTree = "<group>"; };
 		24ADDAD997661444C65CC8CE6B3DF280 /* LNDecoderProtocol.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = LNDecoderProtocol.h; sourceTree = "<group>"; };
-		24AE3DDD5D4272B3779F3BAA888092B0 /* mln_isolate.c */ = {isa = PBXFileReference; includeInIndex = 1; path = mln_isolate.c; sourceTree = "<group>"; };
+		24AE3DDD5D4272B3779F3BAA888092B0 /* mln_isolate.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; path = mln_isolate.c; sourceTree = "<group>"; };
 		24B5845A45FBBFB5D3E5F499C6D3A33F /* MLNTypeUtil.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLNTypeUtil.m; sourceTree = "<group>"; };
 		255862C123FBBA96A745C0F5D6EF94E4 /* MLNQRCodeHistoryCell.xib */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = file.xib; path = MLNQRCodeHistoryCell.xib; sourceTree = "<group>"; };
 		25712C59929BFC63E7833019F6167126 /* MJRefreshConst.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = MJRefreshConst.h; path = MJRefresh/MJRefreshConst.h; sourceTree = "<group>"; };
@@ -1451,7 +1459,7 @@
 		275C89C2DFF024E565F40EF2F69AD437 /* MLNSpacer.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLNSpacer.h; sourceTree = "<group>"; };
 		2764B9E5E729979B621922CB3081B0D5 /* debug.png */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = image.png; name = debug.png; path = "MLN-iOS/MLNDevTool/Classes/Offline/Assets/debug.png"; sourceTree = "<group>"; };
 		279942A4F81F8CC82A304626143A8FB6 /* SDAnimatedImage.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = SDAnimatedImage.m; path = SDWebImage/Core/SDAnimatedImage.m; sourceTree = "<group>"; };
-		283853FD5E0931F3BFB5091B064CCFA9 /* lgc.c */ = {isa = PBXFileReference; includeInIndex = 1; name = lgc.c; path = "MLN-iOS/MLN/Classes/LuaLib/lgc.c"; sourceTree = "<group>"; };
+		283853FD5E0931F3BFB5091B064CCFA9 /* lgc.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = lgc.c; path = "MLN-iOS/MLN/Classes/LuaLib/lgc.c"; sourceTree = "<group>"; };
 		2864532DC354B6BAADC24B98A9962403 /* MLNKitLuaCoeBuilderProtocol.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLNKitLuaCoeBuilderProtocol.h; sourceTree = "<group>"; };
 		28870E934E2CB996DC81281308AA1C07 /* SDWebImageDownloaderResponseModifier.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = SDWebImageDownloaderResponseModifier.m; path = SDWebImage/Core/SDWebImageDownloaderResponseModifier.m; sourceTree = "<group>"; };
 		28AFC745C5A93A804ACFE6BEE96F18D8 /* MLNKitEnvironment.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = MLNKitEnvironment.h; path = "MLN-iOS/MLN/Classes/Kit/MLNKitEnvironment.h"; sourceTree = "<group>"; };
@@ -1517,7 +1525,7 @@
 		33AAA834109483E0BE965CB497DAB1CF /* EXPMatchers+endWith.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "EXPMatchers+endWith.m"; path = "Expecta/Matchers/EXPMatchers+endWith.m"; sourceTree = "<group>"; };
 		33C93DFBA21BA7490EBA8AEB1C79398F /* MLNLayoutNodeFactory.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLNLayoutNodeFactory.h; sourceTree = "<group>"; };
 		3404E6AAE902C025BB1E89F9B36A6AD8 /* SDCycleScrollView-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "SDCycleScrollView-dummy.m"; sourceTree = "<group>"; };
-		342F17CF60B14AF059255DF2F03B3FF4 /* mln_except.c */ = {isa = PBXFileReference; includeInIndex = 1; path = mln_except.c; sourceTree = "<group>"; };
+		342F17CF60B14AF059255DF2F03B3FF4 /* mln_except.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; path = mln_except.c; sourceTree = "<group>"; };
 		344DBFFA968E20AA8FF36CD8399CFE4C /* MLNHStackNode.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLNHStackNode.h; sourceTree = "<group>"; };
 		349ADE276AD56AFD4F26570BFB586943 /* MLNWindowContext.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLNWindowContext.m; sourceTree = "<group>"; };
 		34BE4F59B4E1604C22C35F9C207C6C92 /* ResourceBundle-MLNDevTool_Offline-MLNDevTool-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "ResourceBundle-MLNDevTool_Offline-MLNDevTool-Info.plist"; sourceTree = "<group>"; };
@@ -1545,12 +1553,12 @@
 		3A9B7AE6F107E79931A24BC90AD54C62 /* SDWebImage.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = SDWebImage.release.xcconfig; sourceTree = "<group>"; };
 		3AC7D386CCC626C7E0E6E368B57133D1 /* EXPMatchers+equal.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "EXPMatchers+equal.m"; path = "Expecta/Matchers/EXPMatchers+equal.m"; sourceTree = "<group>"; };
 		3B008873980B8B4F7A7B6E77F5DD8892 /* MLNCornerMaskImageManager.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLNCornerMaskImageManager.m; sourceTree = "<group>"; };
-		3B03F7D0A7D5D8DD9AA8EB150F12CCDD /* MLNDevTool_UI.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = MLNDevTool_UI.bundle; path = "MLNDevTool-MLNDevTool_UI.bundle"; sourceTree = BUILT_PRODUCTS_DIR; };
+		3B03F7D0A7D5D8DD9AA8EB150F12CCDD /* MLNDevTool_UI.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MLNDevTool_UI.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		3B42136AC4C9E6E3E9E5E69BD89CCA3A /* MLNHttpDefaultHandler.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLNHttpDefaultHandler.h; sourceTree = "<group>"; };
 		3B61542B1906EFC5F6CF86C6DA2525DD /* UIView+WebCacheOperation.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "UIView+WebCacheOperation.h"; path = "SDWebImage/Core/UIView+WebCacheOperation.h"; sourceTree = "<group>"; };
-		3B691051B116751BBC7BE74E42A2B6E2 /* mmoslib.c */ = {isa = PBXFileReference; includeInIndex = 1; path = mmoslib.c; sourceTree = "<group>"; };
+		3B691051B116751BBC7BE74E42A2B6E2 /* mmoslib.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; path = mmoslib.c; sourceTree = "<group>"; };
 		3B6981BB5267324E18439D332B36A02C /* EXPDoubleTuple.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = EXPDoubleTuple.m; path = Expecta/EXPDoubleTuple.m; sourceTree = "<group>"; };
-		3B6F065091D9511797E3440477DB79D4 /* lstrlib.c */ = {isa = PBXFileReference; includeInIndex = 1; name = lstrlib.c; path = "MLN-iOS/MLN/Classes/LuaLib/lstrlib.c"; sourceTree = "<group>"; };
+		3B6F065091D9511797E3440477DB79D4 /* lstrlib.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = lstrlib.c; path = "MLN-iOS/MLN/Classes/LuaLib/lstrlib.c"; sourceTree = "<group>"; };
 		3BA3E6F786184586F20E63314958EC42 /* MLNGaussEffectHandler.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLNGaussEffectHandler.h; sourceTree = "<group>"; };
 		3BED88B9A679AC61B99D38F103538861 /* MLNAnimationHandler.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLNAnimationHandler.h; sourceTree = "<group>"; };
 		3BF6D5164998D2B6BB845233DCBA058A /* MLNObserver.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLNObserver.h; sourceTree = "<group>"; };
@@ -1575,19 +1583,19 @@
 		413DA49074350D8A0636B1E79E8C7CA7 /* MLNAnimationSet.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLNAnimationSet.m; sourceTree = "<group>"; };
 		4163E7EF7299075BFBD30ED00CDADDD2 /* MJRefresh.bundle */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = "wrapper.plug-in"; name = MJRefresh.bundle; path = MJRefresh/MJRefresh.bundle; sourceTree = "<group>"; };
 		417615BDCCFA1D44B02428D0018AFA11 /* MLNQRCodeScanView.xib */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = file.xib; path = MLNQRCodeScanView.xib; sourceTree = "<group>"; };
-		41D55827C10438CD3FF3D659DE262E6B /* MLN.podspec */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; lastKnownFileType = text; path = MLN.podspec; sourceTree = "<group>"; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		41D55827C10438CD3FF3D659DE262E6B /* MLN.podspec */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; path = MLN.podspec; sourceTree = "<group>"; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		421581E1C97D74B3C0B30331F9C01453 /* EXPMatchers+beLessThanOrEqualTo.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "EXPMatchers+beLessThanOrEqualTo.h"; path = "Expecta/Matchers/EXPMatchers+beLessThanOrEqualTo.h"; sourceTree = "<group>"; };
 		4249E616ED53608D5EABD6C348C9B2C6 /* UIImage+Transform.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "UIImage+Transform.m"; path = "SDWebImage/Core/UIImage+Transform.m"; sourceTree = "<group>"; };
 		426BE45D2FA0624A4DA325EF2FB1B4E9 /* SDImageAPNGCoder.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = SDImageAPNGCoder.m; path = SDWebImage/Core/SDImageAPNGCoder.m; sourceTree = "<group>"; };
 		429595EA885FE233BECB52CD906282BF /* NSDictionary+MLNSafety.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "NSDictionary+MLNSafety.h"; sourceTree = "<group>"; };
 		42BF6DDF44B847B2CFB130CAAB0059B8 /* MLNExporterProtocol.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLNExporterProtocol.h; sourceTree = "<group>"; };
-		437A6BA52C5F9AAD0359654D71EA4C10 /* ldebug.c */ = {isa = PBXFileReference; includeInIndex = 1; name = ldebug.c; path = "MLN-iOS/MLN/Classes/LuaLib/ldebug.c"; sourceTree = "<group>"; };
+		437A6BA52C5F9AAD0359654D71EA4C10 /* ldebug.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = ldebug.c; path = "MLN-iOS/MLN/Classes/LuaLib/ldebug.c"; sourceTree = "<group>"; };
 		437D07888CFC936D7683A46C2B7BF89D /* MLNWindow.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLNWindow.h; sourceTree = "<group>"; };
 		4395E0C2764B3FB8A12C04DEB2C29F09 /* MLNEntityExportProtocol.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLNEntityExportProtocol.h; sourceTree = "<group>"; };
 		439AE2D2A1BC6995006566AB925FDB88 /* MLNHttp.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLNHttp.h; sourceTree = "<group>"; };
 		44378F9699D70221B8FE8D070C634918 /* MLNCornerManagerTool.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLNCornerManagerTool.m; sourceTree = "<group>"; };
 		45A08C691569119D0E7FC63CAB91F553 /* MLNGlobalFuntionExporter.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLNGlobalFuntionExporter.h; sourceTree = "<group>"; };
-		463FD45B20FDE63D5594E1F672B6992E /* mln_luasocket.c */ = {isa = PBXFileReference; includeInIndex = 1; path = mln_luasocket.c; sourceTree = "<group>"; };
+		463FD45B20FDE63D5594E1F672B6992E /* mln_luasocket.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; path = mln_luasocket.c; sourceTree = "<group>"; };
 		467CDAF25CD6A590B3BD36C0CE2FBABE /* MLNDevTool.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = MLNDevTool.debug.xcconfig; sourceTree = "<group>"; };
 		46A381C897511EC1CD49690F45C41E6E /* MLNEditTextViewConst.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLNEditTextViewConst.h; sourceTree = "<group>"; };
 		46B49798AF37A074FEE9C08216B298FF /* MLNValueCalculator.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLNValueCalculator.h; sourceTree = "<group>"; };
@@ -1611,7 +1619,7 @@
 		4A1433C2669145F26C02B46AC3551D14 /* Pods-MLN_Tests-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-MLN_Tests-acknowledgements.markdown"; sourceTree = "<group>"; };
 		4ACEBE23A5E5C863A39F3CDF13327C4A /* debug.png */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = image.png; name = debug.png; path = "MLN-iOS/MLNDevTool/Classes/HotReload/Assets/debug.png"; sourceTree = "<group>"; };
 		4B115421828D255930BC4C8BB422EFE6 /* SDDiskCache.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = SDDiskCache.h; path = SDWebImage/Core/SDDiskCache.h; sourceTree = "<group>"; };
-		4B151FB699C3157FEA15054C7FF94CDB /* luac.c */ = {isa = PBXFileReference; includeInIndex = 1; name = luac.c; path = "MLN-iOS/MLN/Classes/LuaLib/luac.c"; sourceTree = "<group>"; };
+		4B151FB699C3157FEA15054C7FF94CDB /* luac.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = luac.c; path = "MLN-iOS/MLN/Classes/LuaLib/luac.c"; sourceTree = "<group>"; };
 		4BA624AE8935A34526B7840B4128DDEC /* PbbaseCommand.pbobjc.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = PbbaseCommand.pbobjc.h; path = "MLN-iOS/MLNDevTool/Classes/Protobuf/PbbaseCommand.pbobjc.h"; sourceTree = "<group>"; };
 		4BAA304C71BC07ECB9D6C36712971EDD /* EXPBlockDefinedMatcher.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = EXPBlockDefinedMatcher.h; path = Expecta/EXPBlockDefinedMatcher.h; sourceTree = "<group>"; };
 		4BEF5DF329721DEB64765B0B970C92A9 /* SDAnimatedImageView+WebCache.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "SDAnimatedImageView+WebCache.h"; path = "SDWebImage/Core/SDAnimatedImageView+WebCache.h"; sourceTree = "<group>"; };
@@ -1662,7 +1670,7 @@
 		558C2349A1C8447B740F88355EBAAE8E /* MLNInternalWaterfallView.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLNInternalWaterfallView.h; sourceTree = "<group>"; };
 		55997AD909EB620A83AF78E8A0A3DFAB /* MLNUIViewController.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = MLNUIViewController.h; path = "MLN-iOS/MLN/Classes/Kit/MLNUIViewController.h"; sourceTree = "<group>"; };
 		55AC28A535C086FA6E3CCD432D42200D /* mln_lauxlib.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = mln_lauxlib.h; path = "MLN-iOS/MLN/Classes/LuaLib/mln_lauxlib.h"; sourceTree = "<group>"; };
-		55E0AFD333353D71ACC2207149E879D6 /* libToast.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; name = libToast.a; path = libToast.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		55E0AFD333353D71ACC2207149E879D6 /* libToast.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libToast.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		561054C63D28610F124B0574ED1DB5C7 /* EXPMatchers+postNotification.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "EXPMatchers+postNotification.h"; path = "Expecta/Matchers/EXPMatchers+postNotification.h"; sourceTree = "<group>"; };
 		5654B59A2F8836A7B7F20FE13C4C8F8B /* PbpongCommand.pbobjc.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = PbpongCommand.pbobjc.h; path = "MLN-iOS/MLNDevTool/Classes/Protobuf/PbpongCommand.pbobjc.h"; sourceTree = "<group>"; };
 		569EAB679AB159EA8A8B8B4BF9AFEAA1 /* ExpectaSupport.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = ExpectaSupport.m; path = Expecta/ExpectaSupport.m; sourceTree = "<group>"; };
@@ -1671,7 +1679,7 @@
 		5721BCF88FED138199A3C6516EFDD2BA /* UIColor+MLNCore.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "UIColor+MLNCore.m"; sourceTree = "<group>"; };
 		57569ACE8EB4BAC095170C0B82C8E519 /* UIKit+AFNetworking.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "UIKit+AFNetworking.h"; path = "UIKit+AFNetworking/UIKit+AFNetworking.h"; sourceTree = "<group>"; };
 		57831F68AC47F4E1EE08E09A5AF352AD /* mln_isolate.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = mln_isolate.h; sourceTree = "<group>"; };
-		579CADD07EB0D1E604A2FECAB8F9A4B4 /* libMLNDevTool.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; name = libMLNDevTool.a; path = libMLNDevTool.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		579CADD07EB0D1E604A2FECAB8F9A4B4 /* libMLNDevTool.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libMLNDevTool.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		5893772EF95AA9A7744BE308777422D7 /* MLNTextConst.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLNTextConst.m; sourceTree = "<group>"; };
 		58971D9234C81E0CA554AD9D051FD1A5 /* MLNNinePatchImageFactory.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLNNinePatchImageFactory.m; sourceTree = "<group>"; };
 		589C4CFE8B8C440B5093C4923EA91639 /* LNUsbClientImpl.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = LNUsbClientImpl.m; sourceTree = "<group>"; };
@@ -1693,7 +1701,7 @@
 		5B9A068C39C453FB4ACA2BB64F834F56 /* PbcloseCommand.pbobjc.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = PbcloseCommand.pbobjc.h; path = "MLN-iOS/MLNDevTool/Classes/Protobuf/PbcloseCommand.pbobjc.h"; sourceTree = "<group>"; };
 		5BDA829C98B92ACC52BFEA24BB7B8366 /* GPBExtensionRegistry.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = GPBExtensionRegistry.h; sourceTree = "<group>"; };
 		5C40A794B99B50AB636DA73E2CC51E9A /* MLNThread.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLNThread.m; sourceTree = "<group>"; };
-		5C4F31330DFA99D699E4BDC8C3573D73 /* libFBSnapshotTestCase.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; name = libFBSnapshotTestCase.a; path = libFBSnapshotTestCase.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		5C4F31330DFA99D699E4BDC8C3573D73 /* libFBSnapshotTestCase.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libFBSnapshotTestCase.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		5CAFAD366F7D919AC4EBC447A1114029 /* MLNContentMode.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLNContentMode.h; sourceTree = "<group>"; };
 		5CDD2999BD97AA276163263073576315 /* FBSnapshotTestCase.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = FBSnapshotTestCase.debug.xcconfig; sourceTree = "<group>"; };
 		5CE22795866D245BE82FFEA0D3F4EC6C /* SDWebImageDownloaderOperation.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = SDWebImageDownloaderOperation.h; path = SDWebImage/Core/SDWebImageDownloaderOperation.h; sourceTree = "<group>"; };
@@ -1728,7 +1736,7 @@
 		624FD90FDEDF06B90B222FE9EE692E6B /* GPBProtocolBuffers.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = GPBProtocolBuffers.h; sourceTree = "<group>"; };
 		6262F0F5438878B3F98B805307B351F2 /* Wrappers.pbobjc.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = Wrappers.pbobjc.h; sourceTree = "<group>"; };
 		628BFEFE89A45099F73648DB7828123A /* SDImageIOAnimatedCoderInternal.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = SDImageIOAnimatedCoderInternal.h; path = SDWebImage/Private/SDImageIOAnimatedCoderInternal.h; sourceTree = "<group>"; };
-		628EB473EED64840032B5965010AB80B /* mln_select.c */ = {isa = PBXFileReference; includeInIndex = 1; path = mln_select.c; sourceTree = "<group>"; };
+		628EB473EED64840032B5965010AB80B /* mln_select.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; path = mln_select.c; sourceTree = "<group>"; };
 		62A56FCBE19B03F39B48946DBC456382 /* MJRefreshFooter.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = MJRefreshFooter.m; path = MJRefresh/Base/MJRefreshFooter.m; sourceTree = "<group>"; };
 		632D2D55E290EB7C5CAD17BBFD8F7CB7 /* FBSnapshotTestCase.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = FBSnapshotTestCase.release.xcconfig; sourceTree = "<group>"; };
 		635E1B4A37771D8DDB8288F5ED01B712 /* NSAttributedString+MLNKit.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "NSAttributedString+MLNKit.h"; sourceTree = "<group>"; };
@@ -1747,7 +1755,7 @@
 		6587851947126B70525B4968780BE64F /* MLNAlert.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLNAlert.h; sourceTree = "<group>"; };
 		66737D70FFA687A893E643BD410FD8E8 /* MLNSafeAreaAdapter.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLNSafeAreaAdapter.h; sourceTree = "<group>"; };
 		66AB59508F842EED1693E9EAEC1CF514 /* MLNInvocation.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLNInvocation.h; sourceTree = "<group>"; };
-		66D31257AA3BD8D2789707B0978B7AA5 /* libPods-LuaNative.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; name = "libPods-LuaNative.a"; path = "libPods-LuaNative.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		66D31257AA3BD8D2789707B0978B7AA5 /* libPods-LuaNative.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-LuaNative.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		66E8A3F05298DFD578A98602658DA61E /* MLNCornerUtil.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLNCornerUtil.h; sourceTree = "<group>"; };
 		671530632C694B06D5A5D8BC09CA0C76 /* MLNBeforeWaitingTask.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLNBeforeWaitingTask.h; sourceTree = "<group>"; };
 		671B661AE540FD0D70899060DEBE22D2 /* SDImageLoadersManager.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = SDImageLoadersManager.h; path = SDWebImage/Core/SDImageLoadersManager.h; sourceTree = "<group>"; };
@@ -1756,7 +1764,7 @@
 		685275CA1507CD54A43F49F378D970EA /* MLNBlock.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLNBlock.h; sourceTree = "<group>"; };
 		685F3640D3CAD1A021C394C59F7997A6 /* MLNNavigatorHandlerProtocol.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLNNavigatorHandlerProtocol.h; sourceTree = "<group>"; };
 		68D63EE7B499C4DEB0E306FDDA31040D /* NSNumber+MLNCore.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "NSNumber+MLNCore.m"; sourceTree = "<group>"; };
-		68F673B0E48F9F82637CB3372D33A213 /* lobject.c */ = {isa = PBXFileReference; includeInIndex = 1; name = lobject.c; path = "MLN-iOS/MLN/Classes/LuaLib/lobject.c"; sourceTree = "<group>"; };
+		68F673B0E48F9F82637CB3372D33A213 /* lobject.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = lobject.c; path = "MLN-iOS/MLN/Classes/LuaLib/lobject.c"; sourceTree = "<group>"; };
 		6964A35BEE17099E8C51E7D79AE41F06 /* MLNKitInstanceConsts.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = MLNKitInstanceConsts.m; path = "MLN-iOS/MLN/Classes/Kit/MLNKitInstanceConsts.m"; sourceTree = "<group>"; };
 		69D30632490D3BC28AD1F24098554F12 /* MLNStyleString.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLNStyleString.h; sourceTree = "<group>"; };
 		69F15A2C0AE77E6C35A17C50C20EDCDC /* SDWebImageCompat.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = SDWebImageCompat.m; path = SDWebImage/Core/SDWebImageCompat.m; sourceTree = "<group>"; };
@@ -1769,13 +1777,13 @@
 		6B9115C0686600C1306FAAF685801AF5 /* MLNStyleStringConst.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLNStyleStringConst.h; sourceTree = "<group>"; };
 		6BB7486E987128CF5D994D87E76745C7 /* MLNBlock.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLNBlock.m; sourceTree = "<group>"; };
 		6BC5B432A35175365F8B409E39AC035F /* NSMutableArray+MLNCore.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "NSMutableArray+MLNCore.h"; sourceTree = "<group>"; };
-		6BE94A85AF36852B619C6F2DD8020E3A /* mlndebug.lua */ = {isa = PBXFileReference; includeInIndex = 1; path = mlndebug.lua; sourceTree = "<group>"; };
+		6BE94A85AF36852B619C6F2DD8020E3A /* mlndebug.lua */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = mlndebug.lua; sourceTree = "<group>"; };
 		6C352E2B82339035272E5679E57BEBE0 /* TAAbstractDotView.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = TAAbstractDotView.m; path = SDCycleScrollView/Lib/SDCycleScrollView/PageControl/TAAbstractDotView.m; sourceTree = "<group>"; };
 		6C4D0097788DDC9D8D07D7AB6BEBBB53 /* SDWebImageIndicator.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = SDWebImageIndicator.h; path = SDWebImage/Core/SDWebImageIndicator.h; sourceTree = "<group>"; };
 		6C811C9D0F6335D927227BE2249B3315 /* MLN_GCDAsyncUdpSocket.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLN_GCDAsyncUdpSocket.m; sourceTree = "<group>"; };
 		6CEC0F15CCD93C83A0D43DCE6BDA2EFA /* NSError+MLNCore.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "NSError+MLNCore.m"; sourceTree = "<group>"; };
 		6D2D4F9584BF4C6246F8C768FE031B54 /* MLNConsole.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLNConsole.h; sourceTree = "<group>"; };
-		6D61654D3A246B992EBC77FDA88014FE /* MLNDevTool_HotReload.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = MLNDevTool_HotReload.bundle; path = "MLNDevTool-MLNDevTool_HotReload.bundle"; sourceTree = BUILT_PRODUCTS_DIR; };
+		6D61654D3A246B992EBC77FDA88014FE /* MLNDevTool_HotReload.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MLNDevTool_HotReload.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		6D6DF2D1BB9EBFF5DC0F1EC37412555B /* MLNVStack.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLNVStack.h; sourceTree = "<group>"; };
 		6E1DA66FDF43279262E2AEB75834BB3E /* PbmoveCommand.pbobjc.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = PbmoveCommand.pbobjc.h; path = "MLN-iOS/MLNDevTool/Classes/Protobuf/PbmoveCommand.pbobjc.h"; sourceTree = "<group>"; };
 		6EC1D58D8CF48048C75025214E010B9B /* SDInternalMacros.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = SDInternalMacros.h; path = SDWebImage/Private/SDInternalMacros.h; sourceTree = "<group>"; };
@@ -1816,14 +1824,14 @@
 		7738544362AAD6469A5E55F92A26A1FD /* PbdeviceCommand.pbobjc.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = PbdeviceCommand.pbobjc.h; path = "MLN-iOS/MLNDevTool/Classes/Protobuf/PbdeviceCommand.pbobjc.h"; sourceTree = "<group>"; };
 		774CF8AB9DC8ECAFAEEEC6CC425F59D7 /* MLNErrorHandlerProtocol.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLNErrorHandlerProtocol.h; sourceTree = "<group>"; };
 		775D26FC22A19B716D80DCCBD2B8EA14 /* MLNTabSegmentView.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLNTabSegmentView.m; sourceTree = "<group>"; };
-		7771294BF01AD6243F57C9065AD87549 /* liolib.c */ = {isa = PBXFileReference; includeInIndex = 1; name = liolib.c; path = "MLN-iOS/MLN/Classes/LuaLib/liolib.c"; sourceTree = "<group>"; };
+		7771294BF01AD6243F57C9065AD87549 /* liolib.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = liolib.c; path = "MLN-iOS/MLN/Classes/LuaLib/liolib.c"; sourceTree = "<group>"; };
 		778A4608C71CD5D89DDAF36D4C8E1DAA /* MLNViewConst.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLNViewConst.m; sourceTree = "<group>"; };
 		77DA438480FC101F17A3650DD1568CE7 /* NSData+LuaNative.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "NSData+LuaNative.h"; sourceTree = "<group>"; };
 		77EB39492BDF1464E54E4D34AB3B18EF /* MLNCornerMaskViewHandler.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLNCornerMaskViewHandler.m; sourceTree = "<group>"; };
 		7843667DD4B2A88D46234C35CF838BC1 /* SDImageLoadersManager.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = SDImageLoadersManager.m; path = SDWebImage/Core/SDImageLoadersManager.m; sourceTree = "<group>"; };
 		784CAFF999A624FDEC0D0B8B92DD8604 /* mln_inet.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = mln_inet.h; sourceTree = "<group>"; };
 		785F470F1C37F6A1105FA6574D805ABA /* GPBMessage_PackagePrivate.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = GPBMessage_PackagePrivate.h; sourceTree = "<group>"; };
-		78C391D155B8868E18E33B829033B799 /* lbaselib.c */ = {isa = PBXFileReference; includeInIndex = 1; name = lbaselib.c; path = "MLN-iOS/MLN/Classes/LuaLib/lbaselib.c"; sourceTree = "<group>"; };
+		78C391D155B8868E18E33B829033B799 /* lbaselib.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = lbaselib.c; path = "MLN-iOS/MLN/Classes/LuaLib/lbaselib.c"; sourceTree = "<group>"; };
 		78D363F643CEDE12D1CC92635556AF45 /* MLNExporterManager.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLNExporterManager.m; sourceTree = "<group>"; };
 		78DDE8C1E40C1491A6BD1691050D4DF8 /* SDWebImageManager.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = SDWebImageManager.h; path = SDWebImage/Core/SDWebImageManager.h; sourceTree = "<group>"; };
 		79A1B47978E13C96CEFB5CC45EBBF70D /* TAAnimatedDotView.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = TAAnimatedDotView.h; path = SDCycleScrollView/Lib/SDCycleScrollView/PageControl/TAAnimatedDotView.h; sourceTree = "<group>"; };
@@ -1869,7 +1877,7 @@
 		81C48AE28EB4BD5F7F6B6D76447807A3 /* EXPUnsupportedObject.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = EXPUnsupportedObject.m; path = Expecta/EXPUnsupportedObject.m; sourceTree = "<group>"; };
 		821069E7E78E79B8C1E5F2AFBD6B6CF0 /* MLNStackNode.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLNStackNode.h; sourceTree = "<group>"; };
 		821C1033F9B7F5A1DC53D60EFE6F36F6 /* lapi.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = lapi.h; path = "MLN-iOS/MLN/Classes/LuaLib/lapi.h"; sourceTree = "<group>"; };
-		82464BBC0E970E735968F6D755DF7BE9 /* loslib.c */ = {isa = PBXFileReference; includeInIndex = 1; name = loslib.c; path = "MLN-iOS/MLN/Classes/LuaLib/loslib.c"; sourceTree = "<group>"; };
+		82464BBC0E970E735968F6D755DF7BE9 /* loslib.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = loslib.c; path = "MLN-iOS/MLN/Classes/LuaLib/loslib.c"; sourceTree = "<group>"; };
 		8269B089F7F34ECD8D13547DED0BCDAE /* MLNEditTextView.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLNEditTextView.m; sourceTree = "<group>"; };
 		827C69AF5DA9E427EACC94FC3DC235D3 /* MLNFPSLabel.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLNFPSLabel.m; sourceTree = "<group>"; };
 		829872C3D65572464AA3E162D503C1EE /* MLNHotReloadViewController.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLNHotReloadViewController.h; sourceTree = "<group>"; };
@@ -1887,13 +1895,13 @@
 		85D3401D136BD3EA06BC422E43D43A9C /* LNTransporterFactory.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = LNTransporterFactory.m; sourceTree = "<group>"; };
 		85D86C7182F7832327C0E5B0F7559484 /* MLNLayoutScrollContainerNode.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLNLayoutScrollContainerNode.h; sourceTree = "<group>"; };
 		860F92C33984E14CF4811D7BDF48B0CB /* MLNQRCodeHistoryCell.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLNQRCodeHistoryCell.h; sourceTree = "<group>"; };
-		861B4C06C55411F7931738A40B1CFB8A /* ldblib.c */ = {isa = PBXFileReference; includeInIndex = 1; name = ldblib.c; path = "MLN-iOS/MLN/Classes/LuaLib/ldblib.c"; sourceTree = "<group>"; };
+		861B4C06C55411F7931738A40B1CFB8A /* ldblib.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = ldblib.c; path = "MLN-iOS/MLN/Classes/LuaLib/ldblib.c"; sourceTree = "<group>"; };
 		86226EE1E66461AB8375D30647C13E4A /* AFURLResponseSerialization.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = AFURLResponseSerialization.m; path = AFNetworking/AFURLResponseSerialization.m; sourceTree = "<group>"; };
 		862D537BE39E3398A22FE8AEF94E2D2E /* MJRefresh.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = MJRefresh.debug.xcconfig; sourceTree = "<group>"; };
 		863CB29A2D7801B9618942469BDFD36B /* ldo.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = ldo.h; path = "MLN-iOS/MLN/Classes/LuaLib/ldo.h"; sourceTree = "<group>"; };
 		8662B090E6F84DFA2170043475C644AA /* MLNCanvasAnimation.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLNCanvasAnimation.h; sourceTree = "<group>"; };
 		868EEE07C35A0490E89C1AA1409930BD /* LNUSBWriterImpl.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = LNUSBWriterImpl.h; sourceTree = "<group>"; };
-		86B4F18940C8F1507F20EB7AC7CAAA19 /* lcode.c */ = {isa = PBXFileReference; includeInIndex = 1; name = lcode.c; path = "MLN-iOS/MLN/Classes/LuaLib/lcode.c"; sourceTree = "<group>"; };
+		86B4F18940C8F1507F20EB7AC7CAAA19 /* lcode.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = lcode.c; path = "MLN-iOS/MLN/Classes/LuaLib/lcode.c"; sourceTree = "<group>"; };
 		870BC0779AAFF3E7EE9302BFD8312A48 /* MLNThread.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLNThread.h; sourceTree = "<group>"; };
 		87113BC29D849E2C3175DBF1A2261A52 /* ltm.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = ltm.h; path = "MLN-iOS/MLN/Classes/LuaLib/ltm.h"; sourceTree = "<group>"; };
 		871A2D6EA807C488A816FFC061785AD5 /* MLNCanvasConst.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLNCanvasConst.m; sourceTree = "<group>"; };
@@ -1901,7 +1909,7 @@
 		88C685844BAB9255CFFF92799BF4976B /* ExpectaSupport.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = ExpectaSupport.h; path = Expecta/ExpectaSupport.h; sourceTree = "<group>"; };
 		88D5FA747FC3899F2BFD68246268A77C /* MLNPreferenceUtils.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLNPreferenceUtils.m; sourceTree = "<group>"; };
 		88F98BB6C081C4D99B6D18AE3FBC5591 /* PbpingCommand.pbobjc.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = PbpingCommand.pbobjc.h; path = "MLN-iOS/MLNDevTool/Classes/Protobuf/PbpingCommand.pbobjc.h"; sourceTree = "<group>"; };
-		8938E56CDFF31FEC256BFF59FEB21E5D /* libMLN.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; name = libMLN.a; path = libMLN.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		8938E56CDFF31FEC256BFF59FEB21E5D /* libMLN.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libMLN.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		89914490D0FB90A25CA84CB43F78A852 /* Specta-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Specta-dummy.m"; sourceTree = "<group>"; };
 		8992137B0C2DCDBDBA6A9B300F0D239E /* NSMutableData+LuaNative.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "NSMutableData+LuaNative.h"; sourceTree = "<group>"; };
 		89DC3C4168B33EF9F50F5F6179D507DF /* UIView+MLNLayout.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "UIView+MLNLayout.m"; sourceTree = "<group>"; };
@@ -1911,7 +1919,7 @@
 		8A99BFB70C2AAABAC3C31F84024D9A9A /* EXPDefines.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = EXPDefines.h; path = Expecta/EXPDefines.h; sourceTree = "<group>"; };
 		8AA28C845AA694A9F8D19A0F43FA3ED3 /* SDWebImageCompat.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = SDWebImageCompat.h; path = SDWebImage/Core/SDWebImageCompat.h; sourceTree = "<group>"; };
 		8AA3E5EADE1A4EC12E886F342D931245 /* SDImageCacheConfig.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = SDImageCacheConfig.m; path = SDWebImage/Core/SDImageCacheConfig.m; sourceTree = "<group>"; };
-		8B6CF5C20C32EE9F7F0862FF892524DE /* libSDCycleScrollView.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; name = libSDCycleScrollView.a; path = libSDCycleScrollView.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		8B6CF5C20C32EE9F7F0862FF892524DE /* libSDCycleScrollView.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libSDCycleScrollView.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		8BBA11CD9152653E8620AC6D7D25FB98 /* EXPMatchers+beKindOf.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "EXPMatchers+beKindOf.m"; path = "Expecta/Matchers/EXPMatchers+beKindOf.m"; sourceTree = "<group>"; };
 		8C0606594E0BC5DB70395AA7117B54ED /* MLNAnimation.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLNAnimation.m; sourceTree = "<group>"; };
 		8C5DDBAB58C841BB82990D5A3C87370C /* MLNViewExporterMacro.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLNViewExporterMacro.h; sourceTree = "<group>"; };
@@ -1919,13 +1927,13 @@
 		8CEF60D62EC6B09C1F7DCD4A854CE994 /* MLNFont.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLNFont.m; sourceTree = "<group>"; };
 		8D64B081848BC95DE8B39B2C5C6FBCD0 /* SDImageFrame.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = SDImageFrame.m; path = SDWebImage/Core/SDImageFrame.m; sourceTree = "<group>"; };
 		8D99FF51AD90BD684B769476C9468757 /* GPBRootObject.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = GPBRootObject.h; sourceTree = "<group>"; };
-		8DDC775D4FC72E62E8CE9A455AF92AD4 /* mln_tcp.c */ = {isa = PBXFileReference; includeInIndex = 1; path = mln_tcp.c; sourceTree = "<group>"; };
+		8DDC775D4FC72E62E8CE9A455AF92AD4 /* mln_tcp.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; path = mln_tcp.c; sourceTree = "<group>"; };
 		8DF8078EC0299120F60CFB180321A10F /* MLNOfflineDevToolUI.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = MLNOfflineDevToolUI.h; path = "MLN-iOS/MLNDevTool/Classes/Offline/MLNOfflineDevToolUI.h"; sourceTree = "<group>"; };
 		8E270343AA0AE683AD0B1050B96951E0 /* MLNQRCodeViewController.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLNQRCodeViewController.m; sourceTree = "<group>"; };
 		8E34813450D56DE84DBC8855B6D4AB38 /* MLNCollectionViewGridLayout.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLNCollectionViewGridLayout.h; sourceTree = "<group>"; };
 		8E46A0FB55BEEFD0F6FE12EBDD02B3C0 /* MLNSafeAreaProxy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLNSafeAreaProxy.m; sourceTree = "<group>"; };
 		8F1FA170C03E10BB9141918DB45EB396 /* NSMutableArray+MLNArray.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "NSMutableArray+MLNArray.m"; sourceTree = "<group>"; };
-		8FD0D90A8A638E9D480FA0562D894E97 /* ltm.c */ = {isa = PBXFileReference; includeInIndex = 1; name = ltm.c; path = "MLN-iOS/MLN/Classes/LuaLib/ltm.c"; sourceTree = "<group>"; };
+		8FD0D90A8A638E9D480FA0562D894E97 /* ltm.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = ltm.c; path = "MLN-iOS/MLN/Classes/LuaLib/ltm.c"; sourceTree = "<group>"; };
 		904C521F21F2E9BEAA4613A2739EA274 /* MLNAnimator.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLNAnimator.m; sourceTree = "<group>"; };
 		905873FE0096A300CD2FC6B6F8DACBE3 /* libMLNProtobuf.a */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = archive.ar; name = libMLNProtobuf.a; path = "MLN-iOS/MLNDevTool/Classes/Protobuf/libMLNProtobuf.a"; sourceTree = "<group>"; };
 		906F6DADA0AA2EF26BF1E5E88BA355F4 /* MLNUIBundle.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLNUIBundle.m; sourceTree = "<group>"; };
@@ -1951,7 +1959,7 @@
 		94201C87CF566392A80B184DA76CAEB5 /* MLNOfflineDevToolUI.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = MLNOfflineDevToolUI.m; path = "MLN-iOS/MLNDevTool/Classes/Offline/MLNOfflineDevToolUI.m"; sourceTree = "<group>"; };
 		948447ACA4201B8AE1BB019E692924EC /* MLNMetamacros.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLNMetamacros.h; sourceTree = "<group>"; };
 		94A805C5678E0825782D2E7DC1723155 /* MLNLoading.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLNLoading.h; sourceTree = "<group>"; };
-		94D69B8F3CA9ECA5E1F093B7D8FDEF7D /* ltable.c */ = {isa = PBXFileReference; includeInIndex = 1; name = ltable.c; path = "MLN-iOS/MLN/Classes/LuaLib/ltable.c"; sourceTree = "<group>"; };
+		94D69B8F3CA9ECA5E1F093B7D8FDEF7D /* ltable.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = ltable.c; path = "MLN-iOS/MLN/Classes/LuaLib/ltable.c"; sourceTree = "<group>"; };
 		950B37E83F8D045954EA559608C39674 /* GPBCodedInputStream_PackagePrivate.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = GPBCodedInputStream_PackagePrivate.h; sourceTree = "<group>"; };
 		951AB7D85E51689A02152DD5B33D36EC /* MLNGlobalVarExporter.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLNGlobalVarExporter.m; sourceTree = "<group>"; };
 		954EEDADC16B491BAC787C8501B6F887 /* NSObject+MLNKVO.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "NSObject+MLNKVO.h"; sourceTree = "<group>"; };
@@ -1995,7 +2003,7 @@
 		9CF2D209E26E0CFC2CDD6358C6991FD1 /* SPTSpec.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = SPTSpec.m; path = Specta/Specta/SPTSpec.m; sourceTree = "<group>"; };
 		9D19997FB4C4DE12EE296EB5720B6AEA /* MLNVStackNode.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLNVStackNode.h; sourceTree = "<group>"; };
 		9D2E5B0882032B997AFB72E17A5E5936 /* MLN.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = MLN.release.xcconfig; sourceTree = "<group>"; };
-		9D940727FF8FB9C785EB98E56350EF41 /* Podfile */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; lastKnownFileType = text; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		9D940727FF8FB9C785EB98E56350EF41 /* Podfile */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		9D97D33FF177347DC279877F3271B434 /* SDCycleScrollView-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "SDCycleScrollView-prefix.pch"; sourceTree = "<group>"; };
 		9DFD2B9462495DB101BE5D28493007BE /* MLNShapeContext.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLNShapeContext.m; sourceTree = "<group>"; };
 		9E52E7538D311380E1431E67FADC8CDB /* MLNLayoutScrollContainerNode.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLNLayoutScrollContainerNode.m; sourceTree = "<group>"; };
@@ -2023,7 +2031,7 @@
 		A465F6E5C66312767849FA89F542FD7E /* llex.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = llex.h; path = "MLN-iOS/MLN/Classes/LuaLib/llex.h"; sourceTree = "<group>"; };
 		A48FC5F266D414508A760011F235B50D /* link.png */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = image.png; path = link.png; sourceTree = "<group>"; };
 		A4A08B604E093DFB1DE88EA4ACEC10A6 /* Specta.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = Specta.release.xcconfig; sourceTree = "<group>"; };
-		A4FA15D44DF6BAC7550EDEED10862AA3 /* libAFNetworking.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; name = libAFNetworking.a; path = libAFNetworking.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		A4FA15D44DF6BAC7550EDEED10862AA3 /* libAFNetworking.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libAFNetworking.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		A53B441855F0541B0694CB44B5365A3D /* PbcreateCommand.pbobjc.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = PbcreateCommand.pbobjc.h; path = "MLN-iOS/MLNDevTool/Classes/Protobuf/PbcreateCommand.pbobjc.h"; sourceTree = "<group>"; };
 		A59F0B257A06CC13E488942CB04FD472 /* MLNRotateAnimation.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLNRotateAnimation.m; sourceTree = "<group>"; };
 		A5CDA8AF9C0950A5E07DC11F2A4E8CA4 /* UIView+MLNLayout.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "UIView+MLNLayout.h"; sourceTree = "<group>"; };
@@ -2040,7 +2048,7 @@
 		A9314B07DBD19D63F39DB2A785FE09E2 /* MLNAnimationHandlerCallbackProtocol.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLNAnimationHandlerCallbackProtocol.h; sourceTree = "<group>"; };
 		A9345C32A615845A81028D73377871E7 /* LNUSBWriterImpl.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = LNUSBWriterImpl.m; sourceTree = "<group>"; };
 		A9BF9FA0994D161245B75AA1F883066C /* MLNListViewObserver.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLNListViewObserver.m; sourceTree = "<group>"; };
-		A9FEE4C30176F77D978CCCD6F20A0D6B /* lvm.c */ = {isa = PBXFileReference; includeInIndex = 1; name = lvm.c; path = "MLN-iOS/MLN/Classes/LuaLib/lvm.c"; sourceTree = "<group>"; };
+		A9FEE4C30176F77D978CCCD6F20A0D6B /* lvm.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = lvm.c; path = "MLN-iOS/MLN/Classes/LuaLib/lvm.c"; sourceTree = "<group>"; };
 		AA1A16053285B231D2D72012DA0A69A1 /* PbupdateCommand.pbobjc.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = PbupdateCommand.pbobjc.h; path = "MLN-iOS/MLNDevTool/Classes/Protobuf/PbupdateCommand.pbobjc.h"; sourceTree = "<group>"; };
 		AA3B657102CC7981BB29DD7B7A27021D /* SpectaTypes.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = SpectaTypes.h; path = Specta/Specta/SpectaTypes.h; sourceTree = "<group>"; };
 		AA588445B26D927C4279E64DDAF08060 /* GPBUnknownFieldSet_PackagePrivate.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = GPBUnknownFieldSet_PackagePrivate.h; sourceTree = "<group>"; };
@@ -2052,7 +2060,7 @@
 		ABD9A55859A60F2C116A6534256F2AE8 /* UIView+WebCache.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "UIView+WebCache.m"; path = "SDWebImage/Core/UIView+WebCache.m"; sourceTree = "<group>"; };
 		AC7A331B825E821EF5AEA1C2ED01114D /* AFHTTPSessionManager.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = AFHTTPSessionManager.m; path = AFNetworking/AFHTTPSessionManager.m; sourceTree = "<group>"; };
 		ACB7B81D01470C7D6A23E70692AFBBA4 /* NSObject+MLNSwizzle.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "NSObject+MLNSwizzle.m"; sourceTree = "<group>"; };
-		ADA286B70BA4B86603F03CA62767C3C4 /* lauxlib.c */ = {isa = PBXFileReference; includeInIndex = 1; name = lauxlib.c; path = "MLN-iOS/MLN/Classes/LuaLib/lauxlib.c"; sourceTree = "<group>"; };
+		ADA286B70BA4B86603F03CA62767C3C4 /* lauxlib.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = lauxlib.c; path = "MLN-iOS/MLN/Classes/LuaLib/lauxlib.c"; sourceTree = "<group>"; };
 		ADBC79813322F778AF1EF19B790227D3 /* MLNImageView.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLNImageView.h; sourceTree = "<group>"; };
 		ADE4FE0AFC3EE1B999E8F4429C114556 /* mln_luasocket.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = mln_luasocket.h; sourceTree = "<group>"; };
 		AE2E9E63ADAC1C3DEE78A5303DDD3AAB /* MLNWaterfallLayout.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLNWaterfallLayout.m; sourceTree = "<group>"; };
@@ -2068,7 +2076,7 @@
 		B062BCC2D162108AAF6FCF4A19867F0E /* MLNImageLoaderProtocol.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLNImageLoaderProtocol.h; sourceTree = "<group>"; };
 		B07C7FF7C66943D12C96E9CA4975831B /* MLNInnerTableView.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLNInnerTableView.h; sourceTree = "<group>"; };
 		B08D8B82FF50244E049D08A5CB96813E /* MLNLabel.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLNLabel.m; sourceTree = "<group>"; };
-		B0B214D775196BA7CA8E17E53048A493 /* libSDWebImage.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; name = libSDWebImage.a; path = libSDWebImage.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		B0B214D775196BA7CA8E17E53048A493 /* libSDWebImage.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libSDWebImage.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		B0DA276A8076398BB78855BED4DF3FEA /* MJRefreshGifHeader.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = MJRefreshGifHeader.m; path = MJRefresh/Custom/Header/MJRefreshGifHeader.m; sourceTree = "<group>"; };
 		B1A8A7A5C2D56DA34FD4D51587177D37 /* MLNKitLuaCorePool.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = MLNKitLuaCorePool.m; path = "MLN-iOS/MLN/Classes/Kit/MLNKitLuaCorePool.m"; sourceTree = "<group>"; };
 		B21A1FA75B55AFF7EB1D98F01A059F33 /* AFNetworkActivityIndicatorManager.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = AFNetworkActivityIndicatorManager.m; path = "UIKit+AFNetworking/AFNetworkActivityIndicatorManager.m"; sourceTree = "<group>"; };
@@ -2104,7 +2112,7 @@
 		B7BFDDD9EF95A4CE67B0F3F0A8497304 /* Pods-MLN_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-MLN_Tests.debug.xcconfig"; sourceTree = "<group>"; };
 		B801CA0446411900B9B336F3E092D2F3 /* MLNSwitch.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLNSwitch.m; sourceTree = "<group>"; };
 		B87D2C43452941AE961AD10EE1CE4695 /* SDImageFrame.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = SDImageFrame.h; path = SDWebImage/Core/SDImageFrame.h; sourceTree = "<group>"; };
-		B889B8AD864C44987B7ECB77C15FCD94 /* mobdebug.lua */ = {isa = PBXFileReference; includeInIndex = 1; path = mobdebug.lua; sourceTree = "<group>"; };
+		B889B8AD864C44987B7ECB77C15FCD94 /* mobdebug.lua */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = mobdebug.lua; sourceTree = "<group>"; };
 		B8EEC749783D1A8162D51E72344CAF56 /* SDAnimatedImage.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = SDAnimatedImage.h; path = SDWebImage/Core/SDAnimatedImage.h; sourceTree = "<group>"; };
 		B8F629048900871FEC33DC40B9BCE401 /* MLNViewPager.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLNViewPager.m; sourceTree = "<group>"; };
 		B9A2AA6F9E0FC0116CD19A143EA6ABD6 /* MLNAdapterCachesManager.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLNAdapterCachesManager.h; sourceTree = "<group>"; };
@@ -2129,7 +2137,7 @@
 		BEE8AD14390526038693E9D2772B4100 /* UIActivityIndicatorView+AFNetworking.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "UIActivityIndicatorView+AFNetworking.h"; path = "UIKit+AFNetworking/UIActivityIndicatorView+AFNetworking.h"; sourceTree = "<group>"; };
 		BF0BB9B69EC2113B269C1DD433CF3EB5 /* MLNCornerManagerFactory.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLNCornerManagerFactory.h; sourceTree = "<group>"; };
 		BF4835428CD1F0B5B271327E91DDD6A5 /* SDImageCacheConfig.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = SDImageCacheConfig.h; path = SDWebImage/Core/SDImageCacheConfig.h; sourceTree = "<group>"; };
-		BF8E2DF40315E859B22FDF5C030E853B /* lfunc.c */ = {isa = PBXFileReference; includeInIndex = 1; name = lfunc.c; path = "MLN-iOS/MLN/Classes/LuaLib/lfunc.c"; sourceTree = "<group>"; };
+		BF8E2DF40315E859B22FDF5C030E853B /* lfunc.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = lfunc.c; path = "MLN-iOS/MLN/Classes/LuaLib/lfunc.c"; sourceTree = "<group>"; };
 		BF982DA113329568EFA4C642BA5D91AC /* AFURLSessionManager.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = AFURLSessionManager.m; path = AFNetworking/AFURLSessionManager.m; sourceTree = "<group>"; };
 		BFB3F49159E36D2E382E99362D40CD96 /* EXPMatchers+FBSnapshotTest.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "EXPMatchers+FBSnapshotTest.h"; sourceTree = "<group>"; };
 		BFBE6F690A2BDD7BCDEAFDF4B4B83D57 /* UIButton+WebCache.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "UIButton+WebCache.h"; path = "SDWebImage/Core/UIButton+WebCache.h"; sourceTree = "<group>"; };
@@ -2142,7 +2150,7 @@
 		C05D0555F5355D5519557911FE860EC5 /* UIActivityIndicatorView+AFNetworking.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "UIActivityIndicatorView+AFNetworking.m"; path = "UIKit+AFNetworking/UIActivityIndicatorView+AFNetworking.m"; sourceTree = "<group>"; };
 		C0D3E694C9580E06B53FEBD99A26FC45 /* MLNRefreshDelegate.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLNRefreshDelegate.h; sourceTree = "<group>"; };
 		C12A67958C69B362BF1F4B4DA65C51CE /* MLNWeakTarget.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLNWeakTarget.h; sourceTree = "<group>"; };
-		C1326B863289EC11EAAA15707A521815 /* ltablib.c */ = {isa = PBXFileReference; includeInIndex = 1; name = ltablib.c; path = "MLN-iOS/MLN/Classes/LuaLib/ltablib.c"; sourceTree = "<group>"; };
+		C1326B863289EC11EAAA15707A521815 /* ltablib.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = ltablib.c; path = "MLN-iOS/MLN/Classes/LuaLib/ltablib.c"; sourceTree = "<group>"; };
 		C180A0C9BBB0F129CD14FF5A512D71F9 /* MLNKVOObserver.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLNKVOObserver.m; sourceTree = "<group>"; };
 		C198DA4BF494EE2D3AD21262D1C49AD5 /* FBSnapshotTestCase-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "FBSnapshotTestCase-umbrella.h"; sourceTree = "<group>"; };
 		C1C7294737C2FD15B6817E26A6074C23 /* mln_options.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = mln_options.h; sourceTree = "<group>"; };
@@ -2155,13 +2163,13 @@
 		C333C85C13E3BDD37FDDAACB77E7469C /* MLNTextViewFactory.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLNTextViewFactory.h; sourceTree = "<group>"; };
 		C3353078C284417264978EFB280E91E1 /* SDMemoryCache.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = SDMemoryCache.h; path = SDWebImage/Core/SDMemoryCache.h; sourceTree = "<group>"; };
 		C340564B92A96AD560D65A8947E7CC7B /* SDWebImageOperation.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = SDWebImageOperation.h; path = SDWebImage/Core/SDWebImageOperation.h; sourceTree = "<group>"; };
-		C36A7FAF4E5C03AA9F24470AC5C6788F /* mln_buffer.c */ = {isa = PBXFileReference; includeInIndex = 1; path = mln_buffer.c; sourceTree = "<group>"; };
+		C36A7FAF4E5C03AA9F24470AC5C6788F /* mln_buffer.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; path = mln_buffer.c; sourceTree = "<group>"; };
 		C36C6912B8A632736CE095FFB042B1F2 /* LNDecoderFactory.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = LNDecoderFactory.h; sourceTree = "<group>"; };
 		C3B746F4281A88134AC4C7189E1BD295 /* LNReaderImpl.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = LNReaderImpl.h; sourceTree = "<group>"; };
 		C3E54F833E879D48881F3DF4F3205359 /* EXPMatchers.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = EXPMatchers.h; path = Expecta/Matchers/EXPMatchers.h; sourceTree = "<group>"; };
 		C4261C31EB6048F980CF761B99627DAE /* clean.png */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = image.png; path = clean.png; sourceTree = "<group>"; };
 		C47D401EA5B214B454E4CA7FD57D9802 /* MJRefreshHeader.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = MJRefreshHeader.h; path = MJRefresh/Base/MJRefreshHeader.h; sourceTree = "<group>"; };
-		C499C56A2F6A6E8667133B5541616FC5 /* lstate.c */ = {isa = PBXFileReference; includeInIndex = 1; name = lstate.c; path = "MLN-iOS/MLN/Classes/LuaLib/lstate.c"; sourceTree = "<group>"; };
+		C499C56A2F6A6E8667133B5541616FC5 /* lstate.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = lstate.c; path = "MLN-iOS/MLN/Classes/LuaLib/lstate.c"; sourceTree = "<group>"; };
 		C49AD5013991C27CC1D66BC987B75641 /* MJRefreshNormalHeader.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = MJRefreshNormalHeader.m; path = MJRefresh/Custom/Header/MJRefreshNormalHeader.m; sourceTree = "<group>"; };
 		C4AC27E115E9DFEF94116D86A6353A62 /* MLNBlockObserver.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLNBlockObserver.m; sourceTree = "<group>"; };
 		C62D2589E3DC5560C144ADF2A4BFCE45 /* MLNAnimationDelegate.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLNAnimationDelegate.h; sourceTree = "<group>"; };
@@ -2188,7 +2196,7 @@
 		CB14FD30E22633AE790A7A29267E9F24 /* MLNCollectionViewAdapter.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLNCollectionViewAdapter.m; sourceTree = "<group>"; };
 		CB1C89F2A9A5AD9BE5A515722B8F7959 /* LNWriterFactory.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = LNWriterFactory.h; sourceTree = "<group>"; };
 		CB4D522DD974E5F075B26022C5E2FD79 /* SDImageCacheDefine.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = SDImageCacheDefine.h; path = SDWebImage/Core/SDImageCacheDefine.h; sourceTree = "<group>"; };
-		CB784E909A0E0B063C1D5DE71BED504C /* lopcodes.c */ = {isa = PBXFileReference; includeInIndex = 1; name = lopcodes.c; path = "MLN-iOS/MLN/Classes/LuaLib/lopcodes.c"; sourceTree = "<group>"; };
+		CB784E909A0E0B063C1D5DE71BED504C /* lopcodes.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = lopcodes.c; path = "MLN-iOS/MLN/Classes/LuaLib/lopcodes.c"; sourceTree = "<group>"; };
 		CBAB569F5DD1B1BC42B733E00C1E8649 /* MLNQRCodeViewController.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLNQRCodeViewController.h; sourceTree = "<group>"; };
 		CBE68484717363F8744A54AA82663717 /* SPTExample.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = SPTExample.m; path = Specta/Specta/SPTExample.m; sourceTree = "<group>"; };
 		CBF2DF8422264E317A18DC773F7C4A34 /* MJRefreshBackFooter.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = MJRefreshBackFooter.m; path = MJRefresh/Base/MJRefreshBackFooter.m; sourceTree = "<group>"; };
@@ -2197,7 +2205,7 @@
 		CC522C40CE8CD0D1EB426D3DB9E08BA8 /* MLNLuaBundle.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLNLuaBundle.h; sourceTree = "<group>"; };
 		CCFA209A912AB7FE7C5852D9806305FE /* UIImage+MemoryCacheCost.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "UIImage+MemoryCacheCost.h"; path = "SDWebImage/Core/UIImage+MemoryCacheCost.h"; sourceTree = "<group>"; };
 		CD31DBB136D6C1CEF2C714AFE500D25B /* UIView+MLNKit.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "UIView+MLNKit.m"; sourceTree = "<group>"; };
-		CD9D22E5F5792913B3BAD24A5A702A7E /* mln_usocket.c */ = {isa = PBXFileReference; includeInIndex = 1; path = mln_usocket.c; sourceTree = "<group>"; };
+		CD9D22E5F5792913B3BAD24A5A702A7E /* mln_usocket.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; path = mln_usocket.c; sourceTree = "<group>"; };
 		CDC11E84DB5801EE8266A3FD56366D4A /* MLNCollectionViewAdapter.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLNCollectionViewAdapter.h; sourceTree = "<group>"; };
 		CDCCDB502ED37573EC8003E4ACBF09A0 /* UIImage+Metadata.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "UIImage+Metadata.m"; path = "SDWebImage/Core/UIImage+Metadata.m"; sourceTree = "<group>"; };
 		CDE8DA2A464FC67FE086EED79FB3AEC9 /* EXPMatchers+FBSnapshotTest.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "EXPMatchers+FBSnapshotTest.m"; sourceTree = "<group>"; };
@@ -2207,11 +2215,11 @@
 		CF5AC36AE8A029A7B12981B1C7C2D8B1 /* MLNInternalWaterfallView.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLNInternalWaterfallView.m; sourceTree = "<group>"; };
 		CF5C92EED1E16A3456F29372B524DB62 /* SPTTestSuite.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = SPTTestSuite.m; path = Specta/Specta/SPTTestSuite.m; sourceTree = "<group>"; };
 		CF8C511725BDBF2B575FD4845907A0B1 /* MLNViewPagerAdapter.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLNViewPagerAdapter.m; sourceTree = "<group>"; };
-		CFC7C30FF0FA8F2B7D2C81FFE1BBF841 /* mln_message_looper.c */ = {isa = PBXFileReference; includeInIndex = 1; path = mln_message_looper.c; sourceTree = "<group>"; };
+		CFC7C30FF0FA8F2B7D2C81FFE1BBF841 /* mln_message_looper.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; path = mln_message_looper.c; sourceTree = "<group>"; };
 		CFD24EDAAFC1DB971D7934E802EA32EA /* UIImageView+AFNetworking.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "UIImageView+AFNetworking.m"; path = "UIKit+AFNetworking/UIImageView+AFNetworking.m"; sourceTree = "<group>"; };
 		CFDCE08C9CE5526E97D615E521B12F07 /* MLNKeyframeAnimation.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLNKeyframeAnimation.m; sourceTree = "<group>"; };
 		CFDD6C45AC831763B32145D2DDC0BC2B /* MLNQRCodeReader.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLNQRCodeReader.m; sourceTree = "<group>"; };
-		D016D4A7EA55F4BB602B95D451CAEF5E /* ldump.c */ = {isa = PBXFileReference; includeInIndex = 1; name = ldump.c; path = "MLN-iOS/MLN/Classes/LuaLib/ldump.c"; sourceTree = "<group>"; };
+		D016D4A7EA55F4BB602B95D451CAEF5E /* ldump.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = ldump.c; path = "MLN-iOS/MLN/Classes/LuaLib/ldump.c"; sourceTree = "<group>"; };
 		D09CED76E8155B9AD8D3BDAED76DCA11 /* MLNGlobalFuncExportProtocol.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLNGlobalFuncExportProtocol.h; sourceTree = "<group>"; };
 		D0F9747F498B22217F8C48C7020ED985 /* PbrenameCommand.pbobjc.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = PbrenameCommand.pbobjc.h; path = "MLN-iOS/MLNDevTool/Classes/Protobuf/PbrenameCommand.pbobjc.h"; sourceTree = "<group>"; };
 		D134698136C01E8F103651FAF970BF26 /* AFSecurityPolicy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = AFSecurityPolicy.m; path = AFNetworking/AFSecurityPolicy.m; sourceTree = "<group>"; };
@@ -2236,14 +2244,14 @@
 		D4DFED7B177C5055BC6213A87B32C7EB /* MLNWeakAssociatedObject.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLNWeakAssociatedObject.h; sourceTree = "<group>"; };
 		D4FFAEE7379E48CB4141A3C5270D7564 /* SPTSharedExampleGroups.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = SPTSharedExampleGroups.m; path = Specta/Specta/SPTSharedExampleGroups.m; sourceTree = "<group>"; };
 		D53B30E993D98CC1ADA0C36C7712A003 /* MLNQRCodeScanView.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLNQRCodeScanView.m; sourceTree = "<group>"; };
-		D58F89FB1CBCEE1F7AA75B239A8D958D /* mln_udp.c */ = {isa = PBXFileReference; includeInIndex = 1; path = mln_udp.c; sourceTree = "<group>"; };
+		D58F89FB1CBCEE1F7AA75B239A8D958D /* mln_udp.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; path = mln_udp.c; sourceTree = "<group>"; };
 		D5D2648A6F2632F956F08A6D94DBB2C0 /* MLNGlobalVarExportProtocol.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLNGlobalVarExportProtocol.h; sourceTree = "<group>"; };
 		D60C32A98E7DD458B156DCCB8494AB11 /* EXPMatchers+respondTo.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "EXPMatchers+respondTo.h"; path = "Expecta/Matchers/EXPMatchers+respondTo.h"; sourceTree = "<group>"; };
 		D6510D46A1EE4886D9BC0F514E4DB476 /* MLNExtScope.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLNExtScope.m; sourceTree = "<group>"; };
 		D65D2A6DC280DF46FBA1A5C3DE1CDAC1 /* mln_select.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = mln_select.h; sourceTree = "<group>"; };
 		D663E92E66B203F4589722F977DDA2D2 /* MLNDevice.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLNDevice.h; sourceTree = "<group>"; };
 		D6F822FEAA721E353340A397508E5F99 /* SPTCompiledExample.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = SPTCompiledExample.m; path = Specta/Specta/SPTCompiledExample.m; sourceTree = "<group>"; };
-		D71A82E0BEA7FE2051E1A9BA25B098CE /* lapi.c */ = {isa = PBXFileReference; includeInIndex = 1; name = lapi.c; path = "MLN-iOS/MLN/Classes/LuaLib/lapi.c"; sourceTree = "<group>"; };
+		D71A82E0BEA7FE2051E1A9BA25B098CE /* lapi.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = lapi.c; path = "MLN-iOS/MLN/Classes/LuaLib/lapi.c"; sourceTree = "<group>"; };
 		D73F6562F075AB6BAE7B97EE65A7F213 /* LNReaderProtocol.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = LNReaderProtocol.h; sourceTree = "<group>"; };
 		D756EA5696C600F2FA71F59982AF258B /* EXPMatchers+beLessThanOrEqualTo.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "EXPMatchers+beLessThanOrEqualTo.m"; path = "Expecta/Matchers/EXPMatchers+beLessThanOrEqualTo.m"; sourceTree = "<group>"; };
 		D7ADFDB09B357EC6D24E6F53EEE7E5B6 /* MLNLuaTable.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLNLuaTable.m; sourceTree = "<group>"; };
@@ -2298,17 +2306,17 @@
 		E30B4A4E88083CD841F76428F13A040E /* MLNStack.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLNStack.m; sourceTree = "<group>"; };
 		E3299AD879F4C63F5FBF3BBF770C4D32 /* MLNView.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLNView.m; sourceTree = "<group>"; };
 		E33B14225454FE91D916B74FB73B1564 /* mln_io.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = mln_io.h; sourceTree = "<group>"; };
-		E3741BF1C5E82E89CAD3CFF280662CA8 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; path = LICENSE; sourceTree = "<group>"; };
+		E3741BF1C5E82E89CAD3CFF280662CA8 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		E37AB43FFB1DCA9F282093B96573CD58 /* MLNCollectionViewCell.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLNCollectionViewCell.h; sourceTree = "<group>"; };
 		E3AF7F406D4E7DC08EA0220C94CEAF36 /* MLNDevTool-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "MLNDevTool-prefix.pch"; sourceTree = "<group>"; };
 		E3BED403C6E6B46E7395A5810EC106EB /* MLNZStackNode.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLNZStackNode.h; sourceTree = "<group>"; };
-		E434776313318C39F2105904DA01AE42 /* lmem.c */ = {isa = PBXFileReference; includeInIndex = 1; name = lmem.c; path = "MLN-iOS/MLN/Classes/LuaLib/lmem.c"; sourceTree = "<group>"; };
+		E434776313318C39F2105904DA01AE42 /* lmem.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = lmem.c; path = "MLN-iOS/MLN/Classes/LuaLib/lmem.c"; sourceTree = "<group>"; };
 		E43FF54E700705B44F6EB0C1FDC51F1E /* MLNFile.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLNFile.h; sourceTree = "<group>"; };
 		E47083E476538938FE0AB2013DFA40A0 /* LNDecoderFactory.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = LNDecoderFactory.m; sourceTree = "<group>"; };
 		E479F3D86DF2BABE89496DC0EADD63AA /* MLNFileConst.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLNFileConst.h; sourceTree = "<group>"; };
 		E483B34076B24142DAB743D783AE6991 /* SDImageTransformer.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = SDImageTransformer.h; path = SDWebImage/Core/SDImageTransformer.h; sourceTree = "<group>"; };
 		E484EB072A2BBC2A4830D766032B864D /* MJRefreshGifHeader.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = MJRefreshGifHeader.h; path = MJRefresh/Custom/Header/MJRefreshGifHeader.h; sourceTree = "<group>"; };
-		E49D6D248DD1CEE584E6776B9164A1B2 /* libMJRefresh.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; name = libMJRefresh.a; path = libMJRefresh.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		E49D6D248DD1CEE584E6776B9164A1B2 /* libMJRefresh.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libMJRefresh.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		E52F78A62C7CF2CCEE28FD9937850B19 /* MLN_GCDAsyncSocket.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLN_GCDAsyncSocket.m; sourceTree = "<group>"; };
 		E54CD61E951FFE80A743F6CB72AB9B74 /* SDWebImage.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = SDWebImage.debug.xcconfig; sourceTree = "<group>"; };
 		E58D48E42560FF55BFE1ACB704F357D3 /* MLNNavigator.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLNNavigator.h; sourceTree = "<group>"; };
@@ -2328,11 +2336,11 @@
 		E7C701D780D525518553A6FE6241556B /* MJRefreshAutoStateFooter.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = MJRefreshAutoStateFooter.h; path = MJRefresh/Custom/Footer/Auto/MJRefreshAutoStateFooter.h; sourceTree = "<group>"; };
 		E8019E0C708C99061B5B957A765F9891 /* lvm.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = lvm.h; path = "MLN-iOS/MLN/Classes/LuaLib/lvm.h"; sourceTree = "<group>"; };
 		E8140FE56EB16EDDFB17FFB66C53F2F3 /* UIImage+MLNKit.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "UIImage+MLNKit.m"; sourceTree = "<group>"; };
-		E89E229FEE37C60157F02CE68982192E /* mln_auxiliar.c */ = {isa = PBXFileReference; includeInIndex = 1; path = mln_auxiliar.c; sourceTree = "<group>"; };
+		E89E229FEE37C60157F02CE68982192E /* mln_auxiliar.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; path = mln_auxiliar.c; sourceTree = "<group>"; };
 		E8AA88A8864B79A382D535155EAFE07A /* MLNKitBridgesManager.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = MLNKitBridgesManager.m; path = "MLN-iOS/MLN/Classes/Kit/MLNKitBridgesManager.m"; sourceTree = "<group>"; };
 		E8EE1DABF743B3C347B9FA699E41698F /* GPBRuntimeTypes.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = GPBRuntimeTypes.h; sourceTree = "<group>"; };
 		E9147DBFB75AB736E46C63D6CE94309B /* MLNFileLoader.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLNFileLoader.m; sourceTree = "<group>"; };
-		E9299F4D427CE328A9A4F4F35EE3473F /* lstring.c */ = {isa = PBXFileReference; includeInIndex = 1; name = lstring.c; path = "MLN-iOS/MLN/Classes/LuaLib/lstring.c"; sourceTree = "<group>"; };
+		E9299F4D427CE328A9A4F4F35EE3473F /* lstring.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = lstring.c; path = "MLN-iOS/MLN/Classes/LuaLib/lstring.c"; sourceTree = "<group>"; };
 		E9666E24BB8AB7345BE83FD6934C785C /* MLNHStack.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLNHStack.m; sourceTree = "<group>"; };
 		E99A6377988C8D383D961222B1171239 /* MLNKitViewController.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = MLNKitViewController.m; path = "MLN-iOS/MLN/Classes/Kit/MLNKitViewController.m"; sourceTree = "<group>"; };
 		E9BAF341523E5001312F3A3455F9F7C8 /* UIImageView+HighlightedWebCache.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "UIImageView+HighlightedWebCache.m"; path = "SDWebImage/Core/UIImageView+HighlightedWebCache.m"; sourceTree = "<group>"; };
@@ -2356,7 +2364,7 @@
 		ECA4E211DB36DDD0435CF6A6EC2C822E /* Pods-MLN_Tests-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Pods-MLN_Tests-umbrella.h"; sourceTree = "<group>"; };
 		ECA91836DC43409DCA0C23271625B2E9 /* MLNKitInstance.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = MLNKitInstance.m; path = "MLN-iOS/MLN/Classes/Kit/MLNKitInstance.m"; sourceTree = "<group>"; };
 		ECBE8C5794DCD991AB6FEA192FC0989A /* history.png */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = image.png; name = history.png; path = "MLN-iOS/MLNDevTool/Classes/Offline/Assets/history.png"; sourceTree = "<group>"; };
-		ED0C993B74FF6ADAD7D049109B27F1A8 /* MLNDevTool_Util.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = MLNDevTool_Util.bundle; path = "MLNDevTool-MLNDevTool_Util.bundle"; sourceTree = BUILT_PRODUCTS_DIR; };
+		ED0C993B74FF6ADAD7D049109B27F1A8 /* MLNDevTool_Util.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MLNDevTool_Util.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		ED2AD19CCF60BD045ABD2CCD84462A42 /* MLNKitInstance.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = MLNKitInstance.h; path = "MLN-iOS/MLN/Classes/Kit/MLNKitInstance.h"; sourceTree = "<group>"; };
 		ED2C56AB658064303E9B35886016905E /* EXPMatchers+beginWith.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "EXPMatchers+beginWith.m"; path = "Expecta/Matchers/EXPMatchers+beginWith.m"; sourceTree = "<group>"; };
 		ED38B8AF7932572B84890F8EACAE5CF1 /* EXPMatchers+contain.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "EXPMatchers+contain.m"; path = "Expecta/Matchers/EXPMatchers+contain.m"; sourceTree = "<group>"; };
@@ -2380,7 +2388,7 @@
 		F0A10B7F575A778FE1AEE3F9609D8D6D /* NSError+MLNCore.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "NSError+MLNCore.h"; sourceTree = "<group>"; };
 		F0A466C994D19198071487D7464C15A8 /* LNDecoderImpl.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = LNDecoderImpl.m; sourceTree = "<group>"; };
 		F0D2F5B801B2E1AB9D08F51079E636DC /* lobject.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = lobject.h; path = "MLN-iOS/MLN/Classes/LuaLib/lobject.h"; sourceTree = "<group>"; };
-		F0D4D03F4148FE2168E6864245A8417C /* mln_map.c */ = {isa = PBXFileReference; includeInIndex = 1; path = mln_map.c; sourceTree = "<group>"; };
+		F0D4D03F4148FE2168E6864245A8417C /* mln_map.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; path = mln_map.c; sourceTree = "<group>"; };
 		F0DBC967ED4B35CE94FD489C321DDF7D /* MLNAnimationSet.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLNAnimationSet.h; sourceTree = "<group>"; };
 		F0E5D12269508C8D048FD40A810EA033 /* MLNCornerMaskImageManager.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLNCornerMaskImageManager.h; sourceTree = "<group>"; };
 		F0FBD364CA610585954D87318C4072A1 /* GPBBootstrap.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = GPBBootstrap.h; sourceTree = "<group>"; };
@@ -2389,7 +2397,7 @@
 		F1D17995E5BA6E7FA652225EA686CE32 /* UIImage+Transform.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "UIImage+Transform.h"; path = "SDWebImage/Core/UIImage+Transform.h"; sourceTree = "<group>"; };
 		F2141708A21BDD0C2D98D02D91E58201 /* MLNKitViewController.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = MLNKitViewController.h; path = "MLN-iOS/MLN/Classes/Kit/MLNKitViewController.h"; sourceTree = "<group>"; };
 		F2299EDBE2B506FC5AEF34DB07FC702E /* MLNQRCodeDefaultInfo.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLNQRCodeDefaultInfo.h; sourceTree = "<group>"; };
-		F23D106D36C6066832E4051581A89F85 /* mln_io.c */ = {isa = PBXFileReference; includeInIndex = 1; path = mln_io.c; sourceTree = "<group>"; };
+		F23D106D36C6066832E4051581A89F85 /* mln_io.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; path = mln_io.c; sourceTree = "<group>"; };
 		F2443D6EAFF43C2B8B2FB898497D4DAE /* SPTCallSite.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = SPTCallSite.m; path = Specta/Specta/SPTCallSite.m; sourceTree = "<group>"; };
 		F2B65006A9854AA57FA475B5D585F279 /* NSArray+MLNSafety.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "NSArray+MLNSafety.m"; sourceTree = "<group>"; };
 		F2BF2E4EDBAD15FAF4B3269525A5FC35 /* MLNScrollCallbackView.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLNScrollCallbackView.h; sourceTree = "<group>"; };
@@ -2419,7 +2427,7 @@
 		F8429346286262DC6F1765F219E91D03 /* MLNLayoutImageViewNode.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLNLayoutImageViewNode.m; sourceTree = "<group>"; };
 		F8BF4765D844397D40FA7713980570D9 /* MLNTopTip.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLNTopTip.m; sourceTree = "<group>"; };
 		F8D96C1EF1D74ED7189B3F649E515F77 /* MLNToast.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLNToast.m; sourceTree = "<group>"; };
-		F8E30DB05874B51A86586F8701B9515C /* MLNDevTool.podspec */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; lastKnownFileType = text; path = MLNDevTool.podspec; sourceTree = "<group>"; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		F8E30DB05874B51A86586F8701B9515C /* MLNDevTool.podspec */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; path = MLNDevTool.podspec; sourceTree = "<group>"; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		F972C311D452B40C2B9FE6275C5E76CD /* MLNValueCalculator.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLNValueCalculator.m; sourceTree = "<group>"; };
 		F9BA9AA1E915F34A4AFB9D71BF9AC261 /* SDImageIOAnimatedCoder.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = SDImageIOAnimatedCoder.m; path = SDWebImage/Core/SDImageIOAnimatedCoder.m; sourceTree = "<group>"; };
 		FA22C529111FE1AD89F1F3568E84C8CF /* MLN-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "MLN-prefix.pch"; sourceTree = "<group>"; };
@@ -2435,14 +2443,14 @@
 		FD5E8443099BF2F6C846A8C6E408EE82 /* TADotView.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = TADotView.h; path = SDCycleScrollView/Lib/SDCycleScrollView/PageControl/TADotView.h; sourceTree = "<group>"; };
 		FD8671291C8022DE2A61C244EBD4AEBD /* MLNCollectionViewLayoutProtocol.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLNCollectionViewLayoutProtocol.h; sourceTree = "<group>"; };
 		FDAC5E80717B07C1F9B0E7479C9EE0E6 /* AFURLSessionManager.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = AFURLSessionManager.h; path = AFNetworking/AFURLSessionManager.h; sourceTree = "<group>"; };
-		FDEDACE14614F70C6A82D83C9A38F233 /* MLNDevTool_Offline.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = MLNDevTool_Offline.bundle; path = "MLNDevTool-MLNDevTool_Offline.bundle"; sourceTree = BUILT_PRODUCTS_DIR; };
+		FDEDACE14614F70C6A82D83C9A38F233 /* MLNDevTool_Offline.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MLNDevTool_Offline.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		FE9649C3ECE787EBE8B71F90561E370E /* MLNTableViewAdapter.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLNTableViewAdapter.m; sourceTree = "<group>"; };
 		FE9F5292CF26A9C676A119370313CF9E /* MLNAnimationConst.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLNAnimationConst.h; sourceTree = "<group>"; };
 		FEDC4DF5AFF941DA13D3D415F5BB95F5 /* AFCompatibilityMacros.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = AFCompatibilityMacros.h; path = AFNetworking/AFCompatibilityMacros.h; sourceTree = "<group>"; };
 		FEE081F65DA54F05A935F7EBD0608843 /* Expecta+Snapshots-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Expecta+Snapshots-dummy.m"; sourceTree = "<group>"; };
 		FEFE5888B056F6E85EAEBF5CFAB3B0F1 /* MLNAlphaAnimation.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLNAlphaAnimation.m; sourceTree = "<group>"; };
 		FF93164DA1F345219EBB781E2407D501 /* SDImageIOCoder.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = SDImageIOCoder.h; path = SDWebImage/Core/SDImageIOCoder.h; sourceTree = "<group>"; };
-		FFC3C397F45AA2EE5F806A8FEC828873 /* loadlib.c */ = {isa = PBXFileReference; includeInIndex = 1; name = loadlib.c; path = "MLN-iOS/MLN/Classes/LuaLib/loadlib.c"; sourceTree = "<group>"; };
+		FFC3C397F45AA2EE5F806A8FEC828873 /* loadlib.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = loadlib.c; path = "MLN-iOS/MLN/Classes/LuaLib/loadlib.c"; sourceTree = "<group>"; };
 		FFD0EB3BDCC8E582D065E2C1968457E4 /* MLNApplication.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLNApplication.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -2588,7 +2596,6 @@
 				E58D48E42560FF55BFE1ACB704F357D3 /* MLNNavigator.h */,
 				D436409FB15C0333E130E8FD436283D2 /* MLNNavigator.m */,
 			);
-			name = Navigator;
 			path = Navigator;
 			sourceTree = "<group>";
 		};
@@ -2629,7 +2636,6 @@
 				870BC0779AAFF3E7EE9302BFD8312A48 /* MLNThread.h */,
 				5C40A794B99B50AB636DA73E2CC51E9A /* MLNThread.m */,
 			);
-			name = DebugLib;
 			path = DebugLib;
 			sourceTree = "<group>";
 		};
@@ -2774,7 +2780,6 @@
 				3320CA48ACD9DA112DA42D5BE5F11797 /* MLNTranslateAnimation.h */,
 				3D6D67D30BE5F612726F3072FC272B7C /* MLNTranslateAnimation.m */,
 			);
-			name = CanvasAnimation;
 			path = CanvasAnimation;
 			sourceTree = "<group>";
 		};
@@ -2796,7 +2801,6 @@
 				480B9ADEA1337184E770E16AC0BE86B8 /* MLNNinePatchImageFactory.h */,
 				58971D9234C81E0CA554AD9D051FD1A5 /* MLNNinePatchImageFactory.m */,
 			);
-			name = NinePatch;
 			path = NinePatch;
 			sourceTree = "<group>";
 		};
@@ -2806,7 +2810,6 @@
 				815AF33035DCD4B1731CBB85E02FEE32 /* Core */,
 				A07F00D74C9D68F6401AB5D4D0C6C549 /* Support Files */,
 			);
-			name = SDWebImage;
 			path = SDWebImage;
 			sourceTree = "<group>";
 		};
@@ -2824,7 +2827,6 @@
 				7325AFC8C2D6150C12F325F241F82019 /* MLNTransformTask.h */,
 				55352569626ED0569E3D9AE4DBBE71EE /* MLNTransformTask.m */,
 			);
-			name = Animation;
 			path = Animation;
 			sourceTree = "<group>";
 		};
@@ -2849,7 +2851,6 @@
 				CBAB569F5DD1B1BC42B733E00C1E8649 /* MLNQRCodeViewController.h */,
 				8E270343AA0AE683AD0B1050B96951E0 /* MLNQRCodeViewController.m */,
 			);
-			name = QRCode;
 			path = QRCode;
 			sourceTree = "<group>";
 		};
@@ -2878,7 +2879,6 @@
 				53E2C1D074CFFD4F5764F21285A5767F /* NSMutableDictionary+MLNMap.h */,
 				229FE29222C5B796CAF219401085AE03 /* NSMutableDictionary+MLNMap.m */,
 			);
-			name = Model;
 			path = Model;
 			sourceTree = "<group>";
 		};
@@ -2891,7 +2891,6 @@
 				9F3CBBEC55425E0167F9B0424DCB6285 /* MLNAnimator.h */,
 				904C521F21F2E9BEAA4613A2739EA274 /* MLNAnimator.m */,
 			);
-			name = Animator;
 			path = Animator;
 			sourceTree = "<group>";
 		};
@@ -2905,7 +2904,6 @@
 				F899D0C205B86E12E1557DF92BFB0077 /* NewCorners */,
 				3144405FB4B36BE8CF7EADF6FCF9E507 /* Shadow */,
 			);
-			name = Render;
 			path = Render;
 			sourceTree = "<group>";
 		};
@@ -2933,7 +2931,6 @@
 				C7BDB9EEAD04309B5950BBEFD99C1459 /* MLNTableViewAutoFitAdapter.h */,
 				5EF511DCABFC12D3653F11033AF5C1B6 /* MLNTableViewAutoFitAdapter.m */,
 			);
-			name = AutoFit;
 			path = AutoFit;
 			sourceTree = "<group>";
 		};
@@ -2970,7 +2967,6 @@
 				E6964C750B8FE4C872BE0551346FF21B /* UIImage+MLN_IN_UTIL.h */,
 				5D42BC6D0BF8C1EDD83F8529BA3BF885 /* UIImage+MLN_IN_UTIL.m */,
 			);
-			name = TabSegmentView;
 			path = TabSegmentView;
 			sourceTree = "<group>";
 		};
@@ -3018,7 +3014,6 @@
 				7B6864E2500E211305BEE9CF6D0BFF13 /* MLNTableViewCellSettingProtocol.h */,
 				1C75CCA36862C290960AB171363D060B /* AutoFit */,
 			);
-			name = TableView;
 			path = TableView;
 			sourceTree = "<group>";
 		};
@@ -3047,7 +3042,6 @@
 				15E3A46435535C4CAD6C1DE2FF5CFAFD /* scan_corner.png */,
 				2A0DE315688FD52E53D5CE8BBCD14AB5 /* scan_line.png */,
 			);
-			name = Assets;
 			path = Assets;
 			sourceTree = "<group>";
 		};
@@ -3074,7 +3068,6 @@
 				13E3D4EC50000D4F12C2C1141D89DE39 /* LNReaderImpl.m */,
 				D73F6562F075AB6BAE7B97EE65A7F213 /* LNReaderProtocol.h */,
 			);
-			name = Read;
 			path = Read;
 			sourceTree = "<group>";
 		};
@@ -3084,7 +3077,6 @@
 				671530632C694B06D5A5D8BC09CA0C76 /* MLNBeforeWaitingTask.h */,
 				84520C74B5575F3D54EC1A938142016B /* MLNBeforeWaitingTask.m */,
 			);
-			name = Task;
 			path = Task;
 			sourceTree = "<group>";
 		};
@@ -3166,7 +3158,6 @@
 				D48770A542A010B9B376C02F741B156C /* NSValue+Expecta.m */,
 				E94982ED898A2E2ABE417CABF74D1CC2 /* Support Files */,
 			);
-			name = Expecta;
 			path = Expecta;
 			sourceTree = "<group>";
 		};
@@ -3176,7 +3167,6 @@
 				A12ADED22DFE9DD9928A7D7F3487929C /* MLNShadowOperation.h */,
 				14E51709E0913F3102983373EFBA2317 /* MLNShadowOperation.m */,
 			);
-			name = Shadow;
 			path = Shadow;
 			sourceTree = "<group>";
 		};
@@ -3236,7 +3226,6 @@
 				F0A466C994D19198071487D7464C15A8 /* LNDecoderImpl.m */,
 				24ADDAD997661444C65CC8CE6B3DF280 /* LNDecoderProtocol.h */,
 			);
-			name = Decode;
 			path = Decode;
 			sourceTree = "<group>";
 		};
@@ -3270,7 +3259,6 @@
 				49D9D1B69160ECD3A40E3EFAFBF5A48C /* XCTestCase+Specta.m */,
 				3300582FD58C7862F292031B45608054 /* Support Files */,
 			);
-			name = Specta;
 			path = Specta;
 			sourceTree = "<group>";
 		};
@@ -3282,7 +3270,6 @@
 				ED55D22862C9BEFFA4CEFF6EC836CC62 /* MLNViewPagerAdapter.h */,
 				CF8C511725BDBF2B575FD4845907A0B1 /* MLNViewPagerAdapter.m */,
 			);
-			name = ViewPager;
 			path = ViewPager;
 			sourceTree = "<group>";
 		};
@@ -3305,7 +3292,6 @@
 				72EC4EA94AE9CC1936B0B0BDB612EDFB /* UIView+SDExtension.m */,
 				CA00263A36CFDE90990B05F192393FD0 /* Support Files */,
 			);
-			name = SDCycleScrollView;
 			path = SDCycleScrollView;
 			sourceTree = "<group>";
 		};
@@ -3315,7 +3301,6 @@
 				3B691051B116751BBC7BE74E42A2B6E2 /* mmoslib.c */,
 				1B326E9AF623F1EE98AF1542874BA7D0 /* mmoslib.h */,
 			);
-			name = Mmoslib;
 			path = Mmoslib;
 			sourceTree = "<group>";
 		};
@@ -3367,7 +3352,6 @@
 				1BBB7842B39776DAFC585E0B9E50D9EE /* UIView+Toast.m */,
 				75F9198D1215AD60ADB8F5FE4CD3BC53 /* Support Files */,
 			);
-			name = Toast;
 			path = Toast;
 			sourceTree = "<group>";
 		};
@@ -3406,7 +3390,6 @@
 				2EB3C55E8E7D9A34E14EC0C61348731F /* UIViewController+MLNKVO.h */,
 				12E48D1E646875981003144D656DF118 /* UIViewController+MLNKVO.m */,
 			);
-			name = Observer;
 			path = Observer;
 			sourceTree = "<group>";
 		};
@@ -3440,7 +3423,6 @@
 				F972C311D452B40C2B9FE6275C5E76CD /* MLNValueCalculator.m */,
 				97EF8DA49836545461BE78F8410B2864 /* MLNValueCalculatorProtocol.h */,
 			);
-			name = Animation;
 			path = Animation;
 			sourceTree = "<group>";
 		};
@@ -3489,7 +3471,6 @@
 				3DDDA6CBA1F5FEFE715891E00F85D62E /* ViewPager */,
 				AE79602652B93FD7059712F13426F612 /* Waterfall */,
 			);
-			name = UI;
 			path = UI;
 			sourceTree = "<group>";
 		};
@@ -3538,7 +3519,6 @@
 				F1D8051F600B901502A27B6842499336 /* Resources */,
 				B3B7A47F599F6B2A4EC4CC0AD68F2EF8 /* Support Files */,
 			);
-			name = MJRefresh;
 			path = MJRefresh;
 			sourceTree = "<group>";
 		};
@@ -3583,7 +3563,6 @@
 				EB76B5E289B10C5A31D8B59CD569856D /* MLNWindowContext.h */,
 				349ADE276AD56AFD4F26570BFB586943 /* MLNWindowContext.m */,
 			);
-			name = WindowManager;
 			path = WindowManager;
 			sourceTree = "<group>";
 		};
@@ -3592,7 +3571,6 @@
 			children = (
 				5D6D5023CDF615DACBD6D736FEDECBE9 /* protobuf */,
 			);
-			name = google;
 			path = google;
 			sourceTree = "<group>";
 		};
@@ -3623,7 +3601,6 @@
 				2E418CA49017D1785FA91C726390C1E1 /* Type.pbobjc.h */,
 				6262F0F5438878B3F98B805307B351F2 /* Wrappers.pbobjc.h */,
 			);
-			name = protobuf;
 			path = protobuf;
 			sourceTree = "<group>";
 		};
@@ -3648,7 +3625,6 @@
 				3D696A23674CB15308402614089ECC07 /* LNWriterProtocol.h */,
 				CD953A81CC10A784EDE8F6C6875E180A /* Impl */,
 			);
-			name = Write;
 			path = Write;
 			sourceTree = "<group>";
 		};
@@ -3681,7 +3657,6 @@
 				1564A71F58604228C8A1A683045DD648 /* MLNContainerWindow.h */,
 				D47CC3ED38111133A0512C75CA0C0FBD /* MLNContainerWindow.m */,
 			);
-			name = ContentWindow;
 			path = ContentWindow;
 			sourceTree = "<group>";
 		};
@@ -3691,7 +3666,6 @@
 				F53665B561E8BE71CB325C0EA2FA0375 /* MLNZipArchive.h */,
 				384399DCB293409CA2400F0C08DF5090 /* MLNZipArchive.m */,
 			);
-			name = MLNZipArchive;
 			path = MLNZipArchive;
 			sourceTree = "<group>";
 		};
@@ -3704,7 +3678,6 @@
 				CDE8DA2A464FC67FE086EED79FB3AEC9 /* EXPMatchers+FBSnapshotTest.m */,
 				B72A2C1F18DE3051007D1D050DEC55DF /* Support Files */,
 			);
-			name = "Expecta+Snapshots";
 			path = "Expecta+Snapshots";
 			sourceTree = "<group>";
 		};
@@ -3795,7 +3768,6 @@
 				E3BED403C6E6B46E7395A5810EC106EB /* MLNZStackNode.h */,
 				366A80FBD4C7DEA672385888482801D8 /* MLNZStackNode.m */,
 			);
-			name = Node;
 			path = Node;
 			sourceTree = "<group>";
 		};
@@ -3825,7 +3797,6 @@
 				89DC3C4168B33EF9F50F5F6179D507DF /* UIView+MLNLayout.m */,
 				9628DC0CA2F316E76FEB3BB5FE6FB9D1 /* Stack */,
 			);
-			name = UI;
 			path = UI;
 			sourceTree = "<group>";
 		};
@@ -3837,7 +3808,6 @@
 				594E52F2C30A592A5E39914BDB2C30EE /* MLNSizeCahceManager.h */,
 				54019F727A4153DD699C56951B6965C6 /* MLNSizeCahceManager.m */,
 			);
-			name = Caches;
 			path = Caches;
 			sourceTree = "<group>";
 		};
@@ -3860,7 +3830,6 @@
 				3B42136AC4C9E6E3E9E5E69BD89CCA3A /* MLNHttpDefaultHandler.h */,
 				A37B4DFE60E1A6608C7B90BD9DEEB2B7 /* MLNHttpDefaultHandler.m */,
 			);
-			name = Network;
 			path = Network;
 			sourceTree = "<group>";
 		};
@@ -3875,7 +3844,6 @@
 				41C55961C53228F0734959BB6278970E /* Support Files */,
 				BAD9D0260AB91BCA0D3BF27CF1798C34 /* UIKit */,
 			);
-			name = AFNetworking;
 			path = AFNetworking;
 			sourceTree = "<group>";
 		};
@@ -3889,7 +3857,6 @@
 				0A568B3F2EF8A94115C7F13B9D6FD4D5 /* lua.png */,
 				14D3E84C3E0A0B42FE912EB97E3C1902 /* right.png */,
 			);
-			name = Assets;
 			path = Assets;
 			sourceTree = "<group>";
 		};
@@ -4075,7 +4042,6 @@
 				3F0899BEB092E5226C03FF16B2575F05 /* LNUsbTransporter.h */,
 				1FEA873E0D1DCB1843A814643090191B /* LNUsbTransporter.m */,
 			);
-			name = Impl;
 			path = Impl;
 			sourceTree = "<group>";
 		};
@@ -4085,7 +4051,6 @@
 				AA61726FAD662C5B214F46DD452A2A02 /* MLNCollectionViewAutoFitAdapter.h */,
 				708FDED43D2B072BE9A4EE0B7D528B00 /* MLNCollectionViewAutoFitAdapter.m */,
 			);
-			name = AutoFit;
 			path = AutoFit;
 			sourceTree = "<group>";
 		};
@@ -4130,7 +4095,6 @@
 				8E46A0FB55BEEFD0F6FE12EBDD02B3C0 /* MLNSafeAreaProxy.m */,
 				591CEC41AFC18703CEC48528CFC75804 /* MLNSafeAreaViewProtocol.h */,
 			);
-			name = SafeArea;
 			path = SafeArea;
 			sourceTree = "<group>";
 		};
@@ -4160,7 +4124,6 @@
 				98FE7198CA282F1196CF6F8FF5209524 /* MLNViewConst.h */,
 				778A4608C71CD5D89DDAF36D4C8E1DAA /* MLNViewConst.m */,
 			);
-			name = GlobalVar;
 			path = GlobalVar;
 			sourceTree = "<group>";
 		};
@@ -4171,8 +4134,11 @@
 				DDE2ACF8433A33BBAADAC9A644A17F29 /* MLNObserver.m */,
 				954EEDADC16B491BAC787C8501B6F887 /* NSObject+MLNKVO.h */,
 				71962ADB706EE45C6220D129BA857AAF /* NSObject+MLNKVO.m */,
+				00AFD4F0245AF9BC0060C885 /* NSObject+MLNDealloctor.h */,
+				00AFD4F1245AF9BC0060C885 /* NSObject+MLNDealloctor.m */,
+				00AFD4F4245AFE680060C885 /* MLNArrayObserver.h */,
+				00AFD4F5245AFE680060C885 /* MLNArrayObserver.m */,
 			);
-			name = BlockKVO;
 			path = BlockKVO;
 			sourceTree = "<group>";
 		};
@@ -4243,7 +4209,6 @@
 				2169D7E794874F1C1C7E2ADF9301D00F /* MLNZStack.h */,
 				B9C829010D51E40129C641C4566FA42B /* MLNZStack.m */,
 			);
-			name = Stack;
 			path = Stack;
 			sourceTree = "<group>";
 		};
@@ -4259,7 +4224,6 @@
 				FB3B86E9DB06D967F99B37179886D520 /* MLNShapeContext.h */,
 				9DFD2B9462495DB101BE5D28493007BE /* MLNShapeContext.m */,
 			);
-			name = Canvas;
 			path = Canvas;
 			sourceTree = "<group>";
 		};
@@ -4269,7 +4233,6 @@
 				C8881A361EE12D6A80CDF63E087A4607 /* MLNTimer.h */,
 				48F842DE8DF32AE2518BD9C07E6920FE /* MLNTimer.m */,
 			);
-			name = Timer;
 			path = Timer;
 			sourceTree = "<group>";
 		};
@@ -4309,7 +4272,6 @@
 				2A2784366C544B7DD216570153583A00 /* LNEncoderImpl.m */,
 				35DE9490451810D6A8662001944336F3 /* LNEncoderProtocol.h */,
 			);
-			name = Encode;
 			path = Encode;
 			sourceTree = "<group>";
 		};
@@ -4335,7 +4297,6 @@
 				978A9BB55229BB78213E0368E95CB2EB /* MLNListViewObserver.h */,
 				A9BF9FA0994D161245B75AA1F883066C /* MLNListViewObserver.m */,
 			);
-			name = lua;
 			path = lua;
 			sourceTree = "<group>";
 		};
@@ -4371,7 +4332,6 @@
 				96D10ADEB376146098B0018D00628170 /* Timer */,
 				5B59C188E63CB1631FC091A1F4F8570B /* WindowManager */,
 			);
-			name = Util;
 			path = Util;
 			sourceTree = "<group>";
 		};
@@ -4383,7 +4343,6 @@
 				69D30632490D3BC28AD1F24098554F12 /* MLNStyleString.h */,
 				02D3922E01771907095CFF7FBA6C4C9F /* MLNStyleString.m */,
 			);
-			name = StyleString;
 			path = StyleString;
 			sourceTree = "<group>";
 		};
@@ -4402,7 +4361,6 @@
 				0FEF7A2352FE40733A059A2C07E84B3B /* MLNWaterfallView.h */,
 				7DF3DBE2ABE5FE11E192A9CE5151C571 /* MLNWaterfallView.m */,
 			);
-			name = Waterfall;
 			path = Waterfall;
 			sourceTree = "<group>";
 		};
@@ -4437,7 +4395,6 @@
 				9C1FDED2423C8F217574CFEAA76FF8F7 /* MLNMainRunLoopObserver.m */,
 				30C3CD7AE448B89147F282D4351267F3 /* Task */,
 			);
-			name = MainRunLoopObserver;
 			path = MainRunLoopObserver;
 			sourceTree = "<group>";
 		};
@@ -4520,7 +4477,6 @@
 				A75EE396D2D2C4FEB5AD11942A423BD9 /* MLNGradientLayerOperation.h */,
 				3E8D21581668F50394602721166EB2B8 /* MLNGradientLayerOperation.m */,
 			);
-			name = Gradient;
 			path = Gradient;
 			sourceTree = "<group>";
 		};
@@ -4587,7 +4543,6 @@
 				E326D224A2BED4D3B05BDDF57BC3DFA5 /* Support Files */,
 				C6BB405FDC8114B8400C0A3157224FC2 /* SwiftSupport */,
 			);
-			name = FBSnapshotTestCase;
 			path = FBSnapshotTestCase;
 			sourceTree = "<group>";
 		};
@@ -4621,7 +4576,6 @@
 				2B2C865B58A7113C5240D7A2EBB1153F /* LNWirterImpl.h */,
 				FA789C17E520D6877767C4A1A339D93E /* LNWirterImpl.m */,
 			);
-			name = Impl;
 			path = Impl;
 			sourceTree = "<group>";
 		};
@@ -4727,7 +4681,6 @@
 				7119F68E213C23CB2EA0D783A642A2D3 /* MLNStaticExporter.h */,
 				03C353CF405D70E7C290F4A5C11147A5 /* MLNStaticExporter.m */,
 			);
-			name = Impl;
 			path = Impl;
 			sourceTree = "<group>";
 		};
@@ -4804,7 +4757,6 @@
 				09B004C524563A12EE63AC7A6C55F427 /* MLNInnerCollectionView.m */,
 				8D748AB44CF80F15A30B27FED7AC3577 /* AutoFit */,
 			);
-			name = CollectionView;
 			path = CollectionView;
 			sourceTree = "<group>";
 		};
@@ -4823,7 +4775,6 @@
 			children = (
 				27AA11F139DA564486171B58BED0C4A1 /* Assets */,
 			);
-			name = QRCode;
 			path = QRCode;
 			sourceTree = "<group>";
 		};
@@ -4897,7 +4848,6 @@
 				B43C507B3BC6675C210B8EB9992A9E16 /* LNUsbClientImpl.h */,
 				589C4CFE8B8C440B5093C4923EA91639 /* LNUsbClientImpl.m */,
 			);
-			name = Impl;
 			path = Impl;
 			sourceTree = "<group>";
 		};
@@ -4950,7 +4900,6 @@
 				6FDA9DEFEB883D4AC00E5A09F2CA6A60 /* MLNBorderLayerOperation.h */,
 				5A71701621378660B39224C0732A4D55 /* MLNBorderLayerOperation.m */,
 			);
-			name = Border;
 			path = Border;
 			sourceTree = "<group>";
 		};
@@ -4997,7 +4946,6 @@
 				1385DFB5854A138DA34078E83DDEFD4E /* MLNCornerMaskViewHandler.h */,
 				77EB39492BDF1464E54E4D34AB3B18EF /* MLNCornerMaskViewHandler.m */,
 			);
-			name = NewCorners;
 			path = NewCorners;
 			sourceTree = "<group>";
 		};
@@ -5014,7 +4962,6 @@
 				3151B3D9EEEE40C19CF824AD44B53852 /* MLNTextViewFactory.m */,
 				BA9C15CDF44D560B77D385D8D0B02785 /* MLNTextViewProtocol.h */,
 			);
-			name = EditTextView;
 			path = EditTextView;
 			sourceTree = "<group>";
 		};
@@ -5199,6 +5146,7 @@
 				4AF5FAED41775BFC7985736F2CC8065C /* lopcodes.h in Headers */,
 				21F7D4B63ABCBEB0E4EA864CDD60C4AA /* lparser.h in Headers */,
 				5A3519731EB2A698C1A018F592C4B8D8 /* lstate.h in Headers */,
+				00AFD4F2245AF9BC0060C885 /* NSObject+MLNDealloctor.h in Headers */,
 				FD777207D6B87B050A36B5963E9D4856 /* lstring.h in Headers */,
 				D20CFBFCDCA3AA5DE0B28DAC78B954EE /* ltable.h in Headers */,
 				98D838D6F31BD3B5E1429D137731BD19 /* ltm.h in Headers */,
@@ -5386,6 +5334,7 @@
 				0D681D857DB8EEAF5E249D352E5D792A /* MLNStaticExportProtocol.h in Headers */,
 				6635A791B854843C6B594D436488B0E8 /* MLNStringUtil.h in Headers */,
 				A671DDDF1D878AEB7F5CEB9DBF431927 /* MLNStyleElement.h in Headers */,
+				00AFD4F6245AFE680060C885 /* MLNArrayObserver.h in Headers */,
 				E3FE2275487C3823FFE5CE2E92B6FEAE /* MLNStyleString.h in Headers */,
 				5A6F6F06AAA4F0C95C6E8520CFEC956F /* MLNStyleStringConst.h in Headers */,
 				AA0C90CEA70B165FFEEAEF2CFBD11DB3 /* MLNSwitch.h in Headers */,
@@ -6434,6 +6383,7 @@
 				F3A67E8400700E13D26441FA8B4B654E /* MLNLuaCore.m in Sources */,
 				53286AF70EE6D5419D13E833C560AB25 /* MLNLuaTable.m in Sources */,
 				B7BCD5712057F7A6C414FC8B15409CE2 /* MLNMainRunLoopObserver.m in Sources */,
+				00AFD4F7245AFE680060C885 /* MLNArrayObserver.m in Sources */,
 				5715E39D7A240FCF435D28567117CDEA /* MLNNavigator.m in Sources */,
 				D43783E0614141A84477E900A39C60F0 /* MLNNetworkReachability.m in Sources */,
 				66EA352BCED09B142CA26236BE008387 /* MLNNetworkReachabilityManager.m in Sources */,
@@ -6450,6 +6400,7 @@
 				09BBEEEB92E83D9D27B53A4D2FC6B50E /* MLNSafeAreaProxy.m in Sources */,
 				03C8C82201E9AA0B6C4FC502E6F8788A /* MLNScaleAnimation.m in Sources */,
 				0E63172289900BB0E07FDC237F61814F /* MLNScrollCallbackView.m in Sources */,
+				00AFD4F3245AF9BC0060C885 /* NSObject+MLNDealloctor.m in Sources */,
 				0E7DD1F765626EC7CEB1A7F6AFB916CD /* MLNScrollView.m in Sources */,
 				C28CE6B9BB414362C7EFF1D1E3EED376 /* MLNScrollViewConst.m in Sources */,
 				6375B5AEEA8850A117712AAB3804B7BD /* MLNScrollViewDelegate.m in Sources */,
@@ -7093,8 +7044,7 @@
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRIP_INSTALLED_PRODUCT = NO;
-				SWIFT_COMPILATION_MODE = wholemodule;
-				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 				SWIFT_VERSION = 5.0;
 				SYMROOT = "${SRCROOT}/../build";
 			};

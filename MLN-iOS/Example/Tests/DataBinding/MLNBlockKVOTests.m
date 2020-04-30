@@ -58,7 +58,7 @@ beforeEach(^{
     it(@"mln_observe", ^{
 //    __weak typeof (self) wself = self;
     __weak typeof(model) weakModel = model;
-    [self mln_observeObject:model property:@"tm.text" withBlock:^(id  _Nonnull observer, id  _Nonnull object, id  _Nonnull oldValue, id  _Nonnull newValue) {
+    [self mln_observeObject:model property:@"tm.text" withBlock:^(id  _Nonnull observer, id  _Nonnull object, id  _Nonnull oldValue, id  _Nonnull newValue, NSDictionary *change) {
         r1 = YES;
         NSLog(@"%@",model.tm);
         expect(oldValue).equal(@"tt");
@@ -67,7 +67,7 @@ beforeEach(^{
         expect(observer == self).beTruthy();
         expect(object == weakModel).beTruthy();
     }];
-    [self mln_observeObject:model property:@"tm.text" withBlock:^(id  _Nonnull observer, id  _Nonnull object, id  _Nonnull oldValue, id  _Nonnull newValue) {
+    [self mln_observeObject:model property:@"tm.text" withBlock:^(id  _Nonnull observer, id  _Nonnull object, id  _Nonnull oldValue, id  _Nonnull newValue, NSDictionary *change) {
         r2 = YES;
         NSLog(@"%@",model.tm);
         expect(oldValue).equal(@"tt");
@@ -77,7 +77,7 @@ beforeEach(^{
         expect(object == weakModel).beTruthy();
     }];
     
-    [self mln_observeObject:model.tm property:@"text" withBlock:^(id  _Nonnull observer, id  _Nonnull object, id  _Nonnull oldValue, id  _Nonnull newValue) {
+    [self mln_observeObject:model.tm property:@"text" withBlock:^(id  _Nonnull observer, id  _Nonnull object, id  _Nonnull oldValue, id  _Nonnull newValue, NSDictionary *change) {
         r3 = YES;
         NSLog(@"%@",model.tm);
         expect(oldValue).equal(@"tt");
@@ -87,7 +87,7 @@ beforeEach(^{
         expect(object == weakModel.tm).beTruthy();
     }];
     
-    [self mln_observeObject:model.tm property:@"text" withBlock:^(id  _Nonnull observer, id  _Nonnull object, id  _Nonnull oldValue, id  _Nonnull newValue) {
+    [self mln_observeObject:model.tm property:@"text" withBlock:^(id  _Nonnull observer, id  _Nonnull object, id  _Nonnull oldValue, id  _Nonnull newValue, NSDictionary *change) {
         r4 = YES;
         NSLog(@"%@",model.tm);
         expect(oldValue).equal(@"tt");
@@ -137,7 +137,7 @@ model.tm.text = newText;
     it(@"mln_properties", ^{
     
     __weak typeof(model) weakModel = model;
-    [self mln_observeObject:model properties:@[@"tm.text", @"name"] withBlock:^(id  _Nonnull observer, id  _Nonnull object, NSString * _Nonnull keyPath, id  _Nonnull oldValue, id  _Nonnull newValue) {
+    [self mln_observeObject:model properties:@[@"tm.text", @"name"] withBlock:^(id  _Nonnull observer, id  _Nonnull object, NSString * _Nonnull keyPath, id  _Nonnull oldValue, id  _Nonnull newValue, NSDictionary *change) {
         expect(self == observer);
         expect(weakModel == object);
         

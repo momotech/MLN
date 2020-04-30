@@ -135,4 +135,30 @@ describe(@"observer", ^{
     });
 });
 
+it(@"observer_once", ^{
+   NSMutableArray *arr = @[].mutableCopy;
+   [dataBinding bindArray:arr forKey:@"arr"];
+   
+   __block BOOL r1 = NO;
+   __block BOOL r2 = NO;
+   MLNKVOObserver *ob1 = [[MLNKVOObserver alloc] initWithViewController:nil callback:^(NSString * _Nonnull keyPath, id  _Nonnull object, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
+    expect(r1).beFalsy();
+    r1 = YES;
+    expect(change[NSKeyValueChangeKindKey]).equal(@(NSKeyValueChangeInsertion));
+   } keyPath:nil];
+   
+   MLNKVOObserver *ob2 = [[MLNKVOObserver alloc] initWithViewController:nil callback:^(NSString * _Nonnull keyPath, id  _Nonnull object, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
+    expect(r2).beFalsy();
+    r2 = YES;
+    expect(change[NSKeyValueChangeKindKey]).equal(@(NSKeyValueChangeInsertion));
+   } keyPath:nil];
+   
+   [dataBinding addArrayObserver:ob1 forKey:@"arr"];
+   [dataBinding addArrayObserver:ob2 forKey:@"arr"];
+   
+   [arr addObject:@"abc"];
+   expect(r1).beTruthy();
+   expect(r2).beTruthy();
+});
+
 SpecEnd
