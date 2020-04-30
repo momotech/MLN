@@ -835,6 +835,8 @@ local function main_thread_should_continue_run(eval_env)
     server:send("401 Error in Execution " .. tostring(#file) .. "\n")
     server:send(file)
   end
+
+  return eval_env
 end
 
 -- 根据分析，局部变量存储在 vars[1][2] 这个表中，格式为：变量名={"变量值", "变量类型"}
@@ -857,6 +859,7 @@ local function debugger_loop(sev, svars, sfile, sline)
   local command
   local app, osname
   local eval_env = svars or {}
+  local main_thread_vars = {}
   local function emptyWatch () return false end
   local loaded = {}
   for k in pairs(package.loaded) do loaded[k] = true end
@@ -873,7 +876,7 @@ local function debugger_loop(sev, svars, sfile, sline)
          server:settimeout() --resume to poll
 
          if not line and err == "timeout" then
-           main_thread_should_continue_run(eval_env)
+          main_thread_vars = main_thread_should_continue_run(eval_env)
          end
       else
          line, err = server:receive()
@@ -924,7 +927,7 @@ local function debugger_loop(sev, svars, sfile, sline)
         server:send("400 Bad Request\n")
       end
       if mobdebug.shouldcontinuerun then
-        main_thread_should_continue_run(eval_env)
+        main_thread_vars = main_thread_should_continue_run(eval_env)
       end
     elseif command == "DELB" then
       local _, _, _, file, line = string.find(line, "^([A-Z]+)%s+(.-)%s+(%d+)%s*$")
@@ -935,7 +938,7 @@ local function debugger_loop(sev, svars, sfile, sline)
         server:send("400 Bad Request\n")
       end
       if mobdebug.shouldcontinuerun then
-        main_thread_should_continue_run(eval_env)
+        main_thread_vars = main_thread_should_continue_run(eval_env)
       end
     elseif command == "EXEC" then
       -- extract any optional parameters
@@ -951,7 +954,7 @@ local function debugger_loop(sev, svars, sfile, sline)
           local stack = tonumber(params.stack)
           -- if the requested stack frame is not the current one, then use a new capture
           -- with a specific stack frame: `capture_vars(0, coro_debugee)`
-          local env = stack and coro_debugee and capture_vars(stack-1, coro_debugee) or eval_env
+          local env = stack and coro_debugee and capture_vars(stack-1, coro_debugee) or main_thread_vars
           setfenv(func, env)
           status, res = stringify_results(params, pcall(func, unpack(env['...'] or {}))) -- pcall will return true if no error.
         end
@@ -1035,12 +1038,12 @@ local function debugger_loop(sev, svars, sfile, sline)
       end
     elseif command == "RUN" then
       server:send("200 OK\n")
-      main_thread_should_continue_run(eval_env)
+      main_thread_vars = main_thread_should_continue_run(eval_env)
     elseif command == "STEP" then
       server:send("200 OK\n")
       step_into = true
       
-      main_thread_should_continue_run(eval_env)
+      main_thread_vars = main_thread_should_continue_run(eval_env)
      
       --[[
       local ev, vars, file, line, idx_watch = coroyield()
@@ -1066,7 +1069,7 @@ local function debugger_loop(sev, svars, sfile, sline)
       if command == "OUT" then step_level = stack_level - 1
       else step_level = stack_level end
 
-      main_thread_should_continue_run(eval_env)
+      main_thread_vars = main_thread_should_continue_run(eval_env)
 
       --[[
       local ev, vars, file, line, idx_watch = coroyield()
