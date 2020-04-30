@@ -13,14 +13,11 @@
 #import "MLNDataBinding.h"
 
 @interface MLNKitViewController ()
-<<<<<<< HEAD
 {
     MLNKitInstance *_luaInstance;
 }
 
-=======
 @property (nonatomic, strong) NSMutableDictionary *globalModel;
->>>>>>> b459a04... [DataBinding] MLNKitViewController支持绑定global
 @end
 
 @implementation MLNKitViewController
