@@ -60,7 +60,7 @@
     return [first isKindOfClass:[NSArray class]];
 }
 
-- (void)mln_startKVOIfMutableble {
+- (void)mln_startKVOIfMutable {
     if ([self isKindOfClass:[NSMutableArray class]]) {
         [(NSMutableArray *)self mln_startKVO];
     }
@@ -69,6 +69,19 @@
         [self enumerateObjectsUsingBlock:^(NSMutableArray*  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
             if ([obj isKindOfClass:[NSMutableArray class]]) {
                 [obj mln_startKVO];
+            }
+        }];
+    }
+}
+
+- (void)mln_stopKVOIfMutable {
+    if ([self isKindOfClass:[NSMutableArray class]]) {
+        [(NSMutableArray *)self mln_stopKVO];
+    }
+    if (self.mln_is2D) {
+        [self enumerateObjectsUsingBlock:^(NSMutableArray*  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            if ([obj isKindOfClass:[NSMutableArray class]]) {
+                [obj mln_stopKVO];
             }
         }];
     }

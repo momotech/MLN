@@ -46,7 +46,10 @@
 //}
 
 - (void)mln_notifyAllObserver:(NSKeyValueChange)type indexSet:(NSIndexSet *)indexSet newValue:(id)newValue oldValue:(id)oldValue {
-    NSMutableArray<MLNKVOArrayHandler> *obs = objc_getAssociatedObject(self, kMLNKVOArrayHandlers);
+    NSArray<MLNKVOArrayHandler> *obs;
+    @synchronized (self) {
+        obs = [self mln_observerHandlersCreateIfNeeded:NO].copy;
+    }
     if (obs && obs.count > 0) {
         NSMutableDictionary *change = @{}.mutableCopy;
         [change setValue:@(type) forKey:NSKeyValueChangeKindKey];
@@ -71,28 +74,34 @@
 //}
 
 - (void)mln_addObserverHandler:(MLNKVOArrayHandler)handler {
-    NSMutableArray<MLNKVOArrayHandler> *obs = [self mln_observerHandlers];
-    if (![obs containsObject:handler]) {
-        [obs addObject:handler];
+    @synchronized (self) {
+        NSMutableArray<MLNKVOArrayHandler> *obs = [self mln_observerHandlersCreateIfNeeded:YES];
+        if (![obs containsObject:handler]) {
+            [obs addObject:handler];
+        }
     }
 }
 
 - (void)mln_removeObserverHandler:(MLNKVOArrayHandler)handler {
     if (handler) {
-        NSMutableArray *obs = objc_getAssociatedObject(self, kMLNKVOArrayHandlers);
-        [obs removeObject:handler];
+        @synchronized (self) {
+            NSMutableArray *obs = [self mln_observerHandlersCreateIfNeeded:NO];
+            [obs removeObject:handler];
+        }
     }
 }
 
 - (void)mln_clearObserverHandlers {
-    NSMutableArray *obs = objc_getAssociatedObject(self, kMLNKVOArrayHandlers);
-    [obs removeAllObjects];
+    @synchronized (self) {
+        NSMutableArray *obs = [self mln_observerHandlersCreateIfNeeded:NO];
+        [obs removeAllObjects];
+    }
 }
 
 static const void *kMLNKVOArrayHandlers = &kMLNKVOArrayHandlers;
-- (NSMutableArray<MLNKVOArrayHandler> *)mln_observerHandlers {
+- (NSMutableArray<MLNKVOArrayHandler> *)mln_observerHandlersCreateIfNeeded:(BOOL)shouldCreate {
     NSMutableArray *obs = objc_getAssociatedObject(self, kMLNKVOArrayHandlers);
-    if (!obs) {
+    if (!obs && shouldCreate) {
         obs = [NSMutableArray array];
         objc_setAssociatedObject(self, kMLNKVOArrayHandlers, obs, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     }

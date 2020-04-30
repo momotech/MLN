@@ -10,7 +10,6 @@
 NS_ASSUME_NONNULL_BEGIN
 
 typedef void(^MLNKVOBlock)(id oldValue, id newValue);
-typedef void(^MLNDeallocatorCallback)(id receiver);
 
 @interface NSObject (MLNKVO)
 
@@ -22,6 +21,12 @@ typedef void(^MLNDeallocatorCallback)(id receiver);
 - (void)mln_removeObervationsForOwner:(id)owner keyPath:(NSString *)keyPath;
 - (void)mln_removeAllObservations;
 
+@end
+
+@interface NSObject (MLNArrayKVO)
+
+- (void)mln_observeArray:(NSMutableArray *)array withBlock:(MLNBlockChange)observationBlock;
+- (void)mln_removeArrayObervationsForOwner:(id)owner;
 @end
 
 @interface NSObject (MLNDeprecated)
