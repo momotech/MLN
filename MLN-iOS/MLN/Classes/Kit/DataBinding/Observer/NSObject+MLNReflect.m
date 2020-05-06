@@ -7,6 +7,7 @@
 
 #import "NSObject+MLNKVO.h"
 #import "MLNExtScope.h"
+#import "MLNCore.h"
 
 @import ObjectiveC;
 
@@ -71,6 +72,6 @@
     if (keyPath) {
         return [self valueForKeyPath:keyPath];
     }
-    return [self mln_toDictionary];
+    return self;
 }
 @end
