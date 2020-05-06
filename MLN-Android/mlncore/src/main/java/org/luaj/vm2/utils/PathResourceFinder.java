@@ -16,11 +16,11 @@ import java.io.File;
  */
 public class PathResourceFinder implements ResourceFinder {
     private static final String LUA_SUFFIX = ".lua";
-    private static final String LUA_BINSP = "b";
     private static final char LUA_PATH_SEPARATOR = '.';
     private static final String PARENT_PATH = "..";
 
     private final String basePath;
+    private String errorMsg;
 
     /**
      * 需要传入根目录
@@ -40,12 +40,11 @@ public class PathResourceFinder implements ResourceFinder {
 
     @Override
     public String findPath(String name) {
-        File f = new File(basePath, name + LUA_BINSP);
+        errorMsg = null;
+        File f = new File(basePath, name);
         if (f.isFile())
             return f.getAbsolutePath();
-        f = new File(basePath, name);
-        if (f.isFile())
-            return f.getAbsolutePath();
+        errorMsg = "PRF: " + f.getAbsolutePath() + " not a file";
         return null;
     }
 
@@ -57,6 +56,11 @@ public class PathResourceFinder implements ResourceFinder {
     @Override
     public void afterContentUse(String name) {
 
+    }
+
+    @Override
+    public String getError() {
+        return errorMsg;
     }
 
     @Override

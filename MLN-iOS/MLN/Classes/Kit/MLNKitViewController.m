@@ -9,10 +9,11 @@
 #import "MLNKitInstance.h"
 #import "MLNLuaBundle.h"
 #import "MLNKitInstanceFactory.h"
-#import "MLNKitViewController+DataBinding.h"
+#import "MLNKVOObserverProtocol.h"
+#import "MLNDataBinding.h"
 
 @interface MLNKitViewController ()
-
+@property (nonatomic, strong) NSMutableDictionary *globalModel;
 @end
 
 @implementation MLNKitViewController
@@ -97,6 +98,8 @@
         [self.delegate kitViewDidLoad:self];
     }
     [self.kitInstance changeRootView:self.view];
+    [self bindGlobalModel];
+    
     NSError *error = nil;
     BOOL ret = [self.kitInstance runWithEntryFile:self.entryFilePath windowExtra:self.extraInfo error:&error];
     if (ret) {
@@ -145,6 +148,11 @@
         [self.delegate kitViewController:self viewDidDisappear:animated];
     }
     [self.kitInstance doLuaWindowDidDisappear];
+}
+
+- (void)bindGlobalModel {
+    self.globalModel = [NSMutableDictionary dictionary];
+    [self.mln_dataBinding bindData:self.globalModel forKey:@"Global"];
 }
 
 - (MLNKitInstance *)kitInstance

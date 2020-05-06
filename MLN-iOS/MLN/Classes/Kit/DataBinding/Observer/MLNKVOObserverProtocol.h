@@ -8,6 +8,8 @@
 #ifndef MLNKVOObserverProtocol_h
 #define MLNKVOObserverProtocol_h
 
+NS_ASSUME_NONNULL_BEGIN
+
 @protocol MLNKVOObserverProtol <NSObject>
 
 /// 返回持有observer的对象，如果返回nil，则会被MLNDatabinding持有
@@ -24,8 +26,18 @@
 @protocol MLNArrayObserverProtocol <NSObject>
 @end
 
+
 @class MLNDataBinding;
+@protocol MLNDataBindingProtocol <NSObject>
+
+@property (nonatomic, strong, readonly) MLNDataBinding * _Nonnull mln_dataBinding;
+
+- (void)bindData:(NSObject *)data forKey:(NSString *)key;
+
+@end
+
 @interface UIViewController (MLNDataBinding)
+
 @property (nonatomic, strong, readonly) MLNDataBinding * _Nonnull mln_dataBinding;
 - (void)mln_addToSuperViewController:(UIViewController *_Nonnull)superVC frame:(CGRect) frame;
 
@@ -35,5 +47,7 @@
 #define LOCK() pthread_mutex_lock(&_lock)
 #define UNLOCK() pthread_mutex_unlock(&_lock)
 #define LOCK_DESTROY() pthread_mutex_destroy(&_lock)
+
+NS_ASSUME_NONNULL_END
 
 #endif /* MLNKVOObserverProtocol_h */

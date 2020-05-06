@@ -24,13 +24,13 @@
 
 - (void)createController {
     NSString *demoName = @"layout_DataBindView.lua";
-    MLNKitViewController *viewController = [[MLNKitViewController alloc] initWithEntryFilePath:demoName];
-    MLNLuaBundle *bundle = [MLNLuaBundle mainBundleWithPath:@"inner_demo.bundle"];
-    [viewController changeCurrentBundle:bundle];
+    NSString *path = [[NSBundle mainBundle] pathForResource:@"inner_demo" ofType:@"bundle"];
+    NSBundle *bundle = [NSBundle bundleWithPath:path];
+    MLNUIViewController *viewController = [[MLNUIViewController alloc] initWithEntryFileName:demoName bundle:bundle];
     
     self.model = [MLNDataBindModel testModel];
     
-    self.model.mln_subscribe(@"name", ^(id  _Nonnull oldValue, id  _Nonnull newValue) {
+    self.model.mln_watch(@"name", ^(id  _Nonnull oldValue, id  _Nonnull newValue) {
         NSLog(@"name has changed from  %@ to %@",oldValue, newValue);
     });
     

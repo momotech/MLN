@@ -17,15 +17,6 @@
 
 @implementation MLNBindTableViewController
 
-- (instancetype)init
-{
-    self = [super init];
-    if (self) {
-        NSLog(@">>>>mem alloc %@",self);
-    }
-    return self;
-}
-
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
@@ -34,15 +25,13 @@
 
 - (void)createController {
     NSString *demoName = @"layout_DataBindTable.lua";
-    MLNKitViewController *viewController = [[MLNKitViewController alloc] initWithEntryFilePath:demoName];
-    MLNLuaBundle *bundle = [MLNLuaBundle mainBundleWithPath:@"inner_demo.bundle"];
-    [viewController changeCurrentBundle:bundle];
-    
+    NSString *path = [[NSBundle mainBundle] pathForResource:@"inner_demo" ofType:@"bundle"];
+    NSBundle *bundle = [NSBundle bundleWithPath:path];
+    MLNUIViewController *viewController = [[MLNUIViewController alloc] initWithEntryFileName:demoName bundle:bundle];
+
     [self createModelArray];
     
-//    [viewController.dataBinding bindArray:self.modelArray forKey:@"source"];
     [viewController bindData:self.tableModel forKey:@"tableModel"];
-    
     [viewController mln_addToSuperViewController:self frame:self.view.bounds];
 }
 
@@ -132,7 +121,4 @@
     });
 }
 
-- (void)dealloc {
-    NSLog(@">>>>mem dealloc %@",self);
-}
 @end

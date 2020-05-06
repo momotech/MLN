@@ -148,7 +148,8 @@ public class UDViewPagerAdapter extends JavaUserdata {
         String ret = reuseIdCache.get(p);
         if (ret != null)
             return ret;
-        LuaValue v = funReuseid.invoke(varargsOf(luaInt(p)))[0];
+        LuaValue[] rets = funReuseid.invoke(varargsOf(luaInt(p)));
+        LuaValue v = rets == null || rets.length == 0 ? Nil() : rets[0];
         if (AssertUtils.assertString(v, funReuseid, getGlobals())) {
             ret = v.toJavaString();
         } else {
@@ -165,7 +166,8 @@ public class UDViewPagerAdapter extends JavaUserdata {
         if (funGetCount == null || funGetCount.isNil()) {
             return 0;
         }
-        LuaValue v = funGetCount.invoke(null)[0];
+        LuaValue[] rets = funGetCount.invoke(null);
+        LuaValue v = rets == null || rets.length == 0 ? Nil() : rets[0];
         if (AssertUtils.assertNumber(v, funGetCount, getGlobals())) {
             allCountCache = v.toInt();
         } else {

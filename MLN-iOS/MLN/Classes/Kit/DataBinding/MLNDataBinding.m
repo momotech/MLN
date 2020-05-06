@@ -7,10 +7,10 @@
 
 #import "MLNDataBinding.h"
 #import <pthread.h>
-#import "KVOController.h"
 #import "NSMutableArray+MLNKVO.h"
 #import "NSArray+MLNKVO.h"
 #import "MLNExtScope.h"
+#import "NSObject+MLNKVO.h"
 
 @interface MLNDataBinding() {
     pthread_mutex_t _lock;
@@ -27,9 +27,8 @@
     self = [super init];
     if (self) {
         self.dataMap = [NSMutableDictionary dictionary];
-        self.observerMap =  [NSMapTable strongToWeakObjectsMapTable];
+        self.observerMap =  [NSMapTable strongToStrongObjectsMapTable];
         LOCK_INIT();
-        NSLog(@">>>>mem alloc %@",self);
     }
     return self;
 }
@@ -92,6 +91,10 @@
 }
 
 - (void)removeDataObserver:(NSObject<MLNKVOObserverProtol> *)observer forKeyPath:(NSString *)keyPath {
+    [self _realRemoveObserver:observer forKeyPath:keyPath forArray:NO];
+}
+
+- (void)_realRemoveObserver:(NSObject<MLNKVOObserverProtol> *)observer forKeyPath:(NSString *)keyPath forArray:(BOOL)forArray {
     NSParameterAssert(observer && keyPath);
     if(!observer || !keyPath) return;
     
@@ -99,6 +102,26 @@
     NSMutableArray *observers = [self.observerMap objectForKey:keyPath];
     [observers removeObject:observer];
     UNLOCK();
+
+    NSString *key, *path;
+    if (!forArray) {
+        [self extractFirstKey:&key path:&path from:keyPath];
+        if (!key || !path) {
+            NSLog(@"key: %@ and path: %@ should not be nil",key,path);
+            return;
+        }
+    } else {
+        key = keyPath;
+    }
+
+    if (key) {
+        id obj = [self dataForKeyPath:key];
+        if (forArray) {
+            [obj mln_removeArrayObervationsForOwner:observer];
+        } else {
+            [obj mln_removeObervationsForOwner:observer keyPath:path];
+        }
+    }
 }
 
 - (NSArray<NSObject<MLNKVOObserverProtol> *> *)observersForKeyPath:(NSString *)keyPath {
@@ -115,7 +138,6 @@
 #pragma mark - Array
 
 - (void)bindArray:(NSArray *)array forKey:(NSString *)key {
-    [array mln_startKVOIfMutableble];
     [self bindData:array forKey:key];
 }
 
@@ -124,7 +146,8 @@
 }
 
 - (void)removeArrayObserver:(NSObject<MLNKVOObserverProtol> *)observer forKey:(NSString *)key {
-    [self removeDataObserver:observer forKeyPath:key];
+//    [self removeDataObserver:observer forKeyPath:key];
+    [self _realRemoveObserver:observer forKeyPath:key forArray:YES];
 }
 
 #pragma mark - Util
@@ -168,35 +191,38 @@
     }
     
     @weakify(self);
+    @weakify(observer);
     void(^obBlock)(NSString*,NSObject*,NSDictionary*) = ^(NSString *kp, NSObject *object, NSDictionary *change) {
         @strongify(self);
-        if (self) {
-            pthread_mutex_lock(&self->_lock);
-            NSArray *obsCopy = observerArray.copy;
-            pthread_mutex_unlock(&self->_lock);
-            for (NSObject<MLNKVOObserverProtol> *ob in obsCopy) {
-                [ob mln_observeValueForKeyPath:kp ofObject:object change:change];
-            }
+        @strongify(observer);
+        if (self && observer) {
+//            pthread_mutex_lock(&self->_lock);
+//            NSArray *obsCopy = observerArray.copy;
+//            pthread_mutex_unlock(&self->_lock);
+//            for (NSObject<MLNKVOObserverProtol> *ob in obsCopy) {
+//                [ob mln_observeValueForKeyPath:kp ofObject:object change:change];
+//            }
+            [observer mln_observeValueForKeyPath:kp ofObject:object change:change];
         }
     };
     
     if (!isArray) {
-        [self.KVOController observe:object keyPath:path options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld block:^(id  _Nullable obs, id  _Nonnull object, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
-            obBlock(path, object, change);
+        [observer mln_observeObject:object property:path withBlock:^(id  _Nonnull observer, id  _Nonnull object, id  _Nonnull oldValue, id  _Nonnull newValue, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
+            obBlock(path,object, change);
         }];
     } else {
         NSMutableArray *bindArray = (NSMutableArray *)object;
-        [bindArray mln_startKVOIfMutableble];
-        
-        [bindArray mln_addObserverHandler:^(NSMutableArray * _Nonnull array, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
-            obBlock(nil, array, change);
+//        [bindArray mln_startKVOIfMutable];
+
+        [observer mln_observeArray:bindArray withBlock:^(id  _Nonnull observer, id  _Nonnull object, id  _Nonnull oldValue, id  _Nonnull newValue, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
+            obBlock(nil, object, change);
         }];
         
         if ([bindArray mln_is2D]) {
-            [bindArray enumerateObjectsUsingBlock:^(NSMutableArray* _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            [bindArray enumerateObjectsUsingBlock:^(NSMutableArray*  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
                 if ([obj isKindOfClass:[NSMutableArray class]]) {
-                    [obj mln_addObserverHandler:^(NSMutableArray * _Nonnull array, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
-                        obBlock(nil, array, change);
+                    [observer mln_observeArray:obj withBlock:^(id  _Nonnull observer, id  _Nonnull object, id  _Nonnull oldValue, id  _Nonnull newValue, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
+                        obBlock(nil, object, change);
                     }];
                 }
             }];
@@ -209,7 +235,4 @@
     UNLOCK();
 }
 
-- (void)dealloc {
-    NSLog(@">>>>mem dealloc %@",self);
-}
 @end

@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
     s.name             = 'MLN'
-    s.version          = '1.0.0.2'
+    s.version          = '1.0.0.5.beta'
     s.summary          = 'A lib of Momo Lua Native.'
     
     # This description is used to generate tags and improve search results.
@@ -52,7 +52,7 @@ Pod::Spec.new do |s|
         k.source_files = 'MLN-iOS/MLN/Classes/Kit/**/*.{h,m,c}'
         k.public_header_files = 'MLN-iOS/MLN/Classes/Kit/**/*.h'
         k.dependency  'MLN/Core'
-        k.dependency  'KVOController'
+        #k.dependency  'KVOController'
     end
     
 end

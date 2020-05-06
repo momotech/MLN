@@ -40,8 +40,6 @@
         self.viewController = viewController;
         self.callback = callback;
         [self addViewControllerObserver:viewController];
-        NSLog(@"---- init : %s %p",__FUNCTION__, self);
-
     }
     return self;
 }
@@ -61,7 +59,6 @@
 
 - (void)dealloc {
     LOCK_DESTROY();
-    NSLog(@"---- dealloc : %s %p",__FUNCTION__, self);
 }
 
 - (void)setActive:(BOOL)active {

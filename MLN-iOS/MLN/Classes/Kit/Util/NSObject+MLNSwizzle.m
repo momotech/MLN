@@ -27,7 +27,6 @@
         Method originMethod = class_getInstanceMethod(self, originSelector);
         IMP imp = imp_implementationWithBlock(originBlock);
         __unused BOOL res = class_addMethod(self, originSelector, imp, method_getTypeEncoding(originMethod));
-        NSLog(@"add %s : %@", sel_getName(originSelector), res?@"OK":@"failed");
     }
     
     [self mln_swizzleInstanceSelector:originSelector withNewSelector:newSelector newImpBlock:block];

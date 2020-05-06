@@ -25,6 +25,7 @@ import java.util.Objects;
  * 寻找在Android assets包下存在的文件数据
  */
 public class AssetsResourceFinder implements ResourceFinder {
+    private String errorMsg;
     private final Context context;
 
     /**
@@ -50,14 +51,15 @@ public class AssetsResourceFinder implements ResourceFinder {
 
     @Override
     public byte[] getContent(String name) {
+        errorMsg = null;
         InputStream is = null;
         try {
             is = context.getAssets().open(name);
             byte[] data = new byte[is.available()];
             if (is.read(data) == data.length)
                 return data;
-        } catch (Throwable ignore) {
-
+        } catch (Throwable e) {
+            errorMsg = "ARF: " + e.toString();
         } finally {
             IOUtil.closeQuietly(is);
         }
@@ -67,6 +69,11 @@ public class AssetsResourceFinder implements ResourceFinder {
     @Override
     public void afterContentUse(String name) {
 
+    }
+
+    @Override
+    public String getError() {
+        return errorMsg;
     }
 
     @Override

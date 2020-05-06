@@ -9,8 +9,7 @@
 #import "MLNBlock.h"
 #import "MLNKitHeader.h"
 #import "MLNKitViewController.h"
-#import "MLNKitViewController+DataBinding.h"
-#import "KVOController.h"
+#import "MLNDataBinding.h"
 
 @interface MLNBlockObserver ()
 @property (nonatomic, strong, readwrite) MLNBlock *block;
@@ -39,7 +38,7 @@
 - (void)notifyKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change {
     [super notifyKeyPath:keyPath ofObject:object change:change];
     if (!self.block.luaCore) {
-        [(MLNKitViewController *)self.viewController removeDataObserver:self forKeyPath:self.keyPath];
+        [((id<MLNDataBindingProtocol>)self.viewController).mln_dataBinding removeDataObserver:self forKeyPath:self.keyPath];
         return;
     }
     
@@ -59,13 +58,8 @@
 {
     self = [super initWithViewController:viewController callback:callback keyPath:keyPath];
     if (self) {
-        NSLog(@">>>>mem alloc %@",self);
     }
     return self;
-}
-
-- (void)dealloc {
-    NSLog(@">>>>mem dealloc %@",self);
 }
 
 @end

@@ -663,5 +663,10 @@ metamacro_if_eq(0, 1)(true)(false)
 #define metamacro_drop19(...) metamacro_drop18(metamacro_tail(__VA_ARGS__))
 #define metamacro_drop20(...) metamacro_drop19(metamacro_tail(__VA_ARGS__))
 
+#ifdef DEBUG
+#   define DLog(...) NSLog(__VA_ARGS__)
+#else
+#   define DLog(...) (void)0
+#endif
 
 #endif /* MLNMetamacros_h */

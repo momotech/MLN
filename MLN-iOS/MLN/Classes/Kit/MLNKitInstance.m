@@ -33,6 +33,7 @@
 #import "MLNWindow.h"
 #import "MLNKitInstanceConsts.h"
 #import "MLNFile.h"
+#import "MLNKitBridgesManager.h"
 
 #define kMLNRunLoopBeforeWaitingLazyTaskOrder   1
 #define kMLNRunLoopBeforeWaitingRenderOrder     2
@@ -51,6 +52,14 @@
 @property (nonatomic, strong) NSMutableArray *onDestroyCallbacks;
 @property (nonatomic, assign) BOOL didViewAppear;
 @property (nonatomic, assign) BOOL needCallAppear;
+
+@end
+
+// Deprecated
+@interface MLNKitInstance ()
+@property (nonatomic) Class<MLNConvertorProtocol> convertorClass;
+@property (nonatomic) Class<MLNExporterProtocol> exporterClass;
+@property (nonatomic, strong) MLNKitBridgesManager *bridgesManager;
 
 @end
 
@@ -201,54 +210,8 @@
     _entryFilePath = entryFilePath;
     // 准备环境
     [self setup];
-    // 运行主页面布局文件
-    BOOL success = [self runLayoutFileWithEntryFilePath:entryFilePath error:error];
     // 执行
-    if (success) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self runWithEntryFile:entryFilePath error:error];
-        });
-    } else { // 文件
-        success = [self runWithEntryFile:entryFilePath error:error];
-    }
-
-    return success;
-}
-
-- (BOOL)runLayoutFileWithEntryFilePath:(NSString *)entryFilePath error:(NSError * _Nullable __autoreleasing * _Nullable)error {
-    NSString *fileName = [[entryFilePath lastPathComponent] stringByDeletingPathExtension];
-    NSString *layoutFileName = [NSString stringWithFormat:@"%@Layout.lua", fileName ?: @""];
-    NSString *layoutFilePath = [self.currentBundle filePathWithName:layoutFileName];
-    
-    NSError *innerError = nil;
-    if (!layoutFilePath || ![MLNFile existAtPath:layoutFilePath]) {
-        innerError = [NSError mln_errorLoad:[NSString stringWithFormat:@"The layout file path of entry file doesn't exist, and the entryFilePath is %@", entryFilePath ?: @"(null)"]];
-//        MLNError(self.luaCore, @"%@", [innerError mln_errorMessage]);
-        NSLog(@"%@",[innerError mln_errorMessage]);
-        [self handleLayoutFileError:innerError errorBuffer:error filePath:entryFilePath];
-        return NO;
-    }
-    
-    BOOL success = [self.luaCore runFile:layoutFileName error:&innerError];
-    if (!success) {
-        [self handleLayoutFileError:innerError errorBuffer:error filePath:entryFilePath];
-        return NO;
-    }
-    
-    [self forceLayoutLuaWindow];
-    if ([self.delegate respondsToSelector:@selector(instance:didFinishRun:)]) {
-        [self.delegate instance:self didFinishRun:entryFilePath];
-    }
-    return YES;
-}
-
-- (void)handleLayoutFileError:(NSError *)error errorBuffer:(NSError **)errorBuffer filePath:(NSString *)filePath {
-    if (errorBuffer) {
-        *errorBuffer = error;
-    }
-    if ([self.delegate respondsToSelector:@selector(instance:didFailRun:error:)]) {
-        [self.delegate instance:self didFailRun:filePath error:error];
-    }
+    return [self runWithEntryFile:entryFilePath error:error];
 }
 
 - (BOOL)runWithEntryFile:(NSString *)entryFilePath error:(NSError * _Nullable __autoreleasing * _Nullable)error
@@ -439,6 +402,8 @@
     }
     // 创建新的LuaCore
     [self luaCore];
+    // 注册Kit所有Bridge, 兼容老代码
+    [self registerKitClasses];
     // 开启所有处理引擎
     [self startAllEngines];
     // 创建LuaWindow
@@ -453,7 +418,11 @@
 
 - (void)createLuaCore
 {
-    _luaCore = [self.luaCoreBuilder getLuaCore];
+    if (self.luaCoreBuilder) {
+        _luaCore = [self.luaCoreBuilder getLuaCore];
+    } else {
+        _luaCore = [[MLNLuaCore alloc] initWithLuaBundle:_currentBundle convertor:_convertorClass exporter:_exporterClass];
+    }
     [_luaCore changeLuaBundle:self.currentBundle];
     _luaCore.weakAssociatedObject = self;
     _luaCore.errorHandler = self;
@@ -666,4 +635,35 @@ extern int mln_luaopen_socket_core(lua_State *L);
 }
 #endif
 
+@end
+
+@implementation MLNKitInstance (Deprecated)
+
+- (instancetype)initWithLuaBundle:(MLNLuaBundle *)bundle rootView:(UIView * _Nullable)rootView viewController:(nonnull UIViewController<MLNViewControllerProtocol> *)viewController
+{
+    return [self initWithLuaBundle:bundle convertor:nil exporter:nil rootView:rootView viewController:viewController];
+}
+
+- (instancetype)initWithLuaBundle:(MLNLuaBundle *__nullable)luaBundle convertor:(Class<MLNConvertorProtocol> __nullable)convertorClass exporter:(Class<MLNExporterProtocol> __nullable)exporterClass rootView:(UIView *)rootView viewController:(UIViewController<MLNViewControllerProtocol> *)viewController
+{
+    if (self = [super init]) {
+        _currentBundle = luaBundle;
+        if (!convertorClass) {
+            convertorClass = MLNKiConvertor.class;
+        }
+        _convertorClass = convertorClass;
+        _exporterClass = exporterClass;
+        _rootView = rootView;
+        _viewController = viewController;
+        _instanceHandlersManager = [[MLNKitInstanceHandlersManager alloc] initWithUIInstance:self];
+        _bridgesManager = [[MLNKitBridgesManager alloc] initWithUIInstance:self];
+        _instanceConsts = [[MLNKitInstanceConsts alloc] init];
+    }
+    return self;
+}
+
+- (void)registerKitClasses
+{
+    [self.bridgesManager registerKit];
+}
 @end

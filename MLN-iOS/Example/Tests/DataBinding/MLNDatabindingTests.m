@@ -10,8 +10,9 @@
 #import "MLNTestModel.h"
 #import <MLNKVOObserver.h>
 #import <NSObject+MLNKVO.h>
-#import "MLNKitViewController.h"
-#import "MLNKitViewController+DataBinding.h"
+#import "MLNUIViewController.h"
+#import "MLNUIViewController+DataBinding.h"
+//#import "MLNKitViewController+DataBinding.h"
 #import "MLNLuaBundle.h"
 #import "MLNKitInstance.h"
 
@@ -19,17 +20,18 @@ SpecBegin(MLNDatabinding)
 
 __block MLNDataBinding *dataBinding;
 __block MLNTestModel *model;
-__block MLNKitViewController *vc;
+__block MLNUIViewController *vc;
 
 
 beforeEach(^{
            NSBundle *bundle = [NSBundle bundleForClass:[self class]];
            MLNLuaBundle *luaB = [[MLNLuaBundle alloc] initWithBundle:bundle];
-           vc = [[MLNKitViewController alloc] initWithEntryFilePath:@"DataBindTest.lua"];
-           [vc changeCurrentBundle:luaB];
+//           vc = [[MLNUIViewController alloc] initWithEntryFilePath:@"DataBindTest.lua"];
+//           [vc changeCurrentBundle:luaB];
+           vc = [[MLNUIViewController alloc] initWithEntryFileName:@"DataBindTest.lua" bundle:bundle];
            [vc view];
            
-           dataBinding = [vc dataBinding];
+           dataBinding = [vc mln_dataBinding];
            [MLNDataBinding performSelector:NSSelectorFromString(@"mln_updateCurrentLuaCore:") withObject:vc.kitInstance.luaCore];
            
            model = [MLNTestModel new];
@@ -156,6 +158,29 @@ describe(@"observer", ^{
         expect(result2).to.beTruthy();
     });
 });
+});
+
+it(@"observer_onc", ^{
+         __block BOOL r1 = NO;
+         __block BOOL r2 = NO;
+         MLNKVOObserver *ob1 = [[MLNKVOObserver alloc] initWithViewController:nil callback:^(NSString * _Nonnull keyPath, id  _Nonnull object, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
+            id new = change[NSKeyValueChangeNewKey];
+            expect(new).equal(@"ttaa");
+            expect(r1).beFalsy();
+            r1  = YES;
+         } keyPath:@"text"];
+         MLNKVOObserver *ob2 = [[MLNKVOObserver alloc] initWithViewController:nil callback:^(NSString * _Nonnull keyPath, id  _Nonnull object, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
+             id new = change[NSKeyValueChangeNewKey];
+             expect(new).equal(@"ttaa");
+             expect(r2).beFalsy();
+             r2  = YES;
+         } keyPath:@"text"];
+
+         [dataBinding addDataObserver:ob1 forKeyPath:@"userData.text"];
+         [dataBinding addDataObserver:ob2 forKeyPath:@"userData.text"];
+         model.text  = @"ttaa";
+       expect(r1).beTruthy();
+       expect(r2).beTruthy();
 });
 
 SpecEnd

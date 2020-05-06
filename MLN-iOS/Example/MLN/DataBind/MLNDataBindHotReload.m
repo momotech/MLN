@@ -11,10 +11,11 @@
 #import "MLNDataBindModel.h"
 #import <NSArray+MLNKVO.h>
 
-@interface MLNDataBindHotReload ()
+@interface MLNDataBindHotReload () <MLNDataBindingProtocol>
 @property (nonatomic, strong) MLNDataBindModel *model;
 //@property (nonatomic, strong) NSMutableArray <MLNDataBindModel *> *modelArray;
 @property (nonatomic, strong) MLNDatabindTableViewModel *tableModel;
+@property (nonatomic, strong) MLNDataBinding *dataBinding;
 @end
 
 @implementation MLNDataBindHotReload
@@ -143,6 +144,18 @@
 
 - (void)dealloc {
     NSLog(@"---- dealloc : %s ",__func__);
+}
+
+#pragma mark - MLNDataBindingProtocol
+
+- (MLNDataBinding *)mln_dataBinding {
+    if (!_dataBinding) {
+        _dataBinding = [MLNDataBinding new];
+    }
+    return _dataBinding;
+}
+- (void)bindData:(NSObject *)data forKey:(NSString *)key {
+    [self.mln_dataBinding bindData:data forKey:key];
 }
 
 @end

@@ -15,6 +15,7 @@
 
 #include "list.h"
 #include <stdlib.h>
+#include <string.h>
 
 static int resize(List *);
 
@@ -33,7 +34,7 @@ struct list_ {
     size_t size;        /*实际元素个数*/
     int _c;             /*错误代码*/
     float load_factor;  /*增长值*/
-    short autoRelist;   /*自动从新排列(中间不会有空位)*/
+    char autoRelist;    /*自动从新排列(中间不会有空位)*/
     list_alloc f_alloc; /*申请和释放内存, nonnull*/
     list_eqauls f_equals;   /*判断内容相等的函数, nullable*/
 };
@@ -46,12 +47,12 @@ List * list_new(list_alloc f, int init, int autoRelist) {
     list->size = 0;
     list->_arr_used = 0;
     list->_c = 0;
-    list->load_factor = 0.75f;
+    list->load_factor = 0.75F;
     list->f_alloc = f;
     list->f_equals = NULL;
-    list->_len = init;
+    list->_len = (size_t) init;
     list->arr = (void **) f(NULL, 0, sizeof(void *) * init);
-    list->autoRelist = autoRelist;
+    list->autoRelist = (char) autoRelist;
     if (!list->arr) {
         list->_c = 1;
         return list;
@@ -111,14 +112,14 @@ void * list_get(List * list, size_t index) {
 }
 
 size_t list_index(List * list, void * v) {
-    if (list->_c) return -2;
+    if (list->_c) return list->size + 2;
     size_t i;
     for (i = 0; i < list->_arr_used; i ++) {
         void * v1 = list->arr[i];
         if (v1 == v) return i;
         if (list->f_equals && list->f_equals(v1, v)) return i;
     }
-    return -1;
+    return list->size + 1;
 }
 
 void * list_remove(List * list, size_t index) {
