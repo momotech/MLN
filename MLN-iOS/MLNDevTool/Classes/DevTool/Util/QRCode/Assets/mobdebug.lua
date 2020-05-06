@@ -691,9 +691,11 @@ local function debug_hook(event, line)
           end
           
           if line >= from and line <= to then
-             local func = loadstring(cmd)
+            local env = capture_vars(1)
+            local func = loadstring(cmd)
              if func and type(func) == "function" then
-                func()
+              setfenv(func, env)
+              func()
              end
           end
         end
@@ -843,11 +845,12 @@ end
 -- 这里暂时把全局变量也存储到这里，统一显示在 idea frame 面板上
 local function mln_append_global_values(vars)
   for k, v in pairs(_G) do
-    if type(v) == "string" or 
+    if k == "item" or --DataBinding:getModel()的返回值名字为item，类型为table
+       type(v) == "string" or 
        type(v) == "userdata" or
        type(v) == "number" then --暂时只显示这三种类型的全局变量
         if string.sub(k, 1, 1) ~= "_" then --过滤掉下划线开头的全局变量（为了idea面板展示更友好）
-          local name = tostring(k) .. " [global]"
+          local name = tostring(k) .. "_global"
           vars[1][2][name] = {v, v}
         end
     end
@@ -954,7 +957,24 @@ local function debugger_loop(sev, svars, sfile, sline)
           local stack = tonumber(params.stack)
           -- if the requested stack frame is not the current one, then use a new capture
           -- with a specific stack frame: `capture_vars(0, coro_debugee)`
-          local env = stack and coro_debugee and capture_vars(stack-1, coro_debugee) or main_thread_vars
+
+          -- 如果想要提取的变量是全局变量，则在_G中查找，然后插到main_vars里，在idea插件面板展示
+          local main_vars = main_thread_vars
+          local _, _, innerLine = string.find(line, "(.+)%-%-%s*%b{}%s*$")
+          if innerLine then
+            local _, _, gname  = string.find(innerLine, "^[A-Z]+%s*return%s*(%a+)_global%s*$")
+            if gname then
+              local v = _G[gname]
+              if v and type(v) == "table" then
+                local vars_metatable = getmetatable(main_vars) --默认main_vars表(也就是capture_vars函数的返回值)，是写保护的，所以这里在写入数据前，更改下元表
+                setmetatable(main_vars, {})
+                main_vars[gname .. "_global"] = v
+                setmetatable(main_vars, vars_metatable)
+              end
+            end
+          end
+
+          local env = stack and coro_debugee and capture_vars(stack-1, coro_debugee) or main_vars
           setfenv(func, env)
           status, res = stringify_results(params, pcall(func, unpack(env['...'] or {}))) -- pcall will return true if no error.
         end
