@@ -35,8 +35,19 @@
 + (id __nullable)lua_dataForKeyPath:(NSString *)keyPath {
     UIViewController<MLNDataBindingProtocol> *kitViewController = (UIViewController<MLNDataBindingProtocol> *)MLN_KIT_INSTANCE([self mln_currentLuaCore]).viewController;
     NSObject *obj = [kitViewController.mln_dataBinding dataForKeyPath:keyPath];
-    if ([obj isKindOfClass:[NSArray class]]) {
+    return [self convertToLuaObject:obj];
+}
+
++ (id)convertToLuaObject:(NSObject *)obj {
+    MLNNativeType type = obj.mln_nativeType;
+    if (type == MLNNativeTypeArray || type == MLNNativeTypeMArray) {
         return [(NSArray *)obj mln_convertToLuaTableAvailable];
+    }
+    if (type == MLNNativeTypeDictionary || type == MLNNativeTypeMDictionary) {
+        return obj.copy;
+    }
+    if (type == MLNNativeTypeObject) {
+        return obj.mln_toDictionary;
     }
     return obj;
 }
@@ -161,11 +172,13 @@
     NSArray *array = [self lua_dataForKeyPath:key];
     id resust;
     @try {
+        id tmp;
         if (array.mln_is2D) {
-            resust = [[[array mln_objectAtIndex:section - 1] mln_objectAtIndex:row - 1] mln_valueForKeyPath:path];
+            tmp = [[[array mln_objectAtIndex:section - 1] mln_objectAtIndex:row - 1] mln_valueForKeyPath:path];
         } else {
-            resust = [[array mln_objectAtIndex:row - 1] mln_valueForKeyPath:path];
+            tmp = [[array mln_objectAtIndex:row - 1] mln_valueForKeyPath:path];
         }
+        resust = [self convertToLuaObject:tmp];
     } @catch (NSException *exception) {
         NSLog(@"%s exception: %@",__func__, exception);
     }
