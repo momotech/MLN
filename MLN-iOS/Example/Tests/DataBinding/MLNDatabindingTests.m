@@ -160,5 +160,28 @@ describe(@"observer", ^{
 });
 });
 
+it(@"observer_onc", ^{
+         __block BOOL r1 = NO;
+         __block BOOL r2 = NO;
+         MLNKVOObserver *ob1 = [[MLNKVOObserver alloc] initWithViewController:nil callback:^(NSString * _Nonnull keyPath, id  _Nonnull object, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
+            id new = change[NSKeyValueChangeNewKey];
+            expect(new).equal(@"ttaa");
+            expect(r1).beFalsy();
+            r1  = YES;
+         } keyPath:@"text"];
+         MLNKVOObserver *ob2 = [[MLNKVOObserver alloc] initWithViewController:nil callback:^(NSString * _Nonnull keyPath, id  _Nonnull object, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
+             id new = change[NSKeyValueChangeNewKey];
+             expect(new).equal(@"ttaa");
+             expect(r2).beFalsy();
+             r2  = YES;
+         } keyPath:@"text"];
+
+         [dataBinding addDataObserver:ob1 forKeyPath:@"userData.text"];
+         [dataBinding addDataObserver:ob2 forKeyPath:@"userData.text"];
+         model.text  = @"ttaa";
+       expect(r1).beTruthy();
+       expect(r2).beTruthy();
+});
+
 SpecEnd
 

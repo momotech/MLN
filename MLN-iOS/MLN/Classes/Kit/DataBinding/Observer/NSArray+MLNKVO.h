@@ -16,7 +16,8 @@ typedef void (^MLNItemKVOBlock)(NSObject *item,NSString *keyPath, NSObject * _Nu
 // 是否二维数组
 - (BOOL)mln_is2D;
 
-- (void)mln_startKVOIfMutableble;
+- (void)mln_startKVOIfMutable;
+- (void)mln_stopKVOIfMutable;
 
 // 监听lua层对Cell ViewModel的改动，支持监听二维数组.
 @property (nonatomic, copy, readonly)NSArray * (^mln_subscribeItem)(MLNItemKVOBlock);
