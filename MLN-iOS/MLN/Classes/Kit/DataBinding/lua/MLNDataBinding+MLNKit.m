@@ -17,6 +17,7 @@
 #import "NSDictionary+MLNKVO.h"
 #import "NSArray+MLNSafety.h"
 #import "MLNTableView.h"
+#import "NSObject+MLNReflect.h"
 
 @implementation MLNDataBinding (MLNKit)
 
@@ -58,6 +59,10 @@
     UIViewController<MLNDataBindingProtocol> *kitViewController = (UIViewController<MLNDataBindingProtocol> *)MLN_KIT_INSTANCE([self mln_currentLuaCore]).viewController;
     
     NSMutableArray *arr = [[kitViewController.mln_dataBinding dataForKeyPath:key] mutableCopy];
+    if (![arr isKindOfClass:[NSMutableArray class]]) {
+        NSLog(@"data of keypath: %@ is %@ , it should be NSMutableArray!",key, data);
+        return nil;
+    }
     [kitViewController.mln_dataBinding updateDataForKeyPath:key value:arr];
     /*
     MLNBlock *reuseIdBlock = [callbackDic objectForKey:@"reuseId"];
@@ -157,9 +162,9 @@
     id resust;
     @try {
         if (array.mln_is2D) {
-            resust = [[[array mln_objectAtIndex:section - 1] mln_objectAtIndex:row - 1] valueForKeyPath:path];
+            resust = [[[array mln_objectAtIndex:section - 1] mln_objectAtIndex:row - 1] mln_valueForKeyPath:path];
         } else {
-            resust = [[array mln_objectAtIndex:row - 1] valueForKeyPath:path];
+            resust = [[array mln_objectAtIndex:row - 1] mln_valueForKeyPath:path];
         }
     } @catch (NSException *exception) {
         NSLog(@"%s exception: %@",__func__, exception);
