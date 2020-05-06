@@ -67,4 +67,10 @@
     return dic.copy;
 }
 
+- (id)mln_valueForKeyPath:(NSString *)keyPath {
+    if (keyPath) {
+        return [self valueForKeyPath:keyPath];
+    }
+    return [self mln_toDictionary];
+}
 @end
