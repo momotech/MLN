@@ -725,7 +725,8 @@ local function debug_hook(event, line)
       -- step_over will equal 'main', so need to check for that explicitly.
       or (step_over and step_over == (coroutine.running() or 'main') and stack_level <= step_level)
       or has_breakpoint(file, line)
-      or is_pending(server))
+      --or is_pending(server)
+    )
 
     if getin then
       vars = vars or capture_vars(1)
@@ -813,6 +814,9 @@ function handle_socket_command_message()
     return "dead"
   end
   local status, res = cororesume(coro_debugger, events.RECEIVE)
+  if not coro_debugger then
+    return "dead"
+  end
   return corostatus(coro_debugger)
 end
 
@@ -845,7 +849,8 @@ end
 -- 这里暂时把全局变量也存储到这里，统一显示在 idea frame 面板上
 local function mln_append_global_values(vars)
   for k, v in pairs(_G) do
-    if k == "item" or --DataBinding:getModel()的返回值名字为item，类型为table
+    if k == "item" or  --DataBinding:getModel()的返回值名字为item，类型为table
+       k == "userData" or --DataBinding:get()的返回值名字为userData，类型为table
        type(v) == "string" or 
        type(v) == "userdata" or
        type(v) == "number" then --暂时只显示这三种类型的全局变量
@@ -1182,7 +1187,10 @@ local function debugger_loop(sev, svars, sfile, sline)
       local pfunc = params and loadstring("return "..params)
       params = pfunc and pfunc() --got table
       params = (type(params) == "table" and params or {}) --校验，确保是table类型
-      mobdebug.commandmodels = params
+      mobdebug.commandmodels = mobdebug.commandmodels and mobdebug.commandmodels or {}
+      for k, v in pairs(params) do
+        mobdebug.commandmodels[k] = v
+      end
       server:send("200 OK\n") --直接当做成功处理
     
     elseif command == "EXIT" then
