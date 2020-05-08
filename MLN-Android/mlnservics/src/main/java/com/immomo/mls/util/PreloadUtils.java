@@ -53,8 +53,7 @@ public class PreloadUtils {
             final byte[] data = readDebug(c);
             if (data == null)
                 return false;
-            g.startDebug(data, ip, port);
-            return true;
+            return g.startDebug(data, ip, port);
         }
         return false;
     }

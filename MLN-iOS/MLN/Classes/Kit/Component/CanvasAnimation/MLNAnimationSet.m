@@ -24,10 +24,13 @@
 
 @implementation MLNAnimationSet
 
-- (instancetype)initWithLuaCore:(MLNLuaCore *)luaCore shareInterpolator:(BOOL)shareInterpolator
+- (instancetype)initWithLuaCore:(MLNLuaCore *)luaCore shareInterpolator:(NSNumber *)shareInterpolator
 {
     if (self = [super init]) {
-        _shareInterpolator = shareInterpolator;
+        if (shareInterpolator) {
+            _shareInterpolator = shareInterpolator.boolValue;
+        }
+        
     }
     return self;
 }
@@ -76,7 +79,7 @@
     animation = [animation copy];
     [self.animationsArray addObject:animation];
     animation.animationGroup.animations = [animation animationValues];
-    self.duration = MAX(self.duration, animation.duration + animation.delay);
+    self.duration = MAX(self.duration, animation.duration * animation.repeatCount + animation.delay);
     self.animationGroup.duration = self.duration;
     self.pivotX = animation.pivotX;
     self.pivotXType = animation.pivotXType;
@@ -84,6 +87,12 @@
     self.pivotYType = animation.pivotYType;
     [self.animationsGroupArray addObject:animation.animationGroup];
 }
+
+- (void)setDuration:(CGFloat)duration
+{
+    [super setDuration:duration];
+}
+
 
 #pragma mark - Export To Lua
 LUA_EXPORT_BEGIN(MLNAnimationSet)

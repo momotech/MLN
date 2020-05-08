@@ -70,6 +70,9 @@
 {
     NSString *filePath = [self.currentBundle pathForResource:name ofType:nil];
     if (filePath == nil && name != nil) {
+        filePath = [self.currentBundle pathForResource:name ofType:@"lua"];
+    }
+    if (filePath == nil && name != nil) {
         filePath = [[self bundlePath] stringByAppendingPathComponent:name];
     }
     return filePath;

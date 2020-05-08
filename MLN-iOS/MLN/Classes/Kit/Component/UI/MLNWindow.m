@@ -48,6 +48,7 @@
 
 - (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
+    [self.safeAreaProxy detachSafeAreaView:self];
 }
 
 #pragma mark - Notification

@@ -15,11 +15,18 @@
 #include <errno.h>
 #include <sys/stat.h>
 #include "compiler.h"
-#include "luajapi.h"
 #include "saes.h"
 #include "lundump.h"
 #include "m_mem.h"
 #include "llimits.h"
+#include "lauxlib.h"
+#include "lualib.h"
+#include "lobject.h"
+#include "lstate.h"
+#include "jinfo.h"
+#include "cache.h"
+#include "jfunction.h"
+#include "jtable.h"
 #include "assets_reader.h"
 
 /**
@@ -30,6 +37,7 @@ static int opensaes = 0;
 extern jclass Globals;
 extern jclass StringClass;
 extern jmethodID Globals__onLuaRequire;
+extern jmethodID Globals__getRequireError;
 
 #define FILE_NOT_FOUND -404
 #define WRITE_FILE_ERROR -300
@@ -317,10 +325,8 @@ static int real_loadbuffer(lua_State *L, char *nd, size_t size, const char *cn) 
         les.s = nd;
         les.size = size;
         ret = lua_load(L, getES, &les, cn, NULL);
-        LOGI("load aes data");
     } else {
         ret = luaL_loadbuffer(L, nd, size, cn);
-        LOGI("load none aes data");
     }
     return ret;
 }
@@ -488,7 +494,6 @@ static int real_loadfile(lua_State *L, const char *filename, const char *chunkna
         codeType = 4;
     }
     int state = lua_load(L, getF, &lf, lua_tostring(L, -1), NULL);
-    LOGI("load %saes data", lf.aes ? " " : "none ");
     int readstatus = ferror(lf.f);
     fclose(lf.f);
     if (readstatus) {
@@ -702,7 +707,6 @@ static char *findfile4lua(lua_State *L, const char *name) {
 static int return_success(lua_State *L, char *filename, int autosave) {
     if (autosave) {
         char *bp = getBinaryPath(filename);
-        LOGI("searcher_Lua---compile file success and save bin to %s", bp);
         saveProto(L, GET_PROTO(L), bp);
         m_malloc(bp, (strlen(bp) + 1) * sizeof(char), 0);
     }
@@ -748,14 +752,12 @@ int searcher_Lua(lua_State *L) {
     int result;
 
     if (real_loadfile(L, filename, name) == LUA_OK) {
-        LOGI("searcher_Lua---compile file success %s", filename);
         result = return_success(L, filename, autosave && !isbin);
         lua_unlock(L);
         return result;
     }
     // 加载失败
     if (isbin) {
-        LOGI("searcher_Lua---compile bin file failed. remove %s", filename);
         //删除二进制文件
         remove(filename);
 #if defined(J_API_INFO)
@@ -795,10 +797,15 @@ int searcher_java(lua_State *L) {
     jobject r = (*env)->CallStaticObjectMethod(env, Globals, Globals__onLuaRequire, (jlong) L, str);
     FREE(env, str);
     if (!r) {
+        jobject errorStr = (*env)->CallStaticObjectMethod(env, Globals, Globals__getRequireError, (jlong) L);
+        const char *em = GetString(env, errorStr);
+        if (em) {
+            lua_pushfstring(L, "\n\trequire %s failed, error: %s", name, em);
+            ReleaseChar(env, errorStr, em);
+        } else {
+            lua_pushfstring(L, "\n\trequire %s failed, unknown error", name);
+        }
         if (need) detachEnv();
-        lua_pushfstring(L,
-                        "call Globals.____onLuaRequire method return null for module %s",
-                        name);
         lua_unlock(L);
         return 1;
     }
@@ -810,7 +817,6 @@ int searcher_java(lua_State *L) {
         if (real_loadfile(L, path, name) == LUA_OK) {
             if (!isBinaryPath(path) && isAutosave(L)) {
                 char *sp = getBinaryPath(path);
-                LOGI("compile file success and save bin to %s", sp);
                 saveProto(L, GET_PROTO(L), sp);
                 m_malloc(sp, (strlen(sp) + 1) * sizeof(char), 0);
             }
@@ -844,7 +850,6 @@ int searcher_java(lua_State *L) {
                 if (bp) {
                     bp = lua_pushfstring(L, "%s" LUA_DIRSEP "%s.lua" BINARY_SUFFIX_END, bp,
                                          luaL_gsub(L, name, ".", LUA_DIRSEP));
-                    LOGI("compile data success and save bin to %s", bp);
                     lua_pop(L, 2);
                     saveProto(L, GET_PROTO(L), bp);
                 }
@@ -876,7 +881,7 @@ int searcher_Lua_asset(lua_State *L) {
     free(filename);
 #endif
     if (code != AR_OK) {
-        lua_pushfstring(L, "find %s from native asset failed, code: %d", name, code);
+        lua_pushfstring(L, "\n\tfind %s from native asset failed, code: %d", name, code);
         return 1;
     }
 
@@ -885,7 +890,7 @@ int searcher_Lua_asset(lua_State *L) {
         const char *preData = preReadData(&ad, HEADER_LEN + SOURCE_LEN, &preReadLen);
         if (!preData) {
             destroyAssetsData(&ad);
-            lua_pushfstring(L, "preload %s from native asset failed!", name);
+            lua_pushfstring(L, "\n\tpreload %s from native asset failed!", name);
             return 1;
         }
 
@@ -912,7 +917,7 @@ int searcher_Lua_asset(lua_State *L) {
         lua_pushvalue(L, 1);
         return 2;
     }
-    lua_pushfstring(L, "error loading module '%s' from asset '%s', code: %d",
+    lua_pushfstring(L, "\n\terror loading module '%s' from asset '%s', code: %d",
                       name, name, code);
     return 1;
 }

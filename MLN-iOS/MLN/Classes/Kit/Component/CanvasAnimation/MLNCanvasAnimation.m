@@ -30,7 +30,7 @@
     NSUInteger _repeatCounting;
 }
 
-@property (nonatomic, weak) UIView *targetView;
+@property (nonatomic, weak, readwrite) UIView *targetView;
 @property (nonatomic, strong) NSMutableDictionary<NSString *, MLNBlock *> *animationCallbacks;
 @property (nonatomic, strong) MLNBeforeWaitingTask *lazyTask;
 @property (nonatomic, weak) MLNCanvasAnimationDelegate *animationDelegate;
@@ -65,9 +65,9 @@
             targetView.layer.timeOffset = .0f;
             targetView.layer.beginTime = .0f;
             [targetView.layer removeAnimationForKey:self.animationKey];
-            CAAnimation *animation = nil;
-            [self animationDidStop:animation finished:NO];
-            _animationDelegate.ignoreAnimationCallback = YES;
+//            CAAnimation *animation = nil;
+//            [self animationDidStop:animation finished:NO];
+//            _animationDelegate.ignoreAnimationCallback = YES;
         }
             break;
         default:
@@ -157,16 +157,14 @@
     switch (_status) {
         case MLNCanvasAnimationStatusReadyToPlay:{
             self.animationGroup.animations = [self animationValues];
+            self.animationGroup.beginTime = CACurrentMediaTime() + _delay;
             for (CABasicAnimation *anim in self.animationGroup.animations) {
                 anim.removedOnCompletion =  _autoBack;
-                if (!_autoBack) {
-                    anim.fillMode = kCAFillModeForwards;
-                }
+                anim.fillMode = _autoBack ? kCAFillModeBackwards : kCAFillModeBoth;
             }
             self.animationGroup.removedOnCompletion = _autoBack;
-            if (!_autoBack) {
-                self.animationGroup.fillMode = kCAFillModeForwards;
-            }
+            self.animationGroup.fillMode = _autoBack ? kCAFillModeBackwards : kCAFillModeBoth;
+            
             self.status = MLNCanvasAnimationStatusRunning;
             [self animationRealStart];
             if (self.repeatCount) {
@@ -197,7 +195,7 @@
     if ([self remainingDelay] > FLT_EPSILON) {
         return;
     }
-    CGFloat percent = (CACurrentMediaTime() - self.startTime - self.delay) / (self.duration * (_repeatType == MLNAnimationRepeatTypeReverse?2:1));
+    CGFloat percent = (CACurrentMediaTime() - self.startTime - self.delay) / (self.duration * 1);
    
     NSInteger repeatCount = (NSUInteger)percent;
     percent = percent - repeatCount;
@@ -242,6 +240,15 @@
     }
 }
 
+- (void)animationStopCallback:(BOOL)finishedFlag
+{
+    MLNBlock *callback = [self.animationCallbacks objectForKey:kAnimationEnd];
+    if (callback) {
+        [callback addBOOLArgument:finishedFlag];
+        [callback callIfCan];
+    }
+}
+
 #pragma mark - CAAnimationDelegate
 - (void)animationDidStart:(CAAnimation *)anim
 {
@@ -255,11 +262,7 @@
 - (void)animationDidStop:(CAAnimation *)anim finished:(BOOL)flag
 {
     // callback
-    MLNBlock *callback = [self.animationCallbacks objectForKey:kAnimationEnd];
-    if (callback) {
-        [callback addBOOLArgument:flag];
-        [callback callIfCan];
-    }
+    [self animationStopCallback:flag];
     [[MLNAnimationHandler sharedHandler] removeCallback:self];
 }
 
@@ -275,8 +278,9 @@
     CGFloat anchorX = 0.5;
     CGFloat anchorY = 0.5;
     switch (_pivotXType) {
-        case MLNAnimationValueTypeAbsolute:
-            anchorX = _targetView.frame.size.width * _pivotX;
+        case MLNAnimationValueTypeAbsolute:{
+            anchorX = _pivotX / _targetView.frame.size.width ;
+        }
             break;
         case MLNAnimationValueTypeRelativeToSelf:
             anchorX = _pivotX;
@@ -396,7 +400,7 @@
 {
     if (_delay) {
         for (CABasicAnimation *animation in self.animations.allValues) {
-            animation.beginTime = _delay;
+            animation.duration = _duration;
         }
     }
     return self.animations.allValues;
@@ -503,7 +507,6 @@
 - (void)setDelay:(CGFloat)delay
 {
     _delay = delay;
-//    self.animationGroup.beginTime = delay;
 }
 
 - (void)setRepeatCount:(NSInteger)repeatCount
@@ -567,9 +570,12 @@
 #pragma mark - Export Method
 - (void)lua_setRepeat:(MLNAnimationRepeatType)type count:(float)count
 {
-    if (count == -1) {
+    if (count < 0) {
         count = MAX_INT;
+    }else {
+        count ++;
     }
+    
     self.repeatType = type;
     self.repeatCount = count;
     switch (type) {
@@ -578,7 +584,7 @@
             self.animationGroup.autoreverses = NO;
             break;
         case MLNAnimationRepeatTypeReverse:
-            self.animationGroup.repeatCount = count;
+            self.animationGroup.repeatCount = count * 1.0 / 2;
             self.animationGroup.autoreverses = YES;
             break;
         default:
@@ -586,6 +592,11 @@
             self.animationGroup.autoreverses = NO;
             break;
     }
+}
+
+- (void)lua_setAutoBack:(BOOL)autoBack
+{
+    _autoBack = autoBack;
 }
 
 #pragma mark - Export To Lua
@@ -607,6 +618,7 @@ LUA_EXPORT_METHOD(setStartCallback, "lua_setStartCallback:", MLNCanvasAnimation)
 LUA_EXPORT_METHOD(setEndCallback, "lua_setEndCallback:", MLNCanvasAnimation)
 LUA_EXPORT_METHOD(setRepeatCallback, "lua_setRepeatCallback:", MLNCanvasAnimation)
 LUA_EXPORT_METHOD(clone, "lua_clone", MLNCanvasAnimation)
+LUA_EXPORT_METHOD(setAutoBack, "lua_setAutoBack:", MLNCanvasAnimation)
 LUA_EXPORT_END(MLNCanvasAnimation, CanvasAnimation, NO, NULL, NULL)
 
 @end

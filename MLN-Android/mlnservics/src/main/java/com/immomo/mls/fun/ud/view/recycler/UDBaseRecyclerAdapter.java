@@ -1004,7 +1004,14 @@ public abstract class UDBaseRecyclerAdapter<L extends UDBaseRecyclerLayout> exte
             return null;
         int sectionCount = 0;
         if (sectionCountDelegate != null && sectionCountDelegate.isFunction()) {
-            LuaValue sv = sectionCountDelegate.invoke(null)[0];
+            LuaValue[] rets = sectionCountDelegate.invoke(null);
+
+            final LuaValue sv;
+            if (rets == null || rets.length == 0) {
+                sv = Nil();
+            } else {
+                sv = rets[0];
+            }
             if (AssertUtils.assertNumber(sv, sectionCountDelegate, getGlobals())) {
                 sectionCount = sv.toInt();
             }
@@ -1024,7 +1031,13 @@ public abstract class UDBaseRecyclerAdapter<L extends UDBaseRecyclerLayout> exte
         int[] result = new int[resultCount];
         int allCount = 0;
         for (int i = 0; i < resultCount; i += 2) {
-            LuaValue rc = rowCountDelegate.invoke(varargsOf(toLuaInt(i >> 1)))[0];
+            LuaValue[] rets = rowCountDelegate.invoke(varargsOf(toLuaInt(i >> 1)));
+            final LuaValue rc;
+            if (rets == null || rets.length == 0) {
+                rc = Nil();
+            } else {
+                rc = rets[0];
+            }
             result[i] = allCount;
             if (AssertUtils.assertNumber(rc, rowCountDelegate, getGlobals()))
                 allCount += rc.toInt();

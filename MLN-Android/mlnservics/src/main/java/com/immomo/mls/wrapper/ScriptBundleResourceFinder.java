@@ -68,4 +68,9 @@ public class ScriptBundleResourceFinder implements ResourceFinder {
         if (sf != null)
             sf.setSourceData(null);
     }
+
+    @Override
+    public String getError() {
+        return null;
+    }
 }

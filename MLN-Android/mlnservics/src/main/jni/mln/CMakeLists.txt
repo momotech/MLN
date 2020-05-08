@@ -14,6 +14,7 @@ add_library(mln_coverage STATIC
 add_library( mlnbridge SHARED
         bridge/mmoslib.c
         bridge/mmbit.c
+        bridge/mmcanvas.c
         bridge/mmbridge.c )
 
 add_definitions(-DLUA_DL_DLOPEN -DLUA_USE_C89 -DLUA_COMPAT_5_1 -DLUA_COMPAT_ALL -DLUA_USE_LINUX -DJAVA_ENV -DP_ANDROID)

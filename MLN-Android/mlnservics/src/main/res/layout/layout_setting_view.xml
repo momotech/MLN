@@ -27,7 +27,7 @@
                 android:id="@+id/hr_use_port"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:hint="8173"
+                android:hint="8172"
                 android:inputType="numberDecimal"
                 android:textSize="20sp"
                 android:textColor="#080808" />

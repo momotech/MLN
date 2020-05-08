@@ -42,6 +42,7 @@ jobjectArray Lua_EMPTY = NULL;
 
 // ------------globals
 jmethodID Globals__onLuaRequire = NULL;
+jmethodID Globals__getRequireError = NULL;
 jmethodID Globals__onLuaGC = NULL;
 jmethodID Globals__onNativeCreateGlobals = NULL;
 jmethodID Globals__onGlobalsDestroyInNative = NULL;
@@ -95,6 +96,7 @@ void initJavaInfo(JNIEnv *env) {
     Globals = GLOBAL(env, findTypeClass(env, "Globals"));
     Globals__onLuaRequire = (*env)->GetStaticMethodID(env, Globals, "__onLuaRequire",
                                                       "(J" STRING_CLASS ")" OBJECT_CLASS);
+    Globals__getRequireError = (*env)->GetStaticMethodID(env, Globals, "__getRequireError", "(J)" STRING_CLASS);
     Globals__onLuaGC = (*env)->GetStaticMethodID(env, Globals, "__onLuaGC", "(J)V");
     Globals__onNativeCreateGlobals = (*env)->GetStaticMethodID(env, Globals,
                                                                "__onNativeCreateGlobals", "(JJZ)V");

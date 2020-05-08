@@ -87,6 +87,7 @@ LUA_EXPORT_VIEW_PROPERTY(cornerRadius, "lua_setCornerRadius:","lua_cornerRadius"
 LUA_EXPORT_VIEW_METHOD(refresh, "lua_setNeedsDisplay", MLNView)
 LUA_EXPORT_VIEW_METHOD(setCornerRadiusWithDirection, "lua_setCornerRadius:byRoundingCorners:", MLNView)
 LUA_EXPORT_VIEW_METHOD(getCornerRadiusWithDirection, "lua_getCornerRadiusWithDirection:", MLNView)
+LUA_EXPORT_VIEW_METHOD(clipToChildren, "lua_setClipsToChildren:", MLNView)
 LUA_EXPORT_VIEW_METHOD(clipToBounds, "lua_setClipsToBounds:", MLNView)
 LUA_EXPORT_VIEW_METHOD(notClip, "lua_setNotClip:", MLNView)
 LUA_EXPORT_VIEW_METHOD(addCornerMask, "lua_addCornerMaskWithRadius:maskColor:corners:", MLNView)

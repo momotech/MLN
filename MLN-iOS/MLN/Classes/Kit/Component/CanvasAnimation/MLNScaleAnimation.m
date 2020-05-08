@@ -73,31 +73,31 @@ static int lua_animation_init(lua_State *L) {
     switch (argCount) {
         case 8: {
             CGFloat fromX          = lua_tonumber(L, 1);
-            CGFloat toX              = lua_tonumber(L, 2);
+            CGFloat toX            = lua_tonumber(L, 2);
             CGFloat fromY          = lua_tonumber(L, 3);
-            CGFloat toY              = lua_tonumber(L, 4);
-            CGFloat pivotXType   = lua_tonumber(L, 5);
-            CGFloat pivotX          = lua_tonumber(L, 6);
-            CGFloat pivotYType   = lua_tonumber(L, 7);
-            CGFloat pivotY          = lua_tonumber(L, 8);
+            CGFloat toY            = lua_tonumber(L, 4);
+            CGFloat pivotXType     = lua_tonumber(L, 5);
+            CGFloat pivotX         = lua_tonumber(L, 6);
+            CGFloat pivotYType     = lua_tonumber(L, 7);
+            CGFloat pivotY         = lua_tonumber(L, 8);
             animation = [[MLNScaleAnimation alloc] initWith:fromX toX:toX fromY:fromY toY:toY pivotXType:pivotXType pivotXValue:pivotX pivotYType:pivotYType pivotYValue:pivotY];
         }
             break;
         case 6: {
             CGFloat fromX          = lua_tonumber(L, 1);
-            CGFloat toX              = lua_tonumber(L, 2);
+            CGFloat toX            = lua_tonumber(L, 2);
             CGFloat fromY          = lua_tonumber(L, 3);
-            CGFloat toY              = lua_tonumber(L, 4);
-            CGFloat pivotX          = lua_tonumber(L, 5);
-            CGFloat pivotY          = lua_tonumber(L, 6);
+            CGFloat toY            = lua_tonumber(L, 4);
+            CGFloat pivotX         = lua_tonumber(L, 5);
+            CGFloat pivotY         = lua_tonumber(L, 6);
             animation = [[MLNScaleAnimation alloc] initWith:fromX toX:toX fromY:fromY toY:toY pivotXValue:pivotX pivotYValue:pivotY];
         }
             break;
         case 4: {
             CGFloat fromX          = lua_tonumber(L, 1);
-            CGFloat toX              = lua_tonumber(L, 2);
+            CGFloat toX            = lua_tonumber(L, 2);
             CGFloat fromY          = lua_tonumber(L, 3);
-            CGFloat toY              = lua_tonumber(L, 4);
+            CGFloat toY            = lua_tonumber(L, 4);
             animation = [[MLNScaleAnimation alloc] initWith:fromX toX:toX fromY:fromY toY:toY];
         }
             break;

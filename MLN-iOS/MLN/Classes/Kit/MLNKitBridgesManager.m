@@ -7,6 +7,7 @@
 
 #import "MLNKitBridgesManager.h"
 #import "MLNLuaCore.h"
+#import "MLNKitInstance.h"
 // Kit Classes's View
 #import "MLNView.h"
 #import "MLNWindow.h"
@@ -74,6 +75,7 @@
 #import "MLNCornerUtil.h"
 #import "MLNSafeAreaAdapter.h"
 #import "MLNLink.h"
+#import "MLNDataBinding.h"
 // Animations
 #import "MLNAnimator.h"
 #import "MLNAnimation.h"
@@ -95,6 +97,12 @@
 #import "MLNZStack.h"
 #import "MLNHStack.h"
 #import "MLNSpacer.h"
+@interface MLNKitBridgesManager()
+/**
+ 承载Kit库bridge和LuaCore实例
+ */
+@property (nonatomic, weak, readonly) MLNKitInstance *instance;
+@end
 
 @implementation MLNKitBridgesManager
 
@@ -205,7 +213,8 @@ static NSArray<Class<MLNExportProtocol>> *utilClasses;
                         [MLNNetworkReachability class],
                         [MLNCornerUtil class],
                         [MLNSafeAreaAdapter class],
-                        [MLNLink class]];
+                        [MLNLink class],
+                        [MLNDataBinding class]];
     }
     return utilClasses;
 }
@@ -252,6 +261,23 @@ static NSArray<Class<MLNExportProtocol>> *stackClasses;
                          [MLNSpacer class]];
     }
     return stackClasses;
+}
+
+@end
+
+@implementation MLNKitBridgesManager (Deprecated)
+
+- (instancetype)initWithUIInstance:(MLNKitInstance *)instance
+{
+    if (self = [super init]) {
+        _instance = instance;
+    }
+    return self;
+}
+
+- (void)registerKit
+{
+    [self registerKitForLuaCore:self.instance.luaCore];
 }
 
 @end

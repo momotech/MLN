@@ -8,7 +8,7 @@
 
 #import "MLNTestMe.h"
 #import "MLNBlock.h"
-
+@import ObjectiveC;
 @implementation MLNTestMe
 
 - (NSNumber *)test:(NSString *)msg a:(NSNumber *)a
@@ -23,6 +23,11 @@
     id ret = [callback callIfCan];
     NSLog(@"%@", ret);
     return @(CGSizeMake(90, 89));
+}
+
+- (void)dealloc {
+    Class cls = object_getClass(self);
+    NSLog(@"%s %@",__func__, cls);
 }
 
 LUA_EXPORT_BEGIN(MLNTestMe)
