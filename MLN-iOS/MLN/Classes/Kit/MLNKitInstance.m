@@ -5,22 +5,6 @@
 //  Created by MoMo on 2019/8/3.
 //
 
-#if __has_include("MLNDebugContext.h")
-    #import "MLNDebugContext.h"
-    #define MLN_COULD_IMPORT_DEBUG_CONTEXT 1
-#elif __has_include(<MLNDebugContext.h>)
-    #import <MLNDebugContext.h>
-    #define MLN_COULD_IMPORT_DEBUG_CONTEXT 1
-#else
-    #define MLN_COULD_IMPORT_DEBUG_CONTEXT 0
-#endif
-
-#if defined(DEBUG) && DEBUG && MLN_COULD_IMPORT_DEBUG_CONTEXT
-    #define MLN_ENABLE_DEBUG 1
-#else
-    #define MLN_ENABLE_DEBUG 0
-#endif
-
 #import "MLNKitInstance.h"
 #import "MLNLuaCore.h"
 #import "MLNLuaTable.h"
@@ -230,11 +214,6 @@
         }
         return NO;
     }
-    
-    // 要在lua代码执行前启动断点调试
-#if MLN_ENABLE_DEBUG
-    [self openBreakpointDebugIfNeeded];
-#endif
     
     // 执行
     NSError *err = nil;
@@ -608,34 +587,6 @@
 
 @end
 
-@implementation MLNKitInstance (Debug)
-
-extern int mln_luaopen_socket_core(lua_State *L);
-- (void)openBreakpointDebugIfNeeded {
-#if MLN_ENABLE_DEBUG
-    [self registerClasses:@[[MLNDebugContext class]] error:NULL];
-    mln_luaopen_socket_core(self.luaCore.state);
-    [self loadDebugModelIfNeed];
-#endif
-}
-
-#if MLN_ENABLE_DEBUG
-- (NSString *)loadDebugModelIfNeed {
-    NSString *backupBundlePath = [self.luaCore.currentBundle bundlePath];
-    [self changeLuaBundleWithPath:[MLNDebugContext debugBundle].bundlePath];
-    NSString *mlndebugPath = [[MLNDebugContext debugBundle] pathForResource:@"mlndebug.lua" ofType:nil];
-    NSError *error = nil;
-    NSData *data = [NSData dataWithContentsOfFile:mlndebugPath];
-    BOOL ret = [self.luaCore runData:data name:@"mlndebug.lua" error:&error];
-    if (!ret) {
-        return [error.userInfo objectForKey:@"message"];
-    }
-    [self changeLuaBundleWithPath:backupBundlePath];
-    return nil;
-}
-#endif
-
-@end
 
 @implementation MLNKitInstance (Deprecated)
 

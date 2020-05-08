@@ -379,12 +379,6 @@ Lua中的根视图。
 
 @end
 
-@interface MLNKitInstance (Debug)
-
-/// 断点调试
-- (void)openBreakpointDebugIfNeeded;
-
-@end
 
 @interface MLNKitInstance (Deprecated)
 /**

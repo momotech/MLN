@@ -183,6 +183,7 @@ static MLNHotReload *sharedInstance;
             }
         }
         [self closeSocketConnectionOfPreviousLuaCore]; // 在上一个luaState释放之前，先主动发一条close消息
+        [self openBreakpointDebugIfNeeded:self.benchLuaInstance];
         [self.benchLuaInstance runWithEntryFile:entryFilePath windowExtra:extraInfo error:NULL]; // 更新bundlePath
     });
 }
@@ -216,6 +217,21 @@ static MLNHotReload *sharedInstance;
         lua_pop(L, 1);
     }
     lua_pop(L, 1);
+}
+
+extern int mln_luaopen_socket_core(lua_State *L);
+- (void)openBreakpointDebugIfNeeded:(MLNKitInstance *)instance {
+    [instance registerClasses:@[[MLNDebugContext class]] error:NULL];
+    mln_luaopen_socket_core(instance.luaCore.state);
+    
+    NSString *backupBundlePath = [instance.luaCore.currentBundle bundlePath];
+    [instance changeLuaBundleWithPath:[MLNDebugContext debugBundle].bundlePath];
+    NSString *mlndebugPath = [[MLNDebugContext debugBundle] pathForResource:@"mlndebug.lua" ofType:nil];
+    NSError *error = nil;
+    NSData *data = [NSData dataWithContentsOfFile:mlndebugPath];
+    BOOL ret = [instance.luaCore runData:data name:@"mlndebug.lua" error:&error];
+    NSAssert(ret, [error.userInfo objectForKey:@"message"]);
+    [instance changeLuaBundleWithPath:backupBundlePath];
 }
 
 #pragma mark - MLNServerListenerProtocol
