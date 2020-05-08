@@ -181,7 +181,6 @@ static MLNHotReload *sharedInstance;
         NSString *resouce = [kLuaHotReloadHost stringByAppendingString:relativePath];
         [extraInfo mln_setObject:resouce forKey:@"LuaSource"];
         [self closeSocketConnectionOfPreviousLuaCore]; // 在上一个luaState释放之前，先主动发一条close消息
-        [self openBreakpointDebugIfNeeded:self.benchLuaInstance];
         [self.benchLuaInstance runWithEntryFile:entryFilePath windowExtra:extraInfo error:NULL]; // 更新bundlePath
     });
 }
@@ -219,7 +218,7 @@ static MLNHotReload *sharedInstance;
 }
 
 extern int mln_luaopen_socket_core(lua_State *L);
-- (void)openBreakpointDebugIfNeeded:(MLNKitInstance *)instance {
++ (void)openBreakpointDebugIfNeeded:(MLNKitInstance *)instance {
     [instance registerClasses:@[[MLNDebugContext class]] error:NULL];
     mln_luaopen_socket_core(instance.luaCore.state);
     
