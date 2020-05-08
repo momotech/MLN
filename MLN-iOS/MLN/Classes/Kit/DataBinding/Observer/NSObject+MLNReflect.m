@@ -8,6 +8,8 @@
 #import "NSObject+MLNKVO.h"
 #import "MLNExtScope.h"
 #import "MLNCore.h"
+#import "MLNDataBinding+MLNKit.h"
+#import "NSArray+MLNKVO.h"
 
 @import ObjectiveC;
 
@@ -60,10 +62,15 @@
     return keys;
 }
 
+
 - (NSDictionary *)mln_toDictionary {
     NSMutableDictionary *dic = [NSMutableDictionary dictionary];
     [self.class mln_propertyKeysWithBlock:^(NSString *key) {
-        [dic setValue:[self valueForKey:key] forKey:key];
+        
+        id obj = [self valueForKey:key];
+        id obj2 = [obj mln_convertToLuaObject];
+        
+        [dic setValue:obj2 forKey:key];
     }];
     return dic.copy;
 }
@@ -71,6 +78,20 @@
 - (id)mln_valueForKeyPath:(NSString *)keyPath {
     if (keyPath) {
         return [self valueForKeyPath:keyPath];
+    }
+    return self;
+}
+
+- (id)mln_convertToLuaObject {
+    MLNNativeType type = self.mln_nativeType;
+    if (type == MLNNativeTypeArray || type == MLNNativeTypeMArray) {
+        return [(NSArray *)self mln_convertToLuaTableAvailable];
+    }
+    if (type == MLNNativeTypeDictionary || type == MLNNativeTypeMDictionary) {
+        return self.copy;
+    }
+    if (type == MLNNativeTypeObject) {
+        return self.mln_toDictionary;
     }
     return self;
 }
