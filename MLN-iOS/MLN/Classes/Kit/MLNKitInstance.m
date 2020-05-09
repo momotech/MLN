@@ -5,16 +5,6 @@
 //  Created by MoMo on 2019/8/3.
 //
 
-#if __has_include("MLNDebugContext.h")
-    #import "MLNDebugContext.h"
-    #define MLN_COULD_LOAD_DEBUG_CONTEXT 1
-#elif __has_include(<MLNDebugContext.h>)
-    #import <MLNDebugContext.h>
-    #define MLN_COULD_LOAD_DEBUG_CONTEXT 1
-#else
-    #define MLN_COULD_LOAD_DEBUG_CONTEXT 0
-#endif
-
 #import "MLNKitInstance.h"
 #import "MLNLuaCore.h"
 #import "MLNLuaTable.h"
@@ -224,6 +214,7 @@
         }
         return NO;
     }
+    
     // 执行
     NSError *err = nil;
     if ([self.luaCore runFile:entryFilePath error:&err]) {
@@ -596,27 +587,6 @@
 
 @end
 
-@implementation MLNKitInstance (Debug)
-
-- (NSString *)loadDebugModelIfNeed {
-#if MLN_COULD_LOAD_DEBUG_CONTEXT
-    NSString *backupBundlePath = [self.luaCore.currentBundle bundlePath];
-    [self changeLuaBundleWithPath:[MLNDebugContext debugBundle].bundlePath];
-    NSString *mlndebugPath = [[MLNDebugContext debugBundle] pathForResource:@"mlndebug.lua" ofType:nil];
-    NSError *error = nil;
-    NSData *data = [NSData dataWithContentsOfFile:mlndebugPath];
-    
-    BOOL ret = [self.luaCore runData:data name:@"mlndebug.lua" error:&error];
-    NSAssert(ret, @"%@", [error.userInfo objectForKey:@"message"]);
-    if (!ret) {
-        return [error.userInfo objectForKey:@"message"];
-    }
-    [self changeLuaBundleWithPath:backupBundlePath];
-#endif
-    return nil;
-}
-
-@end
 
 @implementation MLNKitInstance (Deprecated)
 

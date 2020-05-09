@@ -13,6 +13,9 @@ NS_ASSUME_NONNULL_BEGIN
 + (NSArray <NSString *> *)mln_propertyKeys;
 - (NSDictionary *)mln_toDictionary;
 - (id)mln_valueForKeyPath:(NSString *)keyPath;
+
+- (id)mln_convertToLuaObject;
+
 @end
 
 NS_ASSUME_NONNULL_END
