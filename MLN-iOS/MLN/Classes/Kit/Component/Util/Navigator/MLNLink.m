@@ -11,6 +11,7 @@
 #import "MLNLinkProtocol.h"
 
 #define MLNCURRENT_VIEW_CONTROLLLER  MLN_KIT_INSTANCE(self.mln_currentLuaCore).viewController
+#define MLN_IS_VALID_CLASS(_class_) [_class_ respondsToSelector:@selector(mlnLinkCreateController:closeCallback:)]
 
 @interface MLNLink ()
 
@@ -104,6 +105,7 @@ static inline NSString *DISGUISE(UIViewController *controller) {
 + (void)registerName:(NSString *)name linkClass:(Class)cls {
     NSParameterAssert(name);
     NSParameterAssert(cls);
+    NSParameterAssert(MLN_IS_VALID_CLASS(cls));
     if (!name || !cls) return;
     [[self sharedLink].nameClassMap setObject:cls forKey:name];
 }
@@ -116,7 +118,7 @@ static inline NSString *DISGUISE(UIViewController *controller) {
     }
     Class cls = [[self sharedLink].nameClassMap objectForKey:luaClassName];
     if (!cls) return;
-    if ([cls respondsToSelector:@selector(mlnLinkCreateController:closeCallback:)]) {
+    if (MLN_IS_VALID_CLASS(cls)) {
         __block NSString *key = nil;
         MLNLinkCloseCallback close = callback ? ^(NSDictionary *param) {
             [self callbackToLuaWhenClosePage:key params:param];
