@@ -379,11 +379,6 @@ Lua中的根视图。
 
 @end
 
-@interface MLNKitInstance (Debug)
-
-- (NSString *)loadDebugModelIfNeed;
-
-@end
 
 @interface MLNKitInstance (Deprecated)
 /**

@@ -28,6 +28,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy, readonly) NSString *relativeEntryFilePath;
 @property (nonatomic, assign, getter=isOpenAssert) BOOL openAssert;
 
++ (void)openBreakpointDebugIfNeeded:(MLNKitInstance *)instance;
+
 @end
 
 NS_ASSUME_NONNULL_END

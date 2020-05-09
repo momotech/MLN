@@ -35,22 +35,9 @@
 + (id __nullable)lua_dataForKeyPath:(NSString *)keyPath {
     UIViewController<MLNDataBindingProtocol> *kitViewController = (UIViewController<MLNDataBindingProtocol> *)MLN_KIT_INSTANCE([self mln_currentLuaCore]).viewController;
     NSObject *obj = [kitViewController.mln_dataBinding dataForKeyPath:keyPath];
-    return [self convertToLuaObject:obj];
+    return [obj mln_convertToLuaObject];
 }
 
-+ (id)convertToLuaObject:(NSObject *)obj {
-    MLNNativeType type = obj.mln_nativeType;
-    if (type == MLNNativeTypeArray || type == MLNNativeTypeMArray) {
-        return [(NSArray *)obj mln_convertToLuaTableAvailable];
-    }
-    if (type == MLNNativeTypeDictionary || type == MLNNativeTypeMDictionary) {
-        return obj.copy;
-    }
-    if (type == MLNNativeTypeObject) {
-        return obj.mln_toDictionary;
-    }
-    return obj;
-}
 
 + (id __nullable)lua_mockForKey:(NSString *)key data:(NSDictionary *)dic {
     UIViewController<MLNDataBindingProtocol> *kitViewController = (UIViewController<MLNDataBindingProtocol> *)MLN_KIT_INSTANCE([self mln_currentLuaCore]).viewController;
@@ -178,7 +165,7 @@
         } else {
             tmp = [[array mln_objectAtIndex:row - 1] mln_valueForKeyPath:path];
         }
-        resust = [self convertToLuaObject:tmp];
+        resust = [tmp mln_convertToLuaObject];
     } @catch (NSException *exception) {
         NSLog(@"%s exception: %@",__func__, exception);
     }
