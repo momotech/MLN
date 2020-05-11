@@ -9,6 +9,8 @@
 #import "MLNSpacerNode.h"
 #import "MLNHeader.h"
 
+#define MLN_SHOULD_WRAP (self.wrapType == MLNStackWrapTypeWrap)
+
 @interface MLNHStackNode ()
 
 @property (nonatomic, assign) CGFloat subNodeTotalHeight;
@@ -28,6 +30,10 @@
 #pragma mark - Override
 
 - (CGSize)measureSubNodes:(NSArray<MLNLayoutNode *> *)subNods maxWidth:(CGFloat)maxWidth maxHeight:(CGFloat)maxHeight {
+    if (self.wrapLineNodes.count > 0) {
+        [self.wrapLineNodes removeAllObjects];
+    }
+    
     CGFloat myMaxWidth = [self myMaxWidthWithMaxWidth:maxWidth];
     CGFloat myMaxHeight = [self myMaxHeightWithMaxHeight:maxHeight];
     
@@ -61,11 +67,14 @@
         } else if (needDirty) {
             [subnode needLayout];
         }
-        CGFloat subMaxWidth = usableZoneWidth - totalWidth - subnode.marginLeft - subnode.marginRight;
+        
+        CGFloat subMaxWidth = usableZoneWidth - subnode.marginLeft - subnode.marginRight;
+        if (MLN_SHOULD_WRAP == NO) { // 非换行模式最大宽度限制要剔除已计算的子view宽度
+            subMaxWidth -= totalWidth;
+        }
         CGFloat subMaxHeight = usableZoneHeight - subnode.marginTop - subnode.marginBottom;
         CGSize subMeasuredSize = [subnode measureSizeWithMaxWidth:subMaxWidth maxHeight:subMaxHeight]; // 计算子节点
         
-        // 处理换行
         CGFloat subNodeWidth = subMeasuredSize.width;
         CGFloat subNodeHeight = subMeasuredSize.height;
         if (subnode.layoutStrategy == MLNLayoutStrategySimapleAuto) {
@@ -73,7 +82,7 @@
             subNodeHeight += (subnode.marginTop + subnode.marginBottom);
         }
         
-        if (self.wrapType == MLNStackWrapTypeWrap) {
+        if (MLN_SHOULD_WRAP) {
             if ((usableZoneWidth - currentLineWidth > subNodeWidth) && self.mergedWidthType != MLNLayoutMeasurementTypeWrapContent) { // 判断当前行剩余宽度是否可容纳下一个子view && 如果是WrapContent则每个子view单独占一行
                 [lineNodes addObject:subnode];
                 
