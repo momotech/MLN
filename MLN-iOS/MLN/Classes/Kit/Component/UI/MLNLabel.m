@@ -404,6 +404,10 @@
     return YES;
 }
 
+- (BOOL)lua_supportOverlay {
+    return YES;
+}
+
 - (void)lua_addSubview:(UIView *)view
 {
     MLNLuaAssert(self.mln_luaCore, NO, @"Not found \"addView\" method, just continar of View has it!");

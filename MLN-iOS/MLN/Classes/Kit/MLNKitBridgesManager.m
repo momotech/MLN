@@ -74,6 +74,7 @@
 #import "mmoslib.h"
 #import "MLNCornerUtil.h"
 #import "MLNSafeAreaAdapter.h"
+#import "MLNLink.h"
 #import "MLNDataBinding.h"
 // Animations
 #import "MLNAnimator.h"
@@ -212,6 +213,7 @@ static NSArray<Class<MLNExportProtocol>> *utilClasses;
                         [MLNNetworkReachability class],
                         [MLNCornerUtil class],
                         [MLNSafeAreaAdapter class],
+                        [MLNLink class],
                         [MLNDataBinding class]];
     }
     return utilClasses;

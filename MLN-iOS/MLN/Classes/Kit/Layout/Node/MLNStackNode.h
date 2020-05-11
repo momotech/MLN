@@ -9,7 +9,7 @@
 #import "MLNStackConst.h"
 
 #define MLN_IS_EXPANDED_SPACER_NODE_IN_HSTACK(node) \
-        (node.isSpacerNode && ((MLNSpacerNode *)node).changedWidth == NO)
+        (node.isSpacerNode && ((MLNSpacerNode *)node).changedWidth == NO && self.wrapType != MLNStackWrapTypeWrap)
 #define MLN_IS_EXPANDED_SPACER_NODE_IN_VSTACK(node) \
         (node.isSpacerNode && ((MLNSpacerNode *)node).changedHeight == NO)
 
@@ -17,10 +17,15 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface MLNStackNode : MLNLayoutContainerNode
 
+- (CGSize)measureSubNodes:(NSArray<MLNLayoutNode *> *)subNods maxWidth:(CGFloat)maxWidth maxHeight:(CGFloat)maxHeight;
+
+@end
+
+@interface MLNPlaneStackNode : MLNStackNode
+
 @property (nonatomic, assign) MLNStackMainAlignment mainAxisAlignment;
 @property (nonatomic, assign) MLNStackCrossAlignment crossAxisAlignment;
-
-- (CGSize)measureSubNodes:(NSArray<MLNLayoutNode *> *)subNods maxWidth:(CGFloat)maxWidth maxHeight:(CGFloat)maxHeight;
+@property (nonatomic, assign) MLNStackWrapType wrapType;
 
 @end
 
