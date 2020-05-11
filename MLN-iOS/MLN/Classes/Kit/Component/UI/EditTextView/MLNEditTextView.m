@@ -657,6 +657,10 @@
     return YES;
 }
 
+- (BOOL)lua_supportOverlay {
+    return YES;
+}
+
 #pragma mark - Export For Lua
 LUA_EXPORT_VIEW_BEGIN(MLNEditTextView)
 LUA_EXPORT_VIEW_PROPERTY(placeholder, "setPlaceholder:","placeholder", MLNEditTextView)

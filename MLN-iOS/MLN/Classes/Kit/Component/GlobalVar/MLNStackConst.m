@@ -21,6 +21,10 @@ LUA_EXPORT_GLOBAL_VAR(MainAxisAlignment, (@{@"START" :@(MLNStackMainAlignmentSta
 LUA_EXPORT_GLOBAL_VAR(CrossAxisAlignment, (@{@"START" :@(MLNStackCrossAlignmentStart),
                                              @"CENTER":@(MLNStackCrossAlignmentCenter),
                                              @"END"   :@(MLNStackCrossAlignmentEnd)}))
+
+LUA_EXPORT_GLOBAL_VAR(WrapType, (@{@"NOT_WRAP":@(MLNStackWrapTypeNone),
+                                   @"WRAP"    :@(MLNStackWrapTypeWrap)}))
+
 LUA_EXPORT_GLOBAL_VAR_END()
 
 @end

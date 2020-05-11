@@ -37,25 +37,7 @@
 
 #pragma mark - Export Lua
 
-- (void)lua_setMainAxisAlignment:(MLNStackMainAlignment)alignment {
-    self.node.mainAxisAlignment = alignment;
-}
-
-- (MLNStackMainAlignment)lua_mainAxisAlignment {
-    return self.node.mainAxisAlignment;
-}
-
-- (void)lua_setCrossAxisAlignment:(MLNStackCrossAlignment)alignment {
-    self.node.crossAxisAlignment = alignment;
-}
-
-- (MLNStackCrossAlignment)lua_crossAxisAlignment {
-    return self.node.crossAxisAlignment;
-}
-
 LUA_EXPORT_VIEW_BEGIN(MLNHStack)
-LUA_EXPORT_VIEW_PROPERTY(mainAxisAlignment, "lua_setMainAxisAlignment:", "lua_mainAxisAlignment", MLNHStack)
-LUA_EXPORT_VIEW_PROPERTY(crossAxisAlignment, "lua_setCrossAxisAlignment:", "lua_crossAxisAlignment", MLNHStack)
-LUA_EXPORT_VIEW_END(MLNHStack, HStack, YES, "MLNStack", NULL)
+LUA_EXPORT_VIEW_END(MLNHStack, HStack, YES, "MLNPlaneStack", NULL)
 
 @end

@@ -20,6 +20,7 @@
 #import "MLNMyImageHandler.h"
 #import "MLNNavigatorHandler.h"
 #import "MLNKVOObserver.h"
+#import <MLNLink.h>
 
 @interface MLNAppDelegate ()
 
@@ -83,6 +84,8 @@
     [MLNKitEnvironment setDefaultScrollRefreshHandler:self.refreshHandler];
     [MLNKitEnvironment setDefaultImageLoader:self.imgLoader];
     [MLNKitEnvironment setDefaultNavigatorHandler:self.navHandler];
+    
+    [MLNLink registerName:@"MLNLuaGallery" linkClassName:@"MLNLuaGalleryViewController"];
 }
 
 - (void)copyJsonFilesToSandbox
