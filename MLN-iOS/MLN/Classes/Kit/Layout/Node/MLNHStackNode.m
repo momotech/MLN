@@ -419,7 +419,9 @@ static MLN_FORCE_INLINE void MeasureHeightForWeightHorizontal(MLNStackNode __uns
             default:
                 measuredHeight = maxHeight;
         }
-        node.measuredHeight = measuredHeight;
+        if (measuredHeight > 0) { // 如果为0，不应修改node测量高度，否则会导致父视图高度也变为0
+            node.measuredHeight = measuredHeight;
+        }
     }
 }
 
