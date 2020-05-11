@@ -232,10 +232,11 @@ static MLN_FORCE_INLINE void GetFirstSubNodeXAndSubNodeSpace(MLNHStackNode __uns
     int validSpacerCount = 0; // 没有设置width的spacerNode
     CGFloat totalWidth = 0.0;
     for (MLNLayoutNode *node in subNodes) {
-        totalWidth += node.marginLeft + node.measuredWidth + node.marginRight;
         if (MLN_IS_EXPANDED_SPACER_NODE_IN_HSTACK(node)) {
             validSpacerCount++;
+            continue; // 具有扩展特性的Spacer不应参与宽度计算
         }
+        totalWidth += node.marginLeft + node.measuredWidth + node.marginRight;
     }
     CGFloat maxWidth = self.measuredWidth - self.paddingLeft - self.paddingRight;
     CGFloat unusedWidth = MAX(0, (maxWidth - totalWidth));
