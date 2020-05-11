@@ -219,6 +219,7 @@ static MLNHotReload *sharedInstance;
 
 extern int mln_luaopen_socket_core(lua_State *L);
 + (void)openBreakpointDebugIfNeeded:(MLNKitInstance *)instance {
+    /*
     [instance registerClasses:@[[MLNDebugContext class]] error:NULL];
     mln_luaopen_socket_core(instance.luaCore.state);
     
@@ -230,6 +231,7 @@ extern int mln_luaopen_socket_core(lua_State *L);
     BOOL ret = [instance.luaCore runData:data name:@"mlndebug.lua" error:&error];
     NSAssert(ret, [error.userInfo objectForKey:@"message"]);
     [instance changeLuaBundleWithPath:backupBundlePath];
+     */
 }
 
 #pragma mark - MLNServerListenerProtocol

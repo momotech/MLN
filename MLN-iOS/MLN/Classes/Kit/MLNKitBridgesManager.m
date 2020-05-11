@@ -219,8 +219,9 @@ static NSArray<Class<MLNExportProtocol>> *utilClasses;
                         [MLNNetworkReachability class],
                         [MLNCornerUtil class],
                         [MLNSafeAreaAdapter class],
-                        [MLNDataBinding class]];
-                        [MLNLink class]];
+                        [MLNDataBinding class],
+                        [MLNLink class]
+        ];
     }
     return utilClasses;
 }
