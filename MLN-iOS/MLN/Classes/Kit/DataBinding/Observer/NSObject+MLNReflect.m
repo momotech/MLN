@@ -11,6 +11,7 @@
 #import "MLNDataBinding+MLNKit.h"
 #import "NSArray+MLNKVO.h"
 #import "NSDictionary+MLNKVO.h"
+#import "MLNColor.h"
 
 @import ObjectiveC;
 
@@ -91,8 +92,13 @@
     if (type == MLNNativeTypeDictionary || type == MLNNativeTypeMDictionary) {
         return [(NSDictionary *)self mln_convertToLuaTableAvailable];
     }
-    if (type == MLNNativeTypeObject) {
-        return self.mln_toDictionary;
+    switch (type) {
+        case MLNNativeTypeObject:
+            return self.mln_toDictionary;
+        case MLNNativeTypeColor:
+            return [[MLNColor alloc] initWithColor:(UIColor *)self];
+        default:
+            break;
     }
     return self;
 }
