@@ -11,6 +11,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface NSDictionary (MLNKVO)
 - (NSMutableDictionary *)mln_mutalbeCopy;
+- (NSDictionary *)mln_convertToLuaTableAvailable;
 @end
 
 @interface NSMutableDictionary (MLNKVO)

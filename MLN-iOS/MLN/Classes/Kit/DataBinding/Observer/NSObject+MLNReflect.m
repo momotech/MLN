@@ -10,6 +10,7 @@
 #import "MLNCore.h"
 #import "MLNDataBinding+MLNKit.h"
 #import "NSArray+MLNKVO.h"
+#import "NSDictionary+MLNKVO.h"
 
 @import ObjectiveC;
 
@@ -88,7 +89,7 @@
         return [(NSArray *)self mln_convertToLuaTableAvailable];
     }
     if (type == MLNNativeTypeDictionary || type == MLNNativeTypeMDictionary) {
-        return self.copy;
+        return [(NSDictionary *)self mln_convertToLuaTableAvailable];
     }
     if (type == MLNNativeTypeObject) {
         return self.mln_toDictionary;
