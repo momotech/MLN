@@ -6,7 +6,6 @@
 //
 
 #import "MLNVStackNode.h"
-#import "MLNSpacerNode.h"
 #import "MLNHeader.h"
 #import "UIView+MLNLayout.h"
 
@@ -72,7 +71,7 @@ static MLN_FORCE_INLINE MLNLayoutNodeColumn *GetBelongColumn(__unsafe_unretained
     CGFloat totalHeight = 0;
     NSInteger totalWeight = 0;
     
-    if (self.wrapType == MLNStackWrapTypeWrap) {
+    if (MLN_IS_WRAP_MODE) {
         MeasureMultiColumnSize(self, subNods, CGSizeMake(usableZoneWidth, usableZoneHeight), &totalWidth, &totalHeight, &totalWeight);
     } else {
         MeasureSingleColumnSize(self, subNods, CGSizeMake(usableZoneWidth, usableZoneHeight), &totalWidth, &totalHeight, &totalWeight);
@@ -124,7 +123,7 @@ static MLN_FORCE_INLINE MLNLayoutNodeColumn *GetBelongColumn(__unsafe_unretained
     self.measuredHeight = measuredHeight;
     
     // measure weight
-    if (totalWeight > 0) {
+    if (totalWeight > 0 && MLN_IS_WRAP_MODE == NO) {
         measureWidthForWeightVertical(self, subNods, measuredWidth, measuredHeight, myMaxWidth, totalWeight);
     }
     return CGSizeMake(self.measuredWidth, self.measuredHeight);
@@ -138,15 +137,11 @@ static MLN_FORCE_INLINE MLNLayoutNodeColumn *GetBelongColumn(__unsafe_unretained
     for (NSArray<MLNLayoutNode *> *subNodes in self.wrapLineNodes) {
         CGFloat space = 0.0; // subNode之间的间隔
         CGFloat vernierY = 0.0; // 游标, 用于设置每个subNode的y坐标
-        CGFloat spacerHeight = 0.0; // spacer的高度
-        GetFirstSubNodeYAndSubNodeSpace(self, &vernierY, &space, &spacerHeight, subNodes);
+        GetFirstSubNodeYAndSubNodeSpace(self, &vernierY, &space, subNodes);
     
         CGFloat childX, childY = 0.0;
         for (MLNLayoutNode *subNode in subNodes) {
             if (subNode.isGone) continue;
-            if (MLN_IS_EXPANDED_SPACER_NODE_IN_VSTACK(subNode)) {
-                subNode.measuredHeight = spacerHeight;
-            }
             
             // 布局主轴(Y-axis)
             vernierY += subNode.marginTop;
@@ -154,7 +149,7 @@ static MLN_FORCE_INLINE MLNLayoutNodeColumn *GetBelongColumn(__unsafe_unretained
             vernierY += subNode.measuredHeight + subNode.marginBottom + space;
             
             // 布局交叉轴(X-axis)
-            if (self.wrapType != MLNStackWrapTypeWrap) {
+            if (MLN_IS_WRAP_MODE == NO) {
                 childX = LayoutSingleColumnSubNodeX(self, subNode, layoutZoneWidth, layoutZoneRight);
             } else {
                 CGFloat columnWidth = GetBelongColumn(subNode).value;
@@ -371,31 +366,20 @@ MLN_FORCE_INLINE void measureWidthForWeightVertical(MLNStackNode __unsafe_unreta
 
 #pragma mark - Private (Layout)
 
-static MLN_FORCE_INLINE void GetFirstSubNodeYAndSubNodeSpace(MLNVStackNode __unsafe_unretained *self, CGFloat *firstSubNodeY, CGFloat *subNodeSpace, CGFloat *spacerHeight, NSArray<MLNLayoutNode *> __unsafe_unretained *subNodes) {
+static MLN_FORCE_INLINE void GetFirstSubNodeYAndSubNodeSpace(MLNVStackNode __unsafe_unretained *self, CGFloat *firstSubNodeY, CGFloat *subNodeSpace, NSArray<MLNLayoutNode *> __unsafe_unretained *subNodes) {
     if (self.mergedHeightType == MLNLayoutMeasurementTypeWrapContent) {
         *firstSubNodeY = self.paddingTop; // WrapContent模式下不会有多余间距
         return;
     }
     
-    int validSpacerCount = 0; // 没有设置height的spacerNode
     CGFloat totalHeight = 0.0;
     for (MLNLayoutNode *node in subNodes) {
-        if (MLN_IS_EXPANDED_SPACER_NODE_IN_VSTACK(node)) {
-            validSpacerCount++;
-            continue; // 具有扩展特性的Spacer不应参与宽度计算
-        }
         totalHeight += node.marginTop + node.measuredHeight + node.marginBottom;
     }
     CGFloat maxHeight = self.measuredHeight - self.paddingTop - self.paddingBottom;
     CGFloat unusedHeigt = MAX(0, (maxHeight - totalHeight));
     
-    MLNStackMainAlignment mainAlignment = self.mainAxisAlignment;
-    if (validSpacerCount > 0) { // 如果有Spacer, 则主轴上AxisAlignment均无效
-        mainAlignment = MLNStackMainAlignmentInvalid;
-        *spacerHeight = unusedHeigt / validSpacerCount;
-    }
-    
-    switch (mainAlignment) {
+    switch (self.mainAxisAlignment) {
         case MLNStackMainAlignmentStart:
             *firstSubNodeY = self.paddingTop;
             break;
@@ -503,75 +487,4 @@ static MLN_FORCE_INLINE CGFloat LayoutMultiColumnSubNodeX(MLNVStackNode __unsafe
     return x;
 }
 
-
-
-/*
-static MLN_FORCE_INLINE CGFloat GetSubNodeGravityX(MLNVStackNode __unsafe_unretained *self, MLNLayoutNode __unsafe_unretained *subNode, CGFloat maxWidth, CGFloat maxX) {
-    CGFloat x = 0.0;
-    switch (subNode.gravity & MLNGravityHorizontalMask) { // 交叉轴方向布局优先以Gravity为准
-        case MLNGravityLeft:
-            x = self.paddingLeft + subNode.marginLeft;
-            break;
-
-        case MLNGravityCenterHorizontal:
-            x = self.paddingLeft + (maxWidth - subNode.measuredWidth) / 2.0 + subNode.marginLeft - subNode.marginRight;
-            break;
-
-        case MLNGravityRight:
-            x = maxX - subNode.measuredWidth - subNode.marginRight;
-            break;
-
-        default:
-            x = -1;
-            break;
-
-    }
-    return x;
-}
-
-
-static MLN_FORCE_INLINE CGFloat GetSubNodeCrossAxisAlignmentX(MLNVStackNode __unsafe_unretained *self, MLNLayoutNode __unsafe_unretained *subNode, CGFloat x, CGFloat maxWidth, CGFloat maxX) {
-    if (self.wrapType != MLNStackWrapTypeWrap) {
-        if (x >= 0) return x; // 如果非换行模式，交叉轴方向布局优先以Gravity为准，若未设置Gravity，则以crossAxisAlignment为准.
-        switch (self.crossAxisAlignment) {
-            case MLNStackCrossAlignmentStart:
-                x = self.paddingLeft + subNode.marginLeft;
-                break;
-                
-            case MLNStackCrossAlignmentCenter:
-                x = self.paddingLeft + (maxWidth - subNode.measuredWidth) / 2.0f + subNode.marginLeft - subNode.marginRight;
-                break;
-                
-            case MLNStackCrossAlignmentEnd:
-                x = maxX - subNode.measuredWidth - subNode.marginRight;
-                break;
-                
-            default:
-                x = self.paddingLeft + subNode.marginLeft;
-                break;
-        }
-        return x;
-    }
-    
-    // 换行模式下Gravity只针对每一行生效，而crossAxisAlignment对所有行作为一个整体生效
-    if (x < 0) {
-        x = self.paddingLeft + subNode.marginLeft;
-    }
-    switch (self.crossAxisAlignment) {
-        case MLNStackCrossAlignmentCenter:
-            x += (maxWidth - self.subNodeTotalWidth) / 2.0f;
-            break;
-            
-        case MLNStackCrossAlignmentEnd:
-            x += (maxX - self.subNodeTotalWidth);
-            break;
-            
-        case MLNStackCrossAlignmentStart:
-        default:
-            // do nothing
-            break;
-    }
-    return x;
-}
-*/
 @end

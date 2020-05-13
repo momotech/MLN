@@ -8,10 +8,7 @@
 #import "MLNLayoutContainerNode.h"
 #import "MLNStackConst.h"
 
-#define MLN_IS_EXPANDED_SPACER_NODE_IN_HSTACK(node) \
-        (node.isSpacerNode && ((MLNSpacerNode *)node).changedWidth == NO && self.wrapType != MLNStackWrapTypeWrap)
-#define MLN_IS_EXPANDED_SPACER_NODE_IN_VSTACK(node) \
-        (node.isSpacerNode && ((MLNSpacerNode *)node).changedHeight == NO)
+#define MLN_IS_WRAP_MODE (self.wrapType == MLNStackWrapTypeWrap)
 
 #define MLN_NODE_HEIGHT_SHOULD_FORCE_USE_MATCHPARENT(node) \
         (node.heightType == MLNLayoutMeasurementTypeMatchParent && node.mergedHeightType == MLNLayoutMeasurementTypeWrapContent)
