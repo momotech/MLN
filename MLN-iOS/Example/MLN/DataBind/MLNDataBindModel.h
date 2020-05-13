@@ -19,6 +19,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy) NSString *iconUrl;
 
 @property (nonatomic, copy) NSString *type;
+@property (nonatomic, copy) NSArray *source;
+
 + (instancetype)testModel;
 
 @end
@@ -27,6 +29,14 @@ NS_ASSUME_NONNULL_BEGIN
 @interface MLNDatabindTableViewModel : NSObject
 @property (nonatomic, strong) NSMutableArray *source;
 @property (nonatomic, assign) NSUInteger tableHeight;
++ (instancetype)testModel;
+@end
+
+
+
+@interface MLNDataBindArrayModel : NSObject
+@property (nonatomic, copy) NSString *name;
+@property (nonatomic, copy) NSArray <MLNDataBindModel *> *source;
 + (instancetype)testModel;
 @end
 

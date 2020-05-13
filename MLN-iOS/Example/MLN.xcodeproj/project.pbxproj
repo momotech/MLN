@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		0011BBB32410AC3F003AE819 /* MLNDatabindingTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 0011BBB22410AC3F003AE819 /* MLNDatabindingTests.m */; };
 		0011BBB72410AC6F003AE819 /* MLNTestModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 0011BBB62410AC6F003AE819 /* MLNTestModel.m */; };
+		00574F94246A8B3200927744 /* MLNDataBindArrayViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 00574F93246A8B3200927744 /* MLNDataBindArrayViewController.m */; };
 		009DD8D524114B9600452458 /* MLNArrayBindingTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 009DD8D424114B9600452458 /* MLNArrayBindingTests.m */; };
 		00A0C999243C180500F0D003 /* MLNPerformanceTestController.m in Sources */ = {isa = PBXBuildFile; fileRef = 00A0C998243C180500F0D003 /* MLNPerformanceTestController.m */; };
 		00A0C9A1243C3C0500F0D003 /* LuaNativeUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00A0C9A0243C3C0500F0D003 /* LuaNativeUITests.m */; };
@@ -125,6 +126,8 @@
 		0011BBB22410AC3F003AE819 /* MLNDatabindingTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNDatabindingTests.m; sourceTree = "<group>"; };
 		0011BBB52410AC6F003AE819 /* MLNTestModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNTestModel.h; sourceTree = "<group>"; };
 		0011BBB62410AC6F003AE819 /* MLNTestModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNTestModel.m; sourceTree = "<group>"; };
+		00574F92246A8B3200927744 /* MLNDataBindArrayViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNDataBindArrayViewController.h; sourceTree = "<group>"; };
+		00574F93246A8B3200927744 /* MLNDataBindArrayViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNDataBindArrayViewController.m; sourceTree = "<group>"; };
 		009DD8D424114B9600452458 /* MLNArrayBindingTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNArrayBindingTests.m; sourceTree = "<group>"; };
 		00A0C997243C180500F0D003 /* MLNPerformanceTestController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNPerformanceTestController.h; sourceTree = "<group>"; };
 		00A0C998243C180500F0D003 /* MLNPerformanceTestController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNPerformanceTestController.m; sourceTree = "<group>"; };
@@ -375,6 +378,8 @@
 				00E6526A2420AD1800A878B8 /* MLNBindModelViewController.m */,
 				00E6526C2420BCCE00A878B8 /* MLNBindTableViewController.h */,
 				00E6526D2420BCCE00A878B8 /* MLNBindTableViewController.m */,
+				00574F92246A8B3200927744 /* MLNDataBindArrayViewController.h */,
+				00574F93246A8B3200927744 /* MLNDataBindArrayViewController.m */,
 			);
 			path = DataBind;
 			sourceTree = "<group>";
@@ -1059,6 +1064,7 @@
 				30E24E9422F3D74A00A0E78C /* MLNGlobalFuncTest.m in Sources */,
 				30E24E9522F3D74A00A0E78C /* MLNStaticTest.m in Sources */,
 				FA4EE3032379086F00449250 /* MLNGalleryMinePageCellCollectModel.m in Sources */,
+				00574F94246A8B3200927744 /* MLNDataBindArrayViewController.m in Sources */,
 				B2DD3E61237990E9002AB6AD /* MLNControlContext.m in Sources */,
 				FA4EE3002379080100449250 /* MLNGalleryMinePageCellDynamicModel.m in Sources */,
 				B27F65902377AA6C00F2D341 /* MLNGalleryMineHeaderView.m in Sources */,

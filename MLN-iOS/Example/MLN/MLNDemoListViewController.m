@@ -99,7 +99,8 @@
 //                       @"MLNDataBindHotReload",
                        @"MLNBindModelViewController",
                        @"MLNBindTableViewController",
-                       @"MLNPerformanceTestController"
+                       @"MLNPerformanceTestController",
+                       @"MLNDataBindArrayViewController"
                        ];
     }
     return _demoArray;
