@@ -33,6 +33,7 @@ static const void *kLuaOpenRipple = &kLuaOpenRipple;
 static const void *kLuaOldColor = &kLuaOldColor;
 static const void *kDidSetLuaOldColor = &kDidSetLuaOldColor;
 static const void *kNeedEndEditing = &kNeedEndEditing;
+static const void *kKeyboardDismiss = &kKeyboardDismiss;
 
 @implementation UIView (MLNKit)
 
@@ -84,6 +85,7 @@ static const void *kNeedEndEditing = &kNeedEndEditing;
     if (![self isKindOfClass:[UIView class]]) {
         return;
     }
+    
     if([self isOpenRipple]) {
         if (![self oldColor] && ![self lua_didSetOldColor]) {
             [self setOldColor:self.backgroundColor];
@@ -91,8 +93,13 @@ static const void *kNeedEndEditing = &kNeedEndEditing;
         }
         self.backgroundColor = kMLNDefaultRippleColor;
     }
+    
     if ([self needEndEditing]) {
         [self endEditing:YES];
+    }
+    
+    if ([self needDismissKeyboard]) {
+        [self.window endEditing:YES];
     }
     
     if (self.mln_touchesBeganCallback) {
@@ -1108,6 +1115,20 @@ static const void *kLuaOnDetachedFromWindowCallback = &kLuaOnDetachedFromWindowC
 - (BOOL)needEndEditing
 {
     NSNumber* number = objc_getAssociatedObject(self, kNeedEndEditing);
+    if (number) {
+        return [number boolValue];
+    }
+    return NO;
+}
+
+- (void)lua_KeyboardDismiss:(BOOL)autodismiss
+{
+    objc_setAssociatedObject(self,kKeyboardDismiss,@(autodismiss),OBJC_ASSOCIATION_ASSIGN);
+}
+
+- (BOOL)needDismissKeyboard
+{
+    NSNumber* number = objc_getAssociatedObject(self, kKeyboardDismiss);
     if (number) {
         return [number boolValue];
     }
