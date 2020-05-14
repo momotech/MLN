@@ -37,10 +37,14 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-@interface MLNBindTestCaseModel2 : MLNBindTestCaseModel
-@property (nonatomic, assign) CGRect rect;
+@interface MLNBindTestCaseModel2 : NSObject
 //@property (nonatomic, assign) CGPoint point;
 //@property (nonatomic, assign) CGSize size;
+@property (nonatomic, strong) NSArray *tagArray;
+@property (nonatomic, copy) NSString *info;
+
++ (instancetype)testModel;
+
 @end
 
 NS_ASSUME_NONNULL_END

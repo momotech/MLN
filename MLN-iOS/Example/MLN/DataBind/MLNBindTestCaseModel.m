@@ -56,12 +56,13 @@
 @implementation MLNBindTestCaseModel2
 
 + (instancetype)testModel {
-    CGRect r = CGRectMake(1.1, 1.2, 1.3, 1.4);
-    CGPoint p = CGPointMake(2.1, 2.2);
-    CGSize s = CGSizeMake(3.1, 3.2);
-    
-    MLNBindTestCaseModel2 *m = [super testModel];
-//    m.rect = r;
+    MLNBindTestCaseModel2 *m = [MLNBindTestCaseModel2 new];
+    m.info = @"向好友介绍自己";
+    m.tagArray = @[
+        @[@"设计师", UIColor.redColor],
+        @[@"程序员", UIColor.blueColor],
+        @[@"勤劳的", UIColor.darkGrayColor]
+    ];
     return m;
 }
 

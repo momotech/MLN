@@ -43,7 +43,7 @@
     [self bindData:self.tcModel forKey:@"testModel"];
     
     MLNBindTestCaseModel2 *tc2 = [MLNBindTestCaseModel2 testModel];
-    [self bindData:tc2 forKey:@"tm"];
+    [self bindData:tc2 forKey:@"pageModel"];
 }
 
 - (void)createModel {
