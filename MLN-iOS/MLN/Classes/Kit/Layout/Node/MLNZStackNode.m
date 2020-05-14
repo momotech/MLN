@@ -37,7 +37,7 @@
             [subnode needLayout];
         }
         CGFloat subMaxWidth = usableZoneWidth - subnode.marginLeft - subnode.marginRight;
-        CGFloat subMaxHeight = usableZoneHeight - totalHeight - subnode.marginTop - subnode.marginBottom;
+        CGFloat subMaxHeight = usableZoneHeight - subnode.marginTop - subnode.marginBottom;
         CGSize subMeasuredSize = [subnode measureSizeWithMaxWidth:subMaxWidth maxHeight:subMaxHeight]; // 计算子节点
         switch (subnode.layoutStrategy) {
             case MLNLayoutStrategyNativeFrame:
