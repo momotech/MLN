@@ -87,27 +87,25 @@
     }
 }
 
-- (instancetype)mln_convertToLuaTableAvailable {
+- (NSArray *)mln_convertToLuaTableAvailable {
     NSMutableArray *arr = [NSMutableArray array];
     [self enumerateObjectsUsingBlock:^(NSObject *  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-//        MLNNativeType type = [obj mln_nativeType];
-//        if (type == MLNNativeTypeMArray ||
-//            type == MLNNativeTypeMDictionary ||
-//            type == MLNNativeTypeObject) {
-//            if (!arr) {
-//                arr = [NSMutableArray array];
-//            }
-//            if (type == MLNNativeTypeObject) {
-//                [arr addObject:[obj mln_toDictionary].copy];
-//            } else {
-//                [arr addObject:obj.copy];
-//            }
-//        }
         NSObject *n = [obj mln_convertToLuaObject];
         if (n) {
             [arr addObject:n];
         }
     }];
     return arr.count > 0 ? arr.copy : self.copy;
+}
+
+- (instancetype)mln_convertToMArray {
+    NSMutableArray *arr = [NSMutableArray array];
+    [self enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        NSObject *n = [obj mln_convertToNativeObject];
+        if (n) {
+            [arr addObject:n];
+        }
+    }];
+    return arr;
 }
 @end

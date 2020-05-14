@@ -35,7 +35,8 @@
     if(!keyPath) return;
     
     UIViewController<MLNDataBindingProtocol> *kitViewController = (UIViewController<MLNDataBindingProtocol> *)MLN_KIT_INSTANCE([self mln_currentLuaCore]).viewController;
-    [kitViewController.mln_dataBinding updateDataForKeyPath:keyPath value:value];
+    NSObject *obj = [value mln_convertToNativeObject];
+    [kitViewController.mln_dataBinding updateDataForKeyPath:keyPath value:obj];
 }
 
 + (id __nullable)lua_dataForKeyPath:(NSString *)keyPath {
@@ -74,59 +75,6 @@
         return nil;
     }
     [kitViewController.mln_dataBinding updateDataForKeyPath:key value:arr];
-    /*
-    MLNBlock *reuseIdBlock = [callbackDic objectForKey:@"reuseId"];
-    MLNBlock *height = [callbackDic objectForKey:@"height"];
-    MLNBlock *size = [callbackDic objectForKey:@"size"];
-    arr.mln_resueIdBlock = ^NSString * _Nonnull(NSArray * _Nonnull items, NSUInteger section, NSUInteger row) {
-        if (reuseIdBlock) {
-            NSDictionary *item;
-            @try {
-                item = (items.mln_is2D) ? items[section][row] : items[row];
-                [reuseIdBlock addMapArgument:item];
-                [reuseIdBlock addUIntegerArgument:section + 1];
-                [reuseIdBlock addUIntegerArgument:row + 1];
-                NSString *cellId = [reuseIdBlock callIfCan];
-                return cellId;
-            } @catch (NSException *exception) {
-                NSLog(@"error %s exception %@",__func__, exception);
-            }
-        }
-        return nil;
-    };
-    arr.mln_heightBlock = ^NSUInteger(NSArray * _Nonnull items, NSUInteger section, NSUInteger row) {
-        if (height) {
-            NSDictionary *item;
-            @try {
-                item = (items.mln_is2D) ? items[section][row] : items[row];
-                [height addMapArgument:item];
-                [height addUIntegerArgument:section + 1];
-                [height addUIntegerArgument:row + 1];
-                NSUInteger h = [[height callIfCan] unsignedIntegerValue];
-                return h;
-            } @catch (NSException *exception) {
-                NSLog(@"error %s exception %@",__func__, exception);
-            }
-        }
-        return 0;
-    };
-    arr.mln_sizeBlock = ^CGSize(NSArray * _Nonnull items, NSUInteger section, NSUInteger row) {
-        if (size) {
-            NSDictionary *item;
-            @try {
-                item = (items.mln_is2D) ? items[section][row] : items[row];
-                [size addMapArgument:item];
-                [size addUIntegerArgument:section + 1];
-                [size addUIntegerArgument:row + 1];
-                CGSize s = [[size callIfCan] CGSizeValue];
-                return s;
-            } @catch (NSException *exception) {
-                NSLog(@"error %s exception %@",__func__, exception);
-            }
-        }
-        return CGSizeZero;
-    };
-     */
     [arr mln_startKVOIfMutable];
     return arr;
 }
@@ -209,63 +157,15 @@
             object = [array mln_objectAtIndex:row - 1];
         }
         
-        id oldValue = [object valueForKeyPath:path];
-        [object setValue:value forKeyPath:path];
-        
-        NSArray *blocks = array.mln_itemKVOBlocks.copy;
-        for (MLNItemKVOBlock block in blocks) {
-            block(object, path, oldValue, value);
-        }
+//        id oldValue = [object valueForKeyPath:path];
+        NSObject *newValue = [value mln_convertToNativeObject];
+        [object setValue:newValue forKeyPath:path];
         
     } @catch (NSException *exception) {
         NSLog(@"%s exception: %@",__func__, exception);
     }
 }
-/*
-+ (NSString *)lua_reuseIdForKey:(NSString *)key section:(NSUInteger)section row:(NSUInteger)row {
-    NSArray *array = [self lua_dataForKeyPath:key];
-    if (array.mln_resueIdBlock) {
-        return array.mln_resueIdBlock(array, section - 1, row - 1);
-    }
-    
-    NSString *firstKey = [[key componentsSeparatedByString:@"."] firstObject];
-    NSObject *obj = [self lua_dataForKeyPath:firstKey];
-    if (obj.mln_resueIdBlock) {
-        return obj.mln_resueIdBlock(array, section - 1, row - 1);
-    }
-    return @"Cell";
-}
 
-+ (NSUInteger)lua_heightForKey:(NSString *)key section:(NSUInteger)section row:(NSUInteger)row {
-    NSArray *array = [self lua_dataForKeyPath:key];
-    if (array.mln_heightBlock) {
-        return array.mln_heightBlock(array, section - 1, row - 1);
-    }
-    
-    NSString *firstKey = [[key componentsSeparatedByString:@"."] firstObject];
-    NSObject *obj = [self lua_dataForKeyPath:firstKey];
-    if (obj.mln_heightBlock) {
-        return obj.mln_heightBlock(array, section - 1, row - 1);
-    }
-    NSAssert(array.mln_heightBlock || obj.mln_heightBlock, @"mln_heightBlock of binded array should not be nil");
-    return 0;
-}
-
-+ (CGSize)lua_sizeForKey:(NSString *)key section:(NSUInteger)section row:(NSUInteger)row {
-    NSArray *array = [self lua_dataForKeyPath:key];
-    if (array.mln_sizeBlock) {
-        return array.mln_sizeBlock(array, section - 1, row - 1);
-    }
-    
-    NSString *firstKey = [[key componentsSeparatedByString:@"."] firstObject];
-    NSObject *obj = [self lua_dataForKeyPath:firstKey];
-    if (obj.mln_sizeBlock) {
-        return obj.mln_sizeBlock(array, section - 1, row - 1);
-    }
-    NSAssert(array.mln_sizeBlock || obj.mln_sizeBlock, @"mln_sizeBlock of binded array should not be nil");
-    return CGSizeZero;
-}
-*/
 + (void)lua_bindCellForKey:(NSString *)key section:(NSUInteger)section row:(NSUInteger)row paths:(NSArray *)paths {
     NSParameterAssert(key && paths);
     if (!key || !paths) return;

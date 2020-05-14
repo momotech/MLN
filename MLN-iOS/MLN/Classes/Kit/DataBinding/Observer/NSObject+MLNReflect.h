@@ -15,7 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (id)mln_valueForKeyPath:(NSString *)keyPath;
 
 - (id)mln_convertToLuaObject;
-
+- (id)mln_convertToNativeObject;
 @end
 
 NS_ASSUME_NONNULL_END
