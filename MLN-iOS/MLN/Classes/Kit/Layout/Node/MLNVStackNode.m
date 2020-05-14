@@ -278,18 +278,18 @@ static MLN_FORCE_INLINE void MeasureMultiColumnSize(__unsafe_unretained MLNVStac
             [lineNodes removeAllObjects];
             [lineNodes addObject:subNode];
             
+            *totalWidth += currentColumnWidth; // 换列后累加上一列宽度
             currentColumnWidth = subNodeSize.width;
             currentColumnHeight = subNodeSize.height;
-            *totalWidth += currentColumnWidth;
             
             belongColumn = [MLNLayoutNodeColumn new]; // 换行后重新分配列宽
             belongColumn.value = currentColumnWidth;
             SetBelongColumn(subNode, belongColumn);
         }
-        *totalWidth = MAX(*totalWidth, currentColumnWidth);
         *totalHeight = MAX(*totalHeight, currentColumnHeight);
     };
     
+    *totalWidth += currentColumnWidth; // 累加最后一列宽度
     if (lineNodes.count > 0) {
         [self.wrapLineNodes addObject:lineNodes];
     }

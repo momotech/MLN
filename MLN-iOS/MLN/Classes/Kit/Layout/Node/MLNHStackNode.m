@@ -278,18 +278,18 @@ static MLN_FORCE_INLINE void MeasureMultiLineSize(__unsafe_unretained MLNHStackN
             [lineNodes removeAllObjects];
             [lineNodes addObject:subNode];
             
+            *totalHeight += currentLineHeight; // 换行后累加上一行的高度
             currentLineWidth = subNodeSize.width;
             currentLineHeight = subNodeSize.height;
-            *totalHeight += currentLineHeight;
             
             belongLine = [MLNLayoutNodeLine new]; // 换行后重新分配行高
             belongLine.value = currentLineHeight;
             SetBelongLine(subNode, belongLine);
         }
         *totalWidth = MAX(*totalWidth, currentLineWidth);
-        *totalHeight = MAX(*totalHeight, currentLineHeight);
     };
-    
+     
+    *totalHeight += currentLineHeight; // 累加最后一行高度
     if (lineNodes.count > 0) {
         [self.wrapLineNodes addObject:lineNodes];
     }
