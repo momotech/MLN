@@ -46,10 +46,6 @@
     MLNKitLuaAssert(NO, @"LinearLayout does not support sendSubviewToBack method");
 }
 
-- (BOOL)lua_supportOverlay {
-    return YES;
-}
-
 #pragma mark - Export For Lua
 LUA_EXPORT_VIEW_BEGIN(MLNLinearLayout)
 LUA_EXPORT_VIEW_METHOD(setWrapContent, "setLua_wrapContent:",MLNLinearLayout)
