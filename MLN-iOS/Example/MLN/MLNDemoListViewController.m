@@ -96,7 +96,7 @@
                        @"TableViewDemo.lua",
                        @"ViewPagerDemo.lua",
                        @"WaterfallViewDemo.lua",
-//                       @"MLNDataBindHotReload",
+                       @"MLNDataBindHotReload",
                        @"MLNBindModelViewController",
                        @"MLNBindTableViewController",
                        @"MLNPerformanceTestController",

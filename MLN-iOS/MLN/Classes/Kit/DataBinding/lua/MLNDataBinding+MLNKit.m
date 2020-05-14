@@ -49,9 +49,9 @@
 }
 
 
-+ (id __nullable)lua_mockForKey:(NSString *)key data:(NSDictionary *)dic {
++ (void)lua_mockForKey:(NSString *)key data:(NSDictionary *)dic {
     NSParameterAssert(key);
-    if(!key) return nil;
+    if(!key) return;
     
     UIViewController<MLNDataBindingProtocol> *kitViewController = (UIViewController<MLNDataBindingProtocol> *)MLN_KIT_INSTANCE([self mln_currentLuaCore]).viewController;
 //    if ([dic isKindOfClass:[NSArray class]]) {
@@ -59,24 +59,33 @@
 //    }
     if (![dic isKindOfClass:[NSDictionary class]]) {
         NSLog(@"error %s, should be NSDictionary",__func__);
-        return nil;
+        return;
     }
-    NSMutableDictionary *map = dic.mln_mutalbeCopy;
+//    NSMutableDictionary *map = dic.mln_mutalbeCopy;
+    NSMutableDictionary *map = [dic mln_convertToNativeObject];
     [kitViewController.mln_dataBinding bindData:map forKey:key];
-    return map;
 }
 
-+ (id __nullable)lua_mockArrayForKey:(NSString *)key data:(NSArray *)data callbackDic:(NSDictionary *)callbackDic {
-    UIViewController<MLNDataBindingProtocol> *kitViewController = (UIViewController<MLNDataBindingProtocol> *)MLN_KIT_INSTANCE([self mln_currentLuaCore]).viewController;
++ (void)lua_mockArrayForKey:(NSString *)key data:(NSArray *)data callbackDic:(NSDictionary *)callbackDic {
+    NSParameterAssert(key && data);
+    if(!key || !data) return;
     
-    NSMutableArray *arr = [[kitViewController.mln_dataBinding dataForKeyPath:key] mutableCopy];
-    if (![arr isKindOfClass:[NSMutableArray class]]) {
-        NSLog(@"data of keypath: %@ is %@ , it should be NSMutableArray!",key, data);
-        return nil;
+    UIViewController<MLNDataBindingProtocol> *kitViewController = (UIViewController<MLNDataBindingProtocol> *)MLN_KIT_INSTANCE([self mln_currentLuaCore]).viewController;
+    if (![data isKindOfClass:[NSArray class]]) {
+        NSLog(@"error %s, should be NSArray",__func__);
+        return;
     }
-    [kitViewController.mln_dataBinding updateDataForKeyPath:key value:arr];
-    [arr mln_startKVOIfMutable];
-    return arr;
+    NSMutableArray *array = [data mln_convertToNativeObject];
+    [kitViewController.mln_dataBinding bindArray:array forKey:key];
+
+//    NSMutableArray *arr = [[kitViewController.mln_dataBinding dataForKeyPath:key] mutableCopy];
+//    if (![arr isKindOfClass:[NSMutableArray class]]) {
+//        NSLog(@"data of keypath: %@ is %@ , it should be NSMutableArray!",key, data);
+//        return nil;
+//    }
+//    [kitViewController.mln_dataBinding updateDataForKeyPath:key value:arr];
+//    [arr mln_startKVOIfMutable];
+//    return arr;
 }
 
 #pragma mark - ListView
@@ -243,8 +252,8 @@
     if ([array isKindOfClass:[NSArray class]] && index < [array count]) {
         NSObject *obj = [array objectAtIndex:index];
         [kitViewController.mln_dataBinding mln_observeObject:obj property:dataKeyPath withBlock:^(id  _Nonnull observer, id  _Nonnull object, id  _Nonnull oldValue, id  _Nonnull newValue, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
-            [handler addObjArgument:newValue];
-            [handler addObjArgument:oldValue];
+            [handler addObjArgument:[newValue mln_convertToLuaObject]];
+            [handler addObjArgument:[oldValue mln_convertToLuaObject]];
             [handler callIfCan];
         }];
     }
@@ -260,11 +269,31 @@
     if ([array isKindOfClass:[NSArray class]] && index < [array count]) {
         NSObject *obj = [array objectAtIndex:index];
         @try {
-            [obj setValue:newValue forKey:dataKeyPath];
+            [obj setValue:[newValue mln_convertToNativeObject] forKey:dataKeyPath];
         } @catch (NSException *exception) {
             NSLog(@"%s exception: %@",__func__,exception);
         }
     }
+}
+
++ (id)lua_getArrayDataForKey:(NSString *)key index:(NSUInteger)index dataKeyPath:(NSString *)dataKeyPath {
+    NSParameterAssert(key);
+    if(!key) return nil;
+    
+    index -= 1;
+    id ret;
+    UIViewController<MLNDataBindingProtocol> *kitViewController = (UIViewController<MLNDataBindingProtocol> *)MLN_KIT_INSTANCE([self mln_currentLuaCore]).viewController;
+    NSArray *array = [kitViewController.mln_dataBinding dataForKeyPath:key];
+    if ([array isKindOfClass:[NSArray class]] && index < [array count]) {
+        @try {
+            NSObject *obj = [array objectAtIndex:index];
+            id newObj = [obj mln_valueForKeyPath:dataKeyPath];
+            ret = [newObj mln_convertToLuaObject];
+        } @catch (NSException *exception) {
+            NSLog(@"%s exception: %@",__func__,exception);
+        }
+    }
+    return ret;
 }
 
 #pragma mark - Setup For Lua
@@ -288,6 +317,7 @@ LUA_EXPORT_STATIC_METHOD(bindCell, "lua_bindCellForKey:section:row:paths:", MLND
 //LUA_EXPORT_STATIC_METHOD(bindArray, "lua_bindArrayForKeyPath:handler:", MLNDataBinding)
 LUA_EXPORT_STATIC_METHOD(bindArrayData, "lua_bindArrayDataForKey:index:dataKeyPath:handler:", MLNDataBinding)
 LUA_EXPORT_STATIC_METHOD(updateArrayData, "lua_updateArrayDataForKey:index:dataKeyPath:newValue:", MLNDataBinding)
+LUA_EXPORT_STATIC_METHOD(getArrayData, "lua_getArrayDataForKey:index:dataKeyPath:", MLNDataBinding)
 
 LUA_EXPORT_STATIC_END(MLNDataBinding, DataBinding, NO, NULL)
 
