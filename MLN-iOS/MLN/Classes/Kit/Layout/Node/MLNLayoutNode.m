@@ -14,8 +14,6 @@
 @interface MLNLayoutNode ()
 
 @property (nonatomic, assign) BOOL needUpdateAnchorPoint;
-@property (nonatomic, assign) BOOL isInvalidForWidthMatchParent;
-@property (nonatomic, assign) BOOL isInvalidForHeightMatchParent;
 
 @end
 @implementation MLNLayoutNode
@@ -245,9 +243,6 @@ MLN_FORCE_INLINE void measureSimapleAutoNodeSize(MLNLayoutNode __unsafe_unretain
 - (void)changeWidth:(CGFloat)width
 {
     MLNLayoutMeasurementType type = width;
-    if (_isInvalidForWidthMatchParent && type == MLNLayoutMeasurementTypeMatchParent) {
-        return; // 作为H(V)Stack的子视图不允许设置MatchParent
-    }
     //⚠️ 小于0且不等于MLNLayoutMeasurementTypeWrapContent和MLNLayoutMeasurementTypeMatchParent
     //   认为是绝对宽度0
     if (width != MLNLayoutMeasurementTypeWrapContent &&
@@ -273,9 +268,6 @@ MLN_FORCE_INLINE void measureSimapleAutoNodeSize(MLNLayoutNode __unsafe_unretain
 - (void)changeHeight:(CGFloat)height
 {
     MLNLayoutMeasurementType type = height;
-    if (_isInvalidForHeightMatchParent && type == MLNLayoutMeasurementTypeMatchParent) {
-        return; // 作为H(V)Stack的子视图不允许设置MatchParent
-    }
     //⚠️ 小于0且不等于MLNLayoutMeasurementTypeWrapContent和MLNLayoutMeasurementTypeMatchParent
     //   认为是绝对高度0
     if (height != MLNLayoutMeasurementTypeWrapContent &&
@@ -431,8 +423,6 @@ MLN_FORCE_INLINE void resetArchpointIfNeed(MLNLayoutNode __unsafe_unretained *no
     self.offsetWidth = 0.f;
     self.offsetHeight = 0.f;
     self.idx = 0;
-    _isInvalidForWidthMatchParent = NO;
-    _isInvalidForHeightMatchParent = NO;
 }
 
 - (void)changeLayoutStrategyTo:(MLNLayoutStrategy)layoutStrategy
@@ -729,22 +719,6 @@ MLN_FORCE_INLINE void resetArchpointIfNeed(MLNLayoutNode __unsafe_unretained *no
 - (NSString *)description
 {
     return [NSString stringWithFormat:@"<%@: %p , diryt : %d,  target view: %@>",NSStringFromClass([self class]), self, self.isDirty, self.targetView];
-}
-
-#pragma mark -
-
-- (void)invalidateMatchParentTypeForWidth {
-    if (self.widthType == MLNLayoutMeasurementTypeMatchParent) {
-        self.widthType = MLNLayoutMeasurementTypeWrapContent;
-    }
-    _isInvalidForWidthMatchParent = YES;
-}
-
-- (void)invalidateMatchParentTypeForHeight {
-    if (self.heightType == MLNLayoutMeasurementTypeMatchParent) {
-        self.heightType = MLNLayoutMeasurementTypeWrapContent;
-    }
-    _isInvalidForHeightMatchParent = YES;
 }
 
 @end

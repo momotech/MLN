@@ -99,6 +99,10 @@ static MLN_FORCE_INLINE void quickSort(MLNStackNode __unsafe_unretained *node, N
 
 @implementation MLNPlaneStackNode
 
+- (void)invalidateMainAxisMatchParentMeasureType {
+    // do nothing
+}
+
 #pragma mark - Override (Init)
 
 - (instancetype)initWithTargetView:(UIView *)targetView {

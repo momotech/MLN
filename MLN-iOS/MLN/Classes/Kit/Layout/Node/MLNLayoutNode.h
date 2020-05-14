@@ -169,9 +169,6 @@ typedef enum : NSUInteger {
 //*****
 - (void)bindSuper:(MLNLayoutNode *)supernode;
 - (void)unbind;
-
-- (void)invalidateMatchParentTypeForWidth;
-- (void)invalidateMatchParentTypeForHeight;
 @end
 
 NS_ASSUME_NONNULL_END

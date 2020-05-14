@@ -30,8 +30,13 @@
     return [[MLNVStackNode alloc] initWithTargetView:targetView];
 }
 
-- (void)invalidateMatchParentMeasureTypeForMainAxis:(UIView *)view {
-    [view.lua_node invalidateMatchParentTypeForHeight];
+#pragma mark - Override
+
+- (void)lua_addSubview:(UIView *)view {
+    [super lua_addSubview:view];
+    if ([view isKindOfClass:[MLNVStack class]]) {
+        [(MLNVStackNode *)view.lua_node invalidateMainAxisMatchParentMeasureType];
+    }
 }
 
 #pragma mark - Export Lua

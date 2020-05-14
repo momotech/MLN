@@ -53,17 +53,6 @@ LUA_EXPORT_VIEW_END(MLNStack, Stack, YES, "MLNView", "initWithLuaCore:frame:")
     return (MLNPlaneStackNode *)self.lua_node;
 }
 
-- (void)invalidateMatchParentMeasureTypeForMainAxis:(UIView *)view {
-    // do nothing.
-}
-
-#pragma mark - Override
-
-- (void)lua_addSubview:(UIView *)view {
-    [super lua_addSubview:view];
-    [self invalidateMatchParentMeasureTypeForMainAxis:view];
-}
-
 #pragma mark - Export Lua
 
 - (void)lua_setMainAxisAlignment:(MLNStackMainAlignment)alignment {

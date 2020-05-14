@@ -34,6 +34,7 @@ if (subNode.isDirty) {\
 
 @property (nonatomic, assign) CGFloat subNodeTotalHeight;
 @property (nonatomic, strong) NSMutableArray<NSArray<MLNLayoutNode *> *> *wrapLineNodes;
+@property (nonatomic, assign) BOOL changedWidthToMatchParent;
 
 @end
 
@@ -58,6 +59,19 @@ static MLN_FORCE_INLINE MLNLayoutNodeLine *GetBelongLine(__unsafe_unretained MLN
 }
 
 #pragma mark - Override
+
+- (void)changeWidth:(CGFloat)width {
+    [super changeWidth:width];
+    if (self.widthType == MLNLayoutMeasurementTypeMatchParent) {
+        _changedWidthToMatchParent = YES;
+    }
+}
+
+- (void)invalidateMainAxisMatchParentMeasureType {
+    if (self.widthType == MLNLayoutMeasurementTypeMatchParent && !_changedWidthToMatchParent) {
+        self.widthType = MLNLayoutMeasurementTypeWrapContent;
+    }
+}
 
 - (CGSize)measureSubNodes:(NSArray<MLNLayoutNode *> *)subNods maxWidth:(CGFloat)maxWidth maxHeight:(CGFloat)maxHeight {
     if (self.wrapLineNodes.count > 0) {

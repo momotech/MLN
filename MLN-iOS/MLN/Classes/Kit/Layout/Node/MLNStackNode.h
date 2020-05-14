@@ -29,6 +29,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) MLNStackCrossAlignment crossAxisAlignment;
 @property (nonatomic, assign) MLNStackWrapType wrapType;
 
+// subclass should override
+- (void)invalidateMainAxisMatchParentMeasureType;
+
 @end
 
 NS_ASSUME_NONNULL_END
