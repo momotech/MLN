@@ -162,6 +162,7 @@ MLN_FORCE_INLINE void measureHeightForWeightHorizontal(MLNLinearLayoutNode __uns
             subnode.widthProportion = subnode.weight * 1.f / totalWeight * 1.f;
             [subnode needLayout];
             [proportionNodes addObject:subnode];
+            totalWeight -= subnode.weight;
         } else{
             subWidth = subnode.measuredWidth;
         }
@@ -174,7 +175,6 @@ MLN_FORCE_INLINE void measureHeightForWeightHorizontal(MLNLinearLayoutNode __uns
                 break;
             }
         }
-        totalWeight -= subnode.weight;
     }
     
     CGFloat needMaxHeight = 0.f;
@@ -337,6 +337,7 @@ MLN_FORCE_INLINE void measureWidthForWeightVertical(MLNLinearLayoutNode __unsafe
             needDirty = YES;
             [subnode needLayout];
             [proportionNodes addObject:subnode];
+            totalWeight -= subnode.weight;
         } else{
             subHeight = subnode.measuredHeight;
         }
@@ -349,7 +350,6 @@ MLN_FORCE_INLINE void measureWidthForWeightVertical(MLNLinearLayoutNode __unsafe
                 break;
             }
         }
-        totalWeight -= subnode.weight;
     }
     
     int needMaxWidth = 0.f;
