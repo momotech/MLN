@@ -10,12 +10,14 @@
 #import "MLNStaticTest.h"
 #import "MLNDataBindModel.h"
 #import <NSArray+MLNKVO.h>
+#import "MLNBindTestCaseModel.h"
 
 @interface MLNDataBindHotReload () <MLNDataBindingProtocol>
 @property (nonatomic, strong) MLNDataBindModel *model;
 //@property (nonatomic, strong) NSMutableArray <MLNDataBindModel *> *modelArray;
 @property (nonatomic, strong) MLNDatabindTableViewModel *tableModel;
 @property (nonatomic, strong) MLNDataBinding *dataBinding;
+@property (nonatomic, strong) MLNBindTestCaseModel *tcModel;
 @end
 
 @implementation MLNDataBindHotReload
@@ -29,11 +31,19 @@
 }
 
 - (void)viewDidLoad {
-    [self createModel];
-    [self createModelArray];
+//    [self createModel];
+//    [self createModelArray];
 //    [self testDataBind];
-    
+    [self createTestCase];
     [super viewDidLoad];
+}
+
+- (void)createTestCase {
+    self.tcModel = [MLNBindTestCaseModel testModel];
+    [self bindData:self.tcModel forKey:@"testModel"];
+    
+    MLNBindTestCaseModel2 *tc2 = [MLNBindTestCaseModel2 testModel];
+    [self bindData:tc2 forKey:@"pageModel"];
 }
 
 - (void)createModel {
@@ -53,9 +63,14 @@
     NSMutableArray *models = @[arr].mutableCopy;
     self.tableModel.source = models;
 
-    self.tableModel.source.mln_subscribeItem(^(NSObject * _Nonnull item, NSString * _Nonnull keyPath, NSObject * _Nullable oldValue, NSObject * _Nullable newValue) {
-        NSLog(@"item  %@ keypath %@ old %@ new %@",item,keyPath,oldValue,newValue);
-    });
+//    self.tableModel.source.mln_subscribeItem(^(NSObject * _Nonnull item, NSString * _Nonnull keyPath, NSObject * _Nullable oldValue, NSObject * _Nullable newValue) {
+//        NSLog(@"item  %@ keypath %@ old %@ new %@",item,keyPath,oldValue,newValue);
+//    });
+    
+    [self mln_observeArray:self.tableModel.source withBlock:^(id  _Nonnull observer, id  _Nonnull object, id  _Nonnull oldValue, id  _Nonnull newValue, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
+        NSLog(@"item  %@  old %@ new %@",object,oldValue,newValue);
+    }];
+    
     
 //    [self.dataBinding bindArray:models forKey:@"source"];
     [self.mln_dataBinding bindData:self.tableModel forKey:@"tableModel"];

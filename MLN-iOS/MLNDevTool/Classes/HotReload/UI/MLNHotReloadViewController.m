@@ -76,7 +76,11 @@
     };
     [[MLNHotReload getInstance] setUpdateCallback:^(MLNKitInstance * _Nonnull instance) {
         __strong typeof(wself) sself = wself;
-        sself->_kitInstance = instance;
+        @try {
+            [sself setValue:instance forKey:@"_kitInstance"];
+        } @catch (NSException *exception) {
+            NSLog(@"%@", exception);
+        };
     }];
 }
 

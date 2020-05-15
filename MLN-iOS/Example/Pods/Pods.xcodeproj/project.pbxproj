@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		002CB619D8F57F95252823B4AF8FC57E /* MLNSpacer.h in Headers */ = {isa = PBXBuildFile; fileRef = DFD0C3A13CC5D3FD15F5EBF71A6187C5 /* MLNSpacer.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		007F89E3246BFC9300FF50F1 /* MLNDefautImageloader.h in Headers */ = {isa = PBXBuildFile; fileRef = 007F89E1246BFC9300FF50F1 /* MLNDefautImageloader.h */; };
+		007F89E4246BFC9300FF50F1 /* MLNDefautImageloader.m in Sources */ = {isa = PBXBuildFile; fileRef = 007F89E2246BFC9300FF50F1 /* MLNDefautImageloader.m */; };
 		00951873181FD2D3FF5C33A7006A0319 /* NSButton+WebCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A39F0B17E7C7F8E149722468559398B /* NSButton+WebCache.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		00DACBE731CA94DE9B908B88BE737E0B /* MLNViewExporterMacro.h in Headers */ = {isa = PBXBuildFile; fileRef = 08D20831E4393499561AA82E15E751CA /* MLNViewExporterMacro.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		03110534BE651EBAF2313563CD8200F2 /* MJRefreshStateHeader.m in Sources */ = {isa = PBXBuildFile; fileRef = B38434308AA1B1C633046E6935559AC5 /* MJRefreshStateHeader.m */; };
@@ -1277,6 +1279,8 @@
 		00076D8D5766531350D8C9D4F199D276 /* MLN_GCDAsyncSocket.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLN_GCDAsyncSocket.h; sourceTree = "<group>"; };
 		00116D7141139B475EA479BA2FF239E5 /* mln_timeout.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; path = mln_timeout.c; sourceTree = "<group>"; };
 		006771FC992340C3AD833F4D22EF3348 /* mln_tcp.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = mln_tcp.h; sourceTree = "<group>"; };
+		007F89E1246BFC9300FF50F1 /* MLNDefautImageloader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNDefautImageloader.h; sourceTree = "<group>"; };
+		007F89E2246BFC9300FF50F1 /* MLNDefautImageloader.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNDefautImageloader.m; sourceTree = "<group>"; };
 		00C9843FAB1090451669CEFF854AAB59 /* LNClientProtocol.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = LNClientProtocol.h; sourceTree = "<group>"; };
 		00E9A50A84CBC360E40449E9C098014D /* AFAutoPurgingImageCache.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = AFAutoPurgingImageCache.m; path = "UIKit+AFNetworking/AFAutoPurgingImageCache.m"; sourceTree = "<group>"; };
 		010C2D222809E4E50B63A23380B477EF /* TAAbstractDotView.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = TAAbstractDotView.h; path = SDCycleScrollView/Lib/SDCycleScrollView/PageControl/TAAbstractDotView.h; sourceTree = "<group>"; };
@@ -2583,6 +2587,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		007F89E0246BFC3300FF50F1 /* Handler */ = {
+			isa = PBXGroup;
+			children = (
+				007F89E1246BFC9300FF50F1 /* MLNDefautImageloader.h */,
+				007F89E2246BFC9300FF50F1 /* MLNDefautImageloader.m */,
+			);
+			path = Handler;
+			sourceTree = "<group>";
+		};
 		007FBAD54F9B91B9D931456412AF1D59 /* Client */ = {
 			isa = PBXGroup;
 			children = (
@@ -3790,6 +3803,7 @@
 				AAAC7ACA61ADF68DF43C3A37D4BC1AD0 /* MLNUIViewController.h */,
 				1AE45C81AB1D785FDB99AE54FF61D7C7 /* MLNUIViewController.m */,
 				BCB5FFAF1A8DF6E294CE074CBF91CFCF /* MLNVersion.h */,
+				007F89E0246BFC3300FF50F1 /* Handler */,
 				6A8BB872E3FC639999FD71DDA83CBC5D /* Category */,
 				6CEBD7FD8CE42C264A4145CC40E2DB5D /* Component */,
 				1F88ADC3871ED0F0620A8D953D585D85 /* Convertor */,
@@ -5325,6 +5339,7 @@
 				E8250CC7210F4D734009126D1BCED4C2 /* MLNAnimationConst.h in Headers */,
 				BC3F990B5C7F1E5232AF9EF7F41B52EE /* MLNAnimationDelegate.h in Headers */,
 				999D7131AA8C31CA96724E6699C0F261 /* MLNAnimationHandler.h in Headers */,
+				007F89E3246BFC9300FF50F1 /* MLNDefautImageloader.h in Headers */,
 				46F100D6ECCEBF64AEE26726CC14FF83 /* MLNAnimationHandlerCallbackProtocol.h in Headers */,
 				AE3637D036ED773FF48B7D373A06FB6A /* MLNAnimationSet.h in Headers */,
 				DC8CED96FC112522D3CEB228CE88C83F /* MLNAnimationZoneView.h in Headers */,
@@ -6427,6 +6442,7 @@
 				DD74A634116296944D11CC579B0EFBE2 /* MLNButton.m in Sources */,
 				78ED42B78F502EE7DD936413C6A503BE /* MLNCanvasAnimation.m in Sources */,
 				B11BDDE4730903C57956CB374DC96DF1 /* MLNCanvasAnimationDelegate.m in Sources */,
+				007F89E4246BFC9300FF50F1 /* MLNDefautImageloader.m in Sources */,
 				3C4DC77404192687B09FF4248D95D8D4 /* MLNCanvasConst.m in Sources */,
 				60C40DAF42573D6B0BB75200C3B1B1F7 /* MLNCanvasPaint.m in Sources */,
 				608F693748C52D36817C0C8F73B0D7E7 /* MLNCanvasPath.m in Sources */,

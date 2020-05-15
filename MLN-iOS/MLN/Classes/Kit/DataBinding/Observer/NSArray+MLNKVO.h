@@ -20,10 +20,11 @@ typedef void (^MLNItemKVOBlock)(NSObject *item,NSString *keyPath, NSObject * _Nu
 - (void)mln_stopKVOIfMutable;
 
 // 监听lua层对Cell ViewModel的改动，支持监听二维数组.
-@property (nonatomic, copy, readonly)NSArray * (^mln_subscribeItem)(MLNItemKVOBlock);
-@property (nonatomic, strong, readonly) NSMutableArray *mln_itemKVOBlocks;
+//@property (nonatomic, copy, readonly)NSArray * (^mln_subscribeItem)(MLNItemKVOBlock);
+//@property (nonatomic, strong, readonly) NSMutableArray *mln_itemKVOBlocks;
 
-- (instancetype)mln_convertToLuaTableAvailable;
+- (NSArray *)mln_convertToLuaTableAvailable;
+- (NSMutableArray *)mln_convertToMArray;
 
 @end
 

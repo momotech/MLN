@@ -8,6 +8,7 @@
 #import "MLNKitInstanceHandlersManager.h"
 #import "MLNApplication.h"
 #import "MLNNetworkReachability.h"
+#import "MLNDefautImageloader.h"
 
 @implementation MLNKitInstanceHandlersManager
 
@@ -27,6 +28,8 @@ static MLNKitInstanceHandlersManager *_defaultManager = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         _defaultManager = [[MLNKitInstanceHandlersManager alloc] init];
+        // 默认的handler
+        [_defaultManager setImageLoader:[MLNDefautImageloader defaultIamgeLoader]];
     });
     return _defaultManager;
 }

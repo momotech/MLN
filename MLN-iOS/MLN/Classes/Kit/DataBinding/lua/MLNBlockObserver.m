@@ -10,6 +10,7 @@
 #import "MLNKitHeader.h"
 #import "MLNKitViewController.h"
 #import "MLNDataBinding.h"
+#import "NSObject+MLNReflect.h"
 
 @interface MLNBlockObserver ()
 @property (nonatomic, strong, readwrite) MLNBlock *block;
@@ -45,8 +46,11 @@
     id newValue = [change objectForKey:NSKeyValueChangeNewKey];
     id oldValue = [change objectForKey:NSKeyValueChangeOldKey];
 
-    [self.block addObjArgument:newValue];
-    [self.block addObjArgument:oldValue];
+    id newValueConvert = [newValue mln_convertToLuaObject];
+    id oldValueConvert = [oldValue mln_convertToLuaObject];
+    
+    [self.block addObjArgument:newValueConvert];
+    [self.block addObjArgument:oldValueConvert];
     [self.block callIfCan];
 }
 

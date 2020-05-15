@@ -10,6 +10,11 @@
 #import "MLNCore.h"
 #import "MLNDataBinding+MLNKit.h"
 #import "NSArray+MLNKVO.h"
+#import "NSDictionary+MLNKVO.h"
+#import "MLNColor.h"
+#import "MLNRect.h"
+#import "MLNSize.h"
+#import "MLNPoint.h"
 
 @import ObjectiveC;
 
@@ -84,14 +89,45 @@
 
 - (id)mln_convertToLuaObject {
     MLNNativeType type = self.mln_nativeType;
-    if (type == MLNNativeTypeArray || type == MLNNativeTypeMArray) {
-        return [(NSArray *)self mln_convertToLuaTableAvailable];
+
+    switch (type) {
+        case MLNNativeTypeArray:
+        case MLNNativeTypeMArray:
+            return [(NSArray *)self mln_convertToLuaTableAvailable];
+        case MLNNativeTypeDictionary:
+        case MLNNativeTypeMDictionary:
+            return [(NSDictionary *)self mln_convertToLuaTableAvailable];
+        case MLNNativeTypeColor:
+            return [[MLNColor alloc] initWithColor:(UIColor *)self];
+        case MLNNativeTypeValue: {
+            NSValue *value = (NSValue *)self;
+            if (MLNValueIsCGRect(value)) {
+                return [MLNRect rectWithCGRect:value.CGRectValue];
+            } else if (MLNValueIsCGSize(value)) {
+                return [MLNSize sizeWithCGSize:value.CGSizeValue];
+            } else if (MLNValueIsCGPoint(value)) {
+                return [MLNPoint pointWithCGPoint:value.CGPointValue];
+            }
+        }
+        case MLNNativeTypeObject:
+            return self.mln_toDictionary;
+        default:
+            break;
     }
-    if (type == MLNNativeTypeDictionary || type == MLNNativeTypeMDictionary) {
-        return self.copy;
-    }
-    if (type == MLNNativeTypeObject) {
-        return self.mln_toDictionary;
+    return self;
+}
+
+- (id)mln_convertToNativeObject {
+    if ([self isKindOfClass:[NSArray class]]) {
+        return [(NSArray *)self mln_convertToMArray];
+    } else if ([self isKindOfClass:[NSDictionary class]]) {
+        return [(NSDictionary *)self mln_convertToMDic];
+    } else if ([self isKindOfClass:[MLNRect class]]) {
+        return [NSValue valueWithCGRect:[(MLNRect *)self CGRectValue]];
+    } else if ([self isKindOfClass:[MLNSize class]]) {
+        return [NSValue valueWithCGSize:[(MLNSize *)self CGSizeValue]];
+    } else if ([self isKindOfClass:[MLNPoint class]]) {
+        return [NSValue valueWithCGPoint:[(MLNPoint *)self CGPointValue]];
     }
     return self;
 }
