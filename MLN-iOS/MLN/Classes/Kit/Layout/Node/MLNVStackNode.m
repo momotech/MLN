@@ -299,9 +299,9 @@ static MLN_FORCE_INLINE void MeasureMultiColumnSize(__unsafe_unretained MLNVStac
     }
 }
 
-MLN_FORCE_INLINE void measureWidthForWeightVertical(MLNStackNode __unsafe_unretained *node, NSArray<MLNLayoutNode *> __unsafe_unretained *subNods, CGFloat measuredWidth, CGFloat measuredHeight, CGFloat myMaxWidth,  NSInteger totalWeight) {
-    CGFloat usableZoneWidth = myMaxWidth - node.paddingLeft - node.paddingRight;
-    CGFloat usableZoneHeight = measuredHeight - node.paddingTop - node.paddingBottom;
+MLN_FORCE_INLINE void measureWidthForWeightVertical(MLNStackNode __unsafe_unretained *self, NSArray<MLNLayoutNode *> __unsafe_unretained *subNods, CGFloat measuredWidth, CGFloat measuredHeight, CGFloat myMaxWidth,  NSInteger totalWeight) {
+    CGFloat usableZoneWidth = myMaxWidth - self.paddingLeft - self.paddingRight;
+    CGFloat usableZoneHeight = measuredHeight - self.paddingTop - self.paddingBottom;
     
     BOOL needDirty = NO;
 
@@ -317,6 +317,7 @@ MLN_FORCE_INLINE void measureWidthForWeightVertical(MLNStackNode __unsafe_unreta
             needDirty = YES;
             [subnode needLayout];
             [proportionNodes addObject:subnode];
+            totalWeight -= subnode.weight;
         } else{
             subHeight = subnode.measuredHeight;
         }
@@ -329,51 +330,59 @@ MLN_FORCE_INLINE void measureWidthForWeightVertical(MLNStackNode __unsafe_unreta
                 break;
             }
         }
-        totalWeight -= subnode.weight;
     }
     
-    int needMaxWidth = 0.f;
+    CGFloat totalWidth = 0.f;
+    NSMutableArray<MLNLayoutNode *> *forceUseMatchParentNodes = [NSMutableArray array];
     
     for (MLNLayoutNode *subnode in proportionNodes) {
         CGFloat subMaxWidth = usableZoneWidth - subnode.marginLeft - subnode.marginRight;
         CGFloat subMaxHeight = usableZoneHeight;
         //计算子节点
         CGSize subMeasuredSize = [subnode measureSizeWithMaxWidth:subMaxWidth maxHeight:subMaxHeight];
+        if (MLN_NODE_WIDTH_SHOULD_FORCE_USE_MATCHPARENT(subnode)) {
+            [forceUseMatchParentNodes addObject:subnode];
+        }
         // 清空权重
         subnode.heightProportion = 0;
         usableZoneHeight -= subMeasuredSize.height;
         switch (subnode.layoutStrategy) {
             case MLNLayoutStrategyNativeFrame:
-                needMaxWidth = MAX(needMaxWidth, subMeasuredSize.width);
+                totalWidth = MAX(totalWidth, subMeasuredSize.width);
                 break;
             default: {
-                needMaxWidth = MAX(needMaxWidth, subMeasuredSize.width +subnode.marginLeft +subnode.marginRight);
+                totalWidth = MAX(totalWidth, subMeasuredSize.width + subnode.marginLeft + subnode.marginRight);
                 break;
             }
         }
     }
     
+    for (MLNLayoutNode *node in forceUseMatchParentNodes) {
+        node.measuredWidth = MAX(totalWidth, self.measuredWidth);
+        AdjustMeasuredWidthForSubNodes(node);
+    }
+    
     // width
-    if (!node.isWidthExcatly) {
-        switch (node.mergedWidthType) {
+    if (!self.isWidthExcatly) {
+        switch (self.mergedWidthType) {
             case MLNLayoutMeasurementTypeWrapContent:
                 // padding
-                needMaxWidth += node.paddingLeft +node.paddingRight;
+                totalWidth += self.paddingLeft + self.paddingRight;
                 // max
-                needMaxWidth = MIN(measuredWidth, needMaxWidth);
+                totalWidth = MIN(measuredWidth, totalWidth);
                 // min
-                needMaxWidth = node.minWidth > 0 ? MAX(needMaxWidth, node.minWidth) : needMaxWidth;
-                measuredWidth = needMaxWidth;
+                totalWidth = self.minWidth > 0 ? MAX(totalWidth, self.minWidth) : totalWidth;
+                measuredWidth = totalWidth;
                 break;
             case MLNLayoutMeasurementTypeMatchParent:
-                measuredWidth = MAX(node.minWidth, myMaxWidth);
+                measuredWidth = MAX(self.minWidth, myMaxWidth);
                 break;
             default:
                 measuredWidth = myMaxWidth;
                 break;
         }
-        if (measuredWidth > node.measuredWidth) {
-            node.measuredWidth = measuredWidth;
+        if (measuredWidth > self.measuredWidth) {
+            self.measuredWidth = measuredWidth;
         }
     }
 }

@@ -299,11 +299,11 @@ static MLN_FORCE_INLINE void MeasureMultiLineSize(__unsafe_unretained MLNHStackN
     }
 }
 
-static MLN_FORCE_INLINE void MeasureHeightForWeightHorizontal(MLNStackNode __unsafe_unretained *node, NSArray<MLNLayoutNode *> __unsafe_unretained *subNods, CGFloat measuredWidth, CGFloat maxHeight, NSInteger totalWeight) {
+static MLN_FORCE_INLINE void MeasureHeightForWeightHorizontal(MLNStackNode __unsafe_unretained *self, NSArray<MLNLayoutNode *> __unsafe_unretained *subNods, CGFloat measuredWidth, CGFloat maxHeight, NSInteger totalWeight) {
     
     CGFloat measuredHeight = 0.f;
-    CGFloat usableZoneWidth = measuredWidth - node.paddingLeft - node.paddingRight;
-    CGFloat usableZoneHeight = maxHeight - node.paddingTop - node.paddingBottom;
+    CGFloat usableZoneWidth = measuredWidth - self.paddingLeft - self.paddingRight;
+    CGFloat usableZoneHeight = maxHeight - self.paddingTop - self.paddingBottom;
     
     NSMutableArray<MLNLayoutNode *> *proportionNodes = [NSMutableArray arrayWithCapacity:subNods.count];
     for (NSUInteger i  = 0; i < subNods.count; i++) {
@@ -316,6 +316,7 @@ static MLN_FORCE_INLINE void MeasureHeightForWeightHorizontal(MLNStackNode __uns
             subnode.widthProportion = subnode.weight * 1.f / totalWeight * 1.f;
             [subnode needLayout];
             [proportionNodes addObject:subnode];
+            totalWeight -= subnode.weight;
         } else{
             subWidth = subnode.measuredWidth;
         }
@@ -328,16 +329,19 @@ static MLN_FORCE_INLINE void MeasureHeightForWeightHorizontal(MLNStackNode __uns
                 break;
             }
         }
-        totalWeight -= subnode.weight;
     }
     
     CGFloat totalHeight = 0.f;
+    NSMutableArray<MLNLayoutNode *> *forceUseMatchParentNodes = [NSMutableArray array];
     
     for (MLNLayoutNode *subnode in proportionNodes) {
         CGFloat subMaxWidth = usableZoneWidth;
         CGFloat subMaxHeight = usableZoneHeight - subnode.marginTop - subnode.marginBottom;
         //计算子节点
         CGSize subMeasuredSize = [subnode measureSizeWithMaxWidth:subMaxWidth maxHeight:subMaxHeight];
+        if (MLN_NODE_HEIGHT_SHOULD_FORCE_USE_MATCHPARENT(subnode)) {
+            [forceUseMatchParentNodes addObject:subnode];
+        }
         // 清空权重
         subnode.widthProportion = 0;
         usableZoneWidth -= subMeasuredSize.width;
@@ -351,26 +355,32 @@ static MLN_FORCE_INLINE void MeasureHeightForWeightHorizontal(MLNStackNode __uns
             }
         }
     }
+    
+    for (MLNLayoutNode *node in forceUseMatchParentNodes) {
+        node.measuredHeight = MAX(self.measuredHeight, totalHeight);
+        AdjustMeasuredHeightForSubNodes(node);
+    }
+    
     // height
-    if (!node.isHeightExcatly) {
-        switch (node.mergedHeightType) {
+    if (!self.isHeightExcatly) {
+        switch (self.mergedHeightType) {
             case MLNLayoutMeasurementTypeWrapContent:
                 // padding
-                totalHeight += node.paddingTop +node.paddingBottom;
+                totalHeight += self.paddingTop + self.paddingBottom;
                 // min
-                totalHeight = MAX(totalHeight, node.minHeight);
+                totalHeight = MAX(totalHeight, self.minHeight);
                 // max
-                totalHeight = node.maxHeight > 0 ? MIN(node.maxHeight, totalHeight) : totalHeight;
+                totalHeight = self.maxHeight > 0 ? MIN(self.maxHeight, totalHeight) : totalHeight;
                 measuredHeight = totalHeight;
                 break;
             case MLNLayoutMeasurementTypeMatchParent:
-                measuredHeight = MAX(node.minHeight, maxHeight);
+                measuredHeight = MAX(self.minHeight, maxHeight);
                 break;
             default:
                 measuredHeight = maxHeight;
         }
-        if (measuredHeight > node.measuredHeight) {
-            node.measuredHeight = measuredHeight;
+        if (measuredHeight > self.measuredHeight) {
+            self.measuredHeight = measuredHeight;
         }
     }
 }
