@@ -330,6 +330,10 @@ MLN_FORCE_INLINE void measureSimapleAutoNodeSize(MLNLayoutNode __unsafe_unretain
 {
     if ([self hasNewLayout]) {
         CGRect newFrame = CGRectMake(self.measuredX + self.offsetX, self.measuredY + self.offsetY, self.measuredWidth + self.offsetWidth, self.measuredHeight + self.offsetHeight);
+        if (self.overlayNode) {
+            self.targetView.superview.frame = newFrame; // 设置overlay的视图的父视图是个临时的wrapView，不参与node布局计算
+            newFrame = CGRectMake(0, 0, CGRectGetWidth(newFrame), CGRectGetWidth(newFrame));
+        }
         if (!CGRectEqualToRect(self.targetView.frame, newFrame)) {
             self.targetView.transform = CGAffineTransformIdentity;
             self.targetView.frame = newFrame;
