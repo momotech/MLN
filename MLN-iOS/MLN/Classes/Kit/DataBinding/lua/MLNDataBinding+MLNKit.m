@@ -333,7 +333,7 @@ LUA_EXPORT_STATIC_METHOD(updateModel, "lua_updateModelForKey:section:row:path:va
 LUA_EXPORT_STATIC_METHOD(bindCell, "lua_bindCellForKey:section:row:paths:", MLNDataBinding)
 
 //LUA_EXPORT_STATIC_METHOD(getSize, "lua_sizeForKey:section:row:", MLNDataBinding)
-//LUA_EXPORT_STATIC_METHOD(bindArray, "lua_bindArrayForKeyPath:handler:", MLNDataBinding)
+LUA_EXPORT_STATIC_METHOD(bindArray, "lua_bindArrayForKeyPath:handler:", MLNDataBinding)
 LUA_EXPORT_STATIC_METHOD(bindArrayData, "lua_bindArrayDataForKey:index:dataKeyPath:handler:", MLNDataBinding)
 LUA_EXPORT_STATIC_METHOD(updateArrayData, "lua_updateArrayDataForKey:index:dataKeyPath:newValue:", MLNDataBinding)
 LUA_EXPORT_STATIC_METHOD(getArrayData, "lua_getArrayDataForKey:index:dataKeyPath:", MLNDataBinding)
