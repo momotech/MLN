@@ -148,6 +148,8 @@ typedef enum : NSUInteger {
 - (CGFloat)myMaxHeightWithMaxHeight:(CGFloat)maxHeight;
 - (void)measureSizeLightMatchParentWithMaxWidth:(CGFloat)maxWidth maxHeight:(CGFloat)maxHeight;
 - (CGFloat)measurePriority;
+- (void)forceUseMatchParentForWidthMeasureType;
+- (void)forceUseMatchParentForHeightMeasureType;
 //*******
 //******                Layout
 //*****

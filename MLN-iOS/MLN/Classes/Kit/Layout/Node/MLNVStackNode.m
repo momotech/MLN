@@ -191,14 +191,6 @@ static MLN_FORCE_INLINE MLNLayoutNodeColumn *GetBelongColumn(__unsafe_unretained
 
 #pragma mark - Private (Measure)
 
-static MLN_FORCE_INLINE void AdjustMeasuredWidthForSubNodes(__unsafe_unretained MLNLayoutNode *node) {
-    NSArray<UIView *> *subViews = [node.targetView subviews];
-    if (subViews.count == 0) return;
-    [subViews enumerateObjectsUsingBlock:^(UIView * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-        obj.lua_node.measuredWidth = node.measuredWidth;
-    }];
-}
-
 static MLN_FORCE_INLINE CGSize GetSubNodeSize(__unsafe_unretained MLNLayoutNode *subNode, CGFloat subNodeMaxWidth,  CGFloat subNodeMaxHeight) {
     CGSize subNodeSize = [subNode measureSizeWithMaxWidth:subNodeMaxWidth maxHeight:subNodeMaxHeight];
     if (subNode.layoutStrategy == MLNLayoutStrategySimapleAuto) {
@@ -233,8 +225,8 @@ static MLN_FORCE_INLINE void MeasureSingleColumnSize(__unsafe_unretained MLNVSta
         [self.wrapLineNodes addObject:lineNodes];
     }
     for (MLNLayoutNode *node in forceUseMatchParentNodes) {
-        node.measuredWidth = *totalWidth;
-        AdjustMeasuredWidthForSubNodes(node);
+        [node forceUseMatchParentForWidthMeasureType];
+        [node measureSizeWithMaxWidth:(*totalWidth - node.marginLeft - node.marginRight) maxHeight:node.measuredHeight];
     }
 }
 
@@ -294,8 +286,9 @@ static MLN_FORCE_INLINE void MeasureMultiColumnSize(__unsafe_unretained MLNVStac
         [self.wrapLineNodes addObject:lineNodes];
     }
     for (MLNLayoutNode *node in shouldUseMatchParentNodes) {
-        node.measuredWidth = GetBelongColumn(node).value; // 对于width为MatchParent的节点，宽度应为其所在列的列宽
-        AdjustMeasuredWidthForSubNodes(node);
+        [node forceUseMatchParentForWidthMeasureType];
+        CGFloat maxWidth = GetBelongColumn(node).value - node.marginLeft - node.marginRight; // 对于width为MatchParent的节点，宽度应为其所在列的列宽
+        [node measureSizeWithMaxWidth:maxWidth maxHeight:node.measuredHeight];
     }
 }
 
@@ -338,13 +331,11 @@ MLN_FORCE_INLINE void measureWidthForWeightVertical(MLNStackNode __unsafe_unreta
     for (MLNLayoutNode *subnode in proportionNodes) {
         CGFloat subMaxWidth = usableZoneWidth - subnode.marginLeft - subnode.marginRight;
         CGFloat subMaxHeight = usableZoneHeight;
-        //计算子节点
-        CGSize subMeasuredSize = [subnode measureSizeWithMaxWidth:subMaxWidth maxHeight:subMaxHeight];
+        CGSize subMeasuredSize = [subnode measureSizeWithMaxWidth:subMaxWidth maxHeight:subMaxHeight]; // 计算子节点
         if (MLN_NODE_WIDTH_SHOULD_FORCE_USE_MATCHPARENT(subnode)) {
             [forceUseMatchParentNodes addObject:subnode];
         }
-        // 清空权重
-        subnode.heightProportion = 0;
+        subnode.heightProportion = 0; // 清空权重
         usableZoneHeight -= subMeasuredSize.height;
         switch (subnode.layoutStrategy) {
             case MLNLayoutStrategyNativeFrame:
@@ -358,8 +349,11 @@ MLN_FORCE_INLINE void measureWidthForWeightVertical(MLNStackNode __unsafe_unreta
     }
     
     for (MLNLayoutNode *node in forceUseMatchParentNodes) {
-        node.measuredWidth = MAX(totalWidth, self.measuredWidth);
-        AdjustMeasuredWidthForSubNodes(node);
+        [node forceUseMatchParentForWidthMeasureType];
+        CGFloat maxWidth = MAX(totalWidth, self.measuredWidth - self.paddingLeft - self.paddingRight) - node.marginLeft - node.marginRight;
+        CGFloat originHeight = node.measuredHeight;
+        [node measureSizeWithMaxWidth:maxWidth maxHeight:originHeight];
+        node.measuredHeight = originHeight; // 高度应保持不变，否则权重将失效
     }
     
     // width
@@ -412,7 +406,7 @@ static MLN_FORCE_INLINE void GetFirstSubNodeYAndSubNodeSpace(MLNVStackNode __uns
             break;
             
         case MLNStackMainAlignmentEnd:
-            *firstSubNodeY = unusedHeigt;
+            *firstSubNodeY = self.paddingTop + unusedHeigt;
             break;
             
         case MLNStackMainAlignmentSpaceBetween:
