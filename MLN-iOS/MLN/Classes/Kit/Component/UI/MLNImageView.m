@@ -459,3 +459,8 @@ LUA_EXPORT_VIEW_METHOD(addShadow, "lua_addShadow:shadowOffset:shadowRadius:shado
 LUA_EXPORT_VIEW_END(MLNImageView, ImageView, YES, "MLNView", NULL)
 
 @end
+
+@implementation MLNOverlayImageView
+LUA_EXPORT_VIEW_BEGIN(MLNOverlayImageView) // 兼容Android
+LUA_EXPORT_VIEW_END(MLNOverlayImageView, OverImageView, YES, "MLNImageView", NULL)
+@end

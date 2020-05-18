@@ -456,3 +456,8 @@ LUA_EXPORT_VIEW_METHOD(setLineSpacing, "lua_setLineSpacing:",MLNLabel) //SDK>=1.
 LUA_EXPORT_VIEW_METHOD(a_setIncludeFontPadding, "lua_a_setIncludeFontPadding:", MLNLabel)
 LUA_EXPORT_VIEW_END(MLNLabel, Label, YES, "MLNView", "initWithLuaCore:frame:")
 @end
+
+@implementation MLNOverlayLabel
+LUA_EXPORT_VIEW_BEGIN(MLNOverlayLabel) // 兼容Android
+LUA_EXPORT_VIEW_END(MLNOverlayLabel, OverLabel, YES, "MLNLabel", "initWithLuaCore:frame:")
+@end
