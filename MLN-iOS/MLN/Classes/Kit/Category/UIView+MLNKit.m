@@ -32,8 +32,8 @@ static const void *kLuaBlurEffectView = &kLuaBlurEffectView;
 static const void *kLuaOpenRipple = &kLuaOpenRipple;
 static const void *kLuaOldColor = &kLuaOldColor;
 static const void *kDidSetLuaOldColor = &kDidSetLuaOldColor;
-static const void *kNeedEndEditing = &kNeedEndEditing;
-static const void *kKeyboardDismiss = &kKeyboardDismiss;
+static const void *kLuaNeedEndEditing = &kLuaNeedEndEditing;
+static const void *kLuaKeyboardDismiss = &kLuaKeyboardDismiss;
 
 @implementation UIView (MLNKit)
 
@@ -94,11 +94,11 @@ static const void *kKeyboardDismiss = &kKeyboardDismiss;
         self.backgroundColor = kMLNDefaultRippleColor;
     }
     
-    if ([self needEndEditing]) {
+    if ([self lua_needEndEditing]) {
         [self endEditing:YES];
     }
     
-    if ([self needDismissKeyboard]) {
+    if ([self lua_needDismissKeyboard]) {
         [self.window endEditing:YES];
     }
     
@@ -1109,26 +1109,26 @@ static const void *kLuaOnDetachedFromWindowCallback = &kLuaOnDetachedFromWindowC
 
 - (void)lua_endEditing:(BOOL)needEnd
 {
-    objc_setAssociatedObject(self,kNeedEndEditing,@(needEnd),OBJC_ASSOCIATION_ASSIGN);
+    objc_setAssociatedObject(self,kLuaNeedEndEditing,@(needEnd),OBJC_ASSOCIATION_ASSIGN);
 }
 
-- (BOOL)needEndEditing
+- (BOOL)lua_needEndEditing
 {
-    NSNumber* number = objc_getAssociatedObject(self, kNeedEndEditing);
+    NSNumber* number = objc_getAssociatedObject(self, kLuaNeedEndEditing);
     if (number) {
         return [number boolValue];
     }
     return NO;
 }
 
-- (void)lua_KeyboardDismiss:(BOOL)autodismiss
+- (void)lua_keyboardDismiss:(BOOL)autodismiss
 {
-    objc_setAssociatedObject(self,kKeyboardDismiss,@(autodismiss),OBJC_ASSOCIATION_ASSIGN);
+    objc_setAssociatedObject(self,kLuaKeyboardDismiss,@(autodismiss),OBJC_ASSOCIATION_ASSIGN);
 }
 
-- (BOOL)needDismissKeyboard
+- (BOOL)lua_needDismissKeyboard
 {
-    NSNumber* number = objc_getAssociatedObject(self, kKeyboardDismiss);
+    NSNumber* number = objc_getAssociatedObject(self, kLuaKeyboardDismiss);
     if (number) {
         return [number boolValue];
     }
