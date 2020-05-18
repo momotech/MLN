@@ -9,7 +9,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-typedef void(^MLNKVOBlock)(id oldValue, id newValue);
+typedef void(^MLNKVOBlock)(id oldValue, id newValue, id observedObject);
 
 @interface NSObject (MLNKVO)
 

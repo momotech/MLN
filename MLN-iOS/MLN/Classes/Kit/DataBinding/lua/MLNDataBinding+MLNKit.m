@@ -296,6 +296,25 @@
     return ret;
 }
 
++ (void)lua_aliasArrayDataForKey:(NSString *)key index:(NSUInteger)index alias:(NSString *)alias {
+    NSParameterAssert(key && alias);
+    if(!key || !alias)  return;
+    
+    index -= 1;
+    UIViewController<MLNDataBindingProtocol> *kitViewController = (UIViewController<MLNDataBindingProtocol> *)MLN_KIT_INSTANCE([self mln_currentLuaCore]).viewController;
+    NSArray *array = [kitViewController.mln_dataBinding dataForKeyPath:key];
+    if ([array isKindOfClass:[NSArray class]] && index < [array count]) {
+        @try {
+            NSObject *obj = [array objectAtIndex:index];
+            if (obj) {
+                [kitViewController.mln_dataBinding bindData:obj forKey:alias];
+            }
+        } @catch (NSException *exception) {
+            NSLog(@"%s exception: %@",__func__,exception);
+        }
+    }
+}
+
 #pragma mark - Setup For Lua
 LUA_EXPORT_STATIC_BEGIN(MLNDataBinding)
 LUA_EXPORT_STATIC_METHOD(bind, "lua_bindDataForKeyPath:handler:", MLNDataBinding)
@@ -314,10 +333,11 @@ LUA_EXPORT_STATIC_METHOD(updateModel, "lua_updateModelForKey:section:row:path:va
 LUA_EXPORT_STATIC_METHOD(bindCell, "lua_bindCellForKey:section:row:paths:", MLNDataBinding)
 
 //LUA_EXPORT_STATIC_METHOD(getSize, "lua_sizeForKey:section:row:", MLNDataBinding)
-//LUA_EXPORT_STATIC_METHOD(bindArray, "lua_bindArrayForKeyPath:handler:", MLNDataBinding)
+LUA_EXPORT_STATIC_METHOD(bindArray, "lua_bindArrayForKeyPath:handler:", MLNDataBinding)
 LUA_EXPORT_STATIC_METHOD(bindArrayData, "lua_bindArrayDataForKey:index:dataKeyPath:handler:", MLNDataBinding)
 LUA_EXPORT_STATIC_METHOD(updateArrayData, "lua_updateArrayDataForKey:index:dataKeyPath:newValue:", MLNDataBinding)
 LUA_EXPORT_STATIC_METHOD(getArrayData, "lua_getArrayDataForKey:index:dataKeyPath:", MLNDataBinding)
+LUA_EXPORT_STATIC_METHOD(aliasArrayData, "lua_aliasArrayDataForKey:index:alias:", MLNDataBinding)
 
 LUA_EXPORT_STATIC_END(MLNDataBinding, DataBinding, NO, NULL)
 

@@ -33,6 +33,14 @@
     
     [viewController bindData:self.tableModel forKey:@"tableModel"];
     [viewController mln_addToSuperViewController:self frame:self.view.bounds];
+    
+    self.tableModel.mln_watch(@"refresh", ^(id  _Nonnull oldValue, id  _Nonnull newValue, MLNDatabindTableViewModel *object) {
+        if (object.refresh) {
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                object.refresh = NO;
+            });
+        }
+    });
 }
 
 - (void)createModelArray {

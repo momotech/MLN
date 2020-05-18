@@ -24,7 +24,7 @@
             @strongify(self);
             if (self && block) {
                 [self mln_observeProperty:keyPath withBlock:^(id  _Nonnull observer, id  _Nonnull object, id  _Nonnull oldValue, id  _Nonnull newValue, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
-                    block(oldValue, newValue);
+                    block(oldValue, newValue, object);
                 }];
 
             }

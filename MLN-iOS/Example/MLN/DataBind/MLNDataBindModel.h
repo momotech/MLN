@@ -29,6 +29,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface MLNDatabindTableViewModel : NSObject
 @property (nonatomic, strong) NSMutableArray *source;
 @property (nonatomic, assign) NSUInteger tableHeight;
+@property (nonatomic, assign) BOOL refresh;
 + (instancetype)testModel;
 @end
 
