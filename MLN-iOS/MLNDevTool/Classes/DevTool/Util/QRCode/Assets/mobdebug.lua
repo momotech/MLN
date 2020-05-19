@@ -556,6 +556,17 @@ local function normalize_path(file)
   return (file:gsub("^(/?)%.%./", "%1"))
 end
 
+local function mln_update_commandmodel_var_names(cmd)
+  local varnames = mobdebug.commandmodel_var_names
+  if varnames ~= nil and type(varnames) == "table" then
+    if cmd ~= nil and type(cmd) == "string" then
+      local _, _, var = string.find(cmd, "%s*(%a+)%s*=%s*%a*")
+      varnames[var] = var
+    end
+
+  end
+end
+
 local function debug_hook(event, line)
   -- (1) LuaJIT needs special treatment. Because debug_hook is set for
   -- *all* coroutines, and not just the one being debugged as in regular Lua
@@ -696,6 +707,7 @@ local function debug_hook(event, line)
              if func and type(func) == "function" then
               setfenv(func, env)
               func()
+              mln_update_commandmodel_var_names(cmd)
              end
           end
         end
@@ -848,9 +860,9 @@ end
 -- 根据分析，局部变量存储在 vars[1][2] 这个表中，格式为：变量名={"变量值", "变量类型"}
 -- 这里暂时把全局变量也存储到这里，统一显示在 idea frame 面板上
 local function mln_append_global_values(vars)
+  local varnames = mobdebug.commandmodel_var_names
   for k, v in pairs(_G) do
-    if k == "item" or  --DataBinding:getModel()的返回值名字为item，类型为table
-       k == "userData" or --DataBinding:get()的返回值名字为userData，类型为table
+    if (varnames and varnames[k] or false) or --DataBinding:getModel()
        type(v) == "string" or 
        type(v) == "userdata" or
        type(v) == "number" then --暂时只显示这三种类型的全局变量
@@ -1188,6 +1200,7 @@ local function debugger_loop(sev, svars, sfile, sline)
       params = pfunc and pfunc() --got table
       params = (type(params) == "table" and params or {}) --校验，确保是table类型
       mobdebug.commandmodels = mobdebug.commandmodels and mobdebug.commandmodels or {}
+      mobdebug.commandmodel_var_names = {}
       for k, v in pairs(params) do
         mobdebug.commandmodels[k] = v
       end
@@ -1857,6 +1870,7 @@ mobdebug.onexit = os and os.exit or done
 mobdebug.onscratch = nil -- callback
 mobdebug.basedir = function(b) if b then basedir = b end return basedir end
 mobdebug.commandmodels = nil
+mobdebug.commandmodel_var_names = nil
 
 return mobdebug
 
