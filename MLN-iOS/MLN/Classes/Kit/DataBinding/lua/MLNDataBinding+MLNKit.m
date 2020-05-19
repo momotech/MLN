@@ -45,7 +45,7 @@
     
     UIViewController<MLNDataBindingProtocol> *kitViewController = (UIViewController<MLNDataBindingProtocol> *)MLN_KIT_INSTANCE([self mln_currentLuaCore]).viewController;
     NSObject *obj = [kitViewController.mln_dataBinding dataForKeyPath:keyPath];
-    return [obj mln_convertToLuaObject];
+    return obj;
 }
 
 
@@ -71,11 +71,19 @@
     if(!key || !data) return;
     
     UIViewController<MLNDataBindingProtocol> *kitViewController = (UIViewController<MLNDataBindingProtocol> *)MLN_KIT_INSTANCE([self mln_currentLuaCore]).viewController;
+    
+    NSMutableArray *existData = [kitViewController.mln_dataBinding dataForKeyPath:key];
+    if ([existData isKindOfClass:[NSMutableArray class]]) {
+        [existData mln_startKVOIfMutable];
+        return;
+    }
+    
     if (![data isKindOfClass:[NSArray class]]) {
         NSLog(@"error %s, should be NSArray",__func__);
         return;
     }
     NSMutableArray *array = [data mln_convertToNativeObject];
+    [array mln_startKVOIfMutable];
     [kitViewController.mln_dataBinding bindArray:array forKey:key];
 
 //    NSMutableArray *arr = [[kitViewController.mln_dataBinding dataForKeyPath:key] mutableCopy];
