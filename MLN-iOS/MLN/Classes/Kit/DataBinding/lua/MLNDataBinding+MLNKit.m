@@ -243,10 +243,16 @@
             return;
         }
          */
+        NSKeyValueChange type = [[change objectForKey:NSKeyValueChangeKindKey] unsignedIntegerValue];
+        if (type == NSKeyValueChangeSetting) {
+            object = [change objectForKey:NSKeyValueChangeNewKey];
+        }
         if (handler && [object isKindOfClass:[NSArray class]]) {
             NSArray *n = [object mln_convertToLuaObject];
-            [handler addArrayArgument:n];
+            [handler addObjArgument:n];
             [handler callIfCan];
+        } else {
+            NSAssert(false, @"object: %@ should be array",object);
         }
         
     } keyPath:keyPath];
