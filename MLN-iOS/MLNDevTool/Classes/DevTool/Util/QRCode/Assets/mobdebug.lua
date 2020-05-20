@@ -117,6 +117,7 @@ local step_into = false
 local step_over = false
 local step_level = 0
 local stack_level = 0
+local first_run = false
 local server
 local buf
 local outputs = {}
@@ -615,7 +616,7 @@ local function debug_hook(event, line)
     -- (4) socket call (only do every Xth check)
     -- (5) at least one watch is registered
     if not (
-      step_into or step_over or breakpoints[line] or watchescnt > 0
+      first_run or step_into or step_over or breakpoints[line] or watchescnt > 0
       or is_pending(server)
     ) then checkcount = checkcount + 1; return end
 
@@ -740,11 +741,15 @@ local function debug_hook(event, line)
       --or is_pending(server)
     )
 
-    if getin then
+    if getin or first_run then
+      local is_first_run = first_run
       vars = vars or capture_vars(1)
       step_into = false
       step_over = false
-      status, res = cororesume(coro_debugger, events.BREAK, vars, file, line)
+      first_run = false
+      if coro_debugger ~= nil then
+        status, res = cororesume(coro_debugger, events.BREAK, vars, file, line, nil--[[该参数表示index，参考727行]], is_first_run)
+      end
     end
 
     -- handle 'stack' command that provides stack() information to the debugger
@@ -825,7 +830,7 @@ function handle_socket_command_message()
   if not coro_debugger then
     return "dead"
   end
-  local status, res = cororesume(coro_debugger, events.RECEIVE)
+  local status, res = cororesume(coro_debugger, events.RECEIVE) --为了对应main_thread_should_continue_run方法中的yield
   if not coro_debugger then
     return "dead"
   end
@@ -854,7 +859,7 @@ local function main_thread_should_continue_run(eval_env)
     server:send(file)
   end
 
-  return eval_env
+  return eval_env, file, line
 end
 
 -- 根据分析，局部变量存储在 vars[1][2] 这个表中，格式为：变量名={"变量值", "变量类型"}
@@ -868,6 +873,12 @@ local function mln_append_global_values(vars)
        type(v) == "number" then --暂时只显示这三种类型的全局变量
         if string.sub(k, 1, 1) ~= "_" then --过滤掉下划线开头的全局变量（为了idea面板展示更友好）
           local name = tostring(k) .. "_global"
+          if not vars[1] then
+             vars[1] = {}
+          end
+          if not vars[1][2] then
+             vars[1][2] = {}
+          end
           vars[1][2][name] = {v, v}
         end
     end
@@ -875,7 +886,7 @@ local function mln_append_global_values(vars)
   return vars
 end
 
-local function debugger_loop(sev, svars, sfile, sline)
+local function debugger_loop(sev, svars, sfile, sline, sindex, is_first_run)
   local command
   local app, osname
   local eval_env = svars or {}
@@ -896,7 +907,7 @@ local function debugger_loop(sev, svars, sfile, sline)
          server:settimeout() --resume to poll
 
          if not line and err == "timeout" then
-          main_thread_vars = main_thread_should_continue_run(eval_env)
+            main_thread_vars, sfile, sline, _, is_first_run = main_thread_should_continue_run(eval_env)
          end
       else
          line, err = server:receive()
@@ -947,7 +958,7 @@ local function debugger_loop(sev, svars, sfile, sline)
         server:send("400 Bad Request\n")
       end
       if mobdebug.shouldcontinuerun then
-        main_thread_vars = main_thread_should_continue_run(eval_env)
+        main_thread_vars, sfile, sline, _, is_first_run = main_thread_should_continue_run(eval_env)
       end
     elseif command == "DELB" then
       local _, _, _, file, line = string.find(line, "^([A-Z]+)%s+(.-)%s+(%d+)%s*$")
@@ -958,7 +969,7 @@ local function debugger_loop(sev, svars, sfile, sline)
         server:send("400 Bad Request\n")
       end
       if mobdebug.shouldcontinuerun then
-        main_thread_vars = main_thread_should_continue_run(eval_env)
+        main_thread_vars, sfile, sline, _, is_first_run = main_thread_should_continue_run(eval_env)
       end
     elseif command == "EXEC" then
       -- extract any optional parameters
@@ -1075,12 +1086,12 @@ local function debugger_loop(sev, svars, sfile, sline)
       end
     elseif command == "RUN" then
       server:send("200 OK\n")
-      main_thread_vars = main_thread_should_continue_run(eval_env)
+      main_thread_vars, sfile, sline, _, is_first_run = main_thread_should_continue_run(eval_env)
+
     elseif command == "STEP" then
       server:send("200 OK\n")
       step_into = true
-      
-      main_thread_vars = main_thread_should_continue_run(eval_env)
+      main_thread_vars, sfile, sline, _, is_first_run = main_thread_should_continue_run(eval_env)
      
       --[[
       local ev, vars, file, line, idx_watch = coroyield()
@@ -1106,7 +1117,7 @@ local function debugger_loop(sev, svars, sfile, sline)
       if command == "OUT" then step_level = stack_level - 1
       else step_level = stack_level end
 
-      main_thread_vars = main_thread_should_continue_run(eval_env)
+      main_thread_vars, sfile, sline, _, is_first_run = main_thread_should_continue_run(eval_env)
 
       --[[
       local ev, vars, file, line, idx_watch = coroyield()
@@ -1150,6 +1161,9 @@ local function debugger_loop(sev, svars, sfile, sline)
       if ev and ev ~= events.STACK then
         server:send("401 Error in Execution " .. tostring(#vars) .. "\n")
         server:send(vars)
+      elseif (is_first_run and not has_breakpoint(sfile, sline)) then --即不是step_into也没有设置断点的情况下，只有首次run文件会出现该情况
+        server:send("204 OK\n") --给插件端的回应，不需要触发断点，只是把这条消息处理掉
+        main_thread_vars, sfile, sline, _, is_first_run = main_thread_should_continue_run(eval_env) --让lua代码继续执行
       else
         local params = string.match(line, "--%s*(%b{})%s*$")
         local pfunc = params and loadstring("return "..params) -- use internal function
@@ -1286,7 +1300,8 @@ local function start(controller_host, controller_port)
     coro_debugger = corocreate(debugger_loop)
     debug.sethook(debug_hook, HOOKMASK)
     seen_hook = nil -- reset in case the last start() call was refused
-    step_into = true -- start with step command
+    -- step_into = true -- start with step command 
+    first_run = true --首次run文件时，需要通过该标识来获取调用栈变量以及收取socket消息等。原有逻辑是通过上述`step_into`来控制，为避免和断点stepInto操作冲突，故新设标识。
     return true
   else
     print(("Could not connect to %s:%s: %s")
