@@ -68,9 +68,11 @@
     NSParameterAssert(keyPath);
     NSString *key, *path;
     [self extractFirstKey:&key path:&path from:keyPath];
-    if (!key) {
-        return nil;
-    }
+    return [self _dataForKey:key path:path];
+}
+
+- (id)_dataForKey:(NSString *)key path:(NSString *)path {
+    if (!key) return nil;
     LOCK();
     NSObject *object = [self.dataMap objectForKey:key];
     UNLOCK();
@@ -87,13 +89,256 @@
 }
 
 - (void)addDataObserver:(NSObject<MLNKVOObserverProtol> *)observer forKeyPath:(NSString *)keyPath {
-    [self _realAddObserver:observer forKeyPath:keyPath isArray:NO];
+//    [self _realAddObserver:observer forKeyPath:keyPath isArray:NO];
+    NSParameterAssert(observer && keyPath);
+    if (!observer || !keyPath) return;
+    
+    NSString *key, *path;
+    [self extractFirstKey:&key path:&path from:keyPath];
+    if (!key || !path) {
+        NSLog(@"key: %@ and path: %@ should not be nil",key,path);
+        return;
+    }
+    [self _realAddDataObserver:observer forKeyPath:keyPath key:key path:path];
 }
 
 - (void)removeDataObserver:(NSObject<MLNKVOObserverProtol> *)observer forKeyPath:(NSString *)keyPath {
-    [self _realRemoveObserver:observer forKeyPath:keyPath forArray:NO];
+//    [self _realRemoveObserver:observer forKeyPath:keyPath forArray:NO];
+    NSParameterAssert(observer && keyPath);
+    if(!observer || !keyPath) return;
+    
+    LOCK();
+    NSMutableArray *observers = [self.observerMap objectForKey:keyPath];
+    [observers removeObject:observer];
+    UNLOCK();
+
+    NSString *key, *path;
+    [self extractFirstKey:&key path:&path from:keyPath];
+    if (!key || !path) {
+        NSLog(@"key: %@ and path: %@ should not be nil",key,path);
+        return;
+    }
+    id obj = [self _dataForKey:key path:path];
+    [obj mln_removeObervationsForOwner:observer keyPath:path];
 }
 
+- (NSArray<NSObject<MLNKVOObserverProtol> *> *)observersForKeyPath:(NSString *)keyPath {
+    NSParameterAssert(keyPath);
+    if (!keyPath) {
+        return nil;
+    }
+    LOCK();
+    NSMutableArray *observers = [self.observerMap objectForKey:keyPath];
+    UNLOCK();
+    return observers;
+}
+
+#pragma mark - Array
+
+- (void)bindArray:(NSArray *)array forKey:(NSString *)key {
+    [self bindData:array forKey:key];
+}
+
+- (void)addArrayObserver:(NSObject<MLNKVOObserverProtol> *)observer forKey:(NSString *)keyPath {
+//    [self _realAddObserver:observer forKeyPath:key isArray:YES];
+    NSParameterAssert(observer && keyPath);
+    if (!observer || !keyPath) return;
+    
+    NSString *key, *path;
+    [self extractFirstKey:&key path:&path from:keyPath];
+    if (key && path) {
+        // add data observer
+        [self _realAddDataObserver:observer forKeyPath:keyPath key:key path:path];
+    }
+    [self _realAddArrayObserver:observer forKeyPath:keyPath key:key path:path];
+}
+
+- (void)removeArrayObserver:(NSObject<MLNKVOObserverProtol> *)observer forKey:(NSString *)keyPath {
+//    [self _realRemoveObserver:observer forKeyPath:key forArray:YES];
+    NSParameterAssert(observer && keyPath);
+    if(!observer || !keyPath) return;
+    
+    LOCK();
+    NSMutableArray *observers = [self.observerMap objectForKey:keyPath];
+    [observers removeObject:observer];
+    UNLOCK();
+
+    NSString *key, *path;
+    [self extractFirstKey:&key path:&path from:keyPath];
+    if (key && path) {
+        // remove data observer
+//        [self removeDataObserver:observer forKeyPath:keyPath];
+        id obj = [self _dataForKey:key path:nil];
+        [obj mln_removeObervationsForOwner:observer keyPath:path];
+    }
+    id obj = [self _dataForKey:key path:path];
+    [obj mln_removeArrayObervationsForOwner:observer];
+}
+
+#pragma mark - Util
+// eg: form="userdata.a.b" -> key = "userdata", path = "a.b"
+- (void)extractFirstKey:(NSString **)firstKey path:(NSString **)path from:(NSString *)from {
+    NSMutableArray *coms = [from componentsSeparatedByString:@"."].mutableCopy;
+    *firstKey = coms.firstObject;
+    if (coms.count >= 2) {
+        [coms removeObjectAtIndex:0];
+        *path = [coms componentsJoinedByString:@"."];
+    }
+}
+
+// ex:keyPath=userData.source, key=userData, path=source
+- (void)_realAddDataObserver:(NSObject<MLNKVOObserverProtol> *)observer forKeyPath:(NSString *)keyPath key:(NSString *)key path:(NSString *)path {
+    
+    NSObject *object = [self _dataForKey:key path:nil];
+    LOCK();
+    NSMutableArray *observerArray = [self.observerMap objectForKey:keyPath];
+    if (!observerArray) {
+        observerArray = [NSMutableArray array];
+        [self.observerMap setObject:observerArray forKey:keyPath];
+    }
+    
+    @weakify(self);
+    @weakify(observer);
+    void(^obBlock)(NSString*,NSObject*,NSDictionary*) = ^(NSString *kp, NSObject *object, NSDictionary *change) {
+        @strongify(self);
+        @strongify(observer);
+        if (self && observer) {
+            [observer mln_observeValueForKeyPath:kp ofObject:object change:change];
+        }
+    };
+    
+    [observer mln_observeObject:object property:path withBlock:^(id  _Nonnull observer, id  _Nonnull object, id  _Nonnull oldValue, id  _Nonnull newValue, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
+        obBlock(path,object, change);
+    }];
+    
+    if (![observerArray containsObject:observer]) {
+        [observerArray addObject:observer];
+    }
+    UNLOCK();
+}
+
+- (void)_realAddArrayObserver:(NSObject<MLNKVOObserverProtol> *)observer forKeyPath:(NSString *)keyPath key:(NSString *)key path:(NSString *)path {
+    NSObject *object = [self _dataForKey:key path:path];
+    // 只有NSMutableArray才有必要添加observer
+    if (![object isKindOfClass:[NSMutableArray class]]) {
+        NSLog(@"binded object %@, is not KindOf NSMutableArray",object);
+        return;
+    }
+
+    LOCK();
+    NSMutableArray *observerArray = [self.observerMap objectForKey:keyPath];
+    if (!observerArray) {
+        observerArray = [NSMutableArray array];
+        [self.observerMap setObject:observerArray forKey:keyPath];
+    }
+    
+    @weakify(self);
+    @weakify(observer);
+    void(^obBlock)(NSString*,NSObject*,NSDictionary*) = ^(NSString *kp, NSObject *object, NSDictionary *change) {
+        @strongify(self);
+        @strongify(observer);
+        if (self && observer) {
+            [observer mln_observeValueForKeyPath:kp ofObject:object change:change];
+        }
+    };
+    
+    NSMutableArray *bindArray = (NSMutableArray *)object;
+//        [bindArray mln_startKVOIfMutable];
+    [observer mln_observeArray:bindArray withBlock:^(id  _Nonnull observer, id  _Nonnull object, id  _Nonnull oldValue, id  _Nonnull newValue, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
+        obBlock(nil, object, change);
+    }];
+    
+    if ([bindArray mln_is2D]) {
+        [bindArray enumerateObjectsUsingBlock:^(NSMutableArray*  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            if ([obj isKindOfClass:[NSMutableArray class]]) {
+                [observer mln_observeArray:obj withBlock:^(id  _Nonnull observer, id  _Nonnull object, id  _Nonnull oldValue, id  _Nonnull newValue, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
+                    obBlock(nil, object, change);
+                }];
+            }
+        }];
+    }
+    
+    if (![observerArray containsObject:observer]) {
+        [observerArray addObject:observer];
+    }
+    UNLOCK();
+}
+
+//- (void)_realAddObserver:(NSObject<MLNKVOObserverProtol> *)observer forKeyPath:(NSString *)keyPath isArray:(BOOL)isArray {
+//    NSParameterAssert(observer && keyPath);
+//    if (!observer || !keyPath) return;
+//
+//    NSString *key, *path;
+//    if (!isArray) {
+//        [self extractFirstKey:&key path:&path from:keyPath];
+//        if (!key || !path) {
+//            NSLog(@"key: %@ and path: %@ should not be nil",key,path);
+//            return;
+//        }
+//    } else {
+//        key = keyPath;
+//    }
+//
+//    NSObject *object = [self dataForKeyPath:key];
+//    // 只有NSMutableArray才有必要添加observer
+//    if (isArray && ![object isKindOfClass:[NSMutableArray class]]) {
+//        NSLog(@"binded object %@, is not KindOf NSMutableArray",object);
+//        return;
+//    }
+//
+//    LOCK();
+//    NSMutableArray *observerArray = [self.observerMap objectForKey:keyPath];
+//    if (!observerArray) {
+//        observerArray = [NSMutableArray array];
+//        [self.observerMap setObject:observerArray forKey:keyPath];
+//    }
+//
+//    @weakify(self);
+//    @weakify(observer);
+//    void(^obBlock)(NSString*,NSObject*,NSDictionary*) = ^(NSString *kp, NSObject *object, NSDictionary *change) {
+//        @strongify(self);
+//        @strongify(observer);
+//        if (self && observer) {
+////            pthread_mutex_lock(&self->_lock);
+////            NSArray *obsCopy = observerArray.copy;
+////            pthread_mutex_unlock(&self->_lock);
+////            for (NSObject<MLNKVOObserverProtol> *ob in obsCopy) {
+////                [ob mln_observeValueForKeyPath:kp ofObject:object change:change];
+////            }
+//            [observer mln_observeValueForKeyPath:kp ofObject:object change:change];
+//        }
+//    };
+//
+//    if (!isArray) {
+//        [observer mln_observeObject:object property:path withBlock:^(id  _Nonnull observer, id  _Nonnull object, id  _Nonnull oldValue, id  _Nonnull newValue, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
+//            obBlock(path,object, change);
+//        }];
+//    } else {
+//        NSMutableArray *bindArray = (NSMutableArray *)object;
+////        [bindArray mln_startKVOIfMutable];
+//
+//        [observer mln_observeArray:bindArray withBlock:^(id  _Nonnull observer, id  _Nonnull object, id  _Nonnull oldValue, id  _Nonnull newValue, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
+//            obBlock(nil, object, change);
+//        }];
+//
+//        if ([bindArray mln_is2D]) {
+//            [bindArray enumerateObjectsUsingBlock:^(NSMutableArray*  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+//                if ([obj isKindOfClass:[NSMutableArray class]]) {
+//                    [observer mln_observeArray:obj withBlock:^(id  _Nonnull observer, id  _Nonnull object, id  _Nonnull oldValue, id  _Nonnull newValue, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
+//                        obBlock(nil, object, change);
+//                    }];
+//                }
+//            }];
+//        }
+//    }
+//
+//    if (![observerArray containsObject:observer]) {
+//        [observerArray addObject:observer];
+//    }
+//    UNLOCK();
+//}
+
+/*
 - (void)_realRemoveObserver:(NSObject<MLNKVOObserverProtol> *)observer forKeyPath:(NSString *)keyPath forArray:(BOOL)forArray {
     NSParameterAssert(observer && keyPath);
     if(!observer || !keyPath) return;
@@ -123,116 +368,5 @@
         }
     }
 }
-
-- (NSArray<NSObject<MLNKVOObserverProtol> *> *)observersForKeyPath:(NSString *)keyPath {
-    NSParameterAssert(keyPath);
-    if (!keyPath) {
-        return nil;
-    }
-    LOCK();
-    NSMutableArray *observers = [self.observerMap objectForKey:keyPath];
-    UNLOCK();
-    return observers;
-}
-
-#pragma mark - Array
-
-- (void)bindArray:(NSArray *)array forKey:(NSString *)key {
-    [self bindData:array forKey:key];
-}
-
-- (void)addArrayObserver:(NSObject<MLNKVOObserverProtol> *)observer forKey:(NSString *)key {
-    [self _realAddObserver:observer forKeyPath:key isArray:YES];
-}
-
-- (void)removeArrayObserver:(NSObject<MLNKVOObserverProtol> *)observer forKey:(NSString *)key {
-//    [self removeDataObserver:observer forKeyPath:key];
-    [self _realRemoveObserver:observer forKeyPath:key forArray:YES];
-}
-
-#pragma mark - Util
-// eg: form="userdata.a.b" -> key = "userdata", path = "a.b"
-- (void)extractFirstKey:(NSString **)firstKey path:(NSString **)path from:(NSString *)from {
-    NSMutableArray *coms = [from componentsSeparatedByString:@"."].mutableCopy;
-    *firstKey = coms.firstObject;
-    if (coms.count >= 2) {
-        [coms removeObjectAtIndex:0];
-        *path = [coms componentsJoinedByString:@"."];
-    }
-}
-
-- (void)_realAddObserver:(NSObject<MLNKVOObserverProtol> *)observer forKeyPath:(NSString *)keyPath isArray:(BOOL)isArray {
-    NSParameterAssert(observer && keyPath);
-    if (!observer || !keyPath) return;
-    
-    NSString *key, *path;
-    if (!isArray) {
-        [self extractFirstKey:&key path:&path from:keyPath];
-        if (!key || !path) {
-            NSLog(@"key: %@ and path: %@ should not be nil",key,path);
-            return;
-        }
-    } else {
-        key = keyPath;
-    }
-
-    NSObject *object = [self dataForKeyPath:key];
-    // 只有NSMutableArray才有必要添加observer
-    if (isArray && ![object isKindOfClass:[NSMutableArray class]]) {
-        NSLog(@"binded object %@, is not KindOf NSMutableArray",object);
-        return;
-    }
-
-    LOCK();
-    NSMutableArray *observerArray = [self.observerMap objectForKey:keyPath];
-    if (!observerArray) {
-        observerArray = [NSMutableArray array];
-        [self.observerMap setObject:observerArray forKey:keyPath];
-    }
-    
-    @weakify(self);
-    @weakify(observer);
-    void(^obBlock)(NSString*,NSObject*,NSDictionary*) = ^(NSString *kp, NSObject *object, NSDictionary *change) {
-        @strongify(self);
-        @strongify(observer);
-        if (self && observer) {
-//            pthread_mutex_lock(&self->_lock);
-//            NSArray *obsCopy = observerArray.copy;
-//            pthread_mutex_unlock(&self->_lock);
-//            for (NSObject<MLNKVOObserverProtol> *ob in obsCopy) {
-//                [ob mln_observeValueForKeyPath:kp ofObject:object change:change];
-//            }
-            [observer mln_observeValueForKeyPath:kp ofObject:object change:change];
-        }
-    };
-    
-    if (!isArray) {
-        [observer mln_observeObject:object property:path withBlock:^(id  _Nonnull observer, id  _Nonnull object, id  _Nonnull oldValue, id  _Nonnull newValue, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
-            obBlock(path,object, change);
-        }];
-    } else {
-        NSMutableArray *bindArray = (NSMutableArray *)object;
-//        [bindArray mln_startKVOIfMutable];
-
-        [observer mln_observeArray:bindArray withBlock:^(id  _Nonnull observer, id  _Nonnull object, id  _Nonnull oldValue, id  _Nonnull newValue, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
-            obBlock(nil, object, change);
-        }];
-        
-        if ([bindArray mln_is2D]) {
-            [bindArray enumerateObjectsUsingBlock:^(NSMutableArray*  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-                if ([obj isKindOfClass:[NSMutableArray class]]) {
-                    [observer mln_observeArray:obj withBlock:^(id  _Nonnull observer, id  _Nonnull object, id  _Nonnull oldValue, id  _Nonnull newValue, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
-                        obBlock(nil, object, change);
-                    }];
-                }
-            }];
-        }
-    }
-    
-    if (![observerArray containsObject:observer]) {
-        [observerArray addObject:observer];
-    }
-    UNLOCK();
-}
-
+ */
 @end

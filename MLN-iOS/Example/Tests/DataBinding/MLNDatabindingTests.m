@@ -120,9 +120,10 @@ describe(@"observer", ^{
              result2 = YES;
          };
          
-         model.mln_subscribe(@"text", ^(id  _Nonnull oldValue, id  _Nonnull newValue) {
+         model.mln_subscribe(@"text", ^(id  _Nonnull oldValue, id  _Nonnull newValue, id observerdObject) {
              kvoBlock(oldValue, newValue);
-         }).mln_subscribe(@"open", ^(id  _Nonnull oldValue, id  _Nonnull newValue) {
+             expect([observerdObject valueForKeyPath:@"text"]).equal(newValue);
+         }).mln_subscribe(@"open", ^(id  _Nonnull oldValue, id  _Nonnull newValue, id observerdObject) {
              kvoBlock(oldValue, newValue);
          });
      };

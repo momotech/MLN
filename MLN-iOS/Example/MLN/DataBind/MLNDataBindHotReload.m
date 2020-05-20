@@ -32,9 +32,9 @@
 
 - (void)viewDidLoad {
 //    [self createModel];
-//    [self createModelArray];
+    [self createModelArray];
 //    [self testDataBind];
-    [self createTestCase];
+//    [self createTestCase];
     [super viewDidLoad];
 }
 
@@ -56,12 +56,13 @@
     NSMutableArray *arr = @[].mutableCopy;
     for (int i = 0; i < 2; i++) {
         MLNDataBindModel *model = [MLNDataBindModel testModel];
+        model.name = [NSString stringWithFormat:@"name %d",i];
         [arr addObject:model];
     }
     
     self.tableModel = [MLNDatabindTableViewModel testModel];
     NSMutableArray *models = @[arr].mutableCopy;
-    self.tableModel.source = models;
+    self.tableModel.source = arr;
 
 //    self.tableModel.source.mln_subscribeItem(^(NSObject * _Nonnull item, NSString * _Nonnull keyPath, NSObject * _Nullable oldValue, NSObject * _Nullable newValue) {
 //        NSLog(@"item  %@ keypath %@ old %@ new %@",item,keyPath,oldValue,newValue);
@@ -75,9 +76,27 @@
 //    [self.dataBinding bindArray:models forKey:@"source"];
     [self.mln_dataBinding bindData:self.tableModel forKey:@"tableModel"];
     
-    [self testModel];
+    NSArray *test_table = @[@"str", @1];
+    [self.mln_dataBinding bindData:test_table forKey:@"test_table"];
+//    [self testModel];
+    [self testBindArray];
 }
 
+- (void)testBindArray {
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(8 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        NSArray *old = self.tableModel.source.copy;
+        
+        NSMutableArray *arr = self.tableModel.source;
+        MLNDataBindModel *model = [MLNDataBindModel testModel];
+        model.name  = [NSString stringWithFormat:@"bindArray"];
+        
+        [arr addObject:model];
+        [arr removeObjectAtIndex:1];
+        [arr replaceObjectAtIndex:0 withObject:model];
+        
+        self.tableModel.source = old;
+    });
+}
 - (void)testModel {
     static int cnt = 1;
     __weak typeof(self) weakSelf = self;
