@@ -195,7 +195,7 @@
     UIViewController<MLNDataBindingProtocol> *kitViewController = (UIViewController<MLNDataBindingProtocol> *)MLN_KIT_INSTANCE([self mln_currentLuaCore]).viewController;
 
     NSArray *array = [self mln_dataForKeyPath:key];
-    MLNListViewObserver *listObserver = (MLNListViewObserver *)[kitViewController.mln_dataBinding observersForKeyPath:key].firstObject;
+    MLNListViewObserver *listObserver = (MLNListViewObserver *)[kitViewController.mln_dataBinding observersForKeyPath:key].lastObject;
     if (![listObserver isKindOfClass:[MLNListViewObserver class]]) {
         NSLog(@"error: not found observer for key %@",key);
         return;
