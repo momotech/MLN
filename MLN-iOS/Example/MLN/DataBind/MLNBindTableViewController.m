@@ -64,7 +64,20 @@
     }];
     
     self.tableModel =  tableModel;
-    [self testModel];
+    [self newTestModel];
+}
+
+- (void)newTestModel {
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        NSMutableArray *arr = @[].mutableCopy;
+        for (int i = 0; i < 3; i++) {
+            MLNDataBindModel *model = [MLNDataBindModel testModel];
+            model.name = [NSString stringWithFormat:@"set array %d",i];
+            [arr addObject:model];
+        }
+        self.tableModel.source = @[arr].mutableCopy;
+        [self testModel];
+    });
 }
 
 //- (void)testModel {
