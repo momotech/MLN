@@ -39,13 +39,18 @@
     [kitViewController.mln_dataBinding updateDataForKeyPath:keyPath value:obj];
 }
 
-+ (id __nullable)lua_dataForKeyPath:(NSString *)keyPath {
++ (id)mln_dataForKeyPath:(NSString *)keyPath {
     NSParameterAssert(keyPath);
     if(!keyPath) return nil;
     
     UIViewController<MLNDataBindingProtocol> *kitViewController = (UIViewController<MLNDataBindingProtocol> *)MLN_KIT_INSTANCE([self mln_currentLuaCore]).viewController;
     NSObject *obj = [kitViewController.mln_dataBinding dataForKeyPath:keyPath];
     return obj;
+}
+
++ (id __nullable)lua_dataForKeyPath:(NSString *)keyPath {
+    NSObject *obj = [self mln_dataForKeyPath:keyPath];
+    return [obj mln_convertToLuaObject];
 }
 
 
@@ -118,7 +123,7 @@
     NSParameterAssert(key);
     if(!key) return 0;
     
-    NSArray *arr = [self lua_dataForKeyPath:key];
+    NSArray *arr = [self mln_dataForKeyPath:key];
     if (arr.mln_is2D) {
         return arr.count;
     }
@@ -129,7 +134,7 @@
     NSParameterAssert(key);
     if(!key) return 0;
     
-    NSArray *arr = [self lua_dataForKeyPath:key];
+    NSArray *arr = [self mln_dataForKeyPath:key];
     if (section > arr.count || section == 0) {
         return 0;
     }
@@ -145,7 +150,7 @@
     NSParameterAssert(key);
     if(!key) return nil;
     
-    NSArray *array = [self lua_dataForKeyPath:key];
+    NSArray *array = [self mln_dataForKeyPath:key];
     id resust;
     @try {
         id tmp;
@@ -165,7 +170,7 @@
     NSParameterAssert(key);
     if(!key) return;
     
-    NSArray *array = [self lua_dataForKeyPath:key];
+    NSArray *array = [self mln_dataForKeyPath:key];
     @try {
         NSObject *object;
         if (array.mln_is2D) {
@@ -189,7 +194,7 @@
     
     UIViewController<MLNDataBindingProtocol> *kitViewController = (UIViewController<MLNDataBindingProtocol> *)MLN_KIT_INSTANCE([self mln_currentLuaCore]).viewController;
 
-    NSArray *array = [self lua_dataForKeyPath:key];
+    NSArray *array = [self mln_dataForKeyPath:key];
     MLNListViewObserver *listObserver = (MLNListViewObserver *)[kitViewController.mln_dataBinding observersForKeyPath:key].firstObject;
     if (![listObserver isKindOfClass:[MLNListViewObserver class]]) {
         NSLog(@"error: not found observer for key %@",key);
