@@ -54,7 +54,7 @@ describe(@"observer", ^{
             result = YES;
         } keyPath:arrayKeyPath];
         
-        [dataBinding addObserver:obs forKeyPath:arrayKeyPath];
+        [dataBinding addMLNObserver:obs forKeyPath:arrayKeyPath];
     };
     //five primitive methods
     it(@"addObject", ^{
@@ -133,9 +133,10 @@ describe(@"observer", ^{
     });
 });
 
-it(@"observer_once", ^{
+it(@"observer_once_remove", ^{
+   NSString *bindKey = @"bindArr";
    NSMutableArray *arr = @[].mutableCopy;
-   [dataBinding bindArray:arr forKey:@"arr"];
+   [dataBinding bindArray:arr forKey:bindKey];
    
    __block BOOL r1 = NO;
    __block BOOL r2 = NO;
@@ -143,19 +144,25 @@ it(@"observer_once", ^{
     expect(r1).beFalsy();
     r1 = YES;
     expect(change[NSKeyValueChangeKindKey]).equal(@(NSKeyValueChangeInsertion));
-   } keyPath:nil];
+   } keyPath:bindKey];
    
    MLNKVOObserver *ob2 = [[MLNKVOObserver alloc] initWithViewController:nil callback:^(NSString * _Nonnull keyPath, id  _Nonnull object, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
     expect(r2).beFalsy();
     r2 = YES;
     expect(change[NSKeyValueChangeKindKey]).equal(@(NSKeyValueChangeInsertion));
-   } keyPath:nil];
+   } keyPath:bindKey];
    
-   [dataBinding addObserver:ob1 forKeyPath:@"arr"];
-   [dataBinding addObserver:ob2 forKeyPath:@"arr"];
+   id ob1id = [dataBinding addMLNObserver:ob1 forKeyPath:bindKey];
+   id ob2id = [dataBinding addMLNObserver:ob2 forKeyPath:bindKey];
    
    [arr addObject:@"abc"];
    expect(r1).beTruthy();
+   expect(r2).beTruthy();
+   r1 = NO;
+   r2 = NO;
+   [dataBinding removeMLNObserverByID:ob1id];
+   [arr addObject:@"abc"];
+   expect(r1).beFalsy();
    expect(r2).beTruthy();
 });
 
@@ -179,7 +186,7 @@ it(@"setArray", ^{
         expect(old).equal(modelsArray);
    } keyPath:arrayKeyPath];
    
-   [dataBinding addObserver:obs forKeyPath:arrayKeyPath];
+   [dataBinding addMLNObserver:obs forKeyPath:arrayKeyPath];
    model.source = array;
 });
 

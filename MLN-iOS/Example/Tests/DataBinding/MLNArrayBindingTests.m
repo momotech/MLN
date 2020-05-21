@@ -57,7 +57,7 @@ describe(@"observer", ^{
             result = YES;
         } keyPath:arrayKeyPath];
         
-        [dataBinding addObserver:obs forKeyPath:arrayKeyPath];
+        [dataBinding addMLNObserver:obs forKeyPath:arrayKeyPath];
     };
     //five primitive methods
     it(@"addObject", ^{
@@ -154,8 +154,8 @@ it(@"observer_once", ^{
     expect(change[NSKeyValueChangeKindKey]).equal(@(NSKeyValueChangeInsertion));
    } keyPath:nil];
    
-   [dataBinding addObserver:ob1 forKeyPath:@"arr"];
-   [dataBinding addObserver:ob2 forKeyPath:@"arr"];
+   [dataBinding addMLNObserver:ob1 forKeyPath:@"arr"];
+   [dataBinding addMLNObserver:ob2 forKeyPath:@"arr"];
    
    [arr addObject:@"abc"];
    expect(r1).beTruthy();

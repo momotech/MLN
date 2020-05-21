@@ -47,15 +47,15 @@
         NSLog(@"");
     } keyPath:@"array"];
     
-    [db addObserver:ob1 forKeyPath:@"array"];
-    [db addObserver:ob2 forKeyPath:@"array"];
+    [db addMLNObserver:ob1 forKeyPath:@"array"];
+    [db addMLNObserver:ob2 forKeyPath:@"array"];
     
     [arr addObject:@11];
     [arr removeObject:@11];
     
-    [db removeObserver:ob1 forKeyPath:@"array"];
+    [db removeMLNObserver:ob1 forKeyPath:@"array"];
     [arr addObject:@22];
-    [db removeObserver:ob2 forKeyPath:@"array"];
+    [db removeMLNObserver:ob2 forKeyPath:@"array"];
     [arr addObject:@22];
 
     [self setupMLNKitEnvironment];
