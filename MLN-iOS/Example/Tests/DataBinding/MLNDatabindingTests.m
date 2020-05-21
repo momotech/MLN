@@ -109,7 +109,7 @@ describe(@"observer", ^{
              result = YES;
              if(com) com();
          } keyPath:keypath];
-         [dataBinding addDataObserver:open forKeyPath:keypath];
+         [dataBinding addObserver:open forKeyPath:keypath];
          
          void (^kvoBlock)(id,id) = ^(id oldValue, id newValue) {
              expect(newValue).to.equal(new);
@@ -177,8 +177,8 @@ it(@"observer_onc", ^{
              r2  = YES;
          } keyPath:@"text"];
 
-         [dataBinding addDataObserver:ob1 forKeyPath:@"userData.text"];
-         [dataBinding addDataObserver:ob2 forKeyPath:@"userData.text"];
+         [dataBinding addObserver:ob1 forKeyPath:@"userData.text"];
+         [dataBinding addObserver:ob2 forKeyPath:@"userData.text"];
          model.text  = @"ttaa";
        expect(r1).beTruthy();
        expect(r2).beTruthy();

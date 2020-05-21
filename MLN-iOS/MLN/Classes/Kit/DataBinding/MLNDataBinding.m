@@ -88,6 +88,28 @@
     return res;
 }
 
+- (void)addObserver:(NSObject<MLNKVOObserverProtol> *)observer forKeyPath:(NSString *)keyPath {
+    NSParameterAssert(observer && keyPath);
+    if (!observer || !keyPath) return;
+    NSObject *obj = [self dataForKeyPath:keyPath];
+    if ([obj isKindOfClass:[NSMutableArray class]]) {
+        [self addArrayObserver:observer forKey:keyPath];
+    } else {
+        [self addDataObserver:observer forKeyPath:keyPath];
+    }
+}
+
+- (void)removeObserver:(NSObject<MLNKVOObserverProtol> *)observer forKeyPath:(NSString *)keyPath {
+    NSParameterAssert(observer && keyPath);
+    if (!observer || !keyPath) return;
+    NSObject *obj = [self dataForKeyPath:keyPath];
+    if ([obj isKindOfClass:[NSMutableArray class]]) {
+        [self removeArrayObserver:observer forKey:keyPath];
+    } else {
+        [self removeDataObserver:observer forKeyPath:keyPath];
+    }
+}
+
 - (void)addDataObserver:(NSObject<MLNKVOObserverProtol> *)observer forKeyPath:(NSString *)keyPath {
 //    [self _realAddObserver:observer forKeyPath:keyPath isArray:NO];
     NSParameterAssert(observer && keyPath);

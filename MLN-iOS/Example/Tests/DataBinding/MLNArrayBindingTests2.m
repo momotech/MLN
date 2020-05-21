@@ -54,7 +54,7 @@ describe(@"observer", ^{
             result = YES;
         } keyPath:arrayKeyPath];
         
-        [dataBinding addArrayObserver:obs forKey:arrayKeyPath];
+        [dataBinding addObserver:obs forKeyPath:arrayKeyPath];
     };
     //five primitive methods
     it(@"addObject", ^{
@@ -151,8 +151,8 @@ it(@"observer_once", ^{
     expect(change[NSKeyValueChangeKindKey]).equal(@(NSKeyValueChangeInsertion));
    } keyPath:nil];
    
-   [dataBinding addArrayObserver:ob1 forKey:@"arr"];
-   [dataBinding addArrayObserver:ob2 forKey:@"arr"];
+   [dataBinding addObserver:ob1 forKeyPath:@"arr"];
+   [dataBinding addObserver:ob2 forKeyPath:@"arr"];
    
    [arr addObject:@"abc"];
    expect(r1).beTruthy();
@@ -179,7 +179,7 @@ it(@"setArray", ^{
         expect(old).equal(modelsArray);
    } keyPath:arrayKeyPath];
    
-   [dataBinding addArrayObserver:obs forKey:arrayKeyPath];
+   [dataBinding addObserver:obs forKeyPath:arrayKeyPath];
    model.source = array;
 });
 

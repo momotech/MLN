@@ -27,7 +27,7 @@
 
     UIViewController<MLNDataBindingProtocol> *kitViewController = (UIViewController<MLNDataBindingProtocol> *)MLN_KIT_INSTANCE([self mln_currentLuaCore]).viewController;
     NSObject<MLNKVOObserverProtol> *observer = [MLNBlockObserver observerWithBlock:handler keyPath:keyPath];
-    [kitViewController.mln_dataBinding addDataObserver:observer forKeyPath:keyPath];
+    [kitViewController.mln_dataBinding addObserver:observer forKeyPath:keyPath];
 }
 
 + (void)lua_updateDataForKeyPath:(NSString *)keyPath value:(id)value {
@@ -116,7 +116,7 @@
     UIViewController<MLNDataBindingProtocol> *kitViewController = (UIViewController<MLNDataBindingProtocol> *)MLN_KIT_INSTANCE([self mln_currentLuaCore]).viewController;
     MLNListViewObserver *observer = [MLNListViewObserver observerWithListView:listView keyPath:key];
     
-    [kitViewController.mln_dataBinding addArrayObserver:observer forKey:key];
+    [kitViewController.mln_dataBinding addObserver:observer forKeyPath:key];
 }
 
 + (NSUInteger)lua_sectionCountForKey:(NSString *)key {
@@ -238,7 +238,7 @@
     NSObject<MLNKVOObserverProtol> *observer = [[MLNKVOObserver alloc] initWithViewController:kitViewController callback:^(NSString * _Nonnull kp, NSArray *  _Nonnull object, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
         /*
         if (!handler.luaCore && weakOb) {
-            [weakController.mln_dataBinding removeDataObserver:weakOb forKeyPath:keyPath];
+            [weakController.mln_dataBinding removeArrayObserver:weakOb forKeyPath:keyPath];
             weakOb = nil;
             return;
         }
@@ -258,7 +258,7 @@
     } keyPath:keyPath];
     
     weakOb = observer;
-    [kitViewController.mln_dataBinding addArrayObserver:observer forKey:keyPath];
+    [kitViewController.mln_dataBinding addObserver:observer forKeyPath:keyPath];
 }
 
 + (void)lua_bindArrayDataForKey:(NSString *)key index:(NSUInteger)index dataKeyPath:(NSString *)dataKeyPath handler:(MLNBlock *)handler {
