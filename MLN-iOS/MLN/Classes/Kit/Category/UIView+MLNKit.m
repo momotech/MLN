@@ -818,7 +818,8 @@ static const void *kLuaRenderContext = &kLuaRenderContext;
 
 - (void)mln_in_addTapGestureIfNeed
 {
-    if (!self.mln_tapClickBlock && [self lua_canClick]) {
+    NSNumber *didSetDismiss = objc_getAssociatedObject(self, kLuaKeyboardDismiss);
+    if (!self.mln_tapClickBlock && !self.mln_touchClickBlock && !didSetDismiss && [self lua_canClick]) {
         UITapGestureRecognizer *gesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(mln_in_tapClickAction:)];
         [self addGestureRecognizer:gesture];
     }
@@ -1122,10 +1123,7 @@ static const void *kLuaOnDetachedFromWindowCallback = &kLuaOnDetachedFromWindowC
 
 - (void)lua_keyboardDismiss:(BOOL)autodismiss
 {
-    NSNumber* number = objc_getAssociatedObject(self, kLuaKeyboardDismiss);
-    if (number == nil) {
-        [self mln_in_addTapGestureIfNeed];
-    }
+    [self mln_in_addTapGestureIfNeed];
     objc_setAssociatedObject(self,kLuaKeyboardDismiss,@(autodismiss),OBJC_ASSOCIATION_ASSIGN);
 }
 
