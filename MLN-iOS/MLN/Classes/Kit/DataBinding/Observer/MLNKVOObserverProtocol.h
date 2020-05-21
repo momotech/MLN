@@ -15,7 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// 返回持有observer的对象，如果返回nil，则会被MLNDatabinding持有
 /// ⚠️ 返回的对象会强持有observer，所以这里要避免循环引用.
 //- (nullable NSObject *)objectRetainingObserver;
-
+@property (nonatomic, copy, readonly) NSString *keyPath;
 - (void)mln_observeValueForKeyPath:(nullable NSString *)keyPath
                       ofObject:(nullable id)object
                         change:(nullable NSDictionary<NSKeyValueChangeKey, id> *)change;
