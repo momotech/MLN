@@ -21,22 +21,48 @@
 
 @implementation MLNDataBinding (MLNKit)
 
-+ (void)lua_bindDataForKeyPath:(NSString *)keyPath handler:(MLNBlock *)handler {
-    NSParameterAssert(keyPath && handler);
-    if (!handler || !keyPath) return;
-
++ (void)lua_watchDataForKeys:(NSArray *)keys handler:(MLNBlock *)handler {
+    NSParameterAssert(keys && handler);
+    if(!keys || !handler)  return;
     UIViewController<MLNDataBindingProtocol> *kitViewController = (UIViewController<MLNDataBindingProtocol> *)MLN_KIT_INSTANCE([self mln_currentLuaCore]).viewController;
-    NSObject<MLNKVOObserverProtol> *observer = [MLNBlockObserver observerWithBlock:handler keyPath:keyPath];
-    [kitViewController.mln_dataBinding addMLNObserver:observer forKeyPath:keyPath];
+    
+    if ([keys isKindOfClass:[NSArray class]]) {
+        NSString *keyPath = [keys componentsJoinedByString:@"."];
+        NSObject<MLNKVOObserverProtol> *observer = [MLNBlockObserver observerWithBlock:handler keyPath:keyPath];
+        [kitViewController.mln_dataBinding addMLNObserver:observer forKeys:keys];
+    } else if([keys isKindOfClass:[NSString class]]){
+        NSString *keyPath = (NSString *)keys;
+        NSObject<MLNKVOObserverProtol> *observer = [MLNBlockObserver observerWithBlock:handler keyPath:keyPath];
+        [kitViewController.mln_dataBinding addMLNObserver:observer forKeyPath:keyPath];
+    }
 }
 
-+ (void)lua_updateDataForKeyPath:(NSString *)keyPath value:(id)value {
-    NSParameterAssert(keyPath);
-    if(!keyPath) return;
++ (void)lua_updateDataForKeys:(NSArray *)keys value:(id)value {
+    NSParameterAssert(keys);
+    if(!keys) return;
     
     UIViewController<MLNDataBindingProtocol> *kitViewController = (UIViewController<MLNDataBindingProtocol> *)MLN_KIT_INSTANCE([self mln_currentLuaCore]).viewController;
     NSObject *obj = [value mln_convertToNativeObject];
-    [kitViewController.mln_dataBinding updateDataForKeyPath:keyPath value:obj];
+    
+    if ([keys isKindOfClass:[NSArray class]]) {
+        [kitViewController.mln_dataBinding updateDataForKeys:keys value:obj];
+    } else if([keys isKindOfClass:[NSString class]]) {
+        [kitViewController.mln_dataBinding updateDataForKeyPath:(NSString *)keys value:obj];
+    }
+}
+
++ (id __nullable)lua_dataForKeys:(NSArray *)keys {
+    NSParameterAssert(keys);
+    if(!keys) return nil;
+    UIViewController<MLNDataBindingProtocol> *kitViewController = (UIViewController<MLNDataBindingProtocol> *)MLN_KIT_INSTANCE([self mln_currentLuaCore]).viewController;
+    NSObject *obj;
+
+    if ([keys isKindOfClass:[NSArray class]]) {
+        obj = [kitViewController.mln_dataBinding dataForKeys:keys];
+    } else if ([keys isKindOfClass:[NSString class]]) {
+       obj = [self mln_dataForKeyPath:(NSString *)keys];
+    }
+    return [obj mln_convertToLuaObject];
 }
 
 + (id)mln_dataForKeyPath:(NSString *)keyPath {
@@ -46,11 +72,6 @@
     UIViewController<MLNDataBindingProtocol> *kitViewController = (UIViewController<MLNDataBindingProtocol> *)MLN_KIT_INSTANCE([self mln_currentLuaCore]).viewController;
     NSObject *obj = [kitViewController.mln_dataBinding dataForKeyPath:keyPath];
     return obj;
-}
-
-+ (id __nullable)lua_dataForKeyPath:(NSString *)keyPath {
-    NSObject *obj = [self mln_dataForKeyPath:keyPath];
-    return [obj mln_convertToLuaObject];
 }
 
 
@@ -212,6 +233,7 @@
         [model mln_removeObervationsForOwner:kitViewController.mln_dataBinding keyPath:k];
     }
 
+    //TODO: 如果paths中有属性对应可变数组？
     [kitViewController.mln_dataBinding mln_observeObject:model properties:paths withBlock:^(id  _Nonnull observer, id  _Nonnull object, NSString * _Nonnull keyPath, id  _Nonnull oldValue, id  _Nonnull newValue, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
         UIView *listView = [listObserver listView];
         if ([listView isKindOfClass:[MLNTableView class]]) {
@@ -336,9 +358,10 @@
 
 #pragma mark - Setup For Lua
 LUA_EXPORT_STATIC_BEGIN(MLNDataBinding)
-LUA_EXPORT_STATIC_METHOD(bind, "lua_bindDataForKeyPath:handler:", MLNDataBinding)
-LUA_EXPORT_STATIC_METHOD(update, "lua_updateDataForKeyPath:value:", MLNDataBinding)
-LUA_EXPORT_STATIC_METHOD(get, "lua_dataForKeyPath:", MLNDataBinding)
+LUA_EXPORT_STATIC_METHOD(bind, "lua_watchDataForKeys:handler:", MLNDataBinding)
+LUA_EXPORT_STATIC_METHOD(update, "lua_updateDataForKeys:value:", MLNDataBinding)
+LUA_EXPORT_STATIC_METHOD(get, "lua_dataForKeys:", MLNDataBinding)
+
 LUA_EXPORT_STATIC_METHOD(mock, "lua_mockForKey:data:", MLNDataBinding)
 LUA_EXPORT_STATIC_METHOD(mockArray, "lua_mockArrayForKey:data:callbackDic:", MLNDataBinding)
 
