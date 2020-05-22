@@ -85,6 +85,9 @@ typedef GPB_ENUM(pbbasecommand_InstructionType) {
     
   /** 代码覆盖率报告可视化指令 */
   pbbasecommand_InstructionType_CoverageVisual = 15,
+    
+  /** mac ip 地址传输 */
+  pbbasecommand_InstructionType_Macipaddress = 16,
 };
 
 GPBEnumDescriptor *pbbasecommand_InstructionType_EnumDescriptor(void);

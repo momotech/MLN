@@ -7,7 +7,24 @@
 
 #import "LNEncoderImpl.h"
 #import "NSMutableData+LuaNative.h"
-#import "MLNProtobuf.h"
+#import "PbbaseCommand.pbobjc.h"
+#import "PbdeviceCommand.pbobjc.h"
+#import "PbupdateCommand.pbobjc.h"
+#import "PbentryFileCommand.pbobjc.h"
+#import "PblogCommand.pbobjc.h"
+#import "PberrorCommand.pbobjc.h"
+#import "PbcloseCommand.pbobjc.h"
+#import "PbreloadCommand.pbobjc.h"
+#import "PbpingCommand.pbobjc.h"
+#import "PbpongCommand.pbobjc.h"
+#import "PbremoveCommand.pbobjc.h"
+#import "PbrenameCommand.pbobjc.h"
+#import "PbmoveCommand.pbobjc.h"
+#import "PbcreateCommand.pbobjc.h"
+#import "PbcoverageSummaryCommand.pbobjc.h"
+#import "PbgenerateReportCommand.pbobjc.h"
+#import "PbdetailReportCommand.pbobjc.h"
+#import "PbipaddressCommand.pbobjc.h"
 
 @implementation LNEncoderImpl
 
@@ -47,6 +64,8 @@
         [data appendInt16:[(pbpongcommand *)msg port]];
         [data appendByte:0x04];
         return data.copy;
+    } else if ([msg isKindOfClass:[pbipaddresscommand class]]) {
+        type = pbbasecommand_InstructionType_Macipaddress;
     }
     if (type == -1) {
         return nil;

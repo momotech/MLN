@@ -133,5 +133,10 @@
     return covCmd;
 }
 
++ (pbipaddresscommand *)buildIPAddressCmd {
+    pbipaddresscommand *ipCmd = [[pbipaddresscommand alloc] init];
+    ipCmd.basecommand = [self buildBaseCmdNotUUID:pbipaddresscommand_FieldNumber_MacIpaddress];
+    return ipCmd;
+}
 
 @end
