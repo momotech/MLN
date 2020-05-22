@@ -11,6 +11,8 @@
 #import "NSArray+MLNKVO.h"
 #import "MLNExtScope.h"
 #import "NSObject+MLNKVO.h"
+#import "NSObject+MLNDealloctor.h"
+#import "MLNExtScope.h"
 
 @interface MLNDataBinding() {
     pthread_mutex_t _lock;
@@ -30,7 +32,7 @@
         self.dataMap = [NSMutableDictionary dictionary];
         self.observerMap =  [NSMapTable strongToStrongObjectsMapTable];
         self.observerIDsMap = [NSMapTable strongToWeakObjectsMapTable];
-        LOCK_INIT();
+        LOCK_RECURSIVE_INIT();
     }
     return self;
 }
@@ -218,7 +220,7 @@
 - (void)extractFirstKey:(NSString **)firstKey path:(NSString **)path from:(NSString *)from {
     NSMutableArray *coms = [from componentsSeparatedByString:@"."].mutableCopy;
     *firstKey = coms.firstObject;
-    if (coms.count >= 2) {
+    if (coms.count >= 2 && ![[coms lastObject] isEqualToString:@""]) {
         [coms removeObjectAtIndex:0];
         *path = [coms componentsJoinedByString:@"."];
     }
@@ -247,6 +249,14 @@
     
     [observer mln_observeObject:object property:path withBlock:^(id  _Nonnull observer, id  _Nonnull object, id  _Nonnull oldValue, id  _Nonnull newValue, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
         obBlock(path,object, change);
+    }];
+    
+    [object mln_addDeallocationCallback:^(id  _Nonnull receiver) {
+        @strongify(self);
+        @strongify(observer);
+        if (self && observer) {
+            [self removeMLNObserver:observer forKeyPath:keyPath];
+        }
     }];
     
     if (![observerArray containsObject:observer]) {
@@ -291,10 +301,14 @@
     }];
     
     if ([bindArray mln_is2D]) {
+        @weakify(bindArray);
         [bindArray enumerateObjectsUsingBlock:^(NSMutableArray*  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
             if ([obj isKindOfClass:[NSMutableArray class]]) {
                 [observer mln_observeArray:obj withBlock:^(id  _Nonnull observer, id  _Nonnull object, id  _Nonnull oldValue, id  _Nonnull newValue, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
-                    obBlock(nil, object, change);
+                    @strongify(bindArray);
+                    NSMutableDictionary *newChange = change.mutableCopy;
+                    [newChange setValue:bindArray forKey:MLNKVOOrigin2DArrayKey];
+                    obBlock(nil, object, newChange);
                 }];
             }
         }];

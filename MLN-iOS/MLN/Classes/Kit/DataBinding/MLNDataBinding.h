@@ -8,6 +8,8 @@
 #import <Foundation/Foundation.h>
 #import "MLNKVOObserverProtocol.h"
 
+#define MLNKVOOrigin2DArrayKey @"MLNKVOOrigin2DArrayKey"
+
 NS_ASSUME_NONNULL_BEGIN
 
 @interface MLNDataBinding : NSObject
