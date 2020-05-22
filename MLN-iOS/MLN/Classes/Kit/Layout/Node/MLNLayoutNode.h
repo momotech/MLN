@@ -76,7 +76,6 @@ typedef enum : NSUInteger {
 @property (nonatomic, assign) CGFloat lastMeasuredMaxHeight;
 @property (nonatomic, assign) CGFloat lastGravityZoneWidth;
 @property (nonatomic, assign) CGFloat lastGravityZoneHeight;
-@property (nonatomic, assign) CGFloat belongLineHeight; // 记录换行模式下,每个subNode所在行的行高
 //*******
 //******                Offset
 //*****
@@ -104,7 +103,6 @@ typedef enum : NSUInteger {
 @property (nonatomic, assign) BOOL isVerticalMaxMode;
 @property (nonatomic, assign) BOOL isHorizontalMaxMode;
 @property (nonatomic, assign, getter=isGone) BOOL gone;
-@property (nonatomic, assign, readonly) BOOL isSpacerNode;
 - (BOOL)isDirty;
 - (BOOL)hasNewLayout;
 - (void)changeLayoutStrategyTo:(MLNLayoutStrategy)layoutStrategy;
@@ -123,7 +121,6 @@ typedef enum : NSUInteger {
 //*****
 @property (nonatomic, weak) MLNLayoutNode *supernode;
 @property (nonatomic, strong, nullable) MLNLayoutNode *overlayNode;
-@property (nonatomic, strong, nullable) MLNLayoutNode *belongLineNode; // 记录换行模式下,每个subNode所在行的行高
 //*******
 //******                Root Node
 //*****
@@ -151,6 +148,8 @@ typedef enum : NSUInteger {
 - (CGFloat)myMaxHeightWithMaxHeight:(CGFloat)maxHeight;
 - (void)measureSizeLightMatchParentWithMaxWidth:(CGFloat)maxWidth maxHeight:(CGFloat)maxHeight;
 - (CGFloat)measurePriority;
+- (void)forceUseMatchParentForWidthMeasureType;
+- (void)forceUseMatchParentForHeightMeasureType;
 //*******
 //******                Layout
 //*****

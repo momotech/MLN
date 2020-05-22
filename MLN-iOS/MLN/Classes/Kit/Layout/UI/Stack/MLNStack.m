@@ -28,10 +28,6 @@
     return YES;
 }
 
-- (BOOL)lua_supportOverlay {
-    return YES;
-}
-
 #pragma mark - Export Lua
 
 - (void)lua_children:(NSArray<UIView *> *)subviews {

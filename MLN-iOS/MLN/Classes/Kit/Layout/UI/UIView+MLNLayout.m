@@ -96,7 +96,10 @@
 - (void)addOverlayIfNeeded {
     MLNLayoutNode *overlayNode = self.lua_node.overlayNode;
     if (overlayNode) {
-        [self addSubview:overlayNode.targetView];
+        UIView *wrapView = [[UIView alloc] init]; // 避免overlay被clip
+        [self.superview addSubview:wrapView];
+        MLNChangeSuperview(self, wrapView); // 只调整视图层级，不调整node层级，这样测量布局均只计算self而不是wrapView
+        [wrapView addSubview:overlayNode.targetView];
         MLN_Lua_UserData_Retain_With_Index(2, overlayNode.targetView);
         [overlayNode.targetView addOverlayIfNeeded]; // overlay还有overlay的情况
     }
@@ -105,10 +108,18 @@
 - (void)removeOverlayIfNeeded {
     MLNLayoutNode *oldOverlay = self.lua_node.overlayNode;
     if (oldOverlay && oldOverlay.targetView.superview) {
+        UIView *wrapView = self.superview;
+        MLNChangeSuperview(self, wrapView.superview); // 恢复视图层级
         [oldOverlay.targetView removeFromSuperview];
         MLN_Lua_UserData_Release(self);
         self.lua_node.overlayNode = nil;
+        [wrapView removeFromSuperview]; // remove overlay's wrapView
     }
+}
+
+static MLN_FORCE_INLINE void MLNChangeSuperview(UIView *view, UIView *newSuperview) {
+    [view removeFromSuperview];
+    [newSuperview addSubview:view];
 }
 
 #pragma mark - Layout

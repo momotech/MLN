@@ -14,6 +14,8 @@
 @interface MLNLayoutNode ()
 
 @property (nonatomic, assign) BOOL needUpdateAnchorPoint;
+@property (nonatomic, assign) BOOL widthForceMatchParent;
+@property (nonatomic, assign) BOOL heightForceMatchParent;
 
 @end
 @implementation MLNLayoutNode
@@ -31,7 +33,6 @@
         _layoutStrategy = MLNLayoutStrategySimapleAuto;
         _anchorPoint = targetView.layer.anchorPoint;
         _paddingNeedUpdated = YES;
-        _belongLineNode = NULL;
     }
     return self;
 }
@@ -42,17 +43,48 @@
 }
 
 #pragma mark - Measure Size
+
+- (void)forceUseMatchParentForWidthMeasureType {
+    if (self.widthType == MLNLayoutMeasurementTypeMatchParent &&
+        self.mergedWidthType == MLNLayoutMeasurementTypeWrapContent) {
+        self.widthForceMatchParent = YES;
+    }
+}
+
+- (void)forceUseMatchParentForHeightMeasureType {
+    if (self.heightType == MLNLayoutMeasurementTypeMatchParent &&
+        self.mergedHeightType == MLNLayoutMeasurementTypeWrapContent) {
+        self.heightForceMatchParent = YES;
+    }
+}
+
+static MLN_FORCE_INLINE BOOL MLNLayoutNodeWidthNeedMerge(MLNLayoutNode *self) {
+    if (self.widthForceMatchParent) {
+        self.widthForceMatchParent = NO;
+        return NO;
+    }
+    return isLayoutNodeWidthNeedMerge(self);
+}
+
+static MLN_FORCE_INLINE BOOL MLNLayoutNodeHeightNeedMerge(MLNLayoutNode *self) {
+    if (self.heightForceMatchParent) {
+        self.heightForceMatchParent = NO;
+        return NO;
+    }
+    return isLayoutNodeHeightNeedMerge(self);
+}
+
 - (void)mergeMeasurementTypes
 {
     _mergedWidthType = self.widthType;
     _mergedHeightType = self.heightType;
     if (self.supernode) {
         // width
-        if (isLayoutNodeWidthNeedMerge(self)) {
+        if (MLNLayoutNodeWidthNeedMerge(self)) {
             _mergedWidthType = MLNLayoutMeasurementTypeWrapContent;
         }
         // height
-        if (isLayoutNodeHeightNeedMerge(self)) {
+        if (MLNLayoutNodeHeightNeedMerge(self)) {
             _mergedHeightType = MLNLayoutMeasurementTypeWrapContent;
         }
     }
@@ -331,6 +363,10 @@ MLN_FORCE_INLINE void measureSimapleAutoNodeSize(MLNLayoutNode __unsafe_unretain
 {
     if ([self hasNewLayout]) {
         CGRect newFrame = CGRectMake(self.measuredX + self.offsetX, self.measuredY + self.offsetY, self.measuredWidth + self.offsetWidth, self.measuredHeight + self.offsetHeight);
+        if (self.overlayNode) {
+            self.targetView.superview.frame = newFrame; // 设置overlay的视图的父视图是个临时的wrapView，不参与node布局计算
+            newFrame = CGRectMake(0, 0, CGRectGetWidth(newFrame), CGRectGetHeight(newFrame));
+        }
         if (!CGRectEqualToRect(self.targetView.frame, newFrame)) {
             self.targetView.transform = CGAffineTransformIdentity;
             self.targetView.frame = newFrame;
@@ -702,10 +738,6 @@ MLN_FORCE_INLINE void resetArchpointIfNeed(MLNLayoutNode __unsafe_unretained *no
 - (CGFloat)measurePriority
 {
     return self.priority - (self.idx * 0.001f);
-}
-
-- (BOOL)isSpacerNode {
-    return NO;
 }
 
 #pragma mark - bind & unbind
