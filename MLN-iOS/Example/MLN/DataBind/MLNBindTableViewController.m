@@ -64,7 +64,8 @@
     }];
     
     self.tableModel =  tableModel;
-    [self newTestModel];
+//    [self newTestModel];
+    [self testModel];
 }
 
 - (void)newTestModel {

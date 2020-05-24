@@ -33,10 +33,11 @@ context(@"Dictionary", ^{
        expect([set containsObject:@"name"]).to.beTruthy();
        
        set = [MLNTestModel mln_propertyKeys];
-       expect(@(set.count)).equal(@3);
+       expect(@(set.count)).equal(@4);
        expect([set containsObject:@"open"]).to.beTruthy();
        expect([set containsObject:@"text"]).to.beTruthy();
        expect([set containsObject:@"source"]).to.beTruthy();
+       expect([set containsObject:@"source2d"]).to.beTruthy();
 
     });
 

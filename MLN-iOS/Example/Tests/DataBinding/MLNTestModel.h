@@ -14,6 +14,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign, getter=isOpen) BOOL open;
 @property (nonatomic, copy) NSString *text;
 @property (nonatomic, strong) NSMutableArray *source;
+@property (nonatomic, strong) NSMutableArray *source2d;
+
 @end
 
 
