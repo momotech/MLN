@@ -111,19 +111,33 @@
 
 - (id __nullable)dataForKeys:(NSArray *)keys {
     NSParameterAssert(keys);
-    if(!keys) return nil;
+    
+    NSArray *formatKeys = [self formatKeys:keys allowFirstKeyIsNumber:NO allowLastKeyIsNumber:YES];
+    if(!formatKeys) return nil;
+    
     return [self dataForKeysArray:keys frontObject:NULL];
 }
 
 - (void)updateDataForKeys:(NSArray *)keys value:(id)value {
     NSParameterAssert(keys);
+    
+    keys = [self formatKeys:keys allowFirstKeyIsNumber:NO allowLastKeyIsNumber:YES];
+    if(!keys) return;
+    
     NSString *firstKey = keys.firstObject;
     if(![firstKey isKindOfClass:[NSString class]]) return;
     NSString *lastKey = keys.lastObject;
     
     if (keys.count == 1) {
-        LOCK();
-        [self.dataMap setObject:value forKey:firstKey];
+//        [self.dataMap setObject:value forKey:firstKey];
+        @try {
+            LOCK();
+            [self.dataMap setValue:value forKeyPath:firstKey];
+        } @catch (NSException *exception) {
+            NSLog(@"%@ %s",exception,__FUNCTION__);
+        } @finally {
+            UNLOCK();
+        }
         UNLOCK();
     } else {
         NSObject *frontObject;
@@ -155,15 +169,17 @@
 - (NSString *)addMLNObserver:(NSObject<MLNKVOObserverProtol> *)observer forKeys:(NSArray *)keys {
     NSParameterAssert(observer && [keys isKindOfClass:[NSArray class]]);
     if(!observer || ![keys isKindOfClass:[NSArray class]] || keys.count == 0) return nil;
+    keys = [self formatKeys:keys allowFirstKeyIsNumber:NO allowLastKeyIsNumber:NO];
+    if(!keys) return nil;
     
     NSString *observerKey = [keys componentsJoinedByString:@"."];
     NSObject *frontObject;
     NSObject *object = [self dataForKeysArray:keys frontObject:&frontObject];
     NSString *path = keys.lastObject;
     NSString *uuid;
-    if (keys.count == 1) {
-        // TODO:监听dataMap.
-    }
+//    if (keys.count == 1) {
+//        // TODO:监听dataMap.
+//    }
     /*
      ['source']:array, object != nil ,frontObject = nil
      ['userData']:object, object != nil, frontObject = nil
@@ -183,15 +199,17 @@
 - (void)removeMLNObserver:(NSObject<MLNKVOObserverProtol> *)observer forKeys:(NSArray *)keys {
     NSParameterAssert(observer && keys);
     if(!observer || ![keys isKindOfClass:[NSArray class]] || keys.count == 0) return;
-
+    keys = [self formatKeys:keys allowFirstKeyIsNumber:NO allowLastKeyIsNumber:NO];
+    if(!keys) return ;
+    
     NSString *observerKey = [keys componentsJoinedByString:@"."];
     NSObject *frontObject;
     NSObject *object = [self dataForKeysArray:keys frontObject:&frontObject];
     NSString *path = keys.lastObject;
-    if (keys.count == 1) {
-        //TODO:移除监听dataMap
-    }
-    // not array, then path not number
+//    if (keys.count == 1) {
+//        //TODO:移除监听dataMap
+//    }
+    // frontObject not array, then path not number
     if (![frontObject isKindOfClass:[NSArray class]]) {
         [self _realRemoveDataObserver:observer forObject:frontObject observerKey:observerKey path:path];
     }
@@ -290,6 +308,7 @@
             }
         }];
     }
+    //TODO: 自动移除Array的监听.
     
     if (![observerArray containsObject:observer]) {
         [observerArray addObject:observer];
@@ -342,14 +361,22 @@
 }
 
 #pragma mark - GetData Private
-
+// keys=['userData.source'] -> frontObject = self.dataMap
 - (id)dataForKeysArray:(NSArray *)keys frontObject:(NSObject **)frontObject {
     NSString *firstKey = keys.firstObject;
     if(!firstKey) return nil;
     
-    LOCK();
-    NSObject *obj = [self.dataMap objectForKey:firstKey];
-    UNLOCK();
+    NSObject *obj;
+    @try {
+        LOCK();
+        //    NSObject *obj = [self.dataMap objectForKey:firstKey];
+        obj = [self.dataMap valueForKeyPath:firstKey];
+        if(frontObject) *frontObject = self.dataMap;
+    } @catch (NSException *exception) {
+        NSLog(@"%@ %s",exception,__FUNCTION__);
+    } @finally {
+        UNLOCK();
+    }
     NSObject *res = obj;
     // 从第二个位置开始遍历
     for (int i = 1; i < keys.count; i++) {
@@ -398,6 +425,49 @@
     return [scanner scanInt:number] && [scanner isAtEnd];
 #endif
     return NO;
+}
+
+//[a,b,1,c,d] -> [a.b,1,c.d]
+-(NSArray *)formatKeys:(NSArray *)keys allowFirstKeyIsNumber:(BOOL)allowFirstKeyIsNumber allowLastKeyIsNumber:(BOOL)allowLastKeyIsNumber {
+    if (keys.count <= 1) {
+        return keys;
+    }
+    NSString *first = keys.firstObject;
+    if (!allowFirstKeyIsNumber && ![first isKindOfClass:[NSString class]]) {
+        NSLog(@"first key must be string!");
+        return nil;
+    }
+    NSString *last = keys.lastObject;
+    if(!allowLastKeyIsNumber && ![last isKindOfClass:[NSString class]]){
+        NSLog(@"last key must be string!");
+        return nil;
+    }
+    NSMutableArray *formatKeys = [NSMutableArray array];
+    NSMutableString *combineString;
+    for (int i = 0; i < keys.count; i++) {
+        int tmp;
+        NSString *value = keys[i];
+        BOOL isNum = [self scanInt:&tmp forStringOrNumber:value];
+        if (isNum) {
+            if (combineString) {
+                [formatKeys addObject:combineString];
+                combineString = nil;
+            }
+            [formatKeys addObject:value];
+        } else {
+            if (!combineString) {
+                combineString = [NSMutableString string];
+            }
+            if (combineString.length > 0) {
+                [combineString appendString:@"."];
+            }
+            [combineString appendString:value];
+        }
+    }
+    if (combineString.length > 0) {
+        [formatKeys addObject:combineString];
+    }
+    return formatKeys;
 }
 
 /*

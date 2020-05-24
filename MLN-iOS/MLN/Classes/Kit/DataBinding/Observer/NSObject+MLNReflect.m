@@ -88,6 +88,10 @@
 }
 
 - (id)mln_convertToLuaObject {
+    if (self == [NSNull null]) {
+        return self;
+    }
+    
     MLNNativeType type = self.mln_nativeType;
 
     switch (type) {
