@@ -14,7 +14,7 @@ public class NativeGenerator {
     public NativeGenerator(Parser parser) {
         StringBuilder sb = new StringBuilder("//\n" +
                 "// Created by Generator on ").append(getDate()).append('\n')
-                .append(Template.Start).append(Template.MethodCom);
+                .append(Template.Start).append(String.format(Template.DefineLuaClassName, parser.getLuaClassName())).append(Template.MethodCom);
         StringBuilder meta = new StringBuilder();
         StringBuilder init = new StringBuilder();
 

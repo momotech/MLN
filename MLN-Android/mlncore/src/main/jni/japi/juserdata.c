@@ -594,8 +594,6 @@ static void fillUDMetatable(JNIEnv *env, lua_State *LS, jclass clz, const char *
         lua_pop(LS, 1);
     }
 
-    traverseAllMethods(clz, traverse_listener, LS);
-
     if (!parent_mn) {
         /// 设置gc方法
         pushUserdataGcClosure(env, LS, clz);
@@ -603,7 +601,15 @@ static void fillUDMetatable(JNIEnv *env, lua_State *LS, jclass clz, const char *
         pushUserdataBoolClosure(env, LS, clz);
         /// 设置__tostring
         pushUserdataTostringClosure(env, LS, clz);
+
+        /// 设置空方法
+        lua_getglobal(LS, EMPTY_METHOD_TABLE);
+        copyTable(LS, -1, -2);
+        lua_pop(LS, 1);
     }
+
+    traverseAllMethods(clz, traverse_listener, LS);
+
     /// 设置__index
     pushUserdataIndexClosure(env, LS, clz);
 }

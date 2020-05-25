@@ -34,6 +34,8 @@ import com.immomo.mls.adapter.impl.DefaultToastAdapter;
 import com.immomo.mls.adapter.impl.DefaultTypeFaceAdapter;
 import com.immomo.mls.adapter.impl.FileCacheImpl;
 import com.immomo.mls.adapter.impl.MLSReloadButtonCreatorImpl;
+import com.immomo.mls.fun.ui.DefaultSafeAreaAdapter;
+import com.immomo.mls.fun.ui.MLNSafeAreaAdapter;
 import com.immomo.mls.provider.ImageProvider;
 import com.immomo.mls.utils.AssertUtils;
 
@@ -60,6 +62,7 @@ public class MLSAdapterContainer {
     private static MLSReloadButtonCreator reloadButtonCreator = new MLSReloadButtonCreatorImpl();
     private static PreinstallError preinstallError;
     private static IFileCache fileCache = new FileCacheImpl();
+    private static MLNSafeAreaAdapter safeAreaAdapter = new DefaultSafeAreaAdapter();
 
     public static MLSThreadAdapter getThreadAdapter() {
         return threadAdapter;
@@ -196,5 +199,13 @@ public class MLSAdapterContainer {
 
     public static void setFileCache(IFileCache fileCache) {
         MLSAdapterContainer.fileCache = fileCache;
+    }
+
+    public static MLNSafeAreaAdapter getSafeAreaAdapter() {
+        return safeAreaAdapter;
+    }
+
+    public static void setSafeAreaAdapter(MLNSafeAreaAdapter safeAreaAdapter) {
+        MLSAdapterContainer.safeAreaAdapter = safeAreaAdapter;
     }
 }

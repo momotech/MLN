@@ -47,6 +47,7 @@ jmethodID Globals__onLuaGC = NULL;
 jmethodID Globals__onNativeCreateGlobals = NULL;
 jmethodID Globals__onGlobalsDestroyInNative = NULL;
 jmethodID Globals__postCallback = NULL;
+jmethodID Globals__onEmptyMethodCall = NULL;
 // ------------value
 jmethodID LuaValue_type = NULL;
 jfieldID LuaValue_nativeGlobalKey = NULL;
@@ -80,6 +81,8 @@ jmethodID LuaUserdata_addRef = NULL;
 jclass Entrys = NULL;
 jmethodID Entrys_C = NULL;
 
+char **emtpyMethods = NULL;
+
 void initJavaInfo(JNIEnv *env) {
     if (init) {
         return;
@@ -104,6 +107,7 @@ void initJavaInfo(JNIEnv *env) {
                                                                   "__onGlobalsDestroyInNative",
                                                                   "(J)V");
     Globals__postCallback = (*env)->GetStaticMethodID(env, Globals, "__postCallback", "(JJJ)I");
+    Globals__onEmptyMethodCall = (*env)->GetStaticMethodID(env, Globals, "__onEmptyMethodCall", "(J" STRING_CLASS STRING_CLASS ")V");
     Globals__getUserdata = (*env)->GetStaticMethodID(env, Globals, "__getUserdata", "(JJ)" OBJECT_CLASS);
 
     LuaValue = GLOBAL(env, findTypeClass(env, "LuaValue"));
@@ -645,4 +649,49 @@ void jni_preRegisterStatic(JNIEnv *env, jobject jobj, jstring className, jobject
         ReleaseChar(env, jname, name);
         FREE(env, jname);
     }
+}
+
+void jni_preRegisterEmptyMethods(JNIEnv *env, jobject jobj, jobjectArray methods) {
+    if (emtpyMethods) {
+        int i = 0;
+        char *s;
+        while ((s = emtpyMethods[i++]) != NULL) {
+            m_malloc(s, strlen(s) + 1, 0);
+        }
+        m_malloc(emtpyMethods, sizeof(char*) * i, 0);
+    }
+    int len = GetArrLen(env, methods);
+    emtpyMethods = m_malloc(0, 0, (len + 1) * sizeof(char *));
+    int i;
+    jstring jname;
+    const char *name;
+    for (i = 0; i < len; ++i) {
+        jname = (jstring) (*env)->GetObjectArrayElement(env, methods, i);
+        name = GetString(env, jname);
+        emtpyMethods[i] = copystr(name);
+        ReleaseChar(env, jname, name);
+        FREE(env, jname);
+    }
+    emtpyMethods[i] = 0;
+}
+
+/**
+ * 遍历所有空函数
+ */
+void traverseAllEmptyMethods(traverse_empty fun, void *ud) {
+    if (emtpyMethods) {
+        char **temp = emtpyMethods;
+        while (*temp) {
+            fun(*temp, ud);
+            temp++;
+        }
+    }
+}
+
+void onEmptyMethodCall(lua_State *L, const char *clz, const char *methodName) {
+    JNIEnv *env;
+    getEnv(&env);
+    jstring jclz = newJString(env, clz);
+    jstring jmn = newJString(env, methodName);
+    (*env)->CallStaticVoidMethod(env, Globals, Globals__onEmptyMethodCall, (jlong) L, jclz, jmn);
 }

@@ -29,6 +29,7 @@ import com.immomo.mls.fun.globals.UDLuaView;
 import com.immomo.mls.global.LuaViewConfig;
 import com.immomo.mls.global.ScriptLoader;
 import com.immomo.mls.log.DefaultPrintStream;
+import com.immomo.mls.log.ErrorType;
 import com.immomo.mls.log.IPrinter;
 import com.immomo.mls.log.PrinterContainer;
 import com.immomo.mls.util.AndroidUtil;
@@ -58,8 +59,9 @@ import com.immomo.mls.wrapper.ScriptBundleResourceFinder;
 import org.luaj.vm2.Globals;
 import org.luaj.vm2.utils.PathResourceFinder;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import androidx.annotation.DrawableRes;
@@ -159,7 +161,10 @@ public class MLSInstance implements ScriptLoader.Callback, Callback, PrinterCont
     /**
      * globals创建完成回调
      */
+
     private OnGlobalsCreateListener onGlobalsCreateListener;
+
+    private List<OnGlobalsCreateListener> onGlobalsCreateListeners;
     /**
      * lua 容器
      */
@@ -255,6 +260,9 @@ public class MLSInstance implements ScriptLoader.Callback, Callback, PrinterCont
         this.isHotReloadPage = isHotReloadPage;
         this.showDebugButton = showDebugButton;
     }
+
+
+
 
     //<editor-fold desc="public method">
     //<editor-fold desc="must call method">
@@ -416,6 +424,7 @@ public class MLSInstance implements ScriptLoader.Callback, Callback, PrinterCont
 
     /**
      * activity onActivityResult 回调
+     *
      * @return true 已处理
      */
     public boolean onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -475,9 +484,15 @@ public class MLSInstance implements ScriptLoader.Callback, Callback, PrinterCont
         extraData.clear();
     }
     //</editor-fold>
-
     public void setOnGlobalsCreateListener(OnGlobalsCreateListener l) {
         onGlobalsCreateListener = l;
+    }
+
+    public void addOnGlobalsCreateListener(OnGlobalsCreateListener l) {
+        if(onGlobalsCreateListeners == null) {
+            onGlobalsCreateListeners = new ArrayList<>();
+        }
+        onGlobalsCreateListeners.add(l);
     }
 
     public void setScriptStateListener(ScriptStateListener scriptStateListener) {
@@ -730,10 +745,23 @@ public class MLSInstance implements ScriptLoader.Callback, Callback, PrinterCont
             LuaViewManager.setupGlobals(globals);
         }
         globals.setJavaUserdata(luaViewManager);
-        if (onGlobalsCreateListener != null) {
+
+        if(onGlobalsCreateListener !=null) {
             onGlobalsCreateListener.onCreate(globals);
         }
+
+        notifyOnGlobalCreateListener(globals);
         return globals;
+    }
+
+
+    private void notifyOnGlobalCreateListener(Globals globals) {
+        if(onGlobalsCreateListeners ==null) {
+            return;
+        }
+        for(OnGlobalsCreateListener onGlobalsCreateListener:onGlobalsCreateListeners) {
+            onGlobalsCreateListener.onCreate(globals);
+        }
     }
 
     private void loadScript(final String hru, final int loadType) {
@@ -848,7 +876,8 @@ public class MLSInstance implements ScriptLoader.Callback, Callback, PrinterCont
             backGroundView = new ImageView(mContext);
             try {
                 backGroundView.setImageResource(mBackgroundRes);
-            } catch (Throwable ignore) {}
+            } catch (Throwable ignore) {
+            }
             backGroundView.setScaleType(ImageView.ScaleType.FIT_XY);
             backGroundView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         }
@@ -1014,9 +1043,9 @@ public class MLSInstance implements ScriptLoader.Callback, Callback, PrinterCont
                             LuaViewManager m = (LuaViewManager) globals.getJavaUserdata();
                             if (m != null && m.STDOUT != null) {
                                 if (m.STDOUT instanceof DefaultPrintStream) {
-                                    ((DefaultPrintStream) m.STDOUT).error(Environment.LUA_ERROR + em);
+                                    ((DefaultPrintStream) m.STDOUT).error(ErrorType.ERROR.getErrorPrefix() + em);
                                 } else {
-                                    m.STDOUT.printf("%s%s", Environment.LUA_ERROR, em);
+                                    m.STDOUT.printf("%s%s", ErrorType.ERROR.getErrorPrefix(), em);
                                     m.STDOUT.println();
                                 }
                             }
@@ -1042,7 +1071,8 @@ public class MLSInstance implements ScriptLoader.Callback, Callback, PrinterCont
             addState(STATE_SCRIPT_EXECUTED);
             onLuaScriptExecutedSuccess();
         }
-        GlobalStateUtils.onScriptExecuted(initData.url, code == SUCCESS);
+        if (initData != null)
+            GlobalStateUtils.onScriptExecuted(initData.url, code == SUCCESS);
     }
     //</editor-fold>
 
@@ -1134,7 +1164,8 @@ public class MLSInstance implements ScriptLoader.Callback, Callback, PrinterCont
                 if (MLSEngine.DEBUG) {
                     String errorValue = String.format("脚本加载失败，code: %d, \n\n msg: %s, \n\n cause: %s, \n\n 详细信息检查日志，tag: %s", e.getCode(), e.getMsg(), e.getCause(), TAG);
                     MLSAdapterContainer.getConsoleLoggerAdapter().e(TAG, e, errorValue);
-                    getSTDPrinter().print(errorValue);
+                    if (getSTDPrinter() != null)
+                        getSTDPrinter().print(errorValue);
                     HotReloadHelper.onError(e.getMsg());
 
                     if (hasState(STATE_HOT_RELOADING)) {

@@ -34,11 +34,11 @@ allprojects {
         recyclerViewVersion = "1.1.0-beta05"
         protobufVersion = '3.0.1'
 
-        mlnCoreVersion = '1.0.1'
-        mlnsVersion = '1.0.1'
-        processorVersion = '1.0.0'
-        annotationVersion = '1.0.0'
-        hotreloadVersion = '1.0.1'
+        mlnCoreVersion = '1.1.0'
+        mlnsVersion = '1.1.0'
+        processorVersion = '1.1.0'
+        annotationVersion = '1.1.0'
+        hotreloadVersion = '1.1.0'
     }
 }
 

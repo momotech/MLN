@@ -1,4 +1,10 @@
 apply plugin: 'com.android.application'
+//apply plugin: 'com.immomo.mln.plugin.databinding'
+
+
+//DataBindingExt {
+//    whitelist = ["com.xfy.demo.bean"]
+//}
 
 android {
     compileSdkVersion project.compileSdkVersion
@@ -23,9 +29,9 @@ android {
     }
     buildTypes {
         release {
-            minifyEnabled true
-            zipAlignEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            minifyEnabled false
+            zipAlignEnabled false
+//            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.release
         }
     }

@@ -67,4 +67,17 @@ public class DefaultPrintStream extends PrintStream {
             });
         }
     }
+
+    public void error(final String msg, final ErrorType errorType) {
+        if (MainThreadExecutor.isMainThread()) {
+            printer.error(msg, errorType);
+        } else {
+            MainThreadExecutor.post(new Runnable() {
+                @Override
+                public void run() {
+                    printer.error(msg, errorType);
+                }
+            });
+        }
+    }
 }

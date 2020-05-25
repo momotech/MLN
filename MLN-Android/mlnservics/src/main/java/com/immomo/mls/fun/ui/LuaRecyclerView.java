@@ -8,6 +8,7 @@
 package com.immomo.mls.fun.ui;
 
 import android.content.Context;
+import android.graphics.Canvas;
 import android.view.LayoutInflater;
 import android.view.View;
 
@@ -227,6 +228,8 @@ public class LuaRecyclerView<A extends UDBaseRecyclerAdapter, L extends UDBaseRe
             int ct = childTop + mlp.topMargin;
             c.layout(cl, ct, cl + c.getMeasuredWidth(), ct + c.getMeasuredHeight());
         }
+
+        getUserdata().layoutOverLayout(left, top, right, bottom);
     }
 
     @Override
@@ -240,8 +243,14 @@ public class LuaRecyclerView<A extends UDBaseRecyclerAdapter, L extends UDBaseRe
                 continue;
             measureChildWithMargins(c, widthMeasureSpec, 0, heightMeasureSpec, 0);
         }
+        getUserdata().measureOverLayout(widthMeasureSpec,heightMeasureSpec);
     }
 
+    @Override
+    protected void dispatchDraw(Canvas canvas) {
+        super.dispatchDraw(canvas);
+        getUserdata().drawOverLayout(canvas);
+    }
     //<editor-fold desc="ILViewGroup">
 
     @Override

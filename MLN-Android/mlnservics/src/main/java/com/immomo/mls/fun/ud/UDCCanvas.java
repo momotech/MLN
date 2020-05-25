@@ -24,6 +24,7 @@ import org.luaj.vm2.utils.LuaApiUsed;
  */
 @LuaApiUsed
 public class UDCCanvas extends LuaUserdata<Canvas> {
+    public static final String LUA_CLASS_NAME = "CCanvas";
     //<editor-fold desc="native method">
     /**
      * 初始化方法

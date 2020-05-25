@@ -50,8 +50,8 @@ local function initCollectionView()
     end)
     return collectionView
 end
---初始化CollectionViewLayout
-local function initCollectionViewLayout()
+--初始化CollectionViewGridLayout
+local function initCollectionViewGridLayout()
 
     collectionLayout = CollectionViewLayout()
     collectionLayout:itemSpacing(5)--间隔大小
@@ -127,8 +127,8 @@ contentView:width(W):height(H)
            :bgColor(Color(255, 255, 255, 1))
 --初始化CollectionView
 collectionView = initCollectionView()
---初始化CollectionViewLayout
-collectionLayout = initCollectionViewLayout()
+--初始化CollectionViewGridLayout
+collectionLayout = initCollectionViewGridLayout()
 --初始化CollectionViewAdapter
 adapter = initAdapter()
 collectionView:layout(collectionLayout)

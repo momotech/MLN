@@ -21,6 +21,7 @@ import org.luaj.vm2.exception.UndumpError;
 import org.luaj.vm2.utils.IGlobalsUserdata;
 import org.luaj.vm2.utils.LuaApiUsed;
 import org.luaj.vm2.utils.NativeLog;
+import org.luaj.vm2.utils.OnEmptyMethodCalledListener;
 import org.luaj.vm2.utils.ResourceFinder;
 import org.luaj.vm2.utils.SignatureUtils;
 
@@ -237,6 +238,10 @@ public final class Globals extends LuaTable {
      * 全局虚拟机
      */
     private static final LongSparseArray<Globals> g_cahce = new LongSparseArray<>();
+    /**
+     * 空方法回调
+     */
+    private static OnEmptyMethodCalledListener onEmptyMethodCalledListener;
 
     /**
      * @see #createLState(boolean)
@@ -346,6 +351,14 @@ public final class Globals extends LuaTable {
         g.debuggable = debuggable;
         saveGlobals(g);
         return g;
+    }
+
+    /**
+     * 为每个Bridge注册空方法，调用空方法不会报错，会返回调用者本身
+     * 回调用{@link #__onEmptyMethodCall(long, String, String)}
+     */
+    public static void preRegisterEmptyMethods(String... methods) {
+        LuaCApi._preRegisterEmptyMethods(methods);
     }
 
     /**
@@ -1144,6 +1157,13 @@ public final class Globals extends LuaTable {
     /**
      * 设置class和luaclassname的对应关系
      */
+    public final void putLuaClassName(Class<? extends LuaUserdata> clz, String lcn) {
+        luaClassNameMap.put(clz, lcn);
+    }
+
+    /**
+     * 设置class和luaclassname的对应关系
+     */
     public final void putLuaClassName(Map<Class, String> other) {
         luaClassNameMap.putAll(other);
     }
@@ -1166,6 +1186,13 @@ public final class Globals extends LuaTable {
     public synchronized void removeOnDestroyListener(OnDestroyListener l) {
         if (onDestroyListeners != null)
             onDestroyListeners.remove(l);
+    }
+
+    /**
+     * 设置空方法监听
+     */
+    public static void setOnEmptyMethodCalledListener(OnEmptyMethodCalledListener listener) {
+        onEmptyMethodCalledListener = listener;
     }
 
     /**
@@ -1350,6 +1377,18 @@ public final class Globals extends LuaTable {
     @LuaApiUsed
     private static void __onLuaGC(long L) {
         System.gc();
+    }
+
+    /**
+     * 调用注册的空方法时，会走到这
+     */
+    @LuaApiUsed
+    private static void __onEmptyMethodCall(long L, String clz, String methodName) {
+        if (onEmptyMethodCalledListener != null) {
+            Globals g = getGlobalsByLState(L);
+            if (g != null)
+                onEmptyMethodCalledListener.onCalled(g, clz, methodName);
+        }
     }
 
     /**

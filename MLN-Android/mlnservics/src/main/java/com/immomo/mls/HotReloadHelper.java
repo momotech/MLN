@@ -371,7 +371,6 @@ public class HotReloadHelper {
         @Override
         public void disconnecte(int type, String ip, int port, String error) {
             LogUtil.d(TAG, "disconnecte", type, ip, port, error);
-//            toast(String.format("断开与HotReload插件的%s连接，error: %s", (type == NET_CONNECTION ? "wifi, 检查是否与电脑在同一个网络环境下" : "usb"), error));
             connectState = CS_Disconnect;
             connectType &= ~type;
             HotReloadServer.getInstance().stop();

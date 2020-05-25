@@ -9,6 +9,8 @@ package com.immomo.mls;
 
 import com.immomo.mls.log.DefaultPrintStream;
 
+import com.immomo.mls.log.ErrorType;
+import com.immomo.mls.log.IPrinter;
 import org.luaj.vm2.Globals;
 import org.luaj.vm2.exception.InvokeError;
 
@@ -19,7 +21,6 @@ import java.io.PrintStream;
  */
 public class Environment {
     public static boolean DEBUG = false;
-
     public static final String LUA_ERROR = "[LUA_ERROR] ";
 
     public static UncatchExceptionListener uncatchExceptionListener = new UncatchExceptionListener() {
@@ -63,6 +64,24 @@ public class Environment {
         HotReloadHelper.onError(t != null ? t.getMessage() : "null");
     }
 
+    public static void errorWithType(ErrorType errorType, Throwable throwable, Globals globals) {
+        String errorMsg = throwable != null ? throwable.getMessage() : "";
+
+        LuaViewManager m = (LuaViewManager) globals.getJavaUserdata();
+        if (m != null && m.STDOUT != null) {
+            PrintStream ps = m.STDOUT;
+            if (ps instanceof DefaultPrintStream) {
+                ((DefaultPrintStream) ps).error(errorType.getErrorPrefix() + errorMsg, errorType);
+            } else {
+                ps.print(errorType.getErrorPrefix() + errorMsg);
+                ps.println();
+            }
+            m.showPrinterIfNot();
+        }
+
+        HotReloadHelper.onError(throwable != null ? throwable.getMessage() : "null");
+    }
+
     public static boolean callbackError(Throwable t, Globals g) {
         if (uncatchExceptionListener != null) {
             return uncatchExceptionListener.onUncatch(false, g, t);
@@ -79,7 +98,6 @@ public class Environment {
          */
         boolean onUncatch(boolean fatal, Globals globals, Throwable e);
     }
-
 
     private static String getErrorMsg(Throwable t) {
         Throwable temp = t != null ? t.getCause() : null;

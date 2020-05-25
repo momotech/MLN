@@ -55,6 +55,7 @@ static JNINativeMethod jni_methods[] = {
     {"_logMemoryInfo", "()V", (void *)jni_logMemoryInfo},
     {"_setGcOffset", "(I)V", (void *)jni_setGcOffset},
     {"_setDatabasePath", "(" STRING_CLASS ")V", (void *)jni_setDatabasePath},
+    {"_preRegisterEmptyMethods", "([" STRING_CLASS ")V", (void *)jni_preRegisterEmptyMethods},
     {"_preRegisterUD", "(" STRING_CLASS "[" STRING_CLASS ")V", (void *)jni_preRegisterUD},
     {"_preRegisterStatic", "(" STRING_CLASS "[" STRING_CLASS ")V", (void *)jni_preRegisterStatic},
     {"_setAssetManager", "(Landroid/content/res/AssetManager;)V", (void *)jni_setAssetManager},

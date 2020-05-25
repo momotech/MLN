@@ -39,6 +39,8 @@
 #define JAVA_CLASS_META METATABLE_PREFIX "__JavaClass"
 #define METATABLE_FORMAT METATABLE_PREFIX "%s"
 
+#define EMPTY_METHOD_TABLE "__EMTPY_METHOD"
+
 #define DEFAULT_SIG "([" LUAVALUE_CLASS ")[" LUAVALUE_CLASS
 
 #define GetString(env, js) (!js ? NULL : (*env)->GetStringUTFChars(env, js, 0))

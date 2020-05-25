@@ -27,6 +27,7 @@ public class UDPath extends LuaUserdata<Path> {
             "reset",
             "moveTo",
             "lineTo",
+            "arcTo",
             "quadTo",
             "cubicTo",
             "addPath",
@@ -34,7 +35,6 @@ public class UDPath extends LuaUserdata<Path> {
             "setFillType",
             "addArc",
             "addRect",
-//            "addOval",
             "addCircle",
     };
 
@@ -72,6 +72,20 @@ public class UDPath extends LuaUserdata<Path> {
     @LuaApiUsed
     LuaValue[] cubicTo(LuaValue[] v) {
         javaUserdata.cubicTo(DimenUtil.dpiToPx(v[2].toFloat()), DimenUtil.dpiToPx(v[3].toFloat()), DimenUtil.dpiToPx(v[4].toFloat()), DimenUtil.dpiToPx(v[5].toFloat()), DimenUtil.dpiToPx(v[0].toFloat()), DimenUtil.dpiToPx(v[1].toFloat()));
+        return null;
+    }
+
+
+    @LuaApiUsed
+    LuaValue[] arcTo(LuaValue[] values) {
+        float centerX = values.length > 0 ? DimenUtil.dpiToPx(values[0].toFloat()) : 0;
+        float centerY = values.length > 1 ? DimenUtil.dpiToPx(values[1].toFloat()) : 0;
+        int radius = values.length > 2 ? DimenUtil.dpiToPx(values[2].toInt()) : 0;
+        int startAngle = values.length > 3 ? values[3].toInt() : 0;
+        int endAngle = values.length > 4 ? values[4].toInt() : 0;
+
+        javaUserdata.arcTo(new RectF(centerX - radius, centerY - radius, centerX + radius,
+            centerY + radius), startAngle, endAngle - startAngle);
         return null;
     }
 

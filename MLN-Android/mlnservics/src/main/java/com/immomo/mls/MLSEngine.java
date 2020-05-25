@@ -10,12 +10,15 @@ package com.immomo.mls;
 import android.content.ComponentCallbacks2;
 import android.content.Context;
 
+import androidx.annotation.NonNull;
+
 import com.immomo.mlncore.MLNCore;
 import com.immomo.mls.adapter.ILoadLibAdapter;
 import com.immomo.mls.adapter.OnRemovedUserdataAdapter;
 import com.immomo.mls.adapter.impl.LoadLibAdapterImpl;
 import com.immomo.mls.fun.constants.BreakMode;
 import com.immomo.mls.fun.constants.ContentMode;
+import com.immomo.mls.fun.constants.CrossAxisAlignType;
 import com.immomo.mls.fun.constants.DrawStyle;
 import com.immomo.mls.fun.constants.EditTextViewInputMode;
 import com.immomo.mls.fun.constants.FileInfo;
@@ -24,6 +27,7 @@ import com.immomo.mls.fun.constants.FontStyle;
 import com.immomo.mls.fun.constants.GradientType;
 import com.immomo.mls.fun.constants.GravityConstants;
 import com.immomo.mls.fun.constants.LinearType;
+import com.immomo.mls.fun.constants.MainAxisAlignType;
 import com.immomo.mls.fun.constants.MeasurementType;
 import com.immomo.mls.fun.constants.MotionEvent;
 import com.immomo.mls.fun.constants.NavigatorAnimType;
@@ -38,23 +42,24 @@ import com.immomo.mls.fun.constants.StyleImageAlign;
 import com.immomo.mls.fun.constants.TabSegmentAlignment;
 import com.immomo.mls.fun.constants.TextAlign;
 import com.immomo.mls.fun.constants.UnderlineStyle;
+import com.immomo.mls.fun.constants.WrapType;
 import com.immomo.mls.fun.globals.UDLuaView;
 import com.immomo.mls.fun.java.Alert;
 import com.immomo.mls.fun.java.Event;
 import com.immomo.mls.fun.java.JToast;
 import com.immomo.mls.fun.java.LuaDialog;
 import com.immomo.mls.fun.lt.LTFile;
-import com.immomo.mls.fun.lt.SClipboard;
-import com.immomo.mls.fun.lt.SICornerRadiusManager;
-import com.immomo.mls.fun.lt.SINavigator;
 import com.immomo.mls.fun.lt.LTPreferenceUtils;
 import com.immomo.mls.fun.lt.LTPrinter;
 import com.immomo.mls.fun.lt.LTStringUtil;
 import com.immomo.mls.fun.lt.LTTypeUtils;
+import com.immomo.mls.fun.lt.SClipboard;
 import com.immomo.mls.fun.lt.SIApplication;
+import com.immomo.mls.fun.lt.SICornerRadiusManager;
 import com.immomo.mls.fun.lt.SIEventCenter;
 import com.immomo.mls.fun.lt.SIGlobalEvent;
 import com.immomo.mls.fun.lt.SILoading;
+import com.immomo.mls.fun.lt.SINavigator;
 import com.immomo.mls.fun.lt.SINetworkReachability;
 import com.immomo.mls.fun.lt.SISystem;
 import com.immomo.mls.fun.lt.SITimeManager;
@@ -70,6 +75,7 @@ import com.immomo.mls.fun.ud.UDPaint;
 import com.immomo.mls.fun.ud.UDPath;
 import com.immomo.mls.fun.ud.UDPoint;
 import com.immomo.mls.fun.ud.UDRect;
+import com.immomo.mls.fun.ud.UDSafeAreaRect;
 import com.immomo.mls.fun.ud.UDSize;
 import com.immomo.mls.fun.ud.UDStyleString;
 import com.immomo.mls.fun.ud.UDWindowManager;
@@ -89,19 +95,25 @@ import com.immomo.mls.fun.ud.net.EncType;
 import com.immomo.mls.fun.ud.net.ErrorKey;
 import com.immomo.mls.fun.ud.net.ResponseKey;
 import com.immomo.mls.fun.ud.net.UDHttp;
+import com.immomo.mls.fun.ud.view.UDBaseHVStack;
+import com.immomo.mls.fun.ud.view.UDBaseStack;
 import com.immomo.mls.fun.ud.view.UDCanvasView;
 import com.immomo.mls.fun.ud.view.UDEditText;
+import com.immomo.mls.fun.ud.view.UDHStack;
 import com.immomo.mls.fun.ud.view.UDImageButton;
 import com.immomo.mls.fun.ud.view.UDImageView;
 import com.immomo.mls.fun.ud.view.UDLabel;
 import com.immomo.mls.fun.ud.view.UDLinearLayout;
 import com.immomo.mls.fun.ud.view.UDRelativeLayout;
 import com.immomo.mls.fun.ud.view.UDScrollView;
+import com.immomo.mls.fun.ud.view.UDSpacer;
 import com.immomo.mls.fun.ud.view.UDSwitch;
 import com.immomo.mls.fun.ud.view.UDTabLayout;
+import com.immomo.mls.fun.ud.view.UDVStack;
 import com.immomo.mls.fun.ud.view.UDView;
 import com.immomo.mls.fun.ud.view.UDViewGroup;
 import com.immomo.mls.fun.ud.view.UDViewPager;
+import com.immomo.mls.fun.ud.view.UDZStack;
 import com.immomo.mls.fun.ud.view.recycler.UDBaseNeedHeightAdapter;
 import com.immomo.mls.fun.ud.view.recycler.UDBaseRecyclerAdapter;
 import com.immomo.mls.fun.ud.view.recycler.UDBaseRecyclerLayout;
@@ -138,8 +150,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import androidx.annotation.NonNull;
-
 /**
  * Created by XiongFangyu on 2018/6/26.
  */
@@ -152,12 +162,17 @@ public class MLSEngine {
             "mlnbridge",
     };
 
+    public static final String BC_Lib = "mlnbc";
+    public static final String BLUR_LIB = "lblur";
+    public static final String ANIM_LIB = "luaanim";
+
     private static final Map<String, Boolean> otherLibs;
 
     static {
-        otherLibs = new HashMap<>(2);
-        otherLibs.put("mlnbc", false);
-        otherLibs.put("lblur", false);
+        otherLibs = new HashMap<>(3);
+        otherLibs.put(BC_Lib, false);
+        otherLibs.put(BLUR_LIB, false);
+//        otherLibs.put(ANIM_LIB, false);
     }
 
     private static boolean init = false;
@@ -250,6 +265,8 @@ public class MLSEngine {
         if (!init) {
             initCoreLibs(adapter);
         }
+        if (!init)
+            return null;
         boolean firstInit = false;
         if (singleRegister == null) {
             synchronized (MLSEngine.class) {
@@ -431,6 +448,12 @@ public class MLSEngine {
                 Register.newUDHolder(UDTabLayout.LUA_CLASS_NAME, UDTabLayout.class, false, UDTabLayout.methods),
                 Register.newUDHolder(UDSwitch.LUA_CLASS_NAME, UDSwitch.class, false, UDSwitch.methods),
                 Register.newUDHolder(UDCanvasView.LUA_CLASS_NAME, UDCanvasView.class, false, UDCanvasView.methods),
+                Register.newUDHolder(UDBaseStack.LUA_CLASS_NAME, UDBaseStack.class, false, UDBaseStack.methods),
+                Register.newUDHolder(UDBaseHVStack.LUA_CLASS_NAME, UDBaseHVStack.class, false, UDBaseHVStack.methods),
+                Register.newUDHolder(UDVStack.LUA_CLASS_NAME, UDVStack.class, false, UDVStack.methods),
+                Register.newUDHolder(UDHStack.LUA_CLASS_NAME, UDHStack.class, false, UDHStack.methods),
+                Register.newUDHolder(UDZStack.LUA_CLASS_NAME, UDZStack.class, false, UDZStack.methods),
+                Register.newUDHolder(UDSpacer.LUA_CLASS_NAME, UDSpacer.class, false, UDSpacer.methods),
 
                 Register.newUDHolder(UDListAdapter.LUA_CLASS_NAME, UDListAdapter.class, false, UDListAdapter.methods),
                 Register.newUDHolder(UDListAutoFitAdapter.LUA_CLASS_NAME, UDListAutoFitAdapter.class, false),
@@ -443,6 +466,7 @@ public class MLSEngine {
                 Register.newUDHolder(UDPath.LUA_CLASS_NAME, UDPath.class, false, UDPath.methods),
                 Register.newUDHolder(UDPaint.LUA_CLASS_NAME, UDPaint.class, false, UDPaint.methods),
                 Register.newUDHolder(UDCanvas.LUA_CLASS_NAME, UDCanvas.class, false, UDCanvas.methods),
+                Register.newUDHolder(UDSafeAreaRect.LUA_CLASS_NAME, UDSafeAreaRect.class, false, UDSafeAreaRect.methods),
 
                 /// 第二种，普通类，含有LuaClass注解的
                 Register.newUDHolderWithLuaClass(UDHttp.LUA_CLASS_NAME, UDHttp.class, false),
@@ -461,6 +485,7 @@ public class MLSEngine {
                 Register.newUDHolderWithLuaClass(UDTranslateAnimation.LUA_CLASS_NAME, UDTranslateAnimation.class, false),
                 Register.newUDHolderWithLuaClass(UDAnimationSet.LUA_CLASS_NAME, UDAnimationSet.class, false),
                 /// end
+
         };
     }
 
@@ -546,6 +571,9 @@ public class MLSEngine {
                 StyleImageAlign.class,
                 MotionEvent.class,
                 SafeAreaConstants.class,
+                MainAxisAlignType.class,
+                CrossAxisAlignType.class,
+                WrapType.class,
         };
     }
 

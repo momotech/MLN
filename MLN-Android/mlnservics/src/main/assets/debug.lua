@@ -667,6 +667,43 @@ local function debug_hook(event, line)
 
         --if is_pending(server) then handle_breakpoint(server) end
 
+        --- MLNUI声明式断点 Begin ---
+        local models = mobdebug.commandmodels
+        if models ~= nil and type(models) == "table" then
+            local filename = file
+            if string.find(file, "%.") then
+                _, _, filename = string.find(file, "([%a+_*%a+]+)")
+            end
+
+            local filemodel = models[filename]
+
+            if filemodel ~= nil and type(filemodel) == "table" then
+                for _, cmds in pairs(filemodel) do
+                    local from, to, cmd
+                    for k, v in pairs(cmds) do
+                        if k == "from" then
+                            from = v
+                        elseif k == "to" then
+                            to = v
+                        elseif k == "cmd" then
+                            cmd = v
+                        end
+                    end
+
+                    if line >= from and line <= to then
+                        local env = capture_vars(1)
+                        local func = loadstring(cmd)
+                        if func and type(func) == "function" then
+                            setfenv(func, env)
+                            func()
+                        end
+                    end
+                end
+            end
+
+        end
+        --- MLNUI声明式断点 End ---
+
         local vars, status, res
         if (watchescnt > 0) then
             vars = capture_vars(1)
@@ -688,7 +725,8 @@ local function debug_hook(event, line)
                         -- step_over will equal 'main', so need to check for that explicitly.
                         or (step_over and step_over == (coroutine.running() or 'main') and stack_level <= step_level)
                         or has_breakpoint(file, line)
-                        or is_pending(server))
+                        --or is_pending(server)
+                )
 
         if getin then
             vars = vars or capture_vars(1)
@@ -746,6 +784,11 @@ local function isrunning()
     return coro_debugger and (corostatus(coro_debugger) == 'suspended' or corostatus(coro_debugger) == 'running')
 end
 
+local function finish()
+    if not (isrunning() and server) then return end
+    server:send("EOF \n") --客户端close后，插件端未收到FIN包，原因未知，故主动发送一个关闭连接的标志
+end
+
 -- this is a function that removes all hooks and closes the socket to
 -- report back to the controller that the debugging is done.
 -- the script that called `done` can still continue.
@@ -771,6 +814,9 @@ function handle_socket_command_message()
         return "dead"
     end
     local status, res = cororesume(coro_debugger, events.RECEIVE)
+    if not coro_debugger then
+        return "dead"
+    end
     return corostatus(coro_debugger)
 end
 
@@ -795,12 +841,33 @@ local function main_thread_should_continue_run(eval_env)
         server:send("401 Error in Execution " .. tostring(#file) .. "\n")
         server:send(file)
     end
+
+    return eval_env
+end
+
+-- 根据分析，局部变量存储在 vars[1][2] 这个表中，格式为：变量名={"变量值", "变量类型"}
+-- 这里暂时把全局变量也存储到这里，统一显示在 idea frame 面板上
+local function mln_append_global_values(vars)
+    for k, v in pairs(_G) do
+        if k == "item" or  --DataBinding:getModel()的返回值名字为item，类型为table
+                k == "userData" or --DataBinding:get()的返回值名字为userData，类型为table
+                type(v) == "string" or
+                type(v) == "userdata" or
+                type(v) == "number" then --暂时只显示这三种类型的全局变量
+            if string.sub(k, 1, 1) ~= "_" then --过滤掉下划线开头的全局变量（为了idea面板展示更友好）
+                local name = tostring(k) .. "_global"
+                vars[1][2][name] = {v, v}
+            end
+        end
+    end
+    return vars
 end
 
 local function debugger_loop(sev, svars, sfile, sline)
     local command
     local app, osname
     local eval_env = svars or {}
+    local main_thread_vars = {}
     local function emptyWatch () return false end
     local loaded = {}
     for k in pairs(package.loaded) do loaded[k] = true end
@@ -817,7 +884,7 @@ local function debugger_loop(sev, svars, sfile, sline)
                 server:settimeout() --resume to poll
 
                 if not line and err == "timeout" then
-                    main_thread_should_continue_run(eval_env)
+                    main_thread_vars = main_thread_should_continue_run(eval_env)
                 end
             else
                 line, err = server:receive()
@@ -868,7 +935,7 @@ local function debugger_loop(sev, svars, sfile, sline)
                 server:send("400 Bad Request\n")
             end
             if mobdebug.shouldcontinuerun then
-                main_thread_should_continue_run(eval_env)
+                main_thread_vars = main_thread_should_continue_run(eval_env)
             end
         elseif command == "DELB" then
             local _, _, _, file, line = string.find(line, "^([A-Z]+)%s+(.-)%s+(%d+)%s*$")
@@ -879,7 +946,7 @@ local function debugger_loop(sev, svars, sfile, sline)
                 server:send("400 Bad Request\n")
             end
             if mobdebug.shouldcontinuerun then
-                main_thread_should_continue_run(eval_env)
+                main_thread_vars = main_thread_should_continue_run(eval_env)
             end
         elseif command == "EXEC" then
             -- extract any optional parameters
@@ -895,9 +962,26 @@ local function debugger_loop(sev, svars, sfile, sline)
                     local stack = tonumber(params.stack)
                     -- if the requested stack frame is not the current one, then use a new capture
                     -- with a specific stack frame: `capture_vars(0, coro_debugee)`
-                    local env = stack and coro_debugee and capture_vars(stack-1, coro_debugee) or eval_env
+
+                    -- 如果想要提取的变量是全局变量，则在_G中查找，然后插到main_vars里，在idea插件面板展示
+                    local main_vars = main_thread_vars
+                    local _, _, innerLine = string.find(line, "(.+)%-%-%s*%b{}%s*$")
+                    if innerLine then
+                        local _, _, gname  = string.find(innerLine, "^[A-Z]+%s*return%s*(%a+)_global%s*$")
+                        if gname then
+                            local v = _G[gname]
+                            if v and type(v) == "table" then
+                                local vars_metatable = getmetatable(main_vars) --默认main_vars表(也就是capture_vars函数的返回值)，是写保护的，所以这里在写入数据前，更改下元表
+                                setmetatable(main_vars, {})
+                                main_vars[gname .. "_global"] = v
+                                setmetatable(main_vars, vars_metatable)
+                            end
+                        end
+                    end
+
+                    local env = stack and coro_debugee and capture_vars(stack-1, coro_debugee) or main_vars
                     setfenv(func, env)
-                    status, res = stringify_results(params, pcall(func, unpack(env['...'] or {})))
+                    status, res = stringify_results(params, pcall(func, unpack(env['...'] or {}))) -- pcall will return true if no error.
                 end
                 if status then
                     if mobdebug.onscratch then mobdebug.onscratch(res) end
@@ -979,12 +1063,12 @@ local function debugger_loop(sev, svars, sfile, sline)
             end
         elseif command == "RUN" then
             server:send("200 OK\n")
-            main_thread_should_continue_run(eval_env)
+            main_thread_vars = main_thread_should_continue_run(eval_env)
         elseif command == "STEP" then
             server:send("200 OK\n")
             step_into = true
 
-            main_thread_should_continue_run(eval_env)
+            main_thread_vars = main_thread_should_continue_run(eval_env)
 
             --[[
             local ev, vars, file, line, idx_watch = coroyield()
@@ -1010,7 +1094,7 @@ local function debugger_loop(sev, svars, sfile, sline)
             if command == "OUT" then step_level = stack_level - 1
             else step_level = stack_level end
 
-            main_thread_should_continue_run(eval_env)
+            main_thread_vars = main_thread_should_continue_run(eval_env)
 
             --[[
             local ev, vars, file, line, idx_watch = coroyield()
@@ -1063,7 +1147,7 @@ local function debugger_loop(sev, svars, sfile, sline)
                 if params.sparse == nil then params.sparse = false end
                 -- take into account additional levels for the stack frames and data management
                 if tonumber(params.maxlevel) then params.maxlevel = tonumber(params.maxlevel)+4 end
-
+                vars = mln_append_global_values(vars)
                 local ok, res = pcall(mobdebug.dump, vars, params)
                 if ok then
                     server:send("200 OK " .. tostring(res) .. "\n")
@@ -1072,6 +1156,7 @@ local function debugger_loop(sev, svars, sfile, sline)
                     server:send(res)
                 end
             end
+
         elseif command == "OUTPUT" then
             local _, _, stream, mode = string.find(line, "^[A-Z]+%s+(%w+)%s+([dcr])%s*$")
             if stream and mode and stream == "stdout" then
@@ -1096,12 +1181,26 @@ local function debugger_loop(sev, svars, sfile, sline)
             else
                 server:send("400 Bad Request\n")
             end
+
+        elseif command == "MODELS" then
+            local params = string.match(line, "--%s*(%b{})%s*$")
+            local pfunc = params and loadstring("return "..params)
+            params = pfunc and pfunc() --got table
+            params = (type(params) == "table" and params or {}) --校验，确保是table类型
+            mobdebug.commandmodels = mobdebug.commandmodels and mobdebug.commandmodels or {}
+            for k, v in pairs(params) do
+                mobdebug.commandmodels[k] = v
+            end
+            server:send("200 OK\n") --直接当做成功处理
+
         elseif command == "EXIT" then
             server:send("200 OK\n")
             coroyield("exit")
+
         else
             server:send("400 Bad Request\n")
         end
+
     end
 end
 
@@ -1750,11 +1849,15 @@ mobdebug.off = off
 mobdebug.moai = moai
 mobdebug.coro = coro
 mobdebug.done = done
+mobdebug.finish = finish
 mobdebug.pause = function() step_into = true end
 mobdebug.yield = nil -- callback
 mobdebug.output = output
 mobdebug.onexit = os and os.exit or done
 mobdebug.onscratch = nil -- callback
 mobdebug.basedir = function(b) if b then basedir = b end return basedir end
+mobdebug.commandmodels = nil
 
 return mobdebug
+
+

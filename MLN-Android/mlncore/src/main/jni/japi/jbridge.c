@@ -88,6 +88,11 @@ void jni_registerStaticClassSimple(JNIEnv *env, jobject jobj, jlong L, jstring j
             copyTable(LS, -1, -2);
         lua_pop(LS, 1);
         ReleaseChar(env, lpcn, parent_name);
+    } else {
+        /// 设置空方法
+        lua_getglobal(LS, EMPTY_METHOD_TABLE);
+        copyTable(LS, -1, -2);
+        lua_pop(LS, 1);
     }
 
     context c = {LS, clz, jclassname};
@@ -225,11 +230,11 @@ static int executeJavaStaticFunction(lua_State *L) {
     idx = lua_upvalueindex(2);
     UDjmethod udmethod = (UDjmethod) lua_touserdata(L, idx);
 
-    /// 第2个参数为Java静态方法
+    /// 第3个参数为Java静态方法
     idx = lua_upvalueindex(3);
     const char *name = lua_tostring(L, idx);
 
-    /// 第3个参数为方法需要的参数个数
+    /// 第4个参数为方法需要的参数个数
     /// -1表示可变个数
     int pc = lua_tointeger(L, lua_upvalueindex(4));
     if (pc == -1) {

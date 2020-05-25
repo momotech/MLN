@@ -156,6 +156,57 @@ jlong jni_lvmMemUse(JNIEnv *env, jobject jobj, jlong L) {
 /// ------------------------------------------------------------------
 /// ------------------------------L State-----------------------------
 /// ------------------------------------------------------------------
+
+/**
+ * 执行空方法
+ * @param L
+ *      1: method name
+ */
+int exeEmptyMethod(lua_State *L) {
+    lua_lock(L);
+    int isUD = -1;
+    if (lua_isuserdata(L, 1)) {
+        isUD = 1;
+    } else if (lua_istable(L, 1)) {
+        isUD = 0;
+    }
+    if (isUD == -1) {
+        lua_pushstring(L, "use ':' instead of '.' to call method!!");
+        lua_unlock(L);
+        lua_error(L);
+        return 1;
+    }
+
+    const char *clz;
+    if (isUD) {
+        UDjavaobject ud = (UDjavaobject) lua_touserdata(L, 1);
+        clz = ud->name;
+    } else {
+        clz = "Unknown static class";
+    }
+    const char *mn;
+    int idx = lua_upvalueindex(1);
+    mn = lua_tostring(L, idx);
+
+    onEmptyMethodCall(L, clz, mn);
+
+    lua_settop(L, 1);
+    lua_unlock(L);
+    return 1;
+}
+/**
+ * -1: table
+ */
+void emptyMethodTable(const void *value, void *ud) {
+    lua_State *L = (lua_State *) ud;
+    const char *name = (const char *) value;
+    lua_pushstring(L, name);
+    lua_pushvalue(L, -1);
+    lua_pushcclosure(L, exeEmptyMethod, 1);
+    /// -1: closure, -2: name, -3: table
+    lua_rawset(L, -3);
+}
+
 extern void openlibs_forlua(lua_State *L, int debug) {
     lua_lock(L);
     L->l_G->gc_callback = NULL;
@@ -191,6 +242,10 @@ extern void openlibs_forlua(lua_State *L, int debug) {
     lua_pop(L, 2);
     if (gc_offset_time > 0)
         G(L)->gc_callback = gc_cb;
+
+    lua_newtable(L);
+    traverseAllEmptyMethods(emptyMethodTable, L);
+    lua_setglobal(L, EMPTY_METHOD_TABLE);
     lua_unlock(L);
 }
 

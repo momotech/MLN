@@ -26,6 +26,7 @@ import com.immomo.mls.adapter.PreinstallError;
 import com.immomo.mls.adapter.ScriptReaderCreator;
 import com.immomo.mls.adapter.ToastAdapter;
 import com.immomo.mls.adapter.TypeFaceAdapter;
+import com.immomo.mls.fun.ui.MLNSafeAreaAdapter;
 import com.immomo.mls.global.LVConfig;
 import com.immomo.mls.global.LuaViewConfig;
 import com.immomo.mls.log.DefaultPrinter;
@@ -58,10 +59,11 @@ public class MLSBuilder {
     private final List<Class> constantsClass;
     private final List<SIHolder> siHolders;
     private final List<CHolder> cHolders;
-    private final List<Class<? extends LuaUserdata>> newUDHolders;
+    private final List<Register.NewUDHolder> newUDHolders;
     private final Register register;
     private int preGlobalNum = 3;
     private boolean clearAll = false;
+    private int delay = 0;
 
     public MLSBuilder(Register register) {
         this.register = register;
@@ -163,6 +165,11 @@ public class MLSBuilder {
         MLSAdapterContainer.setFileCache(iFileCache);
         return this;
     }
+
+    public MLSBuilder setSafeAreaAdapter(MLNSafeAreaAdapter safeAreaAdapter) {
+        MLSAdapterContainer.setSafeAreaAdapter(safeAreaAdapter);
+        return this;
+    }
     //</editor-fold>
 
     //<editor-fold desc="Register">
@@ -182,8 +189,8 @@ public class MLSBuilder {
      * 写法可参照{@link com.immomo.mls.fun.ud.UDCCanvas}，且需要在c层注册文件
      * 建议使用Android Studio的模板生成java代码，实现完java层逻辑后，使用mlncgen.jar生成c层注册文件
      */
-    public MLSBuilder registerNewUD(Class<? extends LuaUserdata>... clz) {
-        newUDHolders.addAll(Arrays.asList(clz));
+    public MLSBuilder registerNewUD(Register.NewUDHolder... holders) {
+        newUDHolders.addAll(Arrays.asList(holders));
         return this;
     }
 
@@ -211,9 +218,18 @@ public class MLSBuilder {
         cHolders.addAll(Arrays.asList(holder));
         return this;
     }
+
+    public MLSBuilder registerEmptyMethods(String... methods) {
+        register.registerEmptyMethods(methods);
+        return this;
+    }
     //</editor-fold>
 
     //<editor-fold desc="Setting">
+    public MLSBuilder setDelay(int d) {
+        this.delay = d;
+        return this;
+    }
 
     /**
      * 设置lua查找so的路径
@@ -499,8 +515,8 @@ public class MLSBuilder {
         for (Register.UDHolder h : udHolders) {
             register.registerUserdata(h);
         }
-        for (Class<? extends LuaUserdata> clz : newUDHolders) {
-            register.registerNewUserdata(clz);
+        for (Register.NewUDHolder h : newUDHolders) {
+            register.registerNewUserdata(h);
         }
         for (Register.SHolder h : sHolders) {
             register.registerStaticBridge(h);
@@ -523,7 +539,7 @@ public class MLSBuilder {
                 Translator.registerJ2L(h.clz, h.j2l);
             }
         }
-        MainThreadExecutor.post(new Runnable() {
+        Runnable task = new Runnable() {
             @Override
             public void run() {
                 long ps = SystemClock.uptimeMillis();
@@ -532,7 +548,12 @@ public class MLSBuilder {
                 if (MLSEngine.DEBUG)
                     MLSAdapterContainer.getConsoleLoggerAdapter().d("MLSBuilder", "pre init globals cast: %d", (SystemClock.uptimeMillis() - ps));
             }
-        });
+        };
+        if (delay <= 0) {
+            MainThreadExecutor.post(task);
+        } else {
+            MainThreadExecutor.postDelayed(this, task, delay);
+        }
         if (MLSEngine.DEBUG)
             MLSAdapterContainer.getConsoleLoggerAdapter().d("MLSBuilder", "build cast: %d", (SystemClock.uptimeMillis() - start));
     }

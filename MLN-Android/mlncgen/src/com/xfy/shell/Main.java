@@ -1,6 +1,7 @@
 package com.xfy.shell;
 
 import java.io.File;
+import java.io.IOException;
 
 public class Main {
 
@@ -13,6 +14,13 @@ public class Main {
     }
 
     public static void main(String[] args) throws Exception {
+//        testParse();
+//        autoGenerate("~/Desktop/UDCanvansTest.java", "~/Desktop", "temp.c");
+
+        mainGenerate(args);
+    }
+
+    private static void mainGenerate(String[] args) throws Exception {
         int len = args.length;
         if (len < 4) {
             throw new Exception(echoUsage());
@@ -43,8 +51,6 @@ public class Main {
         System.out.println("generate success! " + f);
     }
 
-
-
     private static void autoGenerate(String javaFile, String outPath, String fileName) throws Exception {
         byte[] data = FileUtils.readBytes(new File(javaFile));
         String content = ClearCommentUtils.clearComment(new String(data));
@@ -55,5 +61,13 @@ public class Main {
         }
         NativeGenerator g = new NativeGenerator(p);
         FileUtils.writeFile(new File(outPath , fileName), g.toString().getBytes());
+    }
+
+    private static void testParse() throws IOException {
+        final String javaFile = "~/Desktop/UDCanvansTest.java";
+        byte[] data = FileUtils.readBytes(new File(javaFile));
+        String content = ClearCommentUtils.clearComment(new String(data));
+        Parser p = new Parser(content);
+        System.out.println(p.toString());
     }
 }

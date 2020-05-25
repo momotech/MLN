@@ -28,6 +28,7 @@
 
 #define GetArrLen(env, arr) (int)((*env)->GetArrayLength(env, arr))
 
+void jni_preRegisterEmptyMethods(JNIEnv *env, jobject jobj, jobjectArray methods);
 void jni_preRegisterUD(JNIEnv *env, jobject jobj, jstring className, jobjectArray methods);
 void jni_preRegisterStatic(JNIEnv *env, jobject jobj, jstring className, jobjectArray methods);
 
@@ -204,5 +205,16 @@ jmethodID getSpecialMethod(JNIEnv *env, jclass clz, int type);
  * 获取静态index函数
  */
 jmethodID getIndexStaticMethod(JNIEnv *env, jclass clz);
-
+/**
+ * 遍历所有空函数
+ */
+typedef void (*traverse_empty)(const void *value, void *ud);
+/**
+ * 遍历所有空函数
+ */
+void traverseAllEmptyMethods(traverse_empty fun, void *ud);
+/**
+ * 调用空方法时，同志java层
+ */
+void onEmptyMethodCall(lua_State *L, const char *clz, const char *methodName);
 #endif //J_INFO_H

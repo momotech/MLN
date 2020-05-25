@@ -39,6 +39,8 @@ class LuaCApi {
     //</editor-fold>
 
     //<editor-fold desc="Pre register">
+    static native void _preRegisterEmptyMethods(String[] methods);
+
     static native void _preRegisterUD(String className, String[] methods);
 
     static native void _preRegisterStatic(String className, String[] methods);

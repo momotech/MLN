@@ -19,6 +19,7 @@ import org.luaj.vm2.utils.LuaApiUsed;
  */
 @LuaApiUsed
 public class ${ClassName} extends LuaUserdata<${WrapClass}> {
+    public static final String LUA_CLASS_NAME = "${LuaClassName}";
     //<editor-fold desc="native method">
     /**
      * 初始化方法

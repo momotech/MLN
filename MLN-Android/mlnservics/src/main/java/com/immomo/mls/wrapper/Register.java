@@ -54,6 +54,7 @@ public class Register {
     private final AllUserdataHolder allUserdataHolder = new AllUserdataHolder();
     private final AllUserdataHolder lvUserdataHolder = new AllUserdataHolder();
     private final List<NewUDHolder> newUDHolders = new ArrayList<>();
+    private final List<String> emptyMethods = new ArrayList<>();
 
     private boolean preInstall = false;
     /**
@@ -69,6 +70,7 @@ public class Register {
         allUserdataHolder.clear();
         lvUserdataHolder.clear();
         newUDHolders.clear();
+        emptyMethods.clear();
     }
 
     /**
@@ -80,6 +82,13 @@ public class Register {
 
     public boolean isPreInstall() {
         return preInstall;
+    }
+
+    /**
+     * 全局增加空方法
+     */
+    public void registerEmptyMethods(String... methods) {
+        emptyMethods.addAll(Arrays.asList(methods));
     }
 
     //<editor-fold desc="check">
@@ -214,8 +223,22 @@ public class Register {
      * 写法可参照{@link com.immomo.mls.fun.ud.UDCCanvas}，且需要在c层注册文件
      * 建议使用Android Studio的模板生成java代码，实现完java层逻辑后，使用mlncgen.jar生成c层注册文件
      */
-    public void registerNewUserdata(Class<? extends LuaUserdata> clz) {
-        NewUDHolder holder = new NewUDHolder(clz);
+    public void registerNewUserdata(String lcn, Class<? extends LuaUserdata> clz) {
+        NewUDHolder holder = new NewUDHolder(lcn, clz);
+        holder.init();
+        newUDHolders.add(holder);
+    }
+
+    /**
+     * 注册高性能，新版userdata
+     * 其中必须有两个native函数:
+     *  static native void _init()
+     *  static native void _register(long l)
+     *
+     * 写法可参照{@link com.immomo.mls.fun.ud.UDCCanvas}，且需要在c层注册文件
+     * 建议使用Android Studio的模板生成java代码，实现完java层逻辑后，使用mlncgen.jar生成c层注册文件
+     */
+    public void registerNewUserdata(NewUDHolder holder) {
         holder.init();
         newUDHolders.add(holder);
     }
@@ -574,6 +597,10 @@ public class Register {
             for (SHolder h : sHolders) {
                 Globals.preRegisterStatic(h.clz, h.methods);
             }
+            if (!emptyMethods.isEmpty()) {
+                Globals.preRegisterEmptyMethods(emptyMethods.toArray(new String[0]));
+            }
+            emptyMethods.clear();
         } catch (Throwable t) {
             if (MLSAdapterContainer.getPreinstallError() != null) {
                 MLSAdapterContainer.getPreinstallError().onError(t);
@@ -803,12 +830,14 @@ public class Register {
         }
     }
 
-    private static final class NewUDHolder {
+    public static final class NewUDHolder {
+        private final String lcn;
         private final Class<? extends LuaUserdata> clz;
         private final Method registerMethod;
         private Method initMethod;
 
-        private NewUDHolder(Class<? extends LuaUserdata> clz) {
+        public NewUDHolder(String lcn, Class<? extends LuaUserdata> clz) {
+            this.lcn = lcn;
             this.clz = clz;
             try {
                 initMethod = clz.getDeclaredMethod(NEW_UD_INIT);
@@ -834,6 +863,7 @@ public class Register {
         private void register(Globals g) {
             try {
                 registerMethod.invoke(null, g.getL_State());
+                g.putLuaClassName(clz, lcn);
             } catch (Throwable e) {
                 Environment.callbackError(e, g);
             }

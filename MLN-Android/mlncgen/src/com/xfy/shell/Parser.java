@@ -11,6 +11,7 @@ public class Parser {
     private static final String PACKAGE = "package";
     private static final String IMPORT = "import";
     private static final String CLASS = "class";
+    private static final String LCN = "LUA_CLASS_NAME";
     private static final char[] Blank = {
             ' ', '\t', '\n'
     };
@@ -19,11 +20,13 @@ public class Parser {
     private static final char LeftBrackets = '(';
     private static final char RightBrackets = ')';
     private static final char BlockStart = '{';
+    private static final char Quot = '"';
     private static final String[] Modifys = {
             "public", "protected", "private"
     };
 
     private String className;
+    private String luaClassName;
     private String packageName;
     private List<Method> methods;
     private List<String> imports;
@@ -37,6 +40,10 @@ public class Parser {
 
     public String getClassName() {
         return className;
+    }
+
+    public String getLuaClassName() {
+        return luaClassName;
     }
 
     public String getPackageName() {
@@ -171,6 +178,20 @@ public class Parser {
                 }
                 className = new String(chars, cs, ce - cs + 1);
                 i ++;
+
+                /// 读lua 类名
+                cs = find(chars, i, LCN);
+                if (cs == -1)
+                    continue;
+                i = cs + LCN.length();
+                while (isBlank(chars[i]) || chars[i] != Quot) {
+                    i ++;
+                }
+                cs = ++i;
+                while (chars[i] != Quot) {
+                    i ++;
+                }
+                luaClassName = new String(chars, cs, i - cs);
                 continue;
             }
             /// 读方法
@@ -245,6 +266,7 @@ public class Parser {
         for (String s : imports) {
             sb.append("import ").append(s).append('\n');
         }
+        sb.append("lua class name:").append(luaClassName).append('\n');
         for (Method m : methods) {
             sb.append(m).append('\n');
         }

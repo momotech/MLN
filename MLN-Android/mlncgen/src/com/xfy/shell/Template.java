@@ -24,13 +24,13 @@ public interface Template {
             "                lua_error(L);                                       \\\n" +
             "                return 1;                                           \\\n" +
             "            }\n" +
-            "\n" +
-            "//todo edit lua class name\n" +
-            "#define LUA_CLASS_NAME \"LUA_CLASS_NAME\"\n" +
-            "\n" +
-            "static jclass _globalClass;\n";
+            "\n\n";
 
-    String MethodCom = "//<editor-fold desc=\"method definition\">\n";
+    String DefineLuaClassName = "#define LUA_CLASS_NAME \"%s\"\n";
+
+    String MethodCom = "\n" +
+            "static jclass _globalClass;\n" +
+            "//<editor-fold desc=\"method definition\">\n";
     String EditorEnd = "//</editor-fold>\n";
 
     public static final String METAStart = "/**\n" +

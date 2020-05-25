@@ -10,6 +10,8 @@ package com.immomo.mls.utils;
 import com.immomo.mls.Environment;
 import com.immomo.mls.MLSEngine;
 
+import com.immomo.mls.log.ErrorType;
+import com.immomo.mls.log.IPrinter;
 import org.luaj.vm2.Globals;
 
 public class ErrorUtils {
@@ -44,7 +46,7 @@ public class ErrorUtils {
     public static void debugDeprecatedSetter(String s, Globals globals) {
         Throwable t = new UnsupportedOperationException("The setter of '" + s + "' method is deprecated!");
         if (MLSEngine.DEBUG) {
-            Environment.error(t, globals);
+            Environment.errorWithType(ErrorType.WARNING, t, globals);
         } else {
             Environment.callbackError(t, globals);
         }
@@ -53,7 +55,7 @@ public class ErrorUtils {
     public static void debugDeprecatedMethodHook(String method, Globals globals) {
         Throwable t = new UnsupportedOperationException("The method '" + method + "' is deprecated!");
         if (MLSEngine.DEBUG) {
-            Environment.error(t, globals);
+            Environment.errorWithType(ErrorType.WARNING, t, globals);
         } else {
             Environment.callbackError(t, globals);
         }
@@ -62,7 +64,7 @@ public class ErrorUtils {
     public static void debugDeprecateMethod(String old, String newMethod, Globals globals) {
         Throwable t = new UnsupportedOperationException("The method '" + old + "' is deprecated, use " + newMethod + " instead!");
         if (MLSEngine.DEBUG) {
-            Environment.error(t, globals);
+            Environment.errorWithType(ErrorType.WARNING, t, globals);
         } else {
             Environment.callbackError(t, globals);
         }
@@ -71,7 +73,7 @@ public class ErrorUtils {
     public static void debugDeprecatedGetter(String s, Globals globals) {
         Throwable t = new UnsupportedOperationException("The getter of '" + s + "' method is deprecated!");
         if (MLSEngine.DEBUG) {
-            Environment.error(t, globals);
+            Environment.errorWithType(ErrorType.WARNING, t, globals);
         } else {
             Environment.callbackError(t, globals);
         }
