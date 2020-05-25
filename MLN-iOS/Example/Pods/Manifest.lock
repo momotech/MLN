@@ -55,6 +55,13 @@ PODS:
     - MLNDevTool/DevTool
   - MLNDevTool/Performance (0.1.9)
   - MLNDevTool/Protobuf (0.1.9)
+  - MLNUI (0.1.0):
+    - MLNUI/Core (= 0.1.0)
+    - MLNUI/Kit (= 0.1.0)
+  - MLNUI/Core (0.1.0):
+    - MLN/LuaLib
+  - MLNUI/Kit (0.1.0):
+    - MLNUI/Core
   - SDCycleScrollView (1.80):
     - SDWebImage (>= 5.0.0)
   - SDWebImage (5.3.3):
@@ -71,6 +78,7 @@ DEPENDENCIES:
   - MJRefresh (= 3.1.16)
   - MLN (from `../../`)
   - MLNDevTool (from `../../`)
+  - MLNUI (from `../../`)
   - SDCycleScrollView (>= 1.80)
   - Specta
   - Toast (~> 4.0.0)
@@ -92,6 +100,8 @@ EXTERNAL SOURCES:
     :path: "../../"
   MLNDevTool:
     :path: "../../"
+  MLNUI:
+    :path: "../../"
 
 SPEC CHECKSUMS:
   AFNetworking: b6f891fdfaed196b46c7a83cf209e09697b94057
@@ -101,11 +111,12 @@ SPEC CHECKSUMS:
   MJRefresh: 7798e16e53a5ef7f332dd05b27664db4e29530fd
   MLN: 1e6fe07803484e64de9d058a0b35dafc31aa0f37
   MLNDevTool: c782928c663dd958f47b716e55509be30a2419e4
+  MLNUI: 936a726d57057a89a346712edb9dc5942a4602e0
   SDCycleScrollView: b3c9a5ed840c771c4938978174c7c9d9feefeb96
   SDWebImage: 51ab1ce3ebd20dec6665ae8ba25c928da323db41
   Specta: 3e1bd89c3517421982dc4d1c992503e48bd5fe66
   Toast: 91b396c56ee72a5790816f40d3a94dd357abc196
 
-PODFILE CHECKSUM: 6704ccdefb9a27fb1f1a2a5857a02bc7bea0b3e3
+PODFILE CHECKSUM: 04f47ed51298cb720e836798ae7de5c117d82950
 
 COCOAPODS: 1.9.1
