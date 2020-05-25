@@ -420,10 +420,11 @@
         *number = [(NSNumber *)obj intValue];
         return YES;
     }
-#if 0 //兼容key是string类型
-    NSScanner *scanner = [NSScanner scannerWithString:obj];
-    return [scanner scanInt:number] && [scanner isAtEnd];
-#endif
+    //兼容key是string类型
+    if ([obj isKindOfClass:[NSString class]]) {
+        NSScanner *scanner = [NSScanner scannerWithString:obj];
+        return [scanner scanInt:number] && [scanner isAtEnd];
+    }
     return NO;
 }
 
