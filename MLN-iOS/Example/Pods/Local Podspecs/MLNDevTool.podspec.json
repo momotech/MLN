@@ -1,6 +1,6 @@
 {
   "name": "MLNDevTool",
-  "version": "0.1.7.1",
+  "version": "0.1.9",
   "summary": "Debug Tool of MLN.",
   "description": "Debug Tool of MLN.",
   "homepage": "https://mln.immomo.com",
@@ -11,7 +11,7 @@
   "authors": "MoMo",
   "source": {
     "git": "https://github.com/momotech/MLN.git",
-    "tag": "devtool-0.1.7.1"
+    "tag": "devtool-0.1.9"
   },
   "platforms": {
     "ios": "8.0"
@@ -54,7 +54,7 @@
       },
       "dependencies": {
         "MLN": [
-          "~> 1.0.0.2"
+
         ],
         "MLNDevTool/Conn": [
 
@@ -84,7 +84,7 @@
 
         ],
         "MLN": [
-          "~> 1.0.0.2"
+
         ]
       }
     },
@@ -104,7 +104,7 @@
 
         ],
         "MLN": [
-          "~> 1.0.0.2"
+
         ]
       },
       "resource_bundles": {

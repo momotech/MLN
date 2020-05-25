@@ -135,13 +135,17 @@ typedef BOOL(^ActionBlock)(void);
 }
 
 - (void)_mainThreadNotifyKeyPath:(NSString *)keyPath ofObject:(NSArray *)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change {
-        
-    NSParameterAssert([object isKindOfClass:[NSArray class]]);
-    
+            
 //    [self.class cancelPreviousPerformRequestsWithTarget:self selector:@selector(mergeAction) object:nil];
 //    [self performSelector:@selector(mergeAction) withObject:nil afterDelay:0];
 //    NSLog(@"keypath %@, object %@ change %@",keyPath, object, change);
     NSKeyValueChange type = [[change objectForKey:NSKeyValueChangeKindKey] unsignedIntegerValue];
+    if (type == NSKeyValueChangeSetting) {
+        [self listViewReload:self.listView];
+        return;
+    }
+    
+    NSParameterAssert([object isKindOfClass:[NSArray class]]);
     NSObject *new = [change objectForKey:NSKeyValueChangeNewKey];
     NSObject *old = [change objectForKey:NSKeyValueChangeOldKey];
     NSIndexSet *indexSet = [change objectForKey:NSKeyValueChangeIndexesKey];

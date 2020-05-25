@@ -6,6 +6,7 @@
 //
 
 #import "NSDictionary+MLNKVO.h"
+#import "NSObject+MLNReflect.h"
 
 @implementation NSDictionary (MLNKVO)
 
@@ -22,6 +23,27 @@
     return copy;
 }
 
+- (NSDictionary *)mln_convertToLuaTableAvailable {
+    NSMutableDictionary *dic = [NSMutableDictionary dictionaryWithCapacity:self.count];
+    [self enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, NSObject*  _Nonnull obj, BOOL * _Nonnull stop) {
+        NSObject *n = [obj mln_convertToLuaObject];
+        if (n) {
+            [dic setObject:n forKey:key];
+        }
+    }];
+    return dic.count > 0 ? dic.copy : self.copy;
+}
+
+- (NSMutableDictionary *)mln_convertToMDic {
+    NSMutableDictionary *dic = [NSMutableDictionary dictionaryWithCapacity:self.count];
+    [self enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop) {
+        NSObject *n = [obj mln_convertToNativeObject];
+        if (n) {
+            [dic setObject:n forKey:key];
+        }
+    }];
+    return dic;
+}
 @end
 
 @implementation NSMutableDictionary (MLNKVO)

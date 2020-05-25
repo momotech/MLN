@@ -126,6 +126,7 @@ LUA_EXPORT_VIEW_METHOD(addBlurEffect, "lua_addBlurEffect", MLNView)
 LUA_EXPORT_VIEW_METHOD(removeBlurEffect, "lua_removeBlurEffect", MLNView)
 LUA_EXPORT_VIEW_METHOD(openRipple, "lua_openRipple:", MLNView)
 LUA_EXPORT_VIEW_METHOD(canEndEditing, "lua_endEditing:", MLNView)
+LUA_EXPORT_VIEW_METHOD(keyboardDismiss, "lua_keyboardDismiss:", MLNView)
 LUA_EXPORT_VIEW_METHOD(bringSubviewToFront, "lua_bringSubviewToFront:", MLNView)
 LUA_EXPORT_VIEW_METHOD(sendSubviewToBack, "lua_sendSubviewToBack:", MLNView)
 //view的背景图片

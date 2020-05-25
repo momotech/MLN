@@ -404,6 +404,10 @@
     return YES;
 }
 
+- (BOOL)lua_supportOverlay {
+    return YES;
+}
+
 - (void)lua_addSubview:(UIView *)view
 {
     MLNLuaAssert(self.mln_luaCore, NO, @"Not found \"addView\" method, just continar of View has it!");
@@ -451,4 +455,9 @@ LUA_EXPORT_VIEW_METHOD(setMinHeight, "lua_setMinHeight:",MLNLabel) //SDK>=1.0.3�
 LUA_EXPORT_VIEW_METHOD(setLineSpacing, "lua_setLineSpacing:",MLNLabel) //SDK>=1.0.3，自适应时的限制
 LUA_EXPORT_VIEW_METHOD(a_setIncludeFontPadding, "lua_a_setIncludeFontPadding:", MLNLabel)
 LUA_EXPORT_VIEW_END(MLNLabel, Label, YES, "MLNView", "initWithLuaCore:frame:")
+@end
+
+@implementation MLNOverlayLabel
+LUA_EXPORT_VIEW_BEGIN(MLNOverlayLabel) // 兼容Android
+LUA_EXPORT_VIEW_END(MLNOverlayLabel, OverLabel, YES, "MLNLabel", "initWithLuaCore:frame:")
 @end

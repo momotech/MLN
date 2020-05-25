@@ -61,7 +61,7 @@ it(@"get data", ^{
    });
 
 it(@"get table data", ^{
-   NSArray *source = [MLNDataBinding performSelector:NSSelectorFromString(@"lua_dataForKeyPath:") withObject:@"userData.source"];
+   NSArray *source = [MLNDataBinding performSelector:NSSelectorFromString(@"lua_dataForKeys:") withObject:@"userData.source"];
    
    expect(source.count == 10).to.beTruthy();
    expect([source isKindOfClass:[NSArray class]]).to.beTruthy();
@@ -101,15 +101,15 @@ describe(@"observer", ^{
          result = NO;
          result2 = NO;
          MLNKVOObserver *open = [[MLNKVOObserver alloc] initWithViewController:nil callback:^(NSString * _Nonnull keyPath, id  _Nonnull object, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
-             expect(keyPath).to.equal(key);
+             expect(keyPath).to.equal(keypath);
              expect([change objectForKey:NSKeyValueChangeNewKey]).to.equal(new);
              expect([change objectForKey:NSKeyValueChangeOldKey]).to.equal(old);
-             expect(object).to.equal(model);
+//             expect(object).to.equal(model);
              expect(result).to.beFalsy();
              result = YES;
              if(com) com();
          } keyPath:keypath];
-         [dataBinding addDataObserver:open forKeyPath:keypath];
+         [dataBinding addMLNObserver:open forKeyPath:keypath];
          
          void (^kvoBlock)(id,id) = ^(id oldValue, id newValue) {
              expect(newValue).to.equal(new);
@@ -120,9 +120,10 @@ describe(@"observer", ^{
              result2 = YES;
          };
          
-         model.mln_subscribe(@"text", ^(id  _Nonnull oldValue, id  _Nonnull newValue) {
+         model.mln_subscribe(@"text", ^(id  _Nonnull oldValue, id  _Nonnull newValue, id observerdObject) {
              kvoBlock(oldValue, newValue);
-         }).mln_subscribe(@"open", ^(id  _Nonnull oldValue, id  _Nonnull newValue) {
+             expect([observerdObject valueForKeyPath:@"text"]).equal(newValue);
+         }).mln_subscribe(@"open", ^(id  _Nonnull oldValue, id  _Nonnull newValue, id observerdObject) {
              kvoBlock(oldValue, newValue);
          });
      };
@@ -176,8 +177,8 @@ it(@"observer_onc", ^{
              r2  = YES;
          } keyPath:@"text"];
 
-         [dataBinding addDataObserver:ob1 forKeyPath:@"userData.text"];
-         [dataBinding addDataObserver:ob2 forKeyPath:@"userData.text"];
+         [dataBinding addMLNObserver:ob1 forKeyPath:@"userData.text"];
+         [dataBinding addMLNObserver:ob2 forKeyPath:@"userData.text"];
          model.text  = @"ttaa";
        expect(r1).beTruthy();
        expect(r2).beTruthy();

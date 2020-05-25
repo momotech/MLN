@@ -18,6 +18,15 @@
     model.hideIcon = NO;
     model.iconUrl = @"http://img0.imgtn.bdimg.com/it/u=383546810,2079334210&fm=26&gp=0.jpg";
     model.type = @"Cell_1";
+    
+    NSMutableArray *arr = @[].mutableCopy;
+    for (int i=0; i<5; i++) {
+        MLNDataBindModel *m = [MLNDataBindModel new];
+        m.name = [NSString stringWithFormat:@"name %d",i];
+        m.title = [NSString stringWithFormat:@"title %d",i];
+        [arr addObject:m];
+    }
+    model.source = arr;
     return model;
 }
 
@@ -34,6 +43,22 @@
     MLNDatabindTableViewModel *m = [MLNDatabindTableViewModel new];
     m.source = @[].mutableCopy;
     m.tableHeight = 1000;
+    return m;
+}
+
+@end
+
+@implementation MLNDataBindArrayModel
+
++ (instancetype)testModel {
+    MLNDataBindArrayModel *m = [MLNDataBindArrayModel new];
+    m.name = @"main name";
+    NSMutableArray *arr = @[].mutableCopy;
+    for (int i = 0; i < 3; i++) {
+        MLNDataBindModel *n = [MLNDataBindModel testModel];
+        [arr addObject:n];
+    }
+    m.source = arr;
     return m;
 }
 

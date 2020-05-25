@@ -25,4 +25,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
+@interface MLNOverlayLabel : MLNLabel
+
+@end
+
 NS_ASSUME_NONNULL_END

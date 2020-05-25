@@ -438,6 +438,10 @@
     return YES;
 }
 
+- (BOOL)lua_supportOverlay {
+    return YES;
+}
+
 #pragma mark - Export For Lua
 LUA_EXPORT_VIEW_BEGIN(MLNImageView)
 LUA_EXPORT_VIEW_PROPERTY(contentMode, "lua_setContentMode:","contentMode", MLNImageView)
@@ -454,4 +458,9 @@ LUA_EXPORT_VIEW_METHOD(blurImage, "lua_setBlurValue:processImage:", MLNImageView
 LUA_EXPORT_VIEW_METHOD(addShadow, "lua_addShadow:shadowOffset:shadowRadius:shadowOpacity:isOval:", MLNImageView)
 LUA_EXPORT_VIEW_END(MLNImageView, ImageView, YES, "MLNView", NULL)
 
+@end
+
+@implementation MLNOverlayImageView
+LUA_EXPORT_VIEW_BEGIN(MLNOverlayImageView) // 兼容Android
+LUA_EXPORT_VIEW_END(MLNOverlayImageView, OverImageView, YES, "MLNImageView", NULL)
 @end

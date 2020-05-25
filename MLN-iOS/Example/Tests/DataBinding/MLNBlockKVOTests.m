@@ -20,13 +20,13 @@ context(@"Dictionary", ^{
         __block BOOL r2 = NO;
 
         NSMutableDictionary *dic = [NSMutableDictionary dictionary];
-        dic.mln_watch(@"name", ^(id  _Nonnull oldValue, id  _Nonnull newValue) {
+        dic.mln_watch(@"name", ^(id  _Nonnull oldValue, id  _Nonnull newValue, id object) {
         r1 = YES;
         expect(oldValue).beNil();
         expect(newValue).equal(@"hello");
         });
         
-        dic.mln_watch(@"name", ^(id  _Nonnull oldValue, id  _Nonnull newValue) {
+        dic.mln_watch(@"name", ^(id  _Nonnull oldValue, id  _Nonnull newValue, id object) {
         r2 = YES;
         expect(oldValue).beNil();
         expect(newValue).equal(@"hello");
@@ -102,14 +102,14 @@ beforeEach(^{
     });
     
     it(@"mln_watch", ^{
-model.mln_watch(@"tm.text", ^(id  _Nonnull oldValue, id  _Nonnull newValue) {
+model.mln_watch(@"tm.text", ^(id  _Nonnull oldValue, id  _Nonnull newValue, id object) {
     r1 = YES;
     NSLog(@"%@",model.tm);
 
     expect(oldValue).equal(@"tt");
     expect(newValue).equal(newText);
 });
-model.mln_watch(@"tm.text", ^(id  _Nonnull oldValue, id  _Nonnull newValue) {
+model.mln_watch(@"tm.text", ^(id  _Nonnull oldValue, id  _Nonnull newValue, id object) {
     r2 = YES;
     NSLog(@"%@",model.tm);
 
@@ -117,14 +117,14 @@ model.mln_watch(@"tm.text", ^(id  _Nonnull oldValue, id  _Nonnull newValue) {
     expect(newValue).equal(newText);
 });
 
-model.tm.mln_watch(@"text", ^(id  _Nonnull oldValue, id  _Nonnull newValue) {
+model.tm.mln_watch(@"text", ^(id  _Nonnull oldValue, id  _Nonnull newValue, id object) {
     r3 = YES;
     NSLog(@"%@",model.tm);
 
     expect(oldValue).equal(@"tt");
     expect(newValue).equal(newText);
 });
-model.tm.mln_watch(@"text", ^(id  _Nonnull oldValue, id  _Nonnull newValue) {
+model.tm.mln_watch(@"text", ^(id  _Nonnull oldValue, id  _Nonnull newValue, id object) {
     r4 = YES;
     NSLog(@"%@",model.tm);
 

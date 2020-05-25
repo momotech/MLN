@@ -18,6 +18,7 @@ SpecBegin(ArrayBinding)
 
 __block MLNDataBinding *dataBinding;
 __block NSMutableArray *modelsArray;
+NSString *arrayKeyPath = @"models";
 
 beforeEach(^{
     modelsArray = [NSMutableArray array];
@@ -28,7 +29,7 @@ beforeEach(^{
         [modelsArray addObject:m];
     }
     dataBinding = [[MLNDataBinding alloc] init];
-    [dataBinding bindArray:modelsArray forKey:@"models"];
+    [dataBinding bindArray:modelsArray forKey:arrayKeyPath];
 });
 
 describe(@"observer", ^{
@@ -54,9 +55,9 @@ describe(@"observer", ^{
             expect(modelsArray.count == expectedCount).to.beTruthy();
             expect(result).to.beFalsy();
             result = YES;
-        } keyPath:@"models"];
+        } keyPath:arrayKeyPath];
         
-        [dataBinding addArrayObserver:obs forKey:@"models"];
+        [dataBinding addMLNObserver:obs forKeyPath:arrayKeyPath];
     };
     //five primitive methods
     it(@"addObject", ^{
@@ -153,8 +154,8 @@ it(@"observer_once", ^{
     expect(change[NSKeyValueChangeKindKey]).equal(@(NSKeyValueChangeInsertion));
    } keyPath:nil];
    
-   [dataBinding addArrayObserver:ob1 forKey:@"arr"];
-   [dataBinding addArrayObserver:ob2 forKey:@"arr"];
+   [dataBinding addMLNObserver:ob1 forKeyPath:@"arr"];
+   [dataBinding addMLNObserver:ob2 forKeyPath:@"arr"];
    
    [arr addObject:@"abc"];
    expect(r1).beTruthy();

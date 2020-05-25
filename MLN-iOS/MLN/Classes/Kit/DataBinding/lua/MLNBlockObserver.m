@@ -10,6 +10,7 @@
 #import "MLNKitHeader.h"
 #import "MLNKitViewController.h"
 #import "MLNDataBinding.h"
+#import "NSObject+MLNReflect.h"
 
 @interface MLNBlockObserver ()
 @property (nonatomic, strong, readwrite) MLNBlock *block;
@@ -38,15 +39,36 @@
 - (void)notifyKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change {
     [super notifyKeyPath:keyPath ofObject:object change:change];
     if (!self.block.luaCore) {
-        [((id<MLNDataBindingProtocol>)self.viewController).mln_dataBinding removeDataObserver:self forKeyPath:self.keyPath];
+        [((id<MLNDataBindingProtocol>)self.viewController).mln_dataBinding removeMLNObserver:self forKeyPath:self.keyPath];
         return;
     }
     
     id newValue = [change objectForKey:NSKeyValueChangeNewKey];
     id oldValue = [change objectForKey:NSKeyValueChangeOldKey];
+    
+    id tmp = [change objectForKey:MLNKVOOrigin2DArrayKey]; // 2D数组
+    if (tmp) {
+        newValue = tmp;
+        oldValue = nil;
+    } else {
+        NSKeyValueChange type = [[change objectForKey:NSKeyValueChangeKindKey] unsignedIntegerValue];
+        switch (type) {
+            case NSKeyValueChangeInsertion:
+            case NSKeyValueChangeRemoval:
+            case NSKeyValueChangeReplacement:
+                newValue = object;
+                oldValue = nil;
+                break;
+            default:
+                break;
+        }
+    }
 
-    [self.block addObjArgument:newValue];
-    [self.block addObjArgument:oldValue];
+    id newValueConvert = [newValue mln_convertToLuaObject];
+    id oldValueConvert = [oldValue mln_convertToLuaObject];
+    
+    [self.block addObjArgument:newValueConvert];
+    [self.block addObjArgument:oldValueConvert];
     [self.block callIfCan];
 }
 

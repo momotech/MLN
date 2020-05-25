@@ -21,102 +21,105 @@
 
 @implementation MLNDataBinding (MLNKit)
 
-+ (void)lua_bindDataForKeyPath:(NSString *)keyPath handler:(MLNBlock *)handler {
++ (void)lua_watchDataForKeys:(NSArray *)keys handler:(MLNBlock *)handler {
+    NSParameterAssert(keys && handler);
+    if(!keys || !handler)  return;
     UIViewController<MLNDataBindingProtocol> *kitViewController = (UIViewController<MLNDataBindingProtocol> *)MLN_KIT_INSTANCE([self mln_currentLuaCore]).viewController;
-    NSObject<MLNKVOObserverProtol> *observer = [MLNBlockObserver observerWithBlock:handler keyPath:keyPath];
-    [kitViewController.mln_dataBinding addDataObserver:observer forKeyPath:keyPath];
+    
+    if ([keys isKindOfClass:[NSArray class]]) {
+        NSString *keyPath = [keys componentsJoinedByString:@"."];
+        NSObject<MLNKVOObserverProtol> *observer = [MLNBlockObserver observerWithBlock:handler keyPath:keyPath];
+        [kitViewController.mln_dataBinding addMLNObserver:observer forKeys:keys];
+    } else if([keys isKindOfClass:[NSString class]]){
+        NSString *keyPath = (NSString *)keys;
+        NSObject<MLNKVOObserverProtol> *observer = [MLNBlockObserver observerWithBlock:handler keyPath:keyPath];
+        [kitViewController.mln_dataBinding addMLNObserver:observer forKeyPath:keyPath];
+    }
 }
 
-+ (void)lua_updateDataForKeyPath:(NSString *)keyPath value:(id)value {
++ (void)lua_updateDataForKeys:(NSArray *)keys value:(id)value {
+    NSParameterAssert(keys);
+    if(!keys) return;
+    
     UIViewController<MLNDataBindingProtocol> *kitViewController = (UIViewController<MLNDataBindingProtocol> *)MLN_KIT_INSTANCE([self mln_currentLuaCore]).viewController;
-    [kitViewController.mln_dataBinding updateDataForKeyPath:keyPath value:value];
+    NSObject *obj = [value mln_convertToNativeObject];
+    
+    if ([keys isKindOfClass:[NSArray class]]) {
+        [kitViewController.mln_dataBinding updateDataForKeys:keys value:obj];
+    } else if([keys isKindOfClass:[NSString class]]) {
+        [kitViewController.mln_dataBinding updateDataForKeyPath:(NSString *)keys value:obj];
+    }
 }
 
-+ (id __nullable)lua_dataForKeyPath:(NSString *)keyPath {
++ (id __nullable)lua_dataForKeys:(NSArray *)keys {
+    NSParameterAssert(keys);
+    if(!keys) return nil;
     UIViewController<MLNDataBindingProtocol> *kitViewController = (UIViewController<MLNDataBindingProtocol> *)MLN_KIT_INSTANCE([self mln_currentLuaCore]).viewController;
-    NSObject *obj = [kitViewController.mln_dataBinding dataForKeyPath:keyPath];
+    NSObject *obj;
+
+    if ([keys isKindOfClass:[NSArray class]]) {
+        obj = [kitViewController.mln_dataBinding dataForKeys:keys];
+    } else if ([keys isKindOfClass:[NSString class]]) {
+       obj = [self mln_dataForKeyPath:(NSString *)keys];
+    }
     return [obj mln_convertToLuaObject];
 }
 
++ (id)mln_dataForKeyPath:(NSString *)keyPath {
+    NSParameterAssert(keyPath);
+    if(!keyPath) return nil;
+    
+    UIViewController<MLNDataBindingProtocol> *kitViewController = (UIViewController<MLNDataBindingProtocol> *)MLN_KIT_INSTANCE([self mln_currentLuaCore]).viewController;
+    NSObject *obj = [kitViewController.mln_dataBinding dataForKeyPath:keyPath];
+    return obj;
+}
 
-+ (id __nullable)lua_mockForKey:(NSString *)key data:(NSDictionary *)dic {
+
++ (void)lua_mockForKey:(NSString *)key data:(NSDictionary *)dic {
+    NSParameterAssert(key);
+    if(!key) return;
+    
     UIViewController<MLNDataBindingProtocol> *kitViewController = (UIViewController<MLNDataBindingProtocol> *)MLN_KIT_INSTANCE([self mln_currentLuaCore]).viewController;
 //    if ([dic isKindOfClass:[NSArray class]]) {
 //        return [self lua_mockArrayForKey:key data:(NSArray *)dic callbackDic:nil];
 //    }
     if (![dic isKindOfClass:[NSDictionary class]]) {
         NSLog(@"error %s, should be NSDictionary",__func__);
-        return nil;
+        return;
     }
-    NSMutableDictionary *map = dic.mln_mutalbeCopy;
+//    NSMutableDictionary *map = dic.mln_mutalbeCopy;
+    NSMutableDictionary *map = [dic mln_convertToNativeObject];
     [kitViewController.mln_dataBinding bindData:map forKey:key];
-    return map;
 }
 
-+ (id __nullable)lua_mockArrayForKey:(NSString *)key data:(NSArray *)data callbackDic:(NSDictionary *)callbackDic {
++ (void)lua_mockArrayForKey:(NSString *)key data:(NSArray *)data callbackDic:(NSDictionary *)callbackDic {
+    NSParameterAssert(key && data);
+    if(!key || !data) return;
+    
     UIViewController<MLNDataBindingProtocol> *kitViewController = (UIViewController<MLNDataBindingProtocol> *)MLN_KIT_INSTANCE([self mln_currentLuaCore]).viewController;
     
-    NSMutableArray *arr = [[kitViewController.mln_dataBinding dataForKeyPath:key] mutableCopy];
-    if (![arr isKindOfClass:[NSMutableArray class]]) {
-        NSLog(@"data of keypath: %@ is %@ , it should be NSMutableArray!",key, data);
-        return nil;
+    NSMutableArray *existData = [kitViewController.mln_dataBinding dataForKeyPath:key];
+    if ([existData isKindOfClass:[NSMutableArray class]]) {
+        [existData mln_startKVOIfMutable];
+        return;
     }
-    [kitViewController.mln_dataBinding updateDataForKeyPath:key value:arr];
-    /*
-    MLNBlock *reuseIdBlock = [callbackDic objectForKey:@"reuseId"];
-    MLNBlock *height = [callbackDic objectForKey:@"height"];
-    MLNBlock *size = [callbackDic objectForKey:@"size"];
-    arr.mln_resueIdBlock = ^NSString * _Nonnull(NSArray * _Nonnull items, NSUInteger section, NSUInteger row) {
-        if (reuseIdBlock) {
-            NSDictionary *item;
-            @try {
-                item = (items.mln_is2D) ? items[section][row] : items[row];
-                [reuseIdBlock addMapArgument:item];
-                [reuseIdBlock addUIntegerArgument:section + 1];
-                [reuseIdBlock addUIntegerArgument:row + 1];
-                NSString *cellId = [reuseIdBlock callIfCan];
-                return cellId;
-            } @catch (NSException *exception) {
-                NSLog(@"error %s exception %@",__func__, exception);
-            }
-        }
-        return nil;
-    };
-    arr.mln_heightBlock = ^NSUInteger(NSArray * _Nonnull items, NSUInteger section, NSUInteger row) {
-        if (height) {
-            NSDictionary *item;
-            @try {
-                item = (items.mln_is2D) ? items[section][row] : items[row];
-                [height addMapArgument:item];
-                [height addUIntegerArgument:section + 1];
-                [height addUIntegerArgument:row + 1];
-                NSUInteger h = [[height callIfCan] unsignedIntegerValue];
-                return h;
-            } @catch (NSException *exception) {
-                NSLog(@"error %s exception %@",__func__, exception);
-            }
-        }
-        return 0;
-    };
-    arr.mln_sizeBlock = ^CGSize(NSArray * _Nonnull items, NSUInteger section, NSUInteger row) {
-        if (size) {
-            NSDictionary *item;
-            @try {
-                item = (items.mln_is2D) ? items[section][row] : items[row];
-                [size addMapArgument:item];
-                [size addUIntegerArgument:section + 1];
-                [size addUIntegerArgument:row + 1];
-                CGSize s = [[size callIfCan] CGSizeValue];
-                return s;
-            } @catch (NSException *exception) {
-                NSLog(@"error %s exception %@",__func__, exception);
-            }
-        }
-        return CGSizeZero;
-    };
-     */
-    [arr mln_startKVOIfMutable];
-    return arr;
+    
+    if (![data isKindOfClass:[NSArray class]]) {
+        NSLog(@"error %s, should be NSArray",__func__);
+        return;
+    }
+    NSMutableArray *array = [data mln_convertToNativeObject];
+    [array mln_startKVOIfMutable];
+    [kitViewController.mln_dataBinding bindArray:array forKey:key];
+
+//    NSMutableArray *arr = [[kitViewController.mln_dataBinding dataForKeyPath:key] mutableCopy];
+//    if (![arr isKindOfClass:[NSMutableArray class]]) {
+//        NSLog(@"data of keypath: %@ is %@ , it should be NSMutableArray!",key, data);
+//        return nil;
+//    }
+//    [kitViewController.mln_dataBinding updateDataForKeyPath:key value:arr];
+//    [arr mln_startKVOIfMutable];
+//    return arr;
 }
 
 #pragma mark - ListView
@@ -128,14 +131,20 @@
 
 // userData.source
 + (void)lua_bindListViewForKey:(NSString *)key listView:(UIView *)listView {
+    NSParameterAssert(key && listView);
+    if(!key || !listView) return;
+    
     UIViewController<MLNDataBindingProtocol> *kitViewController = (UIViewController<MLNDataBindingProtocol> *)MLN_KIT_INSTANCE([self mln_currentLuaCore]).viewController;
     MLNListViewObserver *observer = [MLNListViewObserver observerWithListView:listView keyPath:key];
     
-    [kitViewController.mln_dataBinding addArrayObserver:observer forKey:key];
+    [kitViewController.mln_dataBinding addMLNObserver:observer forKeyPath:key];
 }
 
 + (NSUInteger)lua_sectionCountForKey:(NSString *)key {
-    NSArray *arr = [self lua_dataForKeyPath:key];
+    NSParameterAssert(key);
+    if(!key) return 0;
+    
+    NSArray *arr = [self mln_dataForKeyPath:key];
     if (arr.mln_is2D) {
         return arr.count;
     }
@@ -143,7 +152,10 @@
 }
 
 + (NSUInteger)lua_rowCountForKey:(NSString *)key section:(NSUInteger)section{
-    NSArray *arr = [self lua_dataForKeyPath:key];
+    NSParameterAssert(key);
+    if(!key) return 0;
+    
+    NSArray *arr = [self mln_dataForKeyPath:key];
     if (section > arr.count || section == 0) {
         return 0;
     }
@@ -156,7 +168,10 @@
 }
 
 + (id)lua_modelForKey:(NSString *)key section:(NSUInteger)section row:(NSUInteger)row path:(NSString *)path {
-    NSArray *array = [self lua_dataForKeyPath:key];
+    NSParameterAssert(key);
+    if(!key) return nil;
+    
+    NSArray *array = [self mln_dataForKeyPath:key];
     id resust;
     @try {
         id tmp;
@@ -173,7 +188,10 @@
 }
 
 + (void)lua_updateModelForKey:(NSString *)key section:(NSUInteger)section row:(NSUInteger)row path:(NSString *)path value:(id)value {
-    NSArray *array = [self lua_dataForKeyPath:key];
+    NSParameterAssert(key);
+    if(!key) return;
+    
+    NSArray *array = [self mln_dataForKeyPath:key];
     @try {
         NSObject *object;
         if (array.mln_is2D) {
@@ -182,68 +200,23 @@
             object = [array mln_objectAtIndex:row - 1];
         }
         
-        id oldValue = [object valueForKeyPath:path];
-        [object setValue:value forKeyPath:path];
-        
-        NSArray *blocks = array.mln_itemKVOBlocks.copy;
-        for (MLNItemKVOBlock block in blocks) {
-            block(object, path, oldValue, value);
-        }
+//        id oldValue = [object valueForKeyPath:path];
+        NSObject *newValue = [value mln_convertToNativeObject];
+        [object setValue:newValue forKeyPath:path];
         
     } @catch (NSException *exception) {
         NSLog(@"%s exception: %@",__func__, exception);
     }
 }
-/*
-+ (NSString *)lua_reuseIdForKey:(NSString *)key section:(NSUInteger)section row:(NSUInteger)row {
-    NSArray *array = [self lua_dataForKeyPath:key];
-    if (array.mln_resueIdBlock) {
-        return array.mln_resueIdBlock(array, section - 1, row - 1);
-    }
-    
-    NSString *firstKey = [[key componentsSeparatedByString:@"."] firstObject];
-    NSObject *obj = [self lua_dataForKeyPath:firstKey];
-    if (obj.mln_resueIdBlock) {
-        return obj.mln_resueIdBlock(array, section - 1, row - 1);
-    }
-    return @"Cell";
-}
 
-+ (NSUInteger)lua_heightForKey:(NSString *)key section:(NSUInteger)section row:(NSUInteger)row {
-    NSArray *array = [self lua_dataForKeyPath:key];
-    if (array.mln_heightBlock) {
-        return array.mln_heightBlock(array, section - 1, row - 1);
-    }
-    
-    NSString *firstKey = [[key componentsSeparatedByString:@"."] firstObject];
-    NSObject *obj = [self lua_dataForKeyPath:firstKey];
-    if (obj.mln_heightBlock) {
-        return obj.mln_heightBlock(array, section - 1, row - 1);
-    }
-    NSAssert(array.mln_heightBlock || obj.mln_heightBlock, @"mln_heightBlock of binded array should not be nil");
-    return 0;
-}
-
-+ (CGSize)lua_sizeForKey:(NSString *)key section:(NSUInteger)section row:(NSUInteger)row {
-    NSArray *array = [self lua_dataForKeyPath:key];
-    if (array.mln_sizeBlock) {
-        return array.mln_sizeBlock(array, section - 1, row - 1);
-    }
-    
-    NSString *firstKey = [[key componentsSeparatedByString:@"."] firstObject];
-    NSObject *obj = [self lua_dataForKeyPath:firstKey];
-    if (obj.mln_sizeBlock) {
-        return obj.mln_sizeBlock(array, section - 1, row - 1);
-    }
-    NSAssert(array.mln_sizeBlock || obj.mln_sizeBlock, @"mln_sizeBlock of binded array should not be nil");
-    return CGSizeZero;
-}
-*/
 + (void)lua_bindCellForKey:(NSString *)key section:(NSUInteger)section row:(NSUInteger)row paths:(NSArray *)paths {
+    NSParameterAssert(key && paths);
+    if (!key || !paths) return;
+    
     UIViewController<MLNDataBindingProtocol> *kitViewController = (UIViewController<MLNDataBindingProtocol> *)MLN_KIT_INSTANCE([self mln_currentLuaCore]).viewController;
 
-    NSArray *array = [self lua_dataForKeyPath:key];
-    MLNListViewObserver *listObserver = (MLNListViewObserver *)[kitViewController.mln_dataBinding observersForKeyPath:key].firstObject;
+    NSArray *array = [self mln_dataForKeyPath:key];
+    MLNListViewObserver *listObserver = (MLNListViewObserver *)[kitViewController.mln_dataBinding observersForKeyPath:key].lastObject;
     if (![listObserver isKindOfClass:[MLNListViewObserver class]]) {
         NSLog(@"error: not found observer for key %@",key);
         return;
@@ -260,6 +233,7 @@
         [model mln_removeObervationsForOwner:kitViewController.mln_dataBinding keyPath:k];
     }
 
+    //TODO: 如果paths中有属性对应可变数组？
     [kitViewController.mln_dataBinding mln_observeObject:model properties:paths withBlock:^(id  _Nonnull observer, id  _Nonnull object, NSString * _Nonnull keyPath, id  _Nonnull oldValue, id  _Nonnull newValue, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
         UIView *listView = [listObserver listView];
         if ([listView isKindOfClass:[MLNTableView class]]) {
@@ -273,11 +247,121 @@
     }];
 }
 
+#pragma mark - BindArray
+
++ (void)lua_bindArrayForKeyPath:(NSString *)keyPath handler:(MLNBlock *)handler {
+    NSParameterAssert(handler && keyPath);
+    if (!handler || !keyPath) return;
+    
+    UIViewController<MLNDataBindingProtocol> *kitViewController = (UIViewController<MLNDataBindingProtocol> *)MLN_KIT_INSTANCE([self mln_currentLuaCore]).viewController;
+//    __weak id<MLNDataBindingProtocol> weakController = kitViewController;
+    __block __weak NSObject<MLNKVOObserverProtol>* weakOb;
+    
+    NSObject<MLNKVOObserverProtol> *observer = [[MLNKVOObserver alloc] initWithViewController:kitViewController callback:^(NSString * _Nonnull kp, NSArray *  _Nonnull object, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
+        /*
+        if (!handler.luaCore && weakOb) {
+            [weakController.mln_dataBinding removeArrayObserver:weakOb forKeyPath:keyPath];
+            weakOb = nil;
+            return;
+        }
+         */
+        NSKeyValueChange type = [[change objectForKey:NSKeyValueChangeKindKey] unsignedIntegerValue];
+        if (type == NSKeyValueChangeSetting) {
+            object = [change objectForKey:NSKeyValueChangeNewKey];
+        }
+        if (handler && [object isKindOfClass:[NSArray class]]) {
+            NSArray *n = [object mln_convertToLuaObject];
+            [handler addObjArgument:n];
+            [handler callIfCan];
+        } else {
+            NSAssert(false, @"object: %@ should be array",object);
+        }
+        
+    } keyPath:keyPath];
+    
+    weakOb = observer;
+    [kitViewController.mln_dataBinding addMLNObserver:observer forKeyPath:keyPath];
+}
+
++ (void)lua_bindArrayDataForKey:(NSString *)key index:(NSUInteger)index dataKeyPath:(NSString *)dataKeyPath handler:(MLNBlock *)handler {
+    NSParameterAssert(key && handler && dataKeyPath);
+    if(!key || !handler || !dataKeyPath) return;
+    
+    index -= 1;
+    UIViewController<MLNDataBindingProtocol> *kitViewController = (UIViewController<MLNDataBindingProtocol> *)MLN_KIT_INSTANCE([self mln_currentLuaCore]).viewController;
+    NSArray *array = [kitViewController.mln_dataBinding dataForKeyPath:key];
+    if ([array isKindOfClass:[NSArray class]] && index < [array count]) {
+        NSObject *obj = [array objectAtIndex:index];
+        [kitViewController.mln_dataBinding mln_observeObject:obj property:dataKeyPath withBlock:^(id  _Nonnull observer, id  _Nonnull object, id  _Nonnull oldValue, id  _Nonnull newValue, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
+            [handler addObjArgument:[newValue mln_convertToLuaObject]];
+            [handler addObjArgument:[oldValue mln_convertToLuaObject]];
+            [handler callIfCan];
+        }];
+    }
+}
+
++ (void)lua_updateArrayDataForKey:(NSString *)key index:(NSUInteger)index dataKeyPath:(NSString *)dataKeyPath newValue:(id)newValue {
+    NSParameterAssert(key && dataKeyPath);
+    if(!key || !dataKeyPath) return;
+    
+    index -= 1;
+    UIViewController<MLNDataBindingProtocol> *kitViewController = (UIViewController<MLNDataBindingProtocol> *)MLN_KIT_INSTANCE([self mln_currentLuaCore]).viewController;
+    NSArray *array = [kitViewController.mln_dataBinding dataForKeyPath:key];
+    if ([array isKindOfClass:[NSArray class]] && index < [array count]) {
+        NSObject *obj = [array objectAtIndex:index];
+        @try {
+            [obj setValue:[newValue mln_convertToNativeObject] forKey:dataKeyPath];
+        } @catch (NSException *exception) {
+            NSLog(@"%s exception: %@",__func__,exception);
+        }
+    }
+}
+
++ (id)lua_getArrayDataForKey:(NSString *)key index:(NSUInteger)index dataKeyPath:(NSString *)dataKeyPath {
+    NSParameterAssert(key);
+    if(!key) return nil;
+    
+    index -= 1;
+    id ret;
+    UIViewController<MLNDataBindingProtocol> *kitViewController = (UIViewController<MLNDataBindingProtocol> *)MLN_KIT_INSTANCE([self mln_currentLuaCore]).viewController;
+    NSArray *array = [kitViewController.mln_dataBinding dataForKeyPath:key];
+    if ([array isKindOfClass:[NSArray class]] && index < [array count]) {
+        @try {
+            NSObject *obj = [array objectAtIndex:index];
+            id newObj = [obj mln_valueForKeyPath:dataKeyPath];
+            ret = [newObj mln_convertToLuaObject];
+        } @catch (NSException *exception) {
+            NSLog(@"%s exception: %@",__func__,exception);
+        }
+    }
+    return ret;
+}
+
++ (void)lua_aliasArrayDataForKey:(NSString *)key index:(NSUInteger)index alias:(NSString *)alias {
+    NSParameterAssert(key && alias);
+    if(!key || !alias)  return;
+    
+    index -= 1;
+    UIViewController<MLNDataBindingProtocol> *kitViewController = (UIViewController<MLNDataBindingProtocol> *)MLN_KIT_INSTANCE([self mln_currentLuaCore]).viewController;
+    NSArray *array = [kitViewController.mln_dataBinding dataForKeyPath:key];
+    if ([array isKindOfClass:[NSArray class]] && index < [array count]) {
+        @try {
+            NSObject *obj = [array objectAtIndex:index];
+            if (obj) {
+                [kitViewController.mln_dataBinding bindData:obj forKey:alias];
+            }
+        } @catch (NSException *exception) {
+            NSLog(@"%s exception: %@",__func__,exception);
+        }
+    }
+}
+
 #pragma mark - Setup For Lua
 LUA_EXPORT_STATIC_BEGIN(MLNDataBinding)
-LUA_EXPORT_STATIC_METHOD(bind, "lua_bindDataForKeyPath:handler:", MLNDataBinding)
-LUA_EXPORT_STATIC_METHOD(update, "lua_updateDataForKeyPath:value:", MLNDataBinding)
-LUA_EXPORT_STATIC_METHOD(get, "lua_dataForKeyPath:", MLNDataBinding)
+LUA_EXPORT_STATIC_METHOD(bind, "lua_watchDataForKeys:handler:", MLNDataBinding)
+LUA_EXPORT_STATIC_METHOD(update, "lua_updateDataForKeys:value:", MLNDataBinding)
+LUA_EXPORT_STATIC_METHOD(get, "lua_dataForKeys:", MLNDataBinding)
+
 LUA_EXPORT_STATIC_METHOD(mock, "lua_mockForKey:data:", MLNDataBinding)
 LUA_EXPORT_STATIC_METHOD(mockArray, "lua_mockArrayForKey:data:callbackDic:", MLNDataBinding)
 
@@ -291,6 +375,11 @@ LUA_EXPORT_STATIC_METHOD(updateModel, "lua_updateModelForKey:section:row:path:va
 LUA_EXPORT_STATIC_METHOD(bindCell, "lua_bindCellForKey:section:row:paths:", MLNDataBinding)
 
 //LUA_EXPORT_STATIC_METHOD(getSize, "lua_sizeForKey:section:row:", MLNDataBinding)
+LUA_EXPORT_STATIC_METHOD(bindArray, "lua_bindArrayForKeyPath:handler:", MLNDataBinding)
+LUA_EXPORT_STATIC_METHOD(bindArrayData, "lua_bindArrayDataForKey:index:dataKeyPath:handler:", MLNDataBinding)
+LUA_EXPORT_STATIC_METHOD(updateArrayData, "lua_updateArrayDataForKey:index:dataKeyPath:newValue:", MLNDataBinding)
+LUA_EXPORT_STATIC_METHOD(getArrayData, "lua_getArrayDataForKey:index:dataKeyPath:", MLNDataBinding)
+LUA_EXPORT_STATIC_METHOD(aliasArrayData, "lua_aliasArrayDataForKey:index:alias:", MLNDataBinding)
 
 LUA_EXPORT_STATIC_END(MLNDataBinding, DataBinding, NO, NULL)
 
