@@ -127,13 +127,13 @@ static int lua_animation_init(lua_State *L) {
 #pragma mark - getter & setter
 - (NSString *)animationKey
 {
-    return kDefaultRotationAnimation;
+    return kMUIDefaultRotationAnimation;
 }
 
 - (void)setFromDegrees:(CGFloat)fromDegrees
 {
     _fromDegrees = fromDegrees;
-    CABasicAnimation *animation = [self animationForKey:kRotaionZ];
+    CABasicAnimation *animation = [self animationForKey:kMUIRotaionZ];
     fromDegrees = fromDegrees / 360.0 * M_PI * 2;
     [animation setFromValue:@(fromDegrees)];
 }
@@ -141,7 +141,7 @@ static int lua_animation_init(lua_State *L) {
 - (void)setToDegrees:(CGFloat)toDegrees
 {
     _toDegrees = toDegrees;
-    CABasicAnimation *animation = [self animationForKey:kRotaionZ];
+    CABasicAnimation *animation = [self animationForKey:kMUIRotaionZ];
     toDegrees = toDegrees / 360.0 * M_PI * 2;
     [animation setToValue:@(toDegrees)];
 }
@@ -149,7 +149,7 @@ static int lua_animation_init(lua_State *L) {
 - (void)setFromXDegrees:(CGFloat)fromXDegrees
 {
     _fromXDegrees = fromXDegrees;
-    CABasicAnimation *animation = [self animationForKey:kRotaionX];
+    CABasicAnimation *animation = [self animationForKey:kMUIRotaionX];
     fromXDegrees = fromXDegrees / 360.0 * M_PI * 2;
     [animation setFromValue:@(fromXDegrees)];
 }
@@ -157,7 +157,7 @@ static int lua_animation_init(lua_State *L) {
 - (void)setToXDegrees:(CGFloat)toXDegrees
 {
     _toXDegrees = toXDegrees;
-    CABasicAnimation *animation = [self animationForKey:kRotaionX];
+    CABasicAnimation *animation = [self animationForKey:kMUIRotaionX];
     toXDegrees = toXDegrees / 360.0 * M_PI * 2;
     [animation setFromValue:@(toXDegrees)];
 }
@@ -165,7 +165,7 @@ static int lua_animation_init(lua_State *L) {
 - (void)setFromYDegrees:(CGFloat)fromYDegrees
 {
     _fromYDegrees  = fromYDegrees;
-    CABasicAnimation *animation = [self animationForKey:kRotaionY];
+    CABasicAnimation *animation = [self animationForKey:kMUIRotaionY];
     fromYDegrees = fromYDegrees / 360.0 * M_PI * 2;
     [animation setFromValue:@(fromYDegrees)];
 }
@@ -173,7 +173,7 @@ static int lua_animation_init(lua_State *L) {
 - (void)setToYDegrees:(CGFloat)toYDegrees
 {
     _toYDegrees  = toYDegrees;
-    CABasicAnimation *animation = [self animationForKey:kRotaionY];
+    CABasicAnimation *animation = [self animationForKey:kMUIRotaionY];
     toYDegrees = toYDegrees / 360.0 * M_PI * 2;
     [animation setFromValue:@(toYDegrees)];
 }

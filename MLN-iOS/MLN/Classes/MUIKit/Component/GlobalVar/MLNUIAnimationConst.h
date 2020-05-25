@@ -8,22 +8,22 @@
 #import <UIKit/UIKit.h>
 #import "MLNUIGlobalVarExportProtocol.h"
 
-FOUNDATION_EXPORT NSString * const kDefaultGroupAnimation;
-FOUNDATION_EXPORT NSString * const kDefaultScaleAnimation;
-FOUNDATION_EXPORT NSString * const kDefaultTranslationAnimation;
-FOUNDATION_EXPORT NSString * const kDefaultRotationAnimation;
-FOUNDATION_EXPORT NSString * const kDefaultOpacityAnimation;
-FOUNDATION_EXPORT NSString * const kTranslationX;
-FOUNDATION_EXPORT NSString * const kTranslationY;
-FOUNDATION_EXPORT NSString * const kTranslationZ;
-FOUNDATION_EXPORT NSString * const kScaleX;
-FOUNDATION_EXPORT NSString * const kScaleY;
-FOUNDATION_EXPORT NSString * const kScaleZ;
-FOUNDATION_EXPORT NSString * const kRotaionX;
-FOUNDATION_EXPORT NSString * const kRotaionY;
-FOUNDATION_EXPORT NSString * const kRotaionZ;
-FOUNDATION_EXPORT NSString * const kOpacity;
-FOUNDATION_EXPORT NSString * const kTransform;
+FOUNDATION_EXPORT NSString * const kMUIDefaultGroupAnimation;
+FOUNDATION_EXPORT NSString * const kMUIDefaultScaleAnimation;
+FOUNDATION_EXPORT NSString * const kMUIDefaultTranslationAnimation;
+FOUNDATION_EXPORT NSString * const kMUIDefaultRotationAnimation;
+FOUNDATION_EXPORT NSString * const kMUIDefaultOpacityAnimation;
+FOUNDATION_EXPORT NSString * const kMUITranslationX;
+FOUNDATION_EXPORT NSString * const kMUITranslationY;
+FOUNDATION_EXPORT NSString * const kMUITranslationZ;
+FOUNDATION_EXPORT NSString * const kMUIScaleX;
+FOUNDATION_EXPORT NSString * const kMUIScaleY;
+FOUNDATION_EXPORT NSString * const kMUIScaleZ;
+FOUNDATION_EXPORT NSString * const kMUIRotaionX;
+FOUNDATION_EXPORT NSString * const kMUIRotaionY;
+FOUNDATION_EXPORT NSString * const kMUIRotaionZ;
+FOUNDATION_EXPORT NSString * const kMUIOpacity;
+FOUNDATION_EXPORT NSString * const kMUITransform;
 
 typedef enum : NSUInteger {
     MLNUIAnimationRepeatTypeNone,

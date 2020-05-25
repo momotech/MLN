@@ -47,7 +47,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param type objc类型字符串
  @return 对应的枚举值
  */
-MLNUI_Objc_Type mln_objctype(const char *type);
+MLNUI_Objc_Type mlnui_objctype(const char *type);
 
 /**
  Native 与 Lua数据转换工具

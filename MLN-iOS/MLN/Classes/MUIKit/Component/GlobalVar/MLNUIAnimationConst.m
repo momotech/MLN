@@ -8,22 +8,22 @@
 #import "MLNUIAnimationConst.h"
 #import "MLNUIGlobalVarExporterMacro.h"
 
-NSString * const kDefaultGroupAnimation = @"com.milua.group.animation";
-NSString * const kDefaultScaleAnimation = @"com.milua.scale.animation";
-NSString * const kDefaultTranslationAnimation = @"com.milua.translation.animation";
-NSString * const kDefaultRotationAnimation = @"com.milua.rotation.animation";
-NSString * const kDefaultOpacityAnimation = @"com.milua.opacity.animation";
-NSString * const kTranslationX = @"transform.translation.x";
-NSString * const kTranslationY = @"transform.translation.y";
-NSString * const kTranslationZ = @"transform.translation.z";
-NSString * const kScaleX = @"transform.scale.x";
-NSString * const kScaleY = @"transform.scale.y";
-NSString * const kScaleZ = @"transform.scale.z";
-NSString * const kRotaionX = @"transform.rotation.x";
-NSString * const kRotaionY = @"transform.rotation.y";
-NSString * const kRotaionZ = @"transform.rotation.z";
-NSString * const kOpacity = @"opacity";
-NSString * const kTransform = @"transform";
+NSString * const kMUIDefaultGroupAnimation = @"com.milua.group.animation";
+NSString * const kMUIDefaultScaleAnimation = @"com.milua.scale.animation";
+NSString * const kMUIDefaultTranslationAnimation = @"com.milua.translation.animation";
+NSString * const kMUIDefaultRotationAnimation = @"com.milua.rotation.animation";
+NSString * const kMUIDefaultOpacityAnimation = @"com.milua.opacity.animation";
+NSString * const kMUITranslationX = @"transform.translation.x";
+NSString * const kMUITranslationY = @"transform.translation.y";
+NSString * const kMUITranslationZ = @"transform.translation.z";
+NSString * const kMUIScaleX = @"transform.scale.x";
+NSString * const kMUIScaleY = @"transform.scale.y";
+NSString * const kMUIScaleZ = @"transform.scale.z";
+NSString * const kMUIRotaionX = @"transform.rotation.x";
+NSString * const kMUIRotaionY = @"transform.rotation.y";
+NSString * const kMUIRotaionZ = @"transform.rotation.z";
+NSString * const kMUIOpacity = @"opacity";
+NSString * const kMUITransform = @"transform";
 
 @implementation MLNUIAnimationConst
 

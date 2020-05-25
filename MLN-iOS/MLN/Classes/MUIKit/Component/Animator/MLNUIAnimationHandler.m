@@ -7,12 +7,12 @@
 
 #import "MLNUIAnimationHandler.h"
 
-@interface CADisplayLinkHandler : NSObject
+@interface MLNUICADisplayLinkHandler : NSObject
 
 @property (nonatomic, copy) void(^displayFrameCallback)(void);
 
 @end
-@implementation CADisplayLinkHandler
+@implementation MLNUICADisplayLinkHandler
 
 - (void)displayFrame
 {
@@ -43,7 +43,7 @@ static MLNUIAnimationHandler *_sharedHandler;
 - (instancetype)init
 {
     if (self = [super init]) {
-        CADisplayLinkHandler *handler = [[CADisplayLinkHandler alloc] init];
+        MLNUICADisplayLinkHandler *handler = [[MLNUICADisplayLinkHandler alloc] init];
         __weak typeof(self) wself = self;
         handler.displayFrameCallback = ^{
             __strong typeof(wself) sself = wself;

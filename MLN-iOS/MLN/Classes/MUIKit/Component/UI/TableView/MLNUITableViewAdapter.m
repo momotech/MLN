@@ -15,7 +15,7 @@
 #import "NSDictionary+MLNUISafety.h"
 #import "MLNUITableViewCellSettingProtocol.h"
 
-#define kDefaultPressColor [UIColor colorWithRed:211/255.0 green:211/255.0 blue:211/255.0 alpha:1.0]
+#define kMUIDefaultPressColor [UIColor colorWithRed:211/255.0 green:211/255.0 blue:211/255.0 alpha:1.0]
 
 @interface MLNUITableViewAdapter()<MLNUITableViewCellSettingProtocol>
 
@@ -43,7 +43,7 @@
         _cellWillAppearByReuseIdCallbacks = [NSMutableDictionary dictionary];
         _cellDidDisappearByReuseIdCallbacks = [NSMutableDictionary dictionary];
         _cachesManager = [[MLNUIAdapterCachesManager alloc] init];
-        _pressedColor = kDefaultPressColor;
+        _pressedColor = kMUIDefaultPressColor;
     }
     return self;
 }

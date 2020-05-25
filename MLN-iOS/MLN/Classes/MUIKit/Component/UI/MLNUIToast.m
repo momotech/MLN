@@ -12,7 +12,7 @@
 #define kFontDefaultSize 14
 #define kToastDefaultWidth 280
 #define kToastDefaultPadding 6.f
-#define kDefaultAnimationDuration 1.5
+#define kMUIDefaultAnimationDuration 1.5
 #define kToastDefaultBackColor [UIColor colorWithRed:0.2f green:0.2f blue:0.2f alpha:0.75f]
 
 @interface MLNUIToast ()
@@ -60,7 +60,7 @@
 - (void)showWithDuration:(CGFloat)duration
 {
     [self showAnimationIfNeed];
-    CGFloat realDuration = fabs(duration - 0.0) < CGFLOAT_MIN? kDefaultAnimationDuration : duration;
+    CGFloat realDuration = fabs(duration - 0.0) < CGFLOAT_MIN? kMUIDefaultAnimationDuration : duration;
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(realDuration * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         [self hideAnimationIfNeed];
     });

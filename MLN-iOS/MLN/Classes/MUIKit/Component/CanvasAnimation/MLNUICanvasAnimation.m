@@ -344,7 +344,7 @@
 
 - (NSString *)animationKey
 {
-    return kDefaultGroupAnimation;
+    return kMUIDefaultGroupAnimation;
 }
 
 - (CABasicAnimation *)animationForKey:(NSString *)key

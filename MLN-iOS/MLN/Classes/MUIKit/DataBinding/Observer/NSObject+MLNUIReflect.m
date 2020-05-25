@@ -8,7 +8,7 @@
 #import "NSObject+MLNUIKVO.h"
 #import "MLNUIExtScope.h"
 #import "MLNUICore.h"
-#import "MLNUIDataBinding+MLNUIKit.h"
+#import "MLNUIDataBinding+MLNKit.h"
 #import "NSArray+MLNUIKVO.h"
 #import "NSDictionary+MLNUIKVO.h"
 #import "MLNUIColor.h"

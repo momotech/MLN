@@ -5,7 +5,7 @@
 //  Created by Dai Dongpeng on 2020/3/3.
 //
 
-#import "MLNUIDataBinding+MLNUIKit.h"
+#import "MLNUIDataBinding+MLNKit.h"
 #import "MLNUIStaticExporterMacro.h"
 #import "MLNUIKitHeader.h"
 #import "MLNUIKitViewController.h"

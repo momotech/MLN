@@ -46,14 +46,14 @@
 - (void)setFromAlpha:(CGFloat)fromAlpha
 {
     _fromAlpha = fromAlpha;
-    CABasicAnimation *animation = [self animationForKey:kOpacity];
+    CABasicAnimation *animation = [self animationForKey:kMUIOpacity];
     [animation setFromValue:@(fromAlpha)];
 }
 
 - (void)setToAlpha:(CGFloat)toAlpha
 {
     _toAlpha = toAlpha;
-    CABasicAnimation *animation = [self animationForKey:kOpacity];
+    CABasicAnimation *animation = [self animationForKey:kMUIOpacity];
     [animation setToValue:@(toAlpha)];
 }
 

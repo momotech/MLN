@@ -115,13 +115,13 @@ static int lua_animation_init(lua_State *L) {
 
 - (void)resetRelativeValuesWithTargetView:(UIView *)targetView
 {
-    CABasicAnimation *xAnimation = [self animationForKey:kTranslationX];
+    CABasicAnimation *xAnimation = [self animationForKey:kMUITranslationX];
     CGFloat fromX = [self relativeValue:YES targetView:targetView relativeType:_fromXType value:_fromX];
     xAnimation.fromValue = @(fromX);
     CGFloat toX = [self relativeValue:YES targetView:targetView relativeType:_toXType value:_toX];
     xAnimation.toValue = @(toX);
     
-    CABasicAnimation *yAnimation = [self animationForKey:kTranslationY];
+    CABasicAnimation *yAnimation = [self animationForKey:kMUITranslationY];
     CGFloat fromY = [self relativeValue:YES targetView:targetView relativeType:_fromYType value:_fromY];
     yAnimation.fromValue = @(fromY);
     CGFloat toY = [self relativeValue:YES targetView:targetView relativeType:_toYType value:_toY];

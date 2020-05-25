@@ -100,7 +100,7 @@ static MLNUI_FORCE_INLINE BOOL __mln_lua_setinvocation (lua_State *L, NSInvocati
         mln_lua_error(L, @"Undefined parameter type！");
         return NO;
     }
-    switch (mln_objctype(type)) {
+    switch (mlnui_objctype(type)) {
         case MLNUI_OBJCType_BOOL: {
             mln_lua_checkboolean(L, stackID);
             BOOL value = lua_toboolean(L, stackID);
@@ -281,7 +281,7 @@ static MLNUI_FORCE_INLINE int __mln_lua_pushinvocation_return(NSInvocation* invo
         mln_lua_error(L, @"Undefined parameter type！");
         return 0;
     }
-    switch (mln_objctype(type)) {
+    switch (mlnui_objctype(type)) {
         case MLNUI_OBJCType_void:
             if (needReturnSelf) {
                 lua_pushvalue(L, 1);

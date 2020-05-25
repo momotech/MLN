@@ -37,7 +37,7 @@ Pod::Spec.new do |s|
         c.framework = 'Foundation', 'UIKit'
         c.source_files = 'MLNUI-iOS/MLNUI/Classes/MUICore/**/*.{h,m,c}'
         c.public_header_files = 'MLNUI-iOS/MLNUI/Classes/MUICore/**/*.h'
-        c.dependency  'MLNUI/LuaLib'
+        c.dependency  'MLN/LuaLib'
     end
     
     s.subspec 'Kit' do |k|

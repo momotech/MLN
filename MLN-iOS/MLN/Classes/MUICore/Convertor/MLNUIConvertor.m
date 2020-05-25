@@ -418,7 +418,7 @@ static MLNUI_FORCE_INLINE id __mln_lua_toobj(lua_State* L, int idx, NSError **er
     }
 }
 
-MLNUI_Objc_Type mln_objctype(const char *type) {
+MLNUI_Objc_Type mlnui_objctype(const char *type) {
     switch (type[0]) {
         case _C_ID: //#define _C_ID       '@'
             if (type[1] == _C_UNDEF) {  //#define _C_UNDEF       '?'

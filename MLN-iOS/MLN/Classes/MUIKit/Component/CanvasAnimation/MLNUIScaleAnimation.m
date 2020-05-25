@@ -135,7 +135,7 @@ static int lua_animation_init(lua_State *L) {
 #pragma mark - getter & setter
 - (NSString *)animationKey
 {
-    return kDefaultScaleAnimation;
+    return kMUIDefaultScaleAnimation;
 }
 
 #pragma mark - Export for Lua
@@ -143,28 +143,28 @@ static int lua_animation_init(lua_State *L) {
 - (void)setFromX:(CGFloat)fromX
 {
     _fromX = fromX;
-    CABasicAnimation *animation = [self animationForKey:kScaleX];
+    CABasicAnimation *animation = [self animationForKey:kMUIScaleX];
     [animation setFromValue:@(fromX)];
 }
 
 - (void)setToX:(CGFloat)toX
 {
     _toX = toX;
-    CABasicAnimation *animation = [self animationForKey:kScaleX];
+    CABasicAnimation *animation = [self animationForKey:kMUIScaleX];
     [animation setToValue:@(toX)];
 }
 
 - (void)setFromY:(CGFloat)fromY
 {
     _fromY = fromY;
-    CABasicAnimation *animation = [self animationForKey:kScaleY];
+    CABasicAnimation *animation = [self animationForKey:kMUIScaleY];
     [animation setFromValue:@(fromY)];
 }
 
 - (void)setToY:(CGFloat)toY
 {
     _toY = toY;
-    CABasicAnimation *animation = [self animationForKey:kScaleY];
+    CABasicAnimation *animation = [self animationForKey:kMUIScaleY];
     [animation setToValue:@(toY)];
 }
 

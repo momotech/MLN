@@ -154,12 +154,12 @@ typedef enum : NSUInteger {
                     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(self.delay * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
                         self.status = MLNUIAnimationStatusRunning;
                         self.animationGroup.animations = animations;
-                        [self.targetView.layer addAnimation:self.animationGroup forKey:kDefaultGroupAnimation];
+                        [self.targetView.layer addAnimation:self.animationGroup forKey:kMUIDefaultGroupAnimation];
                     });
                 } else {
                     self.status = MLNUIAnimationStatusRunning;
                     self.animationGroup.animations = animations;
-                    [self.targetView.layer addAnimation:self.animationGroup forKey:kDefaultGroupAnimation];
+                    [self.targetView.layer addAnimation:self.animationGroup forKey:kMUIDefaultGroupAnimation];
                 }
             }
             break;
@@ -206,28 +206,28 @@ typedef enum : NSUInteger {
 #pragma mark - Export Mothed
 - (void)lua_setTranslateX:(CGFloat)fromeValue to:(CGFloat)toValue
 {
-    CABasicAnimation *animation = [self animationForKey:kTranslationX];
+    CABasicAnimation *animation = [self animationForKey:kMUITranslationX];
     animation.fromValue = @(fromeValue);
     animation.toValue = @(toValue);
 }
 
 - (void)lua_setTranslateY:(CGFloat)fromeValue to:(CGFloat)toValue
 {
-    CABasicAnimation *animation = [self animationForKey:kTranslationY];
+    CABasicAnimation *animation = [self animationForKey:kMUITranslationY];
     animation.fromValue = @(fromeValue);
     animation.toValue = @(toValue);
 }
 
 - (void)lua_setScaleX:(CGFloat)fromeValue to:(CGFloat)toValue
 {
-    CABasicAnimation *animation = [self animationForKey:kScaleX];
+    CABasicAnimation *animation = [self animationForKey:kMUIScaleX];
     animation.fromValue = @(fromeValue);
     animation.toValue = @(toValue);
 }
 
 - (void)lua_setRotationY:(CGFloat)fromValue to:(CGFloat)toValue
 {
-    CABasicAnimation *animation = [self animationForKey:kRotaionY];
+    CABasicAnimation *animation = [self animationForKey:kMUIRotaionY];
     animation.fromValue = @(fromValue/180.f*M_PI);
     animation.toValue = @(toValue/180.f*M_PI);
     [self lua_setScaleValue:1500];
@@ -235,7 +235,7 @@ typedef enum : NSUInteger {
 
 - (void)lua_setRotationX:(CGFloat)fromValue to:(CGFloat)toValue
 {
-    CABasicAnimation *animation = [self animationForKey:kRotaionX];
+    CABasicAnimation *animation = [self animationForKey:kMUIRotaionX];
     animation.fromValue = @(fromValue/180.f*M_PI);
     animation.toValue = @(toValue/180.f*M_PI);
     [self lua_setScaleValue:1500];
@@ -250,14 +250,14 @@ typedef enum : NSUInteger {
 
 - (void)lua_setRotationZ:(CGFloat)fromeValue to:(CGFloat)toValue
 {
-    CABasicAnimation *animation = [self animationForKey:kRotaionZ];
+    CABasicAnimation *animation = [self animationForKey:kMUIRotaionZ];
     animation.fromValue = @(fromeValue/180.f*M_PI);
     animation.toValue = @(toValue/180.f*M_PI);
 }
 
 - (void)lua_setScaleY:(CGFloat)fromeValue to:(CGFloat)toValue
 {
-    CABasicAnimation *animation = [self animationForKey:kScaleY];
+    CABasicAnimation *animation = [self animationForKey:kMUIScaleY];
     animation.fromValue = @(fromeValue);
     animation.toValue = @(toValue);
 }
@@ -319,7 +319,7 @@ typedef enum : NSUInteger {
 
 - (void)lua_setAlpha:(CGFloat)fromeValue to:(CGFloat)toValue
 {
-    CABasicAnimation *animation = [self animationForKey:kOpacity];
+    CABasicAnimation *animation = [self animationForKey:kMUIOpacity];
     animation.fromValue = @(fromeValue);
     animation.toValue = @(toValue);
 }
@@ -345,7 +345,7 @@ typedef enum : NSUInteger {
             view.layer.speed = 1.0;
             view.layer.timeOffset = .0f;
             view.layer.beginTime = .0f;
-            [view.layer removeAnimationForKey:kDefaultGroupAnimation];
+            [view.layer removeAnimationForKey:kMUIDefaultGroupAnimation];
             [self callAnimationDidStopWith:NO];
             _ignoreAnimationCallback = YES;
             break;
@@ -365,7 +365,7 @@ typedef enum : NSUInteger {
         default:
             self.status = MLNUIAnimationStatusStop;
             [MLNUI_KIT_INSTANCE(self.mln_luaCore) popAnimation:self];
-            [self.targetView.layer removeAnimationForKey:kDefaultGroupAnimation];
+            [self.targetView.layer removeAnimationForKey:kMUIDefaultGroupAnimation];
             return;
     }
 }
