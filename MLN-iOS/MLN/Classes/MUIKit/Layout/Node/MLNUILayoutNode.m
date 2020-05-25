@@ -169,7 +169,7 @@ MLNUI_FORCE_INLINE void measureSimapleAutoNodeSize(MLNUILayoutNode __unsafe_unre
     CGFloat measuredHeight = myMaxHeight;
     if (node.mergedWidthType == MLNUILayoutMeasurementTypeWrapContent ||
         node.mergedHeightType == MLNUILayoutMeasurementTypeWrapContent) {
-        CGSize measureSize = [node.targetView lua_measureSizeWithMaxWidth:myMaxWidth maxHeight:myMaxHeight];
+        CGSize measureSize = [node.targetView luaui_measureSizeWithMaxWidth:myMaxWidth maxHeight:myMaxHeight];
         measuredWidth = measureSize.width;
         measuredHeight = measureSize.height;
     }
@@ -370,13 +370,13 @@ MLNUI_FORCE_INLINE void measureSimapleAutoNodeSize(MLNUILayoutNode __unsafe_unre
         if (!CGRectEqualToRect(self.targetView.frame, newFrame)) {
             self.targetView.transform = CGAffineTransformIdentity;
             self.targetView.frame = newFrame;
-            [self.targetView lua_resetTransformIfNeed];
-            [self.targetView lua_changedLayout];
+            [self.targetView luaui_resetTransformIfNeed];
+            [self.targetView luaui_changedLayout];
         }
     }
     [self updatedLayout];
     resetArchpointIfNeed(self);
-    [self.targetView lua_layoutCompleted];
+    [self.targetView luaui_layoutCompleted];
 }
 
 MLNUI_FORCE_INLINE void resetArchpointIfNeed(MLNUILayoutNode __unsafe_unretained *node) {

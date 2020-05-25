@@ -24,7 +24,7 @@
 
 @implementation MLNUIAnimationSet
 
-- (instancetype)initWithLuaCore:(MLNUILuaCore *)luaCore shareInterpolator:(NSNumber *)shareInterpolator
+- (instancetype)initWithMLNUILuaCore:(MLNUILuaCore *)luaCore shareInterpolator:(NSNumber *)shareInterpolator
 {
     if (self = [super init]) {
         if (shareInterpolator) {
@@ -69,7 +69,7 @@
 }
 
 #pragma mark - Export Method
-- (void)lua_addAnimation:(MLNUICanvasAnimation *)animation
+- (void)luaui_addAnimation:(MLNUICanvasAnimation *)animation
 {
     if (!animation || ![animation isKindOfClass:[MLNUICanvasAnimation class]]) {
         MLNUIKitLuaAssert(NO, @"animation type must be canvas animation!");
@@ -96,6 +96,6 @@
 
 #pragma mark - Export To Lua
 LUA_EXPORT_BEGIN(MLNUIAnimationSet)
-LUA_EXPORT_METHOD(addAnimation, "lua_addAnimation:", MLNUIAnimationSet)
-LUA_EXPORT_END(MLNUIAnimationSet, AnimationSet, YES, "MLNUICanvasAnimation", "initWithLuaCore:shareInterpolator:")
+LUA_EXPORT_METHOD(addAnimation, "luaui_addAnimation:", MLNUIAnimationSet)
+LUA_EXPORT_END(MLNUIAnimationSet, AnimationSet, YES, "MLNUICanvasAnimation", "initWithMLNUILuaCore:shareInterpolator:")
 @end

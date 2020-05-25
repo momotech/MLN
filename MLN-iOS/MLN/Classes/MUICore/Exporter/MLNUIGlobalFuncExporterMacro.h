@@ -14,7 +14,7 @@
  导出全局函数类开始
  */
 #define LUA_EXPORT_GLOBAL_FUNC_BEGIN(CLZ)\
-LUA_EXPORT_MAKE_METHOD_LIST(mln_Global_Method_,CLZ)
+LUA_EXPORT_MAKE_METHOD_LIST(mlnui_Global_Method_,CLZ)
 
 /**
  导出全局C方法到Lua
@@ -34,7 +34,7 @@ LUA_EXPORT_METHOD_LIST_ADD(#LUA_FUNC, "NULL", #CLZ, NO, NULL, NULL, C_FUNC)
  @param CLZ 原生类名称
  */
 #define LUA_EXPORT_GLOBAL_FUNC(LUA_FUNC, SEL_NAME, CLZ) \
-LUA_EXPORT_METHOD_LIST_ADD(#LUA_FUNC, SEL_NAME, #CLZ, NO, NULL, NULL, mln_lua_global_func)
+LUA_EXPORT_METHOD_LIST_ADD(#LUA_FUNC, SEL_NAME, #CLZ, NO, NULL, NULL, mlnui_luaui_global_func)
 
 /**
  导出全局函数类导出结束
@@ -45,7 +45,7 @@ LUA_EXPORT_METHOD_LIST_ADD(#LUA_FUNC, SEL_NAME, #CLZ, NO, NULL, NULL, mln_lua_gl
 #define LUA_EXPORT_GLOBAL_FUNC_WITH_NAME_END(CLZ, LUA_CLZ, PKG) \
 LUA_EXPORT_METHOD_LIST_COMPLETED \
 LUA_EXPORT_MAKE_INFO(#PKG, #CLZ, #LUA_CLZ, "MLNUIGlbalFunction", YES, NULL, NO, NULL,\
-(struct mln_objc_method *)mln_Global_Method_ ## CLZ, NULL, CLZ)\
+(struct mlnui_objc_method *)mlnui_Global_Method_ ## CLZ, NULL, CLZ)\
 LUA_EXPORT_TYPE(MLNUIExportTypeGlobalFunc)\
 LUA_EXPORT_STATIC_LUA_CORE(CLZ)
 

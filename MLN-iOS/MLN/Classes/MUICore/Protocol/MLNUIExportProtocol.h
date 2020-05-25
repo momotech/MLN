@@ -30,7 +30,7 @@ typedef enum : NSUInteger {
  */
 @protocol MLNUIExportProtocol <NSObject>
 
-+ (MLNUIExportType)mln_exportType;
++ (MLNUIExportType)mlnui_exportType;
 
 @end
 

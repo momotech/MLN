@@ -17,7 +17,7 @@
 
 @interface MLNUICanvasView()
 
-@property (nonatomic, strong) MLNUIBlock *mln_drawRectCallback;
+@property (nonatomic, strong) MLNUIBlock *mlnui_drawRectCallback;
 @property (nonatomic, strong) MLNUIBeforeWaitingTask *lazyTask;
 @property (nonatomic, strong) MLNUIShapeContext *context;
 
@@ -41,17 +41,17 @@
 - (MLNUIShapeContext *)context
 {
     if (!_context) {
-        _context = [[MLNUIShapeContext alloc] initWithLuaCore:self.mln_luaCore TargetView:self];
+        _context = [[MLNUIShapeContext alloc] initWithMLNUILuaCore:self.mlnui_luaCore TargetView:self];
     }
     return _context;
 }
 
 - (void)drawStart
 {
-    if (_mln_drawRectCallback) {
+    if (_mlnui_drawRectCallback) {
         [_context cleanShapes];
-        [_mln_drawRectCallback addObjArgument:self.context];
-        [_mln_drawRectCallback callIfCan];
+        [_mlnui_drawRectCallback addObjArgument:self.context];
+        [_mlnui_drawRectCallback callIfCan];
     }
 }
 
@@ -61,54 +61,54 @@
 }
 
 #pragma mark - Draw
-- (void)lua_setDrawCallback:(MLNUIBlock *)block
+- (void)luaui_setDrawCallback:(MLNUIBlock *)block
 {
-    self.mln_drawRectCallback = block;
-    [self mln_pushLazyTask:self.lazyTask];
+    self.mlnui_drawRectCallback = block;
+    [self mlnui_pushLazyTask:self.lazyTask];
 }
 
-- (void)lua_refresh
+- (void)luaui_refresh
 {
-    if (self.mln_drawRectCallback) {
-        [self mln_pushLazyTask:self.lazyTask];
+    if (self.mlnui_drawRectCallback) {
+        [self mlnui_pushLazyTask:self.lazyTask];
     }
 }
 
 #pragma mark - Overrid For Lua
-- (BOOL)lua_canClick
+- (BOOL)luaui_canClick
 {
     return YES;
 }
 
-- (BOOL)lua_canLongPress
+- (BOOL)luaui_canLongPress
 {
     return YES;
 }
 
-- (BOOL)lua_layoutEnable
+- (BOOL)luaui_layoutEnable
 {
     return YES;
 }
 
-- (void)lua_addSubview:(UIView *)view
+- (void)luaui_addSubview:(UIView *)view
 {
     MLNUIKitLuaAssert(NO, @"Not found \"addView\" method, just continar of View has it!");
 }
 
-- (void)lua_insertSubview:(UIView *)view atIndex:(NSInteger)index
+- (void)luaui_insertSubview:(UIView *)view atIndex:(NSInteger)index
 {
     MLNUIKitLuaAssert(NO, @"Not found \"insertView\" method, just continar of View has it!");
 }
 
-- (void)lua_removeAllSubViews
+- (void)luaui_removeAllSubViews
 {
     MLNUIKitLuaAssert(NO, @"Not found \"removeAllSubviews\" method, just continar of View has it!");
 }
 
 #pragma mark - Export For Lua
 LUA_EXPORT_VIEW_BEGIN(MLNUICanvasView)
-LUA_EXPORT_VIEW_METHOD(onDraw, "lua_setDrawCallback:", MLNUICanvasView)
-LUA_EXPORT_VIEW_METHOD(refresh, "lua_refresh", MLNUICanvasView)
+LUA_EXPORT_VIEW_METHOD(onDraw, "luaui_setDrawCallback:", MLNUICanvasView)
+LUA_EXPORT_VIEW_METHOD(refresh, "luaui_refresh", MLNUICanvasView)
 LUA_EXPORT_VIEW_END(MLNUICanvasView, CanvasView, YES, "MLNUIView", NULL)
 
 @end

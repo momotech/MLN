@@ -10,7 +10,7 @@ NS_ASSUME_NONNULL_BEGIN
 typedef void(^MLNUIDeallocatorCallback)(id receiver);
 
 @interface NSObject (MLNUIDealloctor)
-- (void)mln_addDeallocationCallback:(MLNUIDeallocatorCallback)block;
+- (void)mlnui_addDeallocationCallback:(MLNUIDeallocatorCallback)block;
 @end
 
 NS_ASSUME_NONNULL_END

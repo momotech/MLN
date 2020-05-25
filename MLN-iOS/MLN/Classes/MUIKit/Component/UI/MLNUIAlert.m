@@ -33,7 +33,7 @@ typedef enum : NSUInteger {
 
 @implementation MLNUIAlert
 
-- (void)lua_setCancel:(NSString *)cancel callback:(MLNUIBlock *)callback
+- (void)luaui_setCancel:(NSString *)cancel callback:(MLNUIBlock *)callback
 {
     MLNUICheckTypeAndNilValue(cancel, @"string", NSString)
     MLNUICheckTypeAndNilValue(callback, @"function", MLNUIBlock)
@@ -42,7 +42,7 @@ typedef enum : NSUInteger {
     self.cancelCallback = callback;
 }
 
-- (void)lua_setSure:(NSString *)sure callback:(MLNUIBlock *)callback
+- (void)luaui_setSure:(NSString *)sure callback:(MLNUIBlock *)callback
 {
     MLNUICheckTypeAndNilValue(sure, @"string", NSString)
     MLNUICheckTypeAndNilValue(callback, @"function", MLNUIBlock)
@@ -51,17 +51,17 @@ typedef enum : NSUInteger {
     self.callback = callback;
 }
 
-- (void)lua_setButtons:(NSArray <NSString *> *)titles callback:(MLNUIBlock *)callback
+- (void)luaui_setButtons:(NSArray <NSString *> *)titles callback:(MLNUIBlock *)callback
 {
     MLNUICheckTypeAndNilValue(titles, @"Array", [NSMutableArray class])
     MLNUICheckTypeAndNilValue(callback, @"function", MLNUIBlock)
-    MLNUILuaAssert(self.mln_luaCore, titles && titles.count > 1, @"The number of button titles must be no less than one！");
+    MLNUILuaAssert(self.mlnui_luaCore, titles && titles.count > 1, @"The number of button titles must be no less than one！");
     self.type = MLNUIAlertTypeMultiple;
     self.multipleTitles = titles;
     self.callback = callback;
 }
 
-- (void)lua_setSingle:(NSString *)single callback:(MLNUIBlock *)callback
+- (void)luaui_setSingle:(NSString *)single callback:(MLNUIBlock *)callback
 {
     MLNUICheckTypeAndNilValue(single, @"string", [NSMutableArray class])
     MLNUICheckTypeAndNilValue(callback, @"function", MLNUIBlock)
@@ -70,7 +70,7 @@ typedef enum : NSUInteger {
     self.callback = callback;
 }
 
-- (void)lua_show
+- (void)luaui_show
 {
     UIAlertView *alertView = nil;
     switch (self.type) {
@@ -79,7 +79,7 @@ typedef enum : NSUInteger {
             break;
         }
         case MLNUIAlertTypeMultiple:{
-            MLNUILuaAssert(self.mln_luaCore, self.multipleTitles.count > 1, @"The number of button titles must be no less than one！");
+            MLNUILuaAssert(self.mlnui_luaCore, self.multipleTitles.count > 1, @"The number of button titles must be no less than one！");
             alertView = [[UIAlertView alloc] initWithTitle:self.title message:self.message delegate:self cancelButtonTitle:nil otherButtonTitles:nil];
             for (NSString *title in self.multipleTitles) {
                 [alertView addButtonWithTitle:title];
@@ -95,7 +95,7 @@ typedef enum : NSUInteger {
     
 }
 
-- (void)lua_dismiss
+- (void)luaui_dismiss
 {
     if (_alertView) {
         [_alertView dismissWithClickedButtonIndex:0 animated:YES];
@@ -150,12 +150,12 @@ typedef enum : NSUInteger {
 LUA_EXPORT_BEGIN(MLNUIAlert)
 LUA_EXPORT_PROPERTY(title, "setTitle:", "title", MLNUIAlert)
 LUA_EXPORT_PROPERTY(message, "setMessage:", "message", MLNUIAlert)
-LUA_EXPORT_METHOD(setCancel, "lua_setCancel:callback:", MLNUIAlert)
-LUA_EXPORT_METHOD(setOk, "lua_setSure:callback:", MLNUIAlert)
-LUA_EXPORT_METHOD(setButtonList, "lua_setButtons:callback:", MLNUIAlert)
-LUA_EXPORT_METHOD(setSingleButton, "lua_setSingle:callback:", MLNUIAlert)
-LUA_EXPORT_METHOD(show, "lua_show", MLNUIAlert)
-LUA_EXPORT_METHOD(dismiss, "lua_dismiss", MLNUIAlert)
+LUA_EXPORT_METHOD(setCancel, "luaui_setCancel:callback:", MLNUIAlert)
+LUA_EXPORT_METHOD(setOk, "luaui_setSure:callback:", MLNUIAlert)
+LUA_EXPORT_METHOD(setButtonList, "luaui_setButtons:callback:", MLNUIAlert)
+LUA_EXPORT_METHOD(setSingleButton, "luaui_setSingle:callback:", MLNUIAlert)
+LUA_EXPORT_METHOD(show, "luaui_show", MLNUIAlert)
+LUA_EXPORT_METHOD(dismiss, "luaui_dismiss", MLNUIAlert)
 LUA_EXPORT_END(MLNUIAlert, Alert, NO, NULL, NULL)
 
 @end

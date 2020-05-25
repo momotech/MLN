@@ -23,9 +23,9 @@
     return r;
 }
 
-- (instancetype)initWithLuaCore:(MLNUILuaCore *)luaCore xNum:(NSNumber *)xNum yNum:(NSNumber *)yNum widthNum:(NSNumber *)widthNum heightNum:(NSNumber *)heightNum
+- (instancetype)initWithMLNUILuaCore:(MLNUILuaCore *)luaCore xNum:(NSNumber *)xNum yNum:(NSNumber *)yNum widthNum:(NSNumber *)widthNum heightNum:(NSNumber *)heightNum
 {
-    if (self = [super initWithLuaCore:luaCore]) {
+    if (self = [super initWithMLNUILuaCore:luaCore]) {
         CGFloat x = CGFloatValueFromNumber(xNum);
         CGFloat y = CGFloatValueFromNumber(yNum);
         CGFloat width = CGFloatValueFromNumber(widthNum);
@@ -35,47 +35,47 @@
     return self;
 }
 
-- (CGFloat)lua_x
+- (CGFloat)luaui_x
 {
     return _rect.origin.x;
 }
 
-- (void)lua_setX:(CGFloat)x
+- (void)luaui_setX:(CGFloat)x
 {
     _rect.origin.x = x;
 }
 
-- (CGFloat)lua_y
+- (CGFloat)luaui_y
 {
     return _rect.origin.y;
 }
 
-- (void)lua_setY:(CGFloat)y
+- (void)luaui_setY:(CGFloat)y
 {
     _rect.origin.y = y;
 }
 
-- (CGFloat)lua_width
+- (CGFloat)luaui_width
 {
     return _rect.size.width;
 }
 
-- (void)lua_setWidth:(CGFloat)width
+- (void)luaui_setWidth:(CGFloat)width
 {
     _rect.size.width = width;
 }
 
-- (CGFloat)lua_height
+- (CGFloat)luaui_height
 {
     return _rect.size.height;
 }
 
-- (void)lua_setHeight:(CGFloat)height
+- (void)luaui_setHeight:(CGFloat)height
 {
     _rect.size.height = height;
 }
 
-- (void)lua_setPoint:(CGPoint)point
+- (void)luaui_setPoint:(CGPoint)point
 {
     _rect.origin.x = point.x;
     _rect.origin.y = point.y;
@@ -86,7 +86,7 @@
     return _rect.origin;
 }
 
-- (void)lua_setSize:(CGSize)size
+- (void)luaui_setSize:(CGSize)size
 {
     _rect.size.width = size.width;
     _rect.size.height = size.height;
@@ -117,19 +117,19 @@
     return [NSString stringWithFormat:@"<Rect x: %f, y: %f, width: %f, height: %f>", _rect.origin.x, _rect.origin.y, _rect.size.width, _rect.size.height];
 }
 
-- (BOOL)mln_isMultiple
+- (BOOL)mlnui_isMultiple
 {
     // 该类型只当做UserData
     return NO;
 }
 
 LUA_EXPORT_BEGIN(MLNUIRect)
-LUA_EXPORT_PROPERTY(point, "lua_setPoint:", "point", MLNUIRect)
-LUA_EXPORT_PROPERTY(size, "lua_setSize:", "size", MLNUIRect)
-LUA_EXPORT_PROPERTY(x, "lua_setX:", "lua_x", MLNUIRect)
-LUA_EXPORT_PROPERTY(y, "lua_setY:", "lua_y", MLNUIRect)
-LUA_EXPORT_PROPERTY(width, "lua_setWidth:", "lua_width", MLNUIRect)
-LUA_EXPORT_PROPERTY(height, "lua_setHeight:", "lua_height", MLNUIRect)
-LUA_EXPORT_END(MLNUIRect, Rect, NO, NULL, "initWithLuaCore:xNum:yNum:widthNum:heightNum:")
+LUA_EXPORT_PROPERTY(point, "luaui_setPoint:", "point", MLNUIRect)
+LUA_EXPORT_PROPERTY(size, "luaui_setSize:", "size", MLNUIRect)
+LUA_EXPORT_PROPERTY(x, "luaui_setX:", "luaui_x", MLNUIRect)
+LUA_EXPORT_PROPERTY(y, "luaui_setY:", "luaui_y", MLNUIRect)
+LUA_EXPORT_PROPERTY(width, "luaui_setWidth:", "luaui_width", MLNUIRect)
+LUA_EXPORT_PROPERTY(height, "luaui_setHeight:", "luaui_height", MLNUIRect)
+LUA_EXPORT_END(MLNUIRect, Rect, NO, NULL, "initWithMLNUILuaCore:xNum:yNum:widthNum:heightNum:")
 
 @end

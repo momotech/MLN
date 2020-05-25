@@ -18,7 +18,7 @@
 @implementation MLNUIHStack
 
 - (MLNUIHStackNode *)node {
-    return (MLNUIHStackNode *)self.lua_node;
+    return (MLNUIHStackNode *)self.luaui_node;
 }
 
 #pragma mark - Override
@@ -37,10 +37,10 @@
 
 #pragma mark - Override
 
-- (void)lua_addSubview:(UIView *)view {
-    [super lua_addSubview:view];
+- (void)luaui_addSubview:(UIView *)view {
+    [super luaui_addSubview:view];
     if ([view isKindOfClass:[MLNUIHStack class]]) {
-        [(MLNUIHStackNode *)view.lua_node invalidateMainAxisMatchParentMeasureType];
+        [(MLNUIHStackNode *)view.luaui_node invalidateMainAxisMatchParentMeasureType];
     }
 }
 

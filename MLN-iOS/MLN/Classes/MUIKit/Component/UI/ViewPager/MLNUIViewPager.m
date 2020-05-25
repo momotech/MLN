@@ -57,9 +57,9 @@
 
 @implementation MLNUIViewPager
 
-- (instancetype)initWithLuaCore:(MLNUILuaCore *)luaCore
+- (instancetype)initWithMLNUILuaCore:(MLNUILuaCore *)luaCore
 {
-    if (self = [super initWithLuaCore:luaCore]){
+    if (self = [super initWithMLNUILuaCore:luaCore]){
         [self initialization];
         [self setupMainView];
     }
@@ -112,15 +112,15 @@
     if (!newSuperview) {
         [self invalidateTimer];
     } else {
-        [self mln_pushLazyTask:self.lazyTask];
+        [self mlnui_pushLazyTask:self.lazyTask];
     }
 }
 
-- (void)mln_user_data_dealloc
+- (void)mlnui_user_data_dealloc
 {
     // 去除强引用
     MLNUI_Lua_UserData_Release(self.adapter);
-    [super mln_user_data_dealloc];
+    [super mlnui_user_data_dealloc];
 }
 
 - (void)dealloc
@@ -143,7 +143,7 @@
         adapter.viewPager = self;
         adapter.targetCollectionView = self.mainView;
         if (self.superview) {
-            [self mln_pushLazyTask:self.lazyTask];
+            [self mlnui_pushLazyTask:self.lazyTask];
         }
     }
 }
@@ -159,7 +159,7 @@
     }
     _recurrence = recurrence;
     if (self.superview) {
-        [self mln_pushLazyTask:self.lazyTask];
+        [self mlnui_pushLazyTask:self.lazyTask];
     }
 }
 
@@ -209,7 +209,7 @@
 }
 
 #pragma mark - Layout For Lua
-- (CGSize)lua_measureSizeWithMaxWidth:(CGFloat)maxWidth maxHeight:(CGFloat)maxHeight
+- (CGSize)luaui_measureSizeWithMaxWidth:(CGFloat)maxWidth maxHeight:(CGFloat)maxHeight
 {
     return CGSizeMake(maxWidth, maxHeight);
 }
@@ -302,7 +302,7 @@
     //    根据当前页数，处理指示器数量
     [self settingPageController];
     if (_missionIndex > 0) {
-        [self lua_scrollToPage:_missionIndex aniamted:_missionAnimated];
+        [self luaui_scrollToPage:_missionIndex aniamted:_missionAnimated];
         _missionIndex = 0;
         _missionAnimated = NO;
     }
@@ -317,17 +317,17 @@
 
 #pragma mark - Export For Lua
 
-- (void)lua_cellWillAppearCallback:(MLNUIBlock *)callback
+- (void)luaui_cellWillAppearCallback:(MLNUIBlock *)callback
 {
     self.cellWillAppearCallback = callback;
 }
 
-- (void)lua_cellDidDisappearCallback:(MLNUIBlock *)callback
+- (void)luaui_cellDidDisappearCallback:(MLNUIBlock *)callback
 {
     self.cellDidDisappearCallback = callback;
 }
 
-- (void)lua_cellClickedCallback:(MLNUIBlock *)callback
+- (void)luaui_cellClickedCallback:(MLNUIBlock *)callback
 {
     self.cellClickedCallback = callback;
 }
@@ -335,10 +335,10 @@
 - (void)scrollToPage:(NSUInteger)index aniamted:(BOOL)animated {
     //外部调用，不触发TabSegment的回调，内部调用需要触发
     _outsideCall = YES;
-    [self lua_scrollToPage:index + 1 aniamted:animated];
+    [self luaui_scrollToPage:index + 1 aniamted:animated];
 }
 
-- (void)lua_scrollToPage:(NSUInteger)index aniamted:(BOOL)animated
+- (void)luaui_scrollToPage:(NSUInteger)index aniamted:(BOOL)animated
 {
     if (0 == _totalItemsCount)
     {
@@ -376,23 +376,23 @@
     [self.adapter collectionView:self.mainView cellForItemAtIndexPath:[NSIndexPath indexPathForRow:index inSection:0]];
 }
 
-- (void)lua_reloadData
+- (void)luaui_reloadData
 {
     _totalItemsCount = 0;
     if (self.superview) {
-        [self mln_pushLazyTask:self.lazyTask];
+        [self mlnui_pushLazyTask:self.lazyTask];
     }
 }
 
-- (void)lua_reloadFinished:(MLNUIBlock *)block
+- (void)luaui_reloadFinished:(MLNUIBlock *)block
 {
     self.reloadFinishedCallback = block;
     if (self.superview) {
-        [self mln_pushLazyTask:self.lazyTask];
+        [self mlnui_pushLazyTask:self.lazyTask];
     }
 }
 
-- (NSUInteger)lua_currentPage
+- (NSUInteger)luaui_currentPage
 {
     int curItem = self.mainView.contentOffset.x/self.mainView.frame.size.width;
     int curIndex = [self pageControlIndexWithCurrentCellIndex:curItem];
@@ -400,7 +400,7 @@
     return  result;
 }
 
-- (void)lua_setPageSelectedListener:(MLNUIBlock *)callback
+- (void)luaui_setPageSelectedListener:(MLNUIBlock *)callback
 {
     self.selectedCallback = callback;
 }
@@ -645,44 +645,44 @@
 
 
 #pragma mark - Override
-- (BOOL)lua_layoutEnable
+- (BOOL)luaui_layoutEnable
 {
     return YES;
 }
 
-- (void)lua_changedLayout
+- (void)luaui_changedLayout
 {
-    [super lua_changedLayout];
+    [super luaui_changedLayout];
     [self setupMainViewFrame];
 }
 
-- (void)lua_addSubview:(UIView *)view
+- (void)luaui_addSubview:(UIView *)view
 {
     MLNUIKitLuaAssert(NO, @"Not found \"addView\" method, just continar of View has it!");
 }
 
-- (void)lua_insertSubview:(UIView *)view atIndex:(NSInteger)index
+- (void)luaui_insertSubview:(UIView *)view atIndex:(NSInteger)index
 {
     MLNUIKitLuaAssert(NO, @"Not found \"insertView\" method, just continar of View has it!");
 }
 
-- (void)lua_removeAllSubViews
+- (void)luaui_removeAllSubViews
 {
     MLNUIKitLuaAssert(NO, @"Not found \"removeAllSubviews\" method, just continar of View has it!");
 }
 
-- (void)lua_setLuaScrollEnable:(BOOL)enable
+- (void)luaui_setLuaScrollEnable:(BOOL)enable
 {
     _scrollEnable  = enable;
     self.mainView.scrollEnabled = enable;
 }
 
-- (void)lua_setPreRenderCount:(NSInteger)count
+- (void)luaui_setPreRenderCount:(NSInteger)count
 {
     
 }
 
-- (void)lua_setTabScrollingListener:(MLNUIBlock *)block
+- (void)luaui_setTabScrollingListener:(MLNUIBlock *)block
 {
     _scrollingListerCallback = block;
     if (!_viewPagerScrollHandler && block) {
@@ -693,19 +693,19 @@
     }
 }
 
-- (void)lua_setPadding:(CGFloat)top right:(CGFloat)right bottom:(CGFloat)bottom left:(CGFloat)left
+- (void)luaui_setPadding:(CGFloat)top right:(CGFloat)right bottom:(CGFloat)bottom left:(CGFloat)left
 {
     self.padding = UIEdgeInsetsMake(top, left, bottom, right);
     if (self.superview) {
-        [self mln_pushLazyTask:self.lazyTask];
+        [self mlnui_pushLazyTask:self.lazyTask];
     }
 }
 
-- (void)lua_setPageControlDotSize:(CGSize)dotSize
+- (void)luaui_setPageControlDotSize:(CGSize)dotSize
 {
     self.pageControlDotSize = dotSize;
     if (self.superview) {
-        [self mln_pushLazyTask:self.lazyTask];
+        [self mlnui_pushLazyTask:self.lazyTask];
     }
 }
 
@@ -722,21 +722,21 @@ LUA_EXPORT_VIEW_PROPERTY(frameInterval, "setFrameInterval:", "frameInterval", ML
 LUA_EXPORT_VIEW_PROPERTY(showIndicator, "setShowPageControl:", "showPageControl", MLNUIViewPager)
 LUA_EXPORT_VIEW_PROPERTY(aheadLoad, "setAheadLoad:", "aheadLoad", MLNUIViewPager)
 LUA_EXPORT_METHOD(endDragging, "setDidEndDeceleratingBlock:", MLNUIViewPager)
-LUA_EXPORT_METHOD(reloadData, "lua_reloadData", MLNUIViewPager)
-LUA_EXPORT_METHOD(reloadDataFinished, "lua_reloadFinished:", MLNUIViewPager)
-LUA_EXPORT_METHOD(scrollToPage, "lua_scrollToPage:aniamted:", MLNUIViewPager)
+LUA_EXPORT_METHOD(reloadData, "luaui_reloadData", MLNUIViewPager)
+LUA_EXPORT_METHOD(reloadDataFinished, "luaui_reloadFinished:", MLNUIViewPager)
+LUA_EXPORT_METHOD(scrollToPage, "luaui_scrollToPage:aniamted:", MLNUIViewPager)
 LUA_EXPORT_METHOD(currentPageColor, "setCurrentPageDotColor:", MLNUIViewPager)
 LUA_EXPORT_METHOD(pageDotColor, "setPageDotColor:", MLNUIViewPager)
 LUA_EXPORT_METHOD(pageControlDotSize, "setPageControlDotSize:", MLNUIViewPager)
-LUA_EXPORT_METHOD(currentPage, "lua_currentPage", MLNUIViewPager)
-LUA_EXPORT_METHOD(setPreRenderCount, "lua_setPreRenderCount:", MLNUIViewPager)
-LUA_EXPORT_METHOD(cellWillAppear, "lua_cellWillAppearCallback:", MLNUIViewPager)
-LUA_EXPORT_METHOD(cellDidDisappear, "lua_cellDidDisappearCallback:", MLNUIViewPager)
-LUA_EXPORT_METHOD(setPageClickListener, "lua_cellClickedCallback:", MLNUIViewPager)
-LUA_EXPORT_METHOD(setScrollEnable, "lua_setLuaScrollEnable:", MLNUIViewPager)
-LUA_EXPORT_METHOD(setTabScrollingListener, "lua_setTabScrollingListener:", MLNUIViewPager)
-LUA_EXPORT_METHOD(padding, "lua_setPadding:right:bottom:left:", MLNUIViewPager)
-LUA_EXPORT_METHOD(onChangeSelected, "lua_setPageSelectedListener:", MLNUIViewPager)
+LUA_EXPORT_METHOD(currentPage, "luaui_currentPage", MLNUIViewPager)
+LUA_EXPORT_METHOD(setPreRenderCount, "luaui_setPreRenderCount:", MLNUIViewPager)
+LUA_EXPORT_METHOD(cellWillAppear, "luaui_cellWillAppearCallback:", MLNUIViewPager)
+LUA_EXPORT_METHOD(cellDidDisappear, "luaui_cellDidDisappearCallback:", MLNUIViewPager)
+LUA_EXPORT_METHOD(setPageClickListener, "luaui_cellClickedCallback:", MLNUIViewPager)
+LUA_EXPORT_METHOD(setScrollEnable, "luaui_setLuaScrollEnable:", MLNUIViewPager)
+LUA_EXPORT_METHOD(setTabScrollingListener, "luaui_setTabScrollingListener:", MLNUIViewPager)
+LUA_EXPORT_METHOD(padding, "luaui_setPadding:right:bottom:left:", MLNUIViewPager)
+LUA_EXPORT_METHOD(onChangeSelected, "luaui_setPageSelectedListener:", MLNUIViewPager)
 LUA_EXPORT_VIEW_END(MLNUIViewPager, ViewPager, YES, "MLNUIView", NULL)
 
 @end

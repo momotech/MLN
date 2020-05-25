@@ -238,15 +238,15 @@
         @strongify(self);
         @strongify(observer);
         if (self && observer) {
-            [observer mln_observeValueForKeyPath:kp ofObject:object change:change];
+            [observer mlnui_observeValueForKeyPath:kp ofObject:object change:change];
         }
     };
     
-    [observer mln_observeObject:object property:path withBlock:^(id  _Nonnull observer, id  _Nonnull object, id  _Nonnull oldValue, id  _Nonnull newValue, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
+    [observer mlnui_observeObject:object property:path withBlock:^(id  _Nonnull observer, id  _Nonnull object, id  _Nonnull oldValue, id  _Nonnull newValue, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
         obBlock(path,object, change);
     }];
     
-    [object mln_addDeallocationCallback:^(id  _Nonnull receiver) {
+    [object mlnui_addDeallocationCallback:^(id  _Nonnull receiver) {
         @strongify(self);
         @strongify(observer);
         if (self && observer) {
@@ -285,21 +285,21 @@
         @strongify(self);
         @strongify(observer);
         if (self && observer) {
-            [observer mln_observeValueForKeyPath:kp ofObject:object change:change];
+            [observer mlnui_observeValueForKeyPath:kp ofObject:object change:change];
         }
     };
     
     NSMutableArray *bindArray = (NSMutableArray *)object;
-//        [bindArray mln_startKVOIfMutable];
-    [observer mln_observeArray:bindArray withBlock:^(id  _Nonnull observer, id  _Nonnull object, id  _Nonnull oldValue, id  _Nonnull newValue, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
+//        [bindArray mlnui_startKVOIfMutable];
+    [observer mlnui_observeArray:bindArray withBlock:^(id  _Nonnull observer, id  _Nonnull object, id  _Nonnull oldValue, id  _Nonnull newValue, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
         obBlock(nil, object, change);
     }];
     
-    if ([bindArray mln_is2D]) {
+    if ([bindArray mlnui_is2D]) {
         @weakify(bindArray);
         [bindArray enumerateObjectsUsingBlock:^(NSMutableArray*  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
             if ([obj isKindOfClass:[NSMutableArray class]]) {
-                [observer mln_observeArray:obj withBlock:^(id  _Nonnull observer, id  _Nonnull object, id  _Nonnull oldValue, id  _Nonnull newValue, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
+                [observer mlnui_observeArray:obj withBlock:^(id  _Nonnull observer, id  _Nonnull object, id  _Nonnull oldValue, id  _Nonnull newValue, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
                     @strongify(bindArray);
                     NSMutableDictionary *newChange = change.mutableCopy;
                     [newChange setValue:bindArray forKey:MLNUIKVOOrigin2DArrayKey];
@@ -330,7 +330,7 @@
     }
     
     if (path) {
-        [object mln_removeObervationsForOwner:observer keyPath:path];
+        [object mlnui_removeObervationsForOwner:observer keyPath:path];
     }
 }
 
@@ -347,14 +347,14 @@
     if (![object isKindOfClass:[NSMutableArray class]]) {
         return;
     }
-    [object mln_removeArrayObervationsForOwner:observer];
+    [object mlnui_removeArrayObervationsForOwner:observer];
 
-    if ([object mln_is2D]) { //处理二维数组
+    if ([object mlnui_is2D]) { //处理二维数组
         @weakify(observer);
         [object enumerateObjectsUsingBlock:^(NSMutableArray *  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
             @strongify(observer);
             if ([obj isKindOfClass:[NSMutableArray class]]) {
-                [obj mln_removeArrayObervationsForOwner:observer];
+                [obj mlnui_removeArrayObervationsForOwner:observer];
             }
         }];
     }
@@ -521,7 +521,7 @@
          return;
      }
      id obj = [self _dataForKey:key path:path];
-     [obj mln_removeObervationsForOwner:observer keyPath:path];
+     [obj mlnui_removeObervationsForOwner:observer keyPath:path];
  }
  
 // eg: form="userdata.a.b" -> key = "userdata", path = "a.b"
@@ -568,10 +568,10 @@
          // remove data observer
  //        [self removeDataObserver:observer forKeyPath:keyPath];
          id obj = [self _dataForKey:key path:nil];
-         [obj mln_removeObervationsForOwner:observer keyPath:path];
+         [obj mlnui_removeObervationsForOwner:observer keyPath:path];
      }
      id obj = [self _dataForKey:key path:path];
-     [obj mln_removeArrayObervationsForOwner:observer];
+     [obj mlnui_removeArrayObervationsForOwner:observer];
  }
  */
 
@@ -614,28 +614,28 @@
 ////            NSArray *obsCopy = observerArray.copy;
 ////            pthread_mutex_unlock(&self->_lock);
 ////            for (NSObject<MLNUIKVOObserverProtol> *ob in obsCopy) {
-////                [ob mln_observeValueForKeyPath:kp ofObject:object change:change];
+////                [ob mlnui_observeValueForKeyPath:kp ofObject:object change:change];
 ////            }
-//            [observer mln_observeValueForKeyPath:kp ofObject:object change:change];
+//            [observer mlnui_observeValueForKeyPath:kp ofObject:object change:change];
 //        }
 //    };
 //
 //    if (!isArray) {
-//        [observer mln_observeObject:object property:path withBlock:^(id  _Nonnull observer, id  _Nonnull object, id  _Nonnull oldValue, id  _Nonnull newValue, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
+//        [observer mlnui_observeObject:object property:path withBlock:^(id  _Nonnull observer, id  _Nonnull object, id  _Nonnull oldValue, id  _Nonnull newValue, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
 //            obBlock(path,object, change);
 //        }];
 //    } else {
 //        NSMutableArray *bindArray = (NSMutableArray *)object;
-////        [bindArray mln_startKVOIfMutable];
+////        [bindArray mlnui_startKVOIfMutable];
 //
-//        [observer mln_observeArray:bindArray withBlock:^(id  _Nonnull observer, id  _Nonnull object, id  _Nonnull oldValue, id  _Nonnull newValue, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
+//        [observer mlnui_observeArray:bindArray withBlock:^(id  _Nonnull observer, id  _Nonnull object, id  _Nonnull oldValue, id  _Nonnull newValue, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
 //            obBlock(nil, object, change);
 //        }];
 //
-//        if ([bindArray mln_is2D]) {
+//        if ([bindArray mlnui_is2D]) {
 //            [bindArray enumerateObjectsUsingBlock:^(NSMutableArray*  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
 //                if ([obj isKindOfClass:[NSMutableArray class]]) {
-//                    [observer mln_observeArray:obj withBlock:^(id  _Nonnull observer, id  _Nonnull object, id  _Nonnull oldValue, id  _Nonnull newValue, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
+//                    [observer mlnui_observeArray:obj withBlock:^(id  _Nonnull observer, id  _Nonnull object, id  _Nonnull oldValue, id  _Nonnull newValue, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
 //                        obBlock(nil, object, change);
 //                    }];
 //                }
@@ -673,9 +673,9 @@
     if (key) {
         id obj = [self dataForKeyPath:key];
         if (forArray) {
-            [obj mln_removeArrayObervationsForOwner:observer];
+            [obj mlnui_removeArrayObervationsForOwner:observer];
         } else {
-            [obj mln_removeObervationsForOwner:observer keyPath:path];
+            [obj mlnui_removeObervationsForOwner:observer keyPath:path];
         }
     }
 }
@@ -698,15 +698,15 @@
 //        @strongify(self);
 //        @strongify(observer);
 //        if (self && observer) {
-//            [observer mln_observeValueForKeyPath:kp ofObject:object change:change];
+//            [observer mlnui_observeValueForKeyPath:kp ofObject:object change:change];
 //        }
 //    };
 //
-//    [observer mln_observeObject:object property:path withBlock:^(id  _Nonnull observer, id  _Nonnull object, id  _Nonnull oldValue, id  _Nonnull newValue, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
+//    [observer mlnui_observeObject:object property:path withBlock:^(id  _Nonnull observer, id  _Nonnull object, id  _Nonnull oldValue, id  _Nonnull newValue, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
 //        obBlock(path,object, change);
 //    }];
 //
-//    [object mln_addDeallocationCallback:^(id  _Nonnull receiver) {
+//    [object mlnui_addDeallocationCallback:^(id  _Nonnull receiver) {
 //        @strongify(self);
 //        @strongify(observer);
 //        if (self && observer) {

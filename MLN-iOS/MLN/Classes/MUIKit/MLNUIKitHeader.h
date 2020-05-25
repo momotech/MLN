@@ -27,7 +27,7 @@
  @param ... 可变参数
  */
 #define MLNUIKitLuaError(FORMAT, ...)\
-MLNUILuaError(((id<MLNUIEntityExportProtocol>)self).mln_luaCore, FORMAT, ##__VA_ARGS__)
+MLNUILuaError(((id<MLNUIEntityExportProtocol>)self).mlnui_luaCore, FORMAT, ##__VA_ARGS__)
 
 /**
  静态类的相关Error
@@ -37,7 +37,7 @@ MLNUILuaError(((id<MLNUIEntityExportProtocol>)self).mln_luaCore, FORMAT, ##__VA_
  @param ... 可变参数
  */
 #define MLNUIKitLuaStaticError(FORMAT, ...)\
-MLNUILuaError([((id<MLNUIStaticExportProtocol>)self) mln_currentLuaCore], FORMAT, ##__VA_ARGS__)
+MLNUILuaError([((id<MLNUIStaticExportProtocol>)self) mlnui_currentLuaCore], FORMAT, ##__VA_ARGS__)
 
 /**
  可实例化对象的相关断言
@@ -48,7 +48,7 @@ MLNUILuaError([((id<MLNUIStaticExportProtocol>)self) mln_currentLuaCore], FORMAT
  @param ... 可变参数
  */
 #define MLNUIKitLuaAssert(CONDITION, FORMAT, ...) \
-MLNUILuaAssert(((id<MLNUIEntityExportProtocol>)self).mln_luaCore, CONDITION, FORMAT, ##__VA_ARGS__)
+MLNUILuaAssert(((id<MLNUIEntityExportProtocol>)self).mlnui_luaCore, CONDITION, FORMAT, ##__VA_ARGS__)
 
 /**
  静态类的相关断言
@@ -59,7 +59,7 @@ MLNUILuaAssert(((id<MLNUIEntityExportProtocol>)self).mln_luaCore, CONDITION, FOR
  @param ... 可变参数
  */
 #define MLNUIKitLuaStaticAssert(CONDITION, FORMAT, ...)\
-MLNUILuaAssert([((id<MLNUIStaticExportProtocol>)self) mln_currentLuaCore], CONDITION, FORMAT, ##__VA_ARGS__)
+MLNUILuaAssert([((id<MLNUIStaticExportProtocol>)self) mlnui_currentLuaCore], CONDITION, FORMAT, ##__VA_ARGS__)
 
 /**
  可实例化类的类型检查断言
@@ -70,7 +70,7 @@ MLNUILuaAssert([((id<MLNUIStaticExportProtocol>)self) mln_currentLuaCore], CONDI
  @param NATIVE_TYPE 对应的原生类型
  */
 #define MLNUICheckTypeAndNilValue(OBJ, LUA_TYPE, NATIVE_TYPE)\
-MLNUILuaAssert(((id<MLNUIEntityExportProtocol>)self).mln_luaCore, ([(OBJ) isKindOfClass:([NATIVE_TYPE class])]), @"The parameter type must be %@ and not a nil value!", LUA_TYPE);
+MLNUILuaAssert(((id<MLNUIEntityExportProtocol>)self).mlnui_luaCore, ([(OBJ) isKindOfClass:([NATIVE_TYPE class])]), @"The parameter type must be %@ and not a nil value!", LUA_TYPE);
 
 /**
  静态类的类型检查断言
@@ -81,7 +81,7 @@ MLNUILuaAssert(((id<MLNUIEntityExportProtocol>)self).mln_luaCore, ([(OBJ) isKind
  @param NATIVE_TYPE 对应的原生类型
  */
 #define MLNUIStaticCheckTypeAndNilValue(OBJ, LUA_TYPE, NATIVE_TYPE)\
-MLNUILuaAssert([((id<MLNUIStaticExportProtocol>)self) mln_currentLuaCore], ([(OBJ) isKindOfClass:([NATIVE_TYPE class])]), @"The parameter type must be %@ and not a nil value!", LUA_TYPE);
+MLNUILuaAssert([((id<MLNUIStaticExportProtocol>)self) mlnui_currentLuaCore], ([(OBJ) isKindOfClass:([NATIVE_TYPE class])]), @"The parameter type must be %@ and not a nil value!", LUA_TYPE);
 
 /**
  可实例化类的字符串检查断言

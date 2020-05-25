@@ -34,7 +34,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) UIViewAnimationOptions options;
 @property (nonatomic, strong) MLNUIBlock *completionCallback;
 
-- (void)lua_startWithView:(UIView *)view;
+- (void)luaui_startWithView:(UIView *)view;
 
 @end
 

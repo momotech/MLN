@@ -19,14 +19,14 @@
     lua_State *L = self.luaCore.state;
     if (!L) {
         if (error) {
-            *error = [NSError mln_errorState:@"Lua state is released"];
+            *error = [NSError mlnui_errorState:@"Lua state is released"];
             MLNUIError(self.luaCore, @"Lua state is released");
         }
         return NO;
     }
     lua_settop(L, 0);
     Class<MLNUIGlobalVarExportProtocol> exportClazz = (Class<MLNUIGlobalVarExportProtocol>)clazz;
-    NSArray<NSDictionary *> *vars = [exportClazz mln_globalVarMap];
+    NSArray<NSDictionary *> *vars = [exportClazz mlnui_globalVarMap];
     for (NSDictionary *info in vars) {
         BOOL ret = [self.luaCore registerGlobalVar:[info objectForKey:kGlobalVarMap] globalName:[info objectForKey:kGlobalVarLuaName] error:error];
         if (!ret) {

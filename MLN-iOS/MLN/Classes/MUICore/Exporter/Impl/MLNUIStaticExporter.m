@@ -16,18 +16,18 @@
 {
     NSParameterAssert(clazz);
     Class<MLNUIStaticExportProtocol> exportClazz = (Class<MLNUIStaticExportProtocol>)clazz;
-    const mln_objc_class *classInfo = [exportClazz mln_clazzInfo];
+    const mlnui_objc_class *classInfo = [exportClazz mlnui_clazzInfo];
     return [self openlib:classInfo libName:classInfo->l_clz nativeClassName:classInfo->clz error:error];
 }
 
 
-- (BOOL)openlib:(const mln_objc_class *)libInfo libName:(const char *)libName nativeClassName:(const char *)nativeClassName error:(NSError **)error
+- (BOOL)openlib:(const mlnui_objc_class *)libInfo libName:(const char *)libName nativeClassName:(const char *)nativeClassName error:(NSError **)error
 {
     NSParameterAssert(libInfo != NULL);
     if (MLNUIHasSuperClass(libInfo)) {
         NSAssert(libInfo->supreClz != NULL, @"%s'super class must not be null!", libInfo->clz);
         Class<MLNUIStaticExportProtocol> superClass = NSClassFromString([NSString stringWithUTF8String:libInfo->supreClz]);
-        if (![self openlib:[superClass mln_clazzInfo] libName:libName nativeClassName:nativeClassName error:error]) {
+        if (![self openlib:[superClass mlnui_clazzInfo] libName:libName nativeClassName:nativeClassName error:error]) {
             return NO;
         }
     }

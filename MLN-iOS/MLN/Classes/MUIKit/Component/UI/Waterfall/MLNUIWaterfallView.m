@@ -28,31 +28,31 @@
 @implementation MLNUIWaterfallView
 @synthesize adapter = _adapter;
 
-- (void)mln_user_data_dealloc
+- (void)mlnui_user_data_dealloc
 {
     // 去除强引用
     MLNUI_Lua_UserData_Release(self.adapter);
     // 去除强引用
     MLNUI_Lua_UserData_Release(self.layout);
-    [super mln_user_data_dealloc];
+    [super mlnui_user_data_dealloc];
 }
 
 #pragma mark - Header
-- (void)lua_addHeaderView:(UIView *)headerview
+- (void)luaui_addHeaderView:(UIView *)headerview
 {
     MLNUIKitLuaAssert(NO, @"WaterfallView:addHeaderView method is deprecated, use WaterfallAdapter:initHeader and WaterfallAdapter:fillHeaderData methods instead!");
     [self.innerWaterfallView setHeaderView:headerview];
     [self.innerWaterfallView reloadData];
 }
 
-- (void)lua_removeHeaderView
+- (void)luaui_removeHeaderView
 {
     MLNUIKitLuaAssert(NO, @"WaterfallView:removeHeaderView method is deprecated, use WaterfallAdapter:headerValid method instead!");
     [self.innerWaterfallView resetHeaderView];
     [self.innerWaterfallView reloadData];
 }
 
-- (void)lua_useAllSpanForLoading:(BOOL)useAllSpanForLoading
+- (void)luaui_useAllSpanForLoading:(BOOL)useAllSpanForLoading
 {
     // Android中加载是否占用一行，默认不占用；iOS空实现
 }
@@ -85,11 +85,11 @@
         // 添加强引用
         MLNUI_Lua_UserData_Retain_With_Index(2, adapter);
         _adapter = adapter;
-        [self mln_pushLazyTask:self.lazyTask];
+        [self mlnui_pushLazyTask:self.lazyTask];
     }
 }
 
-- (void)lua_setCollectionViewLayout:(UICollectionViewLayout *)layout
+- (void)luaui_setCollectionViewLayout:(UICollectionViewLayout *)layout
 {
     if (_layout != layout) {
         // 去除强引用
@@ -102,34 +102,34 @@
     
 }
 
-- (UICollectionViewLayout *)lua_collectionViewLayout
+- (UICollectionViewLayout *)luaui_collectionViewLayout
 {
     return self.innerWaterfallView.collectionViewLayout;
 }
 
-- (void)lua_setScrollDirection:(MLNUIScrollDirection)scrollDirection
+- (void)luaui_setScrollDirection:(MLNUIScrollDirection)scrollDirection
 {
     MLNUIKitLuaAssert(NO, @"WaterfallView does not setting scrollDirction!");
 }
 
-- (MLNUIScrollDirection)lua_scrollDirection
+- (MLNUIScrollDirection)luaui_scrollDirection
 {
-    return self.innerWaterfallView.mln_horizontal? MLNUIScrollDirectionHorizontal : MLNUIScrollDirectionVertical;
+    return self.innerWaterfallView.mlnui_horizontal? MLNUIScrollDirectionHorizontal : MLNUIScrollDirectionVertical;
 }
 
-- (void)lua_showScrollIndicator:(BOOL)show
+- (void)luaui_showScrollIndicator:(BOOL)show
 {
     self.innerWaterfallView.showsVerticalScrollIndicator = show;
     self.innerWaterfallView.showsHorizontalScrollIndicator = show;
 }
 
-- (BOOL)lua_isShowScrollIndicator
+- (BOOL)luaui_isShowScrollIndicator
 {
     return self.innerWaterfallView.showsHorizontalScrollIndicator && self.innerWaterfallView.showsVerticalScrollIndicator;
 }
 
 #pragma mark - Scroll
-- (void)lua_scrollToCell:(NSInteger)row section:(NSInteger)section animation:(BOOL)animate
+- (void)luaui_scrollToCell:(NSInteger)row section:(NSInteger)section animation:(BOOL)animate
 {
     if (!self.innerWaterfallView.scrollEnabled) {
         return;
@@ -147,19 +147,19 @@
     }
 }
 
-- (void)lua_scrollToTop:(BOOL)animated
+- (void)luaui_scrollToTop:(BOOL)animated
 {
     if (self.innerWaterfallView.scrollEnabled) {
         [self.innerWaterfallView setContentOffset:CGPointZero animated:animated];
     }
 }
 
-- (BOOL)lua_scrollIsTop
+- (BOOL)luaui_scrollIsTop
 {
     return self.innerWaterfallView.contentOffset.y + self.innerWaterfallView.contentInset.top <= 0;
 }
 
-- (CGPoint)lua_pointAtIndexPath:(NSInteger)row section:(NSInteger)section
+- (CGPoint)luaui_pointAtIndexPath:(NSInteger)row section:(NSInteger)section
 {
     NSInteger realRow = row - 1;
     NSInteger realSection = section - 1;
@@ -178,7 +178,7 @@
 }
 
 #pragma mark - Relaod
-- (void)lua_reloadAtSection:(NSInteger)section animation:(BOOL)animation
+- (void)luaui_reloadAtSection:(NSInteger)section animation:(BOOL)animation
 {
     NSInteger sectionCount = [self.innerWaterfallView numberOfSections];
     NSInteger realSection = section - 1;
@@ -200,7 +200,7 @@
     }
 }
 
-- (void)lua_reloadAtRow:(NSInteger)row section:(NSInteger)section animation:(BOOL)animation
+- (void)luaui_reloadAtRow:(NSInteger)row section:(NSInteger)section animation:(BOOL)animation
 {
     NSInteger sectionCount = [self.innerWaterfallView numberOfSections];
     NSInteger realSection = section - 1;
@@ -228,7 +228,7 @@
     }
 }
 
-- (void)lua_reloadData
+- (void)luaui_reloadData
 {
     if ([self.adapter respondsToSelector:@selector(collectionViewReloadData:)]) {
         [self.adapter collectionViewReloadData:self.innerWaterfallView];
@@ -238,22 +238,22 @@
 }
 
 #pragma mark - Insert
-- (void)lua_insertAtRow:(NSInteger)row section:(NSInteger)section
+- (void)luaui_insertAtRow:(NSInteger)row section:(NSInteger)section
 {
-    [self lua_insertRow:row section:section animated:NO];
+    [self luaui_insertRow:row section:section animated:NO];
 }
 
-- (void)lua_insertRow:(NSInteger)row section:(NSInteger)section animated:(BOOL)animated
+- (void)luaui_insertRow:(NSInteger)row section:(NSInteger)section animated:(BOOL)animated
 {
-    [self lua_insertRowsAtSection:section startRow:row endRow:row animated:animated];
+    [self luaui_insertRowsAtSection:section startRow:row endRow:row animated:animated];
 }
 
-- (void)lua_insertCellsAtSection:(NSInteger)section startRow:(NSInteger)startRow endRow:(NSInteger)endRow
+- (void)luaui_insertCellsAtSection:(NSInteger)section startRow:(NSInteger)startRow endRow:(NSInteger)endRow
 {
-    [self lua_insertRowsAtSection:section startRow:startRow endRow:endRow animated:NO];
+    [self luaui_insertRowsAtSection:section startRow:startRow endRow:endRow animated:NO];
 }
 
-- (void)lua_insertRowsAtSection:(NSInteger)section startRow:(NSInteger)startRow endRow:(NSInteger)endRow animated:(BOOL)animated
+- (void)luaui_insertRowsAtSection:(NSInteger)section startRow:(NSInteger)startRow endRow:(NSInteger)endRow animated:(BOOL)animated
 {
     NSInteger realSection = section -1;
     NSInteger realStartRow = startRow -1;
@@ -288,22 +288,22 @@
 }
 
 #pragma mark - Delete
-- (void)lua_deleteAtRow:(NSInteger)row section:(NSInteger)section
+- (void)luaui_deleteAtRow:(NSInteger)row section:(NSInteger)section
 {
-    [self lua_deleteRow:row section:section animated:NO];
+    [self luaui_deleteRow:row section:section animated:NO];
 }
 
-- (void)lua_deleteRow:(NSInteger)row section:(NSInteger)section animated:(BOOL)animated
+- (void)luaui_deleteRow:(NSInteger)row section:(NSInteger)section animated:(BOOL)animated
 {
-    [self lua_deleteRowsAtSection:section startRow:row endRow:row animated:animated];
+    [self luaui_deleteRowsAtSection:section startRow:row endRow:row animated:animated];
 }
 
-- (void)lua_deleteCellsAtSection:(NSInteger)section startRow:(NSInteger)startRow endRow:(NSInteger)endRow
+- (void)luaui_deleteCellsAtSection:(NSInteger)section startRow:(NSInteger)startRow endRow:(NSInteger)endRow
 {
-    [self lua_deleteRowsAtSection:section startRow:startRow endRow:endRow animated:NO];
+    [self luaui_deleteRowsAtSection:section startRow:startRow endRow:endRow animated:NO];
 }
 
-- (void)lua_deleteRowsAtSection:(NSInteger)section startRow:(NSInteger)startRow endRow:(NSInteger)endRow animated:(BOOL)animated
+- (void)luaui_deleteRowsAtSection:(NSInteger)section startRow:(NSInteger)startRow endRow:(NSInteger)endRow animated:(BOOL)animated
 {
     NSInteger realSection = section -1;
     NSInteger realStartRow = startRow -1;
@@ -337,7 +337,7 @@
     }
 }
 
-- (MLNUILuaTable* )lua_cellAt:(NSInteger)section row:(NSInteger)row
+- (MLNUILuaTable* )luaui_cellAt:(NSInteger)section row:(NSInteger)row
 {
     NSInteger trueSection = section - 1;
     NSInteger trueRow = row - 1;
@@ -353,7 +353,7 @@
     return nil;
 }
 
-- (NSMutableArray *)lua_visibleCells
+- (NSMutableArray *)luaui_visibleCells
 {
     NSMutableArray* arrayT = [NSMutableArray array];
     for (MLNUICollectionViewCell* cell in [self.innerWaterfallView visibleCells]) {
@@ -368,53 +368,53 @@
 }
 
 #pragma mark - Override
-- (CGSize)lua_measureSizeWithMaxWidth:(CGFloat)maxWidth maxHeight:(CGFloat)maxHeight
+- (CGSize)luaui_measureSizeWithMaxWidth:(CGFloat)maxWidth maxHeight:(CGFloat)maxHeight
 {
     return CGSizeMake(maxWidth, maxHeight);
 }
 
-- (UIView *)lua_contentView
+- (UIView *)luaui_contentView
 {
     return self.innerWaterfallView;
 }
 
-- (BOOL)lua_layoutEnable
+- (BOOL)luaui_layoutEnable
 {
     return YES;
 }
 
-- (void)lua_addSubview:(UIView *)view
+- (void)luaui_addSubview:(UIView *)view
 {
     MLNUIKitLuaAssert(NO, @"Not found \"addView\" method, just continar of View has it!");
 }
 
-- (void)lua_insertSubview:(UIView *)view atIndex:(NSInteger)index
+- (void)luaui_insertSubview:(UIView *)view atIndex:(NSInteger)index
 {
     MLNUIKitLuaAssert(NO, @"Not found \"insertView\" method, just continar of View has it!");
 }
 
-- (void)lua_removeAllSubViews
+- (void)luaui_removeAllSubViews
 {
     MLNUIKitLuaAssert(NO, @"Not found \"removeAllSubviews\" method, just continar of View has it!");
 }
 
-- (void)lua_setShowsHorizontalScrollIndicator:(BOOL)show
+- (void)luaui_setShowsHorizontalScrollIndicator:(BOOL)show
 {
     MLNUIKitLuaAssert(NO, @"CollectionView does not supoort this method!");
 }
 
-- (BOOL)lua_showsHorizontalScrollIndicator
+- (BOOL)luaui_showsHorizontalScrollIndicator
 {
     MLNUIKitLuaAssert(NO, @"CollectionView does not supoort this method!");
     return NO;
 }
 
-- (void)lua_setShowsVerticalScrollIndicator:(BOOL)show
+- (void)luaui_setShowsVerticalScrollIndicator:(BOOL)show
 {
     MLNUIKitLuaAssert(NO, @"CollectionView does not supoort this method!");
 }
 
-- (BOOL)lua_showsVerticalScrollIndicator
+- (BOOL)luaui_showsVerticalScrollIndicator
 {
     MLNUIKitLuaAssert(NO, @"CollectionView does not supoort this method!");
     return NO;
@@ -464,8 +464,8 @@
 
 #pragma mark - Export For Lua
 LUA_EXPORT_VIEW_BEGIN(MLNUIWaterfallView)
-LUA_EXPORT_VIEW_METHOD(addHeaderView, "lua_addHeaderView:", MLNUIWaterfallView)
-LUA_EXPORT_VIEW_METHOD(removeHeaderView, "lua_removeHeaderView", MLNUIWaterfallView)
-LUA_EXPORT_METHOD(useAllSpanForLoading, "lua_useAllSpanForLoading:", MLNUIWaterfallView)
-LUA_EXPORT_VIEW_END(MLNUIWaterfallView, WaterfallView, YES, "MLNUICollectionView", "initWithLuaCore:refreshEnable:loadEnable:")
+LUA_EXPORT_VIEW_METHOD(addHeaderView, "luaui_addHeaderView:", MLNUIWaterfallView)
+LUA_EXPORT_VIEW_METHOD(removeHeaderView, "luaui_removeHeaderView", MLNUIWaterfallView)
+LUA_EXPORT_METHOD(useAllSpanForLoading, "luaui_useAllSpanForLoading:", MLNUIWaterfallView)
+LUA_EXPORT_VIEW_END(MLNUIWaterfallView, WaterfallView, YES, "MLNUICollectionView", "initWithMLNUILuaCore:refreshEnable:loadEnable:")
 @end

@@ -67,7 +67,7 @@
     return self;
 }
 
-static int lua_animation_init(lua_State *L) {
+static int luaui_animation_init(lua_State *L) {
     MLNUIScaleAnimation *animation = nil;
     NSUInteger argCount = lua_gettop(L);
     switch (argCount) {
@@ -107,7 +107,7 @@ static int lua_animation_init(lua_State *L) {
         }
             break;
         default: {
-            mln_lua_error(L, @"number of arguments must be 0 or 4 or 6 or 8!");
+            mlnui_luaui_error(L, @"number of arguments must be 0 or 4 or 6 or 8!");
             break;
         }
     }
@@ -174,5 +174,5 @@ LUA_EXPORT_PROPERTY(setFromX, "setFromX:", "fromX", MLNUIScaleAnimation)
 LUA_EXPORT_PROPERTY(setToX, "setToX:", "toX", MLNUIScaleAnimation)
 LUA_EXPORT_PROPERTY(setFromY, "setFromY:", "fromX", MLNUIScaleAnimation)
 LUA_EXPORT_PROPERTY(setToY, "setToY:", "toY", MLNUIScaleAnimation)
-LUA_EXPORT_END_WITH_CFUNC(MLNUIScaleAnimation, ScaleAnimation, YES, "MLNUICanvasAnimation", lua_animation_init)
+LUA_EXPORT_END_WITH_CFUNC(MLNUIScaleAnimation, ScaleAnimation, YES, "MLNUICanvasAnimation", luaui_animation_init)
 @end

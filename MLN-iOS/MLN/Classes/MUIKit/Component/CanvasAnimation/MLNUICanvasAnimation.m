@@ -75,7 +75,7 @@
     }
     _targetView = targetView;
     _status = MLNUICanvasAnimationStatusReadyToPlay;
-    [MLNUI_KIT_INSTANCE(self.mln_luaCore) pushLazyTask:self.lazyTask];
+    [MLNUI_KIT_INSTANCE(self.mlnui_luaCore) pushLazyTask:self.lazyTask];
 }
 
 - (void)cancel
@@ -85,7 +85,7 @@
     self.status = MLNUICanvasAnimationStatusNone;
 }
 
-- (void)lua_pause
+- (void)luaui_pause
 {
     switch (self.status) {
         case MLNUICanvasAnimationStatusReadyToPlay:
@@ -105,27 +105,27 @@
     }
 }
 
-- (void)lua_stop
+- (void)luaui_stop
 {
     switch (self.status) {
         case MLNUICanvasAnimationStatusStop:
             return;
         default:
             self.status = MLNUICanvasAnimationStatusStop;
-            [MLNUI_KIT_INSTANCE(self.mln_luaCore) popLazyTask:self.lazyTask];
+            [MLNUI_KIT_INSTANCE(self.mlnui_luaCore) popLazyTask:self.lazyTask];
             [self.targetView.layer removeAnimationForKey:self.animationKey];
             [[MLNUIAnimationHandler sharedHandler] removeCallback:self];
             return;
     }
 }
 
-- (void)lua_resumeAnimations
+- (void)luaui_resumeAnimations
 {
     switch (self.status) {
         case MLNUICanvasAnimationStatusPause:
         {
             self.status = MLNUICanvasAnimationStatusReadyToResume;
-            [MLNUI_KIT_INSTANCE(self.mln_luaCore) pushLazyTask:self.lazyTask];
+            [MLNUI_KIT_INSTANCE(self.mlnui_luaCore) pushLazyTask:self.lazyTask];
         }
         default:
             break;
@@ -147,7 +147,7 @@
     
 }
 
-- (instancetype)lua_clone
+- (instancetype)luaui_clone
 {
     return [self copy];
 }
@@ -352,7 +352,7 @@
     CABasicAnimation *animation = [self.animations objectForKey:key];
     if (!animation) {
         animation = [CABasicAnimation animationWithKeyPath:key];
-        [self.animations mln_setObject:animation forKey:key];
+        [self.animations mlnui_setObject:animation forKey:key];
     }
     return animation;
 }
@@ -390,7 +390,7 @@
         CABasicAnimation *newAnimation = [self baseAnimationWithKeyPath:key interpolatorType:self.interpolator];
         newAnimation.fromValue = animation.fromValue;
         newAnimation.toValue = animation.toValue;
-        [newAnimations mln_setObject:newAnimation forKey:key];
+        [newAnimations mlnui_setObject:newAnimation forKey:key];
     }];
     _animations = newAnimations;
 }
@@ -460,7 +460,7 @@
     }
     switch (_pivotXType) {
         case MLNUIAnimationValueTypeAbsolute:
-            return (_pivotX / _targetView.lua_node.width);
+            return (_pivotX / _targetView.luaui_node.width);
             break;
         case MLNUIAnimationValueTypeRelativeToSelf:
             return _pivotX;
@@ -478,7 +478,7 @@
     }
     switch (_pivotXType) {
         case MLNUIAnimationValueTypeAbsolute:
-            return (_pivotY / _targetView.lua_node.height);
+            return (_pivotY / _targetView.luaui_node.height);
             break;
         case MLNUIAnimationValueTypeRelativeToSelf:
             return _pivotY;
@@ -489,12 +489,12 @@
     }
 }
 
-- (CGFloat)lua_pivotX
+- (CGFloat)luaui_pivotX
 {
     return _pivotX;
 }
 
-- (CGFloat)lua_pivotY
+- (CGFloat)luaui_pivotY
 {
     return _pivotY;
 }
@@ -534,13 +534,13 @@
 }
 
 #pragma mark - Export Method
-- (void)lua_startWithView:(UIView *)targetView
+- (void)luaui_startWithView:(UIView *)targetView
 {
     MLNUICheckTypeAndNilValue(targetView, @"View", [UIView class])
     [self startWithView:targetView];
 }
 
-- (void)lua_setStartCallback:(MLNUIBlock *)callback
+- (void)luaui_setStartCallback:(MLNUIBlock *)callback
 {
     if (!callback) {
         MLNUIKitLuaError(@"callback must not be nil!");
@@ -549,7 +549,7 @@
     [self.animationCallbacks setObject:callback forKey:kAnimationStart];
 }
 
-- (void)lua_setEndCallback:(MLNUIBlock *)callback
+- (void)luaui_setEndCallback:(MLNUIBlock *)callback
 {
     if (!callback) {
         MLNUIKitLuaError(@"callback must not be nil!");
@@ -558,7 +558,7 @@
     [self.animationCallbacks setObject:callback forKey:kAnimationEnd];
 }
 
-- (void)lua_setRepeatCallback:(MLNUIBlock *)callback
+- (void)luaui_setRepeatCallback:(MLNUIBlock *)callback
 {
     if (!callback) {
         MLNUIKitLuaError(@"callback must not be nil!");
@@ -568,7 +568,7 @@
 }
 
 #pragma mark - Export Method
-- (void)lua_setRepeat:(MLNUIAnimationRepeatType)type count:(float)count
+- (void)luaui_setRepeat:(MLNUIAnimationRepeatType)type count:(float)count
 {
     if (count < 0) {
         count = MAX_INT;
@@ -594,7 +594,7 @@
     }
 }
 
-- (void)lua_setAutoBack:(BOOL)autoBack
+- (void)luaui_setAutoBack:(BOOL)autoBack
 {
     _autoBack = autoBack;
 }
@@ -602,23 +602,23 @@
 #pragma mark - Export To Lua
 LUA_EXPORT_BEGIN(MLNUICanvasAnimation)
 LUA_EXPORT_PROPERTY(setPivotXType, "setPivotXType:", "pivotXType", MLNUICanvasAnimation)
-LUA_EXPORT_PROPERTY(setPivotX, "setPivotX:", "lua_pivotX", MLNUICanvasAnimation)
+LUA_EXPORT_PROPERTY(setPivotX, "setPivotX:", "luaui_pivotX", MLNUICanvasAnimation)
 LUA_EXPORT_PROPERTY(setPivotYType, "setPivotYType:", "pivotYType", MLNUICanvasAnimation)
-LUA_EXPORT_PROPERTY(setPivotY, "setPivotY:", "lua_pivotY", MLNUICanvasAnimation)
+LUA_EXPORT_PROPERTY(setPivotY, "setPivotY:", "luaui_pivotY", MLNUICanvasAnimation)
 LUA_EXPORT_PROPERTY(setDuration, "setDuration:", "duration", MLNUICanvasAnimation)
 LUA_EXPORT_PROPERTY(setDelay, "setDelay:", "delay", MLNUICanvasAnimation)
 LUA_EXPORT_PROPERTY(setInterpolator, "setInterpolator:", "interpolator", MLNUICanvasAnimation)
-LUA_EXPORT_METHOD(setRepeat, "lua_setRepeat:count:",  MLNUICanvasAnimation)
-LUA_EXPORT_METHOD(startWithView, "lua_startWithView:", MLNUICanvasAnimation)
+LUA_EXPORT_METHOD(setRepeat, "luaui_setRepeat:count:",  MLNUICanvasAnimation)
+LUA_EXPORT_METHOD(startWithView, "luaui_startWithView:", MLNUICanvasAnimation)
 LUA_EXPORT_METHOD(cancel, "cancel", MLNUICanvasAnimation)
-LUA_EXPORT_METHOD(pause, "lua_pause", MLNUICanvasAnimation)
-LUA_EXPORT_METHOD(resume, "lua_resumeAnimations", MLNUICanvasAnimation)
-LUA_EXPORT_METHOD(stop, "lua_stop", MLNUICanvasAnimation)
-LUA_EXPORT_METHOD(setStartCallback, "lua_setStartCallback:", MLNUICanvasAnimation)
-LUA_EXPORT_METHOD(setEndCallback, "lua_setEndCallback:", MLNUICanvasAnimation)
-LUA_EXPORT_METHOD(setRepeatCallback, "lua_setRepeatCallback:", MLNUICanvasAnimation)
-LUA_EXPORT_METHOD(clone, "lua_clone", MLNUICanvasAnimation)
-LUA_EXPORT_METHOD(setAutoBack, "lua_setAutoBack:", MLNUICanvasAnimation)
+LUA_EXPORT_METHOD(pause, "luaui_pause", MLNUICanvasAnimation)
+LUA_EXPORT_METHOD(resume, "luaui_resumeAnimations", MLNUICanvasAnimation)
+LUA_EXPORT_METHOD(stop, "luaui_stop", MLNUICanvasAnimation)
+LUA_EXPORT_METHOD(setStartCallback, "luaui_setStartCallback:", MLNUICanvasAnimation)
+LUA_EXPORT_METHOD(setEndCallback, "luaui_setEndCallback:", MLNUICanvasAnimation)
+LUA_EXPORT_METHOD(setRepeatCallback, "luaui_setRepeatCallback:", MLNUICanvasAnimation)
+LUA_EXPORT_METHOD(clone, "luaui_clone", MLNUICanvasAnimation)
+LUA_EXPORT_METHOD(setAutoBack, "luaui_setAutoBack:", MLNUICanvasAnimation)
 LUA_EXPORT_END(MLNUICanvasAnimation, CanvasAnimation, NO, NULL, NULL)
 
 @end

@@ -14,7 +14,7 @@
  标记导出全局变量类开始
  */
 #define LUA_EXPORT_GLOBAL_VAR_BEGIN()\
-+ (NSArray<NSDictionary *> *)mln_globalVarMap \
++ (NSArray<NSDictionary *> *)mlnui_globalVarMap \
 {\
 return @[\
 

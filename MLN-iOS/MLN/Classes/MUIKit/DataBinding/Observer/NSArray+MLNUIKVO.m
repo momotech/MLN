@@ -16,18 +16,18 @@
 
 @implementation NSArray (MLNUIKVO)
 
-- (NSArray * _Nonnull (^)(MLNUIItemKVOBlock _Nonnull))mln_subscribeItem {
+- (NSArray * _Nonnull (^)(MLNUIItemKVOBlock _Nonnull))mlnui_subscribeItem {
     @weakify(self);
      return ^(MLNUIItemKVOBlock block) {
          @strongify(self);
          if (block) {
-             [self.mln_itemKVOBlocks addObject:block];
+             [self.mlnui_itemKVOBlocks addObject:block];
          }
          return self;
      };
 }
 
-- (NSMutableArray *)mln_itemKVOBlocks {
+- (NSMutableArray *)mlnui_itemKVOBlocks {
     NSMutableArray *arr = objc_getAssociatedObject(self, _cmd);
     if (!arr) {
         arr = @[].mutableCopy;
@@ -36,18 +36,18 @@
     return arr;
 }
 
-//- (NSArray * _Nonnull (^)(NSString * _Nonnull, MLNUIItemKVOBlock *))mln_subscribeItem {
+//- (NSArray * _Nonnull (^)(NSString * _Nonnull, MLNUIItemKVOBlock *))mlnui_subscribeItem {
 //    return ^(NSString *keyPath, MLNUIItemKVOBlock block){
 //        return self;
 //    };
 //}
 
 
-- (NSMutableArray *)mln_mutalbeCopy {
+- (NSMutableArray *)mlnui_mutalbeCopy {
     NSMutableArray *copy = [NSMutableArray arrayWithCapacity:self.count];
     [self enumerateObjectsUsingBlock:^(NSObject *  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-        if ([obj respondsToSelector:@selector(mln_mutalbeCopy)]) {
-            [copy addObject:[(NSArray  *)obj mln_mutalbeCopy]];
+        if ([obj respondsToSelector:@selector(mlnui_mutalbeCopy)]) {
+            [copy addObject:[(NSArray  *)obj mlnui_mutalbeCopy]];
         } else {
             [copy addObject:obj];
         }
@@ -55,42 +55,42 @@
     return copy;
 }
 
-- (BOOL)mln_is2D {
+- (BOOL)mlnui_is2D {
     NSObject *first = self.firstObject;
     return [first isKindOfClass:[NSArray class]];
 }
 
-- (void)mln_startKVOIfMutable {
+- (void)mlnui_startKVOIfMutable {
     if ([self isKindOfClass:[NSMutableArray class]]) {
-        [(NSMutableArray *)self mln_startKVO];
+        [(NSMutableArray *)self mlnui_startKVO];
     }
     
-    if (self.mln_is2D) {
+    if (self.mlnui_is2D) {
         [self enumerateObjectsUsingBlock:^(NSMutableArray*  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
             if ([obj isKindOfClass:[NSMutableArray class]]) {
-                [obj mln_startKVO];
+                [obj mlnui_startKVO];
             }
         }];
     }
 }
 
-- (void)mln_stopKVOIfMutable {
+- (void)mlnui_stopKVOIfMutable {
     if ([self isKindOfClass:[NSMutableArray class]]) {
-        [(NSMutableArray *)self mln_stopKVO];
+        [(NSMutableArray *)self mlnui_stopKVO];
     }
-    if (self.mln_is2D) {
+    if (self.mlnui_is2D) {
         [self enumerateObjectsUsingBlock:^(NSMutableArray*  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
             if ([obj isKindOfClass:[NSMutableArray class]]) {
-                [obj mln_stopKVO];
+                [obj mlnui_stopKVO];
             }
         }];
     }
 }
 
-- (NSArray *)mln_convertToLuaTableAvailable {
+- (NSArray *)mlnui_convertToLuaTableAvailable {
     NSMutableArray *arr = [NSMutableArray array];
     [self enumerateObjectsUsingBlock:^(NSObject *  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-        NSObject *n = [obj mln_convertToLuaObject];
+        NSObject *n = [obj mlnui_convertToLuaObject];
         if (n) {
             [arr addObject:n];
         }
@@ -98,10 +98,10 @@
     return arr.count > 0 ? arr.copy : self.copy;
 }
 
-- (instancetype)mln_convertToMArray {
+- (instancetype)mlnui_convertToMArray {
     NSMutableArray *arr = [NSMutableArray array];
     [self enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-        NSObject *n = [obj mln_convertToNativeObject];
+        NSObject *n = [obj mlnui_convertToNativeObject];
         if (n) {
             [arr addObject:n];
         }

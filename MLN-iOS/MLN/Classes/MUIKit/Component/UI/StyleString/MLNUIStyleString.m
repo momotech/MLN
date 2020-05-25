@@ -32,17 +32,17 @@
 {
     if (self = [super init]){
         _mutableStyledString = attributes.mutableCopy;
-        [_mutableStyledString setLua_styleString:self];
+        [_mutableStyledString setLuaui_styleString:self];
     }
     return self;
 }
 
-- (instancetype)initWithLuaCore:(MLNUILuaCore *)luaCore string:(NSString *)attriteStr
+- (instancetype)initWithMLNUILuaCore:(MLNUILuaCore *)luaCore string:(NSString *)attriteStr
 {
-    if (self = [super initWithLuaCore:luaCore]){
+    if (self = [super initWithMLNUILuaCore:luaCore]){
         attriteStr = attriteStr ?: @"";
         _mutableStyledString = [[NSMutableAttributedString alloc]initWithString:attriteStr];
-        [_mutableStyledString setLua_styleString:self];
+        [_mutableStyledString setLuaui_styleString:self];
         // 设置默认行间距
         NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
         paragraphStyle.lineSpacing = 2;
@@ -181,7 +181,7 @@
 
 - (BOOL)outOfRange:(NSInteger)location length:(NSInteger)length
 {
-    MLNUILuaAssert(self.mln_luaCore, ((location + length) <= self.mutableStyledString.length), @"out of range");
+    MLNUILuaAssert(self.mlnui_luaCore, ((location + length) <= self.mutableStyledString.length), @"out of range");
     return (location + length) > self.mutableStyledString.length;
 }
 
@@ -216,7 +216,7 @@
     _statusChanged = NO;
 }
 
-- (void)mln_checkImageIfNeed
+- (void)mlnui_checkImageIfNeed
 {
     NSMutableArray *imageElementArray = [NSMutableArray array];
     MLNUIImageLoadFinishedCallback tempCallback = self.loadFinishedCallback;
@@ -277,17 +277,17 @@
 
 - (id<MLNUIImageLoaderProtocol>)imageLoader
 {
-    return MLNUI_KIT_INSTANCE(self.mln_luaCore).instanceHandlersManager.imageLoader;
+    return MLNUI_KIT_INSTANCE(self.mlnui_luaCore).instanceHandlersManager.imageLoader;
 }
 
 #pragma mark - Method For Lua
 
-- (void)lua_setFontName:(NSString *)name
+- (void)luaui_setFontName:(NSString *)name
 {
-    [self lua_setFontName:name location:0 length:self.mutableStyledString.length];
+    [self luaui_setFontName:name location:0 length:self.mutableStyledString.length];
 }
 
-- (void)lua_setFontName:(NSString *)name location:(NSInteger)location length:(NSInteger)length
+- (void)luaui_setFontName:(NSString *)name location:(NSInteger)location length:(NSInteger)length
 {
     location = location <= 0 ? 0 : location - 1;
     _statusChanged = YES;
@@ -308,12 +308,12 @@
     }
 }
 
-- (void)lua_setFontSize:(CGFloat)size
+- (void)luaui_setFontSize:(CGFloat)size
 {
-    [self lua_setFontSize:size location:0 length:self.mutableStyledString.length];
+    [self luaui_setFontSize:size location:0 length:self.mutableStyledString.length];
 }
 
-- (void)lua_setFontSize:(CGFloat)size location:(NSInteger)location length:(NSInteger)length
+- (void)luaui_setFontSize:(CGFloat)size location:(NSInteger)location length:(NSInteger)length
 {
     location = location <= 0 ? 0 : location - 1;
     _statusChanged = YES;
@@ -334,13 +334,13 @@
     }
 }
 
-- (void)lua_setFontColor:(UIColor *)color
+- (void)luaui_setFontColor:(UIColor *)color
 {
     MLNUICheckTypeAndNilValue(color, @"Color", [UIColor class])
-    [self lua_setFontColor:color location:0 length:self.mutableStyledString.length];
+    [self luaui_setFontColor:color location:0 length:self.mutableStyledString.length];
 }
 
-- (void)lua_setFontColor:(UIColor *)color location:(NSInteger)location length:(NSInteger)length
+- (void)luaui_setFontColor:(UIColor *)color location:(NSInteger)location length:(NSInteger)length
 {
     MLNUICheckTypeAndNilValue(color, @"Color", [UIColor class])
     location = location <= 0 ? 0 : location - 1;
@@ -363,13 +363,13 @@
 }
 
 
-- (void)lua_setBackgroundColor:(UIColor *)color
+- (void)luaui_setBackgroundColor:(UIColor *)color
 {
     MLNUICheckTypeAndNilValue(color, @"Color", UIColor)
-    [self lua_setBackgroundColor:color location:0 length:self.mutableStyledString.length];
+    [self luaui_setBackgroundColor:color location:0 length:self.mutableStyledString.length];
 }
 
-- (void)lua_setBackgroundColor:(UIColor *)color location:(NSInteger)location length:(NSInteger)length
+- (void)luaui_setBackgroundColor:(UIColor *)color location:(NSInteger)location length:(NSInteger)length
 {
     MLNUICheckTypeAndNilValue(color, @"Color", UIColor)
     location = location <= 0 ? 0 : location - 1;
@@ -391,12 +391,12 @@
     
 }
 
-- (void)lua_setFontStyle:(MLNUIFontStyle)style
+- (void)luaui_setFontStyle:(MLNUIFontStyle)style
 {
-    [self lua_setFontStyle:style location:0 length:self.mutableStyledString.length];
+    [self luaui_setFontStyle:style location:0 length:self.mutableStyledString.length];
 }
 
-- (void)lua_setFontStyle:(MLNUIFontStyle)style location:(NSInteger)location length:(NSInteger)length
+- (void)luaui_setFontStyle:(MLNUIFontStyle)style location:(NSInteger)location length:(NSInteger)length
 {
     location = location <= 0 ? 0 : location - 1;
     _statusChanged = YES;
@@ -417,12 +417,12 @@
     
 }
 
-- (void)lua_setUnderLineStyle:(MLNUIUnderlineStyle)style
+- (void)luaui_setUnderLineStyle:(MLNUIUnderlineStyle)style
 {
-    [self lua_setUnderLineStyle:style location:0 length:self.mutableStyledString.length];
+    [self luaui_setUnderLineStyle:style location:0 length:self.mutableStyledString.length];
 }
 
-- (void)lua_setUnderLineStyle:(MLNUIUnderlineStyle)style location:(NSInteger)location length:(NSInteger)length
+- (void)luaui_setUnderLineStyle:(MLNUIUnderlineStyle)style location:(NSInteger)location length:(NSInteger)length
 {
     location = location <= 0 ? 0 : location - 1;
     _statusChanged = YES;
@@ -443,20 +443,20 @@
 
 }
 
-- (void)lua_setImageAlignType:(MLNUIStyleImageAlignType)alignType
+- (void)luaui_setImageAlignType:(MLNUIStyleImageAlignType)alignType
 {
     self.imageAlign = alignType;
 }
 
-- (void)lua_append:(NSMutableAttributedString *)styleString
+- (void)luaui_append:(NSMutableAttributedString *)styleString
 {
     MLNUICheckTypeAndNilValue(styleString, @"StyleString", [NSMutableAttributedString class])
     if (![styleString isKindOfClass:[NSMutableAttributedString class]]) return;
     if (!styleString || !self.mutableStyledString) return;
     
-    MLNUIStyleString *lua_styleString = styleString.lua_styleString;
-    if (lua_styleString) {
-        for (MLNUIStyleElement *element in lua_styleString.styleElementsDictM.allValues) {
+    MLNUIStyleString *luaui_styleString = styleString.luaui_styleString;
+    if (luaui_styleString) {
+        for (MLNUIStyleElement *element in luaui_styleString.styleElementsDictM.allValues) {
             MLNUIStyleElement *newElement = element.copy;
             NSRange oldRange = element.range;
             oldRange.location += self.mutableStyledString.length;
@@ -464,13 +464,13 @@
             [self.styleElementsDictM setObject:newElement forKey:NSStringFromRange(newElement.range)];
         }
     }
-    [styleString setLua_styleString:nil];
+    [styleString setLuaui_styleString:nil];
     
     [self.mutableStyledString appendAttributedString:[styleString copy]];
     
 }
 
-- (id)mln_rawNativeData
+- (id)mlnui_rawNativeData
 {
     [self handleStyleStringIfNeed];
     return self.mutableStyledString;
@@ -483,7 +483,7 @@
     return size;
 }
 
-- (CGSize)lua_sizeThatFits:(CGFloat)maxWidth
+- (CGSize)luaui_sizeThatFits:(CGFloat)maxWidth
 {
     [self handleStyleStringIfNeed];
     if (!self.mutableStyledString) return CGSizeZero;
@@ -508,14 +508,14 @@
     }
 }
 
-- (BOOL)lua_showAsImageWithSize:(CGSize)size
+- (BOOL)luaui_showAsImageWithSize:(CGSize)size
 {
     NSTextAttachment *textAttachment = [[NSTextAttachment alloc] init];
     NSString *imagePathString = self.mutableStyledString.string;
     textAttachment.image = nil;
     textAttachment.bounds = CGRectMake(0, 0, size.width, size.height);
     _mutableStyledString = [NSAttributedString attributedStringWithAttachment:textAttachment].mutableCopy;
-    [_mutableStyledString setLua_styleString:self];
+    [_mutableStyledString setLuaui_styleString:self];
     MLNUIStyleElement *element = [[MLNUIStyleElement alloc] init];
     element.range = NSMakeRange(0, 1);
     element.imageSize = size;
@@ -528,12 +528,12 @@
     return textAttachment.image != nil;
 }
 
-- (void)lua_setText:(NSString*)attriteStr {
+- (void)luaui_setText:(NSString*)attriteStr {
     attriteStr = attriteStr ?: @"";
-    [_mutableStyledString setLua_styleString:nil];
+    [_mutableStyledString setLuaui_styleString:nil];
     [_styleElementsDictM removeAllObjects];
     _mutableStyledString = [[NSMutableAttributedString alloc]initWithString:attriteStr];
-    [_mutableStyledString setLua_styleString:self];
+    [_mutableStyledString setLuaui_styleString:self];
     // 设置默认行间距
     NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
     paragraphStyle.lineSpacing = 2;
@@ -565,30 +565,30 @@
 
 - (MLNUIKitInstance *)myKitInstance
 {
-    return MLNUI_KIT_INSTANCE(self.mln_luaCore);
+    return MLNUI_KIT_INSTANCE(self.mlnui_luaCore);
 }
 
 #pragma mark - Export For Lua
 LUA_EXPORT_BEGIN(MLNUIStyleString)
-LUA_EXPORT_METHOD(fontName,"lua_setFontName:",MLNUIStyleString)
-LUA_EXPORT_METHOD(setFontNameForRange,"lua_setFontName:location:length:",MLNUIStyleString)
-LUA_EXPORT_METHOD(fontSize,"lua_setFontSize:",MLNUIStyleString)
-LUA_EXPORT_METHOD(setFontSizeForRange,"lua_setFontSize:location:length:",MLNUIStyleString)
-LUA_EXPORT_METHOD(fontStyle,"lua_setFontStyle:",MLNUIStyleString)
-LUA_EXPORT_METHOD(setFontStyleForRange,"lua_setFontStyle:location:length:",MLNUIStyleString)
-LUA_EXPORT_METHOD(fontColor,"lua_setFontColor:",MLNUIStyleString)
-LUA_EXPORT_METHOD(setFontColorForRange,"lua_setFontColor:location:length:",MLNUIStyleString)
-LUA_EXPORT_METHOD(backgroundColor,"lua_setBackgroundColor:",MLNUIStyleString)
-LUA_EXPORT_METHOD(setBackgroundColorForRange,"lua_setBackgroundColor:location:length:",MLNUIStyleString)
-LUA_EXPORT_METHOD(underline,"lua_setUnderLineStyle:",MLNUIStyleString)
-LUA_EXPORT_METHOD(setUnderlineForRange,"lua_setUnderLineStyle:location:length:",MLNUIStyleString)
-LUA_EXPORT_METHOD(showAsImage,"lua_showAsImageWithSize:",MLNUIStyleString)
-LUA_EXPORT_METHOD(append, "lua_append:", MLNUIStyleString)
+LUA_EXPORT_METHOD(fontName,"luaui_setFontName:",MLNUIStyleString)
+LUA_EXPORT_METHOD(setFontNameForRange,"luaui_setFontName:location:length:",MLNUIStyleString)
+LUA_EXPORT_METHOD(fontSize,"luaui_setFontSize:",MLNUIStyleString)
+LUA_EXPORT_METHOD(setFontSizeForRange,"luaui_setFontSize:location:length:",MLNUIStyleString)
+LUA_EXPORT_METHOD(fontStyle,"luaui_setFontStyle:",MLNUIStyleString)
+LUA_EXPORT_METHOD(setFontStyleForRange,"luaui_setFontStyle:location:length:",MLNUIStyleString)
+LUA_EXPORT_METHOD(fontColor,"luaui_setFontColor:",MLNUIStyleString)
+LUA_EXPORT_METHOD(setFontColorForRange,"luaui_setFontColor:location:length:",MLNUIStyleString)
+LUA_EXPORT_METHOD(backgroundColor,"luaui_setBackgroundColor:",MLNUIStyleString)
+LUA_EXPORT_METHOD(setBackgroundColorForRange,"luaui_setBackgroundColor:location:length:",MLNUIStyleString)
+LUA_EXPORT_METHOD(underline,"luaui_setUnderLineStyle:",MLNUIStyleString)
+LUA_EXPORT_METHOD(setUnderlineForRange,"luaui_setUnderLineStyle:location:length:",MLNUIStyleString)
+LUA_EXPORT_METHOD(showAsImage,"luaui_showAsImageWithSize:",MLNUIStyleString)
+LUA_EXPORT_METHOD(append, "luaui_append:", MLNUIStyleString)
 LUA_EXPORT_METHOD(calculateSize, "calculateSize:", MLNUIStyleString)
-LUA_EXPORT_METHOD(sizeThatFits, "lua_sizeThatFits:", MLNUIStyleString)
-LUA_EXPORT_METHOD(setText, "lua_setText:", MLNUIStyleString)
-LUA_EXPORT_METHOD(imageAlign, "lua_setImageAlignType:", MLNUIStyleString)
-LUA_EXPORT_END(MLNUIStyleString, StyleString, NO, NULL, "initWithLuaCore:string:")
+LUA_EXPORT_METHOD(sizeThatFits, "luaui_sizeThatFits:", MLNUIStyleString)
+LUA_EXPORT_METHOD(setText, "luaui_setText:", MLNUIStyleString)
+LUA_EXPORT_METHOD(imageAlign, "luaui_setImageAlignType:", MLNUIStyleString)
+LUA_EXPORT_END(MLNUIStyleString, StyleString, NO, NULL, "initWithMLNUILuaCore:string:")
 
 @end
 

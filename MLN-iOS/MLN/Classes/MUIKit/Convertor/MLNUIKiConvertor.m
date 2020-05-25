@@ -20,7 +20,7 @@
 
 - (int)pushNativeObject:(id)obj error:(NSError *__autoreleasing *)error
 {
-    if ([obj mln_nativeType] == MLNUINativeTypeColor) {
+    if ([obj mlnui_nativeType] == MLNUINativeTypeColor) {
         obj = [[MLNUIColor alloc] initWithColor:(UIColor *)obj];
     }
     return [super pushNativeObject:obj error:error];

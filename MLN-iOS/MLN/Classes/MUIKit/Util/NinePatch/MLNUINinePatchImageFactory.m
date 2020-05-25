@@ -16,15 +16,15 @@ typedef enum NSInteger{
 
 @interface MLNUINinePatchImageFactory()
 
-+ (NSArray*)mln_getRGBAsFromImage:(UIImage*)image atX:(int)xx andY:(int)yy count:(int)count;
-+ (UIImage*)mln_createResizableImageFromNinePatchImage:(UIImage*)ninePatchImage imgViewSize:(CGSize)imgViewSize;
++ (NSArray*)mlnui_getRGBAsFromImage:(UIImage*)image atX:(int)xx andY:(int)yy count:(int)count;
++ (UIImage*)mlnui_createResizableImageFromNinePatchImage:(UIImage*)ninePatchImage imgViewSize:(CGSize)imgViewSize;
 
 @end
 
 @implementation MLNUINinePatchImageFactory
 
 
-+ (NSArray*)mln_getRGBAsFromImage:(UIImage*)image atX:(int)xx andY:(int)yy count:(int)count
++ (NSArray*)mlnui_getRGBAsFromImage:(UIImage*)image atX:(int)xx andY:(int)yy count:(int)count
 {
     NSMutableArray* result = [NSMutableArray arrayWithCapacity:count];
     
@@ -63,7 +63,7 @@ typedef enum NSInteger{
     return result;
 }
 
-+ (UIImage*)mln_createResizableNinePatchImageNamed:(NSString*)name  imgViewSize:(CGSize)imgViewSize
++ (UIImage*)mlnui_createResizableNinePatchImageNamed:(NSString*)name  imgViewSize:(CGSize)imgViewSize
 {
 //    MLNUILuaAssert([name hasSuffix:@".9"],@"The image name is not ended with .9");
     NSString* fixedImageFilename = [NSString stringWithFormat:@"%@%@", name, @".png"];
@@ -77,21 +77,21 @@ typedef enum NSInteger{
         oriImage = ori2xImage;
     }
     
-    return [self mln_createResizableImageFromNinePatchImage:oriImage imgViewSize:(CGSize)imgViewSize];
+    return [self mlnui_createResizableImageFromNinePatchImage:oriImage imgViewSize:(CGSize)imgViewSize];
 }
 
-+ (UIImage *)mln_createResizableNinePatchImage:(UIImage*)image imgViewSize:(CGSize)imgViewSize
++ (UIImage *)mlnui_createResizableNinePatchImage:(UIImage*)image imgViewSize:(CGSize)imgViewSize
 {
-    return [self mln_createResizableImageFromNinePatchImage:image imgViewSize:(CGSize)imgViewSize];
+    return [self mlnui_createResizableImageFromNinePatchImage:image imgViewSize:(CGSize)imgViewSize];
 }
 
-+ (UIImage *)mln_createResizableImageFromNinePatchImage:(UIImage*)ninePatchImage imgViewSize:(CGSize)imgViewSize
++ (UIImage *)mlnui_createResizableImageFromNinePatchImage:(UIImage*)ninePatchImage imgViewSize:(CGSize)imgViewSize
 {
     NSInteger scale = ninePatchImage.scale;
     CGSize realSize = CGSizeMake(ninePatchImage.size.width * scale, ninePatchImage.size.height * scale);
     
     MLNUINinePathTpe type = MLNUINinePathTpeNormal;
-    NSArray* rgbaImage = [self mln_getRGBAsFromImage:ninePatchImage atX:0 andY:0 count:realSize.width * realSize.height];
+    NSArray* rgbaImage = [self mlnui_getRGBAsFromImage:ninePatchImage atX:0 andY:0 count:realSize.width * realSize.height];
     NSArray* topBarRgba = [rgbaImage subarrayWithRange:NSMakeRange(1, realSize.width - 2)];
     NSMutableArray* leftBarRgba = [NSMutableArray arrayWithCapacity:0];
     int count = (int)[rgbaImage count];
@@ -157,16 +157,16 @@ typedef enum NSInteger{
     left /= scale;
     bottom  /= scale;
     right /= scale;
-    UIImage* cropImage = [ninePatchImage mln_crop:CGRectMake(1, 1, ninePatchImage.size.width - 2, ninePatchImage.size.height - 2)];
+    UIImage* cropImage = [ninePatchImage mlnui_crop:CGRectMake(1, 1, ninePatchImage.size.width - 2, ninePatchImage.size.height - 2)];
     switch (type) {
         case MLNUINinePathTpeVerticalCenter:
         {
-            return [cropImage mln_stretchVerticalWithContainerSize:imgViewSize image:cropImage topCap:top leftCap:left bottomCap:bottom rightCap:right];
+            return [cropImage mlnui_stretchVerticalWithContainerSize:imgViewSize image:cropImage topCap:top leftCap:left bottomCap:bottom rightCap:right];
              break;
         }
            case MLNUINinePathTpeHorizontalCenter:
         {
-            return [cropImage mln_stretchHorizontalWithContainerSize:imgViewSize image:cropImage topCap:top leftCap:left bottomCap:bottom rightCap:right];
+            return [cropImage mlnui_stretchHorizontalWithContainerSize:imgViewSize image:cropImage topCap:top leftCap:left bottomCap:bottom rightCap:right];
             break;
         }
         default:
@@ -180,7 +180,7 @@ typedef enum NSInteger{
 
 @implementation UIImage (MLNUINineCrop)
 
-- (UIImage*)mln_crop:(CGRect)rect
+- (UIImage*)mlnui_crop:(CGRect)rect
 {
     rect = CGRectMake(rect.origin.x * self.scale,
                       rect.origin.y * self.scale,
@@ -195,7 +195,7 @@ typedef enum NSInteger{
     return result;
 }
 
-- (UIImage *)mln_stretchHorizontalWithContainerSize:(CGSize)imageViewSize image:(UIImage *)originImage topCap:(NSInteger)top leftCap:(NSInteger)left bottomCap:(NSInteger)bottom rightCap:(NSInteger)right {
+- (UIImage *)mlnui_stretchHorizontalWithContainerSize:(CGSize)imageViewSize image:(UIImage *)originImage topCap:(NSInteger)top leftCap:(NSInteger)left bottomCap:(NSInteger)bottom rightCap:(NSInteger)right {
     
     CGSize imageSize = originImage.size;
     CGSize bgSize = CGSizeMake(imageViewSize.width, imageViewSize.height); //imageView的宽高取整，否则会出现横竖两条缝
@@ -215,7 +215,7 @@ typedef enum NSInteger{
     return secondStrechImage;
 }
 
-- (UIImage *)mln_stretchVerticalWithContainerSize:(CGSize)imageViewSize image:(UIImage *)originImage topCap:(NSInteger)top leftCap:(NSInteger)left bottomCap:(NSInteger)bottom rightCap:(NSInteger)right {
+- (UIImage *)mlnui_stretchVerticalWithContainerSize:(CGSize)imageViewSize image:(UIImage *)originImage topCap:(NSInteger)top leftCap:(NSInteger)left bottomCap:(NSInteger)bottom rightCap:(NSInteger)right {
     
     CGSize imageSize = originImage.size;
     CGSize bgSize = CGSizeMake(imageViewSize.width, imageViewSize.height); //imageView的宽高取整，否则会出现横竖两条缝

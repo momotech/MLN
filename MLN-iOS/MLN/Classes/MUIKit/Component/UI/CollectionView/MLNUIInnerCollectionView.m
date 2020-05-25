@@ -10,14 +10,14 @@
 
 @implementation MLNUIInnerCollectionView
 
-- (BOOL)mln_isConvertible
+- (BOOL)mlnui_isConvertible
 {
-    return [self.containerView mln_isConvertible];
+    return [self.containerView mlnui_isConvertible];
 }
 
-- (MLNUILuaCore *)mln_luaCore
+- (MLNUILuaCore *)mlnui_luaCore
 {
-    return self.containerView.mln_luaCore;
+    return self.containerView.mlnui_luaCore;
 }
 
 @end

@@ -21,21 +21,21 @@
 
 @implementation MLNUIApplication
 
-+ (void)mln_addEnterForegroundCallback:(MLNUIBlock *)callback
++ (void)mlnui_addEnterForegroundCallback:(MLNUIBlock *)callback
 {
     if (!callback) {
         return;
     }
-    MLNUIApplication *application = MLNUI_KIT_INSTANCE(self.mln_currentLuaCore).instanceHandlersManager.application;
+    MLNUIApplication *application = MLNUI_KIT_INSTANCE(self.mlnui_currentLuaCore).instanceHandlersManager.application;
     [application addEnterForegroundCallback:callback];
 }
 
-+ (void)mln_addEnterBackgroundCallback:(MLNUIBlock *)callback
++ (void)mlnui_addEnterBackgroundCallback:(MLNUIBlock *)callback
 {
     if (!callback) {
         return;
     }
-    MLNUIApplication *application = MLNUI_KIT_INSTANCE(self.mln_currentLuaCore).instanceHandlersManager.application;
+    MLNUIApplication *application = MLNUI_KIT_INSTANCE(self.mlnui_currentLuaCore).instanceHandlersManager.application;
     [application addEnterBackgroundCallback:callback];
 }
 
@@ -81,8 +81,8 @@
 
 #pragma mark - Setup For Lua
 LUA_EXPORT_STATIC_BEGIN(MLNUIApplication)
-LUA_EXPORT_STATIC_METHOD(setForeground2BackgroundCallback, "mln_addEnterBackgroundCallback:", MLNUIApplication)
-LUA_EXPORT_STATIC_METHOD(setBackground2ForegroundCallback, "mln_addEnterForegroundCallback:", MLNUIApplication)
+LUA_EXPORT_STATIC_METHOD(setForeground2BackgroundCallback, "mlnui_addEnterBackgroundCallback:", MLNUIApplication)
+LUA_EXPORT_STATIC_METHOD(setBackground2ForegroundCallback, "mlnui_addEnterForegroundCallback:", MLNUIApplication)
 LUA_EXPORT_STATIC_END(MLNUIApplication, Application, NO, NULL)
 
 @end

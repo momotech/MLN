@@ -10,7 +10,7 @@
 
 @implementation NSArray (MLNUICore)
 
-- (MLNUINativeType)mln_nativeType
+- (MLNUINativeType)mlnui_nativeType
 {
     return MLNUINativeTypeArray;
 }

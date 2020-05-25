@@ -49,37 +49,37 @@
     return self;
 }
 
-- (void)lua_setLineSpacing:(CGFloat)lineSpacing
+- (void)luaui_setLineSpacing:(CGFloat)lineSpacing
 {
     self.lineSpacing = lineSpacing;
 }
 
-- (CGFloat)lua_lineSpacing
+- (CGFloat)luaui_lineSpacing
 {
     return self.lineSpacing;
 }
 
-- (void)lua_setItemSpacing:(CGFloat)itemSpacing
+- (void)luaui_setItemSpacing:(CGFloat)itemSpacing
 {
     self.itemSpacing = itemSpacing;
 }
 
-- (CGFloat)lua_itemSpacing
+- (CGFloat)luaui_itemSpacing
 {
     return self.itemSpacing;
 }
 
-- (void)lua_setlayoutInset:(CGFloat)top left:(CGFloat)left bottom:(CGFloat)bottom  right:(CGFloat)right
+- (void)luaui_setlayoutInset:(CGFloat)top left:(CGFloat)left bottom:(CGFloat)bottom  right:(CGFloat)right
 {
     self.layoutInset = UIEdgeInsetsMake(top, left, bottom, right);
 }
 
-- (void)lua_setSpanCount:(NSUInteger)spanCount
+- (void)luaui_setSpanCount:(NSUInteger)spanCount
 {
     self.spanCount = spanCount;
 }
 
-- (NSInteger)lua_spanCount
+- (NSInteger)luaui_spanCount
 {
     return self.spanCount;
 }
@@ -147,12 +147,12 @@ static MLNUI_FORCE_INLINE void layoutItemForIndexPath(const __unsafe_unretained 
 
 static MLNUI_FORCE_INLINE void layoutItemHorizontallyForIndexPath(const __unsafe_unretained MLNUICollectionViewGridLayout *selfRef, const __unsafe_unretained NSIndexPath *indexPath)
 {
-    MLNUILuaAssert(selfRef.mln_luaCore, [selfRef.collectionView.delegate respondsToSelector:@selector(collectionView:layout:sizeForItemAtIndexPath:)], @"It must implment sizeForCell method");
+    MLNUILuaAssert(selfRef.mlnui_luaCore, [selfRef.collectionView.delegate respondsToSelector:@selector(collectionView:layout:sizeForItemAtIndexPath:)], @"It must implment sizeForCell method");
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wincompatible-pointer-types-discards-qualifiers"
     CGSize cellSize = [(id<MLNUICollectionViewGridLayoutDelegate>)selfRef.collectionView.delegate collectionView:selfRef.collectionView layout:selfRef sizeForItemAtIndexPath:indexPath];
 #pragma clang diagnostic pop
-    MLNUILuaAssert(selfRef.mln_luaCore, cellSize.width <= selfRef.collectionView.frame.size.width - selfRef.layoutInset.left - selfRef.layoutInset.right, @"The sum of cellWidth，leftInset，rightInset should not bigger than the width of collectionView");
+    MLNUILuaAssert(selfRef.mlnui_luaCore, cellSize.width <= selfRef.collectionView.frame.size.width - selfRef.layoutInset.left - selfRef.layoutInset.right, @"The sum of cellWidth，leftInset，rightInset should not bigger than the width of collectionView");
     
     // 2.1 记录当前行数、列数
     NSInteger currentCol = [selfRef col];
@@ -209,12 +209,12 @@ static MLNUI_FORCE_INLINE void layoutItemHorizontallyForIndexPath(const __unsafe
 
 static MLNUI_FORCE_INLINE void layoutItemVerticallyForIndexPath(const __unsafe_unretained MLNUICollectionViewGridLayout *selfRef, const __unsafe_unretained NSIndexPath *indexPath)
 {
-    MLNUILuaAssert(selfRef.mln_luaCore, [selfRef.collectionView.delegate respondsToSelector:@selector(collectionView:layout:sizeForItemAtIndexPath:)], @"It must implment sizeForCell method");
+    MLNUILuaAssert(selfRef.mlnui_luaCore, [selfRef.collectionView.delegate respondsToSelector:@selector(collectionView:layout:sizeForItemAtIndexPath:)], @"It must implment sizeForCell method");
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wincompatible-pointer-types-discards-qualifiers"
     CGSize cellSize = [(id<MLNUICollectionViewGridLayoutDelegate>)selfRef.collectionView.delegate collectionView:selfRef.collectionView layout:selfRef sizeForItemAtIndexPath:indexPath];
 #pragma clang diagnostic pop
-    MLNUILuaAssert(selfRef.mln_luaCore, cellSize.height <= selfRef.collectionView.frame.size.height - selfRef.layoutInset.top - selfRef.layoutInset.bottom, @"The sum of cellHeight，topInset，bottomInset should not bigger than the height of collectionView");
+    MLNUILuaAssert(selfRef.mlnui_luaCore, cellSize.height <= selfRef.collectionView.frame.size.height - selfRef.layoutInset.top - selfRef.layoutInset.bottom, @"The sum of cellHeight，topInset，bottomInset should not bigger than the height of collectionView");
     
     // 2.1 记录当前行数、列数
     NSInteger currentCol = selfRef->_col;
@@ -395,10 +395,10 @@ static MLNUI_FORCE_INLINE bool currentIndexGridIsEnoughForCellSize(const __unsaf
 
 #pragma mark - Export For Lua
 LUA_EXPORT_BEGIN(MLNUICollectionViewGridLayout)
-LUA_EXPORT_PROPERTY(lineSpacing, "lua_setLineSpacing:","lua_lineSpacing", MLNUICollectionViewGridLayout)
-LUA_EXPORT_PROPERTY(itemSpacing, "lua_setItemSpacing:","lua_itemSpacing", MLNUICollectionViewGridLayout)
-LUA_EXPORT_PROPERTY(spanCount, "lua_setSpanCount:","lua_spanCount", MLNUICollectionViewGridLayout)
-LUA_EXPORT_METHOD(layoutInset, "lua_setlayoutInset:left:bottom:right:", MLNUICollectionViewGridLayout)
+LUA_EXPORT_PROPERTY(lineSpacing, "luaui_setLineSpacing:","luaui_lineSpacing", MLNUICollectionViewGridLayout)
+LUA_EXPORT_PROPERTY(itemSpacing, "luaui_setItemSpacing:","luaui_itemSpacing", MLNUICollectionViewGridLayout)
+LUA_EXPORT_PROPERTY(spanCount, "luaui_setSpanCount:","luaui_spanCount", MLNUICollectionViewGridLayout)
+LUA_EXPORT_METHOD(layoutInset, "luaui_setlayoutInset:left:bottom:right:", MLNUICollectionViewGridLayout)
 LUA_EXPORT_END(MLNUICollectionViewGridLayout, CollectionLayout, NO, NULL, NULL)
 
 @end

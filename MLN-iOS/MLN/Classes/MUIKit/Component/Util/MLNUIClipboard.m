@@ -11,17 +11,17 @@
 
 @implementation MLNUIClipboard
 
-+ (void)lua_setText:(NSString *)text
++ (void)luaui_setText:(NSString *)text
 {
     [UIPasteboard generalPasteboard].string = text?:@"";
 }
 
-+ (NSString *)lua_getText
++ (NSString *)luaui_getText
 {
     return [UIPasteboard generalPasteboard].string;
 }
 
-+ (void)lua_setText:(NSString *)text clipboardName:(NSString *)name
++ (void)luaui_setText:(NSString *)text clipboardName:(NSString *)name
 {
     MLNUIStaticCheckStringTypeAndNilValue(text)
     MLNUIStaticCheckStringTypeAndNilValue(name)
@@ -35,7 +35,7 @@
      clipboard.string = text;
 }
 
-+ (NSString *)lua_getTextWithClipboardName:(NSString *)name
++ (NSString *)luaui_getTextWithClipboardName:(NSString *)name
 {
     MLNUIStaticCheckStringTypeAndNilValue(name)
     UIPasteboard *clipboard = nil;
@@ -48,9 +48,9 @@
 
 #pragma mark - Setup For Lua
 LUA_EXPORT_STATIC_BEGIN(MLNUIClipboard)
-LUA_EXPORT_STATIC_METHOD(setText, "lua_setText:", MLNUIClipboard)
-LUA_EXPORT_STATIC_METHOD(getText, "lua_getText", MLNUIClipboard)
-LUA_EXPORT_STATIC_METHOD(setTextWithClipboardName, "lua_setText:clipboardName:", MLNUIClipboard)
-LUA_EXPORT_STATIC_METHOD(getTextWithClipboardName, "lua_getTextWithClipboardName:", MLNUIClipboard)
+LUA_EXPORT_STATIC_METHOD(setText, "luaui_setText:", MLNUIClipboard)
+LUA_EXPORT_STATIC_METHOD(getText, "luaui_getText", MLNUIClipboard)
+LUA_EXPORT_STATIC_METHOD(setTextWithClipboardName, "luaui_setText:clipboardName:", MLNUIClipboard)
+LUA_EXPORT_STATIC_METHOD(getTextWithClipboardName, "luaui_getTextWithClipboardName:", MLNUIClipboard)
 LUA_EXPORT_STATIC_END(MLNUIClipboard, Clipboard, NO, NULL)
 @end

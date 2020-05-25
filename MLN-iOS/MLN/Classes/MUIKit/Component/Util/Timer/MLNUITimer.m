@@ -29,10 +29,10 @@ typedef enum : NSUInteger {
 
 @implementation MLNUITimer
 
-- (void)mln_user_data_dealloc
+- (void)mlnui_user_data_dealloc
 {
     [self stop];
-    [super mln_user_data_dealloc];
+    [super mlnui_user_data_dealloc];
 }
 
 - (void)startWithCallback:(MLNUIBlock *)callback

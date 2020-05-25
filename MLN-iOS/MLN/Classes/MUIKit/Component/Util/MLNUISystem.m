@@ -14,38 +14,38 @@
 
 @implementation MLNUISystem
 
-+ (NSString *)lua_osVersion
++ (NSString *)luaui_osVersion
 {
     return [[UIDevice currentDevice] systemVersion];
 }
 
-+ (NSInteger)lua_OSVersionInt
++ (NSInteger)luaui_OSVersionInt
 {
     NSString *systemVersion = [[UIDevice currentDevice] systemVersion];
     return [[systemVersion componentsSeparatedByString:@"."].firstObject integerValue];
 }
 
-+ (NSString *)lua_sdkVersion
++ (NSString *)luaui_sdkVersion
 {
     return @MLNUI_SDK_VERSION;
 }
 
-+ (NSInteger)lua_sdkVersionInt
++ (NSInteger)luaui_sdkVersionInt
 {
     return MLNUI_SDK_VERSION_INT;
 }
 
-+ (BOOL)lua_iOS
++ (BOOL)luaui_iOS
 {
     return YES;
 }
 
-+ (BOOL)lua_Android
++ (BOOL)luaui_Android
 {
     return NO;
 }
 
-+ (void)lua_asyncDoInMain:(MLNUIBlock *)callback
++ (void)luaui_asyncDoInMain:(MLNUIBlock *)callback
 {
     dispatch_async(dispatch_get_main_queue(), ^{
         if (!callback) return ;
@@ -54,27 +54,27 @@
 }
 
 
-+ (CGFloat)lua_scale
++ (CGFloat)luaui_scale
 {
     return [UIScreen mainScreen].scale;
 }
 
-+ (CGSize)lua_screenSize
++ (CGSize)luaui_screenSize
 {
     return [UIScreen mainScreen].bounds.size;
 }
 
-+ (CGFloat)lua_navBarHeight
++ (CGFloat)luaui_navBarHeight
 {
     return 44.f;
 }
 
-+ (CGFloat)lua_stateBarHeight
++ (CGFloat)luaui_stateBarHeight
 {
     return CGRectGetHeight([[UIApplication sharedApplication] statusBarFrame]);
 }
 
-+ (CGFloat)lua_homeIndicatorHeight
++ (CGFloat)luaui_homeIndicatorHeight
 {
     static CGFloat height;
     static dispatch_once_t onceToken;
@@ -88,7 +88,7 @@
     return height;
 }
 
-+ (CGFloat)lua_tabBarHeight
++ (CGFloat)luaui_tabBarHeight
 {
     return  49.f;
 }
@@ -103,17 +103,17 @@
     return x;
 }
 
-+ (NSString *)lua_deviceInfo
++ (NSString *)luaui_deviceInfo
 {
     return [MLNUIDevice platform];
 }
 
-+ (void)lua_layerMode:(BOOL)on
++ (void)luaui_layerMode:(BOOL)on
 {
     [[UIApplication sharedApplication] setIdleTimerDisabled:on] ;
 }
 
-+ (void)lua_setTimeOut:(MLNUIBlock *)task delay:(NSTimeInterval)delay
++ (void)luaui_setTimeOut:(MLNUIBlock *)task delay:(NSTimeInterval)delay
 {
     MLNUIStaticCheckTypeAndNilValue(task, @"callback", MLNUIBlock);
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delay * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
@@ -123,12 +123,12 @@
     });
 }
 
-+ (MLNUINetworkStatus)lua_netWorkType
++ (MLNUINetworkStatus)luaui_netWorkType
 {
     return [[MLNUINetworkReachabilityManager sharedManager] networkStatus];
 }
 
-+ (void)lua_setOnNetworkStateChange:(MLNUIBlock *)callback
++ (void)luaui_setOnNetworkStateChange:(MLNUIBlock *)callback
 {
     MLNUIStaticCheckTypeAndNilValue(callback, @"callback", MLNUIBlock);
     [[MLNUINetworkReachabilityManager sharedManager] addNetworkChangedCallback:^(MLNUINetworkStatus status) {
@@ -139,19 +139,19 @@
     }];
 }
 
-+ (void)lua_switchFullscreen:(BOOL)fullscreen {
++ (void)luaui_switchFullscreen:(BOOL)fullscreen {
     [[UIApplication sharedApplication] setStatusBarHidden:fullscreen];
 }
 
-+ (void)lua_showStatusBar {
++ (void)luaui_showStatusBar {
     [self _dealWithStatusBar:NO];
 }
 
-+ (void)lua_hideStatusBar {
++ (void)luaui_hideStatusBar {
     [self _dealWithStatusBar:YES];
 }
 
-+ (void)lua_changeBrightness:(NSInteger)brightness
++ (void)luaui_changeBrightness:(NSInteger)brightness
 {
     if ( brightness < 1) {
         brightness = 1;
@@ -162,7 +162,7 @@
     [UIScreen mainScreen].brightness = brightness / 255.0;
 }
 
-+ (NSInteger)lua_brightness
++ (NSInteger)luaui_brightness
 {
     return (int)([UIScreen mainScreen].brightness * 255.0);
 }
@@ -185,28 +185,28 @@
 
 #pragma mark - Setup For Lua
 LUA_EXPORT_STATIC_BEGIN(MLNUISystem)
-LUA_EXPORT_STATIC_METHOD(OSVersion, "lua_osVersion", MLNUISystem)
-LUA_EXPORT_STATIC_METHOD(SDKVersion, "lua_sdkVersion", MLNUISystem)
-LUA_EXPORT_STATIC_METHOD(SDKVersionInt, "lua_sdkVersionInt", MLNUISystem)
-LUA_EXPORT_STATIC_METHOD(OSVersionInt, "lua_OSVersionInt", MLNUISystem)
-LUA_EXPORT_STATIC_METHOD(iOS, "lua_iOS", MLNUISystem)
-LUA_EXPORT_STATIC_METHOD(Android, "lua_Android", MLNUISystem)
-LUA_EXPORT_STATIC_METHOD(asyncDoInMain, "lua_asyncDoInMain:", MLNUISystem)
-LUA_EXPORT_STATIC_METHOD(scale, "lua_scale", MLNUISystem)
-LUA_EXPORT_STATIC_METHOD(screenSize, "lua_screenSize", MLNUISystem)
-LUA_EXPORT_STATIC_METHOD(navBarHeight, "lua_navBarHeight", MLNUISystem)
-LUA_EXPORT_STATIC_METHOD(stateBarHeight, "lua_stateBarHeight", MLNUISystem)
-LUA_EXPORT_STATIC_METHOD(homeIndicatorHeight, "lua_homeIndicatorHeight", MLNUISystem)
-LUA_EXPORT_STATIC_METHOD(deviceInfo, "lua_deviceInfo", MLNUISystem)
-LUA_EXPORT_STATIC_METHOD(tabBarHeight, "lua_tabBarHeight", MLNUISystem)
-LUA_EXPORT_STATIC_METHOD(setTimeOut, "lua_setTimeOut:delay:", MLNUISystem)
-LUA_EXPORT_STATIC_METHOD(networkState, "lua_netWorkType", MLNUISystem)
-LUA_EXPORT_STATIC_METHOD(switchFullscreen, "lua_switchFullscreen:", MLNUISystem)
-LUA_EXPORT_STATIC_METHOD(setOnNetworkStateChange, "lua_setOnNetworkStateChange:", MLNUISystem)
-LUA_EXPORT_STATIC_METHOD(showStatusBar, "lua_showStatusBar", MLNUISystem)
-LUA_EXPORT_STATIC_METHOD(hideStatusBar, "lua_hideStatusBar", MLNUISystem)
-LUA_EXPORT_STATIC_METHOD(changeBright, "lua_changeBrightness:", MLNUISystem)
-LUA_EXPORT_STATIC_METHOD(getBright, "lua_brightness", MLNUISystem) 
+LUA_EXPORT_STATIC_METHOD(OSVersion, "luaui_osVersion", MLNUISystem)
+LUA_EXPORT_STATIC_METHOD(SDKVersion, "luaui_sdkVersion", MLNUISystem)
+LUA_EXPORT_STATIC_METHOD(SDKVersionInt, "luaui_sdkVersionInt", MLNUISystem)
+LUA_EXPORT_STATIC_METHOD(OSVersionInt, "luaui_OSVersionInt", MLNUISystem)
+LUA_EXPORT_STATIC_METHOD(iOS, "luaui_iOS", MLNUISystem)
+LUA_EXPORT_STATIC_METHOD(Android, "luaui_Android", MLNUISystem)
+LUA_EXPORT_STATIC_METHOD(asyncDoInMain, "luaui_asyncDoInMain:", MLNUISystem)
+LUA_EXPORT_STATIC_METHOD(scale, "luaui_scale", MLNUISystem)
+LUA_EXPORT_STATIC_METHOD(screenSize, "luaui_screenSize", MLNUISystem)
+LUA_EXPORT_STATIC_METHOD(navBarHeight, "luaui_navBarHeight", MLNUISystem)
+LUA_EXPORT_STATIC_METHOD(stateBarHeight, "luaui_stateBarHeight", MLNUISystem)
+LUA_EXPORT_STATIC_METHOD(homeIndicatorHeight, "luaui_homeIndicatorHeight", MLNUISystem)
+LUA_EXPORT_STATIC_METHOD(deviceInfo, "luaui_deviceInfo", MLNUISystem)
+LUA_EXPORT_STATIC_METHOD(tabBarHeight, "luaui_tabBarHeight", MLNUISystem)
+LUA_EXPORT_STATIC_METHOD(setTimeOut, "luaui_setTimeOut:delay:", MLNUISystem)
+LUA_EXPORT_STATIC_METHOD(networkState, "luaui_netWorkType", MLNUISystem)
+LUA_EXPORT_STATIC_METHOD(switchFullscreen, "luaui_switchFullscreen:", MLNUISystem)
+LUA_EXPORT_STATIC_METHOD(setOnNetworkStateChange, "luaui_setOnNetworkStateChange:", MLNUISystem)
+LUA_EXPORT_STATIC_METHOD(showStatusBar, "luaui_showStatusBar", MLNUISystem)
+LUA_EXPORT_STATIC_METHOD(hideStatusBar, "luaui_hideStatusBar", MLNUISystem)
+LUA_EXPORT_STATIC_METHOD(changeBright, "luaui_changeBrightness:", MLNUISystem)
+LUA_EXPORT_STATIC_METHOD(getBright, "luaui_brightness", MLNUISystem) 
 LUA_EXPORT_STATIC_END(MLNUISystem, System, NO, NULL)
 
 @end

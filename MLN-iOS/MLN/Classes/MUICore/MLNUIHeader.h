@@ -27,8 +27,8 @@ Lua强引用栈上指定位置的UserData
 @param USER_DATA UserData对应的原生对象
 */
 #define MLNUI_Lua_UserData_Retain_With_Index(INDEX, USER_DATA) \
-if ([((NSObject *)(USER_DATA)) mln_isConvertible]) {\
-    [((id<MLNUIEntityExportProtocol>)(USER_DATA)).mln_luaCore setStrongObjectWithIndex:(INDEX) cKey:(__bridge void *)(USER_DATA)];\
+if ([((NSObject *)(USER_DATA)) mlnui_isConvertible]) {\
+    [((id<MLNUIEntityExportProtocol>)(USER_DATA)).mlnui_luaCore setStrongObjectWithIndex:(INDEX) cKey:(__bridge void *)(USER_DATA)];\
 }
 
 /**
@@ -37,8 +37,8 @@ if ([((NSObject *)(USER_DATA)) mln_isConvertible]) {\
 @param USER_DATA UserData对应的原生对象
 */
 #define MLNUI_Lua_UserData_Release(USER_DATA) \
-if ([((NSObject *)(USER_DATA)) mln_isConvertible]) {\
-    [((id<MLNUIEntityExportProtocol>)(USER_DATA)).mln_luaCore removeStrongObjectForCKey:(__bridge void *)(USER_DATA)];\
+if ([((NSObject *)(USER_DATA)) mlnui_isConvertible]) {\
+    [((id<MLNUIEntityExportProtocol>)(USER_DATA)).mlnui_luaCore removeStrongObjectForCKey:(__bridge void *)(USER_DATA)];\
 }
 
 #if defined(__LP64__) && __LP64__
@@ -100,15 +100,15 @@ __VA_ARGS__;\
 /**
  强制类型检查
  */
-#define mln_lua_checkType(L_T, idx, TYPE_T) mln_lua_assert(L_T, lua_type(L_T, idx) == TYPE_T, @"%s expected, got %s", lua_typename(L_T, TYPE_T), luaL_typename(L_T, idx))
-#define mln_lua_checkboolean(L, idx) mln_lua_checkType(L, idx, LUA_TBOOLEAN);
-#define mln_lua_checkludata(L, idx) mln_lua_checkType(L, idx, LUA_TLIGHTUSERDATA);
-#define mln_lua_checknumber(L, idx) mln_lua_checkType(L, idx, LUA_TNUMBER);
-#define mln_lua_checkstring(L, idx) mln_lua_checkType(L, idx, LUA_TSTRING);
-#define mln_lua_checktable(L, idx) mln_lua_checkType(L, idx, LUA_TTABLE);
-#define mln_lua_checkfunc(L, idx) mln_lua_checkType(L, idx, LUA_TFUNCTION);
-#define mln_lua_checkudata(L, idx) mln_lua_checkType(L, idx, LUA_TUSERDATA);
-#define mln_lua_checkthread(L, idx) mln_lua_checkType(L, idx, LUA_TTHREAD);
+#define mlnui_luaui_checkType(L_T, idx, TYPE_T) mlnui_luaui_assert(L_T, lua_type(L_T, idx) == TYPE_T, @"%s expected, got %s", lua_typename(L_T, TYPE_T), luaL_typename(L_T, idx))
+#define mlnui_luaui_checkboolean(L, idx) mlnui_luaui_checkType(L, idx, LUA_TBOOLEAN);
+#define mlnui_luaui_checkludata(L, idx) mlnui_luaui_checkType(L, idx, LUA_TLIGHTUSERDATA);
+#define mlnui_luaui_checknumber(L, idx) mlnui_luaui_checkType(L, idx, LUA_TNUMBER);
+#define mlnui_luaui_checkstring(L, idx) mlnui_luaui_checkType(L, idx, LUA_TSTRING);
+#define mlnui_luaui_checktable(L, idx) mlnui_luaui_checkType(L, idx, LUA_TTABLE);
+#define mlnui_luaui_checkfunc(L, idx) mlnui_luaui_checkType(L, idx, LUA_TFUNCTION);
+#define mlnui_luaui_checkudata(L, idx) mlnui_luaui_checkType(L, idx, LUA_TUSERDATA);
+#define mlnui_luaui_checkthread(L, idx) mlnui_luaui_checkType(L, idx, LUA_TTHREAD);
 
 #define MLNUIValueIsType(VALUE, TYPE) strcmp((VALUE).objCType, @encode(TYPE)) == 0
 #define MLNUIValueIsCGRect(VALUE) MLNUIValueIsType(VALUE, CGRect)
@@ -154,7 +154,7 @@ error_tt = [error_tt stringByAppendingString:[LUA_CORE traceback]];\
  @param format 字符拼接格式
  @param ... 可变参数
  */
-#define mln_lua_assert(L, condition, format, ...)\
+#define mlnui_luaui_assert(L, condition, format, ...)\
 if ([MLNUI_LUA_CORE((L)).errorHandler canHandleAssert:MLNUI_LUA_CORE((L))] && !(condition)) {\
 MLNUICallAssertHandler(MLNUI_LUA_CORE((L)), format, ##__VA_ARGS__)\
 }
@@ -166,7 +166,7 @@ MLNUICallAssertHandler(MLNUI_LUA_CORE((L)), format, ##__VA_ARGS__)\
  @param format 字符拼接格式
  @param ... 可变参数
  */
-#define mln_lua_error(L, format, ...)\
+#define mlnui_luaui_error(L, format, ...)\
 MLNUICallErrorHandler(MLNUI_LUA_CORE((L)), format, ##__VA_ARGS__)\
 
 /**

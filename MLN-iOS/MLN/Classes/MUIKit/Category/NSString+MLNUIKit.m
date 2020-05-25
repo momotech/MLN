@@ -10,7 +10,7 @@
 
 @implementation NSString (MLNUIKit)
 
-- (NSDictionary *)mln_dictionaryFromQuery {
+- (NSDictionary *)mlnui_dictionaryFromQuery {
     NSCharacterSet *delimiterSet = [NSCharacterSet characterSetWithCharactersInString:@"&;#"];
     NSMutableDictionary *pairs = [NSMutableDictionary dictionary];
     NSScanner *scanner = [[NSScanner alloc] initWithString:self];
@@ -30,9 +30,9 @@
     return [NSDictionary dictionaryWithDictionary:pairs];
 }
 
-- (NSString *)mln_queryStringForKey:(NSString *)key
+- (NSString *)mlnui_queryStringForKey:(NSString *)key
 {
-    NSDictionary *dict = [self mln_dictionaryFromQuery];
+    NSDictionary *dict = [self mlnui_dictionaryFromQuery];
     if (dict.count) {
         return [dict valueForKey:key];
     }
@@ -44,7 +44,7 @@
  *
  *  @return 字典对象
  */
-- (NSDictionary *)mln_dictionaryWithContentFile
+- (NSDictionary *)mlnui_dictionaryWithContentFile
 {
     NSMutableDictionary *jsonDict = nil;
     NSString *jsonString = [[NSString alloc] initWithContentsOfFile:self encoding:NSUTF8StringEncoding error:nil];
@@ -58,12 +58,12 @@
     return jsonDict;
 }
 
-- (NSString *)mln_realURLPath
+- (NSString *)mlnui_realURLPath
 {
     return [[self componentsSeparatedByString:@"?"] firstObject];
 }
 
-- (NSString *)mln_md5
+- (NSString *)mlnui_md5
 {
     const char *str = [self UTF8String];
     if (str == NULL) {

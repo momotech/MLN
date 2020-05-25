@@ -226,7 +226,7 @@
     frame.size = view.frame.size;
     if ([view isKindOfClass:[UIScrollView class]]) {
         UIScrollView *scrollView =  (UIScrollView *)view;
-        frame.size = scrollView.mln_horizontal?CGSizeMake(MAX(scrollView.contentSize.width,frame.size.width), frame.size.height):CGSizeMake(frame.size.width, MAX(scrollView.contentSize.height,frame.size.height));
+        frame.size = scrollView.mlnui_horizontal?CGSizeMake(MAX(scrollView.contentSize.width,frame.size.width), frame.size.height):CGSizeMake(frame.size.width, MAX(scrollView.contentSize.height,frame.size.height));
     }
     return frame;
 }

@@ -15,7 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, weak) id<MLNUIEntityExportProtocol> containerView;
 
-- (MLNUILuaCore *)mln_luaCore;
+- (MLNUILuaCore *)mlnui_luaCore;
 
 @end
 

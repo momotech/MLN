@@ -28,7 +28,7 @@
  */
 #define onExit \
     try {} @finally {} \
-    __strong mln_cleanupBlock_t metamacro_concat(mln_exitBlock_, __LINE__) __attribute__((cleanup(mln_executeCleanupBlock), unused)) = ^
+    __strong mlnui_cleanupBlock_t metamacro_concat(mlnui_exitBlock_, __LINE__) __attribute__((cleanup(mlnui_executeCleanupBlock), unused)) = ^
 
 /**
  * Creates \c __weak shadow variables for each of the variables provided as
@@ -42,7 +42,7 @@
  */
 #define weakify(...) \
     try {} @finally {} \
-    metamacro_foreach_cxt(mln_weakify_,, __weak, __VA_ARGS__)
+    metamacro_foreach_cxt(mlnui_weakify_,, __weak, __VA_ARGS__)
 
 /**
  * Like #weakify, but uses \c __unsafe_unretained instead, for targets or
@@ -50,7 +50,7 @@
  */
 #define unsafeify(...) \
     try {} @finally {} \
-    metamacro_foreach_cxt(mln_weakify_,, __unsafe_unretained, __VA_ARGS__)
+    metamacro_foreach_cxt(mlnui_weakify_,, __unsafe_unretained, __VA_ARGS__)
 
 /**
  * Strongly references each of the variables provided as arguments, which must
@@ -82,16 +82,16 @@
     try {} @finally {} \
     _Pragma("clang diagnostic push") \
     _Pragma("clang diagnostic ignored \"-Wshadow\"") \
-    metamacro_foreach(mln_strongify_,, __VA_ARGS__) \
+    metamacro_foreach(mlnui_strongify_,, __VA_ARGS__) \
     _Pragma("clang diagnostic pop")
 
 /*** implementation details follow ***/
-typedef void (^mln_cleanupBlock_t)();
+typedef void (^mlnui_cleanupBlock_t)();
 
-void mln_executeCleanupBlock (__strong mln_cleanupBlock_t *block);
+void mlnui_executeCleanupBlock (__strong mlnui_cleanupBlock_t *block);
 
-#define mln_weakify_(INDEX, CONTEXT, VAR) \
+#define mlnui_weakify_(INDEX, CONTEXT, VAR) \
     CONTEXT __typeof__(VAR) metamacro_concat(VAR, _weak_) = (VAR);
 
-#define mln_strongify_(INDEX, VAR) \
+#define mlnui_strongify_(INDEX, VAR) \
     __strong __typeof__(VAR) VAR = metamacro_concat(VAR, _weak_);

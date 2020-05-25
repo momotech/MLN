@@ -16,22 +16,22 @@
 
 - (instancetype)initWithFrame:(CGRect)frame {
     if (self = [super initWithFrame:frame]) {
-        self.lua_weight = 1;
+        self.luaui_weight = 1;
     }
     return self;
 }
 
-- (BOOL)lua_isContainer {
+- (BOOL)luaui_isContainer {
     return NO;
 }
 
-- (BOOL)lua_layoutEnable {
+- (BOOL)luaui_layoutEnable {
     return YES;
 }
 
 #pragma mark - Export Lua
 
 LUA_EXPORT_VIEW_BEGIN(MLNUISpacer)
-LUA_EXPORT_VIEW_END(MLNUISpacer, Spacer, YES, "MLNUIView", "initWithLuaCore:frame:")
+LUA_EXPORT_VIEW_END(MLNUISpacer, Spacer, YES, "MLNUIView", "initWithMLNUILuaCore:frame:")
 
 @end

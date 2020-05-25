@@ -10,15 +10,15 @@
 
 #include "mln_lua.h"
 
-struct mln_objc_method ;
-typedef struct mln_objc_method *MLNUI_Method_List;
-struct mln_objc_class;
-typedef struct mln_objc_class *MLNUI_Class;
+struct mlnui_objc_method ;
+typedef struct mlnui_objc_method *MLNUI_Method_List;
+struct mlnui_objc_class;
+typedef struct mlnui_objc_class *MLNUI_Class;
 
 /**
  方法信息结构体
  */
-typedef struct mln_objc_method {
+typedef struct mlnui_objc_method {
     const char *l_mn;  /* Object-C method name in lua*/
     const char *mn; /* Object-C method name */
     const char *clz; /* Object-C class name */
@@ -26,12 +26,12 @@ typedef struct mln_objc_method {
     const char *setter_n; /* Object-C getter method name*/
     const char *getter_n; /* Object-C setter method name */
     lua_CFunction func; /* C function in lua */
-} mln_objc_method;
+} mlnui_objc_method;
 
 /**
  类描述信息结构体
  */
-typedef struct mln_objc_class {
+typedef struct mlnui_objc_class {
     const char *pkg; /* packge name */
     const char *clz; /* Object-C class name */
     const char *l_clz; /* Object-C class name in lua */
@@ -42,8 +42,8 @@ typedef struct mln_objc_class {
     BOOL hasConstructor; /* it should be NO if static class. */
     MLNUI_Method_List methods; /* Object-C method */
     MLNUI_Method_List clz_methods; /* Object-C class method */
-    struct mln_objc_method constructor; /* Object-C constructor method */
-} mln_objc_class;
+    struct mlnui_objc_method constructor; /* Object-C constructor method */
+} mlnui_objc_class;
 
 #define MLNUIHasSuperClass(clz) (!(clz)->isRoot)
 

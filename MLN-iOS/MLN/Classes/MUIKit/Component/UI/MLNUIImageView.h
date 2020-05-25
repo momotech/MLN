@@ -12,9 +12,9 @@ NS_ASSUME_NONNULL_BEGIN
 @class MLNUIBlock;
 @interface MLNUIImageView : UIImageView <MLNUIEntityExportProtocol>
 
-- (void)lua_setImageWith:(NSString *)imageName;
-- (void)lua_setImageWith:(NSString *)imageName placeHolderImage:(NSString *)placeHolder;
-- (void)lua_setImageWith:(NSString *)imageName placeHolderImage:(NSString *)placeHolder callback:(MLNUIBlock *)callback;
+- (void)luaui_setImageWith:(NSString *)imageName;
+- (void)luaui_setImageWith:(NSString *)imageName placeHolderImage:(NSString *)placeHolder;
+- (void)luaui_setImageWith:(NSString *)imageName placeHolderImage:(NSString *)placeHolder callback:(MLNUIBlock *)callback;
 
 @end
 

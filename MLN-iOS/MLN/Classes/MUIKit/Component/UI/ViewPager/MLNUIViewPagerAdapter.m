@@ -88,7 +88,7 @@
     NSString *reuseId = [self reuseIdAt:indexPath];
     [self registerCellClassIfNeed:collectionView reuseId:reuseId];
     MLNUICollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:reuseId forIndexPath:indexPath];
-    [cell pushContentViewWithLuaCore:self.mln_luaCore];
+    [cell pushContentViewWithLuaCore:self.mlnui_luaCore];
     if (!cell.isInited) {
         MLNUIBlock *initCallback = [self.initedCellCallbacks objectForKey:reuseId];
         MLNUIKitLuaAssert(initCallback, @"It must not be nil callback of cell init!");
@@ -110,52 +110,52 @@
 }
 
 #pragma mark -  Save Lua Callback
-- (void)lua_numberOfRowsInSection:(MLNUIBlock *)callback
+- (void)luaui_numberOfRowsInSection:(MLNUIBlock *)callback
 {
     self.rowNumbersCallback = callback;
 }
 
-- (void)lua_reuseIdWithCallback:(MLNUIBlock *)callback
+- (void)luaui_reuseIdWithCallback:(MLNUIBlock *)callback
 {
     self.cellReuseIdCallback = callback;
 }
 
-- (void)lua_initCellBy:(NSString *)reuseId callback:(MLNUIBlock *)callback
+- (void)luaui_initCellBy:(NSString *)reuseId callback:(MLNUIBlock *)callback
 {
     MLNUIKitLuaAssert(callback , @"The callback must not be nil!");
     MLNUIKitLuaAssert(reuseId && reuseId.length >0 , @"The reuse id must not be nil!");
     if (reuseId && reuseId.length >0) {
-        [self.initedCellCallbacks mln_setObject:callback forKey:reuseId];
+        [self.initedCellCallbacks mlnui_setObject:callback forKey:reuseId];
     }
 }
 
-- (void)lua_reuseCellBy:(NSString *)reuseId callback:(MLNUIBlock *)callback
+- (void)luaui_reuseCellBy:(NSString *)reuseId callback:(MLNUIBlock *)callback
 {
     MLNUIKitLuaAssert(callback , @"The callback must not be nil!");
     MLNUIKitLuaAssert(reuseId && reuseId.length >0 , @"The reuse id must not be nil!");
     if (reuseId && reuseId.length >0) {
-        [self.reuseCellCallbacks mln_setObject:callback forKey:reuseId];
+        [self.reuseCellCallbacks mlnui_setObject:callback forKey:reuseId];
     }
 }
 
-- (void)lua_initCellCallback:(MLNUIBlock *)callback
+- (void)luaui_initCellCallback:(MLNUIBlock *)callback
 {
-    [self lua_initCellBy:kMLNUICollectionViewCellReuseID callback:callback];
+    [self luaui_initCellBy:kMLNUICollectionViewCellReuseID callback:callback];
 }
 
-- (void)lua_reuseCellCallback:(MLNUIBlock *)callback
+- (void)luaui_reuseCellCallback:(MLNUIBlock *)callback
 {
-    [self lua_reuseCellBy:kMLNUICollectionViewCellReuseID callback:callback];
+    [self luaui_reuseCellBy:kMLNUICollectionViewCellReuseID callback:callback];
 }
 
 #pragma mark - Export For Lua
 LUA_EXPORT_BEGIN(MLNUIViewPagerAdapter)
-LUA_EXPORT_METHOD(getCount, "lua_numberOfRowsInSection:", MLNUIViewPagerAdapter)
-LUA_EXPORT_METHOD(reuseId, "lua_reuseIdWithCallback:", MLNUIViewPagerAdapter)
-LUA_EXPORT_METHOD(initCellByReuseId, "lua_initCellBy:callback:", MLNUIViewPagerAdapter)
-LUA_EXPORT_METHOD(fillCellDataByReuseId, "lua_reuseCellBy:callback:", MLNUIViewPagerAdapter)
-LUA_EXPORT_METHOD(initCell, "lua_initCellCallback:", MLNUIViewPagerAdapter)
-LUA_EXPORT_METHOD(fillCellData, "lua_reuseCellCallback:", MLNUIViewPagerAdapter)
+LUA_EXPORT_METHOD(getCount, "luaui_numberOfRowsInSection:", MLNUIViewPagerAdapter)
+LUA_EXPORT_METHOD(reuseId, "luaui_reuseIdWithCallback:", MLNUIViewPagerAdapter)
+LUA_EXPORT_METHOD(initCellByReuseId, "luaui_initCellBy:callback:", MLNUIViewPagerAdapter)
+LUA_EXPORT_METHOD(fillCellDataByReuseId, "luaui_reuseCellBy:callback:", MLNUIViewPagerAdapter)
+LUA_EXPORT_METHOD(initCell, "luaui_initCellCallback:", MLNUIViewPagerAdapter)
+LUA_EXPORT_METHOD(fillCellData, "luaui_reuseCellCallback:", MLNUIViewPagerAdapter)
 LUA_EXPORT_END(MLNUIViewPagerAdapter, ViewPagerAdapter, NO, NULL, NULL)
 
 @end

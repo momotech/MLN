@@ -25,7 +25,7 @@
 }
 
 - (void)imageView:(UIImageView<MLNUIEntityExportProtocol> *)imageView setImageWithPath:(NSString *)path placeHolderImage:(NSString *)placeHolder completed:(void(^)(UIImage *__nullable image, NSError *__nullable error, NSString *__nullable imagePath))completed {
-    UIImage *image = [self imageWithLocalPath:path instance:MLNUI_KIT_INSTANCE(imageView.mln_luaCore)];
+    UIImage *image = [self imageWithLocalPath:path instance:MLNUI_KIT_INSTANCE(imageView.mlnui_luaCore)];
     if (image) {
         [imageView setImage:image];
     }
@@ -54,13 +54,13 @@
             if (image) {
                 if (!isSynchronzied) {
                     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-                        UIImage* resizedImage = [MLNUINinePatchImageFactory mln_createResizableNinePatchImage:image imgViewSize:imgViewSize];
+                        UIImage* resizedImage = [MLNUINinePatchImageFactory mlnui_createResizableNinePatchImage:image imgViewSize:imgViewSize];
                         dispatch_async(dispatch_get_main_queue(), ^{
                             stImgView.image = resizedImage;
                         });
                     });
                 } else {
-                    stImgView.image = [MLNUINinePatchImageFactory mln_createResizableNinePatchImage:image imgViewSize:imgViewSize];
+                    stImgView.image = [MLNUINinePatchImageFactory mlnui_createResizableNinePatchImage:image imgViewSize:imgViewSize];
                 }
             } else {
                 wkImgView.image = nil;
@@ -69,7 +69,7 @@
 }
 
 - (void)button:(UIButton<MLNUIEntityExportProtocol> *)button setImageWithPath:(NSString *)path forState:(UIControlState)state {
-    UIImage *image =  [self imageWithLocalPath:path instance:MLNUI_KIT_INSTANCE(button.mln_luaCore)];
+    UIImage *image =  [self imageWithLocalPath:path instance:MLNUI_KIT_INSTANCE(button.mlnui_luaCore)];
     if (image) {
         [button setImage:image forState:state];
     }
@@ -77,7 +77,7 @@
 
 - (void)view:(UIView<MLNUIEntityExportProtocol> *)view loadImageWithPath:(NSString *)imagePath completed:(void(^)(UIImage *__nullable image, NSError *__nullable error, NSString *__nullable imagePath))completed {
     if (completed) {
-        UIImage *image = [self imageWithLocalPath:imagePath instance:MLNUI_KIT_INSTANCE(view.mln_luaCore)];
+        UIImage *image = [self imageWithLocalPath:imagePath instance:MLNUI_KIT_INSTANCE(view.mlnui_luaCore)];
         completed(image, nil, imagePath);
     }
 }

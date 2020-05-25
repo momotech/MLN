@@ -186,7 +186,7 @@
                                           [keyPath isEqualToString:kViewHidden] ||
                                           [keyPath isEqualToString:kViewAlpha]))) {
         [self resestSafeAreaInsets];
-        [self.safeAreaView lua_requestLayout];
+        [self.safeAreaView luaui_requestLayout];
     }
 }
 

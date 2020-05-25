@@ -74,7 +74,7 @@
 {
     BOOL shouldChange = YES;
     if ([self.internalTextViewDelegate respondsToSelector:@selector(internalTextView:shouldChangeTextInRange:replacementText:)]) {
-        shouldChange = [self.internalTextViewDelegate internalTextView:self shouldChangeTextInRange:[self mln_in_selectedRange] replacementText:@""];
+        shouldChange = [self.internalTextViewDelegate internalTextView:self shouldChangeTextInRange:[self mlnui_in_selectedRange] replacementText:@""];
     }
     if (shouldChange) {
         [super deleteBackward];
@@ -111,7 +111,7 @@
     
 }
 
-- (NSRange)mln_in_selectedRange
+- (NSRange)mlnui_in_selectedRange
 {
     UITextPosition* beginning = self.beginningOfDocument;
     
@@ -138,7 +138,7 @@
 
 - (NSRange)selectedRange
 {
-    return [self mln_in_selectedRange];
+    return [self mlnui_in_selectedRange];
 }
 
 

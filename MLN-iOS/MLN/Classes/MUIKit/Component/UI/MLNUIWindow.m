@@ -37,9 +37,9 @@
 
 @implementation MLNUIWindow
 
-- (instancetype)initWithLuaCore:(MLNUILuaCore *)luaCore frame:(CGRect)frame
+- (instancetype)initWithMLNUILuaCore:(MLNUILuaCore *)luaCore frame:(CGRect)frame
 {
-    self = [super initWithLuaCore:luaCore frame:frame];
+    self = [super initWithMLNUILuaCore:luaCore frame:frame];
     if (self) {
         [self addNotificationObservers];
     }
@@ -62,8 +62,8 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(enterForground:) name:UIApplicationWillEnterForegroundNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(enterBackground:) name:UIApplicationDidEnterBackgroundNotification object:nil];
     // Safe Area
-    UINavigationBar *navbar = MLNUI_KIT_INSTANCE(self.mln_luaCore).viewController.navigationController.navigationBar;
-    self.safeAreaProxy = [[MLNUISafeAreaProxy alloc] initWithSafeAreaView:self navigationBar:navbar viewController:MLNUI_KIT_INSTANCE(self.mln_luaCore).viewController];
+    UINavigationBar *navbar = MLNUI_KIT_INSTANCE(self.mlnui_luaCore).viewController.navigationController.navigationBar;
+    self.safeAreaProxy = [[MLNUISafeAreaProxy alloc] initWithSafeAreaView:self navigationBar:navbar viewController:MLNUI_KIT_INSTANCE(self.mlnui_luaCore).viewController];
 }
 
 - (void)enterForground:(NSNotification *)notification
@@ -121,85 +121,85 @@
 #pragma mark - luaSafeArea
 - (void)updateSafeAreaInsets:(UIEdgeInsets)safeAreaInsets
 {
-    MLNUILayoutWindowNode *node  = (MLNUILayoutWindowNode *)self.lua_node;
+    MLNUILayoutWindowNode *node  = (MLNUILayoutWindowNode *)self.luaui_node;
     node.safeAreaInsets = safeAreaInsets;
 }
 
-- (void)lua_setSafeAreaAdapter:(MLNUISafeAreaAdapter *)adapter
+- (void)luaui_setSafeAreaAdapter:(MLNUISafeAreaAdapter *)adapter
 {
     self.safeAreaProxy.adapter = adapter;
 }
 
-- (void)lua_setSafeArea:(MLNUISafeArea)safeArea
+- (void)luaui_setSafeArea:(MLNUISafeArea)safeArea
 {
     self.safeAreaProxy.safeArea = safeArea;
 }
 
-- (MLNUISafeArea)lua_getSafeArea
+- (MLNUISafeArea)luaui_getSafeArea
 {
     return self.safeAreaProxy.safeArea;
 }
 
-- (CGFloat)lua_safeAreaInsetsTop
+- (CGFloat)luaui_safeAreaInsetsTop
 {
     return self.safeAreaProxy.safeAreaTop;
 }
 
-- (CGFloat)lua_safeAreaInsetsBottom
+- (CGFloat)luaui_safeAreaInsetsBottom
 {
     return self.safeAreaProxy.safeAreaBottom;
 }
 
-- (CGFloat)lua_safeAreaInsetsLeft
+- (CGFloat)luaui_safeAreaInsetsLeft
 {
     return self.safeAreaProxy.safeAreaLeft;
 }
 
-- (CGFloat)lua_safeAreaInsetsRight
+- (CGFloat)luaui_safeAreaInsetsRight
 {
     return self.safeAreaProxy.safeAreaRight;
 }
 
 #pragma mark - Export for lua
-- (NSMutableDictionary *)lua_getExtraData
+- (NSMutableDictionary *)luaui_getExtraData
 {
     return self.extraInfo;
 }
 
-- (CGFloat)lua_stateBarHeight
+- (CGFloat)luaui_stateBarHeight
 {
-    return [MLNUISystem lua_stateBarHeight];
+    return [MLNUISystem luaui_stateBarHeight];
 }
 
-- (CGFloat)lua_statusBarHeight
+- (CGFloat)luaui_statusBarHeight
 {
-    return [MLNUISystem lua_stateBarHeight];
+    return [MLNUISystem luaui_stateBarHeight];
 }
 
-- (CGFloat)lua_navBarHeight
+- (CGFloat)luaui_navBarHeight
 {
-    return [MLNUISystem lua_navBarHeight];
+    return [MLNUISystem luaui_navBarHeight];
 }
 
-- (CGFloat)lua_tabBarHeight
+- (CGFloat)luaui_tabBarHeight
 {
-    return [MLNUISystem lua_tabBarHeight];
+    return [MLNUISystem luaui_tabBarHeight];
 }
 
-- (CGFloat)lua_homeIndicatorHeight
+- (CGFloat)luaui_homeIndicatorHeight
 {
-    return [MLNUISystem lua_homeIndicatorHeight];
+    return [MLNUISystem luaui_homeIndicatorHeight];
 }
 
-- (CGFloat)lua_homeBarHeight
+- (CGFloat)luaui_homeBarHeight
 {
-    return [MLNUISystem lua_homeIndicatorHeight];
+    return [MLNUISystem luaui_homeIndicatorHeight];
 }
 
 /**
  android 返回键回调方法，iOS空实现
  */
-- (void)lua_backKeyPressed:(MLNUIBlock *)callback
+- (void)luaui_backKeyPressed:(MLNUIBlock *)callback
 {
     // android 返回键回调方法，iOS空实现
 }
@@ -207,7 +207,7 @@
 /**
  *android 是否执行返回到上一个页面的操作，默认为true，Android方法，iOS空实现
  **/
-- (void)lua_backKeyEnabled:(BOOL)enable
+- (void)luaui_backKeyEnabled:(BOOL)enable
 {
     
 }
@@ -262,13 +262,13 @@
     }
 }
 
-- (void)lua_setViewAppearCallback:(MLNUIBlock *)callback
+- (void)luaui_setViewAppearCallback:(MLNUIBlock *)callback
 {
     MLNUICheckTypeAndNilValue(callback, @"function", MLNUIBlock);
     self.viewAppearCallback = callback;
 }
 
-- (void)lua_setViewDidDisappear:(MLNUIBlock *)callback
+- (void)luaui_setViewDidDisappear:(MLNUIBlock *)callback
 {
     MLNUICheckTypeAndNilValue(callback, @"function", MLNUIBlock);
     self.viewDisappearCallback = callback;
@@ -277,7 +277,7 @@
     }
 }
 
-- (void)lua_setOnSizeChanged:(MLNUIBlock *)callback
+- (void)luaui_setOnSizeChanged:(MLNUIBlock *)callback
 {
     MLNUICheckTypeAndNilValue(callback, @"function", MLNUIBlock);
     self.onSizeChangedCallback = callback;
@@ -286,7 +286,7 @@
     }
 }
 
-- (void)lua_setOnDestroy:(MLNUIBlock *)callback
+- (void)luaui_setOnDestroy:(MLNUIBlock *)callback
 {
     MLNUICheckTypeAndNilValue(callback, @"function", MLNUIBlock);
     self.onDestroyCallback = callback;
@@ -295,22 +295,22 @@
     }
 }
 
-- (void)lua_setKeyBoardFrameChangeCallback:(MLNUIBlock *)callback
+- (void)luaui_setKeyBoardFrameChangeCallback:(MLNUIBlock *)callback
 {
     MLNUICheckTypeAndNilValue(callback, @"function", MLNUIBlock);
     self.keyboardFrameChangeCallback = callback;
 }
 
 #pragma mark - Override
-- (CGFloat)lua_height
+- (CGFloat)luaui_height
 {
-    MLNUILayoutWindowNode *node  = (MLNUILayoutWindowNode *)self.lua_node;
+    MLNUILayoutWindowNode *node  = (MLNUILayoutWindowNode *)self.luaui_node;
     return node.height - node.safeAreaInsets.top - node.safeAreaInsets.bottom;
 }
 
-- (CGFloat)lua_width
+- (CGFloat)luaui_width
 {
-    MLNUILayoutWindowNode *node  = (MLNUILayoutWindowNode *)self.lua_node;
+    MLNUILayoutWindowNode *node  = (MLNUILayoutWindowNode *)self.luaui_node;
     return node.width - node.safeAreaInsets.left - node.safeAreaInsets.right;
 }
 
@@ -319,35 +319,35 @@
     BOOL isSizeChange = !CGSizeEqualToSize(self.frame.size, frame.size);
     [super setFrame:frame];
     if (isSizeChange) {
-        MLNUILayoutNode *node = self.lua_node;
+        MLNUILayoutNode *node = self.luaui_node;
         [node changeWidth:frame.size.width];
         [node changeHeight:frame.size.height];
-        [self lua_requestLayout];
+        [self luaui_requestLayout];
     }
     [self doSizeChanged];
 }
 
-- (BOOL)mln_nativeView
+- (BOOL)mlnui_nativeView
 {
     return YES;
 }
 
-- (BOOL)lua_canClick
+- (BOOL)luaui_canClick
 {
     return YES;
 }
 
-- (BOOL)lua_canLongPress
+- (BOOL)luaui_canLongPress
 {
     return YES;
 }
 
-- (BOOL)lua_layoutEnable
+- (BOOL)luaui_layoutEnable
 {
     return YES;
 }
 
-- (void)setLua_wrapContent:(BOOL)lua_wrapContent
+- (void)setLuaui_wrapContent:(BOOL)luaui_wrapContent
 {
     // cann't set wrap content to window
 }
@@ -357,52 +357,52 @@
     return NO;
 }
 
-- (void)lua_setKeyboardStatusCallback:(MLNUIBlock *)keyboardStatusCallback
+- (void)luaui_setKeyboardStatusCallback:(MLNUIBlock *)keyboardStatusCallback
 {
     _keyboardStatusCallback = keyboardStatusCallback;
 }
 
-- (void)lua_setStatusBarStyle:(MLNUIStatusBarStyle)style
+- (void)luaui_setStatusBarStyle:(MLNUIStatusBarStyle)style
 {
     [[UIApplication sharedApplication] setStatusBarStyle:(UIStatusBarStyle)style animated:NO];
 }
 
-- (MLNUIStatusBarStyle)lua_getStatusBarStyle
+- (MLNUIStatusBarStyle)luaui_getStatusBarStyle
 {
     return (MLNUIStatusBarStyle)[[UIApplication sharedApplication] statusBarStyle];
 }
 
-- (void)lua_overlay:(UIView *)overlay {
-    [super lua_overlay:overlay];
-    [self.lua_node needLayout]; // window的测量和布局操作执行时机比较早, 故对window调用overlay需要重新layout
+- (void)luaui_overlay:(UIView *)overlay {
+    [super luaui_overlay:overlay];
+    [self.luaui_node needLayout]; // window的测量和布局操作执行时机比较早, 故对window调用overlay需要重新layout
 }
 
 #pragma mark - Export
 LUA_EXPORT_VIEW_BEGIN(MLNUIWindow)
-LUA_EXPORT_VIEW_PROPERTY(safeArea, "lua_setSafeArea:", "lua_getSafeArea", MILWindow)
-LUA_EXPORT_VIEW_METHOD(safeAreaAdapter, "lua_setSafeAreaAdapter:", MLNUIWindow)
-LUA_EXPORT_VIEW_METHOD(safeAreaInsetsTop, "lua_safeAreaInsetsTop", MLNUIWindow)
-LUA_EXPORT_VIEW_METHOD(safeAreaInsetsBottom, "lua_safeAreaInsetsBottom", MLNUIWindow)
-LUA_EXPORT_VIEW_METHOD(safeAreaInsetsLeft, "lua_safeAreaInsetsLeft", MLNUIWindow)
-LUA_EXPORT_VIEW_METHOD(safeAreaInsetsRight, "lua_safeAreaInsetsRight", MLNUIWindow)
-LUA_EXPORT_VIEW_METHOD(viewAppear, "lua_setViewAppearCallback:", MLNUIWindow)
-LUA_EXPORT_VIEW_METHOD(viewDisappear, "lua_setViewDidDisappear:", MLNUIWindow)
-LUA_EXPORT_VIEW_METHOD(sizeChanged, "lua_setOnSizeChanged:", MLNUIWindow)
-LUA_EXPORT_VIEW_METHOD(onDestroy, "lua_setOnDestroy:", MLNUIWindow)
-LUA_EXPORT_VIEW_METHOD(getExtra, "lua_getExtraData", MLNUIWindow)
-LUA_EXPORT_VIEW_METHOD(keyboardShowing, "lua_setKeyboardStatusCallback:", MLNUIWindow)
-LUA_EXPORT_VIEW_METHOD(setPageColor, "lua_setBackgroundColor:", MLNUIWindow)
-LUA_EXPORT_VIEW_METHOD(stateBarHeight, "lua_stateBarHeight", MLNUIWindow)
-LUA_EXPORT_VIEW_METHOD(statusBarHeight, "lua_statusBarHeight", MLNUIWindow)
-LUA_EXPORT_VIEW_METHOD(navBarHeight, "lua_navBarHeight", MLNUIWindow)
-LUA_EXPORT_VIEW_METHOD(tabBarHeight, "lua_tabBarHeight", MLNUIWindow)
-LUA_EXPORT_VIEW_METHOD(homeHeight, "lua_homeIndicatorHeight", MLNUIWindow)
-LUA_EXPORT_VIEW_METHOD(homeBarHeight, "lua_homeBarHeight", MLNUIWindow)
-LUA_EXPORT_VIEW_METHOD(backKeyPressed, "lua_backKeyPressed:", MLNUIWindow)
-LUA_EXPORT_VIEW_METHOD(backKeyEnabled, "lua_backKeyEnabled:", MLNUIWindow)
-LUA_EXPORT_VIEW_METHOD(getStatusBarStyle, "lua_getStatusBarStyle", MLNUIWindow)
-LUA_EXPORT_VIEW_METHOD(setStatusBarStyle, "lua_setStatusBarStyle:", MLNUIWindow)
-LUA_EXPORT_VIEW_METHOD(i_keyBoardFrameChangeCallback, "lua_setKeyBoardFrameChangeCallback:", MLNUIWindow)
+LUA_EXPORT_VIEW_PROPERTY(safeArea, "luaui_setSafeArea:", "luaui_getSafeArea", MILWindow)
+LUA_EXPORT_VIEW_METHOD(safeAreaAdapter, "luaui_setSafeAreaAdapter:", MLNUIWindow)
+LUA_EXPORT_VIEW_METHOD(safeAreaInsetsTop, "luaui_safeAreaInsetsTop", MLNUIWindow)
+LUA_EXPORT_VIEW_METHOD(safeAreaInsetsBottom, "luaui_safeAreaInsetsBottom", MLNUIWindow)
+LUA_EXPORT_VIEW_METHOD(safeAreaInsetsLeft, "luaui_safeAreaInsetsLeft", MLNUIWindow)
+LUA_EXPORT_VIEW_METHOD(safeAreaInsetsRight, "luaui_safeAreaInsetsRight", MLNUIWindow)
+LUA_EXPORT_VIEW_METHOD(viewAppear, "luaui_setViewAppearCallback:", MLNUIWindow)
+LUA_EXPORT_VIEW_METHOD(viewDisappear, "luaui_setViewDidDisappear:", MLNUIWindow)
+LUA_EXPORT_VIEW_METHOD(sizeChanged, "luaui_setOnSizeChanged:", MLNUIWindow)
+LUA_EXPORT_VIEW_METHOD(onDestroy, "luaui_setOnDestroy:", MLNUIWindow)
+LUA_EXPORT_VIEW_METHOD(getExtra, "luaui_getExtraData", MLNUIWindow)
+LUA_EXPORT_VIEW_METHOD(keyboardShowing, "luaui_setKeyboardStatusCallback:", MLNUIWindow)
+LUA_EXPORT_VIEW_METHOD(setPageColor, "luaui_setBackgroundColor:", MLNUIWindow)
+LUA_EXPORT_VIEW_METHOD(stateBarHeight, "luaui_stateBarHeight", MLNUIWindow)
+LUA_EXPORT_VIEW_METHOD(statusBarHeight, "luaui_statusBarHeight", MLNUIWindow)
+LUA_EXPORT_VIEW_METHOD(navBarHeight, "luaui_navBarHeight", MLNUIWindow)
+LUA_EXPORT_VIEW_METHOD(tabBarHeight, "luaui_tabBarHeight", MLNUIWindow)
+LUA_EXPORT_VIEW_METHOD(homeHeight, "luaui_homeIndicatorHeight", MLNUIWindow)
+LUA_EXPORT_VIEW_METHOD(homeBarHeight, "luaui_homeBarHeight", MLNUIWindow)
+LUA_EXPORT_VIEW_METHOD(backKeyPressed, "luaui_backKeyPressed:", MLNUIWindow)
+LUA_EXPORT_VIEW_METHOD(backKeyEnabled, "luaui_backKeyEnabled:", MLNUIWindow)
+LUA_EXPORT_VIEW_METHOD(getStatusBarStyle, "luaui_getStatusBarStyle", MLNUIWindow)
+LUA_EXPORT_VIEW_METHOD(setStatusBarStyle, "luaui_setStatusBarStyle:", MLNUIWindow)
+LUA_EXPORT_VIEW_METHOD(i_keyBoardFrameChangeCallback, "luaui_setKeyBoardFrameChangeCallback:", MLNUIWindow)
 LUA_EXPORT_VIEW_END(MLNUIWindow, Window, YES, "MLNUIView", NULL)
 
 @end

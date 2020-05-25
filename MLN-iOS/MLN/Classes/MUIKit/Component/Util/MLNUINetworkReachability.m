@@ -20,25 +20,25 @@
 @end
 @implementation MLNUINetworkReachability
 
-+ (void)lua_open
++ (void)luaui_open
 {
     [[MLNUINetworkReachabilityManager sharedManager] startMonitoring];
 }
 
-+ (void)lua_cloze
++ (void)luaui_cloze
 {
     [[MLNUINetworkReachabilityManager sharedManager] stopMonitoring];
 }
 
-+ (MLNUINetworkStatus)lua_netWorkType
++ (MLNUINetworkStatus)luaui_netWorkType
 {
     return [[MLNUINetworkReachabilityManager sharedManager] networkStatus];
 }
 
-+ (void)lua_setOnNetworkStateChange:(MLNUIBlock *)callback
++ (void)luaui_setOnNetworkStateChange:(MLNUIBlock *)callback
 {
     MLNUIStaticCheckTypeAndNilValue(callback, @"callback", MLNUIBlock);
-    MLNUINetworkReachability *networkReachability = MLNUI_KIT_INSTANCE(self.mln_currentLuaCore).instanceHandlersManager.networkReachability;
+    MLNUINetworkReachability *networkReachability = MLNUI_KIT_INSTANCE(self.mlnui_currentLuaCore).instanceHandlersManager.networkReachability;
     // clear
     if (networkReachability.reachabilityStatusBlock) {
         [[MLNUINetworkReachabilityManager sharedManager] removeNetworkChangedCallback:networkReachability.reachabilityStatusBlock];
@@ -64,10 +64,10 @@
 
 #pragma mark - Setup For Lua
 LUA_EXPORT_STATIC_BEGIN(MLNUINetworkReachability)
-LUA_EXPORT_STATIC_METHOD(open, "lua_open", MLNUINetworkReachability)
-LUA_EXPORT_STATIC_METHOD(close, "lua_cloze", MLNUINetworkReachability)
-LUA_EXPORT_STATIC_METHOD(networkState, "lua_netWorkType", MLNUINetworkReachability)
-LUA_EXPORT_STATIC_METHOD(setOnNetworkStateChange, "lua_setOnNetworkStateChange:", MLNUINetworkReachability)
+LUA_EXPORT_STATIC_METHOD(open, "luaui_open", MLNUINetworkReachability)
+LUA_EXPORT_STATIC_METHOD(close, "luaui_cloze", MLNUINetworkReachability)
+LUA_EXPORT_STATIC_METHOD(networkState, "luaui_netWorkType", MLNUINetworkReachability)
+LUA_EXPORT_STATIC_METHOD(setOnNetworkStateChange, "luaui_setOnNetworkStateChange:", MLNUINetworkReachability)
 LUA_EXPORT_STATIC_END(MLNUINetworkReachability, NetworkReachability, NO, NULL)
 
 @end

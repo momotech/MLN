@@ -23,8 +23,8 @@
 {
     if (!CGAffineTransformEqualToTransform(_transform, transform)) {
         _transform = transform;
-        if ([self.target mln_isConvertible]) {
-            MLNUIKitInstance *instance = MLNUI_KIT_INSTANCE([(UIView<MLNUIEntityExportProtocol> *)self.target mln_luaCore]);
+        if ([self.target mlnui_isConvertible]) {
+            MLNUIKitInstance *instance = MLNUI_KIT_INSTANCE([(UIView<MLNUIEntityExportProtocol> *)self.target mlnui_luaCore]);
             [instance pushAnimation:self];
         }
     }

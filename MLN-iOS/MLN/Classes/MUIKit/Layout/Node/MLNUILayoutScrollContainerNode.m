@@ -13,7 +13,7 @@
 - (instancetype)initWithTargetView:(UIScrollView *)targetView
 {
     if (self = [super initWithTargetView:targetView]) {
-        _scrollHorizontal = targetView.mln_horizontal;
+        _scrollHorizontal = targetView.mlnui_horizontal;
     }
     return self;
 }

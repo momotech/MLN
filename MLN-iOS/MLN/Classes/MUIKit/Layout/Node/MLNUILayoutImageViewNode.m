@@ -60,7 +60,7 @@ MLNUI_FORCE_INLINE void measureImageViewAutoNodeSize (MLNUILayoutNode __unsafe_u
     [node mergeMeasurementTypes];
     CGFloat widthSize = node.width;
     CGFloat heightSize = node.height;
-    CGSize imgSize = [node.targetView lua_measureSizeWithMaxWidth:maxWidth maxHeight:maxHeight];
+    CGSize imgSize = [node.targetView luaui_measureSizeWithMaxWidth:maxWidth maxHeight:maxHeight];
     
     BOOL resizeWidth = NO;
     BOOL resizeHeight = NO;

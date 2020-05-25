@@ -13,22 +13,22 @@
 
 @implementation MLNUIEntityExporter
 
-static int mln_lua_user_data_gc (lua_State *L) {
+static int mlnui_luaui_user_data_gc (lua_State *L) {
     MLNUIUserData *user = (MLNUIUserData *)lua_touserdata(L, 1);
     if( user && user->object ){
         NSObject<MLNUIEntityExportProtocol> *obj = (__bridge NSObject<MLNUIEntityExportProtocol> *)(user->object);
-        [obj mln_luaRelease];
+        [obj mlnui_luaRelease];
         user->object = NULL;
-        if ([obj mln_isConvertible] && [obj mln_luaRetainCount] == 0) {
-            if ([obj respondsToSelector:@selector(mln_user_data_dealloc)]) {
-                [(NSObject<MLNUIEntityExportProtocol> *)obj mln_user_data_dealloc];
+        if ([obj mlnui_isConvertible] && [obj mlnui_luaRetainCount] == 0) {
+            if ([obj respondsToSelector:@selector(mlnui_user_data_dealloc)]) {
+                [(NSObject<MLNUIEntityExportProtocol> *)obj mlnui_user_data_dealloc];
             }
         }
     }
     return 0;
 }
 
-static int mln_lua_user_data_tostring (lua_State *L) {
+static int mlnui_luaui_user_data_tostring (lua_State *L) {
     MLNUIUserData * user = (MLNUIUserData *)lua_touserdata(L, 1);
     if(user){
         NSObject * obj =  (__bridge NSObject *)(user->object);
@@ -39,7 +39,7 @@ static int mln_lua_user_data_tostring (lua_State *L) {
     return 0;
 }
 
-static int mln_lua_obj_equal (lua_State *L) {
+static int mlnui_luaui_obj_equal (lua_State *L) {
     BOOL isEqual = NO;
     if (lua_gettop(L) == 2) {
         MLNUIUserData * user_1 = (MLNUIUserData *)lua_touserdata(L, 1);
@@ -55,9 +55,9 @@ static int mln_lua_obj_equal (lua_State *L) {
 }
 
 static const struct luaL_Reg MLNUIUserDataBaseFuncs [] = {
-    {"__gc", mln_lua_user_data_gc},
-    {"__tostring", mln_lua_user_data_tostring},
-    {"__eq", mln_lua_obj_equal},
+    {"__gc", mlnui_luaui_user_data_gc},
+    {"__tostring", mlnui_luaui_user_data_tostring},
+    {"__eq", mlnui_luaui_obj_equal},
     {NULL, NULL}
 };
 
@@ -65,7 +65,7 @@ static const struct luaL_Reg MLNUIUserDataBaseFuncs [] = {
 {
     NSParameterAssert(clazz);
     Class<MLNUIEntityExportProtocol> exportClazz = (Class<MLNUIEntityExportProtocol>)clazz;
-    const mln_objc_class *classInfo = [exportClazz mln_clazzInfo];
+    const mlnui_objc_class *classInfo = [exportClazz mlnui_clazzInfo];
     // 注册构造函数
     BOOL ret = [self registerConstructor:classInfo->constructor.func clazz:classInfo->clz constructor:classInfo->constructor.mn luaName:classInfo->l_clz error:error];
     if (!ret) {
@@ -85,14 +85,14 @@ static const struct luaL_Reg MLNUIUserDataBaseFuncs [] = {
     return [self openlib:classInfo nativeClassName:classInfo->clz error:error];
 }
 
-- (BOOL)openlib:(const mln_objc_class *)libInfo nativeClassName:(const char *)nativeClassName error:(NSError **)error
+- (BOOL)openlib:(const mlnui_objc_class *)libInfo nativeClassName:(const char *)nativeClassName error:(NSError **)error
 {
     NSParameterAssert(libInfo != NULL);
     if (MLNUIHasSuperClass(libInfo)) {
         MLNUIAssert(self.luaCore, charpNotEmpty(libInfo->supreClz), @"%s's super not found!", libInfo->clz);
         NSAssert(libInfo->supreClz != NULL, @"%s'super class must not be null!", libInfo->clz);
         Class<MLNUIEntityExportProtocol> superClass = NSClassFromString([NSString stringWithUTF8String:libInfo->supreClz]);
-        if (![self openlib:[superClass mln_clazzInfo] nativeClassName:nativeClassName error:error]) {
+        if (![self openlib:[superClass mlnui_clazzInfo] nativeClassName:nativeClassName error:error]) {
             return NO;
         }
     }
@@ -106,7 +106,7 @@ static const struct luaL_Reg MLNUIUserDataBaseFuncs [] = {
     lua_State *L = self.luaCore.state;
     if (!L) {
         if (error) {
-            *error = [NSError mln_errorState:@"Lua state is released"];
+            *error = [NSError mlnui_errorState:@"Lua state is released"];
             MLNUIError(self.luaCore, @"Lua state is released");
         }
         return NO;
@@ -114,7 +114,7 @@ static const struct luaL_Reg MLNUIUserDataBaseFuncs [] = {
     lua_checkstack(L, 12);
     lua_pushstring(L, nativeClazzName);
     lua_pushboolean(L, NO); // 不是属性
-    lua_pushstring(L, charpNotEmpty(nativeConstructorName) ? nativeConstructorName : "initWithLuaCore:");
+    lua_pushstring(L, charpNotEmpty(nativeConstructorName) ? nativeConstructorName : "initWithMLNUILuaCore:");
     lua_pushcclosure(L, cfunc, 3);
     lua_setglobal(L, luaName);
     return YES;

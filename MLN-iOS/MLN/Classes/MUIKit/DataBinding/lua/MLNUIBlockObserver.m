@@ -39,7 +39,7 @@
 - (void)notifyKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change {
     [super notifyKeyPath:keyPath ofObject:object change:change];
     if (!self.block.luaCore) {
-        [((id<MLNUIDataBindingProtocol>)self.viewController).mln_dataBinding removeMLNUIObserver:self forKeyPath:self.keyPath];
+        [((id<MLNUIDataBindingProtocol>)self.viewController).mlnui_dataBinding removeMLNUIObserver:self forKeyPath:self.keyPath];
         return;
     }
     
@@ -64,8 +64,8 @@
         }
     }
 
-    id newValueConvert = [newValue mln_convertToLuaObject];
-    id oldValueConvert = [oldValue mln_convertToLuaObject];
+    id newValueConvert = [newValue mlnui_convertToLuaObject];
+    id oldValueConvert = [oldValue mlnui_convertToLuaObject];
     
     [self.block addObjArgument:newValueConvert];
     [self.block addObjArgument:oldValueConvert];

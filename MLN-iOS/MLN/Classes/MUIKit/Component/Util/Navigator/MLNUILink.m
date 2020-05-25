@@ -10,7 +10,7 @@
 #import "MLNUIAnimationConst.h"
 #import "MLNUILinkProtocol.h"
 
-#define MLNUICURRENT_VIEW_CONTROLLLER  MLNUI_KIT_INSTANCE(self.mln_currentLuaCore).viewController
+#define MLNUICURRENT_VIEW_CONTROLLLER  MLNUI_KIT_INSTANCE(self.mlnui_currentLuaCore).viewController
 #define MLNUI_IS_VALID_CLASS(_class_) [_class_ respondsToSelector:@selector(mlnLinkCreateController:closeCallback:)]
 
 @interface MLNUILink ()
@@ -112,7 +112,7 @@ static inline NSString *DISGUISE(UIViewController *controller) {
 
 #pragma mark - Setup Lua
 
-+ (void)lua_link:(NSString *)luaClassName params:(NSDictionary *)params animation:(MLNUIAnimationAnimType)animation closeCallback:(MLNUIBlock *)callback {
++ (void)luaui_link:(NSString *)luaClassName params:(NSDictionary *)params animation:(MLNUIAnimationAnimType)animation closeCallback:(MLNUIBlock *)callback {
     if (!luaClassName) {
         return;
     }
@@ -134,7 +134,7 @@ static inline NSString *DISGUISE(UIViewController *controller) {
     }
 }
 
-+ (void)lua_closePage:(MLNUIAnimationAnimType)animation params:(NSDictionary *)params {
++ (void)luaui_closePage:(MLNUIAnimationAnimType)animation params:(NSDictionary *)params {
     UIViewController *currentController = MLNUICURRENT_VIEW_CONTROLLLER;
     if (!currentController) return;
     BOOL animate = (animation != MLNUIAnimationAnimTypeNone);
@@ -147,8 +147,8 @@ static inline NSString *DISGUISE(UIViewController *controller) {
 }
 
 LUA_EXPORT_STATIC_BEGIN(MLNUILink)
-LUA_EXPORT_STATIC_METHOD(link, "lua_link:params:animation:closeCallback:", MLNUILink)
-LUA_EXPORT_STATIC_METHOD(close, "lua_closePage:params:", MLNUILink)
+LUA_EXPORT_STATIC_METHOD(link, "luaui_link:params:animation:closeCallback:", MLNUILink)
+LUA_EXPORT_STATIC_METHOD(close, "luaui_closePage:params:", MLNUILink)
 LUA_EXPORT_STATIC_END(MLNUILink, Link, NO, NULL)
 
 @end

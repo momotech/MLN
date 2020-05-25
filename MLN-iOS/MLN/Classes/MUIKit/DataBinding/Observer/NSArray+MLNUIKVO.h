@@ -14,17 +14,17 @@ typedef void (^MLNUIItemKVOBlock)(NSObject *item,NSString *keyPath, NSObject * _
 @interface NSArray (MLNUIKVO)
 
 // 是否二维数组
-- (BOOL)mln_is2D;
+- (BOOL)mlnui_is2D;
 
-- (void)mln_startKVOIfMutable;
-- (void)mln_stopKVOIfMutable;
+- (void)mlnui_startKVOIfMutable;
+- (void)mlnui_stopKVOIfMutable;
 
 // 监听lua层对Cell ViewModel的改动，支持监听二维数组.
-//@property (nonatomic, copy, readonly)NSArray * (^mln_subscribeItem)(MLNUIItemKVOBlock);
-//@property (nonatomic, strong, readonly) NSMutableArray *mln_itemKVOBlocks;
+//@property (nonatomic, copy, readonly)NSArray * (^mlnui_subscribeItem)(MLNUIItemKVOBlock);
+//@property (nonatomic, strong, readonly) NSMutableArray *mlnui_itemKVOBlocks;
 
-- (NSArray *)mln_convertToLuaTableAvailable;
-- (NSMutableArray *)mln_convertToMArray;
+- (NSArray *)mlnui_convertToLuaTableAvailable;
+- (NSMutableArray *)mlnui_convertToMArray;
 
 @end
 

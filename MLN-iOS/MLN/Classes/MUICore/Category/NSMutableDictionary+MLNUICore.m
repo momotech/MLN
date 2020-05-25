@@ -10,7 +10,7 @@
 
 @implementation NSMutableDictionary (MLNUICore)
 
-- (MLNUINativeType)mln_nativeType
+- (MLNUINativeType)mlnui_nativeType
 {
     // @note: 适配iOS10 之前的类簇问题
     if ([NSStringFromClass([self class]) hasPrefix:@"__NSDictionaryM"]) {

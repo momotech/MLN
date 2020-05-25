@@ -20,7 +20,7 @@
 
 @implementation MLNUIAlphaAnimation
 
-- (instancetype)initWithLuaCore:(MLNUILuaCore *)luaCore fromAlpha:(NSNumber *)fromAlpha toAlpha:(NSNumber *)toAlpha
+- (instancetype)initWithMLNUILuaCore:(MLNUILuaCore *)luaCore fromAlpha:(NSNumber *)fromAlpha toAlpha:(NSNumber *)toAlpha
 {
     if (self = [super init]) {
         if (fromAlpha) {
@@ -61,5 +61,5 @@
 LUA_EXPORT_BEGIN(MLNUIAlphaAnimation)
 LUA_EXPORT_PROPERTY(setFromAlpha, "setFromAlpha:", "fromAlpha", MLNUIAlphaAnimation)
 LUA_EXPORT_PROPERTY(setToAlpha, "setToAlpha:", "toAlpha", MLNUIAlphaAnimation)
-LUA_EXPORT_END(MLNUIAlphaAnimation, AlphaAnimation, YES, "MLNUICanvasAnimation", "initWithLuaCore:fromAlpha:toAlpha:")
+LUA_EXPORT_END(MLNUIAlphaAnimation, AlphaAnimation, YES, "MLNUICanvasAnimation", "initWithMLNUILuaCore:fromAlpha:toAlpha:")
 @end

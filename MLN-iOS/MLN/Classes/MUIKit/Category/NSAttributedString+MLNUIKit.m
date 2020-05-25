@@ -20,13 +20,13 @@ static const void *kLuaStyleString = &kLuaStyleString;
 
 @implementation NSAttributedString (MLNUIKit)
 
-- (void)setLua_styleString:(MLNUIStyleString *)lua_styleString
+- (void)setLuaui_styleString:(MLNUIStyleString *)luaui_styleString
 {
-    MLNUIWeakAssociatedObject *proxy = [MLNUIWeakAssociatedObject weakAssociatedObject:lua_styleString];
+    MLNUIWeakAssociatedObject *proxy = [MLNUIWeakAssociatedObject weakAssociatedObject:luaui_styleString];
     objc_setAssociatedObject(self, &kLuaStyleString, proxy, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
-- (MLNUIStyleString *)lua_styleString
+- (MLNUIStyleString *)luaui_styleString
 {
     MLNUIWeakAssociatedObject *proxy = objc_getAssociatedObject(self, &kLuaStyleString);
     return proxy.associatedObject;

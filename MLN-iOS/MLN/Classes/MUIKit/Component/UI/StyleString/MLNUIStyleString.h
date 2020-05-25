@@ -18,7 +18,7 @@ typedef void(^MLNUIImageLoadFinishedCallback)(NSAttributedString *attributeText)
 
 - (instancetype)initWithAttributedString:(NSAttributedString *)attributes;
 
-- (void)mln_checkImageIfNeed;
+- (void)mlnui_checkImageIfNeed;
 
 @property(nonatomic,strong, readonly) NSMutableAttributedString *mutableStyledString;
 

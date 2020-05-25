@@ -22,21 +22,21 @@
 
  @return 映射信息
  */
-+ (const mln_objc_class *)mln_clazzInfo;
++ (const mlnui_objc_class *)mlnui_clazzInfo;
 
 /**
  调用当前静态bridge的LuaCore
 
  @return 当前调用者
  */
-+ (MLNUILuaCore *)mln_currentLuaCore;
++ (MLNUILuaCore *)mlnui_currentLuaCore;
 
 /**
  更新调用当前静态bridge的LuaCore
 
  @param luaCore 当前调用者
  */
-+ (void)mln_updateCurrentLuaCore:(MLNUILuaCore *)luaCore;
++ (void)mlnui_updateCurrentLuaCore:(MLNUILuaCore *)luaCore;
 
 @end
 

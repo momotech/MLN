@@ -16,12 +16,12 @@ typedef void(^MLNUIKVOArrayHandler)(NSMutableArray *array,NSDictionary<NSKeyValu
 
 @interface NSMutableArray (MLNUIKVO)
 
-- (void)mln_addObserverHandler:(MLNUIKVOArrayHandler)handler;
-- (void)mln_removeObserverHandler:(MLNUIKVOArrayHandler)handler;
-- (void)mln_clearObserverHandlers;
+- (void)mlnui_addObserverHandler:(MLNUIKVOArrayHandler)handler;
+- (void)mlnui_removeObserverHandler:(MLNUIKVOArrayHandler)handler;
+- (void)mlnui_clearObserverHandlers;
 
-- (void)mln_startKVO;
-- (void)mln_stopKVO;
+- (void)mlnui_startKVO;
+- (void)mlnui_stopKVO;
 
 @end
 

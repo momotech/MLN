@@ -13,28 +13,28 @@
 + (void)load
 {
     Method origMethod = class_getInstanceMethod([self class], @selector(viewDidLoad));
-    Method swizzledMethod = class_getInstanceMethod([self class], @selector(mln_viewDidLoad));
+    Method swizzledMethod = class_getInstanceMethod([self class], @selector(mlnui_viewDidLoad));
     method_exchangeImplementations(origMethod, swizzledMethod);
     
     origMethod = class_getInstanceMethod([self class], @selector(viewWillAppear:));
-    swizzledMethod = class_getInstanceMethod([self class], @selector(mln_viewWillAppear:));
+    swizzledMethod = class_getInstanceMethod([self class], @selector(mlnui_viewWillAppear:));
     method_exchangeImplementations(origMethod, swizzledMethod);
     
     origMethod = class_getInstanceMethod([self class], @selector(viewDidAppear:));
-    swizzledMethod = class_getInstanceMethod([self class], @selector(mln_viewDidAppear:));
+    swizzledMethod = class_getInstanceMethod([self class], @selector(mlnui_viewDidAppear:));
     method_exchangeImplementations(origMethod, swizzledMethod);
     
     origMethod = class_getInstanceMethod([self class], @selector(viewWillDisappear:));
-    swizzledMethod = class_getInstanceMethod([self class], @selector(mln_viewWillDisappear:));
+    swizzledMethod = class_getInstanceMethod([self class], @selector(mlnui_viewWillDisappear:));
     method_exchangeImplementations(origMethod, swizzledMethod);
     
     origMethod = class_getInstanceMethod([self class], @selector(viewDidDisappear:));
-    swizzledMethod = class_getInstanceMethod([self class], @selector(mln_viewDidDisappear:));
+    swizzledMethod = class_getInstanceMethod([self class], @selector(mlnui_viewDidDisappear:));
     method_exchangeImplementations(origMethod, swizzledMethod);
 }
 
 static const void *kMLNUILifeCycleObserverSet = &kMLNUILifeCycleObserverSet;
-- (void)mln_addLifeCycleObserver:(MLNUIViewControllerLifeCycleObserver)observer
+- (void)mlnui_addLifeCycleObserver:(MLNUIViewControllerLifeCycleObserver)observer
 {
     if (!observer) {
         return;
@@ -47,7 +47,7 @@ static const void *kMLNUILifeCycleObserverSet = &kMLNUILifeCycleObserverSet;
     [set addObject:observer];
 }
 
-- (void)mln_removeLifeCycleObserver:(MLNUIViewControllerLifeCycleObserver)observer
+- (void)mlnui_removeLifeCycleObserver:(MLNUIViewControllerLifeCycleObserver)observer
 {
     if (!observer) {
         return;
@@ -56,13 +56,13 @@ static const void *kMLNUILifeCycleObserverSet = &kMLNUILifeCycleObserverSet;
     [set removeObject:observer];
 }
 
-- (void)mln_removeAllLifeCycleObserver
+- (void)mlnui_removeAllLifeCycleObserver
 {
     NSMutableSet *set = objc_getAssociatedObject(self, kMLNUILifeCycleObserverSet);
     [set removeAllObjects];
 }
 
-- (void)__mln_notifyAllLifeCycleObserver:(MLNUIViewControllerLifeCycle)state
+- (void)__mlnui_notifyAllLifeCycleObserver:(MLNUIViewControllerLifeCycle)state
 {
      NSMutableSet *set = objc_getAssociatedObject(self, kMLNUILifeCycleObserverSet);
     for (MLNUIViewControllerLifeCycleObserver observer in set) {
@@ -72,34 +72,34 @@ static const void *kMLNUILifeCycleObserverSet = &kMLNUILifeCycleObserverSet;
 
 #pragma mark - Life Cycle
 
-- (void)mln_viewDidLoad
+- (void)mlnui_viewDidLoad
 {
-    [self mln_viewDidLoad];
-    [self __mln_notifyAllLifeCycleObserver:MLNUIViewControllerLifeCycleViewDidLoad];
+    [self mlnui_viewDidLoad];
+    [self __mlnui_notifyAllLifeCycleObserver:MLNUIViewControllerLifeCycleViewDidLoad];
 }
 
-- (void)mln_viewWillAppear:(BOOL)animated
+- (void)mlnui_viewWillAppear:(BOOL)animated
 {
-    [self mln_viewWillAppear:animated];
-    [self __mln_notifyAllLifeCycleObserver:MLNUIViewControllerLifeCycleViewWillAppear];
+    [self mlnui_viewWillAppear:animated];
+    [self __mlnui_notifyAllLifeCycleObserver:MLNUIViewControllerLifeCycleViewWillAppear];
 }
 
-- (void)mln_viewDidAppear:(BOOL)animated
+- (void)mlnui_viewDidAppear:(BOOL)animated
 {
-    [self mln_viewDidAppear:animated];
-    [self __mln_notifyAllLifeCycleObserver:MLNUIViewControllerLifeCycleViewDidAppear];
+    [self mlnui_viewDidAppear:animated];
+    [self __mlnui_notifyAllLifeCycleObserver:MLNUIViewControllerLifeCycleViewDidAppear];
 }
 
-- (void)mln_viewWillDisappear:(BOOL)animated
+- (void)mlnui_viewWillDisappear:(BOOL)animated
 {
-    [self mln_viewWillDisappear:animated];
-    [self __mln_notifyAllLifeCycleObserver:MLNUIViewControllerLifeCycleViewWillAppear];
+    [self mlnui_viewWillDisappear:animated];
+    [self __mlnui_notifyAllLifeCycleObserver:MLNUIViewControllerLifeCycleViewWillAppear];
 }
 
-- (void)mln_viewDidDisappear:(BOOL)animated
+- (void)mlnui_viewDidDisappear:(BOOL)animated
 {
-    [self mln_viewDidDisappear:animated];
-    [self __mln_notifyAllLifeCycleObserver:MLNUIViewControllerLifeCycleViewDidDisappear];
+    [self mlnui_viewDidDisappear:animated];
+    [self __mlnui_notifyAllLifeCycleObserver:MLNUIViewControllerLifeCycleViewDidDisappear];
 }
 
 @end

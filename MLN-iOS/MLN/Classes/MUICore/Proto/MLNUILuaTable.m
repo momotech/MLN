@@ -15,14 +15,14 @@
 @end
 @implementation MLNUILuaTable
 
-static MLNUI_FORCE_INLINE int mln_pushTable(lua_State *L, void * key, MLNUILuaTableEnvironment env) {
+static MLNUI_FORCE_INLINE int mlnui_pushTable(lua_State *L, void * key, MLNUILuaTableEnvironment env) {
     lua_pushlightuserdata(L, key);
     lua_gettable(L, env); // [ ... | table ]
-    mln_lua_checktable(L, -1);
+    mlnui_luaui_checktable(L, -1);
     return -1;
 }
 
-- (instancetype)initWithLuaCore:(MLNUILuaCore *)luaCore env:(MLNUILuaTableEnvironment)env
+- (instancetype)initWithMLNUILuaCore:(MLNUILuaCore *)luaCore env:(MLNUILuaTableEnvironment)env
 {
     if (self = [super init]) {
         _luaCore = luaCore;
@@ -70,7 +70,7 @@ static MLNUI_FORCE_INLINE int mln_pushTable(lua_State *L, void * key, MLNUILuaTa
     int base = lua_gettop(L);
     lua_pushvalue(L, objIndex);
     // 将对应table压栈
-    mln_pushTable(L, (__bridge void *)(self), self.env);
+    mlnui_pushTable(L, (__bridge void *)(self), self.env);
     // 设置key - value
     lua_pushstring(L, key.UTF8String); // [ ... | table | key ]
     lua_pushvalue(L, -3); // [ ... | table | key | ud ]
@@ -90,7 +90,7 @@ static MLNUI_FORCE_INLINE int mln_pushTable(lua_State *L, void * key, MLNUILuaTa
     int base = lua_gettop(L);
     lua_pushvalue(L, objIndex);
     // 将对应table压栈
-    mln_pushTable(L, (__bridge void *)(self), self.env);
+    mlnui_pushTable(L, (__bridge void *)(self), self.env);
     // 设置key - value
     lua_pushlightuserdata(L, cKey); // [ ... | table | key ]
     lua_pushvalue(L, -3); // [ ... | table | key | ud ]
@@ -108,7 +108,7 @@ static MLNUI_FORCE_INLINE int mln_pushTable(lua_State *L, void * key, MLNUILuaTa
         return;
     }
     // 将对应table压栈
-    mln_pushTable(L, (__bridge void *)(self), self.env);
+    mlnui_pushTable(L, (__bridge void *)(self), self.env);
     // 设置key - value
     lua_pushstring(L, key.UTF8String); // [ ... | table | key ]
     [MLNUI_LUA_CORE(L) pushNativeObject:obj error:NULL]; // [ ... | table | key | ud ]
@@ -126,7 +126,7 @@ static MLNUI_FORCE_INLINE int mln_pushTable(lua_State *L, void * key, MLNUILuaTa
         return;
     }
     // 将对应table压栈
-    mln_pushTable(L, (__bridge void *)(self), self.env);
+    mlnui_pushTable(L, (__bridge void *)(self), self.env);
     // 设置key - value
     lua_pushlightuserdata(L, cKey); // [ ... | table | key ]
     [MLNUI_LUA_CORE(L) pushNativeObject:obj error:NULL]; // [ ... | table | key | ud ]
@@ -144,7 +144,7 @@ static MLNUI_FORCE_INLINE int mln_pushTable(lua_State *L, void * key, MLNUILuaTa
         return;
     }
     int oldTop = lua_gettop(L);
-    mln_pushTable(L, (__bridge void *)(self), self.env); // [ ... | table ]
+    mlnui_pushTable(L, (__bridge void *)(self), self.env); // [ ... | table ]
     // 设置key - nil
     lua_pushstring(L, key.UTF8String); // [ ... | table | key ]
     lua_pushnil(L); // [ ... | table | key | nil ]
@@ -163,7 +163,7 @@ static MLNUI_FORCE_INLINE int mln_pushTable(lua_State *L, void * key, MLNUILuaTa
         return;
     }
     int oldTop = lua_gettop(L);
-    mln_pushTable(L, (__bridge void *)(self), self.env); // [ ... | table ]
+    mlnui_pushTable(L, (__bridge void *)(self), self.env); // [ ... | table ]
     // 设置key - nil
     lua_pushlightuserdata(L, cKey); // [ ... | table | key ]
     lua_pushnil(L); // [ ... | table | key | nil ]
@@ -181,7 +181,7 @@ static MLNUI_FORCE_INLINE int mln_pushTable(lua_State *L, void * key, MLNUILuaTa
         return NSNotFound;
     }
     int oldTop = lua_gettop(L);
-    mln_pushTable(L, (__bridge void *)(self), self.env);
+    mlnui_pushTable(L, (__bridge void *)(self), self.env);
     lua_pushstring(L, key.UTF8String);
     lua_gettable(L, -2);
     if (lua_type(L, -1) == LUA_TUSERDATA) {
@@ -202,7 +202,7 @@ static MLNUI_FORCE_INLINE int mln_pushTable(lua_State *L, void * key, MLNUILuaTa
         return NSNotFound;
     }
     int oldTop = lua_gettop(L);
-    mln_pushTable(L, (__bridge void *)(self), self.env);
+    mlnui_pushTable(L, (__bridge void *)(self), self.env);
     lua_pushlightuserdata(L, cKey);
     lua_gettable(L, -2);
     if (lua_type(L, -1) == LUA_TUSERDATA) {
@@ -222,7 +222,7 @@ static MLNUI_FORCE_INLINE int mln_pushTable(lua_State *L, void * key, MLNUILuaTa
         MLNUIError(self.luaCore, @"The lua state must not be nil!");
         return NSNotFound;
     }
-    return mln_pushTable(L, (__bridge void *)(self), self.env);
+    return mlnui_pushTable(L, (__bridge void *)(self), self.env);
 }
 
 - (void)dealloc
@@ -237,24 +237,24 @@ static MLNUI_FORCE_INLINE int mln_pushTable(lua_State *L, void * key, MLNUILuaTa
 }
 
 #pragma mark - 自定义转换压栈
-- (BOOL)mln_isConvertible
+- (BOOL)mlnui_isConvertible
 {
     return YES;
 }
 
-- (BOOL)mln_isCustomConversion
+- (BOOL)mlnui_isCustomConversion
 {
     return YES;
 }
 
-- (BOOL)mln_convertToLuaStack:(NSError **)error
+- (BOOL)mlnui_convertToLuaStack:(NSError **)error
 {
     lua_State *L = self.luaCore.state;
     if (!L) {
         MLNUIError(self.luaCore, @"The lua state must not be nil!");
         return NO;
     }
-    mln_pushTable(L, (__bridge void *)(self), self.env);
+    mlnui_pushTable(L, (__bridge void *)(self), self.env);
     return YES;
 }
 

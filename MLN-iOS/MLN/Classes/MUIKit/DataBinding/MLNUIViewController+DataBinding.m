@@ -35,10 +35,10 @@
 }
 
 - (void)bindData:(NSObject *)data forKey:(NSString *)key {
-    [self.mln_dataBinding bindData:data forKey:key];
+    [self.mlnui_dataBinding bindData:data forKey:key];
 }
 
-- (MLNUIDataBinding *)mln_dataBinding {
+- (MLNUIDataBinding *)mlnui_dataBinding {
     if (!_dataBinding) {
         _dataBinding = [[MLNUIDataBinding alloc] init];
     }
@@ -50,7 +50,7 @@
 
 @implementation UIViewController (MLNUIDataBinding)
 
-- (MLNUIDataBinding *)mln_dataBinding {
+- (MLNUIDataBinding *)mlnui_dataBinding {
     MLNUIDataBinding *obj = objc_getAssociatedObject(self, _cmd);
     if (!obj) {
         obj = [[MLNUIDataBinding alloc] init];
@@ -59,7 +59,7 @@
     return obj;
 }
 
-- (void)mln_addToSuperViewController:(UIViewController *)superVC frame:(CGRect) frame {
+- (void)mlnui_addToSuperViewController:(UIViewController *)superVC frame:(CGRect) frame {
     if (superVC) {
         [superVC addChildViewController:self];
         self.view.frame = frame;

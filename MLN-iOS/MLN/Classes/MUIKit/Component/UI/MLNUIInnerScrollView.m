@@ -18,20 +18,20 @@
 
 @interface MLNUIInnerScrollView()
 
-@property(nonatomic, weak) MLNUILuaCore *mln_luaCore;
-@property (nonatomic, strong) MLNUIScrollViewDelegate *lua_delegate;
+@property(nonatomic, weak) MLNUILuaCore *mlnui_luaCore;
+@property (nonatomic, strong) MLNUIScrollViewDelegate *luaui_delegate;
 @property (nonatomic, assign, getter=isLinearContenView, readonly) BOOL linearContenView;
 
 @end
 
 @implementation MLNUIInnerScrollView
 
-- (instancetype)initWithLuaCore:(MLNUILuaCore *)luaCore direction:(BOOL)horizontal isLinearContenView:(BOOL)isLinearContenView
+- (instancetype)initWithMLNUILuaCore:(MLNUILuaCore *)luaCore direction:(BOOL)horizontal isLinearContenView:(BOOL)isLinearContenView
 {
-    if (self = [self initWithLuaCore:luaCore isHorizontal:horizontal]) {
+    if (self = [self initWithMLNUILuaCore:luaCore isHorizontal:horizontal]) {
         _linearContenView = isLinearContenView;
-        self.lua_delegate = [[MLNUIScrollViewDelegate alloc] init];
-        self.delegate = self.lua_delegate;
+        self.luaui_delegate = [[MLNUIScrollViewDelegate alloc] init];
+        self.delegate = self.luaui_delegate;
         if (@available(iOS 11.0, *)) {
             self.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
         }
@@ -45,8 +45,8 @@
 {
     [super willMoveToSuperview:newSuperview];
     
-    if (newSuperview && self.mln_contentView) {
-        [self lua_addSubview:self.mln_contentView];
+    if (newSuperview && self.mlnui_contentView) {
+        [self luaui_addSubview:self.mlnui_contentView];
     }
 }
 
@@ -59,7 +59,7 @@
 - (void)recalculContentSizeIfNeed
 {
     CGSize contentSize = self.contentSize;
-    if (!self.mln_horizontal) {
+    if (!self.mlnui_horizontal) {
         if (contentSize.width > self.frame.size.width && self.frame.size.width != 0) {
             contentSize.width = self.frame.size.width;
             self.contentSize = contentSize;
@@ -75,17 +75,17 @@
 
 - (void)updateContentViewLayoutIfNeed
 {
-    if (self.lua_node.isDirty) {
-        [self.mln_contentView lua_needLayout];
+    if (self.luaui_node.isDirty) {
+        [self.mlnui_contentView luaui_needLayout];
     }
 }
 
 #pragma mark - Private method
 - (void)createLinearLayoutIfNeed
 {
-    if (self.isLinearContenView && !self.mln_contentView) {
-        self.mln_contentView = [self createLinearLayoutWithDirection:self.mln_horizontal];
-        self.mln_contentView.clipsToBounds = YES;
+    if (self.isLinearContenView && !self.mlnui_contentView) {
+        self.mlnui_contentView = [self createLinearLayoutWithDirection:self.mlnui_horizontal];
+        self.mlnui_contentView.clipsToBounds = YES;
     }
 }
 
@@ -94,24 +94,24 @@
     switch (direction) {
         case MLNUIScrollDirectionHorizontal: {
             MLNUILinearLayout *linear = [[MLNUILinearLayout alloc] initWithLayoutDirection:MLNUILayoutDirectionHorizontal];
-            linear.lua_height = MLNUILayoutMeasurementTypeMatchParent;
+            linear.luaui_height = MLNUILayoutMeasurementTypeMatchParent;
             return linear;
         }
         default: {
             MLNUILinearLayout *linear = [[MLNUILinearLayout alloc] initWithLayoutDirection:MLNUILayoutDirectionVertical];
-            linear.lua_width = MLNUILayoutMeasurementTypeMatchParent;
+            linear.luaui_width = MLNUILayoutMeasurementTypeMatchParent;
             return linear;
         }
     }
 }
 
 #pragma mark - Override
-- (BOOL)lua_layoutEnable
+- (BOOL)luaui_layoutEnable
 {
     return YES;
 }
 
-- (BOOL)lua_isContainer
+- (BOOL)luaui_isContainer
 {
     return YES;
 }

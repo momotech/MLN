@@ -7,6 +7,6 @@
 
 #import "MLNUIExtScope.h"
 
-void mln_executeCleanupBlock (__strong mln_cleanupBlock_t *block) {
+void mlnui_executeCleanupBlock (__strong mlnui_cleanupBlock_t *block) {
     (*block)();
 }

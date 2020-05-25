@@ -28,7 +28,7 @@
  @param luaCore lua状态机
  @return 导出器实例
  */
-- (instancetype)initWithLuaCore:(MLNUILuaCore *)luaCore;
+- (instancetype)initWithMLNUILuaCore:(MLNUILuaCore *)luaCore;
 
 /**
  导出一个类到lua状态机

@@ -11,13 +11,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface MLNUISnapshotManager : NSObject
 
-+ (UIImage *)mln_captureNormalView:(UIView *)view;
++ (UIImage *)mlnui_captureNormalView:(UIView *)view;
 
-+ (UIImage *)mln_captureScrollView:(UIScrollView *)scrollView;
++ (UIImage *)mlnui_captureScrollView:(UIScrollView *)scrollView;
 
 
 // 文件保存
-+ (NSString *)mln_image:(UIImage *)image saveWithFileName:(NSString *)fileName;
++ (NSString *)mlnui_image:(UIImage *)image saveWithFileName:(NSString *)fileName;
 
 @end
 

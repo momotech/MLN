@@ -64,7 +64,7 @@ typedef enum : NSUInteger {
     CABasicAnimation *animation = [self.animations objectForKey:key];
     if (!animation) {
         animation = [self baseAnimationWithKeyPath:key interpolatorType:self.interpolatorType];
-        [self.animations mln_setObject:animation forKey:key];
+        [self.animations mlnui_setObject:animation forKey:key];
     }
     return animation;
 }
@@ -93,7 +93,7 @@ typedef enum : NSUInteger {
         CABasicAnimation *newAnimation = [self baseAnimationWithKeyPath:key interpolatorType:self.interpolatorType];
         newAnimation.fromValue = animation.fromValue;
         newAnimation.toValue = animation.toValue;
-        [newAnimations mln_setObject:newAnimation forKey:key];
+        [newAnimations mlnui_setObject:newAnimation forKey:key];
     }];
     _animations = newAnimations;
 }
@@ -204,71 +204,71 @@ typedef enum : NSUInteger {
 
 
 #pragma mark - Export Mothed
-- (void)lua_setTranslateX:(CGFloat)fromeValue to:(CGFloat)toValue
+- (void)luaui_setTranslateX:(CGFloat)fromeValue to:(CGFloat)toValue
 {
     CABasicAnimation *animation = [self animationForKey:kMUITranslationX];
     animation.fromValue = @(fromeValue);
     animation.toValue = @(toValue);
 }
 
-- (void)lua_setTranslateY:(CGFloat)fromeValue to:(CGFloat)toValue
+- (void)luaui_setTranslateY:(CGFloat)fromeValue to:(CGFloat)toValue
 {
     CABasicAnimation *animation = [self animationForKey:kMUITranslationY];
     animation.fromValue = @(fromeValue);
     animation.toValue = @(toValue);
 }
 
-- (void)lua_setScaleX:(CGFloat)fromeValue to:(CGFloat)toValue
+- (void)luaui_setScaleX:(CGFloat)fromeValue to:(CGFloat)toValue
 {
     CABasicAnimation *animation = [self animationForKey:kMUIScaleX];
     animation.fromValue = @(fromeValue);
     animation.toValue = @(toValue);
 }
 
-- (void)lua_setRotationY:(CGFloat)fromValue to:(CGFloat)toValue
+- (void)luaui_setRotationY:(CGFloat)fromValue to:(CGFloat)toValue
 {
     CABasicAnimation *animation = [self animationForKey:kMUIRotaionY];
     animation.fromValue = @(fromValue/180.f*M_PI);
     animation.toValue = @(toValue/180.f*M_PI);
-    [self lua_setScaleValue:1500];
+    [self luaui_setScaleValue:1500];
 }
 
-- (void)lua_setRotationX:(CGFloat)fromValue to:(CGFloat)toValue
+- (void)luaui_setRotationX:(CGFloat)fromValue to:(CGFloat)toValue
 {
     CABasicAnimation *animation = [self animationForKey:kMUIRotaionX];
     animation.fromValue = @(fromValue/180.f*M_PI);
     animation.toValue = @(toValue/180.f*M_PI);
-    [self lua_setScaleValue:1500];
+    [self luaui_setScaleValue:1500];
 }
 
-- (void)lua_setScaleValue:(CGFloat)value
+- (void)luaui_setScaleValue:(CGFloat)value
 {
     CATransform3D scale = CATransform3DIdentity;
     scale.m34 = -1.0f/value;
     self.scale = scale;
 }
 
-- (void)lua_setRotationZ:(CGFloat)fromeValue to:(CGFloat)toValue
+- (void)luaui_setRotationZ:(CGFloat)fromeValue to:(CGFloat)toValue
 {
     CABasicAnimation *animation = [self animationForKey:kMUIRotaionZ];
     animation.fromValue = @(fromeValue/180.f*M_PI);
     animation.toValue = @(toValue/180.f*M_PI);
 }
 
-- (void)lua_setScaleY:(CGFloat)fromeValue to:(CGFloat)toValue
+- (void)luaui_setScaleY:(CGFloat)fromeValue to:(CGFloat)toValue
 {
     CABasicAnimation *animation = [self animationForKey:kMUIScaleY];
     animation.fromValue = @(fromeValue);
     animation.toValue = @(toValue);
 }
 
-- (void)lua_setAutoBack:(BOOL)autoBack
+- (void)luaui_setAutoBack:(BOOL)autoBack
 {
     self.animationGroup.removedOnCompletion = autoBack;
     _autoBack = autoBack;
 }
 
-- (void)lua_setRepeat:(MLNUIAnimationRepeatType)type count:(float)count
+- (void)luaui_setRepeat:(MLNUIAnimationRepeatType)type count:(float)count
 {
     if (count == -1) {
         count = MAX_INT;
@@ -290,7 +290,7 @@ typedef enum : NSUInteger {
     }
 }
 
-- (void)lua_repeatCount:(NSInteger)repeatCount
+- (void)luaui_repeatCount:(NSInteger)repeatCount
 {
     if (repeatCount == -1) {
         repeatCount = MAX_INT;
@@ -298,17 +298,17 @@ typedef enum : NSUInteger {
     self.animationGroup.repeatCount = repeatCount;
 }
 
-- (void)lua_setDuration:(CGFloat)duration
+- (void)luaui_setDuration:(CGFloat)duration
 {
     self.animationGroup.duration =duration;
 }
 
-- (void)lua_setDelay:(CGFloat)delay
+- (void)luaui_setDelay:(CGFloat)delay
 {
     self.delay = delay;
 }
 
-- (void)lua_setInterpolator:(MLNUIAnimationInterpolatorType)type
+- (void)luaui_setInterpolator:(MLNUIAnimationInterpolatorType)type
 {
     if (type != _interpolatorType) {
         _interpolatorType = type;
@@ -317,7 +317,7 @@ typedef enum : NSUInteger {
     }
 }
 
-- (void)lua_setAlpha:(CGFloat)fromeValue to:(CGFloat)toValue
+- (void)luaui_setAlpha:(CGFloat)fromeValue to:(CGFloat)toValue
 {
     CABasicAnimation *animation = [self animationForKey:kMUIOpacity];
     animation.fromValue = @(fromeValue);
@@ -325,18 +325,18 @@ typedef enum : NSUInteger {
 }
 
 #pragma mark - Callbacks
-- (void)lua_setStartCallback:(MLNUIBlock *)block
+- (void)luaui_setStartCallback:(MLNUIBlock *)block
 {
-    [self.animationCallbacks mln_setObject:block forKey:kStartCallback];
+    [self.animationCallbacks mlnui_setObject:block forKey:kStartCallback];
 }
 
-- (void)lua_setEndCallback:(MLNUIBlock *)block
+- (void)luaui_setEndCallback:(MLNUIBlock *)block
 {
-    [self.animationCallbacks mln_setObject:block forKey:kEndCallback];
+    [self.animationCallbacks mlnui_setObject:block forKey:kEndCallback];
 }
 
 #pragma mark - Contol
-- (void)lua_startWithView:(UIView *)view
+- (void)luaui_startWithView:(UIView *)view
 {
     MLNUICheckTypeAndNilValue(view, @"View", [UIView class]);
     switch (self.status) {
@@ -354,23 +354,23 @@ typedef enum : NSUInteger {
     }
     self.targetView = view;
     self.status = MLNUIAnimationStatusReadyToPlay;
-    [MLNUI_KIT_INSTANCE(self.mln_luaCore) pushAnimation:self];
+    [MLNUI_KIT_INSTANCE(self.mlnui_luaCore) pushAnimation:self];
 }
 
-- (void)lua_stop
+- (void)luaui_stop
 {
     switch (self.status) {
         case MLNUIAnimationStatusStop:
             return;
         default:
             self.status = MLNUIAnimationStatusStop;
-            [MLNUI_KIT_INSTANCE(self.mln_luaCore) popAnimation:self];
+            [MLNUI_KIT_INSTANCE(self.mlnui_luaCore) popAnimation:self];
             [self.targetView.layer removeAnimationForKey:kMUIDefaultGroupAnimation];
             return;
     }
 }
 
-- (void)lua_pause
+- (void)luaui_pause
 {
     switch (self.status) {
         case MLNUIAnimationStatusReadyToPlay:
@@ -390,13 +390,13 @@ typedef enum : NSUInteger {
     }
 }
 
-- (void)lua_resumeAnimations
+- (void)luaui_resumeAnimations
 {
     switch (self.status) {
         case MLNUIAnimationStatusPuase:
         {
             self.status = MLNUIAnimationStatusReadyToResume;
-            [MLNUI_KIT_INSTANCE(self.mln_luaCore) pushAnimation:self];
+            [MLNUI_KIT_INSTANCE(self.mlnui_luaCore) pushAnimation:self];
         }
         default:
             break;
@@ -405,26 +405,26 @@ typedef enum : NSUInteger {
 
 #pragma mark - Export To Lua
 LUA_EXPORT_BEGIN(MLNUIAnimation)
-LUA_EXPORT_METHOD(setTranslateX, "lua_setTranslateX:to:", MLNUIAnimation)
-LUA_EXPORT_METHOD(setTranslateY, "lua_setTranslateY:to:", MLNUIAnimation)
-LUA_EXPORT_METHOD(setRotate, "lua_setRotationZ:to:", MLNUIAnimation)
-LUA_EXPORT_METHOD(setRotateY, "lua_setRotationY:to:", MLNUIAnimation)
-LUA_EXPORT_METHOD(setRotateX, "lua_setRotationX:to:", MLNUIAnimation)
-LUA_EXPORT_METHOD(setScaleX, "lua_setScaleX:to:", MLNUIAnimation)
-LUA_EXPORT_METHOD(setScaleY, "lua_setScaleY:to:", MLNUIAnimation)
-LUA_EXPORT_METHOD(setAlpha, "lua_setAlpha:to:", MLNUIAnimation)
-LUA_EXPORT_METHOD(repeatCount, "lua_repeatCount:", MLNUIAnimation)
-LUA_EXPORT_METHOD(setRepeat, "lua_setRepeat:count:", MLNUIAnimation)
-LUA_EXPORT_METHOD(setAutoBack, "lua_setAutoBack:", MLNUIAnimation)
-LUA_EXPORT_METHOD(setDuration, "lua_setDuration:", MLNUIAnimation)
-LUA_EXPORT_METHOD(setDelay, "lua_setDelay:", MLNUIAnimation)
-LUA_EXPORT_METHOD(setInterpolator, "lua_setInterpolator:", MLNUIAnimation)
-LUA_EXPORT_METHOD(start, "lua_startWithView:", MLNUIAnimation)
-LUA_EXPORT_METHOD(pause, "lua_pause", MLNUIAnimation)
-LUA_EXPORT_METHOD(resume, "lua_resumeAnimations", MLNUIAnimation)
-LUA_EXPORT_METHOD(stop, "lua_stop", MLNUIAnimation)
-LUA_EXPORT_METHOD(setStartCallback, "lua_setStartCallback:", MLNUIAnimation)
-LUA_EXPORT_METHOD(setEndCallback, "lua_setEndCallback:", MLNUIAnimation)
+LUA_EXPORT_METHOD(setTranslateX, "luaui_setTranslateX:to:", MLNUIAnimation)
+LUA_EXPORT_METHOD(setTranslateY, "luaui_setTranslateY:to:", MLNUIAnimation)
+LUA_EXPORT_METHOD(setRotate, "luaui_setRotationZ:to:", MLNUIAnimation)
+LUA_EXPORT_METHOD(setRotateY, "luaui_setRotationY:to:", MLNUIAnimation)
+LUA_EXPORT_METHOD(setRotateX, "luaui_setRotationX:to:", MLNUIAnimation)
+LUA_EXPORT_METHOD(setScaleX, "luaui_setScaleX:to:", MLNUIAnimation)
+LUA_EXPORT_METHOD(setScaleY, "luaui_setScaleY:to:", MLNUIAnimation)
+LUA_EXPORT_METHOD(setAlpha, "luaui_setAlpha:to:", MLNUIAnimation)
+LUA_EXPORT_METHOD(repeatCount, "luaui_repeatCount:", MLNUIAnimation)
+LUA_EXPORT_METHOD(setRepeat, "luaui_setRepeat:count:", MLNUIAnimation)
+LUA_EXPORT_METHOD(setAutoBack, "luaui_setAutoBack:", MLNUIAnimation)
+LUA_EXPORT_METHOD(setDuration, "luaui_setDuration:", MLNUIAnimation)
+LUA_EXPORT_METHOD(setDelay, "luaui_setDelay:", MLNUIAnimation)
+LUA_EXPORT_METHOD(setInterpolator, "luaui_setInterpolator:", MLNUIAnimation)
+LUA_EXPORT_METHOD(start, "luaui_startWithView:", MLNUIAnimation)
+LUA_EXPORT_METHOD(pause, "luaui_pause", MLNUIAnimation)
+LUA_EXPORT_METHOD(resume, "luaui_resumeAnimations", MLNUIAnimation)
+LUA_EXPORT_METHOD(stop, "luaui_stop", MLNUIAnimation)
+LUA_EXPORT_METHOD(setStartCallback, "luaui_setStartCallback:", MLNUIAnimation)
+LUA_EXPORT_METHOD(setEndCallback, "luaui_setEndCallback:", MLNUIAnimation)
 LUA_EXPORT_END(MLNUIAnimation, Animation, NO, NULL, NULL)
 
 @end

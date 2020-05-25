@@ -106,7 +106,7 @@
 }
 
 #pragma mark - export fo lua
-- (void)lua_setPaintColor:(UIColor *)paintColor
+- (void)luaui_setPaintColor:(UIColor *)paintColor
 {
     if (![paintColor isKindOfClass:[UIColor class]]) {
         MLNUIKitLuaAssert(NO, @"paintColor type must be Color!")
@@ -115,45 +115,45 @@
     _paintColor = paintColor;
 }
 
-- (void)lua_setAlpha:(CGFloat)alpha
+- (void)luaui_setAlpha:(CGFloat)alpha
 {
     _alpha = alpha;
 }
 
-- (void)lua_setPathEffect:(NSInteger)pathEffect
+- (void)luaui_setPathEffect:(NSInteger)pathEffect
 {
     _pathEffect = pathEffect;
 }
 
-- (void)lua_setShader:(NSInteger)shader
+- (void)luaui_setShader:(NSInteger)shader
 {
     _shader = shader;
 }
 
-- (void)lua_setWidth:(CGFloat)width
+- (void)luaui_setWidth:(CGFloat)width
 {
     _width = width;
 }
 
-- (void)lua_setStyle:(MLNUICanvasDrawStyle)style
+- (void)luaui_setStyle:(MLNUICanvasDrawStyle)style
 {
     _style = style;
 }
 
-- (void)lua_setFontSize:(CGFloat)fontSize
+- (void)luaui_setFontSize:(CGFloat)fontSize
 {
     _fontSize = fontSize;
     _font = [UIFont systemFontOfSize:fontSize];
 }
 
-- (void)lua_setFontNameSize:(NSString *)fontName fontSize:(CGFloat)fontSize
+- (void)luaui_setFontNameSize:(NSString *)fontName fontSize:(CGFloat)fontSize
 {
     _fontSize = fontSize;
     _fontName = fontName;
     _font = [UIFont fontWithName:fontName size:fontSize]?:[UIFont systemFontOfSize:fontSize];
 }
 
-- (void)lua_setDash:(NSArray *)dashs phase:(CGFloat)phase
+- (void)luaui_setDash:(NSArray *)dashs phase:(CGFloat)phase
 {
     _phase = phase;
     _dashs = dashs;
@@ -161,14 +161,14 @@
 
 #pragma mark - Export To Lua
 LUA_EXPORT_BEGIN(MLNUICanvasPaint)
-LUA_EXPORT_PROPERTY(paintColor, "lua_setPaintColor:","paintColor", MLNUICanvasPaint)
-LUA_EXPORT_PROPERTY(alpha, "lua_setAlpha:","alpha", MLNUICanvasPaint)
-LUA_EXPORT_PROPERTY(pathEffect, "lua_setPathEffect:","pathEffect", MLNUICanvasPaint)
-LUA_EXPORT_PROPERTY(shader, "lua_setShader:","shader", MLNUICanvasPaint)
-LUA_EXPORT_PROPERTY(width, "lua_setWidth:","width", MLNUICanvasPaint)
-LUA_EXPORT_PROPERTY(style, "lua_setStyle:","style", MLNUICanvasPaint)
-LUA_EXPORT_METHOD(fontSize, "lua_setFontSize:", MLNUICanvasPaint)
-LUA_EXPORT_METHOD(fontNameSize, "lua_setFontNameSize:fontSize:", MLNUICanvasPaint)
-LUA_EXPORT_METHOD(setDash, "lua_setDash:phase:", MLNUICanvasPaint)
+LUA_EXPORT_PROPERTY(paintColor, "luaui_setPaintColor:","paintColor", MLNUICanvasPaint)
+LUA_EXPORT_PROPERTY(alpha, "luaui_setAlpha:","alpha", MLNUICanvasPaint)
+LUA_EXPORT_PROPERTY(pathEffect, "luaui_setPathEffect:","pathEffect", MLNUICanvasPaint)
+LUA_EXPORT_PROPERTY(shader, "luaui_setShader:","shader", MLNUICanvasPaint)
+LUA_EXPORT_PROPERTY(width, "luaui_setWidth:","width", MLNUICanvasPaint)
+LUA_EXPORT_PROPERTY(style, "luaui_setStyle:","style", MLNUICanvasPaint)
+LUA_EXPORT_METHOD(fontSize, "luaui_setFontSize:", MLNUICanvasPaint)
+LUA_EXPORT_METHOD(fontNameSize, "luaui_setFontNameSize:fontSize:", MLNUICanvasPaint)
+LUA_EXPORT_METHOD(setDash, "luaui_setDash:phase:", MLNUICanvasPaint)
 LUA_EXPORT_END(MLNUICanvasPaint, Paint, NO, NULL, NULL)
 @end

@@ -21,9 +21,9 @@
 
 @implementation MLNUIShapeContext
 
-- (instancetype)initWithLuaCore:(MLNUILuaCore *)luaCore TargetView:(UIView *)targetView
+- (instancetype)initWithMLNUILuaCore:(MLNUILuaCore *)luaCore TargetView:(UIView *)targetView
 {
-    if (self =  [super initWithLuaCore:luaCore]) {
+    if (self =  [super initWithMLNUILuaCore:luaCore]) {
         _targetView = targetView;
     }
     return self;
@@ -31,7 +31,7 @@
 
 - (void)cleanShapes
 {
-    [self lua_clear];
+    [self luaui_clear];
 }
 
 #pragma mark - Private
@@ -74,13 +74,13 @@
 }
 
 #pragma mark - Export For Lua
-- (void)lua_setFillColor:(UIColor *)fillColor
+- (void)luaui_setFillColor:(UIColor *)fillColor
 {
     _targetView.backgroundColor = fillColor;
     _targetView.opaque = YES;
 }
 
-- (void)lua_drawLine:(CGFloat)startX startY:(CGFloat)startY endX:(CGFloat)endX endY:(CGFloat)endY paint:(MLNUICanvasPaint *)paint
+- (void)luaui_drawLine:(CGFloat)startX startY:(CGFloat)startY endX:(CGFloat)endX endY:(CGFloat)endY paint:(MLNUICanvasPaint *)paint
 {
     UIBezierPath *path = [UIBezierPath bezierPath];
     [path moveToPoint:CGPointMake(startX, startY)];
@@ -94,7 +94,7 @@
     [self.shapeLayers addObject:shape];
 }
 
-- (void)lua_drawPath:(UIBezierPath *)path paint:(MLNUICanvasPaint *)paint
+- (void)luaui_drawPath:(UIBezierPath *)path paint:(MLNUICanvasPaint *)paint
 {
     CAShapeLayer *shape = [CAShapeLayer layer];
     shape.fillRule = path.usesEvenOddFillRule?@"even-odd":@"non-zero";
@@ -104,7 +104,7 @@
     [self.shapeLayers addObject:shape];
 }
 
-- (void)lua_drawPoint:(CGFloat)x y:(CGFloat)y paint:(MLNUICanvasPaint *)paint
+- (void)luaui_drawPoint:(CGFloat)x y:(CGFloat)y paint:(MLNUICanvasPaint *)paint
 {
     UIBezierPath *path = [UIBezierPath bezierPath];
     [path moveToPoint:CGPointMake(x, y)];
@@ -118,7 +118,7 @@
     [self.shapeLayers addObject:shape];
 }
 
-- (void)lua_drawGradientWithStart:(CGFloat)startX startY:(CGFloat)startY endX:(CGFloat)endX endY:(CGFloat)endY colorArray:(NSArray *)colorArray path:(UIBezierPath *)bezierPath
+- (void)luaui_drawGradientWithStart:(CGFloat)startX startY:(CGFloat)startY endX:(CGFloat)endX endY:(CGFloat)endY colorArray:(NSArray *)colorArray path:(UIBezierPath *)bezierPath
 {
     CAGradientLayer *gradientLayer = [CAGradientLayer layer];
     CGRect frame = self.targetView.frame;
@@ -139,7 +139,7 @@
     [self.shapeLayers addObject:gradientLayer];
 }
 
-- (void)lua_clear
+- (void)luaui_clear
 {
     for (CALayer *layer in self.shapeLayers) {
         [layer removeFromSuperlayer];
@@ -155,12 +155,12 @@
 
 #pragma mark - Export To Lua
 LUA_EXPORT_BEGIN(MLNUIShapeContext)
-LUA_EXPORT_METHOD(clear, "lua_clear", MLNUIShapeContext)
-LUA_EXPORT_METHOD(drawColor, "lua_setFillColor:", MLNUIShapeContext)
-LUA_EXPORT_METHOD(drawLine, "lua_drawLine:startY:endX:endY:paint:", MLNUIShapeContext)
-LUA_EXPORT_METHOD(drawPoint, "lua_drawPoint:y:paint:", MLNUIShapeContext)
-LUA_EXPORT_METHOD(drawPath, "lua_drawPath:paint:", MLNUIShapeContext)
-LUA_EXPORT_METHOD(drawGradientColor, "lua_drawGradientWithStart:startY:endX:endY:colorArray:path:", MLNUIShapeContext)
+LUA_EXPORT_METHOD(clear, "luaui_clear", MLNUIShapeContext)
+LUA_EXPORT_METHOD(drawColor, "luaui_setFillColor:", MLNUIShapeContext)
+LUA_EXPORT_METHOD(drawLine, "luaui_drawLine:startY:endX:endY:paint:", MLNUIShapeContext)
+LUA_EXPORT_METHOD(drawPoint, "luaui_drawPoint:y:paint:", MLNUIShapeContext)
+LUA_EXPORT_METHOD(drawPath, "luaui_drawPath:paint:", MLNUIShapeContext)
+LUA_EXPORT_METHOD(drawGradientColor, "luaui_drawGradientWithStart:startY:endX:endY:colorArray:path:", MLNUIShapeContext)
 LUA_EXPORT_END(MLNUIShapeContext, DrawContext, NO, NULL, NULL)
 
 @end

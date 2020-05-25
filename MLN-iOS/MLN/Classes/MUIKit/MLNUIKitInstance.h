@@ -108,7 +108,7 @@ Lua中的根视图。
  @param viewController LuaWindow所在的视图控制器，并使用viewController.view作为承载LuaWindow的根视图
  @return Lua Core 实例
  */
-- (instancetype)initWithLuaCoreBuilder:(id<MLNUIKitLuaCoeBuilderProtocol>)luaCoreBuilder viewController:(UIViewController<MLNUIViewControllerProtocol> *)viewController;
+- (instancetype)initWithMLNUILuaCoreBuilder:(id<MLNUIKitLuaCoeBuilderProtocol>)luaCoreBuilder viewController:(UIViewController<MLNUIViewControllerProtocol> *)viewController;
 
 /**
  初始化方法

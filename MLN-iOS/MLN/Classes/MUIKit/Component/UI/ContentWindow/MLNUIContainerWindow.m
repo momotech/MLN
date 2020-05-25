@@ -28,19 +28,19 @@
 
 @implementation MLNUIContainerWindow
 
-- (instancetype)initWithLuaCore:(MLNUILuaCore *)luaCore rectValue:(NSValue *)rectValue
+- (instancetype)initWithMLNUILuaCore:(MLNUILuaCore *)luaCore rectValue:(NSValue *)rectValue
 {
     CGRect frame = rectValue ? rectValue.CGRectValue : CGRectZero;
-    if (self = [super initWithLuaCore:luaCore frame:frame]) {
+    if (self = [super initWithMLNUILuaCore:luaCore frame:frame]) {
         [self defaultSettingWith:rectValue];
-        [self.virtualSuperNode addSubnode:self.lua_node];
-        self.lua_node.supernode = self.virtualSuperNode;
+        [self.virtualSuperNode addSubnode:self.luaui_node];
+        self.luaui_node.supernode = self.virtualSuperNode;
         self.windowLevel = UIWindowLevelAlert - 10;
         self.layer.masksToBounds = YES;
-        self.lua_node.enable = YES;
+        self.luaui_node.enable = YES;
         self.cancelable = YES;
         self.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:0];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(mln_in_keWindowChanged:) name:UIWindowDidBecomeKeyNotification object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(mlnui_in_keWindowChanged:) name:UIWindowDidBecomeKeyNotification object:nil];
     }
     return self;
 }
@@ -49,41 +49,41 @@
 {
     if (rectValue) {
         CGRect frame = rectValue.CGRectValue;
-        [self setLua_marginTop:frame.origin.y];
-        [self setLua_marginLeft:frame.origin.x];
-        [self setLua_width:frame.size.width];
-        [self setLua_height:frame.size.height];
+        [self setLuaui_marginTop:frame.origin.y];
+        [self setLuaui_marginLeft:frame.origin.x];
+        [self setLuaui_width:frame.size.width];
+        [self setLuaui_height:frame.size.height];
     } else {
-        [self setLua_width:MLNUILayoutMeasurementTypeWrapContent];
-        [self setLua_height:MLNUILayoutMeasurementTypeWrapContent];
+        [self setLuaui_width:MLNUILayoutMeasurementTypeWrapContent];
+        [self setLuaui_height:MLNUILayoutMeasurementTypeWrapContent];
     }
 }
 
-- (void)lua_setCancelable:(BOOL)cancel
+- (void)luaui_setCancelable:(BOOL)cancel
 {
     self.cancelable = cancel;
 }
 
-- (BOOL)lua_cancelable
+- (BOOL)luaui_cancelable
 {
     return self.cancelable;
 }
 
-- (void)lua_show
+- (void)luaui_show
 {
-    [self mln_in_showContentWindow:YES];
+    [self mlnui_in_showContentWindow:YES];
 }
 
-- (void)lua_dismiss
+- (void)luaui_dismiss
 {
-    [self mln_in_dismissContentWindow];
+    [self mlnui_in_dismissContentWindow];
 }
 
-- (void)lua_setContent:(UIView *)view
+- (void)luaui_setContent:(UIView *)view
 {
-    [self lua_removeAllSubViews];
+    [self luaui_removeAllSubViews];
     _fromLuaView = view;
-    [self lua_addSubview:view];
+    [self luaui_addSubview:view];
 }
 
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
@@ -92,13 +92,13 @@
     CGPoint point = [touches.anyObject locationInView:self];
     if (!self.cancelable || (self.cancelable && [self isTouchPointInSubviews:point]))
         return;
-    [self mln_in_dismissContentWindow];
+    [self mlnui_in_dismissContentWindow];
 }
 
 #pragma mark - private method
-- (void)mln_in_showContentWindow:(BOOL)notKeyWindow
+- (void)mlnui_in_showContentWindow:(BOOL)notKeyWindow
 {
-    [MLNUI_KIT_INSTANCE(self.mln_luaCore) addRootnode:(MLNUILayoutContainerNode *)self.virtualSuperNode];
+    [MLNUI_KIT_INSTANCE(self.mlnui_luaCore) addRootnode:(MLNUILayoutContainerNode *)self.virtualSuperNode];
     [[MLNUIWindowContext sharedContext] pushKeyWindow:[UIApplication sharedApplication].keyWindow];
     self.hidden = NO;
     if (!notKeyWindow) {
@@ -106,10 +106,10 @@
     }
 }
 
-- (void)mln_in_dismissContentWindow
+- (void)mlnui_in_dismissContentWindow
 {
     MLNUIWindowContext *context = [MLNUIWindowContext sharedContext];
-    [MLNUI_KIT_INSTANCE(self.mln_luaCore) removeRootNode:(MLNUILayoutContainerNode *)self.virtualSuperNode];
+    [MLNUI_KIT_INSTANCE(self.mlnui_luaCore) removeRootNode:(MLNUILayoutContainerNode *)self.virtualSuperNode];
     [context removeWithWindow:self];
     UIWindow *topWindw = nil;
     do{
@@ -117,17 +117,17 @@
     } while (topWindw.hidden == YES && topWindw != nil);
     [topWindw makeKeyWindow];
     self.hidden = YES;
-    [self mln_lua_didDisappear];
+    [self mlnui_luaui_didDisappear];
 }
 
-- (void)mln_lua_didDisappear
+- (void)mlnui_luaui_didDisappear
 {
     if (_disappearBlock) {
         [_disappearBlock callIfCan];
     }
 }
 
-- (void)mln_in_keWindowChanged:(NSNotification *)noti
+- (void)mlnui_in_keWindowChanged:(NSNotification *)noti
 {
     if (![noti.object isKindOfClass:[UIWindow class]]) {
         return;
@@ -150,12 +150,12 @@
     return result;
 }
 
-- (void)lua_setDisappearBlock:(MLNUIBlock *)disappearBlock
+- (void)luaui_setDisappearBlock:(MLNUIBlock *)disappearBlock
 {
     _disappearBlock = disappearBlock;
 }
 
-- (void)mln_in_didDisappear
+- (void)mlnui_in_didDisappear
 {
     if (_disappearBlock) {
         [_disappearBlock callIfCan];
@@ -171,24 +171,24 @@
         CGRect bounds = [UIScreen mainScreen].bounds;
         [_virtualSuperNode changeWidth:bounds.size.width];
         [_virtualSuperNode changeHeight:bounds.size.height];
-        [MLNUI_KIT_INSTANCE(self.mln_luaCore) addRootnode:(MLNUILayoutContainerNode *)self.virtualSuperNode];
+        [MLNUI_KIT_INSTANCE(self.mlnui_luaCore) addRootnode:(MLNUILayoutContainerNode *)self.virtualSuperNode];
     }
     return _virtualSuperNode;
 }
 
-- (BOOL)lua_layoutEnable
+- (BOOL)luaui_layoutEnable
 {
     return YES;
 }
 
-- (BOOL)lua_isContainer
+- (BOOL)luaui_isContainer
 {
     return YES;
 }
 
-- (void)setLua_wrapContent:(BOOL)lua_wrapContent
+- (void)setLuaui_wrapContent:(BOOL)luaui_wrapContent
 {
-    MLNUILuaAssert(self.mln_luaCore, NO, @"cann't set wrap content to window");
+    MLNUILuaAssert(self.mlnui_luaCore, NO, @"cann't set wrap content to window");
 }
 
 - (BOOL)isLua_wrapContent
@@ -196,9 +196,9 @@
     return NO;
 }
 
-- (void)lua_changedLayout
+- (void)luaui_changedLayout
 {
-    [super lua_changedLayout];
+    [super luaui_changedLayout];
 }
 
 #pragma mark -- life style
@@ -209,11 +209,11 @@
 
 #pragma mark - Export For Lua
 LUA_EXPORT_VIEW_BEGIN(MLNUIContainerWindow)
-LUA_EXPORT_VIEW_METHOD(show, "lua_show", MLNUIContainerWindow)
-LUA_EXPORT_VIEW_METHOD(dismiss, "lua_dismiss", MLNUIContainerWindow)
-LUA_EXPORT_VIEW_METHOD(contentDisAppear, "lua_setDisappearBlock:", MLNUIContainerWindow)
-LUA_EXPORT_VIEW_METHOD(setContent, "lua_setContent:", MLNUIContainerWindow)
+LUA_EXPORT_VIEW_METHOD(show, "luaui_show", MLNUIContainerWindow)
+LUA_EXPORT_VIEW_METHOD(dismiss, "luaui_dismiss", MLNUIContainerWindow)
+LUA_EXPORT_VIEW_METHOD(contentDisAppear, "luaui_setDisappearBlock:", MLNUIContainerWindow)
+LUA_EXPORT_VIEW_METHOD(setContent, "luaui_setContent:", MLNUIContainerWindow)
 LUA_EXPORT_VIEW_PROPERTY(cancelable, "setCancelable:", "cancelable", MLNUIContainerWindow)
-LUA_EXPORT_VIEW_END(MLNUIContainerWindow, ContentWindow, YES, "MLNUIView", "initWithLuaCore:rectValue:")
+LUA_EXPORT_VIEW_END(MLNUIContainerWindow, ContentWindow, YES, "MLNUIView", "initWithMLNUILuaCore:rectValue:")
 
 @end

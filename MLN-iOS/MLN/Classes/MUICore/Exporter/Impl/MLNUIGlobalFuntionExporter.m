@@ -15,7 +15,7 @@
 - (BOOL)exportClass:(Class<MLNUIExportProtocol>)clazz error:(NSError **)error
 {
     Class<MLNUIGlobalFuncExportProtocol> exportClazz = (Class<MLNUIGlobalFuncExportProtocol>)clazz;
-    const mln_objc_class *clazzInfo = [exportClazz mln_clazzInfo];
+    const mlnui_objc_class *clazzInfo = [exportClazz mlnui_clazzInfo];
     return [self.luaCore registerGlobalFunc:clazzInfo->pkg libname:clazzInfo->l_clz methodList:clazzInfo->clz_methods nup:0 error:error];
 }
 

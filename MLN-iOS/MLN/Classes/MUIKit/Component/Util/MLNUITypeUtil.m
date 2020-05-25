@@ -10,7 +10,7 @@
 
 @implementation MLNUITypeUtil
 
-static int mln_isMap(lua_State *L)
+static int mlnui_isMap(lua_State *L)
 {
     BOOL ret = NO;
     if (mln_lua_gettop(L) > 1 && lua_isuserdata(L, 2)) {
@@ -22,7 +22,7 @@ static int mln_isMap(lua_State *L)
     return 1;
 }
 
-static int mln_isArray(lua_State *L)
+static int mlnui_isArray(lua_State *L)
 {
     BOOL ret = NO;
     if (mln_lua_gettop(L) > 1 && lua_isuserdata(L, 2)) {
@@ -36,8 +36,8 @@ static int mln_isArray(lua_State *L)
 
 #pragma mark - Export
 LUA_EXPORT_STATIC_BEGIN(MLNUITypeUtil)
-LUA_EXPORT_STATIC_C_FUNC(isMap, mln_isMap, MLNUITypeUtil)
-LUA_EXPORT_STATIC_C_FUNC(isArray, mln_isArray, MLNUITypeUtil)
+LUA_EXPORT_STATIC_C_FUNC(isMap, mlnui_isMap, MLNUITypeUtil)
+LUA_EXPORT_STATIC_C_FUNC(isArray, mlnui_isArray, MLNUITypeUtil)
 LUA_EXPORT_STATIC_END(MLNUITypeUtil, TypeUtils, NO, NULL)
 
 @end

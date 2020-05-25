@@ -141,8 +141,8 @@
 
 - (void)internalTextViewDidChange:(UIView<MLNUITextViewProtocol> *)internalTextView
 {
-    if (self.type == MLNUIInternalTextViewTypeMultableLine && self.lua_node.isWrapContent) {
-        [self lua_needLayoutAndSpread];
+    if (self.type == MLNUIInternalTextViewTypeMultableLine && self.luaui_node.isWrapContent) {
+        [self luaui_needLayoutAndSpread];
     }
     //触发回调
     if ([_changedString isEqualToString:@"\n"]) {
@@ -335,7 +335,7 @@
     self.internalTextView.editable = canEdit;
 }
 
-- (void)lua_setCanEdit:(BOOL)canEdit
+- (void)luaui_setCanEdit:(BOOL)canEdit
 {
     self.internalTextView.editable = canEdit;
 }
@@ -351,8 +351,8 @@
     self.internalTextView.text = text;
     [self clipBeyondTextIfNeed:self.internalTextView];
     text = self.internalTextView.text;
-    if (self.type == MLNUIInternalTextViewTypeMultableLine && self.lua_node.isWrapContent) {
-        [self lua_needLayoutAndSpread];
+    if (self.type == MLNUIInternalTextViewTypeMultableLine && self.luaui_node.isWrapContent) {
+        [self luaui_needLayoutAndSpread];
     }
     if (_didChangingCallback) {
         [_didChangingCallback addStringArgument:text?:@""];
@@ -384,8 +384,8 @@
         placeholder = [placeholder stringByReplacingOccurrencesOfString:@"\n" withString:@""];
     }
     self.internalTextView.placeholder = placeholder;
-    if (self.type == MLNUIInternalTextViewTypeMultableLine && self.lua_node.isWrapContent) {
-        [self lua_needLayoutAndSpread];
+    if (self.type == MLNUIInternalTextViewTypeMultableLine && self.luaui_node.isWrapContent) {
+        [self luaui_needLayoutAndSpread];
     }
 }
 
@@ -417,8 +417,8 @@
 - (void)setAttributedText:(NSAttributedString *)attributedText
 {
     self.internalTextView.attributedText = attributedText;
-    if (self.type == MLNUIInternalTextViewTypeMultableLine && self.lua_node.isWrapContent) {
-        [self lua_needLayoutAndSpread];
+    if (self.type == MLNUIInternalTextViewTypeMultableLine && self.luaui_node.isWrapContent) {
+        [self luaui_needLayoutAndSpread];
     }
 }
 
@@ -427,12 +427,12 @@
     return self.internalTextView.attributedText;
 }
 
-- (void)lua_setFonrSize:(CGFloat)fontSize
+- (void)luaui_setFonrSize:(CGFloat)fontSize
 {
     self.internalTextView.font = [UIFont systemFontOfSize:fontSize];
 }
 
-- (CGFloat)lua_fontSize
+- (CGFloat)luaui_fontSize
 {
     return self.internalTextView.font.pointSize;
 }
@@ -454,7 +454,7 @@
     }
 }
 
-- (MLNUIEditTextViewInputMode)lua_inputMode
+- (MLNUIEditTextViewInputMode)luaui_inputMode
 {
     switch (self.internalTextView.keyboardType) {
         case UIKeyboardTypeNumberPad:
@@ -512,44 +512,44 @@
     _returnMode = returnMode;
 }
 
-- (void)lua_setPadding:(CGFloat)top right:(CGFloat)right bottom:(CGFloat)bottom left:(CGFloat)left
+- (void)luaui_setPadding:(CGFloat)top right:(CGFloat)right bottom:(CGFloat)bottom left:(CGFloat)left
 {
     self.padding = UIEdgeInsetsMake(top, left, bottom, right);
-    if (self.type == MLNUIInternalTextViewTypeMultableLine && self.lua_node.isWrapContent) {
-        [self lua_needLayoutAndSpread];
+    if (self.type == MLNUIInternalTextViewTypeMultableLine && self.luaui_node.isWrapContent) {
+        [self luaui_needLayoutAndSpread];
     }
-    [self mln_pushLazyTask:self.lazyTask];
+    [self mlnui_pushLazyTask:self.lazyTask];
 }
 
-- (void)lua_dismissKeyboard
+- (void)luaui_dismissKeyboard
 {
     if ([self.internalTextView isFirstResponder]) {
         [self.internalTextView resignFirstResponder];
     }
 }
 
-- (void)lua_showKeyboard
+- (void)luaui_showKeyboard
 {
     if ([self.internalTextView canBecomeFirstResponder]) {
         [self.internalTextView becomeFirstResponder];
     }
 }
 
-- (void)lua_fontName:(NSString *)fontName size:(CGFloat)fontSize
+- (void)luaui_fontName:(NSString *)fontName size:(CGFloat)fontSize
 {
     UIFont *font =  [UIFont fontWithName:fontName size:fontSize]?:[UIFont systemFontOfSize:fontSize];
     self.internalTextView.font = font;
-    if (self.type == MLNUIInternalTextViewTypeMultableLine && self.lua_node.isWrapContent) {
-        [self lua_needLayoutAndSpread];
+    if (self.type == MLNUIInternalTextViewTypeMultableLine && self.luaui_node.isWrapContent) {
+        [self luaui_needLayoutAndSpread];
     }
 }
 
-- (void)lua_setCursorColor:(UIColor *)color
+- (void)luaui_setCursorColor:(UIColor *)color
 {
     self.internalTextView.tintColor = color;
 }
 
-- (void)lua_setSingleLine:(BOOL)singleLine
+- (void)luaui_setSingleLine:(BOOL)singleLine
 {
     self.type = !singleLine;
 }
@@ -560,7 +560,7 @@
     _type = type;
 }
 
-- (BOOL)lua_SingleLineType
+- (BOOL)luaui_SingleLineType
 {
     return !_type;
 }
@@ -574,17 +574,17 @@
             [_internalTextView becomeFirstResponder];
         }
         [preInternalTextView removeFromSuperview];
-        [self lua_needLayoutAndSpread];
-        [self mln_pushLazyTask:self.lazyTask];
+        [self luaui_needLayoutAndSpread];
+        [self mlnui_pushLazyTask:self.lazyTask];
         [self setupSwitchStatusWityType:type];
     }
 }
 
 #pragma mark - Layout For Lua
-- (CGSize)lua_measureSizeWithMaxWidth:(CGFloat)maxWidth maxHeight:(CGFloat)maxHeight
+- (CGSize)luaui_measureSizeWithMaxWidth:(CGFloat)maxWidth maxHeight:(CGFloat)maxHeight
 {
     NSString *cacheKey = [self remakeCacheKeyWithMaxWidth:maxWidth maxHeight:maxHeight];
-    MLNUISizeCahceManager *sizeCacheManager = MLNUI_KIT_INSTANCE(self.mln_luaCore).layoutEngine.sizeCacheManager;
+    MLNUISizeCahceManager *sizeCacheManager = MLNUI_KIT_INSTANCE(self.mlnui_luaCore).layoutEngine.sizeCacheManager;
     NSValue *sizeValue = [sizeCacheManager objectForKey:cacheKey];
     if (sizeValue) {
         return sizeValue.CGSizeValue;
@@ -606,9 +606,9 @@
     return [NSString stringWithFormat:@"%lu%@%@%ld%lu%f%f%f%f%f%f",(unsigned long)self.attributedText.hash,self.placeholder, self.text,(long)self.textAlignment,(unsigned long)self.font.hash,self.padding.top,self.padding.bottom,self.padding.left,self.padding.right, maxWidth, maxHeight];
 }
 
-- (void)lua_changedLayout
+- (void)luaui_changedLayout
 {
-    [super lua_changedLayout];
+    [super luaui_changedLayout];
     if (!CGRectEqualToRect(self.backgroundImageView.frame, self.bounds)) {
         self.backgroundImageView.frame = self.bounds;
     }
@@ -618,7 +618,7 @@
     }
 }
 
-- (void)lua_setMaxBytes:(NSInteger)bytes
+- (void)luaui_setMaxBytes:(NSInteger)bytes
 {
     bytes = bytes >= 1 ? bytes : 1;
     BOOL shouldReload = _maxBytes > 0;
@@ -627,7 +627,7 @@
     _maxLength = 0;
 }
 
-- (void)lua_setMaxLength:(NSInteger)length
+- (void)luaui_setMaxLength:(NSInteger)length
 {
     length = length >= 1 ? length : 1;
     BOOL shouldReload = _maxLength > 0;
@@ -637,22 +637,22 @@
 }
 
 #pragma mark - Override
-- (void)lua_addSubview:(UIView *)view
+- (void)luaui_addSubview:(UIView *)view
 {
     MLNUIKitLuaAssert(NO, @"Not found \"addView\" method, just continar of View has it!");
 }
 
-- (void)lua_insertSubview:(UIView *)view atIndex:(NSInteger)index
+- (void)luaui_insertSubview:(UIView *)view atIndex:(NSInteger)index
 {
     MLNUIKitLuaAssert(NO, @"Not found \"insertView\" method, just continar of View has it!");
 }
 
-- (void)lua_removeAllSubViews
+- (void)luaui_removeAllSubViews
 {
     MLNUIKitLuaAssert(NO, @"Not found \"removeAllSubviews\" method, just continar of View has it!");
 }
 
-- (BOOL)lua_layoutEnable
+- (BOOL)luaui_layoutEnable
 {
     return YES;
 }
@@ -662,26 +662,26 @@ LUA_EXPORT_VIEW_BEGIN(MLNUIEditTextView)
 LUA_EXPORT_VIEW_PROPERTY(placeholder, "setPlaceholder:","placeholder", MLNUIEditTextView)
 LUA_EXPORT_VIEW_PROPERTY(placeholderColor, "setPlaceholderColor:","placeholderColor", MLNUIEditTextView)
 LUA_EXPORT_VIEW_PROPERTY(textColor, "setTextColor:","textColor", MLNUIEditTextView)
-LUA_EXPORT_VIEW_PROPERTY(fontSize, "lua_setFonrSize:","lua_fontSize", MLNUIEditTextView)
-LUA_EXPORT_VIEW_PROPERTY(inputMode, "setInputMode:","lua_inputMode", MLNUIEditTextView)
+LUA_EXPORT_VIEW_PROPERTY(fontSize, "luaui_setFonrSize:","luaui_fontSize", MLNUIEditTextView)
+LUA_EXPORT_VIEW_PROPERTY(inputMode, "setInputMode:","luaui_inputMode", MLNUIEditTextView)
 LUA_EXPORT_VIEW_PROPERTY(passwordMode, "setPasswordMode:","passwordMode", MLNUIEditTextView)
 LUA_EXPORT_VIEW_PROPERTY(returnMode, "setReturnMode:","returnMode", MLNUIEditTextView)
 LUA_EXPORT_VIEW_PROPERTY(textAlign, "setTextAlignment:","textAlignment", MLNUIEditTextView)
-LUA_EXPORT_VIEW_PROPERTY(maxBytes, "lua_setMaxBytes:","maxBytes", MLNUIEditTextView)
-LUA_EXPORT_VIEW_PROPERTY(maxLength, "lua_setMaxLength:","maxLength", MLNUIEditTextView)
+LUA_EXPORT_VIEW_PROPERTY(maxBytes, "luaui_setMaxBytes:","maxBytes", MLNUIEditTextView)
+LUA_EXPORT_VIEW_PROPERTY(maxLength, "luaui_setMaxLength:","maxLength", MLNUIEditTextView)
 LUA_EXPORT_VIEW_PROPERTY(text, "setText:","text", MLNUIEditTextView)
-LUA_EXPORT_VIEW_PROPERTY(singleLine, "lua_setSingleLine:","lua_SingleLineType", MLNUIEditTextView)
-LUA_EXPORT_VIEW_METHOD(fontNameSize, "lua_fontName:size:", MLNUIEditTextView)
+LUA_EXPORT_VIEW_PROPERTY(singleLine, "luaui_setSingleLine:","luaui_SingleLineType", MLNUIEditTextView)
+LUA_EXPORT_VIEW_METHOD(fontNameSize, "luaui_fontName:size:", MLNUIEditTextView)
 LUA_EXPORT_VIEW_METHOD(setBeginChangingCallback, "setBeginChangingCallback:", MLNUIEditTextView)
 LUA_EXPORT_VIEW_METHOD(setShouldChangeCallback, "setShouldChangeCallback:", MLNUIEditTextView)
 LUA_EXPORT_VIEW_METHOD(setDidChangingCallback, "setDidChangingCallback:", MLNUIEditTextView)
 LUA_EXPORT_VIEW_METHOD(setEndChangedCallback, "setEndChangedCallback:", MLNUIEditTextView)
 LUA_EXPORT_VIEW_METHOD(setReturnCallback, "setReturnCallback:", MLNUIEditTextView)
-LUA_EXPORT_VIEW_METHOD(setCanEdit, "lua_setCanEdit:", MLNUIEditTextView)
-LUA_EXPORT_VIEW_METHOD(padding, "lua_setPadding:right:bottom:left:", MLNUIEditTextView)
-LUA_EXPORT_VIEW_METHOD(dismissKeyboard, "lua_dismissKeyboard", MLNUIEditTextView)
-LUA_EXPORT_VIEW_METHOD(showKeyboard, "lua_showKeyboard", MLNUIEditTextView)
-LUA_EXPORT_VIEW_METHOD(setCursorColor, "lua_setCursorColor:", MLNUIEditTextView)
+LUA_EXPORT_VIEW_METHOD(setCanEdit, "luaui_setCanEdit:", MLNUIEditTextView)
+LUA_EXPORT_VIEW_METHOD(padding, "luaui_setPadding:right:bottom:left:", MLNUIEditTextView)
+LUA_EXPORT_VIEW_METHOD(dismissKeyboard, "luaui_dismissKeyboard", MLNUIEditTextView)
+LUA_EXPORT_VIEW_METHOD(showKeyboard, "luaui_showKeyboard", MLNUIEditTextView)
+LUA_EXPORT_VIEW_METHOD(setCursorColor, "luaui_setCursorColor:", MLNUIEditTextView)
 LUA_EXPORT_VIEW_END(MLNUIEditTextView, EditTextView, YES, "MLNUIView", NULL)
 
 @end

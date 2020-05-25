@@ -74,12 +74,12 @@
 
 - (void)setupClipToBounds
 {
-    MLNUIRenderContext *context = self.targetView.mln_renderContext;
+    MLNUIRenderContext *context = self.targetView.mlnui_renderContext;
     BOOL isOpenDefaultClip = NO;
-    if ([self.targetView mln_isConvertible]) {
+    if ([self.targetView mlnui_isConvertible]) {
         // 添加Lua强引用
         id<MLNUIEntityExportProtocol> obj = (id<MLNUIEntityExportProtocol>)self.targetView;
-        isOpenDefaultClip = [MLNUI_KIT_INSTANCE(obj.mln_luaCore) instanceConsts].defaultCornerClip;
+        isOpenDefaultClip = [MLNUI_KIT_INSTANCE(obj.mlnui_luaCore) instanceConsts].defaultCornerClip;
     }
     if (isOpenDefaultClip && !context.didSetClipToBounds) {
         self.targetView.clipsToBounds = YES;

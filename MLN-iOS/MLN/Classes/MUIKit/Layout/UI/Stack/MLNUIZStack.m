@@ -13,7 +13,7 @@
 @implementation MLNUIZStack
 
 - (MLNUIZStackNode *)node {
-    return (MLNUIZStackNode *)self.lua_node;
+    return (MLNUIZStackNode *)self.luaui_node;
 }
 
 #pragma mark - Override
@@ -32,16 +32,16 @@
 
 #pragma mark - Export Lua
 
-- (void)lua_setChildrenGravity:(MLNUIGravity)gravity {
+- (void)luaui_setChildrenGravity:(MLNUIGravity)gravity {
     self.node.childGravity = gravity;
 }
 
-- (MLNUIGravity)lua_childrenGravity {
+- (MLNUIGravity)luaui_childrenGravity {
     return self.node.childGravity;
 }
 
 LUA_EXPORT_VIEW_BEGIN(MLNUIZStack)
-LUA_EXPORT_VIEW_PROPERTY(childGravity, "lua_setChildrenGravity:", "lua_childrenGravity", MLNUIZStack)
+LUA_EXPORT_VIEW_PROPERTY(childGravity, "luaui_setChildrenGravity:", "luaui_childrenGravity", MLNUIZStack)
 LUA_EXPORT_VIEW_END(MLNUIZStack, ZStack, YES, "MLNUIStack", NULL)
 
 @end

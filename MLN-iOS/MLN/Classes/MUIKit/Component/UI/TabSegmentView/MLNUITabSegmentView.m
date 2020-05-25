@@ -44,11 +44,11 @@ const CGFloat kMLNUITabSegmentViewLabelOffsetWeight = 10.0f;
 @property (nonatomic, strong) MLNUITabSegmentScrollHandler *scrollHandler;
 
 @property (nonatomic, copy) MLNUITabSegmentViewTapActionBlock  tapBlock;
-@property (nonatomic, copy) MLNUITabSegmentViewTapActionBlock lua_tapBlock;
+@property (nonatomic, copy) MLNUITabSegmentViewTapActionBlock luaui_tapBlock;
 
-@property (nonatomic, strong) MLNUIBlock *lua_tapCallback;
-@property (nonatomic, strong) MLNUIBlock *lua_clickCallback;
-@property (nonatomic, strong) MLNUIBlock *lua_scrollingCallback;
+@property (nonatomic, strong) MLNUIBlock *luaui_tapCallback;
+@property (nonatomic, strong) MLNUIBlock *luaui_clickCallback;
+@property (nonatomic, strong) MLNUIBlock *luaui_scrollingCallback;
 @property (nonatomic,weak) MLNUIViewPager *pageView;
 @property (nonatomic, assign) CGFloat normalFontSize;
 @property (nonatomic, assign) CGFloat selectScale;
@@ -74,23 +74,23 @@ const CGFloat kMLNUITabSegmentViewLabelOffsetWeight = 10.0f;
 
 @implementation MLNUITabSegmentView
 
-- (instancetype)initWithLuaCore:(MLNUILuaCore *)luaCore
+- (instancetype)initWithMLNUILuaCore:(MLNUILuaCore *)luaCore
                           frame:(CGRect)frame
                   segmentTitles:(NSArray<NSString*> *)segmentTitles
                        tapBlock:(MLNUITabSegmentViewTapActionBlock)block{
-    return [self initWithLuaCore:luaCore
+    return [self initWithMLNUILuaCore:luaCore
                            frame:frame
                  segmentTitles:segmentTitles
                  configuration:[MLNUITabSegmentViewConfiguration defaultConfiguration]
                       tapBlock:block];
 }
 
-- (instancetype)initWithLuaCore:(MLNUILuaCore *)luaCore
+- (instancetype)initWithMLNUILuaCore:(MLNUILuaCore *)luaCore
                           frame:(CGRect)frame
                   segmentTitles:(NSArray<NSString*> *)segmentTitles
                   configuration:(MLNUITabSegmentViewConfiguration *)configuration
                        tapBlock:(MLNUITabSegmentViewTapActionBlock)block{
-    if (self = [super initWithLuaCore:luaCore frame:frame]) {
+    if (self = [super initWithMLNUILuaCore:luaCore frame:frame]) {
         
         NSAssert(configuration != nil , @"MLNUITabSegmentView configuration can't nil，you can use [MLNUITabSegmentViewConfiguration defaultConfiguration]" );
         _settingIndex = -1;
@@ -109,14 +109,14 @@ const CGFloat kMLNUITabSegmentViewLabelOffsetWeight = 10.0f;
     return self;
 }
 
-- (instancetype)initWithLuaCore:(MLNUILuaCore *)luaCore frame:(CGRect)frame segmentTitles:(NSArray<NSString *> *)segmentTitles tintColor:(UIColor *)tintColor {
+- (instancetype)initWithMLNUILuaCore:(MLNUILuaCore *)luaCore frame:(CGRect)frame segmentTitles:(NSArray<NSString *> *)segmentTitles tintColor:(UIColor *)tintColor {
     
-    if (self = [self initWithLuaCore:luaCore
+    if (self = [self initWithMLNUILuaCore:luaCore
                                 frame:frame
                         segmentTitles:segmentTitles
-                             tapBlock:self.lua_tapBlock]) {
+                             tapBlock:self.luaui_tapBlock]) {
         self.segmentTitles = segmentTitles;
-        __unsafe_unretained MLNUILayoutNode *node = self.lua_node;
+        __unsafe_unretained MLNUILayoutNode *node = self.luaui_node;
         [node changeX:frame.origin.x];
         [node changeY:frame.origin.y];
         MLNUICheckWidth(frame.size.width);
@@ -406,9 +406,9 @@ const CGFloat kMLNUITabSegmentViewLabelOffsetWeight = 10.0f;
     }
     
     
-    if (_lua_clickCallback) {
-        [_lua_clickCallback addIntegerArgument:tapLabel.tag + 1];
-        [_lua_clickCallback callIfCan];
+    if (_luaui_clickCallback) {
+        [_luaui_clickCallback addIntegerArgument:tapLabel.tag + 1];
+        [_luaui_clickCallback callIfCan];
     }
     
     //when recalculate or new tag != currentindex
@@ -489,10 +489,10 @@ const CGFloat kMLNUITabSegmentViewLabelOffsetWeight = 10.0f;
     if (fromIndex >= self.segmentViews.count || toIndex >= self.segmentViews.count) {
         return;
     }
-    if (_lua_scrollingCallback) {
+    if (_luaui_scrollingCallback) {
         CGFloat absoluteProgress =  (fromIndex == self.currentIndex) ? progress : (1.0 - progress);
-        [_lua_scrollingCallback addFloatArgument:absoluteProgress];
-        [_lua_scrollingCallback callIfCan];
+        [_luaui_scrollingCallback addFloatArgument:absoluteProgress];
+        [_luaui_scrollingCallback callIfCan];
     }
     MLNUITabSegmentLabel *oldLable = [self.segmentViews objectAtIndex:fromIndex];
     MLNUITabSegmentLabel *newLabel = [self.segmentViews objectAtIndex:toIndex];
@@ -645,21 +645,21 @@ const CGFloat kMLNUITabSegmentViewLabelOffsetWeight = 10.0f;
 }
 
 #pragma mark - Layout For Lua
-- (BOOL)lua_layoutEnable
+- (BOOL)luaui_layoutEnable
 {
     return YES;
 }
 
 
 #pragma mark - Export For Lua
-- (MLNUITabSegmentViewTapActionBlock)lua_tapBlock {
-    if (!_lua_tapBlock) {
+- (MLNUITabSegmentViewTapActionBlock)luaui_tapBlock {
+    if (!_luaui_tapBlock) {
         __weak typeof(self) weakSelf = self;
-        _lua_tapBlock =  ^(MLNUITabSegmentView* view,NSInteger index) {
+        _luaui_tapBlock =  ^(MLNUITabSegmentView* view,NSInteger index) {
             __strong typeof(weakSelf) strongSelf = weakSelf;
-            if (strongSelf.lua_tapCallback && !strongSelf.ignoreTapCallbackToLua) {
-                [strongSelf.lua_tapCallback addIntArgument:(int)index + 1];
-                [strongSelf.lua_tapCallback callIfCan];
+            if (strongSelf.luaui_tapCallback && !strongSelf.ignoreTapCallbackToLua) {
+                [strongSelf.luaui_tapCallback addIntArgument:(int)index + 1];
+                [strongSelf.luaui_tapCallback callIfCan];
             }
             if (strongSelf.pageView) {
                 [strongSelf.pageView scrollToPage:index aniamted:strongSelf.animated];
@@ -667,11 +667,11 @@ const CGFloat kMLNUITabSegmentViewLabelOffsetWeight = 10.0f;
             strongSelf.ignoreTapCallbackToLua = NO;
         };
     }
-    return _lua_tapBlock;
+    return _luaui_tapBlock;
 }
 
 //bind viewPager
-- (void)lua_relatedToViewPager:(MLNUIViewPager*)viewPager animated:(NSNumber *)animatedValue
+- (void)luaui_relatedToViewPager:(MLNUIViewPager*)viewPager animated:(NSNumber *)animatedValue
 {
     BOOL animated = [animatedValue boolValue];
     MLNUICheckTypeAndNilValue(viewPager, @"ViewPager", [MLNUIViewPager class])
@@ -685,11 +685,11 @@ const CGFloat kMLNUITabSegmentViewLabelOffsetWeight = 10.0f;
     if (viewPager.missionIndex == 0) {
         [viewPager scrollToPage:_currentIndex aniamted:animated];
     } else {
-        [self lua_setCurrentIndex:viewPager.missionIndex animated:@(viewPager.missionAnimated)];
+        [self luaui_setCurrentIndex:viewPager.missionIndex animated:@(viewPager.missionAnimated)];
     }
 }
 
-- (void)lua_setNormalFontSize:(CGFloat)size {
+- (void)luaui_setNormalFontSize:(CGFloat)size {
     if (_normalFontSize == size) {
         return;
     }
@@ -699,7 +699,7 @@ const CGFloat kMLNUITabSegmentViewLabelOffsetWeight = 10.0f;
     [self resetIfNeed];
 }
 
-- (void)lua_setSelectScale:(CGFloat)scale {
+- (void)luaui_setSelectScale:(CGFloat)scale {
     if (_selectScale == scale) {
         return;
     }
@@ -709,7 +709,7 @@ const CGFloat kMLNUITabSegmentViewLabelOffsetWeight = 10.0f;
     [self resetIfNeed];
 }
 
-- (void)lua_setCustomTintColor:(UIColor *)color
+- (void)luaui_setCustomTintColor:(UIColor *)color
 {
     MLNUICheckTypeAndNilValue(color, @"Color", [UIColor class])
     if (_customTintColor == color) {
@@ -720,7 +720,7 @@ const CGFloat kMLNUITabSegmentViewLabelOffsetWeight = 10.0f;
     [self colorSettingResetIfNeed];
 }
 
-- (void)lua_setSelectedColor:(UIColor *)color
+- (void)luaui_setSelectedColor:(UIColor *)color
 {
     MLNUICheckTypeAndNilValue(color, @"Color", [UIColor class])
     if (_selectedTintColor == color) {
@@ -732,7 +732,7 @@ const CGFloat kMLNUITabSegmentViewLabelOffsetWeight = 10.0f;
     [self colorSettingResetIfNeed];
 }
 
-- (void)lua_setIndicatorColor:(UIColor *)color
+- (void)luaui_setIndicatorColor:(UIColor *)color
 {
     MLNUICheckTypeAndNilValue(color, @"Color", UIColor)
     if (_indicatorColor == color) {
@@ -743,7 +743,7 @@ const CGFloat kMLNUITabSegmentViewLabelOffsetWeight = 10.0f;
     [self colorSettingResetIfNeed];
 }
 
-- (void)lua_setTabSpacing:(NSInteger)tabSpacing
+- (void)luaui_setTabSpacing:(NSInteger)tabSpacing
 {
     if (self.configuration.itemPadding == tabSpacing) {
         return;
@@ -786,7 +786,7 @@ const CGFloat kMLNUITabSegmentViewLabelOffsetWeight = 10.0f;
     }
 }
 
-- (void)lua_setCurrentIndex:(NSInteger)currentIndex animated:(NSNumber *)animatedValue
+- (void)luaui_setCurrentIndex:(NSInteger)currentIndex animated:(NSNumber *)animatedValue
 {
     BOOL animated = [animatedValue boolValue];
     if (currentIndex < 1 || currentIndex > self.segmentTitles.count) {
@@ -806,7 +806,7 @@ const CGFloat kMLNUITabSegmentViewLabelOffsetWeight = 10.0f;
     _settingIndex = currentIndex;
 }
 
-- (void)lua_setTapTitle:(NSString*)title atIndex:(NSInteger)index {
+- (void)luaui_setTapTitle:(NSString*)title atIndex:(NSInteger)index {
     MLNUICheckTypeAndNilValue(title, @"string", [NSString class])
     if (index < 1 || index > self.segmentTitles.count) {
         return;
@@ -815,7 +815,7 @@ const CGFloat kMLNUITabSegmentViewLabelOffsetWeight = 10.0f;
     [self setTapTitle:title atIndex:trueIndex];
 }
 
-- (void)lua_setTapBadgeNum:(NSInteger)number atIndex:(NSInteger)index {
+- (void)luaui_setTapBadgeNum:(NSInteger)number atIndex:(NSInteger)index {
     if (index < 1 || index > self.segmentTitles.count) {
         return;
     }
@@ -824,7 +824,7 @@ const CGFloat kMLNUITabSegmentViewLabelOffsetWeight = 10.0f;
     [self setTapBadgeNum:number atIndex:trueIndex];
 }
 
-- (void)lua_setTapBadgeTitle:(NSString*)title atIndex:(NSInteger)index {
+- (void)luaui_setTapBadgeTitle:(NSString*)title atIndex:(NSInteger)index {
     NSInteger trueIndex=  index - 1;
     [self.itemBadgeInfo setObject:title?:@"" forKey:[NSString stringWithFormat:@"%ld",trueIndex]];
     MLNUICheckTypeAndNilValue(title, @"string", [NSString class])
@@ -834,7 +834,7 @@ const CGFloat kMLNUITabSegmentViewLabelOffsetWeight = 10.0f;
     [self setTapBadgeTitle:title atIndex:trueIndex];
 }
 
-- (void)lua_setRedDotHidden:(BOOL)isHidden atIndex:(NSInteger)index {
+- (void)luaui_setRedDotHidden:(BOOL)isHidden atIndex:(NSInteger)index {
     if (index < 1 || index > self.segmentTitles.count) {
         return;
     }
@@ -842,11 +842,11 @@ const CGFloat kMLNUITabSegmentViewLabelOffsetWeight = 10.0f;
     [self setRedDotHidden:isHidden adIndex:trueIndex];
 }
 
-- (void)lua_changeRedDotStatusAtIndex:(NSInteger)index isShow:(BOOL)isShow {
-    [self lua_setRedDotHidden:!isShow atIndex:index];
+- (void)luaui_changeRedDotStatusAtIndex:(NSInteger)index isShow:(BOOL)isShow {
+    [self luaui_setRedDotHidden:!isShow atIndex:index];
 }
 
-- (void)lua_animtionFromIndex:(NSInteger)fromIndex toIndex:(NSInteger)toIndex progress:(CGFloat)progress {
+- (void)luaui_animtionFromIndex:(NSInteger)fromIndex toIndex:(NSInteger)toIndex progress:(CGFloat)progress {
     if ((fromIndex < 1 || fromIndex > self.segmentTitles.count) || (toIndex < 1 || toIndex > self.segmentTitles.count)) {
         return;
     }
@@ -858,11 +858,11 @@ const CGFloat kMLNUITabSegmentViewLabelOffsetWeight = 10.0f;
     
 }
 
-- (void)lua_setCurrentIndex:(NSInteger)currentIndex {
-    [self lua_setCurrentIndex:currentIndex animated:@(YES)];
+- (void)luaui_setCurrentIndex:(NSInteger)currentIndex {
+    [self luaui_setCurrentIndex:currentIndex animated:@(YES)];
 }
 
-- (NSInteger)lua_currentIndex {
+- (NSInteger)luaui_currentIndex {
     NSInteger realIndex = _currentIndex + 1;
     if (_settingIndex != -1) {
         realIndex = _settingIndex;
@@ -870,12 +870,12 @@ const CGFloat kMLNUITabSegmentViewLabelOffsetWeight = 10.0f;
     return realIndex;
 }
 
-- (void)lua_setTapCallback:(MLNUIBlock *)block {
+- (void)luaui_setTapCallback:(MLNUIBlock *)block {
     MLNUICheckTypeAndNilValue(block, @"tapCallback", [MLNUIBlock class])
-    self.lua_tapCallback = block;
+    self.luaui_tapCallback = block;
 }
 
-- (void)lua_setAlignment:(MLNUITabSegmentAlignment)alignment {
+- (void)luaui_setAlignment:(MLNUITabSegmentAlignment)alignment {
     self.alignment = alignment;
     [self layoutSegmentTitle];
     if (_currentIndex < self.segmentViews.count && _currentIndex >= 0) {
@@ -886,41 +886,41 @@ const CGFloat kMLNUITabSegmentViewLabelOffsetWeight = 10.0f;
     }
 }
 
-- (void)lua_setTapClickedCallBack:(MLNUIBlock *)block {
+- (void)luaui_setTapClickedCallBack:(MLNUIBlock *)block {
     MLNUICheckTypeAndNilValue(block, @"Callback", [MLNUIBlock class])
-    _lua_clickCallback = block;
+    _luaui_clickCallback = block;
 }
 
-- (void)lua_setTabScrollingListener:(MLNUIBlock *)block{
+- (void)luaui_setTabScrollingListener:(MLNUIBlock *)block{
     MLNUICheckTypeAndNilValue(block, @"Callback", [MLNUIBlock class])
-    _lua_scrollingCallback = block;
+    _luaui_scrollingCallback = block;
 }
 
 
 #pragma mark - Export For Lua
 LUA_EXPORT_VIEW_BEGIN(MLNUITabSegmentView)
-LUA_EXPORT_VIEW_PROPERTY(currentIndex, "lua_setCurrentIndex:","lua_currentIndex", MLNUITabSegmentView)
-LUA_EXPORT_VIEW_PROPERTY(normalFontSize, "lua_setNormalFontSize:","normalFontSize", MLNUITabSegmentView)
-LUA_EXPORT_VIEW_PROPERTY(selectScale, "lua_setSelectScale:","selectScale", MLNUITabSegmentView)
-LUA_EXPORT_VIEW_PROPERTY(tintColor, "lua_setCustomTintColor:","customTintColor", MLNUITabSegmentView)
-LUA_EXPORT_VIEW_PROPERTY(selectedColor, "lua_setSelectedColor:","selectedColor", MLNUITabSegmentView)
-LUA_EXPORT_VIEW_PROPERTY(indicatorColor, "lua_setIndicatorColor:","indicatorColor", MLNUITabSegmentView)
-LUA_EXPORT_VIEW_METHOD(relatedToViewPager, "lua_relatedToViewPager:animated:", MLNUITabSegmentView)
-LUA_EXPORT_VIEW_METHOD(setCurrentIndexAnimated, "lua_setCurrentIndex:animated:", MLNUITabSegmentView)
-LUA_EXPORT_VIEW_METHOD(setTapTitleAtIndex, "lua_setTapTitle:atIndex:", MLNUITabSegmentView)
-LUA_EXPORT_VIEW_METHOD(setTapBadgeNumAtIndex, "lua_setTapBadgeNum:atIndex:", MLNUITabSegmentView)
-LUA_EXPORT_VIEW_METHOD(setTapBadgeTitleAtIndex, "lua_setTapBadgeTitle:atIndex:", MLNUITabSegmentView)
-LUA_EXPORT_VIEW_METHOD(setRedDotHiddenAtIndex, "lua_changeRedDotStatusAtIndex:isShow:", MLNUITabSegmentView)
-LUA_EXPORT_VIEW_METHOD(changeRedDotStatusAtIndex, "lua_changeRedDotStatusAtIndex:isShow:", MLNUITabSegmentView)
-LUA_EXPORT_VIEW_METHOD(animtionFromIndexToIndexProgress, "lua_animtionFromIndex:toIndex:progress:", MLNUITabSegmentView)
-LUA_EXPORT_VIEW_METHOD(animationFromIndexToIndexProgress, "lua_animtionFromIndex:toIndex:progress:", MLNUITabSegmentView)
-LUA_EXPORT_VIEW_METHOD(addTabSelectedListener, "lua_setTapCallback:", MLNUITabSegmentView)
-LUA_EXPORT_VIEW_METHOD(setTabSelectedListener, "lua_setTapCallback:", MLNUITabSegmentView)
-LUA_EXPORT_VIEW_METHOD(setItemTabClickListener, "lua_setTapClickedCallBack:", MLNUITabSegmentView)
-LUA_EXPORT_VIEW_METHOD(setAlignment, "lua_setAlignment:", MLNUITabSegmentView)
-LUA_EXPORT_VIEW_METHOD(setTabSpacing, "lua_setTabSpacing:", MLNUITabSegmentView)
-LUA_EXPORT_VIEW_METHOD(setTabScrollingListener, "lua_setTabScrollingListener:", MLNUITabSegmentView)
-LUA_EXPORT_VIEW_END(MLNUITabSegmentView,TabSegmentView, YES, "MLNUIView", "initWithLuaCore:frame:segmentTitles:tintColor:")
+LUA_EXPORT_VIEW_PROPERTY(currentIndex, "luaui_setCurrentIndex:","luaui_currentIndex", MLNUITabSegmentView)
+LUA_EXPORT_VIEW_PROPERTY(normalFontSize, "luaui_setNormalFontSize:","normalFontSize", MLNUITabSegmentView)
+LUA_EXPORT_VIEW_PROPERTY(selectScale, "luaui_setSelectScale:","selectScale", MLNUITabSegmentView)
+LUA_EXPORT_VIEW_PROPERTY(tintColor, "luaui_setCustomTintColor:","customTintColor", MLNUITabSegmentView)
+LUA_EXPORT_VIEW_PROPERTY(selectedColor, "luaui_setSelectedColor:","selectedColor", MLNUITabSegmentView)
+LUA_EXPORT_VIEW_PROPERTY(indicatorColor, "luaui_setIndicatorColor:","indicatorColor", MLNUITabSegmentView)
+LUA_EXPORT_VIEW_METHOD(relatedToViewPager, "luaui_relatedToViewPager:animated:", MLNUITabSegmentView)
+LUA_EXPORT_VIEW_METHOD(setCurrentIndexAnimated, "luaui_setCurrentIndex:animated:", MLNUITabSegmentView)
+LUA_EXPORT_VIEW_METHOD(setTapTitleAtIndex, "luaui_setTapTitle:atIndex:", MLNUITabSegmentView)
+LUA_EXPORT_VIEW_METHOD(setTapBadgeNumAtIndex, "luaui_setTapBadgeNum:atIndex:", MLNUITabSegmentView)
+LUA_EXPORT_VIEW_METHOD(setTapBadgeTitleAtIndex, "luaui_setTapBadgeTitle:atIndex:", MLNUITabSegmentView)
+LUA_EXPORT_VIEW_METHOD(setRedDotHiddenAtIndex, "luaui_changeRedDotStatusAtIndex:isShow:", MLNUITabSegmentView)
+LUA_EXPORT_VIEW_METHOD(changeRedDotStatusAtIndex, "luaui_changeRedDotStatusAtIndex:isShow:", MLNUITabSegmentView)
+LUA_EXPORT_VIEW_METHOD(animtionFromIndexToIndexProgress, "luaui_animtionFromIndex:toIndex:progress:", MLNUITabSegmentView)
+LUA_EXPORT_VIEW_METHOD(animationFromIndexToIndexProgress, "luaui_animtionFromIndex:toIndex:progress:", MLNUITabSegmentView)
+LUA_EXPORT_VIEW_METHOD(addTabSelectedListener, "luaui_setTapCallback:", MLNUITabSegmentView)
+LUA_EXPORT_VIEW_METHOD(setTabSelectedListener, "luaui_setTapCallback:", MLNUITabSegmentView)
+LUA_EXPORT_VIEW_METHOD(setItemTabClickListener, "luaui_setTapClickedCallBack:", MLNUITabSegmentView)
+LUA_EXPORT_VIEW_METHOD(setAlignment, "luaui_setAlignment:", MLNUITabSegmentView)
+LUA_EXPORT_VIEW_METHOD(setTabSpacing, "luaui_setTabSpacing:", MLNUITabSegmentView)
+LUA_EXPORT_VIEW_METHOD(setTabScrollingListener, "luaui_setTabScrollingListener:", MLNUITabSegmentView)
+LUA_EXPORT_VIEW_END(MLNUITabSegmentView,TabSegmentView, YES, "MLNUIView", "initWithMLNUILuaCore:frame:segmentTitles:tintColor:")
 
 
 
@@ -1141,7 +1141,7 @@ static inline CGFloat middleWeight(CGFloat weightA, CGFloat weightB) {
 
 - (UIImageView *)createRedDotView {
     if (!_redDotView) {
-        UIImage* image = [UIImage mln_imageWithColor:[UIColor colorWithRed:248/255.0 green:85/255.0 blue:67/255.0 alpha:1.0] finalSize:CGSizeMake(16, 16) cornerRadius:8];
+        UIImage* image = [UIImage mlnui_imageWithColor:[UIColor colorWithRed:248/255.0 green:85/255.0 blue:67/255.0 alpha:1.0] finalSize:CGSizeMake(16, 16) cornerRadius:8];
         _redDotView = [[UIImageView alloc] initWithImage:image];
         CGRect frame = _redDotView.frame;
         frame.size = CGSizeMake(8, 8);

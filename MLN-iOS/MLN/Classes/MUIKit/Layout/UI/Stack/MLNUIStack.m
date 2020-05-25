@@ -14,75 +14,75 @@
 @implementation MLNUIStack
 
 - (MLNUILayoutNode *)createStackNodeWithTargetView:(UIView *)targetView {
-    MLNUIAssert(self.mln_luaCore, false, @"The subclass of MLNUIStack should override this method.");
+    MLNUIAssert(self.mlnui_luaCore, false, @"The subclass of MLNUIStack should override this method.");
     return nil;
 }
 
 #pragma mark - Override
 
-- (BOOL)lua_isContainer {
+- (BOOL)luaui_isContainer {
     return YES;
 }
 
-- (BOOL)lua_layoutEnable {
+- (BOOL)luaui_layoutEnable {
     return YES;
 }
 
 #pragma mark - Export Lua
 
-- (void)lua_children:(NSArray<UIView *> *)subviews {
+- (void)luaui_children:(NSArray<UIView *> *)subviews {
     if ([subviews isKindOfClass:[NSArray class]] == NO) {
         return;
     }
     [subviews enumerateObjectsUsingBlock:^(UIView *_Nonnull view, NSUInteger idx, BOOL *_Nonnull stop) {
         if ([view isKindOfClass:[UIView class]]) {
-            [self lua_addSubview:view];
+            [self luaui_addSubview:view];
         }
     }];
 }
 
 LUA_EXPORT_VIEW_BEGIN(MLNUIStack)
-LUA_EXPORT_VIEW_METHOD(children, "lua_children:", MLNUIStack)
-LUA_EXPORT_VIEW_END(MLNUIStack, Stack, YES, "MLNUIView", "initWithLuaCore:frame:")
+LUA_EXPORT_VIEW_METHOD(children, "luaui_children:", MLNUIStack)
+LUA_EXPORT_VIEW_END(MLNUIStack, Stack, YES, "MLNUIView", "initWithMLNUILuaCore:frame:")
 
 @end
 
 @implementation MLNUIPlaneStack
 
 - (MLNUIPlaneStackNode *)node {
-    return (MLNUIPlaneStackNode *)self.lua_node;
+    return (MLNUIPlaneStackNode *)self.luaui_node;
 }
 
 #pragma mark - Export Lua
 
-- (void)lua_setMainAxisAlignment:(MLNUIStackMainAlignment)alignment {
+- (void)luaui_setMainAxisAlignment:(MLNUIStackMainAlignment)alignment {
     self.node.mainAxisAlignment = alignment;
 }
 
-- (MLNUIStackMainAlignment)lua_mainAxisAlignment {
+- (MLNUIStackMainAlignment)luaui_mainAxisAlignment {
     return self.node.mainAxisAlignment;
 }
 
-- (void)lua_setCrossAxisAlignment:(MLNUIStackCrossAlignment)alignment {
+- (void)luaui_setCrossAxisAlignment:(MLNUIStackCrossAlignment)alignment {
     self.node.crossAxisAlignment = alignment;
 }
 
-- (MLNUIStackCrossAlignment)lua_crossAxisAlignment {
+- (MLNUIStackCrossAlignment)luaui_crossAxisAlignment {
     return self.node.crossAxisAlignment;
 }
 
-- (void)lua_setStackWrap:(MLNUIStackWrapType)wrapType {
+- (void)luaui_setStackWrap:(MLNUIStackWrapType)wrapType {
     self.node.wrapType = wrapType;
 }
 
-- (MLNUIStackWrapType)lua_stackWrap {
+- (MLNUIStackWrapType)luaui_stackWrap {
     return self.node.wrapType;
 }
 
 LUA_EXPORT_VIEW_BEGIN(MLNUIPlaneStack)
-LUA_EXPORT_VIEW_PROPERTY(mainAxisAlignment, "lua_setMainAxisAlignment:", "lua_mainAxisAlignment", MLNUIPlaneStack)
-LUA_EXPORT_VIEW_PROPERTY(crossAxisAlignment, "lua_setCrossAxisAlignment:", "lua_crossAxisAlignment", MLNUIPlaneStack)
-LUA_EXPORT_VIEW_PROPERTY(wrap, "lua_setStackWrap:", "lua_stackWrap", MLNUIPlaneStack)
+LUA_EXPORT_VIEW_PROPERTY(mainAxisAlignment, "luaui_setMainAxisAlignment:", "luaui_mainAxisAlignment", MLNUIPlaneStack)
+LUA_EXPORT_VIEW_PROPERTY(crossAxisAlignment, "luaui_setCrossAxisAlignment:", "luaui_crossAxisAlignment", MLNUIPlaneStack)
+LUA_EXPORT_VIEW_PROPERTY(wrap, "luaui_setStackWrap:", "luaui_stackWrap", MLNUIPlaneStack)
 LUA_EXPORT_VIEW_END(MLNUIPlaneStack, PlaneStack, YES, "MLNUIStack", NULL)
 
 @end

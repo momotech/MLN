@@ -27,29 +27,29 @@
     return self;
 }
 
-- (void)lua_addClick:(MLNUIBlock *)clickCallback
+- (void)luaui_addClick:(MLNUIBlock *)clickCallback
 {
-    if (!self.mln_tapClickBlock) {
+    if (!self.mlnui_tapClickBlock) {
         [self addTarget:self action:@selector(buttonCallBack) forControlEvents:UIControlEventTouchUpInside];
     }
-    self.mln_tapClickBlock = clickCallback;
+    self.mlnui_tapClickBlock = clickCallback;
 }
 
 - (void)buttonCallBack
 {
-    if (self.mln_tapClickBlock) {
-        [self.mln_tapClickBlock  callIfCan];
+    if (self.mlnui_tapClickBlock) {
+        [self.mlnui_tapClickBlock  callIfCan];
     }
 }
 
-- (void)lua_setImage:(NSString *)imageSrc press:(NSString *)press
+- (void)luaui_setImage:(NSString *)imageSrc press:(NSString *)press
 {
     MLNUICheckStringTypeAndNilValue(imageSrc)
-    [self lua_setImage:imageSrc forState:UIControlStateNormal];
-    [self lua_setImage:press forState:UIControlStateHighlighted];
+    [self luaui_setImage:imageSrc forState:UIControlStateNormal];
+    [self luaui_setImage:press forState:UIControlStateHighlighted];
 }
 
-- (void)lua_setImage:(NSString *)imageSrc forState:(UIControlState)state
+- (void)luaui_setImage:(NSString *)imageSrc forState:(UIControlState)state
 {
     MLNUICheckStringTypeAndNilValue(imageSrc)
     id<MLNUIImageLoaderProtocol> imageLoader = [self imageLoader];
@@ -58,42 +58,42 @@
     [imageLoader button:self setImageWithPath:imageSrc forState:state];
 }
 
-- (void)lua_setPaddingWithTop:(CGFloat)top right:(CGFloat)right bottom:(CGFloat)bottom left:(CGFloat)left
+- (void)luaui_setPaddingWithTop:(CGFloat)top right:(CGFloat)right bottom:(CGFloat)bottom left:(CGFloat)left
 {
-    [super lua_setPaddingWithTop:top right:right bottom:bottom left:left];
+    [super luaui_setPaddingWithTop:top right:right bottom:bottom left:left];
     self.imageEdgeInsets = UIEdgeInsetsMake(top, left, bottom, right);
 }
 
 - (id<MLNUIImageLoaderProtocol>)imageLoader
 {
-    return MLNUI_KIT_INSTANCE(self.mln_luaCore).instanceHandlersManager.imageLoader;
+    return MLNUI_KIT_INSTANCE(self.mlnui_luaCore).instanceHandlersManager.imageLoader;
 }
 
 #pragma mark - Override
-- (void)lua_addSubview:(UIView *)view
+- (void)luaui_addSubview:(UIView *)view
 {
     MLNUIKitLuaAssert(NO, @"Not found \"addView\" method, just continar of View has it!");
 }
 
-- (void)lua_insertSubview:(UIView *)view atIndex:(NSInteger)index
+- (void)luaui_insertSubview:(UIView *)view atIndex:(NSInteger)index
 {
     MLNUIKitLuaAssert(NO, @"Not found \"insertView\" method, just continar of View has it!");
 }
 
-- (void)lua_removeAllSubViews
+- (void)luaui_removeAllSubViews
 {
     MLNUIKitLuaAssert(NO, @"Not found \"removeAllSubviews\" method, just continar of View has it!");
 }
 
-- (BOOL)lua_layoutEnable
+- (BOOL)luaui_layoutEnable
 {
     return YES;
 }
 
 #pragma mark - Export For Lua
 LUA_EXPORT_VIEW_BEGIN(MLNUIButton)
-LUA_EXPORT_VIEW_METHOD(setImage, "lua_setImage:press:", MLNUIButton)
-LUA_EXPORT_VIEW_METHOD(padding, "lua_setPaddingWithTop:right:bottom:left:", MLNUIButton)
+LUA_EXPORT_VIEW_METHOD(setImage, "luaui_setImage:press:", MLNUIButton)
+LUA_EXPORT_VIEW_METHOD(padding, "luaui_setPaddingWithTop:right:bottom:left:", MLNUIButton)
 LUA_EXPORT_VIEW_END(MLNUIButton, ImageButton, YES, "MLNUIView", NULL)
 
 @end

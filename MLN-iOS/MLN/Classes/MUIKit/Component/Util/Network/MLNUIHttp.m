@@ -24,7 +24,7 @@
 static id<MLNUIHttpHandlerProtocol> defaultHttpHandler = nil;
 - (id<MLNUIHttpHandlerProtocol>)getHandler
 {
-    id<MLNUIHttpHandlerProtocol> handler = MLNUI_KIT_INSTANCE(self.mln_luaCore).instanceHandlersManager.httpHandler;
+    id<MLNUIHttpHandlerProtocol> handler = MLNUI_KIT_INSTANCE(self.mlnui_luaCore).instanceHandlersManager.httpHandler;
     if (!handler) {
         handler = [[MLNUIHttpDefaultHandler alloc] init];
         defaultHttpHandler = handler;
@@ -32,7 +32,7 @@ static id<MLNUIHttpHandlerProtocol> defaultHttpHandler = nil;
     return handler;
 }
 
-- (void)lua_setBaseUrlString:(NSString *)baseUrlString
+- (void)luaui_setBaseUrlString:(NSString *)baseUrlString
 {
     self.baseUrlString = baseUrlString;
     if ([[self getHandler] respondsToSelector:@selector(http:setBaseUrlString:)]) {
@@ -50,7 +50,7 @@ static id<MLNUIHttpHandlerProtocol> defaultHttpHandler = nil;
 
 - (void)get:(NSString *)urlString params:(NSDictionary *)params completionHandler:(MLNUIBlock *)completionHandler
 {
-    MLNUILuaAssert(self.mln_luaCore, stringNotEmpty(urlString), @"url must not  be null");
+    MLNUILuaAssert(self.mlnui_luaCore, stringNotEmpty(urlString), @"url must not  be null");
     [[self getHandler] http:self get:urlString params:params completionHandler:^(BOOL success, NSDictionary *respInfo, NSDictionary *errorInfo) {
         if (completionHandler) {
             doInMainQueue([completionHandler addBOOLArgument:success];
@@ -63,7 +63,7 @@ static id<MLNUIHttpHandlerProtocol> defaultHttpHandler = nil;
 
 - (void)post:(NSString *)urlString params:(NSDictionary *)params completionHandler:(MLNUIBlock *)completionHandler
 {
-    MLNUILuaAssert(self.mln_luaCore, stringNotEmpty(urlString), @"url must not  be null");
+    MLNUILuaAssert(self.mlnui_luaCore, stringNotEmpty(urlString), @"url must not  be null");
     [[self getHandler] http:self post:urlString params:params completionHandler:^(BOOL success, NSDictionary *respInfo, NSDictionary *errorInfo) {
         if (completionHandler) {
             doInMainQueue([completionHandler addBOOLArgument:success];
@@ -76,7 +76,7 @@ static id<MLNUIHttpHandlerProtocol> defaultHttpHandler = nil;
 
 - (void)download:(NSString *)urlString params:(NSDictionary *)params progressHandler:(MLNUIBlock *)progressHandler completionHandler:(MLNUIBlock *)completionHandler
 {
-    MLNUILuaAssert(self.mln_luaCore, stringNotEmpty(urlString), @"url must not  be null");
+    MLNUILuaAssert(self.mlnui_luaCore, stringNotEmpty(urlString), @"url must not  be null");
     [[self getHandler] http:self download:urlString params:params  progressHandler:^(float progress, float total) {
         if (progressHandler) {
             doInMainQueue([progressHandler addFloatArgument:progress];
@@ -95,7 +95,7 @@ static id<MLNUIHttpHandlerProtocol> defaultHttpHandler = nil;
 
 - (void)upload:(NSString *)urlString params:(NSDictionary *)params filePaths:(NSArray *)filePaths fileNames:(NSArray *)fileNames completionHandler:(MLNUIBlock *)completionHandler
 {
-    MLNUILuaAssert(self.mln_luaCore, stringNotEmpty(urlString), @"url must not  be null");
+    MLNUILuaAssert(self.mlnui_luaCore, stringNotEmpty(urlString), @"url must not  be null");
     [[self getHandler] http:self upload:urlString params:params filePaths:filePaths  fileNames:fileNames completionHandler:^(BOOL success, NSDictionary *respInfo, NSDictionary *errorInfo) {
         if (completionHandler) {
             doInMainQueue([completionHandler addBOOLArgument:success];
@@ -107,9 +107,9 @@ static id<MLNUIHttpHandlerProtocol> defaultHttpHandler = nil;
 }
 
 #pragma mark - Public method
-- (void)mln_download:(NSString *)urlString params:(NSDictionary *)params progressHandler:(void(^)(float progress, float total))progressHandler completionHandler:(void(^)(BOOL success, NSDictionary *respInfo, id respData, NSDictionary *errorInfo))completionHandler
+- (void)mlnui_download:(NSString *)urlString params:(NSDictionary *)params progressHandler:(void(^)(float progress, float total))progressHandler completionHandler:(void(^)(BOOL success, NSDictionary *respInfo, id respData, NSDictionary *errorInfo))completionHandler
 {
-    MLNUILuaAssert(self.mln_luaCore, stringNotEmpty(urlString), @"url must not  be null");
+    MLNUILuaAssert(self.mlnui_luaCore, stringNotEmpty(urlString), @"url must not  be null");
     if ([[self getHandler] respondsToSelector:@selector(http:download:params:progressHandler:completionHandler:)]) {
         [[self getHandler] http:self download:urlString params:params progressHandler:progressHandler completionHandler:completionHandler];
     }
@@ -117,7 +117,7 @@ static id<MLNUIHttpHandlerProtocol> defaultHttpHandler = nil;
 
 #pragma mark - Setup For Lua
 LUA_EXPORT_BEGIN(MLNUIHttp)
-LUA_EXPORT_METHOD(setBaseUrl, "lua_setBaseUrlString:", MLNUIHttp)
+LUA_EXPORT_METHOD(setBaseUrl, "luaui_setBaseUrlString:", MLNUIHttp)
 LUA_EXPORT_METHOD(addCachePolicyFilterKey, "addCachePolicyFilterKey:", MLNUIHttp)
 LUA_EXPORT_METHOD(get, "get:params:completionHandler:", MLNUIHttp)
 LUA_EXPORT_METHOD(post, "post:params:completionHandler:", MLNUIHttp)

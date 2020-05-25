@@ -1,5 +1,5 @@
 //
-//  UIImage+mln_in_util.m
+//  UIImage+mlnui_in_util.m
 //  MLNUI
 //
 //  Created by MoMo on 2019/1/16.
@@ -9,7 +9,7 @@
 
 @implementation UIImage (MLNUI_IN_UTIL)
 
-+ (UIImage *)mln_in_imageWithColor:(UIColor *)color finalSize:(CGSize)size cornerRadius:(CGFloat)cornerRadius
++ (UIImage *)mlnui_in_imageWithColor:(UIColor *)color finalSize:(CGSize)size cornerRadius:(CGFloat)cornerRadius
 {
     if (!color) {
         color = [UIColor clearColor];

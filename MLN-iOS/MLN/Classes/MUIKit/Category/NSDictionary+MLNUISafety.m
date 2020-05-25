@@ -10,7 +10,7 @@
 
 @implementation NSDictionary (MLNUISafety)
 
-- (id)mln_objectForKey:(id)aKey
+- (id)mlnui_objectForKey:(id)aKey
 {
 #ifdef MLNUICrashProtect
     if (!aKey) return nil;
@@ -22,7 +22,7 @@
 
 @implementation NSMutableDictionary (MLNUISafety)
 
-+ (instancetype)mln_dictionaryWithDictionary:(NSDictionary *)dict
++ (instancetype)mlnui_dictionaryWithDictionary:(NSDictionary *)dict
 {
 #ifdef MLNUICrashProtect
     if (!(dict &&
@@ -34,7 +34,7 @@
     return [self dictionaryWithDictionary:dict];
 }
 
-- (void)mln_removeObjectForKey:(id)aKey
+- (void)mlnui_removeObjectForKey:(id)aKey
 {
 #ifdef MLNUICrashProtect
     if (!aKey) return;
@@ -42,7 +42,7 @@
     [self removeObjectForKey:aKey];
 }
 
-- (void)mln_removeObjectsForKeys:(NSArray *)keyArray
+- (void)mlnui_removeObjectsForKeys:(NSArray *)keyArray
 {
 #ifdef MLNUICrashProtect
     if (!(keyArray &&
@@ -52,7 +52,7 @@
     [self removeObjectsForKeys:keyArray];
 }
 
-- (void)mln_setObject:(id)anObject forKey:(id<NSCopying>)aKey
+- (void)mlnui_setObject:(id)anObject forKey:(id<NSCopying>)aKey
 {
 #ifdef MLNUICrashProtect
     if (!(aKey && anObject)) return;
@@ -60,7 +60,7 @@
     [self setObject:anObject forKey:aKey];
 }
 
-- (void)mln_setValuesForKeysWithDictionary:(NSDictionary<NSString *,id> *)keyedValues
+- (void)mlnui_setValuesForKeysWithDictionary:(NSDictionary<NSString *,id> *)keyedValues
 {
 #ifdef MLNUICrashProtect
     if (!(keyedValues &&
@@ -72,7 +72,7 @@
     [self setValuesForKeysWithDictionary:keyedValues];
 }
 
-- (void)mln_addEntriesFromDictionary:(NSDictionary *)otherDictionary
+- (void)mlnui_addEntriesFromDictionary:(NSDictionary *)otherDictionary
 {
 #ifdef MLNUICrashProtect
     if (!(otherDictionary &&
@@ -84,7 +84,7 @@
     [self addEntriesFromDictionary:otherDictionary];
 }
 
-- (void)mln_setDictionary:(NSDictionary *)otherDictionary
+- (void)mlnui_setDictionary:(NSDictionary *)otherDictionary
 {
 #ifdef MLNUICrashProtect
     if (!(otherDictionary &&
@@ -96,7 +96,7 @@
     [self setDictionary:otherDictionary];
 }
 
-- (void)mln_setObject:(id)obj forKeyedSubscript:(id<NSCopying>)key
+- (void)mlnui_setObject:(id)obj forKeyedSubscript:(id<NSCopying>)key
 {
 #ifdef MLNUICrashProtect
     if (!(key && obj)) return;

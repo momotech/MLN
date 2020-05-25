@@ -12,7 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface MLNUILinearLayout : MLNUIView
 
-- (instancetype)initWithLuaCore:(MLNUILuaCore *)luaCore LayoutDirectionNumber:(NSNumber *)directionNum;
+- (instancetype)initWithMLNUILuaCore:(MLNUILuaCore *)luaCore LayoutDirectionNumber:(NSNumber *)directionNum;
 - (instancetype)initWithLayoutDirection:(MLNUILayoutDirection)direction;
 
 @property (nonatomic, assign) MLNUILayoutDirection direction;

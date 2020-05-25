@@ -10,7 +10,7 @@
 
 @implementation NSDictionary (MLNUICore)
 
-- (MLNUINativeType)mln_nativeType
+- (MLNUINativeType)mlnui_nativeType
 {
     return MLNUINativeTypeDictionary;
 }

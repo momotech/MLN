@@ -10,12 +10,12 @@
 
 @implementation NSNumber (MLNUICore)
 
-- (MLNUINativeType)mln_nativeType
+- (MLNUINativeType)mlnui_nativeType
 {
     return MLNUINativeTypeNumber;
 }
 
-- (BOOL)mln_isMultiple
+- (BOOL)mlnui_isMultiple
 {
     return NO;
 }

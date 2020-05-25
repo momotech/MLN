@@ -11,18 +11,18 @@
 
 @implementation NSValue (MLNUICore)
 
-- (MLNUINativeType)mln_nativeType
+- (MLNUINativeType)mlnui_nativeType
 {
     return MLNUINativeTypeValue;
 }
 
-- (BOOL)mln_isMultiple
+- (BOOL)mlnui_isMultiple
 {
     // 该类型默认需要自助转换，不直接当做UserData
     return YES;
 }
 
-- (NSArray *)mln_multipleParams
+- (NSArray *)mlnui_multipleParams
 {
     if (MLNUIValueIsCGRect(self)) {
         CGRect rect = self.CGRectValue;

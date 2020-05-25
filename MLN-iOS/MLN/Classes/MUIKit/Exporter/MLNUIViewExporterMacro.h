@@ -60,7 +60,7 @@ LUA_EXPORT_PROPERTY_WITH_CFUNC(LUA_FUNC, NULL, NULL, CFUNC, CLZ)
 
 /**
  标记完成View UserData类导出 (构造函数为C函数)
- @note ⚠️使用C函数创建对象，必要将mln_isLuaObject属性设置为YES
+ @note ⚠️使用C函数创建对象，必要将mlnui_isLuaObject属性设置为YES
  
  @param CLZ 原生类名称
  @param PACKAGE Lua中的包名
@@ -74,7 +74,7 @@ LUA_EXPORT_PACKAGE_END_WITH_CFUNC(CLZ, PACKAGE, LUA_CLZ, HAS_SUPER, SUPER_CLZ_NA
 
 /**
  标记完成View UserData类导出 (构造函数为C函数)
- @note ⚠️使用C函数创建对象，必要将mln_isLuaObject属性设置为YES
+ @note ⚠️使用C函数创建对象，必要将mlnui_isLuaObject属性设置为YES
  
  @param CLZ 原生类名称
  @param LUA_CLZ Lua中的类名称
@@ -94,7 +94,7 @@ LUA_EXPORT_PACKAGE_VIEW_END_WITH_CFUNC(CLZ, "mln", LUA_CLZ, HAS_SUPER, SUPER_CLZ
  @param LUA_CLZ Lua中的类名称
  @param HAS_SUPER 是否有父类 (YES/NO)，这是在Lua中的继承关系，并非原生的继承关系
  @param SUPERCLZ 父类的原生类名字，可以没有原生的继承关系。
- @param CONSTRUCTOR_NAME 构造器方法，默认为”initWithLuaCore:“。
+ @param CONSTRUCTOR_NAME 构造器方法，默认为”initWithMLNUILuaCore:“。
  */
 #define LUA_EXPORT_PACKAGE_VIEW_END(CLZ, PACKAGE, LUA_CLZ, HAS_SUPER, SUPER_CLZ_NAME, CONSTRUCTOR_NAME) \
 LUA_EXPORT_PACKAGE_END(CLZ, PACKAGE, LUA_CLZ, HAS_SUPER, SUPER_CLZ_NAME, CONSTRUCTOR_NAME)
@@ -107,7 +107,7 @@ LUA_EXPORT_PACKAGE_END(CLZ, PACKAGE, LUA_CLZ, HAS_SUPER, SUPER_CLZ_NAME, CONSTRU
  @param LUA_CLZ Lua中的类名称
  @param HAS_SUPER 是否有父类 (YES/NO)，这是在Lua中的继承关系，并非原生的继承关系
  @param SUPERCLZ 父类的原生类名字，可以没有原生的继承关系。
- @param CONSTRUCTOR_NAME 构造器方法，默认为”initWithLuaCore:“。
+ @param CONSTRUCTOR_NAME 构造器方法，默认为”initWithMLNUILuaCore:“。
  */
 #define LUA_EXPORT_VIEW_END(CLZ, LUA_CLZ, HAS_SUPER, SUPER_CLZ_NAME, CONSTRUCTOR_NAME) \
 LUA_EXPORT_PACKAGE_VIEW_END(CLZ, "mln", LUA_CLZ, HAS_SUPER, SUPER_CLZ_NAME, CONSTRUCTOR_NAME)

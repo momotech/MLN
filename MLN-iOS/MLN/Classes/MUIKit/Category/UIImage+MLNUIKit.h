@@ -12,9 +12,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface UIImage (MLNUIKit)
 
-+ (UIImage *)mln_imageWithColor:(UIColor *)color finalSize:(CGSize)size cornerRadius:(CGFloat)cornerRadius;
++ (UIImage *)mlnui_imageWithColor:(UIColor *)color finalSize:(CGSize)size cornerRadius:(CGFloat)cornerRadius;
 
-- (UIImage *)mln_ImageWithCornerRadius:(MLNUICornerRadius)cornerRadius;
+- (UIImage *)mlnui_ImageWithCornerRadius:(MLNUICornerRadius)cornerRadius;
 
 @end
 

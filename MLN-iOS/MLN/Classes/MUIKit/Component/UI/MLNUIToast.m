@@ -29,12 +29,12 @@
     if (message != nil && ![message isKindOfClass:[NSString class]]) {
         message = @"";
     }
-    return [[MLNUIToast alloc] initWithLuaCore:nil message:message duration:duration];
+    return [[MLNUIToast alloc] initWithMLNUILuaCore:nil message:message duration:duration];
 }
 
-- (instancetype)initWithLuaCore:(MLNUILuaCore *)luaCore message:(NSString *)message duration:(CGFloat)duration
+- (instancetype)initWithMLNUILuaCore:(MLNUILuaCore *)luaCore message:(NSString *)message duration:(CGFloat)duration
 {
-    self = [super initWithLuaCore:luaCore];
+    self = [super initWithMLNUILuaCore:luaCore];
     if (self) {
         if (message != nil && ![message isKindOfClass:[NSString class]]) {
             MLNUIKitLuaAssert(NO, @"The message type should be String!");
@@ -169,6 +169,6 @@
 
 #pragma mark - Export For Lua
 LUA_EXPORT_BEGIN(MLNUIToast)
-LUA_EXPORT_END(MLNUIToast, Toast, NO, NULL, "initWithLuaCore:message:duration:")
+LUA_EXPORT_END(MLNUIToast, Toast, NO, NULL, "initWithMLNUILuaCore:message:duration:")
 
 @end

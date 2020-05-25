@@ -23,7 +23,7 @@
 
  @return 映射表
  */
-+ (NSArray<NSDictionary *> *)mln_globalVarMap;
++ (NSArray<NSDictionary *> *)mlnui_globalVarMap;
 
 @end
 

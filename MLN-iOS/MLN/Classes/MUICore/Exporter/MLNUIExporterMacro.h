@@ -17,7 +17,7 @@
  @param CLZ 类名称
  */
 #define LUA_EXPORT_MAKE_METHOD_LIST(METHODS, CLZ) \
-static const struct mln_objc_method METHODS ## CLZ [] = {
+static const struct mlnui_objc_method METHODS ## CLZ [] = {
 
 /**
  创建方法映射
@@ -73,7 +73,7 @@ LUA_EXPORT_MAKE_METHOD(LUA_FUNC_NAME, SEL_NAME, CLZ_NAME, IS_PROPERTY_T, SETTER_
  */
 #define LUA_EXPORT_MAKE_INFO(PKG_NAME, CLZ_NAME, LUA_CLZ_NAME, LTYPE_NAME, HAS_SUPER, SUPER_CLZ_NAME, HAS_CSTRUCTOR, METHODS,\
 CLZMETHODS, CONSTRUCTOR_T, CLZ) \
-static const struct mln_objc_class mln_Clazz_Info_ ## CLZ = {\
+static const struct mlnui_objc_class mlnui_Clazz_Info_ ## CLZ = {\
 PKG_NAME,\
 CLZ_NAME,\
 LUA_CLZ_NAME,\
@@ -86,9 +86,9 @@ METHODS,\
 CLZMETHODS,\
 CONSTRUCTOR_T\
 };\
-+ (const mln_objc_class *)mln_clazzInfo\
++ (const mlnui_objc_class *)mlnui_clazzInfo\
 {\
-return &mln_Clazz_Info_ ## CLZ;\
+return &mlnui_Clazz_Info_ ## CLZ;\
 }
 
 /**
@@ -97,7 +97,7 @@ return &mln_Clazz_Info_ ## CLZ;\
  @param TYPE 导出类型
  */
 #define LUA_EXPORT_TYPE(TYPE) \
-+ (MLNUIExportType)mln_exportType {\
++ (MLNUIExportType)mlnui_exportType {\
     return (TYPE);\
 }
 

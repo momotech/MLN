@@ -54,7 +54,7 @@
             self.active = YES;
         }
     };
-    [viewController mln_addLifeCycleObserver:self.observer];
+    [viewController mlnui_addLifeCycleObserver:self.observer];
 }
 
 - (void)dealloc {
@@ -77,7 +77,7 @@
 }
 
 // eg: 这里的keypath是text, self.keyPath是userData.text
-- (void)mln_observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change {
+- (void)mlnui_observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change {
     if (!self.isActive) {
         __weak typeof(self) wself = self;
         LOCK();

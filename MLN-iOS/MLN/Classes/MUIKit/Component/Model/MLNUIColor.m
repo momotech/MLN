@@ -42,7 +42,7 @@
     return self;
 }
 
-static int lua_color_init(lua_State *L) {
+static int luaui_color_init(lua_State *L) {
     MLNUIColor *color = nil;
     NSUInteger argCount = lua_gettop(L);
     switch (argCount) {
@@ -65,14 +65,14 @@ static int lua_color_init(lua_State *L) {
             color = [[MLNUIColor alloc] initWithR:0 g:0 b:0 a:1.0];
             break;
         default: {
-            mln_lua_error(L, @"number of arguments must be 3 or 4 or 0!");
+            mlnui_luaui_error(L, @"number of arguments must be 3 or 4 or 0!");
             break;
         }
     }
     
     if (color) {
         // 标记为Lua创建
-        color.mln_isLuaObject = YES;
+        color.mlnui_isLuaObject = YES;
         [MLNUI_LUA_CORE(L) pushNativeObject:color error:NULL];
         return 1;
     }
@@ -113,12 +113,12 @@ static int lua_color_init(lua_State *L) {
 }
 
 #pragma mark - Export
-- (void)lua_setByHex:(NSUInteger)hex
+- (void)luaui_setByHex:(NSUInteger)hex
 {
-    [self lua_setByHex:hex alpha:1.f];
+    [self luaui_setByHex:hex alpha:1.f];
 }
 
-- (void)lua_setByHex:(NSUInteger)hex alpha:(CGFloat)alpha
+- (void)luaui_setByHex:(NSUInteger)hex alpha:(CGFloat)alpha
 {
     alpha = alpha > 1.f ? 1.f:alpha;
     alpha = alpha < 0.f ? 0.f:alpha;
@@ -136,59 +136,59 @@ static int lua_color_init(lua_State *L) {
 }
 
 
-- (void)lua_setAlpha:(CGFloat)alpha
+- (void)luaui_setAlpha:(CGFloat)alpha
 {
     self.alpha = alpha < 0? 0 : (alpha > 1.0? 1.0 : alpha);
     self.color = [UIColor colorWithRed:self.red green:self.green blue:self.blue alpha:self.alpha];
 }
 
-- (void)lua_setRed:(NSUInteger)red
+- (void)luaui_setRed:(NSUInteger)red
 {
     self.red = kColorComponentValue(red) / 255.0;
     self.color = [UIColor colorWithRed:self.red green:self.green blue:self.blue alpha:self.alpha];
     [self _recalcuHex];
 }
 
-- (NSUInteger)lua_red
+- (NSUInteger)luaui_red
 {
     return self.red * 255.f;
 }
 
-- (void)lua_setGreen:(NSUInteger)green
+- (void)luaui_setGreen:(NSUInteger)green
 {
     self.green = kColorComponentValue(green) / 255.0;
     self.color = [UIColor colorWithRed:self.red green:self.green blue:self.blue alpha:self.alpha];
     [self _recalcuHex];
 }
 
-- (NSUInteger)lua_green
+- (NSUInteger)luaui_green
 {
     return self.green * 255.f;
 }
 
-- (void)lua_setBlue:(NSUInteger)blue
+- (void)luaui_setBlue:(NSUInteger)blue
 {
     self.blue = kColorComponentValue(blue) / 255.0;
     self.color = [UIColor colorWithRed:self.red green:self.green blue:self.blue alpha:self.alpha];
     [self _recalcuHex];
 }
 
-- (NSUInteger)lua_blue
+- (NSUInteger)luaui_blue
 {
     return self.blue * 255.f;
 }
 
-- (void)lua_setByR:(NSUInteger)r g:(NSUInteger)g b:(NSUInteger)b
+- (void)luaui_setByR:(NSUInteger)r g:(NSUInteger)g b:(NSUInteger)b
 {
-    [self lua_setByR:r g:g b:b a:1.f];
+    [self luaui_setByR:r g:g b:b a:1.f];
 }
 
-- (void)lua_setByR:(NSUInteger)r g:(NSUInteger)g b:(NSUInteger)b a:(CGFloat)a
+- (void)luaui_setByR:(NSUInteger)r g:(NSUInteger)g b:(NSUInteger)b a:(CGFloat)a
 {
     [self _setByRed:r green:g blue:b alpha:a];
 }
 
-- (void)lua_setColor:(NSString*)color { //#ffffffff”或“rgb(12,23,34)”或“rgba(12,23,45,0.1)”
+- (void)luaui_setColor:(NSString*)color { //#ffffffff”或“rgb(12,23,34)”或“rgba(12,23,45,0.1)”
     color = [color stringByReplacingOccurrencesOfString:@" " withString:@""];
     color = [color stringByReplacingOccurrencesOfString:@"(" withString:@""];
     color = [color stringByReplacingOccurrencesOfString:@")" withString:@""];
@@ -217,13 +217,13 @@ static int lua_color_init(lua_State *L) {
         r = [array[0] intValue];
         g = [array[1] intValue];
         b = [array[2] intValue];
-        [self lua_setByR:r g:g b:b a:a];
+        [self luaui_setByR:r g:g b:b a:a];
     } else {
-        [self lua_setColorWithHex:color];
+        [self luaui_setColorWithHex:color];
     }
 }
 
-- (void)lua_clear
+- (void)luaui_clear
 {
     self.color = [UIColor clearColor];
     self.red = 0.f;
@@ -234,7 +234,7 @@ static int lua_color_init(lua_State *L) {
 }
 
 //设置颜色RGBA
-- (void)lua_setColorWithHex:(NSString *)hex {
+- (void)luaui_setColorWithHex:(NSString *)hex {
     MLNUICheckStringTypeAndNilValue(hex);
     NSString *cString = [[hex stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] uppercaseString];
     
@@ -270,11 +270,11 @@ static int lua_color_init(lua_State *L) {
     [[NSScanner scannerWithString:gString] scanHexInt:&g];
     [[NSScanner scannerWithString:bString] scanHexInt:&b];
     
-    [self lua_setByR:r g:g b:b a:a/255.0f];
+    [self luaui_setByR:r g:g b:b a:a/255.0f];
 }
 
 //设置颜色ARGB
-- (void)lua_setAHex:(NSString *)aHex {
+- (void)luaui_setAHex:(NSString *)aHex {
     MLNUICheckStringTypeAndNilValue(aHex);
     NSString *cString = [[aHex stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] uppercaseString];
     
@@ -309,26 +309,26 @@ static int lua_color_init(lua_State *L) {
     [[NSScanner scannerWithString:gString] scanHexInt:&g];
     [[NSScanner scannerWithString:bString] scanHexInt:&b];
     
-    [self lua_setByR:r g:g b:b a:a/255.0f];
+    [self luaui_setByR:r g:g b:b a:a/255.0f];
 }
 
-- (id)mln_rawNativeData
+- (id)mlnui_rawNativeData
 {
     return self.color;
 }
 
 #pragma mark - Export To Lua
 LUA_EXPORT_BEGIN(MLNUIColor)
-LUA_EXPORT_PROPERTY(hex, "lua_setByHex:", "hex", MLNUIColor)
-LUA_EXPORT_PROPERTY(alpha, "lua_setAlpha:", "alpha", MLNUIColor)
-LUA_EXPORT_PROPERTY(red, "lua_setRed:", "lua_red", MLNUIColor)
-LUA_EXPORT_PROPERTY(green, "lua_setGreen:", "lua_green", MLNUIColor)
-LUA_EXPORT_PROPERTY(blue, "lua_setBlue:", "lua_blue", MLNUIColor)
-LUA_EXPORT_METHOD(setHexA, "lua_setByHex:alpha:", MLNUIColor)
-LUA_EXPORT_METHOD(setRGBA, "lua_setByR:g:b:a:", MLNUIColor)
-LUA_EXPORT_METHOD(setColor, "lua_setColor:", MLNUIColor)
-LUA_EXPORT_METHOD(setAColor, "lua_setAHex:", MLNUIColor)
-LUA_EXPORT_METHOD(clear, "lua_clear", MLNUIColor)
-LUA_EXPORT_END_WITH_CFUNC(MLNUIColor, Color, NO, NULL, lua_color_init)
+LUA_EXPORT_PROPERTY(hex, "luaui_setByHex:", "hex", MLNUIColor)
+LUA_EXPORT_PROPERTY(alpha, "luaui_setAlpha:", "alpha", MLNUIColor)
+LUA_EXPORT_PROPERTY(red, "luaui_setRed:", "luaui_red", MLNUIColor)
+LUA_EXPORT_PROPERTY(green, "luaui_setGreen:", "luaui_green", MLNUIColor)
+LUA_EXPORT_PROPERTY(blue, "luaui_setBlue:", "luaui_blue", MLNUIColor)
+LUA_EXPORT_METHOD(setHexA, "luaui_setByHex:alpha:", MLNUIColor)
+LUA_EXPORT_METHOD(setRGBA, "luaui_setByR:g:b:a:", MLNUIColor)
+LUA_EXPORT_METHOD(setColor, "luaui_setColor:", MLNUIColor)
+LUA_EXPORT_METHOD(setAColor, "luaui_setAHex:", MLNUIColor)
+LUA_EXPORT_METHOD(clear, "luaui_clear", MLNUIColor)
+LUA_EXPORT_END_WITH_CFUNC(MLNUIColor, Color, NO, NULL, luaui_color_init)
 
 @end

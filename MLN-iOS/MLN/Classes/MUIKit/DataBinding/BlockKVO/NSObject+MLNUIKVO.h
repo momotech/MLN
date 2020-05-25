@@ -13,24 +13,24 @@ typedef void(^MLNUIKVOBlock)(id oldValue, id newValue, id observedObject);
 
 @interface NSObject (MLNUIKVO)
 
-@property (nonatomic, copy, readonly) NSObject *(^mln_watch)(NSString *keyPath, MLNUIKVOBlock block);
+@property (nonatomic, copy, readonly) NSObject *(^mlnui_watch)(NSString *keyPath, MLNUIKVOBlock block);
 
-- (void)mln_observeObject:(id)object property:(NSString *)keyPath withBlock:(MLNUIBlockChange)observationBlock;
-- (void)mln_observeObject:(id)object properties:(NSArray <NSString *> *)keyPaths withBlock:(MLNUIBlockChangeMany)observationBlock;
+- (void)mlnui_observeObject:(id)object property:(NSString *)keyPath withBlock:(MLNUIBlockChange)observationBlock;
+- (void)mlnui_observeObject:(id)object properties:(NSArray <NSString *> *)keyPaths withBlock:(MLNUIBlockChangeMany)observationBlock;
 
-- (void)mln_removeObervationsForOwner:(id)owner keyPath:(NSString *)keyPath;
-- (void)mln_removeAllObservations;
+- (void)mlnui_removeObervationsForOwner:(id)owner keyPath:(NSString *)keyPath;
+- (void)mlnui_removeAllObservations;
 
 @end
 
 @interface NSObject (MLNUIArrayKVO)
 
-- (void)mln_observeArray:(NSMutableArray *)array withBlock:(MLNUIBlockChange)observationBlock;
-- (void)mln_removeArrayObervationsForOwner:(id)owner;
+- (void)mlnui_observeArray:(NSMutableArray *)array withBlock:(MLNUIBlockChange)observationBlock;
+- (void)mlnui_removeArrayObervationsForOwner:(id)owner;
 @end
 
 @interface NSObject (MLNUIDeprecated)
-@property (nonatomic, copy, readonly) NSObject *(^mln_subscribe)(NSString *keyPath, MLNUIKVOBlock block);
+@property (nonatomic, copy, readonly) NSObject *(^mlnui_subscribe)(NSString *keyPath, MLNUIKVOBlock block);
 @end
 
 NS_ASSUME_NONNULL_END

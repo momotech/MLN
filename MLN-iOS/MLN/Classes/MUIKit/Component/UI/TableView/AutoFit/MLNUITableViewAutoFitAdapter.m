@@ -31,7 +31,7 @@
     NSString *reuseId = [self reuseIdAt:indexPath];
     MLNUITableViewCell *cell = [self tableView:tableView dequeueCalculCellForIdentifier:reuseId];
     [self updateCellWidthIfNeed:cell tableViewWidth:tableViewWidth];
-    [cell pushContentViewWithLuaCore:self.mln_luaCore];
+    [cell pushContentViewWithLuaCore:self.mlnui_luaCore];
     if (!cell.isInited) {
         MLNUIBlock *initCallback = [self initedCellCallbackByReuseId:reuseId];
         MLNUIKitLuaAssert(initCallback, @"It must not be nil callback of cell init!");
@@ -59,7 +59,7 @@
     }
 }
 
-- (void)lua_heightForRowCallback:(MLNUIBlock *)callback
+- (void)luaui_heightForRowCallback:(MLNUIBlock *)callback
 {
      MLNUIKitLuaAssert(NO, @"Not fount method [AutoFitAdapter heightForCell]!");
 }
@@ -73,7 +73,7 @@
             [tableView registerClass:[MLNUITableViewCell class] forCellReuseIdentifier:identifier];
             cell = [tableView dequeueReusableCellWithIdentifier:identifier];
         }
-        [self.calculCells mln_setObject:cell forKey:identifier];
+        [self.calculCells mlnui_setObject:cell forKey:identifier];
     }
     return cell;
 }

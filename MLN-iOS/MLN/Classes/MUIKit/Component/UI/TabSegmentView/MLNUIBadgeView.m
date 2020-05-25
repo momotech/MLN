@@ -67,7 +67,7 @@
 - (UIImageView *)backImageView
 {
     if (!_backImageView) {
-        UIImage *image = [UIImage mln_in_imageWithColor:[UIColor colorWithRed:248/255.0 green:85/255.0 blue:67/255.0 alpha:1.0] finalSize:CGSizeMake(16, 16) cornerRadius:8];
+        UIImage *image = [UIImage mlnui_in_imageWithColor:[UIColor colorWithRed:248/255.0 green:85/255.0 blue:67/255.0 alpha:1.0] finalSize:CGSizeMake(16, 16) cornerRadius:8];
         _backImageView = [[UIImageView alloc] initWithFrame:CGRectMake(_padding, _padding, _originFrame.size.width, _originFrame.size.height)];
         
         [self setImage:image];

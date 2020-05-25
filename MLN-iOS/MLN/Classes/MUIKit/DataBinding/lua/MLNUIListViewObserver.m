@@ -16,15 +16,15 @@
 #import "NSArray+MLNUIKVO.h"
 
 @interface MLNUITableView (Internal)
-- (void)lua_reloadData;
-//- (void)lua_insertRow:(NSInteger)row section:(NSInteger)section animated:(BOOL)animated;
-//- (void)lua_deleteRow:(NSInteger)row section:(NSInteger)section animated:(BOOL)animated;
+- (void)luaui_reloadData;
+//- (void)luaui_insertRow:(NSInteger)row section:(NSInteger)section animated:(BOOL)animated;
+//- (void)luaui_deleteRow:(NSInteger)row section:(NSInteger)section animated:(BOOL)animated;
 
-- (void)lua_insertRowsAtSection:(NSInteger)section startRow:(NSInteger)startRow endRow:(NSInteger)endRow animated:(BOOL)animated;
-- (void)lua_deleteRowsAtSection:(NSInteger)section startRow:(NSInteger)startRow endRow:(NSInteger)endRow animated:(BOOL)animated;
+- (void)luaui_insertRowsAtSection:(NSInteger)section startRow:(NSInteger)startRow endRow:(NSInteger)endRow animated:(BOOL)animated;
+- (void)luaui_deleteRowsAtSection:(NSInteger)section startRow:(NSInteger)startRow endRow:(NSInteger)endRow animated:(BOOL)animated;
 
-//- (void)lua_reloadAtSection:(NSInteger)section animation:(BOOL)animation;
-- (void)lua_reloadAtRow:(NSInteger)row section:(NSInteger)section animation:(BOOL)animation;
+//- (void)luaui_reloadAtSection:(NSInteger)section animation:(BOOL)animation;
+- (void)luaui_reloadAtRow:(NSInteger)row section:(NSInteger)section animation:(BOOL)animation;
 
 @end
 
@@ -46,7 +46,7 @@ typedef BOOL(^ActionBlock)(void);
     if ([listView isKindOfClass:[MLNUITableView class]] || [listView isKindOfClass:[MLNUICollectionView class]]) {
         MLNUITableView *table = (MLNUITableView *)listView;
         
-        MLNUIKitViewController *kitViewController = (MLNUIKitViewController *)MLNUI_KIT_INSTANCE([table mln_luaCore]).viewController;
+        MLNUIKitViewController *kitViewController = (MLNUIKitViewController *)MLNUI_KIT_INSTANCE([table mlnui_luaCore]).viewController;
         MLNUIListViewObserver *observer = [[MLNUIListViewObserver alloc] initWithViewController:kitViewController callback:nil keyPath:keyPath];
         observer.listView = listView;
         observer.kitViewController = kitViewController;
@@ -88,35 +88,35 @@ typedef BOOL(^ActionBlock)(void);
 
 - (void)listViewReload:(UIView *)list {
     MLNUITableView *table = (MLNUITableView *)list;
-    SEL sel = @selector(lua_reloadData);
+    SEL sel = @selector(luaui_reloadData);
     if ([table respondsToSelector:sel]) {
-        [table lua_reloadData];
+        [table luaui_reloadData];
     }
 }
 
 - (void)listView:(UIView *)list reloadAtRow:(NSUInteger)row section:(NSUInteger)section {
     MLNUITableView *table = (MLNUITableView *)list;
-    SEL sel = @selector(lua_reloadAtRow:section:animation:);
+    SEL sel = @selector(luaui_reloadAtRow:section:animation:);
     if ([table respondsToSelector:sel]) { // + 1 模拟lua层调用
-        [table lua_reloadAtRow:row + 1 section:section + 1 animation:NO];
+        [table luaui_reloadAtRow:row + 1 section:section + 1 animation:NO];
     }
 }
 
 - (void)listView:(UIView *)list insertRowsAtSection:(NSUInteger)section startRow:(NSUInteger)startRow endRow:(NSUInteger)endRow object:(NSObject *)object {
 
     MLNUITableView *table = (MLNUITableView *)list;
-    SEL sel = @selector(lua_insertRowsAtSection:startRow:endRow:animated:);
+    SEL sel = @selector(luaui_insertRowsAtSection:startRow:endRow:animated:);
     if ([table respondsToSelector:sel]) { // + 1 模拟lua层调用
-        [table lua_insertRowsAtSection:section + 1 startRow:startRow + 1 endRow:endRow + 1 animated:NO];
+        [table luaui_insertRowsAtSection:section + 1 startRow:startRow + 1 endRow:endRow + 1 animated:NO];
     }
 }
 
 - (void)listView:(UIView *)list deleteRowsAtSection:(NSUInteger)section startRow:(NSUInteger)startRow endRow:(NSUInteger)endRow object:(NSObject *)object {
 
     MLNUITableView *table = (MLNUITableView *)list;
-    SEL sel = @selector(lua_deleteRowsAtSection:startRow:endRow:animated:);
+    SEL sel = @selector(luaui_deleteRowsAtSection:startRow:endRow:animated:);
     if ([table respondsToSelector:sel]) { // + 1 模拟lua层调用
-        [table lua_deleteRowsAtSection:section + 1 startRow:startRow + 1 endRow:endRow + 1 animated:NO];
+        [table luaui_deleteRowsAtSection:section + 1 startRow:startRow + 1 endRow:endRow + 1 animated:NO];
     }
 }
 
@@ -166,7 +166,7 @@ typedef BOOL(^ActionBlock)(void);
             section = indexSet.firstIndex;
             [self listViewReload:self.listView];
             return YES;
-        } else if([object mln_is2D]  && tmp) {  //ex. object[0][0] = xx
+        } else if([object mlnui_is2D]  && tmp) {  //ex. object[0][0] = xx
             section = [object indexOfObject:tmp];
         }
         switch (type) {

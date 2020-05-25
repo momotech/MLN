@@ -36,10 +36,10 @@
     }
 }
 
-- (void)lua_addSubview:(UIView *)view
+- (void)luaui_addSubview:(UIView *)view
 {
     MLNUICheckTypeAndNilValue(view, @"View", [UIView class]);
-    [self.luaContentView lua_addSubview:view];
+    [self.luaContentView luaui_addSubview:view];
 }
 
 #pragma mark - MLNUIReuseCellProtocol
@@ -86,7 +86,7 @@
 
 - (void)requestLayoutIfNeed
 {
-    [self.luaContentView lua_requestLayoutIfNeed];
+    [self.luaContentView luaui_requestLayoutIfNeed];
 }
 
 - (void)updateLastReueseId:(NSString *)lastReuaseId
@@ -109,7 +109,7 @@
     return _luaContentView;
 }
 
-- (MLNUILuaCore *)mln_luaCore
+- (MLNUILuaCore *)mlnui_luaCore
 {
     return self.luaContentView.luaTable.luaCore;
 }

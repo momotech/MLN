@@ -22,9 +22,9 @@
     return p;
 }
 
-- (instancetype)initWithLuaCore:(MLNUILuaCore *)luaCore x:(NSNumber *)x y:(NSNumber *)y
+- (instancetype)initWithMLNUILuaCore:(MLNUILuaCore *)luaCore x:(NSNumber *)x y:(NSNumber *)y
 {
-    if (self = [super initWithLuaCore:luaCore]) {
+    if (self = [super initWithMLNUILuaCore:luaCore]) {
         _point = CGPointMake(CGFloatValueFromNumber(x), CGFloatValueFromNumber(y));
     }
     return self;
@@ -70,7 +70,7 @@
     return [NSString stringWithFormat:@"<Point x: %f, y: %f>", _point.x, _point.y];
 }
 
-- (BOOL)mln_isMultiple
+- (BOOL)mlnui_isMultiple
 {
     // 该类型只当做UserData
     return NO;
@@ -80,6 +80,6 @@
 LUA_EXPORT_BEGIN(MLNUIPoint)
 LUA_EXPORT_PROPERTY(x, "setX:", "x", MLNUIPoint)
 LUA_EXPORT_PROPERTY(y, "setY:", "y", MLNUIPoint)
-LUA_EXPORT_END(MLNUIPoint, Point, NO, NULL, "initWithLuaCore:x:y:")
+LUA_EXPORT_END(MLNUIPoint, Point, NO, NULL, "initWithMLNUILuaCore:x:y:")
 
 @end

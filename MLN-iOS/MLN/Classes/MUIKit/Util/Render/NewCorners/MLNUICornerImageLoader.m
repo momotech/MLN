@@ -20,7 +20,7 @@
     dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
     
     id<MLNUIImageLoaderProtocol> imageLoder = [self imageLoaderWithImageView:imageView];
-    MLNUILuaAssert(imageView.mln_luaCore, [imageLoder respondsToSelector:@selector(view:loadImageWithPath:completed:)], @"-[imageLoder view:loadImageWithPath:completed:] was not found!");
+    MLNUILuaAssert(imageView.mlnui_luaCore, [imageLoder respondsToSelector:@selector(view:loadImageWithPath:completed:)], @"-[imageLoder view:loadImageWithPath:completed:] was not found!");
     MLNUICornerRadius cornerRadius = { .topLeft = 20, .topRight = 20, .bottomLeft = 20, .bottomRight = 20 };
     cornerRadius.topLeft = (direction & MLNUIRectCornerTopLeft) ? radius : 0;
     cornerRadius.topRight = (direction & MLNUIRectCornerTopRight) ? radius : 0;
@@ -32,7 +32,7 @@
             loadStatus += 1;
             if (loadStatus == 1 && image) {
                 dispatch_async(queue, ^{
-                    UIImage *cornerImage = [image mln_ImageWithCornerRadius:cornerRadius];
+                    UIImage *cornerImage = [image mlnui_ImageWithCornerRadius:cornerRadius];
                     dispatch_async(dispatch_get_main_queue(), ^{
                         if (loadStatus == 1) {
                             imageView.image = cornerImage;
@@ -48,7 +48,7 @@
             loadStatus += 1;
             if (image) {
                 dispatch_async(queue, ^{
-                    UIImage *cornerImage = [image mln_ImageWithCornerRadius:cornerRadius];
+                    UIImage *cornerImage = [image mlnui_ImageWithCornerRadius:cornerRadius];
                     dispatch_async(dispatch_get_main_queue(), ^{
                             imageView.image = cornerImage;
                     });
@@ -63,7 +63,7 @@
 
 + (id<MLNUIImageLoaderProtocol>)imageLoaderWithImageView:(UIImageView<MLNUIEntityExportProtocol> *)imageView
 {
-    return MLNUI_KIT_INSTANCE(imageView.mln_luaCore).instanceHandlersManager.imageLoader;
+    return MLNUI_KIT_INSTANCE(imageView.mlnui_luaCore).instanceHandlersManager.imageLoader;
 }
 
 @end

@@ -10,7 +10,7 @@
 
 @implementation NSArray (MLNUISafety)
 
-- (id)mln_objectAtIndex:(NSUInteger)index
+- (id)mlnui_objectAtIndex:(NSUInteger)index
 {
 #if MLNUICrashProtect
     if (index >= self.count) {
@@ -24,7 +24,7 @@
 
 @implementation NSMutableArray (MLNUISafety)
 
-+ (instancetype)mln_arrayWithArray:(NSArray *)array
++ (instancetype)mlnui_arrayWithArray:(NSArray *)array
 {
 #if MLNUICrashProtect
     if (!(array &&
@@ -36,7 +36,7 @@
     return [self arrayWithArray:array];
 }
 
-- (void)mln_addObject:(id)anObject
+- (void)mlnui_addObject:(id)anObject
 {
 #if MLNUICrashProtect
     if (!anObject) return;
@@ -44,7 +44,7 @@
     [self addObject:anObject];
 }
 
-- (void)mln_addObjectsFromArray:(NSArray *)array
+- (void)mlnui_addObjectsFromArray:(NSArray *)array
 {
 #if MLNUICrashProtect
     if (!(array &&
@@ -54,7 +54,7 @@
     [self addObjectsFromArray:array];
 }
 
-- (void)mln_insertObject:(id)anObject atIndex:(NSUInteger)index
+- (void)mlnui_insertObject:(id)anObject atIndex:(NSUInteger)index
 {
 #if MLNUICrashProtect
     if (!(anObject && index <= self.count)) return;
@@ -62,7 +62,7 @@
     [self insertObject:anObject atIndex:index];
 }
 
-- (void)mln_removeObjectAtIndex:(NSUInteger)index
+- (void)mlnui_removeObjectAtIndex:(NSUInteger)index
 {
 #if MLNUICrashProtect
     if (index >= self.count) return;
@@ -70,7 +70,7 @@
     [self removeObjectAtIndex:index];
 }
 
-- (void)mln_replaceObjectAtIndex:(NSUInteger)index withObject:(id)anObject
+- (void)mlnui_replaceObjectAtIndex:(NSUInteger)index withObject:(id)anObject
 {
 #if MLNUICrashProtect
     if (!(anObject && index < self.count)) return;
@@ -78,7 +78,7 @@
     [self replaceObjectAtIndex:index withObject:anObject];
 }
 
-- (void)mln_removeObject:(id)anObject
+- (void)mlnui_removeObject:(id)anObject
 {
 #if MLNUICrashProtect
     if (!anObject) return;
@@ -86,7 +86,7 @@
     [self removeObject:anObject];
 }
 
-- (void)mln_removeObjects:(NSArray *)array
+- (void)mlnui_removeObjects:(NSArray *)array
 {
 #if MLNUICrashProtect
     if (!(array &&
@@ -96,7 +96,7 @@
     [self removeObjectsInArray:array];
 }
 
-- (void)mln_exchangeObjectAtIndex:(NSUInteger)startIndex withOther:(NSUInteger)otherIndex
+- (void)mlnui_exchangeObjectAtIndex:(NSUInteger)startIndex withOther:(NSUInteger)otherIndex
 {
 #if MLNUICrashProtect
     if (startIndex >= self.count || otherIndex >= self.count) return;
@@ -104,7 +104,7 @@
     [self exchangeObjectAtIndex:startIndex withObjectAtIndex:otherIndex];
 }
 
-- (void)mln_insertObjects:(NSArray *)objects fromIndex:(NSUInteger)fromIndex
+- (void)mlnui_insertObjects:(NSArray *)objects fromIndex:(NSUInteger)fromIndex
 {
 #if MLNUICrashProtect
     if (!(objects && ([objects isKindOfClass:[NSArray class]] ||
@@ -115,7 +115,7 @@
     [self insertObjects:objects atIndexes:indexSet];
 }
 
-- (void)mln_removeObjectsFromIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex
+- (void)mlnui_removeObjectsFromIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex
 {
 #if MLNUICrashProtect
     if (fromIndex >= self.count || toIndex >= self.count || fromIndex > toIndex) return;
@@ -124,7 +124,7 @@
     [self removeObjectsAtIndexes:indexSet];
 }
 
-- (void)mln_replaceObjects:(NSArray *)objects fromIndex:(NSUInteger)fromIndex
+- (void)mlnui_replaceObjects:(NSArray *)objects fromIndex:(NSUInteger)fromIndex
 {
 #if MLNUICrashProtect
     if (!(objects &&

@@ -17,7 +17,7 @@
 @end
 @implementation MLNUIBlock
 
-static int mln_errorFunc_traceback (lua_State *L) {
+static int mlnui_errorFunc_traceback (lua_State *L) {
     if(!lua_isstring(L,1))
         return 1;
     lua_getfield(L,LUA_GLOBALSINDEX,"debug");
@@ -37,7 +37,7 @@ static int mln_errorFunc_traceback (lua_State *L) {
 }
 
 #pragma mark - Initialization
-- (instancetype)initWithLuaCore:(MLNUILuaCore *)luaCore indexOnLuaStack:(int)index
+- (instancetype)initWithMLNUILuaCore:(MLNUILuaCore *)luaCore indexOnLuaStack:(int)index
 {
     if (self = [super init]) {
         _luaCore = luaCore;
@@ -80,11 +80,11 @@ static int mln_errorFunc_traceback (lua_State *L) {
     }
     int base = lua_gettop(L);
     // 添加error处理函数
-    lua_pushcfunction(L, mln_errorFunc_traceback);
+    lua_pushcfunction(L, mlnui_errorFunc_traceback);
     // Lua Fucntion 压栈
     lua_pushlightuserdata(L, (__bridge void *)self); // [ ... | table | self ]
     lua_gettable(L, LUA_REGISTRYINDEX); // ? = table[self] // [ ... | table | ? ]
-    mln_lua_checkfunc(L, -1);
+    mlnui_luaui_checkfunc(L, -1);
     // 参数压栈
     int argsCount = (int)self.arguments.count;
     for (id arg in self.arguments) {
@@ -201,7 +201,7 @@ static int mln_errorFunc_traceback (lua_State *L) {
         [self.arguments addObject:[NSNull null]];
         return;
     }
-    if ([argument mln_nativeType] != MLNUINativeTypeMDictionary) {
+    if ([argument mlnui_nativeType] != MLNUINativeTypeMDictionary) {
         argument = [NSMutableDictionary dictionaryWithDictionary:argument];
     }
     [self.arguments addObject:argument];
@@ -214,7 +214,7 @@ static int mln_errorFunc_traceback (lua_State *L) {
         [self.arguments addObject:[NSNull null]];
         return;
     }
-    if ([argument mln_nativeType] != MLNUINativeTypeMArray) {
+    if ([argument mlnui_nativeType] != MLNUINativeTypeMArray) {
         argument = [NSMutableArray arrayWithArray:argument];
     }
     [self.arguments addObject:argument];

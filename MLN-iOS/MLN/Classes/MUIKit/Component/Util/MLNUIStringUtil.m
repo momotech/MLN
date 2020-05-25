@@ -12,13 +12,13 @@
 
 @implementation MLNUIStringUtil
 
-+ (NSInteger)lua_length:(NSString *)string
++ (NSInteger)luaui_length:(NSString *)string
 {
     if (!string) return 0;
     return string.length;
 }
 
-+ (NSMutableDictionary *)lua_jsonToMap:(NSString*)string {
++ (NSMutableDictionary *)luaui_jsonToMap:(NSString*)string {
     MLNUIStaticCheckTypeAndNilValue(string, @"string", NSString)
     if (!(string && [string isKindOfClass:[NSString class]])) {
         return nil;
@@ -35,7 +35,7 @@
     return dic.mutableCopy;
 }
 
-+ (NSString*)lua_mapToJson:(NSDictionary*)dict {
++ (NSString*)luaui_mapToJson:(NSDictionary*)dict {
     MLNUIStaticCheckTypeAndNilValue(dict, @"Map", NSMutableDictionary)
     if (!(dict && [dict isKindOfClass:[NSDictionary class]])) {
         return nil;
@@ -53,7 +53,7 @@
     return jsonString;
 }
 
-+ (NSArray *)lua_jsonToArray:(NSString *)string
++ (NSArray *)luaui_jsonToArray:(NSString *)string
 {
     MLNUIStaticCheckTypeAndNilValue(string, @"string", [NSString class])
     if (!(string && [string isKindOfClass:[NSString class]])) {
@@ -78,7 +78,7 @@
     return nil;
 }
 
-+ (NSString *)lua_arrayToJson:(NSArray *)array
++ (NSString *)luaui_arrayToJson:(NSArray *)array
 {
     MLNUIStaticCheckTypeAndNilValue(array, @"Array", [NSMutableArray class])
     if (!(array && [array isKindOfClass:[NSArray class]])) {
@@ -139,12 +139,12 @@
     return string;
 }
 
-+ (CGSize)lua_sizeWithContent:(NSString *)content fontSize:(CGFloat)fontSize
++ (CGSize)luaui_sizeWithContent:(NSString *)content fontSize:(CGFloat)fontSize
 {
     return [content sizeWithAttributes:@{NSFontAttributeName : [UIFont systemFontOfSize:fontSize]}];
 }
 
-+ (CGSize)lua_sizeWithContent:(NSString *)content fontName:(NSString *)fontName size:(CGFloat)fontSize
++ (CGSize)luaui_sizeWithContent:(NSString *)content fontName:(NSString *)fontName size:(CGFloat)fontSize
 {
     UIFont* font = [UIFont fontWithName:fontName size:fontSize];
     if (!font) {
@@ -153,22 +153,22 @@
     return [content sizeWithAttributes:@{NSFontAttributeName : font}];
 }
 
-+ (NSString *)lua_md5:(NSString *)string
++ (NSString *)luaui_md5:(NSString *)string
 {
-    return [string mln_md5];
+    return [string mlnui_md5];
 }
 
 #pragma mark - Setup For Lua
 
 LUA_EXPORT_STATIC_BEGIN(MLNUIStringUtil)
-LUA_EXPORT_STATIC_METHOD(length, "lua_length:", MLNUIStringUtil)
-LUA_EXPORT_STATIC_METHOD(jsonToMap, "lua_jsonToMap:", MLNUIStringUtil)
-LUA_EXPORT_STATIC_METHOD(mapToJSON, "lua_mapToJson:", MLNUIStringUtil)
-LUA_EXPORT_STATIC_METHOD(jsonToArray, "lua_jsonToArray:", MLNUIStringUtil)
-LUA_EXPORT_STATIC_METHOD(arrayToJSON, "lua_arrayToJson:", MLNUIStringUtil)
-LUA_EXPORT_STATIC_METHOD(sizeWithContentFontSize, "lua_sizeWithContent:fontSize:", MLNUIStringUtil)
-LUA_EXPORT_STATIC_METHOD(sizeWithContentFontNameSize, "lua_sizeWithContent:fontName:size:", MLNUIStringUtil)
-LUA_EXPORT_STATIC_METHOD(md5, "lua_md5:", MLNUIStringUtil)
+LUA_EXPORT_STATIC_METHOD(length, "luaui_length:", MLNUIStringUtil)
+LUA_EXPORT_STATIC_METHOD(jsonToMap, "luaui_jsonToMap:", MLNUIStringUtil)
+LUA_EXPORT_STATIC_METHOD(mapToJSON, "luaui_mapToJson:", MLNUIStringUtil)
+LUA_EXPORT_STATIC_METHOD(jsonToArray, "luaui_jsonToArray:", MLNUIStringUtil)
+LUA_EXPORT_STATIC_METHOD(arrayToJSON, "luaui_arrayToJson:", MLNUIStringUtil)
+LUA_EXPORT_STATIC_METHOD(sizeWithContentFontSize, "luaui_sizeWithContent:fontSize:", MLNUIStringUtil)
+LUA_EXPORT_STATIC_METHOD(sizeWithContentFontNameSize, "luaui_sizeWithContent:fontName:size:", MLNUIStringUtil)
+LUA_EXPORT_STATIC_METHOD(md5, "luaui_md5:", MLNUIStringUtil)
 LUA_EXPORT_STATIC_END(MLNUIStringUtil, StringUtil, NO, NULL)
 
 @end

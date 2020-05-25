@@ -1,5 +1,5 @@
 //
-//  UIImage+mln_in_util.h
+//  UIImage+mlnui_in_util.h
 //  MLNUI
 //
 //  Created by MoMo on 2019/1/16.
@@ -11,7 +11,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface UIImage (MLNUI_IN_UTIL)
 
-+ (UIImage *)mln_in_imageWithColor:(UIColor *)color finalSize:(CGSize)size cornerRadius:(CGFloat)cornerRadius;
++ (UIImage *)mlnui_in_imageWithColor:(UIColor *)color finalSize:(CGSize)size cornerRadius:(CGFloat)cornerRadius;
 
 @end
 

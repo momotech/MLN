@@ -40,10 +40,10 @@
                 @strongify(self);
                 [self executeBlocks:change];
             };
-            [arr mln_startKVO];
-            [arr mln_addObserverHandler:self.handler];
+            [arr mlnui_startKVO];
+            [arr mlnui_addObserverHandler:self.handler];
         } else {
-            [arr mln_removeObserverHandler:self.handler];
+            [arr mlnui_removeObserverHandler:self.handler];
         }
     }
 }

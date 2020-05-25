@@ -47,7 +47,7 @@
 @implementation NSObject (MLNUIDealloctor)
 
 static const void *MLNUIDeallocatorAssociationKey = &MLNUIDeallocatorAssociationKey;
-- (void)mln_addDeallocationCallback:(MLNUIDeallocatorCallback)block {
+- (void)mlnui_addDeallocationCallback:(MLNUIDeallocatorCallback)block {
     @synchronized (self) {
         @autoreleasepool {
             MLNUIDeallocator *dealloctor = objc_getAssociatedObject(self, MLNUIDeallocatorAssociationKey);
@@ -55,7 +55,7 @@ static const void *MLNUIDeallocatorAssociationKey = &MLNUIDeallocatorAssociation
                 dealloctor = [[MLNUIDeallocator alloc] initWithOwner:self];
                 objc_setAssociatedObject(self, MLNUIDeallocatorAssociationKey, dealloctor, OBJC_ASSOCIATION_RETAIN);
             }
-            [self.class mln_swizzleDeallocIfNeeded];
+            [self.class mlnui_swizzleDeallocIfNeeded];
             [dealloctor addCallback:block];
         }
     }
@@ -63,7 +63,7 @@ static const void *MLNUIDeallocatorAssociationKey = &MLNUIDeallocatorAssociation
 
 
 #pragma mark - Private
-+ (BOOL)mln_swizzleDeallocIfNeeded {
++ (BOOL)mlnui_swizzleDeallocIfNeeded {
     static NSMutableSet *swizzledClasses = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{

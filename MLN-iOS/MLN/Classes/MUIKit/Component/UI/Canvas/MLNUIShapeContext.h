@@ -12,7 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface MLNUIShapeContext : NSObject<MLNUIEntityExportProtocol>
 
-- (instancetype)initWithLuaCore:(MLNUILuaCore *)luaCore TargetView:(UIView *)targetView;
+- (instancetype)initWithMLNUILuaCore:(MLNUILuaCore *)luaCore TargetView:(UIView *)targetView;
 
 - (void)cleanShapes;
 

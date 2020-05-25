@@ -12,10 +12,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface MLNUISystem : NSObject <MLNUIStaticExportProtocol>
 
-+ (CGFloat)lua_stateBarHeight;
-+ (CGFloat)lua_navBarHeight;
-+ (CGFloat)lua_homeIndicatorHeight;
-+ (CGFloat)lua_tabBarHeight;
++ (CGFloat)luaui_stateBarHeight;
++ (CGFloat)luaui_navBarHeight;
++ (CGFloat)luaui_homeIndicatorHeight;
++ (CGFloat)luaui_tabBarHeight;
 
 @end
 

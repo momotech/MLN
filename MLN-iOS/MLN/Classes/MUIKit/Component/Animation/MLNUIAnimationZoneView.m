@@ -27,10 +27,10 @@
 {
     CGPoint tapPoint =  [tap locationInView:self];
     UIView *targetView = [self findTargetView:tapPoint];
-    if (!targetView.mln_tapClickBlock) return;
-    [targetView.mln_tapClickBlock addFloatArgument:tapPoint.x];
-    [targetView.mln_tapClickBlock addFloatArgument:tapPoint.y];
-    [targetView.mln_tapClickBlock callIfCan];
+    if (!targetView.mlnui_tapClickBlock) return;
+    [targetView.mlnui_tapClickBlock addFloatArgument:tapPoint.x];
+    [targetView.mlnui_tapClickBlock addFloatArgument:tapPoint.y];
+    [targetView.mlnui_tapClickBlock callIfCan];
 }
 
 - (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event
@@ -53,17 +53,17 @@
 
 
 #pragma mark - Override
-- (BOOL)lua_canClick
+- (BOOL)luaui_canClick
 {
     return NO;
 }
 
-- (BOOL)lua_canLongPress
+- (BOOL)luaui_canLongPress
 {
     return NO;
 }
 
-- (BOOL)lua_layoutEnable
+- (BOOL)luaui_layoutEnable
 {
     return YES;
 }

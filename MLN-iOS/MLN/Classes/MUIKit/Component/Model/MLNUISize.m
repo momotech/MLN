@@ -22,9 +22,9 @@
     return s;
 }
 
-- (instancetype)initWithLuaCore:(MLNUILuaCore *)luaCore width:(NSNumber *)width height:(NSNumber *)height
+- (instancetype)initWithMLNUILuaCore:(MLNUILuaCore *)luaCore width:(NSNumber *)width height:(NSNumber *)height
 {
-    if (self = [super initWithLuaCore:luaCore]) {
+    if (self = [super initWithMLNUILuaCore:luaCore]) {
         _size = CGSizeMake(CGFloatValueFromNumber(width), CGFloatValueFromNumber(height));
     }
     return self;
@@ -70,7 +70,7 @@
     return [NSString stringWithFormat:@"<Size width: %f, height: %f>", _size.width, _size.height];
 }
 
-- (BOOL)mln_isMultiple
+- (BOOL)mlnui_isMultiple
 {
     // 该类型只当做UserData
     return NO;
@@ -80,6 +80,6 @@
 LUA_EXPORT_BEGIN(MLNUISize)
 LUA_EXPORT_PROPERTY(width, "setWidth:", "width", MLNUISize)
 LUA_EXPORT_PROPERTY(height, "setHeight:", "height", MLNUISize)
-LUA_EXPORT_END(MLNUISize, Size, NO, NULL, "initWithLuaCore:width:height:")
+LUA_EXPORT_END(MLNUISize, Size, NO, NULL, "initWithMLNUILuaCore:width:height:")
 
 @end

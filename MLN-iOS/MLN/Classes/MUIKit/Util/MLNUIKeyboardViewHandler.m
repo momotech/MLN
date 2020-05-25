@@ -12,7 +12,7 @@
 @interface MLNUIKeyboardViewHandler()
 
 @property (nonatomic, weak) UIView *attachView;
-@property (nonatomic, assign) CGFloat lua_node_offsetY;
+@property (nonatomic, assign) CGFloat luaui_node_offsetY;
 @property (nonatomic, assign) NSInteger triggerTime;
 @property (nonatomic, assign) BOOL remainOriginOffset;
 
@@ -93,9 +93,9 @@
     }
     CGRect frame = self.attachView.frame;
     frame.origin.y += self.positionAdjustOffsetY;
-    if (self.attachView.lua_node.enable) {
-        self.lua_node_offsetY = self.attachView.lua_node.offsetY;
-        self.attachView.lua_node.offsetY += self.positionAdjustOffsetY;
+    if (self.attachView.luaui_node.enable) {
+        self.luaui_node_offsetY = self.attachView.luaui_node.offsetY;
+        self.attachView.luaui_node.offsetY += self.positionAdjustOffsetY;
     }
     
     [UIView animateWithDuration:duration animations:^{
@@ -112,11 +112,11 @@
         frame.origin.y += self.positionAdjustOffsetY;
         // @note 变量remainOriginOffset 是为了解决键盘willshow有时会回调两次，导致记录的偏移量不正确
         if (!self.remainOriginOffset) {
-            self.lua_node_offsetY = self.attachView.lua_node.offsetY;
+            self.luaui_node_offsetY = self.attachView.luaui_node.offsetY;
             self.remainOriginOffset = YES;
         }
-        self.attachView.lua_node.offsetY -= overstep;
-        self.attachView.lua_node.offsetY += self.positionAdjustOffsetY;
+        self.attachView.luaui_node.offsetY -= overstep;
+        self.attachView.luaui_node.offsetY += self.positionAdjustOffsetY;
         [UIView animateWithDuration:duration animations:^{
             self.attachView.frame = frame;
         }];
@@ -128,7 +128,7 @@
     self.triggerTime = 0;
     CGFloat duration = [notification.userInfo[UIKeyboardAnimationDurationUserInfoKey] doubleValue];
     CGRect frame = self.beforePositionAdjustViewFrame;
-    self.attachView.lua_node.offsetY = self.lua_node_offsetY;
+    self.attachView.luaui_node.offsetY = self.luaui_node_offsetY;
     self.remainOriginOffset = NO;
     [UIView animateWithDuration:duration animations:^{
         self.attachView.frame = frame;

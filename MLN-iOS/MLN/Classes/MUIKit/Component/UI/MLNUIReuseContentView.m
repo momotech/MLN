@@ -33,7 +33,7 @@
 #pragma mark - Calculate Layout
 - (CGFloat)calculHeightWithWidth:(CGFloat)width maxHeight:(CGFloat)maxHeight
 {
-    __unsafe_unretained MLNUILayoutNode *node = self.lua_node;
+    __unsafe_unretained MLNUILayoutNode *node = self.luaui_node;
     node.enable = YES;
     node.heightType = MLNUILayoutMeasurementTypeWrapContent;
     [node changeWidth:width];
@@ -47,7 +47,7 @@
 
 - (CGSize)calculSizeWithMaxWidth:(CGFloat)maxWidth maxHeight:(CGFloat)maxHeight
 {
-    __unsafe_unretained MLNUILayoutNode *node = self.lua_node;
+    __unsafe_unretained MLNUILayoutNode *node = self.luaui_node;
     node.enable = YES;
     [node needLayoutAndSpread];
     node.heightType = MLNUILayoutMeasurementTypeWrapContent;
@@ -79,18 +79,18 @@
 - (void)setupLayoutNodeIfNeed
 {
     if (!self.inited) {
-        __unsafe_unretained MLNUILayoutContainerNode *node = (MLNUILayoutContainerNode *)self.lua_node;
+        __unsafe_unretained MLNUILayoutContainerNode *node = (MLNUILayoutContainerNode *)self.luaui_node;
         node.widthType = MLNUILayoutMeasurementTypeIdle;
         node.heightType = MLNUILayoutMeasurementTypeIdle;
         node.root = YES;
         node.enable = NO;
-        [MLNUI_KIT_INSTANCE(self.mln_luaCore) addRootnode:node];
+        [MLNUI_KIT_INSTANCE(self.mlnui_luaCore) addRootnode:node];
     }
 }
 
 - (void)createLuaTableWithLuaCore:(MLNUILuaCore *)luaCore
 {
-    _luaTable = [[MLNUILuaTable alloc] initWithLuaCore:luaCore env:MLNUILuaTableEnvRegister];
+    _luaTable = [[MLNUILuaTable alloc] initWithMLNUILuaCore:luaCore env:MLNUILuaTableEnvRegister];
     [_luaTable setObject:self key:@"contentView"];
 }
 
@@ -98,7 +98,7 @@
 {
     if (!CGSizeEqualToSize(self.frame.size, self.cell.bounds.size)) {
         CGRect frame = self.cell.bounds;
-        MLNUILayoutNode *node = self.lua_node;
+        MLNUILayoutNode *node = self.luaui_node;
         [node changeX:frame.origin.x];
         [node changeY:frame.origin.y];
         [node changeWidth:frame.size.width];
@@ -107,33 +107,33 @@
 }
 
 #pragma mark - Override Method For Lua
-- (void)lua_setCornerRadius:(CGFloat)cornerRadius
+- (void)luaui_setCornerRadius:(CGFloat)cornerRadius
 {
     if (self.cell) {
-        [self.cell lua_setCornerRadius:cornerRadius];
-        [self.cell.contentView lua_setCornerRadius:cornerRadius];
+        [self.cell luaui_setCornerRadius:cornerRadius];
+        [self.cell.contentView luaui_setCornerRadius:cornerRadius];
     }
-    [super lua_setCornerRadius:cornerRadius];
+    [super luaui_setCornerRadius:cornerRadius];
 }
 
-- (void)setLua_marginTop:(CGFloat)lua_marginTop
+- (void)setLuaui_marginTop:(CGFloat)luaui_marginTop
 {
-    MLNUIKitLuaAssert(lua_marginTop == 0, @"The contentView should not called marginTop");
+    MLNUIKitLuaAssert(luaui_marginTop == 0, @"The contentView should not called marginTop");
 }
 
-- (void)setLua_marginLeft:(CGFloat)lua_marginLeft
+- (void)setLuaui_marginLeft:(CGFloat)luaui_marginLeft
 {
-    MLNUIKitLuaAssert(lua_marginLeft == 0, @"The contentView should not called marginLeft");
+    MLNUIKitLuaAssert(luaui_marginLeft == 0, @"The contentView should not called marginLeft");
 }
 
-- (void)setLua_marginRight:(CGFloat)lua_marginRight
+- (void)setLuaui_marginRight:(CGFloat)luaui_marginRight
 {
-    MLNUIKitLuaAssert(lua_marginRight == 0, @"The contentView should not called marginRight");
+    MLNUIKitLuaAssert(luaui_marginRight == 0, @"The contentView should not called marginRight");
 }
 
-- (void)setLua_marginBottom:(CGFloat)lua_marginBottom
+- (void)setLuaui_marginBottom:(CGFloat)luaui_marginBottom
 {
-    MLNUIKitLuaAssert(lua_marginBottom == 0, @"The contentView should not called marginBottom");
+    MLNUIKitLuaAssert(luaui_marginBottom == 0, @"The contentView should not called marginBottom");
 }
 
 

@@ -19,7 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param luaCore 对应的lua状态机
  @return Lua创建的实例对象
  */
-- (instancetype)initWithLuaCore:(MLNUILuaCore *)luaCore frame:(CGRect)frame;
+- (instancetype)initWithMLNUILuaCore:(MLNUILuaCore *)luaCore frame:(CGRect)frame;
 
 @end
 

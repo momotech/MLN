@@ -31,12 +31,12 @@
     CGFloat height = collectionView.frame.size.height;
     CGFloat maxWidth = width;
     CGFloat maxHeight = CGFLOAT_MAX;
-    if (collectionView.mln_horizontal) {
+    if (collectionView.mlnui_horizontal) {
         maxWidth = CGFLOAT_MAX;
         maxHeight = height;
     }
     MLNUICollectionViewCell *cell = [[MLNUICollectionViewCell alloc] initWithFrame:CGRectMake(0, 0, width, height)];
-    [cell pushContentViewWithLuaCore:self.mln_luaCore];
+    [cell pushContentViewWithLuaCore:self.mlnui_luaCore];
     if (!cell.isInited) {
         MLNUIBlock *initCallback = [self initedCellCallbackByReuseId:reuseId];
         [initCallback addLuaTableArgument:[cell getLuaTable]];

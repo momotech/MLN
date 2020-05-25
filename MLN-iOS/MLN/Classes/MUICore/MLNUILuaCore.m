@@ -13,7 +13,7 @@
 #import "MLNUIFileLoader.h"
 #import "MLNUILuaTable.h"
 
-static void * mln_state_alloc(void *ud, void *ptr, size_t osize, size_t nsize) {
+static void * mlnui_state_alloc(void *ud, void *ptr, size_t osize, size_t nsize) {
     (void)ud;
     (void)osize;
     if (nsize == 0) {
@@ -24,13 +24,13 @@ static void * mln_state_alloc(void *ud, void *ptr, size_t osize, size_t nsize) {
     }
 }
 
-static MLNUI_FORCE_INLINE int mln_libsize (const struct mln_objc_method *list) {
+static MLNUI_FORCE_INLINE int mlnui_libsize (const struct mlnui_objc_method *list) {
     int size = 0;
     for (; list->l_mn; list++) size++;
     return size;
 }
 
-static int mln_errorFunc_traceback (lua_State *L) {
+static int mlnui_errorFunc_traceback (lua_State *L) {
     if(!lua_isstring(L,1))
         return 1;
     lua_getfield(L,LUA_GLOBALSINDEX,"debug");
@@ -133,21 +133,21 @@ static int mln_errorFunc_traceback (lua_State *L) {
     }
 }
 
-- (void)mln_addMemoryWarningNotification
+- (void)mlnui_addMemoryWarningNotification
 {
     [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(mln_didReceiveMemoryWarning:)
+                                             selector:@selector(mlnui_didReceiveMemoryWarning:)
                                                  name:UIApplicationDidReceiveMemoryWarningNotification
                                                object:nil];
 }
 
-- (void)mln_removeMemoryWarningNotification
+- (void)mlnui_removeMemoryWarningNotification
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationDidReceiveMemoryWarningNotification object:nil];
 }
 
 
-- (void)mln_didReceiveMemoryWarning:(NSNotification *)notification
+- (void)mlnui_didReceiveMemoryWarning:(NSNotification *)notification
 {
     [self doGC];
 }
@@ -222,11 +222,11 @@ static int mln_errorFunc_traceback (lua_State *L) {
         if (!exporterClass) {
             exporterClass = [MLNUIExporterManager class];
         }
-        _exporter = [[(Class)exporterClass alloc] initWithLuaCore:self];
+        _exporter = [[(Class)exporterClass alloc] initWithMLNUILuaCore:self];
         if (!convertorClass) {
             convertorClass = [MLNUIConvertor class];
         }
-        _convertor = [[(Class)convertorClass alloc] initWithLuaCore:self];
+        _convertor = [[(Class)convertorClass alloc] initWithMLNUILuaCore:self];
         _currentBundle = luaBundle;
         if (!_currentBundle) {
             _currentBundle = [MLNUILuaBundle mainBundle];
@@ -245,7 +245,7 @@ static int mln_errorFunc_traceback (lua_State *L) {
 
 - (void)createViewStrongTable
 {
-    _objStrongTable = [[MLNUILuaTable alloc] initWithLuaCore:self env:MLNUILuaTableEnvRegister];
+    _objStrongTable = [[MLNUILuaTable alloc] initWithMLNUILuaCore:self env:MLNUILuaTableEnvRegister];
 }
 
 - (BOOL)runFile:(NSString *)filePath error:(NSError * _Nullable __autoreleasing *)error
@@ -282,7 +282,7 @@ static int mln_errorFunc_traceback (lua_State *L) {
     }
     if (!data || data.length <=0) {
         NSString *errmsg = [NSString stringWithFormat:@"%@ not found", name];
-        NSError *err = [NSError mln_errorLoad:errmsg];
+        NSError *err = [NSError mlnui_errorLoad:errmsg];
         if (error) {
             *error = err;
         }
@@ -295,7 +295,7 @@ static int mln_errorFunc_traceback (lua_State *L) {
     }
     if (!stringNotEmpty(name)) {
         NSString *errmsg = [NSString stringWithFormat:@"%@ not found", name];
-        NSError *err = [NSError mln_errorLoad:errmsg];
+        NSError *err = [NSError mlnui_errorLoad:errmsg];
         if (error) {
             *error = err;
         }
@@ -309,7 +309,7 @@ static int mln_errorFunc_traceback (lua_State *L) {
     _filePath = name;
     lua_State *L = self.state;
     if (!L) {
-        NSError *err = [NSError mln_errorState:@"Lua state is released"];
+        NSError *err = [NSError mlnui_errorState:@"Lua state is released"];
         if (error) {
             *error = err;
         }
@@ -323,7 +323,7 @@ static int mln_errorFunc_traceback (lua_State *L) {
     int code = luaL_loadbuffer(L, data.bytes, data.length, name.UTF8String);
     if (code != 0) {
         NSString *errMsg = [NSString stringWithFormat:@"%s", lua_tostring(L, -1)];
-        NSError *err = [NSError mln_errorLoad:errMsg];
+        NSError *err = [NSError mlnui_errorLoad:errMsg];
         if (error) {
             *error = err;
         }
@@ -346,14 +346,14 @@ static int mln_errorFunc_traceback (lua_State *L) {
     lua_State *L = self.state;
     if (!L) {
         if (error) {
-            *error = [NSError mln_errorState:@"Lua state is released"];
+            *error = [NSError mlnui_errorState:@"Lua state is released"];
             MLNUIError(self, @"Lua state is released");
         }
         return NO;
     }
     if (lua_type(L, -1) != LUA_TFUNCTION) {
         if (error) {
-            *error = [NSError mln_errorCall:@"Function not found"];
+            *error = [NSError mlnui_errorCall:@"Function not found"];
             MLNUIError(self, @"Function not found");
         }
         return NO;
@@ -362,13 +362,13 @@ static int mln_errorFunc_traceback (lua_State *L) {
         lua_insert(L, -numberOfArgs-1);
     }
     int base = lua_gettop(L) - numberOfArgs;  /* function index */
-    lua_pushcfunction(L, mln_errorFunc_traceback);  /* push traceback function */
+    lua_pushcfunction(L, mlnui_errorFunc_traceback);  /* push traceback function */
     lua_insert(L, base);  /* put it under chunk and args */
     int code = lua_pcall(L, numberOfArgs, 0, base);
     if (code != 0) {
         NSString *errmsg = [NSString stringWithFormat:@"%s", lua_tostring(L, -1)];
         if (error) {
-            *error = [NSError mln_errorCall:errmsg];
+            *error = [NSError mlnui_errorCall:errmsg];
             MLNUIError(self, @"%s", lua_tostring(L, -1));
         }
         return NO;
@@ -381,7 +381,7 @@ static int mln_errorFunc_traceback (lua_State *L) {
     lua_State *L = self.state;
     if (!L) {
         if (error) {
-            *error = [NSError mln_errorState:@"Lua state is released"];
+            *error = [NSError mlnui_errorState:@"Lua state is released"];
             MLNUIError(self, @"Lua state is released");
         }
         return NO;
@@ -390,18 +390,18 @@ static int mln_errorFunc_traceback (lua_State *L) {
     return YES;
 }
 
-- (BOOL)openLib:(const char *)libName nativeClassName:(const char *)nativeClassName methodList:(const struct mln_objc_method *)list nup:(int)nup error:(NSError **)error
+- (BOOL)openLib:(const char *)libName nativeClassName:(const char *)nativeClassName methodList:(const struct mlnui_objc_method *)list nup:(int)nup error:(NSError **)error
 {
     lua_State *L = self.state;
     if (!L) {
         if (error) {
-            *error = [NSError mln_errorState:@"Lua state is released"];
+            *error = [NSError mlnui_errorState:@"Lua state is released"];
             MLNUIError(self, @"Lua state is released");
         }
         return NO;
     }
     if (libName) {
-        int size = mln_libsize(list);
+        int size = mlnui_libsize(list);
         /* check whether lib already exists */
         luaL_findtable(L, LUA_REGISTRYINDEX, "_LOADED", 1);
         lua_getfield(L, -1, libName);  /* get _LOADED[libname] */
@@ -419,15 +419,15 @@ static int mln_errorFunc_traceback (lua_State *L) {
     for (; list->l_mn; list++) {
         if (!charpNotEmpty(list->clz)) {
             if (error) {
-                *error = [NSError mln_errorOpenLib:@"The class name must not be nil!"];
-                mln_lua_error(L, @"The class name must not be nil!");
+                *error = [NSError mlnui_errorOpenLib:@"The class name must not be nil!"];
+                mlnui_luaui_error(L, @"The class name must not be nil!");
             }
             return NO;
         }
         if (list->func == NULL) {
             if (error) {
-                *error = [NSError mln_errorOpenLib:@"The C function must not be NULL!"];
-                mln_lua_error(L, @"The C function must not be NULL!");
+                *error = [NSError mlnui_errorOpenLib:@"The C function must not be NULL!"];
+                mlnui_luaui_error(L, @"The C function must not be NULL!");
             }
             return NO;
         }
@@ -483,7 +483,7 @@ static int mln_errorFunc_traceback (lua_State *L) {
     lua_State *L = self.state;
     if (!L) {
         if (error) {
-            *error = [NSError mln_errorState:@"Lua state is released"];
+            *error = [NSError mlnui_errorState:@"Lua state is released"];
         }
         return NO;
     }
@@ -493,14 +493,14 @@ static int mln_errorFunc_traceback (lua_State *L) {
     return YES;
 }
 
-- (BOOL)registerGlobalFunc:(const char *)packageName libname:(const char *)libname methodList:(const struct mln_objc_method *)list nup:(int)nup error:(NSError **)error
+- (BOOL)registerGlobalFunc:(const char *)packageName libname:(const char *)libname methodList:(const struct mlnui_objc_method *)list nup:(int)nup error:(NSError **)error
 {
     NSParameterAssert(charpNotEmpty(packageName));
     NSParameterAssert(charpNotEmpty(libname));
     lua_State *L = self.state;
     if (!L) {
         if (error) {
-            *error = [NSError mln_errorState:@"Lua state is released"];
+            *error = [NSError mlnui_errorState:@"Lua state is released"];
         }
         return NO;
     }
@@ -537,15 +537,15 @@ static int mln_errorFunc_traceback (lua_State *L) {
     for (; list->l_mn; list++) {
         if (!charpNotEmpty(list->clz)) {
             if (error) {
-                *error = [NSError mln_errorOpenLib:@"The class name must not be nil!"];
-                mln_lua_error(L, @"The class name must not be nil!");
+                *error = [NSError mlnui_errorOpenLib:@"The class name must not be nil!"];
+                mlnui_luaui_error(L, @"The class name must not be nil!");
             }
             return NO;
         }
         if (list->func == NULL) {
             if (error) {
-                *error = [NSError mln_errorOpenLib:@"The C function must not be NULL!"];
-                mln_lua_error(L, @"The C function must not be NULL!");
+                *error = [NSError mlnui_errorOpenLib:@"The C function must not be NULL!"];
+                mlnui_luaui_error(L, @"The C function must not be NULL!");
             }
             return NO;
         }
@@ -591,7 +591,7 @@ static int mln_errorFunc_traceback (lua_State *L) {
     lua_State *L = self.state;
     if (!L) {
         if (error) {
-            *error = [NSError mln_errorState:@"Lua state is released"];
+            *error = [NSError mlnui_errorState:@"Lua state is released"];
             MLNUIError(self, @"Lua state is released");
         }
         return NO;
@@ -608,7 +608,7 @@ static int mln_errorFunc_traceback (lua_State *L) {
     lua_State *L = self.state;
     if (!L) {
         if (error) {
-            *error = [NSError mln_errorState:@"Lua state is released"];
+            *error = [NSError mlnui_errorState:@"Lua state is released"];
             MLNUIError(self, @"Lua state is released");
         }
         return NO;
@@ -674,7 +674,7 @@ static int mln_errorFunc_traceback (lua_State *L) {
 - (void)openLuaStateIfNeed
 {
     if (!_state) {
-        _state =  lua_newstate(mln_state_alloc, (__bridge void *)(self));
+        _state =  lua_newstate(mlnui_state_alloc, (__bridge void *)(self));
         luaL_openlibs(_state);
     }
 }
@@ -687,12 +687,12 @@ static int mln_errorFunc_traceback (lua_State *L) {
 
 - (void)addNotification
 {
-    [self mln_addMemoryWarningNotification];
+    [self mlnui_addMemoryWarningNotification];
 }
 
 - (void)dealloc
 {
-    [self mln_removeMemoryWarningNotification];
+    [self mlnui_removeMemoryWarningNotification];
     [self releaseLuaCore];
 }
 

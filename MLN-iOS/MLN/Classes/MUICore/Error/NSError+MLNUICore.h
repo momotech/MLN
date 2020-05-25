@@ -34,7 +34,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param msg 错误描述细信息
  @return error对象
  */
-+ (instancetype)mln_errorLoad:(NSString *)msg;
++ (instancetype)mlnui_errorLoad:(NSString *)msg;
 
 /**
  lua执行错误
@@ -42,7 +42,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param msg 错误描述细信息
  @return error对象
  */
-+ (instancetype)mln_errorCall:(NSString *)msg;
++ (instancetype)mlnui_errorCall:(NSString *)msg;
 
 /**
  lua状态机错误
@@ -50,7 +50,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param msg 错误信息
  @return error对象
  */
-+ (instancetype)mln_errorState:(NSString *)msg;
++ (instancetype)mlnui_errorState:(NSString *)msg;
 
 /**
  lua状态机注册错误
@@ -58,7 +58,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param msg 错误信息
  @return error对象
  */
-+ (instancetype)mln_errorOpenLib:(NSString *)msg;
++ (instancetype)mlnui_errorOpenLib:(NSString *)msg;
 
 /**
  类型转换异常
@@ -66,7 +66,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param msg 错误信息
  @return error 对象
  */
-+ (instancetype)mln_errorConvert:(NSString *)msg;
++ (instancetype)mlnui_errorConvert:(NSString *)msg;
 
 /**
  根据code和msg创建error对象
@@ -75,14 +75,14 @@ NS_ASSUME_NONNULL_BEGIN
  @param msg error的描述信息
  @return error 对象
  */
-+ (instancetype)mln_error:(int)code msg:(NSString *)msg;
++ (instancetype)mlnui_error:(int)code msg:(NSString *)msg;
 
 /**
  获取error信息
 
  @return error信息
  */
-- (NSString *)mln_errorMessage;
+- (NSString *)mlnui_errorMessage;
 
 @end
 

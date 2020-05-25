@@ -11,7 +11,7 @@ NS_ASSUME_NONNULL_BEGIN
 @class MLNUILuaCore;
 @interface MLNUIScrollCallbackView : UIView
 
-- (instancetype)initWithLuaCore:(MLNUILuaCore *)luaCore refreshEnable:(NSNumber *)refreshEnable loadEnable:(NSNumber *)loadEnable;
+- (instancetype)initWithMLNUILuaCore:(MLNUILuaCore *)luaCore refreshEnable:(NSNumber *)refreshEnable loadEnable:(NSNumber *)loadEnable;
 
 @end
 

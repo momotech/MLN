@@ -22,7 +22,7 @@
 
 + (MLNUILayoutNode *)createNodeWithTargetView:(UIView *)aView
 {
-    if (aView.lua_isContainer) {
+    if (aView.luaui_isContainer) {
         return [self internalCreateContainerNodeWithTargetView:aView];
     } else if([aView isKindOfClass:[UIImageView class]]) {
         return [[MLNUILayoutImageViewNode alloc] initWithTargetView:aView];

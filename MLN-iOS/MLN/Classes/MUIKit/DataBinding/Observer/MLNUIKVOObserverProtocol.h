@@ -16,7 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// ⚠️ 返回的对象会强持有observer，所以这里要避免循环引用.
 //- (nullable NSObject *)objectRetainingObserver;
 @property (nonatomic, copy, readonly) NSString *keyPath;
-- (void)mln_observeValueForKeyPath:(nullable NSString *)keyPath
+- (void)mlnui_observeValueForKeyPath:(nullable NSString *)keyPath
                       ofObject:(nullable id)object
                         change:(nullable NSDictionary<NSKeyValueChangeKey, id> *)change;
 
@@ -30,7 +30,7 @@ NS_ASSUME_NONNULL_BEGIN
 @class MLNUIDataBinding;
 @protocol MLNUIDataBindingProtocol <NSObject>
 
-@property (nonatomic, strong, readonly) MLNUIDataBinding * _Nonnull mln_dataBinding;
+@property (nonatomic, strong, readonly) MLNUIDataBinding * _Nonnull mlnui_dataBinding;
 
 - (void)bindData:(NSObject *)data forKey:(NSString *)key;
 
@@ -38,8 +38,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface UIViewController (MLNUIDataBinding)
 
-@property (nonatomic, strong, readonly) MLNUIDataBinding * _Nonnull mln_dataBinding;
-- (void)mln_addToSuperViewController:(UIViewController *_Nonnull)superVC frame:(CGRect) frame;
+@property (nonatomic, strong, readonly) MLNUIDataBinding * _Nonnull mlnui_dataBinding;
+- (void)mlnui_addToSuperViewController:(UIViewController *_Nonnull)superVC frame:(CGRect) frame;
 
 @end
 

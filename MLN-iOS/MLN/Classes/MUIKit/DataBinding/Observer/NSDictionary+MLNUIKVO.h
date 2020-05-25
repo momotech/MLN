@@ -10,13 +10,13 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface NSDictionary (MLNUIKVO)
-- (NSMutableDictionary *)mln_mutalbeCopy;
-- (NSDictionary *)mln_convertToLuaTableAvailable;
-- (NSMutableDictionary *)mln_convertToMDic;
+- (NSMutableDictionary *)mlnui_mutalbeCopy;
+- (NSDictionary *)mlnui_convertToLuaTableAvailable;
+- (NSMutableDictionary *)mlnui_convertToMDic;
 @end
 
 @interface NSMutableDictionary (MLNUIKVO)
-- (NSDictionary *)mln_copy;
+- (NSDictionary *)mlnui_copy;
 @end
 
 NS_ASSUME_NONNULL_END

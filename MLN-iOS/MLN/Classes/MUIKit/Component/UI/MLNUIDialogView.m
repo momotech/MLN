@@ -33,12 +33,12 @@
 
 @implementation MLNUIDialogView
 
-- (instancetype)initWithLuaCore:(MLNUILuaCore *)luaCore frame:(CGRect)frame
+- (instancetype)initWithMLNUILuaCore:(MLNUILuaCore *)luaCore frame:(CGRect)frame
 {
     self = [super initWithFrame:[[UIScreen mainScreen] bounds]];
     if (self) {
         self.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:0];
-        MLNUILayoutNode *node = self.lua_node;
+        MLNUILayoutNode *node = self.luaui_node;
         node.root = YES;
         node.enable = NO;
         CGSize size = [[UIScreen mainScreen] bounds].size;
@@ -47,58 +47,58 @@
         [node changeWidth:size.width];
         [node changeHeight:size.height];
         self.cancelable = YES;
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(mln_in_keWindowChanged:) name:UIWindowDidBecomeKeyNotification object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(mlnui_in_keWindowChanged:) name:UIWindowDidBecomeKeyNotification object:nil];
     }
     return self;
 }
 
-- (void)lua_setCancelable:(BOOL)cancel
+- (void)luaui_setCancelable:(BOOL)cancel
 {
     self.cancelable = cancel;
 }
 
- - (BOOL)lua_cancelable
+ - (BOOL)luaui_cancelable
 {
     return self.cancelable;
 }
 
-- (void)lua_show
+- (void)luaui_show
 {
     [self _showDialogView];
 }
 
-- (void)lua_dismiss
+- (void)luaui_dismiss
 {
     [self _dismissDialogView];
 }
 
-- (void)lua_setContent:(UIView *)view
+- (void)luaui_setContent:(UIView *)view
 {
     MLNUICheckTypeAndNilValue(view, @"View", [UIView class])
-    [self lua_removeAllSubViews];
+    [self luaui_removeAllSubViews];
     _fromLuaView = view;
     if (_didSetGravity) {
-        view.lua_gravity = _contentGravity;
+        view.luaui_gravity = _contentGravity;
     }
-    if (view.lua_node.gravity == MLNUIGravityNone) {
-        view.lua_node.gravity = MLNUIGravityCenter;
+    if (view.luaui_node.gravity == MLNUIGravityNone) {
+        view.luaui_node.gravity = MLNUIGravityCenter;
     }
-    [self lua_addSubview:view];
+    [self luaui_addSubview:view];
 }
 
 - (void)initAdjustPosition
 {
     __weak typeof(self) weakSelf = self;
-    [_fromLuaView mln_in_setPositionAdjustForKeyboard:YES offsetY:0.0];
-    self.fromLuaView.lua_keyboardViewHandler.positionBack = ^CGFloat(CGFloat keyboardHeight) {
+    [_fromLuaView mlnui_in_setPositionAdjustForKeyboard:YES offsetY:0.0];
+    self.fromLuaView.luaui_keyboardViewHandler.positionBack = ^CGFloat(CGFloat keyboardHeight) {
         __strong typeof(weakSelf) strongSelf = weakSelf;
-        if (!strongSelf.fromLuaView || strongSelf.fromLuaView.lua_node.marginTop != 0) {
+        if (!strongSelf.fromLuaView || strongSelf.fromLuaView.luaui_node.marginTop != 0) {
             return 0.0f;
         }
         if (strongSelf.fromLuaStartY == 0) {
             strongSelf.fromLuaStartY = strongSelf.fromLuaView.frame.origin.y;
         }
-        CGFloat differenceHeight = strongSelf.lua_height - strongSelf.fromLuaView.lua_height;
+        CGFloat differenceHeight = strongSelf.luaui_height - strongSelf.fromLuaView.luaui_height;
         if (differenceHeight == 0) {
             return 0.f;
         }
@@ -106,14 +106,14 @@
         CGFloat offsetY = scaleY * (differenceHeight - keyboardHeight) - strongSelf.fromLuaStartY ;
         return offsetY;
     };
-    self.fromLuaView.lua_keyboardViewHandler.alwaysAdjustPositionKeyboardCoverView = YES;
+    self.fromLuaView.luaui_keyboardViewHandler.alwaysAdjustPositionKeyboardCoverView = YES;
 }
 
-- (BOOL)lua_layoutEnable {
+- (BOOL)luaui_layoutEnable {
     return YES;
 }
 
-- (void)setLua_wrapContent:(BOOL)lua_wrapContent
+- (void)setLuaui_wrapContent:(BOOL)luaui_wrapContent
 {
     // cann't set wrap content to window
 }
@@ -126,10 +126,10 @@
 #pragma mark - private method
 - (void)_showDialogView
 {
-    if (_fromLuaView && _fromLuaView.lua_node.gravity) {
+    if (_fromLuaView && _fromLuaView.luaui_node.gravity) {
         [self initAdjustPosition];
     }
-    [MLNUI_KIT_INSTANCE(self.mln_luaCore) addRootnode:(MLNUILayoutContainerNode *)self.lua_node];
+    [MLNUI_KIT_INSTANCE(self.mlnui_luaCore) addRootnode:(MLNUILayoutContainerNode *)self.luaui_node];
     [self.contentWindow addSubview:self];
     [[MLNUIWindowContext sharedContext] pushKeyWindow:[UIApplication sharedApplication].keyWindow];
     self.contentWindow.hidden = NO;
@@ -139,7 +139,7 @@
 - (void)_dismissDialogView
 {
     MLNUIWindowContext *context = [MLNUIWindowContext sharedContext];
-    [MLNUI_KIT_INSTANCE(self.mln_luaCore) removeRootNode:(MLNUILayoutContainerNode *)self.lua_node];
+    [MLNUI_KIT_INSTANCE(self.mlnui_luaCore) removeRootNode:(MLNUILayoutContainerNode *)self.luaui_node];
     [context removeWithWindow:self.contentWindow];
     UIWindow *topWindw = nil;
      do{
@@ -147,7 +147,7 @@
      } while (topWindw.hidden == YES && topWindw != nil);
     [topWindw makeKeyWindow];
     _contentWindow.hidden = YES;
-    [self _lua_didDisappear];
+    [self _luaui_didDisappear];
 }
 
 - (void)contentWindowClicked:(UIGestureRecognizer *)gesture
@@ -170,33 +170,33 @@
     return result;
 }
 
-- (void)lua_setDisappearBlock:(MLNUIBlock *)disappearBlock
+- (void)luaui_setDisappearBlock:(MLNUIBlock *)disappearBlock
 {
     _disappearBlock = disappearBlock;
 }
 
-- (void)lua_setDimAmount:(CGFloat)amount
+- (void)luaui_setDimAmount:(CGFloat)amount
 {
     amount = amount > 1 ? 1.0 : (amount < 0 ? 0 : amount);
     self.contentWindow.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:amount];
 }
 
-- (void)lua_setContentGravity:(MLNUIGravity)gravity
+- (void)luaui_setContentGravity:(MLNUIGravity)gravity
 {
     _didSetGravity = YES;
     _contentGravity = gravity;
-    self.fromLuaView.lua_gravity = gravity;
+    self.fromLuaView.luaui_gravity = gravity;
 }
 
-- (void)_lua_didDisappear
+- (void)_luaui_didDisappear
 {
-    _fromLuaView.lua_keyboardViewHandler.alwaysAdjustPositionKeyboardCoverView = NO;
+    _fromLuaView.luaui_keyboardViewHandler.alwaysAdjustPositionKeyboardCoverView = NO;
     if (_disappearBlock) {
         [_disappearBlock callIfCan];
     }
 }
 
-- (void)mln_in_keWindowChanged:(NSNotification *)noti
+- (void)mlnui_in_keWindowChanged:(NSNotification *)noti
 {
     if (![noti.object isKindOfClass:[UIWindow class]]) {
         return;
@@ -230,13 +230,13 @@
 
 #pragma mark - Export For Lua
 LUA_EXPORT_VIEW_BEGIN(MLNUIDialogView)
-LUA_EXPORT_VIEW_PROPERTY(cancelable, "lua_setCancelable:", "lua_cancelable", MLNUIDialogView)
-LUA_EXPORT_VIEW_METHOD(show, "lua_show", MLNUIDialogView)
-LUA_EXPORT_VIEW_METHOD(dismiss, "lua_dismiss", MLNUIDialogView)
-LUA_EXPORT_VIEW_METHOD(dialogDisAppear, "lua_setDisappearBlock:", MLNUIDialogView)
-LUA_EXPORT_VIEW_METHOD(setContent, "lua_setContent:", MLNUIDialogView)
-LUA_EXPORT_VIEW_METHOD(setDimAmount, "lua_setDimAmount:", MLNUIDialogView)
-LUA_EXPORT_VIEW_METHOD(setContentGravity, "lua_setContentGravity:", MLNUIDialogView)
-LUA_EXPORT_VIEW_END(MLNUIDialogView, Dialog, YES, "MLNUIView", "initWithLuaCore:frame:")
+LUA_EXPORT_VIEW_PROPERTY(cancelable, "luaui_setCancelable:", "luaui_cancelable", MLNUIDialogView)
+LUA_EXPORT_VIEW_METHOD(show, "luaui_show", MLNUIDialogView)
+LUA_EXPORT_VIEW_METHOD(dismiss, "luaui_dismiss", MLNUIDialogView)
+LUA_EXPORT_VIEW_METHOD(dialogDisAppear, "luaui_setDisappearBlock:", MLNUIDialogView)
+LUA_EXPORT_VIEW_METHOD(setContent, "luaui_setContent:", MLNUIDialogView)
+LUA_EXPORT_VIEW_METHOD(setDimAmount, "luaui_setDimAmount:", MLNUIDialogView)
+LUA_EXPORT_VIEW_METHOD(setContentGravity, "luaui_setContentGravity:", MLNUIDialogView)
+LUA_EXPORT_VIEW_END(MLNUIDialogView, Dialog, YES, "MLNUIView", "initWithMLNUILuaCore:frame:")
 
 @end

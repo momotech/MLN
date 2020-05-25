@@ -29,7 +29,7 @@
 
 - (MLNUIExporter *)getExporter:(Class<MLNUIExportProtocol>)clazz
 {
-    switch ([clazz mln_exportType]) {
+    switch ([clazz mlnui_exportType]) {
         case MLNUIExportTypeStatic:
             return self.staticExporter;
         case MLNUIExportTypeEntity:
@@ -48,7 +48,7 @@
 - (MLNUIExporter *)staticExporter
 {
     if (!_staticExporter) {
-        _staticExporter = [[MLNUIStaticExporter alloc] initWithLuaCore:self.luaCore];
+        _staticExporter = [[MLNUIStaticExporter alloc] initWithMLNUILuaCore:self.luaCore];
     }
     return _staticExporter;
 }
@@ -56,7 +56,7 @@
 - (MLNUIExporter *)entityExporter
 {
     if (!_entityExporter) {
-        _entityExporter = [[MLNUIEntityExporter alloc] initWithLuaCore:self.luaCore];
+        _entityExporter = [[MLNUIEntityExporter alloc] initWithMLNUILuaCore:self.luaCore];
     }
     return _entityExporter;
 }
@@ -64,7 +64,7 @@
 - (MLNUIExporter *)globalVarExporter
 {
     if (!_globalVarExporter) {
-        _globalVarExporter = [[MLNUIGlobalVarExporter alloc] initWithLuaCore:self.luaCore];
+        _globalVarExporter = [[MLNUIGlobalVarExporter alloc] initWithMLNUILuaCore:self.luaCore];
     }
     return _globalVarExporter;
 }
@@ -72,7 +72,7 @@
 - (MLNUIExporter *)globalFuncExporter
 {
     if (!_globalFuncExporter) {
-        _globalFuncExporter = [[MLNUIGlobalFuntionExporter alloc] initWithLuaCore:self.luaCore];
+        _globalFuncExporter = [[MLNUIGlobalFuntionExporter alloc] initWithMLNUILuaCore:self.luaCore];
     }
     return _globalFuncExporter;
 }

@@ -13,34 +13,34 @@
 
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView
 {
-    if (scrollView.lua_scrollBeginCallback) {
-        [scrollView.lua_scrollBeginCallback addFloatArgument:scrollView.contentOffset.x];
-        [scrollView.lua_scrollBeginCallback addFloatArgument:scrollView.contentOffset.y];
-        [scrollView.lua_scrollBeginCallback callIfCan];
+    if (scrollView.luaui_scrollBeginCallback) {
+        [scrollView.luaui_scrollBeginCallback addFloatArgument:scrollView.contentOffset.x];
+        [scrollView.luaui_scrollBeginCallback addFloatArgument:scrollView.contentOffset.y];
+        [scrollView.luaui_scrollBeginCallback callIfCan];
     }
 }
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
 {
-    if (scrollView.lua_scrollingCallback) {
-        [scrollView.lua_scrollingCallback addFloatArgument:scrollView.contentOffset.x];
-        [scrollView.lua_scrollingCallback addFloatArgument:scrollView.contentOffset.y];
-        [scrollView.lua_scrollingCallback callIfCan];
+    if (scrollView.luaui_scrollingCallback) {
+        [scrollView.luaui_scrollingCallback addFloatArgument:scrollView.contentOffset.x];
+        [scrollView.luaui_scrollingCallback addFloatArgument:scrollView.contentOffset.y];
+        [scrollView.luaui_scrollingCallback callIfCan];
     }
     
-    if (scrollView.lua_loadahead > 0 && !scrollView.lua_isLoading) {
-        if (!scrollView.mln_horizontal) {
-            if (scrollView.contentSize.height - scrollView.contentOffset.y <= scrollView.frame.size.height * (scrollView.lua_loadahead + 1)) {
+    if (scrollView.luaui_loadahead > 0 && !scrollView.luaui_isLoading) {
+        if (!scrollView.mlnui_horizontal) {
+            if (scrollView.contentSize.height - scrollView.contentOffset.y <= scrollView.frame.size.height * (scrollView.luaui_loadahead + 1)) {
                 CGFloat value = ( scrollView.contentSize.height - scrollView.contentOffset.y - scrollView.frame.size.height)/scrollView.frame.size.height;
-                if (value <= scrollView.lua_loadahead && ![scrollView lua_isNoMoreData]) {
-                    [scrollView lua_startLoading];
+                if (value <= scrollView.luaui_loadahead && ![scrollView luaui_isNoMoreData]) {
+                    [scrollView luaui_startLoading];
                 }
             }
         } else {
-            if (scrollView.contentSize.width - scrollView.contentOffset.x <= scrollView.frame.size.width * (scrollView.lua_loadahead + 1)) {
+            if (scrollView.contentSize.width - scrollView.contentOffset.x <= scrollView.frame.size.width * (scrollView.luaui_loadahead + 1)) {
                 CGFloat value = ( scrollView.contentSize.width - scrollView.contentOffset.x - scrollView.frame.size.width)/scrollView.frame.size.width;
-                if (value <= scrollView.lua_loadahead && ![scrollView lua_isNoMoreData]) {
-                    [scrollView lua_startLoading];
+                if (value <= scrollView.luaui_loadahead && ![scrollView luaui_isNoMoreData]) {
+                    [scrollView luaui_startLoading];
                 }
             }
         }
@@ -48,47 +48,47 @@
 }
 
 - (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
-    if (scrollView.lua_endDraggingCallback) {
-        [scrollView.lua_endDraggingCallback addFloatArgument:scrollView.contentOffset.x];
-        [scrollView.lua_endDraggingCallback addFloatArgument:scrollView.contentOffset.y];
-        [scrollView.lua_endDraggingCallback addBOOLArgument:decelerate];
-        [scrollView.lua_endDraggingCallback callIfCan];
+    if (scrollView.luaui_endDraggingCallback) {
+        [scrollView.luaui_endDraggingCallback addFloatArgument:scrollView.contentOffset.x];
+        [scrollView.luaui_endDraggingCallback addFloatArgument:scrollView.contentOffset.y];
+        [scrollView.luaui_endDraggingCallback addBOOLArgument:decelerate];
+        [scrollView.luaui_endDraggingCallback callIfCan];
     }
-    if (!decelerate && scrollView.lua_scrollEndCallback) {
-        [scrollView.lua_scrollEndCallback addFloatArgument:scrollView.contentOffset.x];
-        [scrollView.lua_scrollEndCallback addFloatArgument:scrollView.contentOffset.y];
-        [self calculateTopOrBottom:scrollView block:scrollView.lua_scrollEndCallback];
+    if (!decelerate && scrollView.luaui_scrollEndCallback) {
+        [scrollView.luaui_scrollEndCallback addFloatArgument:scrollView.contentOffset.x];
+        [scrollView.luaui_scrollEndCallback addFloatArgument:scrollView.contentOffset.y];
+        [self calculateTopOrBottom:scrollView block:scrollView.luaui_scrollEndCallback];
         
-        [scrollView.lua_scrollEndCallback callIfCan];
+        [scrollView.luaui_scrollEndCallback callIfCan];
     }
 }
 
 - (void)scrollViewWillBeginDecelerating:(UIScrollView *)scrollView
 {
-    if (scrollView.lua_startDeceleratingCallback) {
-        [scrollView.lua_startDeceleratingCallback addFloatArgument:scrollView.contentOffset.x];
-        [scrollView.lua_startDeceleratingCallback addFloatArgument:scrollView.contentOffset.y];
-        [scrollView.lua_startDeceleratingCallback callIfCan];
+    if (scrollView.luaui_startDeceleratingCallback) {
+        [scrollView.luaui_startDeceleratingCallback addFloatArgument:scrollView.contentOffset.x];
+        [scrollView.luaui_startDeceleratingCallback addFloatArgument:scrollView.contentOffset.y];
+        [scrollView.luaui_startDeceleratingCallback callIfCan];
     }
 }
 
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
 {
-    if (scrollView.lua_scrollEndCallback) {
-        [scrollView.lua_scrollEndCallback addFloatArgument:scrollView.contentOffset.x];
-        [scrollView.lua_scrollEndCallback addFloatArgument:scrollView.contentOffset.y];
-        [self calculateTopOrBottom:scrollView block:scrollView.lua_scrollEndCallback];
-        [scrollView.lua_scrollEndCallback callIfCan];
+    if (scrollView.luaui_scrollEndCallback) {
+        [scrollView.luaui_scrollEndCallback addFloatArgument:scrollView.contentOffset.x];
+        [scrollView.luaui_scrollEndCallback addFloatArgument:scrollView.contentOffset.y];
+        [self calculateTopOrBottom:scrollView block:scrollView.luaui_scrollEndCallback];
+        [scrollView.luaui_scrollEndCallback callIfCan];
     }
 }
 
 - (void)scrollViewDidEndScrollingAnimation:(UIScrollView *)scrollView
 {
-    if (scrollView.lua_scrollEndCallback) {
-        [scrollView.lua_scrollEndCallback addFloatArgument:scrollView.contentOffset.x];
-        [scrollView.lua_scrollEndCallback addFloatArgument:scrollView.contentOffset.y];
-        [self calculateTopOrBottom:scrollView block:scrollView.lua_scrollEndCallback];
-        [scrollView.lua_scrollEndCallback callIfCan];
+    if (scrollView.luaui_scrollEndCallback) {
+        [scrollView.luaui_scrollEndCallback addFloatArgument:scrollView.contentOffset.x];
+        [scrollView.luaui_scrollEndCallback addFloatArgument:scrollView.contentOffset.y];
+        [self calculateTopOrBottom:scrollView block:scrollView.luaui_scrollEndCallback];
+        [scrollView.luaui_scrollEndCallback callIfCan];
     }
 }
 

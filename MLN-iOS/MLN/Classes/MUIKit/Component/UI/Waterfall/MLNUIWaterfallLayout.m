@@ -194,7 +194,7 @@
     return attribute;
 }
 
-- (void)lua_setlayoutInset:(CGFloat)top left:(CGFloat)left bottom:(CGFloat)bottom  right:(CGFloat)right
+- (void)luaui_setlayoutInset:(CGFloat)top left:(CGFloat)left bottom:(CGFloat)bottom  right:(CGFloat)right
 {
     self.layoutInset = UIEdgeInsetsMake(top, left, bottom, right);
 }
@@ -249,7 +249,7 @@ LUA_EXPORT_BEGIN(MLNUIWaterfallLayout)
 LUA_EXPORT_PROPERTY(spanCount, "setColumnCount:", "columnCount", MLNUIWaterfallLayout)
 LUA_EXPORT_PROPERTY(lineSpacing, "setLineSpacing:","lineSpacing", MLNUIWaterfallLayout)
 LUA_EXPORT_PROPERTY(itemSpacing, "setItemSpacing:","itemSpacing", MLNUIWaterfallLayout)
-LUA_EXPORT_METHOD(layoutInset, "lua_setlayoutInset:left:bottom:right:", MLNUIWaterfallLayout)
+LUA_EXPORT_METHOD(layoutInset, "luaui_setlayoutInset:left:bottom:right:", MLNUIWaterfallLayout)
 LUA_EXPORT_END(MLNUIWaterfallLayout, WaterfallLayout, NO, NULL, NULL)
 
 @end

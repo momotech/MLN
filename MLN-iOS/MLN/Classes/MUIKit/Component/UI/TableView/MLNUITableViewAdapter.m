@@ -214,7 +214,7 @@
     }
     MLNUITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:reuseId forIndexPath:indexPath];
     cell.delegate = self;
-    [cell pushContentViewWithLuaCore:self.mln_luaCore];
+    [cell pushContentViewWithLuaCore:self.mlnui_luaCore];
     if (!cell.isInited) {
         [initCallback addLuaTableArgument:[cell getLuaTable]];
         [initCallback callIfCan];
@@ -335,55 +335,55 @@
 }
 
 #pragma mark - Extension Functions For Lua
-- (void)lua_selectedRow:(NSString *)reuseId callback:(MLNUIBlock *)callback
+- (void)luaui_selectedRow:(NSString *)reuseId callback:(MLNUIBlock *)callback
 {
     MLNUIKitLuaAssert(callback , @"The callback must not be nil!");
     MLNUIKitLuaAssert(reuseId && reuseId.length >0 , @"The reuse id must not be nil!");
     if (reuseId && reuseId.length >0) {
         [self.targetTableView registerClass:[MLNUITableViewCell class] forCellReuseIdentifier:reuseId];
-        [self.selectedRowCallbacks mln_setObject:callback forKey:reuseId];
+        [self.selectedRowCallbacks mlnui_setObject:callback forKey:reuseId];
     }
 }
 
-- (void)lua_selectedRowCallback:(MLNUIBlock *)callback
+- (void)luaui_selectedRowCallback:(MLNUIBlock *)callback
 {
-    [self lua_selectedRow:kMLNUITableViewCellReuseID callback:callback];
+    [self luaui_selectedRow:kMLNUITableViewCellReuseID callback:callback];
 }
 
-- (void)lua_longPressRow:(NSString *)reuseId callback:(MLNUIBlock *)callback
+- (void)luaui_longPressRow:(NSString *)reuseId callback:(MLNUIBlock *)callback
 {
     MLNUIKitLuaAssert(callback , @"The callback must not be nil!");
     MLNUIKitLuaAssert(reuseId && reuseId.length >0 , @"The reuse id must not be nil!");
     if (reuseId && reuseId.length >0) {
         [self.targetTableView registerClass:[MLNUITableViewCell class] forCellReuseIdentifier:reuseId];
-        [self.longPressRowCallbacks mln_setObject:callback forKey:reuseId];
+        [self.longPressRowCallbacks mlnui_setObject:callback forKey:reuseId];
     }
 }
 
-- (void)lua_longPressRowCallback:(MLNUIBlock *)callback
+- (void)luaui_longPressRowCallback:(MLNUIBlock *)callback
 {
-    [self lua_longPressRow:kMLNUITableViewCellReuseID callback:callback];
+    [self luaui_longPressRow:kMLNUITableViewCellReuseID callback:callback];
 }
 
-- (void)lua_cellWillAppearCallback:(MLNUIBlock *)callback
+- (void)luaui_cellWillAppearCallback:(MLNUIBlock *)callback
 {
     MLNUIKitLuaAssert(callback , @"The callback must not be nil!");
     [self.cellWillAppearByReuseIdCallbacks setObject:callback forKey:kMLNUITableViewCellReuseID];
 }
 
-- (void)lua_cellDidDisappearCallback:(MLNUIBlock *)callback
+- (void)luaui_cellDidDisappearCallback:(MLNUIBlock *)callback
 {
     [self.cellDidDisappearByReuseIdCallbacks setObject:callback forKey:kMLNUITableViewCellReuseID];
 }
 
-- (void)lua_cellWillAppear:(NSString *)reuseId callback:(MLNUIBlock *)callback
+- (void)luaui_cellWillAppear:(NSString *)reuseId callback:(MLNUIBlock *)callback
 {
     MLNUIKitLuaAssert(reuseId && reuseId.length >0 , @"The reuse id must not be nil!");
     MLNUIKitLuaAssert(callback , @"The callback must not be nil!");
     [self.cellWillAppearByReuseIdCallbacks setObject:callback forKey:reuseId];
 }
 
-- (void)lua_cellDidDisappear:(NSString *)reuseId callback:(MLNUIBlock *)callback
+- (void)luaui_cellDidDisappear:(NSString *)reuseId callback:(MLNUIBlock *)callback
 {
     MLNUIKitLuaAssert(reuseId && reuseId.length >0 , @"The reuse id must not be nil!");
     MLNUIKitLuaAssert(callback , @"The callback must not be nil!");
@@ -391,85 +391,85 @@
 }
 
 #pragma mark - Save data Callback
-- (void)lua_numbersOfSections:(MLNUIBlock *)callback
+- (void)luaui_numbersOfSections:(MLNUIBlock *)callback
 {
     self.sectionsNumberCallback = callback;
 }
 
-- (void)lua_numberOfRowsInSection:(MLNUIBlock *)callback
+- (void)luaui_numberOfRowsInSection:(MLNUIBlock *)callback
 {
     self.rowNumbersCallback = callback;
 }
 
-- (void)lua_reuseIdWithCallback:(MLNUIBlock *)callback
+- (void)luaui_reuseIdWithCallback:(MLNUIBlock *)callback
 {
     self.cellReuseIdCallback = callback;
 }
 
-- (void)lua_initCellBy:(NSString *)reuseId callback:(MLNUIBlock *)callback
+- (void)luaui_initCellBy:(NSString *)reuseId callback:(MLNUIBlock *)callback
 {
     MLNUIKitLuaAssert(callback , @"The callback must not be nil!");
     MLNUIKitLuaAssert(reuseId && reuseId.length >0 , @"The reuse id must not be nil!");
     if (reuseId && reuseId.length >0) {
         [self.targetTableView registerClass:[MLNUITableViewCell class] forCellReuseIdentifier:reuseId];
-        [self.initedCellCallbacks mln_setObject:callback forKey:reuseId];
+        [self.initedCellCallbacks mlnui_setObject:callback forKey:reuseId];
     }
 }
 
-- (void)lua_reuseCellBy:(NSString *)reuseId callback:(MLNUIBlock *)callback
+- (void)luaui_reuseCellBy:(NSString *)reuseId callback:(MLNUIBlock *)callback
 {
     MLNUIKitLuaAssert(callback , @"The callback must not be nil!");
     MLNUIKitLuaAssert(reuseId && reuseId.length >0 , @"The reuse id must not be nil!");
     if (reuseId && reuseId.length >0) {
         [self.targetTableView registerClass:[MLNUITableViewCell class] forCellReuseIdentifier:reuseId];
-        [self.fillCellDataCallbacks mln_setObject:callback forKey:reuseId];
+        [self.fillCellDataCallbacks mlnui_setObject:callback forKey:reuseId];
     }
 }
 
-- (void)lua_heightForRowBy:(NSString *)reuseId callback:(MLNUIBlock *)callback
+- (void)luaui_heightForRowBy:(NSString *)reuseId callback:(MLNUIBlock *)callback
 {
     MLNUIKitLuaAssert(callback , @"The callback must not be nil!");
     MLNUIKitLuaAssert(reuseId && reuseId.length >0 , @"The reuse id must not be nil!");
     if (reuseId && reuseId.length >0) {
-        [self.heightForRowCallbacks mln_setObject:callback forKey:reuseId];
+        [self.heightForRowCallbacks mlnui_setObject:callback forKey:reuseId];
     }
 }
 
-- (void)lua_initCellCallback:(MLNUIBlock *)callback
+- (void)luaui_initCellCallback:(MLNUIBlock *)callback
 {
-    [self lua_initCellBy:kMLNUITableViewCellReuseID callback:callback];
+    [self luaui_initCellBy:kMLNUITableViewCellReuseID callback:callback];
 }
 
-- (void)lua_reuseCellCallback:(MLNUIBlock *)callback
+- (void)luaui_reuseCellCallback:(MLNUIBlock *)callback
 {
-    [self lua_reuseCellBy:kMLNUITableViewCellReuseID callback:callback];
+    [self luaui_reuseCellBy:kMLNUITableViewCellReuseID callback:callback];
 }
 
-- (void)lua_heightForRowCallback:(MLNUIBlock *)callback
+- (void)luaui_heightForRowCallback:(MLNUIBlock *)callback
 {
-    [self lua_heightForRowBy:kMLNUITableViewCellReuseID callback:callback];
+    [self luaui_heightForRowBy:kMLNUITableViewCellReuseID callback:callback];
 }
 
 
 #pragma mark - Setup For Lua
 LUA_EXPORT_BEGIN(MLNUITableViewAdapter)
-LUA_EXPORT_METHOD(sectionCount, "lua_numbersOfSections:", MLNUITableViewAdapter)
-LUA_EXPORT_METHOD(rowCount, "lua_numberOfRowsInSection:", MLNUITableViewAdapter)
-LUA_EXPORT_METHOD(reuseId, "lua_reuseIdWithCallback:", MLNUITableViewAdapter)
-LUA_EXPORT_METHOD(initCellByReuseId, "lua_initCellBy:callback:", MLNUITableViewAdapter)
-LUA_EXPORT_METHOD(fillCellDataByReuseId, "lua_reuseCellBy:callback:", MLNUITableViewAdapter)
-LUA_EXPORT_METHOD(initCell, "lua_initCellCallback:", MLNUITableViewAdapter)
-LUA_EXPORT_METHOD(fillCellData, "lua_reuseCellCallback:", MLNUITableViewAdapter)
-LUA_EXPORT_METHOD(selectedRowByReuseId, "lua_selectedRow:callback:", MLNUITableViewAdapter)
-LUA_EXPORT_METHOD(selectedRow, "lua_selectedRowCallback:", MLNUITableViewAdapter)
-LUA_EXPORT_METHOD(longPressRowByReuseId, "lua_longPressRow:callback:", MLNUITableViewAdapter)
-LUA_EXPORT_METHOD(longPressRow, "lua_longPressRowCallback:", MLNUITableViewAdapter)
-LUA_EXPORT_METHOD(heightForCell, "lua_heightForRowCallback:", MLNUITableViewAdapter)
-LUA_EXPORT_METHOD(heightForCellByReuseId, "lua_heightForRowBy:callback:", MLNUITableViewAdapter)
-LUA_EXPORT_METHOD(cellWillAppear, "lua_cellWillAppearCallback:", MLNUITableViewAdapter)
-LUA_EXPORT_METHOD(cellDidDisappear, "lua_cellDidDisappearCallback:", MLNUITableViewAdapter)
-LUA_EXPORT_METHOD(cellWillAppearByReuseId, "lua_cellWillAppear:callback:", MLNUITableViewAdapter)
-LUA_EXPORT_METHOD(cellDidDisappearByReuseId, "lua_cellDidDisappear:callback:", MLNUITableViewAdapter)
+LUA_EXPORT_METHOD(sectionCount, "luaui_numbersOfSections:", MLNUITableViewAdapter)
+LUA_EXPORT_METHOD(rowCount, "luaui_numberOfRowsInSection:", MLNUITableViewAdapter)
+LUA_EXPORT_METHOD(reuseId, "luaui_reuseIdWithCallback:", MLNUITableViewAdapter)
+LUA_EXPORT_METHOD(initCellByReuseId, "luaui_initCellBy:callback:", MLNUITableViewAdapter)
+LUA_EXPORT_METHOD(fillCellDataByReuseId, "luaui_reuseCellBy:callback:", MLNUITableViewAdapter)
+LUA_EXPORT_METHOD(initCell, "luaui_initCellCallback:", MLNUITableViewAdapter)
+LUA_EXPORT_METHOD(fillCellData, "luaui_reuseCellCallback:", MLNUITableViewAdapter)
+LUA_EXPORT_METHOD(selectedRowByReuseId, "luaui_selectedRow:callback:", MLNUITableViewAdapter)
+LUA_EXPORT_METHOD(selectedRow, "luaui_selectedRowCallback:", MLNUITableViewAdapter)
+LUA_EXPORT_METHOD(longPressRowByReuseId, "luaui_longPressRow:callback:", MLNUITableViewAdapter)
+LUA_EXPORT_METHOD(longPressRow, "luaui_longPressRowCallback:", MLNUITableViewAdapter)
+LUA_EXPORT_METHOD(heightForCell, "luaui_heightForRowCallback:", MLNUITableViewAdapter)
+LUA_EXPORT_METHOD(heightForCellByReuseId, "luaui_heightForRowBy:callback:", MLNUITableViewAdapter)
+LUA_EXPORT_METHOD(cellWillAppear, "luaui_cellWillAppearCallback:", MLNUITableViewAdapter)
+LUA_EXPORT_METHOD(cellDidDisappear, "luaui_cellDidDisappearCallback:", MLNUITableViewAdapter)
+LUA_EXPORT_METHOD(cellWillAppearByReuseId, "luaui_cellWillAppear:callback:", MLNUITableViewAdapter)
+LUA_EXPORT_METHOD(cellDidDisappearByReuseId, "luaui_cellDidDisappear:callback:", MLNUITableViewAdapter)
 LUA_EXPORT_PROPERTY(showPressed, "setShowPressedColor:", "showPressedColor",MLNUITableViewAdapter)
 LUA_EXPORT_PROPERTY(pressedColor, "setPressedColor:","pressedColor", MLNUITableViewAdapter)
 LUA_EXPORT_END(MLNUITableViewAdapter, TableViewAdapter, NO, NULL, NULL)

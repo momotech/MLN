@@ -11,7 +11,7 @@
 
 @synthesize luaCore = _luaCore;
 
-- (instancetype)initWithLuaCore:(MLNUILuaCore *)luaCore
+- (instancetype)initWithMLNUILuaCore:(MLNUILuaCore *)luaCore
 {
     NSParameterAssert(luaCore);
     if (self = [super init]) {

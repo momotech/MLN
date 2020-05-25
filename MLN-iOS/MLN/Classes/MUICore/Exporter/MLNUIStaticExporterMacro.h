@@ -15,7 +15,7 @@
  
  @param CLZ 原生类名
  */
-#define LUA_EXPORT_STATIC_BEGIN(CLZ)  LUA_EXPORT_MAKE_METHOD_LIST(mln_Class_Method_, CLZ)
+#define LUA_EXPORT_STATIC_BEGIN(CLZ)  LUA_EXPORT_MAKE_METHOD_LIST(mlnui_Class_Method_, CLZ)
 
 /**
  导出静态方法映射
@@ -25,7 +25,7 @@
  @param CLZ 类名称
  */
 #define LUA_EXPORT_STATIC_METHOD(LUA_FUNC, SEL_NAME, CLZ) \
-LUA_EXPORT_METHOD_LIST_ADD(#LUA_FUNC, SEL_NAME, #CLZ, NO, NULL, NULL, mln_lua_class_method)
+LUA_EXPORT_METHOD_LIST_ADD(#LUA_FUNC, SEL_NAME, #CLZ, NO, NULL, NULL, mlnui_luaui_class_method)
 
 /**
  导出C函数映射
@@ -44,12 +44,12 @@ LUA_EXPORT_METHOD_LIST_ADD(#LUA_FUNC, "C_FUNC", #CLZ, NO, NULL, NULL, FUNC)
  */
 #define LUA_EXPORT_STATIC_LUA_CORE(CLZ) \
 static __weak MLNUILuaCore *currentLuaCore_ ## CLZ = nil;\
-+ (MLNUILuaCore *)mln_currentLuaCore\
++ (MLNUILuaCore *)mlnui_currentLuaCore\
 {\
     return currentLuaCore_ ## CLZ;\
 }\
 \
-+ (void)mln_updateCurrentLuaCore:(MLNUILuaCore *)luaCore\
++ (void)mlnui_updateCurrentLuaCore:(MLNUILuaCore *)luaCore\
 {\
     currentLuaCore_ ## CLZ = luaCore;\
 }
@@ -66,7 +66,7 @@ static __weak MLNUILuaCore *currentLuaCore_ ## CLZ = nil;\
 #define LUA_EXPORT_PACKAGE_STATIC_END(CLZ, PACKAGE, LUA_CLZ, HAS_SUPER, SUPER_CLZ_NAME) \
 LUA_EXPORT_METHOD_LIST_COMPLETED \
 LUA_EXPORT_MAKE_INFO(PACKAGE, #CLZ, #LUA_CLZ, "MLNUI_UserDataNativeObject", HAS_SUPER, SUPER_CLZ_NAME, NO, NULL,\
-(struct mln_objc_method *)mln_Class_Method_ ## CLZ, NULL, CLZ)\
+(struct mlnui_objc_method *)mlnui_Class_Method_ ## CLZ, NULL, CLZ)\
 LUA_EXPORT_TYPE(MLNUIExportTypeStatic)\
 LUA_EXPORT_STATIC_LUA_CORE(CLZ)
 

@@ -51,32 +51,32 @@
     return self;
 }
 
-- (BOOL)lua_enable
+- (BOOL)luaui_enable
 {
     return self.enable;
 }
 
-- (void)setLua_enable:(BOOL)lua_enable
+- (void)setLuaui_enable:(BOOL)luaui_enable
 {
-    [super setLua_enable:lua_enable];
-    self.enable = lua_enable;
+    [super setLuaui_enable:luaui_enable];
+    self.enable = luaui_enable;
 }
 
-- (void)lua_addClick:(MLNUIBlock *)clickCallback
+- (void)luaui_addClick:(MLNUIBlock *)clickCallback
 {
-    [super lua_addClick:clickCallback];
+    [super luaui_addClick:clickCallback];
     self.userInteractionEnabled = clickCallback != nil;
 }
 
-- (void)lua_addTouch:(MLNUIBlock *)touchCallBack
+- (void)luaui_addTouch:(MLNUIBlock *)touchCallBack
 {
-    [super lua_addTouch:touchCallBack];
+    [super luaui_addTouch:touchCallBack];
     self.userInteractionEnabled = touchCallBack != nil;
 }
 
-- (void)lua_addLongPress:(MLNUIBlock *)longPressCallback
+- (void)luaui_addLongPress:(MLNUIBlock *)longPressCallback
 {
-    [super lua_addLongPress:longPressCallback];
+    [super luaui_addLongPress:longPressCallback];
     self.userInteractionEnabled = longPressCallback != nil;
 }
 
@@ -84,10 +84,10 @@
 {
     image = [self convertToBlurImageIfNeed:image];
     [super setImage:image];
-    [self.lua_node needLayoutAndSpread];
+    [self.luaui_node needLayoutAndSpread];
 }
 
-- (CGSize)lua_measureSizeWithMaxWidth:(CGFloat)maxWidth maxHeight:(CGFloat)maxHeight
+- (CGSize)luaui_measureSizeWithMaxWidth:(CGFloat)maxWidth maxHeight:(CGFloat)maxHeight
 {
     return self.image ? self.image.size : CGSizeZero;
 }
@@ -159,12 +159,12 @@
     }
     self.effectView.hidden = NO;
     self.effectView.alpha = blurValue / MLNUI_BlurScope;
-    [self mln_pushLazyTask:self.lazyTask];
+    [self mlnui_pushLazyTask:self.lazyTask];
 }
 
 
 #pragma mark - Export Methods
-- (void)lua_setImageWith:(nonnull NSString *)imageName
+- (void)luaui_setImageWith:(nonnull NSString *)imageName
 {
     self.imageViewMode = MLNUIImageViewModeNone;
     if (!stringNotEmpty(imageName)) {
@@ -177,7 +177,7 @@
     [imageLoder imageView:self setImageWithPath:imageName];
 }
 
-- (void)lua_setImageWith:(nonnull NSString *)imageName placeHolderImage:(NSString *)placeHolder
+- (void)luaui_setImageWith:(nonnull NSString *)imageName placeHolderImage:(NSString *)placeHolder
 {
     if ((!stringNotEmpty(imageName) && !stringNotEmpty(placeHolder))) {
         self.image = nil;
@@ -189,7 +189,7 @@
     [imageLoder imageView:self setImageWithPath:imageName placeHolderImage:placeHolder];
 }
 
-- (void)lua_setImageWith:(nonnull NSString *)imageName placeHolderImage:(NSString *)placeHolder callback:(MLNUIBlock *)callback
+- (void)luaui_setImageWith:(nonnull NSString *)imageName placeHolderImage:(NSString *)placeHolder callback:(MLNUIBlock *)callback
 {
     self.imageViewMode = MLNUIImageViewModeNone;
     if ((!stringNotEmpty(imageName) && !stringNotEmpty(placeHolder))) {
@@ -216,7 +216,7 @@
     }];
 }
 
-- (void)lua_setCornerImageWith:(nonnull NSString *)imageName placeHolderImage:(NSString*)placeHolder cornerRadius:(NSInteger)radius direction:(MLNUIRectCorner)direction
+- (void)luaui_setCornerImageWith:(nonnull NSString *)imageName placeHolderImage:(NSString*)placeHolder cornerRadius:(NSInteger)radius direction:(MLNUIRectCorner)direction
 {
     self.imageViewMode = MLNUIImageViewModeNone;
     if ((!stringNotEmpty(imageName) && !stringNotEmpty(placeHolder))) {
@@ -234,7 +234,7 @@
     
 }
 
-- (void)lua_setNineImageWith:(nonnull NSString *)imageName synchronized:(BOOL)synchronzied
+- (void)luaui_setNineImageWith:(nonnull NSString *)imageName synchronized:(BOOL)synchronzied
 {
     _nineImageName = imageName;
     _synchronziedSetNineImage = synchronzied;
@@ -243,10 +243,10 @@
         return;
     }
     
-    [self mln_pushLazyTask:self.lazyTask];
+    [self mlnui_pushLazyTask:self.lazyTask];
 }
 
-- (void)mln_in_setNineImageWith:(nonnull NSString *)imageName synchronized:(BOOL)synchronzied
+- (void)mlnui_in_setNineImageWith:(nonnull NSString *)imageName synchronized:(BOOL)synchronzied
 {
     if (!stringNotEmpty(imageName)) {
         return;
@@ -267,13 +267,13 @@
             CGSize imgViewSize = self.frame.size;
             if (!synchronzied) {
                 dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-                    UIImage *resizedImage = [MLNUINinePatchImageFactory mln_createResizableNinePatchImage:image imgViewSize:imgViewSize];
+                    UIImage *resizedImage = [MLNUINinePatchImageFactory mlnui_createResizableNinePatchImage:image imgViewSize:imgViewSize];
                     dispatch_async(dispatch_get_main_queue(), ^{
                         [self setNineImageCheckContentMode:resizedImage];
                     });
                 });
             } else {
-                UIImage *resizedImage = [MLNUINinePatchImageFactory mln_createResizableNinePatchImage:image imgViewSize:imgViewSize];
+                UIImage *resizedImage = [MLNUINinePatchImageFactory mlnui_createResizableNinePatchImage:image imgViewSize:imgViewSize];
                 [self setNineImageCheckContentMode:resizedImage];
             }
         } else {
@@ -282,7 +282,7 @@
     }];
 }
 
-- (void)lua_startAnimation:(NSArray <NSString *> *)urlArray duration:(CGFloat)duration repeat:(BOOL)repeat
+- (void)luaui_startAnimation:(NSArray <NSString *> *)urlArray duration:(CGFloat)duration repeat:(BOOL)repeat
 {
     self.imageViewMode = MLNUIImageViewModeNone;
     MLNUICheckTypeAndNilValue(urlArray, @"Array", [NSMutableArray class])
@@ -323,24 +323,24 @@
     });
 }
 
-- (void)lua_setLazyLoad:(BOOL)lazyLoad
+- (void)luaui_setLazyLoad:(BOOL)lazyLoad
 {
     //@note the special feature of Android.
 }
 
-- (BOOL)lua_lazyLoad
+- (BOOL)luaui_lazyLoad
 {
     //@note the special feature of Android.
     return NO;
 }
 
 
-- (void)lua_setPaddingWithTop:(CGFloat)top right:(CGFloat)right bottom:(CGFloat)bottom left:(CGFloat)left
+- (void)luaui_setPaddingWithTop:(CGFloat)top right:(CGFloat)right bottom:(CGFloat)bottom left:(CGFloat)left
 {
     MLNUIKitLuaAssert(NO, @"ImageView does not support padding!");
 }
 
-- (void)lua_setBlurValue:(CGFloat)blurValue processImage:(BOOL)processImage
+- (void)luaui_setBlurValue:(CGFloat)blurValue processImage:(BOOL)processImage
 {
     blurValue = blurValue <= 0.0? 0.0f : blurValue;
     blurValue = blurValue > MLNUI_BlurScope? MLNUI_BlurScope : blurValue;
@@ -352,22 +352,22 @@
     }
 }
 
-- (void)lua_changedLayout
+- (void)luaui_changedLayout
 {
-    [super lua_changedLayout];
+    [super luaui_changedLayout];
     if (_blurValue > 0) {
-        [self mln_pushLazyTask:self.lazyTask];
+        [self mlnui_pushLazyTask:self.lazyTask];
     }
 }
 
-- (void)lua_setContentMode:(UIViewContentMode)contentMode
+- (void)luaui_setContentMode:(UIViewContentMode)contentMode
 {
     MLNUIKitLuaAssert(contentMode != UIViewContentModeCenter, @"ContentMode.CENTER is deprecated");
     self.imageContentMode = contentMode;
     [self checkContentMode];
 }
 
-- (UIViewContentMode)lua_getContentMode
+- (UIViewContentMode)luaui_getContentMode
 {
     return self.imageContentMode;
 }
@@ -394,7 +394,7 @@
                 sself.effectView.frame = sself.bounds;
             }
             if (sself.nineImageName.length > 0) {
-                [sself mln_in_setNineImageWith:sself.nineImageName synchronized:sself.synchronziedSetNineImage];
+                [sself mlnui_in_setNineImageWith:sself.nineImageName synchronized:sself.synchronziedSetNineImage];
             }
         }];
     }
@@ -403,59 +403,59 @@
 
 - (id<MLNUIImageLoaderProtocol>)imageLoader
 {
-    return MLNUI_KIT_INSTANCE(self.mln_luaCore).instanceHandlersManager.imageLoader;
+    return MLNUI_KIT_INSTANCE(self.mlnui_luaCore).instanceHandlersManager.imageLoader;
 }
 
 #pragma mark - Override
 
-- (void)lua_addSubview:(UIView *)view
+- (void)luaui_addSubview:(UIView *)view
 {
     MLNUIKitLuaAssert(NO, @"Not found \"addView\" method in ImageView, just continar of View has it!");
 }
 
-- (void)lua_insertSubview:(UIView *)view atIndex:(NSInteger)index
+- (void)luaui_insertSubview:(UIView *)view atIndex:(NSInteger)index
 {
     MLNUIKitLuaAssert(NO, @"Not found \"insertView\" method in ImageView, just continar of View has it!");
 }
 
-- (void)lua_removeAllSubViews
+- (void)luaui_removeAllSubViews
 {
     MLNUIKitLuaAssert(NO, @"Not found \"removeAllSubviews\" method in ImageView, just continar of View has it!");
 }
 
-- (BOOL)lua_canClick
+- (BOOL)luaui_canClick
 {
     return YES;
 }
 
-- (BOOL)lua_canLongPress
+- (BOOL)luaui_canLongPress
 {
     return YES;
 }
 
-- (BOOL)lua_layoutEnable
+- (BOOL)luaui_layoutEnable
 {
     return YES;
 }
 
-- (BOOL)lua_supportOverlay {
+- (BOOL)luaui_supportOverlay {
     return YES;
 }
 
 #pragma mark - Export For Lua
 LUA_EXPORT_VIEW_BEGIN(MLNUIImageView)
-LUA_EXPORT_VIEW_PROPERTY(contentMode, "lua_setContentMode:","contentMode", MLNUIImageView)
-LUA_EXPORT_VIEW_PROPERTY(lazyLoad, "lua_setLazyLoad:","lua_lazyLoad", MLNUIImageView)
-LUA_EXPORT_VIEW_METHOD(startAnimationImages, "lua_startAnimation:duration:repeat:", MLNUIImageView)
+LUA_EXPORT_VIEW_PROPERTY(contentMode, "luaui_setContentMode:","contentMode", MLNUIImageView)
+LUA_EXPORT_VIEW_PROPERTY(lazyLoad, "luaui_setLazyLoad:","luaui_lazyLoad", MLNUIImageView)
+LUA_EXPORT_VIEW_METHOD(startAnimationImages, "luaui_startAnimation:duration:repeat:", MLNUIImageView)
 LUA_EXPORT_VIEW_METHOD(stopAnimationImages, "stopAnimating", MLNUIImageView)
 LUA_EXPORT_VIEW_METHOD(isAnimating, "isAnimating", MLNUIImageView)
-LUA_EXPORT_VIEW_METHOD(image, "lua_setImageWith:", MLNUIImageView)
-LUA_EXPORT_VIEW_METHOD(setImageUrl, "lua_setImageWith:placeHolderImage:", MLNUIImageView)
-LUA_EXPORT_VIEW_METHOD(setCornerImage, "lua_setCornerImageWith:placeHolderImage:cornerRadius:direction:", MLNUIImageView)
-LUA_EXPORT_VIEW_METHOD(setImageWithCallback, "lua_setImageWith:placeHolderImage:callback:", MLNUIImageView)
-LUA_EXPORT_VIEW_METHOD(setNineImage, "lua_setNineImageWith:synchronized:", MLNUIImageView)
-LUA_EXPORT_VIEW_METHOD(blurImage, "lua_setBlurValue:processImage:", MLNUIImageView)
-LUA_EXPORT_VIEW_METHOD(addShadow, "lua_addShadow:shadowOffset:shadowRadius:shadowOpacity:isOval:", MLNUIImageView)
+LUA_EXPORT_VIEW_METHOD(image, "luaui_setImageWith:", MLNUIImageView)
+LUA_EXPORT_VIEW_METHOD(setImageUrl, "luaui_setImageWith:placeHolderImage:", MLNUIImageView)
+LUA_EXPORT_VIEW_METHOD(setCornerImage, "luaui_setCornerImageWith:placeHolderImage:cornerRadius:direction:", MLNUIImageView)
+LUA_EXPORT_VIEW_METHOD(setImageWithCallback, "luaui_setImageWith:placeHolderImage:callback:", MLNUIImageView)
+LUA_EXPORT_VIEW_METHOD(setNineImage, "luaui_setNineImageWith:synchronized:", MLNUIImageView)
+LUA_EXPORT_VIEW_METHOD(blurImage, "luaui_setBlurValue:processImage:", MLNUIImageView)
+LUA_EXPORT_VIEW_METHOD(addShadow, "luaui_addShadow:shadowOffset:shadowRadius:shadowOpacity:isOval:", MLNUIImageView)
 LUA_EXPORT_VIEW_END(MLNUIImageView, ImageView, YES, "MLNUIView", NULL)
 
 @end

@@ -51,7 +51,7 @@
 
 - (MLNUIWindow *)createLuaWindow
 {
-    return [[MLNUIWindow alloc] initWithLuaCore:self.luaCore frame:self.rootView.bounds];
+    return [[MLNUIWindow alloc] initWithMLNUILuaCore:self.luaCore frame:self.rootView.bounds];
 }
 
 - (void)setupLuaWindow:(NSMutableDictionary *)windowExtra
@@ -67,7 +67,7 @@
 
 - (void)pushWindowToLayoutEngine
 {
-    __unsafe_unretained MLNUILayoutContainerNode *node = (MLNUILayoutContainerNode *)self.luaWindow.lua_node;
+    __unsafe_unretained MLNUILayoutContainerNode *node = (MLNUILayoutContainerNode *)self.luaWindow.luaui_node;
     node.heightType = MLNUILayoutMeasurementTypeIdle;
     node.widthType = MLNUILayoutMeasurementTypeIdle;
     [node changeX:0.f];
@@ -155,7 +155,7 @@
 }
 
 #pragma mark - Public For LuaCore
-- (instancetype)initWithLuaCoreBuilder:(id<MLNUIKitLuaCoeBuilderProtocol>)luaCoreBuilder viewController:(UIViewController<MLNUIViewControllerProtocol> *)viewController
+- (instancetype)initWithMLNUILuaCoreBuilder:(id<MLNUIKitLuaCoeBuilderProtocol>)luaCoreBuilder viewController:(UIViewController<MLNUIViewControllerProtocol> *)viewController
 {
     return [self initWithLuaBundle:[MLNUILuaBundle mainBundle] luaCoreBuilder:luaCoreBuilder viewController:viewController];
 }
@@ -202,7 +202,7 @@
 {
     if (!stringNotEmpty(entryFilePath)) {
         if (error) {
-            *error = [NSError mln_errorCall:@"entry file is nil!"];
+            *error = [NSError mlnui_errorCall:@"entry file is nil!"];
         }
         MLNUIError(self.luaCore, @"entry file is nil!");
         if ([self.delegate respondsToSelector:@selector(instance:didFailRun:error:)]) {
@@ -419,7 +419,7 @@
 
 - (void)forceLayoutLuaWindow
 {
-   [self.luaWindow lua_requestLayout];
+   [self.luaWindow luaui_requestLayout];
 }
 
 - (void)releaseAll
@@ -462,7 +462,7 @@
    // 通知Lua，Window即将释放
     [self.luaWindow doLuaViewDestroy];
     // 释放Lua Window
-    [self.luaWindow  lua_removeAllSubViews];
+    [self.luaWindow  luaui_removeAllSubViews];
     [self.luaWindow  removeFromSuperview];
     _luaWindow  = nil;
 }

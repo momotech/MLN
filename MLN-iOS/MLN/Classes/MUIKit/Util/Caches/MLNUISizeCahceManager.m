@@ -34,16 +34,16 @@
 
 - (nullable id)objectForKey:(id)key
 {
-    return [self.memCache mln_objectForKey:key];
+    return [self.memCache mlnui_objectForKey:key];
 }
 - (void)setObject:(id)obj forKey:(id)key
 {
-    [self.memCache mln_setObject:obj forKey:key];
+    [self.memCache mlnui_setObject:obj forKey:key];
 }
 
 - (void)removeObjectForKey:(id)key
 {
-    [self.memCache mln_removeObjectForKey:key];
+    [self.memCache mlnui_removeObjectForKey:key];
 }
 
 - (void)removeAllObjects

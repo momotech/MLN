@@ -11,11 +11,11 @@
 #import "MLNUIKitInstance.h"
 #import "MLNUIKitInstanceHandlersManager.h"
 
-#define MLNUICURRENT_VIEW_CONTROLLLER  MLNUI_KIT_INSTANCE(self.mln_currentLuaCore).viewController
+#define MLNUICURRENT_VIEW_CONTROLLLER  MLNUI_KIT_INSTANCE(self.mlnui_currentLuaCore).viewController
 
 @implementation MLNUINavigator
 
-+ (void)lua_gotoPage:(NSString *)action params:(NSDictionary *)params animType:(MLNUIAnimationAnimType)animType
++ (void)luaui_gotoPage:(NSString *)action params:(NSDictionary *)params animType:(MLNUIAnimationAnimType)animType
 {
     MLNUIStaticCheckStringTypeAndNilValue(action)
     id<MLNUINavigatorHandlerProtocol> delegate = [self navigatorHandler];
@@ -25,7 +25,7 @@
     }
 }
 
-+ (void)lua_gotoAndCloseSelf:(NSString *)action params:(NSDictionary *)params animType:(MLNUIAnimationAnimType)animType
++ (void)luaui_gotoAndCloseSelf:(NSString *)action params:(NSDictionary *)params animType:(MLNUIAnimationAnimType)animType
 {
     MLNUIStaticCheckStringTypeAndNilValue(action)
     id<MLNUINavigatorHandlerProtocol> delegate = [self navigatorHandler];
@@ -35,7 +35,7 @@
     }
 }
 
-+ (void)lua_closeSelf:(MLNUIAnimationAnimType)animType
++ (void)luaui_closeSelf:(MLNUIAnimationAnimType)animType
 {
     id<MLNUINavigatorHandlerProtocol> delegate = [self navigatorHandler];
      MLNUIKitLuaStaticAssert([delegate respondsToSelector:@selector(viewController:closeSelf:)], @"-[MLNUINavigator viewController:closeSelf:] was not found!");
@@ -44,7 +44,7 @@
     }
 }
 
-+ (BOOL)lua_closeToLuaPage:(NSString *)pageName
++ (BOOL)luaui_closeToLuaPage:(NSString *)pageName
 {
     MLNUIStaticCheckStringTypeAndNilValue(pageName)
     id<MLNUINavigatorHandlerProtocol> delegate = [self navigatorHandler];
@@ -58,16 +58,16 @@
 
 + (id<MLNUINavigatorHandlerProtocol>)navigatorHandler
 {
-    return MLNUI_KIT_INSTANCE(self.mln_currentLuaCore).instanceHandlersManager.navigatorHandler;
+    return MLNUI_KIT_INSTANCE(self.mlnui_currentLuaCore).instanceHandlersManager.navigatorHandler;
 }
 
 #pragma mark - Setup For Lua
 LUA_EXPORT_STATIC_BEGIN(MLNUINavigator)
-LUA_EXPORT_STATIC_METHOD(gotoPage, "lua_gotoPage:params:animType:", MLNUINavigator)
+LUA_EXPORT_STATIC_METHOD(gotoPage, "luaui_gotoPage:params:animType:", MLNUINavigator)
 LUA_EXPORT_STATIC_METHOD(gotoLuaCodePage, "gotoLuaCodePage:animType:", MLNUINavigator)
-LUA_EXPORT_STATIC_METHOD(gotoAndCloseSelf, "lua_gotoAndCloseSelf:params:animType:", MLNUINavigator)
-LUA_EXPORT_STATIC_METHOD(closeSelf, "lua_closeSelf:", MLNUINavigator)
-LUA_EXPORT_STATIC_METHOD(closeToLuaPageFinished, "lua_closeToLuaPage:", MLNUINavigator)
+LUA_EXPORT_STATIC_METHOD(gotoAndCloseSelf, "luaui_gotoAndCloseSelf:params:animType:", MLNUINavigator)
+LUA_EXPORT_STATIC_METHOD(closeSelf, "luaui_closeSelf:", MLNUINavigator)
+LUA_EXPORT_STATIC_METHOD(closeToLuaPageFinished, "luaui_closeToLuaPage:", MLNUINavigator)
 LUA_EXPORT_STATIC_END(MLNUINavigator, Navigator, NO, NULL)
 
 @end

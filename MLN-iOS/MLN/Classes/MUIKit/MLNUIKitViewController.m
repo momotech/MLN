@@ -152,7 +152,7 @@
 
 - (void)bindGlobalModel {
     self.globalModel = [NSMutableDictionary dictionary];
-    [self.mln_dataBinding bindData:self.globalModel forKey:@"Global"];
+    [self.mlnui_dataBinding bindData:self.globalModel forKey:@"Global"];
 }
 
 - (MLNUIKitInstance *)kitInstance

@@ -31,7 +31,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param index Lua Function在Lua栈上的位置
  @return Block对象
  */
-- (instancetype)initWithLuaCore:(MLNUILuaCore *)luaCore indexOnLuaStack:(int)index NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithMLNUILuaCore:(MLNUILuaCore *)luaCore indexOnLuaStack:(int)index NS_DESIGNATED_INITIALIZER;
 
 + (instancetype)new NS_UNAVAILABLE;
 - (instancetype)init NS_UNAVAILABLE;

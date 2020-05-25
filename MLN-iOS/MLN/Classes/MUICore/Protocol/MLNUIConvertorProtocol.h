@@ -24,7 +24,7 @@
  @param luaCore 当前lua状态机
  @return 转换器实例
  */
-- (instancetype)initWithLuaCore:(MLNUILuaCore *)luaCore;
+- (instancetype)initWithMLNUILuaCore:(MLNUILuaCore *)luaCore;
 
 /**
  将Native对象转换为Lua数据，并压入栈顶

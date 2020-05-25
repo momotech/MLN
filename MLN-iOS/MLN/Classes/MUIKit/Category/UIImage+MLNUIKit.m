@@ -10,7 +10,7 @@
 
 @implementation UIImage (MLNUIKit)
 
-- (UIImage *)mln_ImageWithCornerRadius:(MLNUICornerRadius)cornerRadius
+- (UIImage *)mlnui_ImageWithCornerRadius:(MLNUICornerRadius)cornerRadius
 {
     CGRect rect = (CGRect){0.f, 0.f, self.size};
     UIImage *image = nil;
@@ -42,7 +42,7 @@
     return image;
 }
 
-+ (UIImage *)mln_imageWithColor:(UIColor *)color finalSize:(CGSize)size cornerRadius:(CGFloat)cornerRadius
++ (UIImage *)mlnui_imageWithColor:(UIColor *)color finalSize:(CGSize)size cornerRadius:(CGFloat)cornerRadius
 {
     if (!color) {
         color = [UIColor clearColor];

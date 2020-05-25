@@ -36,7 +36,7 @@
 
 @implementation NSMutableArray (MLNUIKVO)
 
-//- (void)mln_notifyAllObserver:(NSKeyValueChange)type new:(NSMutableArray *)new old:(NSMutableArray *)old {
+//- (void)mlnui_notifyAllObserver:(NSKeyValueChange)type new:(NSMutableArray *)new old:(NSMutableArray *)old {
 //    NSMutableArray<MLNUIKVOArrayHandler> *obs = objc_getAssociatedObject(self, kMLNUIKVOArrayHandlers);
 //    if (obs && obs.count > 0) {
 //        for (MLNUIKVOArrayHandler handler in obs) {
@@ -45,10 +45,10 @@
 //    }
 //}
 
-- (void)mln_notifyAllObserver:(NSKeyValueChange)type indexSet:(NSIndexSet *)indexSet newValue:(id)newValue oldValue:(id)oldValue {
+- (void)mlnui_notifyAllObserver:(NSKeyValueChange)type indexSet:(NSIndexSet *)indexSet newValue:(id)newValue oldValue:(id)oldValue {
     NSArray<MLNUIKVOArrayHandler> *obs;
     @synchronized (self) {
-        obs = [self mln_observerHandlersCreateIfNeeded:NO].copy;
+        obs = [self mlnui_observerHandlersCreateIfNeeded:NO].copy;
     }
     if (obs && obs.count > 0) {
         NSMutableDictionary *change = @{}.mutableCopy;
@@ -62,44 +62,44 @@
     }
 }
 
-//- (NSMutableArray * _Nonnull (^)(MLNUIKVOSubcribeArray _Nonnull))mln_subscribeArray {
+//- (NSMutableArray * _Nonnull (^)(MLNUIKVOSubcribeArray _Nonnull))mlnui_subscribeArray {
 //    __weak __typeof(self)weakSelf = self;
 //    return ^(MLNUIKVOSubcribeArray block) {
 //        __strong __typeof(weakSelf)self = weakSelf;
-//        [self mln_addObserverHandler:^(NSMutableArray * _Nonnull array, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
+//        [self mlnui_addObserverHandler:^(NSMutableArray * _Nonnull array, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
 //            block(change);
 //        }];
 //        return self;
 //    };
 //}
 
-- (void)mln_addObserverHandler:(MLNUIKVOArrayHandler)handler {
+- (void)mlnui_addObserverHandler:(MLNUIKVOArrayHandler)handler {
     @synchronized (self) {
-        NSMutableArray<MLNUIKVOArrayHandler> *obs = [self mln_observerHandlersCreateIfNeeded:YES];
+        NSMutableArray<MLNUIKVOArrayHandler> *obs = [self mlnui_observerHandlersCreateIfNeeded:YES];
         if (![obs containsObject:handler]) {
             [obs addObject:handler];
         }
     }
 }
 
-- (void)mln_removeObserverHandler:(MLNUIKVOArrayHandler)handler {
+- (void)mlnui_removeObserverHandler:(MLNUIKVOArrayHandler)handler {
     if (handler) {
         @synchronized (self) {
-            NSMutableArray *obs = [self mln_observerHandlersCreateIfNeeded:NO];
+            NSMutableArray *obs = [self mlnui_observerHandlersCreateIfNeeded:NO];
             [obs removeObject:handler];
         }
     }
 }
 
-- (void)mln_clearObserverHandlers {
+- (void)mlnui_clearObserverHandlers {
     @synchronized (self) {
-        NSMutableArray *obs = [self mln_observerHandlersCreateIfNeeded:NO];
+        NSMutableArray *obs = [self mlnui_observerHandlersCreateIfNeeded:NO];
         [obs removeAllObjects];
     }
 }
 
 static const void *kMLNUIKVOArrayHandlers = &kMLNUIKVOArrayHandlers;
-- (NSMutableArray<MLNUIKVOArrayHandler> *)mln_observerHandlersCreateIfNeeded:(BOOL)shouldCreate {
+- (NSMutableArray<MLNUIKVOArrayHandler> *)mlnui_observerHandlersCreateIfNeeded:(BOOL)shouldCreate {
     NSMutableArray *obs = objc_getAssociatedObject(self, kMLNUIKVOArrayHandlers);
     if (!obs && shouldCreate) {
         obs = [NSMutableArray array];
@@ -116,7 +116,7 @@ NS_INLINE  Class MLNUICreateSubClass(Class class, NSString *subName) {
 }
 
 // 只对当前对象进行KVO
-- (void)mln_startKVO {
+- (void)mlnui_startKVO {
     Class class = object_getClass(self);
     NSString *className = NSStringFromClass(class);
     BOOL isStart = [className containsString:kMLNUIKVO];
@@ -132,7 +132,7 @@ NS_INLINE  Class MLNUICreateSubClass(Class class, NSString *subName) {
     }
 }
 
-- (void)mln_stopKVO {
+- (void)mlnui_stopKVO {
     Class cls = object_getClass(self);
     BOOL isStart = [NSStringFromClass(cls) containsString:kMLNUIKVO];
     Class originClass = self.mlnkvo_originClass;
@@ -180,7 +180,7 @@ shold override five primitive methods
     
     origin = @selector(insertObject:atIndex:);
     swizzle = @selector(mlnkvo_insertObject:atIndex:);
-    [cls mln_swizzleInstanceSelector:origin withNewSelector:swizzle newImpBlock:^(NSMutableArray *self, id object, NSUInteger index) {
+    [cls mlnui_swizzleInstanceSelector:origin withNewSelector:swizzle newImpBlock:^(NSMutableArray *self, id object, NSUInteger index) {
         id oldValue;
         if (index < self.count) {
             oldValue = [self objectAtIndex:index];
@@ -190,12 +190,12 @@ shold override five primitive methods
         ((void(*)(id,SEL,id,NSUInteger))imp)(self, origin, object,index);
         // call observer
         NSIndexSet *set = [NSIndexSet indexSetWithIndex:index];
-        [self mln_notifyAllObserver:NSKeyValueChangeInsertion indexSet:set newValue:object oldValue:oldValue];
+        [self mlnui_notifyAllObserver:NSKeyValueChangeInsertion indexSet:set newValue:object oldValue:oldValue];
     } forceAddOriginImpBlock:placeholderBlock];
     
     origin = @selector(removeObjectAtIndex:);
     swizzle = @selector(mlnkvo_removeObjectAtIndex:);
-    [cls mln_swizzleInstanceSelector:origin withNewSelector:swizzle newImpBlock:^(NSMutableArray *self, NSUInteger index) {
+    [cls mlnui_swizzleInstanceSelector:origin withNewSelector:swizzle newImpBlock:^(NSMutableArray *self, NSUInteger index) {
         id oldValue;
         if (index < self.count) {
             oldValue = [self objectAtIndex:index];
@@ -205,36 +205,36 @@ shold override five primitive methods
         ((void(*)(id,SEL,NSUInteger))imp)(self, origin, index);
         
         NSIndexSet *set = [NSIndexSet indexSetWithIndex:index];
-        [self mln_notifyAllObserver:NSKeyValueChangeRemoval indexSet:set newValue:nil oldValue:oldValue];
+        [self mlnui_notifyAllObserver:NSKeyValueChangeRemoval indexSet:set newValue:nil oldValue:oldValue];
     } forceAddOriginImpBlock:placeholderBlock];
     
     // iOS13: addobject: will call insertObject:atIndex:
 //    origin = @selector(addObject:);
 //    swizzle = @selector(mlnkvo_addObject:);
-//    [cls mln_swizzleInstanceSelector:origin withNewSelector:swizzle newImpBlock:^(NSMutableArray *self, id object) {
+//    [cls mlnui_swizzleInstanceSelector:origin withNewSelector:swizzle newImpBlock:^(NSMutableArray *self, id object) {
 //        // call real imp
 //        GetIMP();
 //        ((void(*)(id,SEL,id))imp)(self, origin, object);
 //        // call observer
 //        NSIndexSet *set = [NSIndexSet indexSetWithIndex:self.count - 1];
-//        [self mln_notifyAllObserver:NSKeyValueChangeInsertion indexSet:set newValue:object oldValue:nil];
+//        [self mlnui_notifyAllObserver:NSKeyValueChangeInsertion indexSet:set newValue:object oldValue:nil];
 //    } forceAddOriginImpBlock:placeholderBlock];
     
 //    origin = @selector(removeLastObject);
 //    swizzle = @selector(mlnkvo_removeLastObject);
-//    [cls mln_swizzleInstanceSelector:origin withNewSelector:swizzle newImpBlock:^(NSMutableArray *self) {
+//    [cls mlnui_swizzleInstanceSelector:origin withNewSelector:swizzle newImpBlock:^(NSMutableArray *self) {
 //        NSIndexSet *set = self.count > 0 ? [NSIndexSet indexSetWithIndex:self.count - 1] : nil;
 //        id oldValue = self.lastObject;
 //        // call real imp
 //        GetIMP();
 //        ((void(*)(id,SEL))imp)(self, origin);
 //        // call observer
-//        [self mln_notifyAllObserver:NSKeyValueChangeInsertion indexSet:set newValue:nil oldValue:oldValue];
+//        [self mlnui_notifyAllObserver:NSKeyValueChangeInsertion indexSet:set newValue:nil oldValue:oldValue];
 //    } forceAddOriginImpBlock:placeholderBlock];
     
     origin = @selector(replaceObjectAtIndex:withObject:);
     swizzle = @selector(mlnkvo_replaceObjectAtIndex:withObject:);
-    [cls mln_swizzleInstanceSelector:origin withNewSelector:swizzle newImpBlock:^(NSMutableArray *self, NSUInteger index, id object) {
+    [cls mlnui_swizzleInstanceSelector:origin withNewSelector:swizzle newImpBlock:^(NSMutableArray *self, NSUInteger index, id object) {
         id oldValue;
         if (index < self.count) {
             oldValue = [self objectAtIndex:index];
@@ -245,7 +245,7 @@ shold override five primitive methods
         ((void(*)(id,SEL,NSUInteger,id))imp)(self, origin,index,object);
 //                )
 //        AfterIMP(
-        [self mln_notifyAllObserver:NSKeyValueChangeReplacement indexSet:set newValue:object oldValue:oldValue];
+        [self mlnui_notifyAllObserver:NSKeyValueChangeReplacement indexSet:set newValue:object oldValue:oldValue];
 //                 )
 
     } forceAddOriginImpBlock:placeholderBlock];

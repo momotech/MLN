@@ -30,12 +30,12 @@
     
     self.model = [MLNDataBindModel testModel];
     
-    self.model.mln_watch(@"name", ^(id  _Nonnull oldValue, id  _Nonnull newValue, id observedObject) {
+    self.model.mlnui_watch(@"name", ^(id  _Nonnull oldValue, id  _Nonnull newValue, id observedObject) {
         NSLog(@"name has changed from  %@ to %@",oldValue, newValue);
     });
     
     [viewController bindData:self.model forKey:@"userData"];
-    [viewController mln_addToSuperViewController:self frame:self.view.bounds];
+    [viewController mlnui_addToSuperViewController:self frame:self.view.bounds];
 }
 
 - (void)testChangeModel:(int)cnt {

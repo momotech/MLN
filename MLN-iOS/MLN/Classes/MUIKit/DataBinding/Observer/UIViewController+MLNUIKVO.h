@@ -21,9 +21,9 @@ typedef void(^MLNUIViewControllerLifeCycleObserver)(MLNUIViewControllerLifeCycle
 
 @interface UIViewController (MLNUIKVO)
 
-- (void)mln_addLifeCycleObserver:(MLNUIViewControllerLifeCycleObserver)observer;
-- (void)mln_removeLifeCycleObserver:(MLNUIViewControllerLifeCycleObserver)observer;
-- (void)mln_removeAllLifeCycleObserver;
+- (void)mlnui_addLifeCycleObserver:(MLNUIViewControllerLifeCycleObserver)observer;
+- (void)mlnui_removeLifeCycleObserver:(MLNUIViewControllerLifeCycleObserver)observer;
+- (void)mlnui_removeAllLifeCycleObserver;
 
 @end
 

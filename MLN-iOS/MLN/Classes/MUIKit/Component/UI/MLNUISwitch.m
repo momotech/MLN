@@ -43,17 +43,17 @@
     return self;
 }
 
-- (void)lua_setOn:(BOOL)on
+- (void)luaui_setOn:(BOOL)on
 {
     [self setOn:on animated:YES];
 }
 
-- (BOOL)lua_on
+- (BOOL)luaui_on
 {
     return self.isOn;
 }
 
-- (void)lua_setSwitchChangedCallback:(MLNUIBlock *)callback
+- (void)luaui_setSwitchChangedCallback:(MLNUIBlock *)callback
 {
     MLNUICheckTypeAndNilValue(callback, @"function", MLNUIBlock);
     self.switchChangedCallback = callback;
@@ -74,30 +74,30 @@
 }
 
 #pragma mark - Override
-- (void)lua_addSubview:(UIView *)view
+- (void)luaui_addSubview:(UIView *)view
 {
     MLNUIKitLuaAssert(NO, @"Not found \"addView\" method, just continar of View has it!");
 }
 
-- (void)lua_insertSubview:(UIView *)view atIndex:(NSInteger)index
+- (void)luaui_insertSubview:(UIView *)view atIndex:(NSInteger)index
 {
     MLNUIKitLuaAssert(NO, @"Not found \"insertView\" method, just continar of View has it!");
 }
 
-- (void)lua_removeAllSubViews
+- (void)luaui_removeAllSubViews
 {
     MLNUIKitLuaAssert(NO, @"Not found \"removeAllSubviews\" method, just continar of View has it!");
 }
 
-- (BOOL)lua_layoutEnable
+- (BOOL)luaui_layoutEnable
 {
     return YES;
 }
 
 #pragma mark - Export For Lua
 LUA_EXPORT_VIEW_BEGIN(MLNUISwitch)
-LUA_EXPORT_PROPERTY(on, "lua_setOn:", "lua_on", MLNUISwitch)
-LUA_EXPORT_VIEW_METHOD(setSwitchChangedCallback, "lua_setSwitchChangedCallback:", MLNUISwitch)
+LUA_EXPORT_PROPERTY(on, "luaui_setOn:", "luaui_on", MLNUISwitch)
+LUA_EXPORT_VIEW_METHOD(setSwitchChangedCallback, "luaui_setSwitchChangedCallback:", MLNUISwitch)
 LUA_EXPORT_VIEW_END(MLNUISwitch, Switch, YES, "MLNUIView", NULL)
 
 @end

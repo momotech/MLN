@@ -40,7 +40,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param env 存储环境
  @return LuaTable实例
  */
-- (instancetype)initWithLuaCore:(MLNUILuaCore *)luaCore env:(MLNUILuaTableEnvironment)env NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithMLNUILuaCore:(MLNUILuaCore *)luaCore env:(MLNUILuaTableEnvironment)env NS_DESIGNATED_INITIALIZER;
 + (instancetype)new NS_UNAVAILABLE;
 - (instancetype)init NS_UNAVAILABLE;
 

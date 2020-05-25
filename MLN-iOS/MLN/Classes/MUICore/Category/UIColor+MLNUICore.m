@@ -10,7 +10,7 @@
 
 @implementation UIColor (MLNUICore)
 
-- (MLNUINativeType)mln_nativeType
+- (MLNUINativeType)mlnui_nativeType
 {
     return MLNUINativeTypeColor;
 }

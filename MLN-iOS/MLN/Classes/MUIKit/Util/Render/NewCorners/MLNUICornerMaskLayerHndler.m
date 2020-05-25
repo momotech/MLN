@@ -72,7 +72,7 @@
 }
 
 - (void)clean {
-    _targetView.clipsToBounds = _targetView.mln_renderContext.clipToBounds;
+    _targetView.clipsToBounds = _targetView.mlnui_renderContext.clipToBounds;
     _targetView.layer.mask = nil;
     _needRemake = NO;
 }

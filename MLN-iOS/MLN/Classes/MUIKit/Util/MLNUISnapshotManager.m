@@ -9,7 +9,7 @@
 
 @implementation MLNUISnapshotManager
 
-+ (UIImage *)mln_captureNormalView:(UIView *)view
++ (UIImage *)mlnui_captureNormalView:(UIView *)view
 {
     UIGraphicsBeginImageContextWithOptions(CGSizeMake(view.frame.size.width, view.frame.size.height), NO, [UIScreen mainScreen].scale);
     CGContextRef context=UIGraphicsGetCurrentContext();
@@ -22,7 +22,7 @@
     return image;
 }
 
-+ (UIImage *)mln_captureScrollView:(UIScrollView *)scrollView
++ (UIImage *)mlnui_captureScrollView:(UIScrollView *)scrollView
 {
     UIGraphicsBeginImageContextWithOptions(scrollView.contentSize, YES, [UIScreen mainScreen].scale);
     CGPoint savedContentOffset = scrollView.contentOffset;
@@ -41,7 +41,7 @@
 
 #pragma mark - 文件保存
 
-+ (NSString *)mln_image:(UIImage *)image saveWithFileName:(NSString *)fileName
++ (NSString *)mlnui_image:(UIImage *)image saveWithFileName:(NSString *)fileName
 {
     NSString *tempPngDir = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) firstObject];
     NSString *path = [tempPngDir stringByAppendingPathComponent:@"MMILuaTempImage"];

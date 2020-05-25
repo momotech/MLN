@@ -11,7 +11,7 @@
 
 #define LUA_ARG_CHECK(TOP) \
 if (lua_gettop(L) != (TOP)) {\
-mln_lua_error(L,  @"number of arguments must be %d!", (TOP));\
+mlnui_luaui_error(L,  @"number of arguments must be %d!", (TOP));\
 return 0;\
 }
 
@@ -30,7 +30,7 @@ key = [NSString stringWithUTF8String:lua_tostring(L, IDX)];\
 break;\
 }\
 default: {\
-mln_lua_error(L,  @"The key must be a string!");\
+mlnui_luaui_error(L,  @"The key must be a string!");\
 lua_pushvalue(L, 1);\
 return 1;\
 }\
@@ -41,11 +41,11 @@ return 1;\
 @implementation NSMutableDictionary (MLNUIMap)
 
 #pragma mark - Export To Lua
-static int lua_newMap(lua_State *L) {
+static int luaui_newMap(lua_State *L) {
     switch (lua_gettop(L)) {
         case 0: {
             NSMutableDictionary *map = [NSMutableDictionary dictionary];
-            map.mln_isLuaObject = YES;
+            map.mlnui_isLuaObject = YES;
             [MLNUI_LUA_CORE(L) pushNativeObject:map error:nil];
             return 1;
         }
@@ -53,35 +53,35 @@ static int lua_newMap(lua_State *L) {
             if (lua_isnumber(L, -1)) {
                 double capacity = lua_tonumber(L, -1);
                 NSMutableDictionary *map = [NSMutableDictionary dictionaryWithCapacity:capacity];
-                map.mln_isLuaObject = YES;
+                map.mlnui_isLuaObject = YES;
                 [MLNUI_LUA_CORE(L) pushNativeObject:map error:nil];
                 return 1;
             }
-            mln_lua_error(L, @"error type of argument, capacity must be number");
+            mlnui_luaui_error(L, @"error type of argument, capacity must be number");
             break;
         }
         default: {
-            mln_lua_error(L, @"number of argument more than 1");
+            mlnui_luaui_error(L, @"number of argument more than 1");
             break;
         }
     }
     return 0;
 }
 
-static int lua_map_objectForKey(lua_State *L) {
+static int luaui_map_objectForKey(lua_State *L) {
     LUA_ARG_CHECK(2);
     LUA_MAP_DO(if (lua_isstring(L, 2)) {
         NSString *key = [NSString stringWithUTF8String:lua_tostring(L, 2)];
-        id value = [map mln_objectForKey:key];
-        switch ([value mln_nativeType]) {
+        id value = [map mlnui_objectForKey:key];
+        switch ([value mlnui_nativeType]) {
             case MLNUINativeTypeDictionary: {
                 value = [NSMutableDictionary dictionaryWithDictionary:value];
-                [map mln_setObject:value forKey:key];
+                [map mlnui_setObject:value forKey:key];
                 break;
             }
             case MLNUINativeTypeArray: {
                 value = [NSMutableArray arrayWithArray:value];
-                [map mln_setObject:value forKey:key];
+                [map mlnui_setObject:value forKey:key];
                 break;
             }
             default:
@@ -90,38 +90,38 @@ static int lua_map_objectForKey(lua_State *L) {
         [MLNUI_LUA_CORE(L) pushNativeObject:value error:NULL];
         return 1;
     } else {
-        mln_lua_error(L,  @"The key must be a string!");
+        mlnui_luaui_error(L,  @"The key must be a string!");
         mln_lua_pushnil(L);
         return 1;
     })
     return 0;
 }
 
-static int lua_map_setObjectForKey(lua_State *L) {
+static int luaui_map_setObjectForKey(lua_State *L) {
     LUA_ARG_CHECK(3);
     LUA_MAP_DO(LUA_MAP_GET_KEY(2);
                id value = [MLNUI_LUA_CORE(L) toNativeObject:3 error:NULL];
-               switch ([value mln_nativeType]) {
+               switch ([value mlnui_nativeType]) {
                    case MLNUINativeTypeDictionary:
                    {
                        value = [NSMutableDictionary dictionaryWithDictionary:value];
-                       [map mln_setObject:value forKey:key];
+                       [map mlnui_setObject:value forKey:key];
                        break;
                    }
                    case MLNUINativeTypeArray: {
                        value = [NSMutableArray arrayWithArray:value];
-                       [map mln_setObject:value forKey:key];
+                       [map mlnui_setObject:value forKey:key];
                        break;
                    }
                    case MLNUINativeTypeNumber:
                    case MLNUINativeTypeString:
                    case MLNUINativeTypeMDictionary:
                    case MLNUINativeTypeMArray: {
-                       [map mln_setObject:value forKey:key];
+                       [map mlnui_setObject:value forKey:key];
                        break;
                    }
                    default: {
-                       mln_lua_error(L,  @"The value type must be one of types, as string, number, map or array!");
+                       mlnui_luaui_error(L,  @"The value type must be one of types, as string, number, map or array!");
                        break;
                    }
                }
@@ -130,19 +130,19 @@ static int lua_map_setObjectForKey(lua_State *L) {
     return 0;
 }
 
-static int lua_map_addEntriesFromDictionary(lua_State *L) {
+static int luaui_map_addEntriesFromDictionary(lua_State *L) {
     LUA_ARG_CHECK(2);
     LUA_MAP_DO(NSMutableDictionary *dictionary = [MLNUI_LUA_CORE(L) toNativeObject:2 error:NULL];
-               switch ([dictionary mln_nativeType]) {
+               switch ([dictionary mlnui_nativeType]) {
                    case MLNUINativeTypeDictionary: {
                        dictionary = [NSMutableDictionary dictionaryWithDictionary:dictionary];
                    }
                    case MLNUINativeTypeMDictionary: {
-                       [map mln_addEntriesFromDictionary:dictionary];
+                       [map mlnui_addEntriesFromDictionary:dictionary];
                        break;
                    }
                    default: {
-                       mln_lua_error(L,  @"The argument must be a array!");
+                       mlnui_luaui_error(L,  @"The argument must be a array!");
                        break;
                    }
                }
@@ -151,26 +151,26 @@ static int lua_map_addEntriesFromDictionary(lua_State *L) {
     return 0;
 }
 
-static int lua_map_removeObjectForKey(lua_State *L) {
+static int luaui_map_removeObjectForKey(lua_State *L) {
     LUA_ARG_CHECK(2);
     LUA_MAP_DO(LUA_MAP_GET_KEY(2);
-               [map mln_removeObjectForKey:key];
+               [map mlnui_removeObjectForKey:key];
                lua_pushvalue(L, 1);
                return 1;)
     return 0;
 }
 
-static int lua_map_removeObjects(lua_State *L) {
+static int luaui_map_removeObjects(lua_State *L) {
     LUA_ARG_CHECK(2);
     LUA_MAP_DO(NSMutableArray *array = [MLNUI_LUA_CORE(L) toNativeObject:2 error:NULL];
-               switch ([array mln_nativeType]) {
+               switch ([array mlnui_nativeType]) {
                    case MLNUINativeTypeArray:
                    case MLNUINativeTypeMArray: {
-                       [map mln_removeObjectsForKeys:array];
+                       [map mlnui_removeObjectsForKeys:array];
                        break;
                    }
                    default: {
-                       mln_lua_error(L,  @"The argument must be an array");
+                       mlnui_luaui_error(L,  @"The argument must be an array");
                        break;
                    }
                }
@@ -179,7 +179,7 @@ static int lua_map_removeObjects(lua_State *L) {
     return 0;
 }
 
-static int lua_map_removeAllObjects(lua_State *L) {
+static int luaui_map_removeAllObjects(lua_State *L) {
     LUA_ARG_CHECK(1);
     LUA_MAP_DO([map removeAllObjects];
                lua_pushvalue(L, 1);
@@ -187,14 +187,14 @@ static int lua_map_removeAllObjects(lua_State *L) {
     return 0;
 }
 
-static int lua_map_allKeys(lua_State *L) {
+static int luaui_map_allKeys(lua_State *L) {
     LUA_ARG_CHECK(1);
     LUA_MAP_DO([MLNUI_LUA_CORE(L) pushNativeObject:[NSMutableArray arrayWithArray:[map allKeys]] error:NULL];
                return 1;)
     return 0;
 }
 
-static int lua_map_count(lua_State *L) {
+static int luaui_map_count(lua_State *L) {
     LUA_ARG_CHECK(1);
     LUA_MAP_DO(lua_pushnumber(L, map.count);
                return 1;)
@@ -203,15 +203,15 @@ static int lua_map_count(lua_State *L) {
 
 #pragma mark - Export To Lua
 LUA_EXPORT_BEGIN(NSMutableDictionary)
-LUA_EXPORT_METHOD_WITH_CFUNC(put, lua_map_setObjectForKey, NSMutableDictionary)
-LUA_EXPORT_METHOD_WITH_CFUNC(putAll, lua_map_addEntriesFromDictionary, NSMutableDictionary)
-LUA_EXPORT_METHOD_WITH_CFUNC(putMap, lua_map_addEntriesFromDictionary, NSMutableDictionary)
-LUA_EXPORT_METHOD_WITH_CFUNC(remove, lua_map_removeObjectForKey, NSMutableDictionary)
-LUA_EXPORT_METHOD_WITH_CFUNC(removeAll, lua_map_removeAllObjects, NSMutableDictionary)
-LUA_EXPORT_METHOD_WITH_CFUNC(removeObjects, lua_map_removeObjects, NSMutableDictionary)
-LUA_EXPORT_METHOD_WITH_CFUNC(allKeys, lua_map_allKeys, NSMutableDictionary)
-LUA_EXPORT_METHOD_WITH_CFUNC(get, lua_map_objectForKey, NSMutableDictionary)
-LUA_EXPORT_METHOD_WITH_CFUNC(size, lua_map_count, NSMutableDictionary)
-LUA_EXPORT_END_WITH_CFUNC(NSMutableDictionary, Map, NO, NULL, lua_newMap)
+LUA_EXPORT_METHOD_WITH_CFUNC(put, luaui_map_setObjectForKey, NSMutableDictionary)
+LUA_EXPORT_METHOD_WITH_CFUNC(putAll, luaui_map_addEntriesFromDictionary, NSMutableDictionary)
+LUA_EXPORT_METHOD_WITH_CFUNC(putMap, luaui_map_addEntriesFromDictionary, NSMutableDictionary)
+LUA_EXPORT_METHOD_WITH_CFUNC(remove, luaui_map_removeObjectForKey, NSMutableDictionary)
+LUA_EXPORT_METHOD_WITH_CFUNC(removeAll, luaui_map_removeAllObjects, NSMutableDictionary)
+LUA_EXPORT_METHOD_WITH_CFUNC(removeObjects, luaui_map_removeObjects, NSMutableDictionary)
+LUA_EXPORT_METHOD_WITH_CFUNC(allKeys, luaui_map_allKeys, NSMutableDictionary)
+LUA_EXPORT_METHOD_WITH_CFUNC(get, luaui_map_objectForKey, NSMutableDictionary)
+LUA_EXPORT_METHOD_WITH_CFUNC(size, luaui_map_count, NSMutableDictionary)
+LUA_EXPORT_END_WITH_CFUNC(NSMutableDictionary, Map, NO, NULL, luaui_newMap)
 
 @end

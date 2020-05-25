@@ -12,7 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface NSAttributedString (MLNUIKit)
 
-@property (nonatomic, weak) MLNUIStyleString *lua_styleString;
+@property (nonatomic, weak) MLNUIStyleString *luaui_styleString;
 
 @end
 

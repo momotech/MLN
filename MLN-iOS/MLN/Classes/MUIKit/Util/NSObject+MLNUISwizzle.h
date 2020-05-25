@@ -11,16 +11,16 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface NSObject (MLNUISwizzle)
 
-+ (void)mln_swizzleInstanceSelector:(SEL)originSelector
++ (void)mlnui_swizzleInstanceSelector:(SEL)originSelector
                 withNewSelector:(SEL)newSelector
                     newImpBlock:(id)block;
 
-+ (void)mln_swizzleInstanceSelector:(SEL)originSelector
++ (void)mlnui_swizzleInstanceSelector:(SEL)originSelector
                     withNewSelector:(SEL)newSelector
                         newImpBlock:(id)block
              forceAddOriginImpBlock:(nullable id)originBlock;
 
-+ (void)mln_swizzleClassSelector:(SEL)originSelector
++ (void)mlnui_swizzleClassSelector:(SEL)originSelector
              withNewSelector:(SEL)newSelector
                  newImpBlock:(id)block;
 

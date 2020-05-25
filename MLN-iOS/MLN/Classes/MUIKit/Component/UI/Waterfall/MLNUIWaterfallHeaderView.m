@@ -25,10 +25,10 @@
     return self;
 }
 
-- (void)lua_addSubview:(UIView *)view
+- (void)luaui_addSubview:(UIView *)view
 {
     MLNUICheckTypeAndNilValue(view, @"View", UIView)
-    [self.luaContentView lua_addSubview:view];
+    [self.luaContentView luaui_addSubview:view];
 }
 
 #pragma mark - MLNUIReuseCellProtocol
@@ -74,7 +74,7 @@
 
 - (void)requestLayoutIfNeed
 {
-    [self.luaContentView lua_requestLayoutIfNeed];
+    [self.luaContentView luaui_requestLayoutIfNeed];
 }
 
 - (void)updateLastReueseId:(NSString *)lastReuaseId

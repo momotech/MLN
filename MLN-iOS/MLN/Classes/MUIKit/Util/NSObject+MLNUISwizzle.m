@@ -10,7 +10,7 @@
 
 @implementation NSObject (MLNUISwizzle)
 
-+ (void)mln_swizzleInstanceSelector:(SEL)originSelector
++ (void)mlnui_swizzleInstanceSelector:(SEL)originSelector
                 withNewSelector:(SEL)newSelector
                     newImpBlock:(id)block
 {
@@ -22,17 +22,17 @@
     }
 }
 
-+ (void)mln_swizzleInstanceSelector:(SEL)originSelector withNewSelector:(SEL)newSelector newImpBlock:(id)block forceAddOriginImpBlock:(id)originBlock {
++ (void)mlnui_swizzleInstanceSelector:(SEL)originSelector withNewSelector:(SEL)newSelector newImpBlock:(id)block forceAddOriginImpBlock:(id)originBlock {
     if (originBlock) {
         Method originMethod = class_getInstanceMethod(self, originSelector);
         IMP imp = imp_implementationWithBlock(originBlock);
         __unused BOOL res = class_addMethod(self, originSelector, imp, method_getTypeEncoding(originMethod));
     }
     
-    [self mln_swizzleInstanceSelector:originSelector withNewSelector:newSelector newImpBlock:block];
+    [self mlnui_swizzleInstanceSelector:originSelector withNewSelector:newSelector newImpBlock:block];
 }
 
-+ (void)mln_swizzleClassSelector:(SEL)originSelector
++ (void)mlnui_swizzleClassSelector:(SEL)originSelector
              withNewSelector:(SEL)newSelector
                  newImpBlock:(id)block
 {

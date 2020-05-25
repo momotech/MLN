@@ -63,7 +63,7 @@
 }
 
 
-static int lua_animation_init(lua_State *L) {
+static int luaui_animation_init(lua_State *L) {
     MLNUITranslateAnimation *animation = nil;
     NSUInteger argCount = lua_gettop(L);
     switch (argCount) {
@@ -93,7 +93,7 @@ static int lua_animation_init(lua_State *L) {
         }
             break;
         default: {
-            mln_lua_error(L, @"number of arguments must be 0 or 4 or 6 or 8!");
+            mlnui_luaui_error(L, @"number of arguments must be 0 or 4 or 6 or 8!");
             break;
         }
     }
@@ -207,5 +207,5 @@ LUA_EXPORT_PROPERTY(setFromYType, "setFromYType:", "fromYType", MLNUITranslateAn
 LUA_EXPORT_PROPERTY(setFromY, "setFromY:", "fromY", MLNUITranslateAnimation)
 LUA_EXPORT_PROPERTY(setToYType, "setToYType:", "toYType", MLNUITranslateAnimation)
 LUA_EXPORT_PROPERTY(setToY, "setToY:", "toY", MLNUITranslateAnimation)
-LUA_EXPORT_END_WITH_CFUNC(MLNUITranslateAnimation, TranslateAnimation, YES, "MLNUICanvasAnimation", lua_animation_init)
+LUA_EXPORT_END_WITH_CFUNC(MLNUITranslateAnimation, TranslateAnimation, YES, "MLNUICanvasAnimation", luaui_animation_init)
 @end
