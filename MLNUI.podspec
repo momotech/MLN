@@ -25,7 +25,7 @@ Pod::Spec.new do |s|
     # s.screenshots     = 'www.example.com/screenshots_1', 'www.example.com/screenshots_2'
     s.license          = { :type => 'MIT', :file => 'LICENSE' }
     s.author           = 'MoMo'
-    s.source           = { :git => 'https://github.com/momotech/MLNUI.git', :tag => 'MLNUI/' + s.version.to_s }
+    s.source           = { :git => 'https://github.com/momotech/MLN.git', :tag => 'MLNUI/' + s.version.to_s }
     # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
     
     s.ios.deployment_target = '8.0'
@@ -35,16 +35,16 @@ Pod::Spec.new do |s|
     s.subspec 'Core' do |c|
         c.name = 'Core'
         c.framework = 'Foundation', 'UIKit'
-        c.source_files = 'MLNUI-iOS/MLNUI/Classes/MUICore/**/*.{h,m,c}'
-        c.public_header_files = 'MLNUI-iOS/MLNUI/Classes/MUICore/**/*.h'
+        c.source_files = 'MLN-iOS/MLN/Classes/MUICore/**/*.{h,m,c}'
+        c.public_header_files = 'MLN-iOS/MLN/Classes/MUICore/**/*.h'
         c.dependency  'MLN/LuaLib'
     end
     
     s.subspec 'Kit' do |k|
         k.name = 'Kit'
         k.framework = 'Foundation', 'UIKit', 'CoreGraphics', 'AVFoundation'
-        k.source_files = 'MLNUI-iOS/MLNUI/Classes/MUIKit/**/*.{h,m,c}'
-        k.public_header_files = 'MLNUI-iOS/MLNUI/Classes/MUIKit/**/*.h'
+        k.source_files = 'MLN-iOS/MLN/Classes/MUIKit/**/*.{h,m,c}'
+        k.public_header_files = 'MLN-iOS/MLN/Classes/MUIKit/**/*.h'
         k.dependency  'MLNUI/Core'
     end
     
