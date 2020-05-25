@@ -21,20 +21,21 @@
 
 @implementation MLNDataBinding (MLNKit)
 
-+ (void)lua_watchDataForKeys:(NSArray *)keys handler:(MLNBlock *)handler {
++ (NSString *)lua_watchDataForKeys:(NSArray *)keys handler:(MLNBlock *)handler {
     NSParameterAssert(keys && handler);
-    if(!keys || !handler)  return;
+    if(!keys || !handler)  return nil;
     UIViewController<MLNDataBindingProtocol> *kitViewController = (UIViewController<MLNDataBindingProtocol> *)MLN_KIT_INSTANCE([self mln_currentLuaCore]).viewController;
     
     if ([keys isKindOfClass:[NSArray class]]) {
         NSString *keyPath = [keys componentsJoinedByString:@"."];
         NSObject<MLNKVOObserverProtol> *observer = [MLNBlockObserver observerWithBlock:handler keyPath:keyPath];
-        [kitViewController.mln_dataBinding addMLNObserver:observer forKeys:keys];
+        return [kitViewController.mln_dataBinding addMLNObserver:observer forKeys:keys];
     } else if([keys isKindOfClass:[NSString class]]){
         NSString *keyPath = (NSString *)keys;
         NSObject<MLNKVOObserverProtol> *observer = [MLNBlockObserver observerWithBlock:handler keyPath:keyPath];
-        [kitViewController.mln_dataBinding addMLNObserver:observer forKeyPath:keyPath];
+        return [kitViewController.mln_dataBinding addMLNObserver:observer forKeyPath:keyPath];
     }
+    return nil;
 }
 
 + (void)lua_updateDataForKeys:(NSArray *)keys value:(id)value {
@@ -74,6 +75,12 @@
     return obj;
 }
 
++ (void)lua_removeMLNObserverByID:(NSString *)observerID {
+    NSParameterAssert(observerID);
+    if(!observerID) return;
+    UIViewController<MLNDataBindingProtocol> *kitViewController = (UIViewController<MLNDataBindingProtocol> *)MLN_KIT_INSTANCE([self mln_currentLuaCore]).viewController;
+    [kitViewController.mln_dataBinding removeMLNObserverByID:observerID];
+}
 
 + (void)lua_mockForKey:(NSString *)key data:(NSDictionary *)dic {
     NSParameterAssert(key);
@@ -361,6 +368,7 @@ LUA_EXPORT_STATIC_BEGIN(MLNDataBinding)
 LUA_EXPORT_STATIC_METHOD(bind, "lua_watchDataForKeys:handler:", MLNDataBinding)
 LUA_EXPORT_STATIC_METHOD(update, "lua_updateDataForKeys:value:", MLNDataBinding)
 LUA_EXPORT_STATIC_METHOD(get, "lua_dataForKeys:", MLNDataBinding)
+LUA_EXPORT_STATIC_METHOD(remove, "lua_removeMLNObserverByID:", MLNDataBinding)
 
 LUA_EXPORT_STATIC_METHOD(mock, "lua_mockForKey:data:", MLNDataBinding)
 LUA_EXPORT_STATIC_METHOD(mockArray, "lua_mockArrayForKey:data:callbackDic:", MLNDataBinding)
