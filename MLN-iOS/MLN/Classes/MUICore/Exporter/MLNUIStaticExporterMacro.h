@@ -1,14 +1,14 @@
 //
-//  MLNStaticExporterMacro.h
-//  MLNCore
+//  MLNUIStaticExporterMacro.h
+//  MLNUICore
 //
 //  Created by MoMo on 2019/8/1.
 //
 
-#ifndef MLNStaticExporterMacro_h
-#define MLNStaticExporterMacro_h
+#ifndef MLNUIStaticExporterMacro_h
+#define MLNUIStaticExporterMacro_h
 
-#import "MLNExporterMacro.h"
+#import "MLNUIExporterMacro.h"
 
 /**
  标记开始静态导出
@@ -43,13 +43,13 @@ LUA_EXPORT_METHOD_LIST_ADD(#LUA_FUNC, "C_FUNC", #CLZ, NO, NULL, NULL, FUNC)
  @param CLZ 当前类
  */
 #define LUA_EXPORT_STATIC_LUA_CORE(CLZ) \
-static __weak MLNLuaCore *currentLuaCore_ ## CLZ = nil;\
-+ (MLNLuaCore *)mln_currentLuaCore\
+static __weak MLNUILuaCore *currentLuaCore_ ## CLZ = nil;\
++ (MLNUILuaCore *)mln_currentLuaCore\
 {\
     return currentLuaCore_ ## CLZ;\
 }\
 \
-+ (void)mln_updateCurrentLuaCore:(MLNLuaCore *)luaCore\
++ (void)mln_updateCurrentLuaCore:(MLNUILuaCore *)luaCore\
 {\
     currentLuaCore_ ## CLZ = luaCore;\
 }
@@ -65,9 +65,9 @@ static __weak MLNLuaCore *currentLuaCore_ ## CLZ = nil;\
  */
 #define LUA_EXPORT_PACKAGE_STATIC_END(CLZ, PACKAGE, LUA_CLZ, HAS_SUPER, SUPER_CLZ_NAME) \
 LUA_EXPORT_METHOD_LIST_COMPLETED \
-LUA_EXPORT_MAKE_INFO(PACKAGE, #CLZ, #LUA_CLZ, "MLN_UserDataNativeObject", HAS_SUPER, SUPER_CLZ_NAME, NO, NULL,\
+LUA_EXPORT_MAKE_INFO(PACKAGE, #CLZ, #LUA_CLZ, "MLNUI_UserDataNativeObject", HAS_SUPER, SUPER_CLZ_NAME, NO, NULL,\
 (struct mln_objc_method *)mln_Class_Method_ ## CLZ, NULL, CLZ)\
-LUA_EXPORT_TYPE(MLNExportTypeStatic)\
+LUA_EXPORT_TYPE(MLNUIExportTypeStatic)\
 LUA_EXPORT_STATIC_LUA_CORE(CLZ)
 
 /**
@@ -81,4 +81,4 @@ LUA_EXPORT_STATIC_LUA_CORE(CLZ)
 #define LUA_EXPORT_STATIC_END(CLZ, LUA_CLZ, HAS_SUPER, SUPER_CLZ_NAME) \
 LUA_EXPORT_PACKAGE_STATIC_END(CLZ, "mln", LUA_CLZ, HAS_SUPER, SUPER_CLZ_NAME)\
 
-#endif /* MLNStaticExporterMacro_h */
+#endif /* MLNUIStaticExporterMacro_h */

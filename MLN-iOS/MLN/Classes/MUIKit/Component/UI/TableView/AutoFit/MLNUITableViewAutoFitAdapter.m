@@ -1,25 +1,25 @@
 //
-//  MLNTableViewAutoFitAdapter.m
+//  MLNUITableViewAutoFitAdapter.m
 //
 //
 //  Created by MoMo on 2018/11/9.
 //
 
-#import "MLNTableViewAutoFitAdapter.h"
-#import "MLNKitHeader.h"
-#import "MLNViewExporterMacro.h"
-#import "MLNTableView.h"
-#import "MLNTableViewCell.h"
-#import "MLNBlock.h"
-#import "NSDictionary+MLNSafety.h"
+#import "MLNUITableViewAutoFitAdapter.h"
+#import "MLNUIKitHeader.h"
+#import "MLNUIViewExporterMacro.h"
+#import "MLNUITableView.h"
+#import "MLNUITableViewCell.h"
+#import "MLNUIBlock.h"
+#import "NSDictionary+MLNUISafety.h"
 
-@interface MLNTableViewAutoFitAdapter ()
+@interface MLNUITableViewAutoFitAdapter ()
 
-@property (nonatomic, strong) NSMutableDictionary<NSString *, MLNTableViewCell *> *calculCells;
+@property (nonatomic, strong) NSMutableDictionary<NSString *, MLNUITableViewCell *> *calculCells;
 
 @end
 
-@implementation MLNTableViewAutoFitAdapter
+@implementation MLNUITableViewAutoFitAdapter
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -29,18 +29,18 @@
     }
     CGFloat tableViewWidth = tableView.frame.size.width;
     NSString *reuseId = [self reuseIdAt:indexPath];
-    MLNTableViewCell *cell = [self tableView:tableView dequeueCalculCellForIdentifier:reuseId];
+    MLNUITableViewCell *cell = [self tableView:tableView dequeueCalculCellForIdentifier:reuseId];
     [self updateCellWidthIfNeed:cell tableViewWidth:tableViewWidth];
     [cell pushContentViewWithLuaCore:self.mln_luaCore];
     if (!cell.isInited) {
-        MLNBlock *initCallback = [self initedCellCallbackByReuseId:reuseId];
-        MLNKitLuaAssert(initCallback, @"It must not be nil callback of cell init!");
+        MLNUIBlock *initCallback = [self initedCellCallbackByReuseId:reuseId];
+        MLNUIKitLuaAssert(initCallback, @"It must not be nil callback of cell init!");
         [initCallback addLuaTableArgument:[cell getLuaTable]];
         [initCallback callIfCan];
         [cell initCompleted];
     }
-    MLNBlock *reuseCallback = [self fillCellDataCallbackByReuseId:reuseId];
-    MLNKitLuaAssert(reuseCallback, @"It must not be nil callback of cell reuse!");
+    MLNUIBlock *reuseCallback = [self fillCellDataCallbackByReuseId:reuseId];
+    MLNUIKitLuaAssert(reuseCallback, @"It must not be nil callback of cell reuse!");
     [reuseCallback addLuaTableArgument:[cell getLuaTable]];
     [reuseCallback addIntArgument:(int)indexPath.section+1];
     [reuseCallback addIntArgument:(int)indexPath.row+1];
@@ -50,7 +50,7 @@
     return height;
 }
 
-- (void)updateCellWidthIfNeed:(MLNTableViewCell *)cell tableViewWidth:(CGFloat)tableViewWidth
+- (void)updateCellWidthIfNeed:(MLNUITableViewCell *)cell tableViewWidth:(CGFloat)tableViewWidth
 {
     if (cell.frame.size.width != tableViewWidth) {
         CGRect frame = cell.frame;
@@ -59,18 +59,18 @@
     }
 }
 
-- (void)lua_heightForRowCallback:(MLNBlock *)callback
+- (void)lua_heightForRowCallback:(MLNUIBlock *)callback
 {
-     MLNKitLuaAssert(NO, @"Not fount method [AutoFitAdapter heightForCell]!");
+     MLNUIKitLuaAssert(NO, @"Not fount method [AutoFitAdapter heightForCell]!");
 }
 
-- (MLNTableViewCell *)tableView:(UITableView *)tableView dequeueCalculCellForIdentifier:(NSString *)identifier
+- (MLNUITableViewCell *)tableView:(UITableView *)tableView dequeueCalculCellForIdentifier:(NSString *)identifier
 {
-    MLNTableViewCell *cell = [self.calculCells objectForKey:identifier];
+    MLNUITableViewCell *cell = [self.calculCells objectForKey:identifier];
     if (!cell) {
         cell = [tableView dequeueReusableCellWithIdentifier:identifier];
         if (!cell) {
-            [tableView registerClass:[MLNTableViewCell class] forCellReuseIdentifier:identifier];
+            [tableView registerClass:[MLNUITableViewCell class] forCellReuseIdentifier:identifier];
             cell = [tableView dequeueReusableCellWithIdentifier:identifier];
         }
         [self.calculCells mln_setObject:cell forKey:identifier];
@@ -79,7 +79,7 @@
 }
 
 #pragma mark - Getter
-- (NSMutableDictionary<NSString *,MLNTableViewCell *> *)calculCells
+- (NSMutableDictionary<NSString *,MLNUITableViewCell *> *)calculCells
 {
     if (!_calculCells) {
         _calculCells = [NSMutableDictionary dictionary];
@@ -87,7 +87,7 @@
     return _calculCells;
 }
 
-LUA_EXPORT_BEGIN(MLNTableViewAutoFitAdapter)
-LUA_EXPORT_END(MLNTableViewAutoFitAdapter, TableViewAutoFitAdapter, YES, "MLNTableViewAdapter", NULL)
+LUA_EXPORT_BEGIN(MLNUITableViewAutoFitAdapter)
+LUA_EXPORT_END(MLNUITableViewAutoFitAdapter, TableViewAutoFitAdapter, YES, "MLNUITableViewAdapter", NULL)
 
 @end

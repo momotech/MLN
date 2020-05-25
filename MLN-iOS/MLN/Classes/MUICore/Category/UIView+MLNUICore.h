@@ -1,16 +1,16 @@
 //
-//  UIView+MLNCore.h
-//  MLNCore
+//  UIView+MLNUICore.h
+//  MLNUICore
 //
 //  Created by MoMo on 2019/7/23.
 //
 
 #import <UIKit/UIKit.h>
-#import "NSObject+MLNCore.h"
+#import "NSObject+MLNUICore.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface UIView (MLNCore)
+@interface UIView (MLNUICore)
 
 /**
  Lua创建的对象会默认调用该初始化方法
@@ -19,7 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param luaCore 对应的lua状态机
  @return Lua创建的实例对象
  */
-- (instancetype)initWithLuaCore:(MLNLuaCore *)luaCore frame:(CGRect)frame;
+- (instancetype)initWithLuaCore:(MLNUILuaCore *)luaCore frame:(CGRect)frame;
 
 @end
 

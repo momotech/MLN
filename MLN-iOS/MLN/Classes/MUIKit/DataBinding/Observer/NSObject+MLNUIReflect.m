@@ -1,24 +1,24 @@
 //
-//  NSObject+MLNKVO.m
+//  NSObject+MLNUIKVO.m
 //  AFNetworking
 //
 //  Created by Dai Dongpeng on 2020/3/19.
 //
 
-#import "NSObject+MLNKVO.h"
-#import "MLNExtScope.h"
-#import "MLNCore.h"
-#import "MLNDataBinding+MLNKit.h"
-#import "NSArray+MLNKVO.h"
-#import "NSDictionary+MLNKVO.h"
-#import "MLNColor.h"
-#import "MLNRect.h"
-#import "MLNSize.h"
-#import "MLNPoint.h"
+#import "NSObject+MLNUIKVO.h"
+#import "MLNUIExtScope.h"
+#import "MLNUICore.h"
+#import "MLNUIDataBinding+MLNUIKit.h"
+#import "NSArray+MLNUIKVO.h"
+#import "NSDictionary+MLNUIKVO.h"
+#import "MLNUIColor.h"
+#import "MLNUIRect.h"
+#import "MLNUISize.h"
+#import "MLNUIPoint.h"
 
 @import ObjectiveC;
 
-@implementation NSObject (MLNReflect)
+@implementation NSObject (MLNUIReflect)
 
 + (void)mln_enumeratePropertiesUsingBlock:(void (^)(objc_property_t property, BOOL *stop))block {
     Class cls = self;
@@ -92,28 +92,28 @@
         return self;
     }
     
-    MLNNativeType type = self.mln_nativeType;
+    MLNUINativeType type = self.mln_nativeType;
 
     switch (type) {
-        case MLNNativeTypeArray:
-        case MLNNativeTypeMArray:
+        case MLNUINativeTypeArray:
+        case MLNUINativeTypeMArray:
             return [(NSArray *)self mln_convertToLuaTableAvailable];
-        case MLNNativeTypeDictionary:
-        case MLNNativeTypeMDictionary:
+        case MLNUINativeTypeDictionary:
+        case MLNUINativeTypeMDictionary:
             return [(NSDictionary *)self mln_convertToLuaTableAvailable];
-        case MLNNativeTypeColor:
-            return [[MLNColor alloc] initWithColor:(UIColor *)self];
-        case MLNNativeTypeValue: {
+        case MLNUINativeTypeColor:
+            return [[MLNUIColor alloc] initWithColor:(UIColor *)self];
+        case MLNUINativeTypeValue: {
             NSValue *value = (NSValue *)self;
-            if (MLNValueIsCGRect(value)) {
-                return [MLNRect rectWithCGRect:value.CGRectValue];
-            } else if (MLNValueIsCGSize(value)) {
-                return [MLNSize sizeWithCGSize:value.CGSizeValue];
-            } else if (MLNValueIsCGPoint(value)) {
-                return [MLNPoint pointWithCGPoint:value.CGPointValue];
+            if (MLNUIValueIsCGRect(value)) {
+                return [MLNUIRect rectWithCGRect:value.CGRectValue];
+            } else if (MLNUIValueIsCGSize(value)) {
+                return [MLNUISize sizeWithCGSize:value.CGSizeValue];
+            } else if (MLNUIValueIsCGPoint(value)) {
+                return [MLNUIPoint pointWithCGPoint:value.CGPointValue];
             }
         }
-        case MLNNativeTypeObject:
+        case MLNUINativeTypeObject:
             return self.mln_toDictionary;
         default:
             break;
@@ -126,12 +126,12 @@
         return [(NSArray *)self mln_convertToMArray];
     } else if ([self isKindOfClass:[NSDictionary class]]) {
         return [(NSDictionary *)self mln_convertToMDic];
-    } else if ([self isKindOfClass:[MLNRect class]]) {
-        return [NSValue valueWithCGRect:[(MLNRect *)self CGRectValue]];
-    } else if ([self isKindOfClass:[MLNSize class]]) {
-        return [NSValue valueWithCGSize:[(MLNSize *)self CGSizeValue]];
-    } else if ([self isKindOfClass:[MLNPoint class]]) {
-        return [NSValue valueWithCGPoint:[(MLNPoint *)self CGPointValue]];
+    } else if ([self isKindOfClass:[MLNUIRect class]]) {
+        return [NSValue valueWithCGRect:[(MLNUIRect *)self CGRectValue]];
+    } else if ([self isKindOfClass:[MLNUISize class]]) {
+        return [NSValue valueWithCGSize:[(MLNUISize *)self CGSizeValue]];
+    } else if ([self isKindOfClass:[MLNUIPoint class]]) {
+        return [NSValue valueWithCGPoint:[(MLNUIPoint *)self CGPointValue]];
     }
     return self;
 }

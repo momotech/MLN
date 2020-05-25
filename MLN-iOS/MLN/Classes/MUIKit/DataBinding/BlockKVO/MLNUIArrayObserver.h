@@ -1,15 +1,15 @@
 //
-//  MLNArrayObserver.h
-//  MLN
+//  MLNUIArrayObserver.h
+//  MLNUI
 //
 //  Created by Dai Dongpeng on 2020/4/30.
 //
 
-#import "MLNObserver.h"
+#import "MLNUIObserver.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface MLNArrayObserver : MLNObserver
+@interface MLNUIArrayObserver : MLNUIObserver
 
 - (instancetype)initWithTarget:(NSMutableArray *)target keyPath:(NSString *)keyPath owner:(id)owner;
 

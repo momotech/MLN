@@ -1,5 +1,5 @@
 //
-//  MLNAnimationDelegate.h
+//  MLNUIAnimationDelegate.h
 //
 //
 //  Created by MoMo on 2018/8/28.
@@ -7,9 +7,9 @@
 
 #import <UIKit/UIKit.h>
 
-@class MLNAnimation;
-@interface MLNAnimationDelegate : NSObject <CAAnimationDelegate>
+@class MLNUIAnimation;
+@interface MLNUIAnimationDelegate : NSObject <CAAnimationDelegate>
 
-- (instancetype)initWithAnimation:(MLNAnimation *)animation;
+- (instancetype)initWithAnimation:(MLNUIAnimation *)animation;
 
 @end

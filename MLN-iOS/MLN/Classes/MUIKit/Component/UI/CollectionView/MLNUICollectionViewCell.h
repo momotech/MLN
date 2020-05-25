@@ -1,16 +1,16 @@
 //
-//  MLNCollectionViewCell.h
+//  MLNUICollectionViewCell.h
 //  
 //
 //  Created by MoMo on 2018/7/17.
 //
 
 #import <UIKit/UIKit.h>
-#import "MLNReuseContentView.h"
+#import "MLNUIReuseContentView.h"
 
-#define kMLNCollectionViewCellReuseID @"kMLNCollectionViewCellReuseID"
+#define kMLNUICollectionViewCellReuseID @"kMLNUICollectionViewCellReuseID"
 
-@interface MLNCollectionViewCell : UICollectionViewCell <MLNReuseCellProtocol>
+@interface MLNUICollectionViewCell : UICollectionViewCell <MLNUIReuseCellProtocol>
 
 
 @end

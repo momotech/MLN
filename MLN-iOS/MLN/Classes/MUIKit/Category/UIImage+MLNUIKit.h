@@ -1,20 +1,20 @@
 //
-//  UIImage+MLNKit.h
-//  MLN
+//  UIImage+MLNUIKit.h
+//  MLNUI
 //
 //  Created by MOMO on 2019/10/16.
 //
 
 #import <UIKit/UIKit.h>
-#import "MLNViewConst.h"
+#import "MLNUIViewConst.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface UIImage (MLNKit)
+@interface UIImage (MLNUIKit)
 
 + (UIImage *)mln_imageWithColor:(UIColor *)color finalSize:(CGSize)size cornerRadius:(CGFloat)cornerRadius;
 
-- (UIImage *)mln_ImageWithCornerRadius:(MLNCornerRadius)cornerRadius;
+- (UIImage *)mln_ImageWithCornerRadius:(MLNUICornerRadius)cornerRadius;
 
 @end
 

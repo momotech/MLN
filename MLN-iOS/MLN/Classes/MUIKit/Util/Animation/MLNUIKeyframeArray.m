@@ -1,22 +1,22 @@
 //
-//  MLNKeyframeArray.m
-//  MLN
+//  MLNUIKeyframeArray.m
+//  MLNUI
 //
 //  Created by MoMo on 2019/9/8.
 //
 
-#import "MLNKeyframeArray.h"
+#import "MLNUIKeyframeArray.h"
 
-@interface MLNKeyframeArray () <MLNKeyframeArrayDelegate> {
+@interface MLNUIKeyframeArray () <MLNUIKeyframeArrayDelegate> {
     NSUInteger _count;
 }
 @property (nonatomic, strong) NSArray *innerArray;
 
 @end
 
-@implementation MLNKeyframeArray
+@implementation MLNUIKeyframeArray
 
-- (instancetype)initWithCount:(NSUInteger)count delegate:(id<MLNKeyframeArrayDelegate>)delegate
+- (instancetype)initWithCount:(NSUInteger)count delegate:(id<MLNUIKeyframeArrayDelegate>)delegate
 {
     if (self = [super init]) {
         _count = count;
@@ -44,12 +44,12 @@
     return [self.delegate keyframeArray:self objectAtIndex:index];
 }
 
-- (nonnull id)keyframeArray:(nonnull MLNKeyframeArray *)array objectAtIndex:(NSUInteger)index {
+- (nonnull id)keyframeArray:(nonnull MLNUIKeyframeArray *)array objectAtIndex:(NSUInteger)index {
     return [self.innerArray objectAtIndex:index];
 }
 
 - (nonnull id)copyWithZone:(nullable NSZone *)zone {
-    MLNKeyframeArray *copyArray = [[self.class allocWithZone:zone] initWithCount:_count delegate:_delegate];
+    MLNUIKeyframeArray *copyArray = [[self.class allocWithZone:zone] initWithCount:_count delegate:_delegate];
     copyArray.innerArray = self.innerArray.copy;
     return copyArray;
 }

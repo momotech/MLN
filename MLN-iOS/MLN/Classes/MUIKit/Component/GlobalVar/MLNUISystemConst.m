@@ -1,21 +1,21 @@
 //
-//  MLNSystemConst.m
+//  MLNUISystemConst.m
 //  CocoaLumberjack
 //
 //  Created by MoMo on 2018/8/13.
 //
 
-#import "MLNSystemConst.h"
-#import "MLNGlobalVarExporterMacro.h"
+#import "MLNUISystemConst.h"
+#import "MLNUIGlobalVarExporterMacro.h"
 
-@implementation MLNSystemConst
+@implementation MLNUISystemConst
 
 #pragma mark - Setup For Lua
 LUA_EXPORT_GLOBAL_VAR_BEGIN()
-LUA_EXPORT_GLOBAL_VAR(NetworkState, (@{@"UNKNOWN": @(MLNNetworkStatusUnknown),
-                                       @"NO_NETWORK": @(MLNNetworkStatusNoNetwork),
-                                       @"CELLULAR": @(MLNNetworkStatusWWAN),
-                                       @"WIFI": @(MLNNetworkStatusWifi)}))
+LUA_EXPORT_GLOBAL_VAR(NetworkState, (@{@"UNKNOWN": @(MLNUINetworkStatusUnknown),
+                                       @"NO_NETWORK": @(MLNUINetworkStatusNoNetwork),
+                                       @"CELLULAR": @(MLNUINetworkStatusWWAN),
+                                       @"WIFI": @(MLNUINetworkStatusWifi)}))
 LUA_EXPORT_GLOBAL_VAR_END()
 
 @end

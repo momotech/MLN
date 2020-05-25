@@ -1,16 +1,16 @@
 //
-//  MLNAnchorPointTask.h
-//  MMLNua
+//  MLNUIAnchorPointTask.h
+//  MMLNUIua
 //
 //  Created by MoMo on 2019/3/19.
 //
 
 #import <UIKit/UIKit.h>
-#import "MLNBeforeWaitingTaskProtocol.h"
+#import "MLNUIBeforeWaitingTaskProtocol.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface MLNBeforeWaitingTask : NSObject <MLNBeforeWaitingTaskProtocol>
+@interface MLNUIBeforeWaitingTask : NSObject <MLNUIBeforeWaitingTaskProtocol>
 
 @property (nonatomic, copy) void(^taskCallback)(void);
 + (instancetype)taskWithCallback:(void(^)(void))callabck;

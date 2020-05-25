@@ -1,31 +1,31 @@
 //
-//  MLNStyleElement.m
+//  MLNUIStyleElement.m
 //
 //
 //  Created by MoMo on 2019/4/25.
 //
 
-#import "MLNStyleElement.h"
-#import "MLNFont.h"
+#import "MLNUIStyleElement.h"
+#import "MLNUIFont.h"
 
-@implementation MLNStyleElement
+@implementation MLNUIStyleElement
 
 - (instancetype)init
 {
     if (self = [super init]) {
         _fontSize = 14;
-        _fontStyle = MLNFontStyleDefault;
+        _fontStyle = MLNUIFontStyleDefault;
         _fontColor = [UIColor blackColor];
-        _underline = MLNUnderlineStyleNone;
+        _underline = MLNUIUnderlineStyleNone;
         _changed = YES;
-        _underline = MLNUnderlineStyleClean;
+        _underline = MLNUIUnderlineStyleClean;
     }
     return self;
 }
 
 - (id)copyWithZone:(NSZone *)zone
 {
-    MLNStyleElement *copy = [[[self class] allocWithZone:zone] init];
+    MLNUIStyleElement *copy = [[[self class] allocWithZone:zone] init];
     copy.fontSize = _fontSize;
     copy.fontStyle = _fontStyle;
     copy.fontName = _fontName;
@@ -44,7 +44,7 @@
 
 - (NSDictionary *)attributes
 {
-    UIFont *font = [MLNFont fontWithFontName:_fontName fontStyle:_fontStyle fontSize:_fontSize instance:self.instance];
+    UIFont *font = [MLNUIFont fontWithFontName:_fontName fontStyle:_fontStyle fontSize:_fontSize instance:self.instance];
     NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithCapacity:3];
     [dict setObject:font forKey:NSFontAttributeName];
     if (_fontColor) {
@@ -54,12 +54,12 @@
         [dict setObject:_backgroundColor forKey:NSBackgroundColorAttributeName];
     }
     switch (_underline) {
-        case MLNUnderlineStyleSingle:
+        case MLNUIUnderlineStyleSingle:
             [dict setObject:@(NSUnderlineStyleSingle) forKey:NSUnderlineStyleAttributeName];
             break;
-        case MLNUnderlineStyleNone:
+        case MLNUIUnderlineStyleNone:
             [dict setObject:@(NSUnderlineStyleNone) forKey:NSUnderlineStyleAttributeName];
-            _underline = MLNUnderlineStyleClean;
+            _underline = MLNUIUnderlineStyleClean;
             break;
         default:
             break;
@@ -83,7 +83,7 @@
     }
 }
 
-- (void)setFontStyle:(MLNFontStyle)fontStyle
+- (void)setFontStyle:(MLNUIFontStyle)fontStyle
 {
     if (_fontStyle != fontStyle) {
         _fontStyle = fontStyle;
@@ -91,7 +91,7 @@
     }
 }
 
-- (void)setUnderline:(MLNUnderlineStyle)underline
+- (void)setUnderline:(MLNUIUnderlineStyle)underline
 {
     if (_underline != underline) {
         _underline = underline;

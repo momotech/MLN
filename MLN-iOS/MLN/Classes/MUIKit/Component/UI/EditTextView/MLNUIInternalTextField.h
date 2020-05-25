@@ -1,18 +1,18 @@
 //
-//  MLNInternalTextField.h
+//  MLNUIInternalTextField.h
 //
 //
 //  Created by MoMo on 2018/12/21.
 //
 
 #import <UIKit/UIKit.h>
-#import "MLNTextViewProtocol.h"
+#import "MLNUITextViewProtocol.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface MLNInternalTextField : UITextField  <MLNTextViewProtocol, UITextFieldDelegate>
+@interface MLNUIInternalTextField : UITextField  <MLNUITextViewProtocol, UITextFieldDelegate>
 
-@property (nonatomic, weak) id<MLNTextViewDelegate> internalTextViewDelegate;
+@property (nonatomic, weak) id<MLNUITextViewDelegate> internalTextViewDelegate;
 
 @property (nonatomic, strong)  UIColor *placeholderColor;
 @property (nonatomic, assign) CGFloat fontSize;

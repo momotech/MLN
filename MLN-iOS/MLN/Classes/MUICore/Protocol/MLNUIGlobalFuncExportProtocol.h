@@ -1,21 +1,21 @@
 //
-//  MLNGlobalFuncExport.h
-//  MLNCore
+//  MLNUIGlobalFuncExport.h
+//  MLNUICore
 //
 //  Created by MoMo on 2019/7/24.
 //
 
-#ifndef MLNGlobalFuncExport_h
-#define MLNGlobalFuncExport_h
+#ifndef MLNUIGlobalFuncExport_h
+#define MLNUIGlobalFuncExport_h
 
-#import "MLNStaticExportProtocol.h"
+#import "MLNUIStaticExportProtocol.h"
 
 /**
  全局函数导出协议
  */
-@protocol MLNGlobalFuncExportProtocol <MLNStaticExportProtocol>
+@protocol MLNUIGlobalFuncExportProtocol <MLNUIStaticExportProtocol>
 
 
 @end
 
-#endif /* MLNGlobalFuncExport_h */
+#endif /* MLNUIGlobalFuncExport_h */

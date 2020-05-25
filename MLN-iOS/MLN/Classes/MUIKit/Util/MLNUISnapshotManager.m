@@ -1,13 +1,13 @@
 //
-//  MLNSnapshotManager.m
+//  MLNUISnapshotManager.m
 //
 //
 //  Created by MoMo on 2019/3/9.
 //
 
-#import "MLNSnapshotManager.h"
+#import "MLNUISnapshotManager.h"
 
-@implementation MLNSnapshotManager
+@implementation MLNUISnapshotManager
 
 + (UIImage *)mln_captureNormalView:(UIView *)view
 {

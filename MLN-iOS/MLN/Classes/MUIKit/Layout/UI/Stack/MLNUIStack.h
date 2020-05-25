@@ -1,25 +1,25 @@
 //
-//  MLNStack.h
-//  MLN
+//  MLNUIStack.h
+//  MLNUI
 //
 //  Created by MOMO on 2020/3/23.
 //
 
-#import "MLNView.h"
-#import "MLNStackConst.h"
+#import "MLNUIView.h"
+#import "MLNUIStackConst.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class MLNLayoutNode;
+@class MLNUILayoutNode;
 
-@interface MLNStack : MLNView
+@interface MLNUIStack : MLNUIView
 
 // subclass should override
-- (MLNLayoutNode *)createStackNodeWithTargetView:(UIView *)targetView;
+- (MLNUILayoutNode *)createStackNodeWithTargetView:(UIView *)targetView;
 
 @end
 
-@interface MLNPlaneStack : MLNStack
+@interface MLNUIPlaneStack : MLNUIStack
 
 // subclass should override
 - (void)invalidateMatchParentMeasureTypeForMainAxis:(UIView *)view;

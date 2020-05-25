@@ -1,16 +1,16 @@
 //
-//  MLNRotateAnimation.h
-//  MLN
+//  MLNUIRotateAnimation.h
+//  MLNUI
 //
 //  Created by MoMo on 2019/5/14.
 //
 
 #import <Foundation/Foundation.h>
-#import "MLNCanvasAnimation.h"
+#import "MLNUICanvasAnimation.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface MLNRotateAnimation : MLNCanvasAnimation
+@interface MLNUIRotateAnimation : MLNUICanvasAnimation
 
 @end
 

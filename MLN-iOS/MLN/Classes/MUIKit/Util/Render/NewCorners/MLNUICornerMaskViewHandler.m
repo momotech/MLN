@@ -1,27 +1,27 @@
 //
-//  MLNCornerMaskViewHandler.m
+//  MLNUICornerMaskViewHandler.m
 //
 //
 //  Created by MoMo on 2019/5/26.
 //
 
-#import "MLNCornerMaskViewHandler.h"
-#import "MLNCornerManagerTool.h"
-#import "UIView+MLNLayout.h"
-//#import "MLNContext.h"
-#import "MLNCornerMaskImageManager.h"
+#import "MLNUICornerMaskViewHandler.h"
+#import "MLNUICornerManagerTool.h"
+#import "UIView+MLNUILayout.h"
+//#import "MLNUIContext.h"
+#import "MLNUICornerMaskImageManager.h"
 
-@interface MLNCornerMaskViewHandler()
+@interface MLNUICornerMaskViewHandler()
 
 @property (nonatomic, strong) UIImageView *maskView;
 @property (nonatomic, strong) UIColor *maskColor;
-@property (nonatomic, assign) MLNCornerRadius multiRadius;
-@property (nonatomic, assign) MLNCornerRadius lastMultiRadius;
+@property (nonatomic, assign) MLNUICornerRadius multiRadius;
+@property (nonatomic, assign) MLNUICornerRadius lastMultiRadius;
 @property (nonatomic, assign) UIRectCorner corners;
 
 @end
 
-@implementation MLNCornerMaskViewHandler
+@implementation MLNUICornerMaskViewHandler
 @synthesize targetView = _targetView;
 @synthesize needRemake = _needRemake;
 
@@ -45,8 +45,8 @@
 }
 
 - (void)addCorner:(UIRectCorner)corner cornerRadius:(CGFloat)cornerRadius maskColor:(nullable UIColor *)maskColor {
-    MLNCornerRadius newMultiRadius = [MLNCornerManagerTool multiRadius:_multiRadius append:corner cornerRadius:cornerRadius];
-    if ([MLNCornerManagerTool multiRadius:_multiRadius equalMultiRadius:newMultiRadius]) {
+    MLNUICornerRadius newMultiRadius = [MLNUICornerManagerTool multiRadius:_multiRadius append:corner cornerRadius:cornerRadius];
+    if ([MLNUICornerManagerTool multiRadius:_multiRadius equalMultiRadius:newMultiRadius]) {
         return;
     }
     _needRemake = YES;
@@ -57,13 +57,13 @@
 
 - (CGFloat)cornerRadiusWithDirection:(UIRectCorner)corner
 {
-   return [MLNCornerManagerTool cornerRadiusWithDirection:corner multiRadius:_multiRadius];
+   return [MLNUICornerManagerTool cornerRadiusWithDirection:corner multiRadius:_multiRadius];
 }
 
 - (void)setMaskColor:(UIColor *)maskColor
 {
     if (maskColor == nil || ![maskColor isKindOfClass:[UIColor class]]) {
-//        MLNLuaAssert(NO, @"The type of mask color should be Color!");
+//        MLNUILuaAssert(NO, @"The type of mask color should be Color!");
         maskColor = [UIColor clearColor];
     }
     if (!CGColorEqualToColor(maskColor.CGColor, _maskColor.CGColor)) {
@@ -73,10 +73,10 @@
 }
 
 - (void)remakeIfNeed {
-    CGRect frame = [MLNCornerManagerTool viewFrame:self.targetView];
-    MLNCornerRadius realMultiRadius = [MLNCornerManagerTool realMultiCornerRadiusWith:_multiRadius size:frame.size];
+    CGRect frame = [MLNUICornerManagerTool viewFrame:self.targetView];
+    MLNUICornerRadius realMultiRadius = [MLNUICornerManagerTool realMultiCornerRadiusWith:_multiRadius size:frame.size];
     if (self.needRemake) {
-        UIImage *image = [[MLNCornerMaskImageManager sharedManager] cornerMaskImageWithMultiRadius:realMultiRadius maskColor:_maskColor corners:_corners];
+        UIImage *image = [[MLNUICornerMaskImageManager sharedManager] cornerMaskImageWithMultiRadius:realMultiRadius maskColor:_maskColor corners:_corners];
         if (!_maskView) {
             _maskView = [[UIImageView alloc] initWithImage:image];
             _maskView.frame = self.targetView.bounds;

@@ -1,47 +1,47 @@
 //
-//  MLNZStack.m
-//  MLN
+//  MLNUIZStack.m
+//  MLNUI
 //
 //  Created by MOMO on 2020/3/23.
 //
 
-#import "MLNZStack.h"
-#import "MLNZStackNode.h"
-#import "UIView+MLNLayout.h"
-#import "MLNViewExporterMacro.h"
+#import "MLNUIZStack.h"
+#import "MLNUIZStackNode.h"
+#import "UIView+MLNUILayout.h"
+#import "MLNUIViewExporterMacro.h"
 
-@implementation MLNZStack
+@implementation MLNUIZStack
 
-- (MLNZStackNode *)node {
-    return (MLNZStackNode *)self.lua_node;
+- (MLNUIZStackNode *)node {
+    return (MLNUIZStackNode *)self.lua_node;
 }
 
 #pragma mark - Override
 
 - (instancetype)init {
     if (self = [super init]) {
-        self.node.widthType = MLNLayoutMeasurementTypeWrapContent;
-        self.node.heightType = MLNLayoutMeasurementTypeWrapContent;
+        self.node.widthType = MLNUILayoutMeasurementTypeWrapContent;
+        self.node.heightType = MLNUILayoutMeasurementTypeWrapContent;
     }
     return self;
 }
 
-- (MLNLayoutNode *)createStackNodeWithTargetView:(UIView *)targetView {
-    return [[MLNZStackNode alloc] initWithTargetView:targetView];
+- (MLNUILayoutNode *)createStackNodeWithTargetView:(UIView *)targetView {
+    return [[MLNUIZStackNode alloc] initWithTargetView:targetView];
 }
 
 #pragma mark - Export Lua
 
-- (void)lua_setChildrenGravity:(MLNGravity)gravity {
+- (void)lua_setChildrenGravity:(MLNUIGravity)gravity {
     self.node.childGravity = gravity;
 }
 
-- (MLNGravity)lua_childrenGravity {
+- (MLNUIGravity)lua_childrenGravity {
     return self.node.childGravity;
 }
 
-LUA_EXPORT_VIEW_BEGIN(MLNZStack)
-LUA_EXPORT_VIEW_PROPERTY(childGravity, "lua_setChildrenGravity:", "lua_childrenGravity", MLNZStack)
-LUA_EXPORT_VIEW_END(MLNZStack, ZStack, YES, "MLNStack", NULL)
+LUA_EXPORT_VIEW_BEGIN(MLNUIZStack)
+LUA_EXPORT_VIEW_PROPERTY(childGravity, "lua_setChildrenGravity:", "lua_childrenGravity", MLNUIZStack)
+LUA_EXPORT_VIEW_END(MLNUIZStack, ZStack, YES, "MLNUIStack", NULL)
 
 @end

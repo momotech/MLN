@@ -1,16 +1,16 @@
 //
-//  MLNAnimationZoneView.m
+//  MLNUIAnimationZoneView.m
 //
 //
 //  Created by MoMo on 2018/11/14.
 //
 
-#import "MLNAnimationZoneView.h"
-#import "MLNViewExporterMacro.h"
-#import "UIView+MLNKit.h"
-#import "MLNBlock.h"
+#import "MLNUIAnimationZoneView.h"
+#import "MLNUIViewExporterMacro.h"
+#import "UIView+MLNUIKit.h"
+#import "MLNUIBlock.h"
 
-@implementation MLNAnimationZoneView
+@implementation MLNUIAnimationZoneView
 
 - (instancetype)initWithFrame:(CGRect)frame
 {
@@ -69,7 +69,7 @@
 }
 
 #pragma mark - Export For Lua
-LUA_EXPORT_VIEW_BEGIN(MLNAnimationZoneView)
-LUA_EXPORT_VIEW_END(MLNAnimationZoneView, AnimationZone, YES, "MLNView", NULL)
+LUA_EXPORT_VIEW_BEGIN(MLNUIAnimationZoneView)
+LUA_EXPORT_VIEW_END(MLNUIAnimationZoneView, AnimationZone, YES, "MLNUIView", NULL)
 
 @end

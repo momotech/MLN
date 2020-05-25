@@ -1,25 +1,25 @@
 //
-//  MLNCornerLayerHandler.m
+//  MLNUICornerLayerHandler.m
 //
 //
 //  Created by MoMo on 2019/5/26.
 //
 
-#import "MLNCornerLayerHandler.h"
-#import "MLNCornerManagerTool.h"
-#import "UIView+MLNKit.h"
-#import "MLNRenderContext.h"
-#import "MLNKitHeader.h"
-#import "MLNKitInstanceConsts.h"
+#import "MLNUICornerLayerHandler.h"
+#import "MLNUICornerManagerTool.h"
+#import "UIView+MLNUIKit.h"
+#import "MLNUIRenderContext.h"
+#import "MLNUIKitHeader.h"
+#import "MLNUIKitInstanceConsts.h"
 
-@interface MLNCornerLayerHandler()
+@interface MLNUICornerLayerHandler()
 
 @property (nonatomic, assign) CGFloat realCornerRadius;
 @property (nonatomic, assign) CGFloat cornerRadius;
 
 @end
 
-@implementation MLNCornerLayerHandler
+@implementation MLNUICornerLayerHandler
 
 @synthesize targetView = _targetView;
 @synthesize needRemake = _needRemake;
@@ -63,7 +63,7 @@
 }
 
 - (void)remakeIfNeed {
-    CGFloat realCornerRadius = [MLNCornerManagerTool realCornerRadiusWith:_targetView cornerRadius:_cornerRadius];
+    CGFloat realCornerRadius = [MLNUICornerManagerTool realCornerRadiusWith:_targetView cornerRadius:_cornerRadius];
     [self setupClipToBounds];
     if (_needRemake || _realCornerRadius != realCornerRadius) {
         _realCornerRadius = realCornerRadius;
@@ -74,12 +74,12 @@
 
 - (void)setupClipToBounds
 {
-    MLNRenderContext *context = self.targetView.mln_renderContext;
+    MLNUIRenderContext *context = self.targetView.mln_renderContext;
     BOOL isOpenDefaultClip = NO;
     if ([self.targetView mln_isConvertible]) {
         // 添加Lua强引用
-        id<MLNEntityExportProtocol> obj = (id<MLNEntityExportProtocol>)self.targetView;
-        isOpenDefaultClip = [MLN_KIT_INSTANCE(obj.mln_luaCore) instanceConsts].defaultCornerClip;
+        id<MLNUIEntityExportProtocol> obj = (id<MLNUIEntityExportProtocol>)self.targetView;
+        isOpenDefaultClip = [MLNUI_KIT_INSTANCE(obj.mln_luaCore) instanceConsts].defaultCornerClip;
     }
     if (isOpenDefaultClip && !context.didSetClipToBounds) {
         self.targetView.clipsToBounds = YES;

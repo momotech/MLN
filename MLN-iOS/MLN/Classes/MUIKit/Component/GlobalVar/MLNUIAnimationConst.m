@@ -1,12 +1,12 @@
 //
-//  MLNAnimationConst.m
+//  MLNUIAnimationConst.m
 //  CocoaLumberjack
 //
 //  Created by MoMo on 2018/8/16.
 //
 
-#import "MLNAnimationConst.h"
-#import "MLNGlobalVarExporterMacro.h"
+#import "MLNUIAnimationConst.h"
+#import "MLNUIGlobalVarExporterMacro.h"
 
 NSString * const kDefaultGroupAnimation = @"com.milua.group.animation";
 NSString * const kDefaultScaleAnimation = @"com.milua.scale.animation";
@@ -25,22 +25,22 @@ NSString * const kRotaionZ = @"transform.rotation.z";
 NSString * const kOpacity = @"opacity";
 NSString * const kTransform = @"transform";
 
-@implementation MLNAnimationConst
+@implementation MLNUIAnimationConst
 
-+ (CAMediaTimingFunction *)buildTimingFunction:(MLNAnimationInterpolatorType)interpolator
++ (CAMediaTimingFunction *)buildTimingFunction:(MLNUIAnimationInterpolatorType)interpolator
 {
     switch (interpolator) {
-        case MLNAnimationInterpolatorTypeBounce:
+        case MLNUIAnimationInterpolatorTypeBounce:
             return [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionLinear];
-        case MLNAnimationInterpolatorTypeOvershoot:
+        case MLNUIAnimationInterpolatorTypeOvershoot:
             return [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionLinear];
-        case MLNAnimationInterpolatorTypeAccelerateDecelerate:
+        case MLNUIAnimationInterpolatorTypeAccelerateDecelerate:
             return [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
-        case MLNAnimationInterpolatorTypeAccelerate:
+        case MLNUIAnimationInterpolatorTypeAccelerate:
             return [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseIn];
-        case MLNAnimationInterpolatorTypeDecelerate:
+        case MLNUIAnimationInterpolatorTypeDecelerate:
             return [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseOut];
-        case MLNAnimationInterpolatorTypeLinear:
+        case MLNUIAnimationInterpolatorTypeLinear:
         default:
             return [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionLinear];
     }
@@ -48,29 +48,29 @@ NSString * const kTransform = @"transform";
 
 #pragma mark - Setup For Lua
 LUA_EXPORT_GLOBAL_VAR_BEGIN()
-LUA_EXPORT_GLOBAL_VAR(RepeatType, (@{@"NONE": @(MLNAnimationRepeatTypeNone),
-                                     @"FROM_START": @(MLNAnimationRepeatTypeBeginToEnd),
-                                     @"REVERSE": @(MLNAnimationRepeatTypeReverse)}))
-LUA_EXPORT_GLOBAL_VAR(InterpolatorType, (@{@"Linear": @(MLNAnimationInterpolatorTypeLinear),
-                                           @"Accelerate": @(MLNAnimationInterpolatorTypeAccelerate),
-                                           @"Decelerate": @(MLNAnimationInterpolatorTypeDecelerate),
-                                           @"AccelerateDecelerate": @(MLNAnimationInterpolatorTypeAccelerateDecelerate),
-                                           @"Overshoot": @(MLNAnimationInterpolatorTypeOvershoot),
-                                           @"Bounce": @(MLNAnimationInterpolatorTypeBounce)}))
+LUA_EXPORT_GLOBAL_VAR(RepeatType, (@{@"NONE": @(MLNUIAnimationRepeatTypeNone),
+                                     @"FROM_START": @(MLNUIAnimationRepeatTypeBeginToEnd),
+                                     @"REVERSE": @(MLNUIAnimationRepeatTypeReverse)}))
+LUA_EXPORT_GLOBAL_VAR(InterpolatorType, (@{@"Linear": @(MLNUIAnimationInterpolatorTypeLinear),
+                                           @"Accelerate": @(MLNUIAnimationInterpolatorTypeAccelerate),
+                                           @"Decelerate": @(MLNUIAnimationInterpolatorTypeDecelerate),
+                                           @"AccelerateDecelerate": @(MLNUIAnimationInterpolatorTypeAccelerateDecelerate),
+                                           @"Overshoot": @(MLNUIAnimationInterpolatorTypeOvershoot),
+                                           @"Bounce": @(MLNUIAnimationInterpolatorTypeBounce)}))
 LUA_EXPORT_GLOBAL_VAR(AnimType, (@{
-                                   @"Default": @(MLNAnimationAnimTypeDefault),
-                                   @"None": @(MLNAnimationAnimTypeNone),
-                                   @"LeftToRight": @(MLNAnimationAnimTypeLeftToRight),
-                                   @"RightToLeft": @(MLNAnimationAnimTypeRightToLeft),
-                                   @"TopToBottom": @(MLNAnimationAnimTypeTopToBottom),
-                                   @"BottomToTop": @(MLNAnimationAnimTypeBottomToTop),
-                                   @"Scale": @(MLNAnimationAnimTypeScale),
-                                   @"Fade": @(MLNAnimationAnimTypeFade),
+                                   @"Default": @(MLNUIAnimationAnimTypeDefault),
+                                   @"None": @(MLNUIAnimationAnimTypeNone),
+                                   @"LeftToRight": @(MLNUIAnimationAnimTypeLeftToRight),
+                                   @"RightToLeft": @(MLNUIAnimationAnimTypeRightToLeft),
+                                   @"TopToBottom": @(MLNUIAnimationAnimTypeTopToBottom),
+                                   @"BottomToTop": @(MLNUIAnimationAnimTypeBottomToTop),
+                                   @"Scale": @(MLNUIAnimationAnimTypeScale),
+                                   @"Fade": @(MLNUIAnimationAnimTypeFade),
                                    }))
 LUA_EXPORT_GLOBAL_VAR(AnimationValueType, (@{
-                                   @"ABSOLUTE": @(MLNAnimationValueTypeAbsolute),
-                                   @"RELATIVE_TO_SELF": @(MLNAnimationValueTypeRelativeToSelf),
-                                   @"RELATIVE_TO_PARENT": @(MLNAnimationValueTypeRelativeToParent),
+                                   @"ABSOLUTE": @(MLNUIAnimationValueTypeAbsolute),
+                                   @"RELATIVE_TO_SELF": @(MLNUIAnimationValueTypeRelativeToSelf),
+                                   @"RELATIVE_TO_PARENT": @(MLNUIAnimationValueTypeRelativeToParent),
                                    }))
 LUA_EXPORT_GLOBAL_VAR_END()
 

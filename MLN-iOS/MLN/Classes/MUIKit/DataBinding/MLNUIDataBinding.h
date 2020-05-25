@@ -1,34 +1,34 @@
 //
-//  MLNDataBinding.h
-// MLN
+//  MLNUIDataBinding.h
+// MLNUI
 //
 //  Created by Dai Dongpeng on 2020/3/3.
 //
 
 #import <Foundation/Foundation.h>
-#import "MLNKVOObserverProtocol.h"
+#import "MLNUIKVOObserverProtocol.h"
 
-#define MLNKVOOrigin2DArrayKey @"MLNKVOOrigin2DArrayKey"
+#define MLNUIKVOOrigin2DArrayKey @"MLNUIKVOOrigin2DArrayKey"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface MLNDataBinding : NSObject
+@interface MLNUIDataBinding : NSObject
 - (void)bindData:(nullable NSObject *)data forKey:(NSString *)key;
-//- (void)addDataObserver:(NSObject<MLNKVOObserverProtol> *)observer forKeyPath:(NSString *)keyPath;
-//- (void)removeDataObserver:(NSObject<MLNKVOObserverProtol> *)observer forKeyPath:(NSString *)keyPath;
-- (NSArray <NSObject<MLNKVOObserverProtol> *> *)observersForKeyPath:(NSString *)keyPath;
-- (NSString *)addMLNObserver:(NSObject<MLNKVOObserverProtol> *)observer forKeyPath:(NSString *)keyPath;
-- (void)removeMLNObserver:(NSObject<MLNKVOObserverProtol> *)observer forKeyPath:(NSString *)keyPath;
-- (void)removeMLNObserverByID:(NSString *)observerID;
+//- (void)addDataObserver:(NSObject<MLNUIKVOObserverProtol> *)observer forKeyPath:(NSString *)keyPath;
+//- (void)removeDataObserver:(NSObject<MLNUIKVOObserverProtol> *)observer forKeyPath:(NSString *)keyPath;
+- (NSArray <NSObject<MLNUIKVOObserverProtol> *> *)observersForKeyPath:(NSString *)keyPath;
+- (NSString *)addMLNUIObserver:(NSObject<MLNUIKVOObserverProtol> *)observer forKeyPath:(NSString *)keyPath;
+- (void)removeMLNUIObserver:(NSObject<MLNUIKVOObserverProtol> *)observer forKeyPath:(NSString *)keyPath;
+- (void)removeMLNUIObserverByID:(NSString *)observerID;
 @end
 
 // for array
-@interface MLNDataBinding ()
+@interface MLNUIDataBinding ()
 - (void)bindArray:(NSArray *)array forKey:(NSString *)key;
 @end
 
 // for lua
-@interface MLNDataBinding ()
+@interface MLNUIDataBinding ()
 - (id __nullable)dataForKeyPath:(NSString *)keyPath;
 - (void)updateDataForKeyPath:(NSString *)keyPath value:(id)value;
 
@@ -36,8 +36,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (id __nullable)dataForKeys:(NSArray *)keys;
 - (void)updateDataForKeys:(NSArray *)keys value:(id)value;
 
-- (NSString *)addMLNObserver:(NSObject<MLNKVOObserverProtol> *)observer forKeys:(NSArray *)keys;
-- (void)removeMLNObserver:(NSObject<MLNKVOObserverProtol> *)observer forKeys:(NSArray *)keys;
+- (NSString *)addMLNUIObserver:(NSObject<MLNUIKVOObserverProtol> *)observer forKeys:(NSArray *)keys;
+- (void)removeMLNUIObserver:(NSObject<MLNUIKVOObserverProtol> *)observer forKeys:(NSArray *)keys;
 
 @end
 

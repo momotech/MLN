@@ -1,5 +1,5 @@
 //
-//  NSObject+MLNKVO.h
+//  NSObject+MLNUIKVO.h
 //  AFNetworking
 //
 //  Created by Dai Dongpeng on 2020/3/19.
@@ -9,7 +9,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface NSObject (MLNReflect)
+@interface NSObject (MLNUIReflect)
 + (NSArray <NSString *> *)mln_propertyKeys;
 - (NSDictionary *)mln_toDictionary;
 - (id)mln_valueForKeyPath:(NSString *)keyPath;

@@ -1,22 +1,22 @@
 //
-//  NSMutableArray+MLNCore.m
-//  MLNCore
+//  NSMutableArray+MLNUICore.m
+//  MLNUICore
 //
 //  Created by MoMo on 2019/7/23.
 //
 
-#import "NSMutableArray+MLNCore.h"
-#import "NSObject+MLNCore.h"
+#import "NSMutableArray+MLNUICore.h"
+#import "NSObject+MLNUICore.h"
 
-@implementation NSMutableArray (MLNCore)
+@implementation NSMutableArray (MLNUICore)
 
-- (MLNNativeType)mln_nativeType
+- (MLNUINativeType)mln_nativeType
 {
     // @note: 适配iOS10 之前的类簇问题
     if ([NSStringFromClass([self class]) hasPrefix:@"__NSArrayM"]) {
-        return MLNNativeTypeMArray;
+        return MLNUINativeTypeMArray;
     }
-    return MLNNativeTypeArray;
+    return MLNUINativeTypeArray;
 }
 
 @end

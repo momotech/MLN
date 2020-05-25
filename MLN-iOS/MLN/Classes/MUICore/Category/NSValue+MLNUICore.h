@@ -1,6 +1,6 @@
 //
-//  NSValue+MLNCore.h
-//  MLN
+//  NSValue+MLNUICore.h
+//  MLNUI
 //
 //  Created by MoMo on 2019/8/2.
 //
@@ -9,7 +9,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface NSValue (MLNCore)
+@interface NSValue (MLNUICore)
 
 @end
 

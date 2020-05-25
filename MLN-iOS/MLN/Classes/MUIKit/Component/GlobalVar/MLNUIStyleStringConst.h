@@ -1,24 +1,24 @@
 //
-//  MLNStyleStringConst.h
+//  MLNUIStyleStringConst.h
 //
 //
 //  Created by MoMo on 2019/7/30.
 //
 
 #import <Foundation/Foundation.h>
-#import "MLNGlobalVarExportProtocol.h"
+#import "MLNUIGlobalVarExportProtocol.h"
 
-typedef NS_ENUM(NSInteger, MLNStyleImageAlignType) {
-    MLNStyleImageAlignTypeDefault = 0,
-    MLNStyleImageAlignTypeTop = 1,
-    MLNStyleImageAlignTypeCenter = 2,
-    MLNStyleImageAlignTypeBottom
+typedef NS_ENUM(NSInteger, MLNUIStyleImageAlignType) {
+    MLNUIStyleImageAlignTypeDefault = 0,
+    MLNUIStyleImageAlignTypeTop = 1,
+    MLNUIStyleImageAlignTypeCenter = 2,
+    MLNUIStyleImageAlignTypeBottom
 };
 
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface MLNStyleStringConst : NSObject <MLNGlobalVarExportProtocol>
+@interface MLNUIStyleStringConst : NSObject <MLNUIGlobalVarExportProtocol>
 
 @end
 

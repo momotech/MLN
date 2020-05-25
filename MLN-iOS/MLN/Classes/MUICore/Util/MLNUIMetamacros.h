@@ -1,13 +1,13 @@
 //
-//  MLNMetamacros.h
+//  MLNUIMetamacros.h
 //  Pods
 //
 //  Created by Dai Dongpeng on 2020/4/9.
 //
 // from https://github.com/Mantle/Mantle/blob/master/Mantle/extobjc/metamacros.h
 
-#ifndef MLNMetamacros_h
-#define MLNMetamacros_h
+#ifndef MLNUIMetamacros_h
+#define MLNUIMetamacros_h
 
 /**
  * Executes one or more expressions (which may have a void type, such as a call
@@ -669,4 +669,4 @@ metamacro_if_eq(0, 1)(true)(false)
 #   define DLog(...) (void)0
 #endif
 
-#endif /* MLNMetamacros_h */
+#endif /* MLNUIMetamacros_h */

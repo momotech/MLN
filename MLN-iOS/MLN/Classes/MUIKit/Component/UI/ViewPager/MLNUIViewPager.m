@@ -1,31 +1,31 @@
 //
-//  MLNViewPager.m
-//  MLN
+//  MLNUIViewPager.m
+//  MLNUI
 //
 //  Created by MoMo on 2018/8/31.
 //
 
-#import "MLNViewPager.h"
-#import "MLNKitHeader.h"
-#import "MLNViewExporterMacro.h"
-#import "MLNCollectionViewCell.h"
-#import "MLNBlock.h"
-#import "UIView+MLNLayout.h"
-#import "MLNTabSegmentView.h"
-#import "MLNViewPagerAdapter.h"
-#import "MLNTabSegmentScrollHandler.h"
-#import "MLNInnerCollectionView.h"
-#import "MLNBeforeWaitingTask.h"
-#import "UIView+MLNKit.h"
+#import "MLNUIViewPager.h"
+#import "MLNUIKitHeader.h"
+#import "MLNUIViewExporterMacro.h"
+#import "MLNUICollectionViewCell.h"
+#import "MLNUIBlock.h"
+#import "UIView+MLNUILayout.h"
+#import "MLNUITabSegmentView.h"
+#import "MLNUIViewPagerAdapter.h"
+#import "MLNUITabSegmentScrollHandler.h"
+#import "MLNUIInnerCollectionView.h"
+#import "MLNUIBeforeWaitingTask.h"
+#import "UIView+MLNUIKit.h"
 
-#define kMLNViewPagerCellReuseId @"kMLNViewPagerCellReuseId"
+#define kMLNUIViewPagerCellReuseId @"kMLNUIViewPagerCellReuseId"
 
-@interface MLNViewPager() <UICollectionViewDelegate, MLNTabSegmentScrollHandlerDelegate>
-@property (nonatomic, weak) MLNInnerCollectionView *mainView; // 显示图片的collectionView
+@interface MLNUIViewPager() <UICollectionViewDelegate, MLNUITabSegmentScrollHandlerDelegate>
+@property (nonatomic, weak) MLNUIInnerCollectionView *mainView; // 显示图片的collectionView
 @property (nonatomic, weak) UICollectionViewFlowLayout *flowLayout;
 @property (nonatomic, assign) CGFloat lastContentOffsetX;
 @property (nonatomic, strong) UIPageControl *pageControl;
-@property (nonatomic, strong) MLNBlock *didEndDeceleratingBlock;
+@property (nonatomic, strong) MLNUIBlock *didEndDeceleratingBlock;
 /** 是否自动滚动,默认Yes */
 @property (nonatomic,assign) BOOL autoScroll;
 @property (nonatomic, assign) BOOL recurrence;
@@ -37,27 +37,27 @@
 @property (nonatomic, strong) UIColor *pageDotColor;
 @property (nonatomic, assign) CGSize pageControlDotSize;
 @property (nonatomic, weak) NSTimer *timer;
-@property (nonatomic, strong) MLNBlock *cellWillAppearCallback;
-@property (nonatomic, strong) MLNBlock *cellDidDisappearCallback;
-@property (nonatomic, strong) MLNBlock *cellClickedCallback;
-@property (nonatomic, strong) MLNBlock *reloadFinishedCallback;
-@property (nonatomic, strong) MLNBlock *scrollingListerCallback;
-@property (nonatomic, strong) MLNBlock *selectedCallback;
+@property (nonatomic, strong) MLNUIBlock *cellWillAppearCallback;
+@property (nonatomic, strong) MLNUIBlock *cellDidDisappearCallback;
+@property (nonatomic, strong) MLNUIBlock *cellClickedCallback;
+@property (nonatomic, strong) MLNUIBlock *reloadFinishedCallback;
+@property (nonatomic, strong) MLNUIBlock *scrollingListerCallback;
+@property (nonatomic, strong) MLNUIBlock *selectedCallback;
 
 @property (nonatomic, assign) NSInteger beginIndex;
 @property (nonatomic, assign) BOOL scrollEnable;
 
 @property (nonatomic, assign) BOOL outsideCall;
 
-@property (nonatomic, strong) MLNTabSegmentScrollHandler *viewPagerScrollHandler;
+@property (nonatomic, strong) MLNUITabSegmentScrollHandler *viewPagerScrollHandler;
 
-@property (nonatomic, strong) MLNBeforeWaitingTask *lazyTask;
+@property (nonatomic, strong) MLNUIBeforeWaitingTask *lazyTask;
 @property (nonatomic, assign) NSInteger scrollToIndex;
 @end
 
-@implementation MLNViewPager
+@implementation MLNUIViewPager
 
-- (instancetype)initWithLuaCore:(MLNLuaCore *)luaCore
+- (instancetype)initWithLuaCore:(MLNUILuaCore *)luaCore
 {
     if (self = [super initWithLuaCore:luaCore]){
         [self initialization];
@@ -72,13 +72,13 @@
     flowLayout.minimumLineSpacing = 0;
     flowLayout.scrollDirection = UICollectionViewScrollDirectionHorizontal;
      _flowLayout = flowLayout;
-    MLNInnerCollectionView *mainView = [[MLNInnerCollectionView alloc] initWithFrame:self.bounds collectionViewLayout:flowLayout];
+    MLNUIInnerCollectionView *mainView = [[MLNUIInnerCollectionView alloc] initWithFrame:self.bounds collectionViewLayout:flowLayout];
     mainView.containerView = self;
     mainView.backgroundColor = [UIColor clearColor];
     mainView.pagingEnabled = YES;
     mainView.showsHorizontalScrollIndicator = NO;
     mainView.showsVerticalScrollIndicator = NO;
-    [mainView registerClass:[MLNCollectionViewCell class] forCellWithReuseIdentifier:kMLNViewPagerCellReuseId];
+    [mainView registerClass:[MLNUICollectionViewCell class] forCellWithReuseIdentifier:kMLNUIViewPagerCellReuseId];
     mainView.scrollsToTop = NO;
     mainView.bounces = NO;
     [self addSubview:mainView];
@@ -119,7 +119,7 @@
 - (void)mln_user_data_dealloc
 {
     // 去除强引用
-    MLN_Lua_UserData_Release(self.adapter);
+    MLNUI_Lua_UserData_Release(self.adapter);
     [super mln_user_data_dealloc];
 }
 
@@ -130,14 +130,14 @@
 }
 
 #pragma mark - setter
-- (void)setAdapter:(id<UICollectionViewDataSource,MLNCycleScrollViewDelegate>)adapter
+- (void)setAdapter:(id<UICollectionViewDataSource,MLNUICycleScrollViewDelegate>)adapter
 {
-    MLNCheckTypeAndNilValue(adapter, @"ViewPagerAdapter", [MLNViewPagerAdapter class])
+    MLNUICheckTypeAndNilValue(adapter, @"ViewPagerAdapter", [MLNUIViewPagerAdapter class])
     if (_adapter != adapter) {
         // 去除强引用
-          MLN_Lua_UserData_Release(_adapter);
+          MLNUI_Lua_UserData_Release(_adapter);
           // 添加强引用
-          MLN_Lua_UserData_Retain_With_Index(2, adapter);
+          MLNUI_Lua_UserData_Retain_With_Index(2, adapter);
         _adapter = adapter;
         _mainView.delegate = self;
         adapter.viewPager = self;
@@ -151,7 +151,7 @@
 - (void)setRecurrence:(BOOL)recurrence
 {
     if (_tabSegmentView && recurrence) {
-        MLNKitLuaAssert(NO, @"Do not set loop scrolling when TabSegmentView was bound");
+        MLNUIKitLuaAssert(NO, @"Do not set loop scrolling when TabSegmentView was bound");
         recurrence = NO;
     }
     if (_recurrence == recurrence) {
@@ -317,17 +317,17 @@
 
 #pragma mark - Export For Lua
 
-- (void)lua_cellWillAppearCallback:(MLNBlock *)callback
+- (void)lua_cellWillAppearCallback:(MLNUIBlock *)callback
 {
     self.cellWillAppearCallback = callback;
 }
 
-- (void)lua_cellDidDisappearCallback:(MLNBlock *)callback
+- (void)lua_cellDidDisappearCallback:(MLNUIBlock *)callback
 {
     self.cellDidDisappearCallback = callback;
 }
 
-- (void)lua_cellClickedCallback:(MLNBlock *)callback
+- (void)lua_cellClickedCallback:(MLNUIBlock *)callback
 {
     self.cellClickedCallback = callback;
 }
@@ -351,7 +351,7 @@
         [self.tabSegmentView setCurrentLabelIndex:index - 1 animated:animated];
     }
     NSUInteger opertaionIndex = index - 1;
-    MLNKitLuaAssert(opertaionIndex >= 0 && opertaionIndex < _totalItemsCount, @"Page index out of range!");
+    MLNUIKitLuaAssert(opertaionIndex >= 0 && opertaionIndex < _totalItemsCount, @"Page index out of range!");
     if (opertaionIndex >= self.adapter.cellCounts || isnan(opertaionIndex)) return;
     if (self.autoScroll) {
         [self invalidateTimer];
@@ -384,7 +384,7 @@
     }
 }
 
-- (void)lua_reloadFinished:(MLNBlock *)block
+- (void)lua_reloadFinished:(MLNUIBlock *)block
 {
     self.reloadFinishedCallback = block;
     if (self.superview) {
@@ -400,18 +400,18 @@
     return  result;
 }
 
-- (void)lua_setPageSelectedListener:(MLNBlock *)callback
+- (void)lua_setPageSelectedListener:(MLNUIBlock *)callback
 {
     self.selectedCallback = callback;
 }
 
 #pragma mark - getter
 
-- (MLNBeforeWaitingTask *)lazyTask
+- (MLNUIBeforeWaitingTask *)lazyTask
 {
     if (!_lazyTask) {
         __weak typeof(self) wself = self;
-        _lazyTask = [MLNBeforeWaitingTask taskWithCallback:^{
+        _lazyTask = [MLNUIBeforeWaitingTask taskWithCallback:^{
             __strong typeof(wself) sself = wself;
             [sself setupMainViewFrame];
             if (sself.adapter.targetCollectionView.dataSource != sself.adapter) {
@@ -466,18 +466,18 @@
     }
 }
 
-#pragma mark - MLNTabSegmentViewDelegate
-- (BOOL)segmentView:(MLNTabSegmentView *)segmentView shouldScrollToIndex:(NSInteger)toIndex
+#pragma mark - MLNUITabSegmentViewDelegate
+- (BOOL)segmentView:(MLNUITabSegmentView *)segmentView shouldScrollToIndex:(NSInteger)toIndex
 {
     return toIndex < _adapter.cellCounts;
 }
 
-- (NSInteger)segmentView:(MLNTabSegmentView *)segmentView correctIndexWithToIndex:(NSInteger)toIndex
+- (NSInteger)segmentView:(MLNUITabSegmentView *)segmentView correctIndexWithToIndex:(NSInteger)toIndex
 {
     return toIndex < 0 ? 0 : (toIndex >= _adapter.cellCounts ? _adapter.cellCounts - 1 : toIndex);
 }
 
-#pragma mark - MLNTabSegmentScrollHandlerDelegate
+#pragma mark - MLNUITabSegmentScrollHandlerDelegate
 
 - (void)scrollDidEndDragging
 {
@@ -607,8 +607,8 @@
 - (void)collectionView:(UICollectionView *)collectionView willDisplayCell:(nonnull UICollectionViewCell *)cell forItemAtIndexPath:(nonnull NSIndexPath *)indexPath
 {
     if (self.cellWillAppearCallback) {
-        MLNKitLuaAssert([cell isKindOfClass:[MLNCollectionViewCell class]], @"Unkown type of cell");
-        MLNCollectionViewCell *cell_t = (MLNCollectionViewCell *)cell;
+        MLNUIKitLuaAssert([cell isKindOfClass:[MLNUICollectionViewCell class]], @"Unkown type of cell");
+        MLNUICollectionViewCell *cell_t = (MLNUICollectionViewCell *)cell;
         [self.cellWillAppearCallback addLuaTableArgument:[cell_t getLuaTable]];
         [self.cellWillAppearCallback addIntArgument:(int)indexPath.item+1];
         [self.cellWillAppearCallback callIfCan];
@@ -618,8 +618,8 @@
 - (void)collectionView:(UICollectionView *)collectionView didEndDisplayingCell:(UICollectionViewCell *)cell forItemAtIndexPath:(NSIndexPath *)indexPath
 {
     if (self.cellDidDisappearCallback) {
-        MLNKitLuaAssert([cell isKindOfClass:[MLNCollectionViewCell class]], @"Unknow type of cell!");
-        MLNCollectionViewCell *cell_t = (MLNCollectionViewCell *)cell;
+        MLNUIKitLuaAssert([cell isKindOfClass:[MLNUICollectionViewCell class]], @"Unknow type of cell!");
+        MLNUICollectionViewCell *cell_t = (MLNUICollectionViewCell *)cell;
         [self.cellDidDisappearCallback addLuaTableArgument:[cell_t getLuaTable]];
         [self.cellDidDisappearCallback addIntArgument:(int)indexPath.item+1];
         [self.cellDidDisappearCallback callIfCan];
@@ -658,17 +658,17 @@
 
 - (void)lua_addSubview:(UIView *)view
 {
-    MLNKitLuaAssert(NO, @"Not found \"addView\" method, just continar of View has it!");
+    MLNUIKitLuaAssert(NO, @"Not found \"addView\" method, just continar of View has it!");
 }
 
 - (void)lua_insertSubview:(UIView *)view atIndex:(NSInteger)index
 {
-    MLNKitLuaAssert(NO, @"Not found \"insertView\" method, just continar of View has it!");
+    MLNUIKitLuaAssert(NO, @"Not found \"insertView\" method, just continar of View has it!");
 }
 
 - (void)lua_removeAllSubViews
 {
-    MLNKitLuaAssert(NO, @"Not found \"removeAllSubviews\" method, just continar of View has it!");
+    MLNUIKitLuaAssert(NO, @"Not found \"removeAllSubviews\" method, just continar of View has it!");
 }
 
 - (void)lua_setLuaScrollEnable:(BOOL)enable
@@ -682,11 +682,11 @@
     
 }
 
-- (void)lua_setTabScrollingListener:(MLNBlock *)block
+- (void)lua_setTabScrollingListener:(MLNUIBlock *)block
 {
     _scrollingListerCallback = block;
     if (!_viewPagerScrollHandler && block) {
-        _viewPagerScrollHandler = [[MLNTabSegmentScrollHandler alloc] init];
+        _viewPagerScrollHandler = [[MLNUITabSegmentScrollHandler alloc] init];
         _viewPagerScrollHandler.delegate = self;
     } else if(!block) {
         _viewPagerScrollHandler  = nil;
@@ -714,29 +714,29 @@
     [self invalidateTimer];
 }
 
-LUA_EXPORT_VIEW_BEGIN(MLNViewPager)
-LUA_EXPORT_VIEW_PROPERTY(adapter, "setAdapter:","adapter", MLNViewPager)
-LUA_EXPORT_VIEW_PROPERTY(autoScroll, "setAutoScroll:", "autoScroll", MLNViewPager)
-LUA_EXPORT_VIEW_PROPERTY(recurrence, "setRecurrence:", "recurrence", MLNViewPager)
-LUA_EXPORT_VIEW_PROPERTY(frameInterval, "setFrameInterval:", "frameInterval", MLNViewPager)
-LUA_EXPORT_VIEW_PROPERTY(showIndicator, "setShowPageControl:", "showPageControl", MLNViewPager)
-LUA_EXPORT_VIEW_PROPERTY(aheadLoad, "setAheadLoad:", "aheadLoad", MLNViewPager)
-LUA_EXPORT_METHOD(endDragging, "setDidEndDeceleratingBlock:", MLNViewPager)
-LUA_EXPORT_METHOD(reloadData, "lua_reloadData", MLNViewPager)
-LUA_EXPORT_METHOD(reloadDataFinished, "lua_reloadFinished:", MLNViewPager)
-LUA_EXPORT_METHOD(scrollToPage, "lua_scrollToPage:aniamted:", MLNViewPager)
-LUA_EXPORT_METHOD(currentPageColor, "setCurrentPageDotColor:", MLNViewPager)
-LUA_EXPORT_METHOD(pageDotColor, "setPageDotColor:", MLNViewPager)
-LUA_EXPORT_METHOD(pageControlDotSize, "setPageControlDotSize:", MLNViewPager)
-LUA_EXPORT_METHOD(currentPage, "lua_currentPage", MLNViewPager)
-LUA_EXPORT_METHOD(setPreRenderCount, "lua_setPreRenderCount:", MLNViewPager)
-LUA_EXPORT_METHOD(cellWillAppear, "lua_cellWillAppearCallback:", MLNViewPager)
-LUA_EXPORT_METHOD(cellDidDisappear, "lua_cellDidDisappearCallback:", MLNViewPager)
-LUA_EXPORT_METHOD(setPageClickListener, "lua_cellClickedCallback:", MLNViewPager)
-LUA_EXPORT_METHOD(setScrollEnable, "lua_setLuaScrollEnable:", MLNViewPager)
-LUA_EXPORT_METHOD(setTabScrollingListener, "lua_setTabScrollingListener:", MLNViewPager)
-LUA_EXPORT_METHOD(padding, "lua_setPadding:right:bottom:left:", MLNViewPager)
-LUA_EXPORT_METHOD(onChangeSelected, "lua_setPageSelectedListener:", MLNViewPager)
-LUA_EXPORT_VIEW_END(MLNViewPager, ViewPager, YES, "MLNView", NULL)
+LUA_EXPORT_VIEW_BEGIN(MLNUIViewPager)
+LUA_EXPORT_VIEW_PROPERTY(adapter, "setAdapter:","adapter", MLNUIViewPager)
+LUA_EXPORT_VIEW_PROPERTY(autoScroll, "setAutoScroll:", "autoScroll", MLNUIViewPager)
+LUA_EXPORT_VIEW_PROPERTY(recurrence, "setRecurrence:", "recurrence", MLNUIViewPager)
+LUA_EXPORT_VIEW_PROPERTY(frameInterval, "setFrameInterval:", "frameInterval", MLNUIViewPager)
+LUA_EXPORT_VIEW_PROPERTY(showIndicator, "setShowPageControl:", "showPageControl", MLNUIViewPager)
+LUA_EXPORT_VIEW_PROPERTY(aheadLoad, "setAheadLoad:", "aheadLoad", MLNUIViewPager)
+LUA_EXPORT_METHOD(endDragging, "setDidEndDeceleratingBlock:", MLNUIViewPager)
+LUA_EXPORT_METHOD(reloadData, "lua_reloadData", MLNUIViewPager)
+LUA_EXPORT_METHOD(reloadDataFinished, "lua_reloadFinished:", MLNUIViewPager)
+LUA_EXPORT_METHOD(scrollToPage, "lua_scrollToPage:aniamted:", MLNUIViewPager)
+LUA_EXPORT_METHOD(currentPageColor, "setCurrentPageDotColor:", MLNUIViewPager)
+LUA_EXPORT_METHOD(pageDotColor, "setPageDotColor:", MLNUIViewPager)
+LUA_EXPORT_METHOD(pageControlDotSize, "setPageControlDotSize:", MLNUIViewPager)
+LUA_EXPORT_METHOD(currentPage, "lua_currentPage", MLNUIViewPager)
+LUA_EXPORT_METHOD(setPreRenderCount, "lua_setPreRenderCount:", MLNUIViewPager)
+LUA_EXPORT_METHOD(cellWillAppear, "lua_cellWillAppearCallback:", MLNUIViewPager)
+LUA_EXPORT_METHOD(cellDidDisappear, "lua_cellDidDisappearCallback:", MLNUIViewPager)
+LUA_EXPORT_METHOD(setPageClickListener, "lua_cellClickedCallback:", MLNUIViewPager)
+LUA_EXPORT_METHOD(setScrollEnable, "lua_setLuaScrollEnable:", MLNUIViewPager)
+LUA_EXPORT_METHOD(setTabScrollingListener, "lua_setTabScrollingListener:", MLNUIViewPager)
+LUA_EXPORT_METHOD(padding, "lua_setPadding:right:bottom:left:", MLNUIViewPager)
+LUA_EXPORT_METHOD(onChangeSelected, "lua_setPageSelectedListener:", MLNUIViewPager)
+LUA_EXPORT_VIEW_END(MLNUIViewPager, ViewPager, YES, "MLNUIView", NULL)
 
 @end

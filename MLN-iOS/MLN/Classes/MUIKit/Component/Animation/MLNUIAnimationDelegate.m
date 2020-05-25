@@ -1,22 +1,22 @@
 //
-//  MLNAnimationDelegate.m
+//  MLNUIAnimationDelegate.m
 //
 //
 //  Created by MoMo on 2018/8/28.
 //
 
-#import "MLNAnimationDelegate.h"
-#import "MLNAnimation.h"
+#import "MLNUIAnimationDelegate.h"
+#import "MLNUIAnimation.h"
 
 
-@interface MLNAnimationDelegate ()
+@interface MLNUIAnimationDelegate ()
 
-@property (nonatomic, weak, readonly) MLNAnimation *animation;
+@property (nonatomic, weak, readonly) MLNUIAnimation *animation;
 
 @end
-@implementation MLNAnimationDelegate
+@implementation MLNUIAnimationDelegate
 
-- (instancetype)initWithAnimation:(MLNAnimation *)animation
+- (instancetype)initWithAnimation:(MLNUIAnimation *)animation
 {
     if (self = [super init]) {
         _animation = animation;

@@ -1,15 +1,15 @@
 //
-//  MLNSpacer.h
-//  MLN
+//  MLNUISpacer.h
+//  MLNUI
 //
 //  Created by MOMO on 2020/3/27.
 //
 
-#import "MLNView.h"
+#import "MLNUIView.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface MLNSpacer : MLNView
+@interface MLNUISpacer : MLNUIView
 
 @end
 

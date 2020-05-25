@@ -1,22 +1,22 @@
 //
 //  MMTableViewCell.h
-//  MLN
+//  MLNUI
 //
 //  Created by MoMo on 28/02/2018.
 //  Copyright © 2018 wemomo.com. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
-#import "MLNReuseContentView.h"
-#import "MLNTableViewCellSettingProtocol.h"
-#import "MLNTableViewAdapterProtocol.h"
+#import "MLNUIReuseContentView.h"
+#import "MLNUITableViewCellSettingProtocol.h"
+#import "MLNUITableViewAdapterProtocol.h"
 
-#define kMLNTableViewCellReuseID @"kMLNTableViewCellReuseID"
+#define kMLNUITableViewCellReuseID @"kMLNUITableViewCellReuseID"
 
-@interface MLNTableViewCell : UITableViewCell <MLNReuseCellProtocol>
+@interface MLNUITableViewCell : UITableViewCell <MLNUIReuseCellProtocol>
 
-@property (nonatomic, strong) MLNReuseContentView *luaContentView;
-@property (nonatomic, weak) id<MLNTableViewCellSettingProtocol> delegate;
+@property (nonatomic, strong) MLNUIReuseContentView *luaContentView;
+@property (nonatomic, weak) id<MLNUITableViewCellSettingProtocol> delegate;
 
 - (void)updateSubviewsFrameIfNeed;
 

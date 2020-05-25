@@ -1,5 +1,5 @@
 //
-//  MLNCornerHandlerPotocol.h
+//  MLNUICornerHandlerPotocol.h
 //
 //
 //  Created by MoMo on 2019/5/26.
@@ -9,7 +9,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@protocol MLNCornerHandlerPotocol <NSObject>
+@protocol MLNUICornerHandlerPotocol <NSObject>
 
 @property (nonatomic, assign) BOOL needRemake;
 @property (nonatomic, weak, readonly) UIView *targetView;

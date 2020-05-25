@@ -1,16 +1,16 @@
 //
-//  MLNLoading.h
+//  MLNUILoading.h
 //
 //
 //  Created by MoMo on 2018/12/10.
 //
 
 #import <UIKit/UIKit.h>
-#import "MLNStaticExportProtocol.h"
+#import "MLNUIStaticExportProtocol.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface MLNLoading : NSObject<MLNStaticExportProtocol>
+@interface MLNUILoading : NSObject<MLNUIStaticExportProtocol>
 
 @end
 

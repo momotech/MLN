@@ -1,44 +1,44 @@
 //
-//  MLNLoading.m
+//  MLNUILoading.m
 //
 //
 //  Created by MoMo on 2018/12/10.
 //
 
-#import "MLNLoading.h"
-#import "MLNKitHeader.h"
-#import "MLNStaticExporterMacro.h"
-#import "MLNView.h"
-#import "MLNLayoutNode.h"
-#import "MLNKitInstance.h"
+#import "MLNUILoading.h"
+#import "MLNUIKitHeader.h"
+#import "MLNUIStaticExporterMacro.h"
+#import "MLNUIView.h"
+#import "MLNUILayoutNode.h"
+#import "MLNUIKitInstance.h"
 
 typedef NS_ENUM(NSInteger, LoadingState) {
     LoadingStateIdle = 0,
     LoadingStateShow,
 };
 
-@interface MLNLoading()
+@interface MLNUILoading()
 @property (nonatomic, assign) LoadingState state;
 @property (nonatomic, strong) UIView *backgroundView;
 @property (nonatomic, strong) UIView *contentView;
 @property (nonatomic, strong) UIActivityIndicatorView *indicatorView;
-@property (nonatomic, copy) MLNOnDestroyCallback onDestroyCallback;
+@property (nonatomic, copy) MLNUIOnDestroyCallback onDestroyCallback;
 
 @end
 
-static MLNLoading *_loading = nil;
+static MLNUILoading *_loading = nil;
 
-@implementation MLNLoading
+@implementation MLNUILoading
 
 + (void)lua_show
 {
-    MLNLoading *loading = [MLNLoading createLoadingIfNeed];
+    MLNUILoading *loading = [MLNUILoading createLoadingIfNeed];
     if (loading.state == LoadingStateShow) return;
     loading.state = LoadingStateShow;
     [loading setupViews];
     loading.backgroundView.hidden = NO;
     [loading layoutMaskAndIndicatorView];
-    [loading addOnInstanceDestroyCallback:MLN_KIT_INSTANCE([self mln_currentLuaCore])];
+    [loading addOnInstanceDestroyCallback:MLNUI_KIT_INSTANCE([self mln_currentLuaCore])];
     [loading.indicatorView startAnimating];
 }
 
@@ -49,31 +49,31 @@ static MLNLoading *_loading = nil;
         [_loading.indicatorView stopAnimating];
         [_loading.backgroundView removeFromSuperview];
         _loading.backgroundView.hidden = YES;
-        [_loading removeOnInstanceDestroyCallback:MLN_KIT_INSTANCE([self mln_currentLuaCore])];
+        [_loading removeOnInstanceDestroyCallback:MLNUI_KIT_INSTANCE([self mln_currentLuaCore])];
         _loading = nil;
     }
 }
 
 #pragma mark - private method
-+ (MLNLoading *)createLoadingIfNeed
++ (MLNUILoading *)createLoadingIfNeed
 {
     if (!_loading) {
-        _loading = [[MLNLoading alloc] init];
+        _loading = [[MLNUILoading alloc] init];
     }
     return _loading;
 }
 
-- (void)addOnInstanceDestroyCallback:(MLNKitInstance *)instance
+- (void)addOnInstanceDestroyCallback:(MLNUIKitInstance *)instance
 {
     if (!self.onDestroyCallback) {
         self.onDestroyCallback = ^{
-            [MLNLoading lua_hide];
+            [MLNUILoading lua_hide];
         };
     }
     [instance addOnDestroyCallback:self.onDestroyCallback];
 }
 
-- (void)removeOnInstanceDestroyCallback:(MLNKitInstance *)instance
+- (void)removeOnInstanceDestroyCallback:(MLNUIKitInstance *)instance
 {
     if (self.onDestroyCallback) {
         [instance removeOnDestroyCallback:self.onDestroyCallback];
@@ -149,9 +149,9 @@ static MLNLoading *_loading = nil;
 }
 
 #pragma mark - Export For Lua
-LUA_EXPORT_STATIC_BEGIN(MLNLoading)
-LUA_EXPORT_STATIC_METHOD(show, "lua_show", MLNLoading)
-LUA_EXPORT_STATIC_METHOD(hide, "lua_hide", MLNLoading)
-LUA_EXPORT_STATIC_END(MLNLoading, Loading, NO, NULL)
+LUA_EXPORT_STATIC_BEGIN(MLNUILoading)
+LUA_EXPORT_STATIC_METHOD(show, "lua_show", MLNUILoading)
+LUA_EXPORT_STATIC_METHOD(hide, "lua_hide", MLNUILoading)
+LUA_EXPORT_STATIC_END(MLNUILoading, Loading, NO, NULL)
 
 @end

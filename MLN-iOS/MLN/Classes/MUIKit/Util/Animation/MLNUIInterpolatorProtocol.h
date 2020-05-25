@@ -1,19 +1,19 @@
 //
-//  MLNInterpolator.h
-//  MLN
+//  MLNUIInterpolator.h
+//  MLNUI
 //
 //  Created by MoMo on 2019/9/4.
 //
 
 #import <UIKit/UIKit.h>
 
-#ifndef MLNInterpolatorProtocol_h
-#define MLNInterpolatorProtocol_h
+#ifndef MLNUIInterpolatorProtocol_h
+#define MLNUIInterpolatorProtocol_h
 
 /**
  动画差值器协议
  */
-@protocol MLNInterpolatorProtocol <NSObject>
+@protocol MLNUIInterpolatorProtocol <NSObject>
 
 /**
  获取当前差值
@@ -25,4 +25,4 @@
 
 @end
 
-#endif /* MLNInterpolatorProtocol_h */
+#endif /* MLNUIInterpolatorProtocol_h */

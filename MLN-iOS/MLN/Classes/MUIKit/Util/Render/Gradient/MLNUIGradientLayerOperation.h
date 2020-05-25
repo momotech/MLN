@@ -1,16 +1,16 @@
 //
-//  MLNGradientLayerTask.h
-//  MMLNua
+//  MLNUIGradientLayerTask.h
+//  MMLNUIua
 //
 //  Created by MoMo on 2019/4/16.
 //
 
 #import <UIKit/UIKit.h>
-#import "MLNViewConst.h"
+#import "MLNUIViewConst.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface MLNGradientLayerOperation : NSObject
+@interface MLNUIGradientLayerOperation : NSObject
 
 - (instancetype)initWithTargetView:(UIView *)targetView;
 
@@ -18,7 +18,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) BOOL needRemake;
 @property (nonatomic, strong, nullable) UIColor *startColor;
 @property (nonatomic, strong, nullable) UIColor *endColor;
-@property (nonatomic, assign) MLNGradientType direction;
+@property (nonatomic, assign) MLNUIGradientType direction;
 
 - (void)remakeIfNeed;
 - (void)cleanGradientLayerIfNeed;

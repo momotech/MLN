@@ -1,21 +1,21 @@
 //
-//  UIView+MLNKit.h
-//  MLNCore
+//  UIView+MLNUIKit.h
+//  MLNUICore
 //
 //  Created by MoMo on 2019/7/23.
 //
 
 #import <UIKit/UIKit.h>
-#import "UIView+MLNCore.h"
-#import "MLNViewConst.h"
-#import "MLNBeforeWaitingTaskProtocol.h"
+#import "UIView+MLNUICore.h"
+#import "MLNUIViewConst.h"
+#import "MLNUIBeforeWaitingTaskProtocol.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class MLNBlock;
-@class MLNKeyboardViewHandler;
-@class MLNRenderContext;
-@interface UIView (MLNKit)
+@class MLNUIBlock;
+@class MLNUIKeyboardViewHandler;
+@class MLNUIRenderContext;
+@interface UIView (MLNUIKit)
 
 @property (nonatomic, assign) CGFloat lua_x;
 @property (nonatomic, assign) CGFloat lua_y;
@@ -31,26 +31,26 @@ NS_ASSUME_NONNULL_BEGIN
 - (CGPoint)lua_convertRelativePointToView:(UIView *)view point:(CGPoint)point;
 
 #pragma mark - TouchEvent
-@property (nonatomic, strong) MLNBlock *mln_touchesBeganCallback;
-@property (nonatomic, strong) MLNBlock *mln_touchesMovedCallback;
-@property (nonatomic, strong) MLNBlock *mln_touchesEndedCallback;
-@property (nonatomic, strong) MLNBlock *mln_touchesCancelledCallback;
-@property (nonatomic, strong) MLNBlock *mln_touchesBeganExtensionCallback;
-@property (nonatomic, strong) MLNBlock *mln_touchesMovedExtensionCallback;
-@property (nonatomic, strong) MLNBlock *mln_touchesEndedExtensionCallback;
-@property (nonatomic, strong) MLNBlock *mln_touchesCancelledExtensionCallback;
+@property (nonatomic, strong) MLNUIBlock *mln_touchesBeganCallback;
+@property (nonatomic, strong) MLNUIBlock *mln_touchesMovedCallback;
+@property (nonatomic, strong) MLNUIBlock *mln_touchesEndedCallback;
+@property (nonatomic, strong) MLNUIBlock *mln_touchesCancelledCallback;
+@property (nonatomic, strong) MLNUIBlock *mln_touchesBeganExtensionCallback;
+@property (nonatomic, strong) MLNUIBlock *mln_touchesMovedExtensionCallback;
+@property (nonatomic, strong) MLNUIBlock *mln_touchesEndedExtensionCallback;
+@property (nonatomic, strong) MLNUIBlock *mln_touchesCancelledExtensionCallback;
 
 #pragma mark - render
-@property (nonatomic, strong, readonly) MLNRenderContext *mln_renderContext;
+@property (nonatomic, strong, readonly) MLNUIRenderContext *mln_renderContext;
 
 #pragma mark - Gesture
-@property (nonatomic, strong) MLNBlock * mln_tapClickBlock;
-@property (nonatomic, strong) MLNBlock * mln_touchClickBlock;
-@property (nonatomic, strong) MLNBlock * mln_longPressBlock;
+@property (nonatomic, strong) MLNUIBlock * mln_tapClickBlock;
+@property (nonatomic, strong) MLNUIBlock * mln_touchClickBlock;
+@property (nonatomic, strong) MLNUIBlock * mln_longPressBlock;
 
-- (void)lua_addClick:(MLNBlock *)clickCallback;
-- (void)lua_addTouch:(MLNBlock *)touchCallBack;
-- (void)lua_addLongPress:(MLNBlock *)longPressCallback;
+- (void)lua_addClick:(MLNUIBlock *)clickCallback;
+- (void)lua_addTouch:(MLNUIBlock *)touchCallBack;
+- (void)lua_addLongPress:(MLNUIBlock *)longPressCallback;
 /**
  Return YES if it can respond to tap events. Default is NO
  */
@@ -62,7 +62,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - Render
 - (void)lua_setCornerRadius:(CGFloat)cornerRadius;
-- (void)lua_addCornerMaskWithRadius:(CGFloat)cornerRadius maskColor:(UIColor *)maskColor corners:(MLNRectCorner)corners;
+- (void)lua_addCornerMaskWithRadius:(CGFloat)cornerRadius maskColor:(UIColor *)maskColor corners:(MLNUIRectCorner)corners;
 - (void)mln_updateCornersIfNeed;
 - (void)mln_updateGradientLayerIfNeed;
 
@@ -78,7 +78,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * keyboardHandler 处理键盘偏移相关
  **/
-@property (nonatomic, strong) MLNKeyboardViewHandler *lua_keyboardViewHandler;
+@property (nonatomic, strong) MLNUIKeyboardViewHandler *lua_keyboardViewHandler;
 
 /**
  键盘出现自动上移View
@@ -130,7 +130,7 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 /**
- 很多场景下，如果你要做的一些操作，需要依赖于MLN布局之后，请使用以下方法
+ 很多场景下，如果你要做的一些操作，需要依赖于MLNUI布局之后，请使用以下方法
  */
 @interface UIView (LazyTask)
 
@@ -139,42 +139,42 @@ NS_ASSUME_NONNULL_BEGIN
  
  @param lazyTask 延迟执行任务
  */
-- (void)mln_pushLazyTask:(id<MLNBeforeWaitingTaskProtocol>)lazyTask;
+- (void)mln_pushLazyTask:(id<MLNUIBeforeWaitingTaskProtocol>)lazyTask;
 
 /**
  出栈自动布局完成以后执行的任务
  
  @param lazyTask 延迟执行任务
  */
-- (void)mln_popLazyTask:(id<MLNBeforeWaitingTaskProtocol>)lazyTask;
+- (void)mln_popLazyTask:(id<MLNUIBeforeWaitingTaskProtocol>)lazyTask;
 
 /**
  压栈自动布局完成以后执行的动画任务，时机晚于LazyTask
  
  @param animation 动画任务，时机晚于LazyTask
  */
-- (void)mln_pushAnimation:(id<MLNBeforeWaitingTaskProtocol>)animation;
+- (void)mln_pushAnimation:(id<MLNUIBeforeWaitingTaskProtocol>)animation;
 
 /**
  出栈自动布局完成以后执行的动画任务，时机晚于LazyTask
  
  @param animation 动画任务，时机晚于LazyTask
  */
-- (void)mln_popAnimation:(id<MLNBeforeWaitingTaskProtocol>)animation;
+- (void)mln_popAnimation:(id<MLNUIBeforeWaitingTaskProtocol>)animation;
 
 /**
  压栈自动布局完成以后执行的渲染任务，时机晚于动画任务
  
  @param renderTask 渲染任务，时机晚于动画任务
  */
-- (void)mln_pushRenderTask:(id<MLNBeforeWaitingTaskProtocol>)renderTask;
+- (void)mln_pushRenderTask:(id<MLNUIBeforeWaitingTaskProtocol>)renderTask;
 
 /**
  出栈自动布局完成以后执行的渲染任务，时机晚于动画任务
  
  @param renderTask 渲染任务，时机晚于动画任务
  */
-- (void)mln_popRenderTask:(id<MLNBeforeWaitingTaskProtocol>)renderTask;
+- (void)mln_popRenderTask:(id<MLNUIBeforeWaitingTaskProtocol>)renderTask;
 
 @end
 

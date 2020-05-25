@@ -1,24 +1,24 @@
 //
-//  MLNNavigatorDelegate.h
+//  MLNUINavigatorDelegate.h
 //  Pods
 //
 //  Created by MoMo on 2018/8/21.
 //
 
-#ifndef MLNNavigatorDelegate_h
-#define MLNNavigatorDelegate_h
+#ifndef MLNUINavigatorDelegate_h
+#define MLNUINavigatorDelegate_h
 #import <UIKit/UIKit.h>
-#import "MLNAnimationConst.h"
-#import "MLNViewControllerProtocol.h"
+#import "MLNUIAnimationConst.h"
+#import "MLNUIViewControllerProtocol.h"
 
-@protocol MLNNavigatorHandlerProtocol <NSObject>
+@protocol MLNUINavigatorHandlerProtocol <NSObject>
 
-- (void)viewController:(UIViewController<MLNViewControllerProtocol> *)viewController gotoPage:(NSString *)action params:(NSDictionary *)params animType:(MLNAnimationAnimType)animType;
-- (void)viewController:(UIViewController<MLNViewControllerProtocol> *)viewController gotoAndCloseSelf:(NSString *)action params:(NSDictionary *)params animType:(MLNAnimationAnimType)animType;
-- (void)viewController:(UIViewController<MLNViewControllerProtocol> *)viewController gotoLuaCodePage:(NSDictionary*)param animType:(MLNAnimationAnimType)animType;
-- (void)viewController:(UIViewController<MLNViewControllerProtocol> *)viewController closeSelf:(MLNAnimationAnimType)animType;
-- (BOOL)viewController:(UIViewController<MLNViewControllerProtocol> *)viewController closeToLuaPage:(NSString *)pageName animateType:(MLNAnimationAnimType)animType;
+- (void)viewController:(UIViewController<MLNUIViewControllerProtocol> *)viewController gotoPage:(NSString *)action params:(NSDictionary *)params animType:(MLNUIAnimationAnimType)animType;
+- (void)viewController:(UIViewController<MLNUIViewControllerProtocol> *)viewController gotoAndCloseSelf:(NSString *)action params:(NSDictionary *)params animType:(MLNUIAnimationAnimType)animType;
+- (void)viewController:(UIViewController<MLNUIViewControllerProtocol> *)viewController gotoLuaCodePage:(NSDictionary*)param animType:(MLNUIAnimationAnimType)animType;
+- (void)viewController:(UIViewController<MLNUIViewControllerProtocol> *)viewController closeSelf:(MLNUIAnimationAnimType)animType;
+- (BOOL)viewController:(UIViewController<MLNUIViewControllerProtocol> *)viewController closeToLuaPage:(NSString *)pageName animateType:(MLNUIAnimationAnimType)animType;
 
 @end
 
-#endif /* MLNNavigatorDelegate_h */
+#endif /* MLNUINavigatorDelegate_h */

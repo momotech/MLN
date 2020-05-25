@@ -1,16 +1,16 @@
 //
-//  MLNHttp.h
-//  MLN
+//  MLNUIHttp.h
+//  MLNUI
 //
 //  Created by MoMo on 2019/8/3.
 //
 
 #import <Foundation/Foundation.h>
-#import "MLNEntityExportProtocol.h"
+#import "MLNUIEntityExportProtocol.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface MLNHttp : NSObject <MLNEntityExportProtocol>
+@interface MLNUIHttp : NSObject <MLNUIEntityExportProtocol>
 
 /**
  网络请求的根地址

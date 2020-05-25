@@ -1,30 +1,30 @@
 //
-//  NSObject+MLNCore.h
-//  MLNCore
+//  NSObject+MLNUICore.h
+//  MLNUICore
 //
 //  Created by MoMo on 2019/7/23.
 //
 
 #import <Foundation/Foundation.h>
-#import "MLNExportProtocol.h"
+#import "MLNUIExportProtocol.h"
 
 typedef enum : NSUInteger {
-    MLNNativeTypeObject,
-    MLNNativeTypeView,
-    MLNNativeTypeNumber,
-    MLNNativeTypeString,
-    MLNNativeTypeDictionary,
-    MLNNativeTypeMDictionary,
-    MLNNativeTypeArray,
-    MLNNativeTypeMArray,
-    MLNNativeTypeColor,
-    MLNNativeTypeValue,
-} MLNNativeType;
+    MLNUINativeTypeObject,
+    MLNUINativeTypeView,
+    MLNUINativeTypeNumber,
+    MLNUINativeTypeString,
+    MLNUINativeTypeDictionary,
+    MLNUINativeTypeMDictionary,
+    MLNUINativeTypeArray,
+    MLNUINativeTypeMArray,
+    MLNUINativeTypeColor,
+    MLNUINativeTypeValue,
+} MLNUINativeType;
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class MLNLuaCore;
-@interface NSObject (MLNCore) <MLNExportProtocol>
+@class MLNUILuaCore;
+@interface NSObject (MLNUICore) <MLNUIExportProtocol>
 
 /**
  标记当前对象是不是由Lua创建。
@@ -40,7 +40,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param luaCore 对应的lua状态机
  @return Lua创建的实例对象
  */
-- (instancetype)initWithLuaCore:(MLNLuaCore *)luaCore;
+- (instancetype)initWithLuaCore:(MLNUILuaCore *)luaCore;
 
 /**
  lua 释放该UserData时，会回调该方法，你可以实现该方法来做一些自定义释放操作。
@@ -80,11 +80,11 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSArray *)mln_multipleParams;
 
 /**
- 获取当前对象的原生类型，默认为MLNNativeTypeObject.
+ 获取当前对象的原生类型，默认为MLNUINativeTypeObject.
  
  @return 当前对象的原生类型
  */
-- (MLNNativeType)mln_nativeType;
+- (MLNUINativeType)mln_nativeType;
 
 /**
  真实的原生实例，如果该对象不是包装特定实例的对象，则返回该对象本身，否则返回被包装的实例

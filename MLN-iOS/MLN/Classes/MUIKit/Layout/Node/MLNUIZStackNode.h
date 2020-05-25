@@ -1,17 +1,17 @@
 //
-//  MLNZStackNode.h
-//  MLN
+//  MLNUIZStackNode.h
+//  MLNUI
 //
 //  Created by MOMO on 2020/3/25.
 //
 
-#import "MLNStackNode.h"
+#import "MLNUIStackNode.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface MLNZStackNode : MLNStackNode
+@interface MLNUIZStackNode : MLNUIStackNode
 
-@property (nonatomic, assign) MLNGravity childGravity;
+@property (nonatomic, assign) MLNUIGravity childGravity;
 
 @end
 

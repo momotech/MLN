@@ -6,11 +6,11 @@
 //
 
 #import "MLNUIViewController.h"
-#import "MLNKVOObserverProtocol.h"
+#import "MLNUIKVOObserverProtocol.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface MLNUIViewController (DataBinding) <MLNDataBindingProtocol>
+@interface MLNUIViewController (DataBinding) <MLNUIDataBindingProtocol>
 
 @end
 

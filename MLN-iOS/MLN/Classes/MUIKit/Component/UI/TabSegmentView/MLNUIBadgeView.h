@@ -1,6 +1,6 @@
 //
-//  MLNBadgeView.h
-//  MLN
+//  MLNUIBadgeView.h
+//  MLNUI
 //
 //  Created by MoMo on 2019/1/16.
 //
@@ -9,7 +9,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface MLNBadgeView : UIView
+@interface MLNUIBadgeView : UIView
 
 /**
  * 显示的文本数字。

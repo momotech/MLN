@@ -1,29 +1,29 @@
 //
-//  MLNKVOObserver.m
-//  MLN
+//  MLNUIKVOObserver.m
+//  MLNUI
 //
 //  Created by Dai Dongpeng on 2020/3/3.
 //
 
-#import "MLNKVOObserver.h"
-#import "UIViewController+MLNKVO.h"
-//#import "MLNKitHeader.h"
-//#import "MLNKitViewController.h"
+#import "MLNUIKVOObserver.h"
+#import "UIViewController+MLNUIKVO.h"
+//#import "MLNUIKitHeader.h"
+//#import "MLNUIKitViewController.h"
 #import <pthread.h>
-#import "MLNExtScope.h"
+#import "MLNUIExtScope.h"
 
-@interface MLNKVOObserver () {
+@interface MLNUIKVOObserver () {
     pthread_mutex_t _lock;
 }
 
-@property (nonatomic, copy) MLNViewControllerLifeCycleObserver observer;
+@property (nonatomic, copy) MLNUIViewControllerLifeCycleObserver observer;
 @property (nonatomic, copy) void(^notifyLiveStickyBlock)(void);
-@property (nonatomic, copy) MLNKVOCallback callback;
+@property (nonatomic, copy) MLNUIKVOCallback callback;
 @property (nonatomic, weak, readwrite) UIViewController *viewController;
 @property (nonatomic, copy, readwrite) NSString *keyPath;
 @end
 
-@implementation MLNKVOObserver
+@implementation MLNUIKVOObserver
 
 - (instancetype)init {
     self = [self initWithViewController:nil callback:nil keyPath:@""];
@@ -32,7 +32,7 @@
     return self;
 }
 
-- (instancetype)initWithViewController:(nullable UIViewController *)viewController callback:(nullable MLNKVOCallback)callback keyPath:(nonnull NSString *)keyPath {
+- (instancetype)initWithViewController:(nullable UIViewController *)viewController callback:(nullable MLNUIKVOCallback)callback keyPath:(nonnull NSString *)keyPath {
     if (self = [super init]) {
         _active = YES;
         _keyPath = keyPath;
@@ -46,11 +46,11 @@
 
 - (void)addViewControllerObserver:(UIViewController *)viewController {
     @weakify(self);
-    self.observer = ^(MLNViewControllerLifeCycle state) {
+    self.observer = ^(MLNUIViewControllerLifeCycle state) {
         @strongify(self);
-        if (state == MLNViewControllerLifeCycleViewDidDisappear) {
+        if (state == MLNUIViewControllerLifeCycleViewDidDisappear) {
             self.active = NO;
-        } else if (state == MLNViewControllerLifeCycleViewDidAppear) {
+        } else if (state == MLNUIViewControllerLifeCycleViewDidAppear) {
             self.active = YES;
         }
     };

@@ -1,19 +1,19 @@
 //
-//  NSObject+MLNDealloctor.m
-//  MLN
+//  NSObject+MLNUIDealloctor.m
+//  MLNUI
 //
 //  Created by Dai Dongpeng on 2020/4/30.
 //
 
-#import "NSObject+MLNDealloctor.h"
+#import "NSObject+MLNUIDealloctor.h"
 @import ObjectiveC;
 
-@interface MLNDeallocator : NSObject
+@interface MLNUIDeallocator : NSObject
 @property (readonly, unsafe_unretained) NSObject *owner;
-@property (readonly, strong) NSMutableArray<MLNDeallocatorCallback> *callbacks;
+@property (readonly, strong) NSMutableArray<MLNUIDeallocatorCallback> *callbacks;
 @end
 
-@implementation MLNDeallocator
+@implementation MLNUIDeallocator
 
 - (instancetype)initWithOwner:(NSObject*)owner {
     self = [super init];
@@ -24,17 +24,17 @@
     return self;
 }
 
-- (void)addCallback:(MLNDeallocatorCallback)block {
+- (void)addCallback:(MLNUIDeallocatorCallback)block {
     if (block)
         [_callbacks addObject:block];
 }
 
 - (void)invokeCallbacks {
-    NSArray<MLNDeallocatorCallback> *blocks = _callbacks;
+    NSArray<MLNUIDeallocatorCallback> *blocks = _callbacks;
     _callbacks = nil;
     
     __unsafe_unretained NSObject *owner = _owner;
-    for (MLNDeallocatorCallback block in blocks) {
+    for (MLNUIDeallocatorCallback block in blocks) {
         block(owner);
     }
 }
@@ -44,16 +44,16 @@
 }
 @end
 
-@implementation NSObject (MLNDealloctor)
+@implementation NSObject (MLNUIDealloctor)
 
-static const void *MLNDeallocatorAssociationKey = &MLNDeallocatorAssociationKey;
-- (void)mln_addDeallocationCallback:(MLNDeallocatorCallback)block {
+static const void *MLNUIDeallocatorAssociationKey = &MLNUIDeallocatorAssociationKey;
+- (void)mln_addDeallocationCallback:(MLNUIDeallocatorCallback)block {
     @synchronized (self) {
         @autoreleasepool {
-            MLNDeallocator *dealloctor = objc_getAssociatedObject(self, MLNDeallocatorAssociationKey);
+            MLNUIDeallocator *dealloctor = objc_getAssociatedObject(self, MLNUIDeallocatorAssociationKey);
             if (!dealloctor) {
-                dealloctor = [[MLNDeallocator alloc] initWithOwner:self];
-                objc_setAssociatedObject(self, MLNDeallocatorAssociationKey, dealloctor, OBJC_ASSOCIATION_RETAIN);
+                dealloctor = [[MLNUIDeallocator alloc] initWithOwner:self];
+                objc_setAssociatedObject(self, MLNUIDeallocatorAssociationKey, dealloctor, OBJC_ASSOCIATION_RETAIN);
             }
             [self.class mln_swizzleDeallocIfNeeded];
             [dealloctor addCallback:block];
@@ -80,7 +80,7 @@ static const void *MLNDeallocatorAssociationKey = &MLNDeallocatorAssociationKey;
         
         void(*oldIMP)(id, SEL) = (typeof(oldIMP))method_getImplementation(dealloc);
         void(^newIMPBlock)(id) = ^(__unsafe_unretained NSObject *self_deallocating) {
-            MLNDeallocator *deallocator = objc_getAssociatedObject(self_deallocating, MLNDeallocatorAssociationKey);
+            MLNUIDeallocator *deallocator = objc_getAssociatedObject(self_deallocating, MLNUIDeallocatorAssociationKey);
             [deallocator invokeCallbacks];
             oldIMP(self_deallocating, deallocSelector);
         };

@@ -1,5 +1,5 @@
 //
-//  MLNSnapshotManager.h
+//  MLNUISnapshotManager.h
 //
 //
 //  Created by MoMo on 2019/3/9.
@@ -9,7 +9,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface MLNSnapshotManager : NSObject
+@interface MLNUISnapshotManager : NSObject
 
 + (UIImage *)mln_captureNormalView:(UIView *)view;
 

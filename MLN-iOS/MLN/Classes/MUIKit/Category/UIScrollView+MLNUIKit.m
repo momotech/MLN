@@ -6,14 +6,14 @@
   * For the full copyright and license information,please view the LICENSE file in the root directory of this source tree.
   */
 
-#import "UIScrollView+MLNKit.h"
-#import "MLNKitHeader.h"
+#import "UIScrollView+MLNUIKit.h"
+#import "MLNUIKitHeader.h"
 #import <objc/runtime.h>
-#import "UIView+MLNKit.h"
-#import "UIView+MLNLayout.h"
-#import "MLNRefreshDelegate.h"
-#import "MLNBlock.h"
-#import "MLNKitInstanceHandlersManager.h"
+#import "UIView+MLNUIKit.h"
+#import "UIView+MLNUILayout.h"
+#import "MLNUIRefreshDelegate.h"
+#import "MLNUIBlock.h"
+#import "MLNUIKitInstanceHandlersManager.h"
 
 static const void *kLuaRefreshEnable = &kLuaRefreshEnable;
 static const void *kLuaLoadEnable = &kLuaLoadEnable;
@@ -21,7 +21,7 @@ static const void *kLuaLoadAhead = &kLuaLoadAhead;
 static const void *kLuaRefreshCallBack = &kLuaRefreshCallBack;
 static const void *kLuaLoadCallBack = &kLuaLoadCallBack;
 
-@implementation UIScrollView (MLNRefresh)
+@implementation UIScrollView (MLNUIRefresh)
 
 - (instancetype)initWithRefreshEnable:(BOOL)refreshEnable loadEnable:(BOOL)loadEnable
 {
@@ -32,7 +32,7 @@ static const void *kLuaLoadCallBack = &kLuaLoadCallBack;
     return self;
 }
 
-- (instancetype)initWithLuaCore:(MLNLuaCore *)luaCore isHorizontal:(BOOL)isHorizontal
+- (instancetype)initWithLuaCore:(MLNUILuaCore *)luaCore isHorizontal:(BOOL)isHorizontal
 {
     if (self = [self initWithLuaCore:luaCore]) {
         self.mln_horizontal = isHorizontal;
@@ -42,15 +42,15 @@ static const void *kLuaLoadCallBack = &kLuaLoadCallBack;
     return self;
 }
 
-static const void *kMLNScrollDirection = &kMLNScrollDirection;
+static const void *kMLNUIScrollDirection = &kMLNUIScrollDirection;
 - (void)setMln_horizontal:(BOOL)mln_horizontal
 {
-    objc_setAssociatedObject(self, kMLNScrollDirection, @(mln_horizontal), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    objc_setAssociatedObject(self, kMLNUIScrollDirection, @(mln_horizontal), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
 - (BOOL)mln_horizontal
 {
-    return [objc_getAssociatedObject(self, kMLNScrollDirection) boolValue];
+    return [objc_getAssociatedObject(self, kMLNUIScrollDirection) boolValue];
 }
 
 - (void)setLua_refreshEnable:(BOOL)lua_refreshEnable
@@ -60,12 +60,12 @@ static const void *kMLNScrollDirection = &kMLNScrollDirection;
         return;
     }
     objc_setAssociatedObject(self, kLuaRefreshEnable, @(lua_refreshEnable), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-    id<MLNRefreshDelegate> delegate = [self getRefreshDelegate];
+    id<MLNUIRefreshDelegate> delegate = [self getRefreshDelegate];
     if (lua_refreshEnable) {
-        MLNKitLuaAssert([delegate respondsToSelector:@selector(createHeaderForRefreshView:)], @"-[refreshDelegate createHeaderForRefreshView:] was not found!");
+        MLNUIKitLuaAssert([delegate respondsToSelector:@selector(createHeaderForRefreshView:)], @"-[refreshDelegate createHeaderForRefreshView:] was not found!");
         [delegate createHeaderForRefreshView:self];
     } else {
-        MLNKitLuaAssert([delegate respondsToSelector:@selector(removeHeaderForRefreshView:)], @"-[refreshDelegate removeHeaderForRefreshView:] was not found!");
+        MLNUIKitLuaAssert([delegate respondsToSelector:@selector(removeHeaderForRefreshView:)], @"-[refreshDelegate removeHeaderForRefreshView:] was not found!");
         [delegate removeHeaderForRefreshView:self];
     }
 }
@@ -77,37 +77,37 @@ static const void *kMLNScrollDirection = &kMLNScrollDirection;
 
 - (BOOL)lua_isRefreshing
 {
-    id<MLNRefreshDelegate> delegate = [self getRefreshDelegate];
-    MLNKitLuaAssert([delegate respondsToSelector:@selector(isRefreshingOfRefreshView:)], @"-[refreshDelegate isRefreshingOfRefreshView:] was not found!");
+    id<MLNUIRefreshDelegate> delegate = [self getRefreshDelegate];
+    MLNUIKitLuaAssert([delegate respondsToSelector:@selector(isRefreshingOfRefreshView:)], @"-[refreshDelegate isRefreshingOfRefreshView:] was not found!");
     return [delegate isRefreshingOfRefreshView:self];
 }
 
 - (void)lua_startRefreshing
 {
-    id<MLNRefreshDelegate> delegate = [self getRefreshDelegate];
-    MLNKitLuaAssert([delegate respondsToSelector:@selector(startRefreshingOfRefreshView:)], @"-[refreshDelegate startRefreshingOfRefreshView:] was not found!");
+    id<MLNUIRefreshDelegate> delegate = [self getRefreshDelegate];
+    MLNUIKitLuaAssert([delegate respondsToSelector:@selector(startRefreshingOfRefreshView:)], @"-[refreshDelegate startRefreshingOfRefreshView:] was not found!");
     [delegate startRefreshingOfRefreshView:self];
 }
 
 - (void)lua_stopRefreshing
 {
-    id<MLNRefreshDelegate> delegate = [self getRefreshDelegate];
-    MLNKitLuaAssert([delegate respondsToSelector:@selector(stopRefreshingOfRefreshView:)], @"-[refreshDelegate stopRefreshingOfRefreshView:] was not found!");
+    id<MLNUIRefreshDelegate> delegate = [self getRefreshDelegate];
+    MLNUIKitLuaAssert([delegate respondsToSelector:@selector(stopRefreshingOfRefreshView:)], @"-[refreshDelegate stopRefreshingOfRefreshView:] was not found!");
     [delegate stopRefreshingOfRefreshView:self];
 }
 
 - (void)lua_startLoading {
-    id<MLNRefreshDelegate> delegate = [self getRefreshDelegate];
-    MLNKitLuaAssert([delegate respondsToSelector:@selector(startLoadingOfRefreshView:)], @"-[refreshDelegate startLoadingOfRefreshView:] was not found!");
+    id<MLNUIRefreshDelegate> delegate = [self getRefreshDelegate];
+    MLNUIKitLuaAssert([delegate respondsToSelector:@selector(startLoadingOfRefreshView:)], @"-[refreshDelegate startLoadingOfRefreshView:] was not found!");
     [delegate startLoadingOfRefreshView:self];
 }
 
-- (void)setLua_refreshCallback:(MLNBlock *)lua_refreshCallback
+- (void)setLua_refreshCallback:(MLNUIBlock *)lua_refreshCallback
 {    
     objc_setAssociatedObject(self, kLuaRefreshCallBack, lua_refreshCallback, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
-- (MLNBlock *)lua_refreshCallback {
+- (MLNUIBlock *)lua_refreshCallback {
     return objc_getAssociatedObject(self, kLuaRefreshCallBack) ;
 }
 
@@ -118,12 +118,12 @@ static const void *kMLNScrollDirection = &kMLNScrollDirection;
         return;
     }
     objc_setAssociatedObject(self, kLuaLoadEnable, @(lua_loadEnable), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-    id<MLNRefreshDelegate> delegate = [self getRefreshDelegate];
+    id<MLNUIRefreshDelegate> delegate = [self getRefreshDelegate];
     if (lua_loadEnable) {
-        MLNKitLuaAssert([delegate respondsToSelector:@selector(createFooterForRefreshView:)], @"-[refreshDelegate createFooterForRefreshView:] was not found!");
+        MLNUIKitLuaAssert([delegate respondsToSelector:@selector(createFooterForRefreshView:)], @"-[refreshDelegate createFooterForRefreshView:] was not found!");
         [delegate createFooterForRefreshView:self];
     } else {
-        MLNKitLuaAssert([delegate respondsToSelector:@selector(removeFooterForRefreshView:)], @"-[refreshDelegate removeFooterForRefreshView:] was not found!");
+        MLNUIKitLuaAssert([delegate respondsToSelector:@selector(removeFooterForRefreshView:)], @"-[refreshDelegate removeFooterForRefreshView:] was not found!");
         [delegate removeFooterForRefreshView:self];
     }
 }
@@ -135,13 +135,13 @@ static const void *kMLNScrollDirection = &kMLNScrollDirection;
 
 - (BOOL)lua_isLoading
 {
-    id<MLNRefreshDelegate> delegate = [self getRefreshDelegate];
-    MLNKitLuaAssert([delegate respondsToSelector:@selector(isLoadingOfRefreshView:)], @"-[refreshDelegate isLoadingOfRefreshView:] was not found!");
+    id<MLNUIRefreshDelegate> delegate = [self getRefreshDelegate];
+    MLNUIKitLuaAssert([delegate respondsToSelector:@selector(isLoadingOfRefreshView:)], @"-[refreshDelegate isLoadingOfRefreshView:] was not found!");
     return [delegate isLoadingOfRefreshView:self];
 }
 
 - (void)setLua_loadahead:(CGFloat)lua_loadahead {
-    MLNKitLuaAssert(lua_loadahead >= 0, @"loadThreshold param must bigger or equal than 0.0!")
+    MLNUIKitLuaAssert(lua_loadahead >= 0, @"loadThreshold param must bigger or equal than 0.0!")
     if (lua_loadahead < 0) {
         return;
     }
@@ -154,29 +154,29 @@ static const void *kMLNScrollDirection = &kMLNScrollDirection;
 
 - (void)lua_stopLoading
 {
-    id<MLNRefreshDelegate> delegate = [self getRefreshDelegate];
-    MLNKitLuaAssert([delegate respondsToSelector:@selector(stopLoadingOfRefreshView:)], @"-[refreshDelegate stopLoadingOfRefreshView:] was not found!");
+    id<MLNUIRefreshDelegate> delegate = [self getRefreshDelegate];
+    MLNUIKitLuaAssert([delegate respondsToSelector:@selector(stopLoadingOfRefreshView:)], @"-[refreshDelegate stopLoadingOfRefreshView:] was not found!");
     [delegate stopLoadingOfRefreshView:self];
 }
 
 - (void)lua_noMoreData
 {
-    id<MLNRefreshDelegate> delegate = [self getRefreshDelegate];
-    MLNKitLuaAssert([delegate respondsToSelector:@selector(noMoreDataOfRefreshView:)], @"-[refreshDelegate noMoreDataOfRefreshView:] was not found!");
+    id<MLNUIRefreshDelegate> delegate = [self getRefreshDelegate];
+    MLNUIKitLuaAssert([delegate respondsToSelector:@selector(noMoreDataOfRefreshView:)], @"-[refreshDelegate noMoreDataOfRefreshView:] was not found!");
     [delegate noMoreDataOfRefreshView:self];
 }
 
 - (void)lua_resetLoading
 {
-    id<MLNRefreshDelegate> delegate = [self getRefreshDelegate];
-    MLNKitLuaAssert([delegate respondsToSelector:@selector(resetLoadingOfRefreshView:)], @"-[refreshDelegate resetLoadingOfRefreshView:] was not found!");
+    id<MLNUIRefreshDelegate> delegate = [self getRefreshDelegate];
+    MLNUIKitLuaAssert([delegate respondsToSelector:@selector(resetLoadingOfRefreshView:)], @"-[refreshDelegate resetLoadingOfRefreshView:] was not found!");
     [delegate resetLoadingOfRefreshView:self];
 }
 
 - (BOOL)lua_isNoMoreData
 {
-    id<MLNRefreshDelegate> delegate = [self getRefreshDelegate];
-    MLNKitLuaAssert([delegate respondsToSelector:@selector(isNoMoreDataOfRefreshView:)], @"-[refreshDelegate isNoMoreDataOfRefreshView:] was not found!");
+    id<MLNUIRefreshDelegate> delegate = [self getRefreshDelegate];
+    MLNUIKitLuaAssert([delegate respondsToSelector:@selector(isNoMoreDataOfRefreshView:)], @"-[refreshDelegate isNoMoreDataOfRefreshView:] was not found!");
     return [delegate isNoMoreDataOfRefreshView:self];
 }
 
@@ -185,35 +185,35 @@ static const void *kMLNScrollDirection = &kMLNScrollDirection;
     
 }
 
-- (void)setLua_loadCallback:(MLNBlock *)lua_loadCallback
+- (void)setLua_loadCallback:(MLNUIBlock *)lua_loadCallback
 {
     objc_setAssociatedObject(self, kLuaLoadCallBack, lua_loadCallback, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
-- (MLNBlock *)lua_loadCallback {
+- (MLNUIBlock *)lua_loadCallback {
     return objc_getAssociatedObject(self, kLuaLoadCallBack) ;
 }
 
-- (id<MLNRefreshDelegate>)getRefreshDelegate
+- (id<MLNUIRefreshDelegate>)getRefreshDelegate
 {
     if (self.mln_isConvertible) {
-        id<MLNEntityExportProtocol> ud = (id<MLNEntityExportProtocol>)self;
-        id<MLNRefreshDelegate> delegate = MLN_KIT_INSTANCE(ud.mln_luaCore).instanceHandlersManager.scrollRefreshHandler;
-        MLNKitLuaAssert(delegate, @"The refresh delegate must not be nil!");
+        id<MLNUIEntityExportProtocol> ud = (id<MLNUIEntityExportProtocol>)self;
+        id<MLNUIRefreshDelegate> delegate = MLNUI_KIT_INSTANCE(ud.mln_luaCore).instanceHandlersManager.scrollRefreshHandler;
+        MLNUIKitLuaAssert(delegate, @"The refresh delegate must not be nil!");
         return delegate;
     }
     return nil;
 }
 
-static const void *kMLNContentvView = &kMLNContentvView;
+static const void *kMLNUIContentvView = &kMLNUIContentvView;
 - (void)setMln_contentView:(UIView *)mln_contentView
 {
-    objc_setAssociatedObject(self, kMLNContentvView, mln_contentView, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    objc_setAssociatedObject(self, kMLNUIContentvView, mln_contentView, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
 - (UIView *)mln_contentView
 {
-    return objc_getAssociatedObject(self, kMLNContentvView);
+    return objc_getAssociatedObject(self, kMLNUIContentvView);
 }
 
 @end
@@ -225,61 +225,61 @@ static const void *kLuaEndDraggingCallback = &kLuaEndDraggingCallback;
 static const void *kLuaStartDeceleratingCallback = &kLuaStartDeceleratingCallback;
 
 
-@implementation UIScrollView (MLNScrolling)
+@implementation UIScrollView (MLNUIScrolling)
 
-- (void)setLua_scrollBeginCallback:(MLNBlock *)lua_scrollBeginCallback
+- (void)setLua_scrollBeginCallback:(MLNUIBlock *)lua_scrollBeginCallback
 {
     objc_setAssociatedObject(self, kLuaScrollBeginCallback, lua_scrollBeginCallback, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
-- (MLNBlock *)lua_scrollBeginCallback
+- (MLNUIBlock *)lua_scrollBeginCallback
 {
     return objc_getAssociatedObject(self, kLuaScrollBeginCallback);
 }
 
-- (void)setLua_scrollingCallback:(MLNBlock *)lua_scrollingCallback
+- (void)setLua_scrollingCallback:(MLNUIBlock *)lua_scrollingCallback
 {
     objc_setAssociatedObject(self, kLuaScrollingCallback, lua_scrollingCallback, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
-- (MLNBlock *)lua_scrollingCallback
+- (MLNUIBlock *)lua_scrollingCallback
 {
     return objc_getAssociatedObject(self, kLuaScrollingCallback);
 }
 
-- (void)setLua_scrollEndCallback:(MLNBlock *)lua_scrollEndCallback
+- (void)setLua_scrollEndCallback:(MLNUIBlock *)lua_scrollEndCallback
 {
     objc_setAssociatedObject(self, kLuaScrollEndCallback, lua_scrollEndCallback, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
-- (MLNBlock *)lua_scrollEndCallback
+- (MLNUIBlock *)lua_scrollEndCallback
 {
     return objc_getAssociatedObject(self, kLuaScrollEndCallback);
 }
 
-- (void)setLua_startDeceleratingCallback:(MLNBlock *)lua_startDeceleratingCallback
+- (void)setLua_startDeceleratingCallback:(MLNUIBlock *)lua_startDeceleratingCallback
 {
     objc_setAssociatedObject(self, kLuaStartDeceleratingCallback, lua_startDeceleratingCallback, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
-- (MLNBlock *)lua_startDeceleratingCallback
+- (MLNUIBlock *)lua_startDeceleratingCallback
 {
     return objc_getAssociatedObject(self, kLuaStartDeceleratingCallback);
 }
 
-- (void)setLua_endDraggingCallback:(MLNBlock *)lua_endDraggingCallback
+- (void)setLua_endDraggingCallback:(MLNUIBlock *)lua_endDraggingCallback
 {
     objc_setAssociatedObject(self, kLuaEndDraggingCallback, lua_endDraggingCallback, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
-- (MLNBlock *)lua_endDraggingCallback
+- (MLNUIBlock *)lua_endDraggingCallback
 {
     return objc_getAssociatedObject(self, kLuaEndDraggingCallback);
 }
 
 - (void)lua_setScrollIndicatorInset:(CGFloat)top right:(CGFloat)right bottom:(CGFloat)bottom  left:(CGFloat)left
 {
-    MLNKitLuaAssert(NO, @"ScrollView:setScrollIndicatorInset method is deprecated");
+    MLNUIKitLuaAssert(NO, @"ScrollView:setScrollIndicatorInset method is deprecated");
     self.scrollIndicatorInsets = UIEdgeInsetsMake(top, left, bottom, right);
 }
 
@@ -289,7 +289,7 @@ static const void *kLuaStartDeceleratingCallback = &kLuaStartDeceleratingCallbac
     self.scrollIndicatorInsets = UIEdgeInsetsMake(top, left, bottom, right);
 }
 
-- (void)lua_getContetnInset:(MLNBlock*)block
+- (void)lua_getContetnInset:(MLNUIBlock*)block
 {
     if (block) {
         [block addFloatArgument:self.contentInset.top];

@@ -1,41 +1,41 @@
 //
-//  MLNLabelT.m
+//  MLNUILabelT.m
 //
 //
 //  Created by MoMo on 2018/11/12.
 //
 
-#import "MLNLabel.h"
-#import "MLNViewExporterMacro.h"
-#import "MLNKitHeader.h"
-#import "MLNKitInstance.h"
-#import "MLNLayoutEngine.h"
-#import "MLNTextConst.h"
-#import "MLNViewConst.h"
-#import "MLNFont.h"
-#import "UIView+MLNKit.h"
-#import "UIView+MLNLayout.h"
-#import "MLNLayoutNode.h"
-#import "MLNSizeCahceManager.h"
-#import "MLNBeforeWaitingTask.h"
-#import "NSAttributedString+MLNKit.h"
-#import "MLNStyleString.h"
+#import "MLNUILabel.h"
+#import "MLNUIViewExporterMacro.h"
+#import "MLNUIKitHeader.h"
+#import "MLNUIKitInstance.h"
+#import "MLNUILayoutEngine.h"
+#import "MLNUITextConst.h"
+#import "MLNUIViewConst.h"
+#import "MLNUIFont.h"
+#import "UIView+MLNUIKit.h"
+#import "UIView+MLNUILayout.h"
+#import "MLNUILayoutNode.h"
+#import "MLNUISizeCahceManager.h"
+#import "MLNUIBeforeWaitingTask.h"
+#import "NSAttributedString+MLNUIKit.h"
+#import "MLNUIStyleString.h"
 
-@interface MLNLabel ()
+@interface MLNUILabel ()
 
 @property (nonatomic, strong) UILabel *innerLabel;
 @property (nonatomic, assign) CGFloat fontSize;
 @property (nonatomic, copy) NSString *fontName;
-@property (nonatomic, assign) MLNFontStyle fontStyle;
+@property (nonatomic, assign) MLNUIFontStyle fontStyle;
 @property (nonatomic, assign) CGFloat lineSpacing;
 @property (nonatomic, copy) NSString *originText;
-@property (nonatomic, assign) MLNLabelMaxMode limitMode;
+@property (nonatomic, assign) MLNUILabelMaxMode limitMode;
 @property (nonatomic, assign) NSLineBreakMode labelBreakMode;
 @end
 
-@implementation MLNLabel
+@implementation MLNUILabel
 
-- (instancetype)initWithLuaCore:(MLNLuaCore *)luaCore frame:(CGRect)frame
+- (instancetype)initWithLuaCore:(MLNUILuaCore *)luaCore frame:(CGRect)frame
 {
     if (self = [super initWithLuaCore:luaCore frame:frame]) {
         self.labelBreakMode = NSLineBreakByTruncatingTail;
@@ -79,10 +79,10 @@
 - (CGSize)lua_measureSizeWithMaxWidth:(CGFloat)maxWidth maxHeight:(CGFloat)maxHeight
 {
     NSString *cacheKey = [self remakeCacheKeyWithMaxWidth:maxWidth maxHeight:maxHeight];
-    MLNSizeCahceManager *sizeCacheManager = MLN_KIT_INSTANCE(self.mln_luaCore).layoutEngine.sizeCacheManager;
+    MLNUISizeCahceManager *sizeCacheManager = MLNUI_KIT_INSTANCE(self.mln_luaCore).layoutEngine.sizeCacheManager;
     NSValue *sizeValue = [sizeCacheManager objectForKey:cacheKey];
     switch (_limitMode) {
-        case MLNLabelMaxModeValue:
+        case MLNUILabelMaxModeValue:
             self.innerLabel.numberOfLines = 0;
             break;
         default:
@@ -145,7 +145,7 @@
 - (void)setAttributedText:(NSAttributedString *)attributedText
 {
     if (![attributedText isKindOfClass:[NSAttributedString class]]) {
-        MLNKitLuaError(@"Error! Cannot assign a non-StyleString type to label styleText ");
+        MLNUIKitLuaError(@"Error! Cannot assign a non-StyleString type to label styleText ");
         return;
     }
     if (self.attributedText == attributedText) {
@@ -186,7 +186,7 @@
 - (void)setNumberOfLines:(NSInteger)numberOfLines
 {
     [self setLua_maxHieght:0];
-    _limitMode = MLNLabelMaxModeLines;
+    _limitMode = MLNUILabelMaxModeLines;
     if (self.numberOfLines == numberOfLines) {
         return;
     }
@@ -225,7 +225,7 @@
 
 - (void)setTextColor:(UIColor *)textColor
 {
-    MLNCheckTypeAndNilValue(textColor, @"Color", [UIColor class])
+    MLNUICheckTypeAndNilValue(textColor, @"Color", [UIColor class])
     self.innerLabel.textColor = textColor;
     [self handleLineSpacing];
 }
@@ -290,24 +290,24 @@
 
 - (void)lua_setTextBold
 {
-    MLNLuaAssert(self.mln_luaCore, NO, @"Label:setTextBold method is deprecated, use setTextFontStyle instead!");
-    [self lua_setTextFontStyle:MLNFontStyleBold];
+    MLNUILuaAssert(self.mln_luaCore, NO, @"Label:setTextBold method is deprecated, use setTextFontStyle instead!");
+    [self lua_setTextFontStyle:MLNUIFontStyleBold];
 }
 
-- (void)lua_setTextFontStyle:(MLNFontStyle)style
+- (void)lua_setTextFontStyle:(MLNUIFontStyle)style
 {
     if (self.fontStyle == style) {
         return;
     }
     self.fontStyle = style;
     [self lua_needLayoutAndSpread];
-    self.font = [MLNFont fontWithFontName:nil fontStyle:style fontSize:self.fontSize instance:MLN_KIT_INSTANCE(self.mln_luaCore)];
+    self.font = [MLNUIFont fontWithFontName:nil fontStyle:style fontSize:self.fontSize instance:MLNUI_KIT_INSTANCE(self.mln_luaCore)];
     [self handleLineSpacing];
 }
 
 - (void)lua_fontName:(NSString *)fontName size:(CGFloat)fontSize
 {
-    MLNCheckStringTypeAndNilValue(fontName)
+    MLNUICheckStringTypeAndNilValue(fontName)
     if (self.fontSize == fontSize && [self.fontName isEqualToString:fontName]) {
         return;
     }
@@ -322,7 +322,7 @@
 
 - (void)lua_setFonAutoFit:(BOOL)fit
 {
-    MLNLuaAssert(self.mln_luaCore, NO, @"Label:setAutoFit method is deprecated!");
+    MLNUILuaAssert(self.mln_luaCore, NO, @"Label:setAutoFit method is deprecated!");
     self.autoFit = fit;
     if (fit) {
         [self calculatorAutoSize];
@@ -333,7 +333,7 @@
 - (void)lua_setText:(NSString *)text
 {
     if (![text isKindOfClass:[NSString class]]) {
-        MLNLuaAssert(self.mln_luaCore, [text isKindOfClass:[NSString class]], @"Error! Cannot assign a non-NSString type to label ");
+        MLNUILuaAssert(self.mln_luaCore, [text isKindOfClass:[NSString class]], @"Error! Cannot assign a non-NSString type to label ");
         return;
     }
     self.text = text;
@@ -342,13 +342,13 @@
 
 - (void)lua_setMaxHeight:(CGFloat)maxHeight
 {
-    _limitMode = MLNLabelMaxModeValue;
+    _limitMode = MLNUILabelMaxModeValue;
     [self setLua_maxHieght:maxHeight];
 }
 
 - (void)lua_setMinHeight:(CGFloat)minHeight
 {
-    _limitMode = MLNLabelMaxModeValue;
+    _limitMode = MLNUILabelMaxModeValue;
     [self setLua_minHeight:minHeight];
 }
 
@@ -410,17 +410,17 @@
 
 - (void)lua_addSubview:(UIView *)view
 {
-    MLNLuaAssert(self.mln_luaCore, NO, @"Not found \"addView\" method, just continar of View has it!");
+    MLNUILuaAssert(self.mln_luaCore, NO, @"Not found \"addView\" method, just continar of View has it!");
 }
 
 - (void)lua_insertSubview:(UIView *)view atIndex:(NSInteger)index
 {
-    MLNLuaAssert(self.mln_luaCore, NO, @"Not found \"insertView\" method, just continar of View has it!");
+    MLNUILuaAssert(self.mln_luaCore, NO, @"Not found \"insertView\" method, just continar of View has it!");
 }
 
 - (void)lua_removeAllSubViews
 {
-    MLNLuaAssert(self.mln_luaCore, NO, @"Not found \"removeAllSubviews\" method, just continar of View has it!");
+    MLNUILuaAssert(self.mln_luaCore, NO, @"Not found \"removeAllSubviews\" method, just continar of View has it!");
 }
 
 - (UIView *)lua_contentView
@@ -434,30 +434,30 @@
 }
 
 #pragma mark - Export To Lua
-LUA_EXPORT_VIEW_BEGIN(MLNLabel)
-LUA_EXPORT_VIEW_PROPERTY(text, "lua_setText:", "text", MLNLabel)
-LUA_EXPORT_VIEW_PROPERTY(textAlign, "setTextAlignment:", "textAlignment", MLNLabel) // MLNTextAlign
-LUA_EXPORT_VIEW_PROPERTY(fontSize, "lua_setFontOfSize:", "lua_fontSize", MLNLabel)
-LUA_EXPORT_VIEW_PROPERTY(textColor, "setTextColor:", "textColor", MLNLabel)
-LUA_EXPORT_VIEW_PROPERTY(lines, "setNumberOfLines:", "numberOfLines", MLNLabel)
-LUA_EXPORT_VIEW_PROPERTY(breakMode, "setLineBreakMode:", "lineBreakMode", MLNLabel)
-LUA_EXPORT_VIEW_PROPERTY(styleText, "setAttributedText:", "attributedText", MLNLabel)
-LUA_EXPORT_VIEW_METHOD(padding, "lua_setPaddingWithTop:right:bottom:left:", MLNLabel)
-LUA_EXPORT_VIEW_METHOD(setTextBold, "lua_setTextBold", MLNLabel)
-LUA_EXPORT_VIEW_METHOD(setTextFontStyle, "lua_setTextFontStyle:", MLNLabel)
-LUA_EXPORT_VIEW_METHOD(fontNameSize, "lua_fontName:size:", MLNLabel)
-LUA_EXPORT_VIEW_METHOD(setAutoFit, "lua_setFonAutoFit:", MLNLabel)
-LUA_EXPORT_VIEW_METHOD(setWrapContent, "setLua_wrapContent:",MLNLabel) //SDK>=1.0.2
-LUA_EXPORT_VIEW_METHOD(setMaxWidth, "setLua_maxWidth:",MLNLabel) //SDK>=1.0.3，自适应时的限制
-LUA_EXPORT_VIEW_METHOD(setMinWidth, "setLua_minWidth:",MLNLabel) //SDK>=1.0.3，自适应时的限制
-LUA_EXPORT_VIEW_METHOD(setMaxHeight, "lua_setMaxHeight:",MLNLabel) //SDK>=1.0.3，自适应时的限制
-LUA_EXPORT_VIEW_METHOD(setMinHeight, "lua_setMinHeight:",MLNLabel) //SDK>=1.0.3，自适应时的限制
-LUA_EXPORT_VIEW_METHOD(setLineSpacing, "lua_setLineSpacing:",MLNLabel) //SDK>=1.0.3，自适应时的限制
-LUA_EXPORT_VIEW_METHOD(a_setIncludeFontPadding, "lua_a_setIncludeFontPadding:", MLNLabel)
-LUA_EXPORT_VIEW_END(MLNLabel, Label, YES, "MLNView", "initWithLuaCore:frame:")
+LUA_EXPORT_VIEW_BEGIN(MLNUILabel)
+LUA_EXPORT_VIEW_PROPERTY(text, "lua_setText:", "text", MLNUILabel)
+LUA_EXPORT_VIEW_PROPERTY(textAlign, "setTextAlignment:", "textAlignment", MLNUILabel) // MLNUITextAlign
+LUA_EXPORT_VIEW_PROPERTY(fontSize, "lua_setFontOfSize:", "lua_fontSize", MLNUILabel)
+LUA_EXPORT_VIEW_PROPERTY(textColor, "setTextColor:", "textColor", MLNUILabel)
+LUA_EXPORT_VIEW_PROPERTY(lines, "setNumberOfLines:", "numberOfLines", MLNUILabel)
+LUA_EXPORT_VIEW_PROPERTY(breakMode, "setLineBreakMode:", "lineBreakMode", MLNUILabel)
+LUA_EXPORT_VIEW_PROPERTY(styleText, "setAttributedText:", "attributedText", MLNUILabel)
+LUA_EXPORT_VIEW_METHOD(padding, "lua_setPaddingWithTop:right:bottom:left:", MLNUILabel)
+LUA_EXPORT_VIEW_METHOD(setTextBold, "lua_setTextBold", MLNUILabel)
+LUA_EXPORT_VIEW_METHOD(setTextFontStyle, "lua_setTextFontStyle:", MLNUILabel)
+LUA_EXPORT_VIEW_METHOD(fontNameSize, "lua_fontName:size:", MLNUILabel)
+LUA_EXPORT_VIEW_METHOD(setAutoFit, "lua_setFonAutoFit:", MLNUILabel)
+LUA_EXPORT_VIEW_METHOD(setWrapContent, "setLua_wrapContent:",MLNUILabel) //SDK>=1.0.2
+LUA_EXPORT_VIEW_METHOD(setMaxWidth, "setLua_maxWidth:",MLNUILabel) //SDK>=1.0.3，自适应时的限制
+LUA_EXPORT_VIEW_METHOD(setMinWidth, "setLua_minWidth:",MLNUILabel) //SDK>=1.0.3，自适应时的限制
+LUA_EXPORT_VIEW_METHOD(setMaxHeight, "lua_setMaxHeight:",MLNUILabel) //SDK>=1.0.3，自适应时的限制
+LUA_EXPORT_VIEW_METHOD(setMinHeight, "lua_setMinHeight:",MLNUILabel) //SDK>=1.0.3，自适应时的限制
+LUA_EXPORT_VIEW_METHOD(setLineSpacing, "lua_setLineSpacing:",MLNUILabel) //SDK>=1.0.3，自适应时的限制
+LUA_EXPORT_VIEW_METHOD(a_setIncludeFontPadding, "lua_a_setIncludeFontPadding:", MLNUILabel)
+LUA_EXPORT_VIEW_END(MLNUILabel, Label, YES, "MLNUIView", "initWithLuaCore:frame:")
 @end
 
-@implementation MLNOverlayLabel
-LUA_EXPORT_VIEW_BEGIN(MLNOverlayLabel) // 兼容Android
-LUA_EXPORT_VIEW_END(MLNOverlayLabel, OverLabel, YES, "MLNLabel", "initWithLuaCore:frame:")
+@implementation MLNUIOverlayLabel
+LUA_EXPORT_VIEW_BEGIN(MLNUIOverlayLabel) // 兼容Android
+LUA_EXPORT_VIEW_END(MLNUIOverlayLabel, OverLabel, YES, "MLNUILabel", "initWithLuaCore:frame:")
 @end

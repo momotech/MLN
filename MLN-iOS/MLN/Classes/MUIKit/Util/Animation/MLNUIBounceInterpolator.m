@@ -1,16 +1,16 @@
 //
-//  MLNBounceInterpolator.m
-//  MLN
+//  MLNUIBounceInterpolator.m
+//  MLNUI
 //
 //  Created by MoMo on 2019/9/4.
 //
 
-#import "MLNBounceInterpolator.h"
-#import "MLNKitHeader.h"
+#import "MLNUIBounceInterpolator.h"
+#import "MLNUIKitHeader.h"
 
-@implementation MLNBounceInterpolator
+@implementation MLNUIBounceInterpolator
 
-static MLN_FORCE_INLINE CGFloat bounce(CGFloat t) {
+static MLNUI_FORCE_INLINE CGFloat bounce(CGFloat t) {
     return t * t * 8.0f;
 }
 

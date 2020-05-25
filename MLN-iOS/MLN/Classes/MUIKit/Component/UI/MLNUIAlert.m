@@ -1,71 +1,71 @@
 //
-//  MLNAlert.m
+//  MLNUIAlert.m
 //  
 //
 //  Created by MoMo on 2018/7/11.
 //
 
-#import "MLNAlert.h"
-#import "MLNKitHeader.h"
-#import "MLNViewExporterMacro.h"
-#import "MLNBlock.h"
+#import "MLNUIAlert.h"
+#import "MLNUIKitHeader.h"
+#import "MLNUIViewExporterMacro.h"
+#import "MLNUIBlock.h"
 
 typedef enum : NSUInteger {
-    MLNAlertTypeSingle,
-    MLNAlertTypeDouble,
-    MLNAlertTypeMultiple,
-} MLNAlertType;
+    MLNUIAlertTypeSingle,
+    MLNUIAlertTypeDouble,
+    MLNUIAlertTypeMultiple,
+} MLNUIAlertType;
 
-@interface MLNAlert() <UIAlertViewDelegate>
+@interface MLNUIAlert() <UIAlertViewDelegate>
 
-@property (nonatomic, assign) MLNAlertType type;
+@property (nonatomic, assign) MLNUIAlertType type;
 @property (nonatomic, copy) NSString *title;
 @property (nonatomic, copy) NSString *message;
 @property (nonatomic, copy) NSString *cancelTitle;
-@property (nonatomic, strong) MLNBlock *cancelCallback;
+@property (nonatomic, strong) MLNUIBlock *cancelCallback;
 @property (nonatomic, copy) NSString *sureTitle;
 @property (nonatomic, copy) NSArray<NSString *> *multipleTitles;
 @property (nonatomic, copy) NSString *singleTitle;
-@property (nonatomic, strong) MLNBlock *callback;
+@property (nonatomic, strong) MLNUIBlock *callback;
 @property (nonatomic, weak) UIAlertView *alertView;
 
 @end
 
-@implementation MLNAlert
+@implementation MLNUIAlert
 
-- (void)lua_setCancel:(NSString *)cancel callback:(MLNBlock *)callback
+- (void)lua_setCancel:(NSString *)cancel callback:(MLNUIBlock *)callback
 {
-    MLNCheckTypeAndNilValue(cancel, @"string", NSString)
-    MLNCheckTypeAndNilValue(callback, @"function", MLNBlock)
-    self.type = MLNAlertTypeDouble;
+    MLNUICheckTypeAndNilValue(cancel, @"string", NSString)
+    MLNUICheckTypeAndNilValue(callback, @"function", MLNUIBlock)
+    self.type = MLNUIAlertTypeDouble;
     self.cancelTitle = cancel.length > 0?cancel:@"取消";
     self.cancelCallback = callback;
 }
 
-- (void)lua_setSure:(NSString *)sure callback:(MLNBlock *)callback
+- (void)lua_setSure:(NSString *)sure callback:(MLNUIBlock *)callback
 {
-    MLNCheckTypeAndNilValue(sure, @"string", NSString)
-    MLNCheckTypeAndNilValue(callback, @"function", MLNBlock)
-    self.type = MLNAlertTypeDouble;
+    MLNUICheckTypeAndNilValue(sure, @"string", NSString)
+    MLNUICheckTypeAndNilValue(callback, @"function", MLNUIBlock)
+    self.type = MLNUIAlertTypeDouble;
     self.sureTitle = sure.length > 0?sure:@"确认";
     self.callback = callback;
 }
 
-- (void)lua_setButtons:(NSArray <NSString *> *)titles callback:(MLNBlock *)callback
+- (void)lua_setButtons:(NSArray <NSString *> *)titles callback:(MLNUIBlock *)callback
 {
-    MLNCheckTypeAndNilValue(titles, @"Array", [NSMutableArray class])
-    MLNCheckTypeAndNilValue(callback, @"function", MLNBlock)
-    MLNLuaAssert(self.mln_luaCore, titles && titles.count > 1, @"The number of button titles must be no less than one！");
-    self.type = MLNAlertTypeMultiple;
+    MLNUICheckTypeAndNilValue(titles, @"Array", [NSMutableArray class])
+    MLNUICheckTypeAndNilValue(callback, @"function", MLNUIBlock)
+    MLNUILuaAssert(self.mln_luaCore, titles && titles.count > 1, @"The number of button titles must be no less than one！");
+    self.type = MLNUIAlertTypeMultiple;
     self.multipleTitles = titles;
     self.callback = callback;
 }
 
-- (void)lua_setSingle:(NSString *)single callback:(MLNBlock *)callback
+- (void)lua_setSingle:(NSString *)single callback:(MLNUIBlock *)callback
 {
-    MLNCheckTypeAndNilValue(single, @"string", [NSMutableArray class])
-    MLNCheckTypeAndNilValue(callback, @"function", MLNBlock)
-    self.type = MLNAlertTypeSingle;
+    MLNUICheckTypeAndNilValue(single, @"string", [NSMutableArray class])
+    MLNUICheckTypeAndNilValue(callback, @"function", MLNUIBlock)
+    self.type = MLNUIAlertTypeSingle;
     self.singleTitle = single;
     self.callback = callback;
 }
@@ -74,12 +74,12 @@ typedef enum : NSUInteger {
 {
     UIAlertView *alertView = nil;
     switch (self.type) {
-        case MLNAlertTypeSingle:{
+        case MLNUIAlertTypeSingle:{
             alertView = [[UIAlertView alloc] initWithTitle:self.title message:self.message delegate:self cancelButtonTitle:self.singleTitle otherButtonTitles:nil];
             break;
         }
-        case MLNAlertTypeMultiple:{
-            MLNLuaAssert(self.mln_luaCore, self.multipleTitles.count > 1, @"The number of button titles must be no less than one！");
+        case MLNUIAlertTypeMultiple:{
+            MLNUILuaAssert(self.mln_luaCore, self.multipleTitles.count > 1, @"The number of button titles must be no less than one！");
             alertView = [[UIAlertView alloc] initWithTitle:self.title message:self.message delegate:self cancelButtonTitle:nil otherButtonTitles:nil];
             for (NSString *title in self.multipleTitles) {
                 [alertView addButtonWithTitle:title];
@@ -106,14 +106,14 @@ typedef enum : NSUInteger {
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
     switch (self.type) {
-        case MLNAlertTypeMultiple:{
+        case MLNUIAlertTypeMultiple:{
             if (self.callback) {
                 [self.callback addIntegerArgument:buttonIndex + 1];
                 [self.callback callIfCan];
             }
             break;
         }
-        case MLNAlertTypeDouble: {
+        case MLNUIAlertTypeDouble: {
             switch (buttonIndex) {
                 case 0:
                     if (_cancelCallback) {
@@ -147,15 +147,15 @@ typedef enum : NSUInteger {
 }
 
 #pragma mark - Export For Lua
-LUA_EXPORT_BEGIN(MLNAlert)
-LUA_EXPORT_PROPERTY(title, "setTitle:", "title", MLNAlert)
-LUA_EXPORT_PROPERTY(message, "setMessage:", "message", MLNAlert)
-LUA_EXPORT_METHOD(setCancel, "lua_setCancel:callback:", MLNAlert)
-LUA_EXPORT_METHOD(setOk, "lua_setSure:callback:", MLNAlert)
-LUA_EXPORT_METHOD(setButtonList, "lua_setButtons:callback:", MLNAlert)
-LUA_EXPORT_METHOD(setSingleButton, "lua_setSingle:callback:", MLNAlert)
-LUA_EXPORT_METHOD(show, "lua_show", MLNAlert)
-LUA_EXPORT_METHOD(dismiss, "lua_dismiss", MLNAlert)
-LUA_EXPORT_END(MLNAlert, Alert, NO, NULL, NULL)
+LUA_EXPORT_BEGIN(MLNUIAlert)
+LUA_EXPORT_PROPERTY(title, "setTitle:", "title", MLNUIAlert)
+LUA_EXPORT_PROPERTY(message, "setMessage:", "message", MLNUIAlert)
+LUA_EXPORT_METHOD(setCancel, "lua_setCancel:callback:", MLNUIAlert)
+LUA_EXPORT_METHOD(setOk, "lua_setSure:callback:", MLNUIAlert)
+LUA_EXPORT_METHOD(setButtonList, "lua_setButtons:callback:", MLNUIAlert)
+LUA_EXPORT_METHOD(setSingleButton, "lua_setSingle:callback:", MLNUIAlert)
+LUA_EXPORT_METHOD(show, "lua_show", MLNUIAlert)
+LUA_EXPORT_METHOD(dismiss, "lua_dismiss", MLNUIAlert)
+LUA_EXPORT_END(MLNUIAlert, Alert, NO, NULL, NULL)
 
 @end

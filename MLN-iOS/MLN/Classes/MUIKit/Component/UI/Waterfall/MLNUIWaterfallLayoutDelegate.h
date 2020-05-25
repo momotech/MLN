@@ -1,6 +1,6 @@
 //
-//  MLNWaterfallLayoutDelegate.h
-//  MLN
+//  MLNUIWaterfallLayoutDelegate.h
+//  MLNUI
 //
 //  Created by MoMo on 2019/11/1.
 //
@@ -9,7 +9,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@protocol MLNWaterfallLayoutDelegate <NSObject>
+@protocol MLNUIWaterfallLayoutDelegate <NSObject>
 
 - (CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout heightForItemAtIndexPath:(NSIndexPath *)indexPath;
 

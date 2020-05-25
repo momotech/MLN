@@ -1,6 +1,6 @@
 //
-//  MLNTabSegmentScrollHandler.h
-//  MLN
+//  MLNUITabSegmentScrollHandler.h
+//  MLNUI
 //
 //  Created by MoMo on 2019/1/16.
 //
@@ -9,18 +9,18 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class MLNTabSegmentView;
+@class MLNUITabSegmentView;
 
-@protocol MLNTabSegmentScrollHandlerDelegate <NSObject>
+@protocol MLNUITabSegmentScrollHandlerDelegate <NSObject>
 - (void)scrollWithOldIndex:(NSInteger)index toIndex:(NSInteger)toIndex progress:(CGFloat)progress;
 - (void)scrollDidStart;
 - (void)scrollDidFinished;
 - (void)scrollDidEndDragging;
 @end
 
-@interface MLNTabSegmentScrollHandler : NSObject
+@interface MLNUITabSegmentScrollHandler : NSObject
 
-@property (nonatomic, weak) id<MLNTabSegmentScrollHandlerDelegate> delegate;
+@property (nonatomic, weak) id<MLNUITabSegmentScrollHandlerDelegate> delegate;
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView;
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView;

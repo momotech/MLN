@@ -1,37 +1,37 @@
 //
-//  MLNLuaTable.m
-//  MLNCore
+//  MLNUILuaTable.m
+//  MLNUICore
 //
 //  Created by MoMo on 2019/7/24.
 //
 
-#import "MLNLuaTable.h"
-#import "MLNHeader.h"
-#import "MLNLuaCore.h"
-#import "NSObject+MLNCore.h"
+#import "MLNUILuaTable.h"
+#import "MLNUIHeader.h"
+#import "MLNUILuaCore.h"
+#import "NSObject+MLNUICore.h"
 
-@interface MLNLuaTable ()
+@interface MLNUILuaTable ()
 
 @end
-@implementation MLNLuaTable
+@implementation MLNUILuaTable
 
-static MLN_FORCE_INLINE int mln_pushTable(lua_State *L, void * key, MLNLuaTableEnvironment env) {
+static MLNUI_FORCE_INLINE int mln_pushTable(lua_State *L, void * key, MLNUILuaTableEnvironment env) {
     lua_pushlightuserdata(L, key);
     lua_gettable(L, env); // [ ... | table ]
     mln_lua_checktable(L, -1);
     return -1;
 }
 
-- (instancetype)initWithLuaCore:(MLNLuaCore *)luaCore env:(MLNLuaTableEnvironment)env
+- (instancetype)initWithLuaCore:(MLNUILuaCore *)luaCore env:(MLNUILuaTableEnvironment)env
 {
     if (self = [super init]) {
         _luaCore = luaCore;
         switch (env) {
-            case MLNLuaTableEnvRegister:
-                _env = MLNLuaTableEnvRegister;
+            case MLNUILuaTableEnvRegister:
+                _env = MLNUILuaTableEnvRegister;
                 break;
             default:
-                _env = MLNLuaTableEnvGlobal;
+                _env = MLNUILuaTableEnvGlobal;
                 break;
         }
         [self createTableWithNumArray:0 numHash:0];
@@ -42,7 +42,7 @@ static MLN_FORCE_INLINE int mln_pushTable(lua_State *L, void * key, MLNLuaTableE
 - (void)createTableWithNumArray:(NSInteger)narr numHash:(NSInteger)nrec
 {
     lua_State *L = self.luaCore.state;
-    MLNAssert(self.luaCore, L, @"The lua state must not be nil!");
+    MLNUIAssert(self.luaCore, L, @"The lua state must not be nil!");
     if (L) {
         lua_checkstack(L, 32);
         int oldTop = lua_gettop(L);
@@ -62,9 +62,9 @@ static MLN_FORCE_INLINE int mln_pushTable(lua_State *L, void * key, MLNLuaTableE
 - (void)setObjectWithIndex:(int)objIndex key:(NSString *)key
 {
     lua_State *L = self.luaCore.state;
-    MLNAssert(self.luaCore, L, @"The lua state must not be nil!");
+    MLNUIAssert(self.luaCore, L, @"The lua state must not be nil!");
     if (!key || key.length <= 0) {
-        MLNError(self.luaCore, @"the key of obj mustn't be nil");
+        MLNUIError(self.luaCore, @"the key of obj mustn't be nil");
         return;
     }
     int base = lua_gettop(L);
@@ -82,9 +82,9 @@ static MLN_FORCE_INLINE int mln_pushTable(lua_State *L, void * key, MLNLuaTableE
 - (void)setObjectWithIndex:(int)objIndex cKey:(void *)cKey
 {
     lua_State *L = self.luaCore.state;
-    MLNAssert(self.luaCore, L, @"The lua state must not be nil!");
+    MLNUIAssert(self.luaCore, L, @"The lua state must not be nil!");
     if (cKey == NULL) {
-        MLNError(self.luaCore, @"the key of obj mustn't be nil");
+        MLNUIError(self.luaCore, @"the key of obj mustn't be nil");
         return;
     }
     int base = lua_gettop(L);
@@ -99,37 +99,37 @@ static MLN_FORCE_INLINE int mln_pushTable(lua_State *L, void * key, MLNLuaTableE
     lua_settop(L, base);
 }
 
-- (void)setObject:(id<MLNEntityExportProtocol>)obj key:(NSString *)key
+- (void)setObject:(id<MLNUIEntityExportProtocol>)obj key:(NSString *)key
 {
     lua_State *L = self.luaCore.state;
-    MLNAssert(self.luaCore, L, @"The lua state must not be nil!");
+    MLNUIAssert(self.luaCore, L, @"The lua state must not be nil!");
     if (!key || key.length <= 0) {
-        MLNError(self.luaCore, @"the key of %@ mustn't be nil",  obj);
+        MLNUIError(self.luaCore, @"the key of %@ mustn't be nil",  obj);
         return;
     }
     // 将对应table压栈
     mln_pushTable(L, (__bridge void *)(self), self.env);
     // 设置key - value
     lua_pushstring(L, key.UTF8String); // [ ... | table | key ]
-    [MLN_LUA_CORE(L) pushNativeObject:obj error:NULL]; // [ ... | table | key | ud ]
+    [MLNUI_LUA_CORE(L) pushNativeObject:obj error:NULL]; // [ ... | table | key | ud ]
     lua_settable(L, -3); // [ ... | table ]
     // 清理栈
     lua_pop(L, 1);
 }
 
-- (void)setObject:(id<MLNEntityExportProtocol>)obj cKey:(void *)cKey
+- (void)setObject:(id<MLNUIEntityExportProtocol>)obj cKey:(void *)cKey
 {
     lua_State *L = self.luaCore.state;
-    MLNAssert(self.luaCore, L, @"The lua state must not be nil!");
+    MLNUIAssert(self.luaCore, L, @"The lua state must not be nil!");
     if (cKey == NULL) {
-        MLNError(self.luaCore, @"the key of %@ mustn't be nil",  obj);
+        MLNUIError(self.luaCore, @"the key of %@ mustn't be nil",  obj);
         return;
     }
     // 将对应table压栈
     mln_pushTable(L, (__bridge void *)(self), self.env);
     // 设置key - value
     lua_pushlightuserdata(L, cKey); // [ ... | table | key ]
-    [MLN_LUA_CORE(L) pushNativeObject:obj error:NULL]; // [ ... | table | key | ud ]
+    [MLNUI_LUA_CORE(L) pushNativeObject:obj error:NULL]; // [ ... | table | key | ud ]
     lua_settable(L, -3); // [ ... | table ]
     // 清理栈
     lua_pop(L, 1);
@@ -138,9 +138,9 @@ static MLN_FORCE_INLINE int mln_pushTable(lua_State *L, void * key, MLNLuaTableE
 - (void)removeObject:(NSString *)key
 {
     lua_State *L = self.luaCore.state;
-    MLNAssert(self.luaCore, L, @"The lua state must not be nil!");
+    MLNUIAssert(self.luaCore, L, @"The lua state must not be nil!");
     if (key == NULL) {
-        MLNError(self.luaCore, @"the key of obj mustn't be nil");
+        MLNUIError(self.luaCore, @"the key of obj mustn't be nil");
         return;
     }
     int oldTop = lua_gettop(L);
@@ -157,9 +157,9 @@ static MLN_FORCE_INLINE int mln_pushTable(lua_State *L, void * key, MLNLuaTableE
 - (void)removeObjectForCKey:(void *)cKey
 {
     lua_State *L = self.luaCore.state;
-    MLNAssert(self.luaCore, L, @"The lua state must not be nil!");
+    MLNUIAssert(self.luaCore, L, @"The lua state must not be nil!");
     if (cKey == NULL) {
-        MLNError(self.luaCore, @"the key of obj mustn't be nil");
+        MLNUIError(self.luaCore, @"the key of obj mustn't be nil");
         return;
     }
     int oldTop = lua_gettop(L);
@@ -177,7 +177,7 @@ static MLN_FORCE_INLINE int mln_pushTable(lua_State *L, void * key, MLNLuaTableE
 {
     lua_State *L = self.luaCore.state;
     if (!L) {
-        MLNError(self.luaCore, @"The lua state must not be nil!");
+        MLNUIError(self.luaCore, @"The lua state must not be nil!");
         return NSNotFound;
     }
     int oldTop = lua_gettop(L);
@@ -198,7 +198,7 @@ static MLN_FORCE_INLINE int mln_pushTable(lua_State *L, void * key, MLNLuaTableE
 {
     lua_State *L = self.luaCore.state;
     if (!L) {
-        MLNError(self.luaCore, @"The lua state must not be nil!");
+        MLNUIError(self.luaCore, @"The lua state must not be nil!");
         return NSNotFound;
     }
     int oldTop = lua_gettop(L);
@@ -219,7 +219,7 @@ static MLN_FORCE_INLINE int mln_pushTable(lua_State *L, void * key, MLNLuaTableE
 {
     lua_State *L = self.luaCore.state;
     if (!L) {
-        MLNError(self.luaCore, @"The lua state must not be nil!");
+        MLNUIError(self.luaCore, @"The lua state must not be nil!");
         return NSNotFound;
     }
     return mln_pushTable(L, (__bridge void *)(self), self.env);
@@ -251,7 +251,7 @@ static MLN_FORCE_INLINE int mln_pushTable(lua_State *L, void * key, MLNLuaTableE
 {
     lua_State *L = self.luaCore.state;
     if (!L) {
-        MLNError(self.luaCore, @"The lua state must not be nil!");
+        MLNUIError(self.luaCore, @"The lua state must not be nil!");
         return NO;
     }
     mln_pushTable(L, (__bridge void *)(self), self.env);

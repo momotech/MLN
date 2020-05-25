@@ -1,24 +1,24 @@
 //
-//  MLNCanvasPaint.h
+//  MLNUICanvasPaint.h
 //
 //
 //  Created by MoMo on 2019/6/5.
 //
 
 #import <Foundation/Foundation.h>
-#import "MLNCanvasConst.h"
-#import "MLNEntityExportProtocol.h"
+#import "MLNUICanvasConst.h"
+#import "MLNUIEntityExportProtocol.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface MLNCanvasPaint : NSObject<MLNEntityExportProtocol>
+@interface MLNUICanvasPaint : NSObject<MLNUIEntityExportProtocol>
 
 @property (nonatomic, strong) UIColor *paintColor;
 @property (nonatomic, assign) CGFloat alpha;
 @property (nonatomic, assign) NSInteger pathEffect;
 @property (nonatomic, assign) NSInteger shader;
 @property (nonatomic, assign) CGFloat width;
-@property (nonatomic, assign) MLNCanvasDrawStyle style;
+@property (nonatomic, assign) MLNUICanvasDrawStyle style;
 @property (nonatomic, strong, readonly) UIFont *font;
 
 - (void)setupContext:(CGContextRef)contextRef;

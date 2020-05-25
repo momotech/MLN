@@ -1,16 +1,16 @@
 //
-//  UIView+MLNCore.m
-//  MLNCore
+//  UIView+MLNUICore.m
+//  MLNUICore
 //
 //  Created by MoMo on 2019/7/23.
 //
 
-#import "UIView+MLNCore.h"
+#import "UIView+MLNUICore.h"
 #import <objc/runtime.h>
 
-@implementation UIView (MLNCore)
+@implementation UIView (MLNUICore)
 
-- (instancetype)initWithLuaCore:(MLNLuaCore *)luaCore frame:(CGRect)frame
+- (instancetype)initWithLuaCore:(MLNUILuaCore *)luaCore frame:(CGRect)frame
 {
     if (self =  [self initWithFrame:frame]) {
 #pragma clang diagnostic push
@@ -21,9 +21,9 @@
     return self;
 }
 
-- (MLNNativeType)mln_nativeType
+- (MLNUINativeType)mln_nativeType
 {
-    return MLNNativeTypeView;
+    return MLNUINativeTypeView;
 }
 
 - (void)mln_user_data_dealloc

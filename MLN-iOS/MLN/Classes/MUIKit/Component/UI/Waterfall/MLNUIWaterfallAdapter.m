@@ -1,37 +1,37 @@
 //
-//  MLNWaterfallAdapter.m
+//  MLNUIWaterfallAdapter.m
 //  
 //
 //  Created by MoMo on 2018/7/18.
 //
 
-#import "MLNWaterfallAdapter.h"
-#import "MLNWaterfallView.h"
-#import "MLNCollectionViewCell.h"
-#import "MLNInternalWaterfallView.h"
-#import "MLNWaterfallHeaderView.h"
-#import "MLNBlock.h"
-#import "MLNKitHeader.h"
-#import "MLNViewExporterMacro.h"
-#import "UIView+MLNLayout.h"
-#import "MLNLayoutNode.h"
+#import "MLNUIWaterfallAdapter.h"
+#import "MLNUIWaterfallView.h"
+#import "MLNUICollectionViewCell.h"
+#import "MLNUIInternalWaterfallView.h"
+#import "MLNUIWaterfallHeaderView.h"
+#import "MLNUIBlock.h"
+#import "MLNUIKitHeader.h"
+#import "MLNUIViewExporterMacro.h"
+#import "UIView+MLNUILayout.h"
+#import "MLNUILayoutNode.h"
 
 
-#define kMLNWaterfallViewReuseID @"kMLNWaterfallViewReuseID"
+#define kMLNUIWaterfallViewReuseID @"kMLNUIWaterfallViewReuseID"
 
-@interface MLNWaterfallAdapter ()
+@interface MLNUIWaterfallAdapter ()
 
-@property (nonatomic, strong) MLNBlock *heightForHeaderCallback;
-@property (nonatomic, strong) MLNBlock *headerValidCallback;
-@property (nonatomic, strong) MLNBlock *initedHeaderCallback;
-@property (nonatomic, strong) MLNBlock *reuseHeaderCallback;
-@property (nonatomic, strong) MLNBlock *heightForCellCallback;
-@property (nonatomic, strong) MLNBlock *headerWillAppearCallback;
-@property (nonatomic, strong) MLNBlock *headerDidDisappearCallback;
+@property (nonatomic, strong) MLNUIBlock *heightForHeaderCallback;
+@property (nonatomic, strong) MLNUIBlock *headerValidCallback;
+@property (nonatomic, strong) MLNUIBlock *initedHeaderCallback;
+@property (nonatomic, strong) MLNUIBlock *reuseHeaderCallback;
+@property (nonatomic, strong) MLNUIBlock *heightForCellCallback;
+@property (nonatomic, strong) MLNUIBlock *headerWillAppearCallback;
+@property (nonatomic, strong) MLNUIBlock *headerDidDisappearCallback;
 
 @end
 
-@implementation MLNWaterfallAdapter
+@implementation MLNUIWaterfallAdapter
 
 - (CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout heightForItemAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -39,7 +39,7 @@
         [self.heightForCellCallback addIntArgument:(int)indexPath.section+1];
         [self.heightForCellCallback addIntArgument:(int)indexPath.item+1];
         NSNumber *heightValue = [self.heightForCellCallback callIfCan];
-        MLNKitLuaAssert(heightValue && [heightValue isMemberOfClass:NSClassFromString(@"__NSCFNumber")], @"The return value of method 'heightForCell' must be a number!");
+        MLNUIKitLuaAssert(heightValue && [heightValue isMemberOfClass:NSClassFromString(@"__NSCFNumber")], @"The return value of method 'heightForCell' must be a number!");
         CGFloat height = CGFloatValueFromNumber(heightValue);
         height = height < 0 ? 0 : height;
         return height;
@@ -53,17 +53,17 @@
         return CGSizeMake(0, 0);
     }
     
-    UIView *headerView = [MLNInternalWaterfallView headerViewInWaterfall:collectionView];
+    UIView *headerView = [MLNUIInternalWaterfallView headerViewInWaterfall:collectionView];
     if (!headerView) { // headerView 不存在，使用header新接口initedHeader、fillHeaderData、heightForHeader
         BOOL isHeaderValid = [self _mln_in_headerIsValid];
         if (section == 0 && isHeaderValid) {
             if (!self.heightForHeaderCallback) {
-                MLNKitLuaAssert(NO, @"The 'heightForHeader' callback must not be nil!");
+                MLNUIKitLuaAssert(NO, @"The 'heightForHeader' callback must not be nil!");
                 return CGSizeZero;
             } else {
                 [self.heightForHeaderCallback addIntArgument:(int)section+1];
                 NSNumber *heightValue = [self.heightForHeaderCallback callIfCan];
-                MLNKitLuaAssert(heightValue && [heightValue isMemberOfClass:NSClassFromString(@"__NSCFNumber")], @"The return value of method 'heightForHeader' must be a number!");
+                MLNUIKitLuaAssert(heightValue && [heightValue isMemberOfClass:NSClassFromString(@"__NSCFNumber")], @"The return value of method 'heightForHeader' must be a number!");
                 CGFloat height = CGFloatValueFromNumber(heightValue);
                 height = height < 0 ? 0 : height;
                 return CGSizeMake(0, height);
@@ -78,10 +78,10 @@
 
 - (UICollectionReusableView *)collectionView:(UICollectionView *)collectionView viewForSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath
 {
-    UIView *headerView = [MLNInternalWaterfallView headerViewInWaterfall:collectionView];
+    UIView *headerView = [MLNUIInternalWaterfallView headerViewInWaterfall:collectionView];
     if (!headerView) {
-        [collectionView registerClass:[MLNWaterfallHeaderView class] forSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:kMLNWaterfallHeaderViewReuseID];
-        MLNWaterfallHeaderView *waterfallHeaderView = [collectionView dequeueReusableSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:kMLNWaterfallHeaderViewReuseID forIndexPath:indexPath];
+        [collectionView registerClass:[MLNUIWaterfallHeaderView class] forSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:kMLNUIWaterfallHeaderViewReuseID];
+        MLNUIWaterfallHeaderView *waterfallHeaderView = [collectionView dequeueReusableSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:kMLNUIWaterfallHeaderViewReuseID forIndexPath:indexPath];
         [waterfallHeaderView pushContentViewWithLuaCore:self.mln_luaCore];
         
         BOOL isHeaderValid = [self _mln_in_headerIsValid];
@@ -90,14 +90,14 @@
         }
         
         if (!waterfallHeaderView.isInited) {
-            MLNKitLuaAssert(self.initedHeaderCallback, @"It must not be nil callback of header init!");
+            MLNUIKitLuaAssert(self.initedHeaderCallback, @"It must not be nil callback of header init!");
             [self.initedHeaderCallback addLuaTableArgument:[waterfallHeaderView getLuaTable]];
             [self.initedHeaderCallback addIntArgument:(int)indexPath.section+1];
             [self.initedHeaderCallback addIntArgument:(int)indexPath.row+1];
             [self.initedHeaderCallback callIfCan];
             [waterfallHeaderView initCompleted];
         }
-        MLNKitLuaAssert(self.reuseHeaderCallback, @"It must not be nil callback of header reuse!")
+        MLNUIKitLuaAssert(self.reuseHeaderCallback, @"It must not be nil callback of header reuse!")
         [self.reuseHeaderCallback addLuaTableArgument:[waterfallHeaderView getLuaTable]];
         [self.reuseHeaderCallback addIntArgument:(int)indexPath.section+1];
         [self.reuseHeaderCallback addIntArgument:(int)indexPath.row+1];
@@ -105,11 +105,11 @@
         [waterfallHeaderView requestLayoutIfNeed];
         return waterfallHeaderView;
     } else {
-        static NSString *reuseId = kMLNWaterfallViewReuseID;
-        [collectionView registerClass:[MLNCollectionViewCell class] forSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:reuseId];
-        MLNCollectionViewCell *headerContentView = [collectionView dequeueReusableSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:reuseId forIndexPath:indexPath];
+        static NSString *reuseId = kMLNUIWaterfallViewReuseID;
+        [collectionView registerClass:[MLNUICollectionViewCell class] forSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:reuseId];
+        MLNUICollectionViewCell *headerContentView = [collectionView dequeueReusableSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:reuseId forIndexPath:indexPath];
         [headerContentView pushContentViewWithLuaCore:self.mln_luaCore];
-        if ([collectionView isKindOfClass:[MLNInternalWaterfallView class]]) {
+        if ([collectionView isKindOfClass:[MLNUIInternalWaterfallView class]]) {
             [headerContentView setupLayoutNodeIfNeed];
             [headerContentView lua_addSubview:headerView];
             [headerView.lua_node needLayoutAndSpread];
@@ -126,7 +126,7 @@
 - (void)collectionView:(UICollectionView *)collectionView willDisplaySupplementaryView:(UICollectionReusableView *)view forElementKind:(NSString *)elementKind atIndexPath:(NSIndexPath *)indexPath
 {
     if (self.headerWillAppearCallback) {
-        id<MLNReuseCellProtocol> headerContentView = (id<MLNReuseCellProtocol>)view;
+        id<MLNUIReuseCellProtocol> headerContentView = (id<MLNUIReuseCellProtocol>)view;
         [self.headerWillAppearCallback addLuaTableArgument:[headerContentView getLuaTable]];
         [self.headerWillAppearCallback addIntArgument:(int)indexPath.section+1];
         [self.headerWillAppearCallback addIntArgument:(int)indexPath.item+1];
@@ -137,7 +137,7 @@
 - (void)collectionView:(UICollectionView *)collectionView didEndDisplayingSupplementaryView:(nonnull UICollectionReusableView *)view forElementOfKind:(nonnull NSString *)elementKind atIndexPath:(nonnull NSIndexPath *)indexPath
 {
     if (self.headerDidDisappearCallback) {
-        id<MLNReuseCellProtocol> headerContentView = (id<MLNReuseCellProtocol>)view;
+        id<MLNUIReuseCellProtocol> headerContentView = (id<MLNUIReuseCellProtocol>)view;
         [self.headerDidDisappearCallback addLuaTableArgument:[headerContentView getLuaTable]];
         [self.headerDidDisappearCallback addIntArgument:(int)indexPath.section+1];
         [self.headerDidDisappearCallback addIntArgument:(int)indexPath.item+1];
@@ -145,34 +145,34 @@
     }
 }
 
-- (void)lua_headerWillAppearCallback:(MLNBlock *)callback
+- (void)lua_headerWillAppearCallback:(MLNUIBlock *)callback
 {
-    MLNCheckTypeAndNilValue(callback, @"function", MLNBlock);
+    MLNUICheckTypeAndNilValue(callback, @"function", MLNUIBlock);
     self.headerWillAppearCallback = callback;
 }
 
-- (void)lua_headerDidDisappearCallback:(MLNBlock *)callback
+- (void)lua_headerDidDisappearCallback:(MLNUIBlock *)callback
 {
-    MLNCheckTypeAndNilValue(callback, @"function", MLNBlock);
+    MLNUICheckTypeAndNilValue(callback, @"function", MLNUIBlock);
     self.headerDidDisappearCallback = callback;
 }
 
 #pragma mark - WaterfallView header
-- (void)lua_initHeaderCallback:(MLNBlock *)callback
+- (void)lua_initHeaderCallback:(MLNUIBlock *)callback
 {
-    MLNCheckTypeAndNilValue(callback, @"function", MLNBlock);
+    MLNUICheckTypeAndNilValue(callback, @"function", MLNUIBlock);
     self.initedHeaderCallback = callback;
 }
 
-- (void)lua_reuseHeaderCallback:(MLNBlock *)callback
+- (void)lua_reuseHeaderCallback:(MLNUIBlock *)callback
 {
-    MLNCheckTypeAndNilValue(callback, @"function", MLNBlock);
+    MLNUICheckTypeAndNilValue(callback, @"function", MLNUIBlock);
     self.reuseHeaderCallback = callback;
 }
 
-- (void)lua_headValidCallback:(MLNBlock *)callback
+- (void)lua_headValidCallback:(MLNUIBlock *)callback
 {
-    MLNCheckTypeAndNilValue(callback, @"function", MLNBlock);
+    MLNUICheckTypeAndNilValue(callback, @"function", MLNUIBlock);
     self.headerValidCallback = callback;
 }
 
@@ -194,18 +194,18 @@
         return NO;
     }
     NSNumber *headerValidValue = [self.headerValidCallback callIfCan];
-    MLNKitLuaAssert(headerValidValue && [headerValidValue isMemberOfClass:NSClassFromString(@"__NSCFBoolean")], @"The return value of  method 'headerValid' must be a bool value!");
+    MLNUIKitLuaAssert(headerValidValue && [headerValidValue isMemberOfClass:NSClassFromString(@"__NSCFBoolean")], @"The return value of  method 'headerValid' must be a bool value!");
     return [headerValidValue boolValue];
 }
 
-LUA_EXPORT_BEGIN(MLNWaterfallAdapter)
-LUA_EXPORT_METHOD(heightForHeader, "setHeightForHeaderCallback:", MLNWaterfallAdapter)
-LUA_EXPORT_METHOD(initHeader, "lua_initHeaderCallback:", MLNWaterfallAdapter)
-LUA_EXPORT_METHOD(fillHeaderData, "lua_reuseHeaderCallback:", MLNWaterfallAdapter)
-LUA_EXPORT_METHOD(headerValid, "lua_headValidCallback:", MLNWaterfallAdapter)
-LUA_EXPORT_METHOD(heightForCell, "setHeightForCellCallback:", MLNWaterfallAdapter)
-LUA_EXPORT_METHOD(headerWillAppear, "lua_headerWillAppearCallback:", MLNWaterfallAdapter)
-LUA_EXPORT_METHOD(headerDidDisappear, "lua_headerDidDisappearCallback:", MLNWaterfallAdapter)
-LUA_EXPORT_END(MLNWaterfallAdapter, WaterfallAdapter, YES, "MLNCollectionViewAdapter", NULL)
+LUA_EXPORT_BEGIN(MLNUIWaterfallAdapter)
+LUA_EXPORT_METHOD(heightForHeader, "setHeightForHeaderCallback:", MLNUIWaterfallAdapter)
+LUA_EXPORT_METHOD(initHeader, "lua_initHeaderCallback:", MLNUIWaterfallAdapter)
+LUA_EXPORT_METHOD(fillHeaderData, "lua_reuseHeaderCallback:", MLNUIWaterfallAdapter)
+LUA_EXPORT_METHOD(headerValid, "lua_headValidCallback:", MLNUIWaterfallAdapter)
+LUA_EXPORT_METHOD(heightForCell, "setHeightForCellCallback:", MLNUIWaterfallAdapter)
+LUA_EXPORT_METHOD(headerWillAppear, "lua_headerWillAppearCallback:", MLNUIWaterfallAdapter)
+LUA_EXPORT_METHOD(headerDidDisappear, "lua_headerDidDisappearCallback:", MLNUIWaterfallAdapter)
+LUA_EXPORT_END(MLNUIWaterfallAdapter, WaterfallAdapter, YES, "MLNUICollectionViewAdapter", NULL)
 
 @end

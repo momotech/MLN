@@ -1,14 +1,14 @@
 //
-//  MLNLayoutScrollContainerNode.m
+//  MLNUILayoutScrollContainerNode.m
 //
 //
 //  Created by MoMo on 2018/12/13.
 //
 
-#import "MLNLayoutScrollContainerNode.h"
-#import "UIScrollView+MLNKit.h"
+#import "MLNUILayoutScrollContainerNode.h"
+#import "UIScrollView+MLNUIKit.h"
 
-@implementation MLNLayoutScrollContainerNode
+@implementation MLNUILayoutScrollContainerNode
 
 - (instancetype)initWithTargetView:(UIScrollView *)targetView
 {
@@ -46,9 +46,9 @@
     }
     
     // 2. calculate subnodes
-    NSArray<MLNLayoutNode *> *subnodes_t = self.subnodes;
+    NSArray<MLNUILayoutNode *> *subnodes_t = self.subnodes;
     for (NSUInteger i = 0; i < subnodes_t.count; i++) {
-        MLNLayoutNode *subnode = subnodes_t[i];
+        MLNUILayoutNode *subnode = subnodes_t[i];
         if (subnode.isGone) {
             continue;
         }
@@ -58,7 +58,7 @@
         CGFloat subUsableZoneHeight = usableZoneHeight - subnode.marginTop - subnode.marginBottom;
         CGSize subMeasuredSize = [subnode measureSizeWithMaxWidth:subUsableZoneWidth maxHeight:subUsableZoneHeight];
         switch (subnode.layoutStrategy) {
-            case MLNLayoutStrategyNativeFrame:
+            case MLNUILayoutStrategyNativeFrame:
                 subMaxWidth = subMeasuredSize.width + subnode.x;
                 subMaxHeight = subMeasuredSize.height + subnode.y;
                 break;
@@ -78,12 +78,12 @@
     // 4. update width
     if (!self.isWidthExcatly) {
         switch (self.mergedWidthType) {
-            case MLNLayoutMeasurementTypeWrapContent:
+            case MLNUILayoutMeasurementTypeWrapContent:
                 myMeasuredWidth = MIN(myMeasuredWidth, myMaxWidth);
                 myMeasuredWidth = MAX(self.minWidth, myMeasuredWidth);
                 self.measuredWidth = myMeasuredWidth;
                 break;
-            case MLNLayoutMeasurementTypeMatchParent:
+            case MLNUILayoutMeasurementTypeMatchParent:
                 self.measuredWidth = MAX(self.minWidth, myMaxWidth);
                 break;
             default:
@@ -95,12 +95,12 @@
     // 5. update height
     if (!self.isHeightExcatly) {
         switch (self.mergedHeightType) {
-            case MLNLayoutMeasurementTypeWrapContent:
+            case MLNUILayoutMeasurementTypeWrapContent:
                 myMeasuredHeight = MIN(myMeasuredHeight, myMaxHeight);
                 myMeasuredHeight = MAX(self.minHeight, myMeasuredHeight);
                 self.measuredHeight = myMeasuredHeight;
                 break;
-            case MLNLayoutMeasurementTypeMatchParent:
+            case MLNUILayoutMeasurementTypeMatchParent:
                 self.measuredHeight = MAX(self.minHeight, myMaxHeight);
                 break;
             default:

@@ -1,15 +1,15 @@
 //
-//  MLNScrollViewDelegate.m
+//  MLNUIScrollViewDelegate.m
 //  Expecta
 //
 //  Created by MoMo on 2018/7/5.
 //
 
-#import "MLNScrollViewDelegate.h"
-#import "UIScrollView+MLNKit.h"
-#import "MLNBlock.h"
+#import "MLNUIScrollViewDelegate.h"
+#import "UIScrollView+MLNUIKit.h"
+#import "MLNUIBlock.h"
 
-@implementation MLNScrollViewDelegate
+@implementation MLNUIScrollViewDelegate
 
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView
 {
@@ -93,7 +93,7 @@
 }
 
 #pragma mark - PrivateMethod
-- (void)calculateTopOrBottom:(UIScrollView *)scrollV block:(MLNBlock *)block
+- (void)calculateTopOrBottom:(UIScrollView *)scrollV block:(MLNUIBlock *)block
 {
     if (!block) {
         return;

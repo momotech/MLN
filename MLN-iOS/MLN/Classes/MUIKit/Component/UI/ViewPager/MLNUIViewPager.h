@@ -1,29 +1,29 @@
 //
-//  MLNViewPager.h
-//  MLN
+//  MLNUIViewPager.h
+//  MLNUI
 //
 //  Created by MoMo on 2018/8/31.
 //
 
 #import <UIKit/UIKit.h>
-#import "MLNTabSegmentViewDelegate.h"
-#import "MLNEntityExportProtocol.h"
+#import "MLNUITabSegmentViewDelegate.h"
+#import "MLNUIEntityExportProtocol.h"
 
-@class MLNViewPager;
-@class MLNTabSegmentView;
-@protocol MLNCycleScrollViewDelegate <NSObject>
+@class MLNUIViewPager;
+@class MLNUITabSegmentView;
+@protocol MLNUICycleScrollViewDelegate <NSObject>
 
 @property (nonatomic, assign) NSInteger cellCounts;
-@property (nonatomic, weak) MLNViewPager *viewPager;
+@property (nonatomic, weak) MLNUIViewPager *viewPager;
 @property (nonatomic, weak) UICollectionView *targetCollectionView;
 
 @end
 
-@interface MLNViewPager : UIView <MLNEntityExportProtocol, MLNTabSegmentViewDelegate>
+@interface MLNUIViewPager : UIView <MLNUIEntityExportProtocol, MLNUITabSegmentViewDelegate>
 
-@property (nonatomic, weak) id<UICollectionViewDataSource,MLNCycleScrollViewDelegate> adapter;
+@property (nonatomic, weak) id<UICollectionViewDataSource,MLNUICycleScrollViewDelegate> adapter;
 @property (nonatomic, weak) id<UIScrollViewDelegate> segmentViewHandler;
-@property (nonatomic, weak) MLNTabSegmentView *tabSegmentView;
+@property (nonatomic, weak) MLNUITabSegmentView *tabSegmentView;
 @property (nonatomic, assign) NSInteger totalItemsCount;
 /** 目标索引 **/
 @property (nonatomic, assign) NSInteger missionIndex;

@@ -1,16 +1,16 @@
 //
-//  MLNRenderContext.h
-//  MMLNua
+//  MLNUIRenderContext.h
+//  MMLNUIua
 //
 //  Created by MoMo on 2019/4/16.
 //
 
 #import <UIKit/UIKit.h>
-#import "MLNViewConst.h"
+#import "MLNUIViewConst.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface MLNRenderContext : NSObject
+@interface MLNUIRenderContext : NSObject
 
 - (instancetype)initWithTargetView:(UIView *)targetView;
 
@@ -21,9 +21,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) BOOL didSetClipToBounds;
 
 - (void)resetCornerRadius:(CGFloat)cornerRadius;
-- (void)resetCornerRadius:(CGFloat)cornerRadius byRoundingCorners:(MLNRectCorner)corners;
+- (void)resetCornerRadius:(CGFloat)cornerRadius byRoundingCorners:(MLNUIRectCorner)corners;
 - (void)resetCornerMaskViewWithRadius:(CGFloat)cornerRadius maskColor:(UIColor *)maskColor corners:(UIRectCorner)corners;
-- (void)resetGradientColor:(UIColor *)startColor endColor:(UIColor *)endColor direction:(MLNGradientType)direction;
+- (void)resetGradientColor:(UIColor *)startColor endColor:(UIColor *)endColor direction:(MLNUIGradientType)direction;
 - (void)resetShadow:(UIColor *)shadowColor shadowOffset:(CGSize)offset shadowRadius:(CGFloat)radius shadowOpacity:(CGFloat)opacity isOval:(BOOL)isOval;
 - (void)resetBorderWithBorderWidth:(CGFloat)borderWidth borderColor:(UIColor *)borderColor;
 
@@ -33,7 +33,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)resetClipWithTask;
 
 - (CGFloat)cornerRadius;
-- (CGFloat)cornerRadiusWithDirection:(MLNRectCorner)corner;
+- (CGFloat)cornerRadiusWithDirection:(MLNUIRectCorner)corner;
 
 @end
 

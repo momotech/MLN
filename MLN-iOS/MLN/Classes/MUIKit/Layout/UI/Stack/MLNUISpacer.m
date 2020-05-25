@@ -1,16 +1,16 @@
 //
-//  MLNSpacer.m
-//  MLN
+//  MLNUISpacer.m
+//  MLNUI
 //
 //  Created by MOMO on 2020/3/27.
 //
 
-#import "MLNSpacer.h"
-#import "MLNKitHeader.h"
-#import "UIView+MLNLayout.h"
-#import "MLNViewExporterMacro.h"
+#import "MLNUISpacer.h"
+#import "MLNUIKitHeader.h"
+#import "UIView+MLNUILayout.h"
+#import "MLNUIViewExporterMacro.h"
 
-@implementation MLNSpacer
+@implementation MLNUISpacer
 
 #pragma mark - Override
 
@@ -31,7 +31,7 @@
 
 #pragma mark - Export Lua
 
-LUA_EXPORT_VIEW_BEGIN(MLNSpacer)
-LUA_EXPORT_VIEW_END(MLNSpacer, Spacer, YES, "MLNView", "initWithLuaCore:frame:")
+LUA_EXPORT_VIEW_BEGIN(MLNUISpacer)
+LUA_EXPORT_VIEW_END(MLNUISpacer, Spacer, YES, "MLNUIView", "initWithLuaCore:frame:")
 
 @end

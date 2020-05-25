@@ -1,17 +1,17 @@
 //
-//  MLNCore.m
-//  MLNCore
+//  MLNUICore.m
+//  MLNUICore
 //
 //  Created by MoMo on 2019/7/23.
 //
 
-#import "MLNLuaCore.h"
-#import "NSError+MLNCore.h"
-#import "MLNLuaBundle.h"
-#import "MLNExporterManager.h"
-#import "MLNConvertor.h"
-#import "MLNFileLoader.h"
-#import "MLNLuaTable.h"
+#import "MLNUILuaCore.h"
+#import "NSError+MLNUICore.h"
+#import "MLNUILuaBundle.h"
+#import "MLNUIExporterManager.h"
+#import "MLNUIConvertor.h"
+#import "MLNUIFileLoader.h"
+#import "MLNUILuaTable.h"
 
 static void * mln_state_alloc(void *ud, void *ptr, size_t osize, size_t nsize) {
     (void)ud;
@@ -24,7 +24,7 @@ static void * mln_state_alloc(void *ud, void *ptr, size_t osize, size_t nsize) {
     }
 }
 
-static MLN_FORCE_INLINE int mln_libsize (const struct mln_objc_method *list) {
+static MLNUI_FORCE_INLINE int mln_libsize (const struct mln_objc_method *list) {
     int size = 0;
     for (; list->l_mn; list++) size++;
     return size;
@@ -49,13 +49,13 @@ static int mln_errorFunc_traceback (lua_State *L) {
     return 1;
 }
 
-@interface MLNLuaCore ()
+@interface MLNUILuaCore ()
 
 @property (nonatomic, assign, getter=isCollecting) BOOL collecting;
 
 @end
 
-@implementation MLNLuaCore (Stack)
+@implementation MLNUILuaCore (Stack)
 
 - (int)pushNativeObject:(id)obj error:(NSError **)error
 {
@@ -119,7 +119,7 @@ static int mln_errorFunc_traceback (lua_State *L) {
 
 @end
 
-@implementation MLNLuaCore (GC)
+@implementation MLNUILuaCore (GC)
 
 - (void)doGC
 {
@@ -154,7 +154,7 @@ static int mln_errorFunc_traceback (lua_State *L) {
 
 @end
 
-@implementation MLNLuaCore (Traceback)
+@implementation MLNUILuaCore (Traceback)
 
 - (NSString *)traceback
 {
@@ -202,50 +202,50 @@ static int mln_errorFunc_traceback (lua_State *L) {
 
 @end
 
-@implementation MLNLuaCore
+@implementation MLNUILuaCore
 
 - (instancetype)initWithLuaBundlePath:(NSString *)luaBundlePath
 {
-    return [self initWithLuaBundle:[MLNLuaBundle bundleCachesWithPath:luaBundlePath] convertor:nil exporter:nil];
+    return [self initWithLuaBundle:[MLNUILuaBundle bundleCachesWithPath:luaBundlePath] convertor:nil exporter:nil];
 }
 
-- (instancetype)initWithLuaBundle:(MLNLuaBundle *)bundle
+- (instancetype)initWithLuaBundle:(MLNUILuaBundle *)bundle
 {
     return [self initWithLuaBundle:bundle convertor:nil exporter:nil];
 }
 
-- (instancetype)initWithLuaBundle:(MLNLuaBundle *__nullable)luaBundle convertor:(Class<MLNConvertorProtocol> __nullable)convertorClass exporter:(Class<MLNExporterProtocol> __nullable)exporterClass
+- (instancetype)initWithLuaBundle:(MLNUILuaBundle *__nullable)luaBundle convertor:(Class<MLNUIConvertorProtocol> __nullable)convertorClass exporter:(Class<MLNUIExporterProtocol> __nullable)exporterClass
 {
     if (self = [super init]) {
         [self openLuaStateIfNeed];
         [self addNotification];
         if (!exporterClass) {
-            exporterClass = [MLNExporterManager class];
+            exporterClass = [MLNUIExporterManager class];
         }
         _exporter = [[(Class)exporterClass alloc] initWithLuaCore:self];
         if (!convertorClass) {
-            convertorClass = [MLNConvertor class];
+            convertorClass = [MLNUIConvertor class];
         }
         _convertor = [[(Class)convertorClass alloc] initWithLuaCore:self];
         _currentBundle = luaBundle;
         if (!_currentBundle) {
-            _currentBundle = [MLNLuaBundle mainBundle];
+            _currentBundle = [MLNUILuaBundle mainBundle];
         }
         [self createViewStrongTable];
-        [self registerMLNBridge];
+        [self registerMLNUIBridge];
     }
     return self;
 }
 
 - (instancetype)init
 {
-    self = [self initWithLuaBundle:[MLNLuaBundle mainBundle] convertor:nil exporter:nil];
+    self = [self initWithLuaBundle:[MLNUILuaBundle mainBundle] convertor:nil exporter:nil];
     return self;
 }
 
 - (void)createViewStrongTable
 {
-    _objStrongTable = [[MLNLuaTable alloc] initWithLuaCore:self env:MLNLuaTableEnvRegister];
+    _objStrongTable = [[MLNUILuaTable alloc] initWithLuaCore:self env:MLNUILuaTableEnvRegister];
 }
 
 - (BOOL)runFile:(NSString *)filePath error:(NSError * _Nullable __autoreleasing *)error
@@ -286,7 +286,7 @@ static int mln_errorFunc_traceback (lua_State *L) {
         if (error) {
             *error = err;
         }
-        MLNError(self, @"%@ not found", name);
+        MLNUIError(self, @"%@ not found", name);
         // 回调代理
         if ([self.delegate respondsToSelector:@selector(luaCore:didFailLoad:filePath:error:)]) {
             [self.delegate luaCore:self didFailLoad:data filePath:name error:err];
@@ -299,7 +299,7 @@ static int mln_errorFunc_traceback (lua_State *L) {
         if (error) {
             *error = err;
         }
-        MLNError(self, @"%@ not found", name);
+        MLNUIError(self, @"%@ not found", name);
         // 回调代理
         if ([self.delegate respondsToSelector:@selector(luaCore:didFailLoad:filePath:error:)]) {
             [self.delegate luaCore:self didFailLoad:data filePath:name error:err];
@@ -313,7 +313,7 @@ static int mln_errorFunc_traceback (lua_State *L) {
         if (error) {
             *error = err;
         }
-        MLNError(self, @"Lua state is released");
+        MLNUIError(self, @"Lua state is released");
         // 回调代理
         if ([self.delegate respondsToSelector:@selector(luaCore:didFailLoad:filePath:error:)]) {
             [self.delegate luaCore:self didFailLoad:data filePath:name error:err];
@@ -327,7 +327,7 @@ static int mln_errorFunc_traceback (lua_State *L) {
         if (error) {
             *error = err;
         }
-        MLNError(self, @"%@", errMsg);
+        MLNUIError(self, @"%@", errMsg);
         // 回调代理
         if ([self.delegate respondsToSelector:@selector(luaCore:didFailLoad:filePath:error:)]) {
             [self.delegate luaCore:self didFailLoad:data filePath:name error:err];
@@ -347,14 +347,14 @@ static int mln_errorFunc_traceback (lua_State *L) {
     if (!L) {
         if (error) {
             *error = [NSError mln_errorState:@"Lua state is released"];
-            MLNError(self, @"Lua state is released");
+            MLNUIError(self, @"Lua state is released");
         }
         return NO;
     }
     if (lua_type(L, -1) != LUA_TFUNCTION) {
         if (error) {
             *error = [NSError mln_errorCall:@"Function not found"];
-            MLNError(self, @"Function not found");
+            MLNUIError(self, @"Function not found");
         }
         return NO;
     }
@@ -369,7 +369,7 @@ static int mln_errorFunc_traceback (lua_State *L) {
         NSString *errmsg = [NSString stringWithFormat:@"%s", lua_tostring(L, -1)];
         if (error) {
             *error = [NSError mln_errorCall:errmsg];
-            MLNError(self, @"%s", lua_tostring(L, -1));
+            MLNUIError(self, @"%s", lua_tostring(L, -1));
         }
         return NO;
     }
@@ -382,7 +382,7 @@ static int mln_errorFunc_traceback (lua_State *L) {
     if (!L) {
         if (error) {
             *error = [NSError mln_errorState:@"Lua state is released"];
-            MLNError(self, @"Lua state is released");
+            MLNUIError(self, @"Lua state is released");
         }
         return NO;
     }
@@ -396,7 +396,7 @@ static int mln_errorFunc_traceback (lua_State *L) {
     if (!L) {
         if (error) {
             *error = [NSError mln_errorState:@"Lua state is released"];
-            MLNError(self, @"Lua state is released");
+            MLNUIError(self, @"Lua state is released");
         }
         return NO;
     }
@@ -452,20 +452,20 @@ static int mln_errorFunc_traceback (lua_State *L) {
     return YES;
 }
 
-- (BOOL)registerClazz:(Class<MLNExportProtocol>)clazz error:(NSError **)error
+- (BOOL)registerClazz:(Class<MLNUIExportProtocol>)clazz error:(NSError **)error
 {
     NSParameterAssert(clazz);
     return [self.exporter exportClass:clazz error:error];
 }
 
-- (BOOL)registerClasses:(NSArray<Class<MLNExportProtocol>> *)classes error:(NSError **)error
+- (BOOL)registerClasses:(NSArray<Class<MLNUIExportProtocol>> *)classes error:(NSError **)error
 {
     NSParameterAssert(classes && classes.count >0);
-    NSArray<Class<MLNExportProtocol>> *classesCopy = classes.copy;
-    for (Class<MLNExportProtocol> clazz in classesCopy) {
+    NSArray<Class<MLNUIExportProtocol>> *classesCopy = classes.copy;
+    for (Class<MLNUIExportProtocol> clazz in classesCopy) {
         BOOL ret = [self.exporter exportClass:clazz error:error];
         if (!ret) {
-            MLNError(self, @"%@", *error);
+            MLNUIError(self, @"%@", *error);
             return NO;
         }
     }
@@ -592,7 +592,7 @@ static int mln_errorFunc_traceback (lua_State *L) {
     if (!L) {
         if (error) {
             *error = [NSError mln_errorState:@"Lua state is released"];
-            MLNError(self, @"Lua state is released");
+            MLNUIError(self, @"Lua state is released");
         }
         return NO;
     }
@@ -609,7 +609,7 @@ static int mln_errorFunc_traceback (lua_State *L) {
     if (!L) {
         if (error) {
             *error = [NSError mln_errorState:@"Lua state is released"];
-            MLNError(self, @"Lua state is released");
+            MLNUIError(self, @"Lua state is released");
         }
         return NO;
     }
@@ -622,10 +622,10 @@ static int mln_errorFunc_traceback (lua_State *L) {
 
 - (void)changeLuaBundleWithPath:(NSString *)bundlePath
 {
-    _currentBundle = [[MLNLuaBundle alloc] initWithBundlePath:bundlePath];
+    _currentBundle = [[MLNUILuaBundle alloc] initWithBundlePath:bundlePath];
 }
 
-- (void)changeLuaBundle:(MLNLuaBundle *)bundle
+- (void)changeLuaBundle:(MLNUILuaBundle *)bundle
 {
     _currentBundle = bundle;
 }
@@ -640,12 +640,12 @@ static int mln_errorFunc_traceback (lua_State *L) {
     [self.objStrongTable setObjectWithIndex:objIndex cKey:cKey];
 }
 
-- (void)setStrongObject:(id<MLNEntityExportProtocol>)obj key:(NSString *)key
+- (void)setStrongObject:(id<MLNUIEntityExportProtocol>)obj key:(NSString *)key
 {
     [self.objStrongTable setObject:obj key:key];
 }
 
-- (void)setStrongObject:(id<MLNEntityExportProtocol>)obj cKey:(void *)cKey
+- (void)setStrongObject:(id<MLNUIEntityExportProtocol>)obj cKey:(void *)cKey
 {
     [self.objStrongTable setObject:obj cKey:cKey];
 }
@@ -679,9 +679,9 @@ static int mln_errorFunc_traceback (lua_State *L) {
     }
 }
 
-- (void)registerMLNBridge
+- (void)registerMLNUIBridge
 {
-    NSArray *classes = @[[MLNFileLoader class]];
+    NSArray *classes = @[[MLNUIFileLoader class]];
     [self registerClasses:classes error:NULL];
 }
 

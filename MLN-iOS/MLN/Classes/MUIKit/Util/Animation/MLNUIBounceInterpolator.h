@@ -1,16 +1,16 @@
 //
-//  MLNBounceInterpolator.h
-//  MLN
+//  MLNUIBounceInterpolator.h
+//  MLNUI
 //
 //  Created by MoMo on 2019/9/4.
 //
 
 #import <Foundation/Foundation.h>
-#import "MLNInterpolatorProtocol.h"
+#import "MLNUIInterpolatorProtocol.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface MLNBounceInterpolator : NSObject <MLNInterpolatorProtocol>
+@interface MLNUIBounceInterpolator : NSObject <MLNUIInterpolatorProtocol>
 
 @end
 

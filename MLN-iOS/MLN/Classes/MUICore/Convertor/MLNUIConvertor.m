@@ -1,23 +1,23 @@
 //
-//  MLNConvertor.m
-//  MLNCore
+//  MLNUIConvertor.m
+//  MLNUICore
 //
 //  Created by MoMo on 2019/7/25.
 //
 
-#import "MLNConvertor.h"
-#import "MLNLuaCore.h"
-#import "NSObject+MLNCore.h"
-#import "NSValue+MLNCore.h"
-#import "MLNLuaTable.h"
-#import "MLNEntityExportProtocol.h"
-#import "NSError+MLNCore.h"
+#import "MLNUIConvertor.h"
+#import "MLNUILuaCore.h"
+#import "NSObject+MLNUICore.h"
+#import "NSValue+MLNUICore.h"
+#import "MLNUILuaTable.h"
+#import "MLNUIEntityExportProtocol.h"
+#import "NSError+MLNUICore.h"
 #import <objc/runtime.h>
-#import "MLNBlock.h"
+#import "MLNUIBlock.h"
 
 #define mln_strcmp(a, b) (strcmp((a), (b)) == 0)
 
-static MLN_FORCE_INLINE void __mln_lua_createUDLuatable(lua_State *L, int index) {
+static MLNUI_FORCE_INLINE void __mln_lua_createUDLuatable(lua_State *L, int index) {
     lua_checkstack(L, 8);
     lua_pushvalue(L, index);
     lua_createtable(L, 8, 0);
@@ -27,30 +27,30 @@ static MLN_FORCE_INLINE void __mln_lua_createUDLuatable(lua_State *L, int index)
     lua_pop(L, 1);
 }
 
-static MLN_FORCE_INLINE void __mln_lua_pushentity(lua_State *L, id<MLNEntityExportProtocol> obj) {
+static MLNUI_FORCE_INLINE void __mln_lua_pushentity(lua_State *L, id<MLNUIEntityExportProtocol> obj) {
     int base = lua_gettop(L);
     // cache
-    if ([MLN_LUA_CORE(L) pushStrongObjectForCKey:(__bridge void *)obj]) {
+    if ([MLNUI_LUA_CORE(L) pushStrongObjectForCKey:(__bridge void *)obj]) {
         return;
     }
     lua_settop(L, base);
     
     const mln_objc_class *classInfo = [[obj class] mln_clazzInfo];
     // 创建Userdata对象
-    MLNUserData *userData = ((MLNUserData *)lua_newuserdata(L, sizeof(MLNUserData)));
+    MLNUIUserData *userData = ((MLNUIUserData *)lua_newuserdata(L, sizeof(MLNUIUserData)));
     __mln_lua_createUDLuatable(L, -1);
     userData->type = classInfo->l_type;
     // 引用native对象
     [obj mln_luaRetain:userData];
-    obj.mln_luaCore = MLN_LUA_CORE(L);
+    obj.mln_luaCore = MLNUI_LUA_CORE(L);
     // 设置方法表
     luaL_getmetatable(L, classInfo->l_name);
     lua_setmetatable(L, -2);
 }
 
-static MLN_FORCE_INLINE BOOL __mln_lua_pushtable(lua_State *L, __unsafe_unretained id obj, NSError **error);
+static MLNUI_FORCE_INLINE BOOL __mln_lua_pushtable(lua_State *L, __unsafe_unretained id obj, NSError **error);
 
-static MLN_FORCE_INLINE int __mln_lua_pushobj(lua_State *L, __unsafe_unretained id obj, NSError **error) {
+static MLNUI_FORCE_INLINE int __mln_lua_pushobj(lua_State *L, __unsafe_unretained id obj, NSError **error) {
     int ret = 1;
     lua_checkstack(L, 4);
     // 是否需要转换为多参数压栈
@@ -75,30 +75,30 @@ static MLN_FORCE_INLINE int __mln_lua_pushobj(lua_State *L, __unsafe_unretained 
     } else
     // 不需要转换为多参数压栈的对象
     switch ([obj mln_nativeType]) {
-        case MLNNativeTypeString:
+        case MLNUINativeTypeString:
         {
             NSString *s = obj;
             lua_pushstring(L, s.UTF8String);
             break;
         }
-        case MLNNativeTypeNumber:
+        case MLNUINativeTypeNumber:
         {
             NSNumber *number = obj;
-            if (MLNNumberIsBool(number)) {
+            if (MLNUINumberIsBool(number)) {
                 lua_pushboolean(L, number.boolValue);
             } else {
                 lua_pushnumber(L, number.doubleValue);
             }
             break;
         }
-        case MLNNativeTypeArray:
+        case MLNUINativeTypeArray:
         {
             if (!__mln_lua_pushtable(L, obj, error)) {
                 return 0;
             }
             break;
         }
-        case MLNNativeTypeDictionary:
+        case MLNUINativeTypeDictionary:
         {
             if (!__mln_lua_pushtable(L, obj, error)) {
                 return 0;
@@ -124,10 +124,10 @@ static MLN_FORCE_INLINE int __mln_lua_pushobj(lua_State *L, __unsafe_unretained 
 
 #define __mln_lua_push(value) \
 switch ([value mln_nativeType]) {\
-case MLNNativeTypeMArray:\
-case MLNNativeTypeArray:\
-case MLNNativeTypeMDictionary:\
-case MLNNativeTypeDictionary:\
+case MLNUINativeTypeMArray:\
+case MLNUINativeTypeArray:\
+case MLNUINativeTypeMDictionary:\
+case MLNUINativeTypeDictionary:\
 ret = __mln_lua_pushtable(L, value, error);\
 break;\
 default:\
@@ -135,11 +135,11 @@ ret = __mln_lua_pushobj(L, value, error);\
 break;\
 }
 
-static MLN_FORCE_INLINE BOOL __mln_lua_pushtable(lua_State *L, __unsafe_unretained id obj, NSError **error) {
+static MLNUI_FORCE_INLINE BOOL __mln_lua_pushtable(lua_State *L, __unsafe_unretained id obj, NSError **error) {
     BOOL ret = YES;
     switch ([obj mln_nativeType]) {
-        case MLNNativeTypeMArray:
-        case MLNNativeTypeArray:
+        case MLNUINativeTypeMArray:
+        case MLNUINativeTypeArray:
         {
             NSArray *array = obj;
             lua_newtable(L);
@@ -151,8 +151,8 @@ static MLN_FORCE_INLINE BOOL __mln_lua_pushtable(lua_State *L, __unsafe_unretain
             }
             break;
         }
-        case MLNNativeTypeMDictionary:
-        case MLNNativeTypeDictionary:
+        case MLNUINativeTypeMDictionary:
+        case MLNUINativeTypeDictionary:
         {
             NSDictionary* dictionary = obj;
             lua_newtable(L);
@@ -177,11 +177,11 @@ static MLN_FORCE_INLINE BOOL __mln_lua_pushtable(lua_State *L, __unsafe_unretain
     return ret;
 }
 
-static MLN_FORCE_INLINE id __mln_lua_toobj(lua_State* L, int idx, NSError **error);
+static MLNUI_FORCE_INLINE id __mln_lua_toobj(lua_State* L, int idx, NSError **error);
 
-static MLN_FORCE_INLINE CGRect __mln_lua__tocgrect(lua_State *L, int idx,  NSError **error) {
+static MLNUI_FORCE_INLINE CGRect __mln_lua__tocgrect(lua_State *L, int idx,  NSError **error) {
     if (lua_isuserdata(L, idx)) {
-        MLNUserData* user =  (MLNUserData*)lua_touserdata(L, idx);
+        MLNUIUserData* user =  (MLNUIUserData*)lua_touserdata(L, idx);
         NSValue *value = (__bridge NSValue *)(user->object);
         if(strcmp(value.objCType, @encode(CGRect)) != 0){
             if (error) {
@@ -197,8 +197,8 @@ static MLN_FORCE_INLINE CGRect __mln_lua__tocgrect(lua_State *L, int idx,  NSErr
             return CGRectZero;
         }
         switch ([ret mln_nativeType]) {
-            case MLNNativeTypeMArray:
-            case MLNNativeTypeArray: {
+            case MLNUINativeTypeMArray:
+            case MLNUINativeTypeArray: {
                 if ([ret count] == 4) {
                     CGFloat x = CGFloatValueFromNumber([ret objectAtIndex:0]);
                     CGFloat y = CGFloatValueFromNumber([ret objectAtIndex:1]);
@@ -207,8 +207,8 @@ static MLN_FORCE_INLINE CGRect __mln_lua__tocgrect(lua_State *L, int idx,  NSErr
                     return CGRectMake(x, y, w, h);
                 }
             }
-            case MLNNativeTypeMDictionary:
-            case MLNNativeTypeDictionary: {
+            case MLNUINativeTypeMDictionary:
+            case MLNUINativeTypeDictionary: {
                 CGFloat x = CGFloatValueFromNumber([(NSDictionary *)ret objectForKey:@"x"]);
                 CGFloat y = CGFloatValueFromNumber([(NSDictionary *)ret objectForKey:@"y"]);
                 CGFloat w = CGFloatValueFromNumber([(NSDictionary *)ret objectForKey:@"width"]);
@@ -228,9 +228,9 @@ static MLN_FORCE_INLINE CGRect __mln_lua__tocgrect(lua_State *L, int idx,  NSErr
     return CGRectZero;
 }
 
-static MLN_FORCE_INLINE CGPoint __mln_lua__tocgpoint(lua_State *L, int idx,  NSError **error) {
+static MLNUI_FORCE_INLINE CGPoint __mln_lua__tocgpoint(lua_State *L, int idx,  NSError **error) {
     if (lua_isuserdata(L, idx)) {
-        MLNUserData* user =  (MLNUserData*)lua_touserdata(L, idx);
+        MLNUIUserData* user =  (MLNUIUserData*)lua_touserdata(L, idx);
         NSValue *value = (__bridge NSValue *)(user->object);
         if(strcmp(value.objCType, @encode(CGPoint)) != 0){
             if (error) {
@@ -246,16 +246,16 @@ static MLN_FORCE_INLINE CGPoint __mln_lua__tocgpoint(lua_State *L, int idx,  NSE
             return CGPointZero;
         }
         switch ([ret mln_nativeType]) {
-            case MLNNativeTypeMArray:
-            case MLNNativeTypeArray: {
+            case MLNUINativeTypeMArray:
+            case MLNUINativeTypeArray: {
                 if ([ret count] == 2) {
                     CGFloat x = CGFloatValueFromNumber([ret objectAtIndex:0]);
                     CGFloat y = CGFloatValueFromNumber([ret objectAtIndex:1]);
                     return CGPointMake(x, y);
                 }
             }
-            case MLNNativeTypeMDictionary:
-            case MLNNativeTypeDictionary: {
+            case MLNUINativeTypeMDictionary:
+            case MLNUINativeTypeDictionary: {
                 CGFloat x = CGFloatValueFromNumber([(NSDictionary *)ret objectForKey:@"x"]);
                 CGFloat y = CGFloatValueFromNumber([(NSDictionary *)ret objectForKey:@"y"]);
                 return CGPointMake(x, y);
@@ -273,9 +273,9 @@ static MLN_FORCE_INLINE CGPoint __mln_lua__tocgpoint(lua_State *L, int idx,  NSE
     return CGPointZero;
 }
 
-static MLN_FORCE_INLINE CGSize __mln_lua_tocgsize(lua_State *L, int idx, NSError **error) {
+static MLNUI_FORCE_INLINE CGSize __mln_lua_tocgsize(lua_State *L, int idx, NSError **error) {
     if (lua_isuserdata(L, idx)) {
-        MLNUserData* user = lua_touserdata(L, idx);
+        MLNUIUserData* user = lua_touserdata(L, idx);
         NSValue *value = (__bridge NSValue *)(user->object);
         if(strcmp(value.objCType, @encode(CGSize)) != 0){
             if (error) {
@@ -291,16 +291,16 @@ static MLN_FORCE_INLINE CGSize __mln_lua_tocgsize(lua_State *L, int idx, NSError
             return CGSizeZero;
         }
         switch ([ret mln_nativeType]) {
-            case MLNNativeTypeMArray:
-            case MLNNativeTypeArray: {
+            case MLNUINativeTypeMArray:
+            case MLNUINativeTypeArray: {
                 if ([ret count] == 2) {
                     CGFloat w = CGFloatValueFromNumber([ret objectAtIndex:0]);
                     CGFloat h = CGFloatValueFromNumber([ret objectAtIndex:1]);
                     return CGSizeMake(w, h);
                 }
             }
-            case MLNNativeTypeMDictionary:
-            case MLNNativeTypeDictionary: {
+            case MLNUINativeTypeMDictionary:
+            case MLNUINativeTypeDictionary: {
                 CGFloat w = CGFloatValueFromNumber([(NSDictionary *)ret objectForKey:@"width"]);
                 CGFloat h = CGFloatValueFromNumber([(NSDictionary *)ret objectForKey:@"height"]);
                 return CGSizeMake(w, h);
@@ -318,7 +318,7 @@ static MLN_FORCE_INLINE CGSize __mln_lua_tocgsize(lua_State *L, int idx, NSError
     return CGSizeZero;
 }
 
-static MLN_FORCE_INLINE NSString * __mln_lua_tonsstring (lua_State *L, int idx, NSError **error) {
+static MLNUI_FORCE_INLINE NSString * __mln_lua_tonsstring (lua_State *L, int idx, NSError **error) {
     if(lua_isstring(L, idx)) {
         size_t size = 0;
         const char * chars = luaL_checklstring(L, idx, &size);
@@ -335,7 +335,7 @@ static MLN_FORCE_INLINE NSString * __mln_lua_tonsstring (lua_State *L, int idx, 
     return nil;
 }
 
-static MLN_FORCE_INLINE id __mln_lua_toobj(lua_State* L, int idx, NSError **error) {
+static MLNUI_FORCE_INLINE id __mln_lua_toobj(lua_State* L, int idx, NSError **error) {
     int type = lua_type(L, idx);
     switch ( type ) {
         case LUA_TNONE:
@@ -343,10 +343,10 @@ static MLN_FORCE_INLINE id __mln_lua_toobj(lua_State* L, int idx, NSError **erro
             return nil;
         }
         case LUA_TUSERDATA: {
-            MLNUserData* user =  (MLNUserData*)lua_touserdata(L, idx);
+            MLNUIUserData* user =  (MLNUIUserData*)lua_touserdata(L, idx);
             id obj =  (__bridge id)(user->object);
             if ([obj mln_isConvertible]) {
-                return [(id<MLNEntityExportProtocol>)obj mln_rawNativeData];
+                return [(id<MLNUIEntityExportProtocol>)obj mln_rawNativeData];
             }
             return nil;
         }
@@ -406,7 +406,7 @@ static MLN_FORCE_INLINE id __mln_lua_toobj(lua_State* L, int idx, NSError **erro
             return @{};
         }
         case LUA_TFUNCTION: {
-            return [[MLNBlock alloc] initWithLuaCore:MLN_LUA_CORE(L) indexOnLuaStack:idx];
+            return [[MLNUIBlock alloc] initWithLuaCore:MLNUI_LUA_CORE(L) indexOnLuaStack:idx];
         }
         default: {
             if (error) {
@@ -418,85 +418,85 @@ static MLN_FORCE_INLINE id __mln_lua_toobj(lua_State* L, int idx, NSError **erro
     }
 }
 
-MLN_Objc_Type mln_objctype(const char *type) {
+MLNUI_Objc_Type mln_objctype(const char *type) {
     switch (type[0]) {
         case _C_ID: //#define _C_ID       '@'
             if (type[1] == _C_UNDEF) {  //#define _C_UNDEF       '?'
-                return MLN_OBJCType_block;
+                return MLNUI_OBJCType_block;
             }
-            return MLN_OBJCType_id;
+            return MLNUI_OBJCType_id;
         case _C_CLASS: //#define _C_CLASS    '#'
-            return MLN_OBJCType_class;
+            return MLNUI_OBJCType_class;
         case _C_SEL:  //#define _C_SEL      ':'
-            return MLN_OBJCType_SEL;
+            return MLNUI_OBJCType_SEL;
         case _C_CHR:  //#define _C_CHR      'c'
-            return MLN_OBJCType_char;
+            return MLNUI_OBJCType_char;
         case _C_UCHR: //#define _C_UCHR     'C'
-            return MLN_OBJCType_uchar;
+            return MLNUI_OBJCType_uchar;
         case _C_SHT:  //#define _C_SHT      's'
-            return MLN_OBJCType_short;
+            return MLNUI_OBJCType_short;
         case _C_USHT: //#define _C_USHT     'S'
-            return MLN_OBJCType_ushort;
+            return MLNUI_OBJCType_ushort;
         case _C_INT:  //#define _C_INT      'i'
-            return MLN_OBJCType_int;
+            return MLNUI_OBJCType_int;
         case _C_UINT: //#define _C_UINT     'I'
-            return MLN_OBJCType_uint;
+            return MLNUI_OBJCType_uint;
         case _C_LNG:  //#define _C_LNG      'l'
-            return MLN_OBJCType_long;
+            return MLNUI_OBJCType_long;
         case _C_ULNG: //#define _C_ULNG     'L'
-            return MLN_OBJCType_ulong;
+            return MLNUI_OBJCType_ulong;
         case _C_LNG_LNG: //#define _C_LNG_LNG  'q'
-            return MLN_OBJCType_llong;
+            return MLNUI_OBJCType_llong;
         case _C_ULNG_LNG: //#define _C_ULNG_LNG 'Q'
-            return MLN_OBJCType_ullong;
+            return MLNUI_OBJCType_ullong;
         case _C_FLT: //#define _C_FLT      'f'
-            return MLN_OBJCType_float;
+            return MLNUI_OBJCType_float;
         case _C_DBL: //#define _C_DBL      'd'
-            return MLN_OBJCType_double;
+            return MLNUI_OBJCType_double;
         case _C_BOOL: //#define _C_BOOL     'B'
-            return MLN_OBJCType_BOOL;
+            return MLNUI_OBJCType_BOOL;
         case _C_VOID: //#define _C_VOID     'v'
-            return MLN_OBJCType_void;
+            return MLNUI_OBJCType_void;
         case _C_CHARPTR: //#define _C_CHARPTR  '*'
-            return MLN_OBJCType_char_ptr;
+            return MLNUI_OBJCType_char_ptr;
         case _C_STRUCT_B: { //#define _C_STRUCT_B '{' 结构体
             if (mln_strcmp(type, @encode(CGRect))) {
-                return MLN_OBJCType_rect;
+                return MLNUI_OBJCType_rect;
             } else if (mln_strcmp(type, @encode(CGSize))) {
-                return MLN_OBJCType_size;
+                return MLNUI_OBJCType_size;
             } else if (mln_strcmp(type, @encode(CGPoint))) {
-                return MLN_OBJCType_point;
+                return MLNUI_OBJCType_point;
             }
-            return MLN_OBJCType_struct;
+            return MLNUI_OBJCType_struct;
         }
         case _C_PTR: { //#define _C_PTR      '^'
             if (type[1] == _C_ID) {
-                return MLN_OBJCType_id_ptr;
+                return MLNUI_OBJCType_id_ptr;
             }  else if (type[1] == _C_STRUCT_B) {
-                return MLN_OBJCType_struct_ptr;
+                return MLNUI_OBJCType_struct_ptr;
             }  else if (mln_strcmp(type, @encode(void *))) {
-                return MLN_OBJCType_void_ptr;
+                return MLNUI_OBJCType_void_ptr;
             }
             //TODO: 待支持其他类型
-            return MLN_OBJCType_ndef;
+            return MLNUI_OBJCType_ndef;
         }
         case _C_CONST: { //#define _C_CONST    'r' 常量
             if (mln_strcmp(type, @encode(const char *))) {
-                return MLN_OBJCType_const_char_ptr;
+                return MLNUI_OBJCType_const_char_ptr;
             }
             //TODO: 待支持其他类型
-            return MLN_OBJCType_ndef;
+            return MLNUI_OBJCType_ndef;
         }
         default:  //#define _C_UNDEF    '?'
-            return MLN_OBJCType_ndef;
+            return MLNUI_OBJCType_ndef;
     }
 }
 
-@implementation MLNConvertor
+@implementation MLNUIConvertor
 
 @synthesize luaCore = _luaCore;
 
-- (instancetype)initWithLuaCore:(MLNLuaCore *)luaCore
+- (instancetype)initWithLuaCore:(MLNUILuaCore *)luaCore
 {
     NSParameterAssert(luaCore);
     if (self = [super init]) {
@@ -511,7 +511,7 @@ MLN_Objc_Type mln_objctype(const char *type) {
     if (!L) {
         if (error) {
             *error = [NSError mln_errorState:@"Lua state is released"];
-            MLNError(self.luaCore, @"Lua state is released");
+            MLNUIError(self.luaCore, @"Lua state is released");
         }
         return 0;
     }
@@ -524,7 +524,7 @@ MLN_Objc_Type mln_objctype(const char *type) {
     if (!L) {
         if (error) {
             *error = [NSError mln_errorState:@"Lua state is released"];
-            MLNError(self.luaCore, @"Lua state is released");
+            MLNUIError(self.luaCore, @"Lua state is released");
         }
         return NO;
     }
@@ -537,14 +537,14 @@ MLN_Objc_Type mln_objctype(const char *type) {
     if (!L) {
         if (error) {
             *error = [NSError mln_errorState:@"Lua state is released"];
-            MLNError(self.luaCore, @"Lua state is released");
+            MLNUIError(self.luaCore, @"Lua state is released");
         }
         return NO;
     }
     if (!aStr) {
         if (error) {
             *error = [NSError mln_errorState:@"stirng must not be nil"];
-            MLNError(self.luaCore, @"stirng must not be nil");
+            MLNUIError(self.luaCore, @"stirng must not be nil");
         }
         return NO;
     }
@@ -558,7 +558,7 @@ MLN_Objc_Type mln_objctype(const char *type) {
     if (!L) {
         if (error) {
             *error = [NSError mln_errorState:@"Lua state is released"];
-            MLNError(self.luaCore, @"Lua state is released");
+            MLNUIError(self.luaCore, @"Lua state is released");
         }
         return 0;
     }
@@ -571,7 +571,7 @@ MLN_Objc_Type mln_objctype(const char *type) {
     if (!L) {
         if (error) {
             *error = [NSError mln_errorState:@"Lua state is released"];
-            MLNError(self.luaCore, @"Lua state is released");
+            MLNUIError(self.luaCore, @"Lua state is released");
         }
         return 0;
     }
@@ -584,7 +584,7 @@ MLN_Objc_Type mln_objctype(const char *type) {
     if (!L) {
         if (error) {
             *error = [NSError mln_errorState:@"Lua state is released"];
-            MLNError(self.luaCore, @"Lua state is released");
+            MLNUIError(self.luaCore, @"Lua state is released");
         }
         return 0;
     }
@@ -597,7 +597,7 @@ MLN_Objc_Type mln_objctype(const char *type) {
     if (!L) {
         if (error) {
             *error = [NSError mln_errorState:@"Lua state is released"];
-            MLNError(self.luaCore, @"Lua state is released");
+            MLNUIError(self.luaCore, @"Lua state is released");
         }
         return 0;
     }
@@ -610,7 +610,7 @@ MLN_Objc_Type mln_objctype(const char *type) {
     if (!L) {
         if (error) {
             *error = [NSError mln_errorState:@"Lua state is released"];
-            MLNError(self.luaCore, @"Lua state is released");
+            MLNUIError(self.luaCore, @"Lua state is released");
         }
         return nil;
     }
@@ -623,7 +623,7 @@ MLN_Objc_Type mln_objctype(const char *type) {
     if (!L) {
         if (error) {
             *error = [NSError mln_errorState:@"Lua state is released"];
-            MLNError(self.luaCore, @"Lua state is released");
+            MLNUIError(self.luaCore, @"Lua state is released");
         }
         return nil;
     }
@@ -636,7 +636,7 @@ MLN_Objc_Type mln_objctype(const char *type) {
     if (!L) {
         if (error) {
             *error = [NSError mln_errorState:@"Lua state is released"];
-            MLNError(self.luaCore, @"Lua state is released");
+            MLNUIError(self.luaCore, @"Lua state is released");
         }
         return CGRectZero;
     }
@@ -649,7 +649,7 @@ MLN_Objc_Type mln_objctype(const char *type) {
     if (!L) {
         if (error) {
             *error = [NSError mln_errorState:@"Lua state is released"];
-            MLNError(self.luaCore, @"Lua state is released");
+            MLNUIError(self.luaCore, @"Lua state is released");
         }
         return CGPointZero;
     }
@@ -662,7 +662,7 @@ MLN_Objc_Type mln_objctype(const char *type) {
     if (!L) {
         if (error) {
             *error = [NSError mln_errorState:@"Lua state is released"];
-            MLNError(self.luaCore, @"Lua state is released");
+            MLNUIError(self.luaCore, @"Lua state is released");
         }
         return CGSizeZero;
     }

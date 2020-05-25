@@ -1,30 +1,30 @@
 //
-//  MLNTabSegmentView.h
-//  MLN
+//  MLNUITabSegmentView.h
+//  MLNUI
 //
 //  Created by MoMo on 2019/1/16.
 //
 
 #import <UIKit/UIKit.h>
-#import "MLNView.h"
-#import "MLNTabSegmentScrollHandler.h"
-#import "MLNTabSegmentViewDelegate.h"
+#import "MLNUIView.h"
+#import "MLNUITabSegmentScrollHandler.h"
+#import "MLNUITabSegmentViewDelegate.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class MLNTabSegmentViewConfiguration, MLNTabSegmentLabel;
+@class MLNUITabSegmentViewConfiguration, MLNUITabSegmentLabel;
 
-typedef void (^MLNTabSegmentViewTapActionBlock) (MLNTabSegmentView *tapView, NSInteger index);
+typedef void (^MLNUITabSegmentViewTapActionBlock) (MLNUITabSegmentView *tapView, NSInteger index);
 
-@interface MLNTabSegmentView : MLNView
+@interface MLNUITabSegmentView : MLNUIView
 
-@property (nonatomic, weak) id<MLNTabSegmentViewDelegate> delegate;
+@property (nonatomic, weak) id<MLNUITabSegmentViewDelegate> delegate;
 
 @property (nonatomic, assign, readonly) NSInteger currentIndex;
-@property (nonatomic, strong, readonly) MLNTabSegmentViewConfiguration *configuration;
+@property (nonatomic, strong, readonly) MLNUITabSegmentViewConfiguration *configuration;
 
 @property (nonatomic, strong, readonly) UIScrollView      *contentScrollView;
-@property (nonatomic, strong, readonly) NSArray<MLNTabSegmentLabel *> *segmentViews;
+@property (nonatomic, strong, readonly) NSArray<MLNUITabSegmentLabel *> *segmentViews;
 @property (nonatomic, strong, readonly) UIImageView       *bottomPointView;
 
 - (void)refreshSegmentTitles:(NSArray<NSString*> *)segmentTitles;
@@ -42,7 +42,7 @@ typedef void (^MLNTabSegmentViewTapActionBlock) (MLNTabSegmentView *tapView, NSI
 
 @end
 
-@interface MLNTabSegmentViewConfiguration : NSObject
+@interface MLNUITabSegmentViewConfiguration : NSObject
 
 //均为没选中放大情况下计算
 @property (nonatomic, assign) CGFloat leftPadding;
@@ -67,7 +67,7 @@ typedef void (^MLNTabSegmentViewTapActionBlock) (MLNTabSegmentView *tapView, NSI
 
 @end
 
-@interface MLNTabSegmentLabel : UIView
+@interface MLNUITabSegmentLabel : UIView
 
 @property (nonatomic, strong) UILabel *titleLabel;
 @property (nonatomic, assign) BOOL enableShowArrow;

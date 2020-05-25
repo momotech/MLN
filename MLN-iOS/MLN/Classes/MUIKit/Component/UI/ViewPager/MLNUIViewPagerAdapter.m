@@ -1,27 +1,27 @@
 //
-//  MLNViewPagerAdapter.m
-//  MLN
+//  MLNUIViewPagerAdapter.m
+//  MLNUI
 //
 //  Created by MoMo on 2018/8/31.
 //
 
-#import "MLNViewPagerAdapter.h"
-#import "MLNKitHeader.h"
-#import "MLNEntityExporterMacro.h"
-#import "MLNCollectionViewCell.h"
-#import "MLNBlock.h"
-#import "NSDictionary+MLNSafety.h"
+#import "MLNUIViewPagerAdapter.h"
+#import "MLNUIKitHeader.h"
+#import "MLNUIEntityExporterMacro.h"
+#import "MLNUICollectionViewCell.h"
+#import "MLNUIBlock.h"
+#import "NSDictionary+MLNUISafety.h"
 
-@interface MLNViewPagerAdapter()
+@interface MLNUIViewPagerAdapter()
 
-@property (nonatomic, strong) MLNBlock *rowNumbersCallback;
-@property (nonatomic, strong) MLNBlock *cellReuseIdCallback;
-@property (nonatomic, strong) NSMutableDictionary<NSString *, MLNBlock *> *initedCellCallbacks;
-@property (nonatomic, strong) NSMutableDictionary<NSString *, MLNBlock *> *reuseCellCallbacks;
+@property (nonatomic, strong) MLNUIBlock *rowNumbersCallback;
+@property (nonatomic, strong) MLNUIBlock *cellReuseIdCallback;
+@property (nonatomic, strong) NSMutableDictionary<NSString *, MLNUIBlock *> *initedCellCallbacks;
+@property (nonatomic, strong) NSMutableDictionary<NSString *, MLNUIBlock *> *reuseCellCallbacks;
 @property (nonatomic, strong) NSMutableSet<NSString *> *cellReuseIds;
 
 @end
-@implementation MLNViewPagerAdapter
+@implementation MLNUIViewPagerAdapter
 
 - (instancetype)init
 {
@@ -39,7 +39,7 @@
     _cellReuseIds = [NSMutableSet set];
 }
 
-- (void)setRowNumbersCallback:(MLNBlock *)rowNumbersCallback
+- (void)setRowNumbersCallback:(MLNUIBlock *)rowNumbersCallback
 {
     _rowNumbersCallback = rowNumbersCallback;
 }
@@ -49,18 +49,18 @@
     if (self.cellReuseIdCallback) {
         [self.cellReuseIdCallback addIntArgument:(int)indexPath.item+1];
         id ret = [self.cellReuseIdCallback callIfCan];
-        MLNKitLuaAssert([ret isKindOfClass:[NSString class]], @"The reuse id must be a string!");
-        return [ret length] > 0 ? ret : kMLNCollectionViewCellReuseID;
+        MLNUIKitLuaAssert([ret isKindOfClass:[NSString class]], @"The reuse id must be a string!");
+        return [ret length] > 0 ? ret : kMLNUICollectionViewCellReuseID;
     }
-    return kMLNCollectionViewCellReuseID;
+    return kMLNUICollectionViewCellReuseID;
 }
 
 - (void)registerCellClassIfNeed:(UICollectionView *)collectionView  reuseId:(NSString *)reuseId
 {
-    MLNKitLuaAssert(collectionView, @"collectionView view must not be nil!");
-    MLNKitLuaAssert(reuseId && reuseId.length >0 , @"The reuse id must be nil!");
+    MLNUIKitLuaAssert(collectionView, @"collectionView view must not be nil!");
+    MLNUIKitLuaAssert(reuseId && reuseId.length >0 , @"The reuse id must be nil!");
     if (reuseId && ![self.cellReuseIds containsObject:reuseId]) {
-        [collectionView registerClass:[MLNCollectionViewCell class] forCellWithReuseIdentifier:reuseId];
+        [collectionView registerClass:[MLNUICollectionViewCell class] forCellWithReuseIdentifier:reuseId];
         [self.cellReuseIds addObject:reuseId];
     }
 }
@@ -87,11 +87,11 @@
 {
     NSString *reuseId = [self reuseIdAt:indexPath];
     [self registerCellClassIfNeed:collectionView reuseId:reuseId];
-    MLNCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:reuseId forIndexPath:indexPath];
+    MLNUICollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:reuseId forIndexPath:indexPath];
     [cell pushContentViewWithLuaCore:self.mln_luaCore];
     if (!cell.isInited) {
-        MLNBlock *initCallback = [self.initedCellCallbacks objectForKey:reuseId];
-        MLNKitLuaAssert(initCallback, @"It must not be nil callback of cell init!");
+        MLNUIBlock *initCallback = [self.initedCellCallbacks objectForKey:reuseId];
+        MLNUIKitLuaAssert(initCallback, @"It must not be nil callback of cell init!");
         [initCallback addLuaTableArgument:[cell getLuaTable]];
         [initCallback addIntArgument:[self pageControlIndexWithCurrentCellIndex:indexPath.item] + 1];
         [initCallback callIfCan];
@@ -100,8 +100,8 @@
             [self collectionView:collectionView cellForItemAtIndexPath:[NSIndexPath indexPathForRow:indexPath.item + 1 inSection:0]];
         }
     }
-    MLNBlock *reuseCallback = [self.reuseCellCallbacks objectForKey:reuseId];
-    MLNKitLuaAssert(reuseCallback, @"It must not be nil callback of cell reuse!");
+    MLNUIBlock *reuseCallback = [self.reuseCellCallbacks objectForKey:reuseId];
+    MLNUIKitLuaAssert(reuseCallback, @"It must not be nil callback of cell reuse!");
     [reuseCallback addLuaTableArgument:[cell getLuaTable]];
     [reuseCallback addIntArgument:[self pageControlIndexWithCurrentCellIndex:indexPath.item] + 1];
     [reuseCallback callIfCan];
@@ -110,52 +110,52 @@
 }
 
 #pragma mark -  Save Lua Callback
-- (void)lua_numberOfRowsInSection:(MLNBlock *)callback
+- (void)lua_numberOfRowsInSection:(MLNUIBlock *)callback
 {
     self.rowNumbersCallback = callback;
 }
 
-- (void)lua_reuseIdWithCallback:(MLNBlock *)callback
+- (void)lua_reuseIdWithCallback:(MLNUIBlock *)callback
 {
     self.cellReuseIdCallback = callback;
 }
 
-- (void)lua_initCellBy:(NSString *)reuseId callback:(MLNBlock *)callback
+- (void)lua_initCellBy:(NSString *)reuseId callback:(MLNUIBlock *)callback
 {
-    MLNKitLuaAssert(callback , @"The callback must not be nil!");
-    MLNKitLuaAssert(reuseId && reuseId.length >0 , @"The reuse id must not be nil!");
+    MLNUIKitLuaAssert(callback , @"The callback must not be nil!");
+    MLNUIKitLuaAssert(reuseId && reuseId.length >0 , @"The reuse id must not be nil!");
     if (reuseId && reuseId.length >0) {
         [self.initedCellCallbacks mln_setObject:callback forKey:reuseId];
     }
 }
 
-- (void)lua_reuseCellBy:(NSString *)reuseId callback:(MLNBlock *)callback
+- (void)lua_reuseCellBy:(NSString *)reuseId callback:(MLNUIBlock *)callback
 {
-    MLNKitLuaAssert(callback , @"The callback must not be nil!");
-    MLNKitLuaAssert(reuseId && reuseId.length >0 , @"The reuse id must not be nil!");
+    MLNUIKitLuaAssert(callback , @"The callback must not be nil!");
+    MLNUIKitLuaAssert(reuseId && reuseId.length >0 , @"The reuse id must not be nil!");
     if (reuseId && reuseId.length >0) {
         [self.reuseCellCallbacks mln_setObject:callback forKey:reuseId];
     }
 }
 
-- (void)lua_initCellCallback:(MLNBlock *)callback
+- (void)lua_initCellCallback:(MLNUIBlock *)callback
 {
-    [self lua_initCellBy:kMLNCollectionViewCellReuseID callback:callback];
+    [self lua_initCellBy:kMLNUICollectionViewCellReuseID callback:callback];
 }
 
-- (void)lua_reuseCellCallback:(MLNBlock *)callback
+- (void)lua_reuseCellCallback:(MLNUIBlock *)callback
 {
-    [self lua_reuseCellBy:kMLNCollectionViewCellReuseID callback:callback];
+    [self lua_reuseCellBy:kMLNUICollectionViewCellReuseID callback:callback];
 }
 
 #pragma mark - Export For Lua
-LUA_EXPORT_BEGIN(MLNViewPagerAdapter)
-LUA_EXPORT_METHOD(getCount, "lua_numberOfRowsInSection:", MLNViewPagerAdapter)
-LUA_EXPORT_METHOD(reuseId, "lua_reuseIdWithCallback:", MLNViewPagerAdapter)
-LUA_EXPORT_METHOD(initCellByReuseId, "lua_initCellBy:callback:", MLNViewPagerAdapter)
-LUA_EXPORT_METHOD(fillCellDataByReuseId, "lua_reuseCellBy:callback:", MLNViewPagerAdapter)
-LUA_EXPORT_METHOD(initCell, "lua_initCellCallback:", MLNViewPagerAdapter)
-LUA_EXPORT_METHOD(fillCellData, "lua_reuseCellCallback:", MLNViewPagerAdapter)
-LUA_EXPORT_END(MLNViewPagerAdapter, ViewPagerAdapter, NO, NULL, NULL)
+LUA_EXPORT_BEGIN(MLNUIViewPagerAdapter)
+LUA_EXPORT_METHOD(getCount, "lua_numberOfRowsInSection:", MLNUIViewPagerAdapter)
+LUA_EXPORT_METHOD(reuseId, "lua_reuseIdWithCallback:", MLNUIViewPagerAdapter)
+LUA_EXPORT_METHOD(initCellByReuseId, "lua_initCellBy:callback:", MLNUIViewPagerAdapter)
+LUA_EXPORT_METHOD(fillCellDataByReuseId, "lua_reuseCellBy:callback:", MLNUIViewPagerAdapter)
+LUA_EXPORT_METHOD(initCell, "lua_initCellCallback:", MLNUIViewPagerAdapter)
+LUA_EXPORT_METHOD(fillCellData, "lua_reuseCellCallback:", MLNUIViewPagerAdapter)
+LUA_EXPORT_END(MLNUIViewPagerAdapter, ViewPagerAdapter, NO, NULL, NULL)
 
 @end

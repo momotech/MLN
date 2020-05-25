@@ -1,16 +1,16 @@
 //
-//  MLNFont.h
+//  MLNUIFont.h
 //  CocoaLumberjack
 //
 //  Created by MoMo on 2018/8/13.
 //
 
 #import <UIKit/UIKit.h>
-#import "MLNTextConst.h"
+#import "MLNUITextConst.h"
 
-@class MLNKitInstance;
-@interface MLNFont : NSObject
+@class MLNUIKitInstance;
+@interface MLNUIFont : NSObject
 
-+ (UIFont *)fontWithFontName:(NSString *)fontName fontStyle:(MLNFontStyle)style fontSize:(CGFloat)fontSize instance:(MLNKitInstance *)instance;
++ (UIFont *)fontWithFontName:(NSString *)fontName fontStyle:(MLNUIFontStyle)style fontSize:(CGFloat)fontSize instance:(MLNUIKitInstance *)instance;
 
 @end

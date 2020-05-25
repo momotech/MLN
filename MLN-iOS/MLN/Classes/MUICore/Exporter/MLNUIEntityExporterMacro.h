@@ -1,16 +1,16 @@
 //
-//  MLNEntityExporterMacro.h
-//  MLNCore
+//  MLNUIEntityExporterMacro.h
+//  MLNUICore
 //
 //  Created by MoMo on 2019/8/1.
 //
 
-#ifndef MLNEntityExporterMacro_h
-#define MLNEntityExporterMacro_h
+#ifndef MLNUIEntityExporterMacro_h
+#define MLNUIEntityExporterMacro_h
 
-#import "MLNExporterMacro.h"
-#import "NSObject+MLNCore.h"
-#import "MLNWeakAssociatedObject.h"
+#import "MLNUIExporterMacro.h"
+#import "NSObject+MLNUICore.h"
+#import "MLNUIWeakAssociatedObject.h"
 #import <objc/runtime.h>
 
 /**
@@ -72,7 +72,7 @@ static const void *kLuaRetainCount ## CLZ = &kLuaRetainCount ## CLZ;\
     return [objc_getAssociatedObject(self, kLuaRetainCount ## CLZ) intValue];\
 }\
 \
-- (void)mln_luaRetain:(MLNUserData *)userData\
+- (void)mln_luaRetain:(MLNUIUserData *)userData\
 {\
     userData->object = CFBridgingRetain(self);\
     int count = [self mln_luaRetainCount];\
@@ -99,26 +99,26 @@ static const void *kLuaRetainCount ## CLZ = &kLuaRetainCount ## CLZ;\
  */
 #define LUA_EXPORT_LUA_CORE(CLZ) \
 static const void *kLuaCore_ ## CLZ = &kLuaCore_ ## CLZ;\
-- (void)setMln_luaCore:(MLNLuaCore *)mln_myLuaCore\
+- (void)setMln_luaCore:(MLNUILuaCore *)mln_myLuaCore\
 {\
-    MLNWeakAssociatedObject *wp = objc_getAssociatedObject(self, kLuaCore_ ## CLZ);\
+    MLNUIWeakAssociatedObject *wp = objc_getAssociatedObject(self, kLuaCore_ ## CLZ);\
     if (!wp) {\
-        wp = [MLNWeakAssociatedObject weakAssociatedObject:mln_myLuaCore];\
+        wp = [MLNUIWeakAssociatedObject weakAssociatedObject:mln_myLuaCore];\
         objc_setAssociatedObject(self, kLuaCore_ ## CLZ, wp, OBJC_ASSOCIATION_RETAIN_NONATOMIC);\
     } else if (wp.associatedObject != mln_myLuaCore) {\
         [wp updateAssociatedObject:mln_myLuaCore];\
     }\
 }\
 \
-- (MLNLuaCore *)mln_luaCore\
+- (MLNUILuaCore *)mln_luaCore\
 {\
-    MLNWeakAssociatedObject *wp = objc_getAssociatedObject(self, kLuaCore_ ## CLZ);\
+    MLNUIWeakAssociatedObject *wp = objc_getAssociatedObject(self, kLuaCore_ ## CLZ);\
     return wp.associatedObject;\
 }
 
 /**
  标记完成实体UserData类导出
- @note ⚠️如果需要自定义初始化方法，第一个参数必须是MLNLuaCore。
+ @note ⚠️如果需要自定义初始化方法，第一个参数必须是MLNUILuaCore。
  
  @param CLZ 原生类名称
  @param PACKAGE Lua中的包名
@@ -129,11 +129,11 @@ static const void *kLuaCore_ ## CLZ = &kLuaCore_ ## CLZ;\
  */
 #define LUA_EXPORT_PACKAGE_END(CLZ, PACKAGE, LUA_CLZ, HAS_SUPER, SUPER_CLZ_NAME, CONSTRUCTOR_NAME) \
 LUA_EXPORT_METHOD_LIST_COMPLETED \
-LUA_EXPORT_MAKE_INFO(PACKAGE, #CLZ, #LUA_CLZ, "MLN_UserDataNativeObject", HAS_SUPER, SUPER_CLZ_NAME, YES,\
+LUA_EXPORT_MAKE_INFO(PACKAGE, #CLZ, #LUA_CLZ, "MLNUI_UserDataNativeObject", HAS_SUPER, SUPER_CLZ_NAME, YES,\
 (struct mln_objc_method *)mln_Method_ ## CLZ, NULL,\
 LUA_EXPORT_MAKE_METHOD("constructor", CONSTRUCTOR_NAME, #CLZ, NO, NULL, NULL, mln_lua_constructor),\
 CLZ)\
-LUA_EXPORT_TYPE(MLNExportTypeEntity)\
+LUA_EXPORT_TYPE(MLNUIExportTypeEntity)\
 LUA_EXPORT_LUA_CORE(CLZ)\
 LUA_EXPORT_LUA_RETAIN_COUNT(CLZ)
 
@@ -151,17 +151,17 @@ LUA_EXPORT_LUA_RETAIN_COUNT(CLZ)
  */
 #define LUA_EXPORT_PACKAGE_END_WITH_CFUNC(CLZ, PACKAGE, LUA_CLZ, HAS_SUPER, SUPER_CLZ_NAME, CONSTRUCTOR_CFUNC) \
 LUA_EXPORT_METHOD_LIST_COMPLETED \
-LUA_EXPORT_MAKE_INFO(PACKAGE, #CLZ, #LUA_CLZ, "MLN_UserDataNativeObject", HAS_SUPER, SUPER_CLZ_NAME, YES,\
+LUA_EXPORT_MAKE_INFO(PACKAGE, #CLZ, #LUA_CLZ, "MLNUI_UserDataNativeObject", HAS_SUPER, SUPER_CLZ_NAME, YES,\
 (struct mln_objc_method *)mln_Method_ ## CLZ, NULL,\
 LUA_EXPORT_MAKE_METHOD("constructor", NULL, #CLZ, NO, NULL, NULL, CONSTRUCTOR_CFUNC),\
 CLZ)\
-LUA_EXPORT_TYPE(MLNExportTypeEntity)\
+LUA_EXPORT_TYPE(MLNUIExportTypeEntity)\
 LUA_EXPORT_LUA_CORE(CLZ)\
 LUA_EXPORT_LUA_RETAIN_COUNT(CLZ)
 
 /**
  标记完成实体UserData类导出
- @note ⚠️如果需要自定义初始化方法，第一个参数必须是MLNLuaCore。
+ @note ⚠️如果需要自定义初始化方法，第一个参数必须是MLNUILuaCore。
  
  @param CLZ 原生类名称
  @param LUA_CLZ Lua中的类名称
@@ -185,4 +185,4 @@ LUA_EXPORT_PACKAGE_END(CLZ, "mln", LUA_CLZ, HAS_SUPER, SUPER_CLZ_NAME, CONSTRUCT
 #define LUA_EXPORT_END_WITH_CFUNC(CLZ, LUA_CLZ, HAS_SUPER, SUPER_CLZ_NAME, CONSTRUCTOR_CFUNC) \
 LUA_EXPORT_PACKAGE_END_WITH_CFUNC(CLZ, "mln", LUA_CLZ, HAS_SUPER, SUPER_CLZ_NAME, CONSTRUCTOR_CFUNC)
 
-#endif /* MLNEntityExporterMacro_h */
+#endif /* MLNUIEntityExporterMacro_h */

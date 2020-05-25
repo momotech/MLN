@@ -1,19 +1,19 @@
 //
-//  MLNCollectionViewGridLayout.h
+//  MLNUICollectionViewGridLayout.h
 //
 //
 //  Created by MoMo on 2018/12/14.
 //
 
 #import <UIKit/UIKit.h>
-#import "MLNEntityExportProtocol.h"
-#import "MLNScrollViewConst.h"
+#import "MLNUIEntityExportProtocol.h"
+#import "MLNUIScrollViewConst.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface MLNCollectionViewGridLayout : UICollectionViewLayout<MLNEntityExportProtocol>
+@interface MLNUICollectionViewGridLayout : UICollectionViewLayout<MLNUIEntityExportProtocol>
 
-@property (nonatomic, assign) MLNScrollDirection scrollDirection;
+@property (nonatomic, assign) MLNUIScrollDirection scrollDirection;
 
 @end
 

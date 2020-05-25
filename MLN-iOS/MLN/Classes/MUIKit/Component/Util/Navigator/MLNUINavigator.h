@@ -1,14 +1,14 @@
 //
-//  MLNNavigator.h
+//  MLNUINavigator.h
 //  
 //
 //  Created by MoMo on 2018/8/21.
 //
 
 #import <Foundation/Foundation.h>
-#import "MLNStaticExportProtocol.h"
+#import "MLNUIStaticExportProtocol.h"
 
-@protocol MLNNavigatorHandlerProtocol;
-@interface MLNNavigator : NSObject <MLNStaticExportProtocol>
+@protocol MLNUINavigatorHandlerProtocol;
+@interface MLNUINavigator : NSObject <MLNUIStaticExportProtocol>
 
 @end

@@ -1,14 +1,14 @@
 //
-//  MLNBadgeView.m
-//  MLN
+//  MLNUIBadgeView.m
+//  MLNUI
 //
 //  Created by MoMo on 2019/1/16.
 //
 
-#import "MLNBadgeView.h"
-#import "UIImage+MLN_IN_UTIL.h"
+#import "MLNUIBadgeView.h"
+#import "UIImage+MLNUI_IN_UTIL.h"
 
-@interface MLNBadgeView()
+@interface MLNUIBadgeView()
 
 @property (nonatomic, strong) UIImageView *backImageView;
 @property (nonatomic, strong) UILabel *badgeLabel;
@@ -41,7 +41,7 @@
 
 @end
 
-@implementation MLNBadgeView
+@implementation MLNUIBadgeView
 
 - (instancetype)initWithFrame:(CGRect)frame
 {

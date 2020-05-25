@@ -1,49 +1,49 @@
 //
-//  MLNDialogView.m
+//  MLNUIDialogView.m
 //
 //
 //  Created by MoMo on 2018/12/12.
 //
 
-#import "MLNDialogView.h"
-#import "MLNKitHeader.h"
-#import "MLNViewExporterMacro.h"
-#import "UIView+MLNKit.h"
-#import "UIView+MLNLayout.h"
-#import "MLNBlock.h"
-#import "MLNLayoutContainerNode.h"
-#import "MLNKeyboardViewHandler.h"
-#import "MLNWindowContext.h"
+#import "MLNUIDialogView.h"
+#import "MLNUIKitHeader.h"
+#import "MLNUIViewExporterMacro.h"
+#import "UIView+MLNUIKit.h"
+#import "UIView+MLNUILayout.h"
+#import "MLNUIBlock.h"
+#import "MLNUILayoutContainerNode.h"
+#import "MLNUIKeyboardViewHandler.h"
+#import "MLNUIWindowContext.h"
 
-@interface MLNDialogView()
+@interface MLNUIDialogView()
 {
     //  标记设置过Gravity，在setContent时，可以取改值
     BOOL _didSetGravity;
-    MLNGravity _contentGravity;
+    MLNUIGravity _contentGravity;
 }
 
 @property (nonatomic, assign) BOOL cancelable;
 
 @property (nonatomic, strong) UIWindow *contentWindow;
-@property (nonatomic, strong) MLNBlock *disappearBlock;
+@property (nonatomic, strong) MLNUIBlock *disappearBlock;
 @property (nonatomic, weak) UIView *fromLuaView;
 @property (nonatomic, assign) CGFloat fromLuaStartY;
 
 @end
 
-@implementation MLNDialogView
+@implementation MLNUIDialogView
 
-- (instancetype)initWithLuaCore:(MLNLuaCore *)luaCore frame:(CGRect)frame
+- (instancetype)initWithLuaCore:(MLNUILuaCore *)luaCore frame:(CGRect)frame
 {
     self = [super initWithFrame:[[UIScreen mainScreen] bounds]];
     if (self) {
         self.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:0];
-        MLNLayoutNode *node = self.lua_node;
+        MLNUILayoutNode *node = self.lua_node;
         node.root = YES;
         node.enable = NO;
         CGSize size = [[UIScreen mainScreen] bounds].size;
-        MLNCheckWidth(size.width);
-        MLNCheckHeight(size.height);
+        MLNUICheckWidth(size.width);
+        MLNUICheckHeight(size.height);
         [node changeWidth:size.width];
         [node changeHeight:size.height];
         self.cancelable = YES;
@@ -74,14 +74,14 @@
 
 - (void)lua_setContent:(UIView *)view
 {
-    MLNCheckTypeAndNilValue(view, @"View", [UIView class])
+    MLNUICheckTypeAndNilValue(view, @"View", [UIView class])
     [self lua_removeAllSubViews];
     _fromLuaView = view;
     if (_didSetGravity) {
         view.lua_gravity = _contentGravity;
     }
-    if (view.lua_node.gravity == MLNGravityNone) {
-        view.lua_node.gravity = MLNGravityCenter;
+    if (view.lua_node.gravity == MLNUIGravityNone) {
+        view.lua_node.gravity = MLNUIGravityCenter;
     }
     [self lua_addSubview:view];
 }
@@ -129,17 +129,17 @@
     if (_fromLuaView && _fromLuaView.lua_node.gravity) {
         [self initAdjustPosition];
     }
-    [MLN_KIT_INSTANCE(self.mln_luaCore) addRootnode:(MLNLayoutContainerNode *)self.lua_node];
+    [MLNUI_KIT_INSTANCE(self.mln_luaCore) addRootnode:(MLNUILayoutContainerNode *)self.lua_node];
     [self.contentWindow addSubview:self];
-    [[MLNWindowContext sharedContext] pushKeyWindow:[UIApplication sharedApplication].keyWindow];
+    [[MLNUIWindowContext sharedContext] pushKeyWindow:[UIApplication sharedApplication].keyWindow];
     self.contentWindow.hidden = NO;
     [self.contentWindow makeKeyWindow];
 }
 
 - (void)_dismissDialogView
 {
-    MLNWindowContext *context = [MLNWindowContext sharedContext];
-    [MLN_KIT_INSTANCE(self.mln_luaCore) removeRootNode:(MLNLayoutContainerNode *)self.lua_node];
+    MLNUIWindowContext *context = [MLNUIWindowContext sharedContext];
+    [MLNUI_KIT_INSTANCE(self.mln_luaCore) removeRootNode:(MLNUILayoutContainerNode *)self.lua_node];
     [context removeWithWindow:self.contentWindow];
     UIWindow *topWindw = nil;
      do{
@@ -170,7 +170,7 @@
     return result;
 }
 
-- (void)lua_setDisappearBlock:(MLNBlock *)disappearBlock
+- (void)lua_setDisappearBlock:(MLNUIBlock *)disappearBlock
 {
     _disappearBlock = disappearBlock;
 }
@@ -181,7 +181,7 @@
     self.contentWindow.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:amount];
 }
 
-- (void)lua_setContentGravity:(MLNGravity)gravity
+- (void)lua_setContentGravity:(MLNUIGravity)gravity
 {
     _didSetGravity = YES;
     _contentGravity = gravity;
@@ -203,7 +203,7 @@
     }
     UIWindow *keyWindow = (UIWindow *)noti.object;
     if (keyWindow && keyWindow != _contentWindow) {
-        [[MLNWindowContext sharedContext] pushKeyWindow:keyWindow];
+        [[MLNUIWindowContext sharedContext] pushKeyWindow:keyWindow];
     }
 }
 
@@ -229,14 +229,14 @@
 }
 
 #pragma mark - Export For Lua
-LUA_EXPORT_VIEW_BEGIN(MLNDialogView)
-LUA_EXPORT_VIEW_PROPERTY(cancelable, "lua_setCancelable:", "lua_cancelable", MLNDialogView)
-LUA_EXPORT_VIEW_METHOD(show, "lua_show", MLNDialogView)
-LUA_EXPORT_VIEW_METHOD(dismiss, "lua_dismiss", MLNDialogView)
-LUA_EXPORT_VIEW_METHOD(dialogDisAppear, "lua_setDisappearBlock:", MLNDialogView)
-LUA_EXPORT_VIEW_METHOD(setContent, "lua_setContent:", MLNDialogView)
-LUA_EXPORT_VIEW_METHOD(setDimAmount, "lua_setDimAmount:", MLNDialogView)
-LUA_EXPORT_VIEW_METHOD(setContentGravity, "lua_setContentGravity:", MLNDialogView)
-LUA_EXPORT_VIEW_END(MLNDialogView, Dialog, YES, "MLNView", "initWithLuaCore:frame:")
+LUA_EXPORT_VIEW_BEGIN(MLNUIDialogView)
+LUA_EXPORT_VIEW_PROPERTY(cancelable, "lua_setCancelable:", "lua_cancelable", MLNUIDialogView)
+LUA_EXPORT_VIEW_METHOD(show, "lua_show", MLNUIDialogView)
+LUA_EXPORT_VIEW_METHOD(dismiss, "lua_dismiss", MLNUIDialogView)
+LUA_EXPORT_VIEW_METHOD(dialogDisAppear, "lua_setDisappearBlock:", MLNUIDialogView)
+LUA_EXPORT_VIEW_METHOD(setContent, "lua_setContent:", MLNUIDialogView)
+LUA_EXPORT_VIEW_METHOD(setDimAmount, "lua_setDimAmount:", MLNUIDialogView)
+LUA_EXPORT_VIEW_METHOD(setContentGravity, "lua_setContentGravity:", MLNUIDialogView)
+LUA_EXPORT_VIEW_END(MLNUIDialogView, Dialog, YES, "MLNUIView", "initWithLuaCore:frame:")
 
 @end

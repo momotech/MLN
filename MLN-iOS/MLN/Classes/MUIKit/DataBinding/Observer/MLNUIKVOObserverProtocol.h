@@ -1,18 +1,18 @@
 //
-//  MLNKVOObserverProtocol.h
+//  MLNUIKVOObserverProtocol.h
 //  Pods
 //
 //  Created by Dai Dongpeng on 2020/3/3.
 //
 
-#ifndef MLNKVOObserverProtocol_h
-#define MLNKVOObserverProtocol_h
+#ifndef MLNUIKVOObserverProtocol_h
+#define MLNUIKVOObserverProtocol_h
 
 NS_ASSUME_NONNULL_BEGIN
 
-@protocol MLNKVOObserverProtol <NSObject>
+@protocol MLNUIKVOObserverProtol <NSObject>
 
-/// 返回持有observer的对象，如果返回nil，则会被MLNDatabinding持有
+/// 返回持有observer的对象，如果返回nil，则会被MLNUIDatabinding持有
 /// ⚠️ 返回的对象会强持有observer，所以这里要避免循环引用.
 //- (nullable NSObject *)objectRetainingObserver;
 @property (nonatomic, copy, readonly) NSString *keyPath;
@@ -23,22 +23,22 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 
-@protocol MLNArrayObserverProtocol <NSObject>
+@protocol MLNUIArrayObserverProtocol <NSObject>
 @end
 
 
-@class MLNDataBinding;
-@protocol MLNDataBindingProtocol <NSObject>
+@class MLNUIDataBinding;
+@protocol MLNUIDataBindingProtocol <NSObject>
 
-@property (nonatomic, strong, readonly) MLNDataBinding * _Nonnull mln_dataBinding;
+@property (nonatomic, strong, readonly) MLNUIDataBinding * _Nonnull mln_dataBinding;
 
 - (void)bindData:(NSObject *)data forKey:(NSString *)key;
 
 @end
 
-@interface UIViewController (MLNDataBinding)
+@interface UIViewController (MLNUIDataBinding)
 
-@property (nonatomic, strong, readonly) MLNDataBinding * _Nonnull mln_dataBinding;
+@property (nonatomic, strong, readonly) MLNUIDataBinding * _Nonnull mln_dataBinding;
 - (void)mln_addToSuperViewController:(UIViewController *_Nonnull)superVC frame:(CGRect) frame;
 
 @end
@@ -55,4 +55,4 @@ NS_ASSUME_NONNULL_BEGIN
 
 NS_ASSUME_NONNULL_END
 
-#endif /* MLNKVOObserverProtocol_h */
+#endif /* MLNUIKVOObserverProtocol_h */

@@ -1,6 +1,6 @@
 //
-//  MLNSafeAreaViewProtocol.h
-//  MLN
+//  MLNUISafeAreaViewProtocol.h
+//  MLNUI
 //
 //  Created by MoMo on 2019/12/20.
 //
@@ -10,14 +10,14 @@
 NS_ASSUME_NONNULL_BEGIN
 
 typedef enum : NSUInteger {
-    MLNSafeAreaClose = 0,
-    MLNSafeAreaLeft = 1,
-    MLNSafeAreaTop = 2,
-    MLNSafeAreaRight = 4,
-    MLNSafeAreaBottom = 8
-} MLNSafeArea;
+    MLNUISafeAreaClose = 0,
+    MLNUISafeAreaLeft = 1,
+    MLNUISafeAreaTop = 2,
+    MLNUISafeAreaRight = 4,
+    MLNUISafeAreaBottom = 8
+} MLNUISafeArea;
 
-@protocol MLNSafeAreaViewProtocol <NSObject>
+@protocol MLNUISafeAreaViewProtocol <NSObject>
 
 - (CGRect)frame;
 - (void)updateSafeAreaInsets:(UIEdgeInsets)safeAreaInsets;

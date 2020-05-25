@@ -1,6 +1,6 @@
 //
-//  MLNInnerScrollView.h
-//  MLN
+//  MLNUIInnerScrollView.h
+//  MLNUI
 //
 //  Created by MoMo on 2019/11/1.
 //
@@ -9,10 +9,10 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class MLNLuaCore;
-@interface MLNInnerScrollView : UIScrollView
+@class MLNUILuaCore;
+@interface MLNUIInnerScrollView : UIScrollView
 
-- (instancetype)initWithLuaCore:(MLNLuaCore *)luaCore direction:(BOOL)horizontal isLinearContenView:(BOOL)isLinearContenView;
+- (instancetype)initWithLuaCore:(MLNUILuaCore *)luaCore direction:(BOOL)horizontal isLinearContenView:(BOOL)isLinearContenView;
 - (void)updateContentViewLayoutIfNeed;
 - (void)recalculContentSizeIfNeed;
 

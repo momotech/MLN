@@ -1,15 +1,15 @@
 //
 //  MMLuaBit.m
-//  MLN
+//  MLNUI
 //
 //  Created by MoMo on 03/05/2018.
 //  Copyright © 2018 wemomo.com. All rights reserved.
 //
 
-#import "MLNBit.h"
-#import "MLNStaticExporterMacro.h"
+#import "MLNUIBit.h"
+#import "MLNUIStaticExporterMacro.h"
 
-@implementation MLNBit
+@implementation MLNUIBit
 
 // 按位或
 static int lua_bor(lua_State *L) {
@@ -75,13 +75,13 @@ static int lua_bxor(lua_State *L) {
 }
 
 #pragma mark - Export To Lua
-LUA_EXPORT_STATIC_BEGIN(MLNBit)
-LUA_EXPORT_STATIC_C_FUNC(bor, lua_bor, MLNBit)
-LUA_EXPORT_STATIC_C_FUNC(band, lua_band, MLNBit)
-LUA_EXPORT_STATIC_C_FUNC(bxor, lua_bxor, MLNBit)
-LUA_EXPORT_STATIC_METHOD(neg, "lua_neg:", MLNBit)
-LUA_EXPORT_STATIC_METHOD(shl, "lua_shl:bit:", MLNBit)
-LUA_EXPORT_STATIC_METHOD(shr, "lua_shr:bit:", MLNBit)
-LUA_EXPORT_STATIC_END(MLNBit, MBit, NO, NULL)
+LUA_EXPORT_STATIC_BEGIN(MLNUIBit)
+LUA_EXPORT_STATIC_C_FUNC(bor, lua_bor, MLNUIBit)
+LUA_EXPORT_STATIC_C_FUNC(band, lua_band, MLNUIBit)
+LUA_EXPORT_STATIC_C_FUNC(bxor, lua_bxor, MLNUIBit)
+LUA_EXPORT_STATIC_METHOD(neg, "lua_neg:", MLNUIBit)
+LUA_EXPORT_STATIC_METHOD(shl, "lua_shl:bit:", MLNUIBit)
+LUA_EXPORT_STATIC_METHOD(shr, "lua_shr:bit:", MLNUIBit)
+LUA_EXPORT_STATIC_END(MLNUIBit, MBit, NO, NULL)
 
 @end

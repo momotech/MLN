@@ -1,23 +1,23 @@
 //
-//  MLNTextViewFactory.h
+//  MLNUITextViewFactory.h
 //
 //
 //  Created by MoMo on 2018/12/21.
 //
 
 #import <Foundation/Foundation.h>
-#import "MLNTextViewProtocol.h"
+#import "MLNUITextViewProtocol.h"
 
 typedef enum : NSUInteger {
-    MLNInternalTextViewTypeSingleLine = 0,
-    MLNInternalTextViewTypeMultableLine = 1,
-} MLNInternalTextViewType;
+    MLNUIInternalTextViewTypeSingleLine = 0,
+    MLNUIInternalTextViewTypeMultableLine = 1,
+} MLNUIInternalTextViewType;
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface MLNTextViewFactory : NSObject
+@interface MLNUITextViewFactory : NSObject
 
-+ (UIView<MLNTextViewProtocol> *)createInternalTextViewByType:(MLNInternalTextViewType)type withTempTextView:(UIView<MLNTextViewProtocol> * _Nullable)temp;
++ (UIView<MLNUITextViewProtocol> *)createInternalTextViewByType:(MLNUIInternalTextViewType)type withTempTextView:(UIView<MLNUITextViewProtocol> * _Nullable)temp;
 
 @end
 

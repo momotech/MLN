@@ -1,31 +1,31 @@
 //
-//  MLNKeyframeAnimationBuilder.m
-//  MLN
+//  MLNUIKeyframeAnimationBuilder.m
+//  MLNUI
 //
 //  Created by MoMo on 2019/9/8.
 //
 
-#import "MLNKeyframeAnimationBuilder.h"
-#import "MLNKeyframeAnimation.h"
-#import "MLNBounceInterpolator.h"
-#import "MLNOvershotInterpolater.h"
-#import "MLNValueCalculator.h"
+#import "MLNUIKeyframeAnimationBuilder.h"
+#import "MLNUIKeyframeAnimation.h"
+#import "MLNUIBounceInterpolator.h"
+#import "MLNUIOvershotInterpolater.h"
+#import "MLNUIValueCalculator.h"
 
-@implementation MLNKeyframeAnimationBuilder
+@implementation MLNUIKeyframeAnimationBuilder
 
-+ (CAKeyframeAnimation *)buildAnimationWithKeyPath:(NSString *)path interpolatorType:(MLNAnimationInterpolatorType)type
++ (CAKeyframeAnimation *)buildAnimationWithKeyPath:(NSString *)path interpolatorType:(MLNUIAnimationInterpolatorType)type
 {
-    id<MLNInterpolatorProtocol> interpolator = nil;
+    id<MLNUIInterpolatorProtocol> interpolator = nil;
     switch (type) {
-        case MLNAnimationInterpolatorTypeBounce: {
-            interpolator = [[MLNBounceInterpolator alloc] init];
-            id<MLNValueCalculatorProtocol> valueCalculator = [[MLNValueCalculator alloc] init];
-            return [MLNKeyframeAnimation animationWithKeyPath:path interpolator:interpolator valueCalculator:valueCalculator];
+        case MLNUIAnimationInterpolatorTypeBounce: {
+            interpolator = [[MLNUIBounceInterpolator alloc] init];
+            id<MLNUIValueCalculatorProtocol> valueCalculator = [[MLNUIValueCalculator alloc] init];
+            return [MLNUIKeyframeAnimation animationWithKeyPath:path interpolator:interpolator valueCalculator:valueCalculator];
         }
-        case MLNAnimationInterpolatorTypeOvershoot: {
-            interpolator = [[MLNOvershotInterpolater alloc] init];
-            id<MLNValueCalculatorProtocol> valueCalculator = [[MLNValueCalculator alloc] init];
-            return [MLNKeyframeAnimation animationWithKeyPath:path interpolator:interpolator valueCalculator:valueCalculator];
+        case MLNUIAnimationInterpolatorTypeOvershoot: {
+            interpolator = [[MLNUIOvershotInterpolater alloc] init];
+            id<MLNUIValueCalculatorProtocol> valueCalculator = [[MLNUIValueCalculator alloc] init];
+            return [MLNUIKeyframeAnimation animationWithKeyPath:path interpolator:interpolator valueCalculator:valueCalculator];
         }
         default:
             return nil;

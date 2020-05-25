@@ -1,27 +1,27 @@
 //
-//  MLNNinePatchImageFactory.h
-//  MLN
+//  MLNUINinePatchImageFactory.h
+//  MLNUI
 //
 //  Created by MOMO on 2019/3/19.
 //
 
-#import "MLNNinePatchImageFactory.h"
-#import "MLNHeader.h"
+#import "MLNUINinePatchImageFactory.h"
+#import "MLNUIHeader.h"
 
 typedef enum NSInteger{
-    MLNNinePathTpeNormal = 1 << 0,
-    MLNNinePathTpeVerticalCenter = 1 << 1,  //水平居中保护
-    MLNNinePathTpeHorizontalCenter = 1 << 2, //垂直居中保护
-}MLNNinePathTpe;
+    MLNUINinePathTpeNormal = 1 << 0,
+    MLNUINinePathTpeVerticalCenter = 1 << 1,  //水平居中保护
+    MLNUINinePathTpeHorizontalCenter = 1 << 2, //垂直居中保护
+}MLNUINinePathTpe;
 
-@interface MLNNinePatchImageFactory()
+@interface MLNUINinePatchImageFactory()
 
 + (NSArray*)mln_getRGBAsFromImage:(UIImage*)image atX:(int)xx andY:(int)yy count:(int)count;
 + (UIImage*)mln_createResizableImageFromNinePatchImage:(UIImage*)ninePatchImage imgViewSize:(CGSize)imgViewSize;
 
 @end
 
-@implementation MLNNinePatchImageFactory
+@implementation MLNUINinePatchImageFactory
 
 
 + (NSArray*)mln_getRGBAsFromImage:(UIImage*)image atX:(int)xx andY:(int)yy count:(int)count
@@ -65,11 +65,11 @@ typedef enum NSInteger{
 
 + (UIImage*)mln_createResizableNinePatchImageNamed:(NSString*)name  imgViewSize:(CGSize)imgViewSize
 {
-//    MLNLuaAssert([name hasSuffix:@".9"],@"The image name is not ended with .9");
+//    MLNUILuaAssert([name hasSuffix:@".9"],@"The image name is not ended with .9");
     NSString* fixedImageFilename = [NSString stringWithFormat:@"%@%@", name, @".png"];
     UIImage* oriImage = [UIImage imageNamed:fixedImageFilename];
     
-//    MLNLuaAssert(oriImage != nil, @"The input image is incorrect: ");
+//    MLNUILuaAssert(oriImage != nil, @"The input image is incorrect: ");
     
     NSString* fixed2xImageFilename = [NSString stringWithFormat:@"%@%@", [name substringWithRange:NSMakeRange(0, name.length - 2)], @"@2x.9.png"];
     UIImage* ori2xImage = [UIImage imageNamed:fixed2xImageFilename];
@@ -90,7 +90,7 @@ typedef enum NSInteger{
     NSInteger scale = ninePatchImage.scale;
     CGSize realSize = CGSizeMake(ninePatchImage.size.width * scale, ninePatchImage.size.height * scale);
     
-    MLNNinePathTpe type = MLNNinePathTpeNormal;
+    MLNUINinePathTpe type = MLNUINinePathTpeNormal;
     NSArray* rgbaImage = [self mln_getRGBAsFromImage:ninePatchImage atX:0 andY:0 count:realSize.width * realSize.height];
     NSArray* topBarRgba = [rgbaImage subarrayWithRange:NSMakeRange(1, realSize.width - 2)];
     NSMutableArray* leftBarRgba = [NSMutableArray arrayWithCapacity:0];
@@ -109,7 +109,7 @@ typedef enum NSInteger{
             break;
         }
     }
-//    MLNLuaAssert(left != -1, @"The 9-patch PNG format is not correct.");
+//    MLNUILuaAssert(left != -1, @"The 9-patch PNG format is not correct.");
     for (int i = topCount - 1; i >= 0; i--) {
         NSArray* aColor = topBarRgba[i];
         if (CGFloatValueFromNumber(aColor[3]) == 1) {
@@ -118,12 +118,12 @@ typedef enum NSInteger{
             break;
         }
     }
-//    MLNLuaAssert(right != -1, @"The 9-patch PNG format is not correct.");
+//    MLNUILuaAssert(right != -1, @"The 9-patch PNG format is not correct.");
     for (int i = left + 1; i <= right - 1; i++) {
         NSArray* aColor = topBarRgba[i];
         if (CGFloatValueFromNumber(aColor[3]) < 1) {
             //这种点9是保护中间的，需要特殊处理
-            type = MLNNinePathTpeHorizontalCenter;
+            type = MLNUINinePathTpeHorizontalCenter;
         }
     }
     leftCount = (int)[leftBarRgba count];
@@ -134,7 +134,7 @@ typedef enum NSInteger{
             break;
         }
     }
-//    MLNLuaAssert(top != -1, @"The 9-patch PNG format is not correct.");
+//    MLNUILuaAssert(top != -1, @"The 9-patch PNG format is not correct.");
     for (int i = leftCount - 1; i >= 0; i--) {
         NSArray* aColor = leftBarRgba[i];
         if (CGFloatValueFromNumber(aColor[3]) == 1) {
@@ -143,12 +143,12 @@ typedef enum NSInteger{
             break;
         }
     }
-//    MLNLuaAssert(bottom != -1, @"The 9-patch PNG format is not correct.");
+//    MLNUILuaAssert(bottom != -1, @"The 9-patch PNG format is not correct.");
     for (int i = top + 1; i <= bottom - 1; i++) {
         NSArray* aColor = leftBarRgba[i];
         if (CGFloatValueFromNumber(aColor[3]) == 0) {
-            type = MLNNinePathTpeVerticalCenter;
-          //  MLNLuaAssert(NO, @"The 9-patch PNG format is not support.");
+            type = MLNUINinePathTpeVerticalCenter;
+          //  MLNUILuaAssert(NO, @"The 9-patch PNG format is not support.");
         }
     }
     leftCount /= scale;
@@ -159,12 +159,12 @@ typedef enum NSInteger{
     right /= scale;
     UIImage* cropImage = [ninePatchImage mln_crop:CGRectMake(1, 1, ninePatchImage.size.width - 2, ninePatchImage.size.height - 2)];
     switch (type) {
-        case MLNNinePathTpeVerticalCenter:
+        case MLNUINinePathTpeVerticalCenter:
         {
             return [cropImage mln_stretchVerticalWithContainerSize:imgViewSize image:cropImage topCap:top leftCap:left bottomCap:bottom rightCap:right];
              break;
         }
-           case MLNNinePathTpeHorizontalCenter:
+           case MLNUINinePathTpeHorizontalCenter:
         {
             return [cropImage mln_stretchHorizontalWithContainerSize:imgViewSize image:cropImage topCap:top leftCap:left bottomCap:bottom rightCap:right];
             break;
@@ -178,7 +178,7 @@ typedef enum NSInteger{
 
 @end
 
-@implementation UIImage (MLNNineCrop)
+@implementation UIImage (MLNUINineCrop)
 
 - (UIImage*)mln_crop:(CGRect)rect
 {

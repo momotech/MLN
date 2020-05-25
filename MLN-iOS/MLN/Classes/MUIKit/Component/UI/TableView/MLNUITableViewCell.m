@@ -1,21 +1,21 @@
 //
 //  MMTableViewCell.m
-//  MLN
+//  MLNUI
 //
 //  Created by MoMo on 28/02/2018.
 //  Copyright © 2018 wemomo.com. All rights reserved.
 //
 
-#import "MLNTableViewCell.h"
-#import "UIView+MLNLayout.h"
-#import "MLNKitHeader.h"
-#import "MLNLuaTable.h"
+#import "MLNUITableViewCell.h"
+#import "UIView+MLNUILayout.h"
+#import "MLNUIKitHeader.h"
+#import "MLNUILuaTable.h"
 
-@interface MLNTableViewCell ()
+@interface MLNUITableViewCell ()
 @property (nonatomic, strong) UIColor *lastBackgroundColor;
 @end
 
-@implementation MLNTableViewCell
+@implementation MLNUITableViewCell
 
 - (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {
@@ -38,7 +38,7 @@
 
 - (void)lua_addSubview:(UIView *)view
 {
-    MLNCheckTypeAndNilValue(view, @"View", UIView);
+    MLNUICheckTypeAndNilValue(view, @"View", UIView);
     [self.luaContentView lua_addSubview:view];
 }
 
@@ -78,8 +78,8 @@
     }
 }
 
-#pragma mark - MLNReuseCellProtocol
-- (void)pushContentViewWithLuaCore:(MLNLuaCore *)luaCore
+#pragma mark - MLNUIReuseCellProtocol
+- (void)pushContentViewWithLuaCore:(MLNUILuaCore *)luaCore
 {
     [self updateContentViewFrameIfNeed];
     [self.luaContentView pushToLuaCore:luaCore];
@@ -95,7 +95,7 @@
     [self.luaContentView updateFrameIfNeed];
 }
 
-- (MLNLuaTable *)getLuaTable
+- (MLNUILuaTable *)getLuaTable
 {
     return self.luaContentView.luaTable;
 }
@@ -142,16 +142,16 @@
 }
 
 #pragma mark - Getter
-- (MLNReuseContentView *)luaContentView
+- (MLNUIReuseContentView *)luaContentView
 {
     if (!_luaContentView) {
-        _luaContentView = [[MLNReuseContentView alloc] initWithFrame:CGRectZero cellView:self];
+        _luaContentView = [[MLNUIReuseContentView alloc] initWithFrame:CGRectZero cellView:self];
         [self.contentView addSubview:_luaContentView];
     }
     return _luaContentView;
 }
 
-- (MLNLuaCore *)mln_luaCore
+- (MLNUILuaCore *)mln_luaCore
 {
     return self.luaContentView.luaTable.luaCore;
 }

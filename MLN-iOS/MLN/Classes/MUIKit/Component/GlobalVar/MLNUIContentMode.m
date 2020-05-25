@@ -1,14 +1,14 @@
 //
-//  MLNScaleType.m
+//  MLNUIScaleType.m
 //  
 //
 //  Created by MoMo on 2018/7/5.
 //
 
-#import "MLNContentMode.h"
-#import "MLNGlobalVarExporterMacro.h"
+#import "MLNUIContentMode.h"
+#import "MLNUIGlobalVarExporterMacro.h"
 
-@implementation MLNContentMode
+@implementation MLNUIContentMode
 
 #pragma mark - Setup For Lua
 LUA_EXPORT_GLOBAL_VAR_BEGIN()

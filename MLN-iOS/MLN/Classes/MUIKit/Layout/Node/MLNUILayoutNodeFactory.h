@@ -1,5 +1,5 @@
 //
-//  MLNLayoutNodeFactory.h
+//  MLNUILayoutNodeFactory.h
 //
 //
 //  Created by MoMo on 2018/12/13.
@@ -9,10 +9,10 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class MLNLayoutNode;
-@interface MLNLayoutNodeFactory : NSObject
+@class MLNUILayoutNode;
+@interface MLNUILayoutNodeFactory : NSObject
 
-+ (MLNLayoutNode *)createNodeWithTargetView:(UIView *)aView;
++ (MLNUILayoutNode *)createNodeWithTargetView:(UIView *)aView;
 
 @end
 

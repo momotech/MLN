@@ -1,13 +1,13 @@
 //
-//  MLNOvershotInterpolader.m
-//  MLN
+//  MLNUIOvershotInterpolader.m
+//  MLNUI
 //
 //  Created by MoMo on 2019/9/8.
 //
 
-#import "MLNOvershotInterpolater.h"
+#import "MLNUIOvershotInterpolater.h"
 
-@implementation MLNOvershotInterpolater
+@implementation MLNUIOvershotInterpolater
 
 - (CGFloat)getInterpolation:(CGFloat)progress {
     if (progress == 0) return 0.0;

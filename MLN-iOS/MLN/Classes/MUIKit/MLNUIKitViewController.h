@@ -1,31 +1,31 @@
 //
-//  MLNKitViewController.h.h
-//  MLN
+//  MLNUIKitViewController.h.h
+//  MLNUI
 //
 //  Created by MoMo on 2019/8/5.
 //
 
 #import <UIKit/UIKit.h>
-#import "MLNViewControllerProtocol.h"
-#import "MLNKitViewControllerDelegate.h"
-#import "MLNExportProtocol.h"
+#import "MLNUIViewControllerProtocol.h"
+#import "MLNUIKitViewControllerDelegate.h"
+#import "MLNUIExportProtocol.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class MLNKitInstance;
-@class MLNKitInstanceHandlersManager;
-@class MLNLuaBundle;
+@class MLNUIKitInstance;
+@class MLNUIKitInstanceHandlersManager;
+@class MLNUILuaBundle;
 /**
- 提供一个默认的包含MLNKitInstance的视图控制器
+ 提供一个默认的包含MLNUIKitInstance的视图控制器
  */
-@interface MLNKitViewController : UIViewController <MLNViewControllerProtocol> {
-@protected MLNKitInstance *_kitInstance;
+@interface MLNUIKitViewController : UIViewController <MLNUIViewControllerProtocol> {
+@protected MLNUIKitInstance *_kitInstance;
 }
 
 /**
  当前KitInstance
  */
-@property (nonatomic, strong, readonly) MLNKitInstance *kitInstance;
+@property (nonatomic, strong, readonly) MLNUIKitInstance *kitInstance;
 
 /**
  入口文件
@@ -45,18 +45,18 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  KitViewController的代理
  */
-@property (nonatomic, weak) id<MLNKitViewControllerDelegate> delegate;
+@property (nonatomic, weak) id<MLNUIKitViewControllerDelegate> delegate;
 
 /**
  其他处理句柄的管理器
  */
-@property (nonatomic, strong, readonly) MLNKitInstanceHandlersManager *handlerManager;
+@property (nonatomic, strong, readonly) MLNUIKitInstanceHandlersManager *handlerManager;
 
 
 /**
  注册的bridge类数组
  */
-@property (nonatomic, strong, readonly) NSArray<Class<MLNExportProtocol>> *regClasses;
+@property (nonatomic, strong, readonly) NSArray<Class<MLNUIExportProtocol>> *regClasses;
 
 /**
  是否隐藏导航栏
@@ -88,7 +88,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param regClasses 要注册的bridge类数组
  @return KitViewController
  */
-- (instancetype)initWithEntryFilePath:(NSString *)entryFilePath extraInfo:(nullable NSDictionary *)extraInfo regClasses:(nullable NSArray<Class<MLNExportProtocol>> *)regClasses NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithEntryFilePath:(NSString *)entryFilePath extraInfo:(nullable NSDictionary *)extraInfo regClasses:(nullable NSArray<Class<MLNUIExportProtocol>> *)regClasses NS_DESIGNATED_INITIALIZER;
 // 废弃默认的初始化方法
 + (instancetype)new NS_UNAVAILABLE;
 - (instancetype)init NS_UNAVAILABLE;
@@ -106,7 +106,7 @@ NS_ASSUME_NONNULL_BEGIN
  
  @param bundle Lua Bundle
  */
-- (void)changeCurrentBundle:(MLNLuaBundle *)bundle;
+- (void)changeCurrentBundle:(MLNUILuaBundle *)bundle;
 
 /**
  重新加载
@@ -143,7 +143,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param registerClasses 要被注册的Bridge数组
  @return 是否成功
  */
-- (BOOL)regClasses:(NSArray<Class<MLNExportProtocol>> *)registerClasses;
+- (BOOL)regClasses:(NSArray<Class<MLNUIExportProtocol>> *)registerClasses;
 
 @end
 

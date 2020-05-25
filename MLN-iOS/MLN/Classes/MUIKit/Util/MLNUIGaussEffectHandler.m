@@ -1,17 +1,17 @@
 //
-//  MLNGaussEffectHandler.m
-//  MLN
+//  MLNUIGaussEffectHandler.m
+//  MLNUI
 //
 //  Created by MOMO on 2019/9/20.
 //
 
-#import "MLNGaussEffectHandler.h"
+#import "MLNUIGaussEffectHandler.h"
 
-@interface MLNGaussEffectHandler()
+@interface MLNUIGaussEffectHandler()
 
 @end
 
-@implementation MLNGaussEffectHandler
+@implementation MLNUIGaussEffectHandler
 
 + (UIImage *)coreBlurImage:(UIImage *)image withBlurValue:(CGFloat)blurValue
 {

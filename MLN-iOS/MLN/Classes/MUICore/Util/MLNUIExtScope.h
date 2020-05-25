@@ -1,11 +1,11 @@
 //
-//  MLNExtScope.h
-//  MLN
+//  MLNUIExtScope.h
+//  MLNUI
 //
 //  Created by Dai Dongpeng on 2020/4/9.
 //
 
-#import "MLNMetamacros.h"
+#import "MLNUIMetamacros.h"
 
 /**
  * \@onExit defines some code to be executed when the current scope exits. The

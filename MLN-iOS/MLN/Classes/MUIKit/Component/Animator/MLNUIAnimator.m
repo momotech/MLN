@@ -1,30 +1,30 @@
 //
 //  Animator.m
-//  MLN
+//  MLNUI
 //
 //  Created by MoMo on 2019/5/21.
 //
 
-#import "MLNAnimator.h"
-#import "MLNLuaCore.h"
-#import "MLNAnimationHandler.h"
-#import "MLNBlock.h"
-#import "MLNAnimationConst.h"
-#import "MLNKitHeader.h"
+#import "MLNUIAnimator.h"
+#import "MLNUILuaCore.h"
+#import "MLNUIAnimationHandler.h"
+#import "MLNUIBlock.h"
+#import "MLNUIAnimationConst.h"
+#import "MLNUIKitHeader.h"
 
-@interface MLNAnimator ()
+@interface MLNUIAnimator ()
 
 @property (nonatomic, assign, getter=isRunning) BOOL running;
 @property (nonatomic, assign, getter=isStarted) BOOL started;
-@property (nonatomic, assign) MLNAnimationRepeatType repeatMode;
+@property (nonatomic, assign) MLNUIAnimationRepeatType repeatMode;
 @property (nonatomic, assign) NSInteger repeatCount;
 @property (nonatomic, assign) NSTimeInterval duration;
 @property (nonatomic, assign) NSTimeInterval delay;
-@property (nonatomic, strong) MLNBlock *startCallback;
-@property (nonatomic, strong) MLNBlock *cancelCallback;
-@property (nonatomic, strong) MLNBlock *endCallback;
-@property (nonatomic, strong) MLNBlock *repeatCallback;
-@property (nonatomic, strong) MLNBlock *onUpdateFrameCallback;
+@property (nonatomic, strong) MLNUIBlock *startCallback;
+@property (nonatomic, strong) MLNUIBlock *cancelCallback;
+@property (nonatomic, strong) MLNUIBlock *endCallback;
+@property (nonatomic, strong) MLNUIBlock *repeatCallback;
+@property (nonatomic, strong) MLNUIBlock *onUpdateFrameCallback;
 
 /**
  当前重复执行了多少个周期
@@ -42,7 +42,7 @@
 @property (nonatomic, assign) NSTimeInterval lastTime;
 
 @end
-@implementation MLNAnimator
+@implementation MLNUIAnimator
 
 - (void)start
 {
@@ -77,24 +77,24 @@
     if (!self.isRunning) {
         return;
     }
-    CGFloat percentage = (self.repeatMode == MLNAnimationRepeatTypeReverse && self.repeatCount >= 0) ? ((self.repeatCount + 1) % 2): 1.f;
+    CGFloat percentage = (self.repeatMode == MLNUIAnimationRepeatTypeReverse && self.repeatCount >= 0) ? ((self.repeatCount + 1) % 2): 1.f;
     [self doUpdateFrameWithPercentage:percentage];
     [self doAnimationEnd];
 }
 
-- (void)setRepeat:(MLNAnimationRepeatType)repeatMode count:(NSInteger)count
+- (void)setRepeat:(MLNUIAnimationRepeatType)repeatMode count:(NSInteger)count
 {
     self.repeatMode = repeatMode;
     self.repeatCount = count;
     self.doCount = count;
 }
 
-- (MLNAnimationHandler *)animationHandler
+- (MLNUIAnimationHandler *)animationHandler
 {
-    return [MLNAnimationHandler sharedHandler];
+    return [MLNUIAnimationHandler sharedHandler];
 }
 
-#pragma mark - MLNAnimationHandlerCallbackProtocol
+#pragma mark - MLNUIAnimationHandlerCallbackProtocol
 - (void)doAnimationFrame:(NSTimeInterval)frameTime
 {
     NSTimeInterval durationTime = frameTime - self.startTime - self.delay;
@@ -142,7 +142,7 @@
         [self.onUpdateFrameCallback addFloatArgument:percentage];
         [self.onUpdateFrameCallback callIfCan];
         // 重新布局当前界面，以支持动画
-        [MLN_KIT_INSTANCE(self.onUpdateFrameCallback.luaCore) requestLayout];
+        [MLNUI_KIT_INSTANCE(self.onUpdateFrameCallback.luaCore) requestLayout];
         [CATransaction commit];
     }
 }
@@ -167,7 +167,7 @@
 
 - (float)percentageWithCurrentDuration:(NSTimeInterval)duration
 {
-    if (self.repeatMode == MLNAnimationRepeatTypeReverse &&
+    if (self.repeatMode == MLNUIAnimationRepeatTypeReverse &&
         self.doCount % 2 == 1) {
         if (duration >= self.duration) {
             return 0.f;
@@ -184,7 +184,7 @@
 #pragma mark - Lifecycle
 - (id)copyWithZone:(NSZone *)zone
 {
-    MLNAnimator *copyAnimator = [[[self class] allocWithZone:zone] init];
+    MLNUIAnimator *copyAnimator = [[[self class] allocWithZone:zone] init];
     copyAnimator.repeatMode = self.repeatMode;
     copyAnimator.repeatCount = self.repeatCount;
     copyAnimator.duration = self.duration;
@@ -198,20 +198,20 @@
 }
 
 #pragma mark - Export To Lua
-LUA_EXPORT_BEGIN(MLNAnimator)
-LUA_EXPORT_METHOD(setRepeat, "setRepeat:count:", MLNAnimator)
-LUA_EXPORT_METHOD(setDuration, "setDuration:", MLNAnimator)
-LUA_EXPORT_METHOD(setDelay, "setDelay:", MLNAnimator)
-LUA_EXPORT_METHOD(start, "start", MLNAnimator)
-LUA_EXPORT_METHOD(stop, "end", MLNAnimator)
-LUA_EXPORT_METHOD(cancel, "cancel", MLNAnimator)
-LUA_EXPORT_METHOD(isRunning, "isRunning", MLNAnimator)
-LUA_EXPORT_METHOD(setStartCallback, "setStartCallback:", MLNAnimator)
-LUA_EXPORT_METHOD(setStopCallback, "setEndCallback:", MLNAnimator)
-LUA_EXPORT_METHOD(setRepeatCallback, "setRepeatCallback:", MLNAnimator)
-LUA_EXPORT_METHOD(setCancelCallback, "setCancelCallback:", MLNAnimator)
-LUA_EXPORT_METHOD(setOnAnimationUpdateCallback, "setOnUpdateFrameCallback:", MLNAnimator)
-LUA_EXPORT_METHOD(clone, "copy", MLNAnimator)
-LUA_EXPORT_END(MLNAnimator, Animator, NO, NULL, NULL)
+LUA_EXPORT_BEGIN(MLNUIAnimator)
+LUA_EXPORT_METHOD(setRepeat, "setRepeat:count:", MLNUIAnimator)
+LUA_EXPORT_METHOD(setDuration, "setDuration:", MLNUIAnimator)
+LUA_EXPORT_METHOD(setDelay, "setDelay:", MLNUIAnimator)
+LUA_EXPORT_METHOD(start, "start", MLNUIAnimator)
+LUA_EXPORT_METHOD(stop, "end", MLNUIAnimator)
+LUA_EXPORT_METHOD(cancel, "cancel", MLNUIAnimator)
+LUA_EXPORT_METHOD(isRunning, "isRunning", MLNUIAnimator)
+LUA_EXPORT_METHOD(setStartCallback, "setStartCallback:", MLNUIAnimator)
+LUA_EXPORT_METHOD(setStopCallback, "setEndCallback:", MLNUIAnimator)
+LUA_EXPORT_METHOD(setRepeatCallback, "setRepeatCallback:", MLNUIAnimator)
+LUA_EXPORT_METHOD(setCancelCallback, "setCancelCallback:", MLNUIAnimator)
+LUA_EXPORT_METHOD(setOnAnimationUpdateCallback, "setOnUpdateFrameCallback:", MLNUIAnimator)
+LUA_EXPORT_METHOD(clone, "copy", MLNUIAnimator)
+LUA_EXPORT_END(MLNUIAnimator, Animator, NO, NULL, NULL)
 
 @end

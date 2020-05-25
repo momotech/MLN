@@ -1,14 +1,14 @@
 //
-//  NSError+MLNCore.h
-//  MLNCore
+//  NSError+MLNUICore.h
+//  MLNUICore
 //
 //  Created by MoMo on 2019/7/23.
 //
 
 #import <Foundation/Foundation.h>
 
-#define kMLN_ERROR_DOMAIN   @"com.mln.error"
-#define kMLN_ERROR_MSG      @"errorMessage"
+#define kMLNUI_ERROR_DOMAIN   @"com.mln.error"
+#define kMLNUI_ERROR_MSG      @"errorMessage"
 
 typedef enum : NSInteger {
     /* lua 文件加载错误 */
@@ -26,7 +26,7 @@ typedef enum : NSInteger {
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface NSError (MLNCore)
+@interface NSError (MLNUICore)
 
 /**
  创建文件加载错误

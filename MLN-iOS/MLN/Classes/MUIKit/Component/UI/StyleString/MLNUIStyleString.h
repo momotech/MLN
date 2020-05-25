@@ -1,20 +1,20 @@
 //
-//  MLNStyleString.h
+//  MLNUIStyleString.h
 //  MMDebugTools-DebugManager
 //
 //  Created by MoMo on 2018/7/4.
 //
 
 #import <Foundation/Foundation.h>
-#import "MLNTextConst.h"
-#import "MLNStyleStringConst.h"
-#import "MLNEntityExportProtocol.h"
+#import "MLNUITextConst.h"
+#import "MLNUIStyleStringConst.h"
+#import "MLNUIEntityExportProtocol.h"
 
-@class MLNStyleElement;
+@class MLNUIStyleElement;
 
-typedef void(^MLNImageLoadFinishedCallback)(NSAttributedString *attributeText);
+typedef void(^MLNUIImageLoadFinishedCallback)(NSAttributedString *attributeText);
 
-@interface MLNStyleString : NSObject<MLNEntityExportProtocol>
+@interface MLNUIStyleString : NSObject<MLNUIEntityExportProtocol>
 
 - (instancetype)initWithAttributedString:(NSAttributedString *)attributes;
 
@@ -22,6 +22,6 @@ typedef void(^MLNImageLoadFinishedCallback)(NSAttributedString *attributeText);
 
 @property(nonatomic,strong, readonly) NSMutableAttributedString *mutableStyledString;
 
-@property (nonatomic, copy) MLNImageLoadFinishedCallback loadFinishedCallback;
+@property (nonatomic, copy) MLNUIImageLoadFinishedCallback loadFinishedCallback;
 
 @end

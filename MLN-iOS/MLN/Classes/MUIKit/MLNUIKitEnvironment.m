@@ -1,49 +1,49 @@
 //
-//  MLNKitEnvironment.m
-//  MLN
+//  MLNUIKitEnvironment.m
+//  MLNUI
 //
 //  Created by MoMo on 2019/11/22.
 //
 
-#import "MLNKitEnvironment.h"
-#import "MLNKitInstanceHandlersManager.h"
-#import "MLNKitInstanceFactory.h"
+#import "MLNUIKitEnvironment.h"
+#import "MLNUIKitInstanceHandlersManager.h"
+#import "MLNUIKitInstanceFactory.h"
 
-@implementation MLNKitEnvironment
+@implementation MLNUIKitEnvironment
 
 + (void)instancePreload
 {
-    [[MLNKitInstanceFactory defaultFactory] preloadWithCapacity:1];
+    [[MLNUIKitInstanceFactory defaultFactory] preloadWithCapacity:1];
 }
 
 + (void)instancePreloadWithCapacity:(NSUInteger)capacity
 {
-    [[MLNKitInstanceFactory defaultFactory] preloadWithCapacity:capacity];
+    [[MLNUIKitInstanceFactory defaultFactory] preloadWithCapacity:capacity];
 }
 
-+ (void)setDefaultErrorHandler:(id<MLNKitInstanceErrorHandlerProtocol>)errorHandler
++ (void)setDefaultErrorHandler:(id<MLNUIKitInstanceErrorHandlerProtocol>)errorHandler
 {
-    [MLNKitInstanceHandlersManager defaultManager].errorHandler = errorHandler;
+    [MLNUIKitInstanceHandlersManager defaultManager].errorHandler = errorHandler;
 }
 
-+ (void)setDefaultHttpHandler:(id<MLNHttpHandlerProtocol>)httpHandler
++ (void)setDefaultHttpHandler:(id<MLNUIHttpHandlerProtocol>)httpHandler
 {
-    [MLNKitInstanceHandlersManager defaultManager].httpHandler = httpHandler;
+    [MLNUIKitInstanceHandlersManager defaultManager].httpHandler = httpHandler;
 }
 
-+ (void)setDefaultImageLoader:(id<MLNImageLoaderProtocol>)imageLoader
++ (void)setDefaultImageLoader:(id<MLNUIImageLoaderProtocol>)imageLoader
 {
-    [MLNKitInstanceHandlersManager defaultManager].imageLoader = imageLoader;
+    [MLNUIKitInstanceHandlersManager defaultManager].imageLoader = imageLoader;
 }
 
-+ (void)setDefaultScrollRefreshHandler:(id<MLNRefreshDelegate>)scrollRefreshHandler
++ (void)setDefaultScrollRefreshHandler:(id<MLNUIRefreshDelegate>)scrollRefreshHandler
 {
-    [MLNKitInstanceHandlersManager defaultManager].scrollRefreshHandler = scrollRefreshHandler;
+    [MLNUIKitInstanceHandlersManager defaultManager].scrollRefreshHandler = scrollRefreshHandler;
 }
 
-+ (void)setDefaultNavigatorHandler:(id<MLNNavigatorHandlerProtocol>)navigatorHandler
++ (void)setDefaultNavigatorHandler:(id<MLNUINavigatorHandlerProtocol>)navigatorHandler
 {
-    [MLNKitInstanceHandlersManager defaultManager].navigatorHandler = navigatorHandler;
+    [MLNUIKitInstanceHandlersManager defaultManager].navigatorHandler = navigatorHandler;
 }
 
 static __weak UIWindow *_mainWindow = nil;

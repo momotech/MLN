@@ -1,21 +1,21 @@
 //
-//  UIImage+MLNKit.m
-//  MLN
+//  UIImage+MLNUIKit.m
+//  MLNUI
 //
 //  Created by MOMO on 2019/10/16.
 //
 
-#import "UIImage+MLNKit.h"
-#import "MLNCornerManagerTool.h"
+#import "UIImage+MLNUIKit.h"
+#import "MLNUICornerManagerTool.h"
 
-@implementation UIImage (MLNKit)
+@implementation UIImage (MLNUIKit)
 
-- (UIImage *)mln_ImageWithCornerRadius:(MLNCornerRadius)cornerRadius
+- (UIImage *)mln_ImageWithCornerRadius:(MLNUICornerRadius)cornerRadius
 {
     CGRect rect = (CGRect){0.f, 0.f, self.size};
     UIImage *image = nil;
     // 根据矩形画带圆角的曲线
-    CGPathRef path  = [MLNCornerManagerTool bezierPathWithRect:rect multiRadius:cornerRadius].CGPath;
+    CGPathRef path  = [MLNUICornerManagerTool bezierPathWithRect:rect multiRadius:cornerRadius].CGPath;
     if (@available(iOS 10.0, *)) {
         UIGraphicsImageRendererFormat *format = [[UIGraphicsImageRendererFormat alloc] init];
         format.prefersExtendedRange = YES;

@@ -1,21 +1,21 @@
 //
-//  MLNWaterfallHeaderView.m
+//  MLNUIWaterfallHeaderView.m
 //
 //
 //  Created by MoMo on 2019/5/10.
 //
 
-#import "MLNWaterfallHeaderView.h"
-#import "MLNKitHeader.h"
-#import "UIView+MLNLayout.h"
+#import "MLNUIWaterfallHeaderView.h"
+#import "MLNUIKitHeader.h"
+#import "UIView+MLNUILayout.h"
 
-@interface MLNWaterfallHeaderView()
+@interface MLNUIWaterfallHeaderView()
 
-@property (nonatomic, strong) MLNReuseContentView *luaContentView;
+@property (nonatomic, strong) MLNUIReuseContentView *luaContentView;
 
 @end
 
-@implementation MLNWaterfallHeaderView
+@implementation MLNUIWaterfallHeaderView
 
 - (instancetype)initWithFrame:(CGRect)frame
 {
@@ -27,12 +27,12 @@
 
 - (void)lua_addSubview:(UIView *)view
 {
-    MLNCheckTypeAndNilValue(view, @"View", UIView)
+    MLNUICheckTypeAndNilValue(view, @"View", UIView)
     [self.luaContentView lua_addSubview:view];
 }
 
-#pragma mark - MLNReuseCellProtocol
-- (void)pushContentViewWithLuaCore:(MLNLuaCore *)luaCore
+#pragma mark - MLNUIReuseCellProtocol
+- (void)pushContentViewWithLuaCore:(MLNUILuaCore *)luaCore
 {
     [self.luaContentView pushToLuaCore:luaCore];
 }
@@ -47,7 +47,7 @@
     [self.luaContentView updateFrameIfNeed];
 }
 
-- (MLNLuaTable *)getLuaTable
+- (MLNUILuaTable *)getLuaTable
 {
     return self.luaContentView.luaTable;
 }
@@ -88,10 +88,10 @@
 }
 
 #pragma mark - Getter
-- (MLNReuseContentView *)luaContentView
+- (MLNUIReuseContentView *)luaContentView
 {
     if (!_luaContentView) {
-        _luaContentView = [[MLNReuseContentView alloc] initWithFrame:CGRectZero cellView:self];
+        _luaContentView = [[MLNUIReuseContentView alloc] initWithFrame:CGRectZero cellView:self];
         [self addSubview:_luaContentView];
     }
     return _luaContentView;

@@ -1,18 +1,18 @@
 //
-//  NSNumber+MLNCore.m
-//  MLNCore
+//  NSNumber+MLNUICore.m
+//  MLNUICore
 //
 //  Created by MoMo on 2019/7/23.
 //
 
-#import "NSNumber+MLNCore.h"
-#import "NSObject+MLNCore.h"
+#import "NSNumber+MLNUICore.h"
+#import "NSObject+MLNUICore.h"
 
-@implementation NSNumber (MLNCore)
+@implementation NSNumber (MLNUICore)
 
-- (MLNNativeType)mln_nativeType
+- (MLNUINativeType)mln_nativeType
 {
-    return MLNNativeTypeNumber;
+    return MLNUINativeTypeNumber;
 }
 
 - (BOOL)mln_isMultiple

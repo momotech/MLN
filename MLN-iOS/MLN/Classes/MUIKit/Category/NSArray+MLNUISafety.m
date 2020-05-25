@@ -1,18 +1,18 @@
 //
-//  NSArray+MLNSafety.m
+//  NSArray+MLNUISafety.m
 //
 //
 //  Created by MoMo on 2018/11/21.
 //
 
-#import "NSArray+MLNSafety.h"
-#import "NSDictionary+MLNSafety.h"
+#import "NSArray+MLNUISafety.h"
+#import "NSDictionary+MLNUISafety.h"
 
-@implementation NSArray (MLNSafety)
+@implementation NSArray (MLNUISafety)
 
 - (id)mln_objectAtIndex:(NSUInteger)index
 {
-#if MLNCrashProtect
+#if MLNUICrashProtect
     if (index >= self.count) {
         return nil;
     }
@@ -22,11 +22,11 @@
 
 @end
 
-@implementation NSMutableArray (MLNSafety)
+@implementation NSMutableArray (MLNUISafety)
 
 + (instancetype)mln_arrayWithArray:(NSArray *)array
 {
-#if MLNCrashProtect
+#if MLNUICrashProtect
     if (!(array &&
           ([array isKindOfClass:[NSArray class]] ||
            [array isKindOfClass:[NSMutableArray class]]))) {
@@ -38,7 +38,7 @@
 
 - (void)mln_addObject:(id)anObject
 {
-#if MLNCrashProtect
+#if MLNUICrashProtect
     if (!anObject) return;
 #endif
     [self addObject:anObject];
@@ -46,7 +46,7 @@
 
 - (void)mln_addObjectsFromArray:(NSArray *)array
 {
-#if MLNCrashProtect
+#if MLNUICrashProtect
     if (!(array &&
           ([array isKindOfClass:[NSArray class]] ||
            [array isKindOfClass:[NSMutableArray class]]))) return;
@@ -56,7 +56,7 @@
 
 - (void)mln_insertObject:(id)anObject atIndex:(NSUInteger)index
 {
-#if MLNCrashProtect
+#if MLNUICrashProtect
     if (!(anObject && index <= self.count)) return;
 #endif
     [self insertObject:anObject atIndex:index];
@@ -64,7 +64,7 @@
 
 - (void)mln_removeObjectAtIndex:(NSUInteger)index
 {
-#if MLNCrashProtect
+#if MLNUICrashProtect
     if (index >= self.count) return;
 #endif
     [self removeObjectAtIndex:index];
@@ -72,7 +72,7 @@
 
 - (void)mln_replaceObjectAtIndex:(NSUInteger)index withObject:(id)anObject
 {
-#if MLNCrashProtect
+#if MLNUICrashProtect
     if (!(anObject && index < self.count)) return;
 #endif
     [self replaceObjectAtIndex:index withObject:anObject];
@@ -80,7 +80,7 @@
 
 - (void)mln_removeObject:(id)anObject
 {
-#if MLNCrashProtect
+#if MLNUICrashProtect
     if (!anObject) return;
 #endif
     [self removeObject:anObject];
@@ -88,7 +88,7 @@
 
 - (void)mln_removeObjects:(NSArray *)array
 {
-#if MLNCrashProtect
+#if MLNUICrashProtect
     if (!(array &&
           ([array isKindOfClass:[NSArray class]] ||
            [array isKindOfClass:[NSMutableArray class]]))) return;
@@ -98,7 +98,7 @@
 
 - (void)mln_exchangeObjectAtIndex:(NSUInteger)startIndex withOther:(NSUInteger)otherIndex
 {
-#if MLNCrashProtect
+#if MLNUICrashProtect
     if (startIndex >= self.count || otherIndex >= self.count) return;
 #endif
     [self exchangeObjectAtIndex:startIndex withObjectAtIndex:otherIndex];
@@ -106,7 +106,7 @@
 
 - (void)mln_insertObjects:(NSArray *)objects fromIndex:(NSUInteger)fromIndex
 {
-#if MLNCrashProtect
+#if MLNUICrashProtect
     if (!(objects && ([objects isKindOfClass:[NSArray class]] ||
                     [objects isKindOfClass:[NSMutableArray class]]))) return;
     if (fromIndex > self.count) return;
@@ -117,7 +117,7 @@
 
 - (void)mln_removeObjectsFromIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex
 {
-#if MLNCrashProtect
+#if MLNUICrashProtect
     if (fromIndex >= self.count || toIndex >= self.count || fromIndex > toIndex) return;
 #endif
     NSIndexSet *indexSet = [[NSIndexSet alloc]initWithIndexesInRange:NSMakeRange(fromIndex, toIndex - fromIndex+1)];
@@ -126,7 +126,7 @@
 
 - (void)mln_replaceObjects:(NSArray *)objects fromIndex:(NSUInteger)fromIndex
 {
-#if MLNCrashProtect
+#if MLNUICrashProtect
     if (!(objects &&
           ([objects isKindOfClass:[NSArray class]] ||
            [objects isKindOfClass:[NSMutableArray class]]))) return;

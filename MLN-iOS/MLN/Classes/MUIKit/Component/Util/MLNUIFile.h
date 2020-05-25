@@ -1,30 +1,30 @@
 //
-//  MLNFile.h
+//  MLNUIFile.h
 //
 //
 //  Created by MoMo on 2018/7/9.
 //
 
 #import <Foundation/Foundation.h>
-#import "MLNStaticExportProtocol.h"
+#import "MLNUIStaticExportProtocol.h"
 
-typedef NS_ENUM(NSInteger, MLNFileErrorCode) {
-    MLNFileErrorCodeFileNotExist = -1,
-    MLNFileErrorCodeNotFile = -2,
-    MLNFileErrorCodeReadFailed = -3,
-    MLNFileErrorCodeParseJsonFailed = -4,
-    MLNFileErrorCodeCreateDirFailed = -5,
-    MLNFileErrorCodeWriteFailed = -6,
-    MLNFileErrorCodeSourceFileNotExist = -7,
-    MLNFileErrorCodeCreateFileFailed = -8,
-    MLNFileErrorCodeDeleteFileFailed = -9,
-    MLNFileErrorCodeMoveFileFailed = -10,
-    MLNFileErrorCodeCopyFileFailed = -11,
-    MLNFileErrorCodeGetFileListFailed = -12,
-    MLNFileErrorCodeGetFileMD5ParseFailed = -13
+typedef NS_ENUM(NSInteger, MLNUIFileErrorCode) {
+    MLNUIFileErrorCodeFileNotExist = -1,
+    MLNUIFileErrorCodeNotFile = -2,
+    MLNUIFileErrorCodeReadFailed = -3,
+    MLNUIFileErrorCodeParseJsonFailed = -4,
+    MLNUIFileErrorCodeCreateDirFailed = -5,
+    MLNUIFileErrorCodeWriteFailed = -6,
+    MLNUIFileErrorCodeSourceFileNotExist = -7,
+    MLNUIFileErrorCodeCreateFileFailed = -8,
+    MLNUIFileErrorCodeDeleteFileFailed = -9,
+    MLNUIFileErrorCodeMoveFileFailed = -10,
+    MLNUIFileErrorCodeCopyFileFailed = -11,
+    MLNUIFileErrorCodeGetFileListFailed = -12,
+    MLNUIFileErrorCodeGetFileMD5ParseFailed = -13
 };
 
-@interface MLNFile : NSObject <MLNStaticExportProtocol>
+@interface MLNUIFile : NSObject <MLNUIStaticExportProtocol>
 
 // 根据lua的文件夹相对路径获取实际存储路径
 + (NSString*)directoryWithPath:(NSString*)path;

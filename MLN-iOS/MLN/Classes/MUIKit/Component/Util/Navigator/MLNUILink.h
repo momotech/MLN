@@ -1,16 +1,16 @@
 //
-//  MLNLink.h
-//  MLN
+//  MLNUILink.h
+//  MLNUI
 //
 //  Created by MOMO on 2020/4/30.
 //
 
 #import <Foundation/Foundation.h>
-#import "MLNStaticExportProtocol.h"
+#import "MLNUIStaticExportProtocol.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface MLNLink : NSObject<MLNStaticExportProtocol>
+@interface MLNUILink : NSObject<MLNUIStaticExportProtocol>
 
 + (void)registerName:(NSString *)name linkClass:(Class)cls;
 + (void)registerName:(NSString *)name linkClassName:(NSString *)clsName;

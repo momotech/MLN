@@ -1,18 +1,18 @@
 //
-//  MLNWaterfallLayout.m
-//  MLN
+//  MLNUIWaterfallLayout.m
+//  MLNUI
 //
 //  Created by MoMo on 2019/11/1.
 //
 
-#import "MLNWaterfallLayout.h"
-#import "MLNInternalWaterfallView.h"
-#import "MLNViewExporterMacro.h"
-#import "MLNHeader.h"
-#import "MLNKitHeader.h"
-#import "MLNWaterfallLayoutDelegate.h"
+#import "MLNUIWaterfallLayout.h"
+#import "MLNUIInternalWaterfallView.h"
+#import "MLNUIViewExporterMacro.h"
+#import "MLNUIHeader.h"
+#import "MLNUIKitHeader.h"
+#import "MLNUIWaterfallLayoutDelegate.h"
 
-@interface MLNWaterfallLayout ()
+@interface MLNUIWaterfallLayout ()
 
 @property (nonatomic, assign) NSUInteger columnCount;
 @property (nonatomic, assign) CGFloat lineSpacing;
@@ -27,7 +27,7 @@
 
 @end
 
-@implementation MLNWaterfallLayout
+@implementation MLNUIWaterfallLayout
 
 - (instancetype)init
 {
@@ -71,7 +71,7 @@
     self.startY = self.layoutInset.top;
     
     //列数
-    MLNKitLuaAssert(_columnCount > 0, @"The spanCount must greater than 0!");
+    MLNUIKitLuaAssert(_columnCount > 0, @"The spanCount must greater than 0!");
     NSInteger columnCount = _columnCount <= 0? 1 : _columnCount;
     
     // 检查是否实现代理方法
@@ -89,7 +89,7 @@
         NSIndexPath *supplementaryViewIndexPath = [NSIndexPath indexPathForRow:0 inSection:section];
         CGSize size = CGSizeZero;
         if (section == 0) {
-            size = [(id<MLNWaterfallLayoutDelegate>)self.collectionView.delegate collectionView:self.collectionView layout:self referenceSizeForHeaderInSection:section];
+            size = [(id<MLNUIWaterfallLayoutDelegate>)self.collectionView.delegate collectionView:self.collectionView layout:self referenceSizeForHeaderInSection:section];
             size.height = size.height < 0 ? 0 : size.height;
             //头视图的高度不为0并且根据代理方法能取到对应的头视图的时候，添加对应头视图的布局对象
             UICollectionViewLayoutAttributes *attribute = [UICollectionViewLayoutAttributes layoutAttributesForSupplementaryViewOfKind:UICollectionElementKindSectionHeader withIndexPath:supplementaryViewIndexPath];
@@ -131,7 +131,7 @@
             CGFloat x = self.layoutInset.left + (currentRow *(itemWidth + self.itemSpacing));
             //根据代理去当前cell的高度  因为当前是采用通过列数计算的宽度，高度根据图片的原始宽高比进行设置的
             //    高度
-            CGFloat height = [(id<MLNWaterfallLayoutDelegate>)self.collectionView.delegate collectionView:self.collectionView layout:self heightForItemAtIndexPath:cellIndePath];
+            CGFloat height = [(id<MLNUIWaterfallLayoutDelegate>)self.collectionView.delegate collectionView:self.collectionView layout:self heightForItemAtIndexPath:cellIndePath];
             
             //设置当前cell布局对象的frame
             attribute.frame = CGRectMake(x, y, itemWidth, height);
@@ -207,13 +207,13 @@
 #pragma mark -
 - (BOOL)isHeaderSettingInNewWay
 {
-    BOOL isHeaderSettingInNewWay = [(id<MLNWaterfallLayoutDelegate>)self.collectionView.delegate headerIsSettingInNewWayWithWaterfallView:self.collectionView];
+    BOOL isHeaderSettingInNewWay = [(id<MLNUIWaterfallLayoutDelegate>)self.collectionView.delegate headerIsSettingInNewWayWithWaterfallView:self.collectionView];
     return isHeaderSettingInNewWay;
 }
 
 - (BOOL)isHeaderValidInNewWay
 {
-    BOOL isHeaderValid = [(id<MLNWaterfallLayoutDelegate>)self.collectionView.delegate headerIsValidWithWaterfallView:self.collectionView];
+    BOOL isHeaderValid = [(id<MLNUIWaterfallLayoutDelegate>)self.collectionView.delegate headerIsValidWithWaterfallView:self.collectionView];
     return isHeaderValid;
 }
 
@@ -245,12 +245,12 @@
 }
 
 #pragma mark - Export For Lua
-LUA_EXPORT_BEGIN(MLNWaterfallLayout)
-LUA_EXPORT_PROPERTY(spanCount, "setColumnCount:", "columnCount", MLNWaterfallLayout)
-LUA_EXPORT_PROPERTY(lineSpacing, "setLineSpacing:","lineSpacing", MLNWaterfallLayout)
-LUA_EXPORT_PROPERTY(itemSpacing, "setItemSpacing:","itemSpacing", MLNWaterfallLayout)
-LUA_EXPORT_METHOD(layoutInset, "lua_setlayoutInset:left:bottom:right:", MLNWaterfallLayout)
-LUA_EXPORT_END(MLNWaterfallLayout, WaterfallLayout, NO, NULL, NULL)
+LUA_EXPORT_BEGIN(MLNUIWaterfallLayout)
+LUA_EXPORT_PROPERTY(spanCount, "setColumnCount:", "columnCount", MLNUIWaterfallLayout)
+LUA_EXPORT_PROPERTY(lineSpacing, "setLineSpacing:","lineSpacing", MLNUIWaterfallLayout)
+LUA_EXPORT_PROPERTY(itemSpacing, "setItemSpacing:","itemSpacing", MLNUIWaterfallLayout)
+LUA_EXPORT_METHOD(layoutInset, "lua_setlayoutInset:left:bottom:right:", MLNUIWaterfallLayout)
+LUA_EXPORT_END(MLNUIWaterfallLayout, WaterfallLayout, NO, NULL, NULL)
 
 @end
 

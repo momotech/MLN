@@ -1,5 +1,5 @@
 //
-//  MLNAdapterCachesManager.h
+//  MLNUIAdapterCachesManager.h
 //  
 //
 //  Created by MoMo on 2019/3/18.
@@ -9,7 +9,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface MLNAdapterCachesManager : NSObject
+@interface MLNUIAdapterCachesManager : NSObject
 
 - (NSInteger)sectionCount;
 - (NSInteger)rowCountInSection:(NSInteger)section;

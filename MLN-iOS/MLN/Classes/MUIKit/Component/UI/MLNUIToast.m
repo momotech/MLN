@@ -1,13 +1,13 @@
 //
-//  MLNToast.m
+//  MLNUIToast.m
 //  
 //
 //  Created by MoMo on 2018/7/11.
 //
 
-#import "MLNToast.h"
-#import "MLNKitHeader.h"
-#import "MLNViewExporterMacro.h"
+#import "MLNUIToast.h"
+#import "MLNUIKitHeader.h"
+#import "MLNUIViewExporterMacro.h"
 
 #define kFontDefaultSize 14
 #define kToastDefaultWidth 280
@@ -15,29 +15,29 @@
 #define kDefaultAnimationDuration 1.5
 #define kToastDefaultBackColor [UIColor colorWithRed:0.2f green:0.2f blue:0.2f alpha:0.75f]
 
-@interface MLNToast ()
+@interface MLNUIToast ()
 
 @property (nonatomic, strong) UIView *containerView;
 @property (nonatomic, strong) UILabel *msgLabel;
 @property (nonatomic, assign) BOOL isShowing;
 
 @end
-@implementation MLNToast
+@implementation MLNUIToast
 
 + (instancetype)toastWithMessage:(NSString *)message duration:(CGFloat)duration
 {
     if (message != nil && ![message isKindOfClass:[NSString class]]) {
         message = @"";
     }
-    return [[MLNToast alloc] initWithLuaCore:nil message:message duration:duration];
+    return [[MLNUIToast alloc] initWithLuaCore:nil message:message duration:duration];
 }
 
-- (instancetype)initWithLuaCore:(MLNLuaCore *)luaCore message:(NSString *)message duration:(CGFloat)duration
+- (instancetype)initWithLuaCore:(MLNUILuaCore *)luaCore message:(NSString *)message duration:(CGFloat)duration
 {
     self = [super initWithLuaCore:luaCore];
     if (self) {
         if (message != nil && ![message isKindOfClass:[NSString class]]) {
-            MLNKitLuaAssert(NO, @"The message type should be String!");
+            MLNUIKitLuaAssert(NO, @"The message type should be String!");
             message = @"";
         }
         [self setupUIWithText:message];
@@ -168,7 +168,7 @@
 }
 
 #pragma mark - Export For Lua
-LUA_EXPORT_BEGIN(MLNToast)
-LUA_EXPORT_END(MLNToast, Toast, NO, NULL, "initWithLuaCore:message:duration:")
+LUA_EXPORT_BEGIN(MLNUIToast)
+LUA_EXPORT_END(MLNUIToast, Toast, NO, NULL, "initWithLuaCore:message:duration:")
 
 @end

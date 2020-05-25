@@ -1,30 +1,30 @@
 //
-//  MLNTextAlign.h
+//  MLNUITextAlign.h
 //  
 //
 //  Created by MoMo on 2018/7/5.
 //
 
 #import <UIKit/UIKit.h>
-#import "MLNGlobalVarExportProtocol.h"
+#import "MLNUIGlobalVarExportProtocol.h"
 
 #define kLuaDefaultFontSize 14
 #define kLuaDefaultPlaceHolderColor [UIColor colorWithRed:0.50 green:0.50 blue:0.50 alpha:1.00]
 #define kLuaDefaultFont [UIFont systemFontOfSize:kLuaDefaultFontSize]
 
 typedef enum : NSUInteger {
-    MLNFontStyleDefault = 0,
-    MLNFontStyleBold,
-    MLNFontStyleItalic,
-    MLNFontStyleBoldItalic
-} MLNFontStyle;
+    MLNUIFontStyleDefault = 0,
+    MLNUIFontStyleBold,
+    MLNUIFontStyleItalic,
+    MLNUIFontStyleBoldItalic
+} MLNUIFontStyle;
 
 typedef enum : NSUInteger {
-    MLNUnderlineStyleClean = -1,
-    MLNUnderlineStyleNone = 0,
-    MLNUnderlineStyleSingle = 1,
-} MLNUnderlineStyle;
+    MLNUIUnderlineStyleClean = -1,
+    MLNUIUnderlineStyleNone = 0,
+    MLNUIUnderlineStyleSingle = 1,
+} MLNUIUnderlineStyle;
 
-@interface MLNTextConst : NSObject <MLNGlobalVarExportProtocol>
+@interface MLNUITextConst : NSObject <MLNUIGlobalVarExportProtocol>
 
 @end

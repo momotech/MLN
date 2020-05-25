@@ -1,15 +1,15 @@
 //
-//  MLNVStackNode.h
-//  MLN
+//  MLNUIVStackNode.h
+//  MLNUI
 //
 //  Created by MOMO on 2020/3/25.
 //
 
-#import "MLNStackNode.h"
+#import "MLNUIStackNode.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface MLNVStackNode : MLNPlaneStackNode
+@interface MLNUIVStackNode : MLNUIPlaneStackNode
 
 @end
 

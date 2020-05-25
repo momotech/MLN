@@ -1,18 +1,18 @@
 //
-//  MLNShapeContext.h
+//  MLNUIShapeContext.h
 //
 //
 //  Created by MoMo on 2019/7/24.
 //
 
 #import <Foundation/Foundation.h>
-#import "MLNEntityExportProtocol.h"
+#import "MLNUIEntityExportProtocol.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface MLNShapeContext : NSObject<MLNEntityExportProtocol>
+@interface MLNUIShapeContext : NSObject<MLNUIEntityExportProtocol>
 
-- (instancetype)initWithLuaCore:(MLNLuaCore *)luaCore TargetView:(UIView *)targetView;
+- (instancetype)initWithLuaCore:(MLNUILuaCore *)luaCore TargetView:(UIView *)targetView;
 
 - (void)cleanShapes;
 

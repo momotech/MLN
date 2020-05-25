@@ -1,6 +1,6 @@
 //
-//  MLNKitInstanceConsts.h
-//  MLN
+//  MLNUIKitInstanceConsts.h
+//  MLNUI
 //
 //  Created by MoMo on 2019/10/29.
 //
@@ -12,7 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  记录对应Instance中通用信息配置
  */
-@interface MLNKitInstanceConsts : NSObject
+@interface MLNUIKitInstanceConsts : NSObject
 
 @property (nonatomic, assign) BOOL defaultCornerClip;
 

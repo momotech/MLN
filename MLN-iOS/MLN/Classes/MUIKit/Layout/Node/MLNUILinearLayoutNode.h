@@ -1,18 +1,18 @@
 //
-//  MLNLinearLayoutNode.h
+//  MLNUILinearLayoutNode.h
 //
 //
 //  Created by MoMo on 2018/10/26.
 //
 
-#import "MLNLayoutContainerNode.h"
-#import "MLNLinearLayout.h"
+#import "MLNUILayoutContainerNode.h"
+#import "MLNUILinearLayout.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface MLNLinearLayoutNode : MLNLayoutContainerNode
+@interface MLNUILinearLayoutNode : MLNUILayoutContainerNode
 
-@property (nonatomic, assign) MLNLayoutDirection direction;
+@property (nonatomic, assign) MLNUILayoutDirection direction;
 @property (nonatomic, assign) BOOL reverse;
 
 @end

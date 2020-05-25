@@ -1,25 +1,25 @@
 //
-//  MLNKitInstanceBuidler.h
-//  MLN
+//  MLNUIKitInstanceBuidler.h
+//  MLNUI
 //
 //  Created by MoMo on 2019/11/22.
 //
 
 #import <Foundation/Foundation.h>
-#import "MLNViewControllerProtocol.h"
+#import "MLNUIViewControllerProtocol.h"
 
 NS_ASSUME_NONNULL_BEGIN
-@class MLNKitInstance;
-@class MLNLuaBundle;
-@interface MLNKitInstanceFactory : NSObject
+@class MLNUIKitInstance;
+@class MLNUILuaBundle;
+@interface MLNUIKitInstanceFactory : NSObject
 
 + (instancetype)defaultFactory;
 
 - (void)preloadWithCapacity:(NSUInteger)capacity;
 
-- (MLNKitInstance *)createKitInstanceWithViewController:(UIViewController<MLNViewControllerProtocol> *)viewController;
-- (MLNKitInstance *)createKitInstanceWithLuaBundle:(MLNLuaBundle *__nullable)luaBundle viewController:(UIViewController<MLNViewControllerProtocol> *)viewController;
-- (MLNKitInstance *)createKitInstanceWithLuaBundle:(MLNLuaBundle *__nullable)luaBundle rootView:(UIView *__nullable)rootView viewController:(UIViewController<MLNViewControllerProtocol> *)viewController;
+- (MLNUIKitInstance *)createKitInstanceWithViewController:(UIViewController<MLNUIViewControllerProtocol> *)viewController;
+- (MLNUIKitInstance *)createKitInstanceWithLuaBundle:(MLNUILuaBundle *__nullable)luaBundle viewController:(UIViewController<MLNUIViewControllerProtocol> *)viewController;
+- (MLNUIKitInstance *)createKitInstanceWithLuaBundle:(MLNUILuaBundle *__nullable)luaBundle rootView:(UIView *__nullable)rootView viewController:(UIViewController<MLNUIViewControllerProtocol> *)viewController;
 
 @end
 

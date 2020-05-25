@@ -1,24 +1,24 @@
 //
-//  MLNBeforeWaitingTaskEngine.m
-//  MMLNua
+//  MLNUIBeforeWaitingTaskEngine.m
+//  MMLNUIua
 //
 //  Created by MoMo on 2019/3/19.
 //
 
-#import "MLNBeforeWaitingTaskEngine.h"
-#import "MLNMainRunLoopObserver.h"
-#import "MLNBeforeWaitingTaskProtocol.h"
+#import "MLNUIBeforeWaitingTaskEngine.h"
+#import "MLNUIMainRunLoopObserver.h"
+#import "MLNUIBeforeWaitingTaskProtocol.h"
 
-@interface MLNBeforeWaitingTaskEngine ()
+@interface MLNUIBeforeWaitingTaskEngine ()
 
 @property (nonatomic, strong) NSMutableArray *taskQueue;
-@property (nonatomic, strong) MLNMainRunLoopObserver *mainLoopObserver;
+@property (nonatomic, strong) MLNUIMainRunLoopObserver *mainLoopObserver;
 @property (nonatomic, assign) CFIndex order;
 
 @end
-@implementation MLNBeforeWaitingTaskEngine
+@implementation MLNUIBeforeWaitingTaskEngine
 
-- (instancetype)initWithLuaInstance:(MLNKitInstance *)luaInstance order:(CFIndex)order
+- (instancetype)initWithLuaInstance:(MLNUIKitInstance *)luaInstance order:(CFIndex)order
 {
     if (self = [super init]) {
         _luaInstance = luaInstance;
@@ -30,7 +30,7 @@
 - (void)start
 {
     if (!self.mainLoopObserver) {
-        self.mainLoopObserver = [[MLNMainRunLoopObserver alloc] init];
+        self.mainLoopObserver = [[MLNUIMainRunLoopObserver alloc] init];
         [self.mainLoopObserver beginForBeforeWaiting:self.order repeats:YES callback:^{
             [self doTasks];
         }];
@@ -43,14 +43,14 @@
     [self.mainLoopObserver end];
 }
 
-- (void)pushTask:(id<MLNBeforeWaitingTaskProtocol>)task
+- (void)pushTask:(id<MLNUIBeforeWaitingTaskProtocol>)task
 {
     if (![self.taskQueue containsObject:task]) {
         [self.taskQueue addObject:task];
     }
 }
 
-- (void)popTask:(id<MLNBeforeWaitingTaskProtocol>)task
+- (void)popTask:(id<MLNUIBeforeWaitingTaskProtocol>)task
 {
     [_taskQueue removeObject:task];
 }
@@ -66,9 +66,9 @@
     if (!_taskQueue || _taskQueue.count <= 0) {
         return;
     }
-    NSArray<id<MLNBeforeWaitingTaskProtocol>> *taskQueueTmp = [_taskQueue copy];
+    NSArray<id<MLNUIBeforeWaitingTaskProtocol>> *taskQueueTmp = [_taskQueue copy];
     [self clearAll];
-    for (id<MLNBeforeWaitingTaskProtocol> animation in taskQueueTmp) {
+    for (id<MLNUIBeforeWaitingTaskProtocol> animation in taskQueueTmp) {
         [animation doTask];
     }
 }

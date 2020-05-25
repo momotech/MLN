@@ -1,6 +1,6 @@
 //
-//  MLNWeakAssociatedObject.h
-//  MLN
+//  MLNUIWeakAssociatedObject.h
+//  MLNUI
 //
 //  Created by MoMo on 2019/8/3.
 //
@@ -12,7 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  处理分类中弱引用问题的工具类。
  */
-@interface MLNWeakAssociatedObject : NSObject
+@interface MLNUIWeakAssociatedObject : NSObject
 
 /**
  关联对象

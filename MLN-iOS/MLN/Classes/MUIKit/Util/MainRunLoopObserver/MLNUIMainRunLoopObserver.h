@@ -1,5 +1,5 @@
 //
-//  MLNMainRunLoopObserver.h
+//  MLNUIMainRunLoopObserver.h
 //
 //
 //  Created by MoMo on 2018/10/24.
@@ -9,7 +9,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface MLNMainRunLoopObserver : NSObject
+@interface MLNUIMainRunLoopObserver : NSObject
 
 - (void)beginForBeforeWaiting:(CFIndex)order repeats:(BOOL)repeats callback:(void(^)(void))callback;
 - (void)beginForActivity:(CFRunLoopActivity)activity repeats:(BOOL)repeats order:(CFIndex)order callback:(void(^)(CFRunLoopActivity activity))callback;

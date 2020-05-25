@@ -1,19 +1,19 @@
 //
-//  MLNBundle.m
-//  MLNCore
+//  MLNUIBundle.m
+//  MLNUICore
 //
 //  Created by MoMo on 2019/7/23.
 //
 
-#import "MLNLuaBundle.h"
+#import "MLNUILuaBundle.h"
 
-@interface MLNLuaBundle ()
+@interface MLNUILuaBundle ()
 
 @property (nonatomic, strong) NSBundle *currentBundle;
 
 @end
 
-@implementation MLNLuaBundle
+@implementation MLNUILuaBundle
 
 + (instancetype)mainBundle
 {

@@ -1,6 +1,6 @@
 //
-//  MLNObserver.h
-//  MLN
+//  MLNUIObserver.h
+//  MLNUI
 //
 //  Created by Dai Dongpeng on 2020/4/29.
 //
@@ -9,12 +9,12 @@
 #import <pthread.h>
 
 NS_ASSUME_NONNULL_BEGIN
-typedef void(^MLNBlockChange)           (id observer, id object, id oldValue, id newValue, NSDictionary<NSKeyValueChangeKey,id> * change);
-typedef void(^MLNBlockChangeMany)           (id observer, id object, NSString *keyPath,id oldValue, id newValue, NSDictionary<NSKeyValueChangeKey,id> *change);
+typedef void(^MLNUIBlockChange)           (id observer, id object, id oldValue, id newValue, NSDictionary<NSKeyValueChangeKey,id> * change);
+typedef void(^MLNUIBlockChangeMany)           (id observer, id object, NSString *keyPath,id oldValue, id newValue, NSDictionary<NSKeyValueChangeKey,id> *change);
 
-@interface MLNObserver : NSObject {
+@interface MLNUIObserver : NSObject {
     @protected
-    NSMutableArray <MLNBlockChange> *_observationBlocks;
+    NSMutableArray <MLNUIBlockChange> *_observationBlocks;
     pthread_mutex_t _lock;
     BOOL _attached;
 }
@@ -29,7 +29,7 @@ typedef void(^MLNBlockChangeMany)           (id observer, id object, NSString *k
 - (void)attach;
 - (void)detach;
 
-- (void)addObservationBlock:(MLNBlockChange)block;
+- (void)addObservationBlock:(MLNUIBlockChange)block;
 
 @end
 

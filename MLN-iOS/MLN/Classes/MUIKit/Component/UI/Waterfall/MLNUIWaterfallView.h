@@ -1,12 +1,12 @@
 //
-//  MLNWaterfallView.h
+//  MLNUIWaterfallView.h
 //  
 //
 //  Created by MoMo on 2018/8/31.
 //
 
-#import "MLNCollectionView.h"
+#import "MLNUICollectionView.h"
 
-@interface MLNWaterfallView : MLNCollectionView
+@interface MLNUIWaterfallView : MLNUICollectionView
 
 @end

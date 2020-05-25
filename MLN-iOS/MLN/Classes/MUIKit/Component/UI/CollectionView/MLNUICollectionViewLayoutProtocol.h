@@ -1,17 +1,17 @@
 //
-//  MLNCollectionViewLayoutProtocol.h
-//  MLN
+//  MLNUICollectionViewLayoutProtocol.h
+//  MLNUI
 //
 //  Created by MoMo on 2019/9/16.
 //
 
-#ifndef MLNCollectionViewLayoutProtocol_h
-#define MLNCollectionViewLayoutProtocol_h
+#ifndef MLNUICollectionViewLayoutProtocol_h
+#define MLNUICollectionViewLayoutProtocol_h
 
 #import <UIKit/UIKit.h>
-#import "MLNScrollViewConst.h"
+#import "MLNUIScrollViewConst.h"
 
-@protocol MLNCollectionViewLayoutProtocol <NSObject>
+@protocol MLNUICollectionViewLayoutProtocol <NSObject>
 
 @required
 @property (nonatomic, assign) UICollectionViewScrollDirection scrollDirection;
@@ -21,4 +21,4 @@
 
 @end
 
-#endif /* MLNCollectionViewLayoutProtocol_h */
+#endif /* MLNUICollectionViewLayoutProtocol_h */

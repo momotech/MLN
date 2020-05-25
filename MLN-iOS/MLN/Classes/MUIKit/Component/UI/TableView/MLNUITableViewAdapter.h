@@ -1,30 +1,30 @@
 //
 //  MMTableViewAdpater.h
-//  MLN
+//  MLNUI
 //
 //  Created by MoMo on 27/02/2018.
 //  Copyright © 2018 wemomo.com. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
-#import "MLNScrollViewDelegate.h"
-#import "MLNEntityExportProtocol.h"
-#import "MLNTableViewAdapterProtocol.h"
-#import "MLNAdapterCachesManager.h"
+#import "MLNUIScrollViewDelegate.h"
+#import "MLNUIEntityExportProtocol.h"
+#import "MLNUITableViewAdapterProtocol.h"
+#import "MLNUIAdapterCachesManager.h"
 
-@class MLNBlock;
-@interface MLNTableViewAdapter : MLNScrollViewDelegate <UITableViewDataSource, MLNEntityExportProtocol, MLNTableViewAdapterProtocol>
+@class MLNUIBlock;
+@interface MLNUITableViewAdapter : MLNUIScrollViewDelegate <UITableViewDataSource, MLNUIEntityExportProtocol, MLNUITableViewAdapterProtocol>
 
 @property (nonatomic, weak) UITableView *targetTableView;
-@property (nonatomic, strong, readonly) NSMutableDictionary<NSString *, MLNBlock *> *initedCellCallbacks;
-@property (nonatomic, strong, readonly) NSMutableDictionary<NSString *, MLNBlock *> *fillCellDataCallbacks;
-@property (nonatomic, strong, readonly) NSMutableDictionary<NSString *, MLNBlock *> *heightForRowCallbacks;
+@property (nonatomic, strong, readonly) NSMutableDictionary<NSString *, MLNUIBlock *> *initedCellCallbacks;
+@property (nonatomic, strong, readonly) NSMutableDictionary<NSString *, MLNUIBlock *> *fillCellDataCallbacks;
+@property (nonatomic, strong, readonly) NSMutableDictionary<NSString *, MLNUIBlock *> *heightForRowCallbacks;
 
 // caches
-@property (nonatomic, strong, readonly) MLNAdapterCachesManager *cachesManager;
+@property (nonatomic, strong, readonly) MLNUIAdapterCachesManager *cachesManager;
 
 - (NSString *)reuseIdAt:(NSIndexPath *)indexPath;
-- (MLNBlock *)initedCellCallbackByReuseId:(NSString *)reuseId;
-- (MLNBlock *)fillCellDataCallbackByReuseId:(NSString *)reuseId;
+- (MLNUIBlock *)initedCellCallbackByReuseId:(NSString *)reuseId;
+- (MLNUIBlock *)fillCellDataCallbackByReuseId:(NSString *)reuseId;
 
 @end

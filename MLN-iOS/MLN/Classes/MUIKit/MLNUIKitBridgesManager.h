@@ -1,25 +1,25 @@
 //
-//  MLNKitBridgesManager.h
-//  MLN
+//  MLNUIKitBridgesManager.h
+//  MLNUI
 //
 //  Created by MoMo on 2019/8/29.
 //
 
 #import <Foundation/Foundation.h>
-#import "MLNExportProtocol.h"
+#import "MLNUIExportProtocol.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class MLNLuaCore;
-@interface MLNKitBridgesManager : NSObject
+@class MLNUILuaCore;
+@interface MLNUIKitBridgesManager : NSObject
 
-- (void)registerKitForLuaCore:(MLNLuaCore *)luaCore;
+- (void)registerKitForLuaCore:(MLNUILuaCore *)luaCore;
 
 @end
 
-@class MLNKitInstance;
-@interface MLNKitBridgesManager (Deprecated)
-- (instancetype)initWithUIInstance:(MLNKitInstance *)instance;
+@class MLNUIKitInstance;
+@interface MLNUIKitBridgesManager (Deprecated)
+- (instancetype)initWithUIInstance:(MLNUIKitInstance *)instance;
 - (void)registerKit;
 @end
 NS_ASSUME_NONNULL_END

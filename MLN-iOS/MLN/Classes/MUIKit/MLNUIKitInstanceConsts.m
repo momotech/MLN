@@ -1,12 +1,12 @@
 //
-//  MLNKitInstanceConsts.m
-//  MLN
+//  MLNUIKitInstanceConsts.m
+//  MLNUI
 //
 //  Created by MoMo on 2019/10/29.
 //
 
-#import "MLNKitInstanceConsts.h"
+#import "MLNUIKitInstanceConsts.h"
 
-@implementation MLNKitInstanceConsts
+@implementation MLNUIKitInstanceConsts
 
 @end

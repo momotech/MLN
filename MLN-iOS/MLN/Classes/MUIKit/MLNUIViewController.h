@@ -6,16 +6,16 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "MLNViewControllerProtocol.h"
+#import "MLNUIViewControllerProtocol.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class MLNKitInstanceHandlersManager;
-@class MLNDataBinding;
-@interface MLNUIViewController : UIViewController <MLNViewControllerProtocol> {
+@class MLNUIKitInstanceHandlersManager;
+@class MLNUIDataBinding;
+@interface MLNUIViewController : UIViewController <MLNUIViewControllerProtocol> {
     @protected
-    MLNKitInstance *_kitInstance;
-    MLNDataBinding *_dataBinding;
+    MLNUIKitInstance *_kitInstance;
+    MLNUIDataBinding *_dataBinding;
 }
 
 /**
@@ -25,11 +25,11 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  其他处理句柄的管理器
  */
-@property (nonatomic, strong, readonly) MLNKitInstanceHandlersManager *handlerManager;
+@property (nonatomic, strong, readonly) MLNUIKitInstanceHandlersManager *handlerManager;
 /**
  MLNUIViewController的代理
  */
-@property (nonatomic, weak) id<MLNViewControllerDelegate> delegate;
+@property (nonatomic, weak) id<MLNUIViewControllerDelegate> delegate;
 
 - (instancetype)initWithEntryFileName:(NSString *)entryFileName;
 - (instancetype)initWithEntryFileName:(NSString *)entryFileName bundle:(nullable NSBundle *)bundle NS_DESIGNATED_INITIALIZER;

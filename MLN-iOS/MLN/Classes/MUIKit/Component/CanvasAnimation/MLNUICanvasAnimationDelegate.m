@@ -1,18 +1,18 @@
 //
-//  MLNCanvasAnimationDelegate.m
-//  MLN
+//  MLNUICanvasAnimationDelegate.m
+//  MLNUI
 //
 //  Created by MoMo on 2019/5/13.
 //
 
-#import "MLNCanvasAnimationDelegate.h"
+#import "MLNUICanvasAnimationDelegate.h"
 
-@interface MLNCanvasAnimationDelegate ()
+@interface MLNUICanvasAnimationDelegate ()
 
 @property (nonatomic, weak, readonly) id<CAAnimationDelegate> animation;
 
 @end
-@implementation MLNCanvasAnimationDelegate
+@implementation MLNUICanvasAnimationDelegate
 
 - (instancetype)initWithAnimation:(id<CAAnimationDelegate>)animation
 {

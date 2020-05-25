@@ -1,33 +1,33 @@
 //
-//  MLNTabSegmentView.m
-//  MLN
+//  MLNUITabSegmentView.m
+//  MLNUI
 //
 //  Created by MoMo on 2019/1/16.
 //
 
-#import "MLNTabSegmentView.h"
-#import "MLNKitHeader.h"
-#import "MLNViewExporterMacro.h"
-#import "MLNBadgeView.h"
-#import "UIImage+MLNKit.h"
-#import "UIView+MLNLayout.h"
-#import "MLNLayoutNode.h"
-#import "MLNViewPager.h"
-#import "MLNViewConst.h"
-#import "MLNBlock.h"
+#import "MLNUITabSegmentView.h"
+#import "MLNUIKitHeader.h"
+#import "MLNUIViewExporterMacro.h"
+#import "MLNUIBadgeView.h"
+#import "UIImage+MLNUIKit.h"
+#import "UIView+MLNUILayout.h"
+#import "MLNUILayoutNode.h"
+#import "MLNUIViewPager.h"
+#import "MLNUIViewConst.h"
+#import "MLNUIBlock.h"
 
-const CGFloat kMLNTabSegmentViewDefaultHeight = 50.0f;
-const CGFloat kMLNTabSegmentViewLabelOffsetWeight = 10.0f;
-#define kMLNTabSegmentViewDefaultFontWeight UIFontWeightRegular
-#define kMLNTabDefaultColor [UIColor colorWithRed:50/255.0 green:51/255.0 blue:51/255.0 alpha:1.0]
+const CGFloat kMLNUITabSegmentViewDefaultHeight = 50.0f;
+const CGFloat kMLNUITabSegmentViewLabelOffsetWeight = 10.0f;
+#define kMLNUITabSegmentViewDefaultFontWeight UIFontWeightRegular
+#define kMLNUITabDefaultColor [UIColor colorWithRed:50/255.0 green:51/255.0 blue:51/255.0 alpha:1.0]
 
-@interface MLNTabSegmentView() <MLNTabSegmentScrollHandlerDelegate>
+@interface MLNUITabSegmentView() <MLNUITabSegmentScrollHandlerDelegate>
 {
     BOOL _shouldReConfigure;
     BOOL _startDragging;
 }
 
-@property (nonatomic, strong) NSArray<MLNTabSegmentLabel *>  *segmentViews;
+@property (nonatomic, strong) NSArray<MLNUITabSegmentLabel *>  *segmentViews;
 @property (nonatomic, strong) NSArray* segmentTitles;
 @property (nonatomic, strong) UIScrollView  *contentScrollView;
 @property (nonatomic, strong) UIImageView  *bottomPointView;
@@ -40,16 +40,16 @@ const CGFloat kMLNTabSegmentViewLabelOffsetWeight = 10.0f;
 @property (nonatomic, assign) CGFloat animationStartOffset;
 @property (nonatomic, assign) CGFloat differenceLength;
 
-@property (nonatomic, strong) MLNTabSegmentViewConfiguration *configuration;
-@property (nonatomic, strong) MLNTabSegmentScrollHandler *scrollHandler;
+@property (nonatomic, strong) MLNUITabSegmentViewConfiguration *configuration;
+@property (nonatomic, strong) MLNUITabSegmentScrollHandler *scrollHandler;
 
-@property (nonatomic, copy) MLNTabSegmentViewTapActionBlock  tapBlock;
-@property (nonatomic, copy) MLNTabSegmentViewTapActionBlock lua_tapBlock;
+@property (nonatomic, copy) MLNUITabSegmentViewTapActionBlock  tapBlock;
+@property (nonatomic, copy) MLNUITabSegmentViewTapActionBlock lua_tapBlock;
 
-@property (nonatomic, strong) MLNBlock *lua_tapCallback;
-@property (nonatomic, strong) MLNBlock *lua_clickCallback;
-@property (nonatomic, strong) MLNBlock *lua_scrollingCallback;
-@property (nonatomic,weak) MLNViewPager *pageView;
+@property (nonatomic, strong) MLNUIBlock *lua_tapCallback;
+@property (nonatomic, strong) MLNUIBlock *lua_clickCallback;
+@property (nonatomic, strong) MLNUIBlock *lua_scrollingCallback;
+@property (nonatomic,weak) MLNUIViewPager *pageView;
 @property (nonatomic, assign) CGFloat normalFontSize;
 @property (nonatomic, assign) CGFloat selectScale;
 @property (nonatomic, strong) UIColor *customTintColor;
@@ -57,7 +57,7 @@ const CGFloat kMLNTabSegmentViewLabelOffsetWeight = 10.0f;
 @property (nonatomic, strong) UIColor *indicatorColor;
 @property (nonatomic, assign) BOOL animated;
 
-@property (nonatomic, assign) MLNTabSegmentAlignment alignment;
+@property (nonatomic, assign) MLNUITabSegmentAlignment alignment;
 
 @property (nonatomic, copy) void (^arrowTapBlock)(NSInteger index);
 
@@ -72,33 +72,33 @@ const CGFloat kMLNTabSegmentViewLabelOffsetWeight = 10.0f;
 
 @end
 
-@implementation MLNTabSegmentView
+@implementation MLNUITabSegmentView
 
-- (instancetype)initWithLuaCore:(MLNLuaCore *)luaCore
+- (instancetype)initWithLuaCore:(MLNUILuaCore *)luaCore
                           frame:(CGRect)frame
                   segmentTitles:(NSArray<NSString*> *)segmentTitles
-                       tapBlock:(MLNTabSegmentViewTapActionBlock)block{
+                       tapBlock:(MLNUITabSegmentViewTapActionBlock)block{
     return [self initWithLuaCore:luaCore
                            frame:frame
                  segmentTitles:segmentTitles
-                 configuration:[MLNTabSegmentViewConfiguration defaultConfiguration]
+                 configuration:[MLNUITabSegmentViewConfiguration defaultConfiguration]
                       tapBlock:block];
 }
 
-- (instancetype)initWithLuaCore:(MLNLuaCore *)luaCore
+- (instancetype)initWithLuaCore:(MLNUILuaCore *)luaCore
                           frame:(CGRect)frame
                   segmentTitles:(NSArray<NSString*> *)segmentTitles
-                  configuration:(MLNTabSegmentViewConfiguration *)configuration
-                       tapBlock:(MLNTabSegmentViewTapActionBlock)block{
+                  configuration:(MLNUITabSegmentViewConfiguration *)configuration
+                       tapBlock:(MLNUITabSegmentViewTapActionBlock)block{
     if (self = [super initWithLuaCore:luaCore frame:frame]) {
         
-        NSAssert(configuration != nil , @"MLNTabSegmentView configuration can't nil，you can use [MLNTabSegmentViewConfiguration defaultConfiguration]" );
+        NSAssert(configuration != nil , @"MLNUITabSegmentView configuration can't nil，you can use [MLNUITabSegmentViewConfiguration defaultConfiguration]" );
         _settingIndex = -1;
         
         self.tapBlock = block;
         self.backgroundColor = [UIColor clearColor];
         
-        self.scrollHandler = [[MLNTabSegmentScrollHandler alloc] init];
+        self.scrollHandler = [[MLNUITabSegmentScrollHandler alloc] init];
         self.scrollHandler.delegate = self;
         
         self.configuration = configuration;
@@ -109,21 +109,21 @@ const CGFloat kMLNTabSegmentViewLabelOffsetWeight = 10.0f;
     return self;
 }
 
-- (instancetype)initWithLuaCore:(MLNLuaCore *)luaCore frame:(CGRect)frame segmentTitles:(NSArray<NSString *> *)segmentTitles tintColor:(UIColor *)tintColor {
+- (instancetype)initWithLuaCore:(MLNUILuaCore *)luaCore frame:(CGRect)frame segmentTitles:(NSArray<NSString *> *)segmentTitles tintColor:(UIColor *)tintColor {
     
     if (self = [self initWithLuaCore:luaCore
                                 frame:frame
                         segmentTitles:segmentTitles
                              tapBlock:self.lua_tapBlock]) {
         self.segmentTitles = segmentTitles;
-        __unsafe_unretained MLNLayoutNode *node = self.lua_node;
+        __unsafe_unretained MLNUILayoutNode *node = self.lua_node;
         [node changeX:frame.origin.x];
         [node changeY:frame.origin.y];
-        MLNCheckWidth(frame.size.width);
-        MLNCheckHeight(frame.size.height);
+        MLNUICheckWidth(frame.size.width);
+        MLNUICheckHeight(frame.size.height);
         [node changeWidth:frame.size.width];
         [node changeHeight:frame.size.height];
-        tintColor = tintColor?:kMLNTabDefaultColor;
+        tintColor = tintColor?:kMLNUITabDefaultColor;
         self.configuration.customTiniColor = tintColor;
         _customTintColor = tintColor;
         _shouldReConfigure = YES;
@@ -136,7 +136,7 @@ const CGFloat kMLNTabSegmentViewLabelOffsetWeight = 10.0f;
     self.toIndex = -1;
     [self removeAnimation];
     
-    for (MLNTabSegmentLabel *segmentLabel in self.segmentViews) {
+    for (MLNUITabSegmentLabel *segmentLabel in self.segmentViews) {
         [segmentLabel removeFromSuperview];
     }
     [self.itemsOffsetCache  removeAllObjects];
@@ -147,7 +147,7 @@ const CGFloat kMLNTabSegmentViewLabelOffsetWeight = 10.0f;
     
     NSMutableArray *marr = [NSMutableArray array];
     
-   CGFloat  labelOffset = (self.configuration.selectScale - 1.0) * kMLNTabSegmentViewLabelOffsetWeight;
+   CGFloat  labelOffset = (self.configuration.selectScale - 1.0) * kMLNUITabSegmentViewLabelOffsetWeight;
     
     for (int i=0; i<segmentTitles.count; i++) {
         NSString *title = [segmentTitles objectAtIndex:i];
@@ -156,23 +156,23 @@ const CGFloat kMLNTabSegmentViewLabelOffsetWeight = 10.0f;
         }
         CGSize size = CGSizeZero;
         if (@available(iOS 8.2, *)) {
-            size = [title boundingRectWithSize:CGSizeMake(CGFLOAT_MAX, CGFLOAT_MAX) options:NSStringDrawingUsesLineFragmentOrigin|NSStringDrawingUsesFontLeading attributes:@{NSFontAttributeName:[UIFont systemFontOfSize:self.configuration.normalFontSize weight:[MLNTabSegmentViewConfiguration getFontWeightWithProgress:1.0]]} context:nil].size;
+            size = [title boundingRectWithSize:CGSizeMake(CGFLOAT_MAX, CGFLOAT_MAX) options:NSStringDrawingUsesLineFragmentOrigin|NSStringDrawingUsesFontLeading attributes:@{NSFontAttributeName:[UIFont systemFontOfSize:self.configuration.normalFontSize weight:[MLNUITabSegmentViewConfiguration getFontWeightWithProgress:1.0]]} context:nil].size;
             
         } else {
             size = [title boundingRectWithSize:CGSizeMake(CGFLOAT_MAX, CGFLOAT_MAX) options:NSStringDrawingUsesLineFragmentOrigin|NSStringDrawingUsesFontLeading attributes:@{NSFontAttributeName:[UIFont systemFontOfSize:self.configuration.normalFontSize]} context:nil].size;
         }
         CGFloat width = ceil(size.width) + 2;
         CGFloat height = ceil(size.height);
-        MLNTabSegmentLabel *segmentLabel = [[MLNTabSegmentLabel alloc] initWithFrame:CGRectMake(left, (self.frame.size.height-height)/2.0 + labelOffset, width, height) fontSize:self.configuration.normalFontSize];
+        MLNUITabSegmentLabel *segmentLabel = [[MLNUITabSegmentLabel alloc] initWithFrame:CGRectMake(left, (self.frame.size.height-height)/2.0 + labelOffset, width, height) fontSize:self.configuration.normalFontSize];
         segmentLabel.titleLabel.text = title;
         [self setupTabLabeBadgeTitlel:segmentLabel withIndex:i];
         
-        segmentLabel.titleLabel.textColor = self.configuration.customTiniColor ? self.configuration.customTiniColor : kMLNTabDefaultColor;
+        segmentLabel.titleLabel.textColor = self.configuration.customTiniColor ? self.configuration.customTiniColor : kMLNUITabDefaultColor;
         segmentLabel.tag = i;
         segmentLabel.exclusiveTouch = YES;
         
         if (i == self.currentIndex) {
-            [segmentLabel setLabelScale:self.configuration.selectScale fontWeight:[MLNTabSegmentViewConfiguration getFontWeightWithProgress:1.0]];
+            [segmentLabel setLabelScale:self.configuration.selectScale fontWeight:[MLNUITabSegmentViewConfiguration getFontWeightWithProgress:1.0]];
             if (_selectedTintColor) {
                 segmentLabel.titleLabel.textColor = _selectedTintColor;
             }
@@ -201,7 +201,7 @@ const CGFloat kMLNTabSegmentViewLabelOffsetWeight = 10.0f;
     [self layoutSegmentTitle];
     
     if (_currentIndex < self.segmentViews.count && _currentIndex >= 0) {
-        MLNTabSegmentLabel* label = _segmentViews[_currentIndex];
+        MLNUITabSegmentLabel* label = _segmentViews[_currentIndex];
         CGPoint center = self.bottomPointView.center;
         center.x = label.frame.size.width / 2.0 + label.frame.origin.x;
         self.bottomPointView.center = center;
@@ -235,7 +235,7 @@ const CGFloat kMLNTabSegmentViewLabelOffsetWeight = 10.0f;
 - (void)setTapTitle:(NSString *)title atIndex:(NSInteger)index {
     if (index >= 0 && index < self.segmentViews.count) {
         [self.itemsOffsetCache removeObjectForKey:@(index)];
-        MLNTabSegmentLabel *label = [self.segmentViews objectAtIndex:index];
+        MLNUITabSegmentLabel *label = [self.segmentViews objectAtIndex:index];
         [label setText:title];
         if (title) {
             NSMutableArray *originArray = [NSMutableArray arrayWithArray:_segmentTitles];
@@ -244,7 +244,7 @@ const CGFloat kMLNTabSegmentViewLabelOffsetWeight = 10.0f;
         }
         CGSize size = CGSizeZero;
         if (@available(iOS 8.2, *)) {
-            size = [title boundingRectWithSize:CGSizeMake(CGFLOAT_MAX, CGFLOAT_MAX) options:NSStringDrawingUsesLineFragmentOrigin|NSStringDrawingUsesFontLeading attributes:@{NSFontAttributeName:[UIFont systemFontOfSize:self.configuration.normalFontSize weight:[MLNTabSegmentViewConfiguration getFontWeightWithProgress:1.0]]} context:nil].size;
+            size = [title boundingRectWithSize:CGSizeMake(CGFLOAT_MAX, CGFLOAT_MAX) options:NSStringDrawingUsesLineFragmentOrigin|NSStringDrawingUsesFontLeading attributes:@{NSFontAttributeName:[UIFont systemFontOfSize:self.configuration.normalFontSize weight:[MLNUITabSegmentViewConfiguration getFontWeightWithProgress:1.0]]} context:nil].size;
         } else {
             size = [title boundingRectWithSize:CGSizeMake(CGFLOAT_MAX, CGFLOAT_MAX) options:NSStringDrawingUsesLineFragmentOrigin|NSStringDrawingUsesFontLeading attributes:@{NSFontAttributeName:[UIFont systemFontOfSize:self.configuration.normalFontSize]} context:nil].size;
         }
@@ -259,21 +259,21 @@ const CGFloat kMLNTabSegmentViewLabelOffsetWeight = 10.0f;
 
 - (void)setTapBadgeNum:(NSInteger)num atIndex:(NSInteger)index {
     if (index >= 0 && index < self.segmentViews.count  ) {
-        MLNTabSegmentLabel *label = [self.segmentViews objectAtIndex:index]?:nil;
+        MLNUITabSegmentLabel *label = [self.segmentViews objectAtIndex:index]?:nil;
         [label setBadgeNum:num];
     }
 }
 
 - (void)setTapBadgeTitle:(NSString *)title atIndex:(NSInteger)index {
     if (index >= 0 && index < self.segmentViews.count  ) {
-        MLNTabSegmentLabel *label = [self.segmentViews objectAtIndex:index]?:nil;
+        MLNUITabSegmentLabel *label = [self.segmentViews objectAtIndex:index]?:nil;
         [label setBadgeTitle:title];
     }
 }
 
 - (void)setRedDotHidden:(BOOL)hidden adIndex:(NSInteger)index {
     if (index >= 0 && index < self.segmentViews.count) {
-        MLNTabSegmentLabel *label = [self.segmentViews objectAtIndex:index]?:nil;
+        MLNUITabSegmentLabel *label = [self.segmentViews objectAtIndex:index]?:nil;
         if (!CGSizeEqualToSize(self.configuration.redDotSize, CGSizeZero) && !hidden) {
             [label resetRedDotSize:self.configuration.redDotSize];
         }
@@ -283,7 +283,7 @@ const CGFloat kMLNTabSegmentViewLabelOffsetWeight = 10.0f;
 
 - (void)setTabSegmentHidden:(BOOL)hidden adIndex:(NSInteger)index {
     if (index >= 0 && index < self.segmentViews.count) {
-        MLNTabSegmentLabel *label = [self.segmentViews objectAtIndex:index]?:nil;
+        MLNUITabSegmentLabel *label = [self.segmentViews objectAtIndex:index]?:nil;
         if(label) {
             label.hidden = hidden;
         }
@@ -360,7 +360,7 @@ const CGFloat kMLNTabSegmentViewLabelOffsetWeight = 10.0f;
         _arrowTapBlock = block;
         for (NSNumber *num in indexs) {
             if ([num integerValue] < self.segmentViews.count) {
-                MLNTabSegmentLabel *label = [self.segmentViews objectAtIndex:[num integerValue]];
+                MLNUITabSegmentLabel *label = [self.segmentViews objectAtIndex:[num integerValue]];
                 [label setEnableShowArrow:YES];
             }
         }
@@ -374,7 +374,7 @@ const CGFloat kMLNTabSegmentViewLabelOffsetWeight = 10.0f;
 }
 
 #pragma mark - private
-- (void)setupTabLabeBadgeTitlel:(MLNTabSegmentLabel *)tabLabel withIndex:(NSInteger)index
+- (void)setupTabLabeBadgeTitlel:(MLNUITabSegmentLabel *)tabLabel withIndex:(NSInteger)index
 {
     NSString *key = [NSString stringWithFormat:@"%ld",index];
     NSObject *obj = [self.itemBadgeInfo objectForKey:key];
@@ -387,7 +387,7 @@ const CGFloat kMLNTabSegmentViewLabelOffsetWeight = 10.0f;
 
 #pragma mark - event
 - (void)didTapSegmentLabel:(UITapGestureRecognizer *)recognizer {
-    MLNTabSegmentLabel *tapLabel = (MLNTabSegmentLabel *)recognizer.view;
+    MLNUITabSegmentLabel *tapLabel = (MLNUITabSegmentLabel *)recognizer.view;
     
     BOOL shouldReCalculate = NO;
     
@@ -428,18 +428,18 @@ const CGFloat kMLNTabSegmentViewLabelOffsetWeight = 10.0f;
 }
 
 - (void)resetAllSegmentViewWithCurrentIndex:(NSInteger)currentIndex {
-    MLNTabSegmentLabel *currentLabel = nil;
+    MLNUITabSegmentLabel *currentLabel = nil;
     for (int i=0; i<self.segmentViews.count; i++) {
-        MLNTabSegmentLabel *segmentLabel = [self.segmentViews objectAtIndex:i];
-        segmentLabel.titleLabel.textColor = self.configuration.customTiniColor ? self.configuration.customTiniColor : kMLNTabDefaultColor;
+        MLNUITabSegmentLabel *segmentLabel = [self.segmentViews objectAtIndex:i];
+        segmentLabel.titleLabel.textColor = self.configuration.customTiniColor ? self.configuration.customTiniColor : kMLNUITabDefaultColor;
         if (i == currentIndex) {
             currentLabel = segmentLabel;
-            [segmentLabel setLabelScale:self.configuration.selectScale fontWeight:[MLNTabSegmentViewConfiguration getFontWeightWithProgress:1.0]];
+            [segmentLabel setLabelScale:self.configuration.selectScale fontWeight:[MLNUITabSegmentViewConfiguration getFontWeightWithProgress:1.0]];
             if (_selectedTintColor) {
                 segmentLabel.titleLabel.textColor = _selectedTintColor;
             }
         }else {
-            [segmentLabel setLabelScale:1.0 fontWeight:[MLNTabSegmentViewConfiguration getFontWeightWithProgress:0.0]];
+            [segmentLabel setLabelScale:1.0 fontWeight:[MLNUITabSegmentViewConfiguration getFontWeightWithProgress:0.0]];
             if (_selectedTintColor) {
                 segmentLabel.titleLabel.textColor = _customTintColor;
             }
@@ -494,14 +494,14 @@ const CGFloat kMLNTabSegmentViewLabelOffsetWeight = 10.0f;
         [_lua_scrollingCallback addFloatArgument:absoluteProgress];
         [_lua_scrollingCallback callIfCan];
     }
-    MLNTabSegmentLabel *oldLable = [self.segmentViews objectAtIndex:fromIndex];
-    MLNTabSegmentLabel *newLabel = [self.segmentViews objectAtIndex:toIndex];
+    MLNUITabSegmentLabel *oldLable = [self.segmentViews objectAtIndex:fromIndex];
+    MLNUITabSegmentLabel *newLabel = [self.segmentViews objectAtIndex:toIndex];
     
     CGFloat fromScale = self.configuration.selectScale + (1-self.configuration.selectScale) * progress;
     CGFloat toScale = 1 + (self.configuration.selectScale-1) * progress;
     
-    [oldLable setLabelScale:fromScale fontWeight:[MLNTabSegmentViewConfiguration getFontWeightWithProgress:(1-progress)]];
-    [newLabel setLabelScale:toScale fontWeight:[MLNTabSegmentViewConfiguration getFontWeightWithProgress:progress]];
+    [oldLable setLabelScale:fromScale fontWeight:[MLNUITabSegmentViewConfiguration getFontWeightWithProgress:(1-progress)]];
+    [newLabel setLabelScale:toScale fontWeight:[MLNUITabSegmentViewConfiguration getFontWeightWithProgress:progress]];
     
     oldLable.titleLabel.textColor = [self.configuration getColorWithProgress:(1 - progress)];
     newLabel.titleLabel.textColor = [self.configuration getColorWithProgress:progress];
@@ -509,13 +509,13 @@ const CGFloat kMLNTabSegmentViewLabelOffsetWeight = 10.0f;
     if (progress == 1) {
         CGFloat newFontSize = newLabel.titleLabel.font.pointSize;
         
-        for (MLNTabSegmentLabel* view in self.segmentViews) {
+        for (MLNUITabSegmentLabel* view in self.segmentViews) {
             if (view == newLabel) {
                 continue;
             }
             CGFloat pointSize = view.titleLabel.font.pointSize;
             if (pointSize > oldLable.titleLabel.font.pointSize && pointSize <= newFontSize) {
-                [view setLabelScale:fromScale fontWeight:[MLNTabSegmentViewConfiguration getFontWeightWithProgress:(1-progress)]];
+                [view setLabelScale:fromScale fontWeight:[MLNUITabSegmentViewConfiguration getFontWeightWithProgress:(1-progress)]];
             }
         }
     }
@@ -550,10 +550,10 @@ const CGFloat kMLNTabSegmentViewLabelOffsetWeight = 10.0f;
     CGFloat offSetY = 0;
     if (self.contentScrollView.contentSize.width < self.frame.size.width) {
         switch (_alignment) {
-            case MLNTabSegmentAlignmentCenter:
+            case MLNUITabSegmentAlignmentCenter:
                 offSetY = (self.frame.size.width - self.contentScrollView.contentSize.width)/2.0;
                 break;
-            case MLNTabSegmentAlignmentRight:
+            case MLNUITabSegmentAlignmentRight:
                 offSetY = self.frame.size.width - self.contentScrollView.contentSize.width;
                 break;
             default:
@@ -562,7 +562,7 @@ const CGFloat kMLNTabSegmentViewLabelOffsetWeight = 10.0f;
         
     }
     for (int i=0; i<self.segmentViews.count; i++) {
-        MLNTabSegmentLabel *afterLabel = [self.segmentViews objectAtIndex:i];
+        MLNUITabSegmentLabel *afterLabel = [self.segmentViews objectAtIndex:i];
         CGRect frame = afterLabel.frame;
         frame.origin.x = left + offSetY;
         afterLabel.frame = frame;
@@ -652,10 +652,10 @@ const CGFloat kMLNTabSegmentViewLabelOffsetWeight = 10.0f;
 
 
 #pragma mark - Export For Lua
-- (MLNTabSegmentViewTapActionBlock)lua_tapBlock {
+- (MLNUITabSegmentViewTapActionBlock)lua_tapBlock {
     if (!_lua_tapBlock) {
         __weak typeof(self) weakSelf = self;
-        _lua_tapBlock =  ^(MLNTabSegmentView* view,NSInteger index) {
+        _lua_tapBlock =  ^(MLNUITabSegmentView* view,NSInteger index) {
             __strong typeof(weakSelf) strongSelf = weakSelf;
             if (strongSelf.lua_tapCallback && !strongSelf.ignoreTapCallbackToLua) {
                 [strongSelf.lua_tapCallback addIntArgument:(int)index + 1];
@@ -671,10 +671,10 @@ const CGFloat kMLNTabSegmentViewLabelOffsetWeight = 10.0f;
 }
 
 //bind viewPager
-- (void)lua_relatedToViewPager:(MLNViewPager*)viewPager animated:(NSNumber *)animatedValue
+- (void)lua_relatedToViewPager:(MLNUIViewPager*)viewPager animated:(NSNumber *)animatedValue
 {
     BOOL animated = [animatedValue boolValue];
-    MLNCheckTypeAndNilValue(viewPager, @"ViewPager", [MLNViewPager class])
+    MLNUICheckTypeAndNilValue(viewPager, @"ViewPager", [MLNUIViewPager class])
     self.pageView = viewPager;
     _animated = animated;
     viewPager.segmentViewHandler = (id<UIScrollViewDelegate>)self.scrollHandler;
@@ -711,7 +711,7 @@ const CGFloat kMLNTabSegmentViewLabelOffsetWeight = 10.0f;
 
 - (void)lua_setCustomTintColor:(UIColor *)color
 {
-    MLNCheckTypeAndNilValue(color, @"Color", [UIColor class])
+    MLNUICheckTypeAndNilValue(color, @"Color", [UIColor class])
     if (_customTintColor == color) {
         return;
     }
@@ -722,7 +722,7 @@ const CGFloat kMLNTabSegmentViewLabelOffsetWeight = 10.0f;
 
 - (void)lua_setSelectedColor:(UIColor *)color
 {
-    MLNCheckTypeAndNilValue(color, @"Color", [UIColor class])
+    MLNUICheckTypeAndNilValue(color, @"Color", [UIColor class])
     if (_selectedTintColor == color) {
         return;
     }
@@ -734,7 +734,7 @@ const CGFloat kMLNTabSegmentViewLabelOffsetWeight = 10.0f;
 
 - (void)lua_setIndicatorColor:(UIColor *)color
 {
-    MLNCheckTypeAndNilValue(color, @"Color", UIColor)
+    MLNUICheckTypeAndNilValue(color, @"Color", UIColor)
     if (_indicatorColor == color) {
         return;
     }
@@ -762,11 +762,11 @@ const CGFloat kMLNTabSegmentViewLabelOffsetWeight = 10.0f;
     if (self.superview) {
         self.bottomPointView.backgroundColor = self.configuration.indicatorColor?:(self.configuration.selectedColor?:self.configuration.customTiniColor);
         for (int i=0; i<self.segmentViews.count; i++) {
-            MLNTabSegmentLabel *segmentLabel = [self.segmentViews objectAtIndex:i];
+            MLNUITabSegmentLabel *segmentLabel = [self.segmentViews objectAtIndex:i];
             if (i == self.currentIndex) {
-                segmentLabel.titleLabel.textColor = self.configuration.selectedColor?:(self.configuration.customTiniColor?:kMLNTabDefaultColor);
+                segmentLabel.titleLabel.textColor = self.configuration.selectedColor?:(self.configuration.customTiniColor?:kMLNUITabDefaultColor);
             }else {
-                segmentLabel.titleLabel.textColor = self.configuration.customTiniColor?:kMLNTabDefaultColor;
+                segmentLabel.titleLabel.textColor = self.configuration.customTiniColor?:kMLNUITabDefaultColor;
             }
         }
     }
@@ -807,7 +807,7 @@ const CGFloat kMLNTabSegmentViewLabelOffsetWeight = 10.0f;
 }
 
 - (void)lua_setTapTitle:(NSString*)title atIndex:(NSInteger)index {
-    MLNCheckTypeAndNilValue(title, @"string", [NSString class])
+    MLNUICheckTypeAndNilValue(title, @"string", [NSString class])
     if (index < 1 || index > self.segmentTitles.count) {
         return;
     }
@@ -827,7 +827,7 @@ const CGFloat kMLNTabSegmentViewLabelOffsetWeight = 10.0f;
 - (void)lua_setTapBadgeTitle:(NSString*)title atIndex:(NSInteger)index {
     NSInteger trueIndex=  index - 1;
     [self.itemBadgeInfo setObject:title?:@"" forKey:[NSString stringWithFormat:@"%ld",trueIndex]];
-    MLNCheckTypeAndNilValue(title, @"string", [NSString class])
+    MLNUICheckTypeAndNilValue(title, @"string", [NSString class])
     if (index < 1 || index > self.segmentTitles.count) {
         return;
     }
@@ -870,66 +870,66 @@ const CGFloat kMLNTabSegmentViewLabelOffsetWeight = 10.0f;
     return realIndex;
 }
 
-- (void)lua_setTapCallback:(MLNBlock *)block {
-    MLNCheckTypeAndNilValue(block, @"tapCallback", [MLNBlock class])
+- (void)lua_setTapCallback:(MLNUIBlock *)block {
+    MLNUICheckTypeAndNilValue(block, @"tapCallback", [MLNUIBlock class])
     self.lua_tapCallback = block;
 }
 
-- (void)lua_setAlignment:(MLNTabSegmentAlignment)alignment {
+- (void)lua_setAlignment:(MLNUITabSegmentAlignment)alignment {
     self.alignment = alignment;
     [self layoutSegmentTitle];
     if (_currentIndex < self.segmentViews.count && _currentIndex >= 0) {
-        MLNTabSegmentLabel* label = _segmentViews[_currentIndex];
+        MLNUITabSegmentLabel* label = _segmentViews[_currentIndex];
         CGPoint center = self.bottomPointView.center;
         center.x = label.frame.size.width / 2.0 + label.frame.origin.x;
         self.bottomPointView.center = center;
     }
 }
 
-- (void)lua_setTapClickedCallBack:(MLNBlock *)block {
-    MLNCheckTypeAndNilValue(block, @"Callback", [MLNBlock class])
+- (void)lua_setTapClickedCallBack:(MLNUIBlock *)block {
+    MLNUICheckTypeAndNilValue(block, @"Callback", [MLNUIBlock class])
     _lua_clickCallback = block;
 }
 
-- (void)lua_setTabScrollingListener:(MLNBlock *)block{
-    MLNCheckTypeAndNilValue(block, @"Callback", [MLNBlock class])
+- (void)lua_setTabScrollingListener:(MLNUIBlock *)block{
+    MLNUICheckTypeAndNilValue(block, @"Callback", [MLNUIBlock class])
     _lua_scrollingCallback = block;
 }
 
 
 #pragma mark - Export For Lua
-LUA_EXPORT_VIEW_BEGIN(MLNTabSegmentView)
-LUA_EXPORT_VIEW_PROPERTY(currentIndex, "lua_setCurrentIndex:","lua_currentIndex", MLNTabSegmentView)
-LUA_EXPORT_VIEW_PROPERTY(normalFontSize, "lua_setNormalFontSize:","normalFontSize", MLNTabSegmentView)
-LUA_EXPORT_VIEW_PROPERTY(selectScale, "lua_setSelectScale:","selectScale", MLNTabSegmentView)
-LUA_EXPORT_VIEW_PROPERTY(tintColor, "lua_setCustomTintColor:","customTintColor", MLNTabSegmentView)
-LUA_EXPORT_VIEW_PROPERTY(selectedColor, "lua_setSelectedColor:","selectedColor", MLNTabSegmentView)
-LUA_EXPORT_VIEW_PROPERTY(indicatorColor, "lua_setIndicatorColor:","indicatorColor", MLNTabSegmentView)
-LUA_EXPORT_VIEW_METHOD(relatedToViewPager, "lua_relatedToViewPager:animated:", MLNTabSegmentView)
-LUA_EXPORT_VIEW_METHOD(setCurrentIndexAnimated, "lua_setCurrentIndex:animated:", MLNTabSegmentView)
-LUA_EXPORT_VIEW_METHOD(setTapTitleAtIndex, "lua_setTapTitle:atIndex:", MLNTabSegmentView)
-LUA_EXPORT_VIEW_METHOD(setTapBadgeNumAtIndex, "lua_setTapBadgeNum:atIndex:", MLNTabSegmentView)
-LUA_EXPORT_VIEW_METHOD(setTapBadgeTitleAtIndex, "lua_setTapBadgeTitle:atIndex:", MLNTabSegmentView)
-LUA_EXPORT_VIEW_METHOD(setRedDotHiddenAtIndex, "lua_changeRedDotStatusAtIndex:isShow:", MLNTabSegmentView)
-LUA_EXPORT_VIEW_METHOD(changeRedDotStatusAtIndex, "lua_changeRedDotStatusAtIndex:isShow:", MLNTabSegmentView)
-LUA_EXPORT_VIEW_METHOD(animtionFromIndexToIndexProgress, "lua_animtionFromIndex:toIndex:progress:", MLNTabSegmentView)
-LUA_EXPORT_VIEW_METHOD(animationFromIndexToIndexProgress, "lua_animtionFromIndex:toIndex:progress:", MLNTabSegmentView)
-LUA_EXPORT_VIEW_METHOD(addTabSelectedListener, "lua_setTapCallback:", MLNTabSegmentView)
-LUA_EXPORT_VIEW_METHOD(setTabSelectedListener, "lua_setTapCallback:", MLNTabSegmentView)
-LUA_EXPORT_VIEW_METHOD(setItemTabClickListener, "lua_setTapClickedCallBack:", MLNTabSegmentView)
-LUA_EXPORT_VIEW_METHOD(setAlignment, "lua_setAlignment:", MLNTabSegmentView)
-LUA_EXPORT_VIEW_METHOD(setTabSpacing, "lua_setTabSpacing:", MLNTabSegmentView)
-LUA_EXPORT_VIEW_METHOD(setTabScrollingListener, "lua_setTabScrollingListener:", MLNTabSegmentView)
-LUA_EXPORT_VIEW_END(MLNTabSegmentView,TabSegmentView, YES, "MLNView", "initWithLuaCore:frame:segmentTitles:tintColor:")
+LUA_EXPORT_VIEW_BEGIN(MLNUITabSegmentView)
+LUA_EXPORT_VIEW_PROPERTY(currentIndex, "lua_setCurrentIndex:","lua_currentIndex", MLNUITabSegmentView)
+LUA_EXPORT_VIEW_PROPERTY(normalFontSize, "lua_setNormalFontSize:","normalFontSize", MLNUITabSegmentView)
+LUA_EXPORT_VIEW_PROPERTY(selectScale, "lua_setSelectScale:","selectScale", MLNUITabSegmentView)
+LUA_EXPORT_VIEW_PROPERTY(tintColor, "lua_setCustomTintColor:","customTintColor", MLNUITabSegmentView)
+LUA_EXPORT_VIEW_PROPERTY(selectedColor, "lua_setSelectedColor:","selectedColor", MLNUITabSegmentView)
+LUA_EXPORT_VIEW_PROPERTY(indicatorColor, "lua_setIndicatorColor:","indicatorColor", MLNUITabSegmentView)
+LUA_EXPORT_VIEW_METHOD(relatedToViewPager, "lua_relatedToViewPager:animated:", MLNUITabSegmentView)
+LUA_EXPORT_VIEW_METHOD(setCurrentIndexAnimated, "lua_setCurrentIndex:animated:", MLNUITabSegmentView)
+LUA_EXPORT_VIEW_METHOD(setTapTitleAtIndex, "lua_setTapTitle:atIndex:", MLNUITabSegmentView)
+LUA_EXPORT_VIEW_METHOD(setTapBadgeNumAtIndex, "lua_setTapBadgeNum:atIndex:", MLNUITabSegmentView)
+LUA_EXPORT_VIEW_METHOD(setTapBadgeTitleAtIndex, "lua_setTapBadgeTitle:atIndex:", MLNUITabSegmentView)
+LUA_EXPORT_VIEW_METHOD(setRedDotHiddenAtIndex, "lua_changeRedDotStatusAtIndex:isShow:", MLNUITabSegmentView)
+LUA_EXPORT_VIEW_METHOD(changeRedDotStatusAtIndex, "lua_changeRedDotStatusAtIndex:isShow:", MLNUITabSegmentView)
+LUA_EXPORT_VIEW_METHOD(animtionFromIndexToIndexProgress, "lua_animtionFromIndex:toIndex:progress:", MLNUITabSegmentView)
+LUA_EXPORT_VIEW_METHOD(animationFromIndexToIndexProgress, "lua_animtionFromIndex:toIndex:progress:", MLNUITabSegmentView)
+LUA_EXPORT_VIEW_METHOD(addTabSelectedListener, "lua_setTapCallback:", MLNUITabSegmentView)
+LUA_EXPORT_VIEW_METHOD(setTabSelectedListener, "lua_setTapCallback:", MLNUITabSegmentView)
+LUA_EXPORT_VIEW_METHOD(setItemTabClickListener, "lua_setTapClickedCallBack:", MLNUITabSegmentView)
+LUA_EXPORT_VIEW_METHOD(setAlignment, "lua_setAlignment:", MLNUITabSegmentView)
+LUA_EXPORT_VIEW_METHOD(setTabSpacing, "lua_setTabSpacing:", MLNUITabSegmentView)
+LUA_EXPORT_VIEW_METHOD(setTabScrollingListener, "lua_setTabScrollingListener:", MLNUITabSegmentView)
+LUA_EXPORT_VIEW_END(MLNUITabSegmentView,TabSegmentView, YES, "MLNUIView", "initWithLuaCore:frame:segmentTitles:tintColor:")
 
 
 
 @end
 
-@implementation MLNTabSegmentViewConfiguration
+@implementation MLNUITabSegmentViewConfiguration
 
 + (instancetype)defaultConfiguration {
-    MLNTabSegmentViewConfiguration *configuration = [[MLNTabSegmentViewConfiguration alloc] init];
+    MLNUITabSegmentViewConfiguration *configuration = [[MLNUITabSegmentViewConfiguration alloc] init];
     
     configuration.leftPadding = 17;
     configuration.rightPadding = 17;
@@ -950,9 +950,9 @@ LUA_EXPORT_VIEW_END(MLNTabSegmentView,TabSegmentView, YES, "MLNView", "initWithL
     progress = MIN(1.0, MAX(0.0, progress));
     CGFloat fontWeight = 0;
     if (@available(iOS 8.2, *)) {
-        CGFloat weight = kMLNTabSegmentViewDefaultFontWeight + (UIFontWeightHeavy - kMLNTabSegmentViewDefaultFontWeight) * progress;
+        CGFloat weight = kMLNUITabSegmentViewDefaultFontWeight + (UIFontWeightHeavy - kMLNUITabSegmentViewDefaultFontWeight) * progress;
         
-        fontWeight = kMLNTabSegmentViewDefaultFontWeight;
+        fontWeight = kMLNUITabSegmentViewDefaultFontWeight;
         if (weight >= UIFontWeightRegular && weight < middleWeight(UIFontWeightRegular, UIFontWeightMedium)) {
             fontWeight = UIFontWeightRegular;
         }
@@ -1009,14 +1009,14 @@ static inline CGFloat middleWeight(CGFloat weightA, CGFloat weightB) {
 
 @end
 
-@interface MLNTabSegmentLabel ()
+@interface MLNUITabSegmentLabel ()
 @property (nonatomic, strong) UIImageView *redDotView;
-@property (nonatomic, strong) MLNBadgeView *badgeView;
+@property (nonatomic, strong) MLNUIBadgeView *badgeView;
 @property (nonatomic, assign) CGRect originRect;
 @property (nonatomic, assign) CGFloat originFontSize;
 @end
 
-@implementation MLNTabSegmentLabel
+@implementation MLNUITabSegmentLabel
 
 - (instancetype)initWithFrame:(CGRect)frame fontSize:(CGFloat)fontSize {
     self = [super initWithFrame:frame];
@@ -1130,9 +1130,9 @@ static inline CGFloat middleWeight(CGFloat weightA, CGFloat weightB) {
 
 #pragma mark - lazy UI
 
-- (MLNBadgeView *)createBadgeView {
+- (MLNUIBadgeView *)createBadgeView {
     if (!_badgeView) {
-        _badgeView = [[MLNBadgeView alloc] initWithOrigin:CGPointZero];
+        _badgeView = [[MLNUIBadgeView alloc] initWithOrigin:CGPointZero];
         _badgeView.hidden = YES;
         [self addSubview:_badgeView];
     }

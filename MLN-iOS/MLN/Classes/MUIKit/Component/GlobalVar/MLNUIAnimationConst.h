@@ -1,12 +1,12 @@
 //
-//  MLNAnimationConst.h
+//  MLNUIAnimationConst.h
 //  CocoaLumberjack
 //
 //  Created by MoMo on 2018/8/16.
 //
 
 #import <UIKit/UIKit.h>
-#import "MLNGlobalVarExportProtocol.h"
+#import "MLNUIGlobalVarExportProtocol.h"
 
 FOUNDATION_EXPORT NSString * const kDefaultGroupAnimation;
 FOUNDATION_EXPORT NSString * const kDefaultScaleAnimation;
@@ -26,39 +26,39 @@ FOUNDATION_EXPORT NSString * const kOpacity;
 FOUNDATION_EXPORT NSString * const kTransform;
 
 typedef enum : NSUInteger {
-    MLNAnimationRepeatTypeNone,
-    MLNAnimationRepeatTypeBeginToEnd,
-    MLNAnimationRepeatTypeReverse,
-} MLNAnimationRepeatType;
+    MLNUIAnimationRepeatTypeNone,
+    MLNUIAnimationRepeatTypeBeginToEnd,
+    MLNUIAnimationRepeatTypeReverse,
+} MLNUIAnimationRepeatType;
 
 typedef enum : NSUInteger {
-    MLNAnimationInterpolatorTypeLinear = 0,
-    MLNAnimationInterpolatorTypeAccelerate,
-    MLNAnimationInterpolatorTypeDecelerate,
-    MLNAnimationInterpolatorTypeAccelerateDecelerate,
-    MLNAnimationInterpolatorTypeOvershoot,
-    MLNAnimationInterpolatorTypeBounce,
-} MLNAnimationInterpolatorType;
+    MLNUIAnimationInterpolatorTypeLinear = 0,
+    MLNUIAnimationInterpolatorTypeAccelerate,
+    MLNUIAnimationInterpolatorTypeDecelerate,
+    MLNUIAnimationInterpolatorTypeAccelerateDecelerate,
+    MLNUIAnimationInterpolatorTypeOvershoot,
+    MLNUIAnimationInterpolatorTypeBounce,
+} MLNUIAnimationInterpolatorType;
 
 typedef enum : NSUInteger {
-    MLNAnimationAnimTypeDefault = 0,
-    MLNAnimationAnimTypeNone,
-    MLNAnimationAnimTypeLeftToRight,
-    MLNAnimationAnimTypeRightToLeft,
-    MLNAnimationAnimTypeTopToBottom,
-    MLNAnimationAnimTypeBottomToTop,
-    MLNAnimationAnimTypeScale,
-    MLNAnimationAnimTypeFade,
-} MLNAnimationAnimType;
+    MLNUIAnimationAnimTypeDefault = 0,
+    MLNUIAnimationAnimTypeNone,
+    MLNUIAnimationAnimTypeLeftToRight,
+    MLNUIAnimationAnimTypeRightToLeft,
+    MLNUIAnimationAnimTypeTopToBottom,
+    MLNUIAnimationAnimTypeBottomToTop,
+    MLNUIAnimationAnimTypeScale,
+    MLNUIAnimationAnimTypeFade,
+} MLNUIAnimationAnimType;
 
 typedef enum : NSInteger {
-    MLNAnimationValueTypeAbsolute = 0,
-    MLNAnimationValueTypeRelativeToSelf,
-    MLNAnimationValueTypeRelativeToParent
-}MLNAnimationValueType;
+    MLNUIAnimationValueTypeAbsolute = 0,
+    MLNUIAnimationValueTypeRelativeToSelf,
+    MLNUIAnimationValueTypeRelativeToParent
+}MLNUIAnimationValueType;
 
-@interface MLNAnimationConst : NSObject <MLNGlobalVarExportProtocol>
+@interface MLNUIAnimationConst : NSObject <MLNUIGlobalVarExportProtocol>
 
-+ (CAMediaTimingFunction *)buildTimingFunction:(MLNAnimationInterpolatorType)interpolator;
++ (CAMediaTimingFunction *)buildTimingFunction:(MLNUIAnimationInterpolatorType)interpolator;
 
 @end

@@ -1,6 +1,6 @@
 //
-//  NSString+MLNCore.h
-//  MLNCore
+//  NSString+MLNUICore.h
+//  MLNUICore
 //
 //  Created by MoMo on 2019/7/23.
 //
@@ -9,7 +9,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface NSString (MLNCore)
+@interface NSString (MLNUICore)
 
 @end
 

@@ -1,21 +1,21 @@
 //
-//  MLNInnerCollectionView.m
-//  MLN
+//  MLNUIInnerCollectionView.m
+//  MLNUI
 //
 //  Created by MoMo on 2019/9/2.
 //
 
-#import "MLNInnerCollectionView.h"
-#import "NSObject+MLNCore.h"
+#import "MLNUIInnerCollectionView.h"
+#import "NSObject+MLNUICore.h"
 
-@implementation MLNInnerCollectionView
+@implementation MLNUIInnerCollectionView
 
 - (BOOL)mln_isConvertible
 {
     return [self.containerView mln_isConvertible];
 }
 
-- (MLNLuaCore *)mln_luaCore
+- (MLNUILuaCore *)mln_luaCore
 {
     return self.containerView.mln_luaCore;
 }

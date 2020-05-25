@@ -1,16 +1,16 @@
 //
-//  NSObject+MLNDealloctor.h
-//  MLN
+//  NSObject+MLNUIDealloctor.h
+//  MLNUI
 //
 //  Created by Dai Dongpeng on 2020/4/30.
 //
 #import <Foundation/Foundation.h>
 
 NS_ASSUME_NONNULL_BEGIN
-typedef void(^MLNDeallocatorCallback)(id receiver);
+typedef void(^MLNUIDeallocatorCallback)(id receiver);
 
-@interface NSObject (MLNDealloctor)
-- (void)mln_addDeallocationCallback:(MLNDeallocatorCallback)block;
+@interface NSObject (MLNUIDealloctor)
+- (void)mln_addDeallocationCallback:(MLNUIDeallocatorCallback)block;
 @end
 
 NS_ASSUME_NONNULL_END

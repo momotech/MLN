@@ -1,28 +1,28 @@
 //
-//  MLNPoint.m
-//  MLN
+//  MLNUIPoint.m
+//  MLNUI
 //
 //  Created by MoMo on 2019/8/2.
 //
 
-#import "MLNPoint.h"
-#import "MLNLuaCore.h"
+#import "MLNUIPoint.h"
+#import "MLNUILuaCore.h"
 
-@interface MLNPoint ()
+@interface MLNUIPoint ()
 
 @property (nonatomic, assign) CGPoint point;
 
 @end
-@implementation MLNPoint
+@implementation MLNUIPoint
 
 + (instancetype)pointWithCGPoint:(CGPoint)point
 {
-    MLNPoint *p = [[MLNPoint alloc] init];
+    MLNUIPoint *p = [[MLNUIPoint alloc] init];
     p.point = point;
     return p;
 }
 
-- (instancetype)initWithLuaCore:(MLNLuaCore *)luaCore x:(NSNumber *)x y:(NSNumber *)y
+- (instancetype)initWithLuaCore:(MLNUILuaCore *)luaCore x:(NSNumber *)x y:(NSNumber *)y
 {
     if (self = [super initWithLuaCore:luaCore]) {
         _point = CGPointMake(CGFloatValueFromNumber(x), CGFloatValueFromNumber(y));
@@ -77,9 +77,9 @@
 }
 
 #pragma mark - Extra To Lua
-LUA_EXPORT_BEGIN(MLNPoint)
-LUA_EXPORT_PROPERTY(x, "setX:", "x", MLNPoint)
-LUA_EXPORT_PROPERTY(y, "setY:", "y", MLNPoint)
-LUA_EXPORT_END(MLNPoint, Point, NO, NULL, "initWithLuaCore:x:y:")
+LUA_EXPORT_BEGIN(MLNUIPoint)
+LUA_EXPORT_PROPERTY(x, "setX:", "x", MLNUIPoint)
+LUA_EXPORT_PROPERTY(y, "setY:", "y", MLNUIPoint)
+LUA_EXPORT_END(MLNUIPoint, Point, NO, NULL, "initWithLuaCore:x:y:")
 
 @end

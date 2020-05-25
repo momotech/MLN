@@ -1,26 +1,26 @@
 //
-//  MLNCollectionViewAdapter.h
+//  MLNUICollectionViewAdapter.h
 //  
 //
 //  Created by MoMo on 2018/7/9.
 //
 
 #import <UIKit/UIKit.h>
-#import "MLNScrollViewDelegate.h"
-#import "MLNEntityExportProtocol.h"
-#import "MLNCollectionViewGridLayout.h"
-#import "MLNCollectionViewAdapterProtocol.h"
-#import "MLNCollectionViewGridLayoutDelegate.h"
-#import "MLNAdapterCachesManager.h"
+#import "MLNUIScrollViewDelegate.h"
+#import "MLNUIEntityExportProtocol.h"
+#import "MLNUICollectionViewGridLayout.h"
+#import "MLNUICollectionViewAdapterProtocol.h"
+#import "MLNUICollectionViewGridLayoutDelegate.h"
+#import "MLNUIAdapterCachesManager.h"
 
-@interface MLNCollectionViewAdapter : MLNScrollViewDelegate <MLNCollectionViewAdapterProtocol, UICollectionViewDelegateFlowLayout, MLNCollectionViewGridLayoutDelegate, MLNEntityExportProtocol>
+@interface MLNUICollectionViewAdapter : MLNUIScrollViewDelegate <MLNUICollectionViewAdapterProtocol, UICollectionViewDelegateFlowLayout, MLNUICollectionViewGridLayoutDelegate, MLNUIEntityExportProtocol>
 
-@property (nonatomic, strong, readonly) NSMutableDictionary<NSString *, MLNBlock *> *initedCellCallbacks;
-@property (nonatomic, strong, readonly) NSMutableDictionary<NSString *, MLNBlock *> *reuseCellCallbacks;
-@property (nonatomic, strong, readonly) MLNAdapterCachesManager *cachesManager;
+@property (nonatomic, strong, readonly) NSMutableDictionary<NSString *, MLNUIBlock *> *initedCellCallbacks;
+@property (nonatomic, strong, readonly) NSMutableDictionary<NSString *, MLNUIBlock *> *reuseCellCallbacks;
+@property (nonatomic, strong, readonly) MLNUIAdapterCachesManager *cachesManager;
 
 - (void)registerCellClassIfNeed:(UICollectionView *)collectionView  reuseId:(NSString *)reuseId;
-- (MLNBlock *)initedCellCallbackByReuseId:(NSString *)reuseId;
-- (MLNBlock *)fillCellDataCallbackByReuseId:(NSString *)reuseId;
+- (MLNUIBlock *)initedCellCallbackByReuseId:(NSString *)reuseId;
+- (MLNUIBlock *)fillCellDataCallbackByReuseId:(NSString *)reuseId;
 
 @end

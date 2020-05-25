@@ -1,19 +1,19 @@
 //
-//  MLNBlockObserver.h
-// MLN
+//  MLNUIBlockObserver.h
+// MLNUI
 //
 //  Created by Dai Dongpeng on 2020/3/3.
 //
 
-#import "MLNKVOObserver.h"
+#import "MLNUIKVOObserver.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface MLNBlockObserver : MLNKVOObserver
+@interface MLNUIBlockObserver : MLNUIKVOObserver
 
-@property (nonatomic, strong, readonly) MLNBlock *block;
+@property (nonatomic, strong, readonly) MLNUIBlock *block;
 
-+ (instancetype)observerWithBlock:(MLNBlock *)block keyPath:(NSString *)keyPath;
++ (instancetype)observerWithBlock:(MLNUIBlock *)block keyPath:(NSString *)keyPath;
 
 @end
 

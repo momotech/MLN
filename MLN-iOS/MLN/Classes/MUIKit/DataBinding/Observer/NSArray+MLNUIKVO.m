@@ -1,24 +1,24 @@
 //
-//  NSArray+MLNKVO.m
-// MLN
+//  NSArray+MLNUIKVO.m
+// MLNUI
 //
 //  Created by Dai Dongpeng on 2020/3/9.
 //
 
-#import "NSArray+MLNKVO.h"
-#import "NSMutableArray+MLNKVO.h"
-#import "MLNExtScope.h"
-#import "NSObject+MLNCore.h"
-#import "NSObject+MLNKVO.h"
-#import "NSObject+MLNReflect.h"
+#import "NSArray+MLNUIKVO.h"
+#import "NSMutableArray+MLNUIKVO.h"
+#import "MLNUIExtScope.h"
+#import "NSObject+MLNUICore.h"
+#import "NSObject+MLNUIKVO.h"
+#import "NSObject+MLNUIReflect.h"
 
 @import ObjectiveC;
 
-@implementation NSArray (MLNKVO)
+@implementation NSArray (MLNUIKVO)
 
-- (NSArray * _Nonnull (^)(MLNItemKVOBlock _Nonnull))mln_subscribeItem {
+- (NSArray * _Nonnull (^)(MLNUIItemKVOBlock _Nonnull))mln_subscribeItem {
     @weakify(self);
-     return ^(MLNItemKVOBlock block) {
+     return ^(MLNUIItemKVOBlock block) {
          @strongify(self);
          if (block) {
              [self.mln_itemKVOBlocks addObject:block];
@@ -36,8 +36,8 @@
     return arr;
 }
 
-//- (NSArray * _Nonnull (^)(NSString * _Nonnull, MLNItemKVOBlock *))mln_subscribeItem {
-//    return ^(NSString *keyPath, MLNItemKVOBlock block){
+//- (NSArray * _Nonnull (^)(NSString * _Nonnull, MLNUIItemKVOBlock *))mln_subscribeItem {
+//    return ^(NSString *keyPath, MLNUIItemKVOBlock block){
 //        return self;
 //    };
 //}

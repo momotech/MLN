@@ -1,17 +1,17 @@
 //
-//  MLNDevice.m
-//  MLN
+//  MLNUIDevice.m
+//  MLNUI
 //
 //  Created by MoMo on 2019/8/5.
 //
 
-#import "MLNDevice.h"
+#import "MLNUIDevice.h"
 #include <sys/socket.h>
 #include <sys/sysctl.h>
 #include <net/if.h>
 #include <net/if_dl.h>
 
-@implementation MLNDevice
+@implementation MLNUIDevice
 
 + (NSString *)getSysInfoByName:(char *)typeSpecifier
 {

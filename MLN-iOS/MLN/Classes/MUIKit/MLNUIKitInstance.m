@@ -1,38 +1,38 @@
 //
-//  MLNInstance.m
-//  MLN
+//  MLNUIInstance.m
+//  MLNUI
 //
 //  Created by MoMo on 2019/8/3.
 //
 
-#import "MLNKitInstance.h"
-#import "MLNLuaCore.h"
-#import "MLNLuaTable.h"
-#import "MLNLayoutEngine.h"
-#import "MLNBeforeWaitingTaskEngine.h"
-#import "MLNKiConvertor.h"
-#import "UIView+MLNLayout.h"
-#import "MLNLayoutContainerNode.h"
-#import "MLNKitInstanceHandlersManager.h"
-#import "MLNWindow.h"
-#import "MLNKitInstanceConsts.h"
-#import "MLNFile.h"
-#import "MLNKitBridgesManager.h"
+#import "MLNUIKitInstance.h"
+#import "MLNUILuaCore.h"
+#import "MLNUILuaTable.h"
+#import "MLNUILayoutEngine.h"
+#import "MLNUIBeforeWaitingTaskEngine.h"
+#import "MLNUIKiConvertor.h"
+#import "UIView+MLNUILayout.h"
+#import "MLNUILayoutContainerNode.h"
+#import "MLNUIKitInstanceHandlersManager.h"
+#import "MLNUIWindow.h"
+#import "MLNUIKitInstanceConsts.h"
+#import "MLNUIFile.h"
+#import "MLNUIKitBridgesManager.h"
 
-#define kMLNRunLoopBeforeWaitingLazyTaskOrder   1
-#define kMLNRunLoopBeforeWaitingRenderOrder     2
-#define kMLNRunLoopBeforeWaitingAnimtaionOrder  3
+#define kMLNUIRunLoopBeforeWaitingLazyTaskOrder   1
+#define kMLNUIRunLoopBeforeWaitingRenderOrder     2
+#define kMLNUIRunLoopBeforeWaitingAnimtaionOrder  3
 
-@interface MLNKitInstance ()<MLNErrorHandlerProtocol, MLNLuaCoreDelegate> {
-    MLNLuaCore *_luaCore;
-    MLNLayoutEngine *_layoutEngine;
-    MLNWindow *_luaWindow;
+@interface MLNUIKitInstance ()<MLNUIErrorHandlerProtocol, MLNUILuaCoreDelegate> {
+    MLNUILuaCore *_luaCore;
+    MLNUILayoutEngine *_layoutEngine;
+    MLNUIWindow *_luaWindow;
 }
-@property (nonatomic, strong) id<MLNKitLuaCoeBuilderProtocol> luaCoreBuilder;
-@property (nonatomic, strong) NSMutableArray<Class<MLNExportProtocol>> *innerRegisterClasses;
-@property (nonatomic, strong) MLNBeforeWaitingTaskEngine *lazyTaskEngine;
-@property (nonatomic, strong) MLNBeforeWaitingTaskEngine *animationEngine;
-@property (nonatomic, strong) MLNBeforeWaitingTaskEngine *renderEngine;
+@property (nonatomic, strong) id<MLNUIKitLuaCoeBuilderProtocol> luaCoreBuilder;
+@property (nonatomic, strong) NSMutableArray<Class<MLNUIExportProtocol>> *innerRegisterClasses;
+@property (nonatomic, strong) MLNUIBeforeWaitingTaskEngine *lazyTaskEngine;
+@property (nonatomic, strong) MLNUIBeforeWaitingTaskEngine *animationEngine;
+@property (nonatomic, strong) MLNUIBeforeWaitingTaskEngine *renderEngine;
 @property (nonatomic, strong) NSMutableArray *onDestroyCallbacks;
 @property (nonatomic, assign) BOOL didViewAppear;
 @property (nonatomic, assign) BOOL needCallAppear;
@@ -40,18 +40,18 @@
 @end
 
 // Deprecated
-@interface MLNKitInstance ()
-@property (nonatomic) Class<MLNConvertorProtocol> convertorClass;
-@property (nonatomic) Class<MLNExporterProtocol> exporterClass;
-@property (nonatomic, strong) MLNKitBridgesManager *bridgesManager;
+@interface MLNUIKitInstance ()
+@property (nonatomic) Class<MLNUIConvertorProtocol> convertorClass;
+@property (nonatomic) Class<MLNUIExporterProtocol> exporterClass;
+@property (nonatomic, strong) MLNUIKitBridgesManager *bridgesManager;
 
 @end
 
-@implementation MLNKitInstance (LuaWindow)
+@implementation MLNUIKitInstance (LuaWindow)
 
-- (MLNWindow *)createLuaWindow
+- (MLNUIWindow *)createLuaWindow
 {
-    return [[MLNWindow alloc] initWithLuaCore:self.luaCore frame:self.rootView.bounds];
+    return [[MLNUIWindow alloc] initWithLuaCore:self.luaCore frame:self.rootView.bounds];
 }
 
 - (void)setupLuaWindow:(NSMutableDictionary *)windowExtra
@@ -67,9 +67,9 @@
 
 - (void)pushWindowToLayoutEngine
 {
-    __unsafe_unretained MLNLayoutContainerNode *node = (MLNLayoutContainerNode *)self.luaWindow.lua_node;
-    node.heightType = MLNLayoutMeasurementTypeIdle;
-    node.widthType = MLNLayoutMeasurementTypeIdle;
+    __unsafe_unretained MLNUILayoutContainerNode *node = (MLNUILayoutContainerNode *)self.luaWindow.lua_node;
+    node.heightType = MLNUILayoutMeasurementTypeIdle;
+    node.widthType = MLNUILayoutMeasurementTypeIdle;
     [node changeX:0.f];
     [node changeY:0.f];
     [node changeWidth:self.rootView.bounds.size.width];
@@ -114,40 +114,40 @@
 
 @end
 
-@implementation MLNKitInstance
+@implementation MLNUIKitInstance
 
-#pragma mark - MLNErrorHandlerProtocol
-- (BOOL)canHandleAssert:(MLNLuaCore *)luaCore
+#pragma mark - MLNUIErrorHandlerProtocol
+- (BOOL)canHandleAssert:(MLNUILuaCore *)luaCore
 {
     return [self.instanceHandlersManager.errorHandler canHandleAssert:self];
 }
 
-- (void)luaCore:(MLNLuaCore *)luaCore error:(NSString *)error
+- (void)luaCore:(MLNUILuaCore *)luaCore error:(NSString *)error
 {
     [self.instanceHandlersManager.errorHandler instance:self error:error];
 }
 
-- (void)luaCore:(MLNLuaCore *)luaCore luaError:(NSString *)error luaTraceback:(NSString *)luaTraceback
+- (void)luaCore:(MLNUILuaCore *)luaCore luaError:(NSString *)error luaTraceback:(NSString *)luaTraceback
 {
     [self.instanceHandlersManager.errorHandler instance:self luaError:error luaTraceback:luaTraceback];
 }
 
-#pragma mark - MLNLuaCoreDelegate
-- (void)luaCore:(MLNLuaCore *)luaCore willLoad:(NSData *)data filePath:(NSString *)filePath
+#pragma mark - MLNUILuaCoreDelegate
+- (void)luaCore:(MLNUILuaCore *)luaCore willLoad:(NSData *)data filePath:(NSString *)filePath
 {
     if ([self.delegate respondsToSelector:@selector(instance:willLoad:fileName:)]) {
         [self.delegate instance:self willLoad:data fileName:filePath];
     }
 }
 
-- (void)luaCore:(MLNLuaCore *)luaCore didLoad:(NSData *)data filePath:(NSString *)filePath
+- (void)luaCore:(MLNUILuaCore *)luaCore didLoad:(NSData *)data filePath:(NSString *)filePath
 {
     if ([self.delegate respondsToSelector:@selector(instance:didLoad:fileName:)]) {
         [self.delegate instance:self didLoad:data fileName:filePath];
     }
 }
 
-- (void)luaCore:(MLNLuaCore *)luaCore didFailLoad:(NSData *)data filePath:(NSString *)filePath error:(NSError *)error
+- (void)luaCore:(MLNUILuaCore *)luaCore didFailLoad:(NSData *)data filePath:(NSString *)filePath error:(NSError *)error
 {
     if ([self.delegate respondsToSelector:@selector(instance:didFailLoad:fileName:error:)]) {
         [self.delegate instance:self didFailLoad:data fileName:filePath error:error];
@@ -155,30 +155,30 @@
 }
 
 #pragma mark - Public For LuaCore
-- (instancetype)initWithLuaCoreBuilder:(id<MLNKitLuaCoeBuilderProtocol>)luaCoreBuilder viewController:(UIViewController<MLNViewControllerProtocol> *)viewController
+- (instancetype)initWithLuaCoreBuilder:(id<MLNUIKitLuaCoeBuilderProtocol>)luaCoreBuilder viewController:(UIViewController<MLNUIViewControllerProtocol> *)viewController
 {
-    return [self initWithLuaBundle:[MLNLuaBundle mainBundle] luaCoreBuilder:luaCoreBuilder viewController:viewController];
+    return [self initWithLuaBundle:[MLNUILuaBundle mainBundle] luaCoreBuilder:luaCoreBuilder viewController:viewController];
 }
 
-- (instancetype)initWithLuaBundlePath:(NSString *__nullable)luaBundlePath luaCoreBuilder:(id<MLNKitLuaCoeBuilderProtocol>)luaCoreBuilder viewController:(UIViewController<MLNViewControllerProtocol> *)viewController
+- (instancetype)initWithLuaBundlePath:(NSString *__nullable)luaBundlePath luaCoreBuilder:(id<MLNUIKitLuaCoeBuilderProtocol>)luaCoreBuilder viewController:(UIViewController<MLNUIViewControllerProtocol> *)viewController
 {
-    return [self initWithLuaBundle:[MLNLuaBundle mainBundleWithPath:luaBundlePath] luaCoreBuilder:luaCoreBuilder viewController:viewController];
+    return [self initWithLuaBundle:[MLNUILuaBundle mainBundleWithPath:luaBundlePath] luaCoreBuilder:luaCoreBuilder viewController:viewController];
 }
 
-- (instancetype)initWithLuaBundle:(MLNLuaBundle *__nullable)luaBundle luaCoreBuilder:(id<MLNKitLuaCoeBuilderProtocol>)luaCoreBuilder viewController:(UIViewController<MLNViewControllerProtocol> *)viewController
+- (instancetype)initWithLuaBundle:(MLNUILuaBundle *__nullable)luaBundle luaCoreBuilder:(id<MLNUIKitLuaCoeBuilderProtocol>)luaCoreBuilder viewController:(UIViewController<MLNUIViewControllerProtocol> *)viewController
 {
     return [self initWithLuaBundle:luaBundle luaCoreBuilder:luaCoreBuilder rootView:nil viewController:viewController];
 }
 
-- (instancetype)initWithLuaBundle:(MLNLuaBundle *__nullable)luaBundle luaCoreBuilder:(id<MLNKitLuaCoeBuilderProtocol>)luaCoreBuilder rootView:(UIView *)rootView viewController:(UIViewController<MLNViewControllerProtocol> *)viewController
+- (instancetype)initWithLuaBundle:(MLNUILuaBundle *__nullable)luaBundle luaCoreBuilder:(id<MLNUIKitLuaCoeBuilderProtocol>)luaCoreBuilder rootView:(UIView *)rootView viewController:(UIViewController<MLNUIViewControllerProtocol> *)viewController
 {
     if (self = [super init]) {
         _currentBundle = luaBundle;
         _luaCoreBuilder = luaCoreBuilder;
         _rootView = rootView;
         _viewController = viewController;
-        _instanceHandlersManager = [[MLNKitInstanceHandlersManager alloc] initWithUIInstance:self];
-        _instanceConsts = [[MLNKitInstanceConsts alloc] init];
+        _instanceHandlersManager = [[MLNUIKitInstanceHandlersManager alloc] initWithUIInstance:self];
+        _instanceConsts = [[MLNUIKitInstanceConsts alloc] init];
     }
     return self;
 }
@@ -204,7 +204,7 @@
         if (error) {
             *error = [NSError mln_errorCall:@"entry file is nil!"];
         }
-        MLNError(self.luaCore, @"entry file is nil!");
+        MLNUIError(self.luaCore, @"entry file is nil!");
         if ([self.delegate respondsToSelector:@selector(instance:didFailRun:error:)]) {
             if (error) {
                 [self.delegate instance:self didFailRun:entryFilePath error:*error];
@@ -243,7 +243,7 @@
 
 - (BOOL)reloadWithEntryFile:(NSString *)entryFilePath windowExtra:(NSDictionary *)windowExtra error:(NSError * _Nullable __autoreleasing *)error
 {
-    MLNAssert(self.luaCore, (entryFilePath && entryFilePath.length >0), @"entry file is nil!");
+    MLNUIAssert(self.luaCore, (entryFilePath && entryFilePath.length >0), @"entry file is nil!");
     // 释放当前环境
     [self releaseAll];
     self.needCallAppear = YES;
@@ -265,13 +265,13 @@
     
 }
 
-- (BOOL)registerClazz:(Class<MLNExportProtocol>)clazz error:(NSError * _Nullable __autoreleasing *)error
+- (BOOL)registerClazz:(Class<MLNUIExportProtocol>)clazz error:(NSError * _Nullable __autoreleasing *)error
 {
     [self.innerRegisterClasses addObject:clazz];
     return [self.luaCore registerClazz:clazz error:error];
 }
 
-- (BOOL)registerClasses:(NSArray<Class<MLNExportProtocol>> *)classes error:(NSError * _Nullable __autoreleasing *)error
+- (BOOL)registerClasses:(NSArray<Class<MLNUIExportProtocol>> *)classes error:(NSError * _Nullable __autoreleasing *)error
 {
     [self.innerRegisterClasses addObjectsFromArray:classes];
     return [self.luaCore registerClasses:classes error:error];
@@ -279,11 +279,11 @@
 
 - (void)changeLuaBundleWithPath:(NSString *)bundlePath
 {
-    _currentBundle = [[MLNLuaBundle alloc] initWithBundlePath:bundlePath];
+    _currentBundle = [[MLNUILuaBundle alloc] initWithBundlePath:bundlePath];
     [self.luaCore changeLuaBundle:_currentBundle];
 }
 
-- (void)changeLuaBundle:(MLNLuaBundle *)bundle
+- (void)changeLuaBundle:(MLNUILuaBundle *)bundle
 {
     _currentBundle = bundle;
     [self.luaCore changeLuaBundle:bundle];
@@ -309,12 +309,12 @@
     [self.luaCore setStrongObjectWithIndex:objIndex cKey:cKey];
 }
 
-- (void)setStrongObject:(id<MLNEntityExportProtocol>)obj key:(NSString *)key
+- (void)setStrongObject:(id<MLNUIEntityExportProtocol>)obj key:(NSString *)key
 {
     [self.luaCore setStrongObject:obj key:key];
 }
 
-- (void)setStrongObject:(id<MLNEntityExportProtocol>)obj cKey:(nonnull void *)cKey
+- (void)setStrongObject:(id<MLNUIEntityExportProtocol>)obj cKey:(nonnull void *)cKey
 {
     [self.luaCore setStrongObject:obj cKey:cKey];
 }
@@ -329,7 +329,7 @@
     [self.luaCore removeStrongObjectForCKey:cKey];
 }
 
-- (void)addOnDestroyCallback:(MLNOnDestroyCallback)callback
+- (void)addOnDestroyCallback:(MLNUIOnDestroyCallback)callback
 {
     if (!callback || [_onDestroyCallbacks containsObject:callback]) {
         return;
@@ -337,7 +337,7 @@
     [self.onDestroyCallbacks addObject:callback];
 }
 
-- (void)removeOnDestroyCallback:(MLNOnDestroyCallback)callback
+- (void)removeOnDestroyCallback:(MLNUIOnDestroyCallback)callback
 {
     if (callback) {
         [_onDestroyCallbacks removeObject:callback];
@@ -347,7 +347,7 @@
 - (void)doOnDestroyCallbacks
 {
     NSArray *destroyCallbacks = _onDestroyCallbacks.copy;
-    for (MLNOnDestroyCallback callback in destroyCallbacks) {
+    for (MLNUIOnDestroyCallback callback in destroyCallbacks) {
         if (callback) {
             callback();
         }
@@ -362,12 +362,12 @@
     return _onDestroyCallbacks;
 }
 
-- (id<MLNConvertorProtocol>)convertor
+- (id<MLNUIConvertorProtocol>)convertor
 {
     return _luaCore.convertor;
 }
 
-- (id<MLNExporterProtocol>)exporter
+- (id<MLNUIExporterProtocol>)exporter
 {
     return _luaCore.exporter;
 }
@@ -400,7 +400,7 @@
     if (self.luaCoreBuilder) {
         _luaCore = [self.luaCoreBuilder getLuaCore];
     } else {
-        _luaCore = [[MLNLuaCore alloc] initWithLuaBundle:_currentBundle convertor:_convertorClass exporter:_exporterClass];
+        _luaCore = [[MLNUILuaCore alloc] initWithLuaBundle:_currentBundle convertor:_convertorClass exporter:_exporterClass];
     }
     [_luaCore changeLuaBundle:self.currentBundle];
     _luaCore.weakAssociatedObject = self;
@@ -468,7 +468,7 @@
 }
 
 #pragma mark - Getter
-- (MLNLuaCore *)luaCore
+- (MLNUILuaCore *)luaCore
 {
     if (!_luaCore) {
         [self createLuaCore];
@@ -476,61 +476,61 @@
     return _luaCore;
 }
 
-- (MLNLayoutEngine *)layoutEngine
+- (MLNUILayoutEngine *)layoutEngine
 {
     if (!_layoutEngine) {
-        _layoutEngine = [[MLNLayoutEngine alloc] initWithLuaInstance:self];
+        _layoutEngine = [[MLNUILayoutEngine alloc] initWithLuaInstance:self];
     }
     return _layoutEngine;
 }
 
-- (MLNBeforeWaitingTaskEngine *)lazyTaskEngine
+- (MLNUIBeforeWaitingTaskEngine *)lazyTaskEngine
 {
     if (!_lazyTaskEngine) {
-        _lazyTaskEngine = [[MLNBeforeWaitingTaskEngine alloc] initWithLuaInstance:self order:kMLNRunLoopBeforeWaitingLazyTaskOrder];
+        _lazyTaskEngine = [[MLNUIBeforeWaitingTaskEngine alloc] initWithLuaInstance:self order:kMLNUIRunLoopBeforeWaitingLazyTaskOrder];
     }
     return _lazyTaskEngine;
 }
 
-- (MLNBeforeWaitingTaskEngine *)animationEngine
+- (MLNUIBeforeWaitingTaskEngine *)animationEngine
 {
     if (!_animationEngine) {
-        _animationEngine = [[MLNBeforeWaitingTaskEngine alloc] initWithLuaInstance:self order:kMLNRunLoopBeforeWaitingAnimtaionOrder];
+        _animationEngine = [[MLNUIBeforeWaitingTaskEngine alloc] initWithLuaInstance:self order:kMLNUIRunLoopBeforeWaitingAnimtaionOrder];
     }
     return _animationEngine;
 }
 
-- (MLNBeforeWaitingTaskEngine *)renderEngine
+- (MLNUIBeforeWaitingTaskEngine *)renderEngine
 {
     if (!_renderEngine) {
-        _renderEngine = [[MLNBeforeWaitingTaskEngine alloc] initWithLuaInstance:self order:kMLNRunLoopBeforeWaitingRenderOrder];
+        _renderEngine = [[MLNUIBeforeWaitingTaskEngine alloc] initWithLuaInstance:self order:kMLNUIRunLoopBeforeWaitingRenderOrder];
     }
     return _renderEngine;
 }
 
-- (NSMutableArray<Class<MLNExportProtocol>> *)innerRegisterClasses
+- (NSMutableArray<Class<MLNUIExportProtocol>> *)innerRegisterClasses
 {
     if (!_innerRegisterClasses) {
-        _innerRegisterClasses = [NSMutableArray arrayWithArray:@[[MLNWindow class]]];
+        _innerRegisterClasses = [NSMutableArray arrayWithArray:@[[MLNUIWindow class]]];
     }
     return _innerRegisterClasses;
 }
 
-- (NSArray<Class<MLNExportProtocol>> *)registerClasses
+- (NSArray<Class<MLNUIExportProtocol>> *)registerClasses
 {
     return self.innerRegisterClasses.copy;
 }
 
 @end
 
-@implementation MLNKitInstance (Layout)
+@implementation MLNUIKitInstance (Layout)
 
-- (void)addRootnode:(MLNLayoutContainerNode *)rootnode
+- (void)addRootnode:(MLNUILayoutContainerNode *)rootnode
 {
     [self.layoutEngine addRootnode:rootnode];
 }
 
-- (void)removeRootNode:(MLNLayoutContainerNode *)rootnode
+- (void)removeRootNode:(MLNUILayoutContainerNode *)rootnode
 {
     [self.layoutEngine removeRootNode:rootnode];
 }
@@ -542,43 +542,43 @@
 
 @end
 
-@implementation MLNKitInstance (LazyTask)
+@implementation MLNUIKitInstance (LazyTask)
 
-- (void)pushLazyTask:(id<MLNBeforeWaitingTaskProtocol>)lazyTask
+- (void)pushLazyTask:(id<MLNUIBeforeWaitingTaskProtocol>)lazyTask
 {
     [self.lazyTaskEngine pushTask:lazyTask];
 }
 
-- (void)popLazyTask:(id<MLNBeforeWaitingTaskProtocol>)lazyTask
+- (void)popLazyTask:(id<MLNUIBeforeWaitingTaskProtocol>)lazyTask
 {
     [self.lazyTaskEngine popTask:lazyTask];
 }
 
 #pragma mark - Animations
-- (void)pushAnimation:(id<MLNBeforeWaitingTaskProtocol>)animation
+- (void)pushAnimation:(id<MLNUIBeforeWaitingTaskProtocol>)animation
 {
     [self.animationEngine pushTask:animation];
 }
 
-- (void)popAnimation:(id<MLNBeforeWaitingTaskProtocol>)animation
+- (void)popAnimation:(id<MLNUIBeforeWaitingTaskProtocol>)animation
 {
     [self.animationEngine popTask:animation];
 }
 
 #pragma mark - Render
-- (void)pushRenderTask:(id<MLNBeforeWaitingTaskProtocol>)renderTask
+- (void)pushRenderTask:(id<MLNUIBeforeWaitingTaskProtocol>)renderTask
 {
     [self.renderEngine pushTask:renderTask];
 }
 
-- (void)popRenderTask:(id<MLNBeforeWaitingTaskProtocol>)renderTask
+- (void)popRenderTask:(id<MLNUIBeforeWaitingTaskProtocol>)renderTask
 {
     [self.renderEngine popTask:renderTask];
 }
 
 @end
 
-@implementation MLNKitInstance (GC)
+@implementation MLNUIKitInstance (GC)
 
 - (void)doGC
 {
@@ -588,27 +588,27 @@
 @end
 
 
-@implementation MLNKitInstance (Deprecated)
+@implementation MLNUIKitInstance (Deprecated)
 
-- (instancetype)initWithLuaBundle:(MLNLuaBundle *)bundle rootView:(UIView * _Nullable)rootView viewController:(nonnull UIViewController<MLNViewControllerProtocol> *)viewController
+- (instancetype)initWithLuaBundle:(MLNUILuaBundle *)bundle rootView:(UIView * _Nullable)rootView viewController:(nonnull UIViewController<MLNUIViewControllerProtocol> *)viewController
 {
     return [self initWithLuaBundle:bundle convertor:nil exporter:nil rootView:rootView viewController:viewController];
 }
 
-- (instancetype)initWithLuaBundle:(MLNLuaBundle *__nullable)luaBundle convertor:(Class<MLNConvertorProtocol> __nullable)convertorClass exporter:(Class<MLNExporterProtocol> __nullable)exporterClass rootView:(UIView *)rootView viewController:(UIViewController<MLNViewControllerProtocol> *)viewController
+- (instancetype)initWithLuaBundle:(MLNUILuaBundle *__nullable)luaBundle convertor:(Class<MLNUIConvertorProtocol> __nullable)convertorClass exporter:(Class<MLNUIExporterProtocol> __nullable)exporterClass rootView:(UIView *)rootView viewController:(UIViewController<MLNUIViewControllerProtocol> *)viewController
 {
     if (self = [super init]) {
         _currentBundle = luaBundle;
         if (!convertorClass) {
-            convertorClass = MLNKiConvertor.class;
+            convertorClass = MLNUIKiConvertor.class;
         }
         _convertorClass = convertorClass;
         _exporterClass = exporterClass;
         _rootView = rootView;
         _viewController = viewController;
-        _instanceHandlersManager = [[MLNKitInstanceHandlersManager alloc] initWithUIInstance:self];
-        _bridgesManager = [[MLNKitBridgesManager alloc] initWithUIInstance:self];
-        _instanceConsts = [[MLNKitInstanceConsts alloc] init];
+        _instanceHandlersManager = [[MLNUIKitInstanceHandlersManager alloc] initWithUIInstance:self];
+        _bridgesManager = [[MLNUIKitBridgesManager alloc] initWithUIInstance:self];
+        _instanceConsts = [[MLNUIKitInstanceConsts alloc] init];
     }
     return self;
 }

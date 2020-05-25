@@ -1,21 +1,21 @@
 //
-//  MLNInnerCollectionView.h
-//  MLN
+//  MLNUIInnerCollectionView.h
+//  MLNUI
 //
 //  Created by MoMo on 2019/9/2.
 //
 
 #import <UIKit/UIKit.h>
-#import "MLNEntityExportProtocol.h"
+#import "MLNUIEntityExportProtocol.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class MLNLuaCore;
-@interface MLNInnerCollectionView : UICollectionView
+@class MLNUILuaCore;
+@interface MLNUIInnerCollectionView : UICollectionView
 
-@property (nonatomic, weak) id<MLNEntityExportProtocol> containerView;
+@property (nonatomic, weak) id<MLNUIEntityExportProtocol> containerView;
 
-- (MLNLuaCore *)mln_luaCore;
+- (MLNUILuaCore *)mln_luaCore;
 
 @end
 

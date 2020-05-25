@@ -1,18 +1,18 @@
 //
-//  MLNPaddingViewProtocol.h
-//  MLN
+//  MLNUIPaddingViewProtocol.h
+//  MLNUI
 //
 //  Created by MoMo on 2019/6/19.
 //
 
-#ifndef MLNPaddingViewProtocol_h
-#define MLNPaddingViewProtocol_h
+#ifndef MLNUIPaddingViewProtocol_h
+#define MLNUIPaddingViewProtocol_h
 #import <UIKit/UIKit.h>
 
 /**
  带有Padding效果的视图协议。
  */
-@protocol MLNPaddingContainerViewProtocol <NSObject>
+@protocol MLNUIPaddingContainerViewProtocol <NSObject>
 
 /**
  被padding包裹的内容视图。
@@ -45,4 +45,4 @@
 
 @end
 
-#endif /* MLNPaddingViewProtocol_h */
+#endif /* MLNUIPaddingViewProtocol_h */

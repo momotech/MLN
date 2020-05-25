@@ -1,28 +1,28 @@
 //
-//  MLNCornerManagerFactory.m
+//  MLNUICornerManagerFactory.m
 //
 //
 //  Created by MoMo on 2019/5/26.
 //
 
-#import "MLNCornerManagerFactory.h"
-#import "MLNCornerLayerHandler.h"
-#import "MLNCornerMaskLayerHndler.h"
-#import "MLNCornerMaskViewHandler.h"
+#import "MLNUICornerManagerFactory.h"
+#import "MLNUICornerLayerHandler.h"
+#import "MLNUICornerMaskLayerHndler.h"
+#import "MLNUICornerMaskViewHandler.h"
 
-@implementation MLNCornerManagerFactory
+@implementation MLNUICornerManagerFactory
 
-+ (id<MLNCornerHandlerPotocol>)handlerWithType:(MLNCornerMode)cornerModel targetView:(UIView *)targetView
++ (id<MLNUICornerHandlerPotocol>)handlerWithType:(MLNUICornerMode)cornerModel targetView:(UIView *)targetView
 {
     switch (cornerModel) {
-        case MLNCornerLayerMode:
-            return [[MLNCornerLayerHandler alloc] initWithTargetView:targetView];
+        case MLNUICornerLayerMode:
+            return [[MLNUICornerLayerHandler alloc] initWithTargetView:targetView];
             break;
-        case MLNCornerMaskLayerMode:
-            return [[MLNCornerMaskLayerHndler alloc] initWithTargetView:targetView];
+        case MLNUICornerMaskLayerMode:
+            return [[MLNUICornerMaskLayerHndler alloc] initWithTargetView:targetView];
             break;
-        case MLNCornerMaskImageViewMode:
-            return [[MLNCornerMaskViewHandler alloc] initWithTargetView:targetView];
+        case MLNUICornerMaskImageViewMode:
+            return [[MLNUICornerMaskViewHandler alloc] initWithTargetView:targetView];
             break;
         default:
             break;

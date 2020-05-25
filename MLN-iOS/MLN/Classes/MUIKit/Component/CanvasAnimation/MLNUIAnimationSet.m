@@ -1,30 +1,30 @@
 //
-//  MLNAnimationSet.m
-//  MLN
+//  MLNUIAnimationSet.m
+//  MLNUI
 //
 //  Created by MoMo on 2019/5/16.
 //
 
-#import "MLNAnimationSet.h"
-#import "MLNKitHeader.h"
-#import "MLNEntityExporterMacro.h"
-#import "MLNBlock.h"
-#import "NSDictionary+MLNSafety.h"
+#import "MLNUIAnimationSet.h"
+#import "MLNUIKitHeader.h"
+#import "MLNUIEntityExporterMacro.h"
+#import "MLNUIBlock.h"
+#import "NSDictionary+MLNUISafety.h"
 
 #define kCanvasCapcity 2
 
-@interface MLNAnimationSet()
+@interface MLNUIAnimationSet()
 
 @property (nonatomic, assign) BOOL shareInterpolator;
 
-@property (nonatomic, strong) NSMutableArray<MLNCanvasAnimation*> *animationsArray;
+@property (nonatomic, strong) NSMutableArray<MLNUICanvasAnimation*> *animationsArray;
 @property (nonatomic, strong) NSMutableArray<CAAnimation *> *animationsGroupArray;
 
 @end
 
-@implementation MLNAnimationSet
+@implementation MLNUIAnimationSet
 
-- (instancetype)initWithLuaCore:(MLNLuaCore *)luaCore shareInterpolator:(NSNumber *)shareInterpolator
+- (instancetype)initWithLuaCore:(MLNUILuaCore *)luaCore shareInterpolator:(NSNumber *)shareInterpolator
 {
     if (self = [super init]) {
         if (shareInterpolator) {
@@ -43,7 +43,7 @@
 #pragma mark - copy
 - (id)copyWithZone:(NSZone *)zone
 {
-    MLNAnimationSet *copy = [super copyWithZone:zone];
+    MLNUIAnimationSet *copy = [super copyWithZone:zone];
     copy.shareInterpolator = _shareInterpolator;
     copy.animationsArray = [_animationsArray mutableCopy];
     copy.animationsGroupArray = [_animationsGroupArray mutableCopy];
@@ -69,10 +69,10 @@
 }
 
 #pragma mark - Export Method
-- (void)lua_addAnimation:(MLNCanvasAnimation *)animation
+- (void)lua_addAnimation:(MLNUICanvasAnimation *)animation
 {
-    if (!animation || ![animation isKindOfClass:[MLNCanvasAnimation class]]) {
-        MLNKitLuaAssert(NO, @"animation type must be canvas animation!");
+    if (!animation || ![animation isKindOfClass:[MLNUICanvasAnimation class]]) {
+        MLNUIKitLuaAssert(NO, @"animation type must be canvas animation!");
         return;
     }
     //Android端会按索引来，到了就执行，故做一次copy操作，不影响多次使用
@@ -95,7 +95,7 @@
 
 
 #pragma mark - Export To Lua
-LUA_EXPORT_BEGIN(MLNAnimationSet)
-LUA_EXPORT_METHOD(addAnimation, "lua_addAnimation:", MLNAnimationSet)
-LUA_EXPORT_END(MLNAnimationSet, AnimationSet, YES, "MLNCanvasAnimation", "initWithLuaCore:shareInterpolator:")
+LUA_EXPORT_BEGIN(MLNUIAnimationSet)
+LUA_EXPORT_METHOD(addAnimation, "lua_addAnimation:", MLNUIAnimationSet)
+LUA_EXPORT_END(MLNUIAnimationSet, AnimationSet, YES, "MLNUICanvasAnimation", "initWithLuaCore:shareInterpolator:")
 @end

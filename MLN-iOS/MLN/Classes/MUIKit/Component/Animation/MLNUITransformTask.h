@@ -1,16 +1,16 @@
 //
-//  MLNTransform.h
+//  MLNUITransform.h
 //  
 //
 //  Created by MoMo on 2019/3/14.
 //
 
 #import <UIKit/UIKit.h>
-#import "MLNBeforeWaitingTaskProtocol.h"
+#import "MLNUIBeforeWaitingTaskProtocol.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface MLNTransformTask : NSObject <MLNBeforeWaitingTaskProtocol>
+@interface MLNUITransformTask : NSObject <MLNUIBeforeWaitingTaskProtocol>
 
 /**
  执行Transform的视图

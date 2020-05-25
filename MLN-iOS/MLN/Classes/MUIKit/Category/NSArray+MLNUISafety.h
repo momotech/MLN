@@ -1,5 +1,5 @@
 //
-//  NSArray+MLNSafety.h
+//  NSArray+MLNUISafety.h
 //
 //
 //  Created by MoMo on 2018/11/21.
@@ -9,13 +9,13 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface NSArray<ObjectType> (MLNSafety)
+@interface NSArray<ObjectType> (MLNUISafety)
 
 - (ObjectType)mln_objectAtIndex:(NSUInteger)index;
 
 @end
 
-@interface NSMutableArray<ObjectType> (MLNSafety)
+@interface NSMutableArray<ObjectType> (MLNUISafety)
 
 + (instancetype)mln_arrayWithArray:(NSArray<ObjectType> *)array;
 - (void)mln_addObject:(ObjectType)anObject;

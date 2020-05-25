@@ -1,21 +1,21 @@
 //
-//  MLNViewControllerProtocol.h
-//  MLN
+//  MLNUIViewControllerProtocol.h
+//  MLNUI
 //
 //  Created by MoMo on 2019/8/30.
 //
 
-#ifndef MLNViewControllerProtocol_h
-#define MLNViewControllerProtocol_h
+#ifndef MLNUIViewControllerProtocol_h
+#define MLNUIViewControllerProtocol_h
 
-@class MLNKitInstance;
-@protocol MLNViewControllerProtocol <NSObject>
+@class MLNUIKitInstance;
+@protocol MLNUIViewControllerProtocol <NSObject>
 
-- (MLNKitInstance *)kitInstance;
+- (MLNUIKitInstance *)kitInstance;
 
 @end
 
-@protocol MLNViewControllerDelegate <NSObject>
+@protocol MLNUIViewControllerDelegate <NSObject>
 @optional
 /**
  模块执行完成
@@ -35,4 +35,4 @@
 - (void)viewController:(UIViewController *)viewController didFailRun:(NSString *)entryFileName error:(NSError *)error;
 @end
 
-#endif /* MLNViewControllerProtocol_h */
+#endif /* MLNUIViewControllerProtocol_h */

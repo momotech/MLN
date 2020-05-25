@@ -1,14 +1,14 @@
 //
-//  UIViewController+MLNKVO.m
-//  MLN
+//  UIViewController+MLNUIKVO.m
+//  MLNUI
 //
 //  Created by tamer on 2020/1/16.
 //
 
-#import "UIViewController+MLNKVO.h"
+#import "UIViewController+MLNUIKVO.h"
 #import <objc/runtime.h>
 
-@implementation UIViewController (MLNKVO)
+@implementation UIViewController (MLNUIKVO)
 
 + (void)load
 {
@@ -33,39 +33,39 @@
     method_exchangeImplementations(origMethod, swizzledMethod);
 }
 
-static const void *kMLNLifeCycleObserverSet = &kMLNLifeCycleObserverSet;
-- (void)mln_addLifeCycleObserver:(MLNViewControllerLifeCycleObserver)observer
+static const void *kMLNUILifeCycleObserverSet = &kMLNUILifeCycleObserverSet;
+- (void)mln_addLifeCycleObserver:(MLNUIViewControllerLifeCycleObserver)observer
 {
     if (!observer) {
         return;
     }
-    NSMutableSet *set = objc_getAssociatedObject(self, kMLNLifeCycleObserverSet);
+    NSMutableSet *set = objc_getAssociatedObject(self, kMLNUILifeCycleObserverSet);
     if (!set) {
         set = [NSMutableSet set];
-        objc_setAssociatedObject(self, kMLNLifeCycleObserverSet, set, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+        objc_setAssociatedObject(self, kMLNUILifeCycleObserverSet, set, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     }
     [set addObject:observer];
 }
 
-- (void)mln_removeLifeCycleObserver:(MLNViewControllerLifeCycleObserver)observer
+- (void)mln_removeLifeCycleObserver:(MLNUIViewControllerLifeCycleObserver)observer
 {
     if (!observer) {
         return;
     }
-    NSMutableSet *set = objc_getAssociatedObject(self, kMLNLifeCycleObserverSet);
+    NSMutableSet *set = objc_getAssociatedObject(self, kMLNUILifeCycleObserverSet);
     [set removeObject:observer];
 }
 
 - (void)mln_removeAllLifeCycleObserver
 {
-    NSMutableSet *set = objc_getAssociatedObject(self, kMLNLifeCycleObserverSet);
+    NSMutableSet *set = objc_getAssociatedObject(self, kMLNUILifeCycleObserverSet);
     [set removeAllObjects];
 }
 
-- (void)__mln_notifyAllLifeCycleObserver:(MLNViewControllerLifeCycle)state
+- (void)__mln_notifyAllLifeCycleObserver:(MLNUIViewControllerLifeCycle)state
 {
-     NSMutableSet *set = objc_getAssociatedObject(self, kMLNLifeCycleObserverSet);
-    for (MLNViewControllerLifeCycleObserver observer in set) {
+     NSMutableSet *set = objc_getAssociatedObject(self, kMLNUILifeCycleObserverSet);
+    for (MLNUIViewControllerLifeCycleObserver observer in set) {
         observer(state);
     }
 }
@@ -75,31 +75,31 @@ static const void *kMLNLifeCycleObserverSet = &kMLNLifeCycleObserverSet;
 - (void)mln_viewDidLoad
 {
     [self mln_viewDidLoad];
-    [self __mln_notifyAllLifeCycleObserver:MLNViewControllerLifeCycleViewDidLoad];
+    [self __mln_notifyAllLifeCycleObserver:MLNUIViewControllerLifeCycleViewDidLoad];
 }
 
 - (void)mln_viewWillAppear:(BOOL)animated
 {
     [self mln_viewWillAppear:animated];
-    [self __mln_notifyAllLifeCycleObserver:MLNViewControllerLifeCycleViewWillAppear];
+    [self __mln_notifyAllLifeCycleObserver:MLNUIViewControllerLifeCycleViewWillAppear];
 }
 
 - (void)mln_viewDidAppear:(BOOL)animated
 {
     [self mln_viewDidAppear:animated];
-    [self __mln_notifyAllLifeCycleObserver:MLNViewControllerLifeCycleViewDidAppear];
+    [self __mln_notifyAllLifeCycleObserver:MLNUIViewControllerLifeCycleViewDidAppear];
 }
 
 - (void)mln_viewWillDisappear:(BOOL)animated
 {
     [self mln_viewWillDisappear:animated];
-    [self __mln_notifyAllLifeCycleObserver:MLNViewControllerLifeCycleViewWillAppear];
+    [self __mln_notifyAllLifeCycleObserver:MLNUIViewControllerLifeCycleViewWillAppear];
 }
 
 - (void)mln_viewDidDisappear:(BOOL)animated
 {
     [self mln_viewDidDisappear:animated];
-    [self __mln_notifyAllLifeCycleObserver:MLNViewControllerLifeCycleViewDidDisappear];
+    [self __mln_notifyAllLifeCycleObserver:MLNUIViewControllerLifeCycleViewDidDisappear];
 }
 
 @end

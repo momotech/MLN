@@ -1,22 +1,22 @@
 //
-//  MLNKitViewController.h.m
-//  MLN
+//  MLNUIKitViewController.h.m
+//  MLNUI
 //
 //  Created by MoMo on 2019/8/5.
 //
 
-#import "MLNKitViewController.h"
-#import "MLNKitInstance.h"
-#import "MLNLuaBundle.h"
-#import "MLNKitInstanceFactory.h"
-#import "MLNKVOObserverProtocol.h"
-#import "MLNDataBinding.h"
+#import "MLNUIKitViewController.h"
+#import "MLNUIKitInstance.h"
+#import "MLNUILuaBundle.h"
+#import "MLNUIKitInstanceFactory.h"
+#import "MLNUIKVOObserverProtocol.h"
+#import "MLNUIDataBinding.h"
 
-@interface MLNKitViewController ()
+@interface MLNUIKitViewController ()
 @property (nonatomic, strong) NSMutableDictionary *globalModel;
 @end
 
-@implementation MLNKitViewController
+@implementation MLNUIKitViewController
 
 - (instancetype)initWithEntryFilePath:(NSString *)entryFilePath
 {
@@ -28,7 +28,7 @@
     return [self initWithEntryFilePath:entryFilePath extraInfo:extraInfo regClasses:nil];
 }
 
-- (instancetype)initWithEntryFilePath:(NSString *)entryFilePath extraInfo:(nullable NSDictionary *)extraInfo regClasses:(nullable NSArray<Class<MLNExportProtocol>> *)regClasses
+- (instancetype)initWithEntryFilePath:(NSString *)entryFilePath extraInfo:(nullable NSDictionary *)extraInfo regClasses:(nullable NSArray<Class<MLNUIExportProtocol>> *)regClasses
 {
     if (self = [super initWithNibName:nil bundle:nil]) {
         _entryFilePath = entryFilePath;
@@ -38,7 +38,7 @@
     return self;
 }
 
-- (BOOL)regClasses:(NSArray<Class<MLNExportProtocol>> *)registerClasses
+- (BOOL)regClasses:(NSArray<Class<MLNUIExportProtocol>> *)registerClasses
 {
     return [self.kitInstance registerClasses:registerClasses error:NULL];
 }
@@ -74,7 +74,7 @@
     [self.kitInstance changeLuaBundleWithPath:bundlePath];
 }
 
-- (void)changeCurrentBundle:(MLNLuaBundle *)bundle
+- (void)changeCurrentBundle:(MLNUILuaBundle *)bundle
 {
     [self.kitInstance changeLuaBundle:bundle];
 }
@@ -84,7 +84,7 @@
     return self.kitInstance.currentBundle.bundlePath;
 }
 
-- (MLNKitInstanceHandlersManager *)handlerManager
+- (MLNUIKitInstanceHandlersManager *)handlerManager
 {
     return self.kitInstance.instanceHandlersManager;
 }
@@ -155,10 +155,10 @@
     [self.mln_dataBinding bindData:self.globalModel forKey:@"Global"];
 }
 
-- (MLNKitInstance *)kitInstance
+- (MLNUIKitInstance *)kitInstance
 {
     if (!_kitInstance) {
-        _kitInstance = [[MLNKitInstanceFactory defaultFactory] createKitInstanceWithViewController:self];
+        _kitInstance = [[MLNUIKitInstanceFactory defaultFactory] createKitInstanceWithViewController:self];
         if (_regClasses && _regClasses.count > 0) {
             [_kitInstance registerClasses:_regClasses error:NULL];
         }

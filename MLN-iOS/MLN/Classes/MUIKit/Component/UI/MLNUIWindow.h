@@ -1,16 +1,16 @@
 //
-//  MLNWindow.h
-//  MLN
+//  MLNUIWindow.h
+//  MLNUI
 //
 //  Created by MoMo on 2019/8/5.
 //
 
-#import "MLNView.h"
-#import "MLNSafeAreaViewProtocol.h"
+#import "MLNUIView.h"
+#import "MLNUISafeAreaViewProtocol.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface MLNWindow : MLNView <MLNSafeAreaViewProtocol>
+@interface MLNUIWindow : MLNUIView <MLNUISafeAreaViewProtocol>
 
 @property (nonatomic, strong) NSMutableDictionary *extraInfo;
 

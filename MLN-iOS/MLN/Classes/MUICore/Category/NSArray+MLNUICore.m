@@ -1,18 +1,18 @@
 //
-//  NSArray+MLNCore.m
-//  MLNCore
+//  NSArray+MLNUICore.m
+//  MLNUICore
 //
 //  Created by MoMo on 2019/7/23.
 //
 
-#import "NSArray+MLNCore.h"
-#import "NSObject+MLNCore.h"
+#import "NSArray+MLNUICore.h"
+#import "NSObject+MLNUICore.h"
 
-@implementation NSArray (MLNCore)
+@implementation NSArray (MLNUICore)
 
-- (MLNNativeType)mln_nativeType
+- (MLNUINativeType)mln_nativeType
 {
-    return MLNNativeTypeArray;
+    return MLNUINativeTypeArray;
 }
 
 @end

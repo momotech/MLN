@@ -1,33 +1,33 @@
 //
-//  MLNTimer.m
+//  MLNUITimer.m
 //  MMDebugTools-DebugManager
 //
 //  Created by MoMo on 2018/7/4.
 //
 
-#import "MLNTimer.h"
-#import "MLNLuaCore.h"
-#import "MLNBlock.h"
-#import "MLNKitHeader.h"
+#import "MLNUITimer.h"
+#import "MLNUILuaCore.h"
+#import "MLNUIBlock.h"
+#import "MLNUIKitHeader.h"
 
 typedef enum : NSUInteger {
-    MLNTimerStatusIdle = 0,
-    MLNTimerStatusRunning,
-    MLNTimerStatusPause,
-} MLNTimerStatus;
+    MLNUITimerStatusIdle = 0,
+    MLNUITimerStatusRunning,
+    MLNUITimerStatusPause,
+} MLNUITimerStatus;
 
-@interface MLNTimer()
+@interface MLNUITimer()
 
 @property (nonatomic, assign) NSTimeInterval interval;
 @property (nonatomic, assign) NSUInteger repeatCount;
 @property (nonatomic, assign) NSUInteger timeOfTriggers;
 @property (nonatomic, strong) NSTimer *timer;
-@property (nonatomic, assign) MLNTimerStatus status;
-@property (nonatomic, strong) MLNBlock *triggerHandler;
+@property (nonatomic, assign) MLNUITimerStatus status;
+@property (nonatomic, strong) MLNUIBlock *triggerHandler;
 
 @end
 
-@implementation MLNTimer
+@implementation MLNUITimer
 
 - (void)mln_user_data_dealloc
 {
@@ -35,15 +35,15 @@ typedef enum : NSUInteger {
     [super mln_user_data_dealloc];
 }
 
-- (void)startWithCallback:(MLNBlock *)callback
+- (void)startWithCallback:(MLNUIBlock *)callback
 {
-    MLNCheckTypeAndNilValue(callback, @"function", MLNBlock);
+    MLNUICheckTypeAndNilValue(callback, @"function", MLNUIBlock);
     if (!self.isIdle) {
         return;
     }
     self.triggerHandler = callback;
     [[NSRunLoop currentRunLoop] addTimer:self.timer forMode:NSRunLoopCommonModes];
-    self.status = MLNTimerStatusRunning;
+    self.status = MLNUITimerStatusRunning;
 }
 
 - (void)stop
@@ -51,7 +51,7 @@ typedef enum : NSUInteger {
     [self.timer invalidate];
     self.timer = nil;
     self.timeOfTriggers = 0;
-    self.status = MLNTimerStatusIdle;
+    self.status = MLNUITimerStatusIdle;
 }
 
 - (void)pause
@@ -60,7 +60,7 @@ typedef enum : NSUInteger {
         return;
     }
     [self.timer setFireDate:[NSDate distantFuture]];
-    self.status = MLNTimerStatusPause;
+    self.status = MLNUITimerStatusPause;
 }
 
 - (void)resume
@@ -69,7 +69,7 @@ typedef enum : NSUInteger {
         return;
     }
     [self.timer setFireDate:[NSDate date]];
-    self.status = MLNTimerStatusRunning;
+    self.status = MLNUITimerStatusRunning;
 }
 
 - (void)resumeDelay
@@ -78,7 +78,7 @@ typedef enum : NSUInteger {
         return;
     }
     [self.timer setFireDate:[NSDate dateWithTimeIntervalSinceNow:self.interval]];
-    self.status = MLNTimerStatusRunning;
+    self.status = MLNUITimerStatusRunning;
 }
 
 - (void)setRepeatCount:(NSUInteger)repeatCount
@@ -88,17 +88,17 @@ typedef enum : NSUInteger {
 
 - (BOOL)isIdle
 {
-    return self.status == MLNTimerStatusIdle;
+    return self.status == MLNUITimerStatusIdle;
 }
 
 - (BOOL)isRunning
 {
-    return self.status == MLNTimerStatusRunning;
+    return self.status == MLNUITimerStatusRunning;
 }
 
 - (BOOL)isPause
 {
-    return self.status == MLNTimerStatusPause;
+    return self.status == MLNUITimerStatusPause;
 }
 
 - (BOOL)isCompleted
@@ -139,14 +139,14 @@ typedef enum : NSUInteger {
 }
 
 #pragma mark - Export For Lua
-LUA_EXPORT_BEGIN(MLNTimer)
-LUA_EXPORT_PROPERTY(interval, "setInterval:", "interval", MLNTimer)
-LUA_EXPORT_PROPERTY(repeatCount, "setRepeatCount:", "repeatCount", MLNTimer)
-LUA_EXPORT_METHOD(start, "startWithCallback:", MLNTimer)
-LUA_EXPORT_METHOD(pause, "pause", MLNTimer)
-LUA_EXPORT_METHOD(resume, "resume", MLNTimer)
-LUA_EXPORT_METHOD(resumeDelay, "resumeDelay", MLNTimer)
-LUA_EXPORT_METHOD(stop, "stop", MLNTimer)
-LUA_EXPORT_END(MLNTimer, Timer, NO, NULL, NULL)
+LUA_EXPORT_BEGIN(MLNUITimer)
+LUA_EXPORT_PROPERTY(interval, "setInterval:", "interval", MLNUITimer)
+LUA_EXPORT_PROPERTY(repeatCount, "setRepeatCount:", "repeatCount", MLNUITimer)
+LUA_EXPORT_METHOD(start, "startWithCallback:", MLNUITimer)
+LUA_EXPORT_METHOD(pause, "pause", MLNUITimer)
+LUA_EXPORT_METHOD(resume, "resume", MLNUITimer)
+LUA_EXPORT_METHOD(resumeDelay, "resumeDelay", MLNUITimer)
+LUA_EXPORT_METHOD(stop, "stop", MLNUITimer)
+LUA_EXPORT_END(MLNUITimer, Timer, NO, NULL, NULL)
 
 @end

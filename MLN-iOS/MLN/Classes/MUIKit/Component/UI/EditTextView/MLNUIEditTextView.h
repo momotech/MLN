@@ -1,17 +1,17 @@
 //
-//  MLNEditTextView.h
+//  MLNUIEditTextView.h
 //
 //
 //  Created by MoMo on 2018/7/30.
 //
 
 #import <UIKit/UIKit.h>
-#import "MLNEditTextViewConst.h"
-#import "MLNEntityExportProtocol.h"
+#import "MLNUIEditTextViewConst.h"
+#import "MLNUIEntityExportProtocol.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface MLNEditTextView : UIView <MLNEntityExportProtocol, UIResponderStandardEditActions>
+@interface MLNUIEditTextView : UIView <MLNUIEntityExportProtocol, UIResponderStandardEditActions>
 
 @property (nonatomic, strong) UIImageView *backgroundImageView;
 @property (nonatomic, assign) UIEdgeInsets padding;
@@ -26,7 +26,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) NSInteger maxLength;
 @property (nonatomic, copy) NSAttributedString *attributedText;
 @property (nonatomic, readonly) UITextRange *markedTextRange;
-@property (nonatomic, assign) MLNEditTextViewReturnType returnMode;
+@property (nonatomic, assign) MLNUIEditTextViewReturnType returnMode;
 
 @property (nonatomic, assign) BOOL canEdit;
 

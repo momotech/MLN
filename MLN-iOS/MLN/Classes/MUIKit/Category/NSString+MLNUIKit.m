@@ -1,14 +1,14 @@
 //
-//  NSString+MLNKit.m
+//  NSString+MLNUIKit.m
 //  
 //
 //  Created by MoMo on 2019/2/15.
 //
 
-#import "NSString+MLNKit.h"
+#import "NSString+MLNUIKit.h"
 #import <CommonCrypto/CommonCrypto.h>
 
-@implementation NSString (MLNKit)
+@implementation NSString (MLNUIKit)
 
 - (NSDictionary *)mln_dictionaryFromQuery {
     NSCharacterSet *delimiterSet = [NSCharacterSet characterSetWithCharactersInString:@"&;#"];

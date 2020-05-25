@@ -1,18 +1,18 @@
 //
-//  MLNKeyframeAnimationBuilder.h
-//  MLN
+//  MLNUIKeyframeAnimationBuilder.h
+//  MLNUI
 //
 //  Created by MoMo on 2019/9/8.
 //
 
 #import <Foundation/Foundation.h>
-#import "MLNAnimationConst.h"
+#import "MLNUIAnimationConst.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface MLNKeyframeAnimationBuilder : NSObject
+@interface MLNUIKeyframeAnimationBuilder : NSObject
 
-+ (CAKeyframeAnimation *)buildAnimationWithKeyPath:(NSString *)path interpolatorType:(MLNAnimationInterpolatorType)type;
++ (CAKeyframeAnimation *)buildAnimationWithKeyPath:(NSString *)path interpolatorType:(MLNUIAnimationInterpolatorType)type;
 
 @end
 

@@ -1,18 +1,18 @@
 //
-//  MLNInternalTextView.h
+//  MLNUIInternalTextView.h
 //
 //
 //  Created by MoMo on 2018/12/21.
 //
 
 #import <UIKit/UIKit.h>
-#import "MLNTextViewProtocol.h"
+#import "MLNUITextViewProtocol.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface MLNInternalTextView : UIView <MLNTextViewProtocol, UITextViewDelegate>
+@interface MLNUIInternalTextView : UIView <MLNUITextViewProtocol, UITextViewDelegate>
 
-@property (nonatomic, weak) id<MLNTextViewDelegate> internalTextViewDelegate;
+@property (nonatomic, weak) id<MLNUITextViewDelegate> internalTextViewDelegate;
 
 @property(nonatomic, getter=isSecureTextEntry) BOOL secureTextEntry;
 @property (nonatomic, assign) NSInteger maxBytes;

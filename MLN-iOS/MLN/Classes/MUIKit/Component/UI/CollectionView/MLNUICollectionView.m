@@ -1,53 +1,53 @@
 //
-//  MLNCollectionView.m
+//  MLNUICollectionView.m
 //  
 //
 //  Created by MoMo on 2018/7/9.
 //
 
-#import "MLNCollectionView.h"
-#import "MLNKitHeader.h"
-#import "MLNViewExporterMacro.h"
-#import "UIScrollView+MLNKit.h"
-#import "UIView+MLNLayout.h"
-#import "MLNLayoutNode.h"
-#import "MLNBeforeWaitingTask.h"
-#import "MLNSizeCahceManager.h"
-#import "MLNCollectionViewCell.h"
-#import "MLNCollectionViewAdapter.h"
-#import "MLNInnerCollectionView.h"
-#import "MLNCollectionViewLayoutProtocol.h"
-#import "UIView+MLNKit.h"
-#import "MLNCollectionViewLayoutProtocol.h"
+#import "MLNUICollectionView.h"
+#import "MLNUIKitHeader.h"
+#import "MLNUIViewExporterMacro.h"
+#import "UIScrollView+MLNUIKit.h"
+#import "UIView+MLNUILayout.h"
+#import "MLNUILayoutNode.h"
+#import "MLNUIBeforeWaitingTask.h"
+#import "MLNUISizeCahceManager.h"
+#import "MLNUICollectionViewCell.h"
+#import "MLNUICollectionViewAdapter.h"
+#import "MLNUIInnerCollectionView.h"
+#import "MLNUICollectionViewLayoutProtocol.h"
+#import "UIView+MLNUIKit.h"
+#import "MLNUICollectionViewLayoutProtocol.h"
 
-@interface MLNCollectionView()
-@property (nonatomic, strong) MLNInnerCollectionView *innerCollectionView;
-@property (nonatomic, assign) MLNScrollDirection scrollDirection;
-@property (nonatomic, strong) UICollectionViewLayout<MLNCollectionViewLayoutProtocol> *layout;
+@interface MLNUICollectionView()
+@property (nonatomic, strong) MLNUIInnerCollectionView *innerCollectionView;
+@property (nonatomic, assign) MLNUIScrollDirection scrollDirection;
+@property (nonatomic, strong) UICollectionViewLayout<MLNUICollectionViewLayoutProtocol> *layout;
 @property (nonatomic, assign) NSInteger missionRow;
 @property (nonatomic, assign) NSInteger missionSection;
 @property (nonatomic, assign) BOOL missionAnimated;
-@property (nonatomic, strong) MLNBeforeWaitingTask *lazyTask;
+@property (nonatomic, strong) MLNUIBeforeWaitingTask *lazyTask;
 
 @end
 
-@implementation MLNCollectionView
+@implementation MLNUICollectionView
 
 - (void)mln_user_data_dealloc
 {
     // 去除强引用
-    MLN_Lua_UserData_Release(self.adapter);
+    MLNUI_Lua_UserData_Release(self.adapter);
     // 去除强引用
-    MLN_Lua_UserData_Release(self.layout);
+    MLNUI_Lua_UserData_Release(self.layout);
     [super mln_user_data_dealloc];
 }
 
 #pragma mark - Getter & setter
-- (MLNBeforeWaitingTask *)lazyTask
+- (MLNUIBeforeWaitingTask *)lazyTask
 {
     if (!_lazyTask) {
         __weak typeof(self) wself = self;
-        _lazyTask = [MLNBeforeWaitingTask taskWithCallback:^{
+        _lazyTask = [MLNUIBeforeWaitingTask taskWithCallback:^{
             __strong typeof(wself) sself = wself;
             if (sself.innerCollectionView.delegate != sself.adapter) {
                 sself.innerCollectionView.delegate = sself.adapter;
@@ -61,44 +61,44 @@
     return _lazyTask;
 }
 
-- (void)setAdapter:(id<MLNCollectionViewAdapterProtocol>)adapter
+- (void)setAdapter:(id<MLNUICollectionViewAdapterProtocol>)adapter
 {
-    MLNCheckTypeAndNilValue(adapter, @"CollectionViewAdapter", [MLNCollectionViewAdapter class])
+    MLNUICheckTypeAndNilValue(adapter, @"CollectionViewAdapter", [MLNUICollectionViewAdapter class])
     if (_adapter != adapter) {
         // 去除强引用
-        MLN_Lua_UserData_Release(_adapter);
+        MLNUI_Lua_UserData_Release(_adapter);
         // 添加强引用
-        MLN_Lua_UserData_Retain_With_Index(2, adapter);
+        MLNUI_Lua_UserData_Retain_With_Index(2, adapter);
         _adapter = adapter;
         [self mln_pushLazyTask:self.lazyTask];
     }
 }
 
-- (void)lua_setCollectionViewLayout:(UICollectionViewLayout<MLNCollectionViewLayoutProtocol> *)layout
+- (void)lua_setCollectionViewLayout:(UICollectionViewLayout<MLNUICollectionViewLayoutProtocol> *)layout
 {
-    MLNCheckTypeAndNilValue(layout, @"CollectionViewGridLayout", [UICollectionViewLayout class])
+    MLNUICheckTypeAndNilValue(layout, @"CollectionViewGridLayout", [UICollectionViewLayout class])
     if (_layout != layout) {
         // 去除强引用
-        MLN_Lua_UserData_Release(_layout);
+        MLNUI_Lua_UserData_Release(_layout);
         // 添加强引用
-        MLN_Lua_UserData_Retain_With_Index(2, layout);
-        layout.scrollDirection = self.innerCollectionView.mln_horizontal? MLNScrollDirectionHorizontal : MLNScrollDirectionVertical;
+        MLNUI_Lua_UserData_Retain_With_Index(2, layout);
+        layout.scrollDirection = self.innerCollectionView.mln_horizontal? MLNUIScrollDirectionHorizontal : MLNUIScrollDirectionVertical;
         _layout = layout;
         self.innerCollectionView.collectionViewLayout = layout;
     }
 }
 
-- (UICollectionViewLayout<MLNCollectionViewLayoutProtocol> *)lua_collectionViewLayout
+- (UICollectionViewLayout<MLNUICollectionViewLayoutProtocol> *)lua_collectionViewLayout
 {
-    return (UICollectionViewLayout<MLNCollectionViewLayoutProtocol> *)self.innerCollectionView.collectionViewLayout;
+    return (UICollectionViewLayout<MLNUICollectionViewLayoutProtocol> *)self.innerCollectionView.collectionViewLayout;
 }
 
-- (void)lua_setScrollDirection:(MLNScrollDirection)scrollDirection
+- (void)lua_setScrollDirection:(MLNUIScrollDirection)scrollDirection
 {
     [self mln_in_setScrollDirection:scrollDirection];
 }
 
-- (MLNScrollDirection)lua_scrollDirection
+- (MLNUIScrollDirection)lua_scrollDirection
 {
     return [self mln_in_scrollDirection];
 }
@@ -116,16 +116,16 @@
 
 #pragma mark - direction
 
-- (void)mln_in_setScrollDirection:(MLNScrollDirection)scrollDirection
+- (void)mln_in_setScrollDirection:(MLNUIScrollDirection)scrollDirection
 {
-    UICollectionViewLayout<MLNCollectionViewLayoutProtocol> *layout = (UICollectionViewLayout<MLNCollectionViewLayoutProtocol> *)self.innerCollectionView.collectionViewLayout;
+    UICollectionViewLayout<MLNUICollectionViewLayoutProtocol> *layout = (UICollectionViewLayout<MLNUICollectionViewLayoutProtocol> *)self.innerCollectionView.collectionViewLayout;
     layout.scrollDirection = scrollDirection;
-    self.innerCollectionView.mln_horizontal = scrollDirection == MLNScrollDirectionHorizontal;
+    self.innerCollectionView.mln_horizontal = scrollDirection == MLNUIScrollDirectionHorizontal;
 }
 
-- (MLNScrollDirection)mln_in_scrollDirection
+- (MLNUIScrollDirection)mln_in_scrollDirection
 {
-   UICollectionViewLayout<MLNCollectionViewLayoutProtocol> *layout = (UICollectionViewLayout<MLNCollectionViewLayoutProtocol> *)self.innerCollectionView.collectionViewLayout;
+   UICollectionViewLayout<MLNUICollectionViewLayoutProtocol> *layout = (UICollectionViewLayout<MLNUICollectionViewLayoutProtocol> *)self.innerCollectionView.collectionViewLayout;
     return layout.scrollDirection;
 }
 
@@ -144,10 +144,10 @@
     NSInteger realSection = section - 1;
     NSInteger realRow = row - 1;
     NSInteger sectionCount = [self.innerCollectionView numberOfSections];
-    MLNKitLuaAssert(realSection >= 0 && realSection < sectionCount, @"This section number is wrong!");
+    MLNUIKitLuaAssert(realSection >= 0 && realSection < sectionCount, @"This section number is wrong!");
     if (realSection >= 0 && realSection < sectionCount) {
         NSInteger count = [self.innerCollectionView numberOfItemsInSection:realSection];
-        MLNKitLuaAssert(realRow >= 0 && realRow < count, @"This row number is wrong!");
+        MLNUIKitLuaAssert(realRow >= 0 && realRow < count, @"This row number is wrong!");
         if (realRow >= 0 && realRow < count) {
             [self.innerCollectionView scrollToItemAtIndexPath:[NSIndexPath indexPathForRow:realRow inSection:realSection] atScrollPosition:UICollectionViewScrollPositionTop animated:animate];
         }
@@ -175,10 +175,10 @@
     NSInteger realRow = row - 1;
     NSInteger realSection = section - 1;
     NSInteger sectionCount = [self.innerCollectionView numberOfSections];
-    MLNKitLuaAssert(realSection >= 0 && realSection < sectionCount, @"This section number is wrong!");
+    MLNUIKitLuaAssert(realSection >= 0 && realSection < sectionCount, @"This section number is wrong!");
     if (realSection >= 0 && realSection < sectionCount) {
         NSInteger rowCount = [self.innerCollectionView numberOfItemsInSection:realSection];
-        MLNKitLuaAssert(realRow >= 0 && realRow < rowCount, @"This row number is wrong!");
+        MLNUIKitLuaAssert(realRow >= 0 && realRow < rowCount, @"This row number is wrong!");
         if (realRow >= 0 && realRow < rowCount) {
             NSIndexPath *indexPath = [NSIndexPath indexPathForRow:realRow inSection:realSection];
             UICollectionViewLayoutAttributes *attributes = [self.innerCollectionView layoutAttributesForItemAtIndexPath:indexPath];
@@ -193,7 +193,7 @@
 {
     NSInteger sectionCount = [self.innerCollectionView numberOfSections];
     NSInteger realSection = section - 1;
-    MLNKitLuaAssert(realSection >= 0 && realSection < sectionCount, @"This section number is wrong!");
+    MLNUIKitLuaAssert(realSection >= 0 && realSection < sectionCount, @"This section number is wrong!");
     if (realSection >= 0 && realSection < sectionCount) {
         NSIndexSet *set = [NSIndexSet indexSetWithIndex:realSection];
         if ([self.adapter respondsToSelector:@selector(collectionView:reloadSections:)]) {
@@ -215,11 +215,11 @@
 {
     NSInteger sectionCount = [self.innerCollectionView numberOfSections];
     NSInteger realSection = section - 1;
-    MLNKitLuaAssert(realSection >= 0  && realSection < sectionCount, @"This section number is wrong!");
+    MLNUIKitLuaAssert(realSection >= 0  && realSection < sectionCount, @"This section number is wrong!");
     if (realSection >= 0  && realSection < sectionCount) {
         NSInteger rowCount = [self.innerCollectionView numberOfItemsInSection:realSection];
         NSInteger realRow = row - 1;
-        MLNKitLuaAssert(realRow >= 0 && realRow < rowCount, @"This row number is wrong!");
+        MLNUIKitLuaAssert(realRow >= 0 && realRow < rowCount, @"This row number is wrong!");
         if (realRow >= 0 && realRow < rowCount) {
             NSIndexPath *indexPath = [NSIndexPath indexPathForRow:realRow inSection:realSection];
             NSArray *indexPaths = @[indexPath];
@@ -270,11 +270,11 @@
     NSInteger realStartRow = startRow -1;
     NSInteger realEndRow = endRow -1;
     NSInteger sectionCount = [self.adapter numberOfSectionsInCollectionView:self.innerCollectionView];
-    MLNKitLuaAssert(realSection >= 0 && realSection < sectionCount, @"This section number is wrong!");
+    MLNUIKitLuaAssert(realSection >= 0 && realSection < sectionCount, @"This section number is wrong!");
     
     if (realSection >= 0 && realSection < sectionCount) {
         NSInteger count = [self.innerCollectionView numberOfItemsInSection:realSection];
-        MLNKitLuaAssert(realStartRow >= 0 && realEndRow >= realStartRow && realStartRow <= count, @"This row number is wrong!");
+        MLNUIKitLuaAssert(realStartRow >= 0 && realEndRow >= realStartRow && realStartRow <= count, @"This row number is wrong!");
         
         if (realStartRow >= 0 && realStartRow <= realEndRow  && realStartRow <= count) {
             NSMutableArray<NSIndexPath *> *indexPaths = [NSMutableArray arrayWithCapacity:realEndRow - realStartRow + 1];
@@ -320,11 +320,11 @@
     NSInteger realStartRow = startRow -1;
     NSInteger realEndRow = endRow -1;
     NSInteger sectionCount = [self.adapter numberOfSectionsInCollectionView:self.innerCollectionView];
-    MLNKitLuaAssert(realSection >= 0 && realSection < sectionCount, @"This section number is wrong!");
+    MLNUIKitLuaAssert(realSection >= 0 && realSection < sectionCount, @"This section number is wrong!");
     
     if (realSection >= 0 && realSection < sectionCount) {
         NSInteger itemCount = [self.innerCollectionView numberOfItemsInSection:realSection];
-        MLNKitLuaAssert(realStartRow >= 0 && realStartRow <= realEndRow && realEndRow < itemCount, @"This row number is wrong");
+        MLNUIKitLuaAssert(realStartRow >= 0 && realStartRow <= realEndRow && realEndRow < itemCount, @"This row number is wrong");
         
         if (realStartRow >= 0 && realStartRow <= realEndRow && realEndRow < itemCount) {
             NSMutableArray<NSIndexPath *> *indexPaths = [NSMutableArray arrayWithCapacity:realEndRow - realStartRow + 1];
@@ -348,17 +348,17 @@
     }
 }
 
-- (MLNLuaTable* )lua_cellAt:(NSInteger)section row:(NSInteger)row
+- (MLNUILuaTable* )lua_cellAt:(NSInteger)section row:(NSInteger)row
 {
     NSInteger trueSection = section - 1;
     NSInteger trueRow = row - 1;
     if (trueSection < 0 || trueRow < 0) {
         return nil;
     }
-    MLNCollectionViewCell* cell = (MLNCollectionViewCell*)[self.innerCollectionView cellForItemAtIndexPath:[NSIndexPath indexPathForRow:trueRow inSection:trueSection]];
-    MLNKitLuaAssert([cell respondsToSelector:@selector(getLuaTable)], @"collection cell must realize gutLuaTable function");
+    MLNUICollectionViewCell* cell = (MLNUICollectionViewCell*)[self.innerCollectionView cellForItemAtIndexPath:[NSIndexPath indexPathForRow:trueRow inSection:trueSection]];
+    MLNUIKitLuaAssert([cell respondsToSelector:@selector(getLuaTable)], @"collection cell must realize gutLuaTable function");
     if (cell) {
-        MLNLuaTable* table = [cell getLuaTable];
+        MLNUILuaTable* table = [cell getLuaTable];
         return table;
     }
     return nil;
@@ -367,9 +367,9 @@
 - (NSMutableArray *)lua_visibleCells
 {
     NSMutableArray* arrayT = [NSMutableArray array];
-    for (MLNCollectionViewCell* cell in [self.innerCollectionView visibleCells]) {
+    for (MLNUICollectionViewCell* cell in [self.innerCollectionView visibleCells]) {
         if ([cell respondsToSelector:@selector(getLuaTable)]) {
-            MLNLuaTable *table = [cell getLuaTable];
+            MLNUILuaTable *table = [cell getLuaTable];
             if (table) {
                 [arrayT addObject:table];
             }
@@ -396,7 +396,7 @@
 - (void)lua_layoutCompleted
 {
     [super lua_layoutCompleted];
-    id<MLNCollectionViewLayoutProtocol> layout = (id<MLNCollectionViewLayoutProtocol>)((UICollectionView *)self.lua_contentView).collectionViewLayout;
+    id<MLNUICollectionViewLayoutProtocol> layout = (id<MLNUICollectionViewLayoutProtocol>)((UICollectionView *)self.lua_contentView).collectionViewLayout;
     [layout relayoutIfNeed];
 }
 
@@ -412,38 +412,38 @@
 
 - (void)lua_addSubview:(UIView *)view
 {
-    MLNKitLuaAssert(NO, @"Not found \"addView\" method, just continar of View has it!");
+    MLNUIKitLuaAssert(NO, @"Not found \"addView\" method, just continar of View has it!");
 }
 
 - (void)lua_insertSubview:(UIView *)view atIndex:(NSInteger)index
 {
-    MLNKitLuaAssert(NO, @"Not found \"insertView\" method, just continar of View has it!");
+    MLNUIKitLuaAssert(NO, @"Not found \"insertView\" method, just continar of View has it!");
 }
 
 - (void)lua_removeAllSubViews
 {
-    MLNKitLuaAssert(NO, @"Not found \"removeAllSubviews\" method, just continar of View has it!");
+    MLNUIKitLuaAssert(NO, @"Not found \"removeAllSubviews\" method, just continar of View has it!");
 }
 
 - (void)lua_setShowsHorizontalScrollIndicator:(BOOL)show
 {
-    MLNKitLuaAssert(NO, @"CollectionView does not supoort this method!");
+    MLNUIKitLuaAssert(NO, @"CollectionView does not supoort this method!");
 }
 
 - (BOOL)lua_showsHorizontalScrollIndicator
 {
-    MLNKitLuaAssert(NO, @"CollectionView does not supoort this method!");
+    MLNUIKitLuaAssert(NO, @"CollectionView does not supoort this method!");
     return NO;
 }
 
 - (void)lua_setShowsVerticalScrollIndicator:(BOOL)show
 {
-    MLNKitLuaAssert(NO, @"CollectionView does not supoort this method!");
+    MLNUIKitLuaAssert(NO, @"CollectionView does not supoort this method!");
 }
 
 - (BOOL)lua_showsVerticalScrollIndicator
 {
-    MLNKitLuaAssert(NO, @"CollectionView does not supoort this method!");
+    MLNUIKitLuaAssert(NO, @"CollectionView does not supoort this method!");
     return NO;
 }
 
@@ -466,7 +466,7 @@
 {
     if (!_innerCollectionView) {
         UICollectionViewFlowLayout *layout = [[UICollectionViewFlowLayout alloc] init];
-        _innerCollectionView = [[MLNInnerCollectionView alloc] initWithFrame:CGRectZero collectionViewLayout:layout];
+        _innerCollectionView = [[MLNUIInnerCollectionView alloc] initWithFrame:CGRectZero collectionViewLayout:layout];
         _innerCollectionView.containerView = self;
         if (@available(iOS 11.0, *)) {
             _innerCollectionView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
@@ -495,66 +495,66 @@
 }
 
 #pragma mark - Export For Lua
-LUA_EXPORT_VIEW_BEGIN(MLNCollectionView)
-LUA_EXPORT_VIEW_PROPERTY(adapter, "setAdapter:", "adapter", MLNCollectionView)
-LUA_EXPORT_VIEW_PROPERTY(layout, "lua_setCollectionViewLayout:","lua_collectionViewLayout", MLNCollectionView)
-LUA_EXPORT_VIEW_PROPERTY(openReuseCell, "setLua_openReuseCell:","lua_openReuseCell", MLNCollectionView)
-LUA_EXPORT_VIEW_PROPERTY(scrollDirection, "lua_setScrollDirection:","lua_scrollDirection", MLNCollectionView)
-LUA_EXPORT_VIEW_PROPERTY(showScrollIndicator, "lua_showScrollIndicator:","lua_isShowScrollIndicator", MLNCollectionView)
-LUA_EXPORT_VIEW_PROPERTY(showsHorizontalScrollIndicator, "lua_setShowsHorizontalScrollIndicator:", "lua_showsHorizontalScrollIndicator", MLNCollectionView)
-LUA_EXPORT_VIEW_PROPERTY(showsVerticalScrollIndicator, "lua_setShowsVerticalScrollIndicator:", "lua_showsVerticalScrollIndicator", MLNCollectionView)
-LUA_EXPORT_VIEW_METHOD(reloadData, "lua_reloadData", MLNCollectionView)
-LUA_EXPORT_VIEW_METHOD(reloadAtRow, "lua_reloadAtRow:section:animation:", MLNCollectionView)
-LUA_EXPORT_VIEW_METHOD(reloadAtSection, "lua_reloadAtSection:animation:", MLNCollectionView)
-LUA_EXPORT_VIEW_METHOD(scrollToCell, "lua_scrollToCell:section:animation:", MLNCollectionView)
-LUA_EXPORT_VIEW_METHOD(scrollToTop, "lua_scrollToTop:", MLNCollectionView)
-LUA_EXPORT_VIEW_METHOD(isStartPosition, "lua_scrollIsTop", MLNCollectionView)
-LUA_EXPORT_VIEW_METHOD(deleteCellAtRow, "lua_deleteAtRow:section:", MLNCollectionView)
-LUA_EXPORT_VIEW_METHOD(insertCellAtRow, "lua_insertAtRow:section:", MLNCollectionView)
-LUA_EXPORT_VIEW_METHOD(insertCellsAtSection, "lua_insertCellsAtSection:startRow:endRow:", MLNCollectionView)
-LUA_EXPORT_VIEW_METHOD(deleteCellsAtSection, "lua_deleteCellsAtSection:startRow:endRow:", MLNCollectionView)
-LUA_EXPORT_VIEW_METHOD(pointAtIndexPath, "lua_pointAtIndexPath:section:", MLNCollectionView)
-LUA_EXPORT_VIEW_METHOD(deleteRow, "lua_deleteRow:section:animated:", MLNCollectionView)
-LUA_EXPORT_VIEW_METHOD(insertRow, "lua_insertRow:section:animated:", MLNCollectionView)
-LUA_EXPORT_VIEW_METHOD(insertRowsAtSection, "lua_insertRowsAtSection:startRow:endRow:animated:", MLNCollectionView)
-LUA_EXPORT_VIEW_METHOD(deleteRowsAtSection, "lua_deleteRowsAtSection:startRow:endRow:animated:", MLNCollectionView)
-LUA_EXPORT_VIEW_METHOD(cellWithSectionRow, "lua_cellAt:row:", MLNCollectionView)
-LUA_EXPORT_VIEW_METHOD(visibleCells, "lua_visibleCells", MLNCollectionView)
-LUA_EXPORT_VIEW_METHOD(setScrollEnable, "mln_setLuaScrollEnable:", MLNCollectionView)
+LUA_EXPORT_VIEW_BEGIN(MLNUICollectionView)
+LUA_EXPORT_VIEW_PROPERTY(adapter, "setAdapter:", "adapter", MLNUICollectionView)
+LUA_EXPORT_VIEW_PROPERTY(layout, "lua_setCollectionViewLayout:","lua_collectionViewLayout", MLNUICollectionView)
+LUA_EXPORT_VIEW_PROPERTY(openReuseCell, "setLua_openReuseCell:","lua_openReuseCell", MLNUICollectionView)
+LUA_EXPORT_VIEW_PROPERTY(scrollDirection, "lua_setScrollDirection:","lua_scrollDirection", MLNUICollectionView)
+LUA_EXPORT_VIEW_PROPERTY(showScrollIndicator, "lua_showScrollIndicator:","lua_isShowScrollIndicator", MLNUICollectionView)
+LUA_EXPORT_VIEW_PROPERTY(showsHorizontalScrollIndicator, "lua_setShowsHorizontalScrollIndicator:", "lua_showsHorizontalScrollIndicator", MLNUICollectionView)
+LUA_EXPORT_VIEW_PROPERTY(showsVerticalScrollIndicator, "lua_setShowsVerticalScrollIndicator:", "lua_showsVerticalScrollIndicator", MLNUICollectionView)
+LUA_EXPORT_VIEW_METHOD(reloadData, "lua_reloadData", MLNUICollectionView)
+LUA_EXPORT_VIEW_METHOD(reloadAtRow, "lua_reloadAtRow:section:animation:", MLNUICollectionView)
+LUA_EXPORT_VIEW_METHOD(reloadAtSection, "lua_reloadAtSection:animation:", MLNUICollectionView)
+LUA_EXPORT_VIEW_METHOD(scrollToCell, "lua_scrollToCell:section:animation:", MLNUICollectionView)
+LUA_EXPORT_VIEW_METHOD(scrollToTop, "lua_scrollToTop:", MLNUICollectionView)
+LUA_EXPORT_VIEW_METHOD(isStartPosition, "lua_scrollIsTop", MLNUICollectionView)
+LUA_EXPORT_VIEW_METHOD(deleteCellAtRow, "lua_deleteAtRow:section:", MLNUICollectionView)
+LUA_EXPORT_VIEW_METHOD(insertCellAtRow, "lua_insertAtRow:section:", MLNUICollectionView)
+LUA_EXPORT_VIEW_METHOD(insertCellsAtSection, "lua_insertCellsAtSection:startRow:endRow:", MLNUICollectionView)
+LUA_EXPORT_VIEW_METHOD(deleteCellsAtSection, "lua_deleteCellsAtSection:startRow:endRow:", MLNUICollectionView)
+LUA_EXPORT_VIEW_METHOD(pointAtIndexPath, "lua_pointAtIndexPath:section:", MLNUICollectionView)
+LUA_EXPORT_VIEW_METHOD(deleteRow, "lua_deleteRow:section:animated:", MLNUICollectionView)
+LUA_EXPORT_VIEW_METHOD(insertRow, "lua_insertRow:section:animated:", MLNUICollectionView)
+LUA_EXPORT_VIEW_METHOD(insertRowsAtSection, "lua_insertRowsAtSection:startRow:endRow:animated:", MLNUICollectionView)
+LUA_EXPORT_VIEW_METHOD(deleteRowsAtSection, "lua_deleteRowsAtSection:startRow:endRow:animated:", MLNUICollectionView)
+LUA_EXPORT_VIEW_METHOD(cellWithSectionRow, "lua_cellAt:row:", MLNUICollectionView)
+LUA_EXPORT_VIEW_METHOD(visibleCells, "lua_visibleCells", MLNUICollectionView)
+LUA_EXPORT_VIEW_METHOD(setScrollEnable, "mln_setLuaScrollEnable:", MLNUICollectionView)
 // refresh header
-LUA_EXPORT_VIEW_PROPERTY(refreshEnable, "setLua_refreshEnable:", "lua_refreshEnable", MLNCollectionView)
-LUA_EXPORT_VIEW_METHOD(isRefreshing, "lua_isRefreshing", MLNCollectionView)
-LUA_EXPORT_VIEW_METHOD(startRefreshing, "lua_startRefreshing", MLNCollectionView)
-LUA_EXPORT_VIEW_METHOD(stopRefreshing, "lua_stopRefreshing", MLNCollectionView)
-LUA_EXPORT_VIEW_METHOD(setRefreshingCallback, "setLua_refreshCallback:", MLNCollectionView)
+LUA_EXPORT_VIEW_PROPERTY(refreshEnable, "setLua_refreshEnable:", "lua_refreshEnable", MLNUICollectionView)
+LUA_EXPORT_VIEW_METHOD(isRefreshing, "lua_isRefreshing", MLNUICollectionView)
+LUA_EXPORT_VIEW_METHOD(startRefreshing, "lua_startRefreshing", MLNUICollectionView)
+LUA_EXPORT_VIEW_METHOD(stopRefreshing, "lua_stopRefreshing", MLNUICollectionView)
+LUA_EXPORT_VIEW_METHOD(setRefreshingCallback, "setLua_refreshCallback:", MLNUICollectionView)
 // load footer
-LUA_EXPORT_VIEW_PROPERTY(loadEnable, "setLua_loadEnable:", "lua_loadEnable", MLNCollectionView)
-LUA_EXPORT_VIEW_METHOD(isLoading, "lua_isLoading", MLNCollectionView)
-LUA_EXPORT_VIEW_METHOD(stopLoading, "lua_stopLoading", MLNCollectionView)
-LUA_EXPORT_VIEW_METHOD(noMoreData, "lua_noMoreData", MLNCollectionView)
-LUA_EXPORT_VIEW_METHOD(resetLoading, "lua_resetLoading", MLNCollectionView)
-LUA_EXPORT_VIEW_METHOD(loadError, "lua_loadError", MLNCollectionView)
-LUA_EXPORT_VIEW_METHOD(setLoadingCallback, "setLua_loadCallback:", MLNCollectionView)
+LUA_EXPORT_VIEW_PROPERTY(loadEnable, "setLua_loadEnable:", "lua_loadEnable", MLNUICollectionView)
+LUA_EXPORT_VIEW_METHOD(isLoading, "lua_isLoading", MLNUICollectionView)
+LUA_EXPORT_VIEW_METHOD(stopLoading, "lua_stopLoading", MLNUICollectionView)
+LUA_EXPORT_VIEW_METHOD(noMoreData, "lua_noMoreData", MLNUICollectionView)
+LUA_EXPORT_VIEW_METHOD(resetLoading, "lua_resetLoading", MLNUICollectionView)
+LUA_EXPORT_VIEW_METHOD(loadError, "lua_loadError", MLNUICollectionView)
+LUA_EXPORT_VIEW_METHOD(setLoadingCallback, "setLua_loadCallback:", MLNUICollectionView)
 // ScrollView callback
-LUA_EXPORT_VIEW_METHOD(padding, "lua_setPaddingWithTop:right:bottom:left:", MLNCollectionView)
-LUA_EXPORT_VIEW_PROPERTY(loadThreshold, "setLua_loadahead:", "lua_loadahead", MLNCollectionView)
-LUA_EXPORT_VIEW_METHOD(setScrollBeginCallback, "setLua_scrollBeginCallback:", MLNCollectionView)
-LUA_EXPORT_VIEW_METHOD(setScrollingCallback, "setLua_scrollingCallback:", MLNCollectionView)
-LUA_EXPORT_VIEW_METHOD(setEndDraggingCallback, "setLua_endDraggingCallback:", MLNCollectionView)
-LUA_EXPORT_VIEW_METHOD(setStartDeceleratingCallback, "setLua_startDeceleratingCallback:",MLNCollectionView)
-LUA_EXPORT_VIEW_METHOD(setScrollEndCallback, "setLua_scrollEndCallback:",MLNCollectionView)
-LUA_EXPORT_VIEW_METHOD(setContentInset, "lua_setContentInset:right:bottom:left:", MLNCollectionView)
-LUA_EXPORT_VIEW_METHOD(getContentInset, "lua_getContetnInset:", MLNCollectionView)
+LUA_EXPORT_VIEW_METHOD(padding, "lua_setPaddingWithTop:right:bottom:left:", MLNUICollectionView)
+LUA_EXPORT_VIEW_PROPERTY(loadThreshold, "setLua_loadahead:", "lua_loadahead", MLNUICollectionView)
+LUA_EXPORT_VIEW_METHOD(setScrollBeginCallback, "setLua_scrollBeginCallback:", MLNUICollectionView)
+LUA_EXPORT_VIEW_METHOD(setScrollingCallback, "setLua_scrollingCallback:", MLNUICollectionView)
+LUA_EXPORT_VIEW_METHOD(setEndDraggingCallback, "setLua_endDraggingCallback:", MLNUICollectionView)
+LUA_EXPORT_VIEW_METHOD(setStartDeceleratingCallback, "setLua_startDeceleratingCallback:",MLNUICollectionView)
+LUA_EXPORT_VIEW_METHOD(setScrollEndCallback, "setLua_scrollEndCallback:",MLNUICollectionView)
+LUA_EXPORT_VIEW_METHOD(setContentInset, "lua_setContentInset:right:bottom:left:", MLNUICollectionView)
+LUA_EXPORT_VIEW_METHOD(getContentInset, "lua_getContetnInset:", MLNUICollectionView)
 // deprected method
-LUA_EXPORT_VIEW_PROPERTY(contentSize, "lua_setContentSize:", "lua_contentSize", MLNCollectionView)
-LUA_EXPORT_VIEW_PROPERTY(scrollEnabled, "lua_setScrollEnabled:", "lua_scrollEnabled", MLNCollectionView)
+LUA_EXPORT_VIEW_PROPERTY(contentSize, "lua_setContentSize:", "lua_contentSize", MLNUICollectionView)
+LUA_EXPORT_VIEW_PROPERTY(scrollEnabled, "lua_setScrollEnabled:", "lua_scrollEnabled", MLNUICollectionView)
 // private method
-LUA_EXPORT_VIEW_PROPERTY(contentOffset, "lua_setContentOffset:", "lua_contentOffset", MLNCollectionView)
-LUA_EXPORT_VIEW_PROPERTY(i_bounces, "lua_setBounces:", "lua_bounces", MLNCollectionView)
-LUA_EXPORT_VIEW_PROPERTY(i_bounceHorizontal, "lua_setAlwaysBounceHorizontal:", "lua_alwaysBounceHorizontal", MLNCollectionView)
-LUA_EXPORT_VIEW_PROPERTY(i_bounceVertical, "lua_setAlwaysBounceVertical:", "lua_alwaysBounceVertical", MLNCollectionView)
-LUA_EXPORT_VIEW_METHOD(setScrollIndicatorInset, "lua_setScrollIndicatorInset:right:bottom:left:", MLNCollectionView)
-LUA_EXPORT_VIEW_METHOD(setOffsetWithAnim, "lua_setContentOffsetWithAnimation:", MLNCollectionView)
-LUA_EXPORT_VIEW_END(MLNCollectionView, CollectionView, YES, "MLNView", "initWithLuaCore:refreshEnable:loadEnable:")
+LUA_EXPORT_VIEW_PROPERTY(contentOffset, "lua_setContentOffset:", "lua_contentOffset", MLNUICollectionView)
+LUA_EXPORT_VIEW_PROPERTY(i_bounces, "lua_setBounces:", "lua_bounces", MLNUICollectionView)
+LUA_EXPORT_VIEW_PROPERTY(i_bounceHorizontal, "lua_setAlwaysBounceHorizontal:", "lua_alwaysBounceHorizontal", MLNUICollectionView)
+LUA_EXPORT_VIEW_PROPERTY(i_bounceVertical, "lua_setAlwaysBounceVertical:", "lua_alwaysBounceVertical", MLNUICollectionView)
+LUA_EXPORT_VIEW_METHOD(setScrollIndicatorInset, "lua_setScrollIndicatorInset:right:bottom:left:", MLNUICollectionView)
+LUA_EXPORT_VIEW_METHOD(setOffsetWithAnim, "lua_setContentOffsetWithAnimation:", MLNUICollectionView)
+LUA_EXPORT_VIEW_END(MLNUICollectionView, CollectionView, YES, "MLNUIView", "initWithLuaCore:refreshEnable:loadEnable:")
 
 @end

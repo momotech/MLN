@@ -1,19 +1,19 @@
 //
-//  MLNKitInstanceDelegate.h
-//  MLN
+//  MLNUIKitInstanceDelegate.h
+//  MLNUI
 //
 //  Created by MoMo on 2019/9/4.
 //
 
-#ifndef MLNKitInstanceDelegate_h
-#define MLNKitInstanceDelegate_h
+#ifndef MLNUIKitInstanceDelegate_h
+#define MLNUIKitInstanceDelegate_h
 
-@class MLNKitInstance;
+@class MLNUIKitInstance;
 
 /**
  KitInstance代理协议
  */
-@protocol MLNKitInstanceDelegate <NSObject>
+@protocol MLNUIKitInstanceDelegate <NSObject>
 
 @optional
 
@@ -22,14 +22,14 @@
 
  @param instance 承载Lua引擎的实例
  */
-- (void)willSetupLuaCore:(MLNKitInstance *)instance;
+- (void)willSetupLuaCore:(MLNUIKitInstance *)instance;
 
 /**
  完成装载Lua引擎
  
  @param instance 承载Lua引擎的实例
  */
-- (void)didSetupLuaCore:(MLNKitInstance *)instance;
+- (void)didSetupLuaCore:(MLNUIKitInstance *)instance;
 
 /**
  即将加载文件
@@ -38,7 +38,7 @@
  @param data 文件对应的数据
  @param fileName 文件路径
  */
-- (void)instance:(MLNKitInstance *)instance willLoad:(NSData *)data fileName:(NSString *)fileName;
+- (void)instance:(MLNUIKitInstance *)instance willLoad:(NSData *)data fileName:(NSString *)fileName;
 
 /**
  完成加载文件
@@ -47,7 +47,7 @@
  @param data 文件对应的数据
  @param fileName 文件路径
  */
-- (void)instance:(MLNKitInstance *)instance didLoad:(NSData *)data fileName:(NSString *)fileName;
+- (void)instance:(MLNUIKitInstance *)instance didLoad:(NSData *)data fileName:(NSString *)fileName;
 
 /**
  加载文件失败
@@ -57,7 +57,7 @@
  @param fileName 文件路径
  @param error 错误信息
  */
-- (void)instance:(MLNKitInstance *)instance didFailLoad:(NSData *)data fileName:(NSString *)fileName error:(NSError *)error;
+- (void)instance:(MLNUIKitInstance *)instance didFailLoad:(NSData *)data fileName:(NSString *)fileName error:(NSError *)error;
 
 /**
  模块执行完成
@@ -65,7 +65,7 @@
  @param instance 承载Lua引擎的实例
  @param entryFileName 被执行模块的入口文件
  */
-- (void)instance:(MLNKitInstance *)instance didFinishRun:(NSString *)entryFileName;
+- (void)instance:(MLNUIKitInstance *)instance didFinishRun:(NSString *)entryFileName;
 
 /**
  模块执行失败
@@ -74,22 +74,22 @@
  @param entryFileName 被执行模块的入口文件
  @param error 失败的信息
  */
-- (void)instance:(MLNKitInstance *)instance didFailRun:(NSString *)entryFileName error:(NSError *)error;
+- (void)instance:(MLNUIKitInstance *)instance didFailRun:(NSString *)entryFileName error:(NSError *)error;
 
 /**
  即将释放Lua引擎
 
  @param instance 承载Lua引擎的实例
  */
-- (void)willReleaseLuaCore:(MLNKitInstance *)instance;
+- (void)willReleaseLuaCore:(MLNUIKitInstance *)instance;
 
 /**
  Lua引擎已释放
  
  @param instance 承载Lua引擎的实例
  */
-- (void)didReleaseLuaCore:(MLNKitInstance *)instance;
+- (void)didReleaseLuaCore:(MLNUIKitInstance *)instance;
 
 @end
 
-#endif /* MLNKitInstanceDelegate_h */
+#endif /* MLNUIKitInstanceDelegate_h */

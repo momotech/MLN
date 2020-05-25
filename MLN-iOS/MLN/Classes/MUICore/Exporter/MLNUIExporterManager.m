@@ -1,42 +1,42 @@
 //
-//  MLNExporterManager.m
-//  MLNCore
+//  MLNUIExporterManager.m
+//  MLNUICore
 //
 //  Created by MoMo on 2019/7/24.
 //
 
-#import "MLNExporterManager.h"
-#import "MLNEntityExporter.h"
-#import "MLNGlobalFuntionExporter.h"
-#import "MLNGlobalVarExporter.h"
-#import "MLNStaticExporter.h"
+#import "MLNUIExporterManager.h"
+#import "MLNUIEntityExporter.h"
+#import "MLNUIGlobalFuntionExporter.h"
+#import "MLNUIGlobalVarExporter.h"
+#import "MLNUIStaticExporter.h"
 
-@interface MLNExporterManager ()
+@interface MLNUIExporterManager ()
 
-@property (nonatomic, strong) MLNExporter *staticExporter;
-@property (nonatomic, strong) MLNExporter *entityExporter;
-@property (nonatomic, strong) MLNExporter *globalVarExporter;
-@property (nonatomic, strong) MLNExporter *globalFuncExporter;
+@property (nonatomic, strong) MLNUIExporter *staticExporter;
+@property (nonatomic, strong) MLNUIExporter *entityExporter;
+@property (nonatomic, strong) MLNUIExporter *globalVarExporter;
+@property (nonatomic, strong) MLNUIExporter *globalFuncExporter;
 
 @end
-@implementation MLNExporterManager
+@implementation MLNUIExporterManager
 
-- (BOOL)exportClass:(Class<MLNExportProtocol>)clazz error:(NSError * _Nullable __autoreleasing *)error
+- (BOOL)exportClass:(Class<MLNUIExportProtocol>)clazz error:(NSError * _Nullable __autoreleasing *)error
 {
-    MLNExporter *exporter = [self getExporter:clazz];
+    MLNUIExporter *exporter = [self getExporter:clazz];
     return [exporter exportClass:clazz error:error];
 }
 
-- (MLNExporter *)getExporter:(Class<MLNExportProtocol>)clazz
+- (MLNUIExporter *)getExporter:(Class<MLNUIExportProtocol>)clazz
 {
     switch ([clazz mln_exportType]) {
-        case MLNExportTypeStatic:
+        case MLNUIExportTypeStatic:
             return self.staticExporter;
-        case MLNExportTypeEntity:
+        case MLNUIExportTypeEntity:
             return self.entityExporter;
-        case MLNExportTypeGlobalVar:
+        case MLNUIExportTypeGlobalVar:
             return self.globalVarExporter;
-        case MLNExportTypeGlobalFunc:
+        case MLNUIExportTypeGlobalFunc:
             return self.globalFuncExporter;
         default:
             break;
@@ -45,34 +45,34 @@
 }
 
 #pragma mark - Getter
-- (MLNExporter *)staticExporter
+- (MLNUIExporter *)staticExporter
 {
     if (!_staticExporter) {
-        _staticExporter = [[MLNStaticExporter alloc] initWithLuaCore:self.luaCore];
+        _staticExporter = [[MLNUIStaticExporter alloc] initWithLuaCore:self.luaCore];
     }
     return _staticExporter;
 }
 
-- (MLNExporter *)entityExporter
+- (MLNUIExporter *)entityExporter
 {
     if (!_entityExporter) {
-        _entityExporter = [[MLNEntityExporter alloc] initWithLuaCore:self.luaCore];
+        _entityExporter = [[MLNUIEntityExporter alloc] initWithLuaCore:self.luaCore];
     }
     return _entityExporter;
 }
 
-- (MLNExporter *)globalVarExporter
+- (MLNUIExporter *)globalVarExporter
 {
     if (!_globalVarExporter) {
-        _globalVarExporter = [[MLNGlobalVarExporter alloc] initWithLuaCore:self.luaCore];
+        _globalVarExporter = [[MLNUIGlobalVarExporter alloc] initWithLuaCore:self.luaCore];
     }
     return _globalVarExporter;
 }
 
-- (MLNExporter *)globalFuncExporter
+- (MLNUIExporter *)globalFuncExporter
 {
     if (!_globalFuncExporter) {
-        _globalFuncExporter = [[MLNGlobalFuntionExporter alloc] initWithLuaCore:self.luaCore];
+        _globalFuncExporter = [[MLNUIGlobalFuntionExporter alloc] initWithLuaCore:self.luaCore];
     }
     return _globalFuncExporter;
 }

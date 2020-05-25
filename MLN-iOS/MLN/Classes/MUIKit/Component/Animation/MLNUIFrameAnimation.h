@@ -1,17 +1,17 @@
 //
-//  MLNFrameAnimation.h
+//  MLNUIFrameAnimation.h
 //
 //
 //  Created by MoMo on 2018/11/14.
 //
 
 #import <UIKit/UIKit.h>
-#import "MLNEntityExportProtocol.h"
-#import "MLNBeforeWaitingTaskProtocol.h"
+#import "MLNUIEntityExportProtocol.h"
+#import "MLNUIBeforeWaitingTaskProtocol.h"
 
 NS_ASSUME_NONNULL_BEGIN
-@class MLNBlock;
-@interface MLNFrameAnimation : NSObject <MLNEntityExportProtocol, MLNBeforeWaitingTaskProtocol>
+@class MLNUIBlock;
+@interface MLNUIFrameAnimation : NSObject <MLNUIEntityExportProtocol, MLNUIBeforeWaitingTaskProtocol>
 
 @property (nonatomic, assign) CGFloat translationStartX;
 @property (nonatomic, assign) CGFloat translationEndX;
@@ -32,7 +32,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) NSTimeInterval duration;
 @property (nonatomic, assign) NSTimeInterval delay;
 @property (nonatomic, assign) UIViewAnimationOptions options;
-@property (nonatomic, strong) MLNBlock *completionCallback;
+@property (nonatomic, strong) MLNUIBlock *completionCallback;
 
 - (void)lua_startWithView:(UIView *)view;
 

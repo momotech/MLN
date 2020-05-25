@@ -1,16 +1,16 @@
 //
-//  MLNScaleAnimation.m
-//  MLN
+//  MLNUIScaleAnimation.m
+//  MLNUI
 //
 //  Created by MoMo on 2019/5/13.
 //
 
-#import "MLNScaleAnimation.h"
-#import "MLNEntityExporterMacro.h"
-#import "MLNBlock.h"
-#import "NSDictionary+MLNSafety.h"
+#import "MLNUIScaleAnimation.h"
+#import "MLNUIEntityExporterMacro.h"
+#import "MLNUIBlock.h"
+#import "NSDictionary+MLNUISafety.h"
 
-@interface MLNScaleAnimation()
+@interface MLNUIScaleAnimation()
 
 @property (nonatomic, assign) CGFloat fromX;
 @property (nonatomic, assign) CGFloat toX;
@@ -19,7 +19,7 @@
 
 @end
 
-@implementation MLNScaleAnimation
+@implementation MLNUIScaleAnimation
 
 - (instancetype)initWith:(CGFloat)fromX
                      toX:(CGFloat)toX
@@ -43,9 +43,9 @@
              pivotYValue:(CGFloat)pivotY
 {
     if (self = [self initWith:fromX toX:toX fromY:fromY toY:toY]) {
-        [self setPivotXType:MLNAnimationValueTypeAbsolute];
+        [self setPivotXType:MLNUIAnimationValueTypeAbsolute];
         [self setPivotX:pivotX];
-        [self setPivotYType:MLNAnimationValueTypeAbsolute];
+        [self setPivotYType:MLNUIAnimationValueTypeAbsolute];
         [self setPivotY:pivotY];
     }
     return self;
@@ -55,9 +55,9 @@
                      toX:(CGFloat)toX
                    fromY:(CGFloat)fromY
                      toY:(CGFloat)toY
-              pivotXType:(MLNAnimationValueType)pivotXType
+              pivotXType:(MLNUIAnimationValueType)pivotXType
              pivotXValue:(CGFloat)pivotX
-              pivotYType:(MLNAnimationValueType)pivotYType
+              pivotYType:(MLNUIAnimationValueType)pivotYType
              pivotYValue:(CGFloat)pivotY
 {
     if (self = [self initWith:fromX toX:toX fromY:fromY toY:toY pivotXValue:pivotX pivotYValue:pivotY]) {
@@ -68,7 +68,7 @@
 }
 
 static int lua_animation_init(lua_State *L) {
-    MLNScaleAnimation *animation = nil;
+    MLNUIScaleAnimation *animation = nil;
     NSUInteger argCount = lua_gettop(L);
     switch (argCount) {
         case 8: {
@@ -80,7 +80,7 @@ static int lua_animation_init(lua_State *L) {
             CGFloat pivotX         = lua_tonumber(L, 6);
             CGFloat pivotYType     = lua_tonumber(L, 7);
             CGFloat pivotY         = lua_tonumber(L, 8);
-            animation = [[MLNScaleAnimation alloc] initWith:fromX toX:toX fromY:fromY toY:toY pivotXType:pivotXType pivotXValue:pivotX pivotYType:pivotYType pivotYValue:pivotY];
+            animation = [[MLNUIScaleAnimation alloc] initWith:fromX toX:toX fromY:fromY toY:toY pivotXType:pivotXType pivotXValue:pivotX pivotYType:pivotYType pivotYValue:pivotY];
         }
             break;
         case 6: {
@@ -90,7 +90,7 @@ static int lua_animation_init(lua_State *L) {
             CGFloat toY            = lua_tonumber(L, 4);
             CGFloat pivotX         = lua_tonumber(L, 5);
             CGFloat pivotY         = lua_tonumber(L, 6);
-            animation = [[MLNScaleAnimation alloc] initWith:fromX toX:toX fromY:fromY toY:toY pivotXValue:pivotX pivotYValue:pivotY];
+            animation = [[MLNUIScaleAnimation alloc] initWith:fromX toX:toX fromY:fromY toY:toY pivotXValue:pivotX pivotYValue:pivotY];
         }
             break;
         case 4: {
@@ -98,12 +98,12 @@ static int lua_animation_init(lua_State *L) {
             CGFloat toX            = lua_tonumber(L, 2);
             CGFloat fromY          = lua_tonumber(L, 3);
             CGFloat toY            = lua_tonumber(L, 4);
-            animation = [[MLNScaleAnimation alloc] initWith:fromX toX:toX fromY:fromY toY:toY];
+            animation = [[MLNUIScaleAnimation alloc] initWith:fromX toX:toX fromY:fromY toY:toY];
         }
             break;
         case 0:
         {
-            animation = [[MLNScaleAnimation alloc] init];
+            animation = [[MLNUIScaleAnimation alloc] init];
         }
             break;
         default: {
@@ -113,7 +113,7 @@ static int lua_animation_init(lua_State *L) {
     }
     
     if (animation) {
-        if ([MLN_LUA_CORE(L) pushNativeObject:animation error:NULL]) {
+        if ([MLNUI_LUA_CORE(L) pushNativeObject:animation error:NULL]) {
             return 1;
         };
     }
@@ -124,7 +124,7 @@ static int lua_animation_init(lua_State *L) {
 #pragma mark - copy
 - (id)copyWithZone:(NSZone *)zone
 {
-    MLNScaleAnimation *copy = [super copyWithZone:zone];
+    MLNUIScaleAnimation *copy = [super copyWithZone:zone];
     copy.fromX = _fromX;
     copy.toX = _toX;
     copy.fromY = _fromY;
@@ -169,10 +169,10 @@ static int lua_animation_init(lua_State *L) {
 }
 
 #pragma mark - Export To Lua
-LUA_EXPORT_BEGIN(MLNScaleAnimation)
-LUA_EXPORT_PROPERTY(setFromX, "setFromX:", "fromX", MLNScaleAnimation)
-LUA_EXPORT_PROPERTY(setToX, "setToX:", "toX", MLNScaleAnimation)
-LUA_EXPORT_PROPERTY(setFromY, "setFromY:", "fromX", MLNScaleAnimation)
-LUA_EXPORT_PROPERTY(setToY, "setToY:", "toY", MLNScaleAnimation)
-LUA_EXPORT_END_WITH_CFUNC(MLNScaleAnimation, ScaleAnimation, YES, "MLNCanvasAnimation", lua_animation_init)
+LUA_EXPORT_BEGIN(MLNUIScaleAnimation)
+LUA_EXPORT_PROPERTY(setFromX, "setFromX:", "fromX", MLNUIScaleAnimation)
+LUA_EXPORT_PROPERTY(setToX, "setToX:", "toX", MLNUIScaleAnimation)
+LUA_EXPORT_PROPERTY(setFromY, "setFromY:", "fromX", MLNUIScaleAnimation)
+LUA_EXPORT_PROPERTY(setToY, "setToY:", "toY", MLNUIScaleAnimation)
+LUA_EXPORT_END_WITH_CFUNC(MLNUIScaleAnimation, ScaleAnimation, YES, "MLNUICanvasAnimation", lua_animation_init)
 @end

@@ -1,6 +1,6 @@
 //
-//  MLNCollectionViewGridLayoutDelegate.h
-//  MLN
+//  MLNUICollectionViewGridLayoutDelegate.h
+//  MLNUI
 //
 //  Created by MoMo on 2019/11/1.
 //
@@ -9,7 +9,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@protocol MLNCollectionViewGridLayoutDelegate <NSObject>
+@protocol MLNUICollectionViewGridLayoutDelegate <NSObject>
 
 - (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath;
 

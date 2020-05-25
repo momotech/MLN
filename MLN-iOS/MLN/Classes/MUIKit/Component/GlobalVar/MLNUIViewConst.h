@@ -1,115 +1,115 @@
 //
-//  MLNViewGlobalVar.h
-//  MLN
+//  MLNUIViewGlobalVar.h
+//  MLNUI
 //
 //  Created by MoMo on 2019/8/3.
 //
 
 #import <Foundation/Foundation.h>
-#import "MLNGlobalVarExportProtocol.h"
-#import "MLNSafeAreaViewProtocol.h"
+#import "MLNUIGlobalVarExportProtocol.h"
+#import "MLNUISafeAreaViewProtocol.h"
 #import "llimits.h"
 
-typedef NS_OPTIONS(NSUInteger, MLNRectCorner)  {
-    MLNRectCornerNone = 0,
-    MLNRectCornerTopLeft = 1<<0,
-    MLNRectCornerTopRight = 1<<1,
-    MLNRectCornerBottomLeft = 1<<2,
-    MLNRectCornerBottomRight = 1<<3,
-    MLNRectCornerAllCorners  = ~0UL
+typedef NS_OPTIONS(NSUInteger, MLNUIRectCorner)  {
+    MLNUIRectCornerNone = 0,
+    MLNUIRectCornerTopLeft = 1<<0,
+    MLNUIRectCornerTopRight = 1<<1,
+    MLNUIRectCornerBottomLeft = 1<<2,
+    MLNUIRectCornerBottomRight = 1<<3,
+    MLNUIRectCornerAllCorners  = ~0UL
 };
 
-static const NSUInteger MLN_AXIS_SPECIFIED = 0x0001;
-static const NSUInteger MLN_AXIS_PULL_BEFORE = 0x0002;
-static const NSUInteger MLN_AXIS_PULL_AFTER = 0x0004;
-static const NSUInteger MLN_AXIS_X_SHIFT = 0;
-static const NSUInteger MLN_AXIS_Y_SHIFT = 4;
-typedef NS_OPTIONS(NSUInteger, MLNGravity) {
-    MLNGravityNone = 0,
-    MLNGravityLeft = (MLN_AXIS_PULL_BEFORE|MLN_AXIS_SPECIFIED)<<MLN_AXIS_X_SHIFT,
-    MLNGravityTop = (MLN_AXIS_PULL_BEFORE|MLN_AXIS_SPECIFIED)<<MLN_AXIS_Y_SHIFT,
-    MLNGravityRight = (MLN_AXIS_PULL_AFTER|MLN_AXIS_SPECIFIED)<<MLN_AXIS_X_SHIFT,
-    MLNGravityBottom = (MLN_AXIS_PULL_AFTER|MLN_AXIS_SPECIFIED)<<MLN_AXIS_Y_SHIFT,
-    MLNGravityCenterHorizontal = MLN_AXIS_SPECIFIED<<MLN_AXIS_X_SHIFT,
-    MLNGravityCenterVertical = MLN_AXIS_SPECIFIED<<MLN_AXIS_Y_SHIFT,
-    MLNGravityCenter = MLNGravityCenterHorizontal|MLNGravityCenterVertical,
-    MLNGravityHorizontalMask = (MLN_AXIS_SPECIFIED |
-                                MLN_AXIS_PULL_BEFORE | MLN_AXIS_PULL_AFTER) << MLN_AXIS_X_SHIFT,
-    MLNGravityVerticalMask = (MLN_AXIS_SPECIFIED |
-                              MLN_AXIS_PULL_BEFORE | MLN_AXIS_PULL_AFTER) << MLN_AXIS_Y_SHIFT,
+static const NSUInteger MLNUI_AXIS_SPECIFIED = 0x0001;
+static const NSUInteger MLNUI_AXIS_PULL_BEFORE = 0x0002;
+static const NSUInteger MLNUI_AXIS_PULL_AFTER = 0x0004;
+static const NSUInteger MLNUI_AXIS_X_SHIFT = 0;
+static const NSUInteger MLNUI_AXIS_Y_SHIFT = 4;
+typedef NS_OPTIONS(NSUInteger, MLNUIGravity) {
+    MLNUIGravityNone = 0,
+    MLNUIGravityLeft = (MLNUI_AXIS_PULL_BEFORE|MLNUI_AXIS_SPECIFIED)<<MLNUI_AXIS_X_SHIFT,
+    MLNUIGravityTop = (MLNUI_AXIS_PULL_BEFORE|MLNUI_AXIS_SPECIFIED)<<MLNUI_AXIS_Y_SHIFT,
+    MLNUIGravityRight = (MLNUI_AXIS_PULL_AFTER|MLNUI_AXIS_SPECIFIED)<<MLNUI_AXIS_X_SHIFT,
+    MLNUIGravityBottom = (MLNUI_AXIS_PULL_AFTER|MLNUI_AXIS_SPECIFIED)<<MLNUI_AXIS_Y_SHIFT,
+    MLNUIGravityCenterHorizontal = MLNUI_AXIS_SPECIFIED<<MLNUI_AXIS_X_SHIFT,
+    MLNUIGravityCenterVertical = MLNUI_AXIS_SPECIFIED<<MLNUI_AXIS_Y_SHIFT,
+    MLNUIGravityCenter = MLNUIGravityCenterHorizontal|MLNUIGravityCenterVertical,
+    MLNUIGravityHorizontalMask = (MLNUI_AXIS_SPECIFIED |
+                                MLNUI_AXIS_PULL_BEFORE | MLNUI_AXIS_PULL_AFTER) << MLNUI_AXIS_X_SHIFT,
+    MLNUIGravityVerticalMask = (MLNUI_AXIS_SPECIFIED |
+                              MLNUI_AXIS_PULL_BEFORE | MLNUI_AXIS_PULL_AFTER) << MLNUI_AXIS_Y_SHIFT,
 };
 
-typedef NS_OPTIONS(NSUInteger, MLNValueType) {
-    MLNValueTypeNone = 0,
-    MLNValueTypeCurrent = MAX_INT,
+typedef NS_OPTIONS(NSUInteger, MLNUIValueType) {
+    MLNUIValueTypeNone = 0,
+    MLNUIValueTypeCurrent = MAX_INT,
 };
 
-typedef NS_OPTIONS(NSUInteger, MLNGradientType) {
-    MLNGradientTypeNone = 0,
-    MLNGradientTypeLeftToRight = 1<<0,
-    MLNGradientTypeRightToLeft = 1<<1,
-    MLNGradientTypeTopToBottom = 1<<2,
-    MLNGradientTypeBottomToTop = 1<<3,
+typedef NS_OPTIONS(NSUInteger, MLNUIGradientType) {
+    MLNUIGradientTypeNone = 0,
+    MLNUIGradientTypeLeftToRight = 1<<0,
+    MLNUIGradientTypeRightToLeft = 1<<1,
+    MLNUIGradientTypeTopToBottom = 1<<2,
+    MLNUIGradientTypeBottomToTop = 1<<3,
 };
 
-typedef NS_OPTIONS(NSUInteger, MLNLayoutDirection){
-    MLNLayoutDirectionHorizontal = 1,
-    MLNLayoutDirectionVertical = 2,
+typedef NS_OPTIONS(NSUInteger, MLNUILayoutDirection){
+    MLNUILayoutDirectionHorizontal = 1,
+    MLNUILayoutDirectionVertical = 2,
 };
 
 typedef enum : NSInteger {
-    MLNLayoutMeasurementTypeIdle = 0,
-    MLNLayoutMeasurementTypeMatchParent = -1,
-    MLNLayoutMeasurementTypeWrapContent = -2,
-} MLNLayoutMeasurementType;
+    MLNUILayoutMeasurementTypeIdle = 0,
+    MLNUILayoutMeasurementTypeMatchParent = -1,
+    MLNUILayoutMeasurementTypeWrapContent = -2,
+} MLNUILayoutMeasurementType;
 
 typedef enum : NSUInteger {
-    MLNStatusBarStyleDefault = 0,
-    MLNStatusBarStyleLight,
-}MLNStatusBarStyle;
+    MLNUIStatusBarStyleDefault = 0,
+    MLNUIStatusBarStyleLight,
+}MLNUIStatusBarStyle;
 
 typedef enum : NSUInteger {
-    MLNTabSegmentAlignmentLeft = 0,
-    MLNTabSegmentAlignmentCenter,
-    MLNTabSegmentAlignmentRight,
-}MLNTabSegmentAlignment;
+    MLNUITabSegmentAlignmentLeft = 0,
+    MLNUITabSegmentAlignmentCenter,
+    MLNUITabSegmentAlignmentRight,
+}MLNUITabSegmentAlignment;
 
 typedef enum : NSUInteger {
-    MLNLabelMaxModeNone = 0,
-    MLNLabelMaxModeLines,
-    MLNLabelMaxModeValue,
-}MLNLabelMaxMode;
+    MLNUILabelMaxModeNone = 0,
+    MLNUILabelMaxModeLines,
+    MLNUILabelMaxModeValue,
+}MLNUILabelMaxMode;
 
 typedef struct {
     CGFloat topLeft;
     CGFloat topRight;
     CGFloat bottomLeft;
     CGFloat bottomRight;
-} MLNCornerRadius;
+} MLNUICornerRadius;
 
 typedef enum : NSUInteger {
     // 设置layer的ConerRadius
-    MLNCornerModeNone = 0,
+    MLNUICornerModeNone = 0,
     // 设置layer的ConerRadius
-    MLNCornerLayerMode,
+    MLNUICornerLayerMode,
     // 设置layer的mask layer
-    MLNCornerMaskLayerMode,
+    MLNUICornerMaskLayerMode,
     // 给View添加一个中间透明四周有圆角的ImageView子视图
-    MLNCornerMaskImageViewMode,
-} MLNCornerMode;
+    MLNUICornerMaskImageViewMode,
+} MLNUICornerMode;
 
 typedef enum : NSUInteger {
-    MLNImageViewModeNone = 0,
+    MLNUIImageViewModeNone = 0,
     //    点9图模式，需要忽略contentMode设置
-    MLNImageViewModeNine,
-} MLNImageViewMode;
+    MLNUIImageViewModeNine,
+} MLNUIImageViewMode;
 
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface MLNViewConst : NSObject <MLNGlobalVarExportProtocol>
+@interface MLNUIViewConst : NSObject <MLNUIGlobalVarExportProtocol>
 
-+ (UIRectCorner)convertToRectCorner:(MLNRectCorner)corners;
++ (UIRectCorner)convertToRectCorner:(MLNUIRectCorner)corners;
 
 @end
 

@@ -1,19 +1,19 @@
 //
-//  MLNAnimationHandlerCallbackProtocol.h
-//  MLN
+//  MLNUIAnimationHandlerCallbackProtocol.h
+//  MLNUI
 //
 //  Created by MoMo on 2019/5/21.
 //
 
-#ifndef MLNAnimationHandlerCallbackProtocol_h
-#define MLNAnimationHandlerCallbackProtocol_h
+#ifndef MLNUIAnimationHandlerCallbackProtocol_h
+#define MLNUIAnimationHandlerCallbackProtocol_h
 
 #import <UIKit/UIKit.h>
 
-@protocol MLNAnimationHandlerCallbackProtocol <NSObject>
+@protocol MLNUIAnimationHandlerCallbackProtocol <NSObject>
 
 - (void)doAnimationFrame:(NSTimeInterval)frameTime;
 
 @end
 
-#endif /* MLNAnimationHandlerCallbackProtocol_h */
+#endif /* MLNUIAnimationHandlerCallbackProtocol_h */

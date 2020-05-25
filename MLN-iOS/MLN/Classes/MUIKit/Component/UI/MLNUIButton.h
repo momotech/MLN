@@ -1,13 +1,13 @@
 //
-//  MLNButton.h
+//  MLNUIButton.h
 //  
 //
 //  Created by MoMo on 2018/7/10.
 //
 
 #import <UIKit/UIKit.h>
-#import "MLNEntityExportProtocol.h"
+#import "MLNUIEntityExportProtocol.h"
 
-@interface MLNButton : UIButton <MLNEntityExportProtocol>
+@interface MLNUIButton : UIButton <MLNUIEntityExportProtocol>
 
 @end

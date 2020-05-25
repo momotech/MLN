@@ -1,6 +1,6 @@
 //
-//  NSMutableArray+MLNCore.h
-//  MLNCore
+//  NSMutableArray+MLNUICore.h
+//  MLNUICore
 //
 //  Created by MoMo on 2019/7/23.
 //
@@ -9,7 +9,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface NSMutableArray (MLNCore)
+@interface NSMutableArray (MLNUICore)
 
 @end
 

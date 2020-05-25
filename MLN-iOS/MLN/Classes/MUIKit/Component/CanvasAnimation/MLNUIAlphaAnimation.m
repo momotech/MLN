@@ -1,16 +1,16 @@
 //
-//  MLNAlphaAnimation.m
-//  MLN
+//  MLNUIAlphaAnimation.m
+//  MLNUI
 //
 //  Created by MoMo on 2019/5/16.
 //
 
-#import "MLNAlphaAnimation.h"
-#import "MLNEntityExporterMacro.h"
-#import "MLNBlock.h"
-#import "NSDictionary+MLNSafety.h"
+#import "MLNUIAlphaAnimation.h"
+#import "MLNUIEntityExporterMacro.h"
+#import "MLNUIBlock.h"
+#import "NSDictionary+MLNUISafety.h"
 
-@interface MLNAlphaAnimation()
+@interface MLNUIAlphaAnimation()
 
 @property (nonatomic, assign) CGFloat fromAlpha;
 @property (nonatomic, assign) CGFloat toAlpha;
@@ -18,9 +18,9 @@
 
 @end
 
-@implementation MLNAlphaAnimation
+@implementation MLNUIAlphaAnimation
 
-- (instancetype)initWithLuaCore:(MLNLuaCore *)luaCore fromAlpha:(NSNumber *)fromAlpha toAlpha:(NSNumber *)toAlpha
+- (instancetype)initWithLuaCore:(MLNUILuaCore *)luaCore fromAlpha:(NSNumber *)fromAlpha toAlpha:(NSNumber *)toAlpha
 {
     if (self = [super init]) {
         if (fromAlpha) {
@@ -36,7 +36,7 @@
 #pragma mark - copy
 - (id)copyWithZone:(NSZone *)zone
 {
-    MLNAlphaAnimation *copy = [super copyWithZone:zone];
+    MLNUIAlphaAnimation *copy = [super copyWithZone:zone];
     copy.fromAlpha = _fromAlpha;
     copy.toAlpha = _toAlpha;
     return copy;
@@ -58,8 +58,8 @@
 }
 
 #pragma mark - Export To Lua
-LUA_EXPORT_BEGIN(MLNAlphaAnimation)
-LUA_EXPORT_PROPERTY(setFromAlpha, "setFromAlpha:", "fromAlpha", MLNAlphaAnimation)
-LUA_EXPORT_PROPERTY(setToAlpha, "setToAlpha:", "toAlpha", MLNAlphaAnimation)
-LUA_EXPORT_END(MLNAlphaAnimation, AlphaAnimation, YES, "MLNCanvasAnimation", "initWithLuaCore:fromAlpha:toAlpha:")
+LUA_EXPORT_BEGIN(MLNUIAlphaAnimation)
+LUA_EXPORT_PROPERTY(setFromAlpha, "setFromAlpha:", "fromAlpha", MLNUIAlphaAnimation)
+LUA_EXPORT_PROPERTY(setToAlpha, "setToAlpha:", "toAlpha", MLNUIAlphaAnimation)
+LUA_EXPORT_END(MLNUIAlphaAnimation, AlphaAnimation, YES, "MLNUICanvasAnimation", "initWithLuaCore:fromAlpha:toAlpha:")
 @end

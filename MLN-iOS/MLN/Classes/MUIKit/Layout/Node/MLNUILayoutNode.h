@@ -1,35 +1,35 @@
 //
-//  MLNLayoutNode.h
+//  MLNUILayoutNode.h
 //
 //
 //  Created by MoMo on 2018/10/24.
 //
 
 #import <UIKit/UIKit.h>
-#import "MLNViewConst.h"
+#import "MLNUIViewConst.h"
 
-#define isLayoutNodeWidthNeedMerge(NODE) (NODE.widthType == MLNLayoutMeasurementTypeMatchParent &&\
-                                   (NODE.supernode.mergedWidthType == MLNLayoutMeasurementTypeWrapContent || \
+#define isLayoutNodeWidthNeedMerge(NODE) (NODE.widthType == MLNUILayoutMeasurementTypeMatchParent &&\
+                                   (NODE.supernode.mergedWidthType == MLNUILayoutMeasurementTypeWrapContent || \
                                     NODE.supernode.isHorizontalMaxMode))
-#define isLayoutNodeHeightNeedMerge(NODE) (NODE.heightType == MLNLayoutMeasurementTypeMatchParent &&\
-                                    (NODE.supernode.mergedHeightType == MLNLayoutMeasurementTypeWrapContent || \
+#define isLayoutNodeHeightNeedMerge(NODE) (NODE.heightType == MLNUILayoutMeasurementTypeMatchParent &&\
+                                    (NODE.supernode.mergedHeightType == MLNUILayoutMeasurementTypeWrapContent || \
                                      NODE.supernode.isVerticalMaxMode))
 
 NS_ASSUME_NONNULL_BEGIN
 
 typedef enum : NSUInteger {
-    MLNLayoutNodeStatusIdle = 0,    // By default.
-    MLNLayoutNodeStatusNeedLayout,
-    MLNLayoutNodeStatusHasNewLayout,
-    MLNLayoutNodeStatusUp2Date,
-} MLNLayoutNodeStatus;
+    MLNUILayoutNodeStatusIdle = 0,    // By default.
+    MLNUILayoutNodeStatusNeedLayout,
+    MLNUILayoutNodeStatusHasNewLayout,
+    MLNUILayoutNodeStatusUp2Date,
+} MLNUILayoutNodeStatus;
 
 typedef enum : NSUInteger {
-    MLNLayoutStrategySimapleAuto = 0, // By default.
-    MLNLayoutStrategyNativeFrame,
-} MLNLayoutStrategy;
+    MLNUILayoutStrategySimapleAuto = 0, // By default.
+    MLNUILayoutStrategyNativeFrame,
+} MLNUILayoutStrategy;
 
-@interface MLNLayoutNode : NSObject
+@interface MLNUILayoutNode : NSObject
 
 //*******
 //******                Absolute
@@ -48,7 +48,7 @@ typedef enum : NSUInteger {
 //*******
 //******                Gravity
 //*****
-@property (nonatomic, assign) enum MLNGravity gravity;
+@property (nonatomic, assign) enum MLNUIGravity gravity;
 //*******
 //******                Margin
 //*****
@@ -90,13 +90,13 @@ typedef enum : NSUInteger {
 //*******
 //******                State
 //*****
-@property (nonatomic, assign, readonly) MLNLayoutStrategy layoutStrategy;
-@property (nonatomic, assign, readonly) MLNLayoutNodeStatus status;
+@property (nonatomic, assign, readonly) MLNUILayoutStrategy layoutStrategy;
+@property (nonatomic, assign, readonly) MLNUILayoutNodeStatus status;
 @property (nonatomic, assign, getter=isWrapContent) BOOL wrapContent;
-@property (nonatomic, assign) MLNLayoutMeasurementType widthType;
-@property (nonatomic, assign) MLNLayoutMeasurementType heightType;
-@property (nonatomic, assign, readonly) MLNLayoutMeasurementType mergedWidthType;
-@property (nonatomic, assign, readonly) MLNLayoutMeasurementType mergedHeightType;
+@property (nonatomic, assign) MLNUILayoutMeasurementType widthType;
+@property (nonatomic, assign) MLNUILayoutMeasurementType heightType;
+@property (nonatomic, assign, readonly) MLNUILayoutMeasurementType mergedWidthType;
+@property (nonatomic, assign, readonly) MLNUILayoutMeasurementType mergedHeightType;
 @property (nonatomic, assign, getter=isEnable) BOOL enable;
 @property (nonatomic, assign, getter=isRoot) BOOL root;
 @property (nonatomic, assign) CGFloat priority;
@@ -105,7 +105,7 @@ typedef enum : NSUInteger {
 @property (nonatomic, assign, getter=isGone) BOOL gone;
 - (BOOL)isDirty;
 - (BOOL)hasNewLayout;
-- (void)changeLayoutStrategyTo:(MLNLayoutStrategy)layoutStrategy;
+- (void)changeLayoutStrategyTo:(MLNUILayoutStrategy)layoutStrategy;
 //*******
 //******                weight
 //*****
@@ -119,12 +119,12 @@ typedef enum : NSUInteger {
 //*******
 //******                Node
 //*****
-@property (nonatomic, weak) MLNLayoutNode *supernode;
-@property (nonatomic, strong, nullable) MLNLayoutNode *overlayNode;
+@property (nonatomic, weak) MLNUILayoutNode *supernode;
+@property (nonatomic, strong, nullable) MLNUILayoutNode *overlayNode;
 //*******
 //******                Root Node
 //*****
-@property (nonatomic, weak) MLNLayoutNode *rootnode;
+@property (nonatomic, weak) MLNUILayoutNode *rootnode;
 //*******
 //******                View
 //*****
@@ -169,7 +169,7 @@ typedef enum : NSUInteger {
 //*******
 //******                bind and unbind
 //*****
-- (void)bindSuper:(MLNLayoutNode *)supernode;
+- (void)bindSuper:(MLNUILayoutNode *)supernode;
 - (void)unbind;
 @end
 

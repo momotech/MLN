@@ -1,16 +1,16 @@
 //
-//  MLNStringUtil.m
+//  MLNUIStringUtil.m
 //
 //
 //  Created by MoMo on 2018/10/11.
 //
 
-#import "MLNStringUtil.h"
-#import "MLNKitHeader.h"
-#import "MLNStaticExporterMacro.h"
-#import "NSString+MLNKit.h"
+#import "MLNUIStringUtil.h"
+#import "MLNUIKitHeader.h"
+#import "MLNUIStaticExporterMacro.h"
+#import "NSString+MLNUIKit.h"
 
-@implementation MLNStringUtil
+@implementation MLNUIStringUtil
 
 + (NSInteger)lua_length:(NSString *)string
 {
@@ -19,7 +19,7 @@
 }
 
 + (NSMutableDictionary *)lua_jsonToMap:(NSString*)string {
-    MLNStaticCheckTypeAndNilValue(string, @"string", NSString)
+    MLNUIStaticCheckTypeAndNilValue(string, @"string", NSString)
     if (!(string && [string isKindOfClass:[NSString class]])) {
         return nil;
     }
@@ -29,14 +29,14 @@
                                                         options:NSJSONReadingMutableContainers
                                                           error:&err];
     if(err) {
-        MLNKitLuaStaticAssert(NO, @"json解析失败：%@",err);
+        MLNUIKitLuaStaticAssert(NO, @"json解析失败：%@",err);
         return nil;
     }
     return dic.mutableCopy;
 }
 
 + (NSString*)lua_mapToJson:(NSDictionary*)dict {
-    MLNStaticCheckTypeAndNilValue(dict, @"Map", NSMutableDictionary)
+    MLNUIStaticCheckTypeAndNilValue(dict, @"Map", NSMutableDictionary)
     if (!(dict && [dict isKindOfClass:[NSDictionary class]])) {
         return nil;
     }
@@ -48,14 +48,14 @@
     if (jsonData) {
         jsonString = [[NSString alloc]initWithData:jsonData encoding:NSUTF8StringEncoding];
     } else {
-        MLNKitLuaStaticAssert(NO, @"%@",error);
+        MLNUIKitLuaStaticAssert(NO, @"%@",error);
     }
     return jsonString;
 }
 
 + (NSArray *)lua_jsonToArray:(NSString *)string
 {
-    MLNStaticCheckTypeAndNilValue(string, @"string", [NSString class])
+    MLNUIStaticCheckTypeAndNilValue(string, @"string", [NSString class])
     if (!(string && [string isKindOfClass:[NSString class]])) {
         return nil;
     }
@@ -63,7 +63,7 @@
     NSError *err;
     id tmp = [NSJSONSerialization JSONObjectWithData:jsonData options:NSJSONReadingMutableContainers error:nil];
     if(err) {
-        MLNKitLuaStaticAssert(NO, @"json解析失败：%@",err);
+        MLNUIKitLuaStaticAssert(NO, @"json解析失败：%@",err);
         return nil;
     }
     if (tmp) {
@@ -80,7 +80,7 @@
 
 + (NSString *)lua_arrayToJson:(NSArray *)array
 {
-    MLNStaticCheckTypeAndNilValue(array, @"Array", [NSMutableArray class])
+    MLNUIStaticCheckTypeAndNilValue(array, @"Array", [NSMutableArray class])
     if (!(array && [array isKindOfClass:[NSArray class]])) {
         return nil;
     }
@@ -90,7 +90,7 @@
     if (jsonData) {
         jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
     } else {
-        MLNKitLuaStaticAssert(NO, @"json解析失败：%@", error);
+        MLNUIKitLuaStaticAssert(NO, @"json解析失败：%@", error);
     }
     return jsonString;
 }
@@ -160,15 +160,15 @@
 
 #pragma mark - Setup For Lua
 
-LUA_EXPORT_STATIC_BEGIN(MLNStringUtil)
-LUA_EXPORT_STATIC_METHOD(length, "lua_length:", MLNStringUtil)
-LUA_EXPORT_STATIC_METHOD(jsonToMap, "lua_jsonToMap:", MLNStringUtil)
-LUA_EXPORT_STATIC_METHOD(mapToJSON, "lua_mapToJson:", MLNStringUtil)
-LUA_EXPORT_STATIC_METHOD(jsonToArray, "lua_jsonToArray:", MLNStringUtil)
-LUA_EXPORT_STATIC_METHOD(arrayToJSON, "lua_arrayToJson:", MLNStringUtil)
-LUA_EXPORT_STATIC_METHOD(sizeWithContentFontSize, "lua_sizeWithContent:fontSize:", MLNStringUtil)
-LUA_EXPORT_STATIC_METHOD(sizeWithContentFontNameSize, "lua_sizeWithContent:fontName:size:", MLNStringUtil)
-LUA_EXPORT_STATIC_METHOD(md5, "lua_md5:", MLNStringUtil)
-LUA_EXPORT_STATIC_END(MLNStringUtil, StringUtil, NO, NULL)
+LUA_EXPORT_STATIC_BEGIN(MLNUIStringUtil)
+LUA_EXPORT_STATIC_METHOD(length, "lua_length:", MLNUIStringUtil)
+LUA_EXPORT_STATIC_METHOD(jsonToMap, "lua_jsonToMap:", MLNUIStringUtil)
+LUA_EXPORT_STATIC_METHOD(mapToJSON, "lua_mapToJson:", MLNUIStringUtil)
+LUA_EXPORT_STATIC_METHOD(jsonToArray, "lua_jsonToArray:", MLNUIStringUtil)
+LUA_EXPORT_STATIC_METHOD(arrayToJSON, "lua_arrayToJson:", MLNUIStringUtil)
+LUA_EXPORT_STATIC_METHOD(sizeWithContentFontSize, "lua_sizeWithContent:fontSize:", MLNUIStringUtil)
+LUA_EXPORT_STATIC_METHOD(sizeWithContentFontNameSize, "lua_sizeWithContent:fontName:size:", MLNUIStringUtil)
+LUA_EXPORT_STATIC_METHOD(md5, "lua_md5:", MLNUIStringUtil)
+LUA_EXPORT_STATIC_END(MLNUIStringUtil, StringUtil, NO, NULL)
 
 @end

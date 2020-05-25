@@ -1,16 +1,16 @@
 //
-//  MLNColor.h
-//  MLN
+//  MLNUIColor.h
+//  MLNUI
 //
 //  Created by MoMo on 2019/8/5.
 //
 
 #import <Foundation/Foundation.h>
-#import "MLNEntityExportProtocol.h"
+#import "MLNUIEntityExportProtocol.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface MLNColor : NSObject <MLNEntityExportProtocol>
+@interface MLNUIColor : NSObject <MLNUIEntityExportProtocol>
 
 - (instancetype)initWithColor:(UIColor *)aColor;
 

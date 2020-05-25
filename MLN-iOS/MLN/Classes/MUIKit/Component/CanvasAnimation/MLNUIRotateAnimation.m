@@ -1,16 +1,16 @@
 //
-//  MLNRotateAnimation.m
-//  MLN
+//  MLNUIRotateAnimation.m
+//  MLNUI
 //
 //  Created by MoMo on 2019/5/14.
 //
 
-#import "MLNRotateAnimation.h"
-#import "MLNEntityExporterMacro.h"
-#import "MLNBlock.h"
-#import "NSDictionary+MLNSafety.h"
+#import "MLNUIRotateAnimation.h"
+#import "MLNUIEntityExporterMacro.h"
+#import "MLNUIBlock.h"
+#import "NSDictionary+MLNUISafety.h"
 
-@interface MLNRotateAnimation()
+@interface MLNUIRotateAnimation()
 
 @property (nonatomic, assign) CGFloat fromDegrees;
 @property (nonatomic, assign) CGFloat toDegrees;
@@ -23,7 +23,7 @@
 
 @end
 
-@implementation MLNRotateAnimation
+@implementation MLNUIRotateAnimation
 
 - (instancetype)initWith:(CGFloat)fromDegress
                toDegress:(CGFloat)toDegress
@@ -41,8 +41,8 @@
                   pivotY:(CGFloat)pivotY
 {
     if (self = [self initWith:fromDegress toDegress:toDegress]) {
-        [self setPivotXType:MLNAnimationValueTypeAbsolute];
-        [self setPivotYType:MLNAnimationValueTypeAbsolute];
+        [self setPivotXType:MLNUIAnimationValueTypeAbsolute];
+        [self setPivotYType:MLNUIAnimationValueTypeAbsolute];
         [self setPivotX:pivotX];
         [self setPivotY:pivotY];
     }
@@ -51,9 +51,9 @@
 
 - (instancetype)initWith:(CGFloat)fromDegress
                toDegress:(CGFloat)toDegress
-              pivotXType:(MLNAnimationValueType)pivotXType
+              pivotXType:(MLNUIAnimationValueType)pivotXType
                   pivotX:(CGFloat)pivotX
-              pivotYType:(MLNAnimationValueType)pivotYType
+              pivotYType:(MLNUIAnimationValueType)pivotYType
                   pivotY:(CGFloat)pivotY
 {
     if (self = [self initWith:fromDegress toDegress:toDegress pivotX:pivotX pivotY:pivotY]) {
@@ -64,7 +64,7 @@
 }
 
 static int lua_animation_init(lua_State *L) {
-    MLNRotateAnimation *animation = nil;
+    MLNUIRotateAnimation *animation = nil;
     NSUInteger argCount = lua_gettop(L);
     switch (argCount) {
         case 6: {
@@ -74,7 +74,7 @@ static int lua_animation_init(lua_State *L) {
             CGFloat pivotX               = lua_tonumber(L, 4);
             CGFloat pivotYType           = lua_tonumber(L, 5);
             CGFloat pivotY               = lua_tonumber(L, 6);
-            animation = [[MLNRotateAnimation alloc] initWith:fromDegress toDegress:toDegress pivotXType:pivotXType pivotX:pivotX pivotYType:pivotYType pivotY:pivotY];
+            animation = [[MLNUIRotateAnimation alloc] initWith:fromDegress toDegress:toDegress pivotXType:pivotXType pivotX:pivotX pivotYType:pivotYType pivotY:pivotY];
         }
             break;
         case 4: {
@@ -82,18 +82,18 @@ static int lua_animation_init(lua_State *L) {
             CGFloat toDegress            = lua_tonumber(L, 2);
             CGFloat pivotX               = lua_tonumber(L, 3);
             CGFloat pivotY               = lua_tonumber(L, 4);
-            animation = [[MLNRotateAnimation alloc] initWith:fromDegress toDegress:toDegress pivotX:pivotX pivotY:pivotY];
+            animation = [[MLNUIRotateAnimation alloc] initWith:fromDegress toDegress:toDegress pivotX:pivotX pivotY:pivotY];
         }
             break;
         case 2: {
             CGFloat fromDegress          = lua_tonumber(L, 1);
             CGFloat toDegress            = lua_tonumber(L, 2);
-            animation = [[MLNRotateAnimation alloc] initWith:fromDegress toDegress:toDegress];
+            animation = [[MLNUIRotateAnimation alloc] initWith:fromDegress toDegress:toDegress];
         }
             break;
         case 0:
         {
-            animation = [[MLNRotateAnimation alloc] init];
+            animation = [[MLNUIRotateAnimation alloc] init];
         }
             break;
         default: {
@@ -103,7 +103,7 @@ static int lua_animation_init(lua_State *L) {
     }
     
     if (animation) {
-        if ([MLN_LUA_CORE(L) pushNativeObject:animation error:NULL]) {
+        if ([MLNUI_LUA_CORE(L) pushNativeObject:animation error:NULL]) {
             return 1;
         };
     }
@@ -114,7 +114,7 @@ static int lua_animation_init(lua_State *L) {
 #pragma mark - copy
 - (id)copyWithZone:(NSZone *)zone
 {
-    MLNRotateAnimation *copy = [super copyWithZone:zone];
+    MLNUIRotateAnimation *copy = [super copyWithZone:zone];
     copy.fromDegrees = _fromDegrees;
     copy.toDegrees = _toDegrees;
     copy.fromXDegrees = _fromXDegrees;
@@ -179,12 +179,12 @@ static int lua_animation_init(lua_State *L) {
 }
 
 #pragma mark - Export To Lua
-LUA_EXPORT_BEGIN(MLNRotateAnimation)
-LUA_EXPORT_PROPERTY(setFromDegrees, "setFromDegrees:", "fromDegrees", MLNRotateAnimation)
-LUA_EXPORT_PROPERTY(setToDegrees, "setToDegrees:", "toDegrees", MLNRotateAnimation)
-LUA_EXPORT_PROPERTY(setFromXDegrees, "setFromXDegrees:", "fromXDegrees", MLNRotateAnimation)
-LUA_EXPORT_PROPERTY(setToXDegrees, "setToXDegrees:", "toXDegrees", MLNRotateAnimation)
-LUA_EXPORT_PROPERTY(setFromYDegrees, "setFromYDegrees:", "fromYDegrees", MLNRotateAnimation)
-LUA_EXPORT_PROPERTY(setToYDegrees, "setToYDegrees:", "toYDegrees", MLNRotateAnimation)
-LUA_EXPORT_END_WITH_CFUNC(MLNRotateAnimation, RotateAnimation, YES, "MLNCanvasAnimation", lua_animation_init)
+LUA_EXPORT_BEGIN(MLNUIRotateAnimation)
+LUA_EXPORT_PROPERTY(setFromDegrees, "setFromDegrees:", "fromDegrees", MLNUIRotateAnimation)
+LUA_EXPORT_PROPERTY(setToDegrees, "setToDegrees:", "toDegrees", MLNUIRotateAnimation)
+LUA_EXPORT_PROPERTY(setFromXDegrees, "setFromXDegrees:", "fromXDegrees", MLNUIRotateAnimation)
+LUA_EXPORT_PROPERTY(setToXDegrees, "setToXDegrees:", "toXDegrees", MLNUIRotateAnimation)
+LUA_EXPORT_PROPERTY(setFromYDegrees, "setFromYDegrees:", "fromYDegrees", MLNUIRotateAnimation)
+LUA_EXPORT_PROPERTY(setToYDegrees, "setToYDegrees:", "toYDegrees", MLNUIRotateAnimation)
+LUA_EXPORT_END_WITH_CFUNC(MLNUIRotateAnimation, RotateAnimation, YES, "MLNUICanvasAnimation", lua_animation_init)
 @end

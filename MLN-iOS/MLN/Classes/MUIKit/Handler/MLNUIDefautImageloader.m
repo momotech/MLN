@@ -1,31 +1,31 @@
 //
-//  MLNDefautImageloader.m
-//  MLN
+//  MLNUIDefautImageloader.m
+//  MLNUI
 //
 //  Created by Dai Dongpeng on 2020/5/13.
 //
 
-#import "MLNDefautImageloader.h"
-#import <MLN/MLNKit.h>
-#import "MLNCornerImageLoader.h"
+#import "MLNUIDefautImageloader.h"
+#import <MLNUI/MLNUIKit.h>
+#import "MLNUICornerImageLoader.h"
 
-@implementation MLNDefautImageloader
+@implementation MLNUIDefautImageloader
 
 + (instancetype)defaultIamgeLoader {
-    static MLNDefautImageloader *loader;
+    static MLNUIDefautImageloader *loader;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        loader = [[MLNDefautImageloader alloc] init];
+        loader = [[MLNUIDefautImageloader alloc] init];
     });
     return loader;
 }
 
-- (void)imageView:(UIImageView<MLNEntityExportProtocol> *)imageView setImageWithPath:(NSString *)path {
+- (void)imageView:(UIImageView<MLNUIEntityExportProtocol> *)imageView setImageWithPath:(NSString *)path {
     [self imageView:imageView setImageWithPath:path placeHolderImage:path completed:nil];
 }
 
-- (void)imageView:(UIImageView<MLNEntityExportProtocol> *)imageView setImageWithPath:(NSString *)path placeHolderImage:(NSString *)placeHolder completed:(void(^)(UIImage *__nullable image, NSError *__nullable error, NSString *__nullable imagePath))completed {
-    UIImage *image = [self imageWithLocalPath:path instance:MLN_KIT_INSTANCE(imageView.mln_luaCore)];
+- (void)imageView:(UIImageView<MLNUIEntityExportProtocol> *)imageView setImageWithPath:(NSString *)path placeHolderImage:(NSString *)placeHolder completed:(void(^)(UIImage *__nullable image, NSError *__nullable error, NSString *__nullable imagePath))completed {
+    UIImage *image = [self imageWithLocalPath:path instance:MLNUI_KIT_INSTANCE(imageView.mln_luaCore)];
     if (image) {
         [imageView setImage:image];
     }
@@ -34,15 +34,15 @@
     }
 }
 
-- (void)imageView:(UIImageView<MLNEntityExportProtocol> *)imageView setCornerImageWith:(NSString *)imageName placeHolderImage:(NSString *)placeHolder cornerRadius:(NSInteger)radius dircetion:(MLNRectCorner)direction {
-    [MLNCornerImageLoader imageView:imageView setCornerImageWith:imageName placeHolderImage:placeHolder cornerRadius:radius dircetion:direction];
+- (void)imageView:(UIImageView<MLNUIEntityExportProtocol> *)imageView setCornerImageWith:(NSString *)imageName placeHolderImage:(NSString *)placeHolder cornerRadius:(NSInteger)radius dircetion:(MLNUIRectCorner)direction {
+    [MLNUICornerImageLoader imageView:imageView setCornerImageWith:imageName placeHolderImage:placeHolder cornerRadius:radius dircetion:direction];
 }
 
-- (void)imageView:(UIImageView<MLNEntityExportProtocol> *)imageView setImageWithPath:(NSString *)path placeHolderImage:(NSString *)placeHolder {
+- (void)imageView:(UIImageView<MLNUIEntityExportProtocol> *)imageView setImageWithPath:(NSString *)path placeHolderImage:(NSString *)placeHolder {
     [self imageView:imageView setImageWithPath:path placeHolderImage:placeHolder completed:nil];
 }
 
-- (void)imageView:(UIImageView<MLNEntityExportProtocol> *)imageView setNineImageWithPath:(NSString *)path synchronized:(BOOL)synchronzied {
+- (void)imageView:(UIImageView<MLNUIEntityExportProtocol> *)imageView setNineImageWithPath:(NSString *)path synchronized:(BOOL)synchronzied {
         //该模式必须是scaleToFill的
         imageView.contentMode = UIViewContentModeScaleToFill;
         __block BOOL isSynchronzied = synchronzied;
@@ -54,13 +54,13 @@
             if (image) {
                 if (!isSynchronzied) {
                     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-                        UIImage* resizedImage = [MLNNinePatchImageFactory mln_createResizableNinePatchImage:image imgViewSize:imgViewSize];
+                        UIImage* resizedImage = [MLNUINinePatchImageFactory mln_createResizableNinePatchImage:image imgViewSize:imgViewSize];
                         dispatch_async(dispatch_get_main_queue(), ^{
                             stImgView.image = resizedImage;
                         });
                     });
                 } else {
-                    stImgView.image = [MLNNinePatchImageFactory mln_createResizableNinePatchImage:image imgViewSize:imgViewSize];
+                    stImgView.image = [MLNUINinePatchImageFactory mln_createResizableNinePatchImage:image imgViewSize:imgViewSize];
                 }
             } else {
                 wkImgView.image = nil;
@@ -68,21 +68,21 @@
         }];
 }
 
-- (void)button:(UIButton<MLNEntityExportProtocol> *)button setImageWithPath:(NSString *)path forState:(UIControlState)state {
-    UIImage *image =  [self imageWithLocalPath:path instance:MLN_KIT_INSTANCE(button.mln_luaCore)];
+- (void)button:(UIButton<MLNUIEntityExportProtocol> *)button setImageWithPath:(NSString *)path forState:(UIControlState)state {
+    UIImage *image =  [self imageWithLocalPath:path instance:MLNUI_KIT_INSTANCE(button.mln_luaCore)];
     if (image) {
         [button setImage:image forState:state];
     }
 }
 
-- (void)view:(UIView<MLNEntityExportProtocol> *)view loadImageWithPath:(NSString *)imagePath completed:(void(^)(UIImage *__nullable image, NSError *__nullable error, NSString *__nullable imagePath))completed {
+- (void)view:(UIView<MLNUIEntityExportProtocol> *)view loadImageWithPath:(NSString *)imagePath completed:(void(^)(UIImage *__nullable image, NSError *__nullable error, NSString *__nullable imagePath))completed {
     if (completed) {
-        UIImage *image = [self imageWithLocalPath:imagePath instance:MLN_KIT_INSTANCE(view.mln_luaCore)];
+        UIImage *image = [self imageWithLocalPath:imagePath instance:MLNUI_KIT_INSTANCE(view.mln_luaCore)];
         completed(image, nil, imagePath);
     }
 }
 
-- (UIImage *)imageWithLocalPath:(NSString *)path instance:(MLNKitInstance *)instance
+- (UIImage *)imageWithLocalPath:(NSString *)path instance:(MLNUIKitInstance *)instance
 {
     // Main bundle' .xcassets
     UIImage *image = [UIImage imageNamed:path];

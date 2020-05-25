@@ -1,6 +1,6 @@
 //
-//  MLNTableViewCellSettingProtocol.h
-//  MLN
+//  MLNUITableViewCellSettingProtocol.h
+//  MLNUI
 //
 //  Created by MoMo on 2019/10/31.
 //
@@ -9,7 +9,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@protocol MLNTableViewCellSettingProtocol <NSObject>
+@protocol MLNUITableViewCellSettingProtocol <NSObject>
 
 - (BOOL)isShowPressedColor;
 - (UIColor *)pressedColor;

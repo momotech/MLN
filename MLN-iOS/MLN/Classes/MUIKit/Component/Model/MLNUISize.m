@@ -1,28 +1,28 @@
 //
-//  MLNSize.m
-//  MLN
+//  MLNUISize.m
+//  MLNUI
 //
 //  Created by MoMo on 2019/8/2.
 //
 
-#import "MLNSize.h"
-#import "MLNLuaCore.h"
+#import "MLNUISize.h"
+#import "MLNUILuaCore.h"
 
-@interface MLNSize ()
+@interface MLNUISize ()
 
 @property (nonatomic, assign) CGSize size;
 
 @end
-@implementation MLNSize
+@implementation MLNUISize
 
 + (instancetype)sizeWithCGSize:(CGSize)size
 {
-    MLNSize *s = [[MLNSize alloc] init];
+    MLNUISize *s = [[MLNUISize alloc] init];
     s.size = size;
     return s;
 }
 
-- (instancetype)initWithLuaCore:(MLNLuaCore *)luaCore width:(NSNumber *)width height:(NSNumber *)height
+- (instancetype)initWithLuaCore:(MLNUILuaCore *)luaCore width:(NSNumber *)width height:(NSNumber *)height
 {
     if (self = [super initWithLuaCore:luaCore]) {
         _size = CGSizeMake(CGFloatValueFromNumber(width), CGFloatValueFromNumber(height));
@@ -77,9 +77,9 @@
 }
 
 #pragma mark - Extra To Lua
-LUA_EXPORT_BEGIN(MLNSize)
-LUA_EXPORT_PROPERTY(width, "setWidth:", "width", MLNSize)
-LUA_EXPORT_PROPERTY(height, "setHeight:", "height", MLNSize)
-LUA_EXPORT_END(MLNSize, Size, NO, NULL, "initWithLuaCore:width:height:")
+LUA_EXPORT_BEGIN(MLNUISize)
+LUA_EXPORT_PROPERTY(width, "setWidth:", "width", MLNUISize)
+LUA_EXPORT_PROPERTY(height, "setHeight:", "height", MLNUISize)
+LUA_EXPORT_END(MLNUISize, Size, NO, NULL, "initWithLuaCore:width:height:")
 
 @end

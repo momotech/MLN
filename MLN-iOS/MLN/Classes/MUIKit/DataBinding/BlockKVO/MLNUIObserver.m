@@ -1,18 +1,18 @@
 //
-//  MLNObserver.m
-//  MLN
+//  MLNUIObserver.m
+//  MLNUI
 //
 //  Created by Dai Dongpeng on 2020/4/29.
 //
 
-#import "MLNObserver.h"
+#import "MLNUIObserver.h"
 #import <pthread.h>
-#import "MLNKVOObserverProtocol.h"
+#import "MLNUIKVOObserverProtocol.h"
 
-@interface MLNObserver()
+@interface MLNUIObserver()
 @end
 
-@implementation MLNObserver
+@implementation MLNUIObserver
 
 - (instancetype)initWithTarget:(NSObject *)target keyPath:(NSString *)keyPath owner:(id)owner {
     if (self = [super init]) {
@@ -52,7 +52,7 @@
     }
 }
 
-- (void)addObservationBlock:(MLNBlockChange)block {
+- (void)addObservationBlock:(MLNUIBlockChange)block {
     if (block) {
         LOCK();
         [_observationBlocks addObject:block];
@@ -92,7 +92,7 @@
     LOCK();
     NSArray *copys = _observationBlocks.copy;
     UNLOCK();
-    for (MLNBlockChange block in copys) {
+    for (MLNUIBlockChange block in copys) {
         block(nil, self.target, old, new, change);
     }
 }

@@ -1,20 +1,20 @@
 //
-//  NSMutableArray+MLNKVO.m
-// MLN
+//  NSMutableArray+MLNUIKVO.m
+// MLNUI
 //
 //  Created by Dai Dongpeng on 2020/3/5.
 //
 
-#import "NSMutableArray+MLNKVO.h"
+#import "NSMutableArray+MLNUIKVO.h"
 #import <objc/runtime.h>
-#import "NSObject+MLNSwizzle.h"
+#import "NSObject+MLNUISwizzle.h"
 
-@interface NSObject (MLNKVOListener)
+@interface NSObject (MLNUIKVOListener)
 @property (nonatomic, strong) Class mlnkvo_originClass;
 @property (nonatomic, assign) BOOL mlnkvo_isObervering;
 @end
 
-@implementation NSObject (MLNKVOListener)
+@implementation NSObject (MLNUIKVOListener)
 
 - (Class)mlnkvo_originClass {
     return objc_getAssociatedObject(self, @selector(mlnkvo_originClass));
@@ -34,19 +34,19 @@
 
 @end
 
-@implementation NSMutableArray (MLNKVO)
+@implementation NSMutableArray (MLNUIKVO)
 
 //- (void)mln_notifyAllObserver:(NSKeyValueChange)type new:(NSMutableArray *)new old:(NSMutableArray *)old {
-//    NSMutableArray<MLNKVOArrayHandler> *obs = objc_getAssociatedObject(self, kMLNKVOArrayHandlers);
+//    NSMutableArray<MLNUIKVOArrayHandler> *obs = objc_getAssociatedObject(self, kMLNUIKVOArrayHandlers);
 //    if (obs && obs.count > 0) {
-//        for (MLNKVOArrayHandler handler in obs) {
+//        for (MLNUIKVOArrayHandler handler in obs) {
 //            handler(type, new, old);
 //        }
 //    }
 //}
 
 - (void)mln_notifyAllObserver:(NSKeyValueChange)type indexSet:(NSIndexSet *)indexSet newValue:(id)newValue oldValue:(id)oldValue {
-    NSArray<MLNKVOArrayHandler> *obs;
+    NSArray<MLNUIKVOArrayHandler> *obs;
     @synchronized (self) {
         obs = [self mln_observerHandlersCreateIfNeeded:NO].copy;
     }
@@ -56,15 +56,15 @@
         [change setValue:indexSet forKey:NSKeyValueChangeIndexesKey];
         [change setValue:newValue forKey:NSKeyValueChangeNewKey];
         [change setValue:oldValue forKey:NSKeyValueChangeOldKey];
-        for (MLNKVOArrayHandler handler in obs) {
+        for (MLNUIKVOArrayHandler handler in obs) {
             handler(self, change);
         }
     }
 }
 
-//- (NSMutableArray * _Nonnull (^)(MLNKVOSubcribeArray _Nonnull))mln_subscribeArray {
+//- (NSMutableArray * _Nonnull (^)(MLNUIKVOSubcribeArray _Nonnull))mln_subscribeArray {
 //    __weak __typeof(self)weakSelf = self;
-//    return ^(MLNKVOSubcribeArray block) {
+//    return ^(MLNUIKVOSubcribeArray block) {
 //        __strong __typeof(weakSelf)self = weakSelf;
 //        [self mln_addObserverHandler:^(NSMutableArray * _Nonnull array, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
 //            block(change);
@@ -73,16 +73,16 @@
 //    };
 //}
 
-- (void)mln_addObserverHandler:(MLNKVOArrayHandler)handler {
+- (void)mln_addObserverHandler:(MLNUIKVOArrayHandler)handler {
     @synchronized (self) {
-        NSMutableArray<MLNKVOArrayHandler> *obs = [self mln_observerHandlersCreateIfNeeded:YES];
+        NSMutableArray<MLNUIKVOArrayHandler> *obs = [self mln_observerHandlersCreateIfNeeded:YES];
         if (![obs containsObject:handler]) {
             [obs addObject:handler];
         }
     }
 }
 
-- (void)mln_removeObserverHandler:(MLNKVOArrayHandler)handler {
+- (void)mln_removeObserverHandler:(MLNUIKVOArrayHandler)handler {
     if (handler) {
         @synchronized (self) {
             NSMutableArray *obs = [self mln_observerHandlersCreateIfNeeded:NO];
@@ -98,18 +98,18 @@
     }
 }
 
-static const void *kMLNKVOArrayHandlers = &kMLNKVOArrayHandlers;
-- (NSMutableArray<MLNKVOArrayHandler> *)mln_observerHandlersCreateIfNeeded:(BOOL)shouldCreate {
-    NSMutableArray *obs = objc_getAssociatedObject(self, kMLNKVOArrayHandlers);
+static const void *kMLNUIKVOArrayHandlers = &kMLNUIKVOArrayHandlers;
+- (NSMutableArray<MLNUIKVOArrayHandler> *)mln_observerHandlersCreateIfNeeded:(BOOL)shouldCreate {
+    NSMutableArray *obs = objc_getAssociatedObject(self, kMLNUIKVOArrayHandlers);
     if (!obs && shouldCreate) {
         obs = [NSMutableArray array];
-        objc_setAssociatedObject(self, kMLNKVOArrayHandlers, obs, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+        objc_setAssociatedObject(self, kMLNUIKVOArrayHandlers, obs, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     }
     return obs;
 }
 
-static NSString *kMLNKVO = @"-MLNKVO";
-NS_INLINE  Class MLNCreateSubClass(Class class, NSString *subName) {
+static NSString *kMLNUIKVO = @"-MLNUIKVO";
+NS_INLINE  Class MLNUICreateSubClass(Class class, NSString *subName) {
     Class subclass = objc_allocateClassPair(class, [subName UTF8String], 0);
     objc_registerClassPair(subclass);
     return subclass;
@@ -119,13 +119,13 @@ NS_INLINE  Class MLNCreateSubClass(Class class, NSString *subName) {
 - (void)mln_startKVO {
     Class class = object_getClass(self);
     NSString *className = NSStringFromClass(class);
-    BOOL isStart = [className containsString:kMLNKVO];
+    BOOL isStart = [className containsString:kMLNUIKVO];
     if (!isStart) {
         self.mlnkvo_originClass = class;
-        NSString *subName = [className stringByAppendingString:kMLNKVO];
+        NSString *subName = [className stringByAppendingString:kMLNUIKVO];
         Class subClass = objc_getClass(subName.UTF8String);
         if (!subClass) {
-            subClass = MLNCreateSubClass(class, subName);
+            subClass = MLNUICreateSubClass(class, subName);
             [NSMutableArray mlnkvo_swizzleWithClass:subClass];
         };
         object_setClass(self, subClass);
@@ -134,7 +134,7 @@ NS_INLINE  Class MLNCreateSubClass(Class class, NSString *subName) {
 
 - (void)mln_stopKVO {
     Class cls = object_getClass(self);
-    BOOL isStart = [NSStringFromClass(cls) containsString:kMLNKVO];
+    BOOL isStart = [NSStringFromClass(cls) containsString:kMLNUIKVO];
     Class originClass = self.mlnkvo_originClass;
     if (isStart && originClass) {
         object_setClass(self, originClass);

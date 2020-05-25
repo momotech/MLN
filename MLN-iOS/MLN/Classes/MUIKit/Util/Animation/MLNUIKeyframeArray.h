@@ -1,6 +1,6 @@
 //
-//  MLNKeyframeArray.h
-//  MLN
+//  MLNUIKeyframeArray.h
+//  MLNUI
 //
 //  Created by MoMo on 2019/9/8.
 //
@@ -9,18 +9,18 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class MLNKeyframeArray;
-@protocol MLNKeyframeArrayDelegate <NSObject>
+@class MLNUIKeyframeArray;
+@protocol MLNUIKeyframeArrayDelegate <NSObject>
 
-- (id)keyframeArray:(MLNKeyframeArray *)array objectAtIndex:(NSUInteger)index;
+- (id)keyframeArray:(MLNUIKeyframeArray *)array objectAtIndex:(NSUInteger)index;
 
 @end
 
-@interface MLNKeyframeArray : NSArray
+@interface MLNUIKeyframeArray : NSArray
 
-@property (nonatomic, weak) id<MLNKeyframeArrayDelegate> delegate;
+@property (nonatomic, weak) id<MLNUIKeyframeArrayDelegate> delegate;
 
-- (instancetype)initWithCount:(NSUInteger)count delegate:(id<MLNKeyframeArrayDelegate>)delegate;
+- (instancetype)initWithCount:(NSUInteger)count delegate:(id<MLNUIKeyframeArrayDelegate>)delegate;
 
 @end
 

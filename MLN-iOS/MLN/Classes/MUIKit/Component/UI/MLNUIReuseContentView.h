@@ -1,21 +1,21 @@
 //
-//  MLNReuseContentView.h
+//  MLNUIReuseContentView.h
 //
 //
 //  Created by MoMo on 2018/11/12.
 //
 
-#import "MLNView.h"
+#import "MLNUIView.h"
 
 NS_ASSUME_NONNULL_BEGIN
-@class MLNLuaTable;
-@protocol MLNReuseCellProtocol <NSObject>
+@class MLNUILuaTable;
+@protocol MLNUIReuseCellProtocol <NSObject>
 
 @required
-- (void)pushContentViewWithLuaCore:(MLNLuaCore *)luaCore;
+- (void)pushContentViewWithLuaCore:(MLNUILuaCore *)luaCore;
 - (void)setupLayoutNodeIfNeed;
 - (void)updateLuaContentViewIfNeed;
-- (MLNLuaTable *)getLuaTable;
+- (MLNUILuaTable *)getLuaTable;
 
 - (BOOL)isInited;
 - (void)initCompleted;
@@ -29,17 +29,17 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-@interface MLNReuseContentView : MLNView
+@interface MLNUIReuseContentView : MLNUIView
 
-@property (nonatomic, strong, readonly) MLNLuaTable *luaTable;
+@property (nonatomic, strong, readonly) MLNUILuaTable *luaTable;
 @property (nonatomic, assign, getter=isInited) BOOL inited;
 @property (nonatomic, copy) NSString *lastReuaseId;
 
-- (instancetype)initWithFrame:(CGRect)frame cellView:(UIView<MLNReuseCellProtocol> *)cell;
+- (instancetype)initWithFrame:(CGRect)frame cellView:(UIView<MLNUIReuseCellProtocol> *)cell;
 
 - (CGFloat)calculHeightWithWidth:(CGFloat)width maxHeight:(CGFloat)maxHeight;
 - (CGSize)calculSizeWithMaxWidth:(CGFloat)maxWidth maxHeight:(CGFloat)maxHeight;
-- (void)pushToLuaCore:(MLNLuaCore *)luaCore;
+- (void)pushToLuaCore:(MLNUILuaCore *)luaCore;
 - (void)setupLayoutNodeIfNeed;
 - (void)updateFrameIfNeed;
 

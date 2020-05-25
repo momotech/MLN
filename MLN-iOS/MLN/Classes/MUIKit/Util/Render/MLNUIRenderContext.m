@@ -1,33 +1,33 @@
 //
-//  MLNRenderContext.m
-//  MMLNua
+//  MLNUIRenderContext.m
+//  MMLNUIua
 //
 //  Created by MoMo on 2019/4/16.
 //
 
-#import "MLNRenderContext.h"
-#import "MLNGradientLayerOperation.h"
-#import "MLNShadowOperation.h"
-#import "MLNBorderLayerOperation.h"
-#import "MLNBeforeWaitingTask.h"
-#import "MLNCornerManagerFactory.h"
-#import "UIView+MLNKit.h"
+#import "MLNUIRenderContext.h"
+#import "MLNUIGradientLayerOperation.h"
+#import "MLNUIShadowOperation.h"
+#import "MLNUIBorderLayerOperation.h"
+#import "MLNUIBeforeWaitingTask.h"
+#import "MLNUICornerManagerFactory.h"
+#import "UIView+MLNUIKit.h"
 
-@interface MLNRenderContext ()
+@interface MLNUIRenderContext ()
 
-@property (nonatomic, assign) MLNCornerMode newCornerMode;
-@property (nonatomic, assign) MLNCornerMode lastCornerMode;
-@property (nonatomic, strong) id<MLNCornerHandlerPotocol> layerOperation;
-@property (nonatomic, strong) id<MLNCornerHandlerPotocol> maskLayerOperation;
-@property (nonatomic, strong) id<MLNCornerHandlerPotocol> maskViewOperation;
-@property (nonatomic, strong) MLNGradientLayerOperation *gradientLayerOperation;
-@property (nonatomic, strong) MLNShadowOperation *shadowOperation;
-@property (nonatomic, strong) MLNBorderLayerOperation *borderOperation;
+@property (nonatomic, assign) MLNUICornerMode newCornerMode;
+@property (nonatomic, assign) MLNUICornerMode lastCornerMode;
+@property (nonatomic, strong) id<MLNUICornerHandlerPotocol> layerOperation;
+@property (nonatomic, strong) id<MLNUICornerHandlerPotocol> maskLayerOperation;
+@property (nonatomic, strong) id<MLNUICornerHandlerPotocol> maskViewOperation;
+@property (nonatomic, strong) MLNUIGradientLayerOperation *gradientLayerOperation;
+@property (nonatomic, strong) MLNUIShadowOperation *shadowOperation;
+@property (nonatomic, strong) MLNUIBorderLayerOperation *borderOperation;
 
-@property (nonatomic, strong) MLNBeforeWaitingTask *beforeWaitingTask;
+@property (nonatomic, strong) MLNUIBeforeWaitingTask *beforeWaitingTask;
 
 @end
-@implementation MLNRenderContext
+@implementation MLNUIRenderContext
 
 - (instancetype)initWithTargetView:(UIView *)targetView
 {
@@ -41,28 +41,28 @@
 #pragma mark - Corner
 - (void)resetCornerRadius:(CGFloat)cornerRadius
 {
-    self.newCornerMode = MLNCornerLayerMode;
+    self.newCornerMode = MLNUICornerLayerMode;
     [self.layerOperation setCornerRadius:cornerRadius];
     [self.targetView mln_pushRenderTask:self.beforeWaitingTask];
 }
 
-- (void)resetCornerRadius:(CGFloat)cornerRadius byRoundingCorners:(MLNRectCorner)corners
+- (void)resetCornerRadius:(CGFloat)cornerRadius byRoundingCorners:(MLNUIRectCorner)corners
 {
-    self.newCornerMode = MLNCornerMaskLayerMode;
+    self.newCornerMode = MLNUICornerMaskLayerMode;
     [self.maskLayerOperation addCorner:(UIRectCorner)corners cornerRadius:cornerRadius];
     [self.targetView mln_pushRenderTask:self.beforeWaitingTask];
 }
 
 - (void)resetCornerMaskViewWithRadius:(CGFloat)cornerRadius maskColor:(UIColor *)maskColor corners:(UIRectCorner)corners
 {
-    self.newCornerMode = MLNCornerMaskImageViewMode;
+    self.newCornerMode = MLNUICornerMaskImageViewMode;
     [self.maskViewOperation addCorner:corners cornerRadius:cornerRadius maskColor:maskColor];
     [self.targetView mln_pushRenderTask:self.beforeWaitingTask];
 }
 
 - (void)resetShadow:(UIColor *)shadowColor shadowOffset:(CGSize)offset shadowRadius:(CGFloat)radius shadowOpacity:(CGFloat)opacity isOval:(BOOL)isOval
 {
-    __unsafe_unretained MLNShadowOperation *shadow = self.shadowOperation;
+    __unsafe_unretained MLNUIShadowOperation *shadow = self.shadowOperation;
     shadow.shadowColor = shadowColor;
     shadow.shadowOffset = offset;
     shadow.shadowRadius = radius;
@@ -77,13 +77,13 @@
     [self.targetView mln_pushRenderTask:self.beforeWaitingTask];
 }
 
-- (MLNCornerRadius)currentCornerRadiusWithCornerMode:(MLNCornerMode)cornerMode
+- (MLNUICornerRadius)currentCornerRadiusWithCornerMode:(MLNUICornerMode)cornerMode
 {
-    MLNCornerRadius cornerRadius = { .topLeft = 0, .topRight = 0, .bottomLeft = 0, .bottomRight = 0 };
-    cornerRadius.topLeft = [self cornerRadiusWithDirection:MLNRectCornerTopLeft];
-    cornerRadius.topRight = [self cornerRadiusWithDirection:MLNRectCornerTopRight];
-    cornerRadius.bottomLeft = [self cornerRadiusWithDirection:MLNRectCornerBottomLeft];
-    cornerRadius.bottomRight = [self cornerRadiusWithDirection:MLNRectCornerBottomRight];
+    MLNUICornerRadius cornerRadius = { .topLeft = 0, .topRight = 0, .bottomLeft = 0, .bottomRight = 0 };
+    cornerRadius.topLeft = [self cornerRadiusWithDirection:MLNUIRectCornerTopLeft];
+    cornerRadius.topRight = [self cornerRadiusWithDirection:MLNUIRectCornerTopRight];
+    cornerRadius.bottomLeft = [self cornerRadiusWithDirection:MLNUIRectCornerBottomLeft];
+    cornerRadius.bottomRight = [self cornerRadiusWithDirection:MLNUIRectCornerBottomRight];
     return  cornerRadius;
 }
 
@@ -92,14 +92,14 @@
     return [[self cornerOperationWithMode:self.newCornerMode] cornerRadiusWithDirection:UIRectCornerTopLeft];
 }
 
-- (CGFloat)cornerRadiusWithDirection:(MLNRectCorner)corner
+- (CGFloat)cornerRadiusWithDirection:(MLNUIRectCorner)corner
 {
     return [[self cornerOperationWithMode:self.newCornerMode] cornerRadiusWithDirection:(UIRectCorner)corner];
 }
 
 - (void)doCornerTask
 {
-    if (self.newCornerMode != self.lastCornerMode && self.lastCornerMode != MLNCornerModeNone) {
+    if (self.newCornerMode != self.lastCornerMode && self.lastCornerMode != MLNUICornerModeNone) {
         [[self cornerOperationWithMode:self.lastCornerMode] clean];
     }
     [[self cornerOperationWithMode:self.newCornerMode] remakeIfNeed];
@@ -115,7 +115,7 @@
 - (void)doClipCheck
 {
     if (!self.targetView.mln_renderContext.didSetClipToBounds && [self.targetView.superview lua_enable]) {
-        MLNRenderContext *superContenx = [self.targetView.superview mln_renderContext];
+        MLNUIRenderContext *superContenx = [self.targetView.superview mln_renderContext];
         if (superContenx.didSetClipToChildren) {
             self.targetView.clipsToBounds = superContenx.clipToChildren;
         }
@@ -142,7 +142,7 @@
 }
 
 #pragma mark - Gradient
-- (void)resetGradientColor:(UIColor *)startColor endColor:(UIColor *)endColor direction:(MLNGradientType)direction
+- (void)resetGradientColor:(UIColor *)startColor endColor:(UIColor *)endColor direction:(MLNUIGradientType)direction
 {
     self.gradientLayerOperation.startColor = startColor;
     self.gradientLayerOperation.endColor = endColor;
@@ -168,16 +168,16 @@
     [self doCornerTask];
     [self doClipCheck];
     [self.gradientLayerOperation remakeIfNeed];
-    MLNCornerRadius radius = [self currentCornerRadiusWithCornerMode:self.newCornerMode];
+    MLNUICornerRadius radius = [self currentCornerRadiusWithCornerMode:self.newCornerMode];
     [self.borderOperation updateCornerRadiusAndRemake:radius];
     [self.shadowOperation updateCornerRadiusAndRemake:radius];
 }
 
-- (MLNBeforeWaitingTask *)beforeWaitingTask
+- (MLNUIBeforeWaitingTask *)beforeWaitingTask
 {
     if (!_beforeWaitingTask) {
         __weak typeof(self) wself = self;
-        _beforeWaitingTask = [MLNBeforeWaitingTask taskWithCallback:^{
+        _beforeWaitingTask = [MLNUIBeforeWaitingTask taskWithCallback:^{
             __strong typeof(wself) sself = wself;
             [sself doTask];
         }];
@@ -186,64 +186,64 @@
 }
 
 #pragma mark - Operations
-- (id<MLNCornerHandlerPotocol>)cornerOperationWithMode:(MLNCornerMode)mode
+- (id<MLNUICornerHandlerPotocol>)cornerOperationWithMode:(MLNUICornerMode)mode
 {
     switch (mode) {
-        case MLNCornerLayerMode:
+        case MLNUICornerLayerMode:
             return self.layerOperation;
-        case MLNCornerMaskLayerMode:
+        case MLNUICornerMaskLayerMode:
             return self.maskLayerOperation;
-        case MLNCornerMaskImageViewMode:
+        case MLNUICornerMaskImageViewMode:
             return self.maskViewOperation;
         default:
             return nil;
     }
 }
 
-- (id<MLNCornerHandlerPotocol>)layerOperation
+- (id<MLNUICornerHandlerPotocol>)layerOperation
 {
     if (!_layerOperation) {
-        _layerOperation = [MLNCornerManagerFactory handlerWithType:MLNCornerLayerMode targetView:self.targetView];
+        _layerOperation = [MLNUICornerManagerFactory handlerWithType:MLNUICornerLayerMode targetView:self.targetView];
     }
     return _layerOperation;
 }
 
-- (id<MLNCornerHandlerPotocol>)maskLayerOperation
+- (id<MLNUICornerHandlerPotocol>)maskLayerOperation
 {
     if (!_maskLayerOperation) {
-        _maskLayerOperation = [MLNCornerManagerFactory handlerWithType:MLNCornerMaskLayerMode targetView:self.targetView];
+        _maskLayerOperation = [MLNUICornerManagerFactory handlerWithType:MLNUICornerMaskLayerMode targetView:self.targetView];
     }
     return _maskLayerOperation;
 }
 
-- (id<MLNCornerHandlerPotocol>)maskViewOperation
+- (id<MLNUICornerHandlerPotocol>)maskViewOperation
 {
     if (!_maskViewOperation) {
-        _maskViewOperation = [MLNCornerManagerFactory handlerWithType:MLNCornerMaskImageViewMode targetView:self.targetView];
+        _maskViewOperation = [MLNUICornerManagerFactory handlerWithType:MLNUICornerMaskImageViewMode targetView:self.targetView];
     }
     return _maskViewOperation;
 }
 
-- (MLNGradientLayerOperation *)gradientLayerOperation
+- (MLNUIGradientLayerOperation *)gradientLayerOperation
 {
     if (!_gradientLayerOperation) {
-        _gradientLayerOperation = [[MLNGradientLayerOperation alloc] initWithTargetView:self.targetView];
+        _gradientLayerOperation = [[MLNUIGradientLayerOperation alloc] initWithTargetView:self.targetView];
     }
     return _gradientLayerOperation;
 }
 
-- (MLNShadowOperation *)shadowOperation
+- (MLNUIShadowOperation *)shadowOperation
 {
     if (!_shadowOperation) {
-        _shadowOperation = [[MLNShadowOperation alloc] initWithTargetView:self.targetView];
+        _shadowOperation = [[MLNUIShadowOperation alloc] initWithTargetView:self.targetView];
     }
     return _shadowOperation;
 }
 
-- (MLNBorderLayerOperation *)borderOperation
+- (MLNUIBorderLayerOperation *)borderOperation
 {
     if (!_borderOperation) {
-        _borderOperation = [[MLNBorderLayerOperation alloc] initWithTargetView:self.targetView];
+        _borderOperation = [[MLNUIBorderLayerOperation alloc] initWithTargetView:self.targetView];
     }
     return _borderOperation;
 }

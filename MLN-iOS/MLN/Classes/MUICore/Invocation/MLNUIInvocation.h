@@ -1,13 +1,13 @@
 //
-//  MLNInvocation.h
-//  MLNCore
+//  MLNUIInvocation.h
+//  MLNUICore
 //
 //  Created by MoMo on 2019/7/30.
 //
 
 #import <Foundation/Foundation.h>
-#import "MLNCore.h"
-#import "MLNGlobalFuncExportProtocol.h"
+#import "MLNUICore.h"
+#import "MLNUIGlobalFuncExportProtocol.h"
 
 /**
  lua虚拟机调用OC初始化方法的路由函数

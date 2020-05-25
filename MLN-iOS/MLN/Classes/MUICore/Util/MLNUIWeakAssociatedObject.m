@@ -1,17 +1,17 @@
 //
-//  MLNWeakAssociatedObject.m
-//  MLN
+//  MLNUIWeakAssociatedObject.m
+//  MLNUI
 //
 //  Created by MoMo on 2019/8/3.
 //
 
-#import "MLNWeakAssociatedObject.h"
+#import "MLNUIWeakAssociatedObject.h"
 
-@implementation MLNWeakAssociatedObject
+@implementation MLNUIWeakAssociatedObject
 
 + (instancetype)weakAssociatedObject:(id)associatedObject
 {
-    MLNWeakAssociatedObject *wp = [[MLNWeakAssociatedObject alloc] initWithAssociatedObject:associatedObject];
+    MLNUIWeakAssociatedObject *wp = [[MLNUIWeakAssociatedObject alloc] initWithAssociatedObject:associatedObject];
     return wp;
 }
 

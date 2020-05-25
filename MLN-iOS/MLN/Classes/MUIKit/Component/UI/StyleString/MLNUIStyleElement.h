@@ -1,24 +1,24 @@
 //
-//  MLNStyleElement.h
+//  MLNUIStyleElement.h
 //
 //
 //  Created by MoMo on 2019/4/25.
 //
 
 #import <Foundation/Foundation.h>
-#import "MLNTextConst.h"
+#import "MLNUITextConst.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class MLNKitInstance;
-@interface MLNStyleElement : NSObject<NSCopying>
+@class MLNUIKitInstance;
+@interface MLNUIStyleElement : NSObject<NSCopying>
 
 @property (nonatomic, copy) NSString *fontName;
 @property (nonatomic, assign) CGFloat fontSize;
-@property (nonatomic, assign) MLNFontStyle fontStyle;
+@property (nonatomic, assign) MLNUIFontStyle fontStyle;
 @property (nonatomic, strong) UIColor *fontColor;
 @property (nonatomic, strong) UIColor *backgroundColor;
-@property (nonatomic, assign) MLNUnderlineStyle underline;
+@property (nonatomic, assign) MLNUIUnderlineStyle underline;
 @property (nonatomic, assign) NSRange range;
 
 @property (nonatomic, copy) NSString *imagePath;
@@ -27,7 +27,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, strong, readonly) NSDictionary *attributes;
 @property (nonatomic, assign) BOOL changed;
-@property (nonatomic, weak) MLNKitInstance *instance;
+@property (nonatomic, weak) MLNUIKitInstance *instance;
 
 @end
 

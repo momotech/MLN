@@ -1,21 +1,21 @@
 //
-//  MLNShadowOperation
+//  MLNUIShadowOperation
 //
 //
 //  Created by MoMo on 2019/3/20.
 //
 
-#import "MLNShadowOperation.h"
-#import "MLNCornerManagerTool.h"
+#import "MLNUIShadowOperation.h"
+#import "MLNUICornerManagerTool.h"
 
-@interface MLNShadowOperation()
+@interface MLNUIShadowOperation()
 
 @property (nonatomic, strong) UIBezierPath *shadowPath;
 @property (nonatomic, assign) CGRect originRect;
 
 @end
 
-@implementation MLNShadowOperation
+@implementation MLNUIShadowOperation
 
 - (instancetype)initWithTargetView:(UIView *)targetView
 {
@@ -81,7 +81,7 @@
     self.targetView.layer.shadowOffset = self.shadowOffset;
     self.targetView.layer.shadowRadius = self.shadowRadius;
     self.targetView.layer.shadowOpacity = self.shadowRadius <= 0? 0.0 : self.shadowOpcity;
-    _shadowPath = [MLNCornerManagerTool bezierPathWithRect:self.targetView.bounds multiRadius:self.multiRadius];
+    _shadowPath = [MLNUICornerManagerTool bezierPathWithRect:self.targetView.bounds multiRadius:self.multiRadius];
     self.targetView.layer.shadowPath = _shadowPath.CGPath;
 }
 
@@ -97,7 +97,7 @@
     }
 }
 
-- (void)updateCornerRadiusAndRemake:(MLNCornerRadius)radius
+- (void)updateCornerRadiusAndRemake:(MLNUICornerRadius)radius
 {
     self.multiRadius = radius;
     [self remakeIfNeed];

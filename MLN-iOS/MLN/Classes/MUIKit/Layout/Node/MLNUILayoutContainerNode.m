@@ -1,19 +1,19 @@
 //
-//  MLNLayoutContainerNode.m
+//  MLNUILayoutContainerNode.m
 //
 //
 //  Created by MoMo on 2018/10/29.
 //
 
-#import "MLNLayoutContainerNode.h"
-#import "UIView+MLNLayout.h"
+#import "MLNUILayoutContainerNode.h"
+#import "UIView+MLNUILayout.h"
 
-@interface MLNLayoutContainerNode ()
+@interface MLNUILayoutContainerNode ()
 
-@property (nonatomic, strong) NSMutableArray<MLNLayoutNode *> *subNodes_m;
+@property (nonatomic, strong) NSMutableArray<MLNUILayoutNode *> *subNodes_m;
 
 @end
-@implementation MLNLayoutContainerNode
+@implementation MLNUILayoutContainerNode
 
 #pragma mark - Override
 - (BOOL)isContainer
@@ -35,8 +35,8 @@
     self.lastMeasuredMaxWidth = maxWidth;
     self.lastMeasuredMaxHeight = maxHeight;
     [self mergeMeasurementTypes];
-    BOOL widthWrapContent = self.mergedWidthType == MLNLayoutMeasurementTypeWrapContent;
-    BOOL heightWrapContent = self.mergedHeightType == MLNLayoutMeasurementTypeWrapContent;
+    BOOL widthWrapContent = self.mergedWidthType == MLNUILayoutMeasurementTypeWrapContent;
+    BOOL heightWrapContent = self.mergedHeightType == MLNUILayoutMeasurementTypeWrapContent;
     CGFloat myMaxWidth = [self myMaxWidthWithMaxWidth:maxWidth];
     CGFloat myMaxHeight = [self myMaxHeightWithMaxHeight:maxHeight];
     
@@ -45,16 +45,16 @@
     CGFloat usableZoneWidth = myMaxWidth - self.paddingLeft - self.paddingRight;
     CGFloat usableZoneHeight = myMaxHeight - self.paddingTop - self.paddingBottom;
     
-    NSMutableArray<MLNLayoutNode *> *measureMatchParentNodes = [NSMutableArray arrayWithCapacity:self.subnodes.count];
-    NSArray<MLNLayoutNode *> *subnodes_t = self.subnodes;
+    NSMutableArray<MLNUILayoutNode *> *measureMatchParentNodes = [NSMutableArray arrayWithCapacity:self.subnodes.count];
+    NSArray<MLNUILayoutNode *> *subnodes_t = self.subnodes;
     for (NSUInteger i = 0; i < subnodes_t.count; i++) {
-        MLNLayoutNode *subnode = subnodes_t[i];
+        MLNUILayoutNode *subnode = subnodes_t[i];
         if (subnode.isGone) {
             continue;
         }
         // need resize for match parent node
-        if (subnode.widthType == MLNLayoutMeasurementTypeMatchParent ||
-            subnode.heightType == MLNLayoutMeasurementTypeMatchParent) {
+        if (subnode.widthType == MLNUILayoutMeasurementTypeMatchParent ||
+            subnode.heightType == MLNUILayoutMeasurementTypeMatchParent) {
             [measureMatchParentNodes addObject:subnode];
         }
         CGFloat subMaxWidth = usableZoneWidth - subnode.marginLeft - subnode.marginRight;
@@ -63,7 +63,7 @@
         // calculate width
         if (widthWrapContent) {
             switch (subnode.layoutStrategy) {
-                case MLNLayoutStrategyNativeFrame:
+                case MLNUILayoutStrategyNativeFrame:
                     myMeasuredWidth = MAX(myMeasuredWidth, subMeasuredSize.width +subnode.x+self.paddingLeft +self.paddingRight);
                     break;
                 default: {
@@ -75,7 +75,7 @@
         // calculate height
         if (heightWrapContent) {
             switch (subnode.layoutStrategy) {
-                case MLNLayoutStrategyNativeFrame:
+                case MLNUILayoutStrategyNativeFrame:
                      myMeasuredHeight = MAX(myMeasuredHeight, subMeasuredSize.height +subnode.y +self.paddingTop +self.paddingBottom);
                     break;
                 default:
@@ -88,12 +88,12 @@
     // width
     if (!self.isWidthExcatly) {
         switch (self.mergedWidthType) {
-            case MLNLayoutMeasurementTypeWrapContent:
+            case MLNUILayoutMeasurementTypeWrapContent:
                 myMeasuredWidth = MAX(self.minWidth, myMeasuredWidth);
                 myMeasuredWidth = self.maxWidth > 0 ? MIN(myMeasuredWidth, self.maxWidth) : myMeasuredWidth;
                 self.measuredWidth = myMeasuredWidth;
                 break;
-            case MLNLayoutMeasurementTypeMatchParent:
+            case MLNUILayoutMeasurementTypeMatchParent:
                 self.measuredWidth = MAX(self.minWidth, myMaxWidth);
                 break;
             default:
@@ -106,12 +106,12 @@
     // height
     if (!self.isHeightExcatly) {
         switch (self.mergedHeightType) {
-            case MLNLayoutMeasurementTypeWrapContent:
+            case MLNUILayoutMeasurementTypeWrapContent:
                 myMeasuredHeight = MAX(self.minHeight, myMeasuredHeight);
                 myMeasuredHeight = self.maxHeight > 0 ? MIN(myMeasuredHeight, self.maxHeight) : myMeasuredHeight;
                 self.measuredHeight = myMeasuredHeight;
                 break;
-            case MLNLayoutMeasurementTypeMatchParent:
+            case MLNUILayoutMeasurementTypeMatchParent:
                 self.measuredHeight = MAX(self.minHeight, myMaxHeight);
                 break;
             default:
@@ -123,7 +123,7 @@
     
     // resize match parent nodes
     if (measureMatchParentNodes.count > 1) {
-        for (MLNLayoutNode *subnode in measureMatchParentNodes) {
+        for (MLNUILayoutNode *subnode in measureMatchParentNodes) {
             CGFloat usableZoneWidth = self.measuredWidth - self.paddingLeft - self.paddingRight;
             CGFloat usableZoneHeight = self.measuredHeight - self.paddingTop - self.paddingBottom;
             CGFloat subMaxWidth = usableZoneWidth - subnode.marginLeft - subnode.marginRight;
@@ -136,7 +136,7 @@
 }
 
 #pragma mark - Node Tree
-- (void)addSubnode:(MLNLayoutNode *)subNode
+- (void)addSubnode:(MLNUILayoutNode *)subNode
 {
     if (subNode.supernode) {
         [subNode removeFromSupernode];
@@ -150,7 +150,7 @@
     }
 }
 
-- (void)insertSubnode:(MLNLayoutNode *)subNode atIndex:(NSUInteger)index
+- (void)insertSubnode:(MLNUILayoutNode *)subNode atIndex:(NSUInteger)index
 {
     if (subNode.supernode) {
         [subNode removeFromSupernode];
@@ -164,7 +164,7 @@
     }
 }
 
-- (void)removeSubnode:(MLNLayoutNode *)subNode
+- (void)removeSubnode:(MLNUILayoutNode *)subNode
 {
     if (subNode && [self.subNodes_m containsObject:subNode]) {
         [self.subNodes_m removeObject:subNode];
@@ -223,16 +223,16 @@
 {
     CGFloat layoutZoneWidth = self.measuredWidth - self.paddingLeft - self.paddingRight;
     CGFloat layoutZoneHeight = self.measuredHeight - self.paddingTop - self.paddingBottom;
-    for (MLNLayoutNode *subnode in self.subnodes) {
+    for (MLNUILayoutNode *subnode in self.subnodes) {
         if (subnode.isGone) {
             continue;
         }
         switch (subnode.layoutStrategy) {
-            case MLNLayoutStrategyNativeFrame:
+            case MLNUILayoutStrategyNativeFrame:
                 subnode.measuredX = subnode.x;
                 subnode.measuredY = subnode.y;
                 break;
-            case MLNLayoutStrategySimapleAuto:
+            case MLNUILayoutStrategySimapleAuto:
                 [self layoutSimapleAutoSubnode:subnode layoutZoneWidth:layoutZoneWidth layoutZoneHeight:layoutZoneHeight];
                 break;
             default:
@@ -240,7 +240,7 @@
         }
         [subnode updateTargetViewFrameIfNeed];
         if (subnode.isContainer) {
-            [(MLNLayoutContainerNode *)subnode layoutSubnodes];
+            [(MLNUILayoutContainerNode *)subnode layoutSubnodes];
         }
         if (subnode.overlayNode) {
             [subnode layoutOverlayNode];
@@ -248,7 +248,7 @@
     }
 }
 
-- (void)layoutSimapleAutoSubnode:(MLNLayoutNode *)subnode layoutZoneWidth:(CGFloat)layoutZoneWidth layoutZoneHeight:(CGFloat)layoutZoneHeight
+- (void)layoutSimapleAutoSubnode:(MLNUILayoutNode *)subnode layoutZoneWidth:(CGFloat)layoutZoneWidth layoutZoneHeight:(CGFloat)layoutZoneHeight
 {
     if ((subnode.isDirty ||
          subnode.hasNewLayout ||
@@ -257,27 +257,27 @@
              subnode.lastGravityZoneWidth = layoutZoneWidth;
              subnode.lastGravityZoneHeight = layoutZoneHeight;
              // horizontal
-             switch (subnode.gravity & MLNGravityHorizontalMask) {
-                 case MLNGravityCenterHorizontal:
+             switch (subnode.gravity & MLNUIGravityHorizontalMask) {
+                 case MLNUIGravityCenterHorizontal:
                      subnode.measuredX = self.paddingLeft + (layoutZoneWidth - subnode.measuredWidth) *0.5 + subnode.marginLeft - subnode.marginRight;
                      break;
-                 case MLNGravityRight:
+                 case MLNUIGravityRight:
                      subnode.measuredX = self.measuredWidth -self.paddingRight -subnode.measuredWidth -subnode.marginRight;
                      break;
-                 case MLNGravityLeft:
+                 case MLNUIGravityLeft:
                  default:
                      subnode.measuredX = self.paddingLeft + subnode.marginLeft;
                      break;
              }
              // vertical
-             switch (subnode.gravity & MLNGravityVerticalMask) {
-                 case MLNGravityCenterVertical:
+             switch (subnode.gravity & MLNUIGravityVerticalMask) {
+                 case MLNUIGravityCenterVertical:
                      subnode.measuredY = self.paddingTop +(layoutZoneHeight -subnode.measuredHeight) *0.5 +subnode.marginTop -subnode.marginBottom;
                      break;
-                 case MLNGravityBottom:
+                 case MLNUIGravityBottom:
                      subnode.measuredY = self.measuredHeight -self.paddingBottom -subnode.measuredHeight -subnode.marginBottom;
                      break;
-                 case MLNGravityTop:
+                 case MLNUIGravityTop:
                  default:
                      subnode.measuredY = self.paddingTop + subnode.marginTop;
                      break;
@@ -286,7 +286,7 @@
 }
 
 #pragma mark - Getter
-- (NSMutableArray<MLNLayoutNode *> *)subNodes_m
+- (NSMutableArray<MLNUILayoutNode *> *)subNodes_m
 {
     if (!_subNodes_m) {
         if (!_subNodes_m) {
@@ -296,7 +296,7 @@
     return _subNodes_m;
 }
 
-- (NSArray<MLNLayoutNode *> *)subnodes
+- (NSArray<MLNUILayoutNode *> *)subnodes
 {
     return [self.subNodes_m copy];
 }

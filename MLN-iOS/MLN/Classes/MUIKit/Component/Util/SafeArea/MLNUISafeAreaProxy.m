@@ -1,15 +1,15 @@
 //
-//  MLNSafeAreaProxy.m
-//  MLN
+//  MLNUISafeAreaProxy.m
+//  MLNUI
 //
 //  Created by MoMo on 2019/12/19.
 //
 
-#import "MLNSafeAreaProxy.h"
-#import "MLNDevice.h"
-#import "MLNSafeAreaAdapter.h"
-#import "UIView+MLNLayout.h"
-#import "MLNKitEnvironment.h"
+#import "MLNUISafeAreaProxy.h"
+#import "MLNUIDevice.h"
+#import "MLNUISafeAreaAdapter.h"
+#import "UIView+MLNUILayout.h"
+#import "MLNUIKitEnvironment.h"
 
 #define kStatusBarDefaultHeight 20.f
 #define kStatusBarBusyHeight 40.f
@@ -19,7 +19,7 @@
 #define kViewHidden @"hidden"
 #define kViewAlpha @"alpha"
 
-@interface MLNSafeAreaProxy ()
+@interface MLNUISafeAreaProxy ()
 {
     CGFloat _safeAreaBottom;
 }
@@ -27,22 +27,22 @@
 
 @end
 
-@implementation MLNSafeAreaProxy
+@implementation MLNUISafeAreaProxy
 
-- (instancetype)initWithSafeAreaView:(UIView<MLNSafeAreaViewProtocol> *)safeAreaView navigationBar:(UINavigationBar *)navigationBar viewController:(UIViewController *)viewController
+- (instancetype)initWithSafeAreaView:(UIView<MLNUISafeAreaViewProtocol> *)safeAreaView navigationBar:(UINavigationBar *)navigationBar viewController:(UIViewController *)viewController
 {
     if (self = [super init]) {
         _safeAreaView = safeAreaView;
         _navigationBar = navigationBar;
         _viewController = viewController;
-        _safeAreaBottom = [MLNDevice isIPHX] ? kIphoneXHomeIndicatorHeight : 0.f;
+        _safeAreaBottom = [MLNUIDevice isIPHX] ? kIphoneXHomeIndicatorHeight : 0.f;
         [self __addObserverWithNavigationBar:navigationBar safeAreaView:safeAreaView];
         [self resestSafeAreaInsets];
     }
     return self;
 }
 
-- (void)setSafeArea:(MLNSafeArea)safeArea
+- (void)setSafeArea:(MLNUISafeArea)safeArea
 {
     if (_safeArea != safeArea) {
         _safeArea = safeArea;
@@ -50,7 +50,7 @@
     }
 }
 
-- (void)setAdapter:(MLNSafeAreaAdapter *)adapter
+- (void)setAdapter:(MLNUISafeAreaAdapter *)adapter
 {
     _adapter = adapter;
     __weak typeof(self) wself = self;
@@ -93,7 +93,7 @@
     return 0.f;
 }
 
-- (void)detachSafeAreaView:(UIView<MLNSafeAreaViewProtocol> *)safeAreaView {
+- (void)detachSafeAreaView:(UIView<MLNUISafeAreaViewProtocol> *)safeAreaView {
     [safeAreaView removeObserver:self forKeyPath:kViewrFrame context:nil];
     self.safeAreaView = nil;
 }
@@ -107,7 +107,7 @@
     [_navigationBar removeObserver:self forKeyPath:kViewAlpha context:nil];
 }
 
-- (void)__addObserverWithNavigationBar:(UINavigationBar *)navigationBar safeAreaView:(UIView<MLNSafeAreaViewProtocol> *)safeAreaView
+- (void)__addObserverWithNavigationBar:(UINavigationBar *)navigationBar safeAreaView:(UIView<MLNUISafeAreaViewProtocol> *)safeAreaView
 {
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(resestSafeAreaInsets) name:UIApplicationDidChangeStatusBarFrameNotification object:nil];
     [safeAreaView addObserver:self forKeyPath:kViewrFrame options:NSKeyValueObservingOptionOld|NSKeyValueObservingOptionNew context:nil];
@@ -119,7 +119,7 @@
 - (CGFloat)__statusBarMaxY
 {
     if (([self.viewController prefersStatusBarHidden] || [[UIApplication sharedApplication] isStatusBarHidden])) {
-        if ([MLNDevice isIPHX]) {
+        if ([MLNUIDevice isIPHX]) {
             return kIphoneXStatusBarDefaultHeight;
         }
         return 0.f;
@@ -148,29 +148,29 @@
 - (void)resestSafeAreaInsets
 {
     UIEdgeInsets safeAreaInset = UIEdgeInsetsZero;
-    UIWindow *window = [MLNKitEnvironment mainWindow];
+    UIWindow *window = [MLNUIKitEnvironment mainWindow];
     if (window) {
         CGRect frame = [self.safeAreaView convertRect:self.safeAreaView.frame toView:window];
         if (frame.origin.y <= 0 || ([self isIphoneBusy] && frame.origin.y <= kStatusBarBusyHeight - kStatusBarDefaultHeight)) {
-            if (_safeArea & MLNSafeAreaTop) {
+            if (_safeArea & MLNUISafeAreaTop) {
                 safeAreaInset.top = [self safeAreaTop];
             }
         }
         
         if (CGRectGetMaxY(frame) >= window.frame.size.height) {
-            if (_safeArea & MLNSafeAreaBottom) {
+            if (_safeArea & MLNUISafeAreaBottom) {
                 safeAreaInset.bottom = [self safeAreaBottom];
             }
         }
         
         if (frame.origin.x <= 0) {
-            if (_safeArea & MLNSafeAreaLeft) {
+            if (_safeArea & MLNUISafeAreaLeft) {
                 safeAreaInset.left = [self safeAreaLeft];
             }
         }
         
         if (CGRectGetMaxX(frame) >= window.frame.size.width) {
-            if (_safeArea & MLNSafeAreaRight) {
+            if (_safeArea & MLNUISafeAreaRight) {
                 safeAreaInset.right = [self safeAreaRight];
             }
         }

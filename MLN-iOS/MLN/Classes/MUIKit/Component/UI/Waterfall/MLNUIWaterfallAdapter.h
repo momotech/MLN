@@ -1,14 +1,14 @@
 //
-//  MLNWaterfallAdapter.h
+//  MLNUIWaterfallAdapter.h
 //  
 //
 //  Created by MoMo on 2018/7/18.
 //
 
-#import "MLNCollectionViewAdapter.h"
-#import "MLNWaterfallLayoutDelegate.h"
-#import "MLNWaterfallLayout.h"
+#import "MLNUICollectionViewAdapter.h"
+#import "MLNUIWaterfallLayoutDelegate.h"
+#import "MLNUIWaterfallLayout.h"
 
-@interface MLNWaterfallAdapter : MLNCollectionViewAdapter <MLNWaterfallLayoutDelegate>
+@interface MLNUIWaterfallAdapter : MLNUICollectionViewAdapter <MLNUIWaterfallLayoutDelegate>
 
 @end

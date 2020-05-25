@@ -1,17 +1,17 @@
 //
-//  MLNValueCalculatorProtocol.h
-//  MLN
+//  MLNUIValueCalculatorProtocol.h
+//  MLNUI
 //
 //  Created by MoMo on 2019/9/7.
 //
 
-#ifndef MLNValueCalculatorProtocol_h
-#define MLNValueCalculatorProtocol_h
+#ifndef MLNUIValueCalculatorProtocol_h
+#define MLNUIValueCalculatorProtocol_h
 
-@protocol MLNValueCalculatorProtocol <NSObject>
+@protocol MLNUIValueCalculatorProtocol <NSObject>
 
 - (id)calculate:(id)fromValue to:(id)toValue interpolation:(CGFloat)interpolation;
 
 @end
 
-#endif /* MLNValueCalculatorProtocol_h */
+#endif /* MLNUIValueCalculatorProtocol_h */

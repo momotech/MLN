@@ -1,15 +1,15 @@
 //
-//  MLNLayoutImageViewNode.h
-//  MLN
+//  MLNUILayoutImageViewNode.h
+//  MLNUI
 //
 //  Created by MoMo on 2019/10/29.
 //
 
-#import "MLNLayoutNode.h"
+#import "MLNUILayoutNode.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface MLNLayoutImageViewNode : MLNLayoutNode
+@interface MLNUILayoutImageViewNode : MLNUILayoutNode
 
 @end
 

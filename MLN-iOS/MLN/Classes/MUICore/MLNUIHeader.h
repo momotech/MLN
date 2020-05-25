@@ -1,12 +1,12 @@
 //
-//  MLNHeader.h
-//  MLNCore
+//  MLNUIHeader.h
+//  MLNUICore
 //
 //  Created by MoMo on 2019/8/1.
 //
 
-#ifndef MLNHeader_h
-#define MLNHeader_h
+#ifndef MLNUIHeader_h
+#define MLNUIHeader_h
 
 #include "mln_lua.h"
 #include "mln_lauxlib.h"
@@ -15,10 +15,10 @@
 #include "lgc.h"
 #include "lapi.h"
 
-#import "MLNStaticExporterMacro.h"
-#import "MLNEntityExporterMacro.h"
-#import "MLNGlobalFuncExporterMacro.h"
-#import "MLNGlobalVarExporterMacro.h"
+#import "MLNUIStaticExporterMacro.h"
+#import "MLNUIEntityExporterMacro.h"
+#import "MLNUIGlobalFuncExporterMacro.h"
+#import "MLNUIGlobalVarExporterMacro.h"
 
 /**
 Lua强引用栈上指定位置的UserData
@@ -26,9 +26,9 @@ Lua强引用栈上指定位置的UserData
 @param INDEX UserData在Lua虚拟机栈上的位置
 @param USER_DATA UserData对应的原生对象
 */
-#define MLN_Lua_UserData_Retain_With_Index(INDEX, USER_DATA) \
+#define MLNUI_Lua_UserData_Retain_With_Index(INDEX, USER_DATA) \
 if ([((NSObject *)(USER_DATA)) mln_isConvertible]) {\
-    [((id<MLNEntityExportProtocol>)(USER_DATA)).mln_luaCore setStrongObjectWithIndex:(INDEX) cKey:(__bridge void *)(USER_DATA)];\
+    [((id<MLNUIEntityExportProtocol>)(USER_DATA)).mln_luaCore setStrongObjectWithIndex:(INDEX) cKey:(__bridge void *)(USER_DATA)];\
 }
 
 /**
@@ -36,9 +36,9 @@ if ([((NSObject *)(USER_DATA)) mln_isConvertible]) {\
 
 @param USER_DATA UserData对应的原生对象
 */
-#define MLN_Lua_UserData_Release(USER_DATA) \
+#define MLNUI_Lua_UserData_Release(USER_DATA) \
 if ([((NSObject *)(USER_DATA)) mln_isConvertible]) {\
-    [((id<MLNEntityExportProtocol>)(USER_DATA)).mln_luaCore removeStrongObjectForCKey:(__bridge void *)(USER_DATA)];\
+    [((id<MLNUIEntityExportProtocol>)(USER_DATA)).mln_luaCore removeStrongObjectForCKey:(__bridge void *)(USER_DATA)];\
 }
 
 #if defined(__LP64__) && __LP64__
@@ -90,12 +90,12 @@ __VA_ARGS__;\
  @param state lua状态机
  @return lua core
  */
-#define MLN_LUA_CORE(state) ((__bridge MLNLuaCore *)(G(state)->ud))
+#define MLNUI_LUA_CORE(state) ((__bridge MLNUILuaCore *)(G(state)->ud))
 
 /**
  强制函数内联
  */
-#define MLN_FORCE_INLINE __inline__ __attribute__((always_inline))
+#define MLNUI_FORCE_INLINE __inline__ __attribute__((always_inline))
 
 /**
  强制类型检查
@@ -110,38 +110,38 @@ __VA_ARGS__;\
 #define mln_lua_checkudata(L, idx) mln_lua_checkType(L, idx, LUA_TUSERDATA);
 #define mln_lua_checkthread(L, idx) mln_lua_checkType(L, idx, LUA_TTHREAD);
 
-#define MLNValueIsType(VALUE, TYPE) strcmp((VALUE).objCType, @encode(TYPE)) == 0
-#define MLNValueIsCGRect(VALUE) MLNValueIsType(VALUE, CGRect)
-#define MLNValueIsCGSize(VALUE) MLNValueIsType(VALUE, CGSize)
-#define MLNValueIsCGPoint(VALUE) MLNValueIsType(VALUE, CGPoint)
+#define MLNUIValueIsType(VALUE, TYPE) strcmp((VALUE).objCType, @encode(TYPE)) == 0
+#define MLNUIValueIsCGRect(VALUE) MLNUIValueIsType(VALUE, CGRect)
+#define MLNUIValueIsCGSize(VALUE) MLNUIValueIsType(VALUE, CGSize)
+#define MLNUIValueIsCGPoint(VALUE) MLNUIValueIsType(VALUE, CGPoint)
 
 //@note ⚠️在Native->Lua类型转换时，默认将char类型当做数字来处理，而BOOL类型在32位手机上编码为'c',
 //      如果返回NO，则为'\0'，Lua接收到的值为0,而Lua语法规定0也为true，所以这里对于char做一个特殊处理
 #if __LP64__ || (TARGET_OS_EMBEDDED && !TARGET_OS_IPHONE) || TARGET_OS_WIN32 || NS_BUILD_32_LIKE_64
-#define MLNNumberIsBool(NUMBER) MLNValueIsType(NUMBER, BOOL) || [number isKindOfClass:[@(YES) class]]
+#define MLNUINumberIsBool(NUMBER) MLNUIValueIsType(NUMBER, BOOL) || [number isKindOfClass:[@(YES) class]]
 #else
-#define MLNNumberIsBool(NUMBER) (MLNValueIsType(NUMBER, BOOL) || [number isKindOfClass:[@(YES) class]] || ((MLNValueIsType(NUMBER, char)) && NUMBER.charValue =='\0'))
+#define MLNUINumberIsBool(NUMBER) (MLNUIValueIsType(NUMBER, BOOL) || [number isKindOfClass:[@(YES) class]] || ((MLNUIValueIsType(NUMBER, char)) && NUMBER.charValue =='\0'))
 #endif
 
 /**
  通知Handler处理Error
  
- @param LUA_CORE MLNLuaCore 虚拟机内核
+ @param LUA_CORE MLNUILuaCore 虚拟机内核
  @param FORMAT 字符拼接格式
  @param ... 可变参数
  */
-#define MLNCallErrorHandler(LUA_CORE, FORMAT, ...) \
+#define MLNUICallErrorHandler(LUA_CORE, FORMAT, ...) \
 NSString *error_tt = [NSString stringWithFormat:FORMAT, ##__VA_ARGS__];\
 [(LUA_CORE).errorHandler luaCore:(LUA_CORE) error:error_tt]; \
 
 /**
  通知Handler处理Error
  
- @param LUA_CORE MLNLuaCore 虚拟机内核
+ @param LUA_CORE MLNUILuaCore 虚拟机内核
  @param FORMAT 字符拼接格式
  @param ... 可变参数
  */
-#define MLNCallAssertHandler(LUA_CORE, FORMAT, ...) \
+#define MLNUICallAssertHandler(LUA_CORE, FORMAT, ...) \
 NSString *error_tt = [NSString stringWithFormat:FORMAT, ##__VA_ARGS__];\
 error_tt = [error_tt stringByAppendingString:[LUA_CORE traceback]];\
 [(LUA_CORE).errorHandler luaCore:(LUA_CORE) error:error_tt]; \
@@ -155,8 +155,8 @@ error_tt = [error_tt stringByAppendingString:[LUA_CORE traceback]];\
  @param ... 可变参数
  */
 #define mln_lua_assert(L, condition, format, ...)\
-if ([MLN_LUA_CORE((L)).errorHandler canHandleAssert:MLN_LUA_CORE((L))] && !(condition)) {\
-MLNCallAssertHandler(MLN_LUA_CORE((L)), format, ##__VA_ARGS__)\
+if ([MLNUI_LUA_CORE((L)).errorHandler canHandleAssert:MLNUI_LUA_CORE((L))] && !(condition)) {\
+MLNUICallAssertHandler(MLNUI_LUA_CORE((L)), format, ##__VA_ARGS__)\
 }
 
 /**
@@ -167,52 +167,52 @@ MLNCallAssertHandler(MLN_LUA_CORE((L)), format, ##__VA_ARGS__)\
  @param ... 可变参数
  */
 #define mln_lua_error(L, format, ...)\
-MLNCallErrorHandler(MLN_LUA_CORE((L)), format, ##__VA_ARGS__)\
+MLNUICallErrorHandler(MLNUI_LUA_CORE((L)), format, ##__VA_ARGS__)\
 
 /**
  Lua相关断言
  
- @param LUA_CORE MLNLuaCore 虚拟机内核
+ @param LUA_CORE MLNUILuaCore 虚拟机内核
  @param CONDITION 判断条件
  @param FORMAT 字符拼接格式
  @param ... 可变参数
  */
-#define MLNLuaAssert(LUA_CORE, CONDITION, FORMAT, ...) \
+#define MLNUILuaAssert(LUA_CORE, CONDITION, FORMAT, ...) \
 if ([(LUA_CORE).errorHandler canHandleAssert:(LUA_CORE)] && !(CONDITION)) {\
-MLNCallAssertHandler(LUA_CORE, FORMAT, ##__VA_ARGS__)\
+MLNUICallAssertHandler(LUA_CORE, FORMAT, ##__VA_ARGS__)\
 }
 
 /**
  Lua Error
  
- @param LUA_CORE MLNLuaCore 虚拟机内核
+ @param LUA_CORE MLNUILuaCore 虚拟机内核
  @param FORMAT 字符拼接格式
  @param ... 可变参数
  */
-#define MLNLuaError(LUA_CORE, FORMAT, ...) \
-MLNCallErrorHandler(LUA_CORE, FORMAT, ##__VA_ARGS__)\
+#define MLNUILuaError(LUA_CORE, FORMAT, ...) \
+MLNUICallErrorHandler(LUA_CORE, FORMAT, ##__VA_ARGS__)\
 
 /**
  原生相关断言
  
- @param LUA_CORE MLNLuaCore 虚拟机内核
+ @param LUA_CORE MLNUILuaCore 虚拟机内核
  @param CONDITION 判断条件
  @param FORMAT 字符拼接格式
  @param ... 可变参数
  */
-#define MLNAssert(LUA_CORE, CONDITION, FORMAT, ...) \
+#define MLNUIAssert(LUA_CORE, CONDITION, FORMAT, ...) \
 if ([(LUA_CORE).errorHandler canHandleAssert:(LUA_CORE)] && !(CONDITION)) {\
-MLNCallAssertHandler(LUA_CORE, FORMAT, ##__VA_ARGS__)\
+MLNUICallAssertHandler(LUA_CORE, FORMAT, ##__VA_ARGS__)\
 }
 
 /**
  原生Error
  
- @param LUA_CORE MLNLuaCore 虚拟机内核
+ @param LUA_CORE MLNUILuaCore 虚拟机内核
  @param FORMAT 字符拼接格式
  @param ... 可变参数
  */
-#define MLNError(LUA_CORE, FORMAT, ...) \
-MLNCallErrorHandler(LUA_CORE, FORMAT, ##__VA_ARGS__)
+#define MLNUIError(LUA_CORE, FORMAT, ...) \
+MLNUICallErrorHandler(LUA_CORE, FORMAT, ##__VA_ARGS__)
 
-#endif /* MLNHeader_h */
+#endif /* MLNUIHeader_h */

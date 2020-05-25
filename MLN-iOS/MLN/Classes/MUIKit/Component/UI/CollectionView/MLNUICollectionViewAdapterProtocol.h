@@ -1,18 +1,18 @@
 //
-//  MLNCollectionViewAdapterProtocol.h
+//  MLNUICollectionViewAdapterProtocol.h
 //  
 //
 //  Created by MoMo on 2019/2/19.
 //
 
-#ifndef MLNCollectionViewAdapterProtocol_h
-#define MLNCollectionViewAdapterProtocol_h
+#ifndef MLNUICollectionViewAdapterProtocol_h
+#define MLNUICollectionViewAdapterProtocol_h
 #import <UIKit/UIKit.h>
-#import "MLNCollectionViewGridLayoutDelegate.h"
+#import "MLNUICollectionViewGridLayoutDelegate.h"
 
-@class MLNBlock;
+@class MLNUIBlock;
 
-@protocol MLNCollectionViewAdapterProtocol <UICollectionViewDataSource, UICollectionViewDelegate, MLNCollectionViewGridLayoutDelegate>
+@protocol MLNUICollectionViewAdapterProtocol <UICollectionViewDataSource, UICollectionViewDelegate, MLNUICollectionViewGridLayoutDelegate>
 
 @property (nonatomic, weak) UICollectionView *collectionView;
 
@@ -34,4 +34,4 @@
 
 @end
 
-#endif /* MLNCollectionViewAdapterProtocol_h */
+#endif /* MLNUICollectionViewAdapterProtocol_h */

@@ -1,20 +1,20 @@
 //
-//  MLNLayoutImageViewNode.m
-//  MLN
+//  MLNUILayoutImageViewNode.m
+//  MLNUI
 //
 //  Created by MoMo on 2019/10/29.
 //
 
-#import "MLNLayoutImageViewNode.h"
-#import "MLNKitHeader.h"
-#import "UIView+MLNLayout.h"
-#import "MLNLayoutContainerNode.h"
-#import "UIView+MLNKit.h"
-#import "MLNLayoutImageViewNode.h"
-#import "UIView+MLNLayout.h"
-#import "MLNKitHeader.h"
+#import "MLNUILayoutImageViewNode.h"
+#import "MLNUIKitHeader.h"
+#import "UIView+MLNUILayout.h"
+#import "MLNUILayoutContainerNode.h"
+#import "UIView+MLNUIKit.h"
+#import "MLNUILayoutImageViewNode.h"
+#import "UIView+MLNUILayout.h"
+#import "MLNUIKitHeader.h"
 
-@implementation MLNLayoutImageViewNode
+@implementation MLNUILayoutImageViewNode
 
 - (CGSize)measureSizeWithMaxWidth:(CGFloat)maxWidth maxHeight:(CGFloat)maxHeight
 {
@@ -22,11 +22,11 @@
         return CGSizeZero;
     }
     switch (self.layoutStrategy) {
-        case MLNLayoutStrategySimapleAuto: {
+        case MLNUILayoutStrategySimapleAuto: {
             measureImageViewAutoNodeSize(self, maxWidth, maxHeight);
             break;
         }
-        case MLNLayoutStrategyNativeFrame: {
+        case MLNUILayoutStrategyNativeFrame: {
             self.measuredWidth = self.width;
             self.measuredHeight = self.height;
             break;
@@ -49,7 +49,7 @@
     return CGSizeMake(self.measuredWidth, self.measuredHeight);
 }
 
-MLN_FORCE_INLINE void measureImageViewAutoNodeSize (MLNLayoutNode __unsafe_unretained *node, CGFloat maxWidth, CGFloat maxHeight) {
+MLNUI_FORCE_INLINE void measureImageViewAutoNodeSize (MLNUILayoutNode __unsafe_unretained *node, CGFloat maxWidth, CGFloat maxHeight) {
     maxWidth = [node calculateWidthBaseOnWeightWithMaxWidth:maxWidth];
     maxHeight = [node calculateHeightBaseOnWeightWithMaxHeight:maxHeight];
     if (!node.isDirty && (node.lastMeasuredMaxWidth==maxWidth && node.lastMeasuredMaxHeight==maxHeight) && !isLayoutNodeHeightNeedMerge(node) && !isLayoutNodeWidthNeedMerge(node)) {
@@ -66,11 +66,11 @@ MLN_FORCE_INLINE void measureImageViewAutoNodeSize (MLNLayoutNode __unsafe_unret
     BOOL resizeHeight = NO;
     CGFloat desiredAspect = .0f;
     
-    MLNLayoutMeasurementType widthSpecMode = node.mergedWidthType;
-    MLNLayoutMeasurementType heightSpecMode= node.mergedHeightType;
+    MLNUILayoutMeasurementType widthSpecMode = node.mergedWidthType;
+    MLNUILayoutMeasurementType heightSpecMode= node.mergedHeightType;
     if (!CGSizeEqualToSize(imgSize, CGSizeZero)) {
-        resizeWidth = widthSpecMode == MLNLayoutMeasurementTypeWrapContent;
-        resizeHeight = heightSpecMode == MLNLayoutMeasurementTypeWrapContent;
+        resizeWidth = widthSpecMode == MLNUILayoutMeasurementTypeWrapContent;
+        resizeHeight = heightSpecMode == MLNUILayoutMeasurementTypeWrapContent;
         desiredAspect = imgSize.width / imgSize.height;
     }
     //两边至少有一边是WRAP_CONTENT的，需要根据实际内容计算
@@ -92,7 +92,7 @@ MLN_FORCE_INLINE void measureImageViewAutoNodeSize (MLNLayoutNode __unsafe_unret
         
         if (fabs(actualAspect - desiredAspect) >= 0.0000001) {
             BOOL done = NO;
-            if (resizeWidth && heightSpecMode != MLNLayoutMeasurementTypeWrapContent) {
+            if (resizeWidth && heightSpecMode != MLNUILayoutMeasurementTypeWrapContent) {
                 CGFloat newWidth = desiredAspect * heightSize;
                 if (!resizeHeight) {
                     widthSize = resolveAdjustedSize(newWidth, maxWidth, node.width>=0 ? node.width : 0 , widthSpecMode);
@@ -103,7 +103,7 @@ MLN_FORCE_INLINE void measureImageViewAutoNodeSize (MLNLayoutNode __unsafe_unret
                 }
             }
             
-            if (!done && resizeHeight && widthSpecMode != MLNLayoutMeasurementTypeWrapContent) {
+            if (!done && resizeHeight && widthSpecMode != MLNUILayoutMeasurementTypeWrapContent) {
                 CGFloat newHeight = widthSize / desiredAspect;
                 if (!resizeWidth) {
                     heightSize = resolveAdjustedSize(newHeight,  maxHeight, node.height>=0 ? node.height : 0, heightSpecMode);
@@ -130,31 +130,31 @@ MLN_FORCE_INLINE void measureImageViewAutoNodeSize (MLNLayoutNode __unsafe_unret
     node.measuredHeight=  heightSize;
 }
 
-MLN_FORCE_INLINE float resolveAdjustedSize(float desiredSize, float maxSize, float measureSize,MLNLayoutMeasurementType measureType)
+MLNUI_FORCE_INLINE float resolveAdjustedSize(float desiredSize, float maxSize, float measureSize,MLNUILayoutMeasurementType measureType)
 {
     CGFloat result = desiredSize;
     switch (measureType) {
-        case MLNLayoutMeasurementTypeWrapContent:
+        case MLNUILayoutMeasurementTypeWrapContent:
             result = MIN(desiredSize, maxSize);
             break;
-        case MLNLayoutMeasurementTypeMatchParent:
+        case MLNUILayoutMeasurementTypeMatchParent:
             result = maxSize;
             break;
-        case MLNLayoutMeasurementTypeIdle:
+        case MLNUILayoutMeasurementTypeIdle:
             result = measureSize;
             break;
     }
     return result;
 }
 
-MLN_FORCE_INLINE float resolveSizeAndState(float measureSize, float maxSize  , MLNLayoutMeasurementType measureType) {
+MLNUI_FORCE_INLINE float resolveSizeAndState(float measureSize, float maxSize  , MLNUILayoutMeasurementType measureType) {
     CGFloat result = measureSize;
     switch (measureType) {
-        case MLNLayoutMeasurementTypeMatchParent:
+        case MLNUILayoutMeasurementTypeMatchParent:
             result = maxSize;
             break;
-        case MLNLayoutMeasurementTypeWrapContent:
-        case MLNLayoutMeasurementTypeIdle:
+        case MLNUILayoutMeasurementTypeWrapContent:
+        case MLNUILayoutMeasurementTypeIdle:
         default:
             result = measureSize;
     }

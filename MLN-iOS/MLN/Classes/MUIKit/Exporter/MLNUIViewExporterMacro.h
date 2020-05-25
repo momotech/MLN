@@ -1,14 +1,14 @@
 //
-//  MLNViewExporterMacro.h
-//  MLNCore
+//  MLNUIViewExporterMacro.h
+//  MLNUICore
 //
 //  Created by MoMo on 2019/8/1.
 //
 
-#ifndef MLNViewExporterMacro_h
-#define MLNViewExporterMacro_h
+#ifndef MLNUIViewExporterMacro_h
+#define MLNUIViewExporterMacro_h
 
-#import "MLNEntityExporterMacro.h"
+#import "MLNUIEntityExporterMacro.h"
 
 /**
  导出View开始
@@ -87,7 +87,7 @@ LUA_EXPORT_PACKAGE_VIEW_END_WITH_CFUNC(CLZ, "mln", LUA_CLZ, HAS_SUPER, SUPER_CLZ
 
 /**
  标记完成View UserData类导出
- @note ⚠️如果需要自定义初始化方法，第一个参数必须是MLNLuaCore。
+ @note ⚠️如果需要自定义初始化方法，第一个参数必须是MLNUILuaCore。
  
  @param CLZ 原生类名称
  @param PACKAGE Lua中的包名
@@ -101,7 +101,7 @@ LUA_EXPORT_PACKAGE_END(CLZ, PACKAGE, LUA_CLZ, HAS_SUPER, SUPER_CLZ_NAME, CONSTRU
 
 /**
  标记完成View UserData类导出
- @note ⚠️如果需要自定义初始化方法，第一个参数必须是MLNLuaCore。
+ @note ⚠️如果需要自定义初始化方法，第一个参数必须是MLNUILuaCore。
  
  @param CLZ 原生类名称
  @param LUA_CLZ Lua中的类名称
@@ -112,4 +112,4 @@ LUA_EXPORT_PACKAGE_END(CLZ, PACKAGE, LUA_CLZ, HAS_SUPER, SUPER_CLZ_NAME, CONSTRU
 #define LUA_EXPORT_VIEW_END(CLZ, LUA_CLZ, HAS_SUPER, SUPER_CLZ_NAME, CONSTRUCTOR_NAME) \
 LUA_EXPORT_PACKAGE_VIEW_END(CLZ, "mln", LUA_CLZ, HAS_SUPER, SUPER_CLZ_NAME, CONSTRUCTOR_NAME)
 
-#endif /* MLNViewExporterMacro_h */
+#endif /* MLNUIViewExporterMacro_h */

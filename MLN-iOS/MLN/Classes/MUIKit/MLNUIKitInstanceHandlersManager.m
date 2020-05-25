@@ -1,75 +1,75 @@
 //
-//  MLNKitInstanceHandlers.m
-//  MLN
+//  MLNUIKitInstanceHandlers.m
+//  MLNUI
 //
 //  Created by MoMo on 2019/8/28.
 //
 
-#import "MLNKitInstanceHandlersManager.h"
-#import "MLNApplication.h"
-#import "MLNNetworkReachability.h"
-#import "MLNDefautImageloader.h"
+#import "MLNUIKitInstanceHandlersManager.h"
+#import "MLNUIApplication.h"
+#import "MLNUINetworkReachability.h"
+#import "MLNUIDefautImageloader.h"
 
-@implementation MLNKitInstanceHandlersManager
+@implementation MLNUIKitInstanceHandlersManager
 
-- (instancetype)initWithUIInstance:(MLNKitInstance *)instance
+- (instancetype)initWithUIInstance:(MLNUIKitInstance *)instance
 {
     if (self = [super init]) {
         _instance = instance;
-        _application = [[MLNApplication alloc] init];
-        _networkReachability = [[MLNNetworkReachability alloc] init];
+        _application = [[MLNUIApplication alloc] init];
+        _networkReachability = [[MLNUINetworkReachability alloc] init];
     }
     return self;
 }
 
-static MLNKitInstanceHandlersManager *_defaultManager = nil;
+static MLNUIKitInstanceHandlersManager *_defaultManager = nil;
 + (instancetype)defaultManager
 {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        _defaultManager = [[MLNKitInstanceHandlersManager alloc] init];
+        _defaultManager = [[MLNUIKitInstanceHandlersManager alloc] init];
         // 默认的handler
-        [_defaultManager setImageLoader:[MLNDefautImageloader defaultIamgeLoader]];
+        [_defaultManager setImageLoader:[MLNUIDefautImageloader defaultIamgeLoader]];
     });
     return _defaultManager;
 }
 
-- (id<MLNKitInstanceErrorHandlerProtocol>)errorHandler
+- (id<MLNUIKitInstanceErrorHandlerProtocol>)errorHandler
 {
-    if (!_errorHandler && self != [MLNKitInstanceHandlersManager defaultManager]) {
-        return [MLNKitInstanceHandlersManager defaultManager].errorHandler;
+    if (!_errorHandler && self != [MLNUIKitInstanceHandlersManager defaultManager]) {
+        return [MLNUIKitInstanceHandlersManager defaultManager].errorHandler;
     }
     return _errorHandler;
 }
 
-- (id<MLNHttpHandlerProtocol>)httpHandler
+- (id<MLNUIHttpHandlerProtocol>)httpHandler
 {
-    if (!_httpHandler && self != [MLNKitInstanceHandlersManager defaultManager]) {
-        return [MLNKitInstanceHandlersManager defaultManager].httpHandler;
+    if (!_httpHandler && self != [MLNUIKitInstanceHandlersManager defaultManager]) {
+        return [MLNUIKitInstanceHandlersManager defaultManager].httpHandler;
     }
     return _httpHandler;
 }
 
-- (id<MLNImageLoaderProtocol>)imageLoader
+- (id<MLNUIImageLoaderProtocol>)imageLoader
 {
-    if (!_imageLoader && self != [MLNKitInstanceHandlersManager defaultManager]) {
-        return [MLNKitInstanceHandlersManager defaultManager].imageLoader;
+    if (!_imageLoader && self != [MLNUIKitInstanceHandlersManager defaultManager]) {
+        return [MLNUIKitInstanceHandlersManager defaultManager].imageLoader;
     }
     return _imageLoader;
 }
 
-- (id<MLNRefreshDelegate>)scrollRefreshHandler
+- (id<MLNUIRefreshDelegate>)scrollRefreshHandler
 {
-    if (!_scrollRefreshHandler && self != [MLNKitInstanceHandlersManager defaultManager]) {
-        return [MLNKitInstanceHandlersManager defaultManager].scrollRefreshHandler;
+    if (!_scrollRefreshHandler && self != [MLNUIKitInstanceHandlersManager defaultManager]) {
+        return [MLNUIKitInstanceHandlersManager defaultManager].scrollRefreshHandler;
     }
     return _scrollRefreshHandler;
 }
 
-- (id<MLNNavigatorHandlerProtocol>)navigatorHandler
+- (id<MLNUINavigatorHandlerProtocol>)navigatorHandler
 {
-    if (!_navigatorHandler && self != [MLNKitInstanceHandlersManager defaultManager]) {
-        return [MLNKitInstanceHandlersManager defaultManager].navigatorHandler;
+    if (!_navigatorHandler && self != [MLNUIKitInstanceHandlersManager defaultManager]) {
+        return [MLNUIKitInstanceHandlersManager defaultManager].navigatorHandler;
     }
     return _navigatorHandler;
 }

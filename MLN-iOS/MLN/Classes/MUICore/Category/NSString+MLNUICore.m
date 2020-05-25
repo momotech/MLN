@@ -1,18 +1,18 @@
 //
-//  NSString+MLNCore.m
-//  MLNCore
+//  NSString+MLNUICore.m
+//  MLNUICore
 //
 //  Created by MoMo on 2019/7/23.
 //
 
-#import "NSString+MLNCore.h"
-#import "NSObject+MLNCore.h"
+#import "NSString+MLNUICore.h"
+#import "NSObject+MLNUICore.h"
 
-@implementation NSString (MLNCore)
+@implementation NSString (MLNUICore)
 
-- (MLNNativeType)mln_nativeType
+- (MLNUINativeType)mln_nativeType
 {
-    return MLNNativeTypeString;
+    return MLNUINativeTypeString;
 }
 
 

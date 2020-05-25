@@ -1,29 +1,29 @@
 //
-//  MLNInternalTextViewProtocl.h
+//  MLNUIInternalTextViewProtocl.h
 //  Pods
 //
 //  Created by MoMo on 2018/12/21.
 //
 
-#ifndef MLNInternalTextViewProtocl_h
-#define MLNInternalTextViewProtocl_h
+#ifndef MLNUIInternalTextViewProtocl_h
+#define MLNUIInternalTextViewProtocl_h
 #import <UIKit/UIKit.h>
 
 
-@protocol MLNTextViewProtocol;
+@protocol MLNUITextViewProtocol;
 
-@protocol MLNTextViewDelegate <NSObject>
+@protocol MLNUITextViewDelegate <NSObject>
 
 @optional
-- (void)internalTextViewDidBeginEditing:(UIView<MLNTextViewProtocol> *)internalTextView;
-- (BOOL)internalTextView:(UIView<MLNTextViewProtocol> *)internalTextView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text;
-- (void)internalTextViewDidChange:(UIView<MLNTextViewProtocol> *)internalTextView;
+- (void)internalTextViewDidBeginEditing:(UIView<MLNUITextViewProtocol> *)internalTextView;
+- (BOOL)internalTextView:(UIView<MLNUITextViewProtocol> *)internalTextView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text;
+- (void)internalTextViewDidChange:(UIView<MLNUITextViewProtocol> *)internalTextView;
 
 @end
 
-@protocol MLNTextViewProtocol <NSObject>
+@protocol MLNUITextViewProtocol <NSObject>
 
-@property (nonatomic, weak) id<MLNTextViewDelegate> internalTextViewDelegate;
+@property (nonatomic, weak) id<MLNUITextViewDelegate> internalTextViewDelegate;
 
 @property (nonatomic, copy) NSString *placeholder;
 @property (nonatomic, strong) UIColor *placeholderColor;
@@ -51,4 +51,4 @@
 
 @end
 
-#endif /* MLNInternalTextViewProtocl_h */
+#endif /* MLNUIInternalTextViewProtocl_h */

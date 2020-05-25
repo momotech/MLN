@@ -1,21 +1,21 @@
 //
-//  MLNScrollViewGlobalVar.h
-//  MLN
+//  MLNUIScrollViewGlobalVar.h
+//  MLNUI
 //
 //  Created by MoMo on 2019/8/5.
 //
 
 #import <Foundation/Foundation.h>
-#import "MLNGlobalVarExportProtocol.h"
+#import "MLNUIGlobalVarExportProtocol.h"
 
 typedef enum : NSUInteger {
-    MLNScrollDirectionVertical = 0,
-    MLNScrollDirectionHorizontal,
-} MLNScrollDirection;
+    MLNUIScrollDirectionVertical = 0,
+    MLNUIScrollDirectionHorizontal,
+} MLNUIScrollDirection;
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface MLNScrollViewConst : NSObject <MLNGlobalVarExportProtocol>
+@interface MLNUIScrollViewConst : NSObject <MLNUIGlobalVarExportProtocol>
 
 @end
 

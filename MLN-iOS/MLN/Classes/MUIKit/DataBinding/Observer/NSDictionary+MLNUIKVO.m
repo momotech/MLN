@@ -1,14 +1,14 @@
 //
-//  NSDictionary+MLNKVO.m
-//  MLN
+//  NSDictionary+MLNUIKVO.m
+//  MLNUI
 //
 //  Created by Dai Dongpeng on 2020/3/12.
 //
 
-#import "NSDictionary+MLNKVO.h"
-#import "NSObject+MLNReflect.h"
+#import "NSDictionary+MLNUIKVO.h"
+#import "NSObject+MLNUIReflect.h"
 
-@implementation NSDictionary (MLNKVO)
+@implementation NSDictionary (MLNUIKVO)
 
 - (NSMutableDictionary *)mln_mutalbeCopy {
     NSMutableDictionary *copy = [NSMutableDictionary dictionaryWithCapacity:self.count];
@@ -46,7 +46,7 @@
 }
 @end
 
-@implementation NSMutableDictionary (MLNKVO)
+@implementation NSMutableDictionary (MLNUIKVO)
 
 - (NSMutableArray *)mln_allMutableKeys {
     NSMutableArray *keys = [NSMutableArray array];

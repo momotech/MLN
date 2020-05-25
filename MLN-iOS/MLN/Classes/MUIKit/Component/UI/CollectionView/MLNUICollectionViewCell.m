@@ -1,22 +1,22 @@
 //
-//  MLNCollectionViewCell.m
+//  MLNUICollectionViewCell.m
 //
 //
 //  Created by MoMo on 2018/7/17.
 //
 
-#import "MLNCollectionViewCell.h"
-#import "UIView+MLNLayout.h"
-#import "MLNKitHeader.h"
-#import "MLNLuaTable.h"
+#import "MLNUICollectionViewCell.h"
+#import "UIView+MLNUILayout.h"
+#import "MLNUIKitHeader.h"
+#import "MLNUILuaTable.h"
 
-@interface MLNCollectionViewCell ()
+@interface MLNUICollectionViewCell ()
 
-@property (nonatomic, strong) MLNReuseContentView *luaContentView;
+@property (nonatomic, strong) MLNUIReuseContentView *luaContentView;
 
 @end
 
-@implementation MLNCollectionViewCell
+@implementation MLNUICollectionViewCell
 
 - (instancetype)initWithFrame:(CGRect)frame
 {
@@ -38,12 +38,12 @@
 
 - (void)lua_addSubview:(UIView *)view
 {
-    MLNCheckTypeAndNilValue(view, @"View", [UIView class]);
+    MLNUICheckTypeAndNilValue(view, @"View", [UIView class]);
     [self.luaContentView lua_addSubview:view];
 }
 
-#pragma mark - MLNReuseCellProtocol
-- (void)pushContentViewWithLuaCore:(MLNLuaCore *)luaCore
+#pragma mark - MLNUIReuseCellProtocol
+- (void)pushContentViewWithLuaCore:(MLNUILuaCore *)luaCore
 {
     [self updateContentViewFrameIfNeed];
     [self.luaContentView pushToLuaCore:luaCore];
@@ -59,7 +59,7 @@
     [self.luaContentView updateFrameIfNeed];
 }
 
-- (MLNLuaTable *)getLuaTable
+- (MLNUILuaTable *)getLuaTable
 {
     return self.luaContentView.luaTable;
 }
@@ -100,16 +100,16 @@
 }
 
 #pragma mark - Getter
-- (MLNReuseContentView *)luaContentView
+- (MLNUIReuseContentView *)luaContentView
 {
     if (!_luaContentView) {
-        _luaContentView = [[MLNReuseContentView alloc] initWithFrame:CGRectZero cellView:self];
+        _luaContentView = [[MLNUIReuseContentView alloc] initWithFrame:CGRectZero cellView:self];
         [self.contentView addSubview:_luaContentView];
     }
     return _luaContentView;
 }
 
-- (MLNLuaCore *)mln_luaCore
+- (MLNUILuaCore *)mln_luaCore
 {
     return self.luaContentView.luaTable.luaCore;
 }

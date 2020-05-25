@@ -1,14 +1,14 @@
 //
-//  MLNToast.h
+//  MLNUIToast.h
 //  
 //
 //  Created by MoMo on 2018/7/11.
 //
 
 #import <Foundation/Foundation.h>
-#import "MLNEntityExportProtocol.h"
+#import "MLNUIEntityExportProtocol.h"
 
-@interface MLNToast : NSObject <MLNEntityExportProtocol>
+@interface MLNUIToast : NSObject <MLNUIEntityExportProtocol>
 
 + (instancetype)toastWithMessage:(NSString *)message duration:(CGFloat)duration;
 

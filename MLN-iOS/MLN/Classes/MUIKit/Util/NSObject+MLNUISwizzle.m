@@ -1,14 +1,14 @@
 //
-//  NSObject+MLNSwizzle.m
-// MLN
+//  NSObject+MLNUISwizzle.m
+// MLNUI
 //
 //  Created by Dai Dongpeng on 2020/3/7.
 //
 
-#import "NSObject+MLNSwizzle.h"
+#import "NSObject+MLNUISwizzle.h"
 @import ObjectiveC;
 
-@implementation NSObject (MLNSwizzle)
+@implementation NSObject (MLNUISwizzle)
 
 + (void)mln_swizzleInstanceSelector:(SEL)originSelector
                 withNewSelector:(SEL)newSelector

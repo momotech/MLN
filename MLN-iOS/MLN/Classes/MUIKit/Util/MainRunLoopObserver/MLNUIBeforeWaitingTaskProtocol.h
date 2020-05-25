@@ -1,17 +1,17 @@
 //
-//  MLNBeforeWaitingTaskProtocol.h
-//  MMLNua
+//  MLNUIBeforeWaitingTaskProtocol.h
+//  MMLNUIua
 //
 //  Created by MoMo on 2019/3/19.
 //
 
-#ifndef MLNBeforeWaitingTaskProtocol_h
-#define MLNBeforeWaitingTaskProtocol_h
+#ifndef MLNUIBeforeWaitingTaskProtocol_h
+#define MLNUIBeforeWaitingTaskProtocol_h
 
-@protocol MLNBeforeWaitingTaskProtocol <NSObject>
+@protocol MLNUIBeforeWaitingTaskProtocol <NSObject>
 
 - (void)doTask;
 
 @end
 
-#endif /* MLNBeforeWaitingTaskProtocol_h */
+#endif /* MLNUIBeforeWaitingTaskProtocol_h */

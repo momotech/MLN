@@ -1,17 +1,17 @@
 //
-//  MLNTabSegmentScrollHandler.m
-//  MLN
+//  MLNUITabSegmentScrollHandler.m
+//  MLNUI
 //
 //  Created by MoMo on 2019/1/16.
 //
 
-#import "MLNTabSegmentScrollHandler.h"
+#import "MLNUITabSegmentScrollHandler.h"
 
-@interface MLNTabSegmentScrollHandler ()
+@interface MLNUITabSegmentScrollHandler ()
 @property (nonatomic) BOOL dragStart;
 @end
 
-@implementation MLNTabSegmentScrollHandler
+@implementation MLNUITabSegmentScrollHandler
 
 - (void)getScrollPageProgressWithScrollView:(UIScrollView *)scrollView leftIndex:(NSInteger *)leftIndex rightIndex:(NSInteger *)rightIndex scrollProgress:(CGFloat *)scrollProgress {
     CGFloat offSetX = scrollView.contentOffset.x;

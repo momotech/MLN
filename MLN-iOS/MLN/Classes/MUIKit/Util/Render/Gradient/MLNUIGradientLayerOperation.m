@@ -1,18 +1,18 @@
 //
-//  MLNGradientLayerTask.m
-//  MMLNua
+//  MLNUIGradientLayerTask.m
+//  MMLNUIua
 //
 //  Created by MoMo on 2019/4/16.
 //
 
-#import "MLNGradientLayerOperation.h"
+#import "MLNUIGradientLayerOperation.h"
 
-@interface MLNGradientLayerOperation ()
+@interface MLNUIGradientLayerOperation ()
 
 @property (nonatomic, strong) CAGradientLayer *gradientLayer;
 
 @end
-@implementation MLNGradientLayerOperation
+@implementation MLNUIGradientLayerOperation
 
 - (instancetype)initWithTargetView:(UIView *)targetView
 {
@@ -38,7 +38,7 @@
     }
 }
 
-- (void)setDirection:(MLNGradientType)direction
+- (void)setDirection:(MLNUIGradientType)direction
 {
     if (_direction != direction) {
         _direction = direction;
@@ -83,15 +83,15 @@
     self.gradientLayer.colors = @[(__bridge id)(self.startColor.CGColor),(__bridge id)(self.endColor.CGColor)];
     self.gradientLayer.locations = @[@0.0,@1.0];
     switch (self.direction) {
-        case MLNGradientTypeRightToLeft:
+        case MLNUIGradientTypeRightToLeft:
             self.gradientLayer.startPoint = CGPointMake(1.0, 0.0);
             self.gradientLayer.endPoint = CGPointMake(0.0, 0.0);
             break;
-        case MLNGradientTypeTopToBottom:
+        case MLNUIGradientTypeTopToBottom:
             self.gradientLayer.startPoint = CGPointMake(0.0, 0.0);
             self.gradientLayer.endPoint = CGPointMake(0.0, 1.0);
             break;
-        case MLNGradientTypeBottomToTop:
+        case MLNUIGradientTypeBottomToTop:
             self.gradientLayer.startPoint = CGPointMake(0.0, 1.0);
             self.gradientLayer.endPoint = CGPointMake(0.0, 0.0);
             break;

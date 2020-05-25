@@ -1,17 +1,17 @@
 //
-//  MLNViewPagerAdapter.h
-//  MLN
+//  MLNUIViewPagerAdapter.h
+//  MLNUI
 //
 //  Created by MoMo on 2018/8/31.
 //
 
 #import <UIKit/UIKit.h>
-#import "MLNEntityExportProtocol.h"
-#import "MLNViewPager.h"
+#import "MLNUIEntityExportProtocol.h"
+#import "MLNUIViewPager.h"
 
-@interface MLNViewPagerAdapter : NSObject <MLNEntityExportProtocol, UICollectionViewDataSource, MLNCycleScrollViewDelegate>
+@interface MLNUIViewPagerAdapter : NSObject <MLNUIEntityExportProtocol, UICollectionViewDataSource, MLNUICycleScrollViewDelegate>
 
-@property (nonatomic, weak) MLNViewPager *viewPager;
+@property (nonatomic, weak) MLNUIViewPager *viewPager;
 @property (nonatomic, assign) NSInteger cellCounts;
 @property (nonatomic, weak) UICollectionView *targetCollectionView;
 

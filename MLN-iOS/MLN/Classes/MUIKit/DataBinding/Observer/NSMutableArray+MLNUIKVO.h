@@ -1,6 +1,6 @@
 //
-//  NSMutableArray+MLNKVO.h
-// MLN
+//  NSMutableArray+MLNUIKVO.h
+// MLNUI
 //
 //  Created by Dai Dongpeng on 2020/3/5.
 //
@@ -9,15 +9,15 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-//typedef void(^MLNKVOObserverHandler)(NSKeyValueChange type, NSMutableArray *newArray, NSDictionary<NSKeyValueChangeKey, id> *change);
+//typedef void(^MLNUIKVOObserverHandler)(NSKeyValueChange type, NSMutableArray *newArray, NSDictionary<NSKeyValueChangeKey, id> *change);
 
-typedef void(^MLNKVOArrayHandler)(NSMutableArray *array,NSDictionary<NSKeyValueChangeKey, id> *change);
-//typedef void(^MLNKVOSubcribeArray)(NSDictionary<NSKeyValueChangeKey, id> *change);
+typedef void(^MLNUIKVOArrayHandler)(NSMutableArray *array,NSDictionary<NSKeyValueChangeKey, id> *change);
+//typedef void(^MLNUIKVOSubcribeArray)(NSDictionary<NSKeyValueChangeKey, id> *change);
 
-@interface NSMutableArray (MLNKVO)
+@interface NSMutableArray (MLNUIKVO)
 
-- (void)mln_addObserverHandler:(MLNKVOArrayHandler)handler;
-- (void)mln_removeObserverHandler:(MLNKVOArrayHandler)handler;
+- (void)mln_addObserverHandler:(MLNUIKVOArrayHandler)handler;
+- (void)mln_removeObserverHandler:(MLNUIKVOArrayHandler)handler;
 - (void)mln_clearObserverHandlers;
 
 - (void)mln_startKVO;

@@ -1,13 +1,13 @@
 //
-//  MLNScaleType.h
+//  MLNUIScaleType.h
 //  
 //
 //  Created by MoMo on 2018/7/5.
 //
 
 #import <Foundation/Foundation.h>
-#import "MLNGlobalVarExportProtocol.h"
+#import "MLNUIGlobalVarExportProtocol.h"
 
-@interface MLNContentMode : NSObject <MLNGlobalVarExportProtocol>
+@interface MLNUIContentMode : NSObject <MLNUIGlobalVarExportProtocol>
 
 @end

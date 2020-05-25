@@ -1,21 +1,21 @@
 //
-//  MLNBlock.m
-//  MLNCore
+//  MLNUIBlock.m
+//  MLNUICore
 //
 //  Created by MoMo on 2019/7/23.
 //
 
-#import "MLNBlock.h"
-#import "MLNLuaCore.h"
-#import "MLNLuaTable.h"
-#import "MLNHeader.h"
+#import "MLNUIBlock.h"
+#import "MLNUILuaCore.h"
+#import "MLNUILuaTable.h"
+#import "MLNUIHeader.h"
 
-@interface MLNBlock ()
+@interface MLNUIBlock ()
 
 @property (nonatomic, strong) NSMutableArray *arguments;
 
 @end
-@implementation MLNBlock
+@implementation MLNUIBlock
 
 static int mln_errorFunc_traceback (lua_State *L) {
     if(!lua_isstring(L,1))
@@ -37,7 +37,7 @@ static int mln_errorFunc_traceback (lua_State *L) {
 }
 
 #pragma mark - Initialization
-- (instancetype)initWithLuaCore:(MLNLuaCore *)luaCore indexOnLuaStack:(int)index
+- (instancetype)initWithLuaCore:(MLNUILuaCore *)luaCore indexOnLuaStack:(int)index
 {
     if (self = [super init]) {
         _luaCore = luaCore;
@@ -52,7 +52,7 @@ static int mln_errorFunc_traceback (lua_State *L) {
 {
     NSAssert([NSThread isMainThread], @"This method to be executed in the main thread!");
     if (L == NULL) {
-        MLNError(self.luaCore, @"Lua state is released");
+        MLNUIError(self.luaCore, @"Lua state is released");
         return;
     }
     lua_checkstack(L, 4); // [ ... ]
@@ -107,7 +107,7 @@ static int mln_errorFunc_traceback (lua_State *L) {
         }
     } else {
         NSString *msg = [NSString stringWithUTF8String:lua_tostring(L, -1)];
-        MLNError(MLN_LUA_CORE(L), @"fail to call lua function! error message: %@", msg);
+        MLNUIError(MLNUI_LUA_CORE(L), @"fail to call lua function! error message: %@", msg);
     }
     // 恢复栈
     lua_settop(L, base);
@@ -201,7 +201,7 @@ static int mln_errorFunc_traceback (lua_State *L) {
         [self.arguments addObject:[NSNull null]];
         return;
     }
-    if ([argument mln_nativeType] != MLNNativeTypeMDictionary) {
+    if ([argument mln_nativeType] != MLNUINativeTypeMDictionary) {
         argument = [NSMutableDictionary dictionaryWithDictionary:argument];
     }
     [self.arguments addObject:argument];
@@ -214,7 +214,7 @@ static int mln_errorFunc_traceback (lua_State *L) {
         [self.arguments addObject:[NSNull null]];
         return;
     }
-    if ([argument mln_nativeType] != MLNNativeTypeMArray) {
+    if ([argument mln_nativeType] != MLNUINativeTypeMArray) {
         argument = [NSMutableArray arrayWithArray:argument];
     }
     [self.arguments addObject:argument];
@@ -240,7 +240,7 @@ static int mln_errorFunc_traceback (lua_State *L) {
     [self.arguments addObject:argument];
 }
 
-- (void)addLuaTableArgument:(MLNLuaTable *)argument;
+- (void)addLuaTableArgument:(MLNUILuaTable *)argument;
 {
     NSAssert([NSThread isMainThread], @"This method to be executed in the main thread!");
     if (!argument) {
@@ -250,7 +250,7 @@ static int mln_errorFunc_traceback (lua_State *L) {
     [self.arguments addObject:argument];
 }
 
-static void releaseAllInMainQueue (MLNLuaCore *luaCore, void * selfp) {
+static void releaseAllInMainQueue (MLNUILuaCore *luaCore, void * selfp) {
     if (isMainQueue) {
         lua_State *L = luaCore.state;
         if (L) {

@@ -1,16 +1,16 @@
 //
-//  MLNSafeAreaAdapter.h
-//  MLN
+//  MLNUISafeAreaAdapter.h
+//  MLNUI
 //
 //  Created by MoMo on 2019/12/20.
 //
 
 #import <Foundation/Foundation.h>
-#import "MLNEntityExportProtocol.h"
+#import "MLNUIEntityExportProtocol.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface MLNSafeAreaAdapter : NSObject <MLNEntityExportProtocol>
+@interface MLNUISafeAreaAdapter : NSObject <MLNUIEntityExportProtocol>
 
 @property (nonatomic, assign) CGFloat insetsTop;
 @property (nonatomic, assign) CGFloat insetsBottom;

@@ -6,11 +6,11 @@
 //
 
 #import "MLNUIViewController.h"
-#import "MLNKitInstanceFactory.h"
-#import "MLNExporter.h"
-#import "MLNKitInstance.h"
-#import "MLNLuaBundle.h"
-#import "MLNLuaCore.h"
+#import "MLNUIKitInstanceFactory.h"
+#import "MLNUIExporter.h"
+#import "MLNUIKitInstance.h"
+#import "MLNUILuaBundle.h"
+#import "MLNUILuaCore.h"
 #import "MLNUIViewController+DataBinding.h"
 
 @interface MLNUIViewController ()
@@ -55,19 +55,19 @@
 
 - (void)prepareForLoadEntryFile {
     [self.kitInstance changeRootView:self.view];
-    [self.kitInstance changeLuaBundle:[[MLNLuaBundle alloc] initWithBundle:self.bundle]];
+    [self.kitInstance changeLuaBundle:[[MLNUILuaBundle alloc] initWithBundle:self.bundle]];
     
     self.globalModel = [NSMutableDictionary dictionary];
     [self bindData:self.globalModel forKey:@"Global"];
 }
 
-- (BOOL)regClasses:(NSArray<Class<MLNExportProtocol>> *)registerClasses {
+- (BOOL)regClasses:(NSArray<Class<MLNUIExportProtocol>> *)registerClasses {
     return [self.kitInstance registerClasses:registerClasses error:NULL];
 }
 
-- (MLNKitInstance *)kitInstance {
+- (MLNUIKitInstance *)kitInstance {
     if (!_kitInstance) {
-        _kitInstance = [[MLNKitInstanceFactory defaultFactory] createKitInstanceWithViewController:self];
+        _kitInstance = [[MLNUIKitInstanceFactory defaultFactory] createKitInstanceWithViewController:self];
     }
     return _kitInstance;
 }

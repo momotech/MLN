@@ -1,18 +1,18 @@
 //
-//  MLNCollectionViewAutoFitAdapter.m
+//  MLNUICollectionViewAutoFitAdapter.m
 //
 //
 //  Created by MoMo on 2019/2/19.
 //
 
-#import "MLNCollectionViewAutoFitAdapter.h"
-#import "MLNViewExporterMacro.h"
-#import "MLNCollectionViewCell.h"
-#import "MLNCollectionView.h"
-#import "UIScrollView+MLNKit.h"
-#import "MLNBlock.h"
+#import "MLNUICollectionViewAutoFitAdapter.h"
+#import "MLNUIViewExporterMacro.h"
+#import "MLNUICollectionViewCell.h"
+#import "MLNUICollectionView.h"
+#import "UIScrollView+MLNUIKit.h"
+#import "MLNUIBlock.h"
 
-@implementation MLNCollectionViewAutoFitAdapter
+@implementation MLNUICollectionViewAutoFitAdapter
 
 - (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -35,15 +35,15 @@
         maxWidth = CGFLOAT_MAX;
         maxHeight = height;
     }
-    MLNCollectionViewCell *cell = [[MLNCollectionViewCell alloc] initWithFrame:CGRectMake(0, 0, width, height)];
+    MLNUICollectionViewCell *cell = [[MLNUICollectionViewCell alloc] initWithFrame:CGRectMake(0, 0, width, height)];
     [cell pushContentViewWithLuaCore:self.mln_luaCore];
     if (!cell.isInited) {
-        MLNBlock *initCallback = [self initedCellCallbackByReuseId:reuseId];
+        MLNUIBlock *initCallback = [self initedCellCallbackByReuseId:reuseId];
         [initCallback addLuaTableArgument:[cell getLuaTable]];
         [initCallback callIfCan];
         [cell initCompleted];
     }
-    MLNBlock *reuseCallback = [self fillCellDataCallbackByReuseId:reuseId];
+    MLNUIBlock *reuseCallback = [self fillCellDataCallbackByReuseId:reuseId];
     [reuseCallback addLuaTableArgument:[cell getLuaTable]];
     [reuseCallback addIntArgument:(int)indexPath.section+1];
     [reuseCallback addIntArgument:(int)indexPath.item+1];
@@ -54,7 +54,7 @@
     return size;
 }
 
-LUA_EXPORT_BEGIN(MLNCollectionViewAutoFitAdapter)
-LUA_EXPORT_END(MLNCollectionViewAutoFitAdapter, CollectionViewAutoFitAdapter, YES, "MLNCollectionViewAdapter", NULL)
+LUA_EXPORT_BEGIN(MLNUICollectionViewAutoFitAdapter)
+LUA_EXPORT_END(MLNUICollectionViewAutoFitAdapter, CollectionViewAutoFitAdapter, YES, "MLNUICollectionViewAdapter", NULL)
 
 @end

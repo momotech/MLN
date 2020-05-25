@@ -1,25 +1,25 @@
 //
-//  MLNLinearLayoutNode.m
+//  MLNUILinearLayoutNode.m
 //
 //
 //  Created by MoMo on 2018/10/26.
 //
 
-#import "MLNLinearLayoutNode.h"
-#import "MLNKitHeader.h"
-#import "UIView+MLNLayout.h"
+#import "MLNUILinearLayoutNode.h"
+#import "MLNUIKitHeader.h"
+#import "UIView+MLNUILayout.h"
 
-@interface MLNLinearLayoutNode ()
+@interface MLNUILinearLayoutNode ()
 
-@property (nonatomic, strong) NSArray<MLNLayoutNode *> *prioritySubnodes;
+@property (nonatomic, strong) NSArray<MLNUILayoutNode *> *prioritySubnodes;
 
 @end
-@implementation MLNLinearLayoutNode
+@implementation MLNUILinearLayoutNode
 
 - (instancetype)initWithTargetView:(UIView *)targetView
 {
     if (self = [super initWithTargetView:targetView]) {
-        _direction = MLNLayoutDirectionHorizontal;
+        _direction = MLNUILayoutDirectionHorizontal;
     }
     return self;
 }
@@ -41,7 +41,7 @@
     [self mergeMeasurementTypes];
     resortingSubnodesIfNeed(self);
     switch (self.direction) {
-        case MLNLayoutDirectionVertical:
+        case MLNUILayoutDirectionVertical:
             measureVertical(self, maxWidth, maxHeight);
             break;
         default:
@@ -51,7 +51,7 @@
     return CGSizeMake(self.measuredWidth, self.measuredHeight);
 }
 
-MLN_FORCE_INLINE void measureHorizontal(MLNLinearLayoutNode __unsafe_unretained *node, CGFloat maxWidth, CGFloat maxHeight) {
+MLNUI_FORCE_INLINE void measureHorizontal(MLNUILinearLayoutNode __unsafe_unretained *node, CGFloat maxWidth, CGFloat maxHeight) {
     CGFloat myMaxWidth = [node myMaxWidthWithMaxWidth:maxWidth];
     CGFloat myMaxHeight = [node myMaxHeightWithMaxHeight:maxHeight];
     
@@ -63,16 +63,16 @@ MLN_FORCE_INLINE void measureHorizontal(MLNLinearLayoutNode __unsafe_unretained 
     BOOL needDirty = NO;
     int totalWeight = 0;
     
-    NSArray<MLNLayoutNode *> *subnodes = node.prioritySubnodes;
+    NSArray<MLNUILayoutNode *> *subnodes = node.prioritySubnodes;
     for (NSUInteger i  = 0; i < subnodes.count; i++) {
-        MLNLayoutNode *subnode = subnodes[i];
+        MLNUILayoutNode *subnode = subnodes[i];
         if (subnode.isGone) {
             if (subnode.isDirty) {
                 needDirty = YES;
             }
             continue;
         }
-        if (subnode.weight > 0 && subnode.widthType != MLNLayoutNodeStatusIdle) {
+        if (subnode.weight > 0 && subnode.widthType != MLNUILayoutNodeStatusIdle) {
             totalWeight += subnode.weight;
         }
         if (subnode.isDirty) {
@@ -84,7 +84,7 @@ MLN_FORCE_INLINE void measureHorizontal(MLNLinearLayoutNode __unsafe_unretained 
         CGFloat subMaxHeight = usableZoneHeight - subnode.marginTop - subnode.marginBottom;
         CGSize subMeasuredSize = [subnode measureSizeWithMaxWidth:subMaxWidth maxHeight:subMaxHeight]; //计算子节点
         switch (subnode.layoutStrategy) {
-            case MLNLayoutStrategyNativeFrame:
+            case MLNUILayoutStrategyNativeFrame:
                 totalWidth = MAX(totalWidth, totalWidth +subMeasuredSize.width);
                 needMaxHeight = MAX(needMaxHeight, subMeasuredSize.height);
                 break;
@@ -101,7 +101,7 @@ MLN_FORCE_INLINE void measureHorizontal(MLNLinearLayoutNode __unsafe_unretained 
     // width
     if (!node.isWidthExcatly) {
         switch (node.mergedWidthType) {
-            case MLNLayoutMeasurementTypeWrapContent:
+            case MLNUILayoutMeasurementTypeWrapContent:
                 // padding
                 totalWidth += node.paddingLeft +node.paddingRight;
                 // min
@@ -110,7 +110,7 @@ MLN_FORCE_INLINE void measureHorizontal(MLNLinearLayoutNode __unsafe_unretained 
                 totalWidth = MIN(myMaxWidth, totalWidth);
                 measuredWidth = totalWidth;
                 break;
-            case MLNLayoutMeasurementTypeMatchParent:
+            case MLNUILayoutMeasurementTypeMatchParent:
                 measuredWidth = MAX(node.minWidth, myMaxWidth);
                 break;
             default:
@@ -120,7 +120,7 @@ MLN_FORCE_INLINE void measureHorizontal(MLNLinearLayoutNode __unsafe_unretained 
     // height
     if (!node.isHeightExcatly) {
         switch (node.mergedHeightType) {
-            case MLNLayoutMeasurementTypeWrapContent:
+            case MLNUILayoutMeasurementTypeWrapContent:
                 // padding
                 needMaxHeight += node.paddingTop +node.paddingBottom;
                 // min
@@ -129,7 +129,7 @@ MLN_FORCE_INLINE void measureHorizontal(MLNLinearLayoutNode __unsafe_unretained 
                 needMaxHeight = MIN(myMaxHeight, needMaxHeight);
                 measuredHeight = needMaxHeight;
                 break;
-            case MLNLayoutMeasurementTypeMatchParent:
+            case MLNUILayoutMeasurementTypeMatchParent:
                 measuredHeight = MAX(node.minHeight, myMaxHeight);
                 break;
             default:
@@ -145,20 +145,20 @@ MLN_FORCE_INLINE void measureHorizontal(MLNLinearLayoutNode __unsafe_unretained 
 }
 
 // 只可能变高度-宽度不变
-MLN_FORCE_INLINE void measureHeightForWeightHorizontal(MLNLinearLayoutNode __unsafe_unretained *node, CGFloat measuredWidth, CGFloat maxHeight,  int totalWeight) {
+MLNUI_FORCE_INLINE void measureHeightForWeightHorizontal(MLNUILinearLayoutNode __unsafe_unretained *node, CGFloat measuredWidth, CGFloat maxHeight,  int totalWeight) {
     CGFloat measuredHeight = 0.f;
     CGFloat usableZoneWidth = measuredWidth - node.paddingLeft - node.paddingRight;
     CGFloat usableZoneHeight = maxHeight - node.paddingTop - node.paddingBottom;
     
-    NSArray<MLNLayoutNode *> *subnodes = node.prioritySubnodes;
-    NSMutableArray<MLNLayoutNode *> *proportionNodes = [NSMutableArray arrayWithCapacity:subnodes.count];
+    NSArray<MLNUILayoutNode *> *subnodes = node.prioritySubnodes;
+    NSMutableArray<MLNUILayoutNode *> *proportionNodes = [NSMutableArray arrayWithCapacity:subnodes.count];
     for (NSUInteger i  = 0; i < subnodes.count; i++) {
-        MLNLayoutNode *subnode = subnodes[i];
+        MLNUILayoutNode *subnode = subnodes[i];
         if (subnode.isGone) {
             continue;
         }
         CGFloat subWidth = 0.f;
-        if (totalWeight > 0 && subnode.weight > 0 && subnode.widthType != MLNLayoutNodeStatusIdle) {
+        if (totalWeight > 0 && subnode.weight > 0 && subnode.widthType != MLNUILayoutNodeStatusIdle) {
             subnode.widthProportion = subnode.weight * 1.f / totalWeight * 1.f;
             [subnode needLayout];
             [proportionNodes addObject:subnode];
@@ -167,7 +167,7 @@ MLN_FORCE_INLINE void measureHeightForWeightHorizontal(MLNLinearLayoutNode __uns
             subWidth = subnode.measuredWidth;
         }
         switch (subnode.layoutStrategy) {
-            case MLNLayoutStrategyNativeFrame:
+            case MLNUILayoutStrategyNativeFrame:
                 usableZoneWidth -= subWidth;
                 break;
             default: {
@@ -179,7 +179,7 @@ MLN_FORCE_INLINE void measureHeightForWeightHorizontal(MLNLinearLayoutNode __uns
     
     CGFloat needMaxHeight = 0.f;
     
-    for (MLNLayoutNode *subnode in proportionNodes) {
+    for (MLNUILayoutNode *subnode in proportionNodes) {
         CGFloat subMaxWidth = usableZoneWidth;
         CGFloat subMaxHeight = usableZoneHeight - subnode.marginTop - subnode.marginBottom;
         //计算子节点
@@ -188,7 +188,7 @@ MLN_FORCE_INLINE void measureHeightForWeightHorizontal(MLNLinearLayoutNode __uns
         subnode.widthProportion = 0;
         usableZoneWidth -= subMeasuredSize.width;
         switch (subnode.layoutStrategy) {
-            case MLNLayoutStrategyNativeFrame:
+            case MLNUILayoutStrategyNativeFrame:
                 needMaxHeight = MAX(needMaxHeight, subMeasuredSize.height);
                 break;
             default: {
@@ -200,7 +200,7 @@ MLN_FORCE_INLINE void measureHeightForWeightHorizontal(MLNLinearLayoutNode __uns
     // height
     if (!node.isHeightExcatly) {
         switch (node.mergedHeightType) {
-            case MLNLayoutMeasurementTypeWrapContent:
+            case MLNUILayoutMeasurementTypeWrapContent:
                 // padding
                 needMaxHeight += node.paddingTop +node.paddingBottom;
                 // min
@@ -209,7 +209,7 @@ MLN_FORCE_INLINE void measureHeightForWeightHorizontal(MLNLinearLayoutNode __uns
                 needMaxHeight = node.maxHeight > 0 ? MIN(node.maxHeight, needMaxHeight) : needMaxHeight;
                 measuredHeight = needMaxHeight;
                 break;
-            case MLNLayoutMeasurementTypeMatchParent:
+            case MLNUILayoutMeasurementTypeMatchParent:
                 measuredHeight = MAX(node.minHeight, maxHeight);
                 break;
             default:
@@ -222,7 +222,7 @@ MLN_FORCE_INLINE void measureHeightForWeightHorizontal(MLNLinearLayoutNode __uns
 }
 
 
-MLN_FORCE_INLINE void measureVertical(MLNLinearLayoutNode __unsafe_unretained *node, CGFloat maxWidth, CGFloat maxHeight) {
+MLNUI_FORCE_INLINE void measureVertical(MLNUILinearLayoutNode __unsafe_unretained *node, CGFloat maxWidth, CGFloat maxHeight) {
     CGFloat myMaxWidth = [node myMaxWidthWithMaxWidth:maxWidth];
     CGFloat myMaxHeight = [node myMaxHeightWithMaxHeight:maxHeight];
     
@@ -234,16 +234,16 @@ MLN_FORCE_INLINE void measureVertical(MLNLinearLayoutNode __unsafe_unretained *n
     BOOL needDirty = NO;
     int totalWeight = 0;
     
-    NSArray<MLNLayoutNode *> *subnodes = node.prioritySubnodes;
+    NSArray<MLNUILayoutNode *> *subnodes = node.prioritySubnodes;
     for (NSUInteger i  = 0; i < subnodes.count; i++) {
-        MLNLayoutNode *subnode = subnodes[i];
+        MLNUILayoutNode *subnode = subnodes[i];
         if (subnode.isGone) {
             if (subnode.isDirty) {
                 needDirty = YES;
             }
             continue;
         }
-        if (subnode.weight > 0 && subnode.heightType != MLNLayoutNodeStatusIdle) {
+        if (subnode.weight > 0 && subnode.heightType != MLNUILayoutNodeStatusIdle) {
             totalWeight += subnode.weight;
         }
         if (subnode.isDirty) {
@@ -255,7 +255,7 @@ MLN_FORCE_INLINE void measureVertical(MLNLinearLayoutNode __unsafe_unretained *n
         CGFloat subMaxHeight = usableZoneHeight - totalHeight - subnode.marginTop - subnode.marginBottom;
         CGSize subMeasuredSize = [subnode measureSizeWithMaxWidth:subMaxWidth maxHeight:subMaxHeight]; //计算子节点
         switch (subnode.layoutStrategy) {
-            case MLNLayoutStrategyNativeFrame:
+            case MLNUILayoutStrategyNativeFrame:
                 needMaxWidth = MAX(needMaxWidth, subMeasuredSize.width);
                 totalHeight = MAX(totalHeight, totalHeight + subMeasuredSize.height);
                 break;
@@ -272,7 +272,7 @@ MLN_FORCE_INLINE void measureVertical(MLNLinearLayoutNode __unsafe_unretained *n
     // width
     if (!node.isWidthExcatly) {
         switch (node.mergedWidthType) {
-            case MLNLayoutMeasurementTypeWrapContent:
+            case MLNUILayoutMeasurementTypeWrapContent:
                 // padding
                 needMaxWidth += node.paddingLeft +node.paddingRight;
                 // max
@@ -281,7 +281,7 @@ MLN_FORCE_INLINE void measureVertical(MLNLinearLayoutNode __unsafe_unretained *n
                 needMaxWidth = node.minWidth > 0 ? MAX(needMaxWidth, node.minWidth) : needMaxWidth;
                 measuredWidth = needMaxWidth;
                 break;
-            case MLNLayoutMeasurementTypeMatchParent:
+            case MLNUILayoutMeasurementTypeMatchParent:
                 measuredWidth = MAX(node.minWidth, myMaxWidth);
                 break;
             default:
@@ -292,7 +292,7 @@ MLN_FORCE_INLINE void measureVertical(MLNLinearLayoutNode __unsafe_unretained *n
     // height
     if (!node.isHeightExcatly) {
         switch (node.mergedHeightType) {
-            case MLNLayoutMeasurementTypeWrapContent:
+            case MLNUILayoutMeasurementTypeWrapContent:
                 // padding
                 totalHeight += node.paddingTop +node.paddingBottom;
                 // max
@@ -301,7 +301,7 @@ MLN_FORCE_INLINE void measureVertical(MLNLinearLayoutNode __unsafe_unretained *n
                 totalHeight = node.minHeight > 0 ? MAX(totalHeight, node.minHeight) : totalHeight;
                 measuredHeight = totalHeight;
                 break;
-            case MLNLayoutMeasurementTypeMatchParent:
+            case MLNUILayoutMeasurementTypeMatchParent:
                 measuredHeight = MAX(node.minHeight, myMaxHeight);
                 break;
             default:
@@ -318,21 +318,21 @@ MLN_FORCE_INLINE void measureVertical(MLNLinearLayoutNode __unsafe_unretained *n
 }
 
 // 只可能变宽度-高度不变
-MLN_FORCE_INLINE void measureWidthForWeightVertical(MLNLinearLayoutNode __unsafe_unretained *node, CGFloat measuredWidth, CGFloat measuredHeight, CGFloat myMaxWidth,  int totalWeight) {
+MLNUI_FORCE_INLINE void measureWidthForWeightVertical(MLNUILinearLayoutNode __unsafe_unretained *node, CGFloat measuredWidth, CGFloat measuredHeight, CGFloat myMaxWidth,  int totalWeight) {
     CGFloat usableZoneWidth = myMaxWidth - node.paddingLeft - node.paddingRight;
     CGFloat usableZoneHeight = measuredHeight - node.paddingTop - node.paddingBottom;
     
     BOOL needDirty = NO;
     
-    NSArray<MLNLayoutNode *> *subnodes = node.prioritySubnodes;
-    NSMutableArray<MLNLayoutNode *> *proportionNodes = [NSMutableArray arrayWithCapacity:subnodes.count];
+    NSArray<MLNUILayoutNode *> *subnodes = node.prioritySubnodes;
+    NSMutableArray<MLNUILayoutNode *> *proportionNodes = [NSMutableArray arrayWithCapacity:subnodes.count];
     for (NSUInteger i  = 0; i < subnodes.count; i++) {
-        MLNLayoutNode *subnode = subnodes[i];
+        MLNUILayoutNode *subnode = subnodes[i];
         if (subnode.isGone) {
             continue;
         }
         CGFloat subHeight = 0.f;
-        if (totalWeight > 0 && subnode.weight > 0 && subnode.heightType != MLNLayoutNodeStatusIdle) {
+        if (totalWeight > 0 && subnode.weight > 0 && subnode.heightType != MLNUILayoutNodeStatusIdle) {
             subnode.heightProportion = subnode.weight * 1.f / totalWeight * 1.f;
             needDirty = YES;
             [subnode needLayout];
@@ -342,7 +342,7 @@ MLN_FORCE_INLINE void measureWidthForWeightVertical(MLNLinearLayoutNode __unsafe
             subHeight = subnode.measuredHeight;
         }
         switch (subnode.layoutStrategy) {
-            case MLNLayoutStrategyNativeFrame:
+            case MLNUILayoutStrategyNativeFrame:
                 usableZoneHeight -= subHeight;
                 break;
             default: {
@@ -354,7 +354,7 @@ MLN_FORCE_INLINE void measureWidthForWeightVertical(MLNLinearLayoutNode __unsafe
     
     int needMaxWidth = 0.f;
     
-    for (MLNLayoutNode *subnode in proportionNodes) {
+    for (MLNUILayoutNode *subnode in proportionNodes) {
         CGFloat subMaxWidth = usableZoneWidth - subnode.marginLeft - subnode.marginRight;
         CGFloat subMaxHeight = usableZoneHeight;
         //计算子节点
@@ -363,7 +363,7 @@ MLN_FORCE_INLINE void measureWidthForWeightVertical(MLNLinearLayoutNode __unsafe
         subnode.heightProportion = 0;
         usableZoneHeight -= subMeasuredSize.height;
         switch (subnode.layoutStrategy) {
-            case MLNLayoutStrategyNativeFrame:
+            case MLNUILayoutStrategyNativeFrame:
                 needMaxWidth = MAX(needMaxWidth, subMeasuredSize.width);
                 break;
             default: {
@@ -376,7 +376,7 @@ MLN_FORCE_INLINE void measureWidthForWeightVertical(MLNLinearLayoutNode __unsafe
     // width
     if (!node.isWidthExcatly) {
         switch (node.mergedWidthType) {
-            case MLNLayoutMeasurementTypeWrapContent:
+            case MLNUILayoutMeasurementTypeWrapContent:
                 // padding
                 needMaxWidth += node.paddingLeft +node.paddingRight;
                 // max
@@ -385,7 +385,7 @@ MLN_FORCE_INLINE void measureWidthForWeightVertical(MLNLinearLayoutNode __unsafe
                 needMaxWidth = node.minWidth > 0 ? MAX(needMaxWidth, node.minWidth) : needMaxWidth;
                 measuredWidth = needMaxWidth;
                 break;
-            case MLNLayoutMeasurementTypeMatchParent:
+            case MLNUILayoutMeasurementTypeMatchParent:
                 measuredWidth = MAX(node.minWidth, myMaxWidth);
                 break;
             default:
@@ -403,7 +403,7 @@ MLN_FORCE_INLINE void measureWidthForWeightVertical(MLNLinearLayoutNode __unsafe
         return;
     }
     switch (self.direction) {
-        case MLNLayoutDirectionVertical:
+        case MLNUILayoutDirectionVertical:
             layoutVertical(self);
             break;
         default:
@@ -412,13 +412,13 @@ MLN_FORCE_INLINE void measureWidthForWeightVertical(MLNLinearLayoutNode __unsafe
     }
 }
 
-MLN_FORCE_INLINE void layoutHorizontal(MLNLinearLayoutNode __unsafe_unretained *node) {
+MLNUI_FORCE_INLINE void layoutHorizontal(MLNUILinearLayoutNode __unsafe_unretained *node) {
     CGFloat maxX = node.paddingLeft;
     CGFloat layoutZoneHeight = node.measuredHeight - node.paddingTop - node.paddingBottom;
     CGFloat layoutZoneBottom = node.measuredHeight - node.paddingBottom;
-    NSArray<MLNLayoutNode *> *subnodes = node.subnodes;
+    NSArray<MLNUILayoutNode *> *subnodes = node.subnodes;
     for (NSUInteger i  = 0; i < subnodes.count; i++) {
-        MLNLayoutNode *subnode = subnodes[i];
+        MLNUILayoutNode *subnode = subnodes[i];
         if (subnode.isGone) {
             continue;
         }
@@ -431,14 +431,14 @@ MLN_FORCE_INLINE void layoutHorizontal(MLNLinearLayoutNode __unsafe_unretained *
         maxX += childWidth + subnode.marginRight;
         // child's y
         CGFloat childY = 0.f;
-        switch (subnode.gravity & MLNGravityVerticalMask) {
-            case MLNGravityCenterVertical:
+        switch (subnode.gravity & MLNUIGravityVerticalMask) {
+            case MLNUIGravityCenterVertical:
                 childY = node.paddingTop + (layoutZoneHeight - childHeight)*.5f + subnode.marginTop - subnode.marginBottom;
                 break;
-            case MLNGravityBottom:
+            case MLNUIGravityBottom:
                 childY = layoutZoneBottom - childHeight - subnode.marginBottom;
                 break;
-            case MLNGravityTop:
+            case MLNUIGravityTop:
             default:
                 childY = node.paddingTop + subnode.marginTop;
                 break;
@@ -448,7 +448,7 @@ MLN_FORCE_INLINE void layoutHorizontal(MLNLinearLayoutNode __unsafe_unretained *
         subnode.measuredY = childY;
         [subnode updateTargetViewFrameIfNeed];
         if (subnode.isContainer) {
-            [(MLNLayoutContainerNode *)subnode layoutSubnodes];
+            [(MLNUILayoutContainerNode *)subnode layoutSubnodes];
         }
         if (subnode.overlayNode) {
             [subnode layoutOverlayNode];
@@ -456,13 +456,13 @@ MLN_FORCE_INLINE void layoutHorizontal(MLNLinearLayoutNode __unsafe_unretained *
     }
 }
 
-MLN_FORCE_INLINE void layoutVertical(MLNLinearLayoutNode __unsafe_unretained *node) {
+MLNUI_FORCE_INLINE void layoutVertical(MLNUILinearLayoutNode __unsafe_unretained *node) {
     CGFloat maxY = node.paddingTop;
     CGFloat layoutZoneWidth = node.measuredWidth - node.paddingLeft - node.paddingRight;
     CGFloat layoutZoneRight = node.measuredWidth - node.paddingRight;
-    NSArray<MLNLayoutNode *> *subnodes = node.subnodes;
+    NSArray<MLNUILayoutNode *> *subnodes = node.subnodes;
     for (NSUInteger i  = 0; i < subnodes.count; i++) {
-        MLNLayoutNode *subnode = subnodes[i];
+        MLNUILayoutNode *subnode = subnodes[i];
         if (subnode.isGone) {
             continue;
         }
@@ -470,14 +470,14 @@ MLN_FORCE_INLINE void layoutVertical(MLNLinearLayoutNode __unsafe_unretained *no
         CGFloat childX = 0.f;
         CGFloat childWidth = subnode.measuredWidth;
         CGFloat childHeight = subnode.measuredHeight;
-        switch (subnode.gravity & MLNGravityHorizontalMask) {
-            case MLNGravityCenterHorizontal:
+        switch (subnode.gravity & MLNUIGravityHorizontalMask) {
+            case MLNUIGravityCenterHorizontal:
                 childX = node.paddingLeft + (layoutZoneWidth - childWidth)*.5f + subnode.marginLeft - subnode.marginRight;
                 break;
-            case MLNGravityRight:
+            case MLNUIGravityRight:
                 childX = layoutZoneRight - childWidth - subnode.marginRight;;
                 break;
-            case MLNGravityLeft:
+            case MLNUIGravityLeft:
             default:
                 childX = node.paddingLeft + subnode.marginLeft;
                 break;
@@ -492,7 +492,7 @@ MLN_FORCE_INLINE void layoutVertical(MLNLinearLayoutNode __unsafe_unretained *no
         subnode.measuredY = childY;
         [subnode updateTargetViewFrameIfNeed];
         if (subnode.isContainer) {
-            [(MLNLayoutContainerNode *)subnode layoutSubnodes];
+            [(MLNUILayoutContainerNode *)subnode layoutSubnodes];
         }
         if (subnode.overlayNode) {
             [subnode layoutOverlayNode];
@@ -501,13 +501,13 @@ MLN_FORCE_INLINE void layoutVertical(MLNLinearLayoutNode __unsafe_unretained *no
 }
 
 #pragma mark - Sort
-static MLN_FORCE_INLINE void resortingSubnodesIfNeed(MLNLinearLayoutNode __unsafe_unretained *node) {
+static MLNUI_FORCE_INLINE void resortingSubnodesIfNeed(MLNUILinearLayoutNode __unsafe_unretained *node) {
     if (node.needSorting) {
-        NSArray<MLNLayoutNode *> *subnodes = node.subnodes;
+        NSArray<MLNUILayoutNode *> *subnodes = node.subnodes;
         NSUInteger count = subnodes.count;
         node.prioritySubnodes = subnodes;
         if (count > 1) {
-            NSMutableArray<MLNLayoutNode *> *nodes_m = [NSMutableArray arrayWithArray:subnodes];
+            NSMutableArray<MLNUILayoutNode *> *nodes_m = [NSMutableArray arrayWithArray:subnodes];
             if (count == 2) {
                 if ([nodes_m firstObject].measurePriority < [nodes_m lastObject].measurePriority) {
                     [nodes_m exchangeObjectAtIndex:0 withObjectAtIndex:1];
@@ -523,13 +523,13 @@ static MLN_FORCE_INLINE void resortingSubnodesIfNeed(MLNLinearLayoutNode __unsaf
     }
 }
 
-static MLN_FORCE_INLINE void quickSort(MLNLinearLayoutNode __unsafe_unretained *node, NSMutableArray<MLNLayoutNode *> __unsafe_unretained *nodes_m, NSUInteger head, NSUInteger tail) {
+static MLNUI_FORCE_INLINE void quickSort(MLNUILinearLayoutNode __unsafe_unretained *node, NSMutableArray<MLNUILayoutNode *> __unsafe_unretained *nodes_m, NSUInteger head, NSUInteger tail) {
     if (head >= tail || nodes_m.count <2) {
         return;
     }
     NSUInteger i = head, j = tail;
     NSUInteger base = head;
-    MLNLayoutNode *baseNode = nodes_m[base]; // 基准
+    MLNUILayoutNode *baseNode = nodes_m[base]; // 基准
     while (i < j) {
         // right
         while (baseNode.measurePriority >= nodes_m[j].measurePriority && i < j)

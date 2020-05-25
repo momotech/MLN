@@ -1,6 +1,6 @@
 //
-//  MLNGaussEffectHandler.h
-//  MLN
+//  MLNUIGaussEffectHandler.h
+//  MLNUI
 //
 //  Created by MOMO on 2019/9/20.
 //
@@ -9,7 +9,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface MLNGaussEffectHandler : NSObject
+@interface MLNUIGaussEffectHandler : NSObject
 
 + (UIImage *)coreBlurImage:(UIImage *)image withBlurValue:(CGFloat)blurValue;
 

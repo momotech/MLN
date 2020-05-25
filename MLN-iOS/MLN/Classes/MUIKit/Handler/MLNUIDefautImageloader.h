@@ -1,16 +1,16 @@
 //
-//  MLNDefautImageloader.h
-//  MLN
+//  MLNUIDefautImageloader.h
+//  MLNUI
 //
 //  Created by Dai Dongpeng on 2020/5/13.
 //
 
 #import <Foundation/Foundation.h>
-#import <MLNImageLoaderProtocol.h>
+#import <MLNUIImageLoaderProtocol.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface MLNDefautImageloader : NSObject <MLNImageLoaderProtocol>
+@interface MLNUIDefautImageloader : NSObject <MLNUIImageLoaderProtocol>
 + (instancetype)defaultIamgeLoader;
 @end
 

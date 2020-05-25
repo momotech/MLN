@@ -1,29 +1,29 @@
 //
-//  MLNRect.m
-//  MLN
+//  MLNUIRect.m
+//  MLNUI
 //
 //  Created by MoMo on 2019/8/2.
 //
 
-#import "MLNRect.h"
-#import "NSObject+MLNCore.h"
-#import "MLNLuaCore.h"
+#import "MLNUIRect.h"
+#import "NSObject+MLNUICore.h"
+#import "MLNUILuaCore.h"
 
-@interface MLNRect ()
+@interface MLNUIRect ()
 
 @property (nonatomic, assign) CGRect rect;
 
 @end
-@implementation MLNRect
+@implementation MLNUIRect
 
 + (instancetype)rectWithCGRect:(CGRect)rect
 {
-    MLNRect *r = [[MLNRect alloc] init];
+    MLNUIRect *r = [[MLNUIRect alloc] init];
     r.rect = rect;
     return r;
 }
 
-- (instancetype)initWithLuaCore:(MLNLuaCore *)luaCore xNum:(NSNumber *)xNum yNum:(NSNumber *)yNum widthNum:(NSNumber *)widthNum heightNum:(NSNumber *)heightNum
+- (instancetype)initWithLuaCore:(MLNUILuaCore *)luaCore xNum:(NSNumber *)xNum yNum:(NSNumber *)yNum widthNum:(NSNumber *)widthNum heightNum:(NSNumber *)heightNum
 {
     if (self = [super initWithLuaCore:luaCore]) {
         CGFloat x = CGFloatValueFromNumber(xNum);
@@ -123,13 +123,13 @@
     return NO;
 }
 
-LUA_EXPORT_BEGIN(MLNRect)
-LUA_EXPORT_PROPERTY(point, "lua_setPoint:", "point", MLNRect)
-LUA_EXPORT_PROPERTY(size, "lua_setSize:", "size", MLNRect)
-LUA_EXPORT_PROPERTY(x, "lua_setX:", "lua_x", MLNRect)
-LUA_EXPORT_PROPERTY(y, "lua_setY:", "lua_y", MLNRect)
-LUA_EXPORT_PROPERTY(width, "lua_setWidth:", "lua_width", MLNRect)
-LUA_EXPORT_PROPERTY(height, "lua_setHeight:", "lua_height", MLNRect)
-LUA_EXPORT_END(MLNRect, Rect, NO, NULL, "initWithLuaCore:xNum:yNum:widthNum:heightNum:")
+LUA_EXPORT_BEGIN(MLNUIRect)
+LUA_EXPORT_PROPERTY(point, "lua_setPoint:", "point", MLNUIRect)
+LUA_EXPORT_PROPERTY(size, "lua_setSize:", "size", MLNUIRect)
+LUA_EXPORT_PROPERTY(x, "lua_setX:", "lua_x", MLNUIRect)
+LUA_EXPORT_PROPERTY(y, "lua_setY:", "lua_y", MLNUIRect)
+LUA_EXPORT_PROPERTY(width, "lua_setWidth:", "lua_width", MLNUIRect)
+LUA_EXPORT_PROPERTY(height, "lua_setHeight:", "lua_height", MLNUIRect)
+LUA_EXPORT_END(MLNUIRect, Rect, NO, NULL, "initWithLuaCore:xNum:yNum:widthNum:heightNum:")
 
 @end

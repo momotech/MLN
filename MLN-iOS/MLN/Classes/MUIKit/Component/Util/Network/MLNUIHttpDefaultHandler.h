@@ -1,16 +1,16 @@
 //
-//  MLNHttpDefaultHandler.h
-//  MLN
+//  MLNUIHttpDefaultHandler.h
+//  MLNUI
 //
 //  Created by MoMo on 2019/8/3.
 //
 
 #import <Foundation/Foundation.h>
-#import "MLNHttpHandlerProtocol.h"
+#import "MLNUIHttpHandlerProtocol.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface MLNHttpDefaultHandler : NSObject <MLNHttpHandlerProtocol>
+@interface MLNUIHttpDefaultHandler : NSObject <MLNUIHttpHandlerProtocol>
 
 @end
 

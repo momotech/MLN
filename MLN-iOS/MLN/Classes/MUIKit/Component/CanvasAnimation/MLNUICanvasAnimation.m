@@ -1,43 +1,43 @@
 //
-//  MLNCanvasAnimation.m
-//  MLN
+//  MLNUICanvasAnimation.m
+//  MLNUI
 //
 //  Created by MoMo on 2019/5/13.
 //
 
-#import "MLNCanvasAnimation.h"
-#import "MLNKitHeader.h"
-#import "MLNEntityExporterMacro.h"
-#import "MLNCanvasAnimationDelegate.h"
-#import "MLNBeforeWaitingTask.h"
-#import "UIView+MLNKit.h"
-#import "UIView+MLNLayout.h"
-#import "MLNLayoutNode.h"
-#import "MLNAnimationSet.h"
-#import "MLNAnimationHandler.h"
-#import "NSDictionary+MLNSafety.h"
-#import "MLNKeyframeAnimationBuilder.h"
+#import "MLNUICanvasAnimation.h"
+#import "MLNUIKitHeader.h"
+#import "MLNUIEntityExporterMacro.h"
+#import "MLNUICanvasAnimationDelegate.h"
+#import "MLNUIBeforeWaitingTask.h"
+#import "UIView+MLNUIKit.h"
+#import "UIView+MLNUILayout.h"
+#import "MLNUILayoutNode.h"
+#import "MLNUIAnimationSet.h"
+#import "MLNUIAnimationHandler.h"
+#import "NSDictionary+MLNUISafety.h"
+#import "MLNUIKeyframeAnimationBuilder.h"
 
-#define kAnimationStart @"MLNCanvasAnimation.Start"
-#define kAnimationEnd @"MLNCanvasAnimation.End"
-#define kAnimationRepeat @"MLNCanvasAnimation.Repeat"
+#define kAnimationStart @"MLNUICanvasAnimation.Start"
+#define kAnimationEnd @"MLNUICanvasAnimation.End"
+#define kAnimationRepeat @"MLNUICanvasAnimation.Repeat"
 
 #define kCanvasAnimationCapcity 2
 
-@interface MLNCanvasAnimation()<CAAnimationDelegate, MLNAnimationHandlerCallbackProtocol>
+@interface MLNUICanvasAnimation()<CAAnimationDelegate, MLNUIAnimationHandlerCallbackProtocol>
 {
     CAAnimationGroup *_animationGroup;
     NSUInteger _repeatCounting;
 }
 
 @property (nonatomic, weak, readwrite) UIView *targetView;
-@property (nonatomic, strong) NSMutableDictionary<NSString *, MLNBlock *> *animationCallbacks;
-@property (nonatomic, strong) MLNBeforeWaitingTask *lazyTask;
-@property (nonatomic, weak) MLNCanvasAnimationDelegate *animationDelegate;
+@property (nonatomic, strong) NSMutableDictionary<NSString *, MLNUIBlock *> *animationCallbacks;
+@property (nonatomic, strong) MLNUIBeforeWaitingTask *lazyTask;
+@property (nonatomic, weak) MLNUICanvasAnimationDelegate *animationDelegate;
 
 @end
 
-@implementation MLNCanvasAnimation
+@implementation MLNUICanvasAnimation
 
 @synthesize pivotX = _pivotX;
 @synthesize pivotY = _pivotY;
@@ -46,9 +46,9 @@
 {
     if (self = [super init]) {
         _pivotX = 0.5;
-        _pivotXType = MLNAnimationValueTypeRelativeToSelf;
+        _pivotXType = MLNUIAnimationValueTypeRelativeToSelf;
         _pivotY = 0.5;
-        _pivotYType = MLNAnimationValueTypeRelativeToSelf;
+        _pivotYType = MLNUIAnimationValueTypeRelativeToSelf;
     }
     return self;
 }
@@ -57,9 +57,9 @@
 - (void)startWithView:(UIView *)targetView
 {
     switch (self.status) {
-        case MLNCanvasAnimationStatusPause:
-        case MLNCanvasAnimationStatusRunning:
-        case MLNCanvasAnimationStatusStop:
+        case MLNUICanvasAnimationStatusPause:
+        case MLNUICanvasAnimationStatusRunning:
+        case MLNUICanvasAnimationStatusStop:
         {
             targetView.layer.speed = 1.0;
             targetView.layer.timeOffset = .0f;
@@ -74,27 +74,27 @@
             break;
     }
     _targetView = targetView;
-    _status = MLNCanvasAnimationStatusReadyToPlay;
-    [MLN_KIT_INSTANCE(self.mln_luaCore) pushLazyTask:self.lazyTask];
+    _status = MLNUICanvasAnimationStatusReadyToPlay;
+    [MLNUI_KIT_INSTANCE(self.mln_luaCore) pushLazyTask:self.lazyTask];
 }
 
 - (void)cancel
 {
     [_targetView.layer removeAnimationForKey:self.animationKey];
-    [[MLNAnimationHandler sharedHandler] removeCallback:self];
-    self.status = MLNCanvasAnimationStatusNone;
+    [[MLNUIAnimationHandler sharedHandler] removeCallback:self];
+    self.status = MLNUICanvasAnimationStatusNone;
 }
 
 - (void)lua_pause
 {
     switch (self.status) {
-        case MLNCanvasAnimationStatusReadyToPlay:
-        case MLNCanvasAnimationStatusPause:
-            self.status = MLNCanvasAnimationStatusPause;
+        case MLNUICanvasAnimationStatusReadyToPlay:
+        case MLNUICanvasAnimationStatusPause:
+            self.status = MLNUICanvasAnimationStatusPause;
             break;
-        case MLNCanvasAnimationStatusRunning:
+        case MLNUICanvasAnimationStatusRunning:
         {
-            self.status = MLNCanvasAnimationStatusPause;
+            self.status = MLNUICanvasAnimationStatusPause;
             CFTimeInterval pausedTime = [self.targetView.layer convertTime:CACurrentMediaTime() fromLayer:nil];
             self.targetView.layer.speed = 0.f;
             self.targetView.layer.timeOffset = pausedTime;
@@ -108,13 +108,13 @@
 - (void)lua_stop
 {
     switch (self.status) {
-        case MLNCanvasAnimationStatusStop:
+        case MLNUICanvasAnimationStatusStop:
             return;
         default:
-            self.status = MLNCanvasAnimationStatusStop;
-            [MLN_KIT_INSTANCE(self.mln_luaCore) popLazyTask:self.lazyTask];
+            self.status = MLNUICanvasAnimationStatusStop;
+            [MLNUI_KIT_INSTANCE(self.mln_luaCore) popLazyTask:self.lazyTask];
             [self.targetView.layer removeAnimationForKey:self.animationKey];
-            [[MLNAnimationHandler sharedHandler] removeCallback:self];
+            [[MLNUIAnimationHandler sharedHandler] removeCallback:self];
             return;
     }
 }
@@ -122,27 +122,27 @@
 - (void)lua_resumeAnimations
 {
     switch (self.status) {
-        case MLNCanvasAnimationStatusPause:
+        case MLNUICanvasAnimationStatusPause:
         {
-            self.status = MLNCanvasAnimationStatusReadyToResume;
-            [MLN_KIT_INSTANCE(self.mln_luaCore) pushLazyTask:self.lazyTask];
+            self.status = MLNUICanvasAnimationStatusReadyToResume;
+            [MLNUI_KIT_INSTANCE(self.mln_luaCore) pushLazyTask:self.lazyTask];
         }
         default:
             break;
     }
 }
 
-- (void)setStartCallback:(MLNBlock *)callback
+- (void)setStartCallback:(MLNUIBlock *)callback
 {
     
 }
 
-- (void)setEndCallback:(MLNBlock *)callback
+- (void)setEndCallback:(MLNUIBlock *)callback
 {
     
 }
 
-- (void)setRepeatCallback:(MLNBlock *)callback
+- (void)setRepeatCallback:(MLNUIBlock *)callback
 {
     
 }
@@ -155,7 +155,7 @@
 - (void)doAnimation
 {
     switch (_status) {
-        case MLNCanvasAnimationStatusReadyToPlay:{
+        case MLNUICanvasAnimationStatusReadyToPlay:{
             self.animationGroup.animations = [self animationValues];
             self.animationGroup.beginTime = CACurrentMediaTime() + _delay;
             for (CABasicAnimation *anim in self.animationGroup.animations) {
@@ -165,23 +165,23 @@
             self.animationGroup.removedOnCompletion = _autoBack;
             self.animationGroup.fillMode = _autoBack ? kCAFillModeBackwards : kCAFillModeBoth;
             
-            self.status = MLNCanvasAnimationStatusRunning;
+            self.status = MLNUICanvasAnimationStatusRunning;
             [self animationRealStart];
             if (self.repeatCount) {
-                [[MLNAnimationHandler sharedHandler] addCallback:self];
+                [[MLNUIAnimationHandler sharedHandler] addCallback:self];
             }
             [self setupAnchorPointWithTargetView:_targetView];
             [_targetView.layer addAnimation:self.animationGroup forKey:self.animationKey];
         }
             break;
-        case MLNCanvasAnimationStatusReadyToResume:{
+        case MLNUICanvasAnimationStatusReadyToResume:{
             CFTimeInterval pauseTime = [self.targetView.layer timeOffset];
             self.targetView.layer.speed = 1.0;
             self.targetView.layer.timeOffset = 0.0;
             self.targetView.layer.beginTime = 0.0;
             CFTimeInterval timeSincePause = [self.targetView.layer convertTime:CACurrentMediaTime() fromLayer:nil] - pauseTime;
             self.targetView.layer.beginTime = timeSincePause;
-            self.status = MLNCanvasAnimationStatusRunning;
+            self.status = MLNUICanvasAnimationStatusRunning;
         }
             break;
         default:
@@ -204,8 +204,8 @@
         [self animationRepeatCallback:_repeatCounting];
     }
     if (self.repeatCount > 0 && self.repeatCount <= repeatCount) {
-        [[MLNAnimationHandler sharedHandler] removeCallback:self];
-        self.status = MLNCanvasAnimationStatusNone;
+        [[MLNUIAnimationHandler sharedHandler] removeCallback:self];
+        self.status = MLNUICanvasAnimationStatusNone;
     }
 }
 
@@ -224,7 +224,7 @@
 - (void)animationRepeatCallback:(NSUInteger)repeatCount
 {
     // callback
-    MLNBlock *callback = [self.animationCallbacks objectForKey:kAnimationRepeat];
+    MLNUIBlock *callback = [self.animationCallbacks objectForKey:kAnimationRepeat];
     if (callback) {
         [callback addUIntegerArgument:repeatCount];
         [callback callIfCan];
@@ -234,7 +234,7 @@
 - (void)animationStartCallback
 {
     // callback
-    MLNBlock *callback = [self.animationCallbacks objectForKey:kAnimationStart];
+    MLNUIBlock *callback = [self.animationCallbacks objectForKey:kAnimationStart];
     if (callback) {
         [callback callIfCan];
     }
@@ -242,7 +242,7 @@
 
 - (void)animationStopCallback:(BOOL)finishedFlag
 {
-    MLNBlock *callback = [self.animationCallbacks objectForKey:kAnimationEnd];
+    MLNUIBlock *callback = [self.animationCallbacks objectForKey:kAnimationEnd];
     if (callback) {
         [callback addBOOLArgument:finishedFlag];
         [callback callIfCan];
@@ -253,7 +253,7 @@
 - (void)animationDidStart:(CAAnimation *)anim
 {
     // callback
-//    MLNBlock *callback = [self.animationCallbacks objectForKey:kAnimationStart];
+//    MLNUIBlock *callback = [self.animationCallbacks objectForKey:kAnimationStart];
 //    if (callback) {
 //        [callback callIfCan];
 //    }
@@ -263,10 +263,10 @@
 {
     // callback
     [self animationStopCallback:flag];
-    [[MLNAnimationHandler sharedHandler] removeCallback:self];
+    [[MLNUIAnimationHandler sharedHandler] removeCallback:self];
 }
 
-#pragma mark - MLNAnimationHandlerCallbackProtocol
+#pragma mark - MLNUIAnimationHandlerCallbackProtocol
 - (void)doAnimationFrame:(NSTimeInterval)frameTime {
     [self tick];
 }
@@ -278,21 +278,21 @@
     CGFloat anchorX = 0.5;
     CGFloat anchorY = 0.5;
     switch (_pivotXType) {
-        case MLNAnimationValueTypeAbsolute:{
+        case MLNUIAnimationValueTypeAbsolute:{
             anchorX = _pivotX / _targetView.frame.size.width ;
         }
             break;
-        case MLNAnimationValueTypeRelativeToSelf:
+        case MLNUIAnimationValueTypeRelativeToSelf:
             anchorX = _pivotX;
             break;
         default:
             break;
     }
     switch (_pivotYType) {
-        case MLNAnimationValueTypeAbsolute:
+        case MLNUIAnimationValueTypeAbsolute:
             anchorY = _pivotY / _targetView.frame.size.height;
             break;
-        case MLNAnimationValueTypeRelativeToSelf:
+        case MLNUIAnimationValueTypeRelativeToSelf:
             anchorY = _pivotY;
             break;
         default:
@@ -323,7 +323,7 @@
 
 #pragma mark - copy
 - (nonnull id)copyWithZone:(nullable NSZone *)zone {
-    MLNCanvasAnimation *copy = [[self class] allocWithZone:zone];
+    MLNUICanvasAnimation *copy = [[self class] allocWithZone:zone];
     copy.pivotX = _pivotX;
     copy.pivotXType = _pivotXType;
     copy.pivotY = _pivotY;
@@ -357,26 +357,26 @@
     return animation;
 }
 
-- (void)setInterpolator:(MLNAnimationInterpolatorType)interpolator
+- (void)setInterpolator:(MLNUIAnimationInterpolatorType)interpolator
 {
     if (_interpolator != interpolator) {
         _interpolator = interpolator;
-        self.animationGroup.timingFunction = [MLNAnimationConst buildTimingFunction:interpolator];
+        self.animationGroup.timingFunction = [MLNUIAnimationConst buildTimingFunction:interpolator];
         [self resetAnimations];
     }
 }
 
-- (CABasicAnimation *)baseAnimationWithKeyPath:(NSString *)key interpolatorType:(MLNAnimationInterpolatorType)interpolatorType
+- (CABasicAnimation *)baseAnimationWithKeyPath:(NSString *)key interpolatorType:(MLNUIAnimationInterpolatorType)interpolatorType
 {
     switch (interpolatorType) {
-        case MLNAnimationInterpolatorTypeBounce:
-        case MLNAnimationInterpolatorTypeOvershoot: {
-            return (CABasicAnimation *)[MLNKeyframeAnimationBuilder buildAnimationWithKeyPath:key interpolatorType:MLNAnimationInterpolatorTypeBounce];
+        case MLNUIAnimationInterpolatorTypeBounce:
+        case MLNUIAnimationInterpolatorTypeOvershoot: {
+            return (CABasicAnimation *)[MLNUIKeyframeAnimationBuilder buildAnimationWithKeyPath:key interpolatorType:MLNUIAnimationInterpolatorTypeBounce];
         }
-        case MLNAnimationInterpolatorTypeLinear:
-        case MLNAnimationInterpolatorTypeAccelerate:
-        case MLNAnimationInterpolatorTypeDecelerate:
-        case MLNAnimationInterpolatorTypeAccelerateDecelerate:
+        case MLNUIAnimationInterpolatorTypeLinear:
+        case MLNUIAnimationInterpolatorTypeAccelerate:
+        case MLNUIAnimationInterpolatorTypeDecelerate:
+        case MLNUIAnimationInterpolatorTypeAccelerateDecelerate:
         default:
             return [CABasicAnimation animationWithKeyPath:key];
             break;
@@ -418,14 +418,14 @@
 {
     if (!_animationGroup) {
         _animationGroup = [CAAnimationGroup animation];
-        MLNCanvasAnimationDelegate *delegate = [[MLNCanvasAnimationDelegate alloc] initWithAnimation:self];
+        MLNUICanvasAnimationDelegate *delegate = [[MLNUICanvasAnimationDelegate alloc] initWithAnimation:self];
         _animationGroup.delegate = delegate;
         _animationDelegate = delegate;
     }
     return _animationGroup;
 }
 
-- (NSMutableDictionary<NSString *,MLNBlock *> *)animationCallbacks
+- (NSMutableDictionary<NSString *,MLNUIBlock *> *)animationCallbacks
 {
     if (!_animationCallbacks) {
         _animationCallbacks = [NSMutableDictionary dictionaryWithCapacity:kCanvasAnimationCapcity];
@@ -433,7 +433,7 @@
     return _animationCallbacks;
 }
 
-- (void)setPivotXType:(MLNAnimationValueType)pivotXType
+- (void)setPivotXType:(MLNUIAnimationValueType)pivotXType
 {
     _pivotXType = pivotXType;
 }
@@ -443,7 +443,7 @@
     _pivotX = pivotX;
 }
 
-- (void)setPivotYType:(MLNAnimationValueType)pivotYType
+- (void)setPivotYType:(MLNUIAnimationValueType)pivotYType
 {
     _pivotYType = pivotYType;
 }
@@ -459,10 +459,10 @@
         return _pivotX;
     }
     switch (_pivotXType) {
-        case MLNAnimationValueTypeAbsolute:
+        case MLNUIAnimationValueTypeAbsolute:
             return (_pivotX / _targetView.lua_node.width);
             break;
-        case MLNAnimationValueTypeRelativeToSelf:
+        case MLNUIAnimationValueTypeRelativeToSelf:
             return _pivotX;
             break;
         default:
@@ -477,10 +477,10 @@
         return _pivotY;
     }
     switch (_pivotXType) {
-        case MLNAnimationValueTypeAbsolute:
+        case MLNUIAnimationValueTypeAbsolute:
             return (_pivotY / _targetView.lua_node.height);
             break;
-        case MLNAnimationValueTypeRelativeToSelf:
+        case MLNUIAnimationValueTypeRelativeToSelf:
             return _pivotY;
             break;
         default:
@@ -515,17 +515,17 @@
     self.animationGroup.repeatCount = repeatCount;
 }
 
-- (void)setRepeatType:(MLNAnimationRepeatType)repeatType
+- (void)setRepeatType:(MLNUIAnimationRepeatType)repeatType
 {
     _repeatType = repeatType;
-    self.animationGroup.autoreverses = repeatType == MLNAnimationRepeatTypeReverse;
+    self.animationGroup.autoreverses = repeatType == MLNUIAnimationRepeatTypeReverse;
 }
 
-- (MLNBeforeWaitingTask *)lazyTask
+- (MLNUIBeforeWaitingTask *)lazyTask
 {
     if (!_lazyTask) {
         __weak typeof(self) wself = self;
-        _lazyTask = [MLNBeforeWaitingTask taskWithCallback:^{
+        _lazyTask = [MLNUIBeforeWaitingTask taskWithCallback:^{
             __strong typeof(wself) sself = wself;
             [sself doAnimation];
         }];
@@ -536,39 +536,39 @@
 #pragma mark - Export Method
 - (void)lua_startWithView:(UIView *)targetView
 {
-    MLNCheckTypeAndNilValue(targetView, @"View", [UIView class])
+    MLNUICheckTypeAndNilValue(targetView, @"View", [UIView class])
     [self startWithView:targetView];
 }
 
-- (void)lua_setStartCallback:(MLNBlock *)callback
+- (void)lua_setStartCallback:(MLNUIBlock *)callback
 {
     if (!callback) {
-        MLNKitLuaError(@"callback must not be nil!");
+        MLNUIKitLuaError(@"callback must not be nil!");
         return;
     }
     [self.animationCallbacks setObject:callback forKey:kAnimationStart];
 }
 
-- (void)lua_setEndCallback:(MLNBlock *)callback
+- (void)lua_setEndCallback:(MLNUIBlock *)callback
 {
     if (!callback) {
-        MLNKitLuaError(@"callback must not be nil!");
+        MLNUIKitLuaError(@"callback must not be nil!");
         return;
     }
     [self.animationCallbacks setObject:callback forKey:kAnimationEnd];
 }
 
-- (void)lua_setRepeatCallback:(MLNBlock *)callback
+- (void)lua_setRepeatCallback:(MLNUIBlock *)callback
 {
     if (!callback) {
-        MLNKitLuaError(@"callback must not be nil!");
+        MLNUIKitLuaError(@"callback must not be nil!");
         return;
     }
     [self.animationCallbacks setObject:callback forKey:kAnimationRepeat];
 }
 
 #pragma mark - Export Method
-- (void)lua_setRepeat:(MLNAnimationRepeatType)type count:(float)count
+- (void)lua_setRepeat:(MLNUIAnimationRepeatType)type count:(float)count
 {
     if (count < 0) {
         count = MAX_INT;
@@ -579,11 +579,11 @@
     self.repeatType = type;
     self.repeatCount = count;
     switch (type) {
-        case MLNAnimationRepeatTypeBeginToEnd:
+        case MLNUIAnimationRepeatTypeBeginToEnd:
             self.animationGroup.repeatCount = count;
             self.animationGroup.autoreverses = NO;
             break;
-        case MLNAnimationRepeatTypeReverse:
+        case MLNUIAnimationRepeatTypeReverse:
             self.animationGroup.repeatCount = count * 1.0 / 2;
             self.animationGroup.autoreverses = YES;
             break;
@@ -600,25 +600,25 @@
 }
 
 #pragma mark - Export To Lua
-LUA_EXPORT_BEGIN(MLNCanvasAnimation)
-LUA_EXPORT_PROPERTY(setPivotXType, "setPivotXType:", "pivotXType", MLNCanvasAnimation)
-LUA_EXPORT_PROPERTY(setPivotX, "setPivotX:", "lua_pivotX", MLNCanvasAnimation)
-LUA_EXPORT_PROPERTY(setPivotYType, "setPivotYType:", "pivotYType", MLNCanvasAnimation)
-LUA_EXPORT_PROPERTY(setPivotY, "setPivotY:", "lua_pivotY", MLNCanvasAnimation)
-LUA_EXPORT_PROPERTY(setDuration, "setDuration:", "duration", MLNCanvasAnimation)
-LUA_EXPORT_PROPERTY(setDelay, "setDelay:", "delay", MLNCanvasAnimation)
-LUA_EXPORT_PROPERTY(setInterpolator, "setInterpolator:", "interpolator", MLNCanvasAnimation)
-LUA_EXPORT_METHOD(setRepeat, "lua_setRepeat:count:",  MLNCanvasAnimation)
-LUA_EXPORT_METHOD(startWithView, "lua_startWithView:", MLNCanvasAnimation)
-LUA_EXPORT_METHOD(cancel, "cancel", MLNCanvasAnimation)
-LUA_EXPORT_METHOD(pause, "lua_pause", MLNCanvasAnimation)
-LUA_EXPORT_METHOD(resume, "lua_resumeAnimations", MLNCanvasAnimation)
-LUA_EXPORT_METHOD(stop, "lua_stop", MLNCanvasAnimation)
-LUA_EXPORT_METHOD(setStartCallback, "lua_setStartCallback:", MLNCanvasAnimation)
-LUA_EXPORT_METHOD(setEndCallback, "lua_setEndCallback:", MLNCanvasAnimation)
-LUA_EXPORT_METHOD(setRepeatCallback, "lua_setRepeatCallback:", MLNCanvasAnimation)
-LUA_EXPORT_METHOD(clone, "lua_clone", MLNCanvasAnimation)
-LUA_EXPORT_METHOD(setAutoBack, "lua_setAutoBack:", MLNCanvasAnimation)
-LUA_EXPORT_END(MLNCanvasAnimation, CanvasAnimation, NO, NULL, NULL)
+LUA_EXPORT_BEGIN(MLNUICanvasAnimation)
+LUA_EXPORT_PROPERTY(setPivotXType, "setPivotXType:", "pivotXType", MLNUICanvasAnimation)
+LUA_EXPORT_PROPERTY(setPivotX, "setPivotX:", "lua_pivotX", MLNUICanvasAnimation)
+LUA_EXPORT_PROPERTY(setPivotYType, "setPivotYType:", "pivotYType", MLNUICanvasAnimation)
+LUA_EXPORT_PROPERTY(setPivotY, "setPivotY:", "lua_pivotY", MLNUICanvasAnimation)
+LUA_EXPORT_PROPERTY(setDuration, "setDuration:", "duration", MLNUICanvasAnimation)
+LUA_EXPORT_PROPERTY(setDelay, "setDelay:", "delay", MLNUICanvasAnimation)
+LUA_EXPORT_PROPERTY(setInterpolator, "setInterpolator:", "interpolator", MLNUICanvasAnimation)
+LUA_EXPORT_METHOD(setRepeat, "lua_setRepeat:count:",  MLNUICanvasAnimation)
+LUA_EXPORT_METHOD(startWithView, "lua_startWithView:", MLNUICanvasAnimation)
+LUA_EXPORT_METHOD(cancel, "cancel", MLNUICanvasAnimation)
+LUA_EXPORT_METHOD(pause, "lua_pause", MLNUICanvasAnimation)
+LUA_EXPORT_METHOD(resume, "lua_resumeAnimations", MLNUICanvasAnimation)
+LUA_EXPORT_METHOD(stop, "lua_stop", MLNUICanvasAnimation)
+LUA_EXPORT_METHOD(setStartCallback, "lua_setStartCallback:", MLNUICanvasAnimation)
+LUA_EXPORT_METHOD(setEndCallback, "lua_setEndCallback:", MLNUICanvasAnimation)
+LUA_EXPORT_METHOD(setRepeatCallback, "lua_setRepeatCallback:", MLNUICanvasAnimation)
+LUA_EXPORT_METHOD(clone, "lua_clone", MLNUICanvasAnimation)
+LUA_EXPORT_METHOD(setAutoBack, "lua_setAutoBack:", MLNUICanvasAnimation)
+LUA_EXPORT_END(MLNUICanvasAnimation, CanvasAnimation, NO, NULL, NULL)
 
 @end

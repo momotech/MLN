@@ -1,28 +1,28 @@
 //
-//  MLNKitLuaCoreBuilder.m
-//  MLN
+//  MLNUIKitLuaCoreBuilder.m
+//  MLNUI
 //
 //  Created by MoMo on 2019/11/22.
 //
 
-#import "MLNKitLuaCorePool.h"
-#import "MLNKitBridgesManager.h"
-#import "MLNLuaCore.h"
-#import "MLNKiConvertor.h"
+#import "MLNUIKitLuaCorePool.h"
+#import "MLNUIKitBridgesManager.h"
+#import "MLNUILuaCore.h"
+#import "MLNUIKiConvertor.h"
 
-@interface MLNKitLuaCorePool ()
+@interface MLNUIKitLuaCorePool ()
 
-@property (nonatomic) Class<MLNConvertorProtocol> convertorClass;
-@property (nonatomic) Class<MLNExporterProtocol> exporterClass;
-@property (nonatomic, strong) MLNLuaBundle *luaBundle;
-@property (nonatomic, strong) MLNKitBridgesManager *bridgeManager;
+@property (nonatomic) Class<MLNUIConvertorProtocol> convertorClass;
+@property (nonatomic) Class<MLNUIExporterProtocol> exporterClass;
+@property (nonatomic, strong) MLNUILuaBundle *luaBundle;
+@property (nonatomic, strong) MLNUIKitBridgesManager *bridgeManager;
 @property (nonatomic, strong) NSMutableArray *luaCoreQueue;
 @property (nonatomic, assign) NSUInteger capacity;
 
 @end
-@implementation MLNKitLuaCorePool
+@implementation MLNUIKitLuaCorePool
 
-- (instancetype)initWithWithLuaBundle:(MLNLuaBundle *__nullable)luaBundle convertor:(Class<MLNConvertorProtocol> __nullable)convertorClass exporter:(Class<MLNExporterProtocol> __nullable)exporterClass
+- (instancetype)initWithWithLuaBundle:(MLNUILuaBundle *__nullable)luaBundle convertor:(Class<MLNUIConvertorProtocol> __nullable)convertorClass exporter:(Class<MLNUIExporterProtocol> __nullable)exporterClass
 {
     if (self = [self init]) {
         _convertorClass = convertorClass;
@@ -36,16 +36,16 @@
 {
     self = [super init];
     if (self) {
-        _convertorClass = MLNKiConvertor.class;
-        _bridgeManager = [[MLNKitBridgesManager alloc] init];
+        _convertorClass = MLNUIKiConvertor.class;
+        _bridgeManager = [[MLNUIKitBridgesManager alloc] init];
         _luaCoreQueue = [NSMutableArray array];
     }
     return self;
 }
 
-- (MLNLuaCore *)getLuaCore
+- (MLNUILuaCore *)getLuaCore
 {
-    MLNLuaCore *luaCore = [self.luaCoreQueue firstObject];
+    MLNUILuaCore *luaCore = [self.luaCoreQueue firstObject];
     if (!luaCore) {
         luaCore = [self buildLuaCore];
     } else {
@@ -59,7 +59,7 @@
 {
     if (self.luaCoreQueue.count < self.capacity) {
         dispatch_async(dispatch_get_global_queue(0, 0), ^{
-            MLNLuaCore *luaCore = [self buildLuaCore];
+            MLNUILuaCore *luaCore = [self buildLuaCore];
             dispatch_async(dispatch_get_main_queue(), ^{
                 [self.luaCoreQueue addObject:luaCore];
                 [self preload];
@@ -74,9 +74,9 @@
     [self preload];
 }
 
-- (MLNLuaCore *)buildLuaCore
+- (MLNUILuaCore *)buildLuaCore
 {
-    MLNLuaCore *luaCore = [[MLNLuaCore alloc] initWithLuaBundle:self.luaBundle convertor:self.convertorClass exporter:self.exporterClass];
+    MLNUILuaCore *luaCore = [[MLNUILuaCore alloc] initWithLuaBundle:self.luaBundle convertor:self.convertorClass exporter:self.exporterClass];
     [self.bridgeManager registerKitForLuaCore:luaCore];
     return luaCore;
 }

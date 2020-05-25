@@ -1,20 +1,20 @@
 //
-//  MLNLinkProtocol.h
-//  MLN
+//  MLNUILinkProtocol.h
+//  MLNUI
 //
 //  Created by MOMO on 2020/5/8.
 //
 
-#ifndef MLNLinkProtocol_h
-#define MLNLinkProtocol_h
+#ifndef MLNUILinkProtocol_h
+#define MLNUILinkProtocol_h
 
-typedef void(^MLNLinkCloseCallback)(NSDictionary *_Nullable param);
+typedef void(^MLNUILinkCloseCallback)(NSDictionary *_Nullable param);
 
 @class NSDictionary;
-@protocol MLNLinkProtocol <NSObject>
+@protocol MLNUILinkProtocol <NSObject>
 
-+ (__kindof UIViewController * _Nonnull)mlnLinkCreateController:(NSDictionary *_Nullable)params closeCallback:(MLNLinkCloseCallback _Nullable)callback;
++ (__kindof UIViewController * _Nonnull)mlnLinkCreateController:(NSDictionary *_Nullable)params closeCallback:(MLNUILinkCloseCallback _Nullable)callback;
 
 @end
 
-#endif /* MLNLinkProtocol_h */
+#endif /* MLNUILinkProtocol_h */

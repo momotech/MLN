@@ -1,22 +1,22 @@
 //
-//  MLNSizeCahceManager.m
+//  MLNUISizeCahceManager.m
 //
 //
 //  Created by MoMo on 2018/11/12.
 //
 
-#import "MLNSizeCahceManager.h"
-#import "MLNKitInstance.h"
-#import "NSDictionary+MLNSafety.h"
+#import "MLNUISizeCahceManager.h"
+#import "MLNUIKitInstance.h"
+#import "NSDictionary+MLNUISafety.h"
 
-@interface MLNSizeCahceManager ()
+@interface MLNUISizeCahceManager ()
 
 @property (nonatomic, strong) NSMutableDictionary *memCache;
 
 @end
-@implementation MLNSizeCahceManager
+@implementation MLNUISizeCahceManager
 
-- (instancetype)initWithInstance:(MLNKitInstance *)instance
+- (instancetype)initWithInstance:(MLNUIKitInstance *)instance
 {
     if (self = [super init]) {
         _instance = instance;

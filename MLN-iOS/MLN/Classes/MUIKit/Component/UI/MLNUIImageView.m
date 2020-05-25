@@ -1,50 +1,50 @@
 //
-//  MLNImageView.m
+//  MLNUIImageView.m
 //
 //
 //  Created by MoMo on 2018/7/6.
 //
 
-#import "MLNImageView.h"
-#import "MLNKitHeader.h"
-#import "MLNViewExporterMacro.h"
-#import "UIView+MLNKit.h"
-#import "UIView+MLNLayout.h"
-#import "MLNBlock.h"
-#import "MLNNinePatchImageFactory.h"
-#import "MLNBeforeWaitingTask.h"
-#import "MLNLayoutNode.h"
-#import "MLNKitInstanceHandlersManager.h"
-#import "MLNGaussEffectHandler.h"
-#import "MLNCornerImageLoader.h"
+#import "MLNUIImageView.h"
+#import "MLNUIKitHeader.h"
+#import "MLNUIViewExporterMacro.h"
+#import "UIView+MLNUIKit.h"
+#import "UIView+MLNUILayout.h"
+#import "MLNUIBlock.h"
+#import "MLNUINinePatchImageFactory.h"
+#import "MLNUIBeforeWaitingTask.h"
+#import "MLNUILayoutNode.h"
+#import "MLNUIKitInstanceHandlersManager.h"
+#import "MLNUIGaussEffectHandler.h"
+#import "MLNUICornerImageLoader.h"
 
 //高斯模糊，值范围，0 ~ 25
-#define MLN_BlurScope 25.0f
+#define MLNUI_BlurScope 25.0f
 //图片高斯模糊转换系数
-#define MLN_BlurScopeConvertScale 4.0
+#define MLNUI_BlurScopeConvertScale 4.0
 
-@interface MLNImageView()
+@interface MLNUIImageView()
 
 @property (nonatomic, assign) CGFloat blurValue;
 @property (nonatomic, assign) BOOL processImage;
 @property (nonatomic, weak) UIToolbar *effectView;
 @property (nonatomic, copy) NSString *nineImageName;
 @property (nonatomic, assign) BOOL synchronziedSetNineImage;
-@property (nonatomic, strong) MLNBeforeWaitingTask *lazyTask;
-@property (nonatomic, assign) MLNImageViewMode imageViewMode;
+@property (nonatomic, strong) MLNUIBeforeWaitingTask *lazyTask;
+@property (nonatomic, assign) MLNUIImageViewMode imageViewMode;
 @property (nonatomic, assign) UIViewContentMode imageContentMode;
 @property (nonatomic, strong) UIImage *rawImage;
 @property (nonatomic, assign) BOOL enable;
 @end
 
-@implementation MLNImageView
+@implementation MLNUIImageView
 
 - (instancetype)init
 {
     if (self = [super initWithFrame:CGRectZero]){
         self.contentMode = UIViewContentModeScaleAspectFit;
         self.imageContentMode = UIViewContentModeScaleAspectFit;
-        self.imageViewMode = MLNImageViewModeNone;
+        self.imageViewMode = MLNUIImageViewModeNone;
         self.clipsToBounds = YES;
         _enable = YES;
     }
@@ -62,19 +62,19 @@
     self.enable = lua_enable;
 }
 
-- (void)lua_addClick:(MLNBlock *)clickCallback
+- (void)lua_addClick:(MLNUIBlock *)clickCallback
 {
     [super lua_addClick:clickCallback];
     self.userInteractionEnabled = clickCallback != nil;
 }
 
-- (void)lua_addTouch:(MLNBlock *)touchCallBack
+- (void)lua_addTouch:(MLNUIBlock *)touchCallBack
 {
     [super lua_addTouch:touchCallBack];
     self.userInteractionEnabled = touchCallBack != nil;
 }
 
-- (void)lua_addLongPress:(MLNBlock *)longPressCallback
+- (void)lua_addLongPress:(MLNUIBlock *)longPressCallback
 {
     [super lua_addLongPress:longPressCallback];
     self.userInteractionEnabled = longPressCallback != nil;
@@ -95,7 +95,7 @@
 - (void)checkContentMode
 {
     switch (_imageViewMode) {
-        case MLNImageViewModeNine:
+        case MLNUIImageViewModeNine:
             break;
         default:
             if (self.imageContentMode != self.contentMode) {
@@ -105,7 +105,7 @@
     }
 }
 
-- (void)setImageViewMode:(MLNImageViewMode)imageViewMode
+- (void)setImageViewMode:(MLNUIImageViewMode)imageViewMode
 {
     _imageViewMode = imageViewMode;
     [self checkContentMode];
@@ -130,7 +130,7 @@
         return newImage;
     }
     self.rawImage = image;
-    return [MLNGaussEffectHandler coreBlurImage:image withBlurValue:_blurValue * MLN_BlurScopeConvertScale];
+    return [MLNUIGaussEffectHandler coreBlurImage:image withBlurValue:_blurValue * MLNUI_BlurScopeConvertScale];
 }
 
 - (void)checkProcessImageWithBlurValue:(CGFloat)blurValue
@@ -158,7 +158,7 @@
         [self setImage:self.rawImage];
     }
     self.effectView.hidden = NO;
-    self.effectView.alpha = blurValue / MLN_BlurScope;
+    self.effectView.alpha = blurValue / MLNUI_BlurScope;
     [self mln_pushLazyTask:self.lazyTask];
 }
 
@@ -166,14 +166,14 @@
 #pragma mark - Export Methods
 - (void)lua_setImageWith:(nonnull NSString *)imageName
 {
-    self.imageViewMode = MLNImageViewModeNone;
+    self.imageViewMode = MLNUIImageViewModeNone;
     if (!stringNotEmpty(imageName)) {
         self.image = nil;
         return;
     }
-    id<MLNImageLoaderProtocol> imageLoder = self.imageLoader;
-    MLNKitLuaAssert(imageLoder, @"The image delegate must not be nil!");
-    MLNKitLuaAssert([imageLoder respondsToSelector:@selector(imageView:setImageWithPath:)], @"-[imageLoder imageView:path:] was not found!");
+    id<MLNUIImageLoaderProtocol> imageLoder = self.imageLoader;
+    MLNUIKitLuaAssert(imageLoder, @"The image delegate must not be nil!");
+    MLNUIKitLuaAssert([imageLoder respondsToSelector:@selector(imageView:setImageWithPath:)], @"-[imageLoder imageView:path:] was not found!");
     [imageLoder imageView:self setImageWithPath:imageName];
 }
 
@@ -183,23 +183,23 @@
         self.image = nil;
         return;
     }
-    id<MLNImageLoaderProtocol> imageLoder = self.imageLoader;
-    MLNKitLuaAssert(imageLoder, @"The image delegate must not be nil!");
-    MLNKitLuaAssert([imageLoder respondsToSelector:@selector(imageView:setImageWithPath:placeHolderImage:)], @"-[imageLoder imageView:path:placeHolderImage:] was not found!");
+    id<MLNUIImageLoaderProtocol> imageLoder = self.imageLoader;
+    MLNUIKitLuaAssert(imageLoder, @"The image delegate must not be nil!");
+    MLNUIKitLuaAssert([imageLoder respondsToSelector:@selector(imageView:setImageWithPath:placeHolderImage:)], @"-[imageLoder imageView:path:placeHolderImage:] was not found!");
     [imageLoder imageView:self setImageWithPath:imageName placeHolderImage:placeHolder];
 }
 
-- (void)lua_setImageWith:(nonnull NSString *)imageName placeHolderImage:(NSString *)placeHolder callback:(MLNBlock *)callback
+- (void)lua_setImageWith:(nonnull NSString *)imageName placeHolderImage:(NSString *)placeHolder callback:(MLNUIBlock *)callback
 {
-    self.imageViewMode = MLNImageViewModeNone;
+    self.imageViewMode = MLNUIImageViewModeNone;
     if ((!stringNotEmpty(imageName) && !stringNotEmpty(placeHolder))) {
         self.image = nil;
         return;
     }
-    MLNCheckTypeAndNilValue(callback, @"callback", [MLNBlock class]);
-    id<MLNImageLoaderProtocol> imageLoder = self.imageLoader;
-    MLNKitLuaAssert(imageLoder, @"The image delegate must not be nil!");
-    MLNKitLuaAssert([imageLoder respondsToSelector:@selector(imageView:setImageWithPath:placeHolderImage:completed:)], @"-[imageLoder imageView:placeHolderImage:completed:] was not found!");
+    MLNUICheckTypeAndNilValue(callback, @"callback", [MLNUIBlock class]);
+    id<MLNUIImageLoaderProtocol> imageLoder = self.imageLoader;
+    MLNUIKitLuaAssert(imageLoder, @"The image delegate must not be nil!");
+    MLNUIKitLuaAssert([imageLoder respondsToSelector:@selector(imageView:setImageWithPath:placeHolderImage:completed:)], @"-[imageLoder imageView:placeHolderImage:completed:] was not found!");
     [imageLoder imageView:self setImageWithPath:imageName placeHolderImage:placeHolder completed:^(UIImage *image, NSError *error, NSString *imagePath) {
         doInMainQueue(if (callback) {
             BOOL success = YES;
@@ -216,20 +216,20 @@
     }];
 }
 
-- (void)lua_setCornerImageWith:(nonnull NSString *)imageName placeHolderImage:(NSString*)placeHolder cornerRadius:(NSInteger)radius direction:(MLNRectCorner)direction
+- (void)lua_setCornerImageWith:(nonnull NSString *)imageName placeHolderImage:(NSString*)placeHolder cornerRadius:(NSInteger)radius direction:(MLNUIRectCorner)direction
 {
-    self.imageViewMode = MLNImageViewModeNone;
+    self.imageViewMode = MLNUIImageViewModeNone;
     if ((!stringNotEmpty(imageName) && !stringNotEmpty(placeHolder))) {
         self.image = nil;
         return;
     }
-    id<MLNImageLoaderProtocol> imageLoder = self.imageLoader;
-    MLNKitLuaAssert(imageLoder, @"The image delegate must not be nil!");
-    MLNKitLuaAssert([imageLoder respondsToSelector:@selector(imageView:setCornerImageWith:placeHolderImage:cornerRadius:dircetion:)], @"-[imageLoder imageView:setCornerImageWith:placeHolderImage:cornerRadius:direction:] was not found!");
+    id<MLNUIImageLoaderProtocol> imageLoder = self.imageLoader;
+    MLNUIKitLuaAssert(imageLoder, @"The image delegate must not be nil!");
+    MLNUIKitLuaAssert([imageLoder respondsToSelector:@selector(imageView:setCornerImageWith:placeHolderImage:cornerRadius:dircetion:)], @"-[imageLoder imageView:setCornerImageWith:placeHolderImage:cornerRadius:direction:] was not found!");
     if ([imageLoder respondsToSelector:@selector(imageView:setCornerImageWith:placeHolderImage:cornerRadius:dircetion:)]) {
         [imageLoder imageView:self setCornerImageWith:imageName placeHolderImage:placeHolder cornerRadius:radius dircetion:direction];
     } else {
-        [MLNCornerImageLoader imageView:self setCornerImageWith:imageName placeHolderImage:placeHolder cornerRadius:radius dircetion:direction];
+        [MLNUICornerImageLoader imageView:self setCornerImageWith:imageName placeHolderImage:placeHolder cornerRadius:radius dircetion:direction];
     }
     
 }
@@ -254,26 +254,26 @@
     if ([imageName rangeOfString:@".9"].location == NSNotFound && [imageName rangeOfString:@".png"].location == NSNotFound) {
         imageName = [NSString stringWithFormat:@"%@.9",imageName];
     }
-    self.imageViewMode = MLNImageViewModeNine;
-    id<MLNImageLoaderProtocol> imageLoder = self.imageLoader;
-    MLNKitLuaAssert(imageLoder, @"The image delegate must not be nil!");
+    self.imageViewMode = MLNUIImageViewModeNine;
+    id<MLNUIImageLoaderProtocol> imageLoder = self.imageLoader;
+    MLNUIKitLuaAssert(imageLoder, @"The image delegate must not be nil!");
     if ([imageLoder respondsToSelector:@selector(imageView:setNineImageWithPath:synchronized:)]) {
         [imageLoder imageView:self setNineImageWithPath:imageName synchronized:synchronzied];
         return;
     }
-    MLNKitLuaAssert([imageLoder respondsToSelector:@selector(view:loadImageWithPath:completed:)], @"-[imageLoder view:loadImageWithPath:completed:] was not found!");
+    MLNUIKitLuaAssert([imageLoder respondsToSelector:@selector(view:loadImageWithPath:completed:)], @"-[imageLoder view:loadImageWithPath:completed:] was not found!");
     [imageLoder view:self loadImageWithPath:imageName completed:^(UIImage *image, NSError *error, NSString *imagePath) {
         if (image) {
             CGSize imgViewSize = self.frame.size;
             if (!synchronzied) {
                 dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-                    UIImage *resizedImage = [MLNNinePatchImageFactory mln_createResizableNinePatchImage:image imgViewSize:imgViewSize];
+                    UIImage *resizedImage = [MLNUINinePatchImageFactory mln_createResizableNinePatchImage:image imgViewSize:imgViewSize];
                     dispatch_async(dispatch_get_main_queue(), ^{
                         [self setNineImageCheckContentMode:resizedImage];
                     });
                 });
             } else {
-                UIImage *resizedImage = [MLNNinePatchImageFactory mln_createResizableNinePatchImage:image imgViewSize:imgViewSize];
+                UIImage *resizedImage = [MLNUINinePatchImageFactory mln_createResizableNinePatchImage:image imgViewSize:imgViewSize];
                 [self setNineImageCheckContentMode:resizedImage];
             }
         } else {
@@ -284,14 +284,14 @@
 
 - (void)lua_startAnimation:(NSArray <NSString *> *)urlArray duration:(CGFloat)duration repeat:(BOOL)repeat
 {
-    self.imageViewMode = MLNImageViewModeNone;
-    MLNCheckTypeAndNilValue(urlArray, @"Array", [NSMutableArray class])
+    self.imageViewMode = MLNUIImageViewModeNone;
+    MLNUICheckTypeAndNilValue(urlArray, @"Array", [NSMutableArray class])
     if (!(urlArray && urlArray.count > 0)) {
         return;
     }
-    id<MLNImageLoaderProtocol> imageLoder = self.imageLoader;
-    MLNKitLuaAssert(imageLoder, @"The image delegate must not be nil!");
-    MLNKitLuaAssert([imageLoder respondsToSelector:@selector(view:loadImageWithPath:completed:)], @"-[imageLoder view:loadImageWithPath:completed:] was not found!");
+    id<MLNUIImageLoaderProtocol> imageLoder = self.imageLoader;
+    MLNUIKitLuaAssert(imageLoder, @"The image delegate must not be nil!");
+    MLNUIKitLuaAssert([imageLoder respondsToSelector:@selector(view:loadImageWithPath:completed:)], @"-[imageLoder view:loadImageWithPath:completed:] was not found!");
     NSMutableArray *imageArray = [NSMutableArray arrayWithCapacity:urlArray.count];
     NSMutableArray *failImageArray = [NSMutableArray arrayWithCapacity:urlArray.count];
     for (NSUInteger i = 0; i < urlArray.count; i++) {
@@ -318,7 +318,7 @@
             [self setAnimationRepeatCount:repeat?0:1];
             [self startAnimating];
         } else {
-            MLNKitLuaAssert(NO, @"images: %@ download failed!", failImageArray);
+            MLNUIKitLuaAssert(NO, @"images: %@ download failed!", failImageArray);
         }
     });
 }
@@ -337,13 +337,13 @@
 
 - (void)lua_setPaddingWithTop:(CGFloat)top right:(CGFloat)right bottom:(CGFloat)bottom left:(CGFloat)left
 {
-    MLNKitLuaAssert(NO, @"ImageView does not support padding!");
+    MLNUIKitLuaAssert(NO, @"ImageView does not support padding!");
 }
 
 - (void)lua_setBlurValue:(CGFloat)blurValue processImage:(BOOL)processImage
 {
     blurValue = blurValue <= 0.0? 0.0f : blurValue;
-    blurValue = blurValue > MLN_BlurScope? MLN_BlurScope : blurValue;
+    blurValue = blurValue > MLNUI_BlurScope? MLNUI_BlurScope : blurValue;
     _processImage = processImage;
     if (processImage) {
         [self checkProcessImageWithBlurValue:blurValue];
@@ -362,7 +362,7 @@
 
 - (void)lua_setContentMode:(UIViewContentMode)contentMode
 {
-    MLNKitLuaAssert(contentMode != UIViewContentModeCenter, @"ContentMode.CENTER is deprecated");
+    MLNUIKitLuaAssert(contentMode != UIViewContentModeCenter, @"ContentMode.CENTER is deprecated");
     self.imageContentMode = contentMode;
     [self checkContentMode];
 }
@@ -384,11 +384,11 @@
     return _effectView;
 }
 
-- (MLNBeforeWaitingTask *)lazyTask
+- (MLNUIBeforeWaitingTask *)lazyTask
 {
     if (!_lazyTask) {
         __weak typeof(self) wself = self;
-        _lazyTask = [MLNBeforeWaitingTask taskWithCallback:^{
+        _lazyTask = [MLNUIBeforeWaitingTask taskWithCallback:^{
             __strong typeof(wself) sself = wself;
             if (sself.blurValue > 0 && !sself.processImage) {
                 sself.effectView.frame = sself.bounds;
@@ -401,26 +401,26 @@
     return _lazyTask;
 }
 
-- (id<MLNImageLoaderProtocol>)imageLoader
+- (id<MLNUIImageLoaderProtocol>)imageLoader
 {
-    return MLN_KIT_INSTANCE(self.mln_luaCore).instanceHandlersManager.imageLoader;
+    return MLNUI_KIT_INSTANCE(self.mln_luaCore).instanceHandlersManager.imageLoader;
 }
 
 #pragma mark - Override
 
 - (void)lua_addSubview:(UIView *)view
 {
-    MLNKitLuaAssert(NO, @"Not found \"addView\" method in ImageView, just continar of View has it!");
+    MLNUIKitLuaAssert(NO, @"Not found \"addView\" method in ImageView, just continar of View has it!");
 }
 
 - (void)lua_insertSubview:(UIView *)view atIndex:(NSInteger)index
 {
-    MLNKitLuaAssert(NO, @"Not found \"insertView\" method in ImageView, just continar of View has it!");
+    MLNUIKitLuaAssert(NO, @"Not found \"insertView\" method in ImageView, just continar of View has it!");
 }
 
 - (void)lua_removeAllSubViews
 {
-    MLNKitLuaAssert(NO, @"Not found \"removeAllSubviews\" method in ImageView, just continar of View has it!");
+    MLNUIKitLuaAssert(NO, @"Not found \"removeAllSubviews\" method in ImageView, just continar of View has it!");
 }
 
 - (BOOL)lua_canClick
@@ -443,24 +443,24 @@
 }
 
 #pragma mark - Export For Lua
-LUA_EXPORT_VIEW_BEGIN(MLNImageView)
-LUA_EXPORT_VIEW_PROPERTY(contentMode, "lua_setContentMode:","contentMode", MLNImageView)
-LUA_EXPORT_VIEW_PROPERTY(lazyLoad, "lua_setLazyLoad:","lua_lazyLoad", MLNImageView)
-LUA_EXPORT_VIEW_METHOD(startAnimationImages, "lua_startAnimation:duration:repeat:", MLNImageView)
-LUA_EXPORT_VIEW_METHOD(stopAnimationImages, "stopAnimating", MLNImageView)
-LUA_EXPORT_VIEW_METHOD(isAnimating, "isAnimating", MLNImageView)
-LUA_EXPORT_VIEW_METHOD(image, "lua_setImageWith:", MLNImageView)
-LUA_EXPORT_VIEW_METHOD(setImageUrl, "lua_setImageWith:placeHolderImage:", MLNImageView)
-LUA_EXPORT_VIEW_METHOD(setCornerImage, "lua_setCornerImageWith:placeHolderImage:cornerRadius:direction:", MLNImageView)
-LUA_EXPORT_VIEW_METHOD(setImageWithCallback, "lua_setImageWith:placeHolderImage:callback:", MLNImageView)
-LUA_EXPORT_VIEW_METHOD(setNineImage, "lua_setNineImageWith:synchronized:", MLNImageView)
-LUA_EXPORT_VIEW_METHOD(blurImage, "lua_setBlurValue:processImage:", MLNImageView)
-LUA_EXPORT_VIEW_METHOD(addShadow, "lua_addShadow:shadowOffset:shadowRadius:shadowOpacity:isOval:", MLNImageView)
-LUA_EXPORT_VIEW_END(MLNImageView, ImageView, YES, "MLNView", NULL)
+LUA_EXPORT_VIEW_BEGIN(MLNUIImageView)
+LUA_EXPORT_VIEW_PROPERTY(contentMode, "lua_setContentMode:","contentMode", MLNUIImageView)
+LUA_EXPORT_VIEW_PROPERTY(lazyLoad, "lua_setLazyLoad:","lua_lazyLoad", MLNUIImageView)
+LUA_EXPORT_VIEW_METHOD(startAnimationImages, "lua_startAnimation:duration:repeat:", MLNUIImageView)
+LUA_EXPORT_VIEW_METHOD(stopAnimationImages, "stopAnimating", MLNUIImageView)
+LUA_EXPORT_VIEW_METHOD(isAnimating, "isAnimating", MLNUIImageView)
+LUA_EXPORT_VIEW_METHOD(image, "lua_setImageWith:", MLNUIImageView)
+LUA_EXPORT_VIEW_METHOD(setImageUrl, "lua_setImageWith:placeHolderImage:", MLNUIImageView)
+LUA_EXPORT_VIEW_METHOD(setCornerImage, "lua_setCornerImageWith:placeHolderImage:cornerRadius:direction:", MLNUIImageView)
+LUA_EXPORT_VIEW_METHOD(setImageWithCallback, "lua_setImageWith:placeHolderImage:callback:", MLNUIImageView)
+LUA_EXPORT_VIEW_METHOD(setNineImage, "lua_setNineImageWith:synchronized:", MLNUIImageView)
+LUA_EXPORT_VIEW_METHOD(blurImage, "lua_setBlurValue:processImage:", MLNUIImageView)
+LUA_EXPORT_VIEW_METHOD(addShadow, "lua_addShadow:shadowOffset:shadowRadius:shadowOpacity:isOval:", MLNUIImageView)
+LUA_EXPORT_VIEW_END(MLNUIImageView, ImageView, YES, "MLNUIView", NULL)
 
 @end
 
-@implementation MLNOverlayImageView
-LUA_EXPORT_VIEW_BEGIN(MLNOverlayImageView) // 兼容Android
-LUA_EXPORT_VIEW_END(MLNOverlayImageView, OverImageView, YES, "MLNImageView", NULL)
+@implementation MLNUIOverlayImageView
+LUA_EXPORT_VIEW_BEGIN(MLNUIOverlayImageView) // 兼容Android
+LUA_EXPORT_VIEW_END(MLNUIOverlayImageView, OverImageView, YES, "MLNUIImageView", NULL)
 @end

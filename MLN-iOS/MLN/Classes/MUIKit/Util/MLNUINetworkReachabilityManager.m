@@ -1,52 +1,52 @@
 //
-//  MLNNetwork.m
+//  MLNUINetwork.m
 //  CocoaLumberjack
 //
 //  Created by MoMo on 2018/8/13.
 //
 
-#import "MLNNetworkReachabilityManager.h"
+#import "MLNUINetworkReachabilityManager.h"
 #import <netinet/in.h>
 #import <netinet6/in6.h>
 #import <arpa/inet.h>
 #import <ifaddrs.h>
 #import <netdb.h>
 #import <SystemConfiguration/SystemConfiguration.h>
-#import "MLNHeader.h"
+#import "MLNUIHeader.h"
 
-static const void * MLNNetworkReachabilityRetainCallback(const void *info) {
+static const void * MLNUINetworkReachabilityRetainCallback(const void *info) {
     return Block_copy(info);
 }
 
-static void MLNNetworkReachabilityReleaseCallback(const void *info) {
+static void MLNUINetworkReachabilityReleaseCallback(const void *info) {
     if (info) {
         Block_release(info);
     }
 }
 
-static MLNNetworkStatus MLNNetworkReachabilityStatusForFlags(SCNetworkReachabilityFlags flags) {
+static MLNUINetworkStatus MLNUINetworkReachabilityStatusForFlags(SCNetworkReachabilityFlags flags) {
     BOOL isReachable = ((flags & kSCNetworkReachabilityFlagsReachable) != 0);
     BOOL needsConnection = ((flags & kSCNetworkReachabilityFlagsConnectionRequired) != 0);
     BOOL canConnectionAutomatically = (((flags & kSCNetworkReachabilityFlagsConnectionOnDemand ) != 0) || ((flags & kSCNetworkReachabilityFlagsConnectionOnTraffic) != 0));
     BOOL canConnectWithoutUserInteraction = (canConnectionAutomatically && (flags & kSCNetworkReachabilityFlagsInterventionRequired) == 0);
     BOOL isNetworkReachable = (isReachable && (!needsConnection || canConnectWithoutUserInteraction));
-    MLNNetworkStatus status = MLNNetworkStatusUnknown;
+    MLNUINetworkStatus status = MLNUINetworkStatusUnknown;
     if (isNetworkReachable == NO) {
-        status = MLNNetworkStatusNoNetwork;
+        status = MLNUINetworkStatusNoNetwork;
     }
 #if    TARGET_OS_IPHONE
     else if ((flags & kSCNetworkReachabilityFlagsIsWWAN) != 0) {
-        status = MLNNetworkStatusWWAN;
+        status = MLNUINetworkStatusWWAN;
     }
 #endif
     else {
-        status = MLNNetworkStatusWifi;
+        status = MLNUINetworkStatusWifi;
     }
     return status;
 }
 
-static void MLNPostReachabilityStatusChange(SCNetworkReachabilityFlags flags, MLNNetworkReachabilityStatusBlock block) {
-    MLNNetworkStatus status = MLNNetworkReachabilityStatusForFlags(flags);
+static void MLNUIPostReachabilityStatusChange(SCNetworkReachabilityFlags flags, MLNUINetworkReachabilityStatusBlock block) {
+    MLNUINetworkStatus status = MLNUINetworkReachabilityStatusForFlags(flags);
     dispatch_async(dispatch_get_main_queue(), ^{
         if (block) {
             block(status);
@@ -54,21 +54,21 @@ static void MLNPostReachabilityStatusChange(SCNetworkReachabilityFlags flags, ML
     });
 }
 
-static void MLNNetworkReachabilityCallback(SCNetworkReachabilityRef __unused target, SCNetworkReachabilityFlags flags, void *info) {
-    MLNPostReachabilityStatusChange(flags, (__bridge MLNNetworkReachabilityStatusBlock)info);
+static void MLNUINetworkReachabilityCallback(SCNetworkReachabilityRef __unused target, SCNetworkReachabilityFlags flags, void *info) {
+    MLNUIPostReachabilityStatusChange(flags, (__bridge MLNUINetworkReachabilityStatusBlock)info);
 }
 
-@interface MLNNetworkReachabilityManager ()
+@interface MLNUINetworkReachabilityManager ()
 
 @property (readonly, nonatomic, assign) SCNetworkReachabilityRef networkReachability;
-@property (nonatomic, strong) NSMutableArray<MLNNetworkReachabilityStatusBlock> *callbacks;
+@property (nonatomic, strong) NSMutableArray<MLNUINetworkReachabilityStatusBlock> *callbacks;
 
 @end
-@implementation MLNNetworkReachabilityManager
+@implementation MLNUINetworkReachabilityManager
 
 + (instancetype)sharedManager
 {
-    static MLNNetworkReachabilityManager *_sharedManager = nil;
+    static MLNUINetworkReachabilityManager *_sharedManager = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         _sharedManager = [self manager];
@@ -80,7 +80,7 @@ static void MLNNetworkReachabilityCallback(SCNetworkReachabilityRef __unused tar
 + (instancetype)managerForAddress:(const void *)address
 {
     SCNetworkReachabilityRef reachability = SCNetworkReachabilityCreateWithAddress(kCFAllocatorDefault, (const struct sockaddr *)address);
-    MLNNetworkReachabilityManager *manager = [[self alloc] initWithReachability:reachability];
+    MLNUINetworkReachabilityManager *manager = [[self alloc] initWithReachability:reachability];
     CFRelease(reachability);
     return manager;
 }
@@ -108,7 +108,7 @@ static void MLNNetworkReachabilityCallback(SCNetworkReachabilityRef __unused tar
         return nil;
     }
     _networkReachability = CFRetain(reachability);
-    _networkStatus = MLNNetworkStatusUnknown;
+    _networkStatus = MLNUINetworkStatusUnknown;
     return self;
 }
 
@@ -120,27 +120,27 @@ static void MLNNetworkReachabilityCallback(SCNetworkReachabilityRef __unused tar
     }
     
     __weak __typeof(self)weakSelf = self;
-    MLNNetworkReachabilityStatusBlock callback = ^(MLNNetworkStatus status) {
+    MLNUINetworkReachabilityStatusBlock callback = ^(MLNUINetworkStatus status) {
         doInMainQueue( __strong __typeof(weakSelf)strongSelf = weakSelf;
                       [strongSelf changeNetworkStatusAndCallback:status];)
     };
     
-    SCNetworkReachabilityContext context = {0, (__bridge void *)callback, MLNNetworkReachabilityRetainCallback, MLNNetworkReachabilityReleaseCallback, NULL};
-    SCNetworkReachabilitySetCallback(self.networkReachability, MLNNetworkReachabilityCallback, &context);
+    SCNetworkReachabilityContext context = {0, (__bridge void *)callback, MLNUINetworkReachabilityRetainCallback, MLNUINetworkReachabilityReleaseCallback, NULL};
+    SCNetworkReachabilitySetCallback(self.networkReachability, MLNUINetworkReachabilityCallback, &context);
     SCNetworkReachabilityScheduleWithRunLoop(self.networkReachability, CFRunLoopGetMain(), kCFRunLoopCommonModes);
     
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0),^{
         SCNetworkReachabilityFlags flags;
         if (SCNetworkReachabilityGetFlags(self.networkReachability, &flags)) {
-            MLNPostReachabilityStatusChange(flags, callback);
+            MLNUIPostReachabilityStatusChange(flags, callback);
         }
     });
 }
 
-- (void)changeNetworkStatusAndCallback:(MLNNetworkStatus)status
+- (void)changeNetworkStatusAndCallback:(MLNUINetworkStatus)status
 {
     _networkStatus = status;
-    for (MLNNetworkReachabilityStatusBlock callback in self.callbacks) {
+    for (MLNUINetworkReachabilityStatusBlock callback in self.callbacks) {
         callback(status);
     }
 }
@@ -161,7 +161,7 @@ static void MLNNetworkReachabilityCallback(SCNetworkReachabilityRef __unused tar
     }
 }
 
-- (void)addNetworkChangedCallback:(MLNNetworkReachabilityStatusBlock)callback
+- (void)addNetworkChangedCallback:(MLNUINetworkReachabilityStatusBlock)callback
 {
     if (!callback) {
         return;
@@ -172,7 +172,7 @@ static void MLNNetworkReachabilityCallback(SCNetworkReachabilityRef __unused tar
     [self.callbacks addObject:callback];
 }
 
-- (void)removeNetworkChangedCallback:(MLNNetworkReachabilityStatusBlock)callback
+- (void)removeNetworkChangedCallback:(MLNUINetworkReachabilityStatusBlock)callback
 {
     if (!callback) {
         return;

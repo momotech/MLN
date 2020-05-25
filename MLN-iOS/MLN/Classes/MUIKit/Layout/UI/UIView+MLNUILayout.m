@@ -1,20 +1,20 @@
 //
-//  UIView+MLNLayout.m
+//  UIView+MLNUILayout.m
 //
 //
 //  Created by MoMo on 2018/10/26.
 //
 
-#import "UIView+MLNLayout.h"
+#import "UIView+MLNUILayout.h"
 #import <objc/runtime.h>
-#import "MLNKitHeader.h"
-#import "MLNLayoutNode.h"
-#import "MLNLayoutContainerNode.h"
-#import "MLNLayoutNodeFactory.h"
-#import "UIView+MLNKit.h"
-#import "MLNRenderContext.h"
+#import "MLNUIKitHeader.h"
+#import "MLNUILayoutNode.h"
+#import "MLNUILayoutContainerNode.h"
+#import "MLNUILayoutNodeFactory.h"
+#import "UIView+MLNUIKit.h"
+#import "MLNUIRenderContext.h"
 
-@implementation UIView (MLNLayout)
+@implementation UIView (MLNUILayout)
 
 - (void)mln_user_data_dealloc
 {
@@ -40,12 +40,12 @@
 
 - (void)lua_addSubview:(UIView *)view
 {
-    //    MLNCheckTypeAndNilValue(view, @"View", UIView);
+    //    MLNUICheckTypeAndNilValue(view, @"View", UIView);
     [self addSubview:view];
     // 添加Lua强引用
-    MLN_Lua_UserData_Retain_With_Index(2, view);
+    MLNUI_Lua_UserData_Retain_With_Index(2, view);
     if (view.lua_node) {
-        [(MLNLayoutContainerNode *)self.lua_node addSubnode:view.lua_node];
+        [(MLNUILayoutContainerNode *)self.lua_node addSubnode:view.lua_node];
     }
     
     // 添加overlay
@@ -58,9 +58,9 @@
     index = index >= 0 && index < self.subviews.count? index : self.subviews.count;
     [self insertSubview:view atIndex:index];
     // 添加Lua强引用
-    MLN_Lua_UserData_Retain_With_Index(2, view);
+    MLNUI_Lua_UserData_Retain_With_Index(2, view);
     if (view.lua_node) {
-        [(MLNLayoutContainerNode *)self.lua_node insertSubnode:view.lua_node atIndex:index];
+        [(MLNUILayoutContainerNode *)self.lua_node insertSubnode:view.lua_node atIndex:index];
     }
 }
 
@@ -68,7 +68,7 @@
 {
     [self removeFromSuperview];
     // 删除Lua强引用
-    MLN_Lua_UserData_Release(self);
+    MLNUI_Lua_UserData_Release(self);
     if (self.lua_node) {
         [self.lua_node removeFromSupernode];
     }
@@ -94,30 +94,30 @@
 }
 
 - (void)addOverlayIfNeeded {
-    MLNLayoutNode *overlayNode = self.lua_node.overlayNode;
+    MLNUILayoutNode *overlayNode = self.lua_node.overlayNode;
     if (overlayNode) {
         UIView *wrapView = [[UIView alloc] init]; // 避免overlay被clip
         [self.superview addSubview:wrapView];
-        MLNChangeSuperview(self, wrapView); // 只调整视图层级，不调整node层级，这样测量布局均只计算self而不是wrapView
+        MLNUIChangeSuperview(self, wrapView); // 只调整视图层级，不调整node层级，这样测量布局均只计算self而不是wrapView
         [wrapView addSubview:overlayNode.targetView];
-        MLN_Lua_UserData_Retain_With_Index(2, overlayNode.targetView);
+        MLNUI_Lua_UserData_Retain_With_Index(2, overlayNode.targetView);
         [overlayNode.targetView addOverlayIfNeeded]; // overlay还有overlay的情况
     }
 }
 
 - (void)removeOverlayIfNeeded {
-    MLNLayoutNode *oldOverlay = self.lua_node.overlayNode;
+    MLNUILayoutNode *oldOverlay = self.lua_node.overlayNode;
     if (oldOverlay && oldOverlay.targetView.superview) {
         UIView *wrapView = self.superview;
-        MLNChangeSuperview(self, wrapView.superview); // 恢复视图层级
+        MLNUIChangeSuperview(self, wrapView.superview); // 恢复视图层级
         [oldOverlay.targetView removeFromSuperview];
-        MLN_Lua_UserData_Release(self);
+        MLNUI_Lua_UserData_Release(self);
         self.lua_node.overlayNode = nil;
         [wrapView removeFromSuperview]; // remove overlay's wrapView
     }
 }
 
-static MLN_FORCE_INLINE void MLNChangeSuperview(UIView *view, UIView *newSuperview) {
+static MLNUI_FORCE_INLINE void MLNUIChangeSuperview(UIView *view, UIView *newSuperview) {
     [view removeFromSuperview];
     [newSuperview addSubview:view];
 }
@@ -197,12 +197,12 @@ static const void *kLuaLayoutEnable = &kLuaLayoutEnable;
     return [lua_layoutEnable boolValue];
 }
 
-- (void)setLua_gravity:(MLNGravity)lua_gravity
+- (void)setLua_gravity:(MLNUIGravity)lua_gravity
 {
     self.lua_node.gravity = lua_gravity;
 }
 
-- (MLNGravity)lua_gravity
+- (MLNUIGravity)lua_gravity
 {
     return self.lua_node.gravity;
 }
@@ -254,14 +254,14 @@ static const void *kLuaLayoutEnable = &kLuaLayoutEnable;
 #pragma mark - Setter & Getter Padding
 - (void)lua_setPaddingWithTop:(CGFloat)top right:(CGFloat)right bottom:(CGFloat)bottom left:(CGFloat)left
 {
-    MLNLayoutNode *node = self.lua_node;
+    MLNUILayoutNode *node = self.lua_node;
     node.paddingTop = top;
     node.paddingRight = right;
     node.paddingBottom = bottom;
     node.paddingLeft = left;
 }
 
-#pragma mark - MLNPaddingViewProtocol
+#pragma mark - MLNUIPaddingViewProtocol
 - (CGFloat)lua_paddingLeft
 {
     return self.lua_node.paddingLeft;
@@ -418,26 +418,26 @@ static const void *kLuaLayoutEnable = &kLuaLayoutEnable;
 - (void)mln_startAutoLayout
 {
     if ([self mln_isConvertible]) {
-        MLNKitInstance *instance = MLN_KIT_INSTANCE([(UIView<MLNEntityExportProtocol> *)self mln_luaCore]);
-        [instance addRootnode:(MLNLayoutContainerNode *)self.lua_node.rootnode];
+        MLNUIKitInstance *instance = MLNUI_KIT_INSTANCE([(UIView<MLNUIEntityExportProtocol> *)self mln_luaCore]);
+        [instance addRootnode:(MLNUILayoutContainerNode *)self.lua_node.rootnode];
     }
 }
 
 - (void)mln_stopAutoLayout
 {
     if ([self mln_isConvertible]) {
-        MLNKitInstance *instance = MLN_KIT_INSTANCE([(UIView<MLNEntityExportProtocol> *)self mln_luaCore]);
-        [instance removeRootNode:(MLNLayoutContainerNode *)self.lua_node.rootnode];
+        MLNUIKitInstance *instance = MLNUI_KIT_INSTANCE([(UIView<MLNUIEntityExportProtocol> *)self mln_luaCore]);
+        [instance removeRootNode:(MLNUILayoutContainerNode *)self.lua_node.rootnode];
     }
 }
 
 #pragma mark - Getter Of Node
 static const void *kLuaLayoutNode = &kLuaLayoutNode;
-- (MLNLayoutNode *)lua_node
+- (MLNUILayoutNode *)lua_node
 {
-    MLNLayoutNode *node = objc_getAssociatedObject(self, kLuaLayoutNode);
+    MLNUILayoutNode *node = objc_getAssociatedObject(self, kLuaLayoutNode);
     if (!node && self.lua_layoutEnable) {
-        node = [MLNLayoutNodeFactory createNodeWithTargetView:self];
+        node = [MLNUILayoutNodeFactory createNodeWithTargetView:self];
         objc_setAssociatedObject(self, kLuaLayoutNode, node, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     }
     return node;

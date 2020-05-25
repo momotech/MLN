@@ -1,19 +1,19 @@
 //
-//  MLNSwitch.h
+//  MLNUISwitch.h
 //
 //
 //  Created by MoMo on 2018/12/18.
 //
 
 #import <UIKit/UIKit.h>
-#import "MLNEntityExportProtocol.h"
+#import "MLNUIEntityExportProtocol.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class MLNBlock;
-@interface MLNSwitch : UISwitch<MLNEntityExportProtocol>
+@class MLNUIBlock;
+@interface MLNUISwitch : UISwitch<MLNUIEntityExportProtocol>
 
-@property (nonatomic, strong) MLNBlock *switchChangedCallback;
+@property (nonatomic, strong) MLNUIBlock *switchChangedCallback;
 
 @end
 

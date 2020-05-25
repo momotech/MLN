@@ -1,25 +1,25 @@
 //
-//  MLNCore.h
-//  MLNCore
+//  MLNUICore.h
+//  MLNUICore
 //
 //  Created by MoMo on 2019/7/23.
 //
 
 #import <Foundation/Foundation.h>
-#import "MLNHeader.h"
-#import "MLNExportProtocol.h"
-#import "MLNErrorHandlerProtocol.h"
-#import "MLNEntityExportProtocol.h"
-#import "MLNConvertorProtocol.h"
-#import "MLNExporterProtocol.h"
-#import "MLNLuaCoreDelegate.h"
+#import "MLNUIHeader.h"
+#import "MLNUIExportProtocol.h"
+#import "MLNUIErrorHandlerProtocol.h"
+#import "MLNUIEntityExportProtocol.h"
+#import "MLNUIConvertorProtocol.h"
+#import "MLNUIExporterProtocol.h"
+#import "MLNUILuaCoreDelegate.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class MLNLuaBundle;
-@class MLNLuaTable;
-@class MLNExporter;
-@interface MLNLuaCore : NSObject
+@class MLNUILuaBundle;
+@class MLNUILuaTable;
+@class MLNUIExporter;
+@interface MLNUILuaCore : NSObject
 
 /**
  lua状态机。
@@ -29,22 +29,22 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  强引用对象的lua table
  */
-@property (nonatomic, strong, readonly) MLNLuaTable *objStrongTable;
+@property (nonatomic, strong, readonly) MLNUILuaTable *objStrongTable;
 
 /**
  原生类的注册导出工具
  */
-@property (nonatomic, strong, readonly) id<MLNExporterProtocol> exporter;
+@property (nonatomic, strong, readonly) id<MLNUIExporterProtocol> exporter;
 
 /**
  Lua 与Native的类型转换工具
  */
-@property (nonatomic, strong, readonly) id<MLNConvertorProtocol> convertor;
+@property (nonatomic, strong, readonly) id<MLNUIConvertorProtocol> convertor;
 
 /**
  代理对象
  */
-@property (nonatomic, weak) id<MLNLuaCoreDelegate> delegate;
+@property (nonatomic, weak) id<MLNUILuaCoreDelegate> delegate;
 
 /**
  当前执行的文件
@@ -54,12 +54,12 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  当前lua core运行的lua bundle环境。
  */
-@property (nonatomic, strong, readonly) MLNLuaBundle *currentBundle;
+@property (nonatomic, strong, readonly) MLNUILuaBundle *currentBundle;
 
 /**
  错误处理句柄
  */
-@property (nonatomic, weak) id<MLNErrorHandlerProtocol> errorHandler;
+@property (nonatomic, weak) id<MLNUIErrorHandlerProtocol> errorHandler;
 
 /**
  弱关联到该LuaCore的对象
@@ -85,7 +85,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param luaBundle Lua Core运行的Lua bundle环境, 为空时默认为Main Bundle
  @return Lua Core 实例
  */
-- (instancetype)initWithLuaBundle:(MLNLuaBundle *__nullable)luaBundle;
+- (instancetype)initWithLuaBundle:(MLNUILuaBundle *__nullable)luaBundle;
 
 /**
  默认的初始化方法
@@ -95,7 +95,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param exporterClass 原生类的注册导出工具的Class，为空时则使用默认的
  @return Lua Core 实例
  */
-- (instancetype)initWithLuaBundle:(MLNLuaBundle *__nullable)luaBundle convertor:(Class<MLNConvertorProtocol> __nullable)convertorClass exporter:(Class<MLNExporterProtocol> __nullable)exporterClass NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithLuaBundle:(MLNUILuaBundle *__nullable)luaBundle convertor:(Class<MLNUIConvertorProtocol> __nullable)convertorClass exporter:(Class<MLNUIExporterProtocol> __nullable)exporterClass NS_DESIGNATED_INITIALIZER;
 
 /**
  加载并执行文件
@@ -173,7 +173,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param error 错误信息
  @return 导出是否成功
  */
-- (BOOL)registerClazz:(Class<MLNExportProtocol>)clazz error:(NSError ** __nullable)error;
+- (BOOL)registerClazz:(Class<MLNUIExportProtocol>)clazz error:(NSError ** __nullable)error;
 
 /**
  注册类到状态机
@@ -182,7 +182,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param error 错误信息
  @return 导出是否成功
  */
-- (BOOL)registerClasses:(NSArray<Class<MLNExportProtocol>> *)classes error:(NSError ** __nullable)error;
+- (BOOL)registerClasses:(NSArray<Class<MLNUIExportProtocol>> *)classes error:(NSError ** __nullable)error;
 
 /**
  注册全局函数到状态机
@@ -247,7 +247,7 @@ NS_ASSUME_NONNULL_BEGIN
 
  @param bundle 新的lua bundle
  */
-- (void)changeLuaBundle:(MLNLuaBundle *)bundle;
+- (void)changeLuaBundle:(MLNUILuaBundle *)bundle;
 
 /**
  强引用对象
@@ -271,7 +271,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param obj 被强引用的对象
  @param key 关联的key
  */
-- (void)setStrongObject:(id<MLNEntityExportProtocol>)obj key:(NSString *)key;
+- (void)setStrongObject:(id<MLNUIEntityExportProtocol>)obj key:(NSString *)key;
 
 /**
  强引用对象
@@ -279,7 +279,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param obj 被强引用的对象
  @param cKey 关联的key
  */
-- (void)setStrongObject:(id<MLNEntityExportProtocol>)obj cKey:(void *)cKey;
+- (void)setStrongObject:(id<MLNUIEntityExportProtocol>)obj cKey:(void *)cKey;
 
 /**
  移除强引用对象
@@ -311,8 +311,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-@class MLNBlock;
-@interface MLNLuaCore (Stack)
+@class MLNUIBlock;
+@interface MLNUILuaCore (Stack)
 
 /**
  将Native对象转换为Lua数据，并压入栈顶
@@ -424,7 +424,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-@interface MLNLuaCore (GC)
+@interface MLNUILuaCore (GC)
 
 /**
  手动执行一次GC
@@ -433,7 +433,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-@interface MLNLuaCore (Traceback)
+@interface MLNUILuaCore (Traceback)
 
 /**
  获取调用栈的traceback

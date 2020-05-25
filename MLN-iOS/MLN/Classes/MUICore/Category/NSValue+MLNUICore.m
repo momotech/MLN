@@ -1,19 +1,19 @@
 //
-//  NSValue+MLNCore.m
-//  MLN
+//  NSValue+MLNUICore.m
+//  MLNUI
 //
 //  Created by MoMo on 2019/8/2.
 //
 
-#import "NSValue+MLNCore.h"
-#import "NSObject+MLNCore.h"
-#import "MLNHeader.h"
+#import "NSValue+MLNUICore.h"
+#import "NSObject+MLNUICore.h"
+#import "MLNUIHeader.h"
 
-@implementation NSValue (MLNCore)
+@implementation NSValue (MLNUICore)
 
-- (MLNNativeType)mln_nativeType
+- (MLNUINativeType)mln_nativeType
 {
-    return MLNNativeTypeValue;
+    return MLNUINativeTypeValue;
 }
 
 - (BOOL)mln_isMultiple
@@ -24,17 +24,17 @@
 
 - (NSArray *)mln_multipleParams
 {
-    if (MLNValueIsCGRect(self)) {
+    if (MLNUIValueIsCGRect(self)) {
         CGRect rect = self.CGRectValue;
         return @[@(rect.origin.x),
                  @(rect.origin.y),
                  @(rect.size.width),
                  @(rect.size.height)];
-    } else if (MLNValueIsCGSize(self)) {
+    } else if (MLNUIValueIsCGSize(self)) {
         CGSize size = self.CGSizeValue;
         return @[@(size.width),
                  @(size.height)];
-    } else if (MLNValueIsCGPoint(self)) {
+    } else if (MLNUIValueIsCGPoint(self)) {
         CGPoint origin = self.CGPointValue;
         return @[@(origin.x),
                  @(origin.y)];

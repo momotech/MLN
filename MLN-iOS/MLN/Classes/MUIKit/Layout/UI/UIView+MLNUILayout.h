@@ -1,18 +1,18 @@
 //
-//  UIView+MLNLayout.h
+//  UIView+MLNUILayout.h
 //
 //
 //  Created by MoMo on 2018/10/26.
 //
 
 #import <UIKit/UIKit.h>
-#import "MLNViewConst.h"
-#import "MLNPaddingContainerViewProtocol.h"
+#import "MLNUIViewConst.h"
+#import "MLNUIPaddingContainerViewProtocol.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class MLNLayoutNode;
-@interface UIView (MLNLayout) <MLNPaddingContainerViewProtocol>
+@class MLNUILayoutNode;
+@interface UIView (MLNUILayout) <MLNUIPaddingContainerViewProtocol>
 
 @property (nonatomic, assign) CGFloat lua_marginTop;
 @property (nonatomic, assign) CGFloat lua_marginLeft;
@@ -23,14 +23,14 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) CGFloat lua_maxWidth;
 @property (nonatomic, assign) CGFloat lua_maxHieght;
 @property (nonatomic, assign) BOOL lua_gone;
-@property (nonatomic, assign) MLNGravity lua_gravity;
+@property (nonatomic, assign) MLNUIGravity lua_gravity;
 @property (nonatomic, assign) CGFloat lua_priority;
 @property (nonatomic, assign) int lua_weight;
 @property (nonatomic, assign, getter=isLua_wrapContent) BOOL lua_wrapContent;
 @property (nonatomic, assign) BOOL lua_layoutEnable; // defualt is NO
 @property (nonatomic, assign, readonly) BOOL lua_isContainer; // defualt is NO
 @property (nonatomic, assign, readonly) BOOL lua_supportOverlay; // default is NO
-@property (nonatomic, strong, readonly) MLNLayoutNode *lua_node;
+@property (nonatomic, strong, readonly) MLNUILayoutNode *lua_node;
 
 - (BOOL)lua_clipsToBounds;
 - (void)lua_setPaddingWithTop:(CGFloat)top right:(CGFloat)right bottom:(CGFloat)bottom left:(CGFloat)left;

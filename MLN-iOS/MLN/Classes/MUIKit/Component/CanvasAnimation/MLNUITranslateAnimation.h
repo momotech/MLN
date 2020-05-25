@@ -1,15 +1,15 @@
 //
-//  MLNTranslateAnimation.h
-//  MLN
+//  MLNUITranslateAnimation.h
+//  MLNUI
 //
 //  Created by MoMo on 2019/5/16.
 //
 
-#import "MLNCanvasAnimation.h"
+#import "MLNUICanvasAnimation.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface MLNTranslateAnimation : MLNCanvasAnimation
+@interface MLNUITranslateAnimation : MLNUICanvasAnimation
 
 @end
 

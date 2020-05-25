@@ -1,16 +1,16 @@
 //
-//  MLNSystem.h
-//  MLN
+//  MLNUISystem.h
+//  MLNUI
 //
 //  Created by MoMo on 2019/8/5.
 //
 
 #import <Foundation/Foundation.h>
-#import "MLNStaticExportProtocol.h"
+#import "MLNUIStaticExportProtocol.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface MLNSystem : NSObject <MLNStaticExportProtocol>
+@interface MLNUISystem : NSObject <MLNUIStaticExportProtocol>
 
 + (CGFloat)lua_stateBarHeight;
 + (CGFloat)lua_navBarHeight;

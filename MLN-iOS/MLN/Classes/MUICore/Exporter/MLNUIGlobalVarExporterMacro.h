@@ -1,14 +1,14 @@
 //
-//  MLNGlobalVarExporterMacro.h
-//  MLNCore
+//  MLNUIGlobalVarExporterMacro.h
+//  MLNUICore
 //
 //  Created by MoMo on 2019/8/1.
 //
 
-#ifndef MLNGlobalVarExporterMacro_h
-#define MLNGlobalVarExporterMacro_h
+#ifndef MLNUIGlobalVarExporterMacro_h
+#define MLNUIGlobalVarExporterMacro_h
 
-#import "MLNExporterMacro.h"
+#import "MLNUIExporterMacro.h"
 
 /**
  标记导出全局变量类开始
@@ -34,6 +34,6 @@ kGlobalVarMap: LUA_VALUES},\
 #define LUA_EXPORT_GLOBAL_VAR_END() \
 ];\
 }\
-LUA_EXPORT_TYPE(MLNExportTypeGlobalVar)
+LUA_EXPORT_TYPE(MLNUIExportTypeGlobalVar)
 
-#endif /* MLNGlobalVarExporterMacro_h */
+#endif /* MLNUIGlobalVarExporterMacro_h */

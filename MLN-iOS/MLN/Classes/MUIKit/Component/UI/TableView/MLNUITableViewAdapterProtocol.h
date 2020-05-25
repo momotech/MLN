@@ -1,15 +1,15 @@
 //
-//  MLNTableViewAdapterProtocol.h
+//  MLNUITableViewAdapterProtocol.h
 //  
 //
 //  Created by MoMo on 2019/2/19.
 //
 
-#ifndef MLNTableViewAdapterProtocol_h
-#define MLNTableViewAdapterProtocol_h
+#ifndef MLNUITableViewAdapterProtocol_h
+#define MLNUITableViewAdapterProtocol_h
 #import <UIKit/UIKit.h>
 
-@protocol MLNTableViewAdapterProtocol <UITableViewDelegate, UITableViewDataSource>
+@protocol MLNUITableViewAdapterProtocol <UITableViewDelegate, UITableViewDataSource>
 
 @property (nonatomic, weak) UITableView *targetTableView;
 
@@ -24,4 +24,4 @@
 
 @end
 
-#endif /* MLNTableViewAdapterProtocol_h */
+#endif /* MLNUITableViewAdapterProtocol_h */

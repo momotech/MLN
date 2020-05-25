@@ -1,36 +1,36 @@
 //
-//  MLNCornerManagerTool.h
+//  MLNUICornerManagerTool.h
 //
 //
 //  Created by MoMo on 2019/5/26.
 //
 
 #import <Foundation/Foundation.h>
-#import "MLNViewConst.h"
+#import "MLNUIViewConst.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface MLNCornerManagerTool : NSObject
+@interface MLNUICornerManagerTool : NSObject
 
 + (CGFloat)realCornerRadiusWith:(UIView *)targetView
                    cornerRadius:(CGFloat)cornerRadius;
 
-+ (MLNCornerRadius)realMultiCornerRadiusWith:(MLNCornerRadius)multiRadius
++ (MLNUICornerRadius)realMultiCornerRadiusWith:(MLNUICornerRadius)multiRadius
                                        size:(CGSize)size;
 
-+ (MLNCornerRadius)multiRadius:(MLNCornerRadius)multiRadius
++ (MLNUICornerRadius)multiRadius:(MLNUICornerRadius)multiRadius
                         append:(UIRectCorner)corner
                   cornerRadius:(CGFloat)cornerRadius;
-+ (BOOL)multiRadius:(MLNCornerRadius)multiRadius
-             equalMultiRadius:(MLNCornerRadius)equalMultiRadius;
++ (BOOL)multiRadius:(MLNUICornerRadius)multiRadius
+             equalMultiRadius:(MLNUICornerRadius)equalMultiRadius;
 
-+ (BOOL)layerModeWith:(MLNCornerRadius)multiRadius;
++ (BOOL)layerModeWith:(MLNUICornerRadius)multiRadius;
 
-+ (UIBezierPath *)bezierPathWithRect:(CGRect)frame multiRadius:(MLNCornerRadius)multiRadius;
++ (UIBezierPath *)bezierPathWithRect:(CGRect)frame multiRadius:(MLNUICornerRadius)multiRadius;
 
-+ (UIBezierPath *)bezierPathWithRect:(CGRect)frame multiRadius:(MLNCornerRadius)multiRadius lineWidth:(CGFloat)lineWidth;
++ (UIBezierPath *)bezierPathWithRect:(CGRect)frame multiRadius:(MLNUICornerRadius)multiRadius lineWidth:(CGFloat)lineWidth;
 
-+ (CGFloat)cornerRadiusWithDirection:(UIRectCorner)corner multiRadius:(MLNCornerRadius)multiRadius;
++ (CGFloat)cornerRadiusWithDirection:(UIRectCorner)corner multiRadius:(MLNUICornerRadius)multiRadius;
 
 + (CGRect)viewFrame:(UIView *)view;
 

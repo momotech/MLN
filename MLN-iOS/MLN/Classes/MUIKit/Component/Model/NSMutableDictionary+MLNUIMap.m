@@ -1,13 +1,13 @@
 //
-//  NSMutableDictionary+MLNLua.m
+//  NSMutableDictionary+MLNUILua.m
 //  
 //
 //  Created by MoMo on 2019/2/14.
 //
 
-#import "NSMutableDictionary+MLNMap.h"
-#import "MLNLuaCore.h"
-#import "NSDictionary+MLNSafety.h"
+#import "NSMutableDictionary+MLNUIMap.h"
+#import "MLNUILuaCore.h"
+#import "NSDictionary+MLNUISafety.h"
 
 #define LUA_ARG_CHECK(TOP) \
 if (lua_gettop(L) != (TOP)) {\
@@ -16,7 +16,7 @@ return 0;\
 }
 
 #define LUA_MAP_DO(...)\
-MLNUserData *ud = (MLNUserData *)lua_touserdata(L, 1);\
+MLNUIUserData *ud = (MLNUIUserData *)lua_touserdata(L, 1);\
 if (ud) {\
 NSMutableDictionary *map = (__bridge __unsafe_unretained NSMutableDictionary *)ud->object;\
 __VA_ARGS__;\
@@ -38,7 +38,7 @@ return 1;\
 
 #define isNeedMutableCopyForMap(MAP) [(MAP) isKindOfClass:[NSDictionary class]] && !isMutableDictionary((MAP))
 
-@implementation NSMutableDictionary (MLNMap)
+@implementation NSMutableDictionary (MLNUIMap)
 
 #pragma mark - Export To Lua
 static int lua_newMap(lua_State *L) {
@@ -46,7 +46,7 @@ static int lua_newMap(lua_State *L) {
         case 0: {
             NSMutableDictionary *map = [NSMutableDictionary dictionary];
             map.mln_isLuaObject = YES;
-            [MLN_LUA_CORE(L) pushNativeObject:map error:nil];
+            [MLNUI_LUA_CORE(L) pushNativeObject:map error:nil];
             return 1;
         }
         case 1: {
@@ -54,7 +54,7 @@ static int lua_newMap(lua_State *L) {
                 double capacity = lua_tonumber(L, -1);
                 NSMutableDictionary *map = [NSMutableDictionary dictionaryWithCapacity:capacity];
                 map.mln_isLuaObject = YES;
-                [MLN_LUA_CORE(L) pushNativeObject:map error:nil];
+                [MLNUI_LUA_CORE(L) pushNativeObject:map error:nil];
                 return 1;
             }
             mln_lua_error(L, @"error type of argument, capacity must be number");
@@ -74,12 +74,12 @@ static int lua_map_objectForKey(lua_State *L) {
         NSString *key = [NSString stringWithUTF8String:lua_tostring(L, 2)];
         id value = [map mln_objectForKey:key];
         switch ([value mln_nativeType]) {
-            case MLNNativeTypeDictionary: {
+            case MLNUINativeTypeDictionary: {
                 value = [NSMutableDictionary dictionaryWithDictionary:value];
                 [map mln_setObject:value forKey:key];
                 break;
             }
-            case MLNNativeTypeArray: {
+            case MLNUINativeTypeArray: {
                 value = [NSMutableArray arrayWithArray:value];
                 [map mln_setObject:value forKey:key];
                 break;
@@ -87,7 +87,7 @@ static int lua_map_objectForKey(lua_State *L) {
             default:
                 break;
         }
-        [MLN_LUA_CORE(L) pushNativeObject:value error:NULL];
+        [MLNUI_LUA_CORE(L) pushNativeObject:value error:NULL];
         return 1;
     } else {
         mln_lua_error(L,  @"The key must be a string!");
@@ -100,23 +100,23 @@ static int lua_map_objectForKey(lua_State *L) {
 static int lua_map_setObjectForKey(lua_State *L) {
     LUA_ARG_CHECK(3);
     LUA_MAP_DO(LUA_MAP_GET_KEY(2);
-               id value = [MLN_LUA_CORE(L) toNativeObject:3 error:NULL];
+               id value = [MLNUI_LUA_CORE(L) toNativeObject:3 error:NULL];
                switch ([value mln_nativeType]) {
-                   case MLNNativeTypeDictionary:
+                   case MLNUINativeTypeDictionary:
                    {
                        value = [NSMutableDictionary dictionaryWithDictionary:value];
                        [map mln_setObject:value forKey:key];
                        break;
                    }
-                   case MLNNativeTypeArray: {
+                   case MLNUINativeTypeArray: {
                        value = [NSMutableArray arrayWithArray:value];
                        [map mln_setObject:value forKey:key];
                        break;
                    }
-                   case MLNNativeTypeNumber:
-                   case MLNNativeTypeString:
-                   case MLNNativeTypeMDictionary:
-                   case MLNNativeTypeMArray: {
+                   case MLNUINativeTypeNumber:
+                   case MLNUINativeTypeString:
+                   case MLNUINativeTypeMDictionary:
+                   case MLNUINativeTypeMArray: {
                        [map mln_setObject:value forKey:key];
                        break;
                    }
@@ -132,12 +132,12 @@ static int lua_map_setObjectForKey(lua_State *L) {
 
 static int lua_map_addEntriesFromDictionary(lua_State *L) {
     LUA_ARG_CHECK(2);
-    LUA_MAP_DO(NSMutableDictionary *dictionary = [MLN_LUA_CORE(L) toNativeObject:2 error:NULL];
+    LUA_MAP_DO(NSMutableDictionary *dictionary = [MLNUI_LUA_CORE(L) toNativeObject:2 error:NULL];
                switch ([dictionary mln_nativeType]) {
-                   case MLNNativeTypeDictionary: {
+                   case MLNUINativeTypeDictionary: {
                        dictionary = [NSMutableDictionary dictionaryWithDictionary:dictionary];
                    }
-                   case MLNNativeTypeMDictionary: {
+                   case MLNUINativeTypeMDictionary: {
                        [map mln_addEntriesFromDictionary:dictionary];
                        break;
                    }
@@ -162,10 +162,10 @@ static int lua_map_removeObjectForKey(lua_State *L) {
 
 static int lua_map_removeObjects(lua_State *L) {
     LUA_ARG_CHECK(2);
-    LUA_MAP_DO(NSMutableArray *array = [MLN_LUA_CORE(L) toNativeObject:2 error:NULL];
+    LUA_MAP_DO(NSMutableArray *array = [MLNUI_LUA_CORE(L) toNativeObject:2 error:NULL];
                switch ([array mln_nativeType]) {
-                   case MLNNativeTypeArray:
-                   case MLNNativeTypeMArray: {
+                   case MLNUINativeTypeArray:
+                   case MLNUINativeTypeMArray: {
                        [map mln_removeObjectsForKeys:array];
                        break;
                    }
@@ -189,7 +189,7 @@ static int lua_map_removeAllObjects(lua_State *L) {
 
 static int lua_map_allKeys(lua_State *L) {
     LUA_ARG_CHECK(1);
-    LUA_MAP_DO([MLN_LUA_CORE(L) pushNativeObject:[NSMutableArray arrayWithArray:[map allKeys]] error:NULL];
+    LUA_MAP_DO([MLNUI_LUA_CORE(L) pushNativeObject:[NSMutableArray arrayWithArray:[map allKeys]] error:NULL];
                return 1;)
     return 0;
 }

@@ -1,15 +1,15 @@
 //
-//  MLNListViewObserver.h
-// MLN
+//  MLNUIListViewObserver.h
+// MLNUI
 //
 //  Created by Dai Dongpeng on 2020/3/5.
 //
 
-#import "MLNKVOObserver.h"
+#import "MLNUIKVOObserver.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface MLNListViewObserver : MLNKVOObserver
+@interface MLNUIListViewObserver : MLNUIKVOObserver
 
 @property (nonatomic, strong, readonly) UIView *listView;
 

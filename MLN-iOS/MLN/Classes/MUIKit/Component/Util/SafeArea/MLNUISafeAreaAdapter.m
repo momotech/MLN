@@ -1,19 +1,19 @@
 //
-//  MLNSafeAreaAdapter.m
-//  MLN
+//  MLNUISafeAreaAdapter.m
+//  MLNUI
 //
 //  Created by MoMo on 2019/12/20.
 //
 
-#import "MLNSafeAreaAdapter.h"
-#import "MLNEntityExporterMacro.h"
+#import "MLNUISafeAreaAdapter.h"
+#import "MLNUIEntityExporterMacro.h"
 
-@interface MLNSafeAreaAdapter ()
+@interface MLNUISafeAreaAdapter ()
 
 @property (nonatomic, copy) void(^updateInsetsCallback)(void);
 
 @end
-@implementation MLNSafeAreaAdapter
+@implementation MLNUISafeAreaAdapter
 
 - (void)setInsetsTop:(CGFloat)insetsTop
 {
@@ -59,11 +59,11 @@
     self.updateInsetsCallback = callback;
 }
 
-LUA_EXPORT_BEGIN(MLNSafeAreaAdapter)
-LUA_EXPORT_PROPERTY(insetsTop, "setInsetsTop:", "insetsTop", MLNSafeAreaAdapter)
-LUA_EXPORT_PROPERTY(insetsBottom, "setInsetsBottom:", "insetsBottom", MLNSafeAreaAdapter)
-LUA_EXPORT_PROPERTY(insetsLeft, "setInsetsLeft:", "insetsLeft", MLNSafeAreaAdapter)
-LUA_EXPORT_PROPERTY(insetsRight, "setInsetsRight:", "insetsRight", MLNSafeAreaAdapter)
-LUA_EXPORT_END(MLNSafeAreaAdapter, SafeAreaAdapter, NO, NULL, NULL)
+LUA_EXPORT_BEGIN(MLNUISafeAreaAdapter)
+LUA_EXPORT_PROPERTY(insetsTop, "setInsetsTop:", "insetsTop", MLNUISafeAreaAdapter)
+LUA_EXPORT_PROPERTY(insetsBottom, "setInsetsBottom:", "insetsBottom", MLNUISafeAreaAdapter)
+LUA_EXPORT_PROPERTY(insetsLeft, "setInsetsLeft:", "insetsLeft", MLNUISafeAreaAdapter)
+LUA_EXPORT_PROPERTY(insetsRight, "setInsetsRight:", "insetsRight", MLNUISafeAreaAdapter)
+LUA_EXPORT_END(MLNUISafeAreaAdapter, SafeAreaAdapter, NO, NULL, NULL)
 
 @end

@@ -1,14 +1,14 @@
 //
-//  MLNStringUtil.h
+//  MLNUIStringUtil.h
 //
 //
 //  Created by MoMo on 2018/10/11.
 //
 
 #import <Foundation/Foundation.h>
-#import "MLNStaticExportProtocol.h"
+#import "MLNUIStaticExportProtocol.h"
 
-@interface MLNStringUtil : NSObject<MLNStaticExportProtocol>
+@interface MLNUIStringUtil : NSObject<MLNUIStaticExportProtocol>
 
 + (BOOL)constraintString:(NSString *)str specifiedLength:(NSUInteger)maxCount;
 + (NSString *)constrainString:(NSString *)string toMaxLength:(NSUInteger)maxLength;

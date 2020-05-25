@@ -1,25 +1,25 @@
 //
-//  MLNCornerMaskLayerHndler.m
+//  MLNUICornerMaskLayerHndler.m
 //
 //
 //  Created by MoMo on 2019/5/26.
 //
 
-#import "MLNCornerMaskLayerHndler.h"
-#import "MLNCornerManagerTool.h"
-#import "MLNLayoutNode.h"
-#import "UIView+MLNLayout.h"
-#import "UIView+MLNKit.h"
-#import "MLNRenderContext.h"
+#import "MLNUICornerMaskLayerHndler.h"
+#import "MLNUICornerManagerTool.h"
+#import "MLNUILayoutNode.h"
+#import "UIView+MLNUILayout.h"
+#import "UIView+MLNUIKit.h"
+#import "MLNUIRenderContext.h"
 
-@interface MLNCornerMaskLayerHndler()
+@interface MLNUICornerMaskLayerHndler()
 
-@property (nonatomic, assign) MLNCornerRadius multiRadius;
-@property (nonatomic, assign) MLNCornerRadius lastMultiRadius;
+@property (nonatomic, assign) MLNUICornerRadius multiRadius;
+@property (nonatomic, assign) MLNUICornerRadius lastMultiRadius;
 
 @end
 
-@implementation MLNCornerMaskLayerHndler
+@implementation MLNUICornerMaskLayerHndler
 @synthesize needRemake = _needRemake;
 @synthesize targetView = _targetView;
 
@@ -39,8 +39,8 @@
 }
 
 - (void)addCorner:(UIRectCorner)corner cornerRadius:(CGFloat)cornerRadius maskColor:(nullable UIColor *)maskColor {
-    MLNCornerRadius newMultiRadius = [MLNCornerManagerTool multiRadius:_multiRadius append:corner cornerRadius:cornerRadius];
-    if ([MLNCornerManagerTool multiRadius:_multiRadius equalMultiRadius:newMultiRadius]) {
+    MLNUICornerRadius newMultiRadius = [MLNUICornerManagerTool multiRadius:_multiRadius append:corner cornerRadius:cornerRadius];
+    if ([MLNUICornerManagerTool multiRadius:_multiRadius equalMultiRadius:newMultiRadius]) {
         return;
     }
     _needRemake = YES;
@@ -49,13 +49,13 @@
 
 - (CGFloat)cornerRadiusWithDirection:(UIRectCorner)corner
 {
-    return [MLNCornerManagerTool cornerRadiusWithDirection:corner multiRadius:_multiRadius];
+    return [MLNUICornerManagerTool cornerRadiusWithDirection:corner multiRadius:_multiRadius];
 }
 
 - (void)remakeIfNeed {
-    CGRect frame = [MLNCornerManagerTool viewFrame:self.targetView];
+    CGRect frame = [MLNUICornerManagerTool viewFrame:self.targetView];
     if (_needRemake) {
-        UIBezierPath *maskPath = [MLNCornerManagerTool bezierPathWithRect:frame multiRadius:_multiRadius];
+        UIBezierPath *maskPath = [MLNUICornerManagerTool bezierPathWithRect:frame multiRadius:_multiRadius];
         CAShapeLayer *maskLayer = [[CAShapeLayer alloc] init];
         maskLayer.frame = frame;
         maskLayer.path = maskPath.CGPath;

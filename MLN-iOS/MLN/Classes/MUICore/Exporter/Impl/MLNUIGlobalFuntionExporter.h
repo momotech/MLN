@@ -1,15 +1,15 @@
 //
-//  MLNGlobalFuntionExporter.h
-//  MLNCore
+//  MLNUIGlobalFuntionExporter.h
+//  MLNUICore
 //
 //  Created by MoMo on 2019/7/23.
 //
 
-#import "MLNExporter.h"
+#import "MLNUIExporter.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface MLNGlobalFuntionExporter : MLNExporter
+@interface MLNUIGlobalFuntionExporter : MLNUIExporter
 
 @end
 

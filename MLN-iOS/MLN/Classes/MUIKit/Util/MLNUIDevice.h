@@ -1,6 +1,6 @@
 //
-//  MLNDevice.h
-//  MLN
+//  MLNUIDevice.h
+//  MLNUI
 //
 //  Created by MoMo on 2019/8/5.
 //
@@ -9,7 +9,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface MLNDevice : NSObject
+@interface MLNUIDevice : NSObject
 
 + (NSString *)platform;
 + (NSString *)hwmodel;

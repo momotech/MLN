@@ -1,13 +1,13 @@
 //
 //  UIImage+mln_in_util.m
-//  MLN
+//  MLNUI
 //
 //  Created by MoMo on 2019/1/16.
 //
 
-#import "UIImage+MLN_IN_UTIL.h"
+#import "UIImage+MLNUI_IN_UTIL.h"
 
-@implementation UIImage (MLN_IN_UTIL)
+@implementation UIImage (MLNUI_IN_UTIL)
 
 + (UIImage *)mln_in_imageWithColor:(UIColor *)color finalSize:(CGSize)size cornerRadius:(CGFloat)cornerRadius
 {

@@ -1,17 +1,17 @@
 //
-//  MLNExporter.m
-//  MLNCore
+//  MLNUIExporter.m
+//  MLNUICore
 //
 //  Created by MoMo on 2019/7/23.
 //
 
-#import "MLNExporter.h"
+#import "MLNUIExporter.h"
 
-@implementation MLNExporter
+@implementation MLNUIExporter
 
 @synthesize luaCore = _luaCore;
 
-- (instancetype)initWithLuaCore:(MLNLuaCore *)luaCore
+- (instancetype)initWithLuaCore:(MLNUILuaCore *)luaCore
 {
     NSParameterAssert(luaCore);
     if (self = [super init]) {
@@ -20,7 +20,7 @@
     return self;
 }
 
-- (BOOL)exportClass:(Class<MLNExportProtocol>)clazz error:(NSError **)error
+- (BOOL)exportClass:(Class<MLNUIExportProtocol>)clazz error:(NSError **)error
 {
     // 子类实现
     return NO;

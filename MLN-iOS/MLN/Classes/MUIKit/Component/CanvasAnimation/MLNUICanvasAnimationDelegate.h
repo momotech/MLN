@@ -1,6 +1,6 @@
 //
-//  MLNCanvasAnimationDelegate.h
-//  MLN
+//  MLNUICanvasAnimationDelegate.h
+//  MLNUI
 //
 //  Created by MoMo on 2019/5/13.
 //
@@ -9,7 +9,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface MLNCanvasAnimationDelegate : NSObject <CAAnimationDelegate>
+@interface MLNUICanvasAnimationDelegate : NSObject <CAAnimationDelegate>
 
 @property (nonatomic, assign) BOOL ignoreAnimationCallback;
 

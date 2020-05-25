@@ -1,6 +1,6 @@
 //
-//  MLNBlock.h
-//  MLNCore
+//  MLNUIBlock.h
+//  MLNUICore
 //
 //  Created by MoMo on 2019/7/23.
 //
@@ -9,20 +9,20 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class MLNLuaCore;
-@class MLNLuaTable;
+@class MLNUILuaCore;
+@class MLNUILuaTable;
 
 /**
- 关联Lua Function的对象， 具体参数和返回值的转换规则，参阅MLNConvertor等
+ 关联Lua Function的对象， 具体参数和返回值的转换规则，参阅MLNUIConvertor等
  
  @note ⚠️该类的实例化和方法调用都只能在主队列执行
  */
-@interface MLNBlock : NSObject
+@interface MLNUIBlock : NSObject
 
 /**
  Lua内核
  */
-@property (nonatomic, weak, readonly) MLNLuaCore *luaCore;
+@property (nonatomic, weak, readonly) MLNUILuaCore *luaCore;
 
 /**
  创建Lua Function关联对象
@@ -31,7 +31,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param index Lua Function在Lua栈上的位置
  @return Block对象
  */
-- (instancetype)initWithLuaCore:(MLNLuaCore *)luaCore indexOnLuaStack:(int)index NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithLuaCore:(MLNUILuaCore *)luaCore indexOnLuaStack:(int)index NS_DESIGNATED_INITIALIZER;
 
 + (instancetype)new NS_UNAVAILABLE;
 - (instancetype)init NS_UNAVAILABLE;
@@ -159,11 +159,11 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)addLuaTableArgumentWithArray:(NSArray *)argument;
 
 /**
- 添加MLNLuaTable类型参数
+ 添加MLNUILuaTable类型参数
  
- @param argument MLNLuaTable类型参数
+ @param argument MLNUILuaTable类型参数
  */
-- (void)addLuaTableArgument:(MLNLuaTable *)argument;
+- (void)addLuaTableArgument:(MLNUILuaTable *)argument;
 
 @end
 

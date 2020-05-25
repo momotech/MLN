@@ -1,5 +1,5 @@
 //
-//  MLNWindowContext.h
+//  MLNUIWindowContext.h
 //
 //
 //  Created by MoMo on 2019/4/29.
@@ -9,7 +9,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface MLNWindowContext : NSObject
+@interface MLNUIWindowContext : NSObject
 
 @property (nonatomic, strong, readonly) NSArray *allObject;
 

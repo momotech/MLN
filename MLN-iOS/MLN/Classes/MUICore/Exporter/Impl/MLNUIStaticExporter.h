@@ -1,15 +1,15 @@
 //
-//  MLNStaticExporter.h
-//  MLNCore
+//  MLNUIStaticExporter.h
+//  MLNUICore
 //
 //  Created by MoMo on 2019/7/23.
 //
 
-#import "MLNExporter.h"
+#import "MLNUIExporter.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface MLNStaticExporter : MLNExporter
+@interface MLNUIStaticExporter : MLNUIExporter
 
 @end
 

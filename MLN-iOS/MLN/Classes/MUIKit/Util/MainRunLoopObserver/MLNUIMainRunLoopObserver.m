@@ -1,18 +1,18 @@
 //
-//  MLNMainRunLoopObserver.m
+//  MLNUIMainRunLoopObserver.m
 //
 //
 //  Created by MoMo on 2018/10/24.
 //
 
-#import "MLNMainRunLoopObserver.h"
+#import "MLNUIMainRunLoopObserver.h"
 
-@interface MLNMainRunLoopObserver ()
+@interface MLNUIMainRunLoopObserver ()
 
 @property (nonatomic, assign) CFRunLoopObserverRef obs;
 
 @end
-@implementation MLNMainRunLoopObserver
+@implementation MLNUIMainRunLoopObserver
 
 - (void)dealloc
 {

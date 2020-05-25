@@ -1,37 +1,37 @@
 //
-//  MLNLuaTable.h
-//  MLNCore
+//  MLNUILuaTable.h
+//  MLNUICore
 //
 //  Created by MoMo on 2019/7/24.
 //
 
 #import <Foundation/Foundation.h>
-#import "MLNEntityExportProtocol.h"
+#import "MLNUIEntityExportProtocol.h"
 
 typedef enum : int {
-    MLNLuaTableEnvGlobal = -10002, // default
-    MLNLuaTableEnvRegister = -10000,
-} MLNLuaTableEnvironment;
+    MLNUILuaTableEnvGlobal = -10002, // default
+    MLNUILuaTableEnvRegister = -10000,
+} MLNUILuaTableEnvironment;
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class MLNLuaCore;
+@class MLNUILuaCore;
 
 /**
  关联Lua table的原生类
   @note ⚠️该类的实例化和方法调用都只能在主队列执行
  */
-@interface MLNLuaTable : NSObject
+@interface MLNUILuaTable : NSObject
 
 /**
  对应的Lua内核
  */
-@property (nonatomic, weak, readonly) MLNLuaCore *luaCore;
+@property (nonatomic, weak, readonly) MLNUILuaCore *luaCore;
 
 /**
  存储该Table的环境
  */
-@property (nonatomic, assign, readonly) MLNLuaTableEnvironment env;
+@property (nonatomic, assign, readonly) MLNUILuaTableEnvironment env;
 
 /**
  创建LuaTable
@@ -40,7 +40,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param env 存储环境
  @return LuaTable实例
  */
-- (instancetype)initWithLuaCore:(MLNLuaCore *)luaCore env:(MLNLuaTableEnvironment)env NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithLuaCore:(MLNUILuaCore *)luaCore env:(MLNUILuaTableEnvironment)env NS_DESIGNATED_INITIALIZER;
 + (instancetype)new NS_UNAVAILABLE;
 - (instancetype)init NS_UNAVAILABLE;
 
@@ -66,7 +66,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param obj value对象
  @param key key值
  */
-- (void)setObject:(id<MLNEntityExportProtocol>)obj key:(NSString *)key;
+- (void)setObject:(id<MLNUIEntityExportProtocol>)obj key:(NSString *)key;
 
 /**
  设置key-value
@@ -74,7 +74,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param obj value对象
  @param cKey key值
  */
-- (void)setObject:(id<MLNEntityExportProtocol>)obj cKey:(void *)cKey;
+- (void)setObject:(id<MLNUIEntityExportProtocol>)obj cKey:(void *)cKey;
 
 /**
  移除对象

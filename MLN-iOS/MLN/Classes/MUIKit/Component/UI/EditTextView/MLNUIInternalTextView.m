@@ -1,14 +1,14 @@
 //
-//  MLNInternalTextView.m
+//  MLNUIInternalTextView.m
 //
 //
 //  Created by MoMo on 2018/12/21.
 //
 
-#import "MLNInternalTextView.h"
-#import "MLNTextConst.h"
+#import "MLNUIInternalTextView.h"
+#import "MLNUITextConst.h"
 
-@interface MLNInternalTextView ()
+@interface MLNUIInternalTextView ()
 
 @property(nonatomic, strong) UITextView *myTextView;
 @property(nonatomic, strong) UILabel *placeholderLabel;
@@ -20,7 +20,7 @@
 @property (nonatomic, assign) UIKeyboardType mil_in_keyboardType;
 
 @end
-@implementation MLNInternalTextView
+@implementation MLNUIInternalTextView
 
 - (instancetype)initWithFrame:(CGRect)frame
 {
@@ -147,14 +147,14 @@
 }
 
 #pragma mark - UITextViewDelegate
-- (void)textViewDidBeginEditing:(MLNInternalTextView *)textView
+- (void)textViewDidBeginEditing:(MLNUIInternalTextView *)textView
 {
     if ([self.internalTextViewDelegate respondsToSelector:@selector(internalTextViewDidBeginEditing:)]) {
         [self.internalTextViewDelegate internalTextViewDidBeginEditing:textView];
     }
 }
 
-- (BOOL)textView:(MLNInternalTextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text
+- (BOOL)textView:(MLNUIInternalTextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text
 {
     if ([self.internalTextViewDelegate respondsToSelector:@selector(internalTextView:shouldChangeTextInRange:replacementText:)]) {
         return [self.internalTextViewDelegate internalTextView:textView shouldChangeTextInRange:range replacementText:text];
@@ -162,7 +162,7 @@
     return YES;
 }
 
-- (void)textViewDidChange:(MLNInternalTextView *)textView
+- (void)textViewDidChange:(MLNUIInternalTextView *)textView
 {
     [self placeholderHiddenIfNeed:textView.text];
     

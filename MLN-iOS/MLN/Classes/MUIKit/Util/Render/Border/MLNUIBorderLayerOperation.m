@@ -1,20 +1,20 @@
 //
-//  MLNBorderLayerOperation.m
-//  MLN
+//  MLNUIBorderLayerOperation.m
+//  MLNUI
 //
 //  Created by MoMo on 2019/8/14.
 //
 
-#import "MLNBorderLayerOperation.h"
-#import "MLNCornerManagerTool.h"
+#import "MLNUIBorderLayerOperation.h"
+#import "MLNUICornerManagerTool.h"
 
-@interface MLNBorderLayerOperation()
+@interface MLNUIBorderLayerOperation()
 
 @property (nonatomic, strong) CAShapeLayer *borderLayer;
 
 @end
 
-@implementation MLNBorderLayerOperation
+@implementation MLNUIBorderLayerOperation
 
 - (instancetype)initWithTargetView:(UIView *)targetView
 {
@@ -74,7 +74,7 @@
     self.borderLayer.fillColor = nil;
     CGFloat maxBorderWidth = MIN(self.targetView.bounds.size.width, self.targetView.bounds.size.height)/2.0;
     CGFloat borderWidth = _borderWidth < maxBorderWidth? _borderWidth : maxBorderWidth;
-    self.borderLayer.path = [MLNCornerManagerTool bezierPathWithRect:self.targetView.bounds multiRadius:self.multiRadius  lineWidth:borderWidth].CGPath;
+    self.borderLayer.path = [MLNUICornerManagerTool bezierPathWithRect:self.targetView.bounds multiRadius:self.multiRadius  lineWidth:borderWidth].CGPath;
     self.borderLayer.frame = self.targetView.bounds;
     self.borderLayer.lineWidth = borderWidth;
     self.borderLayer.lineCap = [self existRoundCorner]? kCALineCapRound : kCALineCapSquare;
@@ -83,7 +83,7 @@
     [self.targetView.layer addSublayer:self.borderLayer];
 }
 
-- (void)updateCornerRadiusAndRemake:(MLNCornerRadius)radius
+- (void)updateCornerRadiusAndRemake:(MLNUICornerRadius)radius
 {
     self.multiRadius = radius;
     [self remakeIfNeed];

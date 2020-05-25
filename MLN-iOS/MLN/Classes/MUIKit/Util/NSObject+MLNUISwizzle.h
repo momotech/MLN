@@ -1,6 +1,6 @@
 //
-//  NSObject+MLNSwizzle.h
-// MLN
+//  NSObject+MLNUISwizzle.h
+// MLNUI
 //
 //  Created by Dai Dongpeng on 2020/3/7.
 //
@@ -9,7 +9,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface NSObject (MLNSwizzle)
+@interface NSObject (MLNUISwizzle)
 
 + (void)mln_swizzleInstanceSelector:(SEL)originSelector
                 withNewSelector:(SEL)newSelector

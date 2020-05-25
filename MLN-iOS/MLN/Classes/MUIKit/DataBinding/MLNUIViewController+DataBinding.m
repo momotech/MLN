@@ -6,9 +6,9 @@
 //
 
 #import "MLNUIViewController+DataBinding.h"
-#import "MLNDataBinding.h"
-#import "MLNLuaCore.h"
-#import "MLNKitInstance.h"
+#import "MLNUIDataBinding.h"
+#import "MLNUILuaCore.h"
+#import "MLNUIKitInstance.h"
 
 @implementation MLNUIViewController (DataBinding)
 - (UIView *)findViewById:(NSString *)identifier {
@@ -25,7 +25,7 @@
           lua_settop(L, base);
           return nil;
       }
-    MLNUserData *ud = (MLNUserData *)lua_touserdata(L, -1);
+    MLNUIUserData *ud = (MLNUIUserData *)lua_touserdata(L, -1);
     UIView *view = nil;
     if (ud) {
         view = (__bridge __unsafe_unretained UIView *)ud->object;
@@ -38,9 +38,9 @@
     [self.mln_dataBinding bindData:data forKey:key];
 }
 
-- (MLNDataBinding *)mln_dataBinding {
+- (MLNUIDataBinding *)mln_dataBinding {
     if (!_dataBinding) {
-        _dataBinding = [[MLNDataBinding alloc] init];
+        _dataBinding = [[MLNUIDataBinding alloc] init];
     }
     return _dataBinding;
 }
@@ -48,12 +48,12 @@
 @end
 
 
-@implementation UIViewController (MLNDataBinding)
+@implementation UIViewController (MLNUIDataBinding)
 
-- (MLNDataBinding *)mln_dataBinding {
-    MLNDataBinding *obj = objc_getAssociatedObject(self, _cmd);
+- (MLNUIDataBinding *)mln_dataBinding {
+    MLNUIDataBinding *obj = objc_getAssociatedObject(self, _cmd);
     if (!obj) {
-        obj = [[MLNDataBinding alloc] init];
+        obj = [[MLNUIDataBinding alloc] init];
         objc_setAssociatedObject(self, _cmd, obj, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     }
     return obj;
@@ -84,7 +84,7 @@
 @param LUA_VIEW_CONTROLLER  Lua所属的视图控制器
 @param VIEW_ID 访问视图的ID
 */
-#define MLN_VIEW_IMPORT(LUA_VIEW_CONTROLLER, VIEW_ID)\
+#define MLNUI_VIEW_IMPORT(LUA_VIEW_CONTROLLER, VIEW_ID)\
 - (UIView *)VIEW_ID\
 {\
 return [(LUA_VIEW_CONTROLLER) findViewById: @#VIEW_ID];\
@@ -97,7 +97,7 @@ return [(LUA_VIEW_CONTROLLER) findViewById: @#VIEW_ID];\
 @param VIEW_ID 访问视图的ID
 @param VIEW_ALIAS 访问视图的别名
 */
-#define MLN_VIEW_IMPORT_WITH_ALIAS(LUA_VIEW_CONTROLLER, VIEW_ID, VIEW_ALIAS)\
+#define MLNUI_VIEW_IMPORT_WITH_ALIAS(LUA_VIEW_CONTROLLER, VIEW_ID, VIEW_ALIAS)\
 - (UIView *)VIEW_ALIAS\
 {\
 return [(LUA_VIEW_CONTROLLER) findViewById: @#VIEW_ID];\

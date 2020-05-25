@@ -1,18 +1,18 @@
 //
-//  MLNWaterfallHeaderView.h
+//  MLNUIWaterfallHeaderView.h
 //
 //
 //  Created by MoMo on 2019/5/10.
 //
 
 #import <UIKit/UIKit.h>
-#import "MLNReuseContentView.h"
+#import "MLNUIReuseContentView.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-#define kMLNWaterfallHeaderViewReuseID @"kMLNWaterfallHeaderViewReuseID"
+#define kMLNUIWaterfallHeaderViewReuseID @"kMLNUIWaterfallHeaderViewReuseID"
 
-@interface MLNWaterfallHeaderView : UICollectionReusableView <MLNReuseCellProtocol>
+@interface MLNUIWaterfallHeaderView : UICollectionReusableView <MLNUIReuseCellProtocol>
 
 @end
 

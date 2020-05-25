@@ -1,19 +1,19 @@
 //
-//  MLNExportInfo.h
-//  MLNCore
+//  MLNUIExportInfo.h
+//  MLNUICore
 //
 //  Created by MoMo on 2019/7/23.
 //
 
-#ifndef MLNExportInfo_h
-#define MLNExportInfo_h
+#ifndef MLNUIExportInfo_h
+#define MLNUIExportInfo_h
 
 #include "mln_lua.h"
 
 struct mln_objc_method ;
-typedef struct mln_objc_method *MLN_Method_List;
+typedef struct mln_objc_method *MLNUI_Method_List;
 struct mln_objc_class;
-typedef struct mln_objc_class *MLN_Class;
+typedef struct mln_objc_class *MLNUI_Class;
 
 /**
  方法信息结构体
@@ -40,21 +40,21 @@ typedef struct mln_objc_class {
     BOOL isRoot; /* is root function,it should be YES if no base class. */
     const char *supreClz; /* base Object-C class */
     BOOL hasConstructor; /* it should be NO if static class. */
-    MLN_Method_List methods; /* Object-C method */
-    MLN_Method_List clz_methods; /* Object-C class method */
+    MLNUI_Method_List methods; /* Object-C method */
+    MLNUI_Method_List clz_methods; /* Object-C class method */
     struct mln_objc_method constructor; /* Object-C constructor method */
 } mln_objc_class;
 
-#define MLNHasSuperClass(clz) (!(clz)->isRoot)
+#define MLNUIHasSuperClass(clz) (!(clz)->isRoot)
 
 /**
  自定义lua USer
  */
-typedef struct _MLNUserData {
+typedef struct _MLNUIUserData {
     /* 对应的native类型 */
     const char *type;
     /* 对应的native对象 */
     const void *object;
-} MLNUserData;
+} MLNUIUserData;
 
-#endif /* MLNExportInfo_h */
+#endif /* MLNUIExportInfo_h */

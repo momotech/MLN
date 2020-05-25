@@ -1,6 +1,6 @@
 //
-//  NSArray+MLNKVO.h
-// MLN
+//  NSArray+MLNUIKVO.h
+// MLNUI
 //
 //  Created by Dai Dongpeng on 2020/3/9.
 //
@@ -9,9 +9,9 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-typedef void (^MLNItemKVOBlock)(NSObject *item,NSString *keyPath, NSObject * _Nullable oldValue, NSObject * _Nullable newValue);
+typedef void (^MLNUIItemKVOBlock)(NSObject *item,NSString *keyPath, NSObject * _Nullable oldValue, NSObject * _Nullable newValue);
 
-@interface NSArray (MLNKVO)
+@interface NSArray (MLNUIKVO)
 
 // 是否二维数组
 - (BOOL)mln_is2D;
@@ -20,7 +20,7 @@ typedef void (^MLNItemKVOBlock)(NSObject *item,NSString *keyPath, NSObject * _Nu
 - (void)mln_stopKVOIfMutable;
 
 // 监听lua层对Cell ViewModel的改动，支持监听二维数组.
-//@property (nonatomic, copy, readonly)NSArray * (^mln_subscribeItem)(MLNItemKVOBlock);
+//@property (nonatomic, copy, readonly)NSArray * (^mln_subscribeItem)(MLNUIItemKVOBlock);
 //@property (nonatomic, strong, readonly) NSMutableArray *mln_itemKVOBlocks;
 
 - (NSArray *)mln_convertToLuaTableAvailable;

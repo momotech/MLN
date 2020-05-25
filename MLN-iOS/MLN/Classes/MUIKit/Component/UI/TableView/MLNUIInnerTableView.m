@@ -1,21 +1,21 @@
 //
-//  MLNInnerTableView.m
-//  MLN
+//  MLNUIInnerTableView.m
+//  MLNUI
 //
 //  Created by MoMo on 2019/9/2.
 //
 
-#import "MLNInnerTableView.h"
-#import "NSObject+MLNCore.h"
+#import "MLNUIInnerTableView.h"
+#import "NSObject+MLNUICore.h"
 
-@implementation MLNInnerTableView
+@implementation MLNUIInnerTableView
 
 - (BOOL)mln_isConvertible
 {
     return [self.containerView mln_isConvertible];
 }
 
-- (MLNLuaCore *)mln_luaCore
+- (MLNUILuaCore *)mln_luaCore
 {
     return self.containerView.mln_luaCore;
 }

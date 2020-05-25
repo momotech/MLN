@@ -1,26 +1,26 @@
 //
-//  MLNBlockObserver.m
-// MLN
+//  MLNUIBlockObserver.m
+// MLNUI
 //
 //  Created by Dai Dongpeng on 2020/3/3.
 //
 
-#import "MLNBlockObserver.h"
-#import "MLNBlock.h"
-#import "MLNKitHeader.h"
-#import "MLNKitViewController.h"
-#import "MLNDataBinding.h"
-#import "NSObject+MLNReflect.h"
+#import "MLNUIBlockObserver.h"
+#import "MLNUIBlock.h"
+#import "MLNUIKitHeader.h"
+#import "MLNUIKitViewController.h"
+#import "MLNUIDataBinding.h"
+#import "NSObject+MLNUIReflect.h"
 
-@interface MLNBlockObserver ()
-@property (nonatomic, strong, readwrite) MLNBlock *block;
+@interface MLNUIBlockObserver ()
+@property (nonatomic, strong, readwrite) MLNUIBlock *block;
 @end
 
-@implementation MLNBlockObserver
+@implementation MLNUIBlockObserver
 
-+ (instancetype)observerWithBlock:(MLNBlock *)block keyPath:(nonnull NSString *)keyPath {
-    MLNKitViewController *kitViewController = (MLNKitViewController *)MLN_KIT_INSTANCE([block luaCore]).viewController;
-    MLNBlockObserver *observer = [[MLNBlockObserver alloc] initWithViewController:kitViewController callback:nil keyPath:keyPath];
++ (instancetype)observerWithBlock:(MLNUIBlock *)block keyPath:(nonnull NSString *)keyPath {
+    MLNUIKitViewController *kitViewController = (MLNUIKitViewController *)MLNUI_KIT_INSTANCE([block luaCore]).viewController;
+    MLNUIBlockObserver *observer = [[MLNUIBlockObserver alloc] initWithViewController:kitViewController callback:nil keyPath:keyPath];
     observer.block = block;
     
     // hotreload时有问题，所以改成在notify时进行移除.
@@ -39,14 +39,14 @@
 - (void)notifyKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change {
     [super notifyKeyPath:keyPath ofObject:object change:change];
     if (!self.block.luaCore) {
-        [((id<MLNDataBindingProtocol>)self.viewController).mln_dataBinding removeMLNObserver:self forKeyPath:self.keyPath];
+        [((id<MLNUIDataBindingProtocol>)self.viewController).mln_dataBinding removeMLNUIObserver:self forKeyPath:self.keyPath];
         return;
     }
     
     id newValue = [change objectForKey:NSKeyValueChangeNewKey];
     id oldValue = [change objectForKey:NSKeyValueChangeOldKey];
     
-    id tmp = [change objectForKey:MLNKVOOrigin2DArrayKey]; // 2D数组
+    id tmp = [change objectForKey:MLNUIKVOOrigin2DArrayKey]; // 2D数组
     if (tmp) {
         newValue = tmp;
         oldValue = nil;
@@ -76,7 +76,7 @@
     return self.block.luaCore;
 }
 
-- (instancetype)initWithViewController:(UIViewController *)viewController callback:(MLNKVOCallback)callback keyPath:(NSString *)keyPath
+- (instancetype)initWithViewController:(UIViewController *)viewController callback:(MLNUIKVOCallback)callback keyPath:(NSString *)keyPath
 {
     self = [super initWithViewController:viewController callback:callback keyPath:keyPath];
     if (self) {

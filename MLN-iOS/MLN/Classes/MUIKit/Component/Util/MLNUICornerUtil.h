@@ -1,16 +1,16 @@
 //
-//  MLNCornerUtil.h
-//  MLN
+//  MLNUICornerUtil.h
+//  MLNUI
 //
 //  Created by MoMo on 2019/10/30.
 //
 
 #import <Foundation/Foundation.h>
-#import "MLNStaticExportProtocol.h"
+#import "MLNUIStaticExportProtocol.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface MLNCornerUtil : NSObject <MLNStaticExportProtocol>
+@interface MLNUICornerUtil : NSObject <MLNUIStaticExportProtocol>
 
 @end
 

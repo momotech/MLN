@@ -1,25 +1,25 @@
 //
-//  MLNTextViewFactory.m
+//  MLNUITextViewFactory.m
 //
 //
 //  Created by MoMo on 2018/12/21.
 //
 
-#import "MLNTextViewFactory.h"
-#import "MLNInternalTextView.h"
-#import "MLNInternalTextField.h"
+#import "MLNUITextViewFactory.h"
+#import "MLNUIInternalTextView.h"
+#import "MLNUIInternalTextField.h"
 
-@implementation MLNTextViewFactory
+@implementation MLNUITextViewFactory
 
-+ (UIView<MLNTextViewProtocol> *)createInternalTextViewByType:(MLNInternalTextViewType)type withTempTextView:(UIView<MLNTextViewProtocol> * _Nullable)temp
++ (UIView<MLNUITextViewProtocol> *)createInternalTextViewByType:(MLNUIInternalTextViewType)type withTempTextView:(UIView<MLNUITextViewProtocol> * _Nullable)temp
 {
-    UIView<MLNTextViewProtocol> *new = nil;
+    UIView<MLNUITextViewProtocol> *new = nil;
     switch (type) {
-        case MLNInternalTextViewTypeMultableLine:
-            new = [[MLNInternalTextView alloc] initWithFrame:CGRectZero];
+        case MLNUIInternalTextViewTypeMultableLine:
+            new = [[MLNUIInternalTextView alloc] initWithFrame:CGRectZero];
             break;
         default:
-            new = [[MLNInternalTextField alloc] initWithFrame:CGRectZero];
+            new = [[MLNUIInternalTextField alloc] initWithFrame:CGRectZero];
             break;
     }
     if (temp) {

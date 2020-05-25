@@ -1,18 +1,18 @@
 //
-//  MLNZStackNode.m
-//  MLN
+//  MLNUIZStackNode.m
+//  MLNUI
 //
 //  Created by MOMO on 2020/3/25.
 //
 
-#import "MLNZStackNode.h"
-#import "MLNHeader.h"
+#import "MLNUIZStackNode.h"
+#import "MLNUIHeader.h"
 
-@implementation MLNZStackNode
+@implementation MLNUIZStackNode
 
 #pragma mark - Override
 
-- (CGSize)measureSubNodes:(NSArray<MLNLayoutNode *> *)subNods maxWidth:(CGFloat)maxWidth maxHeight:(CGFloat)maxHeight {
+- (CGSize)measureSubNodes:(NSArray<MLNUILayoutNode *> *)subNods maxWidth:(CGFloat)maxWidth maxHeight:(CGFloat)maxHeight {
     CGFloat myMaxWidth = [self myMaxWidthWithMaxWidth:maxWidth];
     CGFloat myMaxHeight = [self myMaxHeightWithMaxHeight:maxHeight];
     
@@ -24,7 +24,7 @@
     BOOL needDirty = NO;
     
     for (NSUInteger i  = 0; i < subNods.count; i++) {
-        MLNLayoutNode *subnode = subNods[i];
+        MLNUILayoutNode *subnode = subNods[i];
         if (subnode.isGone) {
             if (subnode.isDirty) {
                 needDirty = YES;
@@ -40,7 +40,7 @@
         CGFloat subMaxHeight = usableZoneHeight - subnode.marginTop - subnode.marginBottom;
         CGSize subMeasuredSize = [subnode measureSizeWithMaxWidth:subMaxWidth maxHeight:subMaxHeight]; // 计算子节点
         switch (subnode.layoutStrategy) {
-            case MLNLayoutStrategyNativeFrame:
+            case MLNUILayoutStrategyNativeFrame:
                 totalWidth = MAX(totalWidth, subMeasuredSize.width);
                 totalHeight = MAX(totalHeight, subMeasuredSize.height);
                 break;
@@ -58,13 +58,13 @@
     // width
     if (!self.isWidthExcatly) {
         switch (self.mergedWidthType) {
-            case MLNLayoutMeasurementTypeWrapContent:
+            case MLNUILayoutMeasurementTypeWrapContent:
                 totalWidth += self.paddingLeft + self.paddingRight;
                 totalWidth = MIN(myMaxWidth, totalWidth);
                 totalWidth = self.minWidth > 0 ? MAX(totalWidth, self.minWidth) : totalWidth;
                 measuredWidth = totalWidth;
                 break;
-            case MLNLayoutMeasurementTypeMatchParent:
+            case MLNUILayoutMeasurementTypeMatchParent:
                 measuredWidth = MAX(self.minWidth, myMaxWidth);
                 break;
             default:
@@ -76,13 +76,13 @@
     // height
     if (!self.isHeightExcatly) {
         switch (self.mergedHeightType) {
-            case MLNLayoutMeasurementTypeWrapContent:
+            case MLNUILayoutMeasurementTypeWrapContent:
                 totalHeight += self.paddingTop + self.paddingBottom;
                 totalHeight = MIN(myMaxHeight, totalHeight);
                 totalHeight = self.minHeight > 0 ? MAX(totalHeight, self.minHeight) : totalHeight;
                 measuredHeight = totalHeight;
                 break;
-            case MLNLayoutMeasurementTypeMatchParent:
+            case MLNUILayoutMeasurementTypeMatchParent:
                 measuredHeight = MAX(self.minHeight, myMaxHeight);
                 break;
             default:
@@ -102,9 +102,9 @@
     CGFloat layoutZoneRight = self.measuredWidth - self.paddingRight;
     CGFloat layoutZoneBottom = self.measuredHeight - self.paddingBottom;
     
-    NSArray<MLNLayoutNode *> *subNodes = self.subnodes;
+    NSArray<MLNUILayoutNode *> *subNodes = self.subnodes;
     for (NSUInteger i = 0; i < subNodes.count; i++) {
-        MLNLayoutNode *subNode = subNodes[i];
+        MLNUILayoutNode *subNode = subNodes[i];
         if (subNode.isGone) continue;
         
         subNode.measuredX = GetSubNodeX(self, subNode, layoutZoneWidth, layoutZoneRight);
@@ -112,7 +112,7 @@
         [subNode updateTargetViewFrameIfNeed];
         
         if (subNode.isContainer) {
-            [(MLNLayoutContainerNode *)subNode layoutSubnodes];
+            [(MLNUILayoutContainerNode *)subNode layoutSubnodes];
         }
         if (subNode.overlayNode) {
             [subNode layoutOverlayNode];
@@ -123,30 +123,30 @@
 #pragma mark -
 
 // 布局X-axis
-static MLN_FORCE_INLINE CGFloat GetSubNodeX(MLNZStackNode __unsafe_unretained *self, MLNLayoutNode __unsafe_unretained *subNode, CGFloat maxWidth, CGFloat maxX) {
+static MLNUI_FORCE_INLINE CGFloat GetSubNodeX(MLNUIZStackNode __unsafe_unretained *self, MLNUILayoutNode __unsafe_unretained *subNode, CGFloat maxWidth, CGFloat maxX) {
     CGFloat x = 0.0;
-    switch (subNode.gravity & MLNGravityHorizontalMask) { // 优先以子节点的Gravity为准
-        case MLNGravityLeft:
+    switch (subNode.gravity & MLNUIGravityHorizontalMask) { // 优先以子节点的Gravity为准
+        case MLNUIGravityLeft:
             x = self.paddingLeft + subNode.marginLeft;
             break;
             
-        case MLNGravityCenterHorizontal:
+        case MLNUIGravityCenterHorizontal:
             x = self.paddingLeft + (maxWidth - subNode.measuredWidth) / 2.0 + subNode.marginLeft - subNode.marginRight;
             break;
             
-        case MLNGravityRight:
+        case MLNUIGravityRight:
             x = maxX - subNode.measuredWidth - subNode.marginRight;;
             break;
             
         default:
-            switch (self.childGravity & MLNGravityHorizontalMask) {
-                case MLNGravityCenterHorizontal:
+            switch (self.childGravity & MLNUIGravityHorizontalMask) {
+                case MLNUIGravityCenterHorizontal:
                     x = self.paddingLeft + (maxWidth - subNode.measuredWidth) / 2.0 + subNode.marginLeft - subNode.marginRight;
                     break;
-                case MLNGravityRight:
+                case MLNUIGravityRight:
                     x = maxX - subNode.measuredWidth - subNode.marginRight;;
                     break;
-                case MLNGravityLeft:
+                case MLNUIGravityLeft:
                 default:
                     x = self.paddingLeft + subNode.marginLeft;
                     break;
@@ -157,30 +157,30 @@ static MLN_FORCE_INLINE CGFloat GetSubNodeX(MLNZStackNode __unsafe_unretained *s
 }
 
 // 布局Y-axis
-static MLN_FORCE_INLINE CGFloat GetSubNodeY(MLNZStackNode __unsafe_unretained *self, MLNLayoutNode __unsafe_unretained *subNode, CGFloat maxHeight, CGFloat maxY) {
+static MLNUI_FORCE_INLINE CGFloat GetSubNodeY(MLNUIZStackNode __unsafe_unretained *self, MLNUILayoutNode __unsafe_unretained *subNode, CGFloat maxHeight, CGFloat maxY) {
     CGFloat y = 0.0;
-    switch (subNode.gravity & MLNGravityVerticalMask) {
-        case MLNGravityTop:
+    switch (subNode.gravity & MLNUIGravityVerticalMask) {
+        case MLNUIGravityTop:
             y = self.paddingTop + subNode.marginTop;
             break;
             
-        case MLNGravityCenterVertical:
+        case MLNUIGravityCenterVertical:
             y = self.paddingTop + (maxHeight - subNode.measuredHeight) / 2.0 + subNode.marginTop - subNode.marginBottom;
             break;
             
-        case MLNGravityBottom:
+        case MLNUIGravityBottom:
             y = maxY - subNode.measuredHeight - subNode.marginBottom;
             break;
             
         default:
-            switch (self.childGravity & MLNGravityVerticalMask) {
-                case MLNGravityCenterVertical:
+            switch (self.childGravity & MLNUIGravityVerticalMask) {
+                case MLNUIGravityCenterVertical:
                     y = self.paddingTop + (maxHeight - subNode.measuredHeight) / 2.0 + subNode.marginTop - subNode.marginBottom;
                     break;
-                case MLNGravityBottom:
+                case MLNUIGravityBottom:
                     y = maxY - subNode.measuredHeight - subNode.marginBottom;
                     break;
-                case MLNGravityTop:
+                case MLNUIGravityTop:
                 default:
                     y = self.paddingTop + subNode.marginTop;
                     break;

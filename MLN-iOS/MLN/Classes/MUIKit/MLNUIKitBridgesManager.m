@@ -1,112 +1,112 @@
 //
-//  MLNKitBridgesManager.m
-//  MLN
+//  MLNUIKitBridgesManager.m
+//  MLNUI
 //
 //  Created by MoMo on 2019/8/29.
 //
 
-#import "MLNKitBridgesManager.h"
-#import "MLNLuaCore.h"
-#import "MLNKitInstance.h"
+#import "MLNUIKitBridgesManager.h"
+#import "MLNUILuaCore.h"
+#import "MLNUIKitInstance.h"
 // Kit Classes's View
-#import "MLNView.h"
-#import "MLNWindow.h"
-#import "MLNLinearLayout.h"
-#import "MLNAlert.h"
-#import "MLNAnimationZoneView.h"
-#import "MLNLabel.h"
-#import "MLNButton.h"
-#import "MLNImageView.h"
-#import "MLNLoading.h"
-#import "MLNScrollView.h"
-#import "MLNSwitch.h"
-#import "MLNToast.h"
-#import "MLNTableView.h"
-#import "MLNTableViewAdapter.h"
-#import "MLNTableViewAutoFitAdapter.h"
-#import "MLNCollectionView.h"
-#import "MLNCollectionViewAdapter.h"
-#import "MLNCollectionViewAutoFitAdapter.h"
-#import "MLNCollectionViewGridLayout.h"
-#import "MLNCollectionLayout.h"
-#import "MLNWaterfallView.h"
-#import "MLNWaterfallLayout.h"
-#import "MLNWaterfallAdapter.h"
-#import "MLNEditTextView.h"
-#import "MLNDialogView.h"
-#import "MLNContainerWindow.h"
-#import "MLNViewPager.h"
-#import "MLNViewPagerAdapter.h"
-#import "MLNTabSegmentView.h"
+#import "MLNUIView.h"
+#import "MLNUIWindow.h"
+#import "MLNUILinearLayout.h"
+#import "MLNUIAlert.h"
+#import "MLNUIAnimationZoneView.h"
+#import "MLNUILabel.h"
+#import "MLNUIButton.h"
+#import "MLNUIImageView.h"
+#import "MLNUILoading.h"
+#import "MLNUIScrollView.h"
+#import "MLNUISwitch.h"
+#import "MLNUIToast.h"
+#import "MLNUITableView.h"
+#import "MLNUITableViewAdapter.h"
+#import "MLNUITableViewAutoFitAdapter.h"
+#import "MLNUICollectionView.h"
+#import "MLNUICollectionViewAdapter.h"
+#import "MLNUICollectionViewAutoFitAdapter.h"
+#import "MLNUICollectionViewGridLayout.h"
+#import "MLNUICollectionLayout.h"
+#import "MLNUIWaterfallView.h"
+#import "MLNUIWaterfallLayout.h"
+#import "MLNUIWaterfallAdapter.h"
+#import "MLNUIEditTextView.h"
+#import "MLNUIDialogView.h"
+#import "MLNUIContainerWindow.h"
+#import "MLNUIViewPager.h"
+#import "MLNUIViewPagerAdapter.h"
+#import "MLNUITabSegmentView.h"
 // Kit Classes's Model
-#import "MLNRect.h"
-#import "MLNSize.h"
-#import "MLNPoint.h"
-#import "MLNColor.h"
-#import "NSMutableArray+MLNArray.h"
-#import "NSMutableDictionary+MLNMap.h"
-#import "MLNStyleString.h"
+#import "MLNUIRect.h"
+#import "MLNUISize.h"
+#import "MLNUIPoint.h"
+#import "MLNUIColor.h"
+#import "NSMutableArray+MLNUIArray.h"
+#import "NSMutableDictionary+MLNUIMap.h"
+#import "MLNUIStyleString.h"
 // Kit Classes's Global Var
-#import "MLNScrollViewConst.h"
-#import "MLNViewConst.h"
-#import "MLNSystemConst.h"
-#import "MLNStyleStringConst.h"
-#import "MLNTextConst.h"
-#import "MLNAnimationConst.h"
-#import "MLNEditTextViewConst.h"
-#import "MLNHTTPConst.h"
-#import "MLNFileConst.h"
-#import "MLNContentMode.h"
-#import "MLNStackConst.h"
+#import "MLNUIScrollViewConst.h"
+#import "MLNUIViewConst.h"
+#import "MLNUISystemConst.h"
+#import "MLNUIStyleStringConst.h"
+#import "MLNUITextConst.h"
+#import "MLNUIAnimationConst.h"
+#import "MLNUIEditTextViewConst.h"
+#import "MLNUIHTTPConst.h"
+#import "MLNUIFileConst.h"
+#import "MLNUIContentMode.h"
+#import "MLNUIStackConst.h"
 // Utils
-#import "MLNSystem.h"
-#import "MLNHttp.h"
-#import "MLNTimer.h"
-#import "MLNClipboard.h"
-#import "MLNBit.h"
-#import "MLNStringUtil.h"
-#import "MLNNavigator.h"
-#import "MLNPreferenceUtils.h"
-#import "MLNFile.h"
-#import "MLNTypeUtil.h"
-#import "MLNApplication.h"
-#import "MLNNetworkReachability.h"
+#import "MLNUISystem.h"
+#import "MLNUIHttp.h"
+#import "MLNUITimer.h"
+#import "MLNUIClipboard.h"
+#import "MLNUIBit.h"
+#import "MLNUIStringUtil.h"
+#import "MLNUINavigator.h"
+#import "MLNUIPreferenceUtils.h"
+#import "MLNUIFile.h"
+#import "MLNUITypeUtil.h"
+#import "MLNUIApplication.h"
+#import "MLNUINetworkReachability.h"
 #import "mmoslib.h"
-#import "MLNCornerUtil.h"
-#import "MLNSafeAreaAdapter.h"
-#import "MLNLink.h"
-#import "MLNDataBinding.h"
+#import "MLNUICornerUtil.h"
+#import "MLNUISafeAreaAdapter.h"
+#import "MLNUILink.h"
+#import "MLNUIDataBinding.h"
 // Animations
-#import "MLNAnimator.h"
-#import "MLNAnimation.h"
-#import "MLNFrameAnimation.h"
-#import "MLNAlphaAnimation.h"
-#import "MLNAnimationSet.h"
-#import "MLNRotateAnimation.h"
-#import "MLNScaleAnimation.h"
-#import "MLNTranslateAnimation.h"
+#import "MLNUIAnimator.h"
+#import "MLNUIAnimation.h"
+#import "MLNUIFrameAnimation.h"
+#import "MLNUIAlphaAnimation.h"
+#import "MLNUIAnimationSet.h"
+#import "MLNUIRotateAnimation.h"
+#import "MLNUIScaleAnimation.h"
+#import "MLNUITranslateAnimation.h"
 // Canvas
-#import "MLNCanvasView.h"
-#import "MLNCanvasPaint.h"
-#import "MLNCanvasConst.h"
-#import "MLNCanvasPath.h"
-#import "MLNShapeContext.h"
+#import "MLNUICanvasView.h"
+#import "MLNUICanvasPaint.h"
+#import "MLNUICanvasConst.h"
+#import "MLNUICanvasPath.h"
+#import "MLNUIShapeContext.h"
 // Stack
-#import "MLNStack.h"
-#import "MLNVStack.h"
-#import "MLNZStack.h"
-#import "MLNHStack.h"
-#import "MLNSpacer.h"
-@interface MLNKitBridgesManager()
+#import "MLNUIStack.h"
+#import "MLNUIVStack.h"
+#import "MLNUIZStack.h"
+#import "MLNUIHStack.h"
+#import "MLNUISpacer.h"
+@interface MLNUIKitBridgesManager()
 /**
  承载Kit库bridge和LuaCore实例
  */
-@property (nonatomic, weak, readonly) MLNKitInstance *instance;
+@property (nonatomic, weak, readonly) MLNUIKitInstance *instance;
 @end
 
-@implementation MLNKitBridgesManager
+@implementation MLNUIKitBridgesManager
 
-- (void)registerKitForLuaCore:(MLNLuaCore *)luaCore
+- (void)registerKitForLuaCore:(MLNUILuaCore *)luaCore
 {
     // 注册视图
     [luaCore registerClasses:self.viewClasses error:NULL];
@@ -126,150 +126,150 @@
     [luaCore registerClasses:self.stackClasses error:NULL];
 }
 
-static NSArray<Class<MLNExportProtocol>> *viewClasses;
-- (NSArray<Class<MLNExportProtocol>> *)viewClasses
+static NSArray<Class<MLNUIExportProtocol>> *viewClasses;
+- (NSArray<Class<MLNUIExportProtocol>> *)viewClasses
 {
     if (!viewClasses) {
-        viewClasses = @[[MLNView class],
-                        [MLNWindow class],
-                        [MLNLinearLayout class],
-                        [MLNAlert class],
-                        [MLNLabel class],
-                        [MLNOverlayLabel class],
-                        [MLNButton class],
-                        [MLNImageView class],
-                        [MLNOverlayImageView class],
-                        [MLNLoading class],
-                        [MLNScrollView class],
-                        [MLNSwitch class],
-                        [MLNToast class],
-                        [MLNTableView class],
-                        [MLNTableViewAdapter class],
-                        [MLNTableViewAutoFitAdapter class],
-                        [MLNCollectionView class],
-                        [MLNCollectionViewAdapter class],
-                        [MLNCollectionViewAutoFitAdapter class],
-                        [MLNCollectionViewGridLayout class],
-                        [MLNCollectionLayout class],
-                        [MLNWaterfallView class],
-                        [MLNWaterfallLayout class],
-                        [MLNWaterfallAdapter class],
-                        [MLNEditTextView class],
-                        [MLNDialogView class],
-                        [MLNContainerWindow class],
-                        [MLNViewPager class],
-                        [MLNViewPagerAdapter class],
-                        [MLNTabSegmentView class]];
+        viewClasses = @[[MLNUIView class],
+                        [MLNUIWindow class],
+                        [MLNUILinearLayout class],
+                        [MLNUIAlert class],
+                        [MLNUILabel class],
+                        [MLNUIOverlayLabel class],
+                        [MLNUIButton class],
+                        [MLNUIImageView class],
+                        [MLNUIOverlayImageView class],
+                        [MLNUILoading class],
+                        [MLNUIScrollView class],
+                        [MLNUISwitch class],
+                        [MLNUIToast class],
+                        [MLNUITableView class],
+                        [MLNUITableViewAdapter class],
+                        [MLNUITableViewAutoFitAdapter class],
+                        [MLNUICollectionView class],
+                        [MLNUICollectionViewAdapter class],
+                        [MLNUICollectionViewAutoFitAdapter class],
+                        [MLNUICollectionViewGridLayout class],
+                        [MLNUICollectionLayout class],
+                        [MLNUIWaterfallView class],
+                        [MLNUIWaterfallLayout class],
+                        [MLNUIWaterfallAdapter class],
+                        [MLNUIEditTextView class],
+                        [MLNUIDialogView class],
+                        [MLNUIContainerWindow class],
+                        [MLNUIViewPager class],
+                        [MLNUIViewPagerAdapter class],
+                        [MLNUITabSegmentView class]];
     }
     return viewClasses;
 }
 
-static NSArray<Class<MLNExportProtocol>> *modelClasses;
-- (NSArray<Class<MLNExportProtocol>> *)modelClasses
+static NSArray<Class<MLNUIExportProtocol>> *modelClasses;
+- (NSArray<Class<MLNUIExportProtocol>> *)modelClasses
 {
     if (!modelClasses) {
-        modelClasses = @[[MLNRect class],
-                         [MLNSize class],
-                         [MLNPoint class],
-                         [MLNColor class],
+        modelClasses = @[[MLNUIRect class],
+                         [MLNUISize class],
+                         [MLNUIPoint class],
+                         [MLNUIColor class],
                          [NSMutableArray class],
                          [NSMutableDictionary class],
-                         [MLNStyleString class]];
+                         [MLNUIStyleString class]];
     }
     return modelClasses;
 }
 
-static NSArray<Class<MLNExportProtocol>> *gvarClasses;
-- (NSArray<Class<MLNExportProtocol>> *)gvarClasses
+static NSArray<Class<MLNUIExportProtocol>> *gvarClasses;
+- (NSArray<Class<MLNUIExportProtocol>> *)gvarClasses
 {
     if (!gvarClasses) {
-        gvarClasses = @[[MLNScrollViewConst class],
-                        [MLNViewConst class],
-                        [MLNSystemConst class],
-                        [MLNStyleStringConst class],
-                        [MLNTextConst class],
-                        [MLNEditTextViewConst class],
-                        [MLNHTTPConst class],
-                        [MLNFileConst class],
-                        [MLNContentMode class],
-                        [MLNStackConst class]];
+        gvarClasses = @[[MLNUIScrollViewConst class],
+                        [MLNUIViewConst class],
+                        [MLNUISystemConst class],
+                        [MLNUIStyleStringConst class],
+                        [MLNUITextConst class],
+                        [MLNUIEditTextViewConst class],
+                        [MLNUIHTTPConst class],
+                        [MLNUIFileConst class],
+                        [MLNUIContentMode class],
+                        [MLNUIStackConst class]];
     }
     return gvarClasses;
 }
 
-static NSArray<Class<MLNExportProtocol>> *utilClasses;
-- (NSArray<Class<MLNExportProtocol>> *)utilClasses
+static NSArray<Class<MLNUIExportProtocol>> *utilClasses;
+- (NSArray<Class<MLNUIExportProtocol>> *)utilClasses
 {
     if (!utilClasses) {
-        utilClasses = @[[MLNSystem class],
-                        [MLNTimer class],
-                        [MLNHttp class],
-                        [MLNClipboard class],
-                        [MLNBit class],
-                        [MLNStringUtil class],
-                        [MLNNavigator class],
-                        [MLNPreferenceUtils class],
-                        [MLNFile class],
-                        [MLNTypeUtil class],
-                        [MLNApplication class],
-                        [MLNNetworkReachability class],
-                        [MLNCornerUtil class],
-                        [MLNSafeAreaAdapter class],
-                        [MLNLink class],
-                        [MLNDataBinding class]];
+        utilClasses = @[[MLNUISystem class],
+                        [MLNUITimer class],
+                        [MLNUIHttp class],
+                        [MLNUIClipboard class],
+                        [MLNUIBit class],
+                        [MLNUIStringUtil class],
+                        [MLNUINavigator class],
+                        [MLNUIPreferenceUtils class],
+                        [MLNUIFile class],
+                        [MLNUITypeUtil class],
+                        [MLNUIApplication class],
+                        [MLNUINetworkReachability class],
+                        [MLNUICornerUtil class],
+                        [MLNUISafeAreaAdapter class],
+                        [MLNUILink class],
+                        [MLNUIDataBinding class]];
     }
     return utilClasses;
 }
 
-static NSArray<Class<MLNExportProtocol>> *animationClasses;
-- (NSArray<Class<MLNExportProtocol>> *)animationClasses
+static NSArray<Class<MLNUIExportProtocol>> *animationClasses;
+- (NSArray<Class<MLNUIExportProtocol>> *)animationClasses
 {
     if (!animationClasses) {
-        animationClasses = @[[MLNAnimator class],
-                             [MLNAnimationConst class],
-                             [MLNAnimation class],
-                             [MLNFrameAnimation class],
-                             [MLNAnimationZoneView class],
-                             [MLNAlphaAnimation class],
-                             [MLNAnimationSet class],
-                             [MLNRotateAnimation class],
-                             [MLNScaleAnimation class],
-                             [MLNTranslateAnimation class]];
+        animationClasses = @[[MLNUIAnimator class],
+                             [MLNUIAnimationConst class],
+                             [MLNUIAnimation class],
+                             [MLNUIFrameAnimation class],
+                             [MLNUIAnimationZoneView class],
+                             [MLNUIAlphaAnimation class],
+                             [MLNUIAnimationSet class],
+                             [MLNUIRotateAnimation class],
+                             [MLNUIScaleAnimation class],
+                             [MLNUITranslateAnimation class]];
     }
     return animationClasses;
 }
 
-static NSArray<Class<MLNExportProtocol>> *canvasClasses;
-- (NSArray<Class<MLNExportProtocol>> *)canvasClasses
+static NSArray<Class<MLNUIExportProtocol>> *canvasClasses;
+- (NSArray<Class<MLNUIExportProtocol>> *)canvasClasses
 {
     if (!canvasClasses) {
-        canvasClasses = @[[MLNCanvasConst class],
-                          [MLNCanvasView class],
-                          [MLNCanvasPaint class],
-                          [MLNCanvasPath class],
-                          [MLNShapeContext class]];
+        canvasClasses = @[[MLNUICanvasConst class],
+                          [MLNUICanvasView class],
+                          [MLNUICanvasPaint class],
+                          [MLNUICanvasPath class],
+                          [MLNUIShapeContext class]];
     }
     return canvasClasses;
 }
 
-static NSArray<Class<MLNExportProtocol>> *stackClasses;
-- (NSArray<Class<MLNExportProtocol>> *)stackClasses
+static NSArray<Class<MLNUIExportProtocol>> *stackClasses;
+- (NSArray<Class<MLNUIExportProtocol>> *)stackClasses
 {
     if (!stackClasses) {
-        stackClasses = @[[MLNStack class],
-                         [MLNVStack class],
-                         [MLNHStack class],
-                         [MLNZStack class],
-                         [MLNSpacer class]];
+        stackClasses = @[[MLNUIStack class],
+                         [MLNUIVStack class],
+                         [MLNUIHStack class],
+                         [MLNUIZStack class],
+                         [MLNUISpacer class]];
     }
     return stackClasses;
 }
 
 @end
 
-@implementation MLNKitBridgesManager (Deprecated)
+@implementation MLNUIKitBridgesManager (Deprecated)
 
-- (instancetype)initWithUIInstance:(MLNKitInstance *)instance
+- (instancetype)initWithUIInstance:(MLNUIKitInstance *)instance
 {
     if (self = [super init]) {
         _instance = instance;

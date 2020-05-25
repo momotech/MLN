@@ -1,13 +1,13 @@
 //
-//  MLNNetworkReachability.h
-//  MLN
+//  MLNUINetworkReachability.h
+//  MLNUI
 //
 //  Created by MoMo on 2018/9/28.
 //
 
 #import <Foundation/Foundation.h>
-#import "MLNStaticExportProtocol.h"
+#import "MLNUIStaticExportProtocol.h"
 
-@interface MLNNetworkReachability : NSObject<MLNStaticExportProtocol>
+@interface MLNUINetworkReachability : NSObject<MLNUIStaticExportProtocol>
 
 @end

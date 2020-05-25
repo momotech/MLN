@@ -1,13 +1,13 @@
 //
-//  MLNTypeUtil.h
-//  MLN
+//  MLNUITypeUtil.h
+//  MLNUI
 //
 //  Created by MoMo on 2018/9/19.
 //
 
 #import <Foundation/Foundation.h>
-#import "MLNStaticExportProtocol.h"
+#import "MLNUIStaticExportProtocol.h"
 
-@interface MLNTypeUtil : NSObject <MLNStaticExportProtocol>
+@interface MLNUITypeUtil : NSObject <MLNUIStaticExportProtocol>
 
 @end

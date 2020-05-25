@@ -1,14 +1,14 @@
 //
-//  MLNExporterMacro.h
-//  MLNCore
+//  MLNUIExporterMacro.h
+//  MLNUICore
 //
 //  Created by MoMo on 2019/7/30.
 //
 
-#ifndef MLNExporterMacro_h
-#define MLNExporterMacro_h
+#ifndef MLNUIExporterMacro_h
+#define MLNUIExporterMacro_h
 
-#import "MLNInvocation.h"
+#import "MLNUIInvocation.h"
 
 /**
  构建方法列表
@@ -55,7 +55,7 @@ LUA_EXPORT_MAKE_METHOD(LUA_FUNC_NAME, SEL_NAME, CLZ_NAME, IS_PROPERTY_T, SETTER_
 {NULL, NULL, NULL, NO, NULL, NULL, NULL}\
 };
 
-#define MLN_COMMA "."
+#define MLNUI_COMMA "."
 
 /**
  构建导出信息
@@ -77,7 +77,7 @@ static const struct mln_objc_class mln_Clazz_Info_ ## CLZ = {\
 PKG_NAME,\
 CLZ_NAME,\
 LUA_CLZ_NAME,\
-PKG_NAME MLN_COMMA LUA_CLZ_NAME,\
+PKG_NAME MLNUI_COMMA LUA_CLZ_NAME,\
 LTYPE_NAME,\
 !(HAS_SUPER),\
 SUPER_CLZ_NAME,\
@@ -97,8 +97,8 @@ return &mln_Clazz_Info_ ## CLZ;\
  @param TYPE 导出类型
  */
 #define LUA_EXPORT_TYPE(TYPE) \
-+ (MLNExportType)mln_exportType {\
++ (MLNUIExportType)mln_exportType {\
     return (TYPE);\
 }
 
-#endif /* MLNExporterMacro_h */
+#endif /* MLNUIExporterMacro_h */

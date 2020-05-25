@@ -1,15 +1,15 @@
 //
-//  MLNTableViewAutoFitAdapter.h
+//  MLNUITableViewAutoFitAdapter.h
 //
 //
 //  Created by MoMo on 2018/11/9.
 //
 
-#import "MLNTableViewAdapter.h"
+#import "MLNUITableViewAdapter.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface MLNTableViewAutoFitAdapter : MLNTableViewAdapter
+@interface MLNUITableViewAutoFitAdapter : MLNUITableViewAdapter
 
 @end
 

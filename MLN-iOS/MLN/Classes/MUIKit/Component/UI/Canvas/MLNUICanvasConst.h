@@ -1,27 +1,27 @@
 //
-//  MLNCanvasConst.h
+//  MLNUICanvasConst.h
 //
 //
 //  Created by MoMo on 2019/7/19.
 //
 
 #import <Foundation/Foundation.h>
-#import "MLNGlobalVarExportProtocol.h"
+#import "MLNUIGlobalVarExportProtocol.h"
 
 typedef enum : NSUInteger {
-    MLNCanvasDrawStyleStroke = 0,
-    MLNCanvasDrawStyleFill,
-    MLNCanvasDrawStyleFillStroke,
-} MLNCanvasDrawStyle;
+    MLNUICanvasDrawStyleStroke = 0,
+    MLNUICanvasDrawStyleFill,
+    MLNUICanvasDrawStyleFillStroke,
+} MLNUICanvasDrawStyle;
 
 typedef enum : NSUInteger {
-    MLNCanvasFillTypeWinding = 0,
-    MLNCanvasFillTypeEvenOdd,
-} MLNCanvasFillType;
+    MLNUICanvasFillTypeWinding = 0,
+    MLNUICanvasFillTypeEvenOdd,
+} MLNUICanvasFillType;
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface MLNCanvasConst : NSObject <MLNGlobalVarExportProtocol>
+@interface MLNUICanvasConst : NSObject <MLNUIGlobalVarExportProtocol>
 
 
 @end

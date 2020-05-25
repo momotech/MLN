@@ -1,36 +1,36 @@
 //
-//  MLNLayoutNode.m
+//  MLNUILayoutNode.m
 //
 //
 //  Created by MoMo on 2018/10/24.
 //
 
-#import "MLNLayoutNode.h"
-#import "MLNKitHeader.h"
-#import "UIView+MLNLayout.h"
-#import "MLNLayoutContainerNode.h"
-#import "UIView+MLNKit.h"
+#import "MLNUILayoutNode.h"
+#import "MLNUIKitHeader.h"
+#import "UIView+MLNUILayout.h"
+#import "MLNUILayoutContainerNode.h"
+#import "UIView+MLNUIKit.h"
 
-@interface MLNLayoutNode ()
+@interface MLNUILayoutNode ()
 
 @property (nonatomic, assign) BOOL needUpdateAnchorPoint;
 @property (nonatomic, assign) BOOL widthForceMatchParent;
 @property (nonatomic, assign) BOOL heightForceMatchParent;
 
 @end
-@implementation MLNLayoutNode
+@implementation MLNUILayoutNode
 
 #pragma mark - Initialization
 - (instancetype)initWithTargetView:(UIView *)targetView
 {
     if (self = [super init]) {
         _targetView = targetView;
-        _status = MLNLayoutNodeStatusIdle;
+        _status = MLNUILayoutNodeStatusIdle;
         _enable = YES;
-        _heightType = MLNLayoutMeasurementTypeWrapContent;
-        _widthType = MLNLayoutMeasurementTypeWrapContent;
+        _heightType = MLNUILayoutMeasurementTypeWrapContent;
+        _widthType = MLNUILayoutMeasurementTypeWrapContent;
         _wrapContent = YES;
-        _layoutStrategy = MLNLayoutStrategySimapleAuto;
+        _layoutStrategy = MLNUILayoutStrategySimapleAuto;
         _anchorPoint = targetView.layer.anchorPoint;
         _paddingNeedUpdated = YES;
     }
@@ -45,20 +45,20 @@
 #pragma mark - Measure Size
 
 - (void)forceUseMatchParentForWidthMeasureType {
-    if (self.widthType == MLNLayoutMeasurementTypeMatchParent &&
-        self.mergedWidthType == MLNLayoutMeasurementTypeWrapContent) {
+    if (self.widthType == MLNUILayoutMeasurementTypeMatchParent &&
+        self.mergedWidthType == MLNUILayoutMeasurementTypeWrapContent) {
         self.widthForceMatchParent = YES;
     }
 }
 
 - (void)forceUseMatchParentForHeightMeasureType {
-    if (self.heightType == MLNLayoutMeasurementTypeMatchParent &&
-        self.mergedHeightType == MLNLayoutMeasurementTypeWrapContent) {
+    if (self.heightType == MLNUILayoutMeasurementTypeMatchParent &&
+        self.mergedHeightType == MLNUILayoutMeasurementTypeWrapContent) {
         self.heightForceMatchParent = YES;
     }
 }
 
-static MLN_FORCE_INLINE BOOL MLNLayoutNodeWidthNeedMerge(MLNLayoutNode *self) {
+static MLNUI_FORCE_INLINE BOOL MLNUILayoutNodeWidthNeedMerge(MLNUILayoutNode *self) {
     if (self.widthForceMatchParent) {
         self.widthForceMatchParent = NO;
         return NO;
@@ -66,7 +66,7 @@ static MLN_FORCE_INLINE BOOL MLNLayoutNodeWidthNeedMerge(MLNLayoutNode *self) {
     return isLayoutNodeWidthNeedMerge(self);
 }
 
-static MLN_FORCE_INLINE BOOL MLNLayoutNodeHeightNeedMerge(MLNLayoutNode *self) {
+static MLNUI_FORCE_INLINE BOOL MLNUILayoutNodeHeightNeedMerge(MLNUILayoutNode *self) {
     if (self.heightForceMatchParent) {
         self.heightForceMatchParent = NO;
         return NO;
@@ -80,12 +80,12 @@ static MLN_FORCE_INLINE BOOL MLNLayoutNodeHeightNeedMerge(MLNLayoutNode *self) {
     _mergedHeightType = self.heightType;
     if (self.supernode) {
         // width
-        if (MLNLayoutNodeWidthNeedMerge(self)) {
-            _mergedWidthType = MLNLayoutMeasurementTypeWrapContent;
+        if (MLNUILayoutNodeWidthNeedMerge(self)) {
+            _mergedWidthType = MLNUILayoutMeasurementTypeWrapContent;
         }
         // height
-        if (MLNLayoutNodeHeightNeedMerge(self)) {
-            _mergedHeightType = MLNLayoutMeasurementTypeWrapContent;
+        if (MLNUILayoutNodeHeightNeedMerge(self)) {
+            _mergedHeightType = MLNUILayoutMeasurementTypeWrapContent;
         }
     }
 }
@@ -96,11 +96,11 @@ static MLN_FORCE_INLINE BOOL MLNLayoutNodeHeightNeedMerge(MLNLayoutNode *self) {
         return CGSizeZero;
     }
     switch (self.layoutStrategy) {
-        case MLNLayoutStrategySimapleAuto: {
+        case MLNUILayoutStrategySimapleAuto: {
             measureSimapleAutoNodeSize(self, maxWidth, maxHeight);
             break;
         }
-        case MLNLayoutStrategyNativeFrame: {
+        case MLNUILayoutStrategyNativeFrame: {
             self.measuredWidth = self.width;
             self.measuredHeight = self.height;
             break;
@@ -125,7 +125,7 @@ static MLN_FORCE_INLINE BOOL MLNLayoutNodeHeightNeedMerge(MLNLayoutNode *self) {
 
 - (CGFloat)calculateWidthBaseOnWeightWithMaxWidth:(CGFloat)maxWidth
 {
-    if (self.widthType != MLNLayoutMeasurementTypeIdle && self.widthProportion > 0.f) {
+    if (self.widthType != MLNUILayoutMeasurementTypeIdle && self.widthProportion > 0.f) {
         maxWidth = maxWidth * self.widthProportion;
         // min
         maxWidth = MAX(maxWidth, self.minWidth);
@@ -140,7 +140,7 @@ static MLN_FORCE_INLINE BOOL MLNLayoutNodeHeightNeedMerge(MLNLayoutNode *self) {
 
 - (CGFloat)calculateHeightBaseOnWeightWithMaxHeight:(CGFloat)maxHeight
 {
-    if (self.heightType != MLNLayoutMeasurementTypeIdle && self.heightProportion > 0.f) {
+    if (self.heightType != MLNUILayoutMeasurementTypeIdle && self.heightProportion > 0.f) {
         maxHeight = maxHeight * self.heightProportion;
         // min
         maxHeight = MAX(maxHeight, self.minHeight);
@@ -153,7 +153,7 @@ static MLN_FORCE_INLINE BOOL MLNLayoutNodeHeightNeedMerge(MLNLayoutNode *self) {
     return maxHeight;
 }
 
-MLN_FORCE_INLINE void measureSimapleAutoNodeSize(MLNLayoutNode __unsafe_unretained *node, CGFloat maxWidth, CGFloat maxHeight) {
+MLNUI_FORCE_INLINE void measureSimapleAutoNodeSize(MLNUILayoutNode __unsafe_unretained *node, CGFloat maxWidth, CGFloat maxHeight) {
     // 权重
     maxWidth = [node calculateWidthBaseOnWeightWithMaxWidth:maxWidth];
     maxHeight = [node calculateHeightBaseOnWeightWithMaxHeight:maxHeight];
@@ -167,8 +167,8 @@ MLN_FORCE_INLINE void measureSimapleAutoNodeSize(MLNLayoutNode __unsafe_unretain
     CGFloat myMaxHeight = [node myMaxHeightWithMaxHeight:maxHeight];
     CGFloat measuredWidth = myMaxWidth;
     CGFloat measuredHeight = myMaxHeight;
-    if (node.mergedWidthType == MLNLayoutMeasurementTypeWrapContent ||
-        node.mergedHeightType == MLNLayoutMeasurementTypeWrapContent) {
+    if (node.mergedWidthType == MLNUILayoutMeasurementTypeWrapContent ||
+        node.mergedHeightType == MLNUILayoutMeasurementTypeWrapContent) {
         CGSize measureSize = [node.targetView lua_measureSizeWithMaxWidth:myMaxWidth maxHeight:myMaxHeight];
         measuredWidth = measureSize.width;
         measuredHeight = measureSize.height;
@@ -176,11 +176,11 @@ MLN_FORCE_INLINE void measureSimapleAutoNodeSize(MLNLayoutNode __unsafe_unretain
     // width
     if (!node.isWidthExcatly) {
         switch (node.mergedWidthType) {
-            case MLNLayoutMeasurementTypeWrapContent:
+            case MLNUILayoutMeasurementTypeWrapContent:
                 measuredWidth = MIN(myMaxWidth, measuredWidth);
                 node.measuredWidth = MAX(node.minWidth, measuredWidth);
                 break;
-            case MLNLayoutMeasurementTypeMatchParent:
+            case MLNUILayoutMeasurementTypeMatchParent:
                 node.measuredWidth = MAX(node.minWidth, myMaxWidth);
                 break;
             default:
@@ -193,11 +193,11 @@ MLN_FORCE_INLINE void measureSimapleAutoNodeSize(MLNLayoutNode __unsafe_unretain
     // height
     if (!node.isHeightExcatly) {
         switch (node.mergedHeightType) {
-            case MLNLayoutMeasurementTypeWrapContent:
+            case MLNUILayoutMeasurementTypeWrapContent:
                 measuredHeight = MIN(myMaxHeight, measuredHeight);
                 node.measuredHeight = MAX(node.minHeight, measuredHeight);
                 break;
-            case MLNLayoutMeasurementTypeMatchParent:
+            case MLNUILayoutMeasurementTypeMatchParent:
                 node.measuredHeight = MAX(node.minHeight, myMaxHeight);
                 break;
             default:
@@ -213,7 +213,7 @@ MLN_FORCE_INLINE void measureSimapleAutoNodeSize(MLNLayoutNode __unsafe_unretain
 {
     // width
     switch (self.widthType) {
-        case MLNLayoutMeasurementTypeMatchParent:
+        case MLNUILayoutMeasurementTypeMatchParent:
             self.measuredWidth = MAX(self.minWidth, maxWidth);
             break;
         default:
@@ -222,7 +222,7 @@ MLN_FORCE_INLINE void measureSimapleAutoNodeSize(MLNLayoutNode __unsafe_unretain
 
     // height
     switch (self.heightType) {
-        case MLNLayoutMeasurementTypeMatchParent:
+        case MLNUILayoutMeasurementTypeMatchParent:
             self.measuredHeight = MAX(self.minHeight, maxHeight);
             break;
         default:
@@ -233,7 +233,7 @@ MLN_FORCE_INLINE void measureSimapleAutoNodeSize(MLNLayoutNode __unsafe_unretain
 - (CGFloat)myMaxWidthWithMaxWidth:(CGFloat)maxWidth
 {
     switch (self.mergedWidthType) {
-        case MLNLayoutMeasurementTypeIdle:
+        case MLNUILayoutMeasurementTypeIdle:
             return self.width;
         default:
             return self.maxWidth > 0.f ? MIN(self.maxWidth, maxWidth) : maxWidth;
@@ -243,7 +243,7 @@ MLN_FORCE_INLINE void measureSimapleAutoNodeSize(MLNLayoutNode __unsafe_unretain
 - (CGFloat)myMaxHeightWithMaxHeight:(CGFloat)maxHeight
 {
     switch (self.mergedHeightType) {
-        case MLNLayoutMeasurementTypeIdle:
+        case MLNUILayoutMeasurementTypeIdle:
             return self.height;
         default:
             return self.maxHeight > 0.f ? MIN(self.maxHeight, maxHeight) : maxHeight;
@@ -253,7 +253,7 @@ MLN_FORCE_INLINE void measureSimapleAutoNodeSize(MLNLayoutNode __unsafe_unretain
 #pragma mark - Layout
 - (void)changeX:(CGFloat)x
 {
-    [self changeLayoutStrategyTo:MLNLayoutStrategyNativeFrame];
+    [self changeLayoutStrategyTo:MLNUILayoutStrategyNativeFrame];
     self.enable = NO;
     if (_x != x || _offsetX != 0.f) {
         _x = x;
@@ -264,7 +264,7 @@ MLN_FORCE_INLINE void measureSimapleAutoNodeSize(MLNLayoutNode __unsafe_unretain
 
 - (void)changeY:(CGFloat)y
 {
-    [self changeLayoutStrategyTo:MLNLayoutStrategyNativeFrame];
+    [self changeLayoutStrategyTo:MLNUILayoutStrategyNativeFrame];
     self.enable = NO;
     if (_y != y || _offsetY != 0.f) {
         _y = y;
@@ -275,12 +275,12 @@ MLN_FORCE_INLINE void measureSimapleAutoNodeSize(MLNLayoutNode __unsafe_unretain
 
 - (void)changeWidth:(CGFloat)width
 {
-    MLNLayoutMeasurementType type = width;
-    //⚠️ 小于0且不等于MLNLayoutMeasurementTypeWrapContent和MLNLayoutMeasurementTypeMatchParent
+    MLNUILayoutMeasurementType type = width;
+    //⚠️ 小于0且不等于MLNUILayoutMeasurementTypeWrapContent和MLNUILayoutMeasurementTypeMatchParent
     //   认为是绝对宽度0
-    if (width != MLNLayoutMeasurementTypeWrapContent &&
-        width != MLNLayoutMeasurementTypeMatchParent) {
-        type = MLNLayoutMeasurementTypeIdle;
+    if (width != MLNUILayoutMeasurementTypeWrapContent &&
+        width != MLNUILayoutMeasurementTypeMatchParent) {
+        type = MLNUILayoutMeasurementTypeIdle;
         width = width < 0.f ? 0.f : width;
     }
     BOOL needLayout = NO;
@@ -300,12 +300,12 @@ MLN_FORCE_INLINE void measureSimapleAutoNodeSize(MLNLayoutNode __unsafe_unretain
 
 - (void)changeHeight:(CGFloat)height
 {
-    MLNLayoutMeasurementType type = height;
-    //⚠️ 小于0且不等于MLNLayoutMeasurementTypeWrapContent和MLNLayoutMeasurementTypeMatchParent
+    MLNUILayoutMeasurementType type = height;
+    //⚠️ 小于0且不等于MLNUILayoutMeasurementTypeWrapContent和MLNUILayoutMeasurementTypeMatchParent
     //   认为是绝对高度0
-    if (height != MLNLayoutMeasurementTypeWrapContent &&
-        height != MLNLayoutMeasurementTypeMatchParent) {
-        type = MLNLayoutMeasurementTypeIdle;
+    if (height != MLNUILayoutMeasurementTypeWrapContent &&
+        height != MLNUILayoutMeasurementTypeMatchParent) {
+        type = MLNUILayoutMeasurementTypeIdle;
         height = height < 0.f ? 0.f : height;
     }
     BOOL needLayout = NO;
@@ -333,12 +333,12 @@ MLN_FORCE_INLINE void measureSimapleAutoNodeSize(MLNLayoutNode __unsafe_unretain
 
 - (void)needLayout
 {
-    _status = MLNLayoutNodeStatusNeedLayout;
+    _status = MLNUILayoutNodeStatusNeedLayout;
 }
 
 - (void)needLayoutAndSpread
 {
-    _status = MLNLayoutNodeStatusNeedLayout;
+    _status = MLNUILayoutNodeStatusNeedLayout;
     if (self.supernode && !self.supernode.isDirty) {
         [self.supernode needLayoutAndSpread];
     }
@@ -346,12 +346,12 @@ MLN_FORCE_INLINE void measureSimapleAutoNodeSize(MLNLayoutNode __unsafe_unretain
 
 - (void)needUpdateLayout
 {
-    _status = MLNLayoutNodeStatusHasNewLayout;
+    _status = MLNUILayoutNodeStatusHasNewLayout;
 }
 
 - (void)updatedLayout
 {
-    _status = MLNLayoutNodeStatusUp2Date;
+    _status = MLNUILayoutNodeStatusUp2Date;
 }
 
 - (void)requestLayout
@@ -379,7 +379,7 @@ MLN_FORCE_INLINE void measureSimapleAutoNodeSize(MLNLayoutNode __unsafe_unretain
     [self.targetView lua_layoutCompleted];
 }
 
-MLN_FORCE_INLINE void resetArchpointIfNeed(MLNLayoutNode __unsafe_unretained *node) {
+MLNUI_FORCE_INLINE void resetArchpointIfNeed(MLNUILayoutNode __unsafe_unretained *node) {
     if (node.needUpdateAnchorPoint) {
         node.targetView.layer.anchorPoint = node.anchorPoint;
         node.needUpdateAnchorPoint = NO;
@@ -387,39 +387,39 @@ MLN_FORCE_INLINE void resetArchpointIfNeed(MLNLayoutNode __unsafe_unretained *no
 }
 
 - (void)layoutOverlayNode {
-    MLNLayoutNode *overlayNode = self.overlayNode;
+    MLNUILayoutNode *overlayNode = self.overlayNode;
     if (overlayNode == nil) return;
     if (overlayNode.isGone) return;
     
     switch (overlayNode.layoutStrategy) {
-        case MLNLayoutStrategyNativeFrame:
+        case MLNUILayoutStrategyNativeFrame:
             overlayNode.measuredX = overlayNode.x;
             overlayNode.measuredY = overlayNode.y;
             break;
             
-        case MLNLayoutStrategySimapleAuto: {
+        case MLNUILayoutStrategySimapleAuto: {
             CGFloat availableWidth = self.measuredWidth - self.paddingLeft - self.paddingRight;
             CGFloat availableHeight = self.measuredHeight - self.paddingTop - self.paddingBottom;
-            switch (overlayNode.gravity & MLNGravityHorizontalMask) {
-                case MLNGravityCenterHorizontal:
+            switch (overlayNode.gravity & MLNUIGravityHorizontalMask) {
+                case MLNUIGravityCenterHorizontal:
                     overlayNode.measuredX = self.paddingLeft + (availableWidth - overlayNode.measuredWidth) / 2.0 + overlayNode.marginLeft - overlayNode.marginRight;
                     break;
-                case MLNGravityRight:
+                case MLNUIGravityRight:
                     overlayNode.measuredX = self.measuredWidth - self.paddingRight - overlayNode.measuredWidth - overlayNode.marginRight;
                     break;
-                case MLNGravityLeft:
+                case MLNUIGravityLeft:
                 default:
                     overlayNode.measuredX = self.paddingLeft + overlayNode.marginLeft;
                     break;
             }
-            switch (overlayNode.gravity & MLNGravityVerticalMask) {
-                case MLNGravityCenterVertical:
+            switch (overlayNode.gravity & MLNUIGravityVerticalMask) {
+                case MLNUIGravityCenterVertical:
                     overlayNode.measuredY = self.paddingTop + (availableHeight - overlayNode.measuredHeight) / 2.0 + overlayNode.marginTop - overlayNode.marginBottom;
                     break;
-                case MLNGravityBottom:
+                case MLNUIGravityBottom:
                     overlayNode.measuredY = self.measuredHeight - self.paddingBottom - overlayNode.measuredHeight - overlayNode.marginBottom;
                     break;
-                case MLNGravityTop:
+                case MLNUIGravityTop:
                 default:
                     overlayNode.measuredY = self.paddingTop + overlayNode.marginTop;
                     break;
@@ -433,7 +433,7 @@ MLN_FORCE_INLINE void resetArchpointIfNeed(MLNLayoutNode __unsafe_unretained *no
 
     [overlayNode updateTargetViewFrameIfNeed];
     if (overlayNode.isContainer) {
-        [(MLNLayoutContainerNode *)overlayNode layoutSubnodes];
+        [(MLNUILayoutContainerNode *)overlayNode layoutSubnodes];
     }
     if (overlayNode.overlayNode) {
         [overlayNode layoutOverlayNode];
@@ -448,7 +448,7 @@ MLN_FORCE_INLINE void resetArchpointIfNeed(MLNLayoutNode __unsafe_unretained *no
 
 - (void)removeFromSupernode
 {
-    [(MLNLayoutContainerNode *)self.supernode removeSubnode:self];
+    [(MLNUILayoutContainerNode *)self.supernode removeSubnode:self];
     [self resetStatus];
 }
 
@@ -462,7 +462,7 @@ MLN_FORCE_INLINE void resetArchpointIfNeed(MLNLayoutNode __unsafe_unretained *no
     self.idx = 0;
 }
 
-- (void)changeLayoutStrategyTo:(MLNLayoutStrategy)layoutStrategy
+- (void)changeLayoutStrategyTo:(MLNUILayoutStrategy)layoutStrategy
 {
     _layoutStrategy = layoutStrategy;
 }
@@ -470,7 +470,7 @@ MLN_FORCE_INLINE void resetArchpointIfNeed(MLNLayoutNode __unsafe_unretained *no
 #pragma mark - Getter Of Status
 - (BOOL)isDirty
 {
-    return self.status == MLNLayoutNodeStatusNeedLayout;
+    return self.status == MLNUILayoutNodeStatusNeedLayout;
 }
 
 - (BOOL)isVerticalMaxMode
@@ -485,7 +485,7 @@ MLN_FORCE_INLINE void resetArchpointIfNeed(MLNLayoutNode __unsafe_unretained *no
 
 - (BOOL)hasNewLayout
 {
-    return self.status == MLNLayoutNodeStatusHasNewLayout;
+    return self.status == MLNUILayoutNodeStatusHasNewLayout;
 }
 
 #pragma mark - Setter Of root
@@ -504,7 +504,7 @@ MLN_FORCE_INLINE void resetArchpointIfNeed(MLNLayoutNode __unsafe_unretained *no
     }
 }
 
-- (void)setSupernode:(MLNLayoutNode *)supernode
+- (void)setSupernode:(MLNUILayoutNode *)supernode
 {
     _supernode = supernode;
 }
@@ -512,15 +512,15 @@ MLN_FORCE_INLINE void resetArchpointIfNeed(MLNLayoutNode __unsafe_unretained *no
 - (void)setWrapContent:(BOOL)wrapContent
 {
     _wrapContent = wrapContent;
-    self.widthType = wrapContent ? MLNLayoutMeasurementTypeWrapContent: MLNLayoutMeasurementTypeIdle;
-    self.heightType = wrapContent ? MLNLayoutMeasurementTypeWrapContent: MLNLayoutMeasurementTypeIdle;
+    self.widthType = wrapContent ? MLNUILayoutMeasurementTypeWrapContent: MLNUILayoutMeasurementTypeIdle;
+    self.heightType = wrapContent ? MLNUILayoutMeasurementTypeWrapContent: MLNUILayoutMeasurementTypeIdle;
 }
 
-- (void)setWidthType:(MLNLayoutMeasurementType)widthType
+- (void)setWidthType:(MLNUILayoutMeasurementType)widthType
 {
-    if (widthType != MLNLayoutMeasurementTypeWrapContent &&
-        widthType != MLNLayoutMeasurementTypeMatchParent) {
-        widthType = MLNLayoutMeasurementTypeIdle;
+    if (widthType != MLNUILayoutMeasurementTypeWrapContent &&
+        widthType != MLNUILayoutMeasurementTypeMatchParent) {
+        widthType = MLNUILayoutMeasurementTypeIdle;
     }
     if (_widthType != widthType) {
         [self needLayoutAndSpread];
@@ -528,11 +528,11 @@ MLN_FORCE_INLINE void resetArchpointIfNeed(MLNLayoutNode __unsafe_unretained *no
     }
 }
 
-- (void)setHeightType:(MLNLayoutMeasurementType)heightType
+- (void)setHeightType:(MLNUILayoutMeasurementType)heightType
 {
-    if (heightType != MLNLayoutMeasurementTypeWrapContent &&
-        heightType != MLNLayoutMeasurementTypeMatchParent) {
-        heightType = MLNLayoutMeasurementTypeIdle;
+    if (heightType != MLNUILayoutMeasurementTypeWrapContent &&
+        heightType != MLNUILayoutMeasurementTypeMatchParent) {
+        heightType = MLNUILayoutMeasurementTypeIdle;
     }
     if (_heightType != heightType) {
         [self needLayoutAndSpread];
@@ -545,8 +545,8 @@ MLN_FORCE_INLINE void resetArchpointIfNeed(MLNLayoutNode __unsafe_unretained *no
     if (_priority != priority) {
         [self needLayoutAndSpread];
         _priority = priority;
-        if (!((MLNLayoutContainerNode *)self.supernode).needSorting) {
-            ((MLNLayoutContainerNode *)self.supernode).needSorting = YES;
+        if (!((MLNUILayoutContainerNode *)self.supernode).needSorting) {
+            ((MLNUILayoutContainerNode *)self.supernode).needSorting = YES;
         }
     }
 }
@@ -639,7 +639,7 @@ MLN_FORCE_INLINE void resetArchpointIfNeed(MLNLayoutNode __unsafe_unretained *no
 }
 
 #pragma mark - Setter Of Gravity
-- (void)setGravity:(enum MLNGravity)gravity
+- (void)setGravity:(enum MLNUIGravity)gravity
 {
     if (_gravity != gravity) {
         [self needLayoutAndSpread];
@@ -723,10 +723,10 @@ MLN_FORCE_INLINE void resetArchpointIfNeed(MLNLayoutNode __unsafe_unretained *no
 }
 
 #pragma mark - Getter
-- (MLNLayoutNode *)rootnode
+- (MLNUILayoutNode *)rootnode
 {
     if ((!_rootnode && !self.isRoot) || !_rootnode.isRoot) {
-        MLNLayoutNode *superNode = self.supernode;
+        MLNUILayoutNode *superNode = self.supernode;
         while (superNode != nil && superNode.isRoot == NO) {
             superNode = superNode.supernode;
         }
@@ -741,7 +741,7 @@ MLN_FORCE_INLINE void resetArchpointIfNeed(MLNLayoutNode __unsafe_unretained *no
 }
 
 #pragma mark - bind & unbind
-- (void)bindSuper:(MLNLayoutNode *)supernode
+- (void)bindSuper:(MLNUILayoutNode *)supernode
 {
     self.supernode = supernode;
     self.rootnode = supernode.rootnode;

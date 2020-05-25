@@ -1,18 +1,18 @@
 //
-//  NSColor+MLNCore.m
-//  MLNCore
+//  NSColor+MLNUICore.m
+//  MLNUICore
 //
 //  Created by MoMo on 2019/7/23.
 //
 
-#import "UIColor+MLNCore.h"
-#import "NSObject+MLNCore.h"
+#import "UIColor+MLNUICore.h"
+#import "NSObject+MLNUICore.h"
 
-@implementation UIColor (MLNCore)
+@implementation UIColor (MLNUICore)
 
-- (MLNNativeType)mln_nativeType
+- (MLNUINativeType)mln_nativeType
 {
-    return MLNNativeTypeColor;
+    return MLNUINativeTypeColor;
 }
 
 @end

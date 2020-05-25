@@ -1,5 +1,5 @@
 //
-//  MLNSizeCahceManager.h
+//  MLNUISizeCahceManager.h
 //
 //
 //  Created by MoMo on 2018/11/12.
@@ -9,14 +9,14 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class MLNKitInstance;
+@class MLNUIKitInstance;
 
-@interface MLNSizeCahceManager<KeyType, ObjectType> : NSObject
+@interface MLNUISizeCahceManager<KeyType, ObjectType> : NSObject
 
-@property (nonatomic, weak, readonly) MLNKitInstance *instance;
+@property (nonatomic, weak, readonly) MLNUIKitInstance *instance;
 @property (nonatomic) NSUInteger countLimit;
 
-- (instancetype)initWithInstance:(MLNKitInstance *)instance;
+- (instancetype)initWithInstance:(MLNUIKitInstance *)instance;
 
 - (nullable ObjectType)objectForKey:(KeyType)key;
 - (void)setObject:(ObjectType)obj forKey:(KeyType)key;

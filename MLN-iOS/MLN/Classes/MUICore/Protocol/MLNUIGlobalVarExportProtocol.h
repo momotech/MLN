@@ -1,14 +1,14 @@
 //
-//  MLNGlobalVarExport.h
-//  MLNCore
+//  MLNUIGlobalVarExport.h
+//  MLNUICore
 //
 //  Created by MoMo on 2019/7/24.
 //
 
-#ifndef MLNGlobalVarExport_h
-#define MLNGlobalVarExport_h
+#ifndef MLNUIGlobalVarExport_h
+#define MLNUIGlobalVarExport_h
 
-#import "MLNExportProtocol.h"
+#import "MLNUIExportProtocol.h"
 
 #define kGlobalVarLuaName @"kGlobalVarLuaName"
 #define kGlobalVarMap @"kGlobalVarMap"
@@ -16,7 +16,7 @@
 /**
  全局变量导出协议
  */
-@protocol MLNGlobalVarExportProtocol <MLNExportProtocol>
+@protocol MLNUIGlobalVarExportProtocol <MLNUIExportProtocol>
 
 /**
  全局变量的导出映射表
@@ -27,4 +27,4 @@
 
 @end
 
-#endif /* MLNGlobalVarExport_h */
+#endif /* MLNUIGlobalVarExport_h */

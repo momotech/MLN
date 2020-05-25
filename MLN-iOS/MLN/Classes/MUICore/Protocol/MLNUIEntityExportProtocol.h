@@ -1,26 +1,26 @@
 //
-//  MLNEntityExport.h
-//  MLNCore
+//  MLNUIEntityExport.h
+//  MLNUICore
 //
 //  Created by MoMo on 2019/7/24.
 //
 
-#ifndef MLNEntityExport_h
-#define MLNEntityExport_h
+#ifndef MLNUIEntityExport_h
+#define MLNUIEntityExport_h
 
-#import "MLNExportProtocol.h"
+#import "MLNUIExportProtocol.h"
 
-@class MLNLuaCore;
+@class MLNUILuaCore;
 
 /**
  可创建UserData 的实体导出类协议
  */
-@protocol MLNEntityExportProtocol <MLNExportProtocol>
+@protocol MLNUIEntityExportProtocol <MLNUIExportProtocol>
 
 /**
  该对象对应的lua状态机
  */
-@property(nonatomic, weak) MLNLuaCore *mln_luaCore;
+@property(nonatomic, weak) MLNUILuaCore *mln_luaCore;
 
 /**
  导出类时使用的描述信息
@@ -41,7 +41,7 @@
 
  @param userData 引用该native对象的UserData
  */
-- (void)mln_luaRetain:(MLNUserData *)userData;
+- (void)mln_luaRetain:(MLNUIUserData *)userData;
 
 /**
  该对象被lua引用释放， retainCount - 1
@@ -79,4 +79,4 @@
 
 @end
 
-#endif /* MLNEntityExport_h */
+#endif /* MLNUIEntityExport_h */

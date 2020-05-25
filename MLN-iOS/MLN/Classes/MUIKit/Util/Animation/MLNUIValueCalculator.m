@@ -1,21 +1,21 @@
 //
-//  MLNValueCalculator.m
-//  MLN
+//  MLNUIValueCalculator.m
+//  MLNUI
 //
 //  Created by MoMo on 2019/9/6.
 //
 
-#import "MLNValueCalculator.h"
-#import "MLNKitHeader.h"
+#import "MLNUIValueCalculator.h"
+#import "MLNUIKitHeader.h"
 
-@implementation MLNValueCalculator
+@implementation MLNUIValueCalculator
 
-static MLN_FORCE_INLINE id calculateCGFloat(CGFloat from, CGFloat to, CGFloat interpolation) {
+static MLNUI_FORCE_INLINE id calculateCGFloat(CGFloat from, CGFloat to, CGFloat interpolation) {
     CGFloat delta = to - from;
     return @(from + delta * interpolation);
 }
 
-static MLN_FORCE_INLINE id calculateCGRect(CGRect from, CGRect to, CGFloat interpolation) {
+static MLNUI_FORCE_INLINE id calculateCGRect(CGRect from, CGRect to, CGFloat interpolation) {
     CGFloat deltaX = to.origin.x - from.origin.x;
     CGFloat deltaY = to.origin.y - from.origin.y;
     CGFloat deltaWidth = to.size.width - from.size.width;
@@ -27,14 +27,14 @@ static MLN_FORCE_INLINE id calculateCGRect(CGRect from, CGRect to, CGFloat inter
                         from.size.height + interpolation * deltaHeight));
 }
 
-static MLN_FORCE_INLINE id calculateCGSize(CGSize from, CGSize to, CGFloat interpolation) {
+static MLNUI_FORCE_INLINE id calculateCGSize(CGSize from, CGSize to, CGFloat interpolation) {
     CGFloat deltaWidth = to.width - from.width;
     CGFloat deltaHeight = to.height - from.height;
     return @(CGSizeMake(from.width + interpolation * deltaWidth,
                         from.height + interpolation * deltaHeight));
 }
 
-static MLN_FORCE_INLINE id calculateCGPoint(CGPoint from, CGPoint to, CGFloat interpolation) {
+static MLNUI_FORCE_INLINE id calculateCGPoint(CGPoint from, CGPoint to, CGFloat interpolation) {
     CGFloat deltaX = to.x - from.x;
     CGFloat deltaY = to.y - from.y;
     return @(CGPointMake(from.x + interpolation * deltaX,

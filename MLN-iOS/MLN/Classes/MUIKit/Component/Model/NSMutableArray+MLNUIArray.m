@@ -1,13 +1,13 @@
 //
-//  NSMutableArray+MLNLua.m
+//  NSMutableArray+MLNUILua.m
 //  
 //
 //  Created by MoMo on 2019/2/14.
 //
 
-#import "NSMutableArray+MLNArray.h"
-#import "MLNLuaCore.h"
-#import "NSArray+MLNSafety.h"
+#import "NSMutableArray+MLNUIArray.h"
+#import "MLNUILuaCore.h"
+#import "NSArray+MLNUISafety.h"
 
 #define lua_CheckIndexZero(INDEX)\
 if ((INDEX) < 0) {\
@@ -15,15 +15,15 @@ if ((INDEX) < 0) {\
     return 0;\
 }
 
-@implementation NSMutableArray (MLNArray)
+@implementation NSMutableArray (MLNUIArray)
 
-static MLN_FORCE_INLINE BOOL __mln_lua_in_checkParams(lua_State *L, int countOfParams) {
+static MLNUI_FORCE_INLINE BOOL __mln_lua_in_checkParams(lua_State *L, int countOfParams) {
     if (lua_gettop(L) != countOfParams + 1) {
         if (lua_isuserdata(L, 1)) {
-            MLNUserData *ud = (MLNUserData *)lua_touserdata(L, 1);
+            MLNUIUserData *ud = (MLNUIUserData *)lua_touserdata(L, 1);
             if (ud) {
                 id array = (__bridge __unsafe_unretained id )ud->object;
-                if ([array mln_nativeType] != MLNNativeTypeMArray) {
+                if ([array mln_nativeType] != MLNUINativeTypeMArray) {
                     mln_lua_error(L, @"Must use ':' to call this method！\n number of arguments must be %d!", countOfParams);
                     return NO;
                 }
@@ -41,7 +41,7 @@ static int lua_newArray(lua_State *L) {
         case 0: {
             NSMutableArray *array = [NSMutableArray array];
             array.mln_isLuaObject = YES;
-            [MLN_LUA_CORE(L) pushNativeObject:array error:nil];
+            [MLNUI_LUA_CORE(L) pushNativeObject:array error:nil];
             return 1;
         }
         case 1: {
@@ -49,7 +49,7 @@ static int lua_newArray(lua_State *L) {
                 double capacity = lua_tonumber(L, -1);
                 NSMutableArray *array = [NSMutableArray arrayWithCapacity:capacity];
                 array.mln_isLuaObject = YES;
-                [MLN_LUA_CORE(L) pushNativeObject:array error:nil];
+                [MLNUI_LUA_CORE(L) pushNativeObject:array error:nil];
                 return 1;
             }
             mln_lua_error(L, @"error type of argument, capacity must be number");
@@ -67,24 +67,24 @@ static int lua_array_addObject(lua_State *L) {
     if (!__mln_lua_in_checkParams(L, 1)) {
         return 0;
     }
-    MLNUserData *ud = (MLNUserData *)lua_touserdata(L, 1);
+    MLNUIUserData *ud = (MLNUIUserData *)lua_touserdata(L, 1);
     if (ud) {
         NSMutableArray *array = (__bridge __unsafe_unretained NSMutableArray *)ud->object;
-        id obj = [MLN_LUA_CORE(L) toNativeObject:2 error:nil];
+        id obj = [MLNUI_LUA_CORE(L) toNativeObject:2 error:nil];
         switch ([obj mln_nativeType]) {
-            case MLNNativeTypeDictionary:
+            case MLNUINativeTypeDictionary:
             {
                 obj = [NSMutableDictionary dictionaryWithDictionary:obj];
                 break;
             }
-            case MLNNativeTypeArray: {
+            case MLNUINativeTypeArray: {
                 obj = [NSMutableArray arrayWithArray:obj];
                 break;
             }
-            case MLNNativeTypeNumber:
-            case MLNNativeTypeString:
-            case MLNNativeTypeMDictionary:
-            case MLNNativeTypeMArray:
+            case MLNUINativeTypeNumber:
+            case MLNUINativeTypeString:
+            case MLNUINativeTypeMDictionary:
+            case MLNUINativeTypeMArray:
                 break;
             default: {
                 mln_lua_error(L, @"The value type must be one of types, as string, number, map or array!");
@@ -104,15 +104,15 @@ static int lua_array_addObjectsFromArray(lua_State *L) {
     if (!__mln_lua_in_checkParams(L, 1)) {
         return 0;
     }
-    MLNUserData *ud = (MLNUserData *)lua_touserdata(L, 1);
+    MLNUIUserData *ud = (MLNUIUserData *)lua_touserdata(L, 1);
     if (ud) {
         NSMutableArray *array = (__bridge __unsafe_unretained NSMutableArray *)ud->object;
-        NSMutableArray *obj = [MLN_LUA_CORE(L) toNativeObject:2 error:nil];
+        NSMutableArray *obj = [MLNUI_LUA_CORE(L) toNativeObject:2 error:nil];
         switch ([obj mln_nativeType]) {
-            case MLNNativeTypeArray: {
+            case MLNUINativeTypeArray: {
                 obj = [NSMutableArray arrayWithArray:obj];
             }
-            case MLNNativeTypeMArray: {
+            case MLNUINativeTypeMArray: {
                 [array mln_addObjectsFromArray:obj];
                 break;
             }
@@ -131,7 +131,7 @@ static int lua_array_removeObjectAtIndex(lua_State *L) {
     if (!__mln_lua_in_checkParams(L, 1)) {
         return 0;
     }
-    MLNUserData *ud = (MLNUserData *)lua_touserdata(L, 1);
+    MLNUIUserData *ud = (MLNUIUserData *)lua_touserdata(L, 1);
     if (ud) {
         NSMutableArray *array = (__bridge __unsafe_unretained NSMutableArray *)ud->object;
         NSInteger realIndex = lua_tonumber(L, 2) -1;
@@ -150,10 +150,10 @@ static int lua_array_removeObject(lua_State *L) {
     if (!__mln_lua_in_checkParams(L, 1)) {
         return 0;
     }
-    MLNUserData *ud = (MLNUserData *)lua_touserdata(L, 1);
+    MLNUIUserData *ud = (MLNUIUserData *)lua_touserdata(L, 1);
     if (ud) {
         NSMutableArray *array = (__bridge __unsafe_unretained NSMutableArray *)ud->object;
-        id obj = [MLN_LUA_CORE(L) toNativeObject:2 error:nil];
+        id obj = [MLNUI_LUA_CORE(L) toNativeObject:2 error:nil];
         mln_lua_assert(L, obj, @"The argument must not be nil!");
         if (obj) {
             [array removeObject:obj];
@@ -168,10 +168,10 @@ static int lua_array_removeObjects(lua_State *L) {
     if (!__mln_lua_in_checkParams(L, 1)) {
         return 0;
     }
-    MLNUserData *ud = (MLNUserData *)lua_touserdata(L, 1);
+    MLNUIUserData *ud = (MLNUIUserData *)lua_touserdata(L, 1);
     if (ud) {
         NSMutableArray *array = (__bridge __unsafe_unretained NSMutableArray *)ud->object;
-        id objs = [MLN_LUA_CORE(L) toNativeObject:2 error:nil];
+        id objs = [MLNUI_LUA_CORE(L) toNativeObject:2 error:nil];
         mln_lua_assert(L, objs, @"The argument must not be nil!");
         if (objs && [objs isKindOfClass:[NSArray class]]) {
             [array removeObjectsInArray:objs];
@@ -186,7 +186,7 @@ static int lua_array_removeObjectsAtRange(lua_State *L) {
     if (!__mln_lua_in_checkParams(L, 2)) {
         return 0;
     }
-    MLNUserData *ud = (MLNUserData *)lua_touserdata(L, 1);
+    MLNUIUserData *ud = (MLNUIUserData *)lua_touserdata(L, 1);
     if (ud) {
         NSMutableArray *array = (__bridge __unsafe_unretained NSMutableArray *)ud->object;
         NSInteger realFrom = lua_tonumber(L, 2) - 1;
@@ -208,7 +208,7 @@ static int lua_array_removeAllObjects(lua_State *L) {
     if (!__mln_lua_in_checkParams(L, 0)) {
         return 0;
     }
-    MLNUserData *ud = (MLNUserData *)lua_touserdata(L, 1);
+    MLNUIUserData *ud = (MLNUIUserData *)lua_touserdata(L, 1);
     if (ud) {
         NSMutableArray *array = (__bridge __unsafe_unretained NSMutableArray *)ud->object;
         [array removeAllObjects];
@@ -222,7 +222,7 @@ static int lua_array_objectAtIndex(lua_State *L) {
     if (!__mln_lua_in_checkParams(L, 1)) {
         return 0;
     }
-    MLNUserData *ud = (MLNUserData *)lua_touserdata(L, 1);
+    MLNUIUserData *ud = (MLNUIUserData *)lua_touserdata(L, 1);
     if (ud) {
         NSMutableArray *array = (__bridge __unsafe_unretained NSMutableArray *)ud->object;
         NSInteger realIndex = lua_tonumber(L, 2) -1;
@@ -233,12 +233,12 @@ static int lua_array_objectAtIndex(lua_State *L) {
             value = [array objectAtIndex:realIndex];
         }
         switch ([value mln_nativeType]) {
-            case MLNNativeTypeDictionary: {
+            case MLNUINativeTypeDictionary: {
                 value = [NSMutableDictionary dictionaryWithDictionary:value];
                 [array mln_replaceObjectAtIndex:realIndex withObject:value];
                 break;
             }
-            case MLNNativeTypeArray: {
+            case MLNUINativeTypeArray: {
                 value = [NSMutableArray arrayWithArray:value];
                 [array mln_replaceObjectAtIndex:realIndex withObject:value];
                 break;
@@ -246,7 +246,7 @@ static int lua_array_objectAtIndex(lua_State *L) {
             default:
                 break;
         }
-        [MLN_LUA_CORE(L) pushNativeObject:value error:nil];
+        [MLNUI_LUA_CORE(L) pushNativeObject:value error:nil];
         return 1;
     }
     return 0;
@@ -256,7 +256,7 @@ static int lua_array_size(lua_State *L) {
     if (!__mln_lua_in_checkParams(L, 0)) {
         return 0;
     }
-    MLNUserData *ud = (MLNUserData *)lua_touserdata(L, 1);
+    MLNUIUserData *ud = (MLNUIUserData *)lua_touserdata(L, 1);
     if (ud) {
         NSMutableArray *array = (__bridge __unsafe_unretained NSMutableArray *)ud->object;
         lua_pushnumber(L, array.count);
@@ -269,10 +269,10 @@ static int lua_array_contains(lua_State *L) {
     if (!__mln_lua_in_checkParams(L, 1)) {
         return 0;
     }
-    MLNUserData *ud = (MLNUserData *)lua_touserdata(L, 1);
+    MLNUIUserData *ud = (MLNUIUserData *)lua_touserdata(L, 1);
     if (ud) {
         NSMutableArray *array = (__bridge __unsafe_unretained NSMutableArray *)ud->object;
-        id value = [MLN_LUA_CORE(L) toNativeObject:2 error:nil];;
+        id value = [MLNUI_LUA_CORE(L) toNativeObject:2 error:nil];;
         BOOL isContains = [array containsObject:value];
         lua_pushboolean(L, isContains);
         return 1;
@@ -284,25 +284,25 @@ static int lua_array_insertObject(lua_State *L) {
     if (!__mln_lua_in_checkParams(L, 2)) {
         return 0;
     }
-    MLNUserData *ud = (MLNUserData *)lua_touserdata(L, 1);
+    MLNUIUserData *ud = (MLNUIUserData *)lua_touserdata(L, 1);
     if (ud) {
         NSMutableArray *array = (__bridge __unsafe_unretained NSMutableArray *)ud->object;
         NSInteger realIndex = lua_tonumber(L, 2) -1;
         lua_CheckIndexZero(realIndex);
-        id obj = [MLN_LUA_CORE(L) toNativeObject:3 error:nil];;
+        id obj = [MLNUI_LUA_CORE(L) toNativeObject:3 error:nil];;
         switch ([obj mln_nativeType]) {
-            case MLNNativeTypeDictionary: {
+            case MLNUINativeTypeDictionary: {
                 obj = [NSMutableDictionary dictionaryWithDictionary:obj];
                 break;
             }
-            case MLNNativeTypeArray: {
+            case MLNUINativeTypeArray: {
                 obj = [NSMutableArray arrayWithArray:obj];
                 break;
             }
-            case MLNNativeTypeNumber:
-            case MLNNativeTypeString:
-            case MLNNativeTypeMDictionary:
-            case MLNNativeTypeMArray:
+            case MLNUINativeTypeNumber:
+            case MLNUINativeTypeString:
+            case MLNUINativeTypeMDictionary:
+            case MLNUINativeTypeMArray:
                 break;
             default: {
                 mln_lua_error(L, @"The value type must be one of types, as string, number, map or array!");
@@ -330,7 +330,7 @@ static int lua_array_insertObjects(lua_State *L) {
         mln_lua_error(L, @"The number of index must be greater than 0!");
         return 0;
     }
-    MLNUserData *ud = (MLNUserData *)lua_touserdata(L, 1);
+    MLNUIUserData *ud = (MLNUIUserData *)lua_touserdata(L, 1);
     if (ud) {
         NSMutableArray *array = (__bridge __unsafe_unretained NSMutableArray *)ud->object;
         NSUInteger count = array.count;
@@ -339,7 +339,7 @@ static int lua_array_insertObjects(lua_State *L) {
             mln_lua_error(L, @"The number of index [%ld] out of array count [%lu]!", fromIndex + 1, (unsigned long)count);
             return 0;
         }
-        NSArray *items = [MLN_LUA_CORE(L) toNativeObject:3 error:nil];
+        NSArray *items = [MLNUI_LUA_CORE(L) toNativeObject:3 error:nil];
         if (!(items && items.count > 0)) {
             mln_lua_error(L, @"The array must not be empty!");
             return 0;
@@ -355,25 +355,25 @@ static int lua_array_replaceObject(lua_State *L) {
     if (!__mln_lua_in_checkParams(L, 2)) {
         return 0;
     }
-    MLNUserData *ud = (MLNUserData *)lua_touserdata(L, 1);
+    MLNUIUserData *ud = (MLNUIUserData *)lua_touserdata(L, 1);
     if (ud) {
         NSMutableArray *array = (__bridge __unsafe_unretained NSMutableArray *)ud->object;
         NSInteger realIndex = lua_tonumber(L, 2) -1;
         lua_CheckIndexZero(realIndex);
-        id obj =[MLN_LUA_CORE(L) toNativeObject:3 error:nil];
+        id obj =[MLNUI_LUA_CORE(L) toNativeObject:3 error:nil];
         switch ([obj mln_nativeType]) {
-            case MLNNativeTypeDictionary: {
+            case MLNUINativeTypeDictionary: {
                 obj = [NSMutableDictionary dictionaryWithDictionary:obj];
                 break;
             }
-            case MLNNativeTypeArray: {
+            case MLNUINativeTypeArray: {
                 obj = [NSMutableArray arrayWithArray:obj];
                 break;
             }
-            case MLNNativeTypeNumber:
-            case MLNNativeTypeString:
-            case MLNNativeTypeMDictionary:
-            case MLNNativeTypeMArray:
+            case MLNUINativeTypeNumber:
+            case MLNUINativeTypeString:
+            case MLNUINativeTypeMDictionary:
+            case MLNUINativeTypeMArray:
                 break;
             default: {
                 mln_lua_error(L, @"The value type must be one of types, as string, number, map or array!");
@@ -401,7 +401,7 @@ static int lua_array_replaceObjects(lua_State *L) {
         mln_lua_error(L, @"The number of index must be greater than 0!");
         return 0;
     }
-    MLNUserData *ud = (MLNUserData *)lua_touserdata(L, 1);
+    MLNUIUserData *ud = (MLNUIUserData *)lua_touserdata(L, 1);
     if (ud) {
         NSMutableArray *array = (__bridge __unsafe_unretained NSMutableArray *)ud->object;
         NSUInteger count = array.count;
@@ -410,7 +410,7 @@ static int lua_array_replaceObjects(lua_State *L) {
             mln_lua_error(L, @"The number of index [%ld] out of array count [%lu]!", fromIndex + 1, (unsigned long)count);
             return 0;
         }
-        NSArray *items = [MLN_LUA_CORE(L) toNativeObject:3 error:nil];
+        NSArray *items = [MLNUI_LUA_CORE(L) toNativeObject:3 error:nil];
         if (!(items && items.count > 0)) {
              mln_lua_error(L, @"The objects must not be empty!");
             return 0;
@@ -430,7 +430,7 @@ static int lua_array_exchange(lua_State *L) {
     if (!__mln_lua_in_checkParams(L, 2)) {
         return 0;
     }
-    MLNUserData *ud = (MLNUserData *)lua_touserdata(L, 1);
+    MLNUIUserData *ud = (MLNUIUserData *)lua_touserdata(L, 1);
     if (ud) {
         NSMutableArray *array = (__bridge __unsafe_unretained NSMutableArray *)ud->object;
         NSInteger realIndex1 = lua_tonumber(L, 2) - 1;
@@ -451,7 +451,7 @@ static int lua_array_sub(lua_State *L) {
     if (!__mln_lua_in_checkParams(L, 2)) {
         return 0;
     }
-    MLNUserData *ud = (MLNUserData *)lua_touserdata(L, 1);
+    MLNUIUserData *ud = (MLNUIUserData *)lua_touserdata(L, 1);
     if (ud) {
         NSMutableArray *resultArray = nil;
         NSMutableArray *array = (__bridge __unsafe_unretained NSMutableArray *)ud->object;
@@ -464,18 +464,18 @@ static int lua_array_sub(lua_State *L) {
             NSInteger length = toIndex - fromIndex + 1;
             resultArray = [NSMutableArray arrayWithArray:[array subarrayWithRange:NSMakeRange(fromIndex, length)]];
         }
-        [MLN_LUA_CORE(L) pushNativeObject:resultArray error:nil];
+        [MLNUI_LUA_CORE(L) pushNativeObject:resultArray error:nil];
         return 1;
     }
     return 0;
 }
 
 static int lua_array_copy(lua_State *L) {
-    MLNUserData *ud = (MLNUserData *)lua_touserdata(L, 1);
+    MLNUIUserData *ud = (MLNUIUserData *)lua_touserdata(L, 1);
     if (ud) {
         NSMutableArray *array = (__bridge __unsafe_unretained NSMutableArray *)ud->object;
         NSMutableArray *resultArray = [NSMutableArray arrayWithArray:array];
-        [MLN_LUA_CORE(L) pushNativeObject:resultArray error:nil];
+        [MLNUI_LUA_CORE(L) pushNativeObject:resultArray error:nil];
         return 1;
     }
     return 0;

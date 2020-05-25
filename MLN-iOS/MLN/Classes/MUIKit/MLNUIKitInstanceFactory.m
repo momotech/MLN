@@ -1,29 +1,29 @@
 //
-//  MLNKitInstanceBuidler.m
-//  MLN
+//  MLNUIKitInstanceBuidler.m
+//  MLNUI
 //
 //  Created by MoMo on 2019/11/22.
 //
 
-#import "MLNKitInstanceFactory.h"
-#import "MLNKitLuaCorePool.h"
-#import "MLNKitInstance.h"
-#import "MLNLuaBundle.h"
+#import "MLNUIKitInstanceFactory.h"
+#import "MLNUIKitLuaCorePool.h"
+#import "MLNUIKitInstance.h"
+#import "MLNUILuaBundle.h"
 
-@interface MLNKitInstanceFactory ()
+@interface MLNUIKitInstanceFactory ()
 
-@property (nonatomic, strong) MLNKitLuaCorePool *luaCorePool;
+@property (nonatomic, strong) MLNUIKitLuaCorePool *luaCorePool;
 
 @end
 
-@implementation MLNKitInstanceFactory
+@implementation MLNUIKitInstanceFactory
 
-static MLNKitInstanceFactory *_defaultFactory = nil;
+static MLNUIKitInstanceFactory *_defaultFactory = nil;
 + (instancetype)defaultFactory
 {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        _defaultFactory = [[MLNKitInstanceFactory alloc] init];
+        _defaultFactory = [[MLNUIKitInstanceFactory alloc] init];
     });
     return _defaultFactory;
 }
@@ -32,7 +32,7 @@ static MLNKitInstanceFactory *_defaultFactory = nil;
 {
     self = [super init];
     if (self) {
-        _luaCorePool = [[MLNKitLuaCorePool alloc] init];
+        _luaCorePool = [[MLNUIKitLuaCorePool alloc] init];
     }
     return self;
 }
@@ -42,19 +42,19 @@ static MLNKitInstanceFactory *_defaultFactory = nil;
     [self.luaCorePool preloadWithCapacity:capacity];
 }
 
-- (MLNKitInstance *)createKitInstanceWithViewController:(UIViewController<MLNViewControllerProtocol> *)viewController
+- (MLNUIKitInstance *)createKitInstanceWithViewController:(UIViewController<MLNUIViewControllerProtocol> *)viewController
 {
-    return [self createKitInstanceWithLuaBundle:[MLNLuaBundle mainBundle] viewController:viewController];
+    return [self createKitInstanceWithLuaBundle:[MLNUILuaBundle mainBundle] viewController:viewController];
 }
 
-- (MLNKitInstance *)createKitInstanceWithLuaBundle:(MLNLuaBundle *)luaBundle viewController:(UIViewController<MLNViewControllerProtocol> *)viewController
+- (MLNUIKitInstance *)createKitInstanceWithLuaBundle:(MLNUILuaBundle *)luaBundle viewController:(UIViewController<MLNUIViewControllerProtocol> *)viewController
 {
     return [self createKitInstanceWithLuaBundle:luaBundle rootView:nil viewController:viewController];
 }
 
-- (MLNKitInstance *)createKitInstanceWithLuaBundle:(MLNLuaBundle *__nullable)luaBundle rootView:(UIView *__nullable)rootView viewController:(UIViewController<MLNViewControllerProtocol> *)viewController
+- (MLNUIKitInstance *)createKitInstanceWithLuaBundle:(MLNUILuaBundle *__nullable)luaBundle rootView:(UIView *__nullable)rootView viewController:(UIViewController<MLNUIViewControllerProtocol> *)viewController
 {
-    return [[MLNKitInstance alloc] initWithLuaBundle:luaBundle luaCoreBuilder:self.luaCorePool rootView:rootView viewController:viewController];
+    return [[MLNUIKitInstance alloc] initWithLuaBundle:luaBundle luaCoreBuilder:self.luaCorePool rootView:rootView viewController:viewController];
 }
 
 @end

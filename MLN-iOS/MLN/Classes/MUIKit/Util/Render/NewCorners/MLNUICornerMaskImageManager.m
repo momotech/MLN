@@ -1,39 +1,39 @@
 //
-//  MLNCornerMaskImageManager.m
+//  MLNUICornerMaskImageManager.m
 //
 //
 //  Created by MoMo on 2018/10/12.
 //
 
-#import "MLNCornerMaskImageManager.h"
+#import "MLNUICornerMaskImageManager.h"
 
 
-@interface MLNCornerMaskImageManager ()
+@interface MLNUICornerMaskImageManager ()
 
 @property (nonatomic, strong) NSCache *imagesCacahe;
 
 @end
 
-@implementation MLNCornerMaskImageManager
+@implementation MLNUICornerMaskImageManager
 
-static MLNCornerMaskImageManager *instance = nil;
+static MLNUICornerMaskImageManager *instance = nil;
 + (instancetype)sharedManager
 {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        instance = [[MLNCornerMaskImageManager alloc] init];
+        instance = [[MLNUICornerMaskImageManager alloc] init];
     });
     return instance;
 }
 
 - (UIImage *)cornerMaskImageWithRadius:(CGFloat)cornerRadius maskColor:(UIColor *)maskColor corners:(UIRectCorner)corners
 {
-    MLNCornerRadius multiRadius = {cornerRadius,cornerRadius,cornerRadius,cornerRadius};
+    MLNUICornerRadius multiRadius = {cornerRadius,cornerRadius,cornerRadius,cornerRadius};
     UIImage *image = [self cornerMaskImageWithMultiRadius:multiRadius maskColor:maskColor corners:corners];
     return image;
 }
 
-- (UIImage *)cornerMaskImageWithMultiRadius:(MLNCornerRadius)cornerRadius maskColor:(UIColor *)maskColor corners:(UIRectCorner)corners
+- (UIImage *)cornerMaskImageWithMultiRadius:(MLNUICornerRadius)cornerRadius maskColor:(UIColor *)maskColor corners:(UIRectCorner)corners
 {
     NSString *key = [self keyWithMultiRadius:cornerRadius maskColor:maskColor corners:corners];
     // 1. cache
@@ -49,7 +49,7 @@ static MLNCornerMaskImageManager *instance = nil;
     return image;
 }
 
-- (NSString *)keyWithMultiRadius:(MLNCornerRadius)cornerRadius maskColor:(UIColor *)maskColor corners:(UIRectCorner)corners
+- (NSString *)keyWithMultiRadius:(MLNUICornerRadius)cornerRadius maskColor:(UIColor *)maskColor corners:(UIRectCorner)corners
 {
     CGFloat red = 0.f;
     CGFloat green = 0.f;
@@ -59,7 +59,7 @@ static MLNCornerMaskImageManager *instance = nil;
     return [NSString stringWithFormat:@"corner_mask_%f_%f_%f_%f_%f_%f_%f_%f_%lu",cornerRadius.topLeft,cornerRadius.topRight,cornerRadius.bottomLeft,cornerRadius.bottomRight, red, green, blue, alpha, (unsigned long)corners];
 }
 
-- (UIImage *)createCornerMaskImageWithMultiRadius:(MLNCornerRadius)multiCornerRadius maskColor:(UIColor *)maskColor corners:(UIRectCorner)corners
+- (UIImage *)createCornerMaskImageWithMultiRadius:(MLNUICornerRadius)multiCornerRadius maskColor:(UIColor *)maskColor corners:(UIRectCorner)corners
 {
     CGFloat radius1 = MAX(multiCornerRadius.topLeft,0);
     CGFloat radius2 = MAX(multiCornerRadius.topRight,0);

@@ -1,21 +1,21 @@
 //
-//  MLNStaticExport.h
-//  MLNCore
+//  MLNUIStaticExport.h
+//  MLNUICore
 //
 //  Created by MoMo on 2019/7/24.
 //
 
-#ifndef MLNStaticExport_h
-#define MLNStaticExport_h
+#ifndef MLNUIStaticExport_h
+#define MLNUIStaticExport_h
 
-#import "MLNExportProtocol.h"
+#import "MLNUIExportProtocol.h"
 
-@class MLNLuaCore;
+@class MLNUILuaCore;
 
 /**
  静态导出协议
  */
-@protocol MLNStaticExportProtocol <MLNExportProtocol>
+@protocol MLNUIStaticExportProtocol <MLNUIExportProtocol>
 
 /**
  被导出类的映射信息
@@ -29,15 +29,15 @@
 
  @return 当前调用者
  */
-+ (MLNLuaCore *)mln_currentLuaCore;
++ (MLNUILuaCore *)mln_currentLuaCore;
 
 /**
  更新调用当前静态bridge的LuaCore
 
  @param luaCore 当前调用者
  */
-+ (void)mln_updateCurrentLuaCore:(MLNLuaCore *)luaCore;
++ (void)mln_updateCurrentLuaCore:(MLNUILuaCore *)luaCore;
 
 @end
 
-#endif /* MLNStaticExport_h */
+#endif /* MLNUIStaticExport_h */

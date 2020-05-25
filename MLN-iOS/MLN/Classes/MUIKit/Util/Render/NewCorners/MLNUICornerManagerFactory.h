@@ -1,20 +1,20 @@
 //
-//  MLNCornerManagerFactory.h
+//  MLNUICornerManagerFactory.h
 //
 //
 //  Created by MoMo on 2019/5/26.
 //
 
 #import <Foundation/Foundation.h>
-#import "MLNViewConst.h"
-#import "MLNCornerHandlerPotocol.h"
+#import "MLNUIViewConst.h"
+#import "MLNUICornerHandlerPotocol.h"
 
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface MLNCornerManagerFactory : NSObject
+@interface MLNUICornerManagerFactory : NSObject
 
-+ (id<MLNCornerHandlerPotocol>)handlerWithType:(MLNCornerMode)cornerModel
++ (id<MLNUICornerHandlerPotocol>)handlerWithType:(MLNUICornerMode)cornerModel
                                     targetView:(UIView *)targetView;
 
 @end

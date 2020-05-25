@@ -1,15 +1,15 @@
 //
-//  MLNCornerManagerTool.m
+//  MLNUICornerManagerTool.m
 //
 //
 //  Created by MoMo on 2019/5/26.
 //
 
-#import "MLNCornerManagerTool.h"
-#import "MLNViewConst.h"
-#import "UIScrollView+MLNKit.h"
+#import "MLNUICornerManagerTool.h"
+#import "MLNUIViewConst.h"
+#import "UIScrollView+MLNUIKit.h"
 
-@implementation MLNCornerManagerTool
+@implementation MLNUICornerManagerTool
 
 + (CGFloat)realCornerRadiusWith:(UIView *)targetView
                    cornerRadius:(CGFloat)cornerRadius
@@ -24,11 +24,11 @@
     return 0.f;
 }
 
-+ (MLNCornerRadius)realMultiCornerRadiusWith:(MLNCornerRadius)multiRadius
++ (MLNUICornerRadius)realMultiCornerRadiusWith:(MLNUICornerRadius)multiRadius
                                       size:(CGSize)size
 {
     CGFloat minValue = MAX(MIN(size.width * .5f, size.height * .5f), 0);
-    MLNCornerRadius newCornerRadius = multiRadius;
+    MLNUICornerRadius newCornerRadius = multiRadius;
     newCornerRadius.topLeft = MIN(multiRadius.topLeft, minValue);
     newCornerRadius.topRight = MIN(multiRadius.topRight, minValue);
     newCornerRadius.bottomLeft = MIN(multiRadius.bottomLeft, minValue);
@@ -37,11 +37,11 @@
     return newCornerRadius;
 }
 
-+ (MLNCornerRadius)multiRadius:(MLNCornerRadius)multiRadius
++ (MLNUICornerRadius)multiRadius:(MLNUICornerRadius)multiRadius
                         append:(UIRectCorner)corner
                   cornerRadius:(CGFloat)cornerRadius
 {
-    MLNCornerRadius radius = multiRadius;
+    MLNUICornerRadius radius = multiRadius;
     if (UIRectCornerAllCorners == corner) {
         if (radius.topLeft != cornerRadius || radius.topRight != cornerRadius || radius.bottomLeft != cornerRadius || radius.bottomRight != cornerRadius) {
             radius.topLeft = cornerRadius;
@@ -74,8 +74,8 @@
     return radius;
 }
 
-+ (BOOL)multiRadius:(MLNCornerRadius)multiRadius
-             equalMultiRadius:(MLNCornerRadius)equalMultiRadius
++ (BOOL)multiRadius:(MLNUICornerRadius)multiRadius
+             equalMultiRadius:(MLNUICornerRadius)equalMultiRadius
 {
     return
     multiRadius.topLeft == equalMultiRadius.topLeft
@@ -85,12 +85,12 @@
 }
 
 
-+ (BOOL)layerModeWith:(MLNCornerRadius)multiRadius
++ (BOOL)layerModeWith:(MLNUICornerRadius)multiRadius
 {
     return multiRadius.topLeft == multiRadius.topRight == multiRadius.bottomLeft == multiRadius.bottomRight;
 }
 
-+ (UIBezierPath *)bezierPathWithRect:(CGRect)frame multiRadius:(MLNCornerRadius)multiRadius
++ (UIBezierPath *)bezierPathWithRect:(CGRect)frame multiRadius:(MLNUICornerRadius)multiRadius
 {
     CGFloat width = frame.size.width;
     CGFloat height = frame.size.height;
@@ -141,7 +141,7 @@
     return path;
 }
 
-+ (UIBezierPath *)bezierPathWithRect:(CGRect)frame multiRadius:(MLNCornerRadius)multiRadius lineWidth:(CGFloat)lineWidth
++ (UIBezierPath *)bezierPathWithRect:(CGRect)frame multiRadius:(MLNUICornerRadius)multiRadius lineWidth:(CGFloat)lineWidth
 {
     UIBezierPath *path = [UIBezierPath bezierPath];
     path.lineWidth = lineWidth;
@@ -196,7 +196,7 @@
     return path;
 }
 
-+ (CGFloat)cornerRadiusWithDirection:(UIRectCorner)corner multiRadius:(MLNCornerRadius)multiRadius
++ (CGFloat)cornerRadiusWithDirection:(UIRectCorner)corner multiRadius:(MLNUICornerRadius)multiRadius
 {
     switch (corner) {
         case UIRectCornerTopLeft:

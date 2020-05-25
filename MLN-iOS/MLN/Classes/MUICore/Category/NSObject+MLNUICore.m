@@ -1,16 +1,16 @@
 //
-//  NSObject+MLNCore.m
-//  MLNCore
+//  NSObject+MLNUICore.m
+//  MLNUICore
 //
 //  Created by MoMo on 2019/7/23.
 //
 
-#import "NSObject+MLNCore.h"
+#import "NSObject+MLNUICore.h"
 #import <objc/runtime.h>
 
-@implementation NSObject (MLNCore)
+@implementation NSObject (MLNUICore)
 
-- (instancetype)initWithLuaCore:(MLNLuaCore *)luaCore
+- (instancetype)initWithLuaCore:(MLNUILuaCore *)luaCore
 {
     if (self =  [self init]) {
 #pragma clang diagnostic push
@@ -36,12 +36,12 @@
     return nil;
 }
 
-static const void *kMLNIsLuaObject = &kMLNIsLuaObject;
+static const void *kMLNUIIsLuaObject = &kMLNUIIsLuaObject;
 
 - (BOOL)mln_isLuaObject
 {
     if (self.mln_isConvertible) {
-        return [objc_getAssociatedObject(self, kMLNIsLuaObject) boolValue];
+        return [objc_getAssociatedObject(self, kMLNUIIsLuaObject) boolValue];
     }
     return NO;
 }
@@ -50,13 +50,13 @@ static const void *kMLNIsLuaObject = &kMLNIsLuaObject;
 {
     // 可转换前提下，才能标记为非Native视图
     if (self.mln_isConvertible) {
-        objc_setAssociatedObject(self, kMLNIsLuaObject, @(mln_isLuaObject), OBJC_ASSOCIATION_ASSIGN);
+        objc_setAssociatedObject(self, kMLNUIIsLuaObject, @(mln_isLuaObject), OBJC_ASSOCIATION_ASSIGN);
     }
 }
 
-- (MLNNativeType)mln_nativeType
+- (MLNUINativeType)mln_nativeType
 {
-    return MLNNativeTypeObject;
+    return MLNUINativeTypeObject;
 }
 
 - (BOOL)mln_isConvertible
@@ -74,9 +74,9 @@ static const void *kMLNIsLuaObject = &kMLNIsLuaObject;
     return NO;
 }
 
-+ (MLNExportType)mln_exportType
++ (MLNUIExportType)mln_exportType
 {
-    return MLNExportTypeNone;
+    return MLNUIExportTypeNone;
 }
 
 

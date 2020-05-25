@@ -1,16 +1,16 @@
 //
-//  MLNCornerMaskLayerHndler.h
+//  MLNUICornerMaskLayerHndler.h
 //
 //
 //  Created by MoMo on 2019/5/26.
 //
 
 #import <Foundation/Foundation.h>
-#import "MLNCornerHandlerPotocol.h"
+#import "MLNUICornerHandlerPotocol.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface MLNCornerMaskLayerHndler : NSObject<MLNCornerHandlerPotocol>
+@interface MLNUICornerMaskLayerHndler : NSObject<MLNUICornerHandlerPotocol>
 
 @end
 

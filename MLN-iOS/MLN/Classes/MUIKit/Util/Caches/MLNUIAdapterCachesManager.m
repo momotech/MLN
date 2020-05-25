@@ -1,13 +1,13 @@
 //
-//  MLNAdapterCachesManager.m
+//  MLNUIAdapterCachesManager.m
 //  
 //
 //  Created by MoMo on 2019/3/18.
 //
 
-#import "MLNAdapterCachesManager.h"
+#import "MLNUIAdapterCachesManager.h"
 
-@interface MLNAdapterCachesManager ()
+@interface MLNUIAdapterCachesManager ()
 
 @property (nonatomic, assign) NSInteger sectionCount;
 @property (nonatomic, strong) NSMutableArray<NSNumber *> *rowCount;
@@ -15,7 +15,7 @@
 @property (nonatomic, strong) NSMutableDictionary<NSIndexPath *, id> *layoutInfos;
 
 @end
-@implementation MLNAdapterCachesManager
+@implementation MLNUIAdapterCachesManager
 
 static NSNumber *kNumberZero = nil;
 - (instancetype)init

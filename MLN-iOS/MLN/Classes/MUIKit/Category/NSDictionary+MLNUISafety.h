@@ -1,5 +1,5 @@
 //
-//  NSDictionary+MLNSafety.h
+//  NSDictionary+MLNUISafety.h
 //
 //
 //  Created by MoMo on 2018/11/21.
@@ -9,13 +9,13 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface NSDictionary<__covariant KeyType, __covariant ObjectType> (MLNSafety)
+@interface NSDictionary<__covariant KeyType, __covariant ObjectType> (MLNUISafety)
 
 - (ObjectType)mln_objectForKey:(KeyType)aKey;
 
 @end
 
-@interface NSMutableDictionary<KeyType, ObjectType> (MLNSafety)
+@interface NSMutableDictionary<KeyType, ObjectType> (MLNUISafety)
 
 + (instancetype)mln_dictionaryWithDictionary:(NSDictionary<KeyType, ObjectType> *)dict;
 - (void)mln_removeObjectForKey:(KeyType)aKey;

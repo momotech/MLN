@@ -1,43 +1,43 @@
 //
-//  MLNCore.h
-//  MLNCore
+//  MLNUICore.h
+//  MLNUICore
 //
 //  Created by MoMo on 2019/7/23.
 //
 
-#ifndef MLNCore_h
-#define MLNCore_h
+#ifndef MLNUICore_h
+#define MLNUICore_h
 
 // 虚拟机内核
-#import "MLNLuaCore.h"
-#import "MLNLuaBundle.h"
-#import "MLNBlock.h"
-#import "MLNLuaBundle.h"
-#import "MLNHeader.h"
+#import "MLNUILuaCore.h"
+#import "MLNUILuaBundle.h"
+#import "MLNUIBlock.h"
+#import "MLNUILuaBundle.h"
+#import "MLNUIHeader.h"
 
 // 可导出协议
-#import "MLNStaticExportProtocol.h"
-#import "MLNEntityExportProtocol.h"
-#import "MLNGlobalFuncExportProtocol.h"
-#import "MLNGlobalVarExportProtocol.h"
+#import "MLNUIStaticExportProtocol.h"
+#import "MLNUIEntityExportProtocol.h"
+#import "MLNUIGlobalFuncExportProtocol.h"
+#import "MLNUIGlobalVarExportProtocol.h"
 
 // 导出工具
-#import "MLNStaticExporterMacro.h"
-#import "MLNEntityExporterMacro.h"
-#import "MLNGlobalFuncExporterMacro.h"
-#import "MLNGlobalVarExporterMacro.h"
+#import "MLNUIStaticExporterMacro.h"
+#import "MLNUIEntityExporterMacro.h"
+#import "MLNUIGlobalFuncExporterMacro.h"
+#import "MLNUIGlobalVarExporterMacro.h"
 
 // 分类
-#import "NSObject+MLNCore.h"
-#import "NSDictionary+MLNCore.h"
-#import "NSArray+MLNCore.h"
-#import "NSNumber+MLNCore.h"
-#import "NSMutableArray+MLNCore.h"
-#import "NSMutableDictionary+MLNCore.h"
-#import "NSString+MLNCore.h"
-#import "UIColor+MLNCore.h"
-#import "UIView+MLNCore.h"
-#import "NSValue+MLNCore.h"
-#import "NSError+MLNCore.h"
+#import "NSObject+MLNUICore.h"
+#import "NSDictionary+MLNUICore.h"
+#import "NSArray+MLNUICore.h"
+#import "NSNumber+MLNUICore.h"
+#import "NSMutableArray+MLNUICore.h"
+#import "NSMutableDictionary+MLNUICore.h"
+#import "NSString+MLNUICore.h"
+#import "UIColor+MLNUICore.h"
+#import "UIView+MLNUICore.h"
+#import "NSValue+MLNUICore.h"
+#import "NSError+MLNUICore.h"
 
-#endif /* MLNCore_h */
+#endif /* MLNUICore_h */

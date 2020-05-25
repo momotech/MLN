@@ -1,20 +1,20 @@
 //
-//  MLNTabSegmentViewDelegate.h
-//  MLN
+//  MLNUITabSegmentViewDelegate.h
+//  MLNUI
 //
 //  Created by MoMo on 2019/1/28.
 //
 
-#ifndef MLNTabSegmentViewDelegate_h
-#define MLNTabSegmentViewDelegate_h
+#ifndef MLNUITabSegmentViewDelegate_h
+#define MLNUITabSegmentViewDelegate_h
 
-@class MLNTabSegmentView;
-@protocol MLNTabSegmentViewDelegate <NSObject>
+@class MLNUITabSegmentView;
+@protocol MLNUITabSegmentViewDelegate <NSObject>
 
 @optional
-- (BOOL)segmentView:(MLNTabSegmentView *)segmentView shouldScrollToIndex:(NSInteger)toIndex;
-- (NSInteger)segmentView:(MLNTabSegmentView *)segmentView correctIndexWithToIndex:(NSInteger)toIndex;
+- (BOOL)segmentView:(MLNUITabSegmentView *)segmentView shouldScrollToIndex:(NSInteger)toIndex;
+- (NSInteger)segmentView:(MLNUITabSegmentView *)segmentView correctIndexWithToIndex:(NSInteger)toIndex;
 
 @end
 
-#endif /* MLNTabSegmentViewDelegate_h */
+#endif /* MLNUITabSegmentViewDelegate_h */

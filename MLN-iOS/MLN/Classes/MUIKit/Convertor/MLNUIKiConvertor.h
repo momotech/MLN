@@ -1,11 +1,11 @@
 //
-//  MLNKiConvertor.h
-//  MLN
+//  MLNUIKiConvertor.h
+//  MLNUI
 //
 //  Created by MoMo on 2019/8/2.
 //
 
-#import "MLNConvertor.h"
+#import "MLNUIConvertor.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -41,7 +41,7 @@ NS_ASSUME_NONNULL_BEGIN
         number -> int、float、CGFloat...
         boolean -> BOOL
  */
-@interface MLNKiConvertor : MLNConvertor
+@interface MLNUIKiConvertor : MLNUIConvertor
 
 @end
 

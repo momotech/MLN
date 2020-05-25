@@ -1,16 +1,16 @@
 //
-//  MLNScaleAnimation.h
-//  MLN
+//  MLNUIScaleAnimation.h
+//  MLNUI
 //
 //  Created by MoMo on 2019/5/13.
 //
 
 #import <Foundation/Foundation.h>
-#import "MLNCanvasAnimation.h"
+#import "MLNUICanvasAnimation.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface MLNScaleAnimation : MLNCanvasAnimation
+@interface MLNUIScaleAnimation : MLNUICanvasAnimation
 
 @end
 

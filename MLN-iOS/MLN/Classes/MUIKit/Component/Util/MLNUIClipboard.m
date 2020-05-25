@@ -1,15 +1,15 @@
 //
-//  MLNClipboard.m
+//  MLNUIClipboard.m
 //
 //
 //  Created by MoMo on 2019/7/5.
 //
 
-#import "MLNClipboard.h"
-#import "MLNStaticExporterMacro.h"
-#import "MLNKitHeader.h"
+#import "MLNUIClipboard.h"
+#import "MLNUIStaticExporterMacro.h"
+#import "MLNUIKitHeader.h"
 
-@implementation MLNClipboard
+@implementation MLNUIClipboard
 
 + (void)lua_setText:(NSString *)text
 {
@@ -23,8 +23,8 @@
 
 + (void)lua_setText:(NSString *)text clipboardName:(NSString *)name
 {
-    MLNStaticCheckStringTypeAndNilValue(text)
-    MLNStaticCheckStringTypeAndNilValue(name)
+    MLNUIStaticCheckStringTypeAndNilValue(text)
+    MLNUIStaticCheckStringTypeAndNilValue(name)
     UIPasteboard *clipboard = nil;
     if (name.length > 0) {
         clipboard = [UIPasteboard pasteboardWithName:name create:YES];
@@ -37,7 +37,7 @@
 
 + (NSString *)lua_getTextWithClipboardName:(NSString *)name
 {
-    MLNStaticCheckStringTypeAndNilValue(name)
+    MLNUIStaticCheckStringTypeAndNilValue(name)
     UIPasteboard *clipboard = nil;
     if (name.length > 0) {
         clipboard = [UIPasteboard pasteboardWithName:name create:NO];
@@ -47,10 +47,10 @@
 }
 
 #pragma mark - Setup For Lua
-LUA_EXPORT_STATIC_BEGIN(MLNClipboard)
-LUA_EXPORT_STATIC_METHOD(setText, "lua_setText:", MLNClipboard)
-LUA_EXPORT_STATIC_METHOD(getText, "lua_getText", MLNClipboard)
-LUA_EXPORT_STATIC_METHOD(setTextWithClipboardName, "lua_setText:clipboardName:", MLNClipboard)
-LUA_EXPORT_STATIC_METHOD(getTextWithClipboardName, "lua_getTextWithClipboardName:", MLNClipboard)
-LUA_EXPORT_STATIC_END(MLNClipboard, Clipboard, NO, NULL)
+LUA_EXPORT_STATIC_BEGIN(MLNUIClipboard)
+LUA_EXPORT_STATIC_METHOD(setText, "lua_setText:", MLNUIClipboard)
+LUA_EXPORT_STATIC_METHOD(getText, "lua_getText", MLNUIClipboard)
+LUA_EXPORT_STATIC_METHOD(setTextWithClipboardName, "lua_setText:clipboardName:", MLNUIClipboard)
+LUA_EXPORT_STATIC_METHOD(getTextWithClipboardName, "lua_getTextWithClipboardName:", MLNUIClipboard)
+LUA_EXPORT_STATIC_END(MLNUIClipboard, Clipboard, NO, NULL)
 @end

@@ -1,15 +1,15 @@
 //
-//  MLNInternalWaterfallView.h
+//  MLNUIInternalWaterfallView.h
 //
 //
 //  Created by MoMo on 2019/6/18.
 //
 
-#import "MLNInnerCollectionView.h"
+#import "MLNUIInnerCollectionView.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface MLNInternalWaterfallView : MLNInnerCollectionView
+@interface MLNUIInternalWaterfallView : MLNUIInnerCollectionView
 
 - (void)setHeaderView:(UIView *)headerView;
 - (void)resetHeaderView;

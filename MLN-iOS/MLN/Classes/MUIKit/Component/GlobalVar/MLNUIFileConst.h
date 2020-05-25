@@ -1,19 +1,19 @@
 //
-//  MLNFileConst.h
-//  MLN
+//  MLNUIFileConst.h
+//  MLNUI
 //
 //  Created by MoMo on 2019/7/1.
 //
 
 #import <Foundation/Foundation.h>
-#import "MLNGlobalVarExportProtocol.h"
+#import "MLNUIGlobalVarExportProtocol.h"
 
-static NSString const *kMLNFileSize = @"kMLNFileSize";
-static NSString const *kMLNModiDate = @"kMLNModiDate";
+static NSString const *kMLNUIFileSize = @"kMLNUIFileSize";
+static NSString const *kMLNUIModiDate = @"kMLNUIModiDate";
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface MLNFileConst : NSObject <MLNGlobalVarExportProtocol>
+@interface MLNUIFileConst : NSObject <MLNUIGlobalVarExportProtocol>
 
 @end
 

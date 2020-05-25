@@ -1,39 +1,39 @@
 //
-//  MLNEditTextView.m
+//  MLNUIEditTextView.m
 //
 //
 //  Created by MoMo on 2018/7/30.
 //
 
-#import "MLNEditTextView.h"
-#import "MLNKitHeader.h"
-#import "MLNViewExporterMacro.h"
-#import "MLNBlock.h"
-#import "MLNStringUtil.h"
-#import "MLNLayoutEngine.h"
-#import "MLNTextViewFactory.h"
-#import "UIView+MLNLayout.h"
-#import "MLNLayoutNode.h"
-#import "MLNSizeCahceManager.h"
-#import "MLNBeforeWaitingTask.h"
-#import "UIView+MLNKit.h"
+#import "MLNUIEditTextView.h"
+#import "MLNUIKitHeader.h"
+#import "MLNUIViewExporterMacro.h"
+#import "MLNUIBlock.h"
+#import "MLNUIStringUtil.h"
+#import "MLNUILayoutEngine.h"
+#import "MLNUITextViewFactory.h"
+#import "UIView+MLNUILayout.h"
+#import "MLNUILayoutNode.h"
+#import "MLNUISizeCahceManager.h"
+#import "MLNUIBeforeWaitingTask.h"
+#import "UIView+MLNUIKit.h"
 
-@interface MLNEditTextView () <MLNTextViewDelegate>{
+@interface MLNUIEditTextView () <MLNUITextViewDelegate>{
     BOOL _singleLine;
 }
 
-@property (nonatomic, strong) UIView<MLNTextViewProtocol> *internalTextView;
+@property (nonatomic, strong) UIView<MLNUITextViewProtocol> *internalTextView;
 
-@property (nonatomic, assign) MLNInternalTextViewType type;
-@property (nonatomic, assign) MLNInternalTextViewType originType;
+@property (nonatomic, assign) MLNUIInternalTextViewType type;
+@property (nonatomic, assign) MLNUIInternalTextViewType originType;
 
-@property (nonatomic, strong) MLNBlock *beginChangingCallback;
-@property (nonatomic, strong) MLNBlock *shouldChangeCallback;
-@property (nonatomic, strong) MLNBlock *didChangingCallback;
-@property (nonatomic, strong) MLNBlock *endChangedCallback;
-@property (nonatomic, strong) MLNBlock *returnCallback;
+@property (nonatomic, strong) MLNUIBlock *beginChangingCallback;
+@property (nonatomic, strong) MLNUIBlock *shouldChangeCallback;
+@property (nonatomic, strong) MLNUIBlock *didChangingCallback;
+@property (nonatomic, strong) MLNUIBlock *endChangedCallback;
+@property (nonatomic, strong) MLNUIBlock *returnCallback;
 
-@property (nonatomic, strong) MLNBeforeWaitingTask *lazyTask;
+@property (nonatomic, strong) MLNUIBeforeWaitingTask *lazyTask;
 
 @property (nonatomic, copy) NSString *originString;
 @property (nonatomic, copy) NSString *changedString;
@@ -43,13 +43,13 @@
 @property (nonatomic, copy) NSString *cacheText;
 
 @end
-@implementation MLNEditTextView
+@implementation MLNUIEditTextView
 
 - (instancetype)initWithFrame:(CGRect)frame
 {
     self = [super initWithFrame:frame];
     if (self) {
-        _type = MLNInternalTextViewTypeMultableLine;
+        _type = MLNUIInternalTextViewTypeMultableLine;
     }
     return self;
 }
@@ -84,11 +84,11 @@
 
 #pragma mark - Getter
 
-- (MLNBeforeWaitingTask *)lazyTask
+- (MLNUIBeforeWaitingTask *)lazyTask
 {
     if (!_lazyTask) {
         __weak typeof(self) wself = self;
-        _lazyTask = [MLNBeforeWaitingTask taskWithCallback:^{
+        _lazyTask = [MLNUIBeforeWaitingTask taskWithCallback:^{
             __strong typeof(wself) sself = wself;
             sself.internalTextView.frame = UIEdgeInsetsInsetRect(sself.bounds, sself.padding);
         }];
@@ -104,26 +104,26 @@
     return _backgroundImageView;
 }
 
-- (UIView<MLNTextViewProtocol> *)internalTextView
+- (UIView<MLNUITextViewProtocol> *)internalTextView
 {
     if (!_internalTextView) {
-        _internalTextView = [MLNTextViewFactory createInternalTextViewByType:self.type withTempTextView:nil];
+        _internalTextView = [MLNUITextViewFactory createInternalTextViewByType:self.type withTempTextView:nil];
         _internalTextView.internalTextViewDelegate = self;
     }
     return _internalTextView;
 }
 
-#pragma mark - MLNInternalTextViewProtocl
-- (void)internalTextViewDidBeginEditing:(UIView<MLNTextViewProtocol> *)internalTextView
+#pragma mark - MLNUIInternalTextViewProtocl
+- (void)internalTextViewDidBeginEditing:(UIView<MLNUITextViewProtocol> *)internalTextView
 {
     if (self.beginChangingCallback) {
         [self.beginChangingCallback callIfCan];
     }
 }
 
-- (BOOL)internalTextView:(UIView<MLNTextViewProtocol> *)internalTextView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text
+- (BOOL)internalTextView:(UIView<MLNUITextViewProtocol> *)internalTextView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text
 {
-    if ([@"\n" isEqualToString:text] && _type == MLNInternalTextViewTypeSingleLine) {
+    if ([@"\n" isEqualToString:text] && _type == MLNUIInternalTextViewTypeSingleLine) {
         [self callReturnCallbackIfNeed];
         return NO;
     }
@@ -139,9 +139,9 @@
     return YES;
 }
 
-- (void)internalTextViewDidChange:(UIView<MLNTextViewProtocol> *)internalTextView
+- (void)internalTextViewDidChange:(UIView<MLNUITextViewProtocol> *)internalTextView
 {
-    if (self.type == MLNInternalTextViewTypeMultableLine && self.lua_node.isWrapContent) {
+    if (self.type == MLNUIInternalTextViewTypeMultableLine && self.lua_node.isWrapContent) {
         [self lua_needLayoutAndSpread];
     }
     //触发回调
@@ -199,7 +199,7 @@
     _originSelectedRange = NSMakeRange(0, 0);
 }
 
-- (BOOL)myTextView:(UIView<MLNTextViewProtocol> *)textView shouldReturnWithRange:(NSRange)range replacementString:(NSString *)string
+- (BOOL)myTextView:(UIView<MLNUITextViewProtocol> *)textView shouldReturnWithRange:(NSRange)range replacementString:(NSString *)string
 {
     if (_maxBytes || _maxLength) {
         NSString *newString = @"";
@@ -212,14 +212,14 @@
             UITextPosition *position = [textView positionFromPosition:selectedRange.start offset:0];
             if (!position){//非高亮
                 if (_maxBytes) {
-                    return ![MLNStringUtil constraintString:newString specifiedLength:_maxBytes+1];
+                    return ![MLNUIStringUtil constraintString:newString specifiedLength:_maxBytes+1];
                 } else {
                     return newString.length <= _maxLength;
                 }
             }
         } else {
             if (_maxBytes) {
-                return ![MLNStringUtil constraintString:newString specifiedLength:_maxBytes+1];
+                return ![MLNUIStringUtil constraintString:newString specifiedLength:_maxBytes+1];
             } else {
                 return newString.length <= _maxLength;
             }
@@ -237,7 +237,7 @@
     }
 }
 
-- (void)callbackDidEndEditing:(UIView<MLNTextViewProtocol> *)internalTextView
+- (void)callbackDidEndEditing:(UIView<MLNUITextViewProtocol> *)internalTextView
 {
     if (_endChangedCallback) {
         [_endChangedCallback addStringArgument:[internalTextView text]?:@""];
@@ -245,12 +245,12 @@
     }
 }
 
-- (void)clipBeyondTextIfNeed:(UIView<MLNTextViewProtocol> *)internalTextView
+- (void)clipBeyondTextIfNeed:(UIView<MLNUITextViewProtocol> *)internalTextView
 {
     if (_maxBytes) {
-        BOOL needSplice = [MLNStringUtil constraintString:[internalTextView text] specifiedLength:_maxBytes];
+        BOOL needSplice = [MLNUIStringUtil constraintString:[internalTextView text] specifiedLength:_maxBytes];
         if (needSplice) {
-            internalTextView.text = [MLNStringUtil constrainString:[internalTextView text] toMaxLength:_maxBytes];
+            internalTextView.text = [MLNUIStringUtil constrainString:[internalTextView text] toMaxLength:_maxBytes];
         }
     } else if(_maxLength){
         BOOL needSplice = [internalTextView text].length > _maxLength;
@@ -276,9 +276,9 @@
     return YES;
 }
 
-- (void)setupSwitchStatusWityType:(MLNInternalTextViewType)type
+- (void)setupSwitchStatusWityType:(MLNUIInternalTextViewType)type
 {
-    if (type == MLNInternalTextViewTypeSingleLine) {
+    if (type == MLNUIInternalTextViewTypeSingleLine) {
         self.switchToSecure = [self passwordMode];
         self.cacheText = self.text;
     } else {
@@ -342,7 +342,7 @@
 
 - (void)setText:(NSString *)text
 {
-    if (self.type == MLNInternalTextViewTypeSingleLine) {
+    if (self.type == MLNUIInternalTextViewTypeSingleLine) {
         text = [text stringByReplacingOccurrencesOfString:@"\n" withString:@""];
     }
     if (![self shouldChangeTextWith:self.internalTextView.text?:@"" new:text start:0 count:text.length]) {
@@ -351,7 +351,7 @@
     self.internalTextView.text = text;
     [self clipBeyondTextIfNeed:self.internalTextView];
     text = self.internalTextView.text;
-    if (self.type == MLNInternalTextViewTypeMultableLine && self.lua_node.isWrapContent) {
+    if (self.type == MLNUIInternalTextViewTypeMultableLine && self.lua_node.isWrapContent) {
         [self lua_needLayoutAndSpread];
     }
     if (_didChangingCallback) {
@@ -377,14 +377,14 @@
 -(void)setPlaceholder:(NSString *)placeholder
 {
     if (![placeholder isKindOfClass:[NSString class]] && placeholder != nil) {
-        MLNKitLuaAssert(NO , @"The placeholder type must be String" );
+        MLNUIKitLuaAssert(NO , @"The placeholder type must be String" );
         return;
     }
-    if (self.type == MLNInternalTextViewTypeSingleLine) {
+    if (self.type == MLNUIInternalTextViewTypeSingleLine) {
         placeholder = [placeholder stringByReplacingOccurrencesOfString:@"\n" withString:@""];
     }
     self.internalTextView.placeholder = placeholder;
-    if (self.type == MLNInternalTextViewTypeMultableLine && self.lua_node.isWrapContent) {
+    if (self.type == MLNUIInternalTextViewTypeMultableLine && self.lua_node.isWrapContent) {
         [self lua_needLayoutAndSpread];
     }
 }
@@ -417,7 +417,7 @@
 - (void)setAttributedText:(NSAttributedString *)attributedText
 {
     self.internalTextView.attributedText = attributedText;
-    if (self.type == MLNInternalTextViewTypeMultableLine && self.lua_node.isWrapContent) {
+    if (self.type == MLNUIInternalTextViewTypeMultableLine && self.lua_node.isWrapContent) {
         [self lua_needLayoutAndSpread];
     }
 }
@@ -437,39 +437,39 @@
     return self.internalTextView.font.pointSize;
 }
 
-- (void)setInputMode:(MLNEditTextViewInputMode)inputMode
+- (void)setInputMode:(MLNUIEditTextViewInputMode)inputMode
 {
     switch (inputMode) {
-        case MLNEditTextViewInputModeNumber://数字模式，强行设置为单行模式
-            [self setType:MLNInternalTextViewTypeSingleLine];
+        case MLNUIEditTextViewInputModeNumber://数字模式，强行设置为单行模式
+            [self setType:MLNUIInternalTextViewTypeSingleLine];
             self.internalTextView.keyboardType = UIKeyboardTypeNumberPad;
             break;
         default:
             self.internalTextView.keyboardType = UIKeyboardTypeDefault;
             break;
     }
-    if ([self.internalTextView isFirstResponder] && _type == MLNInternalTextViewTypeSingleLine) {
+    if ([self.internalTextView isFirstResponder] && _type == MLNUIInternalTextViewTypeSingleLine) {
         [self.internalTextView resignFirstResponder];
         [self.internalTextView becomeFirstResponder];
     }
 }
 
-- (MLNEditTextViewInputMode)lua_inputMode
+- (MLNUIEditTextViewInputMode)lua_inputMode
 {
     switch (self.internalTextView.keyboardType) {
         case UIKeyboardTypeNumberPad:
-            return MLNEditTextViewInputModeNumber;
+            return MLNUIEditTextViewInputModeNumber;
             break;
         default:
-            return MLNEditTextViewInputModeNormal;
+            return MLNUIEditTextViewInputModeNormal;
             break;
     }
 }
 
 - (void)setPasswordMode:(BOOL)passwordMode
 {
-    if (_type == MLNInternalTextViewTypeMultableLine && passwordMode) {
-        MLNKitLuaAssert(NO, @"Multi-line mode does not support password mode and should be set to single-line mode");
+    if (_type == MLNUIInternalTextViewTypeMultableLine && passwordMode) {
+        MLNUIKitLuaAssert(NO, @"Multi-line mode does not support password mode and should be set to single-line mode");
     }
     self.internalTextView.secureTextEntry = passwordMode;
     [self setupSwitchStatusWityType:_type];
@@ -480,25 +480,25 @@
     return self.internalTextView.secureTextEntry;
 }
 
-- (void)setReturnMode:(MLNEditTextViewReturnType)returnMode
+- (void)setReturnMode:(MLNUIEditTextViewReturnType)returnMode
 {
     if (_returnMode == returnMode) {
         return;
     }
     switch (returnMode) {
-        case MLNEditTextViewReturnTypeGo:
+        case MLNUIEditTextViewReturnTypeGo:
             self.internalTextView.returnKeyType = UIReturnKeyGo;
             break;
-        case MLNEditTextViewReturnTypeSearch:
+        case MLNUIEditTextViewReturnTypeSearch:
             self.internalTextView.returnKeyType = UIReturnKeySearch;
             break;
-        case MLNEditTextViewReturnTypeSend:
+        case MLNUIEditTextViewReturnTypeSend:
             self.internalTextView.returnKeyType = UIReturnKeySend;
             break;
-        case MLNEditTextViewReturnTypeNext:
+        case MLNUIEditTextViewReturnTypeNext:
             self.internalTextView.returnKeyType = UIReturnKeyNext;
             break;
-        case MLNEditTextViewReturnTypeDone:
+        case MLNUIEditTextViewReturnTypeDone:
             self.internalTextView.returnKeyType = UIReturnKeyDone;
             break;
         default:
@@ -515,7 +515,7 @@
 - (void)lua_setPadding:(CGFloat)top right:(CGFloat)right bottom:(CGFloat)bottom left:(CGFloat)left
 {
     self.padding = UIEdgeInsetsMake(top, left, bottom, right);
-    if (self.type == MLNInternalTextViewTypeMultableLine && self.lua_node.isWrapContent) {
+    if (self.type == MLNUIInternalTextViewTypeMultableLine && self.lua_node.isWrapContent) {
         [self lua_needLayoutAndSpread];
     }
     [self mln_pushLazyTask:self.lazyTask];
@@ -539,7 +539,7 @@
 {
     UIFont *font =  [UIFont fontWithName:fontName size:fontSize]?:[UIFont systemFontOfSize:fontSize];
     self.internalTextView.font = font;
-    if (self.type == MLNInternalTextViewTypeMultableLine && self.lua_node.isWrapContent) {
+    if (self.type == MLNUIInternalTextViewTypeMultableLine && self.lua_node.isWrapContent) {
         [self lua_needLayoutAndSpread];
     }
 }
@@ -554,7 +554,7 @@
     self.type = !singleLine;
 }
 
-- (void)setType:(MLNInternalTextViewType)type
+- (void)setType:(MLNUIInternalTextViewType)type
 {
     [self recreateInternalTextViewIfNeed:type];
     _type = type;
@@ -565,11 +565,11 @@
     return !_type;
 }
 
-- (void)recreateInternalTextViewIfNeed:(MLNInternalTextViewType)type
+- (void)recreateInternalTextViewIfNeed:(MLNUIInternalTextViewType)type
 {
     if (_internalTextView && _type != type) {
-        UIView<MLNTextViewProtocol> *preInternalTextView = _internalTextView;
-        _internalTextView = [MLNTextViewFactory createInternalTextViewByType:type withTempTextView:preInternalTextView];
+        UIView<MLNUITextViewProtocol> *preInternalTextView = _internalTextView;
+        _internalTextView = [MLNUITextViewFactory createInternalTextViewByType:type withTempTextView:preInternalTextView];
         if ([preInternalTextView isFirstResponder]) {
             [_internalTextView becomeFirstResponder];
         }
@@ -584,7 +584,7 @@
 - (CGSize)lua_measureSizeWithMaxWidth:(CGFloat)maxWidth maxHeight:(CGFloat)maxHeight
 {
     NSString *cacheKey = [self remakeCacheKeyWithMaxWidth:maxWidth maxHeight:maxHeight];
-    MLNSizeCahceManager *sizeCacheManager = MLN_KIT_INSTANCE(self.mln_luaCore).layoutEngine.sizeCacheManager;
+    MLNUISizeCahceManager *sizeCacheManager = MLNUI_KIT_INSTANCE(self.mln_luaCore).layoutEngine.sizeCacheManager;
     NSValue *sizeValue = [sizeCacheManager objectForKey:cacheKey];
     if (sizeValue) {
         return sizeValue.CGSizeValue;
@@ -639,17 +639,17 @@
 #pragma mark - Override
 - (void)lua_addSubview:(UIView *)view
 {
-    MLNKitLuaAssert(NO, @"Not found \"addView\" method, just continar of View has it!");
+    MLNUIKitLuaAssert(NO, @"Not found \"addView\" method, just continar of View has it!");
 }
 
 - (void)lua_insertSubview:(UIView *)view atIndex:(NSInteger)index
 {
-    MLNKitLuaAssert(NO, @"Not found \"insertView\" method, just continar of View has it!");
+    MLNUIKitLuaAssert(NO, @"Not found \"insertView\" method, just continar of View has it!");
 }
 
 - (void)lua_removeAllSubViews
 {
-    MLNKitLuaAssert(NO, @"Not found \"removeAllSubviews\" method, just continar of View has it!");
+    MLNUIKitLuaAssert(NO, @"Not found \"removeAllSubviews\" method, just continar of View has it!");
 }
 
 - (BOOL)lua_layoutEnable
@@ -658,30 +658,30 @@
 }
 
 #pragma mark - Export For Lua
-LUA_EXPORT_VIEW_BEGIN(MLNEditTextView)
-LUA_EXPORT_VIEW_PROPERTY(placeholder, "setPlaceholder:","placeholder", MLNEditTextView)
-LUA_EXPORT_VIEW_PROPERTY(placeholderColor, "setPlaceholderColor:","placeholderColor", MLNEditTextView)
-LUA_EXPORT_VIEW_PROPERTY(textColor, "setTextColor:","textColor", MLNEditTextView)
-LUA_EXPORT_VIEW_PROPERTY(fontSize, "lua_setFonrSize:","lua_fontSize", MLNEditTextView)
-LUA_EXPORT_VIEW_PROPERTY(inputMode, "setInputMode:","lua_inputMode", MLNEditTextView)
-LUA_EXPORT_VIEW_PROPERTY(passwordMode, "setPasswordMode:","passwordMode", MLNEditTextView)
-LUA_EXPORT_VIEW_PROPERTY(returnMode, "setReturnMode:","returnMode", MLNEditTextView)
-LUA_EXPORT_VIEW_PROPERTY(textAlign, "setTextAlignment:","textAlignment", MLNEditTextView)
-LUA_EXPORT_VIEW_PROPERTY(maxBytes, "lua_setMaxBytes:","maxBytes", MLNEditTextView)
-LUA_EXPORT_VIEW_PROPERTY(maxLength, "lua_setMaxLength:","maxLength", MLNEditTextView)
-LUA_EXPORT_VIEW_PROPERTY(text, "setText:","text", MLNEditTextView)
-LUA_EXPORT_VIEW_PROPERTY(singleLine, "lua_setSingleLine:","lua_SingleLineType", MLNEditTextView)
-LUA_EXPORT_VIEW_METHOD(fontNameSize, "lua_fontName:size:", MLNEditTextView)
-LUA_EXPORT_VIEW_METHOD(setBeginChangingCallback, "setBeginChangingCallback:", MLNEditTextView)
-LUA_EXPORT_VIEW_METHOD(setShouldChangeCallback, "setShouldChangeCallback:", MLNEditTextView)
-LUA_EXPORT_VIEW_METHOD(setDidChangingCallback, "setDidChangingCallback:", MLNEditTextView)
-LUA_EXPORT_VIEW_METHOD(setEndChangedCallback, "setEndChangedCallback:", MLNEditTextView)
-LUA_EXPORT_VIEW_METHOD(setReturnCallback, "setReturnCallback:", MLNEditTextView)
-LUA_EXPORT_VIEW_METHOD(setCanEdit, "lua_setCanEdit:", MLNEditTextView)
-LUA_EXPORT_VIEW_METHOD(padding, "lua_setPadding:right:bottom:left:", MLNEditTextView)
-LUA_EXPORT_VIEW_METHOD(dismissKeyboard, "lua_dismissKeyboard", MLNEditTextView)
-LUA_EXPORT_VIEW_METHOD(showKeyboard, "lua_showKeyboard", MLNEditTextView)
-LUA_EXPORT_VIEW_METHOD(setCursorColor, "lua_setCursorColor:", MLNEditTextView)
-LUA_EXPORT_VIEW_END(MLNEditTextView, EditTextView, YES, "MLNView", NULL)
+LUA_EXPORT_VIEW_BEGIN(MLNUIEditTextView)
+LUA_EXPORT_VIEW_PROPERTY(placeholder, "setPlaceholder:","placeholder", MLNUIEditTextView)
+LUA_EXPORT_VIEW_PROPERTY(placeholderColor, "setPlaceholderColor:","placeholderColor", MLNUIEditTextView)
+LUA_EXPORT_VIEW_PROPERTY(textColor, "setTextColor:","textColor", MLNUIEditTextView)
+LUA_EXPORT_VIEW_PROPERTY(fontSize, "lua_setFonrSize:","lua_fontSize", MLNUIEditTextView)
+LUA_EXPORT_VIEW_PROPERTY(inputMode, "setInputMode:","lua_inputMode", MLNUIEditTextView)
+LUA_EXPORT_VIEW_PROPERTY(passwordMode, "setPasswordMode:","passwordMode", MLNUIEditTextView)
+LUA_EXPORT_VIEW_PROPERTY(returnMode, "setReturnMode:","returnMode", MLNUIEditTextView)
+LUA_EXPORT_VIEW_PROPERTY(textAlign, "setTextAlignment:","textAlignment", MLNUIEditTextView)
+LUA_EXPORT_VIEW_PROPERTY(maxBytes, "lua_setMaxBytes:","maxBytes", MLNUIEditTextView)
+LUA_EXPORT_VIEW_PROPERTY(maxLength, "lua_setMaxLength:","maxLength", MLNUIEditTextView)
+LUA_EXPORT_VIEW_PROPERTY(text, "setText:","text", MLNUIEditTextView)
+LUA_EXPORT_VIEW_PROPERTY(singleLine, "lua_setSingleLine:","lua_SingleLineType", MLNUIEditTextView)
+LUA_EXPORT_VIEW_METHOD(fontNameSize, "lua_fontName:size:", MLNUIEditTextView)
+LUA_EXPORT_VIEW_METHOD(setBeginChangingCallback, "setBeginChangingCallback:", MLNUIEditTextView)
+LUA_EXPORT_VIEW_METHOD(setShouldChangeCallback, "setShouldChangeCallback:", MLNUIEditTextView)
+LUA_EXPORT_VIEW_METHOD(setDidChangingCallback, "setDidChangingCallback:", MLNUIEditTextView)
+LUA_EXPORT_VIEW_METHOD(setEndChangedCallback, "setEndChangedCallback:", MLNUIEditTextView)
+LUA_EXPORT_VIEW_METHOD(setReturnCallback, "setReturnCallback:", MLNUIEditTextView)
+LUA_EXPORT_VIEW_METHOD(setCanEdit, "lua_setCanEdit:", MLNUIEditTextView)
+LUA_EXPORT_VIEW_METHOD(padding, "lua_setPadding:right:bottom:left:", MLNUIEditTextView)
+LUA_EXPORT_VIEW_METHOD(dismissKeyboard, "lua_dismissKeyboard", MLNUIEditTextView)
+LUA_EXPORT_VIEW_METHOD(showKeyboard, "lua_showKeyboard", MLNUIEditTextView)
+LUA_EXPORT_VIEW_METHOD(setCursorColor, "lua_setCursorColor:", MLNUIEditTextView)
+LUA_EXPORT_VIEW_END(MLNUIEditTextView, EditTextView, YES, "MLNUIView", NULL)
 
 @end

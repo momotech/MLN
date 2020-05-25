@@ -7,18 +7,18 @@
   */
 
 #import <UIKit/UIKit.h>
-#import "MLNScrollViewConst.h"
+#import "MLNUIScrollViewConst.h"
 
-@class MLNBlock;
-@class MLNLuaCore;
-@interface UIScrollView (MLNRefresh)
+@class MLNUIBlock;
+@class MLNUILuaCore;
+@interface UIScrollView (MLNUIRefresh)
 
 - (instancetype)initWithRefreshEnable:(BOOL)refreshEnable loadEnable:(BOOL)loadEnable;
-- (instancetype)initWithLuaCore:(MLNLuaCore *)luaCore isHorizontal:(BOOL)isHorizontal;
+- (instancetype)initWithLuaCore:(MLNUILuaCore *)luaCore isHorizontal:(BOOL)isHorizontal;
 
 @property (nonatomic, assign) BOOL mln_horizontal;
 @property (nonatomic, assign) BOOL lua_refreshEnable;
-@property (nonatomic, strong) MLNBlock *lua_refreshCallback;
+@property (nonatomic, strong) MLNUIBlock *lua_refreshCallback;
 - (BOOL)lua_isRefreshing;
 - (void)lua_startRefreshing;
 - (void)lua_stopRefreshing;
@@ -27,7 +27,7 @@
 @property (nonatomic, assign) BOOL lua_loadEnable;
 // loading in advance value default 0, used value 0 ~ 1.0
 @property (nonatomic, assign) CGFloat lua_loadahead;
-@property (nonatomic, strong) MLNBlock *lua_loadCallback;
+@property (nonatomic, strong) MLNUIBlock *lua_loadCallback;
 - (BOOL)lua_isLoading;
 - (void)lua_stopLoading;
 - (void)lua_noMoreData;
@@ -39,16 +39,16 @@
 
 @end
 
-@interface UIScrollView (MLNScrolling)
+@interface UIScrollView (MLNUIScrolling)
 
-@property (nonatomic, copy) MLNBlock *lua_scrollBeginCallback;
-@property (nonatomic, copy) MLNBlock *lua_scrollingCallback;
-@property (nonatomic, copy) MLNBlock *lua_endDraggingCallback;
-@property (nonatomic, copy) MLNBlock *lua_startDeceleratingCallback;
-@property (nonatomic, copy) MLNBlock *lua_scrollEndCallback;
+@property (nonatomic, copy) MLNUIBlock *lua_scrollBeginCallback;
+@property (nonatomic, copy) MLNUIBlock *lua_scrollingCallback;
+@property (nonatomic, copy) MLNUIBlock *lua_endDraggingCallback;
+@property (nonatomic, copy) MLNUIBlock *lua_startDeceleratingCallback;
+@property (nonatomic, copy) MLNUIBlock *lua_scrollEndCallback;
 
 - (void)lua_setContentInset:(CGFloat)top right:(CGFloat)right bottom:(CGFloat)bottom left:(CGFloat)left;
-- (void)lua_getContetnInset:(MLNBlock*)block;
+- (void)lua_getContetnInset:(MLNUIBlock*)block;
 - (void)lua_setScrollIndicatorInset:(CGFloat)top right:(CGFloat)right bottom:(CGFloat)bottom  left:(CGFloat)left;
 - (void)lua_setContentOffsetWithAnimation:(CGPoint)point;
 - (void)mln_setLuaScrollEnable:(BOOL)enable;

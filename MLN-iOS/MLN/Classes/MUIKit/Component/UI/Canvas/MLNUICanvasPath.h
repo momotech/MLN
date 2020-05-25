@@ -1,17 +1,17 @@
 //
-//  MLNCanvasPath.h
+//  MLNUICanvasPath.h
 //
 //
 //  Created by MoMo on 2019/5/20.
 //
 
 #import <Foundation/Foundation.h>
-#import "MLNEntityExportProtocol.h"
+#import "MLNUIEntityExportProtocol.h"
 
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface MLNCanvasPath : NSObject<MLNEntityExportProtocol>
+@interface MLNUICanvasPath : NSObject<MLNUIEntityExportProtocol>
 
 
 @property (nonatomic, strong, readonly) UIBezierPath *bezierPath;

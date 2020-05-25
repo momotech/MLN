@@ -1,29 +1,29 @@
 //
-//  MLNCornerUtil.m
-//  MLN
+//  MLNUICornerUtil.m
+//  MLNUI
 //
 //  Created by MoMo on 2019/10/30.
 //
 
-#import "MLNCornerUtil.h"
-#import "MLNKitHeader.h"
-#import "MLNKitInstanceConsts.h"
+#import "MLNUICornerUtil.h"
+#import "MLNUIKitHeader.h"
+#import "MLNUIKitInstanceConsts.h"
 
-@implementation MLNCornerUtil
+@implementation MLNUICornerUtil
 
 + (void)lua_openDefaultClip:(BOOL)clip
 {
-    [MLN_KIT_INSTANCE([self mln_currentLuaCore]) instanceConsts].defaultCornerClip = clip;
+    [MLNUI_KIT_INSTANCE([self mln_currentLuaCore]) instanceConsts].defaultCornerClip = clip;
 }
 
 + (BOOL)isOpenDefaultClip
 {
-    return [MLN_KIT_INSTANCE([self mln_currentLuaCore]) instanceConsts].defaultCornerClip;
+    return [MLNUI_KIT_INSTANCE([self mln_currentLuaCore]) instanceConsts].defaultCornerClip;
 }
 
 #pragma mark - Setup For Lua
-LUA_EXPORT_STATIC_BEGIN(MLNCornerUtil)
-LUA_EXPORT_STATIC_METHOD(openDefaultClip, "lua_openDefaultClip:", MLNCornerUtil)
-LUA_EXPORT_STATIC_END(MLNCornerUtil, CornerManager, NO, NULL)
+LUA_EXPORT_STATIC_BEGIN(MLNUICornerUtil)
+LUA_EXPORT_STATIC_METHOD(openDefaultClip, "lua_openDefaultClip:", MLNUICornerUtil)
+LUA_EXPORT_STATIC_END(MLNUICornerUtil, CornerManager, NO, NULL)
 
 @end

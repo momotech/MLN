@@ -1,30 +1,30 @@
 //
-//  MLNTranslateAnimation.m
-//  MLN
+//  MLNUITranslateAnimation.m
+//  MLNUI
 //
 //  Created by MoMo on 2019/5/16.
 //
 
-#import "MLNTranslateAnimation.h"
-#import "MLNEntityExporterMacro.h"
-#import "MLNBlock.h"
-#import "NSDictionary+MLNSafety.h"
+#import "MLNUITranslateAnimation.h"
+#import "MLNUIEntityExporterMacro.h"
+#import "MLNUIBlock.h"
+#import "NSDictionary+MLNUISafety.h"
 
-@interface MLNTranslateAnimation()
+@interface MLNUITranslateAnimation()
 
-@property (nonatomic, assign) MLNAnimationValueType fromXType;
+@property (nonatomic, assign) MLNUIAnimationValueType fromXType;
 @property (nonatomic, assign) CGFloat fromX;
-@property (nonatomic, assign) MLNAnimationValueType toXType;
+@property (nonatomic, assign) MLNUIAnimationValueType toXType;
 @property (nonatomic, assign) CGFloat toX;
 
-@property (nonatomic, assign) MLNAnimationValueType fromYType;
+@property (nonatomic, assign) MLNUIAnimationValueType fromYType;
 @property (nonatomic, assign) CGFloat fromY;
-@property (nonatomic, assign) MLNAnimationValueType toYType;
+@property (nonatomic, assign) MLNUIAnimationValueType toYType;
 @property (nonatomic, assign) CGFloat toY;
 
 @end
 
-@implementation MLNTranslateAnimation
+@implementation MLNUITranslateAnimation
 
 - (instancetype)initWith:(CGFloat)fromX
                      toX:(CGFloat)toX
@@ -32,25 +32,25 @@
                      toY:(CGFloat)toY
 {
     if (self = [super init]) {
-        [self setFromXType:MLNAnimationValueTypeAbsolute];
+        [self setFromXType:MLNUIAnimationValueTypeAbsolute];
         [self setFromX:fromX];
-        [self setToXType:MLNAnimationValueTypeAbsolute];
+        [self setToXType:MLNUIAnimationValueTypeAbsolute];
         [self setToX:toX];
-        [self setFromYType:MLNAnimationValueTypeAbsolute];
+        [self setFromYType:MLNUIAnimationValueTypeAbsolute];
         [self setFromY:fromY];
-        [self setToYType:MLNAnimationValueTypeAbsolute];
+        [self setToYType:MLNUIAnimationValueTypeAbsolute];
         [self setToY:toY];
     }
     return self;
 }
 
-- (instancetype)initWith:(MLNAnimationValueType)fromXType
+- (instancetype)initWith:(MLNUIAnimationValueType)fromXType
                    fromX:(CGFloat)fromX
-                 toXType:(MLNAnimationValueType)toXType
+                 toXType:(MLNUIAnimationValueType)toXType
                      toX:(CGFloat)toX
-               fromYType:(MLNAnimationValueType)fromYType
+               fromYType:(MLNUIAnimationValueType)fromYType
                    fromY:(CGFloat)fromY
-                 toYType:(MLNAnimationValueType)toYType
+                 toYType:(MLNUIAnimationValueType)toYType
                      toY:(CGFloat)toY
 {
     if (self = [self initWith:fromX toX:toX fromY:fromY toY:toY]) {
@@ -64,7 +64,7 @@
 
 
 static int lua_animation_init(lua_State *L) {
-    MLNTranslateAnimation *animation = nil;
+    MLNUITranslateAnimation *animation = nil;
     NSUInteger argCount = lua_gettop(L);
     switch (argCount) {
         case 8: {
@@ -76,7 +76,7 @@ static int lua_animation_init(lua_State *L) {
             CGFloat fromY              = lua_tonumber(L, 6);
             CGFloat toYType            = lua_tonumber(L, 7);
             CGFloat toY                = lua_tonumber(L, 8);
-            animation = [[MLNTranslateAnimation alloc] initWith:fromXType fromX:fromX toXType:toXType toX:toX fromYType:fromYType fromY:fromY toYType:toYType toY:toY];
+            animation = [[MLNUITranslateAnimation alloc] initWith:fromXType fromX:fromX toXType:toXType toX:toX fromYType:fromYType fromY:fromY toYType:toYType toY:toY];
         }
             break;
         case 4: {
@@ -84,12 +84,12 @@ static int lua_animation_init(lua_State *L) {
             CGFloat toX               = lua_tonumber(L, 2);
             CGFloat fromY             = lua_tonumber(L, 3);
             CGFloat toY               = lua_tonumber(L, 4);
-            animation = [[MLNTranslateAnimation alloc] initWith:fromX toX:toX fromY:fromY toY:toY];
+            animation = [[MLNUITranslateAnimation alloc] initWith:fromX toX:toX fromY:fromY toY:toY];
         }
             break;
         case 0:
         {
-            animation = [[MLNTranslateAnimation alloc] init];
+            animation = [[MLNUITranslateAnimation alloc] init];
         }
             break;
         default: {
@@ -99,7 +99,7 @@ static int lua_animation_init(lua_State *L) {
     }
     
     if (animation) {
-        if ([MLN_LUA_CORE(L) pushNativeObject:animation error:NULL]) {
+        if ([MLNUI_LUA_CORE(L) pushNativeObject:animation error:NULL]) {
             return 1;
         };
     }
@@ -131,7 +131,7 @@ static int lua_animation_init(lua_State *L) {
 #pragma mark - copy
 - (id)copyWithZone:(NSZone *)zone
 {
-    MLNTranslateAnimation *copy = [super copyWithZone:zone];
+    MLNUITranslateAnimation *copy = [super copyWithZone:zone];
     copy.fromX = _fromX;
     copy.fromXType = _fromXType;
     copy.toX   = _toX;
@@ -146,18 +146,18 @@ static int lua_animation_init(lua_State *L) {
 #pragma mark - getter & setter
 - (CGFloat)relativeValue:(BOOL)xAxis
               targetView:(UIView *)targetView
-            relativeType:(MLNAnimationValueType)rType
+            relativeType:(MLNUIAnimationValueType)rType
                    value:(CGFloat)value
 {
-    if (rType == MLNAnimationValueTypeAbsolute) {
+    if (rType == MLNUIAnimationValueTypeAbsolute) {
         return value;
     }
     
-    UIView *relativeView = rType == MLNAnimationValueTypeRelativeToSelf ? targetView : targetView.superview;
+    UIView *relativeView = rType == MLNUIAnimationValueTypeRelativeToSelf ? targetView : targetView.superview;
     return xAxis ? relativeView.frame.size.width * value : relativeView.frame.size.height * value;
 }
 
-- (void)setFromXType:(MLNAnimationValueType)fromXType
+- (void)setFromXType:(MLNUIAnimationValueType)fromXType
 {
     _fromXType = fromXType;
 }
@@ -167,7 +167,7 @@ static int lua_animation_init(lua_State *L) {
     _fromX = fromX;
 }
 
-- (void)setToXType:(MLNAnimationValueType)toXType
+- (void)setToXType:(MLNUIAnimationValueType)toXType
 {
     _toXType = toXType;
 }
@@ -177,7 +177,7 @@ static int lua_animation_init(lua_State *L) {
     _toX = toX;
 }
 
-- (void)setFromYType:(MLNAnimationValueType)fromYType
+- (void)setFromYType:(MLNUIAnimationValueType)fromYType
 {
     _fromYType = fromYType;
 }
@@ -187,7 +187,7 @@ static int lua_animation_init(lua_State *L) {
     _fromY = fromY;
 }
 
-- (void)setToYType:(MLNAnimationValueType)toYType
+- (void)setToYType:(MLNUIAnimationValueType)toYType
 {
     _toYType = toYType;
 }
@@ -198,14 +198,14 @@ static int lua_animation_init(lua_State *L) {
 }
 
 #pragma mark - Export To Lua
-LUA_EXPORT_BEGIN(MLNTranslateAnimation)
-LUA_EXPORT_PROPERTY(setFromXType, "setFromXType:", "fromXType", MLNTranslateAnimation)
-LUA_EXPORT_PROPERTY(setFromX, "setFromX:", "fromX", MLNTranslateAnimation)
-LUA_EXPORT_PROPERTY(setToXType, "setToXType:", "toXType", MLNTranslateAnimation)
-LUA_EXPORT_PROPERTY(setToX, "setToX:", "toX", MLNTranslateAnimation)
-LUA_EXPORT_PROPERTY(setFromYType, "setFromYType:", "fromYType", MLNTranslateAnimation)
-LUA_EXPORT_PROPERTY(setFromY, "setFromY:", "fromY", MLNTranslateAnimation)
-LUA_EXPORT_PROPERTY(setToYType, "setToYType:", "toYType", MLNTranslateAnimation)
-LUA_EXPORT_PROPERTY(setToY, "setToY:", "toY", MLNTranslateAnimation)
-LUA_EXPORT_END_WITH_CFUNC(MLNTranslateAnimation, TranslateAnimation, YES, "MLNCanvasAnimation", lua_animation_init)
+LUA_EXPORT_BEGIN(MLNUITranslateAnimation)
+LUA_EXPORT_PROPERTY(setFromXType, "setFromXType:", "fromXType", MLNUITranslateAnimation)
+LUA_EXPORT_PROPERTY(setFromX, "setFromX:", "fromX", MLNUITranslateAnimation)
+LUA_EXPORT_PROPERTY(setToXType, "setToXType:", "toXType", MLNUITranslateAnimation)
+LUA_EXPORT_PROPERTY(setToX, "setToX:", "toX", MLNUITranslateAnimation)
+LUA_EXPORT_PROPERTY(setFromYType, "setFromYType:", "fromYType", MLNUITranslateAnimation)
+LUA_EXPORT_PROPERTY(setFromY, "setFromY:", "fromY", MLNUITranslateAnimation)
+LUA_EXPORT_PROPERTY(setToYType, "setToYType:", "toYType", MLNUITranslateAnimation)
+LUA_EXPORT_PROPERTY(setToY, "setToY:", "toY", MLNUITranslateAnimation)
+LUA_EXPORT_END_WITH_CFUNC(MLNUITranslateAnimation, TranslateAnimation, YES, "MLNUICanvasAnimation", lua_animation_init)
 @end

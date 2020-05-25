@@ -1,18 +1,18 @@
 //
-//  NSDictionary+MLNCore.m
-//  MLNCore
+//  NSDictionary+MLNUICore.m
+//  MLNUICore
 //
 //  Created by MoMo on 2019/7/23.
 //
 
-#import "NSDictionary+MLNCore.h"
-#import "NSObject+MLNCore.h"
+#import "NSDictionary+MLNUICore.h"
+#import "NSObject+MLNUICore.h"
 
-@implementation NSDictionary (MLNCore)
+@implementation NSDictionary (MLNUICore)
 
-- (MLNNativeType)mln_nativeType
+- (MLNUINativeType)mln_nativeType
 {
-    return MLNNativeTypeDictionary;
+    return MLNUINativeTypeDictionary;
 }
 
 @end

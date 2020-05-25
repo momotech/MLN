@@ -1,26 +1,26 @@
 //
-//  NSObject+MLNKVO.m
-//  MLN
+//  NSObject+MLNUIKVO.m
+//  MLNUI
 //
 //  Created by Dai Dongpeng on 2020/4/29.
 //
 
-#import "NSObject+MLNKVO.h"
-#import "MLNKVOObserver.h"
-#import "MLNExtScope.h"
-#import "NSObject+MLNDealloctor.h"
-#import "MLNArrayObserver.h"
+#import "NSObject+MLNUIKVO.h"
+#import "MLNUIKVOObserver.h"
+#import "MLNUIExtScope.h"
+#import "NSObject+MLNUIDealloctor.h"
+#import "MLNUIArrayObserver.h"
 
 #define kArrayKVOPlaceHolder @"kArrayKVOPlaceHolder"
 
 @import ObjectiveC;
 
-@implementation NSObject (MLNKVO)
+@implementation NSObject (MLNUIKVO)
 
 #pragma mark - Public
-- (NSObject * _Nonnull (^)(NSString * _Nonnull, MLNKVOBlock _Nonnull))mln_watch {
+- (NSObject * _Nonnull (^)(NSString * _Nonnull, MLNUIKVOBlock _Nonnull))mln_watch {
         @weakify(self);
-        return ^(NSString *keyPath, MLNKVOBlock block){
+        return ^(NSString *keyPath, MLNUIKVOBlock block){
             @strongify(self);
             if (self && block) {
                 [self mln_observeProperty:keyPath withBlock:^(id  _Nonnull observer, id  _Nonnull object, id  _Nonnull oldValue, id  _Nonnull newValue, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
@@ -32,13 +32,13 @@
         };
 }
 
-- (void)mln_observeProperty:(NSString *)keyPath withBlock:(MLNBlockChange)observationBlock {
+- (void)mln_observeProperty:(NSString *)keyPath withBlock:(MLNUIBlockChange)observationBlock {
     [self mln_observeObject:self property:keyPath withBlock:observationBlock];
 }
 
 
-- (void)mln_observeObject:(id)object property:(NSString *)keyPath withBlock:(MLNBlockChange)observationBlock {
-    MLNObserver *observer = nil;
+- (void)mln_observeObject:(id)object property:(NSString *)keyPath withBlock:(MLNUIBlockChange)observationBlock {
+    MLNUIObserver *observer = nil;
     @autoreleasepool {
         observer = [object mln_observerForKeyPath:keyPath owner:self];
     }
@@ -49,7 +49,7 @@
     }];
 }
 
-- (void)mln_observeObject:(id)object properties:(NSArray <NSString *> *)keyPaths withBlock:(MLNBlockChangeMany)observationBlock {
+- (void)mln_observeObject:(id)object properties:(NSArray <NSString *> *)keyPaths withBlock:(MLNUIBlockChangeMany)observationBlock {
     for (NSString *keyPath in keyPaths) {
         [self mln_observeObject:object property:keyPath withBlock:^(id  _Nonnull observer, id  _Nonnull object, id  _Nonnull oldValue, id  _Nonnull newValue, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
             observationBlock(observer, object, keyPath, oldValue, newValue, change);
@@ -57,15 +57,15 @@
     }
 }
 
-- (MLNObserver *)mln_observerForKeyPath:(NSString *)keyPath owner:(id)owner {
-    MLNObserver *observer = nil;
+- (MLNUIObserver *)mln_observerForKeyPath:(NSString *)keyPath owner:(id)owner {
+    MLNUIObserver *observer = nil;
     NSMutableDictionary *observers = [self mln_keyPathBlockObserversCreateIfNeeded:YES];
     NSMutableSet *observersForKeyPath = [observers objectForKey:keyPath];
     if (!observersForKeyPath) {
         observersForKeyPath = [NSMutableSet set];
         [observers setObject:observersForKeyPath forKey:keyPath];
     } else {
-        for (MLNObserver *existingObserver in observersForKeyPath) {
+        for (MLNUIObserver *existingObserver in observersForKeyPath) {
             if (existingObserver.owner == owner) {
                 observer = existingObserver;
                 break;
@@ -74,15 +74,15 @@
     }
     if (!observer) {
         if ([keyPath isEqualToString:kArrayKVOPlaceHolder] && [self isKindOfClass:[NSMutableArray class]]) {
-            observer = [[MLNArrayObserver alloc] initWithTarget:self keyPath:kArrayKVOPlaceHolder owner:owner];
+            observer = [[MLNUIArrayObserver alloc] initWithTarget:self keyPath:kArrayKVOPlaceHolder owner:owner];
         } else {
-            observer = [[MLNObserver alloc] initWithTarget:self keyPath:keyPath owner:owner];;
+            observer = [[MLNUIObserver alloc] initWithTarget:self keyPath:keyPath owner:owner];;
         }
         [observersForKeyPath addObject:observer];
         [observer attach];
         
         if (owner != self) {
-            __weak MLNObserver *weakObserver = observer;
+            __weak MLNUIObserver *weakObserver = observer;
             [owner mln_addDeallocationCallback:^(id  _Nonnull receiver) {
                 [weakObserver.target mln_removeObervationsForOwner:receiver keyPath:keyPath];
             }];
@@ -119,24 +119,24 @@
     ;
     
     NSMutableSet *observersForOwnerForKeyPath = [NSMutableSet set];
-    for (MLNObserver *observer in observersForKeyPath) {
+    for (MLNUIObserver *observer in observersForKeyPath) {
         if (observer.owner == owner) {
             [observersForOwnerForKeyPath addObject:observer];
         }
     }
     
-    for (MLNObserver *observer in observersForOwnerForKeyPath) {
+    for (MLNUIObserver *observer in observersForOwnerForKeyPath) {
         [observer detach];
         [observersForKeyPath removeObject:observer];
     }
 }
 @end
 
-#import "MLNArrayObserver.h"
-@implementation NSObject (MLNArrayKVO)
+#import "MLNUIArrayObserver.h"
+@implementation NSObject (MLNUIArrayKVO)
 
-- (void)mln_observeArray:(NSMutableArray *)array withBlock:(MLNBlockChange)observationBlock {
-    MLNObserver *observer = nil;
+- (void)mln_observeArray:(NSMutableArray *)array withBlock:(MLNUIBlockChange)observationBlock {
+    MLNUIObserver *observer = nil;
     @autoreleasepool {
         observer = [array mln_observerForKeyPath:kArrayKVOPlaceHolder owner:self];
     }
@@ -153,8 +153,8 @@
 
 @end
 
-@implementation NSObject (MLNDeprecated)
-- (NSObject * _Nonnull (^)(NSString * _Nonnull, MLNKVOBlock _Nonnull))mln_subscribe {
+@implementation NSObject (MLNUIDeprecated)
+- (NSObject * _Nonnull (^)(NSString * _Nonnull, MLNUIKVOBlock _Nonnull))mln_subscribe {
     return self.mln_watch;
 }
 @end

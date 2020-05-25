@@ -1,5 +1,5 @@
 //
-//  NSString+MLNKit.h
+//  NSString+MLNUIKit.h
 //  
 //
 //  Created by MoMo on 2019/2/15.
@@ -9,7 +9,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface NSString (MLNKit)
+@interface NSString (MLNUIKit)
 
 - (NSString *)mln_md5;
 

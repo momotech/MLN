@@ -1,18 +1,18 @@
 //
-//  NSDictionary+MLNSafety.m
+//  NSDictionary+MLNUISafety.m
 //
 //
 //  Created by MoMo on 2018/11/21.
 //
 
-#import "NSDictionary+MLNSafety.h"
-#import "NSArray+MLNSafety.h"
+#import "NSDictionary+MLNUISafety.h"
+#import "NSArray+MLNUISafety.h"
 
-@implementation NSDictionary (MLNSafety)
+@implementation NSDictionary (MLNUISafety)
 
 - (id)mln_objectForKey:(id)aKey
 {
-#ifdef MLNCrashProtect
+#ifdef MLNUICrashProtect
     if (!aKey) return nil;
 #endif
     return [self objectForKey:aKey];
@@ -20,11 +20,11 @@
 
 @end
 
-@implementation NSMutableDictionary (MLNSafety)
+@implementation NSMutableDictionary (MLNUISafety)
 
 + (instancetype)mln_dictionaryWithDictionary:(NSDictionary *)dict
 {
-#ifdef MLNCrashProtect
+#ifdef MLNUICrashProtect
     if (!(dict &&
           ([dict isKindOfClass:[NSDictionary class]] ||
            [dict isKindOfClass:[NSMutableDictionary class]]))) {
@@ -36,7 +36,7 @@
 
 - (void)mln_removeObjectForKey:(id)aKey
 {
-#ifdef MLNCrashProtect
+#ifdef MLNUICrashProtect
     if (!aKey) return;
 #endif
     [self removeObjectForKey:aKey];
@@ -44,7 +44,7 @@
 
 - (void)mln_removeObjectsForKeys:(NSArray *)keyArray
 {
-#ifdef MLNCrashProtect
+#ifdef MLNUICrashProtect
     if (!(keyArray &&
           ([keyArray isKindOfClass:[NSArray class]] ||
            [keyArray isKindOfClass:[NSMutableArray class]]))) return;
@@ -54,7 +54,7 @@
 
 - (void)mln_setObject:(id)anObject forKey:(id<NSCopying>)aKey
 {
-#ifdef MLNCrashProtect
+#ifdef MLNUICrashProtect
     if (!(aKey && anObject)) return;
 #endif
     [self setObject:anObject forKey:aKey];
@@ -62,7 +62,7 @@
 
 - (void)mln_setValuesForKeysWithDictionary:(NSDictionary<NSString *,id> *)keyedValues
 {
-#ifdef MLNCrashProtect
+#ifdef MLNUICrashProtect
     if (!(keyedValues &&
           ([keyedValues isKindOfClass:[NSDictionary class]] ||
            [keyedValues isKindOfClass:[NSMutableDictionary class]]))) {
@@ -74,7 +74,7 @@
 
 - (void)mln_addEntriesFromDictionary:(NSDictionary *)otherDictionary
 {
-#ifdef MLNCrashProtect
+#ifdef MLNUICrashProtect
     if (!(otherDictionary &&
           ([otherDictionary isKindOfClass:[NSDictionary class]] ||
            [otherDictionary isKindOfClass:[NSMutableDictionary class]]))) {
@@ -86,7 +86,7 @@
 
 - (void)mln_setDictionary:(NSDictionary *)otherDictionary
 {
-#ifdef MLNCrashProtect
+#ifdef MLNUICrashProtect
     if (!(otherDictionary &&
           ([otherDictionary isKindOfClass:[NSDictionary class]] ||
            [otherDictionary isKindOfClass:[NSMutableDictionary class]]))) {
@@ -98,7 +98,7 @@
 
 - (void)mln_setObject:(id)obj forKeyedSubscript:(id<NSCopying>)key
 {
-#ifdef MLNCrashProtect
+#ifdef MLNUICrashProtect
     if (!(key && obj)) return;
 #endif
     [self setObject:obj forKeyedSubscript:key];

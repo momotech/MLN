@@ -1,22 +1,22 @@
 //
-//  NSMutableDictionary+MLNCore.m
-//  MLNCore
+//  NSMutableDictionary+MLNUICore.m
+//  MLNUICore
 //
 //  Created by MoMo on 2019/7/23.
 //
 
-#import "NSMutableDictionary+MLNCore.h"
-#import "NSObject+MLNCore.h"
+#import "NSMutableDictionary+MLNUICore.h"
+#import "NSObject+MLNUICore.h"
 
-@implementation NSMutableDictionary (MLNCore)
+@implementation NSMutableDictionary (MLNUICore)
 
-- (MLNNativeType)mln_nativeType
+- (MLNUINativeType)mln_nativeType
 {
     // @note: 适配iOS10 之前的类簇问题
     if ([NSStringFromClass([self class]) hasPrefix:@"__NSDictionaryM"]) {
-        return MLNNativeTypeMDictionary;
+        return MLNUINativeTypeMDictionary;
     }
-    return MLNNativeTypeDictionary;
+    return MLNUINativeTypeDictionary;
 }
 
 @end

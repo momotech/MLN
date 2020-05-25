@@ -1,33 +1,33 @@
 //
-//  MLNStackNode.h
-//  MLN
+//  MLNUIStackNode.h
+//  MLNUI
 //
 //  Created by MOMO on 2020/3/23.
 //
 
-#import "MLNLayoutContainerNode.h"
-#import "MLNStackConst.h"
+#import "MLNUILayoutContainerNode.h"
+#import "MLNUIStackConst.h"
 
-#define MLN_IS_WRAP_MODE (self.wrapType == MLNStackWrapTypeWrap)
+#define MLNUI_IS_WRAP_MODE (self.wrapType == MLNUIStackWrapTypeWrap)
 
-#define MLN_NODE_HEIGHT_SHOULD_FORCE_USE_MATCHPARENT(node) \
-        (node.heightType == MLNLayoutMeasurementTypeMatchParent && node.mergedHeightType == MLNLayoutMeasurementTypeWrapContent)
-#define MLN_NODE_WIDTH_SHOULD_FORCE_USE_MATCHPARENT(node) \
-        (node.widthType == MLNLayoutMeasurementTypeMatchParent && node.mergedWidthType == MLNLayoutMeasurementTypeWrapContent)
+#define MLNUI_NODE_HEIGHT_SHOULD_FORCE_USE_MATCHPARENT(node) \
+        (node.heightType == MLNUILayoutMeasurementTypeMatchParent && node.mergedHeightType == MLNUILayoutMeasurementTypeWrapContent)
+#define MLNUI_NODE_WIDTH_SHOULD_FORCE_USE_MATCHPARENT(node) \
+        (node.widthType == MLNUILayoutMeasurementTypeMatchParent && node.mergedWidthType == MLNUILayoutMeasurementTypeWrapContent)
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface MLNStackNode : MLNLayoutContainerNode
+@interface MLNUIStackNode : MLNUILayoutContainerNode
 
-- (CGSize)measureSubNodes:(NSArray<MLNLayoutNode *> *)subNods maxWidth:(CGFloat)maxWidth maxHeight:(CGFloat)maxHeight;
+- (CGSize)measureSubNodes:(NSArray<MLNUILayoutNode *> *)subNods maxWidth:(CGFloat)maxWidth maxHeight:(CGFloat)maxHeight;
 
 @end
 
-@interface MLNPlaneStackNode : MLNStackNode
+@interface MLNUIPlaneStackNode : MLNUIStackNode
 
-@property (nonatomic, assign) MLNStackMainAlignment mainAxisAlignment;
-@property (nonatomic, assign) MLNStackCrossAlignment crossAxisAlignment;
-@property (nonatomic, assign) MLNStackWrapType wrapType;
+@property (nonatomic, assign) MLNUIStackMainAlignment mainAxisAlignment;
+@property (nonatomic, assign) MLNUIStackCrossAlignment crossAxisAlignment;
+@property (nonatomic, assign) MLNUIStackWrapType wrapType;
 
 // subclass should override
 - (void)invalidateMainAxisMatchParentMeasureType;

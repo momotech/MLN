@@ -1,34 +1,34 @@
 //
-//  MLNLink.m
-//  MLN
+//  MLNUILink.m
+//  MLNUI
 //
 //  Created by MOMO on 2020/4/30.
 //
 
-#import "MLNLink.h"
-#import "MLNKitHeader.h"
-#import "MLNAnimationConst.h"
-#import "MLNLinkProtocol.h"
+#import "MLNUILink.h"
+#import "MLNUIKitHeader.h"
+#import "MLNUIAnimationConst.h"
+#import "MLNUILinkProtocol.h"
 
-#define MLNCURRENT_VIEW_CONTROLLLER  MLN_KIT_INSTANCE(self.mln_currentLuaCore).viewController
-#define MLN_IS_VALID_CLASS(_class_) [_class_ respondsToSelector:@selector(mlnLinkCreateController:closeCallback:)]
+#define MLNUICURRENT_VIEW_CONTROLLLER  MLNUI_KIT_INSTANCE(self.mln_currentLuaCore).viewController
+#define MLNUI_IS_VALID_CLASS(_class_) [_class_ respondsToSelector:@selector(mlnLinkCreateController:closeCallback:)]
 
-@interface MLNLink ()
+@interface MLNUILink ()
 
 @property (nonatomic, strong) NSMutableDictionary *nameClassMap;
 @property (nonatomic, strong) NSMutableDictionary *linkLuaCallbackMap;
 
 @end
 
-@implementation MLNLink
+@implementation MLNUILink
 
 #pragma mark - Private
 
-+ (MLNLink *)sharedLink {
-    static MLNLink *link = nil;
++ (MLNUILink *)sharedLink {
+    static MLNUILink *link = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        link = [MLNLink new];
+        link = [MLNUILink new];
     });
     return link;
 }
@@ -53,20 +53,20 @@ static inline NSString *DISGUISE(UIViewController *controller) {
     return value;
 }
 
-+ (BOOL)gotoController:(UIViewController *)controller animation:(MLNAnimationAnimType)animation {
++ (BOOL)gotoController:(UIViewController *)controller animation:(MLNUIAnimationAnimType)animation {
     NSParameterAssert([controller isKindOfClass:[UIViewController class]]);
     if ([controller isKindOfClass:[UIViewController class]] == NO) {
         return NO;
     }
-    BOOL animate = (animation != MLNAnimationAnimTypeNone);
-    UIViewController *currentController = MLNCURRENT_VIEW_CONTROLLLER;
+    BOOL animate = (animation != MLNUIAnimationAnimTypeNone);
+    UIViewController *currentController = MLNUICURRENT_VIEW_CONTROLLLER;
     switch (animation) {
-        case MLNAnimationAnimTypeRightToLeft:
+        case MLNUIAnimationAnimTypeRightToLeft:
             NSParameterAssert(currentController.navigationController);
             [self pushToControllerIfNeeded:currentController controller:controller animate:animate];
             break;
             
-        case MLNAnimationAnimTypeBottomToTop:
+        case MLNUIAnimationAnimTypeBottomToTop:
             [currentController presentViewController:controller animated:animate completion:nil];
             break;
             
@@ -87,7 +87,7 @@ static inline NSString *DISGUISE(UIViewController *controller) {
 
 + (void)callbackToLuaWhenClosePage:(NSString *)key params:(NSDictionary *)params{
     if (!key) return;
-    MLNBlock *callback = [[self sharedLink].linkLuaCallbackMap objectForKey:key];
+    MLNUIBlock *callback = [[self sharedLink].linkLuaCallbackMap objectForKey:key];
     if (callback) {
         [callback addBOOLArgument:YES];
         [callback addMapArgument:params];
@@ -105,22 +105,22 @@ static inline NSString *DISGUISE(UIViewController *controller) {
 + (void)registerName:(NSString *)name linkClass:(Class)cls {
     NSParameterAssert(name);
     NSParameterAssert(cls);
-    NSParameterAssert(MLN_IS_VALID_CLASS(cls));
+    NSParameterAssert(MLNUI_IS_VALID_CLASS(cls));
     if (!name || !cls) return;
     [[self sharedLink].nameClassMap setObject:cls forKey:name];
 }
 
 #pragma mark - Setup Lua
 
-+ (void)lua_link:(NSString *)luaClassName params:(NSDictionary *)params animation:(MLNAnimationAnimType)animation closeCallback:(MLNBlock *)callback {
++ (void)lua_link:(NSString *)luaClassName params:(NSDictionary *)params animation:(MLNUIAnimationAnimType)animation closeCallback:(MLNUIBlock *)callback {
     if (!luaClassName) {
         return;
     }
     Class cls = [[self sharedLink].nameClassMap objectForKey:luaClassName];
     if (!cls) return;
-    if (MLN_IS_VALID_CLASS(cls)) {
+    if (MLNUI_IS_VALID_CLASS(cls)) {
         __block NSString *key = nil;
-        MLNLinkCloseCallback close = callback ? ^(NSDictionary *param) {
+        MLNUILinkCloseCallback close = callback ? ^(NSDictionary *param) {
             [self callbackToLuaWhenClosePage:key params:param];
         } : nil;
         UIViewController *controller = [cls mlnLinkCreateController:params closeCallback:close];
@@ -130,14 +130,14 @@ static inline NSString *DISGUISE(UIViewController *controller) {
             [[self sharedLink].linkLuaCallbackMap setObject:callback forKey:key];
         }
     } else {
-        MLNKitLuaStaticError(@"The %@ class (key is %@) does not implement MLNLinkProtocol method.", cls, luaClassName);
+        MLNUIKitLuaStaticError(@"The %@ class (key is %@) does not implement MLNUILinkProtocol method.", cls, luaClassName);
     }
 }
 
-+ (void)lua_closePage:(MLNAnimationAnimType)animation params:(NSDictionary *)params {
-    UIViewController *currentController = MLNCURRENT_VIEW_CONTROLLLER;
++ (void)lua_closePage:(MLNUIAnimationAnimType)animation params:(NSDictionary *)params {
+    UIViewController *currentController = MLNUICURRENT_VIEW_CONTROLLLER;
     if (!currentController) return;
-    BOOL animate = (animation != MLNAnimationAnimTypeNone);
+    BOOL animate = (animation != MLNUIAnimationAnimTypeNone);
     if (currentController.navigationController) {
         [currentController.navigationController popViewControllerAnimated:animate];
     } else {
@@ -146,9 +146,9 @@ static inline NSString *DISGUISE(UIViewController *controller) {
     [self callbackToLuaWhenClosePage:DISGUISE(currentController) params:params];
 }
 
-LUA_EXPORT_STATIC_BEGIN(MLNLink)
-LUA_EXPORT_STATIC_METHOD(link, "lua_link:params:animation:closeCallback:", MLNLink)
-LUA_EXPORT_STATIC_METHOD(close, "lua_closePage:params:", MLNLink)
-LUA_EXPORT_STATIC_END(MLNLink, Link, NO, NULL)
+LUA_EXPORT_STATIC_BEGIN(MLNUILink)
+LUA_EXPORT_STATIC_METHOD(link, "lua_link:params:animation:closeCallback:", MLNUILink)
+LUA_EXPORT_STATIC_METHOD(close, "lua_closePage:params:", MLNUILink)
+LUA_EXPORT_STATIC_END(MLNUILink, Link, NO, NULL)
 
 @end

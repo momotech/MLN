@@ -1,15 +1,15 @@
 //
-//  MLNCanvasPaint.m
+//  MLNUICanvasPaint.m
 //
 //
 //  Created by MoMo on 2019/6/5.
 //
 
-#import "MLNCanvasPaint.h"
-#import "MLNViewExporterMacro.h"
-#import "MLNKitHeader.h"
+#import "MLNUICanvasPaint.h"
+#import "MLNUIViewExporterMacro.h"
+#import "MLNUIKitHeader.h"
 
-@interface MLNCanvasPaint()
+@interface MLNUICanvasPaint()
 {
     UIFont *_font;
 }
@@ -21,7 +21,7 @@
 
 @end
 
-@implementation MLNCanvasPaint
+@implementation MLNUICanvasPaint
 
 - (instancetype)init
 {
@@ -91,10 +91,10 @@
     shapeLayer.strokeColor = shapeLayer.fillColor = [UIColor clearColor].CGColor;
 
     switch (_style) {
-        case MLNCanvasDrawStyleFill:
+        case MLNUICanvasDrawStyleFill:
             shapeLayer.fillColor = _paintColor.CGColor;
             break;
-        case MLNCanvasDrawStyleStroke:
+        case MLNUICanvasDrawStyleStroke:
             shapeLayer.strokeColor = _paintColor.CGColor;
             break;
         default:
@@ -109,7 +109,7 @@
 - (void)lua_setPaintColor:(UIColor *)paintColor
 {
     if (![paintColor isKindOfClass:[UIColor class]]) {
-        MLNKitLuaAssert(NO, @"paintColor type must be Color!")
+        MLNUIKitLuaAssert(NO, @"paintColor type must be Color!")
         return;
     }
     _paintColor = paintColor;
@@ -135,7 +135,7 @@
     _width = width;
 }
 
-- (void)lua_setStyle:(MLNCanvasDrawStyle)style
+- (void)lua_setStyle:(MLNUICanvasDrawStyle)style
 {
     _style = style;
 }
@@ -160,15 +160,15 @@
 }
 
 #pragma mark - Export To Lua
-LUA_EXPORT_BEGIN(MLNCanvasPaint)
-LUA_EXPORT_PROPERTY(paintColor, "lua_setPaintColor:","paintColor", MLNCanvasPaint)
-LUA_EXPORT_PROPERTY(alpha, "lua_setAlpha:","alpha", MLNCanvasPaint)
-LUA_EXPORT_PROPERTY(pathEffect, "lua_setPathEffect:","pathEffect", MLNCanvasPaint)
-LUA_EXPORT_PROPERTY(shader, "lua_setShader:","shader", MLNCanvasPaint)
-LUA_EXPORT_PROPERTY(width, "lua_setWidth:","width", MLNCanvasPaint)
-LUA_EXPORT_PROPERTY(style, "lua_setStyle:","style", MLNCanvasPaint)
-LUA_EXPORT_METHOD(fontSize, "lua_setFontSize:", MLNCanvasPaint)
-LUA_EXPORT_METHOD(fontNameSize, "lua_setFontNameSize:fontSize:", MLNCanvasPaint)
-LUA_EXPORT_METHOD(setDash, "lua_setDash:phase:", MLNCanvasPaint)
-LUA_EXPORT_END(MLNCanvasPaint, Paint, NO, NULL, NULL)
+LUA_EXPORT_BEGIN(MLNUICanvasPaint)
+LUA_EXPORT_PROPERTY(paintColor, "lua_setPaintColor:","paintColor", MLNUICanvasPaint)
+LUA_EXPORT_PROPERTY(alpha, "lua_setAlpha:","alpha", MLNUICanvasPaint)
+LUA_EXPORT_PROPERTY(pathEffect, "lua_setPathEffect:","pathEffect", MLNUICanvasPaint)
+LUA_EXPORT_PROPERTY(shader, "lua_setShader:","shader", MLNUICanvasPaint)
+LUA_EXPORT_PROPERTY(width, "lua_setWidth:","width", MLNUICanvasPaint)
+LUA_EXPORT_PROPERTY(style, "lua_setStyle:","style", MLNUICanvasPaint)
+LUA_EXPORT_METHOD(fontSize, "lua_setFontSize:", MLNUICanvasPaint)
+LUA_EXPORT_METHOD(fontNameSize, "lua_setFontNameSize:fontSize:", MLNUICanvasPaint)
+LUA_EXPORT_METHOD(setDash, "lua_setDash:phase:", MLNUICanvasPaint)
+LUA_EXPORT_END(MLNUICanvasPaint, Paint, NO, NULL, NULL)
 @end

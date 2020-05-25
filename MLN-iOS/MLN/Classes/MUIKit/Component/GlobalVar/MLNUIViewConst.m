@@ -1,54 +1,54 @@
 //
-//  MLNViewGlobalVar.m
-//  MLN
+//  MLNUIViewGlobalVar.m
+//  MLNUI
 //
 //  Created by MoMo on 2019/8/3.
 //
 
-#import "MLNViewConst.h"
-#import "MLNGlobalVarExporterMacro.h"
+#import "MLNUIViewConst.h"
+#import "MLNUIGlobalVarExporterMacro.h"
 
-@implementation MLNViewConst
+@implementation MLNUIViewConst
 
-+ (UIRectCorner)convertToRectCorner:(MLNRectCorner)corners
++ (UIRectCorner)convertToRectCorner:(MLNUIRectCorner)corners
 {
     return UIRectCornerAllCorners;
 }
 
 #pragma mark - Setup For Lua
 LUA_EXPORT_GLOBAL_VAR_BEGIN()
-LUA_EXPORT_GLOBAL_VAR(StatusBarStyle, (@{@"Default": @(MLNStatusBarStyleDefault),
-                                         @"Light": @(MLNStatusBarStyleLight)}))
-LUA_EXPORT_GLOBAL_VAR(RectCorner, (@{@"TOP_LEFT":@(MLNRectCornerTopLeft),
-                                     @"TOP_RIGHT":@(MLNRectCornerTopRight),
-                                     @"BOTTOM_RIGHT":@(MLNRectCornerBottomRight),
-                                     @"BOTTOM_LEFT":@(MLNRectCornerBottomLeft),
-                                     @"ALL_CORNERS":@(MLNRectCornerAllCorners)}))
-LUA_EXPORT_GLOBAL_VAR(LinearType, (@{@"HORIZONTAL":@(MLNLayoutDirectionHorizontal),
-                                     @"VERTICAL":@(MLNLayoutDirectionVertical)}))
-LUA_EXPORT_GLOBAL_VAR(Gravity, (@{@"LEFT":@(MLNGravityLeft),
-                                  @"TOP":@(MLNGravityTop),
-                                  @"RIGHT":@(MLNGravityRight),
-                                  @"BOTTOM":@(MLNGravityBottom),
-                                  @"CENTER_HORIZONTAL":@(MLNGravityCenterHorizontal),
-                                  @"CENTER_VERTICAL":@(MLNGravityCenterVertical),
-                                  @"CENTER":@(MLNGravityCenter)}))
-LUA_EXPORT_GLOBAL_VAR(MeasurementType, (@{@"MATCH_PARENT":@(MLNLayoutMeasurementTypeMatchParent),
-                                          @"WRAP_CONTENT":@(MLNLayoutMeasurementTypeWrapContent)}))
-LUA_EXPORT_GLOBAL_VAR(ValueType, (@{@"NONE":@(MLNValueTypeNone),
-                                    @"CURRENT":@(MLNValueTypeCurrent)}))
-LUA_EXPORT_GLOBAL_VAR(GradientType, (@{@"LEFT_TO_RIGHT":@(MLNGradientTypeLeftToRight),
-                                       @"RIGHT_TO_LEFT":@(MLNGradientTypeRightToLeft),
-                                       @"TOP_TO_BOTTOM":@(MLNGradientTypeTopToBottom),
-                                       @"BOTTOM_TO_TOP":@(MLNGradientTypeBottomToTop)}))
-LUA_EXPORT_GLOBAL_VAR(TabSegmentAlignment, (@{@"LEFT":@(MLNTabSegmentAlignmentLeft),
-                                              @"CENTER":@(MLNTabSegmentAlignmentCenter),
-                                              @"RIGHT":@(MLNTabSegmentAlignmentRight)}))
-LUA_EXPORT_GLOBAL_VAR(SafeArea, (@{@"CLOSE":@(MLNSafeAreaClose),
-                                   @"LEFT":@(MLNSafeAreaLeft),
-                                   @"TOP":@(MLNSafeAreaTop),
-                                   @"RIGHT":@(MLNSafeAreaRight),
-                                   @"BOTTOM":@(MLNSafeAreaBottom)}))
+LUA_EXPORT_GLOBAL_VAR(StatusBarStyle, (@{@"Default": @(MLNUIStatusBarStyleDefault),
+                                         @"Light": @(MLNUIStatusBarStyleLight)}))
+LUA_EXPORT_GLOBAL_VAR(RectCorner, (@{@"TOP_LEFT":@(MLNUIRectCornerTopLeft),
+                                     @"TOP_RIGHT":@(MLNUIRectCornerTopRight),
+                                     @"BOTTOM_RIGHT":@(MLNUIRectCornerBottomRight),
+                                     @"BOTTOM_LEFT":@(MLNUIRectCornerBottomLeft),
+                                     @"ALL_CORNERS":@(MLNUIRectCornerAllCorners)}))
+LUA_EXPORT_GLOBAL_VAR(LinearType, (@{@"HORIZONTAL":@(MLNUILayoutDirectionHorizontal),
+                                     @"VERTICAL":@(MLNUILayoutDirectionVertical)}))
+LUA_EXPORT_GLOBAL_VAR(Gravity, (@{@"LEFT":@(MLNUIGravityLeft),
+                                  @"TOP":@(MLNUIGravityTop),
+                                  @"RIGHT":@(MLNUIGravityRight),
+                                  @"BOTTOM":@(MLNUIGravityBottom),
+                                  @"CENTER_HORIZONTAL":@(MLNUIGravityCenterHorizontal),
+                                  @"CENTER_VERTICAL":@(MLNUIGravityCenterVertical),
+                                  @"CENTER":@(MLNUIGravityCenter)}))
+LUA_EXPORT_GLOBAL_VAR(MeasurementType, (@{@"MATCH_PARENT":@(MLNUILayoutMeasurementTypeMatchParent),
+                                          @"WRAP_CONTENT":@(MLNUILayoutMeasurementTypeWrapContent)}))
+LUA_EXPORT_GLOBAL_VAR(ValueType, (@{@"NONE":@(MLNUIValueTypeNone),
+                                    @"CURRENT":@(MLNUIValueTypeCurrent)}))
+LUA_EXPORT_GLOBAL_VAR(GradientType, (@{@"LEFT_TO_RIGHT":@(MLNUIGradientTypeLeftToRight),
+                                       @"RIGHT_TO_LEFT":@(MLNUIGradientTypeRightToLeft),
+                                       @"TOP_TO_BOTTOM":@(MLNUIGradientTypeTopToBottom),
+                                       @"BOTTOM_TO_TOP":@(MLNUIGradientTypeBottomToTop)}))
+LUA_EXPORT_GLOBAL_VAR(TabSegmentAlignment, (@{@"LEFT":@(MLNUITabSegmentAlignmentLeft),
+                                              @"CENTER":@(MLNUITabSegmentAlignmentCenter),
+                                              @"RIGHT":@(MLNUITabSegmentAlignmentRight)}))
+LUA_EXPORT_GLOBAL_VAR(SafeArea, (@{@"CLOSE":@(MLNUISafeAreaClose),
+                                   @"LEFT":@(MLNUISafeAreaLeft),
+                                   @"TOP":@(MLNUISafeAreaTop),
+                                   @"RIGHT":@(MLNUISafeAreaRight),
+                                   @"BOTTOM":@(MLNUISafeAreaBottom)}))
 
 LUA_EXPORT_GLOBAL_VAR_END()
 

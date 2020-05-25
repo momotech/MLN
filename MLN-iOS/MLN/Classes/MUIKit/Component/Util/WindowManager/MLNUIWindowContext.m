@@ -1,27 +1,27 @@
 //
-//  MLNWindowContext.m
+//  MLNUIWindowContext.m
 //
 //
 //  Created by MoMo on 2019/4/29.
 //
 
-#import "MLNWindowContext.h"
+#import "MLNUIWindowContext.h"
 
-@interface MLNWindowContext()
+@interface MLNUIWindowContext()
 
 @property (nonatomic, strong) NSPointerArray *windowsArray;
 
 @end
 
-@implementation MLNWindowContext
+@implementation MLNUIWindowContext
 
-static MLNWindowContext *_context;
+static MLNUIWindowContext *_context;
 
 + (instancetype)sharedContext
 {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        _context = [[MLNWindowContext alloc] init];
+        _context = [[MLNUIWindowContext alloc] init];
     });
     return _context;
 }

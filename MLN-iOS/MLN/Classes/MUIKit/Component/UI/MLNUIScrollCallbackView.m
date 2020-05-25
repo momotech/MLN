@@ -1,17 +1,17 @@
 //
-//  MLNScrollCallbackView.m
+//  MLNUIScrollCallbackView.m
 //
 //
 //  Created by MoMo on 2019/6/19.
 //
 
-#import "MLNScrollCallbackView.h"
-#import "UIView+MLNLayout.h"
-#import "MLNKitHeader.h"
-#import "MLNViewExporterMacro.h"
-#import "UIScrollView+MLNKit.h"
-#import "MLNKitInstanceHandlersManager.h"
-#import "MLNBlock.h"
+#import "MLNUIScrollCallbackView.h"
+#import "UIView+MLNUILayout.h"
+#import "MLNUIKitHeader.h"
+#import "MLNUIViewExporterMacro.h"
+#import "UIScrollView+MLNUIKit.h"
+#import "MLNUIKitInstanceHandlersManager.h"
+#import "MLNUIBlock.h"
 
 #define SCROLLVIEW_DO(...)\
 if ([self.lua_contentView isKindOfClass:[UIScrollView class]]) {\
@@ -19,15 +19,15 @@ UIScrollView *scrollView = (UIScrollView *)self.lua_contentView;\
 __VA_ARGS__;\
 }
 
-@interface MLNScrollCallbackView ()
+@interface MLNUIScrollCallbackView ()
 
-@property(nonatomic, weak) MLNLuaCore *mln_luaCore;
+@property(nonatomic, weak) MLNUILuaCore *mln_luaCore;
 
 @end
 
-@implementation MLNScrollCallbackView
+@implementation MLNUIScrollCallbackView
 
-- (instancetype)initWithLuaCore:(MLNLuaCore *)luaCore refreshEnable:(NSNumber *)refreshEnable loadEnable:(NSNumber *)loadEnable
+- (instancetype)initWithLuaCore:(MLNUILuaCore *)luaCore refreshEnable:(NSNumber *)refreshEnable loadEnable:(NSNumber *)loadEnable
 {
     if (self = [super initWithLuaCore:luaCore]) {
         self.backgroundColor = [UIColor clearColor];
@@ -39,33 +39,33 @@ __VA_ARGS__;\
 
 - (void)setLua_openReuseCell:(BOOL)openRuseCell
 {
-    MLNKitLuaAssert(NO, @"The setter of 'openReuseCell' method is deprecated!");
+    MLNUIKitLuaAssert(NO, @"The setter of 'openReuseCell' method is deprecated!");
 }
 
 - (BOOL)lua_openReuseCell
 {
-    MLNKitLuaAssert(NO, @"The getter of 'openReuseCell' method is deprecated!");
+    MLNUIKitLuaAssert(NO, @"The getter of 'openReuseCell' method is deprecated!");
     return NO;
 }
 
 - (void)setLua_minWidth:(CGFloat)lua_minWidth
 {
-    MLNKitLuaAssert(NO, @"Not support 'setMinWidth' method!");
+    MLNUIKitLuaAssert(NO, @"Not support 'setMinWidth' method!");
 }
 
 - (void)setLua_maxWidth:(CGFloat)lua_maxWidth
 {
-    MLNKitLuaAssert(NO, @"Not support 'setMaxWidth' method!");
+    MLNUIKitLuaAssert(NO, @"Not support 'setMaxWidth' method!");
 }
 
 - (void)setLua_minHeight:(CGFloat)lua_minHeight
 {
-    MLNKitLuaAssert(NO, @"Not support 'setMinHeight' method!");
+    MLNUIKitLuaAssert(NO, @"Not support 'setMinHeight' method!");
 }
 
 - (void)setLua_maxHieght:(CGFloat)lua_maxHieght
 {
-    MLNKitLuaAssert(NO, @"Not support 'setMaxHeight' method!");
+    MLNUIKitLuaAssert(NO, @"Not support 'setMaxHeight' method!");
 }
 
 #pragma mark - ScrollView Callback
@@ -80,12 +80,12 @@ __VA_ARGS__;\
         return;
     }
                   scrollView.lua_refreshEnable = lua_refreshEnable;
-                  id<MLNRefreshDelegate> delegate = [self getRefreshDelegate];
+                  id<MLNUIRefreshDelegate> delegate = [self getRefreshDelegate];
                   if (lua_refreshEnable) {
-                      MLNKitLuaAssert([delegate respondsToSelector:@selector(createHeaderForRefreshView:)], @"-[refreshDelegate createHeaderForRefreshView:] was not found!");
+                      MLNUIKitLuaAssert([delegate respondsToSelector:@selector(createHeaderForRefreshView:)], @"-[refreshDelegate createHeaderForRefreshView:] was not found!");
                       [delegate createHeaderForRefreshView:scrollView];
                   } else {
-                      MLNKitLuaAssert([delegate respondsToSelector:@selector(removeHeaderForRefreshView:)], @"-[refreshDelegate removeHeaderForRefreshView:] was not found!");
+                      MLNUIKitLuaAssert([delegate respondsToSelector:@selector(removeHeaderForRefreshView:)], @"-[refreshDelegate removeHeaderForRefreshView:] was not found!");
                       [delegate removeHeaderForRefreshView:scrollView];
                   })
 }
@@ -98,8 +98,8 @@ __VA_ARGS__;\
 
 - (BOOL)lua_isRefreshing
 {
-    SCROLLVIEW_DO(id<MLNRefreshDelegate> delegate = [self getRefreshDelegate];
-                  MLNKitLuaAssert([delegate respondsToSelector:@selector(isRefreshingOfRefreshView:)], @"-[refreshDelegate isRefreshingOfRefreshView:] was not found!");
+    SCROLLVIEW_DO(id<MLNUIRefreshDelegate> delegate = [self getRefreshDelegate];
+                  MLNUIKitLuaAssert([delegate respondsToSelector:@selector(isRefreshingOfRefreshView:)], @"-[refreshDelegate isRefreshingOfRefreshView:] was not found!");
                   return [delegate isRefreshingOfRefreshView:scrollView];
                   )
     return NO;
@@ -107,34 +107,34 @@ __VA_ARGS__;\
 
 - (void)lua_startRefreshing
 {
-    SCROLLVIEW_DO(id<MLNRefreshDelegate> delegate = [self getRefreshDelegate];
-                  MLNKitLuaAssert([delegate respondsToSelector:@selector(startRefreshingOfRefreshView:)], @"-[refreshDelegate startRefreshingOfRefreshView:] was not found!");
+    SCROLLVIEW_DO(id<MLNUIRefreshDelegate> delegate = [self getRefreshDelegate];
+                  MLNUIKitLuaAssert([delegate respondsToSelector:@selector(startRefreshingOfRefreshView:)], @"-[refreshDelegate startRefreshingOfRefreshView:] was not found!");
                   [delegate startRefreshingOfRefreshView:scrollView];
                   )
 }
 
 - (void)lua_stopRefreshing
 {
-    SCROLLVIEW_DO(id<MLNRefreshDelegate> delegate = [self getRefreshDelegate];
-                  MLNKitLuaAssert([delegate respondsToSelector:@selector(stopRefreshingOfRefreshView:)], @"-[refreshDelegate stopRefreshingOfRefreshView:] was not found!");
+    SCROLLVIEW_DO(id<MLNUIRefreshDelegate> delegate = [self getRefreshDelegate];
+                  MLNUIKitLuaAssert([delegate respondsToSelector:@selector(stopRefreshingOfRefreshView:)], @"-[refreshDelegate stopRefreshingOfRefreshView:] was not found!");
                   [delegate stopRefreshingOfRefreshView:scrollView];
                   )
 }
 
 - (void)lua_startLoading {
-    SCROLLVIEW_DO(id<MLNRefreshDelegate> delegate = [self getRefreshDelegate];
-                  MLNKitLuaAssert([delegate respondsToSelector:@selector(startLoadingOfRefreshView:)], @"-[refreshDelegate startLoadingOfRefreshView:] was not found!");
+    SCROLLVIEW_DO(id<MLNUIRefreshDelegate> delegate = [self getRefreshDelegate];
+                  MLNUIKitLuaAssert([delegate respondsToSelector:@selector(startLoadingOfRefreshView:)], @"-[refreshDelegate startLoadingOfRefreshView:] was not found!");
                   [delegate startLoadingOfRefreshView:scrollView];
                   )
 }
 
-- (void)setLua_refreshCallback:(MLNBlock *)lua_refreshCallback
+- (void)setLua_refreshCallback:(MLNUIBlock *)lua_refreshCallback
 {
-    MLNCheckTypeAndNilValue(lua_refreshCallback, @"callback", MLNBlock);
+    MLNUICheckTypeAndNilValue(lua_refreshCallback, @"callback", MLNUIBlock);
     SCROLLVIEW_DO(scrollView.lua_refreshCallback = lua_refreshCallback;)
 }
 
-- (MLNBlock *)lua_refreshCallback {
+- (MLNUIBlock *)lua_refreshCallback {
     SCROLLVIEW_DO(return scrollView.lua_refreshCallback;)
     return nil;
 }
@@ -145,12 +145,12 @@ __VA_ARGS__;\
         return;
     }
                   scrollView.lua_loadEnable = lua_loadEnable;
-                  id<MLNRefreshDelegate> delegate = [self getRefreshDelegate];
+                  id<MLNUIRefreshDelegate> delegate = [self getRefreshDelegate];
                   if (lua_loadEnable) {
-                      MLNKitLuaAssert([delegate respondsToSelector:@selector(createFooterForRefreshView:)], @"-[refreshDelegate createFooterForRefreshView:] was not found!");
+                      MLNUIKitLuaAssert([delegate respondsToSelector:@selector(createFooterForRefreshView:)], @"-[refreshDelegate createFooterForRefreshView:] was not found!");
                       [delegate createFooterForRefreshView:scrollView];
                   } else {
-                      MLNKitLuaAssert([delegate respondsToSelector:@selector(removeFooterForRefreshView:)], @"-[refreshDelegate removeFooterForRefreshView:] was not found!");
+                      MLNUIKitLuaAssert([delegate respondsToSelector:@selector(removeFooterForRefreshView:)], @"-[refreshDelegate removeFooterForRefreshView:] was not found!");
                       [delegate removeFooterForRefreshView:scrollView];
                   })
 }
@@ -163,15 +163,15 @@ __VA_ARGS__;\
 
 - (BOOL)lua_isLoading
 {
-    SCROLLVIEW_DO(id<MLNRefreshDelegate> delegate = [self getRefreshDelegate];
-                  MLNKitLuaAssert([delegate respondsToSelector:@selector(isLoadingOfRefreshView:)], @"-[refreshDelegate isLoadingOfRefreshView:] was not found!");
+    SCROLLVIEW_DO(id<MLNUIRefreshDelegate> delegate = [self getRefreshDelegate];
+                  MLNUIKitLuaAssert([delegate respondsToSelector:@selector(isLoadingOfRefreshView:)], @"-[refreshDelegate isLoadingOfRefreshView:] was not found!");
                   return [delegate isLoadingOfRefreshView:scrollView];
                   )
     return NO;
 }
 
 - (void)setLua_loadahead:(CGFloat)lua_loadahead {
-    SCROLLVIEW_DO(MLNKitLuaAssert(lua_loadahead >= 0, @"loadThreshold param must bigger or equal than 0.0!")
+    SCROLLVIEW_DO(MLNUIKitLuaAssert(lua_loadahead >= 0, @"loadThreshold param must bigger or equal than 0.0!")
                   if (lua_loadahead < 0) {
                       return;
                   }
@@ -186,30 +186,30 @@ __VA_ARGS__;\
 
 - (void)lua_stopLoading
 {
-    SCROLLVIEW_DO(id<MLNRefreshDelegate> delegate = [self getRefreshDelegate];
-                  MLNKitLuaAssert([delegate respondsToSelector:@selector(stopLoadingOfRefreshView:)], @"-[refreshDelegate stopLoadingOfRefreshView:] was not found!");
+    SCROLLVIEW_DO(id<MLNUIRefreshDelegate> delegate = [self getRefreshDelegate];
+                  MLNUIKitLuaAssert([delegate respondsToSelector:@selector(stopLoadingOfRefreshView:)], @"-[refreshDelegate stopLoadingOfRefreshView:] was not found!");
                   [delegate stopLoadingOfRefreshView:scrollView];)
 }
 
 - (void)lua_noMoreData
 {
-    SCROLLVIEW_DO(id<MLNRefreshDelegate> delegate = [self getRefreshDelegate];
-                  MLNKitLuaAssert([delegate respondsToSelector:@selector(noMoreDataOfRefreshView:)], @"-[refreshDelegate noMoreDataOfRefreshView:] was not found!");
+    SCROLLVIEW_DO(id<MLNUIRefreshDelegate> delegate = [self getRefreshDelegate];
+                  MLNUIKitLuaAssert([delegate respondsToSelector:@selector(noMoreDataOfRefreshView:)], @"-[refreshDelegate noMoreDataOfRefreshView:] was not found!");
                   [delegate noMoreDataOfRefreshView:scrollView];)
 }
 
 - (void)lua_resetLoading
 {
-    SCROLLVIEW_DO(id<MLNRefreshDelegate> delegate = [self getRefreshDelegate];
-                  MLNKitLuaAssert([delegate respondsToSelector:@selector(resetLoadingOfRefreshView:)], @"-[refreshDelegate resetLoadingOfRefreshView:] was not found!");
+    SCROLLVIEW_DO(id<MLNUIRefreshDelegate> delegate = [self getRefreshDelegate];
+                  MLNUIKitLuaAssert([delegate respondsToSelector:@selector(resetLoadingOfRefreshView:)], @"-[refreshDelegate resetLoadingOfRefreshView:] was not found!");
                   [delegate resetLoadingOfRefreshView:scrollView];
                   )
 }
 
 - (BOOL)lua_isNoMoreData
 {
-    SCROLLVIEW_DO(id<MLNRefreshDelegate> delegate = [self getRefreshDelegate];
-                  MLNKitLuaAssert([delegate respondsToSelector:@selector(isNoMoreDataOfRefreshView:)], @"-[refreshDelegate isNoMoreDataOfRefreshView:] was not found!");
+    SCROLLVIEW_DO(id<MLNUIRefreshDelegate> delegate = [self getRefreshDelegate];
+                  MLNUIKitLuaAssert([delegate respondsToSelector:@selector(isNoMoreDataOfRefreshView:)], @"-[refreshDelegate isNoMoreDataOfRefreshView:] was not found!");
                   return [delegate isNoMoreDataOfRefreshView:scrollView];
                   )
     return NO;
@@ -220,76 +220,76 @@ __VA_ARGS__;\
     // @note Android需要用到此方法，iOS空实现
 }
 
-- (void)setLua_loadCallback:(MLNBlock *)lua_loadCallback
+- (void)setLua_loadCallback:(MLNUIBlock *)lua_loadCallback
 {
-    MLNCheckTypeAndNilValue(lua_loadCallback, @"function", MLNBlock);
+    MLNUICheckTypeAndNilValue(lua_loadCallback, @"function", MLNUIBlock);
     SCROLLVIEW_DO(scrollView.lua_loadCallback = lua_loadCallback;)
 }
 
-- (MLNBlock *)lua_loadCallback {
+- (MLNUIBlock *)lua_loadCallback {
     SCROLLVIEW_DO(return scrollView.lua_loadCallback;)
     return nil;
 }
 
-- (id<MLNRefreshDelegate>)getRefreshDelegate
+- (id<MLNUIRefreshDelegate>)getRefreshDelegate
 {
-    return MLN_KIT_INSTANCE(self.mln_luaCore).instanceHandlersManager.scrollRefreshHandler;
+    return MLNUI_KIT_INSTANCE(self.mln_luaCore).instanceHandlersManager.scrollRefreshHandler;
 }
 
-- (void)setLua_scrollBeginCallback:(MLNBlock *)lua_scrollBeginCallback
+- (void)setLua_scrollBeginCallback:(MLNUIBlock *)lua_scrollBeginCallback
 {
     SCROLLVIEW_DO(scrollView.lua_scrollBeginCallback = lua_scrollBeginCallback;)
 }
 
-- (MLNBlock *)lua_scrollBeginCallback
+- (MLNUIBlock *)lua_scrollBeginCallback
 {
     SCROLLVIEW_DO(return scrollView.lua_scrollBeginCallback;)
     return nil;
 }
 
-- (void)setLua_scrollingCallback:(MLNBlock *)lua_scrollingCallback
+- (void)setLua_scrollingCallback:(MLNUIBlock *)lua_scrollingCallback
 {
-    MLNCheckTypeAndNilValue(lua_scrollingCallback, @"function", MLNBlock);
+    MLNUICheckTypeAndNilValue(lua_scrollingCallback, @"function", MLNUIBlock);
     SCROLLVIEW_DO(scrollView.lua_scrollingCallback = lua_scrollingCallback;)
 }
 
-- (MLNBlock *)lua_scrollingCallback
+- (MLNUIBlock *)lua_scrollingCallback
 {
     SCROLLVIEW_DO(return scrollView.lua_scrollingCallback;)
     return nil;
 }
 
-- (void)setLua_scrollEndCallback:(MLNBlock *)lua_scrollEndCallback
+- (void)setLua_scrollEndCallback:(MLNUIBlock *)lua_scrollEndCallback
 {
-    MLNCheckTypeAndNilValue(lua_scrollEndCallback, @"function", MLNBlock);
+    MLNUICheckTypeAndNilValue(lua_scrollEndCallback, @"function", MLNUIBlock);
     SCROLLVIEW_DO(scrollView.lua_scrollEndCallback = lua_scrollEndCallback;)
 }
 
-- (MLNBlock *)lua_scrollEndCallback
+- (MLNUIBlock *)lua_scrollEndCallback
 {
     SCROLLVIEW_DO(return scrollView.lua_scrollEndCallback);
     return nil;
 }
 
-- (void)setLua_startDeceleratingCallback:(MLNBlock *)lua_startDeceleratingCallback
+- (void)setLua_startDeceleratingCallback:(MLNUIBlock *)lua_startDeceleratingCallback
 {
-    MLNCheckTypeAndNilValue(lua_startDeceleratingCallback, @"function", MLNBlock);
+    MLNUICheckTypeAndNilValue(lua_startDeceleratingCallback, @"function", MLNUIBlock);
     SCROLLVIEW_DO(scrollView.lua_startDeceleratingCallback = lua_startDeceleratingCallback;)
 }
 
-- (MLNBlock *)lua_startDeceleratingCallback
+- (MLNUIBlock *)lua_startDeceleratingCallback
 {
     SCROLLVIEW_DO(return scrollView.lua_startDeceleratingCallback;)
     return nil;
 }
 
-- (void)setLua_endDraggingCallback:(MLNBlock *)lua_endDraggingCallback
+- (void)setLua_endDraggingCallback:(MLNUIBlock *)lua_endDraggingCallback
 {
-    MLNCheckTypeAndNilValue(lua_endDraggingCallback, @"function", MLNBlock);
+    MLNUICheckTypeAndNilValue(lua_endDraggingCallback, @"function", MLNUIBlock);
     SCROLLVIEW_DO(scrollView.lua_endDraggingCallback = lua_endDraggingCallback;)
 }
 
-- (MLNBlock *)lua_endDraggingCallback
+- (MLNUIBlock *)lua_endDraggingCallback
 {
     SCROLLVIEW_DO(return scrollView.lua_endDraggingCallback;)
     return nil;
@@ -303,7 +303,7 @@ __VA_ARGS__;\
                   })
 }
 
-- (void)lua_getContetnInset:(MLNBlock*)block
+- (void)lua_getContetnInset:(MLNUIBlock*)block
 {
     SCROLLVIEW_DO(if(block) {
         [block addFloatArgument:scrollView.contentInset.top];
@@ -318,7 +318,7 @@ __VA_ARGS__;\
 
 - (void)lua_setContentSize:(CGSize)contentSize
 {
-    MLNKitLuaAssert(NO, @"The setter of 'contentSize' method is deprecated!");
+    MLNUIKitLuaAssert(NO, @"The setter of 'contentSize' method is deprecated!");
     SCROLLVIEW_DO(scrollView.contentSize = contentSize;
                   [self recalculContentSizeIfNeed];)
 }
@@ -342,20 +342,20 @@ __VA_ARGS__;\
 
 - (CGSize)lua_contentSize
 {
-    MLNKitLuaAssert(NO, @"The 'contentSize' method is deprecated!");
+    MLNUIKitLuaAssert(NO, @"The 'contentSize' method is deprecated!");
     SCROLLVIEW_DO(return scrollView.contentSize;)
     return CGSizeZero;
 }
 
 - (void)lua_setScrollEnabled:(BOOL)enable
 {
-    MLNKitLuaAssert(NO, @"The setter of 'scrollEnabled' method is deprecated!");
+    MLNUIKitLuaAssert(NO, @"The setter of 'scrollEnabled' method is deprecated!");
     SCROLLVIEW_DO(scrollView.scrollEnabled = enable;)
 }
 
 - (BOOL)lua_scrollEnabled
 {
-    MLNKitLuaAssert(NO, @"The getter of 'scrollEnabled' method is deprecated!");
+    MLNUIKitLuaAssert(NO, @"The getter of 'scrollEnabled' method is deprecated!");
     SCROLLVIEW_DO(return scrollView.scrollEnabled;)
     return NO;
 }

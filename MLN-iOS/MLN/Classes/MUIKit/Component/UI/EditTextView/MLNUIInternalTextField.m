@@ -1,20 +1,20 @@
 //
-//  MLNInternalTextField.m
+//  MLNUIInternalTextField.m
 //
 //
 //  Created by MoMo on 2018/12/21.
 //
 
-#import "MLNInternalTextField.h"
-#import "MLNTextConst.h"
+#import "MLNUIInternalTextField.h"
+#import "MLNUITextConst.h"
 
-@interface MLNInternalTextField ()
+@interface MLNUIInternalTextField ()
 
 @property (nonatomic, strong)UIColor * placeHolderColor;
 
 @end
 
-@implementation MLNInternalTextField
+@implementation MLNUIInternalTextField
 
 - (instancetype)initWithFrame:(CGRect)frame
 {
@@ -63,7 +63,7 @@
 }
 
 #pragma mark - UITextFieldDelegate
-- (void)textFieldDidBeginEditing:(MLNInternalTextField *)textField
+- (void)textFieldDidBeginEditing:(MLNUIInternalTextField *)textField
 {
     if ([self.internalTextViewDelegate respondsToSelector:@selector(internalTextViewDidBeginEditing:)]) {
         [self.internalTextViewDelegate internalTextViewDidBeginEditing:textField];
@@ -81,7 +81,7 @@
     }
 }
 
-- (BOOL)textField:(MLNInternalTextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
+- (BOOL)textField:(MLNUIInternalTextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
 {
     if (string.length == 0) {
         return YES;
@@ -92,7 +92,7 @@
     return YES;
 }
 
-- (void)textFieldDidChanged:(MLNInternalTextField *)textField
+- (void)textFieldDidChanged:(MLNUIInternalTextField *)textField
 {
     if ([self.internalTextViewDelegate respondsToSelector:@selector(internalTextViewDidChange:)]) {
         [self.internalTextViewDelegate internalTextViewDidChange:textField];

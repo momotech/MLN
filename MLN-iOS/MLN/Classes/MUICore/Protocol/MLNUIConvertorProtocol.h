@@ -1,22 +1,22 @@
 //
-//  MLNConvertorProtocol.h
-//  MLN
+//  MLNUIConvertorProtocol.h
+//  MLNUI
 //
 //  Created by MoMo on 2019/8/2.
 //
 
-#ifndef MLNConvertorProtocol_h
-#define MLNConvertorProtocol_h
+#ifndef MLNUIConvertorProtocol_h
+#define MLNUIConvertorProtocol_h
 
 #import <UIKit/UIkit.h>
 
-@class MLNLuaCore;
-@protocol MLNConvertorProtocol <NSObject>
+@class MLNUILuaCore;
+@protocol MLNUIConvertorProtocol <NSObject>
 
 /**
  当前lua状态机
  */
-@property (nonatomic, weak, readonly) MLNLuaCore *luaCore;
+@property (nonatomic, weak, readonly) MLNUILuaCore *luaCore;
 
 /**
  创建转换器
@@ -24,7 +24,7 @@
  @param luaCore 当前lua状态机
  @return 转换器实例
  */
-- (instancetype)initWithLuaCore:(MLNLuaCore *)luaCore;
+- (instancetype)initWithLuaCore:(MLNUILuaCore *)luaCore;
 
 /**
  将Native对象转换为Lua数据，并压入栈顶
@@ -136,4 +136,4 @@
 
 @end
 
-#endif /* MLNConvertorProtocol_h */
+#endif /* MLNUIConvertorProtocol_h */

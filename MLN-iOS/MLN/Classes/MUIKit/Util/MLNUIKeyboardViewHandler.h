@@ -1,6 +1,6 @@
 //
-//  MLNKeyboardViewHandler.h
-//  MLN
+//  MLNUIKeyboardViewHandler.h
+//  MLNUI
 //
 //  Created by MoMo on 2019/8/5.
 //
@@ -9,14 +9,14 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-typedef CGFloat(^MLNPositionAdjustOffsetYCallBack)(CGFloat keyboardHeight);
+typedef CGFloat(^MLNUIPositionAdjustOffsetYCallBack)(CGFloat keyboardHeight);
 
-@interface MLNKeyboardViewHandler : NSObject
+@interface MLNUIKeyboardViewHandler : NSObject
 
 @property (nonatomic, assign) BOOL positionAdjust;
 @property (nonatomic, assign) CGFloat positionAdjustOffsetY;
 @property (nonatomic, assign) CGRect beforePositionAdjustViewFrame;
-@property (nonatomic, copy) MLNPositionAdjustOffsetYCallBack positionBack;
+@property (nonatomic, copy) MLNUIPositionAdjustOffsetYCallBack positionBack;
 @property (nonatomic, assign) BOOL alwaysAdjustPositionKeyboardCoverView;
 
 - (instancetype)initWithView:(UIView *)view;
