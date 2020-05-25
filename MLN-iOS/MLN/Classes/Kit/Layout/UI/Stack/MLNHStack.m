@@ -35,6 +35,15 @@
     return [[MLNHStackNode alloc] initWithTargetView:targetView];
 }
 
+#pragma mark - Override
+
+- (void)lua_addSubview:(UIView *)view {
+    [super lua_addSubview:view];
+    if ([view isKindOfClass:[MLNHStack class]]) {
+        [(MLNHStackNode *)view.lua_node invalidateMainAxisMatchParentMeasureType];
+    }
+}
+
 #pragma mark - Export Lua
 
 LUA_EXPORT_VIEW_BEGIN(MLNHStack)

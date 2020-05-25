@@ -98,6 +98,10 @@ static const void *kLuaKeyboardDismiss = &kLuaKeyboardDismiss;
         [self endEditing:YES];
     }
     
+    if ([self lua_needDismissKeyboard]) {
+        [self.window endEditing:YES];
+    }
+    
     if (self.mln_touchesBeganCallback) {
         UITouch *touch = [touches anyObject];
         CGPoint point = [touch locationInView:self];
@@ -829,9 +833,6 @@ static const void *kLuaRenderContext = &kLuaRenderContext;
     if (!self.lua_enable) {
         return;
     }
-    if ([self lua_needDismissKeyboard]) {
-        [self.window endEditing:YES];
-    }
     if (self.mln_tapClickBlock) {
         [self.mln_tapClickBlock callIfCan];
     }
@@ -1122,10 +1123,6 @@ static const void *kLuaOnDetachedFromWindowCallback = &kLuaOnDetachedFromWindowC
 
 - (void)lua_keyboardDismiss:(BOOL)autodismiss
 {
-    NSNumber* number = objc_getAssociatedObject(self, kLuaKeyboardDismiss);
-    if (number == nil) {
-        [self mln_in_addTapGestureIfNeed];
-    }
     objc_setAssociatedObject(self,kLuaKeyboardDismiss,@(autodismiss),OBJC_ASSOCIATION_ASSIGN);
 }
 

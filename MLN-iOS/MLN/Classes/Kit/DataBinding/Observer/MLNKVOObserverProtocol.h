@@ -44,6 +44,11 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 #define LOCK_INIT() pthread_mutex_init(&_lock, NULL)
+#define LOCK_RECURSIVE_INIT() \
+    pthread_mutexattr_t mta; \
+    pthread_mutexattr_init(&mta); \
+    pthread_mutexattr_settype(&mta, PTHREAD_MUTEX_RECURSIVE); \
+    pthread_mutex_init(&_lock, &mta)
 #define LOCK() pthread_mutex_lock(&_lock)
 #define UNLOCK() pthread_mutex_unlock(&_lock)
 #define LOCK_DESTROY() pthread_mutex_destroy(&_lock)

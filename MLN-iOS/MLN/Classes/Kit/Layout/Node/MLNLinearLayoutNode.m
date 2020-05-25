@@ -48,17 +48,6 @@
             measureHorizontal(self, maxWidth, maxHeight);
             break;
     }
-    if (self.overlayNode) {
-        CGFloat overlayMaxWidth = self.measuredWidth - self.overlayNode.marginLeft - self.overlayNode.marginRight;
-        CGFloat overlayMaxHeight = self.measuredHeight - self.overlayNode.marginTop - self.overlayNode.marginBottom;
-        if (self.overlayNode.width > self.measuredWidth) {
-            [self.overlayNode changeWidth:self.measuredWidth];
-        }
-        if (self.overlayNode.height > self.measuredHeight) {
-            [self.overlayNode changeHeight:self.measuredHeight];
-        }
-        [self.overlayNode measureSizeWithMaxWidth:overlayMaxWidth maxHeight:overlayMaxHeight];
-    }
     return CGSizeMake(self.measuredWidth, self.measuredHeight);
 }
 
@@ -173,6 +162,7 @@ MLN_FORCE_INLINE void measureHeightForWeightHorizontal(MLNLinearLayoutNode __uns
             subnode.widthProportion = subnode.weight * 1.f / totalWeight * 1.f;
             [subnode needLayout];
             [proportionNodes addObject:subnode];
+            totalWeight -= subnode.weight;
         } else{
             subWidth = subnode.measuredWidth;
         }
@@ -185,7 +175,6 @@ MLN_FORCE_INLINE void measureHeightForWeightHorizontal(MLNLinearLayoutNode __uns
                 break;
             }
         }
-        totalWeight -= subnode.weight;
     }
     
     CGFloat needMaxHeight = 0.f;
@@ -226,7 +215,9 @@ MLN_FORCE_INLINE void measureHeightForWeightHorizontal(MLNLinearLayoutNode __uns
             default:
                 measuredHeight = maxHeight;
         }
-        node.measuredHeight = measuredHeight;
+        if (measuredHeight > node.measuredHeight) {
+            node.measuredHeight = measuredHeight;
+        }
     }
 }
 
@@ -346,6 +337,7 @@ MLN_FORCE_INLINE void measureWidthForWeightVertical(MLNLinearLayoutNode __unsafe
             needDirty = YES;
             [subnode needLayout];
             [proportionNodes addObject:subnode];
+            totalWeight -= subnode.weight;
         } else{
             subHeight = subnode.measuredHeight;
         }
@@ -358,7 +350,6 @@ MLN_FORCE_INLINE void measureWidthForWeightVertical(MLNLinearLayoutNode __unsafe
                 break;
             }
         }
-        totalWeight -= subnode.weight;
     }
     
     int needMaxWidth = 0.f;
