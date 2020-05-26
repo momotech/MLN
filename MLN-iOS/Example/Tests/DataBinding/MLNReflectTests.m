@@ -7,8 +7,8 @@
 //
 
 #import "MLNTestModel.h"
-#import <NSObject+MLNKVO.h>
-#import <NSObject+MLNReflect.h>
+#import <NSObject+MLNUIKVO.h>
+#import <NSObject+MLNUIReflect.h>
 
 SpecBegin(Reflect)
 
@@ -25,14 +25,14 @@ context(@"Dictionary", ^{
         __block NSArray *set;
         __block NSDictionary *dic;
     beforeEach(^{
-        set = [model.class mln_propertyKeys];
-        dic = [model mln_toDictionary];
+        set = [model.class mlnui_propertyKeys];
+        dic = [model mlnui_toDictionary];
     });
     it(@"properties", ^{
        expect(@(set.count)).equal(@1);
        expect([set containsObject:@"name"]).to.beTruthy();
        
-       set = [MLNTestModel mln_propertyKeys];
+       set = [MLNTestModel mlnui_propertyKeys];
        expect(@(set.count)).equal(@4);
        expect([set containsObject:@"open"]).to.beTruthy();
        expect([set containsObject:@"text"]).to.beTruthy();
@@ -44,7 +44,7 @@ context(@"Dictionary", ^{
     it(@"to_dic", ^{
        expect(dic.count == 1).to.beTruthy();
        expect(dic[@"name"]).equal(@"nn");
-       dic = [tModel mln_toDictionary];
+       dic = [tModel mlnui_toDictionary];
     });
 });
 

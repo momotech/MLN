@@ -8,7 +8,7 @@
 
 #import <XCTest/XCTest.h>
 #import "MLNTestModel.h"
-#import "NSObject+MLNKVO.h"
+#import "NSObject+MLNUIKVO.h"
 
 SpecBegin(BlockKVO)
 
@@ -20,13 +20,13 @@ context(@"Dictionary", ^{
         __block BOOL r2 = NO;
 
         NSMutableDictionary *dic = [NSMutableDictionary dictionary];
-        dic.mln_watch(@"name", ^(id  _Nonnull oldValue, id  _Nonnull newValue, id object) {
+        dic.mlnui_watch(@"name", ^(id  _Nonnull oldValue, id  _Nonnull newValue, id object) {
         r1 = YES;
         expect(oldValue).beNil();
         expect(newValue).equal(@"hello");
         });
         
-        dic.mln_watch(@"name", ^(id  _Nonnull oldValue, id  _Nonnull newValue, id object) {
+        dic.mlnui_watch(@"name", ^(id  _Nonnull oldValue, id  _Nonnull newValue, id object) {
         r2 = YES;
         expect(oldValue).beNil();
         expect(newValue).equal(@"hello");
@@ -55,10 +55,10 @@ beforeEach(^{
     weakTmodel = tModel;
 });
         
-    it(@"mln_observe", ^{
+    it(@"mlnui_observe", ^{
 //    __weak typeof (self) wself = self;
     __weak typeof(model) weakModel = model;
-    [self mln_observeObject:model property:@"tm.text" withBlock:^(id  _Nonnull observer, id  _Nonnull object, id  _Nonnull oldValue, id  _Nonnull newValue, NSDictionary *change) {
+    [self mlnui_observeObject:model property:@"tm.text" withBlock:^(id  _Nonnull observer, id  _Nonnull object, id  _Nonnull oldValue, id  _Nonnull newValue, NSDictionary *change) {
         r1 = YES;
         NSLog(@"%@",model.tm);
         expect(oldValue).equal(@"tt");
@@ -67,7 +67,7 @@ beforeEach(^{
         expect(observer == self).beTruthy();
         expect(object == weakModel).beTruthy();
     }];
-    [self mln_observeObject:model property:@"tm.text" withBlock:^(id  _Nonnull observer, id  _Nonnull object, id  _Nonnull oldValue, id  _Nonnull newValue, NSDictionary *change) {
+    [self mlnui_observeObject:model property:@"tm.text" withBlock:^(id  _Nonnull observer, id  _Nonnull object, id  _Nonnull oldValue, id  _Nonnull newValue, NSDictionary *change) {
         r2 = YES;
         NSLog(@"%@",model.tm);
         expect(oldValue).equal(@"tt");
@@ -77,7 +77,7 @@ beforeEach(^{
         expect(object == weakModel).beTruthy();
     }];
     
-    [self mln_observeObject:model.tm property:@"text" withBlock:^(id  _Nonnull observer, id  _Nonnull object, id  _Nonnull oldValue, id  _Nonnull newValue, NSDictionary *change) {
+    [self mlnui_observeObject:model.tm property:@"text" withBlock:^(id  _Nonnull observer, id  _Nonnull object, id  _Nonnull oldValue, id  _Nonnull newValue, NSDictionary *change) {
         r3 = YES;
         NSLog(@"%@",model.tm);
         expect(oldValue).equal(@"tt");
@@ -87,7 +87,7 @@ beforeEach(^{
         expect(object == weakModel.tm).beTruthy();
     }];
     
-    [self mln_observeObject:model.tm property:@"text" withBlock:^(id  _Nonnull observer, id  _Nonnull object, id  _Nonnull oldValue, id  _Nonnull newValue, NSDictionary *change) {
+    [self mlnui_observeObject:model.tm property:@"text" withBlock:^(id  _Nonnull observer, id  _Nonnull object, id  _Nonnull oldValue, id  _Nonnull newValue, NSDictionary *change) {
         r4 = YES;
         NSLog(@"%@",model.tm);
         expect(oldValue).equal(@"tt");
@@ -101,15 +101,15 @@ beforeEach(^{
 
     });
     
-    it(@"mln_watch", ^{
-model.mln_watch(@"tm.text", ^(id  _Nonnull oldValue, id  _Nonnull newValue, id object) {
+    it(@"mlnui_watch", ^{
+model.mlnui_watch(@"tm.text", ^(id  _Nonnull oldValue, id  _Nonnull newValue, id object) {
     r1 = YES;
     NSLog(@"%@",model.tm);
 
     expect(oldValue).equal(@"tt");
     expect(newValue).equal(newText);
 });
-model.mln_watch(@"tm.text", ^(id  _Nonnull oldValue, id  _Nonnull newValue, id object) {
+model.mlnui_watch(@"tm.text", ^(id  _Nonnull oldValue, id  _Nonnull newValue, id object) {
     r2 = YES;
     NSLog(@"%@",model.tm);
 
@@ -117,14 +117,14 @@ model.mln_watch(@"tm.text", ^(id  _Nonnull oldValue, id  _Nonnull newValue, id o
     expect(newValue).equal(newText);
 });
 
-model.tm.mln_watch(@"text", ^(id  _Nonnull oldValue, id  _Nonnull newValue, id object) {
+model.tm.mlnui_watch(@"text", ^(id  _Nonnull oldValue, id  _Nonnull newValue, id object) {
     r3 = YES;
     NSLog(@"%@",model.tm);
 
     expect(oldValue).equal(@"tt");
     expect(newValue).equal(newText);
 });
-model.tm.mln_watch(@"text", ^(id  _Nonnull oldValue, id  _Nonnull newValue, id object) {
+model.tm.mlnui_watch(@"text", ^(id  _Nonnull oldValue, id  _Nonnull newValue, id object) {
     r4 = YES;
     NSLog(@"%@",model.tm);
 
@@ -134,10 +134,10 @@ model.tm.mln_watch(@"text", ^(id  _Nonnull oldValue, id  _Nonnull newValue, id o
 model.tm.text = newText;
 });
     
-    it(@"mln_properties", ^{
+    it(@"mlnui_properties", ^{
     
     __weak typeof(model) weakModel = model;
-    [self mln_observeObject:model properties:@[@"tm.text", @"name"] withBlock:^(id  _Nonnull observer, id  _Nonnull object, NSString * _Nonnull keyPath, id  _Nonnull oldValue, id  _Nonnull newValue, NSDictionary *change) {
+    [self mlnui_observeObject:model properties:@[@"tm.text", @"name"] withBlock:^(id  _Nonnull observer, id  _Nonnull object, NSString * _Nonnull keyPath, id  _Nonnull oldValue, id  _Nonnull newValue, NSDictionary *change) {
         expect(self == observer);
         expect(weakModel == object);
         

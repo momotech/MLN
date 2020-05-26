@@ -7,10 +7,11 @@
 //
 
 #import "MLNHotReloadViewController.h"
+#import "MLNUIHotReloadViewController.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface MLNDataBindHotReload : MLNHotReloadViewController
+@interface MLNDataBindHotReload : MLNUIHotReloadViewController
 
 @end
 
