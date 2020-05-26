@@ -151,8 +151,9 @@
         }
         @try {
             if (isMArray) {
+                --index;
                 NSMutableArray *arr = (NSMutableArray *)frontObject;
-                if (index >= arr.count) {
+                if (index < 0 || index >= arr.count) {
                     NSLog(@"index %d exceed range of array %zd",index,arr.count);
                     return;
                 }
@@ -172,7 +173,7 @@
     keys = [self formatKeys:keys allowFirstKeyIsNumber:NO allowLastKeyIsNumber:NO];
     if(!keys) return nil;
     
-    NSString *observerKey = [keys componentsJoinedByString:@"."];
+//    NSString *observerKey = [keys componentsJoinedByString:@"."];
     NSObject *frontObject;
     NSObject *object = [self dataForKeysArray:keys frontObject:&frontObject];
     NSString *path = keys.lastObject;
@@ -393,7 +394,8 @@
             return nil;
         }
         if (isArray) {
-            if (index >= [(NSArray *)res count]) {
+            --index; // lua索引
+            if (index <  0 || index >= [(NSArray *)res count]) {
                 if(frontObject) *frontObject = nil;
                 NSLog(@"index %d exceed rang of array %zd",index,[(NSArray *)res count]);
                 return nil;
@@ -416,14 +418,15 @@
 - (BOOL)scanInt:(int *)number forStringOrNumber:(NSString *)obj {
     if(!obj) return NO;
     
-    if ([obj isKindOfClass:[NSNumber class]]) {
-        *number = [(NSNumber *)obj intValue];
-        return YES;
-    }
     //兼容key是string类型
     if ([obj isKindOfClass:[NSString class]]) {
         NSScanner *scanner = [NSScanner scannerWithString:obj];
         return [scanner scanInt:number] && [scanner isAtEnd];
+    }
+    
+    if ([obj isKindOfClass:[NSNumber class]]) {
+        *number = [(NSNumber *)obj intValue];
+        return YES;
     }
     return NO;
 }
@@ -454,7 +457,7 @@
                 [formatKeys addObject:combineString];
                 combineString = nil;
             }
-            [formatKeys addObject:value];
+            [formatKeys addObject:@(tmp)];
         } else {
             if (!combineString) {
                 combineString = [NSMutableString string];
