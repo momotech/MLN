@@ -1,1 +1,1 @@
-../../../../../MLNDevTool/Classes/Protobuf/PbdetailReportCommand.pbobjc.h
+../../../../../MLNDevTool/Classes/MLNProtobuf/PbdetailReportCommand.pbobjc.h

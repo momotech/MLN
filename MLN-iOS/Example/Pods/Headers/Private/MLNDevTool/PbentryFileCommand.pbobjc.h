@@ -1,1 +1,1 @@
-../../../../../MLNDevTool/Classes/Protobuf/PbentryFileCommand.pbobjc.h
+../../../../../MLNDevTool/Classes/MLNProtobuf/PbentryFileCommand.pbobjc.h

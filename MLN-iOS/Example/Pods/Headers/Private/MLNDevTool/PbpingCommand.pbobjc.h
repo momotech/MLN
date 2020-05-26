@@ -1,1 +1,1 @@
-../../../../../MLNDevTool/Classes/Protobuf/PbpingCommand.pbobjc.h
+../../../../../MLNDevTool/Classes/MLNProtobuf/PbpingCommand.pbobjc.h

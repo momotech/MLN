@@ -21,11 +21,15 @@
   "public_header_files": "MLN-iOS/MLNDevTool/Classes/*.h",
   "subspecs": [
     {
-      "name": "Protobuf",
-      "source_files": "MLN-iOS/MLNDevTool/Classes/Protobuf/**/*.{h,m,c,a}",
-      "vendored_libraries": "MLN-iOS/MLNDevTool/Classes/Protobuf/**/*.a",
+      "name": "MLNProtobuf",
+      "source_files": "MLN-iOS/MLNDevTool/Classes/MLNProtobuf/**/*.{h,m}",
       "pod_target_xcconfig": {
-        "HEADER_SEARCH_PATHS": "\"$(SRCROOT)/../../MLNDevTool/Classes/Protobuf/include\" \"$(SRCROOT)/MLNDevTool/MLN-iOS/MLNDevTool/Classes/Protobuf/include\""
+        "GCC_PREPROCESSOR_DEFINITIONS": "$(inherited) GPB_USE_PROTOBUF_FRAMEWORK_IMPORTS=1"
+      },
+      "dependencies": {
+        "Protobuf": [
+
+        ]
       }
     },
     {
@@ -39,7 +43,7 @@
       "source_files": "MLN-iOS/MLNDevTool/Classes/Conn/**/*.{h,m,c}",
       "public_header_files": "MLN-iOS/MLNDevTool/Classes/Conn/**/*.h",
       "dependencies": {
-        "MLNDevTool/Protobuf": [
+        "MLNDevTool/MLNProtobuf": [
 
         ]
       }

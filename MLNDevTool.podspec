@@ -33,12 +33,11 @@ Pod::Spec.new do |s|
     s.requires_arc = true
     s.public_header_files = 'MLN-iOS/MLNDevTool/Classes/*.h'
     
-    s.subspec 'Protobuf' do |pb|
-      pb.name = 'Protobuf'
-      pb.source_files = 'MLN-iOS/MLNDevTool/Classes/Protobuf/**/*.{h,m,c,a}'
-      pb.vendored_libraries = 'MLN-iOS/MLNDevTool/Classes/Protobuf/**/*.a'
-      pb.pod_target_xcconfig = { 'HEADER_SEARCH_PATHS' => '"$(SRCROOT)/../../MLNDevTool/Classes/Protobuf/include" "$(SRCROOT)/MLNDevTool/MLN-iOS/MLNDevTool/Classes/Protobuf/include"'
-      }
+    s.subspec 'MLNProtobuf' do |pb|
+      pb.name = 'MLNProtobuf'
+      pb.source_files = 'MLN-iOS/MLNDevTool/Classes/MLNProtobuf/**/*.{h,m}'
+      pb.pod_target_xcconfig = { 'GCC_PREPROCESSOR_DEFINITIONS' => '$(inherited) GPB_USE_PROTOBUF_FRAMEWORK_IMPORTS=1' }
+      pb.dependency 'Protobuf'
     end
     
     s.subspec 'Conn' do |conn|
@@ -46,7 +45,7 @@ Pod::Spec.new do |s|
       conn.framework = 'Foundation', 'UIKit', 'CoreGraphics', 'AVFoundation'
       conn.source_files = 'MLN-iOS/MLNDevTool/Classes/Conn/**/*.{h,m,c}'
       conn.public_header_files = 'MLN-iOS/MLNDevTool/Classes/Conn/**/*.h'
-      conn.dependency  'MLNDevTool/Protobuf'
+      conn.dependency 'MLNDevTool/MLNProtobuf'
     end
     
     s.subspec 'DevTool' do |d|
@@ -58,7 +57,7 @@ Pod::Spec.new do |s|
         'MLNDevTool_UI' => 'MLN-iOS/MLNDevTool/Classes/DevTool/UI/**/Assets/*.{png,xib}'
       }
       d.dependency 'MLN'
-      d.dependency  'MLNDevTool/Conn'
+      d.dependency 'MLNDevTool/Conn'
     end
 
     s.subspec 'Performance' do |perf|
@@ -75,7 +74,7 @@ Pod::Spec.new do |s|
         o.resource_bundles = {
           'MLNDevTool_Offline' => 'MLN-iOS/MLNDevTool/Classes/Offline/**/Assets/*.{png,lua,xib}'
         }
-        o.dependency  'MLNDevTool/DevTool'
+        o.dependency 'MLNDevTool/DevTool'
         o.dependency 'MLN'
     end
     
@@ -84,8 +83,8 @@ Pod::Spec.new do |s|
         h.framework = 'Foundation', 'UIKit'
         h.source_files = 'MLN-iOS/MLNDevTool/Classes/HotReload/**/*.{h,m,c}'
         h.public_header_files = 'MLN-iOS/MLNDevTool/Classes/HotReload/**/*.h'
-        h.dependency  'MLNDevTool/DevTool'
-        h.dependency  'MLNDevTool/Conn'
+        h.dependency 'MLNDevTool/DevTool'
+        h.dependency 'MLNDevTool/Conn'
         h.resource_bundles = {
           'MLNDevTool_HotReload' => 'MLN-iOS/MLNDevTool/Classes/HotReload/**/Assets/*.{png,xib}'
         }
