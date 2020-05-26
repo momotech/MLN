@@ -2,8 +2,8 @@
 #import <MLNUIDataBinding.h>
 #import <MLNUIKVOObserver.h>
 #import "MLNTestModel.h"
-#import <NSMutableArray+MLNKVO.h>
-#import "NSObject+MLNKVO.h"
+#import <NSMutableArray+MLNUIKVO.h>
+#import "NSObject+MLNUIKVO.h"
 
 SpecBegin(ArrayBinding2)
 

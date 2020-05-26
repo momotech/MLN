@@ -9,7 +9,7 @@
 #import <MLNUIDataBinding.h>
 #import <MLNUIKVOObserver.h>
 #import "MLNTestModel.h"
-#import <NSMutableArray+MLNKVO.h>
+#import <NSMutableArray+MLNUIKVO.h>
 
 SpecBegin(ArrayBinding)
 

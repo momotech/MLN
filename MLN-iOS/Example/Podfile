@@ -15,7 +15,7 @@ end
 target 'MLN_Tests' do
   inherit! :search_paths
   #
-  pod 'MLN', :path => '../../'
+  pod 'MLNUI', :path => '../../'
   pod 'Specta'
   pod 'Expecta'
   pod 'FBSnapshotTestCase'
