@@ -17,7 +17,8 @@
 #import "MLNDebugCodeCoverageFunction.h"
 #import "MLNDebugContext.h"
 #import "mln_luasocket.h"
-#import "MLNKVOObserverProtocol.h"
+#import "MLNUIKVOObserverProtocol.h"
+#import "MLNUIKitInstanceFactory.h"
 
 @interface MLNHotReload () <MLNKitInstanceErrorHandlerProtocol, MLNKitInstanceDelegate, MLNServerManagerDelegate, MLNDebugPrintObserver, MLNServerListenerProtocol, MLNHotReloadPresenterDelegate> {
     int _usbPort;
@@ -125,9 +126,17 @@ static MLNHotReload *sharedInstance;
     [UIApplication sharedApplication].idleTimerDisabled = _defaultIdleTimeStatus;
 }
 
+- (MLNKitInstance *)getKitInstance {
+#if 0
+    MLNKitInstance *luaInstance = [[MLNKitInstanceFactory defaultFactory] createKitInstanceWithViewController:self.viewController];
+#endif
+    MLNKitInstance *luaInstance = (MLNKitInstance *)[[MLNUIKitInstanceFactory defaultFactory]  createKitInstanceWithViewController:self.viewController];
+    return luaInstance;
+}
+
 - (MLNKitInstance *)createLuaInstance:(NSString * )bundlePath entryFilePath:(NSString * _Nonnull)entryFilePath params:(NSDictionary * _Nonnull )params
 {
-    MLNKitInstance *luaInstance = [[MLNKitInstanceFactory defaultFactory] createKitInstanceWithViewController:self.viewController];
+    MLNKitInstance *luaInstance = [self getKitInstance];
     luaInstance.delegate = self;
     luaInstance.instanceHandlersManager.errorHandler = self;
     [luaInstance changeLuaBundleWithPath:bundlePath];
@@ -168,7 +177,7 @@ static MLNHotReload *sharedInstance;
     }
     dispatch_async(dispatch_get_main_queue(), ^{
         //加载lua文件之前清除掉数据绑定，解决刷新时会使用到上次的数据.
-        objc_setAssociatedObject(self.viewController, @selector(mln_dataBinding), nil, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+        objc_setAssociatedObject(self.viewController, @selector(mlnui_dataBinding), nil, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
         
         self.benchLuaInstance = [self createLuaInstance:bundlePath entryFilePath:entryFilePath params:params];
         // 参数

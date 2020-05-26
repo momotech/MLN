@@ -1,18 +1,17 @@
 //
-//  MLNHotLuaViewController.m
-//  MLNDebugger_Example
+//  MLNUIHotReloadViewController.m
+//  MLNDevTool
 //
-//  Created by MoMo on 2019/6/14.
-//  Copyright © 2019 MoMo.xiaoning. All rights reserved.
+//  Created by Dai Dongpeng on 2020/5/26.
 //
 
-#import "MLNHotReloadViewController.h"
+#import "MLNUIHotReloadViewController.h"
 #import "MLNHotReload.h"
 #import "PBCommandBuilder.h"
 #import "MLNDebugPrintFunction.h"
 #import "MLNUIDataBinding.h"
 
-@interface MLNHotReloadViewController ()
+@interface MLNUIHotReloadViewController ()
 // NavigationBar
 @property (nonatomic, assign) BOOL navigationBarTransparent;
 @property (nonatomic, strong) UIImage *backgroundImageForBarMetrics;
@@ -20,7 +19,7 @@
 
 @end
 
-@implementation MLNHotReloadViewController
+@implementation MLNUIHotReloadViewController
 
 - (instancetype)initWithNavigationBarTransparent:(BOOL)transparent
 {
@@ -42,9 +41,12 @@
     NSMutableArray *regs = [NSMutableArray arrayWithArray:regClasses ? regClasses :@[]];
     [regs addObject: [MLNUIDataBinding class]];
     
-    if (self = [super initWithEntryFilePath:entryFilePath extraInfo:extraInfo regClasses:regs]) {
-        _navigationBarTransparent = transparent;
-    }
+//    if (self = [super initWithEntryFilePath:entryFilePath extraInfo:extraInfo regClasses:regs]) {
+//        _navigationBarTransparent = transparent;
+//    }
+    self = [super initWithEntryFileName:entryFilePath];
+    [self setValue:extraInfo forKey:@"extraInfo"];
+    [self performSelector:@selector(regClasses:) withObject:regs];
     return self;
 }
 
@@ -125,6 +127,3 @@
 }
 
 @end
-
-
-
