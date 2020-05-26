@@ -6,14 +6,14 @@
 //  Copyright © 2020 MoMo. All rights reserved.
 //
 
-#import "MLNDataBinding.h"
+#import "MLNUIDataBinding.h"
 
 NSArray *formatKeys(NSArray *keys);
 
 @interface FormatKeys : NSObject
 - (NSDictionary *)getObserverinfo:(NSArray *)expect;
 @end
-@interface MLNDataBinding (FormatKeys)
+@interface MLNUIDataBinding (FormatKeys)
 -(NSArray *)formatKeys:(NSArray *)keys allowFirstKeyIsNumber:(BOOL)allowFirstKeyIsNumber allowLastKeyIsNumber:(BOOL)allowLastKeyIsNumber;
 @end
 
@@ -54,7 +54,7 @@ it(@"format", ^
    @{@"object":@"map",@"keypath":@"a"}
    ];
    FormatKeys *fm = [FormatKeys new];
-   MLNDataBinding *db = [MLNDataBinding new];
+   MLNUIDataBinding *db = [MLNUIDataBinding new];
    
     for(int i = 0; i < keys.count; i++){
 //   NSArray *format = [fm formatKeys:keys[i]];

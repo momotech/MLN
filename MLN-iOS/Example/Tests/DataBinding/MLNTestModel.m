@@ -7,7 +7,7 @@
 //
 
 #import "MLNTestModel.h"
-#import "NSObject+MLNKVO.h"
+#import "NSObject+MLNUIKVO.h"
 @import ObjectiveC;
 
 @implementation MLNTestModel

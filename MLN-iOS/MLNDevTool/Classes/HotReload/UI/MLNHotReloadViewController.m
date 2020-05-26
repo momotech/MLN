@@ -10,6 +10,7 @@
 #import "MLNHotReload.h"
 #import "PBCommandBuilder.h"
 #import "MLNDebugPrintFunction.h"
+#import "MLNUIDataBinding.h"
 
 @interface MLNHotReloadViewController ()
 // NavigationBar
@@ -38,7 +39,10 @@
 
 - (instancetype)initWithEntryFilePath:(NSString *)entryFilePath extraInfo:(nullable NSDictionary *)extraInfo regClasses:(nullable NSArray<Class<MLNExportProtocol>> *)regClasses navigationBarTransparent:(BOOL)transparent
 {
-    if (self = [super initWithEntryFilePath:entryFilePath extraInfo:extraInfo regClasses:regClasses]) {
+    NSMutableArray *regs = [NSMutableArray arrayWithArray:regClasses ? regClasses :@[]];
+    [regs addObject: [MLNUIDataBinding class]];
+    
+    if (self = [super initWithEntryFilePath:entryFilePath extraInfo:extraInfo regClasses:regs]) {
         _navigationBarTransparent = transparent;
     }
     return self;

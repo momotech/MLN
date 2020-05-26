@@ -1,6 +1,0 @@
-framework module MLNDevTool {
-  umbrella header "MLNDevTool-umbrella.h"
-
-  export *
-  module * { export * }
-}

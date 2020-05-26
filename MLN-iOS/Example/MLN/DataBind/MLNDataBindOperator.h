@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <MLNCore.h>
+#import <MLNUICore.h>
 #import "MLNDataBindHotReload.h"
 
 NS_ASSUME_NONNULL_BEGIN

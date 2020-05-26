@@ -75,7 +75,6 @@
 #import "MLNCornerUtil.h"
 #import "MLNSafeAreaAdapter.h"
 #import "MLNLink.h"
-#import "MLNDataBinding.h"
 // Animations
 #import "MLNAnimator.h"
 #import "MLNAnimation.h"
@@ -216,7 +215,7 @@ static NSArray<Class<MLNExportProtocol>> *utilClasses;
                         [MLNCornerUtil class],
                         [MLNSafeAreaAdapter class],
                         [MLNLink class],
-                        [MLNDataBinding class]];
+                        ];
     }
     return utilClasses;
 }

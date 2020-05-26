@@ -4,6 +4,7 @@ platform :ios, '8.0'
 
 target 'LuaNative' do
   pod 'MLN', :path => '../../'
+  pod 'MLNUI', :path => '../../'
   pod 'MLNDevTool', :path => '../../'
   pod 'AFNetworking', '~> 3.0'
   pod 'MJRefresh', '3.1.16'
@@ -14,7 +15,7 @@ end
 target 'MLN_Tests' do
   inherit! :search_paths
   #
-  pod 'MLN', :path => '../../'
+  pod 'MLNUI', :path => '../../'
   pod 'Specta'
   pod 'Expecta'
   pod 'FBSnapshotTestCase'

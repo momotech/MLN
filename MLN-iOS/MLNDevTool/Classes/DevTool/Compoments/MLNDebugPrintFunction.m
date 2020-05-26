@@ -6,6 +6,7 @@
 //
 
 #import "MLNDebugPrintFunction.h"
+#import "MLNUIGlobalFuncExporterMacro.h"
 
 
 @implementation MLNDebugPrintFunction
@@ -65,4 +66,7 @@ LUA_EXPORT_GLOBAL_FUNC_BEGIN(MLNDebugPrintFunction)
 LUA_EXPORT_GLOBAL_C_FUNC(print, mln_print, MLNDebugPrintFunction)
 LUA_EXPORT_GLOBAL_FUNC_END(MLNDebugPrintFunction)
 
+LUAUI_EXPORT_GLOBAL_FUNC_BEGIN(MLNDebugPrintFunction)
+LUAUI_EXPORT_GLOBAL_C_FUNC(print, mln_print, MLNDebugPrintFunction)
+LUAUI_EXPORT_GLOBAL_FUNC_END(MLNDebugPrintFunction)
 @end

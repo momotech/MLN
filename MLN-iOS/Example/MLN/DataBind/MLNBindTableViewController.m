@@ -7,7 +7,7 @@
 //
 
 #import "MLNBindTableViewController.h"
-#import "MLNKit.h"
+#import "MLNUIKit.h"
 #import "MLNDataBindModel.h"
 
 @interface MLNBindTableViewController ()
@@ -32,9 +32,9 @@
     [self createModelArray];
     
     [viewController bindData:self.tableModel forKey:@"tableModel"];
-    [viewController mln_addToSuperViewController:self frame:self.view.bounds];
+    [viewController mlnui_addToSuperViewController:self frame:self.view.bounds];
     
-    self.tableModel.mln_watch(@"refresh", ^(id  _Nonnull oldValue, id  _Nonnull newValue, MLNDatabindTableViewModel *object) {
+    self.tableModel.mlnui_watch(@"refresh", ^(id  _Nonnull oldValue, id  _Nonnull newValue, MLNDatabindTableViewModel *object) {
         if (object.refresh) {
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
                 object.refresh = NO;
@@ -59,7 +59,7 @@
 //    tableModel.source.mln_subscribeItem(^(NSObject * _Nonnull item, NSString * _Nonnull keyPath, NSObject * _Nonnull oldValue, NSObject * _Nonnull newValue) {
 //        NSLog(@"item  %@ keypath %@ old %@ new %@",item,keyPath,oldValue,newValue);
 //    });
-    [self mln_observeArray:self.tableModel.source withBlock:^(id  _Nonnull observer, id  _Nonnull object, id  _Nonnull oldValue, id  _Nonnull newValue, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
+    [self mlnui_observeArray:self.tableModel.source withBlock:^(id  _Nonnull observer, id  _Nonnull object, id  _Nonnull oldValue, id  _Nonnull newValue, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
          NSLog(@"item  %@ old %@ new %@",object,oldValue,newValue);
     }];
     
@@ -115,7 +115,7 @@
             return ;
         }
         NSMutableArray *models = self.tableModel.source;
-        if (models.mln_is2D) {
+        if (models.mlnui_is2D) {
             if (models.count < 3) {
                 MLNDataBindModel *model = [MLNDataBindModel testModel];
                 model.name = [NSString stringWithFormat:@"section %zd",models.count];

@@ -12,6 +12,7 @@
 #import "MLNGlobalVarTest.h"
 #import "MLNGlobalFuncTest.h"
 #import "MLNHotReloadViewController.h"
+#import "MLNUIHotReloadViewController.h"
 #import "MLNOfflineViewController.h"
 #import "MLNFPSLabel.h"
 #import "MLNLoadTimeStatistics.h"
@@ -78,7 +79,8 @@
 
 
 - (void)showHotReload:(id)sender {
-    self.hotvc = [[MLNHotReloadViewController alloc] init];
+//    self.hotvc = [[MLNHotReloadViewController alloc] init];
+    self.hotvc = [[MLNUIHotReloadViewController alloc] initWithEntryFileName:@""];
     [self.navigationController pushViewController:self.hotvc animated:YES];
 }
 
