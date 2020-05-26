@@ -10,9 +10,9 @@
 
 @implementation MLNUIFileConst
 
-LUA_EXPORT_GLOBAL_VAR_BEGIN()
-LUA_EXPORT_GLOBAL_VAR(FileInfo, (@{@"FileSize": kMLNUIFileSize,
+LUAUI_EXPORT_GLOBAL_VAR_BEGIN()
+LUAUI_EXPORT_GLOBAL_VAR(FileInfo, (@{@"FileSize": kMLNUIFileSize,
                                    @"ModiDate": kMLNUIModiDate}))
-LUA_EXPORT_GLOBAL_VAR_END()
+LUAUI_EXPORT_GLOBAL_VAR_END()
 
 @end

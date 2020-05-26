@@ -168,7 +168,7 @@
 }
 
 #pragma mark - Export For Lua
-LUA_EXPORT_BEGIN(MLNUIToast)
-LUA_EXPORT_END(MLNUIToast, Toast, NO, NULL, "initWithMLNUILuaCore:message:duration:")
+LUAUI_EXPORT_BEGIN(MLNUIToast)
+LUAUI_EXPORT_END(MLNUIToast, Toast, NO, NULL, "initWithMLNUILuaCore:message:duration:")
 
 @end

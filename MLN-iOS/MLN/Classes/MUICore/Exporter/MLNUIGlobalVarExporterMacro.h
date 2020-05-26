@@ -13,7 +13,7 @@
 /**
  标记导出全局变量类开始
  */
-#define LUA_EXPORT_GLOBAL_VAR_BEGIN()\
+#define LUAUI_EXPORT_GLOBAL_VAR_BEGIN()\
 + (NSArray<NSDictionary *> *)mlnui_globalVarMap \
 {\
 return @[\
@@ -24,16 +24,16 @@ return @[\
  @param LUA_NAME Lua中变量名称
  @param LUA_VALUES 包含所有变量的字典
  */
-#define LUA_EXPORT_GLOBAL_VAR(LUA_NAME, LUA_VALUES) \
+#define LUAUI_EXPORT_GLOBAL_VAR(LUA_NAME, LUA_VALUES) \
 @{kGlobalVarLuaName: (@#LUA_NAME),\
 kGlobalVarMap: LUA_VALUES},\
 
 /**
  导出全局变量结束
  */
-#define LUA_EXPORT_GLOBAL_VAR_END() \
+#define LUAUI_EXPORT_GLOBAL_VAR_END() \
 ];\
 }\
-LUA_EXPORT_TYPE(MLNUIExportTypeGlobalVar)
+LUAUI_EXPORT_TYPE(MLNUIExportTypeGlobalVar)
 
 #endif /* MLNUIGlobalVarExporterMacro_h */

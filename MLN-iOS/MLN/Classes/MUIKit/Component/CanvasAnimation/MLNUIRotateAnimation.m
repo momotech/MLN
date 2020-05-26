@@ -179,12 +179,12 @@ static int luaui_animation_init(lua_State *L) {
 }
 
 #pragma mark - Export To Lua
-LUA_EXPORT_BEGIN(MLNUIRotateAnimation)
-LUA_EXPORT_PROPERTY(setFromDegrees, "setFromDegrees:", "fromDegrees", MLNUIRotateAnimation)
-LUA_EXPORT_PROPERTY(setToDegrees, "setToDegrees:", "toDegrees", MLNUIRotateAnimation)
-LUA_EXPORT_PROPERTY(setFromXDegrees, "setFromXDegrees:", "fromXDegrees", MLNUIRotateAnimation)
-LUA_EXPORT_PROPERTY(setToXDegrees, "setToXDegrees:", "toXDegrees", MLNUIRotateAnimation)
-LUA_EXPORT_PROPERTY(setFromYDegrees, "setFromYDegrees:", "fromYDegrees", MLNUIRotateAnimation)
-LUA_EXPORT_PROPERTY(setToYDegrees, "setToYDegrees:", "toYDegrees", MLNUIRotateAnimation)
-LUA_EXPORT_END_WITH_CFUNC(MLNUIRotateAnimation, RotateAnimation, YES, "MLNUICanvasAnimation", luaui_animation_init)
+LUAUI_EXPORT_BEGIN(MLNUIRotateAnimation)
+LUAUI_EXPORT_PROPERTY(setFromDegrees, "setFromDegrees:", "fromDegrees", MLNUIRotateAnimation)
+LUAUI_EXPORT_PROPERTY(setToDegrees, "setToDegrees:", "toDegrees", MLNUIRotateAnimation)
+LUAUI_EXPORT_PROPERTY(setFromXDegrees, "setFromXDegrees:", "fromXDegrees", MLNUIRotateAnimation)
+LUAUI_EXPORT_PROPERTY(setToXDegrees, "setToXDegrees:", "toXDegrees", MLNUIRotateAnimation)
+LUAUI_EXPORT_PROPERTY(setFromYDegrees, "setFromYDegrees:", "fromYDegrees", MLNUIRotateAnimation)
+LUAUI_EXPORT_PROPERTY(setToYDegrees, "setToYDegrees:", "toYDegrees", MLNUIRotateAnimation)
+LUAUI_EXPORT_END_WITH_CFUNC(MLNUIRotateAnimation, RotateAnimation, YES, "MLNUICanvasAnimation", luaui_animation_init)
 @end

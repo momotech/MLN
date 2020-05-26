@@ -12,16 +12,16 @@
 
 typedef enum : NSInteger {
     /* lua 文件加载错误 */
-    NSErrorCodeLoad = -1,
+    MLNUINSErrorCodeLoad = -1,
     /* lua 执行错误 */
-    NSErrorCodeCall = -2,
+    MLNUINSErrorCodeCall = -2,
     /* lua 状态机异常 */
-    NSErrorCodeState = -3,
+    MLNUINSErrorCodeState = -3,
     /* lua 状态机注册异常 */
-    NSErrorCodeOpenLib = -4,
+    MLNUINSErrorCodeOpenLib = -4,
     /* lua 转换异常 */
-    NSErrorCodeConvert = -5,
-} NSErrorCode;
+    MLNUINSErrorCodeConvert = -5,
+} MLNUINSErrorCode;
 
 
 NS_ASSUME_NONNULL_BEGIN

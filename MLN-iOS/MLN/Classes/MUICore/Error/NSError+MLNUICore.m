@@ -10,23 +10,23 @@
 @implementation NSError (MLNUICore)
 
 + (instancetype)mlnui_errorLoad:(NSString *)msg {
-    return [self mlnui_error:NSErrorCodeLoad msg:msg];
+    return [self mlnui_error:MLNUINSErrorCodeLoad msg:msg];
 }
 
 + (instancetype)mlnui_errorCall:(NSString *)msg {
-    return [self mlnui_error:NSErrorCodeCall msg:msg];
+    return [self mlnui_error:MLNUINSErrorCodeCall msg:msg];
 }
 
 + (instancetype)mlnui_errorState:(NSString *)msg {
-    return [self mlnui_error:NSErrorCodeState msg:msg];
+    return [self mlnui_error:MLNUINSErrorCodeState msg:msg];
 }
 
 + (instancetype)mlnui_errorOpenLib:(NSString *)msg {
-    return [self mlnui_error:NSErrorCodeOpenLib msg:msg];
+    return [self mlnui_error:MLNUINSErrorCodeOpenLib msg:msg];
 }
 
 + (instancetype)mlnui_errorConvert:(NSString *)msg {
-    return [self mlnui_error:NSErrorCodeConvert msg:msg];
+    return [self mlnui_error:MLNUINSErrorCodeConvert msg:msg];
 }
 
 + (instancetype)mlnui_error:(int)code msg:(NSString *)msg {

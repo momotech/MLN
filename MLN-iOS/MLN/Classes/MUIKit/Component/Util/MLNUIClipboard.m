@@ -47,10 +47,10 @@
 }
 
 #pragma mark - Setup For Lua
-LUA_EXPORT_STATIC_BEGIN(MLNUIClipboard)
-LUA_EXPORT_STATIC_METHOD(setText, "luaui_setText:", MLNUIClipboard)
-LUA_EXPORT_STATIC_METHOD(getText, "luaui_getText", MLNUIClipboard)
-LUA_EXPORT_STATIC_METHOD(setTextWithClipboardName, "luaui_setText:clipboardName:", MLNUIClipboard)
-LUA_EXPORT_STATIC_METHOD(getTextWithClipboardName, "luaui_getTextWithClipboardName:", MLNUIClipboard)
-LUA_EXPORT_STATIC_END(MLNUIClipboard, Clipboard, NO, NULL)
+LUAUI_EXPORT_STATIC_BEGIN(MLNUIClipboard)
+LUAUI_EXPORT_STATIC_METHOD(setText, "luaui_setText:", MLNUIClipboard)
+LUAUI_EXPORT_STATIC_METHOD(getText, "luaui_getText", MLNUIClipboard)
+LUAUI_EXPORT_STATIC_METHOD(setTextWithClipboardName, "luaui_setText:clipboardName:", MLNUIClipboard)
+LUAUI_EXPORT_STATIC_METHOD(getTextWithClipboardName, "luaui_getTextWithClipboardName:", MLNUIClipboard)
+LUAUI_EXPORT_STATIC_END(MLNUIClipboard, Clipboard, NO, NULL)
 @end

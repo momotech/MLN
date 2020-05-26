@@ -87,7 +87,7 @@
     return _calculCells;
 }
 
-LUA_EXPORT_BEGIN(MLNUITableViewAutoFitAdapter)
-LUA_EXPORT_END(MLNUITableViewAutoFitAdapter, TableViewAutoFitAdapter, YES, "MLNUITableViewAdapter", NULL)
+LUAUI_EXPORT_BEGIN(MLNUITableViewAutoFitAdapter)
+LUAUI_EXPORT_END(MLNUITableViewAutoFitAdapter, TableViewAutoFitAdapter, YES, "MLNUITableViewAdapter", NULL)
 
 @end

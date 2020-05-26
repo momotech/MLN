@@ -160,15 +160,15 @@
 }
 
 #pragma mark - Export To Lua
-LUA_EXPORT_BEGIN(MLNUICanvasPaint)
-LUA_EXPORT_PROPERTY(paintColor, "luaui_setPaintColor:","paintColor", MLNUICanvasPaint)
-LUA_EXPORT_PROPERTY(alpha, "luaui_setAlpha:","alpha", MLNUICanvasPaint)
-LUA_EXPORT_PROPERTY(pathEffect, "luaui_setPathEffect:","pathEffect", MLNUICanvasPaint)
-LUA_EXPORT_PROPERTY(shader, "luaui_setShader:","shader", MLNUICanvasPaint)
-LUA_EXPORT_PROPERTY(width, "luaui_setWidth:","width", MLNUICanvasPaint)
-LUA_EXPORT_PROPERTY(style, "luaui_setStyle:","style", MLNUICanvasPaint)
-LUA_EXPORT_METHOD(fontSize, "luaui_setFontSize:", MLNUICanvasPaint)
-LUA_EXPORT_METHOD(fontNameSize, "luaui_setFontNameSize:fontSize:", MLNUICanvasPaint)
-LUA_EXPORT_METHOD(setDash, "luaui_setDash:phase:", MLNUICanvasPaint)
-LUA_EXPORT_END(MLNUICanvasPaint, Paint, NO, NULL, NULL)
+LUAUI_EXPORT_BEGIN(MLNUICanvasPaint)
+LUAUI_EXPORT_PROPERTY(paintColor, "luaui_setPaintColor:","paintColor", MLNUICanvasPaint)
+LUAUI_EXPORT_PROPERTY(alpha, "luaui_setAlpha:","alpha", MLNUICanvasPaint)
+LUAUI_EXPORT_PROPERTY(pathEffect, "luaui_setPathEffect:","pathEffect", MLNUICanvasPaint)
+LUAUI_EXPORT_PROPERTY(shader, "luaui_setShader:","shader", MLNUICanvasPaint)
+LUAUI_EXPORT_PROPERTY(width, "luaui_setWidth:","width", MLNUICanvasPaint)
+LUAUI_EXPORT_PROPERTY(style, "luaui_setStyle:","style", MLNUICanvasPaint)
+LUAUI_EXPORT_METHOD(fontSize, "luaui_setFontSize:", MLNUICanvasPaint)
+LUAUI_EXPORT_METHOD(fontNameSize, "luaui_setFontNameSize:fontSize:", MLNUICanvasPaint)
+LUAUI_EXPORT_METHOD(setDash, "luaui_setDash:phase:", MLNUICanvasPaint)
+LUAUI_EXPORT_END(MLNUICanvasPaint, Paint, NO, NULL, NULL)
 @end

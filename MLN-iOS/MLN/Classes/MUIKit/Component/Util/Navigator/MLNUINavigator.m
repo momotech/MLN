@@ -62,12 +62,12 @@
 }
 
 #pragma mark - Setup For Lua
-LUA_EXPORT_STATIC_BEGIN(MLNUINavigator)
-LUA_EXPORT_STATIC_METHOD(gotoPage, "luaui_gotoPage:params:animType:", MLNUINavigator)
-LUA_EXPORT_STATIC_METHOD(gotoLuaCodePage, "gotoLuaCodePage:animType:", MLNUINavigator)
-LUA_EXPORT_STATIC_METHOD(gotoAndCloseSelf, "luaui_gotoAndCloseSelf:params:animType:", MLNUINavigator)
-LUA_EXPORT_STATIC_METHOD(closeSelf, "luaui_closeSelf:", MLNUINavigator)
-LUA_EXPORT_STATIC_METHOD(closeToLuaPageFinished, "luaui_closeToLuaPage:", MLNUINavigator)
-LUA_EXPORT_STATIC_END(MLNUINavigator, Navigator, NO, NULL)
+LUAUI_EXPORT_STATIC_BEGIN(MLNUINavigator)
+LUAUI_EXPORT_STATIC_METHOD(gotoPage, "luaui_gotoPage:params:animType:", MLNUINavigator)
+LUAUI_EXPORT_STATIC_METHOD(gotoLuaCodePage, "gotoLuaCodePage:animType:", MLNUINavigator)
+LUAUI_EXPORT_STATIC_METHOD(gotoAndCloseSelf, "luaui_gotoAndCloseSelf:params:animType:", MLNUINavigator)
+LUAUI_EXPORT_STATIC_METHOD(closeSelf, "luaui_closeSelf:", MLNUINavigator)
+LUAUI_EXPORT_STATIC_METHOD(closeToLuaPageFinished, "luaui_closeToLuaPage:", MLNUINavigator)
+LUAUI_EXPORT_STATIC_END(MLNUINavigator, Navigator, NO, NULL)
 
 @end

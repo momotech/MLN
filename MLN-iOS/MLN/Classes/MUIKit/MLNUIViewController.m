@@ -15,7 +15,6 @@
 
 @interface MLNUIViewController ()
 @property (nonatomic, copy, readwrite) NSString *entryFileName;
-@property (nonatomic, copy, readonly) NSDictionary *extraInfo;
 @property (nonatomic, strong) NSBundle *bundle;
 @property (nonatomic, strong) NSMutableDictionary *globalModel;
 @end
@@ -68,6 +67,9 @@
 - (MLNUIKitInstance *)kitInstance {
     if (!_kitInstance) {
         _kitInstance = [[MLNUIKitInstanceFactory defaultFactory] createKitInstanceWithViewController:self];
+        if (self.regClasses) {
+            [_kitInstance registerClasses:self.regClasses error:NULL];
+        }
     }
     return _kitInstance;
 }

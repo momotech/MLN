@@ -95,7 +95,7 @@
 
 
 #pragma mark - Export To Lua
-LUA_EXPORT_BEGIN(MLNUIAnimationSet)
-LUA_EXPORT_METHOD(addAnimation, "luaui_addAnimation:", MLNUIAnimationSet)
-LUA_EXPORT_END(MLNUIAnimationSet, AnimationSet, YES, "MLNUICanvasAnimation", "initWithMLNUILuaCore:shareInterpolator:")
+LUAUI_EXPORT_BEGIN(MLNUIAnimationSet)
+LUAUI_EXPORT_METHOD(addAnimation, "luaui_addAnimation:", MLNUIAnimationSet)
+LUAUI_EXPORT_END(MLNUIAnimationSet, AnimationSet, YES, "MLNUICanvasAnimation", "initWithMLNUILuaCore:shareInterpolator:")
 @end

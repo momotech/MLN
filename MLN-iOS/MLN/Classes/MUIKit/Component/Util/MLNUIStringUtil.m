@@ -160,15 +160,15 @@
 
 #pragma mark - Setup For Lua
 
-LUA_EXPORT_STATIC_BEGIN(MLNUIStringUtil)
-LUA_EXPORT_STATIC_METHOD(length, "luaui_length:", MLNUIStringUtil)
-LUA_EXPORT_STATIC_METHOD(jsonToMap, "luaui_jsonToMap:", MLNUIStringUtil)
-LUA_EXPORT_STATIC_METHOD(mapToJSON, "luaui_mapToJson:", MLNUIStringUtil)
-LUA_EXPORT_STATIC_METHOD(jsonToArray, "luaui_jsonToArray:", MLNUIStringUtil)
-LUA_EXPORT_STATIC_METHOD(arrayToJSON, "luaui_arrayToJson:", MLNUIStringUtil)
-LUA_EXPORT_STATIC_METHOD(sizeWithContentFontSize, "luaui_sizeWithContent:fontSize:", MLNUIStringUtil)
-LUA_EXPORT_STATIC_METHOD(sizeWithContentFontNameSize, "luaui_sizeWithContent:fontName:size:", MLNUIStringUtil)
-LUA_EXPORT_STATIC_METHOD(md5, "luaui_md5:", MLNUIStringUtil)
-LUA_EXPORT_STATIC_END(MLNUIStringUtil, StringUtil, NO, NULL)
+LUAUI_EXPORT_STATIC_BEGIN(MLNUIStringUtil)
+LUAUI_EXPORT_STATIC_METHOD(length, "luaui_length:", MLNUIStringUtil)
+LUAUI_EXPORT_STATIC_METHOD(jsonToMap, "luaui_jsonToMap:", MLNUIStringUtil)
+LUAUI_EXPORT_STATIC_METHOD(mapToJSON, "luaui_mapToJson:", MLNUIStringUtil)
+LUAUI_EXPORT_STATIC_METHOD(jsonToArray, "luaui_jsonToArray:", MLNUIStringUtil)
+LUAUI_EXPORT_STATIC_METHOD(arrayToJSON, "luaui_arrayToJson:", MLNUIStringUtil)
+LUAUI_EXPORT_STATIC_METHOD(sizeWithContentFontSize, "luaui_sizeWithContent:fontSize:", MLNUIStringUtil)
+LUAUI_EXPORT_STATIC_METHOD(sizeWithContentFontNameSize, "luaui_sizeWithContent:fontName:size:", MLNUIStringUtil)
+LUAUI_EXPORT_STATIC_METHOD(md5, "luaui_md5:", MLNUIStringUtil)
+LUAUI_EXPORT_STATIC_END(MLNUIStringUtil, StringUtil, NO, NULL)
 
 @end

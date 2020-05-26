@@ -318,17 +318,17 @@ static int luaui_color_init(lua_State *L) {
 }
 
 #pragma mark - Export To Lua
-LUA_EXPORT_BEGIN(MLNUIColor)
-LUA_EXPORT_PROPERTY(hex, "luaui_setByHex:", "hex", MLNUIColor)
-LUA_EXPORT_PROPERTY(alpha, "luaui_setAlpha:", "alpha", MLNUIColor)
-LUA_EXPORT_PROPERTY(red, "luaui_setRed:", "luaui_red", MLNUIColor)
-LUA_EXPORT_PROPERTY(green, "luaui_setGreen:", "luaui_green", MLNUIColor)
-LUA_EXPORT_PROPERTY(blue, "luaui_setBlue:", "luaui_blue", MLNUIColor)
-LUA_EXPORT_METHOD(setHexA, "luaui_setByHex:alpha:", MLNUIColor)
-LUA_EXPORT_METHOD(setRGBA, "luaui_setByR:g:b:a:", MLNUIColor)
-LUA_EXPORT_METHOD(setColor, "luaui_setColor:", MLNUIColor)
-LUA_EXPORT_METHOD(setAColor, "luaui_setAHex:", MLNUIColor)
-LUA_EXPORT_METHOD(clear, "luaui_clear", MLNUIColor)
-LUA_EXPORT_END_WITH_CFUNC(MLNUIColor, Color, NO, NULL, luaui_color_init)
+LUAUI_EXPORT_BEGIN(MLNUIColor)
+LUAUI_EXPORT_PROPERTY(hex, "luaui_setByHex:", "hex", MLNUIColor)
+LUAUI_EXPORT_PROPERTY(alpha, "luaui_setAlpha:", "alpha", MLNUIColor)
+LUAUI_EXPORT_PROPERTY(red, "luaui_setRed:", "luaui_red", MLNUIColor)
+LUAUI_EXPORT_PROPERTY(green, "luaui_setGreen:", "luaui_green", MLNUIColor)
+LUAUI_EXPORT_PROPERTY(blue, "luaui_setBlue:", "luaui_blue", MLNUIColor)
+LUAUI_EXPORT_METHOD(setHexA, "luaui_setByHex:alpha:", MLNUIColor)
+LUAUI_EXPORT_METHOD(setRGBA, "luaui_setByR:g:b:a:", MLNUIColor)
+LUAUI_EXPORT_METHOD(setColor, "luaui_setColor:", MLNUIColor)
+LUAUI_EXPORT_METHOD(setAColor, "luaui_setAHex:", MLNUIColor)
+LUAUI_EXPORT_METHOD(clear, "luaui_clear", MLNUIColor)
+LUAUI_EXPORT_END_WITH_CFUNC(MLNUIColor, Color, NO, NULL, luaui_color_init)
 
 @end

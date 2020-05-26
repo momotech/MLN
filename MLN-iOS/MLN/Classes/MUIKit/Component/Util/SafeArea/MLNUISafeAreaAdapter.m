@@ -59,11 +59,11 @@
     self.updateInsetsCallback = callback;
 }
 
-LUA_EXPORT_BEGIN(MLNUISafeAreaAdapter)
-LUA_EXPORT_PROPERTY(insetsTop, "setInsetsTop:", "insetsTop", MLNUISafeAreaAdapter)
-LUA_EXPORT_PROPERTY(insetsBottom, "setInsetsBottom:", "insetsBottom", MLNUISafeAreaAdapter)
-LUA_EXPORT_PROPERTY(insetsLeft, "setInsetsLeft:", "insetsLeft", MLNUISafeAreaAdapter)
-LUA_EXPORT_PROPERTY(insetsRight, "setInsetsRight:", "insetsRight", MLNUISafeAreaAdapter)
-LUA_EXPORT_END(MLNUISafeAreaAdapter, SafeAreaAdapter, NO, NULL, NULL)
+LUAUI_EXPORT_BEGIN(MLNUISafeAreaAdapter)
+LUAUI_EXPORT_PROPERTY(insetsTop, "setInsetsTop:", "insetsTop", MLNUISafeAreaAdapter)
+LUAUI_EXPORT_PROPERTY(insetsBottom, "setInsetsBottom:", "insetsBottom", MLNUISafeAreaAdapter)
+LUAUI_EXPORT_PROPERTY(insetsLeft, "setInsetsLeft:", "insetsLeft", MLNUISafeAreaAdapter)
+LUAUI_EXPORT_PROPERTY(insetsRight, "setInsetsRight:", "insetsRight", MLNUISafeAreaAdapter)
+LUAUI_EXPORT_END(MLNUISafeAreaAdapter, SafeAreaAdapter, NO, NULL, NULL)
 
 @end

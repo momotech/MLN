@@ -11,9 +11,9 @@
 @implementation MLNUIScrollViewConst
 
 #pragma mark - Setup For Lua
-LUA_EXPORT_GLOBAL_VAR_BEGIN()
-LUA_EXPORT_GLOBAL_VAR(ScrollDirection, (@{@"VERTICAL":@(MLNUIScrollDirectionVertical),
+LUAUI_EXPORT_GLOBAL_VAR_BEGIN()
+LUAUI_EXPORT_GLOBAL_VAR(ScrollDirection, (@{@"VERTICAL":@(MLNUIScrollDirectionVertical),
                                           @"HORIZONTAL":@(MLNUIScrollDirectionHorizontal)}))
-LUA_EXPORT_GLOBAL_VAR_END()
+LUAUI_EXPORT_GLOBAL_VAR_END()
 
 @end

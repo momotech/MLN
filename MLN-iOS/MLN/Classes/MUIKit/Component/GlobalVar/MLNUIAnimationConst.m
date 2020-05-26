@@ -47,17 +47,17 @@ NSString * const kMUITransform = @"transform";
 }
 
 #pragma mark - Setup For Lua
-LUA_EXPORT_GLOBAL_VAR_BEGIN()
-LUA_EXPORT_GLOBAL_VAR(RepeatType, (@{@"NONE": @(MLNUIAnimationRepeatTypeNone),
+LUAUI_EXPORT_GLOBAL_VAR_BEGIN()
+LUAUI_EXPORT_GLOBAL_VAR(RepeatType, (@{@"NONE": @(MLNUIAnimationRepeatTypeNone),
                                      @"FROM_START": @(MLNUIAnimationRepeatTypeBeginToEnd),
                                      @"REVERSE": @(MLNUIAnimationRepeatTypeReverse)}))
-LUA_EXPORT_GLOBAL_VAR(InterpolatorType, (@{@"Linear": @(MLNUIAnimationInterpolatorTypeLinear),
+LUAUI_EXPORT_GLOBAL_VAR(InterpolatorType, (@{@"Linear": @(MLNUIAnimationInterpolatorTypeLinear),
                                            @"Accelerate": @(MLNUIAnimationInterpolatorTypeAccelerate),
                                            @"Decelerate": @(MLNUIAnimationInterpolatorTypeDecelerate),
                                            @"AccelerateDecelerate": @(MLNUIAnimationInterpolatorTypeAccelerateDecelerate),
                                            @"Overshoot": @(MLNUIAnimationInterpolatorTypeOvershoot),
                                            @"Bounce": @(MLNUIAnimationInterpolatorTypeBounce)}))
-LUA_EXPORT_GLOBAL_VAR(AnimType, (@{
+LUAUI_EXPORT_GLOBAL_VAR(AnimType, (@{
                                    @"Default": @(MLNUIAnimationAnimTypeDefault),
                                    @"None": @(MLNUIAnimationAnimTypeNone),
                                    @"LeftToRight": @(MLNUIAnimationAnimTypeLeftToRight),
@@ -67,12 +67,12 @@ LUA_EXPORT_GLOBAL_VAR(AnimType, (@{
                                    @"Scale": @(MLNUIAnimationAnimTypeScale),
                                    @"Fade": @(MLNUIAnimationAnimTypeFade),
                                    }))
-LUA_EXPORT_GLOBAL_VAR(AnimationValueType, (@{
+LUAUI_EXPORT_GLOBAL_VAR(AnimationValueType, (@{
                                    @"ABSOLUTE": @(MLNUIAnimationValueTypeAbsolute),
                                    @"RELATIVE_TO_SELF": @(MLNUIAnimationValueTypeRelativeToSelf),
                                    @"RELATIVE_TO_PARENT": @(MLNUIAnimationValueTypeRelativeToParent),
                                    }))
-LUA_EXPORT_GLOBAL_VAR_END()
+LUAUI_EXPORT_GLOBAL_VAR_END()
 
 
 @end

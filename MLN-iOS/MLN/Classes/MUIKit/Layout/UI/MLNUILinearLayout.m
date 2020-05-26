@@ -47,13 +47,13 @@
 }
 
 #pragma mark - Export For Lua
-LUA_EXPORT_VIEW_BEGIN(MLNUILinearLayout)
-LUA_EXPORT_VIEW_METHOD(setWrapContent, "setLuaui_wrapContent:",MLNUILinearLayout)
-LUA_EXPORT_VIEW_METHOD(requestLayout, "luaui_requestLayout", MLNUILinearLayout)
-LUA_EXPORT_VIEW_METHOD(setMaxWidth, "setLuaui_maxWidth:",MLNUILinearLayout)
-LUA_EXPORT_VIEW_METHOD(setMinWidth, "setLuaui_minWidth:",MLNUILinearLayout)
-LUA_EXPORT_VIEW_METHOD(setMaxHeight, "setLuaui_maxHieght:",MLNUILinearLayout)
-LUA_EXPORT_VIEW_METHOD(setMinHeight, "setLuaui_minHeight:",MLNUILinearLayout)
-LUA_EXPORT_VIEW_END(MLNUILinearLayout, LinearLayout, YES, "MLNUIView", "initWithMLNUILuaCore:LayoutDirectionNumber:")
+LUAUI_EXPORT_VIEW_BEGIN(MLNUILinearLayout)
+LUAUI_EXPORT_VIEW_METHOD(setWrapContent, "setLuaui_wrapContent:",MLNUILinearLayout)
+LUAUI_EXPORT_VIEW_METHOD(requestLayout, "luaui_requestLayout", MLNUILinearLayout)
+LUAUI_EXPORT_VIEW_METHOD(setMaxWidth, "setLuaui_maxWidth:",MLNUILinearLayout)
+LUAUI_EXPORT_VIEW_METHOD(setMinWidth, "setLuaui_minWidth:",MLNUILinearLayout)
+LUAUI_EXPORT_VIEW_METHOD(setMaxHeight, "setLuaui_maxHieght:",MLNUILinearLayout)
+LUAUI_EXPORT_VIEW_METHOD(setMinHeight, "setLuaui_minHeight:",MLNUILinearLayout)
+LUAUI_EXPORT_VIEW_END(MLNUILinearLayout, LinearLayout, YES, "MLNUIView", "initWithMLNUILuaCore:LayoutDirectionNumber:")
 
 @end

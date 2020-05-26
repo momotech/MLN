@@ -40,8 +40,8 @@
     return self.node.childGravity;
 }
 
-LUA_EXPORT_VIEW_BEGIN(MLNUIZStack)
-LUA_EXPORT_VIEW_PROPERTY(childGravity, "luaui_setChildrenGravity:", "luaui_childrenGravity", MLNUIZStack)
-LUA_EXPORT_VIEW_END(MLNUIZStack, ZStack, YES, "MLNUIStack", NULL)
+LUAUI_EXPORT_VIEW_BEGIN(MLNUIZStack)
+LUAUI_EXPORT_VIEW_PROPERTY(childGravity, "luaui_setChildrenGravity:", "luaui_childrenGravity", MLNUIZStack)
+LUAUI_EXPORT_VIEW_END(MLNUIZStack, ZStack, YES, "MLNUIStack", NULL)
 
 @end

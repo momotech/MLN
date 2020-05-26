@@ -80,9 +80,9 @@
 }
 
 #pragma mark - Setup For Lua
-LUA_EXPORT_STATIC_BEGIN(MLNUIApplication)
-LUA_EXPORT_STATIC_METHOD(setForeground2BackgroundCallback, "mlnui_addEnterBackgroundCallback:", MLNUIApplication)
-LUA_EXPORT_STATIC_METHOD(setBackground2ForegroundCallback, "mlnui_addEnterForegroundCallback:", MLNUIApplication)
-LUA_EXPORT_STATIC_END(MLNUIApplication, Application, NO, NULL)
+LUAUI_EXPORT_STATIC_BEGIN(MLNUIApplication)
+LUAUI_EXPORT_STATIC_METHOD(setForeground2BackgroundCallback, "mlnui_addEnterBackgroundCallback:", MLNUIApplication)
+LUAUI_EXPORT_STATIC_METHOD(setBackground2ForegroundCallback, "mlnui_addEnterForegroundCallback:", MLNUIApplication)
+LUAUI_EXPORT_STATIC_END(MLNUIApplication, Application, NO, NULL)
 
 @end

@@ -443,24 +443,24 @@
 }
 
 #pragma mark - Export For Lua
-LUA_EXPORT_VIEW_BEGIN(MLNUIImageView)
-LUA_EXPORT_VIEW_PROPERTY(contentMode, "luaui_setContentMode:","contentMode", MLNUIImageView)
-LUA_EXPORT_VIEW_PROPERTY(lazyLoad, "luaui_setLazyLoad:","luaui_lazyLoad", MLNUIImageView)
-LUA_EXPORT_VIEW_METHOD(startAnimationImages, "luaui_startAnimation:duration:repeat:", MLNUIImageView)
-LUA_EXPORT_VIEW_METHOD(stopAnimationImages, "stopAnimating", MLNUIImageView)
-LUA_EXPORT_VIEW_METHOD(isAnimating, "isAnimating", MLNUIImageView)
-LUA_EXPORT_VIEW_METHOD(image, "luaui_setImageWith:", MLNUIImageView)
-LUA_EXPORT_VIEW_METHOD(setImageUrl, "luaui_setImageWith:placeHolderImage:", MLNUIImageView)
-LUA_EXPORT_VIEW_METHOD(setCornerImage, "luaui_setCornerImageWith:placeHolderImage:cornerRadius:direction:", MLNUIImageView)
-LUA_EXPORT_VIEW_METHOD(setImageWithCallback, "luaui_setImageWith:placeHolderImage:callback:", MLNUIImageView)
-LUA_EXPORT_VIEW_METHOD(setNineImage, "luaui_setNineImageWith:synchronized:", MLNUIImageView)
-LUA_EXPORT_VIEW_METHOD(blurImage, "luaui_setBlurValue:processImage:", MLNUIImageView)
-LUA_EXPORT_VIEW_METHOD(addShadow, "luaui_addShadow:shadowOffset:shadowRadius:shadowOpacity:isOval:", MLNUIImageView)
-LUA_EXPORT_VIEW_END(MLNUIImageView, ImageView, YES, "MLNUIView", NULL)
+LUAUI_EXPORT_VIEW_BEGIN(MLNUIImageView)
+LUAUI_EXPORT_VIEW_PROPERTY(contentMode, "luaui_setContentMode:","contentMode", MLNUIImageView)
+LUAUI_EXPORT_VIEW_PROPERTY(lazyLoad, "luaui_setLazyLoad:","luaui_lazyLoad", MLNUIImageView)
+LUAUI_EXPORT_VIEW_METHOD(startAnimationImages, "luaui_startAnimation:duration:repeat:", MLNUIImageView)
+LUAUI_EXPORT_VIEW_METHOD(stopAnimationImages, "stopAnimating", MLNUIImageView)
+LUAUI_EXPORT_VIEW_METHOD(isAnimating, "isAnimating", MLNUIImageView)
+LUAUI_EXPORT_VIEW_METHOD(image, "luaui_setImageWith:", MLNUIImageView)
+LUAUI_EXPORT_VIEW_METHOD(setImageUrl, "luaui_setImageWith:placeHolderImage:", MLNUIImageView)
+LUAUI_EXPORT_VIEW_METHOD(setCornerImage, "luaui_setCornerImageWith:placeHolderImage:cornerRadius:direction:", MLNUIImageView)
+LUAUI_EXPORT_VIEW_METHOD(setImageWithCallback, "luaui_setImageWith:placeHolderImage:callback:", MLNUIImageView)
+LUAUI_EXPORT_VIEW_METHOD(setNineImage, "luaui_setNineImageWith:synchronized:", MLNUIImageView)
+LUAUI_EXPORT_VIEW_METHOD(blurImage, "luaui_setBlurValue:processImage:", MLNUIImageView)
+LUAUI_EXPORT_VIEW_METHOD(addShadow, "luaui_addShadow:shadowOffset:shadowRadius:shadowOpacity:isOval:", MLNUIImageView)
+LUAUI_EXPORT_VIEW_END(MLNUIImageView, ImageView, YES, "MLNUIView", NULL)
 
 @end
 
 @implementation MLNUIOverlayImageView
-LUA_EXPORT_VIEW_BEGIN(MLNUIOverlayImageView) // 兼容Android
-LUA_EXPORT_VIEW_END(MLNUIOverlayImageView, OverImageView, YES, "MLNUIImageView", NULL)
+LUAUI_EXPORT_VIEW_BEGIN(MLNUIOverlayImageView) // 兼容Android
+LUAUI_EXPORT_VIEW_END(MLNUIOverlayImageView, OverImageView, YES, "MLNUIImageView", NULL)
 @end

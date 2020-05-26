@@ -24,9 +24,12 @@
 #import "NSObject+MLNUIKVO.h"
 #import "MLNUIKVOObserverProtocol.h"
 #import "MLNUIKitInstanceHandlersManager.h"
+#import "MLNUIKitEnvironment.h"
+#import "MLNUILink.h"
 
 // View导出工具
 #import "MLNUIViewExporterMacro.h"
+#import "MLNUIEntityExporterMacro.h"
 
 // UI
 #import "MLNUIView.h"

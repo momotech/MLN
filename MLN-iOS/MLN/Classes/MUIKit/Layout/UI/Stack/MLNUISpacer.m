@@ -31,7 +31,7 @@
 
 #pragma mark - Export Lua
 
-LUA_EXPORT_VIEW_BEGIN(MLNUISpacer)
-LUA_EXPORT_VIEW_END(MLNUISpacer, Spacer, YES, "MLNUIView", "initWithMLNUILuaCore:frame:")
+LUAUI_EXPORT_VIEW_BEGIN(MLNUISpacer)
+LUAUI_EXPORT_VIEW_END(MLNUISpacer, Spacer, YES, "MLNUIView", "initWithMLNUILuaCore:frame:")
 
 @end

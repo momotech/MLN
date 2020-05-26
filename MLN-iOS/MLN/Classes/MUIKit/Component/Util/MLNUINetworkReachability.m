@@ -63,11 +63,11 @@
 }
 
 #pragma mark - Setup For Lua
-LUA_EXPORT_STATIC_BEGIN(MLNUINetworkReachability)
-LUA_EXPORT_STATIC_METHOD(open, "luaui_open", MLNUINetworkReachability)
-LUA_EXPORT_STATIC_METHOD(close, "luaui_cloze", MLNUINetworkReachability)
-LUA_EXPORT_STATIC_METHOD(networkState, "luaui_netWorkType", MLNUINetworkReachability)
-LUA_EXPORT_STATIC_METHOD(setOnNetworkStateChange, "luaui_setOnNetworkStateChange:", MLNUINetworkReachability)
-LUA_EXPORT_STATIC_END(MLNUINetworkReachability, NetworkReachability, NO, NULL)
+LUAUI_EXPORT_STATIC_BEGIN(MLNUINetworkReachability)
+LUAUI_EXPORT_STATIC_METHOD(open, "luaui_open", MLNUINetworkReachability)
+LUAUI_EXPORT_STATIC_METHOD(close, "luaui_cloze", MLNUINetworkReachability)
+LUAUI_EXPORT_STATIC_METHOD(networkState, "luaui_netWorkType", MLNUINetworkReachability)
+LUAUI_EXPORT_STATIC_METHOD(setOnNetworkStateChange, "luaui_setOnNetworkStateChange:", MLNUINetworkReachability)
+LUAUI_EXPORT_STATIC_END(MLNUINetworkReachability, NetworkReachability, NO, NULL)
 
 @end

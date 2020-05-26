@@ -208,12 +208,12 @@
 }
 
 #pragma mark - Export For Lua
-LUA_EXPORT_VIEW_BEGIN(MLNUIContainerWindow)
-LUA_EXPORT_VIEW_METHOD(show, "luaui_show", MLNUIContainerWindow)
-LUA_EXPORT_VIEW_METHOD(dismiss, "luaui_dismiss", MLNUIContainerWindow)
-LUA_EXPORT_VIEW_METHOD(contentDisAppear, "luaui_setDisappearBlock:", MLNUIContainerWindow)
-LUA_EXPORT_VIEW_METHOD(setContent, "luaui_setContent:", MLNUIContainerWindow)
-LUA_EXPORT_VIEW_PROPERTY(cancelable, "setCancelable:", "cancelable", MLNUIContainerWindow)
-LUA_EXPORT_VIEW_END(MLNUIContainerWindow, ContentWindow, YES, "MLNUIView", "initWithMLNUILuaCore:rectValue:")
+LUAUI_EXPORT_VIEW_BEGIN(MLNUIContainerWindow)
+LUAUI_EXPORT_VIEW_METHOD(show, "luaui_show", MLNUIContainerWindow)
+LUAUI_EXPORT_VIEW_METHOD(dismiss, "luaui_dismiss", MLNUIContainerWindow)
+LUAUI_EXPORT_VIEW_METHOD(contentDisAppear, "luaui_setDisappearBlock:", MLNUIContainerWindow)
+LUAUI_EXPORT_VIEW_METHOD(setContent, "luaui_setContent:", MLNUIContainerWindow)
+LUAUI_EXPORT_VIEW_PROPERTY(cancelable, "setCancelable:", "cancelable", MLNUIContainerWindow)
+LUAUI_EXPORT_VIEW_END(MLNUIContainerWindow, ContentWindow, YES, "MLNUIView", "initWithMLNUILuaCore:rectValue:")
 
 @end

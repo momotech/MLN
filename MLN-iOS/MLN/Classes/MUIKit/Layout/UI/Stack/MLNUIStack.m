@@ -41,9 +41,9 @@
     }];
 }
 
-LUA_EXPORT_VIEW_BEGIN(MLNUIStack)
-LUA_EXPORT_VIEW_METHOD(children, "luaui_children:", MLNUIStack)
-LUA_EXPORT_VIEW_END(MLNUIStack, Stack, YES, "MLNUIView", "initWithMLNUILuaCore:frame:")
+LUAUI_EXPORT_VIEW_BEGIN(MLNUIStack)
+LUAUI_EXPORT_VIEW_METHOD(children, "luaui_children:", MLNUIStack)
+LUAUI_EXPORT_VIEW_END(MLNUIStack, Stack, YES, "MLNUIView", "initWithMLNUILuaCore:frame:")
 
 @end
 
@@ -79,10 +79,10 @@ LUA_EXPORT_VIEW_END(MLNUIStack, Stack, YES, "MLNUIView", "initWithMLNUILuaCore:f
     return self.node.wrapType;
 }
 
-LUA_EXPORT_VIEW_BEGIN(MLNUIPlaneStack)
-LUA_EXPORT_VIEW_PROPERTY(mainAxisAlignment, "luaui_setMainAxisAlignment:", "luaui_mainAxisAlignment", MLNUIPlaneStack)
-LUA_EXPORT_VIEW_PROPERTY(crossAxisAlignment, "luaui_setCrossAxisAlignment:", "luaui_crossAxisAlignment", MLNUIPlaneStack)
-LUA_EXPORT_VIEW_PROPERTY(wrap, "luaui_setStackWrap:", "luaui_stackWrap", MLNUIPlaneStack)
-LUA_EXPORT_VIEW_END(MLNUIPlaneStack, PlaneStack, YES, "MLNUIStack", NULL)
+LUAUI_EXPORT_VIEW_BEGIN(MLNUIPlaneStack)
+LUAUI_EXPORT_VIEW_PROPERTY(mainAxisAlignment, "luaui_setMainAxisAlignment:", "luaui_mainAxisAlignment", MLNUIPlaneStack)
+LUAUI_EXPORT_VIEW_PROPERTY(crossAxisAlignment, "luaui_setCrossAxisAlignment:", "luaui_crossAxisAlignment", MLNUIPlaneStack)
+LUAUI_EXPORT_VIEW_PROPERTY(wrap, "luaui_setStackWrap:", "luaui_stackWrap", MLNUIPlaneStack)
+LUAUI_EXPORT_VIEW_END(MLNUIPlaneStack, PlaneStack, YES, "MLNUIStack", NULL)
 
 @end

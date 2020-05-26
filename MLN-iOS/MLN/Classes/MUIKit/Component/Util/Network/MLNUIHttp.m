@@ -116,13 +116,13 @@ static id<MLNUIHttpHandlerProtocol> defaultHttpHandler = nil;
 }
 
 #pragma mark - Setup For Lua
-LUA_EXPORT_BEGIN(MLNUIHttp)
-LUA_EXPORT_METHOD(setBaseUrl, "luaui_setBaseUrlString:", MLNUIHttp)
-LUA_EXPORT_METHOD(addCachePolicyFilterKey, "addCachePolicyFilterKey:", MLNUIHttp)
-LUA_EXPORT_METHOD(get, "get:params:completionHandler:", MLNUIHttp)
-LUA_EXPORT_METHOD(post, "post:params:completionHandler:", MLNUIHttp)
-LUA_EXPORT_METHOD(download, "download:params:progressHandler:completionHandler:", MLNUIHttp)
-LUA_EXPORT_METHOD(upload, "upload:params:filePaths:fileNames:completionHandler:", MLNUIHttp)
-LUA_EXPORT_END(MLNUIHttp, Http, NO, NULL, NULL)
+LUAUI_EXPORT_BEGIN(MLNUIHttp)
+LUAUI_EXPORT_METHOD(setBaseUrl, "luaui_setBaseUrlString:", MLNUIHttp)
+LUAUI_EXPORT_METHOD(addCachePolicyFilterKey, "addCachePolicyFilterKey:", MLNUIHttp)
+LUAUI_EXPORT_METHOD(get, "get:params:completionHandler:", MLNUIHttp)
+LUAUI_EXPORT_METHOD(post, "post:params:completionHandler:", MLNUIHttp)
+LUAUI_EXPORT_METHOD(download, "download:params:progressHandler:completionHandler:", MLNUIHttp)
+LUAUI_EXPORT_METHOD(upload, "upload:params:filePaths:fileNames:completionHandler:", MLNUIHttp)
+LUAUI_EXPORT_END(MLNUIHttp, Http, NO, NULL, NULL)
 
 @end

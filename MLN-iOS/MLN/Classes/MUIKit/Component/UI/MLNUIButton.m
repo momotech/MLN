@@ -91,9 +91,9 @@
 }
 
 #pragma mark - Export For Lua
-LUA_EXPORT_VIEW_BEGIN(MLNUIButton)
-LUA_EXPORT_VIEW_METHOD(setImage, "luaui_setImage:press:", MLNUIButton)
-LUA_EXPORT_VIEW_METHOD(padding, "luaui_setPaddingWithTop:right:bottom:left:", MLNUIButton)
-LUA_EXPORT_VIEW_END(MLNUIButton, ImageButton, YES, "MLNUIView", NULL)
+LUAUI_EXPORT_VIEW_BEGIN(MLNUIButton)
+LUAUI_EXPORT_VIEW_METHOD(setImage, "luaui_setImage:press:", MLNUIButton)
+LUAUI_EXPORT_VIEW_METHOD(padding, "luaui_setPaddingWithTop:right:bottom:left:", MLNUIButton)
+LUAUI_EXPORT_VIEW_END(MLNUIButton, ImageButton, YES, "MLNUIView", NULL)
 
 @end

@@ -147,15 +147,15 @@ typedef enum : NSUInteger {
 }
 
 #pragma mark - Export For Lua
-LUA_EXPORT_BEGIN(MLNUIAlert)
-LUA_EXPORT_PROPERTY(title, "setTitle:", "title", MLNUIAlert)
-LUA_EXPORT_PROPERTY(message, "setMessage:", "message", MLNUIAlert)
-LUA_EXPORT_METHOD(setCancel, "luaui_setCancel:callback:", MLNUIAlert)
-LUA_EXPORT_METHOD(setOk, "luaui_setSure:callback:", MLNUIAlert)
-LUA_EXPORT_METHOD(setButtonList, "luaui_setButtons:callback:", MLNUIAlert)
-LUA_EXPORT_METHOD(setSingleButton, "luaui_setSingle:callback:", MLNUIAlert)
-LUA_EXPORT_METHOD(show, "luaui_show", MLNUIAlert)
-LUA_EXPORT_METHOD(dismiss, "luaui_dismiss", MLNUIAlert)
-LUA_EXPORT_END(MLNUIAlert, Alert, NO, NULL, NULL)
+LUAUI_EXPORT_BEGIN(MLNUIAlert)
+LUAUI_EXPORT_PROPERTY(title, "setTitle:", "title", MLNUIAlert)
+LUAUI_EXPORT_PROPERTY(message, "setMessage:", "message", MLNUIAlert)
+LUAUI_EXPORT_METHOD(setCancel, "luaui_setCancel:callback:", MLNUIAlert)
+LUAUI_EXPORT_METHOD(setOk, "luaui_setSure:callback:", MLNUIAlert)
+LUAUI_EXPORT_METHOD(setButtonList, "luaui_setButtons:callback:", MLNUIAlert)
+LUAUI_EXPORT_METHOD(setSingleButton, "luaui_setSingle:callback:", MLNUIAlert)
+LUAUI_EXPORT_METHOD(show, "luaui_show", MLNUIAlert)
+LUAUI_EXPORT_METHOD(dismiss, "luaui_dismiss", MLNUIAlert)
+LUAUI_EXPORT_END(MLNUIAlert, Alert, NO, NULL, NULL)
 
 @end

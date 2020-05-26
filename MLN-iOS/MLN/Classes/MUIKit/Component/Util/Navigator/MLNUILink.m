@@ -146,9 +146,9 @@ static inline NSString *DISGUISE(UIViewController *controller) {
     [self callbackToLuaWhenClosePage:DISGUISE(currentController) params:params];
 }
 
-LUA_EXPORT_STATIC_BEGIN(MLNUILink)
-LUA_EXPORT_STATIC_METHOD(link, "luaui_link:params:animation:closeCallback:", MLNUILink)
-LUA_EXPORT_STATIC_METHOD(close, "luaui_closePage:params:", MLNUILink)
-LUA_EXPORT_STATIC_END(MLNUILink, Link, NO, NULL)
+LUAUI_EXPORT_STATIC_BEGIN(MLNUILink)
+LUAUI_EXPORT_STATIC_METHOD(link, "luaui_link:params:animation:closeCallback:", MLNUILink)
+LUAUI_EXPORT_STATIC_METHOD(close, "luaui_closePage:params:", MLNUILink)
+LUAUI_EXPORT_STATIC_END(MLNUILink, Link, NO, NULL)
 
 @end

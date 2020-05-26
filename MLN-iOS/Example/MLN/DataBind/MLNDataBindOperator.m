@@ -8,6 +8,7 @@
 
 #import "MLNDataBindOperator.h"
 #import "MLNDBTestModel.h"
+#import "MLNUIKit.h"
 
 static MLNDataBindHotReload *_hotReload;
 static MLNDataBindOperator *_currentOperator;
@@ -23,7 +24,7 @@ static MLNDataBindOperator *_currentOperator;
     if (self) {
         MLNDBTestModel *m = [MLNDBTestModel testModel];
         self.normalModel = m;
-        [_hotReload.mln_dataBinding bindData:m forKey:@"userData"];
+        [_hotReload.mlnui_dataBinding bindData:m forKey:@"userData"];
     }
     return self;
 }
@@ -78,4 +79,15 @@ LUA_EXPORT_METHOD(testNativeArrayDelete2,"testNativeArrayDelete2",MLNDataBindOpe
 
 LUA_EXPORT_END(MLNDataBindOperator,DBOP, NO, NULL, NULL)
 
+
+LUAUI_EXPORT_BEGIN(MLNDataBindOperator)
+LUAUI_EXPORT_METHOD(testNativeChange,"testNativeChange",MLNDataBindOperator)
+
+LUAUI_EXPORT_METHOD(testNativeArraySet,"testNativeArraySet",MLNDataBindOperator)
+LUAUI_EXPORT_METHOD(testNativeArrayAdd,"testNativeArrayAdd",MLNDataBindOperator)
+LUAUI_EXPORT_METHOD(testNativeArrayDelete,"testNativeArrayDelete",MLNDataBindOperator)
+LUAUI_EXPORT_METHOD(testNativeArrayAdd2,"testNativeArrayAdd2",MLNDataBindOperator)
+LUAUI_EXPORT_METHOD(testNativeArrayDelete2,"testNativeArrayDelete2",MLNDataBindOperator)
+
+LUAUI_EXPORT_END(MLNDataBindOperator,DBOP, NO, NULL, NULL)
 @end

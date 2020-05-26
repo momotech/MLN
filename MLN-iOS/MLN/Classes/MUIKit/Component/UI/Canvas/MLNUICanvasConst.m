@@ -11,13 +11,13 @@
 @implementation MLNUICanvasConst
 
 #pragma mark - Setup For Lua
-LUA_EXPORT_GLOBAL_VAR_BEGIN()
-LUA_EXPORT_GLOBAL_VAR(DrawStyle, (@{ @"Stroke": @(MLNUICanvasDrawStyleStroke),
+LUAUI_EXPORT_GLOBAL_VAR_BEGIN()
+LUAUI_EXPORT_GLOBAL_VAR(DrawStyle, (@{ @"Stroke": @(MLNUICanvasDrawStyleStroke),
                                      @"Fill": @(MLNUICanvasDrawStyleFill),
                                      @"FillStroke": @(MLNUICanvasDrawStyleFillStroke)}))
-LUA_EXPORT_GLOBAL_VAR(FillType, (@{@"WINDING": @(MLNUICanvasFillTypeWinding),
+LUAUI_EXPORT_GLOBAL_VAR(FillType, (@{@"WINDING": @(MLNUICanvasFillTypeWinding),
                                    @"EVEN_ODD": @(MLNUICanvasFillTypeEvenOdd)}))
-LUA_EXPORT_GLOBAL_VAR_END()
+LUAUI_EXPORT_GLOBAL_VAR_END()
 
 
 @end

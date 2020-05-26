@@ -11,15 +11,15 @@
 @implementation MLNUIEditTextViewConst
 
 #pragma mark - Setup For Lua
-LUA_EXPORT_GLOBAL_VAR_BEGIN()
-LUA_EXPORT_GLOBAL_VAR(EditTextViewInputMode, (@{@"Normal":@(MLNUIEditTextViewInputModeNormal),
+LUAUI_EXPORT_GLOBAL_VAR_BEGIN()
+LUAUI_EXPORT_GLOBAL_VAR(EditTextViewInputMode, (@{@"Normal":@(MLNUIEditTextViewInputModeNormal),
                                                 @"Number":@(MLNUIEditTextViewInputModeNumber)}))
-LUA_EXPORT_GLOBAL_VAR(ReturnType, (@{@"Default":@(MLNUIEditTextViewReturnTypeDefault),
+LUAUI_EXPORT_GLOBAL_VAR(ReturnType, (@{@"Default":@(MLNUIEditTextViewReturnTypeDefault),
                                      @"Go":@(MLNUIEditTextViewReturnTypeGo),
                                      @"Search":@(MLNUIEditTextViewReturnTypeSearch),
                                      @"Send":@(MLNUIEditTextViewReturnTypeSend),
                                      @"Next":@(MLNUIEditTextViewReturnTypeNext),
                                      @"Done":@(MLNUIEditTextViewReturnTypeDone)}))
-LUA_EXPORT_GLOBAL_VAR_END()
+LUAUI_EXPORT_GLOBAL_VAR_END()
 
 @end

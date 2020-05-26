@@ -77,9 +77,9 @@
 }
 
 #pragma mark - Extra To Lua
-LUA_EXPORT_BEGIN(MLNUIPoint)
-LUA_EXPORT_PROPERTY(x, "setX:", "x", MLNUIPoint)
-LUA_EXPORT_PROPERTY(y, "setY:", "y", MLNUIPoint)
-LUA_EXPORT_END(MLNUIPoint, Point, NO, NULL, "initWithMLNUILuaCore:x:y:")
+LUAUI_EXPORT_BEGIN(MLNUIPoint)
+LUAUI_EXPORT_PROPERTY(x, "setX:", "x", MLNUIPoint)
+LUAUI_EXPORT_PROPERTY(y, "setY:", "y", MLNUIPoint)
+LUAUI_EXPORT_END(MLNUIPoint, Point, NO, NULL, "initWithMLNUILuaCore:x:y:")
 
 @end

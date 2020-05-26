@@ -149,13 +149,13 @@
 }
 
 #pragma mark - Export For Lua
-LUA_EXPORT_BEGIN(MLNUIViewPagerAdapter)
-LUA_EXPORT_METHOD(getCount, "luaui_numberOfRowsInSection:", MLNUIViewPagerAdapter)
-LUA_EXPORT_METHOD(reuseId, "luaui_reuseIdWithCallback:", MLNUIViewPagerAdapter)
-LUA_EXPORT_METHOD(initCellByReuseId, "luaui_initCellBy:callback:", MLNUIViewPagerAdapter)
-LUA_EXPORT_METHOD(fillCellDataByReuseId, "luaui_reuseCellBy:callback:", MLNUIViewPagerAdapter)
-LUA_EXPORT_METHOD(initCell, "luaui_initCellCallback:", MLNUIViewPagerAdapter)
-LUA_EXPORT_METHOD(fillCellData, "luaui_reuseCellCallback:", MLNUIViewPagerAdapter)
-LUA_EXPORT_END(MLNUIViewPagerAdapter, ViewPagerAdapter, NO, NULL, NULL)
+LUAUI_EXPORT_BEGIN(MLNUIViewPagerAdapter)
+LUAUI_EXPORT_METHOD(getCount, "luaui_numberOfRowsInSection:", MLNUIViewPagerAdapter)
+LUAUI_EXPORT_METHOD(reuseId, "luaui_reuseIdWithCallback:", MLNUIViewPagerAdapter)
+LUAUI_EXPORT_METHOD(initCellByReuseId, "luaui_initCellBy:callback:", MLNUIViewPagerAdapter)
+LUAUI_EXPORT_METHOD(fillCellDataByReuseId, "luaui_reuseCellBy:callback:", MLNUIViewPagerAdapter)
+LUAUI_EXPORT_METHOD(initCell, "luaui_initCellCallback:", MLNUIViewPagerAdapter)
+LUAUI_EXPORT_METHOD(fillCellData, "luaui_reuseCellCallback:", MLNUIViewPagerAdapter)
+LUAUI_EXPORT_END(MLNUIViewPagerAdapter, ViewPagerAdapter, NO, NULL, NULL)
 
 @end

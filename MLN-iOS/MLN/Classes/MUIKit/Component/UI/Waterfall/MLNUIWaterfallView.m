@@ -463,9 +463,9 @@
 }
 
 #pragma mark - Export For Lua
-LUA_EXPORT_VIEW_BEGIN(MLNUIWaterfallView)
-LUA_EXPORT_VIEW_METHOD(addHeaderView, "luaui_addHeaderView:", MLNUIWaterfallView)
-LUA_EXPORT_VIEW_METHOD(removeHeaderView, "luaui_removeHeaderView", MLNUIWaterfallView)
-LUA_EXPORT_METHOD(useAllSpanForLoading, "luaui_useAllSpanForLoading:", MLNUIWaterfallView)
-LUA_EXPORT_VIEW_END(MLNUIWaterfallView, WaterfallView, YES, "MLNUICollectionView", "initWithMLNUILuaCore:refreshEnable:loadEnable:")
+LUAUI_EXPORT_VIEW_BEGIN(MLNUIWaterfallView)
+LUAUI_EXPORT_VIEW_METHOD(addHeaderView, "luaui_addHeaderView:", MLNUIWaterfallView)
+LUAUI_EXPORT_VIEW_METHOD(removeHeaderView, "luaui_removeHeaderView", MLNUIWaterfallView)
+LUAUI_EXPORT_METHOD(useAllSpanForLoading, "luaui_useAllSpanForLoading:", MLNUIWaterfallView)
+LUAUI_EXPORT_VIEW_END(MLNUIWaterfallView, WaterfallView, YES, "MLNUICollectionView", "initWithMLNUILuaCore:refreshEnable:loadEnable:")
 @end

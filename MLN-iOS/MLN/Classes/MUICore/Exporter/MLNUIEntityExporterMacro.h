@@ -18,7 +18,7 @@
  
  @param CLZ 原生类名
  */
-#define LUA_EXPORT_BEGIN(CLZ)  LUA_EXPORT_MAKE_METHOD_LIST(mlnui_Method_, CLZ)
+#define LUAUI_EXPORT_BEGIN(CLZ)  LUAUI_EXPORT_MAKE_METHOD_LIST(mlnui_Method_, CLZ)
 
 /**
  导出实例方法映射
@@ -27,8 +27,8 @@
  @param SEL_NAME 原生中的对象方法
  @param CLZ 类名称
  */
-#define LUA_EXPORT_METHOD(LUA_FUNC, SEL_NAME, CLZ) \
-LUA_EXPORT_METHOD_LIST_ADD(#LUA_FUNC, SEL_NAME, #CLZ, NO, NULL, NULL, mlnui_luaui_obj_method)
+#define LUAUI_EXPORT_METHOD(LUA_FUNC, SEL_NAME, CLZ) \
+LUAUI_EXPORT_METHOD_LIST_ADD(#LUA_FUNC, SEL_NAME, #CLZ, NO, NULL, NULL, mlnui_luaui_obj_method)
 
 /**
  导出C函数映射
@@ -37,8 +37,8 @@ LUA_EXPORT_METHOD_LIST_ADD(#LUA_FUNC, SEL_NAME, #CLZ, NO, NULL, NULL, mlnui_luau
  @param CFUNC C函数
  @param CLZ 类名称
  */
-#define LUA_EXPORT_METHOD_WITH_CFUNC(LUA_FUNC, CFUNC, CLZ) \
-LUA_EXPORT_METHOD_LIST_ADD(#LUA_FUNC, "CFUNC", #CLZ, NO, NULL, NULL, CFUNC)
+#define LUAUI_EXPORT_METHOD_WITH_CFUNC(LUA_FUNC, CFUNC, CLZ) \
+LUAUI_EXPORT_METHOD_LIST_ADD(#LUA_FUNC, "CFUNC", #CLZ, NO, NULL, NULL, CFUNC)
 
 /**
  导出属性映射
@@ -48,8 +48,8 @@ LUA_EXPORT_METHOD_LIST_ADD(#LUA_FUNC, "CFUNC", #CLZ, NO, NULL, NULL, CFUNC)
  @param GETTER_NAME 原生中的getter方法
  @param CLZ 类名称
  */
-#define LUA_EXPORT_PROPERTY(LUA_FUNC, SETTER_NAME, GETTER_NAME, CLZ) \
-LUA_EXPORT_METHOD_LIST_ADD(#LUA_FUNC, NULL, #CLZ, YES, SETTER_NAME, GETTER_NAME, mlnui_luaui_obj_method)
+#define LUAUI_EXPORT_PROPERTY(LUA_FUNC, SETTER_NAME, GETTER_NAME, CLZ) \
+LUAUI_EXPORT_METHOD_LIST_ADD(#LUA_FUNC, NULL, #CLZ, YES, SETTER_NAME, GETTER_NAME, mlnui_luaui_obj_method)
 
 /**
  导出属性与C函数的映射
@@ -58,25 +58,25 @@ LUA_EXPORT_METHOD_LIST_ADD(#LUA_FUNC, NULL, #CLZ, YES, SETTER_NAME, GETTER_NAME,
  @param CFUNC c函数
  @param CLZ 类名称 (例：NSObject)
  */
-#define LUA_EXPORT_PROPERTY_WITH_CFUNC(LUA_FUNC, CFUNC, CLZ) \
-LUA_EXPORT_METHOD_LIST_ADD(#LUA_FUNC, NULL, #CLZ, YES, "CFUNC_SETTER", "CFUNC_GETTER", CFUNC)
+#define LUAUI_EXPORT_PROPERTY_WITH_CFUNC(LUA_FUNC, CFUNC, CLZ) \
+LUAUI_EXPORT_METHOD_LIST_ADD(#LUA_FUNC, NULL, #CLZ, YES, "CFUNC_SETTER", "CFUNC_GETTER", CFUNC)
 
 
 /**
  处理Lua引用计数问题
  */
-#define LUA_EXPORT_LUA_RETAIN_COUNT(CLZ) \
-static const void *kLuaRetainCount ## CLZ = &kLuaRetainCount ## CLZ;\
+#define LUAUI_EXPORT_LUA_RETAIN_COUNT(CLZ) \
+static const void *kLuaUIRetainCount ## CLZ = &kLuaUIRetainCount ## CLZ;\
 - (int)mlnui_luaRetainCount\
 {\
-    return [objc_getAssociatedObject(self, kLuaRetainCount ## CLZ) intValue];\
+    return [objc_getAssociatedObject(self, kLuaUIRetainCount ## CLZ) intValue];\
 }\
 \
 - (void)mlnui_luaRetain:(MLNUIUserData *)userData\
 {\
     userData->object = CFBridgingRetain(self);\
     int count = [self mlnui_luaRetainCount];\
-    objc_setAssociatedObject(self, kLuaRetainCount ## CLZ, @(count + 1), OBJC_ASSOCIATION_ASSIGN);\
+    objc_setAssociatedObject(self, kLuaUIRetainCount ## CLZ, @(count + 1), OBJC_ASSOCIATION_ASSIGN);\
 }\
 \
 - (void)mlnui_luaRelease\
@@ -84,7 +84,7 @@ static const void *kLuaRetainCount ## CLZ = &kLuaRetainCount ## CLZ;\
     CFBridgingRelease((__bridge CFTypeRef _Nullable)self);\
     int count = [self mlnui_luaRetainCount];\
     NSAssert(count > 0, @"lua 过度释放UserData");\
-    objc_setAssociatedObject(self, kLuaRetainCount ## CLZ, @(count - 1), OBJC_ASSOCIATION_ASSIGN);\
+    objc_setAssociatedObject(self, kLuaUIRetainCount ## CLZ, @(count - 1), OBJC_ASSOCIATION_ASSIGN);\
 }\
 \
 - (BOOL)mlnui_isConvertible\
@@ -97,14 +97,14 @@ static const void *kLuaRetainCount ## CLZ = &kLuaRetainCount ## CLZ;\
 
  @param CLZ 被导出类
  */
-#define LUA_EXPORT_LUA_CORE(CLZ) \
-static const void *kLuaCore_ ## CLZ = &kLuaCore_ ## CLZ;\
+#define LUAUI_EXPORT_LUA_CORE(CLZ) \
+static const void *kLuaUICore_ ## CLZ = &kLuaUICore_ ## CLZ;\
 - (void)setMlnui_luaCore:(MLNUILuaCore *)mlnui_myLuaCore\
 {\
-    MLNUIWeakAssociatedObject *wp = objc_getAssociatedObject(self, kLuaCore_ ## CLZ);\
+    MLNUIWeakAssociatedObject *wp = objc_getAssociatedObject(self, kLuaUICore_ ## CLZ);\
     if (!wp) {\
         wp = [MLNUIWeakAssociatedObject weakAssociatedObject:mlnui_myLuaCore];\
-        objc_setAssociatedObject(self, kLuaCore_ ## CLZ, wp, OBJC_ASSOCIATION_RETAIN_NONATOMIC);\
+        objc_setAssociatedObject(self, kLuaUICore_ ## CLZ, wp, OBJC_ASSOCIATION_RETAIN_NONATOMIC);\
     } else if (wp.associatedObject != mlnui_myLuaCore) {\
         [wp updateAssociatedObject:mlnui_myLuaCore];\
     }\
@@ -112,7 +112,7 @@ static const void *kLuaCore_ ## CLZ = &kLuaCore_ ## CLZ;\
 \
 - (MLNUILuaCore *)mlnui_luaCore\
 {\
-    MLNUIWeakAssociatedObject *wp = objc_getAssociatedObject(self, kLuaCore_ ## CLZ);\
+    MLNUIWeakAssociatedObject *wp = objc_getAssociatedObject(self, kLuaUICore_ ## CLZ);\
     return wp.associatedObject;\
 }
 
@@ -127,15 +127,15 @@ static const void *kLuaCore_ ## CLZ = &kLuaCore_ ## CLZ;\
  @param SUPERCLZ 父类的原生类名字，可以没有原生的继承关系。
  @param CONSTRUCTOR_NAME 构造器方法，默认为”initWithMLNUILuaCore:“.
  */
-#define LUA_EXPORT_PACKAGE_END(CLZ, PACKAGE, LUA_CLZ, HAS_SUPER, SUPER_CLZ_NAME, CONSTRUCTOR_NAME) \
-LUA_EXPORT_METHOD_LIST_COMPLETED \
-LUA_EXPORT_MAKE_INFO(PACKAGE, #CLZ, #LUA_CLZ, "MLNUI_UserDataNativeObject", HAS_SUPER, SUPER_CLZ_NAME, YES,\
+#define LUAUI_EXPORT_PACKAGE_END(CLZ, PACKAGE, LUA_CLZ, HAS_SUPER, SUPER_CLZ_NAME, CONSTRUCTOR_NAME) \
+LUAUI_EXPORT_METHOD_LIST_COMPLETED \
+LUAUI_EXPORT_MAKE_INFO(PACKAGE, #CLZ, #LUA_CLZ, "MLNUI_UserDataNativeObject", HAS_SUPER, SUPER_CLZ_NAME, YES,\
 (struct mlnui_objc_method *)mlnui_Method_ ## CLZ, NULL,\
-LUA_EXPORT_MAKE_METHOD("constructor", CONSTRUCTOR_NAME, #CLZ, NO, NULL, NULL, mlnui_lua_constructor),\
+LUAUI_EXPORT_MAKE_METHOD("constructor", CONSTRUCTOR_NAME, #CLZ, NO, NULL, NULL, mlnui_lua_constructor),\
 CLZ)\
-LUA_EXPORT_TYPE(MLNUIExportTypeEntity)\
-LUA_EXPORT_LUA_CORE(CLZ)\
-LUA_EXPORT_LUA_RETAIN_COUNT(CLZ)
+LUAUI_EXPORT_TYPE(MLNUIExportTypeEntity)\
+LUAUI_EXPORT_LUA_CORE(CLZ)\
+LUAUI_EXPORT_LUA_RETAIN_COUNT(CLZ)
 
 
 /**
@@ -149,15 +149,15 @@ LUA_EXPORT_LUA_RETAIN_COUNT(CLZ)
  @param SUPERCLZ 父类的原生类名字，可以没有原生的继承关系。
  @param CONSTRUCTOR_CFUNC C函数构造器
  */
-#define LUA_EXPORT_PACKAGE_END_WITH_CFUNC(CLZ, PACKAGE, LUA_CLZ, HAS_SUPER, SUPER_CLZ_NAME, CONSTRUCTOR_CFUNC) \
-LUA_EXPORT_METHOD_LIST_COMPLETED \
-LUA_EXPORT_MAKE_INFO(PACKAGE, #CLZ, #LUA_CLZ, "MLNUI_UserDataNativeObject", HAS_SUPER, SUPER_CLZ_NAME, YES,\
+#define LUAUI_EXPORT_PACKAGE_END_WITH_CFUNC(CLZ, PACKAGE, LUA_CLZ, HAS_SUPER, SUPER_CLZ_NAME, CONSTRUCTOR_CFUNC) \
+LUAUI_EXPORT_METHOD_LIST_COMPLETED \
+LUAUI_EXPORT_MAKE_INFO(PACKAGE, #CLZ, #LUA_CLZ, "MLNUI_UserDataNativeObject", HAS_SUPER, SUPER_CLZ_NAME, YES,\
 (struct mlnui_objc_method *)mlnui_Method_ ## CLZ, NULL,\
-LUA_EXPORT_MAKE_METHOD("constructor", NULL, #CLZ, NO, NULL, NULL, CONSTRUCTOR_CFUNC),\
+LUAUI_EXPORT_MAKE_METHOD("constructor", NULL, #CLZ, NO, NULL, NULL, CONSTRUCTOR_CFUNC),\
 CLZ)\
-LUA_EXPORT_TYPE(MLNUIExportTypeEntity)\
-LUA_EXPORT_LUA_CORE(CLZ)\
-LUA_EXPORT_LUA_RETAIN_COUNT(CLZ)
+LUAUI_EXPORT_TYPE(MLNUIExportTypeEntity)\
+LUAUI_EXPORT_LUA_CORE(CLZ)\
+LUAUI_EXPORT_LUA_RETAIN_COUNT(CLZ)
 
 /**
  标记完成实体UserData类导出
@@ -169,8 +169,8 @@ LUA_EXPORT_LUA_RETAIN_COUNT(CLZ)
  @param SUPERCLZ 父类的原生类名字，可以没有原生的继承关系。
  @param CONSTRUCTOR_NAME 构造器方法，默认为”init“。
  */
-#define LUA_EXPORT_END(CLZ, LUA_CLZ, HAS_SUPER, SUPER_CLZ_NAME, CONSTRUCTOR_NAME) \
-LUA_EXPORT_PACKAGE_END(CLZ, "mln", LUA_CLZ, HAS_SUPER, SUPER_CLZ_NAME, CONSTRUCTOR_NAME)
+#define LUAUI_EXPORT_END(CLZ, LUA_CLZ, HAS_SUPER, SUPER_CLZ_NAME, CONSTRUCTOR_NAME) \
+LUAUI_EXPORT_PACKAGE_END(CLZ, "mlnui", LUA_CLZ, HAS_SUPER, SUPER_CLZ_NAME, CONSTRUCTOR_NAME)
 
 /**
  导出Object结束 (C函数)
@@ -182,7 +182,7 @@ LUA_EXPORT_PACKAGE_END(CLZ, "mln", LUA_CLZ, HAS_SUPER, SUPER_CLZ_NAME, CONSTRUCT
  @param SUPERCLZ 父类的原生类名字，可以没有原生的继承关系。
  @param CONSTRUCTOR_CFUNC C函数构造器
  */
-#define LUA_EXPORT_END_WITH_CFUNC(CLZ, LUA_CLZ, HAS_SUPER, SUPER_CLZ_NAME, CONSTRUCTOR_CFUNC) \
-LUA_EXPORT_PACKAGE_END_WITH_CFUNC(CLZ, "mln", LUA_CLZ, HAS_SUPER, SUPER_CLZ_NAME, CONSTRUCTOR_CFUNC)
+#define LUAUI_EXPORT_END_WITH_CFUNC(CLZ, LUA_CLZ, HAS_SUPER, SUPER_CLZ_NAME, CONSTRUCTOR_CFUNC) \
+LUAUI_EXPORT_PACKAGE_END_WITH_CFUNC(CLZ, "mlnui", LUA_CLZ, HAS_SUPER, SUPER_CLZ_NAME, CONSTRUCTOR_CFUNC)
 
 #endif /* MLNUIEntityExporterMacro_h */

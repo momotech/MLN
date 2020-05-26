@@ -245,12 +245,12 @@
 }
 
 #pragma mark - Export For Lua
-LUA_EXPORT_BEGIN(MLNUIWaterfallLayout)
-LUA_EXPORT_PROPERTY(spanCount, "setColumnCount:", "columnCount", MLNUIWaterfallLayout)
-LUA_EXPORT_PROPERTY(lineSpacing, "setLineSpacing:","lineSpacing", MLNUIWaterfallLayout)
-LUA_EXPORT_PROPERTY(itemSpacing, "setItemSpacing:","itemSpacing", MLNUIWaterfallLayout)
-LUA_EXPORT_METHOD(layoutInset, "luaui_setlayoutInset:left:bottom:right:", MLNUIWaterfallLayout)
-LUA_EXPORT_END(MLNUIWaterfallLayout, WaterfallLayout, NO, NULL, NULL)
+LUAUI_EXPORT_BEGIN(MLNUIWaterfallLayout)
+LUAUI_EXPORT_PROPERTY(spanCount, "setColumnCount:", "columnCount", MLNUIWaterfallLayout)
+LUAUI_EXPORT_PROPERTY(lineSpacing, "setLineSpacing:","lineSpacing", MLNUIWaterfallLayout)
+LUAUI_EXPORT_PROPERTY(itemSpacing, "setItemSpacing:","itemSpacing", MLNUIWaterfallLayout)
+LUAUI_EXPORT_METHOD(layoutInset, "luaui_setlayoutInset:left:bottom:right:", MLNUIWaterfallLayout)
+LUAUI_EXPORT_END(MLNUIWaterfallLayout, WaterfallLayout, NO, NULL, NULL)
 
 @end
 

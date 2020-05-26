@@ -198,14 +198,14 @@
     return [headerValidValue boolValue];
 }
 
-LUA_EXPORT_BEGIN(MLNUIWaterfallAdapter)
-LUA_EXPORT_METHOD(heightForHeader, "setHeightForHeaderCallback:", MLNUIWaterfallAdapter)
-LUA_EXPORT_METHOD(initHeader, "luaui_initHeaderCallback:", MLNUIWaterfallAdapter)
-LUA_EXPORT_METHOD(fillHeaderData, "luaui_reuseHeaderCallback:", MLNUIWaterfallAdapter)
-LUA_EXPORT_METHOD(headerValid, "luaui_headValidCallback:", MLNUIWaterfallAdapter)
-LUA_EXPORT_METHOD(heightForCell, "setHeightForCellCallback:", MLNUIWaterfallAdapter)
-LUA_EXPORT_METHOD(headerWillAppear, "luaui_headerWillAppearCallback:", MLNUIWaterfallAdapter)
-LUA_EXPORT_METHOD(headerDidDisappear, "luaui_headerDidDisappearCallback:", MLNUIWaterfallAdapter)
-LUA_EXPORT_END(MLNUIWaterfallAdapter, WaterfallAdapter, YES, "MLNUICollectionViewAdapter", NULL)
+LUAUI_EXPORT_BEGIN(MLNUIWaterfallAdapter)
+LUAUI_EXPORT_METHOD(heightForHeader, "setHeightForHeaderCallback:", MLNUIWaterfallAdapter)
+LUAUI_EXPORT_METHOD(initHeader, "luaui_initHeaderCallback:", MLNUIWaterfallAdapter)
+LUAUI_EXPORT_METHOD(fillHeaderData, "luaui_reuseHeaderCallback:", MLNUIWaterfallAdapter)
+LUAUI_EXPORT_METHOD(headerValid, "luaui_headValidCallback:", MLNUIWaterfallAdapter)
+LUAUI_EXPORT_METHOD(heightForCell, "setHeightForCellCallback:", MLNUIWaterfallAdapter)
+LUAUI_EXPORT_METHOD(headerWillAppear, "luaui_headerWillAppearCallback:", MLNUIWaterfallAdapter)
+LUAUI_EXPORT_METHOD(headerDidDisappear, "luaui_headerDidDisappearCallback:", MLNUIWaterfallAdapter)
+LUAUI_EXPORT_END(MLNUIWaterfallAdapter, WaterfallAdapter, YES, "MLNUICollectionViewAdapter", NULL)
 
 @end

@@ -9,19 +9,20 @@
 #import "MLNDataBindHotReload.h"
 #import "MLNStaticTest.h"
 #import "MLNDataBindModel.h"
-#import <NSArray+MLNKVO.h>
+#import <NSArray+MLNUIKVO.h>
 #import "MLNBindTestCaseModel.h"
 #import "MLNDataBindOperator.h"
+#import "MLNUIKit.h"
 
-@interface MLNDataBindHotReload () <MLNDataBindingProtocol>
-@property (nonatomic, strong) MLNDataBinding *dataBinding;
+@interface MLNDataBindHotReload () <MLNUIDataBindingProtocol>
 @property (nonatomic, strong) MLNBindTestCaseModel *tcModel;
 @end
 
 @implementation MLNDataBindHotReload
 
 - (instancetype)init {
-    self = [super initWithRegisterClasses:@[[MLNStaticTest class],[MLNDataBindOperator class]] extraInfo:nil];
+    self = [super initWithEntryFileName:@"" bundle:nil];
+    self.regClasses = @[[MLNStaticTest class], [MLNDataBindOperator class]];
     if (self) {
         NSLog(@"---- %s",__FUNCTION__);
         [MLNDataBindOperator setHotReload:self];
@@ -44,16 +45,16 @@
     NSLog(@"---- dealloc : %s ",__func__);
 }
 
-#pragma mark - MLNDataBindingProtocol
+#pragma mark - MLNUIDataBindingProtocol
 
-- (MLNDataBinding *)mln_dataBinding {
+- (MLNUIDataBinding *)mlnui_dataBinding {
     if (!_dataBinding) {
-        _dataBinding = [MLNDataBinding new];
+        _dataBinding = [MLNUIDataBinding new];
     }
     return _dataBinding;
 }
-- (void)bindData:(NSObject *)data forKey:(NSString *)key {
-    [self.mln_dataBinding bindData:data forKey:key];
-}
+//- (void)bindData:(NSObject *)data forKey:(NSString *)key {
+//    [self.mlnui_dataBinding bindData:data forKey:key];
+//}
 
 @end

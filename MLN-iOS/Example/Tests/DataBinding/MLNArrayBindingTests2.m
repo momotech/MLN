@@ -1,6 +1,6 @@
 
-#import <MLNDataBinding.h>
-#import <MLNKVOObserver.h>
+#import <MLNUIDataBinding.h>
+#import <MLNUIKVOObserver.h>
 #import "MLNTestModel.h"
 #import <NSMutableArray+MLNKVO.h>
 #import "NSObject+MLNKVO.h"
@@ -10,7 +10,7 @@ SpecBegin(ArrayBinding2)
 // fixed XCTest issue.
 //[NSMutableArray load];
 
-__block MLNDataBinding *dataBinding;
+__block MLNUIDataBinding *dataBinding;
 __block MLNTestModel *model;
 __block NSMutableArray *modelsArray;
 NSString *arrayKeyPath = @"userData.source";
@@ -24,7 +24,7 @@ beforeEach(^{
         m.text = [NSString stringWithFormat:@"hello %d", i+10];
         [array addObject:m];
     }
-    dataBinding = [[MLNDataBinding alloc] init];
+    dataBinding = [[MLNUIDataBinding alloc] init];
     model = [MLNTestModel new];
     model.source = array;
     model.source2d = @[array].mutableCopy;
@@ -33,11 +33,11 @@ beforeEach(^{
 });
 
 it(@"observer_chain", ^{
-   MLNKVOObserver *ob = [[MLNKVOObserver alloc] initWithViewController:nil callback:^(NSString * _Nonnull keyPath, id  _Nonnull object, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
+   MLNUIKVOObserver *ob = [[MLNUIKVOObserver alloc] initWithViewController:nil callback:^(NSString * _Nonnull keyPath, id  _Nonnull object, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
         NSLog(@"%@",change);
    } keyPath:arrayKeyPath2];
    
-   [dataBinding addMLNObserver:ob forKeyPath:arrayKeyPath2];
+   [dataBinding addMLNUIObserver:ob forKeyPath:arrayKeyPath2];
    [model.source2d[0] removeLastObject];
    [model.source2d removeLastObject];
    model.source2d = nil;
@@ -50,27 +50,27 @@ it(@"observer_once_remove", ^{
    
    __block BOOL r1 = NO;
    __block BOOL r2 = NO;
-   MLNKVOObserver *ob1 = [[MLNKVOObserver alloc] initWithViewController:nil callback:^(NSString * _Nonnull keyPath, id  _Nonnull object, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
+   MLNUIKVOObserver *ob1 = [[MLNUIKVOObserver alloc] initWithViewController:nil callback:^(NSString * _Nonnull keyPath, id  _Nonnull object, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
     expect(r1).beFalsy();
     r1 = YES;
     expect(change[NSKeyValueChangeKindKey]).equal(@(NSKeyValueChangeInsertion));
    } keyPath:bindKey];
    
-   MLNKVOObserver *ob2 = [[MLNKVOObserver alloc] initWithViewController:nil callback:^(NSString * _Nonnull keyPath, id  _Nonnull object, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
+   MLNUIKVOObserver *ob2 = [[MLNUIKVOObserver alloc] initWithViewController:nil callback:^(NSString * _Nonnull keyPath, id  _Nonnull object, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
     expect(r2).beFalsy();
     r2 = YES;
     expect(change[NSKeyValueChangeKindKey]).equal(@(NSKeyValueChangeInsertion));
    } keyPath:bindKey];
    
-   id ob1id = [dataBinding addMLNObserver:ob1 forKeyPath:bindKey];
-   id ob2id = [dataBinding addMLNObserver:ob2 forKeyPath:bindKey];
+   id ob1id = [dataBinding addMLNUIObserver:ob1 forKeyPath:bindKey];
+   id ob2id = [dataBinding addMLNUIObserver:ob2 forKeyPath:bindKey];
    
    [arr addObject:@"abc"];
    expect(r1).beTruthy();
    expect(r2).beTruthy();
    r1 = NO;
    r2 = NO;
-   [dataBinding removeMLNObserverByID:ob1id];
+   [dataBinding removeMLNUIObserverByID:ob1id];
    [arr addObject:@"abc"];
    expect(r1).beFalsy();
    expect(r2).beTruthy();
@@ -85,7 +85,7 @@ it(@"setArray", ^{
        [array addObject:m];
    }
    __block BOOL flag = NO;
-   MLNKVOObserver *obs = [[MLNKVOObserver alloc] initWithViewController:nil callback:^(NSString * _Nonnull keyPath, id  _Nonnull object, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
+   MLNUIKVOObserver *obs = [[MLNUIKVOObserver alloc] initWithViewController:nil callback:^(NSString * _Nonnull keyPath, id  _Nonnull object, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
         NSString *key = [[arrayKeyPath componentsSeparatedByString:@"."] firstObject];
         NSString *path = [arrayKeyPath stringByReplacingOccurrencesOfString:[key stringByAppendingString:@"."] withString:@""];
         expect(keyPath).equal(arrayKeyPath);
@@ -98,7 +98,7 @@ it(@"setArray", ^{
         flag = YES;
    } keyPath:arrayKeyPath];
    
-   [dataBinding addMLNObserver:obs forKeyPath:arrayKeyPath];
+   [dataBinding addMLNUIObserver:obs forKeyPath:arrayKeyPath];
    model.source = array;
    expect(flag).beTruthy();
 });

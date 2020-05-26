@@ -58,8 +58,8 @@
 }
 
 #pragma mark - Export To Lua
-LUA_EXPORT_BEGIN(MLNUIAlphaAnimation)
-LUA_EXPORT_PROPERTY(setFromAlpha, "setFromAlpha:", "fromAlpha", MLNUIAlphaAnimation)
-LUA_EXPORT_PROPERTY(setToAlpha, "setToAlpha:", "toAlpha", MLNUIAlphaAnimation)
-LUA_EXPORT_END(MLNUIAlphaAnimation, AlphaAnimation, YES, "MLNUICanvasAnimation", "initWithMLNUILuaCore:fromAlpha:toAlpha:")
+LUAUI_EXPORT_BEGIN(MLNUIAlphaAnimation)
+LUAUI_EXPORT_PROPERTY(setFromAlpha, "setFromAlpha:", "fromAlpha", MLNUIAlphaAnimation)
+LUAUI_EXPORT_PROPERTY(setToAlpha, "setToAlpha:", "toAlpha", MLNUIAlphaAnimation)
+LUAUI_EXPORT_END(MLNUIAlphaAnimation, AlphaAnimation, YES, "MLNUICanvasAnimation", "initWithMLNUILuaCore:fromAlpha:toAlpha:")
 @end

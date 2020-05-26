@@ -139,14 +139,14 @@ typedef enum : NSUInteger {
 }
 
 #pragma mark - Export For Lua
-LUA_EXPORT_BEGIN(MLNUITimer)
-LUA_EXPORT_PROPERTY(interval, "setInterval:", "interval", MLNUITimer)
-LUA_EXPORT_PROPERTY(repeatCount, "setRepeatCount:", "repeatCount", MLNUITimer)
-LUA_EXPORT_METHOD(start, "startWithCallback:", MLNUITimer)
-LUA_EXPORT_METHOD(pause, "pause", MLNUITimer)
-LUA_EXPORT_METHOD(resume, "resume", MLNUITimer)
-LUA_EXPORT_METHOD(resumeDelay, "resumeDelay", MLNUITimer)
-LUA_EXPORT_METHOD(stop, "stop", MLNUITimer)
-LUA_EXPORT_END(MLNUITimer, Timer, NO, NULL, NULL)
+LUAUI_EXPORT_BEGIN(MLNUITimer)
+LUAUI_EXPORT_PROPERTY(interval, "setInterval:", "interval", MLNUITimer)
+LUAUI_EXPORT_PROPERTY(repeatCount, "setRepeatCount:", "repeatCount", MLNUITimer)
+LUAUI_EXPORT_METHOD(start, "startWithCallback:", MLNUITimer)
+LUAUI_EXPORT_METHOD(pause, "pause", MLNUITimer)
+LUAUI_EXPORT_METHOD(resume, "resume", MLNUITimer)
+LUAUI_EXPORT_METHOD(resumeDelay, "resumeDelay", MLNUITimer)
+LUAUI_EXPORT_METHOD(stop, "stop", MLNUITimer)
+LUAUI_EXPORT_END(MLNUITimer, Timer, NO, NULL, NULL)
 
 @end

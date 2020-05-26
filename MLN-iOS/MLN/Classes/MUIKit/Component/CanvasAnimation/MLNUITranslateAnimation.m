@@ -198,14 +198,14 @@ static int luaui_animation_init(lua_State *L) {
 }
 
 #pragma mark - Export To Lua
-LUA_EXPORT_BEGIN(MLNUITranslateAnimation)
-LUA_EXPORT_PROPERTY(setFromXType, "setFromXType:", "fromXType", MLNUITranslateAnimation)
-LUA_EXPORT_PROPERTY(setFromX, "setFromX:", "fromX", MLNUITranslateAnimation)
-LUA_EXPORT_PROPERTY(setToXType, "setToXType:", "toXType", MLNUITranslateAnimation)
-LUA_EXPORT_PROPERTY(setToX, "setToX:", "toX", MLNUITranslateAnimation)
-LUA_EXPORT_PROPERTY(setFromYType, "setFromYType:", "fromYType", MLNUITranslateAnimation)
-LUA_EXPORT_PROPERTY(setFromY, "setFromY:", "fromY", MLNUITranslateAnimation)
-LUA_EXPORT_PROPERTY(setToYType, "setToYType:", "toYType", MLNUITranslateAnimation)
-LUA_EXPORT_PROPERTY(setToY, "setToY:", "toY", MLNUITranslateAnimation)
-LUA_EXPORT_END_WITH_CFUNC(MLNUITranslateAnimation, TranslateAnimation, YES, "MLNUICanvasAnimation", luaui_animation_init)
+LUAUI_EXPORT_BEGIN(MLNUITranslateAnimation)
+LUAUI_EXPORT_PROPERTY(setFromXType, "setFromXType:", "fromXType", MLNUITranslateAnimation)
+LUAUI_EXPORT_PROPERTY(setFromX, "setFromX:", "fromX", MLNUITranslateAnimation)
+LUAUI_EXPORT_PROPERTY(setToXType, "setToXType:", "toXType", MLNUITranslateAnimation)
+LUAUI_EXPORT_PROPERTY(setToX, "setToX:", "toX", MLNUITranslateAnimation)
+LUAUI_EXPORT_PROPERTY(setFromYType, "setFromYType:", "fromYType", MLNUITranslateAnimation)
+LUAUI_EXPORT_PROPERTY(setFromY, "setFromY:", "fromY", MLNUITranslateAnimation)
+LUAUI_EXPORT_PROPERTY(setToYType, "setToYType:", "toYType", MLNUITranslateAnimation)
+LUAUI_EXPORT_PROPERTY(setToY, "setToY:", "toY", MLNUITranslateAnimation)
+LUAUI_EXPORT_END_WITH_CFUNC(MLNUITranslateAnimation, TranslateAnimation, YES, "MLNUICanvasAnimation", luaui_animation_init)
 @end

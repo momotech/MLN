@@ -77,9 +77,9 @@
 }
 
 #pragma mark - Extra To Lua
-LUA_EXPORT_BEGIN(MLNUISize)
-LUA_EXPORT_PROPERTY(width, "setWidth:", "width", MLNUISize)
-LUA_EXPORT_PROPERTY(height, "setHeight:", "height", MLNUISize)
-LUA_EXPORT_END(MLNUISize, Size, NO, NULL, "initWithMLNUILuaCore:width:height:")
+LUAUI_EXPORT_BEGIN(MLNUISize)
+LUAUI_EXPORT_PROPERTY(width, "setWidth:", "width", MLNUISize)
+LUAUI_EXPORT_PROPERTY(height, "setHeight:", "height", MLNUISize)
+LUAUI_EXPORT_END(MLNUISize, Size, NO, NULL, "initWithMLNUILuaCore:width:height:")
 
 @end

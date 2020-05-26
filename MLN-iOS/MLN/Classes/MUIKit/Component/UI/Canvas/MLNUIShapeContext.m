@@ -154,13 +154,13 @@
 }
 
 #pragma mark - Export To Lua
-LUA_EXPORT_BEGIN(MLNUIShapeContext)
-LUA_EXPORT_METHOD(clear, "luaui_clear", MLNUIShapeContext)
-LUA_EXPORT_METHOD(drawColor, "luaui_setFillColor:", MLNUIShapeContext)
-LUA_EXPORT_METHOD(drawLine, "luaui_drawLine:startY:endX:endY:paint:", MLNUIShapeContext)
-LUA_EXPORT_METHOD(drawPoint, "luaui_drawPoint:y:paint:", MLNUIShapeContext)
-LUA_EXPORT_METHOD(drawPath, "luaui_drawPath:paint:", MLNUIShapeContext)
-LUA_EXPORT_METHOD(drawGradientColor, "luaui_drawGradientWithStart:startY:endX:endY:colorArray:path:", MLNUIShapeContext)
-LUA_EXPORT_END(MLNUIShapeContext, DrawContext, NO, NULL, NULL)
+LUAUI_EXPORT_BEGIN(MLNUIShapeContext)
+LUAUI_EXPORT_METHOD(clear, "luaui_clear", MLNUIShapeContext)
+LUAUI_EXPORT_METHOD(drawColor, "luaui_setFillColor:", MLNUIShapeContext)
+LUAUI_EXPORT_METHOD(drawLine, "luaui_drawLine:startY:endX:endY:paint:", MLNUIShapeContext)
+LUAUI_EXPORT_METHOD(drawPoint, "luaui_drawPoint:y:paint:", MLNUIShapeContext)
+LUAUI_EXPORT_METHOD(drawPath, "luaui_drawPath:paint:", MLNUIShapeContext)
+LUAUI_EXPORT_METHOD(drawGradientColor, "luaui_drawGradientWithStart:startY:endX:endY:colorArray:path:", MLNUIShapeContext)
+LUAUI_EXPORT_END(MLNUIShapeContext, DrawContext, NO, NULL, NULL)
 
 @end

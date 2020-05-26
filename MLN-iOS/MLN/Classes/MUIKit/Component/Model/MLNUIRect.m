@@ -123,13 +123,13 @@
     return NO;
 }
 
-LUA_EXPORT_BEGIN(MLNUIRect)
-LUA_EXPORT_PROPERTY(point, "luaui_setPoint:", "point", MLNUIRect)
-LUA_EXPORT_PROPERTY(size, "luaui_setSize:", "size", MLNUIRect)
-LUA_EXPORT_PROPERTY(x, "luaui_setX:", "luaui_x", MLNUIRect)
-LUA_EXPORT_PROPERTY(y, "luaui_setY:", "luaui_y", MLNUIRect)
-LUA_EXPORT_PROPERTY(width, "luaui_setWidth:", "luaui_width", MLNUIRect)
-LUA_EXPORT_PROPERTY(height, "luaui_setHeight:", "luaui_height", MLNUIRect)
-LUA_EXPORT_END(MLNUIRect, Rect, NO, NULL, "initWithMLNUILuaCore:xNum:yNum:widthNum:heightNum:")
+LUAUI_EXPORT_BEGIN(MLNUIRect)
+LUAUI_EXPORT_PROPERTY(point, "luaui_setPoint:", "point", MLNUIRect)
+LUAUI_EXPORT_PROPERTY(size, "luaui_setSize:", "size", MLNUIRect)
+LUAUI_EXPORT_PROPERTY(x, "luaui_setX:", "luaui_x", MLNUIRect)
+LUAUI_EXPORT_PROPERTY(y, "luaui_setY:", "luaui_y", MLNUIRect)
+LUAUI_EXPORT_PROPERTY(width, "luaui_setWidth:", "luaui_width", MLNUIRect)
+LUAUI_EXPORT_PROPERTY(height, "luaui_setHeight:", "luaui_height", MLNUIRect)
+LUAUI_EXPORT_END(MLNUIRect, Rect, NO, NULL, "initWithMLNUILuaCore:xNum:yNum:widthNum:heightNum:")
 
 @end

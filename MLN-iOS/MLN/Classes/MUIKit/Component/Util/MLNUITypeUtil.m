@@ -35,9 +35,9 @@ static int mlnui_isArray(lua_State *L)
 }
 
 #pragma mark - Export
-LUA_EXPORT_STATIC_BEGIN(MLNUITypeUtil)
-LUA_EXPORT_STATIC_C_FUNC(isMap, mlnui_isMap, MLNUITypeUtil)
-LUA_EXPORT_STATIC_C_FUNC(isArray, mlnui_isArray, MLNUITypeUtil)
-LUA_EXPORT_STATIC_END(MLNUITypeUtil, TypeUtils, NO, NULL)
+LUAUI_EXPORT_STATIC_BEGIN(MLNUITypeUtil)
+LUAUI_EXPORT_STATIC_C_FUNC(isMap, mlnui_isMap, MLNUITypeUtil)
+LUAUI_EXPORT_STATIC_C_FUNC(isArray, mlnui_isArray, MLNUITypeUtil)
+LUAUI_EXPORT_STATIC_END(MLNUITypeUtil, TypeUtils, NO, NULL)
 
 @end

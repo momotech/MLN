@@ -169,10 +169,10 @@ static int luaui_animation_init(lua_State *L) {
 }
 
 #pragma mark - Export To Lua
-LUA_EXPORT_BEGIN(MLNUIScaleAnimation)
-LUA_EXPORT_PROPERTY(setFromX, "setFromX:", "fromX", MLNUIScaleAnimation)
-LUA_EXPORT_PROPERTY(setToX, "setToX:", "toX", MLNUIScaleAnimation)
-LUA_EXPORT_PROPERTY(setFromY, "setFromY:", "fromX", MLNUIScaleAnimation)
-LUA_EXPORT_PROPERTY(setToY, "setToY:", "toY", MLNUIScaleAnimation)
-LUA_EXPORT_END_WITH_CFUNC(MLNUIScaleAnimation, ScaleAnimation, YES, "MLNUICanvasAnimation", luaui_animation_init)
+LUAUI_EXPORT_BEGIN(MLNUIScaleAnimation)
+LUAUI_EXPORT_PROPERTY(setFromX, "setFromX:", "fromX", MLNUIScaleAnimation)
+LUAUI_EXPORT_PROPERTY(setToX, "setToX:", "toX", MLNUIScaleAnimation)
+LUAUI_EXPORT_PROPERTY(setFromY, "setFromY:", "fromX", MLNUIScaleAnimation)
+LUAUI_EXPORT_PROPERTY(setToY, "setToY:", "toY", MLNUIScaleAnimation)
+LUAUI_EXPORT_END_WITH_CFUNC(MLNUIScaleAnimation, ScaleAnimation, YES, "MLNUICanvasAnimation", luaui_animation_init)
 @end

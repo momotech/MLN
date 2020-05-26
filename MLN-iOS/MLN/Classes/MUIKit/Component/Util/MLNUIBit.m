@@ -75,13 +75,13 @@ static int luaui_bxor(lua_State *L) {
 }
 
 #pragma mark - Export To Lua
-LUA_EXPORT_STATIC_BEGIN(MLNUIBit)
-LUA_EXPORT_STATIC_C_FUNC(bor, luaui_bor, MLNUIBit)
-LUA_EXPORT_STATIC_C_FUNC(band, luaui_band, MLNUIBit)
-LUA_EXPORT_STATIC_C_FUNC(bxor, luaui_bxor, MLNUIBit)
-LUA_EXPORT_STATIC_METHOD(neg, "luaui_neg:", MLNUIBit)
-LUA_EXPORT_STATIC_METHOD(shl, "luaui_shl:bit:", MLNUIBit)
-LUA_EXPORT_STATIC_METHOD(shr, "luaui_shr:bit:", MLNUIBit)
-LUA_EXPORT_STATIC_END(MLNUIBit, MBit, NO, NULL)
+LUAUI_EXPORT_STATIC_BEGIN(MLNUIBit)
+LUAUI_EXPORT_STATIC_C_FUNC(bor, luaui_bor, MLNUIBit)
+LUAUI_EXPORT_STATIC_C_FUNC(band, luaui_band, MLNUIBit)
+LUAUI_EXPORT_STATIC_C_FUNC(bxor, luaui_bxor, MLNUIBit)
+LUAUI_EXPORT_STATIC_METHOD(neg, "luaui_neg:", MLNUIBit)
+LUAUI_EXPORT_STATIC_METHOD(shl, "luaui_shl:bit:", MLNUIBit)
+LUAUI_EXPORT_STATIC_METHOD(shr, "luaui_shr:bit:", MLNUIBit)
+LUAUI_EXPORT_STATIC_END(MLNUIBit, MBit, NO, NULL)
 
 @end

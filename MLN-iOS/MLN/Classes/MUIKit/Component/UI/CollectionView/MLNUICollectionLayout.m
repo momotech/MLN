@@ -12,7 +12,7 @@
 
 
 #pragma mark - Export For Lua
-LUA_EXPORT_BEGIN(MLNUICollectionLayout)
-LUA_EXPORT_END(MLNUICollectionLayout, CollectionLayout, YES, "MLNUICollectionViewGridLayout", NULL)
+LUAUI_EXPORT_BEGIN(MLNUICollectionLayout)
+LUAUI_EXPORT_END(MLNUICollectionLayout, CollectionLayout, YES, "MLNUICollectionViewGridLayout", NULL)
 
 @end

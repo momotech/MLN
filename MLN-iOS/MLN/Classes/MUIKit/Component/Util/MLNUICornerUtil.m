@@ -22,8 +22,8 @@
 }
 
 #pragma mark - Setup For Lua
-LUA_EXPORT_STATIC_BEGIN(MLNUICornerUtil)
-LUA_EXPORT_STATIC_METHOD(openDefaultClip, "luaui_openDefaultClip:", MLNUICornerUtil)
-LUA_EXPORT_STATIC_END(MLNUICornerUtil, CornerManager, NO, NULL)
+LUAUI_EXPORT_STATIC_BEGIN(MLNUICornerUtil)
+LUAUI_EXPORT_STATIC_METHOD(openDefaultClip, "luaui_openDefaultClip:", MLNUICornerUtil)
+LUAUI_EXPORT_STATIC_END(MLNUICornerUtil, CornerManager, NO, NULL)
 
 @end

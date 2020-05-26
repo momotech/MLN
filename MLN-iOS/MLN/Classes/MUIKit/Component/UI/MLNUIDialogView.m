@@ -229,14 +229,14 @@
 }
 
 #pragma mark - Export For Lua
-LUA_EXPORT_VIEW_BEGIN(MLNUIDialogView)
-LUA_EXPORT_VIEW_PROPERTY(cancelable, "luaui_setCancelable:", "luaui_cancelable", MLNUIDialogView)
-LUA_EXPORT_VIEW_METHOD(show, "luaui_show", MLNUIDialogView)
-LUA_EXPORT_VIEW_METHOD(dismiss, "luaui_dismiss", MLNUIDialogView)
-LUA_EXPORT_VIEW_METHOD(dialogDisAppear, "luaui_setDisappearBlock:", MLNUIDialogView)
-LUA_EXPORT_VIEW_METHOD(setContent, "luaui_setContent:", MLNUIDialogView)
-LUA_EXPORT_VIEW_METHOD(setDimAmount, "luaui_setDimAmount:", MLNUIDialogView)
-LUA_EXPORT_VIEW_METHOD(setContentGravity, "luaui_setContentGravity:", MLNUIDialogView)
-LUA_EXPORT_VIEW_END(MLNUIDialogView, Dialog, YES, "MLNUIView", "initWithMLNUILuaCore:frame:")
+LUAUI_EXPORT_VIEW_BEGIN(MLNUIDialogView)
+LUAUI_EXPORT_VIEW_PROPERTY(cancelable, "luaui_setCancelable:", "luaui_cancelable", MLNUIDialogView)
+LUAUI_EXPORT_VIEW_METHOD(show, "luaui_show", MLNUIDialogView)
+LUAUI_EXPORT_VIEW_METHOD(dismiss, "luaui_dismiss", MLNUIDialogView)
+LUAUI_EXPORT_VIEW_METHOD(dialogDisAppear, "luaui_setDisappearBlock:", MLNUIDialogView)
+LUAUI_EXPORT_VIEW_METHOD(setContent, "luaui_setContent:", MLNUIDialogView)
+LUAUI_EXPORT_VIEW_METHOD(setDimAmount, "luaui_setDimAmount:", MLNUIDialogView)
+LUAUI_EXPORT_VIEW_METHOD(setContentGravity, "luaui_setContentGravity:", MLNUIDialogView)
+LUAUI_EXPORT_VIEW_END(MLNUIDialogView, Dialog, YES, "MLNUIView", "initWithMLNUILuaCore:frame:")
 
 @end

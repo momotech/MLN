@@ -7,6 +7,7 @@
 
 #import <UIKit/UIKit.h>
 #import "MLNUIViewControllerProtocol.h"
+#import "MLNUIExportProtocol.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -40,6 +41,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)initWithCoder:(NSCoder *)aDecoder NS_UNAVAILABLE;
 - (instancetype)initWithNibName:(nullable NSString *)nibNameOrNil bundle:(nullable NSBundle *)nibBundleOrNil NS_UNAVAILABLE;
 
+@property (nonatomic, copy) NSDictionary *extraInfo;
+@property (nonatomic, copy) NSArray <id<MLNUIExportProtocol>> *regClasses;
 @end
 
 NS_ASSUME_NONNULL_END

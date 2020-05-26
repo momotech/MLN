@@ -23,9 +23,9 @@
 
 #pragma mark - Setup For Lua
 
-LUA_EXPORT_STATIC_BEGIN(MLNUIPreferenceUtils)
-LUA_EXPORT_STATIC_METHOD(save, "luaui_save:value:", MLNUIPreferenceUtils)
-LUA_EXPORT_STATIC_METHOD(get, "luaui_get:defaultValue:", MLNUIPreferenceUtils)
-LUA_EXPORT_STATIC_END(MLNUIPreferenceUtils, PreferenceUtils, NO, NULL)
+LUAUI_EXPORT_STATIC_BEGIN(MLNUIPreferenceUtils)
+LUAUI_EXPORT_STATIC_METHOD(save, "luaui_save:value:", MLNUIPreferenceUtils)
+LUAUI_EXPORT_STATIC_METHOD(get, "luaui_get:defaultValue:", MLNUIPreferenceUtils)
+LUAUI_EXPORT_STATIC_END(MLNUIPreferenceUtils, PreferenceUtils, NO, NULL)
 
 @end

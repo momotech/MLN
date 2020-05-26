@@ -106,9 +106,9 @@
 }
 
 #pragma mark - Export For Lua
-LUA_EXPORT_VIEW_BEGIN(MLNUICanvasView)
-LUA_EXPORT_VIEW_METHOD(onDraw, "luaui_setDrawCallback:", MLNUICanvasView)
-LUA_EXPORT_VIEW_METHOD(refresh, "luaui_refresh", MLNUICanvasView)
-LUA_EXPORT_VIEW_END(MLNUICanvasView, CanvasView, YES, "MLNUIView", NULL)
+LUAUI_EXPORT_VIEW_BEGIN(MLNUICanvasView)
+LUAUI_EXPORT_VIEW_METHOD(onDraw, "luaui_setDrawCallback:", MLNUICanvasView)
+LUAUI_EXPORT_VIEW_METHOD(refresh, "luaui_refresh", MLNUICanvasView)
+LUAUI_EXPORT_VIEW_END(MLNUICanvasView, CanvasView, YES, "MLNUIView", NULL)
 
 @end

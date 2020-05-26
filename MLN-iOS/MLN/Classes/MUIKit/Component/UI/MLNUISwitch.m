@@ -95,9 +95,9 @@
 }
 
 #pragma mark - Export For Lua
-LUA_EXPORT_VIEW_BEGIN(MLNUISwitch)
-LUA_EXPORT_PROPERTY(on, "luaui_setOn:", "luaui_on", MLNUISwitch)
-LUA_EXPORT_VIEW_METHOD(setSwitchChangedCallback, "luaui_setSwitchChangedCallback:", MLNUISwitch)
-LUA_EXPORT_VIEW_END(MLNUISwitch, Switch, YES, "MLNUIView", NULL)
+LUAUI_EXPORT_VIEW_BEGIN(MLNUISwitch)
+LUAUI_EXPORT_PROPERTY(on, "luaui_setOn:", "luaui_on", MLNUISwitch)
+LUAUI_EXPORT_VIEW_METHOD(setSwitchChangedCallback, "luaui_setSwitchChangedCallback:", MLNUISwitch)
+LUAUI_EXPORT_VIEW_END(MLNUISwitch, Switch, YES, "MLNUIView", NULL)
 
 @end

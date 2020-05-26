@@ -6,9 +6,9 @@
 //  Copyright © 2020 MoMo. All rights reserved.
 //
 
-#import <MLNDataBinding.h>
+#import <MLNUIDataBinding.h>
 #import "MLNTestModel.h"
-#import <MLNKVOObserver.h>
+#import <MLNUIKVOObserver.h>
 #import <NSObject+MLNKVO.h>
 #import "MLNUIViewController.h"
 #import "MLNUIViewController+DataBinding.h"
@@ -18,7 +18,7 @@
 
 SpecBegin(MLNDatabinding)
 
-__block MLNDataBinding *dataBinding;
+__block MLNUIDataBinding *dataBinding;
 __block MLNTestModel *model;
 __block MLNUIViewController *vc;
 
@@ -32,7 +32,7 @@ beforeEach(^{
            [vc view];
            
            dataBinding = [vc mln_dataBinding];
-           [MLNDataBinding performSelector:NSSelectorFromString(@"mln_updateCurrentLuaCore:") withObject:vc.kitInstance.luaCore];
+           [MLNUIDataBinding performSelector:NSSelectorFromString(@"mln_updateCurrentLuaCore:") withObject:vc.kitInstance.luaCore];
            
            model = [MLNTestModel new];
            model.open = true;
@@ -61,7 +61,7 @@ it(@"get data", ^{
    });
 
 it(@"get table data", ^{
-   NSArray *source = [MLNDataBinding performSelector:NSSelectorFromString(@"lua_dataForKeys:") withObject:@"userData.source"];
+   NSArray *source = [MLNUIDataBinding performSelector:NSSelectorFromString(@"lua_dataForKeys:") withObject:@"userData.source"];
    
    expect(source.count == 10).to.beTruthy();
    expect([source isKindOfClass:[NSArray class]]).to.beTruthy();
@@ -100,7 +100,7 @@ describe(@"observer", ^{
      void (^observerBlock)(NSString *,NSString *,id,id,id) = ^(NSString *keypath,NSString *key, id old, id new, dispatch_block_t com) {
          result = NO;
          result2 = NO;
-         MLNKVOObserver *open = [[MLNKVOObserver alloc] initWithViewController:nil callback:^(NSString * _Nonnull keyPath, id  _Nonnull object, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
+         MLNUIKVOObserver *open = [[MLNUIKVOObserver alloc] initWithViewController:nil callback:^(NSString * _Nonnull keyPath, id  _Nonnull object, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
              expect(keyPath).to.equal(keypath);
              expect([change objectForKey:NSKeyValueChangeNewKey]).to.equal(new);
              expect([change objectForKey:NSKeyValueChangeOldKey]).to.equal(old);
@@ -109,7 +109,7 @@ describe(@"observer", ^{
              result = YES;
              if(com) com();
          } keyPath:keypath];
-         [dataBinding addMLNObserver:open forKeyPath:keypath];
+         [dataBinding addMLNUIObserver:open forKeyPath:keypath];
          
          void (^kvoBlock)(id,id) = ^(id oldValue, id newValue) {
              expect(newValue).to.equal(new);
@@ -164,21 +164,21 @@ describe(@"observer", ^{
 it(@"observer_onc", ^{
          __block BOOL r1 = NO;
          __block BOOL r2 = NO;
-         MLNKVOObserver *ob1 = [[MLNKVOObserver alloc] initWithViewController:nil callback:^(NSString * _Nonnull keyPath, id  _Nonnull object, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
+         MLNUIKVOObserver *ob1 = [[MLNUIKVOObserver alloc] initWithViewController:nil callback:^(NSString * _Nonnull keyPath, id  _Nonnull object, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
             id new = change[NSKeyValueChangeNewKey];
             expect(new).equal(@"ttaa");
             expect(r1).beFalsy();
             r1  = YES;
          } keyPath:@"text"];
-         MLNKVOObserver *ob2 = [[MLNKVOObserver alloc] initWithViewController:nil callback:^(NSString * _Nonnull keyPath, id  _Nonnull object, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
+         MLNUIKVOObserver *ob2 = [[MLNUIKVOObserver alloc] initWithViewController:nil callback:^(NSString * _Nonnull keyPath, id  _Nonnull object, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
              id new = change[NSKeyValueChangeNewKey];
              expect(new).equal(@"ttaa");
              expect(r2).beFalsy();
              r2  = YES;
          } keyPath:@"text"];
 
-         [dataBinding addMLNObserver:ob1 forKeyPath:@"userData.text"];
-         [dataBinding addMLNObserver:ob2 forKeyPath:@"userData.text"];
+         [dataBinding addMLNUIObserver:ob1 forKeyPath:@"userData.text"];
+         [dataBinding addMLNUIObserver:ob2 forKeyPath:@"userData.text"];
          model.text  = @"ttaa";
        expect(r1).beTruthy();
        expect(r2).beTruthy();

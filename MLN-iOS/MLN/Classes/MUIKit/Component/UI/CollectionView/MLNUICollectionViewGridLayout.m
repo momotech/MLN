@@ -394,11 +394,11 @@ static MLNUI_FORCE_INLINE bool currentIndexGridIsEnoughForCellSize(const __unsaf
 }
 
 #pragma mark - Export For Lua
-LUA_EXPORT_BEGIN(MLNUICollectionViewGridLayout)
-LUA_EXPORT_PROPERTY(lineSpacing, "luaui_setLineSpacing:","luaui_lineSpacing", MLNUICollectionViewGridLayout)
-LUA_EXPORT_PROPERTY(itemSpacing, "luaui_setItemSpacing:","luaui_itemSpacing", MLNUICollectionViewGridLayout)
-LUA_EXPORT_PROPERTY(spanCount, "luaui_setSpanCount:","luaui_spanCount", MLNUICollectionViewGridLayout)
-LUA_EXPORT_METHOD(layoutInset, "luaui_setlayoutInset:left:bottom:right:", MLNUICollectionViewGridLayout)
-LUA_EXPORT_END(MLNUICollectionViewGridLayout, CollectionLayout, NO, NULL, NULL)
+LUAUI_EXPORT_BEGIN(MLNUICollectionViewGridLayout)
+LUAUI_EXPORT_PROPERTY(lineSpacing, "luaui_setLineSpacing:","luaui_lineSpacing", MLNUICollectionViewGridLayout)
+LUAUI_EXPORT_PROPERTY(itemSpacing, "luaui_setItemSpacing:","luaui_itemSpacing", MLNUICollectionViewGridLayout)
+LUAUI_EXPORT_PROPERTY(spanCount, "luaui_setSpanCount:","luaui_spanCount", MLNUICollectionViewGridLayout)
+LUAUI_EXPORT_METHOD(layoutInset, "luaui_setlayoutInset:left:bottom:right:", MLNUICollectionViewGridLayout)
+LUAUI_EXPORT_END(MLNUICollectionViewGridLayout, CollectionLayout, NO, NULL, NULL)
 
 @end

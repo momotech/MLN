@@ -22,8 +22,8 @@ static int mlnui_file_loader(lua_State *L)
 }
 
 #pragma mark - Export
-LUA_EXPORT_GLOBAL_FUNC_BEGIN(MLNUIFileLoader)
-LUA_EXPORT_GLOBAL_C_FUNC(2, mlnui_file_loader, MLNUIFileLoader)
-LUA_EXPORT_GLOBAL_FUNC_WITH_NAME_END(MLNUIFileLoader, loaders, package)
+LUAUI_EXPORT_GLOBAL_FUNC_BEGIN(MLNUIFileLoader)
+LUAUI_EXPORT_GLOBAL_C_FUNC(2, mlnui_file_loader, MLNUIFileLoader)
+LUAUI_EXPORT_GLOBAL_FUNC_WITH_NAME_END(MLNUIFileLoader, loaders, package)
 
 @end

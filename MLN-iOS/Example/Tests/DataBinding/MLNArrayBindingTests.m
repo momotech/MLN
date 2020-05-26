@@ -6,8 +6,8 @@
 //  Copyright © 2020 MoMo. All rights reserved.
 //
 
-#import <MLNDataBinding.h>
-#import <MLNKVOObserver.h>
+#import <MLNUIDataBinding.h>
+#import <MLNUIKVOObserver.h>
 #import "MLNTestModel.h"
 #import <NSMutableArray+MLNKVO.h>
 
@@ -16,7 +16,7 @@ SpecBegin(ArrayBinding)
 // fixed XCTest issue.
 //[NSMutableArray load];
 
-__block MLNDataBinding *dataBinding;
+__block MLNUIDataBinding *dataBinding;
 __block NSMutableArray *modelsArray;
 NSString *arrayKeyPath = @"models";
 
@@ -28,7 +28,7 @@ beforeEach(^{
         m.text = [NSString stringWithFormat:@"hello %d", i+10];
         [modelsArray addObject:m];
     }
-    dataBinding = [[MLNDataBinding alloc] init];
+    dataBinding = [[MLNUIDataBinding alloc] init];
     [dataBinding bindArray:modelsArray forKey:arrayKeyPath];
 });
 
@@ -36,7 +36,7 @@ describe(@"observer", ^{
     __block BOOL result = NO;
     void(^observerBlock)(NSKeyValueChange,NSUInteger,NSUInteger,id,id) = ^(NSKeyValueChange type, NSUInteger index, NSUInteger expectedCount, id newValue, id oldValue){
         result = NO;
-        MLNKVOObserver *obs = [[MLNKVOObserver alloc] initWithViewController:nil callback:^(NSString * _Nonnull keyPath, id  _Nonnull object, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
+        MLNUIKVOObserver *obs = [[MLNUIKVOObserver alloc] initWithViewController:nil callback:^(NSString * _Nonnull keyPath, id  _Nonnull object, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
             NSKeyValueChange kind = [[change objectForKey:NSKeyValueChangeKindKey] unsignedIntegerValue];
             expect(@(kind)).to.equal(@(type));
             
@@ -57,7 +57,7 @@ describe(@"observer", ^{
             result = YES;
         } keyPath:arrayKeyPath];
         
-        [dataBinding addMLNObserver:obs forKeyPath:arrayKeyPath];
+        [dataBinding addMLNUIObserver:obs forKeyPath:arrayKeyPath];
     };
     //five primitive methods
     it(@"addObject", ^{
@@ -142,20 +142,20 @@ it(@"observer_once", ^{
    
    __block BOOL r1 = NO;
    __block BOOL r2 = NO;
-   MLNKVOObserver *ob1 = [[MLNKVOObserver alloc] initWithViewController:nil callback:^(NSString * _Nonnull keyPath, id  _Nonnull object, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
+   MLNUIKVOObserver *ob1 = [[MLNUIKVOObserver alloc] initWithViewController:nil callback:^(NSString * _Nonnull keyPath, id  _Nonnull object, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
     expect(r1).beFalsy();
     r1 = YES;
     expect(change[NSKeyValueChangeKindKey]).equal(@(NSKeyValueChangeInsertion));
    } keyPath:nil];
    
-   MLNKVOObserver *ob2 = [[MLNKVOObserver alloc] initWithViewController:nil callback:^(NSString * _Nonnull keyPath, id  _Nonnull object, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
+   MLNUIKVOObserver *ob2 = [[MLNUIKVOObserver alloc] initWithViewController:nil callback:^(NSString * _Nonnull keyPath, id  _Nonnull object, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
     expect(r2).beFalsy();
     r2 = YES;
     expect(change[NSKeyValueChangeKindKey]).equal(@(NSKeyValueChangeInsertion));
    } keyPath:nil];
    
-   [dataBinding addMLNObserver:ob1 forKeyPath:@"arr"];
-   [dataBinding addMLNObserver:ob2 forKeyPath:@"arr"];
+   [dataBinding addMLNUIObserver:ob1 forKeyPath:@"arr"];
+   [dataBinding addMLNUIObserver:ob2 forKeyPath:@"arr"];
    
    [arr addObject:@"abc"];
    expect(r1).beTruthy();

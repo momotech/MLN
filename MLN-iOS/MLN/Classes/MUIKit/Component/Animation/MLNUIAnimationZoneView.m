@@ -69,7 +69,7 @@
 }
 
 #pragma mark - Export For Lua
-LUA_EXPORT_VIEW_BEGIN(MLNUIAnimationZoneView)
-LUA_EXPORT_VIEW_END(MLNUIAnimationZoneView, AnimationZone, YES, "MLNUIView", NULL)
+LUAUI_EXPORT_VIEW_BEGIN(MLNUIAnimationZoneView)
+LUAUI_EXPORT_VIEW_END(MLNUIAnimationZoneView, AnimationZone, YES, "MLNUIView", NULL)
 
 @end

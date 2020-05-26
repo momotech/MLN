@@ -149,9 +149,9 @@ static MLNUILoading *_loading = nil;
 }
 
 #pragma mark - Export For Lua
-LUA_EXPORT_STATIC_BEGIN(MLNUILoading)
-LUA_EXPORT_STATIC_METHOD(show, "luaui_show", MLNUILoading)
-LUA_EXPORT_STATIC_METHOD(hide, "luaui_hide", MLNUILoading)
-LUA_EXPORT_STATIC_END(MLNUILoading, Loading, NO, NULL)
+LUAUI_EXPORT_STATIC_BEGIN(MLNUILoading)
+LUAUI_EXPORT_STATIC_METHOD(show, "luaui_show", MLNUILoading)
+LUAUI_EXPORT_STATIC_METHOD(hide, "luaui_hide", MLNUILoading)
+LUAUI_EXPORT_STATIC_END(MLNUILoading, Loading, NO, NULL)
 
 @end

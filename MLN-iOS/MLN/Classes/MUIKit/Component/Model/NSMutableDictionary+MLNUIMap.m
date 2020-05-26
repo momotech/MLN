@@ -202,16 +202,16 @@ static int luaui_map_count(lua_State *L) {
 }
 
 #pragma mark - Export To Lua
-LUA_EXPORT_BEGIN(NSMutableDictionary)
-LUA_EXPORT_METHOD_WITH_CFUNC(put, luaui_map_setObjectForKey, NSMutableDictionary)
-LUA_EXPORT_METHOD_WITH_CFUNC(putAll, luaui_map_addEntriesFromDictionary, NSMutableDictionary)
-LUA_EXPORT_METHOD_WITH_CFUNC(putMap, luaui_map_addEntriesFromDictionary, NSMutableDictionary)
-LUA_EXPORT_METHOD_WITH_CFUNC(remove, luaui_map_removeObjectForKey, NSMutableDictionary)
-LUA_EXPORT_METHOD_WITH_CFUNC(removeAll, luaui_map_removeAllObjects, NSMutableDictionary)
-LUA_EXPORT_METHOD_WITH_CFUNC(removeObjects, luaui_map_removeObjects, NSMutableDictionary)
-LUA_EXPORT_METHOD_WITH_CFUNC(allKeys, luaui_map_allKeys, NSMutableDictionary)
-LUA_EXPORT_METHOD_WITH_CFUNC(get, luaui_map_objectForKey, NSMutableDictionary)
-LUA_EXPORT_METHOD_WITH_CFUNC(size, luaui_map_count, NSMutableDictionary)
-LUA_EXPORT_END_WITH_CFUNC(NSMutableDictionary, Map, NO, NULL, luaui_newMap)
+LUAUI_EXPORT_BEGIN(NSMutableDictionary)
+LUAUI_EXPORT_METHOD_WITH_CFUNC(put, luaui_map_setObjectForKey, NSMutableDictionary)
+LUAUI_EXPORT_METHOD_WITH_CFUNC(putAll, luaui_map_addEntriesFromDictionary, NSMutableDictionary)
+LUAUI_EXPORT_METHOD_WITH_CFUNC(putMap, luaui_map_addEntriesFromDictionary, NSMutableDictionary)
+LUAUI_EXPORT_METHOD_WITH_CFUNC(remove, luaui_map_removeObjectForKey, NSMutableDictionary)
+LUAUI_EXPORT_METHOD_WITH_CFUNC(removeAll, luaui_map_removeAllObjects, NSMutableDictionary)
+LUAUI_EXPORT_METHOD_WITH_CFUNC(removeObjects, luaui_map_removeObjects, NSMutableDictionary)
+LUAUI_EXPORT_METHOD_WITH_CFUNC(allKeys, luaui_map_allKeys, NSMutableDictionary)
+LUAUI_EXPORT_METHOD_WITH_CFUNC(get, luaui_map_objectForKey, NSMutableDictionary)
+LUAUI_EXPORT_METHOD_WITH_CFUNC(size, luaui_map_count, NSMutableDictionary)
+LUAUI_EXPORT_END_WITH_CFUNC(NSMutableDictionary, Map, NO, NULL, luaui_newMap)
 
 @end

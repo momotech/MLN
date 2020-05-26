@@ -54,7 +54,7 @@
     return size;
 }
 
-LUA_EXPORT_BEGIN(MLNUICollectionViewAutoFitAdapter)
-LUA_EXPORT_END(MLNUICollectionViewAutoFitAdapter, CollectionViewAutoFitAdapter, YES, "MLNUICollectionViewAdapter", NULL)
+LUAUI_EXPORT_BEGIN(MLNUICollectionViewAutoFitAdapter)
+LUAUI_EXPORT_END(MLNUICollectionViewAutoFitAdapter, CollectionViewAutoFitAdapter, YES, "MLNUICollectionViewAdapter", NULL)
 
 @end

@@ -11,10 +11,10 @@
 @implementation MLNUIStyleStringConst
 
 #pragma mark - Setup For Lua
-LUA_EXPORT_GLOBAL_VAR_BEGIN()
-LUA_EXPORT_GLOBAL_VAR(StyleImageAlign, (@{@"Default": @(MLNUIStyleImageAlignTypeDefault),
+LUAUI_EXPORT_GLOBAL_VAR_BEGIN()
+LUAUI_EXPORT_GLOBAL_VAR(StyleImageAlign, (@{@"Default": @(MLNUIStyleImageAlignTypeDefault),
                                          @"Top": @(MLNUIStyleImageAlignTypeTop),
                                          @"Center": @(MLNUIStyleImageAlignTypeCenter),
                                          @"Bottom": @(MLNUIStyleImageAlignTypeBottom)}))
-LUA_EXPORT_GLOBAL_VAR_END()
+LUAUI_EXPORT_GLOBAL_VAR_END()
 @end

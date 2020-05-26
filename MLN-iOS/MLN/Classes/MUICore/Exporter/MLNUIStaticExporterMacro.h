@@ -15,7 +15,7 @@
  
  @param CLZ 原生类名
  */
-#define LUA_EXPORT_STATIC_BEGIN(CLZ)  LUA_EXPORT_MAKE_METHOD_LIST(mlnui_Class_Method_, CLZ)
+#define LUAUI_EXPORT_STATIC_BEGIN(CLZ)  LUAUI_EXPORT_MAKE_METHOD_LIST(mlnui_Class_Method_, CLZ)
 
 /**
  导出静态方法映射
@@ -24,8 +24,8 @@
  @param SEL_NAME 在原生中类方法的方法名C字符串
  @param CLZ 类名称
  */
-#define LUA_EXPORT_STATIC_METHOD(LUA_FUNC, SEL_NAME, CLZ) \
-LUA_EXPORT_METHOD_LIST_ADD(#LUA_FUNC, SEL_NAME, #CLZ, NO, NULL, NULL, mlnui_luaui_class_method)
+#define LUAUI_EXPORT_STATIC_METHOD(LUA_FUNC, SEL_NAME, CLZ) \
+LUAUI_EXPORT_METHOD_LIST_ADD(#LUA_FUNC, SEL_NAME, #CLZ, NO, NULL, NULL, mlnui_luaui_class_method)
 
 /**
  导出C函数映射
@@ -34,24 +34,24 @@ LUA_EXPORT_METHOD_LIST_ADD(#LUA_FUNC, SEL_NAME, #CLZ, NO, NULL, NULL, mlnui_luau
  @param FUNC C的Function
  @param CLZ 类名称
  */
-#define LUA_EXPORT_STATIC_C_FUNC(LUA_FUNC, FUNC, CLZ) \
-LUA_EXPORT_METHOD_LIST_ADD(#LUA_FUNC, "C_FUNC", #CLZ, NO, NULL, NULL, FUNC)
+#define LUAUI_EXPORT_STATIC_C_FUNC(LUA_FUNC, FUNC, CLZ) \
+LUAUI_EXPORT_METHOD_LIST_ADD(#LUA_FUNC, "C_FUNC", #CLZ, NO, NULL, NULL, FUNC)
 
 /**
  LuaCore相关方法注册
 
  @param CLZ 当前类
  */
-#define LUA_EXPORT_STATIC_LUA_CORE(CLZ) \
-static __weak MLNUILuaCore *currentLuaCore_ ## CLZ = nil;\
+#define LUAUI_EXPORT_STATIC_LUA_CORE(CLZ) \
+static __weak MLNUILuaCore *mlnui_currentLuaCore_ ## CLZ = nil;\
 + (MLNUILuaCore *)mlnui_currentLuaCore\
 {\
-    return currentLuaCore_ ## CLZ;\
+    return mlnui_currentLuaCore_ ## CLZ;\
 }\
 \
 + (void)mlnui_updateCurrentLuaCore:(MLNUILuaCore *)luaCore\
 {\
-    currentLuaCore_ ## CLZ = luaCore;\
+    mlnui_currentLuaCore_ ## CLZ = luaCore;\
 }
 
 /**
@@ -63,12 +63,12 @@ static __weak MLNUILuaCore *currentLuaCore_ ## CLZ = nil;\
  @param HAS_SUPER 是否有父类 (YES/NO)，这是在Lua中的继承关系，并非原生的继承关系
  @param SUPERCLZ 父类的原生类名字，可以没有原生的继承关系。
  */
-#define LUA_EXPORT_PACKAGE_STATIC_END(CLZ, PACKAGE, LUA_CLZ, HAS_SUPER, SUPER_CLZ_NAME) \
-LUA_EXPORT_METHOD_LIST_COMPLETED \
-LUA_EXPORT_MAKE_INFO(PACKAGE, #CLZ, #LUA_CLZ, "MLNUI_UserDataNativeObject", HAS_SUPER, SUPER_CLZ_NAME, NO, NULL,\
+#define LUAUI_EXPORT_PACKAGE_STATIC_END(CLZ, PACKAGE, LUA_CLZ, HAS_SUPER, SUPER_CLZ_NAME) \
+LUAUI_EXPORT_METHOD_LIST_COMPLETED \
+LUAUI_EXPORT_MAKE_INFO(PACKAGE, #CLZ, #LUA_CLZ, "MLNUI_UserDataNativeObject", HAS_SUPER, SUPER_CLZ_NAME, NO, NULL,\
 (struct mlnui_objc_method *)mlnui_Class_Method_ ## CLZ, NULL, CLZ)\
-LUA_EXPORT_TYPE(MLNUIExportTypeStatic)\
-LUA_EXPORT_STATIC_LUA_CORE(CLZ)
+LUAUI_EXPORT_TYPE(MLNUIExportTypeStatic)\
+LUAUI_EXPORT_STATIC_LUA_CORE(CLZ)
 
 /**
  标记完成静态导出
@@ -78,7 +78,7 @@ LUA_EXPORT_STATIC_LUA_CORE(CLZ)
  @param HAS_SUPER 是否有父类 (YES/NO)，这是在Lua中的继承关系，并非原生的继承关系
  @param SUPERCLZ 父类的原生类名字，可以没有原生的继承关系。
  */
-#define LUA_EXPORT_STATIC_END(CLZ, LUA_CLZ, HAS_SUPER, SUPER_CLZ_NAME) \
-LUA_EXPORT_PACKAGE_STATIC_END(CLZ, "mln", LUA_CLZ, HAS_SUPER, SUPER_CLZ_NAME)\
+#define LUAUI_EXPORT_STATIC_END(CLZ, LUA_CLZ, HAS_SUPER, SUPER_CLZ_NAME) \
+LUAUI_EXPORT_PACKAGE_STATIC_END(CLZ, "mlnui", LUA_CLZ, HAS_SUPER, SUPER_CLZ_NAME)\
 
 #endif /* MLNUIStaticExporterMacro_h */
