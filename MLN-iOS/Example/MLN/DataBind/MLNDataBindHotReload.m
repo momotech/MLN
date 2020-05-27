@@ -53,9 +53,9 @@
     NSMutableArray *models = @[arr].mutableCopy;
     self.tableModel.source = models;
 
-    self.tableModel.source.mln_subscribeItem(^(NSObject * _Nonnull item, NSString * _Nonnull keyPath, NSObject * _Nullable oldValue, NSObject * _Nullable newValue) {
-        NSLog(@"item  %@ keypath %@ old %@ new %@",item,keyPath,oldValue,newValue);
-    });
+//    self.tableModel.source.mln_subscribeItem(^(NSObject * _Nonnull item, NSString * _Nonnull keyPath, NSObject * _Nullable oldValue, NSObject * _Nullable newValue) {
+//        NSLog(@"item  %@ keypath %@ old %@ new %@",item,keyPath,oldValue,newValue);
+//    });
     
 //    [self.dataBinding bindArray:models forKey:@"source"];
     [self.mln_dataBinding bindData:self.tableModel forKey:@"tableModel"];
