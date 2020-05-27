@@ -1,1 +1,1 @@
-../../../../../MLNDevTool/Classes/Protobuf/PbrenameCommand.pbobjc.h
+../../../../../MLNDevTool/Classes/MLNProtobuf/PbrenameCommand.pbobjc.h

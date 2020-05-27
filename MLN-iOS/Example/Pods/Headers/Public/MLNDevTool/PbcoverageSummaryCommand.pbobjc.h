@@ -1,1 +1,1 @@
-../../../../../MLNDevTool/Classes/Protobuf/PbcoverageSummaryCommand.pbobjc.h
+../../../../../MLNDevTool/Classes/MLNProtobuf/PbcoverageSummaryCommand.pbobjc.h

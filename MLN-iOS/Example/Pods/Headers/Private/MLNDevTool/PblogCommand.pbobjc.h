@@ -1,1 +1,1 @@
-../../../../../MLNDevTool/Classes/Protobuf/PblogCommand.pbobjc.h
+../../../../../MLNDevTool/Classes/MLNProtobuf/PblogCommand.pbobjc.h

@@ -1,1 +1,1 @@
-../../../../../MLNDevTool/Classes/Protobuf/PbdeviceCommand.pbobjc.h
+../../../../../MLNDevTool/Classes/MLNProtobuf/PbdeviceCommand.pbobjc.h

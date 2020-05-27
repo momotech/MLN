@@ -78,6 +78,10 @@
             clazz = pbcoveragevisualcommand.class;
             break;
         }
+        case pbbasecommand_InstructionType_Macipaddress: {
+            clazz = pbipaddresscommand.class;
+            break;
+        }
         default:
             break;
     }

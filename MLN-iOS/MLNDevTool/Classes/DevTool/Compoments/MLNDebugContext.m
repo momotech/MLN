@@ -44,6 +44,9 @@
     if (self = [super init]) {
         _ipAddress = [[NSUserDefaults standardUserDefaults] stringForKey:MLNDEBUG_IP_KEY];
         _port = [[NSUserDefaults standardUserDefaults] integerForKey:MLNDEBUG_PORT_KEY];
+        if (_port == 0) {
+            _port = 8172;
+        }
     }
     return self;
 }
