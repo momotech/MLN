@@ -20,6 +20,7 @@
 @property (nonatomic, strong) NSMutableDictionary *dataMap;
 @property (nonatomic, strong) NSMapTable *observerMap;
 @property (nonatomic, strong) NSMapTable *observerIDsMap;
+@property (nonatomic, strong) NSMutableArray *listViewTags;
 @end
 
 @implementation MLNUIDataBinding
@@ -31,6 +32,7 @@
         self.dataMap = [NSMutableDictionary dictionary];
         self.observerMap =  [NSMapTable strongToStrongObjectsMapTable];
         self.observerIDsMap = [NSMapTable strongToWeakObjectsMapTable];
+        self.listViewTags = [NSMutableArray array];
         LOCK_RECURSIVE_INIT();
     }
     return self;
@@ -115,7 +117,7 @@
     NSArray *formatKeys = [self formatKeys:keys allowFirstKeyIsNumber:NO allowLastKeyIsNumber:YES];
     if(!formatKeys) return nil;
     
-    return [self dataForKeysArray:keys frontObject:NULL];
+    return [self dataForKeysArray:formatKeys frontObject:NULL];
 }
 
 - (void)updateDataForKeys:(NSArray *)keys value:(id)value {
@@ -125,7 +127,6 @@
     if(!keys) return;
     
     NSString *firstKey = keys.firstObject;
-    if(![firstKey isKindOfClass:[NSString class]]) return;
     NSString *lastKey = keys.lastObject;
     
     if (keys.count == 1) {
@@ -216,6 +217,12 @@
     }
     if ([object isKindOfClass:[NSMutableArray class]]) {
         [self _realRemoveArrayObserver:observer forObject:(NSMutableArray *)object observerKey:observerKey];
+    }
+}
+
+- (void)addListViewTag:(NSString *)tag {
+    if (tag) {
+        [self.listViewTags addObject:tag];
     }
 }
 
@@ -364,26 +371,29 @@
 #pragma mark - GetData Private
 // keys=['userData.source'] -> frontObject = self.dataMap
 - (id)dataForKeysArray:(NSArray *)keys frontObject:(NSObject **)frontObject {
-    NSString *firstKey = keys.firstObject;
-    if(!firstKey) return nil;
+    NSMutableString *frontKey = [[keys firstObject] mutableCopy];
+    if(!frontKey) return nil;
     
     NSObject *obj;
     @try {
         LOCK();
         //    NSObject *obj = [self.dataMap objectForKey:firstKey];
-        obj = [self.dataMap valueForKeyPath:firstKey];
+        obj = [self.dataMap valueForKeyPath:frontKey];
         if(frontObject) *frontObject = self.dataMap;
     } @catch (NSException *exception) {
         NSLog(@"%@ %s",exception,__FUNCTION__);
     } @finally {
         UNLOCK();
     }
+    BOOL isListViewDataSource = [self.listViewTags containsObject:frontKey];
     NSObject *res = obj;
     // 从第二个位置开始遍历
     for (int i = 1; i < keys.count; i++) {
         if (i == keys.count - 1 && frontObject) {
             *frontObject = res;
         }
+        isListViewDataSource = [self.listViewTags containsObject:frontKey];
+        
         NSString *k = keys[i];
         int index = 0;
         BOOL isNum = [self scanInt:&index forStringOrNumber:k];
@@ -394,15 +404,33 @@
             return nil;
         }
         if (isArray) {
+            if (isListViewDataSource && ![(NSArray *)res mlnui_is2D]) { //是list-source且不是二维数组
+                if (i < keys.count - 1) {
+                    NSString *nextKey = keys[i+1];
+                    int tmp;
+                    BOOL nextIsNum = [self scanInt:&tmp forStringOrNumber:nextKey]; //下一个是数字，说明这个是section，抛弃.
+                    if (nextIsNum) {
+                        if (index == 1) {
+                            continue;
+                        }
+                        NSLog(@"index %d illegal, should be 1",index);
+                        return nil;
+                    }
+                }
+            }
             --index; // lua索引
             if (index <  0 || index >= [(NSArray *)res count]) {
                 if(frontObject) *frontObject = nil;
-                NSLog(@"index %d exceed rang of array %zd",index,[(NSArray *)res count]);
+                NSLog(@"index %d illegal, should match size of array %zd",index,[(NSArray *)res count]);
                 return nil;
             }
             res = ((NSArray *)res)[index];
+            [frontKey appendString:@"."];
+            [frontKey appendString:@(index+1).stringValue]; //to lua索引
         } else {
             @try {
+                [frontKey appendString:@"."];
+                [frontKey appendString:k];
                 res = [res valueForKeyPath:k];
             } @catch (NSException *exception) {
                 NSLog(@"%@ %s",exception,__FUNCTION__);

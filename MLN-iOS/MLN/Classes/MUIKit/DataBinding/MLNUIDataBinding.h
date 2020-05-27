@@ -39,6 +39,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSString *)addMLNUIObserver:(NSObject<MLNUIKVOObserverProtol> *)observer forKeys:(NSArray *)keys;
 - (void)removeMLNUIObserver:(NSObject<MLNUIKVOObserverProtol> *)observer forKeys:(NSArray *)keys;
 
+//用于判断是否ListView的数据源
+- (void)addListViewTag:(NSString *)tag;
+
 @end
 
 

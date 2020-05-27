@@ -144,6 +144,7 @@
     UIViewController<MLNUIDataBindingProtocol> *kitViewController = (UIViewController<MLNUIDataBindingProtocol> *)MLNUI_KIT_INSTANCE([self mlnui_currentLuaCore]).viewController;
     MLNUIListViewObserver *observer = [MLNUIListViewObserver observerWithListView:listView keyPath:key];
     
+    [kitViewController.mlnui_dataBinding addListViewTag:key];
     [kitViewController.mlnui_dataBinding addMLNUIObserver:observer forKeyPath:key];
 }
 
@@ -169,8 +170,9 @@
     
     if (arr.mlnui_is2D) {
         return [[arr mlnui_objectAtIndex:section - 1] count];
+    } else if(section != 1) {
+        return 0;//1维，section错误.
     }
-
     return arr.count;
 }
 
