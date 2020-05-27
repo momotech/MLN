@@ -448,6 +448,7 @@
 #pragma mark - Setup For Lua
 LUAUI_EXPORT_STATIC_BEGIN(MLNUIDataBinding)
 LUAUI_EXPORT_STATIC_METHOD(bind, "luaui_watchDataForKeys:handler:", MLNUIDataBinding)
+LUAUI_EXPORT_STATIC_METHOD(watch, "luaui_watchDataForKeys:handler:", MLNUIDataBinding)
 LUAUI_EXPORT_STATIC_METHOD(update, "luaui_updateDataForKeys:value:", MLNUIDataBinding)
 LUAUI_EXPORT_STATIC_METHOD(get, "luaui_dataForKeys:", MLNUIDataBinding)
 LUAUI_EXPORT_STATIC_METHOD(removeObserver, "luaui_removeMLNUIObserverByID:", MLNUIDataBinding)
