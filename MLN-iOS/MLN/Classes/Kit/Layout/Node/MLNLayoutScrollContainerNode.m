@@ -113,12 +113,6 @@
     if (self.overlayNode) {
         CGFloat overlayMaxWidth = self.measuredWidth - self.overlayNode.marginLeft - self.overlayNode.marginRight;
         CGFloat overlayMaxHeight = self.measuredHeight - self.overlayNode.marginTop - self.overlayNode.marginBottom;
-        if (self.overlayNode.width > self.measuredWidth) {
-            [self.overlayNode changeWidth:self.measuredWidth];
-        }
-        if (self.overlayNode.height > self.measuredHeight) {
-            [self.overlayNode changeHeight:self.measuredHeight];
-        }
         [self.overlayNode measureSizeWithMaxWidth:overlayMaxWidth maxHeight:overlayMaxHeight];
     }
     

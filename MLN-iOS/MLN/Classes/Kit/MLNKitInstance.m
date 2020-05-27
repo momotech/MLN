@@ -215,7 +215,6 @@
         }
         return NO;
     }
-
     // 执行
     NSError *err = nil;
     if ([self.luaCore runFile:entryFilePath error:&err]) {
@@ -579,6 +578,28 @@
 - (void)doGC
 {
     [_luaCore doGC];
+}
+
+@end
+
+@implementation MLNKitInstance (Debug)
+
+- (NSString *)loadDebugModelIfNeed {
+#if MLN_COULD_LOAD_DEBUG_CONTEXT
+    NSString *backupBundlePath = [self.luaCore.currentBundle bundlePath];
+    [self changeLuaBundleWithPath:[MLNDebugContext debugBundle].bundlePath];
+    NSString *mlndebugPath = [[MLNDebugContext debugBundle] pathForResource:@"mlndebug.lua" ofType:nil];
+    NSError *error = nil;
+    NSData *data = [NSData dataWithContentsOfFile:mlndebugPath];
+    
+    BOOL ret = [self.luaCore runData:data name:@"mlndebug.lua" error:&error];
+    NSAssert(ret, @"%@", [error.userInfo objectForKey:@"message"]);
+    if (!ret) {
+        return [error.userInfo objectForKey:@"message"];
+    }
+    [self changeLuaBundleWithPath:backupBundlePath];
+#endif
+    return nil;
 }
 
 @end

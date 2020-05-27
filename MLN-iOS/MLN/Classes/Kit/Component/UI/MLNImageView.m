@@ -431,10 +431,6 @@
     return YES;
 }
 
-- (BOOL)lua_supportOverlay {
-    return YES;
-}
-
 #pragma mark - Export For Lua
 LUA_EXPORT_VIEW_BEGIN(MLNImageView)
 LUA_EXPORT_VIEW_PROPERTY(contentMode, "lua_setContentMode:","contentMode", MLNImageView)

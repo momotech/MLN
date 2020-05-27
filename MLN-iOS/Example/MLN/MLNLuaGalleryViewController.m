@@ -23,9 +23,8 @@
 #import "MLNGalleryNative.h"
 #import "MLNLuaPageViewController.h"
 #import "MLNGalleryMainViewController.h"
-#import <MLNLinkProtocol.h>
 
-@interface MLNLuaGalleryViewController () <MLNViewControllerProtocol, MLNKitInstanceDelegate, UINavigationControllerDelegate, MLNLinkProtocol>
+@interface MLNLuaGalleryViewController () <MLNViewControllerProtocol, MLNKitInstanceDelegate, UINavigationControllerDelegate>
 
 @property (nonatomic, strong) MLNKitInstance *kitInstance;
 
@@ -34,8 +33,6 @@
 @property (nonatomic, strong) MLNFPSLabel *fpsLabel;
 @property (nonatomic, strong) UILabel *loadTimeLabel;
 @property (nonatomic, strong) MLNLoadTimeStatistics *loadTimeStatistics;
-@property (nonatomic, strong) MLNLinkCloseCallback callback;
-
 @end
 
 @implementation MLNLuaGalleryViewController
@@ -113,21 +110,6 @@
     
     if (!kMemoryTest) {
         [self showLuaScriptLoadTime];
-    }
-}
-
-#pragma mark - MLNLinkProtocol
-
-+ (UIViewController *)mlnLinkCreateController:(NSDictionary *)params closeCallback:(MLNLinkCloseCallback)callback {
-    NSLog(@"params is %@", params);
-    MLNLuaGalleryViewController *vc = [[MLNLuaGalleryViewController alloc] init];
-    vc.callback = callback;
-    return vc;
-}
-
-- (void)dealloc {
-    if (self.callback) {
-        self.callback(@{@"code":@(200), @"message":@"ok"});
     }
 }
 

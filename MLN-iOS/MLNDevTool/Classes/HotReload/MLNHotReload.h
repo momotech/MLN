@@ -23,8 +23,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy, readonly) NSString *entryFilePath;
 @property (nonatomic, copy, readonly) NSString *relativeEntryFilePath;
 
-+ (void)openBreakpointDebugIfNeeded:(MLNKitInstance *)instance;
-
 @end
 
 NS_ASSUME_NONNULL_END

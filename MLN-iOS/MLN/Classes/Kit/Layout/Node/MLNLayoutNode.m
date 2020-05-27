@@ -31,7 +31,6 @@
         _layoutStrategy = MLNLayoutStrategySimapleAuto;
         _anchorPoint = targetView.layer.anchorPoint;
         _paddingNeedUpdated = YES;
-        _belongLineNode = NULL;
     }
     return self;
 }
@@ -80,12 +79,6 @@
     if (self.overlayNode) {
         CGFloat overlayMaxWidth = self.measuredWidth - self.overlayNode.marginLeft - self.overlayNode.marginRight;
         CGFloat overlayMaxHeight = self.measuredHeight - self.overlayNode.marginTop - self.overlayNode.marginBottom;
-        if (self.overlayNode.width > self.measuredWidth) {
-            [self.overlayNode changeWidth:self.measuredWidth];
-        }
-        if (self.overlayNode.height > self.measuredHeight) {
-            [self.overlayNode changeHeight:self.measuredHeight];
-        }
         [self.overlayNode measureSizeWithMaxWidth:overlayMaxWidth maxHeight:overlayMaxHeight];
     }
     return CGSizeMake(self.measuredWidth, self.measuredHeight);

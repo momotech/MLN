@@ -29,7 +29,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign, getter=isLua_wrapContent) BOOL lua_wrapContent;
 @property (nonatomic, assign) BOOL lua_layoutEnable; // defualt is NO
 @property (nonatomic, assign, readonly) BOOL lua_isContainer; // defualt is NO
-@property (nonatomic, assign, readonly) BOOL lua_supportOverlay; // default is NO
 @property (nonatomic, strong, readonly) MLNLayoutNode *lua_node;
 
 - (BOOL)lua_clipsToBounds;

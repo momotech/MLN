@@ -76,7 +76,6 @@ typedef enum : NSUInteger {
 @property (nonatomic, assign) CGFloat lastMeasuredMaxHeight;
 @property (nonatomic, assign) CGFloat lastGravityZoneWidth;
 @property (nonatomic, assign) CGFloat lastGravityZoneHeight;
-@property (nonatomic, assign) CGFloat belongLineHeight; // 记录换行模式下,每个subNode所在行的行高
 //*******
 //******                Offset
 //*****
@@ -122,8 +121,7 @@ typedef enum : NSUInteger {
 //******                Node
 //*****
 @property (nonatomic, weak) MLNLayoutNode *supernode;
-@property (nonatomic, strong, nullable) MLNLayoutNode *overlayNode;
-@property (nonatomic, strong, nullable) MLNLayoutNode *belongLineNode; // 记录换行模式下,每个subNode所在行的行高
+@property (nonatomic, strong) MLNLayoutNode *overlayNode;
 //*******
 //******                Root Node
 //*****

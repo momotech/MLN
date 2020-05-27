@@ -44,9 +44,6 @@
     if (view.lua_node) {
         [(MLNLayoutContainerNode *)self.lua_node addSubnode:view.lua_node];
     }
-    
-    // 添加overlay
-    [view addOverlayIfNeeded];
 }
 
 - (void)lua_insertSubview:(UIView *)view atIndex:(NSInteger)index
@@ -78,33 +75,15 @@
 }
 
 - (void)lua_overlay:(UIView *)overlay {
-    if (self.lua_supportOverlay == NO) {
-        return;
-    }
     if ([overlay isKindOfClass:[UIView class]]) {
-        [self removeOverlayIfNeeded]; // 移除旧的(若有)
-        self.lua_node.overlayNode = overlay.lua_node;
-        if (self.superview) { // 先将视图添加到父视图后设置overlay的情况
-            [self addOverlayIfNeeded];
+        MLNLayoutNode *oldOverlay = self.lua_node.overlayNode;
+        if (oldOverlay) {
+            [oldOverlay.targetView removeFromSuperview];
+            MLN_Lua_UserData_Release(oldOverlay.targetView);
         }
-    }
-}
-
-- (void)addOverlayIfNeeded {
-    MLNLayoutNode *overlayNode = self.lua_node.overlayNode;
-    if (overlayNode) {
-        [self addSubview:overlayNode.targetView];
-        MLN_Lua_UserData_Retain_With_Index(2, overlayNode.targetView);
-        [overlayNode.targetView addOverlayIfNeeded]; // overlay还有overlay的情况
-    }
-}
-
-- (void)removeOverlayIfNeeded {
-    MLNLayoutNode *oldOverlay = self.lua_node.overlayNode;
-    if (oldOverlay && oldOverlay.targetView.superview) {
-        [oldOverlay.targetView removeFromSuperview];
-        MLN_Lua_UserData_Release(self);
-        self.lua_node.overlayNode = nil;
+        [self addSubview:overlay];
+        MLN_Lua_UserData_Retain_With_Index(2, overlay);
+        self.lua_node.overlayNode = overlay.lua_node;
     }
 }
 
@@ -225,10 +204,6 @@ static const void *kLuaLayoutEnable = &kLuaLayoutEnable;
 
 - (BOOL)lua_isContainer
 {
-    return NO;
-}
-
-- (BOOL)lua_supportOverlay {
     return NO;
 }
 
