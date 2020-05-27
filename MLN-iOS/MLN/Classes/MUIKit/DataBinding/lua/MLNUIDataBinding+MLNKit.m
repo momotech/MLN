@@ -20,7 +20,7 @@
 #import "NSObject+MLNUIReflect.h"
 
 @implementation MLNUIDataBinding (MLNUIKit)
-
+#pragma mark - Watch/Get/Update
 + (NSString *)luaui_watchDataForKeys:(NSArray *)keys handler:(MLNUIBlock *)handler {
     NSParameterAssert(keys && handler);
     if(!keys || !handler)  return nil;
@@ -81,6 +81,8 @@
     UIViewController<MLNUIDataBindingProtocol> *kitViewController = (UIViewController<MLNUIDataBindingProtocol> *)MLNUI_KIT_INSTANCE([self mlnui_currentLuaCore]).viewController;
     [kitViewController.mlnui_dataBinding removeMLNUIObserverByID:observerID];
 }
+
+#pragma mark - Mock
 
 + (void)luaui_mockForKey:(NSString *)key data:(NSDictionary *)dic {
     NSParameterAssert(key);
@@ -176,6 +178,108 @@
     return arr.count;
 }
 
++ (void)luaui_bindCellForKey:(NSString *)key section:(NSUInteger)section row:(NSUInteger)row paths:(NSArray *)paths {
+    NSParameterAssert(key && paths);
+    if (!key || !paths) return;
+    
+    UIViewController<MLNUIDataBindingProtocol> *kitViewController = (UIViewController<MLNUIDataBindingProtocol> *)MLNUI_KIT_INSTANCE([self mlnui_currentLuaCore]).viewController;
+
+    NSArray *array = [self mlnui_dataForKeyPath:key];
+    MLNUIListViewObserver *listObserver = (MLNUIListViewObserver *)[kitViewController.mlnui_dataBinding observersForKeyPath:key].lastObject;
+    if (![listObserver isKindOfClass:[MLNUIListViewObserver class]]) {
+        NSLog(@"error: not found observer for key %@",key);
+        return;
+    }
+    
+    NSObject *model;
+    if (array.mlnui_is2D) {
+        model = [[array mlnui_objectAtIndex:section - 1] mlnui_objectAtIndex:row - 1];
+    } else {
+        model = [array mlnui_objectAtIndex:row - 1];
+    }
+    
+    for (NSString *k in paths) {
+        [model mlnui_removeObervationsForOwner:kitViewController.mlnui_dataBinding keyPath:k];
+    }
+
+    //TODO: 如果paths中有属性对应可变数组？
+    [kitViewController.mlnui_dataBinding mlnui_observeObject:model properties:paths withBlock:^(id  _Nonnull observer, id  _Nonnull object, NSString * _Nonnull keyPath, id  _Nonnull oldValue, id  _Nonnull newValue, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
+        UIView *listView = [listObserver listView];
+        if ([listView isKindOfClass:[MLNUITableView class]]) {
+            MLNUITableView *table = (MLNUITableView *)listView;
+            NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row - 1 inSection:section - 1];
+            [table.adapter tableView:table.adapter.targetTableView reloadRowsAtIndexPaths:@[indexPath]];
+            [table.adapter.targetTableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
+        } else {
+            
+        }
+    }];
+}
+
+#pragma mark - Array
+
++ (void)luaui_insertForKey:(NSString *)key index:(int)index value:(id)value {
+    NSParameterAssert(key && value);
+    if(!key || !value) return;
+    
+    NSMutableArray *arr = [self mlnui_dataForKeyPath:key];
+    if ([arr isKindOfClass:[NSMutableArray class]]) {
+        Class firstClass = [arr.firstObject class];
+        NSObject *newValue;
+        //TODO: value 如果是Dic，是否转成自定义Model?
+        if (NO && [value isKindOfClass:[NSDictionary class]] && firstClass && ![firstClass isKindOfClass:[NSDictionary class]]) {
+            @try {
+                newValue = [firstClass new];
+                for (NSString *k in [(NSDictionary *)value allKeys]) {
+                    NSObject *nv = [value[k] mlnui_convertToNativeObject];
+                    [newValue setValue:nv forKey:k];
+                }
+            } @catch (NSException *exception) {
+                NSLog(@"ex %@ %s",exception,__FUNCTION__);
+            }
+        }
+        if (!newValue) newValue = [value mlnui_convertToNativeObject];
+        if(!newValue) return;
+        
+        if (index == -1) {
+            [arr addObject:newValue];
+            return;
+        }
+        index--;
+        if (index >= 0 &&  index <= arr.count) {
+            [arr insertObject:newValue atIndex:index];
+            return;
+        } else {
+            NSLog(@"index %d illeage, array size is %zd",index+1,arr.count);
+        }
+    } else {
+        NSLog(@"type of object is %@, is not NSMutableArray",arr.class);
+    }
+}
+
++ (void)luaui_removeForKey:(NSString *)key index:(int)index {
+    NSParameterAssert(key);
+    if(!key) return;
+    
+    NSMutableArray *arr = [self mlnui_dataForKeyPath:key];
+    if (![arr isKindOfClass:[NSMutableArray class]]) {
+        if (index == -1) {
+            [arr removeLastObject];
+            return;
+        }
+        index--;
+        if (index >= 0 && index < arr.count) {
+            [arr removeObjectAtIndex:index];
+        } else {
+            NSLog(@"index %d illeage, array size is %zd",index+1,arr.count);
+        }
+    } else {
+        NSLog(@"type of object is %@, is not NSMutableArray",arr.class);
+    }
+}
+
+#pragma mark - 废弃的方法
+
 + (id)luaui_modelForKey:(NSString *)key section:(NSUInteger)section row:(NSUInteger)row path:(NSString *)path {
     NSParameterAssert(key);
     if(!key) return nil;
@@ -217,46 +321,6 @@
         NSLog(@"%s exception: %@",__func__, exception);
     }
 }
-
-+ (void)luaui_bindCellForKey:(NSString *)key section:(NSUInteger)section row:(NSUInteger)row paths:(NSArray *)paths {
-    NSParameterAssert(key && paths);
-    if (!key || !paths) return;
-    
-    UIViewController<MLNUIDataBindingProtocol> *kitViewController = (UIViewController<MLNUIDataBindingProtocol> *)MLNUI_KIT_INSTANCE([self mlnui_currentLuaCore]).viewController;
-
-    NSArray *array = [self mlnui_dataForKeyPath:key];
-    MLNUIListViewObserver *listObserver = (MLNUIListViewObserver *)[kitViewController.mlnui_dataBinding observersForKeyPath:key].lastObject;
-    if (![listObserver isKindOfClass:[MLNUIListViewObserver class]]) {
-        NSLog(@"error: not found observer for key %@",key);
-        return;
-    }
-    
-    NSObject *model;
-    if (array.mlnui_is2D) {
-        model = [[array mlnui_objectAtIndex:section - 1] mlnui_objectAtIndex:row - 1];
-    } else {
-        model = [array mlnui_objectAtIndex:row - 1];
-    }
-    
-    for (NSString *k in paths) {
-        [model mlnui_removeObervationsForOwner:kitViewController.mlnui_dataBinding keyPath:k];
-    }
-
-    //TODO: 如果paths中有属性对应可变数组？
-    [kitViewController.mlnui_dataBinding mlnui_observeObject:model properties:paths withBlock:^(id  _Nonnull observer, id  _Nonnull object, NSString * _Nonnull keyPath, id  _Nonnull oldValue, id  _Nonnull newValue, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
-        UIView *listView = [listObserver listView];
-        if ([listView isKindOfClass:[MLNUITableView class]]) {
-            MLNUITableView *table = (MLNUITableView *)listView;
-            NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row - 1 inSection:section - 1];
-            [table.adapter tableView:table.adapter.targetTableView reloadRowsAtIndexPaths:@[indexPath]];
-            [table.adapter.targetTableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
-        } else {
-            
-        }
-    }];
-}
-
-#pragma mark - BindArray
 
 + (void)luaui_bindArrayForKeyPath:(NSString *)keyPath handler:(MLNUIBlock *)handler {
     NSParameterAssert(handler && keyPath);
@@ -370,20 +434,24 @@ LUAUI_EXPORT_STATIC_BEGIN(MLNUIDataBinding)
 LUAUI_EXPORT_STATIC_METHOD(bind, "luaui_watchDataForKeys:handler:", MLNUIDataBinding)
 LUAUI_EXPORT_STATIC_METHOD(update, "luaui_updateDataForKeys:value:", MLNUIDataBinding)
 LUAUI_EXPORT_STATIC_METHOD(get, "luaui_dataForKeys:", MLNUIDataBinding)
-LUAUI_EXPORT_STATIC_METHOD(remove, "luaui_removeMLNUIObserverByID:", MLNUIDataBinding)
+LUAUI_EXPORT_STATIC_METHOD(removeObserver, "luaui_removeMLNUIObserverByID:", MLNUIDataBinding)
 
 LUAUI_EXPORT_STATIC_METHOD(mock, "luaui_mockForKey:data:", MLNUIDataBinding)
 LUAUI_EXPORT_STATIC_METHOD(mockArray, "luaui_mockArrayForKey:data:callbackDic:", MLNUIDataBinding)
 
+LUAUI_EXPORT_STATIC_METHOD(insert, "luaui_insertForKey:index:value:", MLNUIDataBinding)
+LUAUI_EXPORT_STATIC_METHOD(remove, "luaui_removeForKey:index:", MLNUIDataBinding)
+
 LUAUI_EXPORT_STATIC_METHOD(bindListView, "luaui_bindListViewForKey:listView:", MLNUIDataBinding)
 LUAUI_EXPORT_STATIC_METHOD(getSectionCount, "luaui_sectionCountForKey:", MLNUIDataBinding)
 LUAUI_EXPORT_STATIC_METHOD(getRowCount, "luaui_rowCountForKey:section:", MLNUIDataBinding)
+LUAUI_EXPORT_STATIC_METHOD(bindCell, "luaui_bindCellForKey:section:row:paths:", MLNUIDataBinding)
+
+//废弃的方法
 LUAUI_EXPORT_STATIC_METHOD(getModel, "luaui_modelForKey:section:row:path:", MLNUIDataBinding)
 LUAUI_EXPORT_STATIC_METHOD(updateModel, "luaui_updateModelForKey:section:row:path:value:", MLNUIDataBinding)
 //LUAUI_EXPORT_STATIC_METHOD(getReuseId, "luaui_reuseIdForKey:section:row:", MLNUIDataBinding)
 //LUAUI_EXPORT_STATIC_METHOD(getHeight, "luaui_heightForKey:section:row:", MLNUIDataBinding)
-LUAUI_EXPORT_STATIC_METHOD(bindCell, "luaui_bindCellForKey:section:row:paths:", MLNUIDataBinding)
-
 //LUAUI_EXPORT_STATIC_METHOD(getSize, "luaui_sizeForKey:section:row:", MLNUIDataBinding)
 LUAUI_EXPORT_STATIC_METHOD(bindArray, "luaui_bindArrayForKeyPath:handler:", MLNUIDataBinding)
 LUAUI_EXPORT_STATIC_METHOD(bindArrayData, "luaui_bindArrayDataForKey:index:dataKeyPath:handler:", MLNUIDataBinding)
