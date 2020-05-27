@@ -14,6 +14,7 @@
 		009DD8D524114B9600452458 /* MLNArrayBindingTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 009DD8D424114B9600452458 /* MLNArrayBindingTests.m */; };
 		00A0C999243C180500F0D003 /* MLNPerformanceTestController.m in Sources */ = {isa = PBXBuildFile; fileRef = 00A0C998243C180500F0D003 /* MLNPerformanceTestController.m */; };
 		00A0C9A1243C3C0500F0D003 /* LuaNativeUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00A0C9A0243C3C0500F0D003 /* LuaNativeUITests.m */; };
+		00A9991C247EA73D00307914 /* MLNUIMyImageHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 00A9991B247EA73D00307914 /* MLNUIMyImageHandler.m */; };
 		00C1E94224756BC6000DB89A /* MLNArrayBindingTests2.m in Sources */ = {isa = PBXBuildFile; fileRef = 00C1E94124756BC6000DB89A /* MLNArrayBindingTests2.m */; };
 		00C1E9492477732E000DB89A /* MLNDataBindOperator.m in Sources */ = {isa = PBXBuildFile; fileRef = 00C1E9482477732E000DB89A /* MLNDataBindOperator.m */; };
 		00C1E94C2477797E000DB89A /* MLNDBTestModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 00C1E94B2477797E000DB89A /* MLNDBTestModel.m */; };
@@ -141,6 +142,8 @@
 		00A0C99E243C3C0400F0D003 /* LuaNativeUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = LuaNativeUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		00A0C9A0243C3C0500F0D003 /* LuaNativeUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LuaNativeUITests.m; sourceTree = "<group>"; };
 		00A0C9A2243C3C0500F0D003 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		00A9991A247EA73D00307914 /* MLNUIMyImageHandler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNUIMyImageHandler.h; sourceTree = "<group>"; };
+		00A9991B247EA73D00307914 /* MLNUIMyImageHandler.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNUIMyImageHandler.m; sourceTree = "<group>"; };
 		00C1E94124756BC6000DB89A /* MLNArrayBindingTests2.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNArrayBindingTests2.m; sourceTree = "<group>"; };
 		00C1E9472477732E000DB89A /* MLNDataBindOperator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNDataBindOperator.h; sourceTree = "<group>"; };
 		00C1E9482477732E000DB89A /* MLNDataBindOperator.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNDataBindOperator.m; sourceTree = "<group>"; };
@@ -856,6 +859,8 @@
 				30A4EB5C231CC86B00995416 /* MLNMyImageHandler.m */,
 				3012BB0E2326822F00FA2BB2 /* MLNNavigatorHandler.h */,
 				3012BB0F2326822F00FA2BB2 /* MLNNavigatorHandler.m */,
+				00A9991A247EA73D00307914 /* MLNUIMyImageHandler.h */,
+				00A9991B247EA73D00307914 /* MLNUIMyImageHandler.m */,
 			);
 			path = Handler;
 			sourceTree = "<group>";
@@ -1099,6 +1104,7 @@
 				B27F65902377AA6C00F2D341 /* MLNGalleryMineHeaderView.m in Sources */,
 				B2DD3E60237990E9002AB6AD /* MLNActionItem.m in Sources */,
 				6003F59E195388D20070C39A /* MLNAppDelegate.m in Sources */,
+				00A9991C247EA73D00307914 /* MLNUIMyImageHandler.m in Sources */,
 				B27F65DD2377AB0700F2D341 /* MLNGalleryNavigationBar.m in Sources */,
 				B29500F72372D5B400F48F09 /* MLNSimpleViewPagerCell.m in Sources */,
 				B29500D92372627000F48F09 /* MLNNativeTabSegmentScrollHandler.m in Sources */,

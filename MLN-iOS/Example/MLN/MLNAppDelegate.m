@@ -22,6 +22,7 @@
 #import <MLNLink.h>
 #import "MLNUIKVOObserver.h"
 #import "MLNUIKit.h"
+#import "MLNUIMyImageHandler.h"
 
 @interface MLNAppDelegate ()
 
@@ -30,6 +31,7 @@
 @property (nonatomic, strong) id<MLNImageLoaderProtocol> imgLoader;
 @property (nonatomic, strong) id<MLNNavigatorHandlerProtocol> navHandler;
 
+@property (nonatomic, strong) id<MLNUIImageLoaderProtocol> imgLoader2;
 @end
 
 @implementation MLNAppDelegate
@@ -56,6 +58,8 @@
     self.refreshHandler = [[MLNMyRefreshHandler alloc] init];
     self.imgLoader = [[MLNMyImageHandler alloc] init];
     self.navHandler = [[MLNNavigatorHandler alloc] init];
+    // MLNUIKit
+    self.imgLoader2 = [[MLNUIMyImageHandler alloc] init];
     
     [MLNKitEnvironment instancePreload];
     [MLNKitEnvironment setDefaultHttpHandler:self.httpHandler];
@@ -72,7 +76,7 @@
     [MLNUIKitEnvironment instancePreload];
     [MLNUIKitEnvironment setDefaultHttpHandler:self.httpHandler];
     [MLNUIKitEnvironment setDefaultScrollRefreshHandler:self.refreshHandler];
-    [MLNUIKitEnvironment setDefaultImageLoader:self.imgLoader];
+    [MLNUIKitEnvironment setDefaultImageLoader:self.imgLoader2];
     [MLNUIKitEnvironment setDefaultNavigatorHandler:self.navHandler];
     
     [MLNUILink registerName:@"MLNLuaGallery" linkClassName:@"MLNLuaGalleryViewController"];
