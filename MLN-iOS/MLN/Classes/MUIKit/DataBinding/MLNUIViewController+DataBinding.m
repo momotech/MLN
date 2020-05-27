@@ -9,7 +9,7 @@
 #import "MLNUIDataBinding.h"
 #import "MLNUILuaCore.h"
 #import "MLNUIKitInstance.h"
-#import "MLNExtScope.h"
+#import "MLNUIExtScope.h"
 
 @implementation MLNUIViewController (DataBinding)
 - (UIView *)findViewById:(NSString *)identifier {
