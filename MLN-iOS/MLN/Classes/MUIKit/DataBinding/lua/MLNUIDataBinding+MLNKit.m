@@ -93,7 +93,8 @@
 //        return [self luaui_mockArrayForKey:key data:(NSArray *)dic callbackDic:nil];
 //    }
     if (![dic isKindOfClass:[NSDictionary class]]) {
-        NSLog(@"error %s, should be NSDictionary",__func__);
+        NSString *log = [NSString stringWithFormat:@"data %@ should be kindOf NSDictionary",dic.class];
+        [self onErrorLog:log];
         return;
     }
 //    NSMutableDictionary *map = dic.mlnui_mutalbeCopy;
@@ -114,7 +115,8 @@
     }
     
     if (![data isKindOfClass:[NSArray class]]) {
-        NSLog(@"error %s, should be NSArray",__func__);
+        NSString *log = [NSString stringWithFormat:@"data %@ should be kindOf NSArray",data.class];
+        [self onErrorLog:log];
         return;
     }
     NSMutableArray *array = [data mlnui_convertToNativeObject];
@@ -235,7 +237,8 @@
                     [newValue setValue:nv forKey:k];
                 }
             } @catch (NSException *exception) {
-                NSLog(@"ex %@ %s",exception,__FUNCTION__);
+                NSString *log = [NSString stringWithFormat:@"ex %@ %s",exception,__FUNCTION__];
+                [self onErrorLog:log];
             }
         }
         if (!newValue) newValue = [value mlnui_convertToNativeObject];
@@ -250,10 +253,12 @@
             [arr insertObject:newValue atIndex:index];
             return;
         } else {
-            NSLog(@"index %d illeage, array size is %zd",index+1,arr.count);
+            NSString *log = [NSString stringWithFormat:@"index %d illeage, should match range of array [1, %zd]",index+1,arr.count];
+            [self onErrorLog:log];
         }
     } else {
-        NSLog(@"type of object is %@, is not NSMutableArray",arr.class);
+        NSString *log = [NSString stringWithFormat:@"type of object is %@, is not NSMutableArray",arr.class];
+        [self onErrorLog:log];
     }
 }
 
@@ -262,7 +267,7 @@
     if(!key) return;
     
     NSMutableArray *arr = [self mlnui_dataForKeyPath:key];
-    if (![arr isKindOfClass:[NSMutableArray class]]) {
+    if ([arr isKindOfClass:[NSMutableArray class]]) {
         if (index == -1) {
             [arr removeLastObject];
             return;
@@ -271,11 +276,22 @@
         if (index >= 0 && index < arr.count) {
             [arr removeObjectAtIndex:index];
         } else {
-            NSLog(@"index %d illeage, array size is %zd",index+1,arr.count);
+            NSString *log = [NSString stringWithFormat:@"index %d illeage, should match range of array [1, %zd]",index+1,arr.count];
+            [self onErrorLog:log];
         }
     } else {
-        NSLog(@"type of object is %@, is not NSMutableArray",arr.class);
+        NSString *log = [NSString stringWithFormat:@"type of object is %@, is not NSMutableArray",arr.class];
+        [self onErrorLog:log];
     }
+}
+
+#pragma mark - Utils
+
++ (void)onErrorLog:(NSString *)log {
+#if DEBUG
+    NSLog(@"%@",log);
+    MLNUIError([self mlnui_currentLuaCore], @"%@",log);
+#endif
 }
 
 #pragma mark - 废弃的方法

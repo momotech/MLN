@@ -47,12 +47,12 @@
 
 #pragma mark - MLNUIDataBindingProtocol
 
-- (MLNUIDataBinding *)mlnui_dataBinding {
-    if (!_dataBinding) {
-        _dataBinding = [MLNUIDataBinding new];
-    }
-    return _dataBinding;
-}
+//- (MLNUIDataBinding *)mlnui_dataBinding {
+//    if (!_dataBinding) {
+//        _dataBinding = [MLNUIDataBinding new];
+//    }
+//    return _dataBinding;
+//}
 //- (void)bindData:(NSObject *)data forKey:(NSString *)key {
 //    [self.mlnui_dataBinding bindData:data forKey:key];
 //}

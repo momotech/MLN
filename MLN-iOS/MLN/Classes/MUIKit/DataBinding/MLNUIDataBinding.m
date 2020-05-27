@@ -135,7 +135,8 @@
             LOCK();
             [self.dataMap setValue:value forKeyPath:firstKey];
         } @catch (NSException *exception) {
-            NSLog(@"%@ %s",exception,__FUNCTION__);
+            NSString *log = [NSString stringWithFormat:@"%@ %s",exception,__FUNCTION__];
+            [self doErrorLog:log];
         } @finally {
             UNLOCK();
         }
@@ -147,7 +148,8 @@
         BOOL isNum = [self scanInt:&index forStringOrNumber:lastKey];
         BOOL isMArray = [frontObject isKindOfClass:[NSMutableArray class]];
         if (isNum != isMArray) {
-            NSLog(@"key %@ and  value %@ are incompatible",lastKey,frontObject);
+            NSString *log = [NSString stringWithFormat:@"key: %@ and  value type: %@ are incompatible",lastKey, frontObject.class];
+            [self doErrorLog:log];
             return;
         }
         @try {
@@ -155,7 +157,8 @@
                 --index;
                 NSMutableArray *arr = (NSMutableArray *)frontObject;
                 if (index < 0 || index >= arr.count) {
-                    NSLog(@"index %d exceed range of array %zd",index,arr.count);
+                    NSString *log = [NSString stringWithFormat:@"index %d exceed range of array [1, %zd]",index+1,arr.count];
+                    [self doErrorLog:log];
                     return;
                 }
                 value ? arr[index] = value : [arr removeObjectAtIndex:index];
@@ -163,7 +166,8 @@
                 [frontObject setValue:value forKeyPath:lastKey];
             }
         } @catch (NSException *exception) {
-            NSLog(@"%@ %s",exception, __func__);
+            NSString *log  = [NSString stringWithFormat:@"%@ %s",exception, __func__];
+            [self doErrorLog:log];
         }
     }
 }
@@ -276,7 +280,8 @@
 //    NSObject *object = [self _dataForKey:key path:path];
     // 只有NSMutableArray才有必要添加observer
     if (![object isKindOfClass:[NSMutableArray class]]) {
-        NSLog(@"binded object %@, is not KindOf NSMutableArray",object);
+        NSString *log = [NSString stringWithFormat:@"binded object %@, is not KindOf NSMutableArray",object.class];
+        NSLog(@"%@",log);
         return nil;
     }
     NSString *observerKey = [keys componentsJoinedByString:@"."];
@@ -381,7 +386,8 @@
         obj = [self.dataMap valueForKeyPath:frontKey];
         if(frontObject) *frontObject = self.dataMap;
     } @catch (NSException *exception) {
-        NSLog(@"%@ %s",exception,__FUNCTION__);
+        NSString *log = [NSString stringWithFormat:@"%@ %s",exception,__FUNCTION__];
+        [self doErrorLog:log];
     } @finally {
         UNLOCK();
     }
@@ -400,7 +406,8 @@
         BOOL isArray = [res isKindOfClass:[NSArray class]];
         if (isNum != isArray) {
             if(frontObject) *frontObject = nil;
-            NSLog(@"key %@ and  value %@ are incompatible",k,res);
+            NSString *log  = [NSString stringWithFormat:@"key %@ and  value %@ are incompatible",k,res.class];
+            [self doErrorLog:log];
             return nil;
         }
         if (isArray) {
@@ -413,7 +420,8 @@
                         if (index == 1) {
                             continue;
                         }
-                        NSLog(@"index %d illegal, should be 1",index);
+                        NSString *log = [NSString stringWithFormat:@"index %d illegal, should be 1",index];
+                        [self doErrorLog:log];
                         return nil;
                     }
                 }
@@ -421,7 +429,8 @@
             --index; // lua索引
             if (index <  0 || index >= [(NSArray *)res count]) {
                 if(frontObject) *frontObject = nil;
-                NSLog(@"index %d illegal, should match size of array %zd",index,[(NSArray *)res count]);
+                NSString *log = [NSString  stringWithFormat:@"index %d illegal, should match range of array [1, %zd]",index+1,[(NSArray *)res count]];
+                [self doErrorLog:log];
                 return nil;
             }
             res = ((NSArray *)res)[index];
@@ -433,8 +442,9 @@
                 [frontKey appendString:k];
                 res = [res valueForKeyPath:k];
             } @catch (NSException *exception) {
-                NSLog(@"%@ %s",exception,__FUNCTION__);
                 if(frontObject) *frontObject = nil;
+                NSString *log = [NSString stringWithFormat:@"%@ %s",exception,__FUNCTION__];
+                [self doErrorLog:log];
                 return nil;
             }
         }
@@ -500,6 +510,11 @@
         [formatKeys addObject:combineString];
     }
     return formatKeys;
+}
+
+- (void)doErrorLog:(NSString *)log{
+    NSLog(@"%@",log);
+    if(self.errorLog) self.errorLog(log);
 }
 
 /*

@@ -9,6 +9,7 @@
 #import "MLNUIDataBinding.h"
 #import "MLNUILuaCore.h"
 #import "MLNUIKitInstance.h"
+#import "MLNExtScope.h"
 
 @implementation MLNUIViewController (DataBinding)
 - (UIView *)findViewById:(NSString *)identifier {
@@ -41,6 +42,13 @@
 - (MLNUIDataBinding *)mlnui_dataBinding {
     if (!_dataBinding) {
         _dataBinding = [[MLNUIDataBinding alloc] init];
+#if DEBUG
+        @weakify(self);
+        _dataBinding.errorLog = ^(NSString * _Nonnull log) {
+            @strongify(self);
+            MLNUIError(self.kitInstance.luaCore, @"%@",log);
+        };
+#endif
     }
     return _dataBinding;
 }

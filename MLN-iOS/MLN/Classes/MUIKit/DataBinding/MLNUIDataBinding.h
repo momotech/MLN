@@ -42,6 +42,7 @@ NS_ASSUME_NONNULL_BEGIN
 //用于判断是否ListView的数据源
 - (void)addListViewTag:(NSString *)tag;
 
+@property (nonatomic, strong)void(^errorLog)(NSString *);
 @end
 
 
