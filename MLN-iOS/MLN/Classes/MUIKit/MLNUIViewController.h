@@ -11,15 +11,9 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-#ifdef MLNUI_INTERNAL
-#define MLNUI_INTERNAL_CONTROLLER MDViewController
-#else
-#define MLNUI_INTERNAL_CONTROLLER UIViewController
-#endif
-
 @class MLNUIKitInstanceHandlersManager;
 @class MLNUIDataBinding;
-@interface MLNUIViewController : MLNUI_INTERNAL_CONTROLLER <MLNUIViewControllerProtocol> {
+@interface MLNUIViewController : UIViewController <MLNUIViewControllerProtocol> {
     @protected
     MLNUIKitInstance *_kitInstance;
     MLNUIDataBinding *_dataBinding;

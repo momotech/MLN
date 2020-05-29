@@ -6,17 +6,12 @@
 //
 
 #import "MLNUIViewController.h"
-#import "MLNUIKitInstanceFactory.h"
-#import "MLNUIExporter.h"
-#import "MLNUIKitInstance.h"
-#import "MLNUILuaBundle.h"
-#import "MLNUILuaCore.h"
-#import "MLNUIViewController+DataBinding.h"
+#import "MLNUIKit.h"
 
 @interface MLNUIViewController ()
 @property (nonatomic, copy, readwrite) NSString *entryFileName;
 @property (nonatomic, strong) NSBundle *bundle;
-@property (nonatomic, strong) NSMutableDictionary *globalModel;
+//@property (nonatomic, strong) NSMutableDictionary *globalModel;
 @end
 
 @implementation MLNUIViewController
@@ -56,8 +51,8 @@
     [self.kitInstance changeRootView:self.view];
     [self.kitInstance changeLuaBundle:[[MLNUILuaBundle alloc] initWithBundle:self.bundle]];
     
-    self.globalModel = [NSMutableDictionary dictionary];
-    [self bindData:self.globalModel forKey:@"Global"];
+//    self.globalModel = [NSMutableDictionary dictionary];
+//    [self bindData:self.globalModel forKey:@"Global"];
 }
 
 - (BOOL)regClasses:(NSArray<Class<MLNUIExportProtocol>> *)registerClasses {
