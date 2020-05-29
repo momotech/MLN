@@ -11,9 +11,15 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+#ifdef MLNUI_INTERNAL
+#define MLNUI_INTERNAL_CONTROLLER MDViewController
+#else
+#define MLNUI_INTERNAL_CONTROLLER UIViewController
+#endif
+
 @class MLNUIKitInstanceHandlersManager;
 @class MLNUIDataBinding;
-@interface MLNUIViewController : UIViewController <MLNUIViewControllerProtocol> {
+@interface MLNUIViewController : MLNUI_INTERNAL_CONTROLLER <MLNUIViewControllerProtocol> {
     @protected
     MLNUIKitInstance *_kitInstance;
     MLNUIDataBinding *_dataBinding;
@@ -42,7 +48,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)initWithNibName:(nullable NSString *)nibNameOrNil bundle:(nullable NSBundle *)nibBundleOrNil NS_UNAVAILABLE;
 
 @property (nonatomic, copy) NSDictionary *extraInfo;
-@property (nonatomic, copy) NSArray <id<MLNUIExportProtocol>> *regClasses;
+@property (nonatomic, copy) NSArray <Class<MLNUIExportProtocol>> *regClasses;
 @end
 
 NS_ASSUME_NONNULL_END
