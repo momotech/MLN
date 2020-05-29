@@ -16,7 +16,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)bindData:(nullable NSObject *)data forKey:(NSString *)key;
 //- (void)addDataObserver:(NSObject<MLNUIKVOObserverProtol> *)observer forKeyPath:(NSString *)keyPath;
 //- (void)removeDataObserver:(NSObject<MLNUIKVOObserverProtol> *)observer forKeyPath:(NSString *)keyPath;
-- (NSArray <NSObject<MLNUIKVOObserverProtol> *> *)observersForKeyPath:(NSString *)keyPath;
+- (NSArray <NSObject<MLNUIKVOObserverProtol> *> *)dataObserversForKeyPath:(NSString *)keyPath;
+- (NSArray <NSObject<MLNUIKVOObserverProtol> *> *)arrayObserversForKeyPath:(NSString *)keyPath;
+
 - (NSString *)addMLNUIObserver:(NSObject<MLNUIKVOObserverProtol> *)observer forKeyPath:(NSString *)keyPath;
 - (void)removeMLNUIObserver:(NSObject<MLNUIKVOObserverProtol> *)observer forKeyPath:(NSString *)keyPath;
 - (void)removeMLNUIObserverByID:(NSString *)observerID;

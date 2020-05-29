@@ -16,6 +16,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (id)mlnui_convertToLuaObject;
 - (id)mlnui_convertToNativeObject;
+
+- (NSMutableDictionary *)mlnui_bindInfos;
+
 @end
 
 NS_ASSUME_NONNULL_END

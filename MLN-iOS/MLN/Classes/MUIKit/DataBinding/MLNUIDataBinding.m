@@ -14,6 +14,8 @@
 #import "NSObject+MLNUIDealloctor.h"
 #import "MLNUIExtScope.h"
 
+#define kArrayPlaceHolder @"_array"
+
 @interface MLNUIDataBinding() {
     pthread_mutex_t _lock;
 }
@@ -34,8 +36,13 @@
         self.observerIDsMap = [NSMapTable strongToWeakObjectsMapTable];
         self.listViewTags = [NSMutableArray array];
         LOCK_RECURSIVE_INIT();
+        NSLog(@"%s",__FUNCTION__);
     }
     return self;
+}
+
+- (void)dealloc {
+    NSLog(@"%s",__FUNCTION__);
 }
 
 #pragma mark - Public
@@ -49,15 +56,26 @@
     }
 }
 
-- (NSArray<NSObject<MLNUIKVOObserverProtol> *> *)observersForKeyPath:(NSString *)keyPath {
+- (NSArray<NSObject<MLNUIKVOObserverProtol> *> *)observersForKeyPath:(NSString *)keyPath forArray:(BOOL) forArray {
     NSParameterAssert(keyPath);
     if (!keyPath) {
         return nil;
+    }
+    if (forArray) {
+        keyPath = [keyPath stringByAppendingString:kArrayPlaceHolder];
     }
     LOCK();
     NSMutableArray *observers = [self.observerMap objectForKey:keyPath];
     UNLOCK();
     return observers;
+}
+
+- (NSArray <NSObject<MLNUIKVOObserverProtol> *> *)dataObserversForKeyPath:(NSString *)keyPath {
+    return [self observersForKeyPath:keyPath forArray:NO];
+}
+
+- (NSArray <NSObject<MLNUIKVOObserverProtol> *> *)arrayObserversForKeyPath:(NSString *)keyPath {
+    return [self observersForKeyPath:keyPath forArray:YES];
 }
 
 - (NSString *)addMLNUIObserver:(NSObject<MLNUIKVOObserverProtol> *)observer forKeyPath:(NSString *)keyPath {
@@ -178,7 +196,7 @@
     keys = [self formatKeys:keys allowFirstKeyIsNumber:NO allowLastKeyIsNumber:NO];
     if(!keys) return nil;
     
-//    NSString *observerKey = [keys componentsJoinedByString:@"."];
+//    NSString *obKey = [keys componentsJoinedByString:@"."];
     NSObject *frontObject;
     NSObject *object = [self dataForKeysArray:keys frontObject:&frontObject];
     NSString *path = keys.lastObject;
@@ -208,7 +226,7 @@
     keys = [self formatKeys:keys allowFirstKeyIsNumber:NO allowLastKeyIsNumber:NO];
     if(!keys) return ;
     
-    NSString *observerKey = [keys componentsJoinedByString:@"."];
+    NSString *obKey = [keys componentsJoinedByString:@"."];
     NSObject *frontObject;
     NSObject *object = [self dataForKeysArray:keys frontObject:&frontObject];
     NSString *path = keys.lastObject;
@@ -217,10 +235,11 @@
 //    }
     // frontObject not array, then path not number
     if (![frontObject isKindOfClass:[NSArray class]]) {
-        [self _realRemoveDataObserver:observer forObject:frontObject observerKey:observerKey path:path];
+        [self _realRemoveDataObserver:observer forObject:frontObject obKey:obKey path:path];
     }
     if ([object isKindOfClass:[NSMutableArray class]]) {
-        [self _realRemoveArrayObserver:observer forObject:(NSMutableArray *)object observerKey:observerKey];
+        obKey = [obKey stringByAppendingString:kArrayPlaceHolder];
+        [self _realRemoveArrayObserver:observer forObject:(NSMutableArray *)object obKey:obKey];
     }
 }
 
@@ -236,12 +255,17 @@
     if (!object || !observer) return nil;
     NSString *uuid;
 //    NSObject *object = [self _dataForKey:key path:nil];
-    NSString *observerKey = [keys componentsJoinedByString:@"."];
+    NSString *obKey = [keys componentsJoinedByString:@"."];
     LOCK();
-    NSMutableArray *observerArray = [self.observerMap objectForKey:observerKey];
+    NSMutableArray *observerArray = [self.observerMap objectForKey:obKey];
     if (!observerArray) {
         observerArray = [NSMutableArray array];
-        [self.observerMap setObject:observerArray forKey:observerKey];
+        [self.observerMap setObject:observerArray forKey:obKey];
+    }
+    
+    if ([observerArray containsObject:observer]) {
+        NSLog(@"data oberver already exist for key %@",obKey);
+        return nil;
     }
     
     @weakify(self);
@@ -266,11 +290,10 @@
         }
     }];
     
-    if (![observerArray containsObject:observer]) {
-        [observerArray addObject:observer];
-        uuid = [[NSUUID UUID] UUIDString];
-        [self.observerIDsMap setObject:observer forKey:uuid];
-    }
+    [observerArray addObject:observer];
+    uuid = [[NSUUID UUID] UUIDString];
+    [self.observerIDsMap setObject:observer forKey:uuid];
+    
     UNLOCK();
     return uuid;
 }
@@ -284,12 +307,18 @@
         NSLog(@"%@",log);
         return nil;
     }
-    NSString *observerKey = [keys componentsJoinedByString:@"."];
+    NSString *obKey = [keys componentsJoinedByString:@"."];
+    obKey = [obKey stringByAppendingString:kArrayPlaceHolder];
     LOCK();
-    NSMutableArray *observerArray = [self.observerMap objectForKey:observer];
+    NSMutableArray *observerArray = [self.observerMap objectForKey:obKey];
     if (!observerArray) {
         observerArray = [NSMutableArray array];
-        [self.observerMap setObject:observerArray forKey:observerKey];
+        [self.observerMap setObject:observerArray forKey:obKey];
+    }
+    
+    if ([observerArray containsObject:observer]) {
+        NSLog(@"array observer already exist for key %@",obKey);
+        return nil;
     }
     
     @weakify(self);
@@ -318,26 +347,37 @@
                     [newChange setValue:bindArray forKey:MLNUIKVOOrigin2DArrayKey];
                     obBlock(nil, object, newChange);
                 }];
+                
+                //自动移除监听
+                [obj mlnui_addDeallocationCallback:^(id  _Nonnull receiver) {
+                    [receiver mlnui_removeAllObservations];
+                }];
             }
         }];
     }
-    //TODO: 自动移除Array的监听.
+    //自动移除监听
+    [bindArray mlnui_addDeallocationCallback:^(id  _Nonnull receiver) {
+        @strongify(self);
+        @strongify(observer);
+        if (self && observer) {
+            [self removeMLNUIObserver:observer forKeys:keys];
+        }
+    }];
     
-    if (![observerArray containsObject:observer]) {
-        [observerArray addObject:observer];
-        uuid = [[NSUUID UUID] UUIDString];
-        [self.observerIDsMap setObject:observer forKey:uuid];
-    }
+    [observerArray addObject:observer];
+    uuid = [[NSUUID UUID] UUIDString];
+    [self.observerIDsMap setObject:observer forKey:uuid];
+    
     UNLOCK();
     return uuid;
 }
 
-- (void)_realRemoveDataObserver:(NSObject<MLNUIKVOObserverProtol> *)observer forObject:(NSObject *)object observerKey:(NSString *)observerKey path:(NSString *)path {
+- (void)_realRemoveDataObserver:(NSObject<MLNUIKVOObserverProtol> *)observer forObject:(NSObject *)object obKey:(NSString *)obKey path:(NSString *)path {
     if(!observer) return;
     
-    if (observerKey && observer) {
+    if (obKey && observer) {
         LOCK();
-        NSMutableArray *observers = [self.observerMap objectForKey:observerKey];
+        NSMutableArray *observers = [self.observerMap objectForKey:obKey];
         [observers removeObject:observer];
         UNLOCK();
     }
@@ -347,12 +387,12 @@
     }
 }
 
-- (void)_realRemoveArrayObserver:(NSObject<MLNUIKVOObserverProtol> *)observer forObject:(NSMutableArray *)object observerKey:(NSString *)observerKey {
+- (void)_realRemoveArrayObserver:(NSObject<MLNUIKVOObserverProtol> *)observer forObject:(NSMutableArray *)object obKey:(NSString *)obKey {
     if(!observer) return;
     
-    if (observerKey) {
+    if (obKey) {
         LOCK();
-        NSMutableArray *observers = [self.observerMap objectForKey:observerKey];
+        NSMutableArray *observers = [self.observerMap objectForKey:obKey];
         [observers removeObject:observer];
         UNLOCK();
     }
@@ -547,7 +587,7 @@
          return nil;
      }
      NSObject *obj = [self _dataForKey:key path:nil];
-     return [self _realAddDataObserver:observer forObject:obj observerKey:keyPath path:path];
+     return [self _realAddDataObserver:observer forObject:obj obKey:keyPath path:path];
  }
 
  - (void)removeDataObserver:(NSObject<MLNUIKVOObserverProtol> *)observer forKeyPath:(NSString *)keyPath {
@@ -591,10 +631,10 @@
      if (key && path) {
          // add data observer
          NSObject *object = [self _dataForKey:key path:nil];
-         uuid = [self _realAddDataObserver:observer forObject:object observerKey:keyPath path:path];
+         uuid = [self _realAddDataObserver:observer forObject:object obKey:keyPath path:path];
      }
      NSObject *object = [self _dataForKey:key path:path];
-     NSString *uuid2 = [self _realAddArrayObserver:observer forObject:object observerKey:keyPath];
+     NSString *uuid2 = [self _realAddArrayObserver:observer forObject:object obKey:keyPath];
      return uuid2 ? uuid2 : uuid;
  }
 

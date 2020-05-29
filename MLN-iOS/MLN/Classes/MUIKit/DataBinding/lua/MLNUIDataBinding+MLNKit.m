@@ -187,11 +187,13 @@
     UIViewController<MLNUIDataBindingProtocol> *kitViewController = (UIViewController<MLNUIDataBindingProtocol> *)MLNUI_KIT_INSTANCE([self mlnui_currentLuaCore]).viewController;
 
     NSArray *array = [self mlnui_dataForKeyPath:key];
-    MLNUIListViewObserver *listObserver = (MLNUIListViewObserver *)[kitViewController.mlnui_dataBinding observersForKeyPath:key].lastObject;
+    MLNUIListViewObserver *listObserver = (MLNUIListViewObserver *)[kitViewController.mlnui_dataBinding arrayObserversForKeyPath:key].lastObject;
     if (![listObserver isKindOfClass:[MLNUIListViewObserver class]]) {
         NSLog(@"error: not found observer for key %@",key);
         return;
     }
+    UIView *listView = [listObserver listView];
+    if (!listView)  return;
     
     NSObject *model;
     if (array.mlnui_is2D) {
@@ -200,6 +202,34 @@
         model = [array mlnui_objectAtIndex:row - 1];
     }
     
+    NSMutableDictionary *infos = [listView mlnui_bindInfos];
+    MLNUIDataBinding *dataBinding = kitViewController.mlnui_dataBinding;
+    
+    NSMutableArray *newKeys = [NSMutableArray array];
+    for (NSString *p in paths) {
+        NSString *nk = [key stringByAppendingString:p];
+        [newKeys addObject:nk];
+        NSString *obID =  [infos objectForKey:nk];
+        if (obID) {
+            [dataBinding removeMLNUIObserverByID:obID];
+        }
+        MLNUIKVOObserver *ob = [[MLNUIKVOObserver alloc] initWithViewController:kitViewController callback:^(NSString * _Nonnull keyPath, id  _Nonnull object, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
+            if ([listView isKindOfClass:[MLNUITableView class]]) {
+                MLNUITableView *table = (MLNUITableView *)listView;
+                NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row - 1 inSection:section - 1];
+                [table.adapter tableView:table.adapter.targetTableView reloadRowsAtIndexPaths:@[indexPath]];
+                [table.adapter.targetTableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
+            } else {
+                
+            }
+        } keyPath:nk];
+        obID = [dataBinding addMLNUIObserver:ob forKeyPath:nk];
+        if (obID) {
+            [infos setObject:obID forKey:nk];
+        }
+    }
+    
+    /*
     for (NSString *k in paths) {
         [model mlnui_removeObervationsForOwner:kitViewController.mlnui_dataBinding keyPath:k];
     }
@@ -216,6 +246,7 @@
             
         }
     }];
+    */
 }
 
 #pragma mark - Array

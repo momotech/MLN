@@ -115,14 +115,27 @@
 }
 
 - (void)mlnui_removeObervationsForOwner:(id)owner keyPath:(NSString *)keyPath {
+    [self _real_mlnui_removeObervationsForOwner:owner keyPath:keyPath];
+}
+
+- (void)mlnui_removeAllObervationsForkeyPath:(NSString *)keyPath {
+    [self _real_mlnui_removeObervationsForOwner:nil keyPath:keyPath];
+}
+
+- (void)_real_mlnui_removeObervationsForOwner:(nullable id)owner keyPath:(NSString *)keyPath {
     NSMutableSet *observersForKeyPath = [self mlnui_keyPathBlockObserversCreateIfNeeded:NO][keyPath]
     ;
     
-    NSMutableSet *observersForOwnerForKeyPath = [NSMutableSet set];
-    for (MLNUIObserver *observer in observersForKeyPath) {
-        if (observer.owner == owner) {
-            [observersForOwnerForKeyPath addObject:observer];
+    NSMutableSet *observersForOwnerForKeyPath;
+    if (owner) {
+        observersForOwnerForKeyPath = [NSMutableSet set];
+        for (MLNUIObserver *observer in observersForKeyPath) {
+            if (observer.owner == owner) {
+                [observersForOwnerForKeyPath addObject:observer];
+            }
         }
+    } else { // owner = nil,remove all observers for keypath
+        observersForOwnerForKeyPath = observersForKeyPath;
     }
     
     for (MLNUIObserver *observer in observersForOwnerForKeyPath) {
@@ -130,6 +143,7 @@
         [observersForKeyPath removeObject:observer];
     }
 }
+
 @end
 
 #import "MLNUIArrayObserver.h"
@@ -151,6 +165,9 @@
     [self mlnui_removeObervationsForOwner:owner keyPath:kArrayKVOPlaceHolder];
 }
 
+- (void)mlnui_removeAllArrayObservations {
+    [self mlnui_removeAllObervationsForkeyPath:kArrayKVOPlaceHolder];
+}
 @end
 
 @implementation NSObject (MLNUIDeprecated)
