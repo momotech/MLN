@@ -1,6 +1,6 @@
 {
   "name": "MLNUI",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "summary": "A lib of Momo Lua UI.",
   "description": "A lib of Momo Lua UI.",
   "homepage": "https://mln.immomo.com",
@@ -11,7 +11,7 @@
   "authors": "MoMo",
   "source": {
     "git": "https://github.com/momotech/MLN.git",
-    "tag": "MLNUI/0.1.0"
+    "tag": "MLNUI/0.1.1"
   },
   "platforms": {
     "ios": "8.0"

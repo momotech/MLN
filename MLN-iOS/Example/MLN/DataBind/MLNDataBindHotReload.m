@@ -14,7 +14,7 @@
 #import "MLNDataBindOperator.h"
 #import "MLNUIKit.h"
 
-@interface MLNDataBindHotReload () <MLNUIDataBindingProtocol>
+@interface MLNDataBindHotReload ()
 @property (nonatomic, strong) MLNBindTestCaseModel *tcModel;
 @end
 
