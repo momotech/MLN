@@ -205,10 +205,8 @@
     NSMutableDictionary *infos = [listView mlnui_bindInfos];
     MLNUIDataBinding *dataBinding = kitViewController.mlnui_dataBinding;
     
-    NSMutableArray *newKeys = [NSMutableArray array];
     for (NSString *p in paths) {
-        NSString *nk = [key stringByAppendingString:p];
-        [newKeys addObject:nk];
+        NSString *nk = [key stringByAppendingFormat:@".%zd.%zd.%@",section,row,p];
         NSString *obID =  [infos objectForKey:nk];
         if (obID) {
             [dataBinding removeMLNUIObserverByID:obID];
