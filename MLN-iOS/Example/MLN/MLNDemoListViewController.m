@@ -10,6 +10,7 @@
 #import "MLNKitViewController.h"
 #import "MLNLuaBundle.h"
 #import "MLNUIViewController.h"
+#import "MLNUIBridge.h"
 
 @interface MLNDemoListViewController () <UITableViewDelegate, UITableViewDataSource>
 
@@ -71,14 +72,16 @@
         [self.navigationController pushViewController:vc animated:YES];
         return;
     }
-#if USE_MLN
+#if 1
     MLNKitViewController *viewController = [[MLNKitViewController alloc] initWithEntryFilePath:demoName];
+    [viewController regClasses:@[[MLNUIBridge class]]];
     MLNLuaBundle *bundle = [MLNLuaBundle mainBundleWithPath:@"inner_demo.bundle"];
     [viewController changeCurrentBundle:bundle];
-#endif
+#else
     NSString *path = [[NSBundle mainBundle] pathForResource:@"inner_demo" ofType:@"bundle"];
     NSBundle *bundle = [[NSBundle alloc]  initWithPath:path];
     MLNUIViewController *viewController = [[MLNUIViewController alloc] initWithEntryFileName:demoName bundle:bundle];
+#endif
     [self.navigationController pushViewController:viewController animated:YES];
 }
 

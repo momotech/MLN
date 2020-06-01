@@ -465,7 +465,7 @@ static int mlnui_errorFunc_traceback (lua_State *L) {
     for (Class<MLNUIExportProtocol> clazz in classesCopy) {
         BOOL ret = [self.exporter exportClass:clazz error:error];
         if (!ret) {
-            MLNUIError(self, @"%@", *error);
+            MLNUIError(self, @"%@", error ? *error : [NSString stringWithFormat:@"%@ 注册失败",clazz]);
             return NO;
         }
     }

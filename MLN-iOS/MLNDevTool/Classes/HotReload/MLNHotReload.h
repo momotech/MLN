@@ -27,6 +27,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy, readonly) NSString *entryFilePath;
 @property (nonatomic, copy, readonly) NSString *relativeEntryFilePath;
 @property (nonatomic, assign, getter=isOpenAssert) BOOL openAssert;
+@property (nonatomic, assign) BOOL useMLNUI;
 
 + (void)openBreakpointDebugIfNeeded:(MLNKitInstance *)instance;
 

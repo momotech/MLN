@@ -20,6 +20,7 @@
 #import "NSObject+MLNUIReflect.h"
 
 @implementation MLNUIDataBinding (MLNUIKit)
+#if 1
 #pragma mark - Watch/Get/Update
 + (NSString *)luaui_watchDataForKeys:(NSArray *)keys handler:(MLNUIBlock *)handler {
     NSParameterAssert(keys && handler);
@@ -506,5 +507,5 @@ LUAUI_EXPORT_STATIC_METHOD(getArrayData, "luaui_getArrayDataForKey:index:dataKey
 LUAUI_EXPORT_STATIC_METHOD(aliasArrayData, "luaui_aliasArrayDataForKey:index:alias:", MLNUIDataBinding)
 
 LUAUI_EXPORT_STATIC_END(MLNUIDataBinding, DataBinding, NO, NULL)
-
+#endif
 @end

@@ -127,10 +127,12 @@ static MLNHotReload *sharedInstance;
 }
 
 - (MLNKitInstance *)getKitInstance {
-#if 0
-    MLNKitInstance *luaInstance = [[MLNKitInstanceFactory defaultFactory] createKitInstanceWithViewController:self.viewController];
-#endif
-    MLNKitInstance *luaInstance = (MLNKitInstance *)[[MLNUIKitInstanceFactory defaultFactory]  createKitInstanceWithViewController:self.viewController];
+    MLNKitInstance *luaInstance;
+    if (self.useMLNUI) {
+        luaInstance = (MLNKitInstance *)[[MLNUIKitInstanceFactory defaultFactory]  createKitInstanceWithViewController:self.viewController];
+    } else {
+        luaInstance = [[MLNKitInstanceFactory defaultFactory] createKitInstanceWithViewController:self.viewController];
+    }
     return luaInstance;
 }
 
