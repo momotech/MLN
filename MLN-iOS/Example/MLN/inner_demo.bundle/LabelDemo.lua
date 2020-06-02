@@ -76,8 +76,6 @@ window:addView(linear)
 
 window:onClick(function()
     print('on click window')
-    local mlnui = MLNUI()
-               
     local userData = {}
     local s = {}
     for i=1,4  do
@@ -97,16 +95,13 @@ window:onClick(function()
         end
         m.titles = titles
         s[i] = m
+
     end
     userData.source = s
     
-    mlnui.watch('source.1.hideIcon',function(new,old)
-        print('hideIcon',new,old)
-    end)
-    
-    mlnui:setFileName('layout_fromMLN')
     --local mlnui = MLNUI('layout_fromMLN.lua'):bind('userData',userData)
-    --local mlnui = MLNUI('layout_fromMLN'):bind('userData',userData)
+    local mlnui = MLNUI('layout_fromMLN'):bind('userData',userData)
+
     mlnui:display()
     
 end)
