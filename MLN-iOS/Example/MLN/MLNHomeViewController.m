@@ -66,7 +66,8 @@
 #pragma mark - action
 
 - (IBAction)hotReloadAction:(id)sender {
-    MLNHotReloadViewController  *hotReloadVC = [[MLNHotReloadViewController alloc] initWithRegisterClasses:@[[MLNStaticTest class], [MLNUIBridge class]] extraInfo:nil];
+    MLNUIHotReloadViewController *hotReloadVC = [[MLNUIHotReloadViewController alloc] initWithEntryFileName:nil];
+    [hotReloadVC setRegClasses:@[[MLNStaticTest class]/*, [MLNUIBridge class]*/]];
     [self.navigationController pushViewController:hotReloadVC animated:YES];
 }
 
