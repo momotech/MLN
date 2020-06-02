@@ -10,7 +10,6 @@
 #import "MLNKitViewController.h"
 #import "MLNLuaBundle.h"
 #import "MLNUIViewController.h"
-#import "MLNUIBridge.h"
 
 @interface MLNDemoListViewController () <UITableViewDelegate, UITableViewDataSource>
 
@@ -74,7 +73,6 @@
     }
 #if 1
     MLNKitViewController *viewController = [[MLNKitViewController alloc] initWithEntryFilePath:demoName];
-    [viewController regClasses:@[[MLNUIBridge class]]];
     MLNLuaBundle *bundle = [MLNLuaBundle mainBundleWithPath:@"inner_demo.bundle"];
     [viewController changeCurrentBundle:bundle];
 #else
