@@ -561,10 +561,9 @@ local function mln_update_commandmodel_var_names(cmd)
   local varnames = mobdebug.commandmodel_var_names
   if varnames ~= nil and type(varnames) == "table" then
     if cmd ~= nil and type(cmd) == "string" then
-      local _, _, var = string.find(cmd, "%s*(%a+)%s*=%s*%a*")
+      local _, _, var = string.find(cmd, "%s*(%a+[a-zA-Z0-9_]*)%s*=%s*%a*")
       varnames[var] = var
     end
-
   end
 end
 
@@ -990,7 +989,7 @@ local function debugger_loop(sev, svars, sfile, sline, sindex, is_first_run)
           local main_vars = main_thread_vars
           local _, _, innerLine = string.find(line, "(.+)%-%-%s*%b{}%s*$")
           if innerLine then
-            local _, _, gname  = string.find(innerLine, "^[A-Z]+%s*return%s*(%a+)_global%s*$")
+            local _, _, gname = string.find(innerLine, "^[A-Z]+%s*return%s*(%a+[a-zA-Z0-9_]*)_global%s*$")
             if gname then
               local v = _G[gname]
               if v and type(v) == "table" then
