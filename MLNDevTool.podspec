@@ -32,7 +32,8 @@ Pod::Spec.new do |s|
     s.libraries = 'z'
     s.requires_arc = true
     s.public_header_files = 'MLN-iOS/MLNDevTool/Classes/*.h'
-    
+    s.dependency 'ArgoUI'
+
     s.subspec 'MLNProtobuf' do |pb|
       pb.name = 'MLNProtobuf'
       pb.source_files = 'MLN-iOS/MLNDevTool/Classes/MLNProtobuf/**/*.{h,m}'
@@ -57,7 +58,6 @@ Pod::Spec.new do |s|
         'MLNDevTool_UI' => 'MLN-iOS/MLNDevTool/Classes/DevTool/UI/**/Assets/*.{png,xib}'
       }
       d.dependency 'MLN'
-      d.dependency 'MLNUI'
       d.dependency 'MLNDevTool/Conn'
     end
 

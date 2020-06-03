@@ -6,7 +6,7 @@
 //
 
 #import "MLNUIDefautImageloader.h"
-#import <MLNUI/MLNUIKit.h>
+#import "MLNUIKit.h"
 #import "MLNUICornerImageLoader.h"
 
 @implementation MLNUIDefautImageloader

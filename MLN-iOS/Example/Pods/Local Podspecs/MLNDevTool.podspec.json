@@ -1,6 +1,6 @@
 {
   "name": "MLNDevTool",
-  "version": "0.1.9",
+  "version": "0.2.0",
   "summary": "Debug Tool of MLN.",
   "description": "Debug Tool of MLN.",
   "homepage": "https://mln.immomo.com",
@@ -11,7 +11,7 @@
   "authors": "MoMo",
   "source": {
     "git": "https://github.com/momotech/MLN.git",
-    "tag": "devtool-0.1.9"
+    "tag": "devtool-0.2.0"
   },
   "platforms": {
     "ios": "8.0"
@@ -19,6 +19,11 @@
   "libraries": "z",
   "requires_arc": true,
   "public_header_files": "MLN-iOS/MLNDevTool/Classes/*.h",
+  "dependencies": {
+    "ArgoUI": [
+
+    ]
+  },
   "subspecs": [
     {
       "name": "MLNProtobuf",
@@ -58,9 +63,6 @@
       },
       "dependencies": {
         "MLN": [
-
-        ],
-        "MLNUI": [
 
         ],
         "MLNDevTool/Conn": [

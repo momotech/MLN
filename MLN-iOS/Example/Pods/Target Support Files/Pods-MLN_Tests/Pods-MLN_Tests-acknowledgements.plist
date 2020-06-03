@@ -39,7 +39,7 @@ THE SOFTWARE.
 			<key>License</key>
 			<string>MIT</string>
 			<key>Title</key>
-			<string>MLN</string>
+			<string>ArgoUI</string>
 			<key>Type</key>
 			<string>PSGroupSpecifier</string>
 		</dict>
@@ -70,7 +70,7 @@ THE SOFTWARE.
 			<key>License</key>
 			<string>MIT</string>
 			<key>Title</key>
-			<string>MLNUI</string>
+			<string>MLN</string>
 			<key>Type</key>
 			<string>PSGroupSpecifier</string>
 		</dict>
