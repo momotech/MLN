@@ -35,7 +35,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)updateDataForKeyPath:(NSString *)keyPath value:(id)value;
 
 // keys
-- (id __nullable)dataForKeys:(NSArray *)keys;
+//- (id __nullable)dataForKeys:(NSArray *)keys;
+- (id __nullable)dataForKeys:(NSArray *)keys frontValue:(NSObject *_Nullable *_Nullable)front;
 - (void)updateDataForKeys:(NSArray *)keys value:(id)value;
 
 - (NSString *)addMLNUIObserver:(NSObject<MLNUIKVOObserverProtol> *)observer forKeys:(NSArray *)keys;

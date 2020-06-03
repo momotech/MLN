@@ -60,7 +60,7 @@
     NSObject *obj;
 
     if ([keys isKindOfClass:[NSArray class]]) {
-        obj = [kitViewController.mlnui_dataBinding dataForKeys:keys];
+        obj = [kitViewController.mlnui_dataBinding dataForKeys:keys frontValue:NULL];
     } else if ([keys isKindOfClass:[NSString class]]) {
        obj = [self mlnui_dataForKeyPath:(NSString *)keys];
     }
@@ -315,6 +315,27 @@
     }
 }
 
++ (NSUInteger)luaui_arraySizeForKey:(NSString *)key {
+    NSParameterAssert(key);
+    if(!key) return 0;
+    UIViewController<MLNUIDataBindingProtocol> *kitViewController = (UIViewController<MLNUIDataBindingProtocol> *)MLNUI_KIT_INSTANCE([self mlnui_currentLuaCore]).viewController;
+    
+    NSArray *keys = [key componentsSeparatedByString:@"."];
+    NSObject *front;
+    NSArray *arr = [kitViewController.mlnui_dataBinding dataForKeys:keys frontValue:&front];
+    
+    if (![arr isKindOfClass: [NSArray  class]]) {
+        if ([front isKindOfClass:[NSArray class]]) {
+            arr = (NSArray *)front;
+        } else {
+            NSString *log = [NSString stringWithFormat:@"%@ is not NSArray",key];
+            [self onErrorLog:log];
+            return 0;
+        }
+    }
+    return arr.count;
+}
+
 #pragma mark - Utils
 
 + (void)onErrorLog:(NSString *)log {
@@ -488,6 +509,7 @@ LUAUI_EXPORT_STATIC_METHOD(mockArray, "luaui_mockArrayForKey:data:callbackDic:",
 
 LUAUI_EXPORT_STATIC_METHOD(insert, "luaui_insertForKey:index:value:", MLNUIDataBinding)
 LUAUI_EXPORT_STATIC_METHOD(remove, "luaui_removeForKey:index:", MLNUIDataBinding)
+LUAUI_EXPORT_STATIC_METHOD(arraySize, "luaui_arraySizeForKey:", MLNUIDataBinding)
 
 LUAUI_EXPORT_STATIC_METHOD(bindListView, "luaui_bindListViewForKey:listView:", MLNUIDataBinding)
 LUAUI_EXPORT_STATIC_METHOD(getSectionCount, "luaui_sectionCountForKey:", MLNUIDataBinding)

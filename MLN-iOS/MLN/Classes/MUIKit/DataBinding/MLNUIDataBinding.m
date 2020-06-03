@@ -116,7 +116,7 @@
     NSParameterAssert(keyPath);
     if(!keyPath) return nil;
     NSArray *keys = [keyPath componentsSeparatedByString:@"."];
-    return [self dataForKeys:keys];
+    return [self dataForKeys:keys frontValue:NULL];
 }
 
 - (void)updateDataForKeyPath:(NSString *)keyPath value:(id)value {
@@ -129,13 +129,17 @@
 
 #pragma mark - Lua Keys
 
-- (id __nullable)dataForKeys:(NSArray *)keys {
+//- (id __nullable)dataForKeys:(NSArray *)keys {
+//    return [self dataForKeys:keys frontValue:NULL];
+//}
+
+- (id __nullable)dataForKeys:(NSArray *)keys frontValue:(NSObject *_Nullable *_Nullable)front {
     NSParameterAssert(keys);
     
     NSArray *formatKeys = [self formatKeys:keys allowFirstKeyIsNumber:NO allowLastKeyIsNumber:YES];
     if(!formatKeys) return nil;
     
-    return [self dataForKeysArray:formatKeys frontObject:NULL];
+    return [self dataForKeysArray:formatKeys frontObject:front];
 }
 
 - (void)updateDataForKeys:(NSArray *)keys value:(id)value {
