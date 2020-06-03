@@ -6,18 +6,19 @@
 //  Copyright © 2020 MoMo. All rights reserved.
 //
 
-#import <MLNDataBinding.h>
-#import <MLNKVOObserver.h>
+#import <MLNUIDataBinding.h>
+#import <MLNUIKVOObserver.h>
 #import "MLNTestModel.h"
-#import <NSMutableArray+MLNKVO.h>
+#import <NSMutableArray+MLNUIKVO.h>
 
 SpecBegin(ArrayBinding)
 
 // fixed XCTest issue.
 //[NSMutableArray load];
 
-__block MLNDataBinding *dataBinding;
+__block MLNUIDataBinding *dataBinding;
 __block NSMutableArray *modelsArray;
+NSString *arrayKeyPath = @"models";
 
 beforeEach(^{
     modelsArray = [NSMutableArray array];
@@ -27,15 +28,15 @@ beforeEach(^{
         m.text = [NSString stringWithFormat:@"hello %d", i+10];
         [modelsArray addObject:m];
     }
-    dataBinding = [[MLNDataBinding alloc] init];
-    [dataBinding bindArray:modelsArray forKey:@"models"];
+    dataBinding = [[MLNUIDataBinding alloc] init];
+    [dataBinding bindArray:modelsArray forKey:arrayKeyPath];
 });
 
 describe(@"observer", ^{
     __block BOOL result = NO;
     void(^observerBlock)(NSKeyValueChange,NSUInteger,NSUInteger,id,id) = ^(NSKeyValueChange type, NSUInteger index, NSUInteger expectedCount, id newValue, id oldValue){
         result = NO;
-        MLNKVOObserver *obs = [[MLNKVOObserver alloc] initWithViewController:nil callback:^(NSString * _Nonnull keyPath, id  _Nonnull object, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
+        MLNUIKVOObserver *obs = [[MLNUIKVOObserver alloc] initWithViewController:nil callback:^(NSString * _Nonnull keyPath, id  _Nonnull object, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
             NSKeyValueChange kind = [[change objectForKey:NSKeyValueChangeKindKey] unsignedIntegerValue];
             expect(@(kind)).to.equal(@(type));
             
@@ -54,9 +55,9 @@ describe(@"observer", ^{
             expect(modelsArray.count == expectedCount).to.beTruthy();
             expect(result).to.beFalsy();
             result = YES;
-        } keyPath:@"models"];
+        } keyPath:arrayKeyPath];
         
-        [dataBinding addArrayObserver:obs forKey:@"models"];
+        [dataBinding addMLNUIObserver:obs forKeyPath:arrayKeyPath];
     };
     //five primitive methods
     it(@"addObject", ^{
@@ -133,6 +134,32 @@ describe(@"observer", ^{
     afterEach(^{
         NSLog(@"%@",modelsArray);
     });
+});
+
+it(@"observer_once", ^{
+   NSMutableArray *arr = @[].mutableCopy;
+   [dataBinding bindArray:arr forKey:@"arr"];
+   
+   __block BOOL r1 = NO;
+   __block BOOL r2 = NO;
+   MLNUIKVOObserver *ob1 = [[MLNUIKVOObserver alloc] initWithViewController:nil callback:^(NSString * _Nonnull keyPath, id  _Nonnull object, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
+    expect(r1).beFalsy();
+    r1 = YES;
+    expect(change[NSKeyValueChangeKindKey]).equal(@(NSKeyValueChangeInsertion));
+   } keyPath:nil];
+   
+   MLNUIKVOObserver *ob2 = [[MLNUIKVOObserver alloc] initWithViewController:nil callback:^(NSString * _Nonnull keyPath, id  _Nonnull object, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
+    expect(r2).beFalsy();
+    r2 = YES;
+    expect(change[NSKeyValueChangeKindKey]).equal(@(NSKeyValueChangeInsertion));
+   } keyPath:nil];
+   
+   [dataBinding addMLNUIObserver:ob1 forKeyPath:@"arr"];
+   [dataBinding addMLNUIObserver:ob2 forKeyPath:@"arr"];
+   
+   [arr addObject:@"abc"];
+   expect(r1).beTruthy();
+   expect(r2).beTruthy();
 });
 
 SpecEnd

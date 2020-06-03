@@ -1,4 +1,3 @@
-
-mdb = require("mobdebug")
-mdb.start(DebugContext:debugIp(), DebugContext:debugPort())
+_mln_debug = require("mobdebug")
+_mln_debug.start(DebugContext:debugIp(), DebugContext:debugPort())
 

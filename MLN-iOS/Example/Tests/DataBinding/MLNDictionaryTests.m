@@ -6,7 +6,7 @@
 //  Copyright © 2020 MoMo. All rights reserved.
 //
 
-#import <NSDictionary+MLNKVO.h>
+#import <NSDictionary+MLNUIKVO.h>
 
 #define CreateDic(name,postfix) \
 name = @{ \
@@ -39,12 +39,12 @@ expect(map[@"key_2"][@"key_2_1"][@"key_2_1_1"]).to.beKindOf([cls class]); \
 expect(map[@"key_2"][@"key_2_1"][@"key_2_1_1"][@"name"]).to.equal(@"hello"); \
 
 it(@"mln_mutableCopy", ^{
-    NSMutableDictionary *map = dic.mln_mutalbeCopy;
+    NSMutableDictionary *map = dic.mlnui_mutalbeCopy;
     CheckDic(NSMutableDictionary);
 });
 
 it(@"mln_copy", ^{
-    NSDictionary *map = mutableDic.mln_copy;
+    NSDictionary *map = mutableDic.mlnui_copy;
     CheckDic(NSDictionary);
 });
 

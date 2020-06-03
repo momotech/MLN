@@ -10,6 +10,7 @@
 #import "MLNHotReload.h"
 #import "PBCommandBuilder.h"
 #import "MLNDebugPrintFunction.h"
+#import "MLNUIDataBinding.h"
 
 @interface MLNHotReloadViewController ()
 // NavigationBar
@@ -38,7 +39,10 @@
 
 - (instancetype)initWithEntryFilePath:(NSString *)entryFilePath extraInfo:(nullable NSDictionary *)extraInfo regClasses:(nullable NSArray<Class<MLNExportProtocol>> *)regClasses navigationBarTransparent:(BOOL)transparent
 {
-    if (self = [super initWithEntryFilePath:entryFilePath extraInfo:extraInfo regClasses:regClasses]) {
+    NSMutableArray *regs = [NSMutableArray arrayWithArray:regClasses ? regClasses :@[]];
+    [regs addObject: [MLNUIDataBinding class]];
+    
+    if (self = [super initWithEntryFilePath:entryFilePath extraInfo:extraInfo regClasses:regs]) {
         _navigationBarTransparent = transparent;
     }
     return self;
@@ -52,6 +56,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.view.backgroundColor = [UIColor whiteColor];
+    [MLNHotReload getInstance].useMLNUI = NO;
      __weak typeof(self) wself = self;
     [MLNHotReload getInstance].registerBridgeClassesCallback = ^(MLNKitInstance * _Nonnull instance) {
         __strong typeof(wself) sself = wself;
@@ -76,7 +81,11 @@
     };
     [[MLNHotReload getInstance] setUpdateCallback:^(MLNKitInstance * _Nonnull instance) {
         __strong typeof(wself) sself = wself;
-        sself->_kitInstance = instance;
+        @try {
+            [sself setValue:instance forKey:@"_kitInstance"];
+        } @catch (NSException *exception) {
+            NSLog(@"%@", exception);
+        };
     }];
 }
 

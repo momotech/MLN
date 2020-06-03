@@ -9,6 +9,8 @@
 #import "MLNDemoListViewController.h"
 #import "MLNKitViewController.h"
 #import "MLNLuaBundle.h"
+#import "MLNUIViewController.h"
+#import "MLNUIBridge.h"
 
 @interface MLNDemoListViewController () <UITableViewDelegate, UITableViewDataSource>
 
@@ -70,9 +72,16 @@
         [self.navigationController pushViewController:vc animated:YES];
         return;
     }
+#if 1
     MLNKitViewController *viewController = [[MLNKitViewController alloc] initWithEntryFilePath:demoName];
+    [viewController regClasses:@[[MLNUIBridge class]]];
     MLNLuaBundle *bundle = [MLNLuaBundle mainBundleWithPath:@"inner_demo.bundle"];
     [viewController changeCurrentBundle:bundle];
+#else
+    NSString *path = [[NSBundle mainBundle] pathForResource:@"inner_demo" ofType:@"bundle"];
+    NSBundle *bundle = [[NSBundle alloc]  initWithPath:path];
+    MLNUIViewController *viewController = [[MLNUIViewController alloc] initWithEntryFileName:demoName bundle:bundle];
+#endif
     [self.navigationController pushViewController:viewController animated:YES];
 }
 
@@ -96,10 +105,11 @@
                        @"TableViewDemo.lua",
                        @"ViewPagerDemo.lua",
                        @"WaterfallViewDemo.lua",
-//                       @"MLNDataBindHotReload",
+                       @"MLNDataBindHotReload",
                        @"MLNBindModelViewController",
                        @"MLNBindTableViewController",
-                       @"MLNPerformanceTestController"
+                       @"MLNPerformanceTestController",
+                       @"MLNDataBindArrayViewController"
                        ];
     }
     return _demoArray;

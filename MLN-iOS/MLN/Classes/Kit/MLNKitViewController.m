@@ -9,10 +9,9 @@
 #import "MLNKitInstance.h"
 #import "MLNLuaBundle.h"
 #import "MLNKitInstanceFactory.h"
-#import "MLNKitViewController+DataBinding.h"
 
 @interface MLNKitViewController ()
-
+@property (nonatomic, strong) NSMutableDictionary *globalModel;
 @end
 
 @implementation MLNKitViewController
@@ -97,6 +96,7 @@
         [self.delegate kitViewDidLoad:self];
     }
     [self.kitInstance changeRootView:self.view];
+    
     NSError *error = nil;
     BOOL ret = [self.kitInstance runWithEntryFile:self.entryFilePath windowExtra:self.extraInfo error:&error];
     if (ret) {

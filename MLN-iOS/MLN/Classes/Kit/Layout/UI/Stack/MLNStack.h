@@ -19,4 +19,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
+@interface MLNPlaneStack : MLNStack
+
+// subclass should override
+- (void)invalidateMatchParentMeasureTypeForMainAxis:(UIView *)view;
+
+@end
+
 NS_ASSUME_NONNULL_END

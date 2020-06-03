@@ -14,6 +14,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign, getter=isOpen) BOOL open;
 @property (nonatomic, copy) NSString *text;
 @property (nonatomic, strong) NSMutableArray *source;
+@property (nonatomic, strong) NSMutableArray *source2d;
+
 @end
 
 
@@ -31,6 +33,12 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) NSUInteger count;
 @property (nonatomic, strong) UIColor *color;
 @property (nonatomic, assign) CGRect rect;
+@end
+
+
+@interface MLNCombineModel : NSObject
+@property (nonatomic, copy) NSString *name;
+@property (nonatomic, strong) MLNTestModel *tm;
 @end
 
 NS_ASSUME_NONNULL_END

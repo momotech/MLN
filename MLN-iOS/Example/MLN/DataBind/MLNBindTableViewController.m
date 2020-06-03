@@ -7,7 +7,7 @@
 //
 
 #import "MLNBindTableViewController.h"
-#import "MLNKit.h"
+#import "MLNUIKit.h"
 #import "MLNDataBindModel.h"
 
 @interface MLNBindTableViewController ()
@@ -25,16 +25,22 @@
 
 - (void)createController {
     NSString *demoName = @"layout_DataBindTable.lua";
-    MLNKitViewController *viewController = [[MLNKitViewController alloc] initWithEntryFilePath:demoName];
-    MLNLuaBundle *bundle = [MLNLuaBundle mainBundleWithPath:@"inner_demo.bundle"];
-    [viewController changeCurrentBundle:bundle];
-    
+    NSString *path = [[NSBundle mainBundle] pathForResource:@"inner_demo" ofType:@"bundle"];
+    NSBundle *bundle = [NSBundle bundleWithPath:path];
+    MLNUIViewController *viewController = [[MLNUIViewController alloc] initWithEntryFileName:demoName bundle:bundle];
+
     [self createModelArray];
     
-//    [viewController.dataBinding bindArray:self.modelArray forKey:@"source"];
     [viewController bindData:self.tableModel forKey:@"tableModel"];
+    [viewController mlnui_addToSuperViewController:self frame:self.view.bounds];
     
-    [viewController mln_addToSuperViewController:self frame:self.view.bounds];
+    self.tableModel.mlnui_watch(@"refresh", ^(id  _Nonnull oldValue, id  _Nonnull newValue, MLNDatabindTableViewModel *object) {
+        if (object.refresh) {
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                object.refresh = NO;
+            });
+        }
+    });
 }
 
 - (void)createModelArray {
@@ -50,12 +56,29 @@
     MLNDatabindTableViewModel *tableModel = [MLNDatabindTableViewModel testModel];
     tableModel.source = @[arr].mutableCopy;
     
-    tableModel.source.mln_subscribeItem(^(NSObject * _Nonnull item, NSString * _Nonnull keyPath, NSObject * _Nonnull oldValue, NSObject * _Nonnull newValue) {
-        NSLog(@"item  %@ keypath %@ old %@ new %@",item,keyPath,oldValue,newValue);
-    });
+//    tableModel.source.mln_subscribeItem(^(NSObject * _Nonnull item, NSString * _Nonnull keyPath, NSObject * _Nonnull oldValue, NSObject * _Nonnull newValue) {
+//        NSLog(@"item  %@ keypath %@ old %@ new %@",item,keyPath,oldValue,newValue);
+//    });
+    [self mlnui_observeArray:self.tableModel.source withBlock:^(id  _Nonnull observer, id  _Nonnull object, id  _Nonnull oldValue, id  _Nonnull newValue, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
+         NSLog(@"item  %@ old %@ new %@",object,oldValue,newValue);
+    }];
     
     self.tableModel =  tableModel;
+//    [self newTestModel];
     [self testModel];
+}
+
+- (void)newTestModel {
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        NSMutableArray *arr = @[].mutableCopy;
+        for (int i = 0; i < 3; i++) {
+            MLNDataBindModel *model = [MLNDataBindModel testModel];
+            model.name = [NSString stringWithFormat:@"set array %d",i];
+            [arr addObject:model];
+        }
+        self.tableModel.source = @[arr].mutableCopy;
+        [self testModel];
+    });
 }
 
 //- (void)testModel {
@@ -92,7 +115,7 @@
             return ;
         }
         NSMutableArray *models = self.tableModel.source;
-        if (models.mln_is2D) {
+        if (models.mlnui_is2D) {
             if (models.count < 3) {
                 MLNDataBindModel *model = [MLNDataBindModel testModel];
                 model.name = [NSString stringWithFormat:@"section %zd",models.count];

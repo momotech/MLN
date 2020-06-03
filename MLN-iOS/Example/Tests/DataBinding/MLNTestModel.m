@@ -7,10 +7,14 @@
 //
 
 #import "MLNTestModel.h"
-#import "NSObject+MLNKVO.h"
+#import "NSObject+MLNUIKVO.h"
+@import ObjectiveC;
 
 @implementation MLNTestModel
-
+- (void)dealloc {
+    Class cls = object_getClass(self);
+    NSLog(@"%s %@",__func__,cls);
+}
 @end
 
 @implementation MLNTestChildModel
@@ -23,6 +27,7 @@
     m->_num = @11;
     return m;
 }
+
 @end
 
 @implementation MLNTestReflectModel
@@ -36,4 +41,13 @@
     return dic.copy;
 }
 
+@end
+
+
+@implementation MLNCombineModel
+
+- (void)dealloc {
+    Class cls = object_getClass(self);
+    NSLog(@"%s %@",__func__,cls);
+}
 @end

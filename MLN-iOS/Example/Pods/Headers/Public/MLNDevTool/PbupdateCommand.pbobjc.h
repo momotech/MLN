@@ -1,1 +1,1 @@
-../../../../../MLNDevTool/Classes/Protobuf/PbupdateCommand.pbobjc.h
+../../../../../MLNDevTool/Classes/MLNProtobuf/PbupdateCommand.pbobjc.h

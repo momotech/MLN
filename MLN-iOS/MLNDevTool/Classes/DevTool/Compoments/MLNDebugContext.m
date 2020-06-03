@@ -7,6 +7,7 @@
 
 #import "MLNDebugContext.h"
 #import "NSBundle+MLNDebugTool.h"
+#import "MLNUIKit.h"
 
 #define MLNDEBUG_IP_KEY   @"MLNDebugContextDebugIPAddressKey"
 #define MLNDEBUG_PORT_KEY @"MLNDebugContextDebugPortKey"
@@ -43,6 +44,9 @@
     if (self = [super init]) {
         _ipAddress = [[NSUserDefaults standardUserDefaults] stringForKey:MLNDEBUG_IP_KEY];
         _port = [[NSUserDefaults standardUserDefaults] integerForKey:MLNDEBUG_PORT_KEY];
+        if (_port == 0) {
+            _port = 8172;
+        }
     }
     return self;
 }
@@ -77,5 +81,10 @@ LUA_EXPORT_STATIC_BEGIN(MLNDebugContext)
 LUA_EXPORT_STATIC_METHOD(debugIp, "mln_debugIp", MLNDebugContext)
 LUA_EXPORT_STATIC_METHOD(debugPort, "mln_debugPort", MLNDebugContext)
 LUA_EXPORT_STATIC_END(MLNDebugContext, DebugContext, NO, NULL)
+
+LUAUI_EXPORT_STATIC_BEGIN(MLNDebugContext)
+LUAUI_EXPORT_STATIC_METHOD(debugIp, "mln_debugIp", MLNDebugContext)
+LUAUI_EXPORT_STATIC_METHOD(debugPort, "mln_debugPort", MLNDebugContext)
+LUAUI_EXPORT_STATIC_END(MLNDebugContext, DebugContext, NO, NULL)
 
 @end

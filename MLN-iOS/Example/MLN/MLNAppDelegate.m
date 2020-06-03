@@ -19,6 +19,11 @@
 #import "MLNMyRefreshHandler.h"
 #import "MLNMyImageHandler.h"
 #import "MLNNavigatorHandler.h"
+#import <MLNLink.h>
+#import "MLNUIKVOObserver.h"
+#import "MLNUIKit.h"
+#import "MLNUIMyImageHandler.h"
+#import "JPFPSStatus.h"
 
 @interface MLNAppDelegate ()
 
@@ -27,12 +32,14 @@
 @property (nonatomic, strong) id<MLNImageLoaderProtocol> imgLoader;
 @property (nonatomic, strong) id<MLNNavigatorHandlerProtocol> navHandler;
 
+@property (nonatomic, strong) id<MLNUIImageLoaderProtocol> imgLoader2;
 @end
 
 @implementation MLNAppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+    [[JPFPSStatus sharedInstance] open];
     [self setupMLNKitEnvironment];
     // 根据标志位判断是否禁用图片加载功能
     if (kDisableImageLoad) {
@@ -53,12 +60,28 @@
     self.refreshHandler = [[MLNMyRefreshHandler alloc] init];
     self.imgLoader = [[MLNMyImageHandler alloc] init];
     self.navHandler = [[MLNNavigatorHandler alloc] init];
+    // MLNUIKit
+    self.imgLoader2 = [[MLNUIMyImageHandler alloc] init];
     
     [MLNKitEnvironment instancePreload];
     [MLNKitEnvironment setDefaultHttpHandler:self.httpHandler];
     [MLNKitEnvironment setDefaultScrollRefreshHandler:self.refreshHandler];
     [MLNKitEnvironment setDefaultImageLoader:self.imgLoader];
     [MLNKitEnvironment setDefaultNavigatorHandler:self.navHandler];
+    
+    [MLNLink registerName:@"MLNLuaGallery" linkClassName:@"MLNLuaGalleryViewController"];
+    [self setupMLNUIKitEnvironment];
+}
+
+- (void)setupMLNUIKitEnvironment
+{
+    [MLNUIKitEnvironment instancePreload];
+    [MLNUIKitEnvironment setDefaultHttpHandler:self.httpHandler];
+    [MLNUIKitEnvironment setDefaultScrollRefreshHandler:self.refreshHandler];
+    [MLNUIKitEnvironment setDefaultImageLoader:self.imgLoader2];
+    [MLNUIKitEnvironment setDefaultNavigatorHandler:self.navHandler];
+    
+    [MLNUILink registerName:@"MLNLuaGallery" linkClassName:@"MLNLuaGalleryViewController"];
 }
 
 - (void)copyJsonFilesToSandbox

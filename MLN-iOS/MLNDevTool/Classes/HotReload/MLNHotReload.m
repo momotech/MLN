@@ -17,6 +17,8 @@
 #import "MLNDebugCodeCoverageFunction.h"
 #import "MLNDebugContext.h"
 #import "mln_luasocket.h"
+#import "MLNUIKVOObserverProtocol.h"
+#import "MLNUIKitInstanceFactory.h"
 
 @interface MLNHotReload () <MLNKitInstanceErrorHandlerProtocol, MLNKitInstanceDelegate, MLNServerManagerDelegate, MLNDebugPrintObserver, MLNServerListenerProtocol, MLNHotReloadPresenterDelegate> {
     int _usbPort;
@@ -124,9 +126,19 @@ static MLNHotReload *sharedInstance;
     [UIApplication sharedApplication].idleTimerDisabled = _defaultIdleTimeStatus;
 }
 
+- (MLNKitInstance *)getKitInstance {
+    MLNKitInstance *luaInstance;
+    if (self.useMLNUI) {
+        luaInstance = (MLNKitInstance *)[[MLNUIKitInstanceFactory defaultFactory]  createKitInstanceWithViewController:self.viewController];
+    } else {
+        luaInstance = [[MLNKitInstanceFactory defaultFactory] createKitInstanceWithViewController:self.viewController];
+    }
+    return luaInstance;
+}
+
 - (MLNKitInstance *)createLuaInstance:(NSString * )bundlePath entryFilePath:(NSString * _Nonnull)entryFilePath params:(NSDictionary * _Nonnull )params
 {
-    MLNKitInstance *luaInstance = [[MLNKitInstanceFactory defaultFactory] createKitInstanceWithViewController:self.viewController];
+    MLNKitInstance *luaInstance = [self getKitInstance];
     luaInstance.delegate = self;
     luaInstance.instanceHandlersManager.errorHandler = self;
     [luaInstance changeLuaBundleWithPath:bundlePath];
@@ -166,6 +178,13 @@ static MLNHotReload *sharedInstance;
         return;
     }
     dispatch_async(dispatch_get_main_queue(), ^{
+        //加载lua文件之前清除掉数据绑定，解决刷新时会使用到上次的数据.
+        objc_setAssociatedObject(self.viewController, @selector(mlnui_dataBinding), nil, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+        @try {
+            [self.viewController setValue:nil forKey:@"_dataBinding"];
+        } @catch (NSException *exception) {
+            
+        }
         self.benchLuaInstance = [self createLuaInstance:bundlePath entryFilePath:entryFilePath params:params];
         // 参数
         NSMutableDictionary *extraInfo = params ? [NSMutableDictionary dictionaryWithDictionary:params] : [NSMutableDictionary dictionary];
@@ -182,8 +201,8 @@ static MLNHotReload *sharedInstance;
                 [extraInfo addEntriesFromDictionary:tmp];
             }
         }
-        // 更新bundlePath
-        [self.benchLuaInstance runWithEntryFile:entryFilePath windowExtra:extraInfo error:NULL];
+        [self closeSocketConnectionOfPreviousLuaCore]; // 在上一个luaState释放之前，先主动发一条close消息
+        [self.benchLuaInstance runWithEntryFile:entryFilePath windowExtra:extraInfo error:NULL]; // 更新bundlePath
     });
 }
 
@@ -199,6 +218,38 @@ static MLNHotReload *sharedInstance;
     } else {
         [self print:@"请先跑一遍项目，再点击生成报告按钮"];
     }
+}
+
+#pragma mark - MLNBreakpoint
+
+- (void)closeSocketConnectionOfPreviousLuaCore {
+    if (!self.luaInstance) return;
+    lua_State *L = self.luaInstance.luaCore.state;
+    if (!L) return; // 客户端close后，插件端未收到FIN包，原因未知，故在close之前主动发一条标记消息，告诉插件close.
+    lua_getglobal(L, "_mln_debug");
+    if (lua_istable(L, -1)) {
+        lua_getfield(L, -1, "finish");
+        if (lua_isfunction(L, -1)) {
+            lua_pcall(L, 0, 0, 0);
+        }
+        lua_pop(L, 1);
+    }
+    lua_pop(L, 1);
+}
+
+extern int mln_luaopen_socket_core(lua_State *L);
++ (void)openBreakpointDebugIfNeeded:(MLNKitInstance *)instance {
+    [instance registerClasses:@[[MLNDebugContext class]] error:NULL];
+    mln_luaopen_socket_core(instance.luaCore.state);
+    
+    NSString *backupBundlePath = [instance.luaCore.currentBundle bundlePath];
+    [instance changeLuaBundleWithPath:[MLNDebugContext debugBundle].bundlePath];
+    NSString *mlndebugPath = [[MLNDebugContext debugBundle] pathForResource:@"mlndebug.lua" ofType:nil];
+    NSError *error = nil;
+    NSData *data = [NSData dataWithContentsOfFile:mlndebugPath];
+    BOOL ret = [instance.luaCore runData:data name:@"mlndebug.lua" error:&error];
+    NSAssert(ret, [error.userInfo objectForKey:@"message"]);
+    [instance changeLuaBundleWithPath:backupBundlePath];
 }
 
 #pragma mark - MLNServerListenerProtocol
@@ -284,12 +335,6 @@ static MLNHotReload *sharedInstance;
         [self.luaInstance doLuaWindowDidAppear];
         [self.presenter tip:@"内容已刷新" duration:0.3 delay:1];
     }
-}
-
-- (void)willSetupLuaCore:(MLNKitInstance *)instance {
-    [instance registerClasses:@[[MLNDebugContext class]] error:NULL];
-    mln_luaopen_socket_core(instance.luaCore.state);
-    [instance loadDebugModelIfNeed];
 }
 
 #pragma mark - Getter

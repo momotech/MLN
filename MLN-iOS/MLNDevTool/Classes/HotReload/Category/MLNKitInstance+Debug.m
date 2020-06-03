@@ -1,0 +1,39 @@
+//
+//  MLNKitInstance+Debug.m
+//  MLNDevTool
+//
+//  Created by MOMO on 2020/5/8.
+//
+
+#import "MLNKitInstance+Debug.h"
+#import <objc/runtime.h>
+#import "MLNHotReload.h"
+
+@implementation MLNKitInstance (Debug)
+
++ (void)load {
+    SEL oldSel = @selector(runWithEntryFile:windowExtra:error:);
+    SEL newSel = @selector(debug_runWithEntryFile:windowExtra:error:);
+    
+    Method oldMethod = class_getInstanceMethod([self class], oldSel);
+    Method newMethod = class_getInstanceMethod([self class], newSel);
+    
+    IMP oldIMP = method_getImplementation(oldMethod);
+    IMP newIMP = method_getImplementation(newMethod);
+    
+    const char *methodType = method_getTypeEncoding(class_getInstanceMethod([self class], oldSel));
+    BOOL add = class_addMethod([self class], oldSel, newIMP, methodType);
+    if (add) {
+        class_replaceMethod([self class], newSel, oldIMP, methodType);
+    } else {
+        method_exchangeImplementations(oldMethod, newMethod);
+    }
+}
+
+- (BOOL)debug_runWithEntryFile:(NSString *)entryFilePath windowExtra:(NSDictionary *)windowExtra error:(NSError * _Nullable __autoreleasing * _Nullable)error {
+    if (entryFilePath.length == 0) return NO;
+    [MLNHotReload openBreakpointDebugIfNeeded:self];
+    return [self debug_runWithEntryFile:entryFilePath windowExtra:windowExtra error:error];
+}
+
+@end

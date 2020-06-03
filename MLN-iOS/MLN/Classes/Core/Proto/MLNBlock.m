@@ -73,7 +73,8 @@ static int mln_errorFunc_traceback (lua_State *L) {
 - (id)callIfCan
 {
     NSAssert([NSThread isMainThread], @"This method to be executed in the main thread!");
-    lua_State *L = self.luaCore.state;
+    MLNLuaCore *core = self.luaCore; // retain luaCore.
+    lua_State *L = core.state;
     if (L == NULL) {
         [self reset];
         return nil;

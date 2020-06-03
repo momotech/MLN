@@ -73,3 +73,35 @@ end)
 
 linear11:addView(switch11)
 window:addView(linear)
+
+window:onClick(function()
+    print('on click window')
+    local userData = {}
+    local s = {}
+    for i=1,4  do
+        local m = {}
+        m.iconUrl = "https://avatars3.githubusercontent.com/u/6847240?s=400&u=f463ffd21044f3bf61fbbe0c65d7a8b245996244&v=4.png"
+        m.name = "preview name "..i
+        m.title = "preview title "..i
+        m.hideIcon = false
+        m.cellType = "person"
+        if i % 2 == 1 then
+            m.cellType = "ad"
+        end
+
+        local titles ={}
+        for i = 1, 2 do
+            titles[i] =  {tt = 'my_title '..i}
+        end
+        m.titles = titles
+        s[i] = m
+
+    end
+    userData.source = s
+    
+    --local mlnui = MLNUI('layout_fromMLN.lua'):bind('userData',userData)
+    local mlnui = MLNUI('layout_fromMLN'):bind('userData',userData)
+
+    mlnui:display()
+    
+end)

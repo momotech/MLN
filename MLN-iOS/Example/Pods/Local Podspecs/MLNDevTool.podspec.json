@@ -1,6 +1,6 @@
 {
   "name": "MLNDevTool",
-  "version": "0.1.7.1",
+  "version": "0.2.0",
   "summary": "Debug Tool of MLN.",
   "description": "Debug Tool of MLN.",
   "homepage": "https://mln.immomo.com",
@@ -11,7 +11,7 @@
   "authors": "MoMo",
   "source": {
     "git": "https://github.com/momotech/MLN.git",
-    "tag": "devtool-0.1.7.1"
+    "tag": "devtool-0.2.0"
   },
   "platforms": {
     "ios": "8.0"
@@ -19,13 +19,22 @@
   "libraries": "z",
   "requires_arc": true,
   "public_header_files": "MLN-iOS/MLNDevTool/Classes/*.h",
+  "dependencies": {
+    "ArgoUI": [
+
+    ]
+  },
   "subspecs": [
     {
-      "name": "Protobuf",
-      "source_files": "MLN-iOS/MLNDevTool/Classes/Protobuf/**/*.{h,m,c,a}",
-      "vendored_libraries": "MLN-iOS/MLNDevTool/Classes/Protobuf/**/*.a",
+      "name": "MLNProtobuf",
+      "source_files": "MLN-iOS/MLNDevTool/Classes/MLNProtobuf/**/*.{h,m}",
       "pod_target_xcconfig": {
-        "HEADER_SEARCH_PATHS": "\"$(SRCROOT)/../../MLNDevTool/Classes/Protobuf/include\" \"$(SRCROOT)/MLNDevTool/MLN-iOS/MLNDevTool/Classes/Protobuf/include\""
+        "GCC_PREPROCESSOR_DEFINITIONS": "$(inherited) GPB_USE_PROTOBUF_FRAMEWORK_IMPORTS=1"
+      },
+      "dependencies": {
+        "Protobuf": [
+
+        ]
       }
     },
     {
@@ -39,7 +48,7 @@
       "source_files": "MLN-iOS/MLNDevTool/Classes/Conn/**/*.{h,m,c}",
       "public_header_files": "MLN-iOS/MLNDevTool/Classes/Conn/**/*.h",
       "dependencies": {
-        "MLNDevTool/Protobuf": [
+        "MLNDevTool/MLNProtobuf": [
 
         ]
       }
@@ -54,7 +63,7 @@
       },
       "dependencies": {
         "MLN": [
-          "~> 1.0.0.2"
+
         ],
         "MLNDevTool/Conn": [
 
@@ -84,7 +93,7 @@
 
         ],
         "MLN": [
-          "~> 1.0.0.2"
+
         ]
       }
     },
@@ -104,7 +113,7 @@
 
         ],
         "MLN": [
-          "~> 1.0.0.2"
+
         ]
       },
       "resource_bundles": {
