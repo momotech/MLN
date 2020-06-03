@@ -42,6 +42,10 @@
     [self.innerScrollView luaui_addSubview:view];
 }
 
+- (void)luaui_removeAllSubViews {
+    [self.innerScrollView luaui_removeAllSubViews];
+}
+
 - (void)setLuaui_width:(CGFloat)luaui_width
 {
     [super setLuaui_width:luaui_width];

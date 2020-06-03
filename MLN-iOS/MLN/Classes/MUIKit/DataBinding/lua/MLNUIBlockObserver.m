@@ -11,6 +11,7 @@
 #import "MLNUIKitViewController.h"
 #import "MLNUIDataBinding.h"
 #import "NSObject+MLNUIReflect.h"
+#import "MLNUIMetamacros.h"
 
 @interface MLNUIBlockObserver ()
 @property (nonatomic, strong, readwrite) MLNUIBlock *block;
@@ -52,12 +53,63 @@
         oldValue = nil;
     } else {
         NSKeyValueChange type = [[change objectForKey:NSKeyValueChangeKindKey] unsignedIntegerValue];
+        NSIndexSet *indexSet = [change objectForKey:NSKeyValueChangeIndexesKey];
+        NSUInteger index = indexSet.firstIndex;
+        
         switch (type) {
-            case NSKeyValueChangeInsertion:
-            case NSKeyValueChangeRemoval:
-            case NSKeyValueChangeReplacement:
+            case NSKeyValueChangeInsertion: {
+                NSMutableArray *oldArray = [object mutableCopy];
+                if (newValue) {
+                    if (index < oldArray.count) {
+                        [oldArray removeObjectAtIndex:index];
+                    }
+#if DEBUG
+                    else {
+                        NSAssert(NO, @"index error ",index);
+                    }
+#endif
+//                    [oldArray removeObject:newValue];
+                }
                 newValue = object;
-                oldValue = nil;
+                oldValue = oldArray;
+            }
+                break;
+            case NSKeyValueChangeRemoval: {
+                NSMutableArray *oldArray = [object mutableCopy];
+                if (oldValue) {
+                    if (index == oldArray.count) {
+                        [oldArray addObject:oldValue];
+                    } else if(index < oldArray.count) {
+                        [oldArray insertObject:oldValue atIndex:index];
+                    }
+#if DEBUG
+                    else {
+                        NSAssert(NO, @"index error ",index);
+                        
+                    }
+#endif
+                }
+                newValue = object;
+                oldValue = oldArray;
+            }
+                break;
+            case NSKeyValueChangeReplacement: {
+                NSMutableArray *oldArray = [object mutableCopy];
+                if (oldValue) {
+                    if (index == oldArray.count) {
+                        [oldArray addObject:oldValue];
+                    } else if(index < oldArray.count) {
+                        [oldArray replaceObjectAtIndex:index withObject:oldValue];
+                    }
+#if DEBUG
+                    else {
+                        NSAssert(NO, @"index error ",index);
+                    }
+#endif
+                }
+                newValue = object;
+                oldValue = oldArray;
+            }
                 break;
             default:
                 break;
