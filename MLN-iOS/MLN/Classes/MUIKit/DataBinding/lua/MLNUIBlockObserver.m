@@ -47,75 +47,75 @@
     id newValue = [change objectForKey:NSKeyValueChangeNewKey];
     id oldValue = [change objectForKey:NSKeyValueChangeOldKey];
     
-    id tmp = [change objectForKey:MLNUIKVOOrigin2DArrayKey]; // 2D数组
-    if (tmp) {
-        newValue = tmp;
-        oldValue = nil;
-    } else {
-        NSKeyValueChange type = [[change objectForKey:NSKeyValueChangeKindKey] unsignedIntegerValue];
-        NSIndexSet *indexSet = [change objectForKey:NSKeyValueChangeIndexesKey];
-        NSUInteger index = indexSet.firstIndex;
-        
-        switch (type) {
-            case NSKeyValueChangeInsertion: {
-                NSMutableArray *oldArray = [object mutableCopy];
-                if (newValue) {
-                    if (index < oldArray.count) {
-                        [oldArray removeObjectAtIndex:index];
-                    }
+    NSKeyValueChange type = [[change objectForKey:NSKeyValueChangeKindKey] unsignedIntegerValue];
+    NSIndexSet *indexSet = [change objectForKey:NSKeyValueChangeIndexesKey];
+    NSUInteger index = indexSet.firstIndex;
+    
+    switch (type) {
+        case NSKeyValueChangeInsertion: {
+            NSMutableArray *oldArray = [object mutableCopy];
+            if (newValue) {
+                if (index < oldArray.count) {
+                    [oldArray removeObjectAtIndex:index];
+                }
 #if DEBUG
-                    else {
-                        NSAssert(NO, @"index error ",index);
-                    }
+                else {
+                    NSAssert(NO, @"index error ",index);
+                }
 #endif
 //                    [oldArray removeObject:newValue];
-                }
-                newValue = object;
-                oldValue = oldArray;
             }
-                break;
-            case NSKeyValueChangeRemoval: {
-                NSMutableArray *oldArray = [object mutableCopy];
-                if (oldValue) {
-                    if (index == oldArray.count) {
-                        [oldArray addObject:oldValue];
-                    } else if(index < oldArray.count) {
-                        [oldArray insertObject:oldValue atIndex:index];
-                    }
-#if DEBUG
-                    else {
-                        NSAssert(NO, @"index error ",index);
-                        
-                    }
-#endif
-                }
-                newValue = object;
-                oldValue = oldArray;
-            }
-                break;
-            case NSKeyValueChangeReplacement: {
-                NSMutableArray *oldArray = [object mutableCopy];
-                if (oldValue) {
-                    if (index == oldArray.count) {
-                        [oldArray addObject:oldValue];
-                    } else if(index < oldArray.count) {
-                        [oldArray replaceObjectAtIndex:index withObject:oldValue];
-                    }
-#if DEBUG
-                    else {
-                        NSAssert(NO, @"index error ",index);
-                    }
-#endif
-                }
-                newValue = object;
-                oldValue = oldArray;
-            }
-                break;
-            default:
-                break;
+            newValue = object;
+            oldValue = oldArray;
         }
+            break;
+        case NSKeyValueChangeRemoval: {
+            NSMutableArray *oldArray = [object mutableCopy];
+            if (oldValue) {
+                if (index == oldArray.count) {
+                    [oldArray addObject:oldValue];
+                } else if(index < oldArray.count) {
+                    [oldArray insertObject:oldValue atIndex:index];
+                }
+#if DEBUG
+                else {
+                    NSAssert(NO, @"index error ",index);
+                    
+                }
+#endif
+            }
+            newValue = object;
+            oldValue = oldArray;
+        }
+            break;
+        case NSKeyValueChangeReplacement: {
+            NSMutableArray *oldArray = [object mutableCopy];
+            if (oldValue) {
+                if (index == oldArray.count) {
+                    [oldArray addObject:oldValue];
+                } else if(index < oldArray.count) {
+                    [oldArray replaceObjectAtIndex:index withObject:oldValue];
+                }
+#if DEBUG
+                else {
+                    NSAssert(NO, @"index error ",index);
+                }
+#endif
+            }
+            newValue = object;
+            oldValue = oldArray;
+        }
+            break;
+        default:
+            break;
     }
 
+    id tmp = [change objectForKey:MLNUIKVOOrigin2DArrayKey]; // 2D数组
+    if (tmp && tmp != object) {
+        newValue = tmp;
+        oldValue = nil;
+    }
+    
     id newValueConvert = [newValue mlnui_convertToLuaObject];
     id oldValueConvert = [oldValue mlnui_convertToLuaObject];
     
