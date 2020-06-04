@@ -96,7 +96,7 @@ it(@"update data", ^{
    expect([dataBinding dataForKeyPath:@"userData.isOpen"]).to.equal(@(false));
 });
 
-describe(@"observer", ^{
+it(@"observer", ^{
      __block BOOL result = NO;
      __block BOOL result2 = NO;
      void (^observerBlock)(NSString *,NSString *,id,id,id) = ^(NSString *keypath,NSString *key, id old, id new, dispatch_block_t com) {
@@ -130,7 +130,7 @@ describe(@"observer", ^{
          });
      };
          
-         context(@"BOOL", ^{
+         it(@"BOOL", ^{
     beforeEach(^{
         observerBlock(@"userData.open", @"open", @(YES), @(NO),nil);
     });
@@ -146,7 +146,7 @@ describe(@"observer", ^{
     });
 });
          
-         context(@"NSString", ^{
+         it(@"NSString", ^{
     beforeEach(^{
         observerBlock(@"userData.text",@"text",@"init",@"word",nil);
     });

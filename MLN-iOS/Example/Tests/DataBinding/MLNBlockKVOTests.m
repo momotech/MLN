@@ -15,7 +15,7 @@ SpecBegin(BlockKVO)
 __block MLNCombineModel *model;
 __block __weak  MLNTestModel *weakTmodel;
 
-context(@"Dictionary", ^{
+it(@"Dictionary", ^{
         __block BOOL r1 = NO;
         __block BOOL r2 = NO;
 
@@ -37,7 +37,7 @@ context(@"Dictionary", ^{
         expect(r2).beTruthy();
 });
 
-context(@"Block", ^{
+it(@"Block", ^{
         __block BOOL r1 = NO;
         __block BOOL r2 = NO;
         __block BOOL r3 = NO;

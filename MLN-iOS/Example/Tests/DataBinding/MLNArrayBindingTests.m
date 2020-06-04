@@ -32,7 +32,7 @@ beforeEach(^{
     [dataBinding bindArray:modelsArray forKey:arrayKeyPath];
 });
 
-describe(@"observer", ^{
+it(@"observer", ^{
     __block BOOL result = NO;
     void(^observerBlock)(NSKeyValueChange,NSUInteger,NSUInteger,id,id) = ^(NSKeyValueChange type, NSUInteger index, NSUInteger expectedCount, id newValue, id oldValue){
         result = NO;
