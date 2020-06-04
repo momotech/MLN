@@ -43,13 +43,13 @@ typedef BOOL(^ActionBlock)(void);
 
 @implementation MLNUIListViewObserver
 
-+ (instancetype)observerWithListView:(UIView *)listView keyPath:(NSString *)keyPath {
++ (instancetype)observerWithListView:(UIView *)listView keyPath:(NSString *)keyPath callback:(MLNUIKVOCallback)callback {
     
     if ([listView isKindOfClass:[MLNUITableView class]] || [listView isKindOfClass:[MLNUICollectionView class]]) {
         MLNUITableView *table = (MLNUITableView *)listView;
         
         MLNUIKitViewController *kitViewController = (MLNUIKitViewController *)MLNUI_KIT_INSTANCE([table mlnui_luaCore]).viewController;
-        MLNUIListViewObserver *observer = [[MLNUIListViewObserver alloc] initWithViewController:kitViewController callback:nil keyPath:keyPath];
+        MLNUIListViewObserver *observer = [[MLNUIListViewObserver alloc] initWithViewController:kitViewController callback:callback keyPath:keyPath];
         observer.listView = listView;
         observer.kitViewController = kitViewController;
         return observer;

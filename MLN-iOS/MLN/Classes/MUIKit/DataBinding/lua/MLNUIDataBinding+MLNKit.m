@@ -147,10 +147,18 @@
     if(!key || !listView) return;
     
     UIViewController<MLNUIDataBindingProtocol> *kitViewController = (UIViewController<MLNUIDataBindingProtocol> *)MLNUI_KIT_INSTANCE([self mlnui_currentLuaCore]).viewController;
-    MLNUIListViewObserver *observer = [MLNUIListViewObserver observerWithListView:listView keyPath:key];
+    MLNUIDataBinding *dataBinding = kitViewController.mlnui_dataBinding;
     
-    [kitViewController.mlnui_dataBinding setListView:listView tag:key];
-    [kitViewController.mlnui_dataBinding addMLNUIObserver:observer forKeyPath:key];
+    __block NSString *obID;
+    __weak __typeof(MLNUIDataBinding*) weakBingding = dataBinding;
+    MLNUIListViewObserver *observer = [MLNUIListViewObserver observerWithListView:listView keyPath:key callback:^(NSString * _Nonnull keyPath, id  _Nonnull object, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
+        __strong __typeof(MLNUIDataBinding*) strongBinding = weakBingding;
+        [strongBinding removeMLNUIObserverByID:obID];
+        [self luaui_bindListViewForKey:key listView:listView];
+    }];
+    
+    [dataBinding setListView:listView tag:key];
+    obID = [dataBinding addMLNUIObserver:observer forKeyPath:key];
 }
 
 + (NSUInteger)luaui_sectionCountForKey:(NSString *)key {
@@ -209,13 +217,17 @@
     
     NSMutableDictionary *infos = [listView mlnui_bindInfos];
     MLNUIDataBinding *dataBinding = kitViewController.mlnui_dataBinding;
+    NSString *modelKey = [key stringByAppendingFormat:@".%zd.%zd",section,row];
+    NSObject *cellModel = [dataBinding dataForKeyPath:modelKey];
     
     for (NSString *p in paths) {
-        NSString *nk = [key stringByAppendingFormat:@".%zd.%zd.%@",section,row,p];
-        NSString *obID =  [infos objectForKey:nk];
+        NSString *idKey = [key stringByAppendingFormat:@".%p.%@",cellModel,p];
+        NSString *obID =  [infos objectForKey:idKey];
         if (obID) {
             [dataBinding removeMLNUIObserverByID:obID];
         }
+        
+        NSString *nk = [modelKey stringByAppendingFormat:@".%@",p];
         MLNUIKVOObserver *ob = [[MLNUIKVOObserver alloc] initWithViewController:kitViewController callback:^(NSString * _Nonnull keyPath, id  _Nonnull object, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
             if ([listView isKindOfClass:[MLNUITableView class]]) {
                 MLNUITableView *table = (MLNUITableView *)listView;
@@ -228,7 +240,7 @@
         } keyPath:nk];
         obID = [dataBinding addMLNUIObserver:ob forKeyPath:nk];
         if (obID) {
-            [infos setObject:obID forKey:nk];
+            [infos setObject:obID forKey:idKey];
         }
     }
     

@@ -343,9 +343,14 @@
         }
     };
     
-    [observer mlnui_observeObject:object property:path withBlock:^(id  _Nonnull observer, id  _Nonnull object, id  _Nonnull oldValue, id  _Nonnull newValue, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
-        obBlock(path,object, change);
-    }];
+    @try {
+        [observer mlnui_observeObject:object property:path withBlock:^(id  _Nonnull observer, id  _Nonnull object, id  _Nonnull oldValue, id  _Nonnull newValue, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
+            obBlock(path,object, change);
+        }];
+    } @catch (NSException *exception) {
+        NSString *log = [NSString stringWithFormat:@"ex: %@ %s",exception,__FUNCTION__];
+        [self doErrorLog:log];
+    }
     
 //    uuid = [[NSUUID UUID] UUIDString];
 
