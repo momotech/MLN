@@ -40,7 +40,7 @@
 - (void)notifyKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change {
     [super notifyKeyPath:keyPath ofObject:object change:change];
     if (!self.block.luaCore) {
-        [((id<MLNUIDataBindingProtocol>)self.viewController).mlnui_dataBinding removeMLNUIObserver:self forKeyPath:self.keyPath];
+        [((id<MLNUIDataBindingProtocol>)self.viewController).mlnui_dataBinding removeMLNUIObserverByID:self.obID];
         return;
     }
     

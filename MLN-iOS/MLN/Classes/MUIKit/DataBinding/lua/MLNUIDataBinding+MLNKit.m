@@ -30,7 +30,7 @@
     if ([keys isKindOfClass:[NSArray class]]) {
         NSString *keyPath = [keys componentsJoinedByString:@"."];
         NSObject<MLNUIKVOObserverProtol> *observer = [MLNUIBlockObserver observerWithBlock:handler keyPath:keyPath];
-        return [kitViewController.mlnui_dataBinding addMLNUIObserver:observer forKeys:keys];
+        return [kitViewController.mlnui_dataBinding addMLNUIObserver:observer forKeyPath:keyPath];
     } else if([keys isKindOfClass:[NSString class]]){
         NSString *keyPath = (NSString *)keys;
         NSObject<MLNUIKVOObserverProtol> *observer = [MLNUIBlockObserver observerWithBlock:handler keyPath:keyPath];
@@ -149,7 +149,7 @@
     UIViewController<MLNUIDataBindingProtocol> *kitViewController = (UIViewController<MLNUIDataBindingProtocol> *)MLNUI_KIT_INSTANCE([self mlnui_currentLuaCore]).viewController;
     MLNUIListViewObserver *observer = [MLNUIListViewObserver observerWithListView:listView keyPath:key];
     
-    [kitViewController.mlnui_dataBinding addListViewTag:key];
+    [kitViewController.mlnui_dataBinding setListView:listView tag:key];
     [kitViewController.mlnui_dataBinding addMLNUIObserver:observer forKeyPath:key];
 }
 
@@ -187,21 +187,25 @@
     
     UIViewController<MLNUIDataBindingProtocol> *kitViewController = (UIViewController<MLNUIDataBindingProtocol> *)MLNUI_KIT_INSTANCE([self mlnui_currentLuaCore]).viewController;
 
-    NSArray *array = [self mlnui_dataForKeyPath:key];
-    MLNUIListViewObserver *listObserver = (MLNUIListViewObserver *)[kitViewController.mlnui_dataBinding arrayObserversForKeyPath:key].lastObject;
-    if (![listObserver isKindOfClass:[MLNUIListViewObserver class]]) {
-        NSLog(@"error: not found observer for key %@",key);
-        return;
-    }
-    UIView *listView = [listObserver listView];
+//    NSArray *array = [self mlnui_dataForKeyPath:key];
+//    MLNUIListViewObserver *listObserver = (MLNUIListViewObserver *)[kitViewController.mlnui_dataBinding arrayObserversForKeyPath:key].lastObject;
+//
+//
+//    if (![listObserver isKindOfClass:[MLNUIListViewObserver class]]) {
+//        NSLog(@"error: not found observer for key %@",key);
+//        return;
+//    }
+    
+//    UIView *listView = [listObserver listView];
+    UIView *listView = [kitViewController.mlnui_dataBinding listViewForTag:key];
     if (!listView)  return;
     
-    NSObject *model;
-    if (array.mlnui_is2D) {
-        model = [[array mlnui_objectAtIndex:section - 1] mlnui_objectAtIndex:row - 1];
-    } else {
-        model = [array mlnui_objectAtIndex:row - 1];
-    }
+//    NSObject *model;
+//    if (array.mlnui_is2D) {
+//        model = [[array mlnui_objectAtIndex:section - 1] mlnui_objectAtIndex:row - 1];
+//    } else {
+//        model = [array mlnui_objectAtIndex:row - 1];
+//    }
     
     NSMutableDictionary *infos = [listView mlnui_bindInfos];
     MLNUIDataBinding *dataBinding = kitViewController.mlnui_dataBinding;
