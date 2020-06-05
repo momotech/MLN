@@ -12,7 +12,6 @@
 #import "MLNUIViewConst.h"
 #import "MLNUIRenderContext.h"
 #import "MLNUIBlock.h"
-#import "MLNUILayoutNode.h"
 #import "MLNUIKeyboardViewHandler.h"
 #import "MLNUITransformTask.h"
 #import "MLNUISnapshotManager.h"
@@ -211,216 +210,7 @@ static const void *kLuaKeyboardDismiss = &kLuaKeyboardDismiss;
     }
 }
 
-#pragma mark - Geometry
-- (void)setLuaui_x:(CGFloat)luaui_x
-{
-    MLNUIKitLuaAssert(NO, @"The setter of 'x' method is deprecated!");
-    [self.luaui_node changeX:luaui_x];
-}
-
-- (CGFloat)luaui_x
-{
-    MLNUIKitLuaAssert(NO, @"The getter of 'x' method is deprecated!");
-    MLNUILayoutNode *node = self.luaui_node;
-    switch (node.layoutStrategy) {
-        case MLNUILayoutStrategyNativeFrame:
-            return node.x;
-        default:
-            return 0.f;
-    }
-}
-
-- (void)setLuaui_y:(CGFloat)luaui_y
-{
-    MLNUIKitLuaAssert(NO, @"The setter of 'y' method is deprecated!");
-    [self.luaui_node changeY:luaui_y];
-}
-
-- (CGFloat)luaui_y
-{
-    MLNUIKitLuaAssert(NO, @"The getter of 'y' method is deprecated!");
-    MLNUILayoutNode *node = self.luaui_node;
-    switch (node.layoutStrategy) {
-        case MLNUILayoutStrategyNativeFrame:
-            return node.y;
-        default:
-            return 0.f;
-    }
-}
-
-- (void)setLuaui_width:(CGFloat)luaui_width
-{
-    MLNUICheckWidth(luaui_width);
-    [self.luaui_node changeWidth:luaui_width];
-}
-
-- (CGFloat)luaui_width
-{
-    MLNUILayoutNode *node = self.luaui_node;
-    switch (node.widthType) {
-        case MLNUILayoutMeasurementTypeIdle:
-            return node.width;
-        default:
-            return node.measuredWidth;
-    }
-}
-
-- (void)setLuaui_height:(CGFloat)luaui_Height
-{
-    MLNUICheckWidth(luaui_Height);
-    [self.luaui_node changeHeight:luaui_Height];
-}
-
-- (CGFloat)luaui_height
-{
-    MLNUILayoutNode *node = self.luaui_node;
-    switch (node.heightType) {
-        case MLNUILayoutMeasurementTypeIdle:
-            return node.height;
-        default:
-            return node.measuredHeight;
-    }
-}
-
-- (void)setLuaui_right:(CGFloat)luaui_right
-{
-    MLNUIKitLuaAssert(NO, @"The setter of 'right' method is deprecated!");
-    MLNUILayoutNode *node = self.luaui_node;
-    CGFloat x = luaui_right - [self luaui_width];
-    [node changeX:x];
-}
-
-- (CGFloat)luaui_right
-{
-    MLNUIKitLuaAssert(NO, @"The getter of 'right' method is deprecated!");
-    MLNUILayoutNode *node = self.luaui_node;
-    switch (node.layoutStrategy) {
-        case MLNUILayoutStrategyNativeFrame:
-            return node.x + [self luaui_width];
-        default:
-            return [self luaui_width];
-    }
-}
-
-- (void)setLuaui_bottom:(CGFloat)luaui_bottom
-{
-    MLNUIKitLuaAssert(NO, @"The setter of 'bottom' method is deprecated!");
-    MLNUILayoutNode *node = self.luaui_node;
-    CGFloat y = luaui_bottom - [self luaui_height];
-    [node changeY:y];
-}
-
-- (CGFloat)luaui_bottom
-{
-    MLNUIKitLuaAssert(NO, @"The getter of 'bottom' method is deprecated!");
-    MLNUILayoutNode *node = self.luaui_node;
-    switch (node.layoutStrategy) {
-        case MLNUILayoutStrategyNativeFrame:
-            return node.y + [self luaui_height];
-        default:
-            return [self luaui_height];
-    }
-}
-
-- (void)luaui_setSize:(CGSize)size
-{
-    MLNUIKitLuaAssert(NO, @"The setter of 'size' method is deprecated!");
-    MLNUILayoutNode *node = self.luaui_node;
-    [node changeWidth:size.width];
-    [node changeHeight:size.height];
-}
-
-- (CGSize )luaui_size
-{
-    MLNUIKitLuaAssert(NO, @"The getter of 'size' method is deprecated!");
-    MLNUILayoutNode *node = self.luaui_node;
-    CGFloat width = 0.f;
-    switch (node.widthType) {
-        case MLNUILayoutMeasurementTypeIdle:
-            width = node.width;
-            break;
-        default:
-            width = node.measuredWidth;
-            break;
-    }
-    CGFloat height = 0.f;
-    switch (node.heightType) {
-        case MLNUILayoutMeasurementTypeIdle:
-            height = node.height;
-            break;
-        default:
-            height = node.measuredHeight;
-            break;
-    }
-    return CGSizeMake(width, height);
-}
-
-- (void)luaui_setOrigin:(CGPoint)point
-{
-    MLNUIKitLuaAssert(NO, @"The setter of 'point' method is deprecated!");
-    MLNUILayoutNode *node = self.luaui_node;
-    [node changeX:point.x];
-    [node changeY:point.y];
-}
-
-- (CGPoint)luaui_origin
-{
-    MLNUIKitLuaAssert(NO, @"The getter of 'point' method is deprecated!");
-    MLNUILayoutNode *node = self.luaui_node;
-    CGFloat x = 0.f;
-    CGFloat y = 0.f;
-    switch (node.layoutStrategy) {
-        case MLNUILayoutStrategyNativeFrame:
-            x = node.x;
-            y = node.y;
-            break;
-        default:
-            x = node.measuredX;
-            y = node.measuredY;
-            break;
-    }
-    return CGPointMake(x, y);
-}
-
-- (CGFloat)luaui_centerX
-{
-    MLNUIKitLuaAssert(NO, @"The getter of 'centerX' method is deprecated!");
-    MLNUILayoutNode *node = self.luaui_node;
-    switch (node.layoutStrategy) {
-        case MLNUILayoutStrategyNativeFrame:
-            return node.x + [self luaui_width] *.5f;
-        default:
-            return node.measuredX + [self luaui_width] *.5f;
-    }
-}
-
-- (CGFloat)luaui_centerY
-{
-    MLNUIKitLuaAssert(NO, @"The getter of 'centerY' method is deprecated!");
-    MLNUILayoutNode *node = self.luaui_node;
-    switch (node.layoutStrategy) {
-        case MLNUILayoutStrategyNativeFrame:
-            return node.y + [self luaui_height] *.5f;
-        default:
-            return node.measuredY + [self luaui_height] *.5f;
-    }
-}
-
-- (void)luaui_setCenterX:(CGFloat)centerX
-{
-    MLNUIKitLuaAssert(NO, @"The setter of 'centerX' method is deprecated!");
-    MLNUILayoutNode *node = self.luaui_node;
-    CGFloat x = centerX - [self luaui_width] * .5f;
-    [node changeX:x];
-}
-
-- (void)luaui_setCenterY:(CGFloat)centerY
-{
-    MLNUIKitLuaAssert(NO, @"The setter of 'centerY' method is deprecated!");
-    MLNUILayoutNode *node = self.luaui_node;
-    CGFloat y = centerY - [self luaui_height] * .5f;
-    [node changeY:y];
-}
+#pragma mark -
 
 - (void)luaui_setBackgroundColor:(UIColor *)color
 {
@@ -431,70 +221,10 @@ static const void *kLuaKeyboardDismiss = &kLuaKeyboardDismiss;
     [self.mlnui_in_renderContext cleanLayerContentsIfNeed];
 }
 
-- (void)luaui_layoutIfNeed
-{
-    MLNUIKitLuaAssert(NO, @"View:layoutIfNeeded method is deprecated!");
-    [self layoutIfNeeded];
-    self.luaui_node.enable = NO;
-}
-
 - (void)luaui_setNeedsDisplay
 {
     MLNUIKitLuaAssert(NO, @"View:refresh method is deprecated!");
     [self setNeedsDisplay];
-}
-
-- (void)luaui_sizeToFit
-{
-    [self sizeToFit];
-    self.luaui_node.enable = NO;
-}
-
-- (void)setLuaui_frame:(CGRect)luaui_frame
-{
-    MLNUIKitLuaAssert(NO, @"The setter of 'frame' method is deprecated!");
-    MLNUILayoutNode *node = self.luaui_node;
-    [node changeX:luaui_frame.origin.x];
-    [node changeY:luaui_frame.origin.y];
-    [node changeWidth:luaui_frame.size.width];
-    [node changeHeight:luaui_frame.size.height];
-}
-
-- (CGRect)luaui_frame
-{
-    MLNUIKitLuaAssert(NO, @"The getter of 'frame' method is deprecated!");
-    MLNUILayoutNode *node = self.luaui_node;
-    CGFloat x = 0.f;
-    CGFloat y = 0.f;
-    switch (node.layoutStrategy) {
-        case MLNUILayoutStrategyNativeFrame:
-            x = node.x;
-            y = node.y;
-            break;
-        default:
-            x = node.measuredX;
-            y = node.measuredY;
-            break;
-    }
-    CGFloat width = 0.f;
-    switch (node.widthType) {
-        case MLNUILayoutMeasurementTypeIdle:
-            width = node.width;
-            break;
-        default:
-            width = node.measuredWidth;
-            break;
-    }
-    CGFloat height = 0.f;
-    switch (node.heightType) {
-        case MLNUILayoutMeasurementTypeIdle:
-            height = node.height;
-            break;
-        default:
-            height = node.measuredHeight;
-            break;
-    }
-    return CGRectMake(x, y, width, height);
 }
 
 - (CGPoint)luaui_convertToView:(UIView *)view point:(CGPoint)point
@@ -521,16 +251,6 @@ static const void *kLuaKeyboardDismiss = &kLuaKeyboardDismiss;
 {
     MLNUICheckTypeAndNilValue(view, @"View", UIView);
     return [self convertPoint:point fromView:view];
-}
-
-- (void)luaui_setAnchorPoint:(CGPoint)point
-{
-    self.layer.anchorPoint = point;
-}
-
-- (CGPoint)luaui_anchorPoint
-{
-    return self.layer.anchorPoint;
 }
 
 #pragma mark - Render
@@ -1175,6 +895,7 @@ static const void *kLuaOnDetachedFromWindowCallback = &kLuaOnDetachedFromWindowC
 }
 
 #pragma mark - Transform
+
 - (void)luaui_resetTransformIfNeed
 {
     MLNUITransformTask *myTransform = [self mlnui_in_getTransform];
@@ -1187,7 +908,7 @@ static const void *kLuaOnDetachedFromWindowCallback = &kLuaOnDetachedFromWindowC
 {
     MLNUIKitLuaAssert(x >= 0.0f && x <= 1.0f, @"param x should bigger or equal than 0.0 and smaller or equal than 1.0!");
     MLNUIKitLuaAssert(y >= 0.0f && y <= 1.0f, @"param y should bigger or equal than 0.0 and smaller or equal than 1.0!");
-    [self.luaui_node changeAnchorPoint:CGPointMake(x, y)];
+    self.layer.anchorPoint = CGPointMake(x, y);
 }
 
 - (void)luaui_transform:(CGFloat)angle adding:(NSNumber *)add

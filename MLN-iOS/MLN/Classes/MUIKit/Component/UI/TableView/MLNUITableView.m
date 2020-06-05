@@ -14,7 +14,6 @@
 #import "MLNUITableViewAdapter.h"
 #import "MLNUITableViewCell.h"
 #import "UIView+MLNUILayout.h"
-#import "MLNUILayoutNode.h"
 #import "MLNUIBeforeWaitingTask.h"
 #import "MLNUISizeCahceManager.h"
 #import "MLNUIInnerTableView.h"
@@ -291,12 +290,11 @@
 
 #pragma mark - Override
 
-- (CGSize)luaui_measureSizeWithMaxWidth:(CGFloat)maxWidth maxHeight:(CGFloat)maxHeight
-{
-    return CGSizeMake(maxWidth, maxHeight);
+- (CGSize)mlnui_sizeThatFits:(CGSize)size {
+    return size;
 }
 
-- (BOOL)luaui_layoutEnable
+- (BOOL)mlnui_layoutEnable
 {
     return YES;
 }
@@ -389,7 +387,7 @@
     return _innerTableView;
 }
 
-- (UIView *)luaui_contentView
+- (UIView *)mlnui_contentView
 {
     return self.innerTableView;
 }
@@ -442,9 +440,6 @@ LUAUI_EXPORT_VIEW_METHOD(setScrollEndCallback, "setLuaui_scrollEndCallback:",MLN
 LUAUI_EXPORT_VIEW_METHOD(setContentInset, "luaui_setContentInset:right:bottom:left:", MLNUITableView)
 LUAUI_EXPORT_VIEW_METHOD(getContentInset, "luaui_getContetnInset:", MLNUITableView)
 LUAUI_EXPORT_VIEW_METHOD(setScrollEnable, "mlnui_setLuaScrollEnable:", MLNUITableView)
-// deprected method
-LUAUI_EXPORT_VIEW_PROPERTY(contentSize, "luaui_setContentSize:", "luaui_contentSize", MLNUITableView)
-LUAUI_EXPORT_VIEW_PROPERTY(scrollEnabled, "luaui_setScrollEnabled:", "luaui_scrollEnabled", MLNUITableView)
 // private method
 LUAUI_EXPORT_VIEW_PROPERTY(contentOffset, "luaui_setContentOffset:", "luaui_contentOffset", MLNUITableView)
 LUAUI_EXPORT_VIEW_PROPERTY(i_bounces, "luaui_setBounces:", "luaui_bounces", MLNUITableView)

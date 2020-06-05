@@ -13,7 +13,6 @@
 #import "MLNUIBlock.h"
 #import "MLNUINinePatchImageFactory.h"
 #import "MLNUIBeforeWaitingTask.h"
-#import "MLNUILayoutNode.h"
 #import "MLNUIKitInstanceHandlersManager.h"
 #import "MLNUIGaussEffectHandler.h"
 #import "MLNUICornerImageLoader.h"
@@ -84,12 +83,7 @@
 {
     image = [self convertToBlurImageIfNeed:image];
     [super setImage:image];
-    [self.luaui_node needLayoutAndSpread];
-}
-
-- (CGSize)luaui_measureSizeWithMaxWidth:(CGFloat)maxWidth maxHeight:(CGFloat)maxHeight
-{
-    return self.image ? self.image.size : CGSizeZero;
+    [self mlnui_markNeedsLayout];
 }
 
 - (void)checkContentMode
@@ -352,9 +346,8 @@
     }
 }
 
-- (void)luaui_changedLayout
-{
-    [super luaui_changedLayout];
+- (void)mlnui_layoutDidChange {
+    [super mlnui_layoutDidChange];
     if (_blurValue > 0) {
         [self mlnui_pushLazyTask:self.lazyTask];
     }
@@ -408,6 +401,10 @@
 
 #pragma mark - Override
 
+- (CGSize)mlnui_sizeThatFits:(CGSize)size {
+    return self.image ? self.image.size : CGSizeZero;
+}
+
 - (void)luaui_addSubview:(UIView *)view
 {
     MLNUIKitLuaAssert(NO, @"Not found \"addView\" method in ImageView, just continar of View has it!");
@@ -433,12 +430,8 @@
     return YES;
 }
 
-- (BOOL)luaui_layoutEnable
+- (BOOL)mlnui_layoutEnable
 {
-    return YES;
-}
-
-- (BOOL)luaui_supportOverlay {
     return YES;
 }
 

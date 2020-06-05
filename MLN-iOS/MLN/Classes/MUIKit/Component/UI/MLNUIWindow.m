@@ -11,9 +11,7 @@
 #import "UIView+MLNUIKit.h"
 #import "UIView+MLNUILayout.h"
 #import "MLNUIBlock.h"
-#import "MLNUILayoutNode.h"
 #import "MLNUISystem.h"
-#import "MLNUILayoutWindowNode.h"
 #import "MLNUIDevice.h"
 #import "MLNUISafeAreaProxy.h"
 #import "MLNUISafeAreaAdapter.h"
@@ -121,8 +119,10 @@
 #pragma mark - luaSafeArea
 - (void)updateSafeAreaInsets:(UIEdgeInsets)safeAreaInsets
 {
-    MLNUILayoutWindowNode *node  = (MLNUILayoutWindowNode *)self.luaui_node;
-    node.safeAreaInsets = safeAreaInsets;
+    self.mlnui_layoutNode.paddingTop = MLNUIPointValue(safeAreaInsets.top);
+    self.mlnui_layoutNode.paddingLeft = MLNUIPointValue(safeAreaInsets.left);
+    self.mlnui_layoutNode.paddingBottom = MLNUIPointValue(safeAreaInsets.bottom);
+    self.mlnui_layoutNode.paddingRight = MLNUIPointValue(safeAreaInsets.right);
 }
 
 - (void)luaui_setSafeAreaAdapter:(MLNUISafeAreaAdapter *)adapter
@@ -302,16 +302,23 @@
 }
 
 #pragma mark - Override
+
+- (BOOL)mlnui_isRootView {
+    return YES;
+}
+
 - (CGFloat)luaui_height
 {
-    MLNUILayoutWindowNode *node  = (MLNUILayoutWindowNode *)self.luaui_node;
-    return node.height - node.safeAreaInsets.top - node.safeAreaInsets.bottom;
+    // TODO:__TODO
+    MLNUILayoutNode *node = self.mlnui_layoutNode;
+    return node.layoutHeight - node.paddingTop.value - node.paddingBottom.value;
 }
 
 - (CGFloat)luaui_width
 {
-    MLNUILayoutWindowNode *node  = (MLNUILayoutWindowNode *)self.luaui_node;
-    return node.width - node.safeAreaInsets.left - node.safeAreaInsets.right;
+    // TODO:__TODO
+    MLNUILayoutNode *node  = self.mlnui_layoutNode;
+    return node.layoutWidth - node.paddingLeft.value - node.paddingRight.value;
 }
 
 - (void)setFrame:(CGRect)frame
@@ -319,10 +326,10 @@
     BOOL isSizeChange = !CGSizeEqualToSize(self.frame.size, frame.size);
     [super setFrame:frame];
     if (isSizeChange) {
-        MLNUILayoutNode *node = self.luaui_node;
-        [node changeWidth:frame.size.width];
-        [node changeHeight:frame.size.height];
-        [self luaui_requestLayout];
+        MLNUILayoutNode *layout = self.mlnui_layoutNode;
+        layout.width = MLNUIPointValue(frame.size.width);
+        layout.height = MLNUIPointValue(frame.size.height);
+        [self mlnui_requestLayoutIfNeed];
     }
     [self doSizeChanged];
 }
@@ -342,7 +349,7 @@
     return YES;
 }
 
-- (BOOL)luaui_layoutEnable
+- (BOOL)mlnui_layoutEnable
 {
     return YES;
 }
@@ -370,11 +377,6 @@
 - (MLNUIStatusBarStyle)luaui_getStatusBarStyle
 {
     return (MLNUIStatusBarStyle)[[UIApplication sharedApplication] statusBarStyle];
-}
-
-- (void)luaui_overlay:(UIView *)overlay {
-    [super luaui_overlay:overlay];
-    [self.luaui_node needLayout]; // window的测量和布局操作执行时机比较早, 故对window调用overlay需要重新layout
 }
 
 #pragma mark - Export

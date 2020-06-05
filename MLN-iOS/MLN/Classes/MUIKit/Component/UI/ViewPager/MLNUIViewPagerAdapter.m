@@ -105,7 +105,7 @@
     [reuseCallback addLuaTableArgument:[cell getLuaTable]];
     [reuseCallback addIntArgument:[self pageControlIndexWithCurrentCellIndex:indexPath.item] + 1];
     [reuseCallback callIfCan];
-    [cell requestLayoutIfNeed];
+    [cell mlnui_requestLayoutIfNeed];
     return cell;
 }
 

@@ -17,8 +17,6 @@ NS_ASSUME_NONNULL_BEGIN
 @class MLNUIRenderContext;
 @interface UIView (MLNUIKit)
 
-@property (nonatomic, assign) CGFloat luaui_x;
-@property (nonatomic, assign) CGFloat luaui_y;
 @property (nonatomic, assign) CGFloat luaui_width;
 @property (nonatomic, assign) CGFloat luaui_height;
 @property (nonatomic, assign) CGFloat luaui_bottom;
@@ -26,8 +24,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) CGRect luaui_frame;
 @property (nonatomic, assign) BOOL luaui_enable;
 
-- (void)luaui_layoutIfNeed;
-- (void)luaui_sizeToFit;
 - (CGPoint)luaui_convertRelativePointToView:(UIView *)view point:(CGPoint)point;
 
 #pragma mark - TouchEvent

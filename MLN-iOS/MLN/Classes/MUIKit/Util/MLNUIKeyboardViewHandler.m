@@ -7,12 +7,11 @@
 
 #import "MLNUIKeyboardViewHandler.h"
 #import "UIView+MLNUILayout.h"
-#import "MLNUILayoutNode.h"
 
 @interface MLNUIKeyboardViewHandler()
 
 @property (nonatomic, weak) UIView *attachView;
-@property (nonatomic, assign) CGFloat luaui_node_offsetY;
+@property (nonatomic, assign) CGFloat mlnuiLayout_offsetY;
 @property (nonatomic, assign) NSInteger triggerTime;
 @property (nonatomic, assign) BOOL remainOriginOffset;
 
@@ -93,10 +92,11 @@
     }
     CGRect frame = self.attachView.frame;
     frame.origin.y += self.positionAdjustOffsetY;
-    if (self.attachView.luaui_node.enable) {
-        self.luaui_node_offsetY = self.attachView.luaui_node.offsetY;
-        self.attachView.luaui_node.offsetY += self.positionAdjustOffsetY;
-    }
+    // TODO:__TODO
+//    if (self.attachView.layoutNode.enable) {
+//        self.mlnuiLayout_offsetY = self.attachView.layoutNode.offsetY;
+//        self.attachView.layoutNode.offsetY += self.positionAdjustOffsetY;
+//    }
     
     [UIView animateWithDuration:duration animations:^{
         self.attachView.frame = frame;
@@ -111,12 +111,15 @@
         frame.origin.y -= overstep;
         frame.origin.y += self.positionAdjustOffsetY;
         // @note 变量remainOriginOffset 是为了解决键盘willshow有时会回调两次，导致记录的偏移量不正确
-        if (!self.remainOriginOffset) {
-            self.luaui_node_offsetY = self.attachView.luaui_node.offsetY;
-            self.remainOriginOffset = YES;
-        }
-        self.attachView.luaui_node.offsetY -= overstep;
-        self.attachView.luaui_node.offsetY += self.positionAdjustOffsetY;
+        
+        // TODO:__TODO
+//        if (!self.remainOriginOffset) {
+//            self.mlnuiLayout_offsetY = self.attachView.layoutNode.offsetY;
+//            self.remainOriginOffset = YES;
+//        }
+//        self.attachView.layoutNode.offsetY -= overstep;
+//        self.attachView.layoutNode.offsetY += self.positionAdjustOffsetY;
+        
         [UIView animateWithDuration:duration animations:^{
             self.attachView.frame = frame;
         }];
@@ -128,7 +131,8 @@
     self.triggerTime = 0;
     CGFloat duration = [notification.userInfo[UIKeyboardAnimationDurationUserInfoKey] doubleValue];
     CGRect frame = self.beforePositionAdjustViewFrame;
-    self.attachView.luaui_node.offsetY = self.luaui_node_offsetY;
+    // TODO:__TODO
+//    self.attachView.layoutNode.offsetY = self.mlnuiLayout_offsetY;
     self.remainOriginOffset = NO;
     [UIView animateWithDuration:duration animations:^{
         self.attachView.frame = frame;

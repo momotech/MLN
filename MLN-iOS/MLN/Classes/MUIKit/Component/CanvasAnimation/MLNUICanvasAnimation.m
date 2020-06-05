@@ -12,7 +12,6 @@
 #import "MLNUIBeforeWaitingTask.h"
 #import "UIView+MLNUIKit.h"
 #import "UIView+MLNUILayout.h"
-#import "MLNUILayoutNode.h"
 #import "MLNUIAnimationSet.h"
 #import "MLNUIAnimationHandler.h"
 #import "NSDictionary+MLNUISafety.h"
@@ -460,7 +459,7 @@
     }
     switch (_pivotXType) {
         case MLNUIAnimationValueTypeAbsolute:
-            return (_pivotX / _targetView.luaui_node.width);
+            return (_pivotX / _targetView.mlnui_layoutNode.width.value);
             break;
         case MLNUIAnimationValueTypeRelativeToSelf:
             return _pivotX;
@@ -478,7 +477,7 @@
     }
     switch (_pivotXType) {
         case MLNUIAnimationValueTypeAbsolute:
-            return (_pivotY / _targetView.luaui_node.height);
+            return (_pivotY / _targetView.mlnui_layoutNode.height.value);
             break;
         case MLNUIAnimationValueTypeRelativeToSelf:
             return _pivotY;
