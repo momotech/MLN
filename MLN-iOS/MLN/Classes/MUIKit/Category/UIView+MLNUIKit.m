@@ -12,7 +12,6 @@
 #import "MLNUIViewConst.h"
 #import "MLNUIRenderContext.h"
 #import "MLNUIBlock.h"
-#import "MLNUIKeyboardViewHandler.h"
 #import "MLNUITransformTask.h"
 #import "MLNUISnapshotManager.h"
 #import "MLNUICanvasAnimation.h"
@@ -26,7 +25,6 @@ static IMP __mlnui_in_UIView_Origin_TouchesEnded_Method_Imp;
 static IMP __mlnui_in_UIView_Origin_TouchesCancelled_Method_Imp;
 
 static const void *kLuaGradientLayer = &kLuaGradientLayer;
-static const void *kLuaKeyboardViewHandlerKey = &kLuaKeyboardViewHandlerKey;
 static const void *kLuaBlurEffectView = &kLuaBlurEffectView;
 static const void *kLuaOpenRipple = &kLuaOpenRipple;
 static const void *kLuaOldColor = &kLuaOldColor;
@@ -745,45 +743,6 @@ static const void *kLuaOnDetachedFromWindowCallback = &kLuaOnDetachedFromWindowC
     resultTouch[@"timeStamp"] = @([NSDate date].timeIntervalSince1970);
     resultTouch[@"target"] = targetView;
     return resultTouch;
-}
-
-#pragma mark - Keyboard
-
-- (void)mlnui_in_setPositionAdjustForKeyboard:(BOOL)bAdjust offsetY:(CGFloat)offsetY
-{
-    if (!self.luaui_keyboardViewHandler) {
-        MLNUIKeyboardViewHandler *keyboardViewHandler = [[MLNUIKeyboardViewHandler alloc] initWithView:self];
-        self.luaui_keyboardViewHandler = keyboardViewHandler;
-    }
-    self.luaui_keyboardViewHandler.alwaysAdjustPositionKeyboardCoverView = NO;
-    
-    self.luaui_keyboardViewHandler.positionAdjust = bAdjust;
-    self.luaui_keyboardViewHandler.positionAdjustOffsetY = bAdjust? offsetY : 0.0;
-}
-
-- (void)luaui_setPositionAdjustForKeyboard:(BOOL)bAdjust
-{
-    [self luaui_setPositionAdjustForKeyboard:bAdjust offsetY:0.0];
-}
-
-- (void)luaui_setPositionAdjustForKeyboard:(BOOL)bAdjust offsetY:(CGFloat)offsetY
-{
-    if (offsetY != 0.0) {
-        MLNUIKitLuaAssert(NO, @"View:setPositionAdjustForKeyboardOffsetY method is deprecated!");
-    } else {
-        MLNUIKitLuaAssert(NO, @"View:setPositionAdjustForKeyboard method is deprecated!");
-    }
-    [self mlnui_in_setPositionAdjustForKeyboard:bAdjust offsetY:offsetY];
-}
-
-- (void)setLuaui_keyboardViewHandler:(MLNUIKeyboardViewHandler *)keyboardViewHandler
-{
-    objc_setAssociatedObject(self, kLuaKeyboardViewHandlerKey, keyboardViewHandler, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-}
-
-- (MLNUIKeyboardViewHandler *)luaui_keyboardViewHandler
-{
-    return objc_getAssociatedObject(self, kLuaKeyboardViewHandlerKey);
 }
 
 #pragma mark - Open Ripple

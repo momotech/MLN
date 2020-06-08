@@ -69,36 +69,6 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)luaui_requestFocus;
 
-#pragma mark - Keyboard
-
-/**
- * keyboardHandler 处理键盘偏移相关
- **/
-@property (nonatomic, strong) MLNUIKeyboardViewHandler *luaui_keyboardViewHandler;
-
-/**
- 键盘出现自动上移View
- 
- @param bAdjust 是否上移
- */
-- (void)luaui_setPositionAdjustForKeyboard:(BOOL)bAdjust;
-
-/**
- 键盘出现自动上移View
- 
- @param bAdjust 是否上移（默认上移键盘高度
- @param offsetY  数值方向偏移（默认为0
- */
-- (void)luaui_setPositionAdjustForKeyboard:(BOOL)bAdjust offsetY:(CGFloat)offsetY;
-
-/**
- 键盘出现自动上移View 源生
- 
- @param bAdjust 是否上移（默认上移键盘高度
- @param offsetY  数值方向偏移（默认为0
- **/
-- (void)mlnui_in_setPositionAdjustForKeyboard:(BOOL)bAdjust offsetY:(CGFloat)offsetY;
-
 /**
  如果需要就重置Transform
  */

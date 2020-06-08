@@ -134,9 +134,6 @@ LUAUI_EXPORT_VIEW_METHOD(touchBeginExtension, "luaui_setTouchesBeganExtensionCal
 LUAUI_EXPORT_VIEW_METHOD(touchMoveExtension, "luaui_setTouchesMovedExtensionCallback:",MLNUIView)
 LUAUI_EXPORT_VIEW_METHOD(touchEndExtension, "luaui_setTouchesEndedExtensionCallback:",MLNUIView)
 LUAUI_EXPORT_VIEW_METHOD(touchCancelExtension, "luaui_setTouchesCancelledExtensionCallback:",MLNUIView)
-// keyboard
-LUAUI_EXPORT_VIEW_METHOD(setPositionAdjustForKeyboard, "luaui_setPositionAdjustForKeyboard:",MLNUIView)
-LUAUI_EXPORT_VIEW_METHOD(setPositionAdjustForKeyboardAndOffset, "luaui_setPositionAdjustForKeyboard:offsetY:",MLNUIView)
 // transform
 LUAUI_EXPORT_VIEW_METHOD(anchorPoint, "luaui_anchorPoint:y:", MLNUIView)
 LUAUI_EXPORT_VIEW_METHOD(transform, "luaui_transform:adding:", MLNUIView)

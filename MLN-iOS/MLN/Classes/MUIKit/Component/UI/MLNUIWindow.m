@@ -309,14 +309,12 @@
 
 - (CGFloat)luaui_height
 {
-    // TODO:__TODO
     MLNUILayoutNode *node = self.mlnui_layoutNode;
     return node.layoutHeight - node.paddingTop.value - node.paddingBottom.value;
 }
 
 - (CGFloat)luaui_width
 {
-    // TODO:__TODO
     MLNUILayoutNode *node  = self.mlnui_layoutNode;
     return node.layoutWidth - node.paddingLeft.value - node.paddingRight.value;
 }

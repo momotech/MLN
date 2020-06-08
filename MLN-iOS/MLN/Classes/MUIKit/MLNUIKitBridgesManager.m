@@ -32,7 +32,6 @@
 #import "MLNUIWaterfallLayout.h"
 #import "MLNUIWaterfallAdapter.h"
 #import "MLNUIEditTextView.h"
-#import "MLNUIContainerWindow.h"
 #import "MLNUIViewPager.h"
 #import "MLNUIViewPagerAdapter.h"
 #import "MLNUITabSegmentView.h"
@@ -152,7 +151,6 @@ static NSArray<Class<MLNUIExportProtocol>> *viewClasses;
                         [MLNUIWaterfallLayout class],
                         [MLNUIWaterfallAdapter class],
                         [MLNUIEditTextView class],
-                        [MLNUIContainerWindow class],
                         [MLNUIViewPager class],
                         [MLNUIViewPagerAdapter class],
                         [MLNUITabSegmentView class]];
