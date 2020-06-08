@@ -16,7 +16,7 @@
 /**
  rawAnimation，懒加载动画对象，Start时确定类型，一旦start过，不可修改
  */
-@property (nonatomic, strong) MLAValueAnimation *valueAnimation;
+@property (nonatomic, strong) MLAObjectAnimation *valueAnimation;
 
 @property (nonatomic, copy) NSString *propertyType;
 @property (nonatomic, weak) UIView *targetView;
@@ -40,7 +40,7 @@
 @property (nonatomic, copy) MLNUIBlock *resumeBlock;
 @property (nonatomic, copy) MLNUIBlock *repeatBlock;
 @property (nonatomic, copy) MLNUIBlock *finishBlock;
-
+@property (nonatomic, assign) BOOL propertyChanged;
 
 @end
 
@@ -53,6 +53,36 @@
         _targetView = target;
     }
     return self;;
+}
+
+- (void)setDelay:(NSNumber *)delay
+{
+    _delay = delay;
+    _propertyChanged = YES;
+}
+
+- (void)setRepeatCount:(NSNumber *)repeatCount
+{
+    _repeatCount = repeatCount;
+    _propertyChanged = YES;
+}
+
+- (void)setDuration:(NSNumber *)duration
+{
+    _duration = duration;
+    _propertyChanged = YES;
+}
+
+- (void)setRepeatForever:(NSNumber *)repeatForever
+{
+    _repeatForever = repeatForever;
+    _propertyChanged = YES;
+}
+
+- (void)setAutoReverses:(NSNumber *)autoReverses
+{
+    _autoReverses = autoReverses;
+    _propertyChanged = YES;
 }
 
 - (NSString *)mlnui_getProperty
@@ -69,6 +99,7 @@
 {
     _timingFunction = timingFunction;
     _timingConfig = timingConfig;
+    _propertyChanged = YES;
 }
 
 - (void)mlnui_start:(MLNUIBlock *)finishBlcok
@@ -76,52 +107,7 @@
     if (finishBlcok != nil) {
         _finishBlock = finishBlcok;
     }
-    
-    __weak typeof(self) weakSelf = self;
-    self.valueAnimation.startBlock = ^(MLAAnimation *animation) {
-        __strong typeof(weakSelf) strongSelf = weakSelf;
-        if (strongSelf.startBlock) {
-            [strongSelf.startBlock addObjArgument:strongSelf];
-            [strongSelf.startBlock callIfCan];
-        }
-    };
-    
-    self.valueAnimation.pauseBlock = ^(MLAAnimation *animation) {
-        __strong typeof(weakSelf) strongSelf = weakSelf;
-        if (strongSelf.pauseBlock) {
-            [strongSelf.pauseBlock addObjArgument:strongSelf];
-            [strongSelf.pauseBlock callIfCan];
-        }
-    };
-    
-    self.valueAnimation.resumeBlock = ^(MLAAnimation *animation) {
-        __strong typeof(weakSelf) strongSelf = weakSelf;
-        if (strongSelf.resumeBlock) {
-            [strongSelf.resumeBlock addObjArgument:strongSelf];
-            [strongSelf.resumeBlock callIfCan];
-        }
-    };
-    
-    self.valueAnimation.repeatBlock = ^(MLAAnimation *animation, NSUInteger count) {
-        __strong typeof(weakSelf) strongSelf = weakSelf;
-        if (strongSelf.repeatBlock) {
-            [strongSelf.repeatBlock addObjArgument:strongSelf];
-            [strongSelf.repeatBlock addUIntegerArgument:count];
-            [strongSelf.repeatBlock callIfCan];
-        }
-    };
-    
-    self.valueAnimation.finishBlock = ^(MLAAnimation *animation, BOOL finish) {
-        __strong typeof(weakSelf) strongSelf = weakSelf;
-        if (strongSelf.finishBlock) {
-            [strongSelf.finishBlock addObjArgument:strongSelf];
-            [strongSelf.finishBlock addBOOLArgument:finish];
-            [strongSelf.finishBlock callIfCan];
-        }
-    };
-    
     [self.valueAnimation start];
-    
 }
 
 - (void)mlnui_pause {
@@ -152,9 +138,29 @@
         [fromArray addObject:value4];
     }
     _from = [fromArray copy];
-    
+    _fromValue = [self mlnui_getValueWithParams:_from];
+    _propertyChanged = YES;
 }
 
+- (void)mlnui_setTo:(NSObject *)value1 value2:(NSObject *)value2 value3:(NSObject *)value3 value4:(NSObject *)value4
+{
+    NSMutableArray *fromArray = [NSMutableArray array];
+    if (value1 != nil) {
+        [fromArray addObject:value1];
+    }
+    if (value2 != nil) {
+        [fromArray addObject:value2];
+    }
+    if (value3 != nil) {
+        [fromArray addObject:value3];
+    }
+    if (value4 != nil) {
+        [fromArray addObject:value4];
+    }
+    _to = [fromArray copy];
+    _toValue = [self mlnui_getValueWithParams:_to];
+    _propertyChanged = YES;
+}
 
 - (MLAValueAnimation *)mlnui_rawAnimation
 {
@@ -167,16 +173,100 @@
         switch (_timingFunction) {
             case MLNUIAnimationTimingFunctionSpring:
             {
-                _valueAnimation = [[MLASpringAnimation alloc] initWithMLNUILuaCore:self.mlnui_luaCore];
+                _valueAnimation = (MLAObjectAnimation *)[[MLASpringAnimation alloc] initWithValueName:_propertyType tartget:_targetView];
                 [self mlnui_setupConfig:(MLASpringAnimation *)_valueAnimation config:_timingConfig];
             }
                 break;
             default:
             {
-                _valueAnimation = [[MLAObjectAnimation alloc] initWithMLNUILuaCore:self.mlnui_luaCore];
+                _valueAnimation = [[MLAObjectAnimation alloc] initWithValueName:_propertyType tartget:_targetView];
             }
                 break;
         }
+        
+        __weak typeof(self) weakSelf = self;
+        _valueAnimation.startBlock = ^(MLAAnimation *animation) {
+            __strong typeof(weakSelf) strongSelf = weakSelf;
+            if (strongSelf.startBlock) {
+                [strongSelf.startBlock addObjArgument:strongSelf];
+                [strongSelf.startBlock callIfCan];
+            }
+        };
+        
+        _valueAnimation.pauseBlock = ^(MLAAnimation *animation) {
+            __strong typeof(weakSelf) strongSelf = weakSelf;
+            if (strongSelf.pauseBlock) {
+                [strongSelf.pauseBlock addObjArgument:strongSelf];
+                [strongSelf.pauseBlock callIfCan];
+            }
+        };
+        
+        _valueAnimation.resumeBlock = ^(MLAAnimation *animation) {
+            __strong typeof(weakSelf) strongSelf = weakSelf;
+            if (strongSelf.resumeBlock) {
+                [strongSelf.resumeBlock addObjArgument:strongSelf];
+                [strongSelf.resumeBlock callIfCan];
+            }
+        };
+        
+        _valueAnimation.repeatBlock = ^(MLAAnimation *animation, NSUInteger count) {
+            __strong typeof(weakSelf) strongSelf = weakSelf;
+            if (strongSelf.repeatBlock) {
+                [strongSelf.repeatBlock addObjArgument:strongSelf];
+                [strongSelf.repeatBlock addUIntegerArgument:count];
+                [strongSelf.repeatBlock callIfCan];
+            }
+        };
+        
+        _valueAnimation.finishBlock = ^(MLAAnimation *animation, BOOL finish) {
+            __strong typeof(weakSelf) strongSelf = weakSelf;
+            if (strongSelf.finishBlock) {
+                [strongSelf.finishBlock addObjArgument:strongSelf];
+                [strongSelf.finishBlock addBOOLArgument:finish];
+                [strongSelf.finishBlock callIfCan];
+            }
+        };
+    }
+    //当修改过属性后，需要进行同步
+    if (_propertyChanged) {
+        if (_duration != nil) {
+            _valueAnimation.duration = [_duration floatValue];
+        }
+        if (_repeatCount != nil) {
+            _valueAnimation.repeatCount = [_repeatCount floatValue];
+        }
+        if (_repeatForever != nil) {
+            _valueAnimation.repeatForever = [_repeatForever boolValue];
+        }
+        if (_autoReverses != nil) {
+            _valueAnimation.autoReverses = [_autoReverses boolValue];
+        }
+        if (_fromValue != nil) {
+            _valueAnimation.fromValue = _fromValue;
+        }
+        if (_toValue != nil) {
+            _valueAnimation.toValue = _toValue;
+        }
+        switch (_timingFunction) {
+            case MLNUIAnimationTimingFunctionDefault:
+                _valueAnimation.timingFunction = MLATimingFunctionDefault;
+                break;
+            case MLNUIAnimationTimingFunctionLinear:
+                _valueAnimation.timingFunction = MLATimingFunctionLinear;
+                break;
+            case MLNUIAnimationTimingFunctionEaseIn:
+                _valueAnimation.timingFunction = MLATimingFunctionEaseIn;
+                break;
+            case MLNUIAnimationTimingFunctionEaseOut:
+                _valueAnimation.timingFunction = MLATimingFunctionEaseOut;
+                break;
+            case MLNUIAnimationTimingFunctionEaseInEaseOut:
+                _valueAnimation.timingFunction = MLATimingFunctionEaseInEaseOut;
+                break;
+            default:
+                break;
+        }
+        _propertyChanged = NO;
     }
     return _valueAnimation;
 }
@@ -225,14 +315,9 @@
     }
 }
 
-- (void)mlnui_setupFromValueIfNeed
-{
-    if (_valueAnimation == nil || _from == nil || _from.count == 0) {
-        return;
-    }
-    
-}
-
+/**
+ 根据动画属性类型去读取可变参数
+ */
 - (id)mlnui_getValueWithParams:(NSObject *)velocity
 {
     if (_propertyType == nil) {
@@ -314,8 +399,24 @@
 
 #pragma mark - Export To Lua
 LUAUI_EXPORT_BEGIN(MLNUIObjectAnimation)
-LUAUI_EXPORT_METHOD(from, "lua_setTranslateXTo:", MLNUIObjectAnimation)
-
-LUAUI_EXPORT_END(MLNUIObjectAnimation, ObjectAnimation, NO, NULL, NULL)
+LUAUI_EXPORT_PROPERTY(duration, "setDuration:", "duration", MLNUIObjectAnimation)
+LUAUI_EXPORT_PROPERTY(repeatCount, "setRepeatCount:", "repeatCount", MLNUIObjectAnimation)
+LUAUI_EXPORT_PROPERTY(repeatForever, "setRepeatForever:", "repeatForever", MLNUIObjectAnimation)
+LUAUI_EXPORT_PROPERTY(autoReverses, "setAutoReverses:", "autoReverses", MLNUIObjectAnimation)
+LUAUI_EXPORT_PROPERTY(startBlock, "setStartBlock:", "startBlock", MLNUIObjectAnimation)
+LUAUI_EXPORT_PROPERTY(pauseBlock, "setPauseBlock:", "pauseBlock", MLNUIObjectAnimation)
+LUAUI_EXPORT_PROPERTY(resumeBlock, "setResumeBlock:", "resumeBlock", MLNUIObjectAnimation)
+LUAUI_EXPORT_PROPERTY(repeatBlock, "setRepeatBlock:", "repeatBlock", MLNUIObjectAnimation)
+LUAUI_EXPORT_PROPERTY(finishBlock, "setFinishBlock:", "finishBlock", MLNUIObjectAnimation)
+LUAUI_EXPORT_METHOD(from, "mlnui_setFrom:value2:value3:value4:", MLNUIObjectAnimation)
+LUAUI_EXPORT_METHOD(to, "mlnui_setTo:value2:value3:value4:", MLNUIObjectAnimation)
+LUAUI_EXPORT_METHOD(timing, "mlnui_timing:timingConfig:", MLNUIObjectAnimation)
+LUAUI_EXPORT_METHOD(property, "mlnui_getProperty", MLNUIObjectAnimation)
+LUAUI_EXPORT_METHOD(target, "mlnui_getTarget", MLNUIObjectAnimation)
+LUAUI_EXPORT_METHOD(start, "mlnui_start:", MLNUIObjectAnimation)
+LUAUI_EXPORT_METHOD(pause, "mlnui_pause", MLNUIObjectAnimation)
+LUAUI_EXPORT_METHOD(resume, "mlnui_resume", MLNUIObjectAnimation)
+LUAUI_EXPORT_METHOD(stop, "mlnui_stop", MLNUIObjectAnimation)
+LUAUI_EXPORT_END(MLNUIObjectAnimation, ObjectAnimation, NO, NULL, "initWithMLNUILuaCore:property:target:")
 
 @end

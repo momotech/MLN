@@ -17,6 +17,10 @@
 #include "MultiAnimation.h"
 #include "CustomAnimation.h"
 
+#import "MLNUIKitHeader.h"
+#import "NSObject+MLNUICore.h"
+#import "MLNUIViewExporterMacro.h"
+
 using namespace ANIMATOR_NAMESPACE;
 
 @interface MLAAnimation () <MLAAnimationPrivate>

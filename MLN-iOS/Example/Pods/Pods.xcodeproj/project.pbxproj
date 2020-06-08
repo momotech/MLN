@@ -1704,6 +1704,8 @@
 		FA6C1CDD248E40250025BA96 /* MLAAnimatable.h in Headers */ = {isa = PBXBuildFile; fileRef = FA6C1CA6248E40240025BA96 /* MLAAnimatable.h */; };
 		FA6C1CDE248E40250025BA96 /* MLAAnimatable.m in Sources */ = {isa = PBXBuildFile; fileRef = FA6C1CA7248E40240025BA96 /* MLAAnimatable.m */; };
 		FA6C1CDF248E40250025BA96 /* MLNUIObjectAnimation.m in Sources */ = {isa = PBXBuildFile; fileRef = FA6C1CA8248E40240025BA96 /* MLNUIObjectAnimation.m */; };
+		FA6C1CE4248E61E00025BA96 /* MLNUIObjectAnimationSet.h in Headers */ = {isa = PBXBuildFile; fileRef = FA6C1CE2248E61E00025BA96 /* MLNUIObjectAnimationSet.h */; };
+		FA6C1CE5248E61E00025BA96 /* MLNUIObjectAnimationSet.m in Sources */ = {isa = PBXBuildFile; fileRef = FA6C1CE3248E61E00025BA96 /* MLNUIObjectAnimationSet.m */; };
 		FA9000B8F17680D061BAB0386B55C329 /* MLNSize.h in Headers */ = {isa = PBXBuildFile; fileRef = A1269F95FD4BC5E97F008C52EAD9B908 /* MLNSize.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		FB02BFA4F346CDF3ABE1B1019AAC30AC /* MLNTableViewAdapterProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 88B26F7D0AF6A3F8B460DB32A188D973 /* MLNTableViewAdapterProtocol.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		FB07DC54FD037EA2605C9277527080CF /* MLNAlphaAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = 9BD70F1C50F26263BBAC0D388E3ED660 /* MLNAlphaAnimation.h */; settings = {ATTRIBUTES = (Project, ); }; };
@@ -3659,10 +3661,12 @@
 		FA6C1CA1248E40240025BA96 /* TransformationMatrix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TransformationMatrix.h; sourceTree = "<group>"; };
 		FA6C1CA2248E40240025BA96 /* FloatConversion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FloatConversion.h; sourceTree = "<group>"; };
 		FA6C1CA4248E40240025BA96 /* MLAAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLAAnimation.h; sourceTree = "<group>"; };
-		FA6C1CA5248E40240025BA96 /* MLAAnimation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MLAAnimation.mm; sourceTree = "<group>"; };
+		FA6C1CA5248E40240025BA96 /* MLAAnimation.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = MLAAnimation.mm; sourceTree = "<group>"; };
 		FA6C1CA6248E40240025BA96 /* MLAAnimatable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLAAnimatable.h; sourceTree = "<group>"; };
 		FA6C1CA7248E40240025BA96 /* MLAAnimatable.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLAAnimatable.m; sourceTree = "<group>"; };
 		FA6C1CA8248E40240025BA96 /* MLNUIObjectAnimation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLNUIObjectAnimation.m; sourceTree = "<group>"; };
+		FA6C1CE2248E61E00025BA96 /* MLNUIObjectAnimationSet.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNUIObjectAnimationSet.h; sourceTree = "<group>"; };
+		FA6C1CE3248E61E00025BA96 /* MLNUIObjectAnimationSet.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNUIObjectAnimationSet.m; sourceTree = "<group>"; };
 		FA71EEBE0D623FD425346AF0D5B9E7AA /* LNWirterImpl.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = LNWirterImpl.h; sourceTree = "<group>"; };
 		FA801E2702F1D1BA8C74FFF697750314 /* LNClientFactory.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = LNClientFactory.m; sourceTree = "<group>"; };
 		FA8BB1CE7D0653D17AEDB7AB12417E29 /* MLNFile.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLNFile.m; sourceTree = "<group>"; };
@@ -7285,6 +7289,8 @@
 			children = (
 				FA6C1C88248E40240025BA96 /* MLNUIObjectAnimation.h */,
 				FA6C1CA8248E40240025BA96 /* MLNUIObjectAnimation.m */,
+				FA6C1CE2248E61E00025BA96 /* MLNUIObjectAnimationSet.h */,
+				FA6C1CE3248E61E00025BA96 /* MLNUIObjectAnimationSet.m */,
 				FA6C1C89248E40240025BA96 /* MLAnimator */,
 				FA6C1C64248E40240025BA96 /* Source */,
 			);
@@ -7581,6 +7587,7 @@
 				37FAD0D1D638B51843DED208D7564DD5 /* MLNFile.h in Headers */,
 				87BD8A10DB59C21DDFCC16D26EA81E03 /* MLNFileConst.h in Headers */,
 				36BD12EAEAE9DD7AD4FE3A63F2D31CE8 /* MLNFileLoader.h in Headers */,
+				FA6C1CE4248E61E00025BA96 /* MLNUIObjectAnimationSet.h in Headers */,
 				4C593AA1AA6AB228218E65A3FCB4993D /* MLNFont.h in Headers */,
 				91A172A9062972338C10B02BC132F63B /* MLNFrameAnimation.h in Headers */,
 				3C32326BA0B5DB805C6B6E0BAD72B694 /* MLNGaussEffectHandler.h in Headers */,
@@ -9377,6 +9384,7 @@
 				8433A1AAF17E1BFFAC403BABE9A4C5BA /* MLNAlphaAnimation.m in Sources */,
 				3EC22E02A7A3D054E8255C0B40FAEEA2 /* MLNAnimation.m in Sources */,
 				F75203D7AC5A9D350A56479E47D9A0F3 /* MLNAnimationConst.m in Sources */,
+				FA6C1CE5248E61E00025BA96 /* MLNUIObjectAnimationSet.m in Sources */,
 				1B2BE0A07D261387B07C8F4A229A9C99 /* MLNAnimationDelegate.m in Sources */,
 				620BFB4DC4C94D126C881C2039B68CE1 /* MLNAnimationHandler.m in Sources */,
 				B77BA50C88D5D51A8B98C6496319E51D /* MLNAnimationSet.m in Sources */,
