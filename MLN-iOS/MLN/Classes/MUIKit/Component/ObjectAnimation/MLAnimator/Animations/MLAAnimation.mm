@@ -1,0 +1,504 @@
+//
+// Created by momo783 on 2020/5/18.
+// Copyright (c) 2020 Boztrail. All rights reserved.
+//
+
+#import "MLAAnimation.h"
+#import "MLAAnimationPrivate.h"
+#import "MLADefines.h"
+#import "MLAAnimator+Private.h"
+#import "MLAAnimatable.h"
+#import "MLAAnimationRuntime.h"
+#import "NSObject+Animator.h"
+#import "NSObject+Hash.h"
+
+#include "ObjectAnimation.h"
+#include "SpringAnimation.h"
+#include "MultiAnimation.h"
+#include "CustomAnimation.h"
+
+using namespace ANIMATOR_NAMESPACE;
+
+@interface MLAAnimation () <MLAAnimationPrivate>
+
+@property(readwrite, weak) id target;
+
+@property (nonatomic, assign) Animation *animation;
+
+@property (nonatomic, strong) NSString *innerKey;
+
+@end
+
+#pragma mark - MLAAnimation Implementation
+
+@implementation MLAAnimation
+
+- (instancetype)initDefault {
+    if (self = [super init]) {
+        _beginTime = 0.f;
+        _repeatCount = 1;
+        _repeatForever = NO;
+        _innerKey = [NSString stringWithFormat:@"animationKey_%@",@([self hash])];
+    }
+    return self;
+}
+
+- (void)dealloc {
+    if (self.animation) {
+        ANIMATOR_SAFE_DELETE(self.animation);
+    }
+}
+
+- (void)setBeginTime:(CFTimeInterval)beginTime {
+    _beginTime = beginTime;
+    if (self.animation) {
+        self.animation->beginTime = beginTime;
+    }
+}
+
+- (void)setRepeatCount:(NSUInteger)repeatCount {
+    _repeatCount = repeatCount;
+    if (self.animation) {
+        self.animation->repeatCount = (AMTInt)repeatCount;
+    }
+}
+
+- (void)setRepeatForever:(BOOL)repeatForever {
+    _repeatForever = repeatForever;
+    if (self.animation) {
+        self.animation->repeatForever = repeatForever;
+    }
+}
+
+- (void)setAutoReverses:(BOOL)autoReverses {
+    _autoReverses = autoReverses;
+    if (self.animation) {
+        self.animation->SetAutoreverses(autoReverses);
+    }
+}
+
+- (void)start {
+    if (self.target) {
+        [[MLAAnimator shareAnimator] addAnimation:self forObject:self.target andKey:self.innerKey];
+    }
+}
+
+- (void)start:(MLAAnimationFinishBlock)finishBlock {
+    _finishBlock = finishBlock;
+    [self start];
+}
+
+- (void)pause {
+    if (self.animation) {
+        self.animation->Pause(true);
+    }
+}
+
+- (void)resume {
+    if (self.animation) {
+        self.animation->Pause(false);
+    }
+}
+
+- (void)finish {
+    if (self.target) {
+        [[MLAAnimator shareAnimator] removeAnimation:self.target forKey:self.innerKey];
+    } else {
+        // Target 释放情况下，Loop会主动移除动画
+    }
+}
+
+#pragma mark - MLAAniamtionPrivate
+- (void)makeAnimation:(NSString *)key forObject:(id)obj {
+    [self setTarget:obj];
+    
+    if (self.animation) {
+        self.animation->beginTime = self.beginTime;
+        self.animation->repeatCount = (AMTInt)self.repeatCount;
+        self.animation->repeatForever = self.repeatForever;
+        self.animation->SetAutoreverses(self.autoReverses);
+    }
+}
+
+- (animator::Animation *)cplusplusAnimation {
+    return self.animation;
+}
+
+- (void)updateAnimation:(animator::Animation *)animation {
+    
+}
+
+- (void)startAnimation {
+    if (self.startBlock) {
+        self.startBlock(self);
+    }
+}
+
+- (void)pauseAnimation:(BOOL)paused {
+    if (paused && self.pauseBlock) {
+        self.pauseBlock(self);
+    } else if (!paused && self.resumeBlock) {
+        self.resumeBlock(self);
+    }
+}
+
+- (void)repeatAnimation:(NSUInteger)count {
+    if (self.repeatBlock) {
+        self.repeatBlock(self, count);
+    }
+}
+
+- (void)finishAnimation:(BOOL)finish {
+    if (self.finishBlock) {
+        self.finishBlock(self, finish);
+    }
+}
+
+@end
+
+#pragma mark - MLAValueAnimation Implementation
+
+@interface MLAValueAnimation ()
+
+@property(readwrite, strong) NSString *valueName;
+
+@property(nonatomic, strong) MLAAnimatable *animatable;
+
+@end
+
+@implementation MLAValueAnimation
+@synthesize target;
+
+- (instancetype)initWithValueName:(NSString *)valueName tartget:(id)target {
+    if (self = [super initDefault]) {
+        [self setTarget:target];
+        _valueName = valueName;
+        _animatable = [MLAAnimatable animatableWithName:valueName];
+    }
+    return self;
+}
+
+- (void)makeValueAnimation:(ValueAnimation*)animation {
+    if (animation) {
+        VectorRef fromVec = nullptr, toVec = nullptr;
+        NSUInteger valueCount = 0;
+        MLAValueType valueType = kMLAValueUnknown;
+        if (self.fromValue) {
+            fromVec = MLAUnbox(self.fromValue, valueType, valueCount, false);
+            
+            if (self.toValue) {
+                NSUInteger toValueCount = 0;
+                toVec = MLAUnbox(self.toValue, valueType, toValueCount, false);
+                NSAssert(valueCount == toValueCount, @"Type Error : fromCount:%@ toCount:%@",@(valueCount),@(toValueCount));
+            }
+        } else {
+            if (self.toValue) {
+                toVec = MLAUnbox(self.toValue, valueType, valueCount, false);
+            }
+        }
+        
+        if (!fromVec) {
+            Vector4r vec = read_values(self.animatable.readBlock, self.target, valueCount);
+            fromVec = VectorRef(Vector::new_vector(valueCount, vec));
+        }
+        if (!toVec) {
+            Vector4r vec = read_values(self.animatable.readBlock, self.target, valueCount);
+            toVec = VectorRef(Vector::new_vector(valueCount, vec));
+        }
+       
+        animation->FromToValues(fromVec->data(), toVec->data(), (AMTInt)valueCount);
+    }
+}
+
+- (void)updateAnimation:(animator::Animation *)animation {
+    if (self.animatable && self.target && self.animation == animation) {
+        ValueAnimation *valueAnimation = (ValueAnimation*)animation;
+        self.animatable.writeBlock(self.target, valueAnimation->GetCurrentValue().data());
+    }
+}
+
+@end
+
+#pragma mark - MLAObjectAnimation Implementation
+
+@interface MLAObjectAnimation ()
+
+@end
+
+@implementation MLAObjectAnimation
+
+- (instancetype)initWithValueName:(NSString *)valueName tartget:(id)target {
+    if (self = [super initWithValueName:valueName tartget:target]) {
+        _timingFunction = MLATimingFunctionDefault;
+    }
+    return self;
+}
+
+- (TimingFunction)timingFunctionWith:(MLATimingFunction)function
+{
+    switch (function) {
+        case MLATimingFunctionDefault:
+            return TimingFunction::Default;
+            break;
+        case MLATimingFunctionLinear:
+        return TimingFunction::Linear;
+            break;
+        case MLATimingFunctionEaseIn:
+            return TimingFunction::EaseIn;
+            break;
+        case MLATimingFunctionEaseInEaseOut:
+            return TimingFunction::EaseOut;
+            break;
+        default:
+            return TimingFunction::Default;
+            break;
+    }
+}
+
+- (void)setDuration:(CGFloat)duration {
+    _duration = duration;
+    if (self.animation) {
+        ObjectAnimation *_animation = (ObjectAnimation *)self.animation;
+        _animation->Duration(duration);
+    }
+}
+
+- (void)setTimingFunction:(MLATimingFunction)timingFunction {
+    _timingFunction = timingFunction;
+    if (self.animation) {
+        ObjectAnimation *_animation = (ObjectAnimation *)self.animation;
+        _animation->ViaTimingFunction([self timingFunctionWith:self.timingFunction]);
+    }
+}
+
+
+- (void)makeAnimation:(NSString *)key forObject:(id)obj {
+    if (!self.animation) {
+        self.animation = new ObjectAnimation(key.UTF8String);
+    }
+    [super makeAnimation:key forObject:obj];
+    
+    ObjectAnimation *animation = (ObjectAnimation *)self.animation;
+    [self makeValueAnimation:animation];
+    
+    animation->Duration(self.duration);
+    animation->ViaTimingFunction([self timingFunctionWith:self.timingFunction]);
+    animation->threshold = self.animatable.threshold;
+}
+
+@end
+
+#pragma mark - MLASpringAnimation Implementation
+
+@interface MLASpringAnimation ()
+
+@end
+
+@implementation MLASpringAnimation
+
+- (instancetype)initWithValueName:(NSString *)valueName tartget:(id)target {
+    if (self = [super initWithValueName:valueName tartget:target]) {
+        _springSpeed = 12.;
+        _springBounciness = 4.0;
+    }
+    return self;
+}
+
+- (void)makeAnimation:(NSString *)key forObject:(id)obj {
+    
+    if (!self.animation) {
+        self.animation = new SpringAnimation(key.UTF8String);
+    }
+    [super makeAnimation:key forObject:obj];
+    
+    SpringAnimation *animation = (SpringAnimation*)self.animation;
+    [self makeValueAnimation:animation];
+    
+    animation->SetSpringSpeed(self.springSpeed);
+    animation->SetSpringBounciness(self.springBounciness);
+    
+    NSUInteger count = 0;
+    MLAValueType valueType = kMLAValueUnknown;
+    VectorRef vec = MLAUnbox(self.velocity, valueType, count, false);
+    animation->SetVelocity(vec->data());
+    
+    if (self.dynamicsTension) {
+        animation->SetDynamicsTension(self.dynamicsTension);
+    }
+    if (self.dynamicsFriction) {
+        animation->SetDynamicsFriction(self.dynamicsFriction);
+    }
+    if (self.dynamicsMass) {
+        animation->SetDynamicsMass(self.dynamicsMass);
+    }
+    
+    animation->threshold = self.animatable.threshold;
+}
+
+- (void)setSpringSpeed:(CGFloat)springSpeed {
+    _springSpeed = springSpeed;
+    if (self.animation) {
+        SpringAnimation *_animation = (SpringAnimation*)self.animation;
+        _animation->SetSpringSpeed(springSpeed);
+    }
+}
+
+- (void)setSpringBounciness:(CGFloat)springBounciness {
+    _springBounciness = springBounciness;
+    if (self.animation) {
+        SpringAnimation *_animation = (SpringAnimation*)self.animation;
+        _animation->SetSpringBounciness(springBounciness);
+    }
+}
+
+- (void)setDynamicsTension:(CGFloat)dynamicsTension {
+    _dynamicsTension = dynamicsTension;
+    if (self.animation) {
+        SpringAnimation *_animation = (SpringAnimation*)self.animation;
+        _animation->SetDynamicsTension(dynamicsTension);
+    }
+}
+
+- (void)setDynamicsFriction:(CGFloat)dynamicsFriction {
+    _dynamicsFriction = dynamicsFriction;
+    if (self.animation) {
+        SpringAnimation *_animation = (SpringAnimation*)self.animation;
+        _animation->SetDynamicsFriction(dynamicsFriction);
+    }
+}
+
+- (void)setDynamicsMass:(CGFloat)dynamicsMass {
+    _dynamicsMass = dynamicsMass;
+    if (self.animation) {
+        SpringAnimation *_animation = (SpringAnimation*)self.animation;
+        _animation->SetDynamicsMass(dynamicsMass);
+    }
+}
+
+
+@end
+
+#pragma mark - MLAM Implementation
+typedef NS_ENUM(NSInteger) {
+    RunningTypeTogether,
+    RunningTypeSequentially,
+    
+} RunningType;
+
+@interface MLAMultiAnimation ()
+
+@property(readwrite, strong) NSArray<MLAAnimation*> *animations;
+
+@property(nonatomic, assign) RunningType runningType;
+
+@property(nonatomic, strong) NSMutableArray<MLAAnimation*> *finishAniamtions;
+
+@property(nonatomic, assign) BOOL startCallbacked;
+
+@end
+
+@implementation MLAMultiAnimation
+
+- (instancetype)init {
+    if (self = [super initDefault]) {
+        _runningType = RunningTypeTogether;
+        _finishAniamtions = [NSMutableArray array];
+    }
+    return self;
+}
+
+- (void)runTogether:(NSArray<MLAAnimation *> *)animations {
+    _runningType = RunningTypeTogether;
+    _animations = animations;
+}
+
+- (void)runSequentially:(NSArray<MLAAnimation *> *)animations {
+    _runningType = RunningTypeSequentially;
+    _animations = animations;
+}
+
+- (void)start {
+    [self setTarget:self];
+    [super start];
+}
+
+- (void)updateAnimation:(animator::Animation *)animation {
+    [super updateAnimation:animation];
+    //
+    MultiAnimation *multiAnimation = dynamic_cast<MultiAnimation*>(animation);
+    if (multiAnimation) {
+        const MultiAnimationList animations = multiAnimation->GetRunningAnimationList();
+        for (auto subAnimation : animations) {
+            for (MLAAnimation *objcAnimation in self.animations) {
+                if (objcAnimation.animation == subAnimation) {
+                    [objcAnimation updateAnimation:subAnimation];
+                    break;
+                }
+            }
+        }
+    }
+}
+
+- (void)makeAnimation:(NSString *)key forObject:(id)obj {
+    [super makeAnimation:key forObject:obj];
+    
+    if (!self.animation) {
+        self.animation = new MultiAnimation(key.UTF8String);
+        MultiAnimation *animation = (MultiAnimation*)self.animation;
+        
+        std::vector<Animation *> animations;
+        for (MLAAnimation *objcAnimation in self.animations) {
+            [objcAnimation makeAnimation:objcAnimation.innerKey forObject:objcAnimation.target];
+            animations.push_back(objcAnimation.cplusplusAnimation);
+        }
+        if (self.runningType == RunningTypeTogether) {
+            animation->RunTogether(animations);
+        } else {
+            animation->RunSequentially(animations);
+        }
+    }
+}
+
+@end
+
+#pragma mark - MLACustomAnimation Implementation
+
+@interface MLACustomAnimation ()
+<MLAAnimationPrivate> {
+    CustomAnimation *_animation;
+}
+@property(nonatomic, strong) MLACustomAnimationBlock animationBlock;
+
+@end
+
+@implementation MLACustomAnimation
+@synthesize target;
+
+- (instancetype)initWithBlock:(MLACustomAnimationBlock)animationBlock {
+    if (self = [super initDefault]) {
+        _animationBlock = animationBlock;
+    }
+    return self;
+}
+
+- (void)makeAnimation:(NSString *)key forObject:(id)obj {
+    [self setTarget:obj];
+    if (!self.animation) {
+        self.animation = new CustomAnimation(key.UTF8String);
+    }
+    [super makeAnimation:key forObject:obj];
+}
+
+- (animator::Animation *)cplusplusAnimation {
+    return _animation;
+}
+
+- (void)updateAnimation:(animator::Animation *)animation {
+    
+}
+
+- (void)finishAnimation:(BOOL)finish {
+    
+}
+
+@end

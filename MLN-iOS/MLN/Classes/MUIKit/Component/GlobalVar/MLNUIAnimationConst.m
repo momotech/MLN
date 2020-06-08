@@ -25,6 +25,31 @@ NSString * const kMUIRotaionZ = @"transform.rotation.z";
 NSString * const kMUIOpacity = @"opacity";
 NSString * const kMUITransform = @"transform";
 
+NSString * const kMUITimingConfigDuration = @"duration";
+NSString * const kMUITimingConfigVelocity = @"velocity";
+NSString * const kMUITimingConfigBounciness = @"bounciness";
+NSString * const kMUITimingConfigSpeed = @"speed";
+NSString * const kMUITimingConfigTension = @"tension";
+NSString * const kMUITimingConfigFriction = @"friction";
+NSString * const kMUITimingConfigMass = @"mass";
+
+NSString * const kMUIAnimPropertyAlpha = @"view.alpha";
+NSString * const kMUIAnimPropertyColor = @"view.backgroundColor";
+NSString * const kMUIAnimPropertyOrigin = @"view.origin";
+NSString * const kMUIAnimPropertyOriginX = @"view.originX";
+NSString * const kMUIAnimPropertyOriginY = @"view.originY";
+NSString * const kMUIAnimPropertyCenter = @"view.center";
+NSString * const kMUIAnimPropertyCenterX = @"view.centerX";
+NSString * const kMUIAnimPropertyCenterY = @"view.centerY";
+NSString * const kMUIAnimPropertySize = @"view.size";
+NSString * const kMUIAnimPropertyFrame = @"view.frame";
+NSString * const kMUIAnimPropertyScale = @"view.scale";
+NSString * const kMUIAnimPropertyScaleX = @"view.scaleX";
+NSString * const kMUIAnimPropertyScaleY = @"view.scaleY";
+NSString * const kMUIAnimPropertyRotation = @"view.rotation";
+NSString * const kMUIAnimPropertyRotationX = @"view.rotationX";
+NSString * const kMUIAnimPropertyRotationY = @"view.rotationY";
+
 @implementation MLNUIAnimationConst
 
 + (CAMediaTimingFunction *)buildTimingFunction:(MLNUIAnimationInterpolatorType)interpolator
@@ -72,6 +97,41 @@ LUAUI_EXPORT_GLOBAL_VAR(AnimationValueType, (@{
                                    @"RELATIVE_TO_SELF": @(MLNUIAnimationValueTypeRelativeToSelf),
                                    @"RELATIVE_TO_PARENT": @(MLNUIAnimationValueTypeRelativeToParent),
                                    }))
+LUAUI_EXPORT_GLOBAL_VAR(Timing, (@{
+                            @"Default": @(MLNUIAnimationTimingFunctionDefault),
+                            @"Linear": @(MLNUIAnimationTimingFunctionLinear),
+                            @"EaseIn": @(MLNUIAnimationTimingFunctionEaseIn),
+                            @"EaseOut": @(MLNUIAnimationTimingFunctionEaseOut),
+                            @"EaseInEaseOut": @(MLNUIAnimationTimingFunctionEaseInEaseOut),
+                            @"Spring": @(MLNUIAnimationTimingFunctionSpring),
+                            }))
+LUAUI_EXPORT_GLOBAL_VAR(TimingConfig, (@{
+                            @"Duration": kMUITimingConfigDuration,
+                            @"Velocity": kMUITimingConfigVelocity,
+                            @"Bounciness": kMUITimingConfigBounciness,
+                            @"Speed": kMUITimingConfigSpeed,
+                            @"Tension": kMUITimingConfigTension,
+                            @"Friction": kMUITimingConfigFriction,
+                            @"Mass": kMUITimingConfigMass,
+                            }))
+LUAUI_EXPORT_GLOBAL_VAR(AnimProperty, (@{
+                            @"Alpha": kMUIAnimPropertyAlpha,
+                            @"Color": kMUIAnimPropertyColor,
+                            @"Origin": kMUIAnimPropertyOrigin,
+                            @"OriginX": kMUIAnimPropertyOriginX,
+                            @"OriginY": kMUIAnimPropertyOriginY,
+                            @"Center": kMUIAnimPropertyCenter,
+                            @"CenterX": kMUIAnimPropertyCenterX,
+                            @"CenterY": kMUIAnimPropertyCenterY,
+                            @"Size": kMUIAnimPropertySize,
+                            @"Frame": kMUIAnimPropertyFrame,
+                            @"Scale": kMUIAnimPropertyScale,
+                            @"ScaleX": kMUIAnimPropertyScaleX,
+                            @"ScaleY": kMUIAnimPropertyScaleY,
+                            @"Rotation": kMUIAnimPropertyRotation,
+                            @"RotationX": kMUIAnimPropertyRotationX,
+                            @"RotationY": kMUIAnimPropertyRotationY,
+                            }))
 LUAUI_EXPORT_GLOBAL_VAR_END()
 
 
