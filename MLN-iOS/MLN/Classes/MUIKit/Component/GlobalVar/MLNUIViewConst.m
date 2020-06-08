@@ -42,21 +42,21 @@ LUAUI_EXPORT_GLOBAL_VAR(SafeArea, (@{@"CLOSE":@(MLNUISafeAreaClose),
                                      @"BOTTOM":@(MLNUISafeAreaBottom)}))
 
 /**** MLNUILayout ****/
-LUAUI_EXPORT_GLOBAL_VAR(MainAlign, (@{@"START":@(MLNUIJustifyFlexStart),
-                                      @"CENTER":@(MLNUIJustifyCenter),
-                                      @"END":@(MLNUIJustifyFlexEnd),
-                                      @"SPACE_BETWEEN":@(MLNUIJustifySpaceBetween),
-                                      @"SPACE_AROUND":@(MLNUIJustifySpaceAround),
-                                      @"SPACE_EVENLY":@(MLNUIJustifySpaceEvenly)}))
+LUAUI_EXPORT_GLOBAL_VAR(MainAxis, (@{@"START":@(MLNUIJustifyFlexStart),
+                                     @"CENTER":@(MLNUIJustifyCenter),
+                                     @"END":@(MLNUIJustifyFlexEnd),
+                                     @"SPACE_BETWEEN":@(MLNUIJustifySpaceBetween),
+                                     @"SPACE_AROUND":@(MLNUIJustifySpaceAround),
+                                     @"SPACE_EVENLY":@(MLNUIJustifySpaceEvenly)}))
 
-LUAUI_EXPORT_GLOBAL_VAR(CrossAlign, (@{@"AUTO":@(MLNUIAlignAuto),
-                                       @"START":@(MLNUIAlignStart),
-                                       @"CENTER":@(MLNUIAlignCenter),
-                                       @"END":@(MLNUIAlignEnd),
-                                       @"STRETCH":@(MLNUIAlignStretch),
-                                       @"BASELINE":@(MLNUIAlignBaseline),
-                                       @"SPACE_BETWEEN":@(MLNUIAlignSpaceBetween),
-                                       @"SPACE_AROUND":@(MLNUIAlignSpaceAround)}))
+LUAUI_EXPORT_GLOBAL_VAR(CrossAxis, (@{@"AUTO":@(MLNUIAlignAuto),
+                                      @"START":@(MLNUIAlignStart),
+                                      @"CENTER":@(MLNUIAlignCenter),
+                                      @"END":@(MLNUIAlignEnd),
+                                      @"STRETCH":@(MLNUIAlignStretch),
+                                      @"BASELINE":@(MLNUIAlignBaseline),
+                                      @"SPACE_BETWEEN":@(MLNUIAlignSpaceBetween),
+                                      @"SPACE_AROUND":@(MLNUIAlignSpaceAround)}))
 
 LUAUI_EXPORT_GLOBAL_VAR(Wrap, (@{@"NO_WRAP":@(MLNUIWrapNoWrap),
                                  @"WRAP":@(MLNUIWrapWrap),
