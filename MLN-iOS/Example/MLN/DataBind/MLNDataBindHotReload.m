@@ -14,7 +14,7 @@
 #import "MLNDataBindOperator.h"
 #import "MLNUIKit.h"
 
-@interface MLNDataBindHotReload () <MLNUIDataBindingProtocol>
+@interface MLNDataBindHotReload ()
 @property (nonatomic, strong) MLNBindTestCaseModel *tcModel;
 @end
 
@@ -24,7 +24,7 @@
     self = [super initWithEntryFileName:@"" bundle:nil];
     self.regClasses = @[[MLNStaticTest class], [MLNDataBindOperator class]];
     if (self) {
-        NSLog(@"---- %s",__FUNCTION__);
+        NSLog(@"---- %s %@",__FUNCTION__,self);
         [MLNDataBindOperator setHotReload:self];
     }
     return self;
@@ -42,7 +42,7 @@
 //}
 
 - (void)dealloc {
-    NSLog(@"---- dealloc : %s ",__func__);
+    NSLog(@"---- dealloc : %s %@",__func__,self);
 }
 
 #pragma mark - MLNUIDataBindingProtocol

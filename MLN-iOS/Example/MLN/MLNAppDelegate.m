@@ -23,6 +23,7 @@
 #import "MLNUIKVOObserver.h"
 #import "MLNUIKit.h"
 #import "MLNUIMyImageHandler.h"
+#import "JPFPSStatus.h"
 
 @interface MLNAppDelegate ()
 
@@ -38,6 +39,7 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+    [[JPFPSStatus sharedInstance] open];
     [self setupMLNKitEnvironment];
     // 根据标志位判断是否禁用图片加载功能
     if (kDisableImageLoad) {

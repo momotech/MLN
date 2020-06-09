@@ -42,7 +42,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)initWithNibName:(nullable NSString *)nibNameOrNil bundle:(nullable NSBundle *)nibBundleOrNil NS_UNAVAILABLE;
 
 @property (nonatomic, copy) NSDictionary *extraInfo;
-@property (nonatomic, copy) NSArray <id<MLNUIExportProtocol>> *regClasses;
+@property (nonatomic, copy) NSArray <Class<MLNUIExportProtocol>> *regClasses;
 @end
 
 NS_ASSUME_NONNULL_END

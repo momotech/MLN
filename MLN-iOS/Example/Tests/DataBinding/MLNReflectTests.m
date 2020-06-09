@@ -21,7 +21,7 @@ beforeEach(^{
            tModel.text = @"tt";
            });
 
-context(@"Dictionary", ^{
+it(@"Dictionary", ^{
         __block NSArray *set;
         __block NSDictionary *dic;
     beforeEach(^{

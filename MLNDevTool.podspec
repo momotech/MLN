@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
     s.name             = 'MLNDevTool'
-    s.version          = '0.1.9'
+    s.version          = '0.2.3'
     s.summary          = 'Debug Tool of MLN.'
     
     # This description is used to generate tags and improve search results.
@@ -32,7 +32,8 @@ Pod::Spec.new do |s|
     s.libraries = 'z'
     s.requires_arc = true
     s.public_header_files = 'MLN-iOS/MLNDevTool/Classes/*.h'
-    
+    s.dependency 'ArgoUI'
+
     s.subspec 'MLNProtobuf' do |pb|
       pb.name = 'MLNProtobuf'
       pb.source_files = 'MLN-iOS/MLNDevTool/Classes/MLNProtobuf/**/*.{h,m}'
@@ -57,7 +58,6 @@ Pod::Spec.new do |s|
         'MLNDevTool_UI' => 'MLN-iOS/MLNDevTool/Classes/DevTool/UI/**/Assets/*.{png,xib}'
       }
       d.dependency 'MLN'
-      d.dependency 'MLNUI'
       d.dependency 'MLNDevTool/Conn'
     end
 

@@ -26,6 +26,7 @@
 #import "MLNUIKitInstanceHandlersManager.h"
 #import "MLNUIKitEnvironment.h"
 #import "MLNUILink.h"
+#import "MLNUIKitInstanceFactory.h"
 
 // View导出工具
 #import "MLNUIViewExporterMacro.h"

@@ -10,7 +10,7 @@
 #import "MLNDBTestModel.h"
 #import "MLNUIKit.h"
 
-static MLNDataBindHotReload *_hotReload;
+static __weak MLNDataBindHotReload *_hotReload;
 static MLNDataBindOperator *_currentOperator;
 
 @interface MLNDataBindOperator()

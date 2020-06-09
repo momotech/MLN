@@ -10,7 +10,7 @@
 #import "LNReaderFactory.h"
 #import "PBCommandBuilder.h"
 #import "UIDevice+HotReload.h"
-#import "MLNDebugContext.h"
+//#import "MLNDebugContext.h"
 
 @interface LNUsbClientImpl ()
 
@@ -148,7 +148,12 @@
             dispatch_semaphore_signal(self.lock);
         } else if ([message isKindOfClass:[pbipaddresscommand class]]) {
             pbipaddresscommand *cmd = (pbipaddresscommand *)message;
-            [MLNDebugContext sharedContext].ipAddress = cmd.macIpaddress;
+//            [MLNDebugContext sharedContext].ipAddress = cmd.macIpaddress;
+            @try {
+                [[NSClassFromString(@"MLNDebugContext") performSelector:NSSelectorFromString(@"sharedContext")] setValue:cmd.macIpaddress forKey:@"ipAddress"];
+            } @catch (NSException *exception) {
+                
+            }
         } else {
             if (callback) {
                 callback(message);

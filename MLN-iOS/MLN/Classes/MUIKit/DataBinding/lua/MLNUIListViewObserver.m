@@ -14,6 +14,8 @@
 #import "MLNUIExtScope.h"
 #import "MLNUIDataBinding.h"
 #import "NSArray+MLNUIKVO.h"
+#import "NSObject+MLNUIKVO.h"
+#import "NSObject+MLNUIDealloctor.h"
 
 @interface MLNUITableView (Internal)
 - (void)luaui_reloadData;
@@ -41,13 +43,13 @@ typedef BOOL(^ActionBlock)(void);
 
 @implementation MLNUIListViewObserver
 
-+ (instancetype)observerWithListView:(UIView *)listView keyPath:(NSString *)keyPath {
++ (instancetype)observerWithListView:(UIView *)listView keyPath:(NSString *)keyPath callback:(MLNUIKVOCallback)callback {
     
     if ([listView isKindOfClass:[MLNUITableView class]] || [listView isKindOfClass:[MLNUICollectionView class]]) {
         MLNUITableView *table = (MLNUITableView *)listView;
         
         MLNUIKitViewController *kitViewController = (MLNUIKitViewController *)MLNUI_KIT_INSTANCE([table mlnui_luaCore]).viewController;
-        MLNUIListViewObserver *observer = [[MLNUIListViewObserver alloc] initWithViewController:kitViewController callback:nil keyPath:keyPath];
+        MLNUIListViewObserver *observer = [[MLNUIListViewObserver alloc] initWithViewController:kitViewController callback:callback keyPath:keyPath];
         observer.listView = listView;
         observer.kitViewController = kitViewController;
         return observer;
@@ -66,7 +68,7 @@ typedef BOOL(^ActionBlock)(void);
     NSArray <ActionBlock>*blocks = self.actions.copy;
     [self.actions removeAllObjects];
     dispatch_block_t doActions = ^{
-        NSLog(@">>>> do actions count %zd",blocks.count);
+        DLog(@">>>> do actions count %zd",blocks.count);
         [blocks enumerateObjectsUsingBlock:^(ActionBlock  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
             *stop = obj();
         }];
@@ -87,6 +89,7 @@ typedef BOOL(^ActionBlock)(void);
 }
 
 - (void)listViewReload:(UIView *)list {
+    DLog(@">>>>>  reload");
     MLNUITableView *table = (MLNUITableView *)list;
     SEL sel = @selector(luaui_reloadData);
     if ([table respondsToSelector:sel]) {
@@ -95,6 +98,8 @@ typedef BOOL(^ActionBlock)(void);
 }
 
 - (void)listView:(UIView *)list reloadAtRow:(NSUInteger)row section:(NSUInteger)section {
+    DLog(@">>>>>  reload section %zd row %zd",section,row);
+
     MLNUITableView *table = (MLNUITableView *)list;
     SEL sel = @selector(luaui_reloadAtRow:section:animation:);
     if ([table respondsToSelector:sel]) { // + 1 模拟lua层调用
@@ -103,6 +108,7 @@ typedef BOOL(^ActionBlock)(void);
 }
 
 - (void)listView:(UIView *)list insertRowsAtSection:(NSUInteger)section startRow:(NSUInteger)startRow endRow:(NSUInteger)endRow object:(NSObject *)object {
+    DLog(@">>>>>  insert section %zd start_row %zd end_row %zd",section,startRow,endRow);
 
     MLNUITableView *table = (MLNUITableView *)list;
     SEL sel = @selector(luaui_insertRowsAtSection:startRow:endRow:animated:);
@@ -112,6 +118,7 @@ typedef BOOL(^ActionBlock)(void);
 }
 
 - (void)listView:(UIView *)list deleteRowsAtSection:(NSUInteger)section startRow:(NSUInteger)startRow endRow:(NSUInteger)endRow object:(NSObject *)object {
+    DLog(@">>>>>  delete section %zd start_row %zd end_row %zd",section,startRow,endRow);
 
     MLNUITableView *table = (MLNUITableView *)list;
     SEL sel = @selector(luaui_deleteRowsAtSection:startRow:endRow:animated:);
@@ -138,15 +145,29 @@ typedef BOOL(^ActionBlock)(void);
             
 //    [self.class cancelPreviousPerformRequestsWithTarget:self selector:@selector(mergeAction) object:nil];
 //    [self performSelector:@selector(mergeAction) withObject:nil afterDelay:0];
-//    NSLog(@"keypath %@, object %@ change %@",keyPath, object, change);
+//    DLog(@"keypath %@, object %@ change %@",keyPath, object, change);
+    NSObject *new = [change objectForKey:NSKeyValueChangeNewKey];
     NSKeyValueChange type = [[change objectForKey:NSKeyValueChangeKindKey] unsignedIntegerValue];
+    if (type == NSKeyValueChangeSetting || type == NSKeyValueChangeInsertion || type == NSKeyValueChangeReplacement) {
+        if ([new isKindOfClass:[NSMutableArray class]]) {
+//            [self.viewController.mlnui_dataBinding addMLNUIObserver:self forKeyPath:self.keyPath];
+            @weakify(self);
+            [self mlnui_observeArray:(NSMutableArray *)new withBlock:^(id  _Nonnull observer, id  _Nonnull object, id  _Nonnull oldValue, id  _Nonnull newValue, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
+                @strongify(self);
+                [self mlnui_observeValueForKeyPath:nil ofObject:object change:change];
+            }];
+            [new mlnui_addDeallocationCallback:^(id  _Nonnull receiver) {
+                [receiver mlnui_removeAllObservations];
+            }];
+        }
+    }
+    
     if (type == NSKeyValueChangeSetting) {
         [self listViewReload:self.listView];
         return;
     }
     
     NSParameterAssert([object isKindOfClass:[NSArray class]]);
-    NSObject *new = [change objectForKey:NSKeyValueChangeNewKey];
     NSObject *old = [change objectForKey:NSKeyValueChangeOldKey];
     NSIndexSet *indexSet = [change objectForKey:NSKeyValueChangeIndexesKey];
     NSObject *tmp = new ? new : old;

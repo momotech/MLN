@@ -19,6 +19,7 @@ typedef void(^MLNUIKVOBlock)(id oldValue, id newValue, id observedObject);
 - (void)mlnui_observeObject:(id)object properties:(NSArray <NSString *> *)keyPaths withBlock:(MLNUIBlockChangeMany)observationBlock;
 
 - (void)mlnui_removeObervationsForOwner:(id)owner keyPath:(NSString *)keyPath;
+- (void)mlnui_removeAllObervationsForkeyPath:(NSString *)keyPath;
 - (void)mlnui_removeAllObservations;
 
 @end
@@ -27,6 +28,7 @@ typedef void(^MLNUIKVOBlock)(id oldValue, id newValue, id observedObject);
 
 - (void)mlnui_observeArray:(NSMutableArray *)array withBlock:(MLNUIBlockChange)observationBlock;
 - (void)mlnui_removeArrayObervationsForOwner:(id)owner;
+- (void)mlnui_removeAllArrayObservations;
 @end
 
 @interface NSObject (MLNUIDeprecated)

@@ -561,11 +561,9 @@ local function mln_update_commandmodel_var_names(cmd)
   local varnames = mobdebug.commandmodel_var_names
   if varnames ~= nil and type(varnames) == "table" then
     if cmd ~= nil and type(cmd) == "string" then
-      local _, _, var = string.find(cmd, "%s*(.+)%s*=%s*%a*")
-      print("============== mln update command mode ===== cmd: ", cmd, " ======= var: ", var)
+      local _, _, var = string.find(cmd, "%s*(%a+[a-zA-Z0-9_]*)%s*=%s*%a*")
       varnames[var] = var
     end
-
   end
 end
 
@@ -991,12 +989,7 @@ local function debugger_loop(sev, svars, sfile, sline, sindex, is_first_run)
           local main_vars = main_thread_vars
           local _, _, innerLine = string.find(line, "(.+)%-%-%s*%b{}%s*$")
           if innerLine then
-            local _, _, gname  = string.find(innerLine, "^[A-Z]+%s*return%s*(.+)_global%s*$")
-            if not gname then
-              _, _, gname = string.find(innerLine, "^[A-Z]+%s*return%s*(.+)%s*$")
-            end
-            print(" ==== 准备找_G   line", line)
-            print("==== 找到_G gname： ", gname, " ==== v: ", gname and _G[gname] or "(null)", " ==== innerLine: ", innerLine and innerLine or "(null)")
+            local _, _, gname = string.find(innerLine, "^[A-Z]+%s*return%s*(%a+[a-zA-Z0-9_]*)_global%s*$")
             if gname then
               local v = _G[gname]
               if v and type(v) == "table" then

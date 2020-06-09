@@ -135,4 +135,13 @@
     }
     return self;
 }
+
+- (NSMutableDictionary *)mlnui_bindInfos {
+    NSMutableDictionary *info = objc_getAssociatedObject(self, _cmd);
+    if (!info) {
+        info = [NSMutableDictionary dictionary];
+        objc_setAssociatedObject(self, _cmd, info, OBJC_ASSOCIATION_RETAIN);
+    }
+    return info;
+}
 @end
