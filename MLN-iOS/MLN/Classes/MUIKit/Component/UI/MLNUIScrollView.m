@@ -29,8 +29,6 @@
     if (self = [super initWithFrame:CGRectZero]) {
         _innerScrollView = [[MLNUIInnerScrollView alloc] initWithMLNUILuaCore:luaCore direction:[isHorizontal boolValue] isStackContenView:[isStackContenView boolValue]];
         [super luaui_addSubview:_innerScrollView];
-        [_innerScrollView setLuaui_width:MLNUILayoutMeasureMatchParent];
-        [_innerScrollView setLuaui_height:MLNUILayoutMeasureMatchParent];
     }
     return self;
 }
@@ -44,24 +42,6 @@
 
 - (void)luaui_removeAllSubViews {
     [self.innerScrollView luaui_removeAllSubViews];
-}
-
-- (void)setLuaui_width:(CGFloat)luaui_width
-{
-    [super setLuaui_width:luaui_width];
-    if (self.mlnui_layoutNode.isDirty) {
-        [self.innerScrollView mlnui_markNeedsLayout];
-        [self.innerScrollView updateContentViewLayoutIfNeed];
-    }
-}
-
-- (void)setLuaui_height:(CGFloat)luaui_height
-{
-    [super setLuaui_height:luaui_height];
-    if (self.mlnui_layoutNode.isDirty) {
-        [self.innerScrollView mlnui_markNeedsLayout];
-        [self.innerScrollView updateContentViewLayoutIfNeed];
-    }
 }
 
 - (void)setLuaui_loadahead:(CGFloat)loadahead
@@ -214,16 +194,31 @@
     return self.innerScrollView.pagingEnabled;
 }
 
+#pragma mark - Override (Layout)
 
-#pragma mark - Override
-- (BOOL)mlnui_layoutEnable
-{
+- (BOOL)mlnui_layoutEnable {
     return YES;
 }
 
-- (BOOL)luaui_isContainer
-{
+- (BOOL)luaui_isContainer {
     return YES;
+}
+
+static inline CGSize MLNUIConstraintSize(MLNUIInnerScrollView *scrollView, CGSize size) {
+    if (scrollView.mlnui_horizontal) {
+        return CGSizeMake(MLNUIMax, size.height);
+    }
+    return CGSizeMake(size.width, MLNUIMax);
+}
+
+- (CGSize)mlnui_sizeThatFits:(CGSize)size {
+    return [self.innerScrollView.mlnui_contentView.mlnui_layoutNode applyLayoutWithSize:MLNUIConstraintSize(self.innerScrollView, size)];
+}
+
+#pragma mark - MLNUIPaddingContainerViewProtocol
+
+- (UIView *)mlnui_contentView {
+    return self.innerScrollView;
 }
 
 #pragma mark - Export For Lua

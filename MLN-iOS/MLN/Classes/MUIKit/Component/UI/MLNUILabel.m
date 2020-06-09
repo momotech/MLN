@@ -180,7 +180,6 @@
 
 - (void)setNumberOfLines:(NSInteger)numberOfLines
 {
-    self.mlnui_layoutNode.maxHeight = MLNUIPointValue(0);
     _limitMode = MLNUILabelMaxModeLines;
     if (self.numberOfLines == numberOfLines) {
         return;

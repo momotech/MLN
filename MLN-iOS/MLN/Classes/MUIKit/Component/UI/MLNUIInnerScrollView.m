@@ -51,12 +51,6 @@
     self.contentSize = self.mlnui_contentView.frame.size;
 }
 
-- (void)updateContentViewLayoutIfNeed {
-    if (self.mlnui_layoutNode.isDirty) {
-        [self.mlnui_contentView mlnui_markNeedsLayout];
-    }
-}
-
 #pragma mark - Private
 
 - (void)createStackContentViewIfNeed:(BOOL)horizontal {
@@ -66,20 +60,14 @@
     MLNUIStack *stack;
     if (horizontal) {
         stack = [[MLNUIHStack alloc] init];
-        [stack setLuaui_height:MLNUILayoutMeasureMatchParent];
     } else {
         stack = [[MLNUIVStack alloc] init];
-        [stack setLuaui_width:MLNUILayoutMeasureMatchParent];
     }
     stack.clipsToBounds = YES;
     self.mlnui_contentView = stack;
 }
 
 #pragma mark - Override
-
-- (BOOL)mlnui_layoutEnable {
-    return YES;
-}
 
 - (BOOL)luaui_isContainer {
     return YES;

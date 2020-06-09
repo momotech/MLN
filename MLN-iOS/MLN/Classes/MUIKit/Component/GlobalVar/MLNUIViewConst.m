@@ -65,9 +65,6 @@ LUAUI_EXPORT_GLOBAL_VAR(Wrap, (@{@"NO_WRAP":@(MLNUIWrapNoWrap),
 LUAUI_EXPORT_GLOBAL_VAR(PositionType, (@{@"RELATIVE":@(MLNUIPositionTypeRelative),
                                          @"ABSOLUTE":@(MLNUIPositionTypeAbsolute)}))
 
-LUAUI_EXPORT_GLOBAL_VAR(Measure, (@{@"MATCH_PARENT":@(MLNUILayoutMeasureMatchParent),
-                                    @"WRAP_CONTENT":@(MLNUILayoutMeasureWrapContent)}))
-
 LUAUI_EXPORT_GLOBAL_VAR_END()
 
 

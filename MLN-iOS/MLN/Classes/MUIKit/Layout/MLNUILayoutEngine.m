@@ -62,7 +62,7 @@
     NSArray<MLNUILayoutNode *> *roots = [self.rootNodesPool copy];
     for (MLNUILayoutNode *rootnode in roots) {
         if (rootnode.isDirty) {
-            [rootnode applyLayoutPreservingOrigin:NO];
+            [rootnode applyLayout];
         }
     }
 }

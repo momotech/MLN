@@ -95,53 +95,31 @@ typedef NS_OPTIONS(NSInteger, YGDimensionFlexibility) {
 // Yoga specific properties, not compatible with flexbox specification
 @property (nonatomic, readwrite, assign) CGFloat aspectRatio;
 
-/**
- Get the resolved direction of this node. This won't be YGDirectionInherit
- */
+/// Get the resolved direction of this node. This won't be YGDirectionInherit
 @property (nonatomic, readonly, assign) MLNUIDirection resolvedDirection;
 
-/**
- Perform a layout calculation and update the frames of the views in the hierarchy with the results.
- If the origin is not preserved, the root view's layout results will applied from {0,0}.
- */
-- (void)applyLayoutPreservingOrigin:(BOOL)preserveOrigin
-    NS_SWIFT_NAME(applyLayout(preservingOrigin:));
+/// Perform a layout calculation and update the frames of the views in the hierarchy with the results. If the origin is not preserved, the root view's layout results will applied from {0,0}.
+- (CGSize)applyLayout NS_SWIFT_NAME(applyLayout());
 
-/**
- Perform a layout calculation and update the frames of the views in the hierarchy with the results.
- If the origin is not preserved, the root view's layout results will applied from {0,0}.
- */
-- (void)applyLayoutPreservingOrigin:(BOOL)preserveOrigin
-               dimensionFlexibility:(YGDimensionFlexibility)dimensionFlexibility
-    NS_SWIFT_NAME(applyLayout(preservingOrigin:dimensionFlexibility:));
+/// @param size the constraint size. Pass `MLNUIMax` indicate an unconstrained size.
+- (CGSize)applyLayoutWithSize:(CGSize)size NS_SWIFT_NAME(applyLayout(size:));
 
-/**
- Returns the size of the view if no constraints were given. This could equivalent to calling [self
- sizeThatFits:CGSizeMake(CGFLOAT_MAX, CGFLOAT_MAX)];
- */
+/// Perform a layout calculation and update the frames of the views in the hierarchy with the results. If the origin is not preserved, the root view's layout results will applied from {0,0}.
+- (void)applyLayoutPreservingOrigin:(BOOL)preserveOrigin dimensionFlexibility:(YGDimensionFlexibility)dimensionFlexibility NS_SWIFT_NAME(applyLayout(preservingOrigin:dimensionFlexibility:));
+
+/// Returns the size of the view if no constraints were given. This could equivalent to calling [self sizeThatFits:CGSizeMake(CGFLOAT_MAX, CGFLOAT_MAX)];
 @property (nonatomic, readonly, assign) CGSize intrinsicSize;
 
-/**
-  Returns the size of the view based on provided constraints. Pass NaN for an unconstrained dimension.
- */
-- (CGSize)calculateLayoutWithSize:(CGSize)size
-    NS_SWIFT_NAME(calculateLayout(with:));
+/// Returns the size of the view based on provided constraints. Pass NaN for an unconstrained dimension.
+- (CGSize)calculateLayoutWithSize:(CGSize)size NS_SWIFT_NAME(calculateLayout(with:));
 
-/**
- Returns the number of children that are using Flexbox.
- */
+/// Returns the number of children that are using Flexbox.
 @property (nonatomic, readonly, assign) NSUInteger numberOfChildren;
 
-/**
- Return a BOOL indiciating whether or not we this node contains any subviews that are included in
- Yoga's layout.
- */
+/// Return a BOOL indiciating whether or not we this node contains any subviews that are included in Yoga's layout.
 @property (nonatomic, readonly, assign) BOOL isLeaf;
 
-/**
- Return's a BOOL indicating if a view is dirty. When a node is dirty
- it usually indicates that it will be remeasured on the next layout pass.
- */
+/// Return's a BOOL indicating if a view is dirty. When a node is dirty it usually indicates that it will be remeasured on the next layout pass.
 @property (nonatomic, readonly, assign) BOOL isDirty;
 
 @property (nonatomic, assign, readonly) BOOL isRootNode;
@@ -149,9 +127,7 @@ typedef NS_OPTIONS(NSInteger, YGDimensionFlexibility) {
 @property (nonatomic, weak,   readonly) UIView *view;
 @property (nonatomic, strong, readonly) NSArray<MLNUILayoutNode *> *subNodes;
 
-/**
- Mark that a view's layout needs to be recalculated. Only works for leaf views.
- */
+/// Mark that a view's layout needs to be recalculated. Only works for leaf views.
 - (void)markDirty;
 
 @end

@@ -392,7 +392,6 @@
     return self.innerTableView;
 }
 
-
 #pragma mark - Setup For Lua
 LUAUI_EXPORT_VIEW_BEGIN(MLNUITableView)
 LUAUI_EXPORT_VIEW_PROPERTY(adapter, "setAdapter:", "adapter", MLNUITableView)

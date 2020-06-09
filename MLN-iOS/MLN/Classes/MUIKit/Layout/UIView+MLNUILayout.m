@@ -187,19 +187,7 @@ static const void *kMLNUILayoutAssociatedKey = &kMLNUILayoutAssociatedKey;
  * Width
  */
 - (void)setLuaui_width:(CGFloat)luaui_width {
-    switch ((MLNUILayoutMeasureType)luaui_width) {
-        case MLNUILayoutMeasureMatchParent:
-            self.mlnui_layoutNode.width = MLNUIPercentValue(100);
-            break;
-            
-        case MLNUILayoutMeasureWrapContent:
-            self.mlnui_layoutNode.width = MLNUIValueAuto;
-            break;
-            
-        default:
-            self.mlnui_layoutNode.width = MLNUIPointValue(luaui_width);
-            break;
-    }
+    self.mlnui_layoutNode.width = MLNUIPointValue(luaui_width);
 }
 
 - (CGFloat)luaui_width {
@@ -277,19 +265,7 @@ static const void *kMLNUILayoutAssociatedKey = &kMLNUILayoutAssociatedKey;
  * Height
  */
 - (void)setLuaui_height:(CGFloat)luaui_height {
-    switch ((MLNUILayoutMeasureType)luaui_height) {
-        case MLNUILayoutMeasureMatchParent:
-            self.mlnui_layoutNode.height = MLNUIPercentValue(100);
-            break;
-            
-        case MLNUILayoutMeasureWrapContent:
-            self.mlnui_layoutNode.height = MLNUIValueAuto;
-            break;
-            
-        default:
-            self.mlnui_layoutNode.height = MLNUIPointValue(luaui_height);
-            break;
-    }
+    self.mlnui_layoutNode.height = MLNUIPointValue(luaui_height);
 }
 
 - (CGFloat)luaui_height {
@@ -727,7 +703,7 @@ static const void *kMLNUILayoutAssociatedKey = &kMLNUILayoutAssociatedKey;
 
 - (void)mlnui_requestLayoutIfNeed {
     if (self.mlnui_layoutNode.isDirty) {
-        [self.mlnui_layoutNode applyLayoutPreservingOrigin:NO];
+        [self.mlnui_layoutNode applyLayout];
     }
 }
 

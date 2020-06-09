@@ -280,20 +280,17 @@ YG_PROPERTY(CGFloat, aspectRatio, AspectRatio)
     return YGNodeLayoutGetDirection(self.node);
 }
 
-- (void)applyLayout
-{
-    [self calculateLayoutWithSize:self.view.bounds.size];
+- (CGSize)applyLayout {
+    return [self applyLayoutWithSize:self.view.bounds.size];
+}
+
+- (CGSize)applyLayoutWithSize:(CGSize)size {
+    CGSize result = [self calculateLayoutWithSize:size];
     YGApplyLayoutToViewHierarchy(self.view, NO);
+    return result;
 }
 
-- (void)applyLayoutPreservingOrigin:(BOOL)preserveOrigin
-{
-    [self calculateLayoutWithSize:self.view.bounds.size];
-    YGApplyLayoutToViewHierarchy(self.view, preserveOrigin);
-}
-
-- (void)applyLayoutPreservingOrigin:(BOOL)preserveOrigin dimensionFlexibility:(YGDimensionFlexibility)dimensionFlexibility
-{
+- (void)applyLayoutPreservingOrigin:(BOOL)preserveOrigin dimensionFlexibility:(YGDimensionFlexibility)dimensionFlexibility {
     CGSize size = self.view.bounds.size;
     if (dimensionFlexibility & YGDimensionFlexibilityFlexibleWidth) {
         size.width = YGUndefined;
@@ -304,7 +301,6 @@ YG_PROPERTY(CGFloat, aspectRatio, AspectRatio)
     [self calculateLayoutWithSize:size];
     YGApplyLayoutToViewHierarchy(self.view, preserveOrigin);
 }
-
 
 - (CGSize)intrinsicSize
 {

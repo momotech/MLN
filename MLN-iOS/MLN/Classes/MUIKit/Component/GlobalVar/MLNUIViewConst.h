@@ -19,12 +19,6 @@ typedef NS_OPTIONS(NSUInteger, MLNUIRectCorner)  {
     MLNUIRectCornerAllCorners  = ~0UL
 };
 
-typedef enum : NSInteger {
-    MLNUILayoutMeasureDefault = 0,
-    MLNUILayoutMeasureMatchParent = -1,
-    MLNUILayoutMeasureWrapContent = -2,
-} MLNUILayoutMeasureType;
-
 typedef NS_OPTIONS(NSUInteger, MLNUIValueType) {
     MLNUIValueTypeNone = 0,
     MLNUIValueTypeCurrent = MAX_INT,
