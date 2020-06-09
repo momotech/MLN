@@ -10,11 +10,12 @@ ANIMATOR_NAMESPACE_BEGIN
 
 const char* Animation::ANIMATION_TYPENAME = "Animation";
 
-Animation::Animation(const AMTString &name)
-: name(name),
+Animation::Animation(const AMTString &strName)
+: name(strName),
   paused(true),
   active(false),
   finished(false),
+  willrepeat(false),
   repeatCount(1),
   realRepeatCount(1),
   repeatForever(false),
@@ -23,6 +24,7 @@ Animation::Animation(const AMTString &name)
   startTime(0.f),
   lastTime(0.f),
   absoluteBeginTime(0.f),
+  pauseBeginTime(0.f),
   tracer(nullptr),
   OnAnimationStartCallback(nullptr),
   OnAnimationStopCallback(nullptr),
@@ -42,8 +44,8 @@ const AnimationTracer &Animation::GetTracer() {
     return reinterpret_cast<const AnimationTracer &>(tracer);
 }
 
-void Animation::SetAutoreverses(AMTBool autoreverses) {
-    Animation::autoreverses = autoreverses;
+void Animation::SetAutoreverses(AMTBool bAutoReverses) {
+    Animation::autoreverses = bAutoReverses;
     if (autoreverses) {
         realRepeatCount = 2 * repeatCount;
     } else {
@@ -52,23 +54,38 @@ void Animation::SetAutoreverses(AMTBool autoreverses) {
 }
 
 void Animation::Pause(AMTBool pause) {
+    if (pause == this->paused) {
+        return;
+    }
+    
     paused = pause;
+    if (paused) {
+        pauseBeginTime = RunLoop::ShareLoop()->CurrentTime();
+    } else {
+        AMTTimeInterval pasedTime = RunLoop::ShareLoop()->CurrentTime() - pauseBeginTime;
+        startTime += pasedTime;
+        lastTime += pasedTime;
+        absoluteBeginTime += pasedTime;
+        pauseBeginTime = 0.f;
+    }
+    
     if (OnAnimationPauseCallback) {
         OnAnimationPauseCallback(this, pause);
     }
 }
 
 void Animation::Reset() {
-     paused = true;
-     active = false;
-     startTime = lastTime = 0.f;
-     finished = false;
-     if (autoreverses) {
-         realRepeatCount = 2 * repeatCount;
-     } else {
-         realRepeatCount = repeatCount;
-     }
-     absoluteBeginTime = RunLoop::ShareLoop()->CurrentTime();
+    paused = true;
+    active = false;
+    startTime = lastTime = 0.f;
+    finished = false;
+    willrepeat = false;
+    if (autoreverses) {
+        realRepeatCount = 2 * repeatCount;
+    } else {
+        realRepeatCount = repeatCount;
+    }
+    absoluteBeginTime = RunLoop::ShareLoop()->CurrentTime();
 }
 
 void Animation::Start() {
@@ -78,8 +95,17 @@ void Animation::Start() {
 }
 
 void Animation::Repeat() {
-    if (OnAnimationRepeatCallback) {
-        OnAnimationRepeatCallback(this, realRepeatCount);
+    if (willrepeat) {
+        if (finished && repeatForever) {
+            InnerReset();
+        } else if (finished && realRepeatCount > 1) {
+            realRepeatCount --;
+            InnerReset();
+        }
+        willrepeat = false;
+        if (OnAnimationRepeatCallback) {
+            OnAnimationRepeatCallback(this, realRepeatCount);
+        }
     }
 }
 
@@ -120,15 +146,12 @@ void Animation::Tick(AMTTimeInterval time, AMTTimeInterval timeInterval, AMTTime
 void Animation::StopAnimationIfFinish() {
 
     if (finished && realRepeatCount == 1 && !repeatForever) {
-        //Stop();
+        return;
     } else {
-        if (finished && realRepeatCount > 1) {
-            realRepeatCount --;
-            Repeat(); // 扩展类实现自己的重复逻辑
-            InnerReset();
-        } else if (finished && repeatForever) {
-            Repeat(); // 扩展类实现自己的重复逻辑
-            InnerReset();
+        if (finished && repeatForever) {
+            willrepeat = true;
+        } else if (finished && realRepeatCount > 1) {
+            willrepeat = true;
         }
     }
     

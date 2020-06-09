@@ -18,7 +18,7 @@ ANIMATOR_NAMESPACE_BEGIN
 
 class SpringAnimation : public ValueAnimation {
 public:
-    SpringAnimation(const AMTString &name);
+    explicit SpringAnimation(const AMTString &strName);
 
     ~SpringAnimation() override;
 

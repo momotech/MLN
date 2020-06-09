@@ -20,7 +20,7 @@ typedef std::function<void (AMTFloat*)> ValueAnimationCallbackValue;
 class ValueAnimation : public Animation {
 
 public:
-    ValueAnimation(const AMTString& name);
+    explicit ValueAnimation(const AMTString& strName);
 
     ~ValueAnimation();
 
@@ -75,7 +75,7 @@ protected:
      */
     virtual void Tick(AMTTimeInterval time, AMTTimeInterval timeInterval, AMTTimeInterval timeProcess) override;
 
-protected:
+private:
     // value数据的个数
     AMTInt valueCount;
 
@@ -95,6 +95,8 @@ protected:
     ValueAnimationCallbackValue callbackValue;
 
     friend class AnimatorEngine;
+    friend class ObjectAnimation;
+    friend class SpringAnimation;
 };
 
 ANIMATOR_NAMESPACE_END

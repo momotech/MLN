@@ -9,8 +9,8 @@ ANIMATOR_NAMESPACE_BEGIN
 
 const char* CustomAnimation::ANIMATION_TYPENAME = "CustomAnimation";
 
-CustomAnimation::CustomAnimation(const AMTString &name)
-: Animation(name),
+CustomAnimation::CustomAnimation(const AMTString &strName)
+: Animation(strName),
 tickCallback(nullptr),
 currentTime(0.f),
 elapsedTime(0.f),
@@ -18,8 +18,8 @@ userData(nullptr) {
 
 }
 
-CustomAnimation::CustomAnimation(const AMTString &name, void *data)
-: Animation(name),
+CustomAnimation::CustomAnimation(const AMTString &strName, void *data)
+: Animation(strName),
 tickCallback(nullptr),
 currentTime(0.f),
 elapsedTime(0.f),

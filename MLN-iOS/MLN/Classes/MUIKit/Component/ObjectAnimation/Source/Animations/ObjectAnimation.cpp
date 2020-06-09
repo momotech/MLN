@@ -18,8 +18,8 @@ static BezierControlPoints staticControls[] = {
 
 const char* ObjectAnimation::ANIMATION_TYPENAME = "ObjectAnimation";
 
-ObjectAnimation::ObjectAnimation(const AMTString &name)
-: ValueAnimation(name),
+ObjectAnimation::ObjectAnimation(const AMTString &strName)
+: ValueAnimation(strName),
   duration(0.f) {
     timingFunction = TimingFunction::Default;
     controlPoints = staticControls[0];
@@ -46,7 +46,7 @@ void ObjectAnimation::Tick(AMTTimeInterval time, AMTTimeInterval timeInterval, A
     ValueAnimation::Tick(time, timeInterval, timeProcess);
 
     // 1、Cap tick 时间到 Duration
-    //AMTFloat localDuration = fmin(timeInterval, duration) / duration;
+    //AMTFloat localDuration = fmin(timeInterval, duration) / duration
     progress = fmin(timeProcess / duration, 1.0);
 
     AMTFloat t = MathUtil::TimingFunctionSolve(controlPoints, progress, SOLVE_EPS(progress));

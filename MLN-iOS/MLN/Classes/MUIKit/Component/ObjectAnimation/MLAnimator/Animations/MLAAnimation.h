@@ -198,6 +198,7 @@ typedef void(^MLAAnimationFinishBlock)(MLAAnimation* animation, BOOL finish);
 @property(readonly, strong) NSArray<MLAAnimation*> *animations;
 
 - (instancetype)init NS_AVAILABLE(10.10, 9.0);
+- (void)setAutoReverses:(BOOL)autoReverses NS_UNAVAILABLE;
 
 - (void)runTogether:(NSArray<MLAAnimation *> *)animations;
 

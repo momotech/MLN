@@ -16,7 +16,7 @@ ANIMATOR_NAMESPACE_BEGIN
 class ObjectAnimation : public ValueAnimation {
 
 public:
-    ObjectAnimation(const AMTString &name);
+    explicit ObjectAnimation(const AMTString &strName);
 
     ~ObjectAnimation();
 

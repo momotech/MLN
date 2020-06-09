@@ -243,11 +243,11 @@ namespace MLAWebCore {
     CATransform3D transform3d () const;
     CGAffineTransform affineTransform () const;
 
-    TransformationMatrix(const CATransform3D&);
-    operator CATransform3D() const;
+    explicit TransformationMatrix(const CATransform3D&);
+    explicit operator CATransform3D() const;
 
-    TransformationMatrix(const CGAffineTransform&);
-    operator CGAffineTransform() const;
+    explicit TransformationMatrix(const CGAffineTransform&);
+    explicit operator CGAffineTransform() const;
 
   private:
 

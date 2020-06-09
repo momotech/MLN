@@ -21,7 +21,7 @@ public:
         Sequentially
     };
 public:
-    MultiAnimation(const AMTString &name);
+    explicit MultiAnimation(const AMTString &strName);
 
     ~MultiAnimation() override;
 
@@ -37,6 +37,8 @@ public:
 
 protected:
     void Reset() override;
+    
+    void InnerReset() override;
 
     void Start() override;
 
@@ -45,6 +47,10 @@ protected:
     void Stop() override;
 
     void Tick(AMTTimeInterval time, AMTTimeInterval timeInterval, AMTTimeInterval timeProcess) override;
+    
+    void ResetSubAnimation();
+    
+    void StartAddRunningAnimation();
 
 private:
     // 动画组合列表

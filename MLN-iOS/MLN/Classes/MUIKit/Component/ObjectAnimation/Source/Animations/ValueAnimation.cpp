@@ -9,8 +9,8 @@ ANIMATOR_NAMESPACE_BEGIN
 
 const char* ValueAnimation::ANIMATION_TYPENAME = "ValueAnimation";
 
-ValueAnimation::ValueAnimation(const AMTString &name)
-: Animation(name),
+ValueAnimation::ValueAnimation(const AMTString &strName)
+: Animation(strName),
   valueCount(0),
   threshold(1.0),
   progress(0.0),
@@ -44,7 +44,7 @@ void ValueAnimation::Tick(AMTTimeInterval time, AMTTimeInterval timeInterval, AM
     Animation::Tick(time, timeInterval, timeProcess);
 
     // 统一的数值计算，让扩展类实现的数据插值方式
-    printf("ValueAnimation::Tick %p Animation Type: %s value :%f \n", this, GetAnimationType(), currentValue[0]);
+    // printf("ValueAnimation::Tick %p Animation Type: %s value :%f \n", this, GetAnimationType(), currentValue[0]);
 }
 
 void ValueAnimation::Reset() {
@@ -59,13 +59,15 @@ void ValueAnimation::Start() {
 }
 
 void ValueAnimation::Repeat() {
-    Animation::Repeat();
-
+    
     if (autoreverses) {
         auto preFromValue = fromValue;
         fromValue = toValue;
         toValue = preFromValue;
     }
+    currentValue = fromValue;
+    
+    Animation::Repeat();
 }
 
 void ValueAnimation::Stop() {

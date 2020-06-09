@@ -39,8 +39,6 @@ inline double deg2turn(double d) { return d / 360.0; }
 inline double rad2grad(double r) { return r * 200.0 / M_PI; }
 inline double grad2rad(double g) { return g * M_PI / 200.0; }
 
-//using namespace std;
-
 namespace MLAWebCore {
   
   //
@@ -978,8 +976,12 @@ namespace MLAWebCore {
     // decompose
     DecomposedType fromDecomp;
     DecomposedType toDecomp;
-    from.decompose(fromDecomp);
-    decompose(toDecomp);
+    
+    if (!from.decompose(fromDecomp) ||  !decompose(toDecomp)) {
+      return;
+    }
+    //from.decompose(fromDecomp);
+    //decompose(toDecomp);
     
     // interpolate
     blendFloat(fromDecomp.scaleX, toDecomp.scaleX, progress);

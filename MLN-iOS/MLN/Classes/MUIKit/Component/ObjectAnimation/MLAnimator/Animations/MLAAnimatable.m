@@ -290,10 +290,10 @@ static NSMutableDictionary<NSString *, MLAAnimatable*> *animatableMaps;
         animatable.threshold = helper.threshold;
     } else {
         animatable.readBlock = ^(id obj, CGFloat vlaues[]) {
-            NSLog(@"-[MLAAnimatable animatableWithName:] \'name :%@\' readBlock  is not exist !!!", name);
+            NSLog(@"-[MLAAnimatable animatableWithName:] \'name :%@\' target :%@ readBlock  is not exist !!!", name, obj);
         };
         animatable.writeBlock = ^(id obj, const CGFloat vlaues[]) {
-            NSLog(@"-[MLAAnimatable animatableWithName:] \'name :%@\' readBlock  is not exist !!!", name);
+            NSLog(@"-[MLAAnimatable animatableWithName:] \'name :%@\' target :%@ readBlock  is not exist !!!", name, obj);
         };
         animatable.threshold = 1.0f;
     }

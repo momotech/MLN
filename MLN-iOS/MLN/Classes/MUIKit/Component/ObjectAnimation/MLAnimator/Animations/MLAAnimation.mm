@@ -17,10 +17,6 @@
 #include "MultiAnimation.h"
 #include "CustomAnimation.h"
 
-#import "MLNUIKitHeader.h"
-#import "NSObject+MLNUICore.h"
-#import "MLNUIViewExporterMacro.h"
-
 using namespace ANIMATOR_NAMESPACE;
 
 @interface MLAAnimation () <MLAAnimationPrivate>
@@ -112,6 +108,10 @@ using namespace ANIMATOR_NAMESPACE;
     }
 }
 
+- (void)reset {
+    // 重置为初始状态
+}
+
 #pragma mark - MLAAniamtionPrivate
 - (void)makeAnimation:(NSString *)key forObject:(id)obj {
     [self setTarget:obj];
@@ -147,6 +147,7 @@ using namespace ANIMATOR_NAMESPACE;
 }
 
 - (void)repeatAnimation:(NSUInteger)count {
+    [self reset];
     if (self.repeatBlock) {
         self.repeatBlock(self, count);
     }
@@ -217,6 +218,13 @@ using namespace ANIMATOR_NAMESPACE;
 - (void)updateAnimation:(animator::Animation *)animation {
     if (self.animatable && self.target && self.animation == animation) {
         ValueAnimation *valueAnimation = (ValueAnimation*)animation;
+        self.animatable.writeBlock(self.target, valueAnimation->GetCurrentValue().data());
+    }
+}
+
+- (void)reset {
+    if (self.animatable && self.target && self.animation) {
+        ValueAnimation *valueAnimation = (ValueAnimation*)self.animation;
         self.animatable.writeBlock(self.target, valueAnimation->GetCurrentValue().data());
     }
 }
@@ -444,22 +452,27 @@ typedef NS_ENUM(NSInteger) {
 }
 
 - (void)makeAnimation:(NSString *)key forObject:(id)obj {
-    [super makeAnimation:key forObject:obj];
-    
     if (!self.animation) {
         self.animation = new MultiAnimation(key.UTF8String);
-        MultiAnimation *animation = (MultiAnimation*)self.animation;
-        
-        std::vector<Animation *> animations;
-        for (MLAAnimation *objcAnimation in self.animations) {
-            [objcAnimation makeAnimation:objcAnimation.innerKey forObject:objcAnimation.target];
-            animations.push_back(objcAnimation.cplusplusAnimation);
-        }
-        if (self.runningType == RunningTypeTogether) {
-            animation->RunTogether(animations);
-        } else {
-            animation->RunSequentially(animations);
-        }
+    }
+    [super makeAnimation:key forObject:obj];
+    
+    MultiAnimation *animation = (MultiAnimation*)self.animation;
+    std::vector<Animation *> animations;
+    for (MLAAnimation *objcAnimation in self.animations) {
+        [objcAnimation makeAnimation:objcAnimation.innerKey forObject:objcAnimation.target];
+        animations.push_back(objcAnimation.cplusplusAnimation);
+    }
+    if (self.runningType == RunningTypeTogether) {
+        animation->RunTogether(animations);
+    } else {
+        animation->RunSequentially(animations);
+    }
+}
+
+- (void)reset {
+    for (MLAAnimation *objcAnimation in self.animations) {
+        [objcAnimation reset];
     }
 }
 

@@ -21,7 +21,7 @@ class Animation {
     typedef std::function<void (Animation*, AMTBool finish)> AnimationStopCallback;
 
 public:
-    Animation(const AMTString &name);
+    explicit Animation(const AMTString &strName);
 
     virtual ~Animation();
 
@@ -32,6 +32,13 @@ public:
         return name;
     }
 
+    // 动画自动反转
+    void SetAutoreverses(AMTBool bAutoReverses = false);
+
+    // 暂停动画
+    void Pause(AMTBool pause);
+
+public:
     // 动画开始时间，相对动画添加的时间间隔，动画开始后设置不生效
     AMTTimeInterval beginTime;
 
@@ -40,15 +47,7 @@ public:
 
     // 动画永久重复
     AMTBool repeatForever;
-
-    // 动画自动反转
-    void SetAutoreverses(AMTBool autoreverses = false);
-
-    // 暂停动画
-    void Pause(AMTBool pause);
-
-public:
-
+    
     /**
      * 动画开始回调，给Engine层使用
      */
@@ -84,6 +83,8 @@ protected:
      * 重置动画状态
      */
     virtual void Reset();
+    
+    virtual void InnerReset();
 
     /**
      * 动画开始
@@ -108,7 +109,26 @@ protected:
      */
     virtual void Tick(AMTTimeInterval time, AMTTimeInterval timeInterval, AMTTimeInterval timeProcess);
 
-protected:
+private:
+
+    /**
+     * 检查动画是否可以开始，可以则开始动画
+     * @param time 当前时间
+     */
+    void StartAnimationIfNeed(AMTTimeInterval time);
+
+    /**
+     * 计算时间间隔和进度，真被Tick动画
+     * @param time 当前时间
+     */
+    void TickTime(AMTTimeInterval time);
+
+    /**
+     * 如果动画完成，则结束动画
+     */
+    void StopAnimationIfFinish();
+    
+private:
     // 动画行为追踪
     AnimationTracer *tracer;
     
@@ -129,38 +149,27 @@ protected:
 
     // 动画是否完成
     AMTBool finished;
+    
+    // 动画即将重复执行
+    AMTBool willrepeat;
 
     // 动画开始时间
     AMTTimeInterval startTime;
 
-    // 上一次动画时间;
+    // 上一次动画时间
     AMTTimeInterval lastTime;
-
-private:
-
-    void InnerReset();
-    /**
-     * 检查动画是否可以开始，可以则开始动画
-     * @param time 当前时间
-     */
-    void StartAnimationIfNeed(AMTTimeInterval time);
-
-    /**
-     * 计算时间间隔和进度，真被Tick动画
-     * @param time 当前时间
-     */
-    void TickTime(AMTTimeInterval time);
-
-    /**
-     * 如果动画完成，则结束动画
-     */
-    void StopAnimationIfFinish();
 
     // 真正的开始时间
     AMTTimeInterval absoluteBeginTime;
+    
+    // 暂停时间长度
+    AMTTimeInterval pauseBeginTime;
 
     friend class AnimatorEngine;
     friend class ValueAnimation;
+    friend class ObjectAnimation;
+    friend class SpringAnimation;
+    friend class CustomAnimation;
     friend class MultiAnimation;
 };
 

@@ -16,9 +16,9 @@ typedef std::function<AMTBool (const AMTString&, const CustomAnimation&)> Custom
 
 class CustomAnimation : public Animation {
 public:
-    CustomAnimation(const AMTString &name);
+    explicit CustomAnimation(const AMTString &strName);
 
-    CustomAnimation(const AMTString &name, void *data);
+    CustomAnimation(const AMTString &strName, void *data);
 
     const CustomAnimation& OnSetp(CustomAnimationTickCallback callback);
 

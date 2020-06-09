@@ -9,8 +9,8 @@ ANIMATOR_NAMESPACE_BEGIN
 
 const char* MultiAnimation::ANIMATION_TYPENAME = "MultiAnimation";
 
-MultiAnimation::MultiAnimation(const AMTString &name)
-: Animation(name), runningType(Together) {
+MultiAnimation::MultiAnimation(const AMTString &strName)
+: Animation(strName), runningType(Together) {
 
 }
 
@@ -33,23 +33,27 @@ void MultiAnimation::RunSequentially(MultiAnimationList list) {
 void MultiAnimation::Reset() {
     Animation::Reset();
     
+    ResetSubAnimation();
+}
+
+void MultiAnimation::InnerReset() {
+    Animation::InnerReset();
+    
+    ResetSubAnimation();
+    StartAddRunningAnimation();
+}
+
+void MultiAnimation::ResetSubAnimation() {
     for (int i = 0; i < animationList.size(); i++) {
         Animation* animation = animationList[i];
-        if (runningType == Together) {
-            animation->Reset();
-        } else {
-            if (i == 0) {
-                animation->Reset();
-            }
-        }
+        animation->Reset();
     }
-    
     finishAnimationList.clear();
 }
 
-void MultiAnimation::Start() {
-    Animation::Start();
-
+void MultiAnimation::StartAddRunningAnimation() {
+    runningAnimationList.clear();
+    
     for (int i = 0; i < animationList.size(); i++) {
         Animation* animation = animationList[i];
         animation->OnAnimationStopCallback = [this] (Animation* animation1, AMTBool finish) {
@@ -63,6 +67,12 @@ void MultiAnimation::Start() {
             }
         }
     }
+}
+
+void MultiAnimation::Start() {
+    Animation::Start();
+
+    StartAddRunningAnimation();
 }
 
 void MultiAnimation::Repeat() {
@@ -101,7 +111,7 @@ void MultiAnimation::Tick(AMTTimeInterval time, AMTTimeInterval timeInterval, AM
             }
         }
     } else {
-        auto animation = animationList[finishAnimationList.size()];
+        Animation *animation = animationList[finishAnimationList.size()];
         if (animation) {
             if (runningAnimationList.size() == 0 || runningAnimationList[0] != animation) {
                 runningAnimationList.clear();

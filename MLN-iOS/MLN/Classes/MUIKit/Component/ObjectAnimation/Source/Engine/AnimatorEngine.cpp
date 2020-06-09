@@ -175,8 +175,8 @@ void AnimatorEngine::UpdateLoopState() {
     RunLoop::ShareLoop()->StartLoop();
     lastLoopTime = RunLoop::ShareLoop()->CurrentTime();
 
-    printf("AnimatorEngine Start Loop !!!\n");
-    RunLoop::ShareLoop()->LoopCallback = [=](AMTTimeInterval currentTime ) -> void {
+    // printf("AnimatorEngine Start Loop !!!\n");
+    RunLoop::ShareLoop()->LoopCallback = [this](AMTTimeInterval currentTime ) -> void {
         this->LoopTick(currentTime);
     };
 }
@@ -225,12 +225,17 @@ void AnimatorEngine::TickAnimation(AMTTimeInterval currentTime, AMTTimeInterval 
 
     // 3/1、回调有进度但未完成的动画数值
     std::vector<AnimationItemRef> callbackList;
+    std::vector<AnimationItemRef> repeatCallbackList;
     
     AnimationItemRef item;
     for (auto iterator = animationList.begin(); iterator != animationList.end() ; iterator++) {
         item = *iterator;
         if (item->animation->finished) {
-            willRemoveAnimationList.push_back(item);
+            if (item->animation->willrepeat) {
+                repeatCallbackList.push_back(item);
+            } else {
+                willRemoveAnimationList.push_back(item);
+            }
         }
         callbackList.push_back(item);
     }
@@ -243,6 +248,17 @@ void AnimatorEngine::TickAnimation(AMTTimeInterval currentTime, AMTTimeInterval 
                 updateAnimation(animation);
             }
         }
+        callbackList.clear();
+    }
+    
+    if (repeatCallbackList.size()) {
+        for (auto item : repeatCallbackList) {
+            Animation* animation = item->animation;
+            if (animation) {
+                animation->Repeat();
+            }
+        }
+        repeatCallbackList.clear();
     }
 
     // 3/2、移除完成的动画对象

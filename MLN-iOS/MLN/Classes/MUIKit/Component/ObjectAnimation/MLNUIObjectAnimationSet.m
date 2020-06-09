@@ -130,9 +130,6 @@ typedef NS_ENUM(NSUInteger, MLNUIObjectAnimationSetType) {
     if (_repeatForever != nil) {
         self.valueAnimation.repeatForever = [_repeatForever boolValue];
     }
-    if (_autoReverses != nil) {
-        self.valueAnimation.autoReverses = [_autoReverses boolValue];
-    }
     if (_delay != nil) {
         self.valueAnimation.beginTime = [_delay floatValue];
     }
@@ -198,9 +195,6 @@ typedef NS_ENUM(NSUInteger, MLNUIObjectAnimationSetType) {
         }
         if (_repeatForever != nil) {
             _valueAnimation.repeatForever = [_repeatForever boolValue];
-        }
-        if (_autoReverses != nil) {
-            _valueAnimation.autoReverses = [_autoReverses boolValue];
         }
         if (_delay != nil) {
             _valueAnimation.beginTime = [_delay floatValue];

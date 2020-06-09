@@ -37,8 +37,8 @@ struct ComputeProgressFunctor<Vector4r> {
 
 const char* SpringAnimation::ANIMATION_TYPENAME = "SpringAnimation";
 
-SpringAnimation::SpringAnimation(const AMTString &name)
-: ValueAnimation(name),
+SpringAnimation::SpringAnimation(const AMTString &strName)
+: ValueAnimation(strName),
   velocity(0.f),
   springBounciness(12.f),
   springSpeed(4.f),
