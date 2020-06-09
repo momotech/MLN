@@ -33,25 +33,6 @@ FOUNDATION_EXPORT NSString * const kMUITimingConfigTension;
 FOUNDATION_EXPORT NSString * const kMUITimingConfigFriction;
 FOUNDATION_EXPORT NSString * const kMUITimingConfigMass;
 
-FOUNDATION_EXPORT NSString * const kMUIAnimPropertyAlpha;
-FOUNDATION_EXPORT NSString * const kMUIAnimPropertyColor;
-FOUNDATION_EXPORT NSString * const kMUIAnimPropertyOrigin;
-FOUNDATION_EXPORT NSString * const kMUIAnimPropertyOriginX;
-FOUNDATION_EXPORT NSString * const kMUIAnimPropertyOriginY;
-FOUNDATION_EXPORT NSString * const kMUIAnimPropertyCenter;
-FOUNDATION_EXPORT NSString * const kMUIAnimPropertyCenterX;
-FOUNDATION_EXPORT NSString * const kMUIAnimPropertyCenterY;
-FOUNDATION_EXPORT NSString * const kMUIAnimPropertySize;
-FOUNDATION_EXPORT NSString * const kMUIAnimPropertyFrame;
-FOUNDATION_EXPORT NSString * const kMUIAnimPropertyScale;
-FOUNDATION_EXPORT NSString * const kMUIAnimPropertyScaleX;
-FOUNDATION_EXPORT NSString * const kMUIAnimPropertyScaleY;
-FOUNDATION_EXPORT NSString * const kMUIAnimPropertyRotation;
-FOUNDATION_EXPORT NSString * const kMUIAnimPropertyRotationX;
-FOUNDATION_EXPORT NSString * const kMUIAnimPropertyRotationY;
-
-
-
 typedef enum : NSUInteger {
     MLNUIAnimationRepeatTypeNone,
     MLNUIAnimationRepeatTypeBeginToEnd,
@@ -92,6 +73,25 @@ typedef enum : NSInteger {
     MLNUIAnimationTimingFunctionEaseInEaseOut,
     MLNUIAnimationTimingFunctionSpring,
 } MLNUIAnimationTimingFunction;
+
+typedef enum : NSInteger {
+    MLNUIAnimationPropertyTypeAlpha,
+    MLNUIAnimationPropertyTypeColor,
+    MLNUIAnimationPropertyTypeOrigin,
+    MLNUIAnimationPropertyTypeOriginX,
+    MLNUIAnimationPropertyTypeOriginY,
+    MLNUIAnimationPropertyTypeCenter,
+    MLNUIAnimationPropertyTypeCenterX,
+    MLNUIAnimationPropertyTypeCenterY,
+    MLNUIAnimationPropertyTypeSize,
+    MLNUIAnimationPropertyTypeFrame,
+    MLNUIAnimationPropertyTypeScale,
+    MLNUIAnimationPropertyTypeScaleX,
+    MLNUIAnimationPropertyTypeScaleY,
+    MLNUIAnimationPropertyTypeRotation,
+    MLNUIAnimationPropertyTypeRotationX,
+    MLNUIAnimationPropertyTypeRotationY,
+} MLNUIAnimationPropertyType;
 
 
 @interface MLNUIAnimationConst : NSObject <MLNUIGlobalVarExportProtocol>

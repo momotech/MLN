@@ -7,6 +7,7 @@
 
 #import "MLNUIAnimationConst.h"
 #import "MLNUIGlobalVarExporterMacro.h"
+#import "MLAAnimation.h"
 
 NSString * const kMUIDefaultGroupAnimation = @"com.milua.group.animation";
 NSString * const kMUIDefaultScaleAnimation = @"com.milua.scale.animation";
@@ -115,22 +116,22 @@ LUAUI_EXPORT_GLOBAL_VAR(TimingConfig, (@{
                             @"Mass": kMUITimingConfigMass,
                             }))
 LUAUI_EXPORT_GLOBAL_VAR(AnimProperty, (@{
-                            @"Alpha": kMUIAnimPropertyAlpha,
-                            @"Color": kMUIAnimPropertyColor,
-                            @"Origin": kMUIAnimPropertyOrigin,
-                            @"OriginX": kMUIAnimPropertyOriginX,
-                            @"OriginY": kMUIAnimPropertyOriginY,
-                            @"Center": kMUIAnimPropertyCenter,
-                            @"CenterX": kMUIAnimPropertyCenterX,
-                            @"CenterY": kMUIAnimPropertyCenterY,
-                            @"Size": kMUIAnimPropertySize,
-                            @"Frame": kMUIAnimPropertyFrame,
-                            @"Scale": kMUIAnimPropertyScale,
-                            @"ScaleX": kMUIAnimPropertyScaleX,
-                            @"ScaleY": kMUIAnimPropertyScaleY,
-                            @"Rotation": kMUIAnimPropertyRotation,
-                            @"RotationX": kMUIAnimPropertyRotationX,
-                            @"RotationY": kMUIAnimPropertyRotationY,
+                            @"Alpha": @(MLNUIAnimationPropertyTypeAlpha),
+                            @"Color": @(MLNUIAnimationPropertyTypeColor),
+                            @"Origin": @(MLNUIAnimationPropertyTypeOrigin),
+                            @"OriginX": @(MLNUIAnimationPropertyTypeOriginX),
+                            @"OriginY": @(MLNUIAnimationPropertyTypeOriginY),
+                            @"Center": @(MLNUIAnimationPropertyTypeCenter),
+                            @"CenterX": @(MLNUIAnimationPropertyTypeCenterX),
+                            @"CenterY": @(MLNUIAnimationPropertyTypeCenterY),
+                            @"Size": @(MLNUIAnimationPropertyTypeSize),
+                            @"Frame": @(MLNUIAnimationPropertyTypeFrame),
+                            @"Scale": @(MLNUIAnimationPropertyTypeScale),
+                            @"ScaleX": @(MLNUIAnimationPropertyTypeScaleX),
+                            @"ScaleY": @(MLNUIAnimationPropertyTypeScaleY),
+                            @"Rotation": @(MLNUIAnimationPropertyTypeRotation),
+                            @"RotationX": @(MLNUIAnimationPropertyTypeRotationX),
+                            @"RotationY": @(MLNUIAnimationPropertyTypeRotationY),
                             }))
 LUAUI_EXPORT_GLOBAL_VAR_END()
 

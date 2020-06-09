@@ -11,6 +11,7 @@
 #import "MLNUIViewExporterMacro.h"
 #import "MLNUIAnimationConst.h"
 #import "MLNUIObjectAnimation.h"
+#import "MLNUIBeforeWaitingTask.h"
 
 typedef NS_ENUM(NSUInteger, MLNUIObjectAnimationSetType) {
     MLNUIObjectAnimationSetTypeTogether,
@@ -24,17 +25,19 @@ typedef NS_ENUM(NSUInteger, MLNUIObjectAnimationSetType) {
 @property (nonatomic, strong) MLAMultiAnimation *valueAnimation;
 
 @property (nonatomic, strong) NSNumber *delay;
-@property (nonatomic, strong) NSNumber *duration;
 @property (nonatomic, strong) NSNumber *repeatCount;
 @property (nonatomic, strong) NSNumber *repeatForever;
 @property (nonatomic, strong) NSNumber *autoReverses;
-@property (nonatomic, copy) MLNUIBlock *startBlock;
-@property (nonatomic, copy) MLNUIBlock *pauseBlock;
-@property (nonatomic, copy) MLNUIBlock *resumeBlock;
-@property (nonatomic, copy) MLNUIBlock *repeatBlock;
-@property (nonatomic, copy) MLNUIBlock *finishBlock;
+@property (nonatomic, strong) MLNUIBlock *startBlock;
+@property (nonatomic, strong) MLNUIBlock *pauseBlock;
+@property (nonatomic, strong) MLNUIBlock *resumeBlock;
+@property (nonatomic, strong) MLNUIBlock *repeatBlock;
+@property (nonatomic, strong) MLNUIBlock *finishBlock;
 @property (nonatomic, assign) MLNUIObjectAnimationSetType runType;
 @property (nonatomic, strong) NSArray *animations;
+@property (nonatomic, assign) BOOL propertyChanged;
+
+@property (nonatomic, strong) MLNUIBeforeWaitingTask *lazyTask;
 
 @end
 
@@ -46,6 +49,31 @@ typedef NS_ENUM(NSUInteger, MLNUIObjectAnimationSetType) {
     }
     return self;;
 }
+
+- (void)setDelay:(NSNumber *)delay
+{
+    _delay = delay;
+    _propertyChanged = YES;
+}
+
+- (void)setRepeatCount:(NSNumber *)repeatCount
+{
+    _repeatCount = repeatCount;
+    _propertyChanged = YES;
+}
+
+- (void)setRepeatForever:(NSNumber *)repeatForever
+{
+    _repeatForever = repeatForever;
+    _propertyChanged = YES;
+}
+
+- (void)setAutoReverses:(NSNumber *)autoReverses
+{
+    _autoReverses = autoReverses;
+    _propertyChanged = YES;
+}
+
 
 - (void)mlnui_start:(MLNUIBlock *)finishBlcok
 {
@@ -82,7 +110,7 @@ typedef NS_ENUM(NSUInteger, MLNUIObjectAnimationSetType) {
         __strong typeof(weakSelf) strongSelf = weakSelf;
         if (strongSelf.repeatBlock) {
             [strongSelf.repeatBlock addObjArgument:strongSelf];
-            [strongSelf.repeatBlock addUIntegerArgument:count];
+            [strongSelf.repeatBlock addUIntegerArgument:(strongSelf.repeatCount.unsignedIntValue - count)];
             [strongSelf.repeatBlock callIfCan];
         }
     };
@@ -105,6 +133,9 @@ typedef NS_ENUM(NSUInteger, MLNUIObjectAnimationSetType) {
     if (_autoReverses != nil) {
         self.valueAnimation.autoReverses = [_autoReverses boolValue];
     }
+    if (_delay != nil) {
+        self.valueAnimation.beginTime = [_delay floatValue];
+    }
     
     NSMutableArray *rawAnimations = [NSMutableArray array];
     if (_animations != nil) {
@@ -126,8 +157,7 @@ typedef NS_ENUM(NSUInteger, MLNUIObjectAnimationSetType) {
             break;
     }
     
-    [self.valueAnimation start];
-    
+    [MLNUI_KIT_INSTANCE(self.mlnui_luaCore) pushLazyTask:self.lazyTask];
 }
 
 - (void)mlnui_pause {
@@ -140,6 +170,7 @@ typedef NS_ENUM(NSUInteger, MLNUIObjectAnimationSetType) {
 
 - (void)mlnui_stop {
     [_valueAnimation finish];
+    [MLNUI_KIT_INSTANCE(self.mlnui_luaCore) popLazyTask:self.lazyTask];
 }
 
 - (void)mlnui_platTogether:(NSArray *)animations
@@ -160,14 +191,42 @@ typedef NS_ENUM(NSUInteger, MLNUIObjectAnimationSetType) {
     if (!_valueAnimation) {
         _valueAnimation = [[MLAMultiAnimation alloc] initWithMLNUILuaCore:self.mlnui_luaCore];
     }
+    //当修改过属性后，需要进行同步
+    if (_propertyChanged) {
+        if (_repeatCount != nil) {
+            _valueAnimation.repeatCount = [_repeatCount floatValue];
+        }
+        if (_repeatForever != nil) {
+            _valueAnimation.repeatForever = [_repeatForever boolValue];
+        }
+        if (_autoReverses != nil) {
+            _valueAnimation.autoReverses = [_autoReverses boolValue];
+        }
+        if (_delay != nil) {
+            _valueAnimation.beginTime = [_delay floatValue];
+        }
+        _propertyChanged = NO;
+    }
     return _valueAnimation;
 }
 
 #pragma mark - private
 
+- (MLNUIBeforeWaitingTask *)lazyTask
+{
+    if (!_lazyTask) {
+        __weak typeof(self) wself = self;
+        _lazyTask = [MLNUIBeforeWaitingTask taskWithCallback:^{
+            __strong typeof(wself) sself = wself;
+            [sself.valueAnimation start];
+        }];
+    }
+    return _lazyTask;
+}
 
 #pragma mark - Export To Lua
 LUAUI_EXPORT_BEGIN(MLNUIObjectAnimationSet)
+LUAUI_EXPORT_PROPERTY(delay, "setDelay:", "delay", MLNUIObjectAnimationSet)
 LUAUI_EXPORT_PROPERTY(duration, "setDuration:", "duration", MLNUIObjectAnimationSet)
 LUAUI_EXPORT_PROPERTY(repeatCount, "setRepeatCount:", "repeatCount", MLNUIObjectAnimationSet)
 LUAUI_EXPORT_PROPERTY(repeatForever, "setRepeatForever:", "repeatForever", MLNUIObjectAnimationSet)
