@@ -278,6 +278,12 @@
         }
         _propertyChanged = NO;
     }
+    if (_valueAnimation.fromValue == nil) {
+        _valueAnimation.fromValue = [self mlnui_getCurrentValue];
+    }
+    if (_valueAnimation.toValue == nil) {
+        _valueAnimation.toValue = [self mlnui_getCurrentValue];
+    }
     return _valueAnimation;
 }
 
@@ -297,7 +303,7 @@
 
 - (void)mlnui_setupConfig:(MLASpringAnimation *)springAnimation config:(NSDictionary *)config
 {
-    springAnimation.velocity = [self mlnui_getCurrentValue];
+    springAnimation.velocity = @(1.0);
     if (config == nil) {
         return;
     }
@@ -335,7 +341,7 @@
     NSObject *velocity = [config objectForKey:kMUITimingConfigVelocity];
     if (velocity != nil)
     {
-        springAnimation.velocity = [self mlnui_getValueWithParams:velocity];
+        springAnimation.velocity = velocity;
     }
 }
 
@@ -393,9 +399,6 @@
         case MLNUIAnimationPropertyTypeCenterY:
         case MLNUIAnimationPropertyTypeScaleX:
         case MLNUIAnimationPropertyTypeScaleY:
-        case MLNUIAnimationPropertyTypeRotation:
-        case MLNUIAnimationPropertyTypeRotationX:
-        case MLNUIAnimationPropertyTypeRotationY:
         {
             if ([velocity isKindOfClass:[NSNumber class]])
             {
@@ -408,6 +411,27 @@
                     return value[0];
                 }
             }
+        }
+        break;
+            
+        case MLNUIAnimationPropertyTypeRotation:
+        case MLNUIAnimationPropertyTypeRotationX:
+        case MLNUIAnimationPropertyTypeRotationY:
+        {
+            CGFloat angle = 0;
+            
+            if ([velocity isKindOfClass:[NSNumber class]])
+            {
+                angle = [(NSNumber *)velocity floatValue];
+            }
+            else if ([velocity isKindOfClass:[NSArray class]])
+            {
+                NSArray *value = (NSArray *)velocity;
+                if (value != nil && value.count == 1 && [value[0] isKindOfClass:[NSNumber class]]) {
+                    angle = [(NSNumber *)value[0] floatValue];
+                }
+            }
+            return @(angle / 360.0 * M_PI * 2);
         }
             break;
         case MLNUIAnimationPropertyTypeColor:

@@ -170,7 +170,7 @@ typedef NS_ENUM(NSUInteger, MLNUIObjectAnimationSetType) {
     [MLNUI_KIT_INSTANCE(self.mlnui_luaCore) popLazyTask:self.lazyTask];
 }
 
-- (void)mlnui_platTogether:(NSArray *)animations
+- (void)mlnui_playTogether:(NSArray *)animations
 {
     _animations = animations;
     _runType = MLNUIObjectAnimationSetTypeTogether;
@@ -186,7 +186,7 @@ typedef NS_ENUM(NSUInteger, MLNUIObjectAnimationSetType) {
 - (MLAMultiAnimation *)valueAnimation
 {
     if (!_valueAnimation) {
-        _valueAnimation = [[MLAMultiAnimation alloc] initWithMLNUILuaCore:self.mlnui_luaCore];
+        _valueAnimation = [[MLAMultiAnimation alloc] init];
     }
     //当修改过属性后，需要进行同步
     if (_propertyChanged) {
@@ -230,10 +230,12 @@ LUAUI_EXPORT_PROPERTY(pauseBlock, "setPauseBlock:", "pauseBlock", MLNUIObjectAni
 LUAUI_EXPORT_PROPERTY(resumeBlock, "setResumeBlock:", "resumeBlock", MLNUIObjectAnimationSet)
 LUAUI_EXPORT_PROPERTY(repeatBlock, "setRepeatBlock:", "repeatBlock", MLNUIObjectAnimationSet)
 LUAUI_EXPORT_PROPERTY(finishBlock, "setFinishBlock:", "finishBlock", MLNUIObjectAnimationSet)
+LUAUI_EXPORT_METHOD(playTogether, "mlnui_playTogether:", MLNUIObjectAnimationSet)
+LUAUI_EXPORT_METHOD(playSequentially, "mlnui_playSequentially:", MLNUIObjectAnimationSet)
 LUAUI_EXPORT_METHOD(start, "mlnui_start:", MLNUIObjectAnimationSet)
 LUAUI_EXPORT_METHOD(pause, "mlnui_pause", MLNUIObjectAnimationSet)
 LUAUI_EXPORT_METHOD(resume, "mlnui_resume", MLNUIObjectAnimationSet)
 LUAUI_EXPORT_METHOD(stop, "mlnui_stop", MLNUIObjectAnimationSet)
-LUAUI_EXPORT_END(MLNUIObjectAnimationSet, AnimationSet, NO, NULL, NULL)
+LUAUI_EXPORT_END(MLNUIObjectAnimationSet, AnimatorSet, NO, NULL, NULL)
 
 @end

@@ -26,13 +26,13 @@ NSString * const kMUIRotaionZ = @"transform.rotation.z";
 NSString * const kMUIOpacity = @"opacity";
 NSString * const kMUITransform = @"transform";
 
-NSString * const kMUITimingConfigDuration = @"duration";
-NSString * const kMUITimingConfigVelocity = @"velocity";
-NSString * const kMUITimingConfigBounciness = @"bounciness";
-NSString * const kMUITimingConfigSpeed = @"speed";
-NSString * const kMUITimingConfigTension = @"tension";
-NSString * const kMUITimingConfigFriction = @"friction";
-NSString * const kMUITimingConfigMass = @"mass";
+NSString * const kMUITimingConfigDuration = @"Duration";
+NSString * const kMUITimingConfigVelocity = @"Belocity";
+NSString * const kMUITimingConfigBounciness = @"Nounciness";
+NSString * const kMUITimingConfigSpeed = @"Speed";
+NSString * const kMUITimingConfigTension = @"Tension";
+NSString * const kMUITimingConfigFriction = @"Friction";
+NSString * const kMUITimingConfigMass = @"Mass";
 
 NSString * const kMUIAnimPropertyAlpha = @"view.alpha";
 NSString * const kMUIAnimPropertyColor = @"view.backgroundColor";
@@ -105,15 +105,6 @@ LUAUI_EXPORT_GLOBAL_VAR(Timing, (@{
                             @"EaseOut": @(MLNUIAnimationTimingFunctionEaseOut),
                             @"EaseInEaseOut": @(MLNUIAnimationTimingFunctionEaseInEaseOut),
                             @"Spring": @(MLNUIAnimationTimingFunctionSpring),
-                            }))
-LUAUI_EXPORT_GLOBAL_VAR(TimingConfig, (@{
-                            @"Duration": kMUITimingConfigDuration,
-                            @"Velocity": kMUITimingConfigVelocity,
-                            @"Bounciness": kMUITimingConfigBounciness,
-                            @"Speed": kMUITimingConfigSpeed,
-                            @"Tension": kMUITimingConfigTension,
-                            @"Friction": kMUITimingConfigFriction,
-                            @"Mass": kMUITimingConfigMass,
                             }))
 LUAUI_EXPORT_GLOBAL_VAR(AnimProperty, (@{
                             @"Alpha": @(MLNUIAnimationPropertyTypeAlpha),
