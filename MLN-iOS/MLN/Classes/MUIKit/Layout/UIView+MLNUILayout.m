@@ -87,9 +87,6 @@ static const void *kMLNUILayoutAssociatedKey = &kMLNUILayoutAssociatedKey;
     [self addSubview:view];
     // 添加Lua强引用
     MLNUI_Lua_UserData_Retain_With_Index(2, view);
-//    if (view.mlnuiLayout) {
-//        [(MLNUILayoutContainerNode *)self.mlnuiLayout addSubnode:view.mlnuiLayout];
-//    }
 }
 
 - (void)luaui_insertSubview:(UIView *)view atIndex:(NSInteger)index {
@@ -98,18 +95,12 @@ static const void *kMLNUILayoutAssociatedKey = &kMLNUILayoutAssociatedKey;
     [self insertSubview:view atIndex:index];
     // 添加Lua强引用
     MLNUI_Lua_UserData_Retain_With_Index(2, view);
-//    if (view.mlnuiLayout) {
-//        [(MLNUILayoutContainerNode *)self.mlnuiLayout insertSubnode:view.mlnuiLayout atIndex:index];
-//    }
 }
 
 - (void)luaui_removeFromSuperview {
     [self removeFromSuperview];
     // 删除Lua强引用
     MLNUI_Lua_UserData_Release(self);
-//    if (self.mlnuiLayout) {
-//        [self.mlnuiLayout removeFromSupernode];
-//    }
 }
 
 - (void)luaui_removeAllSubViews {
