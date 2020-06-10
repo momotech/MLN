@@ -403,6 +403,8 @@
     MLNUILuaAssert(self.mlnui_luaCore, NO, @"Not found \"removeAllSubviews\" method, just continar of View has it!");
 }
 
+#pragma mark - MLNUIPaddingContainerViewProtocol
+
 - (UIView *)mlnui_contentView
 {
     return self.innerLabel;
@@ -434,9 +436,4 @@ LUAUI_EXPORT_VIEW_METHOD(setMinHeight, "luaui_setMinHeight:",MLNUILabel) //SDK>=
 LUAUI_EXPORT_VIEW_METHOD(setLineSpacing, "luaui_setLineSpacing:",MLNUILabel) //SDK>=1.0.3，自适应时的限制
 LUAUI_EXPORT_VIEW_METHOD(a_setIncludeFontPadding, "luaui_a_setIncludeFontPadding:", MLNUILabel)
 LUAUI_EXPORT_VIEW_END(MLNUILabel, Label, YES, "MLNUIView", "initWithMLNUILuaCore:frame:")
-@end
-
-@implementation MLNUIOverlayLabel
-LUAUI_EXPORT_VIEW_BEGIN(MLNUIOverlayLabel) // 兼容Android
-LUAUI_EXPORT_VIEW_END(MLNUIOverlayLabel, OverLabel, YES, "MLNUILabel", "initWithMLNUILuaCore:frame:")
 @end

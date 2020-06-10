@@ -387,6 +387,8 @@
     return _innerTableView;
 }
 
+#pragma mark - MLNUIPaddingContainerViewProtocol
+
 - (UIView *)mlnui_contentView
 {
     return self.innerTableView;

@@ -452,8 +452,3 @@ LUAUI_EXPORT_VIEW_METHOD(addShadow, "luaui_addShadow:shadowOffset:shadowRadius:s
 LUAUI_EXPORT_VIEW_END(MLNUIImageView, ImageView, YES, "MLNUIView", NULL)
 
 @end
-
-@implementation MLNUIOverlayImageView
-LUAUI_EXPORT_VIEW_BEGIN(MLNUIOverlayImageView) // 兼容Android
-LUAUI_EXPORT_VIEW_END(MLNUIOverlayImageView, OverImageView, YES, "MLNUIImageView", NULL)
-@end

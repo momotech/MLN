@@ -488,6 +488,8 @@
     return _innerCollectionView;
 }
 
+#pragma mark - MLNUIPaddingContainerViewProtocol
+
 - (UIView *)mlnui_contentView
 {
     return self.innerCollectionView;

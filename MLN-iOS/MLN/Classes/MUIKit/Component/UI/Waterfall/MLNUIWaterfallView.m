@@ -367,15 +367,17 @@
     return arrayT;
 }
 
-#pragma mark - Override
-
-- (CGSize)mlnui_sizeThatFits:(CGSize)size {
-    return size;
-}
+#pragma mark - MLNUIPaddingContainerViewProtocol
 
 - (UIView *)mlnui_contentView
 {
     return self.innerWaterfallView;
+}
+
+#pragma mark - Override
+
+- (CGSize)mlnui_sizeThatFits:(CGSize)size {
+    return size;
 }
 
 - (BOOL)mlnui_layoutEnable
