@@ -389,54 +389,6 @@ static const void *kMLNUILayoutAssociatedKey = &kMLNUILayoutAssociatedKey;
     return 0.0;
 }
 
-- (void)setLuaui_paddingPercentTop:(CGFloat)paddingPercentTop {
-    self.mlnui_layoutNode.paddingTop = MLNUIPercentValue(paddingPercentTop);
-}
-
-- (CGFloat)luaui_paddingPercentTop {
-    MLNUIValue top = self.mlnui_layoutNode.paddingTop;
-    if (top.unit == MLNUIUnitPercent) {
-        return top.value;
-    }
-    return 0.0;
-}
-
-- (void)setLuaui_paddingPercentLeft:(CGFloat)paddingPercentLeft {
-    self.mlnui_layoutNode.paddingLeft = MLNUIPercentValue(paddingPercentLeft);
-}
-
-- (CGFloat)luaui_paddingPercentLeft {
-    MLNUIValue left = self.mlnui_layoutNode.paddingLeft;
-    if (left.unit == MLNUIUnitPercent) {
-        return left.value;
-    }
-    return 0.0;
-}
-
-- (void)setLuaui_paddingPercentBottom:(CGFloat)paddingPercentBottom {
-    self.mlnui_layoutNode.paddingBottom = MLNUIPercentValue(paddingPercentBottom);
-}
-
-- (CGFloat)luaui_paddingPercentBottom {
-    MLNUIValue bottom = self.mlnui_layoutNode.paddingBottom;
-    if (bottom.unit == MLNUIUnitPercent) {
-        return bottom.value;
-    }
-    return 0.0;
-}
-
-- (void)setLuaui_paddingPercentRight:(CGFloat)paddingPercentRight {
-    self.mlnui_layoutNode.paddingRight = MLNUIPercentValue(paddingPercentRight);
-}
-
-- (CGFloat)luaui_paddingPercentRight {
-    MLNUIValue right = self.mlnui_layoutNode.paddingRight;
-    if (right.unit == MLNUIUnitPercent) {
-        return right.value;
-    }
-    return 0.0;
-}
-
 /**
  * Margin
  */
@@ -491,54 +443,6 @@ static const void *kMLNUILayoutAssociatedKey = &kMLNUILayoutAssociatedKey;
 - (CGFloat)luaui_marginRight {
     MLNUIValue right = self.mlnui_layoutNode.marginRight;
     if (right.unit == MLNUIUnitPoint) {
-        return right.value;
-    }
-    return 0.0;
-}
-
-- (void)setLuaui_marginPercentTop:(CGFloat)marginPercentTop {
-    self.mlnui_layoutNode.marginTop = MLNUIPercentValue(marginPercentTop);
-}
-
-- (CGFloat)luaui_marginPercentTop {
-    MLNUIValue top = self.mlnui_layoutNode.marginTop;
-    if (top.unit == MLNUIUnitPercent) {
-        return top.value;
-    }
-    return 0.0;
-}
-
-- (void)setLuaui_marginPercentLeft:(CGFloat)marginPercentLeft {
-    self.mlnui_layoutNode.marginLeft = MLNUIPercentValue(marginPercentLeft);
-}
-
-- (CGFloat)luaui_marginPercentLeft {
-    MLNUIValue left = self.mlnui_layoutNode.marginLeft;
-    if (left.unit == MLNUIUnitPercent) {
-        return left.value;
-    }
-    return 0.0;
-}
-
-- (void)setLuaui_marginPercentBottom:(CGFloat)marginPercentBottom {
-    self.mlnui_layoutNode.marginBottom = MLNUIPercentValue(marginPercentBottom);
-}
-
-- (CGFloat)luaui_marginPercentBottom {
-    MLNUIValue bottom = self.mlnui_layoutNode.marginBottom;
-    if (bottom.unit == MLNUIUnitPercent) {
-        return bottom.value;
-    }
-    return 0.0;
-}
-
-- (void)setLuaui_marginPercentRight:(CGFloat)marginPercentRight {
-    self.mlnui_layoutNode.marginRight = MLNUIPercentValue(marginPercentRight);
-}
-
-- (CGFloat)luaui_marginPercentRight {
-    MLNUIValue right = self.mlnui_layoutNode.marginRight;
-    if (right.unit == MLNUIUnitPercent) {
         return right.value;
     }
     return 0.0;
@@ -633,54 +537,6 @@ static const void *kMLNUILayoutAssociatedKey = &kMLNUILayoutAssociatedKey;
 - (CGFloat)luaui_positionRight {
     MLNUIValue right = self.mlnui_layoutNode.right;
     if (right.unit == MLNUIUnitPoint) {
-        return right.value;
-    }
-    return 0.0;
-}
-
-- (void)setLuaui_positionPercentTop:(CGFloat)positionPercentTop {
-    self.mlnui_layoutNode.top = MLNUIPercentValue(positionPercentTop);
-}
-
-- (CGFloat)luaui_positionPercentTop {
-    MLNUIValue top = self.mlnui_layoutNode.top;
-    if (top.unit == MLNUIUnitPercent) {
-        return top.value;
-    }
-    return 0.0;
-}
-
-- (void)setLuaui_positionPercentLeft:(CGFloat)positionPercentLeft {
-    self.mlnui_layoutNode.left = MLNUIPercentValue(positionPercentLeft);
-}
-
-- (CGFloat)luaui_positionPercentLeft {
-    MLNUIValue left = self.mlnui_layoutNode.left;
-    if (left.unit == MLNUIUnitPercent) {
-        return left.value;
-    }
-    return 0.0;
-}
-
-- (void)setLuaui_positionPercentBottom:(CGFloat)positionPercentBottom {
-    self.mlnui_layoutNode.bottom = MLNUIPercentValue(positionPercentBottom);
-}
-
-- (CGFloat)luaui_positionPercentBottom {
-    MLNUIValue bottom = self.mlnui_layoutNode.bottom;
-    if (bottom.unit == MLNUIUnitPercent) {
-        return bottom.value;
-    }
-    return 0.0;
-}
-
-- (void)setLuaui_positionPercentRight:(CGFloat)positionPercentRight {
-    self.mlnui_layoutNode.right = MLNUIPercentValue(positionPercentRight);
-}
-
-- (CGFloat)luaui_positionPercentRight {
-    MLNUIValue right = self.mlnui_layoutNode.right;
-    if (right.unit == MLNUIUnitPercent) {
         return right.value;
     }
     return 0.0;
