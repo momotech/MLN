@@ -206,9 +206,9 @@
 
 static inline CGSize MLNUIConstraintSize(MLNUIInnerScrollView *scrollView, CGSize size) {
     if (scrollView.mlnui_horizontal) {
-        return CGSizeMake(MLNUIMax, size.height);
+        return CGSizeMake(MLNUIUndefined, size.height);
     }
-    return CGSizeMake(size.width, MLNUIMax);
+    return CGSizeMake(size.width, MLNUIUndefined);
 }
 
 - (CGSize)mlnui_sizeThatFits:(CGSize)size {

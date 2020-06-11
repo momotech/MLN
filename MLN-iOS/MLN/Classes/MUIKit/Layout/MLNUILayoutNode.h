@@ -6,9 +6,9 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <yoga/YGEnums.h>
-#import <yoga/Yoga.h>
-#import <yoga/YGMacros.h>
+#import "YGEnums.h"
+#import "Yoga.h"
+#import "YGMacros.h"
 #import "MLNUILayoutMacro.h"
 
 NS_ASSUME_NONNULL_BEGIN
@@ -101,7 +101,7 @@ typedef NS_OPTIONS(NSInteger, YGDimensionFlexibility) {
 /// Perform a layout calculation and update the frames of the views in the hierarchy with the results. If the origin is not preserved, the root view's layout results will applied from {0,0}.
 - (CGSize)applyLayout NS_SWIFT_NAME(applyLayout());
 
-/// @param size the constraint size. Pass `MLNUIMax` indicate an unconstrained size.
+/// @param size the constraint size. Pass `MLNUIUndefined` indicate an unconstrained size.
 - (CGSize)applyLayoutWithSize:(CGSize)size NS_SWIFT_NAME(applyLayout(size:));
 
 /// Perform a layout calculation and update the frames of the views in the hierarchy with the results. If the origin is not preserved, the root view's layout results will applied from {0,0}.

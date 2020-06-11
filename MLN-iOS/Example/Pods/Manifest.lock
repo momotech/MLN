@@ -17,13 +17,10 @@ PODS:
   - ArgoUI (0.1.4):
     - ArgoUI/Core (= 0.1.4)
     - ArgoUI/Kit (= 0.1.4)
-    - Yoga
   - ArgoUI/Core (0.1.4):
     - MLN/LuaLib
-    - Yoga
   - ArgoUI/Kit (0.1.4):
     - ArgoUI/Core
-    - Yoga
   - Expecta (1.0.6)
   - "Expecta+Snapshots (3.1.1)":
     - Expecta (~> 1.0)
@@ -82,7 +79,6 @@ PODS:
   - SDWebImage/Core (5.3.3)
   - Specta (1.0.7)
   - Toast (4.0.0)
-  - Yoga (1.14.0)
 
 DEPENDENCIES:
   - AFNetworking (~> 3.0)
@@ -111,7 +107,6 @@ SPEC REPOS:
     - SDWebImage
     - Specta
     - Toast
-    - Yoga
 
 EXTERNAL SOURCES:
   ArgoUI:
@@ -123,7 +118,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   AFNetworking: b6f891fdfaed196b46c7a83cf209e09697b94057
-  ArgoUI: 20aa6191281eccba888da0f2ae00579d9c9ba87b
+  ArgoUI: f2474996194bb6a6bbb183842ac96112de8c6baf
   Expecta: 3b6bd90a64b9a1dcb0b70aa0e10a7f8f631667d5
   "Expecta+Snapshots": dcff217eef506dabd6dfdc7864ea2da321fafbb8
   FBSnapshotTestCase: 094f9f314decbabe373b87cc339bea235a63e07a
@@ -136,7 +131,6 @@ SPEC CHECKSUMS:
   SDWebImage: 51ab1ce3ebd20dec6665ae8ba25c928da323db41
   Specta: 3e1bd89c3517421982dc4d1c992503e48bd5fe66
   Toast: 91b396c56ee72a5790816f40d3a94dd357abc196
-  Yoga: cff67a400f6b74dc38eb0bad4f156673d9aa980c
 
 PODFILE CHECKSUM: a565d45bb084b5fcd184c23ae77328dc55a88bf5
 

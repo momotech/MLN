@@ -7,7 +7,7 @@
 
 #pragma once
 #import "YGValue.h"
-#define MLNUIMax YGUndefined
+#define MLNUIUndefined YGUndefined
 
 /** ======= */
 typedef YGValue MLNUIValue;
