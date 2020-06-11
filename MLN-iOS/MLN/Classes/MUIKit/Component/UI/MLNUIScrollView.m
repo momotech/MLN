@@ -204,15 +204,16 @@
     return YES;
 }
 
-static inline CGSize MLNUIConstraintSize(MLNUIInnerScrollView *scrollView, CGSize size) {
-    if (scrollView.mlnui_horizontal) {
-        return CGSizeMake(MLNUIUndefined, size.height);
-    }
-    return CGSizeMake(size.width, MLNUIUndefined);
+- (CGSize)mlnui_sizeThatFits:(CGSize)size {
+    return [self.innerScrollView.mlnui_contentView.mlnui_layoutNode applyLayoutWithSize:CGSizeMake(MLNUIUndefined, MLNUIUndefined)]; // 自适应内容大小 (前提是没有设置固定宽高)
 }
 
-- (CGSize)mlnui_sizeThatFits:(CGSize)size {
-    return [self.innerScrollView.mlnui_contentView.mlnui_layoutNode applyLayoutWithSize:MLNUIConstraintSize(self.innerScrollView, size)];
+- (void)mlnui_layoutCompleted {
+    [super mlnui_layoutCompleted];
+    UIView *contentView = self.innerScrollView.mlnui_contentView;
+    if (CGSizeEqualToSize(contentView.frame.size, CGSizeZero)) { // 固定宽高不会执行mlnui_sizeThatFits
+        [contentView.mlnui_layoutNode applyLayoutWithSize:CGSizeMake(MLNUIUndefined, MLNUIUndefined)];
+    }
 }
 
 #pragma mark - MLNUIPaddingContainerViewProtocol

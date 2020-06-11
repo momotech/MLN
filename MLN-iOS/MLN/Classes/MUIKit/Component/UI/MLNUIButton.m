@@ -58,18 +58,46 @@
     [imageLoader button:self setImageWithPath:imageSrc forState:state];
 }
 
-- (void)luaui_setPaddingWithTop:(CGFloat)top right:(CGFloat)right bottom:(CGFloat)bottom left:(CGFloat)left
-{
-    [super luaui_setPaddingWithTop:top right:right bottom:bottom left:left];
-    self.imageEdgeInsets = UIEdgeInsetsMake(top, left, bottom, right);
-}
-
 - (id<MLNUIImageLoaderProtocol>)imageLoader
 {
     return MLNUI_KIT_INSTANCE(self.mlnui_luaCore).instanceHandlersManager.imageLoader;
 }
 
 #pragma mark - Override
+
+- (void)luaui_setPaddingWithTop:(CGFloat)top right:(CGFloat)right bottom:(CGFloat)bottom left:(CGFloat)left {
+    [super luaui_setPaddingWithTop:top right:right bottom:bottom left:left];
+    self.imageEdgeInsets = UIEdgeInsetsMake(top, left, bottom, right);
+}
+
+- (void)setLuaui_paddingTop:(CGFloat)luaui_paddingTop {
+    [super setLuaui_paddingTop:luaui_paddingTop];
+    UIEdgeInsets insets = self.imageEdgeInsets;
+    insets.top = luaui_paddingTop;
+    self.imageEdgeInsets = insets;
+}
+
+- (void)setLuaui_paddingLeft:(CGFloat)luaui_paddingLeft {
+    [super setLuaui_paddingTop:luaui_paddingLeft];
+    UIEdgeInsets insets = self.imageEdgeInsets;
+    insets.left = luaui_paddingLeft;
+    self.imageEdgeInsets = insets;
+}
+
+- (void)setLuaui_paddingRight:(CGFloat)luaui_paddingRight {
+    [super setLuaui_paddingTop:luaui_paddingRight];
+    UIEdgeInsets insets = self.imageEdgeInsets;
+    insets.right = luaui_paddingRight;
+    self.imageEdgeInsets = insets;
+}
+
+- (void)setLuaui_paddingBottom:(CGFloat)luaui_paddingBottom {
+    [super setLuaui_paddingTop:luaui_paddingBottom];
+    UIEdgeInsets insets = self.imageEdgeInsets;
+    insets.bottom = luaui_paddingBottom;
+    self.imageEdgeInsets = insets;
+}
+
 - (void)luaui_addSubview:(UIView *)view
 {
     MLNUIKitLuaAssert(NO, @"Not found \"addView\" method, just continar of View has it!");

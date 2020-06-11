@@ -29,6 +29,10 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark - Layout
 
 - (void)luaui_setPaddingWithTop:(CGFloat)top right:(CGFloat)right bottom:(CGFloat)bottom left:(CGFloat)left;
+@property (nonatomic, assign) CGFloat luaui_paddingTop;
+@property (nonatomic, assign) CGFloat luaui_paddingLeft;
+@property (nonatomic, assign) CGFloat luaui_paddingRight;
+@property (nonatomic, assign) CGFloat luaui_paddingBottom;
 
 - (void)mlnui_markNeedsLayout;
 - (void)mlnui_requestLayoutIfNeed;

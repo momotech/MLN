@@ -334,6 +334,22 @@
     MLNUIKitLuaAssert(NO, @"ImageView does not support padding!");
 }
 
+- (void)setLuaui_paddingTop:(CGFloat)luaui_paddingTop {
+    MLNUIKitLuaAssert(NO, @"ImageView does not support padding!");
+}
+
+- (void)setLuaui_paddingLeft:(CGFloat)luaui_paddingLeft {
+    MLNUIKitLuaAssert(NO, @"ImageView does not support padding!");
+}
+
+- (void)setLuaui_paddingRight:(CGFloat)luaui_paddingRight {
+    MLNUIKitLuaAssert(NO, @"ImageView does not support padding!");
+}
+
+- (void)setLuaui_paddingBottom:(CGFloat)luaui_paddingBottom {
+    MLNUIKitLuaAssert(NO, @"ImageView does not support padding!");
+}
+
 - (void)luaui_setBlurValue:(CGFloat)blurValue processImage:(BOOL)processImage
 {
     blurValue = blurValue <= 0.0? 0.0f : blurValue;
