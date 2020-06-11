@@ -43,6 +43,10 @@
 
 @property (nonatomic, strong) MLNUIBeforeWaitingTask *lazyTask;
 
+@property (nonatomic, assign) CGFloat defaultAlpha;
+@property (nonatomic, assign) CGRect defaultFrame;
+@property (nonatomic, assign) CGPoint defaultCenter;
+
 @end
 
 @implementation MLNUIObjectAnimation
@@ -52,6 +56,7 @@
     if (self = [super initWithMLNUILuaCore:luaCore]) {
         _propertyType = propertyType;
         _targetView = target;
+        _defaultAlpha = -1;
     }
     return self;;
 }
@@ -279,10 +284,10 @@
         _propertyChanged = NO;
     }
     if (_valueAnimation.fromValue == nil) {
-        _valueAnimation.fromValue = [self mlnui_getCurrentValue];
+        _valueAnimation.fromValue = [self mlnui_getDefaultValue];
     }
     if (_valueAnimation.toValue == nil) {
-        _valueAnimation.toValue = [self mlnui_getCurrentValue];
+        _valueAnimation.toValue = [self mlnui_getDefaultValue];
     }
     return _valueAnimation;
 }
@@ -345,19 +350,24 @@
     }
 }
 
-- (id)mlnui_getCurrentValue
+- (id)mlnui_getDefaultValue
 {
+    if (CGPointEqualToPoint(CGPointZero, _defaultCenter)) {
+        _defaultCenter = self.targetView.center;
+    }
+    if (CGRectEqualToRect(CGRectZero, _defaultFrame)) {
+        _defaultFrame= self.targetView.frame;
+    }
+    if (_defaultAlpha <= 0) {
+        _defaultAlpha = self.targetView.alpha;
+    }
     switch (_propertyType) {
         case MLNUIAnimationPropertyTypeAlpha:
-            return @(self.targetView.alpha);
-        case MLNUIAnimationPropertyTypeOriginX:
-            return @(self.targetView.frame.origin.x);
-        case MLNUIAnimationPropertyTypeOriginY:
-            return @(self.targetView.frame.origin.y);
-        case MLNUIAnimationPropertyTypeCenterX:
-            return @(self.targetView.center.x);
-        case MLNUIAnimationPropertyTypeCenterY:
-            return @(self.targetView.center.y);
+            return @(_defaultAlpha);
+        case MLNUIAnimationPropertyTypePositionX:
+            return @(_defaultCenter.x);
+        case MLNUIAnimationPropertyTypePositionY:
+            return @(_defaultCenter.y);
         case MLNUIAnimationPropertyTypeScaleX:
             return @(1.0);
         case MLNUIAnimationPropertyTypeScaleY:
@@ -370,16 +380,14 @@
             return @(0);
         case MLNUIAnimationPropertyTypeColor:
             return self.targetView.backgroundColor;
-        case MLNUIAnimationPropertyTypeOrigin:
-            return @(self.targetView.frame.origin);
-        case MLNUIAnimationPropertyTypeCenter:
-            return @(self.targetView.center);
+        case MLNUIAnimationPropertyTypePosition:
+            return @(_defaultCenter);
         case MLNUIAnimationPropertyTypeSize:
-            return @(self.targetView.frame.size);
+            return @(_defaultFrame.size);
         case MLNUIAnimationPropertyTypeScale:
             return @(CGPointMake(1.0, 1.0));
         case MLNUIAnimationPropertyTypeFrame:
-            return @(self.targetView.frame);
+            return @(_defaultFrame);
         default:
             break;
     }
@@ -393,10 +401,8 @@
 {
     switch (_propertyType) {
         case MLNUIAnimationPropertyTypeAlpha:
-        case MLNUIAnimationPropertyTypeOriginX:
-        case MLNUIAnimationPropertyTypeOriginY:
-        case MLNUIAnimationPropertyTypeCenterX:
-        case MLNUIAnimationPropertyTypeCenterY:
+        case MLNUIAnimationPropertyTypePositionX:
+        case MLNUIAnimationPropertyTypePositionY:
         case MLNUIAnimationPropertyTypeScaleX:
         case MLNUIAnimationPropertyTypeScaleY:
         {
@@ -449,8 +455,7 @@
             }
         }
             break;
-        case MLNUIAnimationPropertyTypeOrigin:
-        case MLNUIAnimationPropertyTypeCenter:
+        case MLNUIAnimationPropertyTypePosition:
         case MLNUIAnimationPropertyTypeSize:
         case MLNUIAnimationPropertyTypeScale:
         {
@@ -499,23 +504,14 @@
         case MLNUIAnimationPropertyTypeColor:
             return kMLAViewColor;
             break;
-        case MLNUIAnimationPropertyTypeOrigin:
-            return kMLAViewOrigin;
+        case MLNUIAnimationPropertyTypePosition:
+            return kMLAViewPosition;
             break;
-        case MLNUIAnimationPropertyTypeOriginX:
-            return kMLAViewOriginX;
+        case MLNUIAnimationPropertyTypePositionX:
+            return kMLAViewPositionX;
             break;
-        case MLNUIAnimationPropertyTypeOriginY:
-            return kMLAViewOriginY;
-            break;
-        case MLNUIAnimationPropertyTypeCenter:
-            return kMLAViewCenter;
-            break;
-        case MLNUIAnimationPropertyTypeCenterX:
-            return kMLAViewCenterX;
-            break;
-        case MLNUIAnimationPropertyTypeCenterY:
-            return kMLAViewCenterY;
+        case MLNUIAnimationPropertyTypePositionY:
+            return kMLAViewPositionY;
             break;
         case MLNUIAnimationPropertyTypeSize:
             return kMLAViewSize;

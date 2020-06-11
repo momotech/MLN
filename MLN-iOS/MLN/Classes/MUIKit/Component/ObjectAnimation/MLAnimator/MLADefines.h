@@ -20,13 +20,9 @@ NS_ASSUME_NONNULL_BEGIN
 extern NSString * const kMLAViewAlpha;  // 透明度
 extern NSString * const kMLAViewColor;  // 背景色
 
-extern NSString * const kMLAViewOrigin;     // 原点位置
-extern NSString * const kMLAViewOriginX;    // 原点X
-extern NSString * const kMLAViewOriginY;    // 原点Y
-
-extern NSString * const kMLAViewCenter;     // 中心点
-extern NSString * const kMLAViewCenterX;    // 中心点X
-extern NSString * const kMLAViewCenterY;    // 中心点Y
+extern NSString * const kMLAViewPosition;     // 位置
+extern NSString * const kMLAViewPositionX;    // 位置X
+extern NSString * const kMLAViewPositionY;    // 位置Y
 
 extern NSString * const kMLAViewSize;       // 尺寸
 extern NSString * const kMLAViewFrame;      // 原点 + 尺寸

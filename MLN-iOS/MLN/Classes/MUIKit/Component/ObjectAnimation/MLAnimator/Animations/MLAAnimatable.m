@@ -12,13 +12,9 @@
 NSString * const kMLAViewAlpha = @"view.alpha";
 NSString * const kMLAViewColor = @"view.backgroundColor";
 
-NSString * const kMLAViewOrigin  = @"view.origin";
-NSString * const kMLAViewOriginX = @"view.originX";
-NSString * const kMLAViewOriginY = @"view.originY";
-
-NSString * const kMLAViewCenter  = @"view.center";
-NSString * const kMLAViewCenterX = @"view.centerX";
-NSString * const kMLAViewCenterY = @"view.centerY";
+NSString * const kMLAViewPosition  = @"view.position";
+NSString * const kMLAViewPositionX = @"view.positionX";
+NSString * const kMLAViewPositionY = @"view.positionY";
 
 NSString * const kMLAViewSize  = @"view.size";
 NSString * const kMLAViewFrame = @"view.frame";
@@ -39,11 +35,17 @@ static CGFloat const kThresholdAlpha = 0.01;
 static CGFloat const kThresholdScale = 0.005;
 static CGFloat const kThresholdRotation = 0.01;
 
+// 数值个数
+static NSUInteger const kValueCountOne = 1;
+static NSUInteger const kValueCountTwo = 2;
+static NSUInteger const kValueCountFours = 4;
+
 typedef struct {
     NSString* name;
     MLAValueReadBlock readBlock;
     MLAValueWriteBlock writeBlock;
     CGFloat threshold;
+    NSUInteger count;
 } _MLAValueHelper;
 typedef _MLAValueHelper MLAValueHelper;
 
@@ -57,7 +59,8 @@ static MLAValueHelper kStaticHelpers[] =
         ^(UIView *obj, const CGFloat values[]) {
             obj.alpha = values[0];
         },
-        kThresholdAlpha
+        kThresholdAlpha,
+        kValueCountOne,
     },
     {
         kMLAViewColor,
@@ -67,48 +70,11 @@ static MLAValueHelper kStaticHelpers[] =
         ^(UIView *obj, const CGFloat values[]) {
             obj.backgroundColor = MLAUIColorRGBACreate(values);
         },
-        kThresholdColor
+        kThresholdColor,
+        kValueCountFours
     },
     {
-        kMLAViewOrigin,
-        ^(UIView *obj, CGFloat values[]) {
-            values[0] = obj.frame.origin.x;
-            values[1] = obj.frame.origin.y;
-        },
-        ^(UIView *obj, const CGFloat values[]) {
-            CGRect frame = obj.frame;
-            frame.origin.x = values[0];
-            frame.origin.y = values[1];
-            obj.frame = frame;
-        },
-        kThresholdPoint
-    },
-    {
-        kMLAViewOriginX,
-        ^(UIView *obj, CGFloat values[]) {
-            values[0] = obj.frame.origin.x;
-        },
-        ^(UIView *obj, const CGFloat values[]) {
-            CGRect frame = obj.frame;
-            frame.origin.x = values[0];
-            obj.frame = frame;
-        },
-        kThresholdPoint
-    },
-    {
-        kMLAViewOriginY,
-        ^(UIView *obj, CGFloat values[]) {
-            values[0] = obj.frame.origin.y;
-        },
-        ^(UIView *obj, const CGFloat values[]) {
-            CGRect frame = obj.frame;
-            frame.origin.y = values[0];
-            obj.frame = frame;
-        },
-        kThresholdPoint
-    },
-    {
-        kMLAViewCenter,
+        kMLAViewPosition,
         ^(UIView *obj, CGFloat values[]) {
             values[0] = obj.center.x;
             values[1] = obj.center.y;
@@ -119,10 +85,11 @@ static MLAValueHelper kStaticHelpers[] =
             center.y = values[1];
             obj.center = center;
         },
-        kThresholdPoint
+        kThresholdPoint,
+        kValueCountTwo
     },
     {
-        kMLAViewCenterX,
+        kMLAViewPositionX,
         ^(UIView *obj, CGFloat values[]) {
             values[0] = obj.center.x;
         },
@@ -131,42 +98,11 @@ static MLAValueHelper kStaticHelpers[] =
             center.x = values[0];
             obj.center = center;
         },
-        kThresholdPoint
+        kThresholdPoint,
+        kValueCountOne
     },
     {
-        kMLAViewSize,
-        ^(UIView *obj, CGFloat values[]) {
-            values[0] = obj.frame.size.width;
-            values[1] = obj.frame.size.height;
-        },
-        ^(UIView *obj, const CGFloat values[]) {
-            CGRect frame = obj.frame;
-            frame.size.width = values[0];
-            frame.size.height = values[1];
-            obj.frame = frame;
-        },
-        kThresholdPoint
-    },
-    {
-        kMLAViewFrame,
-        ^(UIView *obj, CGFloat values[]) {
-            values[0] = obj.frame.origin.x;
-            values[1] = obj.frame.origin.y;
-            values[2] = obj.frame.size.width;
-            values[3] = obj.frame.size.height;
-        },
-        ^(UIView *obj, const CGFloat values[]) {
-            CGRect frame = obj.frame;
-            frame.origin.x = values[0];
-            frame.origin.y = values[1];
-            frame.size.width = values[2];
-            frame.size.height = values[3];
-            obj.frame = frame;
-        },
-        kThresholdPoint
-    },
-    {
-        kMLAViewCenterY,
+        kMLAViewPositionY,
         ^(UIView *obj, CGFloat values[]) {
             values[0] = obj.center.y;
         },
@@ -175,7 +111,42 @@ static MLAValueHelper kStaticHelpers[] =
             center.y = values[0];
             obj.center = center;
         },
-        kThresholdPoint
+        kThresholdPoint,
+        kValueCountOne
+    },
+    {
+        kMLAViewSize,
+        ^(UIView *obj, CGFloat values[]) {
+            values[0] = obj.layer.bounds.size.width;
+            values[1] = obj.layer.bounds.size.height;
+        },
+        ^(UIView *obj, const CGFloat values[]) {
+            CGSize size = CGSizeMake(values[0], values[1]);
+            if (size.width < 0.f || size.height < 0.f) {
+                return;
+            }
+            CGRect frame = obj.bounds;
+            frame.size = size;
+            obj.layer.bounds = frame;
+        },
+        kThresholdPoint,
+        kValueCountTwo
+    },
+    {
+        kMLAViewFrame,
+        ^(UIView *obj, CGFloat values[]) {
+            CGRect frame = obj.layer.frame;
+            values[0] = frame.origin.x;
+            values[1] = frame.origin.y;
+            values[2] = frame.size.width;
+            values[3] = frame.size.height;
+        },
+        ^(UIView *obj, const CGFloat values[]) {
+            CGRect frame = CGRectMake(values[0], values[1], values[2], values[3]);
+            obj.layer.frame = frame;
+        },
+        kThresholdPoint,
+        kValueCountFours
     },
     {
         kMLAViewScale,
@@ -185,7 +156,8 @@ static MLAValueHelper kStaticHelpers[] =
         ^(UIView *obj, const CGFloat values[]) {
             MLALayerSetScaleXY(obj.layer, values_to_point(values));
         },
-        kThresholdScale
+        kThresholdScale,
+        kValueCountTwo
     },
     {
         kMLAViewScaleX,
@@ -195,7 +167,8 @@ static MLAValueHelper kStaticHelpers[] =
         ^(UIView *obj, const CGFloat values[]) {
             MLALayerSetScaleX(obj.layer, values[0]);
         },
-        kThresholdScale
+        kThresholdScale,
+        kValueCountOne
     },
     {
         kMLAViewScaleY,
@@ -205,7 +178,8 @@ static MLAValueHelper kStaticHelpers[] =
         ^(UIView *obj, const CGFloat values[]) {
             MLALayerSetScaleY(obj.layer, values[0]);
         },
-        kThresholdScale
+        kThresholdScale,
+        kValueCountOne
     },
     {
         kMLAViewRotation,
@@ -215,7 +189,8 @@ static MLAValueHelper kStaticHelpers[] =
         ^(UIView *obj, const CGFloat values[]) {
             MLALayerSetRotation(obj.layer, values[0]);
         },
-        kThresholdRotation
+        kThresholdRotation,
+        kValueCountOne
     },
     {
         kMLAViewRotationX,
@@ -225,7 +200,8 @@ static MLAValueHelper kStaticHelpers[] =
         ^(UIView *obj, const CGFloat values[]) {
             MLALayerSetRotationX(obj.layer, values[0]);
         },
-        kThresholdRotation
+        kThresholdRotation,
+        kValueCountOne
     },
     {
         kMLAViewRotationY,
@@ -235,7 +211,8 @@ static MLAValueHelper kStaticHelpers[] =
         ^(UIView *obj, const CGFloat values[]) {
            MLALayerSetRotationY(obj.layer, values[0]);
         },
-        kThresholdRotation
+        kThresholdRotation,
+        kValueCountOne
     }
 };
 
@@ -255,6 +232,16 @@ static NSUInteger helperIndexInSatticStates(NSString *name)
 #pragma mark - MLAAnimatable
 
 @interface MLAAnimatable ()
+
+@property(readwrite, nonatomic, strong) NSString *name;
+
+@property(readwrite, nonatomic, strong) MLAValueReadBlock readBlock;
+
+@property(readwrite, nonatomic, strong) MLAValueWriteBlock writeBlock;
+
+@property(readwrite, nonatomic, assign) CGFloat threshold;
+
+@property(readwrite, nonatomic, assign) NSUInteger valueCount;
 
 @end
 
@@ -288,6 +275,7 @@ static NSMutableDictionary<NSString *, MLAAnimatable*> *animatableMaps;
         animatable.readBlock = helper.readBlock;
         animatable.writeBlock = helper.writeBlock;
         animatable.threshold = helper.threshold;
+        animatable.valueCount = helper.count;
     } else {
         animatable.readBlock = ^(id obj, CGFloat vlaues[]) {
             NSLog(@"-[MLAAnimatable animatableWithName:] \'name :%@\' target :%@ readBlock  is not exist !!!", name, obj);
@@ -296,10 +284,28 @@ static NSMutableDictionary<NSString *, MLAAnimatable*> *animatableMaps;
             NSLog(@"-[MLAAnimatable animatableWithName:] \'name :%@\' target :%@ readBlock  is not exist !!!", name, obj);
         };
         animatable.threshold = 1.0f;
+        animatable.valueCount = kValueCountOne;
     }
     [animatableMaps setObject:animatable forKey:name];
     
     return animatable;
+}
+
+@end
+
+@interface MLAMutableAnimatable ()
+
+@end
+
+@implementation MLAMutableAnimatable
+@synthesize readBlock;
+@synthesize writeBlock;
+@synthesize threshold;
+@synthesize valueCount;
+
++ (instancetype)animatableWithName:(NSString *)name {
+    MLAMutableAnimatable *mutableAnimatable = [[MLAMutableAnimatable alloc] initWithName:name];
+    return mutableAnimatable;
 }
 
 @end

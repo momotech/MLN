@@ -16,27 +16,57 @@ typedef void (^MLAValueWriteBlock)(id obj, const CGFloat values[_Nonnull]);
 /**
  * 可插值的数据类型
  */
-@property(nonatomic, strong) NSString *name;
+@property(readonly, nonatomic, strong) NSString *name;
 
 /**
  * 数据读取函数
  */
-@property(nonatomic, strong) MLAValueReadBlock readBlock;
+@property(readonly, nonatomic, strong) MLAValueReadBlock readBlock;
 
 /**
  * 数值更新函数
  */
-@property(nonatomic, strong) MLAValueWriteBlock writeBlock;
+@property(readonly, nonatomic, strong) MLAValueWriteBlock writeBlock;
 
 /**
  * 预留值，精度控制
  */
-@property(nonatomic, assign) CGFloat threshold;
+@property(readonly, nonatomic, assign) CGFloat threshold;
+
+/**
+ * 数值个数
+ */
+@property(readonly, nonatomic, assign) NSUInteger valueCount;
 
 - (instancetype)init NS_UNAVAILABLE;
 
 + (instancetype)animatableWithName:(NSString *)name;
 
 @end
+
+@interface MLAMutableAnimatable : MLAAnimatable
+/**
+ * 数据读取函数
+ */
+@property(readwrite, nonatomic, strong) MLAValueReadBlock readBlock;
+
+/**
+ * 数值更新函数
+ */
+@property(readwrite, nonatomic, strong) MLAValueWriteBlock writeBlock;
+
+/**
+ * 预留值，精度控制
+ */
+@property(readwrite, nonatomic, assign) CGFloat threshold;
+
+/**
+ * 数值个数
+ */
+@property(readwrite, nonatomic, assign) NSUInteger valueCount;
+
+@end
+
+typedef void(^MLAMutableAnimatableInitializeHandler)(MLAMutableAnimatable *animatable);
 
 NS_ASSUME_NONNULL_END

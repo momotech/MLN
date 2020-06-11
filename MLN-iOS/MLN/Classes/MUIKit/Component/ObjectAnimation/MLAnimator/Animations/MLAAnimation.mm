@@ -16,6 +16,7 @@
 #include "SpringAnimation.h"
 #include "MultiAnimation.h"
 #include "CustomAnimation.h"
+#include "MLAActionEnabler.h"
 
 using namespace ANIMATOR_NAMESPACE;
 
@@ -134,14 +135,17 @@ using namespace ANIMATOR_NAMESPACE;
 
 - (void)startAnimation {
     if (self.startBlock) {
+        ActionEnabler enabler;
         self.startBlock(self);
     }
 }
 
 - (void)pauseAnimation:(BOOL)paused {
     if (paused && self.pauseBlock) {
+        ActionEnabler enabler;
         self.pauseBlock(self);
     } else if (!paused && self.resumeBlock) {
+        ActionEnabler enabler;
         self.resumeBlock(self);
     }
 }
@@ -149,12 +153,14 @@ using namespace ANIMATOR_NAMESPACE;
 - (void)repeatAnimation:(NSUInteger)count {
     [self reset];
     if (self.repeatBlock) {
+        ActionEnabler enabler;
         self.repeatBlock(self, count);
     }
 }
 
 - (void)finishAnimation:(BOOL)finish {
     if (self.finishBlock) {
+        ActionEnabler enabler;
         self.finishBlock(self, finish);
     }
 }
@@ -183,22 +189,39 @@ using namespace ANIMATOR_NAMESPACE;
     return self;
 }
 
+- (instancetype)initWithValueName:(NSString *)valueName tartget:(id)target
+      mutableAnimatableInitialize:(MLAMutableAnimatableInitializeHandler)initializeHandler {
+    if (!initializeHandler) {
+        return nil;
+    }
+    if (self = [super initDefault]) {
+        [self setTarget:target];
+        _valueName = valueName;
+        MLAMutableAnimatable *mutableAnimatable = [MLAMutableAnimatable animatableWithName:valueName];
+        initializeHandler(mutableAnimatable);
+        _animatable = mutableAnimatable;
+    }
+    return self;
+}
+
 - (void)makeValueAnimation:(ValueAnimation*)animation {
     if (animation) {
         VectorRef fromVec = nullptr, toVec = nullptr;
-        NSUInteger valueCount = 0;
-        MLAValueType valueType = kMLAValueUnknown;
+        NSUInteger valueCount = self.animatable.valueCount;
         if (self.fromValue) {
-            fromVec = MLAUnbox(self.fromValue, valueType, valueCount, false);
-            
-            if (self.toValue) {
-                NSUInteger toValueCount = 0;
-                toVec = MLAUnbox(self.toValue, valueType, toValueCount, false);
-                NSAssert(valueCount == toValueCount, @"Type Error : fromCount:%@ toCount:%@",@(valueCount),@(toValueCount));
+            NSUInteger fromValueCount = 0;
+            MLAValueType valueType = kMLAValueUnknown;
+            fromVec = MLAUnbox(self.fromValue, valueType, fromValueCount, false);
+            if (valueCount != fromValueCount) {
+                fromVec = nullptr;
             }
-        } else {
-            if (self.toValue) {
-                toVec = MLAUnbox(self.toValue, valueType, valueCount, false);
+        }
+        if (self.toValue) {
+            NSUInteger toValueCount = 0;
+            MLAValueType valueType = kMLAValueUnknown;
+            toVec = MLAUnbox(self.toValue, valueType, toValueCount, false);
+            if (valueCount != toValueCount) {
+                toVec = nullptr;
             }
         }
         
@@ -210,7 +233,7 @@ using namespace ANIMATOR_NAMESPACE;
             Vector4r vec = read_values(self.animatable.readBlock, self.target, valueCount);
             toVec = VectorRef(Vector::new_vector(valueCount, vec));
         }
-       
+        
         animation->FromToValues(fromVec->data(), toVec->data(), (AMTInt)valueCount);
     }
 }
@@ -258,8 +281,11 @@ using namespace ANIMATOR_NAMESPACE;
         case MLATimingFunctionEaseIn:
             return TimingFunction::EaseIn;
             break;
+        case MLATimingFunctionEaseOut:
+        return TimingFunction::EaseOut;
+        break;
         case MLATimingFunctionEaseInEaseOut:
-            return TimingFunction::EaseOut;
+            return TimingFunction::EaseInOut;
             break;
         default:
             return TimingFunction::Default;
@@ -332,6 +358,9 @@ using namespace ANIMATOR_NAMESPACE;
     NSUInteger count = 0;
     MLAValueType valueType = kMLAValueUnknown;
     VectorRef vec = MLAUnbox(self.velocity, valueType, count, false);
+    if (!vec || count != self.animatable.valueCount) {
+        vec = MLAUnbox(self.fromValue, valueType, count, false);
+    }
     animation->SetVelocity(vec->data());
     
     if (self.dynamicsTension) {

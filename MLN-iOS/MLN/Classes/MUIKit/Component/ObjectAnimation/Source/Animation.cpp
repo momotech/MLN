@@ -110,10 +110,11 @@ void Animation::Repeat() {
 }
 
 void Animation::Stop() {
+    active = false;
+    
     if (OnAnimationStopCallback) {
         OnAnimationStopCallback(this, finished);
     }
-    active = false;
 }
 
 void Animation::StartAnimationIfNeed(AMTTimeInterval time) {

@@ -49,7 +49,7 @@ void ObjectAnimation::Tick(AMTTimeInterval time, AMTTimeInterval timeInterval, A
     //AMTFloat localDuration = fmin(timeInterval, duration) / duration
     progress = fmin(timeProcess / duration, 1.0);
 
-    AMTFloat t = MathUtil::TimingFunctionSolve(controlPoints, progress, SOLVE_EPS(progress));
+    AMTFloat t = MathUtil::TimingFunctionSolve(controlPoints, progress, SOLVE_EPS(duration));
 
     MathUtil::InterpolateVector(valueCount, currentValue.data(), fromValue.data(), toValue.data(), t);
     

@@ -69,6 +69,16 @@ void MultiAnimation::StartAddRunningAnimation() {
     }
 }
 
+void MultiAnimation::Pause(AMTBool pause) {
+    if (runningAnimationList.size()) {
+        for (int i = 0; i < runningAnimationList.size(); i++) {
+            Animation* animation = runningAnimationList[i];
+            animation->Pause(pause);
+        }
+    }
+    Animation::Pause(pause);
+}
+
 void MultiAnimation::Start() {
     Animation::Start();
 

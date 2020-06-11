@@ -36,7 +36,7 @@ public:
     void SetAutoreverses(AMTBool bAutoReverses = false);
 
     // 暂停动画
-    void Pause(AMTBool pause);
+    virtual void Pause(AMTBool pause);
 
 public:
     // 动画开始时间，相对动画添加的时间间隔，动画开始后设置不生效

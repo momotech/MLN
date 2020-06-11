@@ -6,6 +6,7 @@
 #include "SpringAnimation.h"
 #include "AnimatorExtras.h"
 #include "MathUtil.h"
+#include <stdlib.h>
 
 ANIMATOR_NAMESPACE_BEGIN
 
@@ -45,6 +46,11 @@ SpringAnimation::SpringAnimation(const AMTString &strName)
   dynamicsFriction(0.f),
   dynamicsTension(0.f),
   dynamicsMass(0.f),
+  velocityVec(nullptr),
+  toValueVec(nullptr),
+  currentVec(nullptr),
+  previousVec(nullptr),
+  previous2Vec(nullptr),
   userSpecifiedDynamics(false) {
     springSolver4R = new SpringSolver4r(1, 1, 1);
     dynamicsThreshold = this->threshold;
@@ -107,6 +113,12 @@ void SpringAnimation::SetDynamicsMass(AMTFloat dynamicsMass) {
     SpringAnimation::UpdateDynamics();
 }
 
+void SpringAnimation::Reset() {
+    ValueAnimation::Reset();
+    previousVec = previous2Vec = nullptr;
+    currentVec = toValueVec = velocityVec = nullptr;
+}
+
 void SpringAnimation::Tick(AMTTimeInterval time, AMTTimeInterval timeInterval, AMTTimeInterval timeProcess) {
     ValueAnimation::Tick(time, timeInterval, timeProcess);
 
@@ -162,7 +174,7 @@ void SpringAnimation::Tick(AMTTimeInterval time, AMTTimeInterval timeInterval, A
         progress = func(v, f, t);
     }
 
-    if (progress >= 1.0) {
+    if (springSolver4R->started() && (HasConverged() && springSolver4R->hasConverged())) {
         finished = true;
         currentValue = toValue;
     }
@@ -170,6 +182,31 @@ void SpringAnimation::Tick(AMTTimeInterval time, AMTTimeInterval timeInterval, A
     if (callbackValue) {
         callbackValue(currentValue.data());
     }
+}
+
+AMTBool SpringAnimation::HasConverged() {
+    if (!previousVec || !previous2Vec) {
+        if (!previous2Vec && previousVec) {
+            previous2Vec = previousVec;
+        }
+        previousVec = currentVec;
+        return false;
+    }
+    
+    AMTInt count = valueCount;
+    AMTFloat t  = dynamicsThreshold / 5;
+
+    const AMTFloat *toValues = toValueVec->data();
+    const AMTFloat *previousValues = previousVec->data();
+    const AMTFloat *previous2Values = previous2Vec->data();
+
+    for (AMTInt idx = 0; idx < count; idx++) {
+        if ((abs(toValues[idx] - previousValues[idx]) >= t) ||
+            (abs(previous2Values[idx] - previousValues[idx]) >= t)) {
+            return false;
+        }
+    }
+    return true;
 }
 
 ANIMATOR_NAMESPACE_END

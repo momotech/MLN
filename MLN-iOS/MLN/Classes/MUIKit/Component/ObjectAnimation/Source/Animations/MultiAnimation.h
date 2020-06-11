@@ -33,6 +33,8 @@ public:
         return runningAnimationList;
     }
     
+    void Pause(AMTBool pause) override;
+    
     static const char* ANIMATION_TYPENAME;ANIMATION_TYPE_DEF(ANIMATION_TYPENAME);
 
 protected:

@@ -5,6 +5,7 @@
 
 #import <CoreGraphics/CoreGraphics.h>
 #import "MLADefines.h"
+#import "MLAAnimatable.h"
 
 // 动画过程回调Block
 @class MLAAnimation;
@@ -75,6 +76,11 @@ typedef void(^MLAAnimationFinishBlock)(MLAAnimation* animation, BOOL finish);
  */
 - (void)start;
 
+/**
+ * 开始动画，带Finish回调
+ * @param finishBlock 动画完成
+ */
+
 - (void)start:(MLAAnimationFinishBlock)finishBlock;
 
 /**
@@ -124,6 +130,12 @@ typedef void(^MLAAnimationFinishBlock)(MLAAnimation* animation, BOOL finish);
  * @param valueName 进行动画的属性类型
  */
 - (instancetype)initWithValueName:(NSString *)valueName tartget:(id)target;
+
+/**
+ * 自定义数值刷新绑定
+ */
+- (instancetype)initWithValueName:(NSString *)valueName tartget:(id)target
+      mutableAnimatableInitialize:(MLAMutableAnimatableInitializeHandler)initializeHandler;
 
 
 @end

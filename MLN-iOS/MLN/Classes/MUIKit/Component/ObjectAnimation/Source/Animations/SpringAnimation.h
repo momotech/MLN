@@ -77,6 +77,10 @@ public:
 
 protected:
     /**
+    * 重制Spring属性动画数值
+    */
+    void Reset() override;
+    /**
      * 覆写父类方法，实现属性动画的Tick
      * @param time 当前时间
      * @param timeInterval 和上次loop的时间间隔
@@ -93,6 +97,11 @@ private:
      * 通过Speed和Bounciness计算Spring动态算法参数
      */
     void UpdateDynamicsBySpeedOrBounciness();
+    
+    /**
+     * 判断是否收敛
+     */
+    AMTBool HasConverged();
 
 private:
     // 当前的速度值
@@ -129,6 +138,11 @@ private:
     VectorRef toValueVec;
 
     VectorRef velocityVec;
+    
+    // 最近两次插值缓存
+    VectorRef previousVec;
+    
+    VectorRef previous2Vec;
     
 };
 

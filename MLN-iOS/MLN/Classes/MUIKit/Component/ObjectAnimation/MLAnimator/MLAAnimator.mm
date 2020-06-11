@@ -95,7 +95,8 @@ static MLAAnimator* shareInstance;
 {
     // 开启CATransaction
     self.transactionEnableState = [CATransaction disableActions];
-    [CATransaction setDisableActions:NO];
+    [CATransaction begin];
+    [CATransaction setDisableActions:YES];
 }
 
 - (void)onUpdateAnimation:(Animation *)animation
@@ -184,6 +185,7 @@ static MLAAnimator* shareInstance;
 
 - (void)onLoopEndCallback:(AMTTimeInterval)currentTime
 {
+    [CATransaction commit];
     // 还原CATransaction原始状态
     [CATransaction setDisableActions:self.transactionEnableState];
 }
