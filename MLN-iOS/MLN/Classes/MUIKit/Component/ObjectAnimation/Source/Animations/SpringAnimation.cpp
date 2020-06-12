@@ -117,6 +117,14 @@ void SpringAnimation::Reset() {
     ValueAnimation::Reset();
     previousVec = previous2Vec = nullptr;
     currentVec = toValueVec = velocityVec = nullptr;
+    dynamicsThreshold = this->threshold;
+}
+
+void SpringAnimation::RepeatReset() {
+    Animation::RepeatReset();
+    previousVec = previous2Vec = nullptr;
+    currentVec = toValueVec = velocityVec = nullptr;
+    dynamicsThreshold = this->threshold;
 }
 
 void SpringAnimation::Tick(AMTTimeInterval time, AMTTimeInterval timeInterval, AMTTimeInterval timeProcess) {
@@ -175,7 +183,7 @@ void SpringAnimation::Tick(AMTTimeInterval time, AMTTimeInterval timeInterval, A
     }
 
     if (springSolver4R->started() && (HasConverged() && springSolver4R->hasConverged())) {
-        finished = true;
+        Animation::SetFinish(true);
         currentValue = toValue;
     }
 

@@ -44,7 +44,8 @@ void CustomAnimation::Tick(AMTTimeInterval time, AMTTimeInterval timeInterval, A
     elapsedTime = timeInterval;
 
     if (tickCallback) {
-        finished = tickCallback(name, *this);
+        AMTBool bFinish = tickCallback(GetName(), *this);
+        Animation::SetFinish(bFinish);
     }
 }
 

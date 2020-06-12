@@ -54,7 +54,7 @@ void ObjectAnimation::Tick(AMTTimeInterval time, AMTTimeInterval timeInterval, A
     MathUtil::InterpolateVector(valueCount, currentValue.data(), fromValue.data(), toValue.data(), t);
     
     if (progress >= 1.0) {
-        finished = true;
+        Animation::SetFinish(true);
         currentValue = toValue;
     }
 

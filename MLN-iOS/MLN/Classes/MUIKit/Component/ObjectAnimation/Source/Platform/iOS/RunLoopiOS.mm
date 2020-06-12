@@ -32,15 +32,21 @@ static CADisplayLink* loopDisplayLink;
 
 @implementation AnimatorRunLoop
 
-
 + (void)startDislpayLink
 {
-    dispatch_async(dispatch_get_main_queue(), ^{
-        loopDisplayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(render)];
-        [loopDisplayLink addToRunLoop:[NSRunLoop mainRunLoop] forMode:NSRunLoopCommonModes];
-    });
-    if (loopDisplayLink.paused) {
-        loopDisplayLink.paused = NO;
+    dispatch_block_t block = ^() {
+        if (!loopDisplayLink) {
+            loopDisplayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(render)];
+            [loopDisplayLink addToRunLoop:[NSRunLoop mainRunLoop] forMode:NSRunLoopCommonModes];
+        }
+        if (loopDisplayLink.paused) {
+            loopDisplayLink.paused = NO;
+        }
+    };
+    if ([NSThread currentThread].isMainThread) {
+        block();
+    } else {
+        dispatch_sync(dispatch_get_main_queue(), block);
     }
 }
 

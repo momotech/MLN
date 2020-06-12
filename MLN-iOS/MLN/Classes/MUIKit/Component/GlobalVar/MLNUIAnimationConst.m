@@ -28,7 +28,7 @@ NSString * const kMUITransform = @"transform";
 
 NSString * const kMUITimingConfigDuration = @"Duration";
 NSString * const kMUITimingConfigVelocity = @"Belocity";
-NSString * const kMUITimingConfigBounciness = @"Nounciness";
+NSString * const kMUITimingConfigBounciness = @"Bounciness";
 NSString * const kMUITimingConfigSpeed = @"Speed";
 NSString * const kMUITimingConfigTension = @"Tension";
 NSString * const kMUITimingConfigFriction = @"Friction";

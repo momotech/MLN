@@ -40,7 +40,7 @@ public:
 protected:
     void Reset() override;
     
-    void InnerReset() override;
+    void RepeatReset() override;
 
     void Start() override;
 

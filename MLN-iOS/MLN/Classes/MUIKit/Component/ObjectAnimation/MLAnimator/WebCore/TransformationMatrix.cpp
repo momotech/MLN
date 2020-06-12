@@ -292,7 +292,7 @@ namespace MLAWebCore {
     result[2] = (a[0] * b[1]) - (a[1] * b[0]);
   }
   
-  static bool decompose(const TransformationMatrix::Matrix4& mat, TransformationMatrix::DecomposedType& result, bool useEulerAngle = false)
+  static bool decompose(const TransformationMatrix::Matrix4& mat, TransformationMatrix::DecomposedType& result, bool useEulerAngle = true)
   {
     TransformationMatrix::Matrix4 localMatrix;
     memcpy(localMatrix, mat, sizeof(TransformationMatrix::Matrix4));
@@ -409,23 +409,22 @@ namespace MLAWebCore {
         row[i][2] *= -1;
       }
     }
-    
-    // Now, get the rotations out, as described in the gem.
-    float sy = sqrt(row[0][0] * row[0][0] + row[1][0] * row[1][0]);
-    bool singular = sy < SMALL_NUMBER;
-
-    if (!singular) {
-      result.rotateX = atan2(row[2][1] , row[2][2]);
-      result.rotateY = atan2(-row[2][0], sy);
-      result.rotateZ = atan2(row[1][0], row[0][0]);
-    } else {
-      result.rotateX = atan2(-row[1][2], row[1][1]);
-      result.rotateY = atan2(-row[2][0], sy);
-      result.rotateZ = 0;
-    }
-    
 
     if (useEulerAngle) {
+      // Now, get the rotations out, as described in the gem.
+      float sy = sqrt(row[0][0] * row[0][0] + row[1][0] * row[1][0]);
+      bool singular = sy < SMALL_NUMBER;
+
+      if (!singular) {
+        result.rotateX = atan2(row[2][1] , row[2][2]);
+        result.rotateY = atan2(-row[2][0], sy);
+        result.rotateZ = atan2(row[1][0], row[0][0]);
+      } else {
+        result.rotateX = atan2(-row[1][2], row[1][1]);
+        result.rotateY = atan2(-row[2][0], sy);
+        result.rotateZ = 0;
+      }
+    } else {
       double s, t, x, y, z, w;
       
       t = row[0][0] + row[1][1] + row[2][2] + 1.0;

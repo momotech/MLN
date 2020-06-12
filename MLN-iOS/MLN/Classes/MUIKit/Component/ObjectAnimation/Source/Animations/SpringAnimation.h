@@ -80,6 +80,12 @@ protected:
     * 重制Spring属性动画数值
     */
     void Reset() override;
+    
+    /**
+     * 重复重置
+     */
+    void RepeatReset() override;
+    
     /**
      * 覆写父类方法，实现属性动画的Tick
      * @param time 当前时间

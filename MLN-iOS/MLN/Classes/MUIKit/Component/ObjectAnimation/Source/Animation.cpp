@@ -97,10 +97,10 @@ void Animation::Start() {
 void Animation::Repeat() {
     if (willrepeat) {
         if (finished && repeatForever) {
-            InnerReset();
+            RepeatReset();
         } else if (finished && realRepeatCount > 1) {
             realRepeatCount --;
-            InnerReset();
+            RepeatReset();
         }
         willrepeat = false;
         if (OnAnimationRepeatCallback) {
@@ -144,6 +144,10 @@ void Animation::Tick(AMTTimeInterval time, AMTTimeInterval timeInterval, AMTTime
     // 更新相关数据，扩展类实现自己的数值计算算法
 }
 
+void Animation::SetFinish(AMTBool bFinish) {
+    finished = bFinish;
+}
+
 void Animation::StopAnimationIfFinish() {
 
     if (finished && realRepeatCount == 1 && !repeatForever) {
@@ -158,7 +162,7 @@ void Animation::StopAnimationIfFinish() {
     
 }
 
-void Animation::InnerReset() {
+void Animation::RepeatReset() {
      paused = true;
      active = false;
      startTime = lastTime = 0.f;

@@ -36,8 +36,8 @@ void MultiAnimation::Reset() {
     ResetSubAnimation();
 }
 
-void MultiAnimation::InnerReset() {
-    Animation::InnerReset();
+void MultiAnimation::RepeatReset() {
+    Animation::RepeatReset();
     
     ResetSubAnimation();
     StartAddRunningAnimation();
@@ -97,7 +97,7 @@ void MultiAnimation::Tick(AMTTimeInterval time, AMTTimeInterval timeInterval, AM
     Animation::Tick(time, timeInterval, timeProcess);
 
     if (animationList.size() == 0) {
-        finished = true;
+        Animation::SetFinish(true);
     }
 
     if (runningType == Together) {
@@ -141,7 +141,7 @@ void MultiAnimation::Tick(AMTTimeInterval time, AMTTimeInterval timeInterval, AM
     }
 
     if (finishAnimationList.size() && finishAnimationList.size() == animationList.size()) {
-        finished = true;
+        Animation::SetFinish(true);
     }
 }
 

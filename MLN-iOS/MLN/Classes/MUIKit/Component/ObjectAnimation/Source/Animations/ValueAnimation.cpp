@@ -44,7 +44,7 @@ void ValueAnimation::Tick(AMTTimeInterval time, AMTTimeInterval timeInterval, AM
     Animation::Tick(time, timeInterval, timeProcess);
 
     // 统一的数值计算，让扩展类实现的数据插值方式
-    // printf("ValueAnimation::Tick %p Animation Type: %s value :%f \n", this, GetAnimationType(), currentValue[0]);
+    // printf("ValueAnimation::Tick %p Type: %s value :%f \n", this, GetAnimationType(), currentValue[0]);
 }
 
 void ValueAnimation::Reset() {
@@ -60,7 +60,7 @@ void ValueAnimation::Start() {
 
 void ValueAnimation::Repeat() {
     
-    if (autoreverses) {
+    if (Animation::GetAutoreverses()) {
         auto preFromValue = fromValue;
         fromValue = toValue;
         toValue = preFromValue;

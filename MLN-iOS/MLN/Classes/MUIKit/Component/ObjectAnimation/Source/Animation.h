@@ -84,7 +84,10 @@ protected:
      */
     virtual void Reset();
     
-    virtual void InnerReset();
+    /**
+     * 动画重复的状态重置
+     */
+    virtual void RepeatReset();
 
     /**
      * 动画开始
@@ -108,6 +111,18 @@ protected:
      * @param timeProcess 和动画开始的时间间隔
      */
     virtual void Tick(AMTTimeInterval time, AMTTimeInterval timeInterval, AMTTimeInterval timeProcess);
+    
+    /**
+     * 当次动画执行完成
+     */
+    void SetFinish(AMTBool bFinish);
+    
+    /**
+     * 动画是否翻转
+     */
+    ANIMATOR_INLINE AMTBool GetAutoreverses() const {
+        return autoreverses;
+    }
 
 private:
 
@@ -166,10 +181,6 @@ private:
     AMTTimeInterval pauseBeginTime;
 
     friend class AnimatorEngine;
-    friend class ValueAnimation;
-    friend class ObjectAnimation;
-    friend class SpringAnimation;
-    friend class CustomAnimation;
     friend class MultiAnimation;
 };
 
