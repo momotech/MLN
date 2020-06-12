@@ -221,6 +221,13 @@ static YGConfigRef globalConfig;
     return array;
 }
 
+- (MLNUILayoutNode *)superNode {
+    YGNodeRef nodeRef = YGNodeGetOwner(self.node);
+    if (!nodeRef) return nil;
+    UIView *view = (__bridge id)YGNodeGetContext(nodeRef);
+    return [view mlnui_layoutNode];
+}
+
 #pragma mark - Style
 
 - (YGPositionType)position
@@ -323,6 +330,20 @@ YG_PROPERTY(CGFloat, aspectRatio, AspectRatio)
         .width = YGNodeLayoutGetWidth(node),
         .height = YGNodeLayoutGetHeight(node),
     };
+}
+
+#pragma mark - Node Tree
+
+- (void)addSubNode:(MLNUILayoutNode *)node {
+    [self insertSubNode:node atIndex:YGNodeGetChildCount(self.node)];
+}
+
+- (void)insertSubNode:(MLNUILayoutNode *)node atIndex:(NSInteger)index {
+    YGNodeInsertChild(self.node, node.node, (const uint32_t)index);
+}
+
+- (void)removeSubNode:(MLNUILayoutNode *)node {
+    YGNodeRemoveChild(self.node, node.node);
 }
 
 #pragma mark - Private

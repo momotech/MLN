@@ -84,23 +84,38 @@ static const void *kMLNUILayoutAssociatedKey = &kMLNUILayoutAssociatedKey;
 }
 
 - (void)luaui_addSubview:(UIView *)view {
+    if (view.superview && view.superview == self) {
+        return;
+    }
+    if (view.superview) {
+        [view luaui_removeFromSuperview];
+    }
     [self addSubview:view];
     // 添加Lua强引用
     MLNUI_Lua_UserData_Retain_With_Index(2, view);
+    [self.mlnui_layoutNode addSubNode:view.mlnui_layoutNode];
 }
 
 - (void)luaui_insertSubview:(UIView *)view atIndex:(NSInteger)index {
+    if (view.superview && view.superview == self) {
+        return;
+    }
+    if (view.superview) {
+        [view luaui_removeFromSuperview];
+    }
     index = index - 1;
     index = index >= 0 && index < self.subviews.count? index : self.subviews.count;
     [self insertSubview:view atIndex:index];
     // 添加Lua强引用
     MLNUI_Lua_UserData_Retain_With_Index(2, view);
+    [self.mlnui_layoutNode insertSubNode:view.mlnui_layoutNode atIndex:index];
 }
 
 - (void)luaui_removeFromSuperview {
     [self removeFromSuperview];
     // 删除Lua强引用
     MLNUI_Lua_UserData_Release(self);
+    [self.mlnui_layoutNode.superNode removeSubNode:self.mlnui_layoutNode];
 }
 
 - (void)luaui_removeAllSubViews {

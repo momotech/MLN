@@ -126,9 +126,14 @@ typedef NS_OPTIONS(NSInteger, YGDimensionFlexibility) {
 @property (nonatomic, assign, readonly) BOOL isWrapContent;
 @property (nonatomic, weak,   readonly) UIView *view;
 @property (nonatomic, strong, readonly) NSArray<MLNUILayoutNode *> *subNodes;
+@property (nonatomic, strong, readonly) MLNUILayoutNode *superNode;
 
 /// Mark that a view's layout needs to be recalculated. Only works for leaf views.
 - (void)markDirty;
+
+- (void)addSubNode:(MLNUILayoutNode *)node;
+- (void)insertSubNode:(MLNUILayoutNode *)node atIndex:(NSInteger)index;
+- (void)removeSubNode:(MLNUILayoutNode *)node;
 
 @end
 
