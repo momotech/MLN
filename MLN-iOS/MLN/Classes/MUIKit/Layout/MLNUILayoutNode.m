@@ -335,14 +335,17 @@ YG_PROPERTY(CGFloat, aspectRatio, AspectRatio)
 #pragma mark - Node Tree
 
 - (void)addSubNode:(MLNUILayoutNode *)node {
+    if (!node) return;
     [self insertSubNode:node atIndex:YGNodeGetChildCount(self.node)];
 }
 
 - (void)insertSubNode:(MLNUILayoutNode *)node atIndex:(NSInteger)index {
+    if (!node) return;
     YGNodeInsertChild(self.node, node.node, (const uint32_t)index);
 }
 
 - (void)removeSubNode:(MLNUILayoutNode *)node {
+    if (!node) return;
     YGNodeRemoveChild(self.node, node.node);
 }
 

@@ -600,10 +600,10 @@ static const void *kMLNUILayoutAssociatedKey = &kMLNUILayoutAssociatedKey;
 
 static MLNUI_FORCE_INLINE void MLNUIComposeFrame(UIView *view, CGRect frame1, CGRect frame2) {
     CGRect frame = (CGRect){
-        CGRectGetMinX(frame1) + CGRectGetMinX(frame2),
-        CGRectGetMinY(frame1) + CGRectGetMinY(frame2),
-        CGRectGetWidth(frame1) + CGRectGetWidth(frame2),
-        CGRectGetHeight(frame1) + CGRectGetHeight(frame2)
+        frame1.origin.x + frame2.origin.x,
+        frame1.origin.y + frame2.origin.y,
+        frame1.size.width + frame2.size.width,
+        frame1.size.height + frame2.size.height,
     };
     view.frame = frame;
 }
