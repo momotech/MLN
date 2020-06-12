@@ -569,6 +569,12 @@ static const void *kMLNUILayoutAssociatedKey = &kMLNUILayoutAssociatedKey;
     }
 }
 
+- (void)mlnui_requestLayoutIfNeedWithSize:(CGSize)size {
+    if (self.mlnui_layoutNode.isDirty) {
+        [self.mlnui_layoutNode applyLayoutWithSize:size];
+    }
+}
+
 - (void)mlnui_layoutDidChange {
     // 1.如果当前View的Frame变更，检查是否需要修正圆角
     [self mlnui_updateCornersIfNeed];

@@ -35,12 +35,13 @@
 
 #pragma mark - Override
 
-- (void)luaui_addSubview:(UIView *)view
-{
+- (void)luaui_addSubview:(UIView *)view {
+    [self mlnui_markNeedsLayout]; // scrollView 作为叶子节点, 但 scrollView 上的 mlnui_contentView 并没有作为根节点，所以若往 scrollView 上 添加/删除视图，不能触发 mlnui_contentView 测量计算，因此这里需要将 srollView 标为 dirty，进而从根节点开始触发测量布局
     [self.innerScrollView luaui_addSubview:view];
 }
 
 - (void)luaui_removeAllSubViews {
+    [self mlnui_markNeedsLayout];
     [self.innerScrollView luaui_removeAllSubViews];
 }
 
@@ -210,10 +211,7 @@
 
 - (void)mlnui_layoutCompleted {
     [super mlnui_layoutCompleted];
-    UIView *contentView = self.innerScrollView.mlnui_contentView;
-    if (CGSizeEqualToSize(contentView.frame.size, CGSizeZero)) { // 固定宽高不会执行mlnui_sizeThatFits
-        [contentView.mlnui_layoutNode applyLayoutWithSize:CGSizeMake(MLNUIUndefined, MLNUIUndefined)];
-    }
+    [self.innerScrollView.mlnui_contentView mlnui_requestLayoutIfNeedWithSize:CGSizeMake(MLNUIUndefined, MLNUIUndefined)]; // 固定宽高不会执行mlnui_sizeThatFits
 }
 
 #pragma mark - MLNUIPaddingContainerViewProtocol

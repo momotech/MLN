@@ -69,7 +69,7 @@ static inline void MLNUILayoutNodeClearHeight(UIView *view) {
 
 - (void)setupLayoutNodeIfNeed {
     if (!self.inited) {
-        [self.mlnui_layoutNode markDirty];
+        [self mlnui_markNeedsLayout];
         [MLNUI_KIT_INSTANCE(self.mlnui_luaCore) addRootnode:self.mlnui_layoutNode];
     }
 }
