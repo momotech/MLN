@@ -63,7 +63,7 @@
     return NO;
 }
 
-- (BOOL)luaui_layoutEnable
+- (BOOL)mlnui_layoutEnable
 {
     return YES;
 }

@@ -251,7 +251,7 @@ static NSValue *kSizeValueZero = nil;
     [reuseCallback addIntArgument:(int)indexPath.section+1];
     [reuseCallback addIntArgument:(int)indexPath.item+1];
     [reuseCallback callIfCan];
-    [cell requestLayoutIfNeed];
+    [cell mlnui_requestLayoutIfNeed];
     return cell;
 }
 

@@ -17,8 +17,6 @@ NS_ASSUME_NONNULL_BEGIN
 @class MLNUIRenderContext;
 @interface UIView (MLNUIKit)
 
-@property (nonatomic, assign) CGFloat luaui_x;
-@property (nonatomic, assign) CGFloat luaui_y;
 @property (nonatomic, assign) CGFloat luaui_width;
 @property (nonatomic, assign) CGFloat luaui_height;
 @property (nonatomic, assign) CGFloat luaui_bottom;
@@ -26,8 +24,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) CGRect luaui_frame;
 @property (nonatomic, assign) BOOL luaui_enable;
 
-- (void)luaui_layoutIfNeed;
-- (void)luaui_sizeToFit;
 - (CGPoint)luaui_convertRelativePointToView:(UIView *)view point:(CGPoint)point;
 
 #pragma mark - TouchEvent
@@ -72,36 +68,6 @@ NS_ASSUME_NONNULL_BEGIN
  请求焦点
  */
 - (void)luaui_requestFocus;
-
-#pragma mark - Keyboard
-
-/**
- * keyboardHandler 处理键盘偏移相关
- **/
-@property (nonatomic, strong) MLNUIKeyboardViewHandler *luaui_keyboardViewHandler;
-
-/**
- 键盘出现自动上移View
- 
- @param bAdjust 是否上移
- */
-- (void)luaui_setPositionAdjustForKeyboard:(BOOL)bAdjust;
-
-/**
- 键盘出现自动上移View
- 
- @param bAdjust 是否上移（默认上移键盘高度
- @param offsetY  数值方向偏移（默认为0
- */
-- (void)luaui_setPositionAdjustForKeyboard:(BOOL)bAdjust offsetY:(CGFloat)offsetY;
-
-/**
- 键盘出现自动上移View 源生
- 
- @param bAdjust 是否上移（默认上移键盘高度
- @param offsetY  数值方向偏移（默认为0
- **/
-- (void)mlnui_in_setPositionAdjustForKeyboard:(BOOL)bAdjust offsetY:(CGFloat)offsetY;
 
 /**
  如果需要就重置Transform

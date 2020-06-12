@@ -11,10 +11,8 @@
 #import "UIScrollView+MLNUIKit.h"
 #import "MLNUIScrollViewDelegate.h"
 #import "UIView+MLNUILayout.h"
-#import "MLNUILinearLayout.h"
 #import "UIView+MLNUIKit.h"
 #import "MLNUILuaCore.h"
-#import "MLNUILayoutScrollContainerNode.h"
 #import "MLNUIInnerScrollView.h"
 #import "MLNUIViewConst.h"
 
@@ -26,16 +24,16 @@
 
 @implementation MLNUIScrollView
 
-- (instancetype)initWithMLNUILuaCore:(MLNUILuaCore *)luaCore isHorizontal:(NSNumber *)isHorizontal isLinearContenView:(NSNumber *)isLinearContenView
+- (instancetype)initWithMLNUILuaCore:(MLNUILuaCore *)luaCore isHorizontal:(NSNumber *)isHorizontal isStackContenView:(NSNumber *)isStackContenView
 {
     if (self = [super initWithFrame:CGRectZero]) {
-        _innerScrollView = [[MLNUIInnerScrollView alloc] initWithMLNUILuaCore:luaCore direction:[isHorizontal boolValue] isLinearContenView:[isLinearContenView boolValue]];
+        _innerScrollView = [[MLNUIInnerScrollView alloc] initWithMLNUILuaCore:luaCore direction:[isHorizontal boolValue] isStackContenView:[isStackContenView boolValue]];
         [super luaui_addSubview:_innerScrollView];
-        _innerScrollView.luaui_node.widthType = MLNUILayoutMeasurementTypeMatchParent;
-        _innerScrollView.luaui_node.heightType = MLNUILayoutMeasurementTypeMatchParent;
     }
     return self;
 }
+
+#pragma mark - Override
 
 - (void)luaui_addSubview:(UIView *)view
 {
@@ -44,36 +42,6 @@
 
 - (void)luaui_removeAllSubViews {
     [self.innerScrollView luaui_removeAllSubViews];
-}
-
-- (void)setLuaui_width:(CGFloat)luaui_width
-{
-    [super setLuaui_width:luaui_width];
-    if (self.luaui_node.isDirty) {
-        [self.innerScrollView luaui_needLayout];
-        [self.innerScrollView updateContentViewLayoutIfNeed];
-    }
-}
-
-- (void)setLuaui_height:(CGFloat)luaui_height
-{
-    [super setLuaui_height:luaui_height];
-    if (self.luaui_node.isDirty) {
-        [self.innerScrollView luaui_needLayout];
-        [self.innerScrollView updateContentViewLayoutIfNeed];
-    }
-}
-
-- (void)setLuaui_ContentSize:(CGSize)contentSize
-{
-    MLNUIKitLuaAssert(NO, @"ScrollView 'contentSize' setter is deprecated");
-    self.innerScrollView.contentSize = contentSize;
-    [self.innerScrollView recalculContentSizeIfNeed];
-}
-
-- (CGSize)luaui_contentSize
-{
-    return self.innerScrollView.contentSize;
 }
 
 - (void)setLuaui_loadahead:(CGFloat)loadahead
@@ -226,21 +194,36 @@
     return self.innerScrollView.pagingEnabled;
 }
 
+#pragma mark - Override (Layout)
 
-#pragma mark - Override
-- (BOOL)luaui_layoutEnable
-{
+- (BOOL)mlnui_layoutEnable {
     return YES;
 }
 
-- (BOOL)luaui_isContainer
-{
+- (BOOL)luaui_isContainer {
     return YES;
+}
+
+- (CGSize)mlnui_sizeThatFits:(CGSize)size {
+    return [self.innerScrollView.mlnui_contentView.mlnui_layoutNode applyLayoutWithSize:CGSizeMake(MLNUIUndefined, MLNUIUndefined)]; // 自适应内容大小 (前提是没有设置固定宽高)
+}
+
+- (void)mlnui_layoutCompleted {
+    [super mlnui_layoutCompleted];
+    UIView *contentView = self.innerScrollView.mlnui_contentView;
+    if (CGSizeEqualToSize(contentView.frame.size, CGSizeZero)) { // 固定宽高不会执行mlnui_sizeThatFits
+        [contentView.mlnui_layoutNode applyLayoutWithSize:CGSizeMake(MLNUIUndefined, MLNUIUndefined)];
+    }
+}
+
+#pragma mark - MLNUIPaddingContainerViewProtocol
+
+- (UIView *)mlnui_contentView {
+    return self.innerScrollView;
 }
 
 #pragma mark - Export For Lua
 LUAUI_EXPORT_VIEW_BEGIN(MLNUIScrollView)
-LUAUI_EXPORT_VIEW_PROPERTY(contentSize, "setLuaui_ContentSize:", "luaui_contentSize", MLNUIScrollView)
 LUAUI_EXPORT_VIEW_PROPERTY(loadThreshold, "setLuaui_loadahead:", "luaui_loadahead", MLNUIScrollView)
 LUAUI_EXPORT_VIEW_PROPERTY(contentOffset, "setLuaui_ContentOffset:", "luaui_contentOffset", MLNUIScrollView)
 LUAUI_EXPORT_VIEW_PROPERTY(scrollEnabled, "setLuaui_ScrollEnabled:", "luaui_isScrollEnabled", MLNUIScrollView)
@@ -261,7 +244,7 @@ LUAUI_EXPORT_VIEW_METHOD(getContentInset, "luaui_getContetnInset:", MLNUIScrollV
 LUAUI_EXPORT_VIEW_METHOD(setScrollIndicatorInset, "luaui_setScrollIndicatorInset:right:bottom:left:", MLNUIScrollView)
 LUAUI_EXPORT_VIEW_METHOD(setOffsetWithAnim, "luaui_setContentOffsetWithAnimation:", MLNUIScrollView)
 LUAUI_EXPORT_VIEW_METHOD(setScrollEnable, "mlnui_setLuaScrollEnable:", MLNUIScrollView)
-LUAUI_EXPORT_VIEW_END(MLNUIScrollView, ScrollView, YES, "MLNUIView", "initWithMLNUILuaCore:isHorizontal:isLinearContenView:")
+LUAUI_EXPORT_VIEW_END(MLNUIScrollView, ScrollView, YES, "MLNUIView", "initWithMLNUILuaCore:isHorizontal:isStackContenView:")
 
 @end
 

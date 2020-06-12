@@ -29,7 +29,7 @@ Pod::Spec.new do |s|
     # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
     
     s.ios.deployment_target = '8.0'
-    s.libraries = 'z', 'libc++'
+    s.libraries = 'z'
     s.requires_arc = true
     
     s.subspec 'Core' do |c|
@@ -43,9 +43,9 @@ Pod::Spec.new do |s|
     s.subspec 'Kit' do |k|
         k.name = 'Kit'
         k.framework = 'Foundation', 'UIKit', 'CoreGraphics', 'AVFoundation'
-        k.source_files = 'MLN-iOS/MLN/Classes/MUIKit/**/*.{h,m,c}'
+        k.source_files = 'MLN-iOS/MLN/Classes/MUIKit/**/*.{h,m,c,cpp,mm}'
         k.public_header_files = 'MLN-iOS/MLN/Classes/MUIKit/**/*.h'
-        k.dependency  'ArgoUI/Core'
+        k.dependency 'ArgoUI/Core'
     end
     
 end

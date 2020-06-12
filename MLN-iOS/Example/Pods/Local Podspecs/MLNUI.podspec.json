@@ -18,6 +18,11 @@
   },
   "libraries": "z",
   "requires_arc": true,
+  "dependencies": {
+    "Yoga": [
+
+    ]
+  },
   "subspecs": [
     {
       "name": "Core",

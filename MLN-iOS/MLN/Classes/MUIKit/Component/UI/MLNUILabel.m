@@ -15,7 +15,6 @@
 #import "MLNUIFont.h"
 #import "UIView+MLNUIKit.h"
 #import "UIView+MLNUILayout.h"
-#import "MLNUILayoutNode.h"
 #import "MLNUISizeCahceManager.h"
 #import "MLNUIBeforeWaitingTask.h"
 #import "NSAttributedString+MLNUIKit.h"
@@ -58,8 +57,8 @@
     if (self.autoFit) {
         [self.innerLabel sizeToFit];
         CGRect frame = self.innerLabel.frame;
-        frame.size.width = frame.size.width + self.luaui_paddingLeft + self.luaui_paddingRight;
-        frame.size.height = frame.size.height + self.luaui_paddingTop + self.luaui_paddingBottom;
+        frame.size.width = frame.size.width + self.mlnui_paddingLeft + self.mlnui_paddingRight;
+        frame.size.height = frame.size.height + self.mlnui_paddingTop + self.mlnui_paddingBottom;
         self.frame = frame;
     }
 }
@@ -75,10 +74,10 @@
     }
 }
 
-#pragma mark - Layout For Lua
-- (CGSize)luaui_measureSizeWithMaxWidth:(CGFloat)maxWidth maxHeight:(CGFloat)maxHeight
-{
-    NSString *cacheKey = [self remakeCacheKeyWithMaxWidth:maxWidth maxHeight:maxHeight];
+#pragma mark - Override
+
+- (CGSize)mlnui_sizeThatFits:(CGSize)size {
+    NSString *cacheKey = [self remakeCacheKeyWithMaxWidth:size.width maxHeight:size.height];
     MLNUISizeCahceManager *sizeCacheManager = MLNUI_KIT_INSTANCE(self.mlnui_luaCore).layoutEngine.sizeCacheManager;
     NSValue *sizeValue = [sizeCacheManager objectForKey:cacheKey];
     switch (_limitMode) {
@@ -91,23 +90,19 @@
     if (sizeValue) {
         return sizeValue.CGSizeValue;
     }
-    maxWidth -= self.luaui_paddingLeft + self.luaui_paddingRight;
-    maxHeight -= self.luaui_paddingTop + self.luaui_paddingBottom;
-    CGSize size = [self.innerLabel sizeThatFits:CGSizeMake(maxWidth, maxHeight)];
+    CGSize fitSize = [self.innerLabel sizeThatFits:CGSizeMake(size.width, size.height)];
     //满足条件则为加了行间距，且当前文本为单行，需要进行行间距消除
-    if (_lineSpacing > 0 && floor(size.height)  <= ceil(self.font.lineHeight) + _lineSpacing) {
+    if (_lineSpacing > 0 && floor(fitSize.height) <= ceil(self.font.lineHeight) + _lineSpacing) {
         CGFloat oldLineSpacing = _lineSpacing;
         _lineSpacing = 0;
         [self cleanLineSpacing];
         _lineSpacing = oldLineSpacing;
-        size.height -= _lineSpacing;
+        fitSize.height -= _lineSpacing;
     }
-    size.width = ceil(size.width);
-    size.height = ceil(size.height);
-    size.width = size.width + self.luaui_paddingLeft + self.luaui_paddingRight;
-    size.height = size.height + self.luaui_paddingTop + self.luaui_paddingBottom;
-    [sizeCacheManager setObject:[NSValue valueWithCGSize:size] forKey:cacheKey];
-    return size;
+    fitSize.width = ceil(fitSize.width);
+    fitSize.height = ceil(fitSize.height);
+    [sizeCacheManager setObject:[NSValue valueWithCGSize:fitSize] forKey:cacheKey];
+    return fitSize;
 }
 
 //当只有一行时，清除行间距
@@ -124,7 +119,7 @@
 
 - (NSString *)remakeCacheKeyWithMaxWidth:(CGFloat)maxWidth maxHeight:(CGFloat)maxHeight
 {
-    return [NSString stringWithFormat:@"%lu%@%ld%lu%f%f%f%f%ld%f%f%lu",(unsigned long)self.attributedText.hash, self.text,(long)self.textAlignment,(unsigned long)self.font.hash,self.luaui_paddingTop,self.luaui_paddingBottom,self.luaui_paddingLeft,self.luaui_paddingRight,(long)self.numberOfLines, maxWidth, maxHeight, (unsigned long)_limitMode];
+    return [NSString stringWithFormat:@"%lu%@%ld%lu%f%f%f%f%ld%f%f%lu",(unsigned long)self.attributedText.hash, self.text,(long)self.textAlignment,(unsigned long)self.font.hash,self.mlnui_paddingTop,self.mlnui_paddingBottom,self.mlnui_paddingLeft,self.mlnui_paddingRight,(long)self.numberOfLines, maxWidth, maxHeight, (unsigned long)_limitMode];
 }
 
 #pragma mark - Getter & Setter
@@ -133,7 +128,7 @@
     if ([self.text isEqualToString:text]) {
         return;
     }
-    [self luaui_needLayoutAndSpread];
+    [self mlnui_markNeedsLayout];
     self.innerLabel.text = [self mlnui_handleSingleLineBreakLineWithText:text];
 }
 
@@ -170,7 +165,7 @@
     attributedText = strM;
     
     self.innerLabel.attributedText = attributedText;
-    [self luaui_needLayoutAndSpread];
+    [self mlnui_markNeedsLayout];
 }
 
 - (void)luaui_setLineSpacing:(CGFloat)lineSpacing {
@@ -185,12 +180,11 @@
 
 - (void)setNumberOfLines:(NSInteger)numberOfLines
 {
-    [self setLuaui_maxHieght:0];
     _limitMode = MLNUILabelMaxModeLines;
     if (self.numberOfLines == numberOfLines) {
         return;
     }
-    [self luaui_needLayoutAndSpread];
+    [self mlnui_markNeedsLayout];
     self.innerLabel.numberOfLines = numberOfLines;
     [self mlnui_handleSingleLineBreakLineWithLine:numberOfLines];
     [self setupBreakMode];
@@ -271,7 +265,7 @@
     if (self.fontSize == size) {
         return;
     }
-    [self luaui_needLayoutAndSpread];
+    [self mlnui_markNeedsLayout];
     self.fontSize = size;
     UIFont *font = self.font;
     if (font) {
@@ -300,7 +294,7 @@
         return;
     }
     self.fontStyle = style;
-    [self luaui_needLayoutAndSpread];
+    [self mlnui_markNeedsLayout];
     self.font = [MLNUIFont fontWithFontName:nil fontStyle:style fontSize:self.fontSize instance:MLNUI_KIT_INSTANCE(self.mlnui_luaCore)];
     [self handleLineSpacing];
 }
@@ -311,23 +305,13 @@
     if (self.fontSize == fontSize && [self.fontName isEqualToString:fontName]) {
         return;
     }
-    [self luaui_needLayoutAndSpread];
+    [self mlnui_markNeedsLayout];
     self.fontSize = fontSize;
     self.fontName = fontName;
     //获取失败后使用系统默认字体样式
     UIFont *newFont = [UIFont fontWithName:fontName size:fontSize];
     self.font = newFont ?:[UIFont systemFontOfSize:fontSize];
     [self handleLineSpacing];
-}
-
-- (void)luaui_setFonAutoFit:(BOOL)fit
-{
-    MLNUILuaAssert(self.mlnui_luaCore, NO, @"Label:setAutoFit method is deprecated!");
-    self.autoFit = fit;
-    if (fit) {
-        [self calculatorAutoSize];
-    }
-    self.luaui_node.enable = NO;
 }
 
 - (void)luaui_setText:(NSString *)text
@@ -343,13 +327,13 @@
 - (void)luaui_setMaxHeight:(CGFloat)maxHeight
 {
     _limitMode = MLNUILabelMaxModeValue;
-    [self setLuaui_maxHieght:maxHeight];
+    self.mlnui_layoutNode.maxHeight = MLNUIPointValue(maxHeight);
 }
 
 - (void)luaui_setMinHeight:(CGFloat)minHeight
 {
     _limitMode = MLNUILabelMaxModeValue;
-    [self setLuaui_minHeight:minHeight];
+    self.mlnui_layoutNode.minHeight = MLNUIPointValue(minHeight);
 }
 
 - (void)handleLineSpacing {
@@ -399,12 +383,8 @@
     return YES;
 }
 
-- (BOOL)luaui_layoutEnable
+- (BOOL)mlnui_layoutEnable
 {
-    return YES;
-}
-
-- (BOOL)luaui_supportOverlay {
     return YES;
 }
 
@@ -423,7 +403,9 @@
     MLNUILuaAssert(self.mlnui_luaCore, NO, @"Not found \"removeAllSubviews\" method, just continar of View has it!");
 }
 
-- (UIView *)luaui_contentView
+#pragma mark - MLNUIPaddingContainerViewProtocol
+
+- (UIView *)mlnui_contentView
 {
     return self.innerLabel;
 }
@@ -446,7 +428,6 @@ LUAUI_EXPORT_VIEW_METHOD(padding, "luaui_setPaddingWithTop:right:bottom:left:", 
 LUAUI_EXPORT_VIEW_METHOD(setTextBold, "luaui_setTextBold", MLNUILabel)
 LUAUI_EXPORT_VIEW_METHOD(setTextFontStyle, "luaui_setTextFontStyle:", MLNUILabel)
 LUAUI_EXPORT_VIEW_METHOD(fontNameSize, "luaui_fontName:size:", MLNUILabel)
-LUAUI_EXPORT_VIEW_METHOD(setAutoFit, "luaui_setFonAutoFit:", MLNUILabel)
 LUAUI_EXPORT_VIEW_METHOD(setWrapContent, "setLuaui_wrapContent:",MLNUILabel) //SDK>=1.0.2
 LUAUI_EXPORT_VIEW_METHOD(setMaxWidth, "setLuaui_maxWidth:",MLNUILabel) //SDK>=1.0.3，自适应时的限制
 LUAUI_EXPORT_VIEW_METHOD(setMinWidth, "setLuaui_minWidth:",MLNUILabel) //SDK>=1.0.3，自适应时的限制
@@ -455,9 +436,4 @@ LUAUI_EXPORT_VIEW_METHOD(setMinHeight, "luaui_setMinHeight:",MLNUILabel) //SDK>=
 LUAUI_EXPORT_VIEW_METHOD(setLineSpacing, "luaui_setLineSpacing:",MLNUILabel) //SDK>=1.0.3，自适应时的限制
 LUAUI_EXPORT_VIEW_METHOD(a_setIncludeFontPadding, "luaui_a_setIncludeFontPadding:", MLNUILabel)
 LUAUI_EXPORT_VIEW_END(MLNUILabel, Label, YES, "MLNUIView", "initWithMLNUILuaCore:frame:")
-@end
-
-@implementation MLNUIOverlayLabel
-LUAUI_EXPORT_VIEW_BEGIN(MLNUIOverlayLabel) // 兼容Android
-LUAUI_EXPORT_VIEW_END(MLNUIOverlayLabel, OverLabel, YES, "MLNUILabel", "initWithMLNUILuaCore:frame:")
 @end

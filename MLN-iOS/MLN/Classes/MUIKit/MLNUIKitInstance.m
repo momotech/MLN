@@ -12,7 +12,6 @@
 #import "MLNUIBeforeWaitingTaskEngine.h"
 #import "MLNUIKiConvertor.h"
 #import "UIView+MLNUILayout.h"
-#import "MLNUILayoutContainerNode.h"
 #import "MLNUIKitInstanceHandlersManager.h"
 #import "MLNUIWindow.h"
 #import "MLNUIKitInstanceConsts.h"
@@ -67,14 +66,9 @@
 
 - (void)pushWindowToLayoutEngine
 {
-    __unsafe_unretained MLNUILayoutContainerNode *node = (MLNUILayoutContainerNode *)self.luaWindow.luaui_node;
-    node.heightType = MLNUILayoutMeasurementTypeIdle;
-    node.widthType = MLNUILayoutMeasurementTypeIdle;
-    [node changeX:0.f];
-    [node changeY:0.f];
-    [node changeWidth:self.rootView.bounds.size.width];
-    [node changeHeight:self.rootView.bounds.size.height];
-    node.root = YES;
+    __unsafe_unretained MLNUILayoutNode *node = self.luaWindow.mlnui_layoutNode;
+    node.width = MLNUIPointValue(self.rootView.bounds.size.width);
+    node.height = MLNUIPointValue(self.rootView.bounds.size.height);
     [self.layoutEngine addRootnode:node];
 }
 
@@ -419,7 +413,7 @@
 
 - (void)forceLayoutLuaWindow
 {
-   [self.luaWindow luaui_requestLayout];
+    [self.luaWindow mlnui_requestLayoutIfNeed];
 }
 
 - (void)releaseAll
@@ -525,12 +519,12 @@
 
 @implementation MLNUIKitInstance (Layout)
 
-- (void)addRootnode:(MLNUILayoutContainerNode *)rootnode
+- (void)addRootnode:(MLNUILayoutNode *)rootnode
 {
     [self.layoutEngine addRootnode:rootnode];
 }
 
-- (void)removeRootNode:(MLNUILayoutContainerNode *)rootnode
+- (void)removeRootNode:(MLNUILayoutNode *)rootnode
 {
     [self.layoutEngine removeRootNode:rootnode];
 }

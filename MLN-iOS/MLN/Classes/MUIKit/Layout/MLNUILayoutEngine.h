@@ -12,6 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
 @class MLNUIKitInstance;
 @class MLNUILayoutContainerNode;
 @class MLNUISizeCahceManager;
+@class MLNUILayoutNode;
 
 /**
  自动布局引擎
@@ -54,14 +55,14 @@ NS_ASSUME_NONNULL_BEGIN
 
  @param rootnode 布局树的根节点
  */
-- (void)addRootnode:(MLNUILayoutContainerNode *)rootnode;
+- (void)addRootnode:(MLNUILayoutNode *)rootnode;
 
 /**
  移除一个布局树
 
  @param rootnode 布局树的根节点
  */
-- (void)removeRootNode:(MLNUILayoutContainerNode *)rootnode;
+- (void)removeRootNode:(MLNUILayoutNode *)rootnode;
 
 /**
  手动触发一个布局计算。

@@ -10,19 +10,14 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class MLNUILayoutNode;
-
 @interface MLNUIStack : MLNUIView
-
-// subclass should override
-- (MLNUILayoutNode *)createStackNodeWithTargetView:(UIView *)targetView;
 
 @end
 
 @interface MLNUIPlaneStack : MLNUIStack
 
 // subclass should override
-- (void)invalidateMatchParentMeasureTypeForMainAxis:(UIView *)view;
+- (void)setLuaui_reverse:(BOOL)reverse;
 
 @end
 

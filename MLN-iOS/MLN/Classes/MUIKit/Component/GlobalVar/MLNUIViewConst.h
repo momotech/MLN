@@ -19,26 +19,6 @@ typedef NS_OPTIONS(NSUInteger, MLNUIRectCorner)  {
     MLNUIRectCornerAllCorners  = ~0UL
 };
 
-static const NSUInteger MLNUI_AXIS_SPECIFIED = 0x0001;
-static const NSUInteger MLNUI_AXIS_PULL_BEFORE = 0x0002;
-static const NSUInteger MLNUI_AXIS_PULL_AFTER = 0x0004;
-static const NSUInteger MLNUI_AXIS_X_SHIFT = 0;
-static const NSUInteger MLNUI_AXIS_Y_SHIFT = 4;
-typedef NS_OPTIONS(NSUInteger, MLNUIGravity) {
-    MLNUIGravityNone = 0,
-    MLNUIGravityLeft = (MLNUI_AXIS_PULL_BEFORE|MLNUI_AXIS_SPECIFIED)<<MLNUI_AXIS_X_SHIFT,
-    MLNUIGravityTop = (MLNUI_AXIS_PULL_BEFORE|MLNUI_AXIS_SPECIFIED)<<MLNUI_AXIS_Y_SHIFT,
-    MLNUIGravityRight = (MLNUI_AXIS_PULL_AFTER|MLNUI_AXIS_SPECIFIED)<<MLNUI_AXIS_X_SHIFT,
-    MLNUIGravityBottom = (MLNUI_AXIS_PULL_AFTER|MLNUI_AXIS_SPECIFIED)<<MLNUI_AXIS_Y_SHIFT,
-    MLNUIGravityCenterHorizontal = MLNUI_AXIS_SPECIFIED<<MLNUI_AXIS_X_SHIFT,
-    MLNUIGravityCenterVertical = MLNUI_AXIS_SPECIFIED<<MLNUI_AXIS_Y_SHIFT,
-    MLNUIGravityCenter = MLNUIGravityCenterHorizontal|MLNUIGravityCenterVertical,
-    MLNUIGravityHorizontalMask = (MLNUI_AXIS_SPECIFIED |
-                                MLNUI_AXIS_PULL_BEFORE | MLNUI_AXIS_PULL_AFTER) << MLNUI_AXIS_X_SHIFT,
-    MLNUIGravityVerticalMask = (MLNUI_AXIS_SPECIFIED |
-                              MLNUI_AXIS_PULL_BEFORE | MLNUI_AXIS_PULL_AFTER) << MLNUI_AXIS_Y_SHIFT,
-};
-
 typedef NS_OPTIONS(NSUInteger, MLNUIValueType) {
     MLNUIValueTypeNone = 0,
     MLNUIValueTypeCurrent = MAX_INT,
@@ -51,17 +31,6 @@ typedef NS_OPTIONS(NSUInteger, MLNUIGradientType) {
     MLNUIGradientTypeTopToBottom = 1<<2,
     MLNUIGradientTypeBottomToTop = 1<<3,
 };
-
-typedef NS_OPTIONS(NSUInteger, MLNUILayoutDirection){
-    MLNUILayoutDirectionHorizontal = 1,
-    MLNUILayoutDirectionVertical = 2,
-};
-
-typedef enum : NSInteger {
-    MLNUILayoutMeasurementTypeIdle = 0,
-    MLNUILayoutMeasurementTypeMatchParent = -1,
-    MLNUILayoutMeasurementTypeWrapContent = -2,
-} MLNUILayoutMeasurementType;
 
 typedef enum : NSUInteger {
     MLNUIStatusBarStyleDefault = 0,

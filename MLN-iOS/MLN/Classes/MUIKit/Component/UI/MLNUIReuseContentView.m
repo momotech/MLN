@@ -10,7 +10,6 @@
 #import "MLNUIKitHeader.h"
 #import "UIView+MLNUIKit.h"
 #import "UIView+MLNUILayout.h"
-#import "MLNUILayoutContainerNode.h"
 #import "MLNUILuaTable.h"
 
 @interface MLNUIReuseContentView()
@@ -31,37 +30,18 @@
 }
 
 #pragma mark - Calculate Layout
-- (CGFloat)calculHeightWithWidth:(CGFloat)width maxHeight:(CGFloat)maxHeight
-{
-    __unsafe_unretained MLNUILayoutNode *node = self.luaui_node;
-    node.enable = YES;
-    node.heightType = MLNUILayoutMeasurementTypeWrapContent;
-    [node changeWidth:width];
-    node.maxHeight = maxHeight;
-    CGSize cellSize = [node measureSizeWithMaxWidth:width maxHeight:maxHeight];
-    node.heightType = MLNUILayoutMeasurementTypeIdle;
-    [node changeHeight:cellSize.height];
-    node.enable = NO;
-    return cellSize.height;
+
+- (CGFloat)calculHeightWithWidth:(CGFloat)width maxHeight:(CGFloat)maxHeight {
+    CGSize size = [self.mlnui_layoutNode calculateLayoutWithSize:CGSizeMake(width, maxHeight)];
+    return size.height;
 }
 
-- (CGSize)calculSizeWithMaxWidth:(CGFloat)maxWidth maxHeight:(CGFloat)maxHeight
-{
-    __unsafe_unretained MLNUILayoutNode *node = self.luaui_node;
-    node.enable = YES;
-    [node needLayoutAndSpread];
-    node.heightType = MLNUILayoutMeasurementTypeWrapContent;
-    node.widthType = MLNUILayoutMeasurementTypeWrapContent;
-    node.maxWidth = maxWidth;
-    node.maxHeight = maxHeight;
-    CGSize cellSize = [node measureSizeWithMaxWidth:maxWidth maxHeight:maxHeight];
-    node.heightType = MLNUILayoutMeasurementTypeIdle;
-    node.widthType = MLNUILayoutMeasurementTypeIdle;
-    node.enable = NO;
-    return cellSize;
+- (CGSize)calculSizeWithMaxWidth:(CGFloat)maxWidth maxHeight:(CGFloat)maxHeight {
+    return [self.mlnui_layoutNode calculateLayoutWithSize:CGSizeMake(maxWidth, maxHeight)];
 }
 
 #pragma mark - Lua Table
+
 - (void)pushToLuaCore:(MLNUILuaCore *)luaCore
 {
     [self createLuaTableIfNeed:luaCore];
@@ -76,15 +56,10 @@
     }
 }
 
-- (void)setupLayoutNodeIfNeed
-{
+- (void)setupLayoutNodeIfNeed {
     if (!self.inited) {
-        __unsafe_unretained MLNUILayoutContainerNode *node = (MLNUILayoutContainerNode *)self.luaui_node;
-        node.widthType = MLNUILayoutMeasurementTypeIdle;
-        node.heightType = MLNUILayoutMeasurementTypeIdle;
-        node.root = YES;
-        node.enable = NO;
-        [MLNUI_KIT_INSTANCE(self.mlnui_luaCore) addRootnode:node];
+        [self.mlnui_layoutNode markDirty];
+        [MLNUI_KIT_INSTANCE(self.mlnui_luaCore) addRootnode:self.mlnui_layoutNode];
     }
 }
 
@@ -98,12 +73,18 @@
 {
     if (!CGSizeEqualToSize(self.frame.size, self.cell.bounds.size)) {
         CGRect frame = self.cell.bounds;
-        MLNUILayoutNode *node = self.luaui_node;
-        [node changeX:frame.origin.x];
-        [node changeY:frame.origin.y];
-        [node changeWidth:frame.size.width];
-        [node changeHeight:frame.size.height];
+        MLNUILayoutNode *node = self.mlnui_layoutNode;
+        node.marginLeft = MLNUIPointValue(frame.origin.x);
+        node.marginTop = MLNUIPointValue(frame.origin.y);
+        node.width = MLNUIPointValue(frame.size.width);
+        node.height = MLNUIPointValue(frame.size.height);
     }
+}
+
+#pragma mark - Override
+
+- (BOOL)mlnui_isRootView {
+    return YES;
 }
 
 #pragma mark - Override Method For Lua

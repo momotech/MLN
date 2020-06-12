@@ -13,7 +13,6 @@
 #import "MLNUILayoutEngine.h"
 #import "MLNUITextViewFactory.h"
 #import "UIView+MLNUILayout.h"
-#import "MLNUILayoutNode.h"
 #import "MLNUISizeCahceManager.h"
 #import "MLNUIBeforeWaitingTask.h"
 #import "UIView+MLNUIKit.h"
@@ -141,8 +140,8 @@
 
 - (void)internalTextViewDidChange:(UIView<MLNUITextViewProtocol> *)internalTextView
 {
-    if (self.type == MLNUIInternalTextViewTypeMultableLine && self.luaui_node.isWrapContent) {
-        [self luaui_needLayoutAndSpread];
+    if (self.type == MLNUIInternalTextViewTypeMultableLine && self.mlnui_layoutNode.isWrapContent) {
+        [self mlnui_markNeedsLayout];
     }
     //触发回调
     if ([_changedString isEqualToString:@"\n"]) {
@@ -351,8 +350,8 @@
     self.internalTextView.text = text;
     [self clipBeyondTextIfNeed:self.internalTextView];
     text = self.internalTextView.text;
-    if (self.type == MLNUIInternalTextViewTypeMultableLine && self.luaui_node.isWrapContent) {
-        [self luaui_needLayoutAndSpread];
+    if (self.type == MLNUIInternalTextViewTypeMultableLine && self.mlnui_layoutNode.isWrapContent) {
+        [self mlnui_markNeedsLayout];
     }
     if (_didChangingCallback) {
         [_didChangingCallback addStringArgument:text?:@""];
@@ -384,8 +383,8 @@
         placeholder = [placeholder stringByReplacingOccurrencesOfString:@"\n" withString:@""];
     }
     self.internalTextView.placeholder = placeholder;
-    if (self.type == MLNUIInternalTextViewTypeMultableLine && self.luaui_node.isWrapContent) {
-        [self luaui_needLayoutAndSpread];
+    if (self.type == MLNUIInternalTextViewTypeMultableLine && self.mlnui_layoutNode.isWrapContent) {
+        [self mlnui_markNeedsLayout];
     }
 }
 
@@ -417,8 +416,8 @@
 - (void)setAttributedText:(NSAttributedString *)attributedText
 {
     self.internalTextView.attributedText = attributedText;
-    if (self.type == MLNUIInternalTextViewTypeMultableLine && self.luaui_node.isWrapContent) {
-        [self luaui_needLayoutAndSpread];
+    if (self.type == MLNUIInternalTextViewTypeMultableLine && self.mlnui_layoutNode.isWrapContent) {
+        [self mlnui_markNeedsLayout];
     }
 }
 
@@ -515,8 +514,8 @@
 - (void)luaui_setPadding:(CGFloat)top right:(CGFloat)right bottom:(CGFloat)bottom left:(CGFloat)left
 {
     self.padding = UIEdgeInsetsMake(top, left, bottom, right);
-    if (self.type == MLNUIInternalTextViewTypeMultableLine && self.luaui_node.isWrapContent) {
-        [self luaui_needLayoutAndSpread];
+    if (self.type == MLNUIInternalTextViewTypeMultableLine && self.mlnui_layoutNode.isWrapContent) {
+        [self mlnui_markNeedsLayout];
     }
     [self mlnui_pushLazyTask:self.lazyTask];
 }
@@ -539,8 +538,8 @@
 {
     UIFont *font =  [UIFont fontWithName:fontName size:fontSize]?:[UIFont systemFontOfSize:fontSize];
     self.internalTextView.font = font;
-    if (self.type == MLNUIInternalTextViewTypeMultableLine && self.luaui_node.isWrapContent) {
-        [self luaui_needLayoutAndSpread];
+    if (self.type == MLNUIInternalTextViewTypeMultableLine && self.mlnui_layoutNode.isWrapContent) {
+        [self mlnui_markNeedsLayout];
     }
 }
 
@@ -574,41 +573,22 @@
             [_internalTextView becomeFirstResponder];
         }
         [preInternalTextView removeFromSuperview];
-        [self luaui_needLayoutAndSpread];
+        [self mlnui_markNeedsLayout];
         [self mlnui_pushLazyTask:self.lazyTask];
         [self setupSwitchStatusWityType:type];
     }
 }
 
 #pragma mark - Layout For Lua
-- (CGSize)luaui_measureSizeWithMaxWidth:(CGFloat)maxWidth maxHeight:(CGFloat)maxHeight
-{
-    NSString *cacheKey = [self remakeCacheKeyWithMaxWidth:maxWidth maxHeight:maxHeight];
-    MLNUISizeCahceManager *sizeCacheManager = MLNUI_KIT_INSTANCE(self.mlnui_luaCore).layoutEngine.sizeCacheManager;
-    NSValue *sizeValue = [sizeCacheManager objectForKey:cacheKey];
-    if (sizeValue) {
-        return sizeValue.CGSizeValue;
-    }
-    maxWidth -= _padding.left + _padding.right;
-    maxHeight -= _padding.top + _padding.bottom;
-    CGSize size = [self.internalTextView sizeThatFits:CGSizeMake(maxWidth, maxHeight)];
-    
-    size.width = ceil(size.width);
-    size.height = ceil(size.height);
-    size.width = size.width + _padding.left + _padding.right;
-    size.height = size.height + _padding.top + _padding.bottom;
-    [sizeCacheManager setObject:[NSValue valueWithCGSize:size] forKey:cacheKey];
-    return size;
-}
 
 - (NSString *)remakeCacheKeyWithMaxWidth:(CGFloat)maxWidth maxHeight:(CGFloat)maxHeight
 {
     return [NSString stringWithFormat:@"%lu%@%@%ld%lu%f%f%f%f%f%f",(unsigned long)self.attributedText.hash,self.placeholder, self.text,(long)self.textAlignment,(unsigned long)self.font.hash,self.padding.top,self.padding.bottom,self.padding.left,self.padding.right, maxWidth, maxHeight];
 }
 
-- (void)luaui_changedLayout
+- (void)mlnui_layoutDidChange
 {
-    [super luaui_changedLayout];
+    [super mlnui_layoutDidChange];
     if (!CGRectEqualToRect(self.backgroundImageView.frame, self.bounds)) {
         self.backgroundImageView.frame = self.bounds;
     }
@@ -652,9 +632,23 @@
     MLNUIKitLuaAssert(NO, @"Not found \"removeAllSubviews\" method, just continar of View has it!");
 }
 
-- (BOOL)luaui_layoutEnable
+- (BOOL)mlnui_layoutEnable
 {
     return YES;
+}
+
+- (CGSize)mlnui_sizeThatFits:(CGSize)size {
+    NSString *cacheKey = [self remakeCacheKeyWithMaxWidth:size.width maxHeight:size.height];
+    MLNUISizeCahceManager *sizeCacheManager = MLNUI_KIT_INSTANCE(self.mlnui_luaCore).layoutEngine.sizeCacheManager;
+    NSValue *sizeValue = [sizeCacheManager objectForKey:cacheKey];
+    if (sizeValue) {
+        return sizeValue.CGSizeValue;
+    }
+    CGSize fitSize = [self.internalTextView sizeThatFits:CGSizeMake(size.width, size.height)];
+    fitSize.width = ceil(fitSize.width);
+    fitSize.height = ceil(fitSize.height);
+    [sizeCacheManager setObject:[NSValue valueWithCGSize:fitSize] forKey:cacheKey];
+    return fitSize;
 }
 
 #pragma mark - Export For Lua

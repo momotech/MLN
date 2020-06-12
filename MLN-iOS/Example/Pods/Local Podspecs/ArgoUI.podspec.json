@@ -41,7 +41,7 @@
         "CoreGraphics",
         "AVFoundation"
       ],
-      "source_files": "MLN-iOS/MLN/Classes/MUIKit/**/*.{h,m,c}",
+      "source_files": "MLN-iOS/MLN/Classes/MUIKit/**/*.{h,m,c,cpp,mm}",
       "public_header_files": "MLN-iOS/MLN/Classes/MUIKit/**/*.h",
       "dependencies": {
         "ArgoUI/Core": [
