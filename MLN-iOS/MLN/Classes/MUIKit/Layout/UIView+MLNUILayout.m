@@ -595,3 +595,35 @@ static const void *kMLNUILayoutAssociatedKey = &kMLNUILayoutAssociatedKey;
 }
 
 @end
+
+@implementation UIView (MLNUIFrame)
+
+static MLNUI_FORCE_INLINE void MLNUIComposeFrame(UIView *view, CGRect frame1, CGRect frame2) {
+    CGRect frame = (CGRect){
+        CGRectGetMinX(frame1) + CGRectGetMinX(frame2),
+        CGRectGetMinY(frame1) + CGRectGetMinY(frame2),
+        CGRectGetWidth(frame1) + CGRectGetWidth(frame2),
+        CGRectGetHeight(frame1) + CGRectGetHeight(frame2)
+    };
+    view.frame = frame;
+}
+
+- (void)setMlnuiLayoutFrame:(CGRect)frame {
+    objc_setAssociatedObject(self, @selector(mlnuiLayoutFrame), [NSValue valueWithCGRect:frame], OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    MLNUIComposeFrame(self, frame, self.mlnuiAnimationFrame);
+}
+
+- (CGRect)mlnuiLayoutFrame {
+    return [objc_getAssociatedObject(self, _cmd) CGRectValue];
+}
+
+- (void)setMlnuiAnimationFrame:(CGRect)frame {
+    objc_setAssociatedObject(self, @selector(mlnuiAnimationFrame), [NSValue valueWithCGRect:frame], OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    MLNUIComposeFrame(self, frame, self.mlnuiLayoutFrame);
+}
+
+- (CGRect)mlnuiAnimationFrame {
+    return [objc_getAssociatedObject(self, _cmd) CGRectValue];
+}
+
+@end

@@ -55,4 +55,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
+@interface UIView (MLNUIFrame)
+
+@property (nonatomic, assign) CGRect mlnuiLayoutFrame;
+@property (nonatomic, assign) CGRect mlnuiAnimationFrame;
+
+@end
+
 NS_ASSUME_NONNULL_END

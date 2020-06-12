@@ -475,11 +475,11 @@ static void YGApplyLayoutToViewHierarchy(UIView *view, BOOL preserveOrigin)
         topLeft.y + YGNodeLayoutGetHeight(node),
     };
 
-    CGRect frame = view.frame;
+    CGRect frame = view.mlnuiLayoutFrame;
     CGPoint origin = preserveOrigin ? frame.origin : CGPointZero;
     frame.origin = CGPointMake(YGRoundPixelValue(topLeft.x + origin.x), YGRoundPixelValue(topLeft.y + origin.y));
     frame.size = CGSizeMake(YGRoundPixelValue(bottomRight.x) - YGRoundPixelValue(topLeft.x), YGRoundPixelValue(bottomRight.y) - YGRoundPixelValue(topLeft.y));
-    view.frame = frame;
+    view.mlnuiLayoutFrame = frame;
     [view mlnui_layoutCompleted];
     
     if (!layout.isLeaf) {
