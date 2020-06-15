@@ -673,28 +673,44 @@ static MLNUI_FORCE_INLINE BOOL MLNUIFloatEqual(CGFloat value1, CGFloat value2) {
     return sy;
 }
 
+static MLNUI_FORCE_INLINE void MLNUIViewApplyFrame(UIView *view, CGRect frame) {
+    if (!CGAffineTransformEqualToTransform(view.transform, CGAffineTransformIdentity)) {
+        CGAffineTransform transform = view.transform;
+        view.transform = CGAffineTransformIdentity;
+        view.frame = frame;
+        view.transform = transform;
+    } else if (!CATransform3DEqualToTransform(view.layer.transform, CATransform3DIdentity)) {
+        CATransform3D transform = view.layer.transform;
+        view.layer.transform = CATransform3DIdentity;
+        view.frame = frame;
+        view.layer.transform = transform;
+    } else {
+        view.frame = frame;
+    }
+}
+
 static MLNUI_FORCE_INLINE void MLNUIViewChangeX(UIView *view, CGFloat x) {
     CGRect frame = view.frame;
     frame.origin.x = x;
-    view.frame = frame;
+    MLNUIViewApplyFrame(view, frame);
 }
 
 static MLNUI_FORCE_INLINE void MLNUIViewChangeY(UIView *view, CGFloat y) {
     CGRect frame = view.frame;
     frame.origin.y = y;
-    view.frame = frame;
+    MLNUIViewApplyFrame(view, frame);
 }
 
 static MLNUI_FORCE_INLINE void MLNUIViewChangeWidth(UIView *view, CGFloat width) {
     CGRect frame = view.frame;
     frame.size.width = width;
-    view.frame = frame;
+    MLNUIViewApplyFrame(view, frame);
 }
 
 static MLNUI_FORCE_INLINE void MLNUIViewChangeHeight(UIView *view, CGFloat height) {
     CGRect frame = view.frame;
     frame.size.height = height;
-    view.frame = frame;
+    MLNUIViewApplyFrame(view, frame);
 }
 
 #pragma mark - Animation
@@ -782,12 +798,12 @@ static MLNUI_FORCE_INLINE void MLNUIViewChangeHeight(UIView *view, CGFloat heigh
 }
 
 - (void)setMlnuiLayoutFrame:(CGRect)frame {
-    self.frame = (CGRect){
+    MLNUIViewApplyFrame(self, (CGRect){
         frame.origin.x + self.mlnuiTranslationX,
         frame.origin.y + self.mlnuiTranslationY,
         frame.size.width * self.mlnuiScaleX,
         frame.size.height * self.mlnuiScaleY
-    };
+    });
 }
 
 - (CGRect)mlnuiLayoutFrame {
