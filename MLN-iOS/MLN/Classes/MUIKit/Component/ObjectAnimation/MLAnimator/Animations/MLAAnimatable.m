@@ -8,6 +8,7 @@
 #import "MLACGUtils.h"
 #import "MLALayerExtras.h"
 #import <UIKit/UIKit.h>
+#import "UIView+MLNUILayout.h"
 
 NSString * const kMLAViewAlpha = @"view.alpha";
 NSString * const kMLAViewColor = @"view.backgroundColor";
@@ -83,7 +84,7 @@ static MLAValueHelper kStaticHelpers[] =
             CGPoint center = obj.center;
             center.x = values[0];
             center.y = values[1];
-            obj.center = center;
+            obj.mlnuiAnimationCenter = center;
         },
         kThresholdPoint,
         kValueCountTwo
@@ -96,7 +97,7 @@ static MLAValueHelper kStaticHelpers[] =
         ^(UIView *obj, const CGFloat values[]) {
             CGPoint center = obj.center;
             center.x = values[0];
-            obj.center = center;
+            obj.mlnuiAnimationCenter = center;
         },
         kThresholdPoint,
         kValueCountOne
@@ -109,7 +110,7 @@ static MLAValueHelper kStaticHelpers[] =
         ^(UIView *obj, const CGFloat values[]) {
             CGPoint center = obj.center;
             center.y = values[0];
-            obj.center = center;
+            obj.mlnuiAnimationCenter = center;
         },
         kThresholdPoint,
         kValueCountOne
@@ -143,7 +144,7 @@ static MLAValueHelper kStaticHelpers[] =
         },
         ^(UIView *obj, const CGFloat values[]) {
             CGRect frame = CGRectMake(values[0], values[1], values[2], values[3]);
-            obj.layer.frame = frame;
+            obj.mlnuiAnimationFrame = frame;
         },
         kThresholdPoint,
         kValueCountFours

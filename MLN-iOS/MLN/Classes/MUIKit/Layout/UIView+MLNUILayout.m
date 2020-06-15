@@ -820,14 +820,6 @@ static MLNUI_FORCE_INLINE void MLNUIViewChangeHeight(UIView *view, CGFloat heigh
     };
 }
 
-- (CGPoint)mlnuiLayoutCenter {
-    CGRect frame = [self mlnuiLayoutFrame];
-    return (CGPoint){
-        frame.origin.x + self.layer.anchorPoint.x * frame.size.width,
-        frame.origin.y + self.layer.anchorPoint.y * frame.size.height
-    };
-}
-
 - (void)setMlnuiLayoutFrame:(CGRect)frame {
     MLNUIViewApplyFrame(self, (CGRect){
         frame.origin.x + self.mlnuiTranslationX,

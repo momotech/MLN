@@ -11,6 +11,7 @@
 #import "MLNUIViewExporterMacro.h"
 #import "MLNUIAnimationConst.h"
 #import "MLNUIBeforeWaitingTask.h"
+#import "UIView+MLNUILayout.h"
 
 @interface MLNUIObjectAnimation()
 
@@ -380,14 +381,16 @@
             return @(0);
         case MLNUIAnimationPropertyTypeColor:
             return self.targetView.backgroundColor;
-        case MLNUIAnimationPropertyTypePosition:
-            return @(_defaultCenter);
+        case MLNUIAnimationPropertyTypePosition: {
+            CGRect frame = _targetView.mlnuiLayoutFrame;
+            return @(CGPointMake(frame.origin.x + frame.size.width / 2.0, frame.origin.y + frame.size.height / 2.0));
+        }
         case MLNUIAnimationPropertyTypeSize:
-            return @(_defaultFrame.size);
+            return @(_targetView.mlnuiLayoutFrame.size);
         case MLNUIAnimationPropertyTypeScale:
             return @(CGPointMake(1.0, 1.0));
         case MLNUIAnimationPropertyTypeFrame:
-            return @(_defaultFrame);
+            return @(_targetView.mlnuiLayoutFrame);
         default:
             break;
     }
