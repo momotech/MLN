@@ -751,6 +751,17 @@ static MLNUI_FORCE_INLINE void MLNUIViewChangeHeight(UIView *view, CGFloat heigh
     return self.frame.size.height;
 }
 
+- (void)setMlnuiAnimationCenter:(CGPoint)center {
+    CGPoint layoutCenter = [self mlnuiLayoutCenter];
+    self.mlnuiTranslationX = center.x - layoutCenter.x;
+    self.mlnuiTranslationY = center.y - layoutCenter.y;
+    self.center = center;
+}
+
+- (CGPoint)mlnuiAnimationCenter {
+    return self.center;
+}
+
 - (void)setMlnuiAnimationFrame:(CGRect)frame {
     self.mlnuiTranslationX = frame.origin.x - self.mlnuiLayoutX;
     self.mlnuiTranslationY = frame.origin.y - self.mlnuiLayoutY;
@@ -795,6 +806,14 @@ static MLNUI_FORCE_INLINE void MLNUIViewChangeHeight(UIView *view, CGFloat heigh
 
 - (CGFloat)mlnuiLayoutHeight {
     return self.frame.size.height / self.mlnuiScaleY;
+}
+
+- (CGPoint)mlnuiLayoutCenter {
+    CGRect frame = [self mlnuiLayoutFrame];
+    return (CGPoint){
+        frame.origin.x + self.layer.anchorPoint.x * frame.size.width,
+        frame.origin.y + self.layer.anchorPoint.y * frame.size.height
+    };
 }
 
 - (void)setMlnuiLayoutFrame:(CGRect)frame {
