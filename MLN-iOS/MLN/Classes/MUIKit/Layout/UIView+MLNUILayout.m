@@ -778,34 +778,38 @@ static MLNUI_FORCE_INLINE void MLNUIViewChangeHeight(UIView *view, CGFloat heigh
 
 - (void)setMlnuiLayoutX:(CGFloat)x {
     MLNUIViewChangeX(self, x + self.mlnuiTranslationX);
+    objc_setAssociatedObject(self, @selector(mlnuiLayoutX), @(x), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
 - (CGFloat)mlnuiLayoutX {
-    return self.frame.origin.x - self.mlnuiTranslationX;
+    return [objc_getAssociatedObject(self, _cmd) floatValue];
 }
 
 - (void)setMlnuiLayoutY:(CGFloat)y {
     MLNUIViewChangeY(self, y + self.mlnuiTranslationY);
+    objc_setAssociatedObject(self, @selector(mlnuiLayoutY), @(y), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
 - (CGFloat)mlnuiLayoutY {
-    return self.frame.origin.y - self.mlnuiTranslationY;
+    return [objc_getAssociatedObject(self, _cmd) floatValue];
 }
 
 - (void)setMlnuiLayoutWidth:(CGFloat)width {
     MLNUIViewChangeWidth(self, width * self.mlnuiScaleX);
+    objc_setAssociatedObject(self, @selector(mlnuiLayoutWidth), @(width), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
 - (CGFloat)mlnuiLayoutWidth {
-    return self.frame.size.width / self.mlnuiScaleX;
+    return [objc_getAssociatedObject(self, _cmd) floatValue];
 }
 
 - (void)setMlnuiLayoutHeight:(CGFloat)height {
     MLNUIViewChangeHeight(self, height * self.mlnuiScaleY);
+    objc_setAssociatedObject(self, @selector(mlnuiLayoutHeight), @(height), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
 - (CGFloat)mlnuiLayoutHeight {
-    return self.frame.size.height / self.mlnuiScaleY;
+    return [objc_getAssociatedObject(self, _cmd) floatValue];
 }
 
 - (CGPoint)mlnuiLayoutCenter {
@@ -823,15 +827,11 @@ static MLNUI_FORCE_INLINE void MLNUIViewChangeHeight(UIView *view, CGFloat heigh
         frame.size.width * self.mlnuiScaleX,
         frame.size.height * self.mlnuiScaleY
     });
+    objc_setAssociatedObject(self, @selector(mlnuiLayoutFrame), [NSValue valueWithCGRect:frame], OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
 - (CGRect)mlnuiLayoutFrame {
-    return (CGRect){
-        self.frame.origin.x - self.mlnuiTranslationX,
-        self.frame.origin.y - self.mlnuiTranslationY,
-        self.frame.size.width / self.mlnuiScaleX,
-        self.frame.size.height / self.mlnuiScaleY
-    };
+    return [objc_getAssociatedObject(self, _cmd) CGRectValue];
 }
 
 @end
