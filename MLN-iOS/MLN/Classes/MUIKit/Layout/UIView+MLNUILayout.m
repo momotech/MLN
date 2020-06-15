@@ -569,6 +569,12 @@ static const void *kMLNUILayoutAssociatedKey = &kMLNUILayoutAssociatedKey;
     }
 }
 
+- (void)mlnui_requestLayoutIfNeedWithSize:(CGSize)size {
+    if (self.mlnui_layoutNode.isDirty) {
+        [self.mlnui_layoutNode applyLayoutWithSize:size];
+    }
+}
+
 - (void)mlnui_layoutDidChange {
     // 1.如果当前View的Frame变更，检查是否需要修正圆角
     [self mlnui_updateCornersIfNeed];
@@ -596,34 +602,217 @@ static const void *kMLNUILayoutAssociatedKey = &kMLNUILayoutAssociatedKey;
 
 @end
 
+@interface UIView ()
+
+@property (nonatomic, assign) CGFloat mlnuiTranslationX;
+@property (nonatomic, assign) CGFloat mlnuiTranslationY;
+@property (nonatomic, assign) CGFloat mlnuiScaleX;
+@property (nonatomic, assign) CGFloat mlnuiScaleY;
+
+@end
+
 @implementation UIView (MLNUIFrame)
 
-static MLNUI_FORCE_INLINE void MLNUIComposeFrame(UIView *view, CGRect frame1, CGRect frame2) {
-    CGRect frame = (CGRect){
-        CGRectGetMinX(frame1) + CGRectGetMinX(frame2),
-        CGRectGetMinY(frame1) + CGRectGetMinY(frame2),
-        CGRectGetWidth(frame1) + CGRectGetWidth(frame2),
-        CGRectGetHeight(frame1) + CGRectGetHeight(frame2)
-    };
-    view.frame = frame;
+#pragma mark - Private
+
+#define MLNUI_PSEUDO_ZERO (-2020)
+
+static MLNUI_FORCE_INLINE BOOL MLNUIFloatEqual(CGFloat value1, CGFloat value2) {
+    return fabs(value1 - value2) < 0.0001f;
 }
 
-- (void)setMlnuiLayoutFrame:(CGRect)frame {
-    objc_setAssociatedObject(self, @selector(mlnuiLayoutFrame), [NSValue valueWithCGRect:frame], OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-    MLNUIComposeFrame(self, frame, self.mlnuiAnimationFrame);
+- (void)setMlnuiTranslationX:(CGFloat)tx {
+    objc_setAssociatedObject(self, @selector(mlnuiTranslationX), @(tx), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
-- (CGRect)mlnuiLayoutFrame {
-    return [objc_getAssociatedObject(self, _cmd) CGRectValue];
+- (CGFloat)mlnuiTranslationX {
+    return [objc_getAssociatedObject(self, _cmd) floatValue];
+}
+
+- (void)setMlnuiTranslationY:(CGFloat)ty {
+    objc_setAssociatedObject(self, @selector(mlnuiTranslationY), @(ty), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+
+- (CGFloat)mlnuiTranslationY {
+    return [objc_getAssociatedObject(self, _cmd) floatValue];
+}
+
+- (void)setMlnuiScaleX:(CGFloat)sx {
+    if (MLNUIFloatEqual(sx, 0.0)) {
+        sx = MLNUI_PSEUDO_ZERO;
+    }
+    objc_setAssociatedObject(self, @selector(mlnuiScaleX), @(sx), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+
+- (CGFloat)mlnuiScaleX {
+    CGFloat sx = [objc_getAssociatedObject(self, _cmd) floatValue];
+    if (MLNUIFloatEqual(sx, 0.0)) {
+        return 1.0f; // default is 1.0
+    }
+    if (MLNUIFloatEqual(sx, MLNUI_PSEUDO_ZERO)) {
+        return 0.0f;
+    }
+    return sx;
+}
+
+- (void)setMlnuiScaleY:(CGFloat)sy {
+    if (MLNUIFloatEqual(sy, 0.0)) {
+        sy = MLNUI_PSEUDO_ZERO;
+    }
+    objc_setAssociatedObject(self, @selector(mlnuiScaleY), @(sy), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+
+- (CGFloat)mlnuiScaleY {
+    CGFloat sy = [objc_getAssociatedObject(self, _cmd) floatValue];
+    if (MLNUIFloatEqual(sy, 0.0)) {
+        return 1.0f; // default is 1.0
+    }
+    if (MLNUIFloatEqual(sy, MLNUI_PSEUDO_ZERO)) {
+        return 0.0f;
+    }
+    return sy;
+}
+
+static MLNUI_FORCE_INLINE void MLNUIViewApplyFrame(UIView *view, CGRect frame) {
+    if (!CGAffineTransformEqualToTransform(view.transform, CGAffineTransformIdentity)) {
+        CGAffineTransform transform = view.transform;
+        view.transform = CGAffineTransformIdentity;
+        view.frame = frame;
+        view.transform = transform;
+    } else if (!CATransform3DEqualToTransform(view.layer.transform, CATransform3DIdentity)) {
+        CATransform3D transform = view.layer.transform;
+        view.layer.transform = CATransform3DIdentity;
+        view.frame = frame;
+        view.layer.transform = transform;
+    } else {
+        view.frame = frame;
+    }
+}
+
+static MLNUI_FORCE_INLINE void MLNUIViewChangeX(UIView *view, CGFloat x) {
+    CGRect frame = view.frame;
+    frame.origin.x = x;
+    MLNUIViewApplyFrame(view, frame);
+}
+
+static MLNUI_FORCE_INLINE void MLNUIViewChangeY(UIView *view, CGFloat y) {
+    CGRect frame = view.frame;
+    frame.origin.y = y;
+    MLNUIViewApplyFrame(view, frame);
+}
+
+static MLNUI_FORCE_INLINE void MLNUIViewChangeWidth(UIView *view, CGFloat width) {
+    CGRect frame = view.frame;
+    frame.size.width = width;
+    MLNUIViewApplyFrame(view, frame);
+}
+
+static MLNUI_FORCE_INLINE void MLNUIViewChangeHeight(UIView *view, CGFloat height) {
+    CGRect frame = view.frame;
+    frame.size.height = height;
+    MLNUIViewApplyFrame(view, frame);
+}
+
+#pragma mark - Animation
+
+- (void)setMlnuiAnimationX:(CGFloat)ax {
+    self.mlnuiTranslationX = ax - self.mlnuiLayoutX;
+    MLNUIViewChangeX(self, ax);
+}
+
+- (CGFloat)mlnuiAnimationX {
+    return self.frame.origin.x;
+}
+
+- (void)setMlnuiAnimationY:(CGFloat)ay {
+    self.mlnuiTranslationY = ay - self.mlnuiLayoutY;
+    MLNUIViewChangeY(self, ay);
+}
+
+- (CGFloat)mlnuiAnimationY {
+    return self.frame.origin.y;
+}
+
+- (void)setMlnuiAnimationWidth:(CGFloat)width {
+    self.mlnuiScaleX = width / self.mlnuiLayoutWidth;
+    MLNUIViewChangeWidth(self, width);
+}
+
+- (CGFloat)mlnuiAnimationWidth {
+    return self.frame.size.width;
+}
+
+- (void)setMlnuiAnimationHeight:(CGFloat)height {
+    self.mlnuiScaleY = height / self.mlnuiLayoutHeight;
+    MLNUIViewChangeHeight(self, height);
+}
+
+- (CGFloat)mlnuiAnimationHeight {
+    return self.frame.size.height;
 }
 
 - (void)setMlnuiAnimationFrame:(CGRect)frame {
-    objc_setAssociatedObject(self, @selector(mlnuiAnimationFrame), [NSValue valueWithCGRect:frame], OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-    MLNUIComposeFrame(self, frame, self.mlnuiLayoutFrame);
+    self.mlnuiTranslationX = frame.origin.x - self.mlnuiLayoutX;
+    self.mlnuiTranslationY = frame.origin.y - self.mlnuiLayoutY;
+    self.mlnuiScaleX = frame.size.width / self.mlnuiLayoutWidth;
+    self.mlnuiScaleY = frame.size.height / self.mlnuiLayoutHeight;
+    self.frame = frame;
 }
 
 - (CGRect)mlnuiAnimationFrame {
-    return [objc_getAssociatedObject(self, _cmd) CGRectValue];
+    return self.frame;
+}
+
+#pragma mark - Layout
+
+- (void)setMlnuiLayoutX:(CGFloat)x {
+    MLNUIViewChangeX(self, x + self.mlnuiTranslationX);
+}
+
+- (CGFloat)mlnuiLayoutX {
+    return self.frame.origin.x - self.mlnuiTranslationX;
+}
+
+- (void)setMlnuiLayoutY:(CGFloat)y {
+    MLNUIViewChangeY(self, y + self.mlnuiTranslationY);
+}
+
+- (CGFloat)mlnuiLayoutY {
+    return self.frame.origin.y - self.mlnuiTranslationY;
+}
+
+- (void)setMlnuiLayoutWidth:(CGFloat)width {
+    MLNUIViewChangeWidth(self, width * self.mlnuiScaleX);
+}
+
+- (CGFloat)mlnuiLayoutWidth {
+    return self.frame.size.width / self.mlnuiScaleX;
+}
+
+- (void)setMlnuiLayoutHeight:(CGFloat)height {
+    MLNUIViewChangeHeight(self, height * self.mlnuiScaleY);
+}
+
+- (CGFloat)mlnuiLayoutHeight {
+    return self.frame.size.height / self.mlnuiScaleY;
+}
+
+- (void)setMlnuiLayoutFrame:(CGRect)frame {
+    MLNUIViewApplyFrame(self, (CGRect){
+        frame.origin.x + self.mlnuiTranslationX,
+        frame.origin.y + self.mlnuiTranslationY,
+        frame.size.width * self.mlnuiScaleX,
+        frame.size.height * self.mlnuiScaleY
+    });
+}
+
+- (CGRect)mlnuiLayoutFrame {
+    return (CGRect){
+        self.frame.origin.x - self.mlnuiTranslationX,
+        self.frame.origin.y - self.mlnuiTranslationY,
+        self.frame.size.width / self.mlnuiScaleX,
+        self.frame.size.height / self.mlnuiScaleY
+    };
 }
 
 @end

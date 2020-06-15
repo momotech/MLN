@@ -31,12 +31,23 @@
 
 #pragma mark - Calculate Layout
 
+static inline void MLNUILayoutNodeClearWidth(UIView *view) {
+    view.mlnui_layoutNode.width = MLNUIValueAuto; // 若要计算自适应宽度，需要清除之前已设置的宽度，否则计算出的是固定宽度
+}
+
+static inline void MLNUILayoutNodeClearHeight(UIView *view) {
+    view.mlnui_layoutNode.height = MLNUIValueAuto; // 若要计算自适应高度，需要清除之前已设置的高度，否则计算出的是固定高度
+}
+
 - (CGFloat)calculHeightWithWidth:(CGFloat)width maxHeight:(CGFloat)maxHeight {
+    MLNUILayoutNodeClearHeight(self);
     CGSize size = [self.mlnui_layoutNode calculateLayoutWithSize:CGSizeMake(width, maxHeight)];
     return size.height;
 }
 
 - (CGSize)calculSizeWithMaxWidth:(CGFloat)maxWidth maxHeight:(CGFloat)maxHeight {
+    MLNUILayoutNodeClearWidth(self);
+    MLNUILayoutNodeClearHeight(self);
     return [self.mlnui_layoutNode calculateLayoutWithSize:CGSizeMake(maxWidth, maxHeight)];
 }
 
@@ -58,7 +69,7 @@
 
 - (void)setupLayoutNodeIfNeed {
     if (!self.inited) {
-        [self.mlnui_layoutNode markDirty];
+        [self mlnui_markNeedsLayout];
         [MLNUI_KIT_INSTANCE(self.mlnui_luaCore) addRootnode:self.mlnui_layoutNode];
     }
 }

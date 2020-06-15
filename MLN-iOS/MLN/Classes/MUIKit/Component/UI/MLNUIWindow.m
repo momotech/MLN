@@ -307,18 +307,6 @@
     return YES;
 }
 
-- (CGFloat)luaui_height
-{
-    MLNUILayoutNode *node = self.mlnui_layoutNode;
-    return node.layoutHeight - node.paddingTop.value - node.paddingBottom.value;
-}
-
-- (CGFloat)luaui_width
-{
-    MLNUILayoutNode *node  = self.mlnui_layoutNode;
-    return node.layoutWidth - node.paddingLeft.value - node.paddingRight.value;
-}
-
 - (void)setFrame:(CGRect)frame
 {
     BOOL isSizeChange = !CGSizeEqualToSize(self.frame.size, frame.size);

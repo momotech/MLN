@@ -27,15 +27,7 @@
     // 2. calculate size
     NSString *reuseId = [self reuseIdentifierAtIndexPath:indexPath];
     [self registerCellClassIfNeed:collectionView reuseId:reuseId];
-    CGFloat width = collectionView.frame.size.width;
-    CGFloat height = collectionView.frame.size.height;
-    CGFloat maxWidth = width;
-    CGFloat maxHeight = CGFLOAT_MAX;
-    if (collectionView.mlnui_horizontal) {
-        maxWidth = CGFLOAT_MAX;
-        maxHeight = height;
-    }
-    MLNUICollectionViewCell *cell = [[MLNUICollectionViewCell alloc] initWithFrame:CGRectMake(0, 0, width, height)];
+    MLNUICollectionViewCell *cell = [[MLNUICollectionViewCell alloc] init];
     [cell pushContentViewWithLuaCore:self.mlnui_luaCore];
     if (!cell.isInited) {
         MLNUIBlock *initCallback = [self initedCellCallbackByReuseId:reuseId];
@@ -48,7 +40,7 @@
     [reuseCallback addIntArgument:(int)indexPath.section+1];
     [reuseCallback addIntArgument:(int)indexPath.item+1];
     [reuseCallback callIfCan];
-    CGSize size = [cell calculSizeWithMaxWidth:maxWidth maxHeight:maxHeight];
+    CGSize size = [cell calculSizeWithMaxWidth:MLNUIUndefined maxHeight:MLNUIUndefined]; // 计算cell自适应大小
     // 3. update cache
     [self.cachesManager updateLayoutInfo:[NSValue valueWithCGSize:size] forIndexPath:indexPath];
     return size;

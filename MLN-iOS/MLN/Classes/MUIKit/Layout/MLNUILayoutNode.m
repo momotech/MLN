@@ -335,14 +335,18 @@ YG_PROPERTY(CGFloat, aspectRatio, AspectRatio)
 #pragma mark - Node Tree
 
 - (void)addSubNode:(MLNUILayoutNode *)node {
+    if (!node) return;
     [self insertSubNode:node atIndex:YGNodeGetChildCount(self.node)];
 }
 
 - (void)insertSubNode:(MLNUILayoutNode *)node atIndex:(NSInteger)index {
+    if (!node) return;
+    YGNodeSetMeasureFunc(self.node, NULL); // ensure the node being inserted no measure func
     YGNodeInsertChild(self.node, node.node, (const uint32_t)index);
 }
 
 - (void)removeSubNode:(MLNUILayoutNode *)node {
+    if (!node) return;
     YGNodeRemoveChild(self.node, node.node);
 }
 
@@ -479,7 +483,9 @@ static void YGApplyLayoutToViewHierarchy(UIView *view, BOOL preserveOrigin)
     CGPoint origin = preserveOrigin ? frame.origin : CGPointZero;
     frame.origin = CGPointMake(YGRoundPixelValue(topLeft.x + origin.x), YGRoundPixelValue(topLeft.y + origin.y));
     frame.size = CGSizeMake(YGRoundPixelValue(bottomRight.x) - YGRoundPixelValue(topLeft.x), YGRoundPixelValue(bottomRight.y) - YGRoundPixelValue(topLeft.y));
-    view.mlnuiLayoutFrame = frame;
+    if (!CGRectEqualToRect(view.mlnuiLayoutFrame, frame)) {
+        view.mlnuiLayoutFrame = frame;
+    }
     [view mlnui_layoutCompleted];
     
     if (!layout.isLeaf) {
