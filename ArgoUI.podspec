@@ -43,9 +43,9 @@ Pod::Spec.new do |s|
     s.subspec 'Kit' do |k|
         k.name = 'Kit'
         k.framework = 'Foundation', 'UIKit', 'CoreGraphics', 'AVFoundation'
-        k.source_files = 'MLN-iOS/MLN/Classes/MUIKit/**/*.{h,m,c}'
+        k.source_files = 'MLN-iOS/MLN/Classes/MUIKit/**/*.{h,m,c,cpp}'
         k.public_header_files = 'MLN-iOS/MLN/Classes/MUIKit/**/*.h'
-        k.dependency  'ArgoUI/Core'
+        k.dependency 'ArgoUI/Core'
     end
     
 end

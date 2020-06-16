@@ -6,37 +6,26 @@
 //
 
 #import "MLNUIVStack.h"
-#import "MLNUIVStackNode.h"
 #import "UIView+MLNUILayout.h"
 #import "MLNUIViewExporterMacro.h"
 
 @implementation MLNUIVStack
 
-- (MLNUIVStackNode *)node {
-    return (MLNUIVStackNode *)self.luaui_node;
-}
-
 #pragma mark - Override
 
 - (instancetype)init {
     if (self = [super init]) {
-        self.node.heightType = MLNUILayoutMeasurementTypeMatchParent; // 主轴
-        self.node.widthType = MLNUILayoutMeasurementTypeWrapContent;  // 交叉轴
+        self.mlnui_layoutNode.flexDirection = MLNUIFlexDirectionColumn;
     }
     return self;
 }
 
-- (MLNUILayoutNode *)createStackNodeWithTargetView:(UIView *)targetView {
-    return [[MLNUIVStackNode alloc] initWithTargetView:targetView];
+- (void)setLuaui_reverse:(BOOL)reverse {
+    self.mlnui_layoutNode.flexDirection = reverse ? MLNUIFlexDirectionColumnReverse : MLNUIFlexDirectionColumn;
 }
 
-#pragma mark - Override
-
-- (void)luaui_addSubview:(UIView *)view {
-    [super luaui_addSubview:view];
-    if ([view isKindOfClass:[MLNUIVStack class]]) {
-        [(MLNUIVStackNode *)view.luaui_node invalidateMainAxisMatchParentMeasureType];
-    }
+- (void)setCrossAxisSize:(CGSize)size {
+    self.mlnui_layoutNode.width = MLNUIPointValue(size.width);
 }
 
 #pragma mark - Export Lua

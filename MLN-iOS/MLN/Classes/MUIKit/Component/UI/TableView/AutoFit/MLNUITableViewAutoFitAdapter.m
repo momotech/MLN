@@ -45,7 +45,7 @@
     [reuseCallback addIntArgument:(int)indexPath.section+1];
     [reuseCallback addIntArgument:(int)indexPath.row+1];
     [reuseCallback callIfCan];
-    height = [cell calculHeightWithWidth:tableViewWidth maxHeight:CGFLOAT_MAX];
+    height = [cell calculHeightWithWidth:tableViewWidth maxHeight:MLNUIUndefined];
     [self.cachesManager updateLayoutInfo:@(height) forIndexPath:indexPath];
     return height;
 }

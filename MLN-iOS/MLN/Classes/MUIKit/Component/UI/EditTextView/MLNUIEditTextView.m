@@ -13,7 +13,6 @@
 #import "MLNUILayoutEngine.h"
 #import "MLNUITextViewFactory.h"
 #import "UIView+MLNUILayout.h"
-#import "MLNUILayoutNode.h"
 #import "MLNUISizeCahceManager.h"
 #import "MLNUIBeforeWaitingTask.h"
 #import "UIView+MLNUIKit.h"
@@ -32,8 +31,6 @@
 @property (nonatomic, strong) MLNUIBlock *didChangingCallback;
 @property (nonatomic, strong) MLNUIBlock *endChangedCallback;
 @property (nonatomic, strong) MLNUIBlock *returnCallback;
-
-@property (nonatomic, strong) MLNUIBeforeWaitingTask *lazyTask;
 
 @property (nonatomic, copy) NSString *originString;
 @property (nonatomic, copy) NSString *changedString;
@@ -84,18 +81,6 @@
 
 #pragma mark - Getter
 
-- (MLNUIBeforeWaitingTask *)lazyTask
-{
-    if (!_lazyTask) {
-        __weak typeof(self) wself = self;
-        _lazyTask = [MLNUIBeforeWaitingTask taskWithCallback:^{
-            __strong typeof(wself) sself = wself;
-            sself.internalTextView.frame = UIEdgeInsetsInsetRect(sself.bounds, sself.padding);
-        }];
-    }
-    return _lazyTask;
-}
-
 - (UIImageView *)backgroundImageView
 {
     if (!_backgroundImageView) {
@@ -141,8 +126,8 @@
 
 - (void)internalTextViewDidChange:(UIView<MLNUITextViewProtocol> *)internalTextView
 {
-    if (self.type == MLNUIInternalTextViewTypeMultableLine && self.luaui_node.isWrapContent) {
-        [self luaui_needLayoutAndSpread];
+    if (self.type == MLNUIInternalTextViewTypeMultableLine && self.mlnui_layoutNode.isWrapContent) {
+        [self mlnui_markNeedsLayout];
     }
     //触发回调
     if ([_changedString isEqualToString:@"\n"]) {
@@ -351,8 +336,8 @@
     self.internalTextView.text = text;
     [self clipBeyondTextIfNeed:self.internalTextView];
     text = self.internalTextView.text;
-    if (self.type == MLNUIInternalTextViewTypeMultableLine && self.luaui_node.isWrapContent) {
-        [self luaui_needLayoutAndSpread];
+    if (self.type == MLNUIInternalTextViewTypeMultableLine && self.mlnui_layoutNode.isWrapContent) {
+        [self mlnui_markNeedsLayout];
     }
     if (_didChangingCallback) {
         [_didChangingCallback addStringArgument:text?:@""];
@@ -384,8 +369,8 @@
         placeholder = [placeholder stringByReplacingOccurrencesOfString:@"\n" withString:@""];
     }
     self.internalTextView.placeholder = placeholder;
-    if (self.type == MLNUIInternalTextViewTypeMultableLine && self.luaui_node.isWrapContent) {
-        [self luaui_needLayoutAndSpread];
+    if (self.type == MLNUIInternalTextViewTypeMultableLine && self.mlnui_layoutNode.isWrapContent) {
+        [self mlnui_markNeedsLayout];
     }
 }
 
@@ -417,8 +402,8 @@
 - (void)setAttributedText:(NSAttributedString *)attributedText
 {
     self.internalTextView.attributedText = attributedText;
-    if (self.type == MLNUIInternalTextViewTypeMultableLine && self.luaui_node.isWrapContent) {
-        [self luaui_needLayoutAndSpread];
+    if (self.type == MLNUIInternalTextViewTypeMultableLine && self.mlnui_layoutNode.isWrapContent) {
+        [self mlnui_markNeedsLayout];
     }
 }
 
@@ -512,15 +497,6 @@
     _returnMode = returnMode;
 }
 
-- (void)luaui_setPadding:(CGFloat)top right:(CGFloat)right bottom:(CGFloat)bottom left:(CGFloat)left
-{
-    self.padding = UIEdgeInsetsMake(top, left, bottom, right);
-    if (self.type == MLNUIInternalTextViewTypeMultableLine && self.luaui_node.isWrapContent) {
-        [self luaui_needLayoutAndSpread];
-    }
-    [self mlnui_pushLazyTask:self.lazyTask];
-}
-
 - (void)luaui_dismissKeyboard
 {
     if ([self.internalTextView isFirstResponder]) {
@@ -539,8 +515,8 @@
 {
     UIFont *font =  [UIFont fontWithName:fontName size:fontSize]?:[UIFont systemFontOfSize:fontSize];
     self.internalTextView.font = font;
-    if (self.type == MLNUIInternalTextViewTypeMultableLine && self.luaui_node.isWrapContent) {
-        [self luaui_needLayoutAndSpread];
+    if (self.type == MLNUIInternalTextViewTypeMultableLine && self.mlnui_layoutNode.isWrapContent) {
+        [self mlnui_markNeedsLayout];
     }
 }
 
@@ -574,41 +550,20 @@
             [_internalTextView becomeFirstResponder];
         }
         [preInternalTextView removeFromSuperview];
-        [self luaui_needLayoutAndSpread];
-        [self mlnui_pushLazyTask:self.lazyTask];
         [self setupSwitchStatusWityType:type];
     }
 }
 
 #pragma mark - Layout For Lua
-- (CGSize)luaui_measureSizeWithMaxWidth:(CGFloat)maxWidth maxHeight:(CGFloat)maxHeight
-{
-    NSString *cacheKey = [self remakeCacheKeyWithMaxWidth:maxWidth maxHeight:maxHeight];
-    MLNUISizeCahceManager *sizeCacheManager = MLNUI_KIT_INSTANCE(self.mlnui_luaCore).layoutEngine.sizeCacheManager;
-    NSValue *sizeValue = [sizeCacheManager objectForKey:cacheKey];
-    if (sizeValue) {
-        return sizeValue.CGSizeValue;
-    }
-    maxWidth -= _padding.left + _padding.right;
-    maxHeight -= _padding.top + _padding.bottom;
-    CGSize size = [self.internalTextView sizeThatFits:CGSizeMake(maxWidth, maxHeight)];
-    
-    size.width = ceil(size.width);
-    size.height = ceil(size.height);
-    size.width = size.width + _padding.left + _padding.right;
-    size.height = size.height + _padding.top + _padding.bottom;
-    [sizeCacheManager setObject:[NSValue valueWithCGSize:size] forKey:cacheKey];
-    return size;
-}
 
 - (NSString *)remakeCacheKeyWithMaxWidth:(CGFloat)maxWidth maxHeight:(CGFloat)maxHeight
 {
     return [NSString stringWithFormat:@"%lu%@%@%ld%lu%f%f%f%f%f%f",(unsigned long)self.attributedText.hash,self.placeholder, self.text,(long)self.textAlignment,(unsigned long)self.font.hash,self.padding.top,self.padding.bottom,self.padding.left,self.padding.right, maxWidth, maxHeight];
 }
 
-- (void)luaui_changedLayout
+- (void)mlnui_layoutDidChange
 {
-    [super luaui_changedLayout];
+    [super mlnui_layoutDidChange];
     if (!CGRectEqualToRect(self.backgroundImageView.frame, self.bounds)) {
         self.backgroundImageView.frame = self.bounds;
     }
@@ -637,6 +592,7 @@
 }
 
 #pragma mark - Override
+
 - (void)luaui_addSubview:(UIView *)view
 {
     MLNUIKitLuaAssert(NO, @"Not found \"addView\" method, just continar of View has it!");
@@ -652,9 +608,63 @@
     MLNUIKitLuaAssert(NO, @"Not found \"removeAllSubviews\" method, just continar of View has it!");
 }
 
-- (BOOL)luaui_layoutEnable
-{
+- (BOOL)mlnui_layoutEnable {
     return YES;
+}
+
+- (CGSize)mlnui_sizeThatFits:(CGSize)size {
+    NSString *cacheKey = [self remakeCacheKeyWithMaxWidth:size.width maxHeight:size.height];
+    MLNUISizeCahceManager *sizeCacheManager = MLNUI_KIT_INSTANCE(self.mlnui_luaCore).layoutEngine.sizeCacheManager;
+    NSValue *sizeValue = [sizeCacheManager objectForKey:cacheKey];
+    if (sizeValue) {
+        return sizeValue.CGSizeValue;
+    }
+    CGSize fitSize = [self.internalTextView sizeThatFits:CGSizeMake(size.width, size.height)];
+    fitSize.width = ceil(fitSize.width);
+    fitSize.height = ceil(fitSize.height);
+    [sizeCacheManager setObject:[NSValue valueWithCGSize:fitSize] forKey:cacheKey];
+    return fitSize;
+}
+
+- (void)luaui_setPaddingWithTop:(CGFloat)top right:(CGFloat)right bottom:(CGFloat)bottom left:(CGFloat)left {
+    self.padding = UIEdgeInsetsMake(top, left, bottom, right);
+    [super luaui_setPaddingWithTop:top right:right bottom:bottom left:left];
+}
+
+- (void)setLuaui_paddingTop:(CGFloat)luaui_paddingTop {
+    [super setLuaui_paddingTop:luaui_paddingTop];
+    UIEdgeInsets insets = self.padding;
+    insets.top = luaui_paddingTop;
+    self.padding = insets;
+}
+
+- (void)setLuaui_paddingLeft:(CGFloat)luaui_paddingLeft {
+    [super setLuaui_paddingLeft:luaui_paddingLeft];
+    UIEdgeInsets insets = self.padding;
+    insets.left = luaui_paddingLeft;
+    self.padding = insets;
+}
+
+- (void)setLuaui_paddingRight:(CGFloat)luaui_paddingRight {
+    [super setLuaui_paddingRight:luaui_paddingRight];
+    UIEdgeInsets insets = self.padding;
+    insets.right = luaui_paddingRight;
+    self.padding = insets;
+}
+
+- (void)setLuaui_paddingBottom:(CGFloat)luaui_paddingBottom {
+    [super setLuaui_paddingBottom:luaui_paddingBottom];
+    UIEdgeInsets insets = self.padding;
+    insets.bottom = luaui_paddingBottom;
+    self.padding = insets;
+}
+
+- (void)layoutSubviews {
+    [super layoutSubviews];
+    CGRect frame = UIEdgeInsetsInsetRect(self.bounds, self.padding);
+    if (!CGRectEqualToRect(frame, self.internalTextView.frame)) {
+        self.internalTextView.frame = frame;
+    }
 }
 
 #pragma mark - Export For Lua
@@ -678,7 +688,6 @@ LUAUI_EXPORT_VIEW_METHOD(setDidChangingCallback, "setDidChangingCallback:", MLNU
 LUAUI_EXPORT_VIEW_METHOD(setEndChangedCallback, "setEndChangedCallback:", MLNUIEditTextView)
 LUAUI_EXPORT_VIEW_METHOD(setReturnCallback, "setReturnCallback:", MLNUIEditTextView)
 LUAUI_EXPORT_VIEW_METHOD(setCanEdit, "luaui_setCanEdit:", MLNUIEditTextView)
-LUAUI_EXPORT_VIEW_METHOD(padding, "luaui_setPadding:right:bottom:left:", MLNUIEditTextView)
 LUAUI_EXPORT_VIEW_METHOD(dismissKeyboard, "luaui_dismissKeyboard", MLNUIEditTextView)
 LUAUI_EXPORT_VIEW_METHOD(showKeyboard, "luaui_showKeyboard", MLNUIEditTextView)
 LUAUI_EXPORT_VIEW_METHOD(setCursorColor, "luaui_setCursorColor:", MLNUIEditTextView)

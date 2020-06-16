@@ -8,8 +8,8 @@
 #import "MLNUIFrameAnimation.h"
 #import "MLNUIKitHeader.h"
 #import "MLNUIEntityExporterMacro.h"
+#import "MLNUIViewConst.h"
 #import "UIView+MLNUILayout.h"
-#import "MLNUILayoutNode.h"
 #import "MLNUIAnimationConst.h"
 #import "MLNUIBlock.h"
 
@@ -170,11 +170,11 @@
     endFrame.size.width = self.scaleEndWidth != MLNUIValueTypeCurrent? self.scaleEndWidth : endFrame.size.width;
     endFrame.size.height = self.scaleEndHeight != MLNUIValueTypeCurrent ? self.scaleEndHeight : endFrame.size.height;
     // offset
-    __unsafe_unretained MLNUILayoutNode *node = view.luaui_node;
-    node.offsetX = endFrame.origin.x - view.frame.origin.x + node.offsetX;
-    node.offsetY = endFrame.origin.y - view.frame.origin.y + node.offsetY;
-    node.offsetWidth = endFrame.size.width - view.frame.size.width + node.offsetWidth;
-    node.offsetHeight = endFrame.size.height - view.frame.size.height + node.offsetHeight;
+    __unsafe_unretained MLNUILayoutNode *layout = view.mlnui_layoutNode; // TODO:__TODO
+//    layout.offsetX = endFrame.origin.x - view.frame.origin.x + layout.offsetX;
+//    layout.offsetY = endFrame.origin.y - view.frame.origin.y + layout.offsetY;
+//    layout.offsetWidth = endFrame.size.width - view.frame.size.width + layout.offsetWidth;
+//    layout.offsetHeight = endFrame.size.height - view.frame.size.height + layout.offsetHeight;
     view.frame = startFrame;
     // alpha
     CGFloat startAlpha = self.startAlpha != MLNUIValueTypeCurrent ? self.startAlpha : view.alpha;
@@ -194,8 +194,8 @@
         view.frame = endFrame;
         view.alpha = endAlpha;
         view.backgroundColor = endColor;
-        [view luaui_needLayoutAndSpread];
-        [view luaui_changedLayout];
+        [view mlnui_markNeedsLayout];
+        [view mlnui_layoutDidChange];
     } completion:^(BOOL finished) {
         BOOL repeatIndefinitely = self.options & UIViewAnimationOptionRepeat;
         if (CGRectEqualToRect(startFrame, endFrame) && startAlpha == endAlpha && CGColorEqualToColor(startColor.CGColor, endColor.CGColor) && !repeatIndefinitely) {

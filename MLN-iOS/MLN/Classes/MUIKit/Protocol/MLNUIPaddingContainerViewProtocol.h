@@ -17,31 +17,12 @@
 /**
  被padding包裹的内容视图。
  */
-@property (nonatomic, strong, readonly) UIView *luaui_contentView;
+@property (nonatomic, strong, readonly) UIView *mlnui_contentView;
 
-@property (nonatomic, assign) CGFloat luaui_paddingLeft;
-@property (nonatomic, assign) CGFloat luaui_paddingRight;
-@property (nonatomic, assign) CGFloat luaui_paddingTop;
-@property (nonatomic, assign) CGFloat luaui_paddingBottom;
-
-/**
- 当前的padding是否需要更新
- */
-@property (nonatomic, assign, getter=luaui_isPaddingNeedUpdated) BOOL luaui_paddingNeedUpdated;
-
-/**
- 当视图内部Padding需要更新时候被调用，如果你需要自己处理padding，可以重写该方法。
- 
- @warning 不可以主动调用该方法！
- */
-- (void)luaui_onUpdateForPadding;
-
-/**
- 当视图内部Padding更新后被调用，如果你需要自己处理padding，可以重写该方法。
- 
- @warning 不可以主动调用该方法！
- */
-- (void)luaui_paddingUpdated;
+@property (nonatomic, assign, readonly) CGFloat mlnui_paddingLeft;
+@property (nonatomic, assign, readonly) CGFloat mlnui_paddingRight;
+@property (nonatomic, assign, readonly) CGFloat mlnui_paddingTop;
+@property (nonatomic, assign, readonly) CGFloat mlnui_paddingBottom;
 
 @end
 

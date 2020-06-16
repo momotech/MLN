@@ -9,11 +9,9 @@
 #import "MLNUIViewExporterMacro.h"
 #import "MLNUIKitHeader.h"
 #import "UIView+MLNUIKit.h"
-#import "MLNUILayoutContainerNode.h"
 #import "MLNUIBeforeWaitingTask.h"
 #import "MLNUIShapeContext.h"
 #import "MLNUIBlock.h"
-
 
 @interface MLNUICanvasView()
 
@@ -85,7 +83,7 @@
     return YES;
 }
 
-- (BOOL)luaui_layoutEnable
+- (BOOL)mlnui_layoutEnable
 {
     return YES;
 }

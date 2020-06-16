@@ -14,8 +14,6 @@
 #import "MLNUIKitHeader.h"
 #import "MLNUIViewExporterMacro.h"
 #import "UIView+MLNUILayout.h"
-#import "MLNUILayoutNode.h"
-
 
 #define kMLNUIWaterfallViewReuseID @"kMLNUIWaterfallViewReuseID"
 
@@ -71,7 +69,7 @@
         }
         return CGSizeZero;
     } else {
-        CGSize size = [headerView.luaui_node measureSizeWithMaxWidth:collectionView.frame.size.width maxHeight:CGFLOAT_MAX];
+        CGSize size = [headerView.mlnui_layoutNode calculateLayoutWithSize:CGSizeMake(CGRectGetWidth(collectionView.frame), CGFLOAT_MAX)];
         return CGSizeMake(0, size.height);
     }
 }
@@ -102,7 +100,7 @@
         [self.reuseHeaderCallback addIntArgument:(int)indexPath.section+1];
         [self.reuseHeaderCallback addIntArgument:(int)indexPath.row+1];
         [self.reuseHeaderCallback callIfCan];
-        [waterfallHeaderView requestLayoutIfNeed];
+        [waterfallHeaderView mlnui_requestLayoutIfNeed];
         return waterfallHeaderView;
     } else {
         static NSString *reuseId = kMLNUIWaterfallViewReuseID;
@@ -112,8 +110,8 @@
         if ([collectionView isKindOfClass:[MLNUIInternalWaterfallView class]]) {
             [headerContentView setupLayoutNodeIfNeed];
             [headerContentView luaui_addSubview:headerView];
-            [headerView.luaui_node needLayoutAndSpread];
-            [headerContentView requestLayoutIfNeed];
+            [headerView mlnui_markNeedsLayout];
+            [headerContentView mlnui_requestLayoutIfNeed];
             [headerContentView updateLuaContentViewIfNeed];
             headerContentView.bounds = headerContentView.bounds;
             return headerContentView;

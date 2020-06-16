@@ -1,0 +1,6 @@
+framework module MLN {
+  umbrella header "MLN-LuaLib-umbrella.h"
+
+  export *
+  module * { export * }
+}

@@ -367,18 +367,20 @@
     return arrayT;
 }
 
-#pragma mark - Override
-- (CGSize)luaui_measureSizeWithMaxWidth:(CGFloat)maxWidth maxHeight:(CGFloat)maxHeight
-{
-    return CGSizeMake(maxWidth, maxHeight);
-}
+#pragma mark - MLNUIPaddingContainerViewProtocol
 
-- (UIView *)luaui_contentView
+- (UIView *)mlnui_contentView
 {
     return self.innerWaterfallView;
 }
 
-- (BOOL)luaui_layoutEnable
+#pragma mark - Override
+
+- (CGSize)mlnui_sizeThatFits:(CGSize)size {
+    return size;
+}
+
+- (BOOL)mlnui_layoutEnable
 {
     return YES;
 }

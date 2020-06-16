@@ -208,12 +208,6 @@
     return _totalItemsCount;
 }
 
-#pragma mark - Layout For Lua
-- (CGSize)luaui_measureSizeWithMaxWidth:(CGFloat)maxWidth maxHeight:(CGFloat)maxHeight
-{
-    return CGSizeMake(maxWidth, maxHeight);
-}
-
 #pragma mark - Private Func
 - (NSInteger)correctCurrentIndex
 {
@@ -645,14 +639,18 @@
 
 
 #pragma mark - Override
-- (BOOL)luaui_layoutEnable
+
+- (CGSize)mlnui_sizeThatFits:(CGSize)size {
+    return size;
+}
+
+- (BOOL)mlnui_layoutEnable
 {
     return YES;
 }
 
-- (void)luaui_changedLayout
-{
-    [super luaui_changedLayout];
+- (void)mlnui_layoutDidChange {
+    [super mlnui_layoutDidChange];
     [self setupMainViewFrame];
 }
 

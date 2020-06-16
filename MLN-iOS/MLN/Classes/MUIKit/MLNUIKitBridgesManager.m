@@ -11,7 +11,6 @@
 // Kit Classes's View
 #import "MLNUIView.h"
 #import "MLNUIWindow.h"
-#import "MLNUILinearLayout.h"
 #import "MLNUIAlert.h"
 #import "MLNUIAnimationZoneView.h"
 #import "MLNUILabel.h"
@@ -33,8 +32,6 @@
 #import "MLNUIWaterfallLayout.h"
 #import "MLNUIWaterfallAdapter.h"
 #import "MLNUIEditTextView.h"
-#import "MLNUIDialogView.h"
-#import "MLNUIContainerWindow.h"
 #import "MLNUIViewPager.h"
 #import "MLNUIViewPagerAdapter.h"
 #import "MLNUITabSegmentView.h"
@@ -94,9 +91,9 @@
 // Stack
 #import "MLNUIStack.h"
 #import "MLNUIVStack.h"
-#import "MLNUIZStack.h"
 #import "MLNUIHStack.h"
 #import "MLNUISpacer.h"
+
 @interface MLNUIKitBridgesManager()
 /**
  承载Kit库bridge和LuaCore实例
@@ -132,13 +129,10 @@ static NSArray<Class<MLNUIExportProtocol>> *viewClasses;
     if (!viewClasses) {
         viewClasses = @[[MLNUIView class],
                         [MLNUIWindow class],
-                        [MLNUILinearLayout class],
                         [MLNUIAlert class],
                         [MLNUILabel class],
-                        [MLNUIOverlayLabel class],
                         [MLNUIButton class],
                         [MLNUIImageView class],
-                        [MLNUIOverlayImageView class],
                         [MLNUILoading class],
                         [MLNUIScrollView class],
                         [MLNUISwitch class],
@@ -155,8 +149,6 @@ static NSArray<Class<MLNUIExportProtocol>> *viewClasses;
                         [MLNUIWaterfallLayout class],
                         [MLNUIWaterfallAdapter class],
                         [MLNUIEditTextView class],
-                        [MLNUIDialogView class],
-                        [MLNUIContainerWindow class],
                         [MLNUIViewPager class],
                         [MLNUIViewPagerAdapter class],
                         [MLNUITabSegmentView class]];
@@ -259,7 +251,6 @@ static NSArray<Class<MLNUIExportProtocol>> *stackClasses;
         stackClasses = @[[MLNUIStack class],
                          [MLNUIVStack class],
                          [MLNUIHStack class],
-                         [MLNUIZStack class],
                          [MLNUISpacer class]];
     }
     return stackClasses;

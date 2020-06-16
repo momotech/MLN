@@ -120,9 +120,9 @@
     return [self.luaContentView calculSizeWithMaxWidth:maxWidth maxHeight:maxHeight];
 }
 
-- (void)requestLayoutIfNeed
+- (void)mlnui_requestLayoutIfNeed
 {
-    [self.luaContentView luaui_requestLayoutIfNeed];
+    [self.luaContentView mlnui_requestLayoutIfNeed];
 }
 
 - (void)updateSubviewsFrameIfNeed

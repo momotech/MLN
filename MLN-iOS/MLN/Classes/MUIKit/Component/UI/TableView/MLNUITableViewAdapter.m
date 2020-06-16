@@ -227,7 +227,7 @@
         [reuseCallback addIntArgument:(int)indexPath.row+1];
         [reuseCallback callIfCan];
     }
-    [cell requestLayoutIfNeed];
+    [cell mlnui_requestLayoutIfNeed];
     return cell;
 }
 

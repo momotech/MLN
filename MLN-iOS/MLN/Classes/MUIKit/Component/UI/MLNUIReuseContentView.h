@@ -5,7 +5,8 @@
 //  Created by MoMo on 2018/11/12.
 //
 
-#import "MLNUIView.h"
+#import "MLNUIVStack.h"
+#import "UIView+MLNUILayout.h"
 
 NS_ASSUME_NONNULL_BEGIN
 @class MLNUILuaTable;
@@ -22,14 +23,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (CGFloat)calculHeightWithWidth:(CGFloat)width maxHeight:(CGFloat)maxHeight;
 - (CGSize)calculSizeWithMaxWidth:(CGFloat)maxWidth maxHeight:(CGFloat)maxHeight;
-- (void)requestLayoutIfNeed;
 - (UIView *)contentView;
 - (NSString *)lastReueseId;
 - (void)updateLastReueseId:(NSString *)lastReuaseId;
 
 @end
 
-@interface MLNUIReuseContentView : MLNUIView
+@interface MLNUIReuseContentView : MLNUIVStack
 
 @property (nonatomic, strong, readonly) MLNUILuaTable *luaTable;
 @property (nonatomic, assign, getter=isInited) BOOL inited;

@@ -26,6 +26,8 @@ NS_ASSUME_NONNULL_BEGIN
 @class MLNUILayoutEngine;
 @class MLNUIKitInstanceHandlersManager;
 @class MLNUIKitInstanceConsts;
+@class MLNUILayoutNode;
+
 /**
  承载Kit库bridge和LuaCore的实例，用来运行Lua文件。
  */
@@ -305,14 +307,14 @@ Lua中的根视图。
 
  @param rootnode 自动布局的根节点
  */
-- (void)addRootnode:(MLNUILayoutContainerNode *)rootnode;
+- (void)addRootnode:(MLNUILayoutNode *)rootnode;
 
 /**
  移除布局的根节点
 
  @param rootnode 自动布局的根节点
  */
-- (void)removeRootNode:(MLNUILayoutContainerNode *)rootnode;
+- (void)removeRootNode:(MLNUILayoutNode *)rootnode;
 
 /**
  同步请求布局，立即执行一次布局
