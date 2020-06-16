@@ -16,8 +16,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface MLNUIPlaneStack : MLNUIStack
 
-// subclass should override
+/// subclass should override
 - (void)setLuaui_reverse:(BOOL)reverse;
+
+/// 如果是HStack则只设置高度；如果是VStack则只设置宽度.
+- (void)setCrossAxisSize:(CGSize)size;
 
 @end
 

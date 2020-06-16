@@ -12,7 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
 @class MLNUILuaCore;
 @interface MLNUIInnerScrollView : UIScrollView
 
-- (instancetype)initWithMLNUILuaCore:(MLNUILuaCore *)luaCore direction:(BOOL)horizontal isStackContenView:(BOOL)isStackContenView;
+- (instancetype)initWithMLNUILuaCore:(MLNUILuaCore *)luaCore direction:(BOOL)horizontal;
 
 @end
 

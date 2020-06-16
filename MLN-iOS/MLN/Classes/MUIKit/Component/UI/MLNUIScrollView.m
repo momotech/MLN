@@ -15,20 +15,23 @@
 #import "MLNUILuaCore.h"
 #import "MLNUIInnerScrollView.h"
 #import "MLNUIViewConst.h"
+#import "MLNUIStack.h"
 
 @interface MLNUIScrollView()
 
 @property (nonatomic, strong) MLNUIInnerScrollView *innerScrollView;
+@property (nonatomic, assign) BOOL autoFitSize; // scrollView如果没有设置固定宽高，则会自适应内容大小
 
 @end
 
 @implementation MLNUIScrollView
 
-- (instancetype)initWithMLNUILuaCore:(MLNUILuaCore *)luaCore isHorizontal:(NSNumber *)isHorizontal isStackContenView:(NSNumber *)isStackContenView
+- (instancetype)initWithMLNUILuaCore:(MLNUILuaCore *)luaCore isHorizontal:(NSNumber *)isHorizontal
 {
     if (self = [super initWithFrame:CGRectZero]) {
-        _innerScrollView = [[MLNUIInnerScrollView alloc] initWithMLNUILuaCore:luaCore direction:[isHorizontal boolValue] isStackContenView:[isStackContenView boolValue]];
+        _innerScrollView = [[MLNUIInnerScrollView alloc] initWithMLNUILuaCore:luaCore direction:[isHorizontal boolValue]];
         [super luaui_addSubview:_innerScrollView];
+        _autoFitSize = NO;
     }
     return self;
 }
@@ -206,12 +209,17 @@
 }
 
 - (CGSize)mlnui_sizeThatFits:(CGSize)size {
+    _autoFitSize = YES;
     return [self.innerScrollView.mlnui_contentView.mlnui_layoutNode applyLayoutWithSize:CGSizeMake(MLNUIUndefined, MLNUIUndefined)]; // 自适应内容大小 (前提是没有设置固定宽高)
 }
 
 - (void)mlnui_layoutCompleted {
     [super mlnui_layoutCompleted];
-    [self.innerScrollView.mlnui_contentView mlnui_requestLayoutIfNeedWithSize:CGSizeMake(MLNUIUndefined, MLNUIUndefined)]; // 固定宽高不会执行mlnui_sizeThatFits
+    if (!_autoFitSize) {
+        MLNUIPlaneStack *contentStack = (MLNUIPlaneStack *)self.innerScrollView.mlnui_contentView;
+        [contentStack setCrossAxisSize:self.innerScrollView.frame.size]; // 固定宽高情况下，要让contentStack交叉轴大小和scrollView保持一致（主轴方向上滚动）
+        [contentStack mlnui_requestLayoutIfNeedWithSize:CGSizeMake(MLNUIUndefined, MLNUIUndefined)]; // 固定宽高不会执行mlnui_sizeThatFits
+    }
 }
 
 #pragma mark - MLNUIPaddingContainerViewProtocol
@@ -242,7 +250,7 @@ LUAUI_EXPORT_VIEW_METHOD(getContentInset, "luaui_getContetnInset:", MLNUIScrollV
 LUAUI_EXPORT_VIEW_METHOD(setScrollIndicatorInset, "luaui_setScrollIndicatorInset:right:bottom:left:", MLNUIScrollView)
 LUAUI_EXPORT_VIEW_METHOD(setOffsetWithAnim, "luaui_setContentOffsetWithAnimation:", MLNUIScrollView)
 LUAUI_EXPORT_VIEW_METHOD(setScrollEnable, "mlnui_setLuaScrollEnable:", MLNUIScrollView)
-LUAUI_EXPORT_VIEW_END(MLNUIScrollView, ScrollView, YES, "MLNUIView", "initWithMLNUILuaCore:isHorizontal:isStackContenView:")
+LUAUI_EXPORT_VIEW_END(MLNUIScrollView, ScrollView, YES, "MLNUIView", "initWithMLNUILuaCore:isHorizontal:")
 
 @end
 

@@ -29,6 +29,10 @@
     self.mlnui_layoutNode.flexDirection = reverse ? MLNUIFlexDirectionRowReverse : MLNUIFlexDirectionRow;
 }
 
+- (void)setCrossAxisSize:(CGSize)size {
+    self.mlnui_layoutNode.height = MLNUIPointValue(size.height);
+}
+
 #pragma mark - Export Lua
 
 LUAUI_EXPORT_VIEW_BEGIN(MLNUIHStack)

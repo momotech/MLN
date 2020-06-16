@@ -25,16 +25,16 @@
 
 @implementation MLNUIInnerScrollView
 
-- (instancetype)initWithMLNUILuaCore:(MLNUILuaCore *)luaCore direction:(BOOL)horizontal isStackContenView:(BOOL)isStackContenView {
+#pragma mark - Override
+
+- (instancetype)initWithMLNUILuaCore:(MLNUILuaCore *)luaCore direction:(BOOL)horizontal {
     if (self = [self initWithMLNUILuaCore:luaCore isHorizontal:horizontal]) {
         self.luaui_delegate = [[MLNUIScrollViewDelegate alloc] init];
         self.delegate = self.luaui_delegate;
         if (@available(iOS 11.0, *)) {
             self.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
         }
-        if (isStackContenView) {
-            [self createStackContentViewIfNeed:horizontal];
-        }
+        [self createStackContentViewIfNeed:horizontal];
     }
     return self;
 }
@@ -57,7 +57,7 @@
     if (self.mlnui_contentView) {
         return;
     }
-    MLNUIStack *stack;
+    MLNUIPlaneStack *stack;
     if (horizontal) {
         stack = [[MLNUIHStack alloc] init];
     } else {
