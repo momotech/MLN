@@ -11,6 +11,7 @@
 
 @class MLNUIBlock;
 @class MLNUILuaCore;
+@class MLNUIPlaneStack;
 @interface UIScrollView (MLNUIRefresh)
 
 - (instancetype)initWithMLNUIRefreshEnable:(BOOL)refreshEnable loadEnable:(BOOL)loadEnable;

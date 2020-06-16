@@ -496,7 +496,13 @@ static void YGApplyLayoutToViewHierarchy(UIView *view, BOOL preserveOrigin)
 }
 
 static inline BOOL MLNUIValueEqual(MLNUIValue value1, MLNUIValue value2) {
-    return (value1.unit == value2.unit) && (value1.value == value2.value);
+    if (value1.unit != value2.unit) {
+        return false;
+    }
+    if (isnan(value1.value) && isnan(value2.value)) { // MLNUIValueAuto
+        return true;
+    }
+    return (value1.value == value2.value);
 }
 
 #pragma mark - Debug
