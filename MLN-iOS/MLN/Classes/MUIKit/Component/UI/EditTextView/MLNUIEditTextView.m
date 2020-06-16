@@ -32,8 +32,6 @@
 @property (nonatomic, strong) MLNUIBlock *endChangedCallback;
 @property (nonatomic, strong) MLNUIBlock *returnCallback;
 
-@property (nonatomic, strong) MLNUIBeforeWaitingTask *lazyTask;
-
 @property (nonatomic, copy) NSString *originString;
 @property (nonatomic, copy) NSString *changedString;
 @property (nonatomic, assign) NSRange newRange;
@@ -82,18 +80,6 @@
 }
 
 #pragma mark - Getter
-
-- (MLNUIBeforeWaitingTask *)lazyTask
-{
-    if (!_lazyTask) {
-        __weak typeof(self) wself = self;
-        _lazyTask = [MLNUIBeforeWaitingTask taskWithCallback:^{
-            __strong typeof(wself) sself = wself;
-            sself.internalTextView.frame = UIEdgeInsetsInsetRect(sself.bounds, sself.padding);
-        }];
-    }
-    return _lazyTask;
-}
 
 - (UIImageView *)backgroundImageView
 {
@@ -511,15 +497,6 @@
     _returnMode = returnMode;
 }
 
-- (void)luaui_setPadding:(CGFloat)top right:(CGFloat)right bottom:(CGFloat)bottom left:(CGFloat)left
-{
-    self.padding = UIEdgeInsetsMake(top, left, bottom, right);
-    if (self.type == MLNUIInternalTextViewTypeMultableLine && self.mlnui_layoutNode.isWrapContent) {
-        [self mlnui_markNeedsLayout];
-    }
-    [self mlnui_pushLazyTask:self.lazyTask];
-}
-
 - (void)luaui_dismissKeyboard
 {
     if ([self.internalTextView isFirstResponder]) {
@@ -573,8 +550,6 @@
             [_internalTextView becomeFirstResponder];
         }
         [preInternalTextView removeFromSuperview];
-        [self mlnui_markNeedsLayout];
-        [self mlnui_pushLazyTask:self.lazyTask];
         [self setupSwitchStatusWityType:type];
     }
 }
@@ -617,6 +592,7 @@
 }
 
 #pragma mark - Override
+
 - (void)luaui_addSubview:(UIView *)view
 {
     MLNUIKitLuaAssert(NO, @"Not found \"addView\" method, just continar of View has it!");
@@ -632,8 +608,7 @@
     MLNUIKitLuaAssert(NO, @"Not found \"removeAllSubviews\" method, just continar of View has it!");
 }
 
-- (BOOL)mlnui_layoutEnable
-{
+- (BOOL)mlnui_layoutEnable {
     return YES;
 }
 
@@ -649,6 +624,47 @@
     fitSize.height = ceil(fitSize.height);
     [sizeCacheManager setObject:[NSValue valueWithCGSize:fitSize] forKey:cacheKey];
     return fitSize;
+}
+
+- (void)luaui_setPaddingWithTop:(CGFloat)top right:(CGFloat)right bottom:(CGFloat)bottom left:(CGFloat)left {
+    self.padding = UIEdgeInsetsMake(top, left, bottom, right);
+    [super luaui_setPaddingWithTop:top right:right bottom:bottom left:left];
+}
+
+- (void)setLuaui_paddingTop:(CGFloat)luaui_paddingTop {
+    [super setLuaui_paddingTop:luaui_paddingTop];
+    UIEdgeInsets insets = self.padding;
+    insets.top = luaui_paddingTop;
+    self.padding = insets;
+}
+
+- (void)setLuaui_paddingLeft:(CGFloat)luaui_paddingLeft {
+    [super setLuaui_paddingLeft:luaui_paddingLeft];
+    UIEdgeInsets insets = self.padding;
+    insets.left = luaui_paddingLeft;
+    self.padding = insets;
+}
+
+- (void)setLuaui_paddingRight:(CGFloat)luaui_paddingRight {
+    [super setLuaui_paddingRight:luaui_paddingRight];
+    UIEdgeInsets insets = self.padding;
+    insets.right = luaui_paddingRight;
+    self.padding = insets;
+}
+
+- (void)setLuaui_paddingBottom:(CGFloat)luaui_paddingBottom {
+    [super setLuaui_paddingBottom:luaui_paddingBottom];
+    UIEdgeInsets insets = self.padding;
+    insets.bottom = luaui_paddingBottom;
+    self.padding = insets;
+}
+
+- (void)layoutSubviews {
+    [super layoutSubviews];
+    CGRect frame = UIEdgeInsetsInsetRect(self.bounds, self.padding);
+    if (!CGRectEqualToRect(frame, self.internalTextView.frame)) {
+        self.internalTextView.frame = frame;
+    }
 }
 
 #pragma mark - Export For Lua
@@ -672,7 +688,6 @@ LUAUI_EXPORT_VIEW_METHOD(setDidChangingCallback, "setDidChangingCallback:", MLNU
 LUAUI_EXPORT_VIEW_METHOD(setEndChangedCallback, "setEndChangedCallback:", MLNUIEditTextView)
 LUAUI_EXPORT_VIEW_METHOD(setReturnCallback, "setReturnCallback:", MLNUIEditTextView)
 LUAUI_EXPORT_VIEW_METHOD(setCanEdit, "luaui_setCanEdit:", MLNUIEditTextView)
-LUAUI_EXPORT_VIEW_METHOD(padding, "luaui_setPadding:right:bottom:left:", MLNUIEditTextView)
 LUAUI_EXPORT_VIEW_METHOD(dismissKeyboard, "luaui_dismissKeyboard", MLNUIEditTextView)
 LUAUI_EXPORT_VIEW_METHOD(showKeyboard, "luaui_showKeyboard", MLNUIEditTextView)
 LUAUI_EXPORT_VIEW_METHOD(setCursorColor, "luaui_setCursorColor:", MLNUIEditTextView)

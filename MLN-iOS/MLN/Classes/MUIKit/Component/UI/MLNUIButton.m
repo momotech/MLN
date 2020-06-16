@@ -78,21 +78,21 @@
 }
 
 - (void)setLuaui_paddingLeft:(CGFloat)luaui_paddingLeft {
-    [super setLuaui_paddingTop:luaui_paddingLeft];
+    [super setLuaui_paddingLeft:luaui_paddingLeft];
     UIEdgeInsets insets = self.imageEdgeInsets;
     insets.left = luaui_paddingLeft;
     self.imageEdgeInsets = insets;
 }
 
 - (void)setLuaui_paddingRight:(CGFloat)luaui_paddingRight {
-    [super setLuaui_paddingTop:luaui_paddingRight];
+    [super setLuaui_paddingRight:luaui_paddingRight];
     UIEdgeInsets insets = self.imageEdgeInsets;
     insets.right = luaui_paddingRight;
     self.imageEdgeInsets = insets;
 }
 
 - (void)setLuaui_paddingBottom:(CGFloat)luaui_paddingBottom {
-    [super setLuaui_paddingTop:luaui_paddingBottom];
+    [super setLuaui_paddingBottom:luaui_paddingBottom];
     UIEdgeInsets insets = self.imageEdgeInsets;
     insets.bottom = luaui_paddingBottom;
     self.imageEdgeInsets = insets;

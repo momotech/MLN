@@ -53,6 +53,18 @@
     }
 }
 
+#pragma mark - Override
+
+- (CGSize)sizeThatFits:(CGSize)size {
+    CGSize fitSize = CGSizeZero;
+    if (self.placeholderLabel.alpha > 0) {
+        fitSize = [self.placeholderLabel sizeThatFits:size];
+    } else {
+        fitSize = [self.myTextView sizeThatFits:size];
+    }
+    return fitSize;
+}
+
 #pragma mark - Responder
 - (BOOL)isFirstResponder
 {
@@ -72,14 +84,6 @@
 - (BOOL)resignFirstResponder
 {
     return [self.myTextView resignFirstResponder];
-}
-
-- (CGSize)sizeThatFits:(CGSize)size
-{
-    if (self.placeholderLabel.alpha > 0) {
-      return  [self.placeholderLabel sizeThatFits:size];
-    }
-    return  [self.myTextView sizeThatFits:size];
 }
 
 #pragma mark - Position
