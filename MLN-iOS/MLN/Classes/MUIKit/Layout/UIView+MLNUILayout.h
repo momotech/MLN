@@ -65,10 +65,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) CGPoint mlnuiAnimationCenter;
 @property (nonatomic, assign) CGRect mlnuiAnimationFrame;
 
-@property (nonatomic, assign) CGFloat mlnuiLayoutX;
-@property (nonatomic, assign) CGFloat mlnuiLayoutY;
-@property (nonatomic, assign) CGFloat mlnuiLayoutWidth;
-@property (nonatomic, assign) CGFloat mlnuiLayoutHeight;
 @property (nonatomic, assign) CGRect mlnuiLayoutFrame;
 
 @end

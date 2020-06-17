@@ -112,8 +112,6 @@ LUAUI_EXPORT_GLOBAL_VAR(AnimProperty, (@{
                             @"Position": @(MLNUIAnimationPropertyTypePosition),
                             @"PositionX": @(MLNUIAnimationPropertyTypePositionX),
                             @"PositionY": @(MLNUIAnimationPropertyTypePositionY),
-                            @"Size": @(MLNUIAnimationPropertyTypeSize),
-                            @"Frame": @(MLNUIAnimationPropertyTypeFrame),
                             @"Scale": @(MLNUIAnimationPropertyTypeScale),
                             @"ScaleX": @(MLNUIAnimationPropertyTypeScaleX),
                             @"ScaleY": @(MLNUIAnimationPropertyTypeScaleY),

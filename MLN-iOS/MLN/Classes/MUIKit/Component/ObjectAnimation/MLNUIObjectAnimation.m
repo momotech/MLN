@@ -59,7 +59,7 @@
         _targetView = target;
         _defaultAlpha = -1;
     }
-    return self;;
+    return self;
 }
 
 - (void)setDelay:(NSNumber *)delay
@@ -385,12 +385,8 @@
             CGRect frame = _targetView.mlnuiLayoutFrame;
             return @(CGPointMake(frame.origin.x + frame.size.width / 2.0, frame.origin.y + frame.size.height / 2.0));
         }
-        case MLNUIAnimationPropertyTypeSize:
-            return @(_targetView.mlnuiLayoutFrame.size);
         case MLNUIAnimationPropertyTypeScale:
             return @(CGPointMake(1.0, 1.0));
-        case MLNUIAnimationPropertyTypeFrame:
-            return @(_targetView.mlnuiLayoutFrame);
         default:
             break;
     }
@@ -459,7 +455,6 @@
         }
             break;
         case MLNUIAnimationPropertyTypePosition:
-        case MLNUIAnimationPropertyTypeSize:
         case MLNUIAnimationPropertyTypeScale:
         {
             NSArray *point = (NSArray *)velocity;
@@ -473,25 +468,7 @@
             }
         }
             break;
-        case MLNUIAnimationPropertyTypeFrame:
-        {
-            NSArray *rect = (NSArray *)velocity;
-            if ([rect isKindOfClass:[NSArray class]] && rect.count == 4)
-            {
-                NSNumber *x = rect[0];
-                NSNumber *y = rect[1];
-                NSNumber *w = rect[2];
-                NSNumber *h = rect[3];
-                if ([x isKindOfClass:[NSNumber class]]
-                    && [y isKindOfClass:[NSNumber class]]
-                    && [w isKindOfClass:[NSNumber class]]
-                    && [h isKindOfClass:[NSNumber class]])
-                {
-                    return @(CGRectMake([x floatValue], [y floatValue], [w floatValue], [h floatValue]));
-                }
-             }
-        }
-            break;
+
         default:
             break;
     }
@@ -515,12 +492,6 @@
             break;
         case MLNUIAnimationPropertyTypePositionY:
             return kMLAViewPositionY;
-            break;
-        case MLNUIAnimationPropertyTypeSize:
-            return kMLAViewSize;
-            break;
-        case MLNUIAnimationPropertyTypeFrame:
-            return kMLAViewFrame;
             break;
         case MLNUIAnimationPropertyTypeScale:
             return kMLAViewScale;

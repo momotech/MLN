@@ -80,8 +80,6 @@ typedef enum : NSInteger {
     MLNUIAnimationPropertyTypePosition,
     MLNUIAnimationPropertyTypePositionX,
     MLNUIAnimationPropertyTypePositionY,
-    MLNUIAnimationPropertyTypeSize,
-    MLNUIAnimationPropertyTypeFrame,
     MLNUIAnimationPropertyTypeScale,
     MLNUIAnimationPropertyTypeScaleX,
     MLNUIAnimationPropertyTypeScaleY,
