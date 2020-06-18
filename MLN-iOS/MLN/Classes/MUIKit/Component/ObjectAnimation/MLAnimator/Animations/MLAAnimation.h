@@ -137,8 +137,6 @@ typedef void(^MLAAnimationFinishBlock)(MLAAnimation* animation, BOOL finish);
 - (instancetype)initWithValueName:(NSString *)valueName tartget:(id)target
       mutableAnimatableInitialize:(MLAMutableAnimatableInitializeHandler)initializeHandler;
 
-//factor : 0-1
-- (void)updateWithFactor:(CGFloat)factor;
 
 @end
 
