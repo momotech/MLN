@@ -8,6 +8,7 @@
 #import "MLACGUtils.h"
 #import "MLALayerExtras.h"
 #import <UIKit/UIKit.h>
+#import "UIView+MLNUILayout.h"
 
 NSString * const kMLAViewAlpha = @"view.alpha";
 NSString * const kMLAViewColor = @"view.backgroundColor";
@@ -76,14 +77,14 @@ static MLAValueHelper kStaticHelpers[] =
     {
         kMLAViewPosition,
         ^(UIView *obj, CGFloat values[]) {
-            values[0] = obj.center.x;
-            values[1] = obj.center.y;
+            values[0] = obj.mlnuiAnimationCenter.x;
+            values[1] = obj.mlnuiAnimationCenter.y;
         },
         ^(UIView *obj, const CGFloat values[]) {
-            CGPoint center = obj.center;
+            CGPoint center = obj.mlnuiAnimationCenter;
             center.x = values[0];
             center.y = values[1];
-            obj.center = center;
+            obj.mlnuiAnimationCenter = center;
         },
         kThresholdPoint,
         kValueCountTwo
@@ -91,12 +92,12 @@ static MLAValueHelper kStaticHelpers[] =
     {
         kMLAViewPositionX,
         ^(UIView *obj, CGFloat values[]) {
-            values[0] = obj.center.x;
+            values[0] = obj.mlnuiAnimationCenter.x;
         },
         ^(UIView *obj, const CGFloat values[]) {
-            CGPoint center = obj.center;
+            CGPoint center = obj.mlnuiAnimationCenter;
             center.x = values[0];
-            obj.center = center;
+            obj.mlnuiAnimationCenter = center;
         },
         kThresholdPoint,
         kValueCountOne
@@ -104,12 +105,12 @@ static MLAValueHelper kStaticHelpers[] =
     {
         kMLAViewPositionY,
         ^(UIView *obj, CGFloat values[]) {
-            values[0] = obj.center.y;
+            values[0] = obj.mlnuiAnimationCenter.y;
         },
         ^(UIView *obj, const CGFloat values[]) {
-            CGPoint center = obj.center;
+            CGPoint center = obj.mlnuiAnimationCenter;
             center.y = values[0];
-            obj.center = center;
+            obj.mlnuiAnimationCenter = center;
         },
         kThresholdPoint,
         kValueCountOne
