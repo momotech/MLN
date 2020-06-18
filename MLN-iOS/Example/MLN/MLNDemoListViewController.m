@@ -13,6 +13,7 @@
 #import "MLNUIBridge.h"
 #import "MLNAnimationTestController.h"
 #import "MLNScaleAnimationController.h"
+#import "MLNScaleController.h"
 
 @interface MLNDemoListViewController () <UITableViewDelegate, UITableViewDataSource>
 
@@ -113,7 +114,8 @@
                        @"MLNPerformanceTestController",
                        @"MLNDataBindArrayViewController",
                        @"MLNAnimationTestController",
-                       @"MLNScaleAnimationController"
+                       @"MLNScaleAnimationController",
+                       @"MLNScaleController"
                        ];
     }
     return _demoArray;

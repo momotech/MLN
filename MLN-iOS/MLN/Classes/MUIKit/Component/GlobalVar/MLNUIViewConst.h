@@ -73,6 +73,14 @@ typedef enum : NSUInteger {
     MLNUIImageViewModeNine,
 } MLNUIImageViewMode;
 
+typedef NS_ENUM(NSUInteger, MLNUITouchType) {
+    MLNUITouchType_Begin,
+    MLNUITouchType_Move,
+    MLNUITouchType_End,
+    MLNUITouchType_Cancel
+};
+
+typedef void(^MLNUITouchCallback)(MLNUITouchType type, UITouch * _Nonnull touch, UIEvent * _Nonnull event);
 
 NS_ASSUME_NONNULL_BEGIN
 

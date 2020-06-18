@@ -17,6 +17,7 @@
 #include "MultiAnimation.h"
 #include "CustomAnimation.h"
 #include "MLAActionEnabler.h"
+#import "MLAValueAnimation+Interactive.h" //不可删除
 
 using namespace ANIMATOR_NAMESPACE;
 

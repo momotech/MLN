@@ -10,6 +10,7 @@
 #import "MLAAnimation.h"
 #import "MLNDraggableView.h"
 #import "MLAAnimationPrivate.h"
+#import "MLAValueAnimation+Interactive.h"
 
 @interface MLAAnimation (TT) <MLAAnimationPrivate>
 @end

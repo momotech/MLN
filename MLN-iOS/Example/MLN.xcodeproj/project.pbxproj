@@ -15,6 +15,7 @@
 		001F90D6249A128100983CA0 /* pdf@2x.jpeg in Resources */ = {isa = PBXBuildFile; fileRef = 001F90D5249A128100983CA0 /* pdf@2x.jpeg */; };
 		001F90DB249A19D000983CA0 /* MLNTouchImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 001F90DA249A19D000983CA0 /* MLNTouchImageView.m */; };
 		00574F94246A8B3200927744 /* MLNDataBindArrayViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 00574F93246A8B3200927744 /* MLNDataBindArrayViewController.m */; };
+		006737D0249B57D200842EB0 /* MLNScaleController.m in Sources */ = {isa = PBXBuildFile; fileRef = 006737CF249B57D200842EB0 /* MLNScaleController.m */; };
 		007F89E7246C0D8400FF50F1 /* MLNBindTestCaseModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 007F89E6246C0D8400FF50F1 /* MLNBindTestCaseModel.m */; };
 		009DD8D524114B9600452458 /* MLNArrayBindingTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 009DD8D424114B9600452458 /* MLNArrayBindingTests.m */; };
 		00A0C999243C180500F0D003 /* MLNPerformanceTestController.m in Sources */ = {isa = PBXBuildFile; fileRef = 00A0C998243C180500F0D003 /* MLNPerformanceTestController.m */; };
@@ -152,6 +153,8 @@
 		001F90DA249A19D000983CA0 /* MLNTouchImageView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNTouchImageView.m; sourceTree = "<group>"; };
 		00574F92246A8B3200927744 /* MLNDataBindArrayViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNDataBindArrayViewController.h; sourceTree = "<group>"; };
 		00574F93246A8B3200927744 /* MLNDataBindArrayViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNDataBindArrayViewController.m; sourceTree = "<group>"; };
+		006737CE249B57D200842EB0 /* MLNScaleController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNScaleController.h; sourceTree = "<group>"; };
+		006737CF249B57D200842EB0 /* MLNScaleController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNScaleController.m; sourceTree = "<group>"; };
 		007F89E5246C0D8400FF50F1 /* MLNBindTestCaseModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNBindTestCaseModel.h; sourceTree = "<group>"; };
 		007F89E6246C0D8400FF50F1 /* MLNBindTestCaseModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNBindTestCaseModel.m; sourceTree = "<group>"; };
 		009DD8D424114B9600452458 /* MLNArrayBindingTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNArrayBindingTests.m; sourceTree = "<group>"; };
@@ -422,6 +425,8 @@
 				001F90D3249A091C00983CA0 /* MLNScaleAnimationController.mm */,
 				001F90D9249A19D000983CA0 /* MLNTouchImageView.h */,
 				001F90DA249A19D000983CA0 /* MLNTouchImageView.m */,
+				006737CE249B57D200842EB0 /* MLNScaleController.h */,
+				006737CF249B57D200842EB0 /* MLNScaleController.m */,
 			);
 			name = Scale;
 			sourceTree = "<group>";
@@ -1195,6 +1200,7 @@
 				00E652532417695900A878B8 /* MLNDataBindHotReload.m in Sources */,
 				30E24E9622F3D74A00A0E78C /* MLNGlobalVarTest.m in Sources */,
 				B27F65C62377AAAE00F2D341 /* MLNGalleryMessageToolCellModel.m in Sources */,
+				006737D0249B57D200842EB0 /* MLNScaleController.m in Sources */,
 				00E6525624176A0F00A878B8 /* MLNDataBindModel.m in Sources */,
 				6003F5A7195388D20070C39A /* MLNLuaGalleryViewController.m in Sources */,
 				3012BB102326822F00FA2BB2 /* MLNNavigatorHandler.m in Sources */,
