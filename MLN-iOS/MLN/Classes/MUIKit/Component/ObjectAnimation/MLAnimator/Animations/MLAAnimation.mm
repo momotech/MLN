@@ -355,11 +355,12 @@ using namespace ANIMATOR_NAMESPACE;
     animation->SetSpringSpeed(self.springSpeed);
     animation->SetSpringBounciness(self.springBounciness);
     
-    NSUInteger count = 0;
+    NSUInteger valueCount = 0;
     MLAValueType valueType = kMLAValueUnknown;
-    VectorRef vec = MLAUnbox(self.velocity, valueType, count, false);
-    if (!vec || count != self.animatable.valueCount) {
-        vec = MLAUnbox(self.fromValue, valueType, count, false);
+    VectorRef vec = MLAUnbox(self.velocity, valueType, valueCount, false);
+    if (!vec || valueCount != self.animatable.valueCount) {
+        Vector4r vec4r = read_values(self.animatable.readBlock, self.target, self.animatable.valueCount);
+        vec = VectorRef(Vector::new_vector(self.animatable.valueCount, vec4r));
     }
     animation->SetVelocity(vec->data());
     

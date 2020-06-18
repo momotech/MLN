@@ -8,7 +8,6 @@
 #import "MLACGUtils.h"
 #import "MLALayerExtras.h"
 #import <UIKit/UIKit.h>
-#import "UIView+MLNUILayout.h"
 
 NSString * const kMLAViewAlpha = @"view.alpha";
 NSString * const kMLAViewColor = @"view.backgroundColor";
@@ -17,6 +16,9 @@ NSString * const kMLAViewPosition  = @"view.position";
 NSString * const kMLAViewPositionX = @"view.positionX";
 NSString * const kMLAViewPositionY = @"view.positionY";
 
+NSString * const kMLAViewSize  = @"view.size";
+NSString * const kMLAViewFrame = @"view.frame";
+
 NSString * const kMLAViewScale  = @"view.scale";
 NSString * const kMLAViewScaleX = @"view.scaleX";
 NSString * const kMLAViewScaleY = @"view.scaleY";
@@ -24,6 +26,7 @@ NSString * const kMLAViewScaleY = @"view.scaleY";
 NSString * const kMLAViewRotation  = @"view.rotation";
 NSString * const kMLAViewRotationX = @"view.rotationX";
 NSString * const kMLAViewRotationY = @"view.rotationY";
+
 
 // 计算精度
 static CGFloat const kThresholdColor = 0.01;
@@ -73,14 +76,14 @@ static MLAValueHelper kStaticHelpers[] =
     {
         kMLAViewPosition,
         ^(UIView *obj, CGFloat values[]) {
-            values[0] = obj.mlnuiAnimationCenter.x;
-            values[1] = obj.mlnuiAnimationCenter.y;
+            values[0] = obj.center.x;
+            values[1] = obj.center.y;
         },
         ^(UIView *obj, const CGFloat values[]) {
-            CGPoint center = obj.mlnuiAnimationCenter;
+            CGPoint center = obj.center;
             center.x = values[0];
             center.y = values[1];
-            obj.mlnuiAnimationCenter = center;
+            obj.center = center;
         },
         kThresholdPoint,
         kValueCountTwo
@@ -88,12 +91,12 @@ static MLAValueHelper kStaticHelpers[] =
     {
         kMLAViewPositionX,
         ^(UIView *obj, CGFloat values[]) {
-            values[0] = obj.mlnuiAnimationCenter.x;
+            values[0] = obj.center.x;
         },
         ^(UIView *obj, const CGFloat values[]) {
-            CGPoint center = obj.mlnuiAnimationCenter;
+            CGPoint center = obj.center;
             center.x = values[0];
-            obj.mlnuiAnimationCenter = center;
+            obj.center = center;
         },
         kThresholdPoint,
         kValueCountOne
@@ -101,15 +104,49 @@ static MLAValueHelper kStaticHelpers[] =
     {
         kMLAViewPositionY,
         ^(UIView *obj, CGFloat values[]) {
-            values[0] = obj.mlnuiAnimationCenter.y;
+            values[0] = obj.center.y;
         },
         ^(UIView *obj, const CGFloat values[]) {
-            CGPoint center = obj.mlnuiAnimationCenter;
+            CGPoint center = obj.center;
             center.y = values[0];
-            obj.mlnuiAnimationCenter = center;
+            obj.center = center;
         },
         kThresholdPoint,
         kValueCountOne
+    },
+    {
+        kMLAViewSize,
+        ^(UIView *obj, CGFloat values[]) {
+            values[0] = obj.layer.bounds.size.width;
+            values[1] = obj.layer.bounds.size.height;
+        },
+        ^(UIView *obj, const CGFloat values[]) {
+            CGSize size = CGSizeMake(values[0], values[1]);
+            if (size.width < 0.f || size.height < 0.f) {
+                return;
+            }
+            CGRect frame = obj.bounds;
+            frame.size = size;
+            obj.layer.bounds = frame;
+        },
+        kThresholdPoint,
+        kValueCountTwo
+    },
+    {
+        kMLAViewFrame,
+        ^(UIView *obj, CGFloat values[]) {
+            CGRect frame = obj.layer.frame;
+            values[0] = frame.origin.x;
+            values[1] = frame.origin.y;
+            values[2] = frame.size.width;
+            values[3] = frame.size.height;
+        },
+        ^(UIView *obj, const CGFloat values[]) {
+            CGRect frame = CGRectMake(values[0], values[1], values[2], values[3]);
+            obj.layer.frame = frame;
+        },
+        kThresholdPoint,
+        kValueCountFours
     },
     {
         kMLAViewScale,
