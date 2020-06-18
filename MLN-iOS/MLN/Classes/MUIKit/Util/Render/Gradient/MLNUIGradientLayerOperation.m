@@ -55,9 +55,10 @@
     }
     CGRect frame = self.targetView.bounds;
     if (self.targetView && !CGRectEqualToRect(frame, self.gradientLayer.frame)) {
-        [UIView performWithoutAnimation:^{
-            self.gradientLayer.frame = frame;
-        }];
+        [CATransaction begin];
+        [CATransaction setDisableActions:YES];
+        self.gradientLayer.frame = frame;
+        [CATransaction commit];
     }
     CALayer *targetLayer = self.targetView.layer;
     CGFloat cornerRadius = targetLayer.cornerRadius;
