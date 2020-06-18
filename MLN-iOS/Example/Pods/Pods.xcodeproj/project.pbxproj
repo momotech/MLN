@@ -1211,7 +1211,7 @@
 		B25FD67E8182C4334EFDF6D34EAAA754 /* UIImage+MLNUIKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 8849C029CEF21A133F1BD8D96E89D19A /* UIImage+MLNUIKit.m */; };
 		B27878E3B8F8ADB1FE01DBD6CB5812E7 /* UIImage+AFNetworking.h in Headers */ = {isa = PBXBuildFile; fileRef = 4052947A5C1CF9805D9248FDC2F114BC /* UIImage+AFNetworking.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		B2A884230703AFC0EE74D6B433762E0C /* MLNZStackNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FCD26B4D01A7FB6CDA2D326F3AA7FDDA /* MLNZStackNode.h */; settings = {ATTRIBUTES = (Project, ); }; };
-		B2AA96B0CA7E9C1D83A9B3B6C6C8B9A4 /* SpringAnimation.mm in Sources */ = {isa = PBXBuildFile; fileRef = C502CE57CB9BA5047DF79D4F5D1D4F0C /* SpringAnimation.mm */; };
+		B2AA96B0CA7E9C1D83A9B3B6C6C8B9A4 /* SpringAnimation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C502CE57CB9BA5047DF79D4F5D1D4F0C /* SpringAnimation.cpp */; };
 		B2F0A60BDE7346E714CC67D5F2237ECA /* MLNUIAnimationHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D839B8A9E11524B044382DEF459EA1A /* MLNUIAnimationHandler.m */; };
 		B3226D40F8BBEE8A81A23E79E5CA387B /* MLNHotReloadUI.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FBB2058069A91F1D732C1C72128F1A5 /* MLNHotReloadUI.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		B3357F988E6F5ED650C2D16AE10FF580 /* LNUsbClientImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = BF86737F6706BD9D279387E2C7415E1D /* LNUsbClientImpl.h */; settings = {ATTRIBUTES = (Project, ); }; };
@@ -1267,7 +1267,7 @@
 		B9648C3B2676FF6214A8EC791FB1BD58 /* MLNLinearLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 71D1D0880EB72AD8FF5D62EB855EB42E /* MLNLinearLayout.m */; };
 		B98FCD6F05EE1C6D10F6E9A3B80AA75F /* NSData+ImageContentType.h in Headers */ = {isa = PBXBuildFile; fileRef = 4E731266CFEAA261D10E8E14CF9B7EC6 /* NSData+ImageContentType.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		B9A630528BE695D4FCAB7479CCAC3617 /* SDWebImageTransition.h in Headers */ = {isa = PBXBuildFile; fileRef = D248255FDECA96910F0E0CA6177659A4 /* SDWebImageTransition.h */; settings = {ATTRIBUTES = (Project, ); }; };
-		BA38A389BA4B328C16B73F0E77132E64 /* Vector.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6AC833B5DD21CE02A46031A5EB491095 /* Vector.mm */; };
+		BA38A389BA4B328C16B73F0E77132E64 /* Vector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6AC833B5DD21CE02A46031A5EB491095 /* Vector.cpp */; };
 		BA62AF17CFDCAD5D4070AE011DFD2E04 /* SDWebImageDownloaderDecryptor.h in Headers */ = {isa = PBXBuildFile; fileRef = E3A4712F743C05E312F201F345397DB8 /* SDWebImageDownloaderDecryptor.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		BA831BF52B006F79158A4B022A0C74A1 /* MLAAnimator+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = B3B4884A59FA5A60F9ED4C27E5321F5C /* MLAAnimator+Private.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		BA9B63FE5E402EA4EAE5D9B6EB418718 /* MLNUIBeforeWaitingTaskProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = A84F2F9F087AE3932FD00898687BE92A /* MLNUIBeforeWaitingTaskProtocol.h */; settings = {ATTRIBUTES = (Project, ); }; };
@@ -2668,7 +2668,7 @@
 		6A6F52991ADF1EB29ADEB923FAAD7C48 /* MLNUIClipboard.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLNUIClipboard.h; sourceTree = "<group>"; };
 		6A7FE02AF0627A5E9D881BEB081ECAC9 /* AFURLSessionManager.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = AFURLSessionManager.h; path = AFNetworking/AFURLSessionManager.h; sourceTree = "<group>"; };
 		6AC61222B9467E54B49635C970F8FA5F /* MLNOfflineDevTool.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = MLNOfflineDevTool.h; path = "MLN-iOS/MLNDevTool/Classes/Offline/MLNOfflineDevTool.h"; sourceTree = "<group>"; };
-		6AC833B5DD21CE02A46031A5EB491095 /* Vector.mm */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.objcpp; path = Vector.mm; sourceTree = "<group>"; };
+		6AC833B5DD21CE02A46031A5EB491095 /* Vector.cpp */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.cpp; path = Vector.cpp; sourceTree = "<group>"; };
 		6AEA507F2C26772069AD421E122C86E7 /* MLNUITableViewCell.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLNUITableViewCell.h; sourceTree = "<group>"; };
 		6B157B2CDA653CE41F59AE3C341293B6 /* MLAAnimationPrivate.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLAAnimationPrivate.h; sourceTree = "<group>"; };
 		6B49BD78323BE6532FBB089A5B439425 /* MLNEntityExporter.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLNEntityExporter.m; sourceTree = "<group>"; };
@@ -3319,7 +3319,7 @@
 		C4BC95CA14166586D114650B9211198B /* SDImageCodersManager.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = SDImageCodersManager.m; path = SDWebImage/Core/SDImageCodersManager.m; sourceTree = "<group>"; };
 		C4E3881E26A00669E5ACA33D819961E8 /* MLAAnimation.mm */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.objcpp; path = MLAAnimation.mm; sourceTree = "<group>"; };
 		C5008848862620B58BCD1ECD83CE8A6B /* EXPMatchers+beInTheRangeOf.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "EXPMatchers+beInTheRangeOf.m"; path = "Expecta/Matchers/EXPMatchers+beInTheRangeOf.m"; sourceTree = "<group>"; };
-		C502CE57CB9BA5047DF79D4F5D1D4F0C /* SpringAnimation.mm */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.objcpp; path = SpringAnimation.mm; sourceTree = "<group>"; };
+		C502CE57CB9BA5047DF79D4F5D1D4F0C /* SpringAnimation.cpp */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.cpp; path = SpringAnimation.cpp; sourceTree = "<group>"; };
 		C566E345B26EE39ABE75B1779931A12A /* EXPMatchers+beInTheRangeOf.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "EXPMatchers+beInTheRangeOf.h"; path = "Expecta/Matchers/EXPMatchers+beInTheRangeOf.h"; sourceTree = "<group>"; };
 		C580C978D28134AA275121479DAFB9DD /* MLNOfflineDevToolPresenter.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = MLNOfflineDevToolPresenter.h; path = "MLN-iOS/MLNDevTool/Classes/Offline/MLNOfflineDevToolPresenter.h"; sourceTree = "<group>"; };
 		C59C8CD335644A6784B0BEBBAC72FA5A /* GPBWrappers.pbobjc.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = GPBWrappers.pbobjc.m; path = objectivec/GPBWrappers.pbobjc.m; sourceTree = "<group>"; };
@@ -5358,7 +5358,7 @@
 				86CD540C8DC36FB03B1BEC1DFCEAF2C6 /* SpringSolver.h */,
 				1548E3AF1E4D82683337071048266A4D /* UnitBezier.h */,
 				8B61566DA1142900F1721E3FAEE05CFC /* Vector.h */,
-				6AC833B5DD21CE02A46031A5EB491095 /* Vector.mm */,
+				6AC833B5DD21CE02A46031A5EB491095 /* Vector.cpp */,
 			);
 			path = Math;
 			sourceTree = "<group>";
@@ -5905,7 +5905,7 @@
 				0C643B503D138F0A9781560E6B00DA7A /* ObjectAnimation.cpp */,
 				4A7355D5E5A41B6D174B179D685E2BFB /* ObjectAnimation.h */,
 				3A4E338D916EA3DC5D722AD84F1789CD /* SpringAnimation.h */,
-				C502CE57CB9BA5047DF79D4F5D1D4F0C /* SpringAnimation.mm */,
+				C502CE57CB9BA5047DF79D4F5D1D4F0C /* SpringAnimation.cpp */,
 				3B251B640C8E4E6DDD00D922CF3391B0 /* ValueAnimation.cpp */,
 				CB63BA8099ADE0FED421AB3AE3D79479 /* ValueAnimation.h */,
 			);
@@ -9827,7 +9827,7 @@
 				5977A11B9C0F726A08C72FE1999EBED1 /* ObjectAnimation.cpp in Sources */,
 				F9C32C696F054B46DB02A50A7C6E8C43 /* RunLoop.cpp in Sources */,
 				866BA37B2020E1CEFEE38A7CFB6C2811 /* RunLoopiOS.mm in Sources */,
-				B2AA96B0CA7E9C1D83A9B3B6C6C8B9A4 /* SpringAnimation.mm in Sources */,
+				B2AA96B0CA7E9C1D83A9B3B6C6C8B9A4 /* SpringAnimation.cpp in Sources */,
 				8BBBA8270EF99B0DD7B058C3F1F2C88B /* TransformationMatrix.cpp in Sources */,
 				A403DE11325D8A614583C6E692B7DC95 /* UIColor+MLNUICore.m in Sources */,
 				2828D6153072AA01B88FAA6DC2A977AD /* UIImage+MLNUI_IN_UTIL.m in Sources */,
@@ -9839,7 +9839,7 @@
 				D9286E452FD75C7A943F8E8BCB9DE298 /* UIViewController+MLNUIKVO.m in Sources */,
 				DA7E56C09F86DEE47EF6FD734C96E371 /* Utils.cpp in Sources */,
 				B50A0F6E7A98BD7E9FA48ACB24AF8FE0 /* ValueAnimation.cpp in Sources */,
-				BA38A389BA4B328C16B73F0E77132E64 /* Vector.mm in Sources */,
+				BA38A389BA4B328C16B73F0E77132E64 /* Vector.cpp in Sources */,
 				DD3DDF8C9F7B5349EABD4FBFA2C341CF /* VectoriOS.mm in Sources */,
 				26912499F375A0E9373688CB592FD60F /* YGConfig.cpp in Sources */,
 				D332114791F5D4741E5D91F8945E8965 /* YGEnums.cpp in Sources */,
