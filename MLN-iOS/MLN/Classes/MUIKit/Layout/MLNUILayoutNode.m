@@ -485,6 +485,7 @@ static void YGApplyLayoutToViewHierarchy(UIView *view, BOOL preserveOrigin)
     frame.size = CGSizeMake(YGRoundPixelValue(bottomRight.x) - YGRoundPixelValue(topLeft.x), YGRoundPixelValue(bottomRight.y) - YGRoundPixelValue(topLeft.y));
     if (!CGRectEqualToRect(view.mlnuiLayoutFrame, frame)) {
         view.mlnuiLayoutFrame = frame;
+        [view mlnui_layoutDidChange];
     }
     [view mlnui_layoutCompleted];
     
