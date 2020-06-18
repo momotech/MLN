@@ -9,6 +9,11 @@
 /* Begin PBXBuildFile section */
 		0011BBB32410AC3F003AE819 /* MLNDatabindingTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 0011BBB22410AC3F003AE819 /* MLNDatabindingTests.m */; };
 		0011BBB72410AC6F003AE819 /* MLNTestModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 0011BBB62410AC6F003AE819 /* MLNTestModel.m */; };
+		001F7D522499C44D00983CA0 /* MLNAnimationTestController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 001F7D512499C44D00983CA0 /* MLNAnimationTestController.mm */; };
+		001F90D12499FEE100983CA0 /* MLNDraggableView.m in Sources */ = {isa = PBXBuildFile; fileRef = 001F90D02499FEE100983CA0 /* MLNDraggableView.m */; };
+		001F90D4249A091C00983CA0 /* MLNScaleAnimationController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 001F90D3249A091C00983CA0 /* MLNScaleAnimationController.mm */; };
+		001F90D6249A128100983CA0 /* pdf@2x.jpeg in Resources */ = {isa = PBXBuildFile; fileRef = 001F90D5249A128100983CA0 /* pdf@2x.jpeg */; };
+		001F90DB249A19D000983CA0 /* MLNTouchImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 001F90DA249A19D000983CA0 /* MLNTouchImageView.m */; };
 		00574F94246A8B3200927744 /* MLNDataBindArrayViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 00574F93246A8B3200927744 /* MLNDataBindArrayViewController.m */; };
 		007F89E7246C0D8400FF50F1 /* MLNBindTestCaseModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 007F89E6246C0D8400FF50F1 /* MLNBindTestCaseModel.m */; };
 		009DD8D524114B9600452458 /* MLNArrayBindingTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 009DD8D424114B9600452458 /* MLNArrayBindingTests.m */; };
@@ -136,6 +141,15 @@
 		0011BBB22410AC3F003AE819 /* MLNDatabindingTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNDatabindingTests.m; sourceTree = "<group>"; };
 		0011BBB52410AC6F003AE819 /* MLNTestModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNTestModel.h; sourceTree = "<group>"; };
 		0011BBB62410AC6F003AE819 /* MLNTestModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNTestModel.m; sourceTree = "<group>"; };
+		001F7D502499C44D00983CA0 /* MLNAnimationTestController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MLNAnimationTestController.h; path = MLN/Animation/MLNAnimationTestController.h; sourceTree = SOURCE_ROOT; };
+		001F7D512499C44D00983CA0 /* MLNAnimationTestController.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = MLNAnimationTestController.mm; path = MLN/Animation/MLNAnimationTestController.mm; sourceTree = SOURCE_ROOT; };
+		001F90CF2499FEE100983CA0 /* MLNDraggableView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNDraggableView.h; sourceTree = "<group>"; };
+		001F90D02499FEE100983CA0 /* MLNDraggableView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNDraggableView.m; sourceTree = "<group>"; };
+		001F90D2249A091C00983CA0 /* MLNScaleAnimationController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNScaleAnimationController.h; sourceTree = "<group>"; };
+		001F90D3249A091C00983CA0 /* MLNScaleAnimationController.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = MLNScaleAnimationController.mm; sourceTree = "<group>"; };
+		001F90D5249A128100983CA0 /* pdf@2x.jpeg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "pdf@2x.jpeg"; sourceTree = "<group>"; };
+		001F90D9249A19D000983CA0 /* MLNTouchImageView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNTouchImageView.h; sourceTree = "<group>"; };
+		001F90DA249A19D000983CA0 /* MLNTouchImageView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNTouchImageView.m; sourceTree = "<group>"; };
 		00574F92246A8B3200927744 /* MLNDataBindArrayViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNDataBindArrayViewController.h; sourceTree = "<group>"; };
 		00574F93246A8B3200927744 /* MLNDataBindArrayViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNDataBindArrayViewController.m; sourceTree = "<group>"; };
 		007F89E5246C0D8400FF50F1 /* MLNBindTestCaseModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNBindTestCaseModel.h; sourceTree = "<group>"; };
@@ -388,6 +402,30 @@
 			path = DataBinding;
 			sourceTree = "<group>";
 		};
+		001F7D4F2499C43C00983CA0 /* Animation */ = {
+			isa = PBXGroup;
+			children = (
+				001F90D8249A199B00983CA0 /* Scale */,
+				001F90D5249A128100983CA0 /* pdf@2x.jpeg */,
+				001F7D502499C44D00983CA0 /* MLNAnimationTestController.h */,
+				001F7D512499C44D00983CA0 /* MLNAnimationTestController.mm */,
+				001F90CF2499FEE100983CA0 /* MLNDraggableView.h */,
+				001F90D02499FEE100983CA0 /* MLNDraggableView.m */,
+			);
+			path = Animation;
+			sourceTree = "<group>";
+		};
+		001F90D8249A199B00983CA0 /* Scale */ = {
+			isa = PBXGroup;
+			children = (
+				001F90D2249A091C00983CA0 /* MLNScaleAnimationController.h */,
+				001F90D3249A091C00983CA0 /* MLNScaleAnimationController.mm */,
+				001F90D9249A19D000983CA0 /* MLNTouchImageView.h */,
+				001F90DA249A19D000983CA0 /* MLNTouchImageView.m */,
+			);
+			name = Scale;
+			sourceTree = "<group>";
+		};
 		00A0C99F243C3C0500F0D003 /* LuaNativeUITests */ = {
 			isa = PBXGroup;
 			children = (
@@ -517,6 +555,7 @@
 				B2DD3E4F237990E9002AB6AD /* MLNPackageManager */,
 				B29500B42371855900F48F09 /* Gallery_Native */,
 				00E652502417693600A878B8 /* DataBind */,
+				001F7D4F2499C43C00983CA0 /* Animation */,
 				FA383454239A6356000F900E /* Main.storyboard */,
 				FA383457239A64AF000F900E /* LaunchScreen.storyboard */,
 				6003F5A8195388D20070C39A /* Images.xcassets */,
@@ -1017,6 +1056,7 @@
 				6003F5A9195388D20070C39A /* Images.xcassets in Resources */,
 				6003F598195388D20070C39A /* InfoPlist.strings in Resources */,
 				FAE9C59523A2529C002C830D /* inner_demo.bundle in Resources */,
+				001F90D6249A128100983CA0 /* pdf@2x.jpeg in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1133,6 +1173,7 @@
 				6003F59E195388D20070C39A /* MLNAppDelegate.m in Sources */,
 				00A9991C247EA73D00307914 /* MLNUIMyImageHandler.m in Sources */,
 				B27F65DD2377AB0700F2D341 /* MLNGalleryNavigationBar.m in Sources */,
+				001F7D522499C44D00983CA0 /* MLNAnimationTestController.mm in Sources */,
 				B29500F72372D5B400F48F09 /* MLNSimpleViewPagerCell.m in Sources */,
 				B29500D92372627000F48F09 /* MLNNativeTabSegmentScrollHandler.m in Sources */,
 				B27F65AE2377AA9700F2D341 /* MLNDiscoverInspirCategoryView.m in Sources */,
@@ -1169,6 +1210,7 @@
 				B27F65D62377AAC400F2D341 /* MLNHomeDataHandler.m in Sources */,
 				30E24E9322F3D74A00A0E78C /* MLNTestMe.m in Sources */,
 				FA4EE2FD237907B000449250 /* MLNGalleryMinePageCellHomeModel.m in Sources */,
+				001F90D12499FEE100983CA0 /* MLNDraggableView.m in Sources */,
 				00A0C999243C180500F0D003 /* MLNPerformanceTestController.m in Sources */,
 				FA383453239A4C61000F900E /* MLNHomeViewController.m in Sources */,
 				00A9B364247F8ED100307914 /* MLNUITestTableHotReload.m in Sources */,
@@ -1190,6 +1232,8 @@
 				B27F65C82377AAAE00F2D341 /* MLNGalleryMessageViewController.m in Sources */,
 				FA4EE310237909BC00449250 /* MLNGalleryMineBottomPageCollectCell.m in Sources */,
 				B27F65912377AA6C00F2D341 /* MLNGalleryMineViewController.m in Sources */,
+				001F90D4249A091C00983CA0 /* MLNScaleAnimationController.mm in Sources */,
+				001F90DB249A19D000983CA0 /* MLNTouchImageView.m in Sources */,
 				B27F65CA2377AAAE00F2D341 /* MLNGalleryMessageBaseCell.m in Sources */,
 				B2DD3E5F237990E9002AB6AD /* MLNPackageManager.m in Sources */,
 				B27F65E12377AB1600F2D341 /* MLNGalleryPlusViewController.m in Sources */,
