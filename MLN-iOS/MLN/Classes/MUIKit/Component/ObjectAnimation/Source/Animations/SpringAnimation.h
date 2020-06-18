@@ -87,6 +87,11 @@ protected:
     void RepeatReset() override;
     
     /**
+     * 重置Spring数值
+     */
+    void ResetSpringValue();
+    
+    /**
      * 覆写父类方法，实现属性动画的Tick
      * @param time 当前时间
      * @param timeInterval 和上次loop的时间间隔

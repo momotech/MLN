@@ -115,13 +115,15 @@ void SpringAnimation::SetDynamicsMass(AMTFloat dynamicsMass) {
 
 void SpringAnimation::Reset() {
     ValueAnimation::Reset();
-    previousVec = previous2Vec = nullptr;
-    currentVec = toValueVec = velocityVec = nullptr;
-    dynamicsThreshold = this->threshold;
+    ResetSpringValue();
 }
 
 void SpringAnimation::RepeatReset() {
     Animation::RepeatReset();
+    ResetSpringValue();
+}
+
+void SpringAnimation::ResetSpringValue() {
     previousVec = previous2Vec = nullptr;
     currentVec = toValueVec = velocityVec = nullptr;
     dynamicsThreshold = this->threshold;
