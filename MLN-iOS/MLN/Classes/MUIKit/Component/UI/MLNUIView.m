@@ -11,6 +11,13 @@
 
 @implementation MLNUIView
 
+- (instancetype)initMLNUIViewWithMLNUILuaCore:(MLNUILuaCore *)luaCore {
+    if (self = [super init]) {
+        MLNUIError(luaCore, @"The View class is deprecated, please use HStack or VStack instead.")
+    }
+    return self;
+}
+
 #pragma mark - Override
 
 - (BOOL)luaui_canClick
@@ -147,6 +154,6 @@ LUAUI_EXPORT_VIEW_METHOD(bgImage, "luaui_setBgImage:", MLNUIView)
 LUAUI_EXPORT_VIEW_METHOD(addShadow, "luaui_addShadow:shadowOffset:shadowRadius:shadowOpacity:isOval:", MLNUIView)
 LUAUI_EXPORT_VIEW_METHOD(setShadow, "luaui_setShadowWithShadowOffset:shadowRadius:shadowOpacity:", MLNUIView)
 LUAUI_EXPORT_VIEW_METHOD(onDetachedView, "luaui_onDetachedFromWindowCallback:", MLNUIView)
-LUAUI_EXPORT_VIEW_END(MLNUIView, View, NO, NULL, NULL)
+LUAUI_EXPORT_VIEW_END(MLNUIView, View, NO, NULL, "initMLNUIViewWithMLNUILuaCore:")
 
 @end
