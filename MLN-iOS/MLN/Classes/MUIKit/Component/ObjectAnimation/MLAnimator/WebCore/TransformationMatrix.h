@@ -190,8 +190,8 @@ namespace MLAWebCore {
       double perspectiveX, perspectiveY, perspectiveZ, perspectiveW;
     } DecomposedType;
     
-    bool decompose(DecomposedType& decomp, bool useEulerAngle = true) const;
-    void recompose(const DecomposedType& decomp, bool useEulerAngle = true);
+    bool decompose(DecomposedType& decomp) const;
+    void recompose(const DecomposedType& decomp, bool useEulerAngle = false);
 
     void blend(const TransformationMatrix& from, double progress);
 

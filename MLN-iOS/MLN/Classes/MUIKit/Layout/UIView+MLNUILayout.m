@@ -751,22 +751,26 @@ static MLNUI_FORCE_INLINE void MLNUIViewChangeHeight(UIView *view, CGFloat heigh
     return self.frame.size.height;
 }
 
-- (void)setMlnuiAnimationCenter:(CGPoint)center {
-    CGPoint layoutCenter = [self mlnuiLayoutCenter];
-    self.mlnuiTranslationX = center.x - layoutCenter.x;
-    self.mlnuiTranslationY = center.y - layoutCenter.y;
-    self.center = center;
+- (void)setMlnuiAnimationPosition:(CGPoint)origin {
+    CGPoint layoutOrigin = self.mlnuiLayoutFrame.origin;
+    self.mlnuiTranslationX = origin.x - layoutOrigin.x;
+    self.mlnuiTranslationY = origin.y - layoutOrigin.y;
+    self.center = (CGPoint){ // 相对于原点是为了和Android保持一致
+        origin.x + self.layer.anchorPoint.x * self.mlnuiLayoutFrame.size.width,
+        origin.y + self.layer.anchorPoint.y * self.mlnuiLayoutFrame.size.height,
+    };
 }
 
-- (CGPoint)mlnuiAnimationCenter {
-    return self.center;
+- (CGPoint)mlnuiAnimationPosition {
+    return self.mlnuiAnimationFrame.origin;
 }
 
 - (void)setMlnuiAnimationFrame:(CGRect)frame {
-    self.mlnuiTranslationX = frame.origin.x - self.mlnuiLayoutFrame.origin.x;
-    self.mlnuiTranslationY = frame.origin.y - self.mlnuiLayoutFrame.origin.y;
-    self.mlnuiScaleX = frame.size.width / self.mlnuiLayoutFrame.size.width;
-    self.mlnuiScaleY = frame.size.height / self.mlnuiLayoutFrame.size.height;
+    CGRect layoutFrame = self.mlnuiLayoutFrame;
+    self.mlnuiTranslationX = frame.origin.x - layoutFrame.origin.x;
+    self.mlnuiTranslationY = frame.origin.y - layoutFrame.origin.y;
+    self.mlnuiScaleX = frame.size.width / layoutFrame.size.width;
+    self.mlnuiScaleY = frame.size.height / layoutFrame.size.height;
     self.frame = frame;
 }
 
@@ -775,14 +779,6 @@ static MLNUI_FORCE_INLINE void MLNUIViewChangeHeight(UIView *view, CGFloat heigh
 }
 
 #pragma mark - Layout
-
-- (CGPoint)mlnuiLayoutCenter {
-    CGRect frame = [self mlnuiLayoutFrame];
-    return (CGPoint){
-        frame.origin.x + self.layer.anchorPoint.x * frame.size.width,
-        frame.origin.y + self.layer.anchorPoint.y * frame.size.height
-    };
-}
 
 - (void)setMlnuiLayoutFrame:(CGRect)frame {
     MLNUIViewApplyFrame(self, (CGRect){

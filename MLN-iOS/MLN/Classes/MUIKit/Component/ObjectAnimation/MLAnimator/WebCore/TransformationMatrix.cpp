@@ -292,7 +292,7 @@ namespace MLAWebCore {
     result[2] = (a[0] * b[1]) - (a[1] * b[0]);
   }
   
-  static bool decompose(const TransformationMatrix::Matrix4& mat, TransformationMatrix::DecomposedType& result, bool useEulerAngle = true)
+ static bool decompose(const TransformationMatrix::Matrix4& mat, TransformationMatrix::DecomposedType& result)
   {
     TransformationMatrix::Matrix4 localMatrix;
     memcpy(localMatrix, mat, sizeof(TransformationMatrix::Matrix4));
@@ -409,59 +409,53 @@ namespace MLAWebCore {
         row[i][2] *= -1;
       }
     }
-
-    if (useEulerAngle) {
-      // Now, get the rotations out, as described in the gem.
-      float sy = sqrt(row[0][0] * row[0][0] + row[1][0] * row[1][0]);
-      bool singular = sy < SMALL_NUMBER;
-
-      if (!singular) {
-        result.rotateX = atan2(row[2][1] , row[2][2]);
-        result.rotateY = atan2(-row[2][0], sy);
-        result.rotateZ = atan2(row[1][0], row[0][0]);
-      } else {
-        result.rotateX = atan2(-row[1][2], row[1][1]);
-        result.rotateY = atan2(-row[2][0], sy);
-        result.rotateZ = 0;
-      }
+      
+    // Now, get the rotations out, as described in the gem.
+    result.rotateY = asin(-row[0][2]);
+    if (cos(result.rotateY) != 0) {
+        result.rotateX = atan2(row[1][2], row[2][2]);
+        result.rotateZ = atan2(row[0][1], row[0][0]);
     } else {
+        result.rotateX = atan2(-row[2][0], row[1][1]);
+        result.rotateZ = 0;
+    }
+      
       double s, t, x, y, z, w;
       
       t = row[0][0] + row[1][1] + row[2][2] + 1.0;
       
       if (t > 1e-4) {
-        s = 0.5 / sqrt(t);
-        w = 0.25 / s;
-        x = (row[2][1] - row[1][2]) * s;
-        y = (row[0][2] - row[2][0]) * s;
-        z = (row[1][0] - row[0][1]) * s;
+          s = 0.5 / sqrt(t);
+          w = 0.25 / s;
+          x = (row[2][1] - row[1][2]) * s;
+          y = (row[0][2] - row[2][0]) * s;
+          z = (row[1][0] - row[0][1]) * s;
       } else if (row[0][0] > row[1][1] && row[0][0] > row[2][2]) {
-        s = sqrt (1.0 + row[0][0] - row[1][1] - row[2][2]) * 2.0; // S=4*qx
-        x = 0.25 * s;
-        y = (row[0][1] + row[1][0]) / s;
-        z = (row[0][2] + row[2][0]) / s;
-        w = (row[2][1] - row[1][2]) / s;
+          s = sqrt (1.0 + row[0][0] - row[1][1] - row[2][2]) * 2.0; // S=4*qx
+          x = 0.25 * s;
+          y = (row[0][1] + row[1][0]) / s;
+          z = (row[0][2] + row[2][0]) / s;
+          w = (row[2][1] - row[1][2]) / s;
       } else if (row[1][1] > row[2][2]) {
-        s = sqrt (1.0 + row[1][1] - row[0][0] - row[2][2]) * 2.0; // S=4*qy
-        x = (row[0][1] + row[1][0]) / s;
-        y = 0.25 * s;
-        z = (row[1][2] + row[2][1]) / s;
-        w = (row[0][2] - row[2][0]) / s;
+          s = sqrt (1.0 + row[1][1] - row[0][0] - row[2][2]) * 2.0; // S=4*qy
+          x = (row[0][1] + row[1][0]) / s;
+          y = 0.25 * s;
+          z = (row[1][2] + row[2][1]) / s;
+          w = (row[0][2] - row[2][0]) / s;
       } else {
-        s = sqrt(1.0 + row[2][2] - row[0][0] - row[1][1]) * 2.0; // S=4*qz
-        x = (row[0][2] + row[2][0]) / s;
-        y = (row[1][2] + row[2][1]) / s;
-        z = 0.25 * s;
-        w = (row[1][0] - row[0][1]) / s;
+          s = sqrt(1.0 + row[2][2] - row[0][0] - row[1][1]) * 2.0; // S=4*qz
+          x = (row[0][2] + row[2][0]) / s;
+          y = (row[1][2] + row[2][1]) / s;
+          z = 0.25 * s;
+          w = (row[1][0] - row[0][1]) / s;
       }
       
       result.quaternionX = x;
       result.quaternionY = y;
       result.quaternionZ = z;
       result.quaternionW = w;
-    }
-    
-    return true;
+      
+      return true;
   }
   
   // Perform a spherical linear interpolation between the two
@@ -976,11 +970,8 @@ namespace MLAWebCore {
     DecomposedType fromDecomp;
     DecomposedType toDecomp;
     
-    if (!from.decompose(fromDecomp) ||  !decompose(toDecomp)) {
-      return;
-    }
-    //from.decompose(fromDecomp);
-    //decompose(toDecomp);
+    from.decompose(fromDecomp);
+    decompose(toDecomp);
     
     // interpolate
     blendFloat(fromDecomp.scaleX, toDecomp.scaleX, progress);
@@ -1002,21 +993,21 @@ namespace MLAWebCore {
     // recompose
     recompose(fromDecomp);
   }
-  
-  bool TransformationMatrix::decompose(DecomposedType& decomp, bool useEulerAngle) const
-  {
+
+bool TransformationMatrix::decompose(DecomposedType& decomp) const
+{
     if (isIdentity()) {
-      memset(&decomp, 0, sizeof(decomp));
-      decomp.perspectiveW = 1;
-      decomp.scaleX = 1;
-      decomp.scaleY = 1;
-      decomp.scaleZ = 1;
+        memset(&decomp, 0, sizeof(decomp));
+        decomp.perspectiveW = 1;
+        decomp.scaleX = 1;
+        decomp.scaleY = 1;
+        decomp.scaleZ = 1;
     }
     
-    if (!MLAWebCore::decompose(m_matrix, decomp, useEulerAngle))
-      return false;
+    if (!MLAWebCore::decompose(m_matrix, decomp))
+        return false;
     return true;
-  }
+}
   
   void TransformationMatrix::recompose(const DecomposedType& decomp, bool useEulerAngle)
   {

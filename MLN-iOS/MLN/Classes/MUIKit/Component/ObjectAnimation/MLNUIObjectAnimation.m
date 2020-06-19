@@ -45,8 +45,7 @@
 @property (nonatomic, strong) MLNUIBeforeWaitingTask *lazyTask;
 
 @property (nonatomic, assign) CGFloat defaultAlpha;
-@property (nonatomic, assign) CGRect defaultFrame;
-@property (nonatomic, assign) CGPoint defaultCenter;
+@property (nonatomic, assign) CGPoint defaultOrigin;
 
 @end
 
@@ -353,11 +352,8 @@
 
 - (id)mlnui_getDefaultValue
 {
-    if (CGPointEqualToPoint(CGPointZero, _defaultCenter)) {
-        _defaultCenter = self.targetView.center;
-    }
-    if (CGRectEqualToRect(CGRectZero, _defaultFrame)) {
-        _defaultFrame= self.targetView.frame;
+    if (CGPointEqualToPoint(CGPointZero, _defaultOrigin)) {
+        _defaultOrigin = self.targetView.mlnuiAnimationFrame.origin;
     }
     if (_defaultAlpha <= 0) {
         _defaultAlpha = self.targetView.alpha;
@@ -366,9 +362,9 @@
         case MLNUIAnimationPropertyTypeAlpha:
             return @(_defaultAlpha);
         case MLNUIAnimationPropertyTypePositionX:
-            return @(_defaultCenter.x);
+            return @(_defaultOrigin.x);
         case MLNUIAnimationPropertyTypePositionY:
-            return @(_defaultCenter.y);
+            return @(_defaultOrigin.y);
         case MLNUIAnimationPropertyTypeScaleX:
             return @(1.0);
         case MLNUIAnimationPropertyTypeScaleY:
@@ -382,8 +378,7 @@
         case MLNUIAnimationPropertyTypeColor:
             return self.targetView.backgroundColor;
         case MLNUIAnimationPropertyTypePosition: {
-            CGRect frame = _targetView.mlnuiLayoutFrame;
-            return @(CGPointMake(frame.origin.x + frame.size.width / 2.0, frame.origin.y + frame.size.height / 2.0));
+            return [NSValue valueWithCGPoint:_targetView.mlnuiLayoutFrame.origin];
         }
         case MLNUIAnimationPropertyTypeScale:
             return @(CGPointMake(1.0, 1.0));

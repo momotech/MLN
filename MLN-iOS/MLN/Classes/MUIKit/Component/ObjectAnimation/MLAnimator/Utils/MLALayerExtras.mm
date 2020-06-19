@@ -35,6 +35,25 @@ using namespace MLAWebCore;
   _m.recompose(_d); \
   L.sublayerTransform = _m.transform3d();
 
+#pragma mark - Log
+
+#if DEBUG
+static void MLALogLayerTransform3D(TransformationMatrix _m, NSString *flag) {
+    NSLog(@"\n \
+    ---- %@ begin ----\n \
+    m11:%0.2f m12:%0.2f m13:%0.2f m14:%0.2f \n \
+    m21:%0.2f m22:%0.2f m23:%0.2f m24:%0.2f \n \
+    m31:%0.2f m32:%0.2f m33:%0.2f m34:%0.2f \n \
+    m41:%0.2f m42:%0.2f m43:%0.2f m44:%0.2f \n \
+    ------ %@ end ------\n.", (flag ?: @""), \
+    _m.m11(), _m.m12(), _m.m13(), _m.m14(),
+    _m.m21(), _m.m22(), _m.m23(), _m.m24(),
+    _m.m31(), _m.m32(), _m.m33(), _m.m34(),
+    _m.m41(), _m.m42(), _m.m43(), _m.m44(),
+    (flag ?: @""));
+}
+#endif
+
 #pragma mark - Scale
 
 NS_INLINE void ensureNonZeroValue(CGFloat &f)

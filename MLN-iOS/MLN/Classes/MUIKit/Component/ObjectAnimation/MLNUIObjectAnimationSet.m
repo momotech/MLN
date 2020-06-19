@@ -186,7 +186,11 @@ typedef NS_ENUM(NSUInteger, MLNUIObjectAnimationSetType) {
 - (MLAMultiAnimation *)valueAnimation
 {
     if (!_valueAnimation) {
-        _valueAnimation = [[MLAMultiAnimation alloc] init];
+        if (@available(iOS 9.0, *)) {
+            _valueAnimation = [[MLAMultiAnimation alloc] init];
+        } else {
+            // Fallback on earlier versions
+        }
     }
     //当修改过属性后，需要进行同步
     if (_propertyChanged) {

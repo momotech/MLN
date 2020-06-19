@@ -24,9 +24,6 @@ extern NSString * const kMLAViewPosition;     // 位置
 extern NSString * const kMLAViewPositionX;    // 位置X
 extern NSString * const kMLAViewPositionY;    // 位置Y
 
-extern NSString * const kMLAViewSize;       // 尺寸
-extern NSString * const kMLAViewFrame;      // 原点 + 尺寸
-
 extern NSString * const kMLAViewScale;      // XY缩放
 extern NSString * const kMLAViewScaleX;     // X缩放
 extern NSString * const kMLAViewScaleY;     // Y缩放
