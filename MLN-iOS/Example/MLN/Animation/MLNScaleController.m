@@ -16,9 +16,21 @@
     BOOL _expanded;
 }
 @property (nonatomic, strong) UIView *scaleView;
+@property (nonatomic, strong) UIButton *alphaButton;
 
-@property (nonatomic, strong) MLASpringAnimation *toBig;
-@property (nonatomic, strong) MLASpringAnimation *toSmall;
+@property (nonatomic, strong) MLASpringAnimation *toBigScale;
+@property (nonatomic, strong) MLASpringAnimation *toSmallScale;
+
+@property (nonatomic, strong) MLAObjectAnimation *toBigAlpha;
+@property (nonatomic, strong) MLAObjectAnimation *toSmallAlpha;
+@property (nonatomic, strong) MLAObjectAnimation *toBigCenter;
+@property (nonatomic, strong) MLAObjectAnimation *toSmallCenter;
+
+@property (nonatomic, strong) MLAMultiAnimation *toBigScaleAndAlpha;
+@property (nonatomic, strong) MLAMultiAnimation *toSmallScaleAndAlpha;
+
+@property (nonatomic, strong) MLAMultiAnimation *toBig;
+@property (nonatomic, strong) MLAMultiAnimation *toSmall;
 
 @property (nonatomic, strong) MLAObjectAnimation *touchAnimation;
 @property (nonatomic, strong) MLNUIInteractiveBehavior *touchBehavior;
@@ -44,8 +56,15 @@
     self.scaleView = drag;
     [self.view addSubview:drag];
     
-    [self createAnimation];
+    UIButton *button = [UIButton buttonWithType:UIButtonTypeInfoLight];
+    button.frame = CGRectMake(self.scaleView.bounds.size.width - 25, 10, 20, 20);
+    button.backgroundColor = [UIColor whiteColor];
+    button.layer.cornerRadius = 10;
+    self.alphaButton = button;
+    [self.scaleView addSubview:button];
     
+    [self createAnimation];
+
     UIButton *b = [UIButton buttonWithType:UIButtonTypeCustom];
     [b setTitle:@"Tap" forState:UIControlStateNormal];
     [b setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
@@ -62,14 +81,45 @@
 }
 
 - (void)createAnimation {
-    self.toBig = [[MLASpringAnimation alloc] initWithValueName:kMLAViewScale tartget:self.scaleView];
-    self.toBig.toValue = @(CGPointMake(1/_scaleFactor, 1/_scaleFactor));
-    [self configSpring:self.toBig];
+    self.toBigScale = [[MLASpringAnimation alloc] initWithValueName:kMLAViewScale tartget:self.scaleView];
+    self.toBigScale.toValue = @(CGPointMake(1/_scaleFactor, 1/_scaleFactor));
+    [self configSpring:self.toBigScale];
     
-    self.toSmall = [[MLASpringAnimation alloc] initWithValueName:kMLAViewScale tartget:self.scaleView];
-    self.toSmall.toValue = @(CGPointMake(1, 1));
-    [self configSpring:self.toSmall];
-//    _endDistance = 100;
+    self.toSmallScale = [[MLASpringAnimation alloc] initWithValueName:kMLAViewScale tartget:self.scaleView];
+    self.toSmallScale.toValue = @(CGPointMake(1, 1));
+    [self configSpring:self.toSmallScale];
+    
+    //
+    CGFloat bigAlpha = 1, smallAlpha = 0;
+    CGPoint bigCenter = self.view.center;
+    CGPoint smallCenter = CGPointMake(bigCenter.x, bigCenter.y + 200);
+    self.scaleView.center = smallCenter;
+    self.alphaButton.alpha = smallAlpha;
+    
+    CGFloat duration = .25;
+    CGFloat centerDura = .15;
+    
+    self.toBigAlpha = [[MLAObjectAnimation alloc] initWithValueName:kMLAViewAlpha tartget:self.alphaButton];
+    self.toBigAlpha.toValue = @(bigAlpha);
+    self.toBigAlpha.duration = duration;
+    
+    self.toSmallAlpha = [[MLAObjectAnimation alloc] initWithValueName:kMLAViewAlpha tartget:self.alphaButton];
+    self.toSmallAlpha.toValue = @(smallAlpha);
+    self.toSmallAlpha.duration = duration;
+    
+    self.toBigCenter = [[MLAObjectAnimation alloc] initWithValueName:kMLAViewPosition tartget:self.scaleView];
+    self.toBigCenter.toValue = @(bigCenter);
+    self.toBigCenter.duration = centerDura;
+    
+    self.toSmallCenter = [[MLAObjectAnimation alloc] initWithValueName:kMLAViewPosition tartget:self.scaleView];
+    self.toSmallCenter.toValue = @(smallCenter);
+    self.toSmallCenter.duration = centerDura;
+    
+    self.toBig = [[MLAMultiAnimation alloc] init];
+    [self.toBig runTogether:@[self.toBigScale, self.toBigAlpha, self.toBigCenter]];
+
+    self.toSmall = [[MLAMultiAnimation alloc] init];
+    [self.toSmall runTogether:@[self.toSmallScale, self.toSmallAlpha, self.toSmallCenter]];
     
     self.touchAnimation = [[MLAObjectAnimation alloc] initWithValueName:kMLAViewScale tartget:self.scaleView];
     float d = 1 + (1/_scaleFactor - 1) / 1.5;
@@ -81,41 +131,61 @@
     behavior.endDistance = 100;
     behavior.overBoundary = NO;
     behavior.enable = YES;
-    behavior.startBlock = ^{
-        NSLog(@"touch begin ...");
-    };
-    behavior.finishBlock = ^{
-        NSLog(@"touch finish ...");
-    };
-    behavior.touchBlock = ^(float dx, float dy, float dis, float velocity) {
-        if (dis >= 100 && _expanded) {
-            _expanded = NO;
-            [self.toSmall finish];
+//    behavior.followEnable  = YES;
+    
+    behavior.touchBlock = ^(MLNUITouchType type,CGFloat dx, CGFloat dy, CGFloat dis, CGFloat velocity) {
+        NSLog(@"touch type %lu ... dis %.2f velocity %.2f ",(unsigned long)type,dis,velocity);
+        if (dis >= 100) {
+            [self setExpanded:NO];
             [self.toSmall start:^(MLAAnimation *animation, BOOL finish) {
                 NSLog(@"touch to small");
             }];
         }
+        if (type == MLNUITouchType_End && dis != 0.00) {
+            if (velocity >= 0 && dis > 70) {
+                [self gotoSmall:@"touch to small"];
+            } else {
+                [self gotoBig:@"touch to big"];
+            }
+        }
     };
-    [self.touchAnimation addInteractiveBehavior:behavior];
-    self.touchBehavior = behavior;
     
+//    MLNUIInteractiveBehavior *touchAlpha = behavior.copy;
+//    touchAlpha.touchBlock = nil;
+    [self.toSmallAlpha addInteractiveBehavior:behavior];
+    [self.touchAnimation addInteractiveBehavior:behavior];
+    
+    self.touchBehavior = behavior;
 }
 
 - (void)tapAction {
-//    [self.toBig finish];
-//    [self.toSmall finish];
-    
     if (_expanded) {
-        [self.toSmall start:^(MLAAnimation *animation, BOOL finish) {
-            NSLog(@"to small finish");
-        }];
+        [self gotoSmall:@"to small finish"];
     } else {
-        [self.toBig start:^(MLAAnimation *animation, BOOL finish) {
-            NSLog(@"to big finish");
-        }];
+        [self gotoBig:@"to big finish"];
     }
-    _expanded = !_expanded;
+    [self setExpanded:!_expanded];
 }
+
+- (void)setExpanded:(BOOL)ex {
+    _expanded = ex;
+    self.touchBehavior.enable = _expanded;
+}
+
+- (void)gotoBig:(NSString *)log {
+    [self.toBig finish];
+    [self.toBig start:^(MLAAnimation *animation, BOOL finish) {
+        NSLog(@"%@",log);
+    }];
+}
+
+- (void)gotoSmall:(NSString *)log {
+    [self.toSmall finish];
+    [self.toSmall start:^(MLAAnimation *animation, BOOL finish) {
+        NSLog(@"%@",log);
+    }];
+}
+
 /*
 #pragma mark - Navigation
 
