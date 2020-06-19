@@ -22,6 +22,7 @@
 
 #import "MLADefines.h"
 #import "MLAAnimatable.h"
+#import "MLNUIInteractiveBehavior.h"
 
 @interface MLAValueAnimation ()
 @property(nonatomic, strong) MLAAnimatable *animatable;
@@ -45,68 +46,105 @@ static BezierControlPoints staticControls[] = {
  AMTFloat t = MathUtil::TimingFunctionSolve(controlPoints, progress, SOLVE_EPS(duration));
  MathUtil::InterpolateVector(valueCount, currentValue.data(), fromValue.data(), toValue.data(), t);
  */
-- (void)updateWithFactor:(CGFloat)factor {
-    if (factor >= 0 || factor <= 1) {
-        VectorRef fromVec = nullptr, toVec = nullptr;
-        AMTInt valueCount = (AMTInt)self.animatable.valueCount;
-        
-        id ff = self.fromValue;
-        if (!ff) {
-            ff = self.obscureFrom;
-        }
-        
-        if (ff) {
-            NSUInteger fromValueCount = 0;
-            MLAValueType valueType = kMLAValueUnknown;
-            fromVec = MLAUnbox(ff, valueType, fromValueCount, false);
-            if (valueCount != fromValueCount) {
-                fromVec = nullptr;
-            }
-        }
-        
-        MLAValueType toType = kMLAValueUnknown;
-        if (self.toValue) {
-            NSUInteger toValueCount = 0;
-//            MLAValueType valueType = kMLAValueUnknown;
-            toVec = MLAUnbox(self.toValue, toType, toValueCount, false);
-            if (valueCount != toValueCount) {
-                toVec = nullptr;
-            }
-        }
-        
-        if (!fromVec) {
-            Vector4r vec = read_values(self.animatable.readBlock, self.target, valueCount);
-            fromVec = VectorRef(Vector::new_vector(valueCount, vec));
-        }
-        if (!toVec) {
-            Vector4r vec = read_values(self.animatable.readBlock, self.target, valueCount);
-            toVec = VectorRef(Vector::new_vector(valueCount, vec));
-        }
-        
-        if (toType != kMLAValueUnknown && !self.fromValue) {
-            self.obscureFrom = MLABox(fromVec, toType);
-        }
+- (void)updateWithFactor:(CGFloat)factor isBegan:(BOOL)isBegan {
+
+    if (isBegan) {
+        self.obscureFrom = nil;
+        return;
+    }
+   VectorRef fromVec = nullptr, toVec = nullptr;
+    AMTInt valueCount = (AMTInt)self.animatable.valueCount;
     
-        VectorRef current = VectorRef(Vector::new_vector(valueCount, fromVec->data()));
+    id ff = self.fromValue;
+    if (!ff) {
+        ff = self.obscureFrom;
+    }
+    
+    if (ff) {
+        NSUInteger fromValueCount = 0;
+        MLAValueType valueType = kMLAValueUnknown;
+        fromVec = MLAUnbox(ff, valueType, fromValueCount, false);
+        if (valueCount != fromValueCount) {
+            fromVec = nullptr;
+        }
+    }
+    
+    MLAValueType toType = kMLAValueUnknown;
+    if (self.toValue) {
+        NSUInteger toValueCount = 0;
+//            MLAValueType valueType = kMLAValueUnknown;
+        toVec = MLAUnbox(self.toValue, toType, toValueCount, false);
+        if (valueCount != toValueCount) {
+            toVec = nullptr;
+        }
+    }
+    
+    if (!fromVec) {
+        Vector4r vec = read_values(self.animatable.readBlock, self.target, valueCount);
+        fromVec = VectorRef(Vector::new_vector(valueCount, vec));
+    }
+    if (!toVec) {
+        Vector4r vec = read_values(self.animatable.readBlock, self.target, valueCount);
+        toVec = VectorRef(Vector::new_vector(valueCount, vec));
+    }
+    
+    if (toType != kMLAValueUnknown && !self.obscureFrom) {
+        self.obscureFrom = MLABox(fromVec, toType);
+    }
+
+    VectorRef current = VectorRef(Vector::new_vector(valueCount, fromVec->data()));
 //        for (int i = 0; i < valueCount; i++) {
 //            current->data()[i] = fromVec->data()[i] + (toVec->data()[i] - fromVec->data()[i]) * factor;
 //        }
-        
-        BezierControlPoints controlPoints = staticControls[1];
-        AMTFloat t = MathUtil::TimingFunctionSolve(controlPoints, factor, SOLVE_EPS(10));
+    
+    BezierControlPoints controlPoints = staticControls[1];
+    
+    AMTFloat t;
+    AMTFloat multi = 1;
+    
+    if (factor > 0) {
+        if (factor > 1) {
+            multi = factor;
+            factor = 1;
+        }
+        t = MathUtil::TimingFunctionSolve(controlPoints, factor, SOLVE_EPS(10));
         MathUtil::InterpolateVector(valueCount, current->data(), fromVec->data(), toVec->data(), t);
-        
-        self.animatable.writeBlock(self.target, current->data());
+    } else {
+        if (factor < -1) {
+            multi = -factor;
+            factor = -1;
+        }
+        t = MathUtil::TimingFunctionSolve(controlPoints, -factor, SOLVE_EPS(10));
+        VectorRef newTo = VectorRef(Vector::new_vector(valueCount, fromVec->data()));
+        for (int i = 0; i < valueCount; i++) {
+            newTo->data()[i] = 2 * fromVec->data()[i] + toVec->data()[i];
+        }
+        MathUtil::InterpolateVector(valueCount, current->data(), fromVec->data(), newTo->data(), t);
     }
+    
+    if (multi != 1) {
+        for (int i = 0; i < valueCount; i++) {
+            current->data()[i] *= multi;
+        }
+    }
+    NSLog(@"update factor %.2f ,isbegan %d",factor,isBegan);
+    self.animatable.writeBlock(self.target, current->data());
 }
 
 - (void)addInteractiveBehavior:(MLNUIInteractiveBehavior *)behavior {
-    behavior.touchAnimation = self;
+    [behavior addAnimation:self];
     if (!self.behaviors) {
         self.behaviors = [NSMutableArray array];
     }
     if (behavior) {
         [self.behaviors addObject:behavior];
+    }
+}
+
+- (void)removeInteractiveBehavior:(MLNUIInteractiveBehavior *)behavior {
+    if (behavior) {
+        [behavior removeAnimation:self];
+        [self.behaviors removeObject:behavior];
     }
 }
 

@@ -141,7 +141,7 @@
                 return;
             }
             if (diffBegin.y < _endDistance) {
-                [self.touchAnimation updateWithFactor:diffBegin.y / _endDistance];
+                [self.touchAnimation updateWithFactor:diffBegin.y / _endDistance isBegan:NO];
             } else {
                 [self doSpring:view];
             }
@@ -183,7 +183,7 @@
     if (diffBegin.y < _endDistance) {
 //        animator::Animation * ani = [self.toSmall cplusplusAnimation];
 //        [self.toSmall updateWithFactor:diffBegin.y / 50];
-        [self.touchAnimation updateWithFactor:diffBegin.y / _endDistance];
+        [self.touchAnimation updateWithFactor:diffBegin.y / _endDistance isBegan:NO];
     } else {
         if (diffBegin.y > _endDistance * 1) {
             [self doSpring:view];

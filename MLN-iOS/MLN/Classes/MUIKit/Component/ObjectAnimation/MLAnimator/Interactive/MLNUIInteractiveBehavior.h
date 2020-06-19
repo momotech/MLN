@@ -6,6 +6,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "MLNUIViewConst.h"
 
 typedef NS_ENUM(NSUInteger, InteractiveType) {
     InteractiveType_Gesture
@@ -19,23 +20,23 @@ typedef NS_ENUM(NSUInteger, InteractiveDirection) {
 NS_ASSUME_NONNULL_BEGIN
 @class MLAValueAnimation;
 
-@interface MLNUIInteractiveBehavior : NSObject
+@interface MLNUIInteractiveBehavior : NSObject <NSCopying>
 
 @property (nonatomic, weak) UIView *targetView;
 @property (nonatomic, assign) InteractiveDirection direction;
-@property (nonatomic, assign) float endDistance;
+@property (nonatomic, assign) CGFloat endDistance;
 @property (nonatomic, assign) BOOL overBoundary;
 @property (nonatomic, assign) BOOL enable;
 @property (nonatomic, assign) BOOL followEnable;
 
-@property (nonatomic, strong) void(^startBlock)(void);
-@property (nonatomic, strong) void(^finishBlock)(void);
-
-@property (nonatomic, strong) void(^touchBlock)(float dx, float dy, float dis, float velocity);
+@property (nonatomic, strong) void(^touchBlock)(MLNUITouchType type,CGFloat dx, CGFloat dy, CGFloat dis, CGFloat velocity);
 
 - (instancetype)initWithType:(InteractiveType)type;
 
-@property (nonatomic, weak) MLAValueAnimation *touchAnimation;
+- (void)addAnimation:(MLAValueAnimation *)ani;
+- (void)removeAnimation:(MLAValueAnimation *)ani;
+- (void)removeAllAnimations;
+
 @end
 
 NS_ASSUME_NONNULL_END
