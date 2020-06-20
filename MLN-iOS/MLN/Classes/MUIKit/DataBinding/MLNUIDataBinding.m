@@ -243,7 +243,7 @@
         BOOL isNum = [self scanInt:&index forStringOrNumber:lastKey];
         BOOL isMArray = [frontObject isKindOfClass:[NSMutableArray class]];
         if (isNum != isMArray) {
-            NSString *log = [NSString stringWithFormat:@"key: %@ and  value type: %@ are incompatible",lastKey, frontObject.class];
+            NSString *log = [NSString stringWithFormat:@"%s key: %@ and  value type: %@ are incompatible! keys: %@",__func__,lastKey, frontObject.class,keys];
             [self doErrorLog:log];
             return;
         }
@@ -535,7 +535,7 @@
         BOOL isArray = [res isKindOfClass:[NSArray class]];
         if (isNum != isArray) {
             if(frontObject) *frontObject = nil;
-            NSString *log  = [NSString stringWithFormat:@"key %@ and  value %@ are incompatible",k,res.class];
+            NSString *log  = [NSString stringWithFormat:@"%s key %@ and  value %@ are incompatible! keys: %@",__func__,k,res.class,keys];
             [self doErrorLog:log];
             return nil;
         }
@@ -598,19 +598,24 @@
     return NO;
 }
 
+- (BOOL)isNumber:(NSObject *)obj {
+    int tmp;
+    return [self scanInt:&tmp forStringOrNumber:(NSString *)obj];
+}
+
 //[a,b,1,c,d] -> [a.b,1,c.d]
 -(NSArray *)formatKeys:(NSArray *)keys allowFirstKeyIsNumber:(BOOL)allowFirstKeyIsNumber allowLastKeyIsNumber:(BOOL)allowLastKeyIsNumber {
     if (keys.count <= 1) {
         return keys;
     }
     NSString *first = keys.firstObject;
-    if (!allowFirstKeyIsNumber && ![first isKindOfClass:[NSString class]]) {
-        NSLog(@"first key must be string!");
+    if (!allowFirstKeyIsNumber && [self isNumber:first]) {
+        NSLog(@"first key cann't be number");
         return nil;
     }
     NSString *last = keys.lastObject;
-    if(!allowLastKeyIsNumber && ![last isKindOfClass:[NSString class]]){
-        NSLog(@"last key must be string!");
+    if(!allowLastKeyIsNumber && [self isNumber:last]){
+        NSLog(@"last key cann't be numbeer!");
         return nil;
     }
     NSMutableArray *formatKeys = [NSMutableArray array];
