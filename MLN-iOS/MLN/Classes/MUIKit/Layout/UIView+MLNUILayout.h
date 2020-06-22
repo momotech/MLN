@@ -34,6 +34,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) CGFloat luaui_paddingLeft;
 @property (nonatomic, assign) CGFloat luaui_paddingRight;
 @property (nonatomic, assign) CGFloat luaui_paddingBottom;
+@property (nonatomic, assign) BOOL luaui_display;
 
 - (void)mlnui_markNeedsLayout;
 - (void)mlnui_requestLayoutIfNeed;
