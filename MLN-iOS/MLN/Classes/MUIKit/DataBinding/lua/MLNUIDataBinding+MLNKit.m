@@ -150,11 +150,11 @@
     MLNUIDataBinding *dataBinding = kitViewController.mlnui_dataBinding;
     
     __block NSString *obID;
-    __weak __typeof(MLNUIDataBinding*) weakBingding = dataBinding;
+//    __weak __typeof(MLNUIDataBinding*) weakBingding = dataBinding;
     MLNUIListViewObserver *observer = [MLNUIListViewObserver observerWithListView:listView keyPath:key callback:^(NSString * _Nonnull keyPath, id  _Nonnull object, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
-        __strong __typeof(MLNUIDataBinding*) strongBinding = weakBingding;
-        [strongBinding removeMLNUIObserverByID:obID];
-        [self luaui_bindListViewForKey:key listView:listView];
+//        __strong __typeof(MLNUIDataBinding*) strongBinding = weakBingding;
+//        [strongBinding removeMLNUIObserverByID:obID];
+//        [self luaui_bindListViewForKey:key listView:listView];
     }];
     
     [dataBinding setListView:listView tag:key];
