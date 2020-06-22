@@ -12,6 +12,8 @@
 #import "MLNUIAnimationConst.h"
 #import "MLNUIBeforeWaitingTask.h"
 #import "UIView+MLNUILayout.h"
+#import "MLNUIInteractiveBehavior.h"
+#import "MLAValueAnimation+Interactive.h"
 
 @interface MLNUIObjectAnimation()
 
@@ -283,12 +285,12 @@
         }
         _propertyChanged = NO;
     }
-    if (_valueAnimation.fromValue == nil) {
-        _valueAnimation.fromValue = [self mlnui_getDefaultValue];
-    }
-    if (_valueAnimation.toValue == nil) {
-        _valueAnimation.toValue = [self mlnui_getDefaultValue];
-    }
+//    if (_valueAnimation.fromValue == nil) {
+//        _valueAnimation.fromValue = [self mlnui_getDefaultValue];
+//    }
+//    if (_valueAnimation.toValue == nil) {
+//        _valueAnimation.toValue = [self mlnui_getDefaultValue];
+//    }
     return _valueAnimation;
 }
 
@@ -512,6 +514,11 @@
     return kMLAViewAlpha;
 }
 
+- (void)mlnui_AddInteractiveBehavior:(MLNUIInteractiveBehavior *)behavior {
+    if (!behavior) return;
+    [self.valueAnimation addInteractiveBehavior:behavior];
+}
+
 #pragma mark - Export To Lua
 LUAUI_EXPORT_BEGIN(MLNUIObjectAnimation)
 LUAUI_EXPORT_PROPERTY(duration, "setDuration:", "duration", MLNUIObjectAnimation)
@@ -533,6 +540,8 @@ LUAUI_EXPORT_METHOD(start, "mlnui_start:", MLNUIObjectAnimation)
 LUAUI_EXPORT_METHOD(pause, "mlnui_pause", MLNUIObjectAnimation)
 LUAUI_EXPORT_METHOD(resume, "mlnui_resume", MLNUIObjectAnimation)
 LUAUI_EXPORT_METHOD(stop, "mlnui_stop", MLNUIObjectAnimation)
+
+LUAUI_EXPORT_METHOD(addInteractiveBehavior, "mlnui_AddInteractiveBehavior:", MLNUIObjectAnimation)
 LUAUI_EXPORT_END(MLNUIObjectAnimation, ObjectAnimation, NO, NULL, "initWithMLNUILuaCore:property:target:")
 
 @end

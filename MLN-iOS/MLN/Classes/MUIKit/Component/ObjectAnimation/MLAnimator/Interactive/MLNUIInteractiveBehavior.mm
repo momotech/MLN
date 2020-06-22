@@ -15,6 +15,10 @@
 #import "MLADefines.h"
 #import "MLAAnimatable.h"
 
+#import "MLNUIViewExporterMacro.h"
+#import "UIView+MLNUIKit.h"
+#import "MLNUIMetamacros.h"
+
 @interface MLNUIInteractiveBehavior ()
 @property (nonatomic, assign)InteractiveType type;
 @property (nonatomic, strong) NSHashTable <MLAValueAnimation *> *valueAnimations;
@@ -22,23 +26,29 @@
 @property (nonatomic, strong) MLNUITouchCallback touchCallback;
 
 @property (nonatomic, assign) CGPoint beginPoint;
+@property (nonatomic, assign) CGFloat lastDistance;
+
 //@property (nonatomic, assign) CGPoint lastPoint;
 
 //@property (nonatomic, assign) CGFloat previousTime;
 //@property (nonatomic, assign) CGFloat newSpeed;
 //@property (nonatomic, assign) CGFloat oldSpeed;
-
+@property (nonatomic, strong) MLNUIBlock *luaTouchBlock;
 @end
 
 @implementation MLNUIInteractiveBehavior
 
 - (instancetype)initWithType:(InteractiveType)type {
     if (self = [super init]) {
-        _type = type;
-        _endDistance = 1999;
-        _valueAnimations = [NSHashTable weakObjectsHashTable];
+        [self setupWithType:type];
     }
     return self;
+}
+
+- (void)setupWithType:(InteractiveType)type {
+    _type = type;
+    _endDistance = 1999;
+    _valueAnimations = [NSHashTable weakObjectsHashTable];
 }
 
 - (void)setTargetView:(UIView *)targetView {
@@ -58,6 +68,10 @@
         __strong __typeof(weakSelf)self = weakSelf;
         if (!self.enable || !self.targetView.superview || self.endDistance == 0)  return ;
         
+        if (previousTime == touch.timestamp) {
+            DLog(@"timestamp is equle.....");
+            return;
+        }
         CGPoint p = [touch locationInView:self.targetView.superview];
         CGPoint lastPoint = [touch previousLocationInView:self.targetView.superview];
         
@@ -73,41 +87,67 @@
         if (MLNUITouchType_Begin == type) {
             self.beginPoint = p;
             newSpeed = oldSpeed = 0;
-            if (self.touchBlock) {
-                self.touchBlock(type,p.x, p.y, 0, newSpeed);
-            }
+            
+            [self onTouch:type dx:p.x dy:p.y distance:0 velocity:newSpeed];
             
             for (MLAValueAnimation *ani in self.valueAnimations) {
                 [ani updateWithFactor:0 isBegan:YES];
             }
         } else if(MLNUITouchType_Move == type) {
+
+            [self onTouch:type dx:p.x dy:p.y distance:dis velocity:newSpeed];
             
-            if (self.touchBlock) {
-                self.touchBlock(type, p.x, p.y, dis, newSpeed);
-            }
-            
-            if (self.followEnable) {
+            BOOL shouldReturn = !self.overBoundary && (factor > 1 || factor < 0);
+            dispatch_block_t followBlock = ^{
                 CGPoint c = self.targetView.center;
                 CGPoint newc = CGPointMake(c.x + diffLast.x, c.y + diffLast.y);
                 self.targetView.center = newc;
-                NSLog(@"old %@ new center %@",NSStringFromCGPoint(c),NSStringFromCGPoint(newc));
+//                DLog(@"old %@ new center %@",NSStringFromCGPoint(c),NSStringFromCGPoint(newc));
+            };
+            
+            if (self.followEnable) {
+                followBlock();
             }
             
-            if (!self.overBoundary && (factor > 1 || factor < 0)) {
-                self.beginPoint = p;
+            if (shouldReturn) {
+//                self.beginPoint = p;
                 return;
             }
             
-            NSLog(@" factor %.2f ",factor);
+            DLog(@" factor %.2f ",factor);
+            
             for (MLAValueAnimation *ani in self.valueAnimations) {
-                [ani updateWithFactor:factor isBegan:NO];
+                if (!self.followEnable || (self.followEnable && ![ani.valueName containsString:kMLAViewPosition])) {
+                    [ani updateWithFactor:factor isBegan:NO];
+                }
             }
         } else {
-            if (self.touchBlock) {
-                self.touchBlock(type, p.x, p.y, dis, newSpeed);
-            }
+            [self onTouch:type dx:p.x dy:p.y distance:dis velocity:newSpeed];
         }
     };
+}
+
+- (void)onTouch:(MLNUITouchType)type dx:(float)dx dy:(float)dy distance:(float)distance velocity:(float)velocity {
+    if (self.touchBlock) {
+        self.touchBlock(type, dx, dy, distance, velocity);
+    }
+    
+    DLog(@"type %lu dis %.2f velocity %.2f ",(unsigned long)type, distance, velocity);
+    
+    if (self.luaTouchBlock) {
+        BOOL isBeginAndEnd = MLNUITouchType_Begin == type || MLNUITouchType_End == type;
+//        BOOL isEndDistance = fabs(self.endDistance - distance) < 0.0001;
+        BOOL isEndDistance = self.lastDistance <= self.endDistance && distance >= self.endDistance;
+        isEndDistance = isEndDistance || (self.lastDistance >= self.endDistance && distance <= self.endDistance);
+        
+        if (isBeginAndEnd || isEndDistance) {
+            [self.luaTouchBlock addUIntegerArgument:type];
+            [self.luaTouchBlock addFloatArgument:distance];
+            [self.luaTouchBlock addFloatArgument:velocity];
+            [self.luaTouchBlock callIfCan];
+        }
+    }
+    self.lastDistance = distance;
 }
 
 - (id)copyWithZone:(nullable NSZone *)zone {
@@ -126,7 +166,6 @@
     return beh;
 }
 
-
 - (void)addAnimation:(MLAValueAnimation *)ani {
     if (ani) {
         [self.valueAnimations addObject:ani];
@@ -140,4 +179,20 @@
 - (void)removeAllAnimations {
     [self.valueAnimations removeAllObjects];
 }
+
+- (instancetype)initWithMLNUILuaCore:(MLNUILuaCore *)luaCore type:(InteractiveType)type {
+    if (self = [self initWithMLNUILuaCore:luaCore]) {
+        [self setupWithType:type];
+    }
+    return self;
+}
+
+- (void)lua_setTouchBlock:(MLNUIBlock *)block {
+    self.luaTouchBlock = block;
+}
+
+- (MLNUIBlock *)lua_touchBlock {
+    return self.luaTouchBlock;
+}
+
 @end

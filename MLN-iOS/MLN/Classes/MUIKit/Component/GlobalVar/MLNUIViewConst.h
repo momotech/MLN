@@ -76,8 +76,17 @@ typedef enum : NSUInteger {
 typedef NS_ENUM(NSUInteger, MLNUITouchType) {
     MLNUITouchType_Begin,
     MLNUITouchType_Move,
-    MLNUITouchType_End,
-    MLNUITouchType_Cancel
+    MLNUITouchType_End
+//    MLNUITouchType_Cancel
+};
+
+typedef NS_ENUM(NSUInteger, InteractiveType) {
+    InteractiveType_Gesture
+};
+
+typedef NS_ENUM(NSUInteger, InteractiveDirection) {
+    InteractiveDirection_X,
+    InteractiveDirection_Y
 };
 
 typedef void(^MLNUITouchCallback)(MLNUITouchType type, UITouch * _Nonnull touch, UIEvent * _Nonnull event);

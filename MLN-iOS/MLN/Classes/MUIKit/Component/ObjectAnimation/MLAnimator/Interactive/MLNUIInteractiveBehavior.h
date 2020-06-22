@@ -8,17 +8,9 @@
 #import <Foundation/Foundation.h>
 #import "MLNUIViewConst.h"
 
-typedef NS_ENUM(NSUInteger, InteractiveType) {
-    InteractiveType_Gesture
-};
-
-typedef NS_ENUM(NSUInteger, InteractiveDirection) {
-    InteractiveDirection_X,
-    InteractiveDirection_Y
-};
-
 NS_ASSUME_NONNULL_BEGIN
 @class MLAValueAnimation;
+@class MLNUILuaCore, MLNUIBlock;
 
 @interface MLNUIInteractiveBehavior : NSObject <NSCopying>
 
@@ -36,6 +28,11 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)addAnimation:(MLAValueAnimation *)ani;
 - (void)removeAnimation:(MLAValueAnimation *)ani;
 - (void)removeAllAnimations;
+
+// bridge
+- (instancetype)initWithMLNUILuaCore:(MLNUILuaCore *)luaCore type:(InteractiveType)type;
+- (void)lua_setTouchBlock:(MLNUIBlock *)block;
+- (MLNUIBlock *)lua_touchBlock;
 
 @end
 

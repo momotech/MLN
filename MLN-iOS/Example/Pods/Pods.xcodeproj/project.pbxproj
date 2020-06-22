@@ -11,6 +11,8 @@
 		0059580107987F1E9B9B81689E934CB3 /* lmathlib.c in Sources */ = {isa = PBXBuildFile; fileRef = B9DF2AEBB37A145632C63AA014CE4086 /* lmathlib.c */; };
 		009F49878E6F7970E76F851B6E03BA19 /* NSBezierPath+SDRoundedCorners.m in Sources */ = {isa = PBXBuildFile; fileRef = 369A836A31AC90A59806CE4D157BD33C /* NSBezierPath+SDRoundedCorners.m */; };
 		00ADF2C4D06667FB89780B3C5B977C60 /* SDWebImageTransitionInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = A525D3BB929B744A0F9A6DB8B5580766 /* SDWebImageTransitionInternal.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		00BBF20B24A05C320027EF8A /* MLNUIInteractiveBehavior+Bridge.h in Headers */ = {isa = PBXBuildFile; fileRef = 00BBF20924A05C320027EF8A /* MLNUIInteractiveBehavior+Bridge.h */; };
+		00BBF20C24A05C320027EF8A /* MLNUIInteractiveBehavior+Bridge.m in Sources */ = {isa = PBXBuildFile; fileRef = 00BBF20A24A05C320027EF8A /* MLNUIInteractiveBehavior+Bridge.m */; };
 		00D3101A5F893E7CDC94C28A612A42AA /* lauxlib.c in Sources */ = {isa = PBXBuildFile; fileRef = 8867063A219865CF15A028B5A464A16F /* lauxlib.c */; };
 		00E25AD5D8ED1116BCB0C4874EA3080C /* MLNSafeAreaAdapter.m in Sources */ = {isa = PBXBuildFile; fileRef = 6C5B21F8238BFB170EBBF4D4052855D2 /* MLNSafeAreaAdapter.m */; };
 		011DAB6E81F5942DA74E224B2675FC84 /* MLNUITableViewAutoFitAdapter.m in Sources */ = {isa = PBXBuildFile; fileRef = 02B80941AEE59ED1B1FDA9A0574B2D98 /* MLNUITableViewAutoFitAdapter.m */; };
@@ -1955,6 +1957,8 @@
 		00466594FD8824E6AA4CB3E5ED113BFC /* MLNCollectionView.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLNCollectionView.m; sourceTree = "<group>"; };
 		0076B943FA546AF6627038A51F392125 /* mln_isolate.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = mln_isolate.h; sourceTree = "<group>"; };
 		008C660BC721D02D79407A2A54755C12 /* mln_map.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; path = mln_map.c; sourceTree = "<group>"; };
+		00BBF20924A05C320027EF8A /* MLNUIInteractiveBehavior+Bridge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MLNUIInteractiveBehavior+Bridge.h"; sourceTree = "<group>"; };
+		00BBF20A24A05C320027EF8A /* MLNUIInteractiveBehavior+Bridge.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "MLNUIInteractiveBehavior+Bridge.m"; sourceTree = "<group>"; };
 		00D1CE868CC1A5CFB1E25E3FBD43555D /* SPTGlobalBeforeAfterEach.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = SPTGlobalBeforeAfterEach.h; path = Specta/Specta/SPTGlobalBeforeAfterEach.h; sourceTree = "<group>"; };
 		00DF0B046D7E5141E151A30739A754B8 /* UIImageView+WebCache.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "UIImageView+WebCache.h"; path = "SDWebImage/Core/UIImageView+WebCache.h"; sourceTree = "<group>"; };
 		0133D4185E455DE4D31516CD62CBC25F /* MLNUIKVOObserver.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLNUIKVOObserver.m; sourceTree = "<group>"; };
@@ -4998,6 +5002,8 @@
 			children = (
 				2B5E9749926C58DD2CAE32E536F7F27F /* MLNUIInteractiveBehavior.h */,
 				56D23B867D97C2EF687EA9925B3E398D /* MLNUIInteractiveBehavior.mm */,
+				00BBF20924A05C320027EF8A /* MLNUIInteractiveBehavior+Bridge.h */,
+				00BBF20A24A05C320027EF8A /* MLNUIInteractiveBehavior+Bridge.m */,
 			);
 			path = Interactive;
 			sourceTree = "<group>";
@@ -8228,6 +8234,7 @@
 				243B465BDA2B496C7A027BF07D11EE6D /* MLNUIInnerCollectionView.h in Headers */,
 				E027BCD6D57ADB255FFC81F33E578803 /* MLNUIInnerScrollView.h in Headers */,
 				D806FCAD50A740DAD291B6737599FBEE /* MLNUIInnerTableView.h in Headers */,
+				00BBF20B24A05C320027EF8A /* MLNUIInteractiveBehavior+Bridge.h in Headers */,
 				18B27E5A8F7DE766AB12EC8B7BB7341A /* MLNUIInteractiveBehavior.h in Headers */,
 				A6F5079453EA9F51742271080B5EE15A /* MLNUIInternalTextField.h in Headers */,
 				3E94F881FFA38AF0F72354A376DCEF90 /* MLNUIInternalTextView.h in Headers */,
@@ -9815,6 +9822,7 @@
 				C4C8641AC60F69A25CE025CAAD698A78 /* MLNUIBeforeWaitingTaskEngine.m in Sources */,
 				272DD3933F323AA39F30AABD580BCDE9 /* MLNUIBit.m in Sources */,
 				49B1FBF33527873779F6C26F6EBF8016 /* MLNUIBlock.m in Sources */,
+				00BBF20C24A05C320027EF8A /* MLNUIInteractiveBehavior+Bridge.m in Sources */,
 				303BA8E57AB66302FD90231625AEEB9E /* MLNUIBlockObserver.m in Sources */,
 				0E9A7255F8C60470F6C5A8B30121E105 /* MLNUIBorderLayerOperation.m in Sources */,
 				426A0186B5485056C73DFFE27D345994 /* MLNUIBounceInterpolator.m in Sources */,

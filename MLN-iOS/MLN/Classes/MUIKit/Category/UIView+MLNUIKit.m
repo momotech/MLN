@@ -187,7 +187,7 @@ static const void *kLuaKeyboardDismiss = &kLuaKeyboardDismiss;
     if (![self isKindOfClass:[UIView class]]) {
         return;
     }
-    [self mlnui_touchType:MLNUITouchType_Cancel touch:touches.anyObject event:event];
+    [self mlnui_touchType:MLNUITouchType_End touch:touches.anyObject event:event];
 
     if([self isOpenRipple]) {
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{

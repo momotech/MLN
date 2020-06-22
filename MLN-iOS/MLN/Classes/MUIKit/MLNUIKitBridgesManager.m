@@ -81,6 +81,8 @@
 //New Animation
 #import "MLNUIObjectAnimation.h"
 #import "MLNUIObjectAnimationSet.h"
+#import "MLNUIInteractiveBehavior.h"
+
 // Canvas
 #import "MLNUICanvasView.h"
 #import "MLNUICanvasPaint.h"
@@ -222,7 +224,9 @@ static NSArray<Class<MLNUIExportProtocol>> *animationClasses;
                              [MLNUIFrameAnimation class],
                              [MLNUIAnimationZoneView class],
                              [MLNUIObjectAnimation class],
-                             [MLNUIObjectAnimationSet class]];
+                             [MLNUIObjectAnimationSet class],
+                             [MLNUIInteractiveBehavior class]
+                            ];
     }
     return animationClasses;
 }
