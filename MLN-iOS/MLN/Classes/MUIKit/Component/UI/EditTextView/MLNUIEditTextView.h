@@ -30,9 +30,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, assign) BOOL canEdit;
 
-/// It's either UITextView or UITextField.
-@property (nonatomic, strong, readonly) UIView *actualResponderView;
-
 @end
 
 NS_ASSUME_NONNULL_END

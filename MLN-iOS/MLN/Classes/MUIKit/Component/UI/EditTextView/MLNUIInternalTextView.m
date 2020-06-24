@@ -65,15 +65,6 @@
     return fitSize;
 }
 
-#pragma mark - Override
-
-- (UIView *)mlnui_firstResponder {
-    if ([self isFirstResponder]) {
-        return self.myTextView;
-    }
-    return nil;
-}
-
 #pragma mark - Responder
 - (BOOL)isFirstResponder
 {

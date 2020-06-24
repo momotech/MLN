@@ -38,7 +38,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - render
 @property (nonatomic, strong, readonly) MLNUIRenderContext *mlnui_renderContext;
-@property (nonatomic, strong, readonly) UIView *mlnui_firstResponder;
 
 #pragma mark - Gesture
 @property (nonatomic, strong) MLNUIBlock * mlnui_tapClickBlock;
