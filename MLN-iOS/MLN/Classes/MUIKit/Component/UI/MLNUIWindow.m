@@ -115,17 +115,12 @@
 
 - (void)keyboardFrameChanged:(NSNotification *)notification
 {
-    CGFloat oldHeight = [[notification.userInfo objectForKey:UIKeyboardFrameBeginUserInfoKey] CGRectValue].size.height;
-    CGFloat newHeight = [[notification.userInfo objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue].size.height;
     if (self.keyboardFrameChangeCallback) {
+        CGFloat oldHeight = [[notification.userInfo objectForKey:UIKeyboardFrameBeginUserInfoKey] CGRectValue].size.height;
+        CGFloat newHeight = [[notification.userInfo objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue].size.height;
         [self.keyboardFrameChangeCallback addFloatArgument:oldHeight];
         [self.keyboardFrameChangeCallback addFloatArgument:newHeight];
         [self.keyboardFrameChangeCallback callIfCan];
-    }
-    if (self.firstResponder) {
-        CGRect frame = self.firstResponder.frame;
-        frame.origin.y -= (newHeight - oldHeight);
-        self.firstResponder.frame = frame; // 跟随键盘高度变化
     }
 }
 
