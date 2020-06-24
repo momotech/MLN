@@ -15,6 +15,7 @@
 #import "MLNUIDevice.h"
 #import "MLNUISafeAreaProxy.h"
 #import "MLNUISafeAreaAdapter.h"
+#import "MLNUIEditTextView.h"
 
 @interface MLNUIWindow ()
 
@@ -30,6 +31,8 @@
 @property (nonatomic, assign) BOOL autoDoDestroy;
 
 @property (nonatomic, strong) MLNUISafeAreaProxy *safeAreaProxy;
+
+@property (nonatomic, weak) MLNUIEditTextView *firstResponder;
 
 @end
 
@@ -93,6 +96,10 @@
             [_keyboardStatusCallback addFloatArgument:height];
             [_keyboardStatusCallback callIfCan];
         }
+        UIView *responder = [self mlnui_firstResponder];
+        if ([responder isKindOfClass:[MLNUIEditTextView class]]) {
+            self.firstResponder = (MLNUIEditTextView *)responder;
+        }
     }
 }
 
@@ -103,16 +110,22 @@
         [_keyboardStatusCallback addFloatArgument:0];
         [_keyboardStatusCallback callIfCan];
     }
+    self.firstResponder = nil;
 }
 
 - (void)keyboardFrameChanged:(NSNotification *)notification
 {
+    CGFloat oldHeight = [[notification.userInfo objectForKey:UIKeyboardFrameBeginUserInfoKey] CGRectValue].size.height;
+    CGFloat newHeight = [[notification.userInfo objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue].size.height;
     if (self.keyboardFrameChangeCallback) {
-        CGFloat oldHeight = [[notification.userInfo objectForKey:UIKeyboardFrameBeginUserInfoKey] CGRectValue].size.height;
-        CGFloat newHeight = [[notification.userInfo objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue].size.height;
         [self.keyboardFrameChangeCallback addFloatArgument:oldHeight];
         [self.keyboardFrameChangeCallback addFloatArgument:newHeight];
         [self.keyboardFrameChangeCallback callIfCan];
+    }
+    if (self.firstResponder) {
+        CGRect frame = self.firstResponder.frame;
+        frame.origin.y -= (newHeight - oldHeight);
+        self.firstResponder.frame = frame; // 跟随键盘高度变化
     }
 }
 
@@ -363,6 +376,20 @@
 - (MLNUIStatusBarStyle)luaui_getStatusBarStyle
 {
     return (MLNUIStatusBarStyle)[[UIApplication sharedApplication] statusBarStyle];
+}
+
+- (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event {
+    if (!self.firstResponder) {
+        return [super hitTest:point withEvent:event];
+    }
+    if (self.firstResponder.superview == self) {
+        return [super hitTest:point withEvent:event];
+    }
+    CGRect firstResponderRelativeToWindowFrame = [self convertRect:self.firstResponder.frame fromView:self.firstResponder.superview];
+    if (CGRectContainsPoint(firstResponderRelativeToWindowFrame, point)) {
+        return self.firstResponder.actualResponderView;
+    }
+    return [super hitTest:point withEvent:event];
 }
 
 #pragma mark - Export

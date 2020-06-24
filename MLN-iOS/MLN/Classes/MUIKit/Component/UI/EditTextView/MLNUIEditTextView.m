@@ -98,6 +98,10 @@
     return _internalTextView;
 }
 
+- (UIView *)actualResponderView { 
+    return [_internalTextView mlnui_firstResponder];
+}
+
 #pragma mark - MLNUIInternalTextViewProtocl
 - (void)internalTextViewDidBeginEditing:(UIView<MLNUITextViewProtocol> *)internalTextView
 {

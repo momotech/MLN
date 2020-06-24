@@ -317,6 +317,17 @@ static const void *kLuaBoarderWidth = &kLuaBoarderWidth;
     renderContext.didSetClipToChildren = YES;
 }
 
+- (UIView *)mlnui_firstResponder {
+    if (self.isFirstResponder) {
+        return self;
+    }
+    for (UIView *subView in self.subviews) {
+        UIView *find = [subView mlnui_firstResponder];
+        if (find) return find;
+    }
+    return nil;
+}
+
 #pragma mark - Corner Radius
 - (void)luaui_setCornerRadius:(CGFloat)cornerRadius
 {
