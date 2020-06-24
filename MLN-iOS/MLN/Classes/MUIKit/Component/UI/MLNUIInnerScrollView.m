@@ -63,6 +63,22 @@
     }
 }
 
+- (void)setCrossAxisMaxSize:(CGSize)maxSize {
+    MLNUILayoutNode *node = [self mlnui_layoutNode];
+    switch (node.flexDirection) {
+        case MLNUIFlexDirectionRow:
+        case MLNUIFlexDirectionRowReverse:
+            node.maxHeight = MLNUIPointValue(maxSize.height);
+            break;
+        case MLNUIFlexDirectionColumn:
+        case MLNUIFlexDirectionColumnReverse:
+            node.maxWidth = MLNUIPointValue(maxSize.width);
+            break;
+        default:
+            break;
+    }
+}
+
 @end
 
 @implementation MLNUIInnerScrollViewContentStackNode

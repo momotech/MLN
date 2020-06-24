@@ -219,14 +219,9 @@
 
 - (CGSize)mlnui_sizeThatFits:(CGSize)size {
     _autoFitSize = YES;
-    CGSize constraintSize = CGSizeMake(MLNUIUndefined, MLNUIUndefined);
-    if (self.innerScrollView.mlnui_horizontal) {
-        constraintSize.height = size.height;
-    } else {
-        constraintSize.width = size.width;
-    }
-    CGSize fitSize = [self.innerScrollView.mlnui_contentView.mlnui_layoutNode applyLayoutWithSize:constraintSize]; // 自适应内容大小 (前提是没有设置固定宽高)
-    return fitSize;
+    MLNUIPlaneStack *contentStack = (MLNUIPlaneStack *)self.innerScrollView.mlnui_contentView;
+    [contentStack setCrossAxisMaxSize:size];
+    return [contentStack.mlnui_layoutNode applyLayoutWithSize:CGSizeMake(MLNUIUndefined, MLNUIUndefined)]; // 自适应内容大小 (前提是没有设置固定宽高)
 }
 
 - (void)mlnui_layoutCompleted {

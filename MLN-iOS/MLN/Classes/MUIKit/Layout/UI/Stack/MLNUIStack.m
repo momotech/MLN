@@ -51,6 +51,10 @@ LUAUI_EXPORT_VIEW_END(MLNUIStack, Stack, YES, "MLNUIView", "initWithMLNUILuaCore
     NSAssert(false, @"@Note: subclass should override this method.");
 }
 
+- (void)setCrossAxisMaxSize:(CGSize)maxSize {
+    NSAssert(false, @"@Note: subclass should override this method.");
+}
+
 #pragma mark - Export Lua
 
 LUAUI_EXPORT_VIEW_BEGIN(MLNUIPlaneStack)

@@ -33,6 +33,10 @@
     self.mlnui_layoutNode.height = MLNUIPointValue(size.height);
 }
 
+- (void)setCrossAxisMaxSize:(CGSize)maxSize {
+    self.mlnui_layoutNode.maxHeight = MLNUIPointValue(maxSize.height);
+}
+
 #pragma mark - Export Lua
 
 LUAUI_EXPORT_VIEW_BEGIN(MLNUIHStack)
