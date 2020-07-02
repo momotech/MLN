@@ -30,6 +30,7 @@
 @property (nonatomic, assign) BOOL autoDoDestroy;
 
 @property (nonatomic, strong) MLNUISafeAreaProxy *safeAreaProxy;
+@property (nonatomic, strong) NSMutableSet<UIView *> *beyondSuperviews; // 键盘弹起，跟随键盘上移而超出父视图frame的视图
 
 @end
 
@@ -107,13 +108,44 @@
 
 - (void)keyboardFrameChanged:(NSNotification *)notification
 {
+    CGFloat oldHeight = [[notification.userInfo objectForKey:UIKeyboardFrameBeginUserInfoKey] CGRectValue].size.height;
+    CGFloat newHeight = [[notification.userInfo objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue].size.height;
     if (self.keyboardFrameChangeCallback) {
-        CGFloat oldHeight = [[notification.userInfo objectForKey:UIKeyboardFrameBeginUserInfoKey] CGRectValue].size.height;
-        CGFloat newHeight = [[notification.userInfo objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue].size.height;
         [self.keyboardFrameChangeCallback addFloatArgument:oldHeight];
         [self.keyboardFrameChangeCallback addFloatArgument:newHeight];
         [self.keyboardFrameChangeCallback callIfCan];
     }
+    if (self.beyondSuperviews.count > 0) {
+        for (UIView *view in self.beyondSuperviews) {
+            CGRect frame = view.frame;
+            frame.origin.y -= (newHeight - oldHeight);
+            view.frame = frame; // 跟随键盘高度变化
+        }
+    }
+}
+
+#pragma mark - Override (Event Chain)
+
+- (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event {
+    if (self.beyondSuperviews.count == 0) {
+        return [super hitTest:point withEvent:event];
+    }
+    for (UIView *view in self.beyondSuperviews) {
+        CGPoint pointRelativeToSuperview = [self convertPoint:point toView:view.superview];
+        if (CGRectContainsPoint(view.frame, pointRelativeToSuperview)) {
+            CGPoint pointRelativeToView = [self convertPoint:point toView:view];
+            UIView *firstResponder = [view hitTest:pointRelativeToView withEvent:event]; // 寻找可响应的子视图
+            return firstResponder ? firstResponder : view; // 若没有子视图可响应，则响应自己
+        }
+    }
+    return [super hitTest:point withEvent:event];
+}
+
+- (NSMutableSet *)beyondSuperviews {
+    if (!_beyondSuperviews) {
+        _beyondSuperviews = [NSMutableSet set];
+    }
+    return _beyondSuperviews;
 }
 
 #pragma mark - luaSafeArea
@@ -210,6 +242,16 @@
 - (void)luaui_backKeyEnabled:(BOOL)enable
 {
     
+}
+
+- (void)luaui_cachePushView:(UIView *)view {
+    if (view) {
+        [self.beyondSuperviews addObject:view];
+    }
+}
+
+- (void)luaui_clearPushView {
+    [self.beyondSuperviews removeAllObjects];
 }
 
 #pragma mark - Appear & Disappear
@@ -366,6 +408,7 @@
 }
 
 #pragma mark - Export
+
 LUAUI_EXPORT_VIEW_BEGIN(MLNUIWindow)
 LUAUI_EXPORT_VIEW_PROPERTY(safeArea, "luaui_setSafeArea:", "luaui_getSafeArea", MILWindow)
 LUAUI_EXPORT_VIEW_METHOD(safeAreaAdapter, "luaui_setSafeAreaAdapter:", MLNUIWindow)
@@ -391,6 +434,8 @@ LUAUI_EXPORT_VIEW_METHOD(backKeyEnabled, "luaui_backKeyEnabled:", MLNUIWindow)
 LUAUI_EXPORT_VIEW_METHOD(getStatusBarStyle, "luaui_getStatusBarStyle", MLNUIWindow)
 LUAUI_EXPORT_VIEW_METHOD(setStatusBarStyle, "luaui_setStatusBarStyle:", MLNUIWindow)
 LUAUI_EXPORT_VIEW_METHOD(i_keyBoardFrameChangeCallback, "luaui_setKeyBoardFrameChangeCallback:", MLNUIWindow)
+LUAUI_EXPORT_VIEW_METHOD(cachePushView, "luaui_cachePushView:", MLNUIWindow)
+LUAUI_EXPORT_VIEW_METHOD(clearPushView, "luaui_clearPushView", MLNUIWindow)
 LUAUI_EXPORT_VIEW_END(MLNUIWindow, Window, YES, "MLNUIView", NULL)
 
 @end
