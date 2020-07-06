@@ -445,7 +445,7 @@
         NSObject *obj = [array objectAtIndex:index];
         [kitViewController.mlnui_dataBinding mlnui_observeObject:obj property:dataKeyPath withBlock:^(id  _Nonnull observer, id  _Nonnull object, id  _Nonnull oldValue, id  _Nonnull newValue, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
             [handler addObjArgument:[newValue mlnui_convertToLuaObject]];
-            [handler addObjArgument:[oldValue mlnui_convertToLuaObject]];
+//            [handler addObjArgument:[oldValue mlnui_convertToLuaObject]];
             [handler callIfCan];
         }];
     }
