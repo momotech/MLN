@@ -95,10 +95,6 @@ static const void *kLuaKeyboardDismiss = &kLuaKeyboardDismiss;
         [self endEditing:YES];
     }
     
-    if ([self luaui_needDismissKeyboard]) {
-        [self.window endEditing:YES];
-    }
-    
     if (self.mlnui_touchesBeganCallback) {
         UITouch *touch = [touches anyObject];
         CGPoint point = [touch locationInView:self];
@@ -540,9 +536,24 @@ static const void *kLuaRenderContext = &kLuaRenderContext;
 
 - (void)mlnui_in_addTapGestureIfNeed
 {
-    if (!self.mlnui_tapClickBlock && [self luaui_canClick]) {
-        UITapGestureRecognizer *gesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(mlnui_in_tapClickAction:)];
+    UITapGestureRecognizer *gesture = [self mlnui_in_getClickGesture];
+    if (!gesture && [self luaui_canClick]) {
+        gesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(mlnui_in_tapClickAction:)];
         [self addGestureRecognizer:gesture];
+        [self mlnui_in_setClickGesture:gesture];
+    }
+}
+
+- (void)mlnui_in_removeTapGestureIfNeed
+{
+    if (self.mlnui_touchClickBlock != nil || self.mlnui_tapClickBlock != nil || [self luaui_needDismissKeyboard]) {
+        return;
+    }
+    
+    UITapGestureRecognizer *gesture = [self mlnui_in_getClickGesture];
+    if (gesture) {
+        [self removeGestureRecognizer:gesture];
+        [self mlnui_in_setClickGesture:nil];
     }
 }
 
@@ -553,6 +564,9 @@ static const void *kLuaRenderContext = &kLuaRenderContext;
     }
     if (self.mlnui_tapClickBlock) {
         [self.mlnui_tapClickBlock callIfCan];
+    }
+    if ([self luaui_needDismissKeyboard]) {
+        [self.window endEditing:YES];
     }
     if (self.mlnui_touchClickBlock) {
         CGPoint point = [gesture locationInView:self];
@@ -588,6 +602,17 @@ static const void *kLuaRenderContext = &kLuaRenderContext;
         [self.mlnui_longPressBlock addFloatArgument:point.y];
         [self.mlnui_longPressBlock callIfCan];
     }
+}
+
+static const void *kLuaClickGesture = &kLuaClickGesture;
+- (void)mlnui_in_setClickGesture:(UITapGestureRecognizer *)gesture
+{
+    objc_setAssociatedObject(self, kLuaClickGesture, gesture, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+
+- (UITapGestureRecognizer *)mlnui_in_getClickGesture
+{
+    return objc_getAssociatedObject(self, kLuaClickGesture);
 }
 
 static const void *kLuaTapGesture = &kLuaTapGesture;
@@ -803,6 +828,12 @@ static const void *kLuaOnDetachedFromWindowCallback = &kLuaOnDetachedFromWindowC
 - (void)luaui_keyboardDismiss:(BOOL)autodismiss
 {
     objc_setAssociatedObject(self,kLuaKeyboardDismiss,@(autodismiss),OBJC_ASSOCIATION_ASSIGN);
+    //当添加点击取消键盘事件后，检查是否添加了点击手势，否则检查是否应该删除点击手势
+    if (autodismiss) {
+        [self mlnui_in_addTapGestureIfNeed];
+    } else {
+        [self mlnui_in_removeTapGestureIfNeed];
+    }
 }
 
 - (BOOL)luaui_needDismissKeyboard
