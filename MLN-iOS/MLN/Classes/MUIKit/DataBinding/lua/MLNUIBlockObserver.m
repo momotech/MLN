@@ -121,7 +121,7 @@
     
     [self.block addObjArgument:newValueConvert];
 //    [self.block addObjArgument:oldValueConvert];
-    [self.block callIfCan];
+    [self.block lazyCallIfCan:nil];
 }
 
 - (NSObject *)objectRetainingObserver {

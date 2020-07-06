@@ -423,7 +423,7 @@
         if (handler && [object isKindOfClass:[NSArray class]]) {
             NSArray *n = [object mlnui_convertToLuaObject];
             [handler addObjArgument:n];
-            [handler callIfCan];
+            [handler lazyCallIfCan:nil];
         } else {
             NSAssert(false, @"object: %@ should be array",object);
         }
@@ -446,7 +446,7 @@
         [kitViewController.mlnui_dataBinding mlnui_observeObject:obj property:dataKeyPath withBlock:^(id  _Nonnull observer, id  _Nonnull object, id  _Nonnull oldValue, id  _Nonnull newValue, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
             [handler addObjArgument:[newValue mlnui_convertToLuaObject]];
 //            [handler addObjArgument:[oldValue mlnui_convertToLuaObject]];
-            [handler callIfCan];
+            [handler lazyCallIfCan:nil];
         }];
     }
 }

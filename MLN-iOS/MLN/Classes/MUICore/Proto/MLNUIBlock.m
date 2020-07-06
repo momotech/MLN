@@ -9,12 +9,20 @@
 #import "MLNUILuaCore.h"
 #import "MLNUILuaTable.h"
 #import "MLNUIHeader.h"
+#import "MLNUILazyBlockTask.h"
+#import "MLNUIExtScope.h"
+#import "MLNUIKitHeader.h"
 
 @interface MLNUIBlock ()
 
 @property (nonatomic, strong) NSMutableArray *arguments;
 
+@property (nonatomic, strong) NSValue *innerFunction;
+@property (nonatomic, strong) MLNUILazyBlockTask *lazyTask;
+@property (nonatomic, strong) void(^completionBlock)(id);
+
 @end
+
 @implementation MLNUIBlock
 
 static int mlnui_errorFunc_traceback (lua_State *L) {
@@ -60,6 +68,7 @@ static int mlnui_errorFunc_traceback (lua_State *L) {
     lua_pushlightuserdata(L,(__bridge void *)self); // [...| func (index)| ... | func | self ]
     lua_insert(L, -2); // [...| func (index)| ... | self | func ]
     lua_settable(L, LUA_REGISTRYINDEX); // regist[self] = func
+    self.innerFunction = [NSValue valueWithPointer:lua_topointer(L, index)];
 }
 
 #pragma mark - Call Lua Function
@@ -113,6 +122,12 @@ static int mlnui_errorFunc_traceback (lua_State *L) {
     // 恢复栈
     lua_settop(L, base);
     return result;
+}
+
+- (void)lazyCallIfCan:(void(^)(id))completionBlock {
+    MLNUIKitInstance *instance = MLNUI_KIT_INSTANCE(self.luaCore);
+    [instance forcePushLazyTask:self.lazyTask];
+    self.completionBlock = completionBlock;
 }
 
 - (void)reset
@@ -273,6 +288,20 @@ static void releaseAllInMainQueue (MLNUILuaCore *luaCore, void * selfp) {
             }
         });
     }
+}
+
+- (MLNUILazyBlockTask *)lazyTask {
+    if (!_lazyTask) {
+        @weakify(self);
+        _lazyTask = [MLNUILazyBlockTask taskWithCallback:^{
+            @strongify(self);
+            id r = [self callIfCan];
+            if (self.completionBlock) {
+                self.completionBlock(r);
+            }
+        } taskID:self.innerFunction];
+    }
+    return _lazyTask;
 }
 
 #pragma mark - Remove Lua Function
