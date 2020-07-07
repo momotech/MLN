@@ -37,7 +37,7 @@ static int luaui_watch(lua_State *L) {
     return 1;
 }
 
-#if 0
+#if 1
 
 //LUAUI_EXPORT_STATIC_BEGIN(MLNUIDB)
 //LUAUI_EXPORT_STATIC_METHOD(watch, "luaui_watchForKey:handler:", MLNUIDB)
@@ -45,7 +45,7 @@ static int luaui_watch(lua_State *L) {
 
 LUAUI_EXPORT_GLOBAL_FUNC_BEGIN(MLNUIDB)
 LUAUI_EXPORT_GLOBAL_C_FUNC(watch, luaui_watch, MLNUIDB)
-LUAUI_EXPORT_GLOBAL_FUNC_WITH_NAME_END(MLNUIDB, NULL, tdb)
+LUAUI_EXPORT_GLOBAL_FUNC_WITH_NAME_END(MLNUIDB, NULL, NULL)
 
 #else
 
@@ -55,7 +55,7 @@ static const struct mlnui_objc_method mlnui_Global_Method_MLNUIDB [] = {
 };
 
 static const struct mlnui_objc_class mlnui_Clazz_Info_MLNUIDB = {
-    "tdb","MLNUIDB","NULL","tdb" "." "NULL","MLNUIGlbalFunction",!(__objc_yes),((void*)0),__objc_no,((void*)0),(struct mlnui_objc_method *)mlnui_Global_Method_MLNUIDB,((void*)0)
+    "NULL","MLNUIDB","NULL","NULL" "." "NULL","MLNUIGlbalFunction",!(__objc_yes),((void*)0),__objc_no,((void*)0),(struct mlnui_objc_method *)mlnui_Global_Method_MLNUIDB,((void*)0)
 };
 
 + (const mlnui_objc_class *)mlnui_clazzInfo{

@@ -584,6 +584,133 @@ static int mlnui_errorFunc_traceback (lua_State *L) {
     return YES;
 }
 
+- (void)dumpstack:(lua_State *)L {
+    int top=lua_gettop(L);
+    for (int i=1; i <= top; i++) {
+      printf("%d\t%s\t", i, luaL_typename(L,i));
+      switch (lua_type(L, i)) {
+        case LUA_TNUMBER:
+          printf("%g\n",lua_tonumber(L,i));
+          break;
+        case LUA_TSTRING:
+          printf("%s\n",lua_tostring(L,i));
+          break;
+        case LUA_TBOOLEAN:
+          printf("%s\n", (lua_toboolean(L, i) ? "true" : "false"));
+          break;
+        case LUA_TNIL:
+          printf("%s\n", "nil");
+          break;
+        default:
+          printf("%p\n",lua_topointer(L,i));
+          break;
+      }
+    }
+}
+
+NS_INLINE BOOL utils_string_is_number(const char *input) {
+    if (!input) return NO;
+    size_t len = strlen(input);
+    if (len == 0) return NO;
+        
+    BOOL is_number = YES;
+    for( size_t i = 0; i < len - 1; i++){
+        if(!isdigit(input[i])){
+            is_number = NO;
+            break;
+        }
+    }
+    return is_number;
+}
+
+- (BOOL)registerStaticFunc:(const char *)packageName libname:(const char *)libname methodList:(const struct mlnui_objc_method *)list nup:(int)nup error:(NSError **)error
+{
+    NSParameterAssert(charpNotEmpty(packageName));
+    NSParameterAssert(charpNotEmpty(libname));
+    lua_State *L = self.state;
+    if (!L) {
+        if (error) {
+            *error = [NSError mlnui_errorState:@"Lua state is released"];
+        }
+        return NO;
+    }
+    
+    BOOL needSetGlobal = YES;
+    BOOL packageIsNull = strcmp(packageName, "NULL") == 0;
+    BOOL libnameIsNull = strcmp(libname, "NULL") == 0;
+    // libname as packageName
+    if (packageIsNull && !libnameIsNull) {
+        packageName = libname;
+        packageIsNull = NO;
+        libnameIsNull = YES;
+    }
+    
+    if (!packageIsNull) {
+        needSetGlobal = NO;
+        lua_getglobal(L, packageName);
+        if (!lua_istable(L, -1)) {
+            lua_pop(L,1);
+            lua_newtable(L);
+            lua_pushvalue(L, -1);
+            lua_setglobal(L, packageName);
+        }
+    }
+    
+    if (!libnameIsNull) {
+        if (!lua_istable(L, -1)) { //not talbe, maybe create table failed in the previous step.
+            mlnui_luaui_error(L, @"create table failed");
+            lua_pop(L, 1);
+            needSetGlobal = YES;
+        } else {
+            lua_getfield(L, -1, libname);
+            if (!lua_istable(L, -1)) {
+                lua_pop(L, 1);
+                lua_newtable(L);
+                lua_pushstring(L, libname);
+                lua_pushvalue(L, -2);
+                lua_settable(L, -4);
+            }
+            lua_remove(L, -2); // remove the table which created in the previous step.
+        }
+    }
+    
+    for (; list->l_mn; list++) {
+        if (list->func == NULL) {
+            if (error) {
+                *error = [NSError mlnui_errorOpenLib:@"The C function must not be NULL!"];
+                mlnui_luaui_error(L, @"The C function must not be NULL!");
+            }
+            return NO;
+        }
+        int extraCount = 0;
+        for (int i = 0; i < nup; i++)  /* copy upvalues to the top */
+            lua_pushvalue(L, -(nup + extraCount));
+        
+        lua_checkstack(L, 12);
+                
+        if (needSetGlobal) {
+            lua_pushcclosure(L, list->func, (nup + extraCount));
+            lua_setglobal(L, list->l_mn);
+        } else {
+            if (strlen(list->l_mn) == 1 && utils_string_is_number(list->l_mn)) {
+                int number = atoi(list->l_mn);
+                lua_pushnumber(L, number);
+            } else {
+                lua_pushstring(L, list->l_mn);
+            }
+            
+            lua_pushcclosure(L, list->func, (nup + extraCount));
+            lua_settable(L, -3);
+        }
+    }
+    
+    if (!needSetGlobal) {
+        lua_remove(L, -1); /* remove package or libname table */
+    }
+    lua_pop(L, nup);  /* remove upvalues */
+    return YES;
+}
+
 - (BOOL)registerGlobalVar:(id)value globalName:(NSString *)globalName error:(NSError * _Nullable __autoreleasing *)error
 {
     NSParameterAssert(value);

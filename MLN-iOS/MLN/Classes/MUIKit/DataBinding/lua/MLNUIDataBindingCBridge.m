@@ -65,7 +65,7 @@ static int luaui_watch(lua_State *L) {
 static int luaui_update (lua_State *L) {
     mlnui_luaui_check_begin();
     mlnui_luaui_checkstring_rt(L, -2);
-    mlnui_luaui_checkudata_rt(L, -1);
+//    mlnui_luaui_checkudata_rt(L, -1);
     mlnui_luaui_check_end();
     TICK();
     
@@ -73,6 +73,7 @@ static int luaui_update (lua_State *L) {
     MLNUIDataBinding *dataBind = _mlnui_get_dataBinding(luaCore);
     NSString *nKey = [luaCore toString:-2 error:NULL];
     id value = [luaCore toNativeObject:-1 error:NULL];
+    value = [value mlnui_convertToNativeObject];
     
     [dataBind updateDataForKeyPath:nKey value:value];
     TOCK("luaui_update key %s",nKey.UTF8String);
@@ -113,7 +114,7 @@ static int luaui_removeObserver (lua_State *L) {
 static int luaui_mock (lua_State *L) {
     mlnui_luaui_check_begin();
     mlnui_luaui_checkstring_rt(L, -2);
-    mlnui_luaui_checkudata_rt(L, -1);
+    mlnui_luaui_checktable(L, -1);
     mlnui_luaui_check_end();
     TICK();
     
@@ -136,7 +137,7 @@ static int luaui_mock (lua_State *L) {
 static int luaui_mock_array (lua_State *L) {
     mlnui_luaui_check_begin();
     mlnui_luaui_checkstring_rt(L, -2);
-    mlnui_luaui_checkudata_rt(L, -1);
+    mlnui_luaui_checktable_rt(L, -1);
     mlnui_luaui_check_end();
     TICK();
     
@@ -167,7 +168,7 @@ static int luaui_insert (lua_State *L) {
     mlnui_luaui_check_begin();
     mlnui_luaui_checkstring_rt(L, -3);
     mlnui_luaui_checknumber_rt(L, -2);
-    mlnui_luaui_checkudata_rt(L, -1);
+//    mlnui_luaui_checkudata_rt(L, -1);
     mlnui_luaui_check_end();
     TICK();
     
@@ -359,7 +360,7 @@ static int luaui_bind_cell (lua_State *L) {
     mlnui_luaui_checkstring_rt(L, -4);
     mlnui_luaui_checknumber_rt(L, -3);
     mlnui_luaui_checknumber_rt(L, -2);
-    mlnui_luaui_checkudata_rt(L, -1);
+    mlnui_luaui_checktable_rt(L, -1);
     mlnui_luaui_check_end();
     TICK();
     
@@ -407,25 +408,25 @@ static int luaui_bind_cell (lua_State *L) {
     return 1;
 }
 
-LUAUI_EXPORT_GLOBAL_FUNC_BEGIN(MLNUIDataBindingCBridge)
+LUAUI_NEW_EXPORT_GLOBAL_FUNC_BEGIN(MLNUIDataBindingCBridge)
 
-LUAUI_EXPORT_GLOBAL_C_FUNC(watch, luaui_watch, MLNUIDataBindingCBridge)
-LUAUI_EXPORT_GLOBAL_C_FUNC(update, luaui_update, MLNUIDataBindingCBridge)
-//LUAUI_EXPORT_GLOBAL_C_FUNC(get, luaui_get, MLNUIDataBindingCBridge)
-//LUAUI_EXPORT_GLOBAL_C_FUNC(removeObserver, luaui_removeObserver, MLNUIDataBindingCBridge)
-//
-//LUAUI_EXPORT_GLOBAL_C_FUNC(mock, luaui_mock, MLNUIDataBindingCBridge)
-//LUAUI_EXPORT_GLOBAL_C_FUNC(mockArray, luaui_mock_array, MLNUIDataBindingCBridge)
-//LUAUI_EXPORT_GLOBAL_C_FUNC(insert, luaui_insert, MLNUIDataBindingCBridge)
-//LUAUI_EXPORT_GLOBAL_C_FUNC(remove, luaui_remove, MLNUIDataBindingCBridge)
-//LUAUI_EXPORT_GLOBAL_C_FUNC(arraySize, luaui_array_size, MLNUIDataBindingCBridge)
-//
-//LUAUI_EXPORT_GLOBAL_C_FUNC(bindListView, luaui_bind_listview, MLNUIDataBindingCBridge)
-//LUAUI_EXPORT_GLOBAL_C_FUNC(getSectionCount, luaui_section_count, MLNUIDataBindingCBridge)
-//LUAUI_EXPORT_GLOBAL_C_FUNC(getRowCount, luaui_row_count, MLNUIDataBindingCBridge)
-//LUAUI_EXPORT_GLOBAL_C_FUNC(bindCell, luaui_bind_cell, MLNUIDataBindingCBridge)
+LUAUI_NEW_EXPORT_GLOBAL_C_FUNC(watch, luaui_watch, MLNUIDataBindingCBridge)
+LUAUI_NEW_EXPORT_GLOBAL_C_FUNC(update, luaui_update, MLNUIDataBindingCBridge)
+LUAUI_NEW_EXPORT_GLOBAL_C_FUNC(get, luaui_get, MLNUIDataBindingCBridge)
+LUAUI_NEW_EXPORT_GLOBAL_C_FUNC(removeObserver, luaui_removeObserver, MLNUIDataBindingCBridge)
 
-LUAUI_EXPORT_GLOBAL_FUNC_WITH_NAME_NO_LUA_CORE_END(MLNUIDataBindingCBridge, NULL, DataBinding)
+LUAUI_NEW_EXPORT_GLOBAL_C_FUNC(mock, luaui_mock, MLNUIDataBindingCBridge)
+LUAUI_NEW_EXPORT_GLOBAL_C_FUNC(mockArray, luaui_mock_array, MLNUIDataBindingCBridge)
+LUAUI_NEW_EXPORT_GLOBAL_C_FUNC(insert, luaui_insert, MLNUIDataBindingCBridge)
+LUAUI_NEW_EXPORT_GLOBAL_C_FUNC(remove, luaui_remove, MLNUIDataBindingCBridge)
+LUAUI_NEW_EXPORT_GLOBAL_C_FUNC(arraySize, luaui_array_size, MLNUIDataBindingCBridge)
+
+LUAUI_NEW_EXPORT_GLOBAL_C_FUNC(bindListView, luaui_bind_listview, MLNUIDataBindingCBridge)
+LUAUI_NEW_EXPORT_GLOBAL_C_FUNC(getSectionCount, luaui_section_count, MLNUIDataBindingCBridge)
+LUAUI_NEW_EXPORT_GLOBAL_C_FUNC(getRowCount, luaui_row_count, MLNUIDataBindingCBridge)
+LUAUI_NEW_EXPORT_GLOBAL_C_FUNC(bindCell, luaui_bind_cell, MLNUIDataBindingCBridge)
+
+LUAUI_NEW_EXPORT_GLOBAL_FUNC_WITH_NAME_END(MLNUIDataBindingCBridge, DataBinding, NULL)
 
 @end
 

@@ -10,6 +10,7 @@
 #import "MLNUIGlobalFuntionExporter.h"
 #import "MLNUIGlobalVarExporter.h"
 #import "MLNUIStaticExporter.h"
+#import "MLNUIStaticFunctionExporter.h"
 
 @interface MLNUIExporterManager ()
 
@@ -17,7 +18,7 @@
 @property (nonatomic, strong) MLNUIExporter *entityExporter;
 @property (nonatomic, strong) MLNUIExporter *globalVarExporter;
 @property (nonatomic, strong) MLNUIExporter *globalFuncExporter;
-
+@property (nonatomic, strong) MLNUIExporter *staticFuncExporter;
 @end
 @implementation MLNUIExporterManager
 
@@ -38,6 +39,8 @@
             return self.globalVarExporter;
         case MLNUIExportTypeGlobalFunc:
             return self.globalFuncExporter;
+        case MLNUIExportTypeStaticFunc:
+            return self.staticFuncExporter;
         default:
             break;
     }
@@ -75,6 +78,13 @@
         _globalFuncExporter = [[MLNUIGlobalFuntionExporter alloc] initWithMLNUILuaCore:self.luaCore];
     }
     return _globalFuncExporter;
+}
+
+- (MLNUIExporter *)staticFuncExporter {
+    if (!_staticFuncExporter) {
+        _staticFuncExporter = [[MLNUIStaticFunctionExporter alloc] initWithMLNUILuaCore:self.luaCore];
+    }
+    return _staticFuncExporter;
 }
 
 @end
