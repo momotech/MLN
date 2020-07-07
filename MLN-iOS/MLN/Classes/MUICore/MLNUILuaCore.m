@@ -506,35 +506,33 @@ static int mlnui_errorFunc_traceback (lua_State *L) {
     }
     BOOL needSetGlobal = YES;
     if (strcmp(packageName, "NULL") != 0) {
-        needSetGlobal = NO;
         lua_getglobal(L, packageName);
         if (!lua_istable(L, -1)) {
             lua_newtable(L);
             lua_pushvalue(L, -1);
-            lua_setglobal(L, packageName);
-        }
-        
-        if (strcmp(libname, "NULL") != 0) {
-            if (!lua_istable(L, -1)) {
-                lua_getglobal(L, libname);
-                if (!lua_istable(L, -1)) {
-                    lua_newtable(L);
-                    lua_pushvalue(L, -1);
-                    lua_setglobal(L, libname);
-                }
-            } else {
-                lua_getfield(L, 1, libname);
-                if (!lua_istable(L, -1)) {
-                    lua_newtable(L);
-                    lua_pushstring(L, libname);
-                    lua_pushvalue(L, -2);
-                    lua_settable(L, -4);
-                }
-                lua_remove(L, -2);
-            }
+            lua_setglobal(L, libname);
         }
     }
-
+    if (strcmp(packageName, "NULL") != 0) {
+        needSetGlobal = NO;
+        if (!lua_istable(L, -1)) {
+            lua_getglobal(L, libname);
+            if (!lua_istable(L, -1)) {
+                lua_newtable(L);
+                lua_pushvalue(L, -1);
+                lua_setglobal(L, libname);
+            }
+        } else {
+            lua_getfield(L, 1, libname);
+            if (!lua_istable(L, -1)) {
+                lua_newtable(L);
+                lua_pushstring(L, libname);
+                lua_pushvalue(L, -2);
+                lua_settable(L, -4);
+            }
+            lua_remove(L, -2);
+        }
+    }
     
     for (; list->l_mn; list++) {
         if (!charpNotEmpty(list->clz)) {
@@ -575,7 +573,7 @@ static int mlnui_errorFunc_traceback (lua_State *L) {
                 int number = atoi(list->l_mn);
                 lua_pushnumber(L, number);
             } else {
-                lua_pushstring(L, list->l_mn);
+                lua_pushstring(L, list->mn);
             }
             lua_insert(L, -2);
             lua_settable(L, -3);
