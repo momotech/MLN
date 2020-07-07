@@ -52,6 +52,18 @@ LUAUI_EXPORT_STATIC_LUA_CORE(CLZ)
 /**
  导出全局函数类导出结束
  
+ @param CLZ 原生类名称
+ @param LUA_CLZ 表名称 (例：package)
+ */
+#define LUAUI_EXPORT_GLOBAL_FUNC_WITH_NAME_NO_LUA_CORE_END(CLZ, LUA_CLZ, PKG) \
+LUAUI_EXPORT_METHOD_LIST_COMPLETED \
+LUAUI_EXPORT_MAKE_INFO(#PKG, #CLZ, #LUA_CLZ, "MLNUIGlbalFunction", YES, NULL, NO, NULL,\
+(struct mlnui_objc_method *)mlnui_Global_Method_ ## CLZ, NULL, CLZ)\
+LUAUI_EXPORT_TYPE(MLNUIExportTypeGlobalFunc)\
+
+/**
+ 导出全局函数类导出结束
+ 
  @param CLZ 类名称 (例：NSObject)
  @param LUA_CLZ 表名称 (例：package)
  */

@@ -125,9 +125,13 @@ static int mlnui_errorFunc_traceback (lua_State *L) {
 }
 
 - (void)lazyCallIfCan:(void(^)(id))completionBlock {
+#if DEBUG && 0
+    [self callIfCan];
+#else
     MLNUIKitInstance *instance = MLNUI_KIT_INSTANCE(self.luaCore);
     [instance forcePushLazyTask:self.lazyTask];
     self.completionBlock = completionBlock;
+#endif
 }
 
 - (void)reset

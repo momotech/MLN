@@ -539,6 +539,6 @@ LUAUI_EXPORT_STATIC_METHOD(updateArrayData, "luaui_updateArrayDataForKey:index:d
 LUAUI_EXPORT_STATIC_METHOD(getArrayData, "luaui_getArrayDataForKey:index:dataKeyPath:", MLNUIDataBinding)
 LUAUI_EXPORT_STATIC_METHOD(aliasArrayData, "luaui_aliasArrayDataForKey:index:alias:", MLNUIDataBinding)
 
-LUAUI_EXPORT_STATIC_END(MLNUIDataBinding, DataBinding, NO, NULL)
+LUAUI_EXPORT_STATIC_END(MLNUIDataBinding, DataBinding2, NO, NULL)
 #endif
 @end
