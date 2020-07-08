@@ -136,14 +136,14 @@ static int luaui_mock (lua_State *L) {
 
 static int luaui_mock_array (lua_State *L) {
     mlnui_luaui_check_begin();
-    mlnui_luaui_checkstring_rt(L, -2);
-    mlnui_luaui_checktable_rt(L, -1);
+    mlnui_luaui_checkstring_rt(L, -3);
+    mlnui_luaui_checktable_rt(L, -2);
     mlnui_luaui_check_end();
     TICK();
     
     MLNUILuaCore *luaCore = MLNUI_LUA_CORE(L);
     MLNUIDataBinding *dataBind = _mlnui_get_dataBinding(luaCore);
-    NSString *nKey = [luaCore toString:-2 error:NULL];
+    NSString *nKey = [luaCore toString:-3 error:NULL];
     
     NSMutableArray *existData = [dataBind dataForKeyPath:nKey];
     if ([existData isKindOfClass:[NSMutableArray class]]) {
@@ -151,7 +151,7 @@ static int luaui_mock_array (lua_State *L) {
         return 1;
     }
     
-    NSArray *data = [luaCore toNativeObject:-1 error:NULL];
+    NSArray *data = [luaCore toNativeObject:-2 error:NULL];
     if (![data isKindOfClass:[NSArray class]]) {
         NSString *log = [NSString stringWithFormat:@"data %@ should be kindOf NSArray",data.class];
         _mlnui_on_error_log(luaCore, log);
