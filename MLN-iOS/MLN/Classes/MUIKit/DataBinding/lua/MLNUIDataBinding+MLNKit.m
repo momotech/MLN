@@ -507,6 +507,10 @@
     }
 }
 
++ (void)test_nop {
+    return;
+}
+
 #pragma mark - Setup For Lua
 LUAUI_EXPORT_STATIC_BEGIN(MLNUIDataBinding)
 LUAUI_EXPORT_STATIC_METHOD(bind, "luaui_watchDataForKeys:handler:", MLNUIDataBinding)
@@ -538,6 +542,10 @@ LUAUI_EXPORT_STATIC_METHOD(bindArrayData, "luaui_bindArrayDataForKey:index:dataK
 LUAUI_EXPORT_STATIC_METHOD(updateArrayData, "luaui_updateArrayDataForKey:index:dataKeyPath:newValue:", MLNUIDataBinding)
 LUAUI_EXPORT_STATIC_METHOD(getArrayData, "luaui_getArrayDataForKey:index:dataKeyPath:", MLNUIDataBinding)
 LUAUI_EXPORT_STATIC_METHOD(aliasArrayData, "luaui_aliasArrayDataForKey:index:alias:", MLNUIDataBinding)
+
+#ifdef DEBUG
+LUAUI_EXPORT_STATIC_METHOD(test_nop, "test_nop", MLNUIDataBinding)
+#endif
 
 LUAUI_EXPORT_STATIC_END(MLNUIDataBinding, DataBinding2, NO, NULL)
 #endif

@@ -58,7 +58,7 @@ static int luaui_watch(lua_State *L) {
     
     lua_pushstring(L, obID.UTF8String);
     
-    TOCK("watch keys %s",nKey.UTF8String);
+    TOCK("luaui_watch key %s",nKey.UTF8String);
     return 1;
 }
 
@@ -408,6 +408,10 @@ static int luaui_bind_cell (lua_State *L) {
     return 1;
 }
 
+static int test_nop(lua_State *L) {
+    return 1;
+}
+
 LUAUI_NEW_EXPORT_GLOBAL_FUNC_BEGIN(MLNUIDataBindingCBridge)
 
 LUAUI_NEW_EXPORT_GLOBAL_C_FUNC(watch, luaui_watch, MLNUIDataBindingCBridge)
@@ -425,6 +429,10 @@ LUAUI_NEW_EXPORT_GLOBAL_C_FUNC(bindListView, luaui_bind_listview, MLNUIDataBindi
 LUAUI_NEW_EXPORT_GLOBAL_C_FUNC(getSectionCount, luaui_section_count, MLNUIDataBindingCBridge)
 LUAUI_NEW_EXPORT_GLOBAL_C_FUNC(getRowCount, luaui_row_count, MLNUIDataBindingCBridge)
 LUAUI_NEW_EXPORT_GLOBAL_C_FUNC(bindCell, luaui_bind_cell, MLNUIDataBindingCBridge)
+
+#ifdef DEBUG
+LUAUI_NEW_EXPORT_GLOBAL_C_FUNC(test_nop, test_nop, MLNUIDataBindingCBridge)
+#endif
 
 LUAUI_NEW_EXPORT_GLOBAL_FUNC_WITH_NAME_END(MLNUIDataBindingCBridge, DataBinding, NULL)
 
