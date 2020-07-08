@@ -404,7 +404,7 @@ static int luaui_bind_cell (lua_State *L) {
         }
     }
     
-    TOCK("luaui_bindCell key %s",nKey.UTF8String);
+    TOCK("luaui_bindCell key %s section %zd row %zd",nKey.UTF8String, section, row);
     return 1;
 }
 
