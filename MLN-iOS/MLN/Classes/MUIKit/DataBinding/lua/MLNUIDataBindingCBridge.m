@@ -296,16 +296,16 @@ static int luaui_bind_listview (lua_State *L) {
 //    UIViewController<MLNUIDataBindingProtocol> *kitViewController = (UIViewController<MLNUIDataBindingProtocol> *)MLNUI_KIT_INSTANCE([self mlnui_currentLuaCore]).viewController;
 //    MLNUIDataBinding *dataBinding = kitViewController.mlnui_dataBinding;
     
-//    __block NSString *obID;
+    __block NSString *obID;
 //    __weak __typeof(MLNUIDataBinding*) weakBingding = dataBinding;
-//    MLNUIListViewObserver *observer = [MLNUIListViewObserver observerWithListView:listView keyPath:nKey callback:^(NSString * _Nonnull keyPath, id  _Nonnull object, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
-////        __strong __typeof(MLNUIDataBinding*) strongBinding = weakBingding;
-////        [strongBinding removeMLNUIObserverByID:obID];
-////        [self luaui_bindListViewForKey:key listView:listView];
-//    }];
+    MLNUIListViewObserver *observer = [MLNUIListViewObserver observerWithListView:listView keyPath:nKey callback:^(NSString * _Nonnull keyPath, id  _Nonnull object, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
+//        __strong __typeof(MLNUIDataBinding*) strongBinding = weakBingding;
+//        [strongBinding removeMLNUIObserverByID:obID];
+//        [self luaui_bindListViewForKey:key listView:listView];
+    }]; //这个是给array加一个默认监听，能够做自动刷新TableView
     
     [dataBind setListView:listView tag:nKey];
-//    obID = [dataBind addMLNUIObserver:observer forKeyPath:key];
+    obID = [dataBind addMLNUIObserver:observer forKeyPath:nKey];
     TOCK("luaui_bindListView key %s",nKey.UTF8String);
     return 1;
 }
