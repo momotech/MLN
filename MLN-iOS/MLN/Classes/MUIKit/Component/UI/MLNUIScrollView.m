@@ -29,22 +29,31 @@
 - (instancetype)initWithMLNUILuaCore:(MLNUILuaCore *)luaCore isHorizontal:(NSNumber *)isHorizontal
 {
     if (self = [super initWithFrame:CGRectZero]) {
-        _innerScrollView = [[MLNUIInnerScrollView alloc] initWithMLNUILuaCore:luaCore direction:[isHorizontal boolValue]];
+        _innerScrollView = [[MLNUIInnerScrollView alloc] initWithMLNUILuaCore:luaCore direction:[isHorizontal boolValue] requetLayoutHandler:[self requestLayoutHandler]];
         [super luaui_addSubview:_innerScrollView];
         _autoFitSize = NO;
     }
     return self;
 }
 
+// contentStack作为根节点，而scrollView作为叶子节点，所以contentStack被标为dirty时不会向上传递
+// 因此在contentStack测量时需要将scrollView主动标为dirty，通过测量scrollView来测量contentStack
+- (MLNUIScrollViewNodeRequestLayoutHandler)requestLayoutHandler {
+    __weak typeof(self) weakSelf = self;
+    return ^CGSize(void){
+        MLNUILayoutNode *node = weakSelf.mlnui_layoutNode;
+        [node markDirty];
+        return [node applyLayout];
+    };
+}
+
 #pragma mark - Override
 
 - (void)luaui_addSubview:(UIView *)view {
-    [self mlnui_markNeedsLayout]; // scrollView 作为叶子节点, 但 scrollView 上的 mlnui_contentView 并没有作为根节点，所以若往 scrollView 上 添加/删除视图，不能触发 mlnui_contentView 测量计算，因此这里需要将 srollView 标为 dirty，进而从根节点开始触发测量布局
     [self.innerScrollView luaui_addSubview:view];
 }
 
 - (void)luaui_removeAllSubViews {
-    [self mlnui_markNeedsLayout];
     [self.innerScrollView luaui_removeAllSubViews];
 }
 
@@ -210,7 +219,9 @@
 
 - (CGSize)mlnui_sizeThatFits:(CGSize)size {
     _autoFitSize = YES;
-    return [self.innerScrollView.mlnui_contentView.mlnui_layoutNode applyLayoutWithSize:CGSizeMake(MLNUIUndefined, MLNUIUndefined)]; // 自适应内容大小 (前提是没有设置固定宽高)
+    MLNUIPlaneStack *contentStack = (MLNUIPlaneStack *)self.innerScrollView.mlnui_contentView;
+    [contentStack setCrossAxisMaxSize:size];
+    return [contentStack.mlnui_layoutNode applyLayoutWithSize:CGSizeMake(MLNUIUndefined, MLNUIUndefined)]; // 自适应内容大小 (前提是没有设置固定宽高)
 }
 
 - (void)mlnui_layoutCompleted {

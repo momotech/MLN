@@ -44,11 +44,15 @@ LUAUI_EXPORT_VIEW_END(MLNUIStack, Stack, YES, "MLNUIView", "initWithMLNUILuaCore
 @implementation MLNUIPlaneStack
 
 - (void)setLuaui_reverse:(BOOL)reverse {
-    // subclass should override
+    NSAssert(false, @"@Note: subclass should override this method.");
 }
 
 - (void)setCrossAxisSize:(CGSize)size {
-    // subclass should overide
+    NSAssert(false, @"@Note: subclass should override this method.");
+}
+
+- (void)setCrossAxisMaxSize:(CGSize)maxSize {
+    NSAssert(false, @"@Note: subclass should override this method.");
 }
 
 #pragma mark - Export Lua

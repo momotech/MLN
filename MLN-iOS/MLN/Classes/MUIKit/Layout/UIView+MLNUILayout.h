@@ -13,6 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface UIView (MLNUILayout)<MLNUIPaddingContainerViewProtocol>
 
+- (Class)mlnui_bindedLayoutNodeClass;
 @property (nonatomic, strong, readonly) MLNUILayoutNode *mlnui_layoutNode;
 
 /// 可重写该属性get方法. 若返回NO, 则不会参与测量布局计算, 也不会关联`mlnui_layoutNode`. 默认为NO.
@@ -33,6 +34,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) CGFloat luaui_paddingLeft;
 @property (nonatomic, assign) CGFloat luaui_paddingRight;
 @property (nonatomic, assign) CGFloat luaui_paddingBottom;
+@property (nonatomic, assign) BOOL luaui_display;
 
 - (void)mlnui_markNeedsLayout;
 - (void)mlnui_requestLayoutIfNeed;

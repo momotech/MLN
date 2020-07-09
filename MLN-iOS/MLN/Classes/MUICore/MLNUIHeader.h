@@ -115,6 +115,21 @@ __VA_ARGS__;\
 #define MLNUIValueIsCGSize(VALUE) MLNUIValueIsType(VALUE, CGSize)
 #define MLNUIValueIsCGPoint(VALUE) MLNUIValueIsType(VALUE, CGPoint)
 
+
+#define mlnui_luaui_checkType_rt(L_T, idx, rt, TYPE_T) mlnui_luaui_assert_rt(L_T, lua_type(L_T, idx) == TYPE_T, rt, @"%s expected, got %s", lua_typename(L_T, TYPE_T), luaL_typename(L_T, idx))
+
+#define mlnui_luaui_check_begin()               BOOL check_rt = YES
+#define mlnui_luaui_check_end()                 if(!check_rt) return 0
+
+#define mlnui_luaui_checkboolean_rt(L, idx)     mlnui_luaui_checkType_rt(L, idx, check_rt, LUA_TBOOLEAN);
+#define mlnui_luaui_checkludata_rt(L, idx)      mlnui_luaui_checkType_rt(L, idx, check_rt, LUA_TLIGHTUSERDATA);
+#define mlnui_luaui_checknumber_rt(L, idx)      mlnui_luaui_checkType_rt(L, idx, check_rt, LUA_TNUMBER);
+#define mlnui_luaui_checkstring_rt(L, idx)      mlnui_luaui_checkType_rt(L, idx, check_rt, LUA_TSTRING);
+#define mlnui_luaui_checktable_rt(L, idx)       mlnui_luaui_checkType_rt(L, idx, check_rt, LUA_TTABLE);
+#define mlnui_luaui_checkfunc_rt(L, idx)        mlnui_luaui_checkType_rt(L, idx, check_rt, LUA_TFUNCTION);
+#define mlnui_luaui_checkudata_rt(L, idx)       mlnui_luaui_checkType_rt(L, idx, check_rt, LUA_TUSERDATA);
+#define mlnui_luaui_checkthread_rt(L, idx)      mlnui_luaui_checkType_rt(L, idx, check_rt, LUA_TTHREAD);
+
 //@note ⚠️在Native->Lua类型转换时，默认将char类型当做数字来处理，而BOOL类型在32位手机上编码为'c',
 //      如果返回NO，则为'\0'，Lua接收到的值为0,而Lua语法规定0也为true，所以这里对于char做一个特殊处理
 #if __LP64__ || (TARGET_OS_EMBEDDED && !TARGET_OS_IPHONE) || TARGET_OS_WIN32 || NS_BUILD_32_LIKE_64
@@ -155,7 +170,13 @@ error_tt = [error_tt stringByAppendingString:[LUA_CORE traceback]];\
  @param ... 可变参数
  */
 #define mlnui_luaui_assert(L, condition, format, ...)\
-if ([MLNUI_LUA_CORE((L)).errorHandler canHandleAssert:MLNUI_LUA_CORE((L))] && !(condition)) {\
+if (!(condition) && [MLNUI_LUA_CORE((L)).errorHandler canHandleAssert:MLNUI_LUA_CORE((L))]) {\
+MLNUICallAssertHandler(MLNUI_LUA_CORE((L)), format, ##__VA_ARGS__)\
+}
+
+#define mlnui_luaui_assert_rt(L, condition, rt, format, ...)\
+rt = rt && (condition);\
+if (!(rt) && [MLNUI_LUA_CORE((L)).errorHandler canHandleAssert:MLNUI_LUA_CORE((L))]) {\
 MLNUICallAssertHandler(MLNUI_LUA_CORE((L)), format, ##__VA_ARGS__)\
 }
 

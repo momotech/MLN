@@ -39,9 +39,9 @@ static const void *kMLNUILifeCycleObserverSet = &kMLNUILifeCycleObserverSet;
     if (!observer) {
         return;
     }
-    NSMutableSet *set = objc_getAssociatedObject(self, kMLNUILifeCycleObserverSet);
+    NSHashTable *set = objc_getAssociatedObject(self, kMLNUILifeCycleObserverSet);
     if (!set) {
-        set = [NSMutableSet set];
+        set = [NSHashTable weakObjectsHashTable];
         objc_setAssociatedObject(self, kMLNUILifeCycleObserverSet, set, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     }
     [set addObject:observer];
@@ -52,20 +52,20 @@ static const void *kMLNUILifeCycleObserverSet = &kMLNUILifeCycleObserverSet;
     if (!observer) {
         return;
     }
-    NSMutableSet *set = objc_getAssociatedObject(self, kMLNUILifeCycleObserverSet);
+    NSHashTable *set = objc_getAssociatedObject(self, kMLNUILifeCycleObserverSet);
     [set removeObject:observer];
 }
 
 - (void)mlnui_removeAllLifeCycleObserver
 {
-    NSMutableSet *set = objc_getAssociatedObject(self, kMLNUILifeCycleObserverSet);
+    NSHashTable *set = objc_getAssociatedObject(self, kMLNUILifeCycleObserverSet);
     [set removeAllObjects];
 }
 
 - (void)__mlnui_notifyAllLifeCycleObserver:(MLNUIViewControllerLifeCycle)state
 {
-     NSMutableSet *set = objc_getAssociatedObject(self, kMLNUILifeCycleObserverSet);
-    for (MLNUIViewControllerLifeCycleObserver observer in set) {
+     NSHashTable *set = objc_getAssociatedObject(self, kMLNUILifeCycleObserverSet);
+    for (MLNUIViewControllerLifeCycleObserver observer in set.allObjects) {
         observer(state);
     }
 }

@@ -22,6 +22,8 @@ typedef enum : NSUInteger {
     MLNUIExportTypeGlobalVar,
     /* 全局函数导出类型 */
     MLNUIExportTypeGlobalFunc,
+    /* 全局函数导出类型2 */
+    MLNUIExportTypeStaticFunc,
 } MLNUIExportType;
 
 @class MLNUICore;

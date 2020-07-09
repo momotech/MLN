@@ -20,6 +20,7 @@
 #import "MLNUIViewController.h"
 #import "MLNUIViewController+DataBinding.h"
 #import "MLNUIDataBinding.h"
+#import "MLNUIDataBindingCBridge.h"
 #import "NSArray+MLNUIKVO.h"
 #import "NSObject+MLNUIKVO.h"
 #import "MLNUIKVOObserverProtocol.h"

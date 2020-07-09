@@ -20,6 +20,7 @@
 #import "MLNUIEntityExportProtocol.h"
 #import "MLNUIGlobalFuncExportProtocol.h"
 #import "MLNUIGlobalVarExportProtocol.h"
+#import "MLNUIStaticFuncExportProtocol.h"
 
 // 导出工具
 #import "MLNUIStaticExporterMacro.h"
