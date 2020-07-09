@@ -126,4 +126,25 @@
 #import "UIScrollView+MLNUIKit.h"
 #import "UIView+MLNUILayout.h"
 
+#import "MLNUIPerformanceHeader.h"
+
+#if DEBUG
+#define PSTART_TAG(type, _tag) [[[MLNUIKitInstanceHandlersManager defaultManager] performanceMonitor] onStart:type tag:_tag]
+#define PSTART(type) PSTART_TAG(type, nil)
+
+
+#define PEND_TAG_INFO(type, _tag, _info) [[[MLNUIKitInstanceHandlersManager defaultManager] performanceMonitor] onEnd:type tag:_tag info:_info]
+#define PEND(type) PEND_TAG_INFO(type, nil, nil)
+
+#define PDISPLAY(delay) dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delay * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{\
+    [[[MLNUIKitInstanceHandlersManager defaultManager] performanceMonitor] display];\
+})
+#else
+#define PSTART(type)
+#define PSTART_TAG(type,tag)
+#define PEND(type)
+#define PEND_TAG_INFO(type,tag,info)
+#define PDISPLAY()
+#endif
+
 #endif /* MLNUIKit_h */

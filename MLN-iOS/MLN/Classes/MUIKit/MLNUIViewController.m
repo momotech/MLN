@@ -34,8 +34,12 @@
     self.automaticallyAdjustsScrollViewInsets = NO;
     [self prepareForLoadEntryFile];
     
+    PSTART(MLNUILoadTimeStatisticsType_Total);
     NSError *error = nil;
     BOOL ret = [self.kitInstance runWithEntryFile:self.entryFileName windowExtra:self.extraInfo error:&error];
+    PEND(MLNUILoadTimeStatisticsType_Total);
+    PDISPLAY(2);
+
     if (ret) {
         if ([self.delegate respondsToSelector:@selector(viewController:didFinishRun:)]) {
             [self.delegate viewController:self didFinishRun:self.entryFileName];
@@ -55,9 +59,9 @@
 //    [self bindData:self.globalModel forKey:@"Global"];
 }
 
-- (BOOL)regClasses:(NSArray<Class<MLNUIExportProtocol>> *)registerClasses {
-    return [self.kitInstance registerClasses:registerClasses error:NULL];
-}
+//- (BOOL)regClasses:(NSArray<Class<MLNUIExportProtocol>> *)registerClasses {
+//    return [self.kitInstance registerClasses:registerClasses error:NULL];
+//}
 
 - (MLNUIKitInstance *)kitInstance {
     if (!_kitInstance) {

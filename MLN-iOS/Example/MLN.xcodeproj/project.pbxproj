@@ -10,6 +10,7 @@
 		0011BBB32410AC3F003AE819 /* MLNDatabindingTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 0011BBB22410AC3F003AE819 /* MLNDatabindingTests.m */; };
 		0011BBB72410AC6F003AE819 /* MLNTestModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 0011BBB62410AC6F003AE819 /* MLNTestModel.m */; };
 		0026755324B3514900D8C617 /* MLNUIDB.m in Sources */ = {isa = PBXBuildFile; fileRef = 0026755224B3514900D8C617 /* MLNUIDB.m */; };
+		00268A4124B7011500D8C617 /* EYLogViewer.m in Sources */ = {isa = PBXBuildFile; fileRef = 00268A3F24B7011500D8C617 /* EYLogViewer.m */; };
 		00574F94246A8B3200927744 /* MLNDataBindArrayViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 00574F93246A8B3200927744 /* MLNDataBindArrayViewController.m */; };
 		007F89E7246C0D8400FF50F1 /* MLNBindTestCaseModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 007F89E6246C0D8400FF50F1 /* MLNBindTestCaseModel.m */; };
 		009DD8D524114B9600452458 /* MLNArrayBindingTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 009DD8D424114B9600452458 /* MLNArrayBindingTests.m */; };
@@ -138,6 +139,8 @@
 		0011BBB62410AC6F003AE819 /* MLNTestModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNTestModel.m; sourceTree = "<group>"; };
 		0026755124B3514900D8C617 /* MLNUIDB.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNUIDB.h; sourceTree = "<group>"; };
 		0026755224B3514900D8C617 /* MLNUIDB.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNUIDB.m; sourceTree = "<group>"; };
+		00268A3F24B7011500D8C617 /* EYLogViewer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EYLogViewer.m; sourceTree = "<group>"; };
+		00268A4024B7011500D8C617 /* EYLogViewer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EYLogViewer.h; sourceTree = "<group>"; };
 		00574F92246A8B3200927744 /* MLNDataBindArrayViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNDataBindArrayViewController.h; sourceTree = "<group>"; };
 		00574F93246A8B3200927744 /* MLNDataBindArrayViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNDataBindArrayViewController.m; sourceTree = "<group>"; };
 		007F89E5246C0D8400FF50F1 /* MLNBindTestCaseModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNBindTestCaseModel.h; sourceTree = "<group>"; };
@@ -498,6 +501,8 @@
 			children = (
 				FAE9C59223A250CD002C830D /* gallery.bundle */,
 				FAE9C59423A2529C002C830D /* inner_demo.bundle */,
+				00268A4024B7011500D8C617 /* EYLogViewer.h */,
+				00268A3F24B7011500D8C617 /* EYLogViewer.m */,
 				6003F59C195388D20070C39A /* MLNAppDelegate.h */,
 				6003F59D195388D20070C39A /* MLNAppDelegate.m */,
 				FA383451239A4C61000F900E /* MLNHomeViewController.h */,
@@ -1119,6 +1124,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B27F65D92377AAC400F2D341 /* MLNHomeTableViewCell.m in Sources */,
+				00268A4124B7011500D8C617 /* EYLogViewer.m in Sources */,
 				0026755324B3514900D8C617 /* MLNUIDB.m in Sources */,
 				B27F65B12377AA9700F2D341 /* MLNDiscoverTagView.m in Sources */,
 				30A4EB5A231CC5CD00995416 /* MLNMyHttpHandler.m in Sources */,

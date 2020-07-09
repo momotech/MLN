@@ -257,7 +257,11 @@ static int mlnui_errorFunc_traceback (lua_State *L) {
     if (!ret) {
         return ret;
     }
-    return [self call:0 error:error];
+    
+    PSTART(MLNUILoadTimeStatisticsType_Execute);
+    BOOL r = [self call:0 error:error];
+    PEND(MLNUILoadTimeStatisticsType_Execute);
+    return r;
 }
 
 - (BOOL)runData:(NSData *)data name:(NSString *)name error:(NSError * _Nullable __autoreleasing *)error
@@ -266,15 +270,23 @@ static int mlnui_errorFunc_traceback (lua_State *L) {
     if (!ret) {
         return ret;
     }
-    return [self call:0 error:error];
+    PSTART(MLNUILoadTimeStatisticsType_Execute);
+    BOOL r = [self call:0 error:error];
+    PEND(MLNUILoadTimeStatisticsType_Execute);
+    return r;
 }
 
 - (BOOL)loadFile:(NSString *)filePath error:(NSError * _Nullable __autoreleasing *)error
 {
     _filePath = filePath;
+    PSTART(MLNUILoadTimeStatisticsType_ReadFile);
     NSString *realFilePath = [self.currentBundle filePathWithName:filePath];
     NSData *data = [NSData dataWithContentsOfFile:realFilePath];
-    return  [self loadData:data name:filePath error:error];
+    PEND(MLNUILoadTimeStatisticsType_ReadFile);
+    PSTART(MLNUILoadTimeStatisticsType_Compile);
+    BOOL r = [self loadData:data name:filePath error:error];
+    PEND(MLNUILoadTimeStatisticsType_Compile);
+    return r;
 }
 
 - (BOOL)loadData:(NSData *)data name:(NSString *)name error:(NSError **)error
