@@ -23,6 +23,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)popTask:(id<MLNUIBeforeWaitingTaskProtocol>)task;
 - (void)clearAll;
 
+- (void)forcePushTask:(id<MLNUIBeforeWaitingTaskProtocol>)task;
+
 @end
 
 NS_ASSUME_NONNULL_END

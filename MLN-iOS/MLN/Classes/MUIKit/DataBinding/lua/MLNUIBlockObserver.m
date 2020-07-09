@@ -120,8 +120,8 @@
     id oldValueConvert = [oldValue mlnui_convertToLuaObject];
     
     [self.block addObjArgument:newValueConvert];
-    [self.block addObjArgument:oldValueConvert];
-    [self.block callIfCan];
+//    [self.block addObjArgument:oldValueConvert];
+    [self.block lazyCallIfCan:nil];
 }
 
 - (NSObject *)objectRetainingObserver {

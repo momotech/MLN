@@ -10,6 +10,7 @@
 #import "PBCommandBuilder.h"
 #import "MLNDebugPrintFunction.h"
 #import "MLNUIDataBinding.h"
+#import "MLNUIDataBindingCBridge.h"
 
 @interface MLNUIHotReloadViewController ()
 // NavigationBar
@@ -40,7 +41,7 @@
 {
     NSMutableArray *regs = [NSMutableArray arrayWithArray:regClasses ? regClasses :@[]];
     [regs addObject: [MLNUIDataBinding class]];
-    
+    [regs addObject: [MLNUIDataBindingCBridge class]];
 //    if (self = [super initWithEntryFilePath:entryFilePath extraInfo:extraInfo regClasses:regs]) {
 //        _navigationBarTransparent = transparent;
 //    }

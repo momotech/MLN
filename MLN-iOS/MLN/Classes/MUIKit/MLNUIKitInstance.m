@@ -543,6 +543,11 @@
     [self.lazyTaskEngine pushTask:lazyTask];
 }
 
+- (void)forcePushLazyTask:(id<MLNUIBeforeWaitingTaskProtocol>)lazyTask
+{
+    [self.lazyTaskEngine forcePushTask:lazyTask];
+}
+
 - (void)popLazyTask:(id<MLNUIBeforeWaitingTaskProtocol>)lazyTask
 {
     [self.lazyTaskEngine popTask:lazyTask];

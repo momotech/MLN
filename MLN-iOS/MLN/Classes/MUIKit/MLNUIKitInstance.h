@@ -336,6 +336,13 @@ Lua中的根视图。
 - (void)pushLazyTask:(id<MLNUIBeforeWaitingTaskProtocol>)lazyTask;
 
 /**
+ 压栈自动布局完成以后执行的任务,如果有重复的任务，则进行替换。
+
+ @param lazyTask 延迟执行任务
+ */
+- (void)forcePushLazyTask:(id<MLNUIBeforeWaitingTaskProtocol>)lazyTask;
+
+/**
  出栈自动布局完成以后执行的任务
 
  @param lazyTask 延迟执行任务

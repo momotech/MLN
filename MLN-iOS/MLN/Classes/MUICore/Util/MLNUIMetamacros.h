@@ -665,8 +665,13 @@ metamacro_if_eq(0, 1)(true)(false)
 
 #ifdef DEBUG
 #   define DLog(...) NSLog(__VA_ARGS__)
+#   define TICK()     CFAbsoluteTime lcoal__start = CFAbsoluteTimeGetCurrent();
+#   define TOCK(...) printf(">>>TOCK "); printf(__VA_ARGS__); printf(" cost %.2f ms \n",(CFAbsoluteTimeGetCurrent() - lcoal__start) * 1000); \
+lcoal__start = CFAbsoluteTimeGetCurrent()
 #else
-#   define DLog(...) (void)0
+#   define DLog(...)
+#   define TICK()
+#   define TOCK(...)
 #endif
 
 #endif /* MLNUIMetamacros_h */
