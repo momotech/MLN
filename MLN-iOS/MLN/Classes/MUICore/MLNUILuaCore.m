@@ -12,6 +12,9 @@
 #import "MLNUIConvertor.h"
 #import "MLNUIFileLoader.h"
 #import "MLNUILuaTable.h"
+#import "MLNUIKit.h"
+
+@import ObjectiveC;
 
 static void * mlnui_state_alloc(void *ud, void *ptr, size_t osize, size_t nsize) {
     (void)ud;
@@ -432,14 +435,33 @@ static int mlnui_errorFunc_traceback (lua_State *L) {
             return NO;
         }
         int extraCount = 0;
+#if OCPerf
+        Class cls = objc_getClass(nativeClassName);
+        lua_pushlightuserdata(L, (__bridge void *)(cls));
+#else
         lua_pushstring(L, nativeClassName); // class
+#endif
         lua_pushboolean(L, list->isProperty);
         if (list->isProperty) {
+
+#if OCPerf
+            SEL setter = sel_registerName(list->setter_n);
+            SEL getter = sel_registerName(list->getter_n);
+            lua_pushlightuserdata(L, setter);
+            lua_pushlightuserdata(L, getter);
+#else
             lua_pushstring(L, list->setter_n); // setter
             lua_pushstring(L, list->getter_n); // getter
+#endif
             extraCount = 4;
         } else {
+#if OCPerf
+            SEL sel = sel_registerName(list->mn);
+            lua_pushlightuserdata(L, sel);
+#else
             lua_pushstring(L, list->mn); // selector
+#endif
+
             extraCount = 3;
         }
         int i;

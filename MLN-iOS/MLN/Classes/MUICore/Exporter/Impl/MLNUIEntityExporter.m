@@ -10,6 +10,7 @@
 #import "NSObject+MLNUICore.h"
 #import "MLNUILuaCore.h"
 #import "MLNUIEntityExportProtocol.h"
+#import "MLNUIKit.h"
 
 @implementation MLNUIEntityExporter
 
@@ -112,9 +113,21 @@ static const struct luaL_Reg MLNUIUserDataBaseFuncs [] = {
         return NO;
     }
     lua_checkstack(L, 12);
+    
+#if OCPerf
+    Class cls = objc_getClass(nativeClazzName);
+    lua_pushlightuserdata(L, (__bridge void *)(cls));
+    
+    lua_pushboolean(L, NO); // 不是属性
+    
+    SEL sel = sel_registerName(charpNotEmpty(nativeConstructorName) ? nativeConstructorName : "initWithMLNUILuaCore:");
+    lua_pushlightuserdata(L, sel);
+#else
     lua_pushstring(L, nativeClazzName);
     lua_pushboolean(L, NO); // 不是属性
     lua_pushstring(L, charpNotEmpty(nativeConstructorName) ? nativeConstructorName : "initWithMLNUILuaCore:");
+#endif
+
     lua_pushcclosure(L, cfunc, 3);
     lua_setglobal(L, luaName);
     return YES;

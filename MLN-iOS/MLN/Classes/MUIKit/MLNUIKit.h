@@ -8,6 +8,9 @@
 #ifndef MLNUIKit_h
 #define MLNUIKit_h
 
+#define OCPerf 0
+
+
 #import <UIKit/UIKit.h>
 
 // 内核
