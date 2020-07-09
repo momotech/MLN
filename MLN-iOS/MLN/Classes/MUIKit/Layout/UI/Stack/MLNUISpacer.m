@@ -20,6 +20,10 @@
     return self;
 }
 
+- (BOOL)mlnui_allowVirtualLayout {
+    return YES;
+}
+
 #pragma mark - Export Lua
 
 LUAUI_EXPORT_VIEW_BEGIN(MLNUISpacer)

@@ -45,6 +45,17 @@ static const void *kMLNUILayoutAssociatedKey = &kMLNUILayoutAssociatedKey;
     return NO;
 }
 
+- (BOOL)mlnui_allowVirtualLayout {
+    return NO;
+}
+
+- (BOOL)mlnui_isVirtualView {
+    if (!self.mlnui_allowVirtualLayout) {
+        return NO;
+    }
+    return !self.mlnui_needRender;
+}
+
 #pragma mark - MLNUIPaddingContainerViewProtocol
 
 - (UIView *)mlnui_contentView {
@@ -80,6 +91,42 @@ static const void *kMLNUILayoutAssociatedKey = &kMLNUILayoutAssociatedKey;
     }
 }
 
+- (void)_mlnui_transferChildrenOfView:(UIView *)view {
+    if (view.subviews.count == 0) {
+        return;
+    }
+    for (UIView<MLNUIEntityExportProtocol> *subview in view.subviews) {
+        [self _mlnui_transferView:subview];
+    }
+}
+
+- (void)_mlnui_transferChildrenOfView:(UIView *)view atIndex:(NSInteger)index {
+    if (view.subviews.count == 0) {
+        return;
+    }
+    for (UIView<MLNUIEntityExportProtocol> *subview in view.subviews) {
+        [self _mlnui_transferView:subview atIndex:index];
+    }
+}
+
+- (void)_mlnui_transferView:(UIView *)view {
+    if (view.superview) {
+        [view removeFromSuperview];
+        MLNUI_Lua_UserData_Release(view);
+    }
+    [self addSubview:view]; 
+    MLNUI_Lua_UserData_Retain_With_Index(2, view);
+}
+
+- (void)_mlnui_transferView:(UIView *)view atIndex:(NSInteger)index {
+    if (view.superview) {
+        [view removeFromSuperview];
+        MLNUI_Lua_UserData_Release(view);
+    }
+    [self insertSubview:view atIndex:index];
+    MLNUI_Lua_UserData_Retain_With_Index(2, view);
+}
+
 - (UIView *)luaui_superview {
     if (![self.superview mlnui_isConvertible]) {
         return nil;
@@ -94,9 +141,15 @@ static const void *kMLNUILayoutAssociatedKey = &kMLNUILayoutAssociatedKey;
     if (view.superview) {
         [view luaui_removeFromSuperview];
     }
-    [self addSubview:view];
-    // 添加Lua强引用
-    MLNUI_Lua_UserData_Retain_With_Index(2, view);
+    
+    if (view.mlnui_isVirtualView) {
+        [self _mlnui_transferChildrenOfView:view];
+    } else if (self.mlnui_isVirtualView && self.mlnui_layoutNode.superNode) {
+        [self.mlnui_layoutNode.superNode.view _mlnui_transferView:view]; // add virtual view firstly and then add subviews to virtual view.
+    } else {
+        [self addSubview:view];
+        MLNUI_Lua_UserData_Retain_With_Index(2, view);
+    }
     [self.mlnui_layoutNode addSubNode:view.mlnui_layoutNode];
 }
 
@@ -107,11 +160,18 @@ static const void *kMLNUILayoutAssociatedKey = &kMLNUILayoutAssociatedKey;
     if (view.superview) {
         [view luaui_removeFromSuperview];
     }
+    
     index = index - 1;
     index = index >= 0 && index < self.subviews.count? index : self.subviews.count;
-    [self insertSubview:view atIndex:index];
-    // 添加Lua强引用
-    MLNUI_Lua_UserData_Retain_With_Index(2, view);
+    
+    if (view.mlnui_isVirtualView) {
+        [self _mlnui_transferChildrenOfView:view atIndex:index];
+    } else if (self.mlnui_isVirtualView && self.mlnui_layoutNode.superNode) {
+        [self.mlnui_layoutNode.superNode.view _mlnui_transferView:view atIndex:index];
+    } else {
+        [self insertSubview:view atIndex:index];
+        MLNUI_Lua_UserData_Retain_With_Index(2, view);
+    }
     [self.mlnui_layoutNode insertSubNode:view.mlnui_layoutNode atIndex:index];
 }
 

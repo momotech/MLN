@@ -10,7 +10,7 @@
 #import "UIView+MLNUILayout.h"
 #import "MLNUIViewExporterMacro.h"
 
-@implementation MLNUIStack
+@implementation MLNUIStack 
 
 #pragma mark - Override
 
@@ -19,6 +19,10 @@
 }
 
 - (BOOL)mlnui_layoutEnable {
+    return YES;
+}
+
+- (BOOL)mlnui_allowVirtualLayout {
     return YES;
 }
 

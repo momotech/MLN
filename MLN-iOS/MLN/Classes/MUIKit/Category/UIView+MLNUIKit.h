@@ -37,6 +37,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) MLNUIBlock *mlnui_touchesCancelledExtensionCallback;
 
 #pragma mark - render
+@property (nonatomic, assign, readonly) BOOL mlnui_needRender;
 @property (nonatomic, strong, readonly) MLNUIRenderContext *mlnui_renderContext;
 
 #pragma mark - Gesture

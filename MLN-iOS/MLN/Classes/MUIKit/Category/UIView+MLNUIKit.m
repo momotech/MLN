@@ -19,6 +19,8 @@
 
 #define kMLNUIDefaultRippleColor [UIColor colorWithRed:247/255.0 green:246/255.0 blue:244/255.0 alpha:1.0]
 
+#define MLNUIMarkViewNeedRender  self.mlnui_needRender = YES;
+
 static IMP __mlnui_in_UIView_Origin_TouchesBegan_Method_Imp;
 static IMP __mlnui_in_UIView_Origin_TouchesMoved_Method_Imp;
 static IMP __mlnui_in_UIView_Origin_TouchesEnded_Method_Imp;
@@ -213,6 +215,7 @@ static const void *kLuaKeyboardDismiss = &kLuaKeyboardDismiss;
 - (void)luaui_setBackgroundColor:(UIColor *)color
 {
     MLNUICheckTypeAndNilValue(color, @"Color", UIColor);
+    MLNUIMarkViewNeedRender;
     [self setOldColor:color];
     self.backgroundColor = color;
     [self.mlnui_in_renderContext  cleanGradientColorIfNeed];
@@ -252,10 +255,20 @@ static const void *kLuaKeyboardDismiss = &kLuaKeyboardDismiss;
 }
 
 #pragma mark - Render
+
+- (void)setMlnui_needRender:(BOOL)needRender {
+    objc_setAssociatedObject(self, @selector(mlnui_needRender), @(needRender), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+
+- (BOOL)mlnui_needRender {
+    return [objc_getAssociatedObject(self, _cmd) boolValue];
+}
+
 static const void *kLuaBoarderColor = &kLuaBoarderColor;
 - (void)luaui_setBorderColor:(UIColor *)color
 {
     MLNUICheckTypeAndNilValue(color, @"Color", UIColor);
+    MLNUIMarkViewNeedRender;
     objc_setAssociatedObject(self, kLuaBoarderColor, color, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     [self.mlnui_in_renderContext resetBorderWithBorderWidth:[self luaui_borderWidth] borderColor:[self luaui_borderColor]];
 }
@@ -268,6 +281,7 @@ static const void *kLuaBoarderColor = &kLuaBoarderColor;
 static const void *kLuaBoarderWidth = &kLuaBoarderWidth;
 - (void)luaui_setBorderWidth:(CGFloat)borderWidth
 {
+    MLNUIMarkViewNeedRender;
     objc_setAssociatedObject(self, kLuaBoarderWidth, @(borderWidth), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     [self.mlnui_in_renderContext resetBorderWithBorderWidth:borderWidth borderColor:[self luaui_borderColor]];
 }
@@ -279,21 +293,25 @@ static const void *kLuaBoarderWidth = &kLuaBoarderWidth;
 
 - (void)luaui_showShadowPath
 {
+    MLNUIMarkViewNeedRender;
     self.layer.shadowPath = [UIBezierPath bezierPathWithRect:self.bounds].CGPath;
 }
 
 - (void)luaui_setShadowOffset:(CGFloat)x y:(CGFloat)y
 {
+    MLNUIMarkViewNeedRender;
     [self.layer setShadowOffset:CGSizeMake(x, y)];
 }
 
 - (void)luaui_setShadowRadius:(CGFloat)radius
 {
+    MLNUIMarkViewNeedRender;
     [self.layer setShadowRadius:radius];
 }
 
 - (void)luaui_setShadowOpacity:(BOOL)opacity
 {
+    MLNUIMarkViewNeedRender;
     [self.layer setShadowOpacity:opacity];
 }
 
@@ -304,6 +322,7 @@ static const void *kLuaBoarderWidth = &kLuaBoarderWidth;
 
 - (void)luaui_setClipsToBounds:(BOOL)clipsToBounds
 {
+    MLNUIMarkViewNeedRender;
     self.clipsToBounds = clipsToBounds;
     MLNUIRenderContext *renderContext = [self mlnui_in_renderContext];
     renderContext.clipToBounds = clipsToBounds;
@@ -312,6 +331,7 @@ static const void *kLuaBoarderWidth = &kLuaBoarderWidth;
 
 - (void)luaui_setClipsToChildren:(BOOL)clipsToChildren
 {
+    MLNUIMarkViewNeedRender;
     MLNUIRenderContext *renderContext = [self mlnui_in_renderContext];
     renderContext.clipToChildren = clipsToChildren;
     renderContext.didSetClipToChildren = YES;
@@ -320,6 +340,7 @@ static const void *kLuaBoarderWidth = &kLuaBoarderWidth;
 #pragma mark - Corner Radius
 - (void)luaui_setCornerRadius:(CGFloat)cornerRadius
 {
+    MLNUIMarkViewNeedRender;
     [self.mlnui_in_renderContext resetCornerRadius:cornerRadius];
 }
 
@@ -335,6 +356,7 @@ static const void *kLuaBoarderWidth = &kLuaBoarderWidth;
 
 - (void)luaui_setCornerRadius:(CGFloat)cornerRadius byRoundingCorners:(MLNUIRectCorner)corners
 {
+    MLNUIMarkViewNeedRender;
     if (corners == MLNUIRectCornerNone) {
         corners = MLNUIRectCornerAllCorners;
     }
@@ -344,6 +366,7 @@ static const void *kLuaBoarderWidth = &kLuaBoarderWidth;
 - (void)luaui_addCornerMaskWithRadius:(CGFloat)cornerRadius maskColor:(UIColor *)maskColor corners:(MLNUIRectCorner)corners
 {
     MLNUICheckTypeAndNilValue(maskColor, @"Color", UIColor);
+    MLNUIMarkViewNeedRender;
     if (corners == MLNUIRectCornerNone) {
         corners = MLNUIRectCornerAllCorners;
     }
@@ -361,6 +384,7 @@ static const void *kLuaBoarderWidth = &kLuaBoarderWidth;
     MLNUIKitLuaAssert(startColor && [startColor isKindOfClass:[UIColor class]], @"startColor must be type of UIColor");
     MLNUIKitLuaAssert(endColor && [endColor isKindOfClass:[UIColor class]], @"endColor must be type of UIColor");
     if (![startColor isKindOfClass:[UIColor class]] || ![endColor isKindOfClass:[UIColor class]]) return;
+    MLNUIMarkViewNeedRender;
     MLNUIGradientType type = isVertical ? MLNUIGradientTypeTopToBottom : MLNUIGradientTypeLeftToRight;
     [self.mlnui_in_renderContext resetGradientColor:startColor endColor:endColor direction:type];
 }
@@ -369,6 +393,7 @@ static const void *kLuaBoarderWidth = &kLuaBoarderWidth;
 {
     MLNUIKitLuaAssert(startColor && [startColor isKindOfClass:[UIColor class]], @"startColor must be type of UIColor");
     MLNUIKitLuaAssert(endColor && [endColor isKindOfClass:[UIColor class]], @"endColor must be type of UIColor");
+    MLNUIMarkViewNeedRender;
     [self.mlnui_in_renderContext resetGradientColor:startColor endColor:endColor direction:direction];
 }
 
@@ -384,12 +409,14 @@ static const void *kLuaBoarderWidth = &kLuaBoarderWidth;
     MLNUIKitLuaAssert(shadowColor && [shadowColor isKindOfClass:[UIColor class]], @"shadowColor must be type of UIColor");
     MLNUIKitLuaAssert(![self isKindOfClass:[UIImageView class]], @"ImageView does not support addShadow");
     if (![shadowColor isKindOfClass:[UIColor class]]) return;
+    MLNUIMarkViewNeedRender;
     [self.mlnui_in_renderContext resetShadow:shadowColor shadowOffset:offset shadowRadius:radius shadowOpacity:opacity isOval:isOval];
 }
 
 - (void)luaui_setShadowWithShadowOffset:(CGSize)offset shadowRadius:(CGFloat)radius shadowOpacity:(CGFloat)opacity
 {
     if ([self isKindOfClass:[UIImageView class]]) return;
+    MLNUIMarkViewNeedRender;
     UIColor *defaultShadowColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:0.215];
     [self.mlnui_in_renderContext resetShadow:defaultShadowColor shadowOffset:offset shadowRadius:radius shadowOpacity:opacity isOval:false];
 }
@@ -413,6 +440,7 @@ static const void *kLuaRenderContext = &kLuaRenderContext;
 #pragma mark - blurEffect
 - (void)luaui_addBlurEffect
 {
+    MLNUIMarkViewNeedRender;
     CGRect rect = self.frame;
     rect.origin.x = 0;
     rect.origin.y = 0;
