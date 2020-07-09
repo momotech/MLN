@@ -91,40 +91,56 @@ static const void *kMLNUILayoutAssociatedKey = &kMLNUILayoutAssociatedKey;
     }
 }
 
-- (void)_mlnui_transferChildrenOfView:(UIView *)view {
+static inline void MLNUITransferView(UIView *fromView, UIView *toView) {
+    if (fromView.superview) {
+        [fromView removeFromSuperview];
+        MLNUI_Lua_UserData_Release(fromView);
+    }
+    [toView addSubview:fromView];
+    MLNUI_Lua_UserData_Retain_With_Index(2, fromView);
+}
+
+static inline void MLNUITransferViewAtIndex(UIView *fromView, UIView *toView, NSInteger index) {
+    if (fromView.superview) {
+        [fromView removeFromSuperview];
+        MLNUI_Lua_UserData_Release(fromView);
+    }
+    [toView insertSubview:fromView atIndex:index];
+    MLNUI_Lua_UserData_Retain_With_Index(2, fromView);
+}
+
+static inline UIView *MLNUIValidSuperview(UIView *self) {
+    MLNUILayoutNode *superNode = self.mlnui_layoutNode.superNode;
+    while (superNode.superNode && superNode.view.mlnui_isVirtualView) {
+        superNode = superNode.superNode;
+    }
+    return superNode.view;
+}
+
+- (void)_mlnui_transferSubviewsFromView:(UIView *)view {
     if (view.subviews.count == 0) {
         return;
     }
     for (UIView<MLNUIEntityExportProtocol> *subview in view.subviews) {
-        [self _mlnui_transferView:subview];
+        MLNUITransferView(subview, self);
     }
 }
 
-- (void)_mlnui_transferChildrenOfView:(UIView *)view atIndex:(NSInteger)index {
+- (void)_mlnui_transferSubviewsFromView:(UIView *)view atIndex:(NSInteger)index {
     if (view.subviews.count == 0) {
         return;
     }
     for (UIView<MLNUIEntityExportProtocol> *subview in view.subviews) {
-        [self _mlnui_transferView:subview atIndex:index];
+        MLNUITransferViewAtIndex(subview, self, index);
     }
 }
 
-- (void)_mlnui_transferView:(UIView *)view {
-    if (view.superview) {
-        [view removeFromSuperview];
-        MLNUI_Lua_UserData_Release(view);
-    }
-    [self addSubview:view]; 
-    MLNUI_Lua_UserData_Retain_With_Index(2, view);
+- (void)_mlnui_transferViewToSuperview:(UIView *)view {
+    MLNUITransferView(view, MLNUIValidSuperview(self));
 }
 
-- (void)_mlnui_transferView:(UIView *)view atIndex:(NSInteger)index {
-    if (view.superview) {
-        [view removeFromSuperview];
-        MLNUI_Lua_UserData_Release(view);
-    }
-    [self insertSubview:view atIndex:index];
-    MLNUI_Lua_UserData_Retain_With_Index(2, view);
+- (void)_mlnui_transferViewToSuperview:(UIView *)view atIndex:(NSInteger)index {
+    MLNUITransferViewAtIndex(view, MLNUIValidSuperview(self), index);
 }
 
 - (UIView *)luaui_superview {
@@ -143,9 +159,9 @@ static const void *kMLNUILayoutAssociatedKey = &kMLNUILayoutAssociatedKey;
     }
     
     if (view.mlnui_isVirtualView) {
-        [self _mlnui_transferChildrenOfView:view];
+        [self _mlnui_transferSubviewsFromView:view];
     } else if (self.mlnui_isVirtualView && self.mlnui_layoutNode.superNode) {
-        [self.mlnui_layoutNode.superNode.view _mlnui_transferView:view]; // add virtual view firstly and then add subviews to virtual view.
+        [self _mlnui_transferViewToSuperview:view]; // add virtual view firstly and then add subviews to virtual view.
     } else {
         [self addSubview:view];
         MLNUI_Lua_UserData_Retain_With_Index(2, view);
@@ -165,9 +181,9 @@ static const void *kMLNUILayoutAssociatedKey = &kMLNUILayoutAssociatedKey;
     index = index >= 0 && index < self.subviews.count? index : self.subviews.count;
     
     if (view.mlnui_isVirtualView) {
-        [self _mlnui_transferChildrenOfView:view atIndex:index];
+        [self _mlnui_transferSubviewsFromView:view atIndex:index];
     } else if (self.mlnui_isVirtualView && self.mlnui_layoutNode.superNode) {
-        [self.mlnui_layoutNode.superNode.view _mlnui_transferView:view atIndex:index];
+        [self _mlnui_transferViewToSuperview:view atIndex:index];
     } else {
         [self insertSubview:view atIndex:index];
         MLNUI_Lua_UserData_Retain_With_Index(2, view);
