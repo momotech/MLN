@@ -121,8 +121,9 @@ static inline UIView *MLNUIValidSuperview(UIView *self) {
     if (view.subviews.count == 0) {
         return;
     }
+    UIView *toView = self.mlnui_isVirtualView ? MLNUIValidSuperview(self) : self;
     for (UIView<MLNUIEntityExportProtocol> *subview in view.subviews) {
-        MLNUITransferView(subview, self);
+        MLNUITransferView(subview, toView);
     }
 }
 
@@ -130,8 +131,9 @@ static inline UIView *MLNUIValidSuperview(UIView *self) {
     if (view.subviews.count == 0) {
         return;
     }
+    UIView *toView = self.mlnui_isVirtualView ? MLNUIValidSuperview(self) : self;
     for (UIView<MLNUIEntityExportProtocol> *subview in view.subviews) {
-        MLNUITransferViewAtIndex(subview, self, index);
+        MLNUITransferViewAtIndex(subview, toView, index);
     }
 }
 
