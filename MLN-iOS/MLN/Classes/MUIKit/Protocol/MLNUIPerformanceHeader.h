@@ -41,6 +41,10 @@ typedef NS_ENUM(NSUInteger, MLNUILoadTimeStatisticsType) {
 - (void)onEnd:(MLNUILoadTimeStatisticsType)type tag:(NSString *)tag info:(NSString *)info;
 - (void)display;
 
+- (void)callOCBridge:(Class)cls selector:(SEL)sel;
+- (void)callDBBridge:(const char *)func;
+- (void)callCBridge:(const char *)func;
+
 @end
 
 #endif /* MLNUIPerformanceHeader_h */

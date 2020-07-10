@@ -7,8 +7,14 @@
 
 #import "MLNUILoadTimeStatistics.h"
 #import "MLNUILogViewer.h"
+#import "MLNUIExtScope.h"
 
-@interface MLNUILoadTimeStatistics ()
+@interface MLNUILoadTimeStatistics () {
+    NSUInteger _oc_cnt;
+    NSUInteger _c_cnt;
+    NSUInteger _db_cnt;
+    NSTimer *_timer;
+}
 
 @property (nonatomic, strong) NSDictionary *typeTags;
 @property (nonatomic, strong) NSMutableDictionary *startMaps;
@@ -135,5 +141,47 @@
     self.spacers = @[@"",@" ",@"  ",@"   ",@"    ",@"     ",@"      "];
 }
 
+- (void)callOCBridge:(Class)cls selector:(SEL)sel {
+    _oc_cnt++;
+    [self startTimeIfneeded];
+}
 
+- (void)callDBBridge:(const char *)func {
+    _db_cnt++;
+    [self startTimeIfneeded];
+}
+
+- (void)callCBridge:(const char *)func {
+    _c_cnt++;
+}
+
+- (void)startTimeIfneeded {
+//    [self.class cancelPreviousPerformRequestsWithTarget:self];
+//    [self performSelector:@selector(_startTimer) withObject:nil afterDelay:2];
+    [self _startTimer];
+}
+
+- (void)_startTimer {
+    if (!_timer || !_timer.isValid) {
+        if (@available(iOS 10.0, *)) {
+            @weakify(self);
+            _timer = [NSTimer timerWithTimeInterval:3 repeats:NO block:^(NSTimer * _Nonnull timer) {
+                @strongify(self);
+                if(!self) return;
+                NSString *log = [NSString stringWithFormat:@"调用OC方法次数：%zd",self->_oc_cnt];
+                self-> _oc_cnt = 0;
+                [MLNUILogViewer addLog:log];
+                
+                log = [NSString stringWithFormat:@"调用数据绑定次数：%zd",self->_db_cnt];
+                self->_db_cnt = 0;
+                [MLNUILogViewer addLog:log];
+
+                [timer invalidate];
+            }];
+            [[NSRunLoop currentRunLoop] addTimer:_timer forMode: NSRunLoopCommonModes];
+        } else {
+            // Fallback on earlier versions
+        }
+    }
+}
 @end

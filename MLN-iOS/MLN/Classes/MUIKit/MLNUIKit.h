@@ -139,12 +139,21 @@
 #define PDISPLAY(delay) dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delay * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{\
     [[[MLNUIKitInstanceHandlersManager defaultManager] performanceMonitor] display];\
 })
+
+#define PCallOC(cls,sel)  [[[MLNUIKitInstanceHandlersManager defaultManager] performanceMonitor] callOCBridge:cls selector:sel]
+#define PCallDB(func)  [[[MLNUIKitInstanceHandlersManager defaultManager] performanceMonitor] callDBBridge:func]
+#define PCallC(func)  [[[MLNUIKitInstanceHandlersManager defaultManager] performanceMonitor] callCBridge:func]
+
+
 #else
 #define PSTART(type)
 #define PSTART_TAG(type,tag)
 #define PEND(type)
 #define PEND_TAG_INFO(type,tag,info)
 #define PDISPLAY()
+#define PCallOC(cls,sel)
+#define PCallDB(func)
+#define PCallC(func)
 #endif
 
 #endif /* MLNUIKit_h */

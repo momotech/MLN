@@ -109,6 +109,7 @@
 //                       @"MLNBindTableViewController",
 //                       @"MLNDataBindArrayViewController",
                        @"MLNBindTestShopStoreController",
+                       @"MLNBindTestLayoutController",
                        @"MLNDataBindHotReload",
                        @"MLNPerformanceTestController",
                        ];

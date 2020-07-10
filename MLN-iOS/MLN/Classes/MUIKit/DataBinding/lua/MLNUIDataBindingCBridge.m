@@ -45,7 +45,7 @@ static int luaui_watch(lua_State *L) {
     mlnui_luaui_checkstring_rt(L, -2);
     mlnui_luaui_checkfunc_rt(L, -1);
     mlnui_luaui_check_end();
-    
+    PCallDB(__func__);
     TICK();
     
     MLNUILuaCore *luaCore = MLNUI_LUA_CORE(L);
@@ -67,8 +67,8 @@ static int luaui_update (lua_State *L) {
     mlnui_luaui_checkstring_rt(L, -2);
 //    mlnui_luaui_checkudata_rt(L, -1);
     mlnui_luaui_check_end();
+    PCallDB(__func__);
     TICK();
-    
     MLNUILuaCore *luaCore = MLNUI_LUA_CORE(L);
     MLNUIDataBinding *dataBind = _mlnui_get_dataBinding(luaCore);
     NSString *nKey = [luaCore toString:-2 error:NULL];
@@ -84,6 +84,7 @@ static int luaui_get (lua_State *L) {
     mlnui_luaui_check_begin();
     mlnui_luaui_checkstring_rt(L, -1);
     mlnui_luaui_check_end();
+    PCallDB(__func__);
     TICK();
     
     MLNUILuaCore *luaCore = MLNUI_LUA_CORE(L);
@@ -100,6 +101,7 @@ static int luaui_removeObserver (lua_State *L) {
     mlnui_luaui_check_begin();
     mlnui_luaui_checkstring_rt(L, -1);
     mlnui_luaui_check_end();
+    PCallDB(__func__);
     TICK();
     
     MLNUILuaCore *luaCore = MLNUI_LUA_CORE(L);
@@ -116,6 +118,7 @@ static int luaui_mock (lua_State *L) {
     mlnui_luaui_checkstring_rt(L, -2);
     mlnui_luaui_checktable(L, -1);
     mlnui_luaui_check_end();
+    PCallDB(__func__);
     TICK();
     
     MLNUILuaCore *luaCore = MLNUI_LUA_CORE(L);
@@ -123,6 +126,17 @@ static int luaui_mock (lua_State *L) {
     NSString *nKey = [luaCore toString:-2 error:NULL];
     NSDictionary *dic = [luaCore toNativeObject:-1 error:NULL];
     
+//    NSString *path = [[NSBundle mainBundle] pathForResource:@"PerformanceDemoMUI" ofType:@"bundle"];
+    NSString *path = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject];
+    
+    path = [path stringByAppendingPathComponent:nKey];
+    
+    [NSKeyedArchiver archiveRootObject:dic toFile:path];
+    NSError *error;
+    BOOL r = [NSKeyedArchiver archivedDataWithRootObject:dic requiringSecureCoding:YES error:&error];
+    if (!r) {
+        NSLog(@"%@",error);
+    }
     if (![dic isKindOfClass:[NSDictionary class]]) {
         NSString *log = [NSString stringWithFormat:@"data %@ should be kindOf NSDictionary",dic.class];
         _mlnui_on_error_log(luaCore, log);
@@ -139,6 +153,7 @@ static int luaui_mock_array (lua_State *L) {
     mlnui_luaui_checkstring_rt(L, -3);
     mlnui_luaui_checktable_rt(L, -2);
     mlnui_luaui_check_end();
+    PCallDB(__func__);
     TICK();
     
     MLNUILuaCore *luaCore = MLNUI_LUA_CORE(L);
@@ -170,6 +185,7 @@ static int luaui_insert (lua_State *L) {
     mlnui_luaui_checknumber_rt(L, -2);
 //    mlnui_luaui_checkudata_rt(L, -1);
     mlnui_luaui_check_end();
+    PCallDB(__func__);
     TICK();
     
     MLNUILuaCore *luaCore = MLNUI_LUA_CORE(L);
@@ -223,6 +239,7 @@ static int luaui_remove (lua_State *L) {
     mlnui_luaui_checknumber_rt(L, -1);
     mlnui_luaui_checkstring_rt(L, -2);
     mlnui_luaui_check_end();
+    PCallDB(__func__);
     TICK();
     
     MLNUILuaCore *luaCore = MLNUI_LUA_CORE(L);
@@ -256,6 +273,7 @@ static int luaui_array_size (lua_State *L) {
     mlnui_luaui_check_begin();
     mlnui_luaui_checkstring_rt(L, -1);
     mlnui_luaui_check_end();
+    PCallDB(__func__);
     TICK();
     
     MLNUILuaCore *luaCore = MLNUI_LUA_CORE(L);
@@ -286,6 +304,7 @@ static int luaui_bind_listview (lua_State *L) {
     mlnui_luaui_checkstring_rt(L, -2);
     mlnui_luaui_checkudata_rt(L, -1);
     mlnui_luaui_check_end();
+    PCallDB(__func__);
     TICK();
     
     MLNUILuaCore *luaCore = MLNUI_LUA_CORE(L);
@@ -314,6 +333,7 @@ static int luaui_section_count (lua_State *L) {
     mlnui_luaui_check_begin();
     mlnui_luaui_checkstring_rt(L, -1);
     mlnui_luaui_check_end();
+    PCallDB(__func__);
     TICK();
     
     MLNUILuaCore *luaCore = MLNUI_LUA_CORE(L);
@@ -334,6 +354,7 @@ static int luaui_row_count (lua_State *L) {
     mlnui_luaui_checkstring_rt(L, -2);
     mlnui_luaui_checknumber_rt(L, -1);
     mlnui_luaui_check_end();
+    PCallDB(__func__);
     TICK();
     
     MLNUILuaCore *luaCore = MLNUI_LUA_CORE(L);
@@ -362,6 +383,7 @@ static int luaui_bind_cell (lua_State *L) {
     mlnui_luaui_checknumber_rt(L, -2);
     mlnui_luaui_checktable_rt(L, -1);
     mlnui_luaui_check_end();
+    PCallDB(__func__);
     TICK();
     
     MLNUILuaCore *luaCore = MLNUI_LUA_CORE(L);
