@@ -273,11 +273,9 @@ shold override five primitive methods
         GetIMP();
         ((void(*)(id,SEL,id))imp)(self, origin, objects);
         // call observer
-        if (objects && objects.count) {
-            for (int i = 0; i < objects.count; i++) {
-                NSIndexSet *set = [NSIndexSet indexSetWithIndex:self.count + i];
-                [self mlnui_notifyAllObserver:NSKeyValueChangeInsertion indexSet:set newValue:objects[i] oldValue:nil];
-            }
+        if (objects && objects.count > 0 && self.count >= objects.count) {
+            NSIndexSet *set = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(self.count - objects.count, objects.count)];
+            [self mlnui_notifyAllObserver:NSKeyValueChangeInsertion indexSet:set newValue:objects oldValue:nil];
         }
     } forceAddOriginImpBlock:placeholderBlock];
 }
