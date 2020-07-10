@@ -136,6 +136,17 @@ error_tt = [error_tt stringByAppendingFormat:@"\n%@",[LUA_CORE traceback]];\
 [(LUA_CORE).errorHandler luaCore:(LUA_CORE) error:error_tt]; \
 
 /**
+ Lua异常通知Handler处理Error
+ 
+ @param LUA_CORE MLNLuaCore 虚拟机内核
+ @param FORMAT 字符拼接格式
+ @param ... 可变参数
+ */
+#define MLNLuaCallErrorHandler(LUA_CORE, FORMAT, ...) \
+NSString *error_tt = [NSString stringWithFormat:FORMAT, ##__VA_ARGS__];\
+[(LUA_CORE).errorHandler luaCore:(LUA_CORE) error:error_tt]; \
+
+/**
  Lua 相关断言
  
  @param L Lua状态机
@@ -205,6 +216,6 @@ MLNCallErrorHandler(LUA_CORE, FORMAT, ##__VA_ARGS__)\
  @param ... 可变参数
  */
 #define MLNError(LUA_CORE, FORMAT, ...) \
-MLNCallErrorHandler(LUA_CORE, FORMAT, ##__VA_ARGS__)
+MLNLuaCallErrorHandler(LUA_CORE, FORMAT, ##__VA_ARGS__)
 
 #endif /* MLNHeader_h */
