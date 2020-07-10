@@ -75,6 +75,7 @@ typedef enum : NSInteger {
 } MLNUIAnimationTimingFunction;
 
 typedef enum : NSInteger {
+    MLNUIAnimationPropertyTypeNone,
     MLNUIAnimationPropertyTypeAlpha,
     MLNUIAnimationPropertyTypeColor,
     MLNUIAnimationPropertyTypePosition,

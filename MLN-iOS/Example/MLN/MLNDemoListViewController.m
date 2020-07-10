@@ -99,7 +99,7 @@
 - (NSArray *)demoArray
 {
     if (!_demoArray) {
-        _demoArray = @[
+        _demoArray = @[@"animation.lua",
                        @"CollectionViewDemo.lua",
                        @"DialogDemo.lua",
                        @"EditTextViewDemo.lua",

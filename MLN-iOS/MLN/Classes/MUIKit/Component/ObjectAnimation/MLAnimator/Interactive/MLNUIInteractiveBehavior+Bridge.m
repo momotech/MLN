@@ -2,7 +2,7 @@
 //  MLNUIInteractiveBehavior+Bridge.m
 //  ArgoUI
 //
-//  Created by Dongpeng Dai on 2020/6/22.
+//  Created by MOMO on 2020/6/22.
 //
 
 #import "MLNUIInteractiveBehavior+Bridge.h"

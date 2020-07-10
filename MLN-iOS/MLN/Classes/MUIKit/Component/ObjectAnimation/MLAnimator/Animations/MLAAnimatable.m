@@ -152,7 +152,6 @@ static MLAValueHelper kStaticHelpers[] =
         },
         ^(UIView *obj, const CGFloat values[]) {
             MLALayerSetRotation(obj.layer, values[0]);
-            NSLog(@"animation rotation value: %0.2f", values[0]);
         },
         kThresholdRotation,
         kValueCountOne

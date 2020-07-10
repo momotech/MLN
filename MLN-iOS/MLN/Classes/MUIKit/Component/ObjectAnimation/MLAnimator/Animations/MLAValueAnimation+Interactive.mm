@@ -2,7 +2,7 @@
 //  MLAValueAnimation+Interactive.m
 //  ArgoUI
 //
-//  Created by Dai Dongpeng on 2020/6/18.
+//  Created by MOMO on 2020/6/18.
 //
 
 #import "MLAValueAnimation+Interactive.h"
@@ -31,21 +31,17 @@
 @implementation MLAValueAnimation (Interactive)
 
 static BezierControlPoints staticControls[] = {
-        {.9, .4, .2,  .7}, // Default
-        {0.0, 0.0, 1.0,  1.0}, // Linear
-        {0.42, 0.0, 1.0, 1.0}, // EaseIn
-        {0.0, 0.0, 0.58, 1.0}, // EaseOut
-        {0.25, 0.1, 0.25, 1.0},  // Ease
-        {0.42, 0.0, 0.58, 1.0},   // EaseInOut
+        {.9, .4, .2,  .7},      // Default
+        {0.0, 0.0, 1.0,  1.0},  // Linear
+        {0.42, 0.0, 1.0, 1.0},  // EaseIn
+        {0.0, 0.0, 0.58, 1.0},  // EaseOut
+        {0.25, 0.1, 0.25, 1.0}, // Ease
+        {0.42, 0.0, 0.58, 1.0}, // EaseInOut
         {.47, .91, .47, .91},   // custom
-        {.61, 1.11, 0.16, .89},   // custom
+        {.61, 1.11, 0.16, .89}, // custom
         {.66, .77, .22, .94},   // custom
 };
 
-/*
- AMTFloat t = MathUtil::TimingFunctionSolve(controlPoints, progress, SOLVE_EPS(duration));
- MathUtil::InterpolateVector(valueCount, currentValue.data(), fromValue.data(), toValue.data(), t);
- */
 - (void)updateWithFactor:(CGFloat)factor isBegan:(BOOL)isBegan {
 
     if (isBegan) {
@@ -72,7 +68,6 @@ static BezierControlPoints staticControls[] = {
     MLAValueType toType = kMLAValueUnknown;
     if (self.toValue) {
         NSUInteger toValueCount = 0;
-//            MLAValueType valueType = kMLAValueUnknown;
         toVec = MLAUnbox(self.toValue, toType, toValueCount, false);
         if (valueCount != toValueCount) {
             toVec = nullptr;
@@ -93,10 +88,7 @@ static BezierControlPoints staticControls[] = {
     }
 
     VectorRef current = VectorRef(Vector::new_vector(valueCount, fromVec->data()));
-//        for (int i = 0; i < valueCount; i++) {
-//            current->data()[i] = fromVec->data()[i] + (toVec->data()[i] - fromVec->data()[i]) * factor;
-//        }
-    
+
     BezierControlPoints controlPoints = staticControls[1];
     
     AMTFloat t;
@@ -127,7 +119,7 @@ static BezierControlPoints staticControls[] = {
             current->data()[i] *= multi;
         }
     }
-    NSLog(@"update factor %.2f ,isbegan %d",factor,isBegan);
+
     self.animatable.writeBlock(self.target, current->data());
 }
 

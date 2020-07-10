@@ -281,6 +281,7 @@
             }
                 break;
             default:
+                _valueAnimation.timingFunction = MLATimingFunctionDefault;
                 break;
         }
         _propertyChanged = NO;

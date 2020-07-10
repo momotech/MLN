@@ -117,7 +117,11 @@ void MultiAnimation::Tick(AMTTimeInterval time, AMTTimeInterval timeInterval, AM
             animation->TickTime(time);
             animation->StopAnimationIfFinish();
             if (animation->finished) {
-                animation->Stop();
+                if (animation->willrepeat) {
+                    animation->Repeat();
+                } else {
+                    animation->Stop();
+                }
             }
         }
     } else {
@@ -131,15 +135,19 @@ void MultiAnimation::Tick(AMTTimeInterval time, AMTTimeInterval timeInterval, AM
             animation->TickTime(time);
             animation->StopAnimationIfFinish();
             if (animation->finished) {
-                animation->Stop();
-                if (finishAnimationList.size() < animationList.size()) {
-                    auto animation = animationList[finishAnimationList.size()];
-                    animation->Reset();
+                if (animation->willrepeat) {
+                    animation->Repeat();
+                } else {
+                    animation->Stop();
+                    if (finishAnimationList.size() < animationList.size()) {
+                        auto animation = animationList[finishAnimationList.size()];
+                        animation->Reset();
+                    }
                 }
             }
         }
     }
-
+    
     if (finishAnimationList.size() && finishAnimationList.size() == animationList.size()) {
         Animation::SetFinish(true);
     }

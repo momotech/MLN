@@ -74,6 +74,7 @@ namespace MLAWebCore {
   typedef double Vector3[3];
   
   const double SMALL_NUMBER = 1.e-8;
+  const double THRESHOLD = 0.5f - 0.0009765625f;
   
   // inverse(original_matrix, inverse_matrix)
   //
@@ -411,6 +412,7 @@ namespace MLAWebCore {
     }
       
     // Now, get the rotations out, as described in the gem.
+    /*
     result.rotateY = asin(-row[0][2]);
     if (cos(result.rotateY) != 0) {
         result.rotateX = atan2(row[1][2], row[2][2]);
@@ -419,6 +421,7 @@ namespace MLAWebCore {
         result.rotateX = atan2(-row[2][0], row[1][1]);
         result.rotateZ = 0;
     }
+     */
       
       double s, t, x, y, z, w;
       
@@ -454,6 +457,21 @@ namespace MLAWebCore {
       result.quaternionY = y;
       result.quaternionZ = z;
       result.quaternionW = w;
+      
+      double threshold_test = w * y - x * z;
+
+      // 通过四元数解算旋转角度
+      // 奇异姿态,俯仰角为±90°  x : roll y : pitch z : yaw
+      if (threshold_test < -THRESHOLD || threshold_test > THRESHOLD) {
+          double sign = sin(threshold_test);
+          result.rotateZ = -2 * sign * atan2(x, w);
+          result.rotateY = sign * (M_PI / 2.0);
+          result.rotateX = 0;
+      } else {
+          result.rotateX = atan2(2 * (y * z + w * x), w * w - x * x - y * y + z * z);
+          result.rotateY = asin(-2 * (x * z - w * y));
+          result.rotateZ = atan2(2 * (x * y + w * z), w * w + x * x - y * y - z * z);
+      }
       
       return true;
   }

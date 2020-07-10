@@ -762,7 +762,11 @@ static MLNUI_FORCE_INLINE void MLNUIViewChangeHeight(UIView *view, CGFloat heigh
 }
 
 - (CGPoint)mlnuiAnimationPosition {
-    return self.mlnuiAnimationFrame.origin;
+    CGPoint origin = (CGPoint){
+        self.center.x - self.layer.anchorPoint.x * self.mlnuiLayoutFrame.size.width,
+        self.center.y - self.layer.anchorPoint.y * self.mlnuiLayoutFrame.size.height
+    };
+    return origin;
 }
 
 - (void)setMlnuiAnimationFrame:(CGRect)frame {

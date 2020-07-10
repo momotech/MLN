@@ -2,7 +2,7 @@
 //  MLNUIInteractiveBehavior.m
 //  ArgoUI
 //
-//  Created by Dai Dongpeng on 2020/6/18.
+//  Created by MOMO on 2020/6/18.
 //
 
 #import "MLNUIInteractiveBehavior.h"
@@ -20,20 +20,14 @@
 #import "MLNUIMetamacros.h"
 
 @interface MLNUIInteractiveBehavior ()
+
 @property (nonatomic, assign)InteractiveType type;
 @property (nonatomic, strong) NSHashTable <MLAValueAnimation *> *valueAnimations;
-
 @property (nonatomic, strong) MLNUITouchCallback touchCallback;
-
 @property (nonatomic, assign) CGPoint beginPoint;
 @property (nonatomic, assign) CGFloat lastDistance;
-
-//@property (nonatomic, assign) CGPoint lastPoint;
-
-//@property (nonatomic, assign) CGFloat previousTime;
-//@property (nonatomic, assign) CGFloat newSpeed;
-//@property (nonatomic, assign) CGFloat oldSpeed;
 @property (nonatomic, strong) MLNUIBlock *luaTouchBlock;
+
 @end
 
 @implementation MLNUIInteractiveBehavior
@@ -69,7 +63,6 @@
         if (!self.enable || !self.targetView.superview || self.endDistance == 0)  return ;
         
         if (previousTime == touch.timestamp) {
-            DLog(@"timestamp is equle.....");
             return;
         }
         CGPoint p = [touch locationInView:self.targetView.superview];
@@ -102,7 +95,6 @@
                 CGPoint c = self.targetView.center;
                 CGPoint newc = CGPointMake(c.x + diffLast.x, c.y + diffLast.y);
                 self.targetView.center = newc;
-//                DLog(@"old %@ new center %@",NSStringFromCGPoint(c),NSStringFromCGPoint(newc));
             };
             
             if (self.followEnable) {
@@ -110,12 +102,9 @@
             }
             
             if (shouldReturn) {
-//                self.beginPoint = p;
                 return;
             }
-            
-            DLog(@" factor %.2f ",factor);
-            
+ 
             for (MLAValueAnimation *ani in self.valueAnimations) {
                 if (!self.followEnable || (self.followEnable && ![ani.valueName containsString:kMLAViewPosition])) {
                     [ani updateWithFactor:factor isBegan:NO];
@@ -131,12 +120,9 @@
     if (self.touchBlock) {
         self.touchBlock(type, dx, dy, distance, velocity);
     }
-    
-    DLog(@"type %lu dis %.2f velocity %.2f ",(unsigned long)type, distance, velocity);
-    
+
     if (self.luaTouchBlock) {
         BOOL isBeginAndEnd = MLNUITouchType_Begin == type || MLNUITouchType_End == type;
-//        BOOL isEndDistance = fabs(self.endDistance - distance) < 0.0001;
         BOOL isEndDistance = self.lastDistance <= self.endDistance && distance >= self.endDistance;
         isEndDistance = isEndDistance || (self.lastDistance >= self.endDistance && distance <= self.endDistance);
         
