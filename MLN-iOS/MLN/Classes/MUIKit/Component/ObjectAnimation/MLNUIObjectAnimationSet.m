@@ -225,7 +225,6 @@ typedef NS_ENUM(NSUInteger, MLNUIObjectAnimationSetType) {
 #pragma mark - Export To Lua
 LUAUI_EXPORT_BEGIN(MLNUIObjectAnimationSet)
 LUAUI_EXPORT_PROPERTY(delay, "setDelay:", "delay", MLNUIObjectAnimationSet)
-LUAUI_EXPORT_PROPERTY(duration, "setDuration:", "duration", MLNUIObjectAnimationSet)
 LUAUI_EXPORT_PROPERTY(repeatCount, "setRepeatCount:", "repeatCount", MLNUIObjectAnimationSet)
 LUAUI_EXPORT_PROPERTY(repeatForever, "setRepeatForever:", "repeatForever", MLNUIObjectAnimationSet)
 LUAUI_EXPORT_PROPERTY(autoReverses, "setAutoReverses:", "autoReverses", MLNUIObjectAnimationSet)
