@@ -12,10 +12,10 @@
 
 @property (nonatomic, strong) NSDictionary *typeTags;
 @property (nonatomic, strong) NSMutableDictionary *startMaps;
-@property (nonatomic, strong) NSMutableDictionary *endMaps;
-@property (nonatomic, strong) NSMutableArray *tags;
-@property (nonatomic, strong) NSMutableDictionary *tagInfos;
-
+//@property (nonatomic, strong) NSMutableDictionary *endMaps;
+@property (nonatomic, strong) NSMutableArray *keys;
+@property (nonatomic, strong) NSMutableDictionary *infos;
+@property (nonatomic, strong) NSArray *spacers;
 @end
 
 @implementation MLNUILoadTimeStatistics
@@ -32,18 +32,14 @@
 
 - (void)onStart:(MLNUILoadTimeStatisticsType)type {
     [self onStart:type tag:nil];
-    if (type == MLNUILoadTimeStatisticsType_Custom) {
-        NSLog(@"");
-    }
 }
 
 - (void)onStart:(MLNUILoadTimeStatisticsType)type tag:(NSString *)tag {
     if (!tag) {
         tag = [self.typeTags objectForKey:@(type)];
     }
-    if (tag) {
-        self.startMaps[tag] = @(CFAbsoluteTimeGetCurrent());
-    }
+    NSString *key = [NSString stringWithFormat:@"%zd_%@",type,tag];
+    self.startMaps[key] = @(CFAbsoluteTimeGetCurrent());
 }
 
 - (void)onEnd:(MLNUILoadTimeStatisticsType)type {
@@ -55,52 +51,61 @@
 }
 
 - (void)onEnd:(MLNUILoadTimeStatisticsType)type tag:(NSString *)tag info:(NSString *)info {
-    if (!tag) {
-        tag = [self.typeTags objectForKey:@(type)];
-    }
-    if (tag) {
-        NSNumber *cost = @((CFAbsoluteTimeGetCurrent() - [self.startMaps[tag] doubleValue]) * 1000);
-        self.endMaps[tag] = cost;
-        [self.tags addObject:tag];
-        self.tagInfos[tag] = info;
-    }
+    dispatch_block_t block = ^{
+        NSString *tagStr = tag;
+        if (!tagStr) {
+            tagStr = [self.typeTags objectForKey:@(type)];
+        }
+        NSString *key = [NSString stringWithFormat:@"%zd_%@",type,tagStr];
+        if (key) {
+            float f = (CFAbsoluteTimeGetCurrent() - [self.startMaps[key] doubleValue]) * 1000;
+            [self.startMaps removeObjectForKey:key];
+            
+            NSString *typeStr = self.typeTags[@(type)];
+            NSString *m = [NSString stringWithFormat:@"%@%@%@",self.spacers[MIN(self.spacers.count - 1, self.startMaps.count)],typeStr, info ?: @""];
+            NSString *msg = [NSString stringWithFormat:@"%@%*.2f ms",m,(int)(35 - m.length),f];
+            
+            [self.keys addObject:key];
+            self.infos[key] = msg;
+        }
+    };
+    block();
 }
 
 - (void)display {
-    [MLNUILogViewer addLog:@"\n"];
-    for (NSString *tag in self.tags.copy) {
-        NSString *log = tag;
-        float f = [self.endMaps[tag] floatValue];
-        NSString *info = self.tagInfos[tag];
-        if (info.length > 0) {
-//            log = [tag stringByAppendingFormat:@" %@",info];
-            log = info;
+    dispatch_block_t block = ^{
+        [MLNUILogViewer addLog:@"\n"];
+        for (NSString *key in self.keys.copy) {
+    //        NSString *log = tag;
+    //        float f = [self.endMaps[tag] floatValue];
+            NSString *log = self.infos[key];
+    //        NSString *msg = [NSString stringWithFormat:@"%@ %.2f ms", log, f];
+            [MLNUILogViewer addLog:log];
         }
-        NSString *msg = [NSString stringWithFormat:@"%@ %.2f ms", log, f];
-        [MLNUILogViewer addLog:msg];
-    }
-    [self reset];
+        [self reset];
+    };
+    block();
 }
 
 - (void)reset {
     [self.startMaps removeAllObjects];
-    [self.endMaps removeAllObjects];
-    [self.tags removeAllObjects];
-    [self.tagInfos removeAllObjects];
+//    [self.endMaps removeAllObjects];
+    [self.keys removeAllObjects];
+    [self.infos removeAllObjects];
 }
 
 - (void)setup {
     self.startMaps = [NSMutableDictionary dictionary];
-    self.endMaps = [NSMutableDictionary dictionary];
-    self.tags = [NSMutableArray array];
-    self.tagInfos = [NSMutableDictionary dictionary];
+//    self.endMaps = [NSMutableDictionary dictionary];
+    self.keys = [NSMutableArray array];
+    self.infos = [NSMutableDictionary dictionary];
     
     NSString *all = @"【总加载时间】";
     NSString *read = @"【读取文件】";
     NSString *luaCore = @"【创建LuaCore】";
     NSString *compile = @"【编译】";
     NSString *exe = @"【执行】";
-    NSString *cus = @"【自定义】";
+    NSString *cus = @"";
 //    self.typeTags = @{
 //        @(MLNUILoadTimeStatisticsType_StartALL): all,
 //        @(MLNUILoadTimeStatisticsType_StartALL): all,
@@ -126,6 +131,8 @@
         @(MLNUILoadTimeStatisticsType_Execute):exe,
         @(MLNUILoadTimeStatisticsType_Custom) :cus
     };
+//    self.spacers = @[@"",@"-",@"--",@"---",@"----",@"-----",@"------"];
+    self.spacers = @[@"",@" ",@"  ",@"   ",@"    ",@"     ",@"      "];
 }
 
 

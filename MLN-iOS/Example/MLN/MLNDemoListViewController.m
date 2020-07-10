@@ -105,11 +105,12 @@
                        @"TableViewDemo.lua",
                        @"ViewPagerDemo.lua",
                        @"WaterfallViewDemo.lua",
+//                       @"MLNBindModelViewController",
+//                       @"MLNBindTableViewController",
+//                       @"MLNDataBindArrayViewController",
+                       @"MLNBindTestShopStoreController",
                        @"MLNDataBindHotReload",
-                       @"MLNBindModelViewController",
-                       @"MLNBindTableViewController",
                        @"MLNPerformanceTestController",
-                       @"MLNDataBindArrayViewController"
                        ];
     }
     return _demoArray;

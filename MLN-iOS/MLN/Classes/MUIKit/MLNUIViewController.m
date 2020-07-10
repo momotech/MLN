@@ -32,9 +32,9 @@
     [super viewDidLoad];
     self.view.backgroundColor = [UIColor whiteColor];
     self.automaticallyAdjustsScrollViewInsets = NO;
-    [self prepareForLoadEntryFile];
     
     PSTART(MLNUILoadTimeStatisticsType_Total);
+    [self prepareForLoadEntryFile];
     NSError *error = nil;
     BOOL ret = [self.kitInstance runWithEntryFile:self.entryFileName windowExtra:self.extraInfo error:&error];
     PEND(MLNUILoadTimeStatisticsType_Total);

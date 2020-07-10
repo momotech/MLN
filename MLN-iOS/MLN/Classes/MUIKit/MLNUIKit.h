@@ -134,7 +134,7 @@
 
 
 #define PEND_TAG_INFO(type, _tag, _info) [[[MLNUIKitInstanceHandlersManager defaultManager] performanceMonitor] onEnd:type tag:_tag info:_info]
-#define PEND(type) PEND_TAG_INFO(type, nil, nil)
+#define PEND(type) PEND_TAG_INFO(type, nil, @"")
 
 #define PDISPLAY(delay) dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delay * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{\
     [[[MLNUIKitInstanceHandlersManager defaultManager] performanceMonitor] display];\
