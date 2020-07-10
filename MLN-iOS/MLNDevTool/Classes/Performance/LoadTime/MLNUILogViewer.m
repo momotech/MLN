@@ -82,12 +82,22 @@
     swipeDownGestureRec.numberOfTouchesRequired = 3;
     [UIApplication.sharedApplication.keyWindow addGestureRecognizer:swipeDownGestureRec];
 
+    UISwipeGestureRecognizer* swipeLeftGestureRec = [UISwipeGestureRecognizer.alloc initWithTarget:self action:@selector(onSwipeDown:)];
+    swipeLeftGestureRec.direction = UISwipeGestureRecognizerDirectionLeft;
+    swipeLeftGestureRec.numberOfTouchesRequired = 3;
+    [UIApplication.sharedApplication.keyWindow addGestureRecognizer:swipeLeftGestureRec];
+    
     // add three finger swipe up gesture for showing
     UISwipeGestureRecognizer* swipeUpGestureRec = [UISwipeGestureRecognizer.alloc initWithTarget:self action:@selector(onSwipeUp:)];
     swipeUpGestureRec.direction = UISwipeGestureRecognizerDirectionUp;
     swipeUpGestureRec.numberOfTouchesRequired = 3;
     [UIApplication.sharedApplication.keyWindow addGestureRecognizer:swipeUpGestureRec];
 
+    UISwipeGestureRecognizer* swipeRightGestureRec = [UISwipeGestureRecognizer.alloc initWithTarget:self action:@selector(onSwipeUp:)];
+    swipeRightGestureRec.direction = UISwipeGestureRecognizerDirectionRight;
+    swipeRightGestureRec.numberOfTouchesRequired = 3;
+    [UIApplication.sharedApplication.keyWindow addGestureRecognizer:swipeRightGestureRec];
+    
     // add container view with border, shadow, background color etc...
     CGFloat const consoleHeightRatio = 0.3;   // 0.0 to 1.0 from bottom to top
     CGFloat const margin = 40.0;               // margin in pixels
