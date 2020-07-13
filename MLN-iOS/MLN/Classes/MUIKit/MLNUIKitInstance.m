@@ -55,9 +55,12 @@
 
 - (void)setupLuaWindow:(NSMutableDictionary *)windowExtra
 {
+    PSTART_TAG(MLNUILoadTimeStatisticsType_Custom, @"other3");
     if (!self.luaWindow) {
         _luaWindow = [self createLuaWindow];
     }
+    PEND_TAG_INFO(MLNUILoadTimeStatisticsType_Custom, @"other3", @"【其他初始化-create window】");
+
     self.luaWindow.extraInfo = windowExtra;
     [self.luaCore registerGlobalVar:self.luaWindow globalName:@"window" error:nil];
     self.luaWindow.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;

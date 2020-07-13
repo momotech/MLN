@@ -8,8 +8,19 @@
 #ifndef MLNUIKit_h
 #define MLNUIKit_h
 
-#define OCPerf 0
+#define OCPERF 0
 
+#if OCPERF
+#define OCPERF_USE_LUD 1
+#define OCPERF_UPDATE_LUACORE 1
+#define OCPERF_USE_CF 1
+#define OCPERF_USE_C 1
+#else
+#define OCPERF_USE_LUD 0
+#define OCPERF_UPDATE_LUACORE 0
+#define OCPERF_USE_CF 0
+#define OCPERF_USE_C 0
+#endif
 
 #import <UIKit/UIKit.h>
 
@@ -150,7 +161,7 @@
 #define PSTART_TAG(type,tag)
 #define PEND(type)
 #define PEND_TAG_INFO(type,tag,info)
-#define PDISPLAY()
+#define PDISPLAY(delay)
 #define PCallOC(cls,sel)
 #define PCallDB(func)
 #define PCallC(func)

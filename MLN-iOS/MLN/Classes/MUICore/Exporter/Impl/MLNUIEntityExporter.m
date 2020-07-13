@@ -114,7 +114,7 @@ static const struct luaL_Reg MLNUIUserDataBaseFuncs [] = {
     }
     lua_checkstack(L, 12);
     
-#if OCPerf
+#if OCPERF_USE_LUD
     Class cls = objc_getClass(nativeClazzName);
     lua_pushlightuserdata(L, (__bridge void *)(cls));
     

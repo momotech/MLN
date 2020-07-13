@@ -208,8 +208,11 @@ static NSArray<Class<MLNUIExportProtocol>> *utilClasses;
                         [MLNUICornerUtil class],
                         [MLNUISafeAreaAdapter class],
                         [MLNUILink class],
+#if OCPERF_USE_C
+                        [MLNUIDataBindingCBridge class],
+#else
                         [MLNUIDataBinding class],
-                        [MLNUIDataBindingCBridge class]
+#endif
         ];
     }
     return utilClasses;

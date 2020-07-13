@@ -449,7 +449,7 @@ static int mlnui_errorFunc_traceback (lua_State *L) {
             return NO;
         }
         int extraCount = 0;
-#if OCPerf
+#if OCPERF_USE_LUD
         Class cls = objc_getClass(nativeClassName);
         lua_pushlightuserdata(L, (__bridge void *)(cls));
 #else
@@ -458,7 +458,7 @@ static int mlnui_errorFunc_traceback (lua_State *L) {
         lua_pushboolean(L, list->isProperty);
         if (list->isProperty) {
 
-#if OCPerf
+#if OCPERF_USE_LUD
             SEL setter = sel_registerName(list->setter_n);
             SEL getter = sel_registerName(list->getter_n);
             lua_pushlightuserdata(L, setter);
@@ -469,7 +469,7 @@ static int mlnui_errorFunc_traceback (lua_State *L) {
 #endif
             extraCount = 4;
         } else {
-#if OCPerf
+#if OCPERF_USE_LUD
             SEL sel = sel_registerName(list->mn);
             lua_pushlightuserdata(L, sel);
 #else

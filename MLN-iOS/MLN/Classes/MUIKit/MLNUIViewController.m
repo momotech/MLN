@@ -34,9 +34,11 @@
     self.automaticallyAdjustsScrollViewInsets = NO;
     
     PSTART(MLNUILoadTimeStatisticsType_Total);
+    CFAbsoluteTime s = CFAbsoluteTimeGetCurrent();
     [self prepareForLoadEntryFile];
     NSError *error = nil;
     BOOL ret = [self.kitInstance runWithEntryFile:self.entryFileName windowExtra:self.extraInfo error:&error];
+    printf(">>>>> total cost %.2f ms \n", (CFAbsoluteTimeGetCurrent() - s) * 1000);
     PEND(MLNUILoadTimeStatisticsType_Total);
     PDISPLAY(2);
 

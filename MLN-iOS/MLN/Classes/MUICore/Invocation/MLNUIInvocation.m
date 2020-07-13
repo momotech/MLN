@@ -16,7 +16,7 @@
 #pragma mark - Class & Selector
 
 static MLNUI_FORCE_INLINE Class __mlnui_luaui_getclass (lua_State *L) {
-#if OCPerf
+#if OCPERF_USE_LUD
     void *p = lua_touserdata(L, lua_upvalueindex(1));
     return (__bridge Class)(p);
 #else
@@ -28,7 +28,7 @@ static MLNUI_FORCE_INLINE Class __mlnui_luaui_getclass (lua_State *L) {
 }
 
 static MLNUI_FORCE_INLINE SEL __mlnui_luaui_getselector_at_index (lua_State *L, int idx) {
-#if OCPerf
+#if OCPERF_USE_LUD
     void *p = lua_touserdata(L, lua_upvalueindex(idx));
     return p;
 #else
@@ -79,7 +79,7 @@ static MLNUI_FORCE_INLINE id __mlnui_luaui_getuserdata_target (lua_State *L) {
 }
 
 #pragma mark - Method Signature
-#if OCPerf
+#if OCPERF_USE_CF
 //static NSMutableDictionary *__mlnui_method_signature_caches = nil;
 static CFMutableDictionaryRef __mlnui_method_signature_caches = nil;
 static MLNUI_FORCE_INLINE NSMethodSignature * _mm_objc_method_signature (Class s_clazz, SEL s_selector, id target, SEL selector) {
@@ -487,7 +487,7 @@ static MLNUI_FORCE_INLINE int __mlnui_luaui_pushinvocation_return(NSInvocation* 
 
 static MLNUI_FORCE_INLINE int __mlnui_luaui_objc_invoke (lua_State *L, int statrtStackIdx, id target, SEL selector, BOOL isclass, BOOL needReturnSelf, BOOL isInit) {
     PCallOC(isclass ? target : [target class], selector);
-#if OCPerf
+#if OCPERF_USE_LUD
     Class s_clazz = isclass ? target : [target class];
     SEL s_selector = selector;
 #else
