@@ -22,6 +22,11 @@
 #define OCPERF_USE_C 0
 #endif
 
+#ifdef OCPERF_USE_C
+#undef OCPERF_USE_C
+#define OCPERF_USE_C 1
+#endif
+
 #import <UIKit/UIKit.h>
 
 // 内核
