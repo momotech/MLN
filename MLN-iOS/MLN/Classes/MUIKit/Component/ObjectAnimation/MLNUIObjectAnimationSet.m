@@ -125,13 +125,16 @@ typedef NS_ENUM(NSUInteger, MLNUIObjectAnimationSetType) {
     };
     
     if (_repeatCount != nil) {
-        self.valueAnimation.repeatCount = [_repeatCount floatValue];
+        self.valueAnimation.repeatCount = _repeatCount;
     }
     if (_repeatForever != nil) {
-        self.valueAnimation.repeatForever = [_repeatForever boolValue];
+        self.valueAnimation.repeatForever = _repeatForever;
     }
     if (_delay != nil) {
-        self.valueAnimation.beginTime = [_delay floatValue];
+        self.valueAnimation.beginTime = _delay;
+    }
+    if (_autoReverses != nil) {
+        _valueAnimation.autoReverses = _autoReverses;
     }
     
     NSMutableArray *rawAnimations = [NSMutableArray array];
@@ -195,13 +198,16 @@ typedef NS_ENUM(NSUInteger, MLNUIObjectAnimationSetType) {
     //当修改过属性后，需要进行同步
     if (_propertyChanged) {
         if (_repeatCount != nil) {
-            _valueAnimation.repeatCount = [_repeatCount floatValue];
+            _valueAnimation.repeatCount = _repeatCount;
         }
         if (_repeatForever != nil) {
-            _valueAnimation.repeatForever = [_repeatForever boolValue];
+            _valueAnimation.repeatForever = _repeatForever;
         }
         if (_delay != nil) {
-            _valueAnimation.beginTime = [_delay floatValue];
+            _valueAnimation.beginTime = _delay;
+        }
+        if (_autoReverses != nil) {
+            _valueAnimation.autoReverses = _autoReverses;
         }
         _propertyChanged = NO;
     }

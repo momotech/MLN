@@ -5,6 +5,7 @@
 
 #include "Animation.h"
 #include "RunLoop.h"
+#include "MultiAnimation.h"
 
 ANIMATOR_NAMESPACE_BEGIN
 
@@ -16,8 +17,8 @@ Animation::Animation(const AMTString &strName)
   active(false),
   finished(false),
   willrepeat(false),
-  repeatCount(1),
-  realRepeatCount(1),
+  repeatCount(0),
+  executeCount(1),
   repeatForever(false),
   autoreverses(false),
   beginTime(0.f),
@@ -46,11 +47,26 @@ const AnimationTracer &Animation::GetTracer() {
 
 void Animation::SetAutoreverses(AMTBool bAutoReverses) {
     Animation::autoreverses = bAutoReverses;
-    if (autoreverses) {
-        realRepeatCount = 2 * repeatCount;
-    } else {
-        realRepeatCount = repeatCount;
-    }
+    Animation::updateAnimationExecuteCount(repeatCount, autoreverses);
+}
+
+void Animation::SetRepeatCount(AMTInt count) {
+    Animation::repeatCount = count;
+    Animation::updateAnimationExecuteCount(repeatCount, autoreverses);
+}
+
+void Animation::updateAnimationExecuteCount(AMTInt repeatCount, AMTBool autoreverse) {
+    executeCount = 1;
+    executeCount += (repeatCount > 0) ? repeatCount : 0;
+    executeCount *= autoreverse ? 2 : 1;
+}
+
+void Animation::SetBeginTime(AMTTimeInterval beginTime) {
+    Animation::beginTime = beginTime;
+}
+
+void Animation::SetRepeatForever(AMTBool forever) {
+    Animation::repeatForever = forever;
 }
 
 void Animation::Pause(AMTBool pause) {
@@ -80,15 +96,10 @@ void Animation::Reset() {
     startTime = lastTime = 0.f;
     finished = false;
     willrepeat = false;
-    if (autoreverses) {
-        realRepeatCount = 2 * repeatCount;
-    } else {
-        realRepeatCount = repeatCount;
-    }
     absoluteBeginTime = RunLoop::ShareLoop()->CurrentTime();
 }
 
-void Animation::Start() {
+void Animation::Start(AMTTimeInterval time) {
     if (OnAnimationStartCallback) {
         OnAnimationStartCallback(this);
     }
@@ -98,13 +109,13 @@ void Animation::Repeat() {
     if (willrepeat) {
         if (finished && repeatForever) {
             RepeatReset();
-        } else if (finished && realRepeatCount > 1) {
-            realRepeatCount --;
+        } else if (finished && executeCount > 1) {
+            executeCount --;
             RepeatReset();
         }
         willrepeat = false;
         if (OnAnimationRepeatCallback) {
-            OnAnimationRepeatCallback(this, realRepeatCount);
+            OnAnimationRepeatCallback(this, repeatCount);
         }
     }
 }
@@ -119,6 +130,8 @@ void Animation::Stop() {
 
 void Animation::StartAnimationIfNeed(AMTTimeInterval time) {
     AMTBool start = false;
+    
+    printf("=======*** time: %0.2f **** absoluteBeginTime: %0.2f *** beginTime: %0.2f\n", time, absoluteBeginTime, beginTime);
 
     if (startTime == 0.f && time >= (absoluteBeginTime + beginTime)) {
         active = true;
@@ -127,7 +140,7 @@ void Animation::StartAnimationIfNeed(AMTTimeInterval time) {
         start = true;
     }
 
-    if (start) Start();
+    if (start) Start(time);
 }
 
 void Animation::TickTime(AMTTimeInterval time) {
@@ -149,17 +162,10 @@ void Animation::SetFinish(AMTBool bFinish) {
 }
 
 void Animation::StopAnimationIfFinish() {
-
-    if (finished && realRepeatCount == 1 && !repeatForever) {
-        return;
-    } else {
-        if (finished && repeatForever) {
-            willrepeat = true;
-        } else if (finished && realRepeatCount > 1) {
-            willrepeat = true;
-        }
+    if (!finished) return;
+    if (executeCount > 1 || repeatForever) {
+        willrepeat = true;
     }
-    
 }
 
 void Animation::RepeatReset() {

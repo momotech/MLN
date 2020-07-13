@@ -56,7 +56,7 @@ protected:
     /**
      * 动画开始
      */
-    virtual void Start() override;
+    virtual void Start(AMTTimeInterval time) override;
 
     /**
      * 动画重复

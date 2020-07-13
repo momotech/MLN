@@ -33,20 +33,20 @@ public:
     }
 
     // 动画自动反转
-    void SetAutoreverses(AMTBool bAutoReverses = false);
+    virtual void SetAutoreverses(AMTBool bAutoReverses = false);
 
     // 暂停动画
     virtual void Pause(AMTBool pause);
 
 public:
     // 动画开始时间，相对动画添加的时间间隔，动画开始后设置不生效
-    AMTTimeInterval beginTime;
+    virtual void SetBeginTime(AMTTimeInterval beginTime);
 
     // 动画重复次数
-    AMTInt repeatCount;
+    virtual void SetRepeatCount(AMTInt count);
 
     // 动画永久重复
-    AMTBool repeatForever;
+    virtual void SetRepeatForever(AMTBool forever);
     
     /**
      * 动画开始回调，给Engine层使用
@@ -92,7 +92,7 @@ protected:
     /**
      * 动画开始
      */
-    virtual void Start();
+    virtual void Start(AMTTimeInterval time);
 
     /**
      * 动画重复
@@ -152,9 +152,16 @@ private:
 
     // 动画自动反转
     AMTBool autoreverses;
+
+    // 动画永久重复
+    AMTBool repeatForever;
     
     // 动画重复次数
-    AMTInt realRepeatCount;
+    AMTInt repeatCount;
+    
+    // 动画一共需要执行的次数
+    AMTInt executeCount;
+    void updateAnimationExecuteCount(AMTInt repeatCount, AMTBool autoreverse);
 
     // 动画是否激活
     AMTBool active;
@@ -167,6 +174,9 @@ private:
     
     // 动画即将重复执行
     AMTBool willrepeat;
+    
+    // 动画开始时间，相对动画添加的时间间隔，动画开始后设置不生效
+    AMTTimeInterval beginTime;
 
     // 动画开始时间
     AMTTimeInterval startTime;

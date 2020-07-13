@@ -29,22 +29,22 @@ typedef void(^MLAAnimationFinishBlock)(MLAAnimation* animation, BOOL finish);
 /**
  * 动画开始执行时间，相对动画被添加的时间间隔
  */
-@property(nonatomic, assign) CFTimeInterval beginTime;
+@property(nonatomic, strong) NSNumber *beginTime;
 
 /**
  * 动画重读执行的次数
  */
-@property(nonatomic, assign) NSUInteger repeatCount;
+@property(nonatomic, strong) NSNumber *repeatCount;
 
 /**
  * 动画是否永远重复执行
  */
-@property(nonatomic, assign) BOOL repeatForever;
+@property(nonatomic, strong) NSNumber *repeatForever;
 
 /**
  * 动画是翻转
  */
-@property(nonatomic, assign) BOOL autoReverses;
+@property(nonatomic, strong) NSNumber *autoReverses;
 
 /**
  * 动画开始回调
@@ -210,7 +210,6 @@ typedef void(^MLAAnimationFinishBlock)(MLAAnimation* animation, BOOL finish);
 @property(readonly, strong) NSArray<MLAAnimation*> *animations;
 
 - (instancetype)init NS_AVAILABLE(10.10, 9.0);
-- (void)setAutoReverses:(BOOL)autoReverses NS_UNAVAILABLE;
 
 - (void)runTogether:(NSArray<MLAAnimation *> *)animations;
 

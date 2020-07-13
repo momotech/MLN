@@ -54,8 +54,8 @@ void ValueAnimation::Reset() {
     currentValue = fromValue;
 }
 
-void ValueAnimation::Start() {
-    Animation::Start();
+void ValueAnimation::Start(AMTTimeInterval time) {
+    Animation::Start(time);
 }
 
 void ValueAnimation::Repeat() {

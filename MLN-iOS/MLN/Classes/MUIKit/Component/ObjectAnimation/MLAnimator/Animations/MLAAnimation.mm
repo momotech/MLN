@@ -37,9 +37,6 @@ using namespace ANIMATOR_NAMESPACE;
 
 - (instancetype)initDefault {
     if (self = [super init]) {
-        _beginTime = 0.f;
-        _repeatCount = 1;
-        _repeatForever = NO;
         _innerKey = [NSString stringWithFormat:@"animationKey_%@",@([self hash])];
     }
     return self;
@@ -51,31 +48,31 @@ using namespace ANIMATOR_NAMESPACE;
     }
 }
 
-- (void)setBeginTime:(CFTimeInterval)beginTime {
+- (void)setBeginTime:(NSNumber *)beginTime {
     _beginTime = beginTime;
     if (self.animation) {
-        self.animation->beginTime = beginTime;
+        self.animation->SetBeginTime(beginTime.floatValue);
     }
 }
 
-- (void)setRepeatCount:(NSUInteger)repeatCount {
+- (void)setRepeatCount:(NSNumber *)repeatCount {
     _repeatCount = repeatCount;
     if (self.animation) {
-        self.animation->repeatCount = (AMTInt)repeatCount;
+        self.animation->SetRepeatCount((AMTInt)repeatCount.integerValue);
     }
 }
 
-- (void)setRepeatForever:(BOOL)repeatForever {
+- (void)setRepeatForever:(NSNumber *)repeatForever {
     _repeatForever = repeatForever;
     if (self.animation) {
-        self.animation->repeatForever = repeatForever;
+        self.animation->SetRepeatForever(repeatForever.boolValue);
     }
 }
 
-- (void)setAutoReverses:(BOOL)autoReverses {
+- (void)setAutoReverses:(NSNumber *)autoReverses {
     _autoReverses = autoReverses;
     if (self.animation) {
-        self.animation->SetAutoreverses(autoReverses);
+        self.animation->SetAutoreverses(autoReverses.boolValue);
     }
 }
 
@@ -119,10 +116,18 @@ using namespace ANIMATOR_NAMESPACE;
     [self setTarget:obj];
     
     if (self.animation) {
-        self.animation->beginTime = self.beginTime;
-        self.animation->repeatCount = (AMTInt)self.repeatCount;
-        self.animation->repeatForever = self.repeatForever;
-        self.animation->SetAutoreverses(self.autoReverses);
+        if (self.beginTime) {
+            self.animation->SetBeginTime(self.beginTime.floatValue);
+        }
+        if (self.repeatCount) {
+            self.animation->SetRepeatCount((AMTInt)self.repeatCount.integerValue);
+        }
+        if (self.autoReverses) {
+            self.animation->SetAutoreverses(self.autoReverses.boolValue);
+        }
+        if (self.repeatForever) {
+            self.animation->SetRepeatForever(self.repeatForever.boolValue);
+        }
     }
 }
 

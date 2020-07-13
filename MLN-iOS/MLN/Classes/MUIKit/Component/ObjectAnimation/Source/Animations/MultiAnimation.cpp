@@ -4,13 +4,19 @@
 //
 
 #include "MultiAnimation.h"
+#include "RunLoop.h"
 
 ANIMATOR_NAMESPACE_BEGIN
 
 const char* MultiAnimation::ANIMATION_TYPENAME = "MultiAnimation";
 
 MultiAnimation::MultiAnimation(const AMTString &strName)
-: Animation(strName), runningType(Together) {
+:
+Animation(strName),
+runningType(Together),
+didSetAutoReverse(false),
+didSetRepeatCount(false),
+didSetRepeatForever(false) {
 
 }
 
@@ -32,6 +38,7 @@ void MultiAnimation::RunSequentially(MultiAnimationList list) {
 
 void MultiAnimation::Reset() {
     Animation::Reset();
+    ClearSubAnimationSettingsIfNeeded();
     
     ResetSubAnimation();
 }
@@ -39,8 +46,7 @@ void MultiAnimation::Reset() {
 void MultiAnimation::RepeatReset() {
     Animation::RepeatReset();
     
-    ResetSubAnimation();
-    StartAddRunningAnimation();
+    StartAddRunningAnimation(RunLoop::ShareLoop()->CurrentTime());
 }
 
 void MultiAnimation::ResetSubAnimation() {
@@ -48,14 +54,15 @@ void MultiAnimation::ResetSubAnimation() {
         Animation* animation = animationList[i];
         animation->Reset();
     }
-    finishAnimationList.clear();
 }
 
-void MultiAnimation::StartAddRunningAnimation() {
+void MultiAnimation::StartAddRunningAnimation(AMTTimeInterval time) {
     runningAnimationList.clear();
+    finishAnimationList.clear();
     
     for (int i = 0; i < animationList.size(); i++) {
         Animation* animation = animationList[i];
+        
         animation->OnAnimationStopCallback = [this] (Animation* animation1, AMTBool finish) {
             this->finishAnimationList.push_back(animation1);
         };
@@ -79,10 +86,9 @@ void MultiAnimation::Pause(AMTBool pause) {
     Animation::Pause(pause);
 }
 
-void MultiAnimation::Start() {
-    Animation::Start();
-
-    StartAddRunningAnimation();
+void MultiAnimation::Start(AMTTimeInterval time) {
+    Animation::Start(time);
+    StartAddRunningAnimation(time);
 }
 
 void MultiAnimation::Repeat() {
@@ -114,13 +120,15 @@ void MultiAnimation::Tick(AMTTimeInterval time, AMTTimeInterval timeInterval, AM
                 continue;
             }
             animation->StartAnimationIfNeed(time);
-            animation->TickTime(time);
-            animation->StopAnimationIfFinish();
-            if (animation->finished) {
-                if (animation->willrepeat) {
-                    animation->Repeat();
-                } else {
-                    animation->Stop();
+            if (animation->active && !animation->paused) {
+                animation->TickTime(time);
+                animation->StopAnimationIfFinish();
+                if (animation->finished) {
+                    if (animation->willrepeat) {
+                        animation->Repeat();
+                    } else {
+                        animation->Stop();
+                    }
                 }
             }
         }
@@ -132,16 +140,19 @@ void MultiAnimation::Tick(AMTTimeInterval time, AMTTimeInterval timeInterval, AM
                 runningAnimationList.push_back(animation);
             }
             animation->StartAnimationIfNeed(time);
-            animation->TickTime(time);
-            animation->StopAnimationIfFinish();
-            if (animation->finished) {
-                if (animation->willrepeat) {
-                    animation->Repeat();
-                } else {
-                    animation->Stop();
-                    if (finishAnimationList.size() < animationList.size()) {
-                        auto animation = animationList[finishAnimationList.size()];
-                        animation->Reset();
+            if (animation->active && !animation->paused) {
+                animation->TickTime(time);
+                animation->StopAnimationIfFinish();
+                
+                if (animation->finished) {
+                    if (animation->willrepeat) {
+                        animation->Repeat();
+                    } else {
+                        animation->Stop();
+                        if (finishAnimationList.size() < animationList.size()) {
+                            auto animation01 = animationList[finishAnimationList.size()];
+                            animation01->Reset();
+                        }
                     }
                 }
             }
@@ -150,6 +161,44 @@ void MultiAnimation::Tick(AMTTimeInterval time, AMTTimeInterval timeInterval, AM
     
     if (finishAnimationList.size() && finishAnimationList.size() == animationList.size()) {
         Animation::SetFinish(true);
+    }
+}
+
+void MultiAnimation::SetRepeatForever(AMTBool forever) {
+    repeatForever = forever;
+    didSetRepeatForever = true;
+}
+
+void MultiAnimation::SetRepeatCount(AMTInt count) {
+    repeatCount = count;
+    didSetRepeatCount = true;
+}
+
+void MultiAnimation::SetAutoreverses(AMTBool reverse) {
+    autoreverses = reverse;
+    didSetAutoReverse = true;
+}
+
+void MultiAnimation::SetBeginTime(AMTTimeInterval time) {
+    beginTime = time;
+    didSetBeginTime = true;
+}
+
+void MultiAnimation::ClearSubAnimationSettingsIfNeeded() {
+    for (int i = 0; i < animationList.size(); i++) {
+        Animation* animation = animationList[i];
+        if (didSetRepeatCount) {
+            animation->SetRepeatCount(repeatCount);
+        }
+        if (didSetRepeatForever) {
+            animation->SetRepeatForever(repeatForever);
+        }
+        if (didSetAutoReverse) {
+            animation->SetAutoreverses(autoreverses);
+        }
+        if (didSetBeginTime) {
+            animation->SetBeginTime(beginTime);
+        }
     }
 }
 

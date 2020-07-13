@@ -35,6 +35,14 @@ public:
     
     void Pause(AMTBool pause) override;
     
+    void SetRepeatForever(AMTBool forever) override;
+    
+    void SetRepeatCount(AMTInt count) override;
+    
+    void SetAutoreverses(AMTBool reverse) override;
+    
+    void SetBeginTime(AMTTimeInterval beginTime) override;
+    
     static const char* ANIMATION_TYPENAME;ANIMATION_TYPE_DEF(ANIMATION_TYPENAME);
 
 protected:
@@ -42,7 +50,7 @@ protected:
     
     void RepeatReset() override;
 
-    void Start() override;
+    void Start(AMTTimeInterval time) override;
 
     void Repeat() override;
 
@@ -52,7 +60,7 @@ protected:
     
     void ResetSubAnimation();
     
-    void StartAddRunningAnimation();
+    void StartAddRunningAnimation(AMTTimeInterval time);
 
 private:
     // 动画组合列表
@@ -66,6 +74,13 @@ private:
 
     // 完成的动画组合列表
     MultiAnimationList finishAnimationList;
+    
+    AMTBool didSetAutoReverse;
+    AMTBool didSetRepeatCount;
+    AMTBool didSetRepeatForever;
+    AMTBool didSetBeginTime;
+    
+    void ClearSubAnimationSettingsIfNeeded();
 
 };
 

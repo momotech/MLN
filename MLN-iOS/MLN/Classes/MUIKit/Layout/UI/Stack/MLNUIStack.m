@@ -48,7 +48,7 @@ LUAUI_EXPORT_VIEW_END(MLNUIStack, Stack, YES, "MLNUIView", "initWithMLNUILuaCore
 }
 
 - (void)setCrossAxisSize:(CGSize)size {
-    // subclass should overide
+    // subclass should override
 }
 
 #pragma mark - Export Lua

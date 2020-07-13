@@ -242,13 +242,13 @@
             _valueAnimation.duration = [_duration floatValue];
         }
         if (_repeatCount != nil) {
-            _valueAnimation.repeatCount = [_repeatCount floatValue];
+            _valueAnimation.repeatCount = _repeatCount;
         }
         if (_repeatForever != nil) {
-            _valueAnimation.repeatForever = [_repeatForever boolValue];
+            _valueAnimation.repeatForever = _repeatForever;
         }
         if (_autoReverses != nil) {
-            _valueAnimation.autoReverses = [_autoReverses boolValue];
+            _valueAnimation.autoReverses = _autoReverses;
         }
         if (_fromValue != nil) {
             _valueAnimation.fromValue = _fromValue;
@@ -257,7 +257,7 @@
             _valueAnimation.toValue = _toValue;
         }
         if (_delay != nil) {
-            _valueAnimation.beginTime = [_delay floatValue];
+            _valueAnimation.beginTime = _delay;
         }
         switch (_timingFunction) {
             case MLNUIAnimationTimingFunctionDefault:
