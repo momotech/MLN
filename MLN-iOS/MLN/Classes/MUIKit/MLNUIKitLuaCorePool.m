@@ -58,7 +58,7 @@
 - (void)preload
 {
     if (self.luaCoreQueue.count < self.capacity) {
-        dispatch_async(dispatch_get_global_queue(0, 0), ^{
+        dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0), ^{
             MLNUILuaCore *luaCore = [self buildLuaCore];
             dispatch_async(dispatch_get_main_queue(), ^{
                 [self.luaCoreQueue addObject:luaCore];

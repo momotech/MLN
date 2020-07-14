@@ -249,22 +249,35 @@ shold override five primitive methods
 //                 )
     } forceAddOriginImpBlock:placeholderBlock];
     
-        origin = @selector(setObject:atIndexedSubscript:);
-        swizzle = @selector(mlnkvo_setObject:atIndexedSubscript:);
-        [cls mlnui_swizzleInstanceSelector:origin withNewSelector:swizzle newImpBlock:^(NSMutableArray *self, id object, NSUInteger index) {
-            id oldValue;
-            if (index < self.count) {
-                oldValue = [self objectAtIndex:index];
-            }
-            GetIMP();
-    //        CallIMP(
-            NSIndexSet *set = [NSIndexSet indexSetWithIndex:index];
-            ((void(*)(id,SEL,id,NSUInteger))imp)(self, origin,object,index);
-    //                )
-    //        AfterIMP(
-            [self mlnui_notifyAllObserver:NSKeyValueChangeReplacement indexSet:set newValue:object oldValue:oldValue];
-    //                 )
-        } forceAddOriginImpBlock:placeholderBlock];
+    origin = @selector(setObject:atIndexedSubscript:);
+    swizzle = @selector(mlnkvo_setObject:atIndexedSubscript:);
+    [cls mlnui_swizzleInstanceSelector:origin withNewSelector:swizzle newImpBlock:^(NSMutableArray *self, id object, NSUInteger index) {
+        id oldValue;
+        if (index < self.count) {
+            oldValue = [self objectAtIndex:index];
+        }
+        GetIMP();
+//        CallIMP(
+        NSIndexSet *set = [NSIndexSet indexSetWithIndex:index];
+        ((void(*)(id,SEL,id,NSUInteger))imp)(self, origin,object,index);
+//                )
+//        AfterIMP(
+        [self mlnui_notifyAllObserver:NSKeyValueChangeReplacement indexSet:set newValue:object oldValue:oldValue];
+//                 )
+    } forceAddOriginImpBlock:placeholderBlock];
+    
+    origin = @selector(addObjectsFromArray:);
+    swizzle = @selector(mlnkvo_addObjectsFromArray:);
+    [cls mlnui_swizzleInstanceSelector:origin withNewSelector:swizzle newImpBlock:^(NSMutableArray *self, NSArray* objects) {
+        // call real imp
+        GetIMP();
+        ((void(*)(id,SEL,id))imp)(self, origin, objects);
+        // call observer
+        if (objects && objects.count > 0 && self.count >= objects.count) {
+            NSIndexSet *set = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(self.count - objects.count, objects.count)];
+            [self mlnui_notifyAllObserver:NSKeyValueChangeInsertion indexSet:set newValue:objects oldValue:nil];
+        }
+    } forceAddOriginImpBlock:placeholderBlock];
 }
 
 #pragma clang diagnostic pop

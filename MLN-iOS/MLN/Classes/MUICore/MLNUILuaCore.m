@@ -12,6 +12,9 @@
 #import "MLNUIConvertor.h"
 #import "MLNUIFileLoader.h"
 #import "MLNUILuaTable.h"
+#import "MLNUIKit.h"
+
+@import ObjectiveC;
 
 static void * mlnui_state_alloc(void *ud, void *ptr, size_t osize, size_t nsize) {
     (void)ud;
@@ -254,7 +257,11 @@ static int mlnui_errorFunc_traceback (lua_State *L) {
     if (!ret) {
         return ret;
     }
-    return [self call:0 error:error];
+    
+    PSTART(MLNUILoadTimeStatisticsType_Execute);
+    BOOL r = [self call:0 error:error];
+    PEND(MLNUILoadTimeStatisticsType_Execute);
+    return r;
 }
 
 - (BOOL)runData:(NSData *)data name:(NSString *)name error:(NSError * _Nullable __autoreleasing *)error
@@ -263,15 +270,25 @@ static int mlnui_errorFunc_traceback (lua_State *L) {
     if (!ret) {
         return ret;
     }
-    return [self call:0 error:error];
+    PSTART(MLNUILoadTimeStatisticsType_Execute);
+    BOOL r = [self call:0 error:error];
+    PEND(MLNUILoadTimeStatisticsType_Execute);
+    return r;
 }
 
 - (BOOL)loadFile:(NSString *)filePath error:(NSError * _Nullable __autoreleasing *)error
 {
     _filePath = filePath;
+    PSTART_TAG(MLNUILoadTimeStatisticsType_ReadFile, filePath);
     NSString *realFilePath = [self.currentBundle filePathWithName:filePath];
     NSData *data = [NSData dataWithContentsOfFile:realFilePath];
-    return  [self loadData:data name:filePath error:error];
+    PEND_TAG_INFO(MLNUILoadTimeStatisticsType_ReadFile, filePath, filePath);
+    
+    PSTART_TAG(MLNUILoadTimeStatisticsType_Compile,filePath);
+    BOOL r = [self loadData:data name:filePath error:error];
+    PEND_TAG_INFO(MLNUILoadTimeStatisticsType_Compile, filePath, filePath);
+    
+    return r;
 }
 
 - (BOOL)loadData:(NSData *)data name:(NSString *)name error:(NSError **)error
@@ -432,14 +449,33 @@ static int mlnui_errorFunc_traceback (lua_State *L) {
             return NO;
         }
         int extraCount = 0;
+#if OCPERF_USE_LUD
+        Class cls = objc_getClass(nativeClassName);
+        lua_pushlightuserdata(L, (__bridge void *)(cls));
+#else
         lua_pushstring(L, nativeClassName); // class
+#endif
         lua_pushboolean(L, list->isProperty);
         if (list->isProperty) {
+
+#if OCPERF_USE_LUD
+            SEL setter = sel_registerName(list->setter_n);
+            SEL getter = sel_registerName(list->getter_n);
+            lua_pushlightuserdata(L, setter);
+            lua_pushlightuserdata(L, getter);
+#else
             lua_pushstring(L, list->setter_n); // setter
             lua_pushstring(L, list->getter_n); // getter
+#endif
             extraCount = 4;
         } else {
+#if OCPERF_USE_LUD
+            SEL sel = sel_registerName(list->mn);
+            lua_pushlightuserdata(L, sel);
+#else
             lua_pushstring(L, list->mn); // selector
+#endif
+
             extraCount = 3;
         }
         int i;

@@ -10,7 +10,7 @@ target 'LuaNative' do
   pod 'MJRefresh', '3.1.16'
   pod 'SDCycleScrollView','>= 1.80'
   pod 'Toast', '~> 4.0.0'
-  pod 'JPFPSStatus'
+  pod 'FLEX'
 end
 
 target 'MLN_Tests' do

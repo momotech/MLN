@@ -9,6 +9,7 @@
 #define MLNUIStaticExporterMacro_h
 
 #import "MLNUIExporterMacro.h"
+#import "MLNUIKit.h"
 
 /**
  标记开始静态导出
@@ -42,6 +43,22 @@ LUAUI_EXPORT_METHOD_LIST_ADD(#LUA_FUNC, "C_FUNC", #CLZ, NO, NULL, NULL, FUNC)
 
  @param CLZ 当前类
  */
+
+#if OCPERF_UPDATE_LUACORE
+#define LUAUI_EXPORT_STATIC_LUA_CORE(CLZ) \
+static __weak MLNUILuaCore *mlnui_currentLuaCore_ ## CLZ = nil;\
++ (MLNUILuaCore *)mlnui_currentLuaCore\
+{\
+    return mlnui_currentLuaCore_ ## CLZ;\
+}\
+\
++ (void)mlnui_updateCurrentLuaCore:(MLNUILuaCore *)luaCore\
+{\
+    if(mlnui_currentLuaCore_ ## CLZ != luaCore) { \
+        mlnui_currentLuaCore_ ## CLZ = luaCore;\
+    }\
+}
+#else
 #define LUAUI_EXPORT_STATIC_LUA_CORE(CLZ) \
 static __weak MLNUILuaCore *mlnui_currentLuaCore_ ## CLZ = nil;\
 + (MLNUILuaCore *)mlnui_currentLuaCore\
@@ -53,6 +70,7 @@ static __weak MLNUILuaCore *mlnui_currentLuaCore_ ## CLZ = nil;\
 {\
     mlnui_currentLuaCore_ ## CLZ = luaCore;\
 }
+#endif
 
 /**
   标记完成静态导出

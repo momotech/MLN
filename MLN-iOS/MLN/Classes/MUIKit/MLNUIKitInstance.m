@@ -55,9 +55,12 @@
 
 - (void)setupLuaWindow:(NSMutableDictionary *)windowExtra
 {
+    PSTART_TAG(MLNUILoadTimeStatisticsType_Custom, @"other3");
     if (!self.luaWindow) {
         _luaWindow = [self createLuaWindow];
     }
+    PEND_TAG_INFO(MLNUILoadTimeStatisticsType_Custom, @"other3", @"【其他初始化-create window】");
+
     self.luaWindow.extraInfo = windowExtra;
     [self.luaCore registerGlobalVar:self.luaWindow globalName:@"window" error:nil];
     self.luaWindow.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
@@ -213,7 +216,10 @@
     NSError *err = nil;
     if ([self.luaCore runFile:entryFilePath error:&err]) {
         // 请求布局
+        PSTART_TAG(MLNUILoadTimeStatisticsType_Custom,@"布局");
         [self forceLayoutLuaWindow];
+        PEND_TAG_INFO(MLNUILoadTimeStatisticsType_Custom, @"布局", @"【布局】");
+//        PEND_TAG_INFO(MLNUILoadTimeStatisticsType_Custom, @"布局", @"【布局】")
         // 回调代理
         if ([self.delegate respondsToSelector:@selector(instance:didFinishRun:)]) {
             [self.delegate instance:self didFinishRun:entryFilePath];
@@ -375,14 +381,21 @@
     }
     // 创建新的LuaCore
     [self luaCore];
+    
+    PSTART_TAG(MLNUILoadTimeStatisticsType_Custom, @"other");
     // 注册Kit所有Bridge, 兼容老代码
     [self registerKitClasses];
     // 开启所有处理引擎
     [self startAllEngines];
     // 创建LuaWindow
+    PSTART_TAG(MLNUILoadTimeStatisticsType_Custom, @"other2");
     [self setupLuaWindow:_windowExtra];
+    PEND_TAG_INFO(MLNUILoadTimeStatisticsType_Custom, @"other2", @"【其他初始化-window】");
     // 将LuaWindow加入到Layout引擎
     [self pushWindowToLayoutEngine];
+    PEND_TAG_INFO(MLNUILoadTimeStatisticsType_Custom, @"other", @"【其他初始化】");
+
+
     // 回调代理
     if ([self.delegate respondsToSelector:@selector(didSetupLuaCore:)]) {
         [self.delegate didSetupLuaCore:self];
@@ -465,7 +478,9 @@
 - (MLNUILuaCore *)luaCore
 {
     if (!_luaCore) {
+        PSTART(MLNUILoadTimeStatisticsType_LuaCore);
         [self createLuaCore];
+        PEND(MLNUILoadTimeStatisticsType_LuaCore);
     }
     return _luaCore;
 }

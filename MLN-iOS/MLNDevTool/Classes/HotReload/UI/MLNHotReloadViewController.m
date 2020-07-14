@@ -42,7 +42,6 @@
 {
     NSMutableArray *regs = [NSMutableArray arrayWithArray:regClasses ? regClasses :@[]];
     [regs addObject: [MLNUIDataBinding class]];
-    [regs addObject: [MLNUIDataBindingCBridge class]];
     
     if (self = [super initWithEntryFilePath:entryFilePath extraInfo:extraInfo regClasses:regs]) {
         _navigationBarTransparent = transparent;

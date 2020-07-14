@@ -12,6 +12,7 @@
 #import "MLNUIHttpHandlerProtocol.h"
 #import "MLNUIKitInstance.h"
 #import "MLNUINavigatorHandlerProtocol.h"
+#import "MLNUIPerformanceHeader.h"
 
 NS_ASSUME_NONNULL_BEGIN
 @class MLNUIApplication;
@@ -57,6 +58,11 @@ NS_ASSUME_NONNULL_BEGIN
  网络连通检测工具
  */
 @property (nonatomic, strong, readonly) MLNUINetworkReachability *networkReachability;
+
+/**
+ 性能调试工具
+ */
+@property (nonatomic, weak) id<MLNUIPerformanceMonitor> performanceMonitor;
 
 /**
  创建Handler管理器
