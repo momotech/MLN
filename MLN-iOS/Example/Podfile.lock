@@ -31,7 +31,7 @@ PODS:
   - FBSnapshotTestCase/Core (2.1.4)
   - FBSnapshotTestCase/SwiftSupport (2.1.4):
     - FBSnapshotTestCase/Core
-  - JPFPSStatus (0.1.1)
+  - FLEX (3.0.0)
   - MJRefresh (3.1.16)
   - MLN (1.0.0.10.beta):
     - MLN/Core (= 1.0.0.10.beta)
@@ -86,7 +86,7 @@ DEPENDENCIES:
   - Expecta
   - "Expecta+Snapshots"
   - FBSnapshotTestCase
-  - JPFPSStatus
+  - FLEX
   - MJRefresh (= 3.1.16)
   - MLN (from `../../`)
   - MLNDevTool (from `../../`)
@@ -100,7 +100,7 @@ SPEC REPOS:
     - Expecta
     - "Expecta+Snapshots"
     - FBSnapshotTestCase
-    - JPFPSStatus
+    - FLEX
     - MJRefresh
     - Protobuf
     - SDCycleScrollView
@@ -122,7 +122,7 @@ SPEC CHECKSUMS:
   Expecta: 3b6bd90a64b9a1dcb0b70aa0e10a7f8f631667d5
   "Expecta+Snapshots": dcff217eef506dabd6dfdc7864ea2da321fafbb8
   FBSnapshotTestCase: 094f9f314decbabe373b87cc339bea235a63e07a
-  JPFPSStatus: 03f32aa3d4d7d0c5bf56f6f3e7cf8b7280a5f52c
+  FLEX: d66c759bce0f6ebbbf472c742380874d846f2883
   MJRefresh: 7798e16e53a5ef7f332dd05b27664db4e29530fd
   MLN: 1e6fe07803484e64de9d058a0b35dafc31aa0f37
   MLNDevTool: f7d3e4bb14af4957c565db6b4a7836addcf8f666
@@ -132,6 +132,6 @@ SPEC CHECKSUMS:
   Specta: 3e1bd89c3517421982dc4d1c992503e48bd5fe66
   Toast: 91b396c56ee72a5790816f40d3a94dd357abc196
 
-PODFILE CHECKSUM: a565d45bb084b5fcd184c23ae77328dc55a88bf5
+PODFILE CHECKSUM: c237f48e49ffe732173011d8f78b1aab8797db9a
 
-COCOAPODS: 1.9.1
+COCOAPODS: 1.9.3

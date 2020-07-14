@@ -23,7 +23,10 @@
 #import "MLNUIKVOObserver.h"
 #import "MLNUIKit.h"
 #import "MLNUIMyImageHandler.h"
-#import "JPFPSStatus.h"
+#import "FLEXManager.h"
+#import "MLNUIFPSStatus.h"
+#import "MLNUILogViewer.h"
+#import "MLNUILoadTimeStatistics.h"
 
 @interface MLNAppDelegate ()
 
@@ -39,7 +42,9 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    [[JPFPSStatus sharedInstance] open];
+    [[MLNUIFPSStatus sharedInstance] open];
+//    [[FLEXManager sharedManager] showExplorer];
+    [MLNUILogViewer setup];
     [self setupMLNKitEnvironment];
     // 根据标志位判断是否禁用图片加载功能
     if (kDisableImageLoad) {
@@ -80,7 +85,7 @@
     [MLNUIKitEnvironment setDefaultScrollRefreshHandler:self.refreshHandler];
     [MLNUIKitEnvironment setDefaultImageLoader:self.imgLoader2];
     [MLNUIKitEnvironment setDefaultNavigatorHandler:self.navHandler];
-    
+    [MLNUIKitEnvironment setPerformanceMonitor: [MLNUILoadTimeStatistics sharedStatistics]];
     [MLNUILink registerName:@"MLNLuaGallery" linkClassName:@"MLNLuaGalleryViewController"];
 }
 

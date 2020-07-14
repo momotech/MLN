@@ -615,7 +615,7 @@
     }
     NSString *last = keys.lastObject;
     if(!allowLastKeyIsNumber && [self isNumber:last]){
-        NSLog(@"last key cann't be numbeer!");
+        NSLog(@"last key cann't be number!");
         return nil;
     }
     NSMutableArray *formatKeys = [NSMutableArray array];
@@ -632,7 +632,7 @@
             [formatKeys addObject:@(tmp)];
         } else {
             if (!combineString) {
-                combineString = [NSMutableString string];
+                combineString = [[NSMutableString alloc] initWithCapacity:40];
             }
             if (combineString.length > 0) {
                 [combineString appendString:@"."];

@@ -8,6 +8,7 @@
 #import "MLNUIKitEnvironment.h"
 #import "MLNUIKitInstanceHandlersManager.h"
 #import "MLNUIKitInstanceFactory.h"
+#import "MLNUIKit.h"
 
 @implementation MLNUIKitEnvironment
 
@@ -60,4 +61,7 @@ static __weak UIWindow *_mainWindow = nil;
     return _mainWindow;
 }
 
++ (void)setPerformanceMonitor:(id<MLNUIPerformanceMonitor>)pMonitor {
+    [MLNUIKitInstanceHandlersManager defaultManager].performanceMonitor = pMonitor;
+}
 @end

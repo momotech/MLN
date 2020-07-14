@@ -72,7 +72,7 @@
 #import "MLNUICornerUtil.h"
 #import "MLNUISafeAreaAdapter.h"
 #import "MLNUILink.h"
-#import "MLNUIDataBinding.h"
+#import "MLNUIKit.h"
 // Animations
 #import "MLNUIAnimator.h"
 #import "MLNUIAnimation.h"
@@ -208,7 +208,12 @@ static NSArray<Class<MLNUIExportProtocol>> *utilClasses;
                         [MLNUICornerUtil class],
                         [MLNUISafeAreaAdapter class],
                         [MLNUILink class],
-                        [MLNUIDataBinding class]];
+#if OCPERF_USE_C
+                        [MLNUIDataBindingCBridge class],
+#else
+                        [MLNUIDataBinding class],
+#endif
+        ];
     }
     return utilClasses;
 }

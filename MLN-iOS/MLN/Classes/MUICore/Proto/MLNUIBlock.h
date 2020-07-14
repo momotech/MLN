@@ -43,6 +43,7 @@ NS_ASSUME_NONNULL_BEGIN
  @return 返回值
  */
 - (id)callIfCan;
+- (void)lazyCallIfCan:(void(^ __nullable)(id))completionBlock;
 
 /**
  调用当前Lua函数传递一个参数
