@@ -41,6 +41,9 @@
 }
 
 - (void)onStart:(MLNUILoadTimeStatisticsType)type tag:(NSString *)tag {
+    if (!NSThread.isMainThread) {
+        return;
+    }
     if (!tag) {
         tag = [self.typeTags objectForKey:@(type)];
     }
@@ -57,6 +60,9 @@
 }
 
 - (void)onEnd:(MLNUILoadTimeStatisticsType)type tag:(NSString *)tag info:(NSString *)info {
+    if (!NSThread.isMainThread) {
+        return;
+    }
     dispatch_block_t block = ^{
         NSString *tagStr = tag;
         if (!tagStr) {

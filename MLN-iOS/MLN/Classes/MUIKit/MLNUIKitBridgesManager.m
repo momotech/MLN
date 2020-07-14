@@ -121,6 +121,21 @@
     [luaCore registerClasses:self.canvasClasses error:NULL];
     // 注册新布局相关
     [luaCore registerClasses:self.stackClasses error:NULL];
+#if OCPERF_PRE_REQUIRE
+    //require lua file
+    [self _requireCustomLuaFiles:luaCore];
+#endif
+}
+
+//static const char *customLuaFiles[] = {"packet.BindMeta", "packet.KeyboardManager", "packet.style"};
+static const char *customLuaFiles[] = {"packet/BindMeta", "packet/KeyboardManager", "packet/style"};
+
+- (void)_requireCustomLuaFiles:(MLNUILuaCore *)luaCore {
+    size_t size = sizeof(customLuaFiles) / sizeof(const char *);
+    for (int i = 0; i < size; i++) {
+        const char *file = customLuaFiles[i];
+        [luaCore requireLuaFile:file];
+    }
 }
 
 static NSArray<Class<MLNUIExportProtocol>> *viewClasses;

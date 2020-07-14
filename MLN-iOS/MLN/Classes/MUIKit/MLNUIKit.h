@@ -15,11 +15,13 @@
 #define OCPERF_UPDATE_LUACORE 1
 #define OCPERF_USE_CF 1
 #define OCPERF_USE_C 1
+#define OCPERF_PRE_REQUIRE 1
 #else
 #define OCPERF_USE_LUD 0
 #define OCPERF_UPDATE_LUACORE 0
 #define OCPERF_USE_CF 0
 #define OCPERF_USE_C 0
+#define OCPERF_PRE_REQUIRE 0
 #endif
 
 #ifdef OCPERF_USE_C

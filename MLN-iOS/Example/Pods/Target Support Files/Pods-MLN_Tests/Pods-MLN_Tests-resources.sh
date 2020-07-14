@@ -98,19 +98,9 @@ EOM
 }
 if [[ "$CONFIGURATION" == "Debug" ]]; then
   install_resource "${PODS_ROOT}/../../MLN/Resource/ArgoUI.bundle"
-  install_resource "${PODS_ROOT}/MJRefresh/MJRefresh/MJRefresh.bundle"
-  install_resource "${PODS_CONFIGURATION_BUILD_DIR}/MLNDevTool/MLNDevTool_Util.bundle"
-  install_resource "${PODS_CONFIGURATION_BUILD_DIR}/MLNDevTool/MLNDevTool_UI.bundle"
-  install_resource "${PODS_CONFIGURATION_BUILD_DIR}/MLNDevTool/MLNDevTool_HotReload.bundle"
-  install_resource "${PODS_CONFIGURATION_BUILD_DIR}/MLNDevTool/MLNDevTool_Offline.bundle"
 fi
 if [[ "$CONFIGURATION" == "Release" ]]; then
   install_resource "${PODS_ROOT}/../../MLN/Resource/ArgoUI.bundle"
-  install_resource "${PODS_ROOT}/MJRefresh/MJRefresh/MJRefresh.bundle"
-  install_resource "${PODS_CONFIGURATION_BUILD_DIR}/MLNDevTool/MLNDevTool_Util.bundle"
-  install_resource "${PODS_CONFIGURATION_BUILD_DIR}/MLNDevTool/MLNDevTool_UI.bundle"
-  install_resource "${PODS_CONFIGURATION_BUILD_DIR}/MLNDevTool/MLNDevTool_HotReload.bundle"
-  install_resource "${PODS_CONFIGURATION_BUILD_DIR}/MLNDevTool/MLNDevTool_Offline.bundle"
 fi
 
 mkdir -p "${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}"

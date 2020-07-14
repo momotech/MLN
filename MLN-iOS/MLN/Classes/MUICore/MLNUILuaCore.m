@@ -765,6 +765,34 @@ NS_INLINE BOOL utils_string_is_number(const char *input) {
     return YES;
 }
 
+- (BOOL)requireLuaFile:(const char *)lua_file {
+    NSParameterAssert(lua_file);
+    if(!lua_file) return NO;
+    lua_State *L = self.state;
+    if (!L) {
+        MLNUIError(self, @"Lua state is released %s",__func__);
+        return NO;
+    }
+    lua_getglobal(L, "require");
+    lua_pushstring(L, lua_file);
+    int s = lua_pcall(L, 1, 0, 0);
+    if (s && !lua_isnil(L, -1)) {
+        const char *msg = lua_tostring(L, -1);
+        if (msg == NULL)
+            msg = "(error object is not a string)";
+        MLNUIError(self, @"%s %s",msg, __func__);
+    }
+    
+    if (s) {
+        lua_getfield(L, LUA_REGISTRYINDEX, "_LOADED");
+        lua_pushnil(L);
+        lua_setfield(L, -2, lua_file);
+        lua_settop(L, 0);
+//        lua_gc(L, LUA_GCCOLLECT, 0);
+    }
+    return YES;;
+}
+
 - (BOOL)createMetaTable:(const char *)name error:(NSError * _Nullable __autoreleasing *)error
 {
     NSParameterAssert(charpNotEmpty(name));

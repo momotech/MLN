@@ -31,6 +31,7 @@ Pod::Spec.new do |s|
     s.ios.deployment_target = '8.0'
     s.libraries = 'z'
     s.requires_arc = true
+    s.resource = 'MLN-iOS/MLN/Resource/ArgoUI.bundle'
     
     s.subspec 'Core' do |c|
         c.name = 'Core'

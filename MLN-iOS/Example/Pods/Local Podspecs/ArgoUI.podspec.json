@@ -18,6 +18,7 @@
   },
   "libraries": "z",
   "requires_arc": true,
+  "resources": "MLN-iOS/MLN/Resource/ArgoUI.bundle",
   "subspecs": [
     {
       "name": "Core",
