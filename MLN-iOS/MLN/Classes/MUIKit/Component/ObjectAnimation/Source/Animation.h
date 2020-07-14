@@ -124,7 +124,7 @@ protected:
         return autoreverses;
     }
     
-    void CallAnimationRepeatCallbackIfNeeded();
+    void CallAnimationRepeatCallbackIfNeeded(Animation *executingAnimation);
 
 private:
 

@@ -114,7 +114,7 @@ void Animation::Repeat() {
             RepeatReset();
         }
         willrepeat = false;
-        CallAnimationRepeatCallbackIfNeeded();
+        CallAnimationRepeatCallbackIfNeeded(this);
     }
 }
 
@@ -127,12 +127,12 @@ void Animation::CallAnimationStartCallbackIfNeeded() {
     }
 }
 
-void Animation::CallAnimationRepeatCallbackIfNeeded() {
+void Animation::CallAnimationRepeatCallbackIfNeeded(Animation *executingAnimation) {
     if (OnAnimationRepeatCallback == nullptr) {
         return;
     }
     didRepeatedCount++;
-    if (autoreverses) {
+    if (executingAnimation && executingAnimation->GetAutoreverses()) {
         if (didRepeatedCount % 2 == 0) {
             OnAnimationRepeatCallback(this, didRepeatedCount / 2);
         }
