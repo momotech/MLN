@@ -346,9 +346,13 @@
     }
     
     NSObject *velocity = [config objectForKey:kMUITimingConfigVelocity];
-    if (velocity != nil)
-    {
-        springAnimation.velocity = velocity;
+    if ([velocity isKindOfClass:[NSArray class]]) { // 最多只有两个值
+        NSArray *array = (NSArray *)velocity;
+        if (array.count == 1) {
+            springAnimation.velocity = array[0];
+        } else if (array.count == 2) {
+            springAnimation.velocity = @((CGPoint){[array[0] floatValue], [array[1] floatValue]});
+        }
     }
 }
 
