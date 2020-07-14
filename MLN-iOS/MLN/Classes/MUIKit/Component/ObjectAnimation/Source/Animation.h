@@ -133,6 +133,11 @@ private:
      * @param time 当前时间
      */
     void StartAnimationIfNeed(AMTTimeInterval time);
+    
+    /**
+     * 动画开始的回调
+     */
+    void CallAnimationStartCallbackIfNeeded();
 
     /**
      * 计算时间间隔和进度，真被Tick动画

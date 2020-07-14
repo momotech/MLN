@@ -102,9 +102,7 @@ void Animation::Reset() {
 }
 
 void Animation::Start(AMTTimeInterval time) {
-    if (OnAnimationStartCallback) {
-        OnAnimationStartCallback(this);
-    }
+    CallAnimationStartCallbackIfNeeded();
 }
 
 void Animation::Repeat() {
@@ -117,6 +115,15 @@ void Animation::Repeat() {
         }
         willrepeat = false;
         CallAnimationRepeatCallbackIfNeeded();
+    }
+}
+
+void Animation::CallAnimationStartCallbackIfNeeded() {
+    if (OnAnimationStartCallback == nullptr) {
+        return;
+    }
+    if (didRepeatedCount == 0) { // 重复执行的动画不应多次回调startBlock
+        OnAnimationStartCallback(this);
     }
 }
 
@@ -152,7 +159,9 @@ void Animation::StartAnimationIfNeed(AMTTimeInterval time) {
         start = true;
     }
 
-    if (start) Start(time);
+    if (start) {
+        Start(time);
+    }
 }
 
 void Animation::TickTime(AMTTimeInterval time) {
