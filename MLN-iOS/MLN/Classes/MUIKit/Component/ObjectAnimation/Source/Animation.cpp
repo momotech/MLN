@@ -18,6 +18,7 @@ Animation::Animation(const AMTString &strName)
   finished(false),
   willrepeat(false),
   repeatCount(0),
+  didRepeatedCount(0),
   executeCount(1),
   repeatForever(false),
   autoreverses(false),
@@ -96,6 +97,7 @@ void Animation::Reset() {
     startTime = lastTime = 0.f;
     finished = false;
     willrepeat = false;
+    didRepeatedCount = 0;
     absoluteBeginTime = RunLoop::ShareLoop()->CurrentTime();
 }
 
@@ -114,9 +116,21 @@ void Animation::Repeat() {
             RepeatReset();
         }
         willrepeat = false;
-        if (OnAnimationRepeatCallback) {
-            OnAnimationRepeatCallback(this, repeatCount);
+        CallAnimationRepeatCallbackIfNeeded();
+    }
+}
+
+void Animation::CallAnimationRepeatCallbackIfNeeded() {
+    if (OnAnimationRepeatCallback == nullptr) {
+        return;
+    }
+    didRepeatedCount++;
+    if (autoreverses) {
+        if (didRepeatedCount % 2 == 0) {
+            OnAnimationRepeatCallback(this, didRepeatedCount / 2);
         }
+    } else {
+        OnAnimationRepeatCallback(this, didRepeatedCount);
     }
 }
 
@@ -130,8 +144,6 @@ void Animation::Stop() {
 
 void Animation::StartAnimationIfNeed(AMTTimeInterval time) {
     AMTBool start = false;
-    
-    printf("=======*** time: %0.2f **** absoluteBeginTime: %0.2f *** beginTime: %0.2f\n", time, absoluteBeginTime, beginTime);
 
     if (startTime == 0.f && time >= (absoluteBeginTime + beginTime)) {
         active = true;

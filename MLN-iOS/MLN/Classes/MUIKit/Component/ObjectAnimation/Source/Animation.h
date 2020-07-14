@@ -123,6 +123,8 @@ protected:
     ANIMATOR_INLINE AMTBool GetAutoreverses() const {
         return autoreverses;
     }
+    
+    void CallAnimationRepeatCallbackIfNeeded();
 
 private:
 
@@ -158,6 +160,9 @@ private:
     
     // 动画重复次数
     AMTInt repeatCount;
+    
+    // 动画已经重复了的次数
+    AMTInt didRepeatedCount;
     
     // 动画一共需要执行的次数
     AMTInt executeCount;

@@ -110,7 +110,7 @@ typedef NS_ENUM(NSUInteger, MLNUIObjectAnimationSetType) {
         __strong typeof(weakSelf) strongSelf = weakSelf;
         if (strongSelf.repeatBlock) {
             [strongSelf.repeatBlock addObjArgument:strongSelf];
-            [strongSelf.repeatBlock addUIntegerArgument:(strongSelf.repeatCount.unsignedIntValue - count)];
+            [strongSelf.repeatBlock addUIntegerArgument:count];
             [strongSelf.repeatBlock callIfCan];
         }
     };

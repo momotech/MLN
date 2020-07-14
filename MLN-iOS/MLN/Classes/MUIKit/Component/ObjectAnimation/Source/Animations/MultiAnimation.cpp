@@ -126,6 +126,7 @@ void MultiAnimation::Tick(AMTTimeInterval time, AMTTimeInterval timeInterval, AM
                 if (animation->finished) {
                     if (animation->willrepeat) {
                         animation->Repeat();
+                        CallAnimationRepeatCallbackIfNeeded();
                     } else {
                         animation->Stop();
                     }
@@ -147,6 +148,7 @@ void MultiAnimation::Tick(AMTTimeInterval time, AMTTimeInterval timeInterval, AM
                 if (animation->finished) {
                     if (animation->willrepeat) {
                         animation->Repeat();
+                        CallAnimationRepeatCallbackIfNeeded();
                     } else {
                         animation->Stop();
                         if (finishAnimationList.size() < animationList.size()) {

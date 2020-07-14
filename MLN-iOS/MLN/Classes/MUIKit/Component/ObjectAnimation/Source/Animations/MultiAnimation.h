@@ -61,6 +61,8 @@ protected:
     void ResetSubAnimation();
     
     void StartAddRunningAnimation(AMTTimeInterval time);
+    
+//    void CallAnimationRepeatCallbackIfNeeded() override;
 
 private:
     // 动画组合列表

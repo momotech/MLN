@@ -221,8 +221,7 @@
             __strong typeof(weakSelf) strongSelf = weakSelf;
             if (strongSelf.repeatBlock) {
                 [strongSelf.repeatBlock addObjArgument:strongSelf];
-                NSUInteger totalCount = [strongSelf.autoReverses boolValue] ? strongSelf.repeatCount.unsignedIntValue * 2 : strongSelf.repeatCount.unsignedIntValue;
-                [strongSelf.repeatBlock addUIntegerArgument:(totalCount - count)];
+                [strongSelf.repeatBlock addUIntegerArgument:count];
                 [strongSelf.repeatBlock callIfCan];
             }
         };
