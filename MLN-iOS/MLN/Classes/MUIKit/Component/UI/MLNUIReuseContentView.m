@@ -98,6 +98,10 @@ static inline void MLNUILayoutNodeClearHeight(UIView *view) {
     return YES;
 }
 
+- (BOOL)mlnui_allowVirtualLayout {
+    return NO;
+}
+
 #pragma mark - Override Method For Lua
 - (void)luaui_setCornerRadius:(CGFloat)cornerRadius
 {

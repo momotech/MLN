@@ -146,6 +146,14 @@ static inline UIView *MLNUIValidSuperview(UIView *self) {
     MLNUITransferViewAtIndex(view, MLNUIValidSuperview(self), index);
 }
 
+- (void)_mlnui_removeVirtualViewSubviews {
+    if (!self.mlnui_isVirtualView) return;
+    NSArray<MLNUILayoutNode *> *subNodes = self.mlnui_layoutNode.subNodes;
+    [subNodes enumerateObjectsUsingBlock:^(MLNUILayoutNode *_Nonnull node, NSUInteger idx, BOOL *_Nonnull stop) {
+        [node.view luaui_removeFromSuperview];
+    }];
+}
+
 - (UIView *)luaui_superview {
     if (![self.superview mlnui_isConvertible]) {
         return nil;
@@ -196,14 +204,21 @@ static inline UIView *MLNUIValidSuperview(UIView *self) {
 
 - (void)luaui_removeFromSuperview {
     [self removeFromSuperview];
-    // 删除Lua强引用
-    MLNUI_Lua_UserData_Release(self);
+    MLNUI_Lua_UserData_Release(self); // 删除Lua强引用
     [self.mlnui_layoutNode.superNode removeSubNode:self.mlnui_layoutNode];
+    
+    if (self.mlnui_isVirtualView) { // 如果是虚拟视图则需要主动移除其所有子视图
+        [self _mlnui_removeVirtualViewSubviews];
+    }
 }
 
 - (void)luaui_removeAllSubViews {
-    NSArray *subViews = self.subviews;
-    [subViews makeObjectsPerformSelector:@selector(luaui_removeFromSuperview)];
+    if (!self.mlnui_allowVirtualLayout) {
+        NSArray *subViews = self.subviews;
+        [subViews makeObjectsPerformSelector:@selector(luaui_removeFromSuperview)];
+    } else {
+        [self _mlnui_removeVirtualViewSubviews];
+    }
 }
 
 #pragma mark - Layout
@@ -518,10 +533,6 @@ static inline UIView *MLNUIValidSuperview(UIView *self) {
     return 0.0;
 }
 
-- (void)setLuaui_marginTopAuto {
-    self.mlnui_layoutNode.marginTop = MLNUIValueAuto;
-}
-
 - (void)setLuaui_marginLeft:(CGFloat)marginLeft {
     self.mlnui_layoutNode.marginLeft = MLNUIPointValue(marginLeft);
 }
@@ -532,10 +543,6 @@ static inline UIView *MLNUIValidSuperview(UIView *self) {
         return left.value;
     }
     return 0.0;
-}
-
-- (void)setLuaui_marginLeftAuto {
-    self.mlnui_layoutNode.marginLeft = MLNUIValueAuto;
 }
 
 - (void)setLuaui_marginBottom:(CGFloat)marginBottom {
@@ -550,10 +557,6 @@ static inline UIView *MLNUIValidSuperview(UIView *self) {
     return 0.0;
 }
 
-- (void)setLuaui_marginBottomAuto {
-    self.mlnui_layoutNode.marginBottom = MLNUIValueAuto;
-}
-
 - (void)setLuaui_marginRight:(CGFloat)marginRight {
     self.mlnui_layoutNode.marginRight = MLNUIPointValue(marginRight);
 }
@@ -564,10 +567,6 @@ static inline UIView *MLNUIValidSuperview(UIView *self) {
         return right.value;
     }
     return 0.0;
-}
-
-- (void)setLuaui_marginRightAuto {
-    self.mlnui_layoutNode.marginRight = MLNUIValueAuto;
 }
 
 /**

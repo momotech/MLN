@@ -68,13 +68,9 @@ LUAUI_EXPORT_VIEW_PROPERTY(paddingRight, "setLuaui_paddingRight:","luaui_padding
 
 LUAUI_EXPORT_VIEW_METHOD(margin, "luaui_setMarginWithTop:right:bottom:left:", MLNUIView)
 LUAUI_EXPORT_VIEW_PROPERTY(marginTop, "setLuaui_marginTop:","luaui_marginTop", MLNUIView)
-LUAUI_EXPORT_VIEW_METHOD(marginTopAuto, "setLuaui_marginTopAuto", MLNUIView)
 LUAUI_EXPORT_VIEW_PROPERTY(marginLeft, "setLuaui_marginLeft:","luaui_marginLeft", MLNUIView)
-LUAUI_EXPORT_VIEW_METHOD(marginLeftAuto, "setLuaui_marginLeftAuto", MLNUIView)
 LUAUI_EXPORT_VIEW_PROPERTY(marginBottom, "setLuaui_marginBottom:","luaui_marginBottom", MLNUIView)
-LUAUI_EXPORT_VIEW_METHOD(marginBottomAuto, "setLuaui_marginBottomAuto", MLNUIView)
 LUAUI_EXPORT_VIEW_PROPERTY(marginRight, "setLuaui_marginRight:","luaui_marginRight", MLNUIView)
-LUAUI_EXPORT_VIEW_METHOD(marginRightAuto, "setLuaui_marginRightAuto", MLNUIView)
 
 LUAUI_EXPORT_VIEW_PROPERTY(basis, "setLuaui_basis:","luaui_basis", MLNUIView)
 LUAUI_EXPORT_VIEW_PROPERTY(grow, "setLuaui_grow:","luaui_grow", MLNUIView)
