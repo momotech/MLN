@@ -28,6 +28,7 @@
 @property (nonatomic, assign) BOOL autoDoLuaViewDidDisappear;
 @property (nonatomic, assign) BOOL autoDoSizeChanged;
 @property (nonatomic, assign) BOOL autoDoDestroy;
+@property (nonatomic, assign) BOOL keyboardIsShowing; // default is NO
 
 @property (nonatomic, strong) MLNUISafeAreaProxy *safeAreaProxy;
 @property (nonatomic, strong) NSMutableSet<UIView *> *beyondSuperviews; // 键盘弹起，跟随键盘上移而超出父视图frame的视图
@@ -40,6 +41,7 @@
 {
     self = [super initWithMLNUILuaCore:luaCore frame:frame];
     if (self) {
+        _keyboardIsShowing = NO;
         [self addNotificationObservers];
     }
     return self;
@@ -80,47 +82,39 @@
     }
 }
 
-- (void)keyboardWasShown:(NSNotification *)notifi
+- (void)keyboardWasShown:(NSNotification *)notification
 {
-    NSDictionary *keybordInfo = [notifi userInfo];
-    CGRect keyBoardRect = [[keybordInfo objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue];
-    CGFloat height = keyBoardRect.size.height;
-    CGRect beginRect = [[keybordInfo objectForKey:UIKeyboardFrameBeginUserInfoKey] CGRectValue];
-    CGRect endRect = [[keybordInfo objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue];
-    // 第三方键盘回调三次问题，监听仅执行最后一次
-    if(beginRect.size.height > 0 && (beginRect.origin.y - endRect.origin.y > 0)){
+    if(!_keyboardIsShowing){
+        NSDictionary *keybordInfo = [notification userInfo];
+        CGRect keyBoardRect = [[keybordInfo objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue];
+        CGFloat height = keyBoardRect.size.height;
         if (_keyboardStatusCallback) {
             [_keyboardStatusCallback addBOOLArgument:YES];
             [_keyboardStatusCallback addFloatArgument:height];
             [_keyboardStatusCallback callIfCan];
+            _keyboardIsShowing = YES;
         }
     }
 }
 
-- (void)keyboardWillBeHiden:(NSNotification *)notifi
+- (void)keyboardWillBeHiden:(NSNotification *)notification
 {
     if (_keyboardStatusCallback) {
         [_keyboardStatusCallback addBOOLArgument:NO];
         [_keyboardStatusCallback addFloatArgument:0];
         [_keyboardStatusCallback callIfCan];
+        _keyboardIsShowing = NO;
     }
 }
 
 - (void)keyboardFrameChanged:(NSNotification *)notification
 {
-    CGFloat oldHeight = [[notification.userInfo objectForKey:UIKeyboardFrameBeginUserInfoKey] CGRectValue].size.height;
-    CGFloat newHeight = [[notification.userInfo objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue].size.height;
     if (self.keyboardFrameChangeCallback) {
+        CGFloat oldHeight = [[notification.userInfo objectForKey:UIKeyboardFrameBeginUserInfoKey] CGRectValue].size.height;
+        CGFloat newHeight = [[notification.userInfo objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue].size.height;
         [self.keyboardFrameChangeCallback addFloatArgument:oldHeight];
         [self.keyboardFrameChangeCallback addFloatArgument:newHeight];
         [self.keyboardFrameChangeCallback callIfCan];
-    }
-    if (self.beyondSuperviews.count > 0) {
-        for (UIView *view in self.beyondSuperviews) {
-            CGRect frame = view.frame;
-            frame.origin.y -= (newHeight - oldHeight);
-            view.frame = frame; // 跟随键盘高度变化
-        }
     }
 }
 
@@ -337,7 +331,7 @@
     }
 }
 
-- (void)luaui_setKeyBoardFrameChangeCallback:(MLNUIBlock *)callback
+- (void)luaui_keyBoardHeightChangeCallback:(MLNUIBlock *)callback
 {
     MLNUICheckTypeAndNilValue(callback, @"function", MLNUIBlock);
     self.keyboardFrameChangeCallback = callback;
@@ -433,7 +427,7 @@ LUAUI_EXPORT_VIEW_METHOD(backKeyPressed, "luaui_backKeyPressed:", MLNUIWindow)
 LUAUI_EXPORT_VIEW_METHOD(backKeyEnabled, "luaui_backKeyEnabled:", MLNUIWindow)
 LUAUI_EXPORT_VIEW_METHOD(getStatusBarStyle, "luaui_getStatusBarStyle", MLNUIWindow)
 LUAUI_EXPORT_VIEW_METHOD(setStatusBarStyle, "luaui_setStatusBarStyle:", MLNUIWindow)
-LUAUI_EXPORT_VIEW_METHOD(i_keyBoardFrameChangeCallback, "luaui_setKeyBoardFrameChangeCallback:", MLNUIWindow)
+LUAUI_EXPORT_VIEW_METHOD(keyBoardHeightChange, "luaui_keyBoardHeightChangeCallback:", MLNUIWindow)
 LUAUI_EXPORT_VIEW_METHOD(cachePushView, "luaui_cachePushView:", MLNUIWindow)
 LUAUI_EXPORT_VIEW_METHOD(clearPushView, "luaui_clearPushView", MLNUIWindow)
 LUAUI_EXPORT_VIEW_END(MLNUIWindow, Window, YES, "MLNUIView", NULL)

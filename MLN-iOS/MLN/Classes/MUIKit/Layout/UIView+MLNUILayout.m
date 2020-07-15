@@ -290,6 +290,10 @@ static inline UIView *MLNUIValidSuperview(UIView *self) {
     return CGRectGetWidth(self.frame);
 }
 
+- (void)setLuaui_widthAuto {
+    self.mlnui_layoutNode.width = MLNUIValueAuto;
+}
+
 - (void)setLuaui_widthPercent:(CGFloat)widthPercent {
     self.mlnui_layoutNode.width = MLNUIPercentValue(widthPercent);
 }
@@ -355,6 +359,10 @@ static inline UIView *MLNUIValidSuperview(UIView *self) {
  */
 - (void)setLuaui_height:(CGFloat)luaui_height {
     self.mlnui_layoutNode.height = MLNUIPointValue(luaui_height);
+}
+
+- (void)setLuaui_heightAuto {
+    self.mlnui_layoutNode.height = MLNUIValueAuto;
 }
 
 - (CGFloat)luaui_height {
@@ -510,6 +518,10 @@ static inline UIView *MLNUIValidSuperview(UIView *self) {
     return 0.0;
 }
 
+- (void)setLuaui_marginTopAuto {
+    self.mlnui_layoutNode.marginTop = MLNUIValueAuto;
+}
+
 - (void)setLuaui_marginLeft:(CGFloat)marginLeft {
     self.mlnui_layoutNode.marginLeft = MLNUIPointValue(marginLeft);
 }
@@ -520,6 +532,10 @@ static inline UIView *MLNUIValidSuperview(UIView *self) {
         return left.value;
     }
     return 0.0;
+}
+
+- (void)setLuaui_marginLeftAuto {
+    self.mlnui_layoutNode.marginLeft = MLNUIValueAuto;
 }
 
 - (void)setLuaui_marginBottom:(CGFloat)marginBottom {
@@ -534,6 +550,10 @@ static inline UIView *MLNUIValidSuperview(UIView *self) {
     return 0.0;
 }
 
+- (void)setLuaui_marginBottomAuto {
+    self.mlnui_layoutNode.marginBottom = MLNUIValueAuto;
+}
+
 - (void)setLuaui_marginRight:(CGFloat)marginRight {
     self.mlnui_layoutNode.marginRight = MLNUIPointValue(marginRight);
 }
@@ -544,6 +564,10 @@ static inline UIView *MLNUIValidSuperview(UIView *self) {
         return right.value;
     }
     return 0.0;
+}
+
+- (void)setLuaui_marginRightAuto {
+    self.mlnui_layoutNode.marginRight = MLNUIValueAuto;
 }
 
 /**
