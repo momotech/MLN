@@ -111,6 +111,7 @@ static inline void MLNUITransferViewAtIndex(UIView *fromView, UIView *toView, NS
 
 static inline UIView *MLNUIValidSuperview(UIView *self) {
     MLNUILayoutNode *superNode = self.mlnui_layoutNode.superNode;
+    if (!superNode) return self; // `self` is virtual view and it has not been added to any view yet.
     while (superNode.superNode && superNode.view.mlnui_isVirtualView) {
         superNode = superNode.superNode;
     }

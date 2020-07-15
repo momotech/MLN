@@ -14,9 +14,9 @@
     BOOL _disableVirtualLayout;
 }
 
-- (instancetype)initWithMLNUILuaCore:(MLNUILuaCore *)luaCore disableVirtualLayout:(BOOL)disableVirtualLayout {
+- (instancetype)initWithMLNUILuaCore:(MLNUILuaCore *)luaCore disableVirtualLayout:(NSNumber *)disableVirtualLayout {
     if (self = [super initWithMLNUILuaCore:luaCore]) {
-        _disableVirtualLayout = disableVirtualLayout;
+        _disableVirtualLayout = [disableVirtualLayout boolValue];
     }
     return self;
 }
