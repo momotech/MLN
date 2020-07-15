@@ -137,13 +137,13 @@ static int mlnui_errorFunc_traceback (lua_State *L) {
      [self callIfCan];
 #else
      @weakify(self);
-     NSArray *arguments = self.arguments.copy;
+     NSArray *args = self.arguments.copy;
      [self reset];
      MLNUIKitInstance *instance = MLNUI_KIT_INSTANCE(self.luaCore);
      MLNUILazyBlockTask *task = [MLNUILazyBlockTask taskWithCallback:^{
         @strongify(self);
         if (!self) return;
-        id r = [self _callWithArguments:arguments];
+        id r = [self _callWithArguments:args];
         if (completionBlock) {
             completionBlock(r);
         }
