@@ -18,8 +18,8 @@
 @property (nonatomic, strong) NSMutableArray *arguments;
 
 @property (nonatomic, strong) NSValue *innerFunction;
-@property (nonatomic, strong) MLNUILazyBlockTask *lazyTask;
-@property (nonatomic, strong) void(^completionBlock)(id);
+//@property (nonatomic, strong) MLNUILazyBlockTask *lazyTask;
+//@property (nonatomic, strong) void(^completionBlock)(id);
 
 @end
 
@@ -81,11 +81,17 @@ static int mlnui_errorFunc_traceback (lua_State *L) {
 
 - (id)callIfCan
 {
+    NSArray *args = self.arguments.copy;
+    [self reset];
+    return [self _callWithArguments:args];
+}
+
+- (id)_callWithArguments:(NSArray *)arguments {
     NSAssert([NSThread isMainThread], @"This method to be executed in the main thread!");
     MLNUILuaCore *core = self.luaCore; //retain luaCore.
     lua_State *L = core.state;
     if (L == NULL) {
-        [self reset];
+//        [self reset];
         return nil;
     }
     int base = lua_gettop(L);
@@ -96,18 +102,18 @@ static int mlnui_errorFunc_traceback (lua_State *L) {
     lua_gettable(L, LUA_REGISTRYINDEX); // ? = table[self] // [ ... | table | ? ]
     mlnui_luaui_checkfunc(L, -1);
     // 参数压栈
-    int argsCount = (int)self.arguments.count;
-    for (id arg in self.arguments) {
+    int argsCount = (int)arguments.count;
+    for (id arg in arguments) {
         if (![self.luaCore pushNativeObject:arg error:NULL]) {
             // 重置当前配置
-            [self reset];
+//            [self reset];
             // 恢复栈
             lua_settop(L, base);
             return nil;
         }
     }
     // 重置当前配置
-    [self reset];
+//    [self reset];
     // 调用
     int success = lua_pcall(L, argsCount, 1, base + 1);
     id result = nil;
@@ -125,15 +131,26 @@ static int mlnui_errorFunc_traceback (lua_State *L) {
 }
 
 - (void)lazyCallIfCan:(void(^)(id))completionBlock {
-    doInMainQueue(
-                  #if DEBUG && 0
-                      [self callIfCan];
-                  #else
-                      MLNUIKitInstance *instance = MLNUI_KIT_INSTANCE(self.luaCore);
-                      [instance forcePushLazyTask:self.lazyTask];
-                      self.completionBlock = completionBlock;
-                  #endif
-                  )
+    doInMainQueue
+    (
+#if DEBUG && 0
+     [self callIfCan];
+#else
+     @weakify(self);
+     NSArray *arguments = self.arguments.copy;
+     [self reset];
+     MLNUIKitInstance *instance = MLNUI_KIT_INSTANCE(self.luaCore);
+     MLNUILazyBlockTask *task = [MLNUILazyBlockTask taskWithCallback:^{
+        @strongify(self);
+        if (!self) return;
+        id r = [self _callWithArguments:arguments];
+        if (completionBlock) {
+            completionBlock(r);
+        }
+    } taskID:self.innerFunction];
+     [instance forcePushLazyTask:task];
+#endif
+     )
 }
 
 - (void)reset
@@ -296,19 +313,19 @@ static void releaseAllInMainQueue (MLNUILuaCore *luaCore, void * selfp) {
     }
 }
 
-- (MLNUILazyBlockTask *)lazyTask {
-    if (!_lazyTask) {
-        @weakify(self);
-        _lazyTask = [MLNUILazyBlockTask taskWithCallback:^{
-            @strongify(self);
-            id r = [self callIfCan];
-            if (self.completionBlock) {
-                self.completionBlock(r);
-            }
-        } taskID:self.innerFunction];
-    }
-    return _lazyTask;
-}
+//- (MLNUILazyBlockTask *)lazyTask {
+//    if (!_lazyTask) {
+//        @weakify(self);
+//        _lazyTask = [MLNUILazyBlockTask taskWithCallback:^{
+//            @strongify(self);
+//            id r = [self callIfCan];
+//            if (self.completionBlock) {
+//                self.completionBlock(r);
+//            }
+//        } taskID:self.innerFunction];
+//    }
+//    return _lazyTask;
+//}
 
 #pragma mark - Remove Lua Function
 - (void)dealloc
