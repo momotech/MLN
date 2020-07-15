@@ -109,7 +109,7 @@ typedef NS_ENUM(NSUInteger, MLNUIObjectAnimationSetType) {
     self.valueAnimation.repeatBlock = ^(MLAAnimation *animation, NSUInteger count) {
         __strong typeof(weakSelf) strongSelf = weakSelf;
         if (strongSelf.repeatBlock) {
-            [strongSelf.repeatBlock addObjArgument:strongSelf];
+            [strongSelf.repeatBlock addObjArgument:animation.bridgeAnimation];
             [strongSelf.repeatBlock addUIntegerArgument:count];
             [strongSelf.repeatBlock callIfCan];
         }

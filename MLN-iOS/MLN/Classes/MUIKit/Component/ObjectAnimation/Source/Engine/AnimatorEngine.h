@@ -32,10 +32,10 @@ typedef AnimationList::iterator AnimationListIterator;
 typedef std::function<void(AMTTimeInterval currentTime)> AnimatorEngineLoopStart;
 typedef std::function<void(AMTTimeInterval currentTime)> AnimatorEngineLoopEnd;
 
-typedef std::function<void(Animation*)> AnimatorEngineAnimationStart;
-typedef std::function<void(Animation*, AMTBool)> AnimatorEngineAnimationPause;
-typedef std::function<void(Animation*,  AMTInt)> AnimatorEngineAnimationRepeat;
-typedef std::function<void(Animation*, AMTBool)> AnimatorEngineAnimationFinish;
+typedef std::function<void(Animation *)> AnimatorEngineAnimationStart;
+typedef std::function<void(Animation *, AMTBool)> AnimatorEngineAnimationPause;
+typedef std::function<void(Animation *, Animation *, AMTInt)> AnimatorEngineAnimationRepeat;
+typedef std::function<void(Animation *, AMTBool)> AnimatorEngineAnimationFinish;
 
 typedef std::function<void(Animation*)> AnimatorEngineUpdateAnimation;
 

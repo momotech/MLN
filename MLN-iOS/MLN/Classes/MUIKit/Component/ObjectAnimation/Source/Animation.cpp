@@ -128,16 +128,16 @@ void Animation::CallAnimationStartCallbackIfNeeded() {
 }
 
 void Animation::CallAnimationRepeatCallbackIfNeeded(Animation *executingAnimation) {
-    if (OnAnimationRepeatCallback == nullptr) {
+    if (OnAnimationRepeatCallback == nullptr || executingAnimation == nullptr) {
         return;
     }
-    didRepeatedCount++;
-    if (executingAnimation && executingAnimation->GetAutoreverses()) {
-        if (didRepeatedCount % 2 == 0) {
-            OnAnimationRepeatCallback(this, didRepeatedCount / 2);
+    executingAnimation->didRepeatedCount++;
+    if (executingAnimation->GetAutoreverses()) {
+        if (executingAnimation->didRepeatedCount % 2 == 0) {
+            OnAnimationRepeatCallback(this, executingAnimation, executingAnimation->didRepeatedCount / 2);
         }
     } else {
-        OnAnimationRepeatCallback(this, didRepeatedCount);
+        OnAnimationRepeatCallback(this, executingAnimation, executingAnimation->didRepeatedCount);
     }
 }
 

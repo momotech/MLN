@@ -18,6 +18,7 @@
 #include "CustomAnimation.h"
 #include "MLAActionEnabler.h"
 #import "MLAValueAnimation+Interactive.h" //不可删除
+#import "MLNUIObjectAnimation.h"
 
 using namespace ANIMATOR_NAMESPACE;
 
@@ -46,6 +47,10 @@ using namespace ANIMATOR_NAMESPACE;
     if (self.animation) {
         ANIMATOR_SAFE_DELETE(self.animation);
     }
+}
+
+- (void *)animationPtr {
+    return _animation;
 }
 
 - (void)setBeginTime:(NSNumber *)beginTime {
@@ -156,11 +161,11 @@ using namespace ANIMATOR_NAMESPACE;
     }
 }
 
-- (void)repeatAnimation:(NSUInteger)count {
+- (void)repeatAnimation:(MLAAnimation *)executingAnimation count:(NSUInteger)count {
     [self reset];
     if (self.repeatBlock) {
         ActionEnabler enabler;
-        self.repeatBlock(self, count);
+        self.repeatBlock(executingAnimation, count);
     }
 }
 

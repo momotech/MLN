@@ -66,9 +66,9 @@ void AnimatorEngine::AddAnimation(Animation *animation, const AMTString &animati
         }
     };
     
-    animation->OnAnimationRepeatCallback = [this](Animation* animation1, AMTInt count) {
+    animation->OnAnimationRepeatCallback = [this](Animation *caller, Animation *executingAnimation, AMTInt count) {
         if (this->animationRepeat) {
-            this->animationRepeat(animation1, count);
+            this->animationRepeat(caller, executingAnimation, count);
         }
     };
 

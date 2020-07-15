@@ -18,7 +18,7 @@
 
 - (void)pauseAnimation:(BOOL)paused;
 
-- (void)repeatAnimation:(NSUInteger)count;
+- (void)repeatAnimation:(MLAAnimation *)executingAnimation count:(NSUInteger)count;
 
 - (void)finishAnimation:(BOOL)finish;
 

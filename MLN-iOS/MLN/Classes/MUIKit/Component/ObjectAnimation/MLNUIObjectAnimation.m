@@ -191,6 +191,7 @@
             }
                 break;
         }
+        _valueAnimation.bridgeAnimation = self;
         
         __weak typeof(self) weakSelf = self;
         _valueAnimation.startBlock = ^(MLAAnimation *animation) {
@@ -220,7 +221,7 @@
         _valueAnimation.repeatBlock = ^(MLAAnimation *animation, NSUInteger count) {
             __strong typeof(weakSelf) strongSelf = weakSelf;
             if (strongSelf.repeatBlock) {
-                [strongSelf.repeatBlock addObjArgument:strongSelf];
+                [strongSelf.repeatBlock addObjArgument:animation.bridgeAnimation];
                 [strongSelf.repeatBlock addUIntegerArgument:count];
                 [strongSelf.repeatBlock callIfCan];
             }

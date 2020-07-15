@@ -15,10 +15,10 @@ ANIMATOR_NAMESPACE_BEGIN
 
 class Animation {
 
-    typedef std::function<void (Animation*)> AnimationStartCallback;
-    typedef std::function<void (Animation*, AMTBool paused)> AnimationPauseCallback;
-    typedef std::function<void (Animation*, AMTInt  repeat)> AnimationRepeatCallback;
-    typedef std::function<void (Animation*, AMTBool finish)> AnimationStopCallback;
+    typedef std::function<void (Animation *)> AnimationStartCallback;
+    typedef std::function<void (Animation *, AMTBool paused)> AnimationPauseCallback;
+    typedef std::function<void (Animation *caller, Animation *executingAnimation, AMTInt  repeat)> AnimationRepeatCallback;
+    typedef std::function<void (Animation *, AMTBool finish)> AnimationStopCallback;
 
 public:
     explicit Animation(const AMTString &strName);

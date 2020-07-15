@@ -81,8 +81,8 @@ static MLAAnimator* shareInstance;
         [self onAnimationPause:animation pause:paused];
     };
     
-    animatorEngine->animationRepeat = [self](Animation* animation, AMTInt count) {
-        [self onAnimationRepeat:animation count:count];
+    animatorEngine->animationRepeat = [self](Animation *caller, Animation *executingAnimation, AMTInt count) {
+        [self onAnimationRepeat:caller executingAnimation:executingAnimation count:count];
     };
     
     
@@ -148,17 +148,27 @@ static MLAAnimator* shareInstance;
     }
 }
 
-- (void)onAnimationRepeat:(Animation*)animation count:(NSUInteger)count
+- (void)onAnimationRepeat:(Animation *)caller executingAnimation:(Animation *)executingAnimation count:(NSUInteger)count
 {
     // 获取动画名
-    NSString *animationKey = [NSString stringWithUTF8String:animation->GetName().c_str()];
+    NSString *animationKey = [NSString stringWithUTF8String:caller->GetName().c_str()];
     
     dispatch_semaphore_wait(_semaphore, DISPATCH_TIME_FOREVER);
     MLAAnimation<MLAAnimationPrivate> *mlaAnimation = (id)[self.animations objectForKey:animationKey];
     dispatch_semaphore_signal(_semaphore);
     
+    MLAAnimation *doingAnimation = mlaAnimation;
+    if ([mlaAnimation isKindOfClass:[MLAMultiAnimation class]]) {
+        NSArray<MLAAnimation *> *array = [(MLAMultiAnimation *)mlaAnimation animations];
+        for (MLAAnimation *anim in array) {
+            if (anim.animationPtr == executingAnimation) {
+                doingAnimation = anim;
+                break;
+            }
+        }
+    }
     if (mlaAnimation) {
-        [mlaAnimation repeatAnimation:count];
+        [mlaAnimation repeatAnimation:doingAnimation count:count];
     }
 }
 

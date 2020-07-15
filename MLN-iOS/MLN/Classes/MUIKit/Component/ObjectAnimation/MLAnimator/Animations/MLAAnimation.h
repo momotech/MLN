@@ -8,7 +8,7 @@
 #import "MLAAnimatable.h"
 
 // 动画过程回调Block
-@class MLAAnimation;
+@class MLAAnimation, MLNUIObjectAnimation;
 typedef void(^MLAAnimationStartBlock)(MLAAnimation* animation);
 typedef void(^MLAAnimationPauseBlock)(MLAAnimation* animation);
 typedef void(^MLAAnimationResumeBlock)(MLAAnimation* animation);
@@ -25,6 +25,12 @@ typedef void(^MLAAnimationFinishBlock)(MLAAnimation* animation, BOOL finish);
 - (instancetype)init NS_UNAVAILABLE;
 
 @property(readonly, weak) id target;
+
+/// animator::Animation*
+@property (nonatomic, assign, readonly) void *animationPtr;
+
+/// MLNUIObjectAnimation
+@property (nonatomic, weak) MLNUIObjectAnimation *bridgeAnimation;
 
 /**
  * 动画开始执行时间，相对动画被添加的时间间隔
