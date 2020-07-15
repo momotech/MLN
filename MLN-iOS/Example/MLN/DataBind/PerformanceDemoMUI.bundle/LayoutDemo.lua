@@ -173,8 +173,10 @@ paramsModel.childView[var_7].isChoosed=true
 paramsModel.curChildPos=var_7
 showStackParamsLayout(false)
 childParamsModel.params=paramsModel.childView[paramsModel.curChildPos.__get].params.__get
+--[[
 print(tostring(paramsModel.childView[paramsModel.curChildPos.__get].params[1].choosedIndex.__get)
 .. "," .. tostring(childParamsModel.params[1].choosedIndex.__get))
+]]--
 end)
 return base_hstack_var1_1
 end)()
@@ -321,8 +323,10 @@ paramsModel.childView[var_9].isChoosed=true
 paramsModel.curChildPos=var_9
 showStackParamsLayout(false)
 childParamsModel.params=paramsModel.childView[paramsModel.curChildPos.__get].params.__get
+--[[
 print(tostring(paramsModel.childView[paramsModel.curChildPos.__get].params[1].choosedIndex.__get)
 .. "," .. tostring(childParamsModel.params[1].choosedIndex.__get))
+]]--
 end)
 return base_vstack_var2_1
 end)()
@@ -413,7 +417,7 @@ window_5:positionType(PositionType.ABSOLUTE)
 window_5:positionRight(50)
 window_5:positionTop(300)
 window_5:onClick(function()
-print("确定------>")
+-- print("确定------>")
 paramsModel.childView[paramsModel.curChildPos.__get].params=childParamsModel.params.__get
 end)
 window:addView(window_5)
@@ -457,7 +461,7 @@ local _v_6 = {}
 for index2=1, (paramsModel.childView[paramsModel.curChildPos.__get].params.__asize) do
 local _p_i_3=index2
 local _v_6_=(function()
-print("create childView ", index2)
+-- print("create childView ", index2)
 if index2 == 1 then
 return  (function()
 local var_11=index2
@@ -492,12 +496,16 @@ childParamsLayout_var3_1_2_var4_1:text(new)
 end
 _view_set_style_with_filter(childParamsLayout_var3_1_2_var4_1,labelStyle,{})
 childParamsLayout_var3_1_2_var4_1:onClick(function()
+--[[
 print("scrollview--->" .. paramsModel.curChildPos.__get .. "," .. var_13 .. "," .. var_14)
 print("label——self--->preIndex=" .. paramsModel.childView[paramsModel.curChildPos.__get].params[var_13].choosedIndex.__get .. ",choosedIndex=" .. var_14)
+]]--
 if not paramsModel.childView[paramsModel.curChildPos.__get].params[_p_i_3].params[_p_i_12].isChoosed.__get then 
 paramsModel.childView[paramsModel.curChildPos.__get].params[_p_i_3].params[_p_i_12].isChoosed=not paramsModel.childView[paramsModel.curChildPos.__get].params[_p_i_3].params[_p_i_12].isChoosed.__get
 preIndex=paramsModel.childView[paramsModel.curChildPos.__get].params[var_13].choosedIndex.__get
+--[[
 print("preindex-->" .. tostring(paramsModel.childView[paramsModel.curChildPos.__get].params[var_13].choosedIndex.__get))
+--]]
 if paramsModel.childView[paramsModel.curChildPos.__get].params[var_13].choosedIndex.__get>0 then 
 paramsModel.childView[paramsModel.curChildPos.__get].params[var_13].params[paramsModel.childView[paramsModel.curChildPos.__get].params[var_13].choosedIndex.__get].isChoosed=not paramsModel.childView[paramsModel.curChildPos.__get].params[var_13].params[paramsModel.childView[paramsModel.curChildPos.__get].params[var_13].choosedIndex.__get].isChoosed.__get
 end 
@@ -627,14 +635,14 @@ end
 watch_f_5()
 paramsModel.childView[paramsModel.curChildPos.__get].params[_p_i_3].values.__watch=watch_f_5
 childParamsLayout_var5_1_2_var6_1:setEndChangedCallback(function(str)
-print("edit--->" .. str)
+-- print("edit--->" .. str)
 if str ~= "" then 
 temp=tonumber(str)
 else 
 temp=0
 end 
 childParamsModel.params[var_17].values[var_18]=temp
-print(childParamsModel.params[var_17].values[var_18].__get)
+-- print(childParamsModel.params[var_17].values[var_18].__get)
 end)
 keyboardManager:bindEditText(keyboardManager.WINDOW_PUSH, childParamsLayout_var5_1_2_var6_1, 0, null)
 return childParamsLayout_var5_1_2_var6_1

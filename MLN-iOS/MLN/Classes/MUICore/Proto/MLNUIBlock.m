@@ -12,6 +12,7 @@
 #import "MLNUILazyBlockTask.h"
 #import "MLNUIExtScope.h"
 #import "MLNUIKitHeader.h"
+#import "MLNUIKit.h"
 
 @interface MLNUIBlock ()
 
@@ -133,22 +134,22 @@ static int mlnui_errorFunc_traceback (lua_State *L) {
 - (void)lazyCallIfCan:(void(^)(id))completionBlock {
     doInMainQueue
     (
-#if DEBUG && 0
-     [self callIfCan];
+#if OCPERF_COALESCE_BLOCK
+      @weakify(self);
+      NSArray *args = self.arguments.copy;
+      [self reset];
+      MLNUIKitInstance *instance = MLNUI_KIT_INSTANCE(self.luaCore);
+      MLNUILazyBlockTask *task = [MLNUILazyBlockTask taskWithCallback:^{
+         @strongify(self);
+         if (!self) return;
+         id r = [self _callWithArguments:args];
+         if (completionBlock) {
+             completionBlock(r);
+         }
+     } taskID:self.innerFunction];
+      [instance forcePushLazyTask:task];
 #else
-     @weakify(self);
-     NSArray *args = self.arguments.copy;
-     [self reset];
-     MLNUIKitInstance *instance = MLNUI_KIT_INSTANCE(self.luaCore);
-     MLNUILazyBlockTask *task = [MLNUILazyBlockTask taskWithCallback:^{
-        @strongify(self);
-        if (!self) return;
-        id r = [self _callWithArguments:args];
-        if (completionBlock) {
-            completionBlock(r);
-        }
-    } taskID:self.innerFunction];
-     [instance forcePushLazyTask:task];
+     [self callIfCan];
 #endif
      )
 }

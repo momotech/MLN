@@ -26,7 +26,7 @@ window_1_1:bgColor(Color(200, 200, 200, 1))
 window_1_1:widthPercent(100)
 window_1_1:basis(1)
 goodsData.list.__watch=function(new,old)
-print("watch_goodsData.list---->" ..#new .. ",")
+-- print("watch_goodsData.list---->" ..#new .. ",")
 end
 DataBinding:bindListView(goodsData.list.__path, window_1_1)
 local window_1_1_adapter = TableViewAutoFitAdapter()
@@ -97,24 +97,24 @@ _cell_.contentView_1_2_1:text(_l_c_item.name.__get)
 _cell_.contentView_1_2_2:text(_l_c_item.discount.__get .. "折" .. " 原¥" .. _l_c_item.price.__get)
 _cell_.contentView_1_2_3:text("折后¥" .. _l_c_item.price.__get*_l_c_item.discount.__get/10)
 _cell_.subNum:onClick(function()
-print("--")
+-- print("--")
 goodsData.totalNum=goodsData.totalNum.__get-1
 if _l_c_item.num.__get>0 then 
 _l_c_item.num=_l_c_item.num.__get-1
 end
 end)
 _cell_.goodsNum:text(_l_c_item.num.__get .. "")
-print("bind-->" .. _l_c_item.name.__get .. "," .. _l_c_item.num.__get)
+-- print("bind-->" .. _l_c_item.name.__get .. "," .. _l_c_item.num.__get)
 for i=1, (goodsData.list.__asize) do
 local _p_i_1=i
-print(goodsData.list[_p_i_1].name.__get .. "-->" .. goodsData.list[_p_i_1].num.__get)
+-- print(goodsData.list[_p_i_1].name.__get .. "-->" .. goodsData.list[_p_i_1].num.__get)
 end 
 BindMetaPopForach()
 isHidden=(_l_c_item.num.__get <= 0)
 _cell_.subNum:display(not isHidden)
 _cell_.goodsNum:display(not isHidden)
 _cell_.addNum:onClick(function()
-print("++")
+-- print("++")
 goodsData.totalNum=goodsData.totalNum.__get+1
 _l_c_item.num=_l_c_item.num.__get+1
 end)
@@ -167,7 +167,7 @@ price=11.1,
 num=6}
 for i=1, (goodsData.list.__asize) do
 local _p_i_3=i
-print(goodsData.list[_p_i_3].name.__get .. "-->" .. goodsData.list[_p_i_3].num.__get)
+-- print(goodsData.list[_p_i_3].name.__get .. "-->" .. goodsData.list[_p_i_3].num.__get)
 end 
 BindMetaPopForach()
 end)
@@ -187,7 +187,7 @@ price=66,
 num=0})
 for i=1, (goodsData.list.__asize) do
 local _p_i_4=i
-print(goodsData.list[_p_i_4].name.__get .. "-->" .. goodsData.list[_p_i_4].num.__get)
+-- print(goodsData.list[_p_i_4].name.__get .. "-->" .. goodsData.list[_p_i_4].num.__get)
 end 
 BindMetaPopForach()
 end)
@@ -204,6 +204,6 @@ end)
 window_1_2:children({window_1_2_1, window_1_2_2, window_1_2_3, window_1_2_4})
 window_1:children({window_1_1, window_1_2})
 goodsData.totalNum.__watch=function(new,old)
-print("watch_goodsData.totalNum--->" .. new .. ",")
+-- print("watch_goodsData.totalNum--->" .. new .. ",")
 end
 window:addView(window_1)

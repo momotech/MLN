@@ -8,26 +8,27 @@
 #ifndef MLNUIKit_h
 #define MLNUIKit_h
 
-#define OCPERF 0
+#define OCPERF 1
 
 #if OCPERF
 #define OCPERF_USE_LUD 1
 #define OCPERF_UPDATE_LUACORE 1
 #define OCPERF_USE_CF 1
-#define OCPERF_USE_C 1
+//#define OCPERF_USE_C 1
 #define OCPERF_PRE_REQUIRE 1
+//#define OCPERF_COALESCE_BLOCK 1
 #else
 #define OCPERF_USE_LUD 0
 #define OCPERF_UPDATE_LUACORE 0
 #define OCPERF_USE_CF 0
-#define OCPERF_USE_C 0
+//#define OCPERF_USE_C 0
 #define OCPERF_PRE_REQUIRE 0
+//#define OCPERF_COALESCE_BLOCK 0
 #endif
 
-#ifdef OCPERF_USE_C
-#undef OCPERF_USE_C
+
 #define OCPERF_USE_C 1
-#endif
+#define OCPERF_COALESCE_BLOCK 1
 
 #import <UIKit/UIKit.h>
 
@@ -146,7 +147,7 @@
 
 #import "MLNUIPerformanceHeader.h"
 
-#if DEBUG
+#if DEBUG || 1
 #define PSTART_TAG(type, _tag) [[[MLNUIKitInstanceHandlersManager defaultManager] performanceMonitor] onStart:type tag:_tag]
 #define PSTART(type) PSTART_TAG(type, nil)
 
