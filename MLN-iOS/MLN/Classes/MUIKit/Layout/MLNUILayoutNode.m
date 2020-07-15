@@ -181,6 +181,10 @@ static YGConfigRef globalConfig;
     YGNodeMarkDirty(node);
 }
 
+- (BOOL)resetOriginAfterLayout {
+    return self.view.mlnui_resetOriginAfterLayout;
+}
+
 - (NSUInteger)numberOfChildren {
     return YGNodeGetChildCount(self.node);
 }
@@ -289,11 +293,11 @@ YG_PROPERTY(CGFloat, aspectRatio, AspectRatio)
 
 - (CGSize)applyLayoutWithSize:(CGSize)size {
     CGSize result = [self calculateLayoutWithSize:size];
-    YGApplyLayoutToViewHierarchy(self.view, NO);
+    YGApplyLayoutToViewHierarchy(self.view);
     return result;
 }
 
-- (void)applyLayoutPreservingOrigin:(BOOL)preserveOrigin dimensionFlexibility:(YGDimensionFlexibility)dimensionFlexibility {
+- (void)applyLayoutWithDimensionFlexibility:(YGDimensionFlexibility)dimensionFlexibility {
     CGSize size = self.view.bounds.size;
     if (dimensionFlexibility & YGDimensionFlexibilityFlexibleWidth) {
         size.width = YGUndefined;
@@ -302,7 +306,7 @@ YG_PROPERTY(CGFloat, aspectRatio, AspectRatio)
         size.height = YGUndefined;
     }
     [self calculateLayoutWithSize:size];
-    YGApplyLayoutToViewHierarchy(self.view, preserveOrigin);
+    YGApplyLayoutToViewHierarchy(self.view);
 }
 
 - (CGSize)intrinsicSize
@@ -454,8 +458,7 @@ static CGFloat YGRoundPixelValue(CGFloat value)
     return roundf(value * scale) / scale;
 }
 
-static void YGApplyLayoutToViewHierarchy(UIView *view, BOOL preserveOrigin)
-{
+static void YGApplyLayoutToViewHierarchy(UIView *view) {
     NSCAssert([NSThread isMainThread], @"Framesetting should only be done on the main thread.");
     const MLNUILayoutNode *layout = view.mlnui_layoutNode;
     if (layout == nil) {
@@ -476,7 +479,7 @@ static void YGApplyLayoutToViewHierarchy(UIView *view, BOOL preserveOrigin)
     };
 
     CGRect frame = view.mlnuiLayoutFrame;
-    CGPoint origin = preserveOrigin ? frame.origin : CGPointZero;
+    CGPoint origin = layout.resetOriginAfterLayout ? CGPointZero : frame.origin;
     frame.origin = CGPointMake(YGRoundPixelValue(topLeft.x + origin.x), YGRoundPixelValue(topLeft.y + origin.y));
     frame.size = CGSizeMake(YGRoundPixelValue(bottomRight.x) - YGRoundPixelValue(topLeft.x), YGRoundPixelValue(bottomRight.y) - YGRoundPixelValue(topLeft.y));
     if (!CGRectEqualToRect(view.mlnuiLayoutFrame, frame)) {
@@ -487,7 +490,7 @@ static void YGApplyLayoutToViewHierarchy(UIView *view, BOOL preserveOrigin)
     
     if (!layout.isLeaf) {
         for (NSUInteger i = 0; i < view.subviews.count; i++) {
-            YGApplyLayoutToViewHierarchy(view.subviews[i], preserveOrigin);
+            YGApplyLayoutToViewHierarchy(view.subviews[i]);
         }
     }
 }

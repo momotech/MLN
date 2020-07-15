@@ -32,6 +32,10 @@
 @property (nonatomic, strong) MLNUISafeAreaProxy *safeAreaProxy;
 @property (nonatomic, strong) NSMutableSet<UIView *> *beyondSuperviews; // 键盘弹起，跟随键盘上移而超出父视图frame的视图
 
+@property (nonatomic, strong) UIView *statusBar;
+@property (nonatomic, assign) MLNUIStatusBarMode statusBarMode; // default full screen
+@property (nonatomic, strong) UIColor *statusBarColor;
+
 @end
 
 @implementation MLNUIWindow
@@ -40,6 +44,7 @@
 {
     self = [super initWithMLNUILuaCore:luaCore frame:frame];
     if (self) {
+        _statusBarMode = MLNUIStatusBarModeFullScreen;
         [self addNotificationObservers];
     }
     return self;
@@ -48,6 +53,19 @@
 - (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     [self.safeAreaProxy detachSafeAreaView:self];
+}
+
+- (CGRect)statusBarFrame {
+    CGRect frame = CGRectZero;
+    if (@available(iOS 13.0, *)) {
+        frame = self.window.windowScene.statusBarManager.statusBarFrame;
+    } else {
+        frame = [UIApplication sharedApplication].statusBarFrame;
+    }
+    if (CGRectEqualToRect(frame, CGRectZero)) {
+        frame = [UIApplication sharedApplication].statusBarFrame;
+    }
+    return frame;
 }
 
 #pragma mark - Notification
@@ -139,13 +157,6 @@
         }
     }
     return [super hitTest:point withEvent:event];
-}
-
-- (NSMutableSet *)beyondSuperviews {
-    if (!_beyondSuperviews) {
-        _beyondSuperviews = [NSMutableSet set];
-    }
-    return _beyondSuperviews;
 }
 
 #pragma mark - luaSafeArea
@@ -254,7 +265,91 @@
     [self.beyondSuperviews removeAllObjects];
 }
 
+- (void)luaui_setStatusBarMode:(MLNUIStatusBarMode)mode {
+    self.statusBarMode = mode;
+    switch (mode) {
+        case MLNUIStatusBarModeFullScreen:
+            [self updateStatusBarHierarchy:nil changeWindowFrame:NO];
+            break;
+            
+        case MLNUIStatusBarModeTransparency:
+            [self updateStatusBarHierarchy:self.superview changeWindowFrame:NO];
+            break;
+            
+        case MLNUIStatusBarModeNoneFullScreen:
+            [self updateStatusBarHierarchy:self.superview changeWindowFrame:YES];
+            break;
+            
+        default:
+            break;
+    }
+}
+
+- (MLNUIStatusBarMode)luaui_getStatusBarMode {
+    return self.statusBarMode;
+}
+
+- (void)luaui_setStatusBarColor:(UIColor *)color {
+    self.statusBarColor = color;
+    _statusBar.backgroundColor = color; // if statusBar isn't nil and set color, or do nothing.
+}
+
+- (UIColor *)luaui_getStatusBarColor {
+    return self.statusBarColor;
+}
+
+#pragma mark - Private
+
+- (void)updateStatusBarHierarchy:(UIView *)superview changeWindowFrame:(BOOL)changeFrame {
+    if (!superview) {
+        [_statusBar removeFromSuperview];
+        _statusBar = nil;
+        return;
+    }
+    if (self.statusBar.superview == superview) {
+        return;
+    }
+    [self.statusBar removeFromSuperview];
+    [superview addSubview:self.statusBar];
+    [self changeLuaWindowFrameIfNeeded:changeFrame];
+}
+
+- (void)changeLuaWindowFrameIfNeeded:(BOOL)change {
+    if (change) {
+        if (CGRectEqualToRect(self.frame, [UIScreen mainScreen].bounds)) {
+            CGFloat statusBarHeight = self.statusBar.frame.size.height;
+            CGRect frame = self.frame;
+            frame.origin.y += statusBarHeight;
+            frame.size.height -= statusBarHeight;
+            self.mlnuiLayoutFrame = frame;
+        }
+    } else {
+        if (!CGRectEqualToRect(self.frame, [UIScreen mainScreen].bounds)) {
+            self.mlnuiLayoutFrame = [UIScreen mainScreen].bounds;
+        }
+    }
+}
+
+#pragma mark - Lazy Loading
+
+- (NSMutableSet *)beyondSuperviews {
+    if (!_beyondSuperviews) {
+        _beyondSuperviews = [NSMutableSet set];
+    }
+    return _beyondSuperviews;
+}
+
+- (UIView *)statusBar {
+    if (!_statusBar) {
+        CGRect frame = [self statusBarFrame];
+        _statusBar = [[UIView alloc] initWithFrame:CGRectMake(0, 0, frame.size.width, frame.size.height)];
+        _statusBar.backgroundColor = self.statusBarColor;
+    }
+    return _statusBar;
+}
+
 #pragma mark - Appear & Disappear
+
 - (BOOL)canDoLuaViewDidAppear
 {
     return self.viewAppearCallback!=nil;
@@ -349,6 +444,10 @@
     return YES;
 }
 
+- (BOOL)mlnui_resetOriginAfterLayout {
+    return NO;
+}
+
 - (void)setFrame:(CGRect)frame
 {
     BOOL isSizeChange = !CGSizeEqualToSize(self.frame.size, frame.size);
@@ -410,7 +509,9 @@
 #pragma mark - Export
 
 LUAUI_EXPORT_VIEW_BEGIN(MLNUIWindow)
-LUAUI_EXPORT_VIEW_PROPERTY(safeArea, "luaui_setSafeArea:", "luaui_getSafeArea", MILWindow)
+LUAUI_EXPORT_VIEW_PROPERTY(safeArea, "luaui_setSafeArea:", "luaui_getSafeArea", MLNUIWindow)
+LUAUI_EXPORT_VIEW_PROPERTY(statusBarMode, "luaui_setStatusBarMode:", "luaui_getStatusBarMode", MLNUIWindow)
+LUAUI_EXPORT_VIEW_PROPERTY(statusBarColor, "luaui_setStatusBarColor:", "luaui_getStatusBarColor", MLNUIWindow)
 LUAUI_EXPORT_VIEW_METHOD(safeAreaAdapter, "luaui_setSafeAreaAdapter:", MLNUIWindow)
 LUAUI_EXPORT_VIEW_METHOD(safeAreaInsetsTop, "luaui_safeAreaInsetsTop", MLNUIWindow)
 LUAUI_EXPORT_VIEW_METHOD(safeAreaInsetsBottom, "luaui_safeAreaInsetsBottom", MLNUIWindow)

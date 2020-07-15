@@ -32,6 +32,12 @@ typedef NS_OPTIONS(NSUInteger, MLNUIGradientType) {
     MLNUIGradientTypeBottomToTop = 1<<3,
 };
 
+typedef NS_ENUM(NSInteger, MLNUIStatusBarMode) {
+    MLNUIStatusBarModeNoneFullScreen = 0,
+    MLNUIStatusBarModeFullScreen,
+    MLNUIStatusBarModeTransparency,
+};
+
 typedef enum : NSUInteger {
     MLNUIStatusBarStyleDefault = 0,
     MLNUIStatusBarStyleLight,
@@ -72,7 +78,6 @@ typedef enum : NSUInteger {
     //    点9图模式，需要忽略contentMode设置
     MLNUIImageViewModeNine,
 } MLNUIImageViewMode;
-
 
 NS_ASSUME_NONNULL_BEGIN
 

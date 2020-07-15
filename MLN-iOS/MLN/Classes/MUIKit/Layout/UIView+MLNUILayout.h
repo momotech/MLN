@@ -19,6 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// 可重写该属性get方法. 若返回NO, 则不会参与测量布局计算, 也不会关联`mlnui_layoutNode`. 默认为NO.
 @property (nonatomic, assign, readonly) BOOL mlnui_layoutEnable;
 @property (nonatomic, assign, readonly) BOOL mlnui_isRootView;   // default is NO
+@property (nonatomic, assign, readonly) BOOL mlnui_resetOriginAfterLayout; // default is YES.
 
 #pragma mark - Hierarchy
 

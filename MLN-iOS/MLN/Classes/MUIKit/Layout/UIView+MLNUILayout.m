@@ -45,6 +45,10 @@ static const void *kMLNUILayoutAssociatedKey = &kMLNUILayoutAssociatedKey;
     return NO;
 }
 
+- (BOOL)mlnui_resetOriginAfterLayout {
+    return YES;
+}
+
 #pragma mark - MLNUIPaddingContainerViewProtocol
 
 - (UIView *)mlnui_contentView {
@@ -825,13 +829,13 @@ static MLNUI_FORCE_INLINE void MLNUIViewChangeHeight(UIView *view, CGFloat heigh
 }
 
 - (void)setMlnuiLayoutFrame:(CGRect)frame {
+    objc_setAssociatedObject(self, @selector(mlnuiLayoutFrame), [NSValue valueWithCGRect:frame], OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     MLNUIViewApplyFrame(self, (CGRect){
         frame.origin.x + self.mlnuiTranslationX,
         frame.origin.y + self.mlnuiTranslationY,
         frame.size.width * self.mlnuiScaleX,
         frame.size.height * self.mlnuiScaleY
     });
-    objc_setAssociatedObject(self, @selector(mlnuiLayoutFrame), [NSValue valueWithCGRect:frame], OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
 - (CGRect)mlnuiLayoutFrame {
