@@ -9,12 +9,12 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+typedef CGSize(^MLNUIScrollViewNodeRequestLayoutHandler)(void);
+
 @class MLNUILuaCore;
 @interface MLNUIInnerScrollView : UIScrollView
 
-- (instancetype)initWithMLNUILuaCore:(MLNUILuaCore *)luaCore direction:(BOOL)horizontal isLinearContenView:(BOOL)isLinearContenView;
-- (void)updateContentViewLayoutIfNeed;
-- (void)recalculContentSizeIfNeed;
+- (instancetype)initWithMLNUILuaCore:(MLNUILuaCore *)luaCore direction:(BOOL)horizontal requetLayoutHandler:(MLNUIScrollViewNodeRequestLayoutHandler)handler;
 
 @end
 

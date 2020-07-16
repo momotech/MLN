@@ -12,7 +12,6 @@
 #import "MLNUIBeforeWaitingTaskEngine.h"
 #import "MLNUIKiConvertor.h"
 #import "UIView+MLNUILayout.h"
-#import "MLNUILayoutContainerNode.h"
 #import "MLNUIKitInstanceHandlersManager.h"
 #import "MLNUIWindow.h"
 #import "MLNUIKitInstanceConsts.h"
@@ -56,9 +55,12 @@
 
 - (void)setupLuaWindow:(NSMutableDictionary *)windowExtra
 {
+    PSTART_TAG(MLNUILoadTimeStatisticsType_Custom, @"other3");
     if (!self.luaWindow) {
         _luaWindow = [self createLuaWindow];
     }
+    PEND_TAG_INFO(MLNUILoadTimeStatisticsType_Custom, @"other3", @"【其他初始化-create window】");
+
     self.luaWindow.extraInfo = windowExtra;
     [self.luaCore registerGlobalVar:self.luaWindow globalName:@"window" error:nil];
     self.luaWindow.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
@@ -67,14 +69,9 @@
 
 - (void)pushWindowToLayoutEngine
 {
-    __unsafe_unretained MLNUILayoutContainerNode *node = (MLNUILayoutContainerNode *)self.luaWindow.luaui_node;
-    node.heightType = MLNUILayoutMeasurementTypeIdle;
-    node.widthType = MLNUILayoutMeasurementTypeIdle;
-    [node changeX:0.f];
-    [node changeY:0.f];
-    [node changeWidth:self.rootView.bounds.size.width];
-    [node changeHeight:self.rootView.bounds.size.height];
-    node.root = YES;
+    __unsafe_unretained MLNUILayoutNode *node = self.luaWindow.mlnui_layoutNode;
+    node.width = MLNUIPointValue(self.rootView.bounds.size.width);
+    node.height = MLNUIPointValue(self.rootView.bounds.size.height);
     [self.layoutEngine addRootnode:node];
 }
 
@@ -219,7 +216,10 @@
     NSError *err = nil;
     if ([self.luaCore runFile:entryFilePath error:&err]) {
         // 请求布局
+        PSTART_TAG(MLNUILoadTimeStatisticsType_Custom,@"布局");
         [self forceLayoutLuaWindow];
+        PEND_TAG_INFO(MLNUILoadTimeStatisticsType_Custom, @"布局", @"【布局】");
+//        PEND_TAG_INFO(MLNUILoadTimeStatisticsType_Custom, @"布局", @"【布局】")
         // 回调代理
         if ([self.delegate respondsToSelector:@selector(instance:didFinishRun:)]) {
             [self.delegate instance:self didFinishRun:entryFilePath];
@@ -381,14 +381,21 @@
     }
     // 创建新的LuaCore
     [self luaCore];
+    
+    PSTART_TAG(MLNUILoadTimeStatisticsType_Custom, @"other");
     // 注册Kit所有Bridge, 兼容老代码
     [self registerKitClasses];
     // 开启所有处理引擎
     [self startAllEngines];
     // 创建LuaWindow
+    PSTART_TAG(MLNUILoadTimeStatisticsType_Custom, @"other2");
     [self setupLuaWindow:_windowExtra];
+    PEND_TAG_INFO(MLNUILoadTimeStatisticsType_Custom, @"other2", @"【其他初始化-window】");
     // 将LuaWindow加入到Layout引擎
     [self pushWindowToLayoutEngine];
+    PEND_TAG_INFO(MLNUILoadTimeStatisticsType_Custom, @"other", @"【其他初始化】");
+
+
     // 回调代理
     if ([self.delegate respondsToSelector:@selector(didSetupLuaCore:)]) {
         [self.delegate didSetupLuaCore:self];
@@ -419,7 +426,7 @@
 
 - (void)forceLayoutLuaWindow
 {
-   [self.luaWindow luaui_requestLayout];
+    [self.luaWindow mlnui_requestLayoutIfNeed];
 }
 
 - (void)releaseAll
@@ -471,7 +478,9 @@
 - (MLNUILuaCore *)luaCore
 {
     if (!_luaCore) {
+        PSTART(MLNUILoadTimeStatisticsType_LuaCore);
         [self createLuaCore];
+        PEND(MLNUILoadTimeStatisticsType_LuaCore);
     }
     return _luaCore;
 }
@@ -525,12 +534,12 @@
 
 @implementation MLNUIKitInstance (Layout)
 
-- (void)addRootnode:(MLNUILayoutContainerNode *)rootnode
+- (void)addRootnode:(MLNUILayoutNode *)rootnode
 {
     [self.layoutEngine addRootnode:rootnode];
 }
 
-- (void)removeRootNode:(MLNUILayoutContainerNode *)rootnode
+- (void)removeRootNode:(MLNUILayoutNode *)rootnode
 {
     [self.layoutEngine removeRootNode:rootnode];
 }
@@ -547,6 +556,11 @@
 - (void)pushLazyTask:(id<MLNUIBeforeWaitingTaskProtocol>)lazyTask
 {
     [self.lazyTaskEngine pushTask:lazyTask];
+}
+
+- (void)forcePushLazyTask:(id<MLNUIBeforeWaitingTaskProtocol>)lazyTask
+{
+    [self.lazyTaskEngine forcePushTask:lazyTask];
 }
 
 - (void)popLazyTask:(id<MLNUIBeforeWaitingTaskProtocol>)lazyTask

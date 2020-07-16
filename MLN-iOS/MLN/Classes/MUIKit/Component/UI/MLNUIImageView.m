@@ -13,7 +13,6 @@
 #import "MLNUIBlock.h"
 #import "MLNUINinePatchImageFactory.h"
 #import "MLNUIBeforeWaitingTask.h"
-#import "MLNUILayoutNode.h"
 #import "MLNUIKitInstanceHandlersManager.h"
 #import "MLNUIGaussEffectHandler.h"
 #import "MLNUICornerImageLoader.h"
@@ -84,12 +83,7 @@
 {
     image = [self convertToBlurImageIfNeed:image];
     [super setImage:image];
-    [self.luaui_node needLayoutAndSpread];
-}
-
-- (CGSize)luaui_measureSizeWithMaxWidth:(CGFloat)maxWidth maxHeight:(CGFloat)maxHeight
-{
-    return self.image ? self.image.size : CGSizeZero;
+    [self mlnui_markNeedsLayout];
 }
 
 - (void)checkContentMode
@@ -340,6 +334,22 @@
     MLNUIKitLuaAssert(NO, @"ImageView does not support padding!");
 }
 
+- (void)setLuaui_paddingTop:(CGFloat)luaui_paddingTop {
+    MLNUIKitLuaAssert(NO, @"ImageView does not support padding!");
+}
+
+- (void)setLuaui_paddingLeft:(CGFloat)luaui_paddingLeft {
+    MLNUIKitLuaAssert(NO, @"ImageView does not support padding!");
+}
+
+- (void)setLuaui_paddingRight:(CGFloat)luaui_paddingRight {
+    MLNUIKitLuaAssert(NO, @"ImageView does not support padding!");
+}
+
+- (void)setLuaui_paddingBottom:(CGFloat)luaui_paddingBottom {
+    MLNUIKitLuaAssert(NO, @"ImageView does not support padding!");
+}
+
 - (void)luaui_setBlurValue:(CGFloat)blurValue processImage:(BOOL)processImage
 {
     blurValue = blurValue <= 0.0? 0.0f : blurValue;
@@ -352,9 +362,8 @@
     }
 }
 
-- (void)luaui_changedLayout
-{
-    [super luaui_changedLayout];
+- (void)mlnui_layoutDidChange {
+    [super mlnui_layoutDidChange];
     if (_blurValue > 0) {
         [self mlnui_pushLazyTask:self.lazyTask];
     }
@@ -408,6 +417,10 @@
 
 #pragma mark - Override
 
+- (CGSize)mlnui_sizeThatFits:(CGSize)size {
+    return self.image ? self.image.size : CGSizeZero;
+}
+
 - (void)luaui_addSubview:(UIView *)view
 {
     MLNUIKitLuaAssert(NO, @"Not found \"addView\" method in ImageView, just continar of View has it!");
@@ -433,12 +446,8 @@
     return YES;
 }
 
-- (BOOL)luaui_layoutEnable
+- (BOOL)mlnui_layoutEnable
 {
-    return YES;
-}
-
-- (BOOL)luaui_supportOverlay {
     return YES;
 }
 
@@ -458,9 +467,4 @@ LUAUI_EXPORT_VIEW_METHOD(blurImage, "luaui_setBlurValue:processImage:", MLNUIIma
 LUAUI_EXPORT_VIEW_METHOD(addShadow, "luaui_addShadow:shadowOffset:shadowRadius:shadowOpacity:isOval:", MLNUIImageView)
 LUAUI_EXPORT_VIEW_END(MLNUIImageView, ImageView, YES, "MLNUIView", NULL)
 
-@end
-
-@implementation MLNUIOverlayImageView
-LUAUI_EXPORT_VIEW_BEGIN(MLNUIOverlayImageView) // 兼容Android
-LUAUI_EXPORT_VIEW_END(MLNUIOverlayImageView, OverImageView, YES, "MLNUIImageView", NULL)
 @end

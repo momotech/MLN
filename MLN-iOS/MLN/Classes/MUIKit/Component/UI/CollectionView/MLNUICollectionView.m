@@ -10,7 +10,6 @@
 #import "MLNUIViewExporterMacro.h"
 #import "UIScrollView+MLNUIKit.h"
 #import "UIView+MLNUILayout.h"
-#import "MLNUILayoutNode.h"
 #import "MLNUIBeforeWaitingTask.h"
 #import "MLNUISizeCahceManager.h"
 #import "MLNUICollectionViewCell.h"
@@ -393,19 +392,18 @@
 }
 
 #pragma mark - Override
-- (void)luaui_layoutCompleted
-{
-    [super luaui_layoutCompleted];
-    id<MLNUICollectionViewLayoutProtocol> layout = (id<MLNUICollectionViewLayoutProtocol>)((UICollectionView *)self.luaui_contentView).collectionViewLayout;
+
+- (void)mlnui_layoutCompleted {
+    [super mlnui_layoutCompleted];
+    id<MLNUICollectionViewLayoutProtocol> layout = (id<MLNUICollectionViewLayoutProtocol>)((UICollectionView *)self.mlnui_contentView).collectionViewLayout;
     [layout relayoutIfNeed];
 }
 
-- (CGSize)luaui_measureSizeWithMaxWidth:(CGFloat)maxWidth maxHeight:(CGFloat)maxHeight
-{
-    return CGSizeMake(maxWidth, maxHeight);
+- (CGSize)mlnui_sizeThatFits:(CGSize)size {
+    return size;
 }
 
-- (BOOL)luaui_layoutEnable
+- (BOOL)mlnui_layoutEnable
 {
     return YES;
 }
@@ -448,6 +446,7 @@
 }
 
 #pragma mark - Gesture
+
 - (void)handleLongPress:(UIGestureRecognizer *)gesture
 {
     if (gesture.state != UIGestureRecognizerStateBegan) {
@@ -489,7 +488,9 @@
     return _innerCollectionView;
 }
 
-- (UIView *)luaui_contentView
+#pragma mark - MLNUIPaddingContainerViewProtocol
+
+- (UIView *)mlnui_contentView
 {
     return self.innerCollectionView;
 }
@@ -545,9 +546,6 @@ LUAUI_EXPORT_VIEW_METHOD(setStartDeceleratingCallback, "setLuaui_startDecelerati
 LUAUI_EXPORT_VIEW_METHOD(setScrollEndCallback, "setLuaui_scrollEndCallback:",MLNUICollectionView)
 LUAUI_EXPORT_VIEW_METHOD(setContentInset, "luaui_setContentInset:right:bottom:left:", MLNUICollectionView)
 LUAUI_EXPORT_VIEW_METHOD(getContentInset, "luaui_getContetnInset:", MLNUICollectionView)
-// deprected method
-LUAUI_EXPORT_VIEW_PROPERTY(contentSize, "luaui_setContentSize:", "luaui_contentSize", MLNUICollectionView)
-LUAUI_EXPORT_VIEW_PROPERTY(scrollEnabled, "luaui_setScrollEnabled:", "luaui_scrollEnabled", MLNUICollectionView)
 // private method
 LUAUI_EXPORT_VIEW_PROPERTY(contentOffset, "luaui_setContentOffset:", "luaui_contentOffset", MLNUICollectionView)
 LUAUI_EXPORT_VIEW_PROPERTY(i_bounces, "luaui_setBounces:", "luaui_bounces", MLNUICollectionView)

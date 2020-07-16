@@ -12,6 +12,7 @@
 @implementation MLNUIView
 
 #pragma mark - Override
+
 - (BOOL)luaui_canClick
 {
     return YES;
@@ -22,7 +23,7 @@
     return YES;
 }
 
-- (BOOL)luaui_layoutEnable
+- (BOOL)mlnui_layoutEnable
 {
     return YES;
 }
@@ -33,49 +34,65 @@
 }
 
 #pragma mark - Export For Lua
+
 LUAUI_EXPORT_VIEW_BEGIN(MLNUIView)
 // layout
-LUAUI_EXPORT_VIEW_PROPERTY(x, "setLuaui_x:","luaui_x", MLNUIView)
-LUAUI_EXPORT_VIEW_PROPERTY(y, "setLuaui_y:","luaui_y", MLNUIView)
+LUAUI_EXPORT_VIEW_PROPERTY(display, "setLuaui_display:","luaui_display", MLNUIView)
+LUAUI_EXPORT_VIEW_PROPERTY(mainAxis, "setLuaui_mainAxis:","luaui_mainAxis", MLNUIView)
+LUAUI_EXPORT_VIEW_PROPERTY(crossSelf, "setLuaui_crossSelf:","luaui_crossSelf", MLNUIView)
+LUAUI_EXPORT_VIEW_PROPERTY(crossAxis, "setLuaui_crossAxis:","luaui_crossAxis", MLNUIView)
+LUAUI_EXPORT_VIEW_PROPERTY(crossContent, "setLuaui_crossContent:","luaui_crossContent", MLNUIView)
+LUAUI_EXPORT_VIEW_PROPERTY(wrap, "setLuaui_wrap:","luaui_wrap", MLNUIView)
+
 LUAUI_EXPORT_VIEW_PROPERTY(width, "setLuaui_width:","luaui_width", MLNUIView)
+LUAUI_EXPORT_VIEW_PROPERTY(minWidth, "setLuaui_minWidth:","luaui_minWidth", MLNUIView)
+LUAUI_EXPORT_VIEW_PROPERTY(maxWidth, "setLuaui_maxWidth:","luaui_maxWidth", MLNUIView)
+LUAUI_EXPORT_VIEW_PROPERTY(widthPercent, "setLuaui_widthPercent:","luaui_widthPercent", MLNUIView)
+LUAUI_EXPORT_VIEW_PROPERTY(minWidthPercent, "setLuaui_minWidthPercent:","luaui_minWidthPercent", MLNUIView)
+LUAUI_EXPORT_VIEW_PROPERTY(maxWidthPercent, "setLuaui_maxWidthPercent:","luaui_maxWidthPercent", MLNUIView)
+
 LUAUI_EXPORT_VIEW_PROPERTY(height, "setLuaui_height:","luaui_height", MLNUIView)
-LUAUI_EXPORT_VIEW_PROPERTY(right, "setLuaui_right:","luaui_right", MLNUIView)
-LUAUI_EXPORT_VIEW_PROPERTY(bottom, "setLuaui_bottom:","luaui_bottom", MLNUIView)
-LUAUI_EXPORT_VIEW_PROPERTY(centerX, "luaui_setCenterX:","luaui_centerX", MLNUIView)
-LUAUI_EXPORT_VIEW_PROPERTY(centerY, "luaui_setCenterY:","luaui_centerY", MLNUIView)
-LUAUI_EXPORT_VIEW_PROPERTY(frame, "setLuaui_frame:","luaui_frame", MLNUIView)
-LUAUI_EXPORT_VIEW_PROPERTY(size, "luaui_setSize:","luaui_size", MLNUIView)
-LUAUI_EXPORT_VIEW_PROPERTY(point, "luaui_setOrigin:","luaui_origin", MLNUIView)
+LUAUI_EXPORT_VIEW_PROPERTY(minHeight, "setLuaui_minHeight:","luaui_minHeight", MLNUIView)
+LUAUI_EXPORT_VIEW_PROPERTY(maxHeight, "setLuaui_maxHeight:","luaui_maxHeight", MLNUIView)
+LUAUI_EXPORT_VIEW_PROPERTY(heightPercent, "setLuaui_heightPercent:","luaui_heightPercent", MLNUIView)
+LUAUI_EXPORT_VIEW_PROPERTY(minHeightPercent, "setLuaui_minHeightPercent:","luaui_minHeightPercent", MLNUIView)
+LUAUI_EXPORT_VIEW_PROPERTY(maxHeightPercent, "setLuaui_maxHeightPercent:","luaui_maxHeightPercent", MLNUIView)
+
+LUAUI_EXPORT_VIEW_METHOD(padding, "luaui_setPaddingWithTop:right:bottom:left:", MLNUIView)
+LUAUI_EXPORT_VIEW_PROPERTY(paddingTop, "setLuaui_paddingTop:","luaui_paddingTop", MLNUIView)
+LUAUI_EXPORT_VIEW_PROPERTY(paddingLeft, "setLuaui_paddingLeft:","luaui_paddingLeft", MLNUIView)
+LUAUI_EXPORT_VIEW_PROPERTY(paddingBottom, "setLuaui_paddingBottom:","luaui_paddingBottom", MLNUIView)
+LUAUI_EXPORT_VIEW_PROPERTY(paddingRight, "setLuaui_paddingRight:","luaui_paddingRight", MLNUIView)
+
+LUAUI_EXPORT_VIEW_METHOD(margin, "luaui_setMarginWithTop:right:bottom:left:", MLNUIView)
 LUAUI_EXPORT_VIEW_PROPERTY(marginTop, "setLuaui_marginTop:","luaui_marginTop", MLNUIView)
 LUAUI_EXPORT_VIEW_PROPERTY(marginLeft, "setLuaui_marginLeft:","luaui_marginLeft", MLNUIView)
 LUAUI_EXPORT_VIEW_PROPERTY(marginBottom, "setLuaui_marginBottom:","luaui_marginBottom", MLNUIView)
 LUAUI_EXPORT_VIEW_PROPERTY(marginRight, "setLuaui_marginRight:","luaui_marginRight", MLNUIView)
-LUAUI_EXPORT_VIEW_PROPERTY(priority, "setLuaui_priority:","luaui_priority", MLNUIView)
-LUAUI_EXPORT_VIEW_PROPERTY(weight, "setLuaui_weight:","luaui_weight", MLNUIView)
-LUAUI_EXPORT_VIEW_METHOD(padding, "luaui_setPaddingWithTop:right:bottom:left:", MLNUIView)
-LUAUI_EXPORT_VIEW_METHOD(setMaxWidth, "setLuaui_maxWidth:",MLNUIView)
-LUAUI_EXPORT_VIEW_METHOD(setMinWidth, "setLuaui_minWidth:",MLNUIView)
-LUAUI_EXPORT_VIEW_METHOD(setMaxHeight, "setLuaui_maxHieght:",MLNUIView)
-LUAUI_EXPORT_VIEW_METHOD(setMinHeight, "setLuaui_minHeight:",MLNUIView)
-LUAUI_EXPORT_VIEW_METHOD(getCenterX, "luaui_centerX", MLNUIView)
-LUAUI_EXPORT_VIEW_METHOD(getCenterY, "luaui_centerY", MLNUIView)
-LUAUI_EXPORT_VIEW_METHOD(sizeToFit, "luaui_sizeToFit",MLNUIView)
+
+LUAUI_EXPORT_VIEW_PROPERTY(basis, "setLuaui_basis:","luaui_basis", MLNUIView)
+LUAUI_EXPORT_VIEW_PROPERTY(grow, "setLuaui_grow:","luaui_grow", MLNUIView)
+LUAUI_EXPORT_VIEW_PROPERTY(shrink, "setLuaui_shrink:","luaui_shrink", MLNUIView)
+
+LUAUI_EXPORT_VIEW_PROPERTY(positionType, "setLuaui_positionType:","luaui_positionType", MLNUIView)
+LUAUI_EXPORT_VIEW_METHOD(position, "luaui_setPositionWithTop:right:bottom:left:", MLNUIView)
+LUAUI_EXPORT_VIEW_PROPERTY(positionTop, "setLuaui_positionTop:","luaui_positionTop", MLNUIView)
+LUAUI_EXPORT_VIEW_PROPERTY(positionLeft, "setLuaui_positionLeft:","luaui_positionLeft", MLNUIView)
+LUAUI_EXPORT_VIEW_PROPERTY(positionBottom, "setLuaui_positionBottom:","luaui_positionBottom", MLNUIView)
+LUAUI_EXPORT_VIEW_PROPERTY(positionRight, "setLuaui_positionRight:","luaui_positionRight", MLNUIView)
+
 LUAUI_EXPORT_VIEW_METHOD(superview, "luaui_superview",MLNUIView)
 LUAUI_EXPORT_VIEW_METHOD(addView, "luaui_addSubview:",MLNUIView)
 LUAUI_EXPORT_VIEW_METHOD(insertView, "luaui_insertSubview:atIndex:",MLNUIView)
 LUAUI_EXPORT_VIEW_METHOD(removeFromSuper, "luaui_removeFromSuperview",MLNUIView)
 LUAUI_EXPORT_VIEW_METHOD(removeAllSubviews, "luaui_removeAllSubViews",MLNUIView)
-LUAUI_EXPORT_VIEW_METHOD(layoutIfNeeded, "luaui_layoutIfNeed",MLNUIView)
 LUAUI_EXPORT_VIEW_METHOD(convertPointTo, "luaui_convertToView:point:",MLNUIView)
 LUAUI_EXPORT_VIEW_METHOD(convertPointFrom, "luaui_convertFromView:point:",MLNUIView)
-LUAUI_EXPORT_VIEW_METHOD(setGravity, "setLuaui_gravity:",MLNUIView)
-LUAUI_EXPORT_VIEW_METHOD(requestLayout, "luaui_requestLayout", MLNUIView)
 LUAUI_EXPORT_VIEW_METHOD(convertRelativePointTo, "luaui_convertRelativePointToView:point:",MLNUIView)
-LUAUI_EXPORT_VIEW_METHOD(overlay, "luaui_overlay:", MLNUIView)
+
 // render
+LUAUI_EXPORT_VIEW_PROPERTY(hidden, "setHidden:","isHidden", MLNView)
 LUAUI_EXPORT_VIEW_PROPERTY(alpha, "setAlpha:","alpha", MLNUIView)
-LUAUI_EXPORT_VIEW_PROPERTY(hidden, "setHidden:","isHidden", MLNUIView)
-LUAUI_EXPORT_VIEW_PROPERTY(gone, "setLuaui_gone:","luaui_gone", MLNUIView)
 LUAUI_EXPORT_VIEW_PROPERTY(borderWidth, "luaui_setBorderWidth:","luaui_borderWidth", MLNUIView)
 LUAUI_EXPORT_VIEW_PROPERTY(borderColor, "luaui_setBorderColor:","luaui_borderColor", MLNUIView)
 LUAUI_EXPORT_VIEW_PROPERTY(bgColor, "luaui_setBackgroundColor:", "backgroundColor", MLNUIView)
@@ -106,9 +123,6 @@ LUAUI_EXPORT_VIEW_METHOD(touchBeginExtension, "luaui_setTouchesBeganExtensionCal
 LUAUI_EXPORT_VIEW_METHOD(touchMoveExtension, "luaui_setTouchesMovedExtensionCallback:",MLNUIView)
 LUAUI_EXPORT_VIEW_METHOD(touchEndExtension, "luaui_setTouchesEndedExtensionCallback:",MLNUIView)
 LUAUI_EXPORT_VIEW_METHOD(touchCancelExtension, "luaui_setTouchesCancelledExtensionCallback:",MLNUIView)
-// keyboard
-LUAUI_EXPORT_VIEW_METHOD(setPositionAdjustForKeyboard, "luaui_setPositionAdjustForKeyboard:",MLNUIView)
-LUAUI_EXPORT_VIEW_METHOD(setPositionAdjustForKeyboardAndOffset, "luaui_setPositionAdjustForKeyboard:offsetY:",MLNUIView)
 // transform
 LUAUI_EXPORT_VIEW_METHOD(anchorPoint, "luaui_anchorPoint:y:", MLNUIView)
 LUAUI_EXPORT_VIEW_METHOD(transform, "luaui_transform:adding:", MLNUIView)

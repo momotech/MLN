@@ -337,6 +337,14 @@ static const void *kLuaStartDeceleratingCallback = &kLuaStartDeceleratingCallbac
     }
 }
 
+- (void)luaui_removeAllSubViews {
+    if (self.mlnui_contentView) {
+        [self.mlnui_contentView luaui_removeAllSubViews];
+    } else {
+        [super luaui_removeAllSubViews];
+    }
+}
+
 - (void)mlnui_setLuaScrollEnable:(BOOL)enable
 {
     self.scrollEnabled = enable;

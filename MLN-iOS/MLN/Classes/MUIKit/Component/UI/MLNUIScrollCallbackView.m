@@ -14,8 +14,8 @@
 #import "MLNUIBlock.h"
 
 #define SCROLLVIEW_DO(...)\
-if ([self.luaui_contentView isKindOfClass:[UIScrollView class]]) {\
-UIScrollView *scrollView = (UIScrollView *)self.luaui_contentView;\
+if ([self.mlnui_contentView isKindOfClass:[UIScrollView class]]) {\
+UIScrollView *scrollView = (UIScrollView *)self.mlnui_contentView;\
 __VA_ARGS__;\
 }
 
@@ -31,8 +31,8 @@ __VA_ARGS__;\
 {
     if (self = [super initWithMLNUILuaCore:luaCore]) {
         self.backgroundColor = [UIColor clearColor];
-        [(UIScrollView *)self.luaui_contentView setLuaui_refreshEnable:[refreshEnable boolValue]];
-        [(UIScrollView *)self.luaui_contentView setLuaui_loadEnable:[loadEnable boolValue]];
+        [(UIScrollView *)self.mlnui_contentView setLuaui_refreshEnable:[refreshEnable boolValue]];
+        [(UIScrollView *)self.mlnui_contentView setLuaui_loadEnable:[loadEnable boolValue]];
     }
     return self;
 }
@@ -316,13 +316,6 @@ __VA_ARGS__;\
 
 #pragma mark - Privious scrollView  method
 
-- (void)luaui_setContentSize:(CGSize)contentSize
-{
-    MLNUIKitLuaAssert(NO, @"The setter of 'contentSize' method is deprecated!");
-    SCROLLVIEW_DO(scrollView.contentSize = contentSize;
-                  [self recalculContentSizeIfNeed];)
-}
-
 - (void)recalculContentSizeIfNeed
 {
     SCROLLVIEW_DO(CGSize contentSize = scrollView.contentSize;
@@ -339,28 +332,6 @@ __VA_ARGS__;\
                       }
                   })
 }
-
-- (CGSize)luaui_contentSize
-{
-    MLNUIKitLuaAssert(NO, @"The 'contentSize' method is deprecated!");
-    SCROLLVIEW_DO(return scrollView.contentSize;)
-    return CGSizeZero;
-}
-
-- (void)luaui_setScrollEnabled:(BOOL)enable
-{
-    MLNUIKitLuaAssert(NO, @"The setter of 'scrollEnabled' method is deprecated!");
-    SCROLLVIEW_DO(scrollView.scrollEnabled = enable;)
-}
-
-- (BOOL)luaui_scrollEnabled
-{
-    MLNUIKitLuaAssert(NO, @"The getter of 'scrollEnabled' method is deprecated!");
-    SCROLLVIEW_DO(return scrollView.scrollEnabled;)
-    return NO;
-}
-
-
 
 #pragma mark - iOS私有方法
 - (CGPoint)luaui_contentOffset

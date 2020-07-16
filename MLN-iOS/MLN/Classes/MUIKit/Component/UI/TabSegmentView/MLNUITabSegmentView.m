@@ -11,7 +11,6 @@
 #import "MLNUIBadgeView.h"
 #import "UIImage+MLNUIKit.h"
 #import "UIView+MLNUILayout.h"
-#import "MLNUILayoutNode.h"
 #import "MLNUIViewPager.h"
 #import "MLNUIViewConst.h"
 #import "MLNUIBlock.h"
@@ -116,13 +115,11 @@ const CGFloat kMLNUITabSegmentViewLabelOffsetWeight = 10.0f;
                         segmentTitles:segmentTitles
                              tapBlock:self.luaui_tapBlock]) {
         self.segmentTitles = segmentTitles;
-        __unsafe_unretained MLNUILayoutNode *node = self.luaui_node;
-        [node changeX:frame.origin.x];
-        [node changeY:frame.origin.y];
-        MLNUICheckWidth(frame.size.width);
-        MLNUICheckHeight(frame.size.height);
-        [node changeWidth:frame.size.width];
-        [node changeHeight:frame.size.height];
+        __unsafe_unretained MLNUILayoutNode *layout = self.mlnui_layoutNode; 
+        layout.marginLeft = MLNUIPointValue(frame.origin.x);
+        layout.marginTop = MLNUIPointValue(frame.origin.y);
+        layout.width = MLNUIPointValue(frame.size.width);
+        layout.height = MLNUIPointValue(frame.size.height);
         tintColor = tintColor?:kMLNUITabDefaultColor;
         self.configuration.customTiniColor = tintColor;
         _customTintColor = tintColor;
@@ -645,7 +642,7 @@ const CGFloat kMLNUITabSegmentViewLabelOffsetWeight = 10.0f;
 }
 
 #pragma mark - Layout For Lua
-- (BOOL)luaui_layoutEnable
+- (BOOL)mlnui_layoutEnable
 {
     return YES;
 }

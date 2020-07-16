@@ -14,7 +14,6 @@
 #import "MLNUITableViewAdapter.h"
 #import "MLNUITableViewCell.h"
 #import "UIView+MLNUILayout.h"
-#import "MLNUILayoutNode.h"
 #import "MLNUIBeforeWaitingTask.h"
 #import "MLNUISizeCahceManager.h"
 #import "MLNUIInnerTableView.h"
@@ -24,6 +23,7 @@
 @interface MLNUITableView()
 @property (nonatomic, strong) MLNUIInnerTableView *innerTableView;
 @property (nonatomic, strong) MLNUIBeforeWaitingTask *lazyTask;
+@property (nonatomic, strong) MLNUIBeforeWaitingTask *calculateCellTask;
 @end
 
 @implementation MLNUITableView
@@ -52,6 +52,17 @@
         }];
     }
     return _lazyTask;
+}
+
+- (MLNUIBeforeWaitingTask *)calculateCellTask {
+    if (!_calculateCellTask) {
+        __weak typeof(self) weakSelf = self;
+        _calculateCellTask = [MLNUIBeforeWaitingTask taskWithCallback:^{
+            __strong typeof(weakSelf) self = weakSelf;
+            [self luaui_reloadData];
+        }];
+    }
+    return _calculateCellTask;
 }
 
 #pragma mark - Export To Lua
@@ -291,14 +302,21 @@
 
 #pragma mark - Override
 
-- (CGSize)luaui_measureSizeWithMaxWidth:(CGFloat)maxWidth maxHeight:(CGFloat)maxHeight
-{
-    return CGSizeMake(maxWidth, maxHeight);
+- (CGSize)mlnui_sizeThatFits:(CGSize)size {
+    return size;
 }
 
-- (BOOL)luaui_layoutEnable
+- (BOOL)mlnui_layoutEnable
 {
     return YES;
+}
+
+- (void)setLuaui_display:(BOOL)luaui_display {
+    BOOL needCalculateCell = (!self.luaui_display && luaui_display);
+    [super setLuaui_display:luaui_display];
+    if (needCalculateCell) {
+        [self mlnui_pushLazyTask:self.calculateCellTask]; // 若tableView初始化时dislay为NO, 之后再设为YES, 需要重新计算cell高度, 不然会展示以前的高度
+    }
 }
 
 - (void)luaui_addSubview:(UIView *)view
@@ -389,11 +407,12 @@
     return _innerTableView;
 }
 
-- (UIView *)luaui_contentView
+#pragma mark - MLNUIPaddingContainerViewProtocol
+
+- (UIView *)mlnui_contentView
 {
     return self.innerTableView;
 }
-
 
 #pragma mark - Setup For Lua
 LUAUI_EXPORT_VIEW_BEGIN(MLNUITableView)
@@ -442,9 +461,6 @@ LUAUI_EXPORT_VIEW_METHOD(setScrollEndCallback, "setLuaui_scrollEndCallback:",MLN
 LUAUI_EXPORT_VIEW_METHOD(setContentInset, "luaui_setContentInset:right:bottom:left:", MLNUITableView)
 LUAUI_EXPORT_VIEW_METHOD(getContentInset, "luaui_getContetnInset:", MLNUITableView)
 LUAUI_EXPORT_VIEW_METHOD(setScrollEnable, "mlnui_setLuaScrollEnable:", MLNUITableView)
-// deprected method
-LUAUI_EXPORT_VIEW_PROPERTY(contentSize, "luaui_setContentSize:", "luaui_contentSize", MLNUITableView)
-LUAUI_EXPORT_VIEW_PROPERTY(scrollEnabled, "luaui_setScrollEnabled:", "luaui_scrollEnabled", MLNUITableView)
 // private method
 LUAUI_EXPORT_VIEW_PROPERTY(contentOffset, "luaui_setContentOffset:", "luaui_contentOffset", MLNUITableView)
 LUAUI_EXPORT_VIEW_PROPERTY(i_bounces, "luaui_setBounces:", "luaui_bounces", MLNUITableView)

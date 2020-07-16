@@ -16,11 +16,11 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)bindData:(nullable NSObject *)data forKey:(NSString *)key;
 //- (void)addDataObserver:(NSObject<MLNUIKVOObserverProtol> *)observer forKeyPath:(NSString *)keyPath;
 //- (void)removeDataObserver:(NSObject<MLNUIKVOObserverProtol> *)observer forKeyPath:(NSString *)keyPath;
-- (NSArray <NSObject<MLNUIKVOObserverProtol> *> *)dataObserversForKeyPath:(NSString *)keyPath;
-- (NSArray <NSObject<MLNUIKVOObserverProtol> *> *)arrayObserversForKeyPath:(NSString *)keyPath;
+//- (NSArray <NSObject<MLNUIKVOObserverProtol> *> *)dataObserversForKeyPath:(NSString *)keyPath;
+//- (NSArray <NSObject<MLNUIKVOObserverProtol> *> *)arrayObserversForKeyPath:(NSString *)keyPath;
 
 - (NSString *)addMLNUIObserver:(NSObject<MLNUIKVOObserverProtol> *)observer forKeyPath:(NSString *)keyPath;
-- (void)removeMLNUIObserver:(NSObject<MLNUIKVOObserverProtol> *)observer forKeyPath:(NSString *)keyPath;
+//- (void)removeMLNUIObserver:(NSObject<MLNUIKVOObserverProtol> *)observer forKeyPath:(NSString *)keyPath;
 - (void)removeMLNUIObserverByID:(NSString *)observerID;
 @end
 
@@ -35,14 +35,16 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)updateDataForKeyPath:(NSString *)keyPath value:(id)value;
 
 // keys
-- (id __nullable)dataForKeys:(NSArray *)keys;
+//- (id __nullable)dataForKeys:(NSArray *)keys;
+- (id __nullable)dataForKeys:(NSArray *)keys frontValue:(NSObject *_Nullable *_Nullable)front;
 - (void)updateDataForKeys:(NSArray *)keys value:(id)value;
 
-- (NSString *)addMLNUIObserver:(NSObject<MLNUIKVOObserverProtol> *)observer forKeys:(NSArray *)keys;
-- (void)removeMLNUIObserver:(NSObject<MLNUIKVOObserverProtol> *)observer forKeys:(NSArray *)keys;
+//- (NSString *)addMLNUIObserver:(NSObject<MLNUIKVOObserverProtol> *)observer forKeys:(NSArray *)keys;
+//- (void)removeMLNUIObserver:(NSObject<MLNUIKVOObserverProtol> *)observer forKeys:(NSArray *)keys;
 
-//用于判断是否ListView的数据源
-- (void)addListViewTag:(NSString *)tag;
+//缓存listView及对应的tag
+- (void)setListView:(UIView *)view tag:(NSString *)tag;
+- (UIView *)listViewForTag:(NSString *)tag;
 
 @property (nonatomic, strong)void(^errorLog)(NSString *);
 @end

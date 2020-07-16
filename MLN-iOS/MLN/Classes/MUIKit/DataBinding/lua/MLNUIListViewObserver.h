@@ -13,7 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, strong, readonly) UIView *listView;
 
-+ (instancetype)observerWithListView:(UIView *)listView keyPath:(NSString *)keyPath;
++ (instancetype)observerWithListView:(UIView *)listView keyPath:(NSString *)keyPath callback:(MLNUIKVOCallback)callback;
 
 @end
 

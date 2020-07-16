@@ -12,6 +12,7 @@
 #import "MLNUIHttpHandlerProtocol.h"
 #import "MLNUIKitInstance.h"
 #import "MLNUINavigatorHandlerProtocol.h"
+#import "MLNUIPerformanceHeader.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -51,6 +52,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// 获取应用的主window
 + (UIWindow *)mainWindow;
+
+/// 设置性能监听
+/// @param pMonitor 性能监听
++ (void)setPerformanceMonitor:(id<MLNUIPerformanceMonitor>)pMonitor;
 
 @end
 

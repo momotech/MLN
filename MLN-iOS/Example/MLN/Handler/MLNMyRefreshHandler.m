@@ -8,6 +8,7 @@
 
 #import "MLNMyRefreshHandler.h"
 #import <MJRefresh.h>
+#import "MLNUIKit.h"
 
 @implementation MLNMyRefreshHandler
 
@@ -18,6 +19,9 @@
     refreshView.mj_header = [MJRefreshNormalHeader headerWithRefreshingBlock:^{
         if (weakRefreshView.lua_refreshCallback) {
             [weakRefreshView.lua_refreshCallback callIfCan];
+        }
+        if (weakRefreshView.luaui_refreshCallback) {
+            [weakRefreshView.luaui_refreshCallback callIfCan];
         }
     }];
 }
@@ -54,6 +58,9 @@
     refreshView.mj_footer = [MJRefreshAutoNormalFooter footerWithRefreshingBlock:^{
         if (weakRefreshView.lua_loadCallback) {
             [weakRefreshView.lua_loadCallback callIfCan];
+        }
+        if (weakRefreshView.luaui_loadCallback) {
+            [weakRefreshView.luaui_loadCallback callIfCan];
         }
     }];
 }

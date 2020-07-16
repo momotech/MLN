@@ -6,13 +6,12 @@
 //
 
 #import "MLNUIBeforeWaitingTask.h"
-#import "MLNUILayoutNode.h"
 
 @implementation MLNUIBeforeWaitingTask
 
 + (instancetype)taskWithCallback:(void (^)(void))callabck
 {
-    MLNUIBeforeWaitingTask *task = [[MLNUIBeforeWaitingTask alloc] init];
+    MLNUIBeforeWaitingTask *task = [[self alloc] init];
     task.taskCallback = callabck;
     return task;
 }

@@ -11,7 +11,6 @@
 // Kit Classes's View
 #import "MLNUIView.h"
 #import "MLNUIWindow.h"
-#import "MLNUILinearLayout.h"
 #import "MLNUIAlert.h"
 #import "MLNUIAnimationZoneView.h"
 #import "MLNUILabel.h"
@@ -33,8 +32,6 @@
 #import "MLNUIWaterfallLayout.h"
 #import "MLNUIWaterfallAdapter.h"
 #import "MLNUIEditTextView.h"
-#import "MLNUIDialogView.h"
-#import "MLNUIContainerWindow.h"
 #import "MLNUIViewPager.h"
 #import "MLNUIViewPagerAdapter.h"
 #import "MLNUITabSegmentView.h"
@@ -75,7 +72,7 @@
 #import "MLNUICornerUtil.h"
 #import "MLNUISafeAreaAdapter.h"
 #import "MLNUILink.h"
-#import "MLNUIDataBinding.h"
+#import "MLNUIKit.h"
 // Animations
 #import "MLNUIAnimator.h"
 #import "MLNUIAnimation.h"
@@ -94,9 +91,9 @@
 // Stack
 #import "MLNUIStack.h"
 #import "MLNUIVStack.h"
-#import "MLNUIZStack.h"
 #import "MLNUIHStack.h"
 #import "MLNUISpacer.h"
+
 @interface MLNUIKitBridgesManager()
 /**
  承载Kit库bridge和LuaCore实例
@@ -124,6 +121,21 @@
     [luaCore registerClasses:self.canvasClasses error:NULL];
     // 注册新布局相关
     [luaCore registerClasses:self.stackClasses error:NULL];
+#if OCPERF_PRE_REQUIRE
+    //require lua file
+    [self _requireCustomLuaFiles:luaCore];
+#endif
+}
+
+//static const char *customLuaFiles[] = {"packet.BindMeta", "packet.KeyboardManager", "packet.style"};
+static const char *customLuaFiles[] = {"packet/BindMeta", "packet/KeyboardManager", "packet/style"};
+
+- (void)_requireCustomLuaFiles:(MLNUILuaCore *)luaCore {
+    size_t size = sizeof(customLuaFiles) / sizeof(const char *);
+    for (int i = 0; i < size; i++) {
+        const char *file = customLuaFiles[i];
+        [luaCore requireLuaFile:file];
+    }
 }
 
 static NSArray<Class<MLNUIExportProtocol>> *viewClasses;
@@ -132,13 +144,10 @@ static NSArray<Class<MLNUIExportProtocol>> *viewClasses;
     if (!viewClasses) {
         viewClasses = @[[MLNUIView class],
                         [MLNUIWindow class],
-                        [MLNUILinearLayout class],
                         [MLNUIAlert class],
                         [MLNUILabel class],
-                        [MLNUIOverlayLabel class],
                         [MLNUIButton class],
                         [MLNUIImageView class],
-                        [MLNUIOverlayImageView class],
                         [MLNUILoading class],
                         [MLNUIScrollView class],
                         [MLNUISwitch class],
@@ -155,8 +164,6 @@ static NSArray<Class<MLNUIExportProtocol>> *viewClasses;
                         [MLNUIWaterfallLayout class],
                         [MLNUIWaterfallAdapter class],
                         [MLNUIEditTextView class],
-                        [MLNUIDialogView class],
-                        [MLNUIContainerWindow class],
                         [MLNUIViewPager class],
                         [MLNUIViewPagerAdapter class],
                         [MLNUITabSegmentView class]];
@@ -216,7 +223,12 @@ static NSArray<Class<MLNUIExportProtocol>> *utilClasses;
                         [MLNUICornerUtil class],
                         [MLNUISafeAreaAdapter class],
                         [MLNUILink class],
-                        [MLNUIDataBinding class]];
+#if OCPERF_USE_C
+                        [MLNUIDataBindingCBridge class],
+#else
+                        [MLNUIDataBinding class],
+#endif
+        ];
     }
     return utilClasses;
 }
@@ -259,7 +271,6 @@ static NSArray<Class<MLNUIExportProtocol>> *stackClasses;
         stackClasses = @[[MLNUIStack class],
                          [MLNUIVStack class],
                          [MLNUIHStack class],
-                         [MLNUIZStack class],
                          [MLNUISpacer class]];
     }
     return stackClasses;

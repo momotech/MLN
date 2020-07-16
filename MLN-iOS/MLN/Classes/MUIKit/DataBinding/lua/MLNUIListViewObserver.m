@@ -17,6 +17,8 @@
 #import "NSObject+MLNUIKVO.h"
 #import "NSObject+MLNUIDealloctor.h"
 
+static NSString *const kUpdateNotiKey = @"MLNUIListView_Update";
+
 @interface MLNUITableView (Internal)
 - (void)luaui_reloadData;
 //- (void)luaui_insertRow:(NSInteger)row section:(NSInteger)section animated:(BOOL)animated;
@@ -43,13 +45,13 @@ typedef BOOL(^ActionBlock)(void);
 
 @implementation MLNUIListViewObserver
 
-+ (instancetype)observerWithListView:(UIView *)listView keyPath:(NSString *)keyPath {
++ (instancetype)observerWithListView:(UIView *)listView keyPath:(NSString *)keyPath callback:(MLNUIKVOCallback)callback {
     
     if ([listView isKindOfClass:[MLNUITableView class]] || [listView isKindOfClass:[MLNUICollectionView class]]) {
         MLNUITableView *table = (MLNUITableView *)listView;
         
         MLNUIKitViewController *kitViewController = (MLNUIKitViewController *)MLNUI_KIT_INSTANCE([table mlnui_luaCore]).viewController;
-        MLNUIListViewObserver *observer = [[MLNUIListViewObserver alloc] initWithViewController:kitViewController callback:nil keyPath:keyPath];
+        MLNUIListViewObserver *observer = [[MLNUIListViewObserver alloc] initWithViewController:kitViewController callback:callback keyPath:keyPath];
         observer.listView = listView;
         observer.kitViewController = kitViewController;
         return observer;
@@ -60,6 +62,8 @@ typedef BOOL(^ActionBlock)(void);
 - (instancetype)initWithViewController:(UIViewController *)viewController callback:(MLNUIKVOCallback)callback keyPath:(NSString *)keyPath {
     if (self = [super initWithViewController:viewController callback:callback keyPath:keyPath]) {
         self.actions = [NSMutableArray array];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_doAction:) name:kUpdateNotiKey object:nil];
+
     }
     return self;
 }
@@ -141,14 +145,24 @@ typedef BOOL(^ActionBlock)(void);
     }
 }
 
+- (void)_doAction:(NSNotification *)noti {
+    ActionBlock action = noti.userInfo[@"action"];
+    if (action) {
+        action();
+    }
+}
+
 - (void)_mainThreadNotifyKeyPath:(NSString *)keyPath ofObject:(NSArray *)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change {
             
 //    [self.class cancelPreviousPerformRequestsWithTarget:self selector:@selector(mergeAction) object:nil];
 //    [self performSelector:@selector(mergeAction) withObject:nil afterDelay:0];
 //    DLog(@"keypath %@, object %@ change %@",keyPath, object, change);
     NSObject *new = [change objectForKey:NSKeyValueChangeNewKey];
+    NSIndexSet *indexSet = [change objectForKey:NSKeyValueChangeIndexesKey];
+    BOOL indexSetCount = [indexSet count];
+    
     NSKeyValueChange type = [[change objectForKey:NSKeyValueChangeKindKey] unsignedIntegerValue];
-    if (type == NSKeyValueChangeSetting || type == NSKeyValueChangeInsertion || type == NSKeyValueChangeReplacement) {
+    if (type == NSKeyValueChangeSetting || ((type == NSKeyValueChangeInsertion || type == NSKeyValueChangeReplacement) && indexSetCount == 1)) {
         if ([new isKindOfClass:[NSMutableArray class]]) {
 //            [self.viewController.mlnui_dataBinding addMLNUIObserver:self forKeyPath:self.keyPath];
             @weakify(self);
@@ -162,55 +176,74 @@ typedef BOOL(^ActionBlock)(void);
         }
     }
     
-    if (type == NSKeyValueChangeSetting) {
-        [self listViewReload:self.listView];
-        return;
-    }
-    
-    NSParameterAssert([object isKindOfClass:[NSArray class]]);
-    NSObject *old = [change objectForKey:NSKeyValueChangeOldKey];
-    NSIndexSet *indexSet = [change objectForKey:NSKeyValueChangeIndexesKey];
-    NSObject *tmp = new ? new : old;
-    
+    ActionBlock action;
     @weakify(self);
-    ActionBlock action = ^BOOL{
-        @strongify(self);
-        if (!self) {
-            return YES;
-        }
-        
-        NSUInteger section = 0;
-        NSUInteger startRow = indexSet.firstIndex;
-        NSUInteger endRow = indexSet.firstIndex;
-        
-        if ([tmp isKindOfClass:[NSArray class]]) { //insert section，没有桥接，使用的应该不多
-            section = indexSet.firstIndex;
+#if 1
+    if (type == NSKeyValueChangeSetting || YES) // FIXME: 新增数据时，如果不reload，lua层子模块的序号不会改变，导致使用了错误的key值
+#else
+    if (type == NSKeyValueChangeSetting)
+#endif
+    {
+        action = ^BOOL {
+            @strongify(self);
+            if (!self) {
+                return YES;
+            }
             [self listViewReload:self.listView];
             return YES;
-        } else if([object mlnui_is2D]  && tmp) {  //ex. object[0][0] = xx
-            section = [object indexOfObject:tmp];
-        }
-        switch (type) {
-    //        case NSKeyValueChangeSetting:
-    //            break;
-            case NSKeyValueChangeInsertion: {
-                [self listView:self.listView insertRowsAtSection:section startRow:startRow endRow:endRow object:tmp];
+        };
+    }
+    else
+    {
+        NSParameterAssert([object isKindOfClass:[NSArray class]]);
+        NSObject *old = [change objectForKey:NSKeyValueChangeOldKey];
+        NSObject *tmp = new ? new : old;
+        
+        action = ^BOOL{
+            if (!self) {
+                return YES;
             }
-                break;
-            case NSKeyValueChangeRemoval: {
-                [self listView:self.listView deleteRowsAtSection:section startRow:startRow endRow:endRow object:tmp];
-            }
-                break;
-            case NSKeyValueChangeReplacement:
-                [self listView:self.listView reloadAtRow:startRow section:section];
-                break;
-            default:
+            
+            NSUInteger section = 0;
+            NSUInteger startRow = indexSet.firstIndex;
+            NSUInteger endRow = indexSet.firstIndex;
+            
+            if ([tmp isKindOfClass:[NSArray class]]) { //insert section，没有桥接，使用的应该不多
+                section = indexSet.firstIndex;
                 [self listViewReload:self.listView];
-                break;
-        }
-        return NO;
-    };
-    action();
+                return YES;
+            } else if([object mlnui_is2D]  && tmp) {  //ex. object[0][0] = xx
+                section = [object indexOfObject:tmp];
+            }
+            switch (type) {
+        //        case NSKeyValueChangeSetting:
+        //            break;
+                case NSKeyValueChangeInsertion: {
+                    [self listView:self.listView insertRowsAtSection:section startRow:startRow endRow:endRow object:tmp];
+                }
+                    break;
+                case NSKeyValueChangeRemoval: {
+                    [self listView:self.listView deleteRowsAtSection:section startRow:startRow endRow:endRow object:tmp];
+                }
+                    break;
+                case NSKeyValueChangeReplacement:
+                    [self listView:self.listView reloadAtRow:startRow section:section];
+                    break;
+                default:
+                    [self listViewReload:self.listView];
+                    return YES;
+                    break;
+            }
+            return NO;
+        };
+    }
+
+//    action();
+//    [self.class cancelPreviousPerformRequestsWithTarget:self];
+//    [self performSelector:@selector(_doAction:) withObject:action afterDelay:0];
+    
+    NSNotification *noti = [NSNotification notificationWithName:kUpdateNotiKey object:nil userInfo:@{@"action" : action}];
+    [[NSNotificationQueue defaultQueue] enqueueNotification:noti postingStyle:NSPostASAP coalesceMask:NSNotificationCoalescingOnName forModes:@[NSRunLoopCommonModes]];
 }
 
 @end

@@ -50,6 +50,15 @@
     }
 }
 
+- (void)forcePushTask:(id<MLNUIBeforeWaitingTaskProtocol>)task {
+    NSUInteger index = [self.taskQueue indexOfObject:task];
+    if (index == NSNotFound) {
+        [self.taskQueue addObject:task];
+    } else {
+        [self.taskQueue replaceObjectAtIndex:index withObject:task];
+    }
+}
+
 - (void)popTask:(id<MLNUIBeforeWaitingTaskProtocol>)task
 {
     [_taskQueue removeObject:task];
