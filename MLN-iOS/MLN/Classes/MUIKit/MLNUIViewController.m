@@ -6,7 +6,9 @@
 //
 
 #import "MLNUIViewController.h"
-#import "MLNUIKit.h"
+#import "MLNUIHeader.h"
+#import "MLNUIKitInstanceFactory.h"
+#import "MLNUIKitInstance.h"
 
 @interface MLNUIViewController ()
 @property (nonatomic, copy, readwrite) NSString *entryFileName;

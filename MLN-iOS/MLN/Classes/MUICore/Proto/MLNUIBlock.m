@@ -12,7 +12,6 @@
 #import "MLNUILazyBlockTask.h"
 #import "MLNUIExtScope.h"
 #import "MLNUIKitHeader.h"
-#import "MLNUIKit.h"
 
 @interface MLNUIBlock ()
 

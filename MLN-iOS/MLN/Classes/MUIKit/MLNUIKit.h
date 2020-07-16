@@ -8,28 +8,6 @@
 #ifndef MLNUIKit_h
 #define MLNUIKit_h
 
-#define OCPERF 1
-
-#if OCPERF
-#define OCPERF_USE_LUD 1
-#define OCPERF_UPDATE_LUACORE 1
-#define OCPERF_USE_CF 1
-//#define OCPERF_USE_C 1
-#define OCPERF_PRE_REQUIRE 1
-//#define OCPERF_COALESCE_BLOCK 1
-#else
-#define OCPERF_USE_LUD 0
-#define OCPERF_UPDATE_LUACORE 0
-#define OCPERF_USE_CF 0
-//#define OCPERF_USE_C 0
-#define OCPERF_PRE_REQUIRE 0
-//#define OCPERF_COALESCE_BLOCK 0
-#endif
-
-
-#define OCPERF_USE_C 1
-#define OCPERF_COALESCE_BLOCK 1
-
 #import <UIKit/UIKit.h>
 
 // 内核
@@ -147,32 +125,5 @@
 
 #import "MLNUIPerformanceHeader.h"
 
-#if DEBUG || 1
-#define PSTART_TAG(type, _tag) [[[MLNUIKitInstanceHandlersManager defaultManager] performanceMonitor] onStart:type tag:_tag]
-#define PSTART(type) PSTART_TAG(type, nil)
-
-
-#define PEND_TAG_INFO(type, _tag, _info) [[[MLNUIKitInstanceHandlersManager defaultManager] performanceMonitor] onEnd:type tag:_tag info:_info]
-#define PEND(type) PEND_TAG_INFO(type, nil, @"")
-
-#define PDISPLAY(delay) dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delay * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{\
-    [[[MLNUIKitInstanceHandlersManager defaultManager] performanceMonitor] display];\
-})
-
-#define PCallOC(cls,sel)  [[[MLNUIKitInstanceHandlersManager defaultManager] performanceMonitor] callOCBridge:cls selector:sel]
-#define PCallDB(func)  [[[MLNUIKitInstanceHandlersManager defaultManager] performanceMonitor] callDBBridge:func]
-#define PCallC(func)  [[[MLNUIKitInstanceHandlersManager defaultManager] performanceMonitor] callCBridge:func]
-
-
-#else
-#define PSTART(type)
-#define PSTART_TAG(type,tag)
-#define PEND(type)
-#define PEND_TAG_INFO(type,tag,info)
-#define PDISPLAY(delay)
-#define PCallOC(cls,sel)
-#define PCallDB(func)
-#define PCallC(func)
-#endif
 
 #endif /* MLNUIKit_h */

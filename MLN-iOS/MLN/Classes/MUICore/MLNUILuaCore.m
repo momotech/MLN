@@ -12,7 +12,6 @@
 #import "MLNUIConvertor.h"
 #import "MLNUIFileLoader.h"
 #import "MLNUILuaTable.h"
-#import "MLNUIKit.h"
 
 @import ObjectiveC;
 

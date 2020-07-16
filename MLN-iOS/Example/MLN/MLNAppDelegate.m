@@ -27,6 +27,7 @@
 #import "MLNUIFPSStatus.h"
 #import "MLNUILogViewer.h"
 #import "MLNUILoadTimeStatistics.h"
+#import "MLNUIHeader.h"
 
 @interface MLNAppDelegate ()
 
@@ -86,6 +87,7 @@
     [MLNUIKitEnvironment setDefaultImageLoader:self.imgLoader2];
     [MLNUIKitEnvironment setDefaultNavigatorHandler:self.navHandler];
     [MLNUIKitEnvironment setPerformanceMonitor: [MLNUILoadTimeStatistics sharedStatistics]];
+    MLNUIKitPerformanceMonitorForDebug = [MLNUILoadTimeStatistics sharedStatistics];
     [MLNUILink registerName:@"MLNLuaGallery" linkClassName:@"MLNLuaGalleryViewController"];
 }
 

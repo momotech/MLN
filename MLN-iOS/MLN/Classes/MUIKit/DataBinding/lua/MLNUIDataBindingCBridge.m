@@ -6,7 +6,6 @@
 //
 
 #import "MLNUIDataBindingCBridge.h"
-#import "MLNUIKit.h"
 #import "MLNUIBlockObserver.h"
 #import "MLNUIListViewObserver.h"
 #import "NSObject+MLNUIKVO.h"
@@ -16,6 +15,7 @@
 #import "MLNUITableView.h"
 #import "NSObject+MLNUIReflect.h"
 #import "MLNUIExtScope.h"
+#import "MLNUIKit.h"
 
 @implementation MLNUIDataBindingCBridge
 

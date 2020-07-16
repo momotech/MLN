@@ -9,7 +9,6 @@
 #define MLNUIStaticExporterMacro_h
 
 #import "MLNUIExporterMacro.h"
-#import "MLNUIKit.h"
 
 /**
  标记开始静态导出

@@ -10,7 +10,6 @@
 #import "NSObject+MLNUICore.h"
 #import "MLNUILuaCore.h"
 #import "MLNUIEntityExportProtocol.h"
-#import "MLNUIKit.h"
 
 @implementation MLNUIEntityExporter
 

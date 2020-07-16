@@ -8,6 +8,28 @@
 #ifndef MLNUIHeader_h
 #define MLNUIHeader_h
 
+#define OCPERF 1
+
+#if OCPERF
+#define OCPERF_USE_LUD 1
+#define OCPERF_UPDATE_LUACORE 1
+#define OCPERF_USE_CF 1
+//#define OCPERF_USE_C 1
+#define OCPERF_PRE_REQUIRE 1
+//#define OCPERF_COALESCE_BLOCK 1
+#else
+#define OCPERF_USE_LUD 0
+#define OCPERF_UPDATE_LUACORE 0
+#define OCPERF_USE_CF 0
+//#define OCPERF_USE_C 0
+#define OCPERF_PRE_REQUIRE 0
+//#define OCPERF_COALESCE_BLOCK 0
+#endif
+
+
+#define OCPERF_USE_C 1
+#define OCPERF_COALESCE_BLOCK 1
+
 #include "mln_lua.h"
 #include "mln_lauxlib.h"
 #include "mln_lualib.h"
@@ -247,5 +269,38 @@ NSString *error_tt = [NSString stringWithFormat:FORMAT, ##__VA_ARGS__];\
  */
 #define MLNUIError(LUA_CORE, FORMAT, ...) \
 MLNUILuaCallErrorHandler(LUA_CORE, FORMAT, ##__VA_ARGS__)
+
+
+#if DEBUG
+#import "MLNUIPerformanceHeader.h"
+extern id<MLNUIPerformanceMonitor> MLNUIKitPerformanceMonitorForDebug;
+
+#define PSTART_TAG(type, _tag) [MLNUIKitPerformanceMonitorForDebug onStart:type tag:_tag]
+#define PSTART(type) PSTART_TAG(type, nil)
+
+
+#define PEND_TAG_INFO(type, _tag, _info) [MLNUIKitPerformanceMonitorForDebug onEnd:type tag:_tag info:_info]
+#define PEND(type) PEND_TAG_INFO(type, nil, @"")
+
+#define PDISPLAY(delay) dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delay * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{\
+    [MLNUIKitPerformanceMonitorForDebug display];\
+})
+
+#define PCallOC(cls,sel)  [MLNUIKitPerformanceMonitorForDebug callOCBridge:cls selector:sel]
+#define PCallDB(func)  [MLNUIKitPerformanceMonitorForDebug callDBBridge:func]
+#define PCallC(func)  [MLNUIKitPerformanceMonitorForDebug callCBridge:func]
+
+#else
+
+#define PSTART(type)
+#define PSTART_TAG(type,tag)
+#define PEND(type)
+#define PEND_TAG_INFO(type,tag,info)
+#define PDISPLAY(delay)
+#define PCallOC(cls,sel)
+#define PCallDB(func)
+#define PCallC(func)
+#endif
+
 
 #endif /* MLNUIHeader_h */
