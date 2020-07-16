@@ -28,7 +28,7 @@
 
 
 #define OCPERF_USE_C 1
-#define OCPERF_COALESCE_BLOCK 1
+#define OCPERF_COALESCE_BLOCK 0
 
 #include "mln_lua.h"
 #include "mln_lauxlib.h"
