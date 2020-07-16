@@ -15,7 +15,7 @@
 
 #define kReuseIndentifierPlaceholder @"kReuseIndentifierPlaceholder"
 
-@interface MLNUICollectionViewAdapter()
+@interface MLNUICollectionViewAdapter()<MLNUICollectionViewCellDelegate>
 
 @property (nonatomic, strong) MLNUIBlock *sectionCountCallback;
 @property (nonatomic, strong) MLNUIBlock *itemCountCallback;
@@ -237,6 +237,7 @@ static NSValue *kSizeValueZero = nil;
     NSString *reuseId = [self reuseIdentifierAtIndexPath:indexPath];
     [self registerCellClassIfNeed:collectionView reuseId:reuseId];
     MLNUICollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:reuseId forIndexPath:indexPath];
+    cell.delegate = self;
     [cell pushContentViewWithLuaCore:self.mlnui_luaCore];
     if (!cell.isInited) {
         MLNUIBlock *initCallback = [self initedCellCallbackByReuseId:reuseId];
