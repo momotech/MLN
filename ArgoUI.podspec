@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
     s.name             = 'ArgoUI'
-    s.version          = '0.1.6'
+    s.version          = '0.1.7'
     s.summary          = 'A lib of Momo Lua UI.'
     
     # This description is used to generate tags and improve search results.
@@ -29,7 +29,7 @@ Pod::Spec.new do |s|
     # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
     
     s.ios.deployment_target = '8.0'
-    s.libraries = 'z'
+    s.libraries = 'z','c++'
     s.requires_arc = true
     s.resource = 'MLN-iOS/MLN/Resource/ArgoUI.bundle'
     
