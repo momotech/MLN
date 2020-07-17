@@ -19,7 +19,7 @@ typedef enum : NSUInteger {
     MLNUIFontStyleBoldItalic
 } MLNUIFontStyle;
 
-typedef enum : NSUInteger {
+typedef enum : NSInteger {
     MLNUIUnderlineStyleClean = -1,
     MLNUIUnderlineStyleNone = 0,
     MLNUIUnderlineStyleSingle = 1,
