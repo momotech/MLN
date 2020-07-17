@@ -490,41 +490,49 @@ static const void *kLuaRenderContext = &kLuaRenderContext;
 #pragma mark - TouchEvent
 - (void)luaui_setTouchesBeganCallback:(MLNUIBlock *)callback
 {
+    MLNUIMarkViewNeedRender;
     self.mlnui_touchesBeganCallback = callback;
 }
 
 - (void)luaui_setTouchesMovedCallback:(MLNUIBlock *)callback
 {
+    MLNUIMarkViewNeedRender;
     self.mlnui_touchesMovedCallback = callback;
 }
 
 - (void)luaui_setTouchesEndedCallback:(MLNUIBlock *)callback
 {
+    MLNUIMarkViewNeedRender;
     self.mlnui_touchesEndedCallback = callback;
 }
 
 - (void)luaui_setTouchesCancelledCallback:(MLNUIBlock *)callback
 {
+    MLNUIMarkViewNeedRender;
     self.mlnui_touchesCancelledCallback = callback;
 }
 
 - (void)luaui_setTouchesBeganExtensionCallback:(MLNUIBlock *)callback
 {
+    MLNUIMarkViewNeedRender;
     self.mlnui_touchesBeganExtensionCallback = callback;
 }
 
 - (void)luaui_setTouchesMovedExtensionCallback:(MLNUIBlock *)callback
 {
+    MLNUIMarkViewNeedRender;
     self.mlnui_touchesMovedExtensionCallback = callback;
 }
 
 - (void)luaui_setTouchesEndedExtensionCallback:(MLNUIBlock *)callback
 {
+    MLNUIMarkViewNeedRender;
     self.mlnui_touchesEndedExtensionCallback = callback;
 }
 
 - (void)luaui_setTouchesCancelledExtensionCallback:(MLNUIBlock *)callback
 {
+    MLNUIMarkViewNeedRender;
     self.mlnui_touchesCancelledExtensionCallback = callback;
 }
 
@@ -552,12 +560,14 @@ static const void *kLuaRenderContext = &kLuaRenderContext;
 - (void)luaui_addTouch:(MLNUIBlock *)touchCallBack
 {
     MLNUIKitLuaAssert(NO, @"View:onTouch method is deprecated");
+    MLNUIMarkViewNeedRender;
     [self mlnui_in_addTapGestureIfNeed];
     self.mlnui_touchClickBlock = touchCallBack;
 }
 
 - (void)luaui_addClick:(MLNUIBlock *)clickCallback
 {
+    MLNUIMarkViewNeedRender;
     [self mlnui_in_addTapGestureIfNeed];
     self.mlnui_tapClickBlock = clickCallback;
 }
@@ -606,6 +616,7 @@ static const void *kLuaRenderContext = &kLuaRenderContext;
 
 - (void)luaui_addLongPress:(MLNUIBlock *)longPressCallback
 {
+    MLNUIMarkViewNeedRender;
     [self mlnui_in_addLongPressGestureIfNeed];
     self.mlnui_longPressBlock = longPressCallback;
 }
@@ -1034,6 +1045,7 @@ static const void *kViewTransform = &kViewTransform;
 
 - (void)luaui_setBgImage:(NSString *)imageName
 {
+    MLNUIMarkViewNeedRender;
     if (!stringNotEmpty(imageName)) {
         self.layer.contents = nil;
         return;
