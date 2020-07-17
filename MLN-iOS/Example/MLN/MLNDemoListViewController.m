@@ -11,9 +11,6 @@
 #import "MLNLuaBundle.h"
 #import "MLNUIViewController.h"
 #import "MLNUIBridge.h"
-#import "MLNAnimationTestController.h"
-#import "MLNScaleAnimationController.h"
-#import "MLNScaleController.h"
 
 @interface MLNDemoListViewController () <UITableViewDelegate, UITableViewDataSource>
 
