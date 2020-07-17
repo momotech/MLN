@@ -13,6 +13,12 @@ local __kvoname = "__kvoname" -- path
 local __set = "__set"
 local __asize = "__asize" --获取数组大小
 local __vv = "__vv" -- 实际存的值
+local __ignore = "__ignore" -- watch忽略
+local __greal = "__greal" -- 获取值并缓存
+local __rreal = "__rreal" -- 移除缓存
+local __ci = "__ci" -- cell item
+
+-- debug
 --local __ck = "__ck" -- 当前key
 --local __pk = "__pk" -- 前一个key
 local WATCH = "watch" -- prevew中使用
@@ -36,9 +42,16 @@ local _emptyTab = {}
 setmetatable(_emptyTab, {
     __index = function(t, k)
         if k == __get then return nil end
+        if k == __asize then return 0 end
+        if k == __path then return "" end
         return _emptyTab
     end,
-    __newindex = function(t, k, v) end
+    __newindex = function(t, k, v) end,
+    __ishook = true,
+    __kvoname = "",
+    __ck = "",
+    __pk = "",
+    __vv = nil,
 })
 -------------------------------------------------------------------------------------------------------------
 -----------------------------------------------------------------------------------------------------------
@@ -69,21 +82,30 @@ function bindMeta_batchSetMeta(t, path, ck, pk)
            BindMeta(bindMeta_path(path , _k), {}, _v, _k, ck)
         end
     end
-    return BindMeta(path, mapt, nil, ck, pk)
+    return BindMeta(path, mapt, t, ck, pk)
+end
+
+function bindMeta_getAndCacheTab(mt)
+    local t = nil
+    if mt.__vv ~= nil then
+        t = mt.__vv
+    else
+        t = DataBinding:get(bindMeta_path(mt.__kvoname))
+    end
+    BindMetaPush(_foreachCaches)
+    local t = DataBinding:get(bindMeta_path(mt.__kvoname))
+    if t and type(t) == "table" then
+        bindMeta_batchSetMeta(t, bindMeta_path(mt.__kvoname), mt.__ck, mt.__pk)
+    else
+        BindMeta(bindMeta_path(mt.__kvoname), nil, nil, mt.__ck, mt.__pk)
+    end
+    return t
 end
 
 --- 数组获取
-function bindMeta_getArray(keypath, ck, pk)
-    BindMetaPush(_foreachCaches)
-    local t = DataBinding:get(keypath)
-    if t and type(t) == "table" then
-        bindMeta_batchSetMeta(t, keypath, ck, pk)
-    else
-        BindMeta(keypath, nil, nil, ck, pk)
-    end
-    if t == nil then
-        return 0
-    end
+function bindMeta_getArraySize(mt)
+    local t = bindMeta_getAndCacheTab(mt)
+    if t == nil then return 0 end
     return #t
 end
 
@@ -101,14 +123,14 @@ end
 -----------------------------------------------------------------------------------------------------------
 ----------------------  原表操作  __index/__newindex/__call                --------------------------
 -----------------------------------------------------------------------------------------------------------
-temp_path = nil
-temp_v = nil
 -- __index
 function bindMeta__index(t, k)
     if k == nil then
         return _emptyTab
     end
-    if type(k) == "number" and k <= 0 then
+    if type(k) == "table" then
+        k = k.__get
+    elseif type(k) == "number" and k <= 0 then
         return _emptyTab
     end
 
@@ -121,12 +143,10 @@ function bindMeta__index(t, k)
     end
     --print("to Get::" .. mt.__kvoname, k)
     if k == __get then -- get
-        temp_v = mt.__vv
-        if temp_v ~= nil then
-            return temp_v
-        end
-        temp_path = bindMeta_path(mt.__kvoname)
+        local temp_path = bindMeta_path(mt.__kvoname)
         if BindMetaGet(_cellBinds) then BindMetaAdd(_cellBinds, temp_path, true) end -- 存储 list 数据绑定path
+        local temp_v = mt.__vv
+        if temp_v ~= nil then return temp_v end -- 有缓存先使用缓存内容
         temp_v = DataBinding:get(temp_path)
         if (#_foreachCaches) > 0 then
             mt.__vv = temp_v
@@ -137,10 +157,12 @@ function bindMeta__index(t, k)
         return bindMeta_path(mt.__kvoname)
     elseif k == __asize then
         --return DataBinding:arraySize(bindMeta_path(mt.__kvoname)) or 0
-        return bindMeta_getArray(bindMeta_path(mt.__kvoname), mt.__ck, mt.__pk)
-    elseif k == __remove then
+        return bindMeta_getArraySize(mt)
+    elseif k == __remove or k == __rreal or k == __greal then
         mt.__opname = k
         return t
+    elseif k == __ci then
+       return BindMeta(mt.__kvoname, {row={__get=mt.__ck}, section={__get=mt.__pk}}, nil, mt.__ck, mt.__pk)
     end
     if debug_preview_watch then
         if k == WATCH or k == FOREACH then
@@ -153,7 +175,7 @@ end
 
 -- __newindex
 function bindMeta__newindex(t, k, v)
-    if k == nil or k == __vv then return end
+    if k == nil or k == __vv or k == __ignore then return end
     local mt = getmetatable(t)
     if k == __watch then -- watch
         k = bindMeta_path(bindMeta_getWatchPath(mt.__kvoname, mt.__ck))
@@ -192,12 +214,9 @@ function bindMeta__newindex(t, k, v)
         if type(v) == "table" and v.__ishook then
             v = v.__get
         end
-        local _pv = rawget(t, k) or t[k].__get -- 旧值
         DataBinding:update(bindMeta_path(mt.__kvoname, k), v)
-        if v ~= _pv then
-            for _, __f in pairs(_debugpwacths[bindMeta_path(mt.__kvoname, k)] or {}) do
-                __f(v, _pv)
-            end
+        for _, __f in pairs(_debugpwacths[bindMeta_path(mt.__kvoname, k)] or {}) do
+            __f(v)
         end
         return
     end
@@ -213,6 +232,15 @@ function bindMeta__call(t, ...)
         return
     end
     mt.__opname = nil
+
+    if op == __greal then -- bind中缓存相关
+        bindMeta_getAndCacheTab(mt)
+        return
+    end
+    if op == __rreal then
+        BindMetaPopForach()
+        return
+    end
 
     local size = select("#", ...)
     if size == 0 then
