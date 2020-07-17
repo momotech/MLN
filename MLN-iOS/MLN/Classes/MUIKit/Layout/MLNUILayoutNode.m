@@ -181,6 +181,10 @@ static YGConfigRef globalConfig;
     YGNodeMarkDirty(node);
 }
 
+- (BOOL)resetOriginAfterLayout {
+    return self.view.mlnui_resetOriginAfterLayout;
+}
+
 - (NSUInteger)numberOfChildren {
     return YGNodeGetChildCount(self.node);
 }
@@ -296,7 +300,7 @@ YG_PROPERTY(CGFloat, aspectRatio, AspectRatio)
     return result;
 }
 
-- (void)applyLayoutPreservingOrigin:(BOOL)preserveOrigin dimensionFlexibility:(YGDimensionFlexibility)dimensionFlexibility {
+- (void)applyLayoutWithDimensionFlexibility:(YGDimensionFlexibility)dimensionFlexibility {
     CGSize size = self.view.bounds.size;
     if (dimensionFlexibility & YGDimensionFlexibilityFlexibleWidth) {
         size.width = YGUndefined;
@@ -449,7 +453,8 @@ static void YGApplyLayoutRecursive(MLNUILayoutNode *layoutNode, float xOffset, f
         }
     } else {
         CGRect frame = view.mlnuiLayoutFrame;
-        frame.origin = (CGPoint){origin.x + xOffset, origin.y + yOffset};
+        CGPoint oldOrigin = layoutNode.resetOriginAfterLayout ? CGPointZero : frame.origin;
+        frame.origin = (CGPoint){origin.x + oldOrigin.x + xOffset, origin.y + oldOrigin.y + yOffset};
         frame.size = (CGSize){
             YGRoundPixelValue(YGNodeLayoutGetWidth(node)),
             YGRoundPixelValue(YGNodeLayoutGetHeight(node))

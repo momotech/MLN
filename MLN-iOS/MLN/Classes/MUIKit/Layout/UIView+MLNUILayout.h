@@ -28,6 +28,8 @@ NS_ASSUME_NONNULL_BEGIN
 /// 当前视图是否为虚拟视图（不参与视图层级渲染）
 - (BOOL)mlnui_isVirtualView;
 
+@property (nonatomic, assign, readonly) BOOL mlnui_resetOriginAfterLayout; // default is YES.
+
 #pragma mark - Hierarchy
 
 - (void)luaui_addSubview:(UIView *)view;
