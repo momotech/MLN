@@ -77,11 +77,12 @@
 #import "MLNUIAnimator.h"
 #import "MLNUIAnimation.h"
 #import "MLNUIFrameAnimation.h"
-#import "MLNUIAlphaAnimation.h"
-#import "MLNUIAnimationSet.h"
-#import "MLNUIRotateAnimation.h"
-#import "MLNUIScaleAnimation.h"
-#import "MLNUITranslateAnimation.h"
+
+//New Animation
+#import "MLNUIObjectAnimation.h"
+#import "MLNUIObjectAnimationSet.h"
+#import "MLNUIInteractiveBehavior.h"
+
 // Canvas
 #import "MLNUICanvasView.h"
 #import "MLNUICanvasPaint.h"
@@ -242,11 +243,10 @@ static NSArray<Class<MLNUIExportProtocol>> *animationClasses;
                              [MLNUIAnimation class],
                              [MLNUIFrameAnimation class],
                              [MLNUIAnimationZoneView class],
-                             [MLNUIAlphaAnimation class],
-                             [MLNUIAnimationSet class],
-                             [MLNUIRotateAnimation class],
-                             [MLNUIScaleAnimation class],
-                             [MLNUITranslateAnimation class]];
+                             [MLNUIObjectAnimation class],
+                             [MLNUIObjectAnimationSet class],
+                             [MLNUIInteractiveBehavior class]
+                            ];
     }
     return animationClasses;
 }

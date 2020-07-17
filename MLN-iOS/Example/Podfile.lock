@@ -14,12 +14,15 @@ PODS:
   - AFNetworking/Serialization (3.2.1)
   - AFNetworking/UIKit (3.2.1):
     - AFNetworking/NSURLSession
-  - ArgoUI (0.1.5):
-    - ArgoUI/Core (= 0.1.5)
-    - ArgoUI/Kit (= 0.1.5)
-  - ArgoUI/Core (0.1.5):
+  - ArgoUI (0.1.6):
+    - ArgoUI/Core (= 0.1.6)
+    - ArgoUI/Kit (= 0.1.6)
+  - ArgoUI/Core (0.1.6):
     - MLN/LuaLib
-  - ArgoUI/Kit (0.1.5):
+  - ArgoUI/Kit (0.1.6):
+    - ArgoUI/Core
+    - ArgoUI/Kit/AnimationCPP (= 0.1.6)
+  - ArgoUI/Kit/AnimationCPP (0.1.6):
     - ArgoUI/Core
   - Expecta (1.0.6)
   - "Expecta+Snapshots (3.1.1)":
@@ -118,7 +121,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   AFNetworking: b6f891fdfaed196b46c7a83cf209e09697b94057
-  ArgoUI: fc4916509fb5efd5c28dafafe447550b0d04d44d
+  ArgoUI: 9c0fd18a5d1cd56410f95cc3068a4815e1c36bb1
   Expecta: 3b6bd90a64b9a1dcb0b70aa0e10a7f8f631667d5
   "Expecta+Snapshots": dcff217eef506dabd6dfdc7864ea2da321fafbb8
   FBSnapshotTestCase: 094f9f314decbabe373b87cc339bea235a63e07a

@@ -82,6 +82,7 @@ static const void *kLuaKeyboardDismiss = &kLuaKeyboardDismiss;
     if (![self isKindOfClass:[UIView class]]) {
         return;
     }
+    [self mlnui_touchType:MLNUITouchType_Begin touch:touches.anyObject event:event];
     
     if([self isOpenRipple]) {
         if (![self oldColor] && ![self luaui_didSetOldColor]) {
@@ -124,7 +125,8 @@ static const void *kLuaKeyboardDismiss = &kLuaKeyboardDismiss;
     if (![self isKindOfClass:[UIView class]]) {
         return;
     }
-    
+    [self mlnui_touchType:MLNUITouchType_Move touch:touches.anyObject event:event];
+
     if (self.mlnui_touchesMovedCallback) {
         UITouch *touch = [touches anyObject];
         CGPoint point = [touch locationInView:self];
@@ -151,6 +153,8 @@ static const void *kLuaKeyboardDismiss = &kLuaKeyboardDismiss;
     if (![self isKindOfClass:[UIView class]]) {
         return;
     }
+    [self mlnui_touchType:MLNUITouchType_End touch:touches.anyObject event:event];
+
     if([self isOpenRipple]) {
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             self.backgroundColor = [self oldColor];
@@ -183,6 +187,8 @@ static const void *kLuaKeyboardDismiss = &kLuaKeyboardDismiss;
     if (![self isKindOfClass:[UIView class]]) {
         return;
     }
+    [self mlnui_touchType:MLNUITouchType_End touch:touches.anyObject event:event];
+
     if([self isOpenRipple]) {
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             self.backgroundColor = [self oldColor];
@@ -205,6 +211,39 @@ static const void *kLuaKeyboardDismiss = &kLuaKeyboardDismiss;
         NSDictionary *touchDict = [self touchResultWithScreenLocation:screenLocation pageLocation:pageLocation target:self];
         [self.mlnui_touchesCancelledExtensionCallback addObjArgument:touchDict.mutableCopy];
         [self.mlnui_touchesCancelledExtensionCallback callIfCan];
+    }
+}
+
+static void *kMLNUITouchCallbacksKey = &kMLNUITouchCallbacksKey;
+- (void)mlnui_addTouchBlock:(MLNUITouchCallback)block {
+    if (block) {
+        NSMutableArray *touchCallbacks = [self mlnui_touchBlocksCreateIfNeeded:YES];
+        if (![touchCallbacks containsObject:block]) {
+            [touchCallbacks addObject:block];
+        }
+    }
+}
+
+- (void)mlnui_removeTouchBlock:(MLNUITouchCallback)block {
+    if (block) {
+        NSMutableArray *touchCallbacks = [self mlnui_touchBlocksCreateIfNeeded:NO];
+        [touchCallbacks removeObject:block];
+    }
+}
+
+- (NSMutableArray *)mlnui_touchBlocksCreateIfNeeded:(BOOL)create {
+    NSMutableArray *arr = objc_getAssociatedObject(self, kMLNUITouchCallbacksKey);
+    if (!arr && create) {
+        arr = [NSMutableArray array];
+        objc_setAssociatedObject(self, kMLNUITouchCallbacksKey, arr, OBJC_ASSOCIATION_RETAIN);
+    }
+    return arr;
+}
+
+- (void)mlnui_touchType:(MLNUITouchType)type touch:(UITouch *)touch event:(UIEvent *)event {
+    NSMutableArray<MLNUITouchCallback> *callbacks = [self mlnui_touchBlocksCreateIfNeeded:NO];
+    for (MLNUITouchCallback block in callbacks) {
+        block(type, touch, event);
     }
 }
 

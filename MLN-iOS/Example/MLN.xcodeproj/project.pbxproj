@@ -117,6 +117,7 @@
 		FA4EE30D237909AB00449250 /* MLNGalleryMineBottomPageDynamicCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FA4EE30C237909AB00449250 /* MLNGalleryMineBottomPageDynamicCell.m */; };
 		FA4EE310237909BC00449250 /* MLNGalleryMineBottomPageCollectCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FA4EE30F237909BC00449250 /* MLNGalleryMineBottomPageCollectCell.m */; };
 		FA4EE313237917E500449250 /* MLNGalleryMinePageCellCollectCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FA4EE312237917E500449250 /* MLNGalleryMinePageCellCollectCell.m */; };
+		FA6C1CE1248E41D10025BA96 /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = FA6C1CE0248E41D10025BA96 /* libc++.tbd */; };
 		FAE9C59323A250CD002C830D /* gallery.bundle in Resources */ = {isa = PBXBuildFile; fileRef = FAE9C59223A250CD002C830D /* gallery.bundle */; };
 		FAE9C59523A2529C002C830D /* inner_demo.bundle in Resources */ = {isa = PBXBuildFile; fileRef = FAE9C59423A2529C002C830D /* inner_demo.bundle */; };
 /* End PBXBuildFile section */
@@ -351,6 +352,7 @@
 		FA4EE30F237909BC00449250 /* MLNGalleryMineBottomPageCollectCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNGalleryMineBottomPageCollectCell.m; sourceTree = "<group>"; };
 		FA4EE311237917E500449250 /* MLNGalleryMinePageCellCollectCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNGalleryMinePageCellCollectCell.h; sourceTree = "<group>"; };
 		FA4EE312237917E500449250 /* MLNGalleryMinePageCellCollectCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNGalleryMinePageCellCollectCell.m; sourceTree = "<group>"; };
+		FA6C1CE0248E41D10025BA96 /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "usr/lib/libc++.tbd"; sourceTree = SDKROOT; };
 		FAE9C59223A250CD002C830D /* gallery.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = gallery.bundle; sourceTree = "<group>"; };
 		FAE9C59423A2529C002C830D /* inner_demo.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = inner_demo.bundle; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -367,6 +369,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FA6C1CE1248E41D10025BA96 /* libc++.tbd in Frameworks */,
 				6003F590195388D20070C39A /* CoreGraphics.framework in Frameworks */,
 				6003F592195388D20070C39A /* UIKit.framework in Frameworks */,
 				6003F58E195388D20070C39A /* Foundation.framework in Frameworks */,
@@ -517,6 +520,7 @@
 		6003F58C195388D20070C39A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				FA6C1CE0248E41D10025BA96 /* libc++.tbd */,
 				6003F58D195388D20070C39A /* Foundation.framework */,
 				6003F58F195388D20070C39A /* CoreGraphics.framework */,
 				6003F591195388D20070C39A /* UIKit.framework */,
@@ -1006,8 +1010,8 @@
 						TestTargetID = 6003F589195388D20070C39A;
 					};
 					6003F589195388D20070C39A = {
-						DevelopmentTeam = E5SS7YSZ2F;
-						ProvisioningStyle = Automatic;
+						DevelopmentTeam = 36WT396TPZ;
+						ProvisioningStyle = Manual;
 					};
 					6003F5AD195388D20070C39A = {
 						TestTargetID = 6003F589195388D20070C39A;
@@ -1487,8 +1491,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=*]" = "iPhone Developer";
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = E5SS7YSZ2F;
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_TEAM = 36WT396TPZ;
 				ENABLE_BITCODE = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "MLN/MLN-Prefix.pch";
@@ -1521,7 +1525,6 @@
 					"-l\"SDCycleScrollView\"",
 					"-l\"SDWebImage\"",
 					"-l\"Toast\"",
-					"-l\"z\"",
 					"-framework",
 					"\"AVFoundation\"",
 					"-framework",
@@ -1540,11 +1543,11 @@
 					"\"SystemConfiguration\"",
 					"-framework",
 					"\"UIKit\"",
-					"-l\"c++\"",
+					"-v",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.MMILua-Example2";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.MMILua-Example";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PROVISIONING_PROFILE_SPECIFIER = "Xcode iOS Wildcard";
 				SWIFT_VERSION = 4.0;
 				WRAPPER_EXTENSION = app;
 			};
@@ -1556,9 +1559,9 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = E5SS7YSZ2F;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_TEAM = 36WT396TPZ;
 				ENABLE_BITCODE = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "MLN/MLN-Prefix.pch";
@@ -1591,7 +1594,6 @@
 					"-l\"SDCycleScrollView\"",
 					"-l\"SDWebImage\"",
 					"-l\"Toast\"",
-					"-l\"z\"",
 					"-framework",
 					"\"AVFoundation\"",
 					"-framework",
@@ -1610,11 +1612,11 @@
 					"\"SystemConfiguration\"",
 					"-framework",
 					"\"UIKit\"",
-					"-l\"c++\"",
+					"-v",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.MMILua-Example2";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.MMILua-Example";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PROVISIONING_PROFILE_SPECIFIER = "Xcode iOS Wildcard";
 				SWIFT_VERSION = 4.0;
 				WRAPPER_EXTENSION = app;
 			};

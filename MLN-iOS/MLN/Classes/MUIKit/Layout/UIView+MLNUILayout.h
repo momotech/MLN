@@ -40,17 +40,11 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)mlnui_requestLayoutIfNeed;
 - (void)mlnui_requestLayoutIfNeedWithSize:(CGSize)size; // constraint size
 
-/**
- * 当时视图的Frame发生变更时被调用，如果在视图Frame变更时，需要处理自己的事件，可以重写该方法。
- * @warning 不可以主动调用该方法！
- */
+/// 当时视图的Frame发生变更时被调用，如果在视图Frame变更时，需要处理自己的事件，可以重写该方法。
 - (void)mlnui_layoutDidChange NS_REQUIRES_SUPER;
 
-/**
- * 当视图的布局完成后被调用。如果在视图布局完成后，需要处理自己的事件，可以重写该方法。
- * @note 无论frame是否变更，都会调用该方法。
- * @warning 不可以主动调用该方法！
- */
+/// 当视图的布局完成后被调用。如果在视图布局完成后，需要处理自己的事件，可以重写该方法。
+/// @Note 无论frame是否变更，都会调用该方法。
 - (void)mlnui_layoutCompleted NS_REQUIRES_SUPER;
 
 /// 用于测量叶子节点视图大小, 子类应该覆盖该方法
@@ -64,13 +58,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) CGFloat mlnuiAnimationY;
 @property (nonatomic, assign) CGFloat mlnuiAnimationWidth;
 @property (nonatomic, assign) CGFloat mlnuiAnimationHeight;
-@property (nonatomic, assign) CGPoint mlnuiAnimationCenter;
+@property (nonatomic, assign) CGPoint mlnuiAnimationPosition; // @Note 相对于原点而不是锚点
 @property (nonatomic, assign) CGRect mlnuiAnimationFrame;
 
-@property (nonatomic, assign) CGFloat mlnuiLayoutX;
-@property (nonatomic, assign) CGFloat mlnuiLayoutY;
-@property (nonatomic, assign) CGFloat mlnuiLayoutWidth;
-@property (nonatomic, assign) CGFloat mlnuiLayoutHeight;
 @property (nonatomic, assign) CGRect mlnuiLayoutFrame;
 
 @end
