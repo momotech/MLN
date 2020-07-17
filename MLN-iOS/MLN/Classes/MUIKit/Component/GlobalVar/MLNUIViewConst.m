@@ -20,6 +20,12 @@
 LUAUI_EXPORT_GLOBAL_VAR_BEGIN()
 LUAUI_EXPORT_GLOBAL_VAR(StatusBarStyle, (@{@"Default": @(MLNUIStatusBarStyleDefault),
                                            @"Light": @(MLNUIStatusBarStyleLight)}))
+
+LUAUI_EXPORT_GLOBAL_VAR(StatusMode, (@{@"NON_FULLSCREEN":@(MLNUIStatusBarModeNoneFullScreen),
+                                       @"FULLSCREEN":@(MLNUIStatusBarModeFullScreen),
+                                       @"TRANSLUCENT":@(MLNUIStatusBarModeTransparency)}))
+
+
 LUAUI_EXPORT_GLOBAL_VAR(RectCorner, (@{@"TOP_LEFT":@(MLNUIRectCornerTopLeft),
                                        @"TOP_RIGHT":@(MLNUIRectCornerTopRight),
                                        @"BOTTOM_RIGHT":@(MLNUIRectCornerBottomRight),

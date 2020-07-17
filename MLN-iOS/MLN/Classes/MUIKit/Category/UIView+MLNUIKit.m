@@ -19,6 +19,8 @@
 
 #define kMLNUIDefaultRippleColor [UIColor colorWithRed:247/255.0 green:246/255.0 blue:244/255.0 alpha:1.0]
 
+#define MLNUIMarkViewNeedRender  self.mlnui_needRender = YES;
+
 static IMP __mlnui_in_UIView_Origin_TouchesBegan_Method_Imp;
 static IMP __mlnui_in_UIView_Origin_TouchesMoved_Method_Imp;
 static IMP __mlnui_in_UIView_Origin_TouchesEnded_Method_Imp;
@@ -94,10 +96,6 @@ static const void *kLuaKeyboardDismiss = &kLuaKeyboardDismiss;
     
     if ([self luaui_needEndEditing]) {
         [self endEditing:YES];
-    }
-    
-    if ([self luaui_needDismissKeyboard]) {
-        [self.window endEditing:YES];
     }
     
     if (self.mlnui_touchesBeganCallback) {
@@ -252,6 +250,7 @@ static void *kMLNUITouchCallbacksKey = &kMLNUITouchCallbacksKey;
 - (void)luaui_setBackgroundColor:(UIColor *)color
 {
     MLNUICheckTypeAndNilValue(color, @"Color", UIColor);
+    MLNUIMarkViewNeedRender;
     [self setOldColor:color];
     self.backgroundColor = color;
     [self.mlnui_in_renderContext  cleanGradientColorIfNeed];
@@ -291,10 +290,20 @@ static void *kMLNUITouchCallbacksKey = &kMLNUITouchCallbacksKey;
 }
 
 #pragma mark - Render
+
+- (void)setMlnui_needRender:(BOOL)needRender {
+    objc_setAssociatedObject(self, @selector(mlnui_needRender), @(needRender), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+
+- (BOOL)mlnui_needRender {
+    return [objc_getAssociatedObject(self, _cmd) boolValue];
+}
+
 static const void *kLuaBoarderColor = &kLuaBoarderColor;
 - (void)luaui_setBorderColor:(UIColor *)color
 {
     MLNUICheckTypeAndNilValue(color, @"Color", UIColor);
+    MLNUIMarkViewNeedRender;
     objc_setAssociatedObject(self, kLuaBoarderColor, color, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     [self.mlnui_in_renderContext resetBorderWithBorderWidth:[self luaui_borderWidth] borderColor:[self luaui_borderColor]];
 }
@@ -307,6 +316,7 @@ static const void *kLuaBoarderColor = &kLuaBoarderColor;
 static const void *kLuaBoarderWidth = &kLuaBoarderWidth;
 - (void)luaui_setBorderWidth:(CGFloat)borderWidth
 {
+    MLNUIMarkViewNeedRender;
     objc_setAssociatedObject(self, kLuaBoarderWidth, @(borderWidth), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     [self.mlnui_in_renderContext resetBorderWithBorderWidth:borderWidth borderColor:[self luaui_borderColor]];
 }
@@ -318,21 +328,25 @@ static const void *kLuaBoarderWidth = &kLuaBoarderWidth;
 
 - (void)luaui_showShadowPath
 {
+    MLNUIMarkViewNeedRender;
     self.layer.shadowPath = [UIBezierPath bezierPathWithRect:self.bounds].CGPath;
 }
 
 - (void)luaui_setShadowOffset:(CGFloat)x y:(CGFloat)y
 {
+    MLNUIMarkViewNeedRender;
     [self.layer setShadowOffset:CGSizeMake(x, y)];
 }
 
 - (void)luaui_setShadowRadius:(CGFloat)radius
 {
+    MLNUIMarkViewNeedRender;
     [self.layer setShadowRadius:radius];
 }
 
 - (void)luaui_setShadowOpacity:(BOOL)opacity
 {
+    MLNUIMarkViewNeedRender;
     [self.layer setShadowOpacity:opacity];
 }
 
@@ -343,6 +357,7 @@ static const void *kLuaBoarderWidth = &kLuaBoarderWidth;
 
 - (void)luaui_setClipsToBounds:(BOOL)clipsToBounds
 {
+    MLNUIMarkViewNeedRender;
     self.clipsToBounds = clipsToBounds;
     MLNUIRenderContext *renderContext = [self mlnui_in_renderContext];
     renderContext.clipToBounds = clipsToBounds;
@@ -351,6 +366,7 @@ static const void *kLuaBoarderWidth = &kLuaBoarderWidth;
 
 - (void)luaui_setClipsToChildren:(BOOL)clipsToChildren
 {
+    MLNUIMarkViewNeedRender;
     MLNUIRenderContext *renderContext = [self mlnui_in_renderContext];
     renderContext.clipToChildren = clipsToChildren;
     renderContext.didSetClipToChildren = YES;
@@ -359,6 +375,7 @@ static const void *kLuaBoarderWidth = &kLuaBoarderWidth;
 #pragma mark - Corner Radius
 - (void)luaui_setCornerRadius:(CGFloat)cornerRadius
 {
+    MLNUIMarkViewNeedRender;
     [self.mlnui_in_renderContext resetCornerRadius:cornerRadius];
 }
 
@@ -374,6 +391,7 @@ static const void *kLuaBoarderWidth = &kLuaBoarderWidth;
 
 - (void)luaui_setCornerRadius:(CGFloat)cornerRadius byRoundingCorners:(MLNUIRectCorner)corners
 {
+    MLNUIMarkViewNeedRender;
     if (corners == MLNUIRectCornerNone) {
         corners = MLNUIRectCornerAllCorners;
     }
@@ -383,6 +401,7 @@ static const void *kLuaBoarderWidth = &kLuaBoarderWidth;
 - (void)luaui_addCornerMaskWithRadius:(CGFloat)cornerRadius maskColor:(UIColor *)maskColor corners:(MLNUIRectCorner)corners
 {
     MLNUICheckTypeAndNilValue(maskColor, @"Color", UIColor);
+    MLNUIMarkViewNeedRender;
     if (corners == MLNUIRectCornerNone) {
         corners = MLNUIRectCornerAllCorners;
     }
@@ -400,6 +419,7 @@ static const void *kLuaBoarderWidth = &kLuaBoarderWidth;
     MLNUIKitLuaAssert(startColor && [startColor isKindOfClass:[UIColor class]], @"startColor must be type of UIColor");
     MLNUIKitLuaAssert(endColor && [endColor isKindOfClass:[UIColor class]], @"endColor must be type of UIColor");
     if (![startColor isKindOfClass:[UIColor class]] || ![endColor isKindOfClass:[UIColor class]]) return;
+    MLNUIMarkViewNeedRender;
     MLNUIGradientType type = isVertical ? MLNUIGradientTypeTopToBottom : MLNUIGradientTypeLeftToRight;
     [self.mlnui_in_renderContext resetGradientColor:startColor endColor:endColor direction:type];
 }
@@ -408,6 +428,7 @@ static const void *kLuaBoarderWidth = &kLuaBoarderWidth;
 {
     MLNUIKitLuaAssert(startColor && [startColor isKindOfClass:[UIColor class]], @"startColor must be type of UIColor");
     MLNUIKitLuaAssert(endColor && [endColor isKindOfClass:[UIColor class]], @"endColor must be type of UIColor");
+    MLNUIMarkViewNeedRender;
     [self.mlnui_in_renderContext resetGradientColor:startColor endColor:endColor direction:direction];
 }
 
@@ -423,12 +444,14 @@ static const void *kLuaBoarderWidth = &kLuaBoarderWidth;
     MLNUIKitLuaAssert(shadowColor && [shadowColor isKindOfClass:[UIColor class]], @"shadowColor must be type of UIColor");
     MLNUIKitLuaAssert(![self isKindOfClass:[UIImageView class]], @"ImageView does not support addShadow");
     if (![shadowColor isKindOfClass:[UIColor class]]) return;
+    MLNUIMarkViewNeedRender;
     [self.mlnui_in_renderContext resetShadow:shadowColor shadowOffset:offset shadowRadius:radius shadowOpacity:opacity isOval:isOval];
 }
 
 - (void)luaui_setShadowWithShadowOffset:(CGSize)offset shadowRadius:(CGFloat)radius shadowOpacity:(CGFloat)opacity
 {
     if ([self isKindOfClass:[UIImageView class]]) return;
+    MLNUIMarkViewNeedRender;
     UIColor *defaultShadowColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:0.215];
     [self.mlnui_in_renderContext resetShadow:defaultShadowColor shadowOffset:offset shadowRadius:radius shadowOpacity:opacity isOval:false];
 }
@@ -452,6 +475,7 @@ static const void *kLuaRenderContext = &kLuaRenderContext;
 #pragma mark - blurEffect
 - (void)luaui_addBlurEffect
 {
+    MLNUIMarkViewNeedRender;
     CGRect rect = self.frame;
     rect.origin.x = 0;
     rect.origin.y = 0;
@@ -505,41 +529,49 @@ static const void *kLuaRenderContext = &kLuaRenderContext;
 #pragma mark - TouchEvent
 - (void)luaui_setTouchesBeganCallback:(MLNUIBlock *)callback
 {
+    MLNUIMarkViewNeedRender;
     self.mlnui_touchesBeganCallback = callback;
 }
 
 - (void)luaui_setTouchesMovedCallback:(MLNUIBlock *)callback
 {
+    MLNUIMarkViewNeedRender;
     self.mlnui_touchesMovedCallback = callback;
 }
 
 - (void)luaui_setTouchesEndedCallback:(MLNUIBlock *)callback
 {
+    MLNUIMarkViewNeedRender;
     self.mlnui_touchesEndedCallback = callback;
 }
 
 - (void)luaui_setTouchesCancelledCallback:(MLNUIBlock *)callback
 {
+    MLNUIMarkViewNeedRender;
     self.mlnui_touchesCancelledCallback = callback;
 }
 
 - (void)luaui_setTouchesBeganExtensionCallback:(MLNUIBlock *)callback
 {
+    MLNUIMarkViewNeedRender;
     self.mlnui_touchesBeganExtensionCallback = callback;
 }
 
 - (void)luaui_setTouchesMovedExtensionCallback:(MLNUIBlock *)callback
 {
+    MLNUIMarkViewNeedRender;
     self.mlnui_touchesMovedExtensionCallback = callback;
 }
 
 - (void)luaui_setTouchesEndedExtensionCallback:(MLNUIBlock *)callback
 {
+    MLNUIMarkViewNeedRender;
     self.mlnui_touchesEndedExtensionCallback = callback;
 }
 
 - (void)luaui_setTouchesCancelledExtensionCallback:(MLNUIBlock *)callback
 {
+    MLNUIMarkViewNeedRender;
     self.mlnui_touchesCancelledExtensionCallback = callback;
 }
 
@@ -567,21 +599,38 @@ static const void *kLuaRenderContext = &kLuaRenderContext;
 - (void)luaui_addTouch:(MLNUIBlock *)touchCallBack
 {
     MLNUIKitLuaAssert(NO, @"View:onTouch method is deprecated");
+    MLNUIMarkViewNeedRender;
     [self mlnui_in_addTapGestureIfNeed];
     self.mlnui_touchClickBlock = touchCallBack;
 }
 
 - (void)luaui_addClick:(MLNUIBlock *)clickCallback
 {
+    MLNUIMarkViewNeedRender;
     [self mlnui_in_addTapGestureIfNeed];
     self.mlnui_tapClickBlock = clickCallback;
 }
 
 - (void)mlnui_in_addTapGestureIfNeed
 {
-    if (!self.mlnui_tapClickBlock && [self luaui_canClick]) {
-        UITapGestureRecognizer *gesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(mlnui_in_tapClickAction:)];
+    UITapGestureRecognizer *gesture = [self mlnui_in_getClickGesture];
+    if (!gesture && [self luaui_canClick]) {
+        gesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(mlnui_in_tapClickAction:)];
         [self addGestureRecognizer:gesture];
+        [self mlnui_in_setClickGesture:gesture];
+    }
+}
+
+- (void)mlnui_in_removeTapGestureIfNeed
+{
+    if (self.mlnui_touchClickBlock != nil || self.mlnui_tapClickBlock != nil || [self luaui_needDismissKeyboard]) {
+        return;
+    }
+    
+    UITapGestureRecognizer *gesture = [self mlnui_in_getClickGesture];
+    if (gesture) {
+        [self removeGestureRecognizer:gesture];
+        [self mlnui_in_setClickGesture:nil];
     }
 }
 
@@ -593,6 +642,9 @@ static const void *kLuaRenderContext = &kLuaRenderContext;
     if (self.mlnui_tapClickBlock) {
         [self.mlnui_tapClickBlock callIfCan];
     }
+    if ([self luaui_needDismissKeyboard]) {
+        [self.window endEditing:YES];
+    }
     if (self.mlnui_touchClickBlock) {
         CGPoint point = [gesture locationInView:self];
         [self.mlnui_touchClickBlock addFloatArgument:point.x];
@@ -603,6 +655,7 @@ static const void *kLuaRenderContext = &kLuaRenderContext;
 
 - (void)luaui_addLongPress:(MLNUIBlock *)longPressCallback
 {
+    MLNUIMarkViewNeedRender;
     [self mlnui_in_addLongPressGestureIfNeed];
     self.mlnui_longPressBlock = longPressCallback;
 }
@@ -627,6 +680,17 @@ static const void *kLuaRenderContext = &kLuaRenderContext;
         [self.mlnui_longPressBlock addFloatArgument:point.y];
         [self.mlnui_longPressBlock callIfCan];
     }
+}
+
+static const void *kLuaClickGesture = &kLuaClickGesture;
+- (void)mlnui_in_setClickGesture:(UITapGestureRecognizer *)gesture
+{
+    objc_setAssociatedObject(self, kLuaClickGesture, gesture, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+
+- (UITapGestureRecognizer *)mlnui_in_getClickGesture
+{
+    return objc_getAssociatedObject(self, kLuaClickGesture);
 }
 
 static const void *kLuaTapGesture = &kLuaTapGesture;
@@ -842,6 +906,12 @@ static const void *kLuaOnDetachedFromWindowCallback = &kLuaOnDetachedFromWindowC
 - (void)luaui_keyboardDismiss:(BOOL)autodismiss
 {
     objc_setAssociatedObject(self,kLuaKeyboardDismiss,@(autodismiss),OBJC_ASSOCIATION_ASSIGN);
+    //当添加点击取消键盘事件后，检查是否添加了点击手势，否则检查是否应该删除点击手势
+    if (autodismiss) {
+        [self mlnui_in_addTapGestureIfNeed];
+    } else {
+        [self mlnui_in_removeTapGestureIfNeed];
+    }
 }
 
 - (BOOL)luaui_needDismissKeyboard
@@ -1014,6 +1084,7 @@ static const void *kViewTransform = &kViewTransform;
 
 - (void)luaui_setBgImage:(NSString *)imageName
 {
+    MLNUIMarkViewNeedRender;
     if (!stringNotEmpty(imageName)) {
         self.layer.contents = nil;
         return;

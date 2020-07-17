@@ -12,10 +12,11 @@
 #import "MLNUITableViewAdapterProtocol.h"
 #import "MLNUIAdapterCachesManager.h"
 
-@class MLNUIBlock;
+@class MLNUIBlock, MLNUITableView;
 @interface MLNUITableViewAdapter : MLNUIScrollViewDelegate <UITableViewDataSource, MLNUIEntityExportProtocol, MLNUITableViewAdapterProtocol>
 
 @property (nonatomic, weak) UITableView *targetTableView;
+@property (nonatomic, weak) MLNUITableView *mlnuiTableView;
 @property (nonatomic, strong, readonly) NSMutableDictionary<NSString *, MLNUIBlock *> *initedCellCallbacks;
 @property (nonatomic, strong, readonly) NSMutableDictionary<NSString *, MLNUIBlock *> *fillCellDataCallbacks;
 @property (nonatomic, strong, readonly) NSMutableDictionary<NSString *, MLNUIBlock *> *heightForRowCallbacks;

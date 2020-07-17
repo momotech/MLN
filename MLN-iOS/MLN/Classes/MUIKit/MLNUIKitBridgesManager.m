@@ -269,6 +269,7 @@ static NSArray<Class<MLNUIExportProtocol>> *stackClasses;
 {
     if (!stackClasses) {
         stackClasses = @[[MLNUIStack class],
+                         [MLNUIPlaneStack class],
                          [MLNUIVStack class],
                          [MLNUIHStack class],
                          [MLNUISpacer class]];

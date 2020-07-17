@@ -11,6 +11,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @protocol MLNUITableViewCellSettingProtocol <NSObject>
 
+@optional
 - (BOOL)isShowPressedColor;
 - (UIColor *)pressedColor;
 

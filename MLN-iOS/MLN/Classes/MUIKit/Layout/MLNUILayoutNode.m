@@ -181,14 +181,21 @@ static YGConfigRef globalConfig;
     YGNodeMarkDirty(node);
 }
 
+- (BOOL)resetOriginAfterLayout {
+    return self.view.mlnui_resetOriginAfterLayout;
+}
+
 - (NSUInteger)numberOfChildren {
     return YGNodeGetChildCount(self.node);
 }
 
 - (BOOL)isLeaf {
-    NSAssert([NSThread isMainThread], @"This method must be called on the main thread.");
-    for (UIView *subview in self.view.subviews) {
-        if (subview.mlnui_layoutEnable) {
+    NSArray<MLNUILayoutNode *> *subNodes = [self subNodes];
+    if (subNodes.count == 0) {
+        return YES;
+    }
+    for (MLNUILayoutNode *node in subNodes) {
+        if (node.view.mlnui_layoutEnable) {
             return NO;
         }
     }
@@ -289,11 +296,11 @@ YG_PROPERTY(CGFloat, aspectRatio, AspectRatio)
 
 - (CGSize)applyLayoutWithSize:(CGSize)size {
     CGSize result = [self calculateLayoutWithSize:size];
-    YGApplyLayoutToViewHierarchy(self.view, NO);
+    YGApplyLayoutRecursive(self.view.mlnui_layoutNode, 0, 0);
     return result;
 }
 
-- (void)applyLayoutPreservingOrigin:(BOOL)preserveOrigin dimensionFlexibility:(YGDimensionFlexibility)dimensionFlexibility {
+- (void)applyLayoutWithDimensionFlexibility:(YGDimensionFlexibility)dimensionFlexibility {
     CGSize size = self.view.bounds.size;
     if (dimensionFlexibility & YGDimensionFlexibilityFlexibleWidth) {
         size.width = YGUndefined;
@@ -302,7 +309,7 @@ YG_PROPERTY(CGFloat, aspectRatio, AspectRatio)
         size.height = YGUndefined;
     }
     [self calculateLayoutWithSize:size];
-    YGApplyLayoutToViewHierarchy(self.view, preserveOrigin);
+    YGApplyLayoutRecursive(self.view.mlnui_layoutNode, 0, 0);
 }
 
 - (CGSize)intrinsicSize
@@ -389,63 +396,36 @@ static CGFloat YGSanitizeMeasurement(CGFloat constrainedSize, CGFloat measuredSi
     return result;
 }
 
-static BOOL YGNodeHasExactSameChildren(const YGNodeRef node, NSArray<UIView *> *subviews)
-{
-    if (YGNodeGetChildCount(node) != subviews.count) {
-        return NO;
-    }
-    
-    for (int i=0; i<subviews.count; i++) {
-        if (YGNodeGetChild(node, i) != subviews[i].mlnui_layoutNode.node) {
-            return NO;
-        }
-    }
-    
-    return YES;
-}
-
-static void YGAttachNodesFromViewHierachy(UIView *const view)
-{
-    MLNUILayoutNode *const layout = view.mlnui_layoutNode;
-    const YGNodeRef node = layout.node;
+static void YGAttachNodesFromViewHierachy(UIView *const view) {
+    MLNUILayoutNode *layoutNode = view.mlnui_layoutNode;
+    const YGNodeRef node = layoutNode.node;
     
     // Only leaf nodes should have a measure function
-    if (layout.isLeaf) {
+    if (layoutNode.isLeaf) {
         YGRemoveAllChildren(node);
         YGNodeSetMeasureFunc(node, YGMeasureView);
     } else {
         YGNodeSetMeasureFunc(node, NULL);
-        
-        NSMutableArray<UIView *> *subviewsToInclude = [[NSMutableArray alloc] initWithCapacity:view.subviews.count];
+        NSMutableArray<UIView *> *needLayoutViews = [[NSMutableArray alloc] initWithCapacity:view.subviews.count];
         for (UIView *subview in view.subviews) {
             if (subview.mlnui_layoutEnable) {
-                [subviewsToInclude addObject:subview];
+                [needLayoutViews addObject:subview];
             }
         }
-        
-        if (!YGNodeHasExactSameChildren(node, subviewsToInclude)) {
-            YGRemoveAllChildren(node);
-            for (int i = 0; i < subviewsToInclude.count; i++) {
-                YGNodeInsertChild(node, subviewsToInclude[i].mlnui_layoutNode.node, i);
-            }
-        }
-        
-        for (UIView *const subview in subviewsToInclude) {
+        for (UIView *subview in needLayoutViews) {
             YGAttachNodesFromViewHierachy(subview);
         }
     }
 }
 
-static void YGRemoveAllChildren(const YGNodeRef node)
-{
+static void YGRemoveAllChildren(const YGNodeRef node) {
     if (node == NULL) {
         return;
     }
     YGNodeRemoveAllChildren(node);
 }
 
-static CGFloat YGRoundPixelValue(CGFloat value)
-{
+static CGFloat YGRoundPixelValue(CGFloat value) {
     static CGFloat scale;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^(){
@@ -454,40 +434,41 @@ static CGFloat YGRoundPixelValue(CGFloat value)
     return roundf(value * scale) / scale;
 }
 
-static void YGApplyLayoutToViewHierarchy(UIView *view, BOOL preserveOrigin)
-{
-    NSCAssert([NSThread isMainThread], @"Framesetting should only be done on the main thread.");
-    const MLNUILayoutNode *layout = view.mlnui_layoutNode;
-    if (layout == nil) {
-        return;
-    }
-    
-    YGNodeRef node = layout.node;
+/// 虚拟视图的 x 和 y 分别作为子视图的 xOffset 和 yOffset
+static void YGApplyLayoutRecursive(MLNUILayoutNode *layoutNode, float xOffset, float yOffset) {
+    YGNodeRef node = layoutNode.node;
     if (isnan(YGNodeLayoutGetWidth(node)) || isnan(YGNodeLayoutGetHeight(node))) {
         return;
     }
-    const CGPoint topLeft = {
-        YGNodeLayoutGetLeft(node),
-        YGNodeLayoutGetTop(node),
-    };
-    const CGPoint bottomRight = {
-        topLeft.x + YGNodeLayoutGetWidth(node),
-        topLeft.y + YGNodeLayoutGetHeight(node),
-    };
-
-    CGRect frame = view.mlnuiLayoutFrame;
-    CGPoint origin = preserveOrigin ? frame.origin : CGPointZero;
-    frame.origin = CGPointMake(YGRoundPixelValue(topLeft.x + origin.x), YGRoundPixelValue(topLeft.y + origin.y));
-    frame.size = CGSizeMake(YGRoundPixelValue(bottomRight.x) - YGRoundPixelValue(topLeft.x), YGRoundPixelValue(bottomRight.y) - YGRoundPixelValue(topLeft.y));
-    if (!CGRectEqualToRect(view.mlnuiLayoutFrame, frame)) {
-        view.mlnuiLayoutFrame = frame;
-        [view mlnui_layoutDidChange];
-    }
-    [view mlnui_layoutCompleted];
     
-    if (!layout.isLeaf) {
-        for (NSUInteger i = 0; i < view.subviews.count; i++) {
-            YGApplyLayoutToViewHierarchy(view.subviews[i], preserveOrigin);
+    CGFloat top = YGNodeLayoutGetTop(node);
+    CGFloat left = YGNodeLayoutGetLeft(node);
+    CGPoint origin = (CGPoint){YGRoundPixelValue(left), YGRoundPixelValue(top)};
+    
+    UIView *view = layoutNode.view;
+    NSArray<MLNUILayoutNode *> *subNodes = layoutNode.subNodes;
+    if (view.mlnui_isVirtualView) {
+        for (MLNUILayoutNode *subNode in subNodes) {
+            YGApplyLayoutRecursive(subNode, origin.x + xOffset, origin.y + yOffset);
+        }
+    } else {
+        CGRect frame = view.mlnuiLayoutFrame;
+        CGPoint oldOrigin = layoutNode.resetOriginAfterLayout ? CGPointZero : frame.origin;
+        frame.origin = (CGPoint){origin.x + oldOrigin.x + xOffset, origin.y + oldOrigin.y + yOffset};
+        frame.size = (CGSize){
+            YGRoundPixelValue(YGNodeLayoutGetWidth(node)),
+            YGRoundPixelValue(YGNodeLayoutGetHeight(node))
+        };
+        if (!CGRectEqualToRect(view.mlnuiLayoutFrame, frame)) {
+            view.mlnuiLayoutFrame = frame;
+            [view mlnui_layoutDidChange];
+        }
+        [view mlnui_layoutCompleted];
+        
+        if (!layoutNode.isLeaf) {
+            for (MLNUILayoutNode *subNode in subNodes) {
+                YGApplyLayoutRecursive(subNode, 0.0, 0.0); // 当前视图(即view) 非虚拟视图，故偏移量为0.0
+            }
         }
     }
 }

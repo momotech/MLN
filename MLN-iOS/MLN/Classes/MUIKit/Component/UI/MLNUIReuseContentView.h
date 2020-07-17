@@ -29,11 +29,14 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
+typedef void(^MLNUIReuseContentViewDidChangeLayout)(void);
+
 @interface MLNUIReuseContentView : MLNUIVStack
 
 @property (nonatomic, strong, readonly) MLNUILuaTable *luaTable;
 @property (nonatomic, assign, getter=isInited) BOOL inited;
 @property (nonatomic, copy) NSString *lastReuaseId;
+@property (nonatomic, strong) MLNUIReuseContentViewDidChangeLayout didChangeLayout;
 
 - (instancetype)initWithFrame:(CGRect)frame cellView:(UIView<MLNUIReuseCellProtocol> *)cell;
 

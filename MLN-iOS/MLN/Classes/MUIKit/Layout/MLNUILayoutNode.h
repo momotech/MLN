@@ -104,8 +104,8 @@ typedef NS_OPTIONS(NSInteger, YGDimensionFlexibility) {
 /// @param size the constraint size. Pass `MLNUIUndefined` indicate an unconstrained size.
 - (CGSize)applyLayoutWithSize:(CGSize)size NS_SWIFT_NAME(applyLayout(size:));
 
-/// Perform a layout calculation and update the frames of the views in the hierarchy with the results. If the origin is not preserved, the root view's layout results will applied from {0,0}.
-- (void)applyLayoutPreservingOrigin:(BOOL)preserveOrigin dimensionFlexibility:(YGDimensionFlexibility)dimensionFlexibility NS_SWIFT_NAME(applyLayout(preservingOrigin:dimensionFlexibility:));
+/// Perform a layout calculation and update the frames of the views in the hierarchy with the results.
+- (void)applyLayoutWithDimensionFlexibility:(YGDimensionFlexibility)dimensionFlexibility NS_SWIFT_NAME(applyLayout(WithDimensionFlexibility:));
 
 /// Returns the size of the view if no constraints were given. This could equivalent to calling [self sizeThatFits:CGSizeMake(CGFLOAT_MAX, CGFLOAT_MAX)];
 @property (nonatomic, readonly, assign) CGSize intrinsicSize;
@@ -121,6 +121,9 @@ typedef NS_OPTIONS(NSInteger, YGDimensionFlexibility) {
 
 /// Return's a BOOL indicating if a view is dirty. When a node is dirty it usually indicates that it will be remeasured on the next layout pass.
 @property (nonatomic, readonly, assign) BOOL isDirty;
+
+/// If YES, the view's origin will be changed when layout. default is YES.
+@property (nonatomic, assign, readonly) BOOL resetOriginAfterLayout;
 
 @property (nonatomic, assign, readonly) BOOL isRootNode;
 @property (nonatomic, assign, readonly) BOOL isWrapContent;

@@ -42,6 +42,12 @@
     [self.luaContentView luaui_addSubview:view];
 }
 
+- (void)reloadCellIfNeeded {
+    if ([self.delegate respondsToSelector:@selector(mlnuiCollectionViewCellShouldReload:)]) {
+        [self.delegate mlnuiCollectionViewCellShouldReload:self];
+    }
+}
+
 #pragma mark - MLNUIReuseCellProtocol
 - (void)pushContentViewWithLuaCore:(MLNUILuaCore *)luaCore
 {
@@ -104,6 +110,8 @@
 {
     if (!_luaContentView) {
         _luaContentView = [[MLNUIReuseContentView alloc] initWithFrame:CGRectZero cellView:self];
+        __weak typeof(self) weakSelf = self;
+        _luaContentView.didChangeLayout = ^{ [weakSelf reloadCellIfNeeded]; };
         [self.contentView addSubview:_luaContentView];
     }
     return _luaContentView;

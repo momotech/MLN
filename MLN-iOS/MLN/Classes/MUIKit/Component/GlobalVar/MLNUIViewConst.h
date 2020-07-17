@@ -32,6 +32,12 @@ typedef NS_OPTIONS(NSUInteger, MLNUIGradientType) {
     MLNUIGradientTypeBottomToTop = 1<<3,
 };
 
+typedef NS_ENUM(NSInteger, MLNUIStatusBarMode) {
+    MLNUIStatusBarModeNoneFullScreen = 0,
+    MLNUIStatusBarModeFullScreen,
+    MLNUIStatusBarModeTransparency,
+};
+
 typedef enum : NSUInteger {
     MLNUIStatusBarStyleDefault = 0,
     MLNUIStatusBarStyleLight,

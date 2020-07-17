@@ -1,6 +1,6 @@
 {
   "name": "MLNDevTool",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "summary": "Debug Tool of MLN.",
   "description": "Debug Tool of MLN.",
   "homepage": "https://mln.immomo.com",
@@ -11,12 +11,15 @@
   "authors": "MoMo",
   "source": {
     "git": "https://github.com/momotech/MLN.git",
-    "tag": "devtool-0.2.3"
+    "tag": "devtool-0.2.4"
   },
   "platforms": {
     "ios": "8.0"
   },
-  "libraries": "z",
+  "libraries": [
+    "z",
+    "c++"
+  ],
   "requires_arc": true,
   "public_header_files": "MLN-iOS/MLNDevTool/Classes/*.h",
   "dependencies": {

@@ -28,8 +28,14 @@
 @property (nonatomic, assign) BOOL autoDoLuaViewDidDisappear;
 @property (nonatomic, assign) BOOL autoDoSizeChanged;
 @property (nonatomic, assign) BOOL autoDoDestroy;
+@property (nonatomic, assign) BOOL keyboardIsShowing; // default is NO
 
 @property (nonatomic, strong) MLNUISafeAreaProxy *safeAreaProxy;
+@property (nonatomic, strong) NSMutableSet<UIView *> *beyondSuperviews; // 键盘弹起，跟随键盘上移而超出父视图frame的视图
+
+@property (nonatomic, strong) UIView *statusBar;
+@property (nonatomic, assign) MLNUIStatusBarMode statusBarMode; // default full screen
+@property (nonatomic, strong) UIColor *statusBarColor;
 
 @end
 
@@ -39,6 +45,8 @@
 {
     self = [super initWithMLNUILuaCore:luaCore frame:frame];
     if (self) {
+        _keyboardIsShowing = NO;
+        _statusBarMode = MLNUIStatusBarModeFullScreen;
         [self addNotificationObservers];
     }
     return self;
@@ -47,6 +55,19 @@
 - (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     [self.safeAreaProxy detachSafeAreaView:self];
+}
+
+- (CGRect)statusBarFrame {
+    CGRect frame = CGRectZero;
+    if (@available(iOS 13.0, *)) {
+        frame = self.window.windowScene.statusBarManager.statusBarFrame;
+    } else {
+        frame = [UIApplication sharedApplication].statusBarFrame;
+    }
+    if (CGRectEqualToRect(frame, CGRectZero)) {
+        frame = [UIApplication sharedApplication].statusBarFrame;
+    }
+    return frame;
 }
 
 #pragma mark - Notification
@@ -79,29 +100,28 @@
     }
 }
 
-- (void)keyboardWasShown:(NSNotification *)notifi
+- (void)keyboardWasShown:(NSNotification *)notification
 {
-    NSDictionary *keybordInfo = [notifi userInfo];
-    CGRect keyBoardRect = [[keybordInfo objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue];
-    CGFloat height = keyBoardRect.size.height;
-    CGRect beginRect = [[keybordInfo objectForKey:UIKeyboardFrameBeginUserInfoKey] CGRectValue];
-    CGRect endRect = [[keybordInfo objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue];
-    // 第三方键盘回调三次问题，监听仅执行最后一次
-    if(beginRect.size.height > 0 && (beginRect.origin.y - endRect.origin.y > 0)){
+    if(!_keyboardIsShowing){
+        NSDictionary *keybordInfo = [notification userInfo];
+        CGRect keyBoardRect = [[keybordInfo objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue];
+        CGFloat height = keyBoardRect.size.height;
         if (_keyboardStatusCallback) {
             [_keyboardStatusCallback addBOOLArgument:YES];
             [_keyboardStatusCallback addFloatArgument:height];
             [_keyboardStatusCallback callIfCan];
+            _keyboardIsShowing = YES;
         }
     }
 }
 
-- (void)keyboardWillBeHiden:(NSNotification *)notifi
+- (void)keyboardWillBeHiden:(NSNotification *)notification
 {
     if (_keyboardStatusCallback) {
         [_keyboardStatusCallback addBOOLArgument:NO];
         [_keyboardStatusCallback addFloatArgument:0];
         [_keyboardStatusCallback callIfCan];
+        _keyboardIsShowing = NO;
     }
 }
 
@@ -114,6 +134,23 @@
         [self.keyboardFrameChangeCallback addFloatArgument:newHeight];
         [self.keyboardFrameChangeCallback callIfCan];
     }
+}
+
+#pragma mark - Override (Event Chain)
+
+- (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event {
+    if (self.beyondSuperviews.count == 0) {
+        return [super hitTest:point withEvent:event];
+    }
+    for (UIView *view in self.beyondSuperviews) {
+        CGPoint pointRelativeToSuperview = [self convertPoint:point toView:view.superview];
+        if (CGRectContainsPoint(view.frame, pointRelativeToSuperview)) {
+            CGPoint pointRelativeToView = [self convertPoint:point toView:view];
+            UIView *firstResponder = [view hitTest:pointRelativeToView withEvent:event]; // 寻找可响应的子视图
+            return firstResponder ? firstResponder : view; // 若没有子视图可响应，则响应自己
+        }
+    }
+    return [super hitTest:point withEvent:event];
 }
 
 #pragma mark - luaSafeArea
@@ -212,7 +249,101 @@
     
 }
 
+- (void)luaui_cachePushView:(UIView *)view {
+    if (view) {
+        [self.beyondSuperviews addObject:view];
+    }
+}
+
+- (void)luaui_clearPushView {
+    [self.beyondSuperviews removeAllObjects];
+}
+
+- (void)luaui_setStatusBarMode:(MLNUIStatusBarMode)mode {
+    self.statusBarMode = mode;
+    switch (mode) {
+        case MLNUIStatusBarModeFullScreen:
+            [self updateStatusBarHierarchy:nil changeWindowFrame:NO];
+            break;
+            
+        case MLNUIStatusBarModeTransparency:
+            [self updateStatusBarHierarchy:self.superview changeWindowFrame:NO];
+            break;
+            
+        case MLNUIStatusBarModeNoneFullScreen:
+            [self updateStatusBarHierarchy:self.superview changeWindowFrame:YES];
+            break;
+            
+        default:
+            break;
+    }
+}
+
+- (MLNUIStatusBarMode)luaui_getStatusBarMode {
+    return self.statusBarMode;
+}
+
+- (void)luaui_setStatusBarColor:(UIColor *)color {
+    self.statusBarColor = color;
+    _statusBar.backgroundColor = color; // if statusBar isn't nil and set color, or do nothing.
+}
+
+- (UIColor *)luaui_getStatusBarColor {
+    return self.statusBarColor;
+}
+
+#pragma mark - StatusBar
+
+- (void)updateStatusBarHierarchy:(UIView *)superview changeWindowFrame:(BOOL)changeFrame {
+    if (!superview) {
+        [_statusBar removeFromSuperview];
+        _statusBar = nil;
+        return;
+    }
+    if (self.statusBar.superview == superview) {
+        return;
+    }
+    [self.statusBar removeFromSuperview];
+    [superview addSubview:self.statusBar];
+    [self changeLuaWindowFrameIfNeeded:changeFrame];
+}
+
+- (void)changeLuaWindowFrameIfNeeded:(BOOL)change {
+    if (change) {
+        if (CGRectEqualToRect(self.frame, [UIScreen mainScreen].bounds)) {
+            CGFloat statusBarHeight = self.statusBar.frame.size.height;
+            CGRect frame = self.frame;
+            frame.origin.y += statusBarHeight;
+            frame.size.height -= statusBarHeight;
+            self.mlnuiLayoutFrame = frame;
+        }
+    } else {
+        if (!CGRectEqualToRect(self.frame, [UIScreen mainScreen].bounds)) {
+            self.mlnuiLayoutFrame = [UIScreen mainScreen].bounds;
+        }
+    }
+}
+
+#pragma mark - Lazy Loading
+
+- (NSMutableSet *)beyondSuperviews {
+    if (!_beyondSuperviews) {
+        _beyondSuperviews = [NSMutableSet set];
+    }
+    return _beyondSuperviews;
+}
+
+- (UIView *)statusBar {
+    if (!_statusBar) {
+        CGRect frame = [self statusBarFrame];
+        _statusBar = [[UIView alloc] initWithFrame:CGRectMake(0, 0, frame.size.width, frame.size.height)];
+        _statusBar.backgroundColor = self.statusBarColor;
+    }
+    return _statusBar;
+}
+
 #pragma mark - Appear & Disappear
+
 - (BOOL)canDoLuaViewDidAppear
 {
     return self.viewAppearCallback!=nil;
@@ -295,7 +426,7 @@
     }
 }
 
-- (void)luaui_setKeyBoardFrameChangeCallback:(MLNUIBlock *)callback
+- (void)luaui_keyBoardHeightChangeCallback:(MLNUIBlock *)callback
 {
     MLNUICheckTypeAndNilValue(callback, @"function", MLNUIBlock);
     self.keyboardFrameChangeCallback = callback;
@@ -305,6 +436,10 @@
 
 - (BOOL)mlnui_isRootView {
     return YES;
+}
+
+- (BOOL)mlnui_resetOriginAfterLayout {
+    return NO;
 }
 
 - (void)setFrame:(CGRect)frame
@@ -366,8 +501,11 @@
 }
 
 #pragma mark - Export
+
 LUAUI_EXPORT_VIEW_BEGIN(MLNUIWindow)
-LUAUI_EXPORT_VIEW_PROPERTY(safeArea, "luaui_setSafeArea:", "luaui_getSafeArea", MILWindow)
+LUAUI_EXPORT_VIEW_PROPERTY(safeArea, "luaui_setSafeArea:", "luaui_getSafeArea", MLNUIWindow)
+LUAUI_EXPORT_VIEW_PROPERTY(statusBarMode, "luaui_setStatusBarMode:", "luaui_getStatusBarMode", MLNUIWindow)
+LUAUI_EXPORT_VIEW_PROPERTY(statusBarColor, "luaui_setStatusBarColor:", "luaui_getStatusBarColor", MLNUIWindow)
 LUAUI_EXPORT_VIEW_METHOD(safeAreaAdapter, "luaui_setSafeAreaAdapter:", MLNUIWindow)
 LUAUI_EXPORT_VIEW_METHOD(safeAreaInsetsTop, "luaui_safeAreaInsetsTop", MLNUIWindow)
 LUAUI_EXPORT_VIEW_METHOD(safeAreaInsetsBottom, "luaui_safeAreaInsetsBottom", MLNUIWindow)
@@ -390,7 +528,9 @@ LUAUI_EXPORT_VIEW_METHOD(backKeyPressed, "luaui_backKeyPressed:", MLNUIWindow)
 LUAUI_EXPORT_VIEW_METHOD(backKeyEnabled, "luaui_backKeyEnabled:", MLNUIWindow)
 LUAUI_EXPORT_VIEW_METHOD(getStatusBarStyle, "luaui_getStatusBarStyle", MLNUIWindow)
 LUAUI_EXPORT_VIEW_METHOD(setStatusBarStyle, "luaui_setStatusBarStyle:", MLNUIWindow)
-LUAUI_EXPORT_VIEW_METHOD(i_keyBoardFrameChangeCallback, "luaui_setKeyBoardFrameChangeCallback:", MLNUIWindow)
+LUAUI_EXPORT_VIEW_METHOD(keyBoardHeightChange, "luaui_keyBoardHeightChangeCallback:", MLNUIWindow)
+LUAUI_EXPORT_VIEW_METHOD(cachePushView, "luaui_cachePushView:", MLNUIWindow)
+LUAUI_EXPORT_VIEW_METHOD(clearPushView, "luaui_clearPushView", MLNUIWindow)
 LUAUI_EXPORT_VIEW_END(MLNUIWindow, Window, YES, "MLNUIView", NULL)
 
 @end

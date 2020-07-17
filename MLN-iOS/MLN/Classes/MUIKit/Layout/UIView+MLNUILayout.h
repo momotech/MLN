@@ -16,9 +16,19 @@ NS_ASSUME_NONNULL_BEGIN
 - (Class)mlnui_bindedLayoutNodeClass;
 @property (nonatomic, strong, readonly) MLNUILayoutNode *mlnui_layoutNode;
 
-/// 可重写该属性get方法. 若返回NO, 则不会参与测量布局计算, 也不会关联`mlnui_layoutNode`. 默认为NO.
+/// 是否参与Node测量布局。若返回NO，则不会参与测量布局计算，也不会关联`mlnui_layoutNode`。默认为NO。 \b 可重写get方法。
 @property (nonatomic, assign, readonly) BOOL mlnui_layoutEnable;
-@property (nonatomic, assign, readonly) BOOL mlnui_isRootView;   // default is NO
+
+/// 是否为根视图。若为根视图，则其节点为根节点。eg: MLNUITableViewCell。默认为NO。\b 可重写get方法。
+@property (nonatomic, assign, readonly) BOOL mlnui_isRootView;
+
+/// 是否允许虚拟布局。目前只有 HStack 和 VStack 以及 Spacer 允许虚拟布局。默认为NO。 \b 可重写get方法。
+@property (nonatomic, assign, readonly) BOOL mlnui_allowVirtualLayout;
+
+/// 当前视图是否为虚拟视图（不参与视图层级渲染）
+- (BOOL)mlnui_isVirtualView;
+
+@property (nonatomic, assign, readonly) BOOL mlnui_resetOriginAfterLayout; // default is YES.
 
 #pragma mark - Hierarchy
 

@@ -35,6 +35,10 @@
     [super mlnui_user_data_dealloc];
 }
 
+- (void)reloadDataInIdleStatus {
+    [self mlnui_pushLazyTask:self.lazyTask];
+}
+
 #pragma mark - Getter
 - (MLNUIBeforeWaitingTask *)lazyTask
 {
@@ -75,6 +79,7 @@
         MLNUI_Lua_UserData_Retain_With_Index(2, adapter);
         _adapter = adapter;
         _adapter.targetTableView = self.innerTableView;
+        _adapter.mlnuiTableView = self;
         [self mlnui_pushLazyTask:self.lazyTask];
     }
 }

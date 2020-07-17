@@ -45,6 +45,21 @@ static const void *kMLNUILayoutAssociatedKey = &kMLNUILayoutAssociatedKey;
     return NO;
 }
 
+- (BOOL)mlnui_allowVirtualLayout {
+    return NO;
+}
+
+- (BOOL)mlnui_isVirtualView {
+    if (!self.mlnui_allowVirtualLayout) {
+        return NO;
+    }
+    return !self.mlnui_needRender;
+}
+
+- (BOOL)mlnui_resetOriginAfterLayout {
+    return YES;
+}
+
 #pragma mark - MLNUIPaddingContainerViewProtocol
 
 - (UIView *)mlnui_contentView {
@@ -80,6 +95,69 @@ static const void *kMLNUILayoutAssociatedKey = &kMLNUILayoutAssociatedKey;
     }
 }
 
+static inline void MLNUITransferView(UIView *fromView, UIView *toView) {
+    if (fromView.superview) {
+        [fromView removeFromSuperview];
+        MLNUI_Lua_UserData_Release(fromView);
+    }
+    [toView addSubview:fromView];
+    MLNUI_Lua_UserData_Retain_With_Index(2, fromView);
+}
+
+static inline void MLNUITransferViewAtIndex(UIView *fromView, UIView *toView, NSInteger index) {
+    if (fromView.superview) {
+        [fromView removeFromSuperview];
+        MLNUI_Lua_UserData_Release(fromView);
+    }
+    [toView insertSubview:fromView atIndex:index];
+    MLNUI_Lua_UserData_Retain_With_Index(2, fromView);
+}
+
+static inline UIView *MLNUIValidSuperview(UIView *self) {
+    MLNUILayoutNode *superNode = self.mlnui_layoutNode.superNode;
+    if (!superNode) return self; // `self` is virtual view and it has not been added to any view yet.
+    while (superNode.superNode && superNode.view.mlnui_isVirtualView) {
+        superNode = superNode.superNode;
+    }
+    return superNode.view;
+}
+
+- (void)_mlnui_transferSubviewsFromView:(UIView *)view {
+    if (view.subviews.count == 0) {
+        return;
+    }
+    UIView *toView = self.mlnui_isVirtualView ? MLNUIValidSuperview(self) : self;
+    for (UIView<MLNUIEntityExportProtocol> *subview in view.subviews) {
+        MLNUITransferView(subview, toView);
+    }
+}
+
+- (void)_mlnui_transferSubviewsFromView:(UIView *)view atIndex:(NSInteger)index {
+    if (view.subviews.count == 0) {
+        return;
+    }
+    UIView *toView = self.mlnui_isVirtualView ? MLNUIValidSuperview(self) : self;
+    for (UIView<MLNUIEntityExportProtocol> *subview in view.subviews) {
+        MLNUITransferViewAtIndex(subview, toView, index);
+    }
+}
+
+- (void)_mlnui_transferViewToSuperview:(UIView *)view {
+    MLNUITransferView(view, MLNUIValidSuperview(self));
+}
+
+- (void)_mlnui_transferViewToSuperview:(UIView *)view atIndex:(NSInteger)index {
+    MLNUITransferViewAtIndex(view, MLNUIValidSuperview(self), index);
+}
+
+- (void)_mlnui_removeVirtualViewSubviews {
+    if (!self.mlnui_isVirtualView) return;
+    NSArray<MLNUILayoutNode *> *subNodes = self.mlnui_layoutNode.subNodes;
+    [subNodes enumerateObjectsUsingBlock:^(MLNUILayoutNode *_Nonnull node, NSUInteger idx, BOOL *_Nonnull stop) {
+        [node.view luaui_removeFromSuperview];
+    }];
+}
+
 - (UIView *)luaui_superview {
     if (![self.superview mlnui_isConvertible]) {
         return nil;
@@ -94,9 +172,15 @@ static const void *kMLNUILayoutAssociatedKey = &kMLNUILayoutAssociatedKey;
     if (view.superview) {
         [view luaui_removeFromSuperview];
     }
-    [self addSubview:view];
-    // 添加Lua强引用
-    MLNUI_Lua_UserData_Retain_With_Index(2, view);
+    
+    if (view.mlnui_isVirtualView) {
+        [self _mlnui_transferSubviewsFromView:view];
+    } else if (self.mlnui_isVirtualView && self.mlnui_layoutNode.superNode) {
+        [self _mlnui_transferViewToSuperview:view]; // add virtual view firstly and then add subviews to virtual view.
+    } else {
+        [self addSubview:view];
+        MLNUI_Lua_UserData_Retain_With_Index(2, view);
+    }
     [self.mlnui_layoutNode addSubNode:view.mlnui_layoutNode];
 }
 
@@ -107,24 +191,41 @@ static const void *kMLNUILayoutAssociatedKey = &kMLNUILayoutAssociatedKey;
     if (view.superview) {
         [view luaui_removeFromSuperview];
     }
+    
     index = index - 1;
     index = index >= 0 && index < self.subviews.count? index : self.subviews.count;
-    [self insertSubview:view atIndex:index];
-    // 添加Lua强引用
-    MLNUI_Lua_UserData_Retain_With_Index(2, view);
+    
+    if (view.mlnui_isVirtualView) {
+        [self _mlnui_transferSubviewsFromView:view atIndex:index];
+    } else if (self.mlnui_isVirtualView && self.mlnui_layoutNode.superNode) {
+        [self _mlnui_transferViewToSuperview:view atIndex:index];
+    } else {
+        [self insertSubview:view atIndex:index];
+        MLNUI_Lua_UserData_Retain_With_Index(2, view);
+    }
     [self.mlnui_layoutNode insertSubNode:view.mlnui_layoutNode atIndex:index];
 }
 
 - (void)luaui_removeFromSuperview {
     [self removeFromSuperview];
-    // 删除Lua强引用
-    MLNUI_Lua_UserData_Release(self);
+    MLNUI_Lua_UserData_Release(self); // 删除Lua强引用
     [self.mlnui_layoutNode.superNode removeSubNode:self.mlnui_layoutNode];
+    
+    if (self.mlnui_isVirtualView) { // 如果是虚拟视图则需要主动移除其所有子视图
+        [self _mlnui_removeVirtualViewSubviews];
+    }
 }
 
 - (void)luaui_removeAllSubViews {
     NSArray *subViews = self.subviews;
     [subViews makeObjectsPerformSelector:@selector(luaui_removeFromSuperview)];
+    
+    NSArray<MLNUILayoutNode *> *subNodes = self.mlnui_layoutNode.subNodes;
+    if (subNodes.count > 0) { // 可能包含虚拟视图
+        [subNodes enumerateObjectsUsingBlock:^(MLNUILayoutNode *_Nonnull node, NSUInteger idx, BOOL *_Nonnull stop) {
+            [node.view luaui_removeFromSuperview];
+        }];
+    }
 }
 
 #pragma mark - Layout
@@ -211,6 +312,10 @@ static const void *kMLNUILayoutAssociatedKey = &kMLNUILayoutAssociatedKey;
     return CGRectGetWidth(self.frame);
 }
 
+- (void)setLuaui_widthAuto {
+    self.mlnui_layoutNode.width = MLNUIValueAuto;
+}
+
 - (void)setLuaui_widthPercent:(CGFloat)widthPercent {
     self.mlnui_layoutNode.width = MLNUIPercentValue(widthPercent);
 }
@@ -276,6 +381,10 @@ static const void *kMLNUILayoutAssociatedKey = &kMLNUILayoutAssociatedKey;
  */
 - (void)setLuaui_height:(CGFloat)luaui_height {
     self.mlnui_layoutNode.height = MLNUIPointValue(luaui_height);
+}
+
+- (void)setLuaui_heightAuto {
+    self.mlnui_layoutNode.height = MLNUIValueAuto;
 }
 
 - (CGFloat)luaui_height {
@@ -789,13 +898,13 @@ static MLNUI_FORCE_INLINE void MLNUIViewChangeHeight(UIView *view, CGFloat heigh
 #pragma mark - Layout
 
 - (void)setMlnuiLayoutFrame:(CGRect)frame {
+    objc_setAssociatedObject(self, @selector(mlnuiLayoutFrame), [NSValue valueWithCGRect:frame], OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     MLNUIViewApplyFrame(self, (CGRect){
         frame.origin.x + self.mlnuiTranslationX,
         frame.origin.y + self.mlnuiTranslationY,
         frame.size.width * self.mlnuiScaleX,
         frame.size.height * self.mlnuiScaleY
     });
-    objc_setAssociatedObject(self, @selector(mlnuiLayoutFrame), [NSValue valueWithCGRect:frame], OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
 - (CGRect)mlnuiLayoutFrame {

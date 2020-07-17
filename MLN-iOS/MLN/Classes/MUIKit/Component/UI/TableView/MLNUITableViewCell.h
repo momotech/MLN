@@ -13,10 +13,19 @@
 
 #define kMLNUITableViewCellReuseID @"kMLNUITableViewCellReuseID"
 
+@class MLNUITableViewCell;
+@protocol MLNUITableViewCellDelegate <NSObject>
+
+@optional
+/// cell上的内容大小发生变更时回调
+- (void)mlnuiTableViewCellShouldReload:(MLNUITableViewCell *)cell;
+
+@end
+
 @interface MLNUITableViewCell : UITableViewCell <MLNUIReuseCellProtocol>
 
 @property (nonatomic, strong) MLNUIReuseContentView *luaContentView;
-@property (nonatomic, weak) id<MLNUITableViewCellSettingProtocol> delegate;
+@property (nonatomic, weak) id<MLNUITableViewCellSettingProtocol, MLNUITableViewCellDelegate> delegate;
 
 - (void)updateSubviewsFrameIfNeed;
 

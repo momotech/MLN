@@ -35,6 +35,6 @@
 #pragma mark - Export Lua
 
 LUAUI_EXPORT_VIEW_BEGIN(MLNUIVStack)
-LUAUI_EXPORT_VIEW_END(MLNUIVStack, VStack, YES, "MLNUIPlaneStack", NULL)
+LUAUI_EXPORT_VIEW_END(MLNUIVStack, VStack, YES, "MLNUIPlaneStack", "initWithMLNUILuaCore:disableVirtualLayout:")
 
 @end
