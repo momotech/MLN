@@ -213,11 +213,14 @@ static inline UIView *MLNUIValidSuperview(UIView *self) {
 }
 
 - (void)luaui_removeAllSubViews {
-    if (!self.mlnui_allowVirtualLayout) {
-        NSArray *subViews = self.subviews;
-        [subViews makeObjectsPerformSelector:@selector(luaui_removeFromSuperview)];
-    } else {
-        [self _mlnui_removeVirtualViewSubviews];
+    NSArray *subViews = self.subviews;
+    [subViews makeObjectsPerformSelector:@selector(luaui_removeFromSuperview)];
+    
+    NSArray<MLNUILayoutNode *> *subNodes = self.mlnui_layoutNode.subNodes;
+    if (subNodes.count > 0) { // 可能包含虚拟视图
+        [subNodes enumerateObjectsUsingBlock:^(MLNUILayoutNode *_Nonnull node, NSUInteger idx, BOOL *_Nonnull stop) {
+            [node.view luaui_removeFromSuperview];
+        }];
     }
 }
 

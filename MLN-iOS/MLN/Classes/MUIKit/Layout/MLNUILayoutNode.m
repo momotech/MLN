@@ -186,9 +186,12 @@ static YGConfigRef globalConfig;
 }
 
 - (BOOL)isLeaf {
-    NSAssert([NSThread isMainThread], @"This method must be called on the main thread.");
-    for (UIView *subview in self.view.subviews) {
-        if (subview.mlnui_layoutEnable) {
+    NSArray<MLNUILayoutNode *> *subNodes = [self subNodes];
+    if (subNodes.count == 0) {
+        return YES;
+    }
+    for (MLNUILayoutNode *node in subNodes) {
+        if (node.view.mlnui_layoutEnable) {
             return NO;
         }
     }
