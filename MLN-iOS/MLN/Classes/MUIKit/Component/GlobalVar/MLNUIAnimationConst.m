@@ -7,6 +7,7 @@
 
 #import "MLNUIAnimationConst.h"
 #import "MLNUIGlobalVarExporterMacro.h"
+#import "MLAAnimation.h"
 
 NSString * const kMUIDefaultGroupAnimation = @"com.milua.group.animation";
 NSString * const kMUIDefaultScaleAnimation = @"com.milua.scale.animation";
@@ -24,6 +25,29 @@ NSString * const kMUIRotaionY = @"transform.rotation.y";
 NSString * const kMUIRotaionZ = @"transform.rotation.z";
 NSString * const kMUIOpacity = @"opacity";
 NSString * const kMUITransform = @"transform";
+
+NSString * const kMUITimingConfigDuration = @"Duration";
+NSString * const kMUITimingConfigVelocity = @"Velocity";
+NSString * const kMUITimingConfigBounciness = @"Bounciness";
+NSString * const kMUITimingConfigSpeed = @"Speed";
+NSString * const kMUITimingConfigTension = @"Tension";
+NSString * const kMUITimingConfigFriction = @"Friction";
+NSString * const kMUITimingConfigMass = @"Mass";
+
+NSString * const kMUIAnimPropertyAlpha = @"view.alpha";
+NSString * const kMUIAnimPropertyColor = @"view.backgroundColor";
+NSString * const kMUIAnimPropertyOrigin = @"view.origin";
+NSString * const kMUIAnimPropertyOriginX = @"view.originX";
+NSString * const kMUIAnimPropertyOriginY = @"view.originY";
+NSString * const kMUIAnimPropertyCenter = @"view.center";
+NSString * const kMUIAnimPropertyCenterX = @"view.centerX";
+NSString * const kMUIAnimPropertyCenterY = @"view.centerY";
+NSString * const kMUIAnimPropertyScale = @"view.scale";
+NSString * const kMUIAnimPropertyScaleX = @"view.scaleX";
+NSString * const kMUIAnimPropertyScaleY = @"view.scaleY";
+NSString * const kMUIAnimPropertyRotation = @"view.rotation";
+NSString * const kMUIAnimPropertyRotationX = @"view.rotationX";
+NSString * const kMUIAnimPropertyRotationY = @"view.rotationY";
 
 @implementation MLNUIAnimationConst
 
@@ -72,6 +96,27 @@ LUAUI_EXPORT_GLOBAL_VAR(AnimationValueType, (@{
                                    @"RELATIVE_TO_SELF": @(MLNUIAnimationValueTypeRelativeToSelf),
                                    @"RELATIVE_TO_PARENT": @(MLNUIAnimationValueTypeRelativeToParent),
                                    }))
+LUAUI_EXPORT_GLOBAL_VAR(Timing, (@{
+                            @"Default": @(MLNUIAnimationTimingFunctionDefault),
+                            @"Linear": @(MLNUIAnimationTimingFunctionLinear),
+                            @"EaseIn": @(MLNUIAnimationTimingFunctionEaseIn),
+                            @"EaseOut": @(MLNUIAnimationTimingFunctionEaseOut),
+                            @"EaseInEaseOut": @(MLNUIAnimationTimingFunctionEaseInEaseOut),
+                            @"Spring": @(MLNUIAnimationTimingFunctionSpring),
+                            }))
+LUAUI_EXPORT_GLOBAL_VAR(AnimProperty, (@{
+                            @"Alpha": @(MLNUIAnimationPropertyTypeAlpha),
+                            @"Color": @(MLNUIAnimationPropertyTypeColor),
+                            @"Position": @(MLNUIAnimationPropertyTypePosition),
+                            @"PositionX": @(MLNUIAnimationPropertyTypePositionX),
+                            @"PositionY": @(MLNUIAnimationPropertyTypePositionY),
+                            @"Scale": @(MLNUIAnimationPropertyTypeScale),
+                            @"ScaleX": @(MLNUIAnimationPropertyTypeScaleX),
+                            @"ScaleY": @(MLNUIAnimationPropertyTypeScaleY),
+                            @"Rotation": @(MLNUIAnimationPropertyTypeRotation),
+                            @"RotationX": @(MLNUIAnimationPropertyTypeRotationX),
+                            @"RotationY": @(MLNUIAnimationPropertyTypeRotationY),
+                            }))
 LUAUI_EXPORT_GLOBAL_VAR_END()
 
 

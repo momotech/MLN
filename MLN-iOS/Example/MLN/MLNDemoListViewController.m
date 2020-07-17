@@ -96,7 +96,7 @@
 - (NSArray *)demoArray
 {
     if (!_demoArray) {
-        _demoArray = @[
+        _demoArray = @[@"animation.lua",
                        @"CollectionViewDemo.lua",
                        @"DialogDemo.lua",
                        @"EditTextViewDemo.lua",
@@ -105,11 +105,13 @@
                        @"TableViewDemo.lua",
                        @"ViewPagerDemo.lua",
                        @"WaterfallViewDemo.lua",
+//                       @"MLNBindModelViewController",
+//                       @"MLNBindTableViewController",
+//                       @"MLNDataBindArrayViewController",
+                       @"MLNBindTestShopStoreController",
+                       @"MLNBindTestLayoutController",
                        @"MLNDataBindHotReload",
-                       @"MLNBindModelViewController",
-                       @"MLNBindTableViewController",
                        @"MLNPerformanceTestController",
-                       @"MLNDataBindArrayViewController"
                        ];
     }
     return _demoArray;

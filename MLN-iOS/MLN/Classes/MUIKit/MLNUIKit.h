@@ -123,4 +123,7 @@
 #import "UIScrollView+MLNUIKit.h"
 #import "UIView+MLNUILayout.h"
 
+#import "MLNUIPerformanceHeader.h"
+
+
 #endif /* MLNUIKit_h */

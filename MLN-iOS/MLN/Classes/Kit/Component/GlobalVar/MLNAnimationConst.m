@@ -25,6 +25,31 @@ NSString * const kRotaionZ = @"transform.rotation.z";
 NSString * const kOpacity = @"opacity";
 NSString * const kTransform = @"transform";
 
+NSString * const kTimingConfigDuration = @"duration";
+NSString * const kTimingConfigVelocity = @"velocity";
+NSString * const kTimingConfigBounciness = @"bounciness";
+NSString * const kTimingConfigSpeed = @"speed";
+NSString * const kTimingConfigTension = @"tension";
+NSString * const kTimingConfigFriction = @"friction";
+NSString * const kTimingConfigMass = @"mass";
+
+NSString * const kAnimPropertyAlpha = @"view.alpha";
+NSString * const kAnimPropertyColor = @"view.backgroundColor";
+NSString * const kAnimPropertyOrigin = @"view.origin";
+NSString * const kAnimPropertyOriginX = @"view.originX";
+NSString * const kAnimPropertyOriginY = @"view.originY";
+NSString * const kAnimPropertyCenter = @"view.center";
+NSString * const kAnimPropertyCenterX = @"view.centerX";
+NSString * const kAnimPropertyCenterY = @"view.centerY";
+NSString * const kAnimPropertySize = @"view.size";
+NSString * const kAnimPropertyFrame = @"view.frame";
+NSString * const kAnimPropertyScale = @"view.scale";
+NSString * const kAnimPropertyScaleX = @"view.scaleX";
+NSString * const kAnimPropertyScaleY = @"view.scaleY";
+NSString * const kAnimPropertyRotation = @"view.rotation";
+NSString * const kAnimPropertyRotationX = @"view.rotationX";
+NSString * const kAnimPropertyRotationY = @"view.rotationY";
+
 @implementation MLNAnimationConst
 
 + (CAMediaTimingFunction *)buildTimingFunction:(MLNAnimationInterpolatorType)interpolator
@@ -72,6 +97,41 @@ LUA_EXPORT_GLOBAL_VAR(AnimationValueType, (@{
                                    @"RELATIVE_TO_SELF": @(MLNAnimationValueTypeRelativeToSelf),
                                    @"RELATIVE_TO_PARENT": @(MLNAnimationValueTypeRelativeToParent),
                                    }))
+LUA_EXPORT_GLOBAL_VAR(Timing, (@{
+                            @"Default": @(MLNAnimationTimingFunctionDefault),
+                            @"Linear": @(MLNAnimationTimingFunctionLinear),
+                            @"EaseIn": @(MLNAnimationTimingFunctionEaseIn),
+                            @"EaseOut": @(MLNAnimationTimingFunctionEaseOut),
+                            @"EaseInEaseOut": @(MLNAnimationTimingFunctionEaseInEaseOut),
+                            @"Spring": @(MLNAnimationTimingFunctionSpring),
+                            }))
+LUA_EXPORT_GLOBAL_VAR(TimingConfig, (@{
+                            @"Duration": kTimingConfigDuration,
+                            @"Velocity": kTimingConfigVelocity,
+                            @"Bounciness": kTimingConfigBounciness,
+                            @"Speed": kTimingConfigSpeed,
+                            @"Tension": kTimingConfigTension,
+                            @"Friction": kTimingConfigFriction,
+                            @"Mass": kTimingConfigMass,
+                            }))
+LUA_EXPORT_GLOBAL_VAR(AnimProperty, (@{
+                            @"Alpha": kAnimPropertyAlpha,
+                            @"Color": kAnimPropertyColor,
+                            @"Origin": kAnimPropertyOrigin,
+                            @"OriginX": kAnimPropertyOriginX,
+                            @"OriginY": kAnimPropertyOriginY,
+                            @"Center": kAnimPropertyCenter,
+                            @"CenterX": kAnimPropertyCenterX,
+                            @"CenterY": kAnimPropertyCenterY,
+                            @"Size": kAnimPropertySize,
+                            @"Frame": kAnimPropertyFrame,
+                            @"Scale": kAnimPropertyScale,
+                            @"ScaleX": kAnimPropertyScaleX,
+                            @"ScaleY": kAnimPropertyScaleY,
+                            @"Rotation": kAnimPropertyRotation,
+                            @"RotationX": kAnimPropertyRotationX,
+                            @"RotationY": kAnimPropertyRotationY,
+                            }))
 LUA_EXPORT_GLOBAL_VAR_END()
 
 

@@ -37,7 +37,7 @@ static int luaui_watch(lua_State *L) {
     return 1;
 }
 
-#if 1
+#if 0
 
 //LUAUI_EXPORT_STATIC_BEGIN(MLNUIDB)
 //LUAUI_EXPORT_STATIC_METHOD(watch, "luaui_watchForKey:handler:", MLNUIDB)

@@ -77,11 +77,12 @@
 #import "MLNUIAnimator.h"
 #import "MLNUIAnimation.h"
 #import "MLNUIFrameAnimation.h"
-#import "MLNUIAlphaAnimation.h"
-#import "MLNUIAnimationSet.h"
-#import "MLNUIRotateAnimation.h"
-#import "MLNUIScaleAnimation.h"
-#import "MLNUITranslateAnimation.h"
+
+//New Animation
+#import "MLNUIObjectAnimation.h"
+#import "MLNUIObjectAnimationSet.h"
+#import "MLNUIInteractiveBehavior.h"
+
 // Canvas
 #import "MLNUICanvasView.h"
 #import "MLNUICanvasPaint.h"
@@ -121,6 +122,21 @@
     [luaCore registerClasses:self.canvasClasses error:NULL];
     // 注册新布局相关
     [luaCore registerClasses:self.stackClasses error:NULL];
+#if OCPERF_PRE_REQUIRE
+    //require lua file
+    [self _requireCustomLuaFiles:luaCore];
+#endif
+}
+
+//static const char *customLuaFiles[] = {"packet.BindMeta", "packet.KeyboardManager", "packet.style"};
+static const char *customLuaFiles[] = {"packet/BindMeta", "packet/KeyboardManager", "packet/style"};
+
+- (void)_requireCustomLuaFiles:(MLNUILuaCore *)luaCore {
+    size_t size = sizeof(customLuaFiles) / sizeof(const char *);
+    for (int i = 0; i < size; i++) {
+        const char *file = customLuaFiles[i];
+        [luaCore requireLuaFile:file];
+    }
 }
 
 static NSArray<Class<MLNUIExportProtocol>> *viewClasses;
@@ -208,8 +224,11 @@ static NSArray<Class<MLNUIExportProtocol>> *utilClasses;
                         [MLNUICornerUtil class],
                         [MLNUISafeAreaAdapter class],
                         [MLNUILink class],
+#if OCPERF_USE_C
+                        [MLNUIDataBindingCBridge class],
+#else
                         [MLNUIDataBinding class],
-                        [MLNUIDataBindingCBridge class]
+#endif
         ];
     }
     return utilClasses;
@@ -224,11 +243,10 @@ static NSArray<Class<MLNUIExportProtocol>> *animationClasses;
                              [MLNUIAnimation class],
                              [MLNUIFrameAnimation class],
                              [MLNUIAnimationZoneView class],
-                             [MLNUIAlphaAnimation class],
-                             [MLNUIAnimationSet class],
-                             [MLNUIRotateAnimation class],
-                             [MLNUIScaleAnimation class],
-                             [MLNUITranslateAnimation class]];
+                             [MLNUIObjectAnimation class],
+                             [MLNUIObjectAnimationSet class],
+                             [MLNUIInteractiveBehavior class]
+                            ];
     }
     return animationClasses;
 }

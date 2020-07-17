@@ -57,6 +57,9 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (BOOL)luaui_canLongPress;
 
+- (void)mlnui_addTouchBlock:(MLNUITouchCallback)block;
+- (void)mlnui_removeTouchBlock:(MLNUITouchCallback)block;
+
 #pragma mark - Render
 - (void)luaui_setCornerRadius:(CGFloat)cornerRadius;
 - (void)luaui_addCornerMaskWithRadius:(CGFloat)cornerRadius maskColor:(UIColor *)maskColor corners:(MLNUIRectCorner)corners;

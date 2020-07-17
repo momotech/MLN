@@ -25,6 +25,14 @@ FOUNDATION_EXPORT NSString * const kMUIRotaionZ;
 FOUNDATION_EXPORT NSString * const kMUIOpacity;
 FOUNDATION_EXPORT NSString * const kMUITransform;
 
+FOUNDATION_EXPORT NSString * const kMUITimingConfigDuration;
+FOUNDATION_EXPORT NSString * const kMUITimingConfigVelocity;
+FOUNDATION_EXPORT NSString * const kMUITimingConfigBounciness;
+FOUNDATION_EXPORT NSString * const kMUITimingConfigSpeed;
+FOUNDATION_EXPORT NSString * const kMUITimingConfigTension;
+FOUNDATION_EXPORT NSString * const kMUITimingConfigFriction;
+FOUNDATION_EXPORT NSString * const kMUITimingConfigMass;
+
 typedef enum : NSUInteger {
     MLNUIAnimationRepeatTypeNone,
     MLNUIAnimationRepeatTypeBeginToEnd,
@@ -56,6 +64,31 @@ typedef enum : NSInteger {
     MLNUIAnimationValueTypeRelativeToSelf,
     MLNUIAnimationValueTypeRelativeToParent
 }MLNUIAnimationValueType;
+
+typedef enum : NSInteger {
+    MLNUIAnimationTimingFunctionDefault,
+    MLNUIAnimationTimingFunctionLinear,
+    MLNUIAnimationTimingFunctionEaseIn,
+    MLNUIAnimationTimingFunctionEaseOut,
+    MLNUIAnimationTimingFunctionEaseInEaseOut,
+    MLNUIAnimationTimingFunctionSpring,
+} MLNUIAnimationTimingFunction;
+
+typedef enum : NSInteger {
+    MLNUIAnimationPropertyTypeNone,
+    MLNUIAnimationPropertyTypeAlpha,
+    MLNUIAnimationPropertyTypeColor,
+    MLNUIAnimationPropertyTypePosition,
+    MLNUIAnimationPropertyTypePositionX,
+    MLNUIAnimationPropertyTypePositionY,
+    MLNUIAnimationPropertyTypeScale,
+    MLNUIAnimationPropertyTypeScaleX,
+    MLNUIAnimationPropertyTypeScaleY,
+    MLNUIAnimationPropertyTypeRotation,
+    MLNUIAnimationPropertyTypeRotationX,
+    MLNUIAnimationPropertyTypeRotationY,
+} MLNUIAnimationPropertyType;
+
 
 @interface MLNUIAnimationConst : NSObject <MLNUIGlobalVarExportProtocol>
 

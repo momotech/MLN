@@ -228,6 +228,14 @@ NS_ASSUME_NONNULL_BEGIN
 - (BOOL)registerGlobalVar:(id)value globalName:(NSString *)globalName error:(NSError ** __nullable)error;
 
 /**
+require lua file
+
+@param lua_file lua file name
+@return 是否成功
+*/
+- (BOOL)requireLuaFile:(const char *)lua_file;
+
+/**
  创建元表
 
  @param name 元表名称
