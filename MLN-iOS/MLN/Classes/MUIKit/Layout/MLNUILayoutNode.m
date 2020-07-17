@@ -136,15 +136,17 @@ static YGConfigRef globalConfig;
 
 @implementation MLNUILayoutNode
 
-+ (void)initialize
-{
++ (void)initialize {
     globalConfig = YGConfigNew();
     YGConfigSetExperimentalFeatureEnabled(globalConfig, YGExperimentalFeatureWebFlexBasis, true);
     YGConfigSetPointScaleFactor(globalConfig, [UIScreen mainScreen].scale);
 }
 
-- (instancetype)initWithView:(UIView *)view isRootView:(BOOL)isRootView
-{
+- (void)dealloc {
+    YGNodeFree(self.node);
+}
+
+- (instancetype)initWithView:(UIView *)view isRootView:(BOOL)isRootView {
     if (self = [super init]) {
         _view = view;
         _node = YGNodeNewWithConfig(globalConfig);
@@ -158,18 +160,13 @@ static YGConfigRef globalConfig;
     return self;
 }
 
-- (void)dealloc
-{
-    YGNodeFree(self.node);
-}
+#pragma mark - Getter
 
-- (BOOL)isDirty
-{
+- (BOOL)isDirty {
     return YGNodeIsDirty(self.node);
 }
 
-- (void)markDirty
-{
+- (void)markDirty {
     if (self.isDirty || !self.isLeaf) {
         return;
     }
@@ -184,8 +181,7 @@ static YGConfigRef globalConfig;
     YGNodeMarkDirty(node);
 }
 
-- (NSUInteger)numberOfChildren
-{
+- (NSUInteger)numberOfChildren {
     return YGNodeGetChildCount(self.node);
 }
 
@@ -485,6 +481,7 @@ static void YGApplyLayoutToViewHierarchy(UIView *view, BOOL preserveOrigin)
     frame.size = CGSizeMake(YGRoundPixelValue(bottomRight.x) - YGRoundPixelValue(topLeft.x), YGRoundPixelValue(bottomRight.y) - YGRoundPixelValue(topLeft.y));
     if (!CGRectEqualToRect(view.mlnuiLayoutFrame, frame)) {
         view.mlnuiLayoutFrame = frame;
+        [view mlnui_layoutDidChange];
     }
     [view mlnui_layoutCompleted];
     

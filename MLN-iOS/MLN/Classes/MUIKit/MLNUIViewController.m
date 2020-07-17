@@ -6,7 +6,9 @@
 //
 
 #import "MLNUIViewController.h"
-#import "MLNUIKit.h"
+#import "MLNUIHeader.h"
+#import "MLNUIKitInstanceFactory.h"
+#import "MLNUIKitInstance.h"
 
 @interface MLNUIViewController ()
 @property (nonatomic, copy, readwrite) NSString *entryFileName;
@@ -32,10 +34,16 @@
     [super viewDidLoad];
     self.view.backgroundColor = [UIColor whiteColor];
     self.automaticallyAdjustsScrollViewInsets = NO;
-    [self prepareForLoadEntryFile];
     
+    PSTART(MLNUILoadTimeStatisticsType_Total);
+    CFAbsoluteTime s = CFAbsoluteTimeGetCurrent();
+    [self prepareForLoadEntryFile];
     NSError *error = nil;
     BOOL ret = [self.kitInstance runWithEntryFile:self.entryFileName windowExtra:self.extraInfo error:&error];
+    printf(">>>>> total cost %.2f ms \n", (CFAbsoluteTimeGetCurrent() - s) * 1000);
+    PEND(MLNUILoadTimeStatisticsType_Total);
+    PDISPLAY(2);
+
     if (ret) {
         if ([self.delegate respondsToSelector:@selector(viewController:didFinishRun:)]) {
             [self.delegate viewController:self didFinishRun:self.entryFileName];
@@ -55,9 +63,9 @@
 //    [self bindData:self.globalModel forKey:@"Global"];
 }
 
-- (BOOL)regClasses:(NSArray<Class<MLNUIExportProtocol>> *)registerClasses {
-    return [self.kitInstance registerClasses:registerClasses error:NULL];
-}
+//- (BOOL)regClasses:(NSArray<Class<MLNUIExportProtocol>> *)registerClasses {
+//    return [self.kitInstance registerClasses:registerClasses error:NULL];
+//}
 
 - (MLNUIKitInstance *)kitInstance {
     if (!_kitInstance) {

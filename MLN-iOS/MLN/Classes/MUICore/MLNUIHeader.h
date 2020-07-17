@@ -8,6 +8,28 @@
 #ifndef MLNUIHeader_h
 #define MLNUIHeader_h
 
+#define OCPERF 1
+
+#if OCPERF
+#define OCPERF_USE_LUD 1
+#define OCPERF_UPDATE_LUACORE 1
+#define OCPERF_USE_CF 1
+//#define OCPERF_USE_C 1
+#define OCPERF_PRE_REQUIRE 1
+//#define OCPERF_COALESCE_BLOCK 1
+#else
+#define OCPERF_USE_LUD 0
+#define OCPERF_UPDATE_LUACORE 0
+#define OCPERF_USE_CF 0
+//#define OCPERF_USE_C 0
+#define OCPERF_PRE_REQUIRE 0
+//#define OCPERF_COALESCE_BLOCK 0
+#endif
+
+
+#define OCPERF_USE_C 1
+#define OCPERF_COALESCE_BLOCK 0
+
 #include "mln_lua.h"
 #include "mln_lauxlib.h"
 #include "mln_lualib.h"
@@ -115,6 +137,21 @@ __VA_ARGS__;\
 #define MLNUIValueIsCGSize(VALUE) MLNUIValueIsType(VALUE, CGSize)
 #define MLNUIValueIsCGPoint(VALUE) MLNUIValueIsType(VALUE, CGPoint)
 
+
+#define mlnui_luaui_checkType_rt(L_T, idx, rt, TYPE_T) mlnui_luaui_assert_rt(L_T, lua_type(L_T, idx) == TYPE_T, rt, @"%s expected, got %s", lua_typename(L_T, TYPE_T), luaL_typename(L_T, idx))
+
+#define mlnui_luaui_check_begin()               BOOL check_rt = YES
+#define mlnui_luaui_check_end()                 if(!check_rt) return 0
+
+#define mlnui_luaui_checkboolean_rt(L, idx)     mlnui_luaui_checkType_rt(L, idx, check_rt, LUA_TBOOLEAN);
+#define mlnui_luaui_checkludata_rt(L, idx)      mlnui_luaui_checkType_rt(L, idx, check_rt, LUA_TLIGHTUSERDATA);
+#define mlnui_luaui_checknumber_rt(L, idx)      mlnui_luaui_checkType_rt(L, idx, check_rt, LUA_TNUMBER);
+#define mlnui_luaui_checkstring_rt(L, idx)      mlnui_luaui_checkType_rt(L, idx, check_rt, LUA_TSTRING);
+#define mlnui_luaui_checktable_rt(L, idx)       mlnui_luaui_checkType_rt(L, idx, check_rt, LUA_TTABLE);
+#define mlnui_luaui_checkfunc_rt(L, idx)        mlnui_luaui_checkType_rt(L, idx, check_rt, LUA_TFUNCTION);
+#define mlnui_luaui_checkudata_rt(L, idx)       mlnui_luaui_checkType_rt(L, idx, check_rt, LUA_TUSERDATA);
+#define mlnui_luaui_checkthread_rt(L, idx)      mlnui_luaui_checkType_rt(L, idx, check_rt, LUA_TTHREAD);
+
 //@note ⚠️在Native->Lua类型转换时，默认将char类型当做数字来处理，而BOOL类型在32位手机上编码为'c',
 //      如果返回NO，则为'\0'，Lua接收到的值为0,而Lua语法规定0也为true，所以这里对于char做一个特殊处理
 #if __LP64__ || (TARGET_OS_EMBEDDED && !TARGET_OS_IPHONE) || TARGET_OS_WIN32 || NS_BUILD_32_LIKE_64
@@ -132,6 +169,7 @@ __VA_ARGS__;\
  */
 #define MLNUICallErrorHandler(LUA_CORE, FORMAT, ...) \
 NSString *error_tt = [NSString stringWithFormat:FORMAT, ##__VA_ARGS__];\
+error_tt = [error_tt stringByAppendingFormat:@"\n%@",[LUA_CORE traceback]];\
 [(LUA_CORE).errorHandler luaCore:(LUA_CORE) error:error_tt]; \
 
 /**
@@ -143,7 +181,7 @@ NSString *error_tt = [NSString stringWithFormat:FORMAT, ##__VA_ARGS__];\
  */
 #define MLNUICallAssertHandler(LUA_CORE, FORMAT, ...) \
 NSString *error_tt = [NSString stringWithFormat:FORMAT, ##__VA_ARGS__];\
-error_tt = [error_tt stringByAppendingString:[LUA_CORE traceback]];\
+error_tt = [error_tt stringByAppendingFormat:@"\n%@",[LUA_CORE traceback]];\
 [(LUA_CORE).errorHandler luaCore:(LUA_CORE) error:error_tt]; \
 
 /**
@@ -155,7 +193,13 @@ error_tt = [error_tt stringByAppendingString:[LUA_CORE traceback]];\
  @param ... 可变参数
  */
 #define mlnui_luaui_assert(L, condition, format, ...)\
-if ([MLNUI_LUA_CORE((L)).errorHandler canHandleAssert:MLNUI_LUA_CORE((L))] && !(condition)) {\
+if (!(condition) && [MLNUI_LUA_CORE((L)).errorHandler canHandleAssert:MLNUI_LUA_CORE((L))]) {\
+MLNUICallAssertHandler(MLNUI_LUA_CORE((L)), format, ##__VA_ARGS__)\
+}
+
+#define mlnui_luaui_assert_rt(L, condition, rt, format, ...)\
+rt = rt && (condition);\
+if (!(rt) && [MLNUI_LUA_CORE((L)).errorHandler canHandleAssert:MLNUI_LUA_CORE((L))]) {\
 MLNUICallAssertHandler(MLNUI_LUA_CORE((L)), format, ##__VA_ARGS__)\
 }
 
@@ -206,6 +250,17 @@ MLNUICallAssertHandler(LUA_CORE, FORMAT, ##__VA_ARGS__)\
 }
 
 /**
+ Lua异常通知Handler处理Error
+
+ @param LUA_CORE MLNLuaCore 虚拟机内核
+ @param FORMAT 字符拼接格式
+ @param ... 可变参数
+ */
+#define MLNUILuaCallErrorHandler(LUA_CORE, FORMAT, ...) \
+NSString *error_tt = [NSString stringWithFormat:FORMAT, ##__VA_ARGS__];\
+[(LUA_CORE).errorHandler luaCore:(LUA_CORE) error:error_tt]; \
+
+/**
  原生Error
  
  @param LUA_CORE MLNUILuaCore 虚拟机内核
@@ -213,6 +268,39 @@ MLNUICallAssertHandler(LUA_CORE, FORMAT, ##__VA_ARGS__)\
  @param ... 可变参数
  */
 #define MLNUIError(LUA_CORE, FORMAT, ...) \
-MLNUICallErrorHandler(LUA_CORE, FORMAT, ##__VA_ARGS__)
+MLNUILuaCallErrorHandler(LUA_CORE, FORMAT, ##__VA_ARGS__)
+
+
+#if DEBUG
+#import "MLNUIPerformanceHeader.h"
+extern id<MLNUIPerformanceMonitor> MLNUIKitPerformanceMonitorForDebug;
+
+#define PSTART_TAG(type, _tag) [MLNUIKitPerformanceMonitorForDebug onStart:type tag:_tag]
+#define PSTART(type) PSTART_TAG(type, nil)
+
+
+#define PEND_TAG_INFO(type, _tag, _info) [MLNUIKitPerformanceMonitorForDebug onEnd:type tag:_tag info:_info]
+#define PEND(type) PEND_TAG_INFO(type, nil, @"")
+
+#define PDISPLAY(delay) dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delay * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{\
+    [MLNUIKitPerformanceMonitorForDebug display];\
+})
+
+#define PCallOC(cls,sel)  [MLNUIKitPerformanceMonitorForDebug callOCBridge:cls selector:sel]
+#define PCallDB(func)  [MLNUIKitPerformanceMonitorForDebug callDBBridge:func]
+#define PCallC(func)  [MLNUIKitPerformanceMonitorForDebug callCBridge:func]
+
+#else
+
+#define PSTART(type)
+#define PSTART_TAG(type,tag)
+#define PEND(type)
+#define PEND_TAG_INFO(type,tag,info)
+#define PDISPLAY(delay)
+#define PCallOC(cls,sel)
+#define PCallDB(func)
+#define PCallC(func)
+#endif
+
 
 #endif /* MLNUIHeader_h */

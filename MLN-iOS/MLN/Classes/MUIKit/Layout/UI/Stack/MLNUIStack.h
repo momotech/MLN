@@ -21,6 +21,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// 如果是HStack则只设置高度；如果是VStack则只设置宽度.
 - (void)setCrossAxisSize:(CGSize)size;
+- (void)setCrossAxisMaxSize:(CGSize)maxSize;
 
 @end
 

@@ -23,6 +23,7 @@
 @interface MLNUITableView()
 @property (nonatomic, strong) MLNUIInnerTableView *innerTableView;
 @property (nonatomic, strong) MLNUIBeforeWaitingTask *lazyTask;
+@property (nonatomic, strong) MLNUIBeforeWaitingTask *calculateCellTask;
 @end
 
 @implementation MLNUITableView
@@ -51,6 +52,17 @@
         }];
     }
     return _lazyTask;
+}
+
+- (MLNUIBeforeWaitingTask *)calculateCellTask {
+    if (!_calculateCellTask) {
+        __weak typeof(self) weakSelf = self;
+        _calculateCellTask = [MLNUIBeforeWaitingTask taskWithCallback:^{
+            __strong typeof(weakSelf) self = weakSelf;
+            [self luaui_reloadData];
+        }];
+    }
+    return _calculateCellTask;
 }
 
 #pragma mark - Export To Lua
@@ -297,6 +309,14 @@
 - (BOOL)mlnui_layoutEnable
 {
     return YES;
+}
+
+- (void)setLuaui_display:(BOOL)luaui_display {
+    BOOL needCalculateCell = (!self.luaui_display && luaui_display);
+    [super setLuaui_display:luaui_display];
+    if (needCalculateCell) {
+        [self mlnui_pushLazyTask:self.calculateCellTask]; // 若tableView初始化时dislay为NO, 之后再设为YES, 需要重新计算cell高度, 不然会展示以前的高度
+    }
 }
 
 - (void)luaui_addSubview:(UIView *)view

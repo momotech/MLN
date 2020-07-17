@@ -215,6 +215,7 @@ NS_ASSUME_NONNULL_BEGIN
  @return 注册是否成功
  */
 - (BOOL)registerGlobalFunc:(const char *)packageName libname:(const char *)libname methodList:(const struct mlnui_objc_method *)list nup:(int)nup error:(NSError ** __nullable)error;
+- (BOOL)registerStaticFunc:(const char *)packageName libname:(const char *)libname methodList:(const struct mlnui_objc_method *)list nup:(int)nup error:(NSError ** __nullable)error;
 
 /**
  注册全局变量
@@ -225,6 +226,14 @@ NS_ASSUME_NONNULL_BEGIN
  @return 注册是否成功
  */
 - (BOOL)registerGlobalVar:(id)value globalName:(NSString *)globalName error:(NSError ** __nullable)error;
+
+/**
+require lua file
+
+@param lua_file lua file name
+@return 是否成功
+*/
+- (BOOL)requireLuaFile:(const char *)lua_file;
 
 /**
  创建元表

@@ -10,7 +10,7 @@
 @interface MLNUILuaBundle ()
 
 @property (nonatomic, strong) NSBundle *currentBundle;
-
+@property (nonatomic, strong) NSBundle *systemBundle;
 @end
 
 @implementation MLNUILuaBundle
@@ -62,18 +62,25 @@
 {
     if (self = [super init]) {
         _currentBundle = bundle;
+        _systemBundle = [NSBundle bundleWithPath:[[NSBundle bundleForClass:[self class]] pathForResource:@"ArgoUI" ofType:@"bundle"]];
     }
     return self;
 }
 
 - (NSString *)filePathWithName:(NSString *)name
 {
-    NSString *filePath = [self.currentBundle pathForResource:name ofType:nil];
-    if (filePath == nil && name != nil) {
-        filePath = [self.currentBundle pathForResource:name ofType:@"lua"];
-    }
-    if (filePath == nil && name != nil) {
-        filePath = [[self bundlePath] stringByAppendingPathComponent:name];
+    NSString *filePath;
+    if (name) {
+        filePath = [self.currentBundle pathForResource:name ofType:nil];
+        if (!filePath) {
+            filePath = [self.currentBundle pathForResource:name ofType:@"lua"];
+        }
+        if (!filePath) {
+            filePath = [self.systemBundle pathForResource:name ofType:nil];
+        }
+        if (!filePath) {
+            filePath = [self.systemBundle pathForResource:name ofType:@"lua"];
+        }
     }
     return filePath;
 }

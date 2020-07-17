@@ -7,6 +7,8 @@
 
 #import <Foundation/Foundation.h>
 
+#define MLNUICrashProtect 1
+
 NS_ASSUME_NONNULL_BEGIN
 
 @interface NSArray<ObjectType> (MLNUISafety)

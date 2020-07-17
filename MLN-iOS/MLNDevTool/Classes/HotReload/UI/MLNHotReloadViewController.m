@@ -11,6 +11,7 @@
 #import "PBCommandBuilder.h"
 #import "MLNDebugPrintFunction.h"
 #import "MLNUIDataBinding.h"
+#import "MLNUIDataBindingCBridge.h"
 
 @interface MLNHotReloadViewController ()
 // NavigationBar

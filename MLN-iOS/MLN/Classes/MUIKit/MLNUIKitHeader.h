@@ -8,6 +8,8 @@
 #ifndef MLNUIKitHeader_h
 #define MLNUIKitHeader_h
 
+
+
 #import "MLNUIHeader.h"
 #import "MLNUIKitInstance.h"
 
@@ -116,5 +118,7 @@ MLNUIStaticCheckTypeAndNilValue(OBJ, @"string", NSString)
  @param VALUE 高度
  */
 #define MLNUICheckHeight(VALUE) MLNUIKitLuaAssert((VALUE >= 0 || VALUE == MLNUILayoutMeasurementTypeWrapContent || VALUE == MLNUILayoutMeasurementTypeMatchParent), @"size must be set height positive number, error number: %@ .", @(VALUE));
+
+
 
 #endif /* MLNUIKitHeader_h */

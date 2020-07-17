@@ -11,21 +11,33 @@
 #import "MLNUIBlock.h"
 #import "NSObject+MLNUICore.h"
 #import "NSValue+MLNUICore.h"
+#import "MLNUIHeader.h"
+#import "MLNUIHeader.h"
 
 #pragma mark - Class & Selector
 
 static MLNUI_FORCE_INLINE Class __mlnui_luaui_getclass (lua_State *L) {
+#if OCPERF_USE_LUD
+    void *p = lua_touserdata(L, lua_upvalueindex(1));
+    return (__bridge Class)(p);
+#else
     mlnui_luaui_checkstring(L, lua_upvalueindex(1));
     NSString *clazzString = [NSString stringWithUTF8String:lua_tostring(L, lua_upvalueindex(1))];
     mlnui_luaui_assert(L, (clazzString && clazzString.length > 0), @"The first upvalue must be a string of class name!");
     return NSClassFromString(clazzString);
+#endif
 }
 
 static MLNUI_FORCE_INLINE SEL __mlnui_luaui_getselector_at_index (lua_State *L, int idx) {
+#if OCPERF_USE_LUD
+    void *p = lua_touserdata(L, lua_upvalueindex(idx));
+    return p;
+#else
     mlnui_luaui_checkstring(L, lua_upvalueindex(idx));
     NSString *selectorString = [NSString stringWithUTF8String:lua_tostring(L, lua_upvalueindex(idx))];
     mlnui_luaui_assert(L, (selectorString && selectorString.length > 0), @"The selector name must not be nil!!");
     return NSSelectorFromString(selectorString);
+#endif
 }
 
 static MLNUI_FORCE_INLINE SEL __mlnui_luaui_getselector (lua_State *L) {
@@ -68,7 +80,32 @@ static MLNUI_FORCE_INLINE id __mlnui_luaui_getuserdata_target (lua_State *L) {
 }
 
 #pragma mark - Method Signature
-
+#if OCPERF_USE_CF
+//static NSMutableDictionary *__mlnui_method_signature_caches = nil;
+static CFMutableDictionaryRef __mlnui_method_signature_caches = nil;
+static MLNUI_FORCE_INLINE NSMethodSignature * _mm_objc_method_signature (Class s_clazz, SEL s_selector, id target, SEL selector) {
+    /*
+     cache = CFDictionaryCreateMutable(CFAllocatorGetDefault(), 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
+     */
+    NSMethodSignature *sig = nil;
+    if (!__mlnui_method_signature_caches) {
+        __mlnui_method_signature_caches = CFDictionaryCreateMutable(CFAllocatorGetDefault(), 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
+    }
+    CFMutableDictionaryRef sigs = (CFMutableDictionaryRef)CFDictionaryGetValue(__mlnui_method_signature_caches, (__bridge const void *)(s_clazz));
+    if (!sigs) {
+        sigs = CFDictionaryCreateMutable(CFAllocatorGetDefault(), 0, NULL, &kCFTypeDictionaryValueCallBacks);
+        CFDictionarySetValue(__mlnui_method_signature_caches, (__bridge const void *)(s_clazz), sigs);
+    }
+    sig = CFDictionaryGetValue(sigs, s_selector);
+    if (!sig) {
+        sig = [target methodSignatureForSelector:selector];
+        if (sig) {
+            CFDictionarySetValue(sigs, s_selector, (__bridge const void *)(sig));
+        }
+    }
+    return sig;
+}
+#else
 static NSMutableDictionary *__mlnui_method_signature_caches = nil;
 static MLNUI_FORCE_INLINE NSMethodSignature * _mm_objc_method_signature (NSString *s_clazz, NSString *s_selector, id target, SEL selector) {
     NSMethodSignature *sig = nil;
@@ -89,6 +126,7 @@ static MLNUI_FORCE_INLINE NSMethodSignature * _mm_objc_method_signature (NSStrin
     }
     return sig;
 }
+#endif
 
 #pragma mark - Invocation
 
@@ -449,8 +487,14 @@ static MLNUI_FORCE_INLINE int __mlnui_luaui_pushinvocation_return(NSInvocation* 
 }
 
 static MLNUI_FORCE_INLINE int __mlnui_luaui_objc_invoke (lua_State *L, int statrtStackIdx, id target, SEL selector, BOOL isclass, BOOL needReturnSelf, BOOL isInit) {
+    PCallOC(isclass ? target : [target class], selector);
+#if OCPERF_USE_LUD
+    Class s_clazz = isclass ? target : [target class];
+    SEL s_selector = selector;
+#else
     NSString *s_clazz = NSStringFromClass(isclass ? target : [target class]);
     NSString *s_selector = NSStringFromSelector(selector);
+#endif
     NSMethodSignature *sig = _mm_objc_method_signature(s_clazz, s_selector, target, selector);
     if (!sig) {
         NSString *targetMsg = s_clazz;

@@ -22,12 +22,16 @@ static const void *kMLNUILayoutAssociatedKey = &kMLNUILayoutAssociatedKey;
 
 @implementation UIView (MLNUILayout)
 
+- (Class)mlnui_bindedLayoutNodeClass {
+    return [MLNUILayoutNode class];
+}
+
 #pragma mark - Property
 
 - (MLNUILayoutNode *)mlnui_layoutNode {
     MLNUILayoutNode *node = objc_getAssociatedObject(self, kMLNUILayoutAssociatedKey);
     if (!node && self.mlnui_layoutEnable) {
-        node = [[MLNUILayoutNode alloc] initWithView:self isRootView:self.mlnui_isRootView];
+        node = [[[self mlnui_bindedLayoutNodeClass] alloc] initWithView:self isRootView:self.mlnui_isRootView];
         objc_setAssociatedObject(self, kMLNUILayoutAssociatedKey, node, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     }
     return node;

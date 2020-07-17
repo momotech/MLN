@@ -98,6 +98,7 @@ LUAUI_EXPORT_VIEW_METHOD(convertPointFrom, "luaui_convertFromView:point:",MLNUIV
 LUAUI_EXPORT_VIEW_METHOD(convertRelativePointTo, "luaui_convertRelativePointToView:point:",MLNUIView)
 
 // render
+LUAUI_EXPORT_VIEW_PROPERTY(hidden, "setHidden:","isHidden", MLNView)
 LUAUI_EXPORT_VIEW_PROPERTY(alpha, "setAlpha:","alpha", MLNUIView)
 LUAUI_EXPORT_VIEW_PROPERTY(borderWidth, "luaui_setBorderWidth:","luaui_borderWidth", MLNUIView)
 LUAUI_EXPORT_VIEW_PROPERTY(borderColor, "luaui_setBorderColor:","luaui_borderColor", MLNUIView)
