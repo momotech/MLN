@@ -44,6 +44,10 @@
 
 LUAUI_EXPORT_VIEW_BEGIN(MLNUIView)
 // layout
+LUAUI_EXPORT_VIEW_METHOD(centerX, "luaui_centerX",MLNUIView)
+LUAUI_EXPORT_VIEW_METHOD(centerY, "luaui_centerY",MLNUIView)
+LUAUI_EXPORT_VIEW_METHOD(layoutComplete, "luaui_layoutComplete:", MLNUIView)
+
 LUAUI_EXPORT_VIEW_PROPERTY(display, "setLuaui_display:","luaui_display", MLNUIView)
 LUAUI_EXPORT_VIEW_PROPERTY(mainAxis, "setLuaui_mainAxis:","luaui_mainAxis", MLNUIView)
 LUAUI_EXPORT_VIEW_PROPERTY(crossSelf, "setLuaui_crossSelf:","luaui_crossSelf", MLNUIView)

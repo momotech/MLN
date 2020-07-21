@@ -155,6 +155,13 @@
     }
 }
 
+- (void)luaui_setDisallowFling:(BOOL)disable {
+    self.innerTableView.luaui_disallowFling = disable;
+}
+
+- (BOOL)luaui_disallowFling {
+    return self.innerTableView.luaui_disallowFling;
+}
 
 #pragma mark - Insert
 - (void)luaui_insertAtRow:(NSInteger)row section:(NSInteger)section
@@ -426,6 +433,7 @@ LUAUI_EXPORT_VIEW_PROPERTY(openReuseCell, "setLuaui_openReuseCell:","luaui_openR
 LUAUI_EXPORT_VIEW_PROPERTY(showsHorizontalScrollIndicator, "luaui_setShowsHorizontalScrollIndicator:", "luaui_showsHorizontalScrollIndicator", MLNUITableView)
 LUAUI_EXPORT_VIEW_PROPERTY(showsVerticalScrollIndicator, "luaui_setShowsVerticalScrollIndicator:", "luaui_showsVerticalScrollIndicator", MLNUITableView)
 LUAUI_EXPORT_VIEW_METHOD(showScrollIndicator, "luaui_showScrollIndicator:", MLNUITableView)
+LUAUI_EXPORT_VIEW_PROPERTY(disallowFling, "luaui_setDisallowFling:", "luaui_disallowFling", MLNUITableView)
 LUAUI_EXPORT_VIEW_METHOD(reloadData, "luaui_reloadData", MLNUITableView)
 LUAUI_EXPORT_VIEW_METHOD(reloadAtRow, "luaui_reloadAtRow:section:animation:", MLNUITableView)
 LUAUI_EXPORT_VIEW_METHOD(reloadAtSection, "luaui_reloadAtSection:animation:", MLNUITableView)

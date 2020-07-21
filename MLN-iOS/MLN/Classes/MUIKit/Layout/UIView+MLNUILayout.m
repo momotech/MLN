@@ -60,6 +60,14 @@ static const void *kMLNUILayoutAssociatedKey = &kMLNUILayoutAssociatedKey;
     return YES;
 }
 
+- (void)setMlnui_layoutCompleteCallback:(MLNUIBlock *)complete {
+    objc_setAssociatedObject(self, @selector(mlnui_layoutCompleteCallback), complete, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+
+- (MLNUIBlock *)mlnui_layoutCompleteCallback {
+    return objc_getAssociatedObject(self, _cmd);
+}
+
 #pragma mark - MLNUIPaddingContainerViewProtocol
 
 - (UIView *)mlnui_contentView {
@@ -236,6 +244,18 @@ static inline UIView *MLNUIValidSuperview(UIView *self) {
 
 - (BOOL)luaui_clipsToBounds {
     return self.mlnui_renderContext.clipToBounds;
+}
+
+- (CGFloat)luaui_centerX {
+    return self.center.x;
+}
+
+- (CGFloat)luaui_centerY {
+    return self.center.y;
+}
+
+- (void)luaui_layoutComplete:(MLNUIBlock *)complete {
+    [self setMlnui_layoutCompleteCallback:complete];
 }
 
 - (void)setLuaui_display:(BOOL)display {
@@ -697,6 +717,9 @@ static inline UIView *MLNUIValidSuperview(UIView *self) {
 }
 
 - (void)mlnui_layoutCompleted {
+    if (self.mlnui_layoutCompleteCallback) {
+        [self.mlnui_layoutCompleteCallback callIfCan];
+    }
     if (self.mlnui_contentView == nil) {
         return;
     }

@@ -350,6 +350,14 @@ static const void *kLuaStartDeceleratingCallback = &kLuaStartDeceleratingCallbac
     self.scrollEnabled = enable;
 }
 
+- (void)setLuaui_disallowFling:(BOOL)disallowFling {
+    objc_setAssociatedObject(self, @selector(luaui_disallowFling), @(disallowFling), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+
+- (BOOL)luaui_disallowFling {
+    return [objc_getAssociatedObject(self, _cmd) boolValue];
+}
+
 @end
 
 
