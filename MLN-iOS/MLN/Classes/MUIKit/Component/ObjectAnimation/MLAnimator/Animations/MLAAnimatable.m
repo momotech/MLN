@@ -25,6 +25,8 @@ NSString * const kMLAViewRotation  = @"view.rotation";
 NSString * const kMLAViewRotationX = @"view.rotationX";
 NSString * const kMLAViewRotationY = @"view.rotationY";
 
+NSString *const kMLAViewContentOffset = @"view.contentOffset";
+
 
 // 计算精度
 static CGFloat const kThresholdColor = 0.01;
@@ -177,6 +179,23 @@ static MLAValueHelper kStaticHelpers[] =
         },
         kThresholdRotation,
         kValueCountOne
+    },
+    {
+        kMLAViewContentOffset,
+        ^(UIView *obj, CGFloat values[]) {
+            UIScrollView *contentView = (UIScrollView *)obj.mlnui_contentView;
+            if (contentView && [contentView isKindOfClass:[UIScrollView class]]) {
+                 values_from_point(values, contentView.contentOffset);
+            }
+        },
+        ^(UIView *obj, const CGFloat values[]) {
+            UIScrollView *contentView = (UIScrollView *)obj.mlnui_contentView;
+            if (contentView && [contentView isKindOfClass:[UIScrollView class]]) {
+                contentView.contentOffset = values_to_point(values);
+            }
+        },
+        kThresholdPoint,
+        kValueCountTwo
     }
 };
 

@@ -398,6 +398,8 @@
         }
         case MLNUIAnimationPropertyTypeScale:
             return @(CGPointMake(1.0, 1.0));
+        case MLNUIAnimationPropertyTypeContentOffset:
+            return @(CGPointMake(0.0, 0.0));
         default:
             break;
     }
@@ -467,6 +469,7 @@
             break;
         case MLNUIAnimationPropertyTypePosition:
         case MLNUIAnimationPropertyTypeScale:
+        case MLNUIAnimationPropertyTypeContentOffset:
         {
             NSArray *point = (NSArray *)velocity;
             if ([point isKindOfClass:[NSArray class]] && point.count == 2)
@@ -522,6 +525,13 @@
         case MLNUIAnimationPropertyTypeRotationY:
             return kMLAViewRotationY;
             break;
+        case MLNUIAnimationPropertyTypeContentOffset: {
+            UIScrollView *contentView = (UIScrollView *)_targetView.mlnui_contentView;
+            if (!contentView || ![contentView isKindOfClass:[UIScrollView class]]) {
+                MLNUIKitLuaAssert(NO, @"The ContentOffset animation type is only valid for ScrollView、TableView、ViewPager and CollectionView.");
+            }
+            return kMLAViewContentOffset;
+        }
         default:
             break;
     }
