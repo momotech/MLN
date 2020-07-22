@@ -25,6 +25,7 @@
             [self lua_removeAllSubViews];
         }
     }
+    [super mln_user_data_dealloc];
 }
 
 #pragma mark - View Tree

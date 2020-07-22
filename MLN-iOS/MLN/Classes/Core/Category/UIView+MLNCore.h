@@ -21,11 +21,6 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (instancetype)initWithLuaCore:(MLNLuaCore *)luaCore frame:(CGRect)frame;
 
-/**
- lua 释放该UserData时，会回调该方法，你可以实现该方法来做一些自定义释放操作。
- */
-- (void)mln_user_data_dealloc;
-
 @end
 
 NS_ASSUME_NONNULL_END

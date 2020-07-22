@@ -80,4 +80,8 @@ static const void *kMLNIsLuaObject = &kMLNIsLuaObject;
     return self;
 }
 
+- (void)mln_user_data_dealloc
+{
+    // nop
+}
 @end
