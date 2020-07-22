@@ -26,13 +26,13 @@
     return MLNUINativeTypeView;
 }
 
-- (void)mlnui_user_data_dealloc
-{
-    [super mlnui_user_data_dealloc];
-    // 如果是归属于lua的视图，在对应UserData被GC时候，应该从界面上移除
-    if (self.mlnui_isLuaObject) {
-        [self removeFromSuperview];
-    }
-}
+//- (void)mlnui_user_data_dealloc
+//{
+//    [super mlnui_user_data_dealloc];
+//    // 如果是归属于lua的视图，在对应UserData被GC时候，应该从界面上移除
+//    if (self.mlnui_isLuaObject) {
+//        [self removeFromSuperview];
+//    }
+//}
 
 @end
