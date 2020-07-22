@@ -61,6 +61,7 @@
 		6003F5B2195388D20070C39A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F591195388D20070C39A /* UIKit.framework */; };
 		6003F5BA195388D20070C39A /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6003F5B8195388D20070C39A /* InfoPlist.strings */; };
 		6003F5BC195388D20070C39A /* Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6003F5BB195388D20070C39A /* Tests.m */; };
+		A4C3142624C7DE2700444CA4 /* MLNGlobalTimeTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A4C3142524C7DE2700444CA4 /* MLNGlobalTimeTest.m */; };
 		B27F658C2377AA6C00F2D341 /* MLNGalleryMineBottomPage.m in Sources */ = {isa = PBXBuildFile; fileRef = B27F657C2377AA6B00F2D341 /* MLNGalleryMineBottomPage.m */; };
 		B27F658F2377AA6C00F2D341 /* MLNGalleryMineInfoViewModel.m in Sources */ = {isa = PBXBuildFile; fileRef = B27F65842377AA6B00F2D341 /* MLNGalleryMineInfoViewModel.m */; };
 		B27F65902377AA6C00F2D341 /* MLNGalleryMineHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = B27F65862377AA6B00F2D341 /* MLNGalleryMineHeaderView.m */; };
@@ -237,6 +238,8 @@
 		614D6372A3D812E53BAA054F /* Pods-MLN_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MLN_Tests.release.xcconfig"; path = "Target Support Files/Pods-MLN_Tests/Pods-MLN_Tests.release.xcconfig"; sourceTree = "<group>"; };
 		6ABC029A38FCC0A39C207FA6 /* Pods-MLN_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MLN_Tests.debug.xcconfig"; path = "Target Support Files/Pods-MLN_Tests/Pods-MLN_Tests.debug.xcconfig"; sourceTree = "<group>"; };
 		6ED891C3203090F5CB5310E5 /* Pods-LuaNative.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LuaNative.debug.xcconfig"; path = "Target Support Files/Pods-LuaNative/Pods-LuaNative.debug.xcconfig"; sourceTree = "<group>"; };
+		A4C3142424C7DE2700444CA4 /* MLNGlobalTimeTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLNGlobalTimeTest.h; sourceTree = "<group>"; };
+		A4C3142524C7DE2700444CA4 /* MLNGlobalTimeTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLNGlobalTimeTest.m; sourceTree = "<group>"; };
 		B27F657C2377AA6B00F2D341 /* MLNGalleryMineBottomPage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLNGalleryMineBottomPage.m; sourceTree = "<group>"; };
 		B27F657E2377AA6B00F2D341 /* MLNGalleryMineBottomPage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLNGalleryMineBottomPage.h; sourceTree = "<group>"; };
 		B27F65842377AA6B00F2D341 /* MLNGalleryMineInfoViewModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLNGalleryMineInfoViewModel.m; sourceTree = "<group>"; };
@@ -904,6 +907,8 @@
 		FAE9C59623A2600B002C830D /* BridgeTest */ = {
 			isa = PBXGroup;
 			children = (
+				A4C3142424C7DE2700444CA4 /* MLNGlobalTimeTest.h */,
+				A4C3142524C7DE2700444CA4 /* MLNGlobalTimeTest.m */,
 				30E24E8C22F3D74900A0E78C /* MLNGlobalFuncTest.h */,
 				30E24E8D22F3D74900A0E78C /* MLNGlobalFuncTest.m */,
 				30E24E9222F3D74900A0E78C /* MLNGlobalVarTest.h */,
@@ -1010,7 +1015,7 @@
 						TestTargetID = 6003F589195388D20070C39A;
 					};
 					6003F589195388D20070C39A = {
-						DevelopmentTeam = E5SS7YSZ2F;
+						DevelopmentTeam = R89P4KXRWG;
 						ProvisioningStyle = Automatic;
 					};
 					6003F5AD195388D20070C39A = {
@@ -1217,6 +1222,7 @@
 				00D5986E24B8766C00EA1660 /* MLNBindTestLayoutController.m in Sources */,
 				007F89E7246C0D8400FF50F1 /* MLNBindTestCaseModel.m in Sources */,
 				B27F65AC2377AA9700F2D341 /* MLNNativeWaterfallHeaderView.m in Sources */,
+				A4C3142624C7DE2700444CA4 /* MLNGlobalTimeTest.m in Sources */,
 				30A4EB60231CD75200995416 /* MLNMyRefreshHandler.m in Sources */,
 				30A4EB5D231CC86B00995416 /* MLNMyImageHandler.m in Sources */,
 				00E652532417695900A878B8 /* MLNDataBindHotReload.m in Sources */,
@@ -1492,7 +1498,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = E5SS7YSZ2F;
+				DEVELOPMENT_TEAM = R89P4KXRWG;
 				ENABLE_BITCODE = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "MLN/MLN-Prefix.pch";
@@ -1545,7 +1551,7 @@
 					"\"UIKit\"",
 					"-v",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.MMILua-Example2";
+				PRODUCT_BUNDLE_IDENTIFIER = org.cocoapods.demo.szt;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 4.0;

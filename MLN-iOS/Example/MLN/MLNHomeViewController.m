@@ -21,6 +21,7 @@
 #import "MLNUIHotReloadViewController.h"
 #import "MLNUIBridge.h"
 #import "MLNUIDB.h"
+#import "MLNGlobalTimeTest.h"
 
 #define kConsoleWidth 250.f
 #define kConsoleHeight 280.f
@@ -68,7 +69,7 @@
 
 - (IBAction)hotReloadAction:(id)sender {
     MLNUIHotReloadViewController *hotReloadVC = [[MLNUIHotReloadViewController alloc] initWithEntryFileName:nil];
-    [hotReloadVC setRegClasses:@[[MLNStaticTest class]/*, [MLNUIBridge class]*/, [MLNUIDB class]]];
+    [hotReloadVC setRegClasses:@[[MLNStaticTest class]/*, [MLNUIBridge class]*/, [MLNUIDB class], [MLNGlobalTimeTest class]]];
     [self.navigationController pushViewController:hotReloadVC animated:YES];
 }
 
