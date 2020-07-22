@@ -68,6 +68,8 @@ LUAUI_EXPORT_GLOBAL_VAR(Wrap, (@{@"NO_WRAP":@(MLNUIWrapNoWrap),
                                  @"WRAP":@(MLNUIWrapWrap),
                                  @"WRAP_REVERSE":@(MLNUIWrapWrapReverse)}))
 
+LUAUI_EXPORT_GLOBAL_VAR(Flex, (@{@"UNDEFINED":@(NAN)}))
+
 LUAUI_EXPORT_GLOBAL_VAR(PositionType, (@{@"RELATIVE":@(MLNUIPositionTypeRelative),
                                          @"ABSOLUTE":@(MLNUIPositionTypeAbsolute)}))
 

@@ -187,8 +187,8 @@ static inline UIView *MLNUIValidSuperview(UIView *self) {
         [self _mlnui_transferViewToSuperview:view]; // add virtual view firstly and then add subviews to virtual view.
     } else {
         [self addSubview:view];
-        MLNUI_Lua_UserData_Retain_With_Index(2, view);
     }
+    MLNUI_Lua_UserData_Retain_With_Index(2, view); // should retain view 
     [self.mlnui_layoutNode addSubNode:view.mlnui_layoutNode];
 }
 
@@ -209,8 +209,8 @@ static inline UIView *MLNUIValidSuperview(UIView *self) {
         [self _mlnui_transferViewToSuperview:view atIndex:index];
     } else {
         [self insertSubview:view atIndex:index];
-        MLNUI_Lua_UserData_Retain_With_Index(2, view);
     }
+    MLNUI_Lua_UserData_Retain_With_Index(2, view);
     [self.mlnui_layoutNode insertSubNode:view.mlnui_layoutNode atIndex:index];
 }
 
@@ -626,14 +626,6 @@ static inline UIView *MLNUIValidSuperview(UIView *self) {
 /**
  * Position
  */
-- (void)luaui_setPositionWithTop:(CGFloat)top right:(CGFloat)right bottom:(CGFloat)bottom left:(CGFloat)left {
-    MLNUILayoutNode *layout = self.mlnui_layoutNode;
-    layout.top = MLNUIPointValue(top);
-    layout.right = MLNUIPointValue(right);
-    layout.bottom = MLNUIPointValue(bottom);
-    layout.left = MLNUIPointValue(left);
-}
-
 - (void)setLuaui_positionType:(MLNUIPositionType)position {
     self.mlnui_layoutNode.position = position;
 }

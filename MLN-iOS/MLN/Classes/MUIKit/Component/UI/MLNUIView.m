@@ -88,7 +88,6 @@ LUAUI_EXPORT_VIEW_PROPERTY(grow, "setLuaui_grow:","luaui_grow", MLNUIView)
 LUAUI_EXPORT_VIEW_PROPERTY(shrink, "setLuaui_shrink:","luaui_shrink", MLNUIView)
 
 LUAUI_EXPORT_VIEW_PROPERTY(positionType, "setLuaui_positionType:","luaui_positionType", MLNUIView)
-LUAUI_EXPORT_VIEW_METHOD(position, "luaui_setPositionWithTop:right:bottom:left:", MLNUIView)
 LUAUI_EXPORT_VIEW_PROPERTY(positionTop, "setLuaui_positionTop:","luaui_positionTop", MLNUIView)
 LUAUI_EXPORT_VIEW_PROPERTY(positionLeft, "setLuaui_positionLeft:","luaui_positionLeft", MLNUIView)
 LUAUI_EXPORT_VIEW_PROPERTY(positionBottom, "setLuaui_positionBottom:","luaui_positionBottom", MLNUIView)
