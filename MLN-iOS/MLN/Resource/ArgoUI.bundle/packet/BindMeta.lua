@@ -79,7 +79,7 @@ function bindMeta_batchSetMeta(t, path, ck, pk)
         if type(_v) == "table" then
             bindMeta_batchSetMeta(_v, bindMeta_path(path , _k), _k, ck)
         else
-           BindMeta(bindMeta_path(path , _k), {}, _v, _k, ck)
+            BindMeta(bindMeta_path(path , _k), {}, _v, _k, ck)
         end
     end
     return BindMeta(path, mapt, t, ck, pk)
@@ -118,6 +118,17 @@ function bindMeta_getWatchPath(keypath, ck)
         end
     end
     return keypath
+end
+
+function bindMeta_update(path, v)
+    local pmt = _kpathCache[path]
+    if pmt ~= nil then -- 赋值前先修改lua层数据
+        pmt = getmetatable(pmt)
+        if pmt.__vv ~= nil then
+            pmt.__vv = v
+        end
+    end
+    DataBinding:update(path, v)
 end
 
 -----------------------------------------------------------------------------------------------------------
@@ -162,7 +173,7 @@ function bindMeta__index(t, k)
         mt.__opname = k
         return t
     elseif k == __ci then
-       return BindMeta(mt.__kvoname, {row={__get=mt.__ck}, section={__get=mt.__pk}}, nil, mt.__ck, mt.__pk)
+        return BindMeta(mt.__kvoname, {row={__get=mt.__ck}, section={__get=mt.__pk}}, nil, mt.__ck, mt.__pk)
     end
     if debug_preview_watch then
         if k == WATCH or k == FOREACH then
@@ -202,6 +213,7 @@ function bindMeta__newindex(t, k, v)
         return
     end
 
+    local path = bindMeta_path(mt.__kvoname, k)
     if debug_preview_watch then
         -- mock顶层数据
         if mt.__kvoname == __b_G then
@@ -214,13 +226,13 @@ function bindMeta__newindex(t, k, v)
         if type(v) == "table" and v.__ishook then
             v = v.__get
         end
-        DataBinding:update(bindMeta_path(mt.__kvoname, k), v)
-        for _, __f in pairs(_debugpwacths[bindMeta_path(mt.__kvoname, k)] or {}) do
+        bindMeta_update(path, v)
+        for _, __f in pairs(_debugpwacths[path] or {}) do
             __f(v)
         end
         return
     end
-    DataBinding:update(bindMeta_path(mt.__kvoname, k), v)
+    bindMeta_update(path, v)
 end
 
 -- __call
