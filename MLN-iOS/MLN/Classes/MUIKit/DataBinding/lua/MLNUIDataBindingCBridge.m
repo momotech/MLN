@@ -126,17 +126,6 @@ static int luaui_mock (lua_State *L) {
     NSString *nKey = [luaCore toString:-2 error:NULL];
     NSDictionary *dic = [luaCore toNativeObject:-1 error:NULL];
     
-//    NSString *path = [[NSBundle mainBundle] pathForResource:@"PerformanceDemoMUI" ofType:@"bundle"];
-    NSString *path = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject];
-    
-    path = [path stringByAppendingPathComponent:nKey];
-    
-    [NSKeyedArchiver archiveRootObject:dic toFile:path];
-    NSError *error;
-    BOOL r = [NSKeyedArchiver archivedDataWithRootObject:dic requiringSecureCoding:YES error:&error];
-    if (!r) {
-        NSLog(@"%@",error);
-    }
     if (![dic isKindOfClass:[NSDictionary class]]) {
         NSString *log = [NSString stringWithFormat:@"data %@ should be kindOf NSDictionary",dic.class];
         _mlnui_on_error_log(luaCore, log);

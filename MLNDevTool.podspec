@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
     s.name             = 'MLNDevTool'
-    s.version          = '0.2.3'
+    s.version          = '0.2.5'
     s.summary          = 'Debug Tool of MLN.'
     
     # This description is used to generate tags and improve search results.
@@ -29,7 +29,7 @@ Pod::Spec.new do |s|
     # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
     
     s.ios.deployment_target = '8.0'
-    s.libraries = 'z'
+    s.libraries = 'z', 'c++'
     s.requires_arc = true
     s.public_header_files = 'MLN-iOS/MLNDevTool/Classes/*.h'
     s.dependency 'ArgoUI'

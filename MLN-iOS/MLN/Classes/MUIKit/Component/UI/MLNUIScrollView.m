@@ -230,6 +230,12 @@
         MLNUIPlaneStack *contentStack = (MLNUIPlaneStack *)self.innerScrollView.mlnui_contentView;
         [contentStack setCrossAxisSize:self.innerScrollView.frame.size]; // 固定宽高情况下，要让contentStack交叉轴大小和scrollView保持一致（主轴方向上滚动）
         [contentStack mlnui_requestLayoutIfNeedWithSize:CGSizeMake(MLNUIUndefined, MLNUIUndefined)]; // 固定宽高不会执行mlnui_sizeThatFits
+        
+    } else { // 自适应内容要二次测量，处理subviews带有widthPercent/heightPercent的情况
+        MLNUILayoutNode *contentNode = self.innerScrollView.mlnui_contentView.mlnui_layoutNode;
+        contentNode.width = MLNUIPointValue(self.frame.size.width);
+        contentNode.height = MLNUIPointValue(self.frame.size.height);
+        [contentNode applyLayoutWithSize:self.frame.size];
     }
 }
 

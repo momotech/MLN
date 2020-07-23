@@ -9,9 +9,11 @@
 #define MLNUITableViewAdapterProtocol_h
 #import <UIKit/UIKit.h>
 
+@class MLNUITableView;
 @protocol MLNUITableViewAdapterProtocol <UITableViewDelegate, UITableViewDataSource>
 
 @property (nonatomic, weak) UITableView *targetTableView;
+@property (nonatomic, weak) MLNUITableView *mlnuiTableView;
 
 @optional
 - (void)tableView:(UITableView *)tableView singleTapSelectRowAtIndexPath:(NSIndexPath *)indexPath;

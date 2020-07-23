@@ -13,7 +13,7 @@
 #import "MLNUIBlock.h"
 #import "NSDictionary+MLNUISafety.h"
 
-@interface MLNUITableViewAutoFitAdapter ()
+@interface MLNUITableViewAutoFitAdapter ()<MLNUITableViewCellDelegate, MLNUITableViewCellSettingProtocol>
 
 @property (nonatomic, strong) NSMutableDictionary<NSString *, MLNUITableViewCell *> *calculCells;
 
@@ -72,10 +72,26 @@
         if (!cell) {
             [tableView registerClass:[MLNUITableViewCell class] forCellReuseIdentifier:identifier];
             cell = [tableView dequeueReusableCellWithIdentifier:identifier];
+            cell.delegate = self;
         }
         [self.calculCells mlnui_setObject:cell forKey:identifier];
     }
     return cell;
+}
+
+#pragma mark - MLNUITableViewCellDelegate
+
+- (void)mlnuiTableViewCellShouldReload:(MLNUITableViewCell *)cell {
+    if (CGPointEqualToPoint(self.targetTableView.contentOffset, CGPointZero)) { // 主要处理首次加载页面cell显示不正确的问题
+        SEL selector = @selector(reloadCellInIdleStatus);
+        [NSObject cancelPreviousPerformRequestsWithTarget:self selector:selector object:nil];
+        [self performSelector:selector withObject:nil afterDelay:0.2]; // default runloop mode
+    }
+}
+
+- (void)reloadCellInIdleStatus {
+    [self.cachesManager invalidateAllCaches];
+    [self.mlnuiTableView reloadDataInIdleStatus];
 }
 
 #pragma mark - Getter

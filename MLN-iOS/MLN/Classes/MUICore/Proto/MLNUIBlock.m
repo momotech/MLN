@@ -17,7 +17,7 @@
 
 @property (nonatomic, strong) NSMutableArray *arguments;
 
-@property (nonatomic, strong) NSValue *innerFunction;
+@property (nonatomic, strong, readwrite) NSValue *innerFunction;
 //@property (nonatomic, strong) MLNUILazyBlockTask *lazyTask;
 //@property (nonatomic, strong) void(^completionBlock)(id);
 
@@ -83,10 +83,10 @@ static int mlnui_errorFunc_traceback (lua_State *L) {
 {
     NSArray *args = self.arguments.copy;
     [self reset];
-    return [self _callWithArguments:args];
+    return [self callWithArguments:args];
 }
 
-- (id)_callWithArguments:(NSArray *)arguments {
+- (id)callWithArguments:(NSArray *)arguments {
     NSAssert([NSThread isMainThread], @"This method to be executed in the main thread!");
     MLNUILuaCore *core = self.luaCore; //retain luaCore.
     lua_State *L = core.state;
@@ -130,28 +130,28 @@ static int mlnui_errorFunc_traceback (lua_State *L) {
     return result;
 }
 
-- (void)lazyCallIfCan:(void(^)(id))completionBlock {
-    doInMainQueue
-    (
-#if OCPERF_COALESCE_BLOCK
-      @weakify(self);
-      NSArray *args = self.arguments.copy;
-      [self reset];
-      MLNUIKitInstance *instance = MLNUI_KIT_INSTANCE(self.luaCore);
-      MLNUILazyBlockTask *task = [MLNUILazyBlockTask taskWithCallback:^{
-         @strongify(self);
-         if (!self) return;
-         id r = [self _callWithArguments:args];
-         if (completionBlock) {
-             completionBlock(r);
-         }
-     } taskID:self.innerFunction];
-      [instance forcePushLazyTask:task];
-#else
-     [self callIfCan];
-#endif
-     )
-}
+//- (void)lazyCallIfCan:(void(^)(id))completionBlock {
+//    doInMainQueue
+//    (
+//#if OCPERF_COALESCE_BLOCK
+//      @weakify(self);
+//      NSArray *args = self.arguments.copy;
+//      [self reset];
+//      MLNUIKitInstance *instance = MLNUI_KIT_INSTANCE(self.luaCore);
+//      MLNUILazyBlockTask *task = [MLNUILazyBlockTask taskWithCallback:^{
+//         @strongify(self);
+//         if (!self) return;
+//         id r = [self callWithArguments:args];
+//         if (completionBlock) {
+//             completionBlock(r);
+//         }
+//     } taskID:self.innerFunction];
+//      [instance forcePushLazyTask:task];
+//#else
+//     [self callIfCan];
+//#endif
+//     )
+//}
 
 - (void)reset
 {

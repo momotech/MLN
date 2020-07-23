@@ -11,6 +11,13 @@
 
 @implementation MLNUIView
 
+- (instancetype)initMLNUIViewWithMLNUILuaCore:(MLNUILuaCore *)luaCore {
+    if (self = [super init]) {
+        MLNUIError(luaCore, @"The View class is deprecated, please use HStack or VStack instead.")
+    }
+    return self;
+}
+
 #pragma mark - Override
 
 - (BOOL)luaui_canClick
@@ -45,6 +52,7 @@ LUAUI_EXPORT_VIEW_PROPERTY(crossContent, "setLuaui_crossContent:","luaui_crossCo
 LUAUI_EXPORT_VIEW_PROPERTY(wrap, "setLuaui_wrap:","luaui_wrap", MLNUIView)
 
 LUAUI_EXPORT_VIEW_PROPERTY(width, "setLuaui_width:","luaui_width", MLNUIView)
+LUAUI_EXPORT_VIEW_METHOD(widthAuto, "setLuaui_widthAuto", MLNUIView)
 LUAUI_EXPORT_VIEW_PROPERTY(minWidth, "setLuaui_minWidth:","luaui_minWidth", MLNUIView)
 LUAUI_EXPORT_VIEW_PROPERTY(maxWidth, "setLuaui_maxWidth:","luaui_maxWidth", MLNUIView)
 LUAUI_EXPORT_VIEW_PROPERTY(widthPercent, "setLuaui_widthPercent:","luaui_widthPercent", MLNUIView)
@@ -52,6 +60,7 @@ LUAUI_EXPORT_VIEW_PROPERTY(minWidthPercent, "setLuaui_minWidthPercent:","luaui_m
 LUAUI_EXPORT_VIEW_PROPERTY(maxWidthPercent, "setLuaui_maxWidthPercent:","luaui_maxWidthPercent", MLNUIView)
 
 LUAUI_EXPORT_VIEW_PROPERTY(height, "setLuaui_height:","luaui_height", MLNUIView)
+LUAUI_EXPORT_VIEW_METHOD(heightAuto, "setLuaui_heightAuto", MLNUIView)
 LUAUI_EXPORT_VIEW_PROPERTY(minHeight, "setLuaui_minHeight:","luaui_minHeight", MLNUIView)
 LUAUI_EXPORT_VIEW_PROPERTY(maxHeight, "setLuaui_maxHeight:","luaui_maxHeight", MLNUIView)
 LUAUI_EXPORT_VIEW_PROPERTY(heightPercent, "setLuaui_heightPercent:","luaui_heightPercent", MLNUIView)
@@ -148,6 +157,6 @@ LUAUI_EXPORT_VIEW_METHOD(bgImage, "luaui_setBgImage:", MLNUIView)
 LUAUI_EXPORT_VIEW_METHOD(addShadow, "luaui_addShadow:shadowOffset:shadowRadius:shadowOpacity:isOval:", MLNUIView)
 LUAUI_EXPORT_VIEW_METHOD(setShadow, "luaui_setShadowWithShadowOffset:shadowRadius:shadowOpacity:", MLNUIView)
 LUAUI_EXPORT_VIEW_METHOD(onDetachedView, "luaui_onDetachedFromWindowCallback:", MLNUIView)
-LUAUI_EXPORT_VIEW_END(MLNUIView, View, NO, NULL, NULL)
+LUAUI_EXPORT_VIEW_END(MLNUIView, View, NO, NULL, "initMLNUIViewWithMLNUILuaCore:")
 
 @end

@@ -20,6 +20,12 @@
 LUAUI_EXPORT_GLOBAL_VAR_BEGIN()
 LUAUI_EXPORT_GLOBAL_VAR(StatusBarStyle, (@{@"Default": @(MLNUIStatusBarStyleDefault),
                                            @"Light": @(MLNUIStatusBarStyleLight)}))
+
+LUAUI_EXPORT_GLOBAL_VAR(StatusMode, (@{@"NON_FULLSCREEN":@(MLNUIStatusBarModeNoneFullScreen),
+                                       @"FULLSCREEN":@(MLNUIStatusBarModeFullScreen),
+                                       @"TRANSLUCENT":@(MLNUIStatusBarModeTransparency)}))
+
+
 LUAUI_EXPORT_GLOBAL_VAR(RectCorner, (@{@"TOP_LEFT":@(MLNUIRectCornerTopLeft),
                                        @"TOP_RIGHT":@(MLNUIRectCornerTopRight),
                                        @"BOTTOM_RIGHT":@(MLNUIRectCornerBottomRight),
@@ -64,6 +70,13 @@ LUAUI_EXPORT_GLOBAL_VAR(Wrap, (@{@"NO_WRAP":@(MLNUIWrapNoWrap),
 
 LUAUI_EXPORT_GLOBAL_VAR(PositionType, (@{@"RELATIVE":@(MLNUIPositionTypeRelative),
                                          @"ABSOLUTE":@(MLNUIPositionTypeAbsolute)}))
+
+LUAUI_EXPORT_GLOBAL_VAR(InteractiveType, (@{@"GESTURE":@(InteractiveType_Gesture)}))
+LUAUI_EXPORT_GLOBAL_VAR(InteractiveDirection, (@{@"X":@(InteractiveDirection_X),
+                                                 @"Y":@(InteractiveDirection_Y)}))
+LUAUI_EXPORT_GLOBAL_VAR(TouchType, (@{@"BEGIN" : @(MLNUITouchType_Begin),
+                                      @"MOVE" : @(MLNUITouchType_Move),
+                                      @"END" : @(MLNUITouchType_End)}))
 
 LUAUI_EXPORT_GLOBAL_VAR_END()
 

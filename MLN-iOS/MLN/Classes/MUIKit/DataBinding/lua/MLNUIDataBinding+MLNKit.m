@@ -19,6 +19,7 @@
 #import "MLNUITableView.h"
 #import "NSObject+MLNUIReflect.h"
 #import "MLNUIMetamacros.h"
+#import "MLNUIBlock+LazyCall.h"
 
 @implementation MLNUIDataBinding (MLNUIKit)
 #if 1

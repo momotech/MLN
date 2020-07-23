@@ -43,6 +43,10 @@
     return YES;
 }
 
+- (BOOL)mlnui_allowVirtualLayout {
+    return NO;
+}
+
 - (Class)mlnui_bindedLayoutNodeClass {
     return [MLNUIInnerScrollViewContentStackNode class];
 }

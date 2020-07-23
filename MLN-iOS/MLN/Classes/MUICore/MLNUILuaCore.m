@@ -772,6 +772,8 @@ NS_INLINE BOOL utils_string_is_number(const char *input) {
         MLNUIError(self, @"Lua state is released %s",__func__);
         return NO;
     }
+    int base = lua_gettop(L);
+    
     lua_getglobal(L, "require");
     lua_pushstring(L, lua_file);
     int s = lua_pcall(L, 1, 0, 0);
@@ -786,7 +788,7 @@ NS_INLINE BOOL utils_string_is_number(const char *input) {
         lua_getfield(L, LUA_REGISTRYINDEX, "_LOADED");
         lua_pushnil(L);
         lua_setfield(L, -2, lua_file);
-        lua_settop(L, 0);
+        lua_settop(L, base);
 //        lua_gc(L, LUA_GCCOLLECT, 0);
     }
     return YES;;
@@ -895,4 +897,35 @@ NS_INLINE BOOL utils_string_is_number(const char *input) {
     }
 }
 
+#if DEBUG
+static void dumpstack (lua_State *L) {
+  int top=lua_gettop(L);
+    printf("top is %d \n",top);
+    
+  for (int i=1; i <= top; i++) {
+    printf("%d\t%s\t", i, luaL_typename(L,i));
+    switch (lua_type(L, i)) {
+      case LUA_TNUMBER:
+        printf("%g\n",lua_tonumber(L,i));
+        break;
+      case LUA_TSTRING:
+        printf("%s\n",lua_tostring(L,i));
+        break;
+      case LUA_TBOOLEAN:
+        printf("%s\n", (lua_toboolean(L, i) ? "true" : "false"));
+        break;
+      case LUA_TNIL:
+        printf("%s\n", "nil");
+        break;
+      default:
+        printf("%p\n",lua_topointer(L,i));
+        break;
+    }
+  }
+}
+
+- (void)printDebugStack {
+    dumpstack(self.state);
+}
+#endif
 @end

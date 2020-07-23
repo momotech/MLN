@@ -178,13 +178,26 @@ static MLNHotReload *sharedInstance;
         return;
     }
     dispatch_async(dispatch_get_main_queue(), ^{
+        UIViewController *vc = self.viewController;
         //加载lua文件之前清除掉数据绑定，解决刷新时会使用到上次的数据.
-        objc_setAssociatedObject(self.viewController, @selector(mlnui_dataBinding), nil, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-        @try {
-            [self.viewController setValue:nil forKey:@"_dataBinding"];
-        } @catch (NSException *exception) {
-            
+        // MLNKitInstanceDelegate, MLNViewControllerProtocol
+        BOOL is_mln = [vc conformsToProtocol:@protocol(MLNKitInstanceDelegate)];
+        if (!is_mln) {
+            is_mln = [vc conformsToProtocol:@protocol(MLNViewControllerProtocol)];
         }
+        if (!is_mln) {
+            id obj = objc_getAssociatedObject(vc, @selector(mlnui_dataBinding));
+            if (obj) {
+                objc_setAssociatedObject(vc, @selector(mlnui_dataBinding), nil, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+            } else {
+                @try {
+                    [vc setValue:nil forKey:@"_dataBinding"];
+                } @catch (NSException *exception) {
+                    NSLog(@"ex %@",exception);
+                }
+            }
+        }
+
         self.benchLuaInstance = [self createLuaInstance:bundlePath entryFilePath:entryFilePath params:params];
         // 参数
         NSMutableDictionary *extraInfo = params ? [NSMutableDictionary dictionaryWithDictionary:params] : [NSMutableDictionary dictionary];

@@ -37,6 +37,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) MLNUIBlock *mlnui_touchesCancelledExtensionCallback;
 
 #pragma mark - render
+@property (nonatomic, assign, readonly) BOOL mlnui_needRender;
 @property (nonatomic, strong, readonly) MLNUIRenderContext *mlnui_renderContext;
 
 #pragma mark - Gesture
@@ -55,6 +56,9 @@ NS_ASSUME_NONNULL_BEGIN
  Return YES if it can respond to long press events. Default is NO
  */
 - (BOOL)luaui_canLongPress;
+
+- (void)mlnui_addTouchBlock:(MLNUITouchCallback)block;
+- (void)mlnui_removeTouchBlock:(MLNUITouchCallback)block;
 
 #pragma mark - Render
 - (void)luaui_setCornerRadius:(CGFloat)cornerRadius;

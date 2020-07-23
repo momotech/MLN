@@ -32,6 +32,12 @@ typedef NS_OPTIONS(NSUInteger, MLNUIGradientType) {
     MLNUIGradientTypeBottomToTop = 1<<3,
 };
 
+typedef NS_ENUM(NSInteger, MLNUIStatusBarMode) {
+    MLNUIStatusBarModeNoneFullScreen = 0,
+    MLNUIStatusBarModeFullScreen,
+    MLNUIStatusBarModeTransparency,
+};
+
 typedef enum : NSUInteger {
     MLNUIStatusBarStyleDefault = 0,
     MLNUIStatusBarStyleLight,
@@ -73,6 +79,23 @@ typedef enum : NSUInteger {
     MLNUIImageViewModeNine,
 } MLNUIImageViewMode;
 
+typedef NS_ENUM(NSUInteger, MLNUITouchType) {
+    MLNUITouchType_Begin,
+    MLNUITouchType_Move,
+    MLNUITouchType_End
+//    MLNUITouchType_Cancel
+};
+
+typedef NS_ENUM(NSUInteger, InteractiveType) {
+    InteractiveType_Gesture
+};
+
+typedef NS_ENUM(NSUInteger, InteractiveDirection) {
+    InteractiveDirection_X,
+    InteractiveDirection_Y
+};
+
+typedef void(^MLNUITouchCallback)(MLNUITouchType type, UITouch * _Nonnull touch, UIEvent * _Nonnull event);
 
 NS_ASSUME_NONNULL_BEGIN
 

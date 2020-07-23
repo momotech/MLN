@@ -42,6 +42,12 @@
     [self.luaContentView luaui_addSubview:view];
 }
 
+- (void)reloadCellIfNeeded {
+    if ([self.delegate respondsToSelector:@selector(mlnuiTableViewCellShouldReload:)]) {
+        [self.delegate mlnuiTableViewCellShouldReload:self];
+    }
+}
+
 #pragma mark - highlightColor
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
 {
@@ -146,6 +152,8 @@
 {
     if (!_luaContentView) {
         _luaContentView = [[MLNUIReuseContentView alloc] initWithFrame:CGRectZero cellView:self];
+        __weak typeof(self) weakSelf = self;
+        _luaContentView.didChangeLayout = ^{ [weakSelf reloadCellIfNeeded]; };
         [self.contentView addSubview:_luaContentView];
     }
     return _luaContentView;

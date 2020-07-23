@@ -15,4 +15,6 @@
 
 @property (nonatomic, weak) id<MLNUITableViewAdapterProtocol> adapter;
 
+- (void)reloadDataInIdleStatus;
+
 @end

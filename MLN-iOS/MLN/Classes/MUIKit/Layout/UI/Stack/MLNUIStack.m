@@ -10,7 +10,16 @@
 #import "UIView+MLNUILayout.h"
 #import "MLNUIViewExporterMacro.h"
 
-@implementation MLNUIStack
+@implementation MLNUIStack {
+    BOOL _disableVirtualLayout;
+}
+
+- (instancetype)initWithMLNUILuaCore:(MLNUILuaCore *)luaCore disableVirtualLayout:(NSNumber *)disableVirtualLayout {
+    if (self = [super initWithMLNUILuaCore:luaCore]) {
+        _disableVirtualLayout = [disableVirtualLayout boolValue];
+    }
+    return self;
+}
 
 #pragma mark - Override
 
@@ -20,6 +29,10 @@
 
 - (BOOL)mlnui_layoutEnable {
     return YES;
+}
+
+- (BOOL)mlnui_allowVirtualLayout {
+    return !_disableVirtualLayout;
 }
 
 #pragma mark - Export Lua
@@ -37,7 +50,7 @@
 
 LUAUI_EXPORT_VIEW_BEGIN(MLNUIStack)
 LUAUI_EXPORT_VIEW_METHOD(children, "luaui_children:", MLNUIStack)
-LUAUI_EXPORT_VIEW_END(MLNUIStack, Stack, YES, "MLNUIView", "initWithMLNUILuaCore:frame:")
+LUAUI_EXPORT_VIEW_END(MLNUIStack, Stack, YES, "MLNUIView", "initWithMLNUILuaCore:disableVirtualLayout:")
 
 @end
 
@@ -59,6 +72,6 @@ LUAUI_EXPORT_VIEW_END(MLNUIStack, Stack, YES, "MLNUIView", "initWithMLNUILuaCore
 
 LUAUI_EXPORT_VIEW_BEGIN(MLNUIPlaneStack)
 LUAUI_EXPORT_VIEW_METHOD(reverse, "setLuaui_reverse:", MLNUIPlaneStack)
-LUAUI_EXPORT_VIEW_END(MLNUIPlaneStack, PlaneStack, YES, "MLNUIStack", NULL)
+LUAUI_EXPORT_VIEW_END(MLNUIPlaneStack, PlaneStack, YES, "MLNUIStack", "initWithMLNUILuaCore:disableVirtualLayout:")
 
 @end

@@ -15,6 +15,7 @@
 @interface MLNUIReuseContentView()
 
 @property (nonatomic, weak) UIView<MLNUIReuseCellProtocol> *cell;
+@property (nonatomic, assign) CGRect oldFrame; // the frame which before MLNUIReuseContentView's content layout change.
 
 @end
 
@@ -96,6 +97,21 @@ static inline void MLNUILayoutNodeClearHeight(UIView *view) {
 
 - (BOOL)mlnui_isRootView {
     return YES;
+}
+
+- (BOOL)mlnui_allowVirtualLayout {
+    return NO;
+}
+
+- (void)mlnui_layoutCompleted {
+    [super mlnui_layoutCompleted];
+    if (CGRectEqualToRect(self.oldFrame, self.mlnuiLayoutFrame) && !CGRectEqualToRect(self.oldFrame, CGRectZero)) {
+        return;
+    }
+    self.oldFrame = self.mlnuiLayoutFrame;
+    if (self.didChangeLayout) {
+        self.didChangeLayout();
+    }
 }
 
 #pragma mark - Override Method For Lua

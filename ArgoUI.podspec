@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
     s.name             = 'ArgoUI'
-    s.version          = '0.1.6'
+    s.version          = '0.1.8'
     s.summary          = 'A lib of Momo Lua UI.'
     
     # This description is used to generate tags and improve search results.
@@ -29,7 +29,7 @@ Pod::Spec.new do |s|
     # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
     
     s.ios.deployment_target = '8.0'
-    s.libraries = 'z'
+    s.libraries = 'z','c++'
     s.requires_arc = true
     s.resource = 'MLN-iOS/MLN/Resource/ArgoUI.bundle'
     
@@ -44,9 +44,17 @@ Pod::Spec.new do |s|
     s.subspec 'Kit' do |k|
         k.name = 'Kit'
         k.framework = 'Foundation', 'UIKit', 'CoreGraphics', 'AVFoundation'
-        k.source_files = 'MLN-iOS/MLN/Classes/MUIKit/**/*.{h,m,c,cpp}'
+        k.source_files = 'MLN-iOS/MLN/Classes/MUIKit/**/*.{h,m,c,cpp,mm}'
+        k.exclude_files = 'MLN-iOS/MLN/Classes/MUIKit/Component/ObjectAnimation/Source/**/*.{h,c,cpp}'
         k.public_header_files = 'MLN-iOS/MLN/Classes/MUIKit/**/*.h'
         k.dependency 'ArgoUI/Core'
+        
+        k.subspec 'AnimationCPP' do |ani|
+          ani.name = 'AnimationCPP'
+          ani.source_files = 'MLN-iOS/MLN/Classes/MUIKit/Component/ObjectAnimation/Source/**/*.{h,c,cpp}'
+          ani.compiler_flags = '-x objective-c++'
+          ani.dependency 'ArgoUI/Core'
+        end
     end
     
 end

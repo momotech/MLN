@@ -69,6 +69,7 @@
         // 添加强引用
         MLNUI_Lua_UserData_Retain_With_Index(2, adapter);
         _adapter = adapter;
+        _adapter.collectionView = self.innerCollectionView;
         [self mlnui_pushLazyTask:self.lazyTask];
     }
 }
