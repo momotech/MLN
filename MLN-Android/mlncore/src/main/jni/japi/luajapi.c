@@ -18,12 +18,15 @@
 #include "mlog.h"
 #include "luasocket.h"
 #include <time.h>
+#include "argo/argo_lib.h"
 #include "m_mem.h"
 #include "compiler.h"
 #include "saes.h"
 #include "llimits.h"
 #include "lfunc.h"
 #include "isolate.h"
+#include "statistics.h"
+#include "statistics_require.h"
 
 extern JavaVM *g_jvm;
 
@@ -68,6 +71,61 @@ jboolean jni_isSAESFile(JNIEnv *env, jobject jobj, jstring path) {
     return r;
 }
 
+static jclass Java_Statistic = NULL;
+static jmethodID Java_Statistic_callback = NULL;
+
+static jclass Java_Require_Statistic = NULL;
+static jmethodID Java_Require_Statistic_callback = NULL;
+
+static void _inner_callback(const char *str, jclass jclass, jmethodID jmethodId) {
+    if (!str)
+        return;
+    JNIEnv *env;
+    int need = getEnv(&env);
+    (*env)->CallStaticVoidMethod(env, jclass, jmethodId, newJString(env, str));
+    if (need)
+        detachEnv();
+}
+
+static void _inner_bridge_callback(const char *str) {
+    _inner_callback(str, Java_Statistic, Java_Statistic_callback);
+}
+
+static void _inner_require_callback(const char *str) {
+    _inner_callback(str, Java_Require_Statistic, Java_Require_Statistic_callback);
+}
+
+void jni_notifyStatisticsCallback(JNIEnv *env, jobject jobj){
+    notifyStatisticsCallback();
+}
+
+void jni_notifyRequireCallback(JNIEnv *env, jobject jobj) {
+    notifyRequireCallback();
+}
+
+void jni_setStatisticsOpen(JNIEnv *env, jobject jobj, jboolean open) {
+    if (open) {
+        if (!Java_Statistic) {
+            Java_Statistic = (*env)->FindClass(env, "com/immomo/mlncore/Statistic");
+            Java_Statistic_callback = (*env)->GetStaticMethodID(env, Java_Statistic, "onBridgeCallback",
+                                                                "(" STRING_CLASS ")V");
+            Java_Statistic = GLOBAL(env, Java_Statistic);
+        }
+        setStrCallback(_inner_bridge_callback);
+
+
+        if (!Java_Require_Statistic) {
+            Java_Require_Statistic = (*env)->FindClass(env, "com/immomo/mlncore/Statistic");
+            Java_Require_Statistic_callback = (*env)->GetStaticMethodID(env, Java_Statistic, "onRequireCallback",
+                                                                "(" STRING_CLASS ")V");
+            Java_Require_Statistic = GLOBAL(env, Java_Require_Statistic);
+        }
+        setRequireStrCallback(_inner_require_callback);
+
+    }
+    setOpenStatistics((int)open);
+    setOpenRequireStatistics((int)open);
+}
 // --------------------------define field--------------------------
 extern jclass LuaValue;
 // --------------------------define private--------------------------
@@ -215,6 +273,7 @@ extern void openlibs_forlua(lua_State *L, int debug) {
     lua_pushcfunction(L, isolate_open);
     lua_setfield(L, -2, ISOLATE_LIB_NAME);
     lua_pop(L, 1);
+    argo_preload(L);
 
     if (debug) {
         luaopen_socket_core(L);
@@ -232,10 +291,12 @@ extern void openlibs_forlua(lua_State *L, int debug) {
 
     lua_getglobal(L, LUA_LOADLIBNAME);          //-1 package table
     luaL_getsubtable(L, -1, "searchers");       //-1 package.searchers table; -2 package table
+    int len = lua_objlen(L, -1);
+#ifdef ANDROID
     lua_pushcfunction(L,
                       searcher_Lua_asset);   //-1: fun;-2 package.searchers table; -3 package table
-    int len = lua_objlen(L, -2);
     lua_rawseti(L, -2, ++len);                  //-1: package.searchers table; -2 package table
+#endif
     lua_pushcfunction(L,
                       searcher_java);        //-1: fun;-2 package.searchers table; -3 package table
     lua_rawseti(L, -2, ++len);
@@ -269,6 +330,7 @@ void jni_openDebug(JNIEnv *env, jobject jobj, jlong L) {
 
 void jni_close(JNIEnv *env, jobject jobj, jlong L) {
     lua_State *LS = (lua_State *) L;
+    argo_close(LS);
 #if defined(J_API_INFO)
     void *ud = G(LS)->ud;
 #endif

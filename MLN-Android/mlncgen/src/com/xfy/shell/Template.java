@@ -1,3 +1,10 @@
+/**
+  * Created by MomoLuaNative.
+  * Copyright (c) 2020, Momo Group. All rights reserved.
+  *
+  * This source code is licensed under the MIT.
+  * For the full copyright and license information,please view the LICENSE file in the root directory of this source tree.
+  */
 package com.xfy.shell;
 
 /**
@@ -5,15 +12,19 @@ package com.xfy.shell;
  */
 public interface Template {
 
-    public static final String Start =
+    String CreatedByGenerator = "//\n" +
+            "// Created by Generator on ";
+
+    String Start =
             "//\n" +
             "\n" +
             "#include <jni.h>\n" +
             "#include \"lauxlib.h\"\n" +
-            "#include \"../juserdata.h\"\n" +
-            "#include \"../jinfo.h\"\n" +
-            "#include \"../juserdata.h\"\n" +
-            "#include \"../m_mem.h\"\n" +
+            "#include \"jinfo.h\"\n";
+
+    String UserdataStart = Start +
+            "#include \"juserdata.h\"\n" +
+            "#include \"m_mem.h\"\n" +
             "\n" +
             "#define PRE JNIEnv *env;                                            \\\n" +
             "            getEnv(&env);                                           \\\n" +
@@ -26,6 +37,16 @@ public interface Template {
             "            }\n" +
             "\n\n";
 
+    String StaticStart = Start +
+            "\n" +
+            "#define PRE JNIEnv *env;                                                        \\\n" +
+            "            getEnv(&env);                                                       \\\n" +
+            "            if (!lua_istable(L, 1)) {                                           \\\n" +
+            "                lua_pushstring(L, \"use ':' instead of '.' to call method!!\");   \\\n" +
+            "                return lua_error(L);                                            \\\n" +
+            "            }\n" +
+            "\n\n";
+
     String DefineLuaClassName = "#define LUA_CLASS_NAME \"%s\"\n";
 
     String MethodCom = "\n" +
@@ -33,13 +54,13 @@ public interface Template {
             "//<editor-fold desc=\"method definition\">\n";
     String EditorEnd = "//</editor-fold>\n";
 
-    public static final String METAStart = "/**\n" +
+    String METAStart = "/**\n" +
             " * -1: metatable\n" +
             " */\n" +
             "static void fillUDMetatable(lua_State *L) {\n" +
             "    static const luaL_Reg _methohds[] = {\n";
 
-    public static final String METAEnd = "            {NULL, NULL}\n" +
+    String METAEnd = "            {NULL, NULL}\n" +
             "    };\n" +
             "    const luaL_Reg *lib = _methohds;\n" +
             "    for (; lib->func; lib++) {\n" +
@@ -49,7 +70,7 @@ public interface Template {
             "    }\n" +
             "}\n";
 
-    public static final String JNIStart = "//<editor-fold desc=\"JNI methods\">\n" +
+    String JNIStart = "//<editor-fold desc=\"JNI methods\">\n" +
             "/**\n" +
             " * java层需要初始化的class静态调用\n" +
             " * 初始化各种jmethodID\n" +
@@ -58,7 +79,7 @@ public interface Template {
             "        (JNIEnv *env, jclass clz) {\n" +
             "    _globalClass = GLOBAL(env, clz);\n";
 
-    public static final String JNIEnd = "}\n" +
+    String UserdataJNIEnd = "}\n" +
             "/**\n" +
             " * java层需要将此ud注册到虚拟机里\n" +
             " * @param l 虚拟机\n" +
@@ -91,6 +112,21 @@ public interface Template {
             "#else\n" +
             "    free(metaname);\n" +
             "#endif\n" +
+            "}\n" +
+            "//</editor-fold>\n";
+
+    String StaticJNIEnd = "}\n" +
+            "/**\n" +
+            " * java层需要将此ud注册到虚拟机里\n" +
+            " * @param l 虚拟机\n" +
+            " */\n" +
+            "JNIEXPORT void JNICALL Java_${ClassName}__1register\n" +
+            "        (JNIEnv *env, jclass o, jlong l) {\n" +
+            "    lua_State *L = (lua_State *)l;\n" +
+            "\n" +
+            "    lua_createtable(L, 0, 0);\n" +
+            "    fillUDMetatable(L);\n" +
+            "    lua_setglobal(L, LUA_CLASS_NAME);\n" +
             "}\n" +
             "//</editor-fold>\n";
 

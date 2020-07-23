@@ -23,7 +23,7 @@ jniDir=${srcDir}/jni
 # so文件夹结构
 libsDir=${srcDir}/libs
 # cpu类型
-arm=(armeabi-v7a)
+arm=('armeabi-v7a' 'arm64-v8a')
 
 # 非lua头文件存放位置
 mln_from=${jniDir}/japi
@@ -59,7 +59,7 @@ function copy_so() {
         mkdirs ${toDir}
     fi
 
-    for ARM in ${arm} ; do
+    for ARM in ${arm[*]} ; do
         for file in `ls ${fromDir}/${ARM}/*.so` ; do
             cp ${file} ${toDir}/${ARM}/
         done

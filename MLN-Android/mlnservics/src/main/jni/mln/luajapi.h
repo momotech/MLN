@@ -17,18 +17,22 @@
 #include <string.h>
 #include "jinfo.h"
 #include "cache.h"
-#include "assets_reader.h"
 #include "jfunction.h"
 #include "compiler.h"
 #include "jbridge.h"
 #include "jtable.h"
 #include "juserdata.h"
 #include "m_mem.h"
+#ifdef ANDROID
+#include "assets_reader.h"
+#endif
 
 // ------------------------------------------------------------------------------
 // -------------------------------JNI METHOD ------------------------------------
 // ------------------------------------------------------------------------------
-
+void jni_setStatisticsOpen(JNIEnv *env, jobject jobj, jboolean open);
+void jni_notifyStatisticsCallback(JNIEnv *env, jobject jobj);
+void jni_notifyRequireCallback(JNIEnv *env, jobject jobj);
 void jni_setAndroidVersion(JNIEnv *env, jobject jobj, jint v);
 jboolean jni_check32bit(JNIEnv *env, jobject jobj);
 jboolean jni_isSAESFile(JNIEnv *env, jobject jobj, jstring path);
@@ -47,6 +51,9 @@ void jni_callMethod(JNIEnv * env, jobject jobj, jlong L, jlong method, jlong arg
 
 static JNINativeMethod jni_methods[] = {
     {"_setAndroidVersion", "(I)V", (void *)jni_setAndroidVersion},
+    {"_setStatisticsOpen", "(Z)V", (void *)jni_setStatisticsOpen},
+    {"_notifyStatisticsCallback", "()V", (void *)jni_notifyStatisticsCallback},
+    {"_notifyRequireCallback", "()V", (void *)jni_notifyRequireCallback},
     {"_check32bit", "()Z", (void *)jni_check32bit},
     {"_isSAESFile", "(" STRING_CLASS ")Z", (void *)jni_isSAESFile},
     {"_openSAES", "(Z)V", (void *)jni_openSAES},
@@ -58,7 +65,9 @@ static JNINativeMethod jni_methods[] = {
     {"_preRegisterEmptyMethods", "([" STRING_CLASS ")V", (void *)jni_preRegisterEmptyMethods},
     {"_preRegisterUD", "(" STRING_CLASS "[" STRING_CLASS ")V", (void *)jni_preRegisterUD},
     {"_preRegisterStatic", "(" STRING_CLASS "[" STRING_CLASS ")V", (void *)jni_preRegisterStatic},
+#ifdef ANDROID
     {"_setAssetManager", "(Landroid/content/res/AssetManager;)V", (void *)jni_setAssetManager},
+#endif
 
     {"_createLState", "(Z)J", (void *)jni_createLState},
     {"_openDebug", "(J)V", (void *)jni_openDebug},
@@ -72,7 +81,9 @@ static JNINativeMethod jni_methods[] = {
 
     {"_loadData", "(J" STRING_CLASS "[B)I", (void *)jni_loadData},
     {"_loadFile", "(J" STRING_CLASS "" STRING_CLASS ")I", (void *)jni_loadFile},
+#ifdef ANDROID
     {"_loadAssetsFile", "(J" STRING_CLASS "" STRING_CLASS ")I", (void *)jni_loadAssetsFile},
+#endif
     {"_doLoadedData", "(J)I", (void *)jni_doLoadedData},
     {"_doLoadedDataAndGetResult", "(J)[" LUAVALUE_CLASS, (void *)jni_doLoadedDataAndGetResult},
     {"_startDebug", "(J[B" STRING_CLASS "I)I", (void *)jni_startDebug},

@@ -39,11 +39,8 @@ jni_invoke(JNIEnv *env, jobject jobj, jlong L, jlong function, jobjectArray para
     int len = pushJavaArray(env, LS, params);
     int ret = lua_pcall(LS, len, (int) rc, erridx);
     if (ret != 0) {
-        const char *errMsg = NULL;
-        if (lua_isstring(LS, -1))
-            errMsg = lua_tostring(LS, -1);
+        throwJavaError(env, LS);
         lua_settop(LS, oldTop);
-        throwInvokeError(env, errMsg);
         lua_unlock(LS);
         return NULL;
     }
@@ -91,3 +88,80 @@ jstring jni_getFunctionSource(JNIEnv *env, jobject jobj, jlong LS, jlong functio
     }
     return NULL;
 }
+
+void throwJavaError(JNIEnv *env, lua_State *L) {
+    const char *errMsg = NULL;
+    if (lua_isstring(L, -1))
+        errMsg = lua_tostring(L, -1);
+    throwInvokeError(env, errMsg);
+}
+
+//<editor-fold desc="fast call">
+#define PRE                                                             \
+            lua_lock(L);                                                \
+            int erridx = getErrorFunctionIndex(L);                      \
+            int oldTop = lua_gettop(L);                                 \
+            getValueFromGNV(L, (ptrdiff_t) function, LUA_TFUNCTION);    \
+            if (lua_isnil(L, -1)) {                                     \
+                throwInvokeError(env, "function is destroyed.");        \
+                lua_settop(L, oldTop);                                  \
+                lua_unlock(L);                                          \
+                return;                                                 \
+            }
+
+#define CALL(n)                                     \
+            int ret = lua_pcall(L, n, 0, erridx);   \
+            if (ret != 0) {                         \
+                throwJavaError(env, L);             \
+                lua_settop(L, oldTop);              \
+                lua_unlock(L);                      \
+                return;                             \
+            }                                       \
+            lua_settop(L, oldTop);                  \
+            lua_unlock(L);
+
+
+Void_Call Java_org_luaj_vm2_LuaFunction_nativeInvokeB(JNIEnv *env, jobject jobj, jlong Ls, jlong function, jboolean b) {
+    lua_State *L = (lua_State *) Ls;
+    PRE
+    lua_pushboolean(L, b);
+    CALL(1)
+}
+
+Void_Call Java_org_luaj_vm2_LuaFunction_nativeInvokeN(JNIEnv *env, jobject jobj, jlong Ls, jlong function, jdouble num) {
+    lua_State *L = (lua_State *) Ls;
+    PRE
+    lua_Integer li = (lua_Integer) num;
+    if (li == num) {
+        lua_pushinteger(L, li);
+    } else {
+        lua_pushnumber(L, num);
+    }
+    CALL(1)
+}
+
+Void_Call Java_org_luaj_vm2_LuaFunction_nativeInvokeS(JNIEnv *env, jobject jobj, jlong Ls, jlong function, jstring s) {
+    lua_State *L = (lua_State *) Ls;
+    PRE
+    const char *str = GetString(env, s);
+    if (str)
+        lua_pushstring(L, str);
+    else
+        lua_pushnil(L);
+    ReleaseChar(env, s, str);
+    CALL(1)
+}
+
+Void_Call Java_org_luaj_vm2_LuaFunction_nativeInvokeT(JNIEnv *env, jobject jobj, jlong Ls, jlong function, jlong table) {
+    lua_State *L = (lua_State *) Ls;
+    PRE
+    getValueFromGNV(L, (ptrdiff_t) table, LUA_TTABLE);
+    if (lua_isnil(L, -1)) {
+        throwInvokeError(env, "table is destroyed.");
+        lua_settop(L, oldTop);
+        lua_unlock(L);
+        return;
+    }
+    CALL(1)
+}
+//</editor-fold>

@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<template
+    format="5"
+    revision="3"
+    name="Static Bridge (Native)"
+    description="Creates a Static Bridge for Lua"
+    minApi="7"
+    minBuildApi="8">
+
+    <category value="MLN" />
+
+    <parameter
+        id="ClassName"
+        name="Java Class Name"
+        type="string"
+        constraints="class|nonempty|unique"
+        default=""
+        help="The name of the java class to create" />
+
+    <parameter
+        id="LuaClassName"
+        name="Lua Class Name"
+        type="string"
+        constraints="nonempty"
+        default=""
+        help="The name of the lua class to create" />
+
+    <globals file="globals.xml.ftl" />
+    <execute file="recipe.xml.ftl" />
+
+</template>

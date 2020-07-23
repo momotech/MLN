@@ -24,8 +24,8 @@ import androidx.collection.LongSparseArray;
 public final class NativeLog {
     private static final String TAG = "LuaLog";
 
-    private static final LongSparseArray<StringBuilder> logBuilder = new LongSparseArray<>();
-    private static final LongSparseArray<ILog> logs = new LongSparseArray<>();
+    private static  LongSparseArray<StringBuilder> logBuilder = new LongSparseArray<>();
+    private static  LongSparseArray<ILog> logs = new LongSparseArray<>();
     private static ILog logImpl;
 
     private static StringBuilder get(long L) {

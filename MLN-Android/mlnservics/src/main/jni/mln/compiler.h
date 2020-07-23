@@ -27,7 +27,9 @@ void jni_openSAES(JNIEnv *env, jobject jobj, jboolean open);
 // --------------------------compile --------------------------
 jint jni_loadData(JNIEnv *env, jobject jobj, jlong L_state_pointer, jstring name, jbyteArray data);
 jint jni_loadFile(JNIEnv *env, jobject jobj, jlong L_state_pointer, jstring path, jstring chunkname);
+#ifdef ANDROID
 jint jni_loadAssetsFile(JNIEnv *env, jobject jobj, jlong L_state_pointer, jstring path, jstring chunkname);
+#endif
 jboolean jni_setMainEntryFromPreload(JNIEnv *env, jobject jobj, jlong L, jstring name);
 void jni_preloadData(JNIEnv *env, jobject jobj, jlong L, jstring name, jbyteArray data);
 void jni_preloadFile(JNIEnv *env, jobject jobj, jlong L, jstring name, jstring path);
@@ -47,8 +49,10 @@ int searcher_java(lua_State *);
  * loadlib.c createsearcherstable
  */
 int searcher_Lua(lua_State *);
+#ifdef ANDROID
 /**
  * require时调用
  */
 int searcher_Lua_asset(lua_State *);
+#endif
 #endif  //_Compiler_h

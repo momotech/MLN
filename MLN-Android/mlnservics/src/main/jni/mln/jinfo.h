@@ -98,6 +98,15 @@ jobjectArray newLuaValueArrayFromStack(JNIEnv *env, lua_State *L, int count, int
  * 将LuaValue对象obj转成lua数据类型，并push到栈顶
  */
 void pushJavaValue(JNIEnv *env, lua_State *L, jobject obj);
+/**
+ * 将java的String对象转成lua数据类型，并push到栈顶
+ * obj可为空
+ */
+void pushJavaString(JNIEnv *env, lua_State *L, jstring obj);
+/**
+ * 将LuaFunction对象obj转成lua数据类型，并push到栈顶
+ */
+void pushJavaUserdata(JNIEnv *env, lua_State *L, jobject ud);
 
 /**
  * 函数返回时使用，将java方法结果转成lua数据，push到栈中，并返回参数个数

@@ -1,7 +1,13 @@
+/**
+  * Created by MomoLuaNative.
+  * Copyright (c) 2020, Momo Group. All rights reserved.
+  *
+  * This source code is licensed under the MIT.
+  * For the full copyright and license information,please view the LICENSE file in the root directory of this source tree.
+  */
 package com.xfy.shell;
 
 import java.io.File;
-import java.io.IOException;
 
 public class Main {
 
@@ -10,12 +16,14 @@ public class Main {
     private static final String OUT_NAME = "-name";
 
     private static String echoUsage() {
-        return "usage: java -jar mlncgen.jar -in <javaFilePath> -out <outPath> [-name <outName>]";
+        return "usage: java -jar mlncgen.jar -in <javaFilePath> -out <outPath> [-name <outName>]\n"+
+                "说明: userdata必须继承LuaUserdata，且bridge方法必须都非静态方法，并需要增加@LuaApiUsed注解;\n"+
+                "\t静态bridge中所有bridge方法必须是静态方法，并需要增加@LuaApiUsed注解。";
     }
 
     public static void main(String[] args) throws Exception {
-//        testParse();
-//        autoGenerate("~/Desktop/UDCanvansTest.java", "~/Desktop", "temp.c");
+//        testParse("/Users/XiongFangyu/Downloads/LTCDataBinding.java");
+//        autoGenerate("/Users/XiongFangyu/Downloads/LTCDataBinding.java", "/Users/XiongFangyu/Downloads", "temp.c");
 
         mainGenerate(args);
     }
@@ -23,7 +31,7 @@ public class Main {
     private static void mainGenerate(String[] args) throws Exception {
         int len = args.length;
         if (len < 4) {
-            throw new Exception(echoUsage());
+            throw new Exception("参数不够！\n" + echoUsage());
         }
         String javaFile = null;
         String outPath = null;
@@ -43,7 +51,7 @@ public class Main {
             }
         }
         if (javaFile == null || outPath == null || fileName == null) {
-            throw new Exception(echoUsage());
+            throw new Exception("参数有错误！\n" + echoUsage());
         }
 
         autoGenerate(javaFile, outPath, fileName);
@@ -63,8 +71,7 @@ public class Main {
         FileUtils.writeFile(new File(outPath , fileName), g.toString().getBytes());
     }
 
-    private static void testParse() throws IOException {
-        final String javaFile = "~/Desktop/UDCanvansTest.java";
+    private static void testParse(String javaFile) throws Exception {
         byte[] data = FileUtils.readBytes(new File(javaFile));
         String content = ClearCommentUtils.clearComment(new String(data));
         Parser p = new Parser(content);

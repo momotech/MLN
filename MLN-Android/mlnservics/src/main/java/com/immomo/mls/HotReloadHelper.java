@@ -14,6 +14,7 @@ import androidx.annotation.IntDef;
 import com.immomo.luanative.hotreload.HotReloadServer;
 import com.immomo.luanative.hotreload.IHotReloadServer;
 import com.immomo.luanative.hotreload.iHotReloadListener;
+import com.immomo.mls.global.LuaViewConfig;
 import com.immomo.mls.util.FileUtil;
 import com.immomo.mls.util.IOUtil;
 import com.immomo.mls.util.LogUtil;
@@ -396,6 +397,11 @@ public class HotReloadHelper {
                     }
                 });
             }
+        }
+
+        @Override
+        public void onIpChanged(String ip) {
+            LuaViewConfig.setDebugIp(ip);
         }
 
         private Globals getGlobals() {

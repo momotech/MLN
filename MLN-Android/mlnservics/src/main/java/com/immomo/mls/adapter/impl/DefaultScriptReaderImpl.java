@@ -14,6 +14,7 @@ import com.immomo.mls.Constants;
 import com.immomo.mls.MLSAdapterContainer;
 import com.immomo.mls.MLSEngine;
 import com.immomo.mls.adapter.ScriptReader;
+import com.immomo.mls.adapter.X64PathAdapter;
 import com.immomo.mls.util.FileUtil;
 import com.immomo.mls.util.IOUtil;
 import com.immomo.mls.util.LogUtil;
@@ -410,8 +411,11 @@ public class DefaultScriptReaderImpl implements ScriptReader {
      * 不存在返回空
      */
     protected String checkFilePath(@NonNull String path, @NonNull String name) {
-        if (!LoadTypeUtils.has(loadType, Constants.LT_NO_X64))
-            path = MLSUtils.checkArm64(path);
+        if (!LoadTypeUtils.has(loadType, Constants.LT_NO_X64)) {
+            X64PathAdapter adapter = MLSAdapterContainer.getX64PathAdapter();
+            if (adapter != null)
+                path = adapter.checkArm64(path);
+        }
 
         File file = new File(path);
         if (!file.exists())

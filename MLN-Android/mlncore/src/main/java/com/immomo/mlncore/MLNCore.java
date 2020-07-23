@@ -51,6 +51,13 @@ public class MLNCore {
     }
 
     /**
+     * 设置bridge统计回调
+     */
+    public static void setStatisticCallback(StatisticCallback c) {
+        Statistic.callback = c;
+    }
+
+    /**
      * 从native创建虚拟机（isolate）
      * @param g isolate lua vm
      */
@@ -127,5 +134,22 @@ public class MLNCore {
          * @return 可返回空，或返回cache
          */
         @Nullable LuaUserdata onNullGet(long id, @NonNull LuaUserdata cache);
+    }
+
+    /**
+     * 可监听
+     */
+    public interface StatisticCallback {
+        /**
+         * Bridge统计监听，可使用{@link Statistic#getBridgeInfo(String, Statistic.Info)}获取信息
+         * @param jsonData json字符串
+         */
+        void onBridgeCallback(String jsonData);
+
+        /**
+         * Require统计监听，可使用{@link Statistic#getRequireInfo(String, Statistic.Info)}获取信息
+         * @param jsonData json字符串
+         */
+        void onRequireCallback(String jsonData);
     }
 }

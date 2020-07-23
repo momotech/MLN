@@ -38,6 +38,7 @@ import com.immomo.mls.fun.constants.ReturnType;
 import com.immomo.mls.fun.constants.SafeAreaConstants;
 import com.immomo.mls.fun.constants.ScrollDirection;
 import com.immomo.mls.fun.constants.StatusBarStyle;
+import com.immomo.mls.fun.constants.StatusMode;
 import com.immomo.mls.fun.constants.StyleImageAlign;
 import com.immomo.mls.fun.constants.TabSegmentAlignment;
 import com.immomo.mls.fun.constants.TextAlign;
@@ -164,15 +165,13 @@ public class MLSEngine {
 
     public static final String BC_Lib = "mlnbc";
     public static final String BLUR_LIB = "lblur";
-    public static final String ANIM_LIB = "luaanim";
 
     private static final Map<String, Boolean> otherLibs;
 
     static {
         otherLibs = new HashMap<>(3);
-        otherLibs.put(BC_Lib, false);
+//        otherLibs.put(BC_Lib, false);
         otherLibs.put(BLUR_LIB, false);
-//        otherLibs.put(ANIM_LIB, false);
     }
 
     private static boolean init = false;
@@ -251,10 +250,14 @@ public class MLSEngine {
                 otherLibs.put(e.getKey(), libAdapter.load(e.getKey()));
             }
         }
+        if (MLSEngine.DEBUG) {
+            LogUtil.d("lua engine load libs:", otherLibs);
+        }
     }
 
     public static boolean isLibInit(String libName) {
-        return otherLibs.get(libName);
+        Boolean init = otherLibs.get(libName);
+        return init != null && init;
     }
 
     public static MLSBuilder init(Context context, final boolean debug) {
@@ -263,6 +266,7 @@ public class MLSEngine {
 
     public static MLSBuilder init(Context context, @NonNull ILoadLibAdapter adapter, final boolean debug) {
         if (!init) {
+            DEBUG = debug;
             initCoreLibs(adapter);
         }
         if (!init)
@@ -357,7 +361,8 @@ public class MLSEngine {
 
     private static MLSBuilder newBuilder() {
         return new MLSBuilder(singleRegister)
-                .registerUD(registerDefaultClass())
+                .registerUD(registerLuaView())
+                .registerUD(registerTools())
                 .registerCovert(registerCovert())
                 .registerSingleInsance(registerSingleInstance())
                 .registerSC(registerStaticClass())
@@ -413,20 +418,9 @@ public class MLSEngine {
         return LuaViewConfig.getPort();
     }
 
-    private static Register.UDHolder[] registerDefaultClass() {
-        return new Register.UDHolder[]{
-                /// 两种方式生成udholder
-                /// 第一种，类继承自LuaUserdata时，使用这种方式
-                Register.newUDHolder(UDSize.LUA_CLASS_NAME, UDSize.class, false, UDSize.methods),
-                Register.newUDHolder(UDPoint.LUA_CLASS_NAME, UDPoint.class, false, UDPoint.methods),
-                Register.newUDHolder(UDRect.LUA_CLASS_NAME, UDRect.class, false, UDRect.methods),
-                Register.newUDHolder(UDColor.LUA_CLASS_NAME, UDColor.class, false, UDColor.methods),
-                Register.newUDHolder(UDMap.LUA_CLASS_NAME, UDMap.class, false, UDMap.methods),
-                Register.newUDHolder(UDArray.LUA_CLASS_NAME, UDArray.class, false, UDArray.methods),
-                Register.newUDHolder(UDStyleString.LUA_CLASS_NAME, UDStyleString.class, false, UDStyleString.methods),
-
-                Register.newUDHolder(UDWindowManager.LUA_CLASS_NAME, UDWindowManager.class, false, UDWindowManager.methods),
-
+    /// view类型放到这里
+    public static Register.UDHolder[] registerLuaView() {
+        return new Register.UDHolder[] {
                 Register.newUDHolder(UDView.LUA_CLASS_NAME, UDView.class, false, UDView.methods),
                 Register.newUDHolder(UDViewGroup.LUA_CLASS_NAME[0], UDViewGroup.class, false, UDViewGroup.methods),
                 Register.newUDHolder(UDViewGroup.LUA_CLASS_NAME[1], UDViewGroup.class, false, UDViewGroup.methods),
@@ -438,9 +432,9 @@ public class MLSEngine {
                 Register.newUDHolder(UDImageView.LUA_CLASS_NAME, UDImageView.class, false, UDImageView.methods),
                 Register.newUDHolder(UDImageButton.LUA_CLASS_NAME, UDImageButton.class, false, UDImageButton.methods),
                 Register.newUDHolder(UDScrollView.LUA_CLASS_NAME, UDScrollView.class, false, UDScrollView.methods),
-                Register.newUDHolder(UDBaseRecyclerAdapter.LUA_CLASS_NAME, UDBaseRecyclerAdapter.class, false, UDBaseRecyclerAdapter.methods),
-                Register.newUDHolder(UDBaseNeedHeightAdapter.LUA_CLASS_NAME, UDBaseNeedHeightAdapter.class, false, UDBaseNeedHeightAdapter.methods),
-                Register.newUDHolder(UDBaseRecyclerLayout.LUA_CLASS_NAME, UDBaseRecyclerLayout.class, false, UDBaseRecyclerLayout.methods),
+                Register.newUDHolder(UDBaseRecyclerAdapter.LUA_CLASS_NAME, UDBaseRecyclerAdapter.class, false, true, UDBaseRecyclerAdapter.methods),
+                Register.newUDHolder(UDBaseNeedHeightAdapter.LUA_CLASS_NAME, UDBaseNeedHeightAdapter.class, false, true, UDBaseNeedHeightAdapter.methods),
+                Register.newUDHolder(UDBaseRecyclerLayout.LUA_CLASS_NAME, UDBaseRecyclerLayout.class, false, true, UDBaseRecyclerLayout.methods),
                 Register.newUDHolder(UDRecyclerView.LUA_CLASS_NAME[0], UDRecyclerView.class, false, UDRecyclerView.methods),
                 Register.newUDHolder(UDRecyclerView.LUA_CLASS_NAME[1], UDRecyclerView.class, false, UDRecyclerView.methods),
                 Register.newUDHolder(UDRecyclerView.LUA_CLASS_NAME[2], UDRecyclerView.class, false, UDRecyclerView.methods),
@@ -455,14 +449,32 @@ public class MLSEngine {
                 Register.newUDHolder(UDZStack.LUA_CLASS_NAME, UDZStack.class, false, UDZStack.methods),
                 Register.newUDHolder(UDSpacer.LUA_CLASS_NAME, UDSpacer.class, false, UDSpacer.methods),
 
-                Register.newUDHolder(UDListAdapter.LUA_CLASS_NAME, UDListAdapter.class, false, UDListAdapter.methods),
-                Register.newUDHolder(UDListAutoFitAdapter.LUA_CLASS_NAME, UDListAutoFitAdapter.class, false),
-                Register.newUDHolder(UDCollectionAdapter.LUA_CLASS_NAME, UDCollectionAdapter.class, false, UDCollectionAdapter.methods),
-                Register.newUDHolder(UDCollectionAutoFitAdapter.LUA_CLASS_NAME, UDCollectionAutoFitAdapter.class, false, UDCollectionAutoFitAdapter.methods),
-                Register.newUDHolder(UDCollectionLayout.LUA_CLASS_NAME, UDCollectionLayout.class, false, UDCollectionLayout.methods),
-                Register.newUDHolder(UDWaterFallAdapter.LUA_CLASS_NAME, UDWaterFallAdapter.class, false, UDWaterFallAdapter.methods),
-                Register.newUDHolder(UDWaterFallLayout.LUA_CLASS_NAME, UDWaterFallLayout.class, false, UDWaterFallLayout.methods),
-                Register.newUDHolder(UDViewPagerAdapter.LUA_CLASS_NAME,UDViewPagerAdapter.class, false, UDViewPagerAdapter.methods),
+                Register.newUDHolder(UDListAdapter.LUA_CLASS_NAME, UDListAdapter.class, false, true, UDListAdapter.methods),
+                Register.newUDHolder(UDListAutoFitAdapter.LUA_CLASS_NAME, UDListAutoFitAdapter.class, false, true),
+                Register.newUDHolder(UDCollectionAdapter.LUA_CLASS_NAME, UDCollectionAdapter.class, false, true, UDCollectionAdapter.methods),
+                Register.newUDHolder(UDCollectionAutoFitAdapter.LUA_CLASS_NAME, UDCollectionAutoFitAdapter.class, false, true, UDCollectionAutoFitAdapter.methods),
+                Register.newUDHolder(UDCollectionLayout.LUA_CLASS_NAME, UDCollectionLayout.class, false,true, UDCollectionLayout.methods),
+                Register.newUDHolder(UDWaterFallAdapter.LUA_CLASS_NAME, UDWaterFallAdapter.class, false, true, UDWaterFallAdapter.methods),
+                Register.newUDHolder(UDWaterFallLayout.LUA_CLASS_NAME, UDWaterFallLayout.class, false, true, UDWaterFallLayout.methods),
+                Register.newUDHolder(UDViewPagerAdapter.LUA_CLASS_NAME,UDViewPagerAdapter.class, false, true, UDViewPagerAdapter.methods),
+
+                Register.newUDHolder(UDStyleString.LUA_CLASS_NAME, UDStyleString.class, false, true, UDStyleString.methods),
+                Register.newUDHolder(UDColor.LUA_CLASS_NAME, UDColor.class, false, true, UDColor.methods),
+        };
+    }
+
+    /// 非view类型放到这里
+    public static Register.UDHolder[] registerTools() {
+        return new Register.UDHolder[] {
+                /// 两种方式生成udholder
+                /// 第一种，类继承自LuaUserdata时，使用这种方式
+                Register.newUDHolder(UDSize.LUA_CLASS_NAME, UDSize.class, false, UDSize.methods),
+                Register.newUDHolder(UDPoint.LUA_CLASS_NAME, UDPoint.class, false, UDPoint.methods),
+                Register.newUDHolder(UDRect.LUA_CLASS_NAME, UDRect.class, false, UDRect.methods),
+                Register.newUDHolder(UDMap.LUA_CLASS_NAME, UDMap.class, false, UDMap.methods),
+                Register.newUDHolder(UDArray.LUA_CLASS_NAME, UDArray.class, false, UDArray.methods),
+                Register.newUDHolder(UDWindowManager.LUA_CLASS_NAME, UDWindowManager.class, false,true, UDWindowManager.methods),
+
                 Register.newUDHolder(UDPath.LUA_CLASS_NAME, UDPath.class, false, UDPath.methods),
                 Register.newUDHolder(UDPaint.LUA_CLASS_NAME, UDPaint.class, false, UDPaint.methods),
                 Register.newUDHolder(UDCanvas.LUA_CLASS_NAME, UDCanvas.class, false, UDCanvas.methods),
@@ -475,7 +487,7 @@ public class MLSEngine {
                 Register.newUDHolderWithLuaClass(JToast.LUA_CLASS_NAME, JToast.class, false),
                 Register.newUDHolderWithLuaClass(Event.LUA_CLASS_NAME, Event.class,false),
                 Register.newUDHolderWithLuaClass(Alert.LUA_CLASS_NAME, Alert.class,false),
-                Register.newUDHolderWithLuaClass(LuaDialog.LUA_CLASS_NAME, LuaDialog.class,false),
+                Register.newUDHolderWithLuaClass(LuaDialog.LUA_CLASS_NAME, LuaDialog.class,false,true),
 
                 /// Canvas Animations
                 Register.newUDHolderWithLuaClass(UDBaseAnimation.LUA_CLASS_NAME, UDBaseAnimation.class, false),
@@ -485,11 +497,10 @@ public class MLSEngine {
                 Register.newUDHolderWithLuaClass(UDTranslateAnimation.LUA_CLASS_NAME, UDTranslateAnimation.class, false),
                 Register.newUDHolderWithLuaClass(UDAnimationSet.LUA_CLASS_NAME, UDAnimationSet.class, false),
                 /// end
-
         };
     }
 
-    private static MLSBuilder.CHolder[] registerCovert() {
+    public static MLSBuilder.CHolder[] registerCovert() {
         return new MLSBuilder.CHolder[]{
                 new MLSBuilder.CHolder(Size.class, UDSize.G, true),
                 new MLSBuilder.CHolder(Point.class, UDPoint.G, true),
@@ -510,7 +521,7 @@ public class MLSEngine {
         };
     }
 
-    private static MLSBuilder.SIHolder[] registerSingleInstance() {
+    public static MLSBuilder.SIHolder[] registerSingleInstance() {
         return new MLSBuilder.SIHolder[]{
                 new MLSBuilder.SIHolder(SISystem.KEY, SISystem.class),
                 new MLSBuilder.SIHolder(SITimeManager.KEY, SITimeManager.class),
@@ -525,7 +536,7 @@ public class MLSEngine {
         };
     }
 
-    private static Register.SHolder[] registerStaticClass() {
+    public static Register.SHolder[] registerStaticClass() {
         return new Register.SHolder[]{
                 /// 第一种，类中含有LuaClass注解
                 Register.newSHolderWithLuaClass(LTPrinter.LUA_CLASS_NAME, LTPrinter.class),
@@ -537,7 +548,7 @@ public class MLSEngine {
         };
     }
 
-    private static Class[] registerConstants() {
+    public static Class[] registerConstants() {
         return new Class[]{
                 FontStyle.class,
                 TextAlign.class,
@@ -564,6 +575,7 @@ public class MLSEngine {
                 GradientType.class,
                 TabSegmentAlignment.class,
                 StatusBarStyle.class,
+                StatusMode.class,
                 AnimationValueType.class,
                 FileInfo.class,
                 DrawStyle.class,

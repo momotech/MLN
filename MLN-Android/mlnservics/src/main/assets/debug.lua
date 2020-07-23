@@ -117,6 +117,7 @@ local step_into = false
 local step_over = false
 local step_level = 0
 local stack_level = 0
+local first_run = false
 local server
 local buf
 local outputs = {}
@@ -556,6 +557,17 @@ local function normalize_path(file)
     return (file:gsub("^(/?)%.%./", "%1"))
 end
 
+local function mln_update_commandmodel_var_names(cmd)
+    local varnames = mobdebug.commandmodel_var_names
+    if varnames ~= nil and type(varnames) == "table" then
+        if cmd ~= nil and type(cmd) == "string" then
+            local _, _, var = string.find(cmd, "%s*(%a+)%s*=%s*%a*")
+            varnames[var] = var
+        end
+
+    end
+end
+
 local function debug_hook(event, line)
     -- (1) LuaJIT needs special treatment. Because debug_hook is set for
     -- *all* coroutines, and not just the one being debugged as in regular Lua
@@ -604,7 +616,7 @@ local function debug_hook(event, line)
         -- (4) socket call (only do every Xth check)
         -- (5) at least one watch is registered
         if not (
-                step_into or step_over or breakpoints[line] or watchescnt > 0
+                first_run or step_into or step_over or breakpoints[line] or watchescnt > 0
                         or is_pending(server)
         ) then checkcount = checkcount + 1; return end
 
@@ -696,6 +708,7 @@ local function debug_hook(event, line)
                         if func and type(func) == "function" then
                             setfenv(func, env)
                             func()
+                            mln_update_commandmodel_var_names(cmd)
                         end
                     end
                 end
@@ -728,11 +741,15 @@ local function debug_hook(event, line)
                         --or is_pending(server)
                 )
 
-        if getin then
+        if getin or first_run then
+            local is_first_run = first_run
             vars = vars or capture_vars(1)
             step_into = false
             step_over = false
-            status, res = cororesume(coro_debugger, events.BREAK, vars, file, line)
+            first_run = false
+            if coro_debugger ~= nil then
+                status, res = cororesume(coro_debugger, events.BREAK, vars, file, line, nil--[[该参数表示index，参考727行]], is_first_run)
+            end
         end
 
         -- handle 'stack' command that provides stack() information to the debugger
@@ -813,7 +830,7 @@ function handle_socket_command_message()
     if not coro_debugger then
         return "dead"
     end
-    local status, res = cororesume(coro_debugger, events.RECEIVE)
+    local status, res = cororesume(coro_debugger, events.RECEIVE) --为了对应main_thread_should_continue_run方法中的yield
     if not coro_debugger then
         return "dead"
     end
@@ -842,20 +859,26 @@ local function main_thread_should_continue_run(eval_env)
         server:send(file)
     end
 
-    return eval_env
+    return eval_env, file, line
 end
 
 -- 根据分析，局部变量存储在 vars[1][2] 这个表中，格式为：变量名={"变量值", "变量类型"}
 -- 这里暂时把全局变量也存储到这里，统一显示在 idea frame 面板上
 local function mln_append_global_values(vars)
+    local varnames = mobdebug.commandmodel_var_names
     for k, v in pairs(_G) do
-        if k == "item" or  --DataBinding:getModel()的返回值名字为item，类型为table
-                k == "userData" or --DataBinding:get()的返回值名字为userData，类型为table
+        if (varnames and varnames[k] or false) or --DataBinding:getModel()
                 type(v) == "string" or
                 type(v) == "userdata" or
                 type(v) == "number" then --暂时只显示这三种类型的全局变量
             if string.sub(k, 1, 1) ~= "_" then --过滤掉下划线开头的全局变量（为了idea面板展示更友好）
                 local name = tostring(k) .. "_global"
+                if not vars[1] then
+                    vars[1] = {}
+                end
+                if not vars[1][2] then
+                    vars[1][2] = {}
+                end
                 vars[1][2][name] = {v, v}
             end
         end
@@ -863,7 +886,7 @@ local function mln_append_global_values(vars)
     return vars
 end
 
-local function debugger_loop(sev, svars, sfile, sline)
+local function debugger_loop(sev, svars, sfile, sline, sindex, is_first_run)
     local command
     local app, osname
     local eval_env = svars or {}
@@ -884,7 +907,7 @@ local function debugger_loop(sev, svars, sfile, sline)
                 server:settimeout() --resume to poll
 
                 if not line and err == "timeout" then
-                    main_thread_vars = main_thread_should_continue_run(eval_env)
+                    main_thread_vars, sfile, sline, _, is_first_run = main_thread_should_continue_run(eval_env)
                 end
             else
                 line, err = server:receive()
@@ -935,7 +958,7 @@ local function debugger_loop(sev, svars, sfile, sline)
                 server:send("400 Bad Request\n")
             end
             if mobdebug.shouldcontinuerun then
-                main_thread_vars = main_thread_should_continue_run(eval_env)
+                main_thread_vars, sfile, sline, _, is_first_run = main_thread_should_continue_run(eval_env)
             end
         elseif command == "DELB" then
             local _, _, _, file, line = string.find(line, "^([A-Z]+)%s+(.-)%s+(%d+)%s*$")
@@ -946,7 +969,7 @@ local function debugger_loop(sev, svars, sfile, sline)
                 server:send("400 Bad Request\n")
             end
             if mobdebug.shouldcontinuerun then
-                main_thread_vars = main_thread_should_continue_run(eval_env)
+                main_thread_vars, sfile, sline, _, is_first_run = main_thread_should_continue_run(eval_env)
             end
         elseif command == "EXEC" then
             -- extract any optional parameters
@@ -1063,12 +1086,12 @@ local function debugger_loop(sev, svars, sfile, sline)
             end
         elseif command == "RUN" then
             server:send("200 OK\n")
-            main_thread_vars = main_thread_should_continue_run(eval_env)
+            main_thread_vars, sfile, sline, _, is_first_run = main_thread_should_continue_run(eval_env)
+
         elseif command == "STEP" then
             server:send("200 OK\n")
             step_into = true
-
-            main_thread_vars = main_thread_should_continue_run(eval_env)
+            main_thread_vars, sfile, sline, _, is_first_run = main_thread_should_continue_run(eval_env)
 
             --[[
             local ev, vars, file, line, idx_watch = coroyield()
@@ -1094,7 +1117,7 @@ local function debugger_loop(sev, svars, sfile, sline)
             if command == "OUT" then step_level = stack_level - 1
             else step_level = stack_level end
 
-            main_thread_vars = main_thread_should_continue_run(eval_env)
+            main_thread_vars, sfile, sline, _, is_first_run = main_thread_should_continue_run(eval_env)
 
             --[[
             local ev, vars, file, line, idx_watch = coroyield()
@@ -1138,6 +1161,9 @@ local function debugger_loop(sev, svars, sfile, sline)
             if ev and ev ~= events.STACK then
                 server:send("401 Error in Execution " .. tostring(#vars) .. "\n")
                 server:send(vars)
+            elseif (is_first_run and not has_breakpoint(sfile, sline)) then --即不是step_into也没有设置断点的情况下，只有首次run文件会出现该情况
+                server:send("204 OK\n") --给插件端的回应，不需要触发断点，只是把这条消息处理掉
+                main_thread_vars, sfile, sline, _, is_first_run = main_thread_should_continue_run(eval_env) --让lua代码继续执行
             else
                 local params = string.match(line, "--%s*(%b{})%s*$")
                 local pfunc = params and loadstring("return "..params) -- use internal function
@@ -1188,6 +1214,7 @@ local function debugger_loop(sev, svars, sfile, sline)
             params = pfunc and pfunc() --got table
             params = (type(params) == "table" and params or {}) --校验，确保是table类型
             mobdebug.commandmodels = mobdebug.commandmodels and mobdebug.commandmodels or {}
+            mobdebug.commandmodel_var_names = {}
             for k, v in pairs(params) do
                 mobdebug.commandmodels[k] = v
             end
@@ -1273,12 +1300,83 @@ local function start(controller_host, controller_port)
         coro_debugger = corocreate(debugger_loop)
         debug.sethook(debug_hook, HOOKMASK)
         seen_hook = nil -- reset in case the last start() call was refused
-        step_into = true -- start with step command
+        -- step_into = true -- start with step command
+        first_run = true --首次run文件时，需要通过该标识来获取调用栈变量以及收取socket消息等。原有逻辑是通过上述`step_into`来控制，为避免和断点stepInto操作冲突，故新设标识。
         return true
     else
         print(("Could not connect to %s:%s: %s")
                 :format(controller_host, controller_port, err or "unknown error"))
     end
+end
+
+-- Starts debugging server
+local function listen(host, port)
+    host = host or "*"
+    port = port or mobdebug.port
+
+    local socket = require("socket")
+
+    local sock, err = socket.tcp()
+    if not sock then
+        print("MLNDebug create socket error: ", err)
+        return
+    end
+
+    print("MLNDebug listen.....socket: ", socket, " sock: ", sock, " type:", type(sock), " host: ", host, " port: ", port)
+    if not sock.bind then
+        print("MLNDebug listen .... the bind function of sock is nil")
+        return
+    end
+    local errcode = sock:bind(host, port)
+    print("MLNDebug bind result: ", errcode)
+    local server_server = sock:listen()
+    server, err = sock:accept() --corresponding to client
+    print("MLNDebug listen and accept a connect client: ", server, "..... host: ", host, " port: ", port, " .... err: ", err)
+
+    if server then
+        -- correct stack depth which already has some calls on it
+        -- so it doesn't go into negative when those calls return
+        -- as this breaks subsequence checks in stack_depth().
+        -- start from 16th frame, which is sufficiently large for this check.
+        stack_level = stack_depth(16)
+
+        -- provide our own traceback function to report errors remotely
+        -- but only under Lua 5.1/LuaJIT as it's not called under Lua 5.2+
+        -- (http://lua-users.org/lists/lua-l/2016-05/msg00297.html)
+        local function f() return function()end end
+        if f() ~= f() then -- Lua 5.1 or LuaJIT
+            local dtraceback = debug.traceback
+            debug.traceback = function (...)
+                if select('#', ...) >= 1 then
+                    local thr, err, lvl = ...
+                    if type(thr) ~= 'thread' then err, lvl = thr, err end
+                    local trace = dtraceback(err, (lvl or 1)+1)
+                    if genv.print == iobase.print then -- no remote redirect
+                        return trace
+                    else
+                        genv.print(trace) -- report the error remotely
+                        return -- don't report locally to avoid double reporting
+                    end
+                end
+                -- direct call to debug.traceback: return the original.
+                -- debug.traceback(nil, level) doesn't work in Lua 5.1
+                -- (http://lua-users.org/lists/lua-l/2011-06/msg00574.html), so
+                -- simply remove first frame from the stack trace
+                local tb = dtraceback("", 2) -- skip debugger frames
+                -- if the string is returned, then remove the first new line as it's not needed
+                return type(tb) == "string" and tb:gsub("^\n","") or tb
+            end
+        end
+        coro_debugger = corocreate(debugger_loop)
+        debug.sethook(debug_hook, HOOKMASK)
+        seen_hook = nil -- reset in case the last start() call was refused
+        -- step_into = true -- start with step command
+        first_run = true --首次run文件时，需要通过该标识来获取调用栈变量以及收取socket消息等。原有逻辑是通过上述`step_into`来控制，为避免和断点stepInto操作冲突，故新设标识。
+        return true
+    else
+        print(("Could not connect to %s:%s: %s"):format(controller_host, controller_port, err or "unknown error"))
+    end
+
 end
 
 local function controller(controller_host, controller_port, scratchpad)
@@ -1764,43 +1862,6 @@ local function handle(params, client, options)
     return file, line
 end
 
--- Starts debugging server
-local function listen(host, port)
-    host = host or "*"
-    port = port or mobdebug.port
-
-    local socket = require "socket"
-
-    print("Lua Remote Debugger")
-    print("Run the program you wish to debug")
-
-    local server = socket.bind(host, port)
-    local client = server:accept()
-
-    client:send("STEP\n")
-    client:receive()
-
-    local breakpoint = client:receive()
-    local _, _, file, line = string.find(breakpoint, "^202 Paused%s+(.-)%s+(%d+)%s*$")
-    if file and line then
-        print("Paused at file " .. file )
-        print("Type 'help' for commands")
-    else
-        local _, _, size = string.find(breakpoint, "^401 Error in Execution (%d+)%s*$")
-        if size then
-            print("Error in remote application: ")
-            print(client:receive(size))
-        end
-    end
-
-    while true do
-        io.write("> ")
-        local file, line, err = handle(io.read("*line"), client)
-        if not file and err == false then break end -- completed debugging
-    end
-
-    client:close()
-end
 
 local cocreate
 local function coro()
@@ -1857,6 +1918,7 @@ mobdebug.onexit = os and os.exit or done
 mobdebug.onscratch = nil -- callback
 mobdebug.basedir = function(b) if b then basedir = b end return basedir end
 mobdebug.commandmodels = nil
+mobdebug.commandmodel_var_names = nil
 
 return mobdebug
 

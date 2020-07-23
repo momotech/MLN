@@ -7,7 +7,10 @@ cmake_minimum_required(VERSION 3.4.1)
 add_library( luajapi SHARED
             m_utf.c
             stack.c
+            list.c
             map.c
+            statistics.c
+            statistics_require.c
             m_mem.c
             saes.c
             utils.c
@@ -23,6 +26,9 @@ add_library( luajapi SHARED
             compiler.c
             message_looper.c
             isolate.c
+            argo/LuaRPC.c
+            argo/databindengine.c
+            argo/argo_lib.c
             luajapi.c )
 
 add_definitions(-DLUA_DL_DLOPEN -DLUA_USE_C89 -DLUA_COMPAT_5_1 -DLUA_COMPAT_ALL -DLUA_USE_LINUX -DJAVA_ENV -DP_ANDROID -DJAVA_CACHE_UD)

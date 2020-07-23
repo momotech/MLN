@@ -7,6 +7,8 @@
   */
 package com.immomo.mls.wrapper;
 
+import android.util.Log;
+
 import com.immomo.mls.Environment;
 import com.immomo.mls.MLSAdapterContainer;
 import com.immomo.mls.MLSEngine;
@@ -51,9 +53,10 @@ public class Register {
     private final List<SIHolder> siHolders = new ArrayList<>(10);
 
     private final HashMap<Class, String> luaClassNameMap = new HashMap<>();
-    private final AllUserdataHolder allUserdataHolder = new AllUserdataHolder();
-    private final AllUserdataHolder lvUserdataHolder = new AllUserdataHolder();
+    protected final AllUserdataHolder allUserdataHolder = new AllUserdataHolder();
+    protected final AllUserdataHolder lvUserdataHolder = new AllUserdataHolder();
     private final List<NewUDHolder> newUDHolders = new ArrayList<>();
+    private final List<NewStaticHolder> newStaticHolders = new ArrayList<>();
     private final List<String> emptyMethods = new ArrayList<>();
 
     private boolean preInstall = false;
@@ -70,6 +73,7 @@ public class Register {
         allUserdataHolder.clear();
         lvUserdataHolder.clear();
         newUDHolders.clear();
+        newStaticHolders.clear();
         emptyMethods.clear();
     }
 
@@ -123,7 +127,7 @@ public class Register {
         return true;
     }
 
-    private static void checkClassMethods(Class clz, String[] methods, boolean ud) {
+    protected static void checkClassMethods(Class clz, String[] methods, boolean ud) {
         String name = clz.getSimpleName();
         if (clz.getAnnotation(LuaApiUsed.class) == null) {
             throw new ProGuardError("Throw in debug! No @LuaApiUsed in class " + clz.getName());
@@ -206,7 +210,7 @@ public class Register {
     public void registerUserdata(UDHolder holder) {
         if (MLSEngine.DEBUG && holder.needCheck)
             checkClassMethods(holder.clz, holder.methods, true);
-        if (UDView.class.isAssignableFrom(holder.clz)) {
+        if (holder.isView) {
             lvUserdataHolder.add(holder);
         } else {
             SizeOfUtils.sizeof(holder.clz);
@@ -255,6 +259,10 @@ public class Register {
         return new UDHolder(lcn, clz, lazy, methods);
     }
 
+    public static UDHolder newUDHolder(String lcn, Class<? extends LuaUserdata> clz, boolean lazy, boolean isView, String... methods) {
+        return new UDHolder(lcn, clz, lazy, isView, methods);
+    }
+
     /**
      * 创建包裹userdata信息的对象
      * 注意：未按要求写的接口，不会增加到lua接口中
@@ -289,13 +297,17 @@ public class Register {
      * @param lazy 是否懒注册
      */
     public static UDHolder newUDHolderWithLuaClass(String lcn, Class clz, boolean lazy) {
+        return newUDHolderWithLuaClass(lcn, clz, lazy, false);
+    }
+
+    public static UDHolder newUDHolderWithLuaClass(String lcn, Class clz, boolean lazy, boolean isView) {
         final String wrapperName = clz.getName() + UD_CLASS_SUFFIX;
         try {
             Class<? extends LuaUserdata> udClz = (Class<? extends LuaUserdata>) Class.forName(wrapperName);
             Field f = udClz.getDeclaredField(METHODS_FIELD);
             String[] ms = (String[]) f.get(null);
             udClassMap.put(clz, udClz);
-            UDHolder h = new UDHolder(lcn, udClz, lazy, ms);
+            UDHolder h = new UDHolder(lcn, udClz, lazy, isView, ms);
             h.needCheck = false;
             return h;
         } catch (Throwable e) {
@@ -385,6 +397,32 @@ public class Register {
         } catch (Throwable e) {
             throw new RegisterError(e);
         }
+    }
+    /**
+     * 注册高性能，新版static bridge
+     * 其中必须有两个native函数:
+     *  static native void _init()
+     *  static native void _register(long l)
+     *
+     * 建议使用Android Studio的模板生成java代码，实现完java层逻辑后，使用mlncgen.jar生成c层注册文件
+     */
+    public void registerNewStaticBridge(String lcn, Class clz) {
+        NewStaticHolder holder = new NewStaticHolder(lcn, clz);
+        holder.init();
+        newStaticHolders.add(holder);
+    }
+
+    /**
+     * 注册高性能，新版static bridge
+     * 其中必须有两个native函数:
+     *  static native void _init()
+     *  static native void _register(long l)
+     *
+     * 建议使用Android Studio的模板生成java代码，实现完java层逻辑后，使用mlncgen.jar生成c层注册文件
+     */
+    public void registerNewStaticBridge(NewStaticHolder holder) {
+        holder.init();
+        newStaticHolders.add(holder);
     }
     //</editor-fold>
 
@@ -571,6 +609,9 @@ public class Register {
         for (NewUDHolder h : newUDHolders) {
             h.register(g);
         }
+        for (NewStaticHolder h : newStaticHolders) {
+            h.register(g);
+        }
         allUserdataHolder.install(g);
         if (installView)
             lvUserdataHolder.install(g);
@@ -588,7 +629,7 @@ public class Register {
     /**
      * 提前初始化所有类信息
      */
-    public void preInstall() {
+    public synchronized void preInstall() {
         if (preInstall) return;
 
         try {
@@ -613,7 +654,7 @@ public class Register {
     /**
      * 将所有userdata放到一起同时注册
      */
-    private final class AllUserdataHolder {
+    protected final class AllUserdataHolder {
         final int INIT = 50;
         final List<String> lcns = new ArrayList<>(INIT);
         final List<String> lpcns = new ArrayList<>(INIT);
@@ -633,7 +674,7 @@ public class Register {
             index = 0;
         }
 
-        void add(UDHolder h) {
+        public void add(UDHolder h) {
             lcns.add(h.luaClassName);
             String parentName = Globals.findLuaParentClass(h.clz, luaClassNameMap);
             if (h.luaClassName.equals(parentName))
@@ -736,13 +777,22 @@ public class Register {
         /**
          * 是否要检查LuaApiUsed注解
          */
-        private boolean needCheck = true;
+        public boolean needCheck = true;
+        /**
+         * 是否是view使用的
+         */
+        public boolean isView = false;
 
         private UDHolder(String lcn, Class<? extends LuaUserdata> clz, boolean lazy, String[] methods) {
+            this(lcn, clz, lazy, UDView.class.isAssignableFrom(clz), methods);
+        }
+
+        private UDHolder(String lcn, Class<? extends LuaUserdata> clz, boolean lazy, boolean isView, String[] methods) {
             this.luaClassName = lcn;
             this.clz = clz;
             this.methods = methods;
             this.lazy = lazy;
+            this.isView = isView;
         }
     }
 
@@ -864,6 +914,45 @@ public class Register {
             try {
                 registerMethod.invoke(null, g.getL_State());
                 g.putLuaClassName(clz, lcn);
+            } catch (Throwable e) {
+                Environment.callbackError(e, g);
+            }
+        }
+    }
+
+    public static final class NewStaticHolder {
+        private final String lcn;
+        private final Class clz;
+        private final Method registerMethod;
+        private Method initMethod;
+
+        public NewStaticHolder(String lcn, Class clz) {
+            this.lcn = lcn;
+            this.clz = clz;
+            try {
+                initMethod = clz.getDeclaredMethod(NEW_UD_INIT);
+                registerMethod = clz.getDeclaredMethod(NEW_UD_REGISTER, long.class);
+                initMethod.setAccessible(true);
+                registerMethod.setAccessible(true);
+            } catch (Throwable t) {
+                throw new RegisterError("register " + clz.getName() + " failed!", t);
+            }
+        }
+
+        private void init() {
+            if (initMethod == null)
+                return;
+            try {
+                initMethod.invoke(null);
+                initMethod = null;
+            } catch (Throwable t) {
+                throw new RegisterError("init " + clz.getName() + " failed!", t);
+            }
+        }
+
+        private void register(Globals g) {
+            try {
+                registerMethod.invoke(null, g.getL_State());
             } catch (Throwable e) {
                 Environment.callbackError(e, g);
             }

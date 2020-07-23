@@ -12,7 +12,8 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.util.LongSparseArray;
+
+import androidx.collection.LongSparseArray;
 
 import com.immomo.mlncore.MLNCore;
 
@@ -233,15 +234,19 @@ public final class Globals extends LuaTable {
      * @see #createLState(boolean)
      * @see #getGlobalsByLState(long)
      */
-    private static final LongSparseArray<Globals> cache = new LongSparseArray<>();
+    private static LongSparseArray<Globals> cache = new LongSparseArray<>();
     /**
      * 全局虚拟机
      */
-    private static final LongSparseArray<Globals> g_cahce = new LongSparseArray<>();
+    private static LongSparseArray<Globals> g_cahce = new LongSparseArray<>();
     /**
      * 空方法回调
      */
     private static OnEmptyMethodCalledListener onEmptyMethodCalledListener;
+    /**
+     * 开启虚拟机统计
+     */
+    private static boolean openStatistics;
 
     /**
      * @see #createLState(boolean)
@@ -285,6 +290,24 @@ public final class Globals extends LuaTable {
      */
     public static boolean isIs32bit() {
         return is32bit;
+    }
+
+    /**
+     * 打开统计bridge调用开关
+     */
+    public static void setStatisticOpen(boolean open) {
+        openStatistics = open;
+        LuaCApi._setStatisticsOpen(open);
+    }
+
+    /**
+     * 通知打印统计信息
+     */
+    public static void notifyStatisticsCallback() {
+        if (openStatistics) {
+            LuaCApi._notifyStatisticsCallback();
+            LuaCApi._notifyRequireCallback();
+        }
     }
 
     /**
@@ -683,6 +706,21 @@ public final class Globals extends LuaTable {
     public final void preloadFile(String chunkName, String path) throws UndumpError {
         checkDestroy();
         LuaCApi._preloadFile(L_State, chunkName, path);
+    }
+
+    /**
+     * 预加载Lua文件
+     * @param chunkName 脚本名称，Lua代码中require()时使用
+     * @param path      脚本绝对路径
+     * @return null：加载成功
+     */
+    public final String preloadFileWithResult(String chunkName, String path) {
+        try {
+            preloadFile(chunkName, path);
+            return null;
+        } catch (UndumpError e) {
+            return e.getMessage();
+        }
     }
 
     /**

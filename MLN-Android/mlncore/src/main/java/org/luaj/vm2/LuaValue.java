@@ -315,7 +315,7 @@ public abstract class LuaValue {
      * 非{@link NLuaValue}数据类型返回0
      */
     @LuaApiUsed
-    long nativeGlobalKey() {
+    public long nativeGlobalKey() {
         return nativeGlobalKey;
     }
 

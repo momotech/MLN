@@ -34,6 +34,10 @@ class LuaCApi {
 
     private static native boolean _check32bit();
 
+    static native void _setStatisticsOpen(boolean open);
+    static native void _notifyStatisticsCallback();
+    static native void _notifyRequireCallback();
+
     //<editor-fold desc="isolate">
     static native void _callMethod(long L, long method, long args);
     //</editor-fold>

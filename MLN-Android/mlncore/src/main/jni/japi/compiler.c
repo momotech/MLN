@@ -14,6 +14,7 @@
 
 #include <errno.h>
 #include <sys/stat.h>
+#include <time.h>
 #include "compiler.h"
 #include "saes.h"
 #include "lundump.h"
@@ -27,7 +28,10 @@
 #include "cache.h"
 #include "jfunction.h"
 #include "jtable.h"
+#include "statistics_require.h"
+#ifdef ANDROID
 #include "assets_reader.h"
+#endif
 
 /**
  * 是否开启文件加密，若开启，读lua文件判断是否是加密文件，写lua文件都加密
@@ -58,8 +62,6 @@ typedef struct LoadES {
     size_t size;
 } LoadES;
 
-static int getLuaClosureAndSave(JNIEnv *env, lua_State *L, jstring savePath, jstring chunkname);
-
 static int loadbuffer(JNIEnv *env, lua_State *L, jstring name, jbyteArray data);
 
 static int real_loadbuffer(lua_State *L, char *nd, size_t size, const char *cn);
@@ -69,24 +71,24 @@ static const char *getES(lua_State *L, void *ud, size_t *size);
 static int loadfile(JNIEnv *env, lua_State *L, jstring path, jstring chunkname);
 
 static int real_loadfile(lua_State *L, const char *filename, const char *chunkname);
-
+#ifdef ANDROID
 static int loadAssetsfile(JNIEnv *env, lua_State *L, jstring path, jstring chunkname);
 
 static int real_loadassetsfile(lua_State *L, const char *filename, const char *chunkname);
-
+#endif
 static int errfile(lua_State *L, const char *what, const char *filename);
 
 static SIZE get_file_size(const char *__restrict file);
 
 static const char *getF(lua_State *L, void *ud, size_t *size);
 
-static void checkSaveError(JNIEnv *env, int ret);
-
 static int writer(lua_State *L, const void *p, size_t size, void *u);
 
 static int saveProto(lua_State *L, const Proto *p, const char *file);
 
 static void throwUndumpError(JNIEnv *env, const char *msg);
+
+//<editor-fold desc="jni methods">
 
 /// ------------------------jni methods------------------------
 void jni_openSAES(JNIEnv *env, jobject jobj, jboolean open) {
@@ -110,6 +112,7 @@ jni_loadFile(JNIEnv *env, jobject jobj, jlong L_state_pointer, jstring path, jst
     return r;
 }
 
+#ifdef ANDROID
 jint
 jni_loadAssetsFile(JNIEnv *env, jobject jobj, jlong L_state_pointer, jstring path, jstring chunkname) {
     lua_State *L = (lua_State *) L_state_pointer;
@@ -118,6 +121,7 @@ jni_loadAssetsFile(JNIEnv *env, jobject jobj, jlong L_state_pointer, jstring pat
     lua_unlock(L);
     return r;
 }
+#endif
 
 jboolean jni_setMainEntryFromPreload(JNIEnv *env, jobject jobj, jlong LS, jstring name) {
     lua_State *L = (lua_State *) LS;
@@ -290,30 +294,13 @@ jint jni_startDebug(JNIEnv *env, jobject jobj, jlong LS, jbyteArray data, jstrin
     lua_unlock(L);
     return (jint) ret;
 }
+//</editor-fold>
+
+//<editor-fold desc="static methods">
 
 ///--------------------------------------------------------------------------------
 ///-----------------------------------static---------------------------------------
 ///--------------------------------------------------------------------------------
-static int getLuaClosureAndSave(JNIEnv *env, lua_State *L, jstring savePath, jstring chunkname) {
-    lua_lock(L);
-    const char *cn = GetString(env, chunkname);
-    lua_pushstring(L, cn); // -1: cn --table
-    ReleaseChar(env, chunkname, cn);
-    lua_rawget(L, -2); // -1: preloadFunction --table
-    if (lua_isnil(L, -1) || !isLfunction(L->top - 1)) {
-        lua_pop(L, 2);
-        lua_unlock(L);
-        return -400;
-    }
-    const char *p = GetString(env, savePath);
-    const Proto *f = GET_PROTO(L);
-    int ret = saveProto(L, f, p);
-    lua_pop(L, 2);
-    ReleaseChar(env, savePath, p);
-    checkSaveError(env, ret);
-    lua_unlock(L);
-    return ret;
-}
 
 static int real_loadbuffer(lua_State *L, char *nd, size_t size, const char *cn) {
     if (!opensaes) return luaL_loadbuffer(L, nd, size, cn);
@@ -364,32 +351,20 @@ static const char *getES(lua_State *L, void *ud, size_t *size) {
     return ls->s + SOURCE_LEN + HEADER_LEN;
 }
 
+static SIZE get_file_size(const char *__restrict file) {
+    struct stat statbuf;
+    stat(file, &statbuf);
+    return (SIZE) statbuf.st_size;
+}
+
+//<editor-fold desc="android assets">
+
+#ifdef ANDROID
 static int loadAssetsfile(JNIEnv *env, lua_State *L, jstring path, jstring chunkname) {
     const char *p = GetString(env, path);
     const char *cn = GetString(env, chunkname);
     lua_lock(L);
     int ret = real_loadassetsfile(L, p, cn);
-    ReleaseChar(env, path, p);
-    if (cn)
-        ReleaseChar(env, chunkname, cn);
-    if (ret) {
-        const char *errmsg;
-        if (lua_isstring(L, -1))
-            errmsg = lua_tostring(L, -1);
-        else
-            errmsg = "unkonw error";
-        lua_pop(L, 1);
-        throwUndumpError(env, errmsg);
-    }
-    lua_unlock(L);
-    return ret;
-}
-
-static int loadfile(JNIEnv *env, lua_State *L, jstring path, jstring chunkname) {
-    const char *p = GetString(env, path);
-    const char *cn = GetString(env, chunkname);
-    lua_lock(L);
-    int ret = real_loadfile(L, p, cn);
     ReleaseChar(env, path, p);
     if (cn)
         ReleaseChar(env, chunkname, cn);
@@ -452,6 +427,29 @@ static int real_loadassetsfile(lua_State *L, const char *filename, const char *c
                         lua_tostring(L, -1), code);
     }
     return code;
+}
+#endif
+//</editor-fold>
+
+static int loadfile(JNIEnv *env, lua_State *L, jstring path, jstring chunkname) {
+    const char *p = GetString(env, path);
+    const char *cn = GetString(env, chunkname);
+    lua_lock(L);
+    int ret = real_loadfile(L, p, cn);
+    ReleaseChar(env, path, p);
+    if (cn)
+        ReleaseChar(env, chunkname, cn);
+    if (ret) {
+        const char *errmsg;
+        if (lua_isstring(L, -1))
+            errmsg = lua_tostring(L, -1);
+        else
+            errmsg = "unkonw error";
+        lua_pop(L, 1);
+        throwUndumpError(env, errmsg);
+    }
+    lua_unlock(L);
+    return ret;
 }
 
 static int real_loadfile(lua_State *L, const char *filename, const char *chunkname) {
@@ -519,12 +517,6 @@ static int real_loadfile(lua_State *L, const char *filename, const char *chunkna
     return state;
 }
 
-static SIZE get_file_size(const char *__restrict file) {
-    struct stat statbuf;
-    stat(file, &statbuf);
-    return (SIZE) statbuf.st_size;
-}
-
 static int errfile(lua_State *L, const char *what, const char *filename) {
     const char *serr = strerror(errno);
     lua_pushfstring(L, "cannot %s %s: %s", what, filename, serr);
@@ -545,22 +537,6 @@ static const char *getF(lua_State *L, void *ud, size_t *size) {
         if (*size && lf->aes) decrypt(lf->buff, *size);
     }
     return lf->buff;
-}
-
-static void checkSaveError(JNIEnv *env, int ret) {
-    switch (ret) {
-        case 0:
-            break;
-        case FILE_NOT_FOUND:
-            throwRuntimeError(env, "cannot open or find file!");
-            break;
-        case WRITE_FILE_ERROR:
-            throwRuntimeError(env, "cannot write");
-            break;
-        case CLOSE_FILE_ERROR:
-            throwRuntimeError(env, "cannot close");
-            break;
-    }
 }
 
 static int saveProto(lua_State *L, const Proto *p, const char *file) {
@@ -634,6 +610,10 @@ static void throwUndumpError(JNIEnv *env, const char *msg) {
                 "exception/UndumpError"));
     (*env)->ThrowNew(env, UndumpError, msg);
 }
+//</editor-fold>
+
+//<editor-fold desc="require">
+
 ///--------------------------------------------------------------------------------
 ///----------------------------------require---------------------------------------
 ///--------------------------------------------------------------------------------
@@ -736,6 +716,8 @@ static int return_failed(lua_State *L, char *filename) {
  * loadlib.c createsearcherstable
  */
 int searcher_Lua(lua_State *L) {
+    double startTime = getStartTime();
+    
     lua_lock(L);
     char *filename;
     const char *name = luaL_checkstring(L, 1);
@@ -754,6 +736,8 @@ int searcher_Lua(lua_State *L) {
     if (real_loadfile(L, filename, name) == LUA_OK) {
         result = return_success(L, filename, autosave && !isbin);
         lua_unlock(L);
+
+        statistics_searcher_Call(FROM_SEARCHER_LUA, name, getoffsetTime(startTime));
         return result;
     }
     // 加载失败
@@ -777,6 +761,8 @@ int searcher_Lua(lua_State *L) {
         }
         result = return_success(L, filename, autosave);
         lua_unlock(L);
+
+        statistics_searcher_Call(FROM_SEARCHER_LUA, name, getoffsetTime(startTime));
         return result;
     }
     result = return_failed(L, filename);
@@ -789,6 +775,8 @@ int searcher_Lua(lua_State *L) {
  * 返回2 : -1: string, -2: function(or nil)
  */
 int searcher_java(lua_State *L) {
+    double startTime = getStartTime();
+    
     JNIEnv *env;
     int need = getEnv(&env);
     lua_lock(L);
@@ -825,6 +813,8 @@ int searcher_java(lua_State *L) {
             FREE(env, r);
             if (need) detachEnv();
             lua_unlock(L);
+
+            statistics_searcher_Call(FROM_SEARCHER_JAVA, name, getoffsetTime(startTime));
             return 2;
         }
         const char *err = lua_pushfstring(L, "error loading module '%s' from file '%s':\n\t%s",
@@ -841,10 +831,10 @@ int searcher_java(lua_State *L) {
         jbyte *nd = (*env)->GetByteArrayElements(env, arr, 0);
         size_t size = (size_t) GetArrLen(env, arr);
         int isbin = isBinaryData(nd);
-        int r = real_loadbuffer(L, (char *) nd, size, name);
+        int loadresult = real_loadbuffer(L, (char *) nd, size, name);
         (*env)->ReleaseByteArrayElements(env, arr, nd, 0);
         FREE(env, arr);
-        if (r == LUA_OK) {
+        if (loadresult == LUA_OK) {
             if (!isbin) {
                 const char *bp = getAutoSavePath(L);
                 if (bp) {
@@ -857,6 +847,8 @@ int searcher_java(lua_State *L) {
             lua_pushstring(L, name);
             if (need) detachEnv();
             lua_unlock(L);
+
+            statistics_searcher_Call(FROM_SEARCHER_JAVA, name, getoffsetTime(startTime));
             return 2;
         }
         if (need) detachEnv();
@@ -866,10 +858,12 @@ int searcher_java(lua_State *L) {
     }
 }
 
+#ifdef ANDROID
 /**
  * require时调用
  */
 int searcher_Lua_asset(lua_State *L) {
+    double startTime = getStartTime();
     const char *name = luaL_checkstring(L, 1);
     name = luaL_gsub(L, name, ".", LUA_DIRSEP);
     const char *filename = formatstr("%s.lua", name);
@@ -915,9 +909,13 @@ int searcher_Lua_asset(lua_State *L) {
 
     if (code == LUA_OK) {
         lua_pushvalue(L, 1);
+
+        statistics_searcher_Call(FROM_SEARCHER_ASSET, name, getoffsetTime(startTime));
         return 2;
     }
     lua_pushfstring(L, "\n\terror loading module '%s' from asset '%s', code: %d",
                       name, name, code);
     return 1;
 }
+#endif
+//</editor-fold>

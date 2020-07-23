@@ -1,3 +1,10 @@
+/**
+  * Created by MomoLuaNative.
+  * Copyright (c) 2020, Momo Group. All rights reserved.
+  *
+  * This source code is licensed under the MIT.
+  * For the full copyright and license information,please view the LICENSE file in the root directory of this source tree.
+  */
 package com.xfy.shell;
 
 import java.util.ArrayList;
@@ -11,6 +18,7 @@ public class Parser {
     private static final String PACKAGE = "package";
     private static final String IMPORT = "import";
     private static final String CLASS = "class";
+    private static final String STATIC = "static";
     private static final String LCN = "LUA_CLASS_NAME";
     private static final char[] Blank = {
             ' ', '\t', '\n'
@@ -28,14 +36,15 @@ public class Parser {
     private String className;
     private String luaClassName;
     private String packageName;
-    private List<Method> methods;
-    private List<String> imports;
+    private final List<Method> methods;
+    private final List<String> imports;
+    private boolean isStatic;
 
-    public Parser(String classContent) {
+    public Parser(String classContent) throws Exception {
         methods = new ArrayList<>();
         imports = new ArrayList<>();
         parse(classContent);
-        setMethodPackage();
+        setMethodPackageAndCheck();
     }
 
     public String getClassName() {
@@ -54,23 +63,31 @@ public class Parser {
         return methods;
     }
 
-    private void setMethodPackage() {
+    public boolean isStatic() {
+        return isStatic;
+    }
+
+    private void setMethodPackageAndCheck() throws Exception {
+        boolean isStatic = methods.get(0).isStatic;
         for (Method m : methods) {
+            if (isStatic != m.isStatic)
+                throw new Exception("所有的bridge方法必须都是静态或非静态");
             setTypePackage(m.returnType);
             for (Type t : m.params) {
                 setTypePackage(t);
             }
         }
+        this.isStatic = isStatic;
     }
 
     private void setTypePackage(Type type) {
-        if (type.isVoid || type.isPrimitive)
+        if (!type.needAddPackage())
             return;
         String name = type.name;
         for (String im : imports) {
             if (im.endsWith(name)) {
                 type.name = im;
-                break;
+                return;
             }
         }
         type.name = packageName + "." + name;
@@ -200,6 +217,7 @@ public class Parser {
                 i ++;
             }
             i --;
+            /// i指向左括号位置 ms指向
             int[] se = {ms, i};
             String methodName = getKeyWordFromEnd(chars, se);
             se[1] = se[0];
@@ -208,6 +226,11 @@ public class Parser {
             if (returnName.isEmpty() || isModify(returnName)) {
                 continue;
             }
+            se[1] = se[0];
+            se[0] = ms;
+            String staticStr = getKeyWordFromEnd(chars, se);
+            boolean isStatic = STATIC.equals(staticStr);
+            /// 读方法参数
             i += 2;
             se[0] = i - 1;
             int end = i;
@@ -218,9 +241,11 @@ public class Parser {
                 if (c == Comma || c == RightBrackets) {
                     end = i;
                     i --;
+                    /// 过滤空白
                     while (isBlank(chars[i])) {
                         i --;
                     }
+                    /// 过滤参数名
                     while (!isBlank(chars[i])) {
                         i --;
                     }
@@ -230,6 +255,7 @@ public class Parser {
                     if (!tn.isEmpty())
                         params.add(new Type(tn));
                     i = end + 1;
+                    se[0] = end;
                     if (c == RightBrackets)
                         break;
                 } else {
@@ -240,6 +266,7 @@ public class Parser {
             m.name = methodName;
             m.returnType = new Type(returnName);
             m.params = params.toArray(new Type[0]);
+            m.isStatic = isStatic;
             methods.add(m);
         }
     }

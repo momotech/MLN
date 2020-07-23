@@ -37,7 +37,7 @@ public class LuaViewManager implements IGlobalsUserdata{
     public String baseFilePath;
     public final LuaCache luaCache;
     public String url;
-    private SparseArray<OnActivityResultListener> onActivityResultListeners;
+    protected SparseArray<OnActivityResultListener> onActivityResultListeners;
     /**
      * 虚拟机全局圆角配置
      */
@@ -77,9 +77,7 @@ public class LuaViewManager implements IGlobalsUserdata{
 
     @Override
     public void l(long L, String tag, String log) {
-        Globals g = Globals.getGlobalsByLState(L);
-        LuaViewManager v = g != null ? (LuaViewManager) g.getJavaUserdata() : null;
-        PrintStream out = v != null ? v.STDOUT : null;
+        PrintStream out = STDOUT;
         if (out != null) {
             out.print(log);
             out.println();
@@ -89,9 +87,7 @@ public class LuaViewManager implements IGlobalsUserdata{
 
     @Override
     public void e(long L, String tag, String log) {
-        Globals g = Globals.getGlobalsByLState(L);
-        LuaViewManager v = g != null ? (LuaViewManager) g.getJavaUserdata() : null;
-        PrintStream out = v != null ? v.STDOUT : null;
+        PrintStream out = STDOUT;
         if (out instanceof DefaultPrintStream) {
             ((DefaultPrintStream) out).error(log);
         } else if (out != null) {
@@ -115,65 +111,4 @@ public class LuaViewManager implements IGlobalsUserdata{
         this.defaltCornerClip = defaltCornerClip;
     }
 
-    /**
-     * setup global values
-     *
-     * @param globals
-     */
-    public static Globals setupGlobals(final Globals globals) {
-        if (globals == null)
-            return null;
-        if (Looper.myLooper() == Looper.getMainLooper()) {
-            realSetupGlobals(globals);
-        } else {
-            final Lock lock = new ReentrantLock();
-            final Condition condition = lock.newCondition();
-            MainThreadExecutor.post(new LockRunnable(lock, condition) {
-                @Override
-                public void realRun() {
-                    realSetupGlobals(globals);
-                }
-            });
-            try {
-                lock.lock();
-                condition.await();
-            } catch (InterruptedException ignore) {
-            } finally {
-                lock.unlock();
-            }
-        }
-        return globals;
-    }
-
-    private static void realSetupGlobals(Globals globals) {
-        long t = SystemClock.uptimeMillis();
-        MLSEngine.singleRegister.install(globals);
-        t = SystemClock.uptimeMillis() - t;
-        if (MLSEngine.DEBUG) {
-            MLSAdapterContainer.getConsoleLoggerAdapter().d("LuaViewManager", "init cast: " + t);
-        }
-        if (MLSEngine.isInit())
-        NativeBridge.registerNativeBridge(globals);
-    }
-
-    private abstract static class LockRunnable implements Runnable {
-        final Lock lock;
-        final Condition condition;
-        LockRunnable(Lock lock, Condition condition) {
-            this.lock = lock;
-            this.condition = condition;
-        }
-        @Override
-        public void run() {
-            try {
-                lock.lock();
-                realRun();
-                condition.signal();
-            } finally {
-                lock.unlock();
-            }
-        }
-
-        protected abstract void realRun();
-    }
 }

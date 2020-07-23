@@ -28,7 +28,7 @@ import androidx.annotation.NonNull;
  */
 public class BorderRadiusEditText extends androidx.appcompat.widget.AppCompatEditText implements IBorderRadiusView, IClipRadius, ViewClipHelper.SuperDrawAction, IShowKeyboard {
     private final @NonNull
-    BorderBackgroundDrawable backgroundDrawable;
+    BorderBackgroundEditTextDrawable backgroundDrawable;
     private final @NonNull
     ViewClipHelper viewClipHelper;
     private final @NonNull
@@ -36,7 +36,7 @@ public class BorderRadiusEditText extends androidx.appcompat.widget.AppCompatEdi
 
     public BorderRadiusEditText(Context context) {
         super(context);
-        backgroundDrawable = new BorderBackgroundDrawable();
+        backgroundDrawable = new BorderBackgroundEditTextDrawable();
         viewClipHelper = new ViewClipHelper(this);
         viewShadowHelper = new ViewShadowHelper();
     }

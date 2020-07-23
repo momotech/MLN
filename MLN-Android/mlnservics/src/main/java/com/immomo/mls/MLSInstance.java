@@ -249,6 +249,15 @@ public class MLSInstance implements ScriptLoader.Callback, Callback, PrinterCont
     }
 
     public MLSInstance(@NonNull Context context, boolean isHotReloadPage, boolean showDebugButton) {
+        this(context, isHotReloadPage, showDebugButton, false);
+    }
+
+    public MLSInstance(@NonNull Context context, boolean isHotReloadPage, boolean showDebugButton, boolean clearStatistic) {
+        if (clearStatistic) {
+            ///清空数据
+            Globals.setStatisticOpen(false);
+            Globals.setStatisticOpen(true);
+        }
         AssertUtils.assertNullForce(context);
         mContext = context;
         createLuaViewManager();
@@ -736,13 +745,16 @@ public class MLSInstance implements ScriptLoader.Callback, Callback, PrinterCont
             });
         }
         removeState(STATE_HOT_RELOADING);
+
+        if(MLSEngine.DEBUG)
+            Globals.notifyStatisticsCallback();//通知打印统计信息
     }
 
     private Globals initGlobals(LuaViewManager luaViewManager) {
         Globals globals = PreGlobalInitUtils.take();
         if (globals == null) {
             globals = Globals.createLState(MLSEngine.isOpenDebugger());
-            LuaViewManager.setupGlobals(globals);
+            PreGlobalInitUtils.setupGlobals(globals);
         }
         globals.setJavaUserdata(luaViewManager);
 
@@ -1125,7 +1137,7 @@ public class MLSInstance implements ScriptLoader.Callback, Callback, PrinterCont
                 lvm.scriptVersion = getScriptVersion();
                 lvm.baseFilePath = scriptBundle.getBasePath();
                 GlobalStateUtils.onScriptLoaded(initData.url, scriptBundle);
-                ScriptLoader.loadScriptBundle(luaView.getUserdata(), scriptBundle, g, MLSInstance.this);
+                ScriptLoader.loadScriptBundle(scriptBundle, g, MLSInstance.this);
                 if (MLSEngine.DEBUG) {
                     HotReloadHelper.addCallback(MLSInstance.this);
                 }

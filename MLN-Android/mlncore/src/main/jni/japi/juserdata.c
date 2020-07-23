@@ -9,6 +9,7 @@
 // Created by Xiong.Fangyu 2019/03/13.
 //
 
+#include <sys/time.h>
 #include "debug_info.h"
 #include "m_mem.h"
 #include "llimits.h"
@@ -16,12 +17,14 @@
 #include "lauxlib.h"
 #include "juserdata.h"
 #include "jtable.h"
+#include "statistics.h"
 
 #define LUA_NEWINDEX "__newindex"
 
 /// 判断是否是JavaUserdata的子类，由java控制内存(存储在)
 #define IS_STRONG_REF(env, clz) (*env)->IsAssignableFrom(env, clz, JavaUserdata)
 #define clearException(env) if ((*env)->ExceptionCheck(env)) (*env)->ExceptionClear(env);
+#define _get_milli_second(t) ((t)->tv_sec*1000.0 + (t)->tv_usec / 1000.0)
 
 extern jclass JavaUserdata;
 extern jmethodID LuaUserdata_memoryCast;
@@ -126,7 +129,7 @@ push_init(JNIEnv *env, lua_State *L, jclass clz, const char *metaname, const cha
  */
 static int execute_new_ud(lua_State *L);
 
-static void fillUDMetatable(JNIEnv *env, lua_State *LS, jclass clz, const char *parent_mn);
+static void fillUDMetatable(JNIEnv *env, lua_State *LS, jclass clz, const char *self, const char *parent_mn);
 
 /**
  * 注册ud
@@ -416,7 +419,7 @@ static jclass init_lazy_metatable(JNIEnv *env, lua_State *L) {
     __LID *lid = (__LID *) lua_touserdata(L, -1);
     lua_pop(L, 1);                                      // metatable
     jclass clz = lid->clz;
-    fillUDMetatable(env, L, clz, lid->p_meta);          // metatable
+    fillUDMetatable(env, L, clz, lid->p_meta, lid->p_meta);          // metatable
     lua_pushnil(L);
     lua_setfield(L, -2, J_MS_METANAME);                 //metatable[__LID] = nil
     lua_unlock(L);
@@ -428,6 +431,9 @@ static jclass init_lazy_metatable(JNIEnv *env, lua_State *L) {
  * upvalue顺序为: 1: metaname
  */
 static int execute_new_ud_lazy(lua_State *L) {
+    struct timeval start = {0};
+    struct timeval end = {0};
+    gettimeofday(&start, NULL);
     JNIEnv *env;
     int need = getEnv(&env);
     lua_lock(L);
@@ -459,6 +465,9 @@ static int execute_new_ud_lazy(lua_State *L) {
         lua_error(L);
         return 1;
     }
+    gettimeofday(&end, NULL);
+    double offset = _get_milli_second(&end) - _get_milli_second(&start);
+    userdataMethodCall(metaname + strlen(METATABLE_PREFIX), InitMethodName, offset);
 
     lua_pushvalue(L, -2);       //metatable --ud-metatable
     lua_setmetatable(L, -2);    //ud --metatable
@@ -480,14 +489,14 @@ push_init(JNIEnv *env, lua_State *L, jclass clz, const char *metaname, const cha
     /// 如果是JavaInstance或JavaClass，只注册方法，因为对象由java创建
     if (strcmp(metaname, JAVA_INSTANCE_META) == 0 || strcmp(metaname, JAVA_CLASS_META) == 0) {
         u_newmetatable(L, metaname);                                        // table
-        fillUDMetatable(env, L, clz, p_metaname);
+        fillUDMetatable(env, L, clz, metaname, p_metaname);
         lua_pop(L, 1);
         lua_pushnil(L);
         return;
     }
 
     u_newmetatable(L, metaname);
-    fillUDMetatable(env, L, clz, p_metaname);
+    fillUDMetatable(env, L, clz, metaname, p_metaname);
     lua_pop(L, 1);
 
     jmethodID cons = getConstructor(env, clz);
@@ -567,7 +576,7 @@ static int traverse_listener(const void *key, const void *value, void *ud) {
  * -1: metatable
  * return void with -1: metatable
  */
-static void fillUDMetatable(JNIEnv *env, lua_State *LS, jclass clz, const char *parent_mn) {
+static void fillUDMetatable(JNIEnv *env, lua_State *LS, jclass clz, const char *self, const char *parent_mn) {
     SET_METATABLE(LS);
     if (parent_mn) {
         luaL_getmetatable(LS, parent_mn);
@@ -1012,6 +1021,9 @@ static void pushMethodClosure(lua_State *L, jmethodID m, const char *mn) {
  *              2:string methodname
  */
 static int executeJavaUDFunction(lua_State *L) {
+    struct timeval start = {0};
+    struct timeval end = {0};
+    gettimeofday(&start, NULL);
     lua_lock(L);
     if (!lua_isuserdata(L, 1)) {
         lua_pushstring(L, "use ':' instead of '.' to call method!!");
@@ -1062,6 +1074,9 @@ static int executeJavaUDFunction(lua_State *L) {
         lua_error(L);
         return 1;
     }
+    gettimeofday(&end, NULL);
+    double offset = _get_milli_second(&end) - _get_milli_second(&start);
+    userdataMethodCall(ud->name + strlen(METATABLE_PREFIX), n, offset);
     if (info)
         m_malloc(info, sizeof(char) * (strlen(info) + 1), 0);
     FREE(env, jobj);

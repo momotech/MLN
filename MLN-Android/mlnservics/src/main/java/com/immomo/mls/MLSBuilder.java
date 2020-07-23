@@ -26,6 +26,7 @@ import com.immomo.mls.adapter.PreinstallError;
 import com.immomo.mls.adapter.ScriptReaderCreator;
 import com.immomo.mls.adapter.ToastAdapter;
 import com.immomo.mls.adapter.TypeFaceAdapter;
+import com.immomo.mls.adapter.X64PathAdapter;
 import com.immomo.mls.fun.ui.MLNSafeAreaAdapter;
 import com.immomo.mls.global.LVConfig;
 import com.immomo.mls.global.LuaViewConfig;
@@ -60,6 +61,7 @@ public class MLSBuilder {
     private final List<SIHolder> siHolders;
     private final List<CHolder> cHolders;
     private final List<Register.NewUDHolder> newUDHolders;
+    private final List<Register.NewStaticHolder> newStaticHolders;
     private final Register register;
     private int preGlobalNum = 3;
     private boolean clearAll = false;
@@ -73,6 +75,7 @@ public class MLSBuilder {
         siHolders = new ArrayList<>();
         cHolders = new ArrayList<>();
         newUDHolders = new ArrayList<>();
+        newStaticHolders = new ArrayList<>();
     }
 
     //<editor-fold desc="Adapter">
@@ -170,12 +173,18 @@ public class MLSBuilder {
         MLSAdapterContainer.setSafeAreaAdapter(safeAreaAdapter);
         return this;
     }
+
+    public MLSBuilder setX64PathAdapter(X64PathAdapter x64PathAdapter) {
+        MLSAdapterContainer.setX64PathAdapter(x64PathAdapter);
+        return this;
+    }
     //</editor-fold>
 
     //<editor-fold desc="Register">
     public MLSBuilder clearAll() {
         udHolders.clear();
         newUDHolders.clear();
+        newStaticHolders.clear();
         sHolders.clear();
         constantsClass.clear();
         siHolders.clear();
@@ -191,6 +200,15 @@ public class MLSBuilder {
      */
     public MLSBuilder registerNewUD(Register.NewUDHolder... holders) {
         newUDHolders.addAll(Arrays.asList(holders));
+        return this;
+    }
+
+    /**
+     * 注册高性能bridge
+     * @see Register#registerNewStaticBridge(Register.NewStaticHolder)
+     */
+    public MLSBuilder registerNewStaticBridge(Register.NewStaticHolder... holders) {
+        newStaticHolders.addAll(Arrays.asList(holders));
         return this;
     }
 
@@ -374,8 +392,8 @@ public class MLSBuilder {
     /**
      * 设置是否在java层读取脚本文件
      */
+    @Deprecated
     public MLSBuilder setReadScriptFileInJava(boolean readScriptFileInJava) {
-        MLSConfigs.readScriptFileInJava = readScriptFileInJava;
         return this;
     }
 
@@ -518,6 +536,9 @@ public class MLSBuilder {
         for (Register.NewUDHolder h : newUDHolders) {
             register.registerNewUserdata(h);
         }
+        for (Register.NewStaticHolder h : newStaticHolders) {
+            register.registerNewStaticBridge(h);
+        }
         for (Register.SHolder h : sHolders) {
             register.registerStaticBridge(h);
         }
@@ -568,11 +589,11 @@ public class MLSBuilder {
      * 适用于需要获取状态的类中，或需要在虚拟机销毁时，释放资源的类中
      */
     public static class SIHolder {
-        String luaClassName;
+        public String luaClassName;
         /**
          * 类中必须有{@link com.immomo.mls.annotation.LuaClass}注解
          */
-        Class clz;
+        public Class clz;
 
         public SIHolder(String lcn, Class clz) {
             luaClassName = lcn;

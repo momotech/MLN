@@ -33,4 +33,4 @@ target_link_libraries( mlnbridge ${log-lib}
 mln_coverage
         luajapi_so)
 
-ADD_SUBDIRECTORY(${CMAKE_CURRENT_SOURCE_DIR}/bc)
+#ADD_SUBDIRECTORY(${CMAKE_CURRENT_SOURCE_DIR}/bc)

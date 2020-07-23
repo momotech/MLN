@@ -132,39 +132,39 @@ public abstract class UDBaseRecyclerAdapter<L extends UDBaseRecyclerLayout> exte
      * 奇数下标为结束位置（不包含）
      * 相减为改组长度
      */
-    private int[] sections;
-    private AtomicInteger allCount;
+    protected int[] sections;
+    protected AtomicInteger allCount;
     /**
      * 所有id缓存，reload的时候清除
      */
-    private SparseArray<String> reuseIdCache;
+    protected SparseArray<String> reuseIdCache;
     /**
      * 每个position的点击事件
      */
-    private SparseArray<View.OnClickListener> viewClickCache;
+    protected SparseArray<View.OnClickListener> viewClickCache;
 
     /**
      * 每个position的 长按事件
      */
-    private SparseArray<View.OnLongClickListener> viewLongClickCache;
+    protected SparseArray<View.OnLongClickListener> viewLongClickCache;
 
-    private final IDGenerator idGenerator;
-    private IDGenerator recycledViewPoolIdGenerator;
+    protected final IDGenerator idGenerator;
+    protected IDGenerator recycledViewPoolIdGenerator;
 
-    private final ItemIDGenerator itemIDGenerator;
+    protected final ItemIDGenerator itemIDGenerator;
 
     protected ILoadViewDelegete loadViewDelegete;
-    private OnLoadListener onLoadListener;
+    protected OnLoadListener onLoadListener;
 
-    private Adapter mAdapter;
+    protected Adapter mAdapter;
 
     protected L layout;
 
     protected int viewWidth;
     protected int viewHeight;
 
-    private boolean reloadWhenViewSizeInit = false;
-    private boolean notifyWhenViewSizeInit = false;
+    protected boolean reloadWhenViewSizeInit = false;
+    protected boolean notifyWhenViewSizeInit = false;
     protected int orientation = RecyclerView.VERTICAL;
 
     @LuaApiUsed

@@ -29,14 +29,14 @@ public class LuaFunction extends NLuaValue {
     /**
      * 执行函数错误信息
      */
-    private InvokeError invokeError;
+    protected InvokeError invokeError;
 
     /**
      * Called by native method.
      * see luajapi.c
      */
     @LuaApiUsed
-    private LuaFunction(long L_state, long stackIndex) {
+    protected LuaFunction(long L_state, long stackIndex) {
         super(L_state, stackIndex);
     }
 
@@ -85,11 +85,94 @@ public class LuaFunction extends NLuaValue {
         return invoke(params, LUA_MULTRET);
     }
 
+    //<editor-fold desc="fast invoke">
+
+    /**
+     * 无返回值快速调用，比普通调用方式性能提高1倍以上
+     * @see #fastInvoke(boolean)
+     * @see #fastInvoke(double)
+     * @see #fastInvoke(String)
+     * @see #fastInvoke(LuaTable)
+     */
+    public final void fastInvoke(boolean b) {
+        try {
+            if (!checkStatus())
+                return;
+            invokeError = null;
+            globals.calledFunction ++;
+            nativeInvokeB(globals.L_State, nativeGlobalKey, b);
+            globals.calledFunction --;
+        } catch (InvokeError e) {
+            invokeError = e;
+            globals.calledFunction --;
+            if (globals.getState() != Globals.LUA_CALLING && MLNCore.hookLuaError(e, globals))
+                return;
+            throw e;
+        }
+    }
+
+    public final void fastInvoke(double number) {
+        try {
+            if (!checkStatus())
+                return;
+            invokeError = null;
+            globals.calledFunction ++;
+            nativeInvokeN(globals.L_State, nativeGlobalKey, number);
+            globals.calledFunction --;
+        } catch (InvokeError e) {
+            invokeError = e;
+            globals.calledFunction --;
+            if (globals.getState() != Globals.LUA_CALLING && MLNCore.hookLuaError(e, globals))
+                return;
+            throw e;
+        }
+    }
+
+    public final void fastInvoke(String s) {
+        try {
+            if (!checkStatus())
+                return;
+            invokeError = null;
+            globals.calledFunction ++;
+            nativeInvokeS(globals.L_State, nativeGlobalKey, s);
+            globals.calledFunction --;
+        } catch (InvokeError e) {
+            invokeError = e;
+            globals.calledFunction --;
+            if (globals.getState() != Globals.LUA_CALLING && MLNCore.hookLuaError(e, globals))
+                return;
+            throw e;
+        }
+    }
+
+    public final void fastInvoke(LuaTable t) {
+        try {
+            if (!checkStatus())
+                return;
+            invokeError = null;
+            globals.calledFunction ++;
+            nativeInvokeT(globals.L_State, nativeGlobalKey, t.nativeGlobalKey);
+            globals.calledFunction --;
+        } catch (InvokeError e) {
+            invokeError = e;
+            globals.calledFunction --;
+            if (globals.getState() != Globals.LUA_CALLING && MLNCore.hookLuaError(e, globals))
+                return;
+            throw e;
+        }
+    }
+
+    protected native void nativeInvokeB(long L, long function, boolean b);
+    protected native void nativeInvokeN(long L, long function, double number);
+    protected native void nativeInvokeS(long L, long function, String s);
+    protected native void nativeInvokeT(long L, long function, long table);
+    //</editor-fold>
+
     /**
      * 检查function的状态，若在debug状态中，或在加载主脚本的状态，则抛出异常
      * @return true: 可正常执行
      */
-    private boolean checkStatus() {
+    protected boolean checkStatus() {
         if (globals.isDestroyed()) {
             invokeError = new InvokeError("globals is destroyed.", 2);
             if (MLNCore.DEBUG || globals.getState() == Globals.LUA_CALLING)
@@ -113,6 +196,14 @@ public class LuaFunction extends NLuaValue {
 
     public final InvokeError getInvokeError() {
         return invokeError;
+    }
+
+    protected final void beforeFunctionInvoke() {
+        globals.calledFunction ++;
+    }
+
+    protected final void afterFunctionInvoked() {
+        globals.calledFunction --;
     }
 
     public String getSource() {

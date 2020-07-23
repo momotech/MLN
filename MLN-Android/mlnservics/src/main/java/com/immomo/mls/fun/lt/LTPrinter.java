@@ -39,8 +39,8 @@ public class LTPrinter {
 
     @LuaBridge
     public static void printObject(LuaValue v) {
-        if (v.isNil()) {
-            MLSAdapterContainer.getConsoleLoggerAdapter().d(LUA_CLASS_NAME, "null");
+        if (v == null || v.isNil()) {
+//            MLSAdapterContainer.getConsoleLoggerAdapter().d(LUA_CLASS_NAME, "null");
             return;
         }
         if (v.isTable()) {

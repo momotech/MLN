@@ -319,6 +319,15 @@ void pushUserdataFromJUD(JNIEnv *env, lua_State *L, jobject obj) {
     lua_unlock(L);
 }
 
+void pushJavaUserdata(JNIEnv *env, lua_State *L, jobject ud) {
+    jlong key = (*env)->GetLongField(env, ud, LuaValue_nativeGlobalKey);
+    /// see LuaUserdata#newUserdata 由java创建的userdata，idx为LUA_REGISTRYINDEX
+    if (isGlobal(key))
+        pushUserdataFromJUD(env, L, ud);
+    else
+        getValueFromGNV(L, (ptrdiff_t) key, LUA_TUSERDATA);
+}
+
 void pushJavaValue(JNIEnv *env, lua_State *L, jobject obj) {
     lua_lock(L);
     if (!obj) {
@@ -353,12 +362,7 @@ void pushJavaValue(JNIEnv *env, lua_State *L, jobject obj) {
             FREE(env, string);
             break;
         case LUA_TUSERDATA:
-            key = (*env)->GetLongField(env, obj, LuaValue_nativeGlobalKey);
-            /// see LuaUserdata#newUserdata 由java创建的userdata，idx为LUA_REGISTRYINDEX
-            if (isGlobal(key))
-                pushUserdataFromJUD(env, L, obj);
-            else
-                getValueFromGNV(L, (ptrdiff_t) key, type);
+            pushJavaUserdata(env, L, obj);
             break;
         default:
             key = (*env)->GetLongField(env, obj, LuaValue_nativeGlobalKey);
@@ -366,6 +370,16 @@ void pushJavaValue(JNIEnv *env, lua_State *L, jobject obj) {
             break;
     }
     lua_unlock(L);
+}
+
+void pushJavaString(JNIEnv *env, lua_State *L, jstring obj) {
+    if (!obj) {
+        lua_pushnil(L);
+        return;
+    }
+    const char *str = GetString(env, obj);
+    lua_pushstring(L, str);
+    ReleaseChar(env, obj, str);
 }
 
 int pushJavaArray(JNIEnv *env, lua_State *L, jobjectArray arr) {

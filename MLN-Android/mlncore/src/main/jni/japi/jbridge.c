@@ -9,6 +9,7 @@
 // Created by Xiong.Fangyu 2019/03/13.
 //
 
+#include <sys/time.h>
 #include "global_define.h"
 #include "m_mem.h"
 #include "llimits.h"
@@ -16,10 +17,11 @@
 #include "jbridge.h"
 #include "jinfo.h"
 #include "jtable.h"
+#include "statistics.h"
 
 #define S_DEFAULT_SIG "(J[" LUAVALUE_CLASS ")[" LUAVALUE_CLASS
 
-static void pushStaticClosure(lua_State *L, jclass clz, jmethodID m, const char *name, int pc);
+static void pushStaticClosure(lua_State *L, jclass clz, jmethodID m, const char *clzName, const char *methodName, int pc);
 
 static int executeJavaStaticFunction(lua_State *L);
 
@@ -28,6 +30,8 @@ static int executeJavaIndexFunction(lua_State *L);
 static void pushLuaIndexClosure(lua_State *L, jclass clz, jmethodID m);
 
 static int executeLuaIndexFunction(lua_State *L);
+
+#define _get_milli_second(t) ((t)->tv_sec*1000.0 + (t)->tv_usec / 1000.0)
 
 static inline void findOrCreateTable(lua_State *L, const char *name, int len) {
     lua_getglobal(L, name);
@@ -58,11 +62,7 @@ static int traverse_listener(const void *key, const void *value, void *ud) {
     context *c = (context *) ud;
 
     lua_pushstring(c->L, methodName);
-    char *name = join3str(c->className, ".", methodName);
-    pushStaticClosure(c->L, c->clz, m, name, -1);
-    if (name) {
-        m_malloc(name, sizeof(char) * (strlen(name) + 1), 0);
-    }
+    pushStaticClosure(c->L, c->clz, m, c->className, methodName, -1);
     lua_rawset(c->L, -3);
     return 0;
 }
@@ -75,6 +75,7 @@ void jni_registerStaticClassSimple(JNIEnv *env, jobject jobj, jlong L, jstring j
         ReleaseChar(env, jn, jclassname);
         return;
     }
+    ReleaseChar(env, jn, jclassname);
 
     lua_State *LS = (lua_State *) L;
     lua_lock(LS);
@@ -95,11 +96,10 @@ void jni_registerStaticClassSimple(JNIEnv *env, jobject jobj, jlong L, jstring j
         lua_pop(LS, 1);
     }
 
-    context c = {LS, clz, jclassname};
-    traverseAllMethods(clz, traverse_listener, &c);
-    ReleaseChar(env, jn, jclassname);
-
     const char *lname = GetString(env, ln);
+    context c = {LS, clz, lname};
+    traverseAllMethods(clz, traverse_listener, &c);
+
     lua_setglobal(LS, lname);
     ReleaseChar(env, ln, lname);
     lua_unlock(LS);
@@ -193,20 +193,17 @@ void jni_registerStringEnum(JNIEnv *env, jobject jobj, jlong LS, jstring lcn, jo
 /**
  * 对应executeJavaStaticFunction
  */
-static void pushStaticClosure(lua_State *L, jclass clz, jmethodID m, const char *name, int pc) {
+static void pushStaticClosure(lua_State *L, jclass clz, jmethodID m, const char *className, const char *methodName, int pc) {
     UDjclass udclz = (UDjclass) lua_newuserdata(L, sizeof(jclass));
     *udclz = clz;
 
     UDjmethod udm = (UDjmethod) lua_newuserdata(L, sizeof(jmethodID));
     *udm = m;
 
-    if (name) {
-        lua_pushstring(L, name);
-    } else {
-        lua_pushstring(L, "unknown");
-    }
+    lua_pushstring(L, className);
+    lua_pushstring(L, methodName);
     lua_pushinteger(L, (lua_Integer) pc);
-    lua_pushcclosure(L, executeJavaStaticFunction, 4);
+    lua_pushcclosure(L, executeJavaStaticFunction, 5);
 }
 
 /**
@@ -214,10 +211,14 @@ static void pushStaticClosure(lua_State *L, jclass clz, jmethodID m, const char 
  * upvalue顺序为:
  *              1:UDjclass, 
  *              2:UDjmethod,
- *              3:name
- *              4:parmaCount
+ *              3:className
+ *              4:methodName
+ *              5:parmaCount
  */
 static int executeJavaStaticFunction(lua_State *L) {
+    struct timeval start = {0};
+    struct timeval end = {0};
+    gettimeofday(&start, NULL);
     JNIEnv *env;
     getEnv(&env);
 
@@ -230,13 +231,17 @@ static int executeJavaStaticFunction(lua_State *L) {
     idx = lua_upvalueindex(2);
     UDjmethod udmethod = (UDjmethod) lua_touserdata(L, idx);
 
-    /// 第3个参数为Java静态方法
+    /// 第3个参数为类名称
     idx = lua_upvalueindex(3);
-    const char *name = lua_tostring(L, idx);
+    const char *className = lua_tostring(L, idx);
 
-    /// 第4个参数为方法需要的参数个数
+    /// 第4个参数为方法名称
+    idx = lua_upvalueindex(4);
+    const char *methodName = lua_tostring(L, idx);
+
+    /// 第5个参数为方法需要的参数个数
     /// -1表示可变个数
-    int pc = lua_tointeger(L, lua_upvalueindex(4));
+    int pc = lua_tointeger(L, lua_upvalueindex(5));
     if (pc == -1) {
         pc = lua_gettop(L) - 1; ///去掉栈底的table
     }
@@ -252,12 +257,20 @@ static int executeJavaStaticFunction(lua_State *L) {
     jobjectArray result = (jobjectArray) (*env)->CallStaticObjectMethod(env, getuserdata(udclz),
                                                                         getuserdata(udmethod),
                                                                         (jlong) L, p);
-    if (catchJavaException(env, L, name)) {
+    char info[200] = {0};
+    size_t cn_len = strlen(className);
+    memcpy(info, className, cn_len);
+    size_t mn_len = strlen(methodName);
+    memcpy(info + cn_len, methodName, mn_len);
+    if (catchJavaException(env, L, info)) {
         FREE(env, p);
         lua_error(L);
         lua_unlock(L);
         return 1;
     }
+    gettimeofday(&end, NULL);
+    double offset = _get_milli_second(&end) - _get_milli_second(&start);
+    staticMethodCall(className, methodName, offset);
 
     FREE(env, p);
     if (!result) {
