@@ -32,6 +32,8 @@ extern NSString * const kMLAViewRotation;       // Z旋转
 extern NSString * const kMLAViewRotationX;      // X旋转
 extern NSString * const kMLAViewRotationY;      // Y旋转
 
+extern NSString *const kMLAViewContentOffset; // UIScrollView及其子类contentOffset
+
 typedef NS_ENUM(NSInteger) {
     MLATimingFunctionDefault,
     MLATimingFunctionLinear,

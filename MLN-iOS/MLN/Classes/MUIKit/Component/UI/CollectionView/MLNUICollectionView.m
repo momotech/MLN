@@ -114,6 +114,14 @@
     return self.innerCollectionView.showsHorizontalScrollIndicator && self.innerCollectionView.showsVerticalScrollIndicator;
 }
 
+- (void)luaui_setDisallowFling:(BOOL)disable {
+    self.innerCollectionView.luaui_disallowFling = disable;
+}
+
+- (BOOL)luaui_disallowFling {
+    return self.innerCollectionView.luaui_disallowFling;
+}
+
 #pragma mark - direction
 
 - (void)mlnui_in_setScrollDirection:(MLNUIScrollDirection)scrollDirection
@@ -505,6 +513,7 @@ LUAUI_EXPORT_VIEW_PROPERTY(scrollDirection, "luaui_setScrollDirection:","luaui_s
 LUAUI_EXPORT_VIEW_PROPERTY(showScrollIndicator, "luaui_showScrollIndicator:","luaui_isShowScrollIndicator", MLNUICollectionView)
 LUAUI_EXPORT_VIEW_PROPERTY(showsHorizontalScrollIndicator, "luaui_setShowsHorizontalScrollIndicator:", "luaui_showsHorizontalScrollIndicator", MLNUICollectionView)
 LUAUI_EXPORT_VIEW_PROPERTY(showsVerticalScrollIndicator, "luaui_setShowsVerticalScrollIndicator:", "luaui_showsVerticalScrollIndicator", MLNUICollectionView)
+LUAUI_EXPORT_VIEW_PROPERTY(disallowFling, "luaui_setDisallowFling:", "luaui_disallowFling", MLNUICollectionView)
 LUAUI_EXPORT_VIEW_METHOD(reloadData, "luaui_reloadData", MLNUICollectionView)
 LUAUI_EXPORT_VIEW_METHOD(reloadAtRow, "luaui_reloadAtRow:section:animation:", MLNUICollectionView)
 LUAUI_EXPORT_VIEW_METHOD(reloadAtSection, "luaui_reloadAtSection:animation:", MLNUICollectionView)

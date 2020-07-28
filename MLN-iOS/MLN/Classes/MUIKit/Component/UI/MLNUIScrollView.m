@@ -207,6 +207,14 @@
     return self.innerScrollView.pagingEnabled;
 }
 
+- (void)luaui_setDisallowFling:(BOOL)disable {
+    self.innerScrollView.luaui_disallowFling = disable;
+}
+
+- (BOOL)luaui_disallowFling {
+    return self.innerScrollView.luaui_disallowFling;
+}
+
 #pragma mark - Override (Layout)
 
 - (BOOL)mlnui_layoutEnable {
@@ -250,6 +258,7 @@ LUAUI_EXPORT_VIEW_BEGIN(MLNUIScrollView)
 LUAUI_EXPORT_VIEW_PROPERTY(loadThreshold, "setLuaui_loadahead:", "luaui_loadahead", MLNUIScrollView)
 LUAUI_EXPORT_VIEW_PROPERTY(contentOffset, "setLuaui_ContentOffset:", "luaui_contentOffset", MLNUIScrollView)
 LUAUI_EXPORT_VIEW_PROPERTY(scrollEnabled, "setLuaui_ScrollEnabled:", "luaui_isScrollEnabled", MLNUIScrollView)
+LUAUI_EXPORT_VIEW_PROPERTY(disallowFling, "luaui_setDisallowFling:", "luaui_disallowFling", MLNUIScrollView)
 LUAUI_EXPORT_VIEW_PROPERTY(i_bounces, "setLuaui_Bounces:", "luaui_bounces", MLNUIScrollView)
 LUAUI_EXPORT_VIEW_PROPERTY(showsHorizontalScrollIndicator, "setLuaui_showsHorizontalScrollIndicator:", "luaui_showsHorizontalScrollIndicator", MLNUIScrollView)
 LUAUI_EXPORT_VIEW_PROPERTY(showsVerticalScrollIndicator, "setLuaui_showsVerticalScrollIndicator:", "luaui_showsVerticalScrollIndicator", MLNUIScrollView)

@@ -47,6 +47,7 @@
 @property (nonatomic, copy) MLNUIBlock *luaui_endDraggingCallback;
 @property (nonatomic, copy) MLNUIBlock *luaui_startDeceleratingCallback;
 @property (nonatomic, copy) MLNUIBlock *luaui_scrollEndCallback;
+@property (nonatomic, assign) BOOL luaui_disallowFling;
 
 - (void)luaui_setContentInset:(CGFloat)top right:(CGFloat)right bottom:(CGFloat)bottom left:(CGFloat)left;
 - (void)luaui_getContetnInset:(MLNUIBlock*)block;

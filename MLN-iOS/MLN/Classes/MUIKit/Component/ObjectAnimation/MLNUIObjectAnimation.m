@@ -63,6 +63,8 @@
     return self;
 }
 
+#pragma mark - Bridge
+
 - (void)setDelay:(NSNumber *)delay
 {
     _delay = delay;
@@ -170,6 +172,13 @@
     _toValue = [self mlnui_getValueWithParams:_to];
     _propertyChanged = YES;
 }
+
+// progress [0, 1]
+- (void)luaui_updateAnimation:(CGFloat)progress {
+    [self.mlnui_rawAnimation updateWithFactor:progress isBegan:NO];
+}
+
+#pragma mark -
 
 - (MLAValueAnimation *)mlnui_rawAnimation
 {
@@ -389,6 +398,8 @@
         }
         case MLNUIAnimationPropertyTypeScale:
             return @(CGPointMake(1.0, 1.0));
+        case MLNUIAnimationPropertyTypeContentOffset:
+            return @(CGPointMake(0.0, 0.0));
         default:
             break;
     }
@@ -458,6 +469,7 @@
             break;
         case MLNUIAnimationPropertyTypePosition:
         case MLNUIAnimationPropertyTypeScale:
+        case MLNUIAnimationPropertyTypeContentOffset:
         {
             NSArray *point = (NSArray *)velocity;
             if ([point isKindOfClass:[NSArray class]] && point.count == 2)
@@ -513,6 +525,13 @@
         case MLNUIAnimationPropertyTypeRotationY:
             return kMLAViewRotationY;
             break;
+        case MLNUIAnimationPropertyTypeContentOffset: {
+            UIScrollView *contentView = (UIScrollView *)_targetView.mlnui_contentView;
+            if (!contentView || ![contentView isKindOfClass:[UIScrollView class]]) {
+                MLNUIKitLuaAssert(NO, @"The ContentOffset animation type is only valid for ScrollView、TableView、ViewPager and CollectionView.");
+            }
+            return kMLAViewContentOffset;
+        }
         default:
             break;
     }
@@ -545,7 +564,7 @@ LUAUI_EXPORT_METHOD(start, "mlnui_start:", MLNUIObjectAnimation)
 LUAUI_EXPORT_METHOD(pause, "mlnui_pause", MLNUIObjectAnimation)
 LUAUI_EXPORT_METHOD(resume, "mlnui_resume", MLNUIObjectAnimation)
 LUAUI_EXPORT_METHOD(stop, "mlnui_stop", MLNUIObjectAnimation)
-
+LUAUI_EXPORT_METHOD(update, "luaui_updateAnimation:", MLNUIObjectAnimation)
 LUAUI_EXPORT_METHOD(addInteractiveBehavior, "mlnui_AddInteractiveBehavior:", MLNUIObjectAnimation)
 LUAUI_EXPORT_END(MLNUIObjectAnimation, ObjectAnimation, NO, NULL, "initWithMLNUILuaCore:property:target:")
 
