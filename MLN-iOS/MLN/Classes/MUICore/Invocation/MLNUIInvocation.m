@@ -487,7 +487,7 @@ static MLNUI_FORCE_INLINE int __mlnui_luaui_pushinvocation_return(NSInvocation* 
 }
 
 static MLNUI_FORCE_INLINE int __mlnui_luaui_objc_invoke (lua_State *L, int statrtStackIdx, id target, SEL selector, BOOL isclass, BOOL needReturnSelf, BOOL isInit) {
-    PCallOC(isclass ? target : [target class], selector);
+    PCallOCStart(isclass ? target : [target class], selector);
 #if OCPERF_USE_LUD
     Class s_clazz = isclass ? target : [target class];
     SEL s_selector = selector;
@@ -529,7 +529,9 @@ static MLNUI_FORCE_INLINE int __mlnui_luaui_objc_invoke (lua_State *L, int statr
         stackIdx++;
     }
     [invocation invoke];
-    return __mlnui_luaui_pushinvocation_return(invocation, L, needReturnSelf, isInit);
+    int r = __mlnui_luaui_pushinvocation_return(invocation, L, needReturnSelf, isInit);
+    PCallOCEnd(isclass ? target : [target class], selector);
+    return r;
 }
 
 #pragma mark - Public Functions

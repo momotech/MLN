@@ -45,7 +45,7 @@
 {
     [[MLNUIFPSStatus sharedInstance] open];
 //    [[FLEXManager sharedManager] showExplorer];
-//    [MLNUILogViewer setup];
+    [MLNUILogViewer setup];
     [self setupMLNKitEnvironment];
     // 根据标志位判断是否禁用图片加载功能
     if (kDisableImageLoad) {

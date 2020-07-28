@@ -28,7 +28,7 @@
     TICK();
     NSParameterAssert(keys && handler);
     if(!keys || !handler)  return nil;
-    PCallDB(__func__);
+    // PCallDB(__func__);
 
     UIViewController<MLNUIDataBindingProtocol> *kitViewController = (UIViewController<MLNUIDataBindingProtocol> *)MLNUI_KIT_INSTANCE([self mlnui_currentLuaCore]).viewController;
     
@@ -42,7 +42,7 @@
     NSParameterAssert(keys);
     if(!keys) return;
     TICK();
-    PCallDB(__func__);
+    // PCallDB(__func__);
 
     UIViewController<MLNUIDataBindingProtocol> *kitViewController = (UIViewController<MLNUIDataBindingProtocol> *)MLNUI_KIT_INSTANCE([self mlnui_currentLuaCore]).viewController;
     NSObject *obj = [value mlnui_convertToNativeObject];
@@ -55,7 +55,7 @@
     NSParameterAssert(keys);
     if(!keys) return nil;
     TICK();
-    PCallDB(__func__);
+    // PCallDB(__func__);
 
 //    UIViewController<MLNUIDataBindingProtocol> *kitViewController = (UIViewController<MLNUIDataBindingProtocol> *)MLNUI_KIT_INSTANCE([self mlnui_currentLuaCore]).viewController;
     NSObject *obj = [self mlnui_dataForKeyPath:keys];
@@ -77,7 +77,7 @@
     NSParameterAssert(observerID);
     if(!observerID) return;
     TICK();
-    PCallDB(__func__);
+    // PCallDB(__func__);
 
     UIViewController<MLNUIDataBindingProtocol> *kitViewController = (UIViewController<MLNUIDataBindingProtocol> *)MLNUI_KIT_INSTANCE([self mlnui_currentLuaCore]).viewController;
     [kitViewController.mlnui_dataBinding removeMLNUIObserverByID:observerID];
@@ -147,7 +147,7 @@
     NSParameterAssert(key && listView);
     if(!key || !listView) return;
     TICK();
-    PCallDB(__func__);
+    // PCallDB(__func__);
 
     UIViewController<MLNUIDataBindingProtocol> *kitViewController = (UIViewController<MLNUIDataBindingProtocol> *)MLNUI_KIT_INSTANCE([self mlnui_currentLuaCore]).viewController;
     MLNUIDataBinding *dataBinding = kitViewController.mlnui_dataBinding;
@@ -168,7 +168,7 @@
 + (NSUInteger)luaui_sectionCountForKey:(NSString *)key {
     NSParameterAssert(key);
     if(!key) return 0;
-    PCallDB(__func__);
+    // PCallDB(__func__);
 
     NSArray *arr = [self mlnui_dataForKeyPath:key];
     if (arr.mlnui_is2D) {
@@ -180,7 +180,7 @@
 + (NSUInteger)luaui_rowCountForKey:(NSString *)key section:(NSUInteger)section{
     NSParameterAssert(key);
     if(!key) return 0;
-    PCallDB(__func__);
+    // PCallDB(__func__);
 
     NSArray *arr = [self mlnui_dataForKeyPath:key];
     if (section > arr.count || section == 0) {
@@ -199,7 +199,7 @@
     NSParameterAssert(key && paths);
     if (!key || !paths) return;
     TICK();
-    PCallDB(__func__);
+    // PCallDB(__func__);
 
     UIViewController<MLNUIDataBindingProtocol> *kitViewController = (UIViewController<MLNUIDataBindingProtocol> *)MLNUI_KIT_INSTANCE([self mlnui_currentLuaCore]).viewController;
 
@@ -278,7 +278,7 @@
     NSParameterAssert(key && value);
     if(!key || !value) return;
     TICK();
-    PCallDB(__func__);
+    // PCallDB(__func__);
 
     NSMutableArray *arr = [self mlnui_dataForKeyPath:key];
     if ([arr isKindOfClass:[NSMutableArray class]]) {
@@ -323,7 +323,7 @@
     NSParameterAssert(key);
     if(!key) return;
     TICK();
-    PCallDB(__func__);
+    // PCallDB(__func__);
 
     NSMutableArray *arr = [self mlnui_dataForKeyPath:key];
     if ([arr isKindOfClass:[NSMutableArray class]]) {
@@ -348,7 +348,7 @@
 + (NSUInteger)luaui_arraySizeForKey:(NSString *)key {
     NSParameterAssert(key);
     if(!key) return 0;
-    PCallDB(__func__);
+    // PCallDB(__func__);
 
     UIViewController<MLNUIDataBindingProtocol> *kitViewController = (UIViewController<MLNUIDataBindingProtocol> *)MLNUI_KIT_INSTANCE([self mlnui_currentLuaCore]).viewController;
     
@@ -382,7 +382,7 @@
 + (id)luaui_modelForKey:(NSString *)key section:(NSUInteger)section row:(NSUInteger)row path:(NSString *)path {
     NSParameterAssert(key);
     if(!key) return nil;
-    PCallDB(__func__);
+    // PCallDB(__func__);
 
     NSArray *array = [self mlnui_dataForKeyPath:key];
     id resust;
@@ -403,7 +403,7 @@
 + (void)luaui_updateModelForKey:(NSString *)key section:(NSUInteger)section row:(NSUInteger)row path:(NSString *)path value:(id)value {
     NSParameterAssert(key);
     if(!key) return;
-    PCallDB(__func__);
+    // PCallDB(__func__);
 
     NSArray *array = [self mlnui_dataForKeyPath:key];
     @try {
@@ -426,7 +426,7 @@
 + (void)luaui_bindArrayForKeyPath:(NSString *)keyPath handler:(MLNUIBlock *)handler {
     NSParameterAssert(handler && keyPath);
     if (!handler || !keyPath) return;
-    PCallDB(__func__);
+    // PCallDB(__func__);
 
     UIViewController<MLNUIDataBindingProtocol> *kitViewController = (UIViewController<MLNUIDataBindingProtocol> *)MLNUI_KIT_INSTANCE([self mlnui_currentLuaCore]).viewController;
 //    __weak id<MLNUIDataBindingProtocol> weakController = kitViewController;
@@ -461,7 +461,7 @@
 + (void)luaui_bindArrayDataForKey:(NSString *)key index:(NSUInteger)index dataKeyPath:(NSString *)dataKeyPath handler:(MLNUIBlock *)handler {
     NSParameterAssert(key && handler && dataKeyPath);
     if(!key || !handler || !dataKeyPath) return;
-    PCallDB(__func__);
+    // PCallDB(__func__);
 
     index -= 1;
     UIViewController<MLNUIDataBindingProtocol> *kitViewController = (UIViewController<MLNUIDataBindingProtocol> *)MLNUI_KIT_INSTANCE([self mlnui_currentLuaCore]).viewController;
@@ -479,7 +479,7 @@
 + (void)luaui_updateArrayDataForKey:(NSString *)key index:(NSUInteger)index dataKeyPath:(NSString *)dataKeyPath newValue:(id)newValue {
     NSParameterAssert(key && dataKeyPath);
     if(!key || !dataKeyPath) return;
-    PCallDB(__func__);
+    // PCallDB(__func__);
 
     index -= 1;
     UIViewController<MLNUIDataBindingProtocol> *kitViewController = (UIViewController<MLNUIDataBindingProtocol> *)MLNUI_KIT_INSTANCE([self mlnui_currentLuaCore]).viewController;
@@ -497,7 +497,7 @@
 + (id)luaui_getArrayDataForKey:(NSString *)key index:(NSUInteger)index dataKeyPath:(NSString *)dataKeyPath {
     NSParameterAssert(key);
     if(!key) return nil;
-    PCallDB(__func__);
+    // PCallDB(__func__);
 
     index -= 1;
     id ret;
@@ -518,7 +518,7 @@
 + (void)luaui_aliasArrayDataForKey:(NSString *)key index:(NSUInteger)index alias:(NSString *)alias {
     NSParameterAssert(key && alias);
     if(!key || !alias)  return;
-    PCallDB(__func__);
+    // PCallDB(__func__);
 
     index -= 1;
     UIViewController<MLNUIDataBindingProtocol> *kitViewController = (UIViewController<MLNUIDataBindingProtocol> *)MLNUI_KIT_INSTANCE([self mlnui_currentLuaCore]).viewController;
