@@ -124,6 +124,10 @@
     longPressGestureRec.minimumPressDuration = 0.2;
     [self.vw_container addGestureRecognizer:longPressGestureRec];
 
+    UIPanGestureRecognizer *pan = [UIPanGestureRecognizer.alloc initWithTarget:self action:@selector(onPan:)];
+    pan.maximumNumberOfTouches = 1;
+    [self.vw_container addGestureRecognizer:pan];
+    
     // add double tap press gesture for copying logs
     UITapGestureRecognizer* doubleTapGestureRec = [UITapGestureRecognizer.alloc initWithTarget:self action:@selector(onDoubleTap:)];
     doubleTapGestureRec.numberOfTapsRequired = 2;
@@ -142,13 +146,14 @@
     self.tx_console.textColor = [UIColor colorWithRed:215/255.0 green:201/255.0 blue:169/255.0 alpha:1.0];
     self.tx_console.font = [UIFont fontWithName:@"Menlo" size:10.0];
     [self.vw_container addSubview:self.tx_console];
-
+    self.tx_console.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    
 //    self.vw_container.alpha = 0;
     // state bools
     isBeingDragged = NO;
     isVisible = NO;
     
-    NSString *tips = @"【拖动】:长按\n【拷贝】:单击两次 \n【清除】单击三次： \n【隐藏/显示】三指向下滑\n";
+    NSString *tips = @"【拖动】:长按\n【拷贝】:单击两次 \n【清除】:单击三次： \n【隐藏/显示】:三指向下滑 \n【改变大小】:滑动\n";
     self.tx_console.text = [self.tx_console.text ?: @"" stringByAppendingString:tips];
 }
 
@@ -185,6 +190,23 @@
 }
 #pragma mark -
 
+- (void)onPan:(UIPanGestureRecognizer *)recognizer {
+    static CGPoint startLocation;
+    static CGRect startRect;
+    if (recognizer.state == UIGestureRecognizerStateBegan) {
+        startLocation = [recognizer locationInView:recognizer.view.superview];
+        startRect = recognizer.view.frame;
+    }
+    
+    if (recognizer.state == UIGestureRecognizerStateChanged) {
+        CGPoint stopLocation = [recognizer locationInView:recognizer.view.superview];
+        CGFloat dx = stopLocation.x - startLocation.x;
+        CGFloat dy = stopLocation.y - startLocation.y;
+        
+        CGRect newr = CGRectMake(startRect.origin.x, startRect.origin.y, startRect.size.width + dx, startRect.size.height + dy);
+        recognizer.view.frame = newr;
+    }
+}
 
 - (void)onLongPress:(UIPanGestureRecognizer *)recognizer
 {

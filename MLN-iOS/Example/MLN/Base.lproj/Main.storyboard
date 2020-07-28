@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="15505" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="HJO-q8-Fnc">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="16097" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="HJO-q8-Fnc">
     <device id="retina4_7" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15509"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16087"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -108,6 +108,22 @@
                                     <action selector="meilishuoButtonAction:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Wh0-eQ-1fc"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="SZ4-d2-9xY">
+                                <rect key="frame" x="92.5" y="493" width="190" height="55"/>
+                                <color key="backgroundColor" white="0.66666666669999997" alpha="0.10000000000000001" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="190" id="aaK-O7-2Il"/>
+                                    <constraint firstAttribute="height" constant="55" id="tIE-MY-ic6"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="22"/>
+                                <state key="normal" title="MLN热重载">
+                                    <color key="titleColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                </state>
+                                <connections>
+                                    <action selector="meilishuoButtonAction:" destination="BYZ-38-t0r" eventType="touchUpInside" id="X09-Bq-Qf4"/>
+                                    <action selector="mlnHotReloadAction:" destination="BYZ-38-t0r" eventType="touchUpInside" id="tyA-C5-eCk"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
@@ -122,13 +138,16 @@
                             <constraint firstItem="b17-bj-ec4" firstAttribute="top" secondItem="4Pp-qu-Hqe" secondAttribute="bottom" constant="20" id="aMm-UU-Cwk"/>
                             <constraint firstItem="gN8-JH-rld" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="cB7-c8-ANW"/>
                             <constraint firstItem="ztv-ZP-eJU" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="h9g-Vn-Bon"/>
+                            <constraint firstItem="SZ4-d2-9xY" firstAttribute="top" secondItem="dd0-zg-BaG" secondAttribute="bottom" constant="20" id="lIu-oq-fBL"/>
                             <constraint firstItem="b17-bj-ec4" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="mbk-pe-Mkm"/>
+                            <constraint firstItem="SZ4-d2-9xY" firstAttribute="centerX" secondItem="dd0-zg-BaG" secondAttribute="centerX" id="qza-tM-0Wa"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="tbv-zd-fdn"/>
                     <connections>
                         <outlet property="loadingIndicator" destination="aHU-tF-bhP" id="pjg-aq-3bQ"/>
                         <outlet property="loadingIndicatorBgView" destination="ztv-ZP-eJU" id="hUB-ER-AC4"/>
+                        <outlet property="mlnHotReload" destination="SZ4-d2-9xY" id="8fi-VC-VyW"/>
                         <outlet property="toastBgView" destination="gN8-JH-rld" id="PNm-ck-zjP"/>
                         <outlet property="toastLabel" destination="hz3-Kd-Lba" id="agz-5W-hw0"/>
                     </connections>
