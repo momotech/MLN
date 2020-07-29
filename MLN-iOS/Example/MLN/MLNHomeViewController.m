@@ -48,7 +48,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
-    self.mlnHotReload.hidden = YES;
+    self.mlnHotReload.hidden = NO;
 }
 
 - (void)viewWillAppear:(BOOL)animated {

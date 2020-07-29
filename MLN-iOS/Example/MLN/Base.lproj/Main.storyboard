@@ -120,7 +120,6 @@
                                     <color key="titleColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 </state>
                                 <connections>
-                                    <action selector="meilishuoButtonAction:" destination="BYZ-38-t0r" eventType="touchUpInside" id="X09-Bq-Qf4"/>
                                     <action selector="mlnHotReloadAction:" destination="BYZ-38-t0r" eventType="touchUpInside" id="tyA-C5-eCk"/>
                                 </connections>
                             </button>
