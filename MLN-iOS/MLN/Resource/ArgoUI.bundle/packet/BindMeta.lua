@@ -486,7 +486,13 @@ function BindMetaWatchListCell(source, section, row)
     local s_path = bindMeta_path(getmetatable(source).__kvoname);
     local ret, map = {}, {}
     local s_len = string.len(s_path)
-    local s_r_len = _getNumberLength(section) + _getNumberLength(row)
+    local s_r_len = 1
+    if section == -1 then -- 适配viewpager
+        s_r_len = _getNumberLength(row)
+        section = 1
+    else
+        s_r_len = _getNumberLength(section) + _getNumberLength(row)
+    end
     local c1, c2 = 0, 0
     local key = ""
     for _, v in ipairs(paths) do
