@@ -12,6 +12,7 @@
 #import "MLNUIDataBinding.h"
 #import "NSObject+MLNUIReflect.h"
 #import "MLNUIMetamacros.h"
+#import "MLNUIBlock+LazyCall.h"
 
 @interface MLNUIBlockObserver ()
 @property (nonatomic, strong, readwrite) MLNUIBlock *block;

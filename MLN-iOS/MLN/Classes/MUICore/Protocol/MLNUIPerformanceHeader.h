@@ -41,9 +41,18 @@ typedef NS_ENUM(NSUInteger, MLNUILoadTimeStatisticsType) {
 - (void)onEnd:(MLNUILoadTimeStatisticsType)type tag:(NSString *)tag info:(NSString *)info;
 - (void)display;
 
-- (void)callOCBridge:(Class)cls selector:(SEL)sel;
-- (void)callDBBridge:(const char *)func;
-- (void)callCBridge:(const char *)func;
+//- (void)callOCBridge:(Class)cls selector:(SEL)sel;
+//- (void)callDBBridge:(const char *)func;
+//- (void)callCBridge:(const char *)func;
+
+- (void)onStartCallOCBridge:(Class)cls selector:(SEL)sel;
+- (void)onEndCallOCBridge:(Class)cls selector:(SEL)sel;
+
+- (void)onStartCallCBridge:(const char *)func;
+- (void)onEndCallCBridge:(const char *)func;
+
+- (void)onStartCallDBBridge:(const char *)func;
+- (void)onEndCallDBBridge:(const char *)func;
 
 @end
 

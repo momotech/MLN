@@ -29,11 +29,18 @@ local __b_G_ = "G_G."
 local _kpathCache = {} -- {path = MetaTab }
 local _watchCache = {} -- {watchid1 = {path, func1}, watchid2 = {path, func2}, ...}
 local _debugpwacths = {} --preview {path = {func1, funct2, ...}}
+local _ckeyTabCaches = {} -- ckey对应缓存
 debug_preview_open = false
 debug_preview_watch = false
 _watchIds = {} -- watch remove
 _cellBinds = {} -- list cell binds
 _foreachCaches = {} -- 用于foreach中的缓存
+
+
+-- 创建弱引用表
+function createWeakT(mode) --"k" / "v" / "kv"
+    return setmetatable({}, { __mode = mode})
+end
 
 -------------------------------------------------------------------------------------------------------------
 ------------- 空表初始化               --------------------------
@@ -42,7 +49,10 @@ local _emptyTab = {}
 setmetatable(_emptyTab, {
     __index = function(t, k)
         if k == __get then return nil end
-        if k == __asize then return 0 end
+        if k == __asize then
+            BindMetaPush(_foreachCaches)
+            return 0
+        end
         if k == __path then return "" end
         return _emptyTab
     end,
@@ -56,6 +66,19 @@ setmetatable(_emptyTab, {
 -------------------------------------------------------------------------------------------------------------
 -----------------------------------------------------------------------------------------------------------
 
+-- 用于缓存值不统一引起的 - list时 一维二维相互转换引起key不同
+local __e_ = {}
+local function bindMeta_ckeyGet(cKey)
+    if cKey == nil then return __e_ end
+    return _ckeyTabCaches[cKey] or __e_
+end
+local function bindMeta_ckeyPut(cKey, mt)
+    if cKey == nil then return end
+    if _ckeyTabCaches[cKey] == nil then
+        _ckeyTabCaches[cKey] = createWeakT("k")
+    end
+    _ckeyTabCaches[cKey][mt] = true
+end
 
 
 --- 拼接 path -
@@ -79,19 +102,13 @@ function bindMeta_batchSetMeta(t, path, ck, pk)
         if type(_v) == "table" then
             bindMeta_batchSetMeta(_v, bindMeta_path(path , _k), _k, ck)
         else
-           BindMeta(bindMeta_path(path , _k), {}, _v, _k, ck)
+            BindMeta(bindMeta_path(path , _k), {}, _v, _k, ck)
         end
     end
     return BindMeta(path, mapt, t, ck, pk)
 end
 
 function bindMeta_getAndCacheTab(mt)
-    local t = nil
-    if mt.__vv ~= nil then
-        t = mt.__vv
-    else
-        t = DataBinding:get(bindMeta_path(mt.__kvoname))
-    end
     BindMetaPush(_foreachCaches)
     local t = DataBinding:get(bindMeta_path(mt.__kvoname))
     if t and type(t) == "table" then
@@ -118,6 +135,13 @@ function bindMeta_getWatchPath(keypath, ck)
         end
     end
     return keypath
+end
+
+function bindMeta_update(path, v, cKey)
+    for _v, _ in pairs(bindMeta_ckeyGet(cKey)) do --同属性key修改先置为空 - 使用时需要本地读取
+        _v.__vv = nil
+    end
+    DataBinding:update(path, v)
 end
 
 -----------------------------------------------------------------------------------------------------------
@@ -162,7 +186,7 @@ function bindMeta__index(t, k)
         mt.__opname = k
         return t
     elseif k == __ci then
-       return BindMeta(mt.__kvoname, {row={__get=mt.__ck}, section={__get=mt.__pk}}, nil, mt.__ck, mt.__pk)
+        return BindMeta(mt.__kvoname, {row={__get=mt.__ck}, section={__get=mt.__pk}}, nil, mt.__ck, mt.__pk)
     end
     if debug_preview_watch then
         if k == WATCH or k == FOREACH then
@@ -202,6 +226,7 @@ function bindMeta__newindex(t, k, v)
         return
     end
 
+    local path = bindMeta_path(mt.__kvoname, k)
     if debug_preview_watch then
         -- mock顶层数据
         if mt.__kvoname == __b_G then
@@ -214,13 +239,13 @@ function bindMeta__newindex(t, k, v)
         if type(v) == "table" and v.__ishook then
             v = v.__get
         end
-        DataBinding:update(bindMeta_path(mt.__kvoname, k), v)
-        for _, __f in pairs(_debugpwacths[bindMeta_path(mt.__kvoname, k)] or {}) do
+        bindMeta_update(path, v, k)
+        for _, __f in pairs(_debugpwacths[path] or {}) do
             __f(v)
         end
         return
     end
-    DataBinding:update(bindMeta_path(mt.__kvoname, k), v)
+    bindMeta_update(path, v, k)
 end
 
 -- __call
@@ -280,7 +305,7 @@ end
 function bindMeta_setmetable(o, kpath, v, cKey, preKey)
     _kpathCache[kpath] = o
     local meta = getmetatable(o)
-    setmetatable(o, {
+    local mt = {
         __index = bindMeta__index,
         __newindex = bindMeta__newindex,
         __call = bindMeta__call,
@@ -290,10 +315,12 @@ function bindMeta_setmetable(o, kpath, v, cKey, preKey)
         __ck = cKey,
         __pk = preKey,
         __vv = v,
-    })
+    }
+    setmetatable(o, mt)
     if (#_foreachCaches) > 0 then
         BindMetaGet(_foreachCaches)[kpath] = true
     end
+    bindMeta_ckeyPut(cKey, mt)
 end
 -------------------------------------------------------------------------------------------------------------
 -----------------------------------------------------------------------------------------------------------
@@ -373,6 +400,7 @@ function BindMetaClear()
         DataBinding:removeObserver(_id)
     end
     _watchCache = {}
+    _ckeyTabCaches = {}
 end
 
 --- 删除监听
@@ -391,8 +419,16 @@ end
 function BindMetaPopForach()
     local t = BindMetaPop(_foreachCaches)
     if t then
+        local _t
         for k, _ in pairs(t) do
-            _kpathCache[k] = nil
+            _t = _kpathCache[k]
+            if _t then
+                _kpathCache[k] = nil
+                _t = getmetatable(_t)
+                if _ckeyTabCaches[_t.__ck] then
+                    _ckeyTabCaches[_t.__ck][_t] = nil
+                end
+            end
         end
     end
 end
@@ -515,7 +551,24 @@ end
 -------------------------------------------------------------------------------------------------------
 -------------------------------------------------------------------------------------------------------
 
-
+function BindMetaCreateFindGID(IDs) -- 创建全局表_G查找view变量名方法
+    local gmt = getmetatable(_G)
+    if gmt ~= nil then
+        local __indexret = gmt.__index
+        gmt.__index = function(t,k)
+            if IDs[k] then return IDs[k] end -- 使用比较少 所以没必要变量保存
+            if __indexret ~= nil then
+                if type(__indexret) == "table" then
+                    return __indexret[k]
+                end
+                return __indexret(t, k)
+            end
+            return nil
+        end
+    else
+        setmetatable(_G, {__index = function(t,k) return IDs[k] end})
+    end
+end
 
 
 
@@ -530,6 +583,7 @@ end
 function BindMetaPreviewEnd()
     debug_preview_open = false
     _kpathCache = {}
+    _ckeyTabCaches = {}
 end
 -------------------------------------------------------------------------------------------------------
 -------------------------------------------------------------------------------------------------------

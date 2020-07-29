@@ -17,12 +17,16 @@ NS_ASSUME_NONNULL_BEGIN
  
  @note ⚠️该类的实例化和方法调用都只能在主队列执行
  */
-@interface MLNUIBlock : NSObject
+@interface MLNUIBlock : NSObject {
+    @protected
+    NSMutableArray *_arguments;
+}
 
 /**
  Lua内核
  */
 @property (nonatomic, weak, readonly) MLNUILuaCore *luaCore;
+@property (nonatomic, strong, readonly) NSValue *innerFunction;
 
 /**
  创建Lua Function关联对象
@@ -43,7 +47,6 @@ NS_ASSUME_NONNULL_BEGIN
  @return 返回值
  */
 - (id)callIfCan;
-- (void)lazyCallIfCan:(void(^ __nullable)(id))completionBlock;
 
 /**
  调用当前Lua函数传递一个参数
@@ -52,6 +55,19 @@ NS_ASSUME_NONNULL_BEGIN
  @return 返回值
  */
 - (id)callWithParam:(id)aParam;
+
+/**
+调用当前Lua函数传递一个参数数组
+
+@param arguments 参数数组
+@return 返回值
+*/
+- (id)callWithArguments:(NSArray *)arguments;
+
+/**
+重置参数数组
+*/
+- (void)reset;
 
 /**
  添加obj类型参数

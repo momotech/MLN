@@ -303,7 +303,9 @@ function _class:watchKeyboard(fun)
     _class.watchCallback = fun
 end
 
-window:keyboardShowing(_class.keyboardListener)
---window:keyBoardHeightChange(_class.keyboardChangeListener)
+function _class:init(window)
+    window:keyboardShowing(_class.keyboardListener)
+    window:keyBoardHeightChange(_class.keyboardChangeListener)
+end
 
 return _class

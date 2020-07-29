@@ -21,6 +21,7 @@
 #import "MLNUIHotReloadViewController.h"
 #import "MLNUIBridge.h"
 #import "MLNUIDB.h"
+#import "MLNGlobalTimeTest.h"
 
 #define kConsoleWidth 250.f
 #define kConsoleHeight 280.f
@@ -39,6 +40,7 @@
 
 @property (nonatomic, strong) MLNHotReloadViewController *luaVC;
 @property (nonatomic, strong) MLNOfflineViewController *offlineViewController;
+@property (weak, nonatomic) IBOutlet UIButton *mlnHotReload;
 @end
 
 @implementation MLNHomeViewController
@@ -46,6 +48,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
+    self.mlnHotReload.hidden = NO;
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -68,7 +71,11 @@
 
 - (IBAction)hotReloadAction:(id)sender {
     MLNUIHotReloadViewController *hotReloadVC = [[MLNUIHotReloadViewController alloc] initWithEntryFileName:nil];
-    [hotReloadVC setRegClasses:@[[MLNStaticTest class]/*, [MLNUIBridge class]*/, [MLNUIDB class]]];
+    [hotReloadVC setRegClasses:@[[MLNStaticTest class]/*, [MLNUIBridge class]*/, [MLNUIDB class], [MLNGlobalTimeTest class]]];
+    [self.navigationController pushViewController:hotReloadVC animated:YES];
+}
+- (IBAction)mlnHotReloadAction:(id)sender {
+    MLNHotReloadViewController *hotReloadVC = [MLNHotReloadViewController.alloc initWithEntryFilePath:nil];
     [self.navigationController pushViewController:hotReloadVC animated:YES];
 }
 
