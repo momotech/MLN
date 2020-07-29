@@ -51,12 +51,15 @@
     
     [subviews enumerateObjectsUsingBlock:^(UIView *_Nonnull view, NSUInteger idx, BOOL *_Nonnull stop) {
         if ([view isKindOfClass:[UIView class]]) {
-            [luaCore pushNativeObject:view error:NULL]; // caller | table | view
-            lua_insert(L, 2);                           // caller | view  | table
-            [self luaui_addSubview:view];               // caller | view  | table | ...
-            lua_remove(L, 2);                           // caller | table
+            lua_pushnumber(L, idx + 1);       // caller | table | idx+1
+            lua_gettable(L, -2);              // caller | table | view
+            lua_insert(L, 2);                 // caller | view  | table
+            [self luaui_addSubview:view];     // caller | view  | table | ...
+            lua_remove(L, 2);                 // caller | table
         }
     }];
+    
+    
 }
 
 LUAUI_EXPORT_VIEW_BEGIN(MLNUIStack)
