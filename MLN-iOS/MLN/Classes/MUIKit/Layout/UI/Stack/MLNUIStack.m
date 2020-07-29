@@ -41,9 +41,20 @@
     if ([subviews isKindOfClass:[NSArray class]] == NO) {
         return;
     }
+    /**
+     * -[UView luaui_addSubview:] 方法会将 view 对应的 userdata 保存在 lua 表中，从而实现 retain + 1，
+     * 详见 MLNUI_Lua_UserData_Retain_With_Index(2, view)。index 为2，即从栈中 index 为2的位置取出 view 对应的 userdata，
+     * 而当前方法中，栈中 index 为2的值为 table(即参数subviews)，所以这里将子视图入栈，并且将 index 调整为2
+     */
+    MLNUILuaCore *luaCore = self.mlnui_luaCore;
+    lua_State *L = luaCore.state;
+    
     [subviews enumerateObjectsUsingBlock:^(UIView *_Nonnull view, NSUInteger idx, BOOL *_Nonnull stop) {
         if ([view isKindOfClass:[UIView class]]) {
-            [self luaui_addSubview:view];
+            [luaCore pushNativeObject:view error:NULL]; // caller | table | view
+            lua_insert(L, 2);                           // caller | view  | table
+            [self luaui_addSubview:view];               // caller | view  | table | ...
+            lua_remove(L, 2);                           // caller | table
         }
     }];
 }

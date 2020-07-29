@@ -106,19 +106,15 @@ static const void *kMLNUILayoutAssociatedKey = &kMLNUILayoutAssociatedKey;
 static inline void MLNUITransferView(UIView *fromView, UIView *toView) {
     if (fromView.superview) {
         [fromView removeFromSuperview];
-        MLNUI_Lua_UserData_Release(fromView);
     }
     [toView addSubview:fromView];
-    MLNUI_Lua_UserData_Retain_With_Index(2, fromView);
 }
 
 static inline void MLNUITransferViewAtIndex(UIView *fromView, UIView *toView, NSInteger index) {
     if (fromView.superview) {
         [fromView removeFromSuperview];
-        MLNUI_Lua_UserData_Release(fromView);
     }
     [toView insertSubview:fromView atIndex:index];
-    MLNUI_Lua_UserData_Retain_With_Index(2, fromView);
 }
 
 static inline UIView *MLNUIValidSuperview(UIView *self) {
