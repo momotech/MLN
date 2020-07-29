@@ -327,6 +327,16 @@ static const void *kLuaStartDeceleratingCallback = &kLuaStartDeceleratingCallbac
     return self.contentOffset;
 }
 
+- (void)luaui_setPagerContentOffset:(CGFloat)x y:(CGFloat)y {
+    if(self.mlnui_horizontal) {
+        x = x < 0 ? 0 : x;
+        [self setContentOffset:CGPointMake(x, 0) animated:NO];
+    } else {
+        y = y < 0 ? 0 : y;
+        [self setContentOffset:CGPointMake(0, y) animated:NO];
+    }
+}
+
 //@override
 - (void)luaui_addSubview:(UIView *)view
 {
