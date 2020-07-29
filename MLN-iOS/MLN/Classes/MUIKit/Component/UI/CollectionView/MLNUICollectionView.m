@@ -558,6 +558,7 @@ LUAUI_EXPORT_VIEW_METHOD(setContentInset, "luaui_setContentInset:right:bottom:le
 LUAUI_EXPORT_VIEW_METHOD(getContentInset, "luaui_getContetnInset:", MLNUICollectionView)
 // private method
 LUAUI_EXPORT_VIEW_PROPERTY(contentOffset, "luaui_setContentOffset:", "luaui_contentOffset", MLNUICollectionView)
+LUAUI_EXPORT_VIEW_METHOD(pagerContentOffset, "luaui_setPagerContentOffset:y:", MLNUICollectionView)
 LUAUI_EXPORT_VIEW_PROPERTY(i_bounces, "luaui_setBounces:", "luaui_bounces", MLNUICollectionView)
 LUAUI_EXPORT_VIEW_PROPERTY(i_bounceHorizontal, "luaui_setAlwaysBounceHorizontal:", "luaui_alwaysBounceHorizontal", MLNUICollectionView)
 LUAUI_EXPORT_VIEW_PROPERTY(i_bounceVertical, "luaui_setAlwaysBounceVertical:", "luaui_alwaysBounceVertical", MLNUICollectionView)
