@@ -497,7 +497,7 @@ static MLNUI_FORCE_INLINE int __mlnui_luaui_objc_invoke (lua_State *L, int statr
 #endif
     NSMethodSignature *sig = _mm_objc_method_signature(s_clazz, s_selector, target, selector);
     if (!sig) {
-        NSString *targetMsg = s_clazz;
+        NSString *targetMsg = NSStringFromClass(isclass ? target : [target class]);
         NSString *selMsg = NSStringFromSelector(selector);
         NSString *errmsg = [NSString stringWithFormat:@"The method signature cannot be nil! \n taget : %@ \n selector : %@",targetMsg, selMsg];
         mlnui_luaui_error(L, @"%@", errmsg);
