@@ -424,8 +424,11 @@ static int luaui_bind_cell (lua_State *L) {
                 NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row - 1 inSection:section - 1];
                 [table.adapter tableView:table.adapter.targetTableView reloadRowsAtIndexPaths:@[indexPath]];
                 [table.adapter.targetTableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
-            } else {
-                
+            } else if([listView isKindOfClass:[MLNUICollectionView class]]){
+                MLNUICollectionView *collection = (MLNUICollectionView *)listView;
+                NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row - 1 inSection:section - 1];
+                [collection.adapter collectionView:collection.adapter.collectionView reloadItemsAtIndexPaths:@[indexPath]];
+                [collection.adapter.collectionView reloadItemsAtIndexPaths:@[indexPath]];
             }
         } keyPath:nk];
         obID = [dataBind addMLNUIObserver:ob forKeyPath:nk];
