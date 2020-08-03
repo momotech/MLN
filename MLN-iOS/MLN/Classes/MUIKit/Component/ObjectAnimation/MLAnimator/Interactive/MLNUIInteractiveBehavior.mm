@@ -87,10 +87,12 @@
                 [ani updateWithFactor:0 isBegan:YES];
             }
         } else if(MLNUITouchType_Move == type) {
-
-            [self onTouch:type dx:p.x dy:p.y distance:dis velocity:newSpeed];
-            
             BOOL shouldReturn = !self.overBoundary && (factor > 1 || factor < 0);
+            
+            if (!shouldReturn) {
+                [self onTouch:type dx:p.x dy:p.y distance:dis velocity:newSpeed];
+            }
+            
             dispatch_block_t followBlock = ^{
                 CGPoint c = self.targetView.center;
                 CGPoint newc = CGPointMake(c.x + diffLast.x, c.y + diffLast.y);
@@ -122,16 +124,10 @@
     }
 
     if (self.luaTouchBlock) {
-        BOOL isBeginAndEnd = MLNUITouchType_Begin == type || MLNUITouchType_End == type;
-        BOOL isEndDistance = self.lastDistance <= self.endDistance && distance >= self.endDistance;
-        isEndDistance = isEndDistance || (self.lastDistance >= self.endDistance && distance <= self.endDistance);
-        
-        if (isBeginAndEnd || isEndDistance) {
-            [self.luaTouchBlock addUIntegerArgument:type];
-            [self.luaTouchBlock addFloatArgument:distance];
-            [self.luaTouchBlock addFloatArgument:velocity];
-            [self.luaTouchBlock callIfCan];
-        }
+        [self.luaTouchBlock addUIntegerArgument:type];
+        [self.luaTouchBlock addFloatArgument:distance];
+        [self.luaTouchBlock addFloatArgument:velocity];
+        [self.luaTouchBlock callIfCan];
     }
     self.lastDistance = distance;
 }
