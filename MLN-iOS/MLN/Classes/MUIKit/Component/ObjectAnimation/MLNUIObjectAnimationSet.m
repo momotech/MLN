@@ -36,6 +36,7 @@ typedef NS_ENUM(NSUInteger, MLNUIObjectAnimationSetType) {
 @property (nonatomic, assign) MLNUIObjectAnimationSetType runType;
 @property (nonatomic, strong) NSArray *animations;
 @property (nonatomic, assign) BOOL propertyChanged;
+@property (nonatomic, assign) BOOL animationPaused; // default is NO;
 
 @property (nonatomic, strong) MLNUIBeforeWaitingTask *lazyTask;
 
@@ -161,10 +162,12 @@ typedef NS_ENUM(NSUInteger, MLNUIObjectAnimationSetType) {
 }
 
 - (void)mlnui_pause {
+    self.animationPaused = YES;
     [_valueAnimation pause];
 }
 
 - (void)mlnui_resume {
+    self.animationPaused = NO;
     [_valueAnimation resume];
 }
 
@@ -194,6 +197,10 @@ typedef NS_ENUM(NSUInteger, MLNUIObjectAnimationSetType) {
         } else {
             // Fallback on earlier versions
         }
+    }
+    
+    if (self.animationPaused) {
+        [_valueAnimation pause];
     }
     //当修改过属性后，需要进行同步
     if (_propertyChanged) {

@@ -48,6 +48,7 @@
 
 @property (nonatomic, assign) CGFloat defaultAlpha;
 @property (nonatomic, assign) CGPoint defaultOrigin;
+@property (nonatomic, assign) BOOL animationPaused; // default is NO
 
 @end
 
@@ -121,10 +122,12 @@
 }
 
 - (void)mlnui_pause {
+    self.animationPaused = YES;
     [_valueAnimation pause];
 }
 
 - (void)mlnui_resume {
+    self.animationPaused = NO;
     [_valueAnimation resume];
 }
 
@@ -201,6 +204,10 @@
                 break;
         }
         _valueAnimation.bridgeAnimation = self;
+        
+        if (self.animationPaused) {
+            [_valueAnimation pause];
+        }
         
         __weak typeof(self) weakSelf = self;
         _valueAnimation.startBlock = ^(MLAAnimation *animation) {
