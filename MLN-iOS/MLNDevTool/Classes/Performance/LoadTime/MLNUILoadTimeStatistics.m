@@ -47,6 +47,7 @@
 
 @property (nonatomic, strong) NSMutableDictionary *startTimes;
 @property (nonatomic, strong) NSMutableArray *singleCosts;
+@property (nonatomic, strong) NSMutableArray *dataBindingCosts;
 
 @property (nonatomic, strong) NSLock *lock;
 @property (nonatomic, strong) dispatch_queue_t workQ;
@@ -177,6 +178,7 @@
     self.startTimes = [NSMutableDictionary dictionary];
 //    self.endTimes = [NSMutableDictionary dictionary];
     self.singleCosts = [NSMutableArray array];
+    self.dataBindingCosts = [NSMutableArray array];
     
     self.lock = [NSLock new];
     self.workQ = dispatch_queue_create("debug.work.queue", DISPATCH_QUEUE_SERIAL);
@@ -239,8 +241,12 @@
     [self.lock lock];
 //    NSDictionary *starts = self.startTimes.copy;
     NSMutableArray *singles = self.singleCosts.mutableCopy;
+    NSMutableArray *dataBindings = self.dataBindingCosts.mutableCopy;
+    
     [self.startTimes removeAllObjects];
     [self.singleCosts removeAllObjects];
+    [self.dataBindingCosts removeAllObjects];
+    
     [self.lock unlock];
     
     NSMutableArray *totalCosts = @[].mutableCopy;
@@ -290,7 +296,16 @@
     for (_MLNUILOadTimeModel *m in totalCosts) {
         total_cost += m.totalCost;
     }
+    
+    double db_cost = 0;
+    for (_MLNUILOadTimeModel *m in dataBindings) {
+        db_cost += m.cost;
+    }
+    
     NSString *log = [NSString stringWithFormat:@"调用Bridge总耗时：%.2f ms",total_cost];
+    [self _addBridgeLog: log];
+    
+    log = [NSString stringWithFormat:@"调用DataBinding总耗时：%.2f ms",db_cost];
     [self _addBridgeLog: log];
     
     [self _addBridgeLog:@" \n\n单次Bridge调用耗时排序："];
@@ -399,6 +414,7 @@
         m.totalCost = m.cost;
         m.totalCount = 1;
         [self.singleCosts addObject:m];
+        [self.dataBindingCosts addObject:m];
         [self.lock unlock];
     });
 }
