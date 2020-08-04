@@ -49,7 +49,7 @@
 @property (nonatomic, strong) NSMutableArray *singleCosts;
 @property (nonatomic, strong) NSMutableArray *dataBindingCosts;
 
-@property (nonatomic, strong) NSLock *lock;
+@property (nonatomic, strong) NSRecursiveLock *lock;
 @property (nonatomic, strong) dispatch_queue_t workQ;
 
 @end
@@ -180,7 +180,7 @@
     self.singleCosts = [NSMutableArray array];
     self.dataBindingCosts = [NSMutableArray array];
     
-    self.lock = [NSLock new];
+    self.lock = [NSRecursiveLock new];
     self.workQ = dispatch_queue_create("debug.work.queue", DISPATCH_QUEUE_SERIAL);
 }
 
