@@ -407,8 +407,16 @@ static int luaui_bind_cell (lua_State *L) {
     if (!listView)  return 1;
 
     NSMutableDictionary *infos = [listView mlnui_bindInfos];
-    NSString *modelKey = [nKey stringByAppendingFormat:@".%zd.%zd",section,row];
-    NSObject *cellModel = [dataBind dataForKeyPath:modelKey];
+//    NSString *modelKey = [nKey stringByAppendingFormat:@".%zd.%zd",section,row];
+    
+    NSObject *cellModel;
+    NSArray *listArray = [dataBind dataForKeyPath:nKey userCache:YES];
+    if ([listArray mlnui_is2D]) {
+        NSArray *tmp = section <= listArray.count ? listArray[section - 1] : nil;
+        cellModel = row <= tmp.count ? tmp[row - 1] : nil;
+    } else {
+        cellModel = listArray[row - 1];
+    }
     
     NSString *indexPathKey = @"DB_IndexPathKey";
     NSMutableDictionary *indexPaths = [infos objectForKey:indexPathKey];
@@ -417,13 +425,7 @@ static int luaui_bind_cell (lua_State *L) {
         [infos setObject:indexPaths forKey:indexPathKey];
     }
     
-    for (NSString *pp in paths) {
-        NSString *p = pp;
-        NSRange r =  [p rangeOfString:modelKey];
-        if (r.location != NSNotFound) {
-            p = [p substringFromIndex:r.length + 1];
-        }
-        
+    for (NSString *p in paths) {
         NSString *idKey = [nKey stringByAppendingFormat:@".%p.%@",cellModel,p];
         
         NSIndexPath *ip = [indexPaths objectForKey:idKey];
@@ -440,7 +442,8 @@ static int luaui_bind_cell (lua_State *L) {
             continue;
         }
         
-        NSString *nk = [modelKey stringByAppendingFormat:@".%@",p];
+//        NSString *nk = [modelKey stringByAppendingFormat:@".%@",p];
+        NSString *nk = [nKey stringByAppendingFormat:@".%zd.%zd.%@",section,row,p];
         MLNUIKVOObserver *ob = [[MLNUIKVOObserver alloc] initWithViewController:kitViewController callback:^(NSString * _Nonnull keyPath, id  _Nonnull object, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
             if ([listView isKindOfClass:[MLNUITableView class]]) {
                 MLNUITableView *table = (MLNUITableView *)listView;
