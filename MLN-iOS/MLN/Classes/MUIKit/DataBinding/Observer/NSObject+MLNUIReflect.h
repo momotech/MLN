@@ -19,6 +19,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (NSMutableDictionary *)mlnui_bindInfos;
 
+@property (nonatomic, assign) BOOL mlnui_dataBinding_dirty;
+@property (nonatomic, assign) BOOL mlnui_dataBinding_is_1DListSource;
+
 @end
 
 NS_ASSUME_NONNULL_END
