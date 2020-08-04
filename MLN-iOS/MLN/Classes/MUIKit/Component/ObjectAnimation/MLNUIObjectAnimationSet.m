@@ -12,6 +12,7 @@
 #import "MLNUIAnimationConst.h"
 #import "MLNUIObjectAnimation.h"
 #import "MLNUIBeforeWaitingTask.h"
+#import "MLAValueAnimation+Interactive.h"
 
 typedef NS_ENUM(NSUInteger, MLNUIObjectAnimationSetType) {
     MLNUIObjectAnimationSetTypeTogether,
@@ -35,6 +36,7 @@ typedef NS_ENUM(NSUInteger, MLNUIObjectAnimationSetType) {
 @property (nonatomic, strong) MLNUIBlock *finishBlock;
 @property (nonatomic, assign) MLNUIObjectAnimationSetType runType;
 @property (nonatomic, strong) NSArray *animations;
+@property (nonatomic, strong) NSMutableArray<MLAValueAnimation *> *rawAnimations;
 @property (nonatomic, assign) BOOL propertyChanged;
 @property (nonatomic, assign) BOOL animationPaused; // default is NO;
 
@@ -75,6 +77,47 @@ typedef NS_ENUM(NSUInteger, MLNUIObjectAnimationSetType) {
     _propertyChanged = YES;
 }
 
+static inline CGFloat MIN_MAX(CGFloat value, CGFloat min, CGFloat max) {
+    if (value < min) value = min;
+    if (value > max) value = max;
+    return value;
+}
+
+// progress [0, 1]
+- (void)luaui_updateAnimations:(CGFloat)progress {
+    switch (self.runType) {
+        case MLNUIObjectAnimationSetTypeTogether: {
+            for (MLAValueAnimation *anim in self.rawAnimations) {
+                [anim updateWithFactor:progress isBegan:NO];
+            }
+        }
+            break;
+            
+        case MLNUIObjectAnimationSetTypeSequentially: {
+            static NSInteger index = 0;
+            CGFloat section = 1.0 / self.rawAnimations.count;  // 所有动画平分progress
+            CGFloat progressOfEachAnimation = progress - index * section;
+            CGFloat validProgress = MIN_MAX(progressOfEachAnimation * self.rawAnimations.count, 0, 1);
+            
+            MLAValueAnimation *anim = self.rawAnimations[MIN(index, self.rawAnimations.count-1)];
+            [anim updateWithFactor:validProgress isBegan:NO];
+            
+            if (progressOfEachAnimation >= section) { // 当前动画的进度超过其所分配的范围，则表示当前动画执行完毕，需执行下一个动画
+                index++;
+            }
+            if (progressOfEachAnimation <= 0) { // 当前动画的进度为负数，则表示当前动画执行完毕，需执行上一个动画
+                index--;
+            }
+            if (progress >= 1.0) { // 所有动画执行完则index复位
+                index = 0;
+            }
+        }
+            break;
+            
+        default:
+            break;
+    }
+}
 
 - (void)mlnui_start:(MLNUIBlock *)finishBlcok
 {
@@ -138,22 +181,15 @@ typedef NS_ENUM(NSUInteger, MLNUIObjectAnimationSetType) {
         _valueAnimation.autoReverses = _autoReverses;
     }
     
-    NSMutableArray *rawAnimations = [NSMutableArray array];
-    if (_animations != nil) {
-        for (MLNUIObjectAnimation *animation in _animations) {
-            [rawAnimations addObject:[animation mlnui_rawAnimation]];
-        }
-    }
-    
     switch (_runType) {
         case MLNUIObjectAnimationSetTypeTogether:
         {
-            [self.valueAnimation runTogether:rawAnimations];
+            [self.valueAnimation runTogether:self.rawAnimations];
         }
             break;
         default:
         {
-            [self.valueAnimation runSequentially:rawAnimations];
+            [self.valueAnimation runSequentially:self.rawAnimations];
         }
             break;
     }
@@ -180,14 +216,15 @@ typedef NS_ENUM(NSUInteger, MLNUIObjectAnimationSetType) {
 {
     _animations = animations;
     _runType = MLNUIObjectAnimationSetTypeTogether;
+    [self flushRawAnimations:animations];
 }
 
 - (void)mlnui_playSequentially:(NSArray *)animations
 {
     _animations = animations;
     _runType = MLNUIObjectAnimationSetTypeSequentially;
+    [self flushRawAnimations:animations];
 }
-
 
 - (MLAMultiAnimation *)valueAnimation
 {
@@ -235,6 +272,22 @@ typedef NS_ENUM(NSUInteger, MLNUIObjectAnimationSetType) {
     return _lazyTask;
 }
 
+- (NSMutableArray<MLAValueAnimation *> *)rawAnimations {
+    if (!_rawAnimations) {
+        _rawAnimations = [NSMutableArray array];
+    }
+    return _rawAnimations;
+}
+
+- (void)flushRawAnimations:(NSArray<MLNUIObjectAnimation *> *)objectAnimations {
+    if (self.rawAnimations.count) {
+        [self.rawAnimations removeAllObjects];
+    }
+    for (MLNUIObjectAnimation *animation in _animations) {
+        [self.rawAnimations addObject:[animation mlnui_rawAnimation]];
+    }
+}
+
 #pragma mark - Export To Lua
 LUAUI_EXPORT_BEGIN(MLNUIObjectAnimationSet)
 LUAUI_EXPORT_PROPERTY(delay, "setDelay:", "delay", MLNUIObjectAnimationSet)
@@ -252,6 +305,7 @@ LUAUI_EXPORT_METHOD(start, "mlnui_start:", MLNUIObjectAnimationSet)
 LUAUI_EXPORT_METHOD(pause, "mlnui_pause", MLNUIObjectAnimationSet)
 LUAUI_EXPORT_METHOD(resume, "mlnui_resume", MLNUIObjectAnimationSet)
 LUAUI_EXPORT_METHOD(stop, "mlnui_stop", MLNUIObjectAnimationSet)
+LUAUI_EXPORT_METHOD(update, "luaui_updateAnimations:", MLNUIObjectAnimationSet)
 LUAUI_EXPORT_END(MLNUIObjectAnimationSet, AnimatorSet, NO, NULL, NULL)
 
 @end
