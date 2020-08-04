@@ -410,11 +410,34 @@ static int luaui_bind_cell (lua_State *L) {
     NSString *modelKey = [nKey stringByAppendingFormat:@".%zd.%zd",section,row];
     NSObject *cellModel = [dataBind dataForKeyPath:modelKey];
     
-    for (NSString *p in paths) {
+    NSString *indexPathKey = @"DB_IndexPathKey";
+    NSMutableDictionary *indexPaths = [infos objectForKey:indexPathKey];
+    if (!indexPaths) {
+        indexPaths = [NSMutableDictionary dictionary];
+        [infos setObject:indexPaths forKey:indexPathKey];
+    }
+    
+    for (NSString *pp in paths) {
+        NSString *p = pp;
+        NSRange r =  [p rangeOfString:modelKey];
+        if (r.location != NSNotFound) {
+            p = [p substringFromIndex:r.length + 1];
+        }
+        
         NSString *idKey = [nKey stringByAppendingFormat:@".%p.%@",cellModel,p];
-        NSString *obID =  [infos objectForKey:idKey];
-        if (obID) {
-            [dataBind removeMLNUIObserverByID:obID];
+        
+        NSIndexPath *ip = [indexPaths objectForKey:idKey];
+        NSString *obID;
+        if (!ip || ip.section != (section - 1) || ip.row != (row - 1)) {
+            ip = [NSIndexPath indexPathForRow:row - 1 inSection:section - 1];
+            [indexPaths setObject:ip forKey:idKey];
+            
+            obID =  [infos objectForKey:idKey];
+            if (obID) {
+                [dataBind removeMLNUIObserverByID:obID];
+            }
+        } else {
+            continue;
         }
         
         NSString *nk = [modelKey stringByAppendingFormat:@".%@",p];
