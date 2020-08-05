@@ -14,6 +14,7 @@
 @property (nonatomic, assign) double cost;
 @property (nonatomic, assign) double totalCost;
 @property (nonatomic, assign) int totalCount;
+@property (nonatomic, assign) BOOL afterLoaded;
 @end
 
 @implementation _MLNUILOadTimeModel
@@ -36,6 +37,7 @@
     
     CFAbsoluteTime _oc_start_time;
     CFAbsoluteTime _oc_end_time;
+    BOOL _hasLoaded;
 }
 
 @property (nonatomic, strong) NSDictionary *typeTags;
@@ -74,6 +76,9 @@
     if (!NSThread.isMainThread) {
         return;
     }
+    if (type == MLNUILoadTimeStatisticsType_Total) {
+        _hasLoaded = NO;
+    }
     if (!tag) {
         tag = [self.typeTags objectForKey:@(type)];
     }
@@ -93,6 +98,10 @@
     if (!NSThread.isMainThread) {
         return;
     }
+    if (type == MLNUILoadTimeStatisticsType_Total) {
+        _hasLoaded = YES;
+    }
+    
     dispatch_block_t block = ^{
         NSString *tagStr = tag;
         if (!tagStr) {
@@ -134,6 +143,7 @@
 //    [self.endMaps removeAllObjects];
     [self.keys removeAllObjects];
     [self.infos removeAllObjects];
+    _hasLoaded = NO;
 }
 
 - (void)setup {
@@ -251,6 +261,8 @@
     
     NSMutableArray *totalCosts = @[].mutableCopy;
     NSMutableArray *totalCounts = @[].mutableCopy;
+//    NSMutableArray *afterLaodedCosts = @[].mutableCopy;
+    __block CGFloat cost_after_load = 0.f;
     
     void (^block)(_MLNUILOadTimeModel *m) = ^(_MLNUILOadTimeModel *m) {
         
@@ -262,12 +274,14 @@
         } else {
             [totalCosts addObject:m];
         }
+        if (m.afterLoaded) {
+            cost_after_load += m.cost;
+        }
     };
     
     for (_MLNUILOadTimeModel *m in singles) {
         block(m);
     }
-    
     totalCounts = totalCosts.mutableCopy;
     
     int count = 20;
@@ -298,8 +312,12 @@
     }
     
     double db_cost = 0;
+    double db_cost_after_load = 0;
     for (_MLNUILOadTimeModel *m in dataBindings) {
         db_cost += m.cost;
+        if (m.afterLoaded) {
+            db_cost_after_load += m.cost;
+        }
     }
     
     NSString *log = [NSString stringWithFormat:@"调用Bridge总耗时：%.2f ms",total_cost];
@@ -307,6 +325,12 @@
     
     log = [NSString stringWithFormat:@"调用DataBinding总耗时：%.2f ms",db_cost];
     [self _addBridgeLog: log];
+    
+    log = [NSString stringWithFormat:@"Load之后的Bridge耗时： %.2f ms", cost_after_load];
+    [self _addBridgeLog:log];
+    
+    log = [NSString stringWithFormat:@"Load之后的DataBinding耗时： %.2f ms", db_cost_after_load];
+    [self _addBridgeLog:log];
     
     [self _addBridgeLog:@" \n\n单次Bridge调用耗时排序："];
     [singles enumerateObjectsUsingBlock:^(_MLNUILOadTimeModel *  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
@@ -364,6 +388,8 @@
 - (void)onEndCallOCBridge:(Class)cls selector:(SEL)sel {
     if (!cls || !sel)  return;
     CFAbsoluteTime t = CFAbsoluteTimeGetCurrent();
+    BOOL afterLoaded = _hasLoaded;
+    
     dispatch_async(self.workQ, ^{
         NSString *classStr = NSStringFromClass(cls);
         NSString *selStr = NSStringFromSelector(sel);
@@ -380,6 +406,8 @@
         m.cost = (t - start) * 1000;
         m.totalCost = m.cost;
         m.totalCount = 1;
+        m.afterLoaded = afterLoaded;
+        
         [self.singleCosts addObject:m];
         
         [self.lock unlock];
@@ -402,6 +430,8 @@
 - (void)onEndCallCBridge:(const char *)func {
     if (!func) return;
     CFAbsoluteTime t = CFAbsoluteTimeGetCurrent();
+    BOOL afterLoaded = _hasLoaded;
+    
     dispatch_async(self.workQ, ^{
         NSString *str = [NSString stringWithUTF8String:func];
         [self.lock lock];
@@ -413,6 +443,8 @@
         m.cost = (t - start) * 1000;
         m.totalCost = m.cost;
         m.totalCount = 1;
+        m.afterLoaded = afterLoaded;
+        
         [self.singleCosts addObject:m];
         [self.dataBindingCosts addObject:m];
         [self.lock unlock];
