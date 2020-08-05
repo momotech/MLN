@@ -16,6 +16,22 @@
 #import "NSObject+MLNUIReflect.h"
 #import "MLNUIExtScope.h"
 #import "MLNUIKit.h"
+@interface _MLNUIBindCellInternalModel : NSObject
+@property (nonatomic, strong) NSMutableDictionary *pathMap;
+@property (nonatomic, strong) NSIndexPath *indexPath;
+//@property (nonatomic, strong) NSMutableArray *paths;
+@end
+@implementation _MLNUIBindCellInternalModel
+- (instancetype)init
+{
+    self = [super init];
+    if (self) {
+//        _paths = @[].mutableCopy;
+        _pathMap = @{}.mutableCopy;
+    }
+    return self;
+}
+@end
 
 @implementation MLNUIDataBindingCBridge
 
@@ -418,48 +434,47 @@ static int luaui_bind_cell (lua_State *L) {
         cellModel = listArray[row - 1];
     }
     
-    NSString *indexPathKey = @"DB_IndexPathKey";
-    NSMutableDictionary *indexPaths = [infos objectForKey:indexPathKey];
-    if (!indexPaths) {
-        indexPaths = [NSMutableDictionary dictionary];
-        [infos setObject:indexPaths forKey:indexPathKey];
+//    NSString *indexPathKey = @"DB_IndexPathKey";
+//    NSMutableDictionary *indexPaths = [infos objectForKey:indexPathKey];
+//    if (!indexPaths) {
+//        indexPaths = [NSMutableDictionary dictionary];
+//        [infos setObject:indexPaths forKey:indexPathKey];
+//    }
+    NSString *idKey = [nKey stringByAppendingFormat:@".%p",cellModel];
+    _MLNUIBindCellInternalModel *model = [infos objectForKey:idKey];
+    if (!model) {
+        model = [_MLNUIBindCellInternalModel new];
+        [infos setObject:model forKey:idKey];
     }
     
-    for (NSString *p in paths) {
-        NSString *idKey = [nKey stringByAppendingFormat:@".%p.%@",cellModel,p];
-        
-        NSIndexPath *ip = [indexPaths objectForKey:idKey];
-        NSString *obID;
-        if (!ip || ip.section != (section - 1) || ip.row != (row - 1)) {
-            ip = [NSIndexPath indexPathForRow:row - 1 inSection:section - 1];
-            [indexPaths setObject:ip forKey:idKey];
-            
-            obID =  [infos objectForKey:idKey];
-            if (obID) {
-                [dataBind removeMLNUIObserverByID:obID];
-            }
-        } else {
-            continue;
-        }
-        
-//        NSString *nk = [modelKey stringByAppendingFormat:@".%@",p];
+    NSIndexPath *ip = model.indexPath;
+    if (!ip || ip.section != (section - 1) || ip.row != (row - 1)) {
+        model.indexPath = [NSIndexPath indexPathForRow:row - 1 inSection:section - 1];
+    }
+    
+    NSMutableArray *newPaths = paths.mutableCopy;
+    [newPaths removeObjectsInArray:model.pathMap.allKeys];
+    
+    for (NSString *p in newPaths) {
         NSString *nk = [nKey stringByAppendingFormat:@".%zd.%zd.%@",section,row,p];
         MLNUIKVOObserver *ob = [[MLNUIKVOObserver alloc] initWithViewController:kitViewController callback:^(NSString * _Nonnull keyPath, id  _Nonnull object, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
             if ([listView isKindOfClass:[MLNUITableView class]]) {
                 MLNUITableView *table = (MLNUITableView *)listView;
-                NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row - 1 inSection:section - 1];
+                NSIndexPath *indexPath = [[[listView mlnui_bindInfos] objectForKey:idKey] indexPath];
+                
                 [table.adapter tableView:table.adapter.targetTableView reloadRowsAtIndexPaths:@[indexPath]];
                 [table.adapter.targetTableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
             } else if([listView isKindOfClass:[MLNUICollectionView class]]){
                 MLNUICollectionView *collection = (MLNUICollectionView *)listView;
-                NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row - 1 inSection:section - 1];
+                NSIndexPath *indexPath = [[[listView mlnui_bindInfos] objectForKey:idKey] indexPath];
+                
                 [collection.adapter collectionView:collection.adapter.collectionView reloadItemsAtIndexPaths:@[indexPath]];
                 [collection.adapter.collectionView reloadItemsAtIndexPaths:@[indexPath]];
             }
         } keyPath:nk];
-        obID = [dataBind addMLNUIObserver:ob forKeyPath:nk];
+        NSString *obID = [dataBind addMLNUIObserver:ob forKeyPath:nk];
         if (obID) {
-            [infos setObject:obID forKey:idKey];
+            [model.pathMap setObject:obID forKey:p];
         }
     }
     
