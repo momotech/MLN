@@ -21,6 +21,7 @@ local __ci = "__ci" -- cell item
 -- debug
 --local __ck = "__ck" -- 当前key
 --local __pk = "__pk" -- 前一个key
+--local __bt = "__bt"
 local WATCH = "watch" -- prevew中使用
 local FOREACH = "forEach"
 local __b_G = "G_G"
@@ -36,6 +37,7 @@ _watchIds = {} -- watch remove
 _cellBinds = {} -- list cell binds
 _foreachCaches = {} -- 用于foreach中的缓存
 
+__open_combine_data__ = true --- 开启list cell 一次性获取全部item数据
 
 -- 创建弱引用表
 function createWeakT(mode) --"k" / "v" / "kv"
@@ -102,26 +104,32 @@ function bindMeta_batchSetMeta(t, path, ck, pk)
         if type(_v) == "table" then
             bindMeta_batchSetMeta(_v, bindMeta_path(path , _k), _k, ck)
         else
-            BindMeta(bindMeta_path(path , _k), {}, _v, _k, ck)
+            BindMeta(bindMeta_path(path , _k), {}, _v, _k, ck, true)
         end
     end
-    return BindMeta(path, mapt, t, ck, pk)
+    return BindMeta(path, mapt, t, ck, pk, true)
 end
 
-function bindMeta_getAndCacheTab(mt)
+function bindMeta_getAndCacheTab(mt, iscache)
     BindMetaPush(_foreachCaches)
-    local t = DataBinding:get(bindMeta_path(mt.__kvoname))
+    local t = mt.__vv
+    if iscache and t ~= nil then
+        if mt.__bt then return t end
+    else
+        t = DataBinding:get(bindMeta_path(mt.__kvoname))
+    end
+
     if t and type(t) == "table" then
         bindMeta_batchSetMeta(t, bindMeta_path(mt.__kvoname), mt.__ck, mt.__pk)
     else
-        BindMeta(bindMeta_path(mt.__kvoname), nil, nil, mt.__ck, mt.__pk)
+        BindMeta(bindMeta_path(mt.__kvoname), nil, t, mt.__ck, mt.__pk, true)
     end
     return t
 end
 
 --- 数组获取
 function bindMeta_getArraySize(mt)
-    local t = bindMeta_getAndCacheTab(mt)
+    local t = bindMeta_getAndCacheTab(mt, true)
     if t == nil then return 0 end
     return #t
 end
@@ -171,6 +179,7 @@ function bindMeta__index(t, k)
         if BindMetaGet(_cellBinds) then BindMetaAdd(_cellBinds, temp_path, true) end -- 存储 list 数据绑定path
         local temp_v = mt.__vv
         if temp_v ~= nil then return temp_v end -- 有缓存先使用缓存内容
+        --print("to Get::" .. mt.__kvoname, k)
         temp_v = DataBinding:get(temp_path)
         if (#_foreachCaches) > 0 then
             mt.__vv = temp_v
@@ -186,7 +195,14 @@ function bindMeta__index(t, k)
         mt.__opname = k
         return t
     elseif k == __ci then
-        return BindMeta(mt.__kvoname, {row={__get=mt.__ck}, section={__get=mt.__pk}}, nil, mt.__ck, mt.__pk)
+        ---@see BindMetaWatchListCell() -- 结束
+        BindMetaPush(_cellBinds)
+        local temp_v = nil
+        if __open_combine_data__ then
+            temp_v = bindMeta_getAndCacheTab(mt, true)
+        end
+        return BindMeta(mt.__kvoname,
+                {row={__get=mt.__ck}, section={__get=mt.__pk}}, temp_v, mt.__ck, mt.__pk)
     end
     if debug_preview_watch then
         if k == WATCH or k == FOREACH then
@@ -259,7 +275,7 @@ function bindMeta__call(t, ...)
     mt.__opname = nil
 
     if op == __greal then -- bind中缓存相关
-        bindMeta_getAndCacheTab(mt)
+        bindMeta_getAndCacheTab(mt, false)
         return
     end
     if op == __rreal then
@@ -302,7 +318,7 @@ function bindMeta__call(t, ...)
     end
 end
 
-function bindMeta_setmetable(o, kpath, v, cKey, preKey)
+function bindMeta_setmetable(o, kpath, v, cKey, preKey, batch)
     _kpathCache[kpath] = o
     local meta = getmetatable(o)
     local mt = {
@@ -315,6 +331,7 @@ function bindMeta_setmetable(o, kpath, v, cKey, preKey)
         __ck = cKey,
         __pk = preKey,
         __vv = v,
+        __bt = batch,
     }
     setmetatable(o, mt)
     if (#_foreachCaches) > 0 then
@@ -333,7 +350,7 @@ if hook_table_insert == nil then
     hook_table_insert = table.insert
     table.insert = function(t, ...)
         assert(t, "insert table must not be nil ")
-        if t.__ishook then
+        if debug_preview_open == false and t.__ishook then
             if select('#', ...) == 1 then
                 DataBinding:insert(bindMeta_path(t.__kvoname), -1, select(1, ...))
                 return
@@ -346,7 +363,7 @@ if hook_table_insert == nil then
     hook_table_remove = table.remove
     table.remove = function(t, ...)
         assert(t, "remove table must not be nil ")
-        if t.__ishook then
+        if debug_preview_open == false and t.__ishook then
             if select('#', ...) == 0 then
                 DataBinding:remove(bindMeta_path(t.__kvoname), -1)
                 return
@@ -369,20 +386,21 @@ end
 ---@param v void  id是否默认值
 ---@param cKey string/number 当前keypath
 ---@param preKey string/number 上一级keypath
-function BindMeta(kpath, o, v, cKey, preKey)
+---@param batch boolean 是否是批量修改的meta
+function BindMeta(kpath, o, v, cKey, preKey, batch)
     kpath = kpath or ""
     --assert(type(kpath) == "string", "kpath must be string...")
 
     if o then
         if not o.__ishook then
-            bindMeta_setmetable(o, kpath, v, cKey, preKey)
+            bindMeta_setmetable(o, kpath, v, cKey, preKey, batch)
         end
         return o
     end
     o = _kpathCache[kpath]
     if o == nil then
         o = {}
-        bindMeta_setmetable(o, kpath, v, cKey, preKey)
+        bindMeta_setmetable(o, kpath, v, cKey, preKey, batch)
     end
     return o;
 end
@@ -441,29 +459,29 @@ end
 ----------------------------------------------------------------------------------------------------------
 ----------------------------         建立 list cell 绑定属性                     --------------------------
 ---------------------------------------------------------------------------------------------------------
-local function _getNumberLength(num)
-    if num < 10 then
-        return 1
-    elseif num < 100 then
-        return 2
-    elseif num < 1000 then
-        return 3
-    elseif num < 10000 then
-        return 4
-    elseif num < 100000 then
-        return 5
-    elseif num < 1000000 then
-        return 6
-    end
-    return 7
-end
+--local function _getNumberLength(num)
+--    if num < 10 then
+--        return 1
+--    elseif num < 100 then
+--        return 2
+--    elseif num < 1000 then
+--        return 3
+--    elseif num < 10000 then
+--        return 4
+--    elseif num < 100000 then
+--        return 5
+--    elseif num < 1000000 then
+--        return 6
+--    end
+--    return 7
+--end
 
 local function _getNextSplitType(v, index)
     if string.len(v) < index then
-        return 0
+        return 0, 0
     end
     if string.byte(v, index) == 46 then -- .
-        return string.byte(v, index + 1) - 48
+        return string.byte(v, index + 1) - 48, index
     end
     return _getNextSplitType(v, index +1)
 end
@@ -480,34 +498,42 @@ end
 -- 设置 list cell 绑定数据
 -- https://git.wemomo.com/sun_109/LuaParser_JavaCode/-/issues/340
 function BindMetaWatchListCell(source, section, row)
+    if __open_combine_data__ then
+        BindMetaPopForach()
+    end
     local paths = BindMetaPop(_cellBinds)
     if not paths then return end
 
     local s_path = bindMeta_path(getmetatable(source).__kvoname);
     local ret, map = {}, {}
     local s_len = string.len(s_path)
-    local s_r_len = 1
+    --local s_r_len = 1
     if section == -1 then -- 适配viewpager
-        s_r_len = _getNumberLength(row)
+        --s_r_len = _getNumberLength(row)
         section = 1
-    else
-        s_r_len = _getNumberLength(section) + _getNumberLength(row)
+        --else
+        --    s_r_len = _getNumberLength(section) + _getNumberLength(row)
     end
-    local c1, c2 = 0, 0
+    local c1, c2, c2i, s_index, vl = 0, 0, 0, 0, 0
     local key = ""
     for _, v in ipairs(paths) do
-        if string.len(v) > (s_len + 3) and string.sub(v,1, s_len) == s_path then
-            c1 = string.byte(v, s_len + 2) - 48
-            c2 = _getNextSplitType(v, s_len + 3)
-            if c1 >= 0 and c1 <= 9 and c2 >= 0 and c2 <= 9 then
-                key = string.sub(v, s_len + 4 + s_r_len)
+        s_index = s_len
+        vl = string.len(v)
+        if vl >= s_index and string.sub(v,1, s_index) == s_path then
+            if vl > (s_index + 3) then
+                c1 = string.byte(v, s_index + 2) - 48
+                c2, c2i = _getNextSplitType(v, s_index + 3)
+                if section > 0 and c1 >= 0 and c1 <= 9 and c2 >= 0 and c2 <= 9 then
+                    s_index = c2i
+                end
+                key = string.sub(v, _getNextSplitIndex(v,s_index + 2) + 1 )
             else
-                key = string.sub(v, _getNextSplitIndex(v,s_len + 2) + 1 )
+                key = nil
             end
         else
             key = v
         end
-        if map[key] ~= true then --去重
+        if key and map[key] ~= true then --去重
             table.insert(ret, key)
             map[key] = true
         end
