@@ -1,7 +1,7 @@
 _view_style_param_func_ = {
     -- 1
     function(view, func, value)
-        func(view, value[1]) 
+        func(view, value[1])
     end,
     -- 2
     function(view, func, value)
@@ -53,14 +53,7 @@ function _view_set_style_with_filter(view, style, filter)
                 _view_set_style_with_filter(view, _v, filter)
             end
         else
-            local isReturn = false;
-            for __i, __v in ipairs(filter) do
-                if __v == _k then
-                    isReturn = true;
-                    break;
-                end
-            end
-            if not isReturn then
+            if not filter[_k] then
                 local _a_k_f = view[_k]
                 if _a_k_f then
                     if type(_v) == "table" then
