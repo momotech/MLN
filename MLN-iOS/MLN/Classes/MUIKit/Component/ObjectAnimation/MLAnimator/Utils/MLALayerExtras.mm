@@ -38,7 +38,7 @@ using namespace MLAWebCore;
 #pragma mark - Log
 
 #if DEBUG
-static void MLALogLayerTransform3D(TransformationMatrix _m, NSString *flag) {
+__unused static void MLALogLayerTransform3D(TransformationMatrix _m, NSString *flag) {
     NSLog(@"\n \
     ---- %@ begin ----\n \
     m11:%0.2f m12:%0.2f m13:%0.2f m14:%0.2f \n \
