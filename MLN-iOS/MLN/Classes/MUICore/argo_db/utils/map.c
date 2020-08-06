@@ -400,7 +400,6 @@ static void resize(Map *map) {
     #endif
 }
 
-//<editor-fold desc="to string">
 #define _f_error (char) 1
 #define _f_malloc (char) 2
 #define _f_finf (char) 4
@@ -525,7 +524,7 @@ char *map_to_string(Map *map, map_value_to_string k2s, map_value_to_string v2s) 
     }
     return ret;
 }
-//</editor-fold>
+///<editor-fold>
 
 #if defined(J_API_INFO)
 size_t map_mem(Map * map) {

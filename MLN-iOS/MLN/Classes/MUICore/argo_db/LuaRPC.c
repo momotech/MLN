@@ -9,6 +9,7 @@
 #include "ltable.h"
 #include "m_mem.h"
 #include "lapi.h"
+#include "argo_lua.h"
 
 /// ---------------------------------------------------------------
 /// 虚拟机之间差异
@@ -136,7 +137,7 @@ static void free_value(TValue *val) {
     }
 }
 
-//<editor-fold desc="string copy free">
+///<-fold desc="string copy free">
 
 static int copy_string(TValue *result, TValue *src) {
     TString *ots = &val_(src).gc->ts;
@@ -168,9 +169,9 @@ static void free_string(TValue *val) {
     size_t len = o->ts.tsv.len;
     m_malloc(o, sizeof(TString) + ((len + 1) * sizeof(char)), 0);
 }
-//</editor-fold>
+///<editor-fold>
 
-//<editor-fold desc="table copy free">
+///<-fold desc="table copy free">
 
 static int _new_table(TValue *result) {
     GCObject *o = obj2gco(m_malloc(NULL, 0, sizeof(Table)));
@@ -310,7 +311,7 @@ static void push_table(lua_State *L, TValue *src) {
     }
     lua_pop(L, 1);                          // -1: table
 }
-//</editor-fold>
+///</editor-fold>
 
 /**
  * simple lua stack index to value pointer

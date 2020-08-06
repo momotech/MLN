@@ -4,10 +4,10 @@
 
 #include "databindengine.h"
 #include <string.h>
-#include "lauxlib.h"
+#include "mln_lauxlib.h"
 #include "utils.h"
 #include "LuaRPC.h"
-
+#include "argo_lua.h"
 
 #ifdef J_API_INFO
 
@@ -147,9 +147,9 @@ void DB_Close(lua_State *L) {
     list_traverse(list, _freeTraverse, L);
     list_free(list);
 }
-//</editor-fold>
+///</editor-fold>
 
-//<editor-fold desc="observable table">
+///<editor-fold desc="observable table">
 /**
  * 存储原虚拟机和新旧数据栈位置
  */
@@ -472,7 +472,7 @@ static void getObservableTable(lua_State *L, const char *key) {
     lua_getfield(L, -1, key);
     lua_remove(L, -2);
 }
-//</editor-fold>
+///</editor-fold>
 
 /**
  * 1、将key和虚拟机关联起来放入 key_observable 中
@@ -696,7 +696,7 @@ static void removeFlagInMetaTable(lua_State *target, const char *flag, int metaI
 
 
 
-//<editor-fold desc="instance free 操作">
+///<editor-fold desc="instance free 操作">
 /**
  * 1、查找被观察数据，key值可能需要拆分
  * 2、若查找到，通过lua rpc将数据复制到被观察虚拟机中，并设置值
@@ -732,7 +732,7 @@ void DB_Update(lua_State *L, const char *key, int valueIndex) {
     lua_pop(target, 2);
 }
 
-//<editor-fold desc="instance free 操作">
+///<editor-fold desc="instance free 操作">
 /**
  * 1、查找被观察数据，key值可能需要拆分
  * 2、若查找到，通过lua rpc将数据复制到被观察虚拟机中
@@ -905,7 +905,7 @@ void DB_Len(lua_State *L, const char *key) {
     lua_pop(target, 2);
 }
 
-//<editor-fold desc="instance free 操作">
+///<editor-fold desc="instance free 操作">
 /**
  * 释放map中key值内存
  */
@@ -953,7 +953,7 @@ static void freeInstance() {
         instance = NULL;
     }
 }
-//</editor-fold>
+///</editor-fold>
 
 int DataBindInit(D_malloc m) {
     if (instance)
@@ -1001,7 +1001,7 @@ int DataBindInit(D_malloc m) {
     return 0;
 }
 
-//<editor-fold desc="debug">
+///<editor-fold desc="debug">
 #ifdef J_API_INFO
 static int _logObservableMap(const void *key, const void *value, void *ud) {
     LOGI("%s : %p", (const char *)key, value);
@@ -1028,4 +1028,4 @@ static void logObserverMap(Map *map) {
     map_traverse(map, _logObserverMap, NULL);
 }
 #endif
-//</editor-fold>
+///</editor-fold>

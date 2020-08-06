@@ -6,7 +6,7 @@
 #define MMLUA4ANDROID_DATABINDENGINE_H
 
 #include <stdlib.h>
-#include "lua.h"
+#include "mln_lua.h"
 #include "map.h"
 #include "list.h"
 
@@ -24,7 +24,7 @@ void DB_Close(lua_State *);
 /**
  * 将lua虚拟机中某个table和key绑定
  * @param L 虚拟机
- * @param key
+ * @param key key
  * @param valueIndex table在虚拟机栈中位置
  */
 void DB_Bind(lua_State *L, const char *key, int valueIndex);

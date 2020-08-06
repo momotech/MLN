@@ -5,7 +5,7 @@
 #ifndef MMLUA4ANDROID_LUARPC_H
 #define MMLUA4ANDROID_LUARPC_H
 
-#include "lua.h"
+#include "mln_lua.h"
 
 #define RPC_OK 0
 #define RPC_MEM_ERROR 1

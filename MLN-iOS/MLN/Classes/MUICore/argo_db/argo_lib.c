@@ -3,9 +3,10 @@
 //
 
 #include "argo_lib.h"
-#include "lauxlib.h"
+#include "mln_lauxlib.h"
 #include "databindengine.h"
 #include "m_mem.h"
+#include "argo_lua.h"
 
 /**
  * 库名称，使用方法
@@ -33,7 +34,7 @@ static inline int checkType(lua_State *L, int index) {
     }
 }
 
-//<editor-fold desc="lua接口">
+///<-fold desc="lua接口">
 /**
  * params: string, table
  * 使用方法:
@@ -134,9 +135,9 @@ static int argo_len(lua_State *L) {
     DB_Len(L, key);
     return 1;
 }
-//</editor-fold>
+///</editor-fold>
 
-//<editor-fold desc="register">
+///<editor-fold desc="register">
 
 static const luaL_Reg libs[] = {
         {"bind", argo_bind},
@@ -167,4 +168,4 @@ void argo_preload(lua_State *L) {
 void argo_close(lua_State *L) {
     DB_Close(L);
 }
-//</editor-fold>
+///</editor-fold>

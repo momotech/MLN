@@ -5,7 +5,8 @@
 #include "utils.h"
 #include <stdarg.h>
 #include "m_mem.h"
-#include "mlog.h"
+//#include "mlog.h"
+#include <stdio.h>
 
 #define MIN_SIZE 400
 #define MAX_SIZE 1024

@@ -5,7 +5,7 @@
 #ifndef MMLUA4ANDROID_ARGO_LIB_H
 #define MMLUA4ANDROID_ARGO_LIB_H
 
-#include "lua.h"
+#include "mln_lua.h"
 /**
  * 为lua虚拟机注册Argo库
  * 将argo table返回到栈顶
