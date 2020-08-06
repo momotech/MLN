@@ -144,4 +144,23 @@
     }
     return info;
 }
+
+- (BOOL)mlnui_dataBinding_dirty {
+    NSNumber *n = objc_getAssociatedObject(self, _cmd);
+    return [n boolValue];
+}
+
+- (void)setMlnui_dataBinding_dirty:(BOOL)dirty {
+    objc_setAssociatedObject(self, @selector(mlnui_dataBinding_dirty), @(dirty), OBJC_ASSOCIATION_ASSIGN);
+}
+
+- (BOOL)mlnui_dataBinding_is_1DListSource {
+    NSNumber *n = objc_getAssociatedObject(self, _cmd);
+    return [n boolValue];
+}
+
+- (void)setMlnui_dataBinding_is_1DListSource:(BOOL)isList {
+    objc_setAssociatedObject(self, @selector(mlnui_dataBinding_is_1DListSource), @(isList), OBJC_ASSOCIATION_ASSIGN);
+}
+
 @end

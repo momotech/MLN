@@ -13,6 +13,7 @@
 #import "NSObject+MLNUIKVO.h"
 #import "NSObject+MLNUIDealloctor.h"
 #import "MLNUIExtScope.h"
+#import "MLNUIMainRunLoopObserver.h"
 
 //#define kArrayPlaceHolder @"_array_"
 
@@ -35,6 +36,10 @@
 
 @property (nonatomic, strong) NSMapTable *dataObserverMap;
 @property (nonatomic, strong) NSMapTable *arrayObserverMap;
+
+@property (nonatomic, strong) NSMapTable *dataCache;
+@property (nonatomic, strong) MLNUIMainRunLoopObserver *runloopObserver;
+
 @end
 
 @implementation MLNUIDataBinding
@@ -49,7 +54,24 @@
         self.listViewMap = [NSMapTable strongToWeakObjectsMapTable];
         self.dataObserverMap = [NSMapTable strongToStrongObjectsMapTable];
         self.arrayObserverMap = [NSMapTable strongToStrongObjectsMapTable];
-
+        self.dataCache = [NSMapTable strongToWeakObjectsMapTable];
+        
+        self.runloopObserver = [[MLNUIMainRunLoopObserver alloc] init];
+        @weakify(self);
+//        [self.runloopObserver beginForBeforeWaiting:0 repeats:YES callback:^{
+//            @strongify(self);
+//            if(!self) return;
+//            pthread_mutex_lock(&self->_lock);
+//            [self.dataCache removeAllObjects];
+//            pthread_mutex_unlock(&self->_lock);
+//        }];
+        [self.runloopObserver beginForActivity:kCFRunLoopEntry repeats:YES order:0 callback:^(CFRunLoopActivity activity) {
+            @strongify(self);
+            if(!self) return;
+            pthread_mutex_lock(&self->_lock);
+            [self.dataCache removeAllObjects];
+            pthread_mutex_unlock(&self->_lock);
+        }];
         LOCK_RECURSIVE_INIT();
         NSLog(@"%s",__FUNCTION__);
     }
@@ -58,6 +80,8 @@
 
 - (void)dealloc {
     NSLog(@"%s",__FUNCTION__);
+    [self.runloopObserver end];
+    LOCK_DESTROY();
 }
 
 #pragma mark - Public
@@ -192,10 +216,30 @@
     return [self dataForKeys:keys frontValue:NULL];
 }
 
+- (id)dataForKeyPath:(NSString *)keyPath userCache:(BOOL)useCache{
+    NSParameterAssert(keyPath);
+    
+    id obj;
+    if (useCache) {
+        obj = [self.dataCache objectForKey:keyPath];
+    }
+    if (!obj) {
+        obj = [self dataForKeyPath:keyPath];
+        if (obj) {
+            [self.dataCache setObject:obj forKey:keyPath];
+        }
+    }
+    return obj;
+}
+
 - (void)updateDataForKeyPath:(NSString *)keyPath value:(id)value {
     NSParameterAssert(keyPath);
     if(!keyPath) return;
-    
+    if (value) {
+        [self.dataCache setObject:value forKey:keyPath];
+    } else {
+        [self.dataCache removeObjectForKey:keyPath];
+    }
     NSArray *keys = [keyPath componentsSeparatedByString:@"."];
     [self updateDataForKeys:keys value:value];
 }
