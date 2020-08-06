@@ -20,6 +20,7 @@
 #import "NSObject+MLNUIReflect.h"
 #import "MLNUIMetamacros.h"
 #import "MLNUIBlock+LazyCall.h"
+#import "MLNUICollectionView.h"
 
 @implementation MLNUIDataBinding (MLNUIKit)
 #if 1
@@ -242,8 +243,11 @@
                 NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row - 1 inSection:section - 1];
                 [table.adapter tableView:table.adapter.targetTableView reloadRowsAtIndexPaths:@[indexPath]];
                 [table.adapter.targetTableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
-            } else {
-                
+            } else if([listView isKindOfClass:[MLNUICollectionView class]]){
+                MLNUICollectionView *collection = (MLNUICollectionView *)listView;
+                NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row - 1 inSection:section - 1];
+                [collection.adapter collectionView:collection.adapter.collectionView reloadItemsAtIndexPaths:@[indexPath]];
+                [collection.adapter.collectionView reloadItemsAtIndexPaths:@[indexPath]];
             }
         } keyPath:nk];
         obID = [dataBinding addMLNUIObserver:ob forKeyPath:nk];
