@@ -418,6 +418,9 @@ static int luaui_bind_cell (lua_State *L) {
     NSUInteger section = lua_tonumber(L, -3);
     NSUInteger row = lua_tonumber(L, -2);
     NSArray *paths = [luaCore toNativeObject:-1 error:NULL];
+    if (paths.count == 0) {
+        return 1;
+    }
     
     UIView *listView = [dataBind listViewForTag:nKey];
     if (!listView)  return 1;
