@@ -27,6 +27,7 @@ using namespace ANIMATOR_NAMESPACE;
 @property(readwrite, weak) id target;
 
 @property (nonatomic, assign) Animation *animation;
+@property (nonatomic, assign) BOOL animationPaused;
 
 @property (nonatomic, strong) NSString *innerKey;
 
@@ -93,12 +94,14 @@ using namespace ANIMATOR_NAMESPACE;
 }
 
 - (void)pause {
+    self.animationPaused = YES;
     if (self.animation) {
         self.animation->Pause(true);
     }
 }
 
 - (void)resume {
+    self.animationPaused = NO;
     if (self.animation) {
         self.animation->Pause(false);
     }
@@ -132,6 +135,9 @@ using namespace ANIMATOR_NAMESPACE;
         }
         if (self.repeatForever) {
             self.animation->SetRepeatForever(self.repeatForever.boolValue);
+        }
+        if (self.animationPaused) {
+            self.animation->Pause(true);
         }
     }
 }
@@ -496,7 +502,6 @@ typedef NS_ENUM(NSInteger) {
     if (!self.animation) {
         self.animation = new MultiAnimation(key.UTF8String);
     }
-    [super makeAnimation:key forObject:obj];
     
     MultiAnimation *animation = (MultiAnimation*)self.animation;
     std::vector<Animation *> animations;
@@ -509,6 +514,8 @@ typedef NS_ENUM(NSInteger) {
     } else {
         animation->RunSequentially(animations);
     }
+    
+    [super makeAnimation:key forObject:obj];
 }
 
 - (void)reset {

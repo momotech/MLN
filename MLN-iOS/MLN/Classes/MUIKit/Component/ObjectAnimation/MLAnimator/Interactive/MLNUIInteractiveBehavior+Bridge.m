@@ -23,6 +23,6 @@ LUAUI_EXPORT_VIEW_PROPERTY(touchBlock, "setLuaTouchBlock:","luaTouchBlock", MLNU
 LUAUI_EXPORT_VIEW_PROPERTY(targetView, "setTargetView:","targetView", MLNUIInteractiveBehavior)
 LUAUI_EXPORT_VIEW_PROPERTY(followEnable, "setFollowEnable:","followEnable", MLNUIInteractiveBehavior)
 
-LUAUI_EXPORT_VIEW_END(MLNUIInteractiveBehavior, InteractiveBehavior, NO, NULL, "initWithMLNUILuaCore:type:")
+LUAUI_EXPORT_VIEW_END(MLNUIInteractiveBehavior, InteractiveBehavior, NO, NULL, "initWithType:")
 
 @end

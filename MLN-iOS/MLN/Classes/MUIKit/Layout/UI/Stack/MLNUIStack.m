@@ -58,8 +58,6 @@
             lua_remove(L, 2);                 // caller | table
         }
     }];
-    
-    
 }
 
 LUAUI_EXPORT_VIEW_BEGIN(MLNUIStack)
