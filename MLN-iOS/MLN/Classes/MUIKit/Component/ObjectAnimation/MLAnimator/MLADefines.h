@@ -33,6 +33,7 @@ extern NSString * const kMLAViewRotationX;      // X旋转
 extern NSString * const kMLAViewRotationY;      // Y旋转
 
 extern NSString *const kMLAViewContentOffset; // UIScrollView及其子类contentOffset
+extern NSString *const kMLAViewTextColor; // MLNUILabel的文字颜色
 
 typedef NS_ENUM(NSInteger) {
     MLATimingFunctionDefault,

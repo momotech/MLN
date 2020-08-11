@@ -14,6 +14,7 @@
 #import "UIView+MLNUILayout.h"
 #import "MLNUIInteractiveBehavior.h"
 #import "MLAValueAnimation+Interactive.h"
+#import "MLNUILabel.h"
 
 @interface MLNUIObjectAnimation()
 
@@ -407,6 +408,8 @@
             return @(CGPointMake(1.0, 1.0));
         case MLNUIAnimationPropertyTypeContentOffset:
             return @(CGPointMake(0.0, 0.0));
+        case MLNUIAnimationPropertyTypeTextColor:
+            return [UIColor whiteColor];
         default:
             break;
     }
@@ -459,17 +462,18 @@
             return @(angle / 360.0 * M_PI * 2);
         }
             break;
-        case MLNUIAnimationPropertyTypeColor:
-        {
-            if ([velocity isKindOfClass:[UIColor class]])
-            {
+        case MLNUIAnimationPropertyTypeTextColor:
+        case MLNUIAnimationPropertyTypeColor: {
+            if ([velocity isKindOfClass:[UIColor class]]) {
                 return velocity;
             }
-            else if ([velocity isKindOfClass:[NSArray class]])
-            {
+            if ([velocity isKindOfClass:[NSArray class]]) {
                 NSArray *value = (NSArray *)velocity;
-                if (value.count == 1) {
-                    return value[0];
+                if (value.count == 4) {
+                    return [UIColor colorWithRed:[value[0] floatValue] green:[value[1] floatValue] blue:[value[2] floatValue] alpha:1.0];
+                }
+                if (value.count == 4) {
+                    return [UIColor colorWithRed:[value[0] floatValue] green:[value[1] floatValue] blue:[value[2] floatValue] alpha:[value[3] floatValue]];
                 }
             }
         }
@@ -538,6 +542,12 @@
                 MLNUIKitLuaAssert(NO, @"The ContentOffset animation type is only valid for ScrollView、TableView、ViewPager and CollectionView.");
             }
             return kMLAViewContentOffset;
+        }
+        case MLNUIAnimationPropertyTypeTextColor: {
+            if (![_targetView isKindOfClass:[MLNUILabel class]]) {
+                MLNUIKitLuaAssert(NO, @"The TextColor animation type is only valid for Label.");
+            }
+            return kMLAViewTextColor;
         }
         default:
             break;

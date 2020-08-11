@@ -88,6 +88,7 @@ typedef enum : NSInteger {
     MLNUIAnimationPropertyTypeRotationX,
     MLNUIAnimationPropertyTypeRotationY,
     MLNUIAnimationPropertyTypeContentOffset,
+    MLNUIAnimationPropertyTypeTextColor,
 } MLNUIAnimationPropertyType;
 
 
