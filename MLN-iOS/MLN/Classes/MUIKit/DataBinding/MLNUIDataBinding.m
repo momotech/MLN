@@ -543,17 +543,18 @@
     if(!frontKey) return nil;
     
     NSObject *obj;
-    @try {
+//    @try {
         LOCK();
         //    NSObject *obj = [self.dataMap objectForKey:firstKey];
         obj = [self.dataMap valueForKeyPath:frontKey];
         if(frontObject) *frontObject = self.dataMap;
-    } @catch (NSException *exception) {
-        NSString *log = [NSString stringWithFormat:@"%@ %s",exception,__FUNCTION__];
-        [self doErrorLog:log];
-    } @finally {
+        
+//    } @catch (NSException *exception) {
+//        NSString *log = [NSString stringWithFormat:@"%@ %s",exception,__FUNCTION__];
+//        [self doErrorLog:log];
+//    } @finally {
         UNLOCK();
-    }
+//    }
     
     BOOL(^checkKey)(NSString *key) = ^(NSString *key){
         for (NSString *k in self.listViewMap.keyEnumerator) {
