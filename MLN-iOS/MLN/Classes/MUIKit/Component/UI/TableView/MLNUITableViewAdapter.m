@@ -214,6 +214,9 @@
     }
     MLNUITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:reuseId forIndexPath:indexPath];
     cell.delegate = self;
+    
+//    NSLog(@">>>>>> cell %p row %zd",cell,indexPath.row);
+    
     [cell pushContentViewWithLuaCore:self.mlnui_luaCore];
     if (!cell.isInited) {
         [initCallback addLuaTableArgument:[cell getLuaTable]];
@@ -262,8 +265,11 @@
 {
     CGFloat height = CGFloatValueFromNumber([self.cachesManager layoutInfoWithIndexPath:indexPath]);
     if (height > 0) {
+//        NSLog(@">>>>>> height form cache, row %zd",indexPath.row);
         return height;
     }
+//    NSLog(@">>>>>> height, row %zd",indexPath.row);
+
     NSString *reuseId = [self reuseIdAt:indexPath];
     MLNUIBlock *reuseHeightForRowCallback = [self heightForRowCallbackByReuseId:reuseId];
     MLNUIKitLuaAssert(reuseHeightForRowCallback, @"The 'heightForCell' callback must not be nil!");
