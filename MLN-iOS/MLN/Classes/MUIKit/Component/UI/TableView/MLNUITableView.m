@@ -407,6 +407,7 @@
             _innerTableView.estimatedSectionFooterHeight = 0.f;
             _innerTableView.estimatedSectionHeaderHeight = 0.f;
         }
+        _innerTableView.estimatedRowHeight = 100;
         _innerTableView.separatorStyle = UITableViewCellSeparatorStyleNone;
         _innerTableView.backgroundColor = [UIColor clearColor];
         _innerTableView.containerView = self;
