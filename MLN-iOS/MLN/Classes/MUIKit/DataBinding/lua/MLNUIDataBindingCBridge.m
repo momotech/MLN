@@ -400,6 +400,26 @@ static int luaui_row_count (lua_State *L) {
     return 1;
 }
 
+
+static inline MLNUIKVOObserver *_getMLNUIKVOObserver(UIViewController *kitViewController, UIView *listView, NSString *nk, NSString *idKey) {
+    MLNUIKVOObserver *ob = [[MLNUIKVOObserver alloc] initWithViewController:kitViewController callback:^(NSString * _Nonnull keyPath, id  _Nonnull object, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
+        if ([listView isKindOfClass:[MLNUITableView class]]) {
+            MLNUITableView *table = (MLNUITableView *)listView;
+            NSIndexPath *indexPath = [[[listView mlnui_bindInfos] objectForKey:idKey] indexPath];
+            
+            [table.adapter tableView:table.adapter.targetTableView reloadRowsAtIndexPaths:@[indexPath]];
+            [table.adapter.targetTableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
+        } else if([listView isKindOfClass:[MLNUICollectionView class]]){
+            MLNUICollectionView *collection = (MLNUICollectionView *)listView;
+            NSIndexPath *indexPath = [[[listView mlnui_bindInfos] objectForKey:idKey] indexPath];
+            
+            [collection.adapter collectionView:collection.adapter.collectionView reloadItemsAtIndexPaths:@[indexPath]];
+            [collection.adapter.collectionView reloadItemsAtIndexPaths:@[indexPath]];
+        }
+    } keyPath:nk];
+    return ob;
+}
+
 static int luaui_bind_cell (lua_State *L) {
     mlnui_luaui_check_begin();
     mlnui_luaui_checkstring_rt(L, -4);
@@ -458,28 +478,68 @@ static int luaui_bind_cell (lua_State *L) {
     NSMutableArray *newPaths = paths.mutableCopy;
     [newPaths removeObjectsInArray:model.pathMap.allKeys];
     
+#if 0
     for (NSString *p in newPaths) {
         NSString *nk = [nKey stringByAppendingFormat:@".%zd.%zd.%@",section,row,p];
-        MLNUIKVOObserver *ob = [[MLNUIKVOObserver alloc] initWithViewController:kitViewController callback:^(NSString * _Nonnull keyPath, id  _Nonnull object, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
-            if ([listView isKindOfClass:[MLNUITableView class]]) {
-                MLNUITableView *table = (MLNUITableView *)listView;
-                NSIndexPath *indexPath = [[[listView mlnui_bindInfos] objectForKey:idKey] indexPath];
-                
-                [table.adapter tableView:table.adapter.targetTableView reloadRowsAtIndexPaths:@[indexPath]];
-                [table.adapter.targetTableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
-            } else if([listView isKindOfClass:[MLNUICollectionView class]]){
-                MLNUICollectionView *collection = (MLNUICollectionView *)listView;
-                NSIndexPath *indexPath = [[[listView mlnui_bindInfos] objectForKey:idKey] indexPath];
-                
-                [collection.adapter collectionView:collection.adapter.collectionView reloadItemsAtIndexPaths:@[indexPath]];
-                [collection.adapter.collectionView reloadItemsAtIndexPaths:@[indexPath]];
-            }
-        } keyPath:nk];
+        MLNUIKVOObserver *ob = _getMLNUIKVOObserver(kitViewController, listView, nk, idKey);
         NSString *obID = [dataBind addMLNUIObserver:ob forKeyPath:nk];
         if (obID) {
             [model.pathMap setObject:obID forKey:p];
         }
     }
+#else
+    for (NSString *p in newPaths) {
+        NSArray *ps = [p componentsSeparatedByString:@"."];
+        NSObject *frontObject = cellModel;
+        NSObject *currentObject = cellModel;
+//        NSArray *adjustedArray = nil; // 适配List的数据源可以是一维数组
+        
+        for (int i = 0; i < ps.count; i++) {
+            frontObject = currentObject;
+            NSString *sub = ps[i];
+//            adjustedArray = nil;
+            if ([frontObject isKindOfClass:[NSArray class]]) {
+                int idx = sub.intValue - 1;
+                if (idx >= 0 && idx < [(NSArray *)frontObject count]) {
+                    currentObject = [(NSArray *)frontObject objectAtIndex:idx];
+                }
+//                if (0 == idx) {
+//                    adjustedArray = (NSArray *)frontObject;
+//                }
+            } else {
+                /*
+                if (adjustedArray) {
+                    int idx = sub.intValue - 1;
+                    if (idx >= 0 && idx < adjustedArray.count) {
+                        currentObject = [adjustedArray objectAtIndex:idx];
+                    }
+                }
+                if (!currentObject) {
+                    currentObject = [frontObject valueForKey:sub];
+                }
+                 */
+                currentObject = [frontObject valueForKey:sub];
+            }
+        }
+        
+        MLNUIKVOObserver *ob = _getMLNUIKVOObserver(kitViewController, listView, nil, idKey);
+
+        NSString *obID = [[NSUUID UUID] UUIDString];
+        ob.obID = obID;
+        
+        if (![frontObject isKindOfClass:[NSArray class]]) {
+            [dataBind _realAddDataObserver:ob forObject:frontObject observerID:obID path:ps.lastObject];
+        }
+        
+        if ([currentObject isKindOfClass:[NSMutableArray class]]) {
+            [dataBind _realAddArrayObserver:ob forObject:currentObject observerID:obID keyPath:@""];
+        }
+        
+        if (obID) {
+            [model.pathMap setObject:obID forKey:p];
+        }
+    }
+#endif
     
     PCallDBEnd(__func__);
     TOCK("luaui_bindCell key %s section %zd row %zd",nKey.UTF8String, section, row);
