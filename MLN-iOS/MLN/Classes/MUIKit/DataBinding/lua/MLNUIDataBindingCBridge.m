@@ -421,12 +421,12 @@ static inline MLNUIKVOObserver *_getMLNUIKVOObserver(UIViewController *kitViewCo
 }
 
 static int luaui_bind_cell (lua_State *L) {
-    mlnui_luaui_check_begin();
-    mlnui_luaui_checkstring_rt(L, -4);
-    mlnui_luaui_checknumber_rt(L, -3);
-    mlnui_luaui_checknumber_rt(L, -2);
-    mlnui_luaui_checktable_rt(L, -1);
-    mlnui_luaui_check_end();
+//    mlnui_luaui_check_begin();
+//    mlnui_luaui_checkstring_rt(L, -4);
+//    mlnui_luaui_checknumber_rt(L, -3);
+//    mlnui_luaui_checknumber_rt(L, -2);
+//    mlnui_luaui_checktable_rt(L, -1);
+//    mlnui_luaui_check_end();
     PCallDBStart(__func__);
     TICK();
     
@@ -546,6 +546,38 @@ static int luaui_bind_cell (lua_State *L) {
     return 1;
 }
 
+static int luaui_get_cell_data(lua_State *L) {
+    PCallDBStart(__func__);
+    TICK();
+    
+    MLNUILuaCore *luaCore = MLNUI_LUA_CORE(L);
+    MLNUIDataBinding *dataBind = _mlnui_get_dataBinding(luaCore);
+    UIViewController<MLNUIDataBindingProtocol> *kitViewController = (UIViewController<MLNUIDataBindingProtocol> *)MLNUI_KIT_INSTANCE(luaCore).viewController;
+
+    NSString *nKey = [luaCore toString:-3 error:NULL];
+    NSUInteger section = lua_tonumber(L, -2);
+    NSUInteger row = lua_tonumber(L, -1);
+//    NSArray *paths = [luaCore toNativeObject:-1 error:NULL];
+    
+    UIView *listView = [dataBind listViewForTag:nKey];
+    if (!listView)  return 1;
+    
+    NSObject *cellModel;
+    NSArray *listArray = [dataBind dataForKeyPath:nKey userCache:YES];
+    if ([listArray mlnui_is2D]) {
+        NSArray *tmp = section <= listArray.count ? listArray[section - 1] : nil;
+        cellModel = row <= tmp.count ? tmp[row - 1] : nil;
+    } else {
+        cellModel = listArray[row - 1];
+    }
+    
+    NSObject *convertedObj = [cellModel mlnui_convertToLuaObject];
+    int nret = [luaCore pushNativeObject:convertedObj error:NULL];
+    PCallDBEnd(__func__);
+    TOCK("luaui_get_cell_data key %s section %zd row %zd",nKey.UTF8String, section, row);
+    return nret;
+}
+
 static int test_nop(lua_State *L) {
     return 1;
 }
@@ -567,6 +599,7 @@ LUAUI_NEW_EXPORT_GLOBAL_C_FUNC(bindListView, luaui_bind_listview, MLNUIDataBindi
 LUAUI_NEW_EXPORT_GLOBAL_C_FUNC(getSectionCount, luaui_section_count, MLNUIDataBindingCBridge)
 LUAUI_NEW_EXPORT_GLOBAL_C_FUNC(getRowCount, luaui_row_count, MLNUIDataBindingCBridge)
 LUAUI_NEW_EXPORT_GLOBAL_C_FUNC(bindCell, luaui_bind_cell, MLNUIDataBindingCBridge)
+LUAUI_NEW_EXPORT_GLOBAL_C_FUNC(getCellData, luaui_get_cell_data, MLNUIDataBindingCBridge)
 
 #ifdef DEBUG
 LUAUI_NEW_EXPORT_GLOBAL_C_FUNC(test_nop, test_nop, MLNUIDataBindingCBridge)
