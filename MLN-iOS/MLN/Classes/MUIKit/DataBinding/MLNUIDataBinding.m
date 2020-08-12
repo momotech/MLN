@@ -224,10 +224,14 @@
         obj = [self.dataCache objectForKey:keyPath];
     }
     if (!obj) {
+//        NSLog(@">>>> get new %@",keyPath);
+
         obj = [self dataForKeyPath:keyPath];
         if (obj) {
             [self.dataCache setObject:obj forKey:keyPath];
         }
+    } else {
+//        NSLog(@">>>> get hit cache %@",keyPath);
     }
     return obj;
 }
