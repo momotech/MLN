@@ -109,9 +109,13 @@ static BezierControlPoints staticControls[] = {
         t = MathUtil::TimingFunctionSolve(controlPoints, -factor, SOLVE_EPS(10));
         VectorRef newTo = VectorRef(Vector::new_vector(valueCount, fromVec->data()));
         for (int i = 0; i < valueCount; i++) {
-            newTo->data()[i] = 2 * fromVec->data()[i] + toVec->data()[i];
+            newTo->data()[i] = 2 * fromVec->data()[i] - toVec->data()[i];
         }
         MathUtil::InterpolateVector(valueCount, current->data(), fromVec->data(), newTo->data(), t);
+    }
+
+    if (multi >= 3.4 && [self.valueName isEqualToString:@"view.scale"]) {
+        multi = 3.4;
     }
     
     if (multi != 1) {
