@@ -108,6 +108,9 @@
             tagStr = [self.typeTags objectForKey:@(type)];
         }
         NSString *key = [NSString stringWithFormat:@"%zd_%@",type,tagStr];
+        if (self.startMaps[key] == nil) {
+            return;
+        }
         if (key) {
             float f = (CFAbsoluteTimeGetCurrent() - [self.startMaps[key] doubleValue]) * 1000;
             [self.startMaps removeObjectForKey:key];
