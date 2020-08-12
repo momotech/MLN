@@ -4317,6 +4317,13 @@
 			path = Waterfall;
 			sourceTree = "<group>";
 		};
+		00E911C824E2B774006614C4 /* New Group */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = "New Group";
+			sourceTree = "<group>";
+		};
 		0142480156ABAC083C8CF4A53F3C1090 /* CanvasAnimation */ = {
 			isa = PBXGroup;
 			children = (
@@ -7455,6 +7462,7 @@
 				426E4E1D9360E655129370AB315A5A6E /* MLNUITableViewAdapterProtocol.h */,
 				93E5D20741F1770AA3B5A17D25EA0A58 /* MLNUITableViewCell.h */,
 				624DC2A0FC345853605B0D14A588F81B /* MLNUITableViewCell.m */,
+				00E911C824E2B774006614C4 /* New Group */,
 				6580E56A448C01D1BDD17CB6E757CFEF /* MLNUITableViewCellSettingProtocol.h */,
 				170F8BC293DB1FC93F49DE117D93BA47 /* AutoFit */,
 			);

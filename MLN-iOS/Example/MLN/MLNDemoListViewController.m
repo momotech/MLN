@@ -112,6 +112,7 @@
                        @"MLNBindTestLayoutController",
                        @"MLNDataBindHotReload",
                        @"MLNPerformanceTestController",
+                       @"MLNKuaController",
                        ];
     }
     return _demoArray;
