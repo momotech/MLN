@@ -18,6 +18,15 @@ function _class:new()
     setmetatable(obj, self)
     self.__index = self
     obj.adapter = obj:initAdapter()
+    -- 初始化数据（懒加载时，防止未初始化数据）
+    obj.initFill = {}
+    -- 数据懒加载
+    obj.isLazy = false
+    obj.needLoad = false
+    -- 数据懒加载
+    obj.fillCellReuseId = nil
+    obj.fillCell = nil
+    obj.fillRow = nil
     return obj
 end
 
@@ -29,6 +38,26 @@ function _class:initAdapter()
         return 1
     end)
     return adapter
+end
+
+-- viewPager滚动停止，页面选中回调
+function _class:onPagerSelected(currentPage)
+    -- 真正执行懒加载数据模式，有可能是预加载，即self.fillRow~=currentPage
+    if self.fillCellReuseId ~= nil and self.fillCell ~= nil and self.isLazy and self.needLoad then
+        self.fillCellReuseId(self.fillCell, self.fillRow)
+        self.isLazy = false
+        self.needLoad = false
+        if self.initFill[self.fillRow] ~= nil and self.initFill[self.fillRow].init == false then
+            self.initFill[self.fillRow].init = true
+        end
+    end
+    -- 未初始化的进行初始化
+    if self.initFill[currentPage] ~= nil and self.initFill[currentPage].init == false then
+        local data = self.initFill[currentPage].data
+        data.dataFunction(data.dataCell, data.dataRow)
+        self.initFill[currentPage].init = true
+    end
+    return self
 end
 
 ---- Factory Method END
@@ -87,7 +116,21 @@ end
 --填充cell数据，根据复用ID
 function _class:fillCellDataByReuseId(reuseId, fillCell)
     self.adapter:fillCellDataByReuseId(reuseId, function(cell, section, row)
-        return fillCell(cell, row)
+        -- 搜集懒加载模式下，所有初始化数据（防止数据未加载）
+        if self.isLazy and self.initFill[row] == nil then
+            local data = { dataID = reuseId, dataRow = row, dataCell = cell, dataFunction = fillCell }
+            local initData = { init = false, data = data }
+            self.initFill[row] = initData
+        end
+        -- 是否懒加载，针对notifyDataSource
+        if self.isLazy then
+            self.needLoad = true
+            self.fillCell = cell
+            self.fillRow = row
+            self.fillCellReuseId = fillCell
+        else
+            return fillCell(cell, row)
+        end
     end)
     return self
 end

@@ -25,6 +25,7 @@ function _class:new()
     setmetatable(obj, self)
     --    self.__index = self
     obj.contentView = obj:initCollectionView()
+    obj.setScrollDirection = ScrollDirection.HORIZONTAL
     obj.layout = obj:initCollectionViewGridLayout()
     obj.itemSpace = 0
     obj.cellSize = window:width()
@@ -178,12 +179,18 @@ function _class:startAnim(duration)
         if self.selected ~= nil then
             self.selected(self.currentPage)
         end
+        -- 滚动结束回调给adapter
+        if self.adapterv.adapter ~=nil then
+            self.adapterv:onPagerSelected(self.currentPage);
+        end
     end)
     self.anim:start()
 end
 
 --- 翻页逻辑
 function _class:jumpPage(offDist)
+    -- 手动翻页的目前也打开懒加载模式
+    self:lazy(true)
     local off = self:offPage(offDist);
     self.nextPage = self.currentPage + off
     local positionX = self.position:x()
@@ -215,13 +222,11 @@ function _class:percent(pos)
     local percent
     local positionX = self.position:x()
     local positionY = self.position:y()
-    local correctPos
+    local correctPos = pos -- 不进行边界防抖动处理
     local off
     if self:isHorizontal() then
-        correctPos = self:correct(positionX, pos) -- 边界防抖动处理
         off = correctPos - positionX
     else
-        correctPos = self:correct(positionY, pos) -- 边界防抖动处理
         off = correctPos - positionY
     end
     if self.jumpType == self.JUMP_TYPE_GESTURE then
@@ -295,8 +300,14 @@ function _class:initSize()
 end
 
 function _class:isHorizontal()
-    local direction = self.contentView:scrollDirection()
-    return direction == ScrollDirection.HORIZONTAL
+    return self.setScrollDirection == ScrollDirection.HORIZONTAL
+end
+
+-- 设置数据是否开启懒加载
+function _class:lazy(isLy)
+    if self.adapterv ~= nil then
+        self.adapterv.isLazy = isLy
+    end
 end
 
 --- Factory Method END
@@ -339,6 +350,8 @@ end
 
 --- 滚动到具体页
 function _class:scrollToPage(pageIndex, duration)
+    -- 代码跳转的开启懒加载模式
+    self:lazy(true)
     self.jumpType = self.JUMP_TYPE_INTERFACE
     self.nextPage = pageIndex
     if self:isHorizontal() then
@@ -387,10 +400,11 @@ end
 --- 设置/获取滚动方向
 function _class:scrollDirection(direction)
     if direction ~= nil then
+        self.setScrollDirection = direction
         self.contentView:scrollDirection(direction)
         return self
     else
-        return self.contentView:scrollDirection()
+        return self.setScrollDirection
     end
 end
 

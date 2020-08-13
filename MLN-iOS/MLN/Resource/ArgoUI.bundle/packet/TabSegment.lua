@@ -22,35 +22,37 @@ _class._type = 'ui'
 --- @public
 ---
 function TabSegment(texts, items, progressBar)
-    if not texts and not items then
-        error("The texts and items can not be nil together", 2)
-    end
     local obj = {}
     setmetatable(obj, _class)
-    if not items then
-        items = obj:_defaultItems(texts)
+    if texts or items or progressBar then
+        obj:setup(texts, items, progressBar)
     end
-    obj._progressBar = progressBar
-    obj:_defaultAnimation()
-    obj:_setupUI(items)
     return obj
 end
 
 function _class:new(texts)
     local obj = {}
-    setmetatable(obj, self)
-    obj:_defaultAnimation()
-    obj:_setupUI(obj:_defaultItems(texts))
-    return obj
+    setmetatable(obj, _class)
+    return obj:setup(texts, nil, nil)
 end
 
 function _class:create(items, progressBar)
     local obj = {}
-    setmetatable(obj, self)
-    obj._progressBar = progressBar
-    obj:_defaultAnimation()
-    obj:_setupUI(items)
-    return obj
+    setmetatable(obj, _class)
+    return obj:setup(nil, items, progressBar)
+end
+
+function _class:setup(texts, items, progressBar)
+    if not texts and not items then
+        error("The texts and items can not be nil together", 2)
+    end
+    if not items then
+        items = self:_defaultItems(texts)
+    end
+    self._progressBar = progressBar
+    self:_defaultAnimation()
+    self:_setupUI(items)
+    return self
 end
 
 function _class:setAnimation(type, fromValue, toValue)
@@ -103,6 +105,10 @@ end
 function _class:_setupUI(items)
     if not items or #items == 0 then
         error("The items can not be nil when init MLNUITabSegment", 2)
+    end
+    if self.contentView then
+        self.contentView:removeFromSuper()
+        self.contentView = nil
     end
     local scrollView = ScrollView(true):showsHorizontalScrollIndicator(false):height(50)
     local container = VStack():basis(1):crossSelf(CrossAxis.STRETCH)
@@ -161,54 +167,59 @@ function _class:_executeProgressBarAnimation(fromIndex, toIndex, progress, autoA
     local toItem = self._subviews[toIndex]
     if not toItem then return end
 
-    local anim = self._animCache[self._progressBar]
-    if not anim then
-        anim = ObjectAnimation(AnimProperty.PositionX, self._progressBar)
-        self._animCache[self._progressBar] = anim
+    local anims = self._animCache[self._progressBar]
+
+    if not self._doingFromIndex  then self._doingFromIndex = fromIndex end
+    if not self._doingToIndex then self._doingToIndex = toIndex end
+    if self._doingFromIndex ~= fromIndex or self._doingToIndex ~= toIndex then
+        anims = nil --should recreate animation
     end
-    anim:stop() --must stop previous animation
 
-    local fromValue = fromItem and (fromItem:centerX() - self._progressBarWidth / 2) or 0
-    local toValue = toItem:centerX() - self._progressBarWidth / 2
+    if not anims then
+        local posXAnim = ObjectAnimation(AnimProperty.PositionX, self._progressBar)
+        local fromValue = fromItem and (fromItem:centerX() - self._progressBarWidth / 2) or 0
+        local toValue = toItem:centerX() - self._progressBarWidth / 2
+        posXAnim:from(fromValue)
+        posXAnim:to(toValue)
+        posXAnim:duration(self._autoAnimTime)
+        posXAnim:finishBlock(function()
+            self._animCache[self._progressBar] = nil --下次重新创建动画
+        end)
 
-    anim:from(fromValue)
-    anim:to(toValue)
+        local widthAnimSet = AnimatorSet()
+        local widthAnim1 = ObjectAnimation(AnimProperty.ScaleX, self._progressBar)
+        local offset = fromItem and math.abs((toItem:centerX() - fromItem:centerX()) / (math.abs(toIndex - fromIndex) + 2)) or 0
+        local maxWidth = 10 + offset  --10 is initial width
+        widthAnim1:from(1)
+        widthAnim1:to(maxWidth / 10)
+        widthAnim1:duration(self._autoAnimTime / 2)
+
+        local widthAnim2 = ObjectAnimation(AnimProperty.ScaleX, self._progressBar)
+        widthAnim2:from(maxWidth / 10)
+        widthAnim2:to(1)
+        widthAnim2:duration(self._autoAnimTime / 2)
+
+        widthAnimSet:sequentially{widthAnim1, widthAnim2}
+        widthAnimSet:finishBlock(function(_)
+            self._animCache[self._progressBar] = nil --下次重新创建动画
+        end)
+
+        anims = {posXAnim, widthAnimSet}
+        self._animCache[self._progressBar] = anims
+    end
+
+    local posXAnim, widthAnimSet = anims[1], anims[2]
 
     if autoAnim then
-        anim:duration(self._autoAnimTime)
-        anim:start()
-        self:_startProgressTimer(fromIndex, toIndex, fromItem, toItem) --通过定时器来驱动进度条width动画
+        posXAnim:start()
+        widthAnimSet:start()
     else
-        anim:update(progress)
-        self:_updateProgressBarWidth(fromIndex, toIndex, fromItem, toItem, progress)
-    end
-end
-
-function _class:_startProgressTimer(fromIndex, toIndex, fromItem, toItem)
-    local timer = self._timer
-    if not timer then
-        timer = Timer():interval(1/60.0)
-        self._timer = timer
-    end
-    local progress = 0
-    timer:start(function ()
-        progress = progress + 0.08--精度值
-        if progress >= 1.0 then
-            progress = 1.0
-            timer:stop()
+        posXAnim:update(progress)
+        widthAnimSet:update(progress)
+        if progress >= 1 then
+            self._animCache[self._progressBar] = nil
         end
-        self:_updateProgressBarWidth(fromIndex, toIndex, fromItem, toItem, progress)
-    end)
-end
-
-function _class:_updateProgressBarWidth(fromIndex, toIndex, fromItem, toItem, progress)
-    local scale = math.abs(1 - progress * 2) --[1 -> 0 -> 1]
-    local offset = 0
-    if fromItem then
-        offset = math.abs((toItem:centerX() - fromItem:centerX()) / (math.abs(toIndex - fromIndex) + 2))
     end
-    local width = 10 + offset * (1 - scale) --10 is initial width
-    self._progressBar:viewWidth(width)
 end
 
 function _class:_executeScrollViewOffsetAnimation(toIndex, progress, autoAnim)
