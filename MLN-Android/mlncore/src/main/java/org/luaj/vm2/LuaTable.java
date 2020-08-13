@@ -28,6 +28,8 @@ import java.util.Iterator;
 public class LuaTable extends NLuaValue implements Iterable {
     private static final Entrys EMPTY_ENTRYS = new Entrys(empty(), empty());
 
+    private boolean inTraverse = false;
+
     /**
      * 由{@link Globals}继承
      */
@@ -212,6 +214,8 @@ public class LuaTable extends NLuaValue implements Iterable {
 
     /**
      * 直接使用{@link #newEntry()}获取所有key value，并获取长度
+     * 若table有hash部分，推荐通过{@link #iterator()}取出数据后计算长度
+     * 若想读取array部分长度，使用{@link #getn()}
      */
     @Deprecated
     public final int size() {
@@ -219,9 +223,9 @@ public class LuaTable extends NLuaValue implements Iterable {
     }
 
     /**
-     * 获取table的长度
-     * table.getn(table)
-     * 长度不一定是table的真实长度
+     * 获取table数组部分的长度 = table.getn(table)
+     * 若数组部分中间有nil，则长度不是真实长度
+     * eg: {1,2,nil,4,5} 长度为2
      * @return 长度
      */
     public final int getn() {
@@ -233,7 +237,10 @@ public class LuaTable extends NLuaValue implements Iterable {
      * 遍历table，一次性将table中key value全部取出来，并放入{@link Entrys}中
      * 不会返回Null
      * @see Entrys
+     * Deprecated 性能很低
+     * use {@link #iterator()}
      */
+    @Deprecated
     public final Entrys newEntry() {
         if (!checkValid())
             return EMPTY_ENTRYS;
@@ -262,7 +269,8 @@ public class LuaTable extends NLuaValue implements Iterable {
     public final boolean startTraverseTable() {
         if (!checkValid())
             return false;
-        return LuaCApi._startTraverseTable(globals.L_State, nativeGlobalKey);
+        inTraverse = LuaCApi._startTraverseTable(globals.L_State, nativeGlobalKey);
+        return inTraverse;
     }
 
     /**
@@ -272,7 +280,9 @@ public class LuaTable extends NLuaValue implements Iterable {
      * @return 如果不存在，返回null
      */
     public final LuaValue[] next() {
-        return LuaCApi._nextEntry(globals.L_State, this == globals);
+        if (inTraverse)
+            return LuaCApi._nextEntry(globals.L_State, this == globals);
+        return null;
     }
 
     /**
@@ -280,7 +290,10 @@ public class LuaTable extends NLuaValue implements Iterable {
      * 若{@link #startTraverseTable}返回true，此方法必须调用
      */
     public final void endTraverseTable() {
-        LuaCApi._endTraverseTable(globals.L_State);
+        if (inTraverse) {
+            LuaCApi._endTraverseTable(globals.L_State);
+            inTraverse = false;
+        }
     }
 
     /**
@@ -306,6 +319,7 @@ public class LuaTable extends NLuaValue implements Iterable {
             public boolean hasNext() {
                 LuaValue[] next = LuaTable.this.next();
                 if (next == null) {
+                    endTraverseTable();
                     return false;
                 }
                 kv = new KV(next[0], next[1]);

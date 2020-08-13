@@ -1,0 +1,19 @@
+*.iml
+.gradle
+local.properties
+/.idea
+.DS_Store
+/build
+
+# Generated files
+bin/
+gen/
+out/
+
+# Gradle files
+.gradle/
+build/
+.vscode/
+objs/
+*.a
+*.o

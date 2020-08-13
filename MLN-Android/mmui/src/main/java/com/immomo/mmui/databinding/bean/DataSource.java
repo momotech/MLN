@@ -13,7 +13,11 @@ package com.immomo.mmui.databinding.bean;
 
 import com.immomo.mmui.ud.UDView;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -23,6 +27,7 @@ import java.util.Map;
  * Date: 2020-05-28 12:22
  */
 public class DataSource {
+    private static final int CAPACITY = 20;
 
     /**
      * 数据源(key: tag, Object: 对应的数据源实例)
@@ -32,7 +37,14 @@ public class DataSource {
     /**
      * 与listView绑定的keys
      */
-    private Map<String, UDView> listKeys;
+    private Map<String, UDView> listViews;
+
+
+
+    /**
+     * listView已经绑定的Cell的属性
+     */
+    private Map<String,List<BindCell>> bindCellKvs;
 
     /**
      * key为watch添加的IPropertyCallback的hashCode
@@ -42,7 +54,7 @@ public class DataSource {
 
     public DataSource() {
         keySource = new ObservableMap<>();
-        listKeys = new HashMap<>();
+        listViews = new HashMap<>();
     }
 
     public ObservableMap<String, Object> getSource() {
@@ -59,9 +71,11 @@ public class DataSource {
      * @return
      */
     public String getListKey(String key) {
-        if(listKeys != null) {
-            for(String listKey: listKeys.keySet()) {
-                if(key.startsWith(listKey)) {
+        if(listViews != null) {
+            List<String> keyList = new ArrayList<>(listViews.keySet());
+            Collections.sort(keyList,new SortByLengthComparator());
+            for(String listKey: keyList) {
+                if(key.startsWith(listKey) ) {
                     return listKey;
                 }
             }
@@ -87,10 +101,10 @@ public class DataSource {
      * @param listKey
      */
     public void addListKey(String listKey,UDView listView) {
-        if(listKeys ==null) {
-            listKeys = new HashMap<>();
+        if(listViews ==null) {
+            listViews = new HashMap<>();
         }
-        listKeys.put(listKey,listView);
+        listViews.put(listKey,listView);
     }
 
 
@@ -110,7 +124,7 @@ public class DataSource {
      * @return
      */
     public UDView getListView(String tag) {
-        return listKeys.get(tag);
+        return listViews.get(tag);
     }
 
     /**
@@ -132,9 +146,70 @@ public class DataSource {
      */
     public void addCallbackId(String callBackId, String tag) {
         if(callBackKeys ==null) {
-            callBackKeys = new HashMap<>();
+            callBackKeys = new HashMap<>(CAPACITY);
         }
         callBackKeys.put(callBackId,tag);
+    }
+
+
+    /**
+     * 添加bindCell
+     * @param key
+     * @param bindCell
+     */
+    public void addBindCell(String key,BindCell bindCell) {
+        if(bindCellKvs == null) {
+            bindCellKvs = new HashMap<>();
+        }
+
+        List bindCells = bindCellKvs.get(key);
+
+        if(bindCells == null) {
+            bindCells = new ArrayList<>();
+            bindCells.add(bindCell);
+            bindCellKvs.put(key,bindCells);
+        }
+
+        if(!bindCells.contains(bindCell)) {
+            bindCells.add(bindCell);
+        }
+    }
+
+
+    /**
+     * 是否已经绑定过Cell
+     * @param key
+     * @param bindCell
+     * @return
+     */
+    public boolean isContainBindCell(String key,BindCell bindCell) {
+        if(bindCellKvs ==null) {
+            return false;
+        }
+
+        List bindCells = bindCellKvs.get(key);
+        if(bindCells == null) {
+            return false;
+        }
+        if(!bindCells.contains(bindCell)) {
+            return false;
+        }
+        return true;
+    }
+
+
+    public static  class SortByLengthComparator implements Comparator<String> {
+
+        @Override
+        public int compare(String var1, String var2) {
+            if (var1.length() > var2.length()) {
+                return -1;
+            } else if (var1.length() == var2.length()) {
+                return 0;
+            } else {
+                return 1;
+            }
+        }
     }
 
 }

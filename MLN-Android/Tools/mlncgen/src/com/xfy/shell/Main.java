@@ -1,0 +1,118 @@
+/**
+ * Created by MomoLuaNative.
+ * Copyright (c) 2020, Momo Group. All rights reserved.
+ *
+ * This source code is licensed under the MIT.
+ * For the full copyright and license information,please view the LICENSE file in the root directory of this source tree.
+ */
+package com.xfy.shell;
+
+import java.io.File;
+
+public class Main {
+
+    private static final String IN_PATH = "-in";
+    private static final String OUT_PATH = "-out";
+    private static final String OUT_NAME = "-name";
+
+    private static final String MODULE = "-module";
+    private static final String CLASS_NAME = "-class";
+    private static final String JNI_NAME = "-jni";
+
+    private static final String CALLBACK = "-callback";
+
+    private static final String[] keys = {
+            IN_PATH, OUT_PATH, OUT_NAME, MODULE, CLASS_NAME, JNI_NAME
+    };
+
+    private static final String[] boolKeys = {
+            CALLBACK
+    };
+
+    private static String echoUsage() {
+        return "usage: java -jar mlncgen.jar <options> [options]\n"+
+                "-in: 输入文件（必须，或使用module+class代替）\n" +
+                "-module: 模块名称\n" +
+                "-class: java全类名称\n" +
+                "-out: 输出文件路径（必须，或使用module+jni代替）\n" +
+                "-jni: c文件输出模块\n" +
+                "-name: 输出文件名称（可选）\n" +
+                "-callback: 生成fast callback" +
+                "说明: userdata必须继承LuaUserdata，且bridge方法必须都非静态方法，并需要增加@LuaApiUsed注解;\n"+
+                "\t静态bridge中所有bridge方法必须是静态方法，并需要增加@LuaApiUsed注解;\n" +
+                "\tcallback中必须有native方法，且native方法参数至少3个";
+    }
+
+    private static final String TestDir = "/Users/XiongFangyu/Desktop/MMLua4Android/mmui/src/main/java/com/immomo/mmui/databinding";
+
+    public static void main(String[] args) throws Exception {
+//        testParse("/Users/XiongFangyu/Desktop/MMLua4Android/mmui/src/main/java/com/immomo/mmui/ud/anim/InteractiveBehaviorCallback.java");
+//        autoGenerate("/Users/XiongFangyu/Downloads/LTCDataBinding.java", "/Users/XiongFangyu/Downloads", "temp.c");
+//        autoGenerateCallback(TestDir + "/DataBindingCallback.java", TestDir, "temp.c");
+
+        mainGenerate(args);
+    }
+
+    private static void mainGenerate(String[] args) throws Exception {
+        ShellParams shellParams = new ShellParams(boolKeys, keys, args);
+        String javaFile = shellParams.getValue(IN_PATH);
+        String outPath = shellParams.getValue(OUT_PATH);
+        String fileName = shellParams.getValue(OUT_NAME);
+        if (fileName == null) {
+            fileName = "temp.c";
+        }
+        if (javaFile == null) {
+            try {
+                javaFile = FileFinder.findByModuleClass(shellParams.getValue(MODULE), shellParams.getValue(CLASS_NAME));
+            } catch (Exception e) {
+                throw new Exception(e.getMessage() + "\n" + echoUsage());
+            }
+        }
+        if (outPath == null) {
+            try {
+                outPath = FileFinder.findByModuleJni(shellParams.getValue(MODULE), shellParams.getValue(JNI_NAME));
+            } catch (Exception e) {
+                throw new Exception(e.getMessage() + "\n" + echoUsage());
+            }
+        }
+
+        if (shellParams.containKey(CALLBACK)) {
+            autoGenerateCallback(javaFile, outPath, fileName);
+        } else {
+            autoGenerate(javaFile, outPath, fileName);
+        }
+        File f = new File(outPath, fileName);
+        System.out.println("generate success! " + f);
+    }
+
+    private static void autoGenerate(String javaFile, String outPath, String fileName) throws Exception {
+        byte[] data = FileUtils.readBytes(new File(javaFile));
+        String content = ClearCommentUtils.clearComment(new String(data));
+        Parser p = new Parser(content);
+        String cn = p.getClassName();
+        if (cn == null || cn.isEmpty()) {
+            throw new Exception("class name is empty!");
+        }
+        NativeGenerator g = new NativeGenerator(p);
+        FileUtils.writeFile(new File(outPath , fileName), g.toString().getBytes());
+    }
+
+    private static void autoGenerateCallback(String javaFile, String outPath, String fileName) throws Exception {
+        byte[] data = FileUtils.readBytes(new File(javaFile));
+        String content = ClearCommentUtils.clearComment(new String(data));
+        Parser p = new Parser(content);
+        String cn = p.getClassName();
+        if (cn == null || cn.isEmpty()) {
+            throw new Exception("class name is empty!");
+        }
+        NativeCallbackGenerator g = new NativeCallbackGenerator(p);
+        FileUtils.writeFile(new File(outPath, fileName), g.toString().getBytes());
+    }
+
+    private static void testParse(String javaFile) throws Exception {
+        byte[] data = FileUtils.readBytes(new File(javaFile));
+        String content = ClearCommentUtils.clearComment(new String(data));
+        Parser p = new Parser(content);
+        System.out.println(p.toString());
+    }
+}

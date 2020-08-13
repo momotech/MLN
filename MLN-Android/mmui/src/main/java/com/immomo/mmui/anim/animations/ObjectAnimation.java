@@ -19,8 +19,8 @@ public class ObjectAnimation extends ValueAnimation {
 
     private TimingFunction timingFunction = TimingFunction.LINEAR;
 
-    public ObjectAnimation(View targetView, String propertyName) {
-        super(targetView, propertyName);
+    public ObjectAnimation(View targetView, int animProperty) {
+        super(targetView, animProperty);
     }
 
     @Override

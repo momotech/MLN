@@ -288,7 +288,15 @@ public final class Globals extends LuaTable {
     /**
      * 判断平台是否是32位平台
      */
+    @Deprecated
     public static boolean isIs32bit() {
+        return is32bit;
+    }
+
+    /**
+     * 判断平台是否是32位平台
+     */
+    public static boolean is32bit() {
         return is32bit;
     }
 
@@ -1080,6 +1088,21 @@ public final class Globals extends LuaTable {
     public final LuaValue[] dump() {
         checkDestroy();
         return LuaCApi._dumpStack(L_State);
+    }
+
+    /**
+     * 获取Lua调用栈
+     */
+    public final String luaTraceBack() {
+        checkDestroy();
+        return LuaCApi._traceback(L_State);
+    }
+
+    /**
+     * 判断当前是否在lua函数调用过程中
+     */
+    public final boolean isInLuaFunction() {
+        return state == LUA_CALLING || calledFunction > 0;
     }
 
     /**

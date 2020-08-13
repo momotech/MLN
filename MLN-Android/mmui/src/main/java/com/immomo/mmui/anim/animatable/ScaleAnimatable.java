@@ -9,23 +9,45 @@ package com.immomo.mmui.anim.animatable;
 
 import android.view.View;
 
-import com.immomo.mmui.anim.base.PropertyName;
+import com.immomo.mmui.anim.base.AnimatableFactory;
 
 
 public class ScaleAnimatable extends Animatable {
-    public ScaleAnimatable(String propertyName) {
-        super(propertyName);
-    }
+    private static final float MAX = 3.4f;
+    private static final float[] max = {
+            MAX, MAX
+    };
+    /*private static final float[] min = {
+            0, 0
+    };*/
 
     @Override
     public void writeValue(final View view, final float[] upDateValues) {
         view.post(new Runnable() {
             @Override
             public void run() {
-                view.setScaleX(upDateValues[0] > 3.4 ? 1 : upDateValues[0]);
-                view.setScaleY(upDateValues[1] > 3.4 ? 1 : upDateValues[1]);
+                view.setScaleX(Math.min(upDateValues[0], MAX));
+                view.setScaleY(Math.min(upDateValues[1], MAX));
             }
         });
+    }
+
+    /**
+     * 获取动画要求的最大值
+     * @return null表示无限制 {@link Float#NaN}表示无限制
+     *          null = {Float.NaN, Float.NaN ...}
+     */
+    public float[] getMaxValues() {
+        return max;
+    }
+
+    /**
+     * 获取动画要求的最小值
+     * @return null表示无限制 {@link Float#NaN}表示无限制
+     *          null = {Float.NaN, Float.NaN ...}
+     */
+    public float[] getMinValues() {
+        return null;
     }
 
     @Override
@@ -41,6 +63,6 @@ public class ScaleAnimatable extends Animatable {
 
     @Override
     public float getThreshold() {
-        return PropertyName.THRESHOLD_SCALE;
+        return AnimatableFactory.THRESHOLD_SCALE;
     }
 }

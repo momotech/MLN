@@ -46,6 +46,7 @@ jlong jni_createLState(JNIEnv *env, jobject jobj, jboolean debug);
 void jni_openDebug(JNIEnv *env, jobject jobj, jlong L);
 void jni_close(JNIEnv *env, jobject jobj, jlong L_state_pointer);
 jobjectArray jni_dumpStack(JNIEnv *env, jobject jobj, jlong L);
+jstring jni_traceback(JNIEnv *env, jobject jobj, jlong L);
 void jni_lgc(JNIEnv *env, jobject jobj, jlong L);
 void jni_callMethod(JNIEnv * env, jobject jobj, jlong L, jlong method, jlong arg);
 
@@ -75,6 +76,7 @@ static JNINativeMethod jni_methods[] = {
     {"_setSoPath", "(J" STRING_CLASS ")V", (void *)jni_setSoPath},
     {"_close", "(J)V", (void *)jni_close},
     {"_dumpStack", "(J)[" LUAVALUE_CLASS, (void *)jni_dumpStack},
+    {"_traceback", "(J)" STRING_CLASS, (void *)jni_traceback},
     {"_removeNativeValue", "(JJI)I", (void *)jni_removeNativeValue},
     {"_hasNativeValue", "(JJI)Z", (void *)jni_hasNativeValue},
     {"_lgc", "(J)V", (void *)jni_lgc},

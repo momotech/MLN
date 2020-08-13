@@ -256,6 +256,16 @@ public class HotReloadServer implements IHotReloadServer {
         }
     }
 
+    @Override
+    public void setSerial(String serial) {
+        PBCommandFactory.Serial = serial;
+    }
+
+    @Override
+    public String getSerial() {
+        return PBCommandFactory.Serial;
+    }
+
     //
     //    ---------- usb client
     //

@@ -27,6 +27,7 @@ import com.immomo.mmui.constants.PositionType;
 import com.immomo.mmui.constants.Wrap;
 import com.immomo.mmui.databinding.LTCDataBinding;
 import com.immomo.mmui.globals.UDLuaView;
+import com.immomo.mmui.sbridge.SMMUI;
 import com.immomo.mmui.ud.UDNodeGroup;
 import com.immomo.mmui.ud.SIPageLink;
 import com.immomo.mmui.ud.UDCanvasView;
@@ -47,13 +48,13 @@ import com.immomo.mmui.ud.UDVStack;
 import com.immomo.mmui.ud.UDView;
 import com.immomo.mmui.ud.UDViewGroup;
 import com.immomo.mmui.ud.UDViewPager;
+import com.immomo.mmui.ud.anim.InteractiveBehavior;
 import com.immomo.mmui.ud.anim.InteractiveDirection;
 import com.immomo.mmui.ud.anim.InteractiveType;
 import com.immomo.mmui.ud.anim.TouchType;
 import com.immomo.mmui.ud.anim.UDAnimation;
 import com.immomo.mmui.ud.anim.UDAnimatorSet;
 import com.immomo.mmui.ud.anim.UDBaseAnimation;
-import com.immomo.mmui.ud.anim.UDInteractiveBehavior;
 import com.immomo.mmui.ud.constants.AnimProperty;
 import com.immomo.mmui.ud.constants.Timing;
 import com.immomo.mmui.ud.recycler.UDBaseNeedHeightAdapter;
@@ -91,6 +92,7 @@ public class MMUIEngine {
         otherLibs.put(YOGA_LIB, false);
     }
 
+    /// 单独实例，和luaview不冲突
     public static MMUIRegister singleRegister;
 
     static MMUIReloadButtonCreator reloadButtonCreator = new MMUIReloadButtonCreatorImpl();
@@ -112,13 +114,13 @@ public class MMUIEngine {
 
         registerMMUI(registerUD());
         registerMMUI(registerTools());
-        registerMMUI(registerUD());
-        registerMMUI(registerTools());
         registerMMUIEnum(registerConstants());
         registerStaticClass(registerStaticClass());
         registerCovert(registerCovertClass());
         registerSingleInstance(registerSingleInstance());
         registerNewStaticClass(registerNewStaticClass());
+
+        MLSEngine.singleRegister.registerStaticBridge(SMMUI.LUA_CLASS_NAME, SMMUI.class);
 
         init = true;
     }
@@ -255,7 +257,6 @@ public class MMUIEngine {
                 Register.newUDHolderWithLuaClass(UDBaseAnimation.LUA_CLASS_NAME, UDBaseAnimation.class, false),
                 Register.newUDHolderWithLuaClass(UDAnimation.LUA_CLASS_NAME, UDAnimation.class, false),
                 Register.newUDHolderWithLuaClass(UDAnimatorSet.LUA_CLASS_NAME, UDAnimatorSet.class, false),
-                Register.newUDHolderWithLuaClass(UDInteractiveBehavior.LUA_CLASS_NAME, UDInteractiveBehavior.class, false),
         };
     }
 
@@ -282,7 +283,8 @@ public class MMUIEngine {
     }
     private static Register.NewStaticHolder[] registerNewStaticClass() {
         return new Register.NewStaticHolder[] {
-                new Register.NewStaticHolder(LTCDataBinding.LUA_CLASS_NAME, LTCDataBinding.class)
+                new Register.NewStaticHolder(LTCDataBinding.LUA_CLASS_NAME, LTCDataBinding.class),
+                new Register.NewStaticHolder(InteractiveBehavior.LUA_CLASS_NAME, InteractiveBehavior.class)
         };
     }
 
@@ -293,7 +295,6 @@ public class MMUIEngine {
                 new CHolder(UDBaseAnimation.class),
                 new CHolder(UDAnimation.class),
                 new CHolder(UDAnimatorSet.class),
-                new CHolder(UDInteractiveBehavior.class),
         };
     }
 

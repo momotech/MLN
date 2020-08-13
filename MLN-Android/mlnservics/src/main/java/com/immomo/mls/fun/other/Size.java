@@ -40,7 +40,7 @@ public class Size {
     }
 
     public float getWidth() {
-        return (int) width;
+        return width;
     }
 
     public void setWidth(float width) {
@@ -48,7 +48,7 @@ public class Size {
     }
 
     public float getHeight() {
-        return (int) height;
+        return height;
     }
 
     public void setHeight(float height) {

@@ -31,11 +31,16 @@ public abstract class UDBaseAnimation implements AnimationListener {
     private Boolean repeatForever;
     private Boolean autoReverses;
 
-    private LVCallback startCallback;
-    private LVCallback pauseCallback;
-    private LVCallback resumeCallback;
+    @LuaBridge(alias = "startBlock")
+    protected LVCallback startCallback;
+    @LuaBridge(alias = "pauseBlock")
+    protected LVCallback pauseCallback;
+    @LuaBridge(alias = "resumeBlock")
+    protected LVCallback resumeCallback;
+    @LuaBridge(alias = "repeatBlock")
     protected LVCallback repeatCallback;
-    private LVCallback stopCallback;
+    @LuaBridge(alias = "finishBlock")
+    protected LVCallback stopCallback;
 
     // 必须有此构造函数
     public UDBaseAnimation(Globals globals, LuaValue[] init) {
@@ -120,72 +125,6 @@ public abstract class UDBaseAnimation implements AnimationListener {
     @LuaBridge(alias = "repeatCount", type = BridgeType.SETTER)
     public void setRepeatCount(int repeatCount) {
         this.repeatCount = repeatCount;
-    }
-
-
-    @LuaBridge(alias = "startBlock", type = BridgeType.GETTER)
-    public LVCallback getStartCallback() {
-        return startCallback;
-    }
-
-    @LuaBridge(alias = "startBlock", type = BridgeType.SETTER)
-    public void setStartCallback(LVCallback callback) {
-        if (startCallback != null) {
-            startCallback.destroy();
-        }
-        startCallback = callback;
-    }
-
-    @LuaBridge(alias = "pauseBlock", type = BridgeType.GETTER)
-    public LVCallback getPauseCallback() {
-        return pauseCallback;
-    }
-
-    @LuaBridge(alias = "pauseBlock", type = BridgeType.SETTER)
-    public void setPauseCallback(LVCallback callback) {
-        if (pauseCallback != null) {
-            pauseCallback.destroy();
-        }
-        pauseCallback = callback;
-    }
-
-    @LuaBridge(alias = "resumeBlock", type = BridgeType.GETTER)
-    public LVCallback getResumeCallback() {
-        return resumeCallback;
-    }
-
-    @LuaBridge(alias = "resumeBlock", type = BridgeType.SETTER)
-    public void setResumeCallback(LVCallback callback) {
-        if (resumeCallback != null) {
-            resumeCallback.destroy();
-        }
-        resumeCallback = callback;
-    }
-
-    @LuaBridge(alias = "repeatBlock", type = BridgeType.GETTER)
-    public LVCallback getRepeatCallback() {
-        return repeatCallback;
-    }
-
-    @LuaBridge(alias = "repeatBlock", type = BridgeType.SETTER)
-    public void setRepeatCallback(LVCallback callback) {
-        if (repeatCallback != null) {
-            repeatCallback.destroy();
-        }
-        repeatCallback = callback;
-    }
-
-    @LuaBridge(alias = "finishBlock", type = BridgeType.GETTER)
-    public LVCallback getStopCallback() {
-        return stopCallback;
-    }
-
-    @LuaBridge(alias = "finishBlock", type = BridgeType.SETTER)
-    public void setStopCallback(LVCallback callback) {
-        if (stopCallback != null) {
-            stopCallback.destroy();
-        }
-        stopCallback = callback;
     }
 
     //</editor-fold>

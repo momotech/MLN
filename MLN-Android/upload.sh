@@ -6,14 +6,7 @@ function inform() {
     echo "usage: ./upload.sh <option>"
     echo "options:"
     echo "  -D: Debug mode(build so with debug info), Default: Release mode(build so without debug info)"
-    echo "  -a: arm type. Default: all"
-    echo "      v7: armeabi-v7a"
-    echo "      v8: arm64-v8a"
-    echo "      all: armeabi-v7a and arm64-v8a"
-    echo "      sep: upload 2 package, one with armeabi-v7a another arm64-v8a"
-    echo "  -b: version name will be like ${VERSION}name, Default: beta_1"
-    echo "      -b name --> ${VERSION}name"
-    echo "      -b 0 --> ${VERSION}"
+    echo "  -s: open statistic, Default: not open"
     echo "  -h: help"
 }
 
@@ -21,6 +14,8 @@ function inform() {
 D=0
 # commit automatic, default false
 c=0
+# statistic
+s=0
 # release version mode, default false
 b=beta_1
 arm=all
@@ -36,6 +31,9 @@ do
             ;;
         "c")
             c=1
+            ;;
+        "s")
+            s=1
             ;;
         "b")
             b=$OPTARG
@@ -67,6 +65,9 @@ for pack in ${PACKAGE[*]} ; do
     cmd="./upload.sh "
     if [[ ${D} -eq 1 ]]; then
         cmd="${cmd}-D "
+    fi
+    if [[ ${c} -eq 1 ]]; then
+        cmd="${cmd}-s "
     fi
     cmd="${cmd}-a ${arm} -b ${b}"
     cd ${pack}

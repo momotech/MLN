@@ -13,13 +13,8 @@ import android.app.Fragment;
 
 import com.immomo.mmui.databinding.interfaces.IObservable;
 import com.immomo.mmui.databinding.interfaces.IPropertyCallback;
-import com.immomo.mmui.databinding.lifeCycle.FragmentLifecycle;
-import com.immomo.mmui.databinding.lifeCycle.LifecycleListener;
-import com.immomo.mmui.databinding.utils.Constants;
-import com.immomo.mmui.databinding.utils.ObserverUtils;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 
 
 /**
@@ -29,9 +24,19 @@ import java.util.List;
  * Date: 2020-03-25 14:19
  */
 public class ObservableField implements IObservable {
-    private ArrayList<ObserverWrap> observerWraps;
+    protected ObservableMap<String,Object> fields;
 
-    public ObservableField() {}
+    public ObservableField() {
+        fields = new ObservableMap<>();
+    }
+
+    /**
+     * 存储属性
+     * @return
+     */
+    public ObservableMap<String, Object> getFields() {
+        return fields;
+    }
 
     /**
      * 注册观察者
@@ -40,30 +45,13 @@ public class ObservableField implements IObservable {
      */
     @Override
     public void watch(Activity activity, String fieldTag, IPropertyCallback iPropertyCallback) {
-        final int observerId = activity.hashCode();
-        final String observerTag = Constants.ACTIVITY + Constants.SPOT + fieldTag;
-        FragmentLifecycle.getLifeListenerFragment(activity).addListener(new LifecycleListener() {
-            @Override
-            public void onDestroy() {
-                ObserverUtils.removeObserver(observerId,this,observerTag);
-            }
-        });
-        watch(observerId,observerTag,true,true,iPropertyCallback);
+        fields.watch(activity,fieldTag,iPropertyCallback);
     }
 
     @Override
     public void watch(Fragment fragment, String fieldTag, IPropertyCallback iPropertyCallback) {
-        final int observerId = fragment.hashCode();
-        final String observerTag = Constants.FRAGMENT + Constants.SPOT + fieldTag;
-        FragmentLifecycle.getLifeListenerFragment(fragment).addListener(new LifecycleListener() {
-            @Override
-            public void onDestroy() {
-                ObserverUtils.removeObserver(observerId,this,observerTag);
-            }
-        });
-        watch(observerId,observerTag,true,true,iPropertyCallback);
+        fields.watch(fragment,fieldTag,iPropertyCallback);
     }
-
 
     /**
      * 如bind(userData.a.b.c)
@@ -74,46 +62,37 @@ public class ObservableField implements IObservable {
      */
     @Override
     public void watch(int observerId, String wholeTag,boolean isSelfObserved, boolean isItemChangedNotify, IPropertyCallback iPropertyCallback) {
-
-        ObserverUtils.subscribe(this,observerId,wholeTag,isSelfObserved, isItemChangedNotify,iPropertyCallback);
+        fields.watch(observerId,wholeTag,isSelfObserved,isItemChangedNotify,iPropertyCallback);
     }
-
 
     @Override
     public void addObserver( ObserverWrap observerWrap) {
-        if(observerWraps == null) {
-            observerWraps = new ArrayList<>();
-        }
-        ObserverUtils.addObserver(observerWraps,observerWrap);
+        fields.addObserver(observerWrap);
     }
 
     @Override
     public void removeObserver( IPropertyCallback iPropertyCallback) {
-        ObserverUtils.removeObserver(observerWraps,iPropertyCallback);
+        fields.removeObserver(iPropertyCallback);
     }
 
     @Override
     public void removeObserver(String observerTag) {
-        ObserverUtils.removeObserver(observerWraps,observerTag);
+        fields.removeObserver(observerTag);
     }
 
     @Override
     public void removeObserver(int observableId) {
-        ObserverUtils.removeObserver(observerWraps,observableId);
+        fields.removeObserver(observableId);
     }
 
     @Override
     public void removeObserverByCallBackId(String callBackId) {
-        ObserverUtils.removeObserverByCallBackId(observerWraps,callBackId);
+        fields.removeObserverByCallBackId(callBackId);
     }
-
 
     @Override
     public void notifyPropertyChanged(String fieldName, Object older, Object newer) {
-        if(observerWraps ==null || observerWraps.size() ==0) {
-            return;
-        }
-        ObserverUtils.notifyPropertyChanged((ArrayList<ObserverWrap>) observerWraps.clone(),fieldName,older,newer);
+        fields.notifyPropertyChanged(fieldName,older,newer);
     }
 
 }

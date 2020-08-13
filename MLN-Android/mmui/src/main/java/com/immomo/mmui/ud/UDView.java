@@ -19,6 +19,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
+import android.view.ViewTreeObserver;
 import android.view.inputmethod.InputMethodManager;
 
 import androidx.annotation.NonNull;
@@ -52,6 +53,7 @@ import com.immomo.mls.utils.AssertUtils;
 import com.immomo.mls.utils.ErrorUtils;
 import com.immomo.mls.utils.convert.ConvertUtils;
 import com.immomo.mmui.ILView;
+import com.immomo.mmui.TouchableView;
 import com.immomo.mmui.weight.layout.IVirtualLayout;
 import com.node.INode;
 
@@ -81,7 +83,7 @@ import static com.immomo.mls.fun.ud.view.IClipRadius.LEVEL_FORCE_NOTCLIP;
  * Created by XiongFangyu on 2018/7/31.
  */
 @LuaApiUsed
-public abstract class UDView<V extends View, N extends INode> extends JavaUserdata<V> implements ILView.ViewLifeCycleCallback {
+public abstract class UDView<V extends View, N extends INode> extends JavaUserdata<V> implements ILView.ViewLifeCycleCallback, TouchableView {
     public static final String LUA_CLASS_NAME = "__BaseView";
     public static final String[] methods = new String[]{
         "anchorPoint",
@@ -143,6 +145,9 @@ public abstract class UDView<V extends View, N extends INode> extends JavaUserda
         "keyboardDismiss",
         "centerX",
         "centerY",
+        "layoutComplete",
+        "viewWidth",
+        "viewHeight",
     };
 
     private List<Animator> animatorCacheList;
@@ -162,6 +167,7 @@ public abstract class UDView<V extends View, N extends INode> extends JavaUserda
     private LuaFunction touchMoveExtensionCallback;
     private LuaFunction touchEndExtensionCallback;
     private LuaFunction touchCancelExtensionCallback;
+    private LuaFunction layoutComplete;
 
     protected LuaFunction onDrawCallback;
     protected UDCanvas udCanvasTemp;//缓存onDraw()的canvas，防止频繁创建
@@ -695,6 +701,28 @@ public abstract class UDView<V extends View, N extends INode> extends JavaUserda
     }
 
     @LuaApiUsed
+    public LuaValue[] layoutComplete(LuaValue[] values) {
+        if (layoutComplete != null)
+            layoutComplete.destroy();
+        LuaValue value = values[0];
+        if (value != null && value.isFunction()) {
+            layoutComplete = value.toLuaFunction();
+            setLayoutComplete();
+        }
+        return null;
+    }
+
+    private void setLayoutComplete() {
+        view.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                layoutComplete.invoke(varargsOf(LuaValue.rNil()));
+                view.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+            }
+        });
+    }
+
+    @LuaApiUsed
     public LuaValue[] centerY(LuaValue[] p) {
         if (p.length == 1) {
             ErrorUtils.debugDeprecatedSetter("centerY", globals);
@@ -707,6 +735,23 @@ public abstract class UDView<V extends View, N extends INode> extends JavaUserda
         if (!Float.isNaN(udLayoutParams.centerY))
             return udLayoutParams.centerY;
         return getView().getY() + getHeight() / 2.0f;
+    }
+
+    //隐藏方法，给新动画使用
+    @LuaApiUsed
+    public LuaValue[] viewWidth(LuaValue[] p) {
+        if (p.length > 0) {
+            getView().setRight(getView().getLeft() + DimenUtil.dpiToPx(p[0].toInt()));
+        }
+        return null;
+    }
+
+    @LuaApiUsed
+    public LuaValue[] viewHeight(LuaValue[] p) {
+        if (p.length > 0) {
+            getView().setBottom(getView().getTop() + DimenUtil.dpiToPx(p[0].toInt()));
+        }
+        return null;
     }
 
 

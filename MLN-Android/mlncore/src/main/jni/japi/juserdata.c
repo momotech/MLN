@@ -336,10 +336,12 @@ get_methods_str(JNIEnv *env, jobjectArray ams, int methodCount, int methodStartI
  */
 static int new_java_obj(JNIEnv *env, lua_State *L, jclass clz, jmethodID con, const char *metaname,
                         int offset) {
+
     int pc = lua_gettop(L) - offset;
     jobjectArray p = newLuaValueArrayFromStack(env, L, pc, 1);
     jobject javaObj = (*env)->NewObject(env, clz, con, (jlong) L, p);
     char *info = joinstr(metaname + strlen(METATABLE_PREFIX), "<init>");
+
     if (catchJavaException(env, L, info)) {
         if (info)
             m_malloc(info, sizeof(char) * (1 + strlen(info)), 0);
@@ -431,9 +433,11 @@ static jclass init_lazy_metatable(JNIEnv *env, lua_State *L) {
  * upvalue顺序为: 1: metaname
  */
 static int execute_new_ud_lazy(lua_State *L) {
+#ifdef STATISTIC_PERFORMANCE
     struct timeval start = {0};
     struct timeval end = {0};
     gettimeofday(&start, NULL);
+#endif
     JNIEnv *env;
     int need = getEnv(&env);
     lua_lock(L);
@@ -465,9 +469,6 @@ static int execute_new_ud_lazy(lua_State *L) {
         lua_error(L);
         return 1;
     }
-    gettimeofday(&end, NULL);
-    double offset = _get_milli_second(&end) - _get_milli_second(&start);
-    userdataMethodCall(metaname + strlen(METATABLE_PREFIX), InitMethodName, offset);
 
     lua_pushvalue(L, -2);       //metatable --ud-metatable
     lua_setmetatable(L, -2);    //ud --metatable
@@ -475,6 +476,13 @@ static int execute_new_ud_lazy(lua_State *L) {
 
     if (need) detachEnv();
     lua_unlock(L);
+
+#ifdef STATISTIC_PERFORMANCE
+    gettimeofday(&end, NULL);
+    double offset = _get_milli_second(&end) - _get_milli_second(&start);
+    userdataMethodCall(metaname + strlen(METATABLE_PREFIX), InitMethodName, offset);
+#endif
+
     return 1;
 }
 //// ----------------------------------------------------------------------------------------------------
@@ -522,6 +530,12 @@ void pushConstructorMethod(lua_State *L, jclass clz, jmethodID con, const char *
  *              3:metaname(string)
  */
 static int execute_new_ud(lua_State *L) {
+#ifdef STATISTIC_PERFORMANCE
+    struct timeval start = {0};
+    struct timeval end = {0};
+    gettimeofday(&start, NULL);
+#endif
+
     JNIEnv *env;
     int need = getEnv(&env);
     lua_lock(L);
@@ -550,6 +564,13 @@ static int execute_new_ud(lua_State *L) {
 
     if (need) detachEnv();
     lua_unlock(L);
+
+#ifdef STATISTIC_PERFORMANCE
+    gettimeofday(&end, NULL);
+    double offset = _get_milli_second(&end) - _get_milli_second(&start);
+    userdataMethodCall(metaname + strlen(METATABLE_PREFIX), InitMethodName, offset);
+#endif
+
     return 1;
 }
 
@@ -1021,9 +1042,11 @@ static void pushMethodClosure(lua_State *L, jmethodID m, const char *mn) {
  *              2:string methodname
  */
 static int executeJavaUDFunction(lua_State *L) {
+#ifdef STATISTIC_PERFORMANCE
     struct timeval start = {0};
     struct timeval end = {0};
     gettimeofday(&start, NULL);
+#endif
     lua_lock(L);
     if (!lua_isuserdata(L, 1)) {
         lua_pushstring(L, "use ':' instead of '.' to call method!!");
@@ -1074,9 +1097,11 @@ static int executeJavaUDFunction(lua_State *L) {
         lua_error(L);
         return 1;
     }
+#ifdef STATISTIC_PERFORMANCE
     gettimeofday(&end, NULL);
     double offset = _get_milli_second(&end) - _get_milli_second(&start);
     userdataMethodCall(ud->name + strlen(METATABLE_PREFIX), n, offset);
+#endif
     if (info)
         m_malloc(info, sizeof(char) * (strlen(info) + 1), 0);
     FREE(env, jobj);

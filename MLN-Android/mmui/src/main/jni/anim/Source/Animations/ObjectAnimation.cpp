@@ -9,11 +9,11 @@
 ANIMATOR_NAMESPACE_BEGIN
 
 static BezierControlPoints staticControls[] = {
-        {0.0,  0.0, 1.0,  1.0}, // Default
-        {0.42, 0.0, 1.0,  1.0}, // Linear
-        {0.0,  0.0, 0.58, 1.0}, // EaseIn
-        {0.42, 0.0, 0.58, 1.0}, // EaseOut
-        {0.25, 0.1, 0.25, 1.0}  // EaseInOut
+        {0.25, 0.10, 0.25, 1.0}, // Default
+        {0.0,  0.0,  1.0,  1.0}, // Linear
+        {0.42, 0.0,  1.0,  1.0}, // EaseIn
+        {0.0,  0.0,  0.58, 1.0}, // EaseOut
+        {0.42, 0.0,  0.58, 1.0}  // EaseInOut
 };
 
 const char* ObjectAnimation::ANIMATION_TYPENAME = "ObjectAnimation";

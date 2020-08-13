@@ -14,6 +14,7 @@ import org.luaj.vm2.Globals;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaUserdata;
 import org.luaj.vm2.LuaValue;
+import org.luaj.vm2.utils.DisposableIterator;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -67,29 +68,90 @@ public class ConvertUtils {
     public static @NonNull
     Map toMap(@NonNull LuaTable luaTable) {
         Map ret = new HashMap();
-        LuaTable.Entrys entrys = luaTable.newEntry();
-        LuaValue[] keys = entrys.keys();
-        LuaValue[] values = entrys.values();
-        int len = keys.length;
-        for (int i = 0; i < len; i++) {
-            ret.put(ConvertUtils.toNativeValue(keys[i]), ConvertUtils.toNativeValue(values[i]));
+        if (!luaTable.startTraverseTable()) {
+            return ret;
         }
+        LuaValue[] next;
+        while ((next = luaTable.next()) != null) {
+            ret.put(ConvertUtils.toNativeValue(next[0]), ConvertUtils.toNativeValue(next[1]));
+        }
+        luaTable.endTraverseTable();
         luaTable.destroy();
         return ret;
     }
 
+    /**
+     * 将table转成list，table中全部数据(包括array部分和hash部分)都会放入list中，顺序可能改变
+     * @see #toArrayList(LuaTable)
+     * @see #toArrayListSafe(LuaTable)
+     */
     public static @NonNull
     List toList(@NonNull LuaTable table) {
         List ret = new ArrayList();
-        LuaTable.Entrys entrys = table.newEntry();
-        LuaValue[] values = entrys.values();
-        for (int i = 0, l = values.length; i < l; i++) {
-            ret.add(ConvertUtils.toNativeValue(values[i]));
+        if (!table.startTraverseTable()) {
+            return ret;
         }
+        LuaValue[] next;
+        while ((next = table.next()) != null) {
+            ret.add(ConvertUtils.toNativeValue(next[1]));
+        }
+        table.endTraverseTable();
         table.destroy();
         return ret;
     }
 
+    /**
+     * 只将table中的数组部分转成list，顺序不变，但数据可能丢失
+     * 数据丢失情况：1、hash部分全部丢失，及key-value部分
+     *              2、array部分nil后所有数据丢失，比如{1,2,3,nil,5,6}，nil后的5、6丢失
+     * @see #toArrayListSafe(LuaTable)
+     * @see #toList(LuaTable)
+     */
+    public static @NonNull
+    List toArrayList(@NonNull LuaTable table) {
+        List ret = new ArrayList();
+        int n = table.getn();
+        for (int i = 1; i <= n; i ++) {
+            ret.add(ConvertUtils.toNativeValue(table.get(i)));
+        }
+        table.destroy();
+
+        return ret;
+    }
+
+    /**
+     * 只将table中的数组部分转成list，顺序不变，但hash部分数据丢失
+     * @see #toList(LuaTable)
+     * @see #toArrayList(LuaTable)
+     */
+    public static @NonNull
+    List toArrayListSafe(@NonNull LuaTable table) {
+        if (!table.startTraverseTable())
+            return new ArrayList();
+        Object[] arr = new Object[10];
+        int arrMax = 0;
+        LuaValue[] next;
+        while ((next = table.next()) != null) {
+            LuaValue key = next[0];
+            if (!key.isInt())
+                continue;
+            int index = key.toInt();
+            if (index < 0)
+                continue;
+            LuaValue value = next[1];
+            Object[] ret = ArrayUtils.set(arr, ConvertUtils.toNativeValue(value), index - 1);
+            if (ret != arr) {
+                arrMax = index;
+                arr = ret;
+            } else {
+                arrMax = Math.max(index, arrMax);
+            }
+        }
+        table.endTraverseTable();
+        table.destroy();
+
+        return ArrayUtils.toList(arr, arrMax);
+    }
 
     public static @NonNull
     LuaTable toTable(@NonNull Globals g, @NonNull Map<String, Object> map) {

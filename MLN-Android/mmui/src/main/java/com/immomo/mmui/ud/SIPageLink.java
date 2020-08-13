@@ -50,7 +50,7 @@ public class SIPageLink {
 
     protected Globals globals;
 
-    private int requestCode = Integer.MAX_VALUE;
+    private int requestCode = 0;
 
     public SIPageLink(Globals g, LuaValue[] init) {
         globals = g;
@@ -90,7 +90,7 @@ public class SIPageLink {
     }
 
     protected int generateRequestCode() {
-        return --requestCode;
+        return ++requestCode;
     }
 
 

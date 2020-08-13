@@ -71,10 +71,10 @@ public class UDImageButton<I extends ImageView & ILuaImageButton> extends UDImag
             setLeanPadding();//叶子节点，需要设置view的padding
         }
         //为了识别NaN，不能使用int
-        mNode.setPadding(YogaEdge.LEFT, DimenUtil.dpiToPxWithNaN(var[0]));
-        mNode.setPadding(YogaEdge.TOP, DimenUtil.dpiToPxWithNaN(var[1]));
-        mNode.setPadding(YogaEdge.RIGHT, DimenUtil.dpiToPxWithNaN(var[2]));
-        mNode.setPadding(YogaEdge.BOTTOM, DimenUtil.dpiToPxWithNaN(var[3]));
+        mNode.setPadding(YogaEdge.TOP,  DimenUtil.dpiToPxWithNaN(var[0]));
+        mNode.setPadding(YogaEdge.RIGHT,DimenUtil.dpiToPxWithNaN(var[1]));
+        mNode.setPadding(YogaEdge.BOTTOM, DimenUtil.dpiToPxWithNaN(var[2]));
+        mNode.setPadding(YogaEdge.LEFT, DimenUtil.dpiToPxWithNaN(var[3]));
         view.requestLayout();
         return null;
     }

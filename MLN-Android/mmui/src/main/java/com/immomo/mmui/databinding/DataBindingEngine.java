@@ -10,25 +10,19 @@ package com.immomo.mmui.databinding;
 
 import android.text.TextUtils;
 
-import com.immomo.mls.util.LogUtil;
 import com.immomo.mmui.databinding.bean.DataSource;
 import com.immomo.mmui.databinding.bean.ObservableList;
 import com.immomo.mmui.databinding.bean.ObservableMap;
 import com.immomo.mmui.databinding.core.DataListProcessor;
 import com.immomo.mmui.databinding.core.DataProcessor;
-import com.immomo.mmui.databinding.core.GetSetAdapter;
+import com.immomo.mmui.databinding.core.GetSetMapAdapter;
 import com.immomo.mmui.databinding.interfaces.IGetSet;
-import com.immomo.mmui.databinding.interfaces.IObservable;
 import com.immomo.mmui.databinding.interfaces.IPropertyCallback;
 import com.immomo.mmui.databinding.utils.Constants;
 import com.immomo.mmui.databinding.utils.DataBindUtils;
-import com.immomo.mmui.databinding.utils.ObserverUtils;
 import com.immomo.mmui.ud.UDView;
-import com.immomo.mmui.ud.recycler.UDBaseRecyclerAdapter;
-import com.immomo.mmui.ud.recycler.UDRecyclerView;
 
 import org.luaj.vm2.Globals;
-import org.luaj.vm2.LuaValue;
 
 import java.util.HashMap;
 import java.util.List;
@@ -53,7 +47,8 @@ public class DataBindingEngine {
 
 
     private DataBindingEngine() {
-        iGetSet = new GetSetAdapter();
+//        iGetSet = new GetSetReflexAdapter();
+        iGetSet = new GetSetMapAdapter();
         dataProcessor = new DataProcessor(iGetSet);
         dataListProcessor = new DataListProcessor(dataProcessor);
     }

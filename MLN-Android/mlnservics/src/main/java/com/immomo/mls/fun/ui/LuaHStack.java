@@ -50,12 +50,12 @@ public class LuaHStack<U extends UDHStack> extends BorderRadiusHStack implements
 
     @Override
     public void bringSubviewToFront(UDView child) {
-        ErrorUtils.debugLuaError("Row does not support bringSubviewToFront method", userdata.getGlobals());
+        ErrorUtils.debugUnsupportError("Row does not support bringSubviewToFront method");
     }
 
     @Override
     public void sendSubviewToBack(UDView child) {
-        ErrorUtils.debugLuaError("Row does not support sendSubviewToBack method", userdata.getGlobals());
+        ErrorUtils.debugUnsupportError("Row does not support sendSubviewToBack method");
     }
 
     @NonNull

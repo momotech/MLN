@@ -162,6 +162,10 @@ public abstract class LuaValue {
         return type() == LUA_TNUMBER;
     }
 
+    public boolean isInt() {
+        return false;
+    }
+
     public boolean isString() {
         return type() == LUA_TSTRING;
     }

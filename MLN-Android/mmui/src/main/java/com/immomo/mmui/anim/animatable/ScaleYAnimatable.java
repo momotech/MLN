@@ -9,12 +9,9 @@ package com.immomo.mmui.anim.animatable;
 
 import android.view.View;
 
-import com.immomo.mmui.anim.base.PropertyName;
+import com.immomo.mmui.anim.base.AnimatableFactory;
 
 public class ScaleYAnimatable extends Animatable {
-    public ScaleYAnimatable(String propertyName) {
-        super(propertyName);
-    }
 
     @Override
     public void writeValue(final View view, final float[] upDateValues) {
@@ -37,6 +34,6 @@ public class ScaleYAnimatable extends Animatable {
 
     @Override
     public float getThreshold() {
-        return PropertyName.THRESHOLD_SCALE;
+        return AnimatableFactory.THRESHOLD_SCALE;
     }
 }

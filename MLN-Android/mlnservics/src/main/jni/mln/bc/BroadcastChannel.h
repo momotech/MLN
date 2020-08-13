@@ -31,11 +31,11 @@ public:
     ~BroadcastChannel();
     void postMessage(std::string msg);
     void postMessage(std::string name, std::string msg);
-    
+
     void postStickyMessage(std::string msg);
     void postStickyMessage(std::string name, std::string msg);
     void removeStickyMessage();
-    
+
     void onMessage(ON_MESSAGE_CALLBACK callback);
     void close();
     
@@ -51,7 +51,7 @@ private:
     ON_MESSAGE_CALLBACK var_callback;
     void *var_extraData;
     void updateCachedEvents(MessageEvent *newEvent);
-    std::vector<MessageEvent *> *cacheEventsWithChannelName(std::string name);
+    std::vector<MessageEvent *> &cacheEventsWithChannelName(std::string name);
 };
 
 

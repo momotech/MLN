@@ -17,11 +17,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.immomo.mls.MLSEngine;
 import com.immomo.mls.fun.other.Size;
 import com.immomo.mls.fun.ud.UDSize;
-import com.immomo.mls.fun.ui.LuaGridLayoutManager;
 import com.immomo.mls.util.AndroidUtil;
 import com.immomo.mls.util.DimenUtil;
 import com.immomo.mls.utils.AssertUtils;
 import com.immomo.mls.utils.ErrorUtils;
+import com.immomo.mmui.ui.LuaGridLayoutManager;
 
 import org.luaj.vm2.LuaFunction;
 import org.luaj.vm2.LuaValue;
@@ -152,7 +152,7 @@ public class UDCollectionAdapter extends UDBaseRecyclerAdapter<UDCollectionLayou
 
             if (!(UDCollectionAdapter.this instanceof UDCollectionAutoFitAdapter)) {
                 //两端在不声明size for cell时，有UI差异。统一报错处理
-                ErrorUtils.debugLuaError("size For Cell must be Called", getGlobals());
+                ErrorUtils.debugLuaError("sizeForCell must be Called when not using CollectionViewAutoFitAdapter", getGlobals());
             }
             return layout.getSize();
         }

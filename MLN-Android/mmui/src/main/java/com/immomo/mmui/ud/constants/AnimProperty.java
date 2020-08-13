@@ -37,4 +37,8 @@ public interface AnimProperty {
     int RotationX = 10;
     @Constant
     int RotationY = 11;
+    @Constant
+    int ContentOffset = 12;
+    @Constant
+    int TextColor = 13;
 }

@@ -13,7 +13,7 @@ const char* Animation::ANIMATION_TYPENAME = "Animation";
 
 Animation::Animation(const AMTString &strName)
 : name(strName),
-  paused(true),
+  paused(false),
   active(false),
   finished(false),
   willrepeat(false),
@@ -92,7 +92,6 @@ void Animation::Pause(AMTBool pause) {
 }
 
 void Animation::Reset() {
-    paused = true;
     active = false;
     startTime = lastTime = 0.f;
     finished = false;
@@ -150,11 +149,13 @@ void Animation::Stop() {
 }
 
 void Animation::StartAnimationIfNeed(AMTTimeInterval time) {
+    if (paused || active) {
+        return;
+    }
     AMTBool start = false;
 
-    if (startTime == 0.f && time >= (absoluteBeginTime + beginTime)) {
+    if (time >= (absoluteBeginTime + beginTime)) {
         active = true;
-        paused = false;
         startTime = lastTime = (absoluteBeginTime + beginTime);
         start = true;
     }
@@ -168,6 +169,7 @@ void Animation::TickTime(AMTTimeInterval time) {
     // 1、开始动画时间间隔计算
     AMTTimeInterval interval = time - lastTime;
     AMTTimeInterval processInterval = time - startTime;
+
     // 2、Tick Time
     Tick(time, interval, processInterval);
     // 3、update lastTime
@@ -190,7 +192,7 @@ void Animation::StopAnimationIfFinish() {
 }
 
 void Animation::RepeatReset() {
-    paused = true;
+    paused = false;
     active = false;
     startTime = lastTime = 0.f;
     finished = false;

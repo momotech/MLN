@@ -32,6 +32,7 @@ import com.immomo.mmui.ILView;
 public class MLSRecyclerView extends RecyclerView implements ScrollableView {
     private boolean scrolled = false;
     private boolean footerShow = false;
+    private boolean disallowFling = false;
     private ILoadViewDelegete loadViewDelegete;
     private OnLoadListener onLoadListener;
     private int[] staggeredGridCache = null;
@@ -313,5 +314,22 @@ public class MLSRecyclerView extends RecyclerView implements ScrollableView {
         if (cycleCallback != null)
             cycleCallback.onDetached();
         super.onDetachedFromWindow();
+    }
+
+    public void setDisallowFling(boolean disallow) {
+        disallowFling = disallow;
+    }
+
+    public boolean isDisallowFling() {
+        return disallowFling;
+    }
+
+    @Override
+    public boolean fling(int velocityX, int velocityY) {
+        if (disallowFling) {
+            return false;
+        } else {
+            return super.fling(velocityX, velocityY);
+        }
     }
 }

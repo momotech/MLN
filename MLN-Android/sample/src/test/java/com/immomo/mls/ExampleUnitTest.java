@@ -1,7 +1,6 @@
 package com.immomo.mls;
 
 
-import com.immomo.mls.databinding.utils.ReflectUtils;
 
 import org.junit.Test;
 
@@ -14,13 +13,6 @@ import org.junit.Test;
 public class ExampleUnitTest {
     @Test
     public void testHashCast() throws Exception {
-        Student student = new Student();
-        student.name = "中北大学";
-
-
-       //"com.xfy.demo.bean.School"
-
-        System.out.println(ReflectUtils.getObjectByStr(student,"student.school.name"));
 
     }
 

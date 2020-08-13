@@ -1185,7 +1185,7 @@ public abstract class UDView<V extends View> extends JavaUserdata<V> implements 
             return null;
         iBorderRadiusView.setAddShadow(color.getColor(), offset.getSize(), radius, alpha);
 
-        ErrorUtils.debugLuaError("The 'addShadow' method is deprected, use 'setShadow' method instead!", getGlobals());
+        ErrorUtils.debugDeprecateMethod("addShadow", "setShadow", getGlobals());
         return null;
     }
 

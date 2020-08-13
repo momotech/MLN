@@ -9,15 +9,10 @@ package com.immomo.mmui.anim.animatable;
 
 import android.view.View;
 
-import com.immomo.mmui.anim.base.PropertyName;
+import com.immomo.mmui.anim.base.AnimatableFactory;
 
 
 public class AlphaAnimatable extends Animatable {
-
-
-    public AlphaAnimatable(String propertyName) {
-        super(propertyName);
-    }
 
     @Override
     public void writeValue(View view, float[] upDateValues) {
@@ -31,6 +26,6 @@ public class AlphaAnimatable extends Animatable {
 
     @Override
     public float getThreshold() {
-        return PropertyName.THRESHOLD_ALPHA;
+        return AnimatableFactory.THRESHOLD_ALPHA;
     }
 }

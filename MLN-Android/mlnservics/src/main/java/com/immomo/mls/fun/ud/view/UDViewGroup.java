@@ -88,7 +88,7 @@ public class UDViewGroup<V extends ViewGroup> extends UDView<V> {
         }
 
         if (sub.getParent() != null) {//和ios统一报错，如果addView的View有parent
-            ErrorUtils.debugLuaError("This child view has a parent view . It is recommended to removing it from the original parent view and then add it .", getGlobals());
+            ErrorUtils.debugAlert("This child view has a parent view . It is recommended to removing it from the original parent view and then add it .", getGlobals());
         }
         v.addView(LuaViewUtil.removeFromParent(sub), index, layoutParams);
     }

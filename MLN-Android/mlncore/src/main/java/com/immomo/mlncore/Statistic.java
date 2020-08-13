@@ -18,6 +18,7 @@ public class Statistic {
     private static final String COUNT_KEY = "count";
 
     static MLNCore.StatisticCallback callback = null;
+
     @LuaApiUsed
     static void onBridgeCallback(String json) {
         if (callback != null)
@@ -34,8 +35,9 @@ public class Statistic {
 
     /**
      * 将统计Bridge的json信息解析，输出{@link Info}
+     *
      * @param json Bridge统计json信息，由{@link #onBridgeCallback(String)}提供
-     * @param bsi 需要统计的信息以及信息输出对象
+     * @param bsi  需要统计的信息以及信息输出对象
      * @return true 输出成功
      */
     public static boolean getBridgeInfo(@NonNull String json, @NonNull Info bsi) {
@@ -80,13 +82,122 @@ public class Statistic {
         }
     }
 
+
+    /**
+     * 将统计Bridge的json信息解析，输出{@link Info}
+     *
+     * @param json             Bridge统计json信息，由{@link #onBridgeCallback(String)}提供
+     * @param bsi              需要统计的信息以及信息输出对象
+     * @param methodNameFilter 过滤方法名
+     * @return true 输出成功
+     */
+    public static boolean getBridgeInfoByMethod(@NonNull String json, @NonNull Info bsi, String methodNameFilter) {
+        double maxTime = bsi.maxTime;
+        double allTime = 0;
+        int count = 0;
+        int overTimeCount = 0;
+        List<String> overTimeMethods = bsi.overTimeInfo;
+        try {
+            JSONObject jo = new JSONObject(json);
+            Iterator<String> classNames = jo.keys();
+            while (classNames.hasNext()) {
+                String className = classNames.next();
+                JSONObject methodInfo = jo.optJSONObject(className);
+                if (methodInfo == null)
+                    continue;
+                Iterator<String> methods = methodInfo.keys();
+                while (methods.hasNext()) {
+                    String method = methods.next();
+                    if (method.equals(methodNameFilter)) {
+                        JSONObject info = methodInfo.optJSONObject(method);
+                        if (info == null)
+                            continue;
+                        double time = info.optDouble(TIME_KEY, 0);
+                        int c = info.optInt(COUNT_KEY, 0);
+                        allTime += time;
+                        count += c;
+                        double avTime = time / c;
+                        if (maxTime > 0 && avTime > maxTime) {
+                            overTimeCount += c;
+                            if (overTimeMethods != null) {
+                                overTimeMethods.add(className + "." + method);
+                            }
+                        }
+                        break;
+                    }
+                }
+            }
+            bsi.allCount = count;
+            bsi.allTime = allTime;
+            bsi.overTimeCount = overTimeCount;
+            return true;
+        } catch (JSONException e) {
+            return false;
+        }
+    }
+
+    /**
+     * 将统计Bridge的json信息解析，输出{@link Info}
+     *
+     * @param json            Bridge统计json信息，由{@link #onBridgeCallback(String)}提供
+     * @param bsi             需要统计的信息以及信息输出对象
+     * @param classNameFilter 过滤方法名
+     * @return true 输出成功
+     */
+    public static boolean getBridgeInfoByClass(@NonNull String json, @NonNull Info bsi, String classNameFilter) {
+        double maxTime = bsi.maxTime;
+        double allTime = 0;
+        int count = 0;
+        int overTimeCount = 0;
+        List<String> overTimeMethods = bsi.overTimeInfo;
+        try {
+            JSONObject jo = new JSONObject(json);
+            Iterator<String> classNames = jo.keys();
+            while (classNames.hasNext()) {
+                String className = classNames.next();
+                if (className.equals(classNameFilter)) {
+                    JSONObject methodInfo = jo.optJSONObject(className);
+                    if (methodInfo == null)
+                        continue;
+                    Iterator<String> methods = methodInfo.keys();
+                    while (methods.hasNext()) {
+                        String method = methods.next();
+                        JSONObject info = methodInfo.optJSONObject(method);
+                        if (info == null)
+                            continue;
+                        double time = info.optDouble(TIME_KEY, 0);
+                        int c = info.optInt(COUNT_KEY, 0);
+                        allTime += time;
+                        count += c;
+                        double avTime = time / c;
+                        if (maxTime > 0 && avTime > maxTime) {
+                            overTimeCount += c;
+                            if (overTimeMethods != null) {
+                                overTimeMethods.add(className + "." + method);
+                            }
+                        }
+                    }
+                    bsi.allCount = count;
+                    bsi.allTime = allTime;
+                    bsi.overTimeCount = overTimeCount;
+                    return true;
+                }
+            }
+            return true;
+        } catch (JSONException e) {
+            return false;
+        }
+    }
+
+
     /**
      * 将统计Require的json信息解析，输出{@link Info}
+     *
      * @param json Require统计json信息，由{@link #onRequireCallback(String)}提供
-     * @param ri 需要统计的信息以及信息输出对象
+     * @param ri   需要统计的信息以及信息输出对象
      * @return true输出成功
      */
-    public static boolean getRequireInfo(@NonNull String json,@NonNull Info ri) {
+    public static boolean getRequireInfo(@NonNull String json, @NonNull Info ri) {
         double maxTime = ri.maxTime;
         int count = 0;
         double allTime = 0;
@@ -105,9 +216,9 @@ public class Statistic {
                     String file = files.next();
                     double ms = info.optDouble(file);// / 1000f;
                     allTime += ms;
-                    count ++;
+                    count++;
                     if (maxTime > 0 && ms > maxTime) {
-                        overTimeCount ++;
+                        overTimeCount++;
                         if (overTimeFiles != null) {
                             overTimeFiles.add(type + "|" + file);
                         }
@@ -125,6 +236,7 @@ public class Statistic {
 
     /**
      * 获取统计信息
+     *
      * @see #getBridgeInfo(String, Info)
      * @see #getRequireInfo(String, Info)
      */
@@ -146,11 +258,13 @@ public class Statistic {
         public double allTime;
         /**
          * 超时次数
+         *
          * @see #maxTime
          */
         public int overTimeCount;
         /**
          * 超时名称
+         *
          * @see #maxTime
          */
         public final List<String> overTimeInfo;

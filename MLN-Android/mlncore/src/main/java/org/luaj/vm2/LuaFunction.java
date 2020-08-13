@@ -89,6 +89,32 @@ public class LuaFunction extends NLuaValue {
 
     /**
      * 无返回值快速调用，比普通调用方式性能提高1倍以上
+     * @see #fastInvoke()
+     * @see #fastInvoke(boolean)
+     * @see #fastInvoke(double)
+     * @see #fastInvoke(String)
+     * @see #fastInvoke(LuaTable)
+     */
+    public final void fastInvoke() {
+        try {
+            if (!checkStatus())
+                return;
+            invokeError = null;
+            globals.calledFunction ++;
+            nativeInvokeV(globals.L_State, nativeGlobalKey);
+            globals.calledFunction --;
+        } catch (InvokeError e) {
+            invokeError = e;
+            globals.calledFunction --;
+            if (globals.getState() != Globals.LUA_CALLING && MLNCore.hookLuaError(e, globals))
+                return;
+            throw e;
+        }
+    }
+
+    /**
+     * 无返回值快速调用，比普通调用方式性能提高1倍以上
+     * @see #fastInvoke()
      * @see #fastInvoke(boolean)
      * @see #fastInvoke(double)
      * @see #fastInvoke(String)
@@ -111,6 +137,14 @@ public class LuaFunction extends NLuaValue {
         }
     }
 
+    /**
+     * 无返回值快速调用，比普通调用方式性能提高1倍以上
+     * @see #fastInvoke()
+     * @see #fastInvoke(boolean)
+     * @see #fastInvoke(double)
+     * @see #fastInvoke(String)
+     * @see #fastInvoke(LuaTable)
+     */
     public final void fastInvoke(double number) {
         try {
             if (!checkStatus())
@@ -128,6 +162,14 @@ public class LuaFunction extends NLuaValue {
         }
     }
 
+    /**
+     * 无返回值快速调用，比普通调用方式性能提高1倍以上
+     * @see #fastInvoke()
+     * @see #fastInvoke(boolean)
+     * @see #fastInvoke(double)
+     * @see #fastInvoke(String)
+     * @see #fastInvoke(LuaTable)
+     */
     public final void fastInvoke(String s) {
         try {
             if (!checkStatus())
@@ -145,6 +187,14 @@ public class LuaFunction extends NLuaValue {
         }
     }
 
+    /**
+     * 无返回值快速调用，比普通调用方式性能提高1倍以上
+     * @see #fastInvoke()
+     * @see #fastInvoke(boolean)
+     * @see #fastInvoke(double)
+     * @see #fastInvoke(String)
+     * @see #fastInvoke(LuaTable)
+     */
     public final void fastInvoke(LuaTable t) {
         try {
             if (!checkStatus())
@@ -162,6 +212,7 @@ public class LuaFunction extends NLuaValue {
         }
     }
 
+    protected native void nativeInvokeV(long L, long function);
     protected native void nativeInvokeB(long L, long function, boolean b);
     protected native void nativeInvokeN(long L, long function, double number);
     protected native void nativeInvokeS(long L, long function, String s);

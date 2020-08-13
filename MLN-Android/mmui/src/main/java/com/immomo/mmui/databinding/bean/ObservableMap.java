@@ -12,12 +12,15 @@ import android.app.Fragment;
 
 import androidx.annotation.Nullable;
 
+import com.immomo.mls.wrapper.Constant;
 import com.immomo.mmui.databinding.interfaces.IObservable;
 import com.immomo.mmui.databinding.interfaces.IPropertyCallback;
 import com.immomo.mmui.databinding.lifeCycle.FragmentLifecycle;
 import com.immomo.mmui.databinding.lifeCycle.LifecycleListener;
 import com.immomo.mmui.databinding.utils.Constants;
 import com.immomo.mmui.databinding.utils.ObserverUtils;
+
+import org.luaj.vm2.Globals;
 
 import java.util.*;
 
@@ -33,7 +36,7 @@ public class ObservableMap<K,V> extends HashMap<K, V> implements IObservable {
     @Override
     public void watch(Activity activity, final String fieldTag, IPropertyCallback iPropertyCallback) {
         final int observerId = activity.hashCode();
-        final String observerTag = this.getClass().getSimpleName() + Constants.SPOT + fieldTag;
+        final String observerTag = Constants.ACTIVITY + Constants.SPOT + fieldTag;
         FragmentLifecycle.getLifeListenerFragment(activity).addListener(new LifecycleListener() {
             @Override
             public void onDestroy() {
@@ -46,7 +49,7 @@ public class ObservableMap<K,V> extends HashMap<K, V> implements IObservable {
     @Override
     public void watch(Fragment fragment, String fieldTag, IPropertyCallback iPropertyCallback) {
         final int observerId = fragment.hashCode();
-        final String observerTag = this.getClass().getSimpleName() + Constants.SPOT + fieldTag;
+        final String observerTag = Constants.FRAGMENT + Constants.SPOT + fieldTag;
         FragmentLifecycle.getLifeListenerFragment(fragment).addListener(new LifecycleListener() {
             @Override
             public void onDestroy() {

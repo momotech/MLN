@@ -9,14 +9,13 @@ package com.immomo.mmui.anim.animatable;
 
 import android.view.View;
 
-import com.immomo.mmui.anim.base.PropertyName;
+import com.immomo.mmui.anim.base.AnimatableFactory;
 
 
 public abstract class Animatable {
     protected float pivotX;
     protected float pivotY;
 
-    protected String propertyName;
     private static final int VALUES_COUNT = 1;
 
     public int getValuesCount() {
@@ -24,13 +23,25 @@ public abstract class Animatable {
     }
 
     public float getThreshold() {
-        return PropertyName.THRESHOLD_POINT;
+        return AnimatableFactory.THRESHOLD_POINT;
     }
 
+    /**
+     * 获取动画要求的最大值
+     * @return null表示无限制 {@link Float#NaN}表示无限制
+     *          null = {Float.NaN, Float.NaN ...}
+     */
+    public float[] getMaxValues() {
+        return null;
+    }
 
-    public Animatable(String propertyName) {
-        this.propertyName = propertyName;
-
+    /**
+     * 获取动画要求的最小值
+     * @return null表示无限制 {@link Float#NaN}表示无限制
+     *          null = {Float.NaN, Float.NaN ...}
+     */
+    public float[] getMinValues() {
+        return null;
     }
 
     public void beforeDoValue(View view) {
@@ -48,5 +59,10 @@ public abstract class Animatable {
 
     }
 
-
+    /**
+     * 是否是位移动画
+     */
+    public boolean hasTranslate() {
+        return false;
+    }
 }

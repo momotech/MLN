@@ -11,6 +11,8 @@ import com.immomo.mls.log.DefaultPrintStream;
 
 import com.immomo.mls.log.ErrorType;
 import com.immomo.mls.log.IPrinter;
+import com.immomo.mls.util.LogUtil;
+
 import org.luaj.vm2.Globals;
 import org.luaj.vm2.exception.InvokeError;
 
@@ -59,6 +61,8 @@ public class Environment {
                 ps.println();
             }
             m.showPrinterIfNot();
+        } else {
+            LogUtil.e(t);
         }
 
         HotReloadHelper.onError(t != null ? t.getMessage() : "null");

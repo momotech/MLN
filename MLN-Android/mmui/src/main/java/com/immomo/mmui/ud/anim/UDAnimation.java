@@ -7,19 +7,20 @@
   */
 package com.immomo.mmui.ud.anim;
 
-import com.immomo.mls.annotation.BridgeType;
 import com.immomo.mls.annotation.LuaBridge;
 import com.immomo.mls.annotation.LuaClass;
 import com.immomo.mls.util.DimenUtil;
+import com.immomo.mls.utils.ErrorUtils;
 import com.immomo.mmui.anim.animations.ObjectAnimation;
 import com.immomo.mmui.anim.animations.SpringAnimation;
 import com.immomo.mmui.anim.animations.ValueAnimation;
 import com.immomo.mmui.anim.base.Animation;
-import com.immomo.mmui.anim.base.PropertyName;
-import com.immomo.mmui.ud.UDColor;
+import com.immomo.mmui.ud.UDLabel;
+import com.immomo.mmui.ud.UDScrollView;
 import com.immomo.mmui.ud.UDView;
 import com.immomo.mmui.ud.constants.AnimProperty;
 import com.immomo.mmui.ud.constants.Timing;
+import com.immomo.mmui.ud.recycler.UDRecyclerView;
 
 import org.luaj.vm2.Globals;
 import org.luaj.vm2.LuaTable;
@@ -36,11 +37,13 @@ public class UDAnimation extends UDBaseAnimation {
 
     public static final String LUA_CLASS_NAME = "ObjectAnimation";
 
-    private int duration;
+    @LuaBridge
+    float duration;
     private int property;
     private UDView target;
     private List<Object> froms = new ArrayList<>();
     private List<Object> tos = new ArrayList<>();
+    private PercentBehavior percentBehavior;
 
 
     private final static String VELOCITY = "Velocity";
@@ -63,20 +66,10 @@ public class UDAnimation extends UDBaseAnimation {
 
     @Override
     protected Animation defaultAnimation() {
-        ObjectAnimation animation = new ObjectAnimation(target.getView(), convertProperty(property));
+        ObjectAnimation animation = new ObjectAnimation(target.getView(), property);
         animation.setDuration(duration);
         animation.setTimingFunction(Animation.TimingFunction.DEFAULT);
         return animation;
-    }
-
-    @LuaBridge(alias = "duration", type = BridgeType.GETTER)
-    public int getDuration() {
-        return duration;
-    }
-
-    @LuaBridge(alias = "duration", type = BridgeType.SETTER)
-    public void setDuration(int duration) {
-        this.duration = duration;
     }
 
     @LuaBridge
@@ -87,7 +80,7 @@ public class UDAnimation extends UDBaseAnimation {
     @LuaBridge
     public void timing(int timing, LuaTable table) {
         if (timing == Timing.Spring) {
-            SpringAnimation springAnimation = new SpringAnimation(target.getView(), convertProperty(property));
+            SpringAnimation springAnimation = new SpringAnimation(target.getView(), property);
             if (table != null) {
                 LuaValue velocity = table.get(VELOCITY);
                 LuaValue bounciness = table.get(BOUNCINESS);
@@ -122,7 +115,7 @@ public class UDAnimation extends UDBaseAnimation {
             }
             animation = springAnimation;
         } else {
-            ObjectAnimation objectAnimation = new ObjectAnimation(target.getView(), convertProperty(property));
+            ObjectAnimation objectAnimation = new ObjectAnimation(target.getView(), property);
             objectAnimation.setTimingFunction(convertTiming(timing));
             animation = objectAnimation;
         }
@@ -137,12 +130,7 @@ public class UDAnimation extends UDBaseAnimation {
         int fSize = froms.size();
         int tSize = tos.size();
         int size = Math.max(fSize, tSize);
-        if (size == 1 && tos.get(0) instanceof UDColor) {
-            if (fSize == 1) {
-                ((ValueAnimation) animation).setColorFromValue(((UDColor) froms.get(0)).getColor());
-            }
-            ((ValueAnimation) animation).setColorToValue(((UDColor) tos.get(0)).getColor());
-        } else if (size == 1) {
+        if (size == 1) {
             if (fSize == 1) {
                 ((ValueAnimation) animation).setFromValue(value(froms, 0));
             }
@@ -154,6 +142,11 @@ public class UDAnimation extends UDBaseAnimation {
             if (tSize == 2) {
                 ((ValueAnimation) animation).setToValue(value(tos, 0), value(tos, 1));
             }
+        } else if (size == 4 && (property == AnimProperty.Color || property == AnimProperty.TextColor)) {
+            if (fSize == 4) {
+                ((ValueAnimation) animation).setFromValue(value(froms, 3) * 255, value(froms, 0), value(froms, 1), value(froms, 2));
+            }
+            ((ValueAnimation) animation).setToValue(value(tos, 3) * 255, value(tos, 0), value(tos, 1), value(tos, 2));
         } else {
             if (fSize == 4) {
                 ((ValueAnimation) animation).setFromValue(value(froms, 0), value(froms, 1), value(froms, 2), value(froms, 3));
@@ -161,6 +154,12 @@ public class UDAnimation extends UDBaseAnimation {
             if (tSize == 4) {
                 ((ValueAnimation) animation).setToValue(value(tos, 0), value(tos, 1), value(tos, 2), value(tos, 3));
             }
+        }
+        if (property == AnimProperty.ContentOffset && (!(target instanceof UDRecyclerView) && !(target instanceof UDScrollView))) {
+            ErrorUtils.debugUnsupportError("The ContentOffset animation type is only valid for ScrollView、TableView、ViewPager and CollectionView.");
+        }
+        if (property == AnimProperty.TextColor && !(target instanceof UDLabel)) {
+            ErrorUtils.debugUnsupportError("The TextColor animation type is only valid for Label.");
         }
         return animation;
     }
@@ -227,8 +226,18 @@ public class UDAnimation extends UDBaseAnimation {
     }
 
     @LuaBridge
-    public void addInteractiveBehavior(UDInteractiveBehavior interactiveBehavior) {
+    public void addInteractiveBehavior(GestureBehavior interactiveBehavior) {
         interactiveBehavior.setAnimation((ObjectAnimation) getAnimation());
+    }
+
+    @LuaBridge
+    public void update(float percent) {
+        if (percentBehavior == null) {
+            percentBehavior = new PercentBehavior();
+            percentBehavior.targetView(target.getView()); // 每个动画类的target和propertyName是不会变化的，其他属性可能变化
+        }
+        percentBehavior.setAnimation((ObjectAnimation) getAnimation());  // 设置相关属性信息
+        percentBehavior.update(percent);
     }
 
     @Override
@@ -236,48 +245,6 @@ public class UDAnimation extends UDBaseAnimation {
         if (repeatCallback != null) {
             repeatCallback.call(this, count);
         }
-    }
-
-    private String convertProperty(int property) {
-        String p = "";
-        switch (property) {
-            case AnimProperty.Alpha:
-                p = PropertyName.K_MLAVIEW_ALPHA;
-                break;
-            case AnimProperty.Color:
-                p = PropertyName.K_MLAVIEW_COLOR;
-                break;
-            case AnimProperty.Position:
-                p = PropertyName.K_MLAVIEW_POSITION;
-                break;
-            case AnimProperty.PositionX:
-                p = PropertyName.K_MLAVIEW_POSITION_X;
-                break;
-            case AnimProperty.PositionY:
-                p = PropertyName.K_MLAVIEW_POSITION_Y;
-                break;
-            case AnimProperty.Scale:
-                p = PropertyName.K_MLAVIEW_SCALE;
-                break;
-            case AnimProperty.ScaleX:
-                p = PropertyName.K_MLAVIEW_SCALE_X;
-                break;
-            case AnimProperty.ScaleY:
-                p = PropertyName.K_MLAVIEW_SCALE_Y;
-                break;
-            case AnimProperty.Rotation:
-                p = PropertyName.K_MLAVIEW_ROTATION;
-                break;
-            case AnimProperty.RotationX:
-                p = PropertyName.K_MLAVIEW_ROTATION_X;
-                break;
-            case AnimProperty.RotationY:
-                p = PropertyName.K_MLAVIEW_ROTATION_Y;
-                break;
-            default:
-                break;
-        }
-        return p;
     }
 
     private Animation.TimingFunction convertTiming(int timing) {

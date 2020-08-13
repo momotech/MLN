@@ -30,6 +30,7 @@ import org.luaj.vm2.Globals;
 import org.luaj.vm2.LuaNumber;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
+import org.luaj.vm2.utils.DisposableIterator;
 import org.luaj.vm2.utils.LuaApiUsed;
 
 import androidx.annotation.NonNull;
@@ -81,15 +82,21 @@ public class UDNodeGroup<V extends VirtualLayout & ILViewGroup> extends UDViewGr
     public LuaValue[] children(LuaValue[] var) {
         if (var.length > 0) {
             LuaTable children = var[0].toLuaTable();
-            for (LuaTable.KV kv : children.newEntry()) {
-                LuaValue value = kv.value;
+
+            DisposableIterator<LuaTable.KV> iterator = children.iterator();
+            if (iterator == null)
+                return null;
+            while (iterator.hasNext()) {
+                LuaValue value = iterator.next().value;
                 if (value.isNil()) {
-                    ErrorUtils.debugLuaError("call addView(nil)!", globals);
+                    ErrorUtils.debugLuaError("children table has nil value!", globals);
                     continue;
                 }
                 if (AssertUtils.assertUserData(value, UDView.class, "addView", getGlobals()))
                     insertView((UDView) value, -1);
             }
+            iterator.dispose();
+//            children.destroy();
         }
 
         return null;

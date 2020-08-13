@@ -82,7 +82,10 @@ public class ObserverWrap {
     public boolean equals(Object obj) {
         if(obj instanceof ObserverWrap) {
             ObserverWrap observerWrap = (ObserverWrap)obj;
-            return observerId == observerWrap.getObserverId() && sourceTag.equals(observerWrap.getSourceTag()) && bindTag.equals(observerWrap.getBindTag());
+            return observerId == observerWrap.getObserverId()
+                    && sourceTag.equals(observerWrap.getSourceTag())
+                    && bindTag.equals(observerWrap.getBindTag())
+                    && propertyListener.equals(observerWrap.propertyListener);
         }
         return super.equals(obj);
     }

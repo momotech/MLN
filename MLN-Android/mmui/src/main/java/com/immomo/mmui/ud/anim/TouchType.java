@@ -16,9 +16,9 @@ import com.immomo.mls.wrapper.ConstantClass;
 @ConstantClass
 public interface TouchType {
     @Constant
-    int BEGIN = 1;
+    int BEGIN = 0;
     @Constant
-    int MOVE = 2;
+    int MOVE = 1;
     @Constant
-    int END = 3;
+    int END = 2;
 }

@@ -71,6 +71,7 @@ jboolean jni_isSAESFile(JNIEnv *env, jobject jobj, jstring path) {
     return r;
 }
 
+#ifdef STATISTIC_PERFORMANCE
 static jclass Java_Statistic = NULL;
 static jmethodID Java_Statistic_callback = NULL;
 
@@ -94,6 +95,7 @@ static void _inner_bridge_callback(const char *str) {
 static void _inner_require_callback(const char *str) {
     _inner_callback(str, Java_Require_Statistic, Java_Require_Statistic_callback);
 }
+#endif
 
 void jni_notifyStatisticsCallback(JNIEnv *env, jobject jobj){
     notifyStatisticsCallback();
@@ -104,6 +106,7 @@ void jni_notifyRequireCallback(JNIEnv *env, jobject jobj) {
 }
 
 void jni_setStatisticsOpen(JNIEnv *env, jobject jobj, jboolean open) {
+#ifdef STATISTIC_PERFORMANCE
     if (open) {
         if (!Java_Statistic) {
             Java_Statistic = (*env)->FindClass(env, "com/immomo/mlncore/Statistic");
@@ -125,6 +128,7 @@ void jni_setStatisticsOpen(JNIEnv *env, jobject jobj, jboolean open) {
     }
     setOpenStatistics((int)open);
     setOpenRequireStatistics((int)open);
+#endif
 }
 // --------------------------define field--------------------------
 extern jclass LuaValue;
@@ -358,6 +362,14 @@ jobjectArray jni_dumpStack(JNIEnv *env, jobject jobj, jlong L) {
     }
     lua_unlock(LS);
     return arr;
+}
+
+jstring jni_traceback(JNIEnv *env, jobject jobj, jlong l) {
+    lua_State *L = (lua_State *) l;
+    luaL_traceback(L, L, NULL, 0);
+    const char *trace = lua_tostring(L, -1);
+    lua_pop(L, 1);
+    return newJString(env, trace);
 }
 
 void jni_lgc(JNIEnv *env, jobject jobj, jlong L) {

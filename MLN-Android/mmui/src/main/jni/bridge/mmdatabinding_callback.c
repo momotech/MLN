@@ -9,37 +9,22 @@
 // Created by XiongFangyu on 2020/7/20.
 //
 
-#include "mmdatabinding_callback.h"
 #include "lua.h"
-#include "llimits.h"
-#include "jinfo.h"
-#include "cache.h"
 #include "jfunction.h"
+#include <jni.h>
 
-extern int getErrorFunctionIndex(lua_State *L);
+#define MMCALLBACK_Void_Call JNIEXPORT void JNICALL
 
-#define PRE                                                             \
-            lua_lock(L);                                                \
-            int erridx = getErrorFunctionIndex(L);                      \
-            int oldTop = lua_gettop(L);                                 \
-            getValueFromGNV(L, (ptrdiff_t) function, LUA_TFUNCTION);    \
-            if (lua_isnil(L, -1)) {                                     \
-                throwInvokeError(env, "function is destroyed.");        \
-                lua_settop(L, oldTop);                                  \
-                lua_unlock(L);                                          \
-                return;                                                 \
-            }
+#define MMCALLBACK_Method(s) Java_com_immomo_mmui_databinding_DataBindingCallback_ ## s
 
-#define CALL(n)                                     \
-            int ret = lua_pcall(L, n, 0, erridx);   \
-            if (ret != 0) {                         \
-                throwJavaError(env, L);             \
-                lua_settop(L, oldTop);              \
-                lua_unlock(L);                      \
-                return;                             \
-            }                                       \
-            lua_settop(L, oldTop);                  \
-            lua_unlock(L);
+#define MMCALLBACK_PRE4PARAMS JNIEnv *env, jobject jobj, jlong Ls, jlong function,
+
+//<editor-fold desc="fast call">
+MMCALLBACK_Void_Call MMCALLBACK_Method(nativeInvokeB)(MMCALLBACK_PRE4PARAMS jboolean b1, jboolean b2);
+MMCALLBACK_Void_Call MMCALLBACK_Method(nativeInvokeN)(MMCALLBACK_PRE4PARAMS jdouble num1, jdouble num2);
+MMCALLBACK_Void_Call MMCALLBACK_Method(nativeInvokeS)(MMCALLBACK_PRE4PARAMS jstring s1, jstring s2);
+MMCALLBACK_Void_Call MMCALLBACK_Method(nativeInvokeT)(MMCALLBACK_PRE4PARAMS jlong table1, jlong table2);
+//</editor-fold>
 
 static inline void push_number(lua_State *L, jdouble num) {
     lua_Integer li1 = (lua_Integer) num;
@@ -59,30 +44,30 @@ static inline void push_string(JNIEnv *env, lua_State *L, jstring s) {
     ReleaseChar(env, s, str);
 }
 
-Void_Call MMCALLBACK_Method(nativeInvokeB)(MMCALLBACK_PRE4PARAMS jboolean b1, jboolean b2) {
+MMCALLBACK_Void_Call MMCALLBACK_Method(nativeInvokeB)(MMCALLBACK_PRE4PARAMS jboolean b1, jboolean b2) {
     lua_State *L = (lua_State *) Ls;
-    PRE
+    check_and_call_method(L, 2, {
     lua_pushboolean(L, b1);
     lua_pushboolean(L, b2);
-    CALL(2)
+    })
 }
-Void_Call MMCALLBACK_Method(nativeInvokeN)(MMCALLBACK_PRE4PARAMS jdouble num1, jdouble num2) {
+MMCALLBACK_Void_Call MMCALLBACK_Method(nativeInvokeN)(MMCALLBACK_PRE4PARAMS jdouble num1, jdouble num2) {
     lua_State *L = (lua_State *) Ls;
-    PRE
+    check_and_call_method(L, 2, {
     push_number(L, num1);
     push_number(L, num2);
-    CALL(2)
+    })
 }
-Void_Call MMCALLBACK_Method(nativeInvokeS)(MMCALLBACK_PRE4PARAMS jstring s1, jstring s2) {
+MMCALLBACK_Void_Call MMCALLBACK_Method(nativeInvokeS)(MMCALLBACK_PRE4PARAMS jstring s1, jstring s2) {
     lua_State *L = (lua_State *) Ls;
-    PRE
+    check_and_call_method(L, 2, {
     push_string(env, L, s1);
     push_string(env, L, s2);
-    CALL(2)
+    })
 }
-Void_Call MMCALLBACK_Method(nativeInvokeT)(MMCALLBACK_PRE4PARAMS jlong table1, jlong table2) {
+MMCALLBACK_Void_Call MMCALLBACK_Method(nativeInvokeT)(MMCALLBACK_PRE4PARAMS jlong table1, jlong table2) {
     lua_State *L = (lua_State *) Ls;
-    PRE
+    check_and_call_method(L, 2, {
     getValueFromGNV(L, (ptrdiff_t) table1, LUA_TTABLE);
     if (table1 && lua_isnil(L, -1)) {
         throwInvokeError(env, "table1 is destroyed.");
@@ -97,5 +82,5 @@ Void_Call MMCALLBACK_Method(nativeInvokeT)(MMCALLBACK_PRE4PARAMS jlong table1, j
         lua_unlock(L);
         return;
     }
-    CALL(2)
+    })
 }

@@ -58,6 +58,7 @@ public class UDScrollView<V extends ViewGroup & IScrollView> extends UDViewGroup
         "i_bounces",
         "i_bounceHorizontal",
         "i_bounceVertical",
+        "i_pagingEnabled",
         "setScrollEnable",
         "setScrollBeginCallback",
         "setScrollingCallback",
@@ -181,11 +182,10 @@ public class UDScrollView<V extends ViewGroup & IScrollView> extends UDViewGroup
         }
 
         //为了识别NaN，不能使用int
-        mNode.setPadding(YogaEdge.LEFT, DimenUtil.dpiToPxWithNaN(var[0]));
-        mNode.setPadding(YogaEdge.TOP, DimenUtil.dpiToPxWithNaN(var[1]));
-        mNode.setPadding(YogaEdge.RIGHT, DimenUtil.dpiToPxWithNaN(var[2]));
-        mNode.setPadding(YogaEdge.BOTTOM, DimenUtil.dpiToPxWithNaN(var[3]));
-
+        mNode.setPadding(YogaEdge.TOP,  DimenUtil.dpiToPxWithNaN(var[0]));
+        mNode.setPadding(YogaEdge.RIGHT,DimenUtil.dpiToPxWithNaN(var[1]));
+        mNode.setPadding(YogaEdge.BOTTOM, DimenUtil.dpiToPxWithNaN(var[2]));
+        mNode.setPadding(YogaEdge.LEFT, DimenUtil.dpiToPxWithNaN(var[3]));
         view.requestLayout();
         return null;
     }
@@ -261,6 +261,11 @@ public class UDScrollView<V extends ViewGroup & IScrollView> extends UDViewGroup
 
     @LuaApiUsed
     public LuaValue[] i_bounceVertical(LuaValue[] bounces) {
+        return null;
+    }
+
+    @LuaApiUsed
+    public LuaValue[] i_pagingEnabled(LuaValue[] bounces) {
         return null;
     }
 

@@ -9,13 +9,10 @@ package com.immomo.mmui.anim.animatable;
 
 import android.view.View;
 
-import com.immomo.mmui.anim.base.PropertyName;
+import com.immomo.mmui.anim.base.AnimatableFactory;
 
 
 public class RotationYAnimatable extends Animatable {
-    public RotationYAnimatable(String propertyName) {
-        super(propertyName);
-    }
 
     @Override
     public void writeValue(View view, float[] upDateValues) {
@@ -32,6 +29,6 @@ public class RotationYAnimatable extends Animatable {
 
     @Override
     public float getThreshold() {
-        return PropertyName.THRESHOLD_ROTATION;
+        return AnimatableFactory.THRESHOLD_ROTATION;
     }
 }

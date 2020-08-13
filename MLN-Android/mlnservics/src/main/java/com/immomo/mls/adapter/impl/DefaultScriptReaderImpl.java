@@ -21,6 +21,7 @@ import com.immomo.mls.util.LogUtil;
 import com.immomo.mls.util.PreloadUtils;
 import com.immomo.mls.utils.ERROR;
 import com.immomo.mls.utils.GlobalStateUtils;
+import com.immomo.mls.utils.LuaUrlUtils;
 import com.immomo.mls.utils.MLSUtils;
 import com.immomo.mls.utils.ParsedUrl;
 import com.immomo.mls.utils.ScriptLoadException;
@@ -399,7 +400,7 @@ public class DefaultScriptReaderImpl implements ScriptReader {
     @SuppressLint("WrongConstant")
     protected ScriptBundle parseAssetsToBundle(ParsedUrl parsedUrl) throws ScriptLoadException {
         String url = parsedUrl.toString();
-        ScriptBundle ret = new ScriptBundle(url, FileUtil.getCacheDir().getAbsolutePath());
+        ScriptBundle ret = new ScriptBundle(url, LuaUrlUtils.getParentPath(url));
         ScriptFile main = PreloadUtils.parseAssetMainScript(parsedUrl);//asset解析scriptFile
         ret.setMain(main);
         ret.addFlag(ScriptBundle.TYPE_ASSETS | ScriptBundle.SINGLE_FILE);

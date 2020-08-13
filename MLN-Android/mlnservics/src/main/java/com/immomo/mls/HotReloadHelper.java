@@ -95,6 +95,14 @@ public class HotReloadHelper {
 
     private static ConnectListener connectListener;
 
+    public static void setSerial(String serial) {
+        HotReloadServer.getInstance().setSerial(serial);
+    }
+
+    public static String getSerial() {
+        return HotReloadServer.getInstance().getSerial();
+    }
+
     private static File getHotReloadPath() {
         File f = new File(FileUtil.getCacheDir(), "LuaHotReload");
         if (!f.exists()) {

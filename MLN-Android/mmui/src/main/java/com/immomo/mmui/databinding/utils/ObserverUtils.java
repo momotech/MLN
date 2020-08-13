@@ -12,6 +12,8 @@ import android.text.TextUtils;
 import com.immomo.mmui.databinding.bean.ObservableList;
 import com.immomo.mmui.databinding.bean.ObserverWrap;
 import com.immomo.mmui.databinding.DataBindingEngine;
+import com.immomo.mmui.databinding.bean.WatchCallBack;
+import com.immomo.mmui.databinding.core.PropertyCallBackHandler;
 import com.immomo.mmui.databinding.interfaces.IObservable;
 import com.immomo.mmui.databinding.interfaces.IPropertyCallback;
 
@@ -106,7 +108,9 @@ public class ObserverUtils {
             if ((observerWrap.getSourceTag()+ Constants.SPOT).startsWith(changeProperty + Constants.SPOT)) {
                 if (observerWrap.getSourceTag().length() == changeProperty.length()) {
 
-                    observerWrap.getPropertyListener().callBack(older, newer);
+//                    observerWrap.getPropertyListener().callBack(older, newer);
+                    PropertyCallBackHandler.getInstance().addCallBack(WatchCallBack.obtain(observerWrap.getPropertyListener(),older,newer));
+
                     finalOlder = older;
                     finalNewer = newer;
 
@@ -117,7 +121,6 @@ public class ObserverUtils {
 
                         ((IObservable) finalNewer).addObserver(ObserverWrap.obtain(observerId, sourceTag, sourceTag, isItemChange, iPropertyCallback));
                     }
-
 
                 } else {
                     String restBindProperty = observerWrap.getSourceTag().substring(changeProperty.length() + 1);
@@ -149,14 +152,15 @@ public class ObserverUtils {
                     if (!isItemChange) {
                         Object olderValue = DataBindingEngine.getInstance().getGetSetAdapter().get(oldClass, restBindProperties[restBindProperties.length - 1]);
                         Object newerValue = DataBindingEngine.getInstance().getGetSetAdapter().get(newClass, restBindProperties[restBindProperties.length - 1]);
-                        observerWrap.getPropertyListener().callBack(olderValue, newerValue);
+//                        observerWrap.getPropertyListener().callBack(olderValue, newerValue);
+                        PropertyCallBackHandler.getInstance().addCallBack(WatchCallBack.obtain(observerWrap.getPropertyListener(),olderValue,newerValue));
                     } else {
-                        observerWrap.getPropertyListener().callBack(oldClass, newClass);
+//                        observerWrap.getPropertyListener().callBack(oldClass, newClass);
+                        PropertyCallBackHandler.getInstance().addCallBack(WatchCallBack.obtain(observerWrap.getPropertyListener(),oldClass,newClass));
                     }
 
                     finalOlder = oldClass;
                     finalNewer = newClass;
-
                 }
 
                 //判断最后节点是否为二维数组,若为二维数组，循环二维数组进行绑定
@@ -206,8 +210,9 @@ public class ObserverUtils {
      * @param observerWrap
      */
     public static void addObserver(List<ObserverWrap> observerWraps, ObserverWrap observerWrap) {
-        observerWraps.add(observerWrap);
-
+        if(!observerWraps.contains(observerWrap)) {
+            observerWraps.add(observerWrap);
+        }
     }
 
 

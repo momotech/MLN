@@ -13,7 +13,7 @@ import com.immomo.mmui.anim.Animator;
 import com.immomo.mmui.anim.animatable.Animatable;
 import com.immomo.mmui.anim.base.Animation;
 import com.immomo.mmui.anim.base.AnimationUpdateListener;
-import com.immomo.mmui.anim.base.PropertyName;
+import com.immomo.mmui.anim.base.AnimatableFactory;
 import com.immomo.mmui.anim.utils.ColorUtil;
 
 
@@ -28,9 +28,9 @@ public abstract class ValueAnimation extends Animation {
     float threshold = 1.0f;
 
 
-    public ValueAnimation(View targetView, String propertyName) {
+    public ValueAnimation(View targetView, int animProperty) {
         super(targetView);
-        animatable = PropertyName.getAnimatable(propertyName);
+        animatable = AnimatableFactory.getAnimatable(animProperty);
     }
 
 

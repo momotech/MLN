@@ -44,6 +44,10 @@ public class MultiAnimation extends Animation {
         isRunTogether = false;
     }
 
+    public boolean isRunTogether() {
+        return isRunTogether;
+    }
+
     @Override
     public String getAnimationName() {
         return MultiAnimation.class.getSimpleName();

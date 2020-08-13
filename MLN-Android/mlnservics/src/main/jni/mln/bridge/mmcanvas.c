@@ -1,10 +1,10 @@
 //
-// Created by Generator on 2020-02-13
+// Created by Generator on 2020-08-11
 //
 
 #include <jni.h>
 #include "lauxlib.h"
-#include "../juserdata.h"
+#include "../cache.h"
 #include "../jinfo.h"
 #include "../juserdata.h"
 #include "../m_mem.h"
@@ -19,6 +19,11 @@
                 return 1;                                           \
             }
 
+
+#ifdef STATISTIC_PERFORMANCE
+#include <time.h>
+#define _get_milli_second(t) ((t)->tv_sec*1000.0 + (t)->tv_usec / 1000.0)
+#endif
 #define LUA_CLASS_NAME "CCanvas"
 
 static jclass _globalClass;
@@ -118,78 +123,169 @@ JNIEXPORT void JNICALL Java_com_immomo_mls_fun_ud_UDCCanvas__1register
  * int save()
  */
 static int _save(lua_State *L) {
+#ifdef STATISTIC_PERFORMANCE
+    struct timeval start = {0};
+    struct timeval end = {0};
+    gettimeofday(&start, NULL);
+#endif
     PRE
     jint ret = (*env)->CallIntMethod(env, jobj, saveID);
+    if (catchJavaException(env, L, LUA_CLASS_NAME ".save")) {
+        return lua_error(L);
+    }
     lua_pushinteger(L, (lua_Integer) ret);
+#ifdef STATISTIC_PERFORMANCE
+    gettimeofday(&end, NULL);
+    userdataMethodCall(LUA_CLASS_NAME, "save", _get_milli_second(&end) - _get_milli_second(&start));
+#endif
     return 1;
 }
 /**
  * void restore()
  */
 static int _restore(lua_State *L) {
+#ifdef STATISTIC_PERFORMANCE
+    struct timeval start = {0};
+    struct timeval end = {0};
+    gettimeofday(&start, NULL);
+#endif
     PRE
     (*env)->CallVoidMethod(env, jobj, restoreID);
+    if (catchJavaException(env, L, LUA_CLASS_NAME ".restore")) {
+        return lua_error(L);
+    }
     lua_settop(L, 1);
+#ifdef STATISTIC_PERFORMANCE
+    gettimeofday(&end, NULL);
+    userdataMethodCall(LUA_CLASS_NAME, "restore", _get_milli_second(&end) - _get_milli_second(&start));
+#endif
     return 1;
 }
 /**
  * void restoreToCount(int)
  */
 static int _restoreToCount(lua_State *L) {
+#ifdef STATISTIC_PERFORMANCE
+    struct timeval start = {0};
+    struct timeval end = {0};
+    gettimeofday(&start, NULL);
+#endif
     PRE
     lua_Integer p1 = luaL_checkinteger(L, 2);
     (*env)->CallVoidMethod(env, jobj, restoreToCountID, (jint)p1);
+    if (catchJavaException(env, L, LUA_CLASS_NAME ".restoreToCount")) {
+        return lua_error(L);
+    }
     lua_settop(L, 1);
+#ifdef STATISTIC_PERFORMANCE
+    gettimeofday(&end, NULL);
+    userdataMethodCall(LUA_CLASS_NAME, "restoreToCount", _get_milli_second(&end) - _get_milli_second(&start));
+#endif
     return 1;
 }
 /**
  * void translate(double,double)
  */
 static int _translate(lua_State *L) {
+#ifdef STATISTIC_PERFORMANCE
+    struct timeval start = {0};
+    struct timeval end = {0};
+    gettimeofday(&start, NULL);
+#endif
     PRE
     lua_Number p1 = luaL_checknumber(L, 2);
     lua_Number p2 = luaL_checknumber(L, 3);
     (*env)->CallVoidMethod(env, jobj, translateID, (jdouble)p1, (jdouble)p2);
+    if (catchJavaException(env, L, LUA_CLASS_NAME ".translate")) {
+        return lua_error(L);
+    }
     lua_settop(L, 1);
+#ifdef STATISTIC_PERFORMANCE
+    gettimeofday(&end, NULL);
+    userdataMethodCall(LUA_CLASS_NAME, "translate", _get_milli_second(&end) - _get_milli_second(&start));
+#endif
     return 1;
 }
 /**
  * void clipRect(double,double,double,double)
  */
 static int _clipRect(lua_State *L) {
+#ifdef STATISTIC_PERFORMANCE
+    struct timeval start = {0};
+    struct timeval end = {0};
+    gettimeofday(&start, NULL);
+#endif
     PRE
     lua_Number p1 = luaL_checknumber(L, 2);
     lua_Number p2 = luaL_checknumber(L, 3);
     lua_Number p3 = luaL_checknumber(L, 4);
     lua_Number p4 = luaL_checknumber(L, 5);
     (*env)->CallVoidMethod(env, jobj, clipRectID, (jdouble)p1, (jdouble)p2, (jdouble)p3, (jdouble)p4);
+    if (catchJavaException(env, L, LUA_CLASS_NAME ".clipRect")) {
+        return lua_error(L);
+    }
     lua_settop(L, 1);
+#ifdef STATISTIC_PERFORMANCE
+    gettimeofday(&end, NULL);
+    userdataMethodCall(LUA_CLASS_NAME, "clipRect", _get_milli_second(&end) - _get_milli_second(&start));
+#endif
     return 1;
 }
 /**
  * void clipPath(com.immomo.mls.fun.ud.UDPath)
  */
 static int _clipPath(lua_State *L) {
+#ifdef STATISTIC_PERFORMANCE
+    struct timeval start = {0};
+    struct timeval end = {0};
+    gettimeofday(&start, NULL);
+#endif
     PRE
     jobject p1 = lua_isnil(L, 2) ? NULL : toJavaValue(env, L, 2);
     (*env)->CallVoidMethod(env, jobj, clipPathID, p1);
+    if (catchJavaException(env, L, LUA_CLASS_NAME ".clipPath")) {
+        FREE(env, p1);
+        return lua_error(L);
+    }
+    FREE(env, p1);
     lua_settop(L, 1);
+#ifdef STATISTIC_PERFORMANCE
+    gettimeofday(&end, NULL);
+    userdataMethodCall(LUA_CLASS_NAME, "clipPath", _get_milli_second(&end) - _get_milli_second(&start));
+#endif
     return 1;
 }
 /**
  * void drawColor(int)
  */
 static int _drawColor(lua_State *L) {
+#ifdef STATISTIC_PERFORMANCE
+    struct timeval start = {0};
+    struct timeval end = {0};
+    gettimeofday(&start, NULL);
+#endif
     PRE
     lua_Integer p1 = luaL_checkinteger(L, 2);
     (*env)->CallVoidMethod(env, jobj, drawColorID, (jint)p1);
+    if (catchJavaException(env, L, LUA_CLASS_NAME ".drawColor")) {
+        return lua_error(L);
+    }
     lua_settop(L, 1);
+#ifdef STATISTIC_PERFORMANCE
+    gettimeofday(&end, NULL);
+    userdataMethodCall(LUA_CLASS_NAME, "drawColor", _get_milli_second(&end) - _get_milli_second(&start));
+#endif
     return 1;
 }
 /**
  * void drawRect(double,double,double,double,com.immomo.mls.fun.ud.UDPaint)
  */
 static int _drawRect(lua_State *L) {
+#ifdef STATISTIC_PERFORMANCE
+    struct timeval start = {0};
+    struct timeval end = {0};
+    gettimeofday(&start, NULL);
+#endif
     PRE
     lua_Number p1 = luaL_checknumber(L, 2);
     lua_Number p2 = luaL_checknumber(L, 3);
@@ -197,7 +293,16 @@ static int _drawRect(lua_State *L) {
     lua_Number p4 = luaL_checknumber(L, 5);
     jobject p5 = lua_isnil(L, 6) ? NULL : toJavaValue(env, L, 6);
     (*env)->CallVoidMethod(env, jobj, drawRectID, (jdouble)p1, (jdouble)p2, (jdouble)p3, (jdouble)p4, p5);
+    if (catchJavaException(env, L, LUA_CLASS_NAME ".drawRect")) {
+        FREE(env, p5);
+        return lua_error(L);
+    }
+    FREE(env, p5);
     lua_settop(L, 1);
+#ifdef STATISTIC_PERFORMANCE
+    gettimeofday(&end, NULL);
+    userdataMethodCall(LUA_CLASS_NAME, "drawRect", _get_milli_second(&end) - _get_milli_second(&start));
+#endif
     return 1;
 }
 //</editor-fold>

@@ -17,8 +17,6 @@ import androidx.recyclerview.widget.RecyclerView;
  */
 public class GridLayoutItemDecoration extends RecyclerView.ItemDecoration {
 
-    private static final String TAG = com.immomo.mls.fun.other.GridLayoutItemDecoration.class.getSimpleName();
-
     public int horizontalSpace;
     public int verticalSpace;
 

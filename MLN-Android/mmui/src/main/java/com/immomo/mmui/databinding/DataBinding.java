@@ -7,7 +7,6 @@
   */
 package com.immomo.mmui.databinding;
 
-import com.immomo.mmui.BuildConfig;
 import com.immomo.mmui.databinding.bean.ObservableList;
 import com.immomo.mmui.databinding.bean.ObservableMap;
 import com.immomo.mmui.databinding.interfaces.IPropertyCallback;
@@ -28,7 +27,7 @@ import java.util.Map;
 public class DataBinding {
     public static final String TAG = "DataBinding";
 
-    public static final  boolean isLog = BuildConfig.DEBUG;
+    public static final  boolean isLog =  false;
 
     /**
      * 绑定观察者
@@ -177,10 +176,10 @@ public class DataBinding {
      * @param key
      * @param section
      * @param row
-     * @param bindPropertys
+     * @param bindProperties
      */
-    public static void bindCell(Globals target, String key, int section, int row,List<String> bindPropertys) {
-        DataBindingEngine.getInstance().bindCell(target,key,section,row,bindPropertys);
+    public static void bindCell(Globals target, String key, int section, int row,List<String> bindProperties) {
+        DataBindingEngine.getInstance().bindCell(target,key,section,row,bindProperties);
     }
 
 

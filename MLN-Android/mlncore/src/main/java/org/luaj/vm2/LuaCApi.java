@@ -52,6 +52,7 @@ class LuaCApi {
 
     //<editor-fold desc="debug">
     static native LuaValue[] _dumpStack(long L_state);
+    static native String _traceback(long L);
 
     //<editor-fold desc="debug mem">
     static native long _lvmMemUse(long L);

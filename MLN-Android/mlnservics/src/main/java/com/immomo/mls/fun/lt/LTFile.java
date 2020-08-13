@@ -296,7 +296,6 @@ public class LTFile {
             return LuaString.valueOf(md5);
         }
 
-        ErrorUtils.debugIllegalStateError("文件不存在 or 不是一个文件");
         return LuaValue.Nil();
     }
 
@@ -559,7 +558,6 @@ public class LTFile {
                 callbackInMain(md5);
                 return;
             }
-            ErrorUtils.debugLuaError("文件不存在 or 不是一个文件",globals);
             callbackInMain(LuaValue.Nil());
         }
     }

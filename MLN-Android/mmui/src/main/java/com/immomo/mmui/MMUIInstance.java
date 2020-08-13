@@ -7,9 +7,12 @@
   */
 package com.immomo.mmui;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
@@ -21,6 +24,7 @@ import android.widget.ImageView;
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
 
 import com.immomo.mls.Constants;
 import com.immomo.mls.HotReloadHelper;
@@ -279,9 +283,34 @@ public class MMUIInstance implements ScriptLoader.Callback, Callback, PrinterCon
         }
         this.isHotReloadPage = isHotReloadPage;
         this.showDebugButton = showDebugButton;
+        if (MLSEngine.DEBUG)
+            initSerial(context);
     }
 
-
+    private void initSerial(Context context) {
+        String serial = HotReloadHelper.getSerial();
+        if (serial != null && !serial.equalsIgnoreCase("unknown")) {
+            return;
+        }
+        String Serial;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            try {
+                if (ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
+                    Serial = Build.getSerial();
+                } else {
+                    Serial = null;
+                }
+            } catch (Throwable ignore) {
+                Serial = null;
+            }
+        } else {
+            Serial = Build.SERIAL;
+        }
+        if (Serial == null || Serial.equalsIgnoreCase("unknown")) {
+            Serial = MLSAdapterContainer.getFileCache().get("android_serial", "unknown");
+        }
+        HotReloadHelper.setSerial(Serial);
+    }
 
 
     //<editor-fold desc="public method">

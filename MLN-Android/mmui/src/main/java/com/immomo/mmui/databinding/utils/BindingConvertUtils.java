@@ -13,6 +13,7 @@ import androidx.annotation.Nullable;
 import com.immomo.mls.utils.convert.ConvertUtils;
 import com.immomo.mls.wrapper.Translator;
 import com.immomo.mmui.databinding.bean.MMUIColor;
+import com.immomo.mmui.databinding.bean.ObservableField;
 import com.immomo.mmui.databinding.bean.ObservableList;
 import com.immomo.mmui.databinding.bean.ObservableMap;
 import com.immomo.mmui.ud.UDColor;
@@ -24,6 +25,7 @@ import org.luaj.vm2.LuaString;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaUserdata;
 import org.luaj.vm2.LuaValue;
+import org.luaj.vm2.utils.DisposableIterator;
 
 import java.util.List;
 import java.util.Map;
@@ -75,6 +77,10 @@ public class BindingConvertUtils {
 
         if (value instanceof MMUIColor) {
             return new UDColor(globals, (MMUIColor) value);
+        }
+
+        if (value instanceof ObservableField) {
+            return toTable(globals,(Map)((ObservableField)value).getFields());
         }
 
         return ConvertUtils.toLuaValue(globals, value);
@@ -145,44 +151,22 @@ public class BindingConvertUtils {
         for (int i = 0, l = list.size(); i < l; i++) {
             Object v = list.get(i);
             if (v == null)
-                ret.set(i+1, LuaValue.Nil());
+                ret.set(i + 1, LuaValue.Nil());
             else if (v instanceof Number)
-                ret.set(i+1, ((Number) v).doubleValue());
+                ret.set(i + 1, ((Number) v).doubleValue());
             else if (v instanceof String)
-                ret.set(i+1, v.toString());
+                ret.set(i + 1, v.toString());
             else if (v instanceof Boolean)
-                ret.set(i+1, ((Boolean) v));
+                ret.set(i + 1, ((Boolean) v));
             else if (v instanceof Map)
-                ret.set(i+1, toTable(g, (Map) v));
+                ret.set(i + 1, toTable(g, (Map) v));
             else if (v instanceof List)
-                ret.set(i+1, toTable(g, (List) v));
+                ret.set(i + 1, toTable(g, (List) v));
             else
-                ret.set(i+1, toLuaValue(g, v));
+                ret.set(i + 1, toLuaValue(g, v));
         }
         return ret;
     }
-
-
-    /**
-     * LuaTable 转 ObservableMap
-     *
-     * @param luaTable
-     * @return
-     */
-    public static @NonNull
-    ObservableMap toObservableMap(@NonNull LuaTable luaTable) {
-        ObservableMap ret = new ObservableMap();
-        LuaTable.Entrys entrys = luaTable.newEntry();
-        LuaValue[] keys = entrys.keys();
-        LuaValue[] values = entrys.values();
-        int len = keys.length;
-        for (int i = 0; i < len; i++) {
-            ret.put(toNativeValue(keys[i]), toNativeValue(values[i]));
-        }
-        luaTable.destroy();
-        return ret;
-    }
-
 
     /**
      * @param value
@@ -207,10 +191,11 @@ public class BindingConvertUtils {
                     return (long) v;
                 return v;
             case LuaValue.LUA_TTABLE:
-                if(isList(value.toLuaTable())) {
-                    return toObservableList(value.toLuaTable());
+                if (value.toLuaTable().getn() > 0) {
+                    return toFastObservableList(value.toLuaTable());
                 }
-                return toObservableMap(value.toLuaTable());
+                return toFastObservableMap(value.toLuaTable());
+
             case LuaValue.LUA_TUSERDATA:
             case LuaValue.LUA_TLIGHTUSERDATA:
                 LuaUserdata ud = value.toUserdata();
@@ -221,40 +206,38 @@ public class BindingConvertUtils {
     }
 
 
-    /**
-     * 判断luaTable 是否是List
-     * @param luaTable
-     * @return
-     */
-    public static boolean isList(LuaTable luaTable) {
-        LuaTable.Entrys entrys = luaTable.newEntry();
-        LuaValue[] keys = entrys.keys();
-        if(keys.length>0 && keys[0].isNumber()) {
-            return true;
+
+    public static @NonNull
+    ObservableList toFastObservableList(LuaTable table) {
+        ObservableList ret = new ObservableList();
+        if (table != null) {
+            DisposableIterator<LuaTable.KV> iterator = table.iterator();
+            if (iterator != null) {
+                while (iterator.hasNext()) {
+                    LuaTable.KV kv = iterator.next();
+                    ret.add(toNativeValue(kv.value));
+                }
+                iterator.dispose();
+            }
         }
-        return false;
+        return ret;
     }
 
 
-    /**
-     * 转ObservableList
-     * @param table
-     * @return
-     */
     public static @NonNull
-    ObservableList toObservableList(@NonNull LuaTable table) {
-        ObservableList ret = new ObservableList();
-        LuaTable.Entrys entrys = table.newEntry();
-        LuaValue[] keys = entrys.keys();
-        LuaValue[] values = entrys.values();
-        for (int i = 0, l = values.length; i < l; i++) {
-            if(keys[i].toInt() == i+1) {
-                ret.add(toNativeValue(values[i]));
-            } else{
-                break;
+    ObservableMap toFastObservableMap(LuaTable table) {
+        ObservableMap ret = new ObservableMap();
+        if (table != null) {
+            DisposableIterator<LuaTable.KV> iterator = table.iterator();
+            if (iterator != null) {
+                while (iterator.hasNext()) {
+                    LuaTable.KV kv = iterator.next();
+                    String key = kv.key.toJavaString();
+                    ret.put(key,toNativeValue(kv.value));
+                }
+                iterator.dispose();
             }
         }
-        table.destroy();
         return ret;
     }
 

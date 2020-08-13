@@ -23,8 +23,8 @@ public class SpringAnimation extends ValueAnimation {
     private float friction;
     private float mass;
 
-    public SpringAnimation(View targetView, String propertyName) {
-        super(targetView, propertyName);
+    public SpringAnimation(View targetView, int animProperty) {
+        super(targetView, animProperty);
     }
 
 

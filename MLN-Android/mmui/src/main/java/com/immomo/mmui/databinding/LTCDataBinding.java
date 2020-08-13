@@ -8,10 +8,12 @@
 package com.immomo.mmui.databinding;
 
 import android.content.Context;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 
 import com.immomo.mls.LuaViewManager;
+import com.immomo.mls.util.LogUtil;
 import com.immomo.mmui.databinding.interfaces.IPropertyCallback;
 import com.immomo.mmui.databinding.utils.BindingConvertUtils;
 import com.immomo.mmui.ud.UDView;
@@ -23,6 +25,7 @@ import org.luaj.vm2.utils.LuaApiUsed;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Created by MLN Template
@@ -30,7 +33,7 @@ import java.util.Map;
  * new Register.NewStaticHolder(LTCDataBinding.LUA_CLASS_NAME, LTCDataBinding.class)
  */
 @LuaApiUsed
-public class LTCDataBinding  {
+public class LTCDataBinding {
     /**
      * Lua类名
      */
@@ -50,18 +53,26 @@ public class LTCDataBinding  {
     public static native void _register(long l);
     //</editor-fold>
 
-    private static class Callback implements IPropertyCallback{
+    private static class Callback implements IPropertyCallback {
         DataBindingCallback callback = null;
         private final long L;
         private final long fun;
         private final Globals globals;
-        private Callback(Globals g, long fun) {
+        private final String key;
+
+        private Callback(Globals g, long fun, String key) {
             this.L = g.getL_State();
             this.fun = fun;
             this.globals = g;
+            this.key = key;
         }
+
         @Override
         public void callBack(Object old, Object news) {
+            if (DataBinding.isLog) {
+                Log.d(DataBinding.TAG, "callBack" + key);
+            }
+
             if (callback == null) {
                 callback = new DataBindingCallback(L, fun);
             }
@@ -180,8 +191,7 @@ public class LTCDataBinding  {
             return -1;
         }
 
-        ///todo 优化，去重
-        /*@Override
+        @Override
         public boolean equals(Object o) {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
@@ -193,111 +203,147 @@ public class LTCDataBinding  {
         @Override
         public int hashCode() {
             return Objects.hash(L, fun);
-        }*/
+        }
     }
     //<editor-fold desc="Bridge API">
 
+    /**
+     * todo 去重
+     * 1、key和fun都相同，存储的时候去重
+     * 2、key不同，fun相同，回调的时候去重
+     */
     @LuaApiUsed
     static String watch(final long L, String key, final long fun) {
+        if (DataBinding.isLog) {
+            Log.d(DataBinding.TAG, "watch---" + key + "---" + fun);
+        }
         final Globals globals = Globals.getGlobalsByLState(L);
-        return DataBinding.watch(globals, key, new Callback(globals, fun));
+        return DataBinding.watch(globals, key, new Callback(globals, fun, key));
     }
 
     /**
      * 通过key更改值
+     *
      * @param L
      * @param key
      * @param value
      */
     @LuaApiUsed
     static void update(final long L, String key, LuaValue value) {
+        if(DataBinding.isLog) {
+            Log.d(DataBinding.TAG,"update---" + key);
+        }
         Globals globals = Globals.getGlobalsByLState(L);
         DataBinding.update(globals, key, BindingConvertUtils.toNativeValue(value));
     }
 
     /**
      * 通过key，获取值
+     *
      * @param L
      * @param key
      * @return
      */
     @LuaApiUsed
-    static LuaValue get(final long L,String key) {
+    static LuaValue get(final long L, String key) {
+        if(DataBinding.isLog) {
+            Log.d(DataBinding.TAG,"get---" + key);
+        }
         Globals globals = Globals.getGlobalsByLState(L);
-        return BindingConvertUtils.toLuaValue(globals,DataBinding.get(globals, key));
+        return BindingConvertUtils.toLuaValue(globals, DataBinding.get(globals, key));
     }
 
 
     /**
      * 数组插入数据
+     *
      * @param L
      * @param key
      * @param index
      * @param luaValue
      */
     @LuaApiUsed
-    static void insert(final long L,String key,int index,LuaValue luaValue) {
+    static void insert(final long L, String key, int index, LuaValue luaValue) {
+        if(DataBinding.isLog) {
+            Log.d(DataBinding.TAG,"insert---" + key);
+        }
         Globals globals = Globals.getGlobalsByLState(L);
-        DataBinding.insert(globals,key,index,BindingConvertUtils.toNativeValue(luaValue));
+        DataBinding.insert(globals, key, index, BindingConvertUtils.toNativeValue(luaValue));
     }
 
 
     /**
      * 数组移除数据
+     *
      * @param L
      * @param key
      * @param index
      */
     @LuaApiUsed
-    static void remove(final long L,String key,int index) {
+    static void remove(final long L, String key, int index) {
+        if(DataBinding.isLog) {
+            Log.d(DataBinding.TAG,"remove---" + key);
+        }
         Globals globals = Globals.getGlobalsByLState(L);
-        DataBinding.remove(globals,key,index);
+        DataBinding.remove(globals, key, index);
     }
-
 
 
     /**
      * 绑定listView
+     *
      * @param L
      * @param key
      * @param view
      */
     @LuaApiUsed
     static void bindListView(final long L, String key, UDView view) {
+        if(DataBinding.isLog) {
+            Log.d(DataBinding.TAG,"bindListView---" + key);
+        }
         Globals globals = Globals.getGlobalsByLState(L);
-        DataBinding.bindListView(globals,key,view);
+        DataBinding.bindListView(globals, key, view);
     }
 
 
     /**
      * 获取section的数量
+     *
      * @param L
      * @param key
      * @return
      */
     @LuaApiUsed
-    static int getSectionCount(final long L,String key) {
+    static int getSectionCount(final long L, String key) {
+        if(DataBinding.isLog) {
+            Log.d(DataBinding.TAG,"getSectionCount---" + key);
+        }
         Globals globals = Globals.getGlobalsByLState(L);
-        return DataBinding.getSectionCount(globals,key);
+        return DataBinding.getSectionCount(globals, key);
     }
 
 
     /**
      * 通过section获取row的数量
+     *
      * @param L
      * @param key
      * @param section
      * @return
      */
     @LuaApiUsed
-    static int getRowCount(final long L,String key,int section) {
+    static int getRowCount(final long L, String key, int section) {
+        if(DataBinding.isLog) {
+            Log.d(DataBinding.TAG,"getRowCount---" + key + "section---" + section);
+        }
         Globals globals = Globals.getGlobalsByLState(L);
-        return DataBinding.getRowCount(globals,key,section-1);
+        return DataBinding.getRowCount(globals, key, section - 1);
     }
 
 
     /**
      * 绑定cell
+     *
      * @param L
      * @param key
      * @param section
@@ -307,48 +353,66 @@ public class LTCDataBinding  {
     @LuaApiUsed
     static void bindCell(final long L, String key, int section, int row, LuaTable luaTable) {
         Globals globals = Globals.getGlobalsByLState(L);
-        DataBinding.bindCell(globals,key,section,row,BindingConvertUtils.toObservableList(luaTable));
+        List<String> bindProperties = BindingConvertUtils.toFastObservableList(luaTable);
+        if(DataBinding.isLog) {
+            Log.d(DataBinding.TAG,"bindCell---" + key + "section---" + section + "row---" +row + "properties" + bindProperties.toString());
+        }
+        DataBinding.bindCell(globals, key, section, row, bindProperties);
     }
 
 
     /**
      * mock 数据
+     *
      * @param L
      * @param key
-     * @param luaValue
+     * @param luaTable
      */
     @LuaApiUsed
-    static void mock(final long L, String key, LuaTable luaValue) {
+    static void mock(final long L, String key, LuaTable luaTable) {
+        if(DataBinding.isLog) {
+            Log.d(DataBinding.TAG,"mock---" + key);
+        }
         Globals globals = Globals.getGlobalsByLState(L);
-        DataBinding.mock(globals,key, BindingConvertUtils.toObservableMap(luaValue));
+        DataBinding.mock(globals, key, BindingConvertUtils.toFastObservableMap(luaTable));
     }
 
 
     /**
      * mock 数组数据（）
+     *
      * @param L
      * @param key
      * @param luaTable
      * @param callBack
      */
     @LuaApiUsed
-    static void mockArray(final long L, String key, LuaTable luaTable,LuaTable callBack) {
+    static void mockArray(final long L, String key, LuaTable luaTable, LuaTable callBack) {
+        if(DataBinding.isLog) {
+            Log.d(DataBinding.TAG,"mockArray---" + key);
+        }
         Globals globals = Globals.getGlobalsByLState(L);
-        DataBinding.mockArray(globals,key,BindingConvertUtils.toObservableList(luaTable),BindingConvertUtils.toObservableMap(callBack));
+        DataBinding.mockArray(globals, key, BindingConvertUtils.toFastObservableList(luaTable), BindingConvertUtils.toFastObservableMap(callBack));
     }
 
 
     @LuaApiUsed
-    static int arraySize(final long L,String key) {
+    static int arraySize(final long L, String key) {
+        if(DataBinding.isLog) {
+            Log.d(DataBinding.TAG,"arraySize---" + key);
+        }
         Globals globals = Globals.getGlobalsByLState(L);
-        return DataBinding.arraySize(globals,key);
+        return DataBinding.arraySize(globals, key);
     }
 
 
     @LuaApiUsed
-    static void removeObserver(final long L,String key) {
+    static void removeObserver(final long L, String key) {
+        if (DataBinding.isLog) {
+            Log.d(DataBinding.TAG, "removeObserver---" + key);
+        }
         Globals globals = Globals.getGlobalsByLState(L);
-        DataBinding.removeObserver(globals,key);
+        DataBinding.removeObserver(globals, key);
     }
 
 

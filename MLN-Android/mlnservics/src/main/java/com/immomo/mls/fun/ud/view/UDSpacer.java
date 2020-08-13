@@ -52,7 +52,7 @@ public class UDSpacer extends UDView<Spacer> {
         if (params.width == MeasurementType.MATCH_PARENT
             || params.width == MeasurementType.WRAP_CONTENT) {
             setWidth(0);
-            ErrorUtils.debugLuaError("The Spacer's width and height doesn't support MeasurementType property.", globals);
+            ErrorUtils.debugDeprecatedMethod("The Spacer's width and height doesn't support MeasurementType property.", globals);
         }
         return result;
     }
@@ -68,7 +68,7 @@ public class UDSpacer extends UDView<Spacer> {
         if (params.width == MeasurementType.MATCH_PARENT
             || params.width == MeasurementType.WRAP_CONTENT) {
             setHeight(0);
-            ErrorUtils.debugLuaError("Spacer not support MeasurementType!", globals);
+            ErrorUtils.debugDeprecatedMethod("Spacer not support MeasurementType!", globals);
         }
         return result;
     }

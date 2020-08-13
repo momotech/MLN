@@ -12,7 +12,8 @@ import android.view.ViewGroup;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
-import com.immomo.mls.fun.ui.LuaStaggeredGridLayoutManager;
+
+import com.immomo.mmui.ui.LuaStaggeredGridLayoutManager;
 
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.utils.LuaApiUsed;

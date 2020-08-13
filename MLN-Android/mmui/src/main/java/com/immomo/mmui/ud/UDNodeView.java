@@ -293,10 +293,10 @@ public abstract class UDNodeView<V extends View> extends UDView<V, FlexNode> imp
             setLeanPadding();//叶子节点，需要设置view的padding
         }
         //为了识别NaN，不能使用int
-        mNode.setPadding(YogaEdge.LEFT, DimenUtil.dpiToPxWithNaN(var[0]));
-        mNode.setPadding(YogaEdge.TOP, DimenUtil.dpiToPxWithNaN(var[1]));
-        mNode.setPadding(YogaEdge.RIGHT, DimenUtil.dpiToPxWithNaN(var[2]));
-        mNode.setPadding(YogaEdge.BOTTOM, DimenUtil.dpiToPxWithNaN(var[3]));
+        mNode.setPadding(YogaEdge.TOP,  DimenUtil.dpiToPxWithNaN(var[0]));
+        mNode.setPadding(YogaEdge.RIGHT,DimenUtil.dpiToPxWithNaN(var[1]));
+        mNode.setPadding(YogaEdge.BOTTOM, DimenUtil.dpiToPxWithNaN(var[2]));
+        mNode.setPadding(YogaEdge.LEFT, DimenUtil.dpiToPxWithNaN(var[3]));
         view.requestLayout();
         return null;
     }
@@ -326,7 +326,7 @@ public abstract class UDNodeView<V extends View> extends UDView<V, FlexNode> imp
     @LuaApiUsed
     public LuaValue[] basis(LuaValue[] var) {
         if (var.length > 0) {
-            mNode.setFlex(var[0].toInt());
+            mNode.setFlex(var[0].toFloat());
             view.requestLayout();
             return null;
         }
@@ -338,7 +338,7 @@ public abstract class UDNodeView<V extends View> extends UDView<V, FlexNode> imp
     @LuaApiUsed
     public LuaValue[] grow(LuaValue[] var) {
         if (var.length > 0) {
-            mNode.setFlexGrow(var[0].toInt());
+            mNode.setFlexGrow(var[0].toFloat());
             view.requestLayout();
             return null;
         }
@@ -350,7 +350,7 @@ public abstract class UDNodeView<V extends View> extends UDView<V, FlexNode> imp
     @LuaApiUsed
     public LuaValue[] shrink(LuaValue[] var) {
         if (var.length > 0) {
-            mNode.setFlexShrink(var[0].toInt());
+            mNode.setFlexShrink(var[0].toFloat());
             view.requestLayout();
             return null;
         }

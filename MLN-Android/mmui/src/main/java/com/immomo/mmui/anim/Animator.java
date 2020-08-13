@@ -7,18 +7,18 @@
   */
 package com.immomo.mmui.anim;
 
+import android.util.LongSparseArray;
+
 import com.immomo.mmui.anim.animations.MultiAnimation;
 import com.immomo.mmui.anim.base.Animation;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 
 public class Animator {
 
-    private HashMap<String, Animation> animationHashMap = new HashMap<>();
+    private LongSparseArray<Animation> animationArray = new LongSparseArray<>();
 
     public static Animator getInstance() {
         return SingleTonHolder._INSTANCE;
@@ -41,7 +41,7 @@ public class Animator {
 
     public void addAnimation(Animation animation) {
 
-        animationHashMap.put(animation.getAnimationPointer() + "", animation);
+        animationArray.put(animation.getAnimationPointer(), animation);
         nativeAddAnimation(animation.getAnimationPointer());
     }
 
@@ -59,21 +59,20 @@ public class Animator {
     public void removeAnimationOfView(Object target) {
 
 
-        List<String> temp = new ArrayList<>();
-        for (Map.Entry<String, Animation> entry : animationHashMap.entrySet()) {
-            String key = entry.getKey();
+        List<Integer> temp = new ArrayList<>();
+        for (int i = 0; i < animationArray.size(); i++) {
 
-            Animation animation = animationHashMap.get(key);
+            Animation animation = animationArray.valueAt(i);
 
             if (null != animation && animation.getTarget() == target) {
-                temp.add(key);
+                temp.add(i);
             }
 
             if (animation instanceof MultiAnimation) {
                 List<Animation> subAnimations = ((MultiAnimation) animation).getAnimations();
                 for (Animation a : subAnimations) {
                     if (a.getTarget() == target) {
-                        temp.add(key);
+                        temp.add(i);
                         break;
                     }
                 }
@@ -81,8 +80,8 @@ public class Animator {
 
         }
 
-        for (String k : temp) {
-            Animation animation = animationHashMap.get(k);
+        for (int index : temp) {
+            Animation animation = animationArray.valueAt(index);
             if (animation != null)
                 removeAnimation(animation.getAnimationPointer());
         }
@@ -118,14 +117,14 @@ public class Animator {
 
 
     private void animationStart(long animationPointer) {
-        Animation animation = animationHashMap.get(animationPointer + "");
+        Animation animation = animationArray.get(animationPointer);
         if (animation != null)
             animation.animationStart(animation);
     }
 
     // 动画集合不回调整体的repeatCount，只回调子Animation的repeatCount
     private void animationRepeat(long callerPointer, long executorPointer, int count) {
-        Animation animation = animationHashMap.get(callerPointer + "");
+        Animation animation = animationArray.get(callerPointer);
         if (animation != null) {
             if (animation instanceof MultiAnimation) {
                 Animation subAnimation = getSubAnimation((MultiAnimation) animation, executorPointer);
@@ -155,21 +154,23 @@ public class Animator {
     }
 
     private void animationPause(long animationPointer, boolean focusPaused) {
-        Animation animation = animationHashMap.get(animationPointer + "");
+        Animation animation = animationArray.get(animationPointer);
         if (animation != null)
             animation.animationPaused(animation, focusPaused);
     }
 
     private void animationFinish(long animationPointer, boolean finished) {
-        Animation animation = animationHashMap.remove(animationPointer + "");
-        if (animation != null){
+        int index = animationArray.indexOfKey(animationPointer);
+        Animation animation = animationArray.valueAt(index);
+        animationArray.removeAt(index);
+        if (animation != null) {
             animation.animationFinish(animation, finished);
             removeAnimation(animationPointer);
         }
     }
 
     private void updateValueAnimation(long animationPointer) {
-        Animation animation = animationHashMap.get(animationPointer + "");
+        Animation animation = animationArray.get(animationPointer);
         if (animation != null) {
             animation.onUpdateAnimation();
         }

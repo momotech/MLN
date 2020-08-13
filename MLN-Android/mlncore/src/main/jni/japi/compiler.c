@@ -716,7 +716,9 @@ static int return_failed(lua_State *L, char *filename) {
  * loadlib.c createsearcherstable
  */
 int searcher_Lua(lua_State *L) {
+#ifdef STATISTIC_PERFORMANCE
     double startTime = getStartTime();
+#endif
     
     lua_lock(L);
     char *filename;
@@ -737,7 +739,9 @@ int searcher_Lua(lua_State *L) {
         result = return_success(L, filename, autosave && !isbin);
         lua_unlock(L);
 
+#ifdef STATISTIC_PERFORMANCE
         statistics_searcher_Call(FROM_SEARCHER_LUA, name, getoffsetTime(startTime));
+#endif
         return result;
     }
     // 加载失败
@@ -762,7 +766,9 @@ int searcher_Lua(lua_State *L) {
         result = return_success(L, filename, autosave);
         lua_unlock(L);
 
+#ifdef STATISTIC_PERFORMANCE
         statistics_searcher_Call(FROM_SEARCHER_LUA, name, getoffsetTime(startTime));
+#endif
         return result;
     }
     result = return_failed(L, filename);
@@ -775,7 +781,9 @@ int searcher_Lua(lua_State *L) {
  * 返回2 : -1: string, -2: function(or nil)
  */
 int searcher_java(lua_State *L) {
+#ifdef STATISTIC_PERFORMANCE
     double startTime = getStartTime();
+#endif
     
     JNIEnv *env;
     int need = getEnv(&env);
@@ -814,7 +822,9 @@ int searcher_java(lua_State *L) {
             if (need) detachEnv();
             lua_unlock(L);
 
+#ifdef STATISTIC_PERFORMANCE
             statistics_searcher_Call(FROM_SEARCHER_JAVA, name, getoffsetTime(startTime));
+#endif
             return 2;
         }
         const char *err = lua_pushfstring(L, "error loading module '%s' from file '%s':\n\t%s",
@@ -848,7 +858,9 @@ int searcher_java(lua_State *L) {
             if (need) detachEnv();
             lua_unlock(L);
 
+#ifdef STATISTIC_PERFORMANCE
             statistics_searcher_Call(FROM_SEARCHER_JAVA, name, getoffsetTime(startTime));
+#endif
             return 2;
         }
         if (need) detachEnv();
@@ -863,7 +875,9 @@ int searcher_java(lua_State *L) {
  * require时调用
  */
 int searcher_Lua_asset(lua_State *L) {
+#ifdef STATISTIC_PERFORMANCE
     double startTime = getStartTime();
+#endif
     const char *name = luaL_checkstring(L, 1);
     name = luaL_gsub(L, name, ".", LUA_DIRSEP);
     const char *filename = formatstr("%s.lua", name);
@@ -910,7 +924,9 @@ int searcher_Lua_asset(lua_State *L) {
     if (code == LUA_OK) {
         lua_pushvalue(L, 1);
 
+#ifdef STATISTIC_PERFORMANCE
         statistics_searcher_Call(FROM_SEARCHER_ASSET, name, getoffsetTime(startTime));
+#endif
         return 2;
     }
     lua_pushfstring(L, "\n\terror loading module '%s' from asset '%s', code: %d",

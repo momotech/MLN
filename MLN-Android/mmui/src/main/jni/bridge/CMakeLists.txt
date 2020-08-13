@@ -11,9 +11,12 @@ cmake_minimum_required(VERSION 3.4.1)
 
 add_library( mmuibridge SHARED
         mmdatabinding_callback.c
-        mmdatabinding.c)
+        mmdatabinding.c
+        interactive_behavior_callback.c
+        interactive_behavior.c)
 
 add_definitions(-DLUA_DL_DLOPEN -DLUA_USE_C89 -DLUA_COMPAT_5_1 -DLUA_COMPAT_ALL -DLUA_USE_LINUX -DJAVA_ENV -DP_ANDROID)
+add_definitions(-DSTATISTIC_PERFORMANCE)
 
 #------------------luajapi link---------------------
 add_library(luajapi_so SHARED IMPORTED)

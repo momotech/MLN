@@ -11,11 +11,6 @@ import android.view.View;
 
 public class ViewPositionAnimatable extends Animatable {
 
-
-    public ViewPositionAnimatable(String propertyName) {
-        super(propertyName);
-    }
-
     @Override
     public void writeValue(View view, float[] upDateValues) {
         view.setX(upDateValues[0] - (float) view.getLayoutParams().width / 2);
@@ -31,5 +26,10 @@ public class ViewPositionAnimatable extends Animatable {
     @Override
     public int getValuesCount() {
         return 2;
+    }
+
+    @Override
+    public boolean hasTranslate() {
+        return true;
     }
 }

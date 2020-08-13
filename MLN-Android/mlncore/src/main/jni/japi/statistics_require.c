@@ -57,6 +57,7 @@ static Map *initMethodsMap() {
 }
 
 void setOpenRequireStatistics(int o) {
+#ifdef STATISTIC_PERFORMANCE
     // 现在打开
     if (o && !open) {
         open = o;
@@ -67,13 +68,19 @@ void setOpenRequireStatistics(int o) {
         open = o;
         map_free(statisticsMap);
     }
+#endif
 };
 
 int isOpenRequireStatistics() {
+#ifdef STATISTIC_PERFORMANCE
     return open;
+#else
+    return 0;
+#endif
 }
 
 void statistics_searcher_Call(const char *fromType, const char *filename, double time) {
+#ifdef STATISTIC_PERFORMANCE
     if (!isOpenRequireStatistics() || !statisticsMap)
         return;
 
@@ -86,9 +93,11 @@ void statistics_searcher_Call(const char *fromType, const char *filename, double
     }
 
     map_put(files, copystr(filename), (int)time);
+#endif
 }
 
 void notifyRequireCallback() {
+#ifdef STATISTIC_PERFORMANCE
     if (statisticsMap) {
         if (_callback) {
             _callback(statisticsMap);
@@ -99,16 +108,21 @@ void notifyRequireCallback() {
         }
     }
     map_remove_all(statisticsMap);
+#endif
 }
 
 void setRequireCallback(requireCallback c) {
+#ifdef STATISTIC_PERFORMANCE
     _callback = c;
     _str_callback = NULL;
+#endif
 };
 
 void setRequireStrCallback(require_str_callback c) {
+#ifdef STATISTIC_PERFORMANCE
     _callback = NULL;
     _str_callback = c;
+#endif
 }
 
 double getStartTime() {

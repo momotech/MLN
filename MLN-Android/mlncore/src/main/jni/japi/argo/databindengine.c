@@ -14,16 +14,6 @@
 #include "lauxlib.h"
 #include "utils.h"
 #include "LuaRPC.h"
-#include "jinfo.h"
-#include "mlog.h"
-
-
-#ifdef J_API_INFO
-
-#include "debug_info.h"
-static void logObservableMap(Map *map);
-static void logObserverMap(Map *map);
-#endif
 
 typedef struct DataBind {
     D_malloc alloc;
@@ -78,6 +68,8 @@ static DataBind* instance = NULL;
 
 #define LUA_INDEX_KEY "__index"
 #define LUA_NEWINDEX_KEY "__newindex"
+#define LUA_PAIRS_KEY "__pairs"
+#define LUA_IPAIRS_KEY "__ipairs"
 #define LUA_LEN_KEY "__len"
 
 #define LUA_CHANGE_TYPE_INSERT 1
@@ -278,6 +270,65 @@ static int _callbackTableInnerTraverse(const void *l, void *ud) {
     return _callbackTraverseReal(l, ud, OBSERVER_TABLE_INNER_KEY);
 }
 
+/* i/pairs start */
+/**
+ * oldtable被新表包装，无法i\pairs()
+ * 这里在原表中插入代理方法。替换为oldtable
+ */
+static int insertFunction(lua_State *L, const char *method, lua_CFunction iter) {
+    if (!luaL_getmetafield(L, -2, method)) {  /* no metamethod? */
+        lua_pushstring(L, method);
+        lua_pushcfunction(L, iter);  /* will return generator, */
+        lua_rawset(L, -3);
+    }
+}
+
+static int ipairsaux (lua_State *L) {
+    int i = luaL_checkint(L, 2);
+    luaL_checktype(L, 1, LUA_TTABLE);
+    i++;  /* next value */
+
+    lua_pushinteger(L, i);
+    lua_rawgeti(L, 1, i);
+    return (lua_isnil(L, -1)) ? 1 : 2;
+}
+
+static int luaB_next (lua_State *L) {
+    luaL_checktype(L, 1, LUA_TTABLE);
+    lua_settop(L, 2);  /* create a 2nd argument if there isn't one */
+
+    if (lua_next(L, 1))
+        return 2;
+    else {
+        lua_pushnil(L);
+        return 1;
+    }
+}
+
+static int pairsmeta (lua_State *L,  int iszero, lua_CFunction iter) {
+    lua_getmetatable(L, 1);
+    lua_pushcfunction(L, iter);
+    lua_getfield(L, -2, LUA_INDEX_KEY);
+
+    if (iszero) lua_pushinteger(L, 0);  /* and initial value */
+    else lua_pushnil(L);
+
+    // -1: key -2: oldtable -3: func -4: metatable -5: source table
+    return 3;
+}
+
+/**
+ *   代理i/pairs方法
+ */
+static int luaB_pairs(lua_State *L) {
+    return pairsmeta(L, 0, luaB_next);
+}
+
+static int luaB_ipairs(lua_State *L) {
+    return pairsmeta(L, 1, ipairsaux);
+}
+/* i/pairs End */
+
 /**
  * __newindex对应的lua函数
  * 参数为: table,参数名称,值
@@ -340,6 +391,7 @@ static int __newindexCallback(lua_State *L) {
 
     return 0;
 }
+
 /**
  * __len对应的lua函数
  * 参数为: table
@@ -427,6 +479,10 @@ static void createObservableTable(lua_State *L, const char *key, int tableIndex,
     lua_pushstring(L, LUA_LEN_KEY);
     lua_pushcfunction(L, __lenFunction);
     lua_rawset(L, -3);
+
+    //插入ipairs、pairs方法. lbaselib.c的相关方法会掉到这里
+    insertFunction(L, LUA_IPAIRS_KEY, luaB_ipairs);
+    insertFunction(L, LUA_PAIRS_KEY, luaB_pairs);
 
     /// -1: metatable -2: table
     lua_setmetatable(L, -2);
@@ -756,8 +812,12 @@ void DB_Get(lua_State *L, const char *key) {
     lua_gettable(target, -2);
 
     /// -1: childtable -2:table
-    rpc_copy(target, -1, L);
-    lua_pop(target, 2);
+    if (target != L) {//不同虚拟机
+        rpc_copy(target, -1, L);
+        lua_pop(target, 2);
+    } else {
+        lua_remove(L, -2); // -1: childtable
+    }
 }
 
 /**
@@ -910,8 +970,14 @@ void DB_Len(lua_State *L, const char *key) {
 
     /// -1: childtable -2:table
     int len = luaL_len(target, -1);
-    lua_pushinteger(L, len);//-1:len
-    lua_pop(target, 2);
+
+    if (target != L) {//不同虚拟机
+        lua_pushinteger(L, len);//-1:len
+        lua_pop(target, 2);
+    } else {
+        lua_pop(L, 2);
+        lua_pushinteger(L, len);// -1:len
+    }
 }
 
 //<editor-fold desc="instance free 操作">
@@ -1009,32 +1075,3 @@ int DataBindInit(D_malloc m) {
 
     return 0;
 }
-
-//<editor-fold desc="debug">
-#ifdef J_API_INFO
-static int _logObservableMap(const void *key, const void *value, void *ud) {
-    LOGI("%s : %p", (const char *)key, value);
-    return 0;
-}
-
-static int _logList(const void *value, void *ud) {
-    LOGI("\t%p", value);
-    return 0;
-}
-
-static int _logObserverMap(const void *key, const void *value, void *ud) {
-    LOGI("%s :[", (const char*) key);
-    list_traverse((List *)value, _logList, NULL);
-    LOGI("]");
-    return 0;
-}
-
-static void logObservableMap(Map *map) {
-    map_traverse(map, _logObservableMap, NULL);
-}
-
-static void logObserverMap(Map *map) {
-    map_traverse(map, _logObserverMap, NULL);
-}
-#endif
-//</editor-fold>

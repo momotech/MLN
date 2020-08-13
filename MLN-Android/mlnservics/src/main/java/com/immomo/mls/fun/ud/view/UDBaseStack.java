@@ -7,21 +7,17 @@
  */
 package com.immomo.mls.fun.ud.view;
 
-import android.view.View;
 import android.view.ViewGroup;
 
 import com.immomo.mls.MLSConfigs;
 import com.immomo.mls.base.ud.lv.ILViewGroup;
-import com.immomo.mls.fun.ui.LuaVStack;
-import com.immomo.mls.fun.weight.newui.BaseRowColumn;
-import com.immomo.mls.util.LuaViewUtil;
 import com.immomo.mls.utils.AssertUtils;
 import com.immomo.mls.utils.ErrorUtils;
 
 import org.luaj.vm2.Globals;
 import org.luaj.vm2.LuaTable;
-import org.luaj.vm2.LuaUserdata;
 import org.luaj.vm2.LuaValue;
+import org.luaj.vm2.utils.DisposableIterator;
 import org.luaj.vm2.utils.LuaApiUsed;
 
 
@@ -56,15 +52,21 @@ public class UDBaseStack<V extends ViewGroup & ILViewGroup> extends UDViewGroup<
     public LuaValue[] children(LuaValue[] var) {
         if (var.length > 0) {
             LuaTable children = var[0].toLuaTable();
-            for (LuaTable.KV kv : children.newEntry()) {
-                LuaValue value = kv.value;
+
+            DisposableIterator<LuaTable.KV> iterator = children.iterator();
+            if (iterator == null)
+                return null;
+            while (iterator.hasNext()) {
+                LuaValue value = iterator.next().value;
                 if (value.isNil()) {
-                    ErrorUtils.debugLuaError("call addView(nil)!", globals);
+                    ErrorUtils.debugLuaError("children table has nil value!", globals);
                     continue;
                 }
                 if (AssertUtils.assertUserData(value, UDView.class, "addView", getGlobals()))
                     insertView((UDView) value, -1);
             }
+            iterator.dispose();
+            children.destroy();
         }
 
         return null;

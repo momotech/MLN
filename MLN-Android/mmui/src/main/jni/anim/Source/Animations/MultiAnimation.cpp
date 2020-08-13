@@ -77,9 +77,9 @@ void MultiAnimation::StartAddRunningAnimation(AMTTimeInterval time) {
 }
 
 void MultiAnimation::Pause(AMTBool pause) {
-    if (runningAnimationList.size()) {
-        for (int i = 0; i < runningAnimationList.size(); i++) {
-            Animation* animation = runningAnimationList[i];
+    if (animationList.size()) {
+        for (int i = 0; i < animationList.size(); i++) {
+            Animation* animation = animationList[i];
             animation->Pause(pause);
         }
     }

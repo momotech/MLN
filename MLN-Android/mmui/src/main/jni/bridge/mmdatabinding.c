@@ -6,12 +6,12 @@
   * For the full copyright and license information,please view the LICENSE file in the root directory of this source tree.
   */
 //
-// Created by Generator on 2020-07-20
+// Created by Generator on 2020-08-11
 //
 
 #include <jni.h>
-#include "cache.h"
 #include "lauxlib.h"
+#include "cache.h"
 #include "jinfo.h"
 
 #define PRE JNIEnv *env;                                                        \
@@ -22,6 +22,10 @@
             }
 
 
+#ifdef STATISTIC_PERFORMANCE
+#include <time.h>
+#define _get_milli_second(t) ((t)->tv_sec*1000.0 + (t)->tv_usec / 1000.0)
+#endif
 #define LUA_CLASS_NAME "DataBinding"
 
 static jclass _globalClass;
@@ -117,146 +121,344 @@ JNIEXPORT void JNICALL Java_com_immomo_mmui_databinding_LTCDataBinding__1registe
 //</editor-fold>
 //<editor-fold desc="lua method implementation">
 /**
- * java.lang.String static watch(long,java.lang.String,long)
+ * static java.lang.String watch(long,java.lang.String,long)
  */
 static int _watch(lua_State *L) {
+#ifdef STATISTIC_PERFORMANCE
+    struct timeval start = {0};
+    struct timeval end = {0};
+    gettimeofday(&start, NULL);
+#endif
     PRE
     jstring p1 = lua_isnil(L, 2) ? NULL : newJString(env, lua_tostring(L, 2));
     jlong p2 = lua_isfunction(L, 3) ? (jlong) copyValueToGNV(L, 3) : 0;
     jobject ret = (*env)->CallStaticObjectMethod(env, _globalClass, watchID, (jlong) L, p1, p2);
+    if (catchJavaException(env, L, LUA_CLASS_NAME ".watch")) {
+        FREE(env, p1);
+        return lua_error(L);
+    }
+    FREE(env, p1);
     pushJavaString(env, L, ret);
+    FREE(env, ret);
+#ifdef STATISTIC_PERFORMANCE
+    gettimeofday(&end, NULL);
+    staticMethodCall(LUA_CLASS_NAME, "watch", _get_milli_second(&end) - _get_milli_second(&start));
+#endif
     return 1;
 }
 /**
- * void static update(long,java.lang.String,org.luaj.vm2.LuaValue)
+ * static void update(long,java.lang.String,org.luaj.vm2.LuaValue)
  */
 static int _update(lua_State *L) {
+#ifdef STATISTIC_PERFORMANCE
+    struct timeval start = {0};
+    struct timeval end = {0};
+    gettimeofday(&start, NULL);
+#endif
     PRE
     jstring p1 = lua_isnil(L, 2) ? NULL : newJString(env, lua_tostring(L, 2));
     jobject p2 = lua_isnil(L, 3) ? NULL : toJavaValue(env, L, 3);
     (*env)->CallStaticVoidMethod(env, _globalClass, updateID, (jlong) L, p1, p2);
+    if (catchJavaException(env, L, LUA_CLASS_NAME ".update")) {
+        FREE(env, p1);
+        FREE(env, p2);
+        return lua_error(L);
+    }
+    FREE(env, p1);
+    FREE(env, p2);
     lua_settop(L, 1);
+#ifdef STATISTIC_PERFORMANCE
+    gettimeofday(&end, NULL);
+    staticMethodCall(LUA_CLASS_NAME, "update", _get_milli_second(&end) - _get_milli_second(&start));
+#endif
     return 1;
 }
 /**
- * org.luaj.vm2.LuaValue static get(long,java.lang.String)
+ * static org.luaj.vm2.LuaValue get(long,java.lang.String)
  */
 static int _get(lua_State *L) {
+#ifdef STATISTIC_PERFORMANCE
+    struct timeval start = {0};
+    struct timeval end = {0};
+    gettimeofday(&start, NULL);
+#endif
     PRE
     jstring p1 = lua_isnil(L, 2) ? NULL : newJString(env, lua_tostring(L, 2));
     jobject ret = (*env)->CallStaticObjectMethod(env, _globalClass, getID, (jlong) L, p1);
+    if (catchJavaException(env, L, LUA_CLASS_NAME ".get")) {
+        FREE(env, p1);
+        return lua_error(L);
+    }
+    FREE(env, p1);
     pushJavaValue(env, L, ret);
+    FREE(env, ret);
+#ifdef STATISTIC_PERFORMANCE
+    gettimeofday(&end, NULL);
+    staticMethodCall(LUA_CLASS_NAME, "get", _get_milli_second(&end) - _get_milli_second(&start));
+#endif
     return 1;
 }
 /**
- * void static insert(long,java.lang.String,int,org.luaj.vm2.LuaValue)
+ * static void insert(long,java.lang.String,int,org.luaj.vm2.LuaValue)
  */
 static int _insert(lua_State *L) {
+#ifdef STATISTIC_PERFORMANCE
+    struct timeval start = {0};
+    struct timeval end = {0};
+    gettimeofday(&start, NULL);
+#endif
     PRE
     jstring p1 = lua_isnil(L, 2) ? NULL : newJString(env, lua_tostring(L, 2));
     lua_Integer p2 = luaL_checkinteger(L, 3);
     jobject p3 = lua_isnil(L, 4) ? NULL : toJavaValue(env, L, 4);
     (*env)->CallStaticVoidMethod(env, _globalClass, insertID, (jlong) L, p1, (jint)p2, p3);
+    if (catchJavaException(env, L, LUA_CLASS_NAME ".insert")) {
+        FREE(env, p1);
+        FREE(env, p3);
+        return lua_error(L);
+    }
+    FREE(env, p1);
+    FREE(env, p3);
     lua_settop(L, 1);
+#ifdef STATISTIC_PERFORMANCE
+    gettimeofday(&end, NULL);
+    staticMethodCall(LUA_CLASS_NAME, "insert", _get_milli_second(&end) - _get_milli_second(&start));
+#endif
     return 1;
 }
 /**
- * void static remove(long,java.lang.String,int)
+ * static void remove(long,java.lang.String,int)
  */
 static int _remove(lua_State *L) {
+#ifdef STATISTIC_PERFORMANCE
+    struct timeval start = {0};
+    struct timeval end = {0};
+    gettimeofday(&start, NULL);
+#endif
     PRE
     jstring p1 = lua_isnil(L, 2) ? NULL : newJString(env, lua_tostring(L, 2));
     lua_Integer p2 = luaL_checkinteger(L, 3);
     (*env)->CallStaticVoidMethod(env, _globalClass, removeID, (jlong) L, p1, (jint)p2);
+    if (catchJavaException(env, L, LUA_CLASS_NAME ".remove")) {
+        FREE(env, p1);
+        return lua_error(L);
+    }
+    FREE(env, p1);
     lua_settop(L, 1);
+#ifdef STATISTIC_PERFORMANCE
+    gettimeofday(&end, NULL);
+    staticMethodCall(LUA_CLASS_NAME, "remove", _get_milli_second(&end) - _get_milli_second(&start));
+#endif
     return 1;
 }
 /**
- * void static bindListView(long,java.lang.String,com.immomo.mmui.ud.UDView)
+ * static void bindListView(long,java.lang.String,com.immomo.mmui.ud.UDView)
  */
 static int _bindListView(lua_State *L) {
+#ifdef STATISTIC_PERFORMANCE
+    struct timeval start = {0};
+    struct timeval end = {0};
+    gettimeofday(&start, NULL);
+#endif
     PRE
     jstring p1 = lua_isnil(L, 2) ? NULL : newJString(env, lua_tostring(L, 2));
     jobject p2 = lua_isnil(L, 3) ? NULL : toJavaValue(env, L, 3);
     (*env)->CallStaticVoidMethod(env, _globalClass, bindListViewID, (jlong) L, p1, p2);
+    if (catchJavaException(env, L, LUA_CLASS_NAME ".bindListView")) {
+        FREE(env, p1);
+        FREE(env, p2);
+        return lua_error(L);
+    }
+    FREE(env, p1);
+    FREE(env, p2);
     lua_settop(L, 1);
+#ifdef STATISTIC_PERFORMANCE
+    gettimeofday(&end, NULL);
+    staticMethodCall(LUA_CLASS_NAME, "bindListView", _get_milli_second(&end) - _get_milli_second(&start));
+#endif
     return 1;
 }
 /**
- * int static getSectionCount(long,java.lang.String)
+ * static int getSectionCount(long,java.lang.String)
  */
 static int _getSectionCount(lua_State *L) {
+#ifdef STATISTIC_PERFORMANCE
+    struct timeval start = {0};
+    struct timeval end = {0};
+    gettimeofday(&start, NULL);
+#endif
     PRE
     jstring p1 = lua_isnil(L, 2) ? NULL : newJString(env, lua_tostring(L, 2));
     jint ret = (*env)->CallStaticIntMethod(env, _globalClass, getSectionCountID, (jlong) L, p1);
+    if (catchJavaException(env, L, LUA_CLASS_NAME ".getSectionCount")) {
+        FREE(env, p1);
+        return lua_error(L);
+    }
+    FREE(env, p1);
     lua_pushinteger(L, (lua_Integer) ret);
+#ifdef STATISTIC_PERFORMANCE
+    gettimeofday(&end, NULL);
+    staticMethodCall(LUA_CLASS_NAME, "getSectionCount", _get_milli_second(&end) - _get_milli_second(&start));
+#endif
     return 1;
 }
 /**
- * int static getRowCount(long,java.lang.String,int)
+ * static int getRowCount(long,java.lang.String,int)
  */
 static int _getRowCount(lua_State *L) {
+#ifdef STATISTIC_PERFORMANCE
+    struct timeval start = {0};
+    struct timeval end = {0};
+    gettimeofday(&start, NULL);
+#endif
     PRE
     jstring p1 = lua_isnil(L, 2) ? NULL : newJString(env, lua_tostring(L, 2));
     lua_Integer p2 = luaL_checkinteger(L, 3);
     jint ret = (*env)->CallStaticIntMethod(env, _globalClass, getRowCountID, (jlong) L, p1, (jint)p2);
+    if (catchJavaException(env, L, LUA_CLASS_NAME ".getRowCount")) {
+        FREE(env, p1);
+        return lua_error(L);
+    }
+    FREE(env, p1);
     lua_pushinteger(L, (lua_Integer) ret);
+#ifdef STATISTIC_PERFORMANCE
+    gettimeofday(&end, NULL);
+    staticMethodCall(LUA_CLASS_NAME, "getRowCount", _get_milli_second(&end) - _get_milli_second(&start));
+#endif
     return 1;
 }
 /**
- * void static bindCell(long,java.lang.String,int,int,org.luaj.vm2.LuaTable)
+ * static void bindCell(long,java.lang.String,int,int,org.luaj.vm2.LuaTable)
  */
 static int _bindCell(lua_State *L) {
+#ifdef STATISTIC_PERFORMANCE
+    struct timeval start = {0};
+    struct timeval end = {0};
+    gettimeofday(&start, NULL);
+#endif
     PRE
     jstring p1 = lua_isnil(L, 2) ? NULL : newJString(env, lua_tostring(L, 2));
     lua_Integer p2 = luaL_checkinteger(L, 3);
     lua_Integer p3 = luaL_checkinteger(L, 4);
     jobject p4 = lua_isnil(L, 5) ? NULL : toJavaValue(env, L, 5);
     (*env)->CallStaticVoidMethod(env, _globalClass, bindCellID, (jlong) L, p1, (jint)p2, (jint)p3, p4);
+    if (catchJavaException(env, L, LUA_CLASS_NAME ".bindCell")) {
+        FREE(env, p1);
+        FREE(env, p4);
+        return lua_error(L);
+    }
+    FREE(env, p1);
+    FREE(env, p4);
     lua_settop(L, 1);
+#ifdef STATISTIC_PERFORMANCE
+    gettimeofday(&end, NULL);
+    staticMethodCall(LUA_CLASS_NAME, "bindCell", _get_milli_second(&end) - _get_milli_second(&start));
+#endif
     return 1;
 }
 /**
- * void static mock(long,java.lang.String,org.luaj.vm2.LuaTable)
+ * static void mock(long,java.lang.String,org.luaj.vm2.LuaTable)
  */
 static int _mock(lua_State *L) {
+#ifdef STATISTIC_PERFORMANCE
+    struct timeval start = {0};
+    struct timeval end = {0};
+    gettimeofday(&start, NULL);
+#endif
     PRE
     jstring p1 = lua_isnil(L, 2) ? NULL : newJString(env, lua_tostring(L, 2));
     jobject p2 = lua_isnil(L, 3) ? NULL : toJavaValue(env, L, 3);
     (*env)->CallStaticVoidMethod(env, _globalClass, mockID, (jlong) L, p1, p2);
+    if (catchJavaException(env, L, LUA_CLASS_NAME ".mock")) {
+        FREE(env, p1);
+        FREE(env, p2);
+        return lua_error(L);
+    }
+    FREE(env, p1);
+    FREE(env, p2);
     lua_settop(L, 1);
+#ifdef STATISTIC_PERFORMANCE
+    gettimeofday(&end, NULL);
+    staticMethodCall(LUA_CLASS_NAME, "mock", _get_milli_second(&end) - _get_milli_second(&start));
+#endif
     return 1;
 }
 /**
- * void static mockArray(long,java.lang.String,org.luaj.vm2.LuaTable,org.luaj.vm2.LuaTable)
+ * static void mockArray(long,java.lang.String,org.luaj.vm2.LuaTable,org.luaj.vm2.LuaTable)
  */
 static int _mockArray(lua_State *L) {
+#ifdef STATISTIC_PERFORMANCE
+    struct timeval start = {0};
+    struct timeval end = {0};
+    gettimeofday(&start, NULL);
+#endif
     PRE
     jstring p1 = lua_isnil(L, 2) ? NULL : newJString(env, lua_tostring(L, 2));
     jobject p2 = lua_isnil(L, 3) ? NULL : toJavaValue(env, L, 3);
     jobject p3 = lua_isnil(L, 4) ? NULL : toJavaValue(env, L, 4);
     (*env)->CallStaticVoidMethod(env, _globalClass, mockArrayID, (jlong) L, p1, p2, p3);
+    if (catchJavaException(env, L, LUA_CLASS_NAME ".mockArray")) {
+        FREE(env, p1);
+        FREE(env, p2);
+        FREE(env, p3);
+        return lua_error(L);
+    }
+    FREE(env, p1);
+    FREE(env, p2);
+    FREE(env, p3);
     lua_settop(L, 1);
+#ifdef STATISTIC_PERFORMANCE
+    gettimeofday(&end, NULL);
+    staticMethodCall(LUA_CLASS_NAME, "mockArray", _get_milli_second(&end) - _get_milli_second(&start));
+#endif
     return 1;
 }
 /**
- * int static arraySize(long,java.lang.String)
+ * static int arraySize(long,java.lang.String)
  */
 static int _arraySize(lua_State *L) {
+#ifdef STATISTIC_PERFORMANCE
+    struct timeval start = {0};
+    struct timeval end = {0};
+    gettimeofday(&start, NULL);
+#endif
     PRE
     jstring p1 = lua_isnil(L, 2) ? NULL : newJString(env, lua_tostring(L, 2));
     jint ret = (*env)->CallStaticIntMethod(env, _globalClass, arraySizeID, (jlong) L, p1);
+    if (catchJavaException(env, L, LUA_CLASS_NAME ".arraySize")) {
+        FREE(env, p1);
+        return lua_error(L);
+    }
+    FREE(env, p1);
     lua_pushinteger(L, (lua_Integer) ret);
+#ifdef STATISTIC_PERFORMANCE
+    gettimeofday(&end, NULL);
+    staticMethodCall(LUA_CLASS_NAME, "arraySize", _get_milli_second(&end) - _get_milli_second(&start));
+#endif
     return 1;
 }
 /**
- * void static removeObserver(long,java.lang.String)
+ * static void removeObserver(long,java.lang.String)
  */
 static int _removeObserver(lua_State *L) {
+#ifdef STATISTIC_PERFORMANCE
+    struct timeval start = {0};
+    struct timeval end = {0};
+    gettimeofday(&start, NULL);
+#endif
     PRE
     jstring p1 = lua_isnil(L, 2) ? NULL : newJString(env, lua_tostring(L, 2));
     (*env)->CallStaticVoidMethod(env, _globalClass, removeObserverID, (jlong) L, p1);
+    if (catchJavaException(env, L, LUA_CLASS_NAME ".removeObserver")) {
+        FREE(env, p1);
+        return lua_error(L);
+    }
+    FREE(env, p1);
     lua_settop(L, 1);
+#ifdef STATISTIC_PERFORMANCE
+    gettimeofday(&end, NULL);
+    staticMethodCall(LUA_CLASS_NAME, "removeObserver", _get_milli_second(&end) - _get_milli_second(&start));
+#endif
     return 1;
 }
 //</editor-fold>

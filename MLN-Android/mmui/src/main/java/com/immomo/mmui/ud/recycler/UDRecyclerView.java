@@ -103,6 +103,10 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
             "scrollEnabled",
             "setOffsetWithAnim",
             "contentOffset",
+            "disallowFling",
+            "pagerContentOffset",
+            "i_bounces",
+            "i_pagingEnabled",
     };
 
     private ILoadViewDelegete loadViewDelegete;
@@ -122,13 +126,19 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
     @Override
     protected T newView(LuaValue[] init) {
         boolean loadEnable = false;
+        boolean isViewPager = false;
         if (init.length > 0) {
             mRefreshEnabled = init[0].toBoolean();
         }
         if (init.length > 1) {
             loadEnable = init[1].toBoolean();
         }
-        return (T) new LuaRecyclerView(getContext(), this, mRefreshEnabled, loadEnable);
+        if (init.length > 2) {
+            isViewPager = init[2].toBoolean();
+        }
+        LuaRecyclerView luaRecyclerView = new LuaRecyclerView(getContext(), this, mRefreshEnabled, loadEnable);
+        luaRecyclerView.setViewpager(isViewPager);
+        return (T) luaRecyclerView;
     }
 
     public void setLoadViewDelegete(ILoadViewDelegete loadViewDelegete) {
@@ -162,6 +172,10 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
 
     protected RecyclerView getRecyclerView() {
         return getView().getRecyclerView();
+    }
+
+    public L getLayout() {
+        return layout;
     }
 
     @Override
@@ -295,6 +309,26 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
             return null;
         }
         return varargsOf(new UDPoint(globals, getView().getContentOffset()));
+    }
+
+    @LuaApiUsed
+    public LuaValue[] pagerContentOffset(LuaValue[] p) {
+        if (p.length == 2) {
+            getView().pagerContentOffset(p[0].toFloat(), p[1].toFloat());
+            return null;
+        }
+        float[] contentOffset = getView().getPagerContentOffset();
+        return varargsOf(LuaNumber.valueOf(contentOffset[0]), LuaNumber.valueOf(contentOffset[1]));
+    }
+
+    @LuaApiUsed
+    public LuaValue[] i_bounces(LuaValue[] bounces) {
+        return null;
+    }
+
+    @LuaApiUsed
+    public LuaValue[] i_pagingEnabled(LuaValue[] bounces) {
+        return null;
     }
 //</editor-fold>
 
@@ -732,7 +766,7 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
     @Deprecated
     @LuaApiUsed
     public LuaValue[] addHeaderView(LuaValue[] values) {
-        ErrorUtils.debugLuaError("WaterfallView:addHeaderView method is deprecated, use WaterfallAdapter:initHeader and WaterfallAdapter:fillHeaderData methods instead!", getGlobals());
+        ErrorUtils.debugDeprecatedMethod("WaterfallView:addHeaderView method is deprecated, use WaterfallAdapter:initHeader and WaterfallAdapter:fillHeaderData methods instead!", getGlobals());
         UDView v = (UDView) values[0];
         if (adapter == null) {
             if (headerViews == null) {
@@ -748,7 +782,7 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
     @Deprecated
     @LuaApiUsed
     public LuaValue[] removeHeaderView(LuaValue[] values) {
-        ErrorUtils.debugLuaError("WaterfallView:removeHeaderView method is deprecated, use WaterfallAdapter:initHeader and WaterfallAdapter:fillHeaderData methods instead!", getGlobals());
+        ErrorUtils.debugDeprecatedMethod("WaterfallView:removeHeaderView method is deprecated, use WaterfallAdapter:initHeader and WaterfallAdapter:fillHeaderData methods instead!", getGlobals());
         if (headerViews != null) {
             headerViews.clear();
         }
@@ -866,6 +900,16 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
         }
 
         return LuaValue.rBoolean(getRecyclerView().isLayoutFrozen());
+    }
+
+    @LuaApiUsed
+    public LuaValue[] disallowFling(LuaValue[] values) {
+        if (values.length > 0) {
+            boolean enable = values[0].toBoolean();
+            ((MLSRecyclerView) getRecyclerView()).setDisallowFling(enable);
+            return null;
+        }
+        return LuaValue.rBoolean(((MLSRecyclerView) getRecyclerView()).isDisallowFling());
     }
 
     //</editor-fold>
@@ -1010,7 +1054,7 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
 
     @Override
     public LuaValue[] addView(LuaValue[] var) {
-        ErrorUtils.debugLuaError("not support addView", getGlobals());
+        ErrorUtils.debugDeprecatedMethod("not support addView", getGlobals());
         return super.addView(var);
     }
 

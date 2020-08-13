@@ -9,13 +9,8 @@ package com.immomo.mmui.databinding.utils;
 
 
 import com.immomo.mmui.databinding.bean.ObservableList;
-import com.immomo.mmui.databinding.bean.ObservableMap;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.math.BigDecimal;
 
 
 /**
@@ -54,9 +49,9 @@ public class DataBindUtils {
      * @return
      */
     public static boolean isNumber(String str) {
-        Pattern pattern = Pattern.compile("[0-9]*");
-        Matcher isNum = pattern.matcher(str);
-        if (!isNum.matches()) {
+        try {
+            Long.parseLong(str);
+        } catch (Exception e) {
             return false;
         }
         return true;

@@ -24,6 +24,7 @@ import org.luaj.vm2.LuaNumber;
 import org.luaj.vm2.LuaString;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
+import org.luaj.vm2.utils.DisposableIterator;
 import org.luaj.vm2.utils.LuaApiUsed;
 
 import java.util.ArrayList;
@@ -99,7 +100,7 @@ public class UDImageView<I extends ImageView & ILuaImageView> extends UDNodeView
             }
             int type = var[0].toInt();
             if (type == ContentMode.CENTER) {
-                ErrorUtils.debugLuaError("ContentMode.CENTER is deprecated", globals);
+                ErrorUtils.debugDeprecatedMethod("ContentMode.CENTER is deprecated", globals);
             }
             getView().setScaleType(ImageView.ScaleType.values()[type]);
             return null;
@@ -276,14 +277,16 @@ public class UDImageView<I extends ImageView & ILuaImageView> extends UDNodeView
     private static List<String> toList(LuaTable t) {
         List<String> ret = new ArrayList<>();
 
-        LuaTable.Entrys entrys = t.newEntry();
-        LuaValue[] keys = entrys.keys();
-        LuaValue[] values = entrys.values();
-
-        int len = keys.length;
-        for (int i = 0; i < len; i++) {
-            ret.add(values[i].toJavaString());
+        DisposableIterator<LuaTable.KV> iterator = t.iterator();
+        if (iterator == null)
+            return ret;
+        while (iterator.hasNext()) {
+            LuaTable.KV kv = iterator.next();
+            ret.add(kv.value.toJavaString());
         }
+        iterator.dispose();
+        t.destroy();
+
         return ret;
     }
 

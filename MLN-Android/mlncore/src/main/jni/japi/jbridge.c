@@ -216,9 +216,11 @@ static void pushStaticClosure(lua_State *L, jclass clz, jmethodID m, const char 
  *              5:parmaCount
  */
 static int executeJavaStaticFunction(lua_State *L) {
+#ifdef STATISTIC_PERFORMANCE
     struct timeval start = {0};
     struct timeval end = {0};
     gettimeofday(&start, NULL);
+#endif
     JNIEnv *env;
     getEnv(&env);
 
@@ -268,9 +270,11 @@ static int executeJavaStaticFunction(lua_State *L) {
         lua_unlock(L);
         return 1;
     }
+#ifdef STATISTIC_PERFORMANCE
     gettimeofday(&end, NULL);
     double offset = _get_milli_second(&end) - _get_milli_second(&start);
     staticMethodCall(className, methodName, offset);
+#endif
 
     FREE(env, p);
     if (!result) {

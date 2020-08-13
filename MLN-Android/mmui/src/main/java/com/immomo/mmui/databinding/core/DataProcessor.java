@@ -7,9 +7,6 @@
   */
 package com.immomo.mmui.databinding.core;
 
-import com.immomo.mls.fun.weight.IPriorityObserver;
-import com.immomo.mls.util.LogUtil;
-import com.immomo.mmui.databinding.DataBinding;
 import com.immomo.mmui.databinding.DataBindingEngine;
 import com.immomo.mmui.databinding.bean.ObservableList;
 import com.immomo.mmui.databinding.bean.ObservableMap;
@@ -53,9 +50,6 @@ public class DataProcessor {
             int finalNumIndex = getFinalNumFromTag(tags);
             if (finalNumIndex == -1) { //表示没有数字
                 String newTag = new StringBuilder(Constants.GLOBAL).append(Constants.SPOT).append(tag).toString();
-                if (DataBinding.isLog) {
-                    LogUtil.d("watch:" + newTag);
-                }
                 addObserver(globals, observed, true, true, newTag, iPropertyCallback);
             } else {
                 String beforeNumTag = getBeforeStr(tags, finalNumIndex);
@@ -67,9 +61,6 @@ public class DataProcessor {
                     newTag = beforeNumTag.replace(Constants.SPOT, "");
                 }
                 Object observer = get(observed, beforeNumTag);
-                if (DataBinding.isLog) {
-                    LogUtil.d("watch item:" + tag);
-                }
                 addObserver(globals, observer, true, true, newTag, iPropertyCallback);
             }
         }
@@ -132,9 +123,6 @@ public class DataProcessor {
      * @param propertyValue
      */
     public void update(Object observed, String propertyTag, Object propertyValue) {
-        if (DataBinding.isLog) {
-            LogUtil.e("update " + propertyTag);
-        }
         mGetSet.set(observed, propertyTag, propertyValue);
     }
 
@@ -147,9 +135,6 @@ public class DataProcessor {
      * @return
      */
     public Object get(Object observed, String propertyTag) {
-        if (DataBinding.isLog) {
-            LogUtil.d("get " + propertyTag);
-        }
         return mGetSet.get(observed, propertyTag);
     }
 
@@ -183,9 +168,6 @@ public class DataProcessor {
      * @param observerTag
      */
     public void removeObserver(final Object observed, String observableId, String observerTag) {
-        if (DataBinding.isLog) {
-            LogUtil.d("removeObserver" + observerTag);
-        }
         String[] fieldTags = observerTag.split(Constants.SPOT_SPLIT);
         Object templeObj = observed;
         if (templeObj instanceof IObservable) {

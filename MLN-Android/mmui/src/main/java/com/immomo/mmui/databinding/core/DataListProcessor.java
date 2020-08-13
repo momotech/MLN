@@ -8,9 +8,11 @@
 package com.immomo.mmui.databinding.core;
 
 
-import com.immomo.mls.util.LogUtil;
+import android.util.Log;
+
 import com.immomo.mmui.databinding.DataBinding;
 import com.immomo.mmui.databinding.DataBindingEngine;
+import com.immomo.mmui.databinding.bean.BindCell;
 import com.immomo.mmui.databinding.bean.DataSource;
 import com.immomo.mmui.databinding.bean.ObservableList;
 import com.immomo.mmui.databinding.interfaces.IListChangedCallback;
@@ -172,10 +174,6 @@ public class DataListProcessor {
 
 
     public int getSectionCount(Object source, String tag) {
-        if (DataBinding.isLog) {
-            LogUtil.d("getSectionCount " + tag);
-        }
-
         Object target = mDataProcessor.get(source, tag);
         if(target == null) {
             return 1;
@@ -194,10 +192,6 @@ public class DataListProcessor {
 
 
     public int getRowCount(Object source, String tag, int section) {
-        if (DataBinding.isLog) {
-            LogUtil.e("getRowCount " + tag + section);
-        }
-
         Object target = mDataProcessor.get(source, tag);
         if(target == null) {
             return 0;
@@ -219,10 +213,6 @@ public class DataListProcessor {
     public void insert(Object source, String tag, int index, Object object) {
         Object observer = mDataProcessor.get(source, tag);
 
-        if (DataBinding.isLog) {
-            LogUtil.e("insert " + tag);
-        }
-
         if (observer instanceof ObservableList) {
             if(index == -1) {
                 ((ObservableList) observer).add(object);
@@ -236,9 +226,6 @@ public class DataListProcessor {
 
 
     public void remove(Object source,String tag,int index) {
-        if (DataBinding.isLog) {
-            LogUtil.e("remove " + tag + "_" +index);
-        }
         Object observer = mDataProcessor.get(source, tag);
         if (observer instanceof ObservableList) {
             ObservableList observableList = (ObservableList) observer;
@@ -266,9 +253,6 @@ public class DataListProcessor {
      * @param bindProperties
      */
     public void bindCell(final Globals globals, DataSource dataSource, String tag, final int section, final int row, List<String> bindProperties) {
-        if(DataBinding.isLog) {
-            LogUtil.e("bindCell" + tag + section + row + bindProperties.toString());
-        }
 
         ObservableList observableList = (ObservableList) mDataProcessor.get(dataSource.getSource(),tag);
         String lastTag;
@@ -279,6 +263,18 @@ public class DataListProcessor {
         }
 
         Object cell = mDataProcessor.get(dataSource.getSource(),lastTag);
+
+
+        BindCell bindCell = BindCell.obtain(section,row,cell.hashCode(),bindProperties);
+
+        if(dataSource.isContainBindCell(tag,bindCell)) {
+            if(DataBinding.isLog) {
+                Log.d(DataBinding.TAG,"bindCell已绑定");
+            }
+            return;
+        }
+
+        dataSource.addBindCell(tag,bindCell);
 
         final UDView udView = dataSource.getListView(tag);
 

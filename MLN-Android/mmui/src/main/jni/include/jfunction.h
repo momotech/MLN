@@ -13,8 +13,33 @@
 #define MMLUA4ANDROID_JFUNCTION_H
 
 #include <jni.h>
+#include "llimits.h"
+#include "jinfo.h"
+#include "cache.h"
 
-#define Void_Call JNIEXPORT void JNICALL
+extern int getErrorFunctionIndex(lua_State *L);
+
+#define check_and_call_method(L, n, params)                             \
+            lua_lock(L);                                                \
+            int erridx = getErrorFunctionIndex(L);                      \
+            int oldTop = lua_gettop(L);                                 \
+            getValueFromGNV(L, (ptrdiff_t) function, LUA_TFUNCTION);    \
+            if (lua_isnil(L, -1)) {                                     \
+                throwInvokeError(env, "function is destroyed.");        \
+                lua_settop(L, oldTop);                                  \
+                lua_unlock(L);                                          \
+                return;                                                 \
+            }                                                           \
+            params;                                                     \
+            int ret = lua_pcall(L, n, 0, erridx);                       \
+            if (ret != 0) {                                             \
+                throwJavaError(env, L);                                 \
+                lua_settop(L, oldTop);                                  \
+                lua_unlock(L);                                          \
+                return;                                                 \
+            }                                                           \
+            lua_settop(L, oldTop);                                      \
+            lua_unlock(L);
 
 jobjectArray jni_invoke(JNIEnv *env, jobject jobj, jlong L, jlong function, jobjectArray params, jint rc);
 
@@ -23,10 +48,4 @@ jstring jni_getFunctionSource(JNIEnv *env, jobject jobj, jlong LS, jlong functio
  * 根据lua栈顶信息抛出java异常
  */
 void throwJavaError(JNIEnv *env, lua_State *L);
-//<editor-fold desc="fast call">
-Void_Call Java_org_luaj_vm2_LuaFunction_nativeInvokeB(JNIEnv *env, jobject jobj, jlong L, jlong function, jboolean b);
-Void_Call Java_org_luaj_vm2_LuaFunction_nativeInvokeN(JNIEnv *env, jobject jobj, jlong L, jlong function, jdouble num);
-Void_Call Java_org_luaj_vm2_LuaFunction_nativeInvokeS(JNIEnv *env, jobject jobj, jlong L, jlong function, jstring s);
-Void_Call Java_org_luaj_vm2_LuaFunction_nativeInvokeT(JNIEnv *env, jobject jobj, jlong L, jlong function, jlong table);
-//</editor-fold>
 #endif //MMLUA4ANDROID_JFUNCTION_H

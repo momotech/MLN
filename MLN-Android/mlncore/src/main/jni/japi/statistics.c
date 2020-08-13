@@ -76,6 +76,7 @@ static Map *initMethodsMap() {
 //</editor-fold>
 
 void setOpenStatistics(int o) {
+#ifdef STATISTIC_PERFORMANCE
     // 现在打开
     if (o && !open) {
         open = o;
@@ -86,13 +87,19 @@ void setOpenStatistics(int o) {
         open = o;
         map_free(statisticsMap);
     }
+#endif
 }
 
 int isOpenStatistics() {
+#ifdef STATISTIC_PERFORMANCE
     return open;
+#else
+    return 0;
+#endif
 }
 
 void userdataMethodCall(const char* clz, const char* method, const double time) {
+#ifdef STATISTIC_PERFORMANCE
     if (!isOpenStatistics() || !statisticsMap)
         return;
     Map *methods = (Map *) map_get(statisticsMap, clz);
@@ -111,9 +118,11 @@ void userdataMethodCall(const char* clz, const char* method, const double time) 
     }
     params->count += 1;
     params->time += time;
+#endif
 }
 
 void staticMethodCall(const char* clz, const char* method, const double time) {
+#ifdef STATISTIC_PERFORMANCE
     if (!isOpenStatistics() || !statisticsMap)
         return;
 
@@ -133,9 +142,11 @@ void staticMethodCall(const char* clz, const char* method, const double time) {
     }
     params->count += 1;
     params->time += time;
+#endif
 }
 
 void notifyStatisticsCallback() {
+#ifdef STATISTIC_PERFORMANCE
     if (statisticsMap) {
         if (_callback) {
             _callback(statisticsMap);
@@ -146,16 +157,21 @@ void notifyStatisticsCallback() {
         }
         map_remove_all(statisticsMap);
     }
+#endif
 }
 
 void setCallback(callback c) {
+#ifdef STATISTIC_PERFORMANCE
     _callback = c;
     _str_callback = NULL;
+#endif
 }
 
 void setStrCallback(str_callback c) {
+#ifdef STATISTIC_PERFORMANCE
     _callback = NULL;
     _str_callback = c;
+#endif
 }
 
 //<editor-fold desc="to string">

@@ -831,7 +831,7 @@ public abstract class UDBaseRecyclerAdapter<L extends UDBaseRecyclerLayout> exte
         if (delegate != null) {
             delegate.invoke(varargsOf(cell));
         } else {
-            ErrorUtils.debugLuaError(" It must not be nil callback of header init!", globals);
+            ErrorUtils.debugLuaError("initHeader callback must not be nil!", globals);
         }
     }
 

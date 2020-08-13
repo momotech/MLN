@@ -28,6 +28,7 @@ public class UDAnimatorSet extends UDBaseAnimation {
 
     public static final String LUA_CLASS_NAME = "AnimatorSet";
     private List<UDAnimation> animationList = new ArrayList<>();
+    private SetPercentBehavior percentBehavior;
 
     // 必须有此构造函数
     public UDAnimatorSet(Globals globals, LuaValue[] init) {
@@ -105,5 +106,14 @@ public class UDAnimatorSet extends UDBaseAnimation {
             }
         }
         return subAnimation;
+    }
+
+    @LuaBridge
+    public void update(float percent) {
+        if (percentBehavior == null) {
+            percentBehavior = new SetPercentBehavior();
+        }
+        percentBehavior.setAnimation((MultiAnimation) getAnimation());  // 设置相关属性信息
+        percentBehavior.update(percent);
     }
 }

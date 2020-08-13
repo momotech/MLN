@@ -20,6 +20,7 @@ import com.immomo.mls.fun.other.Point;
 import com.immomo.mls.fun.ud.view.UDView;
 import com.immomo.mls.fun.ud.view.recycler.UDBaseRecyclerAdapter;
 import com.immomo.mls.fun.ud.view.recycler.UDBaseRecyclerLayout;
+import com.immomo.mls.fun.ud.view.recycler.UDCollectionLayout;
 import com.immomo.mls.fun.ud.view.recycler.UDRecyclerView;
 import com.immomo.mls.fun.weight.BorderRadiusSwipeRefreshLayout;
 import com.immomo.mls.fun.weight.MLSRecyclerView;
@@ -28,6 +29,7 @@ import com.immomo.mls.util.LuaViewUtil;
 import com.immomo.mls.utils.MainThreadExecutor;
 import com.immomo.mls.weight.load.ILoadViewDelegete;
 
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
@@ -42,6 +44,7 @@ public class LuaRecyclerView<A extends UDBaseRecyclerAdapter, L extends UDBaseRe
     private SizeChangedListener sizeChangedListener;
     private boolean loadEnable = false;
     private boolean isLoading = false;
+    private boolean isViewPager = false;
     private ViewLifeCycleCallback cycleCallback;
 
     public LuaRecyclerView(Context context, UDRecyclerView javaUserdata, boolean refreshEnable, boolean loadEnable) {
@@ -279,6 +282,29 @@ public class LuaRecyclerView<A extends UDBaseRecyclerAdapter, L extends UDBaseRe
     @Override
     public Point getContentOffset() {
         return new Point(DimenUtil.pxToDpi(getRecyclerView().computeHorizontalScrollOffset()), DimenUtil.pxToDpi(getRecyclerView().computeVerticalScrollOffset()));
+    }
+
+    @Override
+    public boolean isViewPager() {
+        return isViewPager;
+    }
+
+    @Override
+    public void setViewpager(boolean viewpager) {
+        isViewPager = viewpager;
+    }
+
+    // 针对viewPager单独设计的接口
+    public void pagerContentOffset(float x, float y) {
+        UDCollectionLayout layout = (UDCollectionLayout) userdata.getLayout();  // viewPager 是基于CollectionView底层做的
+        GridLayoutManager layoutManager = (GridLayoutManager) getRecyclerView().getLayoutManager();
+        getRecyclerView().scrollBy(DimenUtil.dpiToPx(x) - ViewPagerOffsetCompute.computeHorizontalScrollOffset(layoutManager, layout), DimenUtil.dpiToPx(y) - ViewPagerOffsetCompute.computeVerticalScrollOffset(layoutManager, layout));
+    }
+
+    public float[] getPagerContentOffset() {
+        UDCollectionLayout layout = (UDCollectionLayout) userdata.getLayout();  // viewPager 是基于CollectionView底层做的
+        GridLayoutManager layoutManager = (GridLayoutManager) getRecyclerView().getLayoutManager();
+        return new float[]{DimenUtil.pxToDpi(ViewPagerOffsetCompute.computeHorizontalScrollOffset(layoutManager, layout)), DimenUtil.pxToDpi(ViewPagerOffsetCompute.computeVerticalScrollOffset(layoutManager, layout))};
     }
 
     @Override

@@ -33,12 +33,12 @@ public class LuaLinearLayout<U extends UDLinearLayout> extends BorderRadiusLinea
 
     @Override
     public void bringSubviewToFront(UDView child) {
-        ErrorUtils.debugLuaError("LinearLayout does not support bringSubviewToFront method", userdata.getGlobals());
+        ErrorUtils.debugUnsupportError("LinearLayout does not support bringSubviewToFront method");
     }
 
     @Override
     public void sendSubviewToBack(UDView child) {
-        ErrorUtils.debugLuaError("LinearLayout does not support sendSubviewToBack method", userdata.getGlobals());
+        ErrorUtils.debugUnsupportError("LinearLayout does not support sendSubviewToBack method");
     }
 
     @NonNull
