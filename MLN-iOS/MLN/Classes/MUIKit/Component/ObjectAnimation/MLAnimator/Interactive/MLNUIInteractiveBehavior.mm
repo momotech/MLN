@@ -85,6 +85,7 @@ static inline BOOL MLNUIFollowEnable(MLNUIInteractiveBehavior *self) {
 - (void)setupTouchBlock {
     __block CGFloat newSpeed,oldSpeed = 0;
     __block NSTimeInterval previousTime = 0;
+    __block CGFloat lastSpeed = 0;
     
     __weak __typeof(self)weakSelf = self;
     self.touchCallback = ^(MLNUITouchType type, UITouch * _Nonnull touch, UIEvent * _Nonnull event) {
@@ -118,7 +119,7 @@ static inline BOOL MLNUIFollowEnable(MLNUIInteractiveBehavior *self) {
                 } else {
                     self.tolerant = CGPointMake(self.endPoint.x - point.x, self.endPoint.y - point.y);
                 }
-                newSpeed = oldSpeed = 0;
+                newSpeed = oldSpeed = lastSpeed = 00;
                 [self onTouch:type dx:point.x dy:point.y distance:0 velocity:newSpeed];
             }
                 break;
@@ -137,6 +138,14 @@ static inline BOOL MLNUIFollowEnable(MLNUIInteractiveBehavior *self) {
                     followBlock();
                 }
                 if (shouldReturn) {
+                    if ((newSpeed > 0) ^ (lastSpeed > 0)) {
+                        lastSpeed = newSpeed;
+                        if (factor > 1) {
+                            self.beginPoint = CGPointMake(point.x - self.endDistance, point.y - self.endDistance);
+                        } else {
+                            self.beginPoint = point;
+                        }
+                    }
                     return;
                 }
                 for (MLAValueAnimation *ani in self.valueAnimations) {
@@ -154,6 +163,8 @@ static inline BOOL MLNUIFollowEnable(MLNUIInteractiveBehavior *self) {
             default:
                 break;
         }
+        
+        lastSpeed = newSpeed;
     };
 }
 
