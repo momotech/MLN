@@ -57,7 +57,7 @@ static inline UIColor *UIColorFromRGBA(const CGFloat values[]) {
 static inline void RGBAFromUIColor(CGFloat values[], UIColor *color) {
     CGFloat red = 0.0, green = 0.0, blue = 0.0, alpha = 0.0;
     [color getRed:&red green:&green blue:&blue alpha:&alpha];
-    values[0] = red; values[1] = green; values[2] = blue; values[3] = alpha;
+    values[0] = 255.0 * red; values[1] = 255.0 * green; values[2] = 255.0 * blue; values[3] = alpha;
 }
 
 static MLAValueHelper kStaticHelpers[] =

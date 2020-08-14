@@ -146,18 +146,19 @@ Vector *Vector::new_cg_affine_transform(const CGAffineTransform &t)
     return v;
 }
 
-CGColorRef Vector::cg_color() const
+UIColor *Vector::ui_color() const
 {
     if (_count < 4) {
         return NULL;
     }
-    return CGColorRGBACreate(_values);
+    return [UIColor colorWithRed:_values[0]/255.0 green:_values[1]/255.0 blue:_values[2]/255.0 alpha:_values[3]];
 }
 
-Vector *Vector::new_cg_color(CGColorRef color)
+Vector *Vector::new_ui_color(UIColor *color)
 {
-    CGFloat rgba[4];
-    CGColorGetRGBAComponents(color, rgba);
+    CGFloat rgba[4], r, g, b;
+    [color getRed:&r green:&g blue:&b alpha:&rgba[3]];
+    rgba[0] = r * 255.0; rgba[1] = g * 255.0; rgba[2] = b * 255.0;
     return new_vector(4, rgba);
 }
 

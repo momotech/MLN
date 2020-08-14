@@ -470,10 +470,10 @@
             if ([velocity isKindOfClass:[NSArray class]]) {
                 NSArray *value = (NSArray *)velocity;
                 if (value.count == 4) {
-                    return [UIColor colorWithRed:[value[0] floatValue] green:[value[1] floatValue] blue:[value[2] floatValue] alpha:1.0];
+                    return [UIColor colorWithRed:[value[0] floatValue]/255.0 green:[value[1] floatValue]/255.0 blue:[value[2] floatValue]/255.0 alpha:1.0];
                 }
                 if (value.count == 4) {
-                    return [UIColor colorWithRed:[value[0] floatValue] green:[value[1] floatValue] blue:[value[2] floatValue] alpha:[value[3] floatValue]];
+                    return [UIColor colorWithRed:[value[0] floatValue]/255.0 green:[value[1] floatValue]/255.0 blue:[value[2] floatValue]/255.0 alpha:[value[3] floatValue]];
                 }
             }
         }
