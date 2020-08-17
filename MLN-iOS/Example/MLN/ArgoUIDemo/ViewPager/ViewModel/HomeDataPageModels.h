@@ -9,9 +9,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) NSMutableArray <HomeDataPageModelsPage *> *page;
 
 
-#if DEBUG
+//#if DEBUG
 + (instancetype)defaultUserData;
-#endif
+//#endif
 
 
 @end

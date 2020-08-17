@@ -2,7 +2,7 @@
 
 @implementation HomeData
 
-#if DEBUG
+//#if DEBUG
 + (instancetype)defaultUserData {
     HomeData *homeData = [HomeData new];
     NSMutableArray *pages = [NSMutableArray array];
@@ -13,6 +13,6 @@
     homeData.pageModels = pages;
     return homeData;
 }
-#endif
+//#endif
 @end
     

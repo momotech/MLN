@@ -2,7 +2,7 @@
 
 @implementation HomeDataPageModelsPage
 
-#if DEBUG
+//#if DEBUG
 + (instancetype)defaultUserData {
     HomeDataPageModelsPage *item = [HomeDataPageModelsPage new];
     item.comment = @"253";
@@ -44,6 +44,6 @@
     ].mutableCopy;
     return item;
 }
-#endif
+//#endif
 
 @end

@@ -15,9 +15,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy) NSString *content;
 @property (nonatomic, strong) NSMutableArray *commentArr;
 
-#if DEBUG
+//#if DEBUG
 + (instancetype)defaultUserData;
-#endif
+//#endif
 
 @end
 

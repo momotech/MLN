@@ -86,8 +86,10 @@
     [MLNUIKitEnvironment setDefaultScrollRefreshHandler:self.refreshHandler];
     [MLNUIKitEnvironment setDefaultImageLoader:self.imgLoader2];
     [MLNUIKitEnvironment setDefaultNavigatorHandler:self.navHandler];
+#if DEBUG
     [MLNUIKitEnvironment setPerformanceMonitor: [MLNUILoadTimeStatistics sharedStatistics]];
     MLNUIKitPerformanceMonitorForDebug = [MLNUILoadTimeStatistics sharedStatistics];
+#endif
     [MLNUILink registerName:@"MLNLuaGallery" linkClassName:@"MLNLuaGalleryViewController"];
 }
 

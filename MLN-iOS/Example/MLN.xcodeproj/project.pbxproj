@@ -48,6 +48,8 @@
 		00E9132224E519B3006614C4 /* CellModelItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E9131D24E519B2006614C4 /* CellModelItem.m */; };
 		00E9132324E519B3006614C4 /* HomeData.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E9131F24E519B2006614C4 /* HomeData.m */; };
 		00E9132624E51CC3006614C4 /* MLNViewPagerDemo.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E9132524E51CC3006614C4 /* MLNViewPagerDemo.m */; };
+		00E9132A24E53B41006614C4 /* MLNKuaController_Native.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E9132924E53B41006614C4 /* MLNKuaController_Native.m */; };
+		00E9132C24E53E46006614C4 /* KuaCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 00E9132B24E53E46006614C4 /* KuaCell.xib */; };
 		00FDB74E24591C3300D4A211 /* MLNBlockKVOTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00FDB74D24591C3300D4A211 /* MLNBlockKVOTests.m */; };
 		3012BB102326822F00FA2BB2 /* MLNNavigatorHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 3012BB0F2326822F00FA2BB2 /* MLNNavigatorHandler.m */; };
 		30A4EB5A231CC5CD00995416 /* MLNMyHttpHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 30A4EB59231CC5CD00995416 /* MLNMyHttpHandler.m */; };
@@ -226,6 +228,9 @@
 		00E9132024E519B3006614C4 /* HomeData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HomeData.h; sourceTree = "<group>"; };
 		00E9132424E51CC3006614C4 /* MLNViewPagerDemo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNViewPagerDemo.h; sourceTree = "<group>"; };
 		00E9132524E51CC3006614C4 /* MLNViewPagerDemo.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNViewPagerDemo.m; sourceTree = "<group>"; };
+		00E9132824E53B41006614C4 /* MLNKuaController_Native.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNKuaController_Native.h; sourceTree = "<group>"; };
+		00E9132924E53B41006614C4 /* MLNKuaController_Native.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNKuaController_Native.m; sourceTree = "<group>"; };
+		00E9132B24E53E46006614C4 /* KuaCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = KuaCell.xib; sourceTree = "<group>"; };
 		00FDB74D24591C3300D4A211 /* MLNBlockKVOTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNBlockKVOTests.m; sourceTree = "<group>"; };
 		0BFEA11F75FC7C356E75DFD6 /* Pods-MLN_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MLN_Example.release.xcconfig"; path = "Target Support Files/Pods-MLN_Example/Pods-MLN_Example.release.xcconfig"; sourceTree = "<group>"; };
 		1018AD05C0E113C32A1AD38C /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
@@ -521,6 +526,7 @@
 		00E911C924E2B8B9006614C4 /* ArgoUIDemo */ = {
 			isa = PBXGroup;
 			children = (
+				00E9132724E53B24006614C4 /* KuaNative */,
 				00E9130824E5180B006614C4 /* Kua */,
 				00E9130624E517C9006614C4 /* ViewPager */,
 			);
@@ -577,6 +583,16 @@
 				00E9131124E51837006614C4 /* HomeDataPageModelsPage.m */,
 			);
 			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		00E9132724E53B24006614C4 /* KuaNative */ = {
+			isa = PBXGroup;
+			children = (
+				00E9132B24E53E46006614C4 /* KuaCell.xib */,
+				00E9132824E53B41006614C4 /* MLNKuaController_Native.h */,
+				00E9132924E53B41006614C4 /* MLNKuaController_Native.m */,
+			);
+			name = KuaNative;
 			sourceTree = "<group>";
 		};
 		4DADC4E2A37EF6A986E99F07 /* Pods */ = {
@@ -1153,6 +1169,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				FA383459239A64AF000F900E /* LaunchScreen.storyboard in Resources */,
+				00E9132C24E53E46006614C4 /* KuaCell.xib in Resources */,
 				FAE9C59323A250CD002C830D /* gallery.bundle in Resources */,
 				30CB3BFB23684CD400AB90C6 /* MLN.podspec in Resources */,
 				30CB3BF923684B7F00AB90C6 /* MLNDevTool.podspec in Resources */,
@@ -1326,6 +1343,7 @@
 				00D5986E24B8766C00EA1660 /* MLNBindTestLayoutController.m in Sources */,
 				007F89E7246C0D8400FF50F1 /* MLNBindTestCaseModel.m in Sources */,
 				B27F65AC2377AA9700F2D341 /* MLNNativeWaterfallHeaderView.m in Sources */,
+				00E9132A24E53B41006614C4 /* MLNKuaController_Native.m in Sources */,
 				A4C3142624C7DE2700444CA4 /* MLNGlobalTimeTest.m in Sources */,
 				30A4EB60231CD75200995416 /* MLNMyRefreshHandler.m in Sources */,
 				30A4EB5D231CC86B00995416 /* MLNMyImageHandler.m in Sources */,

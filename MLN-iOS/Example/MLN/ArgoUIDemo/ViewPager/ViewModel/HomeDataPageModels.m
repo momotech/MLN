@@ -5,7 +5,7 @@
 @implementation HomeDataPageModels
 
 
-#if DEBUG
+//#if DEBUG
 + (instancetype)defaultUserData {
     HomeDataPageModels *model = [HomeDataPageModels new];
     NSMutableArray *page = [NSMutableArray new];
@@ -16,7 +16,7 @@
     model.page = page;
     return model;
 }
-#endif
+//#endif
 
 
 @end
