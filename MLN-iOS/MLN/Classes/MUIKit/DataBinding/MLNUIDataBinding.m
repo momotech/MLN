@@ -179,6 +179,32 @@
     }
 }
 
+- (void)removeMLNUIDataObserverByID:(NSString *)obID {
+    NSParameterAssert(obID);
+    if(!obID) return;
+
+    LOCK();
+    MLNUIInternalObserverPair *dataPair = [self.dataObserverMap objectForKey:obID];
+    [self.dataObserverMap removeObjectForKey:obID];
+    UNLOCK();
+    if (dataPair) {
+        [self _removeDataObserverPair:dataPair];
+    }
+}
+
+- (void)removeMLNUIArrayObserverByID:(NSString *)obID {
+    NSParameterAssert(obID);
+    if(!obID) return;
+
+    LOCK();
+    MLNUIInternalObserverPair *arrayPair = [self.arrayObserverMap objectForKey:obID];
+    [self.arrayObserverMap removeObjectForKey:obID];
+    UNLOCK();
+    if (arrayPair) {
+        [self _removeArrayObserverPair:arrayPair];
+    }
+}
+
 - (void)_removeDataObserverPair:(MLNUIInternalObserverPair *)p {
     [p.observedObject mlnui_removeObervationsForOwner:p.observer keyPath:p.keyPath];
 }
@@ -406,7 +432,8 @@
         @strongify(self);
         @strongify(observer);
         if (self && observer) {
-            [self removeMLNUIObserverByID:obID];
+//            [self removeMLNUIObserverByID:obID];
+            [self removeMLNUIDataObserverByID:obID];
         }
     }];
     
@@ -486,7 +513,8 @@
         @strongify(observer);
         if (self && observer) {
 //            [self removeMLNUIObserver:observer forKeys:keys];
-            [self removeMLNUIObserverByID:obID];
+//            [self removeMLNUIObserverByID:obID];
+            [self removeMLNUIArrayObserverByID:obID];
         }
     }];
     
