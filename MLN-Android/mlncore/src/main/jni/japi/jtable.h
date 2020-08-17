@@ -23,6 +23,8 @@ jlong jni_createTable(JNIEnv *env, jobject jobj, jlong L);
 
 jint jni_getTableSize(JNIEnv *env, jobject jobj, jlong L, jlong table);
 void jni_clearTableArray(JNIEnv *env, jobject jobj, jlong L, jlong table, jint from, jint to);
+void jni_removeTableIndex(JNIEnv *env, jobject jobj,jlong L,jlong table,jint index);
+void jni_clearTable(JNIEnv *env, jobject jobj,jlong L,jlong table);
 
 void jni_setTableNumber(JNIEnv *env, jobject jobj, jlong L, jlong table, jint k, jdouble v);
 void jni_setTableBoolean(JNIEnv *env, jobject jobj, jlong L, jlong table, jint k, jboolean v);

@@ -12,7 +12,11 @@ import android.app.Activity;
 import android.app.Fragment;
 
 
+import com.immomo.mmui.databinding.bean.FieldCacheHelper;
 import com.immomo.mmui.databinding.bean.ObserverWrap;
+
+import org.luaj.vm2.Globals;
+import org.luaj.vm2.LuaTable;
 
 /**
  * Description:
@@ -88,4 +92,20 @@ public interface IObservable {
      * @param newer
      */
     void notifyPropertyChanged(String fieldName, Object older, Object newer);
+
+
+    /**
+     * 获取缓存
+     * @param globals
+     * @return
+     */
+    LuaTable getFieldCache(Globals globals);
+
+
+    /**
+     * 添加缓存
+     * @param luaTable
+     */
+    void addFieldCache(LuaTable luaTable);
+
 }

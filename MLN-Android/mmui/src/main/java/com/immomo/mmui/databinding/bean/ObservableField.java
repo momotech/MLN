@@ -14,7 +14,9 @@ import android.app.Fragment;
 import com.immomo.mmui.databinding.interfaces.IObservable;
 import com.immomo.mmui.databinding.interfaces.IPropertyCallback;
 
-import java.util.HashMap;
+import org.luaj.vm2.Globals;
+import org.luaj.vm2.LuaTable;
+
 
 
 /**
@@ -25,6 +27,7 @@ import java.util.HashMap;
  */
 public class ObservableField implements IObservable {
     protected ObservableMap<String,Object> fields;
+
 
     public ObservableField() {
         fields = new ObservableMap<>();
@@ -94,5 +97,16 @@ public class ObservableField implements IObservable {
     public void notifyPropertyChanged(String fieldName, Object older, Object newer) {
         fields.notifyPropertyChanged(fieldName,older,newer);
     }
+
+    @Override
+    public LuaTable getFieldCache(Globals globals) {
+        return fields.getFieldCache(globals);
+    }
+
+    @Override
+    public void addFieldCache(LuaTable luaTable) {
+        fields.addFieldCache(luaTable);
+    }
+
 
 }

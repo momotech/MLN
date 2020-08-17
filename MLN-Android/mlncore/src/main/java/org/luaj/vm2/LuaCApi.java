@@ -125,6 +125,10 @@ class LuaCApi {
 
     static native void _clearTableArray(long L, long table, int from, int to);
 
+    static native void _removeTableIndex(long L,long table,int index);
+
+    static native void _clearTable(long L,long table);
+
     static native void _setTableNumber(long L, long table, int k, double n);
 
     static native void _setTableBoolean(long L, long table, int k, boolean v);

@@ -29,17 +29,10 @@ public class ColorUtil {
     }
 
     public static void colorToArray(float[] floats, int color) {
-        if (color == -1) {
-            floats[0] = 0;
-            floats[1] = 0;
-            floats[2] = 0;
-            floats[3] = 0;
-        } else {
-            floats[0] = (float) Color.alpha(color);
-            floats[1] = (float) Color.red(color);
-            floats[2] = (float) Color.green(color);
-            floats[3] = (float) Color.blue(color);
-        }
+        floats[0] = (float) Color.alpha(color);
+        floats[1] = (float) Color.red(color);
+        floats[2] = (float) Color.green(color);
+        floats[3] = (float) Color.blue(color);
     }
 
 

@@ -96,6 +96,8 @@ static JNINativeMethod jni_methods[] = {
     {"_createTable", "(J)J", (void *)jni_createTable},
     {"_getTableSize", "(JJ)I", (void *)jni_getTableSize},
     {"_clearTableArray", "(JJII)V", (void *)jni_clearTableArray},
+    {"_removeTableIndex", "(JJI)V", (void *)jni_removeTableIndex},
+    {"_clearTable","(JJ)V", (void *)jni_clearTable},
 
     {"_setTableNumber", "(JJID)V", (void *)jni_setTableNumber},
     {"_setTableBoolean", "(JJIZ)V", (void *)jni_setTableBoolean},

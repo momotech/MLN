@@ -13,7 +13,8 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 import com.immomo.mls.LuaViewManager;
-import com.immomo.mls.util.LogUtil;
+import com.immomo.mmui.databinding.bean.ObservableList;
+import com.immomo.mmui.databinding.bean.ObservableMap;
 import com.immomo.mmui.databinding.interfaces.IPropertyCallback;
 import com.immomo.mmui.databinding.utils.BindingConvertUtils;
 import com.immomo.mmui.ud.UDView;
@@ -82,59 +83,34 @@ public class LTCDataBinding {
                 return;
             }
 
-            if (old != null) {
-                switch (isSameTypeParams(old, news)) {
-                    case 1:
-                        callback.fastInvoke((Boolean) news, (Boolean) old);
-                        break;
-                    case 2:
-                        callback.fastInvoke(((Number) news).doubleValue(), ((Number) old).doubleValue());
-                        break;
-                    case 3:
-                        callback.fastInvoke((Character) news, (Character) old);
-                        break;
-                    case 4:
-                        callback.fastInvoke((String) news, (String) old);
-                        break;
-                    case 5:
-                        callback.fastInvoke(news != null ? BindingConvertUtils.toTable(globals, (Map) news).nativeGlobalKey() : 0,
-                                BindingConvertUtils.toTable(globals, (Map) old).nativeGlobalKey());
-                        break;
-                    case 6:
-                        callback.fastInvoke(news != null ? BindingConvertUtils.toTable(globals, (List) news).nativeGlobalKey() : 0,
-                                BindingConvertUtils.toTable(globals, (Map) old).nativeGlobalKey());
-                        break;
-                    case 7:
-                        callback.fastInvoke(news != null ? BindingConvertUtils.toTable(globals, (List) news).nativeGlobalKey() : 0,
-                                BindingConvertUtils.toTable(globals, (List) old).nativeGlobalKey());
-                        break;
-                    case 8:
-                        callback.fastInvoke(news != null ? BindingConvertUtils.toTable(globals, (Map) news).nativeGlobalKey() : 0,
-                                BindingConvertUtils.toTable(globals, (List) old).nativeGlobalKey());
-                        break;
-                    default:
-                        callback.invoke(LuaValue.varargsOf(BindingConvertUtils.toLuaValue(globals,news), BindingConvertUtils.toLuaValue(globals,old)));
-                        break;
-                }
-            } else {// if news != null and old == null
-                switch (isSameTypeParams(news, old)) {
-                    case 4:
-                        callback.fastInvoke((String) news, (String) old);
-                        break;
-                    case 5:
-                    case 6:
-                        callback.fastInvoke(BindingConvertUtils.toTable(globals, (Map) news).nativeGlobalKey(),
-                                0);
-                        break;
-                    case 7:
-                    case 8:
-                        callback.fastInvoke(BindingConvertUtils.toTable(globals, (List) news).nativeGlobalKey(),
-                                0);
-                        break;
-                    default:
-                        callback.invoke(LuaValue.varargsOf(BindingConvertUtils.toLuaValue(globals,news)));
-                        break;
-                }
+
+            switch (isSameTypeParams(old, news)) {
+                case 1:
+                    callback.fastInvoke((Boolean) news, (Boolean) old);
+                    break;
+                case 2:
+                    callback.fastInvoke(((Number) news).doubleValue(), ((Number) old).doubleValue());
+                    break;
+                case 3:
+                    callback.fastInvoke((Character) news, (Character) old);
+                    break;
+                case 4:
+                    callback.fastInvoke((String) news, null);
+                    break;
+                case 5:
+                case 6:
+                    callback.fastInvoke(news != null ? BindingConvertUtils.toTable(globals, (ObservableMap<Object, Object>) news).nativeGlobalKey() : 0,
+                            0);
+                    break;
+                case 7:
+                case 8:
+                    callback.fastInvoke(news != null ? BindingConvertUtils.toTable(globals, (ObservableList) news).nativeGlobalKey() : 0,
+                            0);
+                    break;
+
+                default:
+                    callback.invoke(LuaValue.varargsOf(BindingConvertUtils.toLuaValue(globals,news)));
+                    break;
             }
         }
 

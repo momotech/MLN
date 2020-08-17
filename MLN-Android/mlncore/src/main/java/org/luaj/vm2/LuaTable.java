@@ -213,6 +213,27 @@ public class LuaTable extends NLuaValue implements Iterable {
     }
 
     /**
+     * 根据index清除table
+     * @param index 下标
+     */
+    public final void remove(int index) {
+        if (!checkValid())
+            return;
+        LuaCApi._removeTableIndex(globals.L_State,nativeGlobalKey,index);
+    }
+
+
+    /**
+     * 清除全部数据
+     */
+    public final void clear() {
+        if (!checkValid())
+            return;
+        LuaCApi._clearTable(globals.L_State,nativeGlobalKey);
+    }
+
+
+    /**
      * 直接使用{@link #newEntry()}获取所有key value，并获取长度
      * 若table有hash部分，推荐通过{@link #iterator()}取出数据后计算长度
      * 若想读取array部分长度，使用{@link #getn()}

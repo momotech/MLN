@@ -12,7 +12,6 @@ import android.app.Fragment;
 
 import androidx.annotation.Nullable;
 
-import com.immomo.mls.wrapper.Constant;
 import com.immomo.mmui.databinding.interfaces.IObservable;
 import com.immomo.mmui.databinding.interfaces.IPropertyCallback;
 import com.immomo.mmui.databinding.lifeCycle.FragmentLifecycle;
@@ -21,6 +20,7 @@ import com.immomo.mmui.databinding.utils.Constants;
 import com.immomo.mmui.databinding.utils.ObserverUtils;
 
 import org.luaj.vm2.Globals;
+import org.luaj.vm2.LuaTable;
 
 import java.util.*;
 
@@ -32,6 +32,9 @@ import java.util.*;
  */
 public class ObservableMap<K,V> extends HashMap<K, V> implements IObservable {
     private ArrayList<ObserverWrap> observerWraps;
+
+    private final FieldCacheHelper fieldCacheHelper = new FieldCacheHelper();
+
 
     @Override
     public void watch(Activity activity, final String fieldTag, IPropertyCallback iPropertyCallback) {
@@ -45,6 +48,7 @@ public class ObservableMap<K,V> extends HashMap<K, V> implements IObservable {
         });
         watch(observerId,observerTag,true,true,iPropertyCallback);
     }
+
 
     @Override
     public void watch(Fragment fragment, String fieldTag, IPropertyCallback iPropertyCallback) {
@@ -97,10 +101,14 @@ public class ObservableMap<K,V> extends HashMap<K, V> implements IObservable {
     @Override
     public V put(K key, V value) {
         V oldV = super.put(key, value);
-        if(observerWraps != null && observerWraps.size() > 0) {
-            notifyPropertyChanged((String)key,oldV,value);
+        if(key instanceof String) {
+            fieldCacheHelper.putField((String)key,value);
+            if(observerWraps != null && observerWraps.size() > 0) {
+                notifyPropertyChanged((String)key,oldV,value);
+            }
+        } else {
+            throw new RuntimeException("map.key must String");
         }
-
         return oldV;
     }
 
@@ -108,8 +116,13 @@ public class ObservableMap<K,V> extends HashMap<K, V> implements IObservable {
     public void putAll(@Nullable Map<? extends K, ? extends V> m) {
         Map older = (Map) this.clone();
         super.putAll(m);
-        if(observerWraps != null && observerWraps.size() > 0) {
-            notifyPropertyChanged("",older,this);
+        if(m instanceof ObservableMap) {
+            fieldCacheHelper.putAllField((ObservableMap)m);
+            if(observerWraps != null && observerWraps.size() > 0) {
+                notifyPropertyChanged("",older,this);
+            }
+        } else {
+            throw new RuntimeException("parameter must ObservableMap");
         }
     }
 
@@ -118,6 +131,7 @@ public class ObservableMap<K,V> extends HashMap<K, V> implements IObservable {
     public V remove(@Nullable Object key) {
         Map older = (Map) this.clone();
         V k = super.remove(key);
+        fieldCacheHelper.removeField((String) k);
         if(observerWraps != null && observerWraps.size() > 0) {
             notifyPropertyChanged("",older,this);
         }
@@ -128,6 +142,7 @@ public class ObservableMap<K,V> extends HashMap<K, V> implements IObservable {
     public void clear() {
         Map older = (Map) this.clone();
         super.clear();
+        fieldCacheHelper.clearFields();
         if(observerWraps != null && observerWraps.size() > 0) {
             notifyPropertyChanged("",older,this);
         }
@@ -142,5 +157,14 @@ public class ObservableMap<K,V> extends HashMap<K, V> implements IObservable {
         ObserverUtils.notifyPropertyChanged((List<ObserverWrap>) observerWraps.clone(),fieldName,older,newer);
     }
 
+    @Override
+    public LuaTable getFieldCache(Globals globals) {
+        return fieldCacheHelper.getFieldCache(globals);
+    }
+
+    @Override
+    public void addFieldCache(LuaTable luaTable) {
+        fieldCacheHelper.addFieldCache(luaTable);
+    }
 
 }

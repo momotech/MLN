@@ -10,12 +10,17 @@ package com.immomo.mmui.databinding.bean;
 import android.app.Activity;
 import android.app.Fragment;
 
+import androidx.annotation.NonNull;
+
 import com.immomo.mmui.databinding.interfaces.IItemChangeCallback;
 import com.immomo.mmui.databinding.interfaces.IListChangeObservable;
 import com.immomo.mmui.databinding.interfaces.IListChangedCallback;
 import com.immomo.mmui.databinding.interfaces.IObservable;
 import com.immomo.mmui.databinding.interfaces.IPropertyCallback;
 import com.immomo.mmui.databinding.utils.ObserverUtils;
+
+import org.luaj.vm2.Globals;
+import org.luaj.vm2.LuaTable;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -37,6 +42,7 @@ public class ObservableList<T> extends ArrayList<T> implements IObservable, ILis
     private List<IItemChangeCallback> iItemChangeCallbacks;
     private List<IListChangedCallback> iListChangedCallbackList;
 
+    private final FieldCacheHelper fieldCacheHelper = new FieldCacheHelper();
 
     @Override
     public void addListChangedCallback(IListChangedCallback iListChangedCallback) {
@@ -79,15 +85,13 @@ public class ObservableList<T> extends ArrayList<T> implements IObservable, ILis
     }
 
 
-    public ObservableList() {
-        super();
-    }
 
     @Override
     public boolean add(T object) {
         Object older = this;
         int oldSize = size();
         if (super.add(object)) {
+            fieldCacheHelper.addField(oldSize,object);
             notifyChange(INSERTED, oldSize, 1);
             notifyPropertyChanged("",older,this);
             return true;
@@ -99,6 +103,7 @@ public class ObservableList<T> extends ArrayList<T> implements IObservable, ILis
     public void add(int index, T object) {
         Object older = this.clone();
         super.add(index, object);
+        fieldCacheHelper.addField(index,object);
         notifyChange(INSERTED, index, 1);
         notifyPropertyChanged("",older,this);
     }
@@ -109,6 +114,7 @@ public class ObservableList<T> extends ArrayList<T> implements IObservable, ILis
         int oldSize = size();
         boolean added = super.addAll(collection);
         if (added) {
+            fieldCacheHelper.addFields((ObservableList)collection);
             notifyChange(INSERTED, oldSize, collection.size());
             notifyPropertyChanged("",older,this);
         }
@@ -120,6 +126,7 @@ public class ObservableList<T> extends ArrayList<T> implements IObservable, ILis
         Object older = this.clone();
         boolean added = super.addAll(index, collection);
         if (added) {
+            fieldCacheHelper.addFields(index,(ObservableList)collection);
             notifyChange(INSERTED, index, collection.size());
             notifyPropertyChanged("",older,this);
         }
@@ -132,6 +139,7 @@ public class ObservableList<T> extends ArrayList<T> implements IObservable, ILis
         int oldSize = size();
         super.clear();
         if (oldSize != 0) {
+            fieldCacheHelper.clearFields();
             notifyChange(REMOVED, 0, oldSize);
             notifyPropertyChanged("",older,this);
         }
@@ -141,10 +149,12 @@ public class ObservableList<T> extends ArrayList<T> implements IObservable, ILis
     public T remove(int index) {
         Object older = this.clone();
         T val = super.remove(index);
+        fieldCacheHelper.removeField(index);
         notifyChange(REMOVED, index, 1);
         notifyPropertyChanged("",older,this);
         return val;
     }
+
 
     @Override
     public boolean remove(Object object) {
@@ -164,6 +174,7 @@ public class ObservableList<T> extends ArrayList<T> implements IObservable, ILis
     public T set(int index, T object) {
         Object older = this.clone();
         T val = super.set(index, object);
+        fieldCacheHelper.addField(index,object);
         notifyChange(CHANGED, index, 1);
         notifyPropertyChanged("",older,this);
         return val;
@@ -229,6 +240,16 @@ public class ObservableList<T> extends ArrayList<T> implements IObservable, ILis
             return;
         }
         ObserverUtils.notifyPropertyChanged((ArrayList<ObserverWrap>) observerWraps.clone(),fieldName,older,newer);
+    }
+
+    @Override
+    public LuaTable getFieldCache(Globals globals) {
+        return fieldCacheHelper.getFieldCache(globals);
+    }
+
+    @Override
+    public void addFieldCache(LuaTable luaTable) {
+        fieldCacheHelper.addFieldCache(luaTable);
     }
 
 

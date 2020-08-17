@@ -35,6 +35,53 @@ void jni_clearTableArray(JNIEnv *env, jobject jobj, jlong L, jlong table, jint f
     lua_unlock(LS);
 }
 
+
+void jni_removeTableIndex(JNIEnv *env, jobject jobj, jlong L, jlong table, jint index) {
+    lua_State *LS = (lua_State *) L;
+    lua_lock(LS);
+
+    getValueFromGNV(LS, (ptrdiff_t) table, LUA_TTABLE);/// -1 table
+    lua_pushinteger(LS, index); ///-1 index -2 table
+    lua_pushnil(LS); /// -1 nil -2 index -3 table
+    lua_rawset(LS, -3);/// -1 table
+
+    jint size = (jint) lua_objlen(LS, -1);
+    while (index <= size) {
+
+        lua_pushinteger(LS, index);   /// -1 index -2 table
+        lua_pushinteger(LS, index + 1);  ///-1 index+1  -2 index -3 table
+        lua_rawget(LS, -3);  ///-1 value(index+1) -2 index -3 table
+        lua_rawset(LS, -3);   ///table -1
+
+        index++;
+    }
+    lua_pop(LS, 1);
+    lua_unlock(LS);
+}
+
+
+void jni_clearTable(JNIEnv *env, jobject jobj, jlong L, jlong table) {
+    lua_State *LS = (lua_State *) L;
+    lua_lock(LS);
+    getValueFromGNV(LS, (ptrdiff_t) table, LUA_TTABLE); /// -1 table
+
+    lua_pushnil(LS);///-1 nil  -2 table
+
+    while (lua_next(LS, -2)) ///-1 v -2 k -3 table
+    {
+        lua_pop(LS, 1);  /// -1 k -2 table
+
+        lua_pushvalue(LS, -1);/// -1 k -2 k -3 table
+
+        lua_pushnil(LS); /// -1nil -2 k -3 k -4 table
+        lua_rawset(LS, -4); /// -1 k -2 table
+    }
+
+    lua_pop(LS, 1);
+    lua_unlock(LS);
+}
+
+
 jlong jni_createTable(JNIEnv *env, jobject jobj, jlong L) {
     lua_State *LS = (lua_State *) L;
     lua_lock(LS);

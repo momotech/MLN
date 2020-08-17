@@ -7,11 +7,14 @@
   */
 package com.immomo.mmui.databinding.utils;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.immomo.mls.utils.convert.ConvertUtils;
 import com.immomo.mls.wrapper.Translator;
+import com.immomo.mmui.databinding.DataBinding;
 import com.immomo.mmui.databinding.bean.MMUIColor;
 import com.immomo.mmui.databinding.bean.ObservableField;
 import com.immomo.mmui.databinding.bean.ObservableList;
@@ -67,24 +70,56 @@ public class BindingConvertUtils {
             return LuaString.valueOf(value.toString());
         }
 
-        if (value instanceof Map) {
-            return toTable(globals, (Map) value);
-        }
-
-        if (value instanceof List) {
-            return toTable(globals, (List) value);
-        }
-
         if (value instanceof MMUIColor) {
             return new UDColor(globals, (MMUIColor) value);
         }
 
+        if (value instanceof ObservableMap) {
+            ObservableMap observableMap = (ObservableMap)value;
+            LuaTable cache = observableMap.getFieldCache(globals);
+            if(cache !=null) {
+                if(DataBinding.isLog) {
+                    Log.d(DataBinding.TAG,"from cache");
+                }
+                return cache;
+            }
+
+            LuaTable luaTable = toTable(globals, (ObservableMap) value);
+            observableMap.addFieldCache(luaTable);
+            return luaTable;
+        }
+
+        if (value instanceof ObservableList) {
+            ObservableList observableList = (ObservableList)value;
+            LuaTable cache = observableList.getFieldCache(globals);
+            if(cache !=null) {
+                if(DataBinding.isLog) {
+                    Log.d(DataBinding.TAG,"from cache");
+                }
+                return cache;
+            }
+            LuaTable luaTable = toTable(globals, (ObservableList) value);
+            observableList.addFieldCache(luaTable);
+            return luaTable;
+        }
+
         if (value instanceof ObservableField) {
-            return toTable(globals,(Map)((ObservableField)value).getFields());
+            ObservableField observableField = (ObservableField)value;
+            LuaTable cache = observableField.getFieldCache(globals);
+            if(cache !=null) {
+                if(DataBinding.isLog) {
+                    Log.d(DataBinding.TAG,"from cache");
+                }
+                return cache;
+            }
+            LuaTable luaTable = toTable(globals,(ObservableMap)((ObservableField)value).getFields());
+            observableField.addFieldCache(luaTable);
+            return luaTable;
         }
 
         return ConvertUtils.toLuaValue(globals, value);
     }
+
 
 
     /**
@@ -95,7 +130,7 @@ public class BindingConvertUtils {
      * @return
      */
     public static @NonNull
-    LuaTable toTable(@NonNull Globals g, @NonNull Map<Object, Object> map) {
+    LuaTable toTable(@NonNull Globals g, @NonNull ObservableMap<Object, Object> map) {
         LuaTable ret = LuaTable.create(g);
         Set<Map.Entry<Object, Object>> entrys = map.entrySet();
         for (Map.Entry<Object, Object> e : entrys) {
@@ -111,9 +146,9 @@ public class BindingConvertUtils {
                 else if (v instanceof Boolean)
                     ret.set((Integer) i, ((Boolean) v));
                 else if (v instanceof Map)
-                    ret.set((Integer) i, toTable(g, (Map) v));
+                    ret.set((Integer) i, toTable(g, (ObservableMap) v));
                 else if (v instanceof List)
-                    ret.set((Integer) i, toTable(g, (List) v));
+                    ret.set((Integer) i, toTable(g, (ObservableList) v));
                 else
                     ret.set((Integer) i, toLuaValue(g, v));
             }
@@ -127,13 +162,14 @@ public class BindingConvertUtils {
                 else if (v instanceof Boolean)
                     ret.set((String) i, ((Boolean) v));
                 else if (v instanceof Map)
-                    ret.set((String) i, toTable(g, (Map) v));
+                    ret.set((String) i, toTable(g, (ObservableMap) v));
                 else if (v instanceof List)
-                    ret.set((String) i, toTable(g, (List) v));
+                    ret.set((String) i, toTable(g, (ObservableList) v));
                 else
                     ret.set((String) i, toLuaValue(g, v));
             }
         }
+        map.addFieldCache(ret);
         return ret;
     }
 
@@ -146,7 +182,7 @@ public class BindingConvertUtils {
      * @return
      */
     public static @NonNull
-    LuaTable toTable(@NonNull Globals g, @NonNull List list) {
+    LuaTable toTable(@NonNull Globals g, @NonNull ObservableList list) {
         LuaTable ret = LuaTable.create(g);
         for (int i = 0, l = list.size(); i < l; i++) {
             Object v = list.get(i);
@@ -159,12 +195,13 @@ public class BindingConvertUtils {
             else if (v instanceof Boolean)
                 ret.set(i + 1, ((Boolean) v));
             else if (v instanceof Map)
-                ret.set(i + 1, toTable(g, (Map) v));
+                ret.set(i + 1, toTable(g, (ObservableMap) v));
             else if (v instanceof List)
-                ret.set(i + 1, toTable(g, (List) v));
+                ret.set(i + 1, toTable(g, (ObservableList) v));
             else
                 ret.set(i + 1, toLuaValue(g, v));
         }
+        list.addFieldCache(ret);
         return ret;
     }
 
