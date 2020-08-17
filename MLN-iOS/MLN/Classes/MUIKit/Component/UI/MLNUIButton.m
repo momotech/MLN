@@ -16,9 +16,13 @@
 
 @interface MLNUIButton()
 
+// fix: 若imageEdgeInsets有值，则button display(false)时，imageView的frame.size不会为0，导致imageView依然显示
+@property (nonatomic) UIEdgeInsets mlnui_cacheImageEdgeInsets;
+
 @end
 
 @implementation MLNUIButton
+
 - (instancetype)initWithFrame:(CGRect)frame
 {
     if (self = [super initWithFrame:frame]) {
@@ -64,6 +68,21 @@
 }
 
 #pragma mark - Override
+
+- (void)setFrame:(CGRect)frame {
+    [super setFrame:frame];
+    if (CGSizeEqualToSize(frame.size, CGSizeZero)) { // button doesn't display
+        if (!UIEdgeInsetsEqualToEdgeInsets(self.imageEdgeInsets, UIEdgeInsetsZero)) {
+            self.mlnui_cacheImageEdgeInsets = self.imageEdgeInsets;
+            self.imageEdgeInsets = UIEdgeInsetsZero;
+        }
+    } else {
+        if (!UIEdgeInsetsEqualToEdgeInsets(self.mlnui_cacheImageEdgeInsets, UIEdgeInsetsZero)) {
+            self.imageEdgeInsets = self.mlnui_cacheImageEdgeInsets;
+            self.mlnui_cacheImageEdgeInsets = UIEdgeInsetsZero;
+        }
+    }
+}
 
 - (void)luaui_setPaddingWithTop:(CGFloat)top right:(CGFloat)right bottom:(CGFloat)bottom left:(CGFloat)left {
     [super luaui_setPaddingWithTop:top right:right bottom:bottom left:left];

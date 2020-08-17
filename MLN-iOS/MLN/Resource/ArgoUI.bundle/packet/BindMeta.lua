@@ -31,13 +31,14 @@ local _kpathCache = {} -- {path = MetaTab }
 local _watchCache = {} -- {watchid1 = {path, func1}, watchid2 = {path, func2}, ...}
 local _debugpwacths = {} --preview {path = {func1, funct2, ...}}
 local _ckeyTabCaches = {} -- ckey对应缓存
-debug_preview_open = false
-debug_preview_watch = false
+local debug_preview_open = false
+local debug_preview_watch = false
 _watchIds = {} -- watch remove
 _cellBinds = {} -- list cell binds
-_foreachCaches = {} -- 用于foreach中的缓存
+local _foreachCaches = {} -- 用于foreach中的缓存
 
 __open_combine_data__ = true --- 开启list cell 一次性获取全部item数据
+__open_cell_data__ = true --- 是否开启cell data 获取方法
 
 -- 创建弱引用表
 function createWeakT(mode) --"k" / "v" / "kv"
@@ -110,13 +111,18 @@ function bindMeta_batchSetMeta(t, path, ck, pk)
     return BindMeta(path, mapt, t, ck, pk, true)
 end
 
-function bindMeta_getAndCacheTab(mt, iscache)
+function bindMeta_getAndCacheTab(mt, iscache, isCell)
     BindMetaPush(_foreachCaches)
     local t = mt.__vv
     if iscache and t ~= nil then
         if mt.__bt then return t end
     else
-        t = DataBinding:get(bindMeta_path(mt.__kvoname))
+        if isCell and __open_cell_data__ then
+            local bind = string.sub(mt.__kvoname, 1, #mt.__kvoname - #(tostring(mt.__pk) .. tostring(mt.__ck)) - 2)
+            t = DataBinding:getCellData(bind, mt.__pk, mt.__ck)
+        else
+            t = DataBinding:get(bindMeta_path(mt.__kvoname))
+        end
     end
 
     if t and type(t) == "table" then
@@ -199,7 +205,7 @@ function bindMeta__index(t, k)
         BindMetaPush(_cellBinds)
         local temp_v = nil
         if __open_combine_data__ then
-            temp_v = bindMeta_getAndCacheTab(mt, true)
+            temp_v = bindMeta_getAndCacheTab(mt, true, true)
         end
         return BindMeta(mt.__kvoname,
                 {row={__get=mt.__ck}, section={__get=mt.__pk}}, temp_v, mt.__ck, mt.__pk)
@@ -309,7 +315,7 @@ function bindMeta__call(t, ...)
                 v = {}
                 _debugpwacths[k] = v
             end
-            table.insert(v, select(2, ...))
+            v[#v + 1] = select(2, ...)
         elseif size == 1 and op == FOREACH then
             for __k, __v in pairs(t) do
                 p1(__v, __k)
@@ -534,7 +540,7 @@ function BindMetaWatchListCell(source, section, row)
             key = v
         end
         if key and map[key] ~= true then --去重
-            table.insert(ret, key)
+            ret[#ret + 1] = key
             map[key] = true
         end
     end
@@ -549,14 +555,14 @@ end
 -------------------------------------------------------------------------------------------------------
 function BindMetaPush(t)
     if t then
-        table.insert(t, {})
+        t[#t + 1] = {}
     end
 end
 
 function BindMetaPop(t)
     if t and #t > 0 then
         local v = t[#t]
-        table.remove(t)
+        t[#t] = nil
         return v
     end
     return nil
@@ -571,12 +577,13 @@ end
 
 function BindMetaAdd(t, v, current)
     if current then
-        if BindMetaGet(t) then
-            table.insert(BindMetaGet(t), v)
+        local _t = BindMetaGet(t)
+        if _t then
+            _t[#_t + 1] = v
         end
     else
         for _, _v in ipairs(t) do
-            table.insert(_v, v)
+            _v[#_v + 1] = v
         end
     end
 end

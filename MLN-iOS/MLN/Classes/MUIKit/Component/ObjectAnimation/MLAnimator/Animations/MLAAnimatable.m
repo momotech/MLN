@@ -9,6 +9,7 @@
 #import "MLALayerExtras.h"
 #import <UIKit/UIKit.h>
 #import "UIView+MLNUILayout.h"
+#import "MLNUILabel.h"
 
 NSString * const kMLAViewAlpha = @"view.alpha";
 NSString * const kMLAViewColor = @"view.backgroundColor";
@@ -26,7 +27,7 @@ NSString * const kMLAViewRotationX = @"view.rotationX";
 NSString * const kMLAViewRotationY = @"view.rotationY";
 
 NSString *const kMLAViewContentOffset = @"view.contentOffset";
-
+NSString *const kMLAViewTextColor = @"view.textColor";
 
 // 计算精度
 static CGFloat const kThresholdColor = 0.01;
@@ -49,6 +50,16 @@ typedef struct {
 } _MLAValueHelper;
 typedef _MLAValueHelper MLAValueHelper;
 
+static inline UIColor *UIColorFromRGBA(const CGFloat values[]) {
+    return [UIColor colorWithRed:values[0]/255.0 green:values[1]/255.0 blue:values[2]/255.0 alpha:values[3]];
+}
+
+static inline void RGBAFromUIColor(CGFloat values[], UIColor *color) {
+    CGFloat red = 0.0, green = 0.0, blue = 0.0, alpha = 0.0;
+    [color getRed:&red green:&green blue:&blue alpha:&alpha];
+    values[0] = 255.0 * red; values[1] = 255.0 * green; values[2] = 255.0 * blue; values[3] = alpha;
+}
+
 static MLAValueHelper kStaticHelpers[] =
 {
     {
@@ -65,10 +76,10 @@ static MLAValueHelper kStaticHelpers[] =
     {
         kMLAViewColor,
         ^(UIView *obj, CGFloat values[]) {
-            MLAUIColorGetRGBAComponents(obj.backgroundColor, values);
+            RGBAFromUIColor(values, obj.backgroundColor);
         },
         ^(UIView *obj, const CGFloat values[]) {
-            obj.backgroundColor = MLAUIColorRGBACreate(values);
+            obj.backgroundColor = UIColorFromRGBA(values);
         },
         kThresholdColor,
         kValueCountFours
@@ -196,6 +207,21 @@ static MLAValueHelper kStaticHelpers[] =
         },
         kThresholdPoint,
         kValueCountTwo
+    },
+    {
+        kMLAViewTextColor,
+        ^(MLNUILabel *obj, CGFloat values[]) {
+            if ([obj isKindOfClass:[MLNUILabel class]]) {
+                RGBAFromUIColor(values, obj.textColor);
+            }
+        },
+        ^(MLNUILabel *obj, const CGFloat values[]) {
+            if ([obj isKindOfClass:[MLNUILabel class]]) {
+                obj.textColor = UIColorFromRGBA(values);
+            }
+        },
+        kThresholdColor,
+        kValueCountFours
     }
 };
 

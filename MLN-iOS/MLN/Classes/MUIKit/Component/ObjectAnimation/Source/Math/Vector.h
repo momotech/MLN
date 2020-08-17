@@ -341,9 +341,9 @@ public:
     CGAffineTransform cg_affine_transform() const;
     static Vector *new_cg_affine_transform(const CGAffineTransform &t);
 
-    // CGColorRef support
-    CGColorRef cg_color() const CF_RETURNS_RETAINED;
-    static Vector *new_cg_color(CGColorRef color);
+    // UIColor support
+    UIColor *ui_color() const;
+    static Vector *new_ui_color(UIColor *color);
 
     // Returns string description
     NSString * toString() const;

@@ -25,8 +25,12 @@
 {
     CGFloat height = CGFloatValueFromNumber([self.cachesManager layoutInfoWithIndexPath:indexPath]);
     if (height > 0) {
+//        NSLog(@">>>>>> height from cache, row %zd",indexPath.row);
+
         return height;
     }
+//    NSLog(@">>>>>> height, row %zd",indexPath.row);
+
     CGFloat tableViewWidth = tableView.frame.size.width;
     NSString *reuseId = [self reuseIdAt:indexPath];
     MLNUITableViewCell *cell = [self tableView:tableView dequeueCalculCellForIdentifier:reuseId];

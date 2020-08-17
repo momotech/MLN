@@ -1,0 +1,5 @@
+
+KUA_CELL_TYPE={
+MAIN=1,
+DETAIL=2
+}

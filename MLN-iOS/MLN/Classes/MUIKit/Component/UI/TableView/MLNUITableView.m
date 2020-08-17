@@ -84,6 +84,14 @@
     }
 }
 
+- (void)luaui_setEstimatedRowHeight:(CGFloat)height {
+    self.innerTableView.estimatedRowHeight = height;
+}
+
+- (CGFloat)luaui_estimatedRowHeight {
+    return self.innerTableView.estimatedRowHeight;
+}
+
 - (void)luaui_reloadAtRow:(NSInteger)row section:(NSInteger)section animation:(BOOL)animation
 {
     MLNUIKitLuaAssert(section > 0, @"This section number is wrong!");
@@ -399,6 +407,7 @@
             _innerTableView.estimatedSectionFooterHeight = 0.f;
             _innerTableView.estimatedSectionHeaderHeight = 0.f;
         }
+        _innerTableView.estimatedRowHeight = 300;
         _innerTableView.separatorStyle = UITableViewCellSeparatorStyleNone;
         _innerTableView.backgroundColor = [UIColor clearColor];
         _innerTableView.containerView = self;
@@ -432,6 +441,8 @@ LUAUI_EXPORT_VIEW_PROPERTY(adapter, "setAdapter:", "adapter", MLNUITableView)
 LUAUI_EXPORT_VIEW_PROPERTY(openReuseCell, "setLuaui_openReuseCell:","luaui_openReuseCell", MLNUITableView)
 LUAUI_EXPORT_VIEW_PROPERTY(showsHorizontalScrollIndicator, "luaui_setShowsHorizontalScrollIndicator:", "luaui_showsHorizontalScrollIndicator", MLNUITableView)
 LUAUI_EXPORT_VIEW_PROPERTY(showsVerticalScrollIndicator, "luaui_setShowsVerticalScrollIndicator:", "luaui_showsVerticalScrollIndicator", MLNUITableView)
+LUAUI_EXPORT_VIEW_PROPERTY(estimatedRowHeight, "luaui_setEstimatedRowHeight:", "luaui_estimatedRowHeight", MLNUITableView)
+
 LUAUI_EXPORT_VIEW_METHOD(showScrollIndicator, "luaui_showScrollIndicator:", MLNUITableView)
 LUAUI_EXPORT_VIEW_PROPERTY(disallowFling, "luaui_setDisallowFling:", "luaui_disallowFling", MLNUITableView)
 LUAUI_EXPORT_VIEW_METHOD(reloadData, "luaui_reloadData", MLNUITableView)

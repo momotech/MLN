@@ -208,7 +208,7 @@ id MLABox(VectorConstRef vec, MLAValueType type, bool force)
       break;
 #endif
     case kMLAValueColor: {
-      return (__bridge_transfer id)vec->cg_color();
+      return vec->ui_color();
       break;
     }
     default:
@@ -248,7 +248,7 @@ static VectorRef vectorize(id value, MLAValueType type)
       vec = Vector::new_cg_affine_transform([value CGAffineTransformValue]);
       break;
     case kMLAValueColor:
-      vec = Vector::new_cg_color(MLACGColorWithColor(value));
+      vec = Vector::new_ui_color(value);
       break;
     default:
       break;

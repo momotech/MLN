@@ -108,6 +108,9 @@
             tagStr = [self.typeTags objectForKey:@(type)];
         }
         NSString *key = [NSString stringWithFormat:@"%zd_%@",type,tagStr];
+        if (self.startMaps[key] == nil) {
+            return;
+        }
         if (key) {
             float f = (CFAbsoluteTimeGetCurrent() - [self.startMaps[key] doubleValue]) * 1000;
             [self.startMaps removeObjectForKey:key];
@@ -225,20 +228,22 @@
             _timer = [NSTimer timerWithTimeInterval:3 repeats:NO block:^(NSTimer * _Nonnull timer) {
                 @strongify(self);
                 if(!self) return;
-                NSString *log = [NSString stringWithFormat:@"调用OC方法次数：%zd",self->_oc_cnt];
-                self-> _oc_cnt = 0;
-                [self _addBridgeLog:log];
-                
-                log = [NSString stringWithFormat:@"调用数据绑定次数：%zd",self->_db_cnt];
-                self->_db_cnt = 0;
-                [self _addBridgeLog:log];
+                dispatch_async(self.workQ, ^{
+                    NSString *log = [NSString stringWithFormat:@"调用OC方法次数：%zd",self->_oc_cnt];
+                    self-> _oc_cnt = 0;
+                    [self _addBridgeLog:log];
+                    
+                    log = [NSString stringWithFormat:@"调用数据绑定次数：%zd",self->_db_cnt];
+                    self->_db_cnt = 0;
+                    [self _addBridgeLog:log];
 
-//                NSString *cost = [NSString stringWithFormat:@"调用OC方法耗时： %.2f ms", (self->_oc_end_time - self->_oc_start_time) * 1000];
-//                [self _addBridgeLog:cost];
-                
-                [self printSortedCost];
-                
-                [timer invalidate];
+    //                NSString *cost = [NSString stringWithFormat:@"调用OC方法耗时： %.2f ms", (self->_oc_end_time - self->_oc_start_time) * 1000];
+    //                [self _addBridgeLog:cost];
+                    
+                    [self printSortedCost];
+                    
+                    [timer invalidate];
+                });
             }];
             [[NSRunLoop currentRunLoop] addTimer:_timer forMode: NSRunLoopCommonModes];
         } else {
@@ -361,7 +366,7 @@
 }
 
 - (void)_addBridgeLog:(NSString *)log {
-    [MLNUILogViewer addLog:log];
+//    [MLNUILogViewer addLog:log];
     NSLog(@">>>> %@",log);
 }
 
