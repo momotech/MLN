@@ -449,7 +449,7 @@ static int luaui_bind_cell (lua_State *L) {
 //    NSString *modelKey = [nKey stringByAppendingFormat:@".%zd.%zd",section,row];
     
     NSObject *cellModel;
-    NSArray *listArray = [dataBind dataForKeyPath:nKey userCache:YES];
+    NSArray *listArray = [dataBind dataForKeyPath:nKey userCache:NO];
     if ([listArray mlnui_is2D]) {
         NSArray *tmp = section <= listArray.count ? listArray[section - 1] : nil;
         cellModel = row <= tmp.count ? tmp[row - 1] : nil;
@@ -563,7 +563,7 @@ static int luaui_get_cell_data(lua_State *L) {
     if (!listView)  return 1;
     
     NSObject *cellModel;
-    NSArray *listArray = [dataBind dataForKeyPath:nKey userCache:YES];
+    NSArray *listArray = [dataBind dataForKeyPath:nKey userCache:NO];
     if ([listArray mlnui_is2D]) {
         NSArray *tmp = section <= listArray.count ? listArray[section - 1] : nil;
         cellModel = row <= tmp.count ? tmp[row - 1] : nil;
