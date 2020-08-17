@@ -23,6 +23,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (CGFloat)calculHeightWithWidth:(CGFloat)width maxHeight:(CGFloat)maxHeight;
 - (CGSize)calculSizeWithMaxWidth:(CGFloat)maxWidth maxHeight:(CGFloat)maxHeight;
+- (CGFloat)calculHeightWithWidth:(CGFloat)width maxHeight:(CGFloat)maxHeight applySize:(BOOL)applySize;
+
 - (UIView *)contentView;
 - (NSString *)lastReueseId;
 - (void)updateLastReueseId:(NSString *)lastReuaseId;
@@ -42,6 +44,8 @@ typedef void(^MLNUIReuseContentViewDidChangeLayout)(void);
 
 - (CGFloat)calculHeightWithWidth:(CGFloat)width maxHeight:(CGFloat)maxHeight;
 - (CGSize)calculSizeWithMaxWidth:(CGFloat)maxWidth maxHeight:(CGFloat)maxHeight;
+- (CGFloat)calculHeightWithWidth:(CGFloat)width maxHeight:(CGFloat)maxHeight applySize:(BOOL)applySize;
+
 - (void)pushToLuaCore:(MLNUILuaCore *)luaCore;
 - (void)setupLayoutNodeIfNeed;
 - (void)updateFrameIfNeed;
