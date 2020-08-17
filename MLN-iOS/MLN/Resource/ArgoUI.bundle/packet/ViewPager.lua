@@ -9,14 +9,14 @@ _class._type = 'ui'
 _class._version = '1.0'
 _class._classname = 'ViewPager'
 --- 定义常量
-_class.HALF_SIZE = window:width() / 2 --- 计算padding
-_class.MAX_SIZE = window:width() / 2 --- 滑动翻页的阈值
 _class.JUMP_TYPE_GESTURE = 1
 _class.JUMP_TYPE_INTERFACE = 2
 _class.ANIM_TIME = 0.2
 _class.MAX_SHAKE = 30 -- 防止抖动
 
 function ViewPager()
+    _class.HALF_SIZE = window:width() / 2 --- 计算padding
+    _class.MAX_SIZE = window:width() / 2 --- 滑动翻页的阈值
     return _class:new()
 end
 
