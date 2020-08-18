@@ -54,6 +54,10 @@
         return nil;
     }
     lua_pcall(L, 0, 1, 0); // return function
+    if (lua_type(L, -1) != LUA_TFUNCTION) {
+        ARGOUI_BUILDMODEL_ERROR("the element of top stack isn't function after loadstring", lua_typename(L, lua_type(L, -1)));
+        return nil;
+    }
     
     NSError *error = nil;
     [luaCore call:argCount retCount:1 error:&error]; // return model
