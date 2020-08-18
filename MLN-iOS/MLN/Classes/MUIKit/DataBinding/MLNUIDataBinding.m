@@ -54,17 +54,10 @@
         self.listViewMap = [NSMapTable strongToWeakObjectsMapTable];
         self.dataObserverMap = [NSMapTable strongToStrongObjectsMapTable];
         self.arrayObserverMap = [NSMapTable strongToStrongObjectsMapTable];
+        /*
         self.dataCache = [NSMapTable strongToWeakObjectsMapTable];
-        
         self.runloopObserver = [[MLNUIMainRunLoopObserver alloc] init];
         @weakify(self);
-//        [self.runloopObserver beginForBeforeWaiting:0 repeats:YES callback:^{
-//            @strongify(self);
-//            if(!self) return;
-//            pthread_mutex_lock(&self->_lock);
-//            [self.dataCache removeAllObjects];
-//            pthread_mutex_unlock(&self->_lock);
-//        }];
         [self.runloopObserver beginForActivity:kCFRunLoopEntry repeats:YES order:0 callback:^(CFRunLoopActivity activity) {
             @strongify(self);
             if(!self) return;
@@ -72,6 +65,7 @@
             [self.dataCache removeAllObjects];
             pthread_mutex_unlock(&self->_lock);
         }];
+        */
         LOCK_RECURSIVE_INIT();
         NSLog(@"%s",__FUNCTION__);
     }

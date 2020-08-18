@@ -126,6 +126,10 @@
     return [self.luaContentView calculSizeWithMaxWidth:maxWidth maxHeight:maxHeight];
 }
 
+- (CGFloat)calculHeightWithWidth:(CGFloat)width maxHeight:(CGFloat)maxHeight applySize:(BOOL)applySize {
+    return [self.luaContentView calculHeightWithWidth:width maxHeight:maxHeight applySize:applySize];
+}
+
 - (void)mlnui_requestLayoutIfNeed
 {
     [self.luaContentView mlnui_requestLayoutIfNeed];
