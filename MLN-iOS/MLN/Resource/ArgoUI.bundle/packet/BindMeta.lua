@@ -38,7 +38,7 @@ _cellBinds = {} -- list cell binds
 local _foreachCaches = {} -- 用于foreach中的缓存
 
 __open_combine_data__ = true --- 开启list cell 一次性获取全部item数据
-__open_cell_data__ = true --- 是否开启cell data 获取方法
+__open_cell_data__ = false --- 是否开启cell data 获取方法
 
 -- 创建弱引用表
 function createWeakT(mode) --"k" / "v" / "kv"
@@ -85,7 +85,7 @@ end
 
 
 --- 拼接 path -
-function bindMeta_path(k1, k2, force)
+local function bindMeta_path(k1, k2, force)
     -- preview模式下会前面会多个 G. 所以需要删除
     if force or (debug_preview_open == false and debug_preview_watch) then
         if string.len(k1) > 2 and string.sub(k1, 1, 2) == __b_G_ then
@@ -99,7 +99,7 @@ function bindMeta_path(k1, k2, force)
 end
 
 --- 批量设置元表 -- 不做上下文连接
-function bindMeta_batchSetMeta(t, path, ck, pk)
+local function bindMeta_batchSetMeta(t, path, ck, pk)
     local mapt = {}
     for _k, _v in pairs(t) do
         if type(_v) == "table" then
@@ -111,7 +111,7 @@ function bindMeta_batchSetMeta(t, path, ck, pk)
     return BindMeta(path, mapt, t, ck, pk, true)
 end
 
-function bindMeta_getAndCacheTab(mt, iscache, isCell)
+local function bindMeta_getAndCacheTab(mt, iscache, isCell)
     BindMetaPush(_foreachCaches)
     local t = mt.__vv
     if iscache and t ~= nil then
@@ -134,13 +134,13 @@ function bindMeta_getAndCacheTab(mt, iscache, isCell)
 end
 
 --- 数组获取
-function bindMeta_getArraySize(mt)
+local function bindMeta_getArraySize(mt)
     local t = bindMeta_getAndCacheTab(mt, true)
     if t == nil then return 0 end
     return #t
 end
 
-function bindMeta_getWatchPath(keypath, ck)
+local function bindMeta_getWatchPath(keypath, ck)
     if type(ck) == "number" then
         local pt = _kpathCache[string.sub(keypath, 1,#keypath - #tostring(ck) -1)]
         if pt then
@@ -151,18 +151,29 @@ function bindMeta_getWatchPath(keypath, ck)
     return keypath
 end
 
-function bindMeta_update(path, v, cKey)
+local function bindMeta_update(path, v, cKey)
     for _v, _ in pairs(bindMeta_ckeyGet(cKey)) do --同属性key修改先置为空 - 使用时需要本地读取
         _v.__vv = nil
     end
     DataBinding:update(path, v)
 end
 
+local function bindMeta_watch(mt, v)
+    local k = bindMeta_path(bindMeta_getWatchPath(mt.__kvoname, mt.__ck))
+    if k == nil then return end
+    local w_id = DataBinding:watch(k, v)
+    if w_id then
+        _watchCache[w_id] = {k, v}
+        BindMetaAdd(_watchIds, w_id, false)
+    end
+    return w_id
+end
+
 -----------------------------------------------------------------------------------------------------------
 ----------------------  原表操作  __index/__newindex/__call                --------------------------
 -----------------------------------------------------------------------------------------------------------
 -- __index
-function bindMeta__index(t, k)
+local function bindMeta__index(t, k)
     if k == nil then
         return _emptyTab
     end
@@ -197,7 +208,7 @@ function bindMeta__index(t, k)
     elseif k == __asize then
         --return DataBinding:arraySize(bindMeta_path(mt.__kvoname)) or 0
         return bindMeta_getArraySize(mt)
-    elseif k == __remove or k == __rreal or k == __greal then
+    elseif k == __remove or k == __rreal or k == __greal or k == __watch then
         mt.__opname = k
         return t
     elseif k == __ci then
@@ -220,17 +231,11 @@ function bindMeta__index(t, k)
 end
 
 -- __newindex
-function bindMeta__newindex(t, k, v)
+local function bindMeta__newindex(t, k, v)
     if k == nil or k == __vv or k == __ignore then return end
     local mt = getmetatable(t)
     if k == __watch then -- watch
-        k = bindMeta_path(bindMeta_getWatchPath(mt.__kvoname, mt.__ck))
-        if k == nil then return end
-        local w_id = DataBinding:watch(k, v)
-        if w_id then
-            _watchCache[w_id] = {k, v}
-            BindMetaAdd(_watchIds, w_id, false)
-        end
+        bindMeta_watch(mt, v)
         return
     end
 
@@ -271,7 +276,7 @@ function bindMeta__newindex(t, k, v)
 end
 
 -- __call
-function bindMeta__call(t, ...)
+local function bindMeta__call(t, ...)
     local mt = getmetatable(t)
     local op = mt.__opname
     if not op then
@@ -304,6 +309,8 @@ function bindMeta__call(t, ...)
             end
         end
         return
+    elseif op == __watch then
+        return bindMeta_watch(mt,p1)
     end
 
     if debug_preview_watch then
@@ -425,12 +432,16 @@ function BindMetaClear()
     end
     _watchCache = {}
     _ckeyTabCaches = {}
+    _foreachCaches = {}
+    _watchIds = {}
+    _cellBinds = {}
 end
 
 --- 删除监听
 function BindMetaRemoveWatchs(t)
     if not t or type(t) ~= "table" then
-        print("remove watch table is error....")
+        --- 删除单个watch
+        DataBinding:removeObserver(t)
         return
     end
     for _, id in ipairs(t) do
