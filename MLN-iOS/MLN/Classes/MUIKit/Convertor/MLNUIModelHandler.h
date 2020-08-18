@@ -13,7 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface MLNUIModelHandler : NSObject
 
-+ (__kindof NSObject *)buildModelWithDataObject:(id)dataObject model:(NSObject *)model extra:(id _Nullable)extra functionChunk:(const char *)functionChunk luaCore:(MLNUILuaCore *)luaCore;
++ (__kindof NSObject *)buildModelWithDataObject:(id)dataObject model:(NSObject *)model extra:(id _Nullable)extra functionChunk:(const char *)functionChunk;
 
 @end
 

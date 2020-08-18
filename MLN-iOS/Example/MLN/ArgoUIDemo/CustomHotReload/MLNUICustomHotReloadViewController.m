@@ -33,7 +33,7 @@ printf("==>>ArgoUI time cost: %0.2fms\n", (end - begin) * 1000);
     
     __weak typeof(self) __unused weakSelf = self;
     [[MLNHotReload getInstance] setUpdateCallback:^(MLNKitInstance *_Nonnull instance) {
-//        [weakSelf testModelHandleWithLuaCore:(MLNUILuaCore *)instance.luaCore];
+        [weakSelf testModelHandleWithLuaCore:(MLNUILuaCore *)instance.luaCore];
     }];
 }
 
@@ -50,11 +50,11 @@ printf("==>>ArgoUI time cost: %0.2fms\n", (end - begin) * 1000);
 - (void)testModelHandleWithLuaCore:(MLNUILuaCore *)luaCore {
     NSString *path = [[NSBundle mainBundle] pathForResource:@"xxx" ofType:@"txt"];
     NSData *data = [NSData dataWithContentsOfFile:path];
-    id dataObject = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
+    id dataObject =@{@"ec":@(100), @"em":@"success", @"data":@{}};
     MLNUIBenchMark(
                    MLNUITestModel *model = [MLNUITestModel new];
-                   const char *luaFunctionChunk = "return buildModel";
-                   MLNUITestModel *resultModel = [MLNUIModelHandler buildModelWithDataObject:dataObject model:model extra:nil functionChunk:luaFunctionChunk luaCore:luaCore];
+                   const char *luaFunctionChunk = "return function(data, model, extra) model[\"em\"] = \"okok\" return model end";
+                   MLNUITestModel *resultModel = [MLNUIModelHandler buildModelWithDataObject:dataObject model:model extra:nil functionChunk:luaFunctionChunk];
                    );
     NSLog(@"model is %@", resultModel);
 }

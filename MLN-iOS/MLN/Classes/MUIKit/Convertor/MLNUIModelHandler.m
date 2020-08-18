@@ -15,13 +15,14 @@
 
 #pragma mark - Public
 
-+ (NSObject *)buildModelWithDataObject:(id)dataObject model:(nonnull NSObject *)model extra:(id _Nullable)extra functionChunk:(nonnull const char *)functionChunk luaCore:(nonnull MLNUILuaCore *)luaCore {
-    NSParameterAssert(dataObject && model && functionChunk && luaCore);
-    if (!dataObject || !model || !luaCore || !functionChunk ) {
++ (NSObject *)buildModelWithDataObject:(id)dataObject model:(nonnull NSObject *)model extra:(id _Nullable)extra functionChunk:(nonnull const char *)functionChunk {
+    NSParameterAssert(dataObject && model && functionChunk);
+    if (!dataObject || !model || !functionChunk ) {
         return nil;
     }
     
     int argCount = 0;
+    MLNUILuaCore *luaCore = [[MLNUILuaCore alloc] initWithLuaBundle:nil convertor:NSClassFromString(@"MLNUIKiConvertor") exporter:nil];
     lua_State *L = luaCore.state;
     
     if ([luaCore pushLuaTable:dataObject error:nil]) {
