@@ -30,6 +30,18 @@
     return self;
 }
 
+- (instancetype)initWithEntryFileName:(NSString *)entryFileName bundleName:(nullable NSString *)bundleName {
+    NSBundle *bundle;
+    if (!bundleName) {
+        bundle = [NSBundle mainBundle];
+    } else {
+        NSString *bundlePath = [[NSBundle mainBundle] pathForResource:bundleName ofType:@"bundle"];
+        bundle = [NSBundle bundleWithPath:bundlePath];
+    }
+    return [self initWithEntryFileName:entryFileName bundle:bundle];
+}
+
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.view.backgroundColor = [UIColor whiteColor];
@@ -40,7 +52,6 @@
     [self prepareForLoadEntryFile];
     NSError *error = nil;
     BOOL ret = [self.kitInstance runWithEntryFile:self.entryFileName windowExtra:self.extraInfo error:&error];
-    printf(">>>>> total cost %.2f ms \n", (CFAbsoluteTimeGetCurrent() - s) * 1000);
     PEND(MLNUILoadTimeStatisticsType_Total);
     PDISPLAY(2);
 
