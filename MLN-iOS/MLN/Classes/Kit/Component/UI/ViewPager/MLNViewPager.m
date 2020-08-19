@@ -228,8 +228,11 @@
     if (CGRectEqualToRect(newRect, self.mainView.frame)) {
         return;
     }
+    self.flowLayout.itemSize = newRect.size;
+    id delegate = self.mainView.delegate;
+    self.mainView.delegate = nil;
     self.mainView.frame = newRect;
-    self.flowLayout.itemSize = self.mainView.frame.size;
+    self.mainView.delegate = delegate;
 }
 
 - (void)didChangedPage
