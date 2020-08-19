@@ -6,8 +6,8 @@
 //
 
 #import "MLNUIModelHandler.h"
-#import "NSObject+MLNUICore.h"
 #import "MLNUILuaCore.h"
+#import "MLNUIKitBridgesManager.h"
 
 #define ARGOUI_BUILDMODEL_ERROR(desc, errmsg) printf("ArgoUI Error: %s (%s)\n.", desc ?: "", errmsg ?: "(null)");
 
@@ -21,10 +21,12 @@
         return nil;
     }
     
-    int argCount = 0;
-    MLNUILuaCore *luaCore = [[MLNUILuaCore alloc] initWithLuaBundle:nil convertor:NSClassFromString(@"MLNUIKiConvertor") exporter:nil];
+    MLNUILuaCore *luaCore = [[MLNUILuaCore alloc] initWithLuaBundle:nil];
     lua_State *L = luaCore.state;
+    MLNUIKitBridgesManager *manager = [[MLNUIKitBridgesManager alloc] init];
+    [manager registerKitForLuaCore:luaCore];
     
+    int argCount = 0;
     if ([luaCore pushLuaTable:dataObject error:nil]) {
         argCount++;
     }
