@@ -358,7 +358,6 @@ static MLNUI_FORCE_INLINE id __mlnui_luaui_toobj(lua_State* L, int idx, NSError 
         }
         case LUA_TNUMBER: {
             double number = lua_tonumber(L, idx);
-            number = isnan(number) ? 0 : number;
             return @(number);
         }
         case LUA_TSTRING: {

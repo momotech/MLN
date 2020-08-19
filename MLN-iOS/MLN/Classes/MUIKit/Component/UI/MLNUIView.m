@@ -44,6 +44,10 @@
 
 LUAUI_EXPORT_VIEW_BEGIN(MLNUIView)
 // layout
+LUAUI_EXPORT_VIEW_METHOD(centerX, "luaui_centerX",MLNUIView)
+LUAUI_EXPORT_VIEW_METHOD(centerY, "luaui_centerY",MLNUIView)
+LUAUI_EXPORT_VIEW_METHOD(layoutComplete, "luaui_layoutComplete:", MLNUIView)
+
 LUAUI_EXPORT_VIEW_PROPERTY(display, "setLuaui_display:","luaui_display", MLNUIView)
 LUAUI_EXPORT_VIEW_PROPERTY(mainAxis, "setLuaui_mainAxis:","luaui_mainAxis", MLNUIView)
 LUAUI_EXPORT_VIEW_PROPERTY(crossSelf, "setLuaui_crossSelf:","luaui_crossSelf", MLNUIView)
@@ -53,6 +57,7 @@ LUAUI_EXPORT_VIEW_PROPERTY(wrap, "setLuaui_wrap:","luaui_wrap", MLNUIView)
 
 LUAUI_EXPORT_VIEW_PROPERTY(width, "setLuaui_width:","luaui_width", MLNUIView)
 LUAUI_EXPORT_VIEW_METHOD(widthAuto, "setLuaui_widthAuto", MLNUIView)
+LUAUI_EXPORT_VIEW_PROPERTY(viewWidth, "setLuaui_viewWidth:", "luaui_viewWidth", MLNUIView) // 业务不可使用，仅供LuaSDK使用
 LUAUI_EXPORT_VIEW_PROPERTY(minWidth, "setLuaui_minWidth:","luaui_minWidth", MLNUIView)
 LUAUI_EXPORT_VIEW_PROPERTY(maxWidth, "setLuaui_maxWidth:","luaui_maxWidth", MLNUIView)
 LUAUI_EXPORT_VIEW_PROPERTY(widthPercent, "setLuaui_widthPercent:","luaui_widthPercent", MLNUIView)
@@ -84,7 +89,6 @@ LUAUI_EXPORT_VIEW_PROPERTY(grow, "setLuaui_grow:","luaui_grow", MLNUIView)
 LUAUI_EXPORT_VIEW_PROPERTY(shrink, "setLuaui_shrink:","luaui_shrink", MLNUIView)
 
 LUAUI_EXPORT_VIEW_PROPERTY(positionType, "setLuaui_positionType:","luaui_positionType", MLNUIView)
-LUAUI_EXPORT_VIEW_METHOD(position, "luaui_setPositionWithTop:right:bottom:left:", MLNUIView)
 LUAUI_EXPORT_VIEW_PROPERTY(positionTop, "setLuaui_positionTop:","luaui_positionTop", MLNUIView)
 LUAUI_EXPORT_VIEW_PROPERTY(positionLeft, "setLuaui_positionLeft:","luaui_positionLeft", MLNUIView)
 LUAUI_EXPORT_VIEW_PROPERTY(positionBottom, "setLuaui_positionBottom:","luaui_positionBottom", MLNUIView)

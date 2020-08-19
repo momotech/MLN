@@ -13,6 +13,7 @@
 #import "NSObject+MLNUIKVO.h"
 #import "NSObject+MLNUIDealloctor.h"
 #import "MLNUIExtScope.h"
+#import "MLNUIMainRunLoopObserver.h"
 
 //#define kArrayPlaceHolder @"_array_"
 
@@ -35,6 +36,10 @@
 
 @property (nonatomic, strong) NSMapTable *dataObserverMap;
 @property (nonatomic, strong) NSMapTable *arrayObserverMap;
+
+@property (nonatomic, strong) NSMapTable *dataCache;
+@property (nonatomic, strong) MLNUIMainRunLoopObserver *runloopObserver;
+
 @end
 
 @implementation MLNUIDataBinding
@@ -49,7 +54,18 @@
         self.listViewMap = [NSMapTable strongToWeakObjectsMapTable];
         self.dataObserverMap = [NSMapTable strongToStrongObjectsMapTable];
         self.arrayObserverMap = [NSMapTable strongToStrongObjectsMapTable];
-
+        /*
+        self.dataCache = [NSMapTable strongToWeakObjectsMapTable];
+        self.runloopObserver = [[MLNUIMainRunLoopObserver alloc] init];
+        @weakify(self);
+        [self.runloopObserver beginForActivity:kCFRunLoopEntry repeats:YES order:0 callback:^(CFRunLoopActivity activity) {
+            @strongify(self);
+            if(!self) return;
+            pthread_mutex_lock(&self->_lock);
+            [self.dataCache removeAllObjects];
+            pthread_mutex_unlock(&self->_lock);
+        }];
+        */
         LOCK_RECURSIVE_INIT();
         NSLog(@"%s",__FUNCTION__);
     }
@@ -58,6 +74,8 @@
 
 - (void)dealloc {
     NSLog(@"%s",__FUNCTION__);
+    [self.runloopObserver end];
+    LOCK_DESTROY();
 }
 
 #pragma mark - Public
@@ -155,6 +173,32 @@
     }
 }
 
+- (void)removeMLNUIDataObserverByID:(NSString *)obID {
+    NSParameterAssert(obID);
+    if(!obID) return;
+
+    LOCK();
+    MLNUIInternalObserverPair *dataPair = [self.dataObserverMap objectForKey:obID];
+    [self.dataObserverMap removeObjectForKey:obID];
+    UNLOCK();
+    if (dataPair) {
+        [self _removeDataObserverPair:dataPair];
+    }
+}
+
+- (void)removeMLNUIArrayObserverByID:(NSString *)obID {
+    NSParameterAssert(obID);
+    if(!obID) return;
+
+    LOCK();
+    MLNUIInternalObserverPair *arrayPair = [self.arrayObserverMap objectForKey:obID];
+    [self.arrayObserverMap removeObjectForKey:obID];
+    UNLOCK();
+    if (arrayPair) {
+        [self _removeArrayObserverPair:arrayPair];
+    }
+}
+
 - (void)_removeDataObserverPair:(MLNUIInternalObserverPair *)p {
     [p.observedObject mlnui_removeObervationsForOwner:p.observer keyPath:p.keyPath];
 }
@@ -192,10 +236,34 @@
     return [self dataForKeys:keys frontValue:NULL];
 }
 
+- (id)dataForKeyPath:(NSString *)keyPath userCache:(BOOL)useCache{
+    NSParameterAssert(keyPath);
+    
+    id obj;
+    if (useCache) {
+        obj = [self.dataCache objectForKey:keyPath];
+    }
+    if (!obj) {
+//        NSLog(@">>>> get new %@",keyPath);
+
+        obj = [self dataForKeyPath:keyPath];
+        if (obj) {
+            [self.dataCache setObject:obj forKey:keyPath];
+        }
+    } else {
+//        NSLog(@">>>> get hit cache %@",keyPath);
+    }
+    return obj;
+}
+
 - (void)updateDataForKeyPath:(NSString *)keyPath value:(id)value {
     NSParameterAssert(keyPath);
     if(!keyPath) return;
-    
+    if (value) {
+        [self.dataCache setObject:value forKey:keyPath];
+    } else {
+        [self.dataCache removeObjectForKey:keyPath];
+    }
     NSArray *keys = [keyPath componentsSeparatedByString:@"."];
     [self updateDataForKeys:keys value:value];
 }
@@ -358,7 +426,8 @@
         @strongify(self);
         @strongify(observer);
         if (self && observer) {
-            [self removeMLNUIObserverByID:obID];
+//            [self removeMLNUIObserverByID:obID];
+            [self removeMLNUIDataObserverByID:obID];
         }
     }];
     
@@ -438,7 +507,8 @@
         @strongify(observer);
         if (self && observer) {
 //            [self removeMLNUIObserver:observer forKeys:keys];
-            [self removeMLNUIObserverByID:obID];
+//            [self removeMLNUIObserverByID:obID];
+            [self removeMLNUIArrayObserverByID:obID];
         }
     }];
     
@@ -499,17 +569,18 @@
     if(!frontKey) return nil;
     
     NSObject *obj;
-    @try {
+//    @try {
         LOCK();
         //    NSObject *obj = [self.dataMap objectForKey:firstKey];
         obj = [self.dataMap valueForKeyPath:frontKey];
         if(frontObject) *frontObject = self.dataMap;
-    } @catch (NSException *exception) {
-        NSString *log = [NSString stringWithFormat:@"%@ %s",exception,__FUNCTION__];
-        [self doErrorLog:log];
-    } @finally {
+        
+//    } @catch (NSException *exception) {
+//        NSString *log = [NSString stringWithFormat:@"%@ %s",exception,__FUNCTION__];
+//        [self doErrorLog:log];
+//    } @finally {
         UNLOCK();
-    }
+//    }
     
     BOOL(^checkKey)(NSString *key) = ^(NSString *key){
         for (NSString *k in self.listViewMap.keyEnumerator) {

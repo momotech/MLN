@@ -126,6 +126,10 @@
     return [self.luaContentView calculSizeWithMaxWidth:maxWidth maxHeight:maxHeight];
 }
 
+- (CGFloat)calculHeightWithWidth:(CGFloat)width maxHeight:(CGFloat)maxHeight applySize:(BOOL)applySize {
+    return [self.luaContentView calculHeightWithWidth:width maxHeight:maxHeight applySize:applySize];
+}
+
 - (void)mlnui_requestLayoutIfNeed
 {
     [self.luaContentView mlnui_requestLayoutIfNeed];
@@ -153,7 +157,9 @@
     if (!_luaContentView) {
         _luaContentView = [[MLNUIReuseContentView alloc] initWithFrame:CGRectZero cellView:self];
         __weak typeof(self) weakSelf = self;
-        _luaContentView.didChangeLayout = ^{ [weakSelf reloadCellIfNeeded]; };
+//        _luaContentView.didChangeLayout = ^{
+//            [weakSelf reloadCellIfNeeded]; // 会导致无限reload
+//        };
         [self.contentView addSubview:_luaContentView];
     }
     return _luaContentView;

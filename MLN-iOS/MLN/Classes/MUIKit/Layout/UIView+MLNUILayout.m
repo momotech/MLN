@@ -60,6 +60,14 @@ static const void *kMLNUILayoutAssociatedKey = &kMLNUILayoutAssociatedKey;
     return YES;
 }
 
+- (void)setMlnui_layoutCompleteCallback:(MLNUIBlock *)complete {
+    objc_setAssociatedObject(self, @selector(mlnui_layoutCompleteCallback), complete, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+
+- (MLNUIBlock *)mlnui_layoutCompleteCallback {
+    return objc_getAssociatedObject(self, _cmd);
+}
+
 #pragma mark - MLNUIPaddingContainerViewProtocol
 
 - (UIView *)mlnui_contentView {
@@ -98,19 +106,15 @@ static const void *kMLNUILayoutAssociatedKey = &kMLNUILayoutAssociatedKey;
 static inline void MLNUITransferView(UIView *fromView, UIView *toView) {
     if (fromView.superview) {
         [fromView removeFromSuperview];
-        MLNUI_Lua_UserData_Release(fromView);
     }
     [toView addSubview:fromView];
-    MLNUI_Lua_UserData_Retain_With_Index(2, fromView);
 }
 
 static inline void MLNUITransferViewAtIndex(UIView *fromView, UIView *toView, NSInteger index) {
     if (fromView.superview) {
         [fromView removeFromSuperview];
-        MLNUI_Lua_UserData_Release(fromView);
     }
     [toView insertSubview:fromView atIndex:index];
-    MLNUI_Lua_UserData_Retain_With_Index(2, fromView);
 }
 
 static inline UIView *MLNUIValidSuperview(UIView *self) {
@@ -179,8 +183,8 @@ static inline UIView *MLNUIValidSuperview(UIView *self) {
         [self _mlnui_transferViewToSuperview:view]; // add virtual view firstly and then add subviews to virtual view.
     } else {
         [self addSubview:view];
-        MLNUI_Lua_UserData_Retain_With_Index(2, view);
     }
+    MLNUI_Lua_UserData_Retain_With_Index(2, view); // should retain view 
     [self.mlnui_layoutNode addSubNode:view.mlnui_layoutNode];
 }
 
@@ -201,8 +205,8 @@ static inline UIView *MLNUIValidSuperview(UIView *self) {
         [self _mlnui_transferViewToSuperview:view atIndex:index];
     } else {
         [self insertSubview:view atIndex:index];
-        MLNUI_Lua_UserData_Retain_With_Index(2, view);
     }
+    MLNUI_Lua_UserData_Retain_With_Index(2, view);
     [self.mlnui_layoutNode insertSubNode:view.mlnui_layoutNode atIndex:index];
 }
 
@@ -236,6 +240,18 @@ static inline UIView *MLNUIValidSuperview(UIView *self) {
 
 - (BOOL)luaui_clipsToBounds {
     return self.mlnui_renderContext.clipToBounds;
+}
+
+- (CGFloat)luaui_centerX {
+    return self.center.x;
+}
+
+- (CGFloat)luaui_centerY {
+    return self.center.y;
+}
+
+- (void)luaui_layoutComplete:(MLNUIBlock *)complete {
+    [self setMlnui_layoutCompleteCallback:complete];
 }
 
 - (void)setLuaui_display:(BOOL)display {
@@ -318,6 +334,16 @@ static inline UIView *MLNUIValidSuperview(UIView *self) {
 
 - (void)setLuaui_widthPercent:(CGFloat)widthPercent {
     self.mlnui_layoutNode.width = MLNUIPercentValue(widthPercent);
+}
+
+- (void)setLuaui_viewWidth:(CGFloat)luaui_width {
+    CGRect frame = self.frame;
+    frame.size.width = luaui_width;
+    self.frame = frame;
+}
+
+- (CGFloat)luaui_viewWidth {
+    return self.frame.size.width;
 }
 
 - (CGFloat)luaui_widthPercent {
@@ -606,14 +632,6 @@ static inline UIView *MLNUIValidSuperview(UIView *self) {
 /**
  * Position
  */
-- (void)luaui_setPositionWithTop:(CGFloat)top right:(CGFloat)right bottom:(CGFloat)bottom left:(CGFloat)left {
-    MLNUILayoutNode *layout = self.mlnui_layoutNode;
-    layout.top = MLNUIPointValue(top);
-    layout.right = MLNUIPointValue(right);
-    layout.bottom = MLNUIPointValue(bottom);
-    layout.left = MLNUIPointValue(left);
-}
-
 - (void)setLuaui_positionType:(MLNUIPositionType)position {
     self.mlnui_layoutNode.position = position;
 }
@@ -697,6 +715,9 @@ static inline UIView *MLNUIValidSuperview(UIView *self) {
 }
 
 - (void)mlnui_layoutCompleted {
+    if (self.mlnui_layoutCompleteCallback) {
+        [self.mlnui_layoutCompleteCallback callIfCan];
+    }
     if (self.mlnui_contentView == nil) {
         return;
     }

@@ -129,13 +129,21 @@
 }
 
 //static const char *customLuaFiles[] = {"packet.BindMeta", "packet.KeyboardManager", "packet.style"};
-static const char *customLuaFiles[] = {"packet/BindMeta", "packet/KeyboardManager", "packet/style"};
+//static const char *customLuaFiles[] = {"packet/BindMeta", "packet/KeyboardManager", "packet/style"};
 
 - (void)_requireCustomLuaFiles:(MLNUILuaCore *)luaCore {
-    size_t size = sizeof(customLuaFiles) / sizeof(const char *);
-    for (int i = 0; i < size; i++) {
-        const char *file = customLuaFiles[i];
-        [luaCore requireLuaFile:file];
+    NSString *path = [[NSBundle bundleForClass:self.class] pathForResource:@"ArgoUI" ofType:@"bundle"];
+    NSBundle *bundle = [NSBundle bundleWithPath:path];
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    NSArray *dirs = [fileManager contentsOfDirectoryAtPath:path error:NULL];
+    dirs = [dirs arrayByAddingObject:@""]; //添加根目录
+    
+    for (NSString *dirName in dirs) {
+        NSArray *urls = [bundle URLsForResourcesWithExtension:@"lua" subdirectory:dirName];
+        for (NSURL *url in urls) {
+            NSString *requrieName = dirName.length > 0 ? [NSString stringWithFormat:@"%@/%@",dirName,[[url lastPathComponent] stringByDeletingPathExtension]] : [[url lastPathComponent] stringByDeletingPathExtension];
+            [luaCore requireLuaFile:requrieName.UTF8String];
+        }
     }
 }
 

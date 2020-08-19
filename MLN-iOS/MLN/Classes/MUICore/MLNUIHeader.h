@@ -286,9 +286,18 @@ extern id<MLNUIPerformanceMonitor> MLNUIKitPerformanceMonitorForDebug;
     [MLNUIKitPerformanceMonitorForDebug display];\
 })
 
-#define PCallOC(cls,sel)  [MLNUIKitPerformanceMonitorForDebug callOCBridge:cls selector:sel]
-#define PCallDB(func)  [MLNUIKitPerformanceMonitorForDebug callDBBridge:func]
-#define PCallC(func)  [MLNUIKitPerformanceMonitorForDebug callCBridge:func]
+//#define PCallOC(cls,sel)  [MLNUIKitPerformanceMonitorForDebug callOCBridge:cls selector:sel]
+//#define PCallDB(func)  [MLNUIKitPerformanceMonitorForDebug callDBBridge:func]
+//#define PCallC(func)  [MLNUIKitPerformanceMonitorForDebug callCBridge:func]
+
+#define PCallOCStart(cls,sel)  [MLNUIKitPerformanceMonitorForDebug onStartCallOCBridge:cls selector:sel]
+#define PCallOCEnd(cls,sel)  [MLNUIKitPerformanceMonitorForDebug onEndCallOCBridge:cls selector:sel]
+
+#define PCallCStart(func)  [MLNUIKitPerformanceMonitorForDebug onStartCallCBridge:func]
+#define PCallCEnd(func)  [MLNUIKitPerformanceMonitorForDebug onEndCallCBridge:func]
+
+#define PCallDBStart(func)  [MLNUIKitPerformanceMonitorForDebug onStartCallDBBridge:func]
+#define PCallDBEnd(func)  [MLNUIKitPerformanceMonitorForDebug onEndCallDBBridge:func]
 
 #else
 
@@ -297,9 +306,19 @@ extern id<MLNUIPerformanceMonitor> MLNUIKitPerformanceMonitorForDebug;
 #define PEND(type)
 #define PEND_TAG_INFO(type,tag,info)
 #define PDISPLAY(delay)
-#define PCallOC(cls,sel)
-#define PCallDB(func)
-#define PCallC(func)
+//#define PCallOC(cls,sel)
+//#define PCallDB(func)
+//#define PCallC(func)
+
+#define PCallOCStart(cls,sel)
+#define PCallOCEnd(cls,sel)
+
+#define PCallCStart(func)
+#define PCallCEnd(func)
+
+#define PCallDBStart(func)
+#define PCallDBEnd(func)
+
 #endif
 
 

@@ -396,4 +396,12 @@ __VA_ARGS__;\
     })
 }
 
+- (void)luaui_setPagerContentOffset:(CGFloat)x y:(CGFloat)y {
+    SCROLLVIEW_DO(if(scrollView.mlnui_horizontal) {
+        [scrollView setContentOffset:CGPointMake(x, 0)];
+    } else {
+        [scrollView setContentOffset:CGPointMake(0, y)];
+    })
+}
+
 @end

@@ -14,6 +14,7 @@
 #import "UIView+MLNUILayout.h"
 #import "MLNUIInteractiveBehavior.h"
 #import "MLAValueAnimation+Interactive.h"
+#import "MLNUILabel.h"
 
 @interface MLNUIObjectAnimation()
 
@@ -48,6 +49,7 @@
 
 @property (nonatomic, assign) CGFloat defaultAlpha;
 @property (nonatomic, assign) CGPoint defaultOrigin;
+@property (nonatomic, assign) BOOL animationPaused; // default is NO
 
 @end
 
@@ -62,6 +64,8 @@
     }
     return self;
 }
+
+#pragma mark - Bridge
 
 - (void)setDelay:(NSNumber *)delay
 {
@@ -119,10 +123,12 @@
 }
 
 - (void)mlnui_pause {
+    self.animationPaused = YES;
     [_valueAnimation pause];
 }
 
 - (void)mlnui_resume {
+    self.animationPaused = NO;
     [_valueAnimation resume];
 }
 
@@ -171,6 +177,13 @@
     _propertyChanged = YES;
 }
 
+// progress [0, 1]
+- (void)luaui_updateAnimation:(CGFloat)progress {
+    [self.mlnui_rawAnimation updateWithFactor:progress isBegan:NO];
+}
+
+#pragma mark -
+
 - (MLAValueAnimation *)mlnui_rawAnimation
 {
     return self.valueAnimation;
@@ -192,6 +205,10 @@
                 break;
         }
         _valueAnimation.bridgeAnimation = self;
+        
+        if (self.animationPaused) {
+            [_valueAnimation pause];
+        }
         
         __weak typeof(self) weakSelf = self;
         _valueAnimation.startBlock = ^(MLAAnimation *animation) {
@@ -389,6 +406,10 @@
         }
         case MLNUIAnimationPropertyTypeScale:
             return @(CGPointMake(1.0, 1.0));
+        case MLNUIAnimationPropertyTypeContentOffset:
+            return @(CGPointMake(0.0, 0.0));
+        case MLNUIAnimationPropertyTypeTextColor:
+            return [UIColor whiteColor];
         default:
             break;
     }
@@ -441,23 +462,25 @@
             return @(angle / 360.0 * M_PI * 2);
         }
             break;
-        case MLNUIAnimationPropertyTypeColor:
-        {
-            if ([velocity isKindOfClass:[UIColor class]])
-            {
+        case MLNUIAnimationPropertyTypeTextColor:
+        case MLNUIAnimationPropertyTypeColor: {
+            if ([velocity isKindOfClass:[UIColor class]]) {
                 return velocity;
             }
-            else if ([velocity isKindOfClass:[NSArray class]])
-            {
+            if ([velocity isKindOfClass:[NSArray class]]) {
                 NSArray *value = (NSArray *)velocity;
-                if (value.count == 1) {
-                    return value[0];
+                if (value.count == 4) {
+                    return [UIColor colorWithRed:[value[0] floatValue]/255.0 green:[value[1] floatValue]/255.0 blue:[value[2] floatValue]/255.0 alpha:1.0];
+                }
+                if (value.count == 4) {
+                    return [UIColor colorWithRed:[value[0] floatValue]/255.0 green:[value[1] floatValue]/255.0 blue:[value[2] floatValue]/255.0 alpha:[value[3] floatValue]];
                 }
             }
         }
             break;
         case MLNUIAnimationPropertyTypePosition:
         case MLNUIAnimationPropertyTypeScale:
+        case MLNUIAnimationPropertyTypeContentOffset:
         {
             NSArray *point = (NSArray *)velocity;
             if ([point isKindOfClass:[NSArray class]] && point.count == 2)
@@ -513,6 +536,19 @@
         case MLNUIAnimationPropertyTypeRotationY:
             return kMLAViewRotationY;
             break;
+        case MLNUIAnimationPropertyTypeContentOffset: {
+            UIScrollView *contentView = (UIScrollView *)_targetView.mlnui_contentView;
+            if (!contentView || ![contentView isKindOfClass:[UIScrollView class]]) {
+                MLNUIKitLuaAssert(NO, @"The ContentOffset animation type is only valid for ScrollView、TableView、ViewPager and CollectionView.");
+            }
+            return kMLAViewContentOffset;
+        }
+        case MLNUIAnimationPropertyTypeTextColor: {
+            if (![_targetView isKindOfClass:[MLNUILabel class]]) {
+                MLNUIKitLuaAssert(NO, @"The TextColor animation type is only valid for Label.");
+            }
+            return kMLAViewTextColor;
+        }
         default:
             break;
     }
@@ -545,7 +581,7 @@ LUAUI_EXPORT_METHOD(start, "mlnui_start:", MLNUIObjectAnimation)
 LUAUI_EXPORT_METHOD(pause, "mlnui_pause", MLNUIObjectAnimation)
 LUAUI_EXPORT_METHOD(resume, "mlnui_resume", MLNUIObjectAnimation)
 LUAUI_EXPORT_METHOD(stop, "mlnui_stop", MLNUIObjectAnimation)
-
+LUAUI_EXPORT_METHOD(update, "luaui_updateAnimation:", MLNUIObjectAnimation)
 LUAUI_EXPORT_METHOD(addInteractiveBehavior, "mlnui_AddInteractiveBehavior:", MLNUIObjectAnimation)
 LUAUI_EXPORT_END(MLNUIObjectAnimation, ObjectAnimation, NO, NULL, "initWithMLNUILuaCore:property:target:")
 

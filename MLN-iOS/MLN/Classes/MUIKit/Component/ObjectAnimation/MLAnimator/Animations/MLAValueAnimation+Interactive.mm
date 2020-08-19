@@ -92,34 +92,36 @@ static BezierControlPoints staticControls[] = {
     BezierControlPoints controlPoints = staticControls[1];
     
     AMTFloat t;
-    AMTFloat multi = 1;
-    
-    if (factor > 0) {
-        if (factor > 1) {
-            multi = factor;
-            factor = 1;
-        }
-        t = MathUtil::TimingFunctionSolve(controlPoints, factor, SOLVE_EPS(10));
-        MathUtil::InterpolateVector(valueCount, current->data(), fromVec->data(), toVec->data(), t);
-    } else {
-        if (factor < -1) {
-            multi = -factor;
-            factor = -1;
-        }
-        t = MathUtil::TimingFunctionSolve(controlPoints, -factor, SOLVE_EPS(10));
-        VectorRef newTo = VectorRef(Vector::new_vector(valueCount, fromVec->data()));
+    int integer_part = factor;
+    CGFloat decimal_part = factor - integer_part;
+    if (factor < 0) {
+        integer_part = -integer_part;
+        decimal_part = -decimal_part;
         for (int i = 0; i < valueCount; i++) {
-            newTo->data()[i] = 2 * fromVec->data()[i] + toVec->data()[i];
-        }
-        MathUtil::InterpolateVector(valueCount, current->data(), fromVec->data(), newTo->data(), t);
-    }
-    
-    if (multi != 1) {
-        for (int i = 0; i < valueCount; i++) {
-            current->data()[i] *= multi;
+            toVec->data()[i] = 2 * fromVec->data()[i] - toVec->data()[i];
         }
     }
 
+    VectorRef adjustFrom = VectorRef(Vector::new_vector(valueCount, fromVec->data()));
+    VectorRef adjustTo = VectorRef(Vector::new_vector(valueCount, toVec->data()));
+    for (int i = 0; i < valueCount; i++) {
+        CGFloat f = fromVec->data()[i] + (toVec->data()[i] - fromVec->data()[i]) * integer_part;
+        adjustFrom->data()[i] = f;
+        CGFloat t = toVec->data()[i] + (toVec->data()[i] - fromVec->data()[i]) * integer_part;
+        adjustTo->data()[i] = t;
+    }
+    
+    t = MathUtil::TimingFunctionSolve(controlPoints, decimal_part, SOLVE_EPS(10));
+    MathUtil::InterpolateVector(valueCount, current->data(), adjustFrom->data(), adjustTo->data(), t);
+    for (int i = 0; i < valueCount; i++) {
+        CGFloat c = current->data()[i];
+        if (c < 0) {
+            current->data()[i] = -c;
+        }
+        if (c > 3.4 && [self.valueName isEqualToString:@"view.scale"]) {
+            current->data()[i] = 3.4;
+        }
+    }
     self.animatable.writeBlock(self.target, current->data());
 }
 

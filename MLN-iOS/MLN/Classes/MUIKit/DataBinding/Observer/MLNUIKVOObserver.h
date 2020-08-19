@@ -15,7 +15,7 @@ typedef void(^MLNUIKVOCallback)(NSString *keyPath, id object, NSDictionary<NSKey
 
 @interface MLNUIKVOObserver : NSObject <MLNUIKVOObserverProtol>
 @property (nonatomic, assign, getter=isActive) BOOL active;
-@property (nonatomic, copy, readonly) NSString *keyPath;
+//@property (nonatomic, copy, readonly) NSString *keyPath;
 @property (nonatomic, weak, readonly) UIViewController *viewController;
 @property (nonatomic, copy) NSString *obID;
 

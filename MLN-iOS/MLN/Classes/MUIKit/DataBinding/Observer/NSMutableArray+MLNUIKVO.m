@@ -8,6 +8,7 @@
 #import "NSMutableArray+MLNUIKVO.h"
 #import <objc/runtime.h>
 #import "NSObject+MLNUISwizzle.h"
+#import "NSObject+MLNUIReflect.h"
 
 @interface NSObject (MLNUIKVOListener)
 @property (nonatomic, strong) Class mlnkvo_originClass;
@@ -147,6 +148,7 @@ NS_INLINE  Class MLNUICreateSubClass(Class class, NSString *subName) {
 #pragma clang diagnostic ignored "-Warc-performSelector-leaks"
 
 #define GetIMP() \
+self.mlnui_dataBinding_dirty = YES;\
 Class super = class_getSuperclass(object_getClass(self)); \
 Method m = class_getInstanceMethod(super, origin); \
 IMP imp = method_getImplementation(m)

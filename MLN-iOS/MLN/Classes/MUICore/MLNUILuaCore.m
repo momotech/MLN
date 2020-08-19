@@ -12,6 +12,7 @@
 #import "MLNUIConvertor.h"
 #import "MLNUIFileLoader.h"
 #import "MLNUILuaTable.h"
+#import "argo_lib.h"
 
 @import ObjectiveC;
 
@@ -875,6 +876,25 @@ NS_INLINE BOOL utils_string_is_number(const char *input) {
 {
     NSArray *classes = @[[MLNUIFileLoader class]];
     [self registerClasses:classes error:NULL];
+    [self openLuaDataBinding];
+}
+
+- (BOOL)openLuaDataBinding {
+    lua_State *L = self.state;
+    if (!L) {
+        NSLog(@"Lua state is released");
+        return NO;
+    }
+    argo_open(L);
+    argo_preload(L);
+    return YES;
+}
+
+- (void)closeLuaDataBinding {
+    lua_State *L = self.state;
+    if (L) {
+        argo_close(L);
+    }
 }
 
 - (void)addNotification
@@ -884,6 +904,7 @@ NS_INLINE BOOL utils_string_is_number(const char *input) {
 
 - (void)dealloc
 {
+    [self closeLuaDataBinding];
     [self mlnui_removeMemoryWarningNotification];
     [self releaseLuaCore];
 }

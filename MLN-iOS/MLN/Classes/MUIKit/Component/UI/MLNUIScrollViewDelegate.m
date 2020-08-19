@@ -47,6 +47,12 @@
     }
 }
 
+- (void)scrollViewWillEndDragging:(UIScrollView *)scrollView withVelocity:(CGPoint)velocity targetContentOffset:(inout CGPoint *)targetContentOffset {
+    if (scrollView.luaui_disallowFling) { // 让scrollView停在手指离开屏幕的位置
+        *targetContentOffset = scrollView.contentOffset;
+    }
+}
+
 - (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
     if (scrollView.luaui_endDraggingCallback) {
         [scrollView.luaui_endDraggingCallback addFloatArgument:scrollView.contentOffset.x];

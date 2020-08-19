@@ -19,17 +19,25 @@
 
 static NSString *const kUpdateNotiKey = @"MLNUIListView_Update";
 
-@interface MLNUITableView (Internal)
+@protocol _MLNUIListInternalRefreshProtocol <NSObject>
 - (void)luaui_reloadData;
 //- (void)luaui_insertRow:(NSInteger)row section:(NSInteger)section animated:(BOOL)animated;
 //- (void)luaui_deleteRow:(NSInteger)row section:(NSInteger)section animated:(BOOL)animated;
-
 - (void)luaui_insertRowsAtSection:(NSInteger)section startRow:(NSInteger)startRow endRow:(NSInteger)endRow animated:(BOOL)animated;
 - (void)luaui_deleteRowsAtSection:(NSInteger)section startRow:(NSInteger)startRow endRow:(NSInteger)endRow animated:(BOOL)animated;
 
 //- (void)luaui_reloadAtSection:(NSInteger)section animation:(BOOL)animation;
 - (void)luaui_reloadAtRow:(NSInteger)row section:(NSInteger)section animation:(BOOL)animation;
+@end
 
+@interface MLNUITableView (Internal) <_MLNUIListInternalRefreshProtocol>
+@end
+
+@interface MLNUICollectionView (Internal) <_MLNUIListInternalRefreshProtocol>
+//- (void)luaui_reloadData;
+//- (void)luaui_insertRowsAtSection:(NSInteger)section startRow:(NSInteger)startRow endRow:(NSInteger)endRow animated:(BOOL)animated;
+//- (void)luaui_deleteRowsAtSection:(NSInteger)section startRow:(NSInteger)startRow endRow:(NSInteger)endRow animated:(BOOL)animated;
+//- (void)luaui_reloadAtRow:(NSInteger)row section:(NSInteger)section animation:(BOOL)animation;
 @end
 
 typedef BOOL(^ActionBlock)(void);
@@ -89,6 +97,10 @@ typedef BOOL(^ActionBlock)(void);
             doActions();
             [table endUpdates];
         }
+    } else if([list isKindOfClass:[MLNUICollectionView class]]) {
+        MLNUICollectionView *mlncol = (MLNUICollectionView *)list;
+        UICollectionView *collection = mlncol.adapter.collectionView;
+        [collection performBatchUpdates:doActions completion:nil];
     }
 }
 

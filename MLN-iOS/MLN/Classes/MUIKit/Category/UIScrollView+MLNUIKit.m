@@ -327,6 +327,16 @@ static const void *kLuaStartDeceleratingCallback = &kLuaStartDeceleratingCallbac
     return self.contentOffset;
 }
 
+- (void)luaui_setPagerContentOffset:(CGFloat)x y:(CGFloat)y {
+    if(self.mlnui_horizontal) {
+        x = x < 0 ? 0 : x;
+        [self setContentOffset:CGPointMake(x, 0) animated:NO];
+    } else {
+        y = y < 0 ? 0 : y;
+        [self setContentOffset:CGPointMake(0, y) animated:NO];
+    }
+}
+
 //@override
 - (void)luaui_addSubview:(UIView *)view
 {
@@ -348,6 +358,14 @@ static const void *kLuaStartDeceleratingCallback = &kLuaStartDeceleratingCallbac
 - (void)mlnui_setLuaScrollEnable:(BOOL)enable
 {
     self.scrollEnabled = enable;
+}
+
+- (void)setLuaui_disallowFling:(BOOL)disallowFling {
+    objc_setAssociatedObject(self, @selector(luaui_disallowFling), @(disallowFling), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+
+- (BOOL)luaui_disallowFling {
+    return [objc_getAssociatedObject(self, _cmd) boolValue];
 }
 
 @end

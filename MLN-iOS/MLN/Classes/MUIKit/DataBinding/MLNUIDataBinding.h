@@ -33,7 +33,8 @@ NS_ASSUME_NONNULL_BEGIN
 @interface MLNUIDataBinding ()
 - (id __nullable)dataForKeyPath:(NSString *)keyPath;
 - (void)updateDataForKeyPath:(NSString *)keyPath value:(id)value;
-
+// for bind cell
+- (id)dataForKeyPath:(NSString *)keyPath userCache:(BOOL)useCache;
 // keys
 //- (id __nullable)dataForKeys:(NSArray *)keys;
 - (id __nullable)dataForKeys:(NSArray *)keys frontValue:(NSObject *_Nullable *_Nullable)front;
@@ -45,6 +46,10 @@ NS_ASSUME_NONNULL_BEGIN
 //缓存listView及对应的tag
 - (void)setListView:(UIView *)view tag:(NSString *)tag;
 - (UIView *)listViewForTag:(NSString *)tag;
+
+// only for bind cell
+- (BOOL)_realAddDataObserver:(NSObject<MLNUIKVOObserverProtol> *)observer forObject:(id)object observerID:(NSString *)obID  path:(NSString *)path;
+- (BOOL)_realAddArrayObserver:(NSObject<MLNUIKVOObserverProtol> *)observer forObject:(NSObject *)object observerID:(NSString *)obID keyPath:(NSString *)keyPath;
 
 @property (nonatomic, strong)void(^errorLog)(NSString *);
 @end

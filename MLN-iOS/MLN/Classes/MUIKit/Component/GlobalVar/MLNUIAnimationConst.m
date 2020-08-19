@@ -116,6 +116,8 @@ LUAUI_EXPORT_GLOBAL_VAR(AnimProperty, (@{
                             @"Rotation": @(MLNUIAnimationPropertyTypeRotation),
                             @"RotationX": @(MLNUIAnimationPropertyTypeRotationX),
                             @"RotationY": @(MLNUIAnimationPropertyTypeRotationY),
+                            @"ContentOffset":@(MLNUIAnimationPropertyTypeContentOffset),
+                            @"TextColor":@(MLNUIAnimationPropertyTypeTextColor)
                             }))
 LUAUI_EXPORT_GLOBAL_VAR_END()
 
