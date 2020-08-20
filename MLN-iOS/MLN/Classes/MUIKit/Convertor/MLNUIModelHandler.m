@@ -34,10 +34,37 @@ typedef void(^MLNLUIModelHandleTask)(void);
     if (!dataObject || !model || !functionChunk) {
         return nil;
     }
+    id object = [self handleModelWithDataObject:dataObject model:model extra:extra functionChunk:functionChunk error:error];
+    return MLNUIConvertDataObjectToModel(object, model);
+}
+
++ (void)buildModelWithDataObject:(id)dataObject model:(NSObject *)model extra:(id)extra functionChunk:(const char *)functionChunk complete:(MLNUIModelHandleComplete)complete {
+    NSParameterAssert(dataObject && model && functionChunk);
+    if (!dataObject || !model || !functionChunk) {
+        return;
+    }
+    MLNLUIModelHandleTask task = ^() {
+        NSError *error = nil;
+        id object = [self handleModelWithDataObject:dataObject model:model extra:extra functionChunk:functionChunk error:&error];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            NSObject *resultModel = MLNUIConvertDataObjectToModel(object, model);
+            if (complete) complete(resultModel, error);
+        });
+    };
+    [self performSelector:@selector(executeTask:) onThread:[self modelConvertThread] withObject:task waitUntilDone:NO];
+}
+
+#pragma mark - Private
+
++ (id)handleModelWithDataObject:(id)dataObject model:(nonnull NSObject *)model extra:(id _Nullable)extra functionChunk:(nonnull const char *)functionChunk error:(NSError *__autoreleasing*)error {
+    NSParameterAssert(dataObject && model && functionChunk);
+    if (!dataObject || !model || !functionChunk) {
+        return nil;
+    }
     
     MLNUILuaCore *luaCore = MLNUILuaCoreGet();
     lua_State *L = luaCore.state;
-
+    
     int argCount = 0;
     if ([luaCore pushLuaTable:dataObject error:nil]) {
         argCount++;
@@ -84,26 +111,8 @@ typedef void(^MLNLUIModelHandleTask)(void);
         ARGOUI_ERROR_LOG(errmsg);
         return nil;
     }
-    id object = [luaCore toNativeObject:-1 error:error];
-    return MLNUIConvertDataObjectToModel(object, model);
+    return [luaCore toNativeObject:-1 error:error];
 }
-
-+ (void)buildModelWithDataObject:(id)dataObject model:(NSObject *)model extra:(id)extra functionChunk:(const char *)functionChunk complete:(MLNUIModelHandleComplete)complete {
-    NSParameterAssert(dataObject && model && functionChunk);
-    if (!dataObject || !model || !functionChunk) {
-        return;
-    }
-    MLNLUIModelHandleTask task = ^() {
-        NSError *error = nil;
-        NSObject *resultModel = [self buildModelWithDataObject:dataObject model:model extra:extra functionChunk:functionChunk error:&error];
-        dispatch_async(dispatch_get_main_queue(), ^{
-            if (complete) complete(resultModel, error);
-        });
-    };
-    [self performSelector:@selector(executeTask:) onThread:[self modelConvertThread] withObject:task waitUntilDone:NO];
-}
-
-#pragma mark - Private
 
 + (NSThread *)modelConvertThread {
     static NSThread *thread = nil;
@@ -168,6 +177,7 @@ static inline NSObject *MLNUIConvertDataObjectToModel(__unsafe_unretained id dat
     if (!dataObject || !model) {
         return nil;
     }
+    NSCAssert([NSThread isMainThread], @"This method will trigger data_binding and will update UI.");
     if ([dataObject isKindOfClass:[NSDictionary class]]) {
         [(NSDictionary *)dataObject enumerateKeysAndObjectsUsingBlock:^(id _Nonnull key, id _Nonnull obj, BOOL *_Nonnull stop) {
             @try {
