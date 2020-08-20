@@ -15,13 +15,16 @@
 
 #define ENTRY_FILE_NAME "file"
 
-#define MLNUIBenchMark(...) \
-CFAbsoluteTime begin = CFAbsoluteTimeGetCurrent();\
-__VA_ARGS__; \
+#define MLNUIBenchMarkBegin \
+CFAbsoluteTime begin = CFAbsoluteTimeGetCurrent();
+
+#define MLNUIBenchMarkEnd \
 CFAbsoluteTime end = CFAbsoluteTimeGetCurrent();\
 printf("==>>ArgoUI time cost: %0.2fms\n", (end - begin) * 1000);
 
 @interface MLNUICustomHotReloadViewController ()<MLNUILinkProtocol>
+
+@property (nonatomic) dispatch_queue_t queue;
 
 @end
 
@@ -30,11 +33,7 @@ printf("==>>ArgoUI time cost: %0.2fms\n", (end - begin) * 1000);
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-    
-    __weak typeof(self) __unused weakSelf = self;
-    [[MLNHotReload getInstance] setUpdateCallback:^(MLNKitInstance *_Nonnull instance) {
-        [weakSelf testModelHandleWithLuaCore:(MLNUILuaCore *)instance.luaCore];
-    }];
+    [self testModelHandle];
 }
 
 #pragma mark - MLNUILinkProtocol
@@ -47,16 +46,29 @@ printf("==>>ArgoUI time cost: %0.2fms\n", (end - begin) * 1000);
 
 #pragma mark - Test
 
-- (void)testModelHandleWithLuaCore:(MLNUILuaCore *)luaCore {
-    NSString *path = [[NSBundle mainBundle] pathForResource:@"xxx" ofType:@"txt"];
-    NSData *data = [NSData dataWithContentsOfFile:path];
-    id dataObject =@{@"ec":@(100), @"em":@"success", @"data":@{}};
-    MLNUIBenchMark(
-                   MLNUITestModel *model = [MLNUITestModel new];
-                   const char *luaFunctionChunk = "return function(data, model, extra) model[\"em\"] = \"okok\" return model end";
-                   MLNUITestModel *resultModel = [MLNUIModelHandler buildModelWithDataObject:dataObject model:model extra:nil functionChunk:luaFunctionChunk];
-                   );
-    NSLog(@"model is %@", resultModel);
+- (void)testModelHandle {
+    id dataObject = @{@"ec":@(100), @"em":@"success", @"data":@{}};
+    
+    MLNUIBenchMarkBegin
+    MLNUITestModel *model = [MLNUITestModel new];
+    const char *luaFunctionChunk = "return function(data, model, extra) model[\"em\"] = \"okok\" return model end";
+    
+//    dispatch_async(dispatch_get_global_queue(0, 0), ^{
+//        MLNUITestModel *resultModel = [MLNUIModelHandler buildModelWithDataObject:dataObject model:model extra:nil functionChunk:luaFunctionChunk error:nil];
+//        dispatch_async(dispatch_get_main_queue(), ^{
+//            MLNUIBenchMarkEnd
+//            NSLog(@"==>>ArgoUI model is %@", resultModel);
+//        });
+//    });
+    
+//    MLNUITestModel *resultModel = [MLNUIModelHandler buildModelWithDataObject:dataObject model:model extra:nil functionChunk:luaFunctionChunk error:nil];
+//    MLNUIBenchMarkEnd
+//    NSLog(@"==>> model is %@", resultModel);
+    
+    [MLNUIModelHandler buildModelWithDataObject:dataObject model:model extra:nil functionChunk:luaFunctionChunk complete:^(__kindof NSObject *_Nonnull model, NSError *_Nonnull error) {
+        MLNUIBenchMarkEnd
+        NSLog(@"==>>ArgoUI model %@ , error: %@", model, error);
+    }];
 }
 
 @end

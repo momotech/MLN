@@ -9,23 +9,35 @@
 #import "MLNUILuaCore.h"
 #import "MLNUIKitBridgesManager.h"
 
-#define ARGOUI_BUILDMODEL_ERROR(desc, errmsg) printf("ArgoUI Error: %s (%s)\n.", desc ?: "", errmsg ?: "(null)");
+#define ARGOUI_ERROR(errmsg) do {\
+if (error) { *error = [NSError errorWithDomain:@"com.argoui.error" code:-1 userInfo:@{NSLocalizedDescriptionKey:errmsg}]; }\
+} while(0);
+
+#if DEBUG
+#define ARGOUI_ERROR_LOG(errmsg) printf("ArgoUI Error: %s\n.", errmsg.UTF8String ?: "(null)");
+#else
+#define ARGOUI_ERROR_LOG(errmsg)
+#endif
+
+typedef void(^MLNLUIModelHandleTask)(void);
+
+@interface MLNUIModelHandler ()
+
+@end
 
 @implementation MLNUIModelHandler
 
 #pragma mark - Public
 
-+ (NSObject *)buildModelWithDataObject:(id)dataObject model:(nonnull NSObject *)model extra:(id _Nullable)extra functionChunk:(nonnull const char *)functionChunk {
++ (NSObject *)buildModelWithDataObject:(id)dataObject model:(nonnull NSObject *)model extra:(id _Nullable)extra functionChunk:(nonnull const char *)functionChunk error:(NSError *__autoreleasing*)error {
     NSParameterAssert(dataObject && model && functionChunk);
-    if (!dataObject || !model || !functionChunk ) {
+    if (!dataObject || !model || !functionChunk) {
         return nil;
     }
     
-    MLNUILuaCore *luaCore = [[MLNUILuaCore alloc] initWithLuaBundle:nil];
+    MLNUILuaCore *luaCore = MLNUILuaCoreGet();
     lua_State *L = luaCore.state;
-    MLNUIKitBridgesManager *manager = [[MLNUIKitBridgesManager alloc] init];
-    [manager registerKitForLuaCore:luaCore];
-    
+
     int argCount = 0;
     if ([luaCore pushLuaTable:dataObject error:nil]) {
         argCount++;
@@ -53,26 +65,79 @@
     
     int res = luaL_loadstring(L, functionChunk);
     if (res != 0) { // error occur
-        ARGOUI_BUILDMODEL_ERROR("load build model function error", luaL_checkstring(L, -1));
+        NSString *errmsg = [NSString stringWithFormat:@"The `functionChunk` parameter is invalid. (%s)", luaL_checkstring(L, -1)];
+        ARGOUI_ERROR(errmsg);
+        ARGOUI_ERROR_LOG(errmsg);
         return nil;
     }
     lua_pcall(L, 0, 1, 0); // return function
     if (lua_type(L, -1) != LUA_TFUNCTION) {
-        ARGOUI_BUILDMODEL_ERROR("the element of top stack isn't function after loadstring", lua_typename(L, lua_type(L, -1)));
+        NSString *errmsg = [NSString stringWithFormat:@"The element of top stack isn't function after loadstring. (%s)", lua_typename(L, lua_type(L, -1))];
+        ARGOUI_ERROR(errmsg);
+        ARGOUI_ERROR_LOG(errmsg);
         return nil;
     }
     
-    NSError *error = nil;
-    [luaCore call:argCount retCount:1 error:&error]; // return model
-    if (error) {
-        ARGOUI_BUILDMODEL_ERROR("call build model function error", error.localizedDescription.UTF8String);
+    [luaCore call:argCount retCount:1 error:error]; // return model
+    if (error && *error) {
+        NSString *errmsg = [NSString stringWithFormat:@"The functionChunk called error. (%s)", [*error localizedDescription].UTF8String];
+        ARGOUI_ERROR_LOG(errmsg);
         return nil;
     }
-    id object = [luaCore toNativeObject:-1 error:nil];
+    id object = [luaCore toNativeObject:-1 error:error];
     return MLNUIConvertDataObjectToModel(object, model);
 }
 
++ (void)buildModelWithDataObject:(id)dataObject model:(NSObject *)model extra:(id)extra functionChunk:(const char *)functionChunk complete:(MLNUIModelHandleComplete)complete {
+    NSParameterAssert(dataObject && model && functionChunk);
+    if (!dataObject || !model || !functionChunk) {
+        return;
+    }
+    MLNLUIModelHandleTask task = ^() {
+        NSError *error = nil;
+        NSObject *resultModel = [self buildModelWithDataObject:dataObject model:model extra:extra functionChunk:functionChunk error:&error];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (complete) complete(resultModel, error);
+        });
+    };
+    [self performSelector:@selector(executeTask:) onThread:[self modelConvertThread] withObject:task waitUntilDone:NO];
+}
+
 #pragma mark - Private
+
++ (NSThread *)modelConvertThread {
+    static NSThread *thread = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        thread = [[NSThread alloc] initWithTarget:self selector:@selector(modelConvertThreadKeepAlive:) object:nil];
+        [thread start];
+    });
+    return thread;
+}
+
++ (void)modelConvertThreadKeepAlive:(id)object {
+    @autoreleasepool {
+        [[NSThread currentThread] setName:@"MLNUIModelConverter"];
+        NSRunLoop *runLoop = [NSRunLoop currentRunLoop];
+        [runLoop addPort:[NSMachPort port] forMode:NSRunLoopCommonModes];
+        [runLoop run];
+    }
+}
+
++ (void)executeTask:(MLNLUIModelHandleTask)task {
+    if (task) task();
+}
+
+static inline MLNUILuaCore *MLNUILuaCoreGet(void) {
+    static MLNUILuaCore *luaCore = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        luaCore = [[MLNUILuaCore alloc] initWithLuaBundle:nil];
+        MLNUIKitBridgesManager *manager = [[MLNUIKitBridgesManager alloc] init];
+        [manager registerKitForLuaCore:luaCore];
+    });
+    return luaCore;
+}
 
 static inline BOOL MLNUIConvertModelToLuaTable(__unsafe_unretained NSObject *model, MLNUILuaCore *luaCore) {
     if (!model || !luaCore) {
@@ -108,7 +173,7 @@ static inline NSObject *MLNUIConvertDataObjectToModel(__unsafe_unretained id dat
             @try {
                 [model setValue:obj forKey:key];
             } @catch (NSException *exception) {
-                ARGOUI_BUILDMODEL_ERROR("Convert NSDictionary to model", [exception description].UTF8String);
+                ARGOUI_ERROR_LOG([exception description]);
             } @finally { }
         }];
     }

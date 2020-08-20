@@ -9,15 +9,28 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+typedef void(^MLNUIModelHandleComplete)(__kindof NSObject *model, NSError *error);
+
 @interface MLNUIModelHandler : NSObject
 
 /// 业务方可根据需要，通过`dataObject`修改`model`中的属性值，从而满足UI显示需求。
+/// @Note 在当前线程同步执行。
 /// @param dataObject 数据源 (字典或数组)
 /// @param model 绑定到视图上的viewModel
 /// @param extra 额外的数据信息
 /// @param functionChunk lua函数代码块
+/// @param error 错误信息
 /// @return 处理后的viewModel，若出现错误，则返回nil。
-+ (__kindof NSObject *)buildModelWithDataObject:(id)dataObject model:(NSObject *)model extra:(id _Nullable)extra functionChunk:(const char *)functionChunk;
++ (__kindof NSObject *)buildModelWithDataObject:(id)dataObject model:(NSObject *)model extra:(id _Nullable)extra functionChunk:(const char *)functionChunk error:(NSError **)error;
+
+/// 业务方可根据需要，通过`dataObject`修改`model`中的属性值，从而满足UI显示需求。
+/// @Note 在后台线程异步执行。
+/// @param dataObject 数据源 (字典或数组)
+/// @param model 绑定到视图上的viewModel
+/// @param extra 额外的数据信息
+/// @param functionChunk lua函数代码块
+/// @param complete 结果回调。
++ (void)buildModelWithDataObject:(id)dataObject model:(NSObject *)model extra:(id _Nullable)extra functionChunk:(const char *)functionChunk complete:(MLNUIModelHandleComplete)complete;
 
 @end
 
