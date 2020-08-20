@@ -171,10 +171,11 @@ NS_ASSUME_NONNULL_BEGIN
  @param libName lib的名称
  @param list lib的方法列表
  @param nup upvalue 个数
+ @param leaveTable 是否把table留在栈顶.参考：luaL_openLib
  @param error 错误信息
  @return 注册是否成功
  */
-- (BOOL)openLib:(const char * __nullable)libName nativeClassName:(const char *)nativeClassName methodList:(const struct mlnui_objc_method *)list nup:(int)nup error:(NSError **)error;
+- (BOOL)openLib:(nullable const char *)libName nativeClassName:(const char *)nativeClassName methodList:(const struct mlnui_objc_method *)list nup:(int)nup leaveTableOnTop:(BOOL)leaveTable error:(NSError **)error;
 
 /**
  注册类到状态机

@@ -24,7 +24,7 @@
         }
         return NO;
     }
-    lua_settop(L, 0);
+//    lua_settop(L, 0);
     Class<MLNUIGlobalVarExportProtocol> exportClazz = (Class<MLNUIGlobalVarExportProtocol>)clazz;
     NSArray<NSDictionary *> *vars = [exportClazz mlnui_globalVarMap];
     for (NSDictionary *info in vars) {
