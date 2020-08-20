@@ -888,7 +888,6 @@ NS_INLINE BOOL utils_string_is_number(const char *input) {
         NSLog(@"Lua state is released");
         return NO;
     }
-    argo_open(L);
     argo_preload(L);
     return YES;
 }
