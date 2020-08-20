@@ -67,13 +67,13 @@
         }];
         */
         LOCK_RECURSIVE_INIT();
-        NSLog(@"%s",__FUNCTION__);
+//        NSLog(@"%s",__FUNCTION__);
     }
     return self;
 }
 
 - (void)dealloc {
-    NSLog(@"%s",__FUNCTION__);
+//    NSLog(@"%s",__FUNCTION__);
     [self.runloopObserver end];
     LOCK_DESTROY();
 }
