@@ -321,5 +321,10 @@ extern id<MLNUIPerformanceMonitor> MLNUIKitPerformanceMonitorForDebug;
 
 #endif
 
+#if DEBUG && 0
+#define MLNUIAssertMainThread() NSAssert([NSThread isMainThread], @"This method to be executed in the main thread!")
+#else
+#define MLNUIAssertMainThread()
+#endif
 
 #endif /* MLNUIHeader_h */

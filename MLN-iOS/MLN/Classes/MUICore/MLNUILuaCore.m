@@ -13,6 +13,7 @@
 #import "MLNUIFileLoader.h"
 #import "MLNUILuaTable.h"
 #import "argo_lib.h"
+#import "MLNUIExtScope.h"
 
 @import ObjectiveC;
 
@@ -410,7 +411,7 @@ static int mlnui_errorFunc_traceback (lua_State *L) {
     return YES;
 }
 
-- (BOOL)openLib:(const char *)libName nativeClassName:(const char *)nativeClassName methodList:(const struct mlnui_objc_method *)list nup:(int)nup error:(NSError **)error
+- (BOOL)openLib:(const char *)libName nativeClassName:(const char *)nativeClassName methodList:(const struct mlnui_objc_method *)list nup:(int)nup leaveTableOnTop:(BOOL)leaveTable error:(NSError **)error
 {
     lua_State *L = self.state;
     if (!L) {
@@ -436,6 +437,13 @@ static int mlnui_errorFunc_traceback (lua_State *L) {
         lua_remove(L, -2);  /* remove _LOADED table */
         lua_insert(L, -(nup+1));  /* move library table to below upvalues */
     }
+    BOOL shouldPOP = !leaveTable;
+    @onExit{
+        if (shouldPOP) {
+            lua_pop(L, 1);
+        }
+    };
+
     for (; list->l_mn; list++) {
         if (!charpNotEmpty(list->clz)) {
             if (error) {
@@ -809,10 +817,12 @@ NS_INLINE BOOL utils_string_is_number(const char *input) {
         }
         return NO;
     }
-    luaL_newmetatable(L, name );
-    lua_pushstring(L, "__index");
-    lua_pushvalue(L, -2);
-    lua_settable(L, -3);
+    
+    if (luaL_newmetatable(L, name )) { // 0 == exist
+        lua_pushvalue(L, -1);
+        lua_setfield(L, -2, "__index");
+    }
+//    lua_pop(L, 1);
     return YES;
 }
 
@@ -888,7 +898,6 @@ NS_INLINE BOOL utils_string_is_number(const char *input) {
         NSLog(@"Lua state is released");
         return NO;
     }
-    argo_open(L);
     argo_preload(L);
     return YES;
 }
