@@ -151,7 +151,8 @@ local function bindMeta_getWatchPath(keypath, ck)
     return keypath
 end
 
-local function bindMeta_update(path, v, cKey)
+local function bindMeta_update(path, v, cKey, cacheValue)
+    if cacheValue then cacheValue[cKey] = v end
     for _v, _ in pairs(bindMeta_ckeyGet(cKey)) do --同属性key修改先置为空 - 使用时需要本地读取
         _v.__vv = nil
     end
@@ -266,13 +267,13 @@ local function bindMeta__newindex(t, k, v)
         if type(v) == "table" and v.__ishook then
             v = v.__get
         end
-        bindMeta_update(path, v, k)
+        bindMeta_update(path, v, k, mt.__vv)
         for _, __f in pairs(_debugpwacths[path] or {}) do
             __f(v)
         end
         return
     end
-    bindMeta_update(path, v, k)
+    bindMeta_update(path, v, k, mt.__vv)
 end
 
 -- __call
