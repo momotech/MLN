@@ -133,6 +133,8 @@
 		FA4EE310237909BC00449250 /* MLNGalleryMineBottomPageCollectCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FA4EE30F237909BC00449250 /* MLNGalleryMineBottomPageCollectCell.m */; };
 		FA4EE313237917E500449250 /* MLNGalleryMinePageCellCollectCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FA4EE312237917E500449250 /* MLNGalleryMinePageCellCollectCell.m */; };
 		FA6C1CE1248E41D10025BA96 /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = FA6C1CE0248E41D10025BA96 /* libc++.tbd */; };
+		FA906FA024EBC8D500F8DAE2 /* MLNUICustomHotReloadViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FA906F9F24EBC8D500F8DAE2 /* MLNUICustomHotReloadViewController.m */; };
+		FA906FA424EBCAB700F8DAE2 /* MLNUITestModel.m in Sources */ = {isa = PBXBuildFile; fileRef = FA906FA324EBCAB700F8DAE2 /* MLNUITestModel.m */; };
 		FAE9C59323A250CD002C830D /* gallery.bundle in Resources */ = {isa = PBXBuildFile; fileRef = FAE9C59223A250CD002C830D /* gallery.bundle */; };
 		FAE9C59523A2529C002C830D /* inner_demo.bundle in Resources */ = {isa = PBXBuildFile; fileRef = FAE9C59423A2529C002C830D /* inner_demo.bundle */; };
 /* End PBXBuildFile section */
@@ -395,6 +397,10 @@
 		FA4EE311237917E500449250 /* MLNGalleryMinePageCellCollectCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNGalleryMinePageCellCollectCell.h; sourceTree = "<group>"; };
 		FA4EE312237917E500449250 /* MLNGalleryMinePageCellCollectCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNGalleryMinePageCellCollectCell.m; sourceTree = "<group>"; };
 		FA6C1CE0248E41D10025BA96 /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "usr/lib/libc++.tbd"; sourceTree = SDKROOT; };
+		FA906F9E24EBC8D500F8DAE2 /* MLNUICustomHotReloadViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNUICustomHotReloadViewController.h; sourceTree = "<group>"; };
+		FA906F9F24EBC8D500F8DAE2 /* MLNUICustomHotReloadViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNUICustomHotReloadViewController.m; sourceTree = "<group>"; };
+		FA906FA224EBCAB700F8DAE2 /* MLNUITestModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNUITestModel.h; sourceTree = "<group>"; };
+		FA906FA324EBCAB700F8DAE2 /* MLNUITestModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNUITestModel.m; sourceTree = "<group>"; };
 		FAE9C59223A250CD002C830D /* gallery.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = gallery.bundle; sourceTree = "<group>"; };
 		FAE9C59423A2529C002C830D /* inner_demo.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = inner_demo.bundle; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -529,6 +535,7 @@
 				00E9132724E53B24006614C4 /* KuaNative */,
 				00E9130824E5180B006614C4 /* Kua */,
 				00E9130624E517C9006614C4 /* ViewPager */,
+				FA906FA124EBC8E000F8DAE2 /* CustomHotReload */,
 			);
 			path = ArgoUIDemo;
 			sourceTree = "<group>";
@@ -1002,6 +1009,17 @@
 			path = BottomCell;
 			sourceTree = "<group>";
 		};
+		FA906FA124EBC8E000F8DAE2 /* CustomHotReload */ = {
+			isa = PBXGroup;
+			children = (
+				FA906F9E24EBC8D500F8DAE2 /* MLNUICustomHotReloadViewController.h */,
+				FA906F9F24EBC8D500F8DAE2 /* MLNUICustomHotReloadViewController.m */,
+				FA906FA224EBCAB700F8DAE2 /* MLNUITestModel.h */,
+				FA906FA324EBCAB700F8DAE2 /* MLNUITestModel.m */,
+			);
+			path = CustomHotReload;
+			sourceTree = "<group>";
+		};
 		FADC4062237462E4002249D4 /* Message */ = {
 			isa = PBXGroup;
 			children = (
@@ -1127,8 +1145,8 @@
 						TestTargetID = 6003F589195388D20070C39A;
 					};
 					6003F589195388D20070C39A = {
-						DevelopmentTeam = BCVQ45P3K6;
-						ProvisioningStyle = Automatic;
+						DevelopmentTeam = 36WT396TPZ;
+						ProvisioningStyle = Manual;
 					};
 					6003F5AD195388D20070C39A = {
 						TestTargetID = 6003F589195388D20070C39A;
@@ -1318,6 +1336,7 @@
 				FA4EE3002379080100449250 /* MLNGalleryMinePageCellDynamicModel.m in Sources */,
 				00E9131824E51837006614C4 /* HomeDataPageModelsPage.m in Sources */,
 				B27F65902377AA6C00F2D341 /* MLNGalleryMineHeaderView.m in Sources */,
+				FA906FA424EBCAB700F8DAE2 /* MLNUITestModel.m in Sources */,
 				00E9132224E519B3006614C4 /* CellModelItem.m in Sources */,
 				B2DD3E60237990E9002AB6AD /* MLNActionItem.m in Sources */,
 				00E9132624E51CC3006614C4 /* MLNViewPagerDemo.m in Sources */,
@@ -1364,6 +1383,7 @@
 				00A45F7624850C35001A07D9 /* MLNUIBridge.m in Sources */,
 				00E911CC24E2B8EC006614C4 /* MLNKuaController.m in Sources */,
 				B29500B72371A3ED00F48F09 /* MLNGalleryMainViewController.m in Sources */,
+				FA906FA024EBC8D500F8DAE2 /* MLNUICustomHotReloadViewController.m in Sources */,
 				00E6526B2420AD1800A878B8 /* MLNBindModelViewController.m in Sources */,
 				B27F65D62377AAC400F2D341 /* MLNHomeDataHandler.m in Sources */,
 				00D5985E24B825BF00EA1660 /* MLNBindTestShopStoreController.m in Sources */,
@@ -1623,8 +1643,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=*]" = "iPhone Developer";
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = BCVQ45P3K6;
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_TEAM = 36WT396TPZ;
 				ENABLE_BITCODE = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "MLN/MLN-Prefix.pch";
@@ -1677,9 +1697,9 @@
 					"\"UIKit\"",
 					"-v",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.MMILua-Example3";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.MMILua-Example";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PROVISIONING_PROFILE_SPECIFIER = "Xcode iOS Wildcard";
 				SWIFT_VERSION = 4.0;
 				WRAPPER_EXTENSION = app;
 			};
@@ -1692,8 +1712,8 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = BCVQ45P3K6;
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_BITCODE = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "MLN/MLN-Prefix.pch";

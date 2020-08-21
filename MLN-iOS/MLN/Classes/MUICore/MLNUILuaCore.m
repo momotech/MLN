@@ -358,8 +358,11 @@ static int mlnui_errorFunc_traceback (lua_State *L) {
     return YES;
 }
 
-- (BOOL)call:(int)numberOfArgs error:(NSError **)error
-{
+- (BOOL)call:(int)argCount error:(NSError *__autoreleasing  _Nullable *)error {
+    return [self call:argCount retCount:0 error:error];
+}
+
+- (BOOL)call:(int)argCount retCount:(int)retCount error:(NSError *__autoreleasing  _Nullable *)error {
     lua_State *L = self.state;
     if (!L) {
         if (error) {
@@ -375,13 +378,13 @@ static int mlnui_errorFunc_traceback (lua_State *L) {
         }
         return NO;
     }
-    if(numberOfArgs>0){
-        lua_insert(L, -numberOfArgs-1);
+    if(argCount > 0){
+        lua_insert(L, -argCount - 1);
     }
-    int base = lua_gettop(L) - numberOfArgs;  /* function index */
+    int base = lua_gettop(L) - argCount;  /* function index */
     lua_pushcfunction(L, mlnui_errorFunc_traceback);  /* push traceback function */
     lua_insert(L, base);  /* put it under chunk and args */
-    int code = lua_pcall(L, numberOfArgs, 0, base);
+    int code = lua_pcall(L, argCount, retCount, base);
     if (code != 0) {
         NSString *errmsg = [NSString stringWithFormat:@"%s", lua_tostring(L, -1)];
         if (error) {

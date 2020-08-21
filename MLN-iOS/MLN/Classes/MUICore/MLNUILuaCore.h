@@ -138,11 +138,21 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  执行栈顶的Chunck或者function，参数位于栈顶以下的位置。
 
- @param numberOfArgs 参数个数
+ @param argCount 参数个数
  @param error 执行错误信息
  @return 执行是否成功
  */
-- (BOOL)call:(int)numberOfArgs error:(NSError **__nullable)error;
+- (BOOL)call:(int)argCount error:(NSError **__nullable)error;
+
+/**
+执行栈顶的Chunck或者function，参数位于栈顶以下的位置。
+
+@param argCount 参数个数
+@param retCount 返回值个数
+@param error 执行错误信息
+@return 执行是否成功
+*/
+- (BOOL)call:(int)argCount retCount:(int)retCount error:(NSError **__nullable)error;
 
 /**
  注册lib到状态机

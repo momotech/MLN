@@ -730,9 +730,23 @@ local function mln_update_commandmodel_var_names(cmd)
     local varnames = mobdebug.commandmodel_var_names
     if varnames ~= nil and type(varnames) == "table" then
         if cmd ~= nil and type(cmd) == "string" then
-            local _, _, var = string.find(cmd, "%s*(%a+[a-zA-Z0-9_]*)%s*=%s*%a*")
+            local _, _, var = string.find(cmd, "%s*([a-zA-Z0-9_]*)%s*=%s*.*")
             varnames[var] = var
         end
+    end
+end
+
+--- loadstring是在全局环境下执行，因而无法取到局部变量值。
+--- 为了能够取到局部变量值，因此这里需要改变下函数的环境表，
+--- 如果当前栈帧中没有找到目标局部变量 (即pcall返回false)，则继续查找上一层栈帧，以此类推。
+local function mlnui_load_model(func, stack_level)
+    local env = capture_vars(stack_level)
+    if not env or stack_level > 100 then
+        return
+    end
+    setfenv(func, env)
+    if not pcall(func) then
+        mlnui_load_model(func, stack_level + 2) ---由于`mlnui_load_model`递归调用会增加一层函数栈帧层级，所以这里加2。
     end
 end
 
@@ -895,11 +909,9 @@ local function debug_hook(event, line)
                     end
 
                     if line >= from and line <= to then
-                        local env = capture_vars(1)
                         local func = loadstring(cmd)
                         if func and type(func) == "function" then
-                            setfenv(func, env)
-                            func()
+                            mlnui_load_model(func, 2)
                             mln_update_commandmodel_var_names(cmd)
                         end
                     end
@@ -1085,9 +1097,9 @@ local function mln_global_values_valid(name)
     if not name or type(name) ~= "string" then
         return true
     end
-    if string.sub(name, 1, 1) == "_" then --过滤掉下划线开头的全局变量（为了idea面板展示更友好）
-        return false
-    end
+    --if string.sub(name, 1, 1) == "_" then --过滤掉下划线开头的全局变量（为了idea面板展示更友好）
+    --    return false
+    --end
     if not mobdebug._global_value_black_list then
         mobdebug._global_value_black_list = { Link = 1, System = 1 } --需要过滤掉的名字作为key
     end
@@ -1107,14 +1119,19 @@ local function mln_append_global_values(vars)
                 type(v) == "userdata" or
                 type(v) == "number" then --暂时只显示这三种类型的全局变量
             if mln_global_values_valid(k) then
-                local name = tostring(k) .. "_global"
+                local name = tostring(k)
                 if not vars[1] then
                     vars[1] = {}
                 end
                 if not vars[1][2] then
                     vars[1][2] = {}
                 end
-                vars[1][2][name] = { v, v }
+                if string.find(name, "_") then ---转义层生成的全局变量，会在名字后增加一个下划线 (@孙宗堂)，这里要移除该下划线再展示到调试面板上。
+                    local temp = string.reverse(name)
+                    temp = string.gsub(temp, "_", "", 1)
+                    name = string.reverse(temp)
+                end
+                vars[1][2][name] = {v, v}
             end
         end
     end
@@ -1235,17 +1252,26 @@ local function debugger_loop(sev, svars, sfile, sline, sindex, is_first_run)
                     -- if the requested stack frame is not the current one, then use a new capture
                     -- with a specific stack frame: `capture_vars(0, coro_debugee)`
 
-                    -- 如果想要提取的变量是全局变量，则在_G中查找，然后插到main_vars里，在idea插件面板展示
+                    --- 如果想要提取的变量是全局变量，则在_G中查找，然后插到main_vars里，在idea插件面板展示
                     local main_vars = main_thread_vars
                     local _, _, innerLine = string.find(line, "(.+)%-%-%s*%b{}%s*$")
                     if innerLine then
-                        local _, _, gname = string.find(innerLine, "^[A-Z]+%s*return%s*(%a+[a-zA-Z0-9_]*)_global%s*$")
+                        local _, _, gname = string.find(innerLine, "^[A-Z]+%s*return%s*([a-zA-Z0-9_]*)%s*$")
                         if gname then
                             local v = _G[gname]
                             if v and type(v) == "table" then
+                                local mt = getmetatable(v)
+                                if mt and mt.__ishook then
+                                    v = nil ---如果是转义层生成的table，则不是我们想要的.
+                                end
+                            end
+                            if not v then
+                                v = _G[gname.."_"] ---要拼上下划线，因为`mln_append_global_values`函数中会去掉下划线。
+                            end
+                            if v and type(v) == "table" then
                                 local vars_metatable = getmetatable(main_vars) --默认main_vars表(也就是capture_vars函数的返回值)，是写保护的，所以这里在写入数据前，更改下元表
                                 setmetatable(main_vars, {})
-                                main_vars[gname .. "_global"] = v
+                                main_vars[gname] = v
                                 setmetatable(main_vars, vars_metatable)
                             end
                         end
@@ -1461,10 +1487,10 @@ local function debugger_loop(sev, svars, sfile, sline, sindex, is_first_run)
             mobdebug.commandmodels = mobdebug.commandmodels and mobdebug.commandmodels or {}
             mobdebug.commandmodel_var_names = {}
             for k, v in pairs(params) do
-                if string.find(k, "_JOINT_") then --中文件名含有包名的情况(eg: package/file), loadstring无法将带有反斜杠的string转为table.
+                if string.find(k, "_JOINT_") then ---文件名含有包名的情况(eg: package/file), loadstring无法将带有反斜杠的string转为table.
                     k = string.gsub(k, "_JOINT_", "/")
                 end
-                if iscasepreserving then --不同平台系统大小写不同(macOS和iOS), 详情搜索`iscasepreserving`的定义
+                if iscasepreserving then ---不同平台系统大小写不同(macOS和iOS), 详情搜索`iscasepreserving`的定义
                     k = string.lower(k)
                 end
                 mobdebug.commandmodels[k] = v

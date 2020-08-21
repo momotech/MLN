@@ -55,6 +55,8 @@
     
     // copy 主bundle中文件到沙盒中
     [self copyJsonFilesToSandbox];
+    
+    [self registerLink];
 
     return YES;
 }
@@ -132,6 +134,10 @@
 - (void)sd_setImageWithURL:(NSURL *)url placeholderImage:(nullable UIImage *)placeholder
 {
     // @note: 测试内存占用时候去掉图片
+}
+
+- (void)registerLink {
+    [MLNUILink registerName:@"CustomHotReload" linkClassName:@"MLNUICustomHotReloadViewController"];
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application
