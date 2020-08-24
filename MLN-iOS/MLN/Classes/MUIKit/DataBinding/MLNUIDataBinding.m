@@ -89,6 +89,16 @@
     }
 }
 
+- (void)bindData:(nullable NSObject *)data {
+    SEL sel = sel_registerName("modelKey");
+    NSAssert([data.class respondsToSelector:sel], @"Data必须实现方法：modelKey ");
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
+    NSString *key = [data.class performSelector:sel];
+#pragma clang diagnostic pop
+    [self bindData:data forKey:key];
+}
+
 //- (NSArray<NSObject<MLNUIKVOObserverProtol> *> *)observersForKeyPath:(NSString *)keyPath forArray:(BOOL) forArray {
 //    NSParameterAssert(keyPath);
 //    if (!keyPath) {
