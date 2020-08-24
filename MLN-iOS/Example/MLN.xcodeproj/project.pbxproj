@@ -13,6 +13,7 @@
 		00268A4124B7011500D8C617 /* EYLogViewer.m in Sources */ = {isa = PBXBuildFile; fileRef = 00268A3F24B7011500D8C617 /* EYLogViewer.m */; };
 		00574F94246A8B3200927744 /* MLNDataBindArrayViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 00574F93246A8B3200927744 /* MLNDataBindArrayViewController.m */; };
 		007F89E7246C0D8400FF50F1 /* MLNBindTestCaseModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 007F89E6246C0D8400FF50F1 /* MLNBindTestCaseModel.m */; };
+		008CA3C124F3D43400C4F76F /* KuaDemoMUI.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 008CA3C024F3D43400C4F76F /* KuaDemoMUI.bundle */; };
 		009DD8D524114B9600452458 /* MLNArrayBindingTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 009DD8D424114B9600452458 /* MLNArrayBindingTests.m */; };
 		00A0C999243C180500F0D003 /* MLNPerformanceTestController.m in Sources */ = {isa = PBXBuildFile; fileRef = 00A0C998243C180500F0D003 /* MLNPerformanceTestController.m */; };
 		00A0C9A1243C3C0500F0D003 /* LuaNativeUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00A0C9A0243C3C0500F0D003 /* LuaNativeUITests.m */; };
@@ -41,7 +42,6 @@
 		00E911D524E2BCE4006614C4 /* UserDataListSourceReply.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E911D124E2BCE4006614C4 /* UserDataListSourceReply.m */; };
 		00E911D624E2BCE4006614C4 /* UserDataListSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E911D224E2BCE4006614C4 /* UserDataListSource.m */; };
 		00E911D724E2BCE4006614C4 /* UserData.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E911D424E2BCE4006614C4 /* UserData.m */; };
-		00E911D924E2BCEC006614C4 /* KuaDemoMUI.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 00E911D824E2BCEB006614C4 /* KuaDemoMUI.bundle */; };
 		00E9131524E51837006614C4 /* ViewPagerDemoMUI.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 00E9130924E51837006614C4 /* ViewPagerDemoMUI.bundle */; };
 		00E9131724E51837006614C4 /* HomeDataPageModels.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E9131024E51837006614C4 /* HomeDataPageModels.m */; };
 		00E9131824E51837006614C4 /* HomeDataPageModelsPage.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E9131124E51837006614C4 /* HomeDataPageModelsPage.m */; };
@@ -169,6 +169,7 @@
 		00574F93246A8B3200927744 /* MLNDataBindArrayViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNDataBindArrayViewController.m; sourceTree = "<group>"; };
 		007F89E5246C0D8400FF50F1 /* MLNBindTestCaseModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNBindTestCaseModel.h; sourceTree = "<group>"; };
 		007F89E6246C0D8400FF50F1 /* MLNBindTestCaseModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNBindTestCaseModel.m; sourceTree = "<group>"; };
+		008CA3C024F3D43400C4F76F /* KuaDemoMUI.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = KuaDemoMUI.bundle; sourceTree = "<group>"; };
 		009DD8D424114B9600452458 /* MLNArrayBindingTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNArrayBindingTests.m; sourceTree = "<group>"; };
 		00A0C997243C180500F0D003 /* MLNPerformanceTestController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNPerformanceTestController.h; sourceTree = "<group>"; };
 		00A0C998243C180500F0D003 /* MLNPerformanceTestController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNPerformanceTestController.m; sourceTree = "<group>"; };
@@ -219,7 +220,6 @@
 		00E911D224E2BCE4006614C4 /* UserDataListSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserDataListSource.m; sourceTree = "<group>"; };
 		00E911D324E2BCE4006614C4 /* UserDataListSourceReply.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserDataListSourceReply.h; sourceTree = "<group>"; };
 		00E911D424E2BCE4006614C4 /* UserData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserData.m; sourceTree = "<group>"; };
-		00E911D824E2BCEB006614C4 /* KuaDemoMUI.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = KuaDemoMUI.bundle; sourceTree = "<group>"; };
 		00E9130924E51837006614C4 /* ViewPagerDemoMUI.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = ViewPagerDemoMUI.bundle; sourceTree = "<group>"; };
 		00E9130C24E51837006614C4 /* HomeDataPageModels.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HomeDataPageModels.h; sourceTree = "<group>"; };
 		00E9130D24E51837006614C4 /* HomeDataPageModelsPage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HomeDataPageModelsPage.h; sourceTree = "<group>"; };
@@ -572,7 +572,7 @@
 		00E9130824E5180B006614C4 /* Kua */ = {
 			isa = PBXGroup;
 			children = (
-				00E911D824E2BCEB006614C4 /* KuaDemoMUI.bundle */,
+				008CA3C024F3D43400C4F76F /* KuaDemoMUI.bundle */,
 				00E911CE24E2BCE4006614C4 /* ViewModel */,
 				00E911CA24E2B8EC006614C4 /* MLNKuaController.h */,
 				00E911CB24E2B8EC006614C4 /* MLNKuaController.m */,
@@ -1197,9 +1197,9 @@
 				30CB3BFB23684CD400AB90C6 /* MLN.podspec in Resources */,
 				30CB3BF923684B7F00AB90C6 /* MLNDevTool.podspec in Resources */,
 				00E9131524E51837006614C4 /* ViewPagerDemoMUI.bundle in Resources */,
+				008CA3C124F3D43400C4F76F /* KuaDemoMUI.bundle in Resources */,
 				FA383456239A6357000F900E /* Main.storyboard in Resources */,
 				00D5986B24B8732F00EA1660 /* PerformanceDemoMUI.bundle in Resources */,
-				00E911D924E2BCEC006614C4 /* KuaDemoMUI.bundle in Resources */,
 				6003F5A9195388D20070C39A /* Images.xcassets in Resources */,
 				6003F598195388D20070C39A /* InfoPlist.strings in Resources */,
 				FAE9C59523A2529C002C830D /* inner_demo.bundle in Resources */,

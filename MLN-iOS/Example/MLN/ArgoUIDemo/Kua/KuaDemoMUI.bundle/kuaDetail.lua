@@ -36,10 +36,6 @@ vwj3:image(backImg)
 _view_set_style_with_filter(vwj3,Style.backImg,{image=true})
 local vwj4 = Label()
 ui_views.vwj4 = vwj4
-vwj4:text(userData.title.__get)
-userData.title.__watch=function(new)
-vwj4:text(new)
-end
 vwj4:textColor(Color():hex(16777215))
 vwj2:children({vwj3, vwj4})
 _view_set_style_with_filter(vwj2,Style.nav,{})
@@ -292,12 +288,12 @@ _l_c1.vwj25:widthPercent(100)
 _l_c1.vwj25:marginBottom(20)
 _l_c1.contentView:addView(_l_c1.vwj25)
 end)
-DataBinding:bindListView(userData.listSource.__path, vwj5)
+DataBinding:bindListView(userData.listSource.__path,vwj5)
 vwj5_adapter:sectionCount(function()
 return DataBinding:getSectionCount(userData.listSource.__path)
 end)
 vwj5_adapter:rowCount(function(section1)
-return DataBinding:getRowCount(userData.listSource.__path,section1)
+return  DataBinding:getRowCount(userData.listSource.__path,section1)
 end)
 vwj5_adapter:fillCellDataByReuseId("commentCell", function(_l_c1,section1,row1)
 local _l_i1=userData.listSource[section1][row1].__ci
@@ -330,7 +326,7 @@ _l_c1.vwj12:text(kvar5.desc.__get)
 _l_c1.vwj15:text(kvar5.content.__get)
 local kvar9 = function()
 local kvar2 = {}
-for kvar1=1, (kvar5.actions.__asize) do
+for kvar1=1, (kvar5.actions.__asize) do 
 local kvar7=kvar1
 local kvar2_=(function()
 return  (function()
@@ -371,11 +367,11 @@ BindMetaWatchListCell(userData.listSource,section1,row1)
 end)
 vwj5_adapter:reuseId(function(section1, row1)
 local _l_i1=userData.listSource[section1][row1].__ci
-if _l_i1.row.__get == 1 then
+if _l_i1.row.__get == 1 then 
 return  "contentCell"
-else
+else 
 return  "commentCell"
-end
+end 
 end)
 vwj5:reloadData()
 vwj1:children({vwj2, vwj5})
@@ -398,3 +394,13 @@ vwj55:widthPercent(100)
 vwj55:height(35)
 vwj55:paddingTop(10)
 window:addView(vwj55)
+
+---延迟代码执行 UI 逻辑分离
+local delayFunc=function()
+vwj4:text(userData.title.__get)
+userData.title.__watch=function(new)
+vwj4:text(new)
+end
+end
+System:asyncDoInMain(delayFunc)
+

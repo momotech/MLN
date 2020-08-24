@@ -51,6 +51,7 @@ NS_ASSUME_NONNULL_BEGIN
 // only for bind cell
 - (BOOL)_realAddDataObserver:(NSObject<MLNUIKVOObserverProtol> *)observer forObject:(id)object observerID:(NSString *)obID  path:(NSString *)path;
 - (BOOL)_realAddArrayObserver:(NSObject<MLNUIKVOObserverProtol> *)observer forObject:(NSObject *)object observerID:(NSString *)obID keyPath:(NSString *)keyPath;
+- (NSString *)addMLNUIObserver:(NSObject<MLNUIKVOObserverProtol> *)observer ForObservedObject:(NSObject *)observedObject KeyPath:(NSString *)keyPath;
 
 @property (nonatomic, strong)void(^errorLog)(NSString *);
 @end

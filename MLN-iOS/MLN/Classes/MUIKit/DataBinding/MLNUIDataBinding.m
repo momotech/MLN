@@ -144,7 +144,49 @@
      ['userData']:object, object != nil, frontObject = nil
      ['userData','name'], object = nil, frontObject != nil
      */
-    NSString *obID = [NSUUID UUID].UUIDString;
+    NSString *obID = [self.class getUUID];
+    observer.obID = obID;
+    if (![frontObject isKindOfClass:[NSArray class]]) {
+        [self _realAddDataObserver:observer forObject:frontObject observerID:obID path:path];
+    }
+    
+    if ([object isKindOfClass:[NSMutableArray class]]) {
+        [self _realAddArrayObserver:observer forObject:object observerID:obID keyPath:keyPath];
+    }
+
+    return obID;
+}
+
++ (NSString *)getUUID {
+    static long long num = 0;
+    return [@(++num) stringValue];
+}
+
+- (NSString *)addMLNUIObserver:(NSObject<MLNUIKVOObserverProtol> *)observer ForObservedObject:(NSObject *)observedObject KeyPath:(NSString *)keyPath {
+    NSParameterAssert(observer && keyPath);
+    if (!observer || !keyPath) return nil;
+    
+    NSArray *keys = [keyPath componentsSeparatedByString:@"."];
+//    return [self addMLNUIObserver:observer forKeys:keys];
+    if(![keys isKindOfClass:[NSArray class]] || keys.count == 0) return nil;
+    
+    keys = [self formatKeys:keys allowFirstKeyIsNumber:NO allowLastKeyIsNumber:NO];
+    if(!keys) return nil;
+    
+//    NSString *obKey = [keys componentsJoinedByString:@"."];
+    NSObject *frontObject;
+//    NSObject *object = [self dataForKeysArray:keys frontObject:&frontObject];
+    NSObject *object = [self _dataForKeysArray:keys mainObject:observedObject frontObject:&frontObject];
+    NSString *path = keys.lastObject;
+//    if (keys.count == 1) {
+//        // TODO:监听dataMap.
+//    }
+    /*
+     ['source']:array, object != nil ,frontObject = nil
+     ['userData']:object, object != nil, frontObject = nil
+     ['userData','name'], object = nil, frontObject != nil
+     */
+    NSString *obID = [self.class getUUID];
     observer.obID = obID;
     if (![frontObject isKindOfClass:[NSArray class]]) {
         [self _realAddDataObserver:observer forObject:frontObject observerID:obID path:path];
@@ -575,6 +617,10 @@
 #pragma mark - GetData Private
 // keys=['userData.source'] -> frontObject = self.dataMap
 - (id)dataForKeysArray:(NSArray *)keys frontObject:(NSObject **)frontObject {
+    return [self _dataForKeysArray:keys mainObject:self.dataMap frontObject:frontObject];
+}
+
+- (id)_dataForKeysArray:(NSArray *)keys mainObject:(NSObject *)mainObject frontObject:(NSObject **)frontObject {
     NSMutableString *frontKey = [[keys firstObject] mutableCopy];
     if(!frontKey) return nil;
     
@@ -582,8 +628,8 @@
 //    @try {
         LOCK();
         //    NSObject *obj = [self.dataMap objectForKey:firstKey];
-        obj = [self.dataMap valueForKeyPath:frontKey];
-        if(frontObject) *frontObject = self.dataMap;
+    obj = [mainObject ?: self.dataMap valueForKeyPath:frontKey];
+    if(frontObject) *frontObject = mainObject ?: self.dataMap;
         
 //    } @catch (NSException *exception) {
 //        NSString *log = [NSString stringWithFormat:@"%@ %s",exception,__FUNCTION__];
