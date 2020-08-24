@@ -551,7 +551,7 @@ function BindMetaWatchListCell(source, section, row)
         else
             key = v
         end
-        if key and map[key] ~= true then --去重
+        if key and #key > 0 and map[key] ~= true then --去重
             ret[#ret + 1] = key
             map[key] = true
         end
