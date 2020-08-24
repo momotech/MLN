@@ -8,7 +8,6 @@
 #import "MLNUIBlockObserver.h"
 #import "MLNUIBlock.h"
 #import "MLNUIKitHeader.h"
-#import "MLNUIKitViewController.h"
 #import "MLNUIDataBinding.h"
 #import "NSObject+MLNUIReflect.h"
 #import "MLNUIMetamacros.h"
@@ -21,7 +20,7 @@
 @implementation MLNUIBlockObserver
 
 + (instancetype)observerWithBlock:(MLNUIBlock *)block keyPath:(nonnull NSString *)keyPath {
-    MLNUIKitViewController *kitViewController = (MLNUIKitViewController *)MLNUI_KIT_INSTANCE([block luaCore]).viewController;
+    UIViewController *kitViewController = (UIViewController *)MLNUI_KIT_INSTANCE([block luaCore]).viewController;
     MLNUIBlockObserver *observer = [[MLNUIBlockObserver alloc] initWithViewController:kitViewController callback:nil keyPath:keyPath];
     observer.block = block;
     

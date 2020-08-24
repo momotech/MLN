@@ -7,7 +7,7 @@
 
 #import "MLNUIListViewObserver.h"
 #import "MLNUITableView.h"
-#import "MLNUIKitViewController.h"
+#import <UIKit/UIKit.h>
 #import "MLNUIKitHeader.h"
 #import "MLNUICollectionView.h"
 #import <pthread.h>
@@ -48,7 +48,7 @@ typedef BOOL(^ActionBlock)(void);
 
 @property (nonatomic, strong, readwrite) UIView *listView;
 @property (nonatomic, strong) NSMutableArray <ActionBlock> *actions;
-@property (nonatomic, weak) MLNUIKitViewController *kitViewController;
+@property (nonatomic, weak) UIViewController *kitViewController;
 @end
 
 @implementation MLNUIListViewObserver
@@ -58,7 +58,7 @@ typedef BOOL(^ActionBlock)(void);
     if ([listView isKindOfClass:[MLNUITableView class]] || [listView isKindOfClass:[MLNUICollectionView class]]) {
         MLNUITableView *table = (MLNUITableView *)listView;
         
-        MLNUIKitViewController *kitViewController = (MLNUIKitViewController *)MLNUI_KIT_INSTANCE([table mlnui_luaCore]).viewController;
+        UIViewController *kitViewController = (UIViewController *)MLNUI_KIT_INSTANCE([table mlnui_luaCore]).viewController;
         MLNUIListViewObserver *observer = [[MLNUIListViewObserver alloc] initWithViewController:kitViewController callback:callback keyPath:keyPath];
         observer.listView = listView;
         observer.kitViewController = kitViewController;

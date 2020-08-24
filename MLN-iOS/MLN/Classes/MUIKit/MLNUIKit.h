@@ -16,7 +16,6 @@
 // Kit
 #import "MLNUIKitHeader.h"
 #import "MLNUIVersion.h"
-#import "MLNUIKitViewController.h"
 #import "MLNUIViewController.h"
 #import "MLNUIViewController+DataBinding.h"
 #import "MLNUIDataBinding.h"

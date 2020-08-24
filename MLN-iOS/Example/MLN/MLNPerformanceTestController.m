@@ -7,7 +7,7 @@
 //
 
 #import "MLNPerformanceTestController.h"
-#import "MLNUIKitViewController.h"
+#import "MLNUIViewController.h"
 #import "MLNLuaBundle.h"
 //#import "MLNKitInstanceFactory.h"
 #import <os/signpost.h>
@@ -122,9 +122,9 @@
     os_signpost_interval_begin(luaLoad, ident, "load", "%s",demoName.UTF8String);
     CFAbsoluteTime s = CFAbsoluteTimeGetCurrent();
 
-    MLNUIKitViewController *viewController = [[MLNUIKitViewController alloc] initWithEntryFilePath:demoName];
-    MLNLuaBundle *bundle = [MLNLuaBundle mainBundleWithPath:@"inner_demo.bundle"];
-    [viewController changeCurrentBundle:bundle];
+     MLNUIViewController*viewController = [[MLNUIViewController alloc] initWithEntryFileName:demoName bundleName:@"inner_demo"];
+//    MLNLuaBundle *bundle = [MLNLuaBundle mainBundleWithPath:@"inner_demo.bundle"];
+//    [viewController changeCurrentBundle:bundle];
     [viewController view];
     
     CFAbsoluteTime cost = (CFAbsoluteTimeGetCurrent() -  s)  *  1000;
@@ -152,21 +152,25 @@
 - (NSArray *)demoArray
 {
     if (!_demoArray) {
-        _demoArray = @[
-                       @"CollectionViewDemo.lua",
-                       @"DialogDemo.lua",
-                       @"EditTextViewDemo.lua",
-                       @"LabelDemo.lua",
-                       @"LinearLayoutDemo.lua",
-                       @"TableViewDemo.lua",
-                       @"ViewPagerDemo.lua",
-                       @"WaterfallViewDemo.lua",
-//                       @"MLNDataBindHotReload",
-                       @"MLNBindModelViewController",
-                       @"MLNBindTableViewController",
-                       @"UIViewController",
-                       @"MLNUIKitViewController"
-                       ];
+        if (@available(iOS 12.0, *)) {
+            _demoArray = @[
+                           @"CollectionViewDemo.lua",
+                           @"DialogDemo.lua",
+                           @"EditTextViewDemo.lua",
+                           @"LabelDemo.lua",
+                           @"LinearLayoutDemo.lua",
+                           @"TableViewDemo.lua",
+                           @"ViewPagerDemo.lua",
+                           @"WaterfallViewDemo.lua",
+    //                       @"MLNDataBindHotReload",
+                           @"MLNBindModelViewController",
+                           @"MLNBindTableViewController",
+                           @"UIViewController",
+                           @"MLNUIViewController"
+                           ];
+        } else {
+            _demoArray = @[];
+        }
     }
     return _demoArray;
 }

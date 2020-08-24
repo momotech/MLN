@@ -8,7 +8,6 @@
 
 #import "MLNDemoListViewController.h"
 #import "MLNKitViewController.h"
-#import "MLNUIKitViewController.h"
 #import "MLNLuaBundle.h"
 #import "MLNUILuaBundle.h"
 #import "MLNUIViewController.h"
@@ -75,14 +74,15 @@
         return;
     }
 #if 1
-    MLNUIKitViewController *viewController = [[MLNUIKitViewController alloc] initWithEntryFilePath:demoName];
+    MLNKitViewController *viewController = [[MLNKitViewController alloc] initWithEntryFilePath:demoName];
     [viewController regClasses:@[[MLNUIBridge class]]];
-    MLNUILuaBundle *bundle = [MLNUILuaBundle mainBundleWithPath:@"inner_demo.bundle"];
+    MLNLuaBundle *bundle = [MLNLuaBundle mainBundleWithPath:@"inner_demo.bundle"];
     [viewController changeCurrentBundle:bundle];
 #else
     NSString *path = [[NSBundle mainBundle] pathForResource:@"inner_demo" ofType:@"bundle"];
     NSBundle *bundle = [[NSBundle alloc]  initWithPath:path];
     MLNUIViewController *viewController = [[MLNUIViewController alloc] initWithEntryFileName:demoName bundle:bundle];
+    viewController.regClasses = @[[MLNUIBridge class]];
 #endif
     [self.navigationController pushViewController:viewController animated:YES];
 }
@@ -98,7 +98,8 @@
 - (NSArray *)demoArray
 {
     if (!_demoArray) {
-        _demoArray = @[@"CustomHotReload.lua",
+        _demoArray = @[
+//                       @"CustomHotReload.lua",
                        @"CollectionViewDemo.lua",
                        @"DialogDemo.lua",
                        @"EditTextViewDemo.lua",
