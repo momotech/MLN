@@ -625,11 +625,12 @@
     if(!frontKey) return nil;
     
     NSObject *obj;
+    if(!mainObject) mainObject = self.dataMap;
 //    @try {
         LOCK();
         //    NSObject *obj = [self.dataMap objectForKey:firstKey];
-    obj = [mainObject ?: self.dataMap valueForKeyPath:frontKey];
-    if(frontObject) *frontObject = mainObject ?: self.dataMap;
+    obj = [mainObject valueForKeyPath:frontKey];
+    if(frontObject) *frontObject = mainObject;
         
 //    } @catch (NSException *exception) {
 //        NSString *log = [NSString stringWithFormat:@"%@ %s",exception,__FUNCTION__];
