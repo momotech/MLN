@@ -26,6 +26,7 @@ local WATCH = "watch" -- prevew中使用
 local FOREACH = "forEach"
 local __b_G = "G_G"
 local __b_G_ = "G_G."
+local __b_G_l = 4
 
 local _kpathCache = {} -- {path = MetaTab }
 local _watchCache = {} -- {watchid1 = {path, func1}, watchid2 = {path, func2}, ...}
@@ -88,8 +89,8 @@ end
 local function bindMeta_path(k1, k2, force)
     -- preview模式下会前面会多个 G. 所以需要删除
     if force or (debug_preview_open == false and debug_preview_watch) then
-        if string.len(k1) > 2 and string.sub(k1, 1, 2) == __b_G_ then
-            k1 = string.sub(k1, 3)
+        if string.len(k1) > __b_G_l and string.sub(k1, 1, __b_G_l) == __b_G_ then
+            k1 = string.sub(k1, __b_G_l + 1)
         end
     end
     if k2 then
@@ -108,7 +109,7 @@ local function bindMeta_batchSetMeta(t, path, ck, pk)
             BindMeta(bindMeta_path(path , _k), {}, _v, _k, ck, true)
         end
     end
-    return BindMeta(path, mapt, t, ck, pk, true)
+    return BindMeta(bindMeta_path(path), mapt, t, ck, pk, true)
 end
 
 local function bindMeta_getAndCacheTab(mt, iscache, isCell)
@@ -170,6 +171,11 @@ local function bindMeta_watch(mt, v)
     return w_id
 end
 
+local function bindMeta_cacheSet(mt, path, v)
+    mt.__vv = v
+    BindMetaGet(_foreachCaches)[path] = true
+end
+
 -----------------------------------------------------------------------------------------------------------
 ----------------------  原表操作  __index/__newindex/__call                --------------------------
 -----------------------------------------------------------------------------------------------------------
@@ -200,8 +206,7 @@ local function bindMeta__index(t, k)
         --print("to Get::" .. mt.__kvoname, k)
         temp_v = DataBinding:get(temp_path)
         if (#_foreachCaches) > 0 then
-            mt.__vv = temp_v
-            BindMetaGet(_foreachCaches)[temp_path] = true
+            bindMeta_cacheSet(mt, temp_path, temp_v)
         end
         return temp_v
     elseif k == __path then
@@ -219,7 +224,7 @@ local function bindMeta__index(t, k)
         if __open_combine_data__ then
             temp_v = bindMeta_getAndCacheTab(mt, true, true)
         end
-        return BindMeta(mt.__kvoname,
+        return BindMeta(bindMeta_path(mt.__kvoname),
                 {row={__get=mt.__ck}, section={__get=mt.__pk}}, temp_v, mt.__ck, mt.__pk)
     end
     if debug_preview_watch then
