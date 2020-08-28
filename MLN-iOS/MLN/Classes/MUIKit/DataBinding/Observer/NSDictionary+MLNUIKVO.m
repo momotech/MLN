@@ -70,4 +70,22 @@
     return self.copy;
 }
 
+- (void)mlnui_setValue:(id)value forKeyPath:(NSString *)keyPath createIntermediateObject:(BOOL)createIntermediateObject {
+    if (createIntermediateObject) {
+        NSArray *keys = [keyPath componentsSeparatedByString:@"."];
+        NSMutableDictionary *dic = self;
+        for (int i = 0; i < keys.count - 1; i++) {
+            NSString *key = keys[i];
+            NSMutableDictionary *tmp = [dic objectForKey:key];
+            if (!tmp) {
+                tmp = [NSMutableDictionary dictionary];
+                [dic setObject:tmp forKey:key];
+            }
+            dic = tmp;
+        }
+        [dic setValue:value forKey:keys.lastObject];
+    } else {
+        [self setValue:value forKeyPath:keyPath];
+    }
+}
 @end

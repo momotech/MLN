@@ -14,6 +14,8 @@
 #import "NSObject+MLNUIDealloctor.h"
 #import "MLNUIExtScope.h"
 #import "MLNUIMainRunLoopObserver.h"
+#import "MLNUIHeader.h"
+#import "NSDictionary+MLNUIKVO.h"
 
 //#define kArrayPlaceHolder @"_array_"
 
@@ -348,7 +350,11 @@
 //        [self.dataMap setObject:value forKey:firstKey];
         @try {
             LOCK();
+#if OCPERF_MAP_LAZY_LOAD
+            [self.dataMap mlnui_setValue:value forKeyPath:firstKey createIntermediateObject:YES];
+#else
             [self.dataMap setValue:value forKeyPath:firstKey];
+#endif
         } @catch (NSException *exception) {
             NSString *log = [NSString stringWithFormat:@"%@ %s",exception,__FUNCTION__];
             [self doErrorLog:log];
@@ -378,7 +384,17 @@
                 }
                 value ? arr[index] = value : [arr removeObjectAtIndex:index];
             } else {
+#if OCPERF_MAP_LAZY_LOAD
+                if (frontObject) {
+                    if ([frontObject isKindOfClass:[NSMutableDictionary class]]) {
+                        [(NSMutableDictionary *)frontObject mlnui_setValue:value forKeyPath:lastKey createIntermediateObject:YES];
+                    } else {
+                        NSAssert(NO, @"frontObject should be NSMutableDictionary");
+                    }
+                }
+#else
                 [frontObject setValue:value forKeyPath:lastKey];
+#endif
             }
         } @catch (NSException *exception) {
             NSString *log  = [NSString stringWithFormat:@"%@ %s",exception, __func__];

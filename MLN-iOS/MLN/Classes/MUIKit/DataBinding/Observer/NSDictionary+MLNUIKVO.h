@@ -17,6 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface NSMutableDictionary (MLNUIKVO)
 - (NSDictionary *)mlnui_copy;
+- (void)mlnui_setValue:(id)value forKeyPath:(NSString *)keyPath createIntermediateObject:(BOOL)createIntermediateObject;
 @end
 
 NS_ASSUME_NONNULL_END
