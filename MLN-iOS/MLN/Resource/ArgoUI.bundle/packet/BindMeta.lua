@@ -445,7 +445,8 @@ end
 
 --- 删除监听
 function BindMetaRemoveWatchs(t)
-    if not t or type(t) ~= "table" then
+    if t == null then return end
+    if type(t) ~= "table" then
         --- 删除单个watch
         DataBinding:removeObserver(t)
         return

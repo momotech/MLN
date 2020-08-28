@@ -21,50 +21,79 @@ _class._type = 'ui'
 ---
 --- @public
 ---
-function TabSegment(texts, items, progressBar)
+function TabSegment(datas)
     local obj = {}
     setmetatable(obj, _class)
-    if texts or items or progressBar then
-        obj:setup(texts, items, progressBar)
-    end
+    obj._models = datas
+    obj.contentView = ScrollView(true):showsHorizontalScrollIndicator(false):height(50)
     return obj
 end
 
-function _class:new(texts)
-    local obj = {}
-    setmetatable(obj, _class)
-    return obj:setup(texts, nil, nil)
-end
-
-function _class:create(items, progressBar)
-    local obj = {}
-    setmetatable(obj, _class)
-    return obj:setup(nil, items, progressBar)
-end
-
-function _class:setup(texts, items, progressBar)
-    if not texts and not items then
-        error("The texts and items can not be nil together", 2)
+function _class:setupAnimation(callback)
+    if not callback or type(callback) ~= "function" then
+        return self
     end
-    if not items then
-        items = self:_defaultItems(texts)
-    end
-    self._progressBar = progressBar
-    self:_defaultAnimation()
-    self:_setupUI(items)
+    callback(self)
     return self
 end
 
-function _class:setAnimation(type, fromValue, toValue)
+function _class:animationType(type)
     self._animType = type
-    self._from = fromValue
-    self._to = toValue
+    return self
+end
+
+function _class:from(f)
+    self._from = f
+    return self
+end
+
+function _class:to(t)
+    self._to = t
+    return self
+end
+
+function _class:setupProgressBar(callback)
+    if not callback or type(callback) ~= "function" then
+        return self
+    end
+    local bar = callback()
+    if self._progressBar and self._progressBar:superview() then
+        self._progressBar:removeFromSuper()
+        self._container:addView(bar)
+    end
+    self._progressBar = bar
+    return self
+end
+
+function _class:bindCell(callback)
+    if not callback or type(callback) ~= "function" then
+        return self
+    end
+    if not self._models or #self._models == 0 then
+        self._setupSubviewsCallback = callback
+        return self
+    end
+    self:_create(self._models, callback)
+    return self
+end
+
+function _class:bindData(datas)
+    if not datas or #datas == 0 then
+        return self
+    end
+    self._models = datas
+    if self._setupSubviewsCallback then
+        self:_create(datas, self._setupSubviewsCallback)
+        self._setupSubviewsCallback = nil
+    end
+    return self
 end
 
 function _class:setCurrentIndex(index)
     if not self._isClickTabSegment then
         self._currentIndex = index
     end
+    return self
 end
 
 function _class:getCurrentIndex()
@@ -84,37 +113,26 @@ end
 ---
 --- @private
 ---
-function _class:_defaultItems(texts)
-    if not texts or #texts == 0 then
-        return nil
+function _class:_create(models, callback)
+    local views = {}
+    for _, v in ipairs(models) do
+        local tab = callback(v)
+        table.insert(views, tab)
     end
-    local items = {}
-    for _, v in ipairs(texts) do
-        local label = Label():text(v):textAlign(TextAlign.CENTER):fontSize(15)
-        table.insert(items, label)
-    end
-    return items
+    self:_setupUI(views)
 end
 
-function _class:_defaultAnimation()
-    self._animType = AnimProperty.Scale
-    self._from = {1.0, 1.0}
-    self._to = {1.5, 1.5}
-end
+function _class:_setupUI(views)
+    if not views or #views == 0 then
+        print("[ArgoUI Warning] The views can not be nil when create TabSegment!")
+        return
+    end
 
-function _class:_setupUI(items)
-    if not items or #items == 0 then
-        error("The items can not be nil when init MLNUITabSegment", 2)
-    end
-    if self.contentView then
-        self.contentView:removeFromSuper()
-        self.contentView = nil
-    end
-    local scrollView = ScrollView(true):showsHorizontalScrollIndicator(false):height(50)
+    local scrollView = self.contentView
     local container = VStack():basis(1):crossSelf(CrossAxis.STRETCH)
     local itemsView = HStack():basis(1):padding(15, 30, 10, 0):crossAxis(CrossAxis.STRETCH):mainAxis(MainAxis.SPACE_EVENLY)
 
-    for i, v in ipairs(items) do
+    for i, v in ipairs(views) do
         v:marginLeft(30):onClick(function()
             self._isClickTabSegment = true
             self:_clickItem(i, true)
@@ -135,7 +153,7 @@ function _class:_setupUI(items)
     end
     self._progressBarWidth = (self._progressBar:width() > 0) and self._progressBar:width() or 10 --处理极端情况：progressBar动画过程中，快速点击tab获取的width是不准的
     container:addView(self._progressBar)
-    self.contentView = scrollView
+    self._container = container
 end
 
 function _class:_clickItem(index, autoAnim)
@@ -263,16 +281,21 @@ function _class:_executeScrollViewOffsetAnimation(toIndex, progress, autoAnim)
     end
 end
 
-function _class:_executeItemAnimation(item, positive, progress, auto)
-    if not item then
+function _class:_executeItemAnimation(tab, positive, progress, auto)
+    if not tab then
         return nil
     end
 
-    local anim = self._animCache[item]
+    local anim = self._animCache[tab]
     if not anim then
-        anim = ObjectAnimation(self._animType, item)
+        if not self._animType then --default tab animation
+            self._animType = AnimProperty.Scale
+            self._from = {1.0, 1.0}
+            self._to = {1.5, 1.5}
+        end
+        anim = ObjectAnimation(self._animType, tab)
         anim:finishBlock(function() self._isClickTabSegment = false end)
-        self._animCache[item] = anim
+        self._animCache[tab] = anim
     end
     anim:stop() --must stop previous animation
 
