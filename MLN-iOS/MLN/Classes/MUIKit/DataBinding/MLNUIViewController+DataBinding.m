@@ -35,6 +35,10 @@
     return view;
 }
 
+- (void)bindData:(NSObject *)data {
+    [self.mlnui_dataBinding bindData:data];
+}
+
 - (void)bindData:(NSObject *)data forKey:(NSString *)key {
     [self.mlnui_dataBinding bindData:data forKey:key];
 }
