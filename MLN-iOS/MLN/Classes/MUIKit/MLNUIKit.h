@@ -23,6 +23,8 @@
 // argo db
 #import "ArgoDataBinding.h"
 #import "ArgoDataBindingCBridge.h"
+#import "ArgoViewController.h"
+#import "ArgoViewController+ArgoDataBinding.h"
 
 #import "NSArray+MLNUIKVO.h"
 #import "NSObject+MLNUIKVO.h"

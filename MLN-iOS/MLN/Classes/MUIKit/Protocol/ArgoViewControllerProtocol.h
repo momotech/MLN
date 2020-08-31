@@ -7,7 +7,7 @@
 
 #ifndef ArgoViewControllerProtocol_h
 #define ArgoViewControllerProtocol_h
-#import "ArgoKitHeader.h"
+#import "ArgoKitDefinitions.h"
 #import "MLNUIViewControllerProtocol.h"
 
 typedef enum : NSUInteger {
