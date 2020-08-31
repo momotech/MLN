@@ -10,6 +10,8 @@
 #import "MLNUILuaCore.h"
 #import "MLNUIKitInstance.h"
 #import "MLNUIExtScope.h"
+#import "MLNUIDataBinding.h"
+#import "MLNUIHeader.h"
 
 @implementation ArgoViewController (ArgoDataBinding)
 
@@ -23,7 +25,12 @@
 
 - (ArgoDataBinding *)argo_dataBinding {
     if (!_dataBinding) {
+# if OCPERF_USE_NEW_DB
         _dataBinding = [[ArgoDataBinding alloc] init];
+#else
+        _dataBinding = [[MLNUIDataBinding alloc] init];
+#endif
+        
 #if DEBUG
         @weakify(self);
         _dataBinding.errorLog = ^(NSString * _Nonnull log) {
