@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
     s.name             = 'ArgoUI'
-    s.version          = '0.2.3'
+    s.version          = '0.2.4.beta1'
     s.summary          = 'A lib of Momo Lua UI.'
     
     # This description is used to generate tags and improve search results.
