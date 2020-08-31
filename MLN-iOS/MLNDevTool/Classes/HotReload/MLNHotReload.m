@@ -190,10 +190,15 @@ static MLNHotReload *sharedInstance;
             if (obj) {
                 objc_setAssociatedObject(vc, @selector(mlnui_dataBinding), nil, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
             } else {
-                @try {
-                    [vc setValue:nil forKey:@"_dataBinding"];
-                } @catch (NSException *exception) {
-                    NSLog(@"ex %@",exception);
+                obj = objc_getAssociatedObject(vc, @selector(argo_dataBinding));
+                if (obj) {
+                    objc_setAssociatedObject(vc, @selector(argo_dataBinding), nil, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+                } else {
+                    @try {
+                        [vc setValue:nil forKey:@"_dataBinding"];
+                    } @catch (NSException *exception) {
+                        NSLog(@"ex %@",exception);
+                    }
                 }
             }
         }
