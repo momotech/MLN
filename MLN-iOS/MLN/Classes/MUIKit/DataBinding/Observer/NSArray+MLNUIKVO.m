@@ -11,6 +11,8 @@
 #import "NSObject+MLNUICore.h"
 #import "NSObject+MLNUIKVO.h"
 #import "NSObject+MLNUIReflect.h"
+#import "ArgoObservableArray.h"
+#import "MLNUIHeader.h"
 
 @import ObjectiveC;
 
@@ -99,7 +101,11 @@
 }
 
 - (instancetype)mlnui_convertToMArray {
+#if OCPERF_USE_NEW_DB
+    ArgoObservableArray *arr = [ArgoObservableArray array];
+#else
     NSMutableArray *arr = [NSMutableArray array];
+#endif
     [self enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         NSObject *n = [obj mlnui_convertToNativeObject];
         if (n) {

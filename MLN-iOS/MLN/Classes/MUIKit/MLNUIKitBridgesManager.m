@@ -233,7 +233,11 @@ static NSArray<Class<MLNUIExportProtocol>> *utilClasses;
                         [MLNUISafeAreaAdapter class],
                         [MLNUILink class],
 #if OCPERF_USE_C
+    #if OCPERF_USE_NEW_DB
+                        [ArgoDataBindingCBridge class],
+    #else
                         [MLNUIDataBindingCBridge class],
+    #endif
 #else
                         [MLNUIDataBinding class],
 #endif
