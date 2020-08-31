@@ -247,7 +247,7 @@ static inline ArgoObserverBase *_getArgoObserver(UIViewController *kitViewContro
         return key;
     }
     NSString *rest = [key substringFromIndex:lvKey.length + 1];
-    NSArray *restKeys = [key componentsSeparatedByString:@"."];
+    NSArray *restKeys = [rest componentsSeparatedByString:@"."];
     
     ArgoObservableArray *array = [self dataForKeyPath:lvKey];
     if (![ArgoObserverHelper arrayIs2D:array] && restKeys.count > 1 && [ArgoObserverHelper isNumber:restKeys[1]]) {
