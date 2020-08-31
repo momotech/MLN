@@ -74,20 +74,7 @@ typedef void(^MLNLUIModelHandleTask)(void);
     }
     if (extra) {
         argCount++;
-        switch ([extra mlnui_nativeType]) {
-            case MLNUINativeTypeArray:
-            case MLNUINativeTypeMArray:
-            case MLNUINativeTypeDictionary:
-            case MLNUINativeTypeMDictionary:
-                [luaCore pushLuaTable:extra error:nil];
-                break;
-            case MLNUINativeTypeObject:
-                MLNUIConvertModelToLuaTable(extra, luaCore);
-                break;
-            default:
-                [luaCore pushNativeObject:extra error:nil];
-                break;
-        }
+        MLNUIPushObject(extra, luaCore);
     }
     
     int res = luaL_loadstring(L, functionChunk);
@@ -148,6 +135,36 @@ static inline MLNUILuaCore *MLNUILuaCoreGet(void) {
     return luaCore;
 }
 
+// <NSObject> 协议中声明的属性要过滤掉
+static inline NSDictionary *MLNUIModelPropertyBlackList(void) {
+    static NSDictionary *dic = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        dic = @{@"superclass":@(true),
+                @"description":@(true),
+                @"debugDescription":@(true),
+                @"hash":@(true)};
+    });
+    return dic;
+}
+
+static inline void MLNUIPushObject(__unsafe_unretained id object, __unsafe_unretained MLNUILuaCore *luaCore) {
+    switch ([object mlnui_nativeType]) {
+        case MLNUINativeTypeDictionary:
+        case MLNUINativeTypeMDictionary:
+        case MLNUINativeTypeArray:
+        case MLNUINativeTypeMArray:
+            [luaCore pushLuaTable:object error:nil];
+            break;
+        case MLNUINativeTypeObject:
+            MLNUIConvertModelToLuaTable(object, luaCore);
+            break;
+        default:
+            [luaCore pushNativeObject:object error:nil];
+            break;
+    }
+}
+
 static inline BOOL MLNUIConvertModelToLuaTable(__unsafe_unretained NSObject *model, MLNUILuaCore *luaCore) {
     if (!model || !luaCore) {
         return false;
@@ -159,14 +176,20 @@ static inline BOOL MLNUIConvertModelToLuaTable(__unsafe_unretained NSObject *mod
     objc_property_t *properties = class_copyPropertyList([model class], &count);
     for (int i = 0; i < count; i++) {
         const char *name = property_getName(properties[i]);
-        id value = [model valueForKey:@(name)];
+        if (MLNUIModelPropertyBlackList()[@(name)]) {
+            continue;
+        }
+        id value = nil;
+        @try {
+            value = [model valueForKey:@(name)];
+        } @catch (NSException *exception) {
+#if DEBUG
+            NSLog(@"ArgoUI Model Exception: %@", exception);
+#endif
+        } @finally { }
         if (!value) continue;
         lua_pushstring(L, name);
-        if ([value mlnui_nativeType] == MLNUINativeTypeObject) {
-            MLNUIConvertModelToLuaTable(value, luaCore);
-        } else {
-            [luaCore pushNativeObject:value error:nil];
-        }
+        MLNUIPushObject(value, luaCore);
         lua_settable(L, -3);
     }
     free(properties);
