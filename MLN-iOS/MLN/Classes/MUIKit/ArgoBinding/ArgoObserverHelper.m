@@ -9,21 +9,19 @@
 
 @implementation ArgoObserverHelper
 
-+ (void)load {
-//    NSString *keypath = @"a.b.1.c.2";
-    
-    NSArray *kps = @[@"a.b.1.c.2", @"a.b.1.2.d.e"];
-    for (NSString *keypath in kps) {
-        NSArray *array = [keypath componentsSeparatedByString:@"."];
-        NSInteger idx = [self lastNumberIndexOf:array];
-        if (idx != NSNotFound) {
-            NSString *befor = [self stringBefor:idx withKeys:array];
-            NSString *after = [keypath substringFromIndex:befor.length + 1];
-            NSLog(@"");
-        }
-    }
-
-}
+//+ (void)load {
+////    NSString *keypath = @"a.b.1.c.2";
+//    NSArray *kps = @[@"a.b.1.c", @"a.b.1.2.d.e"];
+//    for (NSString *keypath in kps) {
+//        NSArray *array = [keypath componentsSeparatedByString:@"."];
+//        NSInteger idx = [self lastNumberIndexOf:array];
+//        if (idx != NSNotFound) {
+//            NSString *befor = [self stringBefor:idx withKeys:array];
+//            NSString *after = [keypath substringFromIndex:befor.length + 1];
+//            NSLog(@"");
+//        }
+//    }
+//}
 
 + (BOOL)isNumber:(NSString *)str {
     int n = str.intValue;

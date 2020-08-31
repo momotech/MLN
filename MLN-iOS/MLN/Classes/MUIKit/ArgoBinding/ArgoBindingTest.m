@@ -5,9 +5,14 @@
 //  Created by Dongpeng Dai on 2020/8/25.
 //
 
+#if 0
 #import "ArgoBindingTest.h"
 #import "ArgoObservableMap.h"
 #import "ArgoObservableArray.h"
+
+@interface ArgoBindingTest : NSObject
+
+@end
 
 @implementation ArgoBindingTest
 
@@ -23,7 +28,6 @@
 }
 
 - (void)testMap {
-    
     {
         int i1 = @"aa".intValue;
         int i2 = @"t19".intValue;
@@ -87,4 +91,7 @@
     [map1 setObject:array2 forKey:@"list"];
     [array2[2] addObject:@"abc"];
 }
+
 @end
+
+#endif
