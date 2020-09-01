@@ -204,7 +204,11 @@ static inline NSObject *MLNUIConvertDataObjectToModel(__unsafe_unretained id dat
     if ([dataObject isKindOfClass:[NSDictionary class]]) {
         [(NSDictionary *)dataObject enumerateKeysAndObjectsUsingBlock:^(id _Nonnull key, id _Nonnull obj, BOOL *_Nonnull stop) {
             @try {
-                [model setValue:obj forKey:key];
+                if ([obj isKindOfClass:[NSArray class]] || [obj isKindOfClass:[NSDictionary class]]) {
+                    [model setValue:[obj mutableCopy] forKey:key];
+                } else {
+                    [model setValue:obj forKey:key];
+                }
             } @catch (NSException *exception) {
                 ARGOUI_ERROR_LOG([exception description]);
             } @finally { }
