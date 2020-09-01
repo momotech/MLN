@@ -12,7 +12,7 @@
 @interface ArgoObservableArray()
 @property (nonatomic, strong) NSMutableArray *proxy;
 //
-@property (nonatomic, strong) NSMutableArray *argoListeners;
+@property (nonatomic, strong) NSMutableDictionary *argoListeners;
 
 @end
 
@@ -41,9 +41,9 @@
     [self notifyArgoListenerKey:kArgoListenerArrayPlaceHolder Change:change];
 }
 
-- (NSMutableArray *)argoListeners {
+- (NSMutableDictionary *)argoListeners {
     if (!_argoListeners) {
-        _argoListeners = [NSMutableArray array];
+        _argoListeners = [NSMutableDictionary dictionary];
     }
     return _argoListeners;
 }

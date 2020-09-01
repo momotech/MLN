@@ -23,15 +23,16 @@
 #import "MLNUICollectionView.h"
 
 @interface _ArgoBindCellInternalModel : NSObject
-@property (nonatomic, strong) NSMutableDictionary *pathMap;
+//@property (nonatomic, strong) NSMutableDictionary *pathMap;
 @property (nonatomic, strong) NSIndexPath *indexPath;
-//@property (nonatomic, strong) NSMutableArray *paths;
+@property (nonatomic, strong) NSArray *paths;
+@property (nonatomic, assign) NSInteger tokenID;
 @end
 @implementation _ArgoBindCellInternalModel
 - (instancetype)init{
     self = [super init];
     if (self) {
-        _pathMap = [NSMutableDictionary dictionary];
+//        _pathMap = [NSMutableDictionary dictionary];
     }
     return self;
 }
@@ -235,18 +236,37 @@ static inline ArgoObserverBase *_getArgoObserver(UIViewController *kitViewContro
     if (!ip || ip.section != (section - 1) || ip.row != (row - 1)) {
         model.indexPath = [NSIndexPath indexPathForRow:row - 1 inSection:section - 1];
     }
+    if (model.paths.count == paths.count) {
+        return;
+    }
+    if (model.paths.count > 0) {
+        [self argo_unwatch:model.tokenID];
+    }
     
-    NSMutableArray *newPaths = paths.mutableCopy;
-    [newPaths removeObjectsInArray:model.pathMap.allKeys];
-    
+//    NSMutableArray *newPaths = paths.mutableCopy;
+//    [newPaths removeObjectsInArray:model.pathMap.allKeys];
     TOCK2("handle ", "");
     TICK3();
-    for (NSString *p in newPaths) {
-        ArgoObserverBase *ob = _getArgoObserver(viewController, listView, p, idKey);
-        NSInteger obid = [self _addOberver:ob forObject:cellModel];
-        [model.pathMap setObject:@(obid) forKey:p];
-        TOCK2("add observer", p.UTF8String);
-    }
+//    for (NSString *p in newPaths) {
+//        ArgoObserverBase *ob = _getArgoObserver(viewController, listView, p, idKey);
+//        NSInteger obid = [self _addOberver:ob forObject:cellModel];
+//        [model.pathMap setObject:@(obid) forKey:p];
+//        TOCK2("add observer", p.UTF8String);
+//    }
+    
+    ArgoObserverBase *observer = _getArgoObserver(viewController, listView, @"", idKey);
+//    id<ArgoListenerToken> token = [cellModel addArgoListenerWithChangeBlock:^(NSString *keyPath, id<ArgoListenerProtocol> object, NSDictionary *change) {
+//        [observer notifyKeyPath:keyPath ofObject:object change:change];
+//    } forKeyPath:observer.keyPath];
+    id<ArgoListenerToken> token = [cellModel addArgoListenerWithChangeBlockForAllKeys:^(NSString *keyPath, id<ArgoListenerProtocol> object, NSDictionary *change) {
+        [observer notifyKeyPath:keyPath ofObject:object change:change];
+    } filter:^BOOL(ArgoObserverContext context, NSDictionary *change) {
+        return YES;
+    } keyPaths:paths];
+    
+    [self.observerMap setObject:token forKey:@(token.tokenID)];
+    model.paths = paths;
+    model.tokenID = token.tokenID;
     TOCK3("add observer ", [@(newPaths.count).stringValue UTF8String]);
 }
 #pragma mark - Utils

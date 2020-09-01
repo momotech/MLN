@@ -32,6 +32,8 @@ typedef BOOL(^ArgoListenerFilter)(ArgoObserverContext context, NSDictionary *cha
 - (id <ArgoListenerToken>)addArgoListenerWithChangeBlock:(ArgoBlockChange)block forKeyPath:(NSString *)keyPath;
 - (id <ArgoListenerToken>)addArgoListenerWithChangeBlock:(ArgoBlockChange)block forKeyPath:(NSString *)keyPath filter:(ArgoListenerFilter)filter;
 
+- (id<ArgoListenerToken>)addArgoListenerWithChangeBlockForAllKeys:(ArgoBlockChange)block filter:(ArgoListenerFilter)filter keyPaths:(NSArray *)keyPaths;
+
 - (void)removeArgoListenerWithToken:(id <ArgoListenerToken>)token;
 
 - (void)addArgoListenerWrapper:(ArgoListenerWrapper *)wrapper;

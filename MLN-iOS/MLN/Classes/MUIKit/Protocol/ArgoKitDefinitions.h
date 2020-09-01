@@ -14,6 +14,7 @@
 
 extern NSString *const kArgoListenerArrayPlaceHolder;
 extern NSString *const kArgoListenerArrayPlaceHolder_SUPER_IS_2D;
+extern NSString *const kArgoListenALL;
 
 extern NSString *const kArgoListenerChangedObject;
 extern NSString *const kArgoListenerChangedKey;

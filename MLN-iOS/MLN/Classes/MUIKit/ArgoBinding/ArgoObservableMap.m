@@ -13,7 +13,7 @@
 @interface ArgoObservableMap()
 @property (nonatomic, strong) NSMutableDictionary *proxy;
 //
-@property (nonatomic, strong) NSMutableArray *argoListeners;
+@property (nonatomic, strong) NSMutableDictionary *argoListeners;
 
 @end
 
@@ -41,9 +41,9 @@
 }
 
 
-- (NSMutableArray *)argoListeners {
+- (NSMutableDictionary *)argoListeners {
     if (!_argoListeners) {
-        _argoListeners = [NSMutableArray array];
+        _argoListeners = [NSMutableDictionary dictionary];
     }
     return _argoListeners;
 }

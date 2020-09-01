@@ -49,7 +49,8 @@
     if (![object isKindOfClass:[ArgoListenerWrapper class]]) {
         return NO;
     }
-    return self.obID == object.obID && self.block == object.block && [self.key isEqualToString:object.key];
+//    return self.obID == object.obID && self.block == object.block && [self.key isEqualToString:object.key];
+    return self.obID == object.obID;
 }
 
 - (void)callWithChange:(NSDictionary *)change {
