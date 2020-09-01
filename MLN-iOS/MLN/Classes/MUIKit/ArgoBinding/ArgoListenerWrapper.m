@@ -10,14 +10,24 @@
 
 @implementation ArgoListenerWrapper
 
-+ (instancetype)wrapperWithID:(NSInteger)obID block:(ArgoBlockChange)block observedObject:(id<ArgoListenerProtocol>)observed keyPath:(NSString *)keyPath key:(NSString *)key prefix:(nonnull NSString *)prefix {
+//+ (instancetype)wrapperWithID:(NSInteger)obID block:(ArgoBlockChange)block observedObject:(id<ArgoListenerProtocol>)observed keyPath:(NSString *)keyPath key:(NSString *)key prefix:(nonnull NSString *)prefix {
+//    ArgoListenerWrapper *wrapper = [ArgoListenerWrapper new];
+//    wrapper.obID = obID;
+//    wrapper.block = block;
+//    wrapper.keyPath = keyPath;
+//    wrapper.observedObject = observed;
+//    wrapper.key = key;
+////    wrapper.prefix = prefix;
+//    return wrapper;
+//}
+
++ (instancetype)wrapperWithID:(NSInteger)obID block:(ArgoBlockChange)block observedObject:(id<ArgoListenerProtocol>)observed keyPath:(NSString *)keyPath key:(NSString *)key {
     ArgoListenerWrapper *wrapper = [ArgoListenerWrapper new];
     wrapper.obID = obID;
     wrapper.block = block;
     wrapper.keyPath = keyPath;
     wrapper.observedObject = observed;
     wrapper.key = key;
-    wrapper.prefix = prefix;
     return wrapper;
 }
 

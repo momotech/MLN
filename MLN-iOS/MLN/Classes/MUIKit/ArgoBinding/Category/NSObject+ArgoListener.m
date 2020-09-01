@@ -23,17 +23,11 @@ NSString *const kArgoConstString_Dot = @".";
 @implementation NSObject (ArgoListener)
 @dynamic argoListeners;
 //
-- (id<ArgoListenerProtocol>)argo_addListenerWithChangeBlock:(ArgoBlockChange)block object:(id<ArgoListenerProtocol>)object obID:(NSInteger)obid keyPath:(NSString *)keyPath paths:(NSArray *)paths prefix:(NSString **)prefix {
+- (id<ArgoListenerProtocol>)argo_addListenerWithChangeBlock:(ArgoBlockChange)block object:(id<ArgoListenerProtocol>)object obID:(NSInteger)obid keyPath:(NSString *)keyPath paths:(NSArray *)paths {
     id<ArgoListenerProtocol>observed = object;
     for (int i = 0; i < paths.count; i++) {
         NSString *key = paths[i];
-        ArgoListenerWrapper *wrapper = [ArgoListenerWrapper wrapperWithID:obid block:block observedObject:observed keyPath:keyPath key:key prefix:*prefix];
-        if ([*prefix length] > 0) {
-//            [prefix appendString:@"."];
-            *prefix = [*prefix stringByAppendingString:kArgoConstString_Dot];
-        }
-//        [prefix appendString:key];
-        *prefix = [*prefix stringByAppendingString:key];
+        ArgoListenerWrapper *wrapper = [ArgoListenerWrapper wrapperWithID:obid block:block observedObject:observed keyPath:keyPath key:key];
         [object addArgoListenerWrapper:wrapper];
         object = (id<ArgoListenerProtocol>)[object get:key];
 //        [wps addObject:wrapper];
@@ -42,14 +36,14 @@ NSString *const kArgoConstString_Dot = @".";
 }
 
 - (void)argo_addArrayListenerWithChangeBlock:(ArgoBlockChange)block array:(ArgoObservableArray *)array obID:(NSInteger)obID observedObject:(id<ArgoListenerProtocol>)observedObject keyPath:(NSString *)keyPath {
-    ArgoListenerWrapper *wrapper = [ArgoListenerWrapper wrapperWithID:obID block:block observedObject:observedObject keyPath:keyPath key:kArgoListenerArrayPlaceHolder prefix:keyPath];
+    ArgoListenerWrapper *wrapper = [ArgoListenerWrapper wrapperWithID:obID block:block observedObject:observedObject keyPath:keyPath key:kArgoListenerArrayPlaceHolder];
     wrapper.arrayKeyPath = kArgoListenerArrayPlaceHolder;
     [array addArgoListenerWrapper:wrapper];
     //        [wps addObject:wrapper];
     //如果list是二维数组
     if (array.count > 0 && [array.firstObject isKindOfClass:[ArgoObservableArray class]]) {
         for (ArgoObservableArray *sub in array) {
-            ArgoListenerWrapper *wrapper = [ArgoListenerWrapper wrapperWithID:obID block:block observedObject:observedObject keyPath:keyPath key:kArgoListenerArrayPlaceHolder prefix:keyPath];
+            ArgoListenerWrapper *wrapper = [ArgoListenerWrapper wrapperWithID:obID block:block observedObject:observedObject keyPath:keyPath key:kArgoListenerArrayPlaceHolder];
             wrapper.arrayKeyPath = kArgoListenerArrayPlaceHolder_SUPER_IS_2D;
             [sub addArgoListenerWrapper:wrapper];
 //                [wps addObject:wrapper];
@@ -65,9 +59,7 @@ static NSInteger ArgoOBID = 0;
     NSArray *paths = [keyPath componentsSeparatedByString:kArgoConstString_Dot];
     id<ArgoListenerProtocol> object = (id<ArgoListenerProtocol>)self;
     // 依次添加监听：userData.data.list
-//    NSMutableString *prefix = [NSMutableString string];
-    NSString *prefix = @"";
-    object = [self argo_addListenerWithChangeBlock:block object:object obID:ArgoOBID keyPath:keyPath paths:paths prefix:&prefix];
+    object = [self argo_addListenerWithChangeBlock:block object:object obID:ArgoOBID keyPath:keyPath paths:paths];
 
     //如果list是数组
     ArgoObservableArray *array = (ArgoObservableArray *)object;
@@ -127,9 +119,15 @@ static NSInteger ArgoOBID = 0;
 }
 
 - (void)handleNotifyMapWithWrapper:(ArgoListenerWrapper *)wrap change:(NSMutableDictionary<NSKeyValueChangeKey,id> *)change {
-    if (wrap.keyPath.length > wrap.prefix.length && wrap.key) {
-        NSUInteger len = wrap.prefix.length;
-        NSString *subKeyPath = [wrap.keyPath substringFromIndex:MIN(wrap.keyPath.length, (len==0?0:len+1) + wrap.key.length + 1)];
+    if (wrap.key.length > 0) {
+        NSString *subKeyPath = @"";
+        if (wrap.keyPath.length > wrap.key.length) {
+            NSString *nk = [wrap.key stringByAppendingString:kArgoConstString_Dot];
+            NSRange range = [wrap.keyPath rangeOfString:nk];
+            if (range.location != NSNotFound) {
+                subKeyPath = [wrap.keyPath substringFromIndex:MIN(wrap.keyPath.length, range.location + range.length)];
+            }
+        }
         ArgoObservableMap *newMap = [change objectForKey:NSKeyValueChangeNewKey];
         id newV = newMap;
         if ([newMap isKindOfClass:[ArgoObservableMap class]]) {
@@ -138,15 +136,7 @@ static NSInteger ArgoOBID = 0;
             // 重新添加监听
             NSArray *subPaths = [subKeyPath componentsSeparatedByString:kArgoConstString_Dot];
             if (subPaths.count) {
-//                NSMutableString *prefix = wrap.prefix.mutableCopy;
-                NSString *prefix = wrap.prefix;
-                if ([prefix length] > 0) {
-//                    [prefix appendString:@"."];
-                    prefix = [prefix stringByAppendingString:kArgoConstString_Dot];
-                }
-//                [prefix appendString:wrap.key];
-                prefix = [prefix stringByAppendingString:wrap.key];
-                [self argo_addListenerWithChangeBlock:wrap.block object:newMap obID:wrap.obID keyPath:wrap.keyPath paths:subPaths prefix:&prefix];
+                [self argo_addListenerWithChangeBlock:wrap.block object:newMap obID:wrap.obID keyPath:wrap.keyPath paths:subPaths];
             }
         } else if([newMap isKindOfClass:[ArgoObservableArray class]]) {
             //如果是array，重新添加监听，需要处理二维
@@ -168,7 +158,7 @@ static NSInteger ArgoOBID = 0;
     ArgoObservableArray *newValue = [change objectForKey:NSKeyValueChangeNewKey];
 //    NSIndexSet *set = [change objectForKey:NSKeyValueChangeIndexesKey];
     if ([newValue isKindOfClass:[ArgoObservableArray class]] && [wrap.arrayKeyPath isEqualToString:kArgoListenerArrayPlaceHolder]) { //self至少是二维，且arrayKeyPath=kArgoListenerArrayPlaceHolder,重新添加监听,防止监听kArgoListenerArrayPlaceHolder_SUPER_IS_2D
-        ArgoListenerWrapper *arrayListener = [ArgoListenerWrapper wrapperWithID:wrap.obID block:wrap.block observedObject:wrap.observedObject keyPath:wrap.keyPath key:kArgoListenerArrayPlaceHolder prefix:wrap.prefix];
+        ArgoListenerWrapper *arrayListener = [ArgoListenerWrapper wrapperWithID:wrap.obID block:wrap.block observedObject:wrap.observedObject keyPath:wrap.keyPath key:kArgoListenerArrayPlaceHolder];
         [newValue addArgoListenerWrapper:arrayListener];
     }
     [change setObject:self forKey:kArgoListenerChangedObject];

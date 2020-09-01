@@ -20,7 +20,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong, nullable) ArgoBlockChange block;
 
 @property (nonatomic, copy) NSString *key; // info
-@property (nonatomic, copy) NSString *prefix;//userData.data (key的前缀）
+//@property (nonatomic, copy) NSString *prefix;//userData.data (key的前缀）
 
 //NSString *const kArgoListenerArrayPlaceHolder = @"ARGO_PH";
 //kArgoListenerArrayPlaceHolder 表示监听的是数组变化(insert/replace/remove)
@@ -33,7 +33,7 @@ NS_ASSUME_NONNULL_BEGIN
 //- (void)cancel;
 - (BOOL)isCanceld;
 
-+ (instancetype)wrapperWithID:(NSInteger)obID block:(ArgoBlockChange)block observedObject:(id<ArgoListenerProtocol>)observed keyPath:(NSString *)keyPath key:(NSString *)key prefix:(nonnull NSString *)prefix;
++ (instancetype)wrapperWithID:(NSInteger)obID block:(ArgoBlockChange)block observedObject:(id<ArgoListenerProtocol>)observed keyPath:(NSString *)keyPath key:(NSString *)key;
 
 @end
 
