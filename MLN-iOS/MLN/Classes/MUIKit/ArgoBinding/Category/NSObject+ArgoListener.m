@@ -16,20 +16,24 @@ NSString *const kArgoListenerArrayPlaceHolder_SUPER_IS_2D = @"ARGO_PH.ARGO_PH";
 NSString *const kArgoListenerChangedObject = @"argo_changed_object";
 NSString *const kArgoListenerChangedKey = @"argo_changeed_key";
 NSString *const kArgoListenerWrapper = @"argo_wrapper";
-//NSString *const kArgoListener2DArray = @"argo_2d_array";
+//NSString const *const kArgoListener2DArray = @"argo_2d_array";
+
+NSString *const kArgoConstString_Dot = @".";
 
 @implementation NSObject (ArgoListener)
 @dynamic argoListeners;
 //
-- (id<ArgoListenerProtocol>)argo_addListenerWithChangeBlock:(ArgoBlockChange)block object:(id<ArgoListenerProtocol>)object obID:(NSInteger)obid keyPath:(NSString *)keyPath paths:(NSArray *)paths prefix:(NSMutableString *)prefix {
+- (id<ArgoListenerProtocol>)argo_addListenerWithChangeBlock:(ArgoBlockChange)block object:(id<ArgoListenerProtocol>)object obID:(NSInteger)obid keyPath:(NSString *)keyPath paths:(NSArray *)paths prefix:(NSString **)prefix {
     id<ArgoListenerProtocol>observed = object;
     for (int i = 0; i < paths.count; i++) {
         NSString *key = paths[i];
-        ArgoListenerWrapper *wrapper = [ArgoListenerWrapper wrapperWithID:obid block:block observedObject:observed keyPath:keyPath key:key prefix:prefix.copy];
-        if (prefix.length > 0) {
-            [prefix appendString:@"."];
+        ArgoListenerWrapper *wrapper = [ArgoListenerWrapper wrapperWithID:obid block:block observedObject:observed keyPath:keyPath key:key prefix:*prefix];
+        if ([*prefix length] > 0) {
+//            [prefix appendString:@"."];
+            *prefix = [*prefix stringByAppendingString:kArgoConstString_Dot];
         }
-        [prefix appendString:key];
+//        [prefix appendString:key];
+        *prefix = [*prefix stringByAppendingString:key];
         [object addArgoListenerWrapper:wrapper];
         object = (id<ArgoListenerProtocol>)[object get:key];
 //        [wps addObject:wrapper];
@@ -58,11 +62,12 @@ static NSInteger ArgoOBID = 0;
 - (id <ArgoListenerToken>)addArgoListenerWithChangeBlock:(ArgoBlockChange)block forKeyPath:(NSString *)keyPath {
 //    NSMutableArray *wps = [NSMutableArray array];
     ArgoOBID++;
-    NSArray *paths = [keyPath componentsSeparatedByString:@"."];
+    NSArray *paths = [keyPath componentsSeparatedByString:kArgoConstString_Dot];
     id<ArgoListenerProtocol> object = (id<ArgoListenerProtocol>)self;
     // 依次添加监听：userData.data.list
-    NSMutableString *prefix = [NSMutableString string];
-    object = [self argo_addListenerWithChangeBlock:block object:object obID:ArgoOBID keyPath:keyPath paths:paths prefix:prefix];
+//    NSMutableString *prefix = [NSMutableString string];
+    NSString *prefix = @"";
+    object = [self argo_addListenerWithChangeBlock:block object:object obID:ArgoOBID keyPath:keyPath paths:paths prefix:&prefix];
 
     //如果list是数组
     ArgoObservableArray *array = (ArgoObservableArray *)object;
@@ -79,7 +84,7 @@ static NSInteger ArgoOBID = 0;
 }
 
 - (void)removeArgoListenerWithToken:(ArgoListenerToken *)token {
-    NSArray *paths = [token.keyPath componentsSeparatedByString:@"."];
+    NSArray *paths = [token.keyPath componentsSeparatedByString:kArgoConstString_Dot];
     NSObject<ArgoListenerProtocol> *object = (NSObject<ArgoListenerProtocol> *)self;
     for (int i = 0; i < paths.count; i++) {
         [object removeListenerWithOBID:token.tokenID];
@@ -111,7 +116,7 @@ static NSInteger ArgoOBID = 0;
 - (void)notifyArgoListenerKey:(NSString *)key Change:(NSMutableDictionary<NSKeyValueChangeKey,id> *)change {
     if(!key || !change) return;
     for (ArgoListenerWrapper *wrap in self.argoListeners.copy) {
-        if (!wrap.block || ![wrap.key isEqualToString:key]) continue;
+        if (!wrap.block || (![wrap.key isEqualToString:key] && ![wrap.keys containsObject:key])) continue;
         
         if ([self isKindOfClass:[ArgoObservableMap class]]) {
             [self handleNotifyMapWithWrapper:wrap change:change];
@@ -131,14 +136,17 @@ static NSInteger ArgoOBID = 0;
             newV = [newMap argoGetForKeyPath:subKeyPath];
             [change setValue:newV forKey:NSKeyValueChangeNewKey];
             // 重新添加监听
-            NSArray *subPaths = [subKeyPath componentsSeparatedByString:@"."];
+            NSArray *subPaths = [subKeyPath componentsSeparatedByString:kArgoConstString_Dot];
             if (subPaths.count) {
-                NSMutableString *prefix = wrap.prefix.mutableCopy;
-                if (prefix.length > 0) {
-                    [prefix appendString:@"."];
+//                NSMutableString *prefix = wrap.prefix.mutableCopy;
+                NSString *prefix = wrap.prefix;
+                if ([prefix length] > 0) {
+//                    [prefix appendString:@"."];
+                    prefix = [prefix stringByAppendingString:kArgoConstString_Dot];
                 }
-                [prefix appendString:wrap.key];
-                [self argo_addListenerWithChangeBlock:wrap.block object:newMap obID:wrap.obID keyPath:wrap.keyPath paths:subPaths prefix:prefix];
+//                [prefix appendString:wrap.key];
+                prefix = [prefix stringByAppendingString:wrap.key];
+                [self argo_addListenerWithChangeBlock:wrap.block object:newMap obID:wrap.obID keyPath:wrap.keyPath paths:subPaths prefix:&prefix];
             }
         } else if([newMap isKindOfClass:[ArgoObservableArray class]]) {
             //如果是array，重新添加监听，需要处理二维
@@ -172,7 +180,7 @@ static NSInteger ArgoOBID = 0;
 }
 
 - (id)argoGetForKeyPath:(NSString *)keyPath {
-    NSArray *paths = [keyPath componentsSeparatedByString:@"."];
+    NSArray *paths = [keyPath componentsSeparatedByString:kArgoConstString_Dot];
     if (paths.count <= 0) {
         return nil;
     }
@@ -184,7 +192,7 @@ static NSInteger ArgoOBID = 0;
 }
 
 - (void)argoPutValue:(NSObject *)value forKeyPath:(NSString *)keyPath {
-    NSArray *paths = [keyPath componentsSeparatedByString:@"."];
+    NSArray *paths = [keyPath componentsSeparatedByString:kArgoConstString_Dot];
     if (paths.count <= 0) {
         return;
     }

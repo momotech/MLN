@@ -27,7 +27,15 @@
 @property (nonatomic, strong) NSIndexPath *indexPath;
 //@property (nonatomic, strong) NSMutableArray *paths;
 @end
-@implementation _ArgoBindCellInternalModel @end
+@implementation _ArgoBindCellInternalModel
+- (instancetype)init{
+    self = [super init];
+    if (self) {
+        _pathMap = [NSMutableDictionary dictionary];
+    }
+    return self;
+}
+@end
 
 
 @interface ArgoDataBinding () {
@@ -72,7 +80,7 @@
 - (id)dataForKeyPath:(NSString *)keyPath {
     NSParameterAssert(keyPath);
     if(!keyPath) return nil;
-    NSArray *keys = [keyPath componentsSeparatedByString:@"."];
+    NSArray *keys = [keyPath componentsSeparatedByString:kArgoConstString_Dot];
     id<ArgoListenerProtocol> object = self.dataMap;
     for (NSString *key in keys) {
         object = (id <ArgoListenerProtocol>)[object get:key];
@@ -83,7 +91,7 @@
 - (void)updateDataForKeyPath:(NSString *)keyPath value:(id)value {
     NSParameterAssert(keyPath);
     if(!keyPath) return;
-    NSArray *keys = [keyPath componentsSeparatedByString:@"."];
+    NSArray *keys = [keyPath componentsSeparatedByString:kArgoConstString_Dot];
     id<ArgoListenerProtocol> object = self.dataMap;
     for (int i = 0; i < keys.count - 1; i++) {
         //TODO: 对于Map，如果中间对象为空，默认创建.
@@ -109,7 +117,7 @@
 
 // from watch
 - (NSInteger)argo_watchKeyPath:(NSString *)keyPath withHandler:(MLNUIBlock *)handler {
-    NSArray *keys = [keyPath componentsSeparatedByString:@"."];
+    NSArray *keys = [keyPath componentsSeparatedByString:kArgoConstString_Dot];
     NSInteger lastNumberIndex = [ArgoObserverHelper lastNumberIndexOf:keys];
     if (lastNumberIndex == NSNotFound) { //没有数字
         return [self _observeObject:self.dataMap keyPath:keyPath handler:handler listView:nil];
@@ -187,13 +195,28 @@ static inline ArgoObserverBase *_getArgoObserver(UIViewController *kitViewContro
     return ob;
 }
 
+//#   define TICK2() CFAbsoluteTime startTime = CFAbsoluteTimeGetCurrent()
+//#   define TOCK2(name, name2) printf(">>>>>> %s  %s took time: %.2f ms \n",name,name2, (CFAbsoluteTimeGetCurrent() - startTime) * 1000); startTime = CFAbsoluteTimeGetCurrent()
+//
+//#   define TICK3() CFAbsoluteTime startTime2 = CFAbsoluteTimeGetCurrent()
+//#   define TOCK3(name, name2) printf(">>>>>> %s  %s took time: %.2f ms \n",name,name2, (CFAbsoluteTimeGetCurrent() - startTime2) * 1000); startTime2 = CFAbsoluteTimeGetCurrent()
+
+#define TICK2()
+#define TOCK2(name,name2)
+#define TICK3()
+#define TOCK3(name,name2)
+
 - (void)argo_bindCellWithController:(UIViewController *)viewController KeyPath:(NSString *)keyPath section:(NSUInteger)section row:(NSUInteger)row paths:(NSArray *)paths {
     UIView *listView = [self argo_listViewForTag:keyPath];
     if (!listView)  return;
-
+    TICK2();
+    
     NSMutableDictionary *infos = [listView mlnui_bindInfos];
     id<ArgoListenerProtocol> cellModel;
     ArgoObservableArray *listArray = [self argo_get:keyPath];
+    
+    TOCK2("get ", keyPath.UTF8String);
+    
     if ([ArgoObserverHelper arrayIs2D:listArray]) {
         NSArray *tmp = section <= listArray.count ? listArray[section - 1] : nil;
         cellModel = row <= tmp.count ? tmp[row - 1] : nil;
@@ -216,11 +239,15 @@ static inline ArgoObserverBase *_getArgoObserver(UIViewController *kitViewContro
     NSMutableArray *newPaths = paths.mutableCopy;
     [newPaths removeObjectsInArray:model.pathMap.allKeys];
     
+    TOCK2("handle ", "");
+    TICK3();
     for (NSString *p in newPaths) {
         ArgoObserverBase *ob = _getArgoObserver(viewController, listView, p, idKey);
         NSInteger obid = [self _addOberver:ob forObject:cellModel];
         [model.pathMap setObject:@(obid) forKey:p];
+        TOCK2("add observer", p.UTF8String);
     }
+    TOCK3("add observer ", [@(newPaths.count).stringValue UTF8String]);
 }
 #pragma mark - Utils
 
@@ -247,12 +274,12 @@ static inline ArgoObserverBase *_getArgoObserver(UIViewController *kitViewContro
         return key;
     }
     NSString *rest = [key substringFromIndex:lvKey.length + 1];
-    NSArray *restKeys = [rest componentsSeparatedByString:@"."];
+    NSArray *restKeys = [rest componentsSeparatedByString:kArgoConstString_Dot];
     
     ArgoObservableArray *array = [self dataForKeyPath:lvKey];
     if (![ArgoObserverHelper arrayIs2D:array] && restKeys.count > 1 && [ArgoObserverHelper isNumber:restKeys[1]]) {
         //一维数组且第二位是数字，去掉第一位
-        NSRange range = [rest rangeOfString:@"."];
+        NSRange range = [rest rangeOfString:kArgoConstString_Dot];
         NSString *newK = [lvKey stringByAppendingString:[rest substringFromIndex:range.location]];
         return newK;
     }

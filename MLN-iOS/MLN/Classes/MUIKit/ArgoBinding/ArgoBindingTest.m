@@ -6,7 +6,7 @@
 //
 
 #if 0
-#import "ArgoBindingTest.h"
+//#import "ArgoBindingTest.h"
 #import "ArgoObservableMap.h"
 #import "ArgoObservableArray.h"
 
@@ -19,7 +19,45 @@
 + (void)load {
     static ArgoBindingTest *obj;
     obj = [ArgoBindingTest new];
-    [obj test];
+//    [obj test];
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(4 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [obj testString];
+    });
+}
+
+- (void)testString {
+    int cnt = 5;
+    {
+        CFAbsoluteTime s = CFAbsoluteTimeGetCurrent();
+        NSMutableString *str = [NSMutableString string];
+        for (int i = 0; i < cnt; i++) {
+            [str appendString:@(i).stringValue];
+        }
+        CFAbsoluteTime e = CFAbsoluteTimeGetCurrent();
+        NSLog(@"mutalbe appendString cost %.2f ms", (e - s) * 1000);
+    }
+    
+    {
+        CFAbsoluteTime s = CFAbsoluteTimeGetCurrent();
+        NSMutableString *str = [NSMutableString string];
+        for (int i = 0; i < cnt; i++) {
+            [str stringByAppendingFormat:@"%d",i];
+        }
+        CFAbsoluteTime e = CFAbsoluteTimeGetCurrent();
+        NSLog(@"mutalbe appendStringFormat cost %.2f ms", (e - s) * 1000);
+    }
+    
+    {
+        CFAbsoluteTime s = CFAbsoluteTimeGetCurrent();
+        NSString *str = @"";
+        for (int i = 0; i < cnt; i++) {
+            str = [str stringByAppendingString:@(i).stringValue];
+        }
+        CFAbsoluteTime e = CFAbsoluteTimeGetCurrent();
+        NSLog(@"non-mutalbe appendString cost %.2f ms", (e - s) * 1000);
+    }
+    
+
 }
 
 - (void)test {

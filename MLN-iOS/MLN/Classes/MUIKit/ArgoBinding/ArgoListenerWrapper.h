@@ -17,7 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) NSInteger obID;
 @property (nonatomic, unsafe_unretained, nullable) id<ArgoListenerProtocol> observedObject; // for keyPath
 @property (nonatomic, copy) NSString *keyPath; //userData.data.info.name
-@property (nonatomic, copy, nullable) ArgoBlockChange block;
+@property (nonatomic, strong, nullable) ArgoBlockChange block;
 
 @property (nonatomic, copy) NSString *key; // info
 @property (nonatomic, copy) NSString *prefix;//userData.data (key的前缀）
@@ -27,6 +27,8 @@ NS_ASSUME_NONNULL_BEGIN
 //kArgoListenerArrayPlaceHolder_SUPER_IS_2D 表示监听的是数组变化(insert/replace/remove),且数组位于二维数组内.
 @property (nonatomic, copy) NSString *arrayKeyPath;
 
+//监听多个keys
+@property (nonatomic, strong) NSSet *keys;
 
 //- (void)cancel;
 - (BOOL)isCanceld;

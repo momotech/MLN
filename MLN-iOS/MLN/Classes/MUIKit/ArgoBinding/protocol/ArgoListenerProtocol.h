@@ -7,15 +7,7 @@
 
 #ifndef ArgoListenerProtocol_h
 #define ArgoListenerProtocol_h
-
-extern NSString *const kArgoListenerArrayPlaceHolder;
-extern NSString *const kArgoListenerArrayPlaceHolder_SUPER_IS_2D;
-
-extern NSString *const kArgoListenerChangedObject;
-extern NSString *const kArgoListenerChangedKey;
-extern NSString *const kArgoListenerWrapper;
-//extern NSString *const kArgoListener2DArray;
-
+#import "ArgoKitDefinitions.h"
 
 @class ArgoListenerWrapper, ArgoListenerToken;
 @protocol ArgoListenerProtocol;

@@ -6,6 +6,7 @@
 //
 
 #import "ArgoObserverHelper.h"
+#import "ArgoKitDefinitions.h"
 
 @implementation ArgoObserverHelper
 
@@ -44,7 +45,7 @@
 
 + (NSString *)stringBefor:(NSInteger)index withKeys:(NSArray<NSString *> *)keys {
     NSArray *newKeys = [keys subarrayWithRange:NSMakeRange(0, index + 1)];
-    NSString *string = [newKeys componentsJoinedByString:@"."];
+    NSString *string = [newKeys componentsJoinedByString:kArgoConstString_Dot];
     return string;
 }
 
