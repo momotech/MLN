@@ -7,6 +7,9 @@
 
 #import "ArgoListenerWrapper.h"
 #import "ArgoListenerProtocol.h"
+@interface ArgoListenerWrapper ()
+@property (nonatomic, strong, nullable, readwrite) ArgoBlockChange block;
+@end
 
 @implementation ArgoListenerWrapper
 
@@ -21,13 +24,14 @@
 //    return wrapper;
 //}
 
-+ (instancetype)wrapperWithID:(NSInteger)obID block:(ArgoBlockChange)block observedObject:(id<ArgoListenerProtocol>)observed keyPath:(NSString *)keyPath key:(NSString *)key {
++ (instancetype)wrapperWithID:(NSInteger)obID block:(ArgoBlockChange)block observedObject:(id<ArgoListenerProtocol>)observed keyPath:(NSString *)keyPath key:(NSString *)key filter:(nonnull ArgoListenerFilter)filter{
     ArgoListenerWrapper *wrapper = [ArgoListenerWrapper new];
     wrapper.obID = obID;
     wrapper.block = block;
     wrapper.keyPath = keyPath;
     wrapper.observedObject = observed;
     wrapper.key = key;
+    wrapper.filter = filter;
     return wrapper;
 }
 
@@ -46,6 +50,14 @@
         return NO;
     }
     return self.obID == object.obID && self.block == object.block && [self.key isEqualToString:object.key];
+}
+
+- (void)callWithChange:(NSDictionary *)change {
+    if (!self.block) return;
+    if (self.filter && !self.filter(ArgoObserverContext_Lua, change)) {
+        return;
+    }
+    self.block(self.keyPath, self.observedObject, change);
 }
 
 @end

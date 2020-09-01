@@ -98,7 +98,7 @@ static int argo_unwatch(lua_State *L) {
     [dataBind argo_unwatch:obid];
     
     PCallDBEnd(__func__);
-    TOCK("argo_unwatch key %s",nKey.UTF8String);
+    TOCK("argo_unwatch key %zd",obid);
     return 1;
 }
 

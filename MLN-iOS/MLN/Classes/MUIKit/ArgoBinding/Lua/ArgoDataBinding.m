@@ -266,13 +266,17 @@ static inline ArgoObserverBase *_getArgoObserver(UIViewController *kitViewContro
 }
 
 - (NSString *)convertedKeyPathWith:(NSString *)key {
+    NSString *fk = [self.listViewMap objectForKey:key];
+    if (fk) {
+        return key;
+    }
     NSString *lvKey = [self listViewKeyMatch:key];
     if (!lvKey) {
         return key;
     }
-    if ([key isEqualToString:lvKey]) {
-        return key;
-    }
+//    if ([key isEqualToString:lvKey]) {
+//        return key;
+//    }
     NSString *rest = [key substringFromIndex:lvKey.length + 1];
     NSArray *restKeys = [rest componentsSeparatedByString:kArgoConstString_Dot];
     

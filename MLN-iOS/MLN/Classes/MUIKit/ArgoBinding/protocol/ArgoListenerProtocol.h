@@ -9,12 +9,18 @@
 #define ArgoListenerProtocol_h
 #import "ArgoKitDefinitions.h"
 
+typedef NS_ENUM(NSUInteger, ArgoObserverContext) {
+    ArgoObserverContext_Lua,
+    ArgoObserverContext_Native
+};
+
 @class ArgoListenerWrapper, ArgoListenerToken;
 @protocol ArgoListenerProtocol;
 
 //typedef void(^ArgoBlockChange)  (id <ArgoListenerProtocol> object, NSDictionary<NSKeyValueChangeKey,id> * change);
 //typedef void(^ArgoBlockChange)  (NSKeyValueChange type, id newValue, NSIndexSet *indexSet, NSDictionary *info);
 typedef void(^ArgoBlockChange)  (NSString *keyPath, id<ArgoListenerProtocol>object, NSDictionary *change);
+typedef BOOL(^ArgoListenerFilter)(ArgoObserverContext context, NSDictionary *change);
 
 @protocol ArgoListenerToken
 //- (void)removeObserver;
@@ -24,6 +30,8 @@ typedef void(^ArgoBlockChange)  (NSString *keyPath, id<ArgoListenerProtocol>obje
 
 @protocol ArgoListenerCategoryProtocol <NSObject>
 - (id <ArgoListenerToken>)addArgoListenerWithChangeBlock:(ArgoBlockChange)block forKeyPath:(NSString *)keyPath;
+- (id <ArgoListenerToken>)addArgoListenerWithChangeBlock:(ArgoBlockChange)block forKeyPath:(NSString *)keyPath filter:(ArgoListenerFilter)filter;
+
 - (void)removeArgoListenerWithToken:(id <ArgoListenerToken>)token;
 
 - (void)addArgoListenerWrapper:(ArgoListenerWrapper *)wrapper;
