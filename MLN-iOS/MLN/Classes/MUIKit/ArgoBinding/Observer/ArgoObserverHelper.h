@@ -15,6 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (NSInteger)lastNumberIndexOf:(NSArray <NSString *> *)keys;
 + (NSString *)stringBefor:(NSInteger)index withKeys:(NSArray <NSString *> *)keys;
 + (BOOL)arrayIs2D:(NSArray *)array;
++ (BOOL)hasNumberInKeys:(NSArray *)keys fromIndex:(int)index;
 
 @end
 

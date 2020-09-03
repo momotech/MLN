@@ -56,4 +56,15 @@
     return NO;
 }
 
++ (BOOL)hasNumberInKeys:(NSArray *)keys fromIndex:(int)index {
+    BOOL hasNumber = NO;
+    for (int i = index; i < keys.count; i++) {
+        if ([self isNumber:keys[i]]) {
+            hasNumber = YES;
+            break;
+        }
+    }
+    return hasNumber;
+}
+
 @end

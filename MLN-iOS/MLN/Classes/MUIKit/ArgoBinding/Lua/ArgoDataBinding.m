@@ -90,10 +90,25 @@
     if(!keyPath) return;
     NSArray *keys = [keyPath componentsSeparatedByString:kArgoConstString_Dot];
     id<ArgoListenerProtocol> object = self.dataMap;
+    id<ArgoListenerProtocol> frontObject;
+    BOOL detected = NO;
+    
     for (int i = 0; i < keys.count - 1; i++) {
         //TODO: 对于Map，如果中间对象为空，默认创建.
-        object = (id<ArgoListenerProtocol>)[object lua_get:keys[i]];
+        frontObject = object;
+        object = (id<ArgoListenerProtocol>)[frontObject lua_get:keys[i]];
+        if (!object && !detected) {
+            detected = YES;
+            if ([ArgoObserverHelper hasNumberInKeys:keys fromIndex:i]) {
+                break;
+            }
+        }
+        if (!object) {
+            object = [ArgoObservableMap new];
+            [(ArgoObservableMap *)frontObject setObject:object forKey:keys[i]];
+        }
     }
+
     [object lua_putValue:value forKey:keys.lastObject];
 }
 

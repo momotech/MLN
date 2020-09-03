@@ -59,7 +59,6 @@
     if(!key) return;
     for (MLNUILuaTable *table in self.cache.allValues) {
 //        if (value) {
-//            //TODO: 警告Tips：声明和实际值没有匹配？
 //            [table setObject:value key:key];
 //        } else {
 //            [table removeObject:key];
