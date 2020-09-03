@@ -17,6 +17,7 @@ NSString *const kArgoListenALL = @"ARGO_ALL";
 
 NSString *const kArgoListenerChangedObject = @"argo_changed_object";
 NSString *const kArgoListenerChangedKey = @"argo_changeed_key";
+NSString *const kArgoListenerContext = @"argo_context";
 NSString *const kArgoListenerWrapper = @"argo_wrapper";
 //NSString const *const kArgoListener2DArray = @"argo_2d_array";
 

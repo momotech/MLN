@@ -26,13 +26,12 @@ extern ArgoFilterBlock kArgoFilter_Native;
 
 
 @interface ArgoWatchWrapper : NSObject
-@property (nonatomic, copy) NSString *keyPath;
-@property (nonatomic, copy) ArgoFilterBlock filterBlock;
-@property (nonatomic, copy) ArgoWatchBlock callbackBlock;
-@property (nonatomic, weak) id<ArgoListenerProtocol> observerd;
 
 @property (nonatomic, copy, readonly) ArgoWatchWrapper *(^filter)(ArgoFilterBlock block);
 @property (nonatomic, copy, readonly) ArgoWatchWrapper *(^callback)(ArgoWatchBlock block);
+
++ (instancetype)wrapperWithKeyPath:(NSString *)keyPath observedObject:(id<ArgoListenerProtocol>)observedObject;
+
 @end
 
 NS_ASSUME_NONNULL_END

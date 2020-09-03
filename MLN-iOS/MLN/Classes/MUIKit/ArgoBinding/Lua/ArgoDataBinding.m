@@ -105,7 +105,7 @@
         }
         if (!object) {
             object = [ArgoObservableMap new];
-            [(ArgoObservableMap *)frontObject setObject:object forKey:keys[i]];
+            [frontObject lua_putValue:object forKey:keys[i]];
         }
     }
 

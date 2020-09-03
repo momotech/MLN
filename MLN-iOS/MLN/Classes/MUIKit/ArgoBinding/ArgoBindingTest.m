@@ -5,7 +5,7 @@
 //  Created by Dongpeng Dai on 2020/8/25.
 //
 
-#if 0
+#if 1
 //#import "ArgoBindingTest.h"
 #import "ArgoObservableMap.h"
 #import "ArgoObservableArray.h"
@@ -19,10 +19,29 @@
 + (void)load {
     static ArgoBindingTest *obj;
     obj = [ArgoBindingTest new];
-    [obj test];
+//    [obj test];
 //    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(4 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
 //        [obj testString];
 //    });
+    [obj testWatch];
+}
+
+- (void)testWatch {
+    ArgoObservableMap *map = [ArgoObservableMap new];
+    
+    map
+    .watch(@"k3")
+    .callback(^(id  _Nonnull oldValue, id  _Nonnull newValue, id  _Nonnull observedObject) {
+        NSLog(@"");
+    })
+    .filter(^BOOL(ArgoWatchContext context, id  _Nonnull newValue) {
+        return YES;
+    });
+   
+    
+    [map setObject:@"v1" forKey:@"k1"];
+    [map setObject:@"v3" forKey:@"k3"];
+
 }
 
 - (void)testString {

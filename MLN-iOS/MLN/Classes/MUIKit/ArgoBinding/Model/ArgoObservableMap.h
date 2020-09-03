@@ -15,7 +15,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, copy, readonly) ArgoWatchWrapper *(^watch)(NSString *keyPath);
 
-
 @end
 
 NS_ASSUME_NONNULL_END

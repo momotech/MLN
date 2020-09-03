@@ -30,6 +30,14 @@
 }
 
 - (void)lua_putValue:(NSObject *)value forKey:(NSString *)key {
+    [self _putValue:value forKey:key context:ArgoWatchContext_Lua];
+}
+
+- (void)native_putValue:(NSObject *)value forKey:(NSString *)key {
+    [self _putValue:value forKey:key context:ArgoWatchContext_Native];
+}
+
+- (void)_putValue:(NSObject *)value forKey:(NSString *)key context:(ArgoWatchContext)context {
     if(!key) return;
     if (value) {
         [self.proxy setObject:value forKey:key];
@@ -44,6 +52,7 @@
     if (value) {
         [change setObject:value forKey:NSKeyValueChangeNewKey];
     }
+    [change setObject:@(context) forKey:kArgoListenerContext];
     [self notifyArgoListenerKey:key Change:change];
 }
 
@@ -59,10 +68,7 @@
     @weakify(self);
     return ^ArgoWatchWrapper *(NSString *keyPath) {
         @strongify(self);
-        ArgoWatchWrapper *watch = [ArgoWatchWrapper new];
-        watch.keyPath = keyPath;
-        watch.observerd = self;
-        return watch;
+        return [ArgoWatchWrapper wrapperWithKeyPath:keyPath observedObject:self];
     };
 }
 
@@ -101,16 +107,16 @@
 #pragma mark - listener
 
 - (void)setObject:(id)anObject forKey:(id<NSCopying>)aKey {
-    [self lua_putValue:anObject forKey:(NSString *)aKey];
+    [self native_putValue:anObject forKey:(NSString *)aKey];
 }
 
 - (void)removeObjectForKey:(id)aKey {
-    [self lua_putValue:nil forKey:aKey];
+    [self native_putValue:nil forKey:aKey];
 }
 
 - (void)removeAllObjects {
     for (NSString *key in self.proxy.allKeys) {
-        [self lua_putValue:nil forKey:key];
+        [self native_putValue:nil forKey:key];
     }
 }
 

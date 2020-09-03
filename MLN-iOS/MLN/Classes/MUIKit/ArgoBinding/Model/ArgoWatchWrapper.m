@@ -20,7 +20,21 @@ ArgoFilterBlock kArgoFilter_Native = ^(ArgoWatchContext context, id value){
     return NO;
 };
 
+@interface ArgoWatchWrapper ()
+@property (nonatomic, copy) NSString *keyPath;
+@property (nonatomic, copy) ArgoFilterBlock filterBlock;
+//@property (nonatomic, copy) ArgoWatchBlock callbackBlock;
+@property (nonatomic, weak) id<ArgoListenerProtocol> observerd;
+@end
+
 @implementation ArgoWatchWrapper
+
++ (instancetype)wrapperWithKeyPath:(NSString *)keyPath observedObject:(id<ArgoListenerProtocol>)observedObject {
+    ArgoWatchWrapper *watch = [self new];
+    watch.keyPath = keyPath;
+    watch.observerd = observedObject;
+    return watch;
+}
 
 - (ArgoWatchWrapper * _Nonnull (^)(ArgoFilterBlock _Nonnull))filter {
     @weakify(self);
@@ -35,9 +49,13 @@ ArgoFilterBlock kArgoFilter_Native = ^(ArgoWatchContext context, id value){
     @weakify(self);
     return ^(ArgoWatchBlock block){
         @strongify(self);
-        if (self && block && self.keyPath) {
+        if (self.keyPath && block) {
             [self.observerd addArgoListenerWithChangeBlock:^(NSString *keyPath, id<ArgoListenerProtocol> object, NSDictionary *change) {
                 NSObject *new = [change objectForKey:NSKeyValueChangeNewKey];
+                ArgoWatchContext context = [[change objectForKey:kArgoListenerContext] unsignedIntegerValue];
+                if (self.filterBlock && !self.filterBlock(context, new)) {
+                    return;
+                }
                 block(nil, new, self);
             } forKeyPath:self.keyPath];
         }
