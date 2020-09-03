@@ -117,7 +117,7 @@ static MLNUI_FORCE_INLINE int mlnui_pushTable(lua_State *L, void * key, MLNUILua
     lua_pop(L, 1);
 }
 
-- (void)rawsetObject:(id<MLNUIEntityExportProtocol>)obj key:(NSString *)key {
+- (void)rawsetObject:(NSObject *)obj key:(NSString *)key {
     lua_State *L = self.luaCore.state;
     MLNUIAssert(self.luaCore, L, @"The lua state must not be nil!");
     if (!key || key.length <= 0) {
@@ -128,7 +128,9 @@ static MLNUI_FORCE_INLINE int mlnui_pushTable(lua_State *L, void * key, MLNUILua
     mlnui_pushTable(L, (__bridge void *)(self), self.env);
     // 设置key - value
     lua_pushstring(L, key.UTF8String); // [ ... | table | key ]
-    [MLNUI_LUA_CORE(L) pushNativeObject:obj error:NULL]; // [ ... | table | key | ud ]
+//    [MLNUI_LUA_CORE(L) pushNativeObject:obj error:NULL]; // [ ... | table | key | ud ]
+    NSError *error;
+    [MLNUI_LUA_CORE(L).convertor pushArgoBindingNativeObject:obj error:&error];
 //    lua_settable(L, -3); // [ ... | table ]
     lua_rawset(L, -3);
     // 清理栈
@@ -153,7 +155,7 @@ static MLNUI_FORCE_INLINE int mlnui_pushTable(lua_State *L, void * key, MLNUILua
     lua_pop(L, 1);
 }
 
-- (void)rawsetObject:(id<MLNUIEntityExportProtocol>)obj index:(int)index {
+- (void)rawsetObject:(NSObject *)obj index:(int)index {
     lua_State *L = self.luaCore.state;
     MLNUIAssert(self.luaCore, L, @"The lua state must not be nil!");
 //    if (!key || key.length <= 0) {
@@ -165,7 +167,9 @@ static MLNUI_FORCE_INLINE int mlnui_pushTable(lua_State *L, void * key, MLNUILua
     mlnui_pushTable(L, (__bridge void *)(self), self.env);
     // 设置key - value
 //    lua_pushnumber(L, index);
-    [MLNUI_LUA_CORE(L) pushNativeObject:obj error:NULL]; // [ ... | table | key | ud ]
+//    [MLNUI_LUA_CORE(L) pushNativeObject:obj error:NULL]; // [ ... | table | key | ud ]
+    NSError *error;
+    [MLNUI_LUA_CORE(L).convertor pushArgoBindingNativeObject:obj error:&error];
 //    lua_settable(L, -3); // [ ... | table ]
     lua_rawseti(L, -2, index);
     // 清理栈
