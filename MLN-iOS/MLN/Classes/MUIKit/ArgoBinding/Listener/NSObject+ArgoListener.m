@@ -61,7 +61,10 @@ NSString *const kArgoConstString_Dot = @".";
     }
 }
 
-static NSInteger ArgoOBID = 0;
++ (NSInteger)getID {
+    static NSInteger ArgoOBID = 1;
+    return ArgoOBID++;
+}
 
 - (id <ArgoListenerToken>)addArgoListenerWithChangeBlock:(ArgoBlockChange)block forKeyPath:(NSString *)keyPath {
     return [self addArgoListenerWithChangeBlock:block forKeyPath:keyPath filter:nil];
@@ -69,29 +72,30 @@ static NSInteger ArgoOBID = 0;
 
 - (id<ArgoListenerToken>)addArgoListenerWithChangeBlock:(ArgoBlockChange)block forKeyPath:(NSString *)keyPath filter:(ArgoListenerFilter)filter {
     //    NSMutableArray *wps = [NSMutableArray array];
-        ArgoOBID++;
-        NSArray *paths = [keyPath componentsSeparatedByString:kArgoConstString_Dot];
-        id<ArgoListenerProtocol> object = (id<ArgoListenerProtocol>)self;
-        // 依次添加监听：userData.data.list
-        object = [self argo_addListenerWithChangeBlock:block object:object obID:ArgoOBID keyPath:keyPath paths:paths filter:filter wrapper:nil];
+//        ArgoOBID++;
+    NSInteger obid = [self.class getID];
+    NSArray *paths = [keyPath componentsSeparatedByString:kArgoConstString_Dot];
+    id<ArgoListenerProtocol> object = (id<ArgoListenerProtocol>)self;
+    // 依次添加监听：userData.data.list
+    object = [self argo_addListenerWithChangeBlock:block object:object obID:obid keyPath:keyPath paths:paths filter:filter wrapper:nil];
 
-        //如果list是数组
-        ArgoObservableArray *array = (ArgoObservableArray *)object;
-        if ([array isKindOfClass:[ArgoObservableArray class]]) {
-            [self argo_addArrayListenerWithChangeBlock:block array:array obID:ArgoOBID observedObject:object keyPath:keyPath filter:filter wrapper:nil];
-        }
-        ArgoListenerToken *token = [ArgoListenerToken new];
-    //    token.wrappers = wps;
-        token.block = block;
-        token.keyPath = keyPath;
-        token.tokenID = ArgoOBID;
-        token.observedObject = (id<ArgoListenerProtocol>)self;
-        return token;
+    //如果list是数组
+    ArgoObservableArray *array = (ArgoObservableArray *)object;
+    if ([array isKindOfClass:[ArgoObservableArray class]]) {
+        [self argo_addArrayListenerWithChangeBlock:block array:array obID:obid observedObject:object keyPath:keyPath filter:filter wrapper:nil];
+    }
+    ArgoListenerToken *token = [ArgoListenerToken new];
+//    token.wrappers = wps;
+    token.block = block;
+    token.keyPath = keyPath;
+    token.tokenID = obid;
+    token.observedObject = (id<ArgoListenerProtocol>)self;
+    return token;
 }
 
 - (id<ArgoListenerToken>)addArgoListenerWithChangeBlockForAllKeys:(ArgoBlockChange)block filter:(ArgoListenerFilter)filter keyPaths:(NSArray *)keyPaths {
-    ArgoOBID++;
-    ArgoListenerWrapper *wrapper = [ArgoListenerWrapper wrapperWithID:ArgoOBID block:block observedObject:self keyPath:kArgoListenALL key:kArgoListenALL filter:filter];
+    NSInteger obid = [self.class getID];
+    ArgoListenerWrapper *wrapper = [ArgoListenerWrapper wrapperWithID:obid block:block observedObject:self keyPath:kArgoListenALL key:kArgoListenALL filter:filter];
     for (NSString *kps in keyPaths) {
         id<ArgoListenerProtocol> object = (id<ArgoListenerProtocol>)self;
         NSArray *paths = [kps componentsSeparatedByString:kArgoConstString_Dot];
@@ -107,7 +111,7 @@ static NSInteger ArgoOBID = 0;
 //    token.wrappers = wps;
     token.block = block;
     token.keyPath = kArgoListenALL;
-    token.tokenID = ArgoOBID;
+    token.tokenID = obid;
     token.observedObject = (id<ArgoListenerProtocol>)self;
     return token;
 }
