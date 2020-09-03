@@ -5,7 +5,7 @@
 //  Created by Dongpeng Dai on 2020/8/25.
 //
 
-#if 1
+#if 0
 //#import "ArgoBindingTest.h"
 #import "ArgoObservableMap.h"
 #import "ArgoObservableArray.h"
@@ -75,10 +75,10 @@
         NSLog(@"");
     }
     
-    ArgoObservableMap *map = [ArgoObservableMap dictionaryWithCapacity:2];
-    ArgoObservableMap *map1 = [ArgoObservableMap dictionaryWithCapacity:2];
-    ArgoObservableMap *map2 = [ArgoObservableMap dictionaryWithCapacity:2];
-    ArgoObservableMap *map3 = [ArgoObservableMap dictionaryWithCapacity:2];
+    ArgoObservableMap *map = [ArgoObservableMap new];
+    ArgoObservableMap *map1 = [ArgoObservableMap new];
+    ArgoObservableMap *map2 = [ArgoObservableMap new];
+    ArgoObservableMap *map3 = [ArgoObservableMap new];
 
 //    id<ArgoListenerToken> token = [map addArgoListenerWithChangeBlock:^(NSKeyValueChange type, id newValue, NSIndexSet *indexSet, NSDictionary *info) {
 ////        NSLog(@"type: %zd, new: %@, indexSet: %@, info: %@",type, newValue, indexSet, info);
@@ -88,33 +88,33 @@
         NSLog(@"object: %p keyPath: %@ change: %@",object,keyPath,change);
     } forKeyPath:@"userData.data.info.name"];
     
-    [map setObject:map1 forKey:@"userData"]; // 1, null
+    [map lua_putValue:map1 forKey:@"userData"]; // 1, null
     
-    [map2 setObject:map3 forKey:@"info"];
-    [map3 setObject:@"this is name" forKey:@"name"];
-    [map1 setObject:map2 forKey:@"data"];// 1, this is name
+    [map2 lua_putValue:map3 forKey:@"info"];
+    [map3 lua_putValue:@"this is name" forKey:@"name"];
+    [map1 lua_putValue:map2 forKey:@"data"];// 1, this is name
     
-    [map3 setObject:@"change" forKey:@"name"];// 1, change
+    [map3 lua_putValue:@"change" forKey:@"name"];// 1, change
     
     [map removeArgoListenerWithToken:token];
     
-    [map2 setObject:map3 forKey:@"info"];
-    [map1 setObject:map2 forKey:@"data"];
-    [map setObject:map1 forKey:@"userData"];
+    [map2 lua_putValue:map3 forKey:@"info"];
+    [map1 lua_putValue:map2 forKey:@"data"];
+    [map lua_putValue:map1 forKey:@"userData"];
 }
 
 - (void)testArray {
-    ArgoObservableMap *map = [ArgoObservableMap dictionaryWithCapacity:2];
-    ArgoObservableMap *map1 = [ArgoObservableMap dictionaryWithCapacity:2];
+    ArgoObservableMap *map = [ArgoObservableMap new];
+    ArgoObservableMap *map1 = [ArgoObservableMap new];
     ArgoObservableArray *array = [ArgoObservableArray array];
     
-    [map setObject:map1 forKey:@"userData"];
+    [map lua_putValue:map1 forKey:@"userData"];
     
     id<ArgoListenerToken> token = [map addArgoListenerWithChangeBlock:^(NSString *keyPath, id<ArgoListenerProtocol> object, NSDictionary *change) {
         NSLog(@"object: %p keyPath: %@ change: %@",object,keyPath,change);
     } forKeyPath:@"userData.list"];
     
-    [map1 setObject:array forKey:@"list"];
+    [map1 lua_putValue:array forKey:@"list"];
     [array addObject:@"1"];
     [array addObject:@"2"];
     [array removeObjectAtIndex:0];
@@ -126,7 +126,7 @@
         ArgoObservableArray *arr = [ArgoObservableArray array];
         [array2 addObject:arr];
     }
-    [map1 setObject:array2 forKey:@"list"];
+    [map1 lua_putValue:array2 forKey:@"list"];
     [array2[2] addObject:@"abc"];
 }
 

@@ -17,9 +17,7 @@
 
 @implementation ArgoObserverBase
 
-- (instancetype)initWithViewController:(nonnull UIViewController<ArgoViewControllerProtocol> *)viewController
-                              callback:(nullable ArgoBlockChange)callback
-                               keyPath:(nonnull NSString *)keyPath {
+- (instancetype)initWithViewController:(UIViewController<ArgoViewControllerProtocol> *)viewController callback:(ArgoBlockChange)callback keyPath:(NSString *)keyPath {
     if (self = [super init]) {
         _viewController = viewController;
         _callback = callback;

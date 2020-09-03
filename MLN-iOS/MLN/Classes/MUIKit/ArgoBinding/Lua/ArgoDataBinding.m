@@ -21,6 +21,7 @@
 #import "NSObject+MLNUIReflect.h"
 #import "MLNUITableView.h"
 #import "MLNUICollectionView.h"
+#import "MLNUILuaTable.h"
 
 @interface _ArgoBindCellInternalModel : NSObject
 //@property (nonatomic, strong) NSMutableDictionary *pathMap;
@@ -63,7 +64,7 @@
     NSParameterAssert(key);
     if (key) {
         LOCK();
-        [self.dataMap putValue:data forKey:key];
+        [self.dataMap lua_putValue:data forKey:key];
         UNLOCK();
     }
 }
@@ -81,12 +82,7 @@
 - (id)dataForKeyPath:(NSString *)keyPath {
     NSParameterAssert(keyPath);
     if(!keyPath) return nil;
-    NSArray *keys = [keyPath componentsSeparatedByString:kArgoConstString_Dot];
-    id<ArgoListenerProtocol> object = self.dataMap;
-    for (NSString *key in keys) {
-        object = (id <ArgoListenerProtocol>)[object get:key];
-    }
-    return object;
+    return [self.dataMap argoGetForKeyPath:keyPath];
 }
 
 - (void)updateDataForKeyPath:(NSString *)keyPath value:(id)value {
@@ -96,9 +92,9 @@
     id<ArgoListenerProtocol> object = self.dataMap;
     for (int i = 0; i < keys.count - 1; i++) {
         //TODO: 对于Map，如果中间对象为空，默认创建.
-        object = (id<ArgoListenerProtocol>)[object get:keys[i]];
+        object = (id<ArgoListenerProtocol>)[object lua_get:keys[i]];
     }
-    [object putValue:value forKey:keys.lastObject];
+    [object lua_putValue:value forKey:keys.lastObject];
 }
 
 #pragma mark - for Lua
@@ -177,7 +173,7 @@
     return [self.listViewMap objectForKey:tag];
 }
 
-static inline ArgoObserverBase *_getArgoObserver(UIViewController *kitViewController, UIView *listView, NSString *nk, NSString *idKey) {
+static inline ArgoObserverBase *_getArgoObserver(UIViewController <ArgoViewControllerProtocol> *kitViewController, UIView *listView, NSString *nk, NSString *idKey) {
     ArgoObserverBase *ob = [[ArgoObserverBase alloc] initWithViewController:kitViewController callback:^(NSString * _Nonnull keyPath, id  _Nonnull object, NSDictionary<NSKeyValueChangeKey,id> * _Nonnull change) {
         if ([listView isKindOfClass:[MLNUITableView class]]) {
             MLNUITableView *table = (MLNUITableView *)listView;
@@ -207,7 +203,7 @@ static inline ArgoObserverBase *_getArgoObserver(UIViewController *kitViewContro
 #define TICK3()
 #define TOCK3(name,name2)
 
-- (void)argo_bindCellWithController:(UIViewController *)viewController KeyPath:(NSString *)keyPath section:(NSUInteger)section row:(NSUInteger)row paths:(NSArray *)paths {
+- (void)argo_bindCellWithController:(UIViewController <ArgoViewControllerProtocol> *)viewController KeyPath:(NSString *)keyPath section:(NSUInteger)section row:(NSUInteger)row paths:(NSArray *)paths {
     UIView *listView = [self argo_listViewForTag:keyPath];
     if (!listView)  return;
     TICK2();
@@ -269,6 +265,11 @@ static inline ArgoObserverBase *_getArgoObserver(UIViewController *kitViewContro
     model.tokenID = token.tokenID;
     TOCK3("add observer ", [@(newPaths.count).stringValue UTF8String]);
 }
+
+- (MLNUILuaTable *)luaTableOf:(id<ArgoObserverProtocol>)object {
+    return nil;
+}
+
 #pragma mark - Utils
 
 - (NSString *)listViewKeyMatch:(NSString *)tag {

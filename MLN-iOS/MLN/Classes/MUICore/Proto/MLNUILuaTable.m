@@ -117,6 +117,61 @@ static MLNUI_FORCE_INLINE int mlnui_pushTable(lua_State *L, void * key, MLNUILua
     lua_pop(L, 1);
 }
 
+- (void)rawsetObject:(id<MLNUIEntityExportProtocol>)obj key:(NSString *)key {
+    lua_State *L = self.luaCore.state;
+    MLNUIAssert(self.luaCore, L, @"The lua state must not be nil!");
+    if (!key || key.length <= 0) {
+        MLNUIError(self.luaCore, @"the key of %@ mustn't be nil",  obj);
+        return;
+    }
+    // 将对应table压栈
+    mlnui_pushTable(L, (__bridge void *)(self), self.env);
+    // 设置key - value
+    lua_pushstring(L, key.UTF8String); // [ ... | table | key ]
+    [MLNUI_LUA_CORE(L) pushNativeObject:obj error:NULL]; // [ ... | table | key | ud ]
+//    lua_settable(L, -3); // [ ... | table ]
+    lua_rawset(L, -3);
+    // 清理栈
+    lua_pop(L, 1);
+}
+
+- (void)setObject:(id<MLNUIEntityExportProtocol>)obj index:(int)index {
+    lua_State *L = self.luaCore.state;
+    MLNUIAssert(self.luaCore, L, @"The lua state must not be nil!");
+//    if (!key || key.length <= 0) {
+//        MLNUIError(self.luaCore, @"the key of %@ mustn't be nil",  obj);
+//        return;
+//    }
+    
+    // 将对应table压栈
+    mlnui_pushTable(L, (__bridge void *)(self), self.env);
+    // 设置key - value
+    lua_pushnumber(L, index);
+    [MLNUI_LUA_CORE(L) pushNativeObject:obj error:NULL]; // [ ... | table | key | ud ]
+    lua_settable(L, -3); // [ ... | table ]
+    // 清理栈
+    lua_pop(L, 1);
+}
+
+- (void)rawsetObject:(id<MLNUIEntityExportProtocol>)obj index:(int)index {
+    lua_State *L = self.luaCore.state;
+    MLNUIAssert(self.luaCore, L, @"The lua state must not be nil!");
+//    if (!key || key.length <= 0) {
+//        MLNUIError(self.luaCore, @"the key of %@ mustn't be nil",  obj);
+//        return;
+//    }
+    
+    // 将对应table压栈
+    mlnui_pushTable(L, (__bridge void *)(self), self.env);
+    // 设置key - value
+//    lua_pushnumber(L, index);
+    [MLNUI_LUA_CORE(L) pushNativeObject:obj error:NULL]; // [ ... | table | key | ud ]
+//    lua_settable(L, -3); // [ ... | table ]
+    lua_rawseti(L, -2, index);
+    // 清理栈
+    lua_pop(L, 1);
+}
+
 - (void)setObject:(id<MLNUIEntityExportProtocol>)obj cKey:(void *)cKey
 {
     lua_State *L = self.luaCore.state;

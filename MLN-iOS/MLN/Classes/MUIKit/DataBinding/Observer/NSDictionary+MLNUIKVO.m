@@ -38,7 +38,7 @@
 
 - (NSMutableDictionary *)mlnui_convertToMDic {
 #if OCPERF_USE_NEW_DB
-    ArgoObservableMap *dic = [ArgoObservableMap dictionaryWithCapacity:self.count];
+    ArgoObservableMap *dic = [[ArgoObservableMap alloc] initWithCapacity:self.count];
 #else
     NSMutableDictionary *dic = [NSMutableDictionary dictionaryWithCapacity:self.count];
 #endif

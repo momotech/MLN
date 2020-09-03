@@ -23,7 +23,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (instancetype)initWithViewController:(nonnull UIViewController<ArgoViewControllerProtocol> *)viewController
                               callback:(nullable ArgoBlockChange)callback
-                               keyPath:(nonnull NSString *)keyPath NS_DESIGNATED_INITIALIZER;
+                               keyPath:(nonnull NSString *)keyPath;
 
 - (void)receiveKeyPath:(NSString *)keyPath ofObject:(id<ArgoListenerProtocol>)object change:(NSDictionary *)change NS_REQUIRES_SUPER;
 

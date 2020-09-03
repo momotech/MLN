@@ -19,7 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
 @class MLNUILuaBundle;
 @class MLNUILuaTable;
 @class MLNUIExporter;
-@interface MLNUILuaCore : NSObject
+@interface MLNUILuaCore : NSObject <NSCopying>
 
 /**
  lua状态机。

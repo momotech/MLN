@@ -19,7 +19,8 @@
 #import "ArgoObservableArray.h"
 #import "ArgoObservableMap.h"
 #import "ArgoObserverHelper.h"
-
+#import "MLNUILuaTable.h"
+#import "MLNUIHeader.h"
 
 @implementation ArgoDataBindingCBridge
 
@@ -48,11 +49,20 @@ static int argo_get (lua_State *L) {
     PCallDBStart(__func__);
     TICK();
     MLNUILuaCore *luaCore = MLNUI_LUA_CORE(L);
-    NSString *nKey = [luaCore toString:-1 error:NULL];
+    NSError *error;
+    NSString *nKey = [luaCore toString:-1 error:&error];
     NSObject *obj = _argo_data_for_keypath(luaCore, nKey);
+    int nret = 1;
+    
     //TODO: 优化，使用lua table
+#if OCPERF_USE_NEW_DB
+    nret = [luaCore.convertor pushArgoBindingNativeObject:obj error:&error];
+#else
     NSObject *convertedObj = [obj mlnui_convertToLuaObject];
-    int nret = [luaCore pushNativeObject:convertedObj error:NULL];
+    nret = [luaCore pushNativeObject:convertedObj error:&error];
+#endif
+
+    
     PCallDBEnd(__func__);
     TOCK("argo_get key %s",nKey.UTF8String);
     return nret;
@@ -63,10 +73,15 @@ static int argo_update (lua_State *L) {
     TICK();
     MLNUILuaCore *luaCore = MLNUI_LUA_CORE(L);
     ArgoDataBinding *dataBind = _argo_get_dataBinding(luaCore);
-    NSString *nKey = [luaCore toString:-2 error:NULL];
+    NSError *error;
+    NSString *nKey = [luaCore toString:-2 error:&error];
     //TODO: 使用lua table
-    id value = [luaCore toNativeObject:-1 error:NULL];
+#if OCPERF_USE_NEW_DB
+    id value = [luaCore.convertor toArgoBindingNativeObject:-1 error:&error];
+#else
+    id value = [luaCore toNativeObject:-1 error:&error];
     value = [value mlnui_convertToNativeObject];
+#endif
     [dataBind argo_updateValue:value forKeyPath:nKey];
     PCallDBEnd(__func__);
     TOCK("argo_update key %s",nKey.UTF8String);
@@ -79,8 +94,9 @@ static int argo_watch(lua_State *L) {
     
     MLNUILuaCore *luaCore = MLNUI_LUA_CORE(L);
     ArgoDataBinding *dataBind = _argo_get_dataBinding(luaCore);
-    NSString *nKey = [luaCore toString:-2 error:NULL];
-    MLNUIBlock *handler = [luaCore toNativeObject:-1 error:NULL];
+    NSError *error;
+    NSString *nKey = [luaCore toString:-2 error:&error];
+    MLNUIBlock *handler = [luaCore.convertor toArgoBindingNativeObject:-1 error:&error];
     
     NSInteger obid = [dataBind argo_watchKeyPath:nKey withHandler:handler];
     lua_pushnumber(L, obid);
@@ -107,15 +123,19 @@ static int argo_mock (lua_State *L) {
     TICK();
     MLNUILuaCore *luaCore = MLNUI_LUA_CORE(L);
     ArgoDataBinding *dataBind = _argo_get_dataBinding(luaCore);
-    NSString *nKey = [luaCore toString:-2 error:NULL];
-    NSDictionary *dic = [luaCore toNativeObject:-1 error:NULL];
-    
+    NSError *error;
+    NSString *nKey = [luaCore toString:-2 error:&error];
+#if OCPERF_USE_NEW_DB
+    ArgoObservableMap *map = [luaCore.convertor toArgoBindingNativeObject:-1 error:&error];
+#else
+    NSDictionary *dic = [luaCore toNativeObject:-1 error:&error];
     if (![dic isKindOfClass:[NSDictionary class]]) {
         NSString *log = [NSString stringWithFormat:@"data %@ should be kindOf NSDictionary",dic.class];
         _argo_on_error_log(luaCore, log);
         return 1;
     }
     id<ArgoListenerProtocol> map = [dic mlnui_convertToNativeObject];
+#endif
     [dataBind bindData:map forKey:nKey];
     PCallDBEnd(__func__);
     TOCK("argo_mock key %s",nKey.UTF8String);
@@ -127,7 +147,8 @@ static int argo_mock_array (lua_State *L) {
     TICK();
     MLNUILuaCore *luaCore = MLNUI_LUA_CORE(L);
     ArgoDataBinding *dataBind = _argo_get_dataBinding(luaCore);
-    NSString *nKey = [luaCore toString:-3 error:NULL];
+    NSError *error;
+    NSString *nKey = [luaCore toString:-3 error:&error];
     
     ArgoObservableArray *existData = [dataBind argo_get:nKey];
     if ([existData isKindOfClass:[ArgoObservableArray class]]) {
@@ -136,14 +157,17 @@ static int argo_mock_array (lua_State *L) {
         TOCK("argo_mockArray key %s",nKey.UTF8String);
         return 1;
     }
-    
-    NSArray *data = [luaCore toNativeObject:-2 error:NULL];
+#if OCPERF_USE_NEW_DB
+    ArgoObservableArray *array = [luaCore.convertor toArgoBindingNativeObject:-2 error:&error];
+#else
+    NSArray *data = [luaCore toNativeObject:-2 error:&error];
     if (![data isKindOfClass:[NSArray class]]) {
         NSString *log = [NSString stringWithFormat:@"data %@ should be kindOf NSArray",data.class];
         _argo_on_error_log(luaCore, log);
         return 1;
     }
     ArgoObservableArray *array = [data mlnui_convertToNativeObject];
+#endif
 //    [array mlnui_startKVOIfMutable];
 //    [dataBind bindArray:array forKey:nKey];
     [dataBind bindData:array forKey:nKey];
@@ -157,14 +181,22 @@ static int argo_insert (lua_State *L) {
     TICK();
     
     MLNUILuaCore *luaCore = MLNUI_LUA_CORE(L);
+    NSError *error;
+#if OCPERF_USE_NEW_DB
+    id value = [luaCore.convertor toArgoBindingNativeObject:-1 error:&error];
+#else
+    id value = [luaCore toNativeObject:-1 error:&error];
+#endif
     
-    id value = [luaCore toNativeObject:-1 error:NULL];
     int index = lua_tonumber(L, -2);
-    NSString *nKey = [luaCore toString:-3 error:NULL];
-
+    NSString *nKey = [luaCore toString:-3 error:&error];
     ArgoObservableArray *arr = _argo_data_for_keypath(luaCore, nKey);
     if ([arr isKindOfClass:[ArgoObservableArray class]]) {
+#if OCPERF_USE_NEW_DB
+        NSObject *newValue = value;
+#else
         NSObject *newValue = [value mlnui_convertToNativeObject];
+#endif
         if(!newValue) return 1;
         
         if (index == -1) {
@@ -193,7 +225,8 @@ static int argo_remove (lua_State *L) {
     PCallDBStart(__func__);
     TICK();
     MLNUILuaCore *luaCore = MLNUI_LUA_CORE(L);
-    NSString *nKey = [luaCore toString:-2 error:NULL];
+    NSError *error;
+    NSString *nKey = [luaCore toString:-2 error:&error];
     int index = lua_tonumber(L, -1);
     
     ArgoObservableArray *arr = _argo_data_for_keypath(luaCore, nKey);
@@ -225,7 +258,8 @@ static int argo_array_size (lua_State *L) {
     TICK();
     
     MLNUILuaCore *luaCore = MLNUI_LUA_CORE(L);
-    NSString *nKey = [luaCore toString:-1 error:NULL];
+    NSError *error;
+    NSString *nKey = [luaCore toString:-1 error:&error];
     NSArray *arr = _argo_data_for_keypath(luaCore, nKey);
     
     if (![arr isKindOfClass: [NSArray  class]]) {
@@ -246,8 +280,9 @@ static int argo_bind_listview (lua_State *L) {
     
     MLNUILuaCore *luaCore = MLNUI_LUA_CORE(L);
     ArgoDataBinding *dataBind = _argo_get_dataBinding(luaCore);
-    NSString *nKey = [luaCore toString:-2 error:NULL];
-    UIView *listView = [luaCore toNativeObject:-1 error:NULL];
+    NSError *error;
+    NSString *nKey = [luaCore toString:-2 error:&error];
+    UIView *listView = [luaCore toNativeObject:-1 error:&error];
     [dataBind argo_bindListView:listView forTag:nKey];
     PCallDBEnd(__func__);
     TOCK("luaui_bindListView key %s",nKey.UTF8String);
@@ -258,7 +293,8 @@ static int argo_section_count (lua_State *L) {
     PCallDBStart(__func__);
     TICK();
     MLNUILuaCore *luaCore = MLNUI_LUA_CORE(L);
-    NSString *nKey = [luaCore toString:-1 error:NULL];
+    NSError *error;
+    NSString *nKey = [luaCore toString:-1 error:&error];
     NSArray *arr = _argo_data_for_keypath(luaCore, nKey);
     NSUInteger count = 1;
     if ([ArgoObserverHelper arrayIs2D:arr]) {
@@ -275,7 +311,8 @@ static int argo_row_count (lua_State *L) {
     TICK();
     
     MLNUILuaCore *luaCore = MLNUI_LUA_CORE(L);
-    NSString *nKey = [luaCore toString:-2 error:NULL];
+    NSError *error;
+    NSString *nKey = [luaCore toString:-2 error:&error];
     int section = lua_tonumber(L, -1);
     NSUInteger count = 0;
     
@@ -301,11 +338,13 @@ static int argo_bind_cell (lua_State *L) {
     MLNUILuaCore *luaCore = MLNUI_LUA_CORE(L);
     ArgoDataBinding *dataBind = _argo_get_dataBinding(luaCore);
     UIViewController<MLNUIDataBindingProtocol> *kitViewController = (UIViewController<MLNUIDataBindingProtocol> *)MLNUI_KIT_INSTANCE(luaCore).viewController;
-
-    NSString *nKey = [luaCore toString:-4 error:NULL];
+    NSError *error;
+    NSString *nKey = [luaCore toString:-4 error:&error];
     NSUInteger section = lua_tonumber(L, -3);
     NSUInteger row = lua_tonumber(L, -2);
     NSArray *paths = [luaCore toNativeObject:-1 error:NULL];
+//    NSArray *paths = [luaCore.convertor toArgoBindingNativeObject:-1 error:&error];
+    
     if (paths.count == 0) {
         return 1;
     }

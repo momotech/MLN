@@ -9,29 +9,36 @@
 #import "NSObject+ArgoListener.h"
 #import "MLNExtScope.h"
 #import "ArgoListenerWrapper.h"
+#import "ArgoLuaCacheAdapter.h"
+#import "MLNUILuaTable.h"
+#import "NSObject+MLNUICore.h"
 
 @interface ArgoObservableMap()
 @property (nonatomic, strong) NSMutableDictionary *proxy;
 //
 @property (nonatomic, strong) NSMutableDictionary *argoListeners;
+@property (nonatomic, strong) ArgoLuaCacheAdapter *cacheAdapter;
 
 @end
 
 @implementation ArgoObservableMap
 
-- (NSObject *)get:(NSString *)key {
+#pragma mark - ArgoListenerProtocol
+- (NSObject *)lua_get:(NSString *)key {
     if(!key) return nil;
     return [self.proxy objectForKey:key];
 }
 
-- (void)putValue:(NSObject *)value forKey:(NSString *)key {
+- (void)lua_putValue:(NSObject *)value forKey:(NSString *)key {
     if(!key) return;
     if (value) {
         [self.proxy setObject:value forKey:key];
     } else {
         [self.proxy removeObjectForKey:key];
     }
-
+    //lua table cache
+    [self.cacheAdapter putValue:value forKey:key];
+    
     NSMutableDictionary *change = [NSMutableDictionary dictionary];
     [change setObject:@(NSKeyValueChangeSetting) forKey:NSKeyValueChangeKindKey];
     if (value) {
@@ -40,12 +47,28 @@
     [self notifyArgoListenerKey:key Change:change];
 }
 
+- (void)addLuaTabe:(MLNUILuaTable *)table {
+    [self.cacheAdapter addLuaTabe:table];
+}
+
+- (MLNUILuaTable *)getLuaTable:(id<NSCopying>)key {
+    return [self.cacheAdapter getLuaTable:key];
+}
+
+#pragma mark -
 
 - (NSMutableDictionary *)argoListeners {
     if (!_argoListeners) {
         _argoListeners = [NSMutableDictionary dictionary];
     }
     return _argoListeners;
+}
+
+- (ArgoLuaCacheAdapter *)cacheAdapter {
+    if (!_cacheAdapter) {
+        _cacheAdapter = [[ArgoLuaCacheAdapter alloc] initWithObject:self];
+    }
+    return _cacheAdapter;
 }
 
 - (void)dealloc {
@@ -56,17 +79,28 @@
 //    }
 }
 
+- (MLNUINativeType)mlnui_nativeType {
+    return MLNUINativeTypeObervableMap;
+}
+
+- (BOOL)mlnui_isConvertible {
+    return NO;
+}
+
 #pragma mark - listener
+
 - (void)setObject:(id)anObject forKey:(id<NSCopying>)aKey {
-    [self putValue:anObject forKey:(NSString *)aKey];
+    [self lua_putValue:anObject forKey:(NSString *)aKey];
 }
 
 - (void)removeObjectForKey:(id)aKey {
-    [self putValue:nil forKey:aKey];
+    [self lua_putValue:nil forKey:aKey];
 }
 
 - (void)removeAllObjects {
-    [self.proxy removeAllObjects];
+    for (NSString *key in self.proxy.allKeys) {
+        [self lua_putValue:nil forKey:key];
+    }
 }
 
 #pragma mark -
@@ -102,6 +136,22 @@
     return [self initWithMutableDictonary:dic];
 }
 
++ (instancetype)dictionary {
+    return [[self alloc] init];
+}
+
++ (instancetype)dictionaryWithCapacity:(NSUInteger)numItems {
+    return [[self alloc] initWithCapacity:numItems];
+}
+
++ (instancetype)dictionaryWithObjectsAndKeys:(id)firstObject, ... {
+    va_list args;
+    va_start(args, firstObject);
+    NSMutableDictionary *dic = [NSMutableDictionary dictionaryWithObjectsAndKeys:firstObject,args, nil];
+    va_end(args);
+    return [[self alloc] initWithMutableDictonary:dic];
+}
+
 - (void)encodeWithCoder:(NSCoder *)coder {
     [self.proxy encodeWithCoder:coder];
 }
@@ -120,7 +170,7 @@
 }
 
 - (id)objectForKey:(id)aKey {
-    return [self get:aKey];
+    return [self lua_get:aKey];
 }
 
 - (NSEnumerator *)keyEnumerator {

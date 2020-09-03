@@ -34,7 +34,7 @@ NSString *const kArgoConstString_Dot = @".";
             wrapper = [ArgoListenerWrapper wrapperWithID:obid block:block observedObject:observed keyPath:keyPath key:key filter:filter];
         }
         [object addArgoListenerWrapper:wrapper];
-        object = (id<ArgoListenerProtocol>)[object get:key];
+        object = (id<ArgoListenerProtocol>)[object lua_get:key];
 //        [wps addObject:wrapper];
     }
     return object;
@@ -118,7 +118,7 @@ static NSInteger ArgoOBID = 0;
     for (int i = 0; i < paths.count; i++) {
         [object removeListenerWithOBID:token.tokenID];
         NSString *key = paths[i];
-        object = (NSObject<ArgoListenerProtocol> *)[object get:key];
+        object = (NSObject<ArgoListenerProtocol> *)[object lua_get:key];
     }
 }
 
@@ -218,7 +218,7 @@ static NSInteger ArgoOBID = 0;
     }
     id<ArgoListenerProtocol> object = (id<ArgoListenerProtocol>)self;
     for (NSString *kp in paths) {
-        object = (id<ArgoListenerProtocol>)[object get:kp];
+        object = (id<ArgoListenerProtocol>)[object lua_get:kp];
     }
     return object;
 }
@@ -230,9 +230,9 @@ static NSInteger ArgoOBID = 0;
     }
     id<ArgoListenerProtocol> object = (id<ArgoListenerProtocol>)self;
     for (int i = 0; i < paths.count - 1; i++) {
-        object = (id<ArgoListenerProtocol>)[object get:paths[i]];
+        object = (id<ArgoListenerProtocol>)[object lua_get:paths[i]];
     }
-    [object putValue:value forKey: paths.lastObject];
+    [object lua_putValue:value forKey: paths.lastObject];
 }
 
 @end

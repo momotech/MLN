@@ -48,7 +48,6 @@
     self.automaticallyAdjustsScrollViewInsets = NO;
     
     PSTART(MLNUILoadTimeStatisticsType_Total);
-    CFAbsoluteTime s = CFAbsoluteTimeGetCurrent();
     [self prepareForLoadEntryFile];
     NSError *error = nil;
     BOOL ret = [self.kitInstance runWithEntryFile:self.entryFileName windowExtra:self.extraInfo error:&error];

@@ -9,6 +9,22 @@
 /* Begin PBXBuildFile section */
 		001452A9542A742D56B524D0DFAB4A54 /* SDCycleScrollView-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 140EE6E74D33985EAFEE4D5FEE7B4195 /* SDCycleScrollView-dummy.m */; };
 		0016443150768500FF6DB62AB55253F5 /* ValueAnimation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6E0730998595E883B895A12EC13BBE2B /* ValueAnimation.cpp */; settings = {COMPILER_FLAGS = "-x objective-c++"; }; };
+		0047080924FE60EF00353B8F /* ArgoObservableMap.m in Sources */ = {isa = PBXBuildFile; fileRef = 0047080524FE60EF00353B8F /* ArgoObservableMap.m */; };
+		0047080A24FE60EF00353B8F /* ArgoObservableArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 0047080624FE60EF00353B8F /* ArgoObservableArray.h */; };
+		0047080B24FE60EF00353B8F /* ArgoObservableArray.m in Sources */ = {isa = PBXBuildFile; fileRef = 0047080724FE60EF00353B8F /* ArgoObservableArray.m */; };
+		0047080C24FE60EF00353B8F /* ArgoObservableMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 0047080824FE60EF00353B8F /* ArgoObservableMap.h */; };
+		0047081624FE60FA00353B8F /* NSObject+ArgoListener.m in Sources */ = {isa = PBXBuildFile; fileRef = 0047080E24FE60FA00353B8F /* NSObject+ArgoListener.m */; };
+		0047081724FE60FA00353B8F /* ArgoListenerWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 0047080F24FE60FA00353B8F /* ArgoListenerWrapper.h */; };
+		0047081924FE60FA00353B8F /* ArgoListenerToken.h in Headers */ = {isa = PBXBuildFile; fileRef = 0047081124FE60FA00353B8F /* ArgoListenerToken.h */; };
+		0047081A24FE60FA00353B8F /* NSObject+ArgoListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 0047081224FE60FA00353B8F /* NSObject+ArgoListener.h */; };
+		0047081B24FE60FA00353B8F /* ArgoListenerToken.m in Sources */ = {isa = PBXBuildFile; fileRef = 0047081324FE60FA00353B8F /* ArgoListenerToken.m */; };
+		0047081D24FE60FA00353B8F /* ArgoListenerWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 0047081524FE60FA00353B8F /* ArgoListenerWrapper.m */; };
+		0047082024FE613400353B8F /* ArgoLuaCacheAdapter.m in Sources */ = {isa = PBXBuildFile; fileRef = 0047081E24FE613400353B8F /* ArgoLuaCacheAdapter.m */; };
+		0047082124FE613400353B8F /* ArgoLuaCacheAdapter.h in Headers */ = {isa = PBXBuildFile; fileRef = 0047081F24FE613400353B8F /* ArgoLuaCacheAdapter.h */; };
+		0047082424FF434F00353B8F /* ArgoObserverHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 0047082224FF434E00353B8F /* ArgoObserverHelper.m */; };
+		0047082524FF434F00353B8F /* ArgoObserverHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = 0047082324FF434E00353B8F /* ArgoObserverHelper.h */; };
+		0047082C24FF890000353B8F /* ArgoBindingConvertor.h in Headers */ = {isa = PBXBuildFile; fileRef = 0047082A24FF890000353B8F /* ArgoBindingConvertor.h */; };
+		0047082D24FF890000353B8F /* ArgoBindingConvertor.m in Sources */ = {isa = PBXBuildFile; fileRef = 0047082B24FF890000353B8F /* ArgoBindingConvertor.m */; };
 		0059580107987F1E9B9B81689E934CB3 /* lmathlib.c in Sources */ = {isa = PBXBuildFile; fileRef = ABEA7C10284C662ECDD03EE61B6C4844 /* lmathlib.c */; };
 		005E076863FED0349320016C970FAF8A /* MLNUIRect.h in Headers */ = {isa = PBXBuildFile; fileRef = 3B1F8F05D4322C7AE560E03AE0B89E6F /* MLNUIRect.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		00613B6C35D834149FD08E8B2FFAC752 /* GPBStruct.pbobjc.h in Headers */ = {isa = PBXBuildFile; fileRef = 61121E20FEFCF837713A284B99745EF8 /* GPBStruct.pbobjc.h */; settings = {ATTRIBUTES = (Project, ); }; };
@@ -162,7 +178,6 @@
 		13FD21BA8A52AA40CA0BE6EB825C7BEF /* PbcoverageSummaryCommand.pbobjc.h in Headers */ = {isa = PBXBuildFile; fileRef = 8899ABE0D5027536640F5953EB9F2105 /* PbcoverageSummaryCommand.pbobjc.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		1406A1D7B2BE8DD341E508E9D089BDC1 /* MLNUICornerUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = 999A5D64BFEA2B0FF885D418184EC50B /* MLNUICornerUtil.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		141E350C0277C299A0668D5771F284AB /* FLEXMethodCallingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BB73D7150AC2832C7774574876B4729 /* FLEXMethodCallingViewController.m */; };
-		144BBCE821D57F20186FC55D722E0AAD /* ArgoListenerToken.h in Headers */ = {isa = PBXBuildFile; fileRef = 5580BB2148639113BC3E021C982BB006 /* ArgoListenerToken.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		144CF5FDEB2026042BA2E1FEF1DAF468 /* MLNUICollectionViewAdapterProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 4928FB794460F5458FD612533E45D9B7 /* MLNUICollectionViewAdapterProtocol.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		14599DF5AC47A3769283605EFFA0ECAB /* MLNBeforeWaitingTaskEngine.m in Sources */ = {isa = PBXBuildFile; fileRef = 9728F21E842EBBB9446052EBA0E182D5 /* MLNBeforeWaitingTaskEngine.m */; };
 		149C26CE6D211A66B8AFA84E825EF796 /* FLEXArgumentInputJSONObjectView.m in Sources */ = {isa = PBXBuildFile; fileRef = D2ECADB751214A60AD6CB956679E9A2B /* FLEXArgumentInputJSONObjectView.m */; };
@@ -468,7 +483,6 @@
 		3A2E010161AA7F202CD9568A62EC5062 /* Specta.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D9EEFA18DE64637AF246D3DCAD1777D /* Specta.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		3A3464C3F007AA3E687DE14042678812 /* MLNQRCodeDefaultInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 5295871F94F5BDEFA5D0BEA07E8B4A29 /* MLNQRCodeDefaultInfo.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		3A489B4B39A239D8B9B0655F57DE551B /* MLNTabSegmentView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3508997B0EAE111F5DBF84032AC127A9 /* MLNTabSegmentView.m */; };
-		3A84624A86B8863CE939A64194A74A54 /* NSObject+ArgoListener.m in Sources */ = {isa = PBXBuildFile; fileRef = 86E40F58943833B20E96AAABCAA68D6A /* NSObject+ArgoListener.m */; };
 		3AC4AF16E7738191E9A2758C8B873ADE /* MLAAnimationPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 52B26DEE9B89828EA235D5A3AEA80242 /* MLAAnimationPrivate.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		3B0291237ACF6071BFE2CA250D2FF095 /* FLEXTableListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 50476ABDB1B705FF5CD130B90E6EF2E9 /* FLEXTableListViewController.m */; };
 		3B3E3A8B880DD91F104026D4BBBF71A2 /* SDWebImagePrefetcher.h in Headers */ = {isa = PBXBuildFile; fileRef = 4BD5F8F78C4DBD938F685A16EA1E81E8 /* SDWebImagePrefetcher.h */; settings = {ATTRIBUTES = (Project, ); }; };
@@ -513,7 +527,6 @@
 		404A07FCE0F139C1FAE16F1166B107EA /* NSObject+Hash.m in Sources */ = {isa = PBXBuildFile; fileRef = DAE3528006DCC034E8CC52F8352061E5 /* NSObject+Hash.m */; };
 		405CC61250A0B8F8A60B2C36D5523F3D /* MLNEditTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B3091B72A78ACDDB9D46B7006E59B0 /* MLNEditTextView.m */; };
 		409B458AF773AC99F9B24D685F8B5BA2 /* MLNUIDataBinding.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C8A26276547935418E2FFED3EB7B927 /* MLNUIDataBinding.h */; settings = {ATTRIBUTES = (Project, ); }; };
-		40A8BE716F6E9775AC5F919EE2A96F44 /* ArgoObservableArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 222E7E302AEB8AC638761D842D901AD2 /* ArgoObservableArray.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		40C71BF8E5F1628C2ECDB85A4111DE89 /* MLNUICornerImageLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = A0FEE87808F12A8B83EB258A6168E4E0 /* MLNUICornerImageLoader.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		40EE2671569963F80B44729A9A371108 /* MLNUIInnerCollectionView.h in Headers */ = {isa = PBXBuildFile; fileRef = 9353763058B2870B6629E01CC5744A6E /* MLNUIInnerCollectionView.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		40EF779FD249A9804612CAEB8E2FB242 /* SDImageIOAnimatedCoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 6507B2CFDEED62FC4DDE036BB998727A /* SDImageIOAnimatedCoder.h */; settings = {ATTRIBUTES = (Project, ); }; };
@@ -615,7 +628,6 @@
 		4F1B82C4389BD6DACEA8B85575CFE5FC /* MLNHotReload.m in Sources */ = {isa = PBXBuildFile; fileRef = BBC0A7CB8365203FD415C5CF2A81FC96 /* MLNHotReload.m */; };
 		4F389A6E1EA142583609A892C6F1AC54 /* NSBezierPath+RoundedCorners.h in Headers */ = {isa = PBXBuildFile; fileRef = F4FB69DDC072768E8826B56D658DF4CA /* NSBezierPath+RoundedCorners.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		4F4DFDF046D45C5175D7854304C0168D /* MLNLuaCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 343B3760D0577AED2949A2B0972A168A /* MLNLuaCore.h */; settings = {ATTRIBUTES = (Project, ); }; };
-		4F6293A8DE429219F33BA0B6101B9E3D /* ArgoListenerWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = F08237065CC52F7D04989DBDE00DA4A9 /* ArgoListenerWrapper.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		4F6EDB02D9BC82BC4D31F7AAA73607EF /* NSMutableData+LuaNative.m in Sources */ = {isa = PBXBuildFile; fileRef = 84856C9DE39842A843DEC8718A378CEB /* NSMutableData+LuaNative.m */; };
 		4F7DE06CF667ADC05BAC677A1821D142 /* FLEXNetworkSettingsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = DE59C55199927CCC6A0BC02069CE814E /* FLEXNetworkSettingsTableViewController.m */; };
 		4F87B8ABEFE8D9B56617C3195F8B90E1 /* MLNVStackNode.h in Headers */ = {isa = PBXBuildFile; fileRef = BB06D96CE936B07F18C8E183BD748F5F /* MLNVStackNode.h */; settings = {ATTRIBUTES = (Project, ); }; };
@@ -857,7 +869,6 @@
 		6C8FCD25745B9FAC283A2B52FA2A9304 /* MLNHeader.h in Headers */ = {isa = PBXBuildFile; fileRef = 192CBA944AE32579CDCA3C7707DA597E /* MLNHeader.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		6C9673A833FFA0B26472671FA08B095B /* MLNUIKitBridgesManager.h in Headers */ = {isa = PBXBuildFile; fileRef = E2B67A022333927125D69BB6FCA547A1 /* MLNUIKitBridgesManager.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		6CA67E24EE040BB2BCF6257C5DF0515C /* ltm.c in Sources */ = {isa = PBXBuildFile; fileRef = 36581F17CD24D0CEBD42A33EA471EF06 /* ltm.c */; };
-		6CA8BE93E00E4DA5C2AAC89347FB5566 /* ArgoListenerToken.m in Sources */ = {isa = PBXBuildFile; fileRef = 898159AEAB35D6BAF8427B74DDB91D6A /* ArgoListenerToken.m */; };
 		6CB8B3262AD7BE3457CF3EBF1EAC9CC2 /* MLNUIStaticExporter.m in Sources */ = {isa = PBXBuildFile; fileRef = A2DC95765F8BC138B749409DEB671081 /* MLNUIStaticExporter.m */; };
 		6CC4DE3CE91FDF0FC26A91DAAF6C530A /* MLNWaterfallView.h in Headers */ = {isa = PBXBuildFile; fileRef = 7F5032342D710D9CD2F95EF9463532E8 /* MLNWaterfallView.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		6D0B7E3A143BD600C9213C6B48877192 /* MLNUIEntityExporter.m in Sources */ = {isa = PBXBuildFile; fileRef = 6C42883A420D9424D45D528A7493FD0C /* MLNUIEntityExporter.m */; };
@@ -1101,7 +1112,6 @@
 		8BEA5A32DC2733F8B62A85C39D24DF5E /* MLNStyleStringConst.h in Headers */ = {isa = PBXBuildFile; fileRef = 2C54B07468D42597D27615AEE18C3537 /* MLNStyleStringConst.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		8C13A66A62D75E2FF73D85B861C39DFE /* MLNImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = CA36F2EEF333D033E92ACF577A97B24A /* MLNImageView.m */; };
 		8CFEB5D601F6C0964D723706FD686D71 /* MLNUIKiConvertor.h in Headers */ = {isa = PBXBuildFile; fileRef = B025004F58E0DC50473EC852DC1EA213 /* MLNUIKiConvertor.h */; settings = {ATTRIBUTES = (Project, ); }; };
-		8D5AF946C3CF6A598B06473FEFF86D4A /* ArgoObserverHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = D3E91FA48DCA1C2799E55DD87A09A14E /* ArgoObserverHelper.m */; };
 		8D7D4DE030B35CA6A103B6B90A9452F5 /* MLNUISafeAreaAdapter.m in Sources */ = {isa = PBXBuildFile; fileRef = ABAE1C0B13AED6DDC2DA9F26ACCA61D5 /* MLNUISafeAreaAdapter.m */; };
 		8D7F1C9CF75CBB6B691088413C078353 /* MLNViewConst.m in Sources */ = {isa = PBXBuildFile; fileRef = 80E64892FC6753009753BA869C4D7EFE /* MLNViewConst.m */; };
 		8D8C52BB6D2312520FC8C0E2BAA42E5A /* NSMutableArray+MLNArray.m in Sources */ = {isa = PBXBuildFile; fileRef = 852E3EDD9A4351F113223F2C4F6BFD1D /* NSMutableArray+MLNArray.m */; };
@@ -1221,7 +1231,6 @@
 		9C94D27E0337D7D3387834D193064031 /* MLNAdapterCachesManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 914E14CBF8D2E75D220EAED958E47B19 /* MLNAdapterCachesManager.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		9CA33D70500CDAC7CC9C7428D0B78011 /* SDDisplayLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 6A9775C7F270F5904D4A508DB434A91C /* SDDisplayLink.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		9CB3B63BF4FABA45E1B6674D7F95F0A0 /* mln_isolate.h in Headers */ = {isa = PBXBuildFile; fileRef = 70961359744414046DBD9966B8A97638 /* mln_isolate.h */; settings = {ATTRIBUTES = (Project, ); }; };
-		9CBC45D1872F6F29FC1D35A525F30C57 /* ArgoListenerWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CF2DB91049ADE9D252EAC18C4F141CE /* ArgoListenerWrapper.m */; };
 		9D031FFC841CBB4BD011ECB1DFDBF63C /* MLNWaterfallLayoutDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = FDC674C54AD66A3A3FFA8A235168EB4B /* MLNWaterfallLayoutDelegate.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		9D0EDAE20BEDEF924CC656FCEA2F0125 /* FLEXNetworkCurlLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = 36348A2251A31931BBC8778793E96D59 /* FLEXNetworkCurlLogger.m */; };
 		9D3211B8FF451608F689CF104D544D98 /* MLNUIMetamacros.h in Headers */ = {isa = PBXBuildFile; fileRef = 311AC319F04BAE867B478B8010AF5B30 /* MLNUIMetamacros.h */; settings = {ATTRIBUTES = (Project, ); }; };
@@ -1259,7 +1268,6 @@
 		A118D99335B4B35DC289855A6661E2F4 /* NSObject+MLNUIDealloctor.m in Sources */ = {isa = PBXBuildFile; fileRef = 954F4E8C3FC9C9F755ED1843740EEDE9 /* NSObject+MLNUIDealloctor.m */; };
 		A12CFB59F38100C987161083B914187D /* EXPMatchers+beSubclassOf.h in Headers */ = {isa = PBXBuildFile; fileRef = 968A4FC3255BBBB9584DA8BBB1F49925 /* EXPMatchers+beSubclassOf.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		A13C0DE6A51219E9F8EC2BE7A47A691A /* MLNUIKVOObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = EBF9AAAA6FF7875BB2B2F01A73E1B3DC /* MLNUIKVOObserver.h */; settings = {ATTRIBUTES = (Project, ); }; };
-		A13F0EF66622F4013ADC3777376D8697 /* NSObject+ArgoListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 63D1675D5C82BD4AD1322AA283CD1266 /* NSObject+ArgoListener.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		A14A20CABA0833E44F89968EFB33B870 /* MLNKitInstanceFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = E61FDBCF72BB6D6D955DFE2AADB39834 /* MLNKitInstanceFactory.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		A15A0A4C0E1A6874E48739532F85DD5F /* FLEXLayerExplorerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 65A5CB855192DCB2F1A4E20488A01549 /* FLEXLayerExplorerViewController.m */; };
 		A16187923EA1A156F18C909206809C30 /* UIButton+AFNetworking.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F586A79F11CB8E7E06586B7E01A02F5 /* UIButton+AFNetworking.m */; };
@@ -1288,7 +1296,6 @@
 		A4598C73F616FB870FEA2B72806A6F44 /* UIView+MLNKit.h in Headers */ = {isa = PBXBuildFile; fileRef = AEC2E596F183F3CC578188961B7F1C6C /* UIView+MLNKit.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		A45AE8FF02C57BEB7FE1785B36D2F674 /* MLNUIKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 325D99C6EBCF1061EE88EC2E89A33AFF /* MLNUIKit.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		A487FEDEB70BBFCC360B4749CA83066E /* MLNZipArchive.h in Headers */ = {isa = PBXBuildFile; fileRef = 6051707CDCCA2C0C79CF4BF2A49647C2 /* MLNZipArchive.h */; settings = {ATTRIBUTES = (Project, ); }; };
-		A498D28C3C4CDA126759DC8B2DFE3E49 /* ArgoObserverHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = 35BA8D824E3FBD7766B1A337E4837117 /* ArgoObserverHelper.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		A4B82C9BCD031AB383792EFCA1B1F721 /* MLNUIAnimationConst.m in Sources */ = {isa = PBXBuildFile; fileRef = 7891CDA8C1612562B4CB6D0D89BEFBE2 /* MLNUIAnimationConst.m */; };
 		A51F7ECF32728036C3977EA073A559AD /* EXPBlockDefinedMatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = C96C1242FE7078619E9E1E4D0ACACE94 /* EXPBlockDefinedMatcher.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		A521606C2710910EFC6D399931257524 /* MLNBeforeWaitingTaskEngine.h in Headers */ = {isa = PBXBuildFile; fileRef = 1D2F1DEAA6084B2BECC4B67F0173BF3A /* MLNBeforeWaitingTaskEngine.h */; settings = {ATTRIBUTES = (Project, ); }; };
@@ -1333,7 +1340,6 @@
 		AA2A96287F4EFC2BE4904102AD348F45 /* SDWebImageCompat.h in Headers */ = {isa = PBXBuildFile; fileRef = 7575F9456469C3B7297FEBA7E202514A /* SDWebImageCompat.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		AA2D3C770A535D793221D1FCA0EA8D66 /* MLNReuseContentView.m in Sources */ = {isa = PBXBuildFile; fileRef = A408A97E38397B123EE3EA1A79261B3F /* MLNReuseContentView.m */; };
 		AA300E5D7A36A0CFE50DF0E70AEDE855 /* MLNUIBundle.m in Sources */ = {isa = PBXBuildFile; fileRef = 92A659237BC81AFB4F85721EBD016E48 /* MLNUIBundle.m */; };
-		AA42AB55491CF3F1039810D10FA3E79D /* ArgoObservableMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 516F64C44332D95EEAF0E4EA27DF5C0F /* ArgoObservableMap.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		AA857E4FB806CE0162DC5DFCEE7A270D /* MLNUIInnerCollectionView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4743AE389F512B260FCEAF6B380995C3 /* MLNUIInnerCollectionView.m */; };
 		AA987512E3FB752604A10157F3CBACF6 /* UIImage+ExtendedCacheData.m in Sources */ = {isa = PBXBuildFile; fileRef = A2C63E82D10DB4A6908C6747A3A5CBCC /* UIImage+ExtendedCacheData.m */; };
 		AAB70680FA04FCFEFB9457A66C9C9078 /* MLNUIHStack.m in Sources */ = {isa = PBXBuildFile; fileRef = 7A67110CD848043691A69D486DDAB780 /* MLNUIHStack.m */; };
@@ -1571,7 +1577,6 @@
 		C7D65CC1BB83F71AC14D3C0BE5223B7E /* MLNUIInteractiveBehavior.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8D801100E891551A8A2C2547AE62F99C /* MLNUIInteractiveBehavior.mm */; };
 		C7DF597603AC35C8609159C5E8FA00E2 /* FLEXObjectExplorerViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = AC2F974DB755EBD5CAF7F6ED36EC41DC /* FLEXObjectExplorerViewController.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		C7EEEFD4A3C54C98011532DF5CA0C5C3 /* MLNAnimator.m in Sources */ = {isa = PBXBuildFile; fileRef = 71A4C0F9CA28E52F0EF3839D72269FC4 /* MLNAnimator.m */; };
-		C7F234269CDED105D078243AF05F37C0 /* ArgoObservableMap.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D67978A0570C5F38F61CF01250626F1 /* ArgoObservableMap.m */; };
 		C80B40D985510D6D85F53E321AC7379B /* FLEXTableLeftCell.h in Headers */ = {isa = PBXBuildFile; fileRef = 62B821E044B87C064682B3AFF3622FCD /* FLEXTableLeftCell.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		C80E4345C38334D2E11FB30C4415F97A /* GPBUnknownFieldSet.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F83FCC49738B8A564D0C9EA1D986362 /* GPBUnknownFieldSet.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		C8439C231FFABAFC832A4B6BDAB4F737 /* MLNUIDataBinding.m in Sources */ = {isa = PBXBuildFile; fileRef = A64E39C117269FBA87DBD9BB3CAE86E8 /* MLNUIDataBinding.m */; };
@@ -1593,7 +1598,6 @@
 		C9CB96494FD37FC858C1C725F24DE0D3 /* SpectaDSL.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C7CF85CC053B60309A2FE3B44D7B320 /* SpectaDSL.m */; };
 		C9D335CD656A2AE43F1F5E474FCB2ADB /* GPBTimestamp.pbobjc.h in Headers */ = {isa = PBXBuildFile; fileRef = 88113A802A2B33BA59935EC3EA1991F3 /* GPBTimestamp.pbobjc.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		C9FB108147E881F0173B9D2DEFC7027F /* MLNDevToolProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 75DB62CC927304E159C6529E2A800393 /* MLNDevToolProtocol.h */; settings = {ATTRIBUTES = (Project, ); }; };
-		CA5D2F17B7DFAA984AF02631B20C7207 /* ArgoObservableArray.m in Sources */ = {isa = PBXBuildFile; fileRef = 6DF540DAFB4DF2F2D93A80FAB0FF4359 /* ArgoObservableArray.m */; };
 		CA618C6722A8E5B364221DD971B442A9 /* SDAnimatedImageView+WebCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 47A21B1D372DBC9886D96C7BAB9F9C58 /* SDAnimatedImageView+WebCache.m */; };
 		CA82582091E982B37F84933E279AF847 /* LNClientImpl.m in Sources */ = {isa = PBXBuildFile; fileRef = 967A224D1CC4E1562BEEAAFBC2A1D87A /* LNClientImpl.m */; };
 		CA885FB046F6CE12918FC377B63E7466 /* MLNUIWaterfallAdapter.m in Sources */ = {isa = PBXBuildFile; fileRef = 990C404CAB72FBB65A3560507E7034F5 /* MLNUIWaterfallAdapter.m */; };
@@ -2191,6 +2195,22 @@
 
 /* Begin PBXFileReference section */
 		00092223DA3AFE6B1DEF146C4B57B8B7 /* ArgoUI-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "ArgoUI-dummy.m"; sourceTree = "<group>"; };
+		0047080524FE60EF00353B8F /* ArgoObservableMap.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArgoObservableMap.m; sourceTree = "<group>"; };
+		0047080624FE60EF00353B8F /* ArgoObservableArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArgoObservableArray.h; sourceTree = "<group>"; };
+		0047080724FE60EF00353B8F /* ArgoObservableArray.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArgoObservableArray.m; sourceTree = "<group>"; };
+		0047080824FE60EF00353B8F /* ArgoObservableMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArgoObservableMap.h; sourceTree = "<group>"; };
+		0047080E24FE60FA00353B8F /* NSObject+ArgoListener.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+ArgoListener.m"; sourceTree = "<group>"; };
+		0047080F24FE60FA00353B8F /* ArgoListenerWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArgoListenerWrapper.h; sourceTree = "<group>"; };
+		0047081124FE60FA00353B8F /* ArgoListenerToken.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArgoListenerToken.h; sourceTree = "<group>"; };
+		0047081224FE60FA00353B8F /* NSObject+ArgoListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+ArgoListener.h"; sourceTree = "<group>"; };
+		0047081324FE60FA00353B8F /* ArgoListenerToken.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArgoListenerToken.m; sourceTree = "<group>"; };
+		0047081524FE60FA00353B8F /* ArgoListenerWrapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArgoListenerWrapper.m; sourceTree = "<group>"; };
+		0047081E24FE613400353B8F /* ArgoLuaCacheAdapter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArgoLuaCacheAdapter.m; sourceTree = "<group>"; };
+		0047081F24FE613400353B8F /* ArgoLuaCacheAdapter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArgoLuaCacheAdapter.h; sourceTree = "<group>"; };
+		0047082224FF434E00353B8F /* ArgoObserverHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArgoObserverHelper.m; sourceTree = "<group>"; };
+		0047082324FF434E00353B8F /* ArgoObserverHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArgoObserverHelper.h; sourceTree = "<group>"; };
+		0047082A24FF890000353B8F /* ArgoBindingConvertor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ArgoBindingConvertor.h; sourceTree = "<group>"; };
+		0047082B24FF890000353B8F /* ArgoBindingConvertor.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ArgoBindingConvertor.m; sourceTree = "<group>"; };
 		007E091147E01AC7C7B463ECEF32B84C /* UIImage+MLNKit.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "UIImage+MLNKit.h"; sourceTree = "<group>"; };
 		009B8B132FCB6B57D162D2BFA0442BEF /* GPBDescriptor.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = GPBDescriptor.m; path = objectivec/GPBDescriptor.m; sourceTree = "<group>"; };
 		00ABBEC1E1639446C4405DE2C9F67310 /* UIView+Toast.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "UIView+Toast.h"; path = "Toast/UIView+Toast.h"; sourceTree = "<group>"; };
@@ -2459,7 +2479,6 @@
 		21903C55833AB292A62619880039C3AE /* SDAsyncBlockOperation.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = SDAsyncBlockOperation.h; path = SDWebImage/Private/SDAsyncBlockOperation.h; sourceTree = "<group>"; };
 		21B8DCB51C1B3EFF299F35FED575ED7D /* FLEXArgumentInputStructView.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = FLEXArgumentInputStructView.h; path = Classes/Editing/ArgumentInputViews/FLEXArgumentInputStructView.h; sourceTree = "<group>"; };
 		2202603C468EC1B8CBCB18EA26B87F47 /* SDDeviceHelper.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = SDDeviceHelper.h; path = SDWebImage/Private/SDDeviceHelper.h; sourceTree = "<group>"; };
-		222E7E302AEB8AC638761D842D901AD2 /* ArgoObservableArray.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = ArgoObservableArray.h; sourceTree = "<group>"; };
 		2234114D4753E3EB14B7F04F3976FDA2 /* MLNAdapterCachesManager.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLNAdapterCachesManager.m; sourceTree = "<group>"; };
 		224447976122A7DCB62234DA629E4302 /* UIViewController+MLNUIKVO.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "UIViewController+MLNUIKVO.h"; sourceTree = "<group>"; };
 		2268A00794CB3F39DBA00383E402F118 /* lopcodes.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = lopcodes.c; path = "MLN-iOS/MLN/Classes/LuaLib/lopcodes.c"; sourceTree = "<group>"; };
@@ -2604,7 +2623,6 @@
 		35271A463C8887F1BFCE6FE69BD331CA /* MLNLink.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLNLink.h; sourceTree = "<group>"; };
 		35497011A2DED505B8EA45CC8BC3418D /* MLNUIViewConst.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLNUIViewConst.h; sourceTree = "<group>"; };
 		35965C549B77EC535330184893EE69FA /* MLNUIWaterfallView.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLNUIWaterfallView.m; sourceTree = "<group>"; };
-		35BA8D824E3FBD7766B1A337E4837117 /* ArgoObserverHelper.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = ArgoObserverHelper.h; sourceTree = "<group>"; };
 		35BF48A698D5EDF4081CA77F83787046 /* MLNDevice.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLNDevice.h; sourceTree = "<group>"; };
 		35C4693C7D72D17B5ED82FD0CDC6392D /* EXPExpect.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = EXPExpect.m; path = Expecta/EXPExpect.m; sourceTree = "<group>"; };
 		36348A2251A31931BBC8778793E96D59 /* FLEXNetworkCurlLogger.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = FLEXNetworkCurlLogger.m; path = Classes/Network/FLEXNetworkCurlLogger.m; sourceTree = "<group>"; };
@@ -2818,7 +2836,6 @@
 		513C9173334F2E2C02576B16AD4A6FEB /* LNClientFactory.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = LNClientFactory.m; sourceTree = "<group>"; };
 		515E1BA578D874E262D7CA03DB7DA3AA /* MLNUICollectionLayout.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLNUICollectionLayout.h; sourceTree = "<group>"; };
 		515E283A842D55EF94B04CCE583FB6BF /* YGLayout.cpp */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.cpp; path = YGLayout.cpp; sourceTree = "<group>"; };
-		516F64C44332D95EEAF0E4EA27DF5C0F /* ArgoObservableMap.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = ArgoObservableMap.h; sourceTree = "<group>"; };
 		5177CD0EDD1C4724E11C5363B0A4CCB0 /* GPBRootObject_PackagePrivate.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = GPBRootObject_PackagePrivate.h; path = objectivec/GPBRootObject_PackagePrivate.h; sourceTree = "<group>"; };
 		51873D453FB4370C50FD3804CF560810 /* TAAbstractDotView.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = TAAbstractDotView.m; path = SDCycleScrollView/Lib/SDCycleScrollView/PageControl/TAAbstractDotView.m; sourceTree = "<group>"; };
 		51AE0F17BA7FF813D504F37E1009F2F1 /* FLEXArgumentInputNotSupportedView.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = FLEXArgumentInputNotSupportedView.m; path = Classes/Editing/ArgumentInputViews/FLEXArgumentInputNotSupportedView.m; sourceTree = "<group>"; };
@@ -2855,7 +2872,6 @@
 		552361532F8F3F6FFD4AE9EEC2D14D72 /* FLEXGlobalsTableViewControllerEntry.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = FLEXGlobalsTableViewControllerEntry.m; path = Classes/ObjectExplorers/Controllers/FLEXGlobalsTableViewControllerEntry.m; sourceTree = "<group>"; };
 		554993289D9773982DDAF7616E560919 /* MLNQRCodeReader.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLNQRCodeReader.m; sourceTree = "<group>"; };
 		556500D6C3F9EFA3CA829A144D4B70D7 /* MLNDebugContext.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLNDebugContext.m; sourceTree = "<group>"; };
-		5580BB2148639113BC3E021C982BB006 /* ArgoListenerToken.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = ArgoListenerToken.h; sourceTree = "<group>"; };
 		55AE8EBC90D5C29445213F6C8F213FFC /* MLNUIGradientLayerOperation.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLNUIGradientLayerOperation.m; sourceTree = "<group>"; };
 		55C1D7F5CAE4433A027FB7BF14F61C5D /* Toast-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Toast-dummy.m"; sourceTree = "<group>"; };
 		55E0AFD333353D71ACC2207149E879D6 /* libToast.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libToast.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -2917,7 +2933,6 @@
 		5C4F31330DFA99D699E4BDC8C3573D73 /* libFBSnapshotTestCase.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libFBSnapshotTestCase.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		5C5991AA612C0AB19F1535FE16ECA74B /* ltable.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = ltable.c; path = "MLN-iOS/MLN/Classes/LuaLib/ltable.c"; sourceTree = "<group>"; };
 		5C70B86081722FA86CDD34C36FF458CC /* GPBApi.pbobjc.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = GPBApi.pbobjc.h; path = objectivec/GPBApi.pbobjc.h; sourceTree = "<group>"; };
-		5CF2DB91049ADE9D252EAC18C4F141CE /* ArgoListenerWrapper.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = ArgoListenerWrapper.m; sourceTree = "<group>"; };
 		5D12DC6F98021A17129082D5158FDB7E /* MLAActionEnabler.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLAActionEnabler.h; sourceTree = "<group>"; };
 		5D1D534BCBD0B40E966C3D9ECA7ABC5D /* MJRefreshBackGifFooter.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = MJRefreshBackGifFooter.h; path = MJRefresh/Custom/Footer/Back/MJRefreshBackGifFooter.h; sourceTree = "<group>"; };
 		5D2E0BACA798A642AADF5947883BEB66 /* AnimationTracer.cpp */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.cpp; path = AnimationTracer.cpp; sourceTree = "<group>"; };
@@ -2925,7 +2940,6 @@
 		5D43CF733998DDB1EA7FC8833258AD8B /* SDAnimatedImageView.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = SDAnimatedImageView.m; path = SDWebImage/Core/SDAnimatedImageView.m; sourceTree = "<group>"; };
 		5D4B6074F273F1C6194200B3E1614681 /* Pods-MLN_Tests-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-MLN_Tests-dummy.m"; sourceTree = "<group>"; };
 		5D5B81352D093CA4F3D0FC7BF9170B95 /* PbbaseCommand.pbobjc.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = PbbaseCommand.pbobjc.h; path = "MLN-iOS/MLNDevTool/Classes/MLNProtobuf/PbbaseCommand.pbobjc.h"; sourceTree = "<group>"; };
-		5D67978A0570C5F38F61CF01250626F1 /* ArgoObservableMap.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = ArgoObservableMap.m; sourceTree = "<group>"; };
 		5DADA21C5D7B287BBDF8D6442AF10FB6 /* MLNEntityExporter.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLNEntityExporter.m; sourceTree = "<group>"; };
 		5DB488827EB135729C080CCD4F072DD3 /* FLEXMethodCallingViewController.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = FLEXMethodCallingViewController.h; path = Classes/Editing/FLEXMethodCallingViewController.h; sourceTree = "<group>"; };
 		5DB60FDBC555FB8D07B3394ABCCAC65C /* SpectaTypes.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = SpectaTypes.h; path = Specta/Specta/SpectaTypes.h; sourceTree = "<group>"; };
@@ -2992,7 +3006,6 @@
 		639CC10143D77F1D2346CC3345528AEC /* GPBBootstrap.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = GPBBootstrap.h; path = objectivec/GPBBootstrap.h; sourceTree = "<group>"; };
 		63C5C9AEEB9FA6EDC09CF0ED8FAC5D8D /* MLNServer.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = MLNServer.h; path = "MLN-iOS/MLNDevTool/Classes/Conn/MLNServer.h"; sourceTree = "<group>"; };
 		63CD80D80912687261F42695320595CF /* NSBundle+MJRefresh.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "NSBundle+MJRefresh.m"; path = "MJRefresh/NSBundle+MJRefresh.m"; sourceTree = "<group>"; };
-		63D1675D5C82BD4AD1322AA283CD1266 /* NSObject+ArgoListener.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "NSObject+ArgoListener.h"; sourceTree = "<group>"; };
 		641AB1A7973A71150F277487ADC7A316 /* FLEXArgumentInputViewFactory.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = FLEXArgumentInputViewFactory.h; path = Classes/Editing/ArgumentInputViews/FLEXArgumentInputViewFactory.h; sourceTree = "<group>"; };
 		6425ABC6D05E6CA3EB80F48AACE0023E /* MLNUINetworkReachabilityManager.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLNUINetworkReachabilityManager.h; sourceTree = "<group>"; };
 		642E18293D436C33EAA99F8B1C26DA1F /* MLNConsole.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLNConsole.m; sourceTree = "<group>"; };
@@ -3077,7 +3090,6 @@
 		6DAE6B10286AE541EECF0325AE212058 /* AFSecurityPolicy.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = AFSecurityPolicy.h; path = AFNetworking/AFSecurityPolicy.h; sourceTree = "<group>"; };
 		6DD250BA0966295415072A67C2CFC7A1 /* GPBCodedInputStream.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = GPBCodedInputStream.h; path = objectivec/GPBCodedInputStream.h; sourceTree = "<group>"; };
 		6DE1EAAA2FE8595BA8E16E45E9FFF8B3 /* EXPMatcher.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = EXPMatcher.h; path = Expecta/EXPMatcher.h; sourceTree = "<group>"; };
-		6DF540DAFB4DF2F2D93A80FAB0FF4359 /* ArgoObservableArray.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = ArgoObservableArray.m; sourceTree = "<group>"; };
 		6DF7CCAFF684D2E6E8319ABEBDDD1206 /* UIView+MJExtension.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "UIView+MJExtension.m"; path = "MJRefresh/UIView+MJExtension.m"; sourceTree = "<group>"; };
 		6E0730998595E883B895A12EC13BBE2B /* ValueAnimation.cpp */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.cpp; path = ValueAnimation.cpp; sourceTree = "<group>"; };
 		6E52EF300E8D731CCD06E1B01E93D993 /* MJRefresh.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = MJRefresh.h; path = MJRefresh/MJRefresh.h; sourceTree = "<group>"; };
@@ -3293,7 +3305,6 @@
 		8655446FD519C62F8317B8A1D00C2B89 /* MLNUIViewPager.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLNUIViewPager.h; sourceTree = "<group>"; };
 		86966A2AFFF97A0C0138899118A04E86 /* MLNUITabSegmentView.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLNUITabSegmentView.m; sourceTree = "<group>"; };
 		86E048760E4DEE0C07F6C5D8536AA7E7 /* NSObject+MLNSwizzle.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "NSObject+MLNSwizzle.m"; sourceTree = "<group>"; };
-		86E40F58943833B20E96AAABCAA68D6A /* NSObject+ArgoListener.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "NSObject+ArgoListener.m"; sourceTree = "<group>"; };
 		86F92559F123AE0AEEC876307F92EE88 /* FLEXNetworkTransactionTableViewCell.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = FLEXNetworkTransactionTableViewCell.h; path = Classes/Network/FLEXNetworkTransactionTableViewCell.h; sourceTree = "<group>"; };
 		870A84A1B3C51FFAEF2844142448330A /* YGConfig.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = YGConfig.h; sourceTree = "<group>"; };
 		8729EE081A9D292146401871DE15A343 /* EXPDefines.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = EXPDefines.h; path = Expecta/EXPDefines.h; sourceTree = "<group>"; };
@@ -3318,7 +3329,6 @@
 		894BAAB432CE5372F925192C8B91312A /* CustomAnimation.cpp */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.cpp; path = CustomAnimation.cpp; sourceTree = "<group>"; };
 		8957CA4CF08B3D966DDF9E379CF4136D /* MLNSafeAreaProxy.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLNSafeAreaProxy.h; sourceTree = "<group>"; };
 		8960B6BF0F46729222A43F40E609CA1A /* MLNUISnapshotManager.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLNUISnapshotManager.m; sourceTree = "<group>"; };
-		898159AEAB35D6BAF8427B74DDB91D6A /* ArgoListenerToken.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = ArgoListenerToken.m; sourceTree = "<group>"; };
 		898938FF28CFF94175F45AAEF69CDED5 /* AFNetworkReachabilityManager.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = AFNetworkReachabilityManager.m; path = AFNetworking/AFNetworkReachabilityManager.m; sourceTree = "<group>"; };
 		89998205C44CC37E2797CDD347413399 /* ArgoLuaObserver.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = ArgoLuaObserver.h; sourceTree = "<group>"; };
 		89F9FFCF4A05186C1E1752C79C119B7B /* MLNLoading.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLNLoading.h; sourceTree = "<group>"; };
@@ -3874,7 +3884,6 @@
 		D3708FD129C6DDC5CE132735C50E1B54 /* NSImage+Compatibility.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "NSImage+Compatibility.h"; path = "SDWebImage/Core/NSImage+Compatibility.h"; sourceTree = "<group>"; };
 		D37FE48AB554EF681F7F48FD14CAA7DE /* UIImage+MultiFormat.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "UIImage+MultiFormat.h"; path = "SDWebImage/Core/UIImage+MultiFormat.h"; sourceTree = "<group>"; };
 		D3C4B13926A8FBC057FC9C72B9281BEB /* MLNStack.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLNStack.m; sourceTree = "<group>"; };
-		D3E91FA48DCA1C2799E55DD87A09A14E /* ArgoObserverHelper.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = ArgoObserverHelper.m; sourceTree = "<group>"; };
 		D4178D76E5DA5B48148AD90CE102DF90 /* FLEXExplorerToolbar.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = FLEXExplorerToolbar.h; path = Classes/Toolbar/FLEXExplorerToolbar.h; sourceTree = "<group>"; };
 		D4443DC1E975CA8486DBFF268B67CBBB /* MJRefreshAutoGifFooter.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = MJRefreshAutoGifFooter.h; path = MJRefresh/Custom/Footer/Auto/MJRefreshAutoGifFooter.h; sourceTree = "<group>"; };
 		D496875D4A087D0FC81D73AF71AD48DC /* MLNView.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLNView.m; sourceTree = "<group>"; };
@@ -4079,7 +4088,6 @@
 		F01E34AE309540DCA5513358A5402667 /* ObjectAnimation.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = ObjectAnimation.h; sourceTree = "<group>"; };
 		F037A6EFD80B0576F790F6103E5CFE16 /* scanme.png */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = image.png; name = scanme.png; path = "MLN-iOS/MLNDevTool/Classes/Offline/Assets/scanme.png"; sourceTree = "<group>"; };
 		F045B19F51E3784BFA976071489DD409 /* MLNCollectionViewCell.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLNCollectionViewCell.h; sourceTree = "<group>"; };
-		F08237065CC52F7D04989DBDE00DA4A9 /* ArgoListenerWrapper.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = ArgoListenerWrapper.h; sourceTree = "<group>"; };
 		F085073A1444AB7168530EA9A920E46A /* FLEXPropertyEditorViewController.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = FLEXPropertyEditorViewController.m; path = Classes/Editing/FLEXPropertyEditorViewController.m; sourceTree = "<group>"; };
 		F09026293E07309D9C3360FE5EA357A2 /* NSString+MLNUICore.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "NSString+MLNUICore.h"; sourceTree = "<group>"; };
 		F096A1F47E7806815338F9DCB0EC2EB1 /* UIActivityIndicatorView+AFNetworking.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "UIActivityIndicatorView+AFNetworking.m"; path = "UIKit+AFNetworking/UIActivityIndicatorView+AFNetworking.m"; sourceTree = "<group>"; };
@@ -4368,6 +4376,32 @@
 				702DBB7968BF48534776CB63F7D1CF63 /* LNReaderProtocol.h */,
 			);
 			path = Read;
+			sourceTree = "<group>";
+		};
+		0047080424FE60EF00353B8F /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				0047080824FE60EF00353B8F /* ArgoObservableMap.h */,
+				0047080524FE60EF00353B8F /* ArgoObservableMap.m */,
+				0047080624FE60EF00353B8F /* ArgoObservableArray.h */,
+				0047080724FE60EF00353B8F /* ArgoObservableArray.m */,
+				0047081F24FE613400353B8F /* ArgoLuaCacheAdapter.h */,
+				0047081E24FE613400353B8F /* ArgoLuaCacheAdapter.m */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		0047080D24FE60FA00353B8F /* Listener */ = {
+			isa = PBXGroup;
+			children = (
+				0047080E24FE60FA00353B8F /* NSObject+ArgoListener.m */,
+				0047081224FE60FA00353B8F /* NSObject+ArgoListener.h */,
+				0047081124FE60FA00353B8F /* ArgoListenerToken.h */,
+				0047081324FE60FA00353B8F /* ArgoListenerToken.m */,
+				0047080F24FE60FA00353B8F /* ArgoListenerWrapper.h */,
+				0047081524FE60FA00353B8F /* ArgoListenerWrapper.m */,
+			);
+			path = Listener;
 			sourceTree = "<group>";
 		};
 		0142480156ABAC083C8CF4A53F3C1090 /* CanvasAnimation */ = {
@@ -5852,6 +5886,8 @@
 				4E7C4E54892B5AAAB87CD51F57EA9127 /* MLNUIKiConvertor.m */,
 				8D7A86848FD1E9EF4F23D13E0F951A56 /* MLNUIModelHandler.h */,
 				379631C00DF746091D0845829D168253 /* MLNUIModelHandler.m */,
+				0047082A24FF890000353B8F /* ArgoBindingConvertor.h */,
+				0047082B24FF890000353B8F /* ArgoBindingConvertor.m */,
 			);
 			name = Convertor;
 			path = "MLN-iOS/MLN/Classes/MUIKit/Convertor";
@@ -5957,19 +5993,10 @@
 			isa = PBXGroup;
 			children = (
 				6F8C5B534E5EEAD18C32E86F3714DDFC /* ArgoBindingTest.m */,
-				5580BB2148639113BC3E021C982BB006 /* ArgoListenerToken.h */,
-				898159AEAB35D6BAF8427B74DDB91D6A /* ArgoListenerToken.m */,
-				F08237065CC52F7D04989DBDE00DA4A9 /* ArgoListenerWrapper.h */,
-				5CF2DB91049ADE9D252EAC18C4F141CE /* ArgoListenerWrapper.m */,
-				222E7E302AEB8AC638761D842D901AD2 /* ArgoObservableArray.h */,
-				6DF540DAFB4DF2F2D93A80FAB0FF4359 /* ArgoObservableArray.m */,
-				516F64C44332D95EEAF0E4EA27DF5C0F /* ArgoObservableMap.h */,
-				5D67978A0570C5F38F61CF01250626F1 /* ArgoObservableMap.m */,
-				35BA8D824E3FBD7766B1A337E4837117 /* ArgoObserverHelper.h */,
-				D3E91FA48DCA1C2799E55DD87A09A14E /* ArgoObserverHelper.m */,
 				987A85230F5045C1B1B379BC17E5D0F8 /* ArgoViewController+ArgoDataBinding.h */,
 				7B3D8505A7C31DF3D84E7E07EB90E9DC /* ArgoViewController+ArgoDataBinding.m */,
-				80BC41D5DFC5303D2B185DDC814D6F20 /* Category */,
+				0047080D24FE60FA00353B8F /* Listener */,
+				0047080424FE60EF00353B8F /* Model */,
 				393898635259703103A9DF7BB4C1436F /* Lua */,
 				FAF4376076A5CECCA472C175C4F95F4E /* Observer */,
 				B9753CCBF9A631E6285EE03EC552886A /* protocol */,
@@ -6487,15 +6514,6 @@
 				30A045E174B5F5239009811D00BC56CA /* MLNQRCodeViewController.m */,
 			);
 			path = QRCode;
-			sourceTree = "<group>";
-		};
-		80BC41D5DFC5303D2B185DDC814D6F20 /* Category */ = {
-			isa = PBXGroup;
-			children = (
-				63D1675D5C82BD4AD1322AA283CD1266 /* NSObject+ArgoListener.h */,
-				86E40F58943833B20E96AAABCAA68D6A /* NSObject+ArgoListener.m */,
-			);
-			path = Category;
 			sourceTree = "<group>";
 		};
 		810AD20E830969CF642AC9ECE1F6DCDB /* TableView */ = {
@@ -8244,6 +8262,8 @@
 				1E1D17D26A162A9173E8B9C42694CF1E /* ArgoLuaObserver.m */,
 				373D3F4590168BE2885B273245F548ED /* ArgoObserverBase.h */,
 				402EDABD87F9DFEB3B075DF8E939D4DD /* ArgoObserverBase.m */,
+				0047082324FF434E00353B8F /* ArgoObserverHelper.h */,
+				0047082224FF434E00353B8F /* ArgoObserverHelper.m */,
 			);
 			path = Observer;
 			sourceTree = "<group>";
@@ -9162,6 +9182,7 @@
 				ED6BA20AB653883DA954EF61E141E777 /* AnimatorEngine.h in Headers */,
 				0756EA0CE49056650D08EE4A1CF97B0F /* AnimatorExtras.h in Headers */,
 				EC4F291061FC7F489C290A698396A26C /* argo_lib.h in Headers */,
+				0047081A24FE60FA00353B8F /* NSObject+ArgoListener.h in Headers */,
 				B9AA2B6027E7BD9724516EB72EF11B68 /* argo_lua.h in Headers */,
 				801D7D7E93EF9FCA78C48D26519B7F77 /* ArgoDataBinding.h in Headers */,
 				15BA2BC394260D9C59AC13C938EF969C /* ArgoDataBindingCBridge.h in Headers */,
@@ -9169,14 +9190,9 @@
 				E46282FE73DCBC3D9A4FC2D142956526 /* ArgoKit.h in Headers */,
 				BA8DD59C3A2ADD0812BA78FF47074E0A /* ArgoKitDefinitions.h in Headers */,
 				FDFF3ED935043E3E81849875E7BABAEE /* ArgoListenerProtocol.h in Headers */,
-				144BBCE821D57F20186FC55D722E0AAD /* ArgoListenerToken.h in Headers */,
-				4F6293A8DE429219F33BA0B6101B9E3D /* ArgoListenerWrapper.h in Headers */,
 				3C053C56C7F55C2452E20C2A16B0DF72 /* ArgoListViewObserver.h in Headers */,
 				6DE62E7A2D817D5D6D0904B2B66FE720 /* ArgoLuaObserver.h in Headers */,
-				40A8BE716F6E9775AC5F919EE2A96F44 /* ArgoObservableArray.h in Headers */,
-				AA42AB55491CF3F1039810D10FA3E79D /* ArgoObservableMap.h in Headers */,
 				078D612EAFE6521CA3CCBDAB3FABA4A4 /* ArgoObserverBase.h in Headers */,
-				A498D28C3C4CDA126759DC8B2DFE3E49 /* ArgoObserverHelper.h in Headers */,
 				E407C346381906FEDB047E541A65BC39 /* ArgoObserverProtocol.h in Headers */,
 				58AF11E8FC92E224F7221F88F9E95FDF /* ArgoViewController+ArgoDataBinding.h in Headers */,
 				268CA230270976C5CCFAFD4E1BE83328 /* ArgoViewController.h in Headers */,
@@ -9187,6 +9203,7 @@
 				13AEDC973A731B67AFD091665015BA5F /* databindengine.h in Headers */,
 				DFE657B5E37277429526256CE91E31BE /* Defines.h in Headers */,
 				C44BCFA161FFBB797C98AD07C39246B0 /* event.h in Headers */,
+				0047080A24FE60EF00353B8F /* ArgoObservableArray.h in Headers */,
 				CB31DD8185DF454892E0EA7BF7D97348 /* experiments-inl.h in Headers */,
 				BD1FED5C720929EBCE1D9B2C4A64F1F1 /* experiments.h in Headers */,
 				C35F2EE3188116A6458BE10560EE1175 /* FloatConversion.h in Headers */,
@@ -9241,6 +9258,7 @@
 				E7122F053D29B7AC89EC97D2A2CE5FCE /* MLNUIClipboard.h in Headers */,
 				858C373C9FFA08AA8B739F9C74D4F5D2 /* MLNUICollectionLayout.h in Headers */,
 				A5F3A23776A6CC8B9594C05636CC333A /* MLNUICollectionView.h in Headers */,
+				0047082C24FF890000353B8F /* ArgoBindingConvertor.h in Headers */,
 				1308421045DF21CC920455FC88DC1692 /* MLNUICollectionViewAdapter.h in Headers */,
 				144CF5FDEB2026042BA2E1FEF1DAF468 /* MLNUICollectionViewAdapterProtocol.h in Headers */,
 				74E681AC0177622FF503C34145A61BC6 /* MLNUICollectionViewAutoFitAdapter.h in Headers */,
@@ -9302,6 +9320,7 @@
 				7BE9FDD8186420B5029493532EF07882 /* MLNUIImageLoaderProtocol.h in Headers */,
 				E25948BBABFA9DC2ED0FA46B2A49B5C4 /* MLNUIImageView.h in Headers */,
 				40EE2671569963F80B44729A9A371108 /* MLNUIInnerCollectionView.h in Headers */,
+				0047082124FE613400353B8F /* ArgoLuaCacheAdapter.h in Headers */,
 				FD075AD29C7AFA120627ABC4FEACF6CB /* MLNUIInnerScrollView.h in Headers */,
 				3F9CC45F930348925369C8A8E0E11EB1 /* MLNUIInnerTableView.h in Headers */,
 				B943B09948F17ECD64C27F418DE4FB85 /* MLNUIInteractiveBehavior+Bridge.h in Headers */,
@@ -9342,6 +9361,7 @@
 				AEE88A33415D6C1900E34AF3D0F5A2B0 /* MLNUILoading.h in Headers */,
 				1704068F3A9F0D8CFA7ABB0969A5384A /* MLNUILuaBundle.h in Headers */,
 				7B308F6E7FC3F3FEFD5C6157AEDC17EA /* MLNUILuaCore.h in Headers */,
+				0047081724FE60FA00353B8F /* ArgoListenerWrapper.h in Headers */,
 				7D742646F5180F47E2692D9239BC0387 /* MLNUILuaCoreDelegate.h in Headers */,
 				9D791B1265B863D835424939B256337E /* MLNUILuaTable.h in Headers */,
 				34983E64533EF5158116CA53FA200A4A /* MLNUIMainRunLoopObserver.h in Headers */,
@@ -9375,6 +9395,7 @@
 				DF03D469A67A3C201D8DA34707AB5BEA /* MLNUIScrollViewDelegate.h in Headers */,
 				EEC642786A31592421690886783D82DF /* MLNUIShadowOperation.h in Headers */,
 				828E0C40157D9811E82DBB307CB7F8D5 /* MLNUIShapeContext.h in Headers */,
+				0047080C24FE60EF00353B8F /* ArgoObservableMap.h in Headers */,
 				6A298FF8AFAE7B28AB4ADFFEA7BF7B6C /* MLNUISize.h in Headers */,
 				97596A1EC35D7D55D01E16FFF550CD42 /* MLNUISizeCahceManager.h in Headers */,
 				EF88E9AFEC6FC2399C082D1447514343 /* MLNUISnapshotManager.h in Headers */,
@@ -9398,6 +9419,7 @@
 				00D4768DEA1FC30444EFDBEBF0DC8005 /* MLNUITableViewAdapterProtocol.h in Headers */,
 				AB7E0229D8F977DC997C163BDFA60076 /* MLNUITableViewAutoFitAdapter.h in Headers */,
 				BA1B0093C7DC99AD4EEAFB1B1413273F /* MLNUITableViewCell.h in Headers */,
+				0047082524FF434F00353B8F /* ArgoObserverHelper.h in Headers */,
 				326B0F901CE964B3164EE47F3B5550D7 /* MLNUITableViewCellSettingProtocol.h in Headers */,
 				EC5BE5E3F8C0BB0984E44AA5CC4A0FE2 /* MLNUITabSegmentScrollHandler.h in Headers */,
 				CAE62C831C814F670004541D7C7C3DB8 /* MLNUITabSegmentView.h in Headers */,
@@ -9447,7 +9469,6 @@
 				27A9511FEE23E89A47DEEEE37967A83F /* NSMutableDictionary+MLNUIMap.h in Headers */,
 				6C7039C8D2172154CC5D80A5B270A713 /* NSNumber+MLNUICore.h in Headers */,
 				39F03790F3E4900DB91FFB099A114A39 /* NSObject+Animator.h in Headers */,
-				A13F0EF66622F4013ADC3777376D8697 /* NSObject+ArgoListener.h in Headers */,
 				DB965E9F8FBC68C9B9C87E9FD35E3BA9 /* NSObject+Hash.h in Headers */,
 				4ED4A0E6BD46F61232C9CDB81BA1D744 /* NSObject+MLNUICore.h in Headers */,
 				C8599C3B98BF2C06CDB26E7DD93EA9D8 /* NSObject+MLNUIDealloctor.h in Headers */,
@@ -9464,6 +9485,7 @@
 				4FBD5804C6CB4F7620AB4873A5E843B2 /* TransformationMatrix.h in Headers */,
 				16C939697A819C13068C2A9879374CA4 /* UIColor+MLNUICore.h in Headers */,
 				86628C39A7BBC33566D36C92516A9F15 /* UIImage+MLNUI_IN_UTIL.h in Headers */,
+				0047081924FE60FA00353B8F /* ArgoListenerToken.h in Headers */,
 				48803EAB9B99A2DFA68BDECCE087B942 /* UIImage+MLNUIKit.h in Headers */,
 				54A390BF1A70135723ABB436E2588153 /* UIScrollView+MLNUIKit.h in Headers */,
 				6EDCDCD3997DC9CED0EE8C3270FEBC0B /* UIView+MLNUICore.h in Headers */,
@@ -10485,14 +10507,9 @@
 				F11C7E873076DE30459343F3C7EEA490 /* ArgoBindingTest.m in Sources */,
 				57BFF157383DDEC1EE18C52F447E6D0E /* ArgoDataBinding.m in Sources */,
 				636E5A416B00986ADB17ED87B1BC8201 /* ArgoDataBindingCBridge.m in Sources */,
-				6CA8BE93E00E4DA5C2AAC89347FB5566 /* ArgoListenerToken.m in Sources */,
-				9CBC45D1872F6F29FC1D35A525F30C57 /* ArgoListenerWrapper.m in Sources */,
 				4D1EA2DE8791EEE27257176B7F141F74 /* ArgoListViewObserver.m in Sources */,
 				0767AD8CBE76AB4C362A7CD15DE207D0 /* ArgoLuaObserver.m in Sources */,
-				CA5D2F17B7DFAA984AF02631B20C7207 /* ArgoObservableArray.m in Sources */,
-				C7F234269CDED105D078243AF05F37C0 /* ArgoObservableMap.m in Sources */,
 				423F3D0AB4D638446BD67ABEA578F620 /* ArgoObserverBase.m in Sources */,
-				8D5AF946C3CF6A598B06473FEFF86D4A /* ArgoObserverHelper.m in Sources */,
 				28A20AFE3ACD828342A47A6CC03DDFFA /* ArgoUI-dummy.m in Sources */,
 				414085DCB4608912A58721615C270A92 /* ArgoViewController+ArgoDataBinding.m in Sources */,
 				10E96B2A88CFD57FD9ACF029EF951139 /* ArgoViewController.m in Sources */,
@@ -10529,6 +10546,7 @@
 				0588AAFC5F564BDF37BD485B7D7499D7 /* MLNUIBeforeWaitingTask.m in Sources */,
 				69FA0C0DC5CF380F0DFF61D5B5DD7422 /* MLNUIBeforeWaitingTaskEngine.m in Sources */,
 				494DD331E6B2DFC8920BCDDA2DD33647 /* MLNUIBit.m in Sources */,
+				0047081B24FE60FA00353B8F /* ArgoListenerToken.m in Sources */,
 				1DB929E88AF628E2710ED02B4B6AD3EA /* MLNUIBlock+LazyCall.m in Sources */,
 				5BD36C13D0AEEAB6F5CD85A809D0F3A7 /* MLNUIBlock.m in Sources */,
 				767776DDCDD8A094EFAAD4196B332C9C /* MLNUIBlockObserver.m in Sources */,
@@ -10571,6 +10589,7 @@
 				3B63EBBF8195A83B415AA0777344A732 /* MLNUIExporterManager.m in Sources */,
 				556AE169E6938F3F6B466CB07D0A589A /* MLNUIExtScope.m in Sources */,
 				B33DDCBFF93A6079EB8557FD881289C6 /* MLNUIFile.m in Sources */,
+				0047080924FE60EF00353B8F /* ArgoObservableMap.m in Sources */,
 				502CE2A5EBEFF2F5BEB7EA3EF9EE650B /* MLNUIFileConst.m in Sources */,
 				C15A21C8472356D5003820EB01E10374 /* MLNUIFileLoader.m in Sources */,
 				B9306548C9D6CEEE41D9E5D2F9C6050F /* MLNUIFont.m in Sources */,
@@ -10590,6 +10609,7 @@
 				60E940271FD1E1775B1A95B84BDEDC88 /* MLNUIInteractiveBehavior+Bridge.m in Sources */,
 				C7D65CC1BB83F71AC14D3C0BE5223B7E /* MLNUIInteractiveBehavior.mm in Sources */,
 				3D31B4E105DA2477695EFC9F99236270 /* MLNUIInternalTextField.m in Sources */,
+				0047080B24FE60EF00353B8F /* ArgoObservableArray.m in Sources */,
 				57C58F95418F5CA4E9D15CCF07AF19B9 /* MLNUIInternalTextView.m in Sources */,
 				78AA5B9A3BE09710AF30558F484317CD /* MLNUIInternalWaterfallView.m in Sources */,
 				A1E5B09287A5EB778B27611899838471 /* MLNUIInvocation.m in Sources */,
@@ -10625,6 +10645,7 @@
 				D4E7CFF7441440ED35267F517FB64461 /* MLNUIObjectAnimation.m in Sources */,
 				050074B3F0A6E3F742958C5DB256DA23 /* MLNUIObjectAnimationSet.m in Sources */,
 				2A397A30AFCBA699E6D7CD23C4705C82 /* MLNUIObserver.m in Sources */,
+				0047082D24FF890000353B8F /* ArgoBindingConvertor.m in Sources */,
 				81A7D6C532A90B5510F41BC34506E342 /* MLNUIOvershotInterpolater.m in Sources */,
 				F2DD4810FE0F252A6572AE7964BADB6E /* MLNUIPoint.m in Sources */,
 				5A8CB9B1872EBD2A3D24D9B209E4DE57 /* MLNUIPreferenceUtils.m in Sources */,
@@ -10639,6 +10660,7 @@
 				A7FA03A83AEB8C6C97280732BD628709 /* MLNUIScrollView.m in Sources */,
 				2E794BA98FAEA673C00FCB9B68283CF3 /* MLNUIScrollViewConst.m in Sources */,
 				1BCF1BAD73D382D81F4DA69F989538E3 /* MLNUIScrollViewDelegate.m in Sources */,
+				0047081D24FE60FA00353B8F /* ArgoListenerWrapper.m in Sources */,
 				BD8C4B4FED07CC451817086CBF803051 /* MLNUIShadowOperation.m in Sources */,
 				2A52D814BE86BA1B381666D824E6CA81 /* MLNUIShapeContext.m in Sources */,
 				9337ED25A43822940509ED3ADAC53A40 /* MLNUISize.m in Sources */,
@@ -10675,6 +10697,7 @@
 				2BC64D128DCA88FE840DEAEAA162A232 /* MLNUIViewController+DataBinding.m in Sources */,
 				59770B62A8B08CB7D0A81B4B2DC3208D /* MLNUIViewController.m in Sources */,
 				0A06C7303089554C272D1FC4FCF141FB /* MLNUIViewPager.m in Sources */,
+				0047082424FF434F00353B8F /* ArgoObserverHelper.m in Sources */,
 				F5A4440561A01C32F272DFEC73F7C0D5 /* MLNUIViewPagerAdapter.m in Sources */,
 				2E25D7A95F9D54052624A9C5647DB26C /* MLNUIVStack.m in Sources */,
 				CA885FB046F6CE12918FC377B63E7466 /* MLNUIWaterfallAdapter.m in Sources */,
@@ -10697,11 +10720,12 @@
 				42CB6B3AC6F1EB959211B9B5CFEEE5F0 /* NSMutableArray+MLNUIArray.m in Sources */,
 				BDC8BDE09D35C92597CDFF2351E97016 /* NSMutableArray+MLNUICore.m in Sources */,
 				2D55AF92B09EC4B387E4E1764CB8E2A9 /* NSMutableArray+MLNUIKVO.m in Sources */,
+				0047081624FE60FA00353B8F /* NSObject+ArgoListener.m in Sources */,
+				0047082024FE613400353B8F /* ArgoLuaCacheAdapter.m in Sources */,
 				F064E3DF0EA6B8ECC4648188E54E6EBF /* NSMutableDictionary+MLNUICore.m in Sources */,
 				98E4792ABBEE4DE5AA848A809FBAACC9 /* NSMutableDictionary+MLNUIMap.m in Sources */,
 				347DF7E06F4E63CEFEC215AE174AD960 /* NSNumber+MLNUICore.m in Sources */,
 				3DCD2521C7E93000141FD1E1E856D89A /* NSObject+Animator.mm in Sources */,
-				3A84624A86B8863CE939A64194A74A54 /* NSObject+ArgoListener.m in Sources */,
 				404A07FCE0F139C1FAE16F1166B107EA /* NSObject+Hash.m in Sources */,
 				39B556266A39F75C07B9DC67E038502E /* NSObject+MLNUICore.m in Sources */,
 				A118D99335B4B35DC289855A6661E2F4 /* NSObject+MLNUIDealloctor.m in Sources */,

@@ -156,7 +156,7 @@
 {
     if (!_luaContentView) {
         _luaContentView = [[MLNUIReuseContentView alloc] initWithFrame:CGRectZero cellView:self];
-        __weak typeof(self) weakSelf = self;
+//        __weak typeof(self) weakSelf = self;
 //        _luaContentView.didChangeLayout = ^{
 //            [weakSelf reloadCellIfNeeded]; // 会导致无限reload
 //        };

@@ -544,7 +544,7 @@ static int luaui_get_cell_data(lua_State *L) {
     
     MLNUILuaCore *luaCore = MLNUI_LUA_CORE(L);
     MLNUIDataBinding *dataBind = _mlnui_get_dataBinding(luaCore);
-    UIViewController<MLNUIDataBindingProtocol> *kitViewController = (UIViewController<MLNUIDataBindingProtocol> *)MLNUI_KIT_INSTANCE(luaCore).viewController;
+//    UIViewController<MLNUIDataBindingProtocol> *kitViewController = (UIViewController<MLNUIDataBindingProtocol> *)MLNUI_KIT_INSTANCE(luaCore).viewController;
 
     NSString *nKey = [luaCore toString:-3 error:NULL];
     NSUInteger section = lua_tonumber(L, -2);

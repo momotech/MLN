@@ -247,6 +247,10 @@ static int mlnui_errorFunc_traceback (lua_State *L) {
     return self;
 }
 
+- (id)copyWithZone:(NSZone *)zone {
+    return self;
+}
+
 - (void)createViewStrongTable
 {
     _objStrongTable = [[MLNUILuaTable alloc] initWithMLNUILuaCore:self env:MLNUILuaTableEnvRegister];

@@ -9,7 +9,7 @@
 #import "ArgoObserverProtocol.h"
 
 NS_ASSUME_NONNULL_BEGIN
-@class MLNUIBlock;
+@class MLNUIBlock, MLNUILuaTable;
 @interface ArgoDataBinding : NSObject
 
 - (void)bindData:(nullable id<ArgoListenerProtocol>)data;
@@ -33,6 +33,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (UIView *)argo_listViewForTag:(NSString *)tag;
 
 - (void)argo_bindCellWithController:(UIViewController *)viewController KeyPath:(NSString *)keyPath section:(NSUInteger)section row:(NSUInteger)row paths:(NSArray *)paths;
+
+- (MLNUILuaTable *)luaTableOf:(id<ArgoObserverProtocol>)object;
 
 @end
 
