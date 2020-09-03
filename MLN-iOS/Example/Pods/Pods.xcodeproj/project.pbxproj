@@ -28,6 +28,8 @@
 		0059580107987F1E9B9B81689E934CB3 /* lmathlib.c in Sources */ = {isa = PBXBuildFile; fileRef = ABEA7C10284C662ECDD03EE61B6C4844 /* lmathlib.c */; };
 		005E076863FED0349320016C970FAF8A /* MLNUIRect.h in Headers */ = {isa = PBXBuildFile; fileRef = 3B1F8F05D4322C7AE560E03AE0B89E6F /* MLNUIRect.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		00613B6C35D834149FD08E8B2FFAC752 /* GPBStruct.pbobjc.h in Headers */ = {isa = PBXBuildFile; fileRef = 61121E20FEFCF837713A284B99745EF8 /* GPBStruct.pbobjc.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		006E8FDB2500F5C000DB3368 /* ArgoWatchWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 006E8FD92500F5C000DB3368 /* ArgoWatchWrapper.h */; };
+		006E8FDC2500F5C000DB3368 /* ArgoWatchWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 006E8FDA2500F5C000DB3368 /* ArgoWatchWrapper.m */; };
 		00B5AEB98D44F7B45C9741CB0E66FCA5 /* UIColor+SDHexString.h in Headers */ = {isa = PBXBuildFile; fileRef = 0B67E7BC7526285403CDDBC5F8FDB0DE /* UIColor+SDHexString.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		00D3101A5F893E7CDC94C28A612A42AA /* lauxlib.c in Sources */ = {isa = PBXBuildFile; fileRef = 29C357E8211B69F013445CA23823442D /* lauxlib.c */; };
 		00D4768DEA1FC30444EFDBEBF0DC8005 /* MLNUITableViewAdapterProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = AF733B17C88444016DA1A89FAE3854F1 /* MLNUITableViewAdapterProtocol.h */; settings = {ATTRIBUTES = (Project, ); }; };
@@ -2211,6 +2213,8 @@
 		0047082324FF434E00353B8F /* ArgoObserverHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArgoObserverHelper.h; sourceTree = "<group>"; };
 		0047082A24FF890000353B8F /* ArgoBindingConvertor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ArgoBindingConvertor.h; sourceTree = "<group>"; };
 		0047082B24FF890000353B8F /* ArgoBindingConvertor.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ArgoBindingConvertor.m; sourceTree = "<group>"; };
+		006E8FD92500F5C000DB3368 /* ArgoWatchWrapper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ArgoWatchWrapper.h; sourceTree = "<group>"; };
+		006E8FDA2500F5C000DB3368 /* ArgoWatchWrapper.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ArgoWatchWrapper.m; sourceTree = "<group>"; };
 		007E091147E01AC7C7B463ECEF32B84C /* UIImage+MLNKit.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "UIImage+MLNKit.h"; sourceTree = "<group>"; };
 		009B8B132FCB6B57D162D2BFA0442BEF /* GPBDescriptor.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = GPBDescriptor.m; path = objectivec/GPBDescriptor.m; sourceTree = "<group>"; };
 		00ABBEC1E1639446C4405DE2C9F67310 /* UIView+Toast.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "UIView+Toast.h"; path = "Toast/UIView+Toast.h"; sourceTree = "<group>"; };
@@ -4387,6 +4391,8 @@
 				0047080724FE60EF00353B8F /* ArgoObservableArray.m */,
 				0047081F24FE613400353B8F /* ArgoLuaCacheAdapter.h */,
 				0047081E24FE613400353B8F /* ArgoLuaCacheAdapter.m */,
+				006E8FD92500F5C000DB3368 /* ArgoWatchWrapper.h */,
+				006E8FDA2500F5C000DB3368 /* ArgoWatchWrapper.m */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -4394,8 +4400,8 @@
 		0047080D24FE60FA00353B8F /* Listener */ = {
 			isa = PBXGroup;
 			children = (
-				0047080E24FE60FA00353B8F /* NSObject+ArgoListener.m */,
 				0047081224FE60FA00353B8F /* NSObject+ArgoListener.h */,
+				0047080E24FE60FA00353B8F /* NSObject+ArgoListener.m */,
 				0047081124FE60FA00353B8F /* ArgoListenerToken.h */,
 				0047081324FE60FA00353B8F /* ArgoListenerToken.m */,
 				0047080F24FE60FA00353B8F /* ArgoListenerWrapper.h */,
@@ -9462,6 +9468,7 @@
 				5E67DDA3A36E740A36F6D4A8BB709DC6 /* NSDictionary+MLNUIKVO.h in Headers */,
 				D6DC204D8E48E28C8DF183591D5F8ADF /* NSDictionary+MLNUISafety.h in Headers */,
 				4A0FDB95B9DDC7496BF37FC287EBDCAF /* NSError+MLNUICore.h in Headers */,
+				006E8FDB2500F5C000DB3368 /* ArgoWatchWrapper.h in Headers */,
 				2480357D57B57B2A6E6B11159E17CB8F /* NSMutableArray+MLNUIArray.h in Headers */,
 				7866DCE9F14557A19514D481609F2E96 /* NSMutableArray+MLNUICore.h in Headers */,
 				BD82AC9E89BADE3B8EF124DFB01B8148 /* NSMutableArray+MLNUIKVO.h in Headers */,
@@ -10614,6 +10621,7 @@
 				78AA5B9A3BE09710AF30558F484317CD /* MLNUIInternalWaterfallView.m in Sources */,
 				A1E5B09287A5EB778B27611899838471 /* MLNUIInvocation.m in Sources */,
 				B43CCD8065411F19EBDDA23CC2E255A1 /* MLNUIKeyframeAnimation.m in Sources */,
+				006E8FDC2500F5C000DB3368 /* ArgoWatchWrapper.m in Sources */,
 				4035648DA8A86938B4F6DC407CD98CF2 /* MLNUIKeyframeAnimationBuilder.m in Sources */,
 				33D326EFE88D1B675E7FFA0D45A87489 /* MLNUIKeyframeArray.m in Sources */,
 				F9988BCF5FD7655E1D13C81C38C1A22E /* MLNUIKiConvertor.m in Sources */,

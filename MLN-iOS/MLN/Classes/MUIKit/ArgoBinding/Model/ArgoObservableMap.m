@@ -55,6 +55,17 @@
     return [self.cacheAdapter getLuaTable:key];
 }
 
+- (ArgoWatchWrapper * _Nonnull (^)(NSString * _Nonnull))watch {
+    @weakify(self);
+    return ^ArgoWatchWrapper *(NSString *keyPath) {
+        @strongify(self);
+        ArgoWatchWrapper *watch = [ArgoWatchWrapper new];
+        watch.keyPath = keyPath;
+        watch.observerd = self;
+        return watch;
+    };
+}
+
 #pragma mark -
 
 - (NSMutableDictionary *)argoListeners {
