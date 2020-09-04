@@ -11,7 +11,10 @@ target 'LuaNative' do
   pod 'SDCycleScrollView','>= 1.80'
   pod 'Toast', '~> 4.0.0'
   pod 'FLEX'
+  pod 'Masonry'
+  pod 'YYModel'
 end
+
 
 target 'MLN_Tests' do
   inherit! :search_paths
