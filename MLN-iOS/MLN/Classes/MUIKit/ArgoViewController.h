@@ -31,9 +31,9 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, weak) id<ArgoViewControllerDelegate> delegate;
 
-- (instancetype)initWithEntryFileName:(NSString *)entryFileName;
+//- (instancetype)initWithEntryFileName:(NSString *)entryFileName;
 - (instancetype)initWithEntryFileName:(NSString *)entryFileName bundleName:(nullable NSString *)bundleName;
-- (instancetype)initWithEntryFileName:(NSString *)entryFileName bundle:(nullable NSBundle *)bundle NS_DESIGNATED_INITIALIZER;
+//- (instancetype)initWithEntryFileName:(NSString *)entryFileName bundle:(nullable NSBundle *)bundle NS_DESIGNATED_INITIALIZER;
 
 // 废弃的初始化方法
 + (instancetype)new NS_UNAVAILABLE;

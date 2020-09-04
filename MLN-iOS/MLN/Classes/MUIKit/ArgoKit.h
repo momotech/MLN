@@ -9,5 +9,7 @@
 #define ArgoKit_h
 
 #import "MLNUIKit.h"
+#import "ArgoObservableMap.h"
+#import "ArgoObservableArray.h"
 
 #endif /* ArgoKit_h */

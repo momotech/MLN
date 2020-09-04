@@ -24,7 +24,7 @@ NSString *const kArgoListenerWrapper = @"argo_wrapper";
 NSString *const kArgoConstString_Dot = @".";
 
 @implementation NSObject (ArgoListener)
-@dynamic argoListeners;
+//@dynamic argoListeners;
 //
 - (id<ArgoListenerProtocol>)argo_addListenerWithChangeBlock:(ArgoBlockChange)block object:(id<ArgoListenerProtocol>)object obID:(NSInteger)obid keyPath:(NSString *)keyPath paths:(NSArray *)paths filter:(ArgoListenerFilter)filter wrapper:(ArgoListenerWrapper *)wrapper {
     id<ArgoListenerProtocol>observed = object;
@@ -104,7 +104,7 @@ NSString *const kArgoConstString_Dot = @".";
         id<ArgoListenerProtocol> object = (id<ArgoListenerProtocol>)self;
         NSArray *paths = [kps componentsSeparatedByString:kArgoConstString_Dot];
         object = [self argo_addListenerWithChangeBlock:nil object:object obID:0 keyPath:nil paths:paths filter:filter wrapper:wrapper];
-        
+
         ArgoObservableArray *array = (ArgoObservableArray *)object;
         if ([array isKindOfClass:[ArgoObservableArray class]]) {
             [self argo_addArrayListenerWithChangeBlock:nil array:array obID:0 observedObject:object keyPath:nil filter:filter wrapper:wrapper];
@@ -140,7 +140,6 @@ NSString *const kArgoConstString_Dot = @".";
     if (wrapper) {
         NSNumber *k = @(wrapper.obID);
         [self.argoListeners setObject:wrapper forKey:k];
-
     }
 }
 
@@ -245,6 +244,10 @@ NSString *const kArgoConstString_Dot = @".";
     [object lua_putValue:value forKey: paths.lastObject];
 }
 
+#pragma mark - 数据类型不匹配时防止crash
+- (NSMutableDictionary<id<NSCopying>,ArgoListenerWrapper *> *)argoListeners { return nil; }
+- (NSObject *)lua_get:(NSString *)key {return nil;}
+- (void)lua_putValue:(NSObject *)value forKey:(NSString *)key {}
 @end
 
 

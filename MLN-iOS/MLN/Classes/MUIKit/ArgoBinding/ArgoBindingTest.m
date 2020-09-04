@@ -5,7 +5,7 @@
 //  Created by Dongpeng Dai on 2020/8/25.
 //
 
-#if 1
+#if 0
 //#import "ArgoBindingTest.h"
 #import "ArgoObservableMap.h"
 #import "ArgoObservableArray.h"

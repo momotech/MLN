@@ -18,7 +18,8 @@
 //
 @property (nonatomic, strong) NSMutableDictionary *argoListeners;
 @property (nonatomic, strong) ArgoLuaCacheAdapter *cacheAdapter;
-
+//@property (nonatomic, copy, readonly) ArgoObservableMap *(^set)(NSString *key, NSObject *value);
+//@property (nonatomic, copy, readonly) NSObject *(^get)(NSString *key);
 @end
 
 @implementation ArgoObservableMap
@@ -35,6 +36,11 @@
 
 - (void)native_putValue:(NSObject *)value forKey:(NSString *)key {
     [self _putValue:value forKey:key context:ArgoWatchContext_Native];
+}
+
+- (NSObject *)native_getValueForKey:(NSString *)key {
+    if(!key) return nil;
+    return [self.proxy objectForKey:key];
 }
 
 - (void)_putValue:(NSObject *)value forKey:(NSString *)key context:(ArgoWatchContext)context {
@@ -72,6 +78,22 @@
     };
 }
 
+- (ArgoObservableMap * _Nonnull (^)(NSString * _Nonnull, NSObject * _Nonnull))set {
+    @weakify(self);
+    return ^(NSString *k, NSObject *v) {
+        @strongify(self);
+        [self native_putValue:v forKey:k];
+        return self;
+    };
+}
+
+- (NSObject * _Nonnull (^)(NSString * _Nonnull))get {
+    @weakify(self);
+    return ^(NSString *k) {
+        @strongify(self);
+        return [self native_getValueForKey:k];
+    };
+}
 #pragma mark -
 
 - (NSMutableDictionary *)argoListeners {
@@ -187,7 +209,7 @@
 }
 
 - (id)objectForKey:(id)aKey {
-    return [self lua_get:aKey];
+    return [self native_getValueForKey:aKey];
 }
 
 - (NSEnumerator *)keyEnumerator {

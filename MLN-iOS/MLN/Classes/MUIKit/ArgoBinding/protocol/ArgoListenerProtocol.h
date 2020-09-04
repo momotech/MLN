@@ -56,6 +56,7 @@ typedef BOOL(^ArgoListenerFilter)(ArgoObserverContext context, NSDictionary *cha
 //- (ArgoListenerWrapper *)addObserverWithChangeBlock:(ArgoBlockChange)block forKeyPath:(NSString *)keyPath;
 - (NSObject *)lua_get:(NSString *)key;
 - (void)lua_putValue:(NSObject *)value forKey:(NSString *)key;
+@property (nonatomic, strong, readonly) NSMutableDictionary <id<NSCopying>, ArgoListenerWrapper *> *argoListeners;
 
 @end 
 #endif /* ArgoListenerProtocol_h */

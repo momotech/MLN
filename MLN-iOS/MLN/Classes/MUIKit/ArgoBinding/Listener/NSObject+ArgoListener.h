@@ -10,9 +10,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 //只用于 ArgoObservableMap & ArgoObservableArray
-
 @interface NSObject (ArgoListener) <ArgoListenerCategoryProtocol>
-@property (nonatomic, strong, readonly) NSMutableDictionary <id<NSCopying>, ArgoListenerWrapper *> *argoListeners;
+
 @end
 
 NS_ASSUME_NONNULL_END
