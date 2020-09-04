@@ -176,6 +176,28 @@ static MLNUI_FORCE_INLINE int mlnui_pushTable(lua_State *L, void * key, MLNUILua
     lua_pop(L, 1);
 }
 
+#define aux_getn(L,n)    (luaL_checktype(L, n, LUA_TTABLE), luaL_getn(L, n))
+- (void)inseretObject:(NSObject *)obj index:(int)index {
+    lua_State *L = self.luaCore.state;
+    MLNUIAssert(self.luaCore, L, @"The lua state must not be nil!");
+    mlnui_pushTable(L, (__bridge void *)(self), self.env);
+    int e = luaL_getn(L, -1) + 1;
+    if(index > e) e = index;
+    for (int i = e; i > index; i--) {
+        lua_rawgeti(L, -1, i - 1);
+        lua_rawseti(L, -2, i); /**t[i] = t[i-1]*/
+    }
+    NSError *error;
+    [MLNUI_LUA_CORE(L).convertor pushArgoBindingNativeObject:obj error:&error];
+    if (error) {
+        lua_pop(L, 1);
+        return;
+    }
+    luaL_setn(L, -2, e);
+    lua_rawseti(L, -2, index);
+    lua_pop(L, 1);
+}
+
 - (void)setObject:(id<MLNUIEntityExportProtocol>)obj cKey:(void *)cKey
 {
     lua_State *L = self.luaCore.state;

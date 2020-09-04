@@ -71,7 +71,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)setObject:(id<MLNUIEntityExportProtocol>)obj index:(int)index;
 - (void)rawsetObject:(NSObject *)obj index:(int)index;
-
+- (void)inseretObject:(NSObject *)obj index:(int)index;
 /**
  设置key-value
  
