@@ -1917,6 +1917,8 @@
 		FA11EA4795AE37F93733CF1F71FC0488 /* SpringAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = C5A44DC869A444D4D1E1576EE7181A1F /* SpringAnimation.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		FA1545F66421BEB6883A84730CACE0B1 /* PberrorCommand.pbobjc.m in Sources */ = {isa = PBXBuildFile; fileRef = D069122DA2AB7F29DEC4FB5659E4D7B3 /* PberrorCommand.pbobjc.m */; };
 		FA192E1964BAD3619E1A06EFDEE273E0 /* LNClientFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = 513C9173334F2E2C02576B16AD4A6FEB /* LNClientFactory.m */; };
+		FA75311A250225A1008AFCD2 /* MLNUIModelKeyPathComparator.h in Headers */ = {isa = PBXBuildFile; fileRef = FA753118250225A0008AFCD2 /* MLNUIModelKeyPathComparator.h */; };
+		FA75311B250225A1008AFCD2 /* MLNUIModelKeyPathComparator.m in Sources */ = {isa = PBXBuildFile; fileRef = FA753119250225A1008AFCD2 /* MLNUIModelKeyPathComparator.m */; };
 		FA76319532636B6DC2C6C97F4D93DF69 /* MLNUICornerManagerTool.m in Sources */ = {isa = PBXBuildFile; fileRef = F9D5EA6D7BA7AA277CDACAB113FF041D /* MLNUICornerManagerTool.m */; };
 		FA856F604EE3DBDDB6FD93562353E2EB /* NSObject+MLNUISwizzle.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B6A442ADB15C39EA939E61BB4049495 /* NSObject+MLNUISwizzle.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		FA9000B8F17680D061BAB0386B55C329 /* MLNSize.h in Headers */ = {isa = PBXBuildFile; fileRef = F6DCFA8890D80AF9ABCE1CD07717C461 /* MLNSize.h */; settings = {ATTRIBUTES = (Project, ); }; };
@@ -4102,6 +4104,8 @@
 		FA13F2CA6BE6C657639B88821DC1DA8A /* MLNStackConst.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLNStackConst.m; sourceTree = "<group>"; };
 		FA6083077EA20771CF0D58234D209EE8 /* MLNReuseContentView.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLNReuseContentView.h; sourceTree = "<group>"; };
 		FA6E8627AB4CC3281CE8D360B31B410C /* MLNLayoutNodeFactory.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLNLayoutNodeFactory.m; sourceTree = "<group>"; };
+		FA753118250225A0008AFCD2 /* MLNUIModelKeyPathComparator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLNUIModelKeyPathComparator.h; sourceTree = "<group>"; };
+		FA753119250225A1008AFCD2 /* MLNUIModelKeyPathComparator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLNUIModelKeyPathComparator.m; sourceTree = "<group>"; };
 		FA95F22681393AE298F4049E710F8203 /* NSMutableArray+MLNUIArray.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "NSMutableArray+MLNUIArray.m"; sourceTree = "<group>"; };
 		FAAC8A89FB5767DA960947F1E160B55D /* MLNUIAlphaAnimation.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLNUIAlphaAnimation.h; sourceTree = "<group>"; };
 		FABD6F50795C4C05A69CBA91A04350FF /* utils.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = utils.h; sourceTree = "<group>"; };
@@ -5863,6 +5867,8 @@
 				043B75C1BFEF00EDA8F3C0FAC4DDCAE4 /* MLNUIKiConvertor.m */,
 				B7EE00EC80608657E9E701852B3C9535 /* MLNUIModelHandler.h */,
 				3BCDA80581893331C58818AC8B814126 /* MLNUIModelHandler.m */,
+				FA753118250225A0008AFCD2 /* MLNUIModelKeyPathComparator.h */,
+				FA753119250225A1008AFCD2 /* MLNUIModelKeyPathComparator.m */,
 			);
 			name = Convertor;
 			path = "MLN-iOS/MLN/Classes/MUIKit/Convertor";
@@ -8824,6 +8830,7 @@
 				ED36B22AE5D1F26981BB4CB71F032FC5 /* MLNUICanvasView.h in Headers */,
 				FBC9DD8C33C5D347F38499D58170CE4E /* MLNUIClipboard.h in Headers */,
 				569EF621A15B8DF2FCFB59B250C894B3 /* MLNUICollectionLayout.h in Headers */,
+				FA75311A250225A1008AFCD2 /* MLNUIModelKeyPathComparator.h in Headers */,
 				A6127FB436CAC1A2BBD25FCBF19D6DD8 /* MLNUICollectionView.h in Headers */,
 				1DAE665F2C8809337F87DAAE2EA32DAD /* MLNUICollectionViewAdapter.h in Headers */,
 				A8B2FC0BE433F62B19D2279A0A17BD9F /* MLNUICollectionViewAdapterProtocol.h in Headers */,
@@ -10724,6 +10731,7 @@
 				70798A1588246BB2AD733FBC92E5AAF4 /* MLNUIViewPagerAdapter.m in Sources */,
 				C88D68CFB7A54B567D5BE1585C962DF8 /* MLNUIVStack.m in Sources */,
 				66A1506B43CC6422DFB3AFD634809AED /* MLNUIWaterfallAdapter.m in Sources */,
+				FA75311B250225A1008AFCD2 /* MLNUIModelKeyPathComparator.m in Sources */,
 				CEF18AAEECE304EF80D4D1659E173001 /* MLNUIWaterfallHeaderView.m in Sources */,
 				BF7B47A0D517A694C1180C8F137B545D /* MLNUIWaterfallLayout.m in Sources */,
 				E9CC414C32313410FFF96582C2B79EBA /* MLNUIWaterfallView.m in Sources */,
