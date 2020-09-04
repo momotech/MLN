@@ -9,7 +9,7 @@
 
 @protocol MLNUIModelHandlerProtocol <NSObject>
 @optional
-/// @return YES 启用 viewmodel 和 服务器返回数据的 key-path 校验功能
+/// @return YES 启用 viewModel 和 服务器返回数据的 key-path 校验功能
 - (BOOL)isCompareKeyPath;
 /// @return 返回 viewModel 的 key-path 字典功能，ArgoUI 自动生成。
 - (NSMutableDictionary *_Nonnull)keyPaths;

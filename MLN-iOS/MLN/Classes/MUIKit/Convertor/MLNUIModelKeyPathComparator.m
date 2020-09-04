@@ -10,17 +10,17 @@
 #import "MLNUIModelHandler.h"
 
 #if DEBUG
-#define ARGOUI_ERROR_LOG(errmsg) printf("ArgoUI Error: %s\n.", errmsg.UTF8String ?: "(null)");
+#define ARGOUI_ERROR_LOG(errMsg) printf("ArgoUI Error: %s\n.", errMsg.UTF8String ?: "(null)");
 #else
-#define ARGOUI_ERROR_LOG(errmsg)
+#define ARGOUI_ERROR_LOG(errMsg)
 #endif
 
 @implementation MLNUIModelKeyPathComparator
 #if DEBUG
 
-/// 获取是否要对 viewModel 和 服务器返回的数据的 keypath 进行对比的条件。
-/// @param model 从 ArgoUI 里面导出的 viweModel，默认有 isCompareKeyPath 这个方法。
-/// @return YES, 进行对比，NO，不进行对比， release 下，NO，也不进行对比。
+/// 获取是否要对 viewModel 和 服务器返回的数据的 keyPath 进行对比的条件。
+/// @param model 从 ArgoUI 里面导出的 viewModel，默认有 isCompareKeyPath 这个方法。
+/// @return YES, 进行对比，NO，不进行对比， release 下 YES 也不进行对比。
 + (BOOL)getCompareSwitchWithModel:(nonnull NSObject <MLNUIModelHandlerProtocol>*)model {
     BOOL compareSwitch = NO;
     if ([model respondsToSelector:@selector(isCompareKeyPath)]) {
@@ -40,24 +40,24 @@
     lua_pcall(L, 1, 0, 0);
     lua_getglobal(L, "KeyPathMap");
 
-    NSError      *vmerror;
-    NSDictionary *KeyPathMap = (NSDictionary *) [luaCore toNativeObject:-1 error:&vmerror];
+    NSError      *vmError;
+    NSDictionary *keyPathMap = (NSDictionary *) [luaCore toNativeObject:-1 error:&vmError];
 
-    if (vmerror) {
-        NSString *errmsg = [NSString stringWithFormat:@"The functionChunk called error. (%s)", [vmerror localizedDescription].UTF8String];
-        ARGOUI_ERROR_LOG(errmsg);
+    if (vmError) {
+        NSString *errMsg = [NSString stringWithFormat:@"The functionChunk called error. (%s)", [vmError localizedDescription].UTF8String];
+        ARGOUI_ERROR_LOG(errMsg);
         lua_pop(L, -1);
         return;
     }
 
-    if (!KeyPathMap || KeyPathMap.allKeys.count == 0) {
+    if (!keyPathMap || keyPathMap.allKeys.count == 0) {
         lua_pop(L, -1);
         return;
     }
 
     if ([model respondsToSelector:@selector(keyPaths)]) {
         NSDictionary *keyPaths = [model keyPaths];
-        [self diffBetween:KeyPathMap and:keyPaths pk:@""];
+        [self diffBetween:keyPathMap and:keyPaths pk:@""];
     }
 
     lua_pop(L, -1);
@@ -65,7 +65,7 @@
 
 + (void)diffBetween:(NSDictionary *)origin and:(NSDictionary *)standard pk:(NSString *)pk {
     if (!origin) {
-        NSLog(@"keypath compare: %@ 没有赋值", pk);
+        NSLog(@"keyPath compare: %@ 没有赋值", pk);
         return;
     }
 
@@ -74,7 +74,7 @@
     [standard enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
         if ([obj isKindOfClass:[NSArray class]]) {
             if (!origin[key]) {
-                NSLog(@"keypath compare: %@ 没有赋值", [pk stringByAppendingFormat:@"%@%@", dot, key]);
+                NSLog(@"keyPath compare: %@ 没有赋值", [pk stringByAppendingFormat:@"%@%@", dot, key]);
             }
             for (int i = 0; i < [origin[key] count]; ++i) {
                 [self diffBetween:origin[key][i] and:obj[0] pk:[pk stringByAppendingFormat:@"%@%@.%d", dot, key, i]];
@@ -83,7 +83,7 @@
             [self diffBetween:origin[key] and:obj pk:[pk stringByAppendingFormat:@"%@%@", dot, key]];
         } else {
             if (![origin.allKeys containsObject:key]) {
-                NSLog(@"keypath compare: %@ 没有赋值", [pk stringByAppendingFormat:@"%@%@", dot, key]);
+                NSLog(@"keyPath compare: %@ 没有赋值", [pk stringByAppendingFormat:@"%@%@", dot, key]);
             }
         }
     }];
