@@ -95,6 +95,8 @@
 #import "MLNUIHStack.h"
 #import "MLNUISpacer.h"
 
+#import "ArgoDataBindingCBridge.h"
+
 @interface MLNUIKitBridgesManager()
 /**
  承载Kit库bridge和LuaCore实例

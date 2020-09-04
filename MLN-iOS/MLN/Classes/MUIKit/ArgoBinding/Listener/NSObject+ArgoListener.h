@@ -7,11 +7,15 @@
 
 #import <Foundation/Foundation.h>
 #import "ArgoListenerProtocol.h"
+#import "ArgoObservableMap.h"
+#import "ArgoObservableArray.h"
 
 NS_ASSUME_NONNULL_BEGIN
-//只用于 ArgoObservableMap & ArgoObservableArray
-@interface NSObject (ArgoListener) <ArgoListenerCategoryProtocol>
 
+@interface ArgoObservableMap (ArgoListener) <ArgoListenerProtocol>
+@end
+
+@interface ArgoObservableArray (ArgoListener) <ArgoListenerProtocol>
 @end
 
 NS_ASSUME_NONNULL_END

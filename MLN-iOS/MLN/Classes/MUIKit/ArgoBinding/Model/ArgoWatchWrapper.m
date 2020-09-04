@@ -10,6 +10,7 @@
 #import "ArgoListenerProtocol.h"
 #import "ArgoObservableMap.h"
 #import "ArgoObservableArray.h"
+#import "NSObject+ArgoListener.h"
 
 ArgoFilterBlock kArgoFilter_Lua = ^(ArgoWatchContext context, id value){
     if(context == ArgoWatchContext_Lua)

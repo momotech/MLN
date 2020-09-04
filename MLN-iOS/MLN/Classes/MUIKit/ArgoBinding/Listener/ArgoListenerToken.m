@@ -6,6 +6,7 @@
 //
 
 #import "ArgoListenerToken.h"
+#import "NSObject+ArgoListener.h"
 
 @interface ArgoListenerToken ()
 

@@ -21,6 +21,7 @@
 #import "ArgoObserverHelper.h"
 #import "MLNUILuaTable.h"
 #import "MLNUIHeader.h"
+#import "NSObject+ArgoListener.h"
 
 @implementation ArgoDataBindingCBridge
 

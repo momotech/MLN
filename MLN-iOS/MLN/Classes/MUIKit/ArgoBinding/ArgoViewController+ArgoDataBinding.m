@@ -15,12 +15,12 @@
 
 @implementation ArgoViewController (ArgoDataBinding)
 
-- (void)bindData:(NSObject *)data {
-    [self.argo_dataBinding bindData:data];
+- (void)bindData:(NSObject<ArgoObservableObject> *)data {
+    [self.argo_dataBinding bindData:(id<ArgoListenerProtocol>)data];
 }
 
-- (void)bindData:(NSObject *)data forKey:(NSString *)key {
-    [self.argo_dataBinding bindData:data forKey:key];
+- (void)bindData:(NSObject<ArgoObservableObject> *)data forKey:(NSString *)key {
+    [self.argo_dataBinding bindData:(id<ArgoListenerProtocol>)data forKey:key];
 }
 
 - (ArgoDataBinding *)argo_dataBinding {

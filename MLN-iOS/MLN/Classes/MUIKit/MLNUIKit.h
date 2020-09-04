@@ -21,8 +21,6 @@
 #import "MLNUIDataBinding.h"
 #import "MLNUIDataBindingCBridge.h"
 // argo db
-#import "ArgoDataBinding.h"
-#import "ArgoDataBindingCBridge.h"
 #import "ArgoViewController.h"
 #import "ArgoViewController+ArgoDataBinding.h"
 

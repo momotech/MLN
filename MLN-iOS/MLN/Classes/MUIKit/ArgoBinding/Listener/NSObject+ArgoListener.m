@@ -23,6 +23,10 @@ NSString *const kArgoListenerWrapper = @"argo_wrapper";
 
 NSString *const kArgoConstString_Dot = @".";
 
+//只用于 ArgoObservableMap & ArgoObservableArray
+@interface NSObject (ArgoListener) <ArgoListenerCategoryProtocol>
+@end
+
 @implementation NSObject (ArgoListener)
 //@dynamic argoListeners;
 //
@@ -127,7 +131,7 @@ NSString *const kArgoConstString_Dot = @".";
     
     for (int i = 1; i < paths.count; i++) {
         NSString *key = paths[i];
-        object = (NSObject<ArgoListenerProtocol> *)[object lua_get:key];
+        object = (id<ArgoListenerProtocol>)[object lua_get:key];
         [object removeListenerWithOBID:token.tokenID];
     }
 }

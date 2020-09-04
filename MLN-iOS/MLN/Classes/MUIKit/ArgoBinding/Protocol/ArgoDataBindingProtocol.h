@@ -7,15 +7,15 @@
 
 #ifndef ArgoDataBindingProtocol_h
 #define ArgoDataBindingProtocol_h
-
+#import "ArgoObservableObject.h"
 
 @class ArgoDataBinding;
 @protocol ArgoDataBindingProtocol <NSObject>
 
 @property (nonatomic, strong, readonly) ArgoDataBinding * _Nonnull argo_dataBinding;
 
-- (void)bindData:(NSObject *_Nonnull)data;
-- (void)bindData:(NSObject *_Nonnull)data forKey:(NSString *_Nonnull)key;
+- (void)bindData:(NSObject <ArgoObservableObject> *_Nonnull)data;
+- (void)bindData:(NSObject <ArgoObservableObject> *_Nonnull)data forKey:(NSString *_Nonnull)key;
 
 @end
 

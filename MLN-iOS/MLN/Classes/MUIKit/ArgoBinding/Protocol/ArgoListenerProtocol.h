@@ -28,6 +28,13 @@ typedef BOOL(^ArgoListenerFilter)(ArgoObserverContext context, NSDictionary *cha
 @property (nonatomic, assign) NSInteger tokenID;
 @end
 
+@protocol ArgoListenerLuaTableProtocol <NSObject>
+
+- (void)addLuaTabe:(MLNUILuaTable *)table;
+- (MLNUILuaTable *)getLuaTable:(id<NSCopying>)key;
+
+@end
+
 @protocol ArgoListenerCategoryProtocol <NSObject>
 - (id <ArgoListenerToken>)addArgoListenerWithChangeBlock:(ArgoBlockChange)block forKeyPath:(NSString *)keyPath;
 - (id <ArgoListenerToken>)addArgoListenerWithChangeBlock:(ArgoBlockChange)block forKeyPath:(NSString *)keyPath filter:(ArgoListenerFilter)filter;
@@ -45,14 +52,7 @@ typedef BOOL(^ArgoListenerFilter)(ArgoObserverContext context, NSDictionary *cha
 
 @end
 
-@protocol ArgoListenerLuaTableProtocol <NSObject>
-
-- (void)addLuaTabe:(MLNUILuaTable *)table;
-- (MLNUILuaTable *)getLuaTable:(id<NSCopying>)key;
-
-@end
-
-@protocol  ArgoListenerProtocol <ArgoListenerCategoryProtocol, ArgoListenerLuaTableProtocol>
+@protocol  ArgoListenerProtocol <ArgoListenerLuaTableProtocol, ArgoListenerCategoryProtocol>
 //- (ArgoListenerWrapper *)addObserverWithChangeBlock:(ArgoBlockChange)block forKeyPath:(NSString *)keyPath;
 - (NSObject *)lua_get:(NSString *)key;
 - (void)lua_putValue:(NSObject *)value forKey:(NSString *)key;

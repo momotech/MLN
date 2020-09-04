@@ -14,6 +14,7 @@
 #import "MLNUIRect.h"
 #import "MLNUISize.h"
 #import "MLNUIPoint.h"
+#import "NSObject+ArgoListener.h"
 
 #pragma mark - to obj
 static MLNUI_FORCE_INLINE NSString * __argo__tonsstring (lua_State *L, int idx, NSError **error) {

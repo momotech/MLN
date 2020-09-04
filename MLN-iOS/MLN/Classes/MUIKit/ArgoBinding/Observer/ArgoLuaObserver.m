@@ -11,6 +11,7 @@
 #import "NSObject+MLNUIReflect.h"
 #import "MLNUIMetamacros.h"
 #import "MLNUIBlock+LazyCall.h"
+#import "NSObject+ArgoListener.h"
 
 @interface ArgoLuaObserver ()
 @property (nonatomic, strong, readwrite) MLNUIBlock *block;

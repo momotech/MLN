@@ -6,12 +6,12 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "ArgoListenerProtocol.h"
 #import "ArgoWatchWrapper.h"
+#import "ArgoObservableObject.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface ArgoObservableArray : NSMutableArray <ArgoListenerProtocol>
+@interface ArgoObservableArray : NSMutableArray <ArgoObservableObject>
 @property (nonatomic, copy, readonly) ArgoWatchArrayWrapper *(^watch)(void);
 @end
 

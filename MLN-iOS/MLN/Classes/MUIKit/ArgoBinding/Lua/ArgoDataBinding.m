@@ -22,6 +22,7 @@
 #import "MLNUITableView.h"
 #import "MLNUICollectionView.h"
 #import "MLNUILuaTable.h"
+#import "NSObject+ArgoListener.h"
 
 @interface _ArgoBindCellInternalModel : NSObject
 //@property (nonatomic, strong) NSMutableDictionary *pathMap;
