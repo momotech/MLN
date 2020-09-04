@@ -9,8 +9,9 @@
 #import "ArgoListenerProtocol.h"
 
 NS_ASSUME_NONNULL_BEGIN
-
-typedef void(^ArgoWatchBlock)(id oldValue, id newValue, id observedObject);
+@class ArgoObservableMap, ArgoObservableArray;
+typedef void(^ArgoWatchBlock)(id oldValue, id newValue, ArgoObservableMap *map);
+typedef void(^ArgoWatchArrayBlock)(ArgoObservableArray *array, NSDictionary *change);
 
 typedef NS_ENUM(NSUInteger, ArgoWatchContext) {
     ArgoWatchContext_Native,
@@ -30,7 +31,17 @@ extern ArgoFilterBlock kArgoFilter_Native;
 @property (nonatomic, copy, readonly) ArgoWatchWrapper *(^filter)(ArgoFilterBlock block);
 @property (nonatomic, copy, readonly) ArgoWatchWrapper *(^callback)(ArgoWatchBlock block);
 
-+ (instancetype)wrapperWithKeyPath:(NSString *)keyPath observedObject:(id<ArgoListenerProtocol>)observedObject;
++ (instancetype)wrapperWithKeyPath:(NSString *)keyPath observedObject:(ArgoObservableMap *)observedObject;
+- (void)unwatch;
+
+@end
+
+@interface ArgoWatchArrayWrapper : NSObject
+
+@property (nonatomic, copy, readonly) ArgoWatchArrayWrapper *(^filter)(ArgoFilterBlock block);
+@property (nonatomic, copy, readonly) ArgoWatchArrayWrapper *(^callback)(ArgoWatchArrayBlock block);
++ (instancetype)wrapperWithObservedObject:(ArgoObservableArray *)observedObject;
+- (void)unwatch;
 
 @end
 

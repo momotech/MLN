@@ -23,24 +23,54 @@
 //    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(4 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
 //        [obj testString];
 //    });
-    [obj testWatch];
+//    [obj testWatch];
+    [obj testArrayWatch];
+}
+
+- (void)testArrayWatch {
+    ArgoObservableArray *array = [ArgoObservableArray new];
+//    [array addArgoListenerWithChangeBlock:^(NSString *keyPath, id<ArgoListenerProtocol> object, NSDictionary *change) {
+//        NSLog(@"");
+//    } forKeyPath:@""];
+    
+    ArgoWatchArrayWrapper *wrap = array
+    .watch()
+    .filter(^BOOL(ArgoWatchContext context, id  _Nonnull newValue) {
+        return YES;
+    })
+    .callback(^(ArgoObservableArray * _Nonnull array, NSDictionary * _Nonnull change) {
+        NSLog(@"");
+    });
+
+    [array addObject:@"aa"];
+    array[1] = @"bb";
+    [array replaceObjectAtIndex:0 withObject:@"change"];
+    [wrap unwatch];
+    
+    [array addObject:@"cc"];
+    [self testWatch];
 }
 
 - (void)testWatch {
     ArgoObservableMap *map = [ArgoObservableMap new];
-    
-    map
-    .watch(@"k3")
-    .callback(^(id  _Nonnull oldValue, id  _Nonnull newValue, id  _Nonnull observedObject) {
+    ArgoWatchWrapper *wrap = map
+    .watch(@"list")
+    .filter(kArgoFilter_Native)
+    .callback(^(id  _Nonnull oldValue, id  _Nonnull newValue, ArgoObservableMap * _Nonnull map) {
+        // ...
         NSLog(@"");
-    })
-    .filter(^BOOL(ArgoWatchContext context, id  _Nonnull newValue) {
-        return YES;
     });
-   
     
     [map setObject:@"v1" forKey:@"k1"];
     [map setObject:@"v3" forKey:@"k3"];
+
+    ArgoObservableArray *array = [ArgoObservableArray new];
+    [map setObject:array forKey:@"list"];
+    [map setObject:array forKey:@"list"];
+
+    [array addObject:@"aa"];
+    [wrap unwatch];
+    [map setObject:array forKey:@"list"];
 
 }
 

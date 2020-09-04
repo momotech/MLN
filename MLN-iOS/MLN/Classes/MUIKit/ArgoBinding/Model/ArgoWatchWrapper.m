@@ -7,6 +7,9 @@
 
 #import "ArgoWatchWrapper.h"
 #import "MLNUIExtScope.h"
+#import "ArgoListenerProtocol.h"
+#import "ArgoObservableMap.h"
+#import "ArgoObservableArray.h"
 
 ArgoFilterBlock kArgoFilter_Lua = ^(ArgoWatchContext context, id value){
     if(context == ArgoWatchContext_Lua)
@@ -23,13 +26,14 @@ ArgoFilterBlock kArgoFilter_Native = ^(ArgoWatchContext context, id value){
 @interface ArgoWatchWrapper ()
 @property (nonatomic, copy) NSString *keyPath;
 @property (nonatomic, copy) ArgoFilterBlock filterBlock;
-//@property (nonatomic, copy) ArgoWatchBlock callbackBlock;
-@property (nonatomic, weak) id<ArgoListenerProtocol> observerd;
+@property (nonatomic, copy) ArgoWatchBlock watchBlock;
+@property (nonatomic, weak) ArgoObservableMap *observerd;
+@property (nonatomic, strong) id<ArgoListenerToken> token;
 @end
 
 @implementation ArgoWatchWrapper
 
-+ (instancetype)wrapperWithKeyPath:(NSString *)keyPath observedObject:(id<ArgoListenerProtocol>)observedObject {
++ (instancetype)wrapperWithKeyPath:(NSString *)keyPath observedObject:(ArgoObservableMap *)observedObject {
     ArgoWatchWrapper *watch = [self new];
     watch.keyPath = keyPath;
     watch.observerd = observedObject;
@@ -49,18 +53,75 @@ ArgoFilterBlock kArgoFilter_Native = ^(ArgoWatchContext context, id value){
     @weakify(self);
     return ^(ArgoWatchBlock block){
         @strongify(self);
+        self.watchBlock = block;
         if (self.keyPath && block) {
-            [self.observerd addArgoListenerWithChangeBlock:^(NSString *keyPath, id<ArgoListenerProtocol> object, NSDictionary *change) {
+            self.token = [self.observerd addArgoListenerWithChangeBlock:^(NSString *keyPath, id<ArgoListenerProtocol> object, NSDictionary *change) {
+                NSObject *old = [change objectForKey:NSKeyValueChangeOldKey];
                 NSObject *new = [change objectForKey:NSKeyValueChangeNewKey];
                 ArgoWatchContext context = [[change objectForKey:kArgoListenerContext] unsignedIntegerValue];
                 if (self.filterBlock && !self.filterBlock(context, new)) {
                     return;
                 }
-                block(nil, new, self);
+                NSKeyValueChange type = [[change objectForKey:NSKeyValueChangeKindKey] unsignedIntegerValue];
+                if (type == NSKeyValueChangeSetting) {
+                    block(old, new, self.observerd);
+                }
             } forKeyPath:self.keyPath];
         }
         return self;
     };
+}
+
+- (void)unwatch {
+    [self.token removeListener];
+}
+
+@end
+
+@interface ArgoWatchArrayWrapper ()
+@property (nonatomic, copy) ArgoFilterBlock filterBlock;
+@property (nonatomic, weak) ArgoObservableArray *observerd;
+@property (nonatomic, strong) id<ArgoListenerToken> token;
+@end
+
+@implementation ArgoWatchArrayWrapper
+
++ (instancetype)wrapperWithObservedObject:(ArgoObservableArray *)observedObject {
+    ArgoWatchArrayWrapper *wrap = [ArgoWatchArrayWrapper new];
+    wrap.observerd = observedObject;
+    return wrap;
+}
+
+- (ArgoWatchArrayWrapper * _Nonnull (^)(ArgoFilterBlock _Nonnull))filter {
+    @weakify(self);
+    return ^(ArgoFilterBlock block){
+        @strongify(self);
+        self.filterBlock = block;
+        return self;
+    };
+}
+
+- (ArgoWatchArrayWrapper * _Nonnull (^)(ArgoWatchArrayBlock _Nonnull))callback {
+    @weakify(self);
+    return ^(ArgoWatchArrayBlock block){
+        @strongify(self);
+        if (block) {
+            self.token = [self.observerd addArgoListenerWithChangeBlock:^(NSString *keyPath, id<ArgoListenerProtocol> object, NSDictionary *change) {
+//                NSObject *old = [change objectForKey:NSKeyValueChangeOldKey];
+                NSObject *new = [change objectForKey:NSKeyValueChangeNewKey];
+                ArgoWatchContext context = [[change objectForKey:kArgoListenerContext] unsignedIntegerValue];
+                if (self.filterBlock && !self.filterBlock(context, new)) {
+                    return;
+                }
+                block(self.observerd,change);
+            } forKeyPath:nil filter:nil];
+        }
+        return self;
+    };
+}
+
+- (void)unwatch {
+    [self.token removeListener];
 }
 
 @end

@@ -85,6 +85,13 @@
     return NO;
 }
 
+- (ArgoWatchArrayWrapper * _Nonnull (^)(void))watch {
+    return ^(void){
+        ArgoWatchArrayWrapper *wrap = [ArgoWatchArrayWrapper wrapperWithObservedObject:self];
+        return wrap;
+    };
+}
+
 #pragma mark - CustomMutableArray
 - (instancetype)initWithMutableArray:(NSMutableArray*)array {
     if((self = [super init])) {
