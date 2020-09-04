@@ -46,12 +46,12 @@
     if (vmerror) {
         NSString *errmsg = [NSString stringWithFormat:@"The functionChunk called error. (%s)", [vmerror localizedDescription].UTF8String];
         ARGOUI_ERROR_LOG(errmsg);
-        lua_insert(L, -2);
+        lua_pop(L, -1);
         return;
     }
 
     if (!KeyPathMap || KeyPathMap.allKeys.count == 0) {
-        lua_insert(L, -2);
+        lua_pop(L, -1);
         return;
     }
 
@@ -60,7 +60,7 @@
         [self diffBetween:KeyPathMap and:keyPaths pk:@""];
     }
 
-    lua_insert(L, -2);
+    lua_pop(L, -1);
 }
 
 + (void)diffBetween:(NSDictionary *)origin and:(NSDictionary *)standard pk:(NSString *)pk {
