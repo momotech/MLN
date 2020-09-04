@@ -74,6 +74,9 @@ NSString *const kArgoConstString_Dot = @".";
 - (id<ArgoListenerToken>)addArgoListenerWithChangeBlock:(ArgoBlockChange)block forKeyPath:(NSString *)keyPath filter:(ArgoListenerFilter)filter {
     //    NSMutableArray *wps = [NSMutableArray array];
 //        ArgoOBID++;
+    if ([self isKindOfClass:[ArgoObservableArray class]]) {
+        keyPath = nil;
+    }
     NSInteger obid = [self.class getID];
     NSArray *paths = [keyPath componentsSeparatedByString:kArgoConstString_Dot];
     id<ArgoListenerProtocol> object = (id<ArgoListenerProtocol>)self;
@@ -96,7 +99,7 @@ NSString *const kArgoConstString_Dot = @".";
 
 - (id<ArgoListenerToken>)addArgoListenerWithChangeBlockForAllKeys:(ArgoBlockChange)block filter:(ArgoListenerFilter)filter keyPaths:(NSArray *)keyPaths {
     NSInteger obid = [self.class getID];
-    ArgoListenerWrapper *wrapper = [ArgoListenerWrapper wrapperWithID:obid block:block observedObject:self keyPath:kArgoListenALL key:kArgoListenALL filter:filter];
+    ArgoListenerWrapper *wrapper = [ArgoListenerWrapper wrapperWithID:obid block:block observedObject:(id<ArgoListenerProtocol>)self keyPath:kArgoListenALL key:kArgoListenALL filter:filter];
     for (NSString *kps in keyPaths) {
         id<ArgoListenerProtocol> object = (id<ArgoListenerProtocol>)self;
         NSArray *paths = [kps componentsSeparatedByString:kArgoConstString_Dot];
@@ -120,10 +123,12 @@ NSString *const kArgoConstString_Dot = @".";
 - (void)removeArgoListenerWithToken:(ArgoListenerToken *)token {
     NSArray *paths = [token.keyPath componentsSeparatedByString:kArgoConstString_Dot];
     NSObject<ArgoListenerProtocol> *object = (NSObject<ArgoListenerProtocol> *)self;
-    for (int i = 0; i < paths.count; i++) {
-        [object removeListenerWithOBID:token.tokenID];
+    [object removeListenerWithOBID:token.tokenID];
+    
+    for (int i = 1; i < paths.count; i++) {
         NSString *key = paths[i];
         object = (NSObject<ArgoListenerProtocol> *)[object lua_get:key];
+        [object removeListenerWithOBID:token.tokenID];
     }
 }
 
