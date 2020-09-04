@@ -1,1 +1,1 @@
-../../../../../MLN/Classes/MUIKit/ArgoBinding/ArgoObserverHelper.h
+../../../../../MLN/Classes/MUIKit/ArgoBinding/Observer/ArgoObserverHelper.h
