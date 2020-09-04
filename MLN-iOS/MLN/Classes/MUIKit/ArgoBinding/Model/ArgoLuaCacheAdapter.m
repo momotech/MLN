@@ -78,31 +78,42 @@
     }
 }
 
+- (void)insertValue:(NSObject *)value forIndex:(int)index {
+    for (MLNUILuaTable *table in self.cache.allValues) {
+        [table inseretObject:value index:index];
+    }
+}
+
 - (void)notifyChange:(NSDictionary *)change {
+    //TODO: 实现lua table的inert...
+//    [self.cache removeAllObjects];
+//    return;
     NSKeyValueChange type = [[change objectForKey:NSKeyValueChangeKindKey] unsignedIntegerValue];
     NSIndexSet *indexSet = [change objectForKey:NSKeyValueChangeIndexesKey];
     NSObject *newValue = [change objectForKey:NSKeyValueChangeNewKey];
     
-    [indexSet enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL * _Nonnull stop) {
-        if (type == NSKeyValueChangeInsertion) {
-            [self _handleInsertOrReplacementWithIndexSet:indexSet newValue:newValue];
-        } else if (type == NSKeyValueChangeRemoval) {
-            [indexSet enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL * _Nonnull stop) {
-                [self putValue:nil forIndex:(int)idx + 1];
-            }];
-        } else if (type == NSKeyValueChangeReplacement) {
-            [self _handleInsertOrReplacementWithIndexSet:indexSet newValue:newValue];
-        } else {
-            NSLog(@"error, should not reach here! ");
-        }
-    }];
+    if (type == NSKeyValueChangeInsertion) {
+        [self _handleInsertOrReplacement:YES WithIndexSet:indexSet newValue:newValue];
+    } else if (type == NSKeyValueChangeRemoval) {
+        [indexSet enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL * _Nonnull stop) {
+            [self putValue:nil forIndex:(int)idx + 1];
+        }];
+    } else if (type == NSKeyValueChangeReplacement) {
+        [self _handleInsertOrReplacement:NO WithIndexSet:indexSet newValue:newValue];
+    } else {
+        NSLog(@"error, should not reach here! ");
+    }
 }
 
-- (void)_handleInsertOrReplacementWithIndexSet:(NSIndexSet *)indexSet newValue:(NSObject *)newValue {
+- (void)_handleInsertOrReplacement:(BOOL)isInsert WithIndexSet:(NSIndexSet *)indexSet newValue:(NSObject *)newValue {
     NSUInteger count = [indexSet count];
     [indexSet enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL * _Nonnull stop) {
         if (count == 1) {
-            [self putValue:newValue forIndex:(int)(idx + 1)];
+            if (isInsert) {
+                [self insertValue:newValue forIndex:(int)(idx + 1)];
+            } else {
+                [self putValue:newValue forIndex:(int)(idx + 1)];
+            }
         } else {
             NSArray *array = (NSArray *)newValue;
             if ([array isKindOfClass:[NSArray class]]) {
@@ -111,7 +122,11 @@
                     NSLog(@"error, index incompatible");
                     *stop = YES;
                 } else {
-                    [self putValue:array[array_index] forIndex:(int)idx + 1];
+                    if (isInsert) {
+                        [self insertValue:array[array_index] forIndex:(int)idx + 1];
+                    } else {
+                        [self putValue:array[array_index] forIndex:(int)idx + 1];
+                    }
                 }
             } else {
                 NSLog(@"error, should be array");
