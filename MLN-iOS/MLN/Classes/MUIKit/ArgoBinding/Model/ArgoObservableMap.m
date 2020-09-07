@@ -147,7 +147,7 @@
 }
 
 - (id)valueForKey:(NSString *)key {
-    [self native_getValueForKey:key];
+    return [self native_getValueForKey:key];
 }
 
 #pragma mark -
