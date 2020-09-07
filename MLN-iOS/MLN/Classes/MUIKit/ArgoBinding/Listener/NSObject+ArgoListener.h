@@ -15,7 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface ArgoObservableMap (ArgoListener) <ArgoListenerProtocol>
 @end
 
-@interface ArgoObservableArray (ArgoListener) <ArgoListenerProtocol>
+@interface ArgoObservableArray (ArgoListener) <ArgoListenerProtocol, ArgoListenerForLuaArray>
 @end
 
 NS_ASSUME_NONNULL_END

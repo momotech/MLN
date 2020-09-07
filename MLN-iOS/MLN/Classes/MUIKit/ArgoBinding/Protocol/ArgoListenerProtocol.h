@@ -52,6 +52,15 @@ typedef BOOL(^ArgoListenerFilter)(ArgoObserverContext context, NSDictionary *cha
 
 @end
 
+@protocol ArgoListenerForLuaArray <NSObject>
+
+- (void)lua_addObject:(NSObject *)object;
+- (void)lua_insertObject:(NSObject *)object atIndex:(int)index;
+
+- (void)lua_removeObjectAtIndex:(int)index;
+- (void)lua_removeLastObject;
+@end
+
 @protocol  ArgoListenerProtocol <ArgoListenerLuaTableProtocol, ArgoListenerCategoryProtocol>
 //- (ArgoListenerWrapper *)addObserverWithChangeBlock:(ArgoBlockChange)block forKeyPath:(NSString *)keyPath;
 - (NSObject *)lua_get:(NSString *)key;

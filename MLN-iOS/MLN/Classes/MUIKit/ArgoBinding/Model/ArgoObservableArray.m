@@ -27,12 +27,22 @@
 }
 
 - (void)lua_putValue:(NSObject *)value forKey:(NSString *)key {
-    [self insertObject:value atIndex:key.integerValue - 1];
+    [self setObject:value atIndexedSubscript:key.integerValue - 1];
 }
 
-- (void)notifyWithType:(NSKeyValueChange)type indexSet:(NSIndexSet *)indexSet newValue:(id)newValue oldValue:(id)oldValue {
+- (NSMutableDictionary *)argoListeners {
+    if (!_argoListeners) {
+        _argoListeners = [NSMutableDictionary dictionary];
+    }
+    return _argoListeners;
+}
+
+
+- (void)notifyWithType:(NSKeyValueChange)type indexSet:(NSIndexSet *)indexSet newValue:(id)newValue oldValue:(id)oldValue context:(ArgoWatchContext)context {
     NSMutableDictionary *change = [NSMutableDictionary dictionary];
     [change setObject:@(type) forKey:NSKeyValueChangeKindKey];
+    [change setObject:@(context) forKey:kArgoListenerContext];
+
     if (indexSet) {
         [change setObject:indexSet forKey:NSKeyValueChangeIndexesKey];
     }
@@ -42,10 +52,12 @@
     if (oldValue) {
         [change setObject:oldValue forKey:NSKeyValueChangeOldKey];
     }
+    
     [self.cacheAdapter notifyChange:change];
     [self notifyArgoListenerKey:kArgoListenerArrayPlaceHolder Change:change];
 }
 
+#pragma mark - ArgoListenerLuaTableProtocol
 - (void)addLuaTabe:(MLNUILuaTable *)table {
     [self.cacheAdapter addLuaTabe:table];
 }
@@ -54,13 +66,44 @@
     return [self.cacheAdapter getLuaTable:key];
 }
 
-#pragma mark -
-- (NSMutableDictionary *)argoListeners {
-    if (!_argoListeners) {
-        _argoListeners = [NSMutableDictionary dictionary];
-    }
-    return _argoListeners;
+#pragma mark - ArgoListenerForLuaArray
+
+- (void)lua_addObject:(NSObject *)object {
+    [self.proxy addObject:object];
+    
+    NSIndexSet *set = [NSIndexSet indexSetWithIndex:self.proxy.count];
+    [self notifyWithType:NSKeyValueChangeInsertion indexSet:set newValue:object oldValue:nil context:ArgoWatchContext_Lua];
 }
+
+- (void)lua_insertObject:(NSObject *)object atIndex:(int)index {
+    index--;
+    [self.proxy insertObject:object atIndex:index];
+    
+    NSIndexSet *set = [NSIndexSet indexSetWithIndex:index];
+    [self notifyWithType:NSKeyValueChangeInsertion indexSet:set newValue:object oldValue:nil context:ArgoWatchContext_Lua];
+}
+
+- (void)lua_removeLastObject {
+    NSUInteger cnt = [self count];
+    if (cnt > 0) {
+        [self.proxy removeLastObject];
+        
+        NSIndexSet *set = [NSIndexSet indexSetWithIndex:cnt - 1];
+        [self notifyWithType:NSKeyValueChangeRemoval indexSet:set newValue:nil oldValue:nil context:ArgoWatchContext_Lua];
+    }
+}
+
+- (void)lua_removeObjectAtIndex:(int)index {
+    index--;
+    if (index > 0 && index < [self count]) {
+        [self.proxy removeObjectAtIndex:index];
+        
+        NSIndexSet *set = [NSIndexSet indexSetWithIndex:index];
+        [self notifyWithType:NSKeyValueChangeRemoval indexSet:set newValue:nil oldValue:nil context:ArgoWatchContext_Lua];
+    }
+}
+
+#pragma mark -
 
 - (ArgoLuaCacheAdapter *)cacheAdapter {
     if (!_cacheAdapter) {
@@ -175,14 +218,14 @@
     [self.proxy insertObject:obj atIndex:index];
     
     NSIndexSet *set = [NSIndexSet indexSetWithIndex:index];
-    [self notifyWithType:NSKeyValueChangeInsertion indexSet:set newValue:obj oldValue:nil];
+    [self notifyWithType:NSKeyValueChangeInsertion indexSet:set newValue:obj oldValue:nil context:ArgoWatchContext_Native];
 }
 
 - (void)removeObjectAtIndex:(NSUInteger)index {
     [self.proxy removeObjectAtIndex:index];
     
     NSIndexSet *set = [NSIndexSet indexSetWithIndex:index];
-    [self notifyWithType:NSKeyValueChangeRemoval indexSet:set newValue:nil oldValue:nil];
+    [self notifyWithType:NSKeyValueChangeRemoval indexSet:set newValue:nil oldValue:nil context:ArgoWatchContext_Native];
 }
 
 //- (void)addObject:(id)obj { // will call insertObject:atIndex:
@@ -197,14 +240,14 @@
     [self.proxy replaceObjectAtIndex:index withObject:obj];
     
     NSIndexSet *set = [NSIndexSet indexSetWithIndex:index];
-    [self notifyWithType:NSKeyValueChangeReplacement indexSet:set newValue:obj oldValue:nil];
+    [self notifyWithType:NSKeyValueChangeReplacement indexSet:set newValue:obj oldValue:nil context:ArgoWatchContext_Native];
 }
 
 - (void)setObject:(id)obj atIndexedSubscript:(NSUInteger)idx {
     [self.proxy setObject:obj atIndexedSubscript:idx];
     
     NSIndexSet *set = [NSIndexSet indexSetWithIndex:idx];
-    [self notifyWithType:NSKeyValueChangeInsertion indexSet:set newValue:obj oldValue:nil];
+    [self notifyWithType:NSKeyValueChangeInsertion indexSet:set newValue:obj oldValue:nil context:ArgoWatchContext_Native];
 }
 
 - (void)addObjectsFromArray:(NSArray*)array {
@@ -218,7 +261,7 @@
     [self.proxy addObjectsFromArray:array];
     
     NSIndexSet *set = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(self.proxy.count - array.count, array.count)];
-    [self notifyWithType:NSKeyValueChangeInsertion indexSet:set newValue:array oldValue:nil];
+    [self notifyWithType:NSKeyValueChangeInsertion indexSet:set newValue:array oldValue:nil context:ArgoWatchContext_Native];
 }
 
 - (void)removeAllObjects {
@@ -237,24 +280,24 @@
 //    [arr removeAllObjects];
     NSIndexSet *set = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, self.count)];
     [self.proxy removeAllObjects];
-    [self notifyWithType:NSKeyValueChangeRemoval indexSet:set newValue:nil oldValue:nil];
+    [self notifyWithType:NSKeyValueChangeRemoval indexSet:set newValue:nil oldValue:nil context:ArgoWatchContext_Native];
 }
 
 - (void)insertObjects:(NSArray *)objects atIndexes:(NSIndexSet *)indexes {
 //    [self.observer insertArr:objects atIndexes:indexes];
     [self.proxy insertObjects:objects atIndexes:indexes];
-    [self notifyWithType:NSKeyValueChangeInsertion indexSet:indexes newValue:objects oldValue:nil];
+    [self notifyWithType:NSKeyValueChangeInsertion indexSet:indexes newValue:objects oldValue:nil context:ArgoWatchContext_Native];
 }
 
 - (void)removeObjectsAtIndexes:(NSIndexSet *)indexes {
 //   [self.observer removeArrAtIndexes:indexes];
     [self.proxy removeObjectsAtIndexes:indexes];
-    [self notifyWithType:NSKeyValueChangeRemoval indexSet:indexes newValue:nil oldValue:nil];
+    [self notifyWithType:NSKeyValueChangeRemoval indexSet:indexes newValue:nil oldValue:nil context:ArgoWatchContext_Native];
 }
 
 - (void)replaceObjectsAtIndexes:(NSIndexSet *)indexes withObjects:(NSArray *)objects {
 //    [self.observer replaceArrAtIndexes:indexes withArr:objects];
     [self.proxy replaceObjectsAtIndexes:indexes withObjects:objects];
-    [self notifyWithType:NSKeyValueChangeReplacement indexSet:indexes newValue:objects oldValue:nil];
+    [self notifyWithType:NSKeyValueChangeReplacement indexSet:indexes newValue:objects oldValue:nil context:ArgoWatchContext_Native];
 }
 @end

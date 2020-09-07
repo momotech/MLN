@@ -201,12 +201,13 @@ static int argo_insert (lua_State *L) {
         if(!newValue) return 1;
         
         if (index == -1) {
-            [arr addObject:newValue];
+            [arr lua_addObject:newValue];
             return 1;
         }
-        index--;
-        if (index >= 0 &&  index <= arr.count) {
-            [arr insertObject:newValue atIndex:index];
+//        index--;
+        if (index > 0 &&  index <= arr.count + 1) {
+//            [arr insertObject:newValue atIndex:index];
+            [arr lua_insertObject:newValue atIndex:index];
             return 1;
         } else {
             NSString *log = [NSString stringWithFormat:@"index %d illeage, should match range of array [1, %zd]",index+1,arr.count];
@@ -233,14 +234,14 @@ static int argo_remove (lua_State *L) {
     ArgoObservableArray *arr = _argo_data_for_keypath(luaCore, nKey);
     if ([arr isKindOfClass:[ArgoObservableArray class]]) {
         if (index == -1) {
-            [arr removeLastObject];
+            [arr lua_removeLastObject];
             PCallDBEnd(__func__);
             TOCK("argo_remove key %s",nKey.UTF8String);
             return 1;
         }
-        index--;
-        if (index >= 0 && index < arr.count) {
-            [arr removeObjectAtIndex:index];
+//        index--;
+        if (index > 0 && index <= arr.count) {
+            [arr lua_removeObjectAtIndex:index];
         } else {
             NSString *log = [NSString stringWithFormat:@"index %d illeage, should match range of array [1, %zd]",index+1,arr.count];
             _argo_on_error_log(luaCore, log);
