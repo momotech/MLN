@@ -113,6 +113,13 @@ end
 ---
 --- @private
 ---
+
+local function CenterX(view)
+    if not view then return 0 end
+    local super = view:superview()
+    return view:marginLeft() + view:width() / 2 + (super and super:paddingLeft() or 0)
+end
+
 function _class:_create(models, callback)
     local views = {}
     for _, v in ipairs(models) do
@@ -195,8 +202,8 @@ function _class:_executeProgressBarAnimation(fromIndex, toIndex, progress, autoA
 
     if not anims then
         local posXAnim = ObjectAnimation(AnimProperty.PositionX, self._progressBar)
-        local fromValue = fromItem and (fromItem:centerX() - self._progressBarWidth / 2) or 0
-        local toValue = toItem:centerX() - self._progressBarWidth / 2
+        local fromValue = fromItem and (CenterX(fromItem) - self._progressBarWidth / 2) or 0
+        local toValue = CenterX(toItem) - self._progressBarWidth / 2
         posXAnim:from(fromValue)
         posXAnim:to(toValue)
         posXAnim:duration(self._autoAnimTime)
@@ -206,7 +213,7 @@ function _class:_executeProgressBarAnimation(fromIndex, toIndex, progress, autoA
 
         local widthAnimSet = AnimatorSet()
         local widthAnim1 = ObjectAnimation(AnimProperty.ScaleX, self._progressBar)
-        local offset = fromItem and math.abs((toItem:centerX() - fromItem:centerX()) / (math.abs(toIndex - fromIndex) + 2)) or 0
+        local offset = fromItem and math.abs((CenterX(toItem) - CenterX(fromItem)) / (math.abs(toIndex - fromIndex) + 2)) or 0
         local maxWidth = 10 + offset  --10 is initial width
         widthAnim1:from(1)
         widthAnim1:to(maxWidth / 10)
@@ -257,7 +264,7 @@ function _class:_executeScrollViewOffsetAnimation(toIndex, progress, autoAnim)
     end
 
     local offset = 0
-    local centerX = toItem:centerX()
+    local centerX = CenterX(toItem)
     local viewWidth = self.contentView:width()
     local contentSizeWidth = self.contentView:contentSize():width()
     if centerX < viewWidth / 2 then
