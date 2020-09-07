@@ -11,7 +11,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface ArgoObservableArray : NSMutableArray <ArgoObservableObject>
+@interface ArgoObservableArray<ObjectType> : NSMutableArray<ObjectType> <ArgoObservableObject>
 @property (nonatomic, copy, readonly) ArgoWatchArrayWrapper *(^watch)(void);
 @end
 
