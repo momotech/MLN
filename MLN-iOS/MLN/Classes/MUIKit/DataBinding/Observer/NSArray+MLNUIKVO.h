@@ -8,7 +8,7 @@
 #import <Foundation/Foundation.h>
 
 NS_ASSUME_NONNULL_BEGIN
-
+@class ArgoObservableArray;
 typedef void (^MLNUIItemKVOBlock)(NSObject *item,NSString *keyPath, NSObject * _Nullable oldValue, NSObject * _Nullable newValue);
 
 @interface NSArray (MLNUIKVO)
@@ -25,6 +25,8 @@ typedef void (^MLNUIItemKVOBlock)(NSObject *item,NSString *keyPath, NSObject * _
 
 - (NSArray *)mlnui_convertToLuaTableAvailable;
 - (NSMutableArray *)mlnui_convertToMArray;
+
+- (ArgoObservableArray *)argo_mutableCopy;
 
 @end
 

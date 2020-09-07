@@ -17,6 +17,7 @@
 #import "MLNUIKitInstanceConsts.h"
 #import "MLNUIFile.h"
 #import "MLNUIKitBridgesManager.h"
+#import "ArgoBindingConvertor.h"
 
 #define kMLNUIRunLoopBeforeWaitingLazyTaskOrder   1
 #define kMLNUIRunLoopBeforeWaitingRenderOrder     2
@@ -614,7 +615,7 @@
     if (self = [super init]) {
         _currentBundle = luaBundle;
         if (!convertorClass) {
-            convertorClass = MLNUIKiConvertor.class;
+            convertorClass = ArgoBindingConvertor.class;
         }
         _convertorClass = convertorClass;
         _exporterClass = exporterClass;

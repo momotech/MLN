@@ -1,16 +1,17 @@
 #import <UIKit/UIKit.h>
-#import "UserDataListSource.h"
-#import "UserData.h"
+#import "ArgoKit.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface UserData : NSObject
+@interface UserData : ArgoObservableMap
+@property (nonatomic, strong) ArgoObservableArray *listSource;
+@property (nonatomic, copy) NSString * title;
 
-@property (nonatomic, copy) NSString *title;
-@property (nonatomic, strong) NSMutableArray<UserDataListSource *> *listSource;
++ (NSString *)modelKey;
 
-+ (instancetype)modelForTest;
-
-@end
-
+#if DEBUG
++ (instancetype)defaultUserData;
+#endif
 NS_ASSUME_NONNULL_END
+@end
+    

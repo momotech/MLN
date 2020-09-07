@@ -11,6 +11,8 @@
 #import "NSObject+MLNUICore.h"
 #import "NSObject+MLNUIKVO.h"
 #import "NSObject+MLNUIReflect.h"
+#import "ArgoObservableArray.h"
+#import "MLNUIHeader.h"
 
 @import ObjectiveC;
 
@@ -48,6 +50,18 @@
     [self enumerateObjectsUsingBlock:^(NSObject *  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         if ([obj respondsToSelector:@selector(mlnui_mutalbeCopy)]) {
             [copy addObject:[(NSArray  *)obj mlnui_mutalbeCopy]];
+        } else {
+            [copy addObject:obj];
+        }
+    }];
+    return copy;
+}
+
+- (ArgoObservableArray *)argo_mutableCopy {
+    ArgoObservableArray *copy = [ArgoObservableArray arrayWithCapacity:self.count];
+    [self enumerateObjectsUsingBlock:^(NSArray *  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        if ([obj respondsToSelector:@selector(argo_mutableCopy)]) {
+            [copy addObject:obj.argo_mutableCopy];
         } else {
             [copy addObject:obj];
         }
@@ -99,7 +113,11 @@
 }
 
 - (instancetype)mlnui_convertToMArray {
+#if OCPERF_USE_NEW_DB
+    ArgoObservableArray *arr = [ArgoObservableArray array];
+#else
     NSMutableArray *arr = [NSMutableArray array];
+#endif
     [self enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         NSObject *n = [obj mlnui_convertToNativeObject];
         if (n) {

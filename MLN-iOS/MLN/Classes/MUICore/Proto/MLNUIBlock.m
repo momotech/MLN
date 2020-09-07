@@ -104,7 +104,11 @@ static int mlnui_errorFunc_traceback (lua_State *L) {
     // 参数压栈
     int argsCount = (int)arguments.count;
     for (id arg in arguments) {
+#if OCPERF_USE_NEW_DB
+        if (![self.luaCore.convertor pushArgoBindingNativeObject:arg error:NULL]) {
+#else
         if (![self.luaCore pushNativeObject:arg error:NULL]) {
+#endif
             // 重置当前配置
 //            [self reset];
             // 恢复栈

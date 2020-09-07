@@ -10,6 +10,8 @@
 #import "MLNUILuaCore.h"
 #import "MLNUIKitInstance.h"
 #import "MLNUIExtScope.h"
+#import "MLNUIHeader.h"
+#import "ArgoDataBinding.h"
 
 @implementation MLNUIViewController (DataBinding)
 - (UIView *)findViewById:(NSString *)identifier {
@@ -35,13 +37,22 @@
     return view;
 }
 
+- (void)bindData:(NSObject *)data {
+    [self.mlnui_dataBinding bindData:data];
+}
+
 - (void)bindData:(NSObject *)data forKey:(NSString *)key {
     [self.mlnui_dataBinding bindData:data forKey:key];
 }
 
 - (MLNUIDataBinding *)mlnui_dataBinding {
     if (!_dataBinding) {
+# if OCPERF_USE_NEW_DB
+        _dataBinding = [[ArgoDataBinding alloc] init];
+#else
         _dataBinding = [[MLNUIDataBinding alloc] init];
+#endif
+        
 #if DEBUG
         @weakify(self);
         _dataBinding.errorLog = ^(NSString * _Nonnull log) {
@@ -52,6 +63,10 @@
     }
     return _dataBinding;
 }
+
+# if OCPERF_USE_NEW_DB
+- (void)addLifeCycleListener:(id)block {}
+#endif
 
 @end
 

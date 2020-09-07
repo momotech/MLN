@@ -31,6 +31,8 @@
 #define OCPERF_COALESCE_BLOCK 1
 #define OCPERF_MAP_LAZY_LOAD 1
 
+#define OCPERF_USE_NEW_DB 0
+
 #include "mln_lua.h"
 #include "mln_lauxlib.h"
 #include "mln_lualib.h"

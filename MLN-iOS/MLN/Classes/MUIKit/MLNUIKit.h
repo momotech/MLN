@@ -20,6 +20,10 @@
 #import "MLNUIViewController+DataBinding.h"
 #import "MLNUIDataBinding.h"
 #import "MLNUIDataBindingCBridge.h"
+// argo db
+#import "ArgoViewController.h"
+#import "ArgoViewController+ArgoDataBinding.h"
+
 #import "NSArray+MLNUIKVO.h"
 #import "NSObject+MLNUIKVO.h"
 #import "MLNUIKVOObserverProtocol.h"
