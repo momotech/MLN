@@ -142,6 +142,14 @@
     }
 }
 
+- (void)setValue:(id)value forKey:(NSString *)key {
+    [self native_putValue:value forKey:key];
+}
+
+- (id)valueForKey:(NSString *)key {
+    [self native_getValueForKey:key];
+}
+
 #pragma mark -
 
 - (instancetype)initWithMutableDictonary:(NSMutableDictionary *)dic {
