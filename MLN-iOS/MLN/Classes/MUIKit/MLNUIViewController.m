@@ -77,6 +77,16 @@
 //    return [self.kitInstance registerClasses:registerClasses error:NULL];
 //}
 
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    [self.kitInstance doLuaWindowDidAppear];
+}
+
+- (void)viewDidDisappear:(BOOL)animated {
+    [super viewDidDisappear:animated];
+    [self.kitInstance doLuaWindowDidDisappear];
+}
+
 - (MLNUIKitInstance *)kitInstance {
     if (!_kitInstance) {
         _kitInstance = [[MLNUIKitInstanceFactory defaultFactory] createKitInstanceWithViewController:self];

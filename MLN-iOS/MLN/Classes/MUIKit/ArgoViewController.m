@@ -74,6 +74,7 @@
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
+    [self.kitInstance doLuaWindowDidAppear];
     [self notifyLifeCycle:ArgoViewControllerLifeCycleViewDidAppear];
 }
 
@@ -84,6 +85,7 @@
 
 - (void)viewDidDisappear:(BOOL)animated {
     [super viewDidDisappear:animated];
+    [self.kitInstance doLuaWindowDidDisappear];
     [self notifyLifeCycle:ArgoViewControllerLifeCycleViewDidDisappear];
 }
 
