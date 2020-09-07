@@ -7,7 +7,7 @@
 
 #import "ArgoObservableMap.h"
 #import "NSObject+ArgoListener.h"
-#import "MLNExtScope.h"
+#import "MLNUIExtScope.h"
 #import "ArgoListenerWrapper.h"
 #import "ArgoLuaCacheAdapter.h"
 #import "MLNUILuaTable.h"
