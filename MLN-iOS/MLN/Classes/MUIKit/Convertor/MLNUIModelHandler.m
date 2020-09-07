@@ -8,6 +8,7 @@
 #import "MLNUIModelHandler.h"
 #import "MLNUILuaCore.h"
 #import "MLNUIKitBridgesManager.h"
+#import "MLNUIModelKeyPathComparator.h"
 
 #define ARGOUI_ERROR(errmsg) do {\
 if (error) { *error = [NSError errorWithDomain:@"com.argoui.error" code:-1 userInfo:@{NSLocalizedDescriptionKey:errmsg}]; }\
@@ -29,7 +30,7 @@ typedef void(^MLNLUIModelHandleTask)(void);
 
 #pragma mark - Public
 
-+ (NSObject *)buildModelWithDataObject:(id)dataObject model:(nonnull NSObject *)model extra:(id _Nullable)extra functionChunk:(nonnull const char *)functionChunk error:(NSError *__autoreleasing*)error {
++ (NSObject *)buildModelWithDataObject:(id)dataObject model:(nonnull NSObject <MLNUIModelHandlerProtocol>*)model extra:(id _Nullable)extra functionChunk:(nonnull const char *)functionChunk error:(NSError *__autoreleasing*)error {
     NSParameterAssert(dataObject && model && functionChunk);
     if (!dataObject || !model || !functionChunk) {
         return nil;
@@ -38,7 +39,7 @@ typedef void(^MLNLUIModelHandleTask)(void);
     return MLNUIConvertDataObjectToModel(object, model);
 }
 
-+ (void)buildModelWithDataObject:(id)dataObject model:(NSObject *)model extra:(id)extra functionChunk:(const char *)functionChunk complete:(MLNUIModelHandleComplete)complete {
++ (void)buildModelWithDataObject:(id)dataObject model:(NSObject <MLNUIModelHandlerProtocol>*)model extra:(id)extra functionChunk:(const char *)functionChunk complete:(MLNUIModelHandleComplete)complete {
     NSParameterAssert(dataObject && model && functionChunk);
     if (!dataObject || !model || !functionChunk) {
         return;
@@ -56,7 +57,7 @@ typedef void(^MLNLUIModelHandleTask)(void);
 
 #pragma mark - Private
 
-+ (id)handleModelWithDataObject:(id)dataObject model:(nonnull NSObject *)model extra:(id _Nullable)extra functionChunk:(nonnull const char *)functionChunk error:(NSError *__autoreleasing*)error {
++ (id)handleModelWithDataObject:(id)dataObject model:(nonnull NSObject <MLNUIModelHandlerProtocol>*)model extra:(id _Nullable)extra functionChunk:(nonnull const char *)functionChunk error:(NSError *__autoreleasing*)error {
     NSParameterAssert(dataObject && model && functionChunk);
     if (!dataObject || !model || !functionChunk) {
         return nil;
@@ -76,7 +77,9 @@ typedef void(^MLNLUIModelHandleTask)(void);
         argCount++;
         MLNUIPushObject(extra, luaCore);
     }
-    
+    #if DEBUG
+            functionChunk = [MLNUIModelKeyPathComparator luaTableKeyTrackCodeAppendFunction:functionChunk model:model];
+    #endif
     int res = luaL_loadstring(L, functionChunk);
     if (res != 0) { // error occur
         NSString *errmsg = [NSString stringWithFormat:@"The `functionChunk` parameter is invalid. (%s)", luaL_checkstring(L, -1)];
@@ -98,6 +101,9 @@ typedef void(^MLNLUIModelHandleTask)(void);
         ARGOUI_ERROR_LOG(errmsg);
         return nil;
     }
+    #if DEBUG
+            [MLNUIModelKeyPathComparator keyPathCompare:luaCore model:model];
+    #endif
     return [luaCore toNativeObject:-1 error:error];
 }
 
