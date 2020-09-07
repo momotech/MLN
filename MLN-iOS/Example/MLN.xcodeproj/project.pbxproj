@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		000B3BDF2505D753001142E2 /* KuaDemoMUI.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 000B3BDE2505D753001142E2 /* KuaDemoMUI.bundle */; };
+		000B3BE22505D75C001142E2 /* UserData.m in Sources */ = {isa = PBXBuildFile; fileRef = 000B3BE02505D75C001142E2 /* UserData.m */; };
 		0011BBB32410AC3F003AE819 /* MLNDatabindingTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 0011BBB22410AC3F003AE819 /* MLNDatabindingTests.m */; };
 		0011BBB72410AC6F003AE819 /* MLNTestModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 0011BBB62410AC6F003AE819 /* MLNTestModel.m */; };
 		0026755324B3514900D8C617 /* MLNUIDB.m in Sources */ = {isa = PBXBuildFile; fileRef = 0026755224B3514900D8C617 /* MLNUIDB.m */; };
@@ -14,7 +16,7 @@
 		00574F94246A8B3200927744 /* MLNDataBindArrayViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 00574F93246A8B3200927744 /* MLNDataBindArrayViewController.m */; };
 		006E8FDF2501E60300DB3368 /* ArgoKuaViewModelUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 006E8FDE2501E60300DB3368 /* ArgoKuaViewModelUtils.m */; };
 		007F89E7246C0D8400FF50F1 /* MLNBindTestCaseModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 007F89E6246C0D8400FF50F1 /* MLNBindTestCaseModel.m */; };
-		008CA3C124F3D43400C4F76F /* KuaDemoMUI.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 008CA3C024F3D43400C4F76F /* KuaDemoMUI.bundle */; };
+		008CA3C124F3D43400C4F76F /* KuaDemoMUI2.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 008CA3C024F3D43400C4F76F /* KuaDemoMUI2.bundle */; };
 		009DD8D524114B9600452458 /* MLNArrayBindingTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 009DD8D424114B9600452458 /* MLNArrayBindingTests.m */; };
 		00A0C999243C180500F0D003 /* MLNPerformanceTestController.m in Sources */ = {isa = PBXBuildFile; fileRef = 00A0C998243C180500F0D003 /* MLNPerformanceTestController.m */; };
 		00A0C9A1243C3C0500F0D003 /* LuaNativeUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00A0C9A0243C3C0500F0D003 /* LuaNativeUITests.m */; };
@@ -40,9 +42,6 @@
 		00E6526B2420AD1800A878B8 /* MLNBindModelViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E6526A2420AD1800A878B8 /* MLNBindModelViewController.m */; };
 		00E6526E2420BCCE00A878B8 /* MLNBindTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E6526D2420BCCE00A878B8 /* MLNBindTableViewController.m */; };
 		00E911CC24E2B8EC006614C4 /* MLNKuaController.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E911CB24E2B8EC006614C4 /* MLNKuaController.m */; };
-		00E911D524E2BCE4006614C4 /* UserDataListSourceReply.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E911D124E2BCE4006614C4 /* UserDataListSourceReply.m */; };
-		00E911D624E2BCE4006614C4 /* UserDataListSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E911D224E2BCE4006614C4 /* UserDataListSource.m */; };
-		00E911D724E2BCE4006614C4 /* UserData.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E911D424E2BCE4006614C4 /* UserData.m */; };
 		00E9131524E51837006614C4 /* ViewPagerDemoMUI.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 00E9130924E51837006614C4 /* ViewPagerDemoMUI.bundle */; };
 		00E9131724E51837006614C4 /* HomeDataPageModels.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E9131024E51837006614C4 /* HomeDataPageModels.m */; };
 		00E9131824E51837006614C4 /* HomeDataPageModelsPage.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E9131124E51837006614C4 /* HomeDataPageModelsPage.m */; };
@@ -159,6 +158,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		000B3BDE2505D753001142E2 /* KuaDemoMUI.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = KuaDemoMUI.bundle; sourceTree = "<group>"; };
+		000B3BE02505D75C001142E2 /* UserData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserData.m; sourceTree = "<group>"; };
+		000B3BE12505D75C001142E2 /* UserData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserData.h; sourceTree = "<group>"; };
 		0011BBB22410AC3F003AE819 /* MLNDatabindingTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNDatabindingTests.m; sourceTree = "<group>"; };
 		0011BBB52410AC6F003AE819 /* MLNTestModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNTestModel.h; sourceTree = "<group>"; };
 		0011BBB62410AC6F003AE819 /* MLNTestModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNTestModel.m; sourceTree = "<group>"; };
@@ -172,7 +174,7 @@
 		006E8FDE2501E60300DB3368 /* ArgoKuaViewModelUtils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ArgoKuaViewModelUtils.m; sourceTree = "<group>"; };
 		007F89E5246C0D8400FF50F1 /* MLNBindTestCaseModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNBindTestCaseModel.h; sourceTree = "<group>"; };
 		007F89E6246C0D8400FF50F1 /* MLNBindTestCaseModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNBindTestCaseModel.m; sourceTree = "<group>"; };
-		008CA3C024F3D43400C4F76F /* KuaDemoMUI.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = KuaDemoMUI.bundle; sourceTree = "<group>"; };
+		008CA3C024F3D43400C4F76F /* KuaDemoMUI2.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = KuaDemoMUI2.bundle; sourceTree = "<group>"; };
 		009DD8D424114B9600452458 /* MLNArrayBindingTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNArrayBindingTests.m; sourceTree = "<group>"; };
 		00A0C997243C180500F0D003 /* MLNPerformanceTestController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNPerformanceTestController.h; sourceTree = "<group>"; };
 		00A0C998243C180500F0D003 /* MLNPerformanceTestController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNPerformanceTestController.m; sourceTree = "<group>"; };
@@ -217,12 +219,6 @@
 		00E6526D2420BCCE00A878B8 /* MLNBindTableViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNBindTableViewController.m; sourceTree = "<group>"; };
 		00E911CA24E2B8EC006614C4 /* MLNKuaController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNKuaController.h; sourceTree = "<group>"; };
 		00E911CB24E2B8EC006614C4 /* MLNKuaController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNKuaController.m; sourceTree = "<group>"; };
-		00E911CF24E2BCE4006614C4 /* UserDataListSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserDataListSource.h; sourceTree = "<group>"; };
-		00E911D024E2BCE4006614C4 /* UserData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserData.h; sourceTree = "<group>"; };
-		00E911D124E2BCE4006614C4 /* UserDataListSourceReply.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserDataListSourceReply.m; sourceTree = "<group>"; };
-		00E911D224E2BCE4006614C4 /* UserDataListSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserDataListSource.m; sourceTree = "<group>"; };
-		00E911D324E2BCE4006614C4 /* UserDataListSourceReply.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserDataListSourceReply.h; sourceTree = "<group>"; };
-		00E911D424E2BCE4006614C4 /* UserData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserData.m; sourceTree = "<group>"; };
 		00E9130924E51837006614C4 /* ViewPagerDemoMUI.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = ViewPagerDemoMUI.bundle; sourceTree = "<group>"; };
 		00E9130C24E51837006614C4 /* HomeDataPageModels.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HomeDataPageModels.h; sourceTree = "<group>"; };
 		00E9130D24E51837006614C4 /* HomeDataPageModelsPage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HomeDataPageModelsPage.h; sourceTree = "<group>"; };
@@ -551,12 +547,8 @@
 		00E911CE24E2BCE4006614C4 /* ViewModel */ = {
 			isa = PBXGroup;
 			children = (
-				00E911D024E2BCE4006614C4 /* UserData.h */,
-				00E911D424E2BCE4006614C4 /* UserData.m */,
-				00E911CF24E2BCE4006614C4 /* UserDataListSource.h */,
-				00E911D224E2BCE4006614C4 /* UserDataListSource.m */,
-				00E911D324E2BCE4006614C4 /* UserDataListSourceReply.h */,
-				00E911D124E2BCE4006614C4 /* UserDataListSourceReply.m */,
+				000B3BE12505D75C001142E2 /* UserData.h */,
+				000B3BE02505D75C001142E2 /* UserData.m */,
 				006E8FDD2501E60300DB3368 /* ArgoKuaViewModelUtils.h */,
 				006E8FDE2501E60300DB3368 /* ArgoKuaViewModelUtils.m */,
 			);
@@ -577,7 +569,8 @@
 		00E9130824E5180B006614C4 /* Kua */ = {
 			isa = PBXGroup;
 			children = (
-				008CA3C024F3D43400C4F76F /* KuaDemoMUI.bundle */,
+				000B3BDE2505D753001142E2 /* KuaDemoMUI.bundle */,
+				008CA3C024F3D43400C4F76F /* KuaDemoMUI2.bundle */,
 				00E911CE24E2BCE4006614C4 /* ViewModel */,
 				00E911CA24E2B8EC006614C4 /* MLNKuaController.h */,
 				00E911CB24E2B8EC006614C4 /* MLNKuaController.m */,
@@ -1202,7 +1195,8 @@
 				30CB3BFB23684CD400AB90C6 /* MLN.podspec in Resources */,
 				30CB3BF923684B7F00AB90C6 /* MLNDevTool.podspec in Resources */,
 				00E9131524E51837006614C4 /* ViewPagerDemoMUI.bundle in Resources */,
-				008CA3C124F3D43400C4F76F /* KuaDemoMUI.bundle in Resources */,
+				000B3BDF2505D753001142E2 /* KuaDemoMUI.bundle in Resources */,
+				008CA3C124F3D43400C4F76F /* KuaDemoMUI2.bundle in Resources */,
 				FA383456239A6357000F900E /* Main.storyboard in Resources */,
 				00D5986B24B8732F00EA1660 /* PerformanceDemoMUI.bundle in Resources */,
 				6003F5A9195388D20070C39A /* Images.xcassets in Resources */,
@@ -1328,7 +1322,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				00E911D524E2BCE4006614C4 /* UserDataListSourceReply.m in Sources */,
 				B27F65D92377AAC400F2D341 /* MLNHomeTableViewCell.m in Sources */,
 				00268A4124B7011500D8C617 /* EYLogViewer.m in Sources */,
 				0026755324B3514900D8C617 /* MLNUIDB.m in Sources */,
@@ -1337,7 +1330,6 @@
 				B27F65C72377AAAE00F2D341 /* MLNGalleryMessageDescCellModel.m in Sources */,
 				B2DD3E62237990E9002AB6AD /* MLNActionManager.m in Sources */,
 				30E24E9422F3D74A00A0E78C /* MLNGlobalFuncTest.m in Sources */,
-				00E911D624E2BCE4006614C4 /* UserDataListSource.m in Sources */,
 				30E24E9522F3D74A00A0E78C /* MLNStaticTest.m in Sources */,
 				FA4EE3032379086F00449250 /* MLNGalleryMinePageCellCollectModel.m in Sources */,
 				00574F94246A8B3200927744 /* MLNDataBindArrayViewController.m in Sources */,
@@ -1381,6 +1373,7 @@
 				B27F65C62377AAAE00F2D341 /* MLNGalleryMessageToolCellModel.m in Sources */,
 				00E6525624176A0F00A878B8 /* MLNDataBindModel.m in Sources */,
 				6003F5A7195388D20070C39A /* MLNLuaGalleryViewController.m in Sources */,
+				000B3BE22505D75C001142E2 /* UserData.m in Sources */,
 				3012BB102326822F00FA2BB2 /* MLNNavigatorHandler.m in Sources */,
 				B2DD3E5E237990E9002AB6AD /* MLNPackage.m in Sources */,
 				00A9B367247F914D00307914 /* MDFashionItem.m in Sources */,
@@ -1389,7 +1382,6 @@
 				B29500CA23725EB800F48F09 /* UIImage+MLNResize.m in Sources */,
 				B27F658C2377AA6C00F2D341 /* MLNGalleryMineBottomPage.m in Sources */,
 				6003F59A195388D20070C39A /* main.m in Sources */,
-				00E911D724E2BCE4006614C4 /* UserData.m in Sources */,
 				00A45F7624850C35001A07D9 /* MLNUIBridge.m in Sources */,
 				00E911CC24E2B8EC006614C4 /* MLNKuaController.m in Sources */,
 				B29500B72371A3ED00F48F09 /* MLNGalleryMainViewController.m in Sources */,

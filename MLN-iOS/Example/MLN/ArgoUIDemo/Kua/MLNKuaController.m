@@ -30,17 +30,20 @@
 //    MLNUIViewController *viewController = [[MLNUIViewController alloc] initWithEntryFileName:demoName bundle:bundle];
     ArgoViewController *viewController = [[ArgoViewController alloc] initWithEntryFileName:demoName bundleName:@"KuaDemoMUI"];
     
-    self.model = [ArgoKuaViewModelUtils getKuaTestModel];
+//    self.model = [ArgoKuaViewModelUtils getKuaTestModel];
+    self.model = [UserData defaultUserData];
+    
 //    self.model.mlnui_watch(@"name", ^(id  _Nonnull oldValue, id  _Nonnull newValue, id observedObject) {
 //        NSLog(@"name has changed from  %@ to %@",oldValue, newValue);
 //    });
-    self.model
-    .watch(@"name")
-    .callback(^(id  _Nonnull oldValue, id  _Nonnull newValue, ArgoObservableMap * _Nonnull map) {
-        NSLog(@"");
-    });
+//    self.model
+//    .watch(@"name")
+//    .callback(^(id  _Nonnull oldValue, id  _Nonnull newValue, ArgoObservableMap * _Nonnull map) {
+//        NSLog(@"");
+//    });
     
-    [viewController bindData:self.model forKey:@"userData"];
+//    [viewController bindData:self.model forKey:@"userData"];
+    [viewController bindData:self.model];
     [viewController mlnui_addToSuperViewController:self frame:self.view.bounds];
 }
 
