@@ -28,7 +28,7 @@
 # if OCPERF_USE_NEW_DB
         _dataBinding = [[ArgoDataBinding alloc] init];
 #else
-        _dataBinding = [[MLNUIDataBinding alloc] init];
+        _dataBinding = (ArgoDataBinding *)[[MLNUIDataBinding alloc] init];
 #endif
         
 #if DEBUG
@@ -40,6 +40,10 @@
 #endif
     }
     return _dataBinding;
+}
+
+- (MLNUIDataBinding *)mlnui_dataBinding {
+    return (MLNUIDataBinding *)[self argo_dataBinding];
 }
 
 @end
