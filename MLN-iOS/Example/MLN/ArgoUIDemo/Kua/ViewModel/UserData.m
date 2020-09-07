@@ -2,6 +2,14 @@
 
 @implementation UserData
 
++ (NSString *)entryFileName {
+    return @"kuaDetail.lua";
+}
+
++ (NSString *)bundleName {
+    return @"KuaDemoMUI";
+}
+
 #if OCPERF_USE_NEW_DB
 - (NSString *)title {
     return [self valueForKey:@"title"];

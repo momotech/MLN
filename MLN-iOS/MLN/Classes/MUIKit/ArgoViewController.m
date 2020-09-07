@@ -9,6 +9,7 @@
 #import "MLNUIHeader.h"
 #import "MLNUIKitInstanceFactory.h"
 #import "MLNUIKitInstance.h"
+#import "ArgoViewModelProtocol.h"
 
 @interface ArgoViewController ()
 @property (nonatomic, copy, readwrite) NSString *entryFileName;
@@ -41,6 +42,11 @@
     return [self initWithEntryFileName:entryFileName bundle:bundle];
 }
 
+- (instancetype)initWithModelClass:(Class<ArgoViewModelProtocol>)cls {
+    NSString *f = [cls entryFileName];
+    NSString *b = [cls bundleName];
+    return [self initWithEntryFileName:f bundleName:b];
+}
 
 - (void)viewDidLoad {
     [super viewDidLoad];

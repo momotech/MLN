@@ -28,8 +28,8 @@
 //    NSString *path = [[NSBundle mainBundle] pathForResource:@"KuaDemoMUI" ofType:@"bundle"];
 //    NSBundle *bundle = [NSBundle bundleWithPath:path];
 //    MLNUIViewController *viewController = [[MLNUIViewController alloc] initWithEntryFileName:demoName bundle:bundle];
-    ArgoViewController *viewController = [[ArgoViewController alloc] initWithEntryFileName:demoName bundleName:@"KuaDemoMUI"];
-    
+//    ArgoViewController *viewController = [[ArgoViewController alloc] initWithEntryFileName:demoName bundleName:@"KuaDemoMUI"];
+    ArgoViewController *viewController = [[ArgoViewController alloc] initWithModelClass:UserData.class];
 //    self.model = [ArgoKuaViewModelUtils getKuaTestModel];
     self.model = [UserData defaultUserData];
     

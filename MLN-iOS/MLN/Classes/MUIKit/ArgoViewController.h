@@ -10,8 +10,9 @@
 #import "MLNUIExportProtocol.h"
 
 NS_ASSUME_NONNULL_BEGIN
-@class ArgoDataBinding;
-@class ArgoKitInstanceHandlersManager;
+@class ArgoDataBinding, ArgoKitInstanceHandlersManager;
+@protocol ArgoViewModelProtocol;
+
 @interface ArgoViewController : UIViewController <ArgoViewControllerProtocol>{
     @protected
     ArgoKitInstance *_kitInstance;
@@ -34,6 +35,7 @@ NS_ASSUME_NONNULL_BEGIN
 //- (instancetype)initWithEntryFileName:(NSString *)entryFileName;
 - (instancetype)initWithEntryFileName:(NSString *)entryFileName bundleName:(nullable NSString *)bundleName;
 //- (instancetype)initWithEntryFileName:(NSString *)entryFileName bundle:(nullable NSBundle *)bundle NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithModelClass:(Class<ArgoViewModelProtocol>)cls;
 
 // 废弃的初始化方法
 + (instancetype)new NS_UNAVAILABLE;
