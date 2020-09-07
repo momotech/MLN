@@ -1,1 +1,1 @@
-../../../../../MLN/Classes/MUIKit/ArgoBinding/Protocol/ArgoObservableObject.h
+../../../../../MLN/Classes/MUIKit/ArgoBinding/protocol/ArgoObservableObject.h
