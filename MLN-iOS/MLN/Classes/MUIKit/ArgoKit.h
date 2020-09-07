@@ -15,9 +15,12 @@
 #import "ArgoObservableArray.h"
 
 #if OCPERF_USE_NEW_DB
+#import "NSDictionary+MLNUIKVO.h"
+#import "NSArray+MLNUIKVO.h"
 #else
 #define ArgoObservableMap NSObject
 #define ArgoObservableArray NSMutableArray
+#define argo_mutableCopy mutableCopy
 #endif
 
 #endif /* ArgoKit_h */

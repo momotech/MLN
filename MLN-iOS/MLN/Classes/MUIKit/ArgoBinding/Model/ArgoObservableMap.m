@@ -151,11 +151,11 @@
 }
 
 - (id)mutableCopy {
-    return [[self.class alloc] initWithDictionary:self.proxy];
+    return [[ArgoObservableMap alloc] initWithMutableDictonary:self.proxy.mutableCopy];
 }
 
 - (id)argo_mutableCopy {
-    return [[self.class alloc] initWithDictionary:self.proxy];
+    return [[ArgoObservableMap alloc] initWithMutableDictonary:self.proxy.mutableCopy];
 }
 #pragma mark -
 
