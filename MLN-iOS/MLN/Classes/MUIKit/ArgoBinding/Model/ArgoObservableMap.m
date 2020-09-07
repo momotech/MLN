@@ -150,6 +150,13 @@
     return [self native_getValueForKey:key];
 }
 
+- (id)mutableCopy {
+    return [[self.class alloc] initWithDictionary:self.proxy];
+}
+
+- (id)argo_mutableCopy {
+    return [[self.class alloc] initWithDictionary:self.proxy];
+}
 #pragma mark -
 
 - (instancetype)initWithMutableDictonary:(NSMutableDictionary *)dic {
@@ -161,6 +168,10 @@
 
 - (instancetype)init {
     return [self initWithMutableDictonary:[NSMutableDictionary dictionary]];
+}
+
+- (instancetype)initWithDictionary:(NSDictionary *)otherDictionary {
+    return [self initWithMutableDictonary:[NSMutableDictionary dictionaryWithDictionary:otherDictionary]];
 }
 
 - (instancetype)initWithCapacity:(NSUInteger)numItems {

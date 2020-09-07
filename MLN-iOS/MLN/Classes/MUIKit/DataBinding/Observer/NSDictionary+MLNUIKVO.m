@@ -25,6 +25,19 @@
     return copy;
 }
 
+- (ArgoObservableMap *)argo_mutableCopy {
+    ArgoObservableMap *copy = [ArgoObservableMap dictionaryWithCapacity:self.count];
+    for (NSString *key in self.allKeys) {
+        NSDictionary *value = [self objectForKey:key];
+        if ([value respondsToSelector:@selector(argo_mutableCopy)]) {
+            [copy setObject:value.argo_mutableCopy forKey:key];
+        } else {
+            [copy setObject:value forKey:key];
+        }
+    }
+    return copy;
+}
+
 - (NSDictionary *)mlnui_convertToLuaTableAvailable {
     NSMutableDictionary *dic = [NSMutableDictionary dictionaryWithCapacity:self.count];
     [self enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, NSObject*  _Nonnull obj, BOOL * _Nonnull stop) {

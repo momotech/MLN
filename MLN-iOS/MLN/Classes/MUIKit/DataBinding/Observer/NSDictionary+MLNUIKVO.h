@@ -8,11 +8,14 @@
 #import <Foundation/Foundation.h>
 
 NS_ASSUME_NONNULL_BEGIN
-
+@class ArgoObservableMap;
 @interface NSDictionary (MLNUIKVO)
 - (NSMutableDictionary *)mlnui_mutalbeCopy;
 - (NSDictionary *)mlnui_convertToLuaTableAvailable;
 - (NSMutableDictionary *)mlnui_convertToMDic;
+
+- (ArgoObservableMap *)argo_mutableCopy;
+
 @end
 
 @interface NSMutableDictionary (MLNUIKVO)

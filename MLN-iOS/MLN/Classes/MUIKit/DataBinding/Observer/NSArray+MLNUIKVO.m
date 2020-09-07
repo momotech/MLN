@@ -57,6 +57,18 @@
     return copy;
 }
 
+- (ArgoObservableArray *)argo_mutableCopy {
+    ArgoObservableArray *copy = [ArgoObservableArray arrayWithCapacity:self.count];
+    [self enumerateObjectsUsingBlock:^(NSArray *  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        if ([obj respondsToSelector:@selector(argo_mutableCopy)]) {
+            [copy addObject:obj.argo_mutableCopy];
+        } else {
+            [copy addObject:obj];
+        }
+    }];
+    return copy;
+}
+
 - (BOOL)mlnui_is2D {
     NSObject *first = self.firstObject;
     return [first isKindOfClass:[NSArray class]];

@@ -135,6 +135,15 @@
     };
 }
 
+#pragma mark -
+- (id)mutableCopy {
+    return [[ArgoObservableArray alloc] initWithMutableArray:self.proxy.mutableCopy];
+}
+
+- (ArgoObservableArray *)argo_mutableCopy {
+    return [[ArgoObservableArray alloc] initWithMutableArray:self.proxy.mutableCopy];
+}
+
 #pragma mark - CustomMutableArray
 - (instancetype)initWithMutableArray:(NSMutableArray*)array {
     if((self = [super init])) {
