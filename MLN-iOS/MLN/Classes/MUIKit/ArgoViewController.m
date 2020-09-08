@@ -36,7 +36,8 @@
     if (!bundleName) {
         bundle = [NSBundle mainBundle];
     } else {
-        NSString *bundlePath = [[NSBundle mainBundle] pathForResource:bundleName ofType:@"bundle"];
+        NSArray *paths = [bundleName componentsSeparatedByString:@"."];
+        NSString *bundlePath = [[NSBundle mainBundle] pathForResource:paths.firstObject ofType:@"bundle"];
         bundle = [NSBundle bundleWithPath:bundlePath];
     }
     return [self initWithEntryFileName:entryFileName bundle:bundle];
