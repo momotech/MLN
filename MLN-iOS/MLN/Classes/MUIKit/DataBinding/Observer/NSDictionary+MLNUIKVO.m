@@ -95,7 +95,12 @@
         NSMutableDictionary *dic = self;
         for (int i = 0; i < keys.count - 1; i++) {
             NSString *key = keys[i];
-            NSMutableDictionary *tmp = [dic objectForKey:key];
+            NSMutableDictionary *tmp;
+            if ([dic isKindOfClass:[NSMutableDictionary class]]) {
+                tmp = [dic objectForKey:key];
+            } else {
+                tmp = [dic valueForKey:key];
+            }
             if (!tmp) {
                 tmp = [NSMutableDictionary dictionary];
                 [dic setObject:tmp forKey:key];
