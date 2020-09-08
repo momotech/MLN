@@ -242,12 +242,12 @@ static inline UIView *MLNUIValidSuperview(UIView *self) {
     return self.mlnui_renderContext.clipToBounds;
 }
 
-- (CGFloat)luaui_centerX {
-    return self.center.x;
+- (CGFloat)luaui_getX {
+    return self.frame.origin.x;
 }
 
-- (CGFloat)luaui_centerY {
-    return self.center.y;
+- (CGFloat)luaui_getY {
+    return self.frame.origin.y;
 }
 
 - (void)luaui_layoutComplete:(MLNUIBlock *)complete {
