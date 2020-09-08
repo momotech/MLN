@@ -19,8 +19,10 @@
 #if OCPERF_USE_NEW_DB
 #import "NSDictionary+MLNUIKVO.h"
 #import "NSArray+MLNUIKVO.h"
+#define ArgoViewModelBase ArgoObservableMap
 #else
-#define ArgoObservableMap NSObject
+#define ArgoViewModelBase NSObject
+#define ArgoObservableMap NSMutableDictionary
 #define ArgoObservableArray NSMutableArray
 #define argo_mutableCopy mutableCopy
 #endif

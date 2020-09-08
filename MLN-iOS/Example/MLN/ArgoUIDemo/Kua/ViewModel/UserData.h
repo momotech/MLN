@@ -3,7 +3,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface UserData : ArgoObservableMap <ArgoViewModelProtocol>
+@interface UserData : ArgoViewModelBase <ArgoViewModelProtocol>
 @property (nonatomic, strong) ArgoObservableArray *listSource;
 @property (nonatomic, copy) NSString * title;
 
