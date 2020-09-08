@@ -16,6 +16,7 @@
 		00574F94246A8B3200927744 /* MLNDataBindArrayViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 00574F93246A8B3200927744 /* MLNDataBindArrayViewController.m */; };
 		006E8FDF2501E60300DB3368 /* ArgoKuaViewModelUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 006E8FDE2501E60300DB3368 /* ArgoKuaViewModelUtils.m */; };
 		007F89E7246C0D8400FF50F1 /* MLNBindTestCaseModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 007F89E6246C0D8400FF50F1 /* MLNBindTestCaseModel.m */; };
+		007FC90E250630B1000A8E92 /* HomePageArgoUI.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 007FC90D250630B1000A8E92 /* HomePageArgoUI.bundle */; };
 		008CA3C124F3D43400C4F76F /* KuaDemoMUI2.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 008CA3C024F3D43400C4F76F /* KuaDemoMUI2.bundle */; };
 		009DD8D524114B9600452458 /* MLNArrayBindingTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 009DD8D424114B9600452458 /* MLNArrayBindingTests.m */; };
 		00A0C999243C180500F0D003 /* MLNPerformanceTestController.m in Sources */ = {isa = PBXBuildFile; fileRef = 00A0C998243C180500F0D003 /* MLNPerformanceTestController.m */; };
@@ -174,6 +175,7 @@
 		006E8FDE2501E60300DB3368 /* ArgoKuaViewModelUtils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ArgoKuaViewModelUtils.m; sourceTree = "<group>"; };
 		007F89E5246C0D8400FF50F1 /* MLNBindTestCaseModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNBindTestCaseModel.h; sourceTree = "<group>"; };
 		007F89E6246C0D8400FF50F1 /* MLNBindTestCaseModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNBindTestCaseModel.m; sourceTree = "<group>"; };
+		007FC90D250630B1000A8E92 /* HomePageArgoUI.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = HomePageArgoUI.bundle; sourceTree = "<group>"; };
 		008CA3C024F3D43400C4F76F /* KuaDemoMUI2.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = KuaDemoMUI2.bundle; sourceTree = "<group>"; };
 		009DD8D424114B9600452458 /* MLNArrayBindingTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNArrayBindingTests.m; sourceTree = "<group>"; };
 		00A0C997243C180500F0D003 /* MLNPerformanceTestController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNPerformanceTestController.h; sourceTree = "<group>"; };
@@ -558,6 +560,7 @@
 		00E9130624E517C9006614C4 /* ViewPager */ = {
 			isa = PBXGroup;
 			children = (
+				007FC90D250630B1000A8E92 /* HomePageArgoUI.bundle */,
 				00E9130A24E51837006614C4 /* ViewModel */,
 				00E9130924E51837006614C4 /* ViewPagerDemoMUI.bundle */,
 				00E9132424E51CC3006614C4 /* MLNViewPagerDemo.h */,
@@ -1201,6 +1204,7 @@
 				00D5986B24B8732F00EA1660 /* PerformanceDemoMUI.bundle in Resources */,
 				6003F5A9195388D20070C39A /* Images.xcassets in Resources */,
 				6003F598195388D20070C39A /* InfoPlist.strings in Resources */,
+				007FC90E250630B1000A8E92 /* HomePageArgoUI.bundle in Resources */,
 				FAE9C59523A2529C002C830D /* inner_demo.bundle in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
