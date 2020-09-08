@@ -24,7 +24,7 @@
 }
 
 - (void)createController {
-    NSString *demoName = @"kuaDetail.lua";
+//    NSString *demoName = @"kuaDetail.lua";
 //    NSString *path = [[NSBundle mainBundle] pathForResource:@"KuaDemoMUI" ofType:@"bundle"];
 //    NSBundle *bundle = [NSBundle bundleWithPath:path];
 //    MLNUIViewController *viewController = [[MLNUIViewController alloc] initWithEntryFileName:demoName bundle:bundle];

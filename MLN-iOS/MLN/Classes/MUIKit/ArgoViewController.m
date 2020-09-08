@@ -68,6 +68,7 @@
         if ([self.delegate respondsToSelector:@selector(viewController:didFailRun:error:)]) {
             [self.delegate viewController:self didFailRun:self.entryFileName error:error];
         }
+        MLNUIError(self.kitInstance.luaCore, @"run entryFile: %@, error: %@",self.entryFileName, error);
     }
     
     [self notifyLifeCycle:ArgoViewControllerLifeCycleViewDidLoad];

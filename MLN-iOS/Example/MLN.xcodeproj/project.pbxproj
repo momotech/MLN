@@ -17,6 +17,7 @@
 		006E8FDF2501E60300DB3368 /* ArgoKuaViewModelUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 006E8FDE2501E60300DB3368 /* ArgoKuaViewModelUtils.m */; };
 		007F89E7246C0D8400FF50F1 /* MLNBindTestCaseModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 007F89E6246C0D8400FF50F1 /* MLNBindTestCaseModel.m */; };
 		007FC90E250630B1000A8E92 /* HomePageArgoUI.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 007FC90D250630B1000A8E92 /* HomePageArgoUI.bundle */; };
+		007FF99A25072DCD000A8E92 /* MLNUIMyErrorHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 007FF99925072DCD000A8E92 /* MLNUIMyErrorHandler.m */; };
 		008CA3C124F3D43400C4F76F /* KuaDemoMUI2.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 008CA3C024F3D43400C4F76F /* KuaDemoMUI2.bundle */; };
 		009DD8D524114B9600452458 /* MLNArrayBindingTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 009DD8D424114B9600452458 /* MLNArrayBindingTests.m */; };
 		00A0C999243C180500F0D003 /* MLNPerformanceTestController.m in Sources */ = {isa = PBXBuildFile; fileRef = 00A0C998243C180500F0D003 /* MLNPerformanceTestController.m */; };
@@ -176,6 +177,8 @@
 		007F89E5246C0D8400FF50F1 /* MLNBindTestCaseModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNBindTestCaseModel.h; sourceTree = "<group>"; };
 		007F89E6246C0D8400FF50F1 /* MLNBindTestCaseModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNBindTestCaseModel.m; sourceTree = "<group>"; };
 		007FC90D250630B1000A8E92 /* HomePageArgoUI.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = HomePageArgoUI.bundle; sourceTree = "<group>"; };
+		007FF99825072DCD000A8E92 /* MLNUIMyErrorHandler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNUIMyErrorHandler.h; sourceTree = "<group>"; };
+		007FF99925072DCD000A8E92 /* MLNUIMyErrorHandler.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNUIMyErrorHandler.m; sourceTree = "<group>"; };
 		008CA3C024F3D43400C4F76F /* KuaDemoMUI2.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = KuaDemoMUI2.bundle; sourceTree = "<group>"; };
 		009DD8D424114B9600452458 /* MLNArrayBindingTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNArrayBindingTests.m; sourceTree = "<group>"; };
 		00A0C997243C180500F0D003 /* MLNPerformanceTestController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNPerformanceTestController.h; sourceTree = "<group>"; };
@@ -1070,6 +1073,8 @@
 				3012BB0F2326822F00FA2BB2 /* MLNNavigatorHandler.m */,
 				00A9991A247EA73D00307914 /* MLNUIMyImageHandler.h */,
 				00A9991B247EA73D00307914 /* MLNUIMyImageHandler.m */,
+				007FF99825072DCD000A8E92 /* MLNUIMyErrorHandler.h */,
+				007FF99925072DCD000A8E92 /* MLNUIMyErrorHandler.m */,
 			);
 			path = Handler;
 			sourceTree = "<group>";
@@ -1405,6 +1410,7 @@
 				006E8FDF2501E60300DB3368 /* ArgoKuaViewModelUtils.m in Sources */,
 				B27F65D72377AAC400F2D341 /* MLNGalleryHomeViewController.m in Sources */,
 				00E9132324E519B3006614C4 /* HomeData.m in Sources */,
+				007FF99A25072DCD000A8E92 /* MLNUIMyErrorHandler.m in Sources */,
 				FA38349B239B5A4C000F900E /* MLNDemoListViewController.m in Sources */,
 				FA4EE2FA2379067000449250 /* MLNGalleryMinePageCellBaseModel.m in Sources */,
 				B27F65AF2377AA9700F2D341 /* MLNNativeWaterfallLayout.m in Sources */,

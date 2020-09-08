@@ -172,8 +172,7 @@ __VA_ARGS__;\
  */
 #define MLNUICallErrorHandler(LUA_CORE, FORMAT, ...) \
 NSString *error_tt = [NSString stringWithFormat:FORMAT, ##__VA_ARGS__];\
-error_tt = [error_tt stringByAppendingFormat:@"\n%@",[LUA_CORE traceback]];\
-[(LUA_CORE).errorHandler luaCore:(LUA_CORE) error:error_tt]; \
+[(LUA_CORE).errorHandler luaCore:(LUA_CORE) luaError:error_tt luaTraceback:[LUA_CORE traceback]]; \
 
 /**
  通知Handler处理Error
