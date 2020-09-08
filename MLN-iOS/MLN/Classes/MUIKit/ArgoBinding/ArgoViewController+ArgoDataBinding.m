@@ -53,7 +53,11 @@
 - (ArgoDataBinding *)argo_dataBinding {
     ArgoDataBinding *obj = objc_getAssociatedObject(self, _cmd);
     if (!obj) {
+# if OCPERF_USE_NEW_DB
         obj = [[ArgoDataBinding alloc] init];
+#else
+        obj = [[MLNUIDataBinding alloc] init];
+#endif
         objc_setAssociatedObject(self, _cmd, obj, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     }
     return obj;
