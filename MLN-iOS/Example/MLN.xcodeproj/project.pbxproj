@@ -126,6 +126,12 @@
 		FA383456239A6357000F900E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FA383454239A6356000F900E /* Main.storyboard */; };
 		FA383459239A64AF000F900E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FA383457239A64AF000F900E /* LaunchScreen.storyboard */; };
 		FA38349B239B5A4C000F900E /* MLNDemoListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FA38349A239B5A4C000F900E /* MLNDemoListViewController.m */; };
+		FA4103E325090347007ADC8F /* DemoLiyifengTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FA4103D825090345007ADC8F /* DemoLiyifengTableViewCell.m */; };
+		FA4103E425090347007ADC8F /* DemoLiyifengViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FA4103DA25090346007ADC8F /* DemoLiyifengViewController.m */; };
+		FA4103E525090347007ADC8F /* DemoTableViewHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = FA4103DC25090346007ADC8F /* DemoTableViewHeaderView.m */; };
+		FA4103E625090347007ADC8F /* DemoLiyifengTableViewHeaderCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FA4103DD25090346007ADC8F /* DemoLiyifengTableViewHeaderCell.m */; };
+		FA4103E725090347007ADC8F /* data.plist in Resources */ = {isa = PBXBuildFile; fileRef = FA4103DE25090346007ADC8F /* data.plist */; };
+		FA4103E825090347007ADC8F /* DemoLiyifengModel.m in Sources */ = {isa = PBXBuildFile; fileRef = FA4103E025090346007ADC8F /* DemoLiyifengModel.m */; };
 		FA4EE2FA2379067000449250 /* MLNGalleryMinePageCellBaseModel.m in Sources */ = {isa = PBXBuildFile; fileRef = FA4EE2F92379067000449250 /* MLNGalleryMinePageCellBaseModel.m */; };
 		FA4EE2FD237907B000449250 /* MLNGalleryMinePageCellHomeModel.m in Sources */ = {isa = PBXBuildFile; fileRef = FA4EE2FC237907B000449250 /* MLNGalleryMinePageCellHomeModel.m */; };
 		FA4EE3002379080100449250 /* MLNGalleryMinePageCellDynamicModel.m in Sources */ = {isa = PBXBuildFile; fileRef = FA4EE2FF2379080100449250 /* MLNGalleryMinePageCellDynamicModel.m */; };
@@ -385,6 +391,17 @@
 		FA383458239A64AF000F900E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		FA383499239B5A4C000F900E /* MLNDemoListViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNDemoListViewController.h; sourceTree = "<group>"; };
 		FA38349A239B5A4C000F900E /* MLNDemoListViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNDemoListViewController.m; sourceTree = "<group>"; };
+		FA4103D825090345007ADC8F /* DemoLiyifengTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DemoLiyifengTableViewCell.m; sourceTree = "<group>"; };
+		FA4103D925090346007ADC8F /* DemoLiyifengViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DemoLiyifengViewController.h; sourceTree = "<group>"; };
+		FA4103DA25090346007ADC8F /* DemoLiyifengViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DemoLiyifengViewController.m; sourceTree = "<group>"; };
+		FA4103DB25090346007ADC8F /* DemoTableViewHeaderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DemoTableViewHeaderView.h; sourceTree = "<group>"; };
+		FA4103DC25090346007ADC8F /* DemoTableViewHeaderView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DemoTableViewHeaderView.m; sourceTree = "<group>"; };
+		FA4103DD25090346007ADC8F /* DemoLiyifengTableViewHeaderCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DemoLiyifengTableViewHeaderCell.m; sourceTree = "<group>"; };
+		FA4103DE25090346007ADC8F /* data.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = data.plist; sourceTree = "<group>"; };
+		FA4103DF25090346007ADC8F /* DemoLiyifengTableViewHeaderCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DemoLiyifengTableViewHeaderCell.h; sourceTree = "<group>"; };
+		FA4103E025090346007ADC8F /* DemoLiyifengModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DemoLiyifengModel.m; sourceTree = "<group>"; };
+		FA4103E125090347007ADC8F /* DemoLiyifengModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DemoLiyifengModel.h; sourceTree = "<group>"; };
+		FA4103E225090347007ADC8F /* DemoLiyifengTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DemoLiyifengTableViewCell.h; sourceTree = "<group>"; };
 		FA4EE2F82379067000449250 /* MLNGalleryMinePageCellBaseModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNGalleryMinePageCellBaseModel.h; sourceTree = "<group>"; };
 		FA4EE2F92379067000449250 /* MLNGalleryMinePageCellBaseModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNGalleryMinePageCellBaseModel.m; sourceTree = "<group>"; };
 		FA4EE2FB237907B000449250 /* MLNGalleryMinePageCellHomeModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNGalleryMinePageCellHomeModel.h; sourceTree = "<group>"; };
@@ -682,6 +699,7 @@
 				B2DD3E4E237990E8002AB6AD /* MLNLuaPageViewController.m */,
 				00A0C997243C180500F0D003 /* MLNPerformanceTestController.h */,
 				00A0C998243C180500F0D003 /* MLNPerformanceTestController.m */,
+				FA4103C425090265007ADC8F /* iOSDemo */,
 				00E911C924E2B8B9006614C4 /* ArgoUIDemo */,
 				FAE9C59723A2603F002C830D /* Handler */,
 				FAE9C59623A2600B002C830D /* BridgeTest */,
@@ -1001,6 +1019,32 @@
 			path = MLNActionManager;
 			sourceTree = "<group>";
 		};
+		FA4103C425090265007ADC8F /* iOSDemo */ = {
+			isa = PBXGroup;
+			children = (
+				FA4103C5250902D7007ADC8F /* iOSKuaNative */,
+			);
+			path = iOSDemo;
+			sourceTree = "<group>";
+		};
+		FA4103C5250902D7007ADC8F /* iOSKuaNative */ = {
+			isa = PBXGroup;
+			children = (
+				FA4103DE25090346007ADC8F /* data.plist */,
+				FA4103E125090347007ADC8F /* DemoLiyifengModel.h */,
+				FA4103E025090346007ADC8F /* DemoLiyifengModel.m */,
+				FA4103E225090347007ADC8F /* DemoLiyifengTableViewCell.h */,
+				FA4103D825090345007ADC8F /* DemoLiyifengTableViewCell.m */,
+				FA4103DF25090346007ADC8F /* DemoLiyifengTableViewHeaderCell.h */,
+				FA4103DD25090346007ADC8F /* DemoLiyifengTableViewHeaderCell.m */,
+				FA4103D925090346007ADC8F /* DemoLiyifengViewController.h */,
+				FA4103DA25090346007ADC8F /* DemoLiyifengViewController.m */,
+				FA4103DB25090346007ADC8F /* DemoTableViewHeaderView.h */,
+				FA4103DC25090346007ADC8F /* DemoTableViewHeaderView.m */,
+			);
+			path = iOSKuaNative;
+			sourceTree = "<group>";
+		};
 		FA4EE3042379093000449250 /* BottomCell */ = {
 			isa = PBXGroup;
 			children = (
@@ -1200,6 +1244,7 @@
 				FA383459239A64AF000F900E /* LaunchScreen.storyboard in Resources */,
 				00E9132C24E53E46006614C4 /* KuaCell.xib in Resources */,
 				FAE9C59323A250CD002C830D /* gallery.bundle in Resources */,
+				FA4103E725090347007ADC8F /* data.plist in Resources */,
 				30CB3BFB23684CD400AB90C6 /* MLN.podspec in Resources */,
 				30CB3BF923684B7F00AB90C6 /* MLNDevTool.podspec in Resources */,
 				00E9131524E51837006614C4 /* ViewPagerDemoMUI.bundle in Resources */,
@@ -1353,6 +1398,7 @@
 				00E9132624E51CC3006614C4 /* MLNViewPagerDemo.m in Sources */,
 				6003F59E195388D20070C39A /* MLNAppDelegate.m in Sources */,
 				00E9131724E51837006614C4 /* HomeDataPageModels.m in Sources */,
+				FA4103E625090347007ADC8F /* DemoLiyifengTableViewHeaderCell.m in Sources */,
 				00A9991C247EA73D00307914 /* MLNUIMyImageHandler.m in Sources */,
 				B27F65DD2377AB0700F2D341 /* MLNGalleryNavigationBar.m in Sources */,
 				B29500F72372D5B400F48F09 /* MLNSimpleViewPagerCell.m in Sources */,
@@ -1365,6 +1411,7 @@
 				FA4EE313237917E500449250 /* MLNGalleryMinePageCellCollectCell.m in Sources */,
 				FA4EE30D237909AB00449250 /* MLNGalleryMineBottomPageDynamicCell.m in Sources */,
 				00E6526E2420BCCE00A878B8 /* MLNBindTableViewController.m in Sources */,
+				FA4103E425090347007ADC8F /* DemoLiyifengViewController.m in Sources */,
 				00C1E94C2477797E000DB89A /* MLNDBTestModel.m in Sources */,
 				B29500D62372627000F48F09 /* MLNNativeTabSegmentView.m in Sources */,
 				B29500EA2372A3A400F48F09 /* MLNSimpleViewPager.m in Sources */,
@@ -1390,11 +1437,13 @@
 				00E9132124E519B3006614C4 /* CellModel.m in Sources */,
 				B29500CA23725EB800F48F09 /* UIImage+MLNResize.m in Sources */,
 				B27F658C2377AA6C00F2D341 /* MLNGalleryMineBottomPage.m in Sources */,
+				FA4103E525090347007ADC8F /* DemoTableViewHeaderView.m in Sources */,
 				6003F59A195388D20070C39A /* main.m in Sources */,
 				00A45F7624850C35001A07D9 /* MLNUIBridge.m in Sources */,
 				00E911CC24E2B8EC006614C4 /* MLNKuaController.m in Sources */,
 				B29500B72371A3ED00F48F09 /* MLNGalleryMainViewController.m in Sources */,
 				FA906FA024EBC8D500F8DAE2 /* MLNUICustomHotReloadViewController.m in Sources */,
+				FA4103E825090347007ADC8F /* DemoLiyifengModel.m in Sources */,
 				00E6526B2420AD1800A878B8 /* MLNBindModelViewController.m in Sources */,
 				B27F65D62377AAC400F2D341 /* MLNHomeDataHandler.m in Sources */,
 				00D5985E24B825BF00EA1660 /* MLNBindTestShopStoreController.m in Sources */,
@@ -1407,6 +1456,7 @@
 				B27F658F2377AA6C00F2D341 /* MLNGalleryMineInfoViewModel.m in Sources */,
 				B27F65CD2377AAAE00F2D341 /* MLNGalleryMessageDetailViewController.m in Sources */,
 				B2D0ABB52370136000B1D349 /* MLNGalleryViewController.m in Sources */,
+				FA4103E325090347007ADC8F /* DemoLiyifengTableViewCell.m in Sources */,
 				006E8FDF2501E60300DB3368 /* ArgoKuaViewModelUtils.m in Sources */,
 				B27F65D72377AAC400F2D341 /* MLNGalleryHomeViewController.m in Sources */,
 				00E9132324E519B3006614C4 /* HomeData.m in Sources */,

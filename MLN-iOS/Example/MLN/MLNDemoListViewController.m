@@ -117,6 +117,7 @@
                        @"MLNPerformanceTestController",
                        @"MLNKuaController",
                        @"MLNViewPagerDemo",
+                       @"DemoLiyifengViewController",
                        ];
     }
     return _demoArray;
