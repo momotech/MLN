@@ -298,6 +298,10 @@ static int argo_section_count (lua_State *L) {
     NSError *error;
     NSString *nKey = [luaCore toString:-1 error:&error];
     NSArray *arr = _argo_data_for_keypath(luaCore, nKey);
+    if (![arr isKindOfClass:[NSArray class]]) {
+        lua_pushinteger(L, 0);
+        return 1;
+    }
     NSUInteger count = 1;
     if ([ArgoObserverHelper arrayIs2D:arr]) {
         count = arr.count;
@@ -319,6 +323,11 @@ static int argo_row_count (lua_State *L) {
     NSUInteger count = 0;
     
     NSArray *arr = _argo_data_for_keypath(luaCore, nKey);
+    if (![arr isKindOfClass:[NSArray class]]) {
+        lua_pushinteger(L, 0);
+        return 1;
+    }
+    
     if (section > arr.count || section == 0) {
         count = 0;
     } else if([ArgoObserverHelper arrayIs2D:arr]){
@@ -346,10 +355,10 @@ static int argo_bind_cell (lua_State *L) {
     NSUInteger row = lua_tonumber(L, -2);
     NSArray *paths = [luaCore toNativeObject:-1 error:NULL];
 //    NSArray *paths = [luaCore.convertor toArgoBindingNativeObject:-1 error:&error];
-    
-    if (paths.count == 0) {
+    if (![paths isKindOfClass:[NSArray class]] || paths.count == 0) {
         return 1;
     }
+
     [dataBind argo_bindCellWithController:kitViewController KeyPath:nKey section:section row:row paths:paths];
     PCallDBEnd(__func__);
     TOCK("argo_bindCell key %s section %zd row %zd",nKey.UTF8String, section, row);
