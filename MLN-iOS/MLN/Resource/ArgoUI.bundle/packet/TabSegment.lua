@@ -207,7 +207,7 @@ function _class:_executeProgressBarAnimation(fromIndex, toIndex, progress, autoA
         posXAnim:to(toValue)
         posXAnim:duration(self._autoAnimTime)
         posXAnim:finishBlock(function()
-            self._animCache[self._progressBar] = nil --下次重新创建动画
+            self:_resetProgressBarAnimationFlag() --下次重新创建动画
         end)
 
         local widthAnimSet = AnimatorSet()
@@ -225,7 +225,7 @@ function _class:_executeProgressBarAnimation(fromIndex, toIndex, progress, autoA
 
         widthAnimSet:sequentially{widthAnim1, widthAnim2}
         widthAnimSet:finishBlock(function(_)
-            self._animCache[self._progressBar] = nil --下次重新创建动画
+            self:_resetProgressBarAnimationFlag() --下次重新创建动画
         end)
 
         anims = {posXAnim, widthAnimSet}
@@ -241,9 +241,15 @@ function _class:_executeProgressBarAnimation(fromIndex, toIndex, progress, autoA
         posXAnim:update(progress)
         widthAnimSet:update(progress)
         if progress >= 1 then
-            self._animCache[self._progressBar] = nil
+            self:_resetProgressBarAnimationFlag()
         end
     end
+end
+
+function _class:_resetProgressBarAnimationFlag()
+    self._animCache[self._progressBar] = nil
+    self._doingFromIndex = nil
+    self._doingToIndex = nil
 end
 
 function _class:_executeScrollViewOffsetAnimation(toIndex, progress, autoAnim)
