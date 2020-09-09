@@ -116,8 +116,7 @@ end
 
 local function CenterX(view)
     if not view then return 0 end
-    local super = view:superview()
-    return view:marginLeft() + view:width() / 2 + (super and super:paddingLeft() or 0)
+    return view:getX() + view:width() / 2
 end
 
 function _class:_create(models, callback)
