@@ -92,6 +92,7 @@
     if (stack && stack.requestLayout) {
         return stack.requestLayout();
     }
+    return CGSizeZero;
 }
 
 @end

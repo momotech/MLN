@@ -22,7 +22,6 @@ function _class:new()
     obj.initFill = {}
     -- 数据懒加载
     obj.isLazy = false
-    obj.needLoad = false
     -- 数据懒加载
     obj.fillCellReuseId = nil
     obj.fillCell = nil
@@ -43,10 +42,9 @@ end
 -- viewPager滚动停止，页面选中回调
 function _class:onPagerSelected(currentPage)
     -- 真正执行懒加载数据模式，有可能是预加载，即self.fillRow~=currentPage
-    if self.fillCellReuseId ~= nil and self.fillCell ~= nil and self.isLazy and self.needLoad then
+    if self.fillCellReuseId ~= nil and self.fillCell ~= nil and self.isLazy then
         self.fillCellReuseId(self.fillCell, self.fillRow)
         self.isLazy = false
-        self.needLoad = false
         if self.initFill[self.fillRow] ~= nil and self.initFill[self.fillRow].init == false then
             self.initFill[self.fillRow].init = true
         end
@@ -124,7 +122,6 @@ function _class:fillCellDataByReuseId(reuseId, fillCell)
         end
         -- 是否懒加载，针对notifyDataSource
         if self.isLazy then
-            self.needLoad = true
             self.fillCell = cell
             self.fillRow = row
             self.fillCellReuseId = fillCell
