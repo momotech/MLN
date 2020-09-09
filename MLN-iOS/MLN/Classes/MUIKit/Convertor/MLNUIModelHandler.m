@@ -9,6 +9,7 @@
 #import "MLNUILuaCore.h"
 #import "MLNUIKitBridgesManager.h"
 #import "MLNUIModelKeyPathComparator.h"
+#import "ArgoBindingConvertor.h"
 
 #define ARGOUI_ERROR(errmsg) do {\
 if (error) { *error = [NSError errorWithDomain:@"com.argoui.error" code:-1 userInfo:@{NSLocalizedDescriptionKey:errmsg}]; }\
@@ -65,14 +66,19 @@ typedef void(^MLNLUIModelHandleTask)(void);
     
     MLNUILuaCore *luaCore = MLNUILuaCoreGet();
     lua_State *L = luaCore.state;
-    
     int argCount = 0;
     if ([luaCore pushLuaTable:dataObject error:nil]) {
         argCount++;
     }
+#if OCPERF_USE_NEW_DB
+    if ([luaCore.convertor pushArgoBindingNativeObject:model error:error]) {
+        argCount++;
+    }
+#else
     if (MLNUIConvertModelToLuaTable(model, luaCore)) {
         argCount++;
     }
+#endif
     if (extra) {
         argCount++;
         MLNUIPushObject(extra, luaCore);
@@ -104,7 +110,11 @@ typedef void(^MLNLUIModelHandleTask)(void);
     #if DEBUG
             [MLNUIModelKeyPathComparator keyPathCompare:luaCore model:model];
     #endif
+#if OCPERF_USE_NEW_DB
+    return [luaCore.convertor toArgoBindingNativeObject:-1 error:NULL];
+#else
     return [luaCore toNativeObject:-1 error:error];
+#endif
 }
 
 + (NSThread *)modelConvertThread {
@@ -134,7 +144,7 @@ static inline MLNUILuaCore *MLNUILuaCoreGet(void) {
     static MLNUILuaCore *luaCore = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        luaCore = [[MLNUILuaCore alloc] initWithLuaBundle:nil];
+        luaCore = [[MLNUILuaCore alloc] initWithLuaBundle:nil convertor:[ArgoBindingConvertor class] exporter:nil];
         MLNUIKitBridgesManager *manager = [[MLNUIKitBridgesManager alloc] init];
         [manager registerKitForLuaCore:luaCore];
     });
