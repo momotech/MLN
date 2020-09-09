@@ -89,7 +89,9 @@
 
 - (CGSize)applyLayout {
     MLNUIInnerScrollViewContentStack *stack = (MLNUIInnerScrollViewContentStack *)self.view;
-    return stack.requestLayout();
+    if (stack && stack.requestLayout) {
+        return stack.requestLayout();
+    }
 }
 
 @end
