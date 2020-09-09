@@ -184,8 +184,10 @@ NSString *const kArgoConstString_Dot = @".";
         ArgoObservableMap *newMap = [change objectForKey:NSKeyValueChangeNewKey];
         id newV = newMap;
         if ([newMap isKindOfClass:[ArgoObservableMap class]]) {
-            newV = [newMap argoGetForKeyPath:subKeyPath];
-            [change setValue:newV forKey:NSKeyValueChangeNewKey];
+            if (subKeyPath.length > 0) {
+                newV = [newMap argoGetForKeyPath:subKeyPath];
+                [change setValue:newV forKey:NSKeyValueChangeNewKey];
+            }
             // 重新添加监听
             NSArray *subPaths = [subKeyPath componentsSeparatedByString:kArgoConstString_Dot];
             if (subPaths.count) {
