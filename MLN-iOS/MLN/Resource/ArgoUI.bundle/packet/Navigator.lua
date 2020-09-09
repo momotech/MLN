@@ -12,7 +12,7 @@ local _class = {
 _class._pageStack = {}--页面栈
 
 local function weak_table()
-    return setmetatable({}, {__mode = "v"})
+    return setmetatable({}, {__mode = "k"})
 end
 
 _class._willPushCache = weak_table()
