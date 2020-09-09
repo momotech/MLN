@@ -162,9 +162,9 @@ NSString *const kArgoConstString_Dot = @".";
         }
         
         if ([self isKindOfClass:[ArgoObservableMap class]]) {
-            [self handleNotifyMapWithWrapper:wrap change:change];
+            [self handleNotifyMapWithWrapper:wrap change:[change mutableCopy]];
         } else if([self isKindOfClass:[ArgoObservableArray class]]){
-            [self handleNotifyArrayWithWrapper:wrap change:change];
+            [self handleNotifyArrayWithWrapper:wrap change:[change mutableCopy]];
         }
     }
 }
