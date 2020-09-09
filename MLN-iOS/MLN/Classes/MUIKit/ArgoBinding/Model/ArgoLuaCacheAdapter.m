@@ -18,6 +18,9 @@
 
 #pragma mark -
 - (void)addLuaTabe:(MLNUILuaTable *)table {
+    if ([NSThread isMainThread] == false) {
+        return;
+    }
     MLNUILuaCore *core = table.luaCore;
     if (core) {
         [self.cache setObject:table forKey:core];
@@ -25,6 +28,9 @@
 }
 
 - (MLNUILuaTable *)getLuaTable:(id<NSCopying>)key {
+    if ([NSThread isMainThread] == false) {
+        return nil;
+    }
     if (key) {
         MLNUILuaTable *t = [self.cache objectForKey:key];
 //        if (t) {
