@@ -10,6 +10,8 @@
 #import "MLNUIKitBridgesManager.h"
 #import "MLNUIModelKeyPathComparator.h"
 #import "ArgoBindingConvertor.h"
+#import "ArgoObservableMap.h"
+#import "ArgoObservableArray.h"
 
 #define ARGOUI_ERROR(errmsg) do {\
 if (error) { *error = [NSError errorWithDomain:@"com.argoui.error" code:-1 userInfo:@{NSLocalizedDescriptionKey:errmsg}]; }\
@@ -220,11 +222,15 @@ static inline NSObject *MLNUIConvertDataObjectToModel(__unsafe_unretained id dat
     if ([dataObject isKindOfClass:[NSDictionary class]]) {
         [(NSDictionary *)dataObject enumerateKeysAndObjectsUsingBlock:^(id _Nonnull key, id _Nonnull obj, BOOL *_Nonnull stop) {
             @try {
+#if OCPERF_USE_NEW_DB
+                [model setValue:obj forKey:key];
+#else
                 if ([obj isKindOfClass:[NSArray class]] || [obj isKindOfClass:[NSDictionary class]]) {
                     [model setValue:[obj mutableCopy] forKey:key];
                 } else {
                     [model setValue:obj forKey:key];
                 }
+#endif
             } @catch (NSException *exception) {
                 ARGOUI_ERROR_LOG([exception description]);
             } @finally { }
