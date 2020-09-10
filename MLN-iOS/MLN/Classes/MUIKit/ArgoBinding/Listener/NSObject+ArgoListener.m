@@ -129,7 +129,7 @@ NSString *const kArgoConstString_Dot = @".";
     NSObject<ArgoListenerProtocol> *object = (NSObject<ArgoListenerProtocol> *)self;
     [object removeListenerWithOBID:token.tokenID];
     
-    for (int i = 1; i < paths.count; i++) {
+    for (int i = 0; i < paths.count; i++) {
         NSString *key = paths[i];
         object = (id<ArgoListenerProtocol>)[object lua_get:key];
         [object removeListenerWithOBID:token.tokenID];
