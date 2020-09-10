@@ -41,6 +41,14 @@
 }
 @end
 
+@interface _ArgoBindListViewInternalModel : NSObject
+@property (nonatomic, weak) UIView *listView;
+@property (nonatomic, strong) NSString *keyPath;
+@property (nonatomic, assign) NSInteger tokenID;
+@end
+
+@implementation _ArgoBindListViewInternalModel
+@end
 
 @interface ArgoDataBinding () {
     pthread_mutex_t _lock;
@@ -182,12 +190,26 @@
 
 - (NSInteger)argo_bindListView:(UIView *)listView forTag:(NSString *)tag {
     if(!listView || !tag) return NSNotFound;
-    [self.listViewMap setObject:listView forKey:tag];
+    _ArgoBindListViewInternalModel *model = [self.listViewMap objectForKey:tag];
+    if (listView == model.listView) {
+        PLOG(@">>>>>> list view %@ already add observer",listView);
+        return model.tokenID;
+    }
+    if (model) { //移除监听
+        [self.listViewMap removeObjectForKey:tag];
+        [self argo_unwatch:model.tokenID];
+    }
+    model = [_ArgoBindListViewInternalModel new];
+//    [self.listViewMap setObject:listView forKey:tag];
     //TODO: 需要转换？
     tag = [self convertedKeyPathWith:tag];
     PLOG(@"_argo_ bind listview %@ %p",tag, listView);
-    return [self _watchKeyPath:tag handler:nil listView:listView];
-//    [self _observeObject:self.dataMap keyPath:tag handler:nil listView:listView];
+    NSInteger tokenID = [self _watchKeyPath:tag handler:nil listView:listView];
+    model.listView = listView;
+    model.tokenID = tokenID;
+    model.keyPath = tag;
+    [self.listViewMap setObject:model forKey:tag];
+    return tokenID;
 }
 
 - (UIView *)argo_listViewForTag:(NSString *)tag {
@@ -343,7 +365,7 @@ static inline ArgoObserverBase *_getArgoObserver(UIViewController <ArgoViewContr
     if (self) {
         self.dataMap = [ArgoObservableMap dictionary];
         self.observerMap = [NSMutableDictionary dictionary];
-        self.listViewMap = [NSMapTable strongToWeakObjectsMapTable];
+        self.listViewMap = [NSMapTable strongToStrongObjectsMapTable];
 //        self.listViewMap = [NSMutableDictionary dictionary];
         LOCK_RECURSIVE_INIT();
     }
