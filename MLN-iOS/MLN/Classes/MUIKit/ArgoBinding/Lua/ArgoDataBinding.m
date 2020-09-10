@@ -23,6 +23,7 @@
 #import "MLNUICollectionView.h"
 #import "MLNUILuaTable.h"
 #import "NSObject+ArgoListener.h"
+#import "MLNUIHeader.h"
 
 @interface _ArgoBindCellInternalModel : NSObject
 //@property (nonatomic, strong) NSMutableDictionary *pathMap;
@@ -46,7 +47,7 @@
 }
 @property (nonatomic, strong) ArgoObservableMap *dataMap;
 @property (nonatomic, strong) NSMutableDictionary *observerMap;
-@property (nonatomic, strong) NSMutableDictionary *listViewMap;
+@property (nonatomic, strong) NSMapTable *listViewMap;
 @end
 
 @interface ArgoInternalListViewPairs : NSObject
@@ -130,22 +131,26 @@
 
 // from watch
 - (NSInteger)argo_watchKeyPath:(NSString *)keyPath withHandler:(MLNUIBlock *)handler {
+    return [self _watchKeyPath:keyPath handler:handler listView:nil];
+}
+
+- (NSInteger)_watchKeyPath:(NSString *)keyPath handler:(MLNUIBlock *)handler listView:(UIView *)listView {
     NSArray *keys = [keyPath componentsSeparatedByString:kArgoConstString_Dot];
     NSInteger lastNumberIndex = [ArgoObserverHelper lastNumberIndexOf:keys];
     if (lastNumberIndex == NSNotFound) { //没有数字
-        return [self _observeObject:self.dataMap keyPath:keyPath handler:handler listView:nil];
+        return [self _observeObject:self.dataMap keyPath:keyPath handler:handler listView:listView];
     }
     
     if (lastNumberIndex == keys.count - 1) { //最后一位是数字!
         NSString *log = [NSString stringWithFormat:@"%s，%@: 最后一个path不能是数字",__func__, keyPath];
         [self doErrorLog:log];
-        return NSIntegerMax;
+        return NSNotFound;
     }
     //keyPath:a.b.1.d.e, befor:a.b.1 after:d.e
     NSString *befor = [ArgoObserverHelper stringBefor:lastNumberIndex withKeys:keys];
     NSString *after = [keyPath substringFromIndex:befor.length + 1];
     id<ArgoListenerProtocol> observed = [self argo_get:befor];
-    return [self _observeObject:observed keyPath:after handler:handler listView:nil];
+    return [self _observeObject:observed keyPath:after handler:handler listView:listView];
 }
 
 - (NSInteger)_observeObject:(id<ArgoListenerProtocol>)observed keyPath:(NSString *)keyPath handler:(MLNUIBlock *)handler listView:(UIView *)listView {
@@ -167,19 +172,22 @@
 }
 
 - (void)argo_unwatch:(NSInteger)tokenID {
-    id<ArgoListenerToken> token = [self.observerMap objectForKey:@(tokenID)];
+    NSObject <ArgoListenerToken> *token = [self.observerMap objectForKey:@(tokenID)];
     if (token) {
+        PLOG(@"_argo_ unwatch %@ id %zd",[token performSelector:NSSelectorFromString(@"keyPath")], token.tokenID);
         [token removeListener];
         [self.observerMap removeObjectForKey:@(tokenID)];
     }
 }
 
-- (void)argo_bindListView:(UIView *)listView forTag:(NSString *)tag {
-    if(!listView || !tag) return;
+- (NSInteger)argo_bindListView:(UIView *)listView forTag:(NSString *)tag {
+    if(!listView || !tag) return NSNotFound;
     [self.listViewMap setObject:listView forKey:tag];
     //TODO: 需要转换？
     tag = [self convertedKeyPathWith:tag];
-    [self _observeObject:self.dataMap keyPath:tag handler:nil listView:listView];
+    PLOG(@"_argo_ bind listview %@ %p",tag, listView);
+    return [self _watchKeyPath:tag handler:nil listView:listView];
+//    [self _observeObject:self.dataMap keyPath:tag handler:nil listView:listView];
 }
 
 - (UIView *)argo_listViewForTag:(NSString *)tag {
@@ -266,6 +274,8 @@ static inline ArgoObserverBase *_getArgoObserver(UIViewController <ArgoViewContr
 //        TOCK2("add observer", p.UTF8String);
 //    }
     
+    PLOG(@"_argo_ bind cell paths %@",paths);
+    
     ArgoObserverBase *observer = _getArgoObserver(viewController, listView, @"", idKey);
 //    id<ArgoListenerToken> token = [cellModel addArgoListenerWithChangeBlock:^(NSString *keyPath, id<ArgoListenerProtocol> object, NSDictionary *change) {
 //        [observer notifyKeyPath:keyPath ofObject:object change:change];
@@ -290,7 +300,7 @@ static inline ArgoObserverBase *_getArgoObserver(UIViewController <ArgoViewContr
 
 - (NSString *)listViewKeyMatch:(NSString *)tag {
     NSString *lvKey;
-    NSArray *keys = [self.listViewMap.allKeys sortedArrayUsingComparator:^NSComparisonResult(NSString *  _Nonnull obj1, NSString *  _Nonnull obj2) {
+    NSArray *keys = [self.listViewMap.keyEnumerator.allObjects sortedArrayUsingComparator:^NSComparisonResult(NSString *  _Nonnull obj1, NSString *  _Nonnull obj2) {
         return (obj1.length > obj2.length) ? NSOrderedAscending : NSOrderedDescending;
     }];
     for (NSString *k in keys) {
@@ -333,8 +343,8 @@ static inline ArgoObserverBase *_getArgoObserver(UIViewController <ArgoViewContr
     if (self) {
         self.dataMap = [ArgoObservableMap dictionary];
         self.observerMap = [NSMutableDictionary dictionary];
-//        self.listViewMap = [NSMapTable strongToWeakObjectsMapTable];
-        self.listViewMap = [NSMutableDictionary dictionary];
+        self.listViewMap = [NSMapTable strongToWeakObjectsMapTable];
+//        self.listViewMap = [NSMutableDictionary dictionary];
         LOCK_RECURSIVE_INIT();
     }
     return self;
