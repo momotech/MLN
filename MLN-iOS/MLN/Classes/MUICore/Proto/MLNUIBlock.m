@@ -126,7 +126,7 @@ static int mlnui_errorFunc_traceback (lua_State *L) {
             result = [self.luaCore toNativeObject:-1 error:NULL];
         }
     } else {
-        NSString *msg = [NSString stringWithUTF8String:lua_tostring(L, -1)];
+        NSString *msg = [NSString stringWithUTF8String:lua_tostring(L, -1) ?: "null"];
         MLNUIError(MLNUI_LUA_CORE(L), @"fail to call lua function! error message: %@", msg);
     }
     // 恢复栈

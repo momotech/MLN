@@ -50,6 +50,7 @@
     } else {
         [self.proxy removeObjectForKey:key];
     }
+    
     //lua table cache
     [self.cacheAdapter putValue:value forKey:key];
     
