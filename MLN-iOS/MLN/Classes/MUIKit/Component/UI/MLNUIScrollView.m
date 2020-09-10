@@ -244,6 +244,7 @@
     if (!_autoFitSize) {
         MLNUIPlaneStack *contentStack = (MLNUIPlaneStack *)self.innerScrollView.mlnui_contentView;
         [contentStack setCrossAxisSize:self.innerScrollView.frame.size]; // 固定宽高情况下，要让contentStack交叉轴大小和scrollView保持一致（主轴方向上滚动）
+        [self ensureContentStackMainAxisEqualLargeThanScrollView:self.innerScrollView.frame.size contentStackNode:contentStack.mlnui_layoutNode];
         [contentStack mlnui_requestLayoutIfNeedWithSize:CGSizeMake(MLNUIUndefined, MLNUIUndefined)]; // 固定宽高不会执行mlnui_sizeThatFits
         
     } else { // 自适应内容要二次测量，处理subviews带有widthPercent/heightPercent的情况
@@ -251,6 +252,26 @@
         contentNode.width = MLNUIPointValue(MAX(contentNode.layoutWidth, self.frame.size.width));
         contentNode.height = MLNUIPointValue(MAX(contentNode.layoutHeight, self.frame.size.height));
         [contentNode applyLayoutWithSize:self.frame.size];
+    }
+}
+
+#pragma mark - Private
+
+// ContentStack 作为 ScrollView 的子视图，两者大小关系如下：
+// 主轴方向：ContentStack >= ScrollView
+// 交叉轴方向：ContentStack = ScrollView
+- (void)ensureContentStackMainAxisEqualLargeThanScrollView:(CGSize)size contentStackNode:(MLNUILayoutNode *)contentStackNode  {
+    switch (contentStackNode.flexDirection) {
+        case MLNUIFlexDirectionRow:
+        case MLNUIFlexDirectionRowReverse:
+            contentStackNode.minWidth = MLNUIPointValue(size.width);
+            break;
+        case MLNUIFlexDirectionColumn:
+        case MLNUIFlexDirectionColumnReverse:
+            contentStackNode.minHeight = MLNUIPointValue(size.height);
+            break;
+        default:
+            break;
     }
 }
 

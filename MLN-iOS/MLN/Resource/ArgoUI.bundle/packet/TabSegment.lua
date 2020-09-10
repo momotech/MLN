@@ -136,7 +136,7 @@ function _class:_setupUI(views)
 
     local scrollView = self.contentView
     local container = VStack():basis(1):crossSelf(CrossAxis.STRETCH)
-    local itemsView = HStack():basis(1):padding(15, 30, 10, 0):crossAxis(CrossAxis.STRETCH):mainAxis(MainAxis.SPACE_EVENLY)
+    local itemsView = HStack():basis(1):padding(15, 30, 10, 0):mainAxis(MainAxis.SPACE_EVENLY):crossSelf(CrossAxis.STRETCH):crossAxis(CrossAxis.STRETCH)
 
     for i, v in ipairs(views) do
         v:marginLeft(30):onClick(function()
