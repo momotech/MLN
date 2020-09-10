@@ -99,6 +99,8 @@ static int argo_watch(lua_State *L) {
     NSString *nKey = [luaCore toString:-2 error:&error];
     MLNUIBlock *handler = [luaCore.convertor toArgoBindingNativeObject:-1 error:&error];
     
+    PLOG(@"_argo_ watch %@",nKey);
+    
     NSInteger obid = [dataBind argo_watchKeyPath:nKey withHandler:handler];
     lua_pushnumber(L, obid);
     PCallDBEnd(__func__);

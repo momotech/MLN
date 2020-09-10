@@ -329,4 +329,23 @@ extern id<MLNUIPerformanceMonitor> MLNUIKitPerformanceMonitorForDebug;
 #define MLNUIAssertMainThread()
 #endif
 
+
+
+#if DEBUG && 1
+#define PLOG( s, ... ) \
+do{\
+NSDateFormatter *formater = [[[NSThread mainThread] threadDictionary] objectForKey:@"_PLOGDATEKEY"];\
+if (!formater) {\
+formater = [NSDateFormatter new];\
+[formater setDateFormat:@"HH:mm:ss.SSS"];\
+[[[NSThread mainThread] threadDictionary] setValue:formater forKey:@"_PLOGDATEKEY"];\
+}\
+const char *c = [[formater stringFromDate:[NSDate date]] UTF8String];\
+const char *f = ">>>>> "; \
+fprintf(stderr, "%s %s %s \n",c, f, [[NSString stringWithFormat:(s), ##__VA_ARGS__] UTF8String]); \
+}while(0)
+#else
+#define PLOG( s, ... )
+#endif
+
 #endif /* MLNUIHeader_h */
