@@ -23,9 +23,7 @@ function _class:new()
     -- 数据懒加载
     obj.isLazy = false
     -- 数据懒加载
-    obj.fillCellReuseId = nil
-    obj.fillCell = nil
-    obj.fillRow = nil
+    obj.fillData = nil
     return obj
 end
 
@@ -42,12 +40,15 @@ end
 -- viewPager滚动停止，页面选中回调
 function _class:onPagerSelected(currentPage)
     -- 真正执行懒加载数据模式，有可能是预加载，即self.fillRow~=currentPage
-    if self.fillCellReuseId ~= nil and self.fillCell ~= nil and self.isLazy then
-        self.fillCellReuseId(self.fillCell, self.fillRow)
-        self.isLazy = false
-        if self.initFill[self.fillRow] ~= nil and self.initFill[self.fillRow].init == false then
-            self.initFill[self.fillRow].init = true
+    if self.fillData ~= nil and self.isLazy then
+        for _, data in ipairs(self.fillData) do
+            data.fillCellReuseId(data.fillCell, data.fillRow)
+            if self.initFill[data.fillRow] ~= nil and self.initFill[data.fillRow].init == false then
+                self.initFill[data.fillRow].init = true
+            end
         end
+        self.isLazy = false
+        self.fillData = nil
     end
     -- 未初始化的进行初始化
     if self.initFill[currentPage] ~= nil and self.initFill[currentPage].init == false then
@@ -122,9 +123,23 @@ function _class:fillCellDataByReuseId(reuseId, fillCell)
         end
         -- 是否懒加载，针对notifyDataSource
         if self.isLazy then
-            self.fillCell = cell
-            self.fillRow = row
-            self.fillCellReuseId = fillCell
+            local contains = false
+            if self.fillData then
+                for _, data in ipairs(self.fillData) do
+                    if data.fillRow == row then
+                        contains = true
+                        break
+                    end
+                end
+            end
+            -- 搜集懒加载模式下，所有加载数据回调（防止数据未加载）---需要去重
+            if contains == false then
+                local data = { fillCell = cell, fillRow = row, fillCellReuseId = fillCell }
+                if not self.fillData then
+                    self.fillData = {}
+                end
+                table.insert(self.fillData, data)
+            end
         else
             return fillCell(cell, row)
         end
