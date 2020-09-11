@@ -331,7 +331,7 @@ extern id<MLNUIPerformanceMonitor> MLNUIKitPerformanceMonitorForDebug;
 
 
 
-#if DEBUG && 1
+#if DEBUG && 0
 #define PLOG( s, ... ) \
 do{\
 NSDateFormatter *formater = [[[NSThread mainThread] threadDictionary] objectForKey:@"_PLOGDATEKEY"];\

@@ -3165,7 +3165,6 @@
 		7124B6AA0B5813CB5E353517AC559140 /* MLNFileHandlerProtocol.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = MLNFileHandlerProtocol.h; path = "MLN-iOS/MLNDevTool/Classes/HotReload/MLNFileHandlerProtocol.h"; sourceTree = "<group>"; };
 		716DA40C803F554557C8CEDFADE9A7A7 /* SDDeviceHelper.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = SDDeviceHelper.h; path = SDWebImage/Private/SDDeviceHelper.h; sourceTree = "<group>"; };
 		71A4C0F9CA28E52F0EF3839D72269FC4 /* MLNAnimator.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLNAnimator.m; sourceTree = "<group>"; };
-		71AD6451943605A589DD8DD6BA989EE7 /* ArgoUI.bundle */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = "wrapper.plug-in"; name = ArgoUI.bundle; path = "MLN-iOS/MLN/Resource/ArgoUI.bundle"; sourceTree = "<group>"; };
 		71CAE707C82AAB93CEF01CEE76D8A51C /* close.png */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = image.png; path = close.png; sourceTree = "<group>"; };
 		71D43F74D18899EB29BB9B9C9AC0F219 /* Vector.cpp */ = {isa = PBXFileReference; includeInIndex = 1; path = Vector.cpp; sourceTree = "<group>"; };
 		71D78846C137F9B0AE6E169B765862BC /* FLEXASLLogController.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = FLEXASLLogController.h; path = Classes/GlobalStateExplorers/SystemLog/FLEXASLLogController.h; sourceTree = "<group>"; };
@@ -4179,6 +4178,7 @@
 		F0E42E1D0425242F05B1CE5FDA6CA058 /* MLNPoint.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLNPoint.h; sourceTree = "<group>"; };
 		F1256D02C56AD4387A6050ABEF02C7A0 /* NSMutableDictionary+MLNUIMap.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "NSMutableDictionary+MLNUIMap.m"; sourceTree = "<group>"; };
 		F1521348E9DCC28D90250029D1DF4AAF /* NSDictionary+MLNCore.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "NSDictionary+MLNCore.h"; sourceTree = "<group>"; };
+		F163D41471135AB26CC657E211CFD731 /* ArgoUISystem.bundle */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = "wrapper.plug-in"; name = ArgoUISystem.bundle; path = "MLN-iOS/MLN/Resource/ArgoUISystem.bundle"; sourceTree = "<group>"; };
 		F177E128DDF5126B9690E43D80BF3035 /* ViewController+MASAdditions.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "ViewController+MASAdditions.m"; path = "Masonry/ViewController+MASAdditions.m"; sourceTree = "<group>"; };
 		F19561CF245E566355F7F69183AD1F6C /* MJRefreshBackNormalFooter.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = MJRefreshBackNormalFooter.m; path = MJRefresh/Custom/Footer/Back/MJRefreshBackNormalFooter.m; sourceTree = "<group>"; };
 		F1A1F2DAD8840ADFD4B26B3EAE056406 /* MLNAnimationZoneView.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLNAnimationZoneView.m; sourceTree = "<group>"; };
@@ -5948,7 +5948,7 @@
 				7956E7EA5C2651582A4D0526985C41E9 /* Core */,
 				CCDC5C66BB98BC9EAE4B76B45541E972 /* Kit */,
 				451A0BDBB3423CD837044280B2F7B3FD /* Pod */,
-				A92C15DD86548E02B6E37B959EB06DB0 /* Resources */,
+				F7F15EBDC96563688A8A9FE79A25F6CB /* Resources */,
 				9A18BAF2B239E39B56028742D3EA9835 /* Support Files */,
 			);
 			name = ArgoUI;
@@ -7665,14 +7665,6 @@
 			path = Navigator;
 			sourceTree = "<group>";
 		};
-		A92C15DD86548E02B6E37B959EB06DB0 /* Resources */ = {
-			isa = PBXGroup;
-			children = (
-				71AD6451943605A589DD8DD6BA989EE7 /* ArgoUI.bundle */,
-			);
-			name = Resources;
-			sourceTree = "<group>";
-		};
 		AB2D137CA6AFF4D3E3811B6FC0E0A365 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
@@ -8550,6 +8542,14 @@
 			);
 			name = Exporter;
 			path = "MLN-iOS/MLN/Classes/Kit/Exporter";
+			sourceTree = "<group>";
+		};
+		F7F15EBDC96563688A8A9FE79A25F6CB /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				F163D41471135AB26CC657E211CFD731 /* ArgoUISystem.bundle */,
+			);
+			name = Resources;
 			sourceTree = "<group>";
 		};
 		F815771404A5F3CE4C90F78440507EEE /* MainRunLoopObserver */ = {

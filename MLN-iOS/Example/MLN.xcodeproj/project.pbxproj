@@ -1278,7 +1278,7 @@
 			);
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-LuaNative/Pods-LuaNative-resources.sh",
-				"${PODS_ROOT}/../../MLN/Resource/ArgoUI.bundle",
+				"${PODS_ROOT}/../../MLN/Resource/ArgoUISystem.bundle",
 				"${PODS_ROOT}/MJRefresh/MJRefresh/MJRefresh.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/MLNDevTool/MLNDevTool_Util.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/MLNDevTool/MLNDevTool_UI.bundle",
@@ -1287,7 +1287,7 @@
 			);
 			name = "[CP] Copy Pods Resources";
 			outputPaths = (
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ArgoUI.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ArgoUISystem.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MJRefresh.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MLNDevTool_Util.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MLNDevTool_UI.bundle",
@@ -1328,11 +1328,11 @@
 			);
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-MLN_Tests/Pods-MLN_Tests-resources.sh",
-				"${PODS_ROOT}/../../MLN/Resource/ArgoUI.bundle",
+				"${PODS_ROOT}/../../MLN/Resource/ArgoUISystem.bundle",
 			);
 			name = "[CP] Copy Pods Resources";
 			outputPaths = (
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ArgoUI.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ArgoUISystem.bundle",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;

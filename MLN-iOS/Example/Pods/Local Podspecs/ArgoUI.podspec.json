@@ -21,7 +21,7 @@
     "c++"
   ],
   "requires_arc": true,
-  "resources": "MLN-iOS/MLN/Resource/ArgoUI.bundle",
+  "resources": "MLN-iOS/MLN/Resource/ArgoUISystem.bundle",
   "subspecs": [
     {
       "name": "Core",

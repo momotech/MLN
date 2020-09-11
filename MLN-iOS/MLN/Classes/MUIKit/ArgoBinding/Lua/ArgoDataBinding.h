@@ -27,6 +27,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (id __nullable)argo_get:(NSString *)keyPath;
 - (void)argo_updateValue:(id)value forKeyPath:(NSString *)keyPath;
 - (NSInteger)argo_watchKeyPath:(NSString *)keyPath withHandler:(MLNUIBlock *)handler;
+- (NSInteger)argo_watchKey:(NSString *)key withHandler:(MLNUIBlock *)handler;
 - (void)argo_unwatch:(NSInteger)tokenID;
 
 - (NSInteger)argo_bindListView:(UIView *)listView forTag:(NSString *)tag;
