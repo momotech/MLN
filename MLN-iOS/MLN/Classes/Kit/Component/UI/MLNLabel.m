@@ -333,8 +333,7 @@
 - (void)lua_setText:(NSString *)text
 {
     if (![text isKindOfClass:[NSString class]]) {
-        MLNLuaAssert(self.mln_luaCore, [text isKindOfClass:[NSString class]], @"Error! Cannot assign a non-NSString type to label ");
-        return;
+        text = [NSString stringWithFormat:@"%@", text ? text : @""];
     }
     self.text = text;
     [self handleLineSpacing];
