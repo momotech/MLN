@@ -30,6 +30,10 @@
     [self setObject:value atIndexedSubscript:key.integerValue - 1];
 }
 
+- (void)lua_rawPutValue:(NSObject *)value forKey:(NSString *)key {
+    [self.proxy setObject:value atIndexedSubscript:key.intValue - 1];
+}
+
 - (NSMutableDictionary *)argoListeners {
     if (!_argoListeners) {
         _argoListeners = [NSMutableDictionary dictionary];

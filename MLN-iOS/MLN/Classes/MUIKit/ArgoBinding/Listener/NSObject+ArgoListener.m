@@ -23,6 +23,16 @@ NSString *const kArgoListenerWrapper = @"argo_wrapper";
 
 NSString *const kArgoConstString_Dot = @".";
 
+ArgoListenerFilter kArgoWatchKeyListenerFilter = ^BOOL(ArgoWatchContext context, NSDictionary *change) {
+//    NSString *changedKey = [change objectForKey:kArgoListenerChangedKey];
+    ArgoListenerWrapper *wrap = [change objectForKey:kArgoListenerWrapper];
+    if (!wrap.keyPath || !wrap.key) {
+        return YES;
+    }
+    BOOL r = [wrap.keyPath hasSuffix:wrap.key];
+    return r;
+};
+
 //只用于 ArgoObservableMap & ArgoObservableArray
 @interface NSObject (ArgoListener) <ArgoListenerCategoryProtocol>
 @end
@@ -71,9 +81,9 @@ NSString *const kArgoConstString_Dot = @".";
     return ArgoOBID++;
 }
 
-- (id <ArgoListenerToken>)addArgoListenerWithChangeBlock:(ArgoBlockChange)block forKeyPath:(NSString *)keyPath {
-    return [self addArgoListenerWithChangeBlock:block forKeyPath:keyPath filter:nil];
-}
+//- (id <ArgoListenerToken>)addArgoListenerWithChangeBlock:(ArgoBlockChange)block forKeyPath:(NSString *)keyPath {
+//    return [self addArgoListenerWithChangeBlock:block forKeyPath:keyPath filter:nil];
+//}
 
 - (id<ArgoListenerToken>)addArgoListenerWithChangeBlock:(ArgoBlockChange)block forKeyPath:(NSString *)keyPath filter:(ArgoListenerFilter)filter {
     //    NSMutableArray *wps = [NSMutableArray array];
@@ -144,6 +154,19 @@ NSString *const kArgoConstString_Dot = @".";
     if (wrapper) {
         NSNumber *k = @(wrapper.obID);
         [self.argoListeners setObject:wrapper forKey:k];
+        if ([self isKindOfClass:[ArgoObservableMap class]] && wrapper.key && wrapper.filter == kArgoWatchKeyListenerFilter) {
+            NSMutableDictionary *dic = [self argoChangedKeysMap];
+            NSMutableDictionary *change = [dic objectForKey:wrapper.key];
+            if (change) {
+                [dic removeObjectForKey:wrapper.key];
+                [change setObject:wrapper.key forKey:kArgoListenerChangedKey];
+                [change setObject:wrapper forKey:kArgoListenerWrapper];
+                //TODO: 是否传递新值?
+//                [change setObject:[self argoGetForKeyPath:wrapper.key] forKey:NSKeyValueChangeNewKey];
+                [wrapper callWithChange:change];
+//                [self handleNotifyMapWithWrapper:wrapper change:change.mutableCopy];
+            }
+        }
     }
 }
 
@@ -252,6 +275,7 @@ NSString *const kArgoConstString_Dot = @".";
 
 #pragma mark - 数据类型不匹配时防止crash
 - (NSMutableDictionary<id<NSCopying>,ArgoListenerWrapper *> *)argoListeners { return nil; }
+- (NSMutableDictionary *)argoChangedKeysMap { return nil;}
 - (NSObject *)lua_get:(NSString *)key {return nil;}
 - (void)lua_putValue:(NSObject *)value forKey:(NSString *)key {}
 @end

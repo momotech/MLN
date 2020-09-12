@@ -70,16 +70,17 @@
 
 #pragma mark - Public
 
-- (void)bindData:(nullable id<ArgoListenerProtocol>)data forKey:(NSString *)key {
+- (void)bindData:(nullable NSObject<ArgoListenerProtocol> *)data forKey:(NSString *)key {
     NSParameterAssert(key);
     if (key) {
         LOCK();
-        [self.dataMap lua_putValue:data forKey:key];
+//        [self.dataMap lua_putValue:data forKey:key];
+        [self.dataMap lua_rawPutValue:data forKey:key];
         UNLOCK();
     }
 }
 
-- (void)bindData:(nullable id<ArgoListenerProtocol>)data {
+- (void)bindData:(nullable NSObject<ArgoListenerProtocol> *)data {
     SEL sel = sel_registerName("modelKey");
     NSAssert([data.class respondsToSelector:sel], @"Data必须实现方法：modelKey ");
 #pragma clang diagnostic push
@@ -143,10 +144,15 @@
 }
 
 - (NSInteger)argo_watchKey:(NSString *)key withHandler:(MLNUIBlock *)handler {
-    return [self _watchKeyPath:key handler:handler listView:nil filter:^BOOL(ArgoObserverContext context, NSDictionary *change) {
-        NSString *changedKey = [change objectForKey:kArgoListenerChangedKey];
-        return [key hasSuffix:changedKey];
-    }];
+//    NSMutableArray *keys = [key componentsSeparatedByString:kArgoConstString_Dot].mutableCopy;
+//    NSString *lastKey = keys.lastObject;
+//    id<ArgoListenerProtocol> object = self.dataMap;
+//    if (keys.count > 1) {
+//        [keys removeLastObject];
+//        object = [object argoGetForKeyPath:[keys componentsJoinedByString:kArgoConstString_Dot]];
+//    }
+//    return [self _observeObject:object keyPath:lastKey handler:handler listView:nil filter:kArgoWatchKeyListenerFilter];
+    return [self _watchKeyPath:key handler:handler listView:nil filter:kArgoWatchKeyListenerFilter];
 }
 
 - (NSInteger)_watchKeyPath:(NSString *)keyPath handler:(MLNUIBlock *)handler listView:(UIView *)listView filter:(ArgoListenerFilter)filter {
@@ -311,9 +317,7 @@ static inline ArgoObserverBase *_getArgoObserver(UIViewController <ArgoViewContr
 //    } forKeyPath:observer.keyPath];
     id<ArgoListenerToken> token = [cellModel addArgoListenerWithChangeBlockForAllKeys:^(NSString *keyPath, id<ArgoListenerProtocol> object, NSDictionary *change) {
         [observer notifyKeyPath:keyPath ofObject:object change:change];
-    } filter:^BOOL(ArgoObserverContext context, NSDictionary *change) {
-        return YES;
-    } keyPaths:paths];
+    } filter:nil keyPaths:paths];
     
     [self.observerMap setObject:token forKey:@(token.tokenID)];
     model.paths = paths;

@@ -25,4 +25,9 @@ extern NSString *const kArgoListenerWrapper;
 //extern NSString const *const kArgoListener2DArray;
 extern NSString *const kArgoConstString_Dot;
 
+typedef NS_ENUM(NSUInteger, ArgoWatchContext) {
+    ArgoWatchContext_Native,
+    ArgoWatchContext_Lua
+};
+
 #endif /* ArgoKitDefinitions_h */

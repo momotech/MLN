@@ -59,15 +59,22 @@ ArgoFilterBlock kArgoFilter_Native = ^(ArgoWatchContext context, id value){
             self.token = [self.observerd addArgoListenerWithChangeBlock:^(NSString *keyPath, id<ArgoListenerProtocol> object, NSDictionary *change) {
                 NSObject *old = [change objectForKey:NSKeyValueChangeOldKey];
                 NSObject *new = [change objectForKey:NSKeyValueChangeNewKey];
-                ArgoWatchContext context = [[change objectForKey:kArgoListenerContext] unsignedIntegerValue];
-                if (self.filterBlock && !self.filterBlock(context, new)) {
-                    return;
-                }
+//                ArgoWatchContext context = [[change objectForKey:kArgoListenerContext] unsignedIntegerValue];
+//                if (self.filterBlock && !self.filterBlock(context, new)) {
+//                    return;
+//                }
                 NSKeyValueChange type = [[change objectForKey:NSKeyValueChangeKindKey] unsignedIntegerValue];
+                
                 if (type == NSKeyValueChangeSetting) {
                     block(old, new, self.observerd);
                 }
-            } forKeyPath:self.keyPath];
+            } forKeyPath:self.keyPath filter:^BOOL(ArgoWatchContext context, NSDictionary *change) {
+                NSObject *new = [change objectForKey:NSKeyValueChangeNewKey];
+                if (self.filterBlock && !self.filterBlock(context, new)) {
+                    return NO;
+                }
+                return YES;
+            }];
         }
         return self;
     };
@@ -108,14 +115,15 @@ ArgoFilterBlock kArgoFilter_Native = ^(ArgoWatchContext context, id value){
         @strongify(self);
         if (block) {
             self.token = [self.observerd addArgoListenerWithChangeBlock:^(NSString *keyPath, id<ArgoListenerProtocol> object, NSDictionary *change) {
-//                NSObject *old = [change objectForKey:NSKeyValueChangeOldKey];
-                NSObject *new = [change objectForKey:NSKeyValueChangeNewKey];
-                ArgoWatchContext context = [[change objectForKey:kArgoListenerContext] unsignedIntegerValue];
-                if (self.filterBlock && !self.filterBlock(context, new)) {
-                    return;
-                }
+//                ArgoWatchContext context = [[change objectForKey:kArgoListenerContext] unsignedIntegerValue];
                 block(self.observerd,change);
-            } forKeyPath:nil filter:nil];
+            } forKeyPath:nil filter:^BOOL(ArgoWatchContext context, NSDictionary *change) {
+                NSObject *new = [change objectForKey:NSKeyValueChangeNewKey];
+                if (self.filterBlock && !self.filterBlock(context, new)) {
+                    return NO;
+                }
+                return YES;
+            }];
         }
         return self;
     };
