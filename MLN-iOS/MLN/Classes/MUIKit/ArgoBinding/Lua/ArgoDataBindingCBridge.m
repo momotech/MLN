@@ -108,7 +108,7 @@ static int argo_watch(lua_State *L) {
     return 1;
 }
 
-static int argo_watch_key(lua_State *L) {
+static int argo_watch_action(lua_State *L) {
     PCallDBStart(__func__);
     TICK();
     
@@ -118,12 +118,12 @@ static int argo_watch_key(lua_State *L) {
     NSString *nKey = [luaCore toString:-2 error:&error];
     MLNUIBlock *handler = [luaCore.convertor toArgoBindingNativeObject:-1 error:&error];
     
-    PLOG(@"_argo_ watch_key %@",nKey);
+    PLOG(@"_argo_ watch_action %@",nKey);
     
     NSInteger obid = [dataBind argo_watchKey:nKey withHandler:handler];
     lua_pushnumber(L, obid);
     PCallDBEnd(__func__);
-    TOCK("argo_watch key %s",nKey.UTF8String);
+    TOCK("argo_watch action %s",nKey.UTF8String);
     return 1;
 }
 
@@ -395,7 +395,7 @@ LUAUI_NEW_EXPORT_GLOBAL_FUNC_BEGIN(ArgoDataBindingCBridge)
 LUAUI_NEW_EXPORT_GLOBAL_C_FUNC(get, argo_get, ArgoDataBindingCBridge)
 LUAUI_NEW_EXPORT_GLOBAL_C_FUNC(update, argo_update, ArgoDataBindingCBridge)
 LUAUI_NEW_EXPORT_GLOBAL_C_FUNC(watch, argo_watch, ArgoDataBindingCBridge)
-LUAUI_NEW_EXPORT_GLOBAL_C_FUNC(watch_key, argo_watch_key, ArgoDataBindingCBridge)
+LUAUI_NEW_EXPORT_GLOBAL_C_FUNC(watchAction, argo_watch_action, ArgoDataBindingCBridge)
 LUAUI_NEW_EXPORT_GLOBAL_C_FUNC(removeObserver, argo_unwatch, ArgoDataBindingCBridge)
 
 LUAUI_NEW_EXPORT_GLOBAL_C_FUNC(mock, argo_mock, ArgoDataBindingCBridge)
