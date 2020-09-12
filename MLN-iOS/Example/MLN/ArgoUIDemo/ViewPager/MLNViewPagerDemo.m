@@ -24,7 +24,8 @@
 
 - (void)createController {
     NSString *demoName = @"HomePage.lua";
-    NSString *path = [[NSBundle mainBundle] pathForResource:@"ViewPagerDemoMUI" ofType:@"bundle"];
+//    NSString *path = [[NSBundle mainBundle] pathForResource:@"ViewPagerDemoMUI" ofType:@"bundle"];
+    NSString *path = [[NSBundle mainBundle] pathForResource:@"HomePageArgoUI" ofType:@"bundle"];
     NSBundle *bundle = [NSBundle bundleWithPath:path];
     MLNUIViewController *viewController = [[MLNUIViewController alloc] initWithEntryFileName:demoName bundle:bundle];
     

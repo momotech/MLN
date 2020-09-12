@@ -58,7 +58,7 @@ static int mlnui_errorFunc_traceback (lua_State *L) {
 #pragma mark - Save Lua Function
 - (void)retainLuaFunc:(lua_State *)L index:(int)index
 {
-    NSAssert([NSThread isMainThread], @"This method to be executed in the main thread!");
+    MLNUIAssertMainThread();
     if (L == NULL) {
         MLNUIError(self.luaCore, @"Lua state is released");
         return;
@@ -74,7 +74,7 @@ static int mlnui_errorFunc_traceback (lua_State *L) {
 #pragma mark - Call Lua Function
 - (id)callWithParam:(id)aParam
 {
-    NSAssert([NSThread isMainThread], @"This method to be executed in the main thread!");
+    MLNUIAssertMainThread();
     [self addObjArgument:aParam];
     return [self callIfCan];
 }
@@ -87,7 +87,7 @@ static int mlnui_errorFunc_traceback (lua_State *L) {
 }
 
 - (id)callWithArguments:(NSArray *)arguments {
-    NSAssert([NSThread isMainThread], @"This method to be executed in the main thread!");
+    MLNUIAssertMainThread();
     MLNUILuaCore *core = self.luaCore; //retain luaCore.
     lua_State *L = core.state;
     if (L == NULL) {
@@ -104,7 +104,11 @@ static int mlnui_errorFunc_traceback (lua_State *L) {
     // 参数压栈
     int argsCount = (int)arguments.count;
     for (id arg in arguments) {
+#if OCPERF_USE_NEW_DB
+        if (![self.luaCore.convertor pushArgoBindingNativeObject:arg error:NULL]) {
+#else
         if (![self.luaCore pushNativeObject:arg error:NULL]) {
+#endif
             // 重置当前配置
 //            [self reset];
             // 恢复栈
@@ -122,7 +126,7 @@ static int mlnui_errorFunc_traceback (lua_State *L) {
             result = [self.luaCore toNativeObject:-1 error:NULL];
         }
     } else {
-        NSString *msg = [NSString stringWithUTF8String:lua_tostring(L, -1)];
+        NSString *msg = [NSString stringWithUTF8String:lua_tostring(L, -1) ?: "null"];
         MLNUIError(MLNUI_LUA_CORE(L), @"fail to call lua function! error message: %@", msg);
     }
     // 恢复栈
@@ -155,14 +159,14 @@ static int mlnui_errorFunc_traceback (lua_State *L) {
 
 - (void)reset
 {
-    NSAssert([NSThread isMainThread], @"This method to be executed in the main thread!");
+    MLNUIAssertMainThread();
     [self.arguments removeAllObjects];
 }
 
 #pragma mark - Setup Parameters For Lua Function
 - (void)addObjArgument:(id)argument
 {
-    NSAssert([NSThread isMainThread], @"This method to be executed in the main thread!");
+    MLNUIAssertMainThread();
     if (!argument) {
         argument = [NSNull null];
     }
@@ -171,61 +175,61 @@ static int mlnui_errorFunc_traceback (lua_State *L) {
 
 - (void)addIntArgument:(int)argument
 {
-    NSAssert([NSThread isMainThread], @"This method to be executed in the main thread!");
+    MLNUIAssertMainThread();
     [self.arguments addObject:@(argument)];
 }
 
 - (void)addFloatArgument:(float)argument
 {
-    NSAssert([NSThread isMainThread], @"This method to be executed in the main thread!");
+    MLNUIAssertMainThread();
     [self.arguments addObject:@(argument)];
 }
 
 - (void)addDoubleArgument:(double)argument
 {
-    NSAssert([NSThread isMainThread], @"This method to be executed in the main thread!");
+    MLNUIAssertMainThread();
     [self.arguments addObject:@(argument)];
 }
 
 - (void)addBOOLArgument:(BOOL)argument
 {
-    NSAssert([NSThread isMainThread], @"This method to be executed in the main thread!");
+    MLNUIAssertMainThread();
     [self.arguments addObject:@(argument)];
 }
 
 - (void)addIntegerArgument:(NSInteger)argument
 {
-    NSAssert([NSThread isMainThread], @"This method to be executed in the main thread!");
+    MLNUIAssertMainThread();
     [self.arguments addObject:@(argument)];
 }
 
 - (void)addUIntegerArgument:(NSUInteger)argument
 {
-    NSAssert([NSThread isMainThread], @"This method to be executed in the main thread!");
+    MLNUIAssertMainThread();
     [self.arguments addObject:@(argument)];
 }
 
 - (void)addCGRectArgument:(CGRect)argument
 {
-    NSAssert([NSThread isMainThread], @"This method to be executed in the main thread!");
+    MLNUIAssertMainThread();
     [self.arguments addObject:@(argument)];
 }
 
 - (void)addCGPointArgument:(CGPoint)argument
 {
-    NSAssert([NSThread isMainThread], @"This method to be executed in the main thread!");
+    MLNUIAssertMainThread();
     [self.arguments addObject:@(argument)];
 }
 
 - (void)addCGSizeArgument:(CGSize)argument
 {
-    NSAssert([NSThread isMainThread], @"This method to be executed in the main thread!");
+    MLNUIAssertMainThread();
     [self.arguments addObject:@(argument)];
 }
 
 - (void)addStringArgument:(NSString *)argument
 {
-    NSAssert([NSThread isMainThread], @"This method to be executed in the main thread!");
+    MLNUIAssertMainThread();
     if (!argument) {
         [self.arguments addObject:[NSNull null]];
         return;
@@ -235,7 +239,7 @@ static int mlnui_errorFunc_traceback (lua_State *L) {
 
 - (void)addMapArgument:(NSDictionary *)argument
 {
-    NSAssert([NSThread isMainThread], @"This method to be executed in the main thread!");
+    MLNUIAssertMainThread();
     if (!argument) {
         [self.arguments addObject:[NSNull null]];
         return;
@@ -248,7 +252,7 @@ static int mlnui_errorFunc_traceback (lua_State *L) {
 
 - (void)addArrayArgument:(NSArray *)argument
 {
-    NSAssert([NSThread isMainThread], @"This method to be executed in the main thread!");
+    MLNUIAssertMainThread();
     if (!argument) {
         [self.arguments addObject:[NSNull null]];
         return;
@@ -261,7 +265,7 @@ static int mlnui_errorFunc_traceback (lua_State *L) {
 
 - (void)addLuaTableArgumentWithArray:(NSArray *)argument
 {
-    NSAssert([NSThread isMainThread], @"This method to be executed in the main thread!");
+    MLNUIAssertMainThread();
     if (!argument) {
         [self.arguments addObject:[NSNull null]];
         return;
@@ -271,7 +275,7 @@ static int mlnui_errorFunc_traceback (lua_State *L) {
 
 - (void)addLuaTableArgumentWithDictionary:(NSDictionary *)argument
 {
-    NSAssert([NSThread isMainThread], @"This method to be executed in the main thread!");
+    MLNUIAssertMainThread();
     if (!argument) {
         [self.arguments addObject:[NSNull null]];
         return;
@@ -281,7 +285,7 @@ static int mlnui_errorFunc_traceback (lua_State *L) {
 
 - (void)addLuaTableArgument:(MLNUILuaTable *)argument;
 {
-    NSAssert([NSThread isMainThread], @"This method to be executed in the main thread!");
+    MLNUIAssertMainThread();
     if (!argument) {
         [self.arguments addObject:[NSNull null]];
         return;

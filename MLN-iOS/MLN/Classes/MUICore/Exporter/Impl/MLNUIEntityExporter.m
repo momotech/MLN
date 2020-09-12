@@ -10,6 +10,7 @@
 #import "NSObject+MLNUICore.h"
 #import "MLNUILuaCore.h"
 #import "MLNUIEntityExportProtocol.h"
+#import "MLNUIExtScope.h"
 
 @implementation MLNUIEntityExporter
 
@@ -72,10 +73,13 @@ static const struct luaL_Reg MLNUIUserDataBaseFuncs [] = {
         return ret;
     }
     // 创建元表
-    ret = [self.luaCore createMetaTable:classInfo->l_name error:error];
+    ret = [self.luaCore createMetaTable:classInfo->l_name error:error]; // -1:table
     if (!ret) {
         return ret;
     }
+    @onExit{
+        lua_pop(self.luaCore.state, 1);
+    };
     // 注册基础方法
     ret = [self.luaCore openCLib:NULL methodList:MLNUIUserDataBaseFuncs nup:0 error:error];
     if (!ret) {
@@ -96,7 +100,7 @@ static const struct luaL_Reg MLNUIUserDataBaseFuncs [] = {
             return NO;
         }
     }
-    return [self.luaCore openLib:NULL nativeClassName:nativeClassName methodList:libInfo->methods nup:0 error:error];
+    return [self.luaCore openLib:NULL nativeClassName:nativeClassName methodList:libInfo->methods nup:0 leaveTableOnTop:YES error:error];
 }
 
 - (BOOL)registerConstructor:(lua_CFunction)cfunc clazz:(const char *)nativeClazzName constructor:(const char *)nativeConstructorName luaName:(const char *)luaName error:(NSError **)error

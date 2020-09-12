@@ -60,7 +60,7 @@ void DB_Get(lua_State *L, const char *key);
  * 针对观察的key，插入数据
  * @param L 插入数据的虚拟机
  * @param key 数据健值
- * @param insertindex 数据插入的位置
+ * @param insertIndex 数据插入的位置
  * @param valueIndex 插入数据在虚拟机栈中位置
  */
 void DB_Insert(lua_State *L, const char *key,int insertIndex, int valueIndex);
@@ -68,7 +68,7 @@ void DB_Insert(lua_State *L, const char *key,int insertIndex, int valueIndex);
  * 针对观察的key，删除其数据
  * @param L 删除数据的虚拟机
  * @param key 对数据健值
- * @param valueIndex 数据在虚拟机栈中位置
+ * @param removeIndex 数据在虚拟机栈中位置
  */
 void DB_Remove(lua_State *L, const char *key, int removeIndex);
 /**

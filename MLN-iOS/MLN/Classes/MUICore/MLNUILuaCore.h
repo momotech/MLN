@@ -19,7 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
 @class MLNUILuaBundle;
 @class MLNUILuaTable;
 @class MLNUIExporter;
-@interface MLNUILuaCore : NSObject
+@interface MLNUILuaCore : NSObject <NSCopying>
 
 /**
  lua状态机。
@@ -138,11 +138,21 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  执行栈顶的Chunck或者function，参数位于栈顶以下的位置。
 
- @param numberOfArgs 参数个数
+ @param argCount 参数个数
  @param error 执行错误信息
  @return 执行是否成功
  */
-- (BOOL)call:(int)numberOfArgs error:(NSError **__nullable)error;
+- (BOOL)call:(int)argCount error:(NSError **__nullable)error;
+
+/**
+执行栈顶的Chunck或者function，参数位于栈顶以下的位置。
+
+@param argCount 参数个数
+@param retCount 返回值个数
+@param error 执行错误信息
+@return 执行是否成功
+*/
+- (BOOL)call:(int)argCount retCount:(int)retCount error:(NSError **__nullable)error;
 
 /**
  注册lib到状态机
@@ -161,10 +171,11 @@ NS_ASSUME_NONNULL_BEGIN
  @param libName lib的名称
  @param list lib的方法列表
  @param nup upvalue 个数
+ @param leaveTable 是否把table留在栈顶.参考：luaL_openLib
  @param error 错误信息
  @return 注册是否成功
  */
-- (BOOL)openLib:(const char * __nullable)libName nativeClassName:(const char *)nativeClassName methodList:(const struct mlnui_objc_method *)list nup:(int)nup error:(NSError **)error;
+- (BOOL)openLib:(nullable const char *)libName nativeClassName:(const char *)nativeClassName methodList:(const struct mlnui_objc_method *)list nup:(int)nup leaveTableOnTop:(BOOL)leaveTable error:(NSError **)error;
 
 /**
  注册类到状态机

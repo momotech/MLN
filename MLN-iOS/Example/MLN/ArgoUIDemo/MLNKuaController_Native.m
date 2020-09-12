@@ -24,7 +24,7 @@
     table.dataSource = self;
     table.delegate = self;
     [self.view addSubview:table];
-    self.model = [UserData modelForTest];
+//    self.model = [UserData modelForTest];
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {

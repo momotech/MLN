@@ -45,9 +45,7 @@
     }
     MLNUITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:reuseId forIndexPath:indexPath];
     cell.delegate = self;
-    
-//    NSLog(@">>>>>> cell %p row %zd",cell,indexPath.row);
-    
+        
     [cell pushContentViewWithLuaCore:self.mlnui_luaCore];
     if (!cell.isInited) {
         [initCallback addLuaTableArgument:[cell getLuaTable]];
@@ -63,16 +61,18 @@
     }
 //    [cell mlnui_requestLayoutIfNeed];
     
-    CGFloat tableViewWidth = tableView.frame.size.width;
-    CGFloat height = [cell calculHeightWithWidth:tableViewWidth maxHeight:MLNUIUndefined applySize:YES];
-    
-    if (![self.cachesManager layoutInfoWithIndexPath:indexPath]) {
-//        [self updateCellWidthIfNeed:cell tableViewWidth:tableViewWidth];
-        [self.cachesManager updateLayoutInfo:@(height) forIndexPath:indexPath];
+    CGFloat height = CGFloatValueFromNumber([self.cachesManager layoutInfoWithIndexPath:indexPath]);
+    if (height <= 0) {
+//        NSLog(@">>>>>> cell %p row %zd calculate height",cell,indexPath.row);
+        CGFloat tableViewWidth = tableView.frame.size.width;
+        height = [cell calculHeightWithWidth:tableViewWidth maxHeight:MLNUIUndefined applySize:YES];
+        if (![self.cachesManager layoutInfoWithIndexPath:indexPath]) {
+    //        [self updateCellWidthIfNeed:cell tableViewWidth:tableViewWidth];
+            [self.cachesManager updateLayoutInfo:@(height) forIndexPath:indexPath];
+        }
     }
     
     self.currentIndexPath = nil;
-    
     return cell;
 }
 

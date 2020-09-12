@@ -9,6 +9,7 @@
 #import "MLNDemoListViewController.h"
 #import "MLNKitViewController.h"
 #import "MLNLuaBundle.h"
+#import "MLNUILuaBundle.h"
 #import "MLNUIViewController.h"
 #import "MLNUIBridge.h"
 
@@ -81,6 +82,7 @@
     NSString *path = [[NSBundle mainBundle] pathForResource:@"inner_demo" ofType:@"bundle"];
     NSBundle *bundle = [[NSBundle alloc]  initWithPath:path];
     MLNUIViewController *viewController = [[MLNUIViewController alloc] initWithEntryFileName:demoName bundle:bundle];
+    viewController.regClasses = @[[MLNUIBridge class]];
 #endif
     [self.navigationController pushViewController:viewController animated:YES];
 }
@@ -96,7 +98,8 @@
 - (NSArray *)demoArray
 {
     if (!_demoArray) {
-        _demoArray = @[@"animation.lua",
+        _demoArray = @[
+//                       @"CustomHotReload.lua",
                        @"CollectionViewDemo.lua",
                        @"DialogDemo.lua",
                        @"EditTextViewDemo.lua",
@@ -114,6 +117,7 @@
                        @"MLNPerformanceTestController",
                        @"MLNKuaController",
                        @"MLNViewPagerDemo",
+                       @"DemoLiyifengViewController",
                        ];
     }
     return _demoArray;

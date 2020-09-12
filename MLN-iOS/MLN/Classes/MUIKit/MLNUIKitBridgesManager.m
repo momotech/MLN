@@ -95,6 +95,8 @@
 #import "MLNUIHStack.h"
 #import "MLNUISpacer.h"
 
+#import "ArgoDataBindingCBridge.h"
+
 @interface MLNUIKitBridgesManager()
 /**
  承载Kit库bridge和LuaCore实例
@@ -132,7 +134,7 @@
 //static const char *customLuaFiles[] = {"packet/BindMeta", "packet/KeyboardManager", "packet/style"};
 
 - (void)_requireCustomLuaFiles:(MLNUILuaCore *)luaCore {
-    NSString *path = [[NSBundle bundleForClass:self.class] pathForResource:@"ArgoUI" ofType:@"bundle"];
+    NSString *path = [[NSBundle bundleForClass:self.class] pathForResource:@"ArgoUISystem" ofType:@"bundle"];
     NSBundle *bundle = [NSBundle bundleWithPath:path];
     NSFileManager *fileManager = [NSFileManager defaultManager];
     NSArray *dirs = [fileManager contentsOfDirectoryAtPath:path error:NULL];
@@ -233,7 +235,11 @@ static NSArray<Class<MLNUIExportProtocol>> *utilClasses;
                         [MLNUISafeAreaAdapter class],
                         [MLNUILink class],
 #if OCPERF_USE_C
+    #if OCPERF_USE_NEW_DB
+                        [ArgoDataBindingCBridge class],
+    #else
                         [MLNUIDataBindingCBridge class],
+    #endif
 #else
                         [MLNUIDataBinding class],
 #endif

@@ -10,6 +10,9 @@
 #import "MLNUILuaCore.h"
 #import "MLNUIKitInstance.h"
 #import "MLNUIExtScope.h"
+#import "MLNUIHeader.h"
+#import "ArgoDataBinding.h"
+#import "ArgoDataBindingProtocol.h"
 
 @implementation MLNUIViewController (DataBinding)
 - (UIView *)findViewById:(NSString *)identifier {
@@ -35,13 +38,22 @@
     return view;
 }
 
+- (void)bindData:(NSObject *)data {
+    [self.mlnui_dataBinding bindData:data];
+}
+
 - (void)bindData:(NSObject *)data forKey:(NSString *)key {
     [self.mlnui_dataBinding bindData:data forKey:key];
 }
 
 - (MLNUIDataBinding *)mlnui_dataBinding {
     if (!_dataBinding) {
+# if OCPERF_USE_NEW_DB
+        _dataBinding = [[ArgoDataBinding alloc] init];
+#else
         _dataBinding = [[MLNUIDataBinding alloc] init];
+#endif
+        
 #if DEBUG
         @weakify(self);
         _dataBinding.errorLog = ^(NSString * _Nonnull log) {
@@ -53,18 +65,28 @@
     return _dataBinding;
 }
 
+# if OCPERF_USE_NEW_DB
+- (void)addLifeCycleListener:(id)block {}
+#endif
+
 @end
 
 
 @implementation UIViewController (MLNUIDataBinding)
 
 - (MLNUIDataBinding *)mlnui_dataBinding {
-    MLNUIDataBinding *obj = objc_getAssociatedObject(self, _cmd);
-    if (!obj) {
-        obj = [[MLNUIDataBinding alloc] init];
-        objc_setAssociatedObject(self, _cmd, obj, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-    }
-    return obj;
+//    MLNUIDataBinding *obj = objc_getAssociatedObject(self, _cmd);
+//    if (!obj) {
+////        obj = [[MLNUIDataBinding alloc] init];
+//# if OCPERF_USE_NEW_DB
+//        obj = [[ArgoDataBinding alloc] init];
+//#else
+//        obj = [[MLNUIDataBinding alloc] init];
+//#endif
+//        objc_setAssociatedObject(self, _cmd, obj, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+//    }
+//    return obj;
+    return [self argo_dataBinding];
 }
 
 - (void)mlnui_addToSuperViewController:(UIViewController *)superVC frame:(CGRect) frame {

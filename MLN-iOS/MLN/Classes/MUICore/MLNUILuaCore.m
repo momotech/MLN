@@ -13,6 +13,7 @@
 #import "MLNUIFileLoader.h"
 #import "MLNUILuaTable.h"
 #import "argo_lib.h"
+#import "MLNUIExtScope.h"
 
 @import ObjectiveC;
 
@@ -246,6 +247,10 @@ static int mlnui_errorFunc_traceback (lua_State *L) {
     return self;
 }
 
+- (id)copyWithZone:(NSZone *)zone {
+    return self;
+}
+
 - (void)createViewStrongTable
 {
     _objStrongTable = [[MLNUILuaTable alloc] initWithMLNUILuaCore:self env:MLNUILuaTableEnvRegister];
@@ -358,8 +363,11 @@ static int mlnui_errorFunc_traceback (lua_State *L) {
     return YES;
 }
 
-- (BOOL)call:(int)numberOfArgs error:(NSError **)error
-{
+- (BOOL)call:(int)argCount error:(NSError *__autoreleasing  _Nullable *)error {
+    return [self call:argCount retCount:0 error:error];
+}
+
+- (BOOL)call:(int)argCount retCount:(int)retCount error:(NSError *__autoreleasing  _Nullable *)error {
     lua_State *L = self.state;
     if (!L) {
         if (error) {
@@ -375,13 +383,13 @@ static int mlnui_errorFunc_traceback (lua_State *L) {
         }
         return NO;
     }
-    if(numberOfArgs>0){
-        lua_insert(L, -numberOfArgs-1);
+    if(argCount > 0){
+        lua_insert(L, -argCount - 1);
     }
-    int base = lua_gettop(L) - numberOfArgs;  /* function index */
+    int base = lua_gettop(L) - argCount;  /* function index */
     lua_pushcfunction(L, mlnui_errorFunc_traceback);  /* push traceback function */
     lua_insert(L, base);  /* put it under chunk and args */
-    int code = lua_pcall(L, numberOfArgs, 0, base);
+    int code = lua_pcall(L, argCount, retCount, base);
     if (code != 0) {
         NSString *errmsg = [NSString stringWithFormat:@"%s", lua_tostring(L, -1)];
         if (error) {
@@ -407,7 +415,7 @@ static int mlnui_errorFunc_traceback (lua_State *L) {
     return YES;
 }
 
-- (BOOL)openLib:(const char *)libName nativeClassName:(const char *)nativeClassName methodList:(const struct mlnui_objc_method *)list nup:(int)nup error:(NSError **)error
+- (BOOL)openLib:(const char *)libName nativeClassName:(const char *)nativeClassName methodList:(const struct mlnui_objc_method *)list nup:(int)nup leaveTableOnTop:(BOOL)leaveTable error:(NSError **)error
 {
     lua_State *L = self.state;
     if (!L) {
@@ -433,6 +441,13 @@ static int mlnui_errorFunc_traceback (lua_State *L) {
         lua_remove(L, -2);  /* remove _LOADED table */
         lua_insert(L, -(nup+1));  /* move library table to below upvalues */
     }
+    BOOL shouldPOP = !leaveTable;
+    @onExit{
+        if (shouldPOP) {
+            lua_pop(L, 1);
+        }
+    };
+
     for (; list->l_mn; list++) {
         if (!charpNotEmpty(list->clz)) {
             if (error) {
@@ -806,10 +821,12 @@ NS_INLINE BOOL utils_string_is_number(const char *input) {
         }
         return NO;
     }
-    luaL_newmetatable(L, name );
-    lua_pushstring(L, "__index");
-    lua_pushvalue(L, -2);
-    lua_settable(L, -3);
+    
+    if (luaL_newmetatable(L, name )) { // 0 == exist
+        lua_pushvalue(L, -1);
+        lua_setfield(L, -2, "__index");
+    }
+//    lua_pop(L, 1);
     return YES;
 }
 
@@ -885,7 +902,6 @@ NS_INLINE BOOL utils_string_is_number(const char *input) {
         NSLog(@"Lua state is released");
         return NO;
     }
-    argo_open(L);
     argo_preload(L);
     return YES;
 }
