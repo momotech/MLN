@@ -6,6 +6,7 @@
 
 local __remove = "__removew"
 local __watch = "__watch"
+local __watchA = "__watchA"
 local __get = "__get"
 local __path = "__path"
 local __ishook = "__ishook"
@@ -17,6 +18,7 @@ local __ignore = "__ignore" -- watch忽略
 local __greal = "__greal" -- 获取值并缓存
 local __rreal = "__rreal" -- 移除缓存
 local __ci = "__ci" -- cell item
+local __cii = "__cii"
 
 -- debug
 --local __ck = "__ck" -- 当前key
@@ -119,7 +121,8 @@ local function bindMeta_getAndCacheTab(mt, iscache, isCell)
         if mt.__bt then return t end
     else
         if isCell and __open_cell_data__ then
-            local bind = string.sub(mt.__kvoname, 1, #mt.__kvoname - #(tostring(mt.__pk) .. tostring(mt.__ck)) - 2)
+            local bind = string.sub(mt.__kvoname, 1,
+                    #mt.__kvoname - #(tostring(mt.__pk) .. tostring(mt.__ck)) - 2)
             t = DataBinding:getCellData(bind, mt.__pk, mt.__ck)
         else
             t = DataBinding:get(bindMeta_path(mt.__kvoname))
@@ -160,10 +163,16 @@ local function bindMeta_update(path, v, cKey, cacheValue)
     DataBinding:update(path, v)
 end
 
-local function bindMeta_watch(mt, v)
+local function bindMeta_watch(mt, v, isWatchA)
     local k = bindMeta_path(bindMeta_getWatchPath(mt.__kvoname, mt.__ck))
     if k == nil then return end
-    local w_id = DataBinding:watch(k, v)
+    local w_id
+    if isWatchA then
+        w_id = DataBinding:watchAction(k, v)
+    else
+        w_id = DataBinding:watch(k, v)
+    end
+    BindMetaWatchAdd(w_id)
     if w_id then
         _watchCache[w_id] = {k, v}
         BindMetaAdd(_watchIds, w_id, false)
@@ -214,15 +223,17 @@ local function bindMeta__index(t, k)
     elseif k == __asize then
         --return DataBinding:arraySize(bindMeta_path(mt.__kvoname)) or 0
         return bindMeta_getArraySize(mt)
-    elseif k == __remove or k == __rreal or k == __greal or k == __watch then
+    elseif k == __remove or k == __rreal or k == __greal or k == __watch or k == __watchA then
         mt.__opname = k
         return t
-    elseif k == __ci then
-        ---@see BindMetaWatchListCell() -- 结束
-        BindMetaPush(_cellBinds)
-        local temp_v = nil
-        if __open_combine_data__ then
-            temp_v = bindMeta_getAndCacheTab(mt, true, true)
+    elseif k == __ci or k == __cii then
+        if k == __ci then
+            ---@see BindMetaWatchListCell() -- 结束
+            BindMetaPush(_cellBinds)
+            local temp_v = nil
+            if __open_combine_data__ then
+                temp_v = bindMeta_getAndCacheTab(mt, true, true)
+            end
         end
         return BindMeta(bindMeta_path(mt.__kvoname),
                 {row={__get=mt.__ck}, section={__get=mt.__pk}}, temp_v, mt.__ck, mt.__pk)
@@ -240,8 +251,8 @@ end
 local function bindMeta__newindex(t, k, v)
     if k == nil or k == __vv or k == __ignore then return end
     local mt = getmetatable(t)
-    if k == __watch then -- watch
-        bindMeta_watch(mt, v)
+    if k == __watch or k == __watchA then -- watch
+        bindMeta_watch(mt, v, k == __watchA)
         return
     end
 
@@ -315,8 +326,8 @@ local function bindMeta__call(t, ...)
             end
         end
         return
-    elseif op == __watch then
-        return bindMeta_watch(mt,p1)
+    elseif op == __watch or op == __watchA then
+        return bindMeta_watch(mt,p1, op == __watchA)
     end
 
     if debug_preview_watch then
@@ -448,6 +459,7 @@ function BindMetaRemoveWatchs(t)
     if t == null then return end
     if type(t) ~= "table" then
         --- 删除单个watch
+        _watchCache[t] = nil
         DataBinding:removeObserver(t)
         return
     end
@@ -652,4 +664,70 @@ function BindMetaPreviewEnd()
     _ckeyTabCaches = {}
 end
 -------------------------------------------------------------------------------------------------------
+------------------------------     watch 链   -----------------------------------------------------
 -------------------------------------------------------------------------------------------------------
+__watch_map = createWeakT("k")
+function BindMetaWatchClear()
+    __watch_map = createWeakT("k")
+    __watch_current_view = nil
+end
+function BindMetaWatchPush(moduleView)
+    local t = createWeakT("v")
+    t.view = moduleView
+    t.subs = createWeakT("k")
+    t.ids = {}
+    if __watch_current_view then
+        __watch_current_view.subs[moduleView] = t
+        t.pre = __watch_current_view
+    end
+    __watch_current_view = t
+    __watch_map[moduleView] = t
+    if type(moduleView) == "table" and moduleView.contentView then
+        __watch_map[moduleView.contentView] = t
+    end
+end
+function BindMetaWatchPop(moduleView)
+    if moduleView and __watch_current_view then
+         __watch_current_view = __watch_current_view.pre
+        return
+    end
+    if moduleView then
+        local t = __watch_map[moduleView]
+        if t then
+            __watch_current_view = t.pre
+            return
+        end
+    end
+    if __watch_current_view then
+        __watch_current_view = __watch_current_view.pre
+        return
+    end
+end
+function BindMetaWatchRemove(moduleView)
+    if not moduleView then return end
+    local t = __watch_map[moduleView]
+    if t then
+        local function removeids(ids)
+            if not ids then return end
+            for _, v in pairs(ids) do
+                DataBinding:removeObserver(v)
+                _watchCache[v] = nil
+            end
+        end
+        local function removesubs(subs)
+            if not subs then return end
+            for _, v in pairs(subs) do
+                removeids(v.ids)
+                removesubs(v.subs)
+            end
+        end
+        removesubs({t})
+    end
+end
+function removeModuleWatchs(moduleView)
+    BindMetaWatchRemove(moduleView)
+end
+function BindMetaWatchAdd(id)
+    if not __watch_current_view then return end
+    __watch_current_view.ids[#__watch_current_view.ids +1] = id
+end
