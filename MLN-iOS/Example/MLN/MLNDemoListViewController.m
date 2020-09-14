@@ -12,6 +12,7 @@
 #import "MLNUILuaBundle.h"
 #import "MLNUIViewController.h"
 #import "MLNUIBridge.h"
+#import "ArgoKit.h"
 
 @interface MLNDemoListViewController () <UITableViewDelegate, UITableViewDataSource>
 
@@ -73,18 +74,16 @@
         [self.navigationController pushViewController:vc animated:YES];
         return;
     }
-#if 1
-    MLNKitViewController *viewController = [[MLNKitViewController alloc] initWithEntryFilePath:demoName];
-    [viewController regClasses:@[[MLNUIBridge class]]];
-    MLNLuaBundle *bundle = [MLNLuaBundle mainBundleWithPath:@"inner_demo.bundle"];
-    [viewController changeCurrentBundle:bundle];
-#else
-    NSString *path = [[NSBundle mainBundle] pathForResource:@"inner_demo" ofType:@"bundle"];
-    NSBundle *bundle = [[NSBundle alloc]  initWithPath:path];
-    MLNUIViewController *viewController = [[MLNUIViewController alloc] initWithEntryFileName:demoName bundle:bundle];
-    viewController.regClasses = @[[MLNUIBridge class]];
-#endif
-    [self.navigationController pushViewController:viewController animated:YES];
+    if ([demoName hasPrefix:@"Argo"]) {
+        ArgoViewController *viewController = [[ArgoViewController alloc] initWithEntryFileName:demoName bundleName:@"inner_demo.bundle"];
+        [self.navigationController pushViewController:viewController animated:YES];
+    } else {
+        MLNKitViewController *viewController = [[MLNKitViewController alloc] initWithEntryFilePath:demoName];
+        [viewController regClasses:@[[MLNUIBridge class]]];
+        MLNLuaBundle *bundle = [MLNLuaBundle mainBundleWithPath:@"inner_demo.bundle"];
+        [viewController changeCurrentBundle:bundle];
+        [self.navigationController pushViewController:viewController animated:YES];
+    }
 }
 
 #pragma life cycle
@@ -106,7 +105,7 @@
                        @"LabelDemo.lua",
                        @"LinearLayoutDemo.lua",
                        @"TableViewDemo.lua",
-                       @"TableViewCeilingCellDemo.lua",
+                       @"ArgoTableViewCeilingCellDemo.lua",
                        @"ViewPagerDemo.lua",
                        @"WaterfallViewDemo.lua",
 //                       @"MLNBindModelViewController",

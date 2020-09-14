@@ -91,7 +91,7 @@ tableView:setScrollWillEndDraggingCallback(function(y)
         print("setScrollWillEndDrag", "y > 0")
         tableView:scrollToCell(index[1] + 1, 1, true)
     elseif y < 0 then
-        print("setScrollWillEndDrag", "y <>> 0")
+        print("setScrollWillEndDrag", "y < 0")
         tableView:scrollToCell(index[1], 1, true)
     end
 end)
