@@ -72,6 +72,9 @@
     if (filePath == nil && name != nil) {
         filePath = [self.currentBundle pathForResource:name ofType:@"lua"];
     }
+    if (!filePath) {// hotreload 新建文件出错 not found ...
+        filePath = [self.currentBundle pathForResource:name ofType:nil inDirectory:@"/"];
+    }
     if (filePath == nil && name != nil) {
         filePath = [[self bundlePath] stringByAppendingPathComponent:name];
     }
