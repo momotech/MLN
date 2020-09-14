@@ -172,10 +172,9 @@
 }
 
  - (NSArray *)luaui_visibleCellsRows {
-     NSArray<__kindof UITableViewCell *> *cells = [self.innerTableView visibleCells];
-     NSMutableArray *rows = [NSMutableArray arrayWithCapacity:cells.count];
-     [cells enumerateObjectsUsingBlock:^(__kindof UITableViewCell *cell, NSUInteger idx, BOOL *stop) {
-         NSIndexPath *indexPath = [self.innerTableView indexPathForCell:cell];
+     NSArray<NSIndexPath *>              *indexPaths = [self.innerTableView indexPathsForVisibleRows];
+     NSMutableArray *rows = [NSMutableArray arrayWithCapacity:indexPaths.count];
+     [indexPaths enumerateObjectsUsingBlock:^(__kindof NSIndexPath *indexPath, NSUInteger idx, BOOL *stop) {
          [rows addObject:@(indexPath.row + 1)];
      }];
      return rows.copy;
