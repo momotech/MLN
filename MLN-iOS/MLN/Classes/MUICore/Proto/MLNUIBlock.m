@@ -104,7 +104,11 @@ static int mlnui_errorFunc_traceback (lua_State *L) {
     // 参数压栈
     int argsCount = (int)arguments.count;
     for (id arg in arguments) {
+#if OCPERF_USE_NEW_DB
+        if (![self.luaCore.convertor pushArgoBindingNativeObject:arg error:NULL]) {
+#else
         if (![self.luaCore pushNativeObject:arg error:NULL]) {
+#endif
             // 重置当前配置
 //            [self reset];
             // 恢复栈
@@ -122,7 +126,7 @@ static int mlnui_errorFunc_traceback (lua_State *L) {
             result = [self.luaCore toNativeObject:-1 error:NULL];
         }
     } else {
-        NSString *msg = [NSString stringWithUTF8String:lua_tostring(L, -1)];
+        NSString *msg = [NSString stringWithUTF8String:lua_tostring(L, -1) ?: "null"];
         MLNUIError(MLNUI_LUA_CORE(L), @"fail to call lua function! error message: %@", msg);
     }
     // 恢复栈

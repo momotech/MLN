@@ -48,7 +48,6 @@
     self.automaticallyAdjustsScrollViewInsets = NO;
     
     PSTART(MLNUILoadTimeStatisticsType_Total);
-    CFAbsoluteTime s = CFAbsoluteTimeGetCurrent();
     [self prepareForLoadEntryFile];
     NSError *error = nil;
     BOOL ret = [self.kitInstance runWithEntryFile:self.entryFileName windowExtra:self.extraInfo error:&error];
@@ -77,6 +76,16 @@
 //- (BOOL)regClasses:(NSArray<Class<MLNUIExportProtocol>> *)registerClasses {
 //    return [self.kitInstance registerClasses:registerClasses error:NULL];
 //}
+
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    [self.kitInstance doLuaWindowDidAppear];
+}
+
+- (void)viewDidDisappear:(BOOL)animated {
+    [super viewDidDisappear:animated];
+    [self.kitInstance doLuaWindowDidDisappear];
+}
 
 - (MLNUIKitInstance *)kitInstance {
     if (!_kitInstance) {

@@ -28,6 +28,7 @@
 #import "MLNUILogViewer.h"
 #import "MLNUILoadTimeStatistics.h"
 #import "MLNUIHeader.h"
+#import "MLNUIMyErrorHandler.h"
 
 @interface MLNAppDelegate ()
 
@@ -35,6 +36,7 @@
 @property (nonatomic, strong) id<MLNRefreshDelegate> refreshHandler;
 @property (nonatomic, strong) id<MLNImageLoaderProtocol> imgLoader;
 @property (nonatomic, strong) id<MLNNavigatorHandlerProtocol> navHandler;
+@property (nonatomic, strong) id<MLNUIErrorHandlerProtocol> errorHandler;
 
 @property (nonatomic, strong) id<MLNUIImageLoaderProtocol> imgLoader2;
 @end
@@ -70,6 +72,7 @@
     self.navHandler = [[MLNNavigatorHandler alloc] init];
     // MLNUIKit
     self.imgLoader2 = [[MLNUIMyImageHandler alloc] init];
+    self.errorHandler = [MLNUIMyErrorHandler new];
     
     [MLNKitEnvironment instancePreload];
     [MLNKitEnvironment setDefaultHttpHandler:self.httpHandler];
@@ -88,6 +91,7 @@
     [MLNUIKitEnvironment setDefaultScrollRefreshHandler:self.refreshHandler];
     [MLNUIKitEnvironment setDefaultImageLoader:self.imgLoader2];
     [MLNUIKitEnvironment setDefaultNavigatorHandler:self.navHandler];
+    [MLNUIKitEnvironment setDefaultErrorHandler:self.errorHandler];
 #if DEBUG
     [MLNUIKitEnvironment setPerformanceMonitor: [MLNUILoadTimeStatistics sharedStatistics]];
     MLNUIKitPerformanceMonitorForDebug = [MLNUILoadTimeStatistics sharedStatistics];

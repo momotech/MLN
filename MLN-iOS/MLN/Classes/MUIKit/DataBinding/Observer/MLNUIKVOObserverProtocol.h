@@ -33,6 +33,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, strong, readonly) MLNUIDataBinding * _Nonnull mlnui_dataBinding;
 
+- (void)bindData:(NSObject *)data;
 - (void)bindData:(NSObject *)data forKey:(NSString *)key;
 
 @end

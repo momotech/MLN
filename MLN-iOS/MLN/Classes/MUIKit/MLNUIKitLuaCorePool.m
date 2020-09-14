@@ -9,6 +9,7 @@
 #import "MLNUIKitBridgesManager.h"
 #import "MLNUILuaCore.h"
 #import "MLNUIKiConvertor.h"
+#import "ArgoBindingConvertor.h"
 
 @interface MLNUIKitLuaCorePool ()
 
@@ -36,7 +37,7 @@
 {
     self = [super init];
     if (self) {
-        _convertorClass = MLNUIKiConvertor.class;
+        _convertorClass = ArgoBindingConvertor.class;
         _bridgeManager = [[MLNUIKitBridgesManager alloc] init];
         _luaCoreQueue = [NSMutableArray array];
     }

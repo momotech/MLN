@@ -19,6 +19,8 @@ typedef enum : NSUInteger {
     MLNUINativeTypeMArray,
     MLNUINativeTypeColor,
     MLNUINativeTypeValue,
+    MLNUINativeTypeObervableMap,
+    MLNUINativeTypeObervableArray,
 } MLNUINativeType;
 
 NS_ASSUME_NONNULL_BEGIN

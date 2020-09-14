@@ -62,7 +62,7 @@
 {
     if (self = [super init]) {
         _currentBundle = bundle;
-        _systemBundle = [NSBundle bundleWithPath:[[NSBundle bundleForClass:[self class]] pathForResource:@"ArgoUI" ofType:@"bundle"]];
+        _systemBundle = [NSBundle bundleWithPath:[[NSBundle bundleForClass:[self class]] pathForResource:@"ArgoUISystem" ofType:@"bundle"]];
     }
     return self;
 }

@@ -17,6 +17,7 @@
 #import "MLNUIKitInstanceConsts.h"
 #import "MLNUIFile.h"
 #import "MLNUIKitBridgesManager.h"
+#import "ArgoBindingConvertor.h"
 
 #define kMLNUIRunLoopBeforeWaitingLazyTaskOrder   1
 #define kMLNUIRunLoopBeforeWaitingRenderOrder     2
@@ -285,6 +286,7 @@
 
 - (void)changeLuaBundle:(MLNUILuaBundle *)bundle
 {
+    NSAssert(![[bundle bundlePath] hasSuffix:@"ArgoUISystem.bundle"], @"业务使用的bundle名字不能是ArgoUISystem.bundle");
     _currentBundle = bundle;
     [self.luaCore changeLuaBundle:bundle];
 }
@@ -614,7 +616,7 @@
     if (self = [super init]) {
         _currentBundle = luaBundle;
         if (!convertorClass) {
-            convertorClass = MLNUIKiConvertor.class;
+            convertorClass = ArgoBindingConvertor.class;
         }
         _convertorClass = convertorClass;
         _exporterClass = exporterClass;
