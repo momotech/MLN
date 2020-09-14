@@ -85,7 +85,7 @@ static MLNUI_FORCE_INLINE id __argo__toobj(lua_State* L, MLNUILuaCore *luaCore,i
                             if(!dic) {
                                 dic = [ArgoObservableMap dictionary];
                             }
-                            [dic setObject:value forKey:key];
+                            [dic lua_rawPutValue:value forKey:key];
                         }
                     }
                 }

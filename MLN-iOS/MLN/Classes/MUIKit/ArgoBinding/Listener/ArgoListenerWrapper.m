@@ -55,7 +55,7 @@
 
 - (void)callWithChange:(NSDictionary *)change {
     if (!self.block) return;
-    ArgoObserverContext contxt = [[change objectForKey:kArgoListenerContext] unsignedIntegerValue];
+    ArgoWatchContext contxt = [[change objectForKey:kArgoListenerContext] unsignedIntegerValue];
     if (self.filter && !self.filter(contxt, change)) {
         return;
     }

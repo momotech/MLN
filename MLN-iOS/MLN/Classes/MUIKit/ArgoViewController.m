@@ -36,7 +36,8 @@
     if (!bundleName) {
         bundle = [NSBundle mainBundle];
     } else {
-        NSString *bundlePath = [[NSBundle mainBundle] pathForResource:bundleName ofType:@"bundle"];
+        NSArray *paths = [bundleName componentsSeparatedByString:@"."];
+        NSString *bundlePath = [[NSBundle mainBundle] pathForResource:paths.firstObject ofType:@"bundle"];
         bundle = [NSBundle bundleWithPath:bundlePath];
     }
     return [self initWithEntryFileName:entryFileName bundle:bundle];
@@ -68,6 +69,7 @@
         if ([self.delegate respondsToSelector:@selector(viewController:didFailRun:error:)]) {
             [self.delegate viewController:self didFailRun:self.entryFileName error:error];
         }
+        MLNUIError(self.kitInstance.luaCore, @"run entryFile: %@, error: %@",self.entryFileName, error);
     }
     
     [self notifyLifeCycle:ArgoViewControllerLifeCycleViewDidLoad];

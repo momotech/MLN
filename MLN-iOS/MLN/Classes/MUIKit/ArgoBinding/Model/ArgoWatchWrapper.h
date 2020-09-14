@@ -6,14 +6,10 @@
 //
 
 #import <Foundation/Foundation.h>
-
+#import "ArgoKitDefinitions.h"
+ 
 NS_ASSUME_NONNULL_BEGIN
 @class ArgoObservableMap, ArgoObservableArray;
-
-typedef NS_ENUM(NSUInteger, ArgoWatchContext) {
-    ArgoWatchContext_Native,
-    ArgoWatchContext_Lua
-};
 
 typedef void(^ArgoWatchBlock)(id oldValue, id newValue, ArgoObservableMap *map);
 typedef void(^ArgoWatchArrayBlock)(ArgoObservableArray *array, NSDictionary *change);

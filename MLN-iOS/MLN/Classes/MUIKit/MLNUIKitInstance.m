@@ -286,6 +286,7 @@
 
 - (void)changeLuaBundle:(MLNUILuaBundle *)bundle
 {
+    NSAssert(![[bundle bundlePath] hasSuffix:@"ArgoUISystem.bundle"], @"业务使用的bundle名字不能是ArgoUISystem.bundle");
     _currentBundle = bundle;
     [self.luaCore changeLuaBundle:bundle];
 }

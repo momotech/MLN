@@ -17,6 +17,8 @@
 @property (nonatomic, strong) NSMutableDictionary *proxy;
 //
 @property (nonatomic, strong) NSMutableDictionary *argoListeners;
+@property (nonatomic, strong) NSMutableDictionary *argoChangedKeysMap;
+
 @property (nonatomic, strong) ArgoLuaCacheAdapter *cacheAdapter;
 //@property (nonatomic, copy, readonly) ArgoObservableMap *(^set)(NSString *key, NSObject *value);
 //@property (nonatomic, copy, readonly) NSObject *(^get)(NSString *key);
@@ -31,11 +33,15 @@
 }
 
 - (void)lua_putValue:(NSObject *)value forKey:(NSString *)key {
-    [self _putValue:value forKey:key context:ArgoWatchContext_Lua];
+    [self _putValue:value forKey:key context:ArgoWatchContext_Lua notify:YES];
+}
+
+- (void)lua_rawPutValue:(NSObject *)value forKey:(NSString *)key {
+    [self _putValue:value forKey:key context:ArgoWatchContext_Lua notify:NO];
 }
 
 - (void)native_putValue:(NSObject *)value forKey:(NSString *)key {
-    [self _putValue:value forKey:key context:ArgoWatchContext_Native];
+    [self _putValue:value forKey:key context:ArgoWatchContext_Native notify:YES];
 }
 
 - (NSObject *)native_getValueForKey:(NSString *)key {
@@ -43,23 +49,32 @@
     return [self.proxy objectForKey:key];
 }
 
-- (void)_putValue:(NSObject *)value forKey:(NSString *)key context:(ArgoWatchContext)context {
+- (void)_putValue:(NSObject *)value forKey:(NSString *)key context:(ArgoWatchContext)context notify:(BOOL)notify{
     if(!key) return;
+    NSObject *old = [self.proxy objectForKey:key];
     if (value) {
         [self.proxy setObject:value forKey:key];
     } else {
         [self.proxy removeObjectForKey:key];
     }
-    //lua table cache
-    [self.cacheAdapter putValue:value forKey:key];
     
-    NSMutableDictionary *change = [NSMutableDictionary dictionary];
-    [change setObject:@(NSKeyValueChangeSetting) forKey:NSKeyValueChangeKindKey];
-    if (value) {
-        [change setObject:value forKey:NSKeyValueChangeNewKey];
+    if (notify) {
+        //lua table cache
+        [self.cacheAdapter putValue:value forKey:key];
+        
+        NSMutableDictionary *change = [NSMutableDictionary dictionary];
+        [change setObject:@(NSKeyValueChangeSetting) forKey:NSKeyValueChangeKindKey];
+        if (value) {
+            [change setObject:value forKey:NSKeyValueChangeNewKey];
+        }
+        if (old) {
+            [change setObject:old forKey:NSKeyValueChangeOldKey];
+        }
+        [change setObject:@(context) forKey:kArgoListenerContext];
+        
+        [self.argoChangedKeysMap setObject:change forKey:key];
+        [self notifyArgoListenerKey:key Change:change];
     }
-    [change setObject:@(context) forKey:kArgoListenerContext];
-    [self notifyArgoListenerKey:key Change:change];
 }
 
 - (void)addLuaTabe:(MLNUILuaTable *)table {
@@ -101,6 +116,13 @@
         _argoListeners = [NSMutableDictionary dictionary];
     }
     return _argoListeners;
+}
+
+- (NSMutableDictionary *)argoChangedKeysMap {
+    if (!_argoChangedKeysMap) {
+        _argoChangedKeysMap = [NSMutableDictionary dictionary];
+    }
+    return _argoChangedKeysMap;
 }
 
 - (ArgoLuaCacheAdapter *)cacheAdapter {

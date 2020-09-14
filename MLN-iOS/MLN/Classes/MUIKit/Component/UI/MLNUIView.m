@@ -44,8 +44,8 @@
 
 LUAUI_EXPORT_VIEW_BEGIN(MLNUIView)
 // layout
-LUAUI_EXPORT_VIEW_METHOD(centerX, "luaui_centerX",MLNUIView)
-LUAUI_EXPORT_VIEW_METHOD(centerY, "luaui_centerY",MLNUIView)
+LUAUI_EXPORT_VIEW_METHOD(getX, "luaui_getX",MLNUIView)
+LUAUI_EXPORT_VIEW_METHOD(getY, "luaui_getY",MLNUIView)
 LUAUI_EXPORT_VIEW_METHOD(layoutComplete, "luaui_layoutComplete:", MLNUIView)
 
 LUAUI_EXPORT_VIEW_PROPERTY(display, "setLuaui_display:","luaui_display", MLNUIView)

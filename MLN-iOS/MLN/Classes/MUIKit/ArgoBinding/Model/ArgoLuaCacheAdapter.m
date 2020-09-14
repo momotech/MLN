@@ -9,6 +9,10 @@
 #import "MLNUILuaTable.h"
 #import "MLNUILuaCore.h"
 
+#define DoWhenNotInMainThread(ret)     if ([NSThread isMainThread] == false) {\
+ret;\
+}\
+
 @interface ArgoLuaCacheAdapter ()
 @property (nonatomic, unsafe_unretained) id<ArgoListenerProtocol> object;
 @property (nonatomic, strong) NSMutableDictionary <id<NSCopying> , MLNUILuaTable *> *cache;
@@ -18,6 +22,7 @@
 
 #pragma mark -
 - (void)addLuaTabe:(MLNUILuaTable *)table {
+    DoWhenNotInMainThread(return;)
     MLNUILuaCore *core = table.luaCore;
     if (core) {
         [self.cache setObject:table forKey:core];
@@ -25,6 +30,7 @@
 }
 
 - (MLNUILuaTable *)getLuaTable:(id<NSCopying>)key {
+    DoWhenNotInMainThread(return nil;)
     if (key) {
         MLNUILuaTable *t = [self.cache objectForKey:key];
 //        if (t) {
@@ -40,10 +46,19 @@
 #pragma mark -
 
 - (instancetype)initWithObject:(id<ArgoListenerProtocol>)object {
+    DoWhenNotInMainThread(return nil;)
     if (self = [super init]) {
         _object = object;
     }
     return self;
+}
+
+- (void)dealloc {
+    DoWhenNotInMainThread(
+        __block id cache = _cache;
+        dispatch_async(dispatch_get_main_queue(), ^{
+          cache = nil;
+    }))
 }
 
 - (NSMutableDictionary <id<NSCopying>, MLNUILuaTable *> *)cache {
@@ -56,6 +71,7 @@
 #pragma mark - Map
 
 - (void)putValue:(NSObject *)value forKey:(NSString *)key {
+    DoWhenNotInMainThread(return;)
     if(!key) return;
     for (MLNUILuaTable *table in self.cache.allValues) {
 //        if (value) {
@@ -72,6 +88,7 @@
 #pragma mark - Array
 
 - (void)putValue:(NSObject *)value forIndex:(int)index {
+    DoWhenNotInMainThread(return;)
     for (MLNUILuaTable *table in self.cache.allValues) {
         //table兼容value=nil的情况
         [table rawsetObject:value index:index];
@@ -79,6 +96,7 @@
 }
 
 - (void)insertValue:(NSObject *)value forIndex:(int)index {
+    DoWhenNotInMainThread(return;)
     for (MLNUILuaTable *table in self.cache.allValues) {
         [table inseretObject:value index:index];
     }
@@ -88,6 +106,7 @@
     //TODO: 实现lua table的inert...
 //    [self.cache removeAllObjects];
 //    return;
+    DoWhenNotInMainThread(return;)
     NSKeyValueChange type = [[change objectForKey:NSKeyValueChangeKindKey] unsignedIntegerValue];
     NSIndexSet *indexSet = [change objectForKey:NSKeyValueChangeIndexesKey];
     NSObject *newValue = [change objectForKey:NSKeyValueChangeNewKey];

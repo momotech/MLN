@@ -23,6 +23,7 @@
 #import "MLNUICollectionView.h"
 #import "MLNUILuaTable.h"
 #import "NSObject+ArgoListener.h"
+#import "MLNUIHeader.h"
 
 @interface _ArgoBindCellInternalModel : NSObject
 //@property (nonatomic, strong) NSMutableDictionary *pathMap;
@@ -40,13 +41,21 @@
 }
 @end
 
+@interface _ArgoBindListViewInternalModel : NSObject
+@property (nonatomic, weak) UIView *listView;
+@property (nonatomic, strong) NSString *keyPath;
+@property (nonatomic, assign) NSInteger tokenID;
+@end
+
+@implementation _ArgoBindListViewInternalModel
+@end
 
 @interface ArgoDataBinding () {
     pthread_mutex_t _lock;
 }
 @property (nonatomic, strong) ArgoObservableMap *dataMap;
 @property (nonatomic, strong) NSMutableDictionary *observerMap;
-@property (nonatomic, strong) NSMutableDictionary *listViewMap;
+@property (nonatomic, strong) NSMapTable *listViewMap;
 @end
 
 @interface ArgoInternalListViewPairs : NSObject
@@ -61,16 +70,17 @@
 
 #pragma mark - Public
 
-- (void)bindData:(nullable id<ArgoListenerProtocol>)data forKey:(NSString *)key {
+- (void)bindData:(nullable NSObject<ArgoListenerProtocol> *)data forKey:(NSString *)key {
     NSParameterAssert(key);
     if (key) {
         LOCK();
-        [self.dataMap lua_putValue:data forKey:key];
+//        [self.dataMap lua_putValue:data forKey:key];
+        [self.dataMap lua_rawPutValue:data forKey:key];
         UNLOCK();
     }
 }
 
-- (void)bindData:(nullable id<ArgoListenerProtocol>)data {
+- (void)bindData:(nullable NSObject<ArgoListenerProtocol> *)data {
     SEL sel = sel_registerName("modelKey");
     NSAssert([data.class respondsToSelector:sel], @"Data必须实现方法：modelKey ");
 #pragma clang diagnostic push
@@ -130,56 +140,89 @@
 
 // from watch
 - (NSInteger)argo_watchKeyPath:(NSString *)keyPath withHandler:(MLNUIBlock *)handler {
+    return [self _watchKeyPath:keyPath handler:handler listView:nil filter:nil];
+}
+
+- (NSInteger)argo_watchKey:(NSString *)key withHandler:(MLNUIBlock *)handler {
+//    NSMutableArray *keys = [key componentsSeparatedByString:kArgoConstString_Dot].mutableCopy;
+//    NSString *lastKey = keys.lastObject;
+//    id<ArgoListenerProtocol> object = self.dataMap;
+//    if (keys.count > 1) {
+//        [keys removeLastObject];
+//        object = [object argoGetForKeyPath:[keys componentsJoinedByString:kArgoConstString_Dot]];
+//    }
+//    return [self _observeObject:object keyPath:lastKey handler:handler listView:nil filter:kArgoWatchKeyListenerFilter];
+    return [self _watchKeyPath:key handler:handler listView:nil filter:kArgoWatchKeyListenerFilter];
+}
+
+- (NSInteger)_watchKeyPath:(NSString *)keyPath handler:(MLNUIBlock *)handler listView:(UIView *)listView filter:(ArgoListenerFilter)filter {
     NSArray *keys = [keyPath componentsSeparatedByString:kArgoConstString_Dot];
     NSInteger lastNumberIndex = [ArgoObserverHelper lastNumberIndexOf:keys];
     if (lastNumberIndex == NSNotFound) { //没有数字
-        return [self _observeObject:self.dataMap keyPath:keyPath handler:handler listView:nil];
+        return [self _observeObject:self.dataMap keyPath:keyPath handler:handler listView:listView filter:filter];
     }
     
     if (lastNumberIndex == keys.count - 1) { //最后一位是数字!
         NSString *log = [NSString stringWithFormat:@"%s，%@: 最后一个path不能是数字",__func__, keyPath];
         [self doErrorLog:log];
-        return NSIntegerMax;
+        return NSNotFound;
     }
     //keyPath:a.b.1.d.e, befor:a.b.1 after:d.e
     NSString *befor = [ArgoObserverHelper stringBefor:lastNumberIndex withKeys:keys];
     NSString *after = [keyPath substringFromIndex:befor.length + 1];
     id<ArgoListenerProtocol> observed = [self argo_get:befor];
-    return [self _observeObject:observed keyPath:after handler:handler listView:nil];
+    return [self _observeObject:observed keyPath:after handler:handler listView:listView filter:filter];
 }
 
-- (NSInteger)_observeObject:(id<ArgoListenerProtocol>)observed keyPath:(NSString *)keyPath handler:(MLNUIBlock *)handler listView:(UIView *)listView {
+- (NSInteger)_observeObject:(id<ArgoListenerProtocol>)observed keyPath:(NSString *)keyPath handler:(MLNUIBlock *)handler listView:(UIView *)listView filter:(ArgoListenerFilter)filter {
     ArgoObserverBase *observer;
     if (handler) {
         observer = [ArgoLuaObserver observerWithBlock:handler callback:nil keyPath:keyPath];
     } else if(listView) {
         observer = [ArgoListViewObserver observerWithListView:listView keyPath:keyPath callback:nil];
     }
-    return [self _addOberver:observer forObject:observed];
+    return [self _addOberver:observer forObject:observed filter:filter];
 }
 
-- (NSInteger)_addOberver:(ArgoObserverBase *)observer forObject:(id<ArgoListenerProtocol>)observed {
+- (NSInteger)_addOberver:(ArgoObserverBase *)observer forObject:(id<ArgoListenerProtocol>)observed filter:(ArgoListenerFilter)filter {
     id<ArgoListenerToken> token = [observed addArgoListenerWithChangeBlock:^(NSString *keyPath, id<ArgoListenerProtocol> object, NSDictionary *change) {
         [observer notifyKeyPath:keyPath ofObject:object change:change];
-    } forKeyPath:observer.keyPath];
+    } forKeyPath:observer.keyPath filter:filter];
     [self.observerMap setObject:token forKey:@(token.tokenID)];
     return token.tokenID;
 }
 
 - (void)argo_unwatch:(NSInteger)tokenID {
-    id<ArgoListenerToken> token = [self.observerMap objectForKey:@(tokenID)];
+    NSObject <ArgoListenerToken> *token = [self.observerMap objectForKey:@(tokenID)];
     if (token) {
+        PLOG(@"_argo_ unwatch %@ id %zd",[token performSelector:NSSelectorFromString(@"keyPath")], token.tokenID);
         [token removeListener];
         [self.observerMap removeObjectForKey:@(tokenID)];
     }
 }
 
-- (void)argo_bindListView:(UIView *)listView forTag:(NSString *)tag {
-    if(!listView || !tag) return;
-    [self.listViewMap setObject:listView forKey:tag];
+- (NSInteger)argo_bindListView:(UIView *)listView forTag:(NSString *)tag {
+    if(!listView || !tag) return NSNotFound;
+    _ArgoBindListViewInternalModel *model = [self.listViewMap objectForKey:tag];
+    if (listView == model.listView) {
+        PLOG(@">>>>>> list view %@ already add observer",listView);
+        return model.tokenID;
+    }
+    if (model) { //移除监听
+        [self.listViewMap removeObjectForKey:tag];
+        [self argo_unwatch:model.tokenID];
+    }
+    model = [_ArgoBindListViewInternalModel new];
+//    [self.listViewMap setObject:listView forKey:tag];
     //TODO: 需要转换？
     tag = [self convertedKeyPathWith:tag];
-    [self _observeObject:self.dataMap keyPath:tag handler:nil listView:listView];
+    PLOG(@"_argo_ bind listview %@ %p",tag, listView);
+    NSInteger tokenID = [self _watchKeyPath:tag handler:nil listView:listView filter:nil];
+    model.listView = listView;
+    model.tokenID = tokenID;
+    model.keyPath = tag;
+    [self.listViewMap setObject:model forKey:tag];
+    return tokenID;
 }
 
 - (UIView *)argo_listViewForTag:(NSString *)tag {
@@ -266,15 +309,15 @@ static inline ArgoObserverBase *_getArgoObserver(UIViewController <ArgoViewContr
 //        TOCK2("add observer", p.UTF8String);
 //    }
     
+    PLOG(@"_argo_ bind cell paths %@",paths);
+    
     ArgoObserverBase *observer = _getArgoObserver(viewController, listView, @"", idKey);
 //    id<ArgoListenerToken> token = [cellModel addArgoListenerWithChangeBlock:^(NSString *keyPath, id<ArgoListenerProtocol> object, NSDictionary *change) {
 //        [observer notifyKeyPath:keyPath ofObject:object change:change];
 //    } forKeyPath:observer.keyPath];
     id<ArgoListenerToken> token = [cellModel addArgoListenerWithChangeBlockForAllKeys:^(NSString *keyPath, id<ArgoListenerProtocol> object, NSDictionary *change) {
         [observer notifyKeyPath:keyPath ofObject:object change:change];
-    } filter:^BOOL(ArgoObserverContext context, NSDictionary *change) {
-        return YES;
-    } keyPaths:paths];
+    } filter:nil keyPaths:paths];
     
     [self.observerMap setObject:token forKey:@(token.tokenID)];
     model.paths = paths;
@@ -290,7 +333,7 @@ static inline ArgoObserverBase *_getArgoObserver(UIViewController <ArgoViewContr
 
 - (NSString *)listViewKeyMatch:(NSString *)tag {
     NSString *lvKey;
-    NSArray *keys = [self.listViewMap.allKeys sortedArrayUsingComparator:^NSComparisonResult(NSString *  _Nonnull obj1, NSString *  _Nonnull obj2) {
+    NSArray *keys = [self.listViewMap.keyEnumerator.allObjects sortedArrayUsingComparator:^NSComparisonResult(NSString *  _Nonnull obj1, NSString *  _Nonnull obj2) {
         return (obj1.length > obj2.length) ? NSOrderedAscending : NSOrderedDescending;
     }];
     for (NSString *k in keys) {
@@ -333,8 +376,8 @@ static inline ArgoObserverBase *_getArgoObserver(UIViewController <ArgoViewContr
     if (self) {
         self.dataMap = [ArgoObservableMap dictionary];
         self.observerMap = [NSMutableDictionary dictionary];
-//        self.listViewMap = [NSMapTable strongToWeakObjectsMapTable];
-        self.listViewMap = [NSMutableDictionary dictionary];
+        self.listViewMap = [NSMapTable strongToStrongObjectsMapTable];
+//        self.listViewMap = [NSMutableDictionary dictionary];
         LOCK_RECURSIVE_INIT();
     }
     return self;

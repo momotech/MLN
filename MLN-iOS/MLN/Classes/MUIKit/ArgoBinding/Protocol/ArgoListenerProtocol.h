@@ -9,10 +9,10 @@
 #define ArgoListenerProtocol_h
 #import "ArgoKitDefinitions.h"
 
-typedef NS_ENUM(NSUInteger, ArgoObserverContext) {
-    ArgoObserverContext_Lua,
-    ArgoObserverContext_Native
-};
+//typedef NS_ENUM(NSUInteger, ArgoWatchContext) {
+//    ArgoWatchContext_Lua,
+//    ArgoWatchContext_Native
+//};
 
 @class ArgoListenerWrapper, ArgoListenerToken, MLNUILuaTable, MLNUILuaCore;
 @protocol ArgoListenerProtocol;
@@ -20,7 +20,9 @@ typedef NS_ENUM(NSUInteger, ArgoObserverContext) {
 //typedef void(^ArgoBlockChange)  (id <ArgoListenerProtocol> object, NSDictionary<NSKeyValueChangeKey,id> * change);
 //typedef void(^ArgoBlockChange)  (NSKeyValueChange type, id newValue, NSIndexSet *indexSet, NSDictionary *info);
 typedef void(^ArgoBlockChange)  (NSString *keyPath, id<ArgoListenerProtocol>object, NSDictionary *change);
-typedef BOOL(^ArgoListenerFilter)(ArgoObserverContext context, NSDictionary *change);
+typedef BOOL(^ArgoListenerFilter)(ArgoWatchContext context, NSDictionary *change);
+
+extern ArgoListenerFilter kArgoWatchKeyListenerFilter;
 
 @protocol ArgoListenerToken
 //- (void)removeObserver;
@@ -36,7 +38,7 @@ typedef BOOL(^ArgoListenerFilter)(ArgoObserverContext context, NSDictionary *cha
 @end
 
 @protocol ArgoListenerCategoryProtocol <NSObject>
-- (id <ArgoListenerToken>)addArgoListenerWithChangeBlock:(ArgoBlockChange)block forKeyPath:(NSString *)keyPath;
+//- (id <ArgoListenerToken>)addArgoListenerWithChangeBlock:(ArgoBlockChange)block forKeyPath:(NSString *)keyPath;
 - (id <ArgoListenerToken>)addArgoListenerWithChangeBlock:(ArgoBlockChange)block forKeyPath:(NSString *)keyPath filter:(ArgoListenerFilter)filter;
 // for bind_cell
 - (id<ArgoListenerToken>)addArgoListenerWithChangeBlockForAllKeys:(ArgoBlockChange)block filter:(ArgoListenerFilter)filter keyPaths:(NSArray *)keyPaths;
@@ -65,7 +67,11 @@ typedef BOOL(^ArgoListenerFilter)(ArgoObserverContext context, NSDictionary *cha
 //- (ArgoListenerWrapper *)addObserverWithChangeBlock:(ArgoBlockChange)block forKeyPath:(NSString *)keyPath;
 - (NSObject *)lua_get:(NSString *)key;
 - (void)lua_putValue:(NSObject *)value forKey:(NSString *)key;
+//
+- (void)lua_rawPutValue:(NSObject *)value forKey:(NSString *)key;
+
 @property (nonatomic, strong, readonly) NSMutableDictionary <id<NSCopying>, ArgoListenerWrapper *> *argoListeners;
+@property (nonatomic, strong, readonly) NSMutableDictionary *argoChangedKeysMap;
 
 @end 
 #endif /* ArgoListenerProtocol_h */

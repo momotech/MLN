@@ -12,6 +12,7 @@
 #import "MLNUIExtScope.h"
 #import "MLNUIHeader.h"
 #import "ArgoDataBinding.h"
+#import "ArgoDataBindingProtocol.h"
 
 @implementation MLNUIViewController (DataBinding)
 - (UIView *)findViewById:(NSString *)identifier {
@@ -74,12 +75,18 @@
 @implementation UIViewController (MLNUIDataBinding)
 
 - (MLNUIDataBinding *)mlnui_dataBinding {
-    MLNUIDataBinding *obj = objc_getAssociatedObject(self, _cmd);
-    if (!obj) {
-        obj = [[MLNUIDataBinding alloc] init];
-        objc_setAssociatedObject(self, _cmd, obj, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-    }
-    return obj;
+//    MLNUIDataBinding *obj = objc_getAssociatedObject(self, _cmd);
+//    if (!obj) {
+////        obj = [[MLNUIDataBinding alloc] init];
+//# if OCPERF_USE_NEW_DB
+//        obj = [[ArgoDataBinding alloc] init];
+//#else
+//        obj = [[MLNUIDataBinding alloc] init];
+//#endif
+//        objc_setAssociatedObject(self, _cmd, obj, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+//    }
+//    return obj;
+    return [self argo_dataBinding];
 }
 
 - (void)mlnui_addToSuperViewController:(UIViewController *)superVC frame:(CGRect) frame {

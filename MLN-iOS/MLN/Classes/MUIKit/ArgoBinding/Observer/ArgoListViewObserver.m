@@ -160,7 +160,6 @@ typedef BOOL(^ActionBlock)(void);
             [self listViewReload:self.listView];
             return YES;
         };
-        return;
     } else {
 //        id<ArgoObserverProtocol> array = [change objectForKey:kArgoListenerChangedObject];
         action = ^BOOL { //参考MLNUIListViewObserver，由于子模块的传参问题，只能reload
@@ -173,8 +172,9 @@ typedef BOOL(^ActionBlock)(void);
         };
     }
     
-    NSNotification *noti = [NSNotification notificationWithName:kUpdateNotiKey object:nil userInfo:@{@"action" : action}];
-    [[NSNotificationQueue defaultQueue] enqueueNotification:noti postingStyle:NSPostASAP coalesceMask:NSNotificationCoalescingOnName forModes:@[NSRunLoopCommonModes]];
+    action();
+//    NSNotification *noti = [NSNotification notificationWithName:kUpdateNotiKey object:nil userInfo:@{@"action" : action}];
+//    [[NSNotificationQueue defaultQueue] enqueueNotification:noti postingStyle:NSPostASAP coalesceMask:NSNotificationCoalescingOnName forModes:@[NSRunLoopCommonModes]];
 }
 
 - (void)receiveKeyPath:(NSString *)keyPath ofObject:(id<ArgoListenerProtocol>)object change:(NSDictionary *)change {
