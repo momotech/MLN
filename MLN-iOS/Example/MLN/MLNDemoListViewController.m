@@ -106,6 +106,7 @@
                        @"LabelDemo.lua",
                        @"LinearLayoutDemo.lua",
                        @"TableViewDemo.lua",
+                       @"TableViewCeilingCellDemo.lua",
                        @"ViewPagerDemo.lua",
                        @"WaterfallViewDemo.lua",
 //                       @"MLNBindModelViewController",
