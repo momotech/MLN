@@ -142,6 +142,10 @@
     self.innerScrollView.luaui_scrollBeginCallback = callback;
 }
 
+- (void)setLuaui_scrollWillEndDragCallback:(MLNUIBlock *)callback {
+    self.innerScrollView.luaui_scrollWillEndDraggingCallback = callback;
+}
+
 - (void)setLuaui_scrollingCallback:(MLNUIBlock *)callback
 {
     self.innerScrollView.luaui_scrollingCallback = callback;
@@ -275,6 +279,7 @@ LUAUI_EXPORT_VIEW_PROPERTY(i_bounceVertical, "setLuaui_alwaysBounceVertical:", "
 LUAUI_EXPORT_VIEW_PROPERTY(a_flingSpeed, "mlnui_setFlingSpeed:", "mlnui_flingSpeed" , MLNUIScrollView)
 LUAUI_EXPORT_VIEW_PROPERTY(i_pagingEnabled, "mlnui_setPagingEnable:", "mlnui_pagingEnabled" , MLNUIScrollView)
 LUAUI_EXPORT_VIEW_METHOD(setScrollBeginCallback, "setLuaui_scrollBeginCallback:",MLNUIScrollView)
+LUAUI_EXPORT_VIEW_METHOD(setScrollWillEndDragCallback, "setLuaui_scrollWillEndDragCallback:",MLNUIScrollView)
 LUAUI_EXPORT_VIEW_METHOD(setScrollingCallback, "setLuaui_scrollingCallback:",MLNUIScrollView)
 LUAUI_EXPORT_VIEW_METHOD(setEndDraggingCallback, "setLuaui_endDraggingCallback:",MLNUIScrollView)
 LUAUI_EXPORT_VIEW_METHOD(setStartDeceleratingCallback, "setLuaui_startDeceleratingCallback:",MLNUIScrollView)

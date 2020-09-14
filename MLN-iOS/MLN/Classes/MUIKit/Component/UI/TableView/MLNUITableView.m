@@ -1,4 +1,4 @@
-//
+ //
 //  MMTableView.m
 //  MLNUI
 //
@@ -170,6 +170,16 @@
 - (BOOL)luaui_disallowFling {
     return self.innerTableView.luaui_disallowFling;
 }
+
+ - (NSArray *)luaui_visibleCellsRows {
+     NSArray<__kindof UITableViewCell *> *cells = [self.innerTableView visibleCells];
+     NSMutableArray *rows = [NSMutableArray arrayWithCapacity:cells.count];
+     [cells enumerateObjectsUsingBlock:^(__kindof UITableViewCell *cell, NSUInteger idx, BOOL *stop) {
+         NSIndexPath *indexPath = [self.innerTableView indexPathForCell:cell];
+         [rows addObject:@(indexPath.row + 1)];
+     }];
+     return rows.copy;
+ }
 
 #pragma mark - Insert
 - (void)luaui_insertAtRow:(NSInteger)row section:(NSInteger)section
@@ -461,6 +471,7 @@ LUAUI_EXPORT_VIEW_METHOD(deleteRowsAtSection, "luaui_deleteRowsAtSection:startRo
 LUAUI_EXPORT_VIEW_METHOD(isStartPosition, "luaui_scrollIsTop", MLNUITableView)
 LUAUI_EXPORT_VIEW_METHOD(cellWithSectionRow, "luaui_cellAt:row:", MLNUITableView)
 LUAUI_EXPORT_VIEW_METHOD(visibleCells, "luaui_visibleCells", MLNUITableView)
+LUAUI_EXPORT_VIEW_METHOD(visibleCellsRows, "luaui_visibleCellsRows", MLNUITableView)
 // refresh header
 LUAUI_EXPORT_VIEW_PROPERTY(refreshEnable, "setLuaui_refreshEnable:", "luaui_refreshEnable", MLNUITableView)
 LUAUI_EXPORT_VIEW_METHOD(isRefreshing, "luaui_isRefreshing", MLNUITableView)
@@ -479,6 +490,7 @@ LUAUI_EXPORT_VIEW_METHOD(setLoadingCallback, "setLuaui_loadCallback:", MLNUITabl
 LUAUI_EXPORT_VIEW_PROPERTY(loadThreshold, "setLuaui_loadahead:", "luaui_loadahead", MLNUITableView)
 LUAUI_EXPORT_VIEW_METHOD(setScrollBeginCallback, "setLuaui_scrollBeginCallback:", MLNUITableView)
 LUAUI_EXPORT_VIEW_METHOD(setScrollingCallback, "setLuaui_scrollingCallback:", MLNUITableView)
+LUAUI_EXPORT_VIEW_METHOD(setScrollWillEndDraggingCallback, "setLuaui_scrollWillEndDraggingCallback:", MLNUITableView)
 LUAUI_EXPORT_VIEW_METHOD(setEndDraggingCallback, "setLuaui_endDraggingCallback:", MLNUITableView)
 LUAUI_EXPORT_VIEW_METHOD(setStartDeceleratingCallback, "setLuaui_startDeceleratingCallback:",MLNUITableView)
 LUAUI_EXPORT_VIEW_METHOD(setScrollEndCallback, "setLuaui_scrollEndCallback:",MLNUITableView)

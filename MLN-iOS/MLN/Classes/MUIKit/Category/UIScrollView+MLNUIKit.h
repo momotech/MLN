@@ -44,6 +44,7 @@
 
 @property (nonatomic, copy) MLNUIBlock *luaui_scrollBeginCallback;
 @property (nonatomic, copy) MLNUIBlock *luaui_scrollingCallback;
+@property (nonatomic, copy) MLNUIBlock *luaui_scrollWillEndDraggingCallback;
 @property (nonatomic, copy) MLNUIBlock *luaui_endDraggingCallback;
 @property (nonatomic, copy) MLNUIBlock *luaui_startDeceleratingCallback;
 @property (nonatomic, copy) MLNUIBlock *luaui_scrollEndCallback;
