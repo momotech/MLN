@@ -283,6 +283,16 @@ __VA_ARGS__;\
     return nil;
 }
 
+- (void)setLuaui_scrollWillEndDraggingCallback:(MLNUIBlock *)luaui_scrollWillEndDraggingCallback {
+    MLNUICheckTypeAndNilValue(luaui_scrollWillEndDraggingCallback, @"function", MLNUIBlock);
+    SCROLLVIEW_DO(scrollView.luaui_scrollWillEndDraggingCallback = luaui_scrollWillEndDraggingCallback;)
+}
+
+- (MLNUIBlock *)luaui_scrollWillEndDraggingCallback {
+    SCROLLVIEW_DO(return scrollView.luaui_scrollWillEndDraggingCallback;)
+    return nil;
+}
+
 - (void)setLuaui_endDraggingCallback:(MLNUIBlock *)luaui_endDraggingCallback
 {
     MLNUICheckTypeAndNilValue(luaui_endDraggingCallback, @"function", MLNUIBlock);
