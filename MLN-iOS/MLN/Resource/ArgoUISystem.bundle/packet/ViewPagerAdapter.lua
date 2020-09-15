@@ -24,6 +24,11 @@ function _class:new()
     obj.isLazy = false
     -- 数据懒加载
     obj.fillData = nil
+    -- 禁止复用，即设置多个id
+    obj.isReuseEnable = true
+    obj.ids = {}
+    obj.ids_initCell = {}
+    obj.ids_fillCell = {}
     return obj
 end
 
@@ -47,9 +52,9 @@ function _class:onPagerSelected(currentPage)
                 self.initFill[data.fillRow].init = true
             end
         end
-        self.isLazy = false
         self.fillData = nil
     end
+    self.isLazy = false
     -- 未初始化的进行初始化
     if self.initFill[currentPage] ~= nil and self.initFill[currentPage].init == false then
         local data = self.initFill[currentPage].data
@@ -57,6 +62,11 @@ function _class:onPagerSelected(currentPage)
         self.initFill[currentPage].init = true
     end
     return self
+end
+
+--获取新id
+function _class:getNewId(userId, row)
+    return userId .. "_" .. tostring(row)
 end
 
 ---- Factory Method END
@@ -99,21 +109,50 @@ end
 --回调某个页面的复用ID
 function _class:reuseId(id)
     self.adapter:reuseId(function(section, row)
-        return id(row)
+        if self.isReuseEnable == true then
+            return id(row)
+        else
+            -- 禁止复用，即设置多个id
+            local oldId = id(row);
+            local newId = self:getNewId(oldId, row);
+            if self.ids[newId] ~= true then
+                self:realInitCellByReuseId(newId, self.ids_initCell[oldId])
+                self:realFillCellDataByReuseId(newId, self.ids_fillCell[oldId])
+                self.ids[newId] = true
+            end
+            return newId
+        end
     end)
     return self
 end
 
 --初始化一个cell，根据复用ID
 function _class:initCellByReuseId(reuseId, initCell)
+    if self.isReuseEnable == true then
+        self:realInitCellByReuseId(reuseId, initCell)
+    else
+        self.ids_initCell[reuseId] = initCell
+    end
+    return self
+end
+
+function _class:realInitCellByReuseId(reuseId, initCell)
     self.adapter:initCellByReuseId(reuseId, function(cell)
         return initCell(cell)
     end)
-    return self
 end
 
 --填充cell数据，根据复用ID
 function _class:fillCellDataByReuseId(reuseId, fillCell)
+    if self.isReuseEnable == true then
+        self:realFillCellDataByReuseId(reuseId, fillCell)
+    else
+        self.ids_fillCell[reuseId] = fillCell
+    end
+    return self
+end
+
+function _class:realFillCellDataByReuseId(reuseId, fillCell)
     self.adapter:fillCellDataByReuseId(reuseId, function(cell, section, row)
         -- 搜集懒加载模式下，所有初始化数据（防止数据未加载）
         if self.isLazy and self.initFill[row] == nil then
@@ -144,7 +183,6 @@ function _class:fillCellDataByReuseId(reuseId, fillCell)
             return fillCell(cell, row)
         end
     end)
-    return self
 end
 
 --设置cell大小的回调
