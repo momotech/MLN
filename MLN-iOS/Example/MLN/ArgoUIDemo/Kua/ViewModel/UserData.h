@@ -7,9 +7,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) ArgoObservableArray *listSource;
 @property (nonatomic, copy) NSString * title;
 
-#if DEBUG
+//#if DEBUG
 + (instancetype)defaultUserData;
-#endif
+//#endif
 NS_ASSUME_NONNULL_END
 @end
     

@@ -29,9 +29,17 @@
  return @"userData";
 }
 
-#if DEBUG
++ (void)load {
+    [self defaultUserData];
+}
+
+//#if DEBUG
 + (instancetype)defaultUserData {
-    UserData *userData = [self new];
+    static UserData *userData;
+    if (userData) {
+        return userData;
+    }
+    userData = [self new];
 userData.listSource = @[
 @{
 @"actions": @[
@@ -1129,6 +1137,6 @@ userData.title = @"ta的动态";
 
 return userData;
 }
-#endif
+//#endif
 @end
     
