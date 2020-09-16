@@ -170,10 +170,6 @@ static MLNUI_FORCE_INLINE id __argo__toobj(lua_State* L, MLNUILuaCore *luaCore,i
 
 static MLNUI_FORCE_INLINE int __argo__pushobj(lua_State *L, MLNUILuaCore *luaCore ,__unsafe_unretained id obj, NSError **error);
 - (int)pushArgoBindingNativeObject:(id)obj error:(NSError *__autoreleasing  _Nullable *)error {
-    if ([obj mlnui_nativeType] == MLNUINativeTypeColor) {
-        obj = [[MLNUIColor alloc] initWithColor:(UIColor *)obj];
-    }
-    
     lua_State *L = self.luaCore.state;
     if (!L) {
         if (error) {
@@ -221,7 +217,11 @@ static MLNUI_FORCE_INLINE void __argo__pushentity(lua_State *L, id<MLNUIEntityEx
 }
 
 static MLNUI_FORCE_INLINE BOOL __argo__pushtable(lua_State *L, MLNUILuaCore *luaCore ,__unsafe_unretained id obj, NSError **error);
-static MLNUI_FORCE_INLINE int __argo__pushobj(lua_State *L, MLNUILuaCore *luaCore ,__unsafe_unretained id obj, NSError **error) {
+static MLNUI_FORCE_INLINE int __argo__pushobj(lua_State *L, MLNUILuaCore *luaCore , id obj, NSError **error) {
+    if ([obj mlnui_nativeType] == MLNUINativeTypeColor) {
+        obj = [[MLNUIColor alloc] initWithColor:(UIColor *)obj];
+    }
+    
     int ret = 1;
     lua_checkstack(L, 4);
     // 是否需要转换为多参数压栈

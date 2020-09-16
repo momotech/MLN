@@ -17,6 +17,8 @@
 #import "MLNUIViewConst.h"
 #import "MLNUIStack.h"
 
+#define MLNUI_CGSIZE_IS_VALID(size) (size.width >= 0.0001 && size.height >= 0.0001)
+
 @interface MLNUIScrollView()
 
 @property (nonatomic, strong) MLNUIInnerScrollView *innerScrollView;
@@ -252,10 +254,12 @@
         [contentStack mlnui_requestLayoutIfNeedWithSize:CGSizeMake(MLNUIUndefined, MLNUIUndefined)]; // 固定宽高不会执行mlnui_sizeThatFits
         
     } else { // 自适应内容要二次测量，处理subviews带有widthPercent/heightPercent的情况
-        MLNUILayoutNode *contentNode = self.innerScrollView.mlnui_contentView.mlnui_layoutNode;
-        contentNode.width = MLNUIPointValue(MAX(contentNode.layoutWidth, self.frame.size.width));
-        contentNode.height = MLNUIPointValue(MAX(contentNode.layoutHeight, self.frame.size.height));
-        [contentNode applyLayoutWithSize:self.frame.size];
+        if (MLNUI_CGSIZE_IS_VALID(self.frame.size)) {
+            MLNUILayoutNode *contentNode = self.innerScrollView.mlnui_contentView.mlnui_layoutNode;
+            contentNode.minWidth = MLNUIPointValue(MAX(contentNode.layoutWidth, self.frame.size.width));
+            contentNode.minHeight = MLNUIPointValue(MAX(contentNode.layoutHeight, self.frame.size.height));
+            [contentNode applyLayoutWithSize:self.frame.size];
+        }
     }
 }
 
