@@ -169,9 +169,12 @@
         [send_txt mas_makeConstraints:^(MASConstraintMaker *make) {
             make.top.mas_equalTo(content_img.mas_bottom).mas_offset(10);
             make.left.mas_equalTo(send_img.mas_right).mas_offset(5);
+            make.bottom.mas_equalTo(self.mas_bottom).mas_offset(-10);
+            
             make.width.mas_equalTo(50);
-            make.height.mas_equalTo(20);
+//            make.height.mas_equalTo(20);
         }];
+        
     }
     return self;
 }

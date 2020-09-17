@@ -92,31 +92,31 @@
         _praiseNumLabel = [UILabel new];
         _praiseNumLabel.font = [UIFont systemFontOfSize:14];
         [self.contentView addSubview:_praiseNumLabel];
-        
+                
         [_iconImg mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.top.mas_equalTo(self.mas_top).mas_offset(20);
-            make.left.mas_equalTo(self.mas_left).mas_offset(20);
+            make.top.mas_equalTo(self.contentView.mas_top).mas_offset(20);
+            make.left.mas_equalTo(self.contentView.mas_left).mas_offset(20);
             make.width.mas_equalTo(50);
             make.height.mas_equalTo(50);
             
         }];
         
         [_nameLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.top.mas_equalTo(self.mas_top).mas_offset(25);
+            make.top.mas_equalTo(self.contentView.mas_top).mas_offset(25);
             make.left.mas_equalTo(_iconImg.mas_right).mas_offset(10);
             make.width.mas_equalTo(100);
             make.height.mas_equalTo(10);
         }];
                        
         [_gradeLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.top.mas_equalTo(self.mas_top).mas_offset(55);
+            make.top.mas_equalTo(self.contentView.mas_top).mas_offset(55);
             make.left.mas_equalTo(_iconImg.mas_right).mas_offset(8);
             make.width.mas_equalTo(70);
             make.height.mas_equalTo(10);
         }];
         
         [_timeLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.top.mas_equalTo(self.mas_top).mas_offset(55);
+            make.top.mas_equalTo(self.contentView.mas_top).mas_offset(55);
             make.left.mas_equalTo(_gradeLabel.mas_right).mas_offset(5);
             make.width.mas_equalTo(100);
             make.height.mas_equalTo(10);
@@ -125,17 +125,18 @@
         
         [_commentLabel mas_makeConstraints:^(MASConstraintMaker *make) {
             make.top.mas_equalTo(_iconImg.mas_bottom).mas_offset(10);
-            make.left.mas_equalTo(self.mas_left).mas_offset(25);
+            make.left.mas_equalTo(self.contentView.mas_left).mas_offset(25);
             make.width.mas_equalTo(400);
-            make.height.mas_equalTo(10);
+//            make.height.mas_equalTo(10);
             
         }];
         
         [_replyBackgroundView mas_makeConstraints:^(MASConstraintMaker *make) {
             make.top.mas_equalTo(_commentLabel.mas_bottom).mas_offset(10);
-            make.left.mas_equalTo(self.mas_left).mas_offset(25);
+            make.left.mas_equalTo(self.contentView.mas_left).mas_offset(25);
             make.width.mas_equalTo(330);
             make.height.mas_equalTo(80);
+            make.bottom.mas_equalTo(self.contentView.mas_bottom).mas_offset(-5);
             
         }];
         
@@ -152,7 +153,6 @@
             make.left.mas_equalTo(_replyNameLabel1.mas_right).mas_offset(5);
             make.width.mas_equalTo(400);
             make.height.mas_equalTo(10);
-            
         }];
         
         [_replyNameLabel2 mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -176,22 +176,21 @@
             make.left.mas_equalTo(_replyBackgroundView.mas_left).mas_offset(250);
             make.width.mas_equalTo(100);
             make.height.mas_equalTo(10);
-            
         }];
         
         [_praiseImg mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.top.mas_equalTo(self.mas_top).mas_offset(35);
-            make.left.mas_equalTo(self.mas_left).mas_offset(290);
+            make.top.mas_equalTo(self.contentView.mas_top).mas_offset(35);
+            make.left.mas_equalTo(self.contentView.mas_left).mas_offset(290);
             make.width.mas_equalTo(20);
             make.height.mas_equalTo(20);
-            
         }];
         
         [_praiseNumLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-                  make.top.mas_equalTo(self.mas_top).mas_offset(35);
-                  make.left.mas_equalTo(_praiseImg.mas_right).mas_offset(5);
-                  make.width.mas_equalTo(40);
-                  make.height.mas_equalTo(20);
+            make.top.mas_equalTo(self.contentView.mas_top).mas_offset(35);
+            make.left.mas_equalTo(_praiseImg.mas_right).mas_offset(5);
+            
+            make.width.mas_equalTo(40);
+            make.height.mas_equalTo(20);
                   
         }];
                        
@@ -215,6 +214,10 @@
     _moreReplyLabel.text = _LiyifengTableViewCellModel.moreReply;
     [_praiseImg sd_setImageWithURL:[NSURL URLWithString:_LiyifengTableViewCellModel.praise]];
     _praiseNumLabel.text = _LiyifengTableViewCellModel.praiseNum;
+//    [self.contentView setNeedsUpdateConstraints];
+//    [self.contentView updateConstraintsIfNeeded];
+//    [self setNeedsLayout];
+//    [self layoutIfNeeded];
 }
 
 @end

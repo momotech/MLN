@@ -9,6 +9,7 @@
 #import "DemoLiyifengTableViewHeaderCell.h"
 //#import "DemoFirstViewController.h"
 #import "DemoTableViewHeaderView.h"
+#import <Masonry/Masonry.h>
 
 @implementation DemoLiyifengTableViewHeaderCell
 
@@ -17,6 +18,10 @@
     if (self) {
         DemoTableViewHeaderView *TableViewHeaderView = [DemoTableViewHeaderView new];
         [self.contentView addSubview:TableViewHeaderView];
+        [TableViewHeaderView mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.edges.equalTo(self.contentView);
+        }];
+        
     }
     return self;
 }
