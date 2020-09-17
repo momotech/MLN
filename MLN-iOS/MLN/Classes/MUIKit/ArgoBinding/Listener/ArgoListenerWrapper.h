@@ -31,11 +31,12 @@ NS_ASSUME_NONNULL_BEGIN
 //@property (nonatomic, strong) NSSet *keys;
 
 @property (nonatomic, strong) ArgoListenerFilter filter;
+@property (nonatomic, assign) BOOL triggerWhenAdd;
 
 //- (void)cancel;
 - (BOOL)isCanceld;
 
-+ (instancetype)wrapperWithID:(NSInteger)obID block:(ArgoBlockChange)block observedObject:(id<ArgoListenerProtocol>)observed keyPath:(NSString *)keyPath key:(NSString *)key filter:(ArgoListenerFilter)filter;
++ (instancetype)wrapperWithID:(NSInteger)obID block:(ArgoBlockChange)block observedObject:(id<ArgoListenerProtocol>)observed keyPath:(NSString *)keyPath key:(NSString *)key filter:(ArgoListenerFilter)filter triggerWhenAdd:(BOOL)triggerWhenAdd;
 
 - (void)callWithChange:(NSDictionary *)change;
 

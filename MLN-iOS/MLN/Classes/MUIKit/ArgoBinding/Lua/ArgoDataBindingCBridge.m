@@ -49,6 +49,7 @@ NS_INLINE void _argo_on_error_log(MLNUILuaCore *luaCore,NSString *log) {
 static int argo_get (lua_State *L) {
     PCallDBStart(__func__);
     TICK();
+
     MLNUILuaCore *luaCore = MLNUI_LUA_CORE(L);
     NSError *error;
     NSString *nKey = [luaCore toString:-1 error:&error];
@@ -93,15 +94,27 @@ static int argo_watch(lua_State *L) {
     PCallDBStart(__func__);
     TICK();
     
+    int top = lua_gettop(L);
+    assert(top == 3 || top == 4);
+    
     MLNUILuaCore *luaCore = MLNUI_LUA_CORE(L);
     ArgoDataBinding *dataBind = _argo_get_dataBinding(luaCore);
     NSError *error;
-    NSString *nKey = [luaCore toString:-2 error:&error];
-    MLNUIBlock *handler = [luaCore.convertor toArgoBindingNativeObject:-1 error:&error];
+    NSString *nKey;
+    MLNUIBlock *handler, *filter;
+
+    if (top == 3) { // table nKey handler
+        nKey = [luaCore toString:-2 error:&error];
+        handler = [luaCore.convertor toArgoBindingNativeObject:-1 error:&error];
+    } else { // table, nkey, filter, handler
+        nKey = [luaCore toString:-3 error:&error];
+        filter = [luaCore.convertor toArgoBindingNativeObject:-2 error:&error];
+        handler = [luaCore.convertor toArgoBindingNativeObject:-1 error:&error];
+    }
     
     PLOG(@"_argo_ watch keyPath %@",nKey);
     
-    NSInteger obid = [dataBind argo_watchKeyPath:nKey withHandler:handler];
+    NSInteger obid = [dataBind argo_watchKeyPath:nKey withHandler:handler filter:filter];
     lua_pushnumber(L, obid);
     PCallDBEnd(__func__);
     TOCK("argo_watch keyPath %s",nKey.UTF8String);
@@ -112,15 +125,27 @@ static int argo_watch_action(lua_State *L) {
     PCallDBStart(__func__);
     TICK();
     
+    int top = lua_gettop(L);
+    assert(top == 3 || top == 4);
+    
     MLNUILuaCore *luaCore = MLNUI_LUA_CORE(L);
     ArgoDataBinding *dataBind = _argo_get_dataBinding(luaCore);
     NSError *error;
-    NSString *nKey = [luaCore toString:-2 error:&error];
-    MLNUIBlock *handler = [luaCore.convertor toArgoBindingNativeObject:-1 error:&error];
+    NSString *nKey;
+    MLNUIBlock *handler, *filter;
+    
+    if (top == 3) {// table, nKey, handler
+        nKey = [luaCore toString:-2 error:&error];
+        handler = [luaCore.convertor toArgoBindingNativeObject:-1 error:&error];
+    } else { // table, nKey, filter, handler
+        nKey = [luaCore toString:-3 error:&error];
+        filter = [luaCore.convertor toArgoBindingNativeObject:-2 error:&error];
+        handler = [luaCore.convertor toArgoBindingNativeObject:-1 error:&error];
+    }
     
     PLOG(@"_argo_ watch_action %@",nKey);
     
-    NSInteger obid = [dataBind argo_watchKey:nKey withHandler:handler];
+    NSInteger obid = [dataBind argo_watchKey:nKey withHandler:handler filter:filter];
     lua_pushnumber(L, obid);
     PCallDBEnd(__func__);
     TOCK("argo_watch action %s",nKey.UTF8String);
