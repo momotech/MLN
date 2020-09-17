@@ -104,8 +104,8 @@ ret;\
 
 - (void)notifyChange:(NSDictionary *)change {
     //TODO: 实现lua table的inert...
-//    [self.cache removeAllObjects];
-//    return;
+    [self.cache removeAllObjects];
+    return;
     DoWhenNotInMainThread(return;)
     NSKeyValueChange type = [[change objectForKey:NSKeyValueChangeKindKey] unsignedIntegerValue];
     NSIndexSet *indexSet = [change objectForKey:NSKeyValueChangeIndexesKey];
