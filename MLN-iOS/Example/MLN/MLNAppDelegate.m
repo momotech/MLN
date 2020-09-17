@@ -92,7 +92,7 @@
     [MLNUIKitEnvironment setDefaultImageLoader:self.imgLoader2];
     [MLNUIKitEnvironment setDefaultNavigatorHandler:self.navHandler];
     [MLNUIKitEnvironment setDefaultErrorHandler:self.errorHandler];
-#if DEBUG
+#if DEBUG && 0
     [MLNUIKitEnvironment setPerformanceMonitor: [MLNUILoadTimeStatistics sharedStatistics]];
     MLNUIKitPerformanceMonitorForDebug = [MLNUILoadTimeStatistics sharedStatistics];
 #endif

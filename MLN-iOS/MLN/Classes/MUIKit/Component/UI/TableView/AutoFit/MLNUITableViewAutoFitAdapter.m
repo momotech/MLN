@@ -13,7 +13,7 @@
 #import "MLNUIBlock.h"
 #import "NSDictionary+MLNUISafety.h"
 
-#if DEBUG
+#if DEBUG && 0
 #define TICK()   CFAbsoluteTime lcoal__start = CFAbsoluteTimeGetCurrent();\
 CFAbsoluteTime lcoal__start2 = lcoal__start;\
 printf("\n");
