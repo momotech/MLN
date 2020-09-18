@@ -214,7 +214,11 @@ ArgoListenerFilter kArgoWatchKeyListenerFilter = ^BOOL(ArgoWatchContext context,
             // 重新添加监听
             NSArray *subPaths = [subKeyPath componentsSeparatedByString:kArgoConstString_Dot];
             if (subPaths.count) {
-                [self argo_addListenerWithChangeBlock:wrap.block object:newMap obID:wrap.obID keyPath:wrap.keyPath paths:subPaths filter:wrap.filter triggerWhenAdd:wrap.triggerWhenAdd wrapper:reuseWrap ? wrap : nil];
+                id<ArgoListenerProtocol> obj = [self argo_addListenerWithChangeBlock:wrap.block object:newMap obID:wrap.obID keyPath:wrap.keyPath paths:subPaths filter:wrap.filter triggerWhenAdd:wrap.triggerWhenAdd wrapper:reuseWrap ? wrap : nil];
+                ArgoObservableArray *array = (ArgoObservableArray *)obj;
+                if ([array isKindOfClass:[ArgoObservableArray class]]) {
+                    [self argo_addArrayListenerWithChangeBlock:wrap.block array:array obID:wrap.obID observedObject:wrap.observedObject keyPath:wrap.keyPath filter:wrap.filter triggerWhenAdd:wrap.triggerWhenAdd wrapper:reuseWrap ? wrap : nil];
+                }
             }
         } else if([newMap isKindOfClass:[ArgoObservableArray class]]) {
             //如果是array，重新添加监听，需要处理二维
