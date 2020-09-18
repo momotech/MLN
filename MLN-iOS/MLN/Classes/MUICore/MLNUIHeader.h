@@ -273,7 +273,7 @@ NSString *error_tt = [NSString stringWithFormat:FORMAT, ##__VA_ARGS__];\
 MLNUILuaCallErrorHandler(LUA_CORE, FORMAT, ##__VA_ARGS__)
 
 
-#if DEBUG
+#if DEBUG && 0
 #import "MLNUIPerformanceHeader.h"
 extern id<MLNUIPerformanceMonitor> MLNUIKitPerformanceMonitorForDebug;
 

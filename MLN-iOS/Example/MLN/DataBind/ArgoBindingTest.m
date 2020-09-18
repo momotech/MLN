@@ -9,6 +9,7 @@
 //#import "ArgoBindingTest.h"
 #import "ArgoObservableMap.h"
 #import "ArgoObservableArray.h"
+//#import "NSObject+ArgoListener.h"
 
 @interface ArgoBindingTest : NSObject
 
@@ -24,7 +25,21 @@
 //        [obj testString];
 //    });
 //    [obj testWatch];
-    [obj testArrayWatch];
+//    [obj testArrayWatch];
+    [self testEncodeDecode];
+}
+
++ (void)testEncodeDecode {
+    ArgoObservableMap *map = [ArgoObservableMap new];
+    [map setObject:@"aaa" forKey:@"kkk"];
+    NSData *mapData = [NSKeyedArchiver archivedDataWithRootObject:map];
+    ArgoObservableMap *r_map = [NSKeyedUnarchiver unarchiveObjectWithData:mapData];
+    
+    ArgoObservableArray *arr = [ArgoObservableArray new];
+    [arr addObject:@"1111"];
+    NSData *arrData = [NSKeyedArchiver archivedDataWithRootObject:arr];
+    ArgoObservableMap *r_arr = [NSKeyedUnarchiver unarchiveObjectWithData:arrData];
+    NSLog(@"%@ %@", r_map, r_arr);
 }
 
 - (void)testArrayWatch {
@@ -135,10 +150,9 @@
     
     id<ArgoListenerToken> token = [map addArgoListenerWithChangeBlock:^(NSString *keyPath, id<ArgoListenerProtocol> object, NSDictionary *change) {
         NSLog(@"object: %p keyPath: %@ change: %@",object,keyPath,change);
-    } forKeyPath:@"userData.data.info.name"];
-    
+    } forKeyPath:@"userData.data.info.name" filter:nil];
+
     [map lua_putValue:map1 forKey:@"userData"]; // 1, null
-    
     [map2 lua_putValue:map3 forKey:@"info"];
     [map3 lua_putValue:@"this is name" forKey:@"name"];
     [map1 lua_putValue:map2 forKey:@"data"];// 1, this is name
@@ -161,7 +175,7 @@
     
     id<ArgoListenerToken> token = [map addArgoListenerWithChangeBlock:^(NSString *keyPath, id<ArgoListenerProtocol> object, NSDictionary *change) {
         NSLog(@"object: %p keyPath: %@ change: %@",object,keyPath,change);
-    } forKeyPath:@"userData.list"];
+    } forKeyPath:@"userData.list" filter:nil];
     
     [map1 lua_putValue:array forKey:@"list"];
     [array addObject:@"1"];

@@ -228,10 +228,10 @@
     
 }
 
-- (void)luaui_setNineImageWith:(nonnull NSString *)imageName synchronized:(BOOL)synchronzied
+- (void)luaui_setNineImageWith:(nonnull NSString *)imageName
 {
     _nineImageName = imageName;
-    _synchronziedSetNineImage = synchronzied;
+    _synchronziedSetNineImage = true;
     if (!stringNotEmpty(imageName)) {
         self.image = nil;
         return;
@@ -462,7 +462,7 @@ LUAUI_EXPORT_VIEW_METHOD(image, "luaui_setImageWith:", MLNUIImageView)
 LUAUI_EXPORT_VIEW_METHOD(setImageUrl, "luaui_setImageWith:placeHolderImage:", MLNUIImageView)
 LUAUI_EXPORT_VIEW_METHOD(setCornerImage, "luaui_setCornerImageWith:placeHolderImage:cornerRadius:direction:", MLNUIImageView)
 LUAUI_EXPORT_VIEW_METHOD(setImageWithCallback, "luaui_setImageWith:placeHolderImage:callback:", MLNUIImageView)
-LUAUI_EXPORT_VIEW_METHOD(setNineImage, "luaui_setNineImageWith:synchronized:", MLNUIImageView)
+LUAUI_EXPORT_VIEW_METHOD(setNineImage, "luaui_setNineImageWith:", MLNUIImageView)
 LUAUI_EXPORT_VIEW_METHOD(blurImage, "luaui_setBlurValue:processImage:", MLNUIImageView)
 LUAUI_EXPORT_VIEW_METHOD(addShadow, "luaui_addShadow:shadowOffset:shadowRadius:shadowOpacity:isOval:", MLNUIImageView)
 LUAUI_EXPORT_VIEW_END(MLNUIImageView, ImageView, YES, "MLNUIView", NULL)

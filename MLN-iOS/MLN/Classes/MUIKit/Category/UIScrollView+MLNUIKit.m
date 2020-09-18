@@ -20,6 +20,7 @@ static const void *kLuaLoadEnable = &kLuaLoadEnable;
 static const void *kLuaLoadAhead = &kLuaLoadAhead;
 static const void *kLuaRefreshCallBack = &kLuaRefreshCallBack;
 static const void *kLuaLoadCallBack = &kLuaLoadCallBack;
+static const void *kLuaScrollWillEndDraggingCallback = &kLuaScrollWillEndDraggingCallback;
 
 @implementation UIScrollView (MLNUIRefresh)
 
@@ -265,6 +266,14 @@ static const void *kLuaStartDeceleratingCallback = &kLuaStartDeceleratingCallbac
 - (MLNUIBlock *)luaui_startDeceleratingCallback
 {
     return objc_getAssociatedObject(self, kLuaStartDeceleratingCallback);
+}
+
+- (void)setLuaui_scrollWillEndDraggingCallback:(MLNUIBlock *)luaui_scrollWillEndDraggingCallback {
+    objc_setAssociatedObject(self, kLuaScrollWillEndDraggingCallback, luaui_scrollWillEndDraggingCallback, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+
+- (MLNUIBlock *)luaui_scrollWillEndDraggingCallback {
+    return objc_getAssociatedObject(self, kLuaScrollWillEndDraggingCallback);
 }
 
 - (void)setLuaui_endDraggingCallback:(MLNUIBlock *)luaui_endDraggingCallback

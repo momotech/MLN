@@ -24,7 +24,7 @@
 //    return wrapper;
 //}
 
-+ (instancetype)wrapperWithID:(NSInteger)obID block:(ArgoBlockChange)block observedObject:(id<ArgoListenerProtocol>)observed keyPath:(NSString *)keyPath key:(NSString *)key filter:(nonnull ArgoListenerFilter)filter{
++ (instancetype)wrapperWithID:(NSInteger)obID block:(ArgoBlockChange)block observedObject:(id<ArgoListenerProtocol>)observed keyPath:(NSString *)keyPath key:(NSString *)key filter:(ArgoListenerFilter)filter triggerWhenAdd:(BOOL)triggerWhenAdd {
     ArgoListenerWrapper *wrapper = [ArgoListenerWrapper new];
     wrapper.obID = obID;
     wrapper.block = block;
@@ -32,6 +32,7 @@
     wrapper.observedObject = observed;
     wrapper.key = key;
     wrapper.filter = filter;
+    wrapper.triggerWhenAdd = triggerWhenAdd;
     return wrapper;
 }
 

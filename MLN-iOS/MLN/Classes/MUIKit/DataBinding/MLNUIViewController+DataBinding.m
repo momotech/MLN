@@ -47,22 +47,23 @@
 }
 
 - (MLNUIDataBinding *)mlnui_dataBinding {
-    if (!_dataBinding) {
-# if OCPERF_USE_NEW_DB
-        _dataBinding = [[ArgoDataBinding alloc] init];
-#else
-        _dataBinding = [[MLNUIDataBinding alloc] init];
-#endif
-        
-#if DEBUG
-        @weakify(self);
-        _dataBinding.errorLog = ^(NSString * _Nonnull log) {
-            @strongify(self);
-            MLNUIError(self.kitInstance.luaCore, @"%@",log);
-        };
-#endif
-    }
-    return _dataBinding;
+//    if (!_dataBinding) {
+//# if OCPERF_USE_NEW_DB
+//        _dataBinding = [[ArgoDataBinding alloc] init];
+//#else
+//        _dataBinding = [[MLNUIDataBinding alloc] init];
+//#endif
+//
+//#if DEBUG
+//        @weakify(self);
+//        _dataBinding.errorLog = ^(NSString * _Nonnull log) {
+//            @strongify(self);
+//            MLNUIError(self.kitInstance.luaCore, @"%@",log);
+//        };
+//#endif
+//    }
+//    return _dataBinding;
+    return [self argo_dataBinding];
 }
 
 # if OCPERF_USE_NEW_DB

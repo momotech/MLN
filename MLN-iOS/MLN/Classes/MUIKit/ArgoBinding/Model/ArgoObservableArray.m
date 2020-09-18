@@ -175,6 +175,18 @@
     return [self initWithMutableArray:arr];
 }
 
+- (void)encodeWithCoder:(NSCoder *)coder {
+    [self.proxy encodeWithCoder:coder];
+}
+
+- (Class)classForCoder {
+    return [self class];
+}
+
+- (Class)classForKeyedArchiver {
+    return [self class];
+}
+
 + (instancetype)array {
     return [[self alloc] init];
 }
@@ -185,10 +197,6 @@
 
 + (instancetype)arrayWithCapacity:(NSUInteger)numItems {
     return [[self alloc] initWithCapacity:numItems];
-}
-
-- (void)encodeWithCoder:(NSCoder *)encoder; {
-    [self.proxy encodeWithCoder:encoder];
 }
 
 - (BOOL)isEqualToArray:(ArgoObservableArray*)array {

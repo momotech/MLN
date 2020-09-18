@@ -34,6 +34,16 @@ NSString *CellHeader = @"CellHeader";
 
 @implementation DemoLiyifengViewController
 
+static NSArray *testModels;
++ (void)load {
+    NSArray *fansData = [NSArray arrayWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"data.plist" ofType:nil]];
+    NSMutableArray *arr = [NSMutableArray array];
+    for (int i = 0; i < 50; i++) {
+        [arr addObject:[fansData objectAtIndex:i % fansData.count]];
+    }
+    testModels = [NSArray yy_modelArrayWithClass:DemoLiyifengModel.class json:arr];
+}
+
 //自定义标签样式方法
 -(UILabel *)tagLabelWithText:(NSString *)text textColor:(UIColor *)textColor {
     UILabel *label = [UILabel new];
@@ -49,11 +59,12 @@ NSString *CellHeader = @"CellHeader";
     self.navigationItem.title = @"#李易峰的超话";
     self.navigationController.navigationBar.barTintColor = ssRGBAlpha(250, 128, 114, 1);
     
-    NSArray *fansData = [NSArray arrayWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"data.plist" ofType:nil]];
+//    NSArray *fansData = [NSArray arrayWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"data.plist" ofType:nil]];
     
 //    [fansData writeToFile:@"/Users/momo/Desktop/data.plist" atomically:YES];
-        
-    self.models = [NSArray yy_modelArrayWithClass:DemoLiyifengModel.class json:fansData];
+    
+//    self.models = [NSArray yy_modelArrayWithClass:DemoLiyifengModel.class json:fansData];
+    self.models = testModels;
     
     UITableView *LiyifengTableView = [UITableView new];
     [self.view addSubview:LiyifengTableView];
@@ -68,13 +79,15 @@ NSString *CellHeader = @"CellHeader";
     [LiyifengTableView registerClass:[DemoLiyifengTableViewCell class] forCellReuseIdentifier: CellInfo];
     
     [LiyifengTableView registerClass:[DemoLiyifengTableViewHeaderCell class] forCellReuseIdentifier: CellHeader];
-
+    
+    LiyifengTableView.estimatedRowHeight = UITableViewAutomaticDimension;
+    LiyifengTableView.rowHeight = UITableViewAutomaticDimension;
 }
 
 #pragma mark - Table view data source
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    
+//    return 1;
     return self.models.count + 1;
 }
 
@@ -94,12 +107,12 @@ NSString *CellHeader = @"CellHeader";
     }
 }
 
-- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *) indexPath{
-    if (indexPath.row == 0) {
-        return self.view.frame.size.height;
-    }
-    return 190;
-}
+//- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *) indexPath{
+//    if (indexPath.row == 0) {
+//        return self.view.frame.size.height;
+//    }
+//    return 190;
+//}
 
 - (void)dismiss:(UIAlertView *)alert{
     [alert dismissWithClickedButtonIndex:[alert cancelButtonIndex] animated:YES];

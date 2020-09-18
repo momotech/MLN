@@ -211,6 +211,18 @@
     return [self initWithMutableDictonary:dic];
 }
 
+- (void)encodeWithCoder:(NSCoder *)coder {
+    [self.proxy encodeWithCoder:coder];
+}
+
+- (Class)classForCoder {
+    return [self class];
+}
+
+- (Class)classForKeyedArchiver {
+    return [self class];
+}
+
 - (instancetype)initWithObjects:(const id [])objects forKeys:(const id<NSCopying> [])keys count:(NSUInteger)cnt {
     NSMutableDictionary *dic = [[NSMutableDictionary alloc] initWithObjects:objects forKeys:keys count:cnt];
     return [self initWithMutableDictonary:dic];
@@ -230,10 +242,6 @@
     NSMutableDictionary *dic = [NSMutableDictionary dictionaryWithObjectsAndKeys:firstObject,args, nil];
     va_end(args);
     return [[self alloc] initWithMutableDictonary:dic];
-}
-
-- (void)encodeWithCoder:(NSCoder *)coder {
-    [self.proxy encodeWithCoder:coder];
 }
 
 - (BOOL)isEqualToDictionary:(ArgoObservableMap *)otherDictionary {

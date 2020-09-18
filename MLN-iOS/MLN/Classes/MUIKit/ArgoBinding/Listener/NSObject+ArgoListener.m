@@ -40,13 +40,13 @@ ArgoListenerFilter kArgoWatchKeyListenerFilter = ^BOOL(ArgoWatchContext context,
 @implementation NSObject (ArgoListener)
 //@dynamic argoListeners;
 //
-- (id<ArgoListenerProtocol>)argo_addListenerWithChangeBlock:(ArgoBlockChange)block object:(id<ArgoListenerProtocol>)object obID:(NSInteger)obid keyPath:(NSString *)keyPath paths:(NSArray *)paths filter:(ArgoListenerFilter)filter wrapper:(ArgoListenerWrapper *)wrapper {
+- (id<ArgoListenerProtocol>)argo_addListenerWithChangeBlock:(ArgoBlockChange)block object:(id<ArgoListenerProtocol>)object obID:(NSInteger)obid keyPath:(NSString *)keyPath paths:(NSArray *)paths filter:(ArgoListenerFilter)filter triggerWhenAdd:(BOOL)triggerWhenAdd wrapper:(ArgoListenerWrapper *)wrapper {
     id<ArgoListenerProtocol>observed = object;
     BOOL useWrapper = !!wrapper;
     for (int i = 0; i < paths.count; i++) {
         NSString *key = paths[i];
         if (!useWrapper) {
-            wrapper = [ArgoListenerWrapper wrapperWithID:obid block:block observedObject:observed keyPath:keyPath key:key filter:filter];
+            wrapper = [ArgoListenerWrapper wrapperWithID:obid block:block observedObject:observed keyPath:keyPath key:key filter:filter triggerWhenAdd:triggerWhenAdd];
         }
         [object addArgoListenerWrapper:wrapper];
         object = (id<ArgoListenerProtocol>)[object lua_get:key];
@@ -55,10 +55,10 @@ ArgoListenerFilter kArgoWatchKeyListenerFilter = ^BOOL(ArgoWatchContext context,
     return object;
 }
 
-- (void)argo_addArrayListenerWithChangeBlock:(ArgoBlockChange)block array:(ArgoObservableArray *)array obID:(NSInteger)obID observedObject:(id<ArgoListenerProtocol>)observedObject keyPath:(NSString *)keyPath filter:(ArgoListenerFilter)filter wrapper:(ArgoListenerWrapper *)wrapper {
+- (void)argo_addArrayListenerWithChangeBlock:(ArgoBlockChange)block array:(ArgoObservableArray *)array obID:(NSInteger)obID observedObject:(id<ArgoListenerProtocol>)observedObject keyPath:(NSString *)keyPath filter:(ArgoListenerFilter)filter triggerWhenAdd:(BOOL)triggerWhenAdd wrapper:(ArgoListenerWrapper *)wrapper {
     BOOL useWrapper = !!wrapper;
     if (!useWrapper) {
-        wrapper = [ArgoListenerWrapper wrapperWithID:obID block:block observedObject:observedObject keyPath:keyPath key:kArgoListenerArrayPlaceHolder filter:filter];
+        wrapper = [ArgoListenerWrapper wrapperWithID:obID block:block observedObject:observedObject keyPath:keyPath key:kArgoListenerArrayPlaceHolder filter:filter triggerWhenAdd:triggerWhenAdd];
         wrapper.arrayKeyPath = kArgoListenerArrayPlaceHolder;
     }
     [array addArgoListenerWrapper:wrapper];
@@ -67,7 +67,7 @@ ArgoListenerFilter kArgoWatchKeyListenerFilter = ^BOOL(ArgoWatchContext context,
     if (array.count > 0 && [array.firstObject isKindOfClass:[ArgoObservableArray class]]) {
         for (ArgoObservableArray *sub in array) {
             if (!useWrapper) {
-                wrapper = [ArgoListenerWrapper wrapperWithID:obID block:block observedObject:observedObject keyPath:keyPath key:kArgoListenerArrayPlaceHolder filter:filter];
+                wrapper = [ArgoListenerWrapper wrapperWithID:obID block:block observedObject:observedObject keyPath:keyPath key:kArgoListenerArrayPlaceHolder filter:filter triggerWhenAdd:triggerWhenAdd];
                 wrapper.arrayKeyPath = kArgoListenerArrayPlaceHolder_SUPER_IS_2D;
             }
             [sub addArgoListenerWrapper:wrapper];
@@ -85,7 +85,7 @@ ArgoListenerFilter kArgoWatchKeyListenerFilter = ^BOOL(ArgoWatchContext context,
 //    return [self addArgoListenerWithChangeBlock:block forKeyPath:keyPath filter:nil];
 //}
 
-- (id<ArgoListenerToken>)addArgoListenerWithChangeBlock:(ArgoBlockChange)block forKeyPath:(NSString *)keyPath filter:(ArgoListenerFilter)filter {
+- (id <ArgoListenerToken>)addArgoListenerWithChangeBlock:(ArgoBlockChange)block forKeyPath:(NSString *)keyPath filter:(ArgoListenerFilter)filter triggerWhenAdd:(BOOL)triggerWhenAdd {
     //    NSMutableArray *wps = [NSMutableArray array];
 //        ArgoOBID++;
     if ([self isKindOfClass:[ArgoObservableArray class]]) {
@@ -95,12 +95,12 @@ ArgoListenerFilter kArgoWatchKeyListenerFilter = ^BOOL(ArgoWatchContext context,
     NSArray *paths = [keyPath componentsSeparatedByString:kArgoConstString_Dot];
     id<ArgoListenerProtocol> object = (id<ArgoListenerProtocol>)self;
     // 依次添加监听：userData.data.list
-    object = [self argo_addListenerWithChangeBlock:block object:object obID:obid keyPath:keyPath paths:paths filter:filter wrapper:nil];
+    object = [self argo_addListenerWithChangeBlock:block object:object obID:obid keyPath:keyPath paths:paths filter:filter triggerWhenAdd:triggerWhenAdd wrapper:nil];
 
     //如果list是数组
     ArgoObservableArray *array = (ArgoObservableArray *)object;
     if ([array isKindOfClass:[ArgoObservableArray class]]) {
-        [self argo_addArrayListenerWithChangeBlock:block array:array obID:obid observedObject:object keyPath:keyPath filter:filter wrapper:nil];
+        [self argo_addArrayListenerWithChangeBlock:block array:array obID:obid observedObject:object keyPath:keyPath filter:filter triggerWhenAdd:triggerWhenAdd wrapper:nil];
     }
     ArgoListenerToken *token = [ArgoListenerToken new];
 //    token.wrappers = wps;
@@ -111,17 +111,17 @@ ArgoListenerFilter kArgoWatchKeyListenerFilter = ^BOOL(ArgoWatchContext context,
     return token;
 }
 
-- (id<ArgoListenerToken>)addArgoListenerWithChangeBlockForAllKeys:(ArgoBlockChange)block filter:(ArgoListenerFilter)filter keyPaths:(NSArray *)keyPaths {
+- (id<ArgoListenerToken>)addArgoListenerWithChangeBlockForAllKeys:(ArgoBlockChange)block filter:(ArgoListenerFilter)filter keyPaths:(NSArray *)keyPaths triggerWhenAdd:(BOOL)triggerWhenAdd {
     NSInteger obid = [self.class getID];
-    ArgoListenerWrapper *wrapper = [ArgoListenerWrapper wrapperWithID:obid block:block observedObject:(id<ArgoListenerProtocol>)self keyPath:kArgoListenALL key:kArgoListenALL filter:filter];
+    ArgoListenerWrapper *wrapper = [ArgoListenerWrapper wrapperWithID:obid block:block observedObject:(id<ArgoListenerProtocol>)self keyPath:kArgoListenALL key:kArgoListenALL filter:filter triggerWhenAdd:triggerWhenAdd];
     for (NSString *kps in keyPaths) {
         id<ArgoListenerProtocol> object = (id<ArgoListenerProtocol>)self;
         NSArray *paths = [kps componentsSeparatedByString:kArgoConstString_Dot];
-        object = [self argo_addListenerWithChangeBlock:nil object:object obID:0 keyPath:nil paths:paths filter:filter wrapper:wrapper];
+        object = [self argo_addListenerWithChangeBlock:nil object:object obID:0 keyPath:nil paths:paths filter:filter triggerWhenAdd:triggerWhenAdd wrapper:wrapper];
 
         ArgoObservableArray *array = (ArgoObservableArray *)object;
         if ([array isKindOfClass:[ArgoObservableArray class]]) {
-            [self argo_addArrayListenerWithChangeBlock:nil array:array obID:0 observedObject:object keyPath:nil filter:filter wrapper:wrapper];
+            [self argo_addArrayListenerWithChangeBlock:nil array:array obID:0 observedObject:object keyPath:nil filter:filter triggerWhenAdd:triggerWhenAdd wrapper:wrapper];
         }
     }
     
@@ -154,7 +154,7 @@ ArgoListenerFilter kArgoWatchKeyListenerFilter = ^BOOL(ArgoWatchContext context,
     if (wrapper) {
         NSNumber *k = @(wrapper.obID);
         [self.argoListeners setObject:wrapper forKey:k];
-        if ([self isKindOfClass:[ArgoObservableMap class]] && wrapper.key && wrapper.filter == kArgoWatchKeyListenerFilter) {
+        if ([self isKindOfClass:[ArgoObservableMap class]] && wrapper.triggerWhenAdd && wrapper.key && wrapper.filter) {
             NSMutableDictionary *dic = [self argoChangedKeysMap];
             NSMutableDictionary *change = [dic objectForKey:wrapper.key];
             if (change) {
@@ -214,11 +214,11 @@ ArgoListenerFilter kArgoWatchKeyListenerFilter = ^BOOL(ArgoWatchContext context,
             // 重新添加监听
             NSArray *subPaths = [subKeyPath componentsSeparatedByString:kArgoConstString_Dot];
             if (subPaths.count) {
-                [self argo_addListenerWithChangeBlock:wrap.block object:newMap obID:wrap.obID keyPath:wrap.keyPath paths:subPaths filter:wrap.filter wrapper:reuseWrap ? wrap : nil];
+                [self argo_addListenerWithChangeBlock:wrap.block object:newMap obID:wrap.obID keyPath:wrap.keyPath paths:subPaths filter:wrap.filter triggerWhenAdd:wrap.triggerWhenAdd wrapper:reuseWrap ? wrap : nil];
             }
         } else if([newMap isKindOfClass:[ArgoObservableArray class]]) {
             //如果是array，重新添加监听，需要处理二维
-            [self argo_addArrayListenerWithChangeBlock:wrap.block array:(ArgoObservableArray *)newMap obID:wrap.obID observedObject:wrap.observedObject keyPath:wrap.keyPath filter:wrap.filter wrapper:reuseWrap ? wrap : nil];
+            [self argo_addArrayListenerWithChangeBlock:wrap.block array:(ArgoObservableArray *)newMap obID:wrap.obID observedObject:wrap.observedObject keyPath:wrap.keyPath filter:wrap.filter triggerWhenAdd:wrap.triggerWhenAdd wrapper:reuseWrap ? wrap : nil];
         }
         [change setObject:self forKey:kArgoListenerChangedObject];
         [change setObject:wrap forKey:kArgoListenerWrapper];
@@ -237,7 +237,7 @@ ArgoListenerFilter kArgoWatchKeyListenerFilter = ^BOOL(ArgoWatchContext context,
     ArgoObservableArray *newValue = [change objectForKey:NSKeyValueChangeNewKey];
 //    NSIndexSet *set = [change objectForKey:NSKeyValueChangeIndexesKey];
     if ([newValue isKindOfClass:[ArgoObservableArray class]] && [wrap.arrayKeyPath isEqualToString:kArgoListenerArrayPlaceHolder]) { //self至少是二维，且arrayKeyPath=kArgoListenerArrayPlaceHolder,重新添加监听,防止监听kArgoListenerArrayPlaceHolder_SUPER_IS_2D
-        ArgoListenerWrapper *arrayListener = [ArgoListenerWrapper wrapperWithID:wrap.obID block:wrap.block observedObject:wrap.observedObject keyPath:wrap.keyPath key:kArgoListenerArrayPlaceHolder filter:wrap.filter];
+        ArgoListenerWrapper *arrayListener = [ArgoListenerWrapper wrapperWithID:wrap.obID block:wrap.block observedObject:wrap.observedObject keyPath:wrap.keyPath key:kArgoListenerArrayPlaceHolder filter:wrap.filter triggerWhenAdd:wrap.triggerWhenAdd];
         [newValue addArgoListenerWrapper:arrayListener];
     }
     [change setObject:self forKey:kArgoListenerChangedObject];

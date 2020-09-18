@@ -39,9 +39,9 @@ extern ArgoListenerFilter kArgoWatchKeyListenerFilter;
 
 @protocol ArgoListenerCategoryProtocol <NSObject>
 //- (id <ArgoListenerToken>)addArgoListenerWithChangeBlock:(ArgoBlockChange)block forKeyPath:(NSString *)keyPath;
-- (id <ArgoListenerToken>)addArgoListenerWithChangeBlock:(ArgoBlockChange)block forKeyPath:(NSString *)keyPath filter:(ArgoListenerFilter)filter;
+- (id <ArgoListenerToken>)addArgoListenerWithChangeBlock:(ArgoBlockChange)block forKeyPath:(NSString *)keyPath filter:(ArgoListenerFilter)filter triggerWhenAdd:(BOOL)triggerWhenAdd;
 // for bind_cell
-- (id<ArgoListenerToken>)addArgoListenerWithChangeBlockForAllKeys:(ArgoBlockChange)block filter:(ArgoListenerFilter)filter keyPaths:(NSArray *)keyPaths;
+- (id<ArgoListenerToken>)addArgoListenerWithChangeBlockForAllKeys:(ArgoBlockChange)block filter:(ArgoListenerFilter)filter keyPaths:(NSArray *)keyPaths triggerWhenAdd:(BOOL)triggerWhenAdd;
 
 - (void)removeArgoListenerWithToken:(id <ArgoListenerToken>)token;
 

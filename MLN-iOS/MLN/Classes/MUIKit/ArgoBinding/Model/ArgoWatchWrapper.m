@@ -74,7 +74,7 @@ ArgoFilterBlock kArgoFilter_Native = ^(ArgoWatchContext context, id value){
                     return NO;
                 }
                 return YES;
-            }];
+            } triggerWhenAdd:NO];
         }
         return self;
     };
@@ -123,7 +123,7 @@ ArgoFilterBlock kArgoFilter_Native = ^(ArgoWatchContext context, id value){
                     return NO;
                 }
                 return YES;
-            }];
+            } triggerWhenAdd:NO];
         }
         return self;
     };

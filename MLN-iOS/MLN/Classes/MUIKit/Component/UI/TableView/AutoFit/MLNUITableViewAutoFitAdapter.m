@@ -13,6 +13,20 @@
 #import "MLNUIBlock.h"
 #import "NSDictionary+MLNUISafety.h"
 
+#if DEBUG && 0
+#define TICK()   CFAbsoluteTime lcoal__start = CFAbsoluteTimeGetCurrent();\
+CFAbsoluteTime lcoal__start2 = lcoal__start;\
+printf("\n");
+#define TOCK(...) printf(">>>TOCK "); printf(__VA_ARGS__); printf(" cost %.2f ms \n",(CFAbsoluteTimeGetCurrent() - lcoal__start) * 1000); \
+lcoal__start = CFAbsoluteTimeGetCurrent()
+
+#define TOCKALL(...) printf(">>>TOCK "); printf(__VA_ARGS__); printf(" cost %.2f ms \n",(CFAbsoluteTimeGetCurrent() - lcoal__start2) * 1000);
+#else
+#define TICK()
+#define TOCK(...)
+#define TOCKALL(...)
+#endif
+
 @interface MLNUITableViewAutoFitAdapter ()<MLNUITableViewCellDelegate, MLNUITableViewCellSettingProtocol>
 
 @property (nonatomic, strong) NSMutableDictionary<NSString *, MLNUITableViewCell *> *calculCells;
@@ -35,7 +49,7 @@
 //        CGFloat height = cell.luaContentView.mlnui_layoutNode.layoutHeight;
 //        [self.cachesManager updateLayoutInfo:@(height) forIndexPath:indexPath];
 //    }
-    
+    TICK();
     self.currentIndexPath = indexPath;
     NSString *reuseId = [self reuseIdAt:indexPath];
     MLNUIBlock *initCallback = [self initedCellCallbackByReuseId:reuseId];
@@ -45,23 +59,25 @@
     }
     MLNUITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:reuseId forIndexPath:indexPath];
     cell.delegate = self;
-        
+    TOCK("befor init %zd",indexPath.row);
     [cell pushContentViewWithLuaCore:self.mlnui_luaCore];
     if (!cell.isInited) {
         [initCallback addLuaTableArgument:[cell getLuaTable]];
         [initCallback callIfCan];
         [cell initCompleted];
+        TOCK("init ");
     }
+    //TODO: 如果高度有缓存，则不需要调用fillCellData？
     MLNUIBlock *reuseCallback = [self fillCellDataCallbackByReuseId:reuseId];
     if (reuseCallback) {
         [reuseCallback addLuaTableArgument:[cell getLuaTable]];
         [reuseCallback addIntArgument:(int)indexPath.section+1];
         [reuseCallback addIntArgument:(int)indexPath.row+1];
         [reuseCallback callIfCan];
+        TOCK("fill cell data");
     }
 //    [cell mlnui_requestLayoutIfNeed];
-    
-    CGFloat height = CGFloatValueFromNumber([self.cachesManager layoutInfoWithIndexPath:indexPath]);
+    __block CGFloat height = CGFloatValueFromNumber([self.cachesManager layoutInfoWithIndexPath:indexPath]);
     if (height <= 0) {
 //        NSLog(@">>>>>> cell %p row %zd calculate height",cell,indexPath.row);
         CGFloat tableViewWidth = tableView.frame.size.width;
@@ -70,9 +86,10 @@
     //        [self updateCellWidthIfNeed:cell tableViewWidth:tableViewWidth];
             [self.cachesManager updateLayoutInfo:@(height) forIndexPath:indexPath];
         }
+        TOCK("caculate height");
     }
-    
     self.currentIndexPath = nil;
+    TOCKALL("cell for row %zd",indexPath.row);
     return cell;
 }
 
