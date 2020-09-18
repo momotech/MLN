@@ -14,16 +14,18 @@ PODS:
   - AFNetworking/Serialization (3.2.1)
   - AFNetworking/UIKit (3.2.1):
     - AFNetworking/NSURLSession
-  - ArgoUI (0.2.9.beta1):
-    - ArgoUI/Core (= 0.2.9.beta1)
-    - ArgoUI/Kit (= 0.2.9.beta1)
-  - ArgoUI/Core (0.2.9.beta1):
+  - ArgoUI (0.0.1):
+    - ArgoUI/Core (= 0.0.1)
+    - ArgoUI/Kit (= 0.0.1)
+  - ArgoUI/Core (0.0.1):
     - MLN/LuaLib
-  - ArgoUI/Kit (0.2.9.beta1):
+  - ArgoUI/Kit (0.0.1):
     - ArgoUI/Core
-    - ArgoUI/Kit/AnimationCPP (= 0.2.9.beta1)
-  - ArgoUI/Kit/AnimationCPP (0.2.9.beta1):
+    - ArgoUI/Kit/AnimationCPP (= 0.0.1)
+  - ArgoUI/Kit/AnimationCPP (0.0.1):
     - ArgoUI/Core
+  - ArgoUIComponent (0.1.1):
+    - ArgoUI
   - Expecta (1.0.6)
   - "Expecta+Snapshots (3.1.1)":
     - Expecta (~> 1.0)
@@ -88,6 +90,7 @@ PODS:
 DEPENDENCIES:
   - AFNetworking (~> 3.0)
   - ArgoUI (from `../../`)
+  - ArgoUIComponent (from `../../`)
   - Expecta
   - "Expecta+Snapshots"
   - FBSnapshotTestCase
@@ -120,6 +123,8 @@ SPEC REPOS:
 EXTERNAL SOURCES:
   ArgoUI:
     :path: "../../"
+  ArgoUIComponent:
+    :path: "../../"
   MLN:
     :path: "../../"
   MLNDevTool:
@@ -127,7 +132,8 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   AFNetworking: b6f891fdfaed196b46c7a83cf209e09697b94057
-  ArgoUI: a48fbe51965083fdb4bac27d187aa0fcb266427c
+  ArgoUI: ec4a957e78808a35f32dcb2c2e7282bb6d34d69a
+  ArgoUIComponent: 61f19175efcbf36118fdccbd999c5fcb3154b709
   Expecta: 3b6bd90a64b9a1dcb0b70aa0e10a7f8f631667d5
   "Expecta+Snapshots": dcff217eef506dabd6dfdc7864ea2da321fafbb8
   FBSnapshotTestCase: 094f9f314decbabe373b87cc339bea235a63e07a
@@ -143,6 +149,6 @@ SPEC CHECKSUMS:
   Toast: 91b396c56ee72a5790816f40d3a94dd357abc196
   YYModel: 2a7fdd96aaa4b86a824e26d0c517de8928c04b30
 
-PODFILE CHECKSUM: 2fc27cc44e77e533f06c0116e881f2a6bf71c4e8
+PODFILE CHECKSUM: 3425dfaea8efd55f71732b376d7dc4df9ee7a481
 
 COCOAPODS: 1.9.3
