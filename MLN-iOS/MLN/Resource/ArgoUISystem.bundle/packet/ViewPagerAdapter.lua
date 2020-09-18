@@ -25,7 +25,7 @@ function _class:new()
     -- 数据懒加载
     obj.fillData = nil
     -- 禁止复用，即设置多个id
-    obj.isReuseEnable = true
+    obj.isReuseEnable = false
     obj.ids = {}
     obj.ids_initCell = {}
     obj.ids_fillCell = {}
@@ -187,10 +187,7 @@ end
 
 --设置cell大小的回调
 function _class:sizeForCellByReuseId(reuseId, size)
-    self.cellSize = size()
-    self.adapter:sizeForCellByReuseId(reuseId, function(section, row)
-        return size()
-    end)
+    self:sizeForCell(size)
     return self
 end
 
