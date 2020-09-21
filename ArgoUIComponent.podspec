@@ -38,7 +38,7 @@ Pod::Spec.new do |s|
 
     s.subspec 'ErrorHandler' do |c|
         c.name = 'ErrorHandler'
-        s.source_files = 'MLN-iOS/MLN/Classes/ArgoUIComponent/ErrorHandler/**/*.{h,m,c}'
-        s.public_header_files = 'MLN-iOS/MLN/Classes/ArgoUIComponent/ErrorHandler/**/*.h'
+        c.source_files = 'MLN-iOS/MLN/Classes/ArgoUIComponent/ErrorHandler/**/*.{h,m,c}'
+        c.public_header_files = 'MLN-iOS/MLN/Classes/ArgoUIComponent/ErrorHandler/**/*.h'
     end
 end
