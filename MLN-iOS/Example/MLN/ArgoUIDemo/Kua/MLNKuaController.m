@@ -44,7 +44,7 @@
     
 //    [viewController bindData:self.model forKey:@"userData"];
     [viewController bindData:self.model];
-    [viewController mlnui_addToSuperViewController:self frame:self.view.bounds];
+    [viewController argo_addToSuperViewController:self frame:self.view.bounds];
 }
 
 @end

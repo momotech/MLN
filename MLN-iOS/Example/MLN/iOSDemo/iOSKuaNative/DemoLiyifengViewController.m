@@ -80,7 +80,7 @@ static NSArray *testModels;
     
     [LiyifengTableView registerClass:[DemoLiyifengTableViewHeaderCell class] forCellReuseIdentifier: CellHeader];
     
-    LiyifengTableView.estimatedRowHeight = UITableViewAutomaticDimension;
+    LiyifengTableView.estimatedRowHeight = 100;
     LiyifengTableView.rowHeight = UITableViewAutomaticDimension;
 }
 

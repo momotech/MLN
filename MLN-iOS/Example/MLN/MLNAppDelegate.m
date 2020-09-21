@@ -46,7 +46,7 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    [[MLNUIFPSStatus sharedInstance] open];
+//    [[MLNUIFPSStatus sharedInstance] open];
 //    [[FLEXManager sharedManager] showExplorer];
 //    [MLNUILogViewer setup];
     [self setupMLNKitEnvironment];
