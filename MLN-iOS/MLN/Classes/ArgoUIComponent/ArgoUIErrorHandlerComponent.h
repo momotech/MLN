@@ -8,6 +8,8 @@
 #import <Foundation/Foundation.h>
 #import "ArgoKit.h"
 
+#define ArgoUI_Debugger_Pause_Enable 1
+
 NS_ASSUME_NONNULL_BEGIN
 
 @interface ArgoUIErrorHandlerComponent : NSObject <MLNUIKitInstanceErrorHandlerProtocol>
