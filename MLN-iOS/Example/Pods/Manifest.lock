@@ -14,26 +14,21 @@ PODS:
   - AFNetworking/Serialization (3.2.1)
   - AFNetworking/UIKit (3.2.1):
     - AFNetworking/NSURLSession
-  - ArgoUI (0.2.9.beta1):
-    - ArgoUI/Core (= 0.2.9.beta1)
-    - ArgoUI/Kit (= 0.2.9.beta1)
-  - ArgoUI/Core (0.2.9.beta1):
+  - ArgoUI (0.0.1):
+    - ArgoUI/Core (= 0.0.1)
+    - ArgoUI/Kit (= 0.0.1)
+  - ArgoUI/Core (0.0.1):
     - MLN/LuaLib
-  - ArgoUI/Kit (0.2.9.beta1):
+  - ArgoUI/Kit (0.0.1):
     - ArgoUI/Core
-    - ArgoUI/Kit/AnimationCPP (= 0.2.9.beta1)
-  - ArgoUI/Kit/AnimationCPP (0.2.9.beta1):
+    - ArgoUI/Kit/AnimationCPP (= 0.0.1)
+  - ArgoUI/Kit/AnimationCPP (0.0.1):
     - ArgoUI/Core
-  - Expecta (1.0.6)
-  - "Expecta+Snapshots (3.1.1)":
-    - Expecta (~> 1.0)
-    - FBSnapshotTestCase/Core (~> 2.0)
-    - Specta (~> 1.0)
-  - FBSnapshotTestCase (2.1.4):
-    - FBSnapshotTestCase/SwiftSupport (= 2.1.4)
-  - FBSnapshotTestCase/Core (2.1.4)
-  - FBSnapshotTestCase/SwiftSupport (2.1.4):
-    - FBSnapshotTestCase/Core
+  - ArgoUIComponent (0.1.2):
+    - ArgoUI
+    - ArgoUIComponent/ErrorHandler (= 0.1.2)
+  - ArgoUIComponent/ErrorHandler (0.1.2):
+    - ArgoUI
   - FLEX (3.0.0)
   - Masonry (1.1.0)
   - MJRefresh (3.1.16)
@@ -81,44 +76,38 @@ PODS:
   - SDWebImage (5.3.3):
     - SDWebImage/Core (= 5.3.3)
   - SDWebImage/Core (5.3.3)
-  - Specta (1.0.7)
   - Toast (4.0.0)
   - YYModel (1.0.4)
 
 DEPENDENCIES:
   - AFNetworking (~> 3.0)
   - ArgoUI (from `../../`)
-  - Expecta
-  - "Expecta+Snapshots"
-  - FBSnapshotTestCase
+  - ArgoUIComponent (from `../../`)
   - FLEX
   - Masonry
   - MJRefresh (= 3.1.16)
   - MLN (from `../../`)
   - MLNDevTool (from `../../`)
   - SDCycleScrollView (>= 1.80)
-  - Specta
   - Toast (~> 4.0.0)
   - YYModel
 
 SPEC REPOS:
   https://github.com/CocoaPods/Specs.git:
     - AFNetworking
-    - Expecta
-    - "Expecta+Snapshots"
-    - FBSnapshotTestCase
     - FLEX
     - Masonry
     - MJRefresh
     - Protobuf
     - SDCycleScrollView
     - SDWebImage
-    - Specta
     - Toast
     - YYModel
 
 EXTERNAL SOURCES:
   ArgoUI:
+    :path: "../../"
+  ArgoUIComponent:
     :path: "../../"
   MLN:
     :path: "../../"
@@ -127,10 +116,8 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   AFNetworking: b6f891fdfaed196b46c7a83cf209e09697b94057
-  ArgoUI: a48fbe51965083fdb4bac27d187aa0fcb266427c
-  Expecta: 3b6bd90a64b9a1dcb0b70aa0e10a7f8f631667d5
-  "Expecta+Snapshots": dcff217eef506dabd6dfdc7864ea2da321fafbb8
-  FBSnapshotTestCase: 094f9f314decbabe373b87cc339bea235a63e07a
+  ArgoUI: ec4a957e78808a35f32dcb2c2e7282bb6d34d69a
+  ArgoUIComponent: c208b954b688481017a29bb6b5ca8056774ccbd3
   FLEX: d66c759bce0f6ebbbf472c742380874d846f2883
   Masonry: 678fab65091a9290e40e2832a55e7ab731aad201
   MJRefresh: 7798e16e53a5ef7f332dd05b27664db4e29530fd
@@ -139,10 +126,9 @@ SPEC CHECKSUMS:
   Protobuf: 2793fcd0622a00b546c60e7cbbcc493e043e9bb9
   SDCycleScrollView: b3c9a5ed840c771c4938978174c7c9d9feefeb96
   SDWebImage: 51ab1ce3ebd20dec6665ae8ba25c928da323db41
-  Specta: 3e1bd89c3517421982dc4d1c992503e48bd5fe66
   Toast: 91b396c56ee72a5790816f40d3a94dd357abc196
   YYModel: 2a7fdd96aaa4b86a824e26d0c517de8928c04b30
 
-PODFILE CHECKSUM: 2fc27cc44e77e533f06c0116e881f2a6bf71c4e8
+PODFILE CHECKSUM: 3425dfaea8efd55f71732b376d7dc4df9ee7a481
 
 COCOAPODS: 1.9.3

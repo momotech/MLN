@@ -121,7 +121,6 @@
 		B2DD3E60237990E9002AB6AD /* MLNActionItem.m in Sources */ = {isa = PBXBuildFile; fileRef = B2DD3E55237990E9002AB6AD /* MLNActionItem.m */; };
 		B2DD3E61237990E9002AB6AD /* MLNControlContext.m in Sources */ = {isa = PBXBuildFile; fileRef = B2DD3E56237990E9002AB6AD /* MLNControlContext.m */; };
 		B2DD3E62237990E9002AB6AD /* MLNActionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = B2DD3E58237990E9002AB6AD /* MLNActionManager.m */; };
-		E3A64ADCB0E407AD5503E94B /* libPods-MLN_Tests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 11F29221569E01F21A903E70 /* libPods-MLN_Tests.a */; };
 		FA383453239A4C61000F900E /* MLNHomeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FA383452239A4C61000F900E /* MLNHomeViewController.m */; };
 		FA383456239A6357000F900E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FA383454239A6356000F900E /* Main.storyboard */; };
 		FA383459239A64AF000F900E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FA383457239A64AF000F900E /* LaunchScreen.storyboard */; };
@@ -250,7 +249,6 @@
 		00FDB74D24591C3300D4A211 /* MLNBlockKVOTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNBlockKVOTests.m; sourceTree = "<group>"; };
 		0BFEA11F75FC7C356E75DFD6 /* Pods-MLN_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MLN_Example.release.xcconfig"; path = "Target Support Files/Pods-MLN_Example/Pods-MLN_Example.release.xcconfig"; sourceTree = "<group>"; };
 		1018AD05C0E113C32A1AD38C /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
-		11F29221569E01F21A903E70 /* libPods-MLN_Tests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-MLN_Tests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		28CCCDF75246FDF349FE71B3 /* libPods-LuaNative.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-LuaNative.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3012BB0E2326822F00FA2BB2 /* MLNNavigatorHandler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNNavigatorHandler.h; sourceTree = "<group>"; };
 		3012BB0F2326822F00FA2BB2 /* MLNNavigatorHandler.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNNavigatorHandler.m; sourceTree = "<group>"; };
@@ -290,8 +288,6 @@
 		6003F5BB195388D20070C39A /* Tests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Tests.m; sourceTree = "<group>"; };
 		606FC2411953D9B200FFA9A0 /* Tests-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Tests-Prefix.pch"; sourceTree = "<group>"; };
 		60CB3A6486D530BC91B53B3C /* Pods-LuaNative.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LuaNative.release.xcconfig"; path = "Target Support Files/Pods-LuaNative/Pods-LuaNative.release.xcconfig"; sourceTree = "<group>"; };
-		614D6372A3D812E53BAA054F /* Pods-MLN_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MLN_Tests.release.xcconfig"; path = "Target Support Files/Pods-MLN_Tests/Pods-MLN_Tests.release.xcconfig"; sourceTree = "<group>"; };
-		6ABC029A38FCC0A39C207FA6 /* Pods-MLN_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MLN_Tests.debug.xcconfig"; path = "Target Support Files/Pods-MLN_Tests/Pods-MLN_Tests.debug.xcconfig"; sourceTree = "<group>"; };
 		6ED891C3203090F5CB5310E5 /* Pods-LuaNative.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LuaNative.debug.xcconfig"; path = "Target Support Files/Pods-LuaNative/Pods-LuaNative.debug.xcconfig"; sourceTree = "<group>"; };
 		A4C3142424C7DE2700444CA4 /* MLNGlobalTimeTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLNGlobalTimeTest.h; sourceTree = "<group>"; };
 		A4C3142524C7DE2700444CA4 /* MLNGlobalTimeTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLNGlobalTimeTest.m; sourceTree = "<group>"; };
@@ -458,7 +454,6 @@
 				6003F5B0195388D20070C39A /* XCTest.framework in Frameworks */,
 				6003F5B2195388D20070C39A /* UIKit.framework in Frameworks */,
 				6003F5B1195388D20070C39A /* Foundation.framework in Frameworks */,
-				E3A64ADCB0E407AD5503E94B /* libPods-MLN_Tests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -636,8 +631,6 @@
 			children = (
 				F236AA5C6B666135B994F09B /* Pods-MLN_Example.debug.xcconfig */,
 				0BFEA11F75FC7C356E75DFD6 /* Pods-MLN_Example.release.xcconfig */,
-				6ABC029A38FCC0A39C207FA6 /* Pods-MLN_Tests.debug.xcconfig */,
-				614D6372A3D812E53BAA054F /* Pods-MLN_Tests.release.xcconfig */,
 				6ED891C3203090F5CB5310E5 /* Pods-LuaNative.debug.xcconfig */,
 				60CB3A6486D530BC91B53B3C /* Pods-LuaNative.release.xcconfig */,
 			);
@@ -676,7 +669,6 @@
 				6003F591195388D20070C39A /* UIKit.framework */,
 				6003F5AF195388D20070C39A /* XCTest.framework */,
 				28CCCDF75246FDF349FE71B3 /* libPods-LuaNative.a */,
-				11F29221569E01F21A903E70 /* libPods-MLN_Tests.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -1170,11 +1162,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 6003F5C2195388D20070C39A /* Build configuration list for PBXNativeTarget "MLN_Tests" */;
 			buildPhases = (
-				CD649900956A4B50787A9D5F /* [CP] Check Pods Manifest.lock */,
 				6003F5AA195388D20070C39A /* Sources */,
 				6003F5AB195388D20070C39A /* Frameworks */,
 				6003F5AC195388D20070C39A /* Resources */,
-				83357F04779090552C6A0CCF /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -1318,46 +1308,6 @@
 			);
 			outputPaths = (
 				"$(DERIVED_FILE_DIR)/Pods-LuaNative-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		83357F04779090552C6A0CCF /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-MLN_Tests/Pods-MLN_Tests-resources.sh",
-				"${PODS_ROOT}/../../MLN/Resource/ArgoUISystem.bundle",
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ArgoUISystem.bundle",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-MLN_Tests/Pods-MLN_Tests-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		CD649900956A4B50787A9D5F /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-MLN_Tests-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -1844,7 +1794,6 @@
 		};
 		6003F5C3195388D20070C39A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 6ABC029A38FCC0A39C207FA6 /* Pods-MLN_Tests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				FRAMEWORK_SEARCH_PATHS = (
@@ -1869,7 +1818,6 @@
 		};
 		6003F5C4195388D20070C39A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 614D6372A3D812E53BAA054F /* Pods-MLN_Tests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				FRAMEWORK_SEARCH_PATHS = (
