@@ -188,6 +188,9 @@
     NSString *befor = [ArgoObserverHelper stringBefor:lastNumberIndex withKeys:keys];
     NSString *after = [keyPath substringFromIndex:befor.length + 1];
     id<ArgoListenerProtocol> observed = [self argo_get:befor];
+    if (!observed) {
+        return NSNotFound;
+    }
     return [self _observeObject:observed keyPath:after handler:handler listView:listView filter:filter triggerWhenAdd:triggerWhenAdd];
 }
 
