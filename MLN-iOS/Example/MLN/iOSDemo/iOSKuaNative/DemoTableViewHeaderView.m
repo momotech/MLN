@@ -24,8 +24,9 @@
     self = [super initWithFrame:frame];
     if (self) {
         UIImageView *icon_img = [UIImageView new];
-        [icon_img sd_setImageWithURL:[NSURL URLWithString:@"https://s.momocdn.com/w/u/others/custom/ios/icon_feng.png"]
-                    placeholderImage:[UIImage imageNamed:@"icon_feng.png"]];
+//        [icon_img sd_setImageWithURL:[NSURL URLWithString:@"https://s.momocdn.com/w/u/others/custom/ios/icon_feng.png"]
+//                    placeholderImage:[UIImage imageNamed:@"icon_feng.png"]];
+        [icon_img sd_setImageWithURL:[NSURL URLWithString:@"https://s.momocdn.com/w/u/others/custom/ios/icon_feng.png"]];
         [self addSubview:icon_img];
         
         UILabel *nameLabel = [self tagLabelWithText:@"马铃薯爱吃土豆泥" textColor:nil];

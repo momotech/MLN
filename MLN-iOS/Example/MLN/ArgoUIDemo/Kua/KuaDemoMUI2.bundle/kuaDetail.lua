@@ -1,15 +1,11 @@
 --1
 
 require("packet/BindMeta")
-if userData== nil then 
-userData= BindMeta("userData")
-end
-require("packet/style")
 if ui_views == nil then 
 ui_views=setmetatable({}, { __mode = 'v'})
 BindMetaCreateFindGID(ui_views)
 end
-require("KuaCell")
+require("KK.KuaCell")
 local backImg="https://s.momocdn.com/w/u/others/2020/07/13/1594631804940-back.png"
 Style={
 nav={
@@ -26,6 +22,10 @@ backImg={
 {positionLeft = 10}
 }
 }
+if userData== nil then 
+userData= BindMeta("userData")
+end
+require("packet/style")
 local vwj1 = VStack()
 ui_views.vwj1 = vwj1
 local vwj2 = HStack()
@@ -36,10 +36,6 @@ vwj3:image(backImg)
 _view_set_style_with_filter(vwj3,Style.backImg,{image=true})
 local vwj4 = Label()
 ui_views.vwj4 = vwj4
-vwj4:text(userData.title.__get)
-userData.title.__watch=function(new)
-vwj4:text(new)
-end
 vwj4:textColor(Color():hex(16777215))
 vwj2:children({vwj3, vwj4})
 _view_set_style_with_filter(vwj2,Style.nav,{})
@@ -51,11 +47,11 @@ vwj5:marginBottom(45)
 local vwj5_adapter = TableViewAutoFitAdapter()
 vwj5:adapter(vwj5_adapter)
 vwj5_adapter:initCellByReuseId("contentCell", function(_l_c1)
---@&$local kvar3=_l_i1$--&@
+--[[$local kvar3=_l_i1$--]]
 local kvar4=KUA_CELL_TYPE.DETAIL
 local vwj6 = VStack()
 _l_c1.vwj6 = vwj6
---@&$local kvar5=kvar3$--&@
+--[[$local kvar5=kvar3$--]]
 local kvar6=KUA_CELL_TYPE.DETAIL
 local vwj7 = VStack()
 _l_c1.vwj7 = vwj7
@@ -150,7 +146,7 @@ _l_c1.vwj6:padding(0, 20, 0, 20)
 _l_c1.contentView:addView(_l_c1.vwj6)
 end)
 vwj5_adapter:initCellByReuseId("commentCell", function(_l_c1)
---@&$local kvar8=_l_i1$--&@
+--[[$local kvar8=_l_i1$--]]
 local vwj25 = VStack()
 _l_c1.vwj25 = vwj25
 local vwj26 = VStack()
@@ -333,7 +329,7 @@ local kvar2 = {}
 for kvar1=1, (kvar5.actions.__asize) do 
 local kvar7=kvar1
 local kvar2_=(function()
-return  (function(_argo_break)
+return  (function()
 local vwj58 = Label()
 ui_views.vwj58 = vwj58
 vwj58 = vwj58
@@ -341,7 +337,7 @@ vwj58:text(kvar5.actions[kvar7].__get)
 vwj58:marginRight(8)
 vwj58:textColor(Color(78, 200, 193, 1))
 return vwj58
-end)('@argo@')
+end)()
 end)()
 if kvar2_ then table.insert(kvar2,kvar2_) end
 end 
@@ -370,7 +366,7 @@ _l_c1.vwj22:text(kvar5.comment.__get)
 BindMetaWatchListCell(userData.listSource,section1,row1)
 end)
 vwj5_adapter:reuseId(function(section1, row1)
-local _l_i1=userData.listSource[section1][row1].__cii
+local _l_i1=userData.listSource[section1][row1].__ci
 if _l_i1.row.__get == 1 then 
 return  "contentCell"
 else 
@@ -398,3 +394,13 @@ vwj55:widthPercent(100)
 vwj55:height(35)
 vwj55:paddingTop(10)
 window:addView(vwj55)
+
+---延迟代码执行 UI 逻辑分离
+local delayFunc=function()
+vwj4:text(userData.title.__get)
+userData.title.__watch=function(new)
+vwj4:text(new)
+end
+end
+System:asyncDoInMain(delayFunc)
+
