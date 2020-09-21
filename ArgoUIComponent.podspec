@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
     s.name             = 'ArgoUIComponent'
-    s.version          = '0.1.1'
+    s.version          = '0.1.2'
     s.summary          = 'components of ArgoUI'
     
     # This description is used to generate tags and improve search results.
@@ -33,9 +33,12 @@ Pod::Spec.new do |s|
     s.requires_arc = true
     # s.resource = 'MLN-iOS/MLN/Resource/ArgoUISystem.bundle'
     s.dependency  'ArgoUI'
-    
-    s.source_files = 'MLN-iOS/MLN/Classes/ArgoUIComponent/**/*.{h,m,c}'
-    s.public_header_files = 'MLN-iOS/MLN/Classes/ArgoUIComponent/**/*.h'
-    s.framework = 'Foundation', 'UIKit'
-    
+#    s.source_files = 'MLN-iOS/MLN/Classes/ArgoUIComponent/**/*.{h,m,c}'
+#    s.public_header_files = 'MLN-iOS/MLN/Classes/ArgoUIComponent/**/*.h'
+
+    s.subspec 'ErrorHandler' do |c|
+        c.name = 'ErrorHandler'
+        s.source_files = 'MLN-iOS/MLN/Classes/ArgoUIComponent/ErrorHandler/**/*.{h,m,c}'
+        s.public_header_files = 'MLN-iOS/MLN/Classes/ArgoUIComponent/ErrorHandler/**/*.h'
+    end
 end
