@@ -55,7 +55,7 @@ static const void *MLNUIDeallocatorAssociationKey = &MLNUIDeallocatorAssociation
                 dealloctor = [[MLNUIDeallocator alloc] initWithOwner:self];
                 objc_setAssociatedObject(self, MLNUIDeallocatorAssociationKey, dealloctor, OBJC_ASSOCIATION_RETAIN);
             }
-            [self.class mlnui_swizzleDeallocIfNeeded];
+//            [self.class mlnui_swizzleDeallocIfNeeded];
             [dealloctor addCallback:block];
         }
     }

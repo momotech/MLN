@@ -67,7 +67,11 @@ NS_ASSUME_NONNULL_BEGIN
  @param key key值
  */
 - (void)setObject:(id<MLNUIEntityExportProtocol>)obj key:(NSString *)key;
+- (void)rawsetObject:(NSObject *)obj key:(NSString *)key;
 
+- (void)setObject:(id<MLNUIEntityExportProtocol>)obj index:(int)index;
+- (void)rawsetObject:(NSObject *)obj index:(int)index;
+- (void)inseretObject:(NSObject *)obj index:(int)index;
 /**
  设置key-value
  

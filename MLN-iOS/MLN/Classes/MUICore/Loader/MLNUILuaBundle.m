@@ -62,7 +62,7 @@
 {
     if (self = [super init]) {
         _currentBundle = bundle;
-        _systemBundle = [NSBundle bundleWithPath:[[NSBundle bundleForClass:[self class]] pathForResource:@"ArgoUI" ofType:@"bundle"]];
+        _systemBundle = [NSBundle bundleWithPath:[[NSBundle bundleForClass:[self class]] pathForResource:@"ArgoUISystem" ofType:@"bundle"]];
     }
     return self;
 }
@@ -74,6 +74,9 @@
         filePath = [self.currentBundle pathForResource:name ofType:nil];
         if (!filePath) {
             filePath = [self.currentBundle pathForResource:name ofType:@"lua"];
+        }
+        if (!filePath) {// hotreload 新建文件出错 not found ... 
+            filePath = [self.currentBundle pathForResource:name ofType:nil inDirectory:@"/"];
         }
         if (!filePath) {
             filePath = [self.systemBundle pathForResource:name ofType:nil];

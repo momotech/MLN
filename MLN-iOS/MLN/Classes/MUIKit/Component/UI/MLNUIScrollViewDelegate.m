@@ -51,6 +51,11 @@
     if (scrollView.luaui_disallowFling) { // 让scrollView停在手指离开屏幕的位置
         *targetContentOffset = scrollView.contentOffset;
     }
+
+    if (scrollView.luaui_scrollWillEndDraggingCallback) {
+        [scrollView.luaui_scrollWillEndDraggingCallback addFloatArgument:velocity.y];
+        [scrollView.luaui_scrollWillEndDraggingCallback callIfCan];
+    }
 }
 
 - (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {

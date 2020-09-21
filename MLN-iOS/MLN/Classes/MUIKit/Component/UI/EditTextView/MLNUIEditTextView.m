@@ -327,6 +327,9 @@
 
 - (void)setText:(NSString *)text
 {
+    if (![text isKindOfClass:NSString.class]) {
+        text = [NSString stringWithFormat:@"%@", text ?: @""];
+    }
     if (self.type == MLNUIInternalTextViewTypeSingleLine) {
         text = [text stringByReplacingOccurrencesOfString:@"\n" withString:@""];
     }
@@ -361,9 +364,10 @@
 
 -(void)setPlaceholder:(NSString *)placeholder
 {
-    if (![placeholder isKindOfClass:[NSString class]] && placeholder != nil) {
-        MLNUIKitLuaAssert(NO , @"The placeholder type must be String" );
-        return;
+    if (![placeholder isKindOfClass:[NSString class]]) {
+//        MLNUIKitLuaAssert(NO , @"The placeholder type must be String" );
+//        return;
+        placeholder = [NSString stringWithFormat:@"%@", placeholder ?: @""];
     }
     if (self.type == MLNUIInternalTextViewTypeSingleLine) {
         placeholder = [placeholder stringByReplacingOccurrencesOfString:@"\n" withString:@""];

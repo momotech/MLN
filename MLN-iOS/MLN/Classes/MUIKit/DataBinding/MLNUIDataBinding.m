@@ -14,6 +14,8 @@
 #import "NSObject+MLNUIDealloctor.h"
 #import "MLNUIExtScope.h"
 #import "MLNUIMainRunLoopObserver.h"
+#import "MLNUIHeader.h"
+#import "NSDictionary+MLNUIKVO.h"
 
 //#define kArrayPlaceHolder @"_array_"
 
@@ -54,17 +56,10 @@
         self.listViewMap = [NSMapTable strongToWeakObjectsMapTable];
         self.dataObserverMap = [NSMapTable strongToStrongObjectsMapTable];
         self.arrayObserverMap = [NSMapTable strongToStrongObjectsMapTable];
+        /*
         self.dataCache = [NSMapTable strongToWeakObjectsMapTable];
-        
         self.runloopObserver = [[MLNUIMainRunLoopObserver alloc] init];
         @weakify(self);
-//        [self.runloopObserver beginForBeforeWaiting:0 repeats:YES callback:^{
-//            @strongify(self);
-//            if(!self) return;
-//            pthread_mutex_lock(&self->_lock);
-//            [self.dataCache removeAllObjects];
-//            pthread_mutex_unlock(&self->_lock);
-//        }];
         [self.runloopObserver beginForActivity:kCFRunLoopEntry repeats:YES order:0 callback:^(CFRunLoopActivity activity) {
             @strongify(self);
             if(!self) return;
@@ -72,14 +67,15 @@
             [self.dataCache removeAllObjects];
             pthread_mutex_unlock(&self->_lock);
         }];
+        */
         LOCK_RECURSIVE_INIT();
-        NSLog(@"%s",__FUNCTION__);
+//        NSLog(@"%s",__FUNCTION__);
     }
     return self;
 }
 
 - (void)dealloc {
-    NSLog(@"%s",__FUNCTION__);
+//    NSLog(@"%s",__FUNCTION__);
     [self.runloopObserver end];
     LOCK_DESTROY();
 }
@@ -93,6 +89,16 @@
         [self.dataMap setValue:data forKey:key];
         UNLOCK();
     }
+}
+
+- (void)bindData:(nullable NSObject *)data {
+    SEL sel = sel_registerName("modelKey");
+    NSAssert([data.class respondsToSelector:sel], @"Data必须实现方法：modelKey ");
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
+    NSString *key = [data.class performSelector:sel];
+#pragma clang diagnostic pop
+    [self bindData:data forKey:key];
 }
 
 //- (NSArray<NSObject<MLNUIKVOObserverProtol> *> *)observersForKeyPath:(NSString *)keyPath forArray:(BOOL) forArray {
@@ -140,7 +146,49 @@
      ['userData']:object, object != nil, frontObject = nil
      ['userData','name'], object = nil, frontObject != nil
      */
-    NSString *obID = [NSUUID UUID].UUIDString;
+    NSString *obID = [self.class getUUID];
+    observer.obID = obID;
+    if (![frontObject isKindOfClass:[NSArray class]]) {
+        [self _realAddDataObserver:observer forObject:frontObject observerID:obID path:path];
+    }
+    
+    if ([object isKindOfClass:[NSMutableArray class]]) {
+        [self _realAddArrayObserver:observer forObject:object observerID:obID keyPath:keyPath];
+    }
+
+    return obID;
+}
+
++ (NSString *)getUUID {
+    static long long num = 0;
+    return [@(++num) stringValue];
+}
+
+- (NSString *)addMLNUIObserver:(NSObject<MLNUIKVOObserverProtol> *)observer ForObservedObject:(NSObject *)observedObject KeyPath:(NSString *)keyPath {
+    NSParameterAssert(observer && keyPath);
+    if (!observer || !keyPath) return nil;
+    
+    NSArray *keys = [keyPath componentsSeparatedByString:@"."];
+//    return [self addMLNUIObserver:observer forKeys:keys];
+    if(![keys isKindOfClass:[NSArray class]] || keys.count == 0) return nil;
+    
+    keys = [self formatKeys:keys allowFirstKeyIsNumber:NO allowLastKeyIsNumber:NO];
+    if(!keys) return nil;
+    
+//    NSString *obKey = [keys componentsJoinedByString:@"."];
+    NSObject *frontObject;
+//    NSObject *object = [self dataForKeysArray:keys frontObject:&frontObject];
+    NSObject *object = [self _dataForKeysArray:keys mainObject:observedObject frontObject:&frontObject];
+    NSString *path = keys.lastObject;
+//    if (keys.count == 1) {
+//        // TODO:监听dataMap.
+//    }
+    /*
+     ['source']:array, object != nil ,frontObject = nil
+     ['userData']:object, object != nil, frontObject = nil
+     ['userData','name'], object = nil, frontObject != nil
+     */
+    NSString *obID = [self.class getUUID];
     observer.obID = obID;
     if (![frontObject isKindOfClass:[NSArray class]]) {
         [self _realAddDataObserver:observer forObject:frontObject observerID:obID path:path];
@@ -174,6 +222,32 @@
     if (dataPair) {
         [self _removeDataObserverPair:dataPair];
     }
+    if (arrayPair) {
+        [self _removeArrayObserverPair:arrayPair];
+    }
+}
+
+- (void)removeMLNUIDataObserverByID:(NSString *)obID {
+    NSParameterAssert(obID);
+    if(!obID) return;
+
+    LOCK();
+    MLNUIInternalObserverPair *dataPair = [self.dataObserverMap objectForKey:obID];
+    [self.dataObserverMap removeObjectForKey:obID];
+    UNLOCK();
+    if (dataPair) {
+        [self _removeDataObserverPair:dataPair];
+    }
+}
+
+- (void)removeMLNUIArrayObserverByID:(NSString *)obID {
+    NSParameterAssert(obID);
+    if(!obID) return;
+
+    LOCK();
+    MLNUIInternalObserverPair *arrayPair = [self.arrayObserverMap objectForKey:obID];
+    [self.arrayObserverMap removeObjectForKey:obID];
+    UNLOCK();
     if (arrayPair) {
         [self _removeArrayObserverPair:arrayPair];
     }
@@ -276,7 +350,11 @@
 //        [self.dataMap setObject:value forKey:firstKey];
         @try {
             LOCK();
+#if OCPERF_MAP_LAZY_LOAD
+            [self.dataMap mlnui_setValue:value forKeyPath:firstKey createIntermediateObject:YES];
+#else
             [self.dataMap setValue:value forKeyPath:firstKey];
+#endif
         } @catch (NSException *exception) {
             NSString *log = [NSString stringWithFormat:@"%@ %s",exception,__FUNCTION__];
             [self doErrorLog:log];
@@ -306,7 +384,17 @@
                 }
                 value ? arr[index] = value : [arr removeObjectAtIndex:index];
             } else {
+#if OCPERF_MAP_LAZY_LOAD
+                if (frontObject) {
+                    if ([frontObject isKindOfClass:[NSMutableDictionary class]]) {
+                        [(NSMutableDictionary *)frontObject mlnui_setValue:value forKeyPath:lastKey createIntermediateObject:YES];
+                    } else {
+                        NSAssert(NO, @"frontObject should be NSMutableDictionary");
+                    }
+                }
+#else
                 [frontObject setValue:value forKeyPath:lastKey];
+#endif
             }
         } @catch (NSException *exception) {
             NSString *log  = [NSString stringWithFormat:@"%@ %s",exception, __func__];
@@ -406,7 +494,8 @@
         @strongify(self);
         @strongify(observer);
         if (self && observer) {
-            [self removeMLNUIObserverByID:obID];
+//            [self removeMLNUIObserverByID:obID];
+            [self removeMLNUIDataObserverByID:obID];
         }
     }];
     
@@ -486,7 +575,8 @@
         @strongify(observer);
         if (self && observer) {
 //            [self removeMLNUIObserver:observer forKeys:keys];
-            [self removeMLNUIObserverByID:obID];
+//            [self removeMLNUIObserverByID:obID];
+            [self removeMLNUIArrayObserverByID:obID];
         }
     }];
     
@@ -543,15 +633,20 @@
 #pragma mark - GetData Private
 // keys=['userData.source'] -> frontObject = self.dataMap
 - (id)dataForKeysArray:(NSArray *)keys frontObject:(NSObject **)frontObject {
+    return [self _dataForKeysArray:keys mainObject:self.dataMap frontObject:frontObject];
+}
+
+- (id)_dataForKeysArray:(NSArray *)keys mainObject:(NSObject *)mainObject frontObject:(NSObject **)frontObject {
     NSMutableString *frontKey = [[keys firstObject] mutableCopy];
     if(!frontKey) return nil;
     
     NSObject *obj;
+    if(!mainObject) mainObject = self.dataMap;
 //    @try {
         LOCK();
         //    NSObject *obj = [self.dataMap objectForKey:firstKey];
-        obj = [self.dataMap valueForKeyPath:frontKey];
-        if(frontObject) *frontObject = self.dataMap;
+    obj = [mainObject valueForKeyPath:frontKey];
+    if(frontObject) *frontObject = mainObject;
         
 //    } @catch (NSException *exception) {
 //        NSString *log = [NSString stringWithFormat:@"%@ %s",exception,__FUNCTION__];

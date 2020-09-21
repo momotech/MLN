@@ -41,15 +41,23 @@ static inline void MLNUILayoutNodeClearHeight(UIView *view) {
 }
 
 - (CGFloat)calculHeightWithWidth:(CGFloat)width maxHeight:(CGFloat)maxHeight {
-    MLNUILayoutNodeClearHeight(self);
-    CGSize size = [self.mlnui_layoutNode calculateLayoutWithSize:CGSizeMake(width, maxHeight)];
-    return size.height;
+//    MLNUILayoutNodeClearHeight(self);
+//    CGSize size = [self.mlnui_layoutNode calculateLayoutWithSize:CGSizeMake(width, maxHeight)];
+//    return size.height;
+    return [self calculHeightWithWidth:width maxHeight:maxHeight applySize:NO];
 }
 
 - (CGSize)calculSizeWithMaxWidth:(CGFloat)maxWidth maxHeight:(CGFloat)maxHeight {
     MLNUILayoutNodeClearWidth(self);
     MLNUILayoutNodeClearHeight(self);
     return [self.mlnui_layoutNode calculateLayoutWithSize:CGSizeMake(maxWidth, maxHeight)];
+}
+
+- (CGFloat)calculHeightWithWidth:(CGFloat)width maxHeight:(CGFloat)maxHeight applySize:(BOOL)applySize {    MLNUILayoutNodeClearHeight(self);
+    CGSize size = applySize
+    ? [self.mlnui_layoutNode applyLayoutWithSize:CGSizeMake(width, maxHeight)]
+    : [self.mlnui_layoutNode calculateLayoutWithSize:CGSizeMake(width, maxHeight)];
+    return size.height;
 }
 
 #pragma mark - Lua Table

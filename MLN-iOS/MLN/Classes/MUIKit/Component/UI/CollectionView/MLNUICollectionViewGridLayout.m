@@ -10,6 +10,8 @@
 #import "MLNUIViewExporterMacro.h"
 #import "MLNUICollectionView.h"
 
+#define MLNUI_FLOAT_TOLERANT 0.1f
+
 @interface MLNUICollectionViewGridLayout()
 {
     MLNUIScrollDirection _scrollDirection;
@@ -214,7 +216,7 @@ static MLNUI_FORCE_INLINE void layoutItemVerticallyForIndexPath(const __unsafe_u
 #pragma clang diagnostic ignored "-Wincompatible-pointer-types-discards-qualifiers"
     CGSize cellSize = [(id<MLNUICollectionViewGridLayoutDelegate>)selfRef.collectionView.delegate collectionView:selfRef.collectionView layout:selfRef sizeForItemAtIndexPath:indexPath];
 #pragma clang diagnostic pop
-    MLNUILuaAssert(selfRef.mlnui_luaCore, cellSize.height <= selfRef.collectionView.frame.size.height - selfRef.layoutInset.top - selfRef.layoutInset.bottom, @"The sum of cellHeight，topInset，bottomInset should not bigger than the height of collectionView");
+    MLNUILuaAssert(selfRef.mlnui_luaCore, cellSize.height <= CGRectGetHeight(selfRef.collectionView.frame) - selfRef.layoutInset.top - selfRef.layoutInset.bottom + MLNUI_FLOAT_TOLERANT, @"The sum of cellHeight，topInset，bottomInset should not bigger than the height of collectionView");
     
     // 2.1 记录当前行数、列数
     NSInteger currentCol = selfRef->_col;

@@ -242,12 +242,14 @@ static inline UIView *MLNUIValidSuperview(UIView *self) {
     return self.mlnui_renderContext.clipToBounds;
 }
 
-- (CGFloat)luaui_centerX {
-    return self.center.x;
+// 应该获取布局的X (frame.x = layoutFrame.x + animationFrame.x)
+- (CGFloat)luaui_getX {
+    return self.mlnuiLayoutFrame.origin.x;
 }
 
-- (CGFloat)luaui_centerY {
-    return self.center.y;
+// 应该获取布局的Y (frame.y = layoutFrame.y + animationFrame.y)
+- (CGFloat)luaui_getY {
+    return self.mlnuiLayoutFrame.origin.y;
 }
 
 - (void)luaui_layoutComplete:(MLNUIBlock *)complete {

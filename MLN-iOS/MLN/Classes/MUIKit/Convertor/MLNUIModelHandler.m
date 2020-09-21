@@ -8,6 +8,10 @@
 #import "MLNUIModelHandler.h"
 #import "MLNUILuaCore.h"
 #import "MLNUIKitBridgesManager.h"
+#import "MLNUIModelKeyPathComparator.h"
+#import "ArgoBindingConvertor.h"
+#import "ArgoObservableMap.h"
+#import "ArgoObservableArray.h"
 
 #define ARGOUI_ERROR(errmsg) do {\
 if (error) { *error = [NSError errorWithDomain:@"com.argoui.error" code:-1 userInfo:@{NSLocalizedDescriptionKey:errmsg}]; }\
@@ -29,7 +33,7 @@ typedef void(^MLNLUIModelHandleTask)(void);
 
 #pragma mark - Public
 
-+ (NSObject *)buildModelWithDataObject:(id)dataObject model:(nonnull NSObject *)model extra:(id _Nullable)extra functionChunk:(nonnull const char *)functionChunk error:(NSError *__autoreleasing*)error {
++ (NSObject *)buildModelWithDataObject:(id)dataObject model:(nonnull NSObject <MLNUIModelHandlerProtocol>*)model extra:(id _Nullable)extra functionChunk:(nonnull const char *)functionChunk error:(NSError *__autoreleasing*)error {
     NSParameterAssert(dataObject && model && functionChunk);
     if (!dataObject || !model || !functionChunk) {
         return nil;
@@ -38,7 +42,7 @@ typedef void(^MLNLUIModelHandleTask)(void);
     return MLNUIConvertDataObjectToModel(object, model);
 }
 
-+ (void)buildModelWithDataObject:(id)dataObject model:(NSObject *)model extra:(id)extra functionChunk:(const char *)functionChunk complete:(MLNUIModelHandleComplete)complete {
++ (void)buildModelWithDataObject:(id)dataObject model:(NSObject <MLNUIModelHandlerProtocol>*)model extra:(id)extra functionChunk:(const char *)functionChunk complete:(MLNUIModelHandleComplete)complete {
     NSParameterAssert(dataObject && model && functionChunk);
     if (!dataObject || !model || !functionChunk) {
         return;
@@ -56,7 +60,7 @@ typedef void(^MLNLUIModelHandleTask)(void);
 
 #pragma mark - Private
 
-+ (id)handleModelWithDataObject:(id)dataObject model:(nonnull NSObject *)model extra:(id _Nullable)extra functionChunk:(nonnull const char *)functionChunk error:(NSError *__autoreleasing*)error {
++ (id)handleModelWithDataObject:(id)dataObject model:(nonnull NSObject <MLNUIModelHandlerProtocol>*)model extra:(id _Nullable)extra functionChunk:(nonnull const char *)functionChunk error:(NSError *__autoreleasing*)error {
     NSParameterAssert(dataObject && model && functionChunk);
     if (!dataObject || !model || !functionChunk) {
         return nil;
@@ -64,32 +68,26 @@ typedef void(^MLNLUIModelHandleTask)(void);
     
     MLNUILuaCore *luaCore = MLNUILuaCoreGet();
     lua_State *L = luaCore.state;
-    
     int argCount = 0;
     if ([luaCore pushLuaTable:dataObject error:nil]) {
         argCount++;
     }
+#if OCPERF_USE_NEW_DB
+    if ([luaCore.convertor pushArgoBindingNativeObject:model error:error]) {
+        argCount++;
+    }
+#else
     if (MLNUIConvertModelToLuaTable(model, luaCore)) {
         argCount++;
     }
+#endif
     if (extra) {
         argCount++;
-        switch ([extra mlnui_nativeType]) {
-            case MLNUINativeTypeArray:
-            case MLNUINativeTypeMArray:
-            case MLNUINativeTypeDictionary:
-            case MLNUINativeTypeMDictionary:
-                [luaCore pushLuaTable:extra error:nil];
-                break;
-            case MLNUINativeTypeObject:
-                MLNUIConvertModelToLuaTable(extra, luaCore);
-                break;
-            default:
-                [luaCore pushNativeObject:extra error:nil];
-                break;
-        }
+        MLNUIPushObject(extra, luaCore);
     }
-    
+    #if DEBUG
+            functionChunk = [MLNUIModelKeyPathComparator luaTableKeyTrackCodeAppendFunction:functionChunk model:model];
+    #endif
     int res = luaL_loadstring(L, functionChunk);
     if (res != 0) { // error occur
         NSString *errmsg = [NSString stringWithFormat:@"The `functionChunk` parameter is invalid. (%s)", luaL_checkstring(L, -1)];
@@ -111,7 +109,14 @@ typedef void(^MLNLUIModelHandleTask)(void);
         ARGOUI_ERROR_LOG(errmsg);
         return nil;
     }
+    #if DEBUG
+            [MLNUIModelKeyPathComparator keyPathCompare:luaCore model:model];
+    #endif
+#if OCPERF_USE_NEW_DB
+    return [luaCore.convertor toArgoBindingNativeObject:-1 error:NULL];
+#else
     return [luaCore toNativeObject:-1 error:error];
+#endif
 }
 
 + (NSThread *)modelConvertThread {
@@ -141,11 +146,41 @@ static inline MLNUILuaCore *MLNUILuaCoreGet(void) {
     static MLNUILuaCore *luaCore = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        luaCore = [[MLNUILuaCore alloc] initWithLuaBundle:nil];
+        luaCore = [[MLNUILuaCore alloc] initWithLuaBundle:nil convertor:[ArgoBindingConvertor class] exporter:nil];
         MLNUIKitBridgesManager *manager = [[MLNUIKitBridgesManager alloc] init];
         [manager registerKitForLuaCore:luaCore];
     });
     return luaCore;
+}
+
+// <NSObject> 协议中声明的属性要过滤掉
+static inline NSDictionary *MLNUIModelPropertyBlackList(void) {
+    static NSDictionary *dic = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        dic = @{@"superclass":@(true),
+                @"description":@(true),
+                @"debugDescription":@(true),
+                @"hash":@(true)};
+    });
+    return dic;
+}
+
+static inline void MLNUIPushObject(__unsafe_unretained id object, __unsafe_unretained MLNUILuaCore *luaCore) {
+    switch ([object mlnui_nativeType]) {
+        case MLNUINativeTypeDictionary:
+        case MLNUINativeTypeMDictionary:
+        case MLNUINativeTypeArray:
+        case MLNUINativeTypeMArray:
+            [luaCore pushLuaTable:object error:nil];
+            break;
+        case MLNUINativeTypeObject:
+            MLNUIConvertModelToLuaTable(object, luaCore);
+            break;
+        default:
+            [luaCore pushNativeObject:object error:nil];
+            break;
+    }
 }
 
 static inline BOOL MLNUIConvertModelToLuaTable(__unsafe_unretained NSObject *model, MLNUILuaCore *luaCore) {
@@ -159,14 +194,20 @@ static inline BOOL MLNUIConvertModelToLuaTable(__unsafe_unretained NSObject *mod
     objc_property_t *properties = class_copyPropertyList([model class], &count);
     for (int i = 0; i < count; i++) {
         const char *name = property_getName(properties[i]);
-        id value = [model valueForKey:@(name)];
+        if (MLNUIModelPropertyBlackList()[@(name)]) {
+            continue;
+        }
+        id value = nil;
+        @try {
+            value = [model valueForKey:@(name)];
+        } @catch (NSException *exception) {
+#if DEBUG
+            NSLog(@"ArgoUI Model Exception: %@", exception);
+#endif
+        } @finally { }
         if (!value) continue;
         lua_pushstring(L, name);
-        if ([value mlnui_nativeType] == MLNUINativeTypeObject) {
-            MLNUIConvertModelToLuaTable(value, luaCore);
-        } else {
-            [luaCore pushNativeObject:value error:nil];
-        }
+        MLNUIPushObject(value, luaCore);
         lua_settable(L, -3);
     }
     free(properties);
@@ -181,7 +222,15 @@ static inline NSObject *MLNUIConvertDataObjectToModel(__unsafe_unretained id dat
     if ([dataObject isKindOfClass:[NSDictionary class]]) {
         [(NSDictionary *)dataObject enumerateKeysAndObjectsUsingBlock:^(id _Nonnull key, id _Nonnull obj, BOOL *_Nonnull stop) {
             @try {
+#if OCPERF_USE_NEW_DB
                 [model setValue:obj forKey:key];
+#else
+                if ([obj isKindOfClass:[NSArray class]] || [obj isKindOfClass:[NSDictionary class]]) {
+                    [model setValue:[obj mutableCopy] forKey:key];
+                } else {
+                    [model setValue:obj forKey:key];
+                }
+#endif
             } @catch (NSException *exception) {
                 ARGOUI_ERROR_LOG([exception description]);
             } @finally { }

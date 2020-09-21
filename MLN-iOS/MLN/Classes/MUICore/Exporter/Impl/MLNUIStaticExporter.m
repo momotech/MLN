@@ -31,7 +31,7 @@
             return NO;
         }
     }
-    return [self.luaCore openLib:libName nativeClassName:nativeClassName methodList:libInfo->clz_methods nup:0 error:error];
+    return [self.luaCore openLib:libName nativeClassName:nativeClassName methodList:libInfo->clz_methods nup:0 leaveTableOnTop:NO error:error];
 }
 
 @end

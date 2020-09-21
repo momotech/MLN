@@ -10,7 +10,13 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface MLNUITestModel : NSObject
+@protocol MLNUIModelTestProtocol <NSObject>
+@property (nonatomic, strong) NSString *myName;
+@optional
+@property (nonatomic, assign) NSInteger myAge;
+@end
+
+@interface MLNUITestModel : NSObject<UITableViewDelegate, NSObject, NSCopying>
 
 @property (nonatomic, assign) NSInteger ec;
 @property (nonatomic, strong) NSString *em;

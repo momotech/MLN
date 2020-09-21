@@ -42,7 +42,12 @@
 {
     NSMutableArray *regs = [NSMutableArray arrayWithArray:regClasses ? regClasses :@[]];
     #if OCPERF_USE_C
-        [regs addObject: [MLNUIDataBindingCBridge class]];
+        #if OCPERF_USE_NEW_DB
+                            [regs addObject: NSClassFromString(@"ArgoDataBindingCBridge")];
+        #else
+                            [regs addObject: [MLNUIDataBindingCBridge class]];
+
+        #endif
     #else
         [regs addObject: [MLNUIDataBinding class]];
     #endif

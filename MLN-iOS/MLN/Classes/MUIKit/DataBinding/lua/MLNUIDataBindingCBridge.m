@@ -449,7 +449,7 @@ static int luaui_bind_cell (lua_State *L) {
 //    NSString *modelKey = [nKey stringByAppendingFormat:@".%zd.%zd",section,row];
     
     NSObject *cellModel;
-    NSArray *listArray = [dataBind dataForKeyPath:nKey userCache:YES];
+    NSArray *listArray = [dataBind dataForKeyPath:nKey userCache:NO];
     if ([listArray mlnui_is2D]) {
         NSArray *tmp = section <= listArray.count ? listArray[section - 1] : nil;
         cellModel = row <= tmp.count ? tmp[row - 1] : nil;
@@ -478,11 +478,18 @@ static int luaui_bind_cell (lua_State *L) {
     NSMutableArray *newPaths = paths.mutableCopy;
     [newPaths removeObjectsInArray:model.pathMap.allKeys];
     
-#if 0
+#if 1
+//    for (NSString *p in newPaths) {
+//        NSString *nk = [nKey stringByAppendingFormat:@".%zd.%zd.%@",section,row,p];
+//        MLNUIKVOObserver *ob = _getMLNUIKVOObserver(kitViewController, listView, nk, idKey);
+//        NSString *obID = [dataBind addMLNUIObserver:ob forKeyPath:nk];
+//        if (obID) {
+//            [model.pathMap setObject:obID forKey:p];
+//        }
+//    }
     for (NSString *p in newPaths) {
-        NSString *nk = [nKey stringByAppendingFormat:@".%zd.%zd.%@",section,row,p];
-        MLNUIKVOObserver *ob = _getMLNUIKVOObserver(kitViewController, listView, nk, idKey);
-        NSString *obID = [dataBind addMLNUIObserver:ob forKeyPath:nk];
+        MLNUIKVOObserver *ob = _getMLNUIKVOObserver(kitViewController, listView, @"", idKey);
+        NSString *obID = [dataBind addMLNUIObserver:ob ForObservedObject:cellModel KeyPath:p];
         if (obID) {
             [model.pathMap setObject:obID forKey:p];
         }
@@ -497,27 +504,12 @@ static int luaui_bind_cell (lua_State *L) {
         for (int i = 0; i < ps.count; i++) {
             frontObject = currentObject;
             NSString *sub = ps[i];
-//            adjustedArray = nil;
             if ([frontObject isKindOfClass:[NSArray class]]) {
                 int idx = sub.intValue - 1;
                 if (idx >= 0 && idx < [(NSArray *)frontObject count]) {
                     currentObject = [(NSArray *)frontObject objectAtIndex:idx];
                 }
-//                if (0 == idx) {
-//                    adjustedArray = (NSArray *)frontObject;
-//                }
             } else {
-                /*
-                if (adjustedArray) {
-                    int idx = sub.intValue - 1;
-                    if (idx >= 0 && idx < adjustedArray.count) {
-                        currentObject = [adjustedArray objectAtIndex:idx];
-                    }
-                }
-                if (!currentObject) {
-                    currentObject = [frontObject valueForKey:sub];
-                }
-                 */
                 currentObject = [frontObject valueForKey:sub];
             }
         }
@@ -552,7 +544,7 @@ static int luaui_get_cell_data(lua_State *L) {
     
     MLNUILuaCore *luaCore = MLNUI_LUA_CORE(L);
     MLNUIDataBinding *dataBind = _mlnui_get_dataBinding(luaCore);
-    UIViewController<MLNUIDataBindingProtocol> *kitViewController = (UIViewController<MLNUIDataBindingProtocol> *)MLNUI_KIT_INSTANCE(luaCore).viewController;
+//    UIViewController<MLNUIDataBindingProtocol> *kitViewController = (UIViewController<MLNUIDataBindingProtocol> *)MLNUI_KIT_INSTANCE(luaCore).viewController;
 
     NSString *nKey = [luaCore toString:-3 error:NULL];
     NSUInteger section = lua_tonumber(L, -2);
@@ -563,7 +555,7 @@ static int luaui_get_cell_data(lua_State *L) {
     if (!listView)  return 1;
     
     NSObject *cellModel;
-    NSArray *listArray = [dataBind dataForKeyPath:nKey userCache:YES];
+    NSArray *listArray = [dataBind dataForKeyPath:nKey userCache:NO];
     if ([listArray mlnui_is2D]) {
         NSArray *tmp = section <= listArray.count ? listArray[section - 1] : nil;
         cellModel = row <= tmp.count ? tmp[row - 1] : nil;

@@ -7,6 +7,8 @@
 
 #import "NSDictionary+MLNUIKVO.h"
 #import "NSObject+MLNUIReflect.h"
+#import "MLNUIHeader.h"
+#import "ArgoObservableMap.h"
 
 @implementation NSDictionary (MLNUIKVO)
 
@@ -16,6 +18,19 @@
         NSDictionary *value = [self objectForKey:key];
         if ([value respondsToSelector:@selector(mlnui_mutalbeCopy)]) {
             [copy setObject:value.mlnui_mutalbeCopy forKey:key];
+        } else {
+            [copy setObject:value forKey:key];
+        }
+    }
+    return copy;
+}
+
+- (ArgoObservableMap *)argo_mutableCopy {
+    ArgoObservableMap *copy = [ArgoObservableMap dictionaryWithCapacity:self.count];
+    for (NSString *key in self.allKeys) {
+        NSDictionary *value = [self objectForKey:key];
+        if ([value respondsToSelector:@selector(argo_mutableCopy)]) {
+            [copy setObject:value.argo_mutableCopy forKey:key];
         } else {
             [copy setObject:value forKey:key];
         }
@@ -35,7 +50,11 @@
 }
 
 - (NSMutableDictionary *)mlnui_convertToMDic {
+#if OCPERF_USE_NEW_DB
+    ArgoObservableMap *dic = [[ArgoObservableMap alloc] initWithCapacity:self.count];
+#else
     NSMutableDictionary *dic = [NSMutableDictionary dictionaryWithCapacity:self.count];
+#endif
     [self enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop) {
         NSObject *n = [obj mlnui_convertToNativeObject];
         if (n) {
@@ -70,4 +89,27 @@
     return self.copy;
 }
 
+- (void)mlnui_setValue:(id)value forKeyPath:(NSString *)keyPath createIntermediateObject:(BOOL)createIntermediateObject {
+    if (createIntermediateObject) {
+        NSArray *keys = [keyPath componentsSeparatedByString:@"."];
+        NSMutableDictionary *dic = self;
+        for (int i = 0; i < keys.count - 1; i++) {
+            NSString *key = keys[i];
+            NSMutableDictionary *tmp;
+            if ([dic isKindOfClass:[NSMutableDictionary class]]) {
+                tmp = [dic objectForKey:key];
+            } else {
+                tmp = [dic valueForKey:key];
+            }
+            if (!tmp) {
+                tmp = [NSMutableDictionary dictionary];
+                [dic setObject:tmp forKey:key];
+            }
+            dic = tmp;
+        }
+        [dic setValue:value forKey:keys.lastObject];
+    } else {
+        [self setValue:value forKeyPath:keyPath];
+    }
+}
 @end

@@ -29,6 +29,9 @@
 
 #define OCPERF_USE_C 1
 #define OCPERF_COALESCE_BLOCK 1
+#define OCPERF_MAP_LAZY_LOAD 1
+
+#define OCPERF_USE_NEW_DB 1
 
 #include "mln_lua.h"
 #include "mln_lauxlib.h"
@@ -169,8 +172,7 @@ __VA_ARGS__;\
  */
 #define MLNUICallErrorHandler(LUA_CORE, FORMAT, ...) \
 NSString *error_tt = [NSString stringWithFormat:FORMAT, ##__VA_ARGS__];\
-error_tt = [error_tt stringByAppendingFormat:@"\n%@",[LUA_CORE traceback]];\
-[(LUA_CORE).errorHandler luaCore:(LUA_CORE) error:error_tt]; \
+[(LUA_CORE).errorHandler luaCore:(LUA_CORE) luaError:error_tt luaTraceback:[LUA_CORE traceback]]; \
 
 /**
  通知Handler处理Error
@@ -271,7 +273,7 @@ NSString *error_tt = [NSString stringWithFormat:FORMAT, ##__VA_ARGS__];\
 MLNUILuaCallErrorHandler(LUA_CORE, FORMAT, ##__VA_ARGS__)
 
 
-#if DEBUG
+#if DEBUG && 0
 #import "MLNUIPerformanceHeader.h"
 extern id<MLNUIPerformanceMonitor> MLNUIKitPerformanceMonitorForDebug;
 
@@ -321,5 +323,29 @@ extern id<MLNUIPerformanceMonitor> MLNUIKitPerformanceMonitorForDebug;
 
 #endif
 
+#if DEBUG && 0
+#define MLNUIAssertMainThread() NSAssert([NSThread isMainThread], @"This method to be executed in the main thread!")
+#else
+#define MLNUIAssertMainThread()
+#endif
+
+
+
+#if DEBUG && 0
+#define PLOG( s, ... ) \
+do{\
+NSDateFormatter *formater = [[[NSThread mainThread] threadDictionary] objectForKey:@"_PLOGDATEKEY"];\
+if (!formater) {\
+formater = [NSDateFormatter new];\
+[formater setDateFormat:@"HH:mm:ss.SSS"];\
+[[[NSThread mainThread] threadDictionary] setValue:formater forKey:@"_PLOGDATEKEY"];\
+}\
+const char *c = [[formater stringFromDate:[NSDate date]] UTF8String];\
+const char *f = ">>>>> "; \
+fprintf(stderr, "%s %s %s \n",c, f, [[NSString stringWithFormat:(s), ##__VA_ARGS__] UTF8String]); \
+}while(0)
+#else
+#define PLOG( s, ... )
+#endif
 
 #endif /* MLNUIHeader_h */

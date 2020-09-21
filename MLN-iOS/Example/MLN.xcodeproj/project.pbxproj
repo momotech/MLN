@@ -7,15 +7,22 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		000B3BDF2505D753001142E2 /* KuaDemoMUI.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 000B3BDE2505D753001142E2 /* KuaDemoMUI.bundle */; };
+		000B3BE22505D75C001142E2 /* UserData.m in Sources */ = {isa = PBXBuildFile; fileRef = 000B3BE02505D75C001142E2 /* UserData.m */; };
 		0011BBB32410AC3F003AE819 /* MLNDatabindingTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 0011BBB22410AC3F003AE819 /* MLNDatabindingTests.m */; };
 		0011BBB72410AC6F003AE819 /* MLNTestModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 0011BBB62410AC6F003AE819 /* MLNTestModel.m */; };
 		0026755324B3514900D8C617 /* MLNUIDB.m in Sources */ = {isa = PBXBuildFile; fileRef = 0026755224B3514900D8C617 /* MLNUIDB.m */; };
 		00268A4124B7011500D8C617 /* EYLogViewer.m in Sources */ = {isa = PBXBuildFile; fileRef = 00268A3F24B7011500D8C617 /* EYLogViewer.m */; };
 		00574F94246A8B3200927744 /* MLNDataBindArrayViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 00574F93246A8B3200927744 /* MLNDataBindArrayViewController.m */; };
+		006E8FDF2501E60300DB3368 /* ArgoKuaViewModelUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 006E8FDE2501E60300DB3368 /* ArgoKuaViewModelUtils.m */; };
 		007F89E7246C0D8400FF50F1 /* MLNBindTestCaseModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 007F89E6246C0D8400FF50F1 /* MLNBindTestCaseModel.m */; };
+		007FC90E250630B1000A8E92 /* HomePageArgoUI.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 007FC90D250630B1000A8E92 /* HomePageArgoUI.bundle */; };
+		007FF99A25072DCD000A8E92 /* MLNUIMyErrorHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 007FF99925072DCD000A8E92 /* MLNUIMyErrorHandler.m */; };
+		008CA3C124F3D43400C4F76F /* KuaDemoMUI2.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 008CA3C024F3D43400C4F76F /* KuaDemoMUI2.bundle */; };
 		009DD8D524114B9600452458 /* MLNArrayBindingTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 009DD8D424114B9600452458 /* MLNArrayBindingTests.m */; };
 		00A0C999243C180500F0D003 /* MLNPerformanceTestController.m in Sources */ = {isa = PBXBuildFile; fileRef = 00A0C998243C180500F0D003 /* MLNPerformanceTestController.m */; };
 		00A0C9A1243C3C0500F0D003 /* LuaNativeUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00A0C9A0243C3C0500F0D003 /* LuaNativeUITests.m */; };
+		00A312E024EFB4A80043A164 /* MLNUITestBridgeModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 00A312DF24EFB4A80043A164 /* MLNUITestBridgeModel.m */; };
 		00A45F7624850C35001A07D9 /* MLNUIBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = 00A45F7524850C35001A07D9 /* MLNUIBridge.m */; };
 		00A9991C247EA73D00307914 /* MLNUIMyImageHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 00A9991B247EA73D00307914 /* MLNUIMyImageHandler.m */; };
 		00A9B364247F8ED100307914 /* MLNUITestTableHotReload.m in Sources */ = {isa = PBXBuildFile; fileRef = 00A9B363247F8ED100307914 /* MLNUITestTableHotReload.m */; };
@@ -37,10 +44,6 @@
 		00E6526B2420AD1800A878B8 /* MLNBindModelViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E6526A2420AD1800A878B8 /* MLNBindModelViewController.m */; };
 		00E6526E2420BCCE00A878B8 /* MLNBindTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E6526D2420BCCE00A878B8 /* MLNBindTableViewController.m */; };
 		00E911CC24E2B8EC006614C4 /* MLNKuaController.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E911CB24E2B8EC006614C4 /* MLNKuaController.m */; };
-		00E911D524E2BCE4006614C4 /* UserDataListSourceReply.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E911D124E2BCE4006614C4 /* UserDataListSourceReply.m */; };
-		00E911D624E2BCE4006614C4 /* UserDataListSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E911D224E2BCE4006614C4 /* UserDataListSource.m */; };
-		00E911D724E2BCE4006614C4 /* UserData.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E911D424E2BCE4006614C4 /* UserData.m */; };
-		00E911D924E2BCEC006614C4 /* KuaDemoMUI.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 00E911D824E2BCEB006614C4 /* KuaDemoMUI.bundle */; };
 		00E9131524E51837006614C4 /* ViewPagerDemoMUI.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 00E9130924E51837006614C4 /* ViewPagerDemoMUI.bundle */; };
 		00E9131724E51837006614C4 /* HomeDataPageModels.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E9131024E51837006614C4 /* HomeDataPageModels.m */; };
 		00E9131824E51837006614C4 /* HomeDataPageModelsPage.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E9131124E51837006614C4 /* HomeDataPageModelsPage.m */; };
@@ -118,11 +121,16 @@
 		B2DD3E60237990E9002AB6AD /* MLNActionItem.m in Sources */ = {isa = PBXBuildFile; fileRef = B2DD3E55237990E9002AB6AD /* MLNActionItem.m */; };
 		B2DD3E61237990E9002AB6AD /* MLNControlContext.m in Sources */ = {isa = PBXBuildFile; fileRef = B2DD3E56237990E9002AB6AD /* MLNControlContext.m */; };
 		B2DD3E62237990E9002AB6AD /* MLNActionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = B2DD3E58237990E9002AB6AD /* MLNActionManager.m */; };
-		E3A64ADCB0E407AD5503E94B /* libPods-MLN_Tests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 11F29221569E01F21A903E70 /* libPods-MLN_Tests.a */; };
 		FA383453239A4C61000F900E /* MLNHomeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FA383452239A4C61000F900E /* MLNHomeViewController.m */; };
 		FA383456239A6357000F900E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FA383454239A6356000F900E /* Main.storyboard */; };
 		FA383459239A64AF000F900E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FA383457239A64AF000F900E /* LaunchScreen.storyboard */; };
 		FA38349B239B5A4C000F900E /* MLNDemoListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FA38349A239B5A4C000F900E /* MLNDemoListViewController.m */; };
+		FA4103E325090347007ADC8F /* DemoLiyifengTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FA4103D825090345007ADC8F /* DemoLiyifengTableViewCell.m */; };
+		FA4103E425090347007ADC8F /* DemoLiyifengViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FA4103DA25090346007ADC8F /* DemoLiyifengViewController.m */; };
+		FA4103E525090347007ADC8F /* DemoTableViewHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = FA4103DC25090346007ADC8F /* DemoTableViewHeaderView.m */; };
+		FA4103E625090347007ADC8F /* DemoLiyifengTableViewHeaderCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FA4103DD25090346007ADC8F /* DemoLiyifengTableViewHeaderCell.m */; };
+		FA4103E725090347007ADC8F /* data.plist in Resources */ = {isa = PBXBuildFile; fileRef = FA4103DE25090346007ADC8F /* data.plist */; };
+		FA4103E825090347007ADC8F /* DemoLiyifengModel.m in Sources */ = {isa = PBXBuildFile; fileRef = FA4103E025090346007ADC8F /* DemoLiyifengModel.m */; };
 		FA4EE2FA2379067000449250 /* MLNGalleryMinePageCellBaseModel.m in Sources */ = {isa = PBXBuildFile; fileRef = FA4EE2F92379067000449250 /* MLNGalleryMinePageCellBaseModel.m */; };
 		FA4EE2FD237907B000449250 /* MLNGalleryMinePageCellHomeModel.m in Sources */ = {isa = PBXBuildFile; fileRef = FA4EE2FC237907B000449250 /* MLNGalleryMinePageCellHomeModel.m */; };
 		FA4EE3002379080100449250 /* MLNGalleryMinePageCellDynamicModel.m in Sources */ = {isa = PBXBuildFile; fileRef = FA4EE2FF2379080100449250 /* MLNGalleryMinePageCellDynamicModel.m */; };
@@ -135,6 +143,7 @@
 		FA6C1CE1248E41D10025BA96 /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = FA6C1CE0248E41D10025BA96 /* libc++.tbd */; };
 		FA906FA024EBC8D500F8DAE2 /* MLNUICustomHotReloadViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FA906F9F24EBC8D500F8DAE2 /* MLNUICustomHotReloadViewController.m */; };
 		FA906FA424EBCAB700F8DAE2 /* MLNUITestModel.m in Sources */ = {isa = PBXBuildFile; fileRef = FA906FA324EBCAB700F8DAE2 /* MLNUITestModel.m */; };
+		FAE72F1625106DA00092E87D /* ArgoBindingTest.m in Sources */ = {isa = PBXBuildFile; fileRef = FAE72F1525106DA00092E87D /* ArgoBindingTest.m */; };
 		FAE9C59323A250CD002C830D /* gallery.bundle in Resources */ = {isa = PBXBuildFile; fileRef = FAE9C59223A250CD002C830D /* gallery.bundle */; };
 		FAE9C59523A2529C002C830D /* inner_demo.bundle in Resources */ = {isa = PBXBuildFile; fileRef = FAE9C59423A2529C002C830D /* inner_demo.bundle */; };
 /* End PBXBuildFile section */
@@ -157,6 +166,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		000B3BDE2505D753001142E2 /* KuaDemoMUI.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = KuaDemoMUI.bundle; sourceTree = "<group>"; };
+		000B3BE02505D75C001142E2 /* UserData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserData.m; sourceTree = "<group>"; };
+		000B3BE12505D75C001142E2 /* UserData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserData.h; sourceTree = "<group>"; };
 		0011BBB22410AC3F003AE819 /* MLNDatabindingTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNDatabindingTests.m; sourceTree = "<group>"; };
 		0011BBB52410AC6F003AE819 /* MLNTestModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNTestModel.h; sourceTree = "<group>"; };
 		0011BBB62410AC6F003AE819 /* MLNTestModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNTestModel.m; sourceTree = "<group>"; };
@@ -166,14 +178,22 @@
 		00268A4024B7011500D8C617 /* EYLogViewer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EYLogViewer.h; sourceTree = "<group>"; };
 		00574F92246A8B3200927744 /* MLNDataBindArrayViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNDataBindArrayViewController.h; sourceTree = "<group>"; };
 		00574F93246A8B3200927744 /* MLNDataBindArrayViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNDataBindArrayViewController.m; sourceTree = "<group>"; };
+		006E8FDD2501E60300DB3368 /* ArgoKuaViewModelUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ArgoKuaViewModelUtils.h; sourceTree = "<group>"; };
+		006E8FDE2501E60300DB3368 /* ArgoKuaViewModelUtils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ArgoKuaViewModelUtils.m; sourceTree = "<group>"; };
 		007F89E5246C0D8400FF50F1 /* MLNBindTestCaseModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNBindTestCaseModel.h; sourceTree = "<group>"; };
 		007F89E6246C0D8400FF50F1 /* MLNBindTestCaseModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNBindTestCaseModel.m; sourceTree = "<group>"; };
+		007FC90D250630B1000A8E92 /* HomePageArgoUI.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = HomePageArgoUI.bundle; sourceTree = "<group>"; };
+		007FF99825072DCD000A8E92 /* MLNUIMyErrorHandler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNUIMyErrorHandler.h; sourceTree = "<group>"; };
+		007FF99925072DCD000A8E92 /* MLNUIMyErrorHandler.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNUIMyErrorHandler.m; sourceTree = "<group>"; };
+		008CA3C024F3D43400C4F76F /* KuaDemoMUI2.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = KuaDemoMUI2.bundle; sourceTree = "<group>"; };
 		009DD8D424114B9600452458 /* MLNArrayBindingTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNArrayBindingTests.m; sourceTree = "<group>"; };
 		00A0C997243C180500F0D003 /* MLNPerformanceTestController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNPerformanceTestController.h; sourceTree = "<group>"; };
 		00A0C998243C180500F0D003 /* MLNPerformanceTestController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNPerformanceTestController.m; sourceTree = "<group>"; };
 		00A0C99E243C3C0400F0D003 /* LuaNativeUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = LuaNativeUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		00A0C9A0243C3C0500F0D003 /* LuaNativeUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LuaNativeUITests.m; sourceTree = "<group>"; };
 		00A0C9A2243C3C0500F0D003 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		00A312DE24EFB4A80043A164 /* MLNUITestBridgeModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNUITestBridgeModel.h; sourceTree = "<group>"; };
+		00A312DF24EFB4A80043A164 /* MLNUITestBridgeModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNUITestBridgeModel.m; sourceTree = "<group>"; };
 		00A45F7424850C35001A07D9 /* MLNUIBridge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNUIBridge.h; sourceTree = "<group>"; };
 		00A45F7524850C35001A07D9 /* MLNUIBridge.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNUIBridge.m; sourceTree = "<group>"; };
 		00A9991A247EA73D00307914 /* MLNUIMyImageHandler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNUIMyImageHandler.h; sourceTree = "<group>"; };
@@ -210,13 +230,6 @@
 		00E6526D2420BCCE00A878B8 /* MLNBindTableViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNBindTableViewController.m; sourceTree = "<group>"; };
 		00E911CA24E2B8EC006614C4 /* MLNKuaController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNKuaController.h; sourceTree = "<group>"; };
 		00E911CB24E2B8EC006614C4 /* MLNKuaController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNKuaController.m; sourceTree = "<group>"; };
-		00E911CF24E2BCE4006614C4 /* UserDataListSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserDataListSource.h; sourceTree = "<group>"; };
-		00E911D024E2BCE4006614C4 /* UserData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserData.h; sourceTree = "<group>"; };
-		00E911D124E2BCE4006614C4 /* UserDataListSourceReply.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserDataListSourceReply.m; sourceTree = "<group>"; };
-		00E911D224E2BCE4006614C4 /* UserDataListSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserDataListSource.m; sourceTree = "<group>"; };
-		00E911D324E2BCE4006614C4 /* UserDataListSourceReply.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserDataListSourceReply.h; sourceTree = "<group>"; };
-		00E911D424E2BCE4006614C4 /* UserData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserData.m; sourceTree = "<group>"; };
-		00E911D824E2BCEB006614C4 /* KuaDemoMUI.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = KuaDemoMUI.bundle; sourceTree = "<group>"; };
 		00E9130924E51837006614C4 /* ViewPagerDemoMUI.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = ViewPagerDemoMUI.bundle; sourceTree = "<group>"; };
 		00E9130C24E51837006614C4 /* HomeDataPageModels.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HomeDataPageModels.h; sourceTree = "<group>"; };
 		00E9130D24E51837006614C4 /* HomeDataPageModelsPage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HomeDataPageModelsPage.h; sourceTree = "<group>"; };
@@ -236,7 +249,6 @@
 		00FDB74D24591C3300D4A211 /* MLNBlockKVOTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNBlockKVOTests.m; sourceTree = "<group>"; };
 		0BFEA11F75FC7C356E75DFD6 /* Pods-MLN_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MLN_Example.release.xcconfig"; path = "Target Support Files/Pods-MLN_Example/Pods-MLN_Example.release.xcconfig"; sourceTree = "<group>"; };
 		1018AD05C0E113C32A1AD38C /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
-		11F29221569E01F21A903E70 /* libPods-MLN_Tests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-MLN_Tests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		28CCCDF75246FDF349FE71B3 /* libPods-LuaNative.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-LuaNative.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3012BB0E2326822F00FA2BB2 /* MLNNavigatorHandler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNNavigatorHandler.h; sourceTree = "<group>"; };
 		3012BB0F2326822F00FA2BB2 /* MLNNavigatorHandler.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNNavigatorHandler.m; sourceTree = "<group>"; };
@@ -276,8 +288,6 @@
 		6003F5BB195388D20070C39A /* Tests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Tests.m; sourceTree = "<group>"; };
 		606FC2411953D9B200FFA9A0 /* Tests-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Tests-Prefix.pch"; sourceTree = "<group>"; };
 		60CB3A6486D530BC91B53B3C /* Pods-LuaNative.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LuaNative.release.xcconfig"; path = "Target Support Files/Pods-LuaNative/Pods-LuaNative.release.xcconfig"; sourceTree = "<group>"; };
-		614D6372A3D812E53BAA054F /* Pods-MLN_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MLN_Tests.release.xcconfig"; path = "Target Support Files/Pods-MLN_Tests/Pods-MLN_Tests.release.xcconfig"; sourceTree = "<group>"; };
-		6ABC029A38FCC0A39C207FA6 /* Pods-MLN_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MLN_Tests.debug.xcconfig"; path = "Target Support Files/Pods-MLN_Tests/Pods-MLN_Tests.debug.xcconfig"; sourceTree = "<group>"; };
 		6ED891C3203090F5CB5310E5 /* Pods-LuaNative.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LuaNative.debug.xcconfig"; path = "Target Support Files/Pods-LuaNative/Pods-LuaNative.debug.xcconfig"; sourceTree = "<group>"; };
 		A4C3142424C7DE2700444CA4 /* MLNGlobalTimeTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLNGlobalTimeTest.h; sourceTree = "<group>"; };
 		A4C3142524C7DE2700444CA4 /* MLNGlobalTimeTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLNGlobalTimeTest.m; sourceTree = "<group>"; };
@@ -378,6 +388,17 @@
 		FA383458239A64AF000F900E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		FA383499239B5A4C000F900E /* MLNDemoListViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNDemoListViewController.h; sourceTree = "<group>"; };
 		FA38349A239B5A4C000F900E /* MLNDemoListViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNDemoListViewController.m; sourceTree = "<group>"; };
+		FA4103D825090345007ADC8F /* DemoLiyifengTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DemoLiyifengTableViewCell.m; sourceTree = "<group>"; };
+		FA4103D925090346007ADC8F /* DemoLiyifengViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DemoLiyifengViewController.h; sourceTree = "<group>"; };
+		FA4103DA25090346007ADC8F /* DemoLiyifengViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DemoLiyifengViewController.m; sourceTree = "<group>"; };
+		FA4103DB25090346007ADC8F /* DemoTableViewHeaderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DemoTableViewHeaderView.h; sourceTree = "<group>"; };
+		FA4103DC25090346007ADC8F /* DemoTableViewHeaderView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DemoTableViewHeaderView.m; sourceTree = "<group>"; };
+		FA4103DD25090346007ADC8F /* DemoLiyifengTableViewHeaderCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DemoLiyifengTableViewHeaderCell.m; sourceTree = "<group>"; };
+		FA4103DE25090346007ADC8F /* data.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = data.plist; sourceTree = "<group>"; };
+		FA4103DF25090346007ADC8F /* DemoLiyifengTableViewHeaderCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DemoLiyifengTableViewHeaderCell.h; sourceTree = "<group>"; };
+		FA4103E025090346007ADC8F /* DemoLiyifengModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DemoLiyifengModel.m; sourceTree = "<group>"; };
+		FA4103E125090347007ADC8F /* DemoLiyifengModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DemoLiyifengModel.h; sourceTree = "<group>"; };
+		FA4103E225090347007ADC8F /* DemoLiyifengTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DemoLiyifengTableViewCell.h; sourceTree = "<group>"; };
 		FA4EE2F82379067000449250 /* MLNGalleryMinePageCellBaseModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNGalleryMinePageCellBaseModel.h; sourceTree = "<group>"; };
 		FA4EE2F92379067000449250 /* MLNGalleryMinePageCellBaseModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNGalleryMinePageCellBaseModel.m; sourceTree = "<group>"; };
 		FA4EE2FB237907B000449250 /* MLNGalleryMinePageCellHomeModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNGalleryMinePageCellHomeModel.h; sourceTree = "<group>"; };
@@ -401,6 +422,7 @@
 		FA906F9F24EBC8D500F8DAE2 /* MLNUICustomHotReloadViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNUICustomHotReloadViewController.m; sourceTree = "<group>"; };
 		FA906FA224EBCAB700F8DAE2 /* MLNUITestModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNUITestModel.h; sourceTree = "<group>"; };
 		FA906FA324EBCAB700F8DAE2 /* MLNUITestModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNUITestModel.m; sourceTree = "<group>"; };
+		FAE72F1525106DA00092E87D /* ArgoBindingTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArgoBindingTest.m; sourceTree = "<group>"; };
 		FAE9C59223A250CD002C830D /* gallery.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = gallery.bundle; sourceTree = "<group>"; };
 		FAE9C59423A2529C002C830D /* inner_demo.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = inner_demo.bundle; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -432,7 +454,6 @@
 				6003F5B0195388D20070C39A /* XCTest.framework in Frameworks */,
 				6003F5B2195388D20070C39A /* UIKit.framework in Frameworks */,
 				6003F5B1195388D20070C39A /* Foundation.framework in Frameworks */,
-				E3A64ADCB0E407AD5503E94B /* libPods-MLN_Tests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -510,6 +531,7 @@
 		00E652502417693600A878B8 /* DataBind */ = {
 			isa = PBXGroup;
 			children = (
+				FAE72F1525106DA00092E87D /* ArgoBindingTest.m */,
 				00D5986124B8275F00EA1660 /* ShopStore */,
 				00A9B361247F8E7600307914 /* TestTable */,
 				00C1E94624777286000DB89A /* TestCase */,
@@ -525,6 +547,8 @@
 				007F89E6246C0D8400FF50F1 /* MLNBindTestCaseModel.m */,
 				00A45F7424850C35001A07D9 /* MLNUIBridge.h */,
 				00A45F7524850C35001A07D9 /* MLNUIBridge.m */,
+				00A312DE24EFB4A80043A164 /* MLNUITestBridgeModel.h */,
+				00A312DF24EFB4A80043A164 /* MLNUITestBridgeModel.m */,
 			);
 			path = DataBind;
 			sourceTree = "<group>";
@@ -543,12 +567,10 @@
 		00E911CE24E2BCE4006614C4 /* ViewModel */ = {
 			isa = PBXGroup;
 			children = (
-				00E911D024E2BCE4006614C4 /* UserData.h */,
-				00E911D424E2BCE4006614C4 /* UserData.m */,
-				00E911CF24E2BCE4006614C4 /* UserDataListSource.h */,
-				00E911D224E2BCE4006614C4 /* UserDataListSource.m */,
-				00E911D324E2BCE4006614C4 /* UserDataListSourceReply.h */,
-				00E911D124E2BCE4006614C4 /* UserDataListSourceReply.m */,
+				000B3BE12505D75C001142E2 /* UserData.h */,
+				000B3BE02505D75C001142E2 /* UserData.m */,
+				006E8FDD2501E60300DB3368 /* ArgoKuaViewModelUtils.h */,
+				006E8FDE2501E60300DB3368 /* ArgoKuaViewModelUtils.m */,
 			);
 			path = ViewModel;
 			sourceTree = "<group>";
@@ -556,6 +578,7 @@
 		00E9130624E517C9006614C4 /* ViewPager */ = {
 			isa = PBXGroup;
 			children = (
+				007FC90D250630B1000A8E92 /* HomePageArgoUI.bundle */,
 				00E9130A24E51837006614C4 /* ViewModel */,
 				00E9130924E51837006614C4 /* ViewPagerDemoMUI.bundle */,
 				00E9132424E51CC3006614C4 /* MLNViewPagerDemo.h */,
@@ -567,7 +590,8 @@
 		00E9130824E5180B006614C4 /* Kua */ = {
 			isa = PBXGroup;
 			children = (
-				00E911D824E2BCEB006614C4 /* KuaDemoMUI.bundle */,
+				000B3BDE2505D753001142E2 /* KuaDemoMUI.bundle */,
+				008CA3C024F3D43400C4F76F /* KuaDemoMUI2.bundle */,
 				00E911CE24E2BCE4006614C4 /* ViewModel */,
 				00E911CA24E2B8EC006614C4 /* MLNKuaController.h */,
 				00E911CB24E2B8EC006614C4 /* MLNKuaController.m */,
@@ -607,8 +631,6 @@
 			children = (
 				F236AA5C6B666135B994F09B /* Pods-MLN_Example.debug.xcconfig */,
 				0BFEA11F75FC7C356E75DFD6 /* Pods-MLN_Example.release.xcconfig */,
-				6ABC029A38FCC0A39C207FA6 /* Pods-MLN_Tests.debug.xcconfig */,
-				614D6372A3D812E53BAA054F /* Pods-MLN_Tests.release.xcconfig */,
 				6ED891C3203090F5CB5310E5 /* Pods-LuaNative.debug.xcconfig */,
 				60CB3A6486D530BC91B53B3C /* Pods-LuaNative.release.xcconfig */,
 			);
@@ -647,7 +669,6 @@
 				6003F591195388D20070C39A /* UIKit.framework */,
 				6003F5AF195388D20070C39A /* XCTest.framework */,
 				28CCCDF75246FDF349FE71B3 /* libPods-LuaNative.a */,
-				11F29221569E01F21A903E70 /* libPods-MLN_Tests.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -673,6 +694,7 @@
 				B2DD3E4E237990E8002AB6AD /* MLNLuaPageViewController.m */,
 				00A0C997243C180500F0D003 /* MLNPerformanceTestController.h */,
 				00A0C998243C180500F0D003 /* MLNPerformanceTestController.m */,
+				FA4103C425090265007ADC8F /* iOSDemo */,
 				00E911C924E2B8B9006614C4 /* ArgoUIDemo */,
 				FAE9C59723A2603F002C830D /* Handler */,
 				FAE9C59623A2600B002C830D /* BridgeTest */,
@@ -992,6 +1014,32 @@
 			path = MLNActionManager;
 			sourceTree = "<group>";
 		};
+		FA4103C425090265007ADC8F /* iOSDemo */ = {
+			isa = PBXGroup;
+			children = (
+				FA4103C5250902D7007ADC8F /* iOSKuaNative */,
+			);
+			path = iOSDemo;
+			sourceTree = "<group>";
+		};
+		FA4103C5250902D7007ADC8F /* iOSKuaNative */ = {
+			isa = PBXGroup;
+			children = (
+				FA4103DE25090346007ADC8F /* data.plist */,
+				FA4103E125090347007ADC8F /* DemoLiyifengModel.h */,
+				FA4103E025090346007ADC8F /* DemoLiyifengModel.m */,
+				FA4103E225090347007ADC8F /* DemoLiyifengTableViewCell.h */,
+				FA4103D825090345007ADC8F /* DemoLiyifengTableViewCell.m */,
+				FA4103DF25090346007ADC8F /* DemoLiyifengTableViewHeaderCell.h */,
+				FA4103DD25090346007ADC8F /* DemoLiyifengTableViewHeaderCell.m */,
+				FA4103D925090346007ADC8F /* DemoLiyifengViewController.h */,
+				FA4103DA25090346007ADC8F /* DemoLiyifengViewController.m */,
+				FA4103DB25090346007ADC8F /* DemoTableViewHeaderView.h */,
+				FA4103DC25090346007ADC8F /* DemoTableViewHeaderView.m */,
+			);
+			path = iOSKuaNative;
+			sourceTree = "<group>";
+		};
 		FA4EE3042379093000449250 /* BottomCell */ = {
 			isa = PBXGroup;
 			children = (
@@ -1064,6 +1112,8 @@
 				3012BB0F2326822F00FA2BB2 /* MLNNavigatorHandler.m */,
 				00A9991A247EA73D00307914 /* MLNUIMyImageHandler.h */,
 				00A9991B247EA73D00307914 /* MLNUIMyImageHandler.m */,
+				007FF99825072DCD000A8E92 /* MLNUIMyErrorHandler.h */,
+				007FF99925072DCD000A8E92 /* MLNUIMyErrorHandler.m */,
 			);
 			path = Handler;
 			sourceTree = "<group>";
@@ -1112,11 +1162,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 6003F5C2195388D20070C39A /* Build configuration list for PBXNativeTarget "MLN_Tests" */;
 			buildPhases = (
-				CD649900956A4B50787A9D5F /* [CP] Check Pods Manifest.lock */,
 				6003F5AA195388D20070C39A /* Sources */,
 				6003F5AB195388D20070C39A /* Frameworks */,
 				6003F5AC195388D20070C39A /* Resources */,
-				83357F04779090552C6A0CCF /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -1145,8 +1193,8 @@
 						TestTargetID = 6003F589195388D20070C39A;
 					};
 					6003F589195388D20070C39A = {
-						DevelopmentTeam = 36WT396TPZ;
-						ProvisioningStyle = Manual;
+						DevelopmentTeam = E5SS7YSZ2F;
+						ProvisioningStyle = Automatic;
 					};
 					6003F5AD195388D20070C39A = {
 						TestTargetID = 6003F589195388D20070C39A;
@@ -1189,14 +1237,17 @@
 				FA383459239A64AF000F900E /* LaunchScreen.storyboard in Resources */,
 				00E9132C24E53E46006614C4 /* KuaCell.xib in Resources */,
 				FAE9C59323A250CD002C830D /* gallery.bundle in Resources */,
+				FA4103E725090347007ADC8F /* data.plist in Resources */,
 				30CB3BFB23684CD400AB90C6 /* MLN.podspec in Resources */,
 				30CB3BF923684B7F00AB90C6 /* MLNDevTool.podspec in Resources */,
 				00E9131524E51837006614C4 /* ViewPagerDemoMUI.bundle in Resources */,
+				000B3BDF2505D753001142E2 /* KuaDemoMUI.bundle in Resources */,
+				008CA3C124F3D43400C4F76F /* KuaDemoMUI2.bundle in Resources */,
 				FA383456239A6357000F900E /* Main.storyboard in Resources */,
 				00D5986B24B8732F00EA1660 /* PerformanceDemoMUI.bundle in Resources */,
-				00E911D924E2BCEC006614C4 /* KuaDemoMUI.bundle in Resources */,
 				6003F5A9195388D20070C39A /* Images.xcassets in Resources */,
 				6003F598195388D20070C39A /* InfoPlist.strings in Resources */,
+				007FC90E250630B1000A8E92 /* HomePageArgoUI.bundle in Resources */,
 				FAE9C59523A2529C002C830D /* inner_demo.bundle in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1220,7 +1271,7 @@
 			);
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-LuaNative/Pods-LuaNative-resources.sh",
-				"${PODS_ROOT}/../../MLN/Resource/ArgoUI.bundle",
+				"${PODS_ROOT}/../../MLN/Resource/ArgoUISystem.bundle",
 				"${PODS_ROOT}/MJRefresh/MJRefresh/MJRefresh.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/MLNDevTool/MLNDevTool_Util.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/MLNDevTool/MLNDevTool_UI.bundle",
@@ -1229,7 +1280,7 @@
 			);
 			name = "[CP] Copy Pods Resources";
 			outputPaths = (
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ArgoUI.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ArgoUISystem.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MJRefresh.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MLNDevTool_Util.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MLNDevTool_UI.bundle",
@@ -1263,46 +1314,6 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		83357F04779090552C6A0CCF /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-MLN_Tests/Pods-MLN_Tests-resources.sh",
-				"${PODS_ROOT}/../../MLN/Resource/ArgoUI.bundle",
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ArgoUI.bundle",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-MLN_Tests/Pods-MLN_Tests-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		CD649900956A4B50787A9D5F /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-MLN_Tests-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -1318,7 +1329,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				00E911D524E2BCE4006614C4 /* UserDataListSourceReply.m in Sources */,
 				B27F65D92377AAC400F2D341 /* MLNHomeTableViewCell.m in Sources */,
 				00268A4124B7011500D8C617 /* EYLogViewer.m in Sources */,
 				0026755324B3514900D8C617 /* MLNUIDB.m in Sources */,
@@ -1327,7 +1337,6 @@
 				B27F65C72377AAAE00F2D341 /* MLNGalleryMessageDescCellModel.m in Sources */,
 				B2DD3E62237990E9002AB6AD /* MLNActionManager.m in Sources */,
 				30E24E9422F3D74A00A0E78C /* MLNGlobalFuncTest.m in Sources */,
-				00E911D624E2BCE4006614C4 /* UserDataListSource.m in Sources */,
 				30E24E9522F3D74A00A0E78C /* MLNStaticTest.m in Sources */,
 				FA4EE3032379086F00449250 /* MLNGalleryMinePageCellCollectModel.m in Sources */,
 				00574F94246A8B3200927744 /* MLNDataBindArrayViewController.m in Sources */,
@@ -1342,6 +1351,7 @@
 				00E9132624E51CC3006614C4 /* MLNViewPagerDemo.m in Sources */,
 				6003F59E195388D20070C39A /* MLNAppDelegate.m in Sources */,
 				00E9131724E51837006614C4 /* HomeDataPageModels.m in Sources */,
+				FA4103E625090347007ADC8F /* DemoLiyifengTableViewHeaderCell.m in Sources */,
 				00A9991C247EA73D00307914 /* MLNUIMyImageHandler.m in Sources */,
 				B27F65DD2377AB0700F2D341 /* MLNGalleryNavigationBar.m in Sources */,
 				B29500F72372D5B400F48F09 /* MLNSimpleViewPagerCell.m in Sources */,
@@ -1354,6 +1364,7 @@
 				FA4EE313237917E500449250 /* MLNGalleryMinePageCellCollectCell.m in Sources */,
 				FA4EE30D237909AB00449250 /* MLNGalleryMineBottomPageDynamicCell.m in Sources */,
 				00E6526E2420BCCE00A878B8 /* MLNBindTableViewController.m in Sources */,
+				FA4103E425090347007ADC8F /* DemoLiyifengViewController.m in Sources */,
 				00C1E94C2477797E000DB89A /* MLNDBTestModel.m in Sources */,
 				B29500D62372627000F48F09 /* MLNNativeTabSegmentView.m in Sources */,
 				B29500EA2372A3A400F48F09 /* MLNSimpleViewPager.m in Sources */,
@@ -1371,19 +1382,22 @@
 				B27F65C62377AAAE00F2D341 /* MLNGalleryMessageToolCellModel.m in Sources */,
 				00E6525624176A0F00A878B8 /* MLNDataBindModel.m in Sources */,
 				6003F5A7195388D20070C39A /* MLNLuaGalleryViewController.m in Sources */,
+				000B3BE22505D75C001142E2 /* UserData.m in Sources */,
 				3012BB102326822F00FA2BB2 /* MLNNavigatorHandler.m in Sources */,
 				B2DD3E5E237990E9002AB6AD /* MLNPackage.m in Sources */,
+				FAE72F1625106DA00092E87D /* ArgoBindingTest.m in Sources */,
 				00A9B367247F914D00307914 /* MDFashionItem.m in Sources */,
 				B27F65B02377AA9700F2D341 /* MLNDiscoverAblbumDeatilHeaderView.m in Sources */,
 				00E9132124E519B3006614C4 /* CellModel.m in Sources */,
 				B29500CA23725EB800F48F09 /* UIImage+MLNResize.m in Sources */,
 				B27F658C2377AA6C00F2D341 /* MLNGalleryMineBottomPage.m in Sources */,
+				FA4103E525090347007ADC8F /* DemoTableViewHeaderView.m in Sources */,
 				6003F59A195388D20070C39A /* main.m in Sources */,
-				00E911D724E2BCE4006614C4 /* UserData.m in Sources */,
 				00A45F7624850C35001A07D9 /* MLNUIBridge.m in Sources */,
 				00E911CC24E2B8EC006614C4 /* MLNKuaController.m in Sources */,
 				B29500B72371A3ED00F48F09 /* MLNGalleryMainViewController.m in Sources */,
 				FA906FA024EBC8D500F8DAE2 /* MLNUICustomHotReloadViewController.m in Sources */,
+				FA4103E825090347007ADC8F /* DemoLiyifengModel.m in Sources */,
 				00E6526B2420AD1800A878B8 /* MLNBindModelViewController.m in Sources */,
 				B27F65D62377AAC400F2D341 /* MLNHomeDataHandler.m in Sources */,
 				00D5985E24B825BF00EA1660 /* MLNBindTestShopStoreController.m in Sources */,
@@ -1396,8 +1410,11 @@
 				B27F658F2377AA6C00F2D341 /* MLNGalleryMineInfoViewModel.m in Sources */,
 				B27F65CD2377AAAE00F2D341 /* MLNGalleryMessageDetailViewController.m in Sources */,
 				B2D0ABB52370136000B1D349 /* MLNGalleryViewController.m in Sources */,
+				FA4103E325090347007ADC8F /* DemoLiyifengTableViewCell.m in Sources */,
+				006E8FDF2501E60300DB3368 /* ArgoKuaViewModelUtils.m in Sources */,
 				B27F65D72377AAC400F2D341 /* MLNGalleryHomeViewController.m in Sources */,
 				00E9132324E519B3006614C4 /* HomeData.m in Sources */,
+				007FF99A25072DCD000A8E92 /* MLNUIMyErrorHandler.m in Sources */,
 				FA38349B239B5A4C000F900E /* MLNDemoListViewController.m in Sources */,
 				FA4EE2FA2379067000449250 /* MLNGalleryMinePageCellBaseModel.m in Sources */,
 				B27F65AF2377AA9700F2D341 /* MLNNativeWaterfallLayout.m in Sources */,
@@ -1412,6 +1429,7 @@
 				FA4EE310237909BC00449250 /* MLNGalleryMineBottomPageCollectCell.m in Sources */,
 				B27F65912377AA6C00F2D341 /* MLNGalleryMineViewController.m in Sources */,
 				B27F65CA2377AAAE00F2D341 /* MLNGalleryMessageBaseCell.m in Sources */,
+				00A312E024EFB4A80043A164 /* MLNUITestBridgeModel.m in Sources */,
 				B2DD3E5F237990E9002AB6AD /* MLNPackageManager.m in Sources */,
 				B27F65E12377AB1600F2D341 /* MLNGalleryPlusViewController.m in Sources */,
 				B27F65A82377AA9700F2D341 /* MLNGalleryDiscoverViewController.m in Sources */,
@@ -1643,8 +1661,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=*]" = "iPhone Developer";
-				CODE_SIGN_STYLE = Manual;
-				DEVELOPMENT_TEAM = 36WT396TPZ;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = E5SS7YSZ2F;
 				ENABLE_BITCODE = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "MLN/MLN-Prefix.pch";
@@ -1697,9 +1715,9 @@
 					"\"UIKit\"",
 					"-v",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.MMILua-Example";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.MMILua-Example2";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "Xcode iOS Wildcard";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 4.0;
 				WRAPPER_EXTENSION = app;
 			};
@@ -1712,8 +1730,8 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Manual;
-				DEVELOPMENT_TEAM = "";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = E5SS7YSZ2F;
 				ENABLE_BITCODE = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "MLN/MLN-Prefix.pch";
@@ -1766,7 +1784,7 @@
 					"\"UIKit\"",
 					"-v",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.MMILua-Example3";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.MMILua-Example2";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 4.0;
@@ -1776,7 +1794,6 @@
 		};
 		6003F5C3195388D20070C39A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 6ABC029A38FCC0A39C207FA6 /* Pods-MLN_Tests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				FRAMEWORK_SEARCH_PATHS = (
@@ -1801,7 +1818,6 @@
 		};
 		6003F5C4195388D20070C39A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 614D6372A3D812E53BAA054F /* Pods-MLN_Tests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				FRAMEWORK_SEARCH_PATHS = (
