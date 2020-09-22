@@ -273,7 +273,7 @@ NSString *error_tt = [NSString stringWithFormat:FORMAT, ##__VA_ARGS__];\
 MLNUILuaCallErrorHandler(LUA_CORE, FORMAT, ##__VA_ARGS__)
 
 
-#define Argo_Debug_Performance_Enable 1
+#define Argo_Debug_Performance_Enable 0
 
 #if DEBUG && Argo_Debug_Performance_Enable
 #import "MLNUIPerformanceHeader.h"

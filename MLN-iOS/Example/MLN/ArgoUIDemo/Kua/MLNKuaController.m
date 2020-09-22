@@ -37,7 +37,6 @@
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    NSLog(@"");
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -45,7 +44,7 @@
     if (self.startTime > 0) {
         CFAbsoluteTime t1 = (self.didLoadTime - self.startTime) * 1000;
         CFAbsoluteTime t2 = (CFAbsoluteTimeGetCurrent() - self.didLoadTime) * 1000;
-        NSLog(@">>>>>> lua didLoad %.2f ms, didAppear %.2f ms", t1, t2);
+        PLOG(@">>>>>> lua didLoad %.2f ms, didAppear %.2f ms", t1, t2);
         self.startTime = 0;
     }
 }

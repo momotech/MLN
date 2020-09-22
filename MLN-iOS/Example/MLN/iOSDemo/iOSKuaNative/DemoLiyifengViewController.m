@@ -23,6 +23,7 @@
 //#import "DemoFirstViewController.h"
 
 #import "DemoLiyifengModel.h"
+#import "MLNUIHeader.h"
 
 
 NSString *CellInfo = @"CellInformation";
@@ -55,7 +56,7 @@ NSString *CellHeader = @"CellHeader";
     if (self.startTime > 0) {
         CFAbsoluteTime t1 = (self.didLoadTime - self.startTime) * 1000;
         CFAbsoluteTime t2 = (CFAbsoluteTimeGetCurrent() - self.didLoadTime) * 1000;
-        NSLog(@">>>>>> native didLoad %.2f ms, didAppear %.2f ms", t1, t2);
+        PLOG(@">>>>>> native didLoad %.2f ms, didAppear %.2f ms", t1, t2);
         self.startTime = 0;
     }
 }
