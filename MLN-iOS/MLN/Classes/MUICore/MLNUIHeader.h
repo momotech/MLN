@@ -352,11 +352,10 @@ fprintf(stderr, "%s %s %s \n",c, f, [[NSString stringWithFormat:(s), ##__VA_ARGS
 
 #if DEBUG
 #define Argo_ErrorLog(format, ... ) \
-    char *r = getenv("Argo_ErrorLog_Disable"); \
-    if (r == NULL || 0 == strcmp(r, "1")) { \
-        return; \
-    } \
-    NSLog(@"%s %@", __func__, [NSString stringWithFormat:format, ##__VA_ARGS__]);
+    char *para_get_env = getenv("Argo_ErrorLog_Disable"); \
+    if (para_get_env == NULL || (para_get_env != NULL && 0 != strcmp(para_get_env , "1"))) { \
+        NSLog(@"%s %@", __func__, [NSString stringWithFormat:format, ##__VA_ARGS__]);\
+    }
 #else
 #define Argo_ErrorLog(format, ... )
 #endif
