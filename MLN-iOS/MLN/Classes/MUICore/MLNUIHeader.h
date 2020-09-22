@@ -348,4 +348,15 @@ fprintf(stderr, "%s %s %s \n",c, f, [[NSString stringWithFormat:(s), ##__VA_ARGS
 #define PLOG( s, ... )
 #endif
 
+#if DEBUG
+#define Argo_ErrorLog(format, ... ) \
+    char *r = getenv("Argo_ErrorLog_Disable"); \
+    if (r == NULL || *r == '1') { \
+        return; \
+    } \
+    NSLog(@"%s %@", __func__, [NSString stringWithFormat:format, ##__VA_ARGS__]);
+#else
+#define Argo_ErrorLog(format, ... )
+#endif
+
 #endif /* MLNUIHeader_h */
