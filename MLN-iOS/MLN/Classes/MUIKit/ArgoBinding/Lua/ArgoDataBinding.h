@@ -31,7 +31,6 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)argo_unwatch:(NSInteger)tokenID;
 
 - (NSInteger)argo_bindListView:(UIView *)listView forTag:(NSString *)tag;
-- (UIView *)argo_listViewForTag:(NSString *)tag;
 
 - (void)argo_bindCellWithController:(UIViewController *)viewController KeyPath:(NSString *)keyPath section:(NSUInteger)section row:(NSUInteger)row paths:(NSArray *)paths;
 

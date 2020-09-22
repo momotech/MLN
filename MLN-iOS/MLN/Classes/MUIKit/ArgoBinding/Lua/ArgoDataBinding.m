@@ -55,7 +55,7 @@
 }
 @property (nonatomic, strong) ArgoObservableMap *dataMap;
 @property (nonatomic, strong) NSMutableDictionary *observerMap;
-@property (nonatomic, strong) NSMapTable *listViewMap;
+@property (nonatomic, strong) NSMapTable <NSString *, _ArgoBindListViewInternalModel* > *listViewMap;
 @end
 
 @interface ArgoInternalListViewPairs : NSObject
@@ -249,7 +249,7 @@
     if (!tag) {
         return nil;
     }
-    return [self.listViewMap objectForKey:tag];
+    return [[self.listViewMap objectForKey:tag] listView];
 }
 
 static inline ArgoObserverBase *_getArgoObserver(UIViewController <ArgoViewControllerProtocol> *kitViewController, UIView *listView, NSString *nk, NSString *idKey) {
@@ -366,8 +366,8 @@ static inline ArgoObserverBase *_getArgoObserver(UIViewController <ArgoViewContr
 }
 
 - (NSString *)convertedKeyPathWith:(NSString *)key {
-    NSString *fk = [self.listViewMap objectForKey:key];
-    if (fk) {
+    _ArgoBindListViewInternalModel *listModel = [self.listViewMap objectForKey:key];
+    if (listModel) {
         return key;
     }
     NSString *lvKey = [self listViewKeyMatch:key];
