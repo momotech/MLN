@@ -94,7 +94,7 @@
     [MLNUIKitEnvironment setDefaultImageLoader:self.imgLoader2];
     [MLNUIKitEnvironment setDefaultNavigatorHandler:self.navHandler];
     [MLNUIKitEnvironment setDefaultErrorHandler:self.errorHandler];
-#if DEBUG && 0
+#if DEBUG && Argo_Debug_Performance_Enable
     [MLNUIKitEnvironment setPerformanceMonitor: [MLNUILoadTimeStatistics sharedStatistics]];
     MLNUIKitPerformanceMonitorForDebug = [MLNUILoadTimeStatistics sharedStatistics];
 #endif
