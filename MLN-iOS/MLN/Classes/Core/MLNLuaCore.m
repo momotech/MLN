@@ -390,7 +390,9 @@ static int mln_errorFunc_traceback (lua_State *L) {
             lua_pop(L, 1);  /* remove previous result */
             /* try global variable (and create one if it does not exist) */
             if (luaL_findtable(L, LUA_GLOBALSINDEX, libName, size) != NULL)
-                luaL_error(L, "name conflict for module " LUA_QS, libName);
+            {
+                mln_lua_error(L, @"name conflict for module " LUA_QS, libName);
+            }
             lua_pushvalue(L, -1);
             lua_setfield(L, -3, libName);  /* _LOADED[libname] = new table */
         }
