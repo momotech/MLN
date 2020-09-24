@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
     s.name             = 'MLN'
-    s.version          = '1.0.0.1.fix7'
+    s.version          = '1.0.0.1.fix8'
     s.summary          = 'A lib of Momo Lua Native.'
     
     # This description is used to generate tags and improve search results.
