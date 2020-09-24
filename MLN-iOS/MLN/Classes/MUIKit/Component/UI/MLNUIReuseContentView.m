@@ -41,9 +41,6 @@ static inline void MLNUILayoutNodeClearHeight(UIView *view) {
 }
 
 - (CGFloat)calculHeightWithWidth:(CGFloat)width maxHeight:(CGFloat)maxHeight {
-//    MLNUILayoutNodeClearHeight(self);
-//    CGSize size = [self.mlnui_layoutNode calculateLayoutWithSize:CGSizeMake(width, maxHeight)];
-//    return size.height;
     return [self calculHeightWithWidth:width maxHeight:maxHeight applySize:NO];
 }
 
@@ -111,15 +108,15 @@ static inline void MLNUILayoutNodeClearHeight(UIView *view) {
     return NO;
 }
 
-- (void)mlnui_layoutCompleted {
-    [super mlnui_layoutCompleted];
-    if (CGRectEqualToRect(self.oldFrame, self.mlnuiLayoutFrame) && !CGRectEqualToRect(self.oldFrame, CGRectZero)) {
-        return;
+// 当 cell 上含有异步内容 (如：加载网络图片)，当异步内容加载完成后，需要重新调整 cell 大小
+- (void)mlnui_layoutDidChange {
+    [super mlnui_layoutDidChange];
+    if (!CGRectEqualToRect(self.oldFrame, CGRectZero)) {
+        if (self.didChangeLayout) {
+            self.didChangeLayout(self.mlnuiLayoutFrame.size);
+        }
     }
     self.oldFrame = self.mlnuiLayoutFrame;
-    if (self.didChangeLayout) {
-        self.didChangeLayout();
-    }
 }
 
 #pragma mark - Override Method For Lua
@@ -152,6 +149,25 @@ static inline void MLNUILayoutNodeClearHeight(UIView *view) {
     MLNUIKitLuaAssert(luaui_marginBottom == 0, @"The contentView should not called marginBottom");
 }
 
+@end
 
+@implementation MLNUIReuseAutoSizeContentViewNode
+
+// 将 width 和 height 设为 auto, 从而计算自适应大小
+- (CGSize)applyLayout {
+    self.width = MLNUIValueAuto;
+    self.height = MLNUIValueAuto;
+    return [self applyLayoutWithSize:CGSizeMake(MLNUIUndefined, MLNUIUndefined)];
+}
+
+@end
+
+@implementation MLNUIReuseAutoSizeContentView
+
+#pragma mark - Override
+
+- (Class)mlnui_bindedLayoutNodeClass {
+    return [MLNUIReuseAutoSizeContentViewNode class];
+}
 
 @end

@@ -42,9 +42,9 @@
     [self.luaContentView luaui_addSubview:view];
 }
 
-- (void)reloadCellIfNeeded {
-    if ([self.delegate respondsToSelector:@selector(mlnuiCollectionViewCellShouldReload:)]) {
-        [self.delegate mlnuiCollectionViewCellShouldReload:self];
+- (void)reloadCellIfNeededWithSize:(CGSize)size {
+    if ([self.delegate respondsToSelector:@selector(mlnuiCollectionViewCellShouldReload:size:)]) {
+        [self.delegate mlnuiCollectionViewCellShouldReload:self size:size];
     }
 }
 
@@ -113,9 +113,11 @@
 - (MLNUIReuseContentView *)luaContentView
 {
     if (!_luaContentView) {
-        _luaContentView = [[MLNUIReuseContentView alloc] initWithFrame:CGRectZero cellView:self];
+        _luaContentView = [[self.reuseContentViewClass alloc] initWithFrame:CGRectZero cellView:self];
         __weak typeof(self) weakSelf = self;
-        _luaContentView.didChangeLayout = ^{ [weakSelf reloadCellIfNeeded]; };
+        _luaContentView.didChangeLayout = ^(CGSize size) {
+            [weakSelf reloadCellIfNeededWithSize:size];
+        };
         [self.contentView addSubview:_luaContentView];
     }
     return _luaContentView;
@@ -124,6 +126,20 @@
 - (MLNUILuaCore *)mlnui_luaCore
 {
     return self.luaContentView.luaTable.luaCore;
+}
+
+- (Class)reuseContentViewClass {
+    return [MLNUIReuseContentView class];
+}
+
+@end
+
+@implementation MLNUICollectionViewAutoSizeCell
+
+#pragma mark - Override
+
+- (Class)reuseContentViewClass {
+    return [MLNUIReuseAutoSizeContentView class];
 }
 
 @end

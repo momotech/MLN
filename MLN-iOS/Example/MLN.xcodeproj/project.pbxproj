@@ -1193,8 +1193,8 @@
 						TestTargetID = 6003F589195388D20070C39A;
 					};
 					6003F589195388D20070C39A = {
-						DevelopmentTeam = E5SS7YSZ2F;
-						ProvisioningStyle = Automatic;
+						DevelopmentTeam = 36WT396TPZ;
+						ProvisioningStyle = Manual;
 					};
 					6003F5AD195388D20070C39A = {
 						TestTargetID = 6003F589195388D20070C39A;
@@ -1661,8 +1661,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=*]" = "iPhone Developer";
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = E5SS7YSZ2F;
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_TEAM = 36WT396TPZ;
 				ENABLE_BITCODE = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "MLN/MLN-Prefix.pch";
@@ -1715,9 +1715,9 @@
 					"\"UIKit\"",
 					"-v",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.MMILua-Example2";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.MMILua-Example";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PROVISIONING_PROFILE_SPECIFIER = "Xcode iOS Wildcard";
 				SWIFT_VERSION = 4.0;
 				WRAPPER_EXTENSION = app;
 			};

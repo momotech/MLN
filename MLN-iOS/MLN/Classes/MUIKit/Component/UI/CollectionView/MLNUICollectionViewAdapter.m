@@ -58,13 +58,17 @@ static NSValue *kSizeValueZero = nil;
     
     NSMutableDictionary* classDict = [self collectionViewRegisterCellClassDict:collectionView];
     if (reuseId && reuseId.length > 0 && ![classDict valueForKey:reuseId]) {
-        [collectionView registerClass:[MLNUICollectionViewCell class] forCellWithReuseIdentifier:reuseId];
+        [collectionView registerClass:[self cellClass] forCellWithReuseIdentifier:reuseId];
         //[self.cellReuseIds addObject:reuseId];
     }
 }
 
 - (NSMutableDictionary *)collectionViewRegisterCellClassDict:(UICollectionView*)collectionView {
     return [collectionView valueForKey:@"_cellClassDict"];
+}
+
+- (Class)cellClass {
+    return [MLNUICollectionViewCell class];
 }
 
 #pragma mark - MLNUICollectionViewAdapterProtocol
@@ -252,7 +256,6 @@ static NSValue *kSizeValueZero = nil;
     [reuseCallback addIntArgument:(int)indexPath.section+1];
     [reuseCallback addIntArgument:(int)indexPath.item+1];
     [reuseCallback callIfCan];
-    [cell mlnui_requestLayoutIfNeed];
     return cell;
 }
 

@@ -18,8 +18,9 @@
 @property (nonatomic, strong, readonly) NSMutableDictionary<NSString *, MLNUIBlock *> *initedCellCallbacks;
 @property (nonatomic, strong, readonly) NSMutableDictionary<NSString *, MLNUIBlock *> *reuseCellCallbacks;
 @property (nonatomic, strong, readonly) MLNUIAdapterCachesManager *cachesManager;
+@property (nonatomic, strong, readonly) Class cellClass;
 
-- (void)registerCellClassIfNeed:(UICollectionView *)collectionView  reuseId:(NSString *)reuseId;
+- (void)registerCellClassIfNeed:(UICollectionView *)collectionView reuseId:(NSString *)reuseId;
 - (MLNUIBlock *)initedCellCallbackByReuseId:(NSString *)reuseId;
 - (MLNUIBlock *)fillCellDataCallbackByReuseId:(NSString *)reuseId;
 

@@ -31,7 +31,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-typedef void(^MLNUIReuseContentViewDidChangeLayout)(void);
+typedef void(^MLNUIReuseContentViewDidChangeLayout)(CGSize size);
 
 @interface MLNUIReuseContentView : MLNUIVStack
 
@@ -49,6 +49,14 @@ typedef void(^MLNUIReuseContentViewDidChangeLayout)(void);
 - (void)pushToLuaCore:(MLNUILuaCore *)luaCore;
 - (void)setupLayoutNodeIfNeed;
 - (void)updateFrameIfNeed;
+
+@end
+
+@interface MLNUIReuseAutoSizeContentViewNode : MLNUILayoutNode
+
+@end
+
+@interface MLNUIReuseAutoSizeContentView : MLNUIReuseContentView
 
 @end
 
