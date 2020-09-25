@@ -36,16 +36,17 @@
     NSString *reuseId = [self reuseIdentifierAtIndexPath:indexPath];
     [self registerCellClassIfNeed:collectionView reuseId:reuseId];
     
-    MLNUICollectionViewAutoSizeCell *cell = [self layoutCellForIndexPath:indexPath];
+    // 该 cell 仅仅是用来计算布局使用，不会显示到屏幕上
+    MLNUICollectionViewAutoSizeCell *cell = [self layoutCellWithIndexPath:indexPath];
     cell.delegate = self;
-    [cell pushContentViewWithLuaCore:self.mlnui_luaCore];
+    MLNUILuaTable *luaCell = [cell createLuaTableAsCellNameForLuaIfNeed:self.mlnui_luaCore];
     
     MLNUIBlock *initCallback = [self initedCellCallbackByReuseId:reuseId];
-    [initCallback addLuaTableArgument:[cell getLuaTable]];
+    [initCallback addLuaTableArgument:luaCell];
     [initCallback callIfCan];
     
     MLNUIBlock *reuseCallback = [self fillCellDataCallbackByReuseId:reuseId];
-    [reuseCallback addLuaTableArgument:[cell getLuaTable]];
+    [reuseCallback addLuaTableArgument:luaCell];
     [reuseCallback addIntArgument:(int)indexPath.section+1];
     [reuseCallback addIntArgument:(int)indexPath.item+1];
     [reuseCallback callIfCan];
@@ -93,8 +94,8 @@
     return _layoutCellCache;
 }
 
-- (MLNUICollectionViewAutoSizeCell *)layoutCellForIndexPath:(NSIndexPath *)indexPath {
-    MLNUIKitLuaAssert(indexPath, @"Expect a valid indexPath: (null)");
+- (MLNUICollectionViewAutoSizeCell *)layoutCellWithIndexPath:(NSIndexPath *)indexPath {
+    MLNUIKitLuaAssert(indexPath, @"Expect a valid indexPath: (null).");
     if (!indexPath) return nil;
     MLNUICollectionViewAutoSizeCell *cell = self.layoutCellCache[indexPath];
     if (!cell) {

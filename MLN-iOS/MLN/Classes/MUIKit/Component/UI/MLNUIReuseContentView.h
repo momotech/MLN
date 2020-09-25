@@ -14,6 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @required
 - (void)pushContentViewWithLuaCore:(MLNUILuaCore *)luaCore;
+- (MLNUILuaTable *)createLuaTableAsCellNameForLuaIfNeed:(MLNUILuaCore *)luaCore;
 - (void)setupLayoutNodeIfNeed;
 - (void)updateLuaContentViewIfNeed;
 - (MLNUILuaTable *)getLuaTable;
@@ -47,6 +48,7 @@ typedef void(^MLNUIReuseContentViewDidChangeLayout)(CGSize size);
 - (CGFloat)calculHeightWithWidth:(CGFloat)width maxHeight:(CGFloat)maxHeight applySize:(BOOL)applySize;
 
 - (void)pushToLuaCore:(MLNUILuaCore *)luaCore;
+- (MLNUILuaTable *)createLuaTableAsCellNameForLuaIfNeed:(MLNUILuaCore *)luaCore;
 - (void)setupLayoutNodeIfNeed;
 - (void)updateFrameIfNeed;
 

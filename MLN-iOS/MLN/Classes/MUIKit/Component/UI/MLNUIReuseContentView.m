@@ -40,6 +40,8 @@ static inline void MLNUILayoutNodeClearHeight(UIView *view) {
     view.mlnui_layoutNode.height = MLNUIValueAuto; // 若要计算自适应高度，需要清除之前已设置的高度，否则计算出的是固定高度
 }
 
+#pragma mark - Public
+
 - (CGFloat)calculHeightWithWidth:(CGFloat)width maxHeight:(CGFloat)maxHeight {
     return [self calculHeightWithWidth:width maxHeight:maxHeight applySize:NO];
 }
@@ -57,20 +59,21 @@ static inline void MLNUILayoutNodeClearHeight(UIView *view) {
     return size.height;
 }
 
-#pragma mark - Lua Table
-
-- (void)pushToLuaCore:(MLNUILuaCore *)luaCore
-{
-    [self createLuaTableIfNeed:luaCore];
+- (void)pushToLuaCore:(MLNUILuaCore *)luaCore {
+    [self createLuaTableAsCellNameForLuaIfNeed:luaCore];
     [self setupLayoutNodeIfNeed];
     [self updateFrameIfNeed];
 }
 
-- (void)createLuaTableIfNeed:(MLNUILuaCore *)luaCore
-{
+// adapter:initCell(function(cell)
+//     --[[这里的 cell 便是下面创建的 lua table--]]
+// end)
+- (MLNUILuaTable *)createLuaTableAsCellNameForLuaIfNeed:(MLNUILuaCore *)luaCore {
     if (!_luaTable) {
-        [self createLuaTableWithLuaCore:luaCore];
+        _luaTable = [[MLNUILuaTable alloc] initWithMLNUILuaCore:luaCore env:MLNUILuaTableEnvRegister];
+        [_luaTable setObject:self key:@"contentView"];
     }
+    return _luaTable;
 }
 
 - (void)setupLayoutNodeIfNeed {
@@ -78,12 +81,6 @@ static inline void MLNUILayoutNodeClearHeight(UIView *view) {
         [self mlnui_markNeedsLayout];
         [MLNUI_KIT_INSTANCE(self.mlnui_luaCore) addRootnode:self.mlnui_layoutNode];
     }
-}
-
-- (void)createLuaTableWithLuaCore:(MLNUILuaCore *)luaCore
-{
-    _luaTable = [[MLNUILuaTable alloc] initWithMLNUILuaCore:luaCore env:MLNUILuaTableEnvRegister];
-    [_luaTable setObject:self key:@"contentView"];
 }
 
 - (void)updateFrameIfNeed

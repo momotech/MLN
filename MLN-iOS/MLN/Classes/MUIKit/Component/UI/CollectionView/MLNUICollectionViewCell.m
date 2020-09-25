@@ -55,6 +55,10 @@
     [self.luaContentView pushToLuaCore:luaCore];
 }
 
+- (MLNUILuaTable *)createLuaTableAsCellNameForLuaIfNeed:(MLNUILuaCore *)luaCore {
+    return [self.luaContentView createLuaTableAsCellNameForLuaIfNeed:luaCore];
+}
+
 - (void)setupLayoutNodeIfNeed
 {
     [self.luaContentView setupLayoutNodeIfNeed];
