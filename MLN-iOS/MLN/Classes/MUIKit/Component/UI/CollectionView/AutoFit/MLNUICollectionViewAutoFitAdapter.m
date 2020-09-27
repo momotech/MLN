@@ -52,15 +52,19 @@
     [reuseCallback callIfCan];
     
     // update cache
-    CGSize size = [cell calculSizeWithMaxWidth:MLNUIUndefined maxHeight:MLNUIUndefined]; // 计算cell自适应大小
+    CGSize size = [cell caculateCellSizeWithMaxSize:self.cellMaxSize apply:YES];
     [self.cachesManager updateLayoutInfo:[NSValue valueWithCGSize:size] forIndexPath:indexPath];
     return size;
 }
 
 #pragma mark - Override
 
-- (Class)cellClass {
+- (Class)collectionViewCellClass {
     return [MLNUICollectionViewAutoSizeCell class];
+}
+
+- (CGSize)fitSizeForCell:(MLNUICollectionViewCell *)cell {
+    return CGSizeZero; // 自适应场景：cell.luaContentView大小自适应
 }
 
 #pragma mark - MLNUICollectionViewCellDelegate

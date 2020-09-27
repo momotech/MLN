@@ -26,15 +26,19 @@
     return self;
 }
 
-- (void)updateContentViewFrameIfNeed
-{
-    //  reset content view frame if need
-    if (self.isInited && !CGSizeEqualToSize(self.contentView.frame.size, self.frame.size)) {
-        CGRect frame = self.contentView.frame;
-        frame.size = self.frame.size;
-        self.contentView.frame = frame;
-    }
-}
+//- (void)updateContentViewFrameIfNeed
+//{
+//    //  reset content view frame if need
+//    if (self.isInited && !CGSizeEqualToSize(self.contentView.frame.size, self.frame.size)) {
+//        CGRect frame = self.contentView.frame;
+//        frame.size = self.frame.size;
+//        self.contentView.frame = frame;
+//    }
+//}
+
+//- (void)setFrame:(CGRect)frame {
+//    [super setFrame:frame];
+//}
 
 - (void)luaui_addSubview:(UIView *)view
 {
@@ -42,9 +46,9 @@
     [self.luaContentView luaui_addSubview:view];
 }
 
-- (void)reloadCellIfNeeded {
-    if ([self.delegate respondsToSelector:@selector(mlnuiTableViewCellShouldReload:)]) {
-        [self.delegate mlnuiTableViewCellShouldReload:self];
+- (void)reloadCellIfNeededWithSize:(CGSize)size {
+    if ([self.delegate respondsToSelector:@selector(mlnuiTableViewCellShouldReload:size:)]) {
+        [self.delegate mlnuiTableViewCellShouldReload:self size:size];
     }
 }
 
@@ -85,25 +89,24 @@
 }
 
 #pragma mark - MLNUIReuseCellProtocol
-- (void)pushContentViewWithLuaCore:(MLNUILuaCore *)luaCore
-{
-    [self updateContentViewFrameIfNeed];
-    [self.luaContentView pushToLuaCore:luaCore];
-}
+//- (void)pushContentViewWithLuaCore:(MLNUILuaCore *)luaCore
+//{
+//    [self updateContentViewFrameIfNeed];
+//    [self.luaContentView pushToLuaCore:luaCore];
+//}
 
 - (MLNUILuaTable *)createLuaTableAsCellNameForLuaIfNeed:(MLNUILuaCore *)luaCore {
     return [self.luaContentView createLuaTableAsCellNameForLuaIfNeed:luaCore];
 }
 
-- (void)setupLayoutNodeIfNeed
-{
-    [self.luaContentView setupLayoutNodeIfNeed];
+- (void)createLayoutNodeIfNeedWithFitSize:(CGSize)fitSize maxSize:(CGSize)maxSize {
+    [self.luaContentView createLayoutNodeIfNeedWithFitSize:fitSize maxSize:maxSize];
 }
 
-- (void)updateLuaContentViewIfNeed
-{
-    [self.luaContentView updateFrameIfNeed];
-}
+//- (void)updateLuaContentViewIfNeed
+//{
+//    [self.luaContentView updateFrameIfNeed];
+//}
 
 - (MLNUILuaTable *)getLuaTable
 {
@@ -120,18 +123,12 @@
     [self.luaContentView setInited:YES];
 }
 
-- (CGFloat)calculHeightWithWidth:(CGFloat)width maxHeight:(CGFloat)maxHeight
-{
-    return [self.luaContentView calculHeightWithWidth:width maxHeight:maxHeight];
+- (CGSize)caculateCellSizeWithMaxSize:(CGSize)maxSize apply:(BOOL)apply {
+    return [self.luaContentView caculateContentViewSizeWithFitSize:CGSizeMake(maxSize.width, 0) maxSize:maxSize apply:apply];
 }
 
-- (CGSize)calculSizeWithMaxWidth:(CGFloat)maxWidth maxHeight:(CGFloat)maxHeight
-{
-    return [self.luaContentView calculSizeWithMaxWidth:maxWidth maxHeight:maxHeight];
-}
-
-- (CGFloat)calculHeightWithWidth:(CGFloat)width maxHeight:(CGFloat)maxHeight applySize:(BOOL)applySize {
-    return [self.luaContentView calculHeightWithWidth:width maxHeight:maxHeight applySize:applySize];
+- (CGSize)caculateCellSizeWithFitSize:(CGSize)fitSize maxSize:(CGSize)maxSize apply:(BOOL)apply {
+    return [self.luaContentView caculateContentViewSizeWithFitSize:fitSize maxSize:maxSize apply:apply];
 }
 
 - (void)mlnui_requestLayoutIfNeed
@@ -139,11 +136,11 @@
     [self.luaContentView mlnui_requestLayoutIfNeed];
 }
 
-- (void)updateSubviewsFrameIfNeed
-{
-    [self updateContentViewFrameIfNeed];
-    [self.luaContentView updateFrameIfNeed];
-}
+//- (void)updateSubviewsFrameIfNeed
+//{
+//    [self updateContentViewFrameIfNeed];
+//    [self.luaContentView updateFrameIfNeed];
+//}
 
 - (void)updateLastReueseId:(NSString *)lastReuaseId
 {
@@ -159,11 +156,11 @@
 - (MLNUIReuseContentView *)luaContentView
 {
     if (!_luaContentView) {
-        _luaContentView = [[MLNUIReuseContentView alloc] initWithFrame:CGRectZero cellView:self];
-//        __weak typeof(self) weakSelf = self;
-//        _luaContentView.didChangeLayout = ^{
-//            [weakSelf reloadCellIfNeeded]; // 会导致无限reload
-//        };
+        _luaContentView = [[self.reuseContentViewClass alloc] initWithFrame:CGRectZero cellView:self];
+        __weak typeof(self) weakSelf = self;
+        _luaContentView.didChangeLayout = ^(CGSize size) {
+            [weakSelf reloadCellIfNeededWithSize:size];
+        };
         [self.contentView addSubview:_luaContentView];
     }
     return _luaContentView;
@@ -172,6 +169,20 @@
 - (MLNUILuaCore *)mlnui_luaCore
 {
     return self.luaContentView.luaTable.luaCore;
+}
+
+- (Class)reuseContentViewClass {
+    return [MLNUIReuseContentView class];
+}
+
+@end
+
+@implementation MLNUITableViewAutoHeightCell
+
+#pragma mark - Override
+
+- (Class)reuseContentViewClass {
+    return [MLNUIReuseAutoSizeContentView class];
 }
 
 @end

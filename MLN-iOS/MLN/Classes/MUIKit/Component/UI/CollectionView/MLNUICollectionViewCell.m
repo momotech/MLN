@@ -49,25 +49,24 @@
 }
 
 #pragma mark - MLNUIReuseCellProtocol
-- (void)pushContentViewWithLuaCore:(MLNUILuaCore *)luaCore
-{
-    [self updateContentViewFrameIfNeed];
-    [self.luaContentView pushToLuaCore:luaCore];
-}
+//- (void)pushContentViewWithLuaCore:(MLNUILuaCore *)luaCore
+//{
+//    [self updateContentViewFrameIfNeed];
+//    [self.luaContentView pushToLuaCore:luaCore];
+//}
 
 - (MLNUILuaTable *)createLuaTableAsCellNameForLuaIfNeed:(MLNUILuaCore *)luaCore {
     return [self.luaContentView createLuaTableAsCellNameForLuaIfNeed:luaCore];
 }
 
-- (void)setupLayoutNodeIfNeed
-{
-    [self.luaContentView setupLayoutNodeIfNeed];
+- (void)createLayoutNodeIfNeedWithFitSize:(CGSize)fitSize maxSize:(CGSize)maxSize {
+    [self.luaContentView createLayoutNodeIfNeedWithFitSize:fitSize maxSize:maxSize];
 }
 
-- (void)updateLuaContentViewIfNeed
-{
-    [self.luaContentView updateFrameIfNeed];
-}
+//- (void)updateLuaContentViewIfNeed
+//{
+//    [self.luaContentView updateFrameIfNeed];
+//}
 
 - (MLNUILuaTable *)getLuaTable
 {
@@ -84,18 +83,12 @@
     [self.luaContentView setInited:YES];
 }
 
-- (CGFloat)calculHeightWithWidth:(CGFloat)width maxHeight:(CGFloat)maxHeight
-{
-    return [self.luaContentView calculHeightWithWidth:width maxHeight:maxHeight];
+- (CGSize)caculateCellSizeWithMaxSize:(CGSize)maxSize apply:(BOOL)apply {
+    return [self.luaContentView caculateContentViewSizeWithMaxSize:maxSize apply:apply];
 }
 
-- (CGSize)calculSizeWithMaxWidth:(CGFloat)maxWidth maxHeight:(CGFloat)maxHeight
-{
-    return [self.luaContentView calculSizeWithMaxWidth:maxWidth maxHeight:maxHeight];
-}
-
-- (CGFloat)calculHeightWithWidth:(CGFloat)width maxHeight:(CGFloat)maxHeight applySize:(BOOL)applySize {
-    return [self.luaContentView calculHeightWithWidth:width maxHeight:maxHeight applySize:applySize];
+- (CGSize)caculateCellSizeWithFitSize:(CGSize)fitSize maxSize:(CGSize)maxSize apply:(BOOL)apply {
+    return [self.luaContentView caculateContentViewSizeWithFitSize:fitSize maxSize:maxSize apply:apply];
 }
 
 - (void)mlnui_requestLayoutIfNeed

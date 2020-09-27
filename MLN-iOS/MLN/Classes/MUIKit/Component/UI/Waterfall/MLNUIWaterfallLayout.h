@@ -10,4 +10,6 @@
 
 @interface MLNUIWaterfallLayout : UICollectionViewLayout <MLNUIEntityExportProtocol>
 
+@property (nonatomic, assign, readonly) CGSize avaliableSizeForLayoutItem;
+
 @end

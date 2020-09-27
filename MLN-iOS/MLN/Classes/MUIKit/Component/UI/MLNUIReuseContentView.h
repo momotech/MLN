@@ -13,18 +13,25 @@ NS_ASSUME_NONNULL_BEGIN
 @protocol MLNUIReuseCellProtocol <NSObject>
 
 @required
-- (void)pushContentViewWithLuaCore:(MLNUILuaCore *)luaCore;
 - (MLNUILuaTable *)createLuaTableAsCellNameForLuaIfNeed:(MLNUILuaCore *)luaCore;
-- (void)setupLayoutNodeIfNeed;
-- (void)updateLuaContentViewIfNeed;
+- (void)createLayoutNodeIfNeedWithFitSize:(CGSize)fitSize maxSize:(CGSize)maxSize;
+
+//- (void)updateLuaContentViewIfNeed;
 - (MLNUILuaTable *)getLuaTable;
 
 - (BOOL)isInited;
 - (void)initCompleted;
 
-- (CGFloat)calculHeightWithWidth:(CGFloat)width maxHeight:(CGFloat)maxHeight;
-- (CGSize)calculSizeWithMaxWidth:(CGFloat)maxWidth maxHeight:(CGFloat)maxHeight;
-- (CGFloat)calculHeightWithWidth:(CGFloat)width maxHeight:(CGFloat)maxHeight applySize:(BOOL)applySize;
+/// 计算 cell 大小
+/// @param maxSize 最大 size 限制
+/// @param apply 是否将计算结果应用到 view 上，如果是，则会改变 view.frame.
+- (CGSize)caculateCellSizeWithMaxSize:(CGSize)maxSize apply:(BOOL)apply;
+
+/// 计算 cell 大小
+/// @param fitSize 若 fitSize 大于0，则计算结果将会以 fitSize 为准，且不大于 maxSize.
+/// @param maxSize 最大 size 限制
+/// @param apply 是否将计算结果应用到 view 上，如果是，则会改变 view.frame.
+- (CGSize)caculateCellSizeWithFitSize:(CGSize)fitSize maxSize:(CGSize)maxSize apply:(BOOL)apply;
 
 - (UIView *)contentView;
 - (NSString *)lastReueseId;
@@ -43,14 +50,23 @@ typedef void(^MLNUIReuseContentViewDidChangeLayout)(CGSize size);
 
 - (instancetype)initWithFrame:(CGRect)frame cellView:(UIView<MLNUIReuseCellProtocol> *)cell;
 
-- (CGFloat)calculHeightWithWidth:(CGFloat)width maxHeight:(CGFloat)maxHeight;
-- (CGSize)calculSizeWithMaxWidth:(CGFloat)maxWidth maxHeight:(CGFloat)maxHeight;
-- (CGFloat)calculHeightWithWidth:(CGFloat)width maxHeight:(CGFloat)maxHeight applySize:(BOOL)applySize;
+/// 计算 contentView 大小
+/// @param maxSize 最大 size 限制
+/// @param apply 是否将计算结果应用到 view 上，如果是，则会改变 view.frame.
+- (CGSize)caculateContentViewSizeWithMaxSize:(CGSize)maxSize apply:(BOOL)apply;
 
-- (void)pushToLuaCore:(MLNUILuaCore *)luaCore;
+/// 计算 contentView 大小
+/// @param fitSize 若 fitSize 大于0，则计算结果将会以 fitSize 为准，且不大于 maxSize.
+/// @param maxSize 最大 size 限制
+/// @param apply 是否将计算结果应用到 view 上，如果是，则会改变 view.frame.
+- (CGSize)caculateContentViewSizeWithFitSize:(CGSize)fitSize maxSize:(CGSize)maxSize  apply:(BOOL)apply;
+
+//- (void)pushToLuaCore:(MLNUILuaCore *)luaCore;
+
 - (MLNUILuaTable *)createLuaTableAsCellNameForLuaIfNeed:(MLNUILuaCore *)luaCore;
-- (void)setupLayoutNodeIfNeed;
-- (void)updateFrameIfNeed;
+- (void)createLayoutNodeIfNeedWithFitSize:(CGSize)fitSize maxSize:(CGSize)maxSize;
+
+//- (void)updateFrameIfNeed;
 
 @end
 

@@ -107,8 +107,8 @@ typedef NS_OPTIONS(NSInteger, YGDimensionFlexibility) {
 /// Perform a layout calculation and update the frames of the views in the hierarchy with the results.
 - (void)applyLayoutWithDimensionFlexibility:(YGDimensionFlexibility)dimensionFlexibility NS_SWIFT_NAME(applyLayout(WithDimensionFlexibility:));
 
-/// Returns the size of the view if no constraints were given. This could equivalent to calling [self sizeThatFits:CGSizeMake(CGFLOAT_MAX, CGFLOAT_MAX)];
-@property (nonatomic, readonly, assign) CGSize intrinsicSize;
+/// Returns the size of the view.
+- (CGSize)calculateLayout NS_SWIFT_NAME(calculateLayout());
 
 /// Returns the size of the view based on provided constraints. Pass NaN for an unconstrained dimension.
 - (CGSize)calculateLayoutWithSize:(CGSize)size NS_SWIFT_NAME(calculateLayout(with:));

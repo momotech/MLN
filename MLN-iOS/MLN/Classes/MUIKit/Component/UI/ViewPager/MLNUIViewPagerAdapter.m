@@ -70,6 +70,21 @@
     return (int)index % self.cellCounts;
 }
 
+//- (CGSize)cellMaxSize {
+//    MLNUICollectionViewGridLayout *layout = (MLNUICollectionViewGridLayout *)self.collectionView.collectionViewLayout;
+//    if ([layout isKindOfClass:[MLNUICollectionViewGridLayout class]]) {
+//        return layout.avaliableSizeForLayoutItem;
+//    }
+//    NSAssert(false, @"The collectionViewLayout should be kind of MLNUICollectionViewGridLayout class.");
+//    return CGSizeZero;
+//}
+
+// TODO: ViewPager 桥接类是否可移除？
+- (void)prepareToUseCell:(__kindof MLNUICollectionViewCell *)cell {
+    [cell createLuaTableAsCellNameForLuaIfNeed:self.mlnui_luaCore];
+    [cell createLayoutNodeIfNeedWithFitSize:CGSizeZero maxSize:CGSizeZero]; // TODO
+}
+
 #pragma mark - UICollectionViewDataSource
 
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
@@ -88,7 +103,9 @@
     NSString *reuseId = [self reuseIdAt:indexPath];
     [self registerCellClassIfNeed:collectionView reuseId:reuseId];
     MLNUICollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:reuseId forIndexPath:indexPath];
-    [cell pushContentViewWithLuaCore:self.mlnui_luaCore];
+//    [cell pushContentViewWithLuaCore:self.mlnui_luaCore];
+    [self prepareToUseCell:cell];
+    
     if (!cell.isInited) {
         MLNUIBlock *initCallback = [self.initedCellCallbacks objectForKey:reuseId];
         MLNUIKitLuaAssert(initCallback, @"It must not be nil callback of cell init!");

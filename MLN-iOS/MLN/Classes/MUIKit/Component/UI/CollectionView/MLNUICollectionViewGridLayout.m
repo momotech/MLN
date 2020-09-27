@@ -11,6 +11,7 @@
 #import "MLNUICollectionView.h"
 
 #define MLNUI_FLOAT_TOLERANT 0.1f
+#define MLNUI_INFINITE_VALUE 0
 
 @interface MLNUICollectionViewGridLayout()
 {
@@ -84,6 +85,15 @@
 - (NSInteger)luaui_spanCount
 {
     return self.spanCount;
+}
+
+#pragma mark - Public
+
+- (CGSize)avaliableSizeForLayoutItem {
+    if ([self isScrollHorizontal]) {
+        return CGSizeMake(MLNUI_INFINITE_VALUE, self.layoutHeight);
+    }
+    return CGSizeMake(self.layoutWidth, MLNUI_INFINITE_VALUE);
 }
 
 #pragma mark - private method
