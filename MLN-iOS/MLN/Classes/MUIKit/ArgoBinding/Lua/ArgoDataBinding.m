@@ -74,8 +74,8 @@
     NSParameterAssert(key);
     if (key) {
         LOCK();
-//        [self.dataMap lua_putValue:data forKey:key];
-        [self.dataMap lua_rawPutValue:data forKey:key];
+        [self.dataMap lua_putValue:data forKey:key];
+//        [self.dataMap lua_rawPutValue:data forKey:key];
         UNLOCK();
     }
 }
@@ -100,14 +100,14 @@
     NSParameterAssert(keyPath);
     if(!keyPath) return;
     NSArray *keys = [keyPath componentsSeparatedByString:kArgoConstString_Dot];
-    id<ArgoListenerProtocol> object = self.dataMap;
-    id<ArgoListenerProtocol> frontObject;
+    NSObject<ArgoListenerProtocol> *object = self.dataMap;
+    NSObject<ArgoListenerProtocol> *frontObject;
     BOOL detected = NO;
     
     for (int i = 0; i < keys.count - 1; i++) {
         //TODO: 对于Map，如果中间对象为空，默认创建.
         frontObject = object;
-        object = (id<ArgoListenerProtocol>)[frontObject lua_get:keys[i]];
+        object = (NSObject<ArgoListenerProtocol> *)[frontObject lua_get:keys[i]];
         if (!object && !detected) {
             detected = YES;
             if ([ArgoObserverHelper hasNumberInKeys:keys fromIndex:i]) {
@@ -115,8 +115,24 @@
             }
         }
         if (!object) {
-            object = [ArgoObservableMap new];
+            /*
+             object = [ArgoObservableMap new];
+            //TODO: 不能使用lua_rawPutValue，ex：watch(a.b.c), b=nil; 对c的监听要添加到b对象上并进行依次传递，所以不能用lua_rawPutValue
             [frontObject lua_putValue:object forKey:keys[i]];
+             */
+            NSObject<ArgoListenerProtocol> *tmpObj = [ArgoObservableMap new];
+            NSString *tmpKey = keys[i];
+            object = tmpObj;
+            for (int j = i + 1; j < keys.count - 1; j++) {
+                NSObject<ArgoListenerProtocol> *obj = [ArgoObservableMap new];
+                [object lua_rawPutValue:obj forKey:keys[j]];
+                object = obj;
+            }
+            //设置最后一个值，需要触发粘性
+            [object lua_putValue:value forKey:keys.lastObject];
+            object = nil;
+            [frontObject lua_putValue:tmpObj forKey:tmpKey];
+            break;
         }
     }
 
