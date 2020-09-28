@@ -128,8 +128,11 @@
 
 - (id __nullable)argo_get:(NSString *)keyPath {
     if(!keyPath) return nil;
-    keyPath = [self convertedKeyPathWith:keyPath];
-    return [self dataForKeyPath:keyPath];
+    NSString *newKeyPath = [self convertedKeyPathWith:keyPath];
+    if ([newKeyPath isEqualToString:keyPath]) {
+        return [self dataForKeyPath:newKeyPath];
+    }
+    return [self argo_get:newKeyPath];
 }
 
 - (void)argo_updateValue:(id)value forKeyPath:(NSString *)keyPath {
