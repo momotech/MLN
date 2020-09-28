@@ -30,10 +30,30 @@ lcoal__start = CFAbsoluteTimeGetCurrent()
 @interface MLNUITableViewAutoFitAdapter ()<MLNUITableViewCellDelegate, MLNUITableViewCellSettingProtocol>
 
 @property (nonatomic, strong) NSMutableDictionary<NSString *, MLNUITableViewCell *> *calculCells;
+@property (nonatomic, strong) NSMutableArray<NSIndexPath *> *needUpdateIndexPaths;
 
 @end
 
 @implementation MLNUITableViewAutoFitAdapter
+
+#pragma mark - Private
+
+- (NSMutableArray<NSIndexPath *> *)needUpdateIndexPaths {
+    if (!_needUpdateIndexPaths) {
+        _needUpdateIndexPaths = [NSMutableArray array];
+    }
+    return _needUpdateIndexPaths;
+}
+
+- (void)reloadCellIfNeeded {
+    if (self.needUpdateIndexPaths.count == 0) {
+        return;
+    }
+    [UIView performWithoutAnimation:^{
+        [self.targetTableView reloadRowsAtIndexPaths:self.needUpdateIndexPaths withRowAnimation:UITableViewRowAnimationNone];
+        [self.needUpdateIndexPaths removeAllObjects];
+    }];
+}
 
 - (CGSize)cellMaxSize {
     return CGSizeMake(self.targetTableView.frame.size.width, MLNUIUndefined);
@@ -43,6 +63,20 @@ lcoal__start = CFAbsoluteTimeGetCurrent()
     [cell createLuaTableAsCellNameForLuaIfNeed:self.mlnui_luaCore];
     [cell createLayoutNodeIfNeedWithFitSize:self.cellMaxSize /*cell.luaContentView宽度和cell保持一致，高度自适应*/
                                     maxSize:self.cellMaxSize];
+
+}
+
+- (void)markCellNeedReloadWithIndexPath:(NSIndexPath *)indexPath {
+    if (!indexPath) return;
+    if ([self.needUpdateIndexPaths containsObject:indexPath]) {
+        return;
+    }
+    [self.needUpdateIndexPaths addObject:indexPath];
+    BOOL isScrolling = [[NSRunLoop currentRunLoop].currentMode isEqualToString:UITrackingRunLoopMode];
+    if (isScrolling) {
+        return;
+    }
+    [self reloadCellIfNeeded];
 }
 
 #pragma mark - Override
@@ -55,6 +89,10 @@ lcoal__start = CFAbsoluteTimeGetCurrent()
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     TICK();
+    if ([self.needUpdateIndexPaths containsObject:indexPath]) {
+        [self.needUpdateIndexPaths removeObject:indexPath];
+    }
+    
     NSString *reuseId = [self reuseIdAt:indexPath];
     MLNUIBlock *initCallback = [self initedCellCallbackByReuseId:reuseId];
     MLNUIKitLuaAssert(initCallback, @"It must not be nil callback of cell init!");
@@ -99,18 +137,8 @@ lcoal__start = CFAbsoluteTimeGetCurrent()
     if (height > 0) {
         return height;
     }
-    NSLog(@"===ArgoUI=== height for row estimated height: %0.2f", tableView.estimatedRowHeight);
     return tableView.estimatedRowHeight;
 }
-
-//- (void)updateCellWidthIfNeed:(MLNUITableViewCell *)cell tableViewWidth:(CGFloat)tableViewWidth
-//{
-//    if (cell.frame.size.width != tableViewWidth) {
-//        CGRect frame = cell.frame;
-//        frame.size.width = tableViewWidth;
-//        cell.frame = frame;
-//    }
-//}
 
 - (void)luaui_heightForRowCallback:(MLNUIBlock *)callback
 {
@@ -132,23 +160,24 @@ lcoal__start = CFAbsoluteTimeGetCurrent()
     return cell;
 }
 
+#pragma mark - UITableViewDelegate
+
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView {
+    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(reloadCellIfNeeded) object:nil];
+    [self performSelector:@selector(reloadCellIfNeeded) withObject:nil afterDelay:0.05];
+}
+
 #pragma mark - MLNUITableViewCellDelegate
 
 - (void)mlnuiTableViewCellShouldReload:(MLNUITableViewCell *)cell size:(CGSize)size {
     NSIndexPath *indexPath = [self.targetTableView indexPathForCell:cell];
     if (!indexPath) return;
-    
     NSNumber *cacheHeight = [self.cachesManager layoutInfoWithIndexPath:indexPath];
     if (cacheHeight && ABS(cacheHeight.floatValue - size.height) < 0.001) {
         return;
     }
-    
-    // 直接更新缓存中的 cell 大小，从而，
-    // - (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath
-    // 方法中可以直接命中缓存，否则需要再进行一次计算
     [self.cachesManager updateLayoutInfo:@(size.height) forIndexPath:indexPath];
-
-    // TODO: cell 上内容变更引起重新测量布局后，需要重新调整 cell 大小.
+    [self markCellNeedReloadWithIndexPath:indexPath];
 }
 
 #pragma mark - Getter
