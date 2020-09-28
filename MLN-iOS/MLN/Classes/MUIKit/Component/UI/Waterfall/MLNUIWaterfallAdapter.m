@@ -107,22 +107,17 @@
         [waterfallHeaderView mlnui_requestLayoutIfNeed];
         return waterfallHeaderView;
     } else {
-        // TODO: 需要测试验证
         static NSString *reuseId = kMLNUIWaterfallViewReuseID;
         [collectionView registerClass:[MLNUICollectionViewCell class] forSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:reuseId];
         MLNUICollectionViewCell *headerContentView = [collectionView dequeueReusableSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:reuseId forIndexPath:indexPath];
-        
-//        [headerContentView pushContentViewWithLuaCore:self.mlnui_luaCore];
+
         [headerContentView createLuaTableAsCellNameForLuaIfNeed:self.mlnui_luaCore];
-        [headerContentView createLayoutNodeIfNeedWithFitSize:headerContentView.frame.size maxSize:headerContentView.frame.size]; // TODO
+        [headerContentView createLayoutNodeIfNeedWithFitSize:headerContentView.frame.size maxSize:headerContentView.frame.size];
         
         if ([collectionView isKindOfClass:[MLNUIInternalWaterfallView class]]) {
-            [headerContentView createLayoutNodeIfNeedWithFitSize:headerContentView.frame.size maxSize:headerContentView.frame.size]; // TODO
             [headerContentView luaui_addSubview:headerView];
             [headerView mlnui_markNeedsLayout];
             [headerContentView mlnui_requestLayoutIfNeed];
-//            [headerContentView updateLuaContentViewIfNeed];
-            headerContentView.bounds = headerContentView.bounds;
             return headerContentView;
         }
     }

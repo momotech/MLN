@@ -11,4 +11,7 @@
 
 @interface MLNUIWaterfallAdapter : MLNUICollectionViewAdapter <MLNUIWaterfallLayoutDelegate>
 
+@property (nonatomic, strong, readonly) MLNUIBlock *initedHeaderCallback;
+@property (nonatomic, strong, readonly) MLNUIBlock *reuseHeaderCallback;
+
 @end
