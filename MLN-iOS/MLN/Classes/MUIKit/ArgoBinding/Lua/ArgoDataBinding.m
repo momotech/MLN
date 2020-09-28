@@ -145,10 +145,7 @@
 - (id __nullable)argo_get:(NSString *)keyPath {
     if(!keyPath) return nil;
     NSString *newKeyPath = [self convertedKeyPathWith:keyPath];
-    if ([newKeyPath isEqualToString:keyPath]) {
-        return [self dataForKeyPath:newKeyPath];
-    }
-    return [self argo_get:newKeyPath];
+    return [self dataForKeyPath:newKeyPath];
 }
 
 - (void)argo_updateValue:(id)value forKeyPath:(NSString *)keyPath {
@@ -385,6 +382,8 @@ static inline ArgoObserverBase *_getArgoObserver(UIViewController <ArgoViewContr
 }
 
 - (NSString *)convertedKeyPathWith:(NSString *)key {
+    return [self _recursiveConvertedKeyPathWith:key resolvedListViewTag:nil];
+    /*
     _ArgoBindListViewInternalModel *listModel = [self.listViewMap objectForKey:key];
     if (listModel) {
         return key;
@@ -405,6 +404,29 @@ static inline ArgoObserverBase *_getArgoObserver(UIViewController <ArgoViewContr
         NSRange range = [rest rangeOfString:kArgoConstString_Dot];
         NSString *newK = [lvKey stringByAppendingString:[rest substringFromIndex:range.location]];
         return newK;
+    }
+    return key;
+     */
+}
+
+- (NSString *)_recursiveConvertedKeyPathWith:(NSString *)key resolvedListViewTag:(NSString *)resolvedTag {
+    _ArgoBindListViewInternalModel *listModel = [self.listViewMap objectForKey:key];
+    if (listModel) {
+        return key;
+    }
+    NSString *lvKey = [self listViewKeyMatch:key];
+    if (!lvKey || (resolvedTag && [resolvedTag isEqualToString:lvKey])) {
+        return key;
+    }
+    NSString *rest = [key substringFromIndex:lvKey.length + 1];
+    NSArray *restKeys = [rest componentsSeparatedByString:kArgoConstString_Dot];
+    
+    ArgoObservableArray *array = [self dataForKeyPath:lvKey];
+    if (![ArgoObserverHelper arrayIs2D:array] && restKeys.count > 1 && [ArgoObserverHelper isNumber:restKeys[1]]) {
+        //一维数组且第二位是数字，去掉第一位
+        NSRange range = [rest rangeOfString:kArgoConstString_Dot];
+        NSString *newK = [lvKey stringByAppendingString:[rest substringFromIndex:range.location]];
+        return [self _recursiveConvertedKeyPathWith:newK resolvedListViewTag:lvKey];
     }
     return key;
 }
