@@ -40,6 +40,10 @@
     [self _putValue:value forKey:key context:ArgoWatchContext_Lua notify:NO];
 }
 
+- (void)native_rawPutValue:(NSObject *)value forKey:(NSString *)key {
+    [self _putValue:value forKey:key context:ArgoWatchContext_Native notify:NO];
+}
+
 - (void)native_putValue:(NSObject *)value forKey:(NSString *)key {
     [self _putValue:value forKey:key context:ArgoWatchContext_Native notify:YES];
 }
