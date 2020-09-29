@@ -17,6 +17,9 @@
 /// cell上的内容大小发生变更时回调
 - (void)mlnuiCollectionViewCellShouldReload:(MLNUICollectionViewCell *)cell size:(CGSize)size;
 
+/// 获取自适应cell大小
+- (CGSize)mlnuiCollectionViewAutoFitSizeForCell:(MLNUICollectionViewCell *)cell indexPath:(NSIndexPath *)indexPath;
+
 @end
 
 @interface MLNUICollectionViewCell : UICollectionViewCell <MLNUIReuseCellProtocol>

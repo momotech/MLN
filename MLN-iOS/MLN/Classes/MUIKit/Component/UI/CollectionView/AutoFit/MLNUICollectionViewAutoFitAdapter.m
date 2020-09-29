@@ -13,6 +13,8 @@
 #import "MLNUIBlock.h"
 #import "MLNUIKitHeader.h"
 
+CGSize MLNUICollectionViewAutoFitCellEstimateSize = (CGSize){60, 60};
+
 @interface MLNUICollectionViewAutoFitAdapter ()<MLNUICollectionViewCellDelegate>
 
 @property (nonatomic, strong) NSMutableDictionary<NSIndexPath *, MLNUICollectionViewAutoSizeCell *> *layoutCellCache;
@@ -21,8 +23,18 @@
 
 @implementation MLNUICollectionViewAutoFitAdapter
 
-- (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath
-{
+- (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath {
+    
+    NSValue *sizeValue = [self.cachesManager layoutInfoWithIndexPath:indexPath];
+    if (sizeValue) {
+        CGSize size = [sizeValue CGSizeValue];
+        if (!CGSizeEqualToSize(size, CGSizeZero)) {
+            return size;
+        }
+    }
+    return MLNUICollectionViewAutoFitCellEstimateSize;
+    
+    /**
     // first get cache
     NSValue *sizeValue = [self.cachesManager layoutInfoWithIndexPath:indexPath];
     if (sizeValue) {
@@ -55,6 +67,7 @@
     CGSize size = [cell caculateCellSizeWithMaxSize:self.cellMaxSize apply:YES];
     [self.cachesManager updateLayoutInfo:[NSValue valueWithCGSize:size] forIndexPath:indexPath];
     return size;
+     */
 }
 
 #pragma mark - Override
@@ -77,20 +90,41 @@
     if (cacheSize && CGSizeEqualToSize(cacheSize.CGSizeValue, size)) {
         return;
     }
-    
-    // 直接更新缓存中的 cell 大小，从而，
-    // - (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath
-    // 方法中可以直接命中缓存，否则需要再进行一次计算
-    [self.cachesManager updateLayoutInfo:@(size) forIndexPath:indexPath];
-
+    [self flushCacheForSize:size indexPath:indexPath];
+   
     // cell 上内容变更引起重新测量布局后，需要重新调整 cell 大小. (即 invalidate collectionViewLayout)
-    UICollectionViewLayoutInvalidationContext *invalidContext = [UICollectionViewLayoutInvalidationContext new];
+    UICollectionViewFlowLayoutInvalidationContext *invalidContext = [UICollectionViewFlowLayoutInvalidationContext new];
     [invalidContext invalidateItemsAtIndexPaths:@[indexPath]];
     [self.collectionView.collectionViewLayout invalidateLayoutWithContext:invalidContext];
  }
 
+- (CGSize)mlnuiCollectionViewAutoFitSizeForCell:(MLNUICollectionViewCell *)cell indexPath:(NSIndexPath *)indexPath {
+    if (!indexPath) return CGSizeZero;
+    NSValue *cacheSize = [self.cachesManager layoutInfoWithIndexPath:indexPath];
+    if (!cacheSize) {
+        CGSize size = [cell caculateCellSizeWithMaxSize:self.cellMaxSize apply:YES];
+        [self flushCacheForSize:size indexPath:indexPath];
+        return size;
+    }
+    return cacheSize.CGSizeValue;
+}
+
 #pragma mark - Private
 
+- (void)flushCacheForSize:(CGSize)size indexPath:(NSIndexPath *)indexPath {
+    // 更新 cell size 缓存
+    [self.cachesManager updateLayoutInfo:@(size) forIndexPath:indexPath];
+    
+    // 针对带有估算高度的 cell 的情况，需要更新真实高度
+//    MLNUICollectionViewGridLayout *layout = (MLNUICollectionViewGridLayout *)self.collectionView.collectionViewLayout;
+//    if ([layout isKindOfClass:[MLNUICollectionViewGridLayout class]]) {
+//        [layout updateRealSize:size forIndexPath:indexPath];
+//    } else {
+//        NSAssert(false, @"The collectionView layout should be kind of MLNUICollectionViewGridLayout class.");
+//    }
+}
+
+/**
 - (NSMutableDictionary<NSIndexPath *,MLNUICollectionViewAutoSizeCell *> *)layoutCellCache {
     if (!_layoutCellCache) {
         _layoutCellCache = [NSMutableDictionary dictionary];
@@ -108,6 +142,7 @@
     }
     return cell;
 }
+*/
 
 LUAUI_EXPORT_BEGIN(MLNUICollectionViewAutoFitAdapter)
 LUAUI_EXPORT_END(MLNUICollectionViewAutoFitAdapter, CollectionViewAutoFitAdapter, YES, "MLNUICollectionViewAdapter", NULL)

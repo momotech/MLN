@@ -129,4 +129,15 @@
     return [MLNUIReuseAutoSizeContentView class];
 }
 
+- (UICollectionViewLayoutAttributes *)preferredLayoutAttributesFittingAttributes:(UICollectionViewLayoutAttributes *)layoutAttributes {
+    UICollectionViewLayoutAttributes *attribute = [super preferredLayoutAttributesFittingAttributes:layoutAttributes];
+    if ([self.delegate respondsToSelector:@selector(mlnuiCollectionViewAutoFitSizeForCell:indexPath:)]) {
+         CGSize size = [self.delegate mlnuiCollectionViewAutoFitSizeForCell:self indexPath:layoutAttributes.indexPath];
+        CGRect frame = attribute.frame;
+        frame.size = size;
+        attribute.frame = frame;
+    }
+    return attribute;
+}
+
 @end
