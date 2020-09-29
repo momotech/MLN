@@ -151,6 +151,13 @@
 
 #pragma mark - Override
 
+- (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier {
+    if (self = [super initWithStyle:style reuseIdentifier:reuseIdentifier]) {
+        self.clipsToBounds = YES;
+    }
+    return self;
+}
+
 - (Class)reuseContentViewClass {
     return [MLNUIReuseAutoSizeContentView class];
 }

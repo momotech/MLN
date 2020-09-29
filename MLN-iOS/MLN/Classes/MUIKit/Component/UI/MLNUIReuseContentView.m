@@ -65,10 +65,27 @@
 
 - (void)setupLayoutNodeFitSize:(CGSize)fitSize maxSize:(CGSize)maxSize {
     MLNUILayoutNode *node = [self mlnui_layoutNode];
-    node.width = (fitSize.width > 0) ? MLNUIPointValue(fitSize.width) : MLNUIValueAuto;
-    node.height = (fitSize.height > 0) ? MLNUIPointValue(fitSize.height) : MLNUIValueAuto;
-    node.maxWidth = (maxSize.width > 0) ? MLNUIPointValue(maxSize.width) : MLNUIValueUndefined;
-    node.maxHeight = (maxSize.height > 0) ? MLNUIPointValue(maxSize.height) : MLNUIValueUndefined;
+    if (fitSize.width > 0) {
+        node.width = MLNUIPointValue(fitSize.width);
+    } else if (isnan(fitSize.width)) {
+        node.width = MLNUIValueAuto;
+    }
+    if (fitSize.height > 0) {
+        node.height = MLNUIPointValue(fitSize.height);
+    } else if (isnan(fitSize.height)) {
+        node.height = MLNUIValueAuto;
+    }
+    
+    if (maxSize.width > 0) {
+        node.maxWidth = MLNUIPointValue(maxSize.width);
+    } else if (isnan(maxSize.width)) {
+        node.maxWidth = MLNUIValueUndefined;
+    }
+    if (maxSize.height > 0) {
+        node.maxHeight = MLNUIPointValue(maxSize.height);
+    } else if (isnan(maxSize.height)) {
+        node.maxHeight = MLNUIValueUndefined;
+    }
 }
 
 #pragma mark - Override

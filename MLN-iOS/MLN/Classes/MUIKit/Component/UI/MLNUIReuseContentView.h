@@ -13,8 +13,18 @@ NS_ASSUME_NONNULL_BEGIN
 @protocol MLNUIReuseCellProtocol <NSObject>
 
 @required
+
+/// 创建 lua table 作为 lua 中的 cell.
+/// 例如：adapter:initCell(function(cell)
+///      --[[ 这里的 cell 便是该方法创建的 lua table --]]
+/// end)
+/// @param luaCore luaCore
 - (MLNUILuaTable *)createLuaTableAsCellNameForLuaIfNeed:(MLNUILuaCore *)luaCore;
 - (MLNUILuaTable *)getLuaTable;
+
+/// 创建视图对应的Node
+/// @param fitSize 若 fitSize 大于0 (0将会被忽略)，则计算结果将会以 fitSize 为准，且不大于 maxSize.
+/// @param maxSize size 上限 (0将会被忽略)
 - (void)createLayoutNodeIfNeedWithFitSize:(CGSize)fitSize maxSize:(CGSize)maxSize;
 
 - (BOOL)isInited;
@@ -26,8 +36,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (CGSize)caculateCellSizeWithMaxSize:(CGSize)maxSize apply:(BOOL)apply;
 
 /// 计算 cell 大小
-/// @param fitSize 若 fitSize 大于0，则计算结果将会以 fitSize 为准，且不大于 maxSize.
-/// @param maxSize 最大 size 限制
+/// @param fitSize 若 fitSize 大于0 (0将会被忽略)，则计算结果将会以 fitSize 为准，且不大于 maxSize.
+/// @param maxSize size 上限 (0将会被忽略)
 /// @param apply 是否将计算结果应用到 view 上，如果是，则会改变 view.frame.
 - (CGSize)caculateCellSizeWithFitSize:(CGSize)fitSize maxSize:(CGSize)maxSize apply:(BOOL)apply;
 
@@ -56,12 +66,21 @@ typedef void(^MLNUIReuseContentViewDidChangeLayout)(CGSize size);
 - (CGSize)caculateContentViewSizeWithMaxSize:(CGSize)maxSize apply:(BOOL)apply;
 
 /// 计算 contentView 大小
-/// @param fitSize 若 fitSize 大于0，则计算结果将会以 fitSize 为准，且不大于 maxSize.
-/// @param maxSize 最大 size 限制
+/// @param fitSize 若 fitSize 大于0 (0将会被忽略)，则计算结果将会以 fitSize 为准，且不大于 maxSize.
+/// @param maxSize size 上限 (0将会被忽略)
 /// @param apply 是否将计算结果应用到 view 上，如果是，则会改变 view.frame.
-- (CGSize)caculateContentViewSizeWithFitSize:(CGSize)fitSize maxSize:(CGSize)maxSize  apply:(BOOL)apply;
+- (CGSize)caculateContentViewSizeWithFitSize:(CGSize)fitSize maxSize:(CGSize)maxSize apply:(BOOL)apply;
 
+/// 创建 lua table 作为 lua 中的 cell.
+/// 例如：adapter:initCell(function(cell)
+///      --[[ 这里的 cell 便是该方法创建的 lua table --]]
+/// end)
+/// @param luaCore luaCore
 - (MLNUILuaTable *)createLuaTableAsCellNameForLuaIfNeed:(MLNUILuaCore *)luaCore;
+
+/// 创建视图对应的Node
+/// @param fitSize 若 fitSize 大于0 (0将会被忽略)，则计算结果将会以 fitSize 为准，且不大于 maxSize.
+/// @param maxSize size 上限 (0将会被忽略)
 - (void)createLayoutNodeIfNeedWithFitSize:(CGSize)fitSize maxSize:(CGSize)maxSize;
 
 @end

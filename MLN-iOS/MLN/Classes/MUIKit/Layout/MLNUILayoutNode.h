@@ -101,7 +101,7 @@ typedef NS_OPTIONS(NSInteger, YGDimensionFlexibility) {
 /// Perform a layout calculation and update the frames of the views in the hierarchy with the results. If the origin is not preserved, the root view's layout results will applied from {0,0}.
 - (CGSize)applyLayout NS_SWIFT_NAME(applyLayout());
 
-/// @param size the constraint size. Pass `MLNUIUndefined` indicate an unconstrained size.
+/// @param size the constraint size. Pass `MLNUIUndefined` indicate an unconstrained size and 0 will be ignored.
 - (CGSize)applyLayoutWithSize:(CGSize)size NS_SWIFT_NAME(applyLayout(size:));
 
 /// Perform a layout calculation and update the frames of the views in the hierarchy with the results.
@@ -110,7 +110,7 @@ typedef NS_OPTIONS(NSInteger, YGDimensionFlexibility) {
 /// Returns the size of the view.
 - (CGSize)calculateLayout NS_SWIFT_NAME(calculateLayout());
 
-/// Returns the size of the view based on provided constraints. Pass NaN for an unconstrained dimension.
+/// Returns the size of the view based on provided constraints. The parameter `size` pass `MLNUIUndefined` for an unconstrained dimension and 0 will be ignored.
 - (CGSize)calculateLayoutWithSize:(CGSize)size NS_SWIFT_NAME(calculateLayout(with:));
 
 /// Returns the number of children that are using Flexbox.

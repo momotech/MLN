@@ -11,8 +11,7 @@
 #import "MLNUIHeader.h"
 #import "MLNUIKitHeader.h"
 #import "MLNUIWaterfallLayoutDelegate.h"
-
-#define MLNUI_INFINITE_VALUE 0
+#import "MLNUILayoutMacro.h"
 
 @interface MLNUIWaterfallLayout ()
 
@@ -33,7 +32,7 @@
 @implementation MLNUIWaterfallLayout
 
 - (CGSize)avaliableSizeForLayoutItem {
-    return CGSizeMake(_itemWidth, MLNUI_INFINITE_VALUE);
+    return CGSizeMake(_itemWidth, MLNUIUndefined);
 }
 
 #pragma mark -

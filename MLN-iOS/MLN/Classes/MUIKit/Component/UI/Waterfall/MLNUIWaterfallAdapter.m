@@ -16,7 +16,6 @@
 #import "UIView+MLNUILayout.h"
 
 #define kMLNUIWaterfallViewReuseID @"kMLNUIWaterfallViewReuseID"
-#define MLNUI_INFINITE_VALUE 0
 
 @interface MLNUIWaterfallAdapter ()
 
@@ -70,7 +69,7 @@
         }
         return CGSizeZero;
     } else {
-        CGSize size = [headerView.mlnui_layoutNode calculateLayoutWithSize:CGSizeMake(collectionView.frame.size.width, MLNUI_INFINITE_VALUE)];
+        CGSize size = [headerView.mlnui_layoutNode calculateLayoutWithSize:CGSizeMake(collectionView.frame.size.width, 0)];
         return CGSizeMake(0, size.height);
     }
 }

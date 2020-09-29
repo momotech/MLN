@@ -11,8 +11,6 @@
 #import "MLNUIInternalWaterfallView.h"
 #import "MLNUIWaterfallHeaderView.h"
 
-#define MLNUI_INFINITE_VALUE 0
-
 @interface MLNUIWaterfallAutoAdapter ()<MLNUICollectionViewCellDelegate>
 
 @property (nonatomic, strong) NSMutableDictionary<NSIndexPath *, MLNUICollectionViewAutoSizeCell *> *layoutCellCache;
@@ -85,13 +83,13 @@
             [self.reuseHeaderCallback addIntArgument:(int)indexPath.row+1];
             [self.reuseHeaderCallback callIfCan];
             
-            CGSize size = [header caculateCellSizeWithMaxSize:CGSizeMake(collectionView.frame.size.width, MLNUI_INFINITE_VALUE) apply:NO];
+            CGSize size = [header caculateCellSizeWithMaxSize:CGSizeMake(collectionView.frame.size.width, MLNUIUndefined) apply:NO];
             return CGSizeMake(0, size.height);
         }
         return CGSizeZero;
     }
     
-    CGSize size = [headerView.mlnui_layoutNode calculateLayoutWithSize:CGSizeMake(collectionView.frame.size.width, MLNUI_INFINITE_VALUE)];
+    CGSize size = [headerView.mlnui_layoutNode calculateLayoutWithSize:CGSizeMake(collectionView.frame.size.width, MLNUIUndefined)];
     return CGSizeMake(0, size.height);
 }
 

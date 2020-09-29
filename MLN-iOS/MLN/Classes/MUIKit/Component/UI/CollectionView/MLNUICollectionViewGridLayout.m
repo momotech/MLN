@@ -9,9 +9,9 @@
 #import "MLNUIKitHeader.h"
 #import "MLNUIViewExporterMacro.h"
 #import "MLNUICollectionView.h"
+#import "MLNUILayoutMacro.h"
 
 #define MLNUI_FLOAT_TOLERANT 0.1f
-#define MLNUI_INFINITE_VALUE 0
 
 @interface MLNUICollectionViewGridLayout()
 {
@@ -91,9 +91,9 @@
 
 - (CGSize)avaliableSizeForLayoutItem {
     if ([self isScrollHorizontal]) {
-        return CGSizeMake(MLNUI_INFINITE_VALUE, self.layoutHeight);
+        return CGSizeMake(MLNUIUndefined, self.layoutHeight);
     }
-    return CGSizeMake(self.layoutWidth, MLNUI_INFINITE_VALUE);
+    return CGSizeMake(self.layoutWidth, MLNUIUndefined);
 }
 
 #pragma mark - private method

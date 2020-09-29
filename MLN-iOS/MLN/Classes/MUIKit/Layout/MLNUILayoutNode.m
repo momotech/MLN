@@ -146,6 +146,34 @@ static YGConfigRef globalConfig;
     YGNodeFree(self.node);
 }
 
+- (void)setMaxWidth:(MLNUIValue)maxWidth {
+    if (self.maxWidth.value == 414) {
+        NSLog(@"++");
+    }
+    
+    switch (maxWidth.unit) {
+    case YGUnitUndefined:
+    YGNodeStyleSetMaxWidth(self.node, maxWidth.value);
+    break;
+    case YGUnitPoint:
+    YGNodeStyleSetMaxWidth(self.node, maxWidth.value);
+    break;
+    case YGUnitPercent:
+    YGNodeStyleSetMaxWidthPercent(self.node, maxWidth.value);
+    break;
+    default:
+    NSAssert(NO, @"Not implemented");
+    }
+    
+}
+
+- (YGValue)maxWidth
+{
+   return YGNodeStyleGetMaxWidth(self.node);
+}
+
+
+
 - (instancetype)initWithView:(UIView *)view isRootView:(BOOL)isRootView {
     if (self = [super init]) {
         _view = view;
@@ -279,7 +307,7 @@ YG_AUTO_VALUE_PROPERTY(width, Width)
 YG_AUTO_VALUE_PROPERTY(height, Height)
 YG_VALUE_PROPERTY(minWidth, MinWidth)
 YG_VALUE_PROPERTY(minHeight, MinHeight)
-YG_VALUE_PROPERTY(maxWidth, MaxWidth)
+//YG_VALUE_PROPERTY(maxWidth, MaxWidth)
 YG_VALUE_PROPERTY(maxHeight, MaxHeight)
 YG_PROPERTY(CGFloat, aspectRatio, AspectRatio)
 
@@ -319,9 +347,12 @@ YG_PROPERTY(CGFloat, aspectRatio, AspectRatio)
     NSAssert([NSThread isMainThread], @"layout calculation must be done on main.");
     YGAttachNodesFromViewHierachy(self.view);
     
-    self.maxWidth = (size.width > 0) ? MLNUIPointValue(size.width) : MLNUIValueUndefined;
-    self.maxHeight = (size.height > 0) ? MLNUIPointValue(size.height) : MLNUIValueUndefined;
-    
+    if (size.width > 0) {
+        self.maxWidth = MLNUIPointValue(size.width);
+    }
+    if (size.height > 0) {
+        self.maxHeight = MLNUIPointValue(size.height);
+    }
     const YGNodeRef node = self.node;
     YGNodeCalculateLayout(node, MLNUIUndefined, MLNUIUndefined, YGNodeStyleGetDirection(node));
     
