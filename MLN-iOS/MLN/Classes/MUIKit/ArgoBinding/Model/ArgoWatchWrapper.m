@@ -12,16 +12,16 @@
 #import "ArgoObservableArray.h"
 #import "NSObject+ArgoListener.h"
 
-ArgoFilterBlock kArgoFilter_Lua = ^(ArgoWatchContext context, id value){
-    if(context == ArgoWatchContext_Lua)
-        return YES;
-    return NO;
+ArgoFilterBlock kArgoFilter_Lua = ^BOOL(ArgoWatchContext context, id value){
+    return ArgoWatchContext_Lua == context;
 };
 
-ArgoFilterBlock kArgoFilter_Native = ^(ArgoWatchContext context, id value){
-    if(context == ArgoWatchContext_Native)
-        return YES;
-    return NO;
+ArgoFilterBlock kArgoFilter_Native = ^BOOL(ArgoWatchContext context, id value){
+    return ArgoWatchContext_Native == context;
+};
+
+ArgoFilterBlock kArgoFilter_ALL = ^BOOL(ArgoWatchContext context, id value){
+    return YES;
 };
 
 @interface ArgoWatchWrapper ()
@@ -38,6 +38,7 @@ ArgoFilterBlock kArgoFilter_Native = ^(ArgoWatchContext context, id value){
     ArgoWatchWrapper *watch = [self new];
     watch.keyPath = keyPath;
     watch.observerd = observedObject;
+    watch.filterBlock = kArgoFilter_Lua;
     return watch;
 }
 

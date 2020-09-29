@@ -156,7 +156,7 @@
 
 // from watch
 - (NSInteger)argo_watchKeyPath:(NSString *)keyPath withHandler:(MLNUIBlock *)handler filter:(MLNUIBlock *)filter {
-    return [self _watchKeyPath:keyPath handler:handler listView:nil filter:filter == nil ? nil : ^BOOL(ArgoWatchContext context, NSDictionary *change) {
+    return [self _watchKeyPath:keyPath handler:handler listView:nil filter:filter == nil ? kArgoFilter_Native : ^BOOL(ArgoWatchContext context, NSDictionary *change) {
         [filter addUIntegerArgument:context];
         id new = [change objectForKey:NSKeyValueChangeNewKey];
         [filter addObjArgument:new];
@@ -166,16 +166,13 @@
 }
 
 - (NSInteger)argo_watchKey:(NSString *)key withHandler:(MLNUIBlock *)handler filter:(MLNUIBlock *)filter {
-//    NSMutableArray *keys = [key componentsSeparatedByString:kArgoConstString_Dot].mutableCopy;
-//    NSString *lastKey = keys.lastObject;
-//    id<ArgoListenerProtocol> object = self.dataMap;
-//    if (keys.count > 1) {
-//        [keys removeLastObject];
-//        object = [object argoGetForKeyPath:[keys componentsJoinedByString:kArgoConstString_Dot]];
-//    }
-//    return [self _observeObject:object keyPath:lastKey handler:handler listView:nil filter:kArgoWatchKeyListenerFilter];
-    //
-    return [self _watchKeyPath:key handler:handler listView:nil filter:filter == nil ? kArgoWatchKeyListenerFilter : ^BOOL(ArgoWatchContext context, NSDictionary *change) {
+    return [self _watchKeyPath:key handler:handler listView:nil filter:filter == nil ? ^BOOL(ArgoWatchContext context, NSDictionary *change) {
+        // 默认只监听native
+        if (context == ArgoWatchContext_Lua) {
+            return NO;
+        }
+        return kArgoWatchKeyListenerFilter(context, change);
+    } : ^BOOL(ArgoWatchContext context, NSDictionary *change) {
         BOOL r = kArgoWatchKeyListenerFilter(context, change);
         if (r) {
             [filter addUIntegerArgument:context];
