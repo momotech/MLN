@@ -54,13 +54,14 @@
     return self.obID == object.obID;
 }
 
-- (void)callWithChange:(NSDictionary *)change {
-    if (!self.block) return;
+- (BOOL)callWithChange:(NSDictionary *)change {
+    if (!self.block) return NO;
     ArgoWatchContext contxt = [[change objectForKey:kArgoListenerContext] unsignedIntegerValue];
     if (self.filter && !self.filter(contxt, change)) {
-        return;
+        return NO;
     }
     self.block(self.keyPath, self.observedObject, change);
+    return YES;
 }
 
 @end

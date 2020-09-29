@@ -15,15 +15,17 @@ typedef void(^ArgoWatchBlock)(id oldValue, id newValue, ArgoObservableMap *map);
 typedef void(^ArgoWatchArrayBlock)(ArgoObservableArray *array, NSDictionary *change);
 
 typedef BOOL(^ArgoFilterBlock)(ArgoWatchContext context, id newValue);
-//只监听lua层的修改
+//只监听lua层的变化
 extern ArgoFilterBlock kArgoFilter_Lua;
-//只监听native层的修改
+//只监听native层的变化
 extern ArgoFilterBlock kArgoFilter_Native;
-
+//同时监听lua和native层的变化
+extern ArgoFilterBlock kArgoFilter_ALL;
 
 #pragma mark - 
 @interface ArgoWatchWrapper : NSObject
 
+///过滤器，默认值是 kArgoFilter_Lua
 @property (nonatomic, copy, readonly) ArgoWatchWrapper *(^filter)(ArgoFilterBlock block);
 @property (nonatomic, copy, readonly) ArgoWatchWrapper *(^callback)(ArgoWatchBlock block);
 
