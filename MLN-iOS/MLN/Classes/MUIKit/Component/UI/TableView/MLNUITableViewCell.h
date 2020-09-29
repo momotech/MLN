@@ -27,8 +27,6 @@
 @property (nonatomic, strong) MLNUIReuseContentView *luaContentView;
 @property (nonatomic, weak) id<MLNUITableViewCellSettingProtocol, MLNUITableViewCellDelegate> delegate;
 
-//- (void)updateSubviewsFrameIfNeed;
-
 @end
 
 @interface MLNUITableViewAutoHeightCell : MLNUITableViewCell

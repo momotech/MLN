@@ -14,10 +14,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @required
 - (MLNUILuaTable *)createLuaTableAsCellNameForLuaIfNeed:(MLNUILuaCore *)luaCore;
-- (void)createLayoutNodeIfNeedWithFitSize:(CGSize)fitSize maxSize:(CGSize)maxSize;
-
-//- (void)updateLuaContentViewIfNeed;
 - (MLNUILuaTable *)getLuaTable;
+- (void)createLayoutNodeIfNeedWithFitSize:(CGSize)fitSize maxSize:(CGSize)maxSize;
 
 - (BOOL)isInited;
 - (void)initCompleted;
@@ -33,9 +31,11 @@ NS_ASSUME_NONNULL_BEGIN
 /// @param apply 是否将计算结果应用到 view 上，如果是，则会改变 view.frame.
 - (CGSize)caculateCellSizeWithFitSize:(CGSize)fitSize maxSize:(CGSize)maxSize apply:(BOOL)apply;
 
-- (UIView *)contentView;
 - (NSString *)lastReueseId;
 - (void)updateLastReueseId:(NSString *)lastReuaseId;
+
+@optional
+- (UIView *)contentView;
 
 @end
 
@@ -61,16 +61,8 @@ typedef void(^MLNUIReuseContentViewDidChangeLayout)(CGSize size);
 /// @param apply 是否将计算结果应用到 view 上，如果是，则会改变 view.frame.
 - (CGSize)caculateContentViewSizeWithFitSize:(CGSize)fitSize maxSize:(CGSize)maxSize  apply:(BOOL)apply;
 
-//- (void)pushToLuaCore:(MLNUILuaCore *)luaCore;
-
 - (MLNUILuaTable *)createLuaTableAsCellNameForLuaIfNeed:(MLNUILuaCore *)luaCore;
 - (void)createLayoutNodeIfNeedWithFitSize:(CGSize)fitSize maxSize:(CGSize)maxSize;
-
-//- (void)updateFrameIfNeed;
-
-@end
-
-@interface MLNUIReuseAutoSizeContentViewNode : MLNUILayoutNode
 
 @end
 

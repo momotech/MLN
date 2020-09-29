@@ -9,7 +9,7 @@
 #import "MLNUIKitHeader.h"
 #import "UIView+MLNUILayout.h"
 
-@interface MLNUIWaterfallHeaderView()
+@interface MLNUIWaterfallHeaderView()<MLNUIReuseCellProtocol>
 
 @property (nonatomic, strong) MLNUIReuseContentView *luaContentView;
 
@@ -32,10 +32,6 @@
 }
 
 #pragma mark - MLNUIReuseCellProtocol
-//- (void)pushContentViewWithLuaCore:(MLNUILuaCore *)luaCore
-//{
-//    [self.luaContentView pushToLuaCore:luaCore];
-//}
 
 - (MLNUILuaTable *)createLuaTableAsCellNameForLuaIfNeed:(MLNUILuaCore *)luaCore {
     return [self.luaContentView createLuaTableAsCellNameForLuaIfNeed:luaCore];
@@ -44,11 +40,6 @@
 - (void)createLayoutNodeIfNeedWithFitSize:(CGSize)fitSize maxSize:(CGSize)maxSize {
     [self.luaContentView createLayoutNodeIfNeedWithFitSize:fitSize maxSize:maxSize];
 }
-
-//- (void)updateLuaContentViewIfNeed
-//{
-//    [self.luaContentView updateFrameIfNeed];
-//}
 
 - (MLNUILuaTable *)getLuaTable
 {
@@ -65,6 +56,11 @@
     [self.luaContentView setInited:YES];
 }
 
+- (void)updateLastReueseId:(NSString *)lastReuaseId
+{
+    self.luaContentView.lastReuaseId = lastReuaseId;
+}
+
 - (CGSize)caculateCellSizeWithMaxSize:(CGSize)maxSize apply:(BOOL)apply {
     return [self.luaContentView caculateContentViewSizeWithMaxSize:maxSize apply:apply];
 }
@@ -76,11 +72,6 @@
 - (void)mlnui_requestLayoutIfNeed
 {
     [self.luaContentView mlnui_requestLayoutIfNeed];
-}
-
-- (void)updateLastReueseId:(NSString *)lastReuaseId
-{
-    self.luaContentView.lastReuaseId = lastReuaseId;
 }
 
 - (NSString *)lastReueseId

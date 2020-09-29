@@ -13,7 +13,7 @@
 
 #define MLNUI_INFINITE_VALUE 0
 
-@interface MLNUIWaterfallAutoAdapter ()
+@interface MLNUIWaterfallAutoAdapter ()<MLNUICollectionViewCellDelegate>
 
 @property (nonatomic, strong) NSMutableDictionary<NSIndexPath *, MLNUICollectionViewAutoSizeCell *> *layoutCellCache;
 
@@ -67,7 +67,7 @@
     }
     
     UIView *headerView = [MLNUIInternalWaterfallView headerViewInWaterfall:collectionView];
-    if (!headerView) { // headerView 不存在，使用header新接口initedHeader、fillHeaderData、heightForHeader
+    if (!headerView) { 
         BOOL isHeaderValid = [self headerIsValidWithWaterfallView:collectionView];
         if (section == 0 && isHeaderValid) {
             NSIndexPath *indexPath = [NSIndexPath indexPathForItem:0 inSection:section];
@@ -94,6 +94,24 @@
     CGSize size = [headerView.mlnui_layoutNode calculateLayoutWithSize:CGSizeMake(collectionView.frame.size.width, MLNUI_INFINITE_VALUE)];
     return CGSizeMake(0, size.height);
 }
+
+#pragma mark - MLNUICollectionViewCellDelegate
+
+- (void)mlnuiCollectionViewCellShouldReload:(MLNUICollectionViewCell *)cell size:(CGSize)size {
+    NSIndexPath *indexPath = [self.collectionView indexPathForCell:cell];
+    if (!indexPath) return;
+    
+    NSValue *cacheSize = [self.cachesManager layoutInfoWithIndexPath:indexPath];
+    if (cacheSize && CGSizeEqualToSize(cacheSize.CGSizeValue, size)) {
+        return;
+    }
+    [self.cachesManager updateLayoutInfo:@(size) forIndexPath:indexPath];
+
+    // cell 上内容变更引起重新测量布局后，需要重新调整 cell 大小. (即 invalidate collectionViewLayout)
+    UICollectionViewLayoutInvalidationContext *invalidContext = [UICollectionViewLayoutInvalidationContext new];
+    [invalidContext invalidateItemsAtIndexPaths:@[indexPath]];
+    [self.collectionView.collectionViewLayout invalidateLayoutWithContext:invalidContext];
+ }
 
 #pragma mark - Private
 

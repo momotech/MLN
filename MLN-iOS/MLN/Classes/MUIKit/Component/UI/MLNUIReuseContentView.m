@@ -44,12 +44,6 @@
     return [self.mlnui_layoutNode calculateLayoutWithSize:maxSize];
 }
 
-//- (void)pushToLuaCore:(MLNUILuaCore *)luaCore {
-//    [self createLuaTableAsCellNameForLuaIfNeed:luaCore];
-//    [self setupLayoutNodeIfNeed];
-//    [self updateFrameIfNeed];
-//}
-
 // adapter:initCell(function(cell) --[[这里的 cell 便是下面创建的 lua table--]] end)
 - (MLNUILuaTable *)createLuaTableAsCellNameForLuaIfNeed:(MLNUILuaCore *)luaCore {
     if (!_luaTable) {
@@ -66,18 +60,6 @@
         [MLNUI_KIT_INSTANCE(self.mlnui_luaCore) addRootnode:self.mlnui_layoutNode];
     }
 }
-
-//- (void)updateFrameIfNeed
-//{
-//    if (!CGSizeEqualToSize(self.frame.size, self.cell.bounds.size)) {
-//        CGRect frame = self.cell.bounds;
-//        MLNUILayoutNode *node = self.mlnui_layoutNode;
-//        node.marginLeft = MLNUIPointValue(frame.origin.x);
-//        node.marginTop = MLNUIPointValue(frame.origin.y);
-//        node.width = MLNUIPointValue(frame.size.width);
-//        node.height = MLNUIPointValue(frame.size.height);
-//    }
-//}
 
 #pragma mark - Private
 
@@ -142,17 +124,9 @@
 
 @end
 
-@implementation MLNUIReuseAutoSizeContentViewNode
-
-@end
-
 @implementation MLNUIReuseAutoSizeContentView
 
 #pragma mark - Override
-
-- (Class)mlnui_bindedLayoutNodeClass {
-    return [MLNUIReuseAutoSizeContentViewNode class];
-}
 
 - (CGSize)caculateContentViewSizeWithMaxSize:(CGSize)maxSize applyToView:(BOOL)apply {
     MLNUILayoutNode *node = [self mlnui_layoutNode];

@@ -26,20 +26,6 @@
     return self;
 }
 
-//- (void)updateContentViewFrameIfNeed
-//{
-//    //  reset content view frame if need
-//    if (self.isInited && !CGSizeEqualToSize(self.contentView.frame.size, self.frame.size)) {
-//        CGRect frame = self.contentView.frame;
-//        frame.size = self.frame.size;
-//        self.contentView.frame = frame;
-//    }
-//}
-
-//- (void)setFrame:(CGRect)frame {
-//    [super setFrame:frame];
-//}
-
 - (void)luaui_addSubview:(UIView *)view
 {
     MLNUICheckTypeAndNilValue(view, @"View", UIView);
@@ -89,11 +75,6 @@
 }
 
 #pragma mark - MLNUIReuseCellProtocol
-//- (void)pushContentViewWithLuaCore:(MLNUILuaCore *)luaCore
-//{
-//    [self updateContentViewFrameIfNeed];
-//    [self.luaContentView pushToLuaCore:luaCore];
-//}
 
 - (MLNUILuaTable *)createLuaTableAsCellNameForLuaIfNeed:(MLNUILuaCore *)luaCore {
     return [self.luaContentView createLuaTableAsCellNameForLuaIfNeed:luaCore];
@@ -102,11 +83,6 @@
 - (void)createLayoutNodeIfNeedWithFitSize:(CGSize)fitSize maxSize:(CGSize)maxSize {
     [self.luaContentView createLayoutNodeIfNeedWithFitSize:fitSize maxSize:maxSize];
 }
-
-//- (void)updateLuaContentViewIfNeed
-//{
-//    [self.luaContentView updateFrameIfNeed];
-//}
 
 - (MLNUILuaTable *)getLuaTable
 {
@@ -135,12 +111,6 @@
 {
     [self.luaContentView mlnui_requestLayoutIfNeed];
 }
-
-//- (void)updateSubviewsFrameIfNeed
-//{
-//    [self updateContentViewFrameIfNeed];
-//    [self.luaContentView updateFrameIfNeed];
-//}
 
 - (void)updateLastReueseId:(NSString *)lastReuaseId
 {

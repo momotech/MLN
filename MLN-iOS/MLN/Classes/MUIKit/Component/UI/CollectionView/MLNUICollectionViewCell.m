@@ -49,11 +49,6 @@
 }
 
 #pragma mark - MLNUIReuseCellProtocol
-//- (void)pushContentViewWithLuaCore:(MLNUILuaCore *)luaCore
-//{
-//    [self updateContentViewFrameIfNeed];
-//    [self.luaContentView pushToLuaCore:luaCore];
-//}
 
 - (MLNUILuaTable *)createLuaTableAsCellNameForLuaIfNeed:(MLNUILuaCore *)luaCore {
     return [self.luaContentView createLuaTableAsCellNameForLuaIfNeed:luaCore];
@@ -62,11 +57,6 @@
 - (void)createLayoutNodeIfNeedWithFitSize:(CGSize)fitSize maxSize:(CGSize)maxSize {
     [self.luaContentView createLayoutNodeIfNeedWithFitSize:fitSize maxSize:maxSize];
 }
-
-//- (void)updateLuaContentViewIfNeed
-//{
-//    [self.luaContentView updateFrameIfNeed];
-//}
 
 - (MLNUILuaTable *)getLuaTable
 {
