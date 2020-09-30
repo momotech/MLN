@@ -90,7 +90,7 @@ static int argo_update (lua_State *L) {
     return 1;
 }
 
-static int argo_watch(lua_State *L) {
+static int argo_watch_value(lua_State *L) {
     PCallDBStart(__func__);
     TICK();
     
@@ -121,7 +121,7 @@ static int argo_watch(lua_State *L) {
     return 1;
 }
 
-static int argo_watch_action(lua_State *L) {
+static int argo_watch(lua_State *L) {
     PCallDBStart(__func__);
     TICK();
     
@@ -419,8 +419,8 @@ LUAUI_NEW_EXPORT_GLOBAL_FUNC_BEGIN(ArgoDataBindingCBridge)
 
 LUAUI_NEW_EXPORT_GLOBAL_C_FUNC(get, argo_get, ArgoDataBindingCBridge)
 LUAUI_NEW_EXPORT_GLOBAL_C_FUNC(update, argo_update, ArgoDataBindingCBridge)
+LUAUI_NEW_EXPORT_GLOBAL_C_FUNC(watchValue, argo_watch_value, ArgoDataBindingCBridge)
 LUAUI_NEW_EXPORT_GLOBAL_C_FUNC(watch, argo_watch, ArgoDataBindingCBridge)
-LUAUI_NEW_EXPORT_GLOBAL_C_FUNC(watchAction, argo_watch_action, ArgoDataBindingCBridge)
 LUAUI_NEW_EXPORT_GLOBAL_C_FUNC(removeObserver, argo_unwatch, ArgoDataBindingCBridge)
 
 LUAUI_NEW_EXPORT_GLOBAL_C_FUNC(mock, argo_mock, ArgoDataBindingCBridge)
