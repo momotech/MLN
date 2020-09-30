@@ -28,6 +28,9 @@ ArgoListenerFilter kArgoWatchKeyListenerFilter = ^BOOL(ArgoWatchContext context,
     if (!wrap.keyPath || !wrap.key) {
         return YES;
     }
+    if ([wrap.keyPath isEqualToString:kArgoListenerArrayPlaceHolder]) { // TODO：数组的变化也会被watch到？
+        return YES;
+    }
     return [wrap.keyPath hasSuffix:wrap.key];
 };
 

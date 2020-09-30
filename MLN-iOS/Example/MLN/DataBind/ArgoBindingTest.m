@@ -5,11 +5,13 @@
 //  Created by Dongpeng Dai on 2020/8/25.
 //
 
-#if 0
+#if 1
 //#import "ArgoBindingTest.h"
 #import "ArgoObservableMap.h"
 #import "ArgoObservableArray.h"
 //#import "NSObject+ArgoListener.h"
+//#import "NSObject+ArgoListener.h"
+#import "ArgoKit.h"
 
 @interface ArgoBindingTest : NSObject
 
@@ -26,7 +28,36 @@
 //    });
 //    [obj testWatch];
 //    [obj testArrayWatch];
-    [self testEncodeDecode];
+//    [self testEncodeDecode];
+    [self testNewWatch];
+}
+
++ (void)testNewWatch {
+    ArgoObservableMap *map = [ArgoObservableMap new];
+    ArgoObservableMap *map1 = [ArgoObservableMap new];
+    ArgoObservableMap *map11 = [ArgoObservableMap new];
+    [map11 setObject:@"v1" forKey:@"k1"];
+    [map1 setObject:map11 forKey:@"map11"];
+    [map setObject:map1 forKey:@"map1"];
+    
+    map
+    .watch(@"map1.map11.k1")
+    .callback(^(id  _Nonnull oldValue, id  _Nonnull newValue, ArgoObservableMap * _Nonnull map) {
+        NSLog(@">>>>> watch new is %@", newValue);
+    });
+    
+    map.watchValue(@"map1.map11.k1")
+    .callback(^(id  _Nonnull oldValue, id  _Nonnull newValue, ArgoObservableMap * _Nonnull map) {
+        NSLog(@">>>>> watch value new is %@", newValue);
+    });
+    
+    [map setObject:@"v2" forKey:@"map1"];
+    [map performSelector:@selector(lua_putValue:forKey:) withObject:
+     @{
+         @"map11" : @{
+                 @"k1" : @3333
+         }.argo_mutableCopy
+     }.argo_mutableCopy withObject:@"map1"];
 }
 
 + (void)testEncodeDecode {
@@ -44,9 +75,6 @@
 
 - (void)testArrayWatch {
     ArgoObservableArray *array = [ArgoObservableArray new];
-//    [array addArgoListenerWithChangeBlock:^(NSString *keyPath, id<ArgoListenerProtocol> object, NSDictionary *change) {
-//        NSLog(@"");
-//    } forKeyPath:@""];
     
     ArgoWatchArrayWrapper *wrap = array
     .watch()
@@ -120,10 +148,9 @@
         CFAbsoluteTime e = CFAbsoluteTimeGetCurrent();
         NSLog(@"non-mutalbe appendString cost %.2f ms", (e - s) * 1000);
     }
-    
-
 }
 
+/*
 - (void)test {
     [self testMap];
     [self testArray];
@@ -192,7 +219,7 @@
     [map1 lua_putValue:array2 forKey:@"list"];
     [array2[2] addObject:@"abc"];
 }
-
+*/
 @end
 
 #endif

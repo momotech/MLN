@@ -29,7 +29,8 @@ extern ArgoFilterBlock kArgoFilter_ALL;
 @property (nonatomic, copy, readonly) ArgoWatchWrapper *(^filter)(ArgoFilterBlock block);
 @property (nonatomic, copy, readonly) ArgoWatchWrapper *(^callback)(ArgoWatchBlock block);
 
-+ (instancetype)wrapperWithKeyPath:(NSString *)keyPath observedObject:(ArgoObservableMap *)observedObject;
++ (instancetype)wrapperWithKeyPath:(NSString *)keyPath observedObject:(ArgoObservableMap *)observedObject watchValue:(BOOL)watchValue;
+
 - (void)unwatch;
 
 @end

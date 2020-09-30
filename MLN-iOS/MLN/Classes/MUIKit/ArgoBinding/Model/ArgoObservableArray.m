@@ -31,12 +31,7 @@
 }
 
 - (void)lua_putValue:(NSObject *)value forKey:(NSString *)key {
-    NSInteger idx = key.integerValue - 1;
-    if (value && idx <= self.count) {
-        [self setObject:value atIndexedSubscript:idx];
-    } else if(!value && idx < self.count) {
-        [self removeObjectAtIndex:idx];
-    }
+    [self _putValue:value forKey:key context:ArgoWatchContext_Lua];
 }
 
 - (void)lua_rawPutValue:(NSObject *)value forKey:(NSString *)key {
@@ -54,6 +49,25 @@
         [self.proxy setObject:value atIndexedSubscript:idx];
     } else if(!value && idx < self.count) {
         [self.proxy removeObjectAtIndex:idx];
+    }
+}
+
+- (void)native_putValue:(NSObject *)value forKey:(NSString *)key {
+    [self _putValue:value forKey:key context:ArgoWatchContext_Native];
+}
+
+- (void)_putValue:(NSObject *)value forKey:(NSString *)key context:(ArgoWatchContext)context {
+    NSInteger idx = ArgoWatchContext_Lua == context ? key.integerValue - 1 : key.integerValue;
+    if (value && idx <= self.count) {
+        [self.proxy setObject:value atIndexedSubscript:idx];
+        
+        NSIndexSet *set = [NSIndexSet indexSetWithIndex:idx];
+        [self notifyWithType:NSKeyValueChangeInsertion indexSet:set newValue:value oldValue:nil context:context];
+    } else if(!value && idx < self.count) {
+        [self.proxy removeObjectAtIndex:idx];
+        
+        NSIndexSet *set = [NSIndexSet indexSetWithIndex:idx];
+        [self notifyWithType:NSKeyValueChangeRemoval indexSet:set newValue:nil oldValue:nil context:context];
     }
 }
 
