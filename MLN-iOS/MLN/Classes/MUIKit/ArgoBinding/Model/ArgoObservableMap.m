@@ -93,7 +93,7 @@
     @weakify(self);
     return ^ArgoWatchWrapper *(NSString *keyPath) {
         @strongify(self);
-        return [ArgoWatchWrapper wrapperWithKeyPath:keyPath observedObject:self];
+        return [ArgoWatchWrapper wrapperWithKeyPath:keyPath observedObject:self triggerWhenAdd:YES];
     };
 }
 

@@ -96,7 +96,7 @@
     return [self.dataMap argoGetForKeyPath:keyPath];
 }
 
-- (void)updateDataForKeyPath:(NSString *)keyPath value:(id)value {
+- (void)updateDataForKeyPath:(NSString *)keyPath value:(id)value context:(ArgoWatchContext)context {
     NSParameterAssert(keyPath);
     if(!keyPath) return;
     NSArray *keys = [keyPath componentsSeparatedByString:kArgoConstString_Dot];
@@ -120,23 +120,42 @@
             //TODO: 不能使用lua_rawPutValue，ex：watch(a.b.c), b=nil; 对c的监听要添加到b对象上并进行依次传递，所以不能用lua_rawPutValue
             [frontObject lua_putValue:object forKey:keys[i]];
              */
-            NSObject<ArgoListenerProtocol> *tmpObj = [ArgoObservableMap new];
-            NSString *tmpKey = keys[i];
-            object = tmpObj;
-            for (int j = i + 1; j < keys.count - 1; j++) {
-                NSObject<ArgoListenerProtocol> *obj = [ArgoObservableMap new];
-                [object lua_rawPutValue:obj forKey:keys[j]];
-                object = obj;
+            if (ArgoWatchContext_Lua == context) {
+                NSObject<ArgoListenerProtocol> *tmpObj = [ArgoObservableMap new];
+                NSString *tmpKey = keys[i];
+                object = tmpObj;
+                for (int j = i + 1; j < keys.count - 1; j++) {
+                    NSObject<ArgoListenerProtocol> *obj = [ArgoObservableMap new];
+                    [object lua_rawPutValue:obj forKey:keys[j]];
+                    object = obj;
+                }
+                //设置最后一个值，需要触发粘性
+                [object lua_putValue:value forKey:keys.lastObject];
+                object = nil;
+                [frontObject lua_putValue:tmpObj forKey:tmpKey];
+            } else {
+                NSObject<ArgoListenerProtocol> *tmpObj = [ArgoObservableMap new];
+                NSString *tmpKey = keys[i];
+                object = tmpObj;
+                for (int j = i + 1; j < keys.count - 1; j++) {
+                    NSObject<ArgoListenerProtocol> *obj = [ArgoObservableMap new];
+                    [object native_rawPutValue:obj forKey:keys[j]];
+                    object = obj;
+                }
+                //设置最后一个值，需要触发粘性
+                [object native_putValue:value forKey:keys.lastObject];
+                object = nil;
+                [frontObject native_putValue:tmpObj forKey:tmpKey];
             }
-            //设置最后一个值，需要触发粘性
-            [object lua_putValue:value forKey:keys.lastObject];
-            object = nil;
-            [frontObject lua_putValue:tmpObj forKey:tmpKey];
             break;
         }
     }
-
-    [object lua_putValue:value forKey:keys.lastObject];
+    
+    if (ArgoWatchContext_Lua == context) {
+        [object lua_putValue:value forKey:keys.lastObject];
+    } else {
+        [object native_putValue:value forKey:keys.lastObject];
+    }
 }
 
 #pragma mark - for Lua
@@ -151,12 +170,22 @@
 - (void)argo_updateValue:(id)value forKeyPath:(NSString *)keyPath {
     if(!keyPath) return;
     keyPath = [self convertedKeyPathWith:keyPath];
-    [self updateDataForKeyPath:keyPath value:value];
+    [self updateDataForKeyPath:keyPath value:value context:ArgoWatchContext_Lua];
 }
 
 // from watch
 - (NSInteger)argo_watchKeyPath:(NSString *)keyPath withHandler:(MLNUIBlock *)handler filter:(MLNUIBlock *)filter {
     return [self _watchKeyPath:keyPath handler:handler listView:nil filter:filter == nil ? kArgoFilter_Native : ^BOOL(ArgoWatchContext context, NSDictionary *change) {
+        [filter addUIntegerArgument:context];
+        id new = [change objectForKey:NSKeyValueChangeNewKey];
+        [filter addObjArgument:new];
+        id res = [filter callIfCan];
+        return [res boolValue];
+    } triggerWhenAdd:NO];
+}
+
+- (NSInteger)argo_watchKeyPath2:(NSString *)keyPath withHandler:(MLNUIBlock *)handler filter:(MLNUIBlock *)filter {
+    return [self _watchKeyPath:keyPath handler:handler listView:nil filter:filter == nil ? nil : ^BOOL(ArgoWatchContext context, NSDictionary *change) {
         [filter addUIntegerArgument:context];
         id new = [change objectForKey:NSKeyValueChangeNewKey];
         [filter addObjArgument:new];

@@ -30,15 +30,17 @@ ArgoFilterBlock kArgoFilter_ALL = ^BOOL(ArgoWatchContext context, id value){
 @property (nonatomic, copy) ArgoWatchBlock watchBlock;
 @property (nonatomic, weak) ArgoObservableMap *observerd;
 @property (nonatomic, strong) id<ArgoListenerToken> token;
+@property (nonatomic, assign) BOOL triggerWhenAdd;
 @end
 
 @implementation ArgoWatchWrapper
 
-+ (instancetype)wrapperWithKeyPath:(NSString *)keyPath observedObject:(ArgoObservableMap *)observedObject {
++ (instancetype)wrapperWithKeyPath:(NSString *)keyPath observedObject:(ArgoObservableMap *)observedObject triggerWhenAdd:(BOOL)triggerWhenAdd{
     ArgoWatchWrapper *watch = [self new];
     watch.keyPath = keyPath;
     watch.observerd = observedObject;
     watch.filterBlock = kArgoFilter_Lua;
+    watch.triggerWhenAdd = triggerWhenAdd;
     return watch;
 }
 
@@ -75,7 +77,7 @@ ArgoFilterBlock kArgoFilter_ALL = ^BOOL(ArgoWatchContext context, id value){
                     return NO;
                 }
                 return YES;
-            } triggerWhenAdd:NO];
+            } triggerWhenAdd:self.triggerWhenAdd];
         }
         return self;
     };
