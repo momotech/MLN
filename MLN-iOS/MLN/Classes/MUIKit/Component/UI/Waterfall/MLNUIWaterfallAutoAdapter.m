@@ -11,9 +11,11 @@
 #import "MLNUIInternalWaterfallView.h"
 #import "MLNUIWaterfallHeaderView.h"
 
-@interface MLNUIWaterfallAutoAdapter ()<MLNUICollectionViewCellDelegate>
+FOUNDATION_EXTERN CGSize MLNUICollectionViewAutoFitCellEstimateSize;
 
-@property (nonatomic, strong) NSMutableDictionary<NSIndexPath *, MLNUICollectionViewAutoSizeCell *> *layoutCellCache;
+@interface MLNUIWaterfallAutoAdapter ()<MLNUICollectionViewCellDelegate, MLNUIWaterfallHeaderViewDelegate>
+
+@property (nonatomic, strong) NSMutableDictionary<NSIndexPath *, NSValue *> *headerViewSizeCache;
 
 @end
 
@@ -21,9 +23,23 @@
 
 #pragma mark - Override
 
+- (Class)headerViewClass {
+    return [MLNUIWaterfallAutoFitHeaderView class];
+}
+
+- (Class)collectionViewCellClass {
+    return [MLNUICollectionViewAutoSizeCell class];
+}
+
+- (CGSize)fitSizeForCell:(MLNUICollectionViewCell *)cell {
+    return CGSizeMake(cell.frame.size.width, MLNUIUndefined); // 自适应场景：cell.luaContentView高度自适应
+}
+
+- (CGSize)headerViewFitSize:(UICollectionReusableView *)headerView {
+    return CGSizeMake(headerView.frame.size.width, MLNUIUndefined); // 自适应场景：headerView.luaContentView高度自适应
+}
+
 - (CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout heightForItemAtIndexPath:(NSIndexPath *)indexPath {
-    
-    // first get cache
     NSValue *sizeValue = [self.cachesManager layoutInfoWithIndexPath:indexPath];
     if (sizeValue) {
         CGSize size = [sizeValue CGSizeValue];
@@ -31,66 +47,18 @@
             return size.height;
         }
     }
-    
-    // caculate if no cache
-    NSString *reuseId = [self reuseIdentifierAtIndexPath:indexPath];
-    [self registerCellClassIfNeed:collectionView reuseId:reuseId];
-    
-    // 该 cell 仅仅是用来计算布局使用，不会显示到屏幕上
-    MLNUICollectionViewAutoSizeCell *cell = [self layoutCellWithIndexPath:indexPath];
-    cell.delegate = self;
-    MLNUILuaTable *luaCell = [cell createLuaTableAsCellNameForLuaIfNeed:self.mlnui_luaCore];
-    
-    MLNUIBlock *initCallback = [self initedCellCallbackByReuseId:reuseId];
-    [initCallback addLuaTableArgument:luaCell];
-    [initCallback callIfCan];
-    
-    MLNUIBlock *reuseCallback = [self fillCellDataCallbackByReuseId:reuseId];
-    [reuseCallback addLuaTableArgument:luaCell];
-    [reuseCallback addIntArgument:(int)indexPath.section+1];
-    [reuseCallback addIntArgument:(int)indexPath.item+1];
-    [reuseCallback callIfCan];
-    
-    // update cache
-    CGSize size = [cell caculateCellSizeWithMaxSize:self.cellMaxSize apply:YES];
-    [self.cachesManager updateLayoutInfo:[NSValue valueWithCGSize:size] forIndexPath:indexPath];
-    return size.height;
-    
+    return MLNUICollectionViewAutoFitCellEstimateSize.height;
 }
 
-- (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout referenceSizeForHeaderInSection:(NSInteger)section
-{
+- (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout referenceSizeForHeaderInSection:(NSInteger)section {
     if (section != 0) { // WaterfallView 限制只有一个headerView
         return CGSizeMake(0, 0);
     }
-    
-    UIView *headerView = [MLNUIInternalWaterfallView headerViewInWaterfall:collectionView];
-    if (!headerView) { 
-        BOOL isHeaderValid = [self headerIsValidWithWaterfallView:collectionView];
-        if (section == 0 && isHeaderValid) {
-            NSIndexPath *indexPath = [NSIndexPath indexPathForItem:0 inSection:section];
-            [collectionView registerClass:[MLNUIWaterfallHeaderView class] forSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:kMLNUIWaterfallHeaderViewReuseID];
-            MLNUIWaterfallHeaderView *header = [collectionView dequeueReusableSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:kMLNUIWaterfallHeaderViewReuseID forIndexPath:indexPath];
-            [header createLuaTableAsCellNameForLuaIfNeed:self.mlnui_luaCore];
-
-            [self.initedHeaderCallback addLuaTableArgument:[header getLuaTable]];
-            [self.initedHeaderCallback addIntArgument:(int)indexPath.section+1];
-            [self.initedHeaderCallback addIntArgument:(int)indexPath.row+1];
-            [self.initedHeaderCallback callIfCan];
-         
-            [self.reuseHeaderCallback addLuaTableArgument:[header getLuaTable]];
-            [self.reuseHeaderCallback addIntArgument:(int)indexPath.section+1];
-            [self.reuseHeaderCallback addIntArgument:(int)indexPath.row+1];
-            [self.reuseHeaderCallback callIfCan];
-            
-            CGSize size = [header caculateCellSizeWithMaxSize:CGSizeMake(collectionView.frame.size.width, MLNUIUndefined) apply:NO];
-            return CGSizeMake(0, size.height);
-        }
-        return CGSizeZero;
+    NSValue *value = [self.headerViewSizeCache objectForKey:[NSIndexPath indexPathForItem:0 inSection:0]];
+    if (value) {
+        return [value CGSizeValue];
     }
-    
-    CGSize size = [headerView.mlnui_layoutNode calculateLayoutWithSize:CGSizeMake(collectionView.frame.size.width, MLNUIUndefined)];
-    return CGSizeMake(0, size.height);
+    return MLNUICollectionViewAutoFitCellEstimateSize;
 }
 
 #pragma mark - MLNUICollectionViewCellDelegate
@@ -106,34 +74,61 @@
     [self.cachesManager updateLayoutInfo:@(size) forIndexPath:indexPath];
 
     // cell 上内容变更引起重新测量布局后，需要重新调整 cell 大小. (即 invalidate collectionViewLayout)
-    UICollectionViewLayoutInvalidationContext *invalidContext = [UICollectionViewLayoutInvalidationContext new];
+    UICollectionViewFlowLayoutInvalidationContext *invalidContext = [UICollectionViewFlowLayoutInvalidationContext new];
     [invalidContext invalidateItemsAtIndexPaths:@[indexPath]];
     [self.collectionView.collectionViewLayout invalidateLayoutWithContext:invalidContext];
  }
 
-#pragma mark - Private
-
-- (NSMutableDictionary<NSIndexPath *,MLNUICollectionViewAutoSizeCell *> *)layoutCellCache {
-    if (!_layoutCellCache) {
-        _layoutCellCache = [NSMutableDictionary dictionary];
+- (CGSize)mlnuiCollectionViewAutoFitSizeForCell:(MLNUICollectionViewCell *)cell indexPath:(NSIndexPath *)indexPath {
+    if (!indexPath) return CGSizeZero;
+    NSValue *cacheSize = [self.cachesManager layoutInfoWithIndexPath:indexPath];
+    if (!cacheSize) {
+        CGSize size = [cell caculateCellSizeWithMaxSize:self.cellMaxSize apply:YES];
+        [self.cachesManager updateLayoutInfo:@(size) forIndexPath:indexPath];
+        return size;
     }
-    return _layoutCellCache;
+    return cacheSize.CGSizeValue;
 }
 
-- (MLNUICollectionViewAutoSizeCell *)layoutCellWithIndexPath:(NSIndexPath *)indexPath {
-    MLNUIKitLuaAssert(indexPath, @"Expect a valid indexPath: (null).");
-    if (!indexPath) return nil;
-    MLNUICollectionViewAutoSizeCell *cell = self.layoutCellCache[indexPath];
-    if (!cell) {
-        cell = [[MLNUICollectionViewAutoSizeCell alloc] init];
-        self.layoutCellCache[indexPath] = cell;
+#pragma mark - MLNUIWaterfallHeaderViewDelegate
+
+- (void)mlnuiWaterfallViewHeaderViewShouldReload:(MLNUIWaterfallHeaderView *)headerView size:(CGSize)size {
+    NSIndexPath *indexPath = [NSIndexPath indexPathForItem:0 inSection:0];
+    NSValue *cacheSize = [self.headerViewSizeCache objectForKey:indexPath];
+    if (cacheSize && CGSizeEqualToSize(cacheSize.CGSizeValue, size)) {
+        return;
     }
-    return cell;
+    [self.headerViewSizeCache setObject:@(size) forKey:indexPath];
+
+    // headerView 上内容变更引起重新测量布局后，需要重新调整 headerView 大小. (即 invalidate collectionViewLayout)
+    UICollectionViewFlowLayoutInvalidationContext *invalidContext = [UICollectionViewFlowLayoutInvalidationContext new];
+    [invalidContext invalidateSupplementaryElementsOfKind:UICollectionElementKindSectionHeader atIndexPaths:@[indexPath]];
+    [self.collectionView.collectionViewLayout invalidateLayoutWithContext:invalidContext];
+ }
+
+- (CGSize)mlnuiWaterfallAutoFitSizeForHeaderView:(MLNUIWaterfallHeaderView *)headerView indexPath:(NSIndexPath *)indexPath {
+    if (!indexPath) return CGSizeZero;
+    NSValue *cacheSize = [self.headerViewSizeCache objectForKey:indexPath];
+    if (!cacheSize) {
+        CGSize size = [headerView caculateCellSizeWithMaxSize:[self headerViewMaxSize:headerView] apply:YES];
+        [self.headerViewSizeCache setObject:@(size) forKey:indexPath];
+        return size;
+    }
+    return cacheSize.CGSizeValue;
+}
+
+#pragma mark - Private
+
+- (NSMutableDictionary<NSIndexPath *,NSValue *> *)headerViewSizeCache {
+    if (!_headerViewSizeCache) {
+        _headerViewSizeCache = [NSMutableDictionary dictionary];
+    }
+    return _headerViewSizeCache;
 }
 
 #pragma mark - Export Lua
 
 LUAUI_EXPORT_BEGIN(MLNUIWaterfallAutoAdapter)
-LUAUI_EXPORT_END(MLNUIWaterfallAutoAdapter, WaterfallAutoAdapter, YES, "MLNUIWaterfallAdapter", NULL)
+LUAUI_EXPORT_END(MLNUIWaterfallAutoAdapter, WaterfallAutoFitAdapter, YES, "MLNUIWaterfallAdapter", NULL)
 
 @end

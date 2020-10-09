@@ -31,6 +31,16 @@
     [self.luaContentView luaui_addSubview:view];
 }
 
+- (Class)reuseContentViewClass {
+    return [MLNUIReuseContentView class];
+}
+
+- (void)reloadHeaderViewIfNeededWithSize:(CGSize)size {
+    if ([self.delegate respondsToSelector:@selector(mlnuiWaterfallViewHeaderViewShouldReload:size:)]) {
+        [self.delegate mlnuiWaterfallViewHeaderViewShouldReload:self size:size];
+    }
+}
+
 #pragma mark - MLNUIReuseCellProtocol
 
 - (MLNUILuaTable *)createLuaTableAsCellNameForLuaIfNeed:(MLNUILuaCore *)luaCore {
@@ -83,10 +93,36 @@
 - (MLNUIReuseContentView *)luaContentView
 {
     if (!_luaContentView) {
-        _luaContentView = [[MLNUIReuseContentView alloc] initWithFrame:CGRectZero cellView:self];
+        _luaContentView = [[self.reuseContentViewClass alloc] initWithFrame:CGRectZero cellView:self];
+        __weak typeof(self) weakSelf = self;
+        _luaContentView.didChangeLayout = ^(CGSize size) {
+            [weakSelf reloadHeaderViewIfNeededWithSize:size];
+        };
         [self addSubview:_luaContentView];
     }
     return _luaContentView;
 }
+
+@end
+
+@implementation MLNUIWaterfallAutoFitHeaderView
+
+#pragma mark - Override
+
+- (Class)reuseContentViewClass {
+    return [MLNUIReuseAutoSizeContentView class];
+}
+
+- (UICollectionViewLayoutAttributes *)preferredLayoutAttributesFittingAttributes:(UICollectionViewLayoutAttributes *)layoutAttributes {
+    UICollectionViewLayoutAttributes *attribute = [super preferredLayoutAttributesFittingAttributes:layoutAttributes];
+    if ([self.delegate respondsToSelector:@selector(mlnuiWaterfallAutoFitSizeForHeaderView:indexPath:)]) {
+        CGSize size = [self.delegate mlnuiWaterfallAutoFitSizeForHeaderView:self indexPath:layoutAttributes.indexPath];
+        CGRect frame = attribute.frame;
+        frame.size = size;
+        attribute.frame = frame;
+    }
+    return attribute;
+}
+
 
 @end
