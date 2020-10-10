@@ -85,6 +85,18 @@ ret;\
     }
 }
 
+- (void)removeAll {
+    if (_cache) {
+        if ([NSThread isMainThread]) {
+            _cache = nil;
+        } else {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                self->_cache = nil;
+            });
+        }
+    }
+}
+
 #pragma mark - Array
 
 - (void)putValue:(NSObject *)value forIndex:(int)index {

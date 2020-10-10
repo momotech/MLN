@@ -17,6 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
 //map interface
 @interface ArgoLuaCacheAdapter ()
 - (void)putValue:(NSObject *)value forKey:(NSString *)key;
+- (void)removeAll;
 @end
 
 // array interface
