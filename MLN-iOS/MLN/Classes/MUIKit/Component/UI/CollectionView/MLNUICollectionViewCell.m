@@ -132,9 +132,13 @@
 - (UICollectionViewLayoutAttributes *)preferredLayoutAttributesFittingAttributes:(UICollectionViewLayoutAttributes *)layoutAttributes {
     UICollectionViewLayoutAttributes *attribute = [super preferredLayoutAttributesFittingAttributes:layoutAttributes];
     if ([self.delegate respondsToSelector:@selector(mlnuiCollectionViewAutoFitSizeForCell:indexPath:)]) {
-         CGSize size = [self.delegate mlnuiCollectionViewAutoFitSizeForCell:self indexPath:layoutAttributes.indexPath];
+        CGSize size = [self.delegate mlnuiCollectionViewAutoFitSizeForCell:self indexPath:layoutAttributes.indexPath];
         CGRect frame = attribute.frame;
-        frame.size = size;
+        if (@available(iOS 10, *)) {
+            frame.size = size;
+        } else {
+            frame.size = CGSizeMake(ceil(size.width), ceil(size.height));
+        }
         attribute.frame = frame;
     }
     return attribute;

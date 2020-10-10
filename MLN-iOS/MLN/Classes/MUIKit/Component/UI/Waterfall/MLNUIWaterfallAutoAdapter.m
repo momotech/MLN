@@ -47,18 +47,18 @@ FOUNDATION_EXTERN CGSize MLNUICollectionViewAutoFitCellEstimateSize;
             return size.height;
         }
     }
-    return MLNUICollectionViewAutoFitCellEstimateSize.height;
+    return 0;
 }
 
 - (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout referenceSizeForHeaderInSection:(NSInteger)section {
     if (section != 0) { // WaterfallView 限制只有一个headerView
-        return CGSizeMake(0, 0);
+        return CGSizeZero;
     }
-    NSValue *value = [self.headerViewSizeCache objectForKey:[NSIndexPath indexPathForItem:0 inSection:0]];
+    NSValue *value = [self.headerViewSizeCache objectForKey:[NSIndexPath indexPathForItem:0 inSection:section]];
     if (value) {
         return [value CGSizeValue];
     }
-    return MLNUICollectionViewAutoFitCellEstimateSize;
+    return CGSizeZero;
 }
 
 #pragma mark - MLNUICollectionViewCellDelegate
@@ -74,9 +74,7 @@ FOUNDATION_EXTERN CGSize MLNUICollectionViewAutoFitCellEstimateSize;
     [self.cachesManager updateLayoutInfo:@(size) forIndexPath:indexPath];
 
     // cell 上内容变更引起重新测量布局后，需要重新调整 cell 大小. (即 invalidate collectionViewLayout)
-    UICollectionViewFlowLayoutInvalidationContext *invalidContext = [UICollectionViewFlowLayoutInvalidationContext new];
-    [invalidContext invalidateItemsAtIndexPaths:@[indexPath]];
-    [self.collectionView.collectionViewLayout invalidateLayoutWithContext:invalidContext];
+    [self.collectionView.collectionViewLayout invalidateLayout];
  }
 
 - (CGSize)mlnuiCollectionViewAutoFitSizeForCell:(MLNUICollectionViewCell *)cell indexPath:(NSIndexPath *)indexPath {
@@ -101,9 +99,7 @@ FOUNDATION_EXTERN CGSize MLNUICollectionViewAutoFitCellEstimateSize;
     [self.headerViewSizeCache setObject:@(size) forKey:indexPath];
 
     // headerView 上内容变更引起重新测量布局后，需要重新调整 headerView 大小. (即 invalidate collectionViewLayout)
-    UICollectionViewFlowLayoutInvalidationContext *invalidContext = [UICollectionViewFlowLayoutInvalidationContext new];
-    [invalidContext invalidateSupplementaryElementsOfKind:UICollectionElementKindSectionHeader atIndexPaths:@[indexPath]];
-    [self.collectionView.collectionViewLayout invalidateLayoutWithContext:invalidContext];
+    [self.collectionView.collectionViewLayout invalidateLayout];
  }
 
 - (CGSize)mlnuiWaterfallAutoFitSizeForHeaderView:(MLNUIWaterfallHeaderView *)headerView indexPath:(NSIndexPath *)indexPath {

@@ -12,6 +12,9 @@
 #import "MLNUIKitHeader.h"
 #import "MLNUIWaterfallLayoutDelegate.h"
 #import "MLNUILayoutMacro.h"
+#import "MLNUIWaterfallAutoAdapter.h"
+
+#define OPEN_CELL_ESTIMATE [self.collectionView.delegate isKindOfClass:[MLNUIWaterfallAutoAdapter class]]
 
 @interface MLNUIWaterfallLayout ()
 
@@ -70,8 +73,6 @@
 
 - (void)_in_prepareLayout
 {
-    [super prepareLayout];
-    
     //重新布局需要清空
     [_cellLayoutInfo removeAllObjects];
     [_headLayoutInfo removeAllObjects];
@@ -140,6 +141,12 @@
             //根据代理去当前cell的高度  因为当前是采用通过列数计算的宽度，高度根据图片的原始宽高比进行设置的
             //    高度
             CGFloat height = [(id<MLNUIWaterfallLayoutDelegate>)self.collectionView.delegate collectionView:self.collectionView layout:self heightForItemAtIndexPath:cellIndePath];
+            if (OPEN_CELL_ESTIMATE) { // collectionView开启估算cell大小机制后，若 attribute.size 含有小数部分，iOS9的系统上会crash
+                if (@available(iOS 10, *)) {} else {
+                    _itemWidth = ceil(_itemWidth);
+                    height = ceil(height);
+                }
+            }
             
             //设置当前cell布局对象的frame
             attribute.frame = CGRectMake(x, y, _itemWidth, height);
