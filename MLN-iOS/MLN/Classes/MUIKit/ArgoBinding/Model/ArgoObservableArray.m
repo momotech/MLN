@@ -23,15 +23,52 @@
 @implementation ArgoObservableArray
 
 - (NSObject *)lua_get:(NSString *)key {
-    return [self objectAtIndex:key.integerValue - 1];
+    NSInteger idx = key.integerValue - 1;
+    if (idx < 0 || idx >= [self count]) {
+        return nil;
+    }
+    return [self objectAtIndex:idx];
 }
 
 - (void)lua_putValue:(NSObject *)value forKey:(NSString *)key {
-    [self setObject:value atIndexedSubscript:key.integerValue - 1];
+    [self _putValue:value forKey:key context:ArgoWatchContext_Lua];
 }
 
 - (void)lua_rawPutValue:(NSObject *)value forKey:(NSString *)key {
-    [self.proxy setObject:value atIndexedSubscript:key.intValue - 1];
+    NSInteger idx = key.integerValue - 1;
+    if (value && idx <= self.count) {
+        [self.proxy setObject:value atIndexedSubscript:idx];
+    } else if(!value && idx < self.count) {
+        [self.proxy removeObjectAtIndex:idx];
+    }
+}
+
+- (void)native_rawPutValue:(NSObject *)value forKey:(NSString *)key {
+    NSInteger idx = key.integerValue;
+    if (value && idx <= self.count) {
+        [self.proxy setObject:value atIndexedSubscript:idx];
+    } else if(!value && idx < self.count) {
+        [self.proxy removeObjectAtIndex:idx];
+    }
+}
+
+- (void)native_putValue:(NSObject *)value forKey:(NSString *)key {
+    [self _putValue:value forKey:key context:ArgoWatchContext_Native];
+}
+
+- (void)_putValue:(NSObject *)value forKey:(NSString *)key context:(ArgoWatchContext)context {
+    NSInteger idx = ArgoWatchContext_Lua == context ? key.integerValue - 1 : key.integerValue;
+    if (value && idx <= self.count) {
+        [self.proxy setObject:value atIndexedSubscript:idx];
+        
+        NSIndexSet *set = [NSIndexSet indexSetWithIndex:idx];
+        [self notifyWithType:NSKeyValueChangeInsertion indexSet:set newValue:value oldValue:nil context:context];
+    } else if(!value && idx < self.count) {
+        [self.proxy removeObjectAtIndex:idx];
+        
+        NSIndexSet *set = [NSIndexSet indexSetWithIndex:idx];
+        [self notifyWithType:NSKeyValueChangeRemoval indexSet:set newValue:nil oldValue:nil context:context];
+    }
 }
 
 - (NSMutableDictionary *)argoListeners {

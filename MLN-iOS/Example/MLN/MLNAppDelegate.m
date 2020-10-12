@@ -46,7 +46,7 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    [[MLNUIFPSStatus sharedInstance] open];
+//    [[MLNUIFPSStatus sharedInstance] open];
 //    [[FLEXManager sharedManager] showExplorer];
 //    [MLNUILogViewer setup];
     [self setupMLNKitEnvironment];
@@ -94,7 +94,7 @@
     [MLNUIKitEnvironment setDefaultImageLoader:self.imgLoader2];
     [MLNUIKitEnvironment setDefaultNavigatorHandler:self.navHandler];
     [MLNUIKitEnvironment setDefaultErrorHandler:self.errorHandler];
-#if DEBUG && 0
+#if DEBUG && Argo_Debug_Performance_Enable
     [MLNUIKitEnvironment setPerformanceMonitor: [MLNUILoadTimeStatistics sharedStatistics]];
     MLNUIKitPerformanceMonitorForDebug = [MLNUILoadTimeStatistics sharedStatistics];
 #endif

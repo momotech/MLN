@@ -273,7 +273,9 @@ NSString *error_tt = [NSString stringWithFormat:FORMAT, ##__VA_ARGS__];\
 MLNUILuaCallErrorHandler(LUA_CORE, FORMAT, ##__VA_ARGS__)
 
 
-#if DEBUG && 0
+#define Argo_Debug_Performance_Enable 0
+
+#if DEBUG && Argo_Debug_Performance_Enable
 #import "MLNUIPerformanceHeader.h"
 extern id<MLNUIPerformanceMonitor> MLNUIKitPerformanceMonitorForDebug;
 
@@ -346,6 +348,22 @@ fprintf(stderr, "%s %s %s \n",c, f, [[NSString stringWithFormat:(s), ##__VA_ARGS
 }while(0)
 #else
 #define PLOG( s, ... )
+#endif
+
+#if DEBUG
+#define Argo_ErrorLog(format, ... ) \
+    char *para_get_env = getenv("Argo_ErrorLog_Disable"); \
+    if (para_get_env == NULL || (para_get_env != NULL && 0 != strcmp(para_get_env , "1"))) { \
+        NSLog(@"%s %@", __func__, [NSString stringWithFormat:format, ##__VA_ARGS__]);\
+    }
+#else
+#define Argo_ErrorLog(format, ... )
+#endif
+
+#if DEBUG && OCPERF_PRE_REQUIRE
+#define Argo_Debug_Check_Pre_Require 1
+#else
+#define Argo_Debug_Check_Pre_Require 0
 #endif
 
 #endif /* MLNUIHeader_h */

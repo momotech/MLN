@@ -88,7 +88,22 @@ typedef void(^MLNLUIModelHandleTask)(void);
     #if DEBUG
             functionChunk = [MLNUIModelKeyPathComparator luaTableKeyTrackCodeAppendFunction:functionChunk model:model];
     #endif
+    
+#if !OCPERF_PRE_REQUIRE // 不开启预加载时，预先导入map()/array()函数
+    const char *require =
+    "function map() return setmetatable({}, {collectionType=1}) end\n"
+    "function array() return setmetatable({}, {collectionType=2}) end\n";
+    char *connectStr = malloc(strlen(require)+strlen(functionChunk)+1);
+    strcpy(connectStr, require);
+    strcat(connectStr, functionChunk);
+    functionChunk = connectStr;
+#endif
+    
     int res = luaL_loadstring(L, functionChunk);
+    
+#if !OCPERF_PRE_REQUIRE
+    free(connectStr);
+#endif
     if (res != 0) { // error occur
         NSString *errmsg = [NSString stringWithFormat:@"The `functionChunk` parameter is invalid. (%s)", luaL_checkstring(L, -1)];
         ARGOUI_ERROR(errmsg);

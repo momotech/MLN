@@ -12,6 +12,7 @@
 #import "ArgoLuaCacheAdapter.h"
 #import "MLNUILuaTable.h"
 #import "NSObject+MLNUICore.h"
+#import "MLNUIHeader.h"
 
 @interface ArgoObservableMap()
 @property (nonatomic, strong) NSMutableDictionary *proxy;
@@ -40,6 +41,10 @@
     [self _putValue:value forKey:key context:ArgoWatchContext_Lua notify:NO];
 }
 
+- (void)native_rawPutValue:(NSObject *)value forKey:(NSString *)key {
+    [self _putValue:value forKey:key context:ArgoWatchContext_Native notify:NO];
+}
+
 - (void)native_putValue:(NSObject *)value forKey:(NSString *)key {
     [self _putValue:value forKey:key context:ArgoWatchContext_Native notify:YES];
 }
@@ -51,6 +56,11 @@
 
 - (void)_putValue:(NSObject *)value forKey:(NSString *)key context:(ArgoWatchContext)context notify:(BOOL)notify{
     if(!key) return;
+#if DEBUG
+    if ([value isKindOfClass:[NSDictionary class]] && ![value isKindOfClass:[ArgoObservableMap class]]) {
+        NSLog(@"[ArgoError] value should be kindOfClass ArgoObservableMap");
+    }
+#endif
     NSObject *old = [self.proxy objectForKey:key];
     if (value) {
         [self.proxy setObject:value forKey:key];
@@ -87,9 +97,17 @@
 
 - (ArgoWatchWrapper * _Nonnull (^)(NSString * _Nonnull))watch {
     @weakify(self);
+    return ^ArgoWatchWrapper *(NSString *key) {
+        @strongify(self);
+        return [ArgoWatchWrapper wrapperWithKeyPath:key observedObject:self watchValue:NO];
+    };
+}
+
+- (ArgoWatchWrapper * _Nonnull (^)(NSString * _Nonnull))watchValue {
+    @weakify(self);
     return ^ArgoWatchWrapper *(NSString *keyPath) {
         @strongify(self);
-        return [ArgoWatchWrapper wrapperWithKeyPath:keyPath observedObject:self];
+        return [ArgoWatchWrapper wrapperWithKeyPath:keyPath observedObject:self watchValue:YES];
     };
 }
 

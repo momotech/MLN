@@ -116,7 +116,8 @@
                        @"MLNDataBindHotReload",
                        @"MLNPerformanceTestController",
                        @"MLNKuaController",
-                       @"MLNViewPagerDemo",
+//                       @"MLNKuaControllerAsync",
+//                       @"MLNViewPagerDemo",
                        @"DemoLiyifengViewController",
                        ];
     }

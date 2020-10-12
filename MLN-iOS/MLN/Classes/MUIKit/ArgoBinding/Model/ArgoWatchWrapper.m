@@ -12,16 +12,16 @@
 #import "ArgoObservableArray.h"
 #import "NSObject+ArgoListener.h"
 
-ArgoFilterBlock kArgoFilter_Lua = ^(ArgoWatchContext context, id value){
-    if(context == ArgoWatchContext_Lua)
-        return YES;
-    return NO;
+ArgoFilterBlock kArgoFilter_Lua = ^BOOL(ArgoWatchContext context, id value){
+    return ArgoWatchContext_Lua == context;
 };
 
-ArgoFilterBlock kArgoFilter_Native = ^(ArgoWatchContext context, id value){
-    if(context == ArgoWatchContext_Native)
-        return YES;
-    return NO;
+ArgoFilterBlock kArgoFilter_Native = ^BOOL(ArgoWatchContext context, id value){
+    return ArgoWatchContext_Native == context;
+};
+
+ArgoFilterBlock kArgoFilter_ALL = ^BOOL(ArgoWatchContext context, id value){
+    return YES;
 };
 
 @interface ArgoWatchWrapper ()
@@ -30,14 +30,17 @@ ArgoFilterBlock kArgoFilter_Native = ^(ArgoWatchContext context, id value){
 @property (nonatomic, copy) ArgoWatchBlock watchBlock;
 @property (nonatomic, weak) ArgoObservableMap *observerd;
 @property (nonatomic, strong) id<ArgoListenerToken> token;
+@property (nonatomic, assign, getter=isWatchValue) BOOL watchValue;
 @end
 
 @implementation ArgoWatchWrapper
 
-+ (instancetype)wrapperWithKeyPath:(NSString *)keyPath observedObject:(ArgoObservableMap *)observedObject {
++ (instancetype)wrapperWithKeyPath:(NSString *)keyPath observedObject:(ArgoObservableMap *)observedObject watchValue:(BOOL)watchValue{
     ArgoWatchWrapper *watch = [self new];
     watch.keyPath = keyPath;
     watch.observerd = observedObject;
+    watch.filterBlock = kArgoFilter_Lua;
+    watch.watchValue = watchValue;
     return watch;
 }
 
@@ -57,6 +60,7 @@ ArgoFilterBlock kArgoFilter_Native = ^(ArgoWatchContext context, id value){
         self.watchBlock = block;
         if (self.keyPath && block) {
             self.token = [self.observerd addArgoListenerWithChangeBlock:^(NSString *keyPath, id<ArgoListenerProtocol> object, NSDictionary *change) {
+                // 不能使用@strongify(self); 必须要强持有
                 NSObject *old = [change objectForKey:NSKeyValueChangeOldKey];
                 NSObject *new = [change objectForKey:NSKeyValueChangeNewKey];
 //                ArgoWatchContext context = [[change objectForKey:kArgoListenerContext] unsignedIntegerValue];
@@ -68,13 +72,18 @@ ArgoFilterBlock kArgoFilter_Native = ^(ArgoWatchContext context, id value){
                 if (type == NSKeyValueChangeSetting) {
                     block(old, new, self.observerd);
                 }
-            } forKeyPath:self.keyPath filter:^BOOL(ArgoWatchContext context, NSDictionary *change) {
+            } forKeyPath:self.keyPath filter: ^BOOL(ArgoWatchContext context, NSDictionary *change) {
                 NSObject *new = [change objectForKey:NSKeyValueChangeNewKey];
+                // 1. 如果是watch,不是直接赋值，忽略
+                if (!self.isWatchValue && !kArgoWatchKeyListenerFilter(context, change)) {
+                    return NO;
+                }
+                // 2. 自定义filter
                 if (self.filterBlock && !self.filterBlock(context, new)) {
                     return NO;
                 }
                 return YES;
-            } triggerWhenAdd:NO];
+            } triggerWhenAdd:self.isWatchValue ? NO : YES];
         }
         return self;
     };
@@ -87,9 +96,11 @@ ArgoFilterBlock kArgoFilter_Native = ^(ArgoWatchContext context, id value){
 @end
 
 @interface ArgoWatchArrayWrapper ()
+// 默认值是 kArgoFilter_Lua
 @property (nonatomic, copy) ArgoFilterBlock filterBlock;
 @property (nonatomic, weak) ArgoObservableArray *observerd;
 @property (nonatomic, strong) id<ArgoListenerToken> token;
+//@property (nonatomic, assign, getter=isWatchValue) BOOL watchValue;
 @end
 
 @implementation ArgoWatchArrayWrapper
@@ -97,6 +108,7 @@ ArgoFilterBlock kArgoFilter_Native = ^(ArgoWatchContext context, id value){
 + (instancetype)wrapperWithObservedObject:(ArgoObservableArray *)observedObject {
     ArgoWatchArrayWrapper *wrap = [ArgoWatchArrayWrapper new];
     wrap.observerd = observedObject;
+    wrap.filterBlock = kArgoFilter_Lua;
     return wrap;
 }
 
@@ -115,7 +127,7 @@ ArgoFilterBlock kArgoFilter_Native = ^(ArgoWatchContext context, id value){
         @strongify(self);
         if (block) {
             self.token = [self.observerd addArgoListenerWithChangeBlock:^(NSString *keyPath, id<ArgoListenerProtocol> object, NSDictionary *change) {
-//                ArgoWatchContext context = [[change objectForKey:kArgoListenerContext] unsignedIntegerValue];
+                // 不能使用@strongify(self); 必须要强持有
                 block(self.observerd,change);
             } forKeyPath:nil filter:^BOOL(ArgoWatchContext context, NSDictionary *change) {
                 NSObject *new = [change objectForKey:NSKeyValueChangeNewKey];

@@ -36,10 +36,6 @@ vwj3:image(backImg)
 _view_set_style_with_filter(vwj3,Style.backImg,{image=true})
 local vwj4 = Label()
 ui_views.vwj4 = vwj4
-vwj4:text(userData.title.__get)
-userData.title.__watch=function(new)
-vwj4:text(new)
-end
 vwj4:textColor(Color():hex(16777215))
 vwj2:children({vwj3, vwj4})
 _view_set_style_with_filter(vwj2,Style.nav,{})
@@ -398,3 +394,13 @@ vwj55:widthPercent(100)
 vwj55:height(35)
 vwj55:paddingTop(10)
 window:addView(vwj55)
+
+---延迟代码执行 UI 逻辑分离
+local delayFunc=function()
+vwj4:text(userData.title.__get)
+userData.title.__watch=function(new)
+vwj4:text(new)
+end
+end
+System:asyncDoInMain(delayFunc)
+
