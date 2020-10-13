@@ -29,7 +29,6 @@ lcoal__start = CFAbsoluteTimeGetCurrent()
 
 @interface MLNUITableViewAutoFitAdapter ()<MLNUITableViewCellDelegate, MLNUITableViewCellSettingProtocol>
 
-@property (nonatomic, strong) NSMutableDictionary<NSString *, MLNUITableViewCell *> *calculCells;
 @property (nonatomic, strong) NSMutableArray<NSIndexPath *> *needUpdateIndexPaths;
 
 @end
@@ -145,21 +144,6 @@ lcoal__start = CFAbsoluteTimeGetCurrent()
      MLNUIKitLuaAssert(NO, @"Not fount method [AutoFitAdapter heightForCell]!");
 }
 
-- (MLNUITableViewCell *)tableView:(UITableView *)tableView dequeueCalculCellForIdentifier:(NSString *)identifier
-{
-    MLNUITableViewCell *cell = [self.calculCells objectForKey:identifier];
-    if (!cell) {
-        cell = [tableView dequeueReusableCellWithIdentifier:identifier];
-        if (!cell) {
-            [tableView registerClass:self.tableViewCellClass forCellReuseIdentifier:identifier];
-            cell = [tableView dequeueReusableCellWithIdentifier:identifier];
-            cell.delegate = self;
-        }
-        [self.calculCells mlnui_setObject:cell forKey:identifier];
-    }
-    return cell;
-}
-
 #pragma mark - UITableViewDelegate
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
@@ -180,14 +164,7 @@ lcoal__start = CFAbsoluteTimeGetCurrent()
     [self markCellNeedReloadWithIndexPath:indexPath];
 }
 
-#pragma mark - Getter
-- (NSMutableDictionary<NSString *,MLNUITableViewCell *> *)calculCells
-{
-    if (!_calculCells) {
-        _calculCells = [NSMutableDictionary dictionary];
-    }
-    return _calculCells;
-}
+#pragma mark - Export
 
 LUAUI_EXPORT_BEGIN(MLNUITableViewAutoFitAdapter)
 LUAUI_EXPORT_END(MLNUITableViewAutoFitAdapter, TableViewAutoFitAdapter, YES, "MLNUITableViewAdapter", NULL)
