@@ -58,6 +58,7 @@
 #import "MLNUIWaterfallView.h"
 #import "MLNUIWaterfallLayout.h"
 #import "MLNUIWaterfallAdapter.h"
+#import "MLNUIWaterfallAutoAdapter.h"
 #import "MLNUIEditTextView.h"
 #import "MLNUIViewPager.h"
 #import "MLNUIViewPagerAdapter.h"

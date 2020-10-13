@@ -31,6 +31,7 @@
 #import "MLNUIWaterfallView.h"
 #import "MLNUIWaterfallLayout.h"
 #import "MLNUIWaterfallAdapter.h"
+#import "MLNUIWaterfallAutoAdapter.h"
 #import "MLNUIEditTextView.h"
 #import "MLNUIViewPager.h"
 #import "MLNUIViewPagerAdapter.h"
@@ -186,6 +187,7 @@ static NSArray<Class<MLNUIExportProtocol>> *viewClasses;
                         [MLNUIWaterfallView class],
                         [MLNUIWaterfallLayout class],
                         [MLNUIWaterfallAdapter class],
+                        [MLNUIWaterfallAutoAdapter class],
                         [MLNUIEditTextView class],
                         [MLNUIViewPager class],
                         [MLNUIViewPagerAdapter class],

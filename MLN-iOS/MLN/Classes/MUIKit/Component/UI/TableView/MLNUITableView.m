@@ -35,10 +35,6 @@
     [super mlnui_user_data_dealloc];
 }
 
-- (void)reloadDataInIdleStatus {
-    [self mlnui_pushLazyTask:self.lazyTask];
-}
-
 #pragma mark - Getter
 - (MLNUIBeforeWaitingTask *)lazyTask
 {

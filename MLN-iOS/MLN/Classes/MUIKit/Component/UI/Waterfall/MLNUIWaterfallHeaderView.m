@@ -9,7 +9,7 @@
 #import "MLNUIKitHeader.h"
 #import "UIView+MLNUILayout.h"
 
-@interface MLNUIWaterfallHeaderView()
+@interface MLNUIWaterfallHeaderView()<MLNUIReuseCellProtocol>
 
 @property (nonatomic, strong) MLNUIReuseContentView *luaContentView;
 
@@ -31,20 +31,24 @@
     [self.luaContentView luaui_addSubview:view];
 }
 
+- (Class)reuseContentViewClass {
+    return [MLNUIReuseContentView class];
+}
+
+- (void)reloadHeaderViewIfNeededWithSize:(CGSize)size {
+    if ([self.delegate respondsToSelector:@selector(mlnuiWaterfallViewHeaderViewShouldReload:size:)]) {
+        [self.delegate mlnuiWaterfallViewHeaderViewShouldReload:self size:size];
+    }
+}
+
 #pragma mark - MLNUIReuseCellProtocol
-- (void)pushContentViewWithLuaCore:(MLNUILuaCore *)luaCore
-{
-    [self.luaContentView pushToLuaCore:luaCore];
+
+- (MLNUILuaTable *)createLuaTableAsCellNameForLuaIfNeed:(MLNUILuaCore *)luaCore {
+    return [self.luaContentView createLuaTableAsCellNameForLuaIfNeed:luaCore];
 }
 
-- (void)setupLayoutNodeIfNeed
-{
-    [self.luaContentView setupLayoutNodeIfNeed];
-}
-
-- (void)updateLuaContentViewIfNeed
-{
-    [self.luaContentView updateFrameIfNeed];
+- (void)createLayoutNodeIfNeedWithFitSize:(CGSize)fitSize maxSize:(CGSize)maxSize {
+    [self.luaContentView createLayoutNodeIfNeedWithFitSize:fitSize maxSize:maxSize];
 }
 
 - (MLNUILuaTable *)getLuaTable
@@ -62,24 +66,22 @@
     [self.luaContentView setInited:YES];
 }
 
-- (CGFloat)calculHeightWithWidth:(CGFloat)width maxHeight:(CGFloat)maxHeight
+- (void)updateLastReueseId:(NSString *)lastReuaseId
 {
-    return [self.luaContentView calculHeightWithWidth:width maxHeight:maxHeight];
+    self.luaContentView.lastReuaseId = lastReuaseId;
 }
 
-- (CGSize)calculSizeWithMaxWidth:(CGFloat)maxWidth maxHeight:(CGFloat)maxHeight
-{
-    return [self.luaContentView calculSizeWithMaxWidth:maxWidth maxHeight:maxHeight];
+- (CGSize)caculateCellSizeWithMaxSize:(CGSize)maxSize apply:(BOOL)apply {
+    return [self.luaContentView caculateContentViewSizeWithMaxSize:maxSize apply:apply];
+}
+
+- (CGSize)caculateCellSizeWithFitSize:(CGSize)fitSize maxSize:(CGSize)maxSize apply:(BOOL)apply {
+    return [self.luaContentView caculateContentViewSizeWithFitSize:fitSize maxSize:maxSize apply:apply];
 }
 
 - (void)mlnui_requestLayoutIfNeed
 {
     [self.luaContentView mlnui_requestLayoutIfNeed];
-}
-
-- (void)updateLastReueseId:(NSString *)lastReuaseId
-{
-    self.luaContentView.lastReuaseId = lastReuaseId;
 }
 
 - (NSString *)lastReueseId
@@ -91,10 +93,36 @@
 - (MLNUIReuseContentView *)luaContentView
 {
     if (!_luaContentView) {
-        _luaContentView = [[MLNUIReuseContentView alloc] initWithFrame:CGRectZero cellView:self];
+        _luaContentView = [[self.reuseContentViewClass alloc] initWithFrame:CGRectZero cellView:self];
+        __weak typeof(self) weakSelf = self;
+        _luaContentView.didChangeLayout = ^(CGSize size) {
+            [weakSelf reloadHeaderViewIfNeededWithSize:size];
+        };
         [self addSubview:_luaContentView];
     }
     return _luaContentView;
 }
+
+@end
+
+@implementation MLNUIWaterfallAutoFitHeaderView
+
+#pragma mark - Override
+
+- (Class)reuseContentViewClass {
+    return [MLNUIReuseAutoSizeContentView class];
+}
+
+- (UICollectionViewLayoutAttributes *)preferredLayoutAttributesFittingAttributes:(UICollectionViewLayoutAttributes *)layoutAttributes {
+    UICollectionViewLayoutAttributes *attribute = [super preferredLayoutAttributesFittingAttributes:layoutAttributes];
+    if ([self.delegate respondsToSelector:@selector(mlnuiWaterfallAutoFitSizeForHeaderView:indexPath:)]) {
+        CGSize size = [self.delegate mlnuiWaterfallAutoFitSizeForHeaderView:self indexPath:layoutAttributes.indexPath];
+        CGRect frame = attribute.frame;
+        frame.size = size;
+        attribute.frame = frame;
+    }
+    return attribute;
+}
+
 
 @end

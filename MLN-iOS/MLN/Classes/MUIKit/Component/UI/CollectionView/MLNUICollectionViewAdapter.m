@@ -51,6 +51,12 @@ static NSValue *kSizeValueZero = nil;
     return self;
 }
 
+- (NSMutableDictionary *)collectionViewRegisterCellClassDict:(UICollectionView*)collectionView {
+    return [collectionView valueForKey:@"_cellClassDict"];
+}
+
+#pragma mark - Public
+
 - (void)registerCellClassIfNeed:(UICollectionView *)collectionView  reuseId:(NSString *)reuseId
 {
     MLNUIKitLuaAssert(collectionView, @"collectionView view must not be nil!");
@@ -58,13 +64,55 @@ static NSValue *kSizeValueZero = nil;
     
     NSMutableDictionary* classDict = [self collectionViewRegisterCellClassDict:collectionView];
     if (reuseId && reuseId.length > 0 && ![classDict valueForKey:reuseId]) {
-        [collectionView registerClass:[MLNUICollectionViewCell class] forCellWithReuseIdentifier:reuseId];
+        [collectionView registerClass:[self collectionViewCellClass] forCellWithReuseIdentifier:reuseId];
         //[self.cellReuseIds addObject:reuseId];
     }
 }
 
-- (NSMutableDictionary *)collectionViewRegisterCellClassDict:(UICollectionView*)collectionView {
-    return [collectionView valueForKey:@"_cellClassDict"];
+- (MLNUIBlock *)initedCellCallbackByReuseId:(NSString *)reuseId
+{
+    MLNUIKitLuaAssert(reuseId && reuseId.length >0 , @"The reuse id must not be nil!");
+    MLNUIBlock *initCellCallback = [self.initedCellCallbacks objectForKey:reuseId];
+    if (!initCellCallback) {
+        initCellCallback = [self.initedCellCallbacks objectForKey:kMLNUICollectionViewCellReuseID];
+    }
+    
+    return initCellCallback;
+}
+
+- (MLNUIBlock *)fillCellDataCallbackByReuseId:(NSString *)reuseId
+{
+    MLNUIKitLuaAssert(reuseId && reuseId.length >0 , @"The reuse id must not be nil!");
+    MLNUIBlock *fillCellDataCallback = [self.reuseCellCallbacks objectForKey:reuseId];
+    if (!fillCellDataCallback) {
+        fillCellDataCallback = [self.reuseCellCallbacks objectForKey:kMLNUICollectionViewCellReuseID];
+    }
+    
+    return fillCellDataCallback;
+}
+
+- (Class)collectionViewCellClass {
+    return [MLNUICollectionViewCell class];
+}
+
+- (CGSize)cellMaxSize {
+    MLNUICollectionViewGridLayout *layout = (MLNUICollectionViewGridLayout *)self.collectionView.collectionViewLayout;
+    if ([layout isKindOfClass:[MLNUICollectionViewGridLayout class]]) {
+        return layout.avaliableSizeForLayoutItem;
+    }
+    NSAssert(false, @"The collectionViewLayout should be kind of MLNUICollectionViewGridLayout class.");
+    return CGSizeZero;
+}
+
+- (CGSize)fitSizeForCell:(MLNUICollectionViewCell *)cell {
+    return cell.frame.size; // 非自适应场景：cell.luaContentView大小要和cell保持一致
+}
+
+#pragma mark - Private
+
+- (void)prepareToUseCell:(MLNUICollectionViewCell *)cell {
+    [cell createLuaTableAsCellNameForLuaIfNeed:self.mlnui_luaCore];
+    [cell createLayoutNodeIfNeedWithFitSize:[self fitSizeForCell:cell] maxSize:self.cellMaxSize];
 }
 
 #pragma mark - MLNUICollectionViewAdapterProtocol
@@ -89,28 +137,6 @@ static NSValue *kSizeValueZero = nil;
     // 3. update cache
     [self.cachesManager updateReuseIdentifier:reuseId forIndexPath:indexPath];
     return reuseId;
-}
-
-- (MLNUIBlock *)initedCellCallbackByReuseId:(NSString *)reuseId
-{
-    MLNUIKitLuaAssert(reuseId && reuseId.length >0 , @"The reuse id must not be nil!");
-    MLNUIBlock *initCellCallback = [self.initedCellCallbacks objectForKey:reuseId];
-    if (!initCellCallback) {
-        initCellCallback = [self.initedCellCallbacks objectForKey:kMLNUICollectionViewCellReuseID];
-    }
-    
-    return initCellCallback;
-}
-
-- (MLNUIBlock *)fillCellDataCallbackByReuseId:(NSString *)reuseId
-{
-    MLNUIKitLuaAssert(reuseId && reuseId.length >0 , @"The reuse id must not be nil!");
-    MLNUIBlock *fillCellDataCallback = [self.reuseCellCallbacks objectForKey:reuseId];
-    if (!fillCellDataCallback) {
-        fillCellDataCallback = [self.reuseCellCallbacks objectForKey:kMLNUICollectionViewCellReuseID];
-    }
-    
-    return fillCellDataCallback;
 }
 
 - (MLNUIBlock *)sizeForCellCallbackByReuseId:(NSString *)reuseId
@@ -238,7 +264,8 @@ static NSValue *kSizeValueZero = nil;
     [self registerCellClassIfNeed:collectionView reuseId:reuseId];
     MLNUICollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:reuseId forIndexPath:indexPath];
     cell.delegate = self;
-    [cell pushContentViewWithLuaCore:self.mlnui_luaCore];
+    [self prepareToUseCell:cell];
+    
     if (!cell.isInited) {
         MLNUIBlock *initCallback = [self initedCellCallbackByReuseId:reuseId];
         MLNUIKitLuaAssert(initCallback, @"It must not be nil callback of cell init!");
@@ -252,7 +279,6 @@ static NSValue *kSizeValueZero = nil;
     [reuseCallback addIntArgument:(int)indexPath.section+1];
     [reuseCallback addIntArgument:(int)indexPath.item+1];
     [reuseCallback callIfCan];
-    [cell mlnui_requestLayoutIfNeed];
     return cell;
 }
 
