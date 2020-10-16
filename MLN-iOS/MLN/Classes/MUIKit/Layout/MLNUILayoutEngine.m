@@ -17,7 +17,7 @@
 {
     MLNUISizeCahceManager *_sizeCacheManager;
 }
-@property (nonatomic, strong) NSMutableArray<MLNUILayoutNode *> *rootNodesPool;
+@property (nonatomic, strong) NSMutableOrderedSet<MLNUILayoutNode *> *rootNodesPool;
 @property (nonatomic, strong) MLNUIMainRunLoopObserver *mainLoopObserver;
 
 @end
@@ -68,10 +68,10 @@
 }
 
 #pragma mark - Getter
-- (NSMutableArray<MLNUILayoutNode *> *)rootNodesPool
+- (NSMutableOrderedSet<MLNUILayoutNode *> *)rootNodesPool
 {
     if (!_rootNodesPool) {
-        _rootNodesPool = [NSMutableArray array];
+        _rootNodesPool = [NSMutableOrderedSet orderedSet];
     }
     return _rootNodesPool;
 }
