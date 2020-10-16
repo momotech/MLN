@@ -2,7 +2,7 @@
 //  MLNUIWaterfallAutoAdapter.m
 //  ArgoUI
 //
-//  Created by xindong on 2020/9/28.
+//  Created by MOMO on 2020/9/28.
 //
 
 #import "MLNUIWaterfallAutoAdapter.h"
