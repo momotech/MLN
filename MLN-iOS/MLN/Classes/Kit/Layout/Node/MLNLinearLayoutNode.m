@@ -169,7 +169,7 @@ MLN_FORCE_INLINE void measureHorizontal(MLNLinearLayoutNode __unsafe_unretained 
     int leftWidth = node.measuredWidth - totalWidthExcludeMatchParent - node.paddingLeft - node.paddingRight;
     
     if (mpCount > 0 && leftWidth > 0) {
-        CGFloat mxWidth = leftWidth / mpCount;
+        CGFloat mxWidth = leftWidth;
         for (MLNLayoutNode *subnode in measureMatchParentNodes) {
 //            CGFloat usableZoneWidth = node.measuredWidth - node.paddingLeft - node.paddingRight;
             CGFloat usableZoneWidth = mxWidth;
@@ -371,7 +371,7 @@ MLN_FORCE_INLINE void measureVertical(MLNLinearLayoutNode __unsafe_unretained *n
     NSUInteger mpCount = measureMatchParentNodes.count;
     int leftHeight = node.measuredHeight - totalHeightExcludeMatchParent - node.paddingTop - node.paddingBottom;
     if (mpCount > 0 && leftHeight > 0) {
-        CGFloat mxHeight = leftHeight / mpCount;
+        CGFloat mxHeight = leftHeight;
         for (MLNLayoutNode *subnode in measureMatchParentNodes) {
             CGFloat usableZoneWidth = node.measuredWidth - node.paddingLeft - node.paddingRight;
 //            CGFloat usableZoneHeight = node.measuredHeight - node.paddingTop - node.paddingBottom;
