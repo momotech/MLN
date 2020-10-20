@@ -14,15 +14,15 @@ PODS:
   - AFNetworking/Serialization (3.2.1)
   - AFNetworking/UIKit (3.2.1):
     - AFNetworking/NSURLSession
-  - ArgoUI (0.0.1):
-    - ArgoUI/Core (= 0.0.1)
-    - ArgoUI/Kit (= 0.0.1)
-  - ArgoUI/Core (0.0.1):
+  - ArgoUI (0.3.5):
+    - ArgoUI/Core (= 0.3.5)
+    - ArgoUI/Kit (= 0.3.5)
+  - ArgoUI/Core (0.3.5):
     - MLN/LuaLib
-  - ArgoUI/Kit (0.0.1):
+  - ArgoUI/Kit (0.3.5):
     - ArgoUI/Core
-    - ArgoUI/Kit/AnimationCPP (= 0.0.1)
-  - ArgoUI/Kit/AnimationCPP (0.0.1):
+    - ArgoUI/Kit/AnimationCPP (= 0.3.5)
+  - ArgoUI/Kit/AnimationCPP (0.3.5):
     - ArgoUI/Core
   - ArgoUIComponent (0.1.2):
     - ArgoUI
@@ -41,34 +41,34 @@ PODS:
   - MLN/Kit (1.0.0.11.beta):
     - MLN/Core
   - MLN/LuaLib (1.0.0.11.beta)
-  - MLNDevTool (0.2.7):
+  - MLNDevTool (0.2.8):
     - ArgoUI
-    - MLNDevTool/Conn (= 0.2.7)
-    - MLNDevTool/DevTool (= 0.2.7)
-    - MLNDevTool/HotReload (= 0.2.7)
-    - MLNDevTool/MLNProtobuf (= 0.2.7)
-    - MLNDevTool/Offline (= 0.2.7)
-    - MLNDevTool/Performance (= 0.2.7)
-  - MLNDevTool/Conn (0.2.7):
+    - MLNDevTool/Conn (= 0.2.8)
+    - MLNDevTool/DevTool (= 0.2.8)
+    - MLNDevTool/HotReload (= 0.2.8)
+    - MLNDevTool/MLNProtobuf (= 0.2.8)
+    - MLNDevTool/Offline (= 0.2.8)
+    - MLNDevTool/Performance (= 0.2.8)
+  - MLNDevTool/Conn (0.2.8):
     - ArgoUI
     - MLNDevTool/MLNProtobuf
-  - MLNDevTool/DevTool (0.2.7):
+  - MLNDevTool/DevTool (0.2.8):
     - ArgoUI
     - MLN
     - MLNDevTool/Conn
-  - MLNDevTool/HotReload (0.2.7):
+  - MLNDevTool/HotReload (0.2.8):
     - ArgoUI
     - MLN
     - MLNDevTool/Conn
     - MLNDevTool/DevTool
-  - MLNDevTool/MLNProtobuf (0.2.7):
+  - MLNDevTool/MLNProtobuf (0.2.8):
     - ArgoUI
     - Protobuf
-  - MLNDevTool/Offline (0.2.7):
+  - MLNDevTool/Offline (0.2.8):
     - ArgoUI
     - MLN
     - MLNDevTool/DevTool
-  - MLNDevTool/Performance (0.2.7):
+  - MLNDevTool/Performance (0.2.8):
     - ArgoUI
   - Protobuf (3.12.0)
   - SDCycleScrollView (1.80):
@@ -116,13 +116,13 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   AFNetworking: b6f891fdfaed196b46c7a83cf209e09697b94057
-  ArgoUI: ec4a957e78808a35f32dcb2c2e7282bb6d34d69a
+  ArgoUI: 544cceb5ea66f20d2209fae018ff8054363cdd71
   ArgoUIComponent: c208b954b688481017a29bb6b5ca8056774ccbd3
   FLEX: d66c759bce0f6ebbbf472c742380874d846f2883
   Masonry: 678fab65091a9290e40e2832a55e7ab731aad201
   MJRefresh: 7798e16e53a5ef7f332dd05b27664db4e29530fd
   MLN: 49a86502211319c94bb9b15bcd686ade68ed6ed6
-  MLNDevTool: 937c2fad7801991a6a69bd21f29fea72ce6adc35
+  MLNDevTool: 4d35c4e3f8d188d62de30b006fbf536db7313505
   Protobuf: 2793fcd0622a00b546c60e7cbbcc493e043e9bb9
   SDCycleScrollView: b3c9a5ed840c771c4938978174c7c9d9feefeb96
   SDWebImage: 51ab1ce3ebd20dec6665ae8ba25c928da323db41

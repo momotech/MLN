@@ -1,6 +1,6 @@
 {
   "name": "MLNDevTool",
-  "version": "0.2.7",
+  "version": "0.2.8",
   "summary": "Debug Tool of MLN.",
   "description": "Debug Tool of MLN.",
   "homepage": "https://mln.immomo.com",
@@ -11,7 +11,7 @@
   "authors": "MoMo",
   "source": {
     "git": "https://github.com/momotech/MLN.git",
-    "tag": "devtool-0.2.7"
+    "tag": "devtool-0.2.8"
   },
   "platforms": {
     "ios": "8.0"

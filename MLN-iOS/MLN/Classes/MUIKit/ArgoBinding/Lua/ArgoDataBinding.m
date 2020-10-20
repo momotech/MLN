@@ -74,8 +74,8 @@
     NSParameterAssert(key);
     if (key) {
         LOCK();
-//        [self.dataMap lua_putValue:data forKey:key];
-        [self.dataMap lua_rawPutValue:data forKey:key];
+        [self.dataMap lua_putValue:data forKey:key];
+//        [self.dataMap lua_rawPutValue:data forKey:key];
         UNLOCK();
     }
 }
@@ -96,18 +96,18 @@
     return [self.dataMap argoGetForKeyPath:keyPath];
 }
 
-- (void)updateDataForKeyPath:(NSString *)keyPath value:(id)value {
+- (void)updateDataForKeyPath:(NSString *)keyPath value:(id)value context:(ArgoWatchContext)context {
     NSParameterAssert(keyPath);
     if(!keyPath) return;
     NSArray *keys = [keyPath componentsSeparatedByString:kArgoConstString_Dot];
-    id<ArgoListenerProtocol> object = self.dataMap;
-    id<ArgoListenerProtocol> frontObject;
+    NSObject<ArgoListenerProtocol> *object = self.dataMap;
+    NSObject<ArgoListenerProtocol> *frontObject;
     BOOL detected = NO;
     
     for (int i = 0; i < keys.count - 1; i++) {
         //TODO: 对于Map，如果中间对象为空，默认创建.
         frontObject = object;
-        object = (id<ArgoListenerProtocol>)[frontObject lua_get:keys[i]];
+        object = (NSObject<ArgoListenerProtocol> *)[frontObject lua_get:keys[i]];
         if (!object && !detected) {
             detected = YES;
             if ([ArgoObserverHelper hasNumberInKeys:keys fromIndex:i]) {
@@ -115,12 +115,47 @@
             }
         }
         if (!object) {
-            object = [ArgoObservableMap new];
+            /*
+             object = [ArgoObservableMap new];
+            //TODO: 不能使用lua_rawPutValue，ex：watch(a.b.c), b=nil; 对c的监听要添加到b对象上并进行依次传递，所以不能用lua_rawPutValue
             [frontObject lua_putValue:object forKey:keys[i]];
+             */
+            if (ArgoWatchContext_Lua == context) {
+                NSObject<ArgoListenerProtocol> *tmpObj = [ArgoObservableMap new];
+                NSString *tmpKey = keys[i];
+                object = tmpObj;
+                for (int j = i + 1; j < keys.count - 1; j++) {
+                    NSObject<ArgoListenerProtocol> *obj = [ArgoObservableMap new];
+                    [object lua_rawPutValue:obj forKey:keys[j]];
+                    object = obj;
+                }
+                //设置最后一个值，需要触发粘性
+                [object lua_putValue:value forKey:keys.lastObject];
+                object = nil;
+                [frontObject lua_putValue:tmpObj forKey:tmpKey];
+            } else {
+                NSObject<ArgoListenerProtocol> *tmpObj = [ArgoObservableMap new];
+                NSString *tmpKey = keys[i];
+                object = tmpObj;
+                for (int j = i + 1; j < keys.count - 1; j++) {
+                    NSObject<ArgoListenerProtocol> *obj = [ArgoObservableMap new];
+                    [object native_rawPutValue:obj forKey:keys[j]];
+                    object = obj;
+                }
+                //设置最后一个值，需要触发粘性
+                [object native_putValue:value forKey:keys.lastObject];
+                object = nil;
+                [frontObject native_putValue:tmpObj forKey:tmpKey];
+            }
+            break;
         }
     }
-
-    [object lua_putValue:value forKey:keys.lastObject];
+    
+    if (ArgoWatchContext_Lua == context) {
+        [object lua_putValue:value forKey:keys.lastObject];
+    } else {
+        [object native_putValue:value forKey:keys.lastObject];
+    }
 }
 
 #pragma mark - for Lua
@@ -128,18 +163,28 @@
 
 - (id __nullable)argo_get:(NSString *)keyPath {
     if(!keyPath) return nil;
-    keyPath = [self convertedKeyPathWith:keyPath];
-    return [self dataForKeyPath:keyPath];
+    NSString *newKeyPath = [self convertedKeyPathWith:keyPath];
+    return [self dataForKeyPath:newKeyPath];
 }
 
 - (void)argo_updateValue:(id)value forKeyPath:(NSString *)keyPath {
     if(!keyPath) return;
     keyPath = [self convertedKeyPathWith:keyPath];
-    [self updateDataForKeyPath:keyPath value:value];
+    [self updateDataForKeyPath:keyPath value:value context:ArgoWatchContext_Lua];
 }
 
 // from watch
 - (NSInteger)argo_watchKeyPath:(NSString *)keyPath withHandler:(MLNUIBlock *)handler filter:(MLNUIBlock *)filter {
+    return [self _watchKeyPath:keyPath handler:handler listView:nil filter:filter == nil ? kArgoFilter_Native : ^BOOL(ArgoWatchContext context, NSDictionary *change) {
+        [filter addUIntegerArgument:context];
+        id new = [change objectForKey:NSKeyValueChangeNewKey];
+        [filter addObjArgument:new];
+        id res = [filter callIfCan];
+        return [res boolValue];
+    } triggerWhenAdd:NO];
+}
+
+- (NSInteger)argo_watchKeyPath2:(NSString *)keyPath withHandler:(MLNUIBlock *)handler filter:(MLNUIBlock *)filter {
     return [self _watchKeyPath:keyPath handler:handler listView:nil filter:filter == nil ? nil : ^BOOL(ArgoWatchContext context, NSDictionary *change) {
         [filter addUIntegerArgument:context];
         id new = [change objectForKey:NSKeyValueChangeNewKey];
@@ -150,16 +195,13 @@
 }
 
 - (NSInteger)argo_watchKey:(NSString *)key withHandler:(MLNUIBlock *)handler filter:(MLNUIBlock *)filter {
-//    NSMutableArray *keys = [key componentsSeparatedByString:kArgoConstString_Dot].mutableCopy;
-//    NSString *lastKey = keys.lastObject;
-//    id<ArgoListenerProtocol> object = self.dataMap;
-//    if (keys.count > 1) {
-//        [keys removeLastObject];
-//        object = [object argoGetForKeyPath:[keys componentsJoinedByString:kArgoConstString_Dot]];
-//    }
-//    return [self _observeObject:object keyPath:lastKey handler:handler listView:nil filter:kArgoWatchKeyListenerFilter];
-    //
-    return [self _watchKeyPath:key handler:handler listView:nil filter:filter == nil ? kArgoWatchKeyListenerFilter : ^BOOL(ArgoWatchContext context, NSDictionary *change) {
+    return [self _watchKeyPath:key handler:handler listView:nil filter:filter == nil ? ^BOOL(ArgoWatchContext context, NSDictionary *change) {
+        // 默认只监听native
+        if (context == ArgoWatchContext_Lua) {
+            return NO;
+        }
+        return kArgoWatchKeyListenerFilter(context, change);
+    } : ^BOOL(ArgoWatchContext context, NSDictionary *change) {
         BOOL r = kArgoWatchKeyListenerFilter(context, change);
         if (r) {
             [filter addUIntegerArgument:context];
@@ -366,6 +408,8 @@ static inline ArgoObserverBase *_getArgoObserver(UIViewController <ArgoViewContr
 }
 
 - (NSString *)convertedKeyPathWith:(NSString *)key {
+    return [self _recursiveConvertedKeyPathWith:key resolvedListViewTag:nil];
+    /*
     _ArgoBindListViewInternalModel *listModel = [self.listViewMap objectForKey:key];
     if (listModel) {
         return key;
@@ -386,6 +430,29 @@ static inline ArgoObserverBase *_getArgoObserver(UIViewController <ArgoViewContr
         NSRange range = [rest rangeOfString:kArgoConstString_Dot];
         NSString *newK = [lvKey stringByAppendingString:[rest substringFromIndex:range.location]];
         return newK;
+    }
+    return key;
+     */
+}
+
+- (NSString *)_recursiveConvertedKeyPathWith:(NSString *)key resolvedListViewTag:(NSString *)resolvedTag {
+    _ArgoBindListViewInternalModel *listModel = [self.listViewMap objectForKey:key];
+    if (listModel) {
+        return key;
+    }
+    NSString *lvKey = [self listViewKeyMatch:key];
+    if (!lvKey || (resolvedTag && [resolvedTag isEqualToString:lvKey])) {
+        return key;
+    }
+    NSString *rest = [key substringFromIndex:lvKey.length + 1];
+    NSArray *restKeys = [rest componentsSeparatedByString:kArgoConstString_Dot];
+    
+    ArgoObservableArray *array = [self dataForKeyPath:lvKey];
+    if (![ArgoObserverHelper arrayIs2D:array] && restKeys.count > 1 && [ArgoObserverHelper isNumber:restKeys[1]]) {
+        //一维数组且第二位是数字，去掉第一位
+        NSRange range = [rest rangeOfString:kArgoConstString_Dot];
+        NSString *newK = [lvKey stringByAppendingString:[rest substringFromIndex:range.location]];
+        return [self _recursiveConvertedKeyPathWith:newK resolvedListViewTag:lvKey];
     }
     return key;
 }

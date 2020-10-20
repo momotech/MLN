@@ -57,7 +57,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.view.backgroundColor = [UIColor whiteColor];
-    [MLNHotReload getInstance].useMLNUI = NO;
+    [MLNHotReload getInstance].useArgo = NO;
      __weak typeof(self) wself = self;
     [MLNHotReload getInstance].registerBridgeClassesCallback = ^(MLNKitInstance * _Nonnull instance) {
         __strong typeof(wself) sself = wself;

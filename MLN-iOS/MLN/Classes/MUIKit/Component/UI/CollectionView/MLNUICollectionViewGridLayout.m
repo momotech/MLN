@@ -9,8 +9,12 @@
 #import "MLNUIKitHeader.h"
 #import "MLNUIViewExporterMacro.h"
 #import "MLNUICollectionView.h"
+#import "MLNUILayoutMacro.h"
+#import "MLNUICollectionViewAutoFitAdapter.h"
 
 #define MLNUI_FLOAT_TOLERANT 0.1f
+
+#define OPEN_CELL_ESTIMATE [selfRef.collectionView.delegate isKindOfClass:[MLNUICollectionViewAutoFitAdapter class]]
 
 @interface MLNUICollectionViewGridLayout()
 {
@@ -86,6 +90,15 @@
     return self.spanCount;
 }
 
+#pragma mark - Public
+
+- (CGSize)avaliableSizeForLayoutItem {
+    if ([self isScrollHorizontal]) {
+        return CGSizeMake(MLNUIUndefined, self.layoutHeight);
+    }
+    return CGSizeMake(self.layoutWidth, MLNUIUndefined);
+}
+
 #pragma mark - private method
 
 - (void)relayoutIfNeed
@@ -150,10 +163,19 @@ static MLNUI_FORCE_INLINE void layoutItemForIndexPath(const __unsafe_unretained 
 static MLNUI_FORCE_INLINE void layoutItemHorizontallyForIndexPath(const __unsafe_unretained MLNUICollectionViewGridLayout *selfRef, const __unsafe_unretained NSIndexPath *indexPath)
 {
     MLNUILuaAssert(selfRef.mlnui_luaCore, [selfRef.collectionView.delegate respondsToSelector:@selector(collectionView:layout:sizeForItemAtIndexPath:)], @"It must implment sizeForCell method");
+    
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wincompatible-pointer-types-discards-qualifiers"
     CGSize cellSize = [(id<MLNUICollectionViewGridLayoutDelegate>)selfRef.collectionView.delegate collectionView:selfRef.collectionView layout:selfRef sizeForItemAtIndexPath:indexPath];
 #pragma clang diagnostic pop
+    
+    // collectionView开启估算cell大小机制后，若 attribute.size 含有小数部分，iOS9的系统上会crash
+    if (OPEN_CELL_ESTIMATE) {
+        if (@available(iOS 10, *)) {} else {
+            cellSize = CGSizeMake(ceil(cellSize.width), ceil(cellSize.height));
+        }
+    }
+    
     MLNUILuaAssert(selfRef.mlnui_luaCore, cellSize.width <= selfRef.collectionView.frame.size.width - selfRef.layoutInset.left - selfRef.layoutInset.right, @"The sum of cellWidth，leftInset，rightInset should not bigger than the width of collectionView");
     
     // 2.1 记录当前行数、列数
@@ -212,10 +234,18 @@ static MLNUI_FORCE_INLINE void layoutItemHorizontallyForIndexPath(const __unsafe
 static MLNUI_FORCE_INLINE void layoutItemVerticallyForIndexPath(const __unsafe_unretained MLNUICollectionViewGridLayout *selfRef, const __unsafe_unretained NSIndexPath *indexPath)
 {
     MLNUILuaAssert(selfRef.mlnui_luaCore, [selfRef.collectionView.delegate respondsToSelector:@selector(collectionView:layout:sizeForItemAtIndexPath:)], @"It must implment sizeForCell method");
+    
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wincompatible-pointer-types-discards-qualifiers"
     CGSize cellSize = [(id<MLNUICollectionViewGridLayoutDelegate>)selfRef.collectionView.delegate collectionView:selfRef.collectionView layout:selfRef sizeForItemAtIndexPath:indexPath];
 #pragma clang diagnostic pop
+    // collectionView开启估算cell大小机制后，若 attribute.size 含有小数部分，iOS9的系统上会crash
+    if (OPEN_CELL_ESTIMATE) {
+        if (@available(iOS 10, *)) {} else {
+            cellSize = CGSizeMake(ceil(cellSize.width), ceil(cellSize.height));
+        }
+    }
+    
     MLNUILuaAssert(selfRef.mlnui_luaCore, cellSize.height <= CGRectGetHeight(selfRef.collectionView.frame) - selfRef.layoutInset.top - selfRef.layoutInset.bottom + MLNUI_FLOAT_TOLERANT, @"The sum of cellHeight，topInset，bottomInset should not bigger than the height of collectionView");
     
     // 2.1 记录当前行数、列数
@@ -362,35 +392,29 @@ static MLNUI_FORCE_INLINE bool currentIndexGridIsEnoughForCellSize(const __unsaf
     return self.scrollDirection == MLNUIScrollDirectionHorizontal;
 }
 
-#pragma mark - collectionView delegate
+#pragma mark - CollectionView delegate
 
-- (NSArray<UICollectionViewLayoutAttributes *> *)layoutAttributesForElementsInRect:(CGRect)rect
-{
+- (NSArray<UICollectionViewLayoutAttributes *> *)layoutAttributesForElementsInRect:(CGRect)rect {
     NSMutableArray *allAttributes = [NSMutableArray array];
-    
     for (UICollectionViewLayoutAttributes *attribute in self.cellLayoutInfo.allValues) {
         if (CGRectIntersectsRect(rect, attribute.frame)) {
             [allAttributes addObject:attribute];
         }
     }
-    
     return [allAttributes copy];
 }
 
-- (UICollectionViewLayoutAttributes *)layoutAttributesForItemAtIndexPath:(NSIndexPath *)indexPath
-{
+- (UICollectionViewLayoutAttributes *)layoutAttributesForItemAtIndexPath:(NSIndexPath *)indexPath {
     return [self.cellLayoutInfo objectForKey:indexPath];
 }
 
-- (CGSize)collectionViewContentSize
-{
+- (CGSize)collectionViewContentSize {
     return self.myContentSize;
 }
 
-- (NSMutableDictionary *)cellLayoutInfo
-{
+- (NSMutableDictionary *)cellLayoutInfo {
     if (!_cellLayoutInfo) {
-        _cellLayoutInfo = [NSMutableDictionary  dictionary];
+        _cellLayoutInfo = [NSMutableDictionary dictionary];
     }
     return _cellLayoutInfo;
 }

@@ -90,7 +90,7 @@ static int argo_update (lua_State *L) {
     return 1;
 }
 
-static int argo_watch(lua_State *L) {
+static int argo_watch_value(lua_State *L) {
     PCallDBStart(__func__);
     TICK();
     
@@ -121,7 +121,38 @@ static int argo_watch(lua_State *L) {
     return 1;
 }
 
-static int argo_watch_action(lua_State *L) {
+static int argo_watch_value_all(lua_State *L) {
+    PCallDBStart(__func__);
+    TICK();
+    
+    int top = lua_gettop(L);
+    assert(top == 3 || top == 4);
+    
+    MLNUILuaCore *luaCore = MLNUI_LUA_CORE(L);
+    ArgoDataBinding *dataBind = _argo_get_dataBinding(luaCore);
+    NSError *error;
+    NSString *nKey;
+    MLNUIBlock *handler, *filter;
+
+    if (top == 3) { // table nKey handler
+        nKey = [luaCore toString:-2 error:&error];
+        handler = [luaCore.convertor toArgoBindingNativeObject:-1 error:&error];
+    } else { // table, nkey, filter, handler
+        nKey = [luaCore toString:-3 error:&error];
+        filter = [luaCore.convertor toArgoBindingNativeObject:-2 error:&error];
+        handler = [luaCore.convertor toArgoBindingNativeObject:-1 error:&error];
+    }
+    
+    PLOG(@"_argo_ watch keyPath %@",nKey);
+    
+    NSInteger obid = [dataBind argo_watchKeyPath2:nKey withHandler:handler filter:filter];
+    lua_pushnumber(L, obid);
+    PCallDBEnd(__func__);
+    TOCK("argo_watch keyPath %s",nKey.UTF8String);
+    return 1;
+}
+
+static int argo_watch(lua_State *L) {
     PCallDBStart(__func__);
     TICK();
     
@@ -419,8 +450,9 @@ LUAUI_NEW_EXPORT_GLOBAL_FUNC_BEGIN(ArgoDataBindingCBridge)
 
 LUAUI_NEW_EXPORT_GLOBAL_C_FUNC(get, argo_get, ArgoDataBindingCBridge)
 LUAUI_NEW_EXPORT_GLOBAL_C_FUNC(update, argo_update, ArgoDataBindingCBridge)
+LUAUI_NEW_EXPORT_GLOBAL_C_FUNC(watchValue, argo_watch_value, ArgoDataBindingCBridge)
+LUAUI_NEW_EXPORT_GLOBAL_C_FUNC(watchValueAll, argo_watch_value_all, ArgoDataBindingCBridge)
 LUAUI_NEW_EXPORT_GLOBAL_C_FUNC(watch, argo_watch, ArgoDataBindingCBridge)
-LUAUI_NEW_EXPORT_GLOBAL_C_FUNC(watchAction, argo_watch_action, ArgoDataBindingCBridge)
 LUAUI_NEW_EXPORT_GLOBAL_C_FUNC(removeObserver, argo_unwatch, ArgoDataBindingCBridge)
 
 LUAUI_NEW_EXPORT_GLOBAL_C_FUNC(mock, argo_mock, ArgoDataBindingCBridge)

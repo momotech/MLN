@@ -18,7 +18,7 @@
 
 @optional
 /// cell上的内容大小发生变更时回调
-- (void)mlnuiTableViewCellShouldReload:(MLNUITableViewCell *)cell;
+- (void)mlnuiTableViewCellShouldReload:(MLNUITableViewCell *)cell size:(CGSize)size;
 
 @end
 
@@ -27,6 +27,9 @@
 @property (nonatomic, strong) MLNUIReuseContentView *luaContentView;
 @property (nonatomic, weak) id<MLNUITableViewCellSettingProtocol, MLNUITableViewCellDelegate> delegate;
 
-- (void)updateSubviewsFrameIfNeed;
+@end
+
+@interface MLNUITableViewAutoHeightCell : MLNUITableViewCell
 
 @end
+

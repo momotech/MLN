@@ -11,6 +11,7 @@
 #import "MLNUIWaterfallLayout.h"
 #import "MLNUIInternalWaterfallView.h"
 #import "MLNUIWaterfallAdapter.h"
+#import "MLNUIWaterfallAutoAdapter.h"
 #import "MLNUIBlock.h"
 #import "MLNUIBeforeWaitingTask.h"
 #import "UIScrollView+MLNUIKit.h"
@@ -18,6 +19,8 @@
 #import "UIView+MLNUILayout.h"
 #import "MLNUICollectionViewLayoutProtocol.h"
 #import "UIView+MLNUIKit.h"
+
+FOUNDATION_EXTERN CGSize MLNUICollectionViewAutoFitCellEstimateSize;
 
 @interface MLNUIWaterfallView()
 @property (nonatomic, strong, readwrite) MLNUIInternalWaterfallView *innerWaterfallView;
@@ -35,6 +38,16 @@
     // 去除强引用
     MLNUI_Lua_UserData_Release(self.layout);
     [super mlnui_user_data_dealloc];
+}
+
+// cell自适应场景下要开启估算功能
+- (void)ensureOpenCellEstimateMechanismForAutoAdapter {
+    MLNUIWaterfallLayout *layout = (MLNUIWaterfallLayout *)self.layout;
+    MLNUIWaterfallAutoAdapter *adapter = (MLNUIWaterfallAutoAdapter *)self.adapter;
+    if ([layout isKindOfClass:[MLNUIWaterfallLayout class]] &&
+        [adapter isKindOfClass:[MLNUIWaterfallAutoAdapter class]]) {
+        layout.estimatedItemSize = MLNUICollectionViewAutoFitCellEstimateSize;
+    }
 }
 
 #pragma mark - Header
@@ -85,7 +98,9 @@
         // 添加强引用
         MLNUI_Lua_UserData_Retain_With_Index(2, adapter);
         _adapter = adapter;
+        _adapter.collectionView = self.innerWaterfallView;
         [self mlnui_pushLazyTask:self.lazyTask];
+        [self ensureOpenCellEstimateMechanismForAutoAdapter];
     }
 }
 
@@ -98,6 +113,7 @@
         MLNUI_Lua_UserData_Retain_With_Index(2, layout);
         _layout = layout;
         self.innerWaterfallView.collectionViewLayout = layout;
+        [self ensureOpenCellEstimateMechanismForAutoAdapter];
     }
     
 }
