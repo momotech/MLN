@@ -242,11 +242,17 @@
 }
 
 /**
- *android 是否执行返回到上一个页面的操作，默认为true，Android方法，iOS空实现
+ *android 是否执行返回到上一个页面的操作，默认为true，Android方法，iOS用来表示是否开启侧滑返回手势
  **/
 - (void)luaui_backKeyEnabled:(BOOL)enable
 {
-    
+    UIViewController *currentController = MLNUI_KIT_INSTANCE(self.mlnui_luaCore).viewController;
+    if (currentController) {
+        UINavigationController *navigationController = [currentController navigationController];
+        if (navigationController) {
+            navigationController.interactivePopGestureRecognizer.enabled = enable;
+        }
+    }
 }
 
 - (void)luaui_cachePushView:(UIView *)view {

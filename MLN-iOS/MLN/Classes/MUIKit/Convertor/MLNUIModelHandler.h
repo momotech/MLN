@@ -41,6 +41,13 @@ typedef void(^MLNUIModelHandleComplete)(__kindof NSObject *model, NSError *error
 /// @param complete 结果回调。
 + (void)buildModelWithDataObject:(id)dataObject model:(NSObject <MLNUIModelHandlerProtocol>*)model extra:(id _Nullable)extra functionChunk:(const char *)functionChunk complete:(MLNUIModelHandleComplete)complete;
 
+/// 将字典转为viewModel
+/// @param model 绑定到视图上的viewModel
+/// @param dic 待转换的字典
+/// @return 即转换后的参数`model`
++ (NSObject *)convertViewModel:(NSObject <MLNUIModelHandlerProtocol> *)model fromDictionary:(NSDictionary *)dic;
+
 @end
 
 NS_ASSUME_NONNULL_END
+

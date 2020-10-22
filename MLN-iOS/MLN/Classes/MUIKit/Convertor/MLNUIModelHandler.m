@@ -58,6 +58,12 @@ typedef void(^MLNLUIModelHandleTask)(void);
     [self performSelector:@selector(executeTask:) onThread:[self modelConvertThread] withObject:task waitUntilDone:NO];
 }
 
++ (NSObject *)convertViewModel:(NSObject<MLNUIModelHandlerProtocol> *)model fromDictionary:(NSDictionary *)dic {
+    NSParameterAssert(model && dic);
+    if (!model || !dic) return nil;
+    return MLNUIConvertDataObjectToModel(dic, model);
+}
+
 #pragma mark - Private
 
 + (id)handleModelWithDataObject:(id)dataObject model:(nonnull NSObject <MLNUIModelHandlerProtocol>*)model extra:(id _Nullable)extra functionChunk:(nonnull const char *)functionChunk error:(NSError *__autoreleasing*)error {
