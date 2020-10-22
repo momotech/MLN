@@ -575,6 +575,16 @@ static const void *kLuaRenderContext = &kLuaRenderContext;
     self.mlnui_touchesCancelledExtensionCallback = callback;
 }
 
+#pragma mark - Responder Chain
+static const void *kLuaDispatch = &kLuaDispatch;
+- (void)setArgo_notDispatch:(BOOL)argo_notDispatch {
+    objc_setAssociatedObject(self, kLuaDispatch, @(argo_notDispatch), OBJC_ASSOCIATION_ASSIGN);
+}
+
+- (BOOL)argo_notDispatch {
+    return [objc_getAssociatedObject(self, kLuaDispatch) boolValue];
+}
+
 #pragma mark - Gesture
 - (BOOL)luaui_enable
 {
@@ -680,6 +690,73 @@ static const void *kLuaRenderContext = &kLuaRenderContext;
         [self.mlnui_longPressBlock addFloatArgument:point.y];
         [self.mlnui_longPressBlock callIfCan];
     }
+}
+
+// android 上的捏合手势叫做 scale
+- (void)argo_addScaleBeginCallback:(MLNUIBlock *)argo_scaleBeginBlock {
+    MLNUIMarkViewNeedRender;
+    [self argo_in_addPinchGestureIfNeed];
+    self.argo_scaleBeginBlock = argo_scaleBeginBlock;
+}
+
+- (void)argo_addScalingCallback:(MLNUIBlock *)argo_scalingBlock {
+    MLNUIMarkViewNeedRender;
+    [self argo_in_addPinchGestureIfNeed];
+    self.argo_scalingBlock = argo_scalingBlock;
+}
+
+- (void)argo_addScaleEndCallback:(MLNUIBlock *)argo_scaleEndBlock {
+    MLNUIMarkViewNeedRender;
+    [self argo_in_addPinchGestureIfNeed];
+    self.argo_scaleEndBlock = argo_scaleEndBlock;
+}
+
+
+- (void)argo_in_addPinchGestureIfNeed {
+    UIPinchGestureRecognizer *gesture = [self argo_in_getPinchGesture];
+    if (!gesture && [self luaui_canPinch]) {
+        gesture = [[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(argo_in_pinchAction:)];
+        [self addGestureRecognizer:gesture];
+        gesture.cancelsTouchesInView = NO;
+        [self argo_in_setPinchGesture:gesture];
+    }
+}
+
+static const void *kLuaScaleBeginBlock = &kLuaScaleBeginBlock;
+- (void)setArgo_scaleBeginBlock:(MLNUIBlock *)argo_scaleBeginBlock {
+    objc_setAssociatedObject(self, kLuaScaleBeginBlock, argo_scaleBeginBlock, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+
+- (MLNUIBlock *)argo_scaleBeginBlock {
+    return objc_getAssociatedObject(self, kLuaScaleBeginBlock);
+}
+
+static const void *kLuaScalingBlock = &kLuaScalingBlock;
+- (void)setArgo_scalingBlock:(MLNUIBlock *)argo_scalingBlock {
+    objc_setAssociatedObject(self, kLuaScalingBlock, argo_scalingBlock, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+
+- (MLNUIBlock *)argo_scalingBlock {
+    return objc_getAssociatedObject(self, kLuaScalingBlock);
+}
+
+static const void *kLuaScaleEndBlock = &kLuaScaleEndBlock;
+- (void)setArgo_scaleEndBlock:(MLNUIBlock *)argo_scaleEndBlock {
+    objc_setAssociatedObject(self, kLuaScaleEndBlock, argo_scaleEndBlock, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+
+- (MLNUIBlock *)argo_scaleEndBlock {
+    return objc_getAssociatedObject(self, kLuaScaleEndBlock);
+}
+
+static const void *kLuaPinchGesture = &kLuaPinchGesture;
+
+- (void)argo_in_setPinchGesture:(UIPinchGestureRecognizer *)gesture {
+    objc_setAssociatedObject(self, kLuaPinchGesture, gesture, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+
+- (UIPinchGestureRecognizer *)argo_in_getPinchGesture {
+    return objc_getAssociatedObject(self, kLuaPinchGesture);
 }
 
 static const void *kLuaClickGesture = &kLuaClickGesture;
