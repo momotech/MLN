@@ -60,7 +60,7 @@ typedef void(^MLNLUIModelHandleTask)(void);
 
 + (NSObject *)convertViewModel:(NSObject<MLNUIModelHandlerProtocol> *)model fromDictionary:(NSDictionary *)dic {
     NSParameterAssert(model && dic);
-    if (!model || !dic) return nil;
+    if (!model || !dic) return model;
     return MLNUIConvertDataObjectToModel(dic, model);
 }
 
