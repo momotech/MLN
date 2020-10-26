@@ -26,17 +26,17 @@ import android.widget.TextView;
 
 import com.immomo.mls.MLSEngine;
 import com.immomo.mls.fun.constants.EditTextViewInputMode;
-import com.immomo.mmui.ud.UDColor;
 import com.immomo.mls.fun.ud.view.IShowKeyboard;
 import com.immomo.mls.util.LogUtil;
 import com.immomo.mls.utils.ErrorUtils;
+import com.immomo.mmui.ILView;
 import com.immomo.mmui.ui.LuaEditText;
 
-import org.luaj.vm2.LuaBoolean;
 import org.luaj.vm2.LuaFunction;
 import org.luaj.vm2.LuaNumber;
 import org.luaj.vm2.LuaString;
 import org.luaj.vm2.LuaValue;
+import org.luaj.vm2.utils.CGenerate;
 import org.luaj.vm2.utils.LuaApiUsed;
 
 import static android.view.inputmethod.EditorInfo.IME_ACTION_UNSPECIFIED;
@@ -46,28 +46,9 @@ import static android.view.inputmethod.EditorInfo.IME_ACTION_UNSPECIFIED;
  * Created by XiongFangyu on 2018/8/1.
  */
 @LuaApiUsed
-public class UDEditText<L extends EditText> extends UDLabel<L> implements TextWatcher, TextView.OnEditorActionListener, IShowKeyboard {
+public class UDEditText<L extends EditText & ILView> extends UDLabel<L> implements TextWatcher, TextView.OnEditorActionListener, IShowKeyboard {
     public static final String LUA_CLASS_NAME = "EditTextView";
 
-    public static final String[] methods = {
-            "placeholder",
-            "placeholderColor",
-            "inputMode",
-            "singleLine",
-            "passwordMode",
-            "maxLength",
-            "maxBytes",
-            "returnMode",
-            "setBeginChangingCallback",
-            "setDidChangingCallback",
-            "setEndChangedCallback",
-            "setReturnCallback",
-            "setCursorColor",
-            "setCanEdit",
-            "showKeyboard",
-            "dismissKeyboard",
-            "setShouldChangeCallback"
-    };
     private static final String TAG = UDEditText.class.getSimpleName();
 
     private boolean passwordMode = false;
@@ -88,15 +69,31 @@ public class UDEditText<L extends EditText> extends UDLabel<L> implements TextWa
     private boolean hasMaxBytesLisenter = false;
     private int mTextAlign;
 
+    @CGenerate(defaultConstructor = true)
     @LuaApiUsed
-    protected UDEditText(long L, LuaValue[] v) {
-        super(L, v);
+    protected UDEditText(long L) {
+        super(L);
     }
 
     @Override
     protected L newView(LuaValue[] init) {
         return (L) new LuaEditText(getContext(), this);
     }
+
+    //<editor-fold desc="native method">
+    /**
+     * 初始化方法
+     * 反射调用
+     * @see com.immomo.mls.wrapper.Register.NewUDHolder
+     */
+    public static native void _init();
+
+    /**
+     * 注册到虚拟机方法
+     * 反射调用
+     * @see com.immomo.mls.wrapper.Register.NewUDHolder
+     */
+    public static native void _register(long l, String parent);
 
     //<editor-fold desc="API">
     //<editor-fold desc="Property">
@@ -113,127 +110,120 @@ public class UDEditText<L extends EditText> extends UDLabel<L> implements TextWa
     }
 
     @LuaApiUsed
-    public LuaValue[] placeholder(LuaValue[] placeholder) {
-        if (placeholder != null && placeholder.length >= 1) {
-
-            String value = placeholder[0].toJavaString();
-            if (singleLineMode) {
-                value = value.replace("\n", "");
-            }
-
-            if (placeholder[0].isNil())
-                value = "";
-
-            getView().setHint(value);
-            return null;
+    public void setPlaceholder(String value) {
+        if (singleLineMode) {
+            value = value.replace("\n", "");
         }
-        return varargsOf(LuaString.valueOf(getView().getHint().toString()));
+
+        getView().setHint(value);
     }
 
     @LuaApiUsed
-    public LuaValue[] placeholderColor(LuaValue[] color) {
-        if (color != null && color.length >= 1) {
-            getView().setHintTextColor(((UDColor) color[0]).getColor());
-            return null;
-        }
+    public String getPlaceholder() {
+        return getView().getHint().toString();
+    }
+
+    @LuaApiUsed
+    public void setPlaceholderColor(UDColor color) {
+        getView().setHintTextColor(color.getColor());
+    }
+
+    @LuaApiUsed
+    public UDColor getPlaceholderColor() {
         UDColor udColor = new UDColor(getGlobals(), getView().getHintTextColors().getDefaultColor());
-        return varargsOf(udColor);
+        return udColor;
     }
 
     @LuaApiUsed
-    public LuaValue[] inputMode(LuaValue[] i) {
-        if (i != null && i.length >= 1) {
-            int value = i[0].toInt();
-            inputType = value;
-            if (passwordMode) {
-                value = value | InputType.TYPE_TEXT_VARIATION_PASSWORD;
-            }
-
-            if (value == EditTextViewInputMode.Number) {//Number系统自动为单行，这里同步为lua的singleLine模式
-                getView().setInputType(value);
-                singleLineMode = false;
-                singleLine(LuaBoolean.rBoolean(true));
-            } else {
-                if (!singleLineMode) {//Normal模式，根据lua的singleLine，设置flag
-                    getView().setInputType(value | EditorInfo.TYPE_TEXT_FLAG_MULTI_LINE);
-                } else {
-                    getView().setInputType(value & ~EditorInfo.TYPE_TEXT_FLAG_MULTI_LINE);
-                }
-            }
-            return null;
+    public void setInputMode(int value) {
+        inputType = value;
+        if (passwordMode) {
+            value = value | InputType.TYPE_TEXT_VARIATION_PASSWORD;
         }
-        return varargsOf(LuaNumber.valueOf(inputType));
+
+        if (value == EditTextViewInputMode.Number) {//Number系统自动为单行，这里同步为lua的singleLine模式
+            getView().setInputType(value);
+            singleLineMode = false;
+            setSingleLine(true);
+        } else {
+            if (!singleLineMode) {//Normal模式，根据lua的singleLine，设置flag
+                getView().setInputType(value | EditorInfo.TYPE_TEXT_FLAG_MULTI_LINE);
+            } else {
+                getView().setInputType(value & ~EditorInfo.TYPE_TEXT_FLAG_MULTI_LINE);
+            }
+        }
+    }
+
+    @LuaApiUsed
+    public int getInputMode() {
+        return inputType;
     }
 
     /**
      * 设置单行横向滑动模式，对齐方式切换为居中
      */
     @LuaApiUsed
-    public LuaValue[] singleLine(LuaValue[] singleLine) {
-        if (singleLine != null && singleLine.length >= 1) {
-            boolean isSingleLine = singleLine[0].toBoolean();
-            if (singleLineMode != isSingleLine) {
-                singleLineMode = isSingleLine;
-                getView().setSingleLine(isSingleLine);
-                if (isSingleLine) {
-                    getView().setGravity(
-                            Gravity.CENTER_VERTICAL | mTextAlign);
-                    if (getView().getHint() != null)
-                        placeholder(varargsOf(LuaString.valueOf(getView().getHint().toString())));
-
-                } else {
-                    getView().setGravity(
-                            Gravity.TOP | mTextAlign);
-                }
-                resetPassWordMode(passwordMode);
+    public void setSingleLine(boolean isSingleLine) {
+        if (singleLineMode != isSingleLine) {
+            singleLineMode = isSingleLine;
+            getView().setSingleLine(isSingleLine);
+            if (isSingleLine) {
+                getView().setGravity(Gravity.CENTER_VERTICAL | mTextAlign);
+                CharSequence hint = getView().getHint();
+                if (hint != null)
+                    setPlaceholder(hint.toString());
+            } else {
+                getView().setGravity(Gravity.TOP | mTextAlign);
             }
-
-            Editable editor = getView().getText();
-            if (editor != null && !TextUtils.isEmpty(editor.toString()) && singleLineMode) {
-                String text = editor.toString();
-                text = text.replace("\n", " ");
-                setText(text);
-            }
-            return null;
-        }
-        return varargsOf(LuaBoolean.valueOf(singleLineMode));
-    }
-
-    @LuaApiUsed
-    public LuaValue[] textAlign(LuaValue[] var) {
-        if (var.length == 1) {
-            mTextAlign = var[0].toInt();
-            getView().setGravity((singleLineMode ? Gravity.CENTER_VERTICAL : Gravity.TOP) | mTextAlign);
-            return null;
-        }
-        return varargsOf(LuaNumber.valueOf(getView().getGravity()));
-    }
-
-    @LuaApiUsed
-    public LuaValue[] passwordMode(LuaValue[] enable) {
-        if (enable != null && enable.length >= 1) {
-            int sectionStart = getView().getSelectionStart();
-            passwordMode = enable[0].toBoolean();
             resetPassWordMode(passwordMode);
-            setSelectionPosition(sectionStart);
-            return null;
         }
-        return varargsOf(LuaBoolean.valueOf(passwordMode));
+
+        Editable editor = getView().getText();
+        if (editor != null && !TextUtils.isEmpty(editor.toString()) && singleLineMode) {
+            String text = editor.toString();
+            text = text.replace("\n", " ");
+            setText(text);
+        }
     }
 
     @LuaApiUsed
-    public LuaValue[] maxLength(LuaValue[] lengths) {
-        if (lengths != null && lengths.length >= 1) {
-            int length = lengths[0].toInt();
-            this.maxlength = length;
+    public boolean isSingleLine() {
+        return singleLineMode;
+    }
 
-            if (setLengthFilter(length))
-                return null;
+    @LuaApiUsed
+    public void setTextAlign(int a) {
+        mTextAlign = a;
+        getView().setGravity((singleLineMode ? Gravity.CENTER_VERTICAL : Gravity.TOP) | mTextAlign);
+    }
 
-            return null;
-        }
+    @LuaApiUsed
+    public int getTextAlign() {
+        return getView().getGravity();
+    }
 
-        return varargsOf(LuaNumber.valueOf(maxlength));
+    @LuaApiUsed
+    public void setPasswordMode(boolean enable) {
+        int sectionStart = getView().getSelectionStart();
+        passwordMode = enable;
+        resetPassWordMode(passwordMode);
+        setSelectionPosition(sectionStart);
+    }
+
+    @LuaApiUsed
+    public boolean isPasswordMode() {
+        return passwordMode;
+    }
+
+    @LuaApiUsed
+    public void setMaxLength(int length) {
+        this.maxlength = length;
+        setLengthFilter(length);
+    }
+
+    @LuaApiUsed
+    public int getMaxLength() {
+        return maxlength;
     }
 
     private boolean setLengthFilter(int length) {
@@ -256,112 +246,89 @@ public class UDEditText<L extends EditText> extends UDLabel<L> implements TextWa
     }
 
     @LuaApiUsed
-    public LuaValue[] maxBytes(LuaValue[] lengths) {
-        if (lengths != null && lengths.length >= 1) {
-            this.maxBytes = lengths[0].toInt();
+    public void setMaxBytes(int max) {
+        this.maxBytes = max;
 
-            setLengthFilter((this.maxBytes / 2));
-            if (!hasMaxBytesLisenter) {
-                hasMaxBytesLisenter = true;
-                getView().addTextChangedListener(new LuaLimitTextWatcher());
-            }
-            return null;
+        setLengthFilter((this.maxBytes / 2));
+        if (!hasMaxBytesLisenter) {
+            hasMaxBytesLisenter = true;
+            getView().addTextChangedListener(new LuaLimitTextWatcher());
         }
-
-        return varargsOf(LuaNumber.valueOf(maxBytes));
     }
 
     @LuaApiUsed
-    public LuaValue[] returnMode(LuaValue[] mode) {
-        if (mode != null && mode.length >= 1) {
-            getView().setImeOptions(mode[0].toInt());
-            if (singleLineMode) {//为了和IOS同步，实时更新效果
-                getView().setSingleLine(false);
-                getView().setSingleLine(singleLineMode);
-                resetPassWordMode(passwordMode);
-            }
-            return null;
+    public int getMaxBytes() {
+        return maxBytes;
+    }
+
+    @LuaApiUsed
+    public void setReturnMode(int r) {
+        getView().setImeOptions(r);
+        if (singleLineMode) {//为了和IOS同步，实时更新效果
+            getView().setSingleLine(false);
+            getView().setSingleLine(singleLineMode);
+            resetPassWordMode(passwordMode);
         }
-        return varargsOf(LuaNumber.valueOf(getView().getImeOptions()));
+    }
+
+    @LuaApiUsed
+    public int returnMode() {
+        return getView().getImeOptions();
     }
     //</editor-fold>
 
     //<editor-fold desc="Method">
     @LuaApiUsed
-    public LuaValue[] setBeginChangingCallback(LuaValue[] fun) {
+    public void setBeginChangingCallback(LuaFunction fun) {
         if (beginChangingCallback != null)
             beginChangingCallback.destroy();
-        beginChangingCallback = fun[0].toLuaFunction();
+        beginChangingCallback = fun;
         addTextWatcher();
-        return null;
     }
 
     @LuaApiUsed
-    public LuaValue[] setDidChangingCallback(LuaValue[] callback) {
+    public void setDidChangingCallback(LuaFunction callback) {
         if (changingCallback != null)
             changingCallback.destroy();
-        changingCallback = callback[0].toLuaFunction();
+        changingCallback = callback;
         addTextWatcher();
-        return null;
     }
 
     @LuaApiUsed
-    public LuaValue[] setEndChangedCallback(LuaValue[] callback) {
+    public void setEndChangedCallback(LuaFunction callback) {
         if (endChangedCallback != null)
             endChangedCallback.destroy();
-        endChangedCallback = callback[0].toLuaFunction();
+        endChangedCallback = callback;
         addTextWatcher();
-        return null;
     }
 
     @LuaApiUsed
-    public LuaValue[] setReturnCallback(LuaValue[] callback) {
+    public void setReturnCallback(LuaFunction callback) {
         if (returnCallback != null)
             returnCallback.destroy();
-        returnCallback = callback[0].toLuaFunction();
+        returnCallback = callback;
         if (returnCallback != null && !editorActionSetted) {
             editorActionSetted = true;
         }
-        return null;
     }
 
     @LuaApiUsed
-    public LuaValue[] setCursorColor(LuaValue[] color) {
-        if (color != null && color.length >= 1) {
-            if (getView() instanceof LuaEditText) {
-                ((LuaEditText) getView()).setCursorColor(((UDColor) color[0]).getColor());
-            }
+    public void setCursorColor(UDColor color) {
+        if (getView() instanceof LuaEditText) {
+            ((LuaEditText) getView()).setCursorColor(color.getColor());
         }
-        return null;
     }
 
     @LuaApiUsed
-    public LuaValue[] setCanEdit(LuaValue[] enable) {
-        if (enable != null && enable.length >= 1) {
-            getView().setEnabled(enable[0].toBoolean());
-        }
-        return null;
-    }
-
-    @Override
-    public LuaValue[] requestFocus(LuaValue[] p) {
-        LuaValue[] result = super.requestFocus(p);
-        showKeyboard(null);
-        return result;
-    }
-
-    @Override
-    public LuaValue[] cancelFocus(LuaValue[] p) {
-        LuaValue[] result = super.cancelFocus(p);
-        dismissKeyboard(null);
-        return result;
+    public void setCanEdit(boolean enable) {
+        getView().setEnabled(enable);
     }
 
     @LuaApiUsed
-    public LuaValue[] setShouldChangeCallback(LuaValue[] p) {
+    public void setShouldChangeCallback(LuaFunction p) {
         if (mSetShouldChangeFunction != null)
             mSetShouldChangeFunction.destroy();
-        mSetShouldChangeFunction = p[0].toLuaFunction();
+        mSetShouldChangeFunction = p;
 
         InputFilter[] filters = getView().getFilters();
         final int count = filters.length;
@@ -369,7 +336,6 @@ public class UDEditText<L extends EditText> extends UDLabel<L> implements TextWa
             if (filters[i] instanceof BlockingFilter) {
                 filters[i] = new BlockingFilter(mSetShouldChangeFunction, getView());
                 getView().setFilters(filters);
-                return null;
             }
         }
         final InputFilter[] newFilters = new InputFilter[filters.length + 1];
@@ -377,11 +343,11 @@ public class UDEditText<L extends EditText> extends UDLabel<L> implements TextWa
         newFilters[count] = new BlockingFilter(mSetShouldChangeFunction, getView());
 
         getView().setFilters(newFilters);
-        return null;
     }
 
+    @CGenerate(alias = "showKeyboard")
     @LuaApiUsed
-    public LuaValue[] showKeyboard(LuaValue[] v) {
+    public void nShowKeyboard() {
         InputMethodManager im = ((InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE));
         if (!getView().isFocused()) {
             getView().requestFocus();
@@ -392,11 +358,10 @@ public class UDEditText<L extends EditText> extends UDLabel<L> implements TextWa
         }
         getView().setCursorVisible(true);
         callBeforeTextChanged();
-        return null;
     }
 
     @LuaApiUsed
-    public LuaValue[] dismissKeyboard(LuaValue[] v) {
+    public void dismissKeyboard() {
         InputMethodManager im = ((InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE));
         View curFocusView = getView().isFocused() ? getView() : null;
         if (curFocusView != null && im != null) {
@@ -404,16 +369,30 @@ public class UDEditText<L extends EditText> extends UDLabel<L> implements TextWa
                     InputMethodManager.HIDE_NOT_ALWAYS);
             getView().setCursorVisible(false);//收起键盘时，移除光标。再次触摸时，显示光标
         }
-
-        return null;
     }
 
+    @Override
     protected void setLines(int i) {
+        super.setLines(i);
         if (i == 1) {
             getView().setSingleLine();
         } else {
             getView().setSingleLine(false);
         }
+    }
+
+    @Override
+    public LuaValue[] requestFocus(LuaValue[] p) {
+        LuaValue[] result = super.requestFocus(p);
+        nShowKeyboard();
+        return result;
+    }
+
+    @Override
+    public LuaValue[] cancelFocus(LuaValue[] p) {
+        LuaValue[] result = super.cancelFocus(p);
+        dismissKeyboard();
+        return result;
     }
 
     //</editor-fold>
@@ -422,7 +401,7 @@ public class UDEditText<L extends EditText> extends UDLabel<L> implements TextWa
     //<editor-fold desc="TextWatcher">
     public void callBeforeTextChanged() {
         if (beginChangingCallback != null)
-            beginChangingCallback.invoke(null);
+            beginChangingCallback.fastInvoke();
     }
 
     @Override
@@ -439,7 +418,7 @@ public class UDEditText<L extends EditText> extends UDLabel<L> implements TextWa
     @Override
     public void afterTextChanged(Editable s) {
         if (endChangedCallback != null) {
-            endChangedCallback.invoke(varargsOf(LuaString.valueOf(s.toString())));
+            endChangedCallback.fastInvoke(s.toString());
         }
     }
     //</editor-fold>
@@ -461,11 +440,11 @@ public class UDEditText<L extends EditText> extends UDLabel<L> implements TextWa
         //有returnMode时，需要return true,消费事件。防止继续分发ACTION_DOWN
         if (event != null && event.getAction() == KeyEvent.ACTION_DOWN) {
             if (returnCallback != null) {
-                returnCallback.invoke(null);
+                returnCallback.fastInvoke();
             }
         } else if (actionId != IME_ACTION_UNSPECIFIED || event == null) {//有returnMode时，actionId为：非IME_ACTION_UNSPECIFIED
             if (returnCallback != null) {
-                returnCallback.invoke(null);
+                returnCallback.fastInvoke();
             }
             return true;
         }

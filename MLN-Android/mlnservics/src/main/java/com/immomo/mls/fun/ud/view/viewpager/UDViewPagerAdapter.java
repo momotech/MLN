@@ -187,7 +187,7 @@ public class UDViewPagerAdapter extends JavaUserdata {
         if (globals.isDestroyed()) {
             return;
         }
-        if (!AssertUtils.assertFunction(delegate, "initCell callback must be a function", getGlobals()))
+        if (!AssertUtils.assertFunction(delegate, "必须通过initCell把函数设置到adapter中", getGlobals()))
             return;
 
         resetLayoutParamsWhenWidth2Zero(luaValue);

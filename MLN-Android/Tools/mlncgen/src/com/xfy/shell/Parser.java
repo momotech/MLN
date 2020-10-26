@@ -15,7 +15,6 @@ import static com.xfy.shell.CharArrayUtils.*;
  * Created by Xiong.Fangyu on 2020-02-12
  */
 public class Parser {
-    private static final String ANNOTATION = "@LuaApiUsed";
     private static final String PACKAGE = "package";
     private static final String IMPORT = "import";
     private static final String CLASS = "class";
@@ -27,6 +26,8 @@ public class Parser {
     private static final char RightBrackets = ')';
     private static final char BlockStart = '{';
     private static final char BlockEnd = '}';
+    private static final char LeftAngleBrackets = '<';
+    private static final char RightAngleBrackets = '>';
     private static final char Quot = '"';
     private static final char SQuot = '\'';
     private static final char Special = '\\';
@@ -38,12 +39,13 @@ public class Parser {
     private static final String NATIVE = "native";
 
     private String className;
-    private String luaClassName;
+    private List<String> luaClassName;
     private String packageName;
     private final List<Method> methods;
     private final List<String> imports;
-    private final List<String> classAnnotation;
+    private final List<Annotation> classAnnotation;
     private boolean isStatic;
+    private boolean isAbstract;
 
     private boolean importIsRead;
 
@@ -59,8 +61,24 @@ public class Parser {
         return className;
     }
 
-    public String getLuaClassName() {
+    public String getSimpleClassName() {
+        int idx = className.lastIndexOf('.');
+        if (idx >= 0) {
+            return className.substring(idx + 1);
+        }
+        return className;
+    }
+
+    public boolean isAbstract() {
+        return isAbstract;
+    }
+
+    public List<String> getLuaClassName() {
         return luaClassName;
+    }
+
+    public String getFirstLuaClassName() {
+        return luaClassName.get(0);
     }
 
     public String getPackageName() {
@@ -80,7 +98,7 @@ public class Parser {
             return;
         Boolean isStatic = null;
         for (Method m : methods) {
-            if (m.containAnnotation(ANNOTATION)) {
+            if (m.containLuaApiUsed()) {
                 if (isStatic == null) {
                     isStatic = m.isStatic;
                 } else if (isStatic != m.isStatic) {
@@ -98,14 +116,12 @@ public class Parser {
     private void setTypePackage(Type type) {
         if (!type.needAddPackage())
             return;
-        String name = type.name;
         for (String im : imports) {
-            if (im.endsWith(name)) {
-                type.name = im;
+            if (type.setImportPackage(im)) {
                 return;
             }
         }
-        type.name = packageName + "." + name;
+        type.setPackage(packageName);
     }
 
     private boolean isModify(String s) {
@@ -151,7 +167,7 @@ public class Parser {
                 i = ps + PACKAGE.length();
                 i = afterBlank(chars, i);
                 int start = i;
-                i = afterNotChars(chars, BlankAndSem, i, chars.length);
+                i = CharArrayUtils.findAfter(chars, BlankAndSem, i, chars.length);
 
                 int e = chars[i] == Sem ? i - 1 : i;
                 e = beforeBlank(chars, e);
@@ -172,7 +188,7 @@ public class Parser {
                     importStart += IMPORT.length();
                     importStart = afterBlank(chars, importStart);
                     int rs = importStart;
-                    importStart = afterNotChars(chars, BlankAndSem, importStart, chars.length);
+                    importStart = CharArrayUtils.findAfter(chars, BlankAndSem, importStart, chars.length);
                     int re = chars[importStart] == Sem ? importStart - 1 : importStart;
                     imports.add(new String(chars, rs, re - rs + 1));
                     lastImportEnd = importStart;
@@ -183,12 +199,19 @@ public class Parser {
             /// 读类名
             if (className == null) {
                 /// i 指向class
-                int preClass = beforeNotBlank(chars, i, lastImportEnd);
+                int preClass = findBlankBefore(chars, i, lastImportEnd);
                 ///查找注解
                 while (preClass != -1) {
-                    int keyStart = beforeNotBlank(chars, preClass, lastImportEnd);
-                    if (keyStart != -1 && chars[keyStart + 1] == AT) {
-                        classAnnotation.add(new String(chars, keyStart + 2, preClass - keyStart - 1));
+                    int keyStart = findBlankBefore(chars, preClass, lastImportEnd);
+                    if (keyStart != -1) {
+                        if (chars[keyStart + 1] == 'a') {
+                            String modi = new String(chars, keyStart + 1, preClass - keyStart);
+                            isAbstract = modi.equals("abstract");
+                        } else if (chars[keyStart + 1] == AT) {
+                            classAnnotation.add(
+                                    Annotation.parse(
+                                            new String(chars, keyStart + 1, preClass - keyStart)));
+                        }
                     }
                     preClass = beforeBlank(chars, keyStart, lastImportEnd);
                 }
@@ -196,9 +219,12 @@ public class Parser {
                 i = cs + CLASS.length();
                 i = afterBlank(chars, i);
                 cs = i;
-                i = afterNotChars(chars, combine(Blank, BlockStart), i, chars.length);
+                i = CharArrayUtils.findAfter(chars, combine(Blank, BlockStart), i, chars.length);
                 int ce = beforeBlank(chars, i);
                 className = new String(chars, cs, ce - cs + 1);
+                int lcidx = className.indexOf('<');
+                if (lcidx > 0)
+                    className = className.substring(0, lcidx);
                 i ++;
 
                 /// 读lua 类名
@@ -206,33 +232,69 @@ public class Parser {
                 if (cs == -1)
                     continue;
                 i = cs + LCN.length();
-                while (isBlank(chars[i]) || chars[i] != Quot) {
-                    i ++;
+                int lcnEnd = findAfter(chars, Sem, i, chars.length);
+                while ((i = findAfter(chars, Quot, i, lcnEnd)) > 0) {
+                    int end = findAfter(chars, Quot, i + 1, lcnEnd);
+                    if (end < 0)
+                        break;
+                    String n = new String(chars, i + 1, end - i - 1);
+                    if (luaClassName == null)
+                        luaClassName = new ArrayList<>();
+                    luaClassName.add(n);
+                    i = end + 1;
                 }
-                cs = ++i;
-                i = afterNotChar(chars, Quot, i, chars.length);
-                luaClassName = new String(chars, cs, i - cs);
+                i = lcnEnd + 1;
                 continue;
             }
             /// 读方法
-            i = parseMethod(chars, i);
+            i = parseMethod(chars, i + 1);
             if (i < 0)
                 break;
         }
     }
 
+    private void parseConstructor(char[] chars, int start, int nameIndex, int end) {
+        List<Annotation> annotations = Annotation.parseMultiAnnotation(new String(chars, start, nameIndex - start));
+        start = nameIndex + className.length();
+        Method m = new Method();
+        m.name = className + "<init>";
+        m.returnType = Type.getType("void");
+        m.params = parseMethodParams(chars, start, end).toArray(new Type[0]);
+        m.annotations = annotations;
+        m.isConstructor = true;
+        methods.add(m);
+    }
+
     private int parseMethod(char[] chars, int i) {
+        i = afterBlank(chars, i);
         int min = i;
-        i = afterChar(chars, LeftBrackets, i, chars.length);
-        if (i < 0)
-            return -1;
+        boolean setMin = false;
+        String methodName;
         int[] se = {min, i - 1};
-        String methodName = getKeyWordFromEnd(chars, se);
+        while (true) {
+            i = findAfter(chars, LeftBrackets, i, chars.length);
+            if (i < 0)
+                return -1;
+            se[1] = i - 1;
+            methodName = getKeyWordFromEnd(chars, se);
+            if (methodName.charAt(0) == AT) {
+                i ++;
+                if (!setMin) {
+                    setMin = true;
+                    min = se[0];
+                }
+                continue;
+            }
+            break;
+        }
         se[1] = se[0];
         se[0] = min;
         String returnName = getKeyWordFromEnd(chars, se);
         int methodEnd = getMethodEnd(chars, i + 1);
         if (returnName.isEmpty() || isModify(returnName)) {
+            if (className.equals(methodName)) {
+                parseConstructor(chars, min, i - methodName.length(), methodEnd);
+            }
             return methodEnd;
         }
         se[1] = se[0];
@@ -271,48 +333,21 @@ public class Parser {
             }
             break;
         }
-        List<String> annotations = null;
-        while (se[0] != min && chars[se[0] + 1] == AT) {
-            if (annotations == null) annotations = new ArrayList<>();
-            annotations.add(modify);
-            se[1] = se[0];
-            se[0] = min;
-            modify = getKeyWordFromEnd(chars, se);
-        }
-
-        /// 读方法参数
-        i ++;//指向括号后一个字符
-        min = i;
-        se[0] = i;
-        int end = i;
-        char c;
-        ArrayList<Type> params = new ArrayList<>();
-        while (true) {
-            c = chars[i];
-            if (c == Comma || c == RightBrackets) {
-                end = i;
-                i --;
-                if (i < min) {
-                    break;
-                }
-                /// 过滤空白
-                i = beforeBlank(chars, i);
-                /// 过滤参数名
-                i = beforeNotBlank(chars, i);
-                /// 跳过了最后一个关键字
-                se[1] = i;
-                String tn = getKeyWordFromEnd(chars, se);
-                if (!tn.isEmpty()) {
-                    params.add(Type.getType(tn));
-                }
-                i = end + 1;
-                se[0] = end;
-                if (c == RightBrackets)
-                    break;
-            } else {
-                i ++;
+        int firstAt = 0;
+        while ((firstAt = findBefore(chars, AT, se[0], min)) > 0) {
+            se[0] = firstAt - 1;
+            if (firstAt == min) {
+                break;
             }
         }
+        if (chars[min] != AT)
+            min = se[0] + 1;
+
+        List<Annotation> annotations = Annotation.parseMultiAnnotation(new String(chars, min, i - min-2));
+
+        /// 读方法参数
+        List<Type> params = parseMethodParams(chars, i, methodEnd);
+
         Method m = new Method();
         m.name = methodName;
         m.returnType = Type.getType(returnName);
@@ -324,12 +359,70 @@ public class Parser {
         return methodEnd;
     }
 
+    public static List<Type> parseMethodParams(char[] chars, int bStart, int max) {
+        int bEnd = ++bStart;
+        while (chars[bEnd] != RightBrackets) {
+            bEnd ++;
+        }
+        List<Type> ret = new ArrayList<>();
+        if (bEnd > max)
+            return ret;
+        int i = bStart;
+        int inBrackets = 0;
+        while (i < bEnd) {
+            char c = chars[i];
+            if (c == LeftAngleBrackets) {
+                inBrackets ++;
+            } else if (c == RightAngleBrackets) {
+                inBrackets --;
+                i ++;
+                continue;
+            } else if ((c == Comma || i == (bEnd - 1)) && inBrackets == 0) {
+                int next = i + 1;
+                ///跳过最后的空白
+                int j = beforeBlank(chars, c == Comma ? i - 1 : i, bStart);
+                if (j == -1)
+                    break;
+                ///跳过参数名称
+                j = findBlankBefore(chars, j, bStart);
+                if (j == -1)
+                    break;
+                ///跳过参数名称前的空白
+                j = beforeBlank(chars, j, bStart);
+                if (j == -1)
+                    break;
+                ///j->参数类型最后一个字符
+                ///跳过开头空白
+                bStart = afterBlank(chars, bStart, j);
+                if (bStart == -1)
+                    break;
+                /// 如果有范型>结尾，则去掉范型
+                if (chars[j] == RightAngleBrackets) {
+                    j = findAfter(chars, LeftAngleBrackets, bStart, j);
+                    if (j == -1)
+                        break;
+                    j --;
+                }
+                /// 如果有其他修饰符，如final，去掉
+                int tidx;
+                while ((tidx = findBlankAfter(chars, bStart, j)) != -1) {
+                    bStart = tidx + 1;
+                }
+                Type t = Type.getType(new String(chars, bStart, j - bStart + 1));
+                ret.add(t);
+                bStart = next;
+            }
+            i ++;
+        }
+        return ret;
+    }
+
     private int getMethodEnd(char[] chars, int s) {
-        s = afterChar(chars, RightBrackets, s, chars.length);
+        s = findAfter(chars, RightBrackets, s, chars.length);
         if (s < 0)
             return -1;
-        int semIndex = afterChar(chars, Sem, s, chars.length);
-        int BlockStartIndex = afterChar(chars, BlockStart, s, chars.length);
+        int semIndex = findAfter(chars, Sem, s, chars.length);
+        int BlockStartIndex = findAfter(chars, BlockStart, s, chars.length);
         /// 不实现的方法
         if (semIndex > 0 && BlockStartIndex > 0 && semIndex < BlockStartIndex)
             return semIndex + 1;
@@ -377,7 +470,7 @@ public class Parser {
             end = start;
         }
         ke = end;
-        end = beforeNotBlank(chars, end, start);
+        end = findBlankBefore(chars, end, start);
         if (end == -1) {
             end = start;
             ks = end;
@@ -391,10 +484,13 @@ public class Parser {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        for (String s : classAnnotation) {
+        for (Annotation s : classAnnotation) {
             sb.append(s).append('\n');
         }
-        sb.append(packageName).append('.').append(className).append('\n');
+        if (isAbstract)
+            sb.append("abstract ");
+        sb.append("class ")
+                .append(packageName).append('.').append(className).append('\n');
         for (String s : imports) {
             sb.append("import ").append(s).append('\n');
         }

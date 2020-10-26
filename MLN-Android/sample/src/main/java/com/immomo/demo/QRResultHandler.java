@@ -33,6 +33,7 @@ import com.immomo.mmui.MMUIActivity;
  */
 public class QRResultHandler implements OuterResultHandler.IResultHandler {
     private static final String DEBUG_SCRIPT = "debug.lua";
+    private static final String KEY_HOT_RELOAD = "KEY_HOT_RELOAD";
 
     @Override
     public boolean handle(Activity activity, Result rawResult, ResultHandler resultHandler, Bitmap barcode) {
@@ -53,7 +54,7 @@ public class QRResultHandler implements OuterResultHandler.IResultHandler {
         boolean isMMUI = "true".equals(uri.getQueryParameter("mmui"));
         Class<? extends Activity> clz = isMMUI ? MMUIActivity.class : LuaViewActivity.class;
         Intent intent = new Intent(activity, clz);
-        InitData initData = MLSBundleUtils.createInitData(code).forceNotUseX64().forceDownload();
+        InitData initData = MLSBundleUtils.createInitData(code).forceDownload();
         if (isDebugScript(uri)) {
             handleDebugScript(code);
             activity.finish();

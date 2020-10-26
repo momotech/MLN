@@ -23,6 +23,7 @@ import com.immomo.mls.wrapper.ScriptBundle;
 import com.immomo.mls.wrapper.ScriptFile;
 
 import org.luaj.vm2.Globals;
+import org.luaj.vm2.exception.UndumpError;
 import org.luaj.vm2.utils.StringReplaceUtils;
 
 import java.io.File;
@@ -110,8 +111,13 @@ public class PreloadUtils {
             File child = new File(file, s);
             ScriptFile sf = createByFile(s, child);
             if (sf != null) {
-                error = g.preloadFileWithResult(s, child.getAbsolutePath());
-                sf.setCompiled(error == null);
+                try {
+                    g.preloadFile(s, child.getAbsolutePath());
+                    sf.setCompiled(true);
+                } catch (UndumpError e) {
+                    sf.setCompiled(false);
+                    error = e.getMessage();
+                }
                 bundle.addChild(sf);
                 result = sf.isCompiled();
             } else {
@@ -197,15 +203,11 @@ public class PreloadUtils {
         } else if (name.endsWith(Constants.POSTFIX_B_LUA)) {
             name = name.substring(0, name.length() - Constants.POSTFIX_B_LUA.length());
         }
-        return new ScriptFile(name, parsedUrl.toString(), true);
+        return new ScriptFile(name, parsedUrl.getUrlWithoutParams(), true, true);
     }
 
     private static ScriptFile createScriptFile(String cn, File f, boolean isMain) {
         return new ScriptFile(cn, f.getAbsolutePath(), isMain);
-    }
-
-    private static ScriptFile createAssetsScriptFile(String cn, String assetsPath, boolean isMain) {
-        return new ScriptFile(cn, assetsPath, isMain);
     }
 
     /**

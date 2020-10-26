@@ -7,13 +7,18 @@
   */
 package com.immomo.mmui.databinding.utils;
 
+import android.os.Looper;
 import android.text.TextUtils;
+import android.util.Log;
 
+import com.immomo.mmui.databinding.DataBinding;
+import com.immomo.mmui.databinding.annotation.WatchContext;
 import com.immomo.mmui.databinding.bean.ObservableList;
 import com.immomo.mmui.databinding.bean.ObserverWrap;
 import com.immomo.mmui.databinding.DataBindingEngine;
 import com.immomo.mmui.databinding.bean.WatchCallBack;
 import com.immomo.mmui.databinding.core.PropertyCallBackHandler;
+import com.immomo.mmui.databinding.filter.IWatchKeyFilter;
 import com.immomo.mmui.databinding.interfaces.IObservable;
 import com.immomo.mmui.databinding.interfaces.IPropertyCallback;
 
@@ -31,13 +36,15 @@ public class ObserverUtils {
     /**
      * 被观察者添加观察者(供ObservableField，ObservableMap调用)
      *
-     * @param observed
+     * @param argoWatchContext  上下文
+     * @param observed          观察者
      * @param observerId        Global的hashCode
      * @param wholeTag          整个tag
      * @param isItemChange      如是list和map,内部增删改查是否通知观察者
+     * @param iWatchFilters     过滤器
      * @param iPropertyCallback 改变回调
      */
-    public static void subscribe(Object observed, int observerId, String wholeTag, boolean isSelfObserved, final boolean isItemChange, IPropertyCallback iPropertyCallback) {
+    public static void subscribe(@WatchContext int argoWatchContext, Object observed, int observerId, String wholeTag, final boolean isItemChange, List<IWatchKeyFilter> iWatchFilters, IPropertyCallback iPropertyCallback) {
 
         final String[] allBindProperties = wholeTag.split(Constants.SPOT_SPLIT);
 
@@ -45,28 +52,26 @@ public class ObserverUtils {
         Object bindClass = observed;
 
         //第一层ObservableMap添加监听
-        if (isSelfObserved) {
-            final ObserverWrap observerWrap = ObserverWrap.obtain(observerId, wholeTag, allBindProperties[0], isItemChange, iPropertyCallback);
-            if (observed instanceof IObservable) {
-                ((IObservable) observed).addObserver(observerWrap);
-            }
+        final ObserverWrap observerWrap = ObserverWrap.obtain(argoWatchContext, observerId, wholeTag, allBindProperties[0], isItemChange, iWatchFilters, iPropertyCallback);
+        if (observed instanceof IObservable) {
+            ((IObservable) observed).createObserver(observerWrap);
         }
 
         //存储中间节点的实例以及该实例之前已经绑定的tag
         for (int i = 1; i < (isItemChange ? allBindProperties.length : allBindProperties.length - 1); i++) {
             bindClass = DataBindingEngine.getInstance().getGetSetAdapter().get(bindClass, allBindProperties[i]);
             bindProperty.append(bindProperty.length() == 0 ? "" : Constants.SPOT).append(allBindProperties[i]);
-            ObserverWrap restObservedProperty = ObserverWrap.obtain(observerId, wholeTag, bindProperty.toString(), isItemChange, iPropertyCallback);
+            ObserverWrap restObservedProperty = ObserverWrap.obtain(argoWatchContext, observerId, wholeTag, bindProperty.toString(), isItemChange, iWatchFilters, iPropertyCallback);
             if (bindClass instanceof IObservable) {
-                ((IObservable) bindClass).addObserver(restObservedProperty);
+                ((IObservable) bindClass).createObserver(restObservedProperty);
             }
         }
 
         //判断最后节点是否为二维数组,若为二维数组，循环二维数组进行绑定
         if (isItemChange && bindClass instanceof ObservableList && ((ObservableList) bindClass).size() > 0 && ((ObservableList) bindClass).get(0) instanceof ObservableList) {
             for (ObservableList list : (ObservableList<ObservableList>) bindClass) {
-                ObserverWrap itemObserverWrap = ObserverWrap.obtain(observerId, wholeTag, wholeTag, isItemChange, iPropertyCallback);
-                list.addObserver(itemObserverWrap);
+                ObserverWrap itemObserverWrap = ObserverWrap.obtain(argoWatchContext, observerId, wholeTag, wholeTag, isItemChange, iWatchFilters, iPropertyCallback);
+                list.createObserver(itemObserverWrap);
             }
         }
 
@@ -81,7 +86,7 @@ public class ObserverUtils {
      * @param older
      * @param newer
      */
-    public static void notifyPropertyChanged(List<ObserverWrap> observerWraps, String fieldName, Object older, Object newer) {
+    public static void notifyPropertyChanged(List<ObserverWrap> observerWraps, @WatchContext int argoWatchContext, String fieldName, Object older, Object newer) {
         if (observerWraps == null || observerWraps.size() == 0) {
             return;
         }
@@ -105,11 +110,12 @@ public class ObserverUtils {
             }
 
             // 两边加点是排除 a.abc 与a.ab 的情况
-            if ((observerWrap.getSourceTag()+ Constants.SPOT).startsWith(changeProperty + Constants.SPOT)) {
+            if ((observerWrap.getSourceTag() + Constants.SPOT).startsWith(changeProperty + Constants.SPOT)) {
                 if (observerWrap.getSourceTag().length() == changeProperty.length()) {
 
-//                    observerWrap.getPropertyListener().callBack(older, newer);
-                    PropertyCallBackHandler.getInstance().addCallBack(WatchCallBack.obtain(observerWrap.getPropertyListener(),older,newer));
+                    if (observerWrap.isFilter(argoWatchContext,changeProperty,newer)) {
+                        PropertyCallBackHandler.getInstance().addCallBack(WatchCallBack.obtain(observerWrap.getPropertyListener(), older, newer));
+                    }
 
                     finalOlder = older;
                     finalNewer = newer;
@@ -118,19 +124,28 @@ public class ObserverUtils {
                         ((IObservable) finalOlder).removeObserver(iPropertyCallback);
                     }
                     if (finalNewer instanceof ObservableList) {
-
-                        ((IObservable) finalNewer).addObserver(ObserverWrap.obtain(observerId, sourceTag, sourceTag, isItemChange, iPropertyCallback));
+                        ((IObservable) finalNewer).addObserver(ObserverWrap.obtain(observerWrap.getWatchContext(), observerId, sourceTag, sourceTag, isItemChange, observerWrap.getWatchFilters(), iPropertyCallback));
                     }
 
                 } else {
                     String restBindProperty = observerWrap.getSourceTag().substring(changeProperty.length() + 1);
                     String[] restBindProperties = restBindProperty.split(Constants.SPOT_SPLIT);
 
-                    StringBuilder bindProperty = new StringBuilder();
+                    StringBuilder bindProperty = new StringBuilder(changeProperty);
 
                     //移除旧值绑定的所有监听  并添加新值需要绑定的实例
                     Object oldClass = older;
                     Object newClass = newer;
+
+                    //改变的旧值移除监听
+                    if (oldClass instanceof IObservable) {
+                        ((IObservable) oldClass).removeObserver(iPropertyCallback);
+                    }
+
+                    //改变的新值增加监听
+                    if (newClass instanceof IObservable) {
+                        ((IObservable) newClass).addObserver(ObserverWrap.obtain(observerWrap.getWatchContext(), observerId, sourceTag, changeProperty, isItemChange, observerWrap.getWatchFilters(), iPropertyCallback));
+                    }
 
                     for (int i = 0; i < (isItemChange ? restBindProperties.length : restBindProperties.length - 1); i++) {
                         oldClass = DataBindingEngine.getInstance().getGetSetAdapter().get(oldClass, restBindProperties[i]);
@@ -142,8 +157,8 @@ public class ObserverUtils {
 
                         if (newClass instanceof IObservable) {
                             bindProperty.append(bindProperty.length() == 0 ? "" : Constants.SPOT).append(restBindProperties[i]);
-                            ObserverWrap restObservedProperty = ObserverWrap.obtain(observerId, sourceTag, bindProperty.toString(), isItemChange, iPropertyCallback);
-                            ((IObservable) oldClass).addObserver(restObservedProperty);
+                            ObserverWrap restObservedProperty = ObserverWrap.obtain(observerWrap.getWatchContext(), observerId, sourceTag, bindProperty.toString(), isItemChange, observerWrap.getWatchFilters(), iPropertyCallback);
+                            ((IObservable) newClass).addObserver(restObservedProperty);
                         }
                     }
 
@@ -152,11 +167,14 @@ public class ObserverUtils {
                     if (!isItemChange) {
                         Object olderValue = DataBindingEngine.getInstance().getGetSetAdapter().get(oldClass, restBindProperties[restBindProperties.length - 1]);
                         Object newerValue = DataBindingEngine.getInstance().getGetSetAdapter().get(newClass, restBindProperties[restBindProperties.length - 1]);
-//                        observerWrap.getPropertyListener().callBack(olderValue, newerValue);
-                        PropertyCallBackHandler.getInstance().addCallBack(WatchCallBack.obtain(observerWrap.getPropertyListener(),olderValue,newerValue));
+
+                        if (observerWrap.isFilter(argoWatchContext,changeProperty,newerValue)) {
+                            PropertyCallBackHandler.getInstance().addCallBack(WatchCallBack.obtain(observerWrap.getPropertyListener(), olderValue, newerValue));
+                        }
                     } else {
-//                        observerWrap.getPropertyListener().callBack(oldClass, newClass);
-                        PropertyCallBackHandler.getInstance().addCallBack(WatchCallBack.obtain(observerWrap.getPropertyListener(),oldClass,newClass));
+                        if (observerWrap.isFilter(argoWatchContext,changeProperty,newClass)) {
+                            PropertyCallBackHandler.getInstance().addCallBack(WatchCallBack.obtain(observerWrap.getPropertyListener(), oldClass, newClass));
+                        }
                     }
 
                     finalOlder = oldClass;
@@ -172,7 +190,7 @@ public class ObserverUtils {
 
                 if (isItemChange && finalNewer instanceof ObservableList && ((ObservableList) finalNewer).size() > 0 && ((ObservableList) finalNewer).get(0) instanceof ObservableList) {
                     for (ObservableList list : (ObservableList<ObservableList>) finalNewer) {
-                        ObserverWrap itemObserverWrap = ObserverWrap.obtain(observerId, sourceTag, sourceTag, isItemChange, iPropertyCallback);
+                        ObserverWrap itemObserverWrap = ObserverWrap.obtain(observerWrap.getWatchContext(), observerId, sourceTag, sourceTag, isItemChange, observerWrap.getWatchFilters(), iPropertyCallback);
                         list.addObserver(itemObserverWrap);
                     }
                 }
@@ -210,8 +228,11 @@ public class ObserverUtils {
      * @param observerWrap
      */
     public static void addObserver(List<ObserverWrap> observerWraps, ObserverWrap observerWrap) {
-        if(!observerWraps.contains(observerWrap)) {
+        if (!observerWraps.contains(observerWrap)) {
             observerWraps.add(observerWrap);
+            if (DataBinding.isLog) {
+                Log.d("DataBinding", "ObserverWrap--->" + observerWrap.toString());
+            }
         }
     }
 
@@ -283,6 +304,7 @@ public class ObserverUtils {
 
     /**
      * 根据CallbackId移除观察者
+     *
      * @param observerWraps
      * @param callBackId
      */
@@ -300,7 +322,47 @@ public class ObserverUtils {
         }
     }
 
+    /**
+     * 判断是否在主线程
+     */
+    public static void checkMainThread() {
+        if (Looper.myLooper() != Looper.getMainLooper()) {
+            throw new IllegalStateException("must called in main thread");
+        }
+    }
 
+
+    /**
+     * 获取数组中最后一个数字的index
+     *
+     * @param tags
+     * @return -1表示返回无数字
+     */
+    public static int getFinalNumFromTag(String[] tags) {
+        int numIndex = -1;
+        for (int i = tags.length - 1; i > 0; i--) {
+            if (DataBindUtils.isNumber(tags[i])) {
+                numIndex = i;
+                break;
+            }
+        }
+        return numIndex;
+    }
+
+
+    /**
+     * 获取index之前的值
+     * @param tags
+     * @param index
+     * @return
+     */
+    public static String getBeforeStr(String[] tags, int index) {
+        StringBuilder stringBuilder = new StringBuilder();
+        for (int i = 0; i <= index; i++) {
+            stringBuilder.append(stringBuilder.length() == 0 ? "" : Constants.SPOT).append(tags[i]);
+        }
+        return stringBuilder.toString();
+    }
 
 
 }

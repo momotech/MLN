@@ -8,22 +8,16 @@
 package com.immomo.mls;
 
 import android.content.Context;
-import android.os.Looper;
-import android.os.SystemClock;
 import android.util.SparseArray;
 
 import com.immomo.mls.cache.LuaCache;
-import com.immomo.mls.log.DefaultPrintStream;
+import com.immomo.mls.log.ErrorPrintStream;
 import com.immomo.mls.util.LogUtil;
-import com.immomo.mls.utils.MainThreadExecutor;
 
 import org.luaj.vm2.Globals;
 import org.luaj.vm2.utils.IGlobalsUserdata;
 
 import java.io.PrintStream;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Created by Xiong.Fangyu on 2019/3/11
@@ -88,8 +82,8 @@ public class LuaViewManager implements IGlobalsUserdata{
     @Override
     public void e(long L, String tag, String log) {
         PrintStream out = STDOUT;
-        if (out instanceof DefaultPrintStream) {
-            ((DefaultPrintStream) out).error(log);
+        if (out instanceof ErrorPrintStream) {
+            ((ErrorPrintStream) out).error(log);
         } else if (out != null) {
             out.print(log);
             out.println();

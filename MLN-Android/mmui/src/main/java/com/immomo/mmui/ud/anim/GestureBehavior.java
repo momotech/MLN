@@ -13,13 +13,14 @@ import android.view.View;
 
 import com.immomo.mls.util.DimenUtil;
 import com.immomo.mmui.TouchableView;
-import com.immomo.mmui.anim.animatable.Animatable;
-import com.immomo.mmui.anim.animations.ObjectAnimation;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by Xiong.Fangyu on 2020/7/24
  */
-public class GestureBehavior implements View.OnTouchListener {
+public class GestureBehavior extends PercentBehavior implements View.OnTouchListener {
     /**
      * @see InteractiveDirection#X
      * @see InteractiveDirection#Y
@@ -29,10 +30,6 @@ public class GestureBehavior implements View.OnTouchListener {
      * 截止距离
      */
     private double endDistance;
-    /**
-     * 是否可越过边界
-     */
-    public boolean overBoundary;
     /**
      * 交互是否可被触发
      */
@@ -45,29 +42,20 @@ public class GestureBehavior implements View.OnTouchListener {
      * function(TouchType type,number distance,numer velocity)
      */
     public InteractiveBehaviorCallback callback;
-
-    private TouchableView targetView;
-
-    private Animatable animatable;
+    /**
+     * 手势view
+     */
+    private TouchableView touchableView;
     /**
      * 是否在2个方向上跟随手势
      */
     private boolean followAll = true;
 
-    private float[] fromValues;
-    private float[] toValues;
-    private float[] values;
-    private float lastDistance = 0;
-    private float minPercent = Float.NaN;
-    private float maxPercent = Float.NaN;
-    private float minDistance = Float.NaN;
-    private float maxDistance = Float.NaN;
-
-    private VelocityTracker vTracker;
+    private Set<PercentBehavior> innerPercentBehaviors = new HashSet<>();
 
     //<editor-fold desc="Bridge API">
     public void targetView(TouchableView view) {
-        this.targetView = view;
+        this.touchableView = view;
         view.addOnTouchListener(this);
     }
 
@@ -93,6 +81,10 @@ public class GestureBehavior implements View.OnTouchListener {
     private float preX;
     private float preY;
 
+    private float lastDistance = 0;
+
+    private VelocityTracker vTracker;
+
     @Override
     public boolean onTouch(View v, MotionEvent event) {
         if (!enable)
@@ -111,7 +103,6 @@ public class GestureBehavior implements View.OnTouchListener {
         int action = event.getAction();
         switch (action) {
             case MotionEvent.ACTION_DOWN:
-                lastDistance = 0;
                 preX = downX = x;
                 preY = downY = y;
                 touchType = TouchType.BEGIN;
@@ -120,8 +111,8 @@ public class GestureBehavior implements View.OnTouchListener {
                     vTracker.addMovement(event);
                 }
                 if (followEnable) {
-                    targetTranslationX = v.getTranslationX();
-                    targetTranslationY = v.getTranslationY();
+                    targetTranslationX = targetView.getTranslationX();
+                    targetTranslationY = targetView.getTranslationY();
                 }
                 break;
             case MotionEvent.ACTION_MOVE:
@@ -153,6 +144,9 @@ public class GestureBehavior implements View.OnTouchListener {
                     delta = y - preY;
                     velocity = vTracker != null ? vTracker.getYVelocity() : 0;
                 }
+                if (vTracker != null)
+                    vTracker.recycle();
+                vTracker = null;
                 break;
         }
         if (followEnable) {
@@ -166,13 +160,13 @@ public class GestureBehavior implements View.OnTouchListener {
                     transY = targetTranslationY;
                 }
             }
-            v.setTranslationX(transX);
-            v.setTranslationY(transY);
+            targetView.setTranslationX(transX);
+            targetView.setTranslationY(transY);
         }
         if (callback != null) {
             callback.callback(touchType, DimenUtil.pxToDpi(delta), DimenUtil.pxToDpi(velocity));
         }
-        if (animatable != null) {
+        if (!innerPercentBehaviors.isEmpty()) {
             float dis = lastDistance + delta;
             if (!Float.isNaN(minDistance)) {
                 dis = dis < minDistance ? minDistance : dis;
@@ -184,67 +178,34 @@ public class GestureBehavior implements View.OnTouchListener {
                 dis = dis < 0 ? 0 : dis;
                 dis = dis > endDistance ? (float) endDistance : dis;
             }
-            fullValues((float) (dis / endDistance));
-            animatable.writeValue(v, values);
+            update((float) (dis / endDistance));
             lastDistance = dis;
         }
         return true;
     }
 
-    public void setAnimation(ObjectAnimation oa) {
-        animatable = oa.getAnimatable();
-        followAll = !animatable.hasTranslate();
-        values = new float[animatable.getValuesCount()];
-        fromValues = oa.getFromValue();
-        toValues = oa.getToValue();
-        initLimit();
-    }
-
-    private void initLimit() {
-        if (animatable == null || fromValues == null || toValues == null)
-            return;
-        float[] values = animatable.getMaxValues();
-        if (values != null) {
-            for (int l = values.length, i = 0; i < l; i++) {
-                float v = values[i];
-                if (Float.isNaN(v))
-                    continue;
-                float p = (v - fromValues[i]) / (toValues[i] - fromValues[i]);
-                if (Float.isNaN(maxPercent))
-                    maxPercent = p;
-                else
-                    maxPercent = p > maxPercent ? p : maxPercent;
-            }
-        }
-
-        values = animatable.getMinValues();
-        if (values != null) {
-            for (int l = values.length, i = 0; i < l; i++) {
-                float v = values[i];
-                if (Float.isNaN(v))
-                    continue;
-                float p = (v - fromValues[i]) / (toValues[i] - fromValues[i]);
-                if (Float.isNaN(minPercent))
-                    minPercent = p;
-                else
-                    minPercent = p < minPercent ? p : minPercent;
-            }
-        }
-
+    @Override
+    public void setAnimation(UDBaseAnimation oa) {
+        super.setAnimation(oa);
+        innerPercentBehaviors.add(oa.getPercentBehavior());
+        followAll = followAll && !animatable.hasTranslate();
         if (endDistance != 0) {
             setEndDistance(endDistance);
         }
     }
 
-    private void fullValues(float f) {
-        for (int l = values.length, i = 0; i < l;i ++) {
-            values[i] = f * (toValues[i] - fromValues[i]) + fromValues[i];
+    @Override
+    public void update(float percent) {
+//        fullValues(percent);
+        for (PercentBehavior pb : innerPercentBehaviors) {
+            pb.update(percent);
         }
     }
+
     /**
      * Lua GC当前对象时调用，可不实现
      */
     public void __onLuaGc() {
-        targetView.removeOnTouchListener(this);
+        touchableView.removeOnTouchListener(this);
     }
 }

@@ -22,17 +22,16 @@ import com.immomo.mls.fun.ud.UDSize;
 import com.immomo.mls.fun.ud.view.IClipRadius;
 import com.immomo.mls.util.DimenUtil;
 import com.immomo.mls.util.LuaViewUtil;
+import com.immomo.mls.utils.ErrorUtils;
 import com.immomo.mmui.ui.IScrollView;
 import com.immomo.mmui.ui.LuaScrollViewContainer;
 import com.immomo.mmui.weight.layout.IFlexLayout;
 import com.immomo.mmui.weight.layout.IVirtualLayout;
-import com.immomo.mmui.weight.layout.IYogaGroup;
 import com.immomo.mmui.weight.layout.NodeLayout;
 
-import org.luaj.vm2.LuaBoolean;
 import org.luaj.vm2.LuaFunction;
-import org.luaj.vm2.LuaNumber;
 import org.luaj.vm2.LuaValue;
+import org.luaj.vm2.utils.CGenerate;
 import org.luaj.vm2.utils.LuaApiUsed;
 import org.xmlpull.v1.XmlPullParser;
 
@@ -44,33 +43,9 @@ import static com.immomo.mls.fun.ud.view.IClipRadius.LEVEL_FORCE_NOTCLIP;
  * Created by XiongFangyu on 2018/8/3.
  */
 @LuaApiUsed
-public class UDScrollView<V extends ViewGroup & IScrollView> extends UDViewGroup<V>
+public class UDScrollView<V extends ViewGroup & IScrollView> extends UDView<V>
     implements IScrollView.OnScrollListener, IScrollView.touchActionListener, IScrollView.FlingListener, View.OnTouchListener {
     public static final String LUA_CLASS_NAME = "ScrollView";
-    public static final String[] methods = {
-        "width",
-        "height",
-        "contentSize",
-        "contentOffset",
-        "scrollEnabled",
-        "showsHorizontalScrollIndicator",
-        "showsVerticalScrollIndicator",
-        "i_bounces",
-        "i_bounceHorizontal",
-        "i_bounceVertical",
-        "i_pagingEnabled",
-        "setScrollEnable",
-        "setScrollBeginCallback",
-        "setScrollingCallback",
-        "setScrollEndCallback",
-        "setContentInset",
-        "setOffsetWithAnim",
-        "setEndDraggingCallback",
-        "setStartDeceleratingCallback",
-        "getContentInset",
-        "removeAllSubviews",
-        "a_flingSpeed",
-    };
 
     private LuaFunction scrollBeginCallback;
     private LuaFunction scrollingCallback;
@@ -82,27 +57,32 @@ public class UDScrollView<V extends ViewGroup & IScrollView> extends UDViewGroup
 
     Size mSize;
 
+    @CGenerate(defaultConstructor = true)
     @LuaApiUsed
-    protected UDScrollView(long L, LuaValue[] v) {
-        super(L, v);
+    protected UDScrollView(long L) {
+        this(L, false, false);
     }
+
+    @CGenerate
+    @LuaApiUsed
+    protected UDScrollView(long L, boolean vertical) {
+        this(L, vertical, false);
+    }
+
+    @CGenerate
+    @LuaApiUsed
+    protected UDScrollView(long L, boolean horizontal, boolean same) {
+        super(L, null);
+        if (javaUserdata instanceof LuaScrollViewContainer) {
+            ((LuaScrollViewContainer) javaUserdata).init(!horizontal, same, getAttributeSet());
+        }
+    }
+    public static native void _init();
+    public static native void _register(long l, String parent);
 
     @Override
     protected V newView(LuaValue[] init) {
-        boolean vertical = true;
-        boolean linear = false;
-        if (init.length == 1) {
-            if (init[0].isNumber())
-                vertical = init[0].toInt() == ScrollDirection.VERTICAL;
-
-            if (init[0].isBoolean())
-                vertical = !init[0].toBoolean();
-        } else if (init.length == 2) {
-            vertical = !init[0].toBoolean();
-            linear = init[1].toBoolean();
-        }
-
-        return (V) new LuaScrollViewContainer(getContext(), this, vertical, linear, getAttributeSet());
+        return (V) new LuaScrollViewContainer(getContext(), this);
     }
 
     private AttributeSet getAttributeSet() {
@@ -123,71 +103,52 @@ public class UDScrollView<V extends ViewGroup & IScrollView> extends UDViewGroup
             mSize = new Size(Size.WRAP_CONTENT, Size.WRAP_CONTENT);
     }
 
-    @LuaApiUsed
     @Override
-    public LuaValue[] width(LuaValue[] varargs) {
+    public void nSetWidth(double w) {
         initSize();
-
-        if (varargs.length == 1) {
-            float w = (float) varargs[0].toDouble();
-            if (w < 0) {
-                checkSize(w);
-                setWidth(0);
-                mSize.setWidth(0);
-            } else {
-                setWidth(DimenUtil.dpiToPxWithNaN(w));
-                mSize.setWidth(w);
-            }
-            setContentSize(mSize);
-            return null;
+        checkSize(w);
+        if (w < 0) {
+            setWidth(0);
+            mSize.setWidth(0);
+        } else {
+            setWidth(DimenUtil.dpiToPx(w));
+            mSize.setWidth((float) w);
         }
-        return super.width(varargs);
-    }
-
-    @LuaApiUsed
-    @Override
-    public LuaValue[] height(LuaValue[] varargs) {
-        initSize();
-
-        if (varargs.length == 1) {
-            float h = (float) varargs[0].toDouble();
-            if (h < 0) {
-                checkSize(h);
-                setHeight(0);
-                mSize.setHeight(0);
-            } else {
-                setHeight(DimenUtil.dpiToPxWithNaN(h));
-                mSize.setHeight(h);
-            }
-            setContentSize(mSize);
-            return null;
-        }
-
-        return super.height(varargs);
+        setContentSize(mSize);
     }
 
     @Override
-    public LuaValue[] padding(LuaValue[] var) {
-        mPaddingTop = DimenUtil.dpiToPx((float) var[0].toDouble());
-        mPaddingRight = DimenUtil.dpiToPx((float) var[1].toDouble());
-        mPaddingBottom = DimenUtil.dpiToPx((float) var[2].toDouble());
-        mPaddingLeft = DimenUtil.dpiToPx((float) var[3].toDouble());
+    public void nSetHeight(double h) {
+        initSize();
+        checkSize(h);
+        if (h < 0) {
+            setHeight(0);
+            mSize.setHeight(0);
+        } else {
+            setHeight(DimenUtil.dpiToPx(h));
+            mSize.setHeight((float) h);
+        }
+        setContentSize(mSize);
+    }
 
-        if (!(this instanceof IYogaGroup)) {
-            getView().getScrollView().setPadding(
+    @Override
+    public void padding(double t, double r, double b, double l) {
+        mPaddingTop = DimenUtil.dpiToPx(t);
+        mPaddingRight = DimenUtil.dpiToPx(r);
+        mPaddingBottom = DimenUtil.dpiToPx(b);
+        mPaddingLeft = DimenUtil.dpiToPx(l);
+
+        view.getScrollView().setPadding(
                 mPaddingLeft,
                 mPaddingTop,
                 mPaddingRight,
                 mPaddingBottom);//叶子节点，需要设置view的padding
-        }
-
         //为了识别NaN，不能使用int
-        mNode.setPadding(YogaEdge.TOP,  DimenUtil.dpiToPxWithNaN(var[0]));
-        mNode.setPadding(YogaEdge.RIGHT,DimenUtil.dpiToPxWithNaN(var[1]));
-        mNode.setPadding(YogaEdge.BOTTOM, DimenUtil.dpiToPxWithNaN(var[2]));
-        mNode.setPadding(YogaEdge.LEFT, DimenUtil.dpiToPxWithNaN(var[3]));
+        mNode.setPadding(YogaEdge.TOP,  mPaddingTop);
+        mNode.setPadding(YogaEdge.RIGHT,mPaddingRight);
+        mNode.setPadding(YogaEdge.BOTTOM, mPaddingBottom);
+        mNode.setPadding(YogaEdge.LEFT, mPaddingLeft);
         view.requestLayout();
-        return null;
     }
 
     protected void setContentSize(Size size) {
@@ -196,83 +157,170 @@ public class UDScrollView<V extends ViewGroup & IScrollView> extends UDViewGroup
 
     //<editor-fold desc="API">
     //<editor-fold desc="Property">
+
     @LuaApiUsed
-    public LuaValue[] contentSize(LuaValue[] p) {
-        if (p.length == 1) {
-            setContentSize(((UDSize) p[0]).getSize());
-            p[0].destroy();
-            return null;
-        }
-        return varargsOf(new UDSize(globals, getView().getContentSize()));
+    public UDSize getContentSize() {
+        return new UDSize(globals, getView().getContentSize());
     }
 
     @LuaApiUsed
-    public LuaValue[] contentOffset(LuaValue[] p) {
-        if (p.length == 1) {
-            getView().setContentOffset(((UDPoint) p[0]).getPoint());
-            p[0].destroy();
-            return null;
-        }
-        return varargsOf(new UDPoint(globals, getView().getContentOffset()));
+    public void setContentSize(UDSize contentSize) {
+        setContentSize(contentSize.getSize());
+        contentSize.destroy();
     }
 
     @LuaApiUsed
-    public LuaValue[] scrollEnabled(LuaValue[] p) {
-        if (p.length == 1) {
-            getView().setEnabled(p[0].toBoolean());
-            return null;
-        }
-        return rBoolean(getView().isEnabled());
+    public UDPoint getContentOffset() {
+        return new UDPoint(globals, getView().getContentOffset());
     }
 
     @LuaApiUsed
-    public LuaValue[] showsHorizontalScrollIndicator(LuaValue[] p) {
-        if (p.length == 1) {
-            getView().setHorizontalScrollBarEnabled(p[0].toBoolean());
-            return null;
-        }
-        return rBoolean(getView().isHorizontalScrollBarEnabled());
+    public void setContentOffset(UDPoint contentOffset) {
+        getView().setContentOffset(contentOffset.getPoint());
+        contentOffset.destroy();
     }
 
     @LuaApiUsed
-    public LuaValue[] showsVerticalScrollIndicator(LuaValue[] p) {
-        if (p.length == 1) {
-            getView().setVerticalScrollBarEnabled(p[0].toBoolean());
-            return null;
-        }
-        return rBoolean(getView().isVerticalScrollBarEnabled());
+    public boolean isScrollEnabled() {
+        return getView().isEnabled();
     }
 
     @LuaApiUsed
-    public LuaValue[] setScrollEnable(LuaValue[] p) {
-        getView().setScrollEnable(p[0].toBoolean());
-        return null;
+    public void setScrollEnabled(boolean scrollEnabled) {
+        getView().setEnabled(scrollEnabled);
     }
 
     @LuaApiUsed
-    public LuaValue[] i_bounces(LuaValue[] bounces) {
-        return null;
+    public boolean isShowsHorizontalScrollIndicator() {
+        return getView().isHorizontalScrollBarEnabled();
     }
 
     @LuaApiUsed
-    public LuaValue[] i_bounceHorizontal(LuaValue[] bounces) {
-        return null;
+    public void setShowsHorizontalScrollIndicator(boolean showsHorizontalScrollIndicator) {
+        getView().setHorizontalScrollBarEnabled((showsHorizontalScrollIndicator));
     }
 
     @LuaApiUsed
-    public LuaValue[] i_bounceVertical(LuaValue[] bounces) {
-        return null;
+    public boolean isShowsVerticalScrollIndicator() {
+        return getView().isVerticalScrollBarEnabled();
     }
 
     @LuaApiUsed
-    public LuaValue[] i_pagingEnabled(LuaValue[] bounces) {
-        return null;
+    public void setShowsVerticalScrollIndicator(boolean showsVerticalScrollIndicator) {
+        getView().setVerticalScrollBarEnabled(showsVerticalScrollIndicator);
+    }
+
+    @LuaApiUsed
+    public void setScrollEnable(boolean e) {
+        getView().setScrollEnable(e);
+    }
+
+    @LuaApiUsed
+    public void i_bounces() {
+    }
+
+    @LuaApiUsed
+    public void i_bounceHorizontal() {
+    }
+
+    @LuaApiUsed
+    public void i_bounceVertical() {
+    }
+
+    @LuaApiUsed
+    public void i_pagingEnabled() {
     }
 
     //</editor-fold>
 
-    @Override
+    //<editor-fold desc="Method">
+
+    @LuaApiUsed
+    public void setScrollBeginCallback(LuaFunction f) {
+        if (scrollBeginCallback != null)
+            scrollBeginCallback.destroy();
+        this.scrollBeginCallback = f;
+        if (scrollBeginCallback != null)
+            getView().setOnScrollListener(this);
+    }
+
+    @LuaApiUsed
+    public void setScrollingCallback(LuaFunction p) {
+        if (scrollingCallback != null)
+            scrollingCallback.destroy();
+        this.scrollingCallback = p;
+        if (scrollingCallback != null)
+            getView().setOnScrollListener(this);
+    }
+
+    @LuaApiUsed
+    public void setScrollEndCallback(LuaFunction f) {
+        if (scrollEndCallback != null)
+            scrollEndCallback.destroy();
+        this.scrollEndCallback = f;
+        if (scrollEndCallback != null)
+            getView().setOnScrollListener(this);
+    }
+
+    /// Android 不实现
+    @LuaApiUsed
+    public void setContentInset() {
+    }
+
+    @LuaApiUsed
+    public void setOffsetWithAnim(UDPoint p) {
+        getView().setOffsetWithAnim(p.getPoint());
+        p.destroy();
+    }
+
+    @LuaApiUsed
+    public void setEndDraggingCallback(LuaFunction f) {
+        if (endDraggingCallback != null)
+            endDraggingCallback.destroy();
+        endDraggingCallback = f;
+
+        if (endDraggingCallback != null)
+            getView().setTouchActionListener(this);
+    }
+
+    @LuaApiUsed
+    public void touchBegin(LuaFunction f) {
+        if (touchDownCallback != null)
+            touchDownCallback.destroy();
+        touchDownCallback = f;
+
+        if (touchDownCallback != null)
+            getView().setTouchActionListener(this);
+    }
+
+    @LuaApiUsed
+    public void setStartDeceleratingCallback(LuaFunction f) {
+        if (startDeceleratingCallback != null)
+            startDeceleratingCallback.destroy();
+        startDeceleratingCallback = f;
+        if (startDeceleratingCallback != null) {
+            getView().setFlingListener(this);
+        }
+    }
+
+    @LuaApiUsed
+    public void getContentInset() {
+    }
+
+    //<editor-fold desc="view group">
+    @LuaApiUsed
+    public void addView(UDView v) {
+        if (v == null) {
+            ErrorUtils.debugLuaError("call addView(nil)!", globals);
+            return;
+        }
+        insertView(v, -1);
+        getFlexNode().dirty();
+    }
+
+    @LuaApiUsed
     public void insertView(UDView view, int index) {
+        index --;
         NodeLayout v = getView().getContentView();
         if (v == null)
             return;
@@ -287,8 +335,8 @@ public class UDScrollView<V extends ViewGroup & IScrollView> extends UDViewGroup
 
         //判断Layout，是否需要转换virtual
         if (sub instanceof IVirtualLayout &&
-            !((IVirtualLayout) sub).isVirtual() &&//非虚拟layout
-            view.needConvertVirtual()) {//无交互或背景
+                !((IVirtualLayout) sub).isVirtual() &&//非虚拟layout
+                view.needConvertVirtual()) {//无交互或背景
             ((IVirtualLayout) sub).changeToVirtual();
         }
 
@@ -305,111 +353,31 @@ public class UDScrollView<V extends ViewGroup & IScrollView> extends UDViewGroup
                 v.addView(LuaViewUtil.removeFromParent(sub), index);
             }
         }
-
-    }
-    //<editor-fold desc="Method">
-
-    @LuaApiUsed
-    public LuaValue[] setScrollBeginCallback(LuaValue[] p) {
-        if (scrollBeginCallback != null)
-            scrollBeginCallback.destroy();
-        this.scrollBeginCallback = p[0].toLuaFunction();
-        if (scrollBeginCallback != null)
-            getView().setOnScrollListener(this);
-        return null;
+        getFlexNode().dirty();
     }
 
     @LuaApiUsed
-    public LuaValue[] setScrollingCallback(LuaValue[] p) {
-        if (scrollingCallback != null)
-            scrollingCallback.destroy();
-        this.scrollingCallback = p[0].toLuaFunction();
-        if (scrollingCallback != null)
-            getView().setOnScrollListener(this);
-        return null;
-    }
-
-    @LuaApiUsed
-    public LuaValue[] setScrollEndCallback(LuaValue[] p) {
-        if (scrollEndCallback != null)
-            scrollEndCallback.destroy();
-        this.scrollEndCallback = p[0].toLuaFunction();
-        if (scrollEndCallback != null)
-            getView().setOnScrollListener(this);
-        return null;
-    }
-
-    @LuaApiUsed
-    public LuaValue[] setContentInset(LuaValue[] v) {
-        destroyAllParams(v);
-        return null;
-    }
-
-    @LuaApiUsed
-    public LuaValue[] setOffsetWithAnim(LuaValue[] p) {
-        getView().setOffsetWithAnim(((UDPoint) p[0]).getPoint());
-        p[0].destroy();
-        return null;
-    }
-
-    @LuaApiUsed
-    public LuaValue[] setEndDraggingCallback(LuaValue[] p) {
-        if (endDraggingCallback != null)
-            endDraggingCallback.destroy();
-        endDraggingCallback = p[0].toLuaFunction();
-
-        if (endDraggingCallback != null)
-            getView().setTouchActionListener(this);
-        return null;
-    }
-
-    @LuaApiUsed
-    public LuaValue[] touchBegin(LuaValue[] p) {
-        if (touchDownCallback != null)
-            touchDownCallback.destroy();
-        touchDownCallback = p[0].toLuaFunction();
-
-        if (touchDownCallback != null)
-            getView().setTouchActionListener(this);
-        return null;
-    }
-
-    @LuaApiUsed
-    public LuaValue[] setStartDeceleratingCallback(LuaValue[] p) {
-        if (startDeceleratingCallback != null)
-            startDeceleratingCallback.destroy();
-        startDeceleratingCallback = p[0].toLuaFunction();
-        if (startDeceleratingCallback != null) {
-            getView().setFlingListener(this);
-        }
-        return null;
-    }
-
-    @LuaApiUsed
-    public LuaValue[] getContentInset(LuaValue[] p) {
-        return null;
-    }
-
-    @LuaApiUsed
-    public LuaValue[] removeAllSubviews(LuaValue[] p) {
+    public void removeAllSubviews() {
         ViewGroup v = getView().getContentView();
         if (v == null)
-            return null;
+            return;
         v.removeAllViews();
-        return null;
+        getFlexNode().dirty();
+        return;
     }
 
     @LuaApiUsed
-    public LuaValue[] a_flingSpeed(LuaValue[] p) {
+    public void a_flingSpeed(float s) {
         ViewGroup v = getView().getContentView();
         if (v == null)
-            return null;
-        getView().setFlingSpeed(p[0].toFloat());
-        return null;
+            return;
+        getView().setFlingSpeed(s);
+        return;
     }
+    //</editor-fold>
+    //</editor-fold>
 
     @Override
-    @LuaApiUsed
     public LuaValue[] clipToBounds(LuaValue[] p) {
         boolean clip = p[0].toBoolean();
         view.setClipToPadding(clip);
@@ -420,7 +388,6 @@ public class UDScrollView<V extends ViewGroup & IScrollView> extends UDViewGroup
         }
         return null;
     }
-    //</editor-fold>
     //</editor-fold>
 
     //<editor-fold desc="OnScrollListener">
@@ -468,14 +435,7 @@ public class UDScrollView<V extends ViewGroup & IScrollView> extends UDViewGroup
         View v = getView().getScrollView();
         float sx = DimenUtil.pxToDpi(v.getScrollX());
         float sy = DimenUtil.pxToDpi(v.getScrollY());
-        c.invoke(varargsOf(LuaNumber.valueOf(sx), LuaNumber.valueOf(sy)));
-    }
-
-    private void callbackWithPoint(LuaFunction c, boolean ecelerating) {
-        View v = getView().getScrollView();
-        float sx = DimenUtil.pxToDpi(v.getScrollX());
-        float sy = DimenUtil.pxToDpi(v.getScrollY());
-        c.invoke(varargsOf(LuaNumber.valueOf(sx), LuaNumber.valueOf(sy), LuaBoolean.valueOf(ecelerating)));
+        c.fastInvoke(sx, sy);
     }
 
     @Override

@@ -19,21 +19,22 @@ import androidx.annotation.Nullable;
 import com.immomo.mls.DefaultOnActivityResultListener;
 import com.immomo.mls.LuaViewManager;
 import com.immomo.mls.OnActivityResultListener;
-import com.immomo.mls.annotation.LuaBridge;
-import com.immomo.mls.annotation.LuaClass;
 import com.immomo.mls.fun.constants.NavigatorAnimType;
 import com.immomo.mls.util.RelativePathUtils;
-import com.immomo.mls.wrapper.callback.IVoidCallback;
+import com.immomo.mls.utils.convert.SmartTableConvert;
 import com.immomo.mmui.MMUILinkRegister;
 
-import org.luaj.vm2.Globals;
-import org.luaj.vm2.LuaNumber;
+import org.luaj.vm2.LuaFunction;
+import org.luaj.vm2.LuaTable;
+import org.luaj.vm2.LuaUserdata;
 import org.luaj.vm2.LuaValue;
+import org.luaj.vm2.utils.CGenerate;
+import org.luaj.vm2.utils.LuaApiUsed;
 
 import java.io.File;
 import java.io.Serializable;
-import java.util.Map;
-import java.util.Set;
+
+import static com.immomo.mls.Constants.ASSETS_PREFIX;
 
 /**
  * Description:
@@ -41,114 +42,133 @@ import java.util.Set;
  * E-mail: xue.jingfei@immomo.com
  * Date: 2020-06-07 17:11
  */
-@LuaClass
-public class SIPageLink {
-    public static final String LUA_CLASS_NAME = "Link";
-    private final String ASSETS_PREFIX = "file://android_asset/";
+@LuaApiUsed
+public class SIPageLink extends LuaUserdata<Object> {
+    public static final String LUA_CLASS_NAME = "__Link";
     private final String LUA_SUFFIX = ".lua";
     private final String HTTP_PREFIX = "http";
 
-    protected Globals globals;
-
     private int requestCode = 0;
 
-    public SIPageLink(Globals g, LuaValue[] init) {
-        globals = g;
+    @CGenerate(defaultConstructor = true)
+    @LuaApiUsed
+    public SIPageLink(long L) {
+        super(L, null);
+    }
+
+    //<editor-fold desc="native method">
+    /**
+     * 初始化方法
+     * 反射调用
+     * @see com.immomo.mls.wrapper.Register.NewUDHolder
+     */
+    public static native void _init();
+
+    /**
+     * 注册到虚拟机方法
+     * 反射调用
+     * @see com.immomo.mls.wrapper.Register.NewUDHolder
+     */
+    public static native void _register(long l, String parent);
+    //</editor-fold>
+
+    //<editor-fold desc="api">
+    @LuaApiUsed
+    public void link(String key, LuaValue params) {
+        Intent intent = parseIntent(key, params);
+        if (intent == null)
+            return;
+        Activity cur = getActivity();
+        if (cur == null)
+            return;
+        cur.startActivity(intent);
+        cur.overridePendingTransition(parseInAnim(NavigatorAnimType.RightToLeft),
+                parseOutAnim(NavigatorAnimType.RightToLeft));
+    }
+
+    @LuaApiUsed
+    public void link(String key, LuaValue params, int animType) {
+        link(key, params, animType, null);
     }
 
     /**
      * 跳转原生页面（纯原生，MLN—UI页面）
-     * @param key activity 对应的key值
-     * @param params 参数
+     *
+     * @param key      activity 对应的key值
+     * @param params   参数
      * @param animType 动画效果
      * @param callback 页面finish 回调
      */
-    @LuaBridge
-    public void link(String key, Map params, Integer animType, IVoidCallback callback) {
-        if(!TextUtils.isEmpty(key)) {
-            Intent intent = new Intent(getContext(), MMUILinkRegister.findActivity(key));
-            Bundle bundle = parseBundle(params);
-            if(bundle !=null) {
-                intent.putExtras(bundle);
-            }
-
-            Activity currentActivity = getActivity();
-            if(callback !=null) {
-                OnActivityResultListener l = new DefaultOnActivityResultListener(callback);
-                int requestCode = generateRequestCode();
-                saveListener(requestCode, l);
-                currentActivity.startActivityForResult(intent,requestCode);
-            } else {
-                currentActivity.startActivity(intent);
-            }
-            if(animType !=null) {
-                currentActivity.overridePendingTransition(parseInAnim(animType), parseOutAnim(animType));
-            } else {
-                currentActivity.overridePendingTransition(parseInAnim(NavigatorAnimType.RightToLeft), parseOutAnim(NavigatorAnimType.RightToLeft));
-            }
+    @LuaApiUsed
+    public void link(String key, LuaValue params, int animType, LuaFunction callback) {
+        Intent intent = parseIntent(key, params);
+        if (intent == null)
+            return;
+        Activity cur = getActivity();
+        if (cur == null)
+            return;
+        if (callback != null) {
+            OnActivityResultListener l = new DefaultOnActivityResultListener(callback);
+            int requestCode = generateRequestCode();
+            saveListener(requestCode, l);
+            cur.startActivityForResult(intent, requestCode);
+        } else {
+            cur.startActivity(intent);
         }
+        cur.overridePendingTransition(parseInAnim(animType), parseOutAnim(animType));
     }
 
-    protected int generateRequestCode() {
-        return ++requestCode;
+    @LuaApiUsed
+    public void close() {
+        Activity a = getActivity();
+        if (a == null)
+            return;
+        a.finish();
+        a.overridePendingTransition(0, parseOutAnim(NavigatorAnimType.LeftToRight));
     }
 
-
-    /**
-     * 保存监听
-     * @param c
-     * @param l
-     * @return
-     */
-    protected boolean saveListener(int c, OnActivityResultListener l) {
-        LuaViewManager lvm = (LuaViewManager) globals.getJavaUserdata();
-        if (lvm != null) {
-            lvm.putOnActivityResultListener(c, l);
-            return true;
-        }
-        return false;
+    @LuaApiUsed
+    public void close(int animType) {
+        close(animType, null);
     }
-
 
     /**
      * 关闭页面
+     *
      * @param animType 动画效果
      */
-    @LuaBridge
-    public void close(Integer animType, Map params) {
+    @LuaApiUsed
+    public void close(int animType, LuaValue params) {
         Activity a = getActivity();
         if (a == null)
             return;
 
-        if(params !=null) {
+        if (params != null) {
             Intent intent = new Intent();
             Bundle bundle = parseBundle(params);
             intent.putExtras(bundle);
-            a.setResult(Activity.RESULT_OK,intent);
+            a.setResult(Activity.RESULT_OK, intent);
         }
 
         a.finish();
-
-        if(animType !=null) {
-            a.overridePendingTransition(0, parseOutAnim(animType));
-        } else {
-            a.overridePendingTransition(0,parseOutAnim(NavigatorAnimType.LeftToRight));
-        }
-
+        a.overridePendingTransition(0, parseOutAnim(animType));
     }
-
 
     /**
      * 跳转lua页面
-     * @param action lua文件
-     * @param params 参数
+     *
+     * @param action   lua文件
+     * @param params   参数
      * @param animType 动画效果
      */
-    @LuaBridge
-    public void linkLua(String action, Map params, @NavigatorAnimType.AnimType int animType,final IVoidCallback callback) {
+    @LuaApiUsed
+    public void linkLua(String action, LuaValue params, int animType, final LuaFunction callback) {
         if (TextUtils.isEmpty(action)) {
             return;
         }
+        Activity currentActivity = getActivity();
+        if (currentActivity == null)
+            return;
         if (RelativePathUtils.isLocalUrl(action)) {//相对路径转化
             if (!action.endsWith(LUA_SUFFIX)) {
                 action = action + LUA_SUFFIX;
@@ -166,45 +186,76 @@ public class SIPageLink {
                 action = entryFile.getAbsolutePath();
             }
         }
-        Activity currentActivity = getActivity();
-
-        if(callback !=null) {
+        if (callback != null) {
             OnActivityResultListener l = new DefaultOnActivityResultListener(callback);
             int requestCode = generateRequestCode();
             saveListener(requestCode, l);
-            gotoLuaPageForResult(action,params,requestCode);
+            gotoLuaPageForResult(action, params, requestCode);
         } else {
-            gotoLuaPage(action,params);
+            gotoLuaPage(action, params);
         }
-
         currentActivity.overridePendingTransition(parseInAnim(animType), parseOutAnim(animType));
-
     }
-
-    protected void gotoLuaPage(String action, Map params) {
-
-    }
-
-
-    protected void gotoLuaPageForResult(String action, Map params,int resultCode) {
-
-    }
-
 
     // 测试使用，保证热重载不会报错
-    @LuaBridge
-    public void register(String key,String path) {
+    @LuaApiUsed
+    public void register(String key, String path) {
 
     }
 
     // 测试使用，保证热重载不会报错
-    @LuaBridge
-    public Map getParams() {
+    @LuaApiUsed
+    public LuaValue getParams() {
         return null;
+    }
+    //</editor-fold>
+
+    protected Intent parseIntent(String key, LuaValue params) {
+        if (TextUtils.isEmpty(key))
+            return null;
+        Context c = getContext();
+        if (c == null)
+            return null;
+        Intent intent = new Intent(c, MMUILinkRegister.findActivity(key));
+        Bundle bundle = parseBundle(params);
+        if (bundle != null) {
+            intent.putExtras(bundle);
+        }
+        return intent;
+    }
+
+    protected int generateRequestCode() {
+        return ++requestCode;
+    }
+
+    /**
+     * 保存监听
+     *
+     * @param c
+     * @param l
+     * @return
+     */
+    protected boolean saveListener(int c, OnActivityResultListener l) {
+        LuaViewManager lvm = (LuaViewManager) globals.getJavaUserdata();
+        if (lvm != null) {
+            lvm.putOnActivityResultListener(c, l);
+            return true;
+        }
+        return false;
+    }
+
+    protected void gotoLuaPage(String action, LuaValue params) {
+
+    }
+
+
+    protected void gotoLuaPageForResult(String action, LuaValue params, int resultCode) {
+
     }
 
     /**
      * 解析打开动画
+     *
      * @param type
      * @return
      */
@@ -229,6 +280,7 @@ public class SIPageLink {
 
     /**
      * 解析关闭动画
+     *
      * @param type
      * @return
      */
@@ -251,49 +303,66 @@ public class SIPageLink {
         }
     }
 
-    protected @Nullable Context getContext() {
+    protected @Nullable
+    Context getContext() {
         LuaViewManager m = (LuaViewManager) globals.getJavaUserdata();
         return m != null ? m.context : null;
     }
 
-    protected @Nullable Activity getActivity() {
+    protected @Nullable
+    Activity getActivity() {
         LuaViewManager m = (LuaViewManager) globals.getJavaUserdata();
         Context c = m != null ? m.context : null;
         return c instanceof Activity ? (Activity) c : null;
     }
 
-    protected Bundle parseBundle(Map map) {
-        if (map == null)
+    protected Bundle parseBundle(LuaValue table) {
+        if (table == null || table.isNil())
             return null;
-        Set<Map.Entry> entrySet = map.entrySet();
+        LuaTable t = table.toLuaTable();
+        if (!t.startTraverseTable()) {
+            return null;
+        }
         Bundle ret = new Bundle();
-        for (Map.Entry e : entrySet) {
-            Object k = e.getKey();
-            if (k == null)
+        LuaValue[] nexts;
+        while ((nexts = t.next()) != null) {
+            String k = nexts[0].toJavaString();
+            LuaValue v = nexts[1];
+            if (v.isNil())
                 continue;
-            Object v = e.getValue();
-            if (v == null)
-                continue;
-            putObject(ret, k.toString(), v);
+            if (v.isBoolean()) {
+                ret.putBoolean(k, v.toBoolean());
+            } else if (v.isNumber()) {
+                double d = v.toDouble();
+                if (d == (int) d) {
+                    ret.putInt(k, (int) d);
+                } else if (d == (long) d) {
+                    ret.putLong(k, (long) d);
+                } else if (d == (float) d) {
+                    ret.putFloat(k, (float) d);
+                } else {
+                    ret.putDouble(k, d);
+                }
+            } else if (v.isString()) {
+                ret.putString(k, v.toJavaString());
+            } else if (v.isTable()) {
+                LuaTable vt = v.toLuaTable();
+                if (vt.getn() > 0) {
+                    ret.putSerializable(k, (Serializable) SmartTableConvert.toList(vt));
+                } else if (!vt.isEmpty()) {
+                    ret.putSerializable(k, (Serializable) SmartTableConvert.toMap(vt));
+                } else {
+                    vt.destroy();
+                }
+            } else if (v.isUserdata()) {
+                Object ud = v.toUserdata().getJavaUserdata();
+                if (ud instanceof Parcelable) {
+                    ret.putParcelable(k, (Parcelable) ud);
+                } else if (ud instanceof Serializable) {
+                    ret.putSerializable(k, (Serializable) ud);
+                }
+            }
         }
         return ret;
-    }
-
-    private static void putObject(Bundle bundle, String key, Object value) {
-        if (value instanceof Integer) {
-            bundle.putInt(key, (Integer) value);
-        } else if (value instanceof Long) {
-            bundle.putLong(key, (Long) value);
-        } else if (value instanceof Float) {
-            bundle.putFloat(key, (Float) value);
-        } else if (value instanceof Double) {
-            bundle.putDouble(key, (Double) value);
-        } else if (value instanceof String) {
-            bundle.putString(key, value.toString());
-        } else if (value instanceof Parcelable) {
-            bundle.putParcelable(key, (Parcelable) value);
-        } else if (value instanceof Serializable) {
-            bundle.putSerializable(key, (Serializable) value);
-        }
     }
 }

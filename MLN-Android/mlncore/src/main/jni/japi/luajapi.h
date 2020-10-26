@@ -92,12 +92,19 @@ static JNINativeMethod jni_methods[] = {
     {"_setMainEntryFromPreload", "(J" STRING_CLASS ")Z", (void *)jni_setMainEntryFromPreload},
     {"_preloadData", "(J" STRING_CLASS "[B)V", (void *)jni_preloadData},
     {"_preloadFile", "(J" STRING_CLASS "" STRING_CLASS ")V", (void *)jni_preloadFile},
+    {"_preloadAssets", "(J" STRING_CLASS "" STRING_CLASS ")V", (void *)jni_preloadAssets},
+    {"_preloadAssetsAndSave", "(J" STRING_CLASS "" STRING_CLASS "" STRING_CLASS ")I", (void *)jni_preloadAssetsAndSave},
+    {"_require", "(J" STRING_CLASS ")I", (void *)jni_require},
+    {"_dumpFunction", "(JJ" STRING_CLASS ")I", (void *)jni_dumpFunction},
 
     {"_createTable", "(J)J", (void *)jni_createTable},
+    {"_isEmpty", "(JJ)Z", (void *)jni_isEmpty},
     {"_getTableSize", "(JJ)I", (void *)jni_getTableSize},
     {"_clearTableArray", "(JJII)V", (void *)jni_clearTableArray},
     {"_removeTableIndex", "(JJI)V", (void *)jni_removeTableIndex},
     {"_clearTable","(JJ)V", (void *)jni_clearTable},
+    {"_setMetatable","(JJJ)J", (void *)jni_setMetatable},
+    {"_getMetatable","(JJ)J", (void *)jni_getMetatable},
 
     {"_setTableNumber", "(JJID)V", (void *)jni_setTableNumber},
     {"_setTableBoolean", "(JJIZ)V", (void *)jni_setTableBoolean},
@@ -105,6 +112,7 @@ static JNINativeMethod jni_methods[] = {
     {"_setTableNil", "(JJI)V", (void *)jni_setTableNil},
     {"_setTableChild", "(JJI" OBJECT_CLASS ")V", (void *)jni_setTableChild},
     {"_setTableChild", "(JJIJI)V", (void *)jni_setTableChildN},
+    {"_setTableMethod", "(JJI" STRING_CLASS "" STRING_CLASS ")V", (void *)jni_setTableMethod},
 
     {"_setTableNumber", "(JJ" STRING_CLASS "D)V", (void *)jni_setTableSNumber},
     {"_setTableBoolean", "(JJ" STRING_CLASS "Z)V", (void *)jni_setTableSBoolean},
@@ -112,6 +120,7 @@ static JNINativeMethod jni_methods[] = {
     {"_setTableNil", "(JJ" STRING_CLASS ")V", (void *)jni_setTableSNil},
     {"_setTableChild", "(JJ" STRING_CLASS "" OBJECT_CLASS ")V", (void *)jni_setTableSChild},
     {"_setTableChild", "(JJ" STRING_CLASS "JI)V", (void *)jni_setTableSChildN},
+    {"_setTableMethod", "(JJ" STRING_CLASS "" STRING_CLASS "" STRING_CLASS ")V", (void *)jni_setTableSMethod},
 
     {"_getTableValue", "(JJI)" OBJECT_CLASS, (void *)jni_getTableValue},
     {"_getTableValue", "(JJ" STRING_CLASS ")" OBJECT_CLASS, (void *)jni_getTableSValue},
@@ -123,11 +132,9 @@ static JNINativeMethod jni_methods[] = {
 
     {"_invoke", "(JJ[" LUAVALUE_CLASS "I)[" LUAVALUE_CLASS, (void *)jni_invoke},
     {"_getFunctionSource", "(JJ)" STRING_CLASS, (void *)jni_getFunctionSource},
-    {"_registerStaticClassSimple", "(J" STRING_CLASS "" STRING_CLASS "" STRING_CLASS ")V", (void *)jni_registerStaticClassSimple},
+    {"_registerAllStaticClass", "(J[" STRING_CLASS "[" STRING_CLASS "[" STRING_CLASS ")V", (void *)jni_registerAllStaticClass},
     {"_registerJavaMetatable", "(J" STRING_CLASS "" STRING_CLASS ")V", (void *)jni_registerJavaMetatable},
-    {"_registerUserdata", "(J" STRING_CLASS "" STRING_CLASS "" STRING_CLASS ")V", (void *)jni_registerUserdata},
     {"_registerAllUserdata", "(J[" STRING_CLASS "[" STRING_CLASS "[" STRING_CLASS "[Z" ")V", (void *)jni_registerAllUserdata},
-    {"_registerUserdataLazy", "(J" STRING_CLASS "" STRING_CLASS "" STRING_CLASS ")V", (void *)jni_registerUserdataLazy},
 
     {"_registerNumberEnum", "(J" STRING_CLASS "[" STRING_CLASS "[D)V", (void *)jni_registerNumberEnum},
     {"_registerStringEnum", "(J" STRING_CLASS "[" STRING_CLASS "[" STRING_CLASS ")V", (void *)jni_registerStringEnum},

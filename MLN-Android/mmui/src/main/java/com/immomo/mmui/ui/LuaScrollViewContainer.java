@@ -17,6 +17,8 @@ import com.immomo.mls.fun.other.Point;
 import com.immomo.mls.fun.other.Size;
 import com.immomo.mls.fun.weight.BorderRadiusFrameLayout;
 import com.immomo.mls.util.LuaViewUtil;
+import com.immomo.mmui.gesture.ArgoTouchLink;
+import com.immomo.mmui.gesture.ICompose;
 import com.immomo.mmui.ud.UDScrollView;
 import com.immomo.mmui.weight.layout.NodeLayout;
 
@@ -27,22 +29,28 @@ import com.immomo.mmui.weight.layout.NodeLayout;
  * 用FrameLayout包裹解决
  * on 2019/9/29
  */
-public class LuaScrollViewContainer extends BorderRadiusFrameLayout implements IScrollView<UDScrollView> {
+public class LuaScrollViewContainer extends BorderRadiusFrameLayout implements IScrollView<UDScrollView>, ICompose {
     private final UDScrollView userdata;
     private ViewLifeCycleCallback cycleCallback;
     private IScrollView iScrollView;
+    private ArgoTouchLink touchLink = new ArgoTouchLink();
 
-    public LuaScrollViewContainer(Context context, UDScrollView userdata, boolean vertical, boolean same, AttributeSet attributeSet) {
+    public LuaScrollViewContainer(Context context, UDScrollView userdata) {
         super(context);
         this.userdata = userdata;
+        setViewLifeCycleCallback(userdata);
+    }
 
+    public void init(boolean vertical, boolean same, AttributeSet attributeSet) {
         if (vertical) {
             iScrollView = new LuaVerticalScrollView(getContext(), userdata, same, attributeSet);
         } else {
             iScrollView = new LuaHorizontalScrollView(getContext(), userdata, same);
         }
-        setViewLifeCycleCallback(userdata);
         addView(iScrollView.getScrollView(), LuaViewUtil.createRelativeLayoutParamsMM());
+        // 处理组合控件
+        touchLink.setHead(this);
+        touchLink.addChild(iScrollView.getScrollView());
     }
 
     @Override
@@ -147,5 +155,10 @@ public class LuaScrollViewContainer extends BorderRadiusFrameLayout implements I
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
         return isEnabled() && super.dispatchTouchEvent(ev);
+    }
+
+    @Override
+    public ArgoTouchLink getTouchLink() {
+        return touchLink;
     }
 }

@@ -24,14 +24,11 @@ import org.luaj.vm2.utils.LuaApiUsed;
 @LuaApiUsed
 public class UDWaterFallAdapter extends UDBaseNeedHeightAdapter<UDWaterFallLayout> {
     public static final String LUA_CLASS_NAME = "WaterfallAdapter";
-    public static final String[] methods = new String[]{
-
-    };
     private LuaStaggeredGridLayoutManager layoutManager;
 
     @LuaApiUsed
     public UDWaterFallAdapter(long L, LuaValue[] v) {
-        super(L, v);
+        super(L);
     }
 
     @Override

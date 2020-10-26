@@ -45,4 +45,9 @@ public class LuaStaggeredGridLayoutManager extends StaggeredGridLayoutManager im
     public boolean canScrollHorizontally() {
         return isScrollEnabled && super.canScrollHorizontally();
     }
+
+    @Override
+    public void scrollToPosition(int position) {
+        super.scrollToPositionWithOffset(position, 0);
+    }
 }

@@ -12,6 +12,7 @@ import android.view.View;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.immomo.mls.util.LogUtil;
 import com.immomo.mmui.ui.LuaStaggeredGridLayoutManager;
 
 
@@ -55,18 +56,19 @@ public class WaterFallItemDecoration extends RecyclerView.ItemDecoration {
         super.getItemOffsets(outRect, view, parent, state);
 
         int spanCount = layoutManager.getSpanCount();
-        int totalCount = parent.getAdapter().getItemCount();
+//        int totalCount = parent.getAdapter().getItemCount();
         int childPosition = parent.getChildAdapterPosition(view);
 
-        int currentColumn = getSpanGroupIndex(childPosition, spanCount);//当前行
-        int totalColumn = getSpanGroupIndex(totalCount - 1, spanCount);//当前行
+//        int currentColumn = getSpanGroupIndex(childPosition, spanCount);//当前行
+//        int totalColumn = getSpanGroupIndex(totalCount - 1, spanCount);//当前行
 
-        int layoutInSetBottom = layout.getPaddingValues()[3];
 
-        outRect.bottom = verticalSpace;
+        outRect.top = verticalSpace;
 
-        if (currentColumn == totalColumn) {
-            outRect.bottom = layoutInSetBottom;
+        int headerCount = ((Adapter) parent.getAdapter()).getHeaderCount();
+        //第一行时，不设置top，此时生效的是layoutInset
+        if (childPosition < ((headerCount > 0) ? headerCount : spanCount)) {
+            outRect.top = 0;
         }
 
         outRect.left = horizontalSpace / 2;

@@ -11,12 +11,12 @@ import androidx.annotation.CallSuper;
 import androidx.annotation.NonNull;
 
 import com.immomo.mls.util.DimenUtil;
-import com.immomo.mmui.anim.animations.ObjectAnimation;
 import com.immomo.mmui.ud.UDView;
 
 import org.luaj.vm2.Globals;
 import org.luaj.vm2.LuaUserdata;
 import org.luaj.vm2.LuaValue;
+import org.luaj.vm2.utils.CGenerate;
 import org.luaj.vm2.utils.LuaApiUsed;
 
 /**
@@ -33,11 +33,11 @@ public class InteractiveBehavior extends LuaUserdata<GestureBehavior> {
      * 必须存在
      *
      * @param L 虚拟机底层地址
-     * @param v 初始化参数，非空，但长度可能为0
      */
+    @CGenerate(defaultConstructor = true)
     @LuaApiUsed
-    protected InteractiveBehavior(long L, @NonNull LuaValue[] v) {
-        super(L, v);
+    protected InteractiveBehavior(long L) {
+        super(L, null);
         /// 必须完成包裹对象的初始化
         javaUserdata = new GestureBehavior();
     }
@@ -55,7 +55,7 @@ public class InteractiveBehavior extends LuaUserdata<GestureBehavior> {
      * @param l 虚拟机C层地址
      * @see Globals#getL_State()
      */
-    public static native void _register(long l);
+    public static native void _register(long l, String parent);
     //</editor-fold>
 
     //<editor-fold desc="Bridge API">
@@ -109,8 +109,12 @@ public class InteractiveBehavior extends LuaUserdata<GestureBehavior> {
         return javaUserdata.followEnable;
     }
 
+    @CGenerate(params = "F")
     @LuaApiUsed
     public void touchBlock(long fun) {
+        if (fun == 0)
+            javaUserdata.callback = null;
+        else
         javaUserdata.callback = new InteractiveBehaviorCallback(globals.getL_State(), fun);
     }
 

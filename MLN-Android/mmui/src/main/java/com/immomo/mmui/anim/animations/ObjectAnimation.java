@@ -47,16 +47,4 @@ public class ObjectAnimation extends ValueAnimation {
                 new float[]{beginTime, duration, repeatCount, threshold},
                 repeatForever, autoReverse, timingFunction.ordinal());
     }
-
-    public Animatable getAnimatable() {
-        return animatable;
-    }
-
-    public float[] getFromValue() {
-        return fromValue;
-    }
-
-    public float[] getToValue() {
-        return toValue;
-    }
 }

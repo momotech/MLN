@@ -7,24 +7,22 @@
   */
 package com.immomo.mmui.ud;
 
-import com.immomo.mmui.ui.LuaNodeLayout;
 import com.facebook.yoga.YogaFlexDirection;
+import com.immomo.mmui.ui.LuaNodeLayout;
 
 import org.luaj.vm2.Globals;
-import org.luaj.vm2.LuaValue;
+import org.luaj.vm2.utils.CGenerate;
 import org.luaj.vm2.utils.LuaApiUsed;
 
 
 @LuaApiUsed
 public class UDHStack extends UDNodeGroup<LuaNodeLayout> {
     public static final String LUA_CLASS_NAME = "HStack";
-    public static final String[] methods = {
-        "reverse"
-    };
 
+    @CGenerate(defaultConstructor = true)
     @LuaApiUsed
-    protected UDHStack(long L, LuaValue[] v) {
-        super(L, v);//HStack 主轴默认充满父容器
+    protected UDHStack(long L) {
+        super(L);//HStack 主轴默认充满父容器
         init();
     }
 
@@ -33,20 +31,34 @@ public class UDHStack extends UDNodeGroup<LuaNodeLayout> {
         init();
     }
 
-//<editor-fold desc="API">
+    //<editor-fold desc="native method">
+    /**
+     * 初始化方法
+     * 反射调用
+     * @see com.immomo.mls.wrapper.Register.NewUDHolder
+     */
+    public static native void _init();
+
+    /**
+     * 注册到虚拟机方法
+     * 反射调用
+     * @see com.immomo.mls.wrapper.Register.NewUDHolder
+     */
+    public static native void _register(long l, String parent);
+    //</editor-fold>
 
     //</editor-fold>
     private void init() {
         mNode.setFlexDirection(YogaFlexDirection.ROW);
     }
 
+    //<editor-fold desc="API">
     @LuaApiUsed
-    public LuaValue[] reverse(LuaValue[] var) {
-        boolean reverse = var.length > 0 && var[0].toBoolean();
+    public void reverse(boolean reverse) {
         mNode.setFlexDirection(
             reverse ? YogaFlexDirection.ROW_REVERSE : YogaFlexDirection.ROW);
-        return null;
     }
+    //</editor-fold>
 
     @Override
     public boolean needConvertVirtual() {

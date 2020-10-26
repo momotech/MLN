@@ -67,7 +67,7 @@ jstring jni_getFunctionSource(JNIEnv *env, jobject jobj, jlong LS, jlong functio
     lua_State *L = (lua_State *) LS;
     lua_lock(L);
     getValueFromGNV(L, (ptrdiff_t) function, LUA_TFUNCTION);
-    if (!lua_isfunction(L, -1)) {
+    if (!lua_isfunction(L, -1) || lua_iscfunction(L, -1)) {
         lua_pop(L, 1);
         lua_unlock(L);
         return NULL;
@@ -102,6 +102,24 @@ void throwJavaError(JNIEnv *env, lua_State *L) {
 #define LuaFunctionMethod(m) Java_org_luaj_vm2_LuaFunction_ ## m
 #define Pre4Params JNIEnv *env, jobject jobj, jlong Ls, jlong function
 
+static inline void push_number(lua_State *L, jdouble num) {
+    lua_Integer li1 = (lua_Integer) num;
+    if (li1 == num) {
+        lua_pushinteger(L, li1);
+    } else {
+        lua_pushnumber(L, num);
+    }
+}
+
+static inline void push_string(JNIEnv *env, lua_State *L, jstring s) {
+    const char *str = GetString(env, s);
+    if (str)
+        lua_pushstring(L, str);
+    else
+        lua_pushnil(L);
+    ReleaseChar(env, s, str);
+}
+
 Void_Call LuaFunctionMethod(nativeInvokeV)(Pre4Params) {
     lua_State *L = (lua_State *) Ls;
     check_and_call_method(L, 0, NULL)
@@ -117,24 +135,14 @@ Void_Call LuaFunctionMethod(nativeInvokeB)(Pre4Params, jboolean b) {
 Void_Call LuaFunctionMethod(nativeInvokeN)(Pre4Params, jdouble num) {
     lua_State *L = (lua_State *) Ls;
     check_and_call_method(L, 1, {
-    lua_Integer li = (lua_Integer) num;
-    if (li == num) {
-        lua_pushinteger(L, li);
-    } else {
-        lua_pushnumber(L, num);
-    }
+        push_number(L, num);
     })
 }
 
 Void_Call LuaFunctionMethod(nativeInvokeS)(Pre4Params, jstring s) {
     lua_State *L = (lua_State *) Ls;
     check_and_call_method(L, 1, {
-    const char *str = GetString(env, s);
-    if (str)
-        lua_pushstring(L, str);
-    else
-        lua_pushnil(L);
-    ReleaseChar(env, s, str);
+        push_string(env, L, s);
     })
 }
 
@@ -142,12 +150,129 @@ Void_Call LuaFunctionMethod(nativeInvokeT)(Pre4Params, jlong table) {
     lua_State *L = (lua_State *) Ls;
     check_and_call_method(L, 1, {
     getValueFromGNV(L, (ptrdiff_t) table, LUA_TTABLE);
-    if (lua_isnil(L, -1)) {
+    if (table && lua_isnil(L, -1)) {
         throwInvokeError(env, "table is destroyed.");
         lua_settop(L, oldTop);
         lua_unlock(L);
         return;
     }
+    })
+}
+
+Void_Call LuaFunctionMethod(nativeInvokeU)(Pre4Params, jlong u) {
+    lua_State *L = (lua_State *) Ls;
+    check_and_call_method(L, 1, {
+        getValueFromGNV(L, (ptrdiff_t) u, LUA_TUSERDATA);
+        if (u && lua_isnil(L, -1)) {
+            throwInvokeError(env, "userdata is destroyed.");
+            lua_settop(L, oldTop);
+            lua_unlock(L);
+            return;
+        }
+    })
+}
+
+Void_Call LuaFunctionMethod(nativeInvokeUD)(Pre4Params, jobject obj) {
+    lua_State *L = (lua_State *) Ls;
+    check_and_call_method(L, 1, {
+        pushUserdataFromJUD(env, L, obj);
+    })
+}
+
+Void_Call LuaFunctionMethod(nativeInvokeBB)(Pre4Params, jboolean b1, jboolean b2) {
+    lua_State *L = (lua_State *) Ls;
+    check_and_call_method(L, 2, {
+        lua_pushboolean(L, b1);
+        lua_pushboolean(L, b2);
+    })
+}
+Void_Call LuaFunctionMethod(nativeInvokeNN)(Pre4Params, jdouble num1, jdouble num2) {
+    lua_State *L = (lua_State *) Ls;
+    check_and_call_method(L, 2, {
+        push_number(L, num1);
+        push_number(L, num2);
+    })
+}
+Void_Call LuaFunctionMethod(nativeInvokeSS)(Pre4Params, jstring s1, jstring s2) {
+    lua_State *L = (lua_State *) Ls;
+    check_and_call_method(L, 2, {
+        push_string(env, L, s1);
+        push_string(env, L, s2);
+    })
+}
+Void_Call LuaFunctionMethod(nativeInvokeTT)(Pre4Params, jlong table1, jlong table2) {
+    lua_State *L = (lua_State *) Ls;
+    check_and_call_method(L, 2, {
+        getValueFromGNV(L, (ptrdiff_t) table1, LUA_TTABLE);
+        if (table1 && lua_isnil(L, -1)) {
+            throwInvokeError(env, "table1 is destroyed.");
+            lua_settop(L, oldTop);
+            lua_unlock(L);
+            return;
+        }
+        getValueFromGNV(L, (ptrdiff_t) table2, LUA_TTABLE);
+        if (table2 && lua_isnil(L, -1)) {
+            throwInvokeError(env, "table2 is destroyed.");
+            lua_settop(L, oldTop);
+            lua_unlock(L);
+            return;
+        }
+    })
+}
+
+Void_Call LuaFunctionMethod(nativeInvokeUU)(Pre4Params, jlong u1, jlong u2) {
+    lua_State *L = (lua_State *) Ls;
+    check_and_call_method(L, 1, {
+        getValueFromGNV(L, (ptrdiff_t) u1, LUA_TUSERDATA);
+        if (u1 && lua_isnil(L, -1)) {
+            throwInvokeError(env, "userdata1 is destroyed.");
+            lua_settop(L, oldTop);
+            lua_unlock(L);
+            return;
+        }
+        getValueFromGNV(L, (ptrdiff_t) u2, LUA_TUSERDATA);
+        if (u2 && lua_isnil(L, -1)) {
+            throwInvokeError(env, "userdata2 is destroyed.");
+            lua_settop(L, oldTop);
+            lua_unlock(L);
+            return;
+        }
+    })
+}
+
+Void_Call LuaFunctionMethod(nativeInvokeUUD)(Pre4Params, jlong u1, jobject u2) {
+    lua_State *L = (lua_State *) Ls;
+    check_and_call_method(L, 1, {
+        getValueFromGNV(L, (ptrdiff_t) u1, LUA_TUSERDATA);
+        if (u1 && lua_isnil(L, -1)) {
+            throwInvokeError(env, "userdata1 is destroyed.");
+            lua_settop(L, oldTop);
+            lua_unlock(L);
+            return;
+        }
+        pushUserdataFromJUD(env, L, u2);
+    })
+}
+
+Void_Call LuaFunctionMethod(nativeInvokeUDU)(Pre4Params, jobject u1, jlong u2) {
+    lua_State *L = (lua_State *) Ls;
+    check_and_call_method(L, 1, {
+        pushUserdataFromJUD(env, L, u1);
+        getValueFromGNV(L, (ptrdiff_t) u2, LUA_TUSERDATA);
+        if (u2 && lua_isnil(L, -1)) {
+            throwInvokeError(env, "userdata2 is destroyed.");
+            lua_settop(L, oldTop);
+            lua_unlock(L);
+            return;
+        }
+    })
+}
+
+Void_Call LuaFunctionMethod(nativeInvokeUDUD)(Pre4Params, jobject u1, jobject u2) {
+    lua_State *L = (lua_State *) Ls;
+    check_and_call_method(L, 1, {
+        pushUserdataFromJUD(env, L, u1);
+        pushUserdataFromJUD(env, L, u2);
     })
 }
 //</editor-fold>

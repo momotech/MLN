@@ -8,7 +8,6 @@
 package com.immomo.mmui.ui;
 
 import android.content.Context;
-import android.view.LayoutInflater;
 import android.view.View;
 
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -18,6 +17,9 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.immomo.mls.MLSAdapterContainer;
 import com.immomo.mls.MLSFlag;
 import com.immomo.mls.fun.other.Point;
+import com.immomo.mmui.gesture.ArgoTouchLink;
+import com.immomo.mmui.gesture.ICompose;
+import com.immomo.mls.fun.ui.IPager;
 import com.immomo.mls.fun.ui.IRefreshRecyclerView;
 import com.immomo.mls.fun.ui.OnLoadListener;
 import com.immomo.mls.fun.ui.SizeChangedListener;
@@ -27,7 +29,6 @@ import com.immomo.mls.util.LuaViewUtil;
 import com.immomo.mls.utils.MainThreadExecutor;
 import com.immomo.mls.weight.load.ILoadViewDelegete;
 import com.immomo.mmui.ILViewGroup;
-import com.immomo.mmui.R;
 import com.immomo.mmui.ud.recycler.UDBaseRecyclerAdapter;
 import com.immomo.mmui.ud.recycler.UDBaseRecyclerLayout;
 import com.immomo.mmui.ud.recycler.UDCollectionLayout;
@@ -37,7 +38,7 @@ import com.immomo.mmui.ud.recycler.UDRecyclerView;
  * Created by XiongFangyu on 2018/7/19.
  */
 public class LuaRecyclerView<A extends UDBaseRecyclerAdapter, L extends UDBaseRecyclerLayout>
-        extends BorderRadiusSwipeRefreshLayout implements ILViewGroup<UDRecyclerView>, IRefreshRecyclerView, OnLoadListener, SwipeRefreshLayout.OnRefreshListener {
+        extends BorderRadiusSwipeRefreshLayout implements ILViewGroup<UDRecyclerView>, IRefreshRecyclerView, OnLoadListener, SwipeRefreshLayout.OnRefreshListener, IPager, ICompose {
     private final MLSRecyclerView recyclerView;
     private final UDRecyclerView userdata;
     private final ILoadViewDelegete loadViewDelegete;
@@ -46,16 +47,19 @@ public class LuaRecyclerView<A extends UDBaseRecyclerAdapter, L extends UDBaseRe
     private boolean isLoading = false;
     private boolean isViewPager = false;
     private ViewLifeCycleCallback cycleCallback;
+    private ArgoTouchLink touchLink = new ArgoTouchLink();
 
     public LuaRecyclerView(Context context, UDRecyclerView javaUserdata, boolean refreshEnable, boolean loadEnable) {
         super(context);
         userdata = javaUserdata;
-        recyclerView = (MLSRecyclerView) LayoutInflater.from(context).inflate(R.layout.mmui_layout_recycler_view, null);
+        /// 使用layoutinflater多耗时4ms
+        recyclerView = new MLSRecyclerView(context, null);//(MLSRecyclerView) LayoutInflater.from(context).inflate(R.layout.mmui_layout_recycler_view, null);
         loadViewDelegete = MLSAdapterContainer.getLoadViewAdapter().newLoadViewDelegate(context, recyclerView);
         recyclerView.setLoadViewDelegete(loadViewDelegete);
         recyclerView.setOnLoadListener(this);
         recyclerView.setCycleCallback(userdata);
         recyclerView.setClipToPadding(false);
+        recyclerView.setUserdata(userdata);
         userdata.setLoadViewDelegete(loadViewDelegete);
         setColorSchemeColors(MLSFlag.getRefreshColor());
         setProgressViewOffset(MLSFlag.isRefreshScale(), 0, MLSFlag.getRefreshEndPx());
@@ -63,6 +67,9 @@ public class LuaRecyclerView<A extends UDBaseRecyclerAdapter, L extends UDBaseRe
         addView(recyclerView, LuaViewUtil.createRelativeLayoutParamsMM());
         setRefreshEnable(refreshEnable);
         setLoadEnable(loadEnable);
+        // 处理组合控件
+        touchLink.setHead(this);
+        touchLink.addChild(recyclerView);
     }
 
     //<editor-fold desc="ILView">
@@ -300,5 +307,10 @@ public class LuaRecyclerView<A extends UDBaseRecyclerAdapter, L extends UDBaseRe
             src = new MarginLayoutParams(src);
         }
         return src;
+    }
+
+    @Override
+    public ArgoTouchLink getTouchLink() {
+        return touchLink;
     }
 }

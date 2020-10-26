@@ -16,14 +16,15 @@ import com.immomo.mls.fun.ui.ILuaImageView;
 import com.immomo.mls.util.DimenUtil;
 import com.immomo.mls.utils.ErrorUtils;
 import com.immomo.mls.utils.MainThreadExecutor;
+import com.immomo.mmui.ILView;
 import com.immomo.mmui.ui.LuaImageView;
 
 import org.luaj.vm2.LuaBoolean;
 import org.luaj.vm2.LuaFunction;
-import org.luaj.vm2.LuaNumber;
 import org.luaj.vm2.LuaString;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
+import org.luaj.vm2.utils.CGenerate;
 import org.luaj.vm2.utils.DisposableIterator;
 import org.luaj.vm2.utils.LuaApiUsed;
 
@@ -34,191 +35,144 @@ import java.util.List;
  * Created by XiongFangyu on 2018/8/1.
  */
 @LuaApiUsed
-public class UDImageView<I extends ImageView & ILuaImageView> extends UDNodeView<I> {
+public class UDImageView<I extends ImageView & ILuaImageView & ILView> extends UDView<I> {
 
     public static final String LUA_CLASS_NAME = "ImageView";
-
-    public static final String[] methods = {
-            "image",
-            "contentMode",
-            "lazyLoad",
-            "setImageUrl",
-            "setImageWithCallback",
-            "borderWidth",
-            "padding",
-            "setCornerImage",
-            "startAnimationImages",
-            "stopAnimationImages",
-            "isAnimating",
-            "blurImage",
-    };
 
     private static final String TAG = UDImageView.class.getSimpleName();
 
     private LuaFunction imageLoadCallback;
 
+    @CGenerate(defaultConstructor = true)
     @LuaApiUsed
-    public UDImageView(long L, LuaValue[] v) {
-        super(L, v);
+    public UDImageView(long L) {
+        super(L, null);
     }
 
     @Override
     protected I newView(LuaValue[] init) {
-        return (I) new LuaImageView(getContext(), this, init);
+        return (I) new LuaImageView(getContext(), this);
     }
 
+    //<editor-fold desc="native method">
+    /**
+     * 初始化方法
+     * 反射调用
+     * @see com.immomo.mls.wrapper.Register.NewUDHolder
+     */
+    public static native void _init();
+
+    /**
+     * 注册到虚拟机方法
+     * 反射调用
+     * @see com.immomo.mls.wrapper.Register.NewUDHolder
+     */
+    public static native void _register(long l, String parent);
+    //</editor-fold>
     //<editor-fold desc="API">
     //<editor-fold desc="Property">
-    @LuaApiUsed
-    public LuaValue[] image(LuaValue[] var) {
-        if (var.length == 1) {
-            cleanNineImage();
-            final String url = var[0].toJavaString();
-            setImage(url);
-            getFlexNode().dirty();
-            return null;
-        }
-        String i = getImage();
-        if (i != null)
-            return varargsOf(LuaString.valueOf(i));
-        return rNil();
-    }
-
-    @Override
-    public LuaValue[] setNineImage(LuaValue[] var) {
-        LuaValue[] luaValues = super.setNineImage(var);
-        ((LuaImageView) getView()).setImageUrlEmpty();
-        return luaValues;
-    }
 
     @LuaApiUsed
-    public LuaValue[] contentMode(LuaValue[] var) {
-        if (var.length == 1) {
-            if (var[0].isNil()) {
-                ErrorUtils.debugUnsupportError("contentMode is nil. You must use 'ContentMode.XXXX'");
-                return null;
-            }
-            int type = var[0].toInt();
-            if (type == ContentMode.CENTER) {
-                ErrorUtils.debugDeprecatedMethod("ContentMode.CENTER is deprecated", globals);
-            }
-            getView().setScaleType(ImageView.ScaleType.values()[type]);
-            return null;
-        }
-        return varargsOf(LuaNumber.valueOf(getView().getScaleType().ordinal()));
-    }
-
-    @LuaApiUsed
-    public LuaValue[] lazyLoad(LuaValue[] var) {
-        if (var.length == 1) {
-            getView().setLazyLoad(var[0].toBoolean());
-            return null;
-        }
-        return getView().isLazyLoad() ? varargsOf(LuaBoolean.True()) : varargsOf(LuaBoolean.False());
-    }
-
-    @LuaApiUsed
-    public LuaValue[] setImageUrl(LuaValue[] var) {
+    public void setImage(String url) {
         cleanNineImage();
-        String url = var.length > 0 && !var[0].isNil() ? var[0].toJavaString() : null;
-        String placeHolder = var.length > 1 && !var[1].isNil() ? var[1].toJavaString() : null;
-
-        setImageUrl(url,
-                placeHolder);
+        getView().setImage(url);
         getFlexNode().dirty();
-        return null;
     }
 
     @LuaApiUsed
-    public LuaValue[] setImageWithCallback(LuaValue[] var) {
-        String url = var.length > 0 && !var[0].isNil() ? var[0].toJavaString() : null;
-        String placeHolder = var.length > 1 && !var[1].isNil() ? var[1].toJavaString() : null;
-        imageLoadCallback = var.length > 2 && !var[2].isNil() ? var[2].toLuaFunction() : null;
-
-        setImageUrl(url, placeHolder);
-        getFlexNode().dirty();
-        return null;
+    public String getImage() {
+        return getView().getImage();
     }
 
     @LuaApiUsed
-    public LuaValue[] blurImage(LuaValue[] var) {
+    public int getContentMode() {
+        return getView().getScaleType().ordinal();
+    }
+
+    @LuaApiUsed
+    public void setContentMode(int type) {
+        if (type == ContentMode.CENTER) {
+            ErrorUtils.debugDeprecatedMethod("ContentMode.CENTER is deprecated", globals);
+        }
+        getView().setScaleType(ImageView.ScaleType.values()[type]);
+    }
+
+    @LuaApiUsed
+    public boolean isLazyLoad() {
+        return getView().isLazyLoad();
+    }
+
+    @LuaApiUsed
+    public void setLazyLoad(boolean lazyLoad) {
+        getView().setLazyLoad(lazyLoad);
+    }
+
+    @LuaApiUsed
+    public void setImageUrl(String url, String placeHolder) {
+        cleanNineImage();
+
+        setImageUrlInner(url, placeHolder);
+        getFlexNode().dirty();
+    }
+
+    @LuaApiUsed
+    public void setImageWithCallback(String url, String placeHolder, LuaFunction imageLoadCallback) {
+        this.imageLoadCallback = imageLoadCallback;
+        setImageUrlInner(url, placeHolder);
+        getFlexNode().dirty();
+    }
+
+    @LuaApiUsed
+    public void blurImage(float blurValue) {
         //ios新增参数2，Android不处理
-        if (var.length > 0 && !var[0].isNil()) {
+        if (blurValue < 0)
+            blurValue = 0;
+        if (blurValue > 25)
+            blurValue = 25;
+        final float finalValue = blurValue;
+        if (finalValue >= 0 && finalValue <= 25) {  // 0 则去掉高斯模糊
 
-            float blurValue = (float) var[0].toDouble();
-            if (blurValue < 0)
-                blurValue = 0;
-            if (blurValue > 25)
-                blurValue = 25;
-            final float finalValue = blurValue;
-            if (finalValue >= 0 && finalValue <= 25) {  // 0 则去掉高斯模糊
+            if (getImage() != null && getImage().length() > 0 && getView().getDrawable() == null) {  // 先设置图片路径，后设置 blurImage() 时
 
-                if (getImage() != null && getImage().length() > 0 && getView().getDrawable() == null) {  // 先设置图片路径，后设置 blurImage() 时
-
-                    MainThreadExecutor.cancelAllRunnable(getTaskTag());
-                    MainThreadExecutor.postDelayed(getTaskTag(), new Runnable() {
-                        @Override
-                        public void run() {
-                            getView().setBlurImage(finalValue);
-                        }
-                    }, 300);
-                    return null;
-                }
-
-                getView().setBlurImage(blurValue);
-                getFlexNode().dirty();
+                MainThreadExecutor.cancelAllRunnable(getTaskTag());
+                MainThreadExecutor.postDelayed(getTaskTag(), new Runnable() {
+                    @Override
+                    public void run() {
+                        getView().setBlurImage(finalValue);
+                    }
+                }, 300);
+                return;
             }
 
-            return null;
+            getView().setBlurImage(blurValue);
+            getFlexNode().dirty();
         }
-
-        return null;
-    }
-
-    protected void setImageUrl(String url, String placeHolder) {
-        getView().setImageUrlWithPlaceHolder(url, placeHolder);
     }
 
     @LuaApiUsed
-    public LuaValue[] borderWidth(LuaValue[] width) {
-        return super.borderWidth(varargsOf(LuaNumber.valueOf((float) width[0].toDouble())));
-    }
-
-    @LuaApiUsed
-    public LuaValue[] padding(LuaValue[] width) {
-        ErrorUtils.debugUnsupportError("ImageView not support padding");
-        return null;
-    }
-
-    @LuaApiUsed
-    public LuaValue[] setCornerImage(LuaValue[] var) {
+    public void setCornerImage(String url, String placeHolder, float radius, int d) {
         cleanNineImage();
-
-        String url = var[0].toJavaString();
-        String placeHolder = var[1].toJavaString();
-        float radius = (float) var[2].toDouble();
-
-        if (var.length == 5) {
-            setCornerRadiusWithDirection(radius, var[4].toInt());
-        } else {
-            setCornerRadius(DimenUtil.dpiToPx(radius));
-        }
-
+        setCornerRadiusWithDirection(radius, d);
         ((LuaImageView) getView()).setImageUrlEmpty();
-        setImageUrl(url, placeHolder);
+        setImageUrlInner(url, placeHolder);
         getFlexNode().dirty();
-        return null;
+    }
+
+    @LuaApiUsed
+    public void setCornerImage(String url, String placeHolder, float radius) {
+        cleanNineImage();
+        setCornerRadius(DimenUtil.dpiToPx(radius));
+        ((LuaImageView) getView()).setImageUrlEmpty();
+        setImageUrlInner(url, placeHolder);
+        getFlexNode().dirty();
     }
     //</editor-fold>
 
     //<editor-fold desc="Method">
     @LuaApiUsed
-    public LuaValue[] startAnimationImages(LuaValue[] values) {
+    public void startAnimationImages(LuaValue value, float d, boolean repeat) {
         // LuaValue value, float d, boolean repeat
         cleanNineImage();
-        LuaValue value = values[0];
-        float d = (float) values[1].toDouble();
-        boolean repeat = values[2].toBoolean();
 
         List list = null;
         if (value instanceof LuaTable) {
@@ -228,41 +182,43 @@ public class UDImageView<I extends ImageView & ILuaImageView> extends UDNodeView
         }
 
         if (list == null || list.isEmpty())
-            return null;
+            return;
         long duration = (long) (d * 1000);
         getView().startAnimImages(list, duration, repeat);
-        return null;
     }
 
     @LuaApiUsed
-    public LuaValue[] stopAnimationImages(LuaValue[] v) {
+    public void stopAnimationImages() {
         getView().stop();
-        return null;
     }
 
     @LuaApiUsed
-    public LuaValue[] isAnimating(LuaValue[] v) {
-        return varargsOf(LuaBoolean.valueOf(getView().isRunning()));
+    public boolean isAnimating() {
+        return getView().isRunning();
     }
     //</editor-fold>
     //</editor-fold>
 
-    //<editor-fold desc="public">
-    public void setImage(String url) {
-        getView().setImage(url);
+    protected void setImageUrlInner(String url, String placeHolder) {
+        getView().setImageUrlWithPlaceHolder(url, placeHolder);
     }
 
-    public String getImage() {
-        return getView().getImage();
+    @Override
+    public void padding(double l, double t, double r, double b) {
+        ErrorUtils.debugUnsupportError("ImageView not support padding");
     }
-    //</editor-fold>
 
+    @Override
+    public void setNineImage(String s) {
+        super.setNineImage(s);
+        ((LuaImageView) getView()).setImageUrlEmpty();
+    }
 
     @Override
     public void setBgDrawable(String src) {
         super.setBgDrawable(src);
         getView().setImageDrawable(null);//.9图和image只有一个生效。与IOS同步
-        stopAnimationImages(null);//停止图片轮播动画
+        stopAnimationImages();//停止图片轮播动画
     }
 
     //设置image后，清空.9图

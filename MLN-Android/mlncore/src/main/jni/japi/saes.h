@@ -45,6 +45,10 @@ void encrypt_cpy(char *dest, const char *src, SIZE len);
 void decrypt(char *data, SIZE len);
 
 /**
+ * 将src解密数据拷贝到dest中
+ */
+void decrypt_cpy(char *dest, const char *src, SIZE len);
+/**
  * 将长度加密并转换成字符串
  * 字符串长度为 SOURCE_LEN
  * 记得调用free

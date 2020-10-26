@@ -8,10 +8,8 @@
 package com.immomo.mmui;
 
 
-import com.immomo.mls.MLSInstance;
 import com.immomo.mls.OnGlobalsCreateListener;
 import com.immomo.mmui.databinding.DataBinding;
-import com.immomo.mmui.databinding.interfaces.IPropertyCallback;
 
 import org.luaj.vm2.Globals;
 
@@ -44,25 +42,6 @@ public class MMUIBinding {
             });
         } else {
             DataBinding.bind(mlsInstance.getGlobals(), target, key);
-        }
-    }
-
-
-    /**
-     * 注册属性改动监听
-     * @param key
-     * @param iPropertyCallback
-     */
-    public void watch(final String key, final IPropertyCallback iPropertyCallback) {
-        if(mlsInstance.getGlobals() ==null) {
-            mlsInstance.addOnGlobalsCreateListener(new OnGlobalsCreateListener() {
-                @Override
-                public void onCreate(Globals g) {
-                    DataBinding.watch(g,key,iPropertyCallback);
-                }
-            });
-        } else {
-            DataBinding.watch(mlsInstance.getGlobals(), key, iPropertyCallback);
         }
     }
 

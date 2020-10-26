@@ -647,7 +647,6 @@ class Generator {
         call = call
                 .replaceAll("\\$T", typeElement.getSimpleName().toString())
                 .replaceAll("\\$N", methodName.toString());
-        note("directly call " + call);
         returnExceptVoidAndLuaValue(mb, call, returnType, initGlobals);
     }
 

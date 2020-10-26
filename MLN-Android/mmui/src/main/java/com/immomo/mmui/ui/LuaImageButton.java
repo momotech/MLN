@@ -21,8 +21,6 @@ import com.immomo.mls.utils.MainThreadExecutor;
 import com.immomo.mmui.ud.UDImageButton;
 import com.immomo.mmui.ud.UDImageView;
 
-import org.luaj.vm2.LuaValue;
-
 /**
  * Created by XiongFangyu on 2018/8/3.
  */
@@ -34,8 +32,8 @@ public class LuaImageButton<U extends UDImageButton> extends LuaImageView<U> imp
     private Drawable normalDrawable;
     private Drawable pressDrawable;
 
-    public LuaImageButton(Context context, UDImageView metaTable, LuaValue[] initParams) {
-        super(context, metaTable, initParams);
+    public LuaImageButton(Context context, UDImageView metaTable) {
+        super(context, metaTable);
     }
 
     @Override

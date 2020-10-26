@@ -29,16 +29,11 @@ class InteractiveBehaviorCallback extends LuaFunction {
         try {
             if (!checkStatus())
                 return;
-            invokeError = null;
             beforeFunctionInvoke();
             nativeCallback(globals.getL_State(), nativeGlobalKey(), type, distance, velocity);
             afterFunctionInvoked();
         } catch (InvokeError e) {
-            invokeError = e;
-            afterFunctionInvoked();
-            if (globals.getState() != Globals.LUA_CALLING && MLNCore.hookLuaError(e, globals))
-                return;
-            throw e;
+            functionInvokeError(e);
         }
     }
 

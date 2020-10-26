@@ -18,7 +18,7 @@ import java.io.PrintStream;
 /**
  * Created by XiongFangyu on 2018/9/6.
  */
-public class DefaultPrintStream extends PrintStream {
+public class DefaultPrintStream extends PrintStream implements ErrorPrintStream {
     private final IPrinter printer;
     public DefaultPrintStream(@NonNull IPrinter out) {
         super(new FileOutputStream(FileDescriptor.out));

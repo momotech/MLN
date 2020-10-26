@@ -8,11 +8,7 @@
 package com.immomo.mmui.databinding.interfaces;
 
 
-import android.app.Activity;
-import android.app.Fragment;
-
-
-import com.immomo.mmui.databinding.bean.FieldCacheHelper;
+import com.immomo.mmui.databinding.annotation.WatchContext;
 import com.immomo.mmui.databinding.bean.ObserverWrap;
 
 import org.luaj.vm2.Globals;
@@ -26,41 +22,32 @@ import org.luaj.vm2.LuaTable;
  */
 public interface IObservable {
 
-    /**
-     * 根据属性变量名注册观察者
-     * @param activity 在activity中watch
-     * @param fieldTag 属性变量名
-     * @param iPropertyCallback
-     */
-    void watch(Activity activity, String fieldTag, IPropertyCallback iPropertyCallback);
-
 
     /**
-     * 根据属性变量名注册观察者
-     * @param fragment 在fragment中watch
-     * @param fieldTag 属性变量名
-     * @param iPropertyCallback
-     */
-    void watch(Fragment fragment, String fieldTag, IPropertyCallback iPropertyCallback);
-
-    /**
-     * 根据属性
-     * @param observerId （Activity的hashCode,Global的hashCode）
+     * 根据observerTag添加回调
+     *
+     * @param globals  lua中增加watch
      * @param observerTag
-     * @param isSelfObserved 自身是否被观察
-     * @param isItemChangedNotify (如根结点是Map和List，item 改变是否通知观察者)
-     * @param iPropertyCallback
      */
-    void watch(int observerId, String observerTag,boolean isSelfObserved,boolean isItemChangedNotify,IPropertyCallback iPropertyCallback);
+    IMapAssembler watchAll(Globals globals, String observerTag);
 
     /**
      * 添加观察者
+     *
      * @param observerWrap
      */
     void addObserver(ObserverWrap observerWrap);
 
+
+    /**
+     * 创建观察者
+     * @param observerWrap
+     */
+    void createObserver(ObserverWrap observerWrap);
+
     /**
      * 根据iPropertyCallback移除观察者
+     *
      * @param iPropertyCallback
      */
     void removeObserver(IPropertyCallback iPropertyCallback);
@@ -68,12 +55,14 @@ public interface IObservable {
 
     /**
      * 根据observerTag移除监听（适用于bindCell）
+     *
      * @param observerTag
      */
     void removeObserver(String observerTag);
 
     /**
      * 根据activity和global的hashCode移除观察者
+     *
      * @param observableId
      */
     void removeObserver(int observableId);
@@ -81,21 +70,24 @@ public interface IObservable {
 
     /**
      * 根据IPropertyCallback的hashCode移除观察者
+     *
      * @param callBackId
      */
     void removeObserverByCallBackId(String callBackId);
 
     /**
      * 属性改变进行传旧值和新值
+     *
      * @param fieldName
      * @param older
      * @param newer
      */
-    void notifyPropertyChanged(String fieldName, Object older, Object newer);
+    void notifyPropertyChanged(@WatchContext int argoWatchContext, String fieldName, Object older, Object newer);
 
 
     /**
      * 获取缓存
+     *
      * @param globals
      * @return
      */
@@ -104,6 +96,7 @@ public interface IObservable {
 
     /**
      * 添加缓存
+     *
      * @param luaTable
      */
     void addFieldCache(LuaTable luaTable);

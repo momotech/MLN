@@ -85,6 +85,7 @@ public class NodeLayout extends ViewGroup implements IFlexLayout {
         //检查 并 创建子View对应的Node
         if (child instanceof NodeLayout) {
             childNode = ((NodeLayout) child).getFlexNode();
+            childNode.setData(child);
         } else {
             if (mNodes.containsKey(child)) {
                 childNode = mNodes.get(child);

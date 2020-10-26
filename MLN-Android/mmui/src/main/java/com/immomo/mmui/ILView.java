@@ -10,13 +10,14 @@ package com.immomo.mmui;
 
 import android.graphics.Canvas;
 
-import com.immomo.mmui.ud.UDNodeView;
+import com.immomo.mls.fun.IUserdataHolder;
+import com.immomo.mmui.ud.UDView;
 
 
 /**
  * Created by XiongFangyu on 2018/7/31.
  */
-public interface ILView<V extends UDNodeView> {
+public interface ILView<V extends UDView> extends IUserdataHolder {
     V getUserdata();
 
     void setViewLifeCycleCallback(ViewLifeCycleCallback cycleCallback);

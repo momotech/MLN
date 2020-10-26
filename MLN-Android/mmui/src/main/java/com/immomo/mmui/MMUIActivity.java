@@ -15,13 +15,14 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
-
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.immomo.luanative.hotreload.HotReloadServer;
+import com.immomo.mls.Constants;
 import com.immomo.mls.InitData;
+import com.immomo.mls.MLSAdapterContainer;
 import com.immomo.mls.MLSBundleUtils;
-import com.immomo.mmui.MMUIInstance;
+import com.immomo.mls.util.LogUtil;
 
 /**
  * Created by Xiong.Fangyu on 2020-05-27
@@ -32,7 +33,7 @@ public class MMUIActivity extends AppCompatActivity {
     private MMUIInstance instance;
 
     public static void startHotReload(Context context, boolean usb) {
-        InitData initData = MLSBundleUtils.createInitData("http://cdnst.momocdn.com/w/u/others/2019/09/23/1569224693764-HotReload.lua?ct=" + (usb ? HotReloadServer.USB_CONNECTION : HotReloadServer.NET_CONNECTION)).forceNotUseX64();
+        InitData initData = MLSBundleUtils.createInitData(Constants.ASSETS_PREFIX + "hotreload_mmui.lua?ct=" + (usb ? HotReloadServer.USB_CONNECTION : HotReloadServer.NET_CONNECTION)).forceNotUseX64();
         Intent intent = new Intent(context, MMUIActivity.class);
         intent.putExtras(MLSBundleUtils.createBundle(initData));
         intent.putExtra(KEY_HOT_RELOAD, true);
@@ -50,6 +51,7 @@ public class MMUIActivity extends AppCompatActivity {
         InitData initData = MLSBundleUtils.parseFromBundle(intent.getExtras()).showLoadingView(true);
         instance = new MMUIInstance(this, hr, hr);
         instance.setContainer(frameLayout);
+        instance.setScriptReader(MLSAdapterContainer.getScriptReaderCreator().newScriptLoader(initData.url));
         instance.setData(initData);
 
         if (instance == null || !instance.isValid()) {
@@ -71,13 +73,9 @@ public class MMUIActivity extends AppCompatActivity {
 
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
-        if (event.getKeyCode() == KeyEvent.KEYCODE_BACK) {
-            if (event.getAction() != KeyEvent.ACTION_UP)
-                instance.dispatchKeyEvent(event);
-
-            if (!instance.getBackKeyEnabled())
-                return true;
-        }
+        LogUtil.d("  dispatchKeyEvent  ", event);
+        if (instance.dispatchKeyEvent(event))
+            return true;
         return super.dispatchKeyEvent(event);
     }
 

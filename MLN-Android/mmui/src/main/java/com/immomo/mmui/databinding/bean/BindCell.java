@@ -19,28 +19,22 @@ import java.util.Objects;
 public class BindCell {
     private int row;
     private int section;
-
-    private int bindHashCode;
+    private Object cell;
     private List<String> properties;
 
 
-    public static BindCell obtain(int section,int row,int bindHashCode,List<String> properties) {
+    public static BindCell obtain(int section,int row,Object cell,List<String> properties) {
         BindCell bindCell = new BindCell();
         bindCell.setSection(section);
         bindCell.setRow(row);
-        bindCell.setBindHashCode(bindHashCode);
+        bindCell.setCell(cell);
         bindCell.setProperties(properties);
         return bindCell;
     }
 
-    public int getBindHashCode() {
-        return bindHashCode;
+    public void setCell(Object cell) {
+        this.cell = cell;
     }
-
-    public void setBindHashCode(int bindHashCode) {
-        this.bindHashCode = bindHashCode;
-    }
-
 
     public int getRow() {
         return row;
@@ -73,12 +67,12 @@ public class BindCell {
         BindCell bindCell = (BindCell) o;
         return row == bindCell.row &&
                 section == bindCell.section &&
-                bindHashCode == bindCell.bindHashCode &&
-                properties.size()==bindCell.properties.size() && properties.containsAll(bindCell.properties);
+                cell == bindCell.cell &&
+                properties.size() == bindCell.properties.size() && properties.containsAll(bindCell.properties);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(row, section, bindHashCode, properties);
+        return Objects.hash(row, section, cell, properties);
     }
 }

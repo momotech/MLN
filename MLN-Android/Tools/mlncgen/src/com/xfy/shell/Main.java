@@ -43,13 +43,26 @@ public class Main {
                 "\tcallback中必须有native方法，且native方法参数至少3个";
     }
 
-    private static final String TestDir = "/Users/XiongFangyu/Desktop/MMLua4Android/mmui/src/main/java/com/immomo/mmui/databinding";
+    private static final File Project = new File("/Users/XiongFangyu/Desktop/MMLua4Android");
+    private static final String TestDir = "/Users/XiongFangyu/Desktop/MMLua4Android/mmui/src/main/java";
+    private static final String TestDir2 = "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/java";
 
     public static void main(String[] args) throws Exception {
-//        testParse("/Users/XiongFangyu/Desktop/MMLua4Android/mmui/src/main/java/com/immomo/mmui/ud/anim/InteractiveBehaviorCallback.java");
-//        autoGenerate("/Users/XiongFangyu/Downloads/LTCDataBinding.java", "/Users/XiongFangyu/Downloads", "temp.c");
-//        autoGenerateCallback(TestDir + "/DataBindingCallback.java", TestDir, "temp.c");
-
+//        testMethodParams();
+//        testParse(Project, "mmui", "com.immomo.mmui.ud.AdapterLuaFunction");
+//        autoGenerate(Project, "mmui", "com.immomo.mmui.ud.recycler.UDRecyclerView", "bridge", "mmrecyclerview.c");
+//        testParse(TestDir, "com.immomo.mmui.ud.UDColor");
+//        testParse(TestDir + "/com/immomo/mmui/ud/UDLabel.java");
+//        testParse(TestDir + "/com/immomo/mmui/ud/anim/InteractiveBehavior.java");
+//        testParse(TestDir + "/com/immomo/mmui/databinding/LTCDataBinding.java");
+//        testAnnotation();
+//        autoGenerate(TestDir + "/com/immomo/mmui/ud/anim/UDAnimation.java", "/Users/XiongFangyu/Downloads", "temp.c");
+//        autoGenerate(TestDir + "/com/immomo/mmui/ud/UDVStack.java", "/Users/XiongFangyu/Downloads", "temp.c");
+//        autoGenerate(TestDir + "/com/immomo/mmui/ud/UDColor.java", "/Users/XiongFangyu/Downloads", "temp.c");
+//        autoGenerate(TestDir + "/com/immomo/mmui/ud/UDStyleString.java", "/Users/XiongFangyu/Downloads", "temp.c");
+//        autoGenerate(TestDir + "/com/immomo/mmui/databinding/LTCDataBinding.java",
+//                "/Users/XiongFangyu/Downloads", "temp.c");
+//        autoGenerateCallback(Project, "mmui", "com.immomo.mmui.ud.RecyclerLuaFunction", "bridge", "temp.c");
         mainGenerate(args);
     }
 
@@ -65,14 +78,16 @@ public class Main {
             try {
                 javaFile = FileFinder.findByModuleClass(shellParams.getValue(MODULE), shellParams.getValue(CLASS_NAME));
             } catch (Exception e) {
-                throw new Exception(e.getMessage() + "\n" + echoUsage());
+                System.out.println(echoUsage());
+                throw new Exception(e.getMessage());
             }
         }
         if (outPath == null) {
             try {
                 outPath = FileFinder.findByModuleJni(shellParams.getValue(MODULE), shellParams.getValue(JNI_NAME));
             } catch (Exception e) {
-                throw new Exception(e.getMessage() + "\n" + echoUsage());
+                System.out.println(echoUsage());
+                throw new Exception(e.getMessage());
             }
         }
 
@@ -83,6 +98,32 @@ public class Main {
         }
         File f = new File(outPath, fileName);
         System.out.println("generate success! " + f);
+    }
+
+    private static void autoGenerate(File project, String module, String className, String jni, String outName) throws Exception {
+        final String javaFile;
+        final String out;
+        if (project != null) {
+            javaFile = (FileFinder.findByModuleClass(project, module, className));
+            out = (FileFinder.findByModuleJni(project, module, jni));
+        } else {
+            javaFile = (FileFinder.findByModuleClass(module, className));
+            out = (FileFinder.findByModuleJni(module, jni));
+        }
+        autoGenerate(javaFile, out, outName);
+    }
+
+    private static void autoGenerateCallback(File project, String module, String className, String jni, String outName) throws Exception {
+        final String javaFile;
+        final String out;
+        if (project != null) {
+            javaFile = (FileFinder.findByModuleClass(project, module, className));
+            out = (FileFinder.findByModuleJni(project, module, jni));
+        } else {
+            javaFile = (FileFinder.findByModuleClass(module, className));
+            out = (FileFinder.findByModuleJni(module, jni));
+        }
+        autoGenerateCallback(javaFile, out, outName);
     }
 
     private static void autoGenerate(String javaFile, String outPath, String fileName) throws Exception {
@@ -109,10 +150,29 @@ public class Main {
         FileUtils.writeFile(new File(outPath, fileName), g.toString().getBytes());
     }
 
+    private static void testParse(File project, String module, String className) throws Exception {
+        File f = new File(FileFinder.findByModuleClass(project, module, className));
+        byte[] data = FileUtils.readBytes(f);
+        String content = ClearCommentUtils.clearComment(new String(data));
+        Parser p = new Parser(content);
+        System.out.println(p.toString());
+    }
+
     private static void testParse(String javaFile) throws Exception {
         byte[] data = FileUtils.readBytes(new File(javaFile));
         String content = ClearCommentUtils.clearComment(new String(data));
         Parser p = new Parser(content);
         System.out.println(p.toString());
+    }
+
+    private static void testAnnotation() throws Exception {
+        final String src = "@CGenerate(params = \"F\", returnType = \"\", other=1, bbb=true)" +
+                "@CGenerate @CGenerate(p=1) ";
+        System.out.println(Annotation.parseMultiAnnotation(src));
+    }
+
+    private static void testMethodParams() throws Exception {
+        final String src = "xxxx(final int a,String b , Map<String, Object > c, List<> d)asgasfa";
+        System.out.println(Parser.parseMethodParams(src.toCharArray(), src.indexOf('('), src.length()));
     }
 }

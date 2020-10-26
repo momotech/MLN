@@ -159,6 +159,7 @@ public class Statistic {
                     JSONObject methodInfo = jo.optJSONObject(className);
                     if (methodInfo == null)
                         continue;
+                    bsi.otherInfo = methodInfo.toString();
                     Iterator<String> methods = methodInfo.keys();
                     while (methods.hasNext()) {
                         String method = methods.next();
@@ -268,6 +269,10 @@ public class Statistic {
          * @see #maxTime
          */
         public final List<String> overTimeInfo;
+        /**
+         * 其他信息
+         */
+        public String otherInfo;
 
         public Info() {
             this(0, null);
@@ -290,6 +295,7 @@ public class Statistic {
                     ", allTime=" + allTime +
                     ", overTimeCount=" + overTimeCount +
                     ", overTimeInfo=" + overTimeInfo +
+                    ", otherInfo=" + otherInfo +
                     '}';
         }
     }

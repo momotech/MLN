@@ -140,9 +140,7 @@ import com.immomo.mls.wrapper.Register;
 import org.luaj.vm2.Globals;
 import org.luaj.vm2.LuaUserdata;
 import org.luaj.vm2.utils.IGlobalsUserdata;
-import org.luaj.vm2.utils.ILog;
 import org.luaj.vm2.utils.MemoryMonitor;
-import org.luaj.vm2.utils.NativeLog;
 import org.luaj.vm2.utils.ResourceFinder;
 
 import java.io.File;
@@ -314,17 +312,6 @@ public class MLSEngine {
                     return cache;
                 }
             });
-            NativeLog.setLogImpl(new ILog() {
-                @Override
-                public void l(long L, String tag, String log) {
-                    HotReloadHelper.log(log);
-                }
-
-                @Override
-                public void e(long L, String tag, String log) {
-                    HotReloadHelper.onError(log);
-                }
-            });
             MLSEngine.context = context;
             DEBUG = debug;
             MLNCore.DEBUG = debug;
@@ -367,6 +354,7 @@ public class MLSEngine {
                 .registerSingleInsance(registerSingleInstance())
                 .registerSC(registerStaticClass())
                 .registerConstants(registerConstants())
+                .registerNewUD(registerNewUD())
                 ;
     }
 
@@ -471,8 +459,6 @@ public class MLSEngine {
                 Register.newUDHolder(UDSize.LUA_CLASS_NAME, UDSize.class, false, UDSize.methods),
                 Register.newUDHolder(UDPoint.LUA_CLASS_NAME, UDPoint.class, false, UDPoint.methods),
                 Register.newUDHolder(UDRect.LUA_CLASS_NAME, UDRect.class, false, UDRect.methods),
-                Register.newUDHolder(UDMap.LUA_CLASS_NAME, UDMap.class, false, UDMap.methods),
-                Register.newUDHolder(UDArray.LUA_CLASS_NAME, UDArray.class, false, UDArray.methods),
                 Register.newUDHolder(UDWindowManager.LUA_CLASS_NAME, UDWindowManager.class, false,true, UDWindowManager.methods),
 
                 Register.newUDHolder(UDPath.LUA_CLASS_NAME, UDPath.class, false, UDPath.methods),
@@ -497,6 +483,13 @@ public class MLSEngine {
                 Register.newUDHolderWithLuaClass(UDTranslateAnimation.LUA_CLASS_NAME, UDTranslateAnimation.class, false),
                 Register.newUDHolderWithLuaClass(UDAnimationSet.LUA_CLASS_NAME, UDAnimationSet.class, false),
                 /// end
+        };
+    }
+
+    public static Register.NewUDHolder[] registerNewUD() {
+        return new Register.NewUDHolder[] {
+                new Register.NewUDHolder(UDArray.LUA_CLASS_NAME, UDArray.class),
+                new Register.NewUDHolder(UDMap.LUA_CLASS_NAME, UDMap.class)
         };
     }
 
@@ -531,7 +524,7 @@ public class MLSEngine {
                 new MLSBuilder.SIHolder(SIEventCenter.LUA_CLASS_NAME, SIEventCenter.class),
                 new MLSBuilder.SIHolder(SINetworkReachability.LUA_CLASS_NAME, SINetworkReachability.class),
                 new MLSBuilder.SIHolder(SILoading.LUA_CLASS_NAME, SILoading.class),
-                new MLSBuilder.SIHolder(SINavigator.LUA_CLASS_NAME, SINavigator.class),
+                new MLSBuilder.SIHolder(SINavigator.LUA_CLASS_NAME, SINavigator.class,true),
                 new MLSBuilder.SIHolder(SICornerRadiusManager.LUA_CLASS_NAME, SICornerRadiusManager.class),
         };
     }

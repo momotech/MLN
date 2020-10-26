@@ -40,7 +40,6 @@ public class DataSource {
     private Map<String, UDView> listViews;
 
 
-
     /**
      * listView已经绑定的Cell的属性
      */
@@ -49,7 +48,8 @@ public class DataSource {
     /**
      * key为watch添加的IPropertyCallback的hashCode
      */
-    private Map<String,String> callBackKeys;
+    private Map<String,CallBackWrap> callBackKeys;
+
 
 
     public DataSource() {
@@ -132,23 +132,23 @@ public class DataSource {
      * @param callBackId
      * @return
      */
-    public String getObservableTag(String callBackId) {
+    public CallBackWrap getObservableTag(String callBackId) {
         if(callBackKeys ==null) {
             return null;
         }
-        return callBackKeys.get(callBackId);
+        return callBackKeys.remove(callBackId);
     }
 
     /**
      * 添加watch的iPropertyCallback
      * @param callBackId
-     * @param tag
+     * @param callBackWrap
      */
-    public void addCallbackId(String callBackId, String tag) {
+    public void addCallbackId(String callBackId, CallBackWrap callBackWrap) {
         if(callBackKeys ==null) {
             callBackKeys = new HashMap<>(CAPACITY);
         }
-        callBackKeys.put(callBackId,tag);
+        callBackKeys.put(callBackId,callBackWrap);
     }
 
 

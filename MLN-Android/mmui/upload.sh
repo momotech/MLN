@@ -3,7 +3,6 @@
 function changeSettingBefore {
     sed -i '' "s/\(.*\)/\/\/\1/g" ../settings.gradle
     sed -i '' "s/\/*\(.*mmui\)/\1/g" ../settings.gradle
-#    sed -i '' "s/\/*\(.*yoga\)/\1/g" ../settings.gradle
 
     sed -i '' "s/\(.*implementation_debug\).*/\1 = false/g" ../build.gradle
 }
@@ -28,6 +27,7 @@ closeNativeInfo
 
 echo '--------------task:bintrayUpload--------------'
 ./../gradlew :mmui:bintrayUpload
-
+ret=$?
 changeSettingAfter
 openNativeInfo
+exit $ret

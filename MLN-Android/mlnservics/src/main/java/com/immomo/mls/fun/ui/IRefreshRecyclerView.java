@@ -54,20 +54,6 @@ public interface IRefreshRecyclerView {
 
     Point getContentOffset();
 
-    boolean isViewPager();
-
-    void setViewpager(boolean viewpager);
-
-    /**
-     * 只针对viewPager设计的接口
-     */
-    void pagerContentOffset(float x, float y);
-
-    /**
-     * 只针对viewPager设计的接口
-     */
-    float[] getPagerContentOffset();
-
     /**
      * 滑动到指定位置
      */

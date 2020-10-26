@@ -19,7 +19,7 @@
 
 extern int getErrorFunctionIndex(lua_State *L);
 
-#define check_and_call_method(L, n, params)                             \
+#define call_method_return(L, n, p, params, jr, dr)                     \
             lua_lock(L);                                                \
             int erridx = getErrorFunctionIndex(L);                      \
             int oldTop = lua_gettop(L);                                 \
@@ -28,18 +28,21 @@ extern int getErrorFunctionIndex(lua_State *L);
                 throwInvokeError(env, "function is destroyed.");        \
                 lua_settop(L, oldTop);                                  \
                 lua_unlock(L);                                          \
-                return;                                                 \
+                dr;                                                     \
             }                                                           \
             params;                                                     \
-            int ret = lua_pcall(L, n, 0, erridx);                       \
+            int ret = lua_pcall(L, n, p, erridx);                       \
             if (ret != 0) {                                             \
                 throwJavaError(env, L);                                 \
                 lua_settop(L, oldTop);                                  \
                 lua_unlock(L);                                          \
-                return;                                                 \
+                dr;                                                     \
             }                                                           \
+            jr;                                                         \
             lua_settop(L, oldTop);                                      \
             lua_unlock(L);
+
+#define check_and_call_method(L, n, params) call_method_return((L), (n), 0, params, ((void *)0), return)
 
 jobjectArray jni_invoke(JNIEnv *env, jobject jobj, jlong L, jlong function, jobjectArray params, jint rc);
 

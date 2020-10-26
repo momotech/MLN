@@ -7,9 +7,6 @@
  */
 package com.immomo.mmui.databinding.core;
 
-import com.immomo.mls.util.LogUtil;
-import com.immomo.mmui.databinding.annotation.IntColor;
-import com.immomo.mmui.databinding.bean.MMUIColor;
 import com.immomo.mmui.databinding.bean.ObservableField;
 import com.immomo.mmui.databinding.bean.ObservableList;
 import com.immomo.mmui.databinding.bean.ObservableMap;
@@ -91,26 +88,4 @@ public class GetSetReflexAdapter implements IGetSet {
 
 
 
-    /**
-     * 方法上有注解
-     * @param temp
-     * @param fieldName
-     *
-     * @return
-     */
-    private static boolean isHaveColorInt(Object temp, String fieldName) {
-        Class clazz = temp.getClass();
-        Field field;
-        try {
-            field = clazz.getDeclaredField(fieldName);
-            field.setAccessible(true);
-            IntColor colorInt = field.getAnnotation(IntColor.class);
-            if(colorInt !=null) {
-                return true;
-            }
-        } catch (NoSuchFieldException e) {
-            LogUtil.e(e);
-        }
-        return false;
-    }
 }

@@ -9,6 +9,7 @@ package com.immomo.mmui.ui;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 import android.view.View;
 
 import androidx.annotation.Nullable;
@@ -25,6 +26,8 @@ import com.immomo.mls.provider.ImageProvider;
 import com.immomo.mls.weight.load.ILoadViewDelegete;
 import com.immomo.mls.weight.load.ScrollableView;
 import com.immomo.mmui.ILView;
+import com.immomo.mmui.gesture.ArgoTouchUtil;
+import com.immomo.mmui.ud.recycler.UDRecyclerView;
 
 /**
  * Created by XiongFangyu on 2018/7/20.
@@ -33,12 +36,14 @@ public class MLSRecyclerView extends RecyclerView implements ScrollableView {
     private boolean scrolled = false;
     private boolean footerShow = false;
     private boolean disallowFling = false;
+    private boolean flingListener = false;
     private ILoadViewDelegete loadViewDelegete;
     private OnLoadListener onLoadListener;
     private int[] staggeredGridCache = null;
     private float loadThreshold = 0;
     private int mToPosition; //记录scrollCellToPosition的 位置
     private ILView.ViewLifeCycleCallback cycleCallback;
+    private UDRecyclerView userdata;
 
     public MLSRecyclerView(Context context, AttributeSet attr) {
         super(context, attr);
@@ -52,8 +57,8 @@ public class MLSRecyclerView extends RecyclerView implements ScrollableView {
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 if (MLSConfigs.lazyFillCellData) {
                     Adapter adapter = getAdapter();
-                    if (adapter instanceof com.immomo.mls.fun.other.Adapter) {
-                        ((com.immomo.mls.fun.other.Adapter) adapter).setRecyclerState(newState);
+                    if (adapter instanceof com.immomo.mmui.ud.recycler.Adapter) {
+                        ((com.immomo.mmui.ud.recycler.Adapter) adapter).setRecyclerState(newState);
                     }
                 }
                 if (newState == RecyclerView.SCROLL_STATE_IDLE) {
@@ -141,6 +146,10 @@ public class MLSRecyclerView extends RecyclerView implements ScrollableView {
         });
         setVerticalScrollBarEnabled(false);
         setHorizontalScrollBarEnabled(false);
+    }
+
+    public void setUserdata(UDRecyclerView userdata){
+        this.userdata = userdata;
     }
 
     public void setLoadThreshold(float loadThreshold) {
@@ -324,12 +333,46 @@ public class MLSRecyclerView extends RecyclerView implements ScrollableView {
         return disallowFling;
     }
 
+    public void setFlingListener(boolean flingListener) {
+        this.flingListener = flingListener;
+    }
+
+    public boolean isFlingListener() {
+        return flingListener;
+    }
+
     @Override
     public boolean fling(int velocityX, int velocityY) {
-        if (disallowFling) {
+        if (disallowFling && !flingListener) {
             return false;
         } else {
             return super.fling(velocityX, velocityY);
         }
+    }
+
+    @Override
+    public boolean onInterceptTouchEvent(MotionEvent ev) {
+        // 组合控件的事件拦截，交个组合控件的根节点进行。由于要重写onInterceptTouchEvent，无法统一。
+        Boolean notDispatch = userdata.isNotDispatch();
+        if (notDispatch == null) { // 默认由控件自己处理
+            return super.onInterceptTouchEvent(ev);
+        } else {
+            return notDispatch;
+        }
+    }
+
+    // 无论自己的事件流还是子view的事件流均会走此方法，因此可以在此处进行事件流控制
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        ArgoTouchUtil.createNewDownTouch(userdata, ev);
+        return super.dispatchTouchEvent(ev);
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent ev) {
+        if (ev.getActionMasked() == MotionEvent.ACTION_POINTER_DOWN) {
+            ArgoTouchUtil.searchPointerView(userdata, ev);
+        }
+        return super.onTouchEvent(ev);
     }
 }

@@ -24,6 +24,7 @@ import com.immomo.mls.LuaViewManager;
 import com.immomo.mls.MLSEngine;
 import com.immomo.mls.MLSInstance;
 import com.immomo.mls.fun.other.Size;
+import com.immomo.mmui.ud.AdapterLuaFunction;
 import com.immomo.mmui.ud.UDColor;
 import com.immomo.mls.fun.ui.IRefreshRecyclerView;
 import com.immomo.mls.fun.ui.OnLoadListener;
@@ -35,6 +36,7 @@ import org.luaj.vm2.JavaUserdata;
 import org.luaj.vm2.LuaFunction;
 import org.luaj.vm2.LuaNumber;
 import org.luaj.vm2.LuaValue;
+import org.luaj.vm2.utils.CGenerate;
 import org.luaj.vm2.utils.LuaApiUsed;
 
 import java.util.HashMap;
@@ -47,72 +49,46 @@ import java.util.concurrent.atomic.AtomicInteger;
 @LuaApiUsed
 public abstract class UDBaseRecyclerAdapter<L extends UDBaseRecyclerLayout> extends JavaUserdata implements OnLoadListener {
     public static final String LUA_CLASS_NAME = "__BaseRecyclerAdapter";
-    public static final String[] methods = new String[]{
-            "showPressed",
-            "pressedColor",
-            "reuseId",
-            "initCell",
-            "initCellByReuseId",
-            "fillCellData",
-            "fillCellDataByReuseId",
-            "headerValid",
-            "initHeader",
-            "fillHeaderData",
-            "sectionCount",
-            "rowCount",
-            "editParam",
-            "editAction",
-            "selectedRow",
-            "longPressRow",
-            "selectedRowByReuseId",
-            "longPressRowByReuseId",
-            "cellDidDisappear",
-            "cellDidDisappearByReuseId",
-            "cellWillAppear",
-            "cellWillAppearByReuseId",
-            "headerDidDisappear",
-            "headerWillAppear",
-    };
     //(section,row) 返回不同类型的id 字符串
-    private LuaFunction reuseIdDelegate;
+    private AdapterLuaFunction reuseIdDelegate;
     // 普通类型初始化view的函数
     private LuaFunction initCellDelegate;
     //type类型初始化view的函数，若设置，则没有找到的type直接报错
     private Map<String, LuaFunction> typeCellDelegate;
     //(cell,section,row) 设置普通类型
-    private LuaFunction bindDataDelegate;
+    private AdapterLuaFunction bindDataDelegate;
     //(cell,section,row) 设置普通类型，若设置，则没有找到的type直接报错
-    private Map<String, LuaFunction> bindTypeDataDelegate;
+    private Map<String, AdapterLuaFunction> bindTypeDataDelegate;
     // Header是否开启
-    private LuaFunction headerValidDelegate;
+    private AdapterLuaFunction headerValidDelegate;
     // Header类型初始化view的函数
     private LuaFunction initHeaderDelegate;
     //(cell,section,row) 设置Header类型
-    private LuaFunction bindHeaderDelegate;
+    private AdapterLuaFunction bindHeaderDelegate;
     //返回由多少组多数
-    private LuaFunction sectionCountDelegate;
+    private AdapterLuaFunction sectionCountDelegate;
     //(section) 返回某组有多少数据
-    private LuaFunction rowCountDelegate;
+    private AdapterLuaFunction rowCountDelegate;
 
     //(cell,section,row) 普通item的点击事件
-    private LuaFunction clickDelegate;
+    private AdapterLuaFunction clickDelegate;
 
     //(cell,section,row) 普通item的 长按事件
-    private LuaFunction clickLongDelegate;
+    private AdapterLuaFunction clickLongDelegate;
 
     //(cell,section,row) 特殊item的点击事件，设置后，没找到的type报错
-    private Map<String, LuaFunction> typeClickDelegate;
+    private Map<String, AdapterLuaFunction> typeClickDelegate;
 
     //(cell,section,row) 特殊item的长按事件，设置后，没找到的type报错
-    private Map<String, LuaFunction> typeLongClickDelegate;
+    private Map<String, AdapterLuaFunction> typeLongClickDelegate;
 
 
     //(cell, section, row) item即将消失时回调
-    private LuaFunction cellDisappearDelegate;
-    private Map<String, LuaFunction> cellDisappearTypeDelegate;
+    private AdapterLuaFunction cellDisappearDelegate;
+    private Map<String, AdapterLuaFunction> cellDisappearTypeDelegate;
     //Callback(cell, section, row)
-    private LuaFunction cellAppearDelegate;
-    private Map<String, LuaFunction> cellAppearTypeDelegate;
+    private AdapterLuaFunction cellAppearDelegate;
+    private Map<String, AdapterLuaFunction> cellAppearTypeDelegate;
     //header消失时回调
     private LuaFunction headerDisappearDelegate;
     //header显示时回调
@@ -121,6 +97,9 @@ public abstract class UDBaseRecyclerAdapter<L extends UDBaseRecyclerLayout> exte
     public boolean showPressed = false;
     //点击后的高亮颜色
     public int pressedColor;
+    private boolean pressedColorSet = false;
+
+    private UDColor returnColor;
 
     private static final int DEFAULT_PRESSED_COLOR = 0xFFD3D3D3;
     DefaultItemAnimator mDefaultItemAnimator;
@@ -136,20 +115,9 @@ public abstract class UDBaseRecyclerAdapter<L extends UDBaseRecyclerLayout> exte
      * 所有id缓存，reload的时候清除
      */
     private SparseArray<String> reuseIdCache;
-    /**
-     * 每个position的点击事件
-     */
-    private SparseArray<View.OnClickListener> viewClickCache;
-
-    /**
-     * 每个position的 长按事件
-     */
-    private SparseArray<View.OnLongClickListener> viewLongClickCache;
 
     private final IDGenerator idGenerator;
     private IDGenerator recycledViewPoolIdGenerator;
-
-    private final ItemIDGenerator itemIDGenerator;
 
     protected ILoadViewDelegete loadViewDelegete;
     private OnLoadListener onLoadListener;
@@ -164,14 +132,18 @@ public abstract class UDBaseRecyclerAdapter<L extends UDBaseRecyclerLayout> exte
     private boolean reloadWhenViewSizeInit = false;
     private boolean notifyWhenViewSizeInit = false;
     protected int orientation = RecyclerView.VERTICAL;
+    protected View mRecyclerView;
 
+    @CGenerate(defaultConstructor = true)
     @LuaApiUsed
-    public UDBaseRecyclerAdapter(long L, LuaValue[] v) {
-        super(L, v);
+    public UDBaseRecyclerAdapter(long L) {
+        super(L, null);
         idGenerator = new IDGenerator();
         pressedColor = DEFAULT_PRESSED_COLOR;
-        itemIDGenerator = new ItemIDGenerator();
+        pressedColorSet = false;
     }
+    public static native void _init();
+    public static native void _register(long l, String parent);
 
     public Context getContext() {
         LuaViewManager m = (LuaViewManager) globals.getJavaUserdata();
@@ -247,8 +219,6 @@ public abstract class UDBaseRecyclerAdapter<L extends UDBaseRecyclerLayout> exte
         int position = getPositionBySectionAndRow(section, row);
         notifyItemInserted(position);
     }
-
-    View mRecyclerView;
 
     public void setRecyclerView(View recyclerView) {
         mRecyclerView = recyclerView;
@@ -343,44 +313,71 @@ public abstract class UDBaseRecyclerAdapter<L extends UDBaseRecyclerLayout> exte
      * @return
      */
     public abstract int getCellViewHeight();
+
+    public boolean hasClickFor(int type) {
+        if (clickDelegate != null)
+            return true;
+        return typeClickDelegate != null && typeClickDelegate.get(getReuseIdByType(type)) != null;
+    }
+
+    public boolean hasLongClickFor(int type) {
+        if (clickLongDelegate != null)
+            return true;
+        return typeLongClickDelegate != null && typeLongClickDelegate.get(getReuseIdByType(type)) != null;
+    }
+
+    public void doCellClick(LuaValue cell, int position) {
+        if (!canDoClick())
+            return;
+        AdapterLuaFunction delegate = null;
+        if (typeClickDelegate != null) {
+            delegate = typeClickDelegate.get(getReuseId(position));
+        }
+        if (delegate == null) {
+            delegate = clickDelegate;
+        }
+        if (delegate != null) {
+            int[] sr = getSectionAndRowIn(position);
+            delegate.fastInvoke(cell, sr[0] + 1, sr[1] + 1);
+        }
+    }
+
+    public boolean doCellLongClick(LuaValue cell, int position) {
+        if (!canDoClick())
+            return true;
+
+        AdapterLuaFunction delegate = null;
+        if (typeLongClickDelegate != null) {
+            delegate = typeLongClickDelegate.get(getReuseId(position));
+        }
+        if (delegate == null)
+            delegate = clickLongDelegate;
+
+        if (delegate != null) {
+            int[] sr = getSectionAndRowIn(position);
+            delegate.fastInvoke(cell, sr[0] + 1, sr[1] + 1);
+        }
+
+        return true;
+    }
     //</editor-fold>
 
     //<editor-fold desc="API">
 
     @LuaApiUsed
-    public LuaValue[] showPressed(LuaValue[] values) {
-        if (values.length >= 1 && values[0] != null) {
-            this.showPressed = values[0].toBoolean();
-            if (mAdapter != null) {
-                mAdapter.notifyDataSetChanged();
-            }
-            return null;
-        }
-        return LuaValue.rBoolean(getShowPressed());
-    }
-
-    public boolean getShowPressed() {
+    public boolean isShowPressed() {
         return showPressed;
     }
 
     @LuaApiUsed
-    public LuaValue[] pressedColor(LuaValue[] values) {
-        if (values.length == 1) {
-            if (values[0] == LuaValue.Nil())
-                this.pressedColor = DEFAULT_PRESSED_COLOR;
-            else
-                this.pressedColor = ((UDColor) values[0]).getColor();
-            if (mAdapter != null) {
-                mAdapter.notifyDataSetChanged();
-            }
-            return null;
+    public void setShowPressed(boolean showPressed) {
+        this.showPressed = showPressed;
+        if (mAdapter != null) {
+            mAdapter.notifyDataSetChanged();
         }
-
-        return varargsOf(getPressedColor());
     }
 
-    private UDColor returnColor;
-
+    @LuaApiUsed
     public UDColor getPressedColor() {
         if (returnColor == null) {
             returnColor = new UDColor(globals, pressedColor);
@@ -390,15 +387,32 @@ public abstract class UDBaseRecyclerAdapter<L extends UDBaseRecyclerLayout> exte
         return returnColor;
     }
 
+    @LuaApiUsed
+    public void setPressedColor(UDColor color) {
+        if (color == null) {
+            pressedColor = DEFAULT_PRESSED_COLOR;
+            pressedColorSet = false;
+        } else {
+            pressedColor = color.getColor();
+            pressedColorSet = true;
+        }
+        if (mAdapter != null) {
+            mAdapter.notifyDataSetChanged();
+        }
+    }
+
     /**
-     * (function(section,row)) 返回不同类型的id 字符串
+     * (string:function(section,row)) 返回不同类型的id 字符串
      * <p>
      * fun
      */
+    @CGenerate(params = "F")
     @LuaApiUsed
-    public LuaValue[] reuseId(LuaValue[] values) {
-        reuseIdDelegate = values[0].toLuaFunction();
-        return null;
+    public void reuseId(long f) {
+        if (f == 0)
+            reuseIdDelegate = null;
+        else
+            reuseIdDelegate = new AdapterLuaFunction(globals, f);
     }
 
     /**
@@ -407,9 +421,8 @@ public abstract class UDBaseRecyclerAdapter<L extends UDBaseRecyclerLayout> exte
      * fun
      */
     @LuaApiUsed
-    public LuaValue[] initCell(LuaValue[] values) {
-        initCellDelegate = values[0].toLuaFunction();
-        return null;
+    public void initCell(LuaFunction f) {
+        initCellDelegate = f;
     }
 
     /**
@@ -419,24 +432,25 @@ public abstract class UDBaseRecyclerAdapter<L extends UDBaseRecyclerLayout> exte
      * fun
      */
     @LuaApiUsed
-    public LuaValue[] initCellByReuseId(LuaValue[] values) {
+    public void initCellByReuseId(String t, LuaFunction f) {
         if (typeCellDelegate == null) {
             typeCellDelegate = new HashMap<>();
         }
-        typeCellDelegate.put(values[0].toJavaString(), values[1].toLuaFunction());
-        return null;
+        typeCellDelegate.put(t, f);
     }
 
     /**
-     * (function(cell)) Header是否开启
+     * (boolean:function(cell)) Header是否开启
      * <p>
      * fun
      */
+    @CGenerate(params = "F")
     @LuaApiUsed
-    public LuaValue[] headerValid(LuaValue[] values) {
-        headerValidDelegate = values[0].toLuaFunction();
-
-        return null;
+    public void headerValid(long f) {
+        if (f == 0)
+            headerValidDelegate = null;
+        else
+        headerValidDelegate = new AdapterLuaFunction(globals, f);
     }
 
     /**
@@ -445,10 +459,8 @@ public abstract class UDBaseRecyclerAdapter<L extends UDBaseRecyclerLayout> exte
      * fun
      */
     @LuaApiUsed
-    public LuaValue[] initHeader(LuaValue[] values) {
-        initHeaderDelegate = values[0].toLuaFunction();
-
-        return null;
+    public void initHeader(LuaFunction f) {
+        initHeaderDelegate = f;
     }
 
     /**
@@ -456,18 +468,18 @@ public abstract class UDBaseRecyclerAdapter<L extends UDBaseRecyclerLayout> exte
      * <p>
      * fun
      */
+    @CGenerate(params = "F")
     @LuaApiUsed
-    public LuaValue[] fillHeaderData(LuaValue[] values) {
-        bindHeaderDelegate = values[0].toLuaFunction();
-
-        return null;
+    public void fillHeaderData(long f) {
+        if (f == 0)
+            bindHeaderDelegate = null;
+        else
+        bindHeaderDelegate = new AdapterLuaFunction(globals, f);
     }
 
     protected void initWaterFallHeader() {
         if (headerValidDelegate != null) {
-            LuaValue[] values = headerValidDelegate.invoke(null);
-            boolean valid = (values != null && values.length > 0 && values[0].isBoolean()) && values[0].toBoolean();
-
+            boolean valid = headerValidDelegate.fastInvoke_Z();
             if (valid) {
                 if (mAdapter != null && mAdapter.getHeaderCount() == 0) {
                     mAdapter.addHeaderView(new FrameLayout(getContext()));
@@ -485,10 +497,13 @@ public abstract class UDBaseRecyclerAdapter<L extends UDBaseRecyclerLayout> exte
      * <p>
      * fun
      */
+    @CGenerate(params = "F")
     @LuaApiUsed
-    public LuaValue[] fillCellData(LuaValue[] values) {
-        bindDataDelegate = values[0].toLuaFunction();
-        return null;
+    public void fillCellData(long f) {
+        if (f == 0)
+            bindDataDelegate = null;
+        else
+        bindDataDelegate = new AdapterLuaFunction(globals, f);
     }
 
     /**
@@ -497,35 +512,44 @@ public abstract class UDBaseRecyclerAdapter<L extends UDBaseRecyclerLayout> exte
      * id
      * fun
      */
+    @CGenerate(params = "0F")
     @LuaApiUsed
-    public LuaValue[] fillCellDataByReuseId(LuaValue[] values) {
+    public void fillCellDataByReuseId(String t, long f) {
         if (bindTypeDataDelegate == null) {
             bindTypeDataDelegate = new HashMap<>();
         }
-        bindTypeDataDelegate.put(values[0].toJavaString(), values[1].toLuaFunction());
-        return null;
+        if (f == 0)
+            bindTypeDataDelegate.put(t, null);
+        else
+        bindTypeDataDelegate.put(t, new AdapterLuaFunction(globals, f));
     }
 
     /**
-     * (function()) 返回由多少组多数
+     * (int:function()) 返回由多少组多数
      * <p>
      * fun
      */
+    @CGenerate(params = "F")
     @LuaApiUsed
-    public LuaValue[] sectionCount(LuaValue[] values) {
-        sectionCountDelegate = values[0].toLuaFunction();
-        return null;
+    public void sectionCount(long f) {
+        if (f == 0)
+            sectionCountDelegate = null;
+        else
+        sectionCountDelegate = new AdapterLuaFunction(globals, f);
     }
 
     /**
-     * (function(section)) 返回某组有多少数据
+     * (int:function(section)) 返回某组有多少数据
      * <p>
      * fun
      */
+    @CGenerate(params = "F")
     @LuaApiUsed
-    public LuaValue[] rowCount(LuaValue[] values) {
-        rowCountDelegate = values[0].toLuaFunction();
-        return null;
+    public void rowCount(long f) {
+        if (f == 0)
+            rowCountDelegate = null;
+        else
+            rowCountDelegate = new AdapterLuaFunction(globals, f);
     }
 
     /**
@@ -533,10 +557,13 @@ public abstract class UDBaseRecyclerAdapter<L extends UDBaseRecyclerLayout> exte
      * <p>
      * fun
      */
+    @CGenerate(params = "F")
     @LuaApiUsed
-    public LuaValue[] selectedRow(LuaValue[] values) {
-        clickDelegate = values[0].toLuaFunction();
-        return null;
+    public void selectedRow(long f) {
+        if (f == 0)
+            clickDelegate = null;
+        else
+        clickDelegate = new AdapterLuaFunction(globals, f);
     }
 
     /**
@@ -544,10 +571,13 @@ public abstract class UDBaseRecyclerAdapter<L extends UDBaseRecyclerLayout> exte
      * <p>
      * fun
      */
+    @CGenerate(params = "F")
     @LuaApiUsed
-    public LuaValue[] longPressRow(LuaValue[] values) {
-        clickLongDelegate = values[0].toLuaFunction();
-        return null;
+    public void longPressRow(long f) {
+        if (f == 0)
+            clickLongDelegate = null;
+        else
+        clickLongDelegate = new AdapterLuaFunction(globals, f);
     }
 
     /**
@@ -556,13 +586,16 @@ public abstract class UDBaseRecyclerAdapter<L extends UDBaseRecyclerLayout> exte
      * id
      * fun
      */
+    @CGenerate(params = "0F")
     @LuaApiUsed
-    public LuaValue[] selectedRowByReuseId(LuaValue[] values) {
+    public void selectedRowByReuseId(String t, long f) {
         if (typeClickDelegate == null) {
             typeClickDelegate = new HashMap<>();
         }
-        typeClickDelegate.put(values[0].toJavaString(), values[1].toLuaFunction());
-        return null;
+        if (f == 0)
+            typeClickDelegate.put(t, null);
+        else
+        typeClickDelegate.put(t, new AdapterLuaFunction(globals, f));
     }
 
     /**
@@ -571,13 +604,16 @@ public abstract class UDBaseRecyclerAdapter<L extends UDBaseRecyclerLayout> exte
      * id
      * fun
      */
+    @CGenerate(params = "0F")
     @LuaApiUsed
-    public LuaValue[] longPressRowByReuseId(LuaValue[] values) {
+    public void longPressRowByReuseId(String t, long f) {
         if (typeLongClickDelegate == null) {
             typeLongClickDelegate = new HashMap<>();
         }
-        typeLongClickDelegate.put(values[0].toJavaString(), values[1].toLuaFunction());
-        return null;
+        if (f == 0)
+            typeLongClickDelegate.put(t, null);
+        else
+        typeLongClickDelegate.put(t, new AdapterLuaFunction(globals, f));
     }
 
     /**
@@ -585,8 +621,7 @@ public abstract class UDBaseRecyclerAdapter<L extends UDBaseRecyclerLayout> exte
      * IOS only
      */
     @LuaApiUsed
-    public LuaValue[] editAction(LuaValue[] values) {
-        return null;
+    public void editAction() {
     }
 
     /**
@@ -594,8 +629,7 @@ public abstract class UDBaseRecyclerAdapter<L extends UDBaseRecyclerLayout> exte
      * IOS only
      */
     @LuaApiUsed
-    public LuaValue[] editParam(LuaValue[] values) {
-        return null;
+    public void editParam() {
     }
 
     /**
@@ -603,22 +637,28 @@ public abstract class UDBaseRecyclerAdapter<L extends UDBaseRecyclerLayout> exte
      * <p>
      * fun
      */
+    @CGenerate(params = "F")
     @LuaApiUsed
-    public LuaValue[] cellDidDisappear(LuaValue[] values) {
-        this.cellDisappearDelegate = values[0].toLuaFunction();
-        return null;
+    public void cellDidDisappear(long f) {
+        if (f == 0)
+            cellDisappearDelegate = null;
+        else
+        this.cellDisappearDelegate = new AdapterLuaFunction(globals, f);
     }
 
     /**
      * ('type',Callback(cell, section, row))item显示时回调，设置后，没找到的type报错
      */
+    @CGenerate(params = "0F")
     @LuaApiUsed
-    public LuaValue[] cellDidDisappearByReuseId(LuaValue[] values) {
+    public void cellDidDisappearByReuseId(String t, long f) {
         if (cellDisappearTypeDelegate == null) {
             cellDisappearTypeDelegate = new HashMap<>();
         }
-        cellDisappearTypeDelegate.put(values[0].toJavaString(), values[1].toLuaFunction());
-        return null;
+        if (f == 0)
+            cellDisappearTypeDelegate.put(t, null);
+        else
+        cellDisappearTypeDelegate.put(t, new AdapterLuaFunction(globals, f));
     }
 
     /**
@@ -626,52 +666,52 @@ public abstract class UDBaseRecyclerAdapter<L extends UDBaseRecyclerLayout> exte
      * <p>
      * fun
      */
+    @CGenerate(params = "F")
     @LuaApiUsed
-    public LuaValue[] cellWillAppear(LuaValue[] values) {
-        cellAppearDelegate = values[0].toLuaFunction();
-        return null;
+    public void cellWillAppear(long f) {
+        if (f == 0)
+            cellAppearDelegate = null;
+        else
+        cellAppearDelegate = new AdapterLuaFunction(globals, f);
     }
 
     /**
      * ('type',Callback(cell, section, row))item显示时回调，设置后，没找到的type报错
      */
+    @CGenerate(params = "0F")
     @LuaApiUsed
-    public LuaValue[] cellWillAppearByReuseId(LuaValue[] values) {
+    public void cellWillAppearByReuseId(String t, long f) {
         if (cellAppearTypeDelegate == null) {
             cellAppearTypeDelegate = new HashMap<>();
         }
-        cellAppearTypeDelegate.put(values[0].toJavaString(), values[1].toLuaFunction());
-        return null;
+        if (f == 0)
+            cellAppearTypeDelegate.put(t, null);
+        else
+        cellAppearTypeDelegate.put(t, new AdapterLuaFunction(globals, f));
     }
 
     /**
-     * header消失时回调
+     * header消失时回调 (function())
      * <p>
      * fun
      */
     @LuaApiUsed
-    public LuaValue[] headerDidDisappear(LuaValue[] values) {
-        headerDisappearDelegate = values[0].toLuaFunction();
-        return null;
+    public void headerDidDisappear(LuaFunction f) {
+        headerDisappearDelegate = f;
     }
 
     /**
-     * header显示时回调
+     * header显示时回调 (function())
      * <p>
      * fun
      */
     @LuaApiUsed
-    public LuaValue[] headerWillAppear(LuaValue[] values) {
-        headerAppearDelegate = values[0].toLuaFunction();
-        return null;
+    public void headerWillAppear(LuaFunction f) {
+        headerAppearDelegate = f;
     }
     //</editor-fold>
 
     //<editor-fold desc="adapter 调用">
-    public long getItemId(int pos) {
-        return itemIDGenerator.getIdBy(pos, getViewType(pos));
-    }
-
     /**
      * 获取某个位置的type
      * <p>
@@ -686,48 +726,6 @@ public abstract class UDBaseRecyclerAdapter<L extends UDBaseRecyclerLayout> exte
         }
         return idGenerator.getViewTypeForReuseId(id);
     }
-
-    public @Nullable
-    View.OnClickListener getClickListener(final LuaValue cell, final int position) {
-        if (clickDelegate == null && typeClickDelegate == null)
-            return null;
-        if (viewClickCache == null) {
-            viewClickCache = new SparseArray<>();
-        }
-        View.OnClickListener ret = viewClickCache.get(position);
-        if (ret != null) {
-            if (ret instanceof ClickHelper) {
-                ((ClickHelper) ret).updataListener(cell, position);
-            }
-            return ret;
-        }
-        ret = new ClickListener(cell, position);
-        viewClickCache.put(position, ret);
-        return ret;
-    }
-
-    public @Nullable
-    View.OnLongClickListener getLongClickListener(final LuaValue cell, final int position) {
-        if (clickLongDelegate == null && typeLongClickDelegate == null)
-            return null;
-
-        if (viewLongClickCache == null) {
-            viewLongClickCache = new SparseArray<>();
-        }
-
-        View.OnLongClickListener ret = viewLongClickCache.get(position);
-        if (ret != null) {
-            if (ret instanceof ClickHelper) {
-                ((ClickHelper) ret).updataListener(cell, position);
-            }
-            return ret;
-        }
-
-        ret = new LongClickListener(cell, position);
-        viewLongClickCache.put(position, ret);
-        return ret;
-    }
-
 
     /**
      * 检查view是否初始化成功
@@ -814,9 +812,9 @@ public abstract class UDBaseRecyclerAdapter<L extends UDBaseRecyclerLayout> exte
         if (globals.isDestroyed()) {
             return;
         }
-        if (!AssertUtils.assertFunction(delegate, "initCell callback must be a function", getGlobals()))
+        if (!AssertUtils.assertFunction(delegate, "必须通过initCell将函数设置到adapter中", getGlobals()))
             return;
-        delegate.invoke(varargsOf(cell));
+        delegate.fastInvoke(cell);
     }
 
     /**
@@ -829,31 +827,28 @@ public abstract class UDBaseRecyclerAdapter<L extends UDBaseRecyclerLayout> exte
         LuaFunction delegate;
         delegate = initHeaderDelegate;
         if (delegate != null) {
-            delegate.invoke(varargsOf(cell));
+            delegate.fastInvoke(cell);
         } else {
             ErrorUtils.debugLuaError("initHeader callback must not be nil!", globals);
         }
     }
 
     public void callFillDataHeader(LuaValue cell, int position) {
-        LuaFunction delegate;
-        delegate = bindHeaderDelegate;
-        if (delegate != null) {//fillHeader，不声明不用报错
-            delegate.invoke(varargsOf(cell, toLuaInt(1), toLuaInt(position)));
+        if (bindHeaderDelegate != null) {//fillHeader，不声明不用报错
+            bindHeaderDelegate.fastInvoke(cell, 2, position + 1);
         }
     }
 
     //判断新版Header是否可用(新版支持init,fill，heightforHeader)
     public boolean isNewHeaderValid() {
         if (headerValidDelegate != null) {
-            LuaValue[] values = headerValidDelegate.invoke(null);
-            return values.length > 0 && values[0].toBoolean();
+            return headerValidDelegate.fastInvoke_Z();
         }
         return false;
     }
 
     public void callFillDataCell(LuaValue cell, int position) {
-        LuaFunction delegate = null;
+        AdapterLuaFunction delegate = null;
         if (bindTypeDataDelegate != null) {
             delegate = bindTypeDataDelegate.get(getReuseId(position));
         }
@@ -862,7 +857,7 @@ public abstract class UDBaseRecyclerAdapter<L extends UDBaseRecyclerLayout> exte
         }
         if (delegate != null) {
             int[] sr = getSectionAndRowIn(position);
-            delegate.invoke(varargsOf(cell, toLuaInt(sr[0]), toLuaInt(sr[1])));
+            delegate.fastInvoke(cell, sr[0] + 1, sr[1] + 1);
         }
     }
 
@@ -877,12 +872,12 @@ public abstract class UDBaseRecyclerAdapter<L extends UDBaseRecyclerLayout> exte
 
         if (pos == RecyclerView.NO_POSITION) {
             if (holder.getCell() == null && headerDisappearDelegate != null) {
-                headerDisappearDelegate.invoke(null);
+                headerDisappearDelegate.fastInvoke();
                 return;
             }
 
             String reuseId = idGenerator.getReuseIdByType(holder.getItemViewType());
-            LuaFunction delegate = null;
+            AdapterLuaFunction delegate = null;
             if (cellDisappearTypeDelegate != null) {
                 delegate = cellDisappearTypeDelegate.get(reuseId);
             }
@@ -897,7 +892,7 @@ public abstract class UDBaseRecyclerAdapter<L extends UDBaseRecyclerLayout> exte
                 int[] sr = getSectionAndRowIn(holder.getLayoutPosition() - sc);
                 if (sr == null)
                     return;
-                delegate.invoke(varargsOf(holder.getCell(), LuaNumber.valueOf(sr[0]), LuaNumber.valueOf(sr[1])));
+                delegate.fastInvoke(holder.getCell(), sr[0] + 1, sr[1] + 1);
             }
 
             return;
@@ -905,12 +900,12 @@ public abstract class UDBaseRecyclerAdapter<L extends UDBaseRecyclerLayout> exte
 
         if (pos < sc) {
             if (headerDisappearDelegate != null) {
-                headerDisappearDelegate.invoke(null);
+                headerDisappearDelegate.fastInvoke();
             }
             return;
         }
 
-        LuaFunction delegate = null;
+        AdapterLuaFunction delegate = null;
         int position = pos - sc;
         if (cellDisappearTypeDelegate != null) {
             delegate = cellDisappearTypeDelegate.get(getReuseId(position));
@@ -923,7 +918,7 @@ public abstract class UDBaseRecyclerAdapter<L extends UDBaseRecyclerLayout> exte
             int[] sr = getSectionAndRowIn(position);
             if (sr == null)
                 return;
-            delegate.invoke(varargsOf(holder.getCell(), toLuaInt(sr[0]), toLuaInt(sr[1])));
+            delegate.fastInvoke(holder.getCell(), sr[0] + 1, sr[1] + 1);
         }
     }
 
@@ -934,12 +929,12 @@ public abstract class UDBaseRecyclerAdapter<L extends UDBaseRecyclerLayout> exte
         int pos = holder.getAdapterPosition();
         if (pos < sc) {
             if (headerAppearDelegate != null) {
-                headerAppearDelegate.invoke(null);
+                headerAppearDelegate.fastInvoke();
             }
             return;
         }
 
-        LuaFunction delegate = null;
+        AdapterLuaFunction delegate = null;
         int position = pos - sc;
         if (cellAppearTypeDelegate != null) {
             delegate = cellAppearTypeDelegate.get(getReuseId(position));
@@ -952,7 +947,7 @@ public abstract class UDBaseRecyclerAdapter<L extends UDBaseRecyclerLayout> exte
             int[] sr = getSectionAndRowIn(position);
             if (sr == null)
                 return;
-            delegate.invoke(varargsOf(holder.getCell(), toLuaInt(sr[0]), toLuaInt(sr[1])));
+            delegate.fastInvoke(holder.getCell(), sr[0] + 1, sr[1] + 1);
         }
     }
     //</editor-fold>
@@ -1001,18 +996,8 @@ public abstract class UDBaseRecyclerAdapter<L extends UDBaseRecyclerLayout> exte
         if (rowCountDelegate == null || rowCountDelegate.isNil())
             return null;
         int sectionCount = 0;
-        if (sectionCountDelegate != null && sectionCountDelegate.isFunction()) {
-            LuaValue[] rets = sectionCountDelegate.invoke(null);
-
-            final LuaValue sv;
-            if (rets == null || rets.length == 0) {
-                sv = Nil();
-            } else {
-                sv = rets[0];
-            }
-            if (AssertUtils.assertNumber(sv, sectionCountDelegate, getGlobals())) {
-                sectionCount = sv.toInt();
-            }
+        if (sectionCountDelegate != null) {
+            sectionCount = sectionCountDelegate.fastInvoke_I();
         } else {
             sectionCount = 1;
         }
@@ -1029,16 +1014,9 @@ public abstract class UDBaseRecyclerAdapter<L extends UDBaseRecyclerLayout> exte
         int[] result = new int[resultCount];
         int allCount = 0;
         for (int i = 0; i < resultCount; i += 2) {
-            LuaValue[] rets = rowCountDelegate.invoke(varargsOf(toLuaInt(i >> 1)));
-            final LuaValue rc;
-            if (rets == null || rets.length == 0) {
-                rc = Nil();
-            } else {
-                rc = rets[0];
-            }
+            int rc = rowCountDelegate.fastInvokeI_I((i >> 1) + 1);
             result[i] = allCount;
-            if (AssertUtils.assertNumber(rc, rowCountDelegate, getGlobals()))
-                allCount += rc.toInt();
+            allCount += rc;
             result[i + 1] = allCount;
         }
         if (allCountOut != null)
@@ -1076,17 +1054,10 @@ public abstract class UDBaseRecyclerAdapter<L extends UDBaseRecyclerLayout> exte
             if (sr == null) {
                 return null;
             }
-            LuaValue[] lr = reuseIdDelegate.invoke(varargsOf(toLuaInt(sr[0]), toLuaInt(sr[1])));
-            LuaValue v = lr != null && lr.length > 0 ? lr[0] : Nil();//不return，返回null
-            String result;
-            if (AssertUtils.assertString(v, reuseIdDelegate, getGlobals())) {
-                result = v.toJavaString();
-            } else {
-                result = v.toString();
-            }
+            String result = reuseIdDelegate.fastInvoke_S(sr[0] + 1, sr[1] + 1);
 
-            if (MLSEngine.DEBUG && "".equals(result)) {//统一报错，reuseid不能为""
-                IllegalArgumentException e = new IllegalArgumentException("reuseId  can`t be ”“");
+            if (MLSEngine.DEBUG && result.isEmpty()) {//统一报错，reuseid不能为""
+                IllegalArgumentException e = new IllegalArgumentException("reuseId不能为空字符串");
                 if (!Environment.hook(e, getGlobals())) {
                     throw e;
                 }
@@ -1164,9 +1135,7 @@ public abstract class UDBaseRecyclerAdapter<L extends UDBaseRecyclerLayout> exte
      */
     @CallSuper
     protected void onClearFromIndex(int index) {
-        removeSparseArrayFromStart(viewClickCache, index);
         removeSparseArrayFromStart(reuseIdCache, index);
-        itemIDGenerator.removeIdBy(index);
     }
 
     /**
@@ -1174,13 +1143,9 @@ public abstract class UDBaseRecyclerAdapter<L extends UDBaseRecyclerLayout> exte
      */
     @CallSuper
     protected void onReload() {
-        if (viewClickCache != null) {
-            viewClickCache.clear();
-        }
         if (reuseIdCache != null) {
             reuseIdCache.clear();
         }
-        itemIDGenerator.clear();
         /*if (viewTypeIdCache != null) {
             viewTypeIdCache.clear();
         }
@@ -1249,85 +1214,8 @@ public abstract class UDBaseRecyclerAdapter<L extends UDBaseRecyclerLayout> exte
                 recyclerView.setPadding(paddingValues[0], paddingValues[1] - layout.getlineSpacingPx(), 0, paddingValues[3] - layout.getlineSpacingPx());
             }
         } else if (layout instanceof UDWaterFallLayout) {//瀑布流布局layoutInSet, outRect.left = horizontalSpace / 2
-            recyclerView.setPadding(paddingValues[0] - layout.getItemSpacingPx() / 2, paddingValues[1], paddingValues[2] - layout.getItemSpacingPx() / 2, 0);
+            recyclerView.setPadding(paddingValues[0] - layout.getItemSpacingPx() / 2, paddingValues[1], paddingValues[2] - layout.getItemSpacingPx() / 2, paddingValues[3]);
         }
-    }
-
-    private final class ClickListener implements View.OnClickListener, ClickHelper {
-        private int position;
-        private LuaValue cell;
-
-        ClickListener(LuaValue cell, int position) {
-            this.position = position;
-            this.cell = cell;
-        }
-
-        @Override
-        public void updataListener(LuaValue cell, int position) {
-            this.position = position;
-            this.cell = cell;
-        }
-
-        @Override
-        public void onClick(View v) {
-            if (!canDoClick())
-                return;
-            LuaFunction delegate = null;
-            if (typeClickDelegate != null) {
-                delegate = typeClickDelegate.get(getReuseId(position));
-            }
-            if (delegate == null) {
-                delegate = clickDelegate;
-            }
-            if (delegate != null) {
-                int[] sr = getSectionAndRowIn(position);
-                delegate.invoke(varargsOf(cell, toLuaInt(sr[0]), toLuaInt(sr[1])));
-            }
-        }
-
-    }
-
-
-    private final class LongClickListener implements View.OnLongClickListener, ClickHelper {
-        private int position;
-        private LuaValue cell;
-
-        LongClickListener(LuaValue cell, int position) {
-            this.position = position;
-            this.cell = cell;
-        }
-
-        @Override
-        public void updataListener(LuaValue cell, int position) {
-            this.position = position;
-            this.cell = cell;
-        }
-
-        @Override
-        public boolean onLongClick(View view) {
-
-            if (!canDoClick())
-                return true;
-
-            LuaFunction delegate = null;
-            if (typeLongClickDelegate != null) {
-                delegate = typeLongClickDelegate.get(getReuseId(position));
-            }
-            if (delegate == null)
-                delegate = clickLongDelegate;
-
-            if (delegate != null) {
-                int[] sr = getSectionAndRowIn(position);
-                delegate.invoke(varargsOf(cell, toLuaInt(sr[0]), toLuaInt(sr[1])));
-            }
-
-            return true;
-        }
-
-    }
-
-    private interface ClickHelper {
-        void updataListener(LuaValue cell, int position);
     }
 
     private boolean canDoClick() {

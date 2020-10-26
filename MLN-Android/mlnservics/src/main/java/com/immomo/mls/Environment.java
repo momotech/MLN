@@ -7,10 +7,8 @@
   */
 package com.immomo.mls;
 
-import com.immomo.mls.log.DefaultPrintStream;
-
+import com.immomo.mls.log.ErrorPrintStream;
 import com.immomo.mls.log.ErrorType;
-import com.immomo.mls.log.IPrinter;
 import com.immomo.mls.util.LogUtil;
 
 import org.luaj.vm2.Globals;
@@ -54,8 +52,8 @@ public class Environment {
         LuaViewManager m = (LuaViewManager) globals.getJavaUserdata();
         if (m != null && m.STDOUT != null) {
             PrintStream ps = m.STDOUT;
-            if (ps instanceof DefaultPrintStream) {
-                ((DefaultPrintStream) ps).error(LUA_ERROR + error);
+            if (ps instanceof ErrorPrintStream) {
+                ((ErrorPrintStream) ps).error(LUA_ERROR + error);
             } else {
                 ps.print(LUA_ERROR + error);
                 ps.println();
@@ -64,8 +62,6 @@ public class Environment {
         } else {
             LogUtil.e(t);
         }
-
-        HotReloadHelper.onError(t != null ? t.getMessage() : "null");
     }
 
     public static void errorWithType(ErrorType errorType, Throwable throwable, Globals globals) {
@@ -74,16 +70,14 @@ public class Environment {
         LuaViewManager m = (LuaViewManager) globals.getJavaUserdata();
         if (m != null && m.STDOUT != null) {
             PrintStream ps = m.STDOUT;
-            if (ps instanceof DefaultPrintStream) {
-                ((DefaultPrintStream) ps).error(errorType.getErrorPrefix() + errorMsg, errorType);
+            if (ps instanceof ErrorPrintStream) {
+                ((ErrorPrintStream) ps).error(errorType.getErrorPrefix() + errorMsg, errorType);
             } else {
                 ps.print(errorType.getErrorPrefix() + errorMsg);
                 ps.println();
             }
             m.showPrinterIfNot();
         }
-
-        HotReloadHelper.onError(throwable != null ? throwable.getMessage() : "null");
     }
 
     public static boolean callbackError(Throwable t, Globals g) {

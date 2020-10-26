@@ -22,7 +22,6 @@ import com.immomo.mls.utils.MainThreadExecutor;
 import com.immomo.mls.wrapper.GlobalsContainer;
 
 import org.luaj.vm2.Globals;
-import org.luaj.vm2.utils.LuaApiUsed;
 import org.luaj.vm2.utils.StringReplaceUtils;
 
 import java.io.File;
@@ -46,7 +45,6 @@ import static java.lang.annotation.RetentionPolicy.SOURCE;
 /**
  * Created by Xiong.Fangyu on 2019-07-16
  */
-@LuaApiUsed
 public class HotReloadHelper {
     private static final String TAG = "HotReloadHelper";
     /**
@@ -281,6 +279,9 @@ public class HotReloadHelper {
                     waitReloading();
 
                     File f = new File(getHotReloadPath(), relativeFilePath);
+                    for (Callback cb : callbacks) {
+                        cb.onUpdateFiles(f.getAbsolutePath());
+                    }
                     File parent = f.getParentFile();
                     if (!parent.isDirectory()) {
                         parent.mkdirs();
@@ -537,6 +538,8 @@ public class HotReloadHelper {
 
     public static interface Callback {
 
+        void onUpdateFiles(String f);
+
         void onReload(String path, HashMap<String, String> params, @STATE int state);
 
         boolean reloadFinish();
@@ -548,10 +551,5 @@ public class HotReloadHelper {
         void onConnected(boolean hasCallback);
 
         void onDisConnected();
-    }
-
-    @LuaApiUsed
-    private static void onReportFromLua(long L, String summaryPath, String detailPath) {
-        HotReloadServer.getInstance().onReport(summaryPath, detailPath);
     }
 }

@@ -41,6 +41,9 @@ import java.util.Set;
  * Date: 2020-05-13 14:52
  */
 public class BindingConvertUtils {
+    private static final String COLLECTION_TYPE = "collectionType";
+    private static final int ARRAY_TYPE = 2;
+    private static final int MAP_TYPE = 1;
     /**
      * LTDataBinding.get()返回的数据转换
      * 与普通数据返回有区别
@@ -75,51 +78,47 @@ public class BindingConvertUtils {
         }
 
         if (value instanceof ObservableMap) {
-            ObservableMap observableMap = (ObservableMap)value;
+            ObservableMap observableMap = (ObservableMap) value;
             LuaTable cache = observableMap.getFieldCache(globals);
-            if(cache !=null) {
-                if(DataBinding.isLog) {
-                    Log.d(DataBinding.TAG,"from cache");
+            if (cache != null) {
+                if (DataBinding.isLog) {
+                    Log.d(DataBinding.TAG, "from cache");
                 }
                 return cache;
             }
 
             LuaTable luaTable = toTable(globals, (ObservableMap) value);
-            observableMap.addFieldCache(luaTable);
             return luaTable;
         }
 
         if (value instanceof ObservableList) {
-            ObservableList observableList = (ObservableList)value;
+            ObservableList observableList = (ObservableList) value;
             LuaTable cache = observableList.getFieldCache(globals);
-            if(cache !=null) {
-                if(DataBinding.isLog) {
-                    Log.d(DataBinding.TAG,"from cache");
+            if (cache != null) {
+                if (DataBinding.isLog) {
+                    Log.d(DataBinding.TAG, "from cache");
                 }
                 return cache;
             }
             LuaTable luaTable = toTable(globals, (ObservableList) value);
-            observableList.addFieldCache(luaTable);
             return luaTable;
         }
 
         if (value instanceof ObservableField) {
-            ObservableField observableField = (ObservableField)value;
+            ObservableField observableField = (ObservableField) value;
             LuaTable cache = observableField.getFieldCache(globals);
-            if(cache !=null) {
-                if(DataBinding.isLog) {
-                    Log.d(DataBinding.TAG,"from cache");
+            if (cache != null) {
+                if (DataBinding.isLog) {
+                    Log.d(DataBinding.TAG, "from cache");
                 }
                 return cache;
             }
-            LuaTable luaTable = toTable(globals,(ObservableMap)((ObservableField)value).getFields());
-            observableField.addFieldCache(luaTable);
+            LuaTable luaTable = toTable(globals, (ObservableMap) ((ObservableField) value).getFields());
             return luaTable;
         }
 
         return ConvertUtils.toLuaValue(globals, value);
     }
-
 
 
     /**
@@ -129,9 +128,12 @@ public class BindingConvertUtils {
      * @param map
      * @return
      */
-    public static @NonNull
+    private static @NonNull
     LuaTable toTable(@NonNull Globals g, @NonNull ObservableMap<Object, Object> map) {
         LuaTable ret = LuaTable.create(g);
+        LuaTable metatalbe = LuaTable.create(g);
+        metatalbe.set(COLLECTION_TYPE,MAP_TYPE);
+        ret.setMetatalbe(metatalbe);
         Set<Map.Entry<Object, Object>> entrys = map.entrySet();
         for (Map.Entry<Object, Object> e : entrys) {
             Object v = e.getValue();
@@ -181,9 +183,12 @@ public class BindingConvertUtils {
      * @param list
      * @return
      */
-    public static @NonNull
+    private static @NonNull
     LuaTable toTable(@NonNull Globals g, @NonNull ObservableList list) {
         LuaTable ret = LuaTable.create(g);
+        LuaTable metatalbe = LuaTable.create(g);
+        metatalbe.set(COLLECTION_TYPE,ARRAY_TYPE);
+        ret.setMetatalbe(metatalbe);
         for (int i = 0, l = list.size(); i < l; i++) {
             Object v = list.get(i);
             if (v == null)
@@ -210,7 +215,7 @@ public class BindingConvertUtils {
      * @return
      */
     public static @Nullable
-    Object toNativeValue(@Nullable LuaValue value) {
+    Object toNativeValue(@Nullable LuaValue value,boolean isMock) {
         if (value == null || value.isNil())
             return null;
         if (value instanceof UDView)
@@ -227,12 +232,19 @@ public class BindingConvertUtils {
                 if (v == (long) v)
                     return (long) v;
                 return v;
-            case LuaValue.LUA_TTABLE:
-                if (value.toLuaTable().getn() > 0) {
-                    return toFastObservableList(value.toLuaTable());
+            case LuaValue.LUA_TTABLE: //当luaTable 为空时，根据元表中"collectionType"进行判断array为2,map为1
+                LuaTable luaTable = value.toLuaTable();
+                if (luaTable.isEmpty()) {
+                    LuaTable metatable = luaTable.getMetatable();
+                    if(metatable !=null) {
+                        LuaValue collectionType = metatable.get(COLLECTION_TYPE);
+                        return collectionType instanceof LuaNumber && collectionType.toInt() == ARRAY_TYPE ? new ObservableList<>() : new ObservableMap<>();
+                    } else {
+                        throw new RuntimeException("empty table must user array or map");
+                    }
+                } else {
+                    return luaTable.getn() > 0 ? toFastObservableList(luaTable,isMock) : toFastObservableMap(luaTable,isMock);
                 }
-                return toFastObservableMap(value.toLuaTable());
-
             case LuaValue.LUA_TUSERDATA:
             case LuaValue.LUA_TLIGHTUSERDATA:
                 LuaUserdata ud = value.toUserdata();
@@ -243,16 +255,15 @@ public class BindingConvertUtils {
     }
 
 
-
     public static @NonNull
-    ObservableList toFastObservableList(LuaTable table) {
+    ObservableList toFastObservableList(LuaTable table,boolean isMock) {
         ObservableList ret = new ObservableList();
         if (table != null) {
             DisposableIterator<LuaTable.KV> iterator = table.iterator();
             if (iterator != null) {
                 while (iterator.hasNext()) {
                     LuaTable.KV kv = iterator.next();
-                    ret.add(toNativeValue(kv.value));
+                    ret.add(toNativeValue(kv.value,isMock));
                 }
                 iterator.dispose();
             }
@@ -262,7 +273,7 @@ public class BindingConvertUtils {
 
 
     public static @NonNull
-    ObservableMap toFastObservableMap(LuaTable table) {
+    ObservableMap toFastObservableMap(LuaTable table,boolean isMock) {
         ObservableMap ret = new ObservableMap();
         if (table != null) {
             DisposableIterator<LuaTable.KV> iterator = table.iterator();
@@ -270,7 +281,11 @@ public class BindingConvertUtils {
                 while (iterator.hasNext()) {
                     LuaTable.KV kv = iterator.next();
                     String key = kv.key.toJavaString();
-                    ret.put(key,toNativeValue(kv.value));
+                    if(isMock) {
+                        ret.mock(key, toNativeValue(kv.value,true));
+                    } else {
+                        ret.put(key, toNativeValue(kv.value,false));
+                    }
                 }
                 iterator.dispose();
             }

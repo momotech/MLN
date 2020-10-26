@@ -36,6 +36,7 @@ closeNativeInfo
 
 echo '--------------task:bintrayUpload--------------'
 ./../gradlew :mlnservics:bintrayUpload
-
+ret=$?
 changeSettingAfter
 openNativeInfo
+exit $ret

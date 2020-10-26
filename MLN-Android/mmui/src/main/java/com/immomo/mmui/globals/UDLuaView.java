@@ -16,20 +16,20 @@ import com.immomo.mls.Constants;
 import com.immomo.mls.MLSConfigs;
 import com.immomo.mls.fun.constants.StatusBarStyle;
 import com.immomo.mls.fun.constants.StatusMode;
-import com.immomo.mmui.keyboard.MMUIKeyboardUtil;
-import com.immomo.mmui.ud.UDColor;
 import com.immomo.mls.fun.ud.UDMap;
 import com.immomo.mls.receiver.ConnectionStateChangeBroadcastReceiver;
 import com.immomo.mls.util.AndroidUtil;
 import com.immomo.mls.util.DimenUtil;
+import com.immomo.mmui.keyboard.MMUIKeyboardUtil;
+import com.immomo.mmui.ud.UDColor;
 import com.immomo.mmui.ud.UDNodeGroup;
 import com.immomo.mmui.ud.UDSafeAreaRect;
 import com.immomo.mmui.ud.UDView;
 
-import org.luaj.vm2.LuaBoolean;
 import org.luaj.vm2.LuaFunction;
 import org.luaj.vm2.LuaNumber;
 import org.luaj.vm2.LuaValue;
+import org.luaj.vm2.utils.CGenerate;
 import org.luaj.vm2.utils.LuaApiUsed;
 
 import java.util.HashSet;
@@ -42,42 +42,6 @@ import java.util.Map;
 public class UDLuaView extends UDNodeGroup<LuaView> implements ConnectionStateChangeBroadcastReceiver.OnConnectionChangeListener, MMUIKeyboardUtil.OnKeyboardShowingListener {
     public static final String LUA_CLASS_NAME = "__WINDOW";
     public static final String LUA_SINGLE_NAME = "window";
-
-    public static final String[] methods = {
-            "getLuaVersion",
-            "viewAppear",
-            "viewDisappear",
-            "backKeyPressed",
-            "sizeChanged",
-            "keyboardShowing",
-            "getExtra",
-            "getLuaSource",
-            "onDestory",
-            "onDestroy",
-            "setPageColor",
-            "setStatusBarStyle",
-            "getStatusBarStyle",
-            "stateBarHeight",
-            "statusBarHeight",
-            "navBarHeight",
-            "tabBarHeight",
-            "homeHeight",
-            "homeBarHeight",
-            "canEndEditing",
-            "sizeChangeEnable",
-            "backKeyEnabled",
-            "safeArea",
-            "safeAreaInsetsTop",
-            "safeAreaInsetsBottom",
-            "safeAreaInsetsLeft",
-            "safeAreaInsetsRight",
-            "safeAreaAdapter",
-            "keyBoardHeightChange",
-            "cachePushView",
-            "clearPushView",
-            "statusBarMode",
-            "statusBarColor",
-    };
 
     private LuaFunction viewAppearCallback;
     private LuaFunction viewDisappearCallback;
@@ -96,9 +60,10 @@ public class UDLuaView extends UDNodeGroup<LuaView> implements ConnectionStateCh
     private HashSet<UDView> keyboardViewCache;//缓存键盘弹起后，上移的view。（配合keyboardManager.lua的方法。）
     private boolean isKeyboardShowing;
 
+    @CGenerate(defaultConstructor = true)
     @LuaApiUsed
-    protected UDLuaView(long L, LuaValue[] v) {
-        super(L, v);
+    protected UDLuaView(long L) {
+        super(L);
     }
 
     @Override
@@ -106,134 +71,125 @@ public class UDLuaView extends UDNodeGroup<LuaView> implements ConnectionStateCh
         return new LuaView(getContext(), this);
     }
 
+    //<editor-fold desc="native method">
+    /**
+     * 初始化方法
+     * 反射调用
+     * @see com.immomo.mls.wrapper.Register.NewUDHolder
+     */
+    public static native void _init();
+
+    /**
+     * 注册到虚拟机方法
+     * 反射调用
+     * @see com.immomo.mls.wrapper.Register.NewUDHolder
+     */
+    public static native void _register(long l, String parent);
+    //</editor-fold>
     //<editor-fold desc="API">
+
     @LuaApiUsed
-    public LuaValue[] getLuaVersion(LuaValue[] p) {
-        return rString(getLuaViewManager().scriptVersion);
+    public String getLuaVersion() {
+        return getLuaViewManager().scriptVersion;
     }
 
     @LuaApiUsed
-    public LuaValue[] viewAppear(LuaValue[] p) {
-        viewAppearCallback = p[0].toLuaFunction();
-        return null;
+    public void viewAppear(LuaFunction p) {
+        viewAppearCallback = p;
     }
 
     @LuaApiUsed
-    public LuaValue[] viewDisappear(LuaValue[] p) {
-        viewDisappearCallback = p[0].toLuaFunction();
-        return null;
+    public void viewDisappear(LuaFunction p) {
+        viewDisappearCallback = p;
     }
 
     @LuaApiUsed
-    public LuaValue[] backKeyPressed(LuaValue[] p) {
-        backKeyPressedCallback = p[0].toLuaFunction();
-        return null;
+    public void backKeyPressed(LuaFunction p) {
+        backKeyPressedCallback = p;
     }
 
     boolean backKeyEnabled = true;
 
-    /**
-     * 是否屏蔽返回键操作
-     */
     @LuaApiUsed
-    public LuaValue[] backKeyEnabled(LuaValue[] values) {
-        if (values.length >= 1 && values[0].isBoolean()) {
-            backKeyEnabled = values[0].toBoolean();
-            return null;
-        }
-        return varargsOf(LuaBoolean.valueOf(backKeyEnabled));
+    public boolean isBackKeyEnabled() {
+        return backKeyEnabled;
     }
 
     @LuaApiUsed
-    public LuaValue[] keyBoardHeightChange(LuaValue[] p) {
-        if (p.length>0){
-            keyBoardHeightChangeCallback = p[0].isFunction() ? p[0].toLuaFunction() : null;
-            final LuaView view = getView();
-            if (view != null) {
-                if (keyboardShowingCallback != null
+    public void setBackKeyEnabled(boolean backKeyEnabled) {
+        this.backKeyEnabled = backKeyEnabled;
+    }
+
+    @LuaApiUsed
+    public void keyBoardHeightChange(LuaFunction p) {
+        keyBoardHeightChangeCallback = p;
+        final LuaView view = getView();
+        if (view != null) {
+            if (keyboardShowingCallback != null
                     && keyBoardHeightChangeCallback != null) {
-                    view.setKeyboardChangeListener();
-                } else {
-                    view.removeKeyboardChangeListener();
-                }
+                view.setKeyboardChangeListener();
+            } else {
+                view.removeKeyboardChangeListener();
             }
         }
-        return null;
     }
 
     @LuaApiUsed
-    public LuaValue[] sizeChanged(LuaValue[] p) {
-        sizeChangedCallback = p[0].toLuaFunction();
-        return null;
+    public void sizeChanged(LuaFunction p) {
+        sizeChangedCallback = p;
     }
 
     @LuaApiUsed
-    public LuaValue[] keyboardShowing(LuaValue[] p) {
-        if (p.length > 0) {
-            keyboardShowingCallback = p[0].isFunction() ? p[0].toLuaFunction() : null;
-            final LuaView view = getView();
-            if (view != null) {
-                if (keyboardShowingCallback != null
+    public void keyboardShowing(LuaFunction p) {
+        keyboardShowingCallback = p;
+        final LuaView view = getView();
+        if (view != null) {
+            if (keyboardShowingCallback != null
                     && keyBoardHeightChangeCallback != null) {
-                    view.setKeyboardChangeListener();
-                } else {
-                    view.removeKeyboardChangeListener();
-                }
+                view.setKeyboardChangeListener();
+            } else {
+                view.removeKeyboardChangeListener();
             }
         }
-        return null;
     }
 
     @LuaApiUsed
-    public LuaValue[] getExtra(LuaValue[] p) {
-        if (extraData == null)
-            return rNil();
-        return varargsOf(extraData);
+    public UDMap getExtra() {
+        return extraData;
     }
 
     @LuaApiUsed
-    public LuaValue[] getLuaSource(LuaValue[] p) {
+    public String getLuaSource() {
         if (extraData != null && extraData.getMap() != null) {
             Object luaSource = extraData.getMap().get(Constants.KEY_LUA_SOURCE);
             if (luaSource instanceof String) {
-                return rString((String) luaSource);
+                return (String) luaSource;
             }
         }
-        return rNil();
-    }
-
-    @Deprecated
-    @LuaApiUsed
-    public LuaValue[] onDestory(LuaValue[] p) {
-        destroyCallback = p[0].toLuaFunction();
         return null;
     }
 
     @LuaApiUsed
-    public LuaValue[] onDestroy(LuaValue[] p) {
-        destroyCallback = p[0].toLuaFunction();
-        return null;
+    public void onDestroy(LuaFunction p) {
+        destroyCallback = p;
     }
 
     @Deprecated
     @LuaApiUsed
-    public LuaValue[] setPageColor(LuaValue[] p) {
+    public void setPageColor(UDColor color) {
         Activity a = getActivity();
         if (a == null)
-            return null;
-        int c = ((UDColor) p[0]).getColor();
+            return;
+        int c = color.getColor();
         AndroidUtil.setStatusBarColor(a, c);
         setBgColor(c);
-        return null;
     }
 
     @LuaApiUsed
-    public LuaValue[] setStatusBarStyle(LuaValue[] p) {
-        int style = p[0].toInt();
-
+    public void setStatusBarStyle(int style) {
         Activity a = getActivity();
         if (a == null || style == statusTextStyle) {
-            return null;
+            return;
         }
 
         switch (style) {
@@ -247,135 +203,126 @@ public class UDLuaView extends UDNodeGroup<LuaView> implements ConnectionStateCh
                 AndroidUtil.showLightStatusBar(true, a);
                 break;
         }
-        return null;
+    }
+
+    @CGenerate(alias = "getStatusBarStyle")
+    @LuaApiUsed
+    public int nGetStatusBarStyle() {
+        return statusTextStyle;
     }
 
     @LuaApiUsed
-    public LuaValue[] getStatusBarStyle(LuaValue[] p) {
-        return rNumber(statusTextStyle);
-    }
-
-    @LuaApiUsed
-    public LuaValue[] statusBarMode(LuaValue[] v) {
+    public void setStatusBarMode(int statusMode) {
         Activity a = getActivity();
-        if (v.length > 0) {
-            int statusMode = v[0].toInt();
-            if (a == null) {
-                return null;
-            }
-            mStatusMode = statusMode;
-            switch (statusMode) {
-                case StatusMode.NON_FULLSCREEN:
-                    AndroidUtil.switchFullscreen(a, false);
-                    break;
-                case StatusMode.FULLSCREEN:
-                    AndroidUtil.switchFullscreen(a, true);
-                    break;
-                case StatusMode.TRANSLUCENT:
-                    AndroidUtil.switchFullscreen(a, false);
-                    AndroidUtil.setTranslucent(a);
-                    break;
-            }
-            return null;
+        if (a == null)
+            return;
+        mStatusMode = statusMode;
+        switch (statusMode) {
+            case StatusMode.NON_FULLSCREEN:
+                AndroidUtil.switchFullscreen(a, false);
+                break;
+            case StatusMode.FULLSCREEN:
+                AndroidUtil.switchFullscreen(a, true);
+                break;
+            case StatusMode.TRANSLUCENT:
+                AndroidUtil.switchFullscreen(a, false);
+                AndroidUtil.setTranslucent(a);
+                break;
         }
+    }
 
-        if(mStatusMode == -1) {
+    @LuaApiUsed
+    public int getStatusBarMode() {
+        Activity a = getActivity();
+        if (mStatusMode == -1) {
             if (a == null) {
-                return rNumber(mStatusMode);
+                return mStatusMode;
             }
             boolean isTranslucent = AndroidUtil.isLayoutStable(a);
             boolean isFullScreen = AndroidUtil.isFullScreen(a);
-            return isFullScreen ? rNumber(StatusMode.FULLSCREEN) :
-                isTranslucent ? rNumber(StatusMode.FULLSCREEN) : rNumber(StatusMode.NON_FULLSCREEN);
+            return isFullScreen ? StatusMode.FULLSCREEN :
+                    isTranslucent ? (StatusMode.FULLSCREEN) : (StatusMode.NON_FULLSCREEN);
         }
-        return rNumber(mStatusMode);
+        return mStatusMode;
     }
 
     @LuaApiUsed
-    public LuaValue[] statusBarColor(LuaValue[] v) {
+    public void setStatusBarColor(UDColor color) {
         Activity a = getActivity();
+        if (a == null)
+            return;
+        AndroidUtil.setStatusColor(a, color.getColor());
+    }
 
-        if (v.length > 0) {
-            if (a == null) {
-                return null;
-            }
-            UDColor color = (UDColor) v[0].toUserdata();
-            AndroidUtil.setStatusColor(a, color.getColor());
+    @LuaApiUsed
+    public UDColor getStatusBarColor() {
+        Activity a = getActivity();
+        if (a == null) {
             return null;
         }
-
-        if (a == null) {
-            return rNil();
-        }
-        return varargsOf(new UDColor(getGlobals(), AndroidUtil.getStatusColor(a)));
-    }
-
-    @Deprecated
-    @LuaApiUsed
-    public LuaValue[] stateBarHeight(LuaValue[] p) {
-        return rNumber(0);
+        return new UDColor(getGlobals(), AndroidUtil.getStatusColor(a));
     }
 
     @LuaApiUsed
-    public LuaValue[] statusBarHeight(LuaValue[] p) {
-        return rNumber(DimenUtil.pxToDpi(AndroidUtil.getStatusBarHeight(getContext())));
+    public float statusBarHeight() {
+        return DimenUtil.pxToDpi(AndroidUtil.getStatusBarHeight(getContext()));
     }
 
     @LuaApiUsed
-    public LuaValue[] navBarHeight(LuaValue[] p) {
-        return rNumber(MLSConfigs.defaultNavBarHeight);
+    public float navBarHeight() {
+        return MLSConfigs.defaultNavBarHeight;
     }
 
     @LuaApiUsed
-    public LuaValue[] tabBarHeight(LuaValue[] p) {
-        return rNumber(0);
+    public float tabBarHeight() {
+        return 0;
     }
 
     @LuaApiUsed
-    public LuaValue[] homeHeight(LuaValue[] p) {
-        return rNumber(0);
+    public float homeHeight() {
+        return 0;
     }
 
     @LuaApiUsed
-    public LuaValue[] homeBarHeight(LuaValue[] p) {
-        return rNumber(DimenUtil.pxToDpi(AndroidUtil.getNavigationBarHeight(getContext())));
+    public float homeBarHeight() {
+        return DimenUtil.pxToDpi(AndroidUtil.getNavigationBarHeight(getContext()));
     }
 
     @LuaApiUsed
-    public LuaValue[] safeArea(LuaValue[] v) {
-        int safeArea = v.length > 0 ? v[0].toInt() : DefaultSafeAreaManager.CLOSE;
+    public void safeArea() {
+        safeArea(DefaultSafeAreaManager.CLOSE);
+    }
 
+    @LuaApiUsed
+    public void safeArea(int safeArea) {
         getSafeArea().safeArea(safeArea, this);
-        return null;
     }
 
     @LuaApiUsed
-    public LuaValue[] safeAreaInsetsTop(LuaValue[] v) {
-        return getSafeArea().safeAreaInsetsTop();
+    public float safeAreaInsetsTop() {
+        return getSafeArea().getSafeAreaInsetsTop();
     }
 
     @LuaApiUsed
-    public LuaValue[] safeAreaInsetsBottom(LuaValue[] v) {
-        return getSafeArea().safeAreaInsetsBottom();
+    public float safeAreaInsetsBottom() {
+        return getSafeArea().getSafeAreaInsetsBottom();
     }
 
     @LuaApiUsed
-    public LuaValue[] safeAreaInsetsLeft(LuaValue[] v) {
-        return getSafeArea().safeAreaInsetsLeft();
+    public float safeAreaInsetsLeft() {
+        return getSafeArea().getSafeAreaInsetsLeft();
     }
 
     @LuaApiUsed
-    public LuaValue[] safeAreaInsetsRight(LuaValue[] v) {
-        return getSafeArea().safeAreaInsetsRight();
+    public float safeAreaInsetsRight() {
+        return getSafeArea().getSafeAreaInsetsRight();
     }
 
     @LuaApiUsed
-    public LuaValue[] safeAreaAdapter(LuaValue[] v) {
-        UDSafeAreaRect safeAreaAdapter = v.length > 0 ? (UDSafeAreaRect) v[0].toUserdata() : null;
-        if (safeAreaAdapter != null) {
-            getSafeArea().setSafeAreaAdapter(safeAreaAdapter,this);
+    public void safeAreaAdapter(UDSafeAreaRect v) {
+        if (v != null) {
+            getSafeArea().setSafeAreaAdapter(v, this);
         }
-        return null;
     }
 
     private DefaultSafeAreaManager getSafeArea() {
@@ -386,49 +333,35 @@ public class UDLuaView extends UDNodeGroup<LuaView> implements ConnectionStateCh
     }
 
     @Override
-    public LuaValue[] padding(LuaValue[] p) {
-        LuaValue[] result = super.padding(p);
+    public void padding(double t, double r, double b, double l) {
+        super.padding(t, r, b, l);
         if (safeAreaManager != null) {
             safeAreaManager.updataArea(this);
         }
-        return result;
     }
 
-    //    @LuaApiUsed
-//    public LuaValue[] canEndEditing(LuaValue[] p) {
-//        return null;
-//    }
-
     @LuaApiUsed
-    public LuaValue[] cachePushView(LuaValue[] var) {
-        if (var.length > 0 && !var[0].isNil()) {
-            UDView bindView = (UDView) var[0].toUserdata();
-            if(keyboardViewCache == null) {
-                keyboardViewCache = new HashSet<>();
-            }
-            keyboardViewCache.add(bindView);
+    public void cachePushView(UDView bindView) {
+        if (keyboardViewCache == null) {
+            keyboardViewCache = new HashSet<>();
         }
-
-        return null;
+        keyboardViewCache.add(bindView);
     }
 
     @LuaApiUsed
-    public LuaValue[] clearPushView(LuaValue[] var){
-        if(keyboardViewCache!=null){
+    public void clearPushView() {
+        if (keyboardViewCache != null) {
             keyboardViewCache.clear();
             keyboardViewCache = null;
         }
-        return null;
     }
+
     /**
      * Android端，私有APi
      */
     @LuaApiUsed
-    public LuaValue[] sizeChangeEnable(LuaValue[] p) {
-        if (p.length != 0 && p[0].isBoolean()) {
-            getView().sizeChangeEnable(p[0].toBoolean());
-        }
-        return null;
+    public void sizeChangeEnable(boolean enable) {
+        getView().sizeChangeEnable(enable);
     }
     //</editor-fold>
 
@@ -451,19 +384,19 @@ public class UDLuaView extends UDNodeGroup<LuaView> implements ConnectionStateCh
 
     public void callbackAppear() {
         if (viewAppearCallback != null) {
-            viewAppearCallback.invoke(null);
+            viewAppearCallback.fastInvoke();
         }
     }
 
     public void callbackDisappear() {
         if (viewDisappearCallback != null) {
-            viewDisappearCallback.invoke(null);
+            viewDisappearCallback.fastInvoke();
         }
     }
 
     public void callBackKeyPressed() {
         if (backKeyPressedCallback != null)
-            backKeyPressedCallback.invoke(null);
+            backKeyPressedCallback.fastInvoke();
     }
 
     public boolean callSizeChanged(int w, int h) {
@@ -472,15 +405,13 @@ public class UDLuaView extends UDNodeGroup<LuaView> implements ConnectionStateCh
         }
         if (sizeChangedCallback == null)
             return false;
-        sizeChangedCallback.invoke(varargsOf(
-                LuaNumber.valueOf(DimenUtil.pxToDpi(w)),
-                LuaNumber.valueOf(DimenUtil.pxToDpi(h))));
+        sizeChangedCallback.fastInvoke(DimenUtil.pxToDpi(w), DimenUtil.pxToDpi(h));
         return true;
     }
 
     public void callDestroy() {
         if (destroyCallback != null) {
-            destroyCallback.invoke(null);
+            destroyCallback.fastInvoke();
         }
 
         if (keyboardViewCache != null) {//销毁键盘弹出，缓存的View
@@ -525,10 +456,6 @@ public class UDLuaView extends UDNodeGroup<LuaView> implements ConnectionStateCh
         return 0;
     }
 
-    public boolean getBackKeyEnabled() {
-        return backKeyEnabled;
-    }
-
     @Override
     public void onConnectionClosed() {
 
@@ -557,14 +484,12 @@ public class UDLuaView extends UDNodeGroup<LuaView> implements ConnectionStateCh
         isKeyboardShowing = isShowing;
         if (keyboardShowingCallback != null)
             keyboardShowingCallback.invoke(varargsOf(isShowing ? True() : False(), LuaNumber.valueOf(isShowing ? DimenUtil.pxToDpi(keyboardHeight) : 0)));
-
     }
 
     @Override
     public void onKeyboardChange(int oldHeight, int newHeight) {
-        if(keyBoardHeightChangeCallback != null) {
-
-            keyBoardHeightChangeCallback.invoke(varargsOf(LuaNumber.valueOf(DimenUtil.pxToDpi(oldHeight)), LuaNumber.valueOf(DimenUtil.pxToDpi(newHeight))));
+        if (keyBoardHeightChangeCallback != null) {
+            keyBoardHeightChangeCallback.fastInvoke(DimenUtil.pxToDpi(oldHeight), DimenUtil.pxToDpi(newHeight));
         }
     }
 }

@@ -15,8 +15,7 @@ import com.immomo.mls.util.AndroidUtil;
 import com.immomo.mls.util.DimenUtil;
 
 import org.luaj.vm2.JavaUserdata;
-import org.luaj.vm2.LuaNumber;
-import org.luaj.vm2.LuaValue;
+import org.luaj.vm2.utils.CGenerate;
 import org.luaj.vm2.utils.LuaApiUsed;
 
 
@@ -26,11 +25,7 @@ import org.luaj.vm2.utils.LuaApiUsed;
 @LuaApiUsed
 public abstract class UDBaseRecyclerLayout<A extends UDBaseRecyclerAdapter> extends JavaUserdata {
     public static final String LUA_CLASS_NAME = "__BaseRecyclerLayout";
-    public static final String[] methods = new String[]{
-            "lineSpacing",
-            "itemSpacing",
 
-    };
     protected int lineSpacing = 0;
     protected int itemSpacing = 0;
 
@@ -40,37 +35,34 @@ public abstract class UDBaseRecyclerLayout<A extends UDBaseRecyclerAdapter> exte
     protected int orientation = RecyclerView.VERTICAL;
     protected A adapter;
 
+    @CGenerate(defaultConstructor = true)
     @LuaApiUsed
-    protected UDBaseRecyclerLayout(long L, LuaValue[] v) {
-        super(L, v);
+    protected UDBaseRecyclerLayout(long L) {
+        super(L, null);
     }
+    public static native void _init();
+    public static native void _register(long l, String parent);
 
     //<editor-fold desc="API">
+
     @LuaApiUsed
-    public LuaValue[] lineSpacing(LuaValue[] values) {
-        if (values.length > 0) {
-            this.lineSpacing = DimenUtil.dpiToPx(values[0]);
-            return null;
-        }
-        return varargsOf(getLineSpacing());
+    public void setLineSpacing(float lineSpacing) {
+        this.lineSpacing = DimenUtil.dpiToPx(lineSpacing);
     }
 
     @LuaApiUsed
-    public LuaValue[] itemSpacing(LuaValue[] values) {
-        if (values.length > 0) {
-            this.itemSpacing = DimenUtil.dpiToPx(values[0]);
-            return null;
-        }
-
-        return varargsOf(getItemSpacing());
+    public void setItemSpacing(float itemSpacing) {
+        this.itemSpacing = DimenUtil.dpiToPx(itemSpacing);
     }
 
-    public LuaValue getLineSpacing() {
-        return LuaNumber.valueOf(DimenUtil.pxToDpi(lineSpacing));
+    @LuaApiUsed
+    public float getLineSpacing() {
+        return DimenUtil.pxToDpi(lineSpacing);
     }
 
-    public LuaValue getItemSpacing() {
-        return LuaNumber.valueOf(DimenUtil.pxToDpi(itemSpacing));
+    @LuaApiUsed
+    public float getItemSpacing() {
+        return DimenUtil.pxToDpi(itemSpacing);
     }
     //</editor-fold>
 

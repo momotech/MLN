@@ -15,12 +15,14 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
-
-import androidx.core.widget.NestedScrollView;
+import android.widget.ScrollView;
 
 import com.immomo.mls.fun.other.Point;
 import com.immomo.mls.fun.other.Size;
 import com.immomo.mls.util.DimenUtil;
+import com.immomo.mmui.gesture.ArgoTouchLink;
+import com.immomo.mmui.gesture.ArgoTouchUtil;
+import com.immomo.mmui.gesture.ICompose;
 import com.immomo.mmui.ud.UDScrollView;
 import com.immomo.mmui.ud.UDVStack;
 import com.immomo.mmui.weight.layout.NodeLayout;
@@ -30,7 +32,7 @@ import java.lang.ref.WeakReference;
 /**
  * Created by XiongFangyu on 2018/8/3.
  */
-public class LuaVerticalScrollView extends NestedScrollView implements IScrollView<UDScrollView> {
+public class LuaVerticalScrollView extends ScrollView implements IScrollView<UDScrollView> {
 
     private LuaNodeLayout mILViewGroup;
 
@@ -50,6 +52,11 @@ public class LuaVerticalScrollView extends NestedScrollView implements IScrollVi
         mILViewGroup = ((LuaNodeLayout)new UDVStack(userdata.getGlobals()).getView());
 
         addView(getContentView(), new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+
+        // 处理组合控件
+        ArgoTouchLink touchLink = ((ICompose) udScrollView.getView()).getTouchLink();
+        touchLink.addChild(getContentView());
+        touchLink.setTarget(this);
     }
 
 
@@ -172,15 +179,31 @@ public class LuaVerticalScrollView extends NestedScrollView implements IScrollVi
                     mTouchActionListener.onTouchDown();
                 break;
         }
-        return super.onInterceptTouchEvent(ev);
+        // 组合控件的事件拦截，交个组合控件的根节点进行。由于要重写onInterceptTouchEvent，无法统一。
+        Boolean notDispatch = udScrollView.isNotDispatch();
+        if (notDispatch == null) { // 默认由控件自己处理
+            return super.onInterceptTouchEvent(ev);
+        } else {
+            return notDispatch;
+        }
+    }
+
+    // 无论自己的事件流还是子view的事件流均会走此方法，因此可以在此处进行事件流控制
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        ArgoTouchUtil.createNewDownTouch(udScrollView, ev);
+        return super.dispatchTouchEvent(ev);
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
         if (!isEnabled())
             return false;
-        switch (ev.getAction()) {
+        switch (ev.getActionMasked()) {
             case MotionEvent.ACTION_DOWN:
+                break;
+            case MotionEvent.ACTION_POINTER_DOWN:
+                ArgoTouchUtil.searchPointerView(udScrollView, ev);
                 break;
             case MotionEvent.ACTION_MOVE:
                 break;

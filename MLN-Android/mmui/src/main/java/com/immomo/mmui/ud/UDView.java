@@ -11,11 +11,13 @@ import android.animation.Animator;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
-import android.view.Gravity;
+import android.view.GestureDetector;
 import android.view.MotionEvent;
+import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
@@ -25,10 +27,18 @@ import android.view.inputmethod.InputMethodManager;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.facebook.yoga.FlexNode;
+import com.facebook.yoga.YogaAlign;
+import com.facebook.yoga.YogaDisplay;
+import com.facebook.yoga.YogaEdge;
+import com.facebook.yoga.YogaJustify;
+import com.facebook.yoga.YogaNodeFactory;
+import com.facebook.yoga.YogaPositionType;
+import com.facebook.yoga.YogaUnit;
+import com.facebook.yoga.YogaValue;
 import com.immomo.mls.LuaViewManager;
 import com.immomo.mls.MLSAdapterContainer;
 import com.immomo.mls.MLSConfigs;
-import com.immomo.mls.MLSEngine;
 import com.immomo.mls.fun.constants.GradientType;
 import com.immomo.mls.fun.constants.MeasurementType;
 import com.immomo.mls.fun.constants.RectCorner;
@@ -41,7 +51,6 @@ import com.immomo.mls.fun.ud.anim.canvasanim.UDBaseAnimation;
 import com.immomo.mls.fun.ud.view.IBorderRadiusView;
 import com.immomo.mls.fun.ud.view.IClipRadius;
 import com.immomo.mls.fun.ud.view.IRippleView;
-import com.immomo.mls.fun.ui.LuaLinearLayout;
 import com.immomo.mls.provider.DrawableLoadCallback;
 import com.immomo.mls.provider.ImageProvider;
 import com.immomo.mls.util.DimenUtil;
@@ -51,41 +60,51 @@ import com.immomo.mls.util.LuaViewUtil;
 import com.immomo.mls.util.RelativePathUtils;
 import com.immomo.mls.utils.AssertUtils;
 import com.immomo.mls.utils.ErrorUtils;
-import com.immomo.mls.utils.convert.ConvertUtils;
 import com.immomo.mmui.ILView;
 import com.immomo.mmui.TouchableView;
-import com.immomo.mmui.weight.layout.IVirtualLayout;
-import com.node.INode;
+import com.immomo.mmui.gesture.ICompose;
+import com.immomo.mmui.weight.layout.IFlexLayout;
+import com.immomo.mmui.weight.layout.IYogaGroup;
+import com.immomo.mmui.weight.layout.NodeLayout;
 
 import org.luaj.vm2.Globals;
 import org.luaj.vm2.JavaUserdata;
 import org.luaj.vm2.LuaFunction;
 import org.luaj.vm2.LuaNumber;
 import org.luaj.vm2.LuaValue;
+import org.luaj.vm2.utils.CGenerate;
 import org.luaj.vm2.utils.LuaApiUsed;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import static android.view.ViewGroup.LayoutParams;
 import static android.view.ViewGroup.MarginLayoutParams;
-import static android.view.ViewGroup.OnClickListener;
-import static android.view.ViewGroup.OnLongClickListener;
 import static android.view.ViewGroup.OnTouchListener;
 import static com.immomo.mls.fun.ud.view.IClipRadius.LEVEL_FORCE_CLIP;
 import static com.immomo.mls.fun.ud.view.IClipRadius.LEVEL_FORCE_NOTCLIP;
 
 /**
  * Created by XiongFangyu on 2018/7/31.
+ * java -jar mlncgen.jar -module mmui -class com.immomo.mmui.ud.UDView -jni bridge -name mmview.c
  */
 @LuaApiUsed
-public abstract class UDView<V extends View, N extends INode> extends JavaUserdata<V> implements ILView.ViewLifeCycleCallback, TouchableView {
+public abstract class UDView<V extends View & ILView> extends JavaUserdata<V> implements ILView.ViewLifeCycleCallback, TouchableView, IFlexLayout{
     public static final String LUA_CLASS_NAME = "__BaseView";
     public static final String[] methods = new String[]{
+        "minWidth",
+        "maxWidth",
+        "minWidthPercent",
+        "maxWidthPercent",
+
+        "minHeight",
+        "maxHeight",
+        "minHeightPercent",
+        "maxHeightPercent",
+
         "anchorPoint",
         "removeFromSuper",
         "superview",
@@ -93,11 +112,7 @@ public abstract class UDView<V extends View, N extends INode> extends JavaUserda
         "removeBlurEffect",
         "openRipple",
         "transformIdentity",
-        "rotation",
-        "translation",
-        "scale",
         "canEndEditing",
-        "alpha",
         "borderWidth",
         "borderColor",
         "bgColor",
@@ -108,29 +123,15 @@ public abstract class UDView<V extends View, N extends INode> extends JavaUserda
         "clipToBounds",
         "setGradientColorWithDirection",
         "setGradientColor",
-        "notClip",
         "enabled",
         "hidden",
-        "onTouch",
-        "onClick",
-        "onLongPress",
         "hasFocus",
         "canFocus",
         "requestFocus",
         "cancelFocus",
-        "setPositionAdjustForKeyboard",
-        "setPositionAdjustForKeyboardAndOffset",
         "convertRelativePointTo",
         "convertPointTo",
         "convertPointFrom",
-        "touchBegin",
-        "touchMove",
-        "touchEnd",
-        "touchCancel",
-        "touchBeginExtension",
-        "touchMoveExtension",
-        "touchEndExtension",
-        "touchCancelExtension",
         "snapshot",
         "startAnimation",
         "clearAnimation",
@@ -141,41 +142,54 @@ public abstract class UDView<V extends View, N extends INode> extends JavaUserda
         "onDraw",
         "onDetachedView",
         "clipToChildren",
-        "setGravity",
         "keyboardDismiss",
-        "centerX",
-        "centerY",
         "layoutComplete",
-        "viewWidth",
-        "viewHeight",
+        "notDispatch",
     };
+
+    //<editor-fold desc="native method">
+    /**
+     * 初始化方法
+     * 反射调用
+     * @see com.immomo.mls.wrapper.Register.NewUDHolder
+     */
+    public static native void _init();
+
+    /**
+     * 注册到虚拟机方法
+     * 反射调用
+     * @see com.immomo.mls.wrapper.Register.NewUDHolder
+     */
+    public static native void _register(long l, String parent);
+    //</editor-fold>
+
+    //normal props
+    private static final int MIN_WIDTH = 7;
+    private static final int MAX_WIDTH = 8;
+    private static final int MIN_WIDTH_PERCENT = 9;
+    private static final int MAX_WIDTH_PERCENT = 10;
+
+    private static final int MIN_HEIGHT = 13;
+    private static final int MAX_HEIGHT = 14;
+    private static final int MIN_HEIGHT_PERCENT = 15;
+    private static final int MAX_HEIGHT_PERCENT = 16;
 
     private List<Animator> animatorCacheList;
 
     private LuaFunction clickCallback;
     private LuaFunction longClickCallback;
-    private LuaFunction touchCallback;
     private LuaFunction detachFunction;
 
     // 配合 IOS 添加
-    private LuaFunction touchBeginCallback;
-    private LuaFunction touchMoveCallback;
-    private LuaFunction touchEndCallback;
-    private LuaFunction touchCancelCallback;
+    private TouchLuaFunction touchBeginCallback, touchMoveCallback, touchEndCallback, touchCancelCallback,
+            touchBeginExtensionCallback, touchMoveExtensionCallback, touchEndExtensionCallback, touchCancelExtensionCallback;
 
-    private LuaFunction touchBeginExtensionCallback;
-    private LuaFunction touchMoveExtensionCallback;
-    private LuaFunction touchEndExtensionCallback;
-    private LuaFunction touchCancelExtensionCallback;
+    private TouchLuaFunction scaleBeginCallback, scalingCallback, scaleEndCallback;
+
     private LuaFunction layoutComplete;
 
     protected LuaFunction onDrawCallback;
     protected UDCanvas udCanvasTemp;//缓存onDraw()的canvas，防止频繁创建
-
-    private HashMap mTouchEventExtensionMap;
-
-    public final @NonNull
-    UDLayoutParams udLayoutParams = new UDLayoutParams();
 
     private float mInitTranslateX = -1;
     private float mInitTranslateY = -1;
@@ -197,13 +211,22 @@ public abstract class UDView<V extends View, N extends INode> extends JavaUserda
     protected int mPaddingBottom;
 
     private boolean allowVirtual = true;//是否允许使用虚拟布局，不代表是虚拟布局
+    private Boolean isNotDispatch = null;//设置事件是否向子view传递
+    private boolean isTouchChange = false;//设置是否改变事件流
+    private boolean childFirstHandlePointers = false; //设置是否子View需要强制处理多指操作
+    private boolean needHandlePointers = false;//设置是否需要处理多指
+    private GestureDetector gestureDetector;
+    private boolean click;
+    private ScaleGestureDetector scaleGestureDetector;
+    private Matrix scaleMatrix;
 
     protected final @NonNull
     V view;
 
     protected @NonNull
-    N mNode;
+    FlexNode mNode;
 
+    //<editor-fold desc="constructor">
     /**
      * 必须有传入long和LuaValue[]的构造方法，且不可混淆
      * 由native创建
@@ -252,12 +275,12 @@ public abstract class UDView<V extends View, N extends INode> extends JavaUserda
         initClipConfig();
         javaUserdata = view;
     }
+    //</editor-fold>
 
     protected @NonNull
     abstract V newView(@NonNull LuaValue[] init);
 
-    protected @NonNull
-    abstract N initNode();
+    //<editor-fold desc="view default setting">
     /**
      * 视图布局默认不切割子视图在padding区域
      *
@@ -284,7 +307,6 @@ public abstract class UDView<V extends View, N extends INode> extends JavaUserda
             vg.setClipChildren(clipChildren());
         }
     }
-
     /**
      * 初始化View的 辅助圆角切割开关。
      * 开关保存在globals，虚拟机全局生效。
@@ -299,6 +321,9 @@ public abstract class UDView<V extends View, N extends INode> extends JavaUserda
             ((IClipRadius) view).initCornerManager(m.getDefaltCornerClip());
         }
     }
+    //</editor-fold>
+
+    //<editor-fold desc="public">
 
     public LuaViewManager getLuaViewManager() {
         return (LuaViewManager) globals.getJavaUserdata();
@@ -312,9 +337,185 @@ public abstract class UDView<V extends View, N extends INode> extends JavaUserda
     public V getView() {
         return view;
     }
+    //</editor-fold>
+
+    //<editor-fold desc="NODE">
+    protected FlexNode initNode() {
+        FlexNode node;
+        if (getView() instanceof IFlexLayout) {
+            node = ((IFlexLayout) getView()).getFlexNode();
+        } else {
+            node = YogaNodeFactory.create();
+            node.setMeasureFunction(new NodeLayout.ViewMeasureFunction());
+        }
+        //初始化默认属性
+        node.setJustifyContent(YogaJustify.FLEX_START);
+        node.setAlignItems(YogaAlign.FLEX_START);
+        node.setAlignContent(YogaAlign.FLEX_START);
+        return node;
+    }
+
+    public FlexNode getFlexNode() {
+        return mNode;
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="view node width height">
+
+    protected void setWidth(float w) {
+        mNode.setWidth(w);
+    }
+
+    public int getWidth() {
+        YogaValue yogaValue = mNode.getWidth();
+        if (yogaValue.unit == YogaUnit.POINT && yogaValue.value > 0) {
+            return (int) yogaValue.value;
+        }
+
+        int w = (int) mNode.getLayoutWidth();
+        if (w > 0) {
+            return w;
+        }
+
+        return view.getWidth();
+    }
+
+    protected void setHeight(float h) {
+        mNode.setHeight(h);
+    }
+
+    public int getHeight() {
+        YogaValue yogaValue = mNode.getHeight();
+        if (yogaValue.unit == YogaUnit.POINT && yogaValue.value > 0) {
+            return (int) yogaValue.value;
+        }
+
+        int w = (int) mNode.getLayoutHeight();
+        if (w > 0) {
+            return w;
+        }
+
+        return view.getHeight();
+    }
+    //</editor-fold>
 
     //<editor-fold desc="API">
-    //<editor-fold desc="Property">
+    //<editor-fold desc="width height">
+    //处理width、height 及其percent、max、min方法
+    private LuaValue[] handlerNormalProps(int methodType, LuaValue[] var) {
+        if (var.length > 0) {
+            switch (methodType) {
+                case MIN_WIDTH:
+                    mNode.setMinWidth(DimenUtil.dpiToPxWithNaN(var[0]));
+                    break;
+                case MAX_WIDTH:
+                    mNode.setMaxWidth(DimenUtil.dpiToPxWithNaN(var[0]));
+                    break;
+                case MIN_WIDTH_PERCENT:
+                    mNode.setMinWidthPercent(var[0].toFloat());
+                    break;
+                case MAX_WIDTH_PERCENT:
+                    mNode.setMaxWidthPercent(var[0].toFloat());
+                    break;
+                case MIN_HEIGHT:
+                    mNode.setMinHeight(DimenUtil.dpiToPxWithNaN(var[0]));
+                    break;
+                case MAX_HEIGHT:
+                    mNode.setMaxHeight(DimenUtil.dpiToPxWithNaN(var[0]));
+                    break;
+                case MIN_HEIGHT_PERCENT:
+                    mNode.setMinHeightPercent(var[0].toFloat());
+                    break;
+                case MAX_HEIGHT_PERCENT:
+                    mNode.setMaxHeightPercent(var[0].toFloat());
+                    break;
+            }
+            view.requestLayout();
+            return null;
+        }
+
+        YogaValue yogaValue;
+        YogaUnit methodUnit;
+        switch (methodType) {
+            case MIN_WIDTH:
+                yogaValue = mNode.getMinWidth();
+                methodUnit = YogaUnit.POINT;
+                break;
+            case MAX_WIDTH:
+                yogaValue = mNode.getMaxWidth();
+                methodUnit = YogaUnit.POINT;
+                break;
+            case MIN_WIDTH_PERCENT:
+                yogaValue = mNode.getMinWidth();
+                methodUnit = YogaUnit.PERCENT;
+                break;
+            case MAX_WIDTH_PERCENT:
+                yogaValue = mNode.getMaxWidth();
+                methodUnit = YogaUnit.PERCENT;
+                break;
+            case MIN_HEIGHT:
+                yogaValue = mNode.getMinHeight();
+                methodUnit = YogaUnit.POINT;
+                break;
+            case MAX_HEIGHT:
+                yogaValue = mNode.getMaxHeight();
+                methodUnit = YogaUnit.POINT;
+                break;
+            case MIN_HEIGHT_PERCENT:
+                yogaValue = mNode.getMinHeight();
+                methodUnit = YogaUnit.PERCENT;
+                break;
+            case MAX_HEIGHT_PERCENT:
+                yogaValue = mNode.getMaxHeight();
+                methodUnit = YogaUnit.PERCENT;
+                break;
+            default:
+                return null;
+        }
+        return LuaNumber.rNumber(yogaValue(yogaValue, methodUnit));
+    }
+
+    @LuaApiUsed
+    public LuaValue[] minWidth(LuaValue[] varargs) {
+        return handlerNormalProps(MIN_WIDTH, varargs);
+    }
+
+    @LuaApiUsed
+    public LuaValue[] minWidthPercent(LuaValue[] varargs) {
+        return handlerNormalProps(MIN_WIDTH_PERCENT, varargs);
+    }
+
+    @LuaApiUsed
+    public LuaValue[] maxWidth(LuaValue[] varargs) {
+        return handlerNormalProps(MAX_WIDTH, varargs);
+    }
+
+    @LuaApiUsed
+    public LuaValue[] maxWidthPercent(LuaValue[] varargs) {
+        return handlerNormalProps(MAX_WIDTH_PERCENT, varargs);
+    }
+
+    @LuaApiUsed
+    public LuaValue[] minHeight(LuaValue[] varargs) {
+        return handlerNormalProps(MIN_HEIGHT, varargs);
+    }
+
+    @LuaApiUsed
+    public LuaValue[] minHeightPercent(LuaValue[] varargs) {
+        return handlerNormalProps(MIN_HEIGHT_PERCENT, varargs);
+    }
+
+    @LuaApiUsed
+    public LuaValue[] maxHeight(LuaValue[] varargs) {
+        return handlerNormalProps(MAX_HEIGHT, varargs);
+    }
+
+    @LuaApiUsed
+    public LuaValue[] maxHeightPercent(LuaValue[] varargs) {
+        return handlerNormalProps(MAX_HEIGHT_PERCENT, varargs);
+    }
+    //</editor-fold>
+
     protected void checkSize(double src) {
         if (src >= 0)
             return;
@@ -325,13 +526,434 @@ public abstract class UDView<V extends View, N extends INode> extends JavaUserda
         ErrorUtils.debugLuaError("size must be set with positive number, error number: " + src + ".", getGlobals());
     }
 
-    protected abstract void setWidth(float w);
+    //<editor-fold desc="native">
 
-    public abstract int getWidth();
+    //叶子节点（原生组件如：Label、ImageView），需要设置view的padding
+    protected void setLeanPadding() {
+        view.setPadding(
+                mPaddingLeft,
+                mPaddingTop,
+                mPaddingRight,
+                mPaddingBottom);
+    }
 
-    protected abstract void setHeight(float h);
+    private float yogaValue(YogaValue yv, YogaUnit unit) {
+        float ret = 0;
+        if (yv != null && yv.unit == unit) {
+            ret = yv.value;
+        }
+        if (unit == YogaUnit.POINT)
+            ret = DimenUtil.pxToDpi(ret);
+        return ret;
+    }
 
-    public abstract int getHeight();
+    //<editor-fold desc="width height">
+    @LuaApiUsed
+    public double getX() {
+        return DimenUtil.pxToDpi(view.getX());
+    }
+
+    @LuaApiUsed
+    public double getY() {
+        return DimenUtil.pxToDpi(view.getY());
+    }
+
+    @LuaApiUsed
+    public void nSetWidth(double d) {
+        checkSize(d);
+        setWidth(DimenUtil.dpiToPx(d));
+    }
+
+    @LuaApiUsed
+    public double nGetWidth() {
+        return DimenUtil.pxToDpi(getWidth());
+    }
+
+    @LuaApiUsed
+    public void setWidthPercent(float p) {
+        mNode.setWidthPercent(p);
+    }
+
+    @LuaApiUsed
+    public float getWidthPercent() {
+        return yogaValue(mNode.getWidth(), YogaUnit.PERCENT);
+    }
+
+    @LuaApiUsed
+    public void widthAuto() {
+        mNode.setWidthAuto();
+        view.requestLayout();
+    }
+
+    @LuaApiUsed
+    public void nSetHeight(double d) {
+        checkSize(d);
+        setHeight(DimenUtil.dpiToPx(d));
+    }
+
+    @LuaApiUsed
+    public double nGetHeight() {
+        return DimenUtil.pxToDpi(getHeight());
+    }
+
+    @LuaApiUsed
+    public void setHeightPercent(float p) {
+        mNode.setHeightPercent(p);
+    }
+
+    @LuaApiUsed
+    public float getHeightPercent() {
+        return yogaValue(mNode.getHeight(), YogaUnit.PERCENT);
+    }
+
+    @LuaApiUsed
+    public void heightAuto() {
+        mNode.setHeightAuto();
+        view.requestLayout();
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="margin">
+
+    @LuaApiUsed
+    public double getMarginLeft() {
+        return yogaValue(mNode.getMargin(YogaEdge.LEFT), YogaUnit.POINT);
+    }
+
+    @LuaApiUsed
+    public void setMarginLeft(double marginLeft) {
+        mNode.setMargin(YogaEdge.LEFT, DimenUtil.dpiToPx(marginLeft));
+        view.requestLayout();
+    }
+
+    @LuaApiUsed
+    public double getMarginTop() {
+        return yogaValue(mNode.getMargin(YogaEdge.TOP), YogaUnit.POINT);
+    }
+
+    @LuaApiUsed
+    public void setMarginTop(double marginTop) {
+        mNode.setMargin(YogaEdge.TOP, DimenUtil.dpiToPx(marginTop));
+        view.requestLayout();
+    }
+
+    @LuaApiUsed
+    public double getMarginRight() {
+        return yogaValue(mNode.getMargin(YogaEdge.RIGHT), YogaUnit.POINT);
+    }
+
+    @LuaApiUsed
+    public void setMarginRight(double marginRight) {
+        mNode.setMargin(YogaEdge.RIGHT, DimenUtil.dpiToPx(marginRight));
+        view.requestLayout();
+    }
+
+    @LuaApiUsed
+    public double getMarginBottom() {
+        return yogaValue(mNode.getMargin(YogaEdge.BOTTOM), YogaUnit.POINT);
+    }
+
+    @LuaApiUsed
+    public void setMarginBottom(double marginBottom) {
+        mNode.setMargin(YogaEdge.BOTTOM, DimenUtil.dpiToPx(marginBottom));
+        view.requestLayout();
+    }
+
+    @LuaApiUsed
+    public void margin(double t, double r, double b, double l) {
+        mNode.setMargin(YogaEdge.TOP, DimenUtil.dpiToPx(t));
+        mNode.setMargin(YogaEdge.RIGHT, DimenUtil.dpiToPx(r));
+        mNode.setMargin(YogaEdge.BOTTOM, DimenUtil.dpiToPx(b));
+        mNode.setMargin(YogaEdge.LEFT, DimenUtil.dpiToPx(l));
+        view.requestLayout();
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="padding">
+
+    @LuaApiUsed
+    public double nGetPaddingLeft() {
+        return yogaValue(mNode.getPadding(YogaEdge.LEFT), YogaUnit.POINT);
+    }
+
+    @LuaApiUsed
+    public void nSetPaddingLeft(double paddingLeft) {
+        mPaddingLeft = DimenUtil.dpiToPx(paddingLeft);
+        if (!(this instanceof IYogaGroup)) {
+            setLeanPadding();//叶子节点，需要设置view的padding
+        }
+        mNode.setPadding(YogaEdge.LEFT, DimenUtil.dpiToPx(paddingLeft));
+        view.requestLayout();
+    }
+
+    @LuaApiUsed
+    public double nGetPaddingTop() {
+        return yogaValue(mNode.getPadding(YogaEdge.TOP), YogaUnit.POINT);
+    }
+
+    @LuaApiUsed
+    public void nSetPaddingTop(double paddingTop) {
+        mPaddingTop = DimenUtil.dpiToPx(paddingTop);
+        if (!(this instanceof IYogaGroup)) {
+            setLeanPadding();//叶子节点，需要设置view的padding
+        }
+        mNode.setPadding(YogaEdge.TOP, DimenUtil.dpiToPx(paddingTop));
+        view.requestLayout();
+    }
+
+    @LuaApiUsed
+    public double nGetPaddingRight() {
+        return yogaValue(mNode.getPadding(YogaEdge.RIGHT), YogaUnit.POINT);
+    }
+
+    @LuaApiUsed
+    public void nSetPaddingRight(double paddingRight) {
+        mPaddingRight = DimenUtil.dpiToPx(paddingRight);
+        if (!(this instanceof IYogaGroup)) {
+            setLeanPadding();//叶子节点，需要设置view的padding
+        }
+        mNode.setPadding(YogaEdge.RIGHT, DimenUtil.dpiToPx(paddingRight));
+        view.requestLayout();
+    }
+
+    @LuaApiUsed
+    public double nGetPaddingBottom() {
+        return yogaValue(mNode.getPadding(YogaEdge.BOTTOM), YogaUnit.POINT);
+    }
+
+    @LuaApiUsed
+    public void nSetPaddingBottom(double paddingBottom) {
+        mPaddingBottom = DimenUtil.dpiToPx(paddingBottom);
+        if (!(this instanceof IYogaGroup)) {
+            setLeanPadding();//叶子节点，需要设置view的padding
+        }
+        mNode.setPadding(YogaEdge.BOTTOM, DimenUtil.dpiToPx(paddingBottom));
+        view.requestLayout();
+    }
+
+    @LuaApiUsed
+    public void padding(double t, double r, double b, double l) {
+        mPaddingTop = DimenUtil.dpiToPx(t);
+        mPaddingRight = DimenUtil.dpiToPx(r);
+        mPaddingBottom = DimenUtil.dpiToPx(b);
+        mPaddingLeft = DimenUtil.dpiToPx(l);
+
+        if (!(this instanceof IYogaGroup)) {
+            setLeanPadding();//叶子节点，需要设置view的padding
+        }
+        //为了识别NaN，不能使用int
+        mNode.setPadding(YogaEdge.TOP,  mPaddingTop);
+        mNode.setPadding(YogaEdge.RIGHT,mPaddingRight);
+        mNode.setPadding(YogaEdge.BOTTOM, mPaddingBottom);
+        mNode.setPadding(YogaEdge.LEFT, mPaddingLeft);
+        view.requestLayout();
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="layout">
+
+    @LuaApiUsed
+    public int getCrossSelf() {
+        return mNode.getAlignSelf().intValue();
+    }
+
+    @LuaApiUsed
+    public void setCrossSelf(int crossSelf) {
+        mNode.setAlignSelf(YogaAlign.fromInt(crossSelf));
+        view.requestLayout();
+    }
+
+    @LuaApiUsed
+    public float getBasis() {
+        return mNode.getFlex();
+    }
+
+    @LuaApiUsed
+    public void setBasis(float basis) {
+        mNode.setFlex(basis);
+        view.requestLayout();
+    }
+
+    @LuaApiUsed
+    public float getGrow() {
+        return mNode.getFlexGrow();
+    }
+
+    @LuaApiUsed
+    public void setGrow(float grow) {
+        mNode.setFlexGrow(grow);
+        view.requestLayout();
+    }
+
+    @LuaApiUsed
+    public float getShrink() {
+        return mNode.getFlexShrink();
+    }
+
+    @LuaApiUsed
+    public void setShrink(float shrink) {
+        mNode.setFlexShrink(shrink);
+        view.requestLayout();
+    }
+
+    @LuaApiUsed
+    public boolean isDisplay() {
+        return mNode.getDisplay() == YogaDisplay.FLEX;
+    }
+
+    @LuaApiUsed
+    public void setDisplay(boolean display) {
+        mNode.setDisplay(display ? YogaDisplay.FLEX : YogaDisplay.NONE);
+        view.requestLayout();
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="position">
+
+    @LuaApiUsed
+    public int getPositionType() {
+        return mNode.getPositionType().intValue();
+    }
+
+    @LuaApiUsed
+    public void setPositionType(int positionType) {
+        mNode.setPositionType(YogaPositionType.fromInt(positionType));
+        view.requestLayout();
+    }
+
+    @LuaApiUsed
+    public double getPositionLeft() {
+        return yogaValue(mNode.getPosition(YogaEdge.LEFT), YogaUnit.POINT);
+    }
+
+    @LuaApiUsed
+    public void setPositionLeft(double positionLeft) {
+        mNode.setPosition(YogaEdge.LEFT, DimenUtil.dpiToPx(positionLeft));
+        view.requestLayout();
+    }
+
+    @LuaApiUsed
+    public double getPositionTop() {
+        return yogaValue(mNode.getPosition(YogaEdge.TOP), YogaUnit.POINT);
+    }
+
+    @LuaApiUsed
+    public void setPositionTop(double positionTop) {
+        mNode.setPosition(YogaEdge.TOP, DimenUtil.dpiToPx(positionTop));
+        view.requestLayout();
+    }
+
+    @LuaApiUsed
+    public double getPositionRight() {
+        return yogaValue(mNode.getPosition(YogaEdge.RIGHT), YogaUnit.POINT);
+    }
+
+    @LuaApiUsed
+    public void setPositionRight(double positionRight) {
+        mNode.setPosition(YogaEdge.RIGHT, DimenUtil.dpiToPx(positionRight));
+        view.requestLayout();
+    }
+
+    @LuaApiUsed
+    public double getPositionBottom() {
+        return yogaValue(mNode.getPosition(YogaEdge.BOTTOM), YogaUnit.POINT);
+    }
+
+    @LuaApiUsed
+    public void setPositionBottom(double positionBottom) {
+        mNode.setPosition(YogaEdge.BOTTOM, DimenUtil.dpiToPx(positionBottom));
+        view.requestLayout();
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="anim">
+
+    @LuaApiUsed
+    public void rotation(float angle, boolean add) {
+        getInitValue();
+
+        if (!add) {
+            view.setRotation(angle);
+        } else {
+            view.setRotation(view.getRotation() + angle);
+        }
+        allowVirtual = false;
+    }
+
+    @LuaApiUsed
+    public void translation(double x, double y, boolean add) {
+        getInitValue();
+
+        if (!add) {
+            view.setTranslationX(DimenUtil.dpiToPx(x));
+            view.setTranslationY(DimenUtil.dpiToPx(y));
+        } else {
+            view.setTranslationX(view.getTranslationX() + DimenUtil.dpiToPx(x));
+            view.setTranslationY(view.getTranslationY() + DimenUtil.dpiToPx(y));
+        }
+        allowVirtual = false;
+    }
+
+    @LuaApiUsed
+    public void scale(float x, float y, boolean add) {
+        getInitValue();
+
+        if (!add) {
+            view.setScaleX(x);
+            view.setScaleY(y);
+        } else {
+            view.setScaleX(view.getScaleX() * x);
+            view.setScaleY(view.getScaleY() * y);
+        }
+        allowVirtual = false;
+    }
+
+    @LuaApiUsed
+    public void setAlpha(float a) {
+        allowVirtual = false;
+        view.setAlpha(a);
+    }
+
+    @LuaApiUsed
+    public float getAlpha() {
+        return view.getAlpha();
+    }
+
+    @LuaApiUsed
+    public void viewWidth(double w) {
+        view.setRight(view.getLeft() + DimenUtil.dpiToPx(w));
+    }
+
+    @LuaApiUsed
+    public void viewHeight(double h) {
+        view.setBottom(view.getTop() + DimenUtil.dpiToPx(h));
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="click">
+    @LuaApiUsed
+    public void onClick(LuaFunction fun) {
+        allowVirtual = false;
+        if (clickCallback != null) {
+            clickCallback.destroy();
+        }
+        clickCallback = fun;
+        if (clickCallback != null) {
+            propersFlags |= FLAG_ONCLICK_SET;
+            setClick(true);
+        }
+    }
+
+    @LuaApiUsed
+    public void onLongPress(LuaFunction fun) {
+        allowVirtual = false;
+        longClickCallback = fun;
+        setGesture(longClickCallback);
+    }
+    //</editor-fold>
+    //</editor-fold>
+
+    //<editor-fold desc="Property">
 
     @LuaApiUsed
     public LuaValue[] anchorPoint(LuaValue[] p) {
@@ -419,66 +1041,12 @@ public abstract class UDView<V extends View, N extends INode> extends JavaUserda
     }
 
     @LuaApiUsed
-    public LuaValue[] rotation(LuaValue[] var) {
-        float angle = (float) var[0].toDouble();
-        boolean notNeedAdding = var.length > 1 && var[1].toBoolean();
-
-        getInitValue();
-
-        if (notNeedAdding) {
-            view.setRotation(angle);
-        } else {
-            view.setRotation(view.getRotation() + angle);
-        }
-        allowVirtual = false;
-        return null;
-    }
-
-    @LuaApiUsed
-    public LuaValue[] translation(LuaValue[] var) {
-        float xTranslate = (float) var[0].toDouble();
-        float yTranslate = (float) var[1].toDouble();
-        boolean notNeedAdding = var.length > 2 && var[2].toBoolean();
-
-        getInitValue();
-
-        if (notNeedAdding) {
-            view.setTranslationX(DimenUtil.dpiToPx(xTranslate));
-            view.setTranslationY(DimenUtil.dpiToPx(yTranslate));
-        } else {
-            view.setTranslationX(view.getTranslationX() + DimenUtil.dpiToPx(xTranslate));
-            view.setTranslationY(view.getTranslationY() + DimenUtil.dpiToPx(yTranslate));
-        }
-        allowVirtual = false;
-        return null;
-    }
-
-    @LuaApiUsed
-    public LuaValue[] scale(LuaValue[] var) {
-        float xScale = Math.abs((float) var[0].toDouble());
-        float yScale = Math.abs((float) var[1].toDouble());
-        boolean notNeedAdding = var.length > 2 && var[2].toBoolean();
-
-        getInitValue();
-
-        if (notNeedAdding) {
-            view.setScaleX(xScale);
-            view.setScaleY(yScale);
-        } else {
-            view.setScaleX(view.getScaleX() * xScale);
-            view.setScaleY(view.getScaleY() * yScale);
-        }
-        allowVirtual = false;
-        return null;
-    }
-
-    @LuaApiUsed
     public LuaValue[] canEndEditing(LuaValue[] p) {
         if (p != null && p.length > 0 && p[0].isBoolean()) {
             canEndEditing = p[0].toBoolean();
             if (canEndEditing) {
                 propersFlags |= FLAG_CANENDEDITING_SET;
-                view.setOnClickListener(clickListener);
+                setClick(true);
             }
         }
         allowVirtual = false;
@@ -491,10 +1059,10 @@ public abstract class UDView<V extends View, N extends INode> extends JavaUserda
             keyboardDismiss = p[0].toBoolean();
             if (keyboardDismiss) {
                 propersFlags |= FLAG_KEYBOARDDISMISS_SET;
-                view.setOnClickListener(clickListener);
+                setClick(true);
             } else if (!hasCanEndEditing() && !hasClick() && hasKeyboardDismiss()){
                 propersFlags &= FLAG_KEYBOARDDISMISS_SET;
-                view.setOnClickListener(null);
+                setClick(false);
             }
         }
         allowVirtual = false;
@@ -503,14 +1071,39 @@ public abstract class UDView<V extends View, N extends INode> extends JavaUserda
     //</editor-fold>
 
     //<editor-fold desc="Render">
+
+    // 设置背景图片，只支持本地资源  不能同bgColor 同时设置，否则会被后设置的覆盖
     @LuaApiUsed
-    public LuaValue[] alpha(LuaValue[] p) {
+    public LuaValue[] bgImage(LuaValue[] var) {
         allowVirtual = false;
-        if (p.length == 1) {
-            view.setAlpha((float) p[0].toDouble());
-            return null;
+        if (var.length == 1) {
+            String url = var[0].toJavaString();
+
+            final ImageProvider provider = MLSAdapterContainer.getImageProvider();
+            Drawable d = provider.loadProjectImage(getContext(), url);
+
+            if (d != null) {
+                getView().setBackground(d);
+                return null;
+            }
+
+            // 陌陌主工程中本地图片路径，getAbsoluteUrl( file://avatar/large/2/2ur6wxA-4.jpg_ )  = /storage/emulated/0/immomo/avatar/large/2/2ur6wxA-4.jpg_
+            if (RelativePathUtils.isLocalUrl(url)) {
+                url = RelativePathUtils.getAbsoluteUrl(url);
+                provider.preload(getContext(), url, null, initLoadCallback());
+                return null;
+            }
+
+            String localUrl = getLuaViewManager().baseFilePath;
+            if (!TextUtils.isEmpty(localUrl)) {
+                File imgFile = new File(localUrl, url);
+                if (imgFile.exists()) {
+                    url = imgFile.getAbsolutePath();
+                    provider.preload(getContext(), url, null, initLoadCallback());
+                }
+            }
         }
-        return varargsOf(LuaNumber.valueOf(view.getAlpha()));
+        return null;
     }
 
     @LuaApiUsed
@@ -549,13 +1142,16 @@ public abstract class UDView<V extends View, N extends INode> extends JavaUserda
 
     @LuaApiUsed
     public LuaValue[] setNineImage(LuaValue[] var) {
-        allowVirtual = false;
         if (var.length == 1 && var[0].isString()) {
-            hasNineImage = true;
-            setBgDrawable(var[0].toJavaString());
-            return null;
+            setNineImage(var[0].toJavaString());
         }
         return rNil();
+    }
+
+    protected void setNineImage(String image) {
+        allowVirtual = false;
+        hasNineImage = true;
+        setBgDrawable(image);
     }
 
     @LuaApiUsed
@@ -678,28 +1274,6 @@ public abstract class UDView<V extends View, N extends INode> extends JavaUserda
         return null;
     }
 
-    @Deprecated
-    @LuaApiUsed
-    public LuaValue[] setGravity(LuaValue[] p) {
-        return null;
-    }
-
-
-    @LuaApiUsed
-    public LuaValue[] centerX(LuaValue[] p) {
-        if (p.length == 1) {
-            ErrorUtils.debugDeprecatedSetter("centerX", globals);
-            return null;
-        }
-        return varargsOf(LuaNumber.valueOf(DimenUtil.pxToDpi(getCenterX())));
-    }
-
-    public float getCenterX() {
-        if (!Float.isNaN(udLayoutParams.centerX))
-            return udLayoutParams.centerX;
-        return (getView().getX() + getWidth() / 2.0f);
-    }
-
     @LuaApiUsed
     public LuaValue[] layoutComplete(LuaValue[] values) {
         if (layoutComplete != null)
@@ -712,48 +1286,55 @@ public abstract class UDView<V extends View, N extends INode> extends JavaUserda
         return null;
     }
 
+    @LuaApiUsed
+    public LuaValue[] notDispatch(LuaValue[] var) {
+        allowVirtual = false;
+        if (var.length == 1 && var[0].isBoolean()) {
+            boolean b = var[0].toBoolean();
+            if (isNotDispatch != null && isNotDispatch == b) {
+                return null;
+            }
+            isNotDispatch = b;
+            isTouchChange = true; // 事件流需要发生改变
+            return null;
+        }
+        if (isNotDispatch == null) {
+            return rNil();
+        } else {
+            return isNotDispatch ? rTrue() : rFalse();
+        }
+    }
+
+    public Boolean isNotDispatch(){
+        return isNotDispatch;
+    }
+
+    public boolean isTouchChange() {
+        return isTouchChange;
+    }
+
+    public void setTouchChange(boolean touchChange) {
+        isTouchChange = touchChange;
+    }
+
     private void setLayoutComplete() {
         view.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
-                layoutComplete.invoke(varargsOf(LuaValue.rNil()));
+                layoutComplete.fastInvoke();
                 view.getViewTreeObserver().removeOnGlobalLayoutListener(this);
             }
         });
     }
 
     @LuaApiUsed
-    public LuaValue[] centerY(LuaValue[] p) {
-        if (p.length == 1) {
-            ErrorUtils.debugDeprecatedSetter("centerY", globals);
-            return null;
-        }
-        return varargsOf(LuaNumber.valueOf(DimenUtil.pxToDpi(getCenterY())));
+    public void childFirstHandlePointers(boolean force){
+        childFirstHandlePointers = force;
     }
 
-    public float getCenterY() {
-        if (!Float.isNaN(udLayoutParams.centerY))
-            return udLayoutParams.centerY;
-        return getView().getY() + getHeight() / 2.0f;
+    public boolean isChildFirstHandlePointers() {
+        return childFirstHandlePointers;
     }
-
-    //隐藏方法，给新动画使用
-    @LuaApiUsed
-    public LuaValue[] viewWidth(LuaValue[] p) {
-        if (p.length > 0) {
-            getView().setRight(getView().getLeft() + DimenUtil.dpiToPx(p[0].toInt()));
-        }
-        return null;
-    }
-
-    @LuaApiUsed
-    public LuaValue[] viewHeight(LuaValue[] p) {
-        if (p.length > 0) {
-            getView().setBottom(getView().getTop() + DimenUtil.dpiToPx(p[0].toInt()));
-        }
-        return null;
-    }
-
 
     /**
      * call when getView is not null!
@@ -867,17 +1448,6 @@ public abstract class UDView<V extends View, N extends INode> extends JavaUserda
         }
         return null;
     }
-
-    @Deprecated
-    @LuaApiUsed
-    public LuaValue[] notClip(LuaValue[] p) {
-        allowVirtual = false;
-        IBorderRadiusView view = getIBorderRadiusView();
-        if (view != null) {
-            view.setDrawRadiusBackground(p[0].toBoolean());
-        }
-        return null;
-    }
     //</editor-fold>
 
     //<editor-fold desc="Interaction">
@@ -900,40 +1470,6 @@ public abstract class UDView<V extends View, N extends INode> extends JavaUserda
             return null;
         }
         return view.getVisibility() != View.VISIBLE ? rTrue() : rFalse();
-    }
-
-    @Deprecated
-    @LuaApiUsed
-    public LuaValue[] onTouch(LuaValue[] var) {
-        allowVirtual = false;
-        ErrorUtils.debugUnsupportError("Method: onTouch() is Deprecated");
-        touchCallback = var[0].isFunction() ? var[0].toLuaFunction() : null;
-        setTouch(touchCallback);
-        return null;
-    }
-
-    @LuaApiUsed
-    public LuaValue[] onClick(LuaValue[] var) {
-        allowVirtual = false;
-        if (clickCallback != null) {
-            clickCallback.destroy();
-        }
-        clickCallback = var[0].isFunction() ? var[0].toLuaFunction() : null;
-        if (clickCallback != null) {
-            propersFlags |= FLAG_ONCLICK_SET;
-            view.setOnClickListener(clickListener);
-        }
-        return null;
-    }
-
-    @LuaApiUsed
-    public LuaValue[] onLongPress(LuaValue[] var) {
-        allowVirtual = false;
-        longClickCallback = var[0].isFunction() ? var[0].toLuaFunction() : null;
-        if (longClickCallback != null) {
-            view.setOnLongClickListener(longClickListener);
-        }
-        return null;
     }
 
     @LuaApiUsed
@@ -987,201 +1523,15 @@ public abstract class UDView<V extends View, N extends INode> extends JavaUserda
         return null;
     }
 
-    // 设置背景图片，只支持本地资源  不能同bgColor 同时设置，否则会被后设置的覆盖
     @LuaApiUsed
-    public LuaValue[] bgImage(LuaValue[] var) {
+    public LuaValue[] removeAllAnimation(LuaValue[] p) {
         allowVirtual = false;
-        if (var.length == 1) {
-            String url = var[0].toJavaString();
-
-            final ImageProvider provider = MLSAdapterContainer.getImageProvider();
-            Drawable d = provider.loadProjectImage(getContext(), url);
-
-            if (d != null) {
-                getView().setBackground(d);
-                return null;
-            }
-
-            // 陌陌主工程中本地图片路径，getAbsoluteUrl( file://avatar/large/2/2ur6wxA-4.jpg_ )  = /storage/emulated/0/immomo/avatar/large/2/2ur6wxA-4.jpg_
-            if (RelativePathUtils.isLocalUrl(url)) {
-                url = RelativePathUtils.getAbsoluteUrl(url);
-                provider.preload(getContext(), url, null, initLoadCallback());
-                return null;
-            }
-
-            String localUrl = getLuaViewManager().baseFilePath;
-            if (!TextUtils.isEmpty(localUrl)) {
-                File imgFile = new File(localUrl, url);
-                if (imgFile.exists()) {
-                    url = imgFile.getAbsolutePath();
-                    provider.preload(getContext(), url, null, initLoadCallback());
-                }
-            }
-        }
+        stopAnimation();
         return null;
     }
-
-    //</editor-fold>
     //</editor-fold>
 
-    @LuaApiUsed
-    public LuaValue[] setPositionAdjustForKeyboard(LuaValue[] p) {
-        allowVirtual = false;
-        deprecatedMethodPrint(UDView.class.getSimpleName(), "setPositionAdjustForKeyboard()");
-        //do nothing
-        return null;
-    }
-
-    @LuaApiUsed
-    public LuaValue[] setPositionAdjustForKeyboardAndOffset(LuaValue[] p) {
-        allowVirtual = false;
-        deprecatedMethodPrint(UDView.class.getSimpleName(), "setPositionAdjustForKeyboardAndOffset()");
-        //do nothing
-        return null;
-    }
-
-    public void deprecatedMethodPrint(String className, String methodName) {
-        if (!MLSEngine.DEBUG)
-            return;
-        String waringMsg = "Deprecated Method = " + className + "  " + methodName;
-
-        if (getLuaViewManager().STDOUT != null) {
-            getLuaViewManager().STDOUT.print(waringMsg);
-            getLuaViewManager().STDOUT.println();
-        }
-
-        MLSAdapterContainer.getToastAdapter().toast(waringMsg);
-    }
-
-    private List<OnTouchListener> touchListeners;
-    private OnTouchListener touchListener = new OnTouchListener() {
-        private boolean notifyTouchListeners(View v, MotionEvent event) {
-            if (touchListeners != null) {
-                for (OnTouchListener l : touchListeners) {
-                    if (l.onTouch(v, event))
-                        return true;
-                }
-            }
-            return false;
-        }
-        @Override
-        public boolean onTouch(View v, MotionEvent event) {
-            if (notifyTouchListeners(v, event))
-                return true;
-
-            float xdp = DimenUtil.pxToDpi(event.getX());
-            float ydp = DimenUtil.pxToDpi(event.getY());
-
-            if (touchCallback != null) {
-                touchCallback.invoke(varargsOf(LuaNumber.valueOf(xdp), LuaNumber.valueOf(ydp)));
-            }
-
-            switch (event.getAction()) {
-                case MotionEvent.ACTION_DOWN:
-                    if (touchBeginCallback != null)
-                        touchBeginCallback.invoke(varargsOf(LuaNumber.valueOf(xdp), LuaNumber.valueOf(DimenUtil.pxToDpi(event.getY()))));
-
-                    touchExtension2Lua(touchBeginExtensionCallback, v, event);
-
-                    break;
-
-                case MotionEvent.ACTION_MOVE:
-                    if (touchMoveCallback != null)
-                        touchMoveCallback.invoke(varargsOf(LuaNumber.valueOf(xdp), LuaNumber.valueOf(ydp)));
-
-                    touchExtension2Lua(touchMoveExtensionCallback, v, event);
-
-                    break;
-
-                case MotionEvent.ACTION_UP:
-
-                    if (touchEndCallback != null)
-                        touchEndCallback.invoke(varargsOf(LuaNumber.valueOf(xdp), LuaNumber.valueOf(ydp)));
-
-                    touchExtension2Lua(touchEndExtensionCallback, v, event);
-
-                    break;
-
-                case MotionEvent.ACTION_CANCEL:
-
-                    if (touchCancelCallback != null)
-                        touchCancelCallback.invoke(varargsOf(LuaNumber.valueOf(xdp), LuaNumber.valueOf(ydp)));
-
-                    touchExtension2Lua(touchCancelExtensionCallback, v, event);
-
-                    break;
-            }
-
-            //View的ACTION_DOWN如果不消费，ACTION_UP就不会回调。且ACTION_DOWN会在松开手指时回调。
-            //如果onTouch消费了事件，会拦截onClick事件。
-            //因此：lua如果用了onClick，就返回false，让click去消费事件。不影响ACTION_DOWN和ACTION_UP
-            if (clickCallback != null) {
-                return false;
-            }
-            return true;
-        }
-
-        private void touchExtension2Lua(LuaFunction function, View v, MotionEvent event) {
-            if (function != null) {
-
-                if (mTouchEventExtensionMap == null)
-                    mTouchEventExtensionMap = new HashMap();
-
-                mTouchEventExtensionMap.clear();
-
-                mTouchEventExtensionMap.put("pageX", DimenUtil.pxToDpi(event.getX()));
-                mTouchEventExtensionMap.put("pageY", DimenUtil.pxToDpi(event.getY()));
-                mTouchEventExtensionMap.put("screenX", DimenUtil.pxToDpi(event.getRawX()));
-                mTouchEventExtensionMap.put("screenY", DimenUtil.pxToDpi(event.getRawY()));
-                mTouchEventExtensionMap.put("target", v);
-                mTouchEventExtensionMap.put("timeStamp", System.currentTimeMillis());
-
-                function.invoke(varargsOf(ConvertUtils.toLuaValue(getGlobals(), mTouchEventExtensionMap)));
-            }
-        }
-
-    };
-
-    private OnClickListener clickListener = new OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            if (clickCallback != null) {
-                clickCallback.invoke(null);
-            }
-            if (canEndEditing) {
-                InputMethodManager im = ((InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE));
-                View curFocusView = view.findFocus();
-                if (curFocusView != null && im != null) {
-                    im.hideSoftInputFromWindow(curFocusView.getWindowToken(),
-                        InputMethodManager.HIDE_NOT_ALWAYS);
-                }
-
-            }
-
-            if (keyboardDismiss) {// 区别于canEndEditing, 任意view都可以收起键盘
-                InputMethodManager im = ((InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE));
-                if (im != null) {
-                    im.hideSoftInputFromWindow(view.getWindowToken(),
-                        InputMethodManager.HIDE_NOT_ALWAYS);
-                }
-            }
-        }
-    };
-
-    private OnLongClickListener longClickListener = new OnLongClickListener() {
-        @Override
-        public boolean onLongClick(View v) {
-            if (longClickCallback != null) {
-                longClickCallback.invoke(null);
-                return true;
-            }
-            return false;
-        }
-    };
-
-    protected MarginLayoutParams newWrapContent() {
-        return new MarginLayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-    }
+    //<editor-fold desc="convert point">
 
     @LuaApiUsed
     public LuaValue[] convertRelativePointTo(LuaValue[] p) {
@@ -1220,13 +1570,6 @@ public abstract class UDView<V extends View, N extends INode> extends JavaUserda
     }
 
     @LuaApiUsed
-    public LuaValue[] removeAllAnimation(LuaValue[] p) {
-        allowVirtual = false;
-        stopAnimation();
-        return null;
-    }
-
-    @LuaApiUsed
     public LuaValue[] convertPointFrom(LuaValue[] p) {
         allowVirtual = false;
         if (p.length != 2)
@@ -1251,50 +1594,170 @@ public abstract class UDView<V extends View, N extends INode> extends JavaUserda
         result.setY(DimenUtil.pxToDpi(fromViewLocation[1]) + point.getY() - DimenUtil.pxToDpi(curLocation[1]));
         return varargsOf(new UDPoint(getGlobals(), result));
     }
+    //</editor-fold>
 
-    private int[] getMarginLeftTop(View view) {
-        int[] curLocation = new int[0];
-        if (view.getLayoutParams() instanceof MarginLayoutParams) {
-            curLocation[0] += ((MarginLayoutParams) view.getLayoutParams()).leftMargin;
-            curLocation[1] += ((MarginLayoutParams) view.getLayoutParams()).topMargin;
+    //<editor-fold desc="touch event">
+
+    @CGenerate(params = "F")
+    @LuaApiUsed
+    public void touchBegin(long f) {
+        allowVirtual = false;
+        if (touchBeginCallback != null)
+            touchBeginCallback.destroy();
+        if (f == 0) {
+            touchBeginCallback = null;
+        } else {
+            touchBeginCallback = new TouchLuaFunction(globals, f);
         }
-        if (view.getParent() != null && view.getParent() instanceof View) {
-            int[] parentLocation = getMarginLeftTop((View) view.getParent());
-            curLocation[0] += parentLocation[0];
-            curLocation[1] += parentLocation[1];
-        }
-        return curLocation;
+        setTouch(touchBeginCallback);
     }
 
-    public void addFrameAnimation(Animator animator) {
-        if (this.animatorCacheList == null) {
-            this.animatorCacheList = new ArrayList<>();
+    @CGenerate(params = "F")
+    @LuaApiUsed
+    public void touchMove(long f) {
+        allowVirtual = false;
+        if (touchMoveCallback != null)
+            touchMoveCallback.destroy();
+        if (f == 0) {
+            touchMoveCallback = null;
+        } else {
+            touchMoveCallback = new TouchLuaFunction(globals, f);
         }
-        this.animatorCacheList.add(animator);
+        setTouch(touchMoveCallback);
     }
 
-    public void stopAnimation() {
-        if (animatorCacheList != null) {
-            final ArrayList<Animator> temp = new ArrayList<>(animatorCacheList);
-            animatorCacheList.clear();
-            for (Animator animator : temp) {
-                animator.cancel();
-            }
+    @CGenerate(params = "F")
+    @LuaApiUsed
+    public void touchEnd(long f) {
+        allowVirtual = false;
+        if (touchEndCallback != null)
+            touchEndCallback.destroy();
+        if (f == 0) {
+            touchEndCallback = null;
+        } else {
+            touchEndCallback = new TouchLuaFunction(globals, f);
         }
+        setTouch(touchEndCallback);
     }
 
-    public void removeFrameAnimation(Animator anim) {
-        if (animatorCacheList != null) {
-            animatorCacheList.remove(anim);
+    @CGenerate(params = "F")
+    @LuaApiUsed
+    public void touchCancel(long f) {
+        allowVirtual = false;
+        if (touchCancelCallback != null)
+            touchCancelCallback.destroy();
+        if (f == 0) {
+            touchCancelCallback = null;
+        } else {
+            touchCancelCallback = new TouchLuaFunction(globals, f);
         }
+        setTouch(touchCancelCallback);
     }
 
-    @Override
-    public void onDetached() {
-        if (detachFunction != null)
-            detachFunction.invoke(null);
-        stopAnimation();
+    @CGenerate(params = "F")
+    @LuaApiUsed
+    public void touchBeginExtension(long f) {
+        allowVirtual = false;
+        if (touchBeginExtensionCallback != null)
+            touchBeginExtensionCallback.destroy();
+        if (f == 0) {
+            touchBeginExtensionCallback = null;
+        } else {
+            touchBeginExtensionCallback = new TouchLuaFunction(globals, f);
+        }
+        setTouch(touchBeginExtensionCallback);
     }
+
+    @CGenerate(params = "F")
+    @LuaApiUsed
+    public void touchMoveExtension(long f) {
+        allowVirtual = false;
+        if (touchMoveExtensionCallback != null)
+            touchMoveExtensionCallback.destroy();
+        if (f == 0) {
+            touchMoveExtensionCallback = null;
+        } else {
+            touchMoveExtensionCallback = new TouchLuaFunction(globals, f);
+        }
+        setTouch(touchMoveExtensionCallback);
+    }
+
+    @CGenerate(params = "F")
+    @LuaApiUsed
+    public void touchEndExtension(long f) {
+        allowVirtual = false;
+        if (touchEndExtensionCallback != null)
+            touchEndExtensionCallback.destroy();
+        if (f == 0) {
+            touchEndExtensionCallback = null;
+        } else {
+            touchEndExtensionCallback = new TouchLuaFunction(globals, f);
+        }
+        setTouch(touchEndExtensionCallback);
+    }
+
+    @CGenerate(params = "F")
+    @LuaApiUsed
+    public void touchCancelExtension(long f) {
+        allowVirtual = false;
+        if (touchCancelExtensionCallback != null)
+            touchCancelExtensionCallback.destroy();
+        if (f == 0) {
+            touchCancelExtensionCallback = null;
+        } else {
+            touchCancelExtensionCallback = new TouchLuaFunction(globals, f);
+        }
+        setTouch(touchCancelExtensionCallback);
+    }
+
+    @CGenerate(params = "F")
+    @LuaApiUsed
+    public void scaleBegin(long f) {
+        allowVirtual = false;
+        needHandlePointers = true;
+        if (scaleBeginCallback != null)
+            scaleBeginCallback.destroy();
+        if (f == 0) {
+            scaleBeginCallback = null;
+        } else {
+            scaleBeginCallback = new TouchLuaFunction(globals, f);
+        }
+        setScaleGesture(scaleBeginCallback);
+    }
+
+    @CGenerate(params = "F")
+    @LuaApiUsed
+    public void scaling(long f) {
+        allowVirtual = false;
+        needHandlePointers = true;
+        if (scalingCallback != null)
+            scalingCallback.destroy();
+        if (f == 0) {
+            scalingCallback = null;
+        } else {
+            scalingCallback = new TouchLuaFunction(globals, f);
+        }
+        setScaleGesture(scalingCallback);
+    }
+
+    @CGenerate(params = "F")
+    @LuaApiUsed
+    public void scaleEnd(long f) {
+        allowVirtual = false;
+        needHandlePointers = true;
+        if (scaleEndCallback != null)
+            scaleEndCallback.destroy();
+        if (f == 0) {
+            scaleEndCallback = null;
+        } else {
+            scaleEndCallback = new TouchLuaFunction(globals, f);
+        }
+        setScaleGesture(scaleEndCallback);
+    }
+
+    //</editor-fold>
+
+    //<editor-fold desc="other">
 
     @LuaApiUsed
     public LuaValue[] onDetachedView(LuaValue[] p) {
@@ -1302,92 +1765,6 @@ public abstract class UDView<V extends View, N extends INode> extends JavaUserda
         if (detachFunction != null)
             detachFunction.destroy();
         detachFunction = p[0].toLuaFunction();
-        return null;
-    }
-
-    @Override
-    public void onAttached() {
-
-    }
-
-    @LuaApiUsed
-    public LuaValue[] touchBegin(LuaValue[] p) {
-        allowVirtual = false;
-        if (touchBeginCallback != null)
-            touchBeginCallback.destroy();
-        touchBeginCallback = p[0].toLuaFunction();
-        setTouch(touchBeginCallback);
-        return null;
-    }
-
-    @LuaApiUsed
-    public LuaValue[] touchMove(LuaValue[] p) {
-        allowVirtual = false;
-        if (touchMoveCallback != null)
-            touchMoveCallback.destroy();
-        touchMoveCallback = p[0].toLuaFunction();
-        setTouch(touchMoveCallback);
-        return null;
-    }
-
-
-    @LuaApiUsed
-    public LuaValue[] touchEnd(LuaValue[] p) {
-        allowVirtual = false;
-        if (touchEndCallback != null)
-            touchEndCallback.destroy();
-        touchEndCallback = p[0].toLuaFunction();
-        setTouch(touchEndCallback);
-        return null;
-    }
-
-    @LuaApiUsed
-    public LuaValue[] touchCancel(LuaValue[] p) {
-        allowVirtual = false;
-        if (touchCancelCallback != null)
-            touchCancelCallback.destroy();
-        touchCancelCallback = p[0].toLuaFunction();
-        setTouch(touchCancelCallback);
-        return null;
-    }
-
-    @LuaApiUsed
-    public LuaValue[] touchBeginExtension(LuaValue[] p) {
-        allowVirtual = false;
-        if (touchBeginExtensionCallback != null)
-            touchBeginExtensionCallback.destroy();
-        touchBeginExtensionCallback = p[0].toLuaFunction();
-        setTouch(touchBeginExtensionCallback);
-        return null;
-    }
-
-    @LuaApiUsed
-    public LuaValue[] touchMoveExtension(LuaValue[] p) {
-        allowVirtual = false;
-        if (touchMoveExtensionCallback != null)
-            touchMoveExtensionCallback.destroy();
-        touchMoveExtensionCallback = p[0].toLuaFunction();
-        setTouch(touchMoveExtensionCallback);
-        return null;
-    }
-
-    @LuaApiUsed
-    public LuaValue[] touchEndExtension(LuaValue[] p) {
-        allowVirtual = false;
-        if (touchEndExtensionCallback != null)
-            touchEndExtensionCallback.destroy();
-        touchEndExtensionCallback = p[0].toLuaFunction();
-        setTouch(touchEndExtensionCallback);
-        return null;
-    }
-
-    @LuaApiUsed
-    public LuaValue[] touchCancelExtension(LuaValue[] p) {
-        allowVirtual = false;
-        if (touchCancelExtensionCallback != null)
-            touchCancelExtensionCallback.destroy();
-        touchCancelExtensionCallback = p[0].toLuaFunction();
-        setTouch(touchCancelExtensionCallback);
         return null;
     }
 
@@ -1407,8 +1784,276 @@ public abstract class UDView<V extends View, N extends INode> extends JavaUserda
         onDrawCallback = values.length > 0 && values[0].isFunction() ? values[0].toLuaFunction() : null;
         return null;
     }
+    //</editor-fold>
+    //</editor-fold>
 
-    //<editor-fold desc="LayoutParams">
+    //<editor-fold desc="listeners">
+
+    private List<OnTouchListener> touchListeners;
+    private OnTouchListener touchListener = new OnTouchListener() {
+        private boolean notifyTouchListeners(View v, MotionEvent event) {
+            if (touchListeners != null) {
+                for (OnTouchListener l : touchListeners) {
+                    if (l.onTouch(v, event))
+                        return true;
+                }
+            }
+            return false;
+        }
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            if (event.getAction() == MotionEvent.ACTION_CANCEL
+                    && event.getX() == 0
+                    && event.getY() == 0) {
+//                if (scaleGestureDetector != null && scaleGestureDetector.onTouchEvent(event)) {
+//                    return true;
+//                }
+//                if (gestureDetector != null && gestureDetector.onTouchEvent(event)) {
+//                    return true;
+//                }
+                return false;
+            }
+            if (scaleMatrix == null) {
+                scaleMatrix = new Matrix();
+            }
+            scaleMatrix.setScale(v.getScaleX(), v.getScaleY());
+            event.transform(scaleMatrix);
+            if (gestureDetector != null) {
+                gestureDetector.onTouchEvent(event);
+            }
+            if (scaleGestureDetector != null) {
+                scaleGestureDetector.onTouchEvent(event);
+            }
+            if (notifyTouchListeners(v, event))
+                return true;
+
+            float xdp = DimenUtil.pxToDpi(event.getX());
+            float ydp = DimenUtil.pxToDpi(event.getY());
+
+            switch (event.getActionMasked()) {
+                case MotionEvent.ACTION_DOWN:
+                    if (touchBeginCallback != null)
+                        touchBeginCallback.fastInvoke(xdp, ydp);
+
+                    touchExtension2Lua(touchBeginExtensionCallback, event);
+
+                    break;
+
+                case MotionEvent.ACTION_MOVE:
+                    if (touchMoveCallback != null)
+                        touchMoveCallback.fastInvoke(xdp, ydp);
+
+                    touchExtension2Lua(touchMoveExtensionCallback, event);
+
+                    break;
+
+                case MotionEvent.ACTION_POINTER_DOWN:
+                    if (needHandlePointers) {
+                        v.getParent().requestDisallowInterceptTouchEvent(true);
+                    }
+                    break;
+
+                case MotionEvent.ACTION_UP:
+
+                    if (touchEndCallback != null)
+                        touchEndCallback.fastInvoke(xdp, ydp);
+
+                    touchExtension2Lua(touchEndExtensionCallback, event);
+
+                    break;
+
+                case MotionEvent.ACTION_CANCEL:
+
+                    if (touchCancelCallback != null)
+                        touchCancelCallback.fastInvoke(xdp, ydp);
+
+                    touchExtension2Lua(touchCancelExtensionCallback, event);
+
+                    break;
+            }
+
+            // View的手势通过Gesture手势识别器去处理，手动调用view的onTouchEvent，让控件出去处理自己特定的手势。
+            // 此处只是进行手势识别和控制是否消费事件。系统默认没有OnTouchListener时，自动走onTouchEvent，所以默认调用onTouchEvent，单不依据onTouchEvent进行控件消费判断。
+            v.onTouchEvent(event);
+            return true;
+        }
+
+        private void touchExtension2Lua(TouchLuaFunction function, MotionEvent event) {
+            if (function != null) {
+                float pageX = DimenUtil.pxToDpi(event.getX());
+                float pageY = DimenUtil.pxToDpi(event.getY());
+                float screenX = DimenUtil.pxToDpi(event.getRawX());
+                float screenY = DimenUtil.pxToDpi(event.getRawY());
+                long timeStamp = System.currentTimeMillis();
+                function.fastInvoke(pageX, pageY, screenX, screenY, UDView.this, timeStamp);
+            }
+        }
+
+    };
+
+    private ScaleGestureDetector.OnScaleGestureListener scaleListener = new ScaleGestureDetector.SimpleOnScaleGestureListener(){
+
+        @Override
+        public boolean onScale(ScaleGestureDetector detector) {
+            if (scalingCallback != null)
+            scale2Lua(scalingCallback, detector);
+            return true;
+        }
+
+        @Override
+        public boolean onScaleBegin(ScaleGestureDetector detector) {
+            if (scaleBeginCallback != null)
+            scale2Lua(scaleBeginCallback, detector);
+            return true;
+        }
+
+        @Override
+        public void onScaleEnd(ScaleGestureDetector detector) {
+            if (scaleEndCallback != null)
+            scale2Lua(scaleEndCallback, detector);
+        }
+
+        private void scale2Lua(TouchLuaFunction function, ScaleGestureDetector detector) {
+            if (function != null) {
+                float focusX = DimenUtil.pxToDpi(detector.getFocusX());
+                float focusY = DimenUtil.pxToDpi(detector.getFocusY());
+                float span = DimenUtil.pxToDpi(detector.getCurrentSpan());
+                float spanX = DimenUtil.pxToDpi(detector.getCurrentSpanX());
+                float spanY = DimenUtil.pxToDpi(detector.getCurrentSpanY());
+                float factor = detector.getScaleFactor();
+                function.fastInvoke(focusX, focusY, span, spanX, spanY, factor);
+            }
+        }
+    };
+
+    private GestureDetector.OnGestureListener gestureListener = new GestureDetector.SimpleOnGestureListener() {
+
+        /**
+         * 轻触(手指松开)
+         */
+        @Override
+        public boolean onSingleTapUp(MotionEvent e) {
+            return super.onSingleTapUp(e);
+        }
+
+        /**
+         * 长按(手指尚未松开也没有达到scroll条件)
+         */
+        @Override
+        public void onLongPress(MotionEvent e) {
+            if (longClickCallback != null) {
+                longClickCallback.fastInvoke();
+            }
+            super.onLongPress(e);
+        }
+
+        /**
+         * 滑动(一次完整的事件可能会多次触发该函数)。返回值表示事件是否处理
+         */
+        @Override
+        public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+            return super.onScroll(e1, e2, distanceX, distanceY);
+        }
+
+        /**
+         * 滑屏(用户按下触摸屏、快速滑动后松开，返回值表示事件是否处理)
+         */
+        @Override
+        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+            return super.onFling(e1, e2, velocityX, velocityY);
+        }
+
+        /**
+         * 短按(手指尚未松开也没有达到scroll条件)
+         */
+        @Override
+        public void onShowPress(MotionEvent e) {
+            super.onShowPress(e);
+        }
+
+        /**
+         * 按下。返回值表示事件是否处理
+         */
+        @Override
+        public boolean onDown(MotionEvent e) {
+            return super.onDown(e);
+        }
+
+        /**
+         * 双击事件
+         */
+        @Override
+        public boolean onDoubleTap(MotionEvent e) {
+            return super.onDoubleTap(e);
+        }
+
+        /**
+         * 双击事件产生之后手指还没有抬起的时候的后续事件
+         */
+        @Override
+        public boolean onDoubleTapEvent(MotionEvent e) {
+            return super.onDoubleTapEvent(e);
+        }
+
+        /**
+         * 单击事件(onSingleTapConfirmed，onDoubleTap是两个互斥的函数)
+         */
+        @Override
+        public boolean onSingleTapConfirmed(MotionEvent e) {
+            if (!click) {
+                return super.onSingleTapConfirmed(e);
+            }
+            if (clickCallback != null) {
+                clickCallback.fastInvoke();
+            }
+            if (canEndEditing) {
+                InputMethodManager im = ((InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE));
+                View curFocusView = view.findFocus();
+                if (curFocusView != null && im != null) {
+                    im.hideSoftInputFromWindow(curFocusView.getWindowToken(),
+                            InputMethodManager.HIDE_NOT_ALWAYS);
+                }
+
+            }
+
+            if (keyboardDismiss) {// 区别于canEndEditing, 任意view都可以收起键盘
+                InputMethodManager im = ((InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE));
+                if (im != null) {
+                    im.hideSoftInputFromWindow(view.getWindowToken(),
+                            InputMethodManager.HIDE_NOT_ALWAYS);
+                }
+            }
+            return super.onSingleTapConfirmed(e);
+        }
+    };
+
+    //</editor-fold>
+
+    protected MarginLayoutParams newWrapContent() {
+        return new MarginLayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+    }
+
+    public void stopAnimation() {
+        if (animatorCacheList != null) {
+            final ArrayList<Animator> temp = new ArrayList<>(animatorCacheList);
+            animatorCacheList.clear();
+            for (Animator animator : temp) {
+                animator.cancel();
+            }
+        }
+    }
+
+    @Override
+    public void onDetached() {
+        if (detachFunction != null)
+            detachFunction.fastInvoke();
+        stopAnimation();
+    }
+
+    @Override
+    public void onAttached() {
+
+    }
 
     /**
      * View 默认2K
@@ -1430,9 +2075,38 @@ public abstract class UDView<V extends View, N extends INode> extends JavaUserda
         }
     }
 
+    private void setScaleGesture(LuaFunction fun){
+        if (fun != null) {
+            if (scaleGestureDetector == null) {
+                scaleGestureDetector = new ScaleGestureDetector(getContext(), scaleListener);
+            }
+            setTouch(fun);
+        }
+    }
+
+    private void setClick(boolean click) {
+        this.click = click;
+        if (click) {
+            setGesture(clickCallback);
+        }
+    }
+
+    private void setGesture(LuaFunction fun) {
+        if (fun != null) {
+            if (gestureDetector == null) {
+                gestureDetector = new GestureDetector(getContext(), gestureListener);
+            }
+        }
+        setTouch(fun);
+    }
+
     private void setTouch(LuaFunction fun) {
         if (fun != null) {
-            view.setOnTouchListener(touchListener);
+            if (view instanceof ICompose) {
+                ((ICompose) view).getTouchLink().setTouchListener(touchListener);
+            } else {
+                view.setOnTouchListener(touchListener);
+            }
         }
     }
 
@@ -1539,63 +2213,6 @@ public abstract class UDView<V extends View, N extends INode> extends JavaUserda
     public boolean hasKeyboardDismiss() {
         return (propersFlags & FLAG_KEYBOARDDISMISS_SET) == FLAG_KEYBOARDDISMISS_SET;
     }
-
-
-    public static class UDLayoutParams {
-        /**
-         * 这四个margin属性是给 普通容器使用的
-         *
-         * @see UDViewGroup
-         */
-        public int marginLeft;
-        public int marginTop;
-        public int marginRight;
-        public int marginBottom;
-        /**
-         * 给普通容器使用
-         *
-         * @see UDViewGroup#insertView(UDView, int)
-         */
-        public float centerX = Float.NaN, centerY = Float.NaN;
-        /**
-         * 这四个margin属性是给线性布局使用
-         *
-         */
-        public int realMarginLeft;
-        public int realMarginTop;
-        public int realMarginRight;
-        public int realMarginBottom;
-        /**
-         * 重力给线性布局使用
-         *
-         */
-        public int gravity = Gravity.LEFT | Gravity.TOP;
-
-        /**
-         * 记录是否设置过gravity，因为gravity默认值不是-1，不好判断Left/Top
-         */
-        public boolean isSetGravity;
-
-        /**
-         * 普通容器判断是否使用gravity和realmargin
-         *
-         * @see UDViewGroup#insertView(UDView, int)
-         */
-        public boolean useRealMargin = true;
-        /**
-         * 优先级
-         *
-         * @see LuaLinearLayout
-         */
-        public int priority = 0;
-        /**
-         * 权重
-         *
-         * @see LuaLinearLayout
-         */
-        public int weight = 0;
-    }
-    //</editor-fold>
 
     private void getInitValue() {
         if (mInitTranslateX == -1)

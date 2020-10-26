@@ -44,6 +44,15 @@ public abstract class Animatable {
         return null;
     }
 
+    /**
+     * 动画要求只能是0或正整数，和{@link #getMinValues()}不冲突
+     * @return null表示不使用绝对值函数
+     *          null= {false, false ...}
+     */
+    public boolean[] absValues() {
+        return null;
+    }
+
     public void beforeDoValue(View view) {
         pivotX = view.getPivotX();
         pivotY = view.getPivotY();

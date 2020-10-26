@@ -14,6 +14,7 @@ import com.immomo.mls.fun.ud.view.recycler.ILayoutInSet;
 import com.immomo.mls.util.DimenUtil;
 
 import org.luaj.vm2.LuaValue;
+import org.luaj.vm2.utils.CGenerate;
 import org.luaj.vm2.utils.LuaApiUsed;
 
 
@@ -24,41 +25,36 @@ import org.luaj.vm2.utils.LuaApiUsed;
 @LuaApiUsed
 public class UDWaterFallLayout extends UDBaseRecyclerLayout implements ILayoutInSet {
     public static final String LUA_CLASS_NAME = "WaterfallLayout";
-    public static final String[] methods = new String[]{
-            "spanCount",
-            "layoutInset",
-    };
     private int spanCount;
     private static final int DEFAULT_SPAN_COUNT = 1;
     private WaterFallItemDecoration waterFallDecoration;
     private final int[] paddingValues;
 
+    @CGenerate(defaultConstructor = true)
     @LuaApiUsed
-    public UDWaterFallLayout(long L, LuaValue[] v) {
-        super(L, v);
+    public UDWaterFallLayout(long L) {
+        super(L);
         spanCount = 2;
         paddingValues = new int[4];
     }
+    public static native void _init();
+    public static native void _register(long l, String parent);
 
     //<editor-fold desc="API">
     @LuaApiUsed
-    public LuaValue[] layoutInset(LuaValue[] values) {
-        paddingValues[0] = DimenUtil.dpiToPx(values[1].toDouble());//left
-        paddingValues[1] = DimenUtil.dpiToPx(values[0].toDouble());//top
-        paddingValues[2] = DimenUtil.dpiToPx(values[3].toDouble());//right
-        paddingValues[3] = DimenUtil.dpiToPx(values[2].toDouble());//bottom
-        return null;
+    public void layoutInset(float t, float l, float b, float r) {
+        paddingValues[0] = DimenUtil.dpiToPx(l);//left
+        paddingValues[1] = DimenUtil.dpiToPx(t);//top
+        paddingValues[2] = DimenUtil.dpiToPx(r);//right
+        paddingValues[3] = DimenUtil.dpiToPx(b);//bottom
     }
 
     @LuaApiUsed
-    public LuaValue[] spanCount(LuaValue[] values) {
-        if (values != null && values.length > 0) {
-            spanCount = values[0].toInt();
-            return null;
-        }
-        return LuaValue.rNumber(getSpanCount());
+    public void setSpanCount(int spanCount) {
+        this.spanCount = spanCount;
     }
 
+    @LuaApiUsed
     @Override
     public int getSpanCount() {
         if (this.spanCount <= 0){
@@ -68,7 +64,6 @@ public class UDWaterFallLayout extends UDBaseRecyclerLayout implements ILayoutIn
                 throw e;
             }
         }
-
         return spanCount;
     }
     //</editor-fold>

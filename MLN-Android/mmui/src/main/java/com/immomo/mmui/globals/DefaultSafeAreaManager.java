@@ -109,24 +109,27 @@ public class DefaultSafeAreaManager implements SafeAreaConstants {
 
 
     public LuaValue[] safeAreaInsetsTop() {
-        return LuaNumber.rNumber(safeAreaAdapter.needSafeArea(context)
-            ? settedRect != null ? DimenUtil.pxToDpi(settedRect.getRect().top) : AndroidUtil.getStatusBarHeight(context)
-            : 0);
+        return LuaNumber.rNumber(getSafeAreaInsetsTop());
     }
 
-    public LuaValue[] safeAreaInsetsBottom() {
-
-        return LuaNumber.rNumber(settedRect != null ? DimenUtil.pxToDpi(settedRect.getRect().bottom) : 0);
+    public float getSafeAreaInsetsTop() {
+        return safeAreaAdapter.needSafeArea(context)
+                ? settedRect != null
+                    ? DimenUtil.pxToDpi(settedRect.getRect().top)
+                    : AndroidUtil.getStatusBarHeight(context)
+                : 0;
     }
 
-    public LuaValue[] safeAreaInsetsLeft() {
-
-        return LuaNumber.rNumber(settedRect != null ? DimenUtil.pxToDpi(settedRect.getRect().left) : 0);
+    public float getSafeAreaInsetsBottom() {
+        return settedRect != null ? DimenUtil.pxToDpi(settedRect.getRect().bottom) : 0;
     }
 
-    public LuaValue[] safeAreaInsetsRight() {
+    public float getSafeAreaInsetsLeft() {
+        return settedRect != null ? DimenUtil.pxToDpi(settedRect.getRect().left) : 0;
+    }
 
-        return LuaNumber.rNumber(settedRect != null ? DimenUtil.pxToDpi(settedRect.getRect().right) : 0);
+    public float getSafeAreaInsetsRight() {
+        return settedRect != null ? DimenUtil.pxToDpi(settedRect.getRect().right) : 0;
     }
 
     /**

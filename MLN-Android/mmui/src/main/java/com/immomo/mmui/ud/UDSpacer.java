@@ -11,7 +11,9 @@ import com.immomo.mls.utils.ErrorUtils;
 import com.immomo.mmui.ui.LuaNodeLayout;
 
 import org.luaj.vm2.Globals;
+import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
+import org.luaj.vm2.utils.CGenerate;
 import org.luaj.vm2.utils.LuaApiUsed;
 
 /**
@@ -21,9 +23,10 @@ import org.luaj.vm2.utils.LuaApiUsed;
 public class UDSpacer extends UDNodeGroup<LuaNodeLayout> {
     public static final String LUA_CLASS_NAME = "Spacer";
 
+    @CGenerate(defaultConstructor = true)
     @LuaApiUsed
-    protected UDSpacer(long L, LuaValue[] v) {
-        super(L, v);//HStack 主轴默认充满父容器
+    protected UDSpacer(long L) {
+        super(L);//HStack 主轴默认充满父容器
         init();
     }
 
@@ -31,6 +34,22 @@ public class UDSpacer extends UDNodeGroup<LuaNodeLayout> {
         super(g);
         init();
     }
+
+    //<editor-fold desc="native method">
+    /**
+     * 初始化方法
+     * 反射调用
+     * @see com.immomo.mls.wrapper.Register.NewUDHolder
+     */
+    public static native void _init();
+
+    /**
+     * 注册到虚拟机方法
+     * 反射调用
+     * @see com.immomo.mls.wrapper.Register.NewUDHolder
+     */
+    public static native void _register(long l, String parent);
+    //</editor-fold>
 
     @Override
     protected LuaNodeLayout newView(LuaValue[] init) {
@@ -41,22 +60,19 @@ public class UDSpacer extends UDNodeGroup<LuaNodeLayout> {
         mNode.setFlexGrow(1);
     }
     //<editor-fold desc="API">
-    @LuaApiUsed
-    public LuaValue[] children(LuaValue[] var) {
+    @Override
+    public void children(LuaTable t) {
         ErrorUtils.debugUnsupportError("Spacer not support children");
-        return null;
     }
 
-    @LuaApiUsed
-    public LuaValue[] insertView(LuaValue[] var) {
+    @Override
+    public void insertView(UDView v, int i) {
         ErrorUtils.debugUnsupportError("Spacer not support insertView");
-        return null;
     }
 
-    @LuaApiUsed
-    public LuaValue[] addView(LuaValue[] var) {
+    @Override
+    public void addView(UDView v) {
         ErrorUtils.debugUnsupportError("Spacer not support addView");
-        return null;
     }
 
     //</editor-fold>

@@ -69,7 +69,7 @@ class LinearChildrenStateHelper {
         if (childrenState == null)
             return 0;
         int p = manager.findFirstVisibleItemPosition();
-        if (p >= childrenState.length)
+        if (p < 0 || p >= childrenState.length)
             return 0;
         View v = manager.findViewByPosition(p);
         if (v == null)

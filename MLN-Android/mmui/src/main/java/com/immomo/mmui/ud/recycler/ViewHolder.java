@@ -16,28 +16,37 @@ import org.luaj.vm2.LuaValue;
 /**
  * Created by XiongFangyu on 2018/7/19.
  */
-public class ViewHolder extends RecyclerView.ViewHolder {
+public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
     private final UDCell cell;
-    private boolean clickListenerSetted;
-    //for test
-    int count = 0;
+    private final UDBaseRecyclerAdapter udAdapter;
+    private final Adapter adapter;
+    private final int type;
+    private boolean clickSet;
+    private boolean longClickSet;
 
-    public ViewHolder(View itemView, UDCell cell) {
+    public ViewHolder(View itemView, UDCell cell, UDBaseRecyclerAdapter adapter, int type) {
         super(itemView);
         this.cell = cell;
+        this.udAdapter = adapter;
+        this.adapter = adapter.getAdapter();
+        this.type = type;
+        checkClick();
     }
 
-    public ViewHolder(View itemView) {
+    public ViewHolder(View itemView, UDBaseRecyclerAdapter adapter) {
         super(itemView);
         cell = null;
+        this.udAdapter = adapter;
+        this.adapter = adapter.getAdapter();
+        this.type = Adapter.TYPE_FOOT;
     }
 
     public boolean isFoot() {
-        return getItemViewType() == Adapter.TYPE_FOOT;
+        return type == Adapter.TYPE_FOOT;
     }
 
     public boolean isHeader() {
-        return getItemViewType() < 0;
+        return type < 0;
     }
 
     public LuaValue getCell() {
@@ -52,21 +61,37 @@ public class ViewHolder extends RecyclerView.ViewHolder {
         return cell != null ? cell.getView() : null;
     }
 
-    public void setOnClickListener(View.OnClickListener listener) {
-        clickListenerSetted = listener != null;
-        itemView.setOnClickListener(listener);
+    public void checkClick() {
+        if (isFoot() || isHeader())
+            return;
+        if (!clickSet && udAdapter.hasClickFor(type))
+            setClick();
+        if (!longClickSet && udAdapter.hasLongClickFor(type))
+            setLongClick();
     }
 
-    public void setOnLongClickListener(View.OnLongClickListener listener) {
-        itemView.setOnLongClickListener(listener);
+    private void setClick() {
+        clickSet = true;
+        itemView.setOnClickListener(this);
     }
 
-    public boolean isClickListenerSetted() {
-        return clickListenerSetted;
+    private void setLongClick() {
+        longClickSet = true;
+        itemView.setOnLongClickListener(this);
     }
 
     @Override
     public String toString() {
-        return super.toString() + " isfoot: " + isFoot() + " count: " + count;
+        return super.toString() + " isfoot: " + isFoot();
+    }
+
+    @Override
+    public void onClick(View v) {
+        udAdapter.doCellClick(getCell(), getAdapterPosition() - adapter.getHeaderCount());
+    }
+
+    @Override
+    public boolean onLongClick(View v) {
+        return udAdapter.doCellLongClick(getCell(), getAdapterPosition() - adapter.getHeaderCount());
     }
 }

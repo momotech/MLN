@@ -7,11 +7,11 @@
   */
 package com.immomo.mmui;
 
-import com.immomo.mmui.ud.UDViewGroup;
+import com.immomo.mmui.ud.UDView;
 
 /**
  * Created by XiongFangyu on 2018/7/31.
  */
-public interface ILViewGroup<U extends UDViewGroup> extends ILView<U> {
+public interface ILViewGroup<U extends UDView> extends ILView<U> {
 
 }

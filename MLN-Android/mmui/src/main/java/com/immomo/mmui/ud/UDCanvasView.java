@@ -22,7 +22,7 @@ import org.luaj.vm2.utils.LuaApiUsed;
  * on 2019/7/25
  */
 @LuaApiUsed
-public class UDCanvasView extends UDNodeView {
+public class UDCanvasView extends UDView {
     public static final String LUA_CLASS_NAME = "CanvasView";
     public static final String[] methods = {
             "closeHardWare",

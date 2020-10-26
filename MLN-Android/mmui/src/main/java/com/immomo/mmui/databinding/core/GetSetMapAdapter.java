@@ -45,19 +45,65 @@ public class GetSetMapAdapter implements IGetSet {
         return temp;
     }
 
+
+    /**
+     * update 时调用,若key值中间取的值为null且不为list时创建
+     * @param source
+     * @param key
+     * @param value
+     */
     @Override
     public void set(Object source, String key, Object value) {
         if(DataBindUtils.isEmpty(key) || source == null) {
             return;
         }
-        Object target = get(source,key.substring(0,key.lastIndexOf(Constants.SPOT)));
-        String fieldName = key.substring(key.lastIndexOf(Constants.SPOT) +1);
-        if(target instanceof ObservableField) {
-            ((ObservableField)target).getFields().put(fieldName,value);
-        } else if(target instanceof ObservableMap) {
-            ((ObservableMap)target).put(fieldName,value);
-        } else if(target instanceof ObservableList) {
-            ((ObservableList)target).set(Integer.parseInt(fieldName)-1, value);
+
+        Object temp = source;
+        String[] fields = key.split(Constants.SPOT_SPLIT);
+        for (int i = 0; i < fields.length; i++) {
+            if(temp == null) {
+                return;
+            }
+
+            String fieldName = fields[i];
+            if(temp instanceof ObservableField) {
+                ObservableField observableField = (ObservableField) temp;
+
+                if(i == fields.length -1) {
+                    observableField.getFields().putInLua(fieldName,value);
+                } else {
+                    temp =  observableField.getFields().get(fieldName);
+                    if(temp == null && !DataBindUtils.isNumber(fields[i+1])) {
+                        temp = new ObservableMap<>();
+                        observableField.getFields().putInLua(fieldName,temp);
+                    }
+                }
+            } else if(temp instanceof ObservableMap) {
+                ObservableMap observableMap = (ObservableMap) temp;
+
+                if(i == fields.length -1) {
+                    observableMap.putInLua(fieldName,value);
+                } else {
+                    temp = ((ObservableMap)temp).get(fieldName);
+                    if(temp == null && !DataBindUtils.isNumber(fields[i+1])) {
+                        temp = new ObservableMap<>();
+                        observableMap.putInLua(fieldName,temp);
+                    }
+                }
+
+            } else if(temp instanceof ObservableList) {
+                ObservableList observableList = (ObservableList)temp;
+
+                if(i == fields.length -1) {
+                    observableList.setInLua(Integer.parseInt(fieldName)-1, value);
+                } else {
+                    temp = (observableList).get(Integer.parseInt(fieldName)-1);
+                    if(temp == null && !DataBindUtils.isNumber(fields[i+1])) {// 如果a.b.c
+                        temp = new ObservableMap<>();
+                        observableList.setInLua(Integer.parseInt(fieldName)-1,temp);
+                    }
+                }
+            }
         }
     }
 

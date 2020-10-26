@@ -127,7 +127,10 @@ public class LuaImageView<U extends UDImageView> extends BorderRadiusImageView i
 
     @Override
     protected void onDraw(Canvas canvas) {
+        canvas.save();
+        canvas.clipRect(0, 0, getWidth(), getHeight());
         super.onDraw(canvas);
+        canvas.restore();
         getUserdata().drawOverLayout(canvas);
     }
 
@@ -292,6 +295,14 @@ public class LuaImageView<U extends UDImageView> extends BorderRadiusImageView i
         Drawable d = provider.loadProjectImage(getContext(), url);
         if (d != null) {
             setImageDrawable(d);
+            return;
+        }
+
+        if (RelativePathUtils.isAssetUrl(url)) {
+            url = RelativePathUtils.getAbsoluteAssetUrl(url);
+            d = provider.loadProjectImage(getContext(), url);
+            if (d != null)
+                setImageDrawable(d);
             return;
         }
 

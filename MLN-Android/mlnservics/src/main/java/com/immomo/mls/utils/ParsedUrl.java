@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import android.text.TextUtils;
 import android.webkit.URLUtil;
 
+import static com.immomo.mls.Constants.ASSETS_PREFIX;
 import com.immomo.mls.util.FileUtil;
 import com.immomo.mls.util.RelativePathUtils;
 
@@ -23,7 +24,6 @@ import static com.immomo.mls.utils.MLSUtils.isLuaScript;
  * Created by XiongFangyu on 2018/6/27.
  */
 public class ParsedUrl {
-    private static final String ASSETS_PREFIX = "file://android_asset/";
     private static final String DEFAULT_LUA_PATH = ".lua";
 
     public static final byte URL_TYPE_UNKNOWN = 0;

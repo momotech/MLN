@@ -7,8 +7,6 @@
   */
 package com.immomo.mmui.ud.anim;
 
-import com.immomo.mls.annotation.LuaBridge;
-import com.immomo.mls.annotation.LuaClass;
 import com.immomo.mls.util.DimenUtil;
 import com.immomo.mls.utils.ErrorUtils;
 import com.immomo.mmui.anim.animations.ObjectAnimation;
@@ -22,9 +20,11 @@ import com.immomo.mmui.ud.constants.AnimProperty;
 import com.immomo.mmui.ud.constants.Timing;
 import com.immomo.mmui.ud.recycler.UDRecyclerView;
 
-import org.luaj.vm2.Globals;
+import org.luaj.vm2.LuaNumber;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
+import org.luaj.vm2.utils.CGenerate;
+import org.luaj.vm2.utils.LuaApiUsed;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,19 +32,16 @@ import java.util.List;
 /**
  * Created by wang.yang on 2020/6/8.
  */
-@LuaClass
+@LuaApiUsed
 public class UDAnimation extends UDBaseAnimation {
 
     public static final String LUA_CLASS_NAME = "ObjectAnimation";
 
-    @LuaBridge
-    float duration;
-    private int property;
+    private float duration;
+    private final int property;
     private UDView target;
     private List<Object> froms = new ArrayList<>();
     private List<Object> tos = new ArrayList<>();
-    private PercentBehavior percentBehavior;
-
 
     private final static String VELOCITY = "Velocity";
     private final static String BOUNCINESS = "Bounciness";
@@ -53,16 +50,15 @@ public class UDAnimation extends UDBaseAnimation {
     private final static String FRICTION = "Friction";
     private final static String MASS = "Mass";
 
-    // 必须有此构造函数
-    public UDAnimation(Globals globals, LuaValue[] init) {
-        super(globals, init);
-        property = init[0].toInt();
-        target = (UDView) init[1].toUserdata();
+    @CGenerate(defaultConstructor = true)
+    @LuaApiUsed
+    public UDAnimation(long L, int property, UDView target) {
+        super(L);
+        this.property = property;
+        this.target = target;
     }
-
-    // lua虚拟机清除相关userdata时，会调用此方法，可无
-    public void __onLuaGc() {
-    }
+    public static native void _init();
+    public static native void _register(long l, String parent);
 
     @Override
     protected Animation defaultAnimation() {
@@ -72,12 +68,22 @@ public class UDAnimation extends UDBaseAnimation {
         return animation;
     }
 
-    @LuaBridge
+    @LuaApiUsed
+    public float getDuration() {
+        return duration;
+    }
+
+    @LuaApiUsed
+    public void setDuration(float duration) {
+        this.duration = duration;
+    }
+
+    @LuaApiUsed
     public UDView target() {
         return target;
     }
 
-    @LuaBridge
+    @LuaApiUsed
     public void timing(int timing, LuaTable table) {
         if (timing == Timing.Spring) {
             SpringAnimation springAnimation = new SpringAnimation(target.getView(), property);
@@ -113,46 +119,46 @@ public class UDAnimation extends UDBaseAnimation {
                     springAnimation.setMass(mass.toFloat());
                 }
             }
-            animation = springAnimation;
+            javaUserdata = springAnimation;
         } else {
             ObjectAnimation objectAnimation = new ObjectAnimation(target.getView(), property);
             objectAnimation.setTimingFunction(convertTiming(timing));
-            animation = objectAnimation;
+            javaUserdata = objectAnimation;
         }
     }
 
     @Override
-    public Animation getAnimation() {
-        super.getAnimation();
-        if (animation instanceof ObjectAnimation) {
-            ((ObjectAnimation) animation).setDuration(duration);
+    public Animation getJavaUserdata() {
+        super.getJavaUserdata();
+        if (javaUserdata instanceof ObjectAnimation) {
+            ((ObjectAnimation) javaUserdata).setDuration(duration);
         }
         int fSize = froms.size();
         int tSize = tos.size();
         int size = Math.max(fSize, tSize);
         if (size == 1) {
             if (fSize == 1) {
-                ((ValueAnimation) animation).setFromValue(value(froms, 0));
+                ((ValueAnimation) javaUserdata).setFromValue(value(froms, 0));
             }
-            ((ValueAnimation) animation).setToValue(value(tos, 0));
+            ((ValueAnimation) javaUserdata).setToValue(value(tos, 0));
         } else if (size == 2) {
             if (fSize == 2) {
-                ((ValueAnimation) animation).setFromValue(value(froms, 0), value(froms, 1));
+                ((ValueAnimation) javaUserdata).setFromValue(value(froms, 0), value(froms, 1));
             }
             if (tSize == 2) {
-                ((ValueAnimation) animation).setToValue(value(tos, 0), value(tos, 1));
+                ((ValueAnimation) javaUserdata).setToValue(value(tos, 0), value(tos, 1));
             }
         } else if (size == 4 && (property == AnimProperty.Color || property == AnimProperty.TextColor)) {
             if (fSize == 4) {
-                ((ValueAnimation) animation).setFromValue(value(froms, 3) * 255, value(froms, 0), value(froms, 1), value(froms, 2));
+                ((ValueAnimation) javaUserdata).setFromValue(value(froms, 3) * 255, value(froms, 0), value(froms, 1), value(froms, 2));
             }
-            ((ValueAnimation) animation).setToValue(value(tos, 3) * 255, value(tos, 0), value(tos, 1), value(tos, 2));
+            ((ValueAnimation) javaUserdata).setToValue(value(tos, 3) * 255, value(tos, 0), value(tos, 1), value(tos, 2));
         } else {
             if (fSize == 4) {
-                ((ValueAnimation) animation).setFromValue(value(froms, 0), value(froms, 1), value(froms, 2), value(froms, 3));
+                ((ValueAnimation) javaUserdata).setFromValue(value(froms, 0), value(froms, 1), value(froms, 2), value(froms, 3));
             }
             if (tSize == 4) {
-                ((ValueAnimation) animation).setToValue(value(tos, 0), value(tos, 1), value(tos, 2), value(tos, 3));
+                ((ValueAnimation) javaUserdata).setToValue(value(tos, 0), value(tos, 1), value(tos, 2), value(tos, 3));
             }
         }
         if (property == AnimProperty.ContentOffset && (!(target instanceof UDRecyclerView) && !(target instanceof UDScrollView))) {
@@ -161,7 +167,7 @@ public class UDAnimation extends UDBaseAnimation {
         if (property == AnimProperty.TextColor && !(target instanceof UDLabel)) {
             ErrorUtils.debugUnsupportError("The TextColor animation type is only valid for Label.");
         }
-        return animation;
+        return javaUserdata;
     }
 
     private float value(List<Object> list, int index) {
@@ -178,13 +184,13 @@ public class UDAnimation extends UDBaseAnimation {
         return value;
     }
 
-    @LuaBridge
+    @LuaApiUsed
     public int property() {
         return property;
     }
 
-    @LuaBridge
-    public void from(LuaValue value1, Float value2, Float value3, Float value4) {
+    @LuaApiUsed
+    public void from(LuaValue value1, LuaValue value2, LuaValue value3, LuaValue value4) {
         froms.clear();
         if (value1 != null) {
             if (value1.isNumber()) {
@@ -193,19 +199,19 @@ public class UDAnimation extends UDBaseAnimation {
                 froms.add(value1.toUserdata());
             }
         }
-        if (value2 != null) {
-            froms.add(value2);
+        if (value2 != null && value2.isNumber()) {
+            froms.add(value2.toFloat());
         }
-        if (value3 != null) {
-            froms.add(value3);
+        if (value3 != null && value3.isNumber()) {
+            froms.add(value3.toFloat());
         }
-        if (value4 != null) {
-            froms.add(value4);
+        if (value4 != null && value4.isNumber()) {
+            froms.add(value4.toFloat());
         }
     }
 
-    @LuaBridge
-    public void to(LuaValue value1, Float value2, Float value3, Float value4) {
+    @LuaApiUsed
+    public void to(LuaValue value1, LuaValue value2, LuaValue value3, LuaValue value4) {
         tos.clear();
         if (value1 != null) {
             if (value1.isNumber()) {
@@ -214,36 +220,26 @@ public class UDAnimation extends UDBaseAnimation {
                 tos.add(value1.toUserdata());
             }
         }
-        if (value2 != null) {
-            tos.add(value2);
+        if (value2 != null && value2.isNumber()) {
+            tos.add(value2.toFloat());
         }
-        if (value3 != null) {
-            tos.add(value3);
+        if (value3 != null && value3.isNumber()) {
+            tos.add(value3.toFloat());
         }
-        if (value4 != null) {
-            tos.add(value4);
+        if (value4 != null && value4.isNumber()) {
+            tos.add(value4.toFloat());
         }
     }
 
-    @LuaBridge
-    public void addInteractiveBehavior(GestureBehavior interactiveBehavior) {
-        interactiveBehavior.setAnimation((ObjectAnimation) getAnimation());
-    }
-
-    @LuaBridge
-    public void update(float percent) {
-        if (percentBehavior == null) {
-            percentBehavior = new PercentBehavior();
-            percentBehavior.targetView(target.getView()); // 每个动画类的target和propertyName是不会变化的，其他属性可能变化
-        }
-        percentBehavior.setAnimation((ObjectAnimation) getAnimation());  // 设置相关属性信息
-        percentBehavior.update(percent);
+    @LuaApiUsed
+    public void addInteractiveBehavior(InteractiveBehavior interactiveBehavior) {
+        interactiveBehavior.getJavaUserdata().setAnimation(this);
     }
 
     @Override
     public void repeat(Animation animation, int count) {
-        if (repeatCallback != null) {
-            repeatCallback.call(this, count);
+        if (repeatBlock != null) {
+            repeatBlock.invoke(varargsOf(this, LuaNumber.valueOf(count)));
         }
     }
 

@@ -15,7 +15,9 @@ import com.immomo.mls.utils.AssertUtils;
 import com.immomo.mls.utils.convert.ConvertUtils;
 import com.immomo.mls.wrapper.callback.IVoidCallback;
 
+import org.luaj.vm2.LuaFunction;
 import org.luaj.vm2.LuaTable;
+import org.luaj.vm2.LuaValue;
 
 /**
  * Created by Xiong.Fangyu on 2019-08-21
@@ -24,9 +26,9 @@ public class DefaultOnActivityResultListener implements OnActivityResultListener
     /**
      * function(bool, table)
      */
-    private final IVoidCallback callback;
+    private final LuaFunction callback;
 
-    public DefaultOnActivityResultListener(IVoidCallback callback) {
+    public DefaultOnActivityResultListener(LuaFunction callback) {
         AssertUtils.assertNullForce(callback);
         this.callback = callback;
     }
@@ -53,7 +55,12 @@ public class DefaultOnActivityResultListener implements OnActivityResultListener
 
     private void callback(boolean result, LuaTable table) {
         try {
-            callback.callbackAndDestroy(result, table);
+            if (table == null) {
+                callback.fastInvoke(result);
+            } else {
+                callback.invoke(LuaValue.varargsOf(result ? LuaValue.True() : LuaValue.False(), table));
+                table.destroy();
+            }
         } catch (Throwable t) {
             Environment.hook(t, callback.getGlobals());
         }

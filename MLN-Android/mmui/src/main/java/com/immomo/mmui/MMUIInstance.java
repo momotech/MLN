@@ -9,24 +9,31 @@ package com.immomo.mmui;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.URLUtil;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatDialog;
 import androidx.core.app.ActivityCompat;
 
 import com.immomo.mls.Constants;
+import com.immomo.mls.DebugPrintStream;
 import com.immomo.mls.HotReloadHelper;
 import com.immomo.mls.InitData;
 import com.immomo.mls.LuaViewManager;
@@ -46,6 +53,7 @@ import com.immomo.mls.fun.constants.StatusBarStyle;
 import com.immomo.mls.global.LuaViewConfig;
 import com.immomo.mls.global.ScriptLoader;
 import com.immomo.mls.log.DefaultPrintStream;
+import com.immomo.mls.log.ErrorPrintStream;
 import com.immomo.mls.log.ErrorType;
 import com.immomo.mls.log.IPrinter;
 import com.immomo.mls.log.PrinterContainer;
@@ -68,20 +76,20 @@ import com.immomo.mls.utils.loader.LoadTypeUtils;
 import com.immomo.mls.utils.loader.ScriptInfo;
 import com.immomo.mls.weight.RefreshView;
 import com.immomo.mls.weight.ScalpelFrameLayout;
-import com.immomo.mls.wrapper.AssetsResourceFinder;
 import com.immomo.mls.wrapper.GlobalsContainer;
 import com.immomo.mls.wrapper.ScriptBundle;
-import com.immomo.mls.wrapper.ScriptBundleResourceFinder;
 import com.immomo.mmui.globals.LuaView;
 import com.immomo.mmui.globals.UDLuaView;
+import com.immomo.mmui.wraps.MMUIScriptReaderImpl;
 
 import org.luaj.vm2.Globals;
-import org.luaj.vm2.utils.PathResourceFinder;
 
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Created by XiongFangyu on 2018/6/26.
@@ -160,7 +168,11 @@ public class MMUIInstance implements ScriptLoader.Callback, Callback, PrinterCon
      * 调试用，普通输出
      * lua 中调用print()方法可在屏幕上输出
      */
-    private DefaultPrintStream STDOUT;
+    private DefaultPrintStream viewOut;
+    /**
+     * 调试用，普通输出+hotreload输出
+     */
+    private PrintStream STDOUT;
     /**
      * 是否手动关闭过printer
      */
@@ -257,22 +269,13 @@ public class MMUIInstance implements ScriptLoader.Callback, Callback, PrinterCon
     /**
      * 是否展示debug button
      */
-    private final boolean showDebugButton;
+    private  boolean showDebugButton;
 
     public MMUIInstance(@NonNull Context context) {
         this(context,  false, MLSEngine.DEBUG);
     }
 
     public MMUIInstance(@NonNull Context context, boolean isHotReloadPage, boolean showDebugButton) {
-        this(context, isHotReloadPage, showDebugButton, false);
-    }
-
-    public MMUIInstance(@NonNull Context context, boolean isHotReloadPage, boolean showDebugButton, boolean clearStatistic) {
-        if (clearStatistic) {
-            ///清空数据
-            Globals.setStatisticOpen(false);
-            Globals.setStatisticOpen(true);
-        }
         AssertUtils.assertNullForce(context);
         mContext = context;
         createLuaViewManager();
@@ -285,6 +288,10 @@ public class MMUIInstance implements ScriptLoader.Callback, Callback, PrinterCon
         this.showDebugButton = showDebugButton;
         if (MLSEngine.DEBUG)
             initSerial(context);
+    }
+
+    public void setShowDebugButton(boolean isShowDebugButton) {
+        this.showDebugButton = isShowDebugButton;
     }
 
     private void initSerial(Context context) {
@@ -335,6 +342,10 @@ public class MMUIInstance implements ScriptLoader.Callback, Callback, PrinterCon
         showProgressView();
     }
 
+    public void setScriptReader(ScriptReader scriptReader) {
+        this.scriptReader = scriptReader;
+    }
+
     /**
      * 设置luaview 的url
      *
@@ -357,7 +368,9 @@ public class MMUIInstance implements ScriptLoader.Callback, Callback, PrinterCon
             return;
         }
         createLuaViewManager();
-        scriptReader = MLSAdapterContainer.getScriptReaderCreator().newScriptLoader(url);
+        if(scriptReader == null) {
+            scriptReader = new MMUIScriptReaderImpl(initData.rootPath,initData.url);
+        }
         if (!extraData.containsKey(Constants.KEY_URL)) {
             extraData.put(Constants.KEY_URL, url);
         }
@@ -455,10 +468,17 @@ public class MMUIInstance implements ScriptLoader.Callback, Callback, PrinterCon
 
     /**
      * 在activity的dispatchKeyEvent方法中调用
+     * eg:
+     *  if (argo.dispatchKeyEvent(event))
+     *      return true;
+     *  else
+     *      return super.dispatchKeyEvent(event);
      */
-    public void dispatchKeyEvent(KeyEvent event) {
-        if (mLuaView != null)
-            mLuaView.dispatchKeyEventSelf(event);
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        if (mLuaView == null)
+            return false;
+        mLuaView.dispatchKeyEventSelf(event);
+        return !mLuaView.getBackKeyEnabled();
     }
 
     /**
@@ -693,7 +713,8 @@ public class MMUIInstance implements ScriptLoader.Callback, Callback, PrinterCon
         if (lvm == null || lvm.context == null)
             return null;
         long now = System.nanoTime();
-        MMUIEngine.singleRegister.createSingleInstance(globals);
+        MLSEngine.singleRegister.createSingleInstance(globals,false);
+        MMUIEngine.singleRegister.createSingleInstance(globals,false);
         if (MLSEngine.DEBUG) {
             now = System.nanoTime() - now;
             LogUtil.d(String.format("create single instance cast : %.2fms", now / 1000000f));
@@ -725,18 +746,16 @@ public class MMUIInstance implements ScriptLoader.Callback, Callback, PrinterCon
         if (debugButton != null) {
             debugButton.bringToFront();
         }
-        if (STDOUT != null) {
-            lvm.STDOUT = STDOUT;
-            View v = (View) ((View) STDOUT.getPrinter()).getParent();
-            v.bringToFront();
-
-            if (MLSEngine.DEBUG) {
-                MLSGlobalStateListener adapter = MLSAdapterContainer.getGlobalStateListener();
-                if (adapter instanceof GlobalStateSDKListener) {
-                    ((GlobalStateSDKListener) adapter).STDOUT = STDOUT;
-                }
+        lvm.STDOUT = STDOUT;
+        if (MLSEngine.DEBUG) {
+            MLSGlobalStateListener adapter = MLSAdapterContainer.getGlobalStateListener();
+            if (adapter instanceof GlobalStateSDKListener) {
+                ((GlobalStateSDKListener) adapter).STDOUT = STDOUT;
             }
-
+        }
+        if (viewOut != null) {
+            View v = (View) ((View) viewOut.getPrinter()).getParent();
+            v.bringToFront();
         }
         return mLuaView;
     }
@@ -755,6 +774,7 @@ public class MMUIInstance implements ScriptLoader.Callback, Callback, PrinterCon
          * 旧虚拟机需要reset，view需要remove并且destroy
          */
         if (hasState(STATE_HOT_RELOADING)) {
+            dismissHotReloadLoading();
             final LuaView lv = hotReloadLuaView;
             hotReloadLuaView = mLuaView;
             mLuaView = lv;
@@ -779,9 +799,6 @@ public class MMUIInstance implements ScriptLoader.Callback, Callback, PrinterCon
             mLuaView.onResume();
         }
         removeState(STATE_HOT_RELOADING);
-
-        if(MLSEngine.DEBUG)
-            Globals.notifyStatisticsCallback();//通知打印统计信息
     }
 
     private Globals initGlobals(LuaViewManager luaViewManager) {
@@ -824,6 +841,7 @@ public class MMUIInstance implements ScriptLoader.Callback, Callback, PrinterCon
         GlobalStateUtils.onGlobalPrepared(initData.url);
 
         ScriptInfo scriptInfo = new ScriptInfo(initData)
+                .withContext(mContext)
                 .withLoadType(loadType)
                 .withCallback(MMUIInstance.this)
                 .whitHotReloadUrl(hru);
@@ -849,6 +867,8 @@ public class MMUIInstance implements ScriptLoader.Callback, Callback, PrinterCon
     }
 
     private void initReloadButton() {
+        if (STDOUT == null)
+            STDOUT = new DebugPrintStream(null);
         if (debugButton == null) {
             debugButton = MMUIEngine.reloadButtonCreator.newGenerator(mContainer, this).generateReloadButton(isHotReloadPage);
         }
@@ -1020,6 +1040,49 @@ public class MMUIInstance implements ScriptLoader.Callback, Callback, PrinterCon
     //</editor-fold>
 
     //<editor-fold desc="HotReloadHelper.Callback">
+
+    private Dialog updatingDialog;
+    private AtomicBoolean updating = new AtomicBoolean(false);
+    @Override
+    public void onUpdateFiles(String f) {
+        if (mContext == null || updating.get())
+            return;
+        updating.set(true);
+        MainThreadExecutor.post(new Runnable() {
+            @Override
+            public void run() {
+                if (mContext == null || !updating.get())
+                    return;
+                if (updatingDialog == null) {
+                    AppCompatDialog d = new AppCompatDialog(mContext);
+                    d.setCanceledOnTouchOutside(false);
+                    LinearLayout cv = new LinearLayout(mContext);
+                    cv.setLayoutParams(new LinearLayout.LayoutParams(AndroidUtil.getScreenWidth(mContext) - 50, LinearLayout.LayoutParams.WRAP_CONTENT));
+                    cv.setOrientation(LinearLayout.VERTICAL);
+                    cv.setGravity(Gravity.CENTER);
+                    cv.setPadding(20,20,20,20);
+                    LayoutInflater.from(mContext).inflate(com.immomo.mls.R.layout.luasdk_loading_diloag, cv);
+                    TextView tv = new TextView(mContext);
+                    tv.setTextSize(20);
+                    tv.setGravity(Gravity.CENTER);
+                    tv.setText("正在更新脚本，请稍后...");
+                    LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(-2, -2);
+                    p.setMargins(0, 20, 0, 0);
+                    cv.addView(tv, p);
+                    d.setContentView(cv);
+                    updatingDialog = d;
+                }
+                updatingDialog.show();
+            }
+        });
+    }
+
+    private void dismissHotReloadLoading() {
+        updating.set(false);
+        if (updatingDialog != null && updatingDialog.isShowing())
+            updatingDialog.dismiss();
+    }
+
     @Override
     public void onReload(final String path, final HashMap<String, String> params, int state) {
         if (globals.isDestroyed()) {
@@ -1038,6 +1101,12 @@ public class MMUIInstance implements ScriptLoader.Callback, Callback, PrinterCon
         } else {
             reloadByHotReload(path, LoadTypeUtils.add(initData.loadType, Constants.LT_MAIN_THREAD), params);
         }
+        MainThreadExecutor.postDelayed(getTaskTag(), new Runnable() {
+            @Override
+            public void run() {
+                dismissHotReloadLoading();
+            }
+        }, 100);
     }
 
     @Override
@@ -1086,21 +1155,16 @@ public class MMUIInstance implements ScriptLoader.Callback, Callback, PrinterCon
                     if (!hasState(STATE_HOT_RELOADING)) {
                         if (MLSEngine.DEBUG) {
                             MLSAdapterContainer.getToastAdapter().toast(em, 1);
-                            LuaViewManager m = (LuaViewManager) globals.getJavaUserdata();
-                            if (m != null && m.STDOUT != null) {
-                                if (m.STDOUT instanceof DefaultPrintStream) {
-                                    ((DefaultPrintStream) m.STDOUT).error(ErrorType.ERROR.getErrorPrefix() + em);
-                                } else {
-                                    m.STDOUT.printf("%s%s", ErrorType.ERROR.getErrorPrefix(), em);
-                                    m.STDOUT.println();
-                                }
-                            }
+                            if (STDOUT != null)
+                                ((ErrorPrintStream) STDOUT).error(ErrorType.ERROR.getErrorPrefix() + em);
                         }
                         if (toggleEmptyViewShow(true))
-                            setEmptyViewContent("执行失败", "点击重新加载");
+                            setEmptyViewContent("打开页面失败", "点击重新加载");
                     } else {
-                        if (MLSEngine.DEBUG && code == COMPILE_FAILED)
-                            HotReloadHelper.onError(em);
+                        dismissHotReloadLoading();
+                        if (MLSEngine.DEBUG && code == COMPILE_FAILED && STDOUT != null) {
+                            ((ErrorPrintStream) STDOUT).error(em);
+                        }
                         if (hotReloadLuaView != null) {
                             removeLuaView(hotReloadLuaView);
                             hotReloadLuaView = null;
@@ -1156,15 +1220,6 @@ public class MMUIInstance implements ScriptLoader.Callback, Callback, PrinterCon
 
                 g.setBasePath(scriptBundle.getBasePath(), false);
 
-//                if (scriptBundle.hasFlag(ScriptBundle.TYPE_ASSETS))
-                g.addResourceFinder(new AssetsResourceFinder(mContext));
-                if (scriptBundle.hasChildren()) {
-                    g.addResourceFinder(new PathResourceFinder(scriptBundle.getBasePath()));
-                    g.setResourceFinder(new ScriptBundleResourceFinder(scriptBundle));
-                } else {
-                    g.setResourceFinder(new PathResourceFinder(scriptBundle.getBasePath()));
-                }
-
                 final LuaViewManager lvm;
                 if (hasState(STATE_HOT_RELOADING)) {
                     lvm = hotReloadLuaViewManager;
@@ -1216,11 +1271,12 @@ public class MMUIInstance implements ScriptLoader.Callback, Callback, PrinterCon
                 if (MLSEngine.DEBUG) {
                     String errorValue = String.format("脚本加载失败，code: %d, \n\n msg: %s, \n\n cause: %s, \n\n 详细信息检查日志，tag: %s", e.getCode(), e.getMsg(), e.getCause(), TAG);
                     MLSAdapterContainer.getConsoleLoggerAdapter().e(TAG, e, errorValue);
-                    if (getSTDPrinter() != null)
-                        getSTDPrinter().print(errorValue);
-                    HotReloadHelper.onError(e.getMsg());
+                    if (STDOUT != null) {
+                        ((ErrorPrintStream) STDOUT).error(e.getMsg());
+                    }
 
                     if (hasState(STATE_HOT_RELOADING)) {
+                        dismissHotReloadLoading();
                         hotReloadGlobals.destroy();
                         hotReloadGlobals = null;
                         hotReloadLuaViewManager = null;
@@ -1243,7 +1299,7 @@ public class MMUIInstance implements ScriptLoader.Callback, Callback, PrinterCon
     //<editor-fold desc="PrinterContainer">
     @Override
     public IPrinter getSTDPrinter() {
-        return STDOUT != null ? STDOUT.getPrinter() : null;
+        return viewOut != null ? viewOut.getPrinter() : null;
     }
 
     @Override
@@ -1279,9 +1335,11 @@ public class MMUIInstance implements ScriptLoader.Callback, Callback, PrinterCon
 
     @Override
     public void onSTDPrinterCreated(IPrinter p) {
-        if (p != null) {
-            STDOUT = new DefaultPrintStream(p);
-        }
+        viewOut = new DefaultPrintStream(p);
+        if (STDOUT == null)
+            STDOUT = new DebugPrintStream(viewOut);
+        else
+            ((DebugPrintStream) STDOUT).inner = viewOut;
         if (luaViewManager != null) {
             luaViewManager.STDOUT = STDOUT;
         }

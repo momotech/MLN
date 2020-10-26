@@ -19,7 +19,7 @@ import com.immomo.mmui.anim.utils.ColorUtil;
 
 public abstract class ValueAnimation extends Animation {
 
-    public Animatable animatable;
+    protected Animatable animatable;
     private AnimationUpdateListener animationUpdateListener;
 
     float[] fromValue;
@@ -42,6 +42,18 @@ public abstract class ValueAnimation extends Animation {
     public void setToValue(float... toValue) {
         this.toValue = toValue;
 
+    }
+
+    public Animatable getAnimatable() {
+        return animatable;
+    }
+
+    public float[] getFromValue() {
+        return fromValue;
+    }
+
+    public float[] getToValue() {
+        return toValue;
     }
 
     public void setColorToValue(int toColor) {

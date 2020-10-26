@@ -56,4 +56,9 @@ public class LuaGridLayoutManager extends GridLayoutManager implements IScrollEn
             super.onLayoutChildren(recycler, state);
         } catch (Throwable ignore) {}
     }
+
+    @Override
+    public void scrollToPosition(int position) {
+        super.scrollToPositionWithOffset(position, 0);
+    }
 }

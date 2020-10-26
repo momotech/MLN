@@ -13,12 +13,12 @@ import android.view.ViewGroup;
 
 import com.immomo.mmui.ILView;
 import com.immomo.mmui.ILViewGroup;
-import com.immomo.mmui.ud.UDViewGroup;
+import com.immomo.mmui.ud.UDNodeGroup;
 import com.immomo.mmui.weight.BorderRadiusNodeLayout;
 
 import androidx.annotation.NonNull;
 
-public class LuaNodeLayout<U extends UDViewGroup> extends BorderRadiusNodeLayout implements ILViewGroup<U> {
+public class LuaNodeLayout<U extends UDNodeGroup> extends BorderRadiusNodeLayout implements ILViewGroup<U> {
     protected U userdata;
     private ILView.ViewLifeCycleCallback cycleCallback;
 
@@ -90,5 +90,15 @@ public class LuaNodeLayout<U extends UDViewGroup> extends BorderRadiusNodeLayout
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
         return isEnabled() && super.dispatchTouchEvent(ev);
+    }
+
+    @Override
+    public boolean onInterceptTouchEvent(MotionEvent ev) {
+        Boolean notDispatch = userdata.isNotDispatch();
+        if (notDispatch == null) { // 默认由控件自己处理
+            return super.onInterceptTouchEvent(ev);
+        } else {
+            return notDispatch;
+        }
     }
 }

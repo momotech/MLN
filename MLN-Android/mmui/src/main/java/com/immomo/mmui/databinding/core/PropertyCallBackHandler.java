@@ -8,6 +8,9 @@
 package com.immomo.mmui.databinding.core;
 
 
+import android.os.Handler;
+import android.os.Looper;
+import android.util.Log;
 import android.view.Choreographer;
 
 import com.immomo.mmui.databinding.bean.WatchCallBack;
@@ -15,6 +18,7 @@ import com.immomo.mmui.databinding.bean.WatchCallBack;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Description:
@@ -24,8 +28,9 @@ import java.util.List;
  */
 public class PropertyCallBackHandler implements Choreographer.FrameCallback {
 
-    private List<WatchCallBack> callBacks = new ArrayList<>();
+    private ArrayList<WatchCallBack> callBacks = new ArrayList<>();
     public final static ThreadLocal<PropertyCallBackHandler> callBackHandler = new ThreadLocal<>();
+    private Handler handler;
 
     public static PropertyCallBackHandler getInstance() {
         if (callBackHandler.get() == null) {
@@ -34,24 +39,31 @@ public class PropertyCallBackHandler implements Choreographer.FrameCallback {
         return callBackHandler.get();
     }
 
-    private PropertyCallBackHandler() {}
+    private PropertyCallBackHandler() {
+        handler = new Handler(Looper.getMainLooper());
+    }
 
     @Override
     public void doFrame(long frameTimeNanos) {
         doCallBackFrame();
-        if (callBacks.size() > 0) {
-            Choreographer.getInstance().postFrameCallback(this);
-        }
+
     }
+
 
     /**
      * 统一处理callBack
      */
     private void doCallBackFrame() {
-        for (WatchCallBack watchCallBack : callBacks) {
+        List<WatchCallBack> commitCallBacks = (List<WatchCallBack>) callBacks.clone();
+        for (WatchCallBack watchCallBack : commitCallBacks) {
             watchCallBack.getiPropertyCallback().callBack(watchCallBack.getOlder(), watchCallBack.getNewer());
         }
-        callBacks.clear();
+        callBacks.removeAll(commitCallBacks);
+        if (callBacks.size() > 0) {
+            Choreographer.getInstance().postFrameCallback(this);
+        } else {
+            Choreographer.getInstance().removeFrameCallback(this);
+        }
     }
 
     /**
@@ -60,7 +72,7 @@ public class PropertyCallBackHandler implements Choreographer.FrameCallback {
      * @param watchCallBack
      */
     public void addCallBack(WatchCallBack watchCallBack) {
-        if(callBacks.size() ==0) {
+        if (callBacks.size() == 0) {
             Choreographer.getInstance().postFrameCallback(this);
         }
 

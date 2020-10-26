@@ -28,7 +28,6 @@ import com.immomo.mls.MLSEngine;
 import com.immomo.mls.adapter.TypeFaceAdapter;
 import com.immomo.mls.fun.constants.StyleImageAlign;
 import com.immomo.mls.fun.other.Size;
-import com.immomo.mmui.ud.UDColor;
 import com.immomo.mls.fun.ud.UDSize;
 import com.immomo.mls.fun.weight.span.ImageSpan;
 import com.immomo.mls.fun.weight.span.UrlImageSpan;
@@ -39,8 +38,7 @@ import com.immomo.mmui.ui.LuaLabel;
 
 import org.luaj.vm2.Globals;
 import org.luaj.vm2.JavaUserdata;
-import org.luaj.vm2.LuaNumber;
-import org.luaj.vm2.LuaValue;
+import org.luaj.vm2.utils.CGenerate;
 import org.luaj.vm2.utils.LuaApiUsed;
 
 import java.util.ArrayList;
@@ -53,26 +51,6 @@ import java.util.List;
 @LuaApiUsed
 public class UDStyleString extends JavaUserdata implements UrlImageSpan.ILoadDrawableResult {
     public static final String LUA_CLASS_NAME = "StyleString";
-    public static final String[] methods = new String[]{
-            "fontName",
-            "fontSize",
-            "fontWeight",
-            "fontStyle",
-            "fontColor",
-            "backgroundColor",
-            "underline",
-            "append",
-            "calculateSize",
-            "setFontNameForRange",
-            "setFontSizeForRange",
-            "setFontStyleForRange",
-            "setFontColorForRange",
-            "setBackgroundColorForRange",
-            "setUnderlineForRange",
-            "showAsImage",
-            "setText",
-            "imageAlign",
-    };
 
     private SpannableStringBuilder text;
     private AbsoluteSizeSpan sizeSpan;
@@ -91,7 +69,7 @@ public class UDStyleString extends JavaUserdata implements UrlImageSpan.ILoadDra
     private boolean changeText = false;
     private UDSize lastSize;
     private Size imageSize;
-    private HashMap mImageUrlHashmap = new HashMap(); // 用于暂存同一个StyleString 对象，应对业务重复添加此对象
+    private HashMap<CharSequence, UDStyleString> mImageUrlHashmap = new HashMap<>(); // 用于暂存同一个StyleString 对象，应对业务重复添加此对象
     private int mVerticalAlignment = StyleImageAlign.Default;//图片方向
     private List<StyleSpan> mFontStyleForRangeList;
 
@@ -101,16 +79,36 @@ public class UDStyleString extends JavaUserdata implements UrlImageSpan.ILoadDra
         initPaint();
     }
 
+    @CGenerate(defaultConstructor = true)
     @LuaApiUsed
-    protected UDStyleString(long L, LuaValue[] v) {
-        super(L, v);
-        if (v != null && v.length >= 1) {
-            text = new SpannableStringBuilder(v[0].toJavaString());
-        } else {
-            text = new SpannableStringBuilder();
-        }
+    protected UDStyleString(long L) {
+        super(L, null);
+        this.text = new SpannableStringBuilder();
         initPaint();
     }
+
+    @CGenerate
+    @LuaApiUsed
+    protected UDStyleString(long L, String text) {
+        super(L, null);
+        this.text = new SpannableStringBuilder(text);
+        initPaint();
+    }
+
+    //<editor-fold desc="native method">
+    /**
+     * 初始化方法
+     * 反射调用
+     * @see com.immomo.mls.wrapper.Register.NewUDHolder
+     */
+    public static native void _init();
+
+    /**
+     * 注册到虚拟机方法
+     * 反射调用
+     * @see com.immomo.mls.wrapper.Register.NewUDHolder
+     */
+    public static native void _register(long l, String parent);
 
     private void initPaint() {
         caculatePaint.setTextSize(DimenUtil.spToPx(14));
@@ -143,126 +141,126 @@ public class UDStyleString extends JavaUserdata implements UrlImageSpan.ILoadDra
 
     //<editor-fold desc="API">
     //<editor-fold desc="Property">
-
     @LuaApiUsed
-    public LuaValue[] fontName(LuaValue[] p) {
-        if (p.length == 0) {
-            return typefaceSpan == null ? rNil() : rString(typefaceSpan.getFamily());
-        }
+    public void setFontName(String name) {
         if (typefaceSpan != null) {
             removeSpan(typefaceSpan);
         }
-        String name = p[0].toJavaString();
         TypeFaceAdapter a = MLSAdapterContainer.getTypeFaceAdapter();
         if (a != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             typefaceSpan = new TypefaceSpan(a.create(name));
             setSpan(typefaceSpan);
         }
-        return null;
     }
 
     @LuaApiUsed
-    public LuaValue[] fontSize(LuaValue[] p) {
-        if (p.length != 0) {
-            if (sizeSpan != null) {
-                removeSpan(sizeSpan);
-            }
-            sizeSpan = new AbsoluteSizeSpan(DimenUtil.spToPx((float) p[0].toDouble()));
-            setSpan(sizeSpan);
-            changeSizePan = true;
-            return null;
-        }
-        if (sizeSpan == null)
-            return rNumber(0);
-        return varargsOf(LuaNumber.valueOf(DimenUtil.pxToSp(sizeSpan.getSize())));
+    public String getFontName() {
+        return typefaceSpan != null ? typefaceSpan.getFamily() : null;
     }
 
     @LuaApiUsed
-    public LuaValue[] fontWeight(LuaValue[] p) {
-        if (p.length != 0) {
-            if (weightSpan != null) {
-                removeSpan(weightSpan);
-            }
-            this.weight = p[0].toInt();
-            weightSpan = new WeightStyleSpan(weight);
-            setSpan(weightSpan);
-            return null;
+    public void setFontSize(float s) {
+        if (sizeSpan != null) {
+            removeSpan(sizeSpan);
         }
-        return rNumber(this.weight);
+        sizeSpan = new AbsoluteSizeSpan(DimenUtil.spToPx(s));
+        setSpan(sizeSpan);
+        changeSizePan = true;
     }
 
     @LuaApiUsed
-    public LuaValue[] fontStyle(LuaValue[] p) {
-        if (p.length != 0) {
-            if (styleSpan != null) {
-                removeSpan(styleSpan);
-            }
-            removeStyleForRange(text);
-
-            styleSpan = new StyleSpan(p[0].toInt());
-            setSpan(styleSpan);
-            return null;
-        }
-        if (styleSpan == null)
-            return rNumber(0);
-        return rNumber(styleSpan.getStyle());
+    public float getFontSize() {
+        return sizeSpan == null ? 0 : DimenUtil.pxToSp(sizeSpan.getSize());
     }
 
     @LuaApiUsed
-    public LuaValue[] fontColor(LuaValue[] p) {
-        if (p.length != 0) {
-            if (colorSpan != null) {
-                removeSpan(colorSpan);
-            }
-            colorSpan = new ForegroundColorSpan(((UDColor) p[0]).getColor());
-            setSpan(colorSpan);
-            return null;
+    public void setFontWeight(int weight) {
+        if (weightSpan != null) {
+            removeSpan(weightSpan);
         }
+        this.weight = weight;
+        weightSpan = new WeightStyleSpan(weight);
+        setSpan(weightSpan);
+    }
+
+    @LuaApiUsed
+    public int getFontWeight() {
+        return this.weight;
+    }
+
+    @LuaApiUsed
+    public void setFontStyle(int s) {
+        if (styleSpan != null) {
+            removeSpan(styleSpan);
+        }
+        removeStyleForRange(text);
+
+        styleSpan = new StyleSpan(s);
+        setSpan(styleSpan);
+    }
+
+    @LuaApiUsed
+    public int getFontStyle() {
+        return styleSpan != null ? styleSpan.getStyle() : 0;
+    }
+
+    @LuaApiUsed
+    public void setFontColor(UDColor color) {
+        if (colorSpan != null) {
+            removeSpan(colorSpan);
+        }
+        colorSpan = new ForegroundColorSpan(color.getColor());
+        setSpan(colorSpan);
+    }
+
+    @LuaApiUsed
+    public UDColor getFontColor() {
         if (colorSpan == null)
-            return rNil();
-        return varargsOf(new UDColor(globals, colorSpan.getForegroundColor()));
+            return null;
+        return new UDColor(globals, colorSpan.getForegroundColor());
     }
 
     @LuaApiUsed
-    public LuaValue[] backgroundColor(LuaValue[] p) {
-        if (p.length != 0) {
-            if (backgroundColorSpan != null) {
-                removeSpan(backgroundColorSpan);
-            }
-            backgroundColorSpan = new BackgroundColorSpan(((UDColor) p[0]).getColor());
-            setSpan(backgroundColorSpan);
-            return null;
+    public void setBackgroundColor(UDColor color) {
+        if (backgroundColorSpan != null) {
+            removeSpan(backgroundColorSpan);
         }
-        if (backgroundColorSpan == null)
-            return rNil();
-        return varargsOf(new UDColor(globals, backgroundColorSpan.getBackgroundColor()));
+        backgroundColorSpan = new BackgroundColorSpan(color.getColor());
+        setSpan(backgroundColorSpan);
     }
 
     @LuaApiUsed
-    public LuaValue[] underline(LuaValue[] p) {
-        if (p.length != 0) {
-            int i = p[0].toInt();
-            if (i > 0 && underlineSpan == null) {
-                underlineSpan = new UnderlineSpan();
-                setSpan(underlineSpan);
-            } else if (i <= 0 && underlineSpan != null) {
-                removeSpan(underlineSpan);
-                underlineSpan = null;
-            }
-            return null;
+    public UDColor getBackgroundColor() {
+        return backgroundColorSpan != null
+                ? new UDColor(globals, backgroundColorSpan.getBackgroundColor())
+                : null;
+    }
+
+    @LuaApiUsed
+    public void setUnderline(int i) {
+        if (i > 0 && underlineSpan == null) {
+            underlineSpan = new UnderlineSpan();
+            setSpan(underlineSpan);
+        } else if (i <= 0 && underlineSpan != null) {
+            removeSpan(underlineSpan);
+            underlineSpan = null;
         }
-        return rNumber(underlineSpan != null ? 1 : 0);
+    }
+
+    @LuaApiUsed
+    public int getUnderline() {
+        return underlineSpan != null ? 1 : 0;
     }
     //</editor-fold>
 
     //<editor-fold desc="Method">
     @LuaApiUsed
-    public LuaValue[] append(LuaValue[] p) {
-        CharSequence charSequence = ((UDStyleString) p[0]).text;
+    public void append(UDStyleString styleString) {
+        CharSequence charSequence = styleString.text;
 
-        LuaValue charSequenceLuaValue = (LuaValue) mImageUrlHashmap.get(charSequence);
+        UDStyleString charSequenceLuaValue = mImageUrlHashmap.get(charSequence);
 
-        if (isImageSpan(charSequence) && charSequenceLuaValue == p[0] && ((UDStyleString) charSequenceLuaValue).imageSize != null) {
+        if (isImageSpan(charSequence) && charSequenceLuaValue == styleString && ((UDStyleString) charSequenceLuaValue).imageSize != null) {
             imageSpan = new UrlImageSpan(((LuaViewManager) globals.getJavaUserdata()).context, charSequence.toString(), ((UDStyleString) charSequenceLuaValue).imageSize, this, mVerticalAlignment);
             text.append(charSequence);
             int imgLength = charSequence.toString().length();
@@ -272,16 +270,14 @@ public class UDStyleString extends JavaUserdata implements UrlImageSpan.ILoadDra
         }
 
         if (charSequence != null)
-            mImageUrlHashmap.put(charSequence, p[0]);
+            mImageUrlHashmap.put(charSequence, styleString);
 
         changeText = true;
-
-        return null;
     }
 
     @LuaApiUsed
-    public LuaValue[] calculateSize(LuaValue[] p) {
-        int maxWidth = DimenUtil.dpiToPx((float) p[0].toDouble());
+    public UDSize calculateSize(float mw) {
+        int maxWidth = DimenUtil.dpiToPx(mw);
         if (maxWidth < 0) {
             if (MLSEngine.DEBUG) {
                 IllegalArgumentException e = new IllegalArgumentException("max width must be more than 0");
@@ -293,10 +289,10 @@ public class UDStyleString extends JavaUserdata implements UrlImageSpan.ILoadDra
                 lastSize = new UDSize(globals, new Size());
                 lastSize.onJavaRef();
             }
-            return varargsOf(lastSize);
+            return lastSize;
         }
         if (layout != null && lastMaxWidth == maxWidth && !changeText && !changeSizePan) {
-            return varargsOf(lastSize);
+            return lastSize;
         }
         if (lastSize == null) {
             lastSize = new UDSize(globals, new Size());
@@ -322,7 +318,7 @@ public class UDStyleString extends JavaUserdata implements UrlImageSpan.ILoadDra
         int h = (int) Math.ceil(DimenUtil.pxToDpi(layout.getHeight()));
         lastSize.setWidth(w);
         lastSize.setHeight(h);
-        return varargsOf(lastSize);
+        return lastSize;
     }
 
     /**
@@ -331,37 +327,35 @@ public class UDStyleString extends JavaUserdata implements UrlImageSpan.ILoadDra
      * 如：p[2].toInt() - 1 + p[1].toInt() - 1
      */
     @LuaApiUsed
-    public LuaValue[] setFontNameForRange(LuaValue[] p) {
-        checkStartPosition(p[1]);
+    public void setFontNameForRange(String name, int s, int end) {
+        checkStartPosition(s);
         try {
-            int location = p[1].toInt() - 1;
-            text.setSpan(new TypefaceSpan(p[0].toJavaString()), location, p[2].toInt() - 1 + location, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            int location = s - 1;
+            text.setSpan(new TypefaceSpan(name), location, end - 1 + location, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         } catch (IndexOutOfBoundsException e) {
             LogUtil.e(e);
         }
-        return null;
     }
 
     @LuaApiUsed
-    public LuaValue[] setFontSizeForRange(LuaValue[] p) {
-        checkStartPosition(p[1]);
+    public void setFontSizeForRange(float s, int start, int end) {
+        checkStartPosition(start);
         try {
-            text.setSpan(new AbsoluteSizeSpan(DimenUtil.spToPx((float) p[0].toDouble())),
-                    p[1].toInt() - 1,
-                    p[2].toInt() + p[1].toInt() - 1,
+            text.setSpan(new AbsoluteSizeSpan(DimenUtil.spToPx(s)),
+                    start - 1,
+                    end + start - 1,
                     Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         } catch (IndexOutOfBoundsException e) {
             LogUtil.e(e);
         }
-        return null;
     }
 
     @LuaApiUsed
-    public LuaValue[] setFontStyleForRange(LuaValue[] p) {
-        checkStartPosition(p[1]);
+    public void setFontStyleForRange(int style, int start, int end) {
+        checkStartPosition(start);
         try {
-            int start = p[1].toInt() - 1;
-            int end = p[2].toInt() + start;
+            start--;
+            end = end + start;
             SpannableStringBuilder before = null;
             if (start > 0) {
                 before = (SpannableStringBuilder) text.subSequence(0, start);
@@ -370,7 +364,7 @@ public class UDStyleString extends JavaUserdata implements UrlImageSpan.ILoadDra
 
             SpannableStringBuilder target = (SpannableStringBuilder) text.subSequence(start, end);
             removeStyleForRange(target);
-            StyleSpan styleSpan = new StyleSpan(p[0].toInt());
+            StyleSpan styleSpan = new StyleSpan(style);
             target.setSpan(styleSpan, 0, target.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
             initFontStyleForRangeList();
@@ -421,44 +415,39 @@ public class UDStyleString extends JavaUserdata implements UrlImageSpan.ILoadDra
         } catch (IndexOutOfBoundsException e) {
             LogUtil.e(e);
         }
-        return null;
     }
 
     @LuaApiUsed
-    public LuaValue[] setFontColorForRange(LuaValue[] p) {
-        checkStartPosition(p[1]);
+    public void setFontColorForRange(UDColor color, int start, int end) {
+        checkStartPosition(start);
         try {
-            text.setSpan(new ForegroundColorSpan(((UDColor) p[0]).getColor()), p[1].toInt() - 1, p[2].toInt() + p[1].toInt() - 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            text.setSpan(new ForegroundColorSpan(color.getColor()), start - 1, end + start - 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         } catch (IndexOutOfBoundsException e) {
             LogUtil.e(e);
         }
-        return null;
     }
 
     @LuaApiUsed
-    public LuaValue[] setBackgroundColorForRange(LuaValue[] p) {
-        checkStartPosition(p[1]);
+    public void setBackgroundColorForRange(UDColor color, int start, int end) {
+        checkStartPosition(start);
         try {
-
-            int start = p[1].toInt() - 1;
-            int end = p[2].toInt() + p[1].toInt() - 1;
+            start--;
+            end = end + start - 1;
 
             SpannableStringBuilder current = (SpannableStringBuilder) text.subSequence(start, end);
             current.clearSpans();
 
-            text.setSpan(new BackgroundColorSpan(((UDColor) p[0]).getColor()), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            text.setSpan(new BackgroundColorSpan(color.getColor()), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         } catch (IndexOutOfBoundsException e) {
             LogUtil.e(e);
         }
-        return null;
     }
 
     @LuaApiUsed
-    public LuaValue[] setUnderlineForRange(LuaValue[] p) {
-        checkStartPosition(p[1]);
-        int underline = p[0].toInt();
-        int start = p[1].toInt() - 1;
-        int end = p[2].toInt() + p[1].toInt() - 1;
+    public void setUnderlineForRange(int underline, int start, int end) {
+        checkStartPosition(start);
+        start--;
+        end = end + start - 1;
         if (underline > 0) {   //设置 UnderlineStyle.LINE
             try {
                 text.setSpan(new UnderlineSpan(), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -473,29 +462,30 @@ public class UDStyleString extends JavaUserdata implements UrlImageSpan.ILoadDra
                 text.setSpan(new UnderlineSpan(), 0, start, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             }
         }
-        return null;
     }
 
     @LuaApiUsed
-    public LuaValue[] showAsImage(LuaValue[] p) {
-        imageSize = ((UDSize) p[0]).getSize();
+    public void showAsImage(UDSize size) {
+        imageSize = size.getSize();
         imageSpan = new UrlImageSpan(((LuaViewManager) globals.getJavaUserdata()).context, text.toString(), imageSize, this, mVerticalAlignment);
         setSpan(imageSpan);
-        return null;
     }
 
     @LuaApiUsed
-    public LuaValue[] setText(LuaValue[] p) {
-        text.clear();
-        text.append(p[0].toJavaString());
+    public void setText(String text) {
+        this.text.clear();
+        this.text.append(text);
         changeText = true;
-        return null;
     }
 
     @LuaApiUsed
-    public LuaValue[] imageAlign(LuaValue[] p) {
-        mVerticalAlignment = p.length > 0 ? p[0].toInt() : StyleImageAlign.Default;
-        return null;
+    public void imageAlign() {
+        mVerticalAlignment = StyleImageAlign.Default;
+    }
+
+    @LuaApiUsed
+    public void imageAlign(int a) {
+        mVerticalAlignment = a;
     }
     //</editor-fold>
     //</editor-fold>
@@ -564,9 +554,9 @@ public class UDStyleString extends JavaUserdata implements UrlImageSpan.ILoadDra
         mUDView = udView;
     }
 
-    private void checkStartPosition(LuaValue luaValue) {
-        if (luaValue.toInt() <= 0) {
-            IllegalArgumentException e = new IllegalArgumentException("StyleString forRange(), start position cannot below equal zero");
+    private void checkStartPosition(int p) {
+        if (p <= 0) {
+            IllegalArgumentException e = new IllegalArgumentException("StyleString xxxforRange方法的开始位置必须大于0");
             if (!Environment.hook(e, getGlobals())) {
                 throw e;
             }

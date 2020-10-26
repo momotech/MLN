@@ -52,7 +52,8 @@ public class MMUIContainer extends FrameLayout implements ScriptStateListener {
 
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
-        instance.dispatchKeyEvent(event);
+        if (instance.dispatchKeyEvent(event))
+            return true;
         return super.dispatchKeyEvent(event);
     }
 

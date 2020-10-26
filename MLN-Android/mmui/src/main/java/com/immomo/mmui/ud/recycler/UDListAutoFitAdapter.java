@@ -20,7 +20,7 @@ public class UDListAutoFitAdapter extends UDListAdapter {
 
     @LuaApiUsed
     public UDListAutoFitAdapter(long L, LuaValue[] v) {
-        super(L, v);
+        super(L);
     }
 
     @Override

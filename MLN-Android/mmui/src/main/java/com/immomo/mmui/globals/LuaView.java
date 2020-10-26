@@ -135,18 +135,19 @@ public class LuaView extends LuaNodeLayout<UDLuaView> {
     }
 
     public void dispatchKeyEventSelf(KeyEvent event) {
-
         if (event.getKeyCode() == KeyEvent.KEYCODE_BACK) {
-            UDLuaView ud = getUserdata();
-            if (ud != null)
-                ud.callBackKeyPressed();
+            if (event.getAction() == KeyEvent.ACTION_UP) {
+                UDLuaView ud = getUserdata();
+                if (ud != null)
+                    ud.callBackKeyPressed();
+            }
         }
     }
 
     public boolean getBackKeyEnabled() {
         UDLuaView ud = getUserdata();
         if (ud != null)
-            return ud.getBackKeyEnabled();
+            return ud.isBackKeyEnabled();
 
         return true;
     }

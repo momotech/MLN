@@ -294,6 +294,10 @@ extern void openlibs_forlua(lua_State *L, int debug) {
     init_cache(L);
 
     lua_getglobal(L, LUA_LOADLIBNAME);          //-1 package table
+
+    lua_pushnil(L);                             //-1 nil -2 table
+    lua_setfield(L, -2, "path");         //package.path = nil -1 table
+
     luaL_getsubtable(L, -1, "searchers");       //-1 package.searchers table; -2 package table
     int len = lua_objlen(L, -1);
 #ifdef ANDROID
@@ -308,9 +312,11 @@ extern void openlibs_forlua(lua_State *L, int debug) {
     if (gc_offset_time > 0)
         G(L)->gc_callback = gc_cb;
 
-    lua_newtable(L);
-    traverseAllEmptyMethods(emptyMethodTable, L);
-    lua_setglobal(L, EMPTY_METHOD_TABLE);
+    if (hasEmptyMethod()) {
+        lua_newtable(L);
+        traverseAllEmptyMethods(emptyMethodTable, L);
+        lua_setglobal(L, EMPTY_METHOD_TABLE);
+    }
     lua_unlock(L);
 }
 

@@ -1605,13 +1605,13 @@ public abstract class UDView<V extends View> extends JavaUserdata<V> implements 
             float ydp = DimenUtil.pxToDpi(event.getY());
 
             if (touchCallback != null) {
-                touchCallback.invoke(varargsOf(LuaNumber.valueOf(xdp), LuaNumber.valueOf(ydp)));
+                touchCallback.fastInvoke(xdp, ydp);
             }
 
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
                     if (touchBeginCallback != null)
-                        touchBeginCallback.invoke(varargsOf(LuaNumber.valueOf(xdp), LuaNumber.valueOf(DimenUtil.pxToDpi(event.getY()))));
+                        touchBeginCallback.fastInvoke(xdp, ydp);
 
                     touchExtension2Lua(touchBeginExtensionCallback, v, event);
 
@@ -1619,7 +1619,7 @@ public abstract class UDView<V extends View> extends JavaUserdata<V> implements 
 
                 case MotionEvent.ACTION_MOVE:
                     if (touchMoveCallback != null)
-                        touchMoveCallback.invoke(varargsOf(LuaNumber.valueOf(xdp), LuaNumber.valueOf(ydp)));
+                        touchMoveCallback.fastInvoke(xdp, ydp);
 
                     touchExtension2Lua(touchMoveExtensionCallback, v, event);
 
@@ -1628,7 +1628,7 @@ public abstract class UDView<V extends View> extends JavaUserdata<V> implements 
                 case MotionEvent.ACTION_UP:
 
                     if (touchEndCallback != null)
-                        touchEndCallback.invoke(varargsOf(LuaNumber.valueOf(xdp), LuaNumber.valueOf(ydp)));
+                        touchEndCallback.fastInvoke(xdp, ydp);
 
                     touchExtension2Lua(touchEndExtensionCallback, v, event);
 
@@ -1637,7 +1637,7 @@ public abstract class UDView<V extends View> extends JavaUserdata<V> implements 
                 case MotionEvent.ACTION_CANCEL:
 
                     if (touchCancelCallback != null)
-                        touchCancelCallback.invoke(varargsOf(LuaNumber.valueOf(xdp), LuaNumber.valueOf(ydp)));
+                        touchCancelCallback.fastInvoke(xdp, ydp);
 
                     touchExtension2Lua(touchCancelExtensionCallback, v, event);
 
@@ -1680,7 +1680,7 @@ public abstract class UDView<V extends View> extends JavaUserdata<V> implements 
 //            if (!canDoClick())//IOS没有防抖动，Android也去掉
 //                return;
             if (clickCallback != null) {
-                clickCallback.invoke(null);
+                clickCallback.fastInvoke();
             }
             if (canEndEditing) {
                 InputMethodManager im = ((InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE));
@@ -1698,7 +1698,7 @@ public abstract class UDView<V extends View> extends JavaUserdata<V> implements 
         @Override
         public boolean onLongClick(View v) {
             if (longClickCallback != null) {
-                longClickCallback.invoke(null);
+                longClickCallback.fastInvoke();
                 return true;
             }
             return false;
@@ -1814,7 +1814,7 @@ public abstract class UDView<V extends View> extends JavaUserdata<V> implements 
     @Override
     public void onDetached() {
         if (detachFunction != null)
-            detachFunction.invoke(null);
+            detachFunction.fastInvoke();
         stopAnimation();
     }
 

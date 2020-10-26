@@ -119,7 +119,7 @@ public class UDPaint extends LuaUserdata<Paint> {
         if (values.length > 0) {
             LuaValue value = values[0];
             if (value.isNumber()) {
-                javaUserdata.setColor(value.toInt());
+                javaUserdata.setColor((int) value.toLong());
             } else {
                 UDColor color = (UDColor) values[0].toUserdata();
                 javaUserdata.setColor(color.getColor());

@@ -51,7 +51,6 @@ public class Adapter extends RecyclerView.Adapter<ViewHolder> {
     private HashMap<ViewHolder, Integer> lazyTasks;
 
     public Adapter(@NonNull UDBaseRecyclerAdapter ud, @NonNull ILoadViewDelegete delegete) {
-        setHasStableIds(true);
         userData = ud;
         if (delegete == null) {
             throw new NullPointerException("ILoadViewDelegete is null!");
@@ -147,18 +146,6 @@ public class Adapter extends RecyclerView.Adapter<ViewHolder> {
     };
 
     @Override
-    public long getItemId(int pos) {
-        if (footerAdded && pos == getItemCount() - 1) {
-            return RecyclerView.NO_ID - 1;
-        }
-        int t = headerViews != null ? headerViews.size() : 0;
-        if (pos < t) {
-            return RecyclerView.NO_ID;
-        }
-        return userData.getItemId(pos - t);
-    }
-
-    @Override
     public int getItemViewType(int position) {
         if (footerAdded && position == getItemCount() - 1)
             return TYPE_FOOT;
@@ -176,13 +163,12 @@ public class Adapter extends RecyclerView.Adapter<ViewHolder> {
             View v = loadViewDelegete.getLoadView().getView();
             v.setOnClickListener(new LoadViewClickListener());
             v.setLayoutParams(userData.newLayoutParams(v.getLayoutParams(), useAllSpanForLoading));
-            ViewHolder ret = new ViewHolder(v);
-            ret.count = getItemCount();
+            ViewHolder ret = new ViewHolder(v, userData);
             footerView = v;
             return ret;
         } else if (viewType < 0) {//header
             View v = headerViews.get(getPositionByType(viewType));
-            return createHeaderViewHolder(v);
+            return createHeaderViewHolder(v, viewType);
         }
         return createItemViewHolder(viewType);
     }
@@ -190,7 +176,6 @@ public class Adapter extends RecyclerView.Adapter<ViewHolder> {
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         if (holder.isFoot()) {
-            holder.count = getItemCount();
             return;
         }
         if (holder.isHeader()) {
@@ -212,9 +197,22 @@ public class Adapter extends RecyclerView.Adapter<ViewHolder> {
         if (userData.checkCanDoBind())
             return;
         int hs = getHeaderCount();
+
         if (userData.hasCellSize()) {
 
             Size size = userData.getCellSize(position - hs);
+
+            if (userData.layout instanceof UDWaterFallLayout) {
+                UDWaterFallLayout layout = (UDWaterFallLayout) userData.layout;
+                int spanCount = layout.getSpanCount();
+
+                //第一行时，多减去outRect.top = 0,无需处理
+                if (position >= ((hs > 0) ? hs : spanCount)) {
+                    //其他行时，多减去outRect.top = LineSpacing; height加回来
+                    size.setHeight(size.getHeight() + layout.getLineSpacing());
+                }
+
+            }
 
             View cellView = holder.getCellView();
 
@@ -223,22 +221,14 @@ public class Adapter extends RecyclerView.Adapter<ViewHolder> {
             }
         }
         if (canCallFillCell || !MLSConfigs.lazyFillCellData) {
-            if (MLSEngine.DEBUG) {
-                long now = System.currentTimeMillis();
-                userData.callFillDataCell(holder.getCell(), position - hs);
-//                LogUtil.e("Adapter---fill data cast: " + (System.currentTimeMillis() - now) + " position: " + position);
-            } else {
-                userData.callFillDataCell(holder.getCell(), position - hs);
-            }
+            userData.callFillDataCell(holder.getCell(), position - hs);
+            holder.checkClick();
         } else {
             if (lazyTasks == null) {
                 lazyTasks = new HashMap<>();
             }
             lazyTasks.put(holder, position - hs);
         }
-        holder.setOnClickListener(userData.getClickListener(holder.getCell(), position - hs));
-
-        holder.setOnLongClickListener(userData.getLongClickListener(holder.getCell(), position - hs));
 
         checkMargin(holder.getCellView());
         setSelector(holder.itemView);
@@ -264,20 +254,10 @@ public class Adapter extends RecyclerView.Adapter<ViewHolder> {
      */
     private ViewHolder createItemViewHolder(final int viewType) {
         final UDCell layout = new UDCell(userData.getGlobals(), userData);
-
-//        View itemView = generateCellView(layout);
         View itemView = layout.getView();
-
-        if (MLSEngine.DEBUG) {
-            long now = System.currentTimeMillis();
-            userData.callInitCell(layout.getCell(), viewType);
-//            LogUtil.e("Adapter---init cast: " + (System.currentTimeMillis() - now) + " type: " + userData.getReuseIdByType(viewType));
-        } else {
-            userData.callInitCell(layout.getCell(), viewType);
-        }
+        userData.callInitCell(layout.getCell(), viewType);
         initSize(itemView, viewType);
-        ViewHolder viewHolder = new ViewHolder(itemView, layout);
-
+        ViewHolder viewHolder = new ViewHolder(itemView, layout, userData, viewType);
         checkMargin(itemView);
         return viewHolder;
     }
@@ -288,7 +268,7 @@ public class Adapter extends RecyclerView.Adapter<ViewHolder> {
      * @param headerView
      * @return
      */
-    private ViewHolder createHeaderViewHolder(View headerView) {
+    private ViewHolder createHeaderViewHolder(View headerView, int viewType) {
         final UDCell layout = new UDCell(userData.getGlobals(), userData);
 
         ViewGroup itemView = (ViewGroup) layout.getView();
@@ -298,7 +278,7 @@ public class Adapter extends RecyclerView.Adapter<ViewHolder> {
         }
         itemView.addView(headerView);
         itemView.setLayoutParams(userData.newLayoutParams(null, true));
-        ViewHolder viewHolder = new ViewHolder(itemView, layout);
+        ViewHolder viewHolder = new ViewHolder(itemView, layout, userData, viewType);
 
         checkMargin(itemView);
         return viewHolder;
@@ -315,7 +295,7 @@ public class Adapter extends RecyclerView.Adapter<ViewHolder> {
         if (view.getTag() == null)
             view.setTag(view.getBackground());
 
-        if (userData.getShowPressed()) {
+        if (userData.isShowPressed()) {
             StateListDrawable bg = new StateListDrawable();
             BorderBackgroundDrawable pressed = new BorderBackgroundDrawable();
             if (view.getBackground() instanceof BorderBackgroundDrawable) {

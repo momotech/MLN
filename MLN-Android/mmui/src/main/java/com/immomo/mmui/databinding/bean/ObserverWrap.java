@@ -7,7 +7,12 @@
   */
 package com.immomo.mmui.databinding.bean;
 
+import com.immomo.mmui.databinding.annotation.WatchContext;
+import com.immomo.mmui.databinding.filter.IWatchKeyFilter;
+import com.immomo.mmui.databinding.filter.WatchActionFilter;
 import com.immomo.mmui.databinding.interfaces.IPropertyCallback;
+
+import java.util.List;
 
 /**
  * Description: 观察者属性
@@ -18,6 +23,11 @@ import com.immomo.mmui.databinding.interfaces.IPropertyCallback;
 
 public class ObserverWrap {
 
+    /**
+     * 上下文
+     */
+    private @WatchContext
+    int watchContext;
 
     /**
      * Global，Activity,Fragment的hashCode
@@ -47,6 +57,18 @@ public class ObserverWrap {
      */
     private boolean isItemChangeNotify = true;
 
+
+    public boolean isWatchAction() {
+        return isWatchAction;
+    }
+
+    private boolean isWatchAction = false;
+
+    /**
+     * watch回调过滤器
+     */
+    private List<IWatchKeyFilter> watchKeyFilters;
+
     public int getObserverId() {
         return observerId;
     }
@@ -67,26 +89,83 @@ public class ObserverWrap {
         return propertyListener;
     }
 
-    public static ObserverWrap obtain(int observerId,String sourceTag, String bindTag,boolean isItemChangeNotify, IPropertyCallback iPropertyCallback) {
+    public int getWatchContext() {
+        return watchContext;
+    }
+
+
+    public List<IWatchKeyFilter> getWatchFilters() {
+        return watchKeyFilters;
+    }
+
+
+    public static ObserverWrap obtain(@WatchContext int argoWatchContext, int observerId, String sourceTag, String bindTag, boolean isItemChangeNotify, List<IWatchKeyFilter> iWatchFilters, IPropertyCallback iPropertyCallback) {
         ObserverWrap observerWrap = new ObserverWrap();
+        observerWrap.watchContext = argoWatchContext;
         observerWrap.isItemChangeNotify = isItemChangeNotify;
         observerWrap.observerId = observerId;
         observerWrap.sourceTag = sourceTag;
         observerWrap.bindTag = bindTag;
         observerWrap.propertyListener = iPropertyCallback;
+        observerWrap.watchKeyFilters = iWatchFilters;
+        for (IWatchKeyFilter watchFilter : iWatchFilters) {
+            if (watchFilter instanceof WatchActionFilter) {
+                observerWrap.isWatchAction = true;
+                break;
+            }
+        }
         return observerWrap;
     }
 
 
+    /**
+     * 判断是否过滤
+     *
+     * @param argoWatchContext
+     * @param newer
+     * @return
+     */
+    public boolean isFilter(@WatchContext int argoWatchContext, String key, Object newer) {
+        if (watchKeyFilters == null || watchKeyFilters.size() == 0) {
+            return true;
+        }
+
+        for (IWatchKeyFilter watchFilter : watchKeyFilters) {
+            if (watchFilter instanceof WatchActionFilter) {
+                isWatchAction = true;
+            }
+            if (watchFilter != null && !watchFilter.call(argoWatchContext, key, newer)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     @Override
     public boolean equals(Object obj) {
-        if(obj instanceof ObserverWrap) {
-            ObserverWrap observerWrap = (ObserverWrap)obj;
-            return observerId == observerWrap.getObserverId()
+        if (obj instanceof ObserverWrap) {
+            ObserverWrap observerWrap = (ObserverWrap) obj;
+            return watchContext == observerWrap.watchContext
+                    && observerId == observerWrap.getObserverId()
                     && sourceTag.equals(observerWrap.getSourceTag())
                     && bindTag.equals(observerWrap.getBindTag())
                     && propertyListener.equals(observerWrap.propertyListener);
         }
         return super.equals(obj);
     }
+
+    @Override
+    public String toString() {
+        return "ObserverWrap{" +
+                "watchContext=" + watchContext +
+                ", observerId=" + observerId +
+                ", sourceTag='" + sourceTag + '\'' +
+                ", bindTag='" + bindTag + '\'' +
+                ", propertyListener=" + propertyListener +
+                ", isItemChangeNotify=" + isItemChangeNotify +
+                ", watchFilters=" + watchKeyFilters +
+                '}';
+    }
+
+
 }

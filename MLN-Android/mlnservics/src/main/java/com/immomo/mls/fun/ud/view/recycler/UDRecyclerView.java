@@ -18,6 +18,7 @@ import com.immomo.mls.fun.ud.UDPoint;
 import com.immomo.mls.fun.ud.view.IClipRadius;
 import com.immomo.mls.fun.ud.view.UDView;
 import com.immomo.mls.fun.ud.view.UDViewGroup;
+import com.immomo.mls.fun.ui.IPager;
 import com.immomo.mls.fun.ui.IRefreshRecyclerView;
 import com.immomo.mls.fun.ui.IScrollEnabled;
 import com.immomo.mls.fun.ui.LuaRecyclerView;
@@ -316,11 +317,16 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
     @LuaApiUsed
     public LuaValue[] pagerContentOffset(LuaValue[] p) {
         if (p.length == 2) {
-            getView().pagerContentOffset(p[0].toFloat(), p[1].toFloat());
+            if (view instanceof IPager) {
+                ((IPager) view).pagerContentOffset(p[0].toFloat(), p[1].toFloat());
+            }
             return null;
         }
-        float[] contentOffset = getView().getPagerContentOffset();
-        return varargsOf(LuaNumber.valueOf(contentOffset[0]), LuaNumber.valueOf(contentOffset[1]));
+        if (view instanceof IPager) {
+            float[] contentOffset = ((IPager) view).getPagerContentOffset();
+            return varargsOf(LuaNumber.valueOf(contentOffset[0]), LuaNumber.valueOf(contentOffset[1]));
+        }
+        return rNil();
     }
 
     @LuaApiUsed

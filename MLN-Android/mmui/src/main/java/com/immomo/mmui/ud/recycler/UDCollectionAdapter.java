@@ -21,10 +21,11 @@ import com.immomo.mls.util.AndroidUtil;
 import com.immomo.mls.util.DimenUtil;
 import com.immomo.mls.utils.AssertUtils;
 import com.immomo.mls.utils.ErrorUtils;
+import com.immomo.mmui.ud.AdapterLuaFunction;
 import com.immomo.mmui.ui.LuaGridLayoutManager;
 
-import org.luaj.vm2.LuaFunction;
-import org.luaj.vm2.LuaValue;
+import org.luaj.vm2.LuaUserdata;
+import org.luaj.vm2.utils.CGenerate;
 import org.luaj.vm2.utils.LuaApiUsed;
 
 import java.util.HashMap;
@@ -36,25 +37,23 @@ import java.util.Map;
 @LuaApiUsed
 public class UDCollectionAdapter extends UDBaseRecyclerAdapter<UDCollectionLayout> {
     public static final String LUA_CLASS_NAME = "CollectionViewAdapter";
-    public static final String[] methods = new String[]{
-            "sizeForCell",
-            "sizeForCellByReuseId",
-            "setSpanSizeLookUp",
-    };
 
-    private LuaFunction cellSizeDelegate;
-    private Map<String, LuaFunction> cellSizeDelegates;
-    private LuaFunction spanSizeLookUpDelegate;
+    private AdapterLuaFunction cellSizeDelegate;
+    private Map<String, AdapterLuaFunction> cellSizeDelegates;
+    private AdapterLuaFunction spanSizeLookUpDelegate;
     private GridLayoutManager layoutManager;
 
     private SparseArray<Size> sizeCache;
     Size initSize;
 
+    @CGenerate(defaultConstructor = true)
     @LuaApiUsed
-    public UDCollectionAdapter(long L, LuaValue[] v) {
-        super(L, v);
+    public UDCollectionAdapter(long L) {
+        super(L);
         initSize = initSize();
     }
+    public static native void _init();
+    public static native void _register(long l, String parent);
 
     protected Size initSize() {
         return new Size(Size.MATCH_PARENT, Size.WRAP_CONTENT);
@@ -67,25 +66,34 @@ public class UDCollectionAdapter extends UDBaseRecyclerAdapter<UDCollectionLayou
      * <p>
      * fun
      */
+    @CGenerate(params = "F")
     @LuaApiUsed
-    public LuaValue[] sizeForCell(LuaValue[] values) {
-        cellSizeDelegate = values.length > 0 ? values[0].toLuaFunction() : null;
-        return null;
+    public void sizeForCell(long f) {
+        if (f == 0)
+            cellSizeDelegate = null;
+        else
+            cellSizeDelegate = new AdapterLuaFunction(globals, f);
     }
 
+    @CGenerate(params = "0F")
     @LuaApiUsed
-    public LuaValue[] sizeForCellByReuseId(LuaValue[] values) {
+    public void sizeForCellByReuseId(String t, long f) {
         if (cellSizeDelegates == null) {
             cellSizeDelegates = new HashMap<>();
         }
-        cellSizeDelegates.put(values[0].toJavaString(), values[1].toLuaFunction());
-        return null;
+        if (f == 0)
+            cellSizeDelegates.put(t, null);
+        else
+            cellSizeDelegates.put(t, new AdapterLuaFunction(globals, f));
     }
 
+    @CGenerate(params = "F")
     @LuaApiUsed
-    public LuaValue[] setSpanSizeLookUp(LuaValue[] values) {
-        spanSizeLookUpDelegate = values.length > 0 ? values[0].toLuaFunction() : null;
-        return null;
+    public void setSpanSizeLookUp(long f) {
+        if (f == 0)
+            spanSizeLookUpDelegate = null;
+        else
+            spanSizeLookUpDelegate = new AdapterLuaFunction(globals, f);
     }
     //</editor-fold>
 
@@ -133,9 +141,7 @@ public class UDCollectionAdapter extends UDBaseRecyclerAdapter<UDCollectionLayou
         if (sr == null)
             return new Size(Size.WRAP_CONTENT, Size.WRAP_CONTENT);
 
-        LuaValue s = toLuaInt(sr[0]);
-        LuaValue r = toLuaInt(sr[1]);
-        LuaFunction caller = null;
+        AdapterLuaFunction caller = null;
         if (cellSizeDelegates != null) {
             String id = getReuseIdByType(getAdapter().getItemViewType(position));
             caller = cellSizeDelegates.get(id);
@@ -146,30 +152,41 @@ public class UDCollectionAdapter extends UDBaseRecyclerAdapter<UDCollectionLayou
             caller = cellSizeDelegate;
         }
         if (caller == null || caller.isNil()) {
-            if (!AssertUtils.assertNull(layout, "must set layout before!", getGlobals())) {
+            if (!AssertUtils.assertNull(layout, "必须先设置layout!", getGlobals())) {
                 return new Size(Size.WRAP_CONTENT, Size.WRAP_CONTENT);
             }
 
-            if (!(UDCollectionAdapter.this instanceof UDCollectionAutoFitAdapter)) {
+            if (MLSEngine.DEBUG && !(UDCollectionAdapter.this instanceof UDCollectionAutoFitAdapter)) {
                 //两端在不声明size for cell时，有UI差异。统一报错处理
-                ErrorUtils.debugLuaError("sizeForCell must be Called when not using CollectionViewAutoFitAdapter", getGlobals());
+                ErrorUtils.debugLuaError("如果不使用CollectionViewAutoFitAdapter，则必须设置sizeForCell", getGlobals());
             }
             return layout.getSize();
         }
-        LuaValue[] rets = caller.invoke(varargsOf(s, r));
-        LuaValue a1 = rets == null || rets.length == 0 ? Nil() : rets[0];
-        if (AssertUtils.assertUserData(a1, UDSize.class, caller, getGlobals())) {
-            UDSize udSize = (UDSize) a1;
+        LuaUserdata ret = caller.fastInvokeII_U(sr[0] + 1, sr[1] + 1);
+        if (AssertUtils.assertUserData(ret, UDSize.class, caller, getGlobals())) {
+            UDSize udSize = (UDSize) ret;
             cellSize = udSize.getSize();
             sizeCache.put(position, cellSize);
 
-            if (cellSize.getHeightPx() <= 0 || cellSize.getWidthPx() <= 0 || cellSize.getHeightPx() > mRecyclerView.getHeight() || cellSize.getWidthPx() > mRecyclerView.getWidth()) {
-                //size 高宽不能小于0
-                ErrorUtils.debugLuaError("size For Cell must be >0 and < View.getHeight()", getGlobals());
+            if (cellSize.getHeightPx() < 0
+                    || cellSize.getWidthPx() < 0) {
+                if (MLSEngine.DEBUG)
+                    ErrorUtils.debugLuaError("sizeForCell返回的size必须都大于0,实际返回:" +
+                                "(" + cellSize.getWidthPx() + "px," + cellSize.getHeightPx() + "px)",
+                        getGlobals());
                 if (cellSize.getHeightPx() < 0)//两端统一返回高度<0,默认为0。
                     cellSize.setHeight(0);
                 if (cellSize.getWidthPx() < 0)
                     cellSize.setWidth(0);
+            }
+
+            if (cellSize.getHeightPx() > mRecyclerView.getHeight()
+                    || cellSize.getWidthPx() > mRecyclerView.getWidth()) {
+                if (MLSEngine.DEBUG)
+                    ErrorUtils.debugLuaError("sizeForCell返回的size必须都小于容器大小," +
+                                "实际返回:(" + cellSize.getWidthPx() + "px," + cellSize.getHeightPx() + ")px," +
+                                "容器大小:(" + mRecyclerView.getWidth() + "px," + mRecyclerView.getHeight() + "px)",
+                        getGlobals());
             }
             return cellSize;
         }
@@ -216,16 +233,10 @@ public class UDCollectionAdapter extends UDBaseRecyclerAdapter<UDCollectionLayou
             //暴露spanSize给lua层
             if (spanSizeLookUpDelegate != null) {
                 int[] sr = getSectionAndRowIn(position);
-                LuaValue[] lr = spanSizeLookUpDelegate.invoke(varargsOf(toLuaInt(sr[0]), toLuaInt(sr[1])));
-
-                LuaValue v = lr != null && lr.length > 0 ? lr[0] : Nil();//不return，返回null
-                int size;
-                if (!v.isNil() && AssertUtils.assertNumber(v, spanSizeLookUpDelegate, getGlobals())) {
-                    size = v.toInt();
-                    if (size > 0) {//如果spanSize小于0，走下面的原有逻辑
-                        int spanCount = layoutManager.getSpanCount();
-                        return size > spanCount ? spanCount : size;//大于spanCount，取spanCount
-                    }
+                int size = spanSizeLookUpDelegate.fastInvokeII_I(sr[0] + 1, sr[1] + 1);
+                if (size > 0) {//如果spanSize小于0，走下面的原有逻辑
+                    int spanCount = layoutManager.getSpanCount();
+                    return size > spanCount ? spanCount : size;//大于spanCount，取spanCount
                 }
             }
 
@@ -281,17 +292,29 @@ public class UDCollectionAdapter extends UDBaseRecyclerAdapter<UDCollectionLayou
                 int[] paddingValues = mLayout.getPaddingValues();
                 int realWidth = realPositionSize.getWidthPx();
                 int realHeight = realPositionSize.getHeightPx();
-                if (recyclerViewWidth < (paddingValues[0] + paddingValues[2] + realWidth) ||
-                        recyclerViewHeight < (paddingValues[1] + paddingValues[3] + realHeight)) {
-
-                    if (!(UDCollectionAdapter.this instanceof UDCollectionAutoFitAdapter)) {
-                        //layoutInset+cellSize 不能大于recyclerView宽高,两端统一报错
-                        ErrorUtils.debugLuaError("The sum of cellWidth，leftInset，rightInset should not bigger than the width of collectionView", getGlobals());
+                if (MLSEngine.DEBUG && !(UDCollectionAdapter.this instanceof UDCollectionAutoFitAdapter)) {
+                    if (recyclerViewWidth < (paddingValues[0] + paddingValues[2] + realWidth)) {
+                        ErrorUtils.debugLuaError("容器宽度小于cell宽度和padding的和，" +
+                                "容器宽度:" + recyclerViewWidth + "px " +
+                                "padding:" + (paddingValues[0] + paddingValues[2]) + "px " +
+                                "cell宽度" + realWidth + "px", getGlobals());
+                    }
+                    if (recyclerViewHeight < (paddingValues[1] + paddingValues[3] + realHeight)) {
+                        ErrorUtils.debugLuaError("容器高度小于cell高度和padding的和，" +
+                                "容器高度:" + recyclerViewHeight + "px " +
+                                "padding:" + (paddingValues[1] + paddingValues[3]) + "px " +
+                                "cell高度" + realHeight + "px", getGlobals());
                     }
                 }
 
-                if (realWidth < 0 || realHeight < 0) {//两端统一报错效果
-                    ErrorUtils.debugLuaError("size for cell can`t < 0", getGlobals());
+                if (realWidth < 0 || realHeight < 0 &&
+                        (!realPositionSize.isMatchOrWrapHeight()
+                                && !realPositionSize.isMatchOrWrapWidth())) {//两端统一报错效果
+                    if (MLSEngine.DEBUG)
+                        ErrorUtils.debugLuaError(
+                            String.format("sizeForCell返回Size必须大于0,实际返回:(%dpx, %dpx)",
+                                    realWidth, realHeight),
+                            getGlobals());
                     realWidth = 0;
                     realHeight = 0;
                 }
@@ -363,8 +386,8 @@ public class UDCollectionAdapter extends UDBaseRecyclerAdapter<UDCollectionLayou
     protected void onLayoutSet(UDCollectionLayout layout) {
         mLayout = layout;
 
-        if (layout.getitemSize() == null)
-            layout.itemSize(varargsOf(new UDSize(getGlobals(), new Size(100, 100))));//?
+        if (layout.getItemSize() == null)
+            layout.setItemSize(new UDSize(globals, new Size(100, 100)));
 
         int sc = layout.getSpanCount();
 

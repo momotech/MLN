@@ -257,9 +257,6 @@ jobject toJavaValue(JNIEnv *env, lua_State *L, int idx) {
         case LUA_TNUMBER:
             result = newLuaNumber(env, (double) lua_tonumber(L, idx));
             break;
-        case LUA_TNIL:
-            result = Lua_NIL;
-            break;
         case LUA_TBOOLEAN:
             result = lua_toboolean(L, idx) ? Lua_TRUE : Lua_FALSE;
             break;
@@ -278,6 +275,9 @@ jobject toJavaValue(JNIEnv *env, lua_State *L, int idx) {
             break;
         case LUA_TTHREAD:
             result = newLuaThread(env, L, idx);
+            break;
+        default:
+            result = Lua_NIL;
             break;
     }
     lua_unlock(L);
@@ -315,7 +315,11 @@ void pushUserdataFromJUD(JNIEnv *env, lua_State *L, jobject obj) {
     ud->name = udname;
 
     luaL_getmetatable(L, udname);
-    lua_setmetatable(L, -2);
+    if (lua_istable(L, -1)) {
+        lua_setmetatable(L, -2);
+    } else {
+        luaL_error(L, "error push userdata, metatable for %s is not a table.", udname);
+    }
     lua_unlock(L);
 }
 
@@ -493,6 +497,10 @@ int getThrowableMsg(JNIEnv *env, jthrowable t, char *out, size_t len) {
     return 0;
 }
 
+int isStrongUserdata(JNIEnv *env, jclass clz) {
+    return (*env)->IsAssignableFrom(env, clz, JavaUserdata);
+}
+
 int catchJavaException(JNIEnv *env, lua_State *L, const char * mn) {
     jthrowable thr = (*env)->ExceptionOccurred(env);
     if (thr) {
@@ -563,8 +571,6 @@ jmethodID getStaticMethodByName(JNIEnv *env, jclass clz, const char *name) {
 }
 
 static const char *special_method_sigs[] = {
-        "(" STRING_CLASS "[" LUAVALUE_CLASS ")[" LUAVALUE_CLASS,
-        "(" STRING_CLASS "" LUAVALUE_CLASS ")V",
         "()" STRING_CLASS,
         "(" OBJECT_CLASS ")Z",
         "()V"
@@ -573,7 +579,7 @@ static const char *special_method_sigs[] = {
 static jmethodID placeholder = (jmethodID) 1;
 
 jmethodID getSpecialMethod(JNIEnv *env, jclass clz, int type) {
-    if (type < METHOD_INDEX || type > METHOD_GC)
+    if (type < METHOD_TOSTRING || type > METHOD_GC)
         return NULL;
     const char *name = special_methods[type];
     jmethodID id = jm_get(clz, name);
@@ -636,7 +642,7 @@ void jni_preRegisterUD(JNIEnv *env, jobject jobj, jstring className, jobjectArra
         FREE(env, jname);
     }
 
-    for (i = METHOD_INDEX; i <= METHOD_GC; ++i) {
+    for (i = METHOD_TOSTRING; i <= METHOD_GC; ++i) {
         getSpecialMethod(env, clz, i);
     }
 }
@@ -666,6 +672,7 @@ void jni_preRegisterStatic(JNIEnv *env, jobject jobj, jstring className, jobject
 }
 
 void jni_preRegisterEmptyMethods(JNIEnv *env, jobject jobj, jobjectArray methods) {
+    /// 覆盖操作，先释放旧内存
     if (emtpyMethods) {
         int i = 0;
         char *s;
@@ -687,6 +694,10 @@ void jni_preRegisterEmptyMethods(JNIEnv *env, jobject jobj, jobjectArray methods
         FREE(env, jname);
     }
     emtpyMethods[i] = 0;
+}
+
+int hasEmptyMethod() {
+    return emtpyMethods != NULL;
 }
 
 /**

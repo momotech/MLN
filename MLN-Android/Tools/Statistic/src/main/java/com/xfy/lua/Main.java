@@ -71,8 +71,10 @@ public class Main {
         int useLen = 0;
         String name = params.getValue(OUT_NAME);
         if (name == null) {
-            name = "temp";
+            name = "temp_" + System.currentTimeMillis() + Suffix;
         } else {
+            if (name.indexOf('.') < 0)
+                name = name + Suffix;
             useLen += 2;
         }
         String outPath = params.getValue(OUT_PATH);

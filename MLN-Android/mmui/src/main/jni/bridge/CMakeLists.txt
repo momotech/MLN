@@ -10,13 +10,43 @@ cmake_minimum_required(VERSION 3.4.1)
 #INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/../include)
 
 add_library( mmuibridge SHARED
-        mmdatabinding_callback.c
         mmdatabinding.c
         interactive_behavior_callback.c
-        interactive_behavior.c)
+        interactive_behavior.c
+        mmui_vm_auto_fill.c
+        mmview.c
+        mmcolor.c
+        mmedittext.c
+        mmlabel.c
+        mmstylestring.c
+        mmnodegroup.c
+        mmspacer.c
+        mmhstack.c
+        mmvstack.c
+        mmwindow.c
+        mmimageview.c
+        mmimagebutton.c
+        mmsafearea.c
+        mmbaseanim.c
+        mmanimset.c
+        mmanimator.c
+        mmrecycler_callback.c
+        mmrecyclerview.c
+        mmadapter_callback.c
+        mmbaserecycleradapter.c
+        mmneedheightadapter.c
+        mmlistadapter.c
+        mmcollectionadapter.c
+        mmbaserecyclerlayout.c
+        mmcollectionlayout.c
+        mmwaterfalllayout.c
+        mmscrollview.c
+        mmpagelink.c
+        mmtocuh_callback)
 
 add_definitions(-DLUA_DL_DLOPEN -DLUA_USE_C89 -DLUA_COMPAT_5_1 -DLUA_COMPAT_ALL -DLUA_USE_LINUX -DJAVA_ENV -DP_ANDROID)
 add_definitions(-DSTATISTIC_PERFORMANCE)
+add_definitions(-DJ_API_INFO)
 
 #------------------luajapi link---------------------
 add_library(luajapi_so SHARED IMPORTED)

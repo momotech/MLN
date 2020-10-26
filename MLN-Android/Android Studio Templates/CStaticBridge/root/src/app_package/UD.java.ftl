@@ -23,15 +23,17 @@ public class ${ClassName} {
     //<editor-fold desc="native method">
     /**
      * 初始化方法
+     * 反射调用
+     * @see com.immomo.mls.wrapper.Register.NewStaticHolder
      */
     public static native void _init();
 
     /**
      * 注册到虚拟机方法
-     * @param l 虚拟机C层地址
-     * @see Globals#getL_State()
+     * 反射调用
+     * @see com.immomo.mls.wrapper.Register.NewStaticHolder
      */
-    public static native void _register(long l);
+    public static native void _register(long l, String parent);
     //</editor-fold>
     //<editor-fold desc="Bridge API">
     /**

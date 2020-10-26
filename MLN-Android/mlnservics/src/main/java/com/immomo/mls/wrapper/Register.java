@@ -7,8 +7,6 @@
   */
 package com.immomo.mls.wrapper;
 
-import android.util.Log;
-
 import com.immomo.mls.Environment;
 import com.immomo.mls.MLSAdapterContainer;
 import com.immomo.mls.MLSEngine;
@@ -30,6 +28,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by Xiong.Fangyu on 2019/3/18
@@ -47,10 +46,19 @@ public class Register {
     private static final String NEW_UD_REGISTER = "_register";
     private static final Map<Class, Class<? extends LuaUserdata>> udClassMap = new HashMap<>(20);
 
-    private final List<SHolder> sHolders = new ArrayList<>(20);
+    private final AllStaticBridgeHolder allStaticBridgeHolder = new AllStaticBridgeHolder();
     private final List<StringEnumHolder> seHolders = new ArrayList<>(10);
     private final List<NumberEnumHolder> neHolders = new ArrayList<>(10);
-    private final List<SIHolder> siHolders = new ArrayList<>(10);
+
+    /**
+     * 存储MLN独有的
+     */
+    private final List<SIHolder> mlnSiHolders = new ArrayList<>(10);
+
+    /**
+     * 存储共有的
+     */
+    private final List<SIHolder> allSiHolders = new ArrayList<>(10);
 
     private final HashMap<Class, String> luaClassNameMap = new HashMap<>();
     protected final AllUserdataHolder allUserdataHolder = new AllUserdataHolder();
@@ -64,10 +72,12 @@ public class Register {
      * 清除所有注册的东西
      */
     public void clearAll() {
-        sHolders.clear();
+        allStaticBridgeHolder.clear();
         seHolders.clear();
         neHolders.clear();
-        siHolders.clear();
+        mlnSiHolders.clear();
+        allSiHolders.clear();
+
         udClassMap.clear();
         luaClassNameMap.clear();
         allUserdataHolder.clear();
@@ -81,7 +91,7 @@ public class Register {
      * 是否有注册过luaview
      */
     public boolean isInit() {
-        return lvUserdataHolder.index > 0;
+        return lvUserdataHolder.index > 0 || allUserdataHolder.index > 0;
     }
 
     public boolean isPreInstall() {
@@ -165,10 +175,10 @@ public class Register {
      * 类中必须含有{@link com.immomo.mls.annotation.LuaClass} 和 {@link com.immomo.mls.annotation.LuaBridge}注解
      * 编译器将通过lprocess库生成相关代码
      *
-     * @see #registerUserdata(Class, boolean, String...)
+     * @see #registerUserdata(Class, boolean, boolean,String...)
      */
     public void registerUserdata(String luaClassName, boolean lazy, Class clz) throws RegisterError {
-        registerUserdata(clz, lazy, luaClassName);
+        registerUserdata(clz, lazy,false, luaClassName);
     }
 
     /**
@@ -183,16 +193,17 @@ public class Register {
      *
      * @param clz          相关类
      * @param lazy         是否懒注册
+     * @param isMLN        是否是MLN独有的
      * @param luaClassName lua中类名
      */
-    public void registerUserdata(Class clz, boolean lazy, String... luaClassName) throws RegisterError {
+    public void registerUserdata(Class clz, boolean lazy,boolean isMLN, String... luaClassName) throws RegisterError {
         final String wrapperName = clz.getName() + UD_CLASS_SUFFIX;
         try {
             Class<? extends LuaUserdata> udClz = (Class<? extends LuaUserdata>) Class.forName(wrapperName);
             Field f = udClz.getDeclaredField(METHODS_FIELD);
             String[] ms = (String[]) f.get(null);
             for (String s : luaClassName) {
-                UDHolder h = new UDHolder(s, udClz, lazy, ms);
+                UDHolder h = new UDHolder(s, udClz, lazy,isMLN,ms);
                 h.needCheck = false;
                 registerUserdata(h);
             }
@@ -230,6 +241,7 @@ public class Register {
     public void registerNewUserdata(String lcn, Class<? extends LuaUserdata> clz) {
         NewUDHolder holder = new NewUDHolder(lcn, clz);
         holder.init();
+        luaClassNameMap.put(clz, lcn);
         newUDHolders.add(holder);
     }
 
@@ -244,6 +256,7 @@ public class Register {
      */
     public void registerNewUserdata(NewUDHolder holder) {
         holder.init();
+        luaClassNameMap.put(holder.clz, holder.lcn);
         newUDHolders.add(holder);
     }
 
@@ -343,7 +356,7 @@ public class Register {
     public void registerStaticBridge(SHolder holder) {
         if (MLSEngine.DEBUG && holder.needCheck)
             checkClassMethods(holder.clz, holder.methods, false);
-        sHolders.add(holder);
+        allStaticBridgeHolder.add(holder);
     }
 
     /**
@@ -409,6 +422,7 @@ public class Register {
     public void registerNewStaticBridge(String lcn, Class clz) {
         NewStaticHolder holder = new NewStaticHolder(lcn, clz);
         holder.init();
+        luaClassNameMap.put(clz, lcn);
         newStaticHolders.add(holder);
     }
 
@@ -422,6 +436,7 @@ public class Register {
      */
     public void registerNewStaticBridge(NewStaticHolder holder) {
         holder.init();
+        luaClassNameMap.put(holder.clz, holder.lcn);
         newStaticHolders.add(holder);
     }
     //</editor-fold>
@@ -435,30 +450,34 @@ public class Register {
      * @param clz          java类
      */
     public void registerSingleInstance(String luaClassName, Class clz) throws RegisterError {
+        registerSingleInstance(luaClassName, clz, false);
+    }
+
+    /**
+     * 注册单例
+     *
+     * @param luaClassName lua通过这个名称获取单例
+     * @param clz          java类
+     * @param isMLN 是否是MLN独有的
+     */
+    public void registerSingleInstance(String luaClassName, Class clz,boolean isMLN) throws RegisterError {
         String realLuaClassName = "__" + luaClassName;
-        registerUserdata(clz, false, realLuaClassName);
-        registerSingleInstance(new SIHolder(luaClassName, realLuaClassName));
+        registerUserdata(clz, false, isMLN,realLuaClassName);
+        if(isMLN) {
+            mlnSiHolders.add(new SIHolder(luaClassName, realLuaClassName));
+        } else {
+            allSiHolders.add(new SIHolder(luaClassName, realLuaClassName));
+        }
     }
 
     /**
-     * 注册单例
-     *
-     * @param holder userdata包裹信息
-     * @param key    lua通过这个名称获取单例
+     * 注册单例，且使用高性能bridge写法
+     * @param luaClassName lua通过这个名称获取单例
      */
-    public void registerSingleInstance(UDHolder holder, String key) {
-        registerUserdata(holder);
-        registerSingleInstance(new SIHolder(key, holder.luaClassName));
-    }
-
-    /**
-     * 注册单例
-     *
-     * @param h 单例包裹信息
-     * @see #newSingleInstanceHolder(String, String)
-     */
-    public void registerSingleInstance(SIHolder h) {
-        siHolders.add(h);
+    public void registerNewSingleInstance(String luaClassName, Class<? extends LuaUserdata> clz) throws RegisterError {
+        String realKey = luaClassName.substring(2);
+        registerNewUserdata(luaClassName, clz);
+        allSiHolders.add(new SIHolder(realKey, luaClassName));
     }
 
     /**
@@ -577,7 +596,7 @@ public class Register {
     //</editor-fold>
 
     /**
-     * 若使用{@link #registerUserdata(String, boolean, Class)} 或 {@link #registerUserdata(Class, boolean, String...)}
+     * 若使用{@link #registerUserdata(String, boolean, Class)} 或 {@link #registerUserdata(Class, boolean,boolean, String...)}
      * 注册userdata，则会将普通类与ud类对应，放入{@link #udClassMap}中
      * 获取对应ud类
      *
@@ -607,23 +626,68 @@ public class Register {
      */
     public void install(Globals g, boolean installView) {
         for (NewUDHolder h : newUDHolders) {
-            h.register(g);
+            h.register(g, luaClassNameMap);
         }
         for (NewStaticHolder h : newStaticHolders) {
-            h.register(g);
+            h.register(g, luaClassNameMap);
         }
         allUserdataHolder.install(g);
         if (installView)
             lvUserdataHolder.install(g);
-        for (SHolder h : sHolders) {
-            g.registerStaticBridgeSimple(h.luaClassName, h.clz);
-        }
+        allStaticBridgeHolder.install(g);
         for (StringEnumHolder h : seHolders) {
             g.registerStringEnum(h.luaClassName, h.keys, h.values);
         }
         for (NumberEnumHolder h : neHolders) {
             g.registerNumberEnum(h.luaClassName, h.keys, h.values);
         }
+        g.putLuaClassName(luaClassNameMap);
+    }
+
+    /**
+     * 统计未使用的Bridge类
+     * @param useBridge 使用过的bridge类名
+     */
+    public List<String> noUseBridge(Set<String> useBridge) {
+        List<String> ret = new ArrayList<>();
+
+        for (NewUDHolder h : newUDHolders) {
+            if (!useBridge.contains(h.lcn)) {
+                ret.add(h.clz.getName());
+            }
+        }
+        for (NewStaticHolder h : newStaticHolders) {
+            if (!useBridge.contains(h.lcn)) {
+                ret.add(h.clz.getName());
+            }
+        }
+        List<String> jcns = allUserdataHolder.jcns;
+        int index = 0;
+        for (String s : allUserdataHolder.lcns) {
+            if (!useBridge.contains(s)) {
+                ret.add(jcns.get(index));
+            }
+            index++;
+        }
+
+        jcns = lvUserdataHolder.jcns;
+        index = 0;
+        for (String s : lvUserdataHolder.lcns) {
+            if (!useBridge.contains(s)) {
+                ret.add(jcns.get(index));
+            }
+            index++;
+        }
+
+        jcns = allStaticBridgeHolder.jcns;
+        index = 0;
+        for (String s : allStaticBridgeHolder.lcns) {
+            if (!useBridge.contains(s)) {
+                ret.add(jcns.get(index));
+            }
+            index ++;
+        }
+        return ret;
     }
 
     /**
@@ -635,9 +699,7 @@ public class Register {
         try {
             allUserdataHolder.preInstall();
             lvUserdataHolder.preInstall();
-            for (SHolder h : sHolders) {
-                Globals.preRegisterStatic(h.clz, h.methods);
-            }
+            allStaticBridgeHolder.preInstall();
             if (!emptyMethods.isEmpty()) {
                 Globals.preRegisterEmptyMethods(emptyMethods.toArray(new String[0]));
             }
@@ -656,6 +718,7 @@ public class Register {
      */
     protected final class AllUserdataHolder {
         final int INIT = 50;
+        final List<Class> classes = new ArrayList<>(INIT);
         final List<String> lcns = new ArrayList<>(INIT);
         final List<String> lpcns = new ArrayList<>(INIT);
         final List<String> jcns = new ArrayList<>(INIT);
@@ -665,6 +728,7 @@ public class Register {
         int index = 0;
 
         void clear() {
+            classes.clear();
             lcns.clear();
             lpcns.clear();
             jcns.clear();
@@ -676,10 +740,7 @@ public class Register {
 
         public void add(UDHolder h) {
             lcns.add(h.luaClassName);
-            String parentName = Globals.findLuaParentClass(h.clz, luaClassNameMap);
-            if (h.luaClassName.equals(parentName))
-                parentName = null;
-            lpcns.add(parentName);
+            classes.add(h.clz);
             jcns.add(SignatureUtils.getClassName(h.clz));
             int m = h.methods != null ? h.methods.length : 0;
             mc = set(mc, index, m);
@@ -697,19 +758,33 @@ public class Register {
                     lpcns.toArray(new String[index]),
                     jcns.toArray(new String[index]),
                     lazy);
-            g.putLuaClassName(luaClassNameMap);
         }
 
         void preInstall() {
             mc = get(mc, index);
             String[] ams = methods.toArray(new String[0]);
             int use = 0;
-            for (int i = 0; i < index; i ++) {
-                String[] ms = new String[mc[i]];
-                System.arraycopy(ams, use, ms, 0, mc[i]);
-                Globals.preRegisterUserdata(jcns.get(i), ms);
-                use += mc[i];
-            }
+            if (!classes.isEmpty())
+                for (int i = 0; i < index; i ++) {
+                    Class c = classes.get(i);
+                    String parentName = Globals.findLuaParentClass(c, luaClassNameMap);
+                    if (lcns.get(i).equals(parentName))
+                        parentName = null;
+                    lpcns.add(parentName);
+
+                    String[] ms = new String[mc[i]];
+                    System.arraycopy(ams, use, ms, 0, mc[i]);
+                    Globals.preRegisterUserdata(jcns.get(i), ms);
+                    use += mc[i];
+                }
+            else
+                for (int i = 0; i < index; i ++) {
+                    String[] ms = new String[mc[i]];
+                    System.arraycopy(ams, use, ms, 0, mc[i]);
+                    Globals.preRegisterUserdata(jcns.get(i), ms);
+                    use += mc[i];
+                }
+            classes.clear();
         }
 
         private int[] set(int[] arr, int index, int value) {
@@ -745,12 +820,100 @@ public class Register {
         }
     }
 
+    protected final class AllStaticBridgeHolder {
+        final int INIT = 50;
+        final List<Class> classes = new ArrayList<>(INIT);
+        final List<String> lcns = new ArrayList<>(INIT);
+        final List<String> lpcns = new ArrayList<>(INIT);
+        final List<String> jcns = new ArrayList<>(INIT);
+        final List<String> methods = new ArrayList<>(INIT * 10);
+        int[] mc = new int[INIT];
+        int index = 0;
+
+        void clear() {
+            classes.clear();
+            lcns.clear();
+            lpcns.clear();
+            jcns.clear();
+            methods.clear();
+            mc = new int[INIT];
+            index = 0;
+        }
+
+        public void add(SHolder h) {
+            lcns.add(h.luaClassName);
+            classes.add(h.clz);
+            jcns.add(SignatureUtils.getClassName(h.clz));
+            int m = h.methods != null ? h.methods.length : 0;
+            mc = set(mc, index, m);
+            index++;
+            methods.addAll(Arrays.asList(h.methods));
+            luaClassNameMap.put(h.clz, h.luaClassName);
+        }
+
+        void install(Globals g) {
+            mc = get(mc, index);
+            g.registerAllStaticClass(
+                    lcns.toArray(new String[index]),
+                    lpcns.toArray(new String[index]),
+                    jcns.toArray(new String[index]));
+        }
+
+        void preInstall() {
+            mc = get(mc, index);
+            String[] ams = methods.toArray(new String[0]);
+            int use = 0;
+            if (!classes.isEmpty())
+                for (int i = 0; i < index; i ++) {
+                    Class c = classes.get(i);
+                    String parentName = Globals.findLuaParentClass(c, luaClassNameMap);
+                    if (lcns.get(i).equals(parentName))
+                        parentName = null;
+                    lpcns.add(parentName);
+
+                    String[] ms = new String[mc[i]];
+                    System.arraycopy(ams, use, ms, 0, mc[i]);
+                    Globals.preRegisterStatic(jcns.get(i), ms);
+                    use += mc[i];
+                }
+            else
+                for (int i = 0; i < index; i ++) {
+                    String[] ms = new String[mc[i]];
+                    System.arraycopy(ams, use, ms, 0, mc[i]);
+                    Globals.preRegisterStatic(jcns.get(i), ms);
+                    use += mc[i];
+                }
+            classes.clear();
+        }
+
+        private int[] set(int[] arr, int index, int value) {
+            if (arr.length > index) {
+                arr[index] = value;
+                return arr;
+            }
+            int[] ret = Arrays.copyOf(arr, arr.length + 10);
+            ret[index] = value;
+            return ret;
+        }
+
+        private int[] get(int[] arr, int len) {
+            if (arr.length == len)
+                return arr;
+            return Arrays.copyOf(arr, len);
+        }
+    }
+
     /**
      * 创建Globals后，将单例注册到虚拟机中，需要在同一个线程运行
      */
-    public void createSingleInstance(Globals g) {
-        for (SIHolder h : siHolders) {
+    public void createSingleInstance(Globals g,boolean isMLNInstall) {
+        for (SIHolder h : allSiHolders) {
             g.createUserdataAndSet(h.luaKey, h.luaClassName);
+        }
+        if(isMLNInstall) {
+            for (SIHolder h : mlnSiHolders) {
+                g.createUserdataAndSet(h.luaKey, h.luaClassName);
+            }
         }
     }
 
@@ -880,18 +1043,20 @@ public class Register {
         }
     }
 
-    public static final class NewUDHolder {
-        private final String lcn;
-        private final Class<? extends LuaUserdata> clz;
-        private final Method registerMethod;
-        private Method initMethod;
+    static class NewHolder {
+        static final String UNSET = "@UNSET";
+        final String lcn;
+        final Method registerMethod;
+        final Class clz;
+        Method initMethod;
+        String parent = UNSET;
 
-        public NewUDHolder(String lcn, Class<? extends LuaUserdata> clz) {
+        NewHolder(String lcn, Class clz) {
             this.lcn = lcn;
             this.clz = clz;
             try {
                 initMethod = clz.getDeclaredMethod(NEW_UD_INIT);
-                registerMethod = clz.getDeclaredMethod(NEW_UD_REGISTER, long.class);
+                registerMethod = clz.getDeclaredMethod(NEW_UD_REGISTER, long.class, String.class);
                 initMethod.setAccessible(true);
                 registerMethod.setAccessible(true);
             } catch (Throwable t) {
@@ -899,7 +1064,7 @@ public class Register {
             }
         }
 
-        private void init() {
+        void init() {
             if (initMethod == null)
                 return;
             try {
@@ -910,52 +1075,28 @@ public class Register {
             }
         }
 
-        private void register(Globals g) {
+        void register(Globals g, Map<Class, String> m) {
+            if (parent == UNSET) {
+                parent = Globals.findLuaParentClass(clz, m);
+            }
             try {
-                registerMethod.invoke(null, g.getL_State());
-                g.putLuaClassName(clz, lcn);
+                registerMethod.invoke(null, g.getL_State(), parent);
             } catch (Throwable e) {
                 Environment.callbackError(e, g);
             }
         }
     }
 
-    public static final class NewStaticHolder {
-        private final String lcn;
-        private final Class clz;
-        private final Method registerMethod;
-        private Method initMethod;
+    public static final class NewUDHolder extends NewHolder{
+        public NewUDHolder(String lcn, Class<? extends LuaUserdata> clz) {
+            super(lcn, clz);
+        }
+    }
+
+    public static final class NewStaticHolder extends NewHolder{
 
         public NewStaticHolder(String lcn, Class clz) {
-            this.lcn = lcn;
-            this.clz = clz;
-            try {
-                initMethod = clz.getDeclaredMethod(NEW_UD_INIT);
-                registerMethod = clz.getDeclaredMethod(NEW_UD_REGISTER, long.class);
-                initMethod.setAccessible(true);
-                registerMethod.setAccessible(true);
-            } catch (Throwable t) {
-                throw new RegisterError("register " + clz.getName() + " failed!", t);
-            }
-        }
-
-        private void init() {
-            if (initMethod == null)
-                return;
-            try {
-                initMethod.invoke(null);
-                initMethod = null;
-            } catch (Throwable t) {
-                throw new RegisterError("init " + clz.getName() + " failed!", t);
-            }
-        }
-
-        private void register(Globals g) {
-            try {
-                registerMethod.invoke(null, g.getL_State());
-            } catch (Throwable e) {
-                Environment.callbackError(e, g);
-            }
+            super(lcn, clz);
         }
     }
 }

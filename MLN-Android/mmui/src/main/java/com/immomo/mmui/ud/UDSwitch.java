@@ -9,6 +9,7 @@ package com.immomo.mmui.ud;
 
 import android.widget.CompoundButton;
 
+import com.immomo.mmui.ILView;
 import com.immomo.mmui.ui.LuaSwitch;
 
 import org.luaj.vm2.LuaBoolean;
@@ -21,7 +22,7 @@ import org.luaj.vm2.utils.LuaApiUsed;
  * on 2018/12/18
  */
 @LuaApiUsed
-public class UDSwitch<L extends CompoundButton> extends UDNodeView<L> implements CompoundButton.OnCheckedChangeListener {
+public class UDSwitch<L extends CompoundButton & ILView> extends UDView<L> implements CompoundButton.OnCheckedChangeListener {
 
     public static final String LUA_CLASS_NAME = "Switch";
 

@@ -167,6 +167,11 @@ int getThrowableMsg(JNIEnv *, jthrowable, char *, size_t);
 int catchJavaException(JNIEnv *, lua_State *, const char *);
 
 /**
+ * 判断class是否是JavaUserdata
+ */
+int isStrongUserdata(JNIEnv *, jclass);
+
+/**
  * 根据名称获取jclass对象
  * 若有缓存，取缓存，若无，通过反射获取，并缓存
  */
@@ -195,14 +200,12 @@ jmethodID getStaticMethodByName(JNIEnv *env, jclass clz, const char *name);
  */
 void traverseAllMethods(jclass clz, map_look_fun fun, void *ud);
 
-#define METHOD_INDEX    0
-#define METHOD_NEWINDEX 1
-#define METHOD_TOSTRING 2
-#define METHOD_EQAULS   3
-#define METHOD_GC       4
+#define METHOD_TOSTRING 0
+#define METHOD_EQAULS   1
+#define METHOD_GC       2
 
 static const char *special_methods[] = {
-        "__index", "__newindex", "toString", "__onLuaEq", "__onLuaGc", NULL
+        "toString", "__onLuaEq", "__onLuaGc", NULL
 };
 
 /**
@@ -218,6 +221,10 @@ jmethodID getIndexStaticMethod(JNIEnv *env, jclass clz);
  * 遍历所有空函数
  */
 typedef void (*traverse_empty)(const void *value, void *ud);
+/**
+ * 是否注册了emptymethods
+ */
+int hasEmptyMethod();
 /**
  * 遍历所有空函数
  */

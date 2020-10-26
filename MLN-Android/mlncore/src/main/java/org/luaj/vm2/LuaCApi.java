@@ -116,10 +116,18 @@ class LuaCApi {
     static native void _preloadData(long L, String chunkName, byte[] data);
 
     static native void _preloadFile(long L, String chunkName, String path);
+
+    static native void _preloadAssets(long L, String chunkName, String path);
+
+    static native int _preloadAssetsAndSave(long L, String chunkName, String path, String savePath);
+
+    static native int _require(long L, String path);
     //</editor-fold>
 
     //<editor-fold desc="Table api">
     static native long _createTable(long L);
+
+    static native boolean _isEmpty(long L, long table);
 
     static native int _getTableSize(long L, long table);
 
@@ -128,6 +136,10 @@ class LuaCApi {
     static native void _removeTableIndex(long L,long table,int index);
 
     static native void _clearTable(long L,long table);
+
+    static native long _setMetatable(long L, long table, long metatable);
+
+    static native long _getMetatable(long L,long table);
 
     static native void _setTableNumber(long L, long table, int k, double n);
 
@@ -153,6 +165,10 @@ class LuaCApi {
 
     static native void _setTableChild(long L, long table, String k, long child, int type);
 
+    static native void _setTableMethod(long L, long table, int k, String clz, String methodName);
+
+    static native void _setTableMethod(long L, long table, String k, String clz, String methodName);
+
     static native Object _getTableValue(long L, long table, int k);
 
     static native Object _getTableValue(long L, long table, String k);
@@ -173,20 +189,18 @@ class LuaCApi {
     static native LuaValue[] _invoke(long global, long gk, LuaValue[] params, int returnCount);
 
     static native String _getFunctionSource(long global, long gk);
+
+    static native int _dumpFunction(long L, long fun, String path);
     //</editor-fold>
 
     //<editor-fold desc="Static Bridge">
-    static native void _registerStaticClassSimple(long L, String javaClassName, String luaClassName, String lpcn);
+    static native void _registerAllStaticClass(long L, String[] javaClassName, String[] luaClassName, String[] lpcn);
     //</editor-fold>
 
     //<editor-fold desc="userdata">
     static native void _registerJavaMetatable(long L, String jcn, String lcn);
 
-    static native void _registerUserdata(long L, String lcn, String lpcn, String jcn);
-
     static native void _registerAllUserdata(long L, String[] lcns, String[] lpcns, String[] jcns, boolean[] lazy);
-
-    static native void _registerUserdataLazy(long L, String lcn, String lpcn, String jcn);
 
     /**
      * Global使用，创建一个userdata，并加入到Global表里

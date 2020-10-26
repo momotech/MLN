@@ -20,6 +20,11 @@ import java.util.Map;
  * Created by XiongFangyu on 2018/8/15.
  */
 public class InitData implements Parcelable {
+
+    /**
+     * lua文件的根目录
+     */
+    public String rootPath;
     /**
      * lua脚本地址
      */

@@ -7,173 +7,262 @@
   */
 package com.immomo.mmui.ud.anim;
 
-import com.immomo.mls.annotation.BridgeType;
-import com.immomo.mls.annotation.LuaBridge;
-import com.immomo.mls.annotation.LuaClass;
-import com.immomo.mls.utils.LVCallback;
 import com.immomo.mmui.anim.base.Animation;
 import com.immomo.mmui.anim.base.AnimationListener;
 
-import org.luaj.vm2.Globals;
-import org.luaj.vm2.LuaValue;
+import org.luaj.vm2.LuaFunction;
+import org.luaj.vm2.LuaUserdata;
+import org.luaj.vm2.utils.CGenerate;
+import org.luaj.vm2.utils.LuaApiUsed;
 
 /**
  * Created by wang.yang on 2020/6/8.
  */
-@LuaClass(abstractClass = true)
-public abstract class UDBaseAnimation implements AnimationListener {
+@LuaApiUsed
+public abstract class UDBaseAnimation extends LuaUserdata<Animation> implements AnimationListener {
 
-    public static final String LUA_CLASS_NAME = "BaseAnimation";
-    protected Animation animation;
+    public static final String LUA_CLASS_NAME = "_BaseAnimation";
+
+    protected PercentBehavior percentBehavior;
 
     private Float delay;
     private Integer repeatCount;
     private Boolean repeatForever;
     private Boolean autoReverses;
 
-    @LuaBridge(alias = "startBlock")
-    protected LVCallback startCallback;
-    @LuaBridge(alias = "pauseBlock")
-    protected LVCallback pauseCallback;
-    @LuaBridge(alias = "resumeBlock")
-    protected LVCallback resumeCallback;
-    @LuaBridge(alias = "repeatBlock")
-    protected LVCallback repeatCallback;
-    @LuaBridge(alias = "finishBlock")
-    protected LVCallback stopCallback;
+    protected LuaFunction startBlock;
+    protected LuaFunction pauseBlock;
+    protected LuaFunction resumeBlock;
+    protected LuaFunction repeatBlock;
+    protected LuaFunction finishBlock;
 
-    // 必须有此构造函数
-    public UDBaseAnimation(Globals globals, LuaValue[] init) {
-
+    @CGenerate(defaultConstructor = true)
+    @LuaApiUsed
+    protected UDBaseAnimation(long L) {
+        super(L, null);
     }
+    public static native void _init();
+    public static native void _register(long l, String parent);
 
     // lua虚拟机清除相关userdata时，会调用此方法，可无
-    public void __onLuaGc() {
+    @Override
+    protected void __onLuaGc() {
+        // 清理lua回调
+        if (startBlock != null) {
+            startBlock.destroy();
+            startBlock = null;
+        }
+        if (pauseBlock != null) {
+            pauseBlock.destroy();
+            pauseBlock = null;
+        }
+        if (resumeBlock != null) {
+            resumeBlock.destroy();
+            resumeBlock = null;
+        }
+        if (repeatBlock != null) {
+            repeatBlock.destroy();
+            repeatBlock = null;
+        }
+        if (finishBlock != null) {
+            finishBlock.destroy();
+            finishBlock = null;
+        }
+        super.__onLuaGc();
+    }
+
+    protected abstract Animation defaultAnimation();
+
+    protected void initPercentBehavior() {
+        if (percentBehavior == null) {
+            percentBehavior = new PercentBehavior();
+        }
+        percentBehavior.setAnimation(this);  // 设置相关属性信息
+    }
+
+    public PercentBehavior getPercentBehavior() {
+        if (percentBehavior == null)
+            initPercentBehavior();
+        return percentBehavior;
     }
 
     //<editor-fold desc="API">
-    @LuaBridge
+
+    //<editor-fold desc="Blocks">
+    @LuaApiUsed
+    public LuaFunction getStartBlock() {
+        return startBlock;
+    }
+
+    @LuaApiUsed
+    public void setStartBlock(LuaFunction startBlock) {
+        this.startBlock = startBlock;
+    }
+
+    @LuaApiUsed
+    public LuaFunction getPauseBlock() {
+        return pauseBlock;
+    }
+
+    @LuaApiUsed
+    public void setPauseBlock(LuaFunction pauseBlock) {
+        this.pauseBlock = pauseBlock;
+    }
+
+    @LuaApiUsed
+    public LuaFunction getResumeBlock() {
+        return resumeBlock;
+    }
+
+    @LuaApiUsed
+    public void setResumeBlock(LuaFunction resumeBlock) {
+        this.resumeBlock = resumeBlock;
+    }
+
+    @LuaApiUsed
+    public LuaFunction getRepeatBlock() {
+        return repeatBlock;
+    }
+
+    @LuaApiUsed
+    public void setRepeatBlock(LuaFunction repeatBlock) {
+        this.repeatBlock = repeatBlock;
+    }
+
+    @LuaApiUsed
+    public LuaFunction getFinishBlock() {
+        return finishBlock;
+    }
+
+    @LuaApiUsed
+    public void setFinishBlock(LuaFunction finishBlock) {
+        this.finishBlock = finishBlock;
+    }
+    //</editor-fold>
+
+    @LuaApiUsed
+    public void update(float percent) {
+        initPercentBehavior();
+        percentBehavior.update(percent);
+    }
+
+    @LuaApiUsed
     public void start() {
-        getAnimation();
-        animation.start();
+        getJavaUserdata();
+        javaUserdata.start();
     }
 
-    @LuaBridge
+    @LuaApiUsed
     public void pause() {
-        if (animation != null) {
-            animation.pause();
-        }
+        if (javaUserdata != null)
+            javaUserdata.pause();
     }
 
-    @LuaBridge
+    @LuaApiUsed
     public void resume() {
-        if (animation != null) {
-            animation.resume();
-        }
+        if (javaUserdata != null)
+        javaUserdata.resume();
     }
 
-    @LuaBridge
+    @LuaApiUsed
     public void stop() {
-        if (animation != null) {
-            animation.finish();
-        }
+        if (javaUserdata != null)
+        javaUserdata.finish();
     }
 
-    public Animation getAnimation() {
-        if (animation == null) {
-            animation = defaultAnimation();
-        }
+    @Override
+    public Animation getJavaUserdata() {
+        if (javaUserdata == null)
+            javaUserdata = defaultAnimation();
         setParams();
-        return animation;
+        return javaUserdata;
     }
 
-    @LuaBridge(alias = "delay", type = BridgeType.GETTER)
+    @LuaApiUsed
     public float getDelay() {
         return delay;
     }
 
-    @LuaBridge(alias = "delay", type = BridgeType.SETTER)
+    @LuaApiUsed
     public void setDelay(float delay) {
         this.delay = delay;
     }
 
-    @LuaBridge(alias = "autoReverses", type = BridgeType.GETTER)
-    public boolean getAutoReverses() {
+    @LuaApiUsed
+    public boolean isAutoReverses() {
         return autoReverses;
     }
 
-    @LuaBridge(alias = "autoReverses", type = BridgeType.SETTER)
+    @LuaApiUsed
     public void setAutoReverses(boolean autoReverses) {
         this.autoReverses = autoReverses;
     }
 
-    @LuaBridge(alias = "repeatForever", type = BridgeType.GETTER)
-    public boolean getRepeatForever() {
+    @LuaApiUsed
+    public boolean isRepeatForever() {
         return repeatForever;
     }
 
-    @LuaBridge(alias = "repeatForever", type = BridgeType.SETTER)
+    @LuaApiUsed
     public void setRepeatForever(boolean repeatForever) {
         this.repeatForever = repeatForever;
     }
 
-    @LuaBridge(alias = "repeatCount", type = BridgeType.GETTER)
+    @LuaApiUsed
     public int getRepeatCount() {
         return repeatCount;
     }
 
-    @LuaBridge(alias = "repeatCount", type = BridgeType.SETTER)
+    @LuaApiUsed
     public void setRepeatCount(int repeatCount) {
         this.repeatCount = repeatCount;
     }
 
     //</editor-fold>
 
-    protected abstract Animation defaultAnimation();
-
     private void setParams() {
         if (delay != null) {
-            animation.setBeginTime(delay);
+            javaUserdata.setBeginTime(delay);
         }
         if (autoReverses != null) {
-            animation.setAutoReverse(autoReverses);
+            javaUserdata.setAutoReverse(autoReverses);
         }
         if (repeatForever != null) {
-            animation.setRepeatForever(repeatForever);
+            javaUserdata.setRepeatForever(repeatForever);
         }
         if (repeatCount != null) {
-            animation.setRepeatCount(repeatCount);
+            javaUserdata.setRepeatCount(repeatCount);
         }
-        if (startCallback != null || pauseCallback != null || resumeCallback != null || repeatCallback != null || stopCallback != null) {
-            animation.setOnAnimationListener(this);
+        if (startBlock != null || pauseBlock != null || resumeBlock != null || repeatBlock != null || finishBlock != null) {
+            javaUserdata.setOnAnimationListener(this);
         }
     }
 
     @Override
     public void start(Animation animation) {
-        if (startCallback != null) {
-            startCallback.call(this);
+        if (startBlock != null) {
+            startBlock.fastInvoke(this);
         }
     }
 
     @Override
     public void pause(Animation animation) {
-        if (pauseCallback != null) {
-            pauseCallback.call(this);
+        if (pauseBlock != null) {
+            pauseBlock.fastInvoke(this);
         }
     }
 
     @Override
     public void resume(Animation animation) {
-        if (resumeCallback != null) {
-            resumeCallback.call(this);
+        if (resumeBlock != null) {
+            resumeBlock.fastInvoke(this);
         }
     }
 
     @Override
     public void finish(Animation animation, boolean finish) {
-        if (stopCallback != null) {
-            stopCallback.call(this, finish);
+        if (finishBlock != null) {
+            finishBlock.invoke(varargsOf(this, finish ? True() : False()));
         }
     }
 }

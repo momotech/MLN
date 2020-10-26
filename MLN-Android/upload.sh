@@ -1,45 +1,37 @@
 #!/usr/bin/env bash
 
-PACKAGE=('mlncore' 'mlnservics' 'yoga' 'mmui')
-VERSION=mmui_1.0.0
+PACKAGE=('annotation' 'processor' 'mlncore' 'HotReload' 'mlnservics' 'yoga' 'mmui')
+DEFAULT_PACKAGE=('mlncore' 'mlnservics' 'mmui')
+
 function inform() {
-    echo "usage: ./upload.sh <option>"
+    echo "usage: ./upload.sh <option> [-p <packages>]"
     echo "options:"
-    echo "  -D: Debug mode(build so with debug info), Default: Release mode(build so without debug info)"
-    echo "  -s: open statistic, Default: not open"
+    echo "  -p: packages to upload, Default: ${DEFAULT_PACKAGE[@]}"
+    echo "      all: ${PACKAGE[@]}"
+    echo "  -c: commit and push"
     echo "  -h: help"
 }
 
-# debug mode, default false
-D=0
 # commit automatic, default false
 c=0
-# statistic
-s=0
-# release version mode, default false
-b=beta_1
-arm=all
-while getopts "hDcb:a:" optname
+options=($@)
+idx=0
+packages=(${DEFAULT_PACKAGE[@]})
+while getopts "hcp" optname
 do
     case "$optname" in
         "h")
             inform
-            exit
-            ;;
-        "D")
-            D=1
+            exit 0
             ;;
         "c")
+            let idx=idx+1
             c=1
             ;;
-        "s")
-            s=1
-            ;;
-        "b")
-            b=$OPTARG
-            ;;
-        "a")
-            arm=$OPTARG
+        "p")
+            let idx=idx+1
+            packages=(${options[@]:idx})
+            break
             ;;
         "?")
             echo "Unknown option $OPTARG"
@@ -58,30 +50,44 @@ do
     esac
 done
 
-echo "------------------uploading ${#PACKAGE[*]} package: ${PACKAGE[*]}------------------"
+if [ ${#packages[*]} -eq 0 ]; then
+    echo "packages is empty"
+    inform
+    exit 1
+fi
+echo "------------------uploading ${#packages[*]} package: ${packages[*]}------------------"
 sleep 1s
 
-for pack in ${PACKAGE[*]} ; do
+for pack in ${packages[*]} ; do
     cmd="./upload.sh "
-    if [[ ${D} -eq 1 ]]; then
-        cmd="${cmd}-D "
-    fi
-    if [[ ${c} -eq 1 ]]; then
-        cmd="${cmd}-s "
-    fi
-    cmd="${cmd}-a ${arm} -b ${b}"
     cd ${pack}
-    sed -i '' "s/VERSION=.*/VERSION=${VERSION}/g" upload.sh
+    if [ $? -ne 0 ]; then
+        echo "upload ${pack} failed! no such package!"
+        echo "all packages: ${PACKAGE[@]}"
+        exit 1
+    fi
+
     echo "======================================================"
     echo "-------------------upload ${pack} --------------------"
     echo "======================================================"
-    ${cmd}
+    ${cmd} >/dev/null
     uploadResult=$?
     cd ../
     if [[ $uploadResult -ne 0 ]]; then
         echo upload ${pack} failed!!! code: $uploadResult
-        echo revert build.gradle file!!!
-        git checkout -- ../build.gradle
+#        echo revert build.gradle file!!!
+#        git checkout -- build.gradle
         exit $uploadResult
     fi
+    if [ "${pack}" == "mlncore" ]; then
+        echo " >> copy so"
+        ./copySo.sh
+    fi
 done
+
+if [ $c -eq 1 ]; then
+  git add build.gradle
+  git commit -m "打包:${b}"
+  git push
+  git checkout -f
+fi

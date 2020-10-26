@@ -9,6 +9,7 @@ package com.immomo.mmui.ui;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.RectF;
 import android.graphics.drawable.Animatable;
 import android.graphics.drawable.BitmapDrawable;
@@ -37,8 +38,6 @@ import com.immomo.mls.utils.MainThreadExecutor;
 import com.immomo.mmui.ILView;
 import com.immomo.mmui.ud.UDImageView;
 
-import org.luaj.vm2.LuaValue;
-
 import java.io.File;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -61,7 +60,7 @@ public class LuaImageView<U extends UDImageView> extends BorderRadiusImageView i
     private final @NonNull AtomicInteger modiCount;
     private final @NonNull ImageProvider provider;
 
-    public LuaImageView(Context context, UDImageView metaTable, LuaValue[] initParams) {
+    public LuaImageView(Context context, UDImageView metaTable) {
         super(context);
         udImageView = metaTable;
         forceClipLevel(LEVEL_FORCE_CLIP);//ImageView 需要强制切割图片，统一效果
@@ -270,6 +269,14 @@ public class LuaImageView<U extends UDImageView> extends BorderRadiusImageView i
         Drawable d = provider.loadProjectImage(getContext(), url);
         if (d != null) {
             setImageDrawable(d);
+            return;
+        }
+
+        if (RelativePathUtils.isAssetUrl(url)) {
+            url = RelativePathUtils.getAbsoluteAssetUrl(url);
+            d = provider.loadProjectImage(getContext(), url);
+            if (d != null)
+                setImageDrawable(d);
             return;
         }
 
@@ -503,6 +510,14 @@ public class LuaImageView<U extends UDImageView> extends BorderRadiusImageView i
     public void setImageDrawable(@Nullable Drawable drawable) {
         getUserdata().getFlexNode().dirty();
         super.setImageDrawable(drawable);
+    }
+
+    @Override
+    protected void onDraw(Canvas canvas) {
+        canvas.save();
+        canvas.clipRect(0, 0, getWidth(), getHeight());
+        super.onDraw(canvas);
+        canvas.restore();
     }
 
     private Object getTaskTag() {

@@ -13,41 +13,16 @@ import com.immomo.mmui.anim.base.AnimatableFactory;
 
 
 public class ScaleAnimatable extends Animatable {
-    private static final float MAX = 3.4f;
-    private static final float[] max = {
-            MAX, MAX
-    };
-    /*private static final float[] min = {
-            0, 0
-    };*/
 
     @Override
     public void writeValue(final View view, final float[] upDateValues) {
         view.post(new Runnable() {
             @Override
             public void run() {
-                view.setScaleX(Math.min(upDateValues[0], MAX));
-                view.setScaleY(Math.min(upDateValues[1], MAX));
+                view.setScaleX(upDateValues[0]);
+                view.setScaleY(upDateValues[1]);
             }
         });
-    }
-
-    /**
-     * 获取动画要求的最大值
-     * @return null表示无限制 {@link Float#NaN}表示无限制
-     *          null = {Float.NaN, Float.NaN ...}
-     */
-    public float[] getMaxValues() {
-        return max;
-    }
-
-    /**
-     * 获取动画要求的最小值
-     * @return null表示无限制 {@link Float#NaN}表示无限制
-     *          null = {Float.NaN, Float.NaN ...}
-     */
-    public float[] getMinValues() {
-        return null;
     }
 
     @Override

@@ -7,11 +7,14 @@
  */
 package com.immomo.mmui.databinding.bean;
 
+
+import com.immomo.mls.util.LogUtil;
 import com.immomo.mmui.databinding.utils.BindingConvertUtils;
 
 import org.luaj.vm2.Globals;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
+import org.luaj.vm2.utils.DisposableIterator;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -50,8 +53,31 @@ public class FieldCacheHelper {
 
 
     /**
+     * 操作缓存luaTable,针对于ObservableList改变item
+     * 使用于{@link ObservableList#set(int, Object)
+     *
+     * @param index
+     * @param newer
+     */
+    public void setField(int index, Object newer) {
+        if (luaValueCache == null) {
+            return;
+        }
+        index++; //LuaTable index 从1开始
+        List<LuaTable> luaTables = (List<LuaTable>) luaValueCache.clone();
+        for (LuaTable luaTable : luaTables) {
+            if (!luaTable.isDestroyed()) {
+                luaTable.set(index, BindingConvertUtils.toLuaValue(luaTable.getGlobals(), newer));
+            } else {
+                luaValueCache.remove(luaTable);
+            }
+        }
+    }
+
+
+    /**
      * 操作缓存luaTable，针对于ObservableList添加
-     * 使用于{@link ObservableList#set(int, Object),ObservableList#add(Object),ObservableList#add(int, Object)}
+     * 使用于{@link ObservableList#add(Object),ObservableList#add(int, Object)}
      *
      * @param index
      * @param newer
@@ -60,10 +86,24 @@ public class FieldCacheHelper {
         if (luaValueCache == null) {
             return;
         }
+        index++; //LuaTable index 从1开始
         List<LuaTable> luaTables = (List<LuaTable>) luaValueCache.clone();
         for (LuaTable luaTable : luaTables) {
             if (!luaTable.isDestroyed()) {
-                luaTable.set(index+1, BindingConvertUtils.toLuaValue(luaTable.getGlobals(), newer));
+                LuaTable copy = LuaTable.create(luaTable.getGlobals());
+                int size = luaTable.getn();
+                for (int i = index; i <= size; i++) {
+                    copy.set(i + 1, luaTable.get(i));
+                }
+                luaTable.set(index, BindingConvertUtils.toLuaValue(luaTable.getGlobals(), newer));
+                DisposableIterator<LuaTable.KV> iterator = copy.iterator();
+                if (iterator != null) {
+                    while (iterator.hasNext()) {
+                        LuaTable.KV kv = iterator.next();
+                        luaTable.set(kv.key.toInt(), kv.value);
+                    }
+                    iterator.dispose();
+                }
             } else {
                 luaValueCache.remove(luaTable);
             }
@@ -114,22 +154,17 @@ public class FieldCacheHelper {
         if (luaValueCache == null) {
             return;
         }
-        List<LuaTable> luaTables = (List<LuaTable>) luaValueCache.clone();
         for (Object object : observableList) {
-            for (LuaTable luaTable : luaTables) {
-                if (!luaTable.isDestroyed()) {
-                    luaTable.set(index + 1, BindingConvertUtils.toLuaValue(luaTable.getGlobals(), object));
-                } else {
-                    luaValueCache.remove(luaTable);
-                }
-            }
+            addField(index, object);
+            index++;
         }
-
     }
+
 
     /**
      * 操作缓存luaTable，针对于ObservableList移除
      * 使用于{@link ObservableList#remove(int),ObservableList#remove(Object)}
+     *
      * @param index
      */
     public void removeField(int index) {
@@ -150,6 +185,7 @@ public class FieldCacheHelper {
     /**
      * 操作缓存luaTable，针对于ObservableList移除
      * 适用于{@link ObservableMap#remove(Object)}
+     *
      * @param field
      */
     public void removeField(String field) {
@@ -165,7 +201,6 @@ public class FieldCacheHelper {
             }
         }
     }
-
 
 
     /**
@@ -190,6 +225,7 @@ public class FieldCacheHelper {
     /**
      * 操作缓存luaTable,针对于observableMap
      * 适用于{@link ObservableMap#putAll(Map)}
+     *
      * @param observableMap
      */
     public void putAllField(ObservableMap observableMap) {
@@ -197,10 +233,10 @@ public class FieldCacheHelper {
             return;
         }
         List<LuaTable> luaTables = (List<LuaTable>) luaValueCache.clone();
-        for(Object key: observableMap.keySet()) {
-            for(LuaTable luaTable: luaTables) {
+        for (Object key : observableMap.keySet()) {
+            for (LuaTable luaTable : luaTables) {
                 if (!luaTable.isDestroyed()) {
-                    luaTable.set((String) key, BindingConvertUtils.toLuaValue(luaTable.getGlobals(),observableMap.get(key)));
+                    luaTable.set((String) key, BindingConvertUtils.toLuaValue(luaTable.getGlobals(), observableMap.get(key)));
                 } else {
                     luaValueCache.remove(luaTable);
                 }

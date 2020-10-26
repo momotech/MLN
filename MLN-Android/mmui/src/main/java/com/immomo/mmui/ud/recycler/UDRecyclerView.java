@@ -19,23 +19,25 @@ import com.immomo.mls.MLSEngine;
 import com.immomo.mls.fun.ud.UDArray;
 import com.immomo.mls.fun.ud.UDPoint;
 import com.immomo.mls.fun.ud.view.IClipRadius;
+import com.immomo.mls.fun.ui.IPager;
 import com.immomo.mls.fun.ui.IRefreshRecyclerView;
 import com.immomo.mls.fun.ui.IScrollEnabled;
 import com.immomo.mls.fun.ui.OnLoadListener;
 import com.immomo.mls.fun.ui.SizeChangedListener;
 import com.immomo.mls.util.DimenUtil;
-import com.immomo.mls.utils.ErrorUtils;
 import com.immomo.mls.utils.MainThreadExecutor;
 import com.immomo.mls.weight.load.ILoadViewDelegete;
+import com.immomo.mmui.ILView;
+import com.immomo.mmui.ud.RecyclerLuaFunction;
 import com.immomo.mmui.ud.UDView;
-import com.immomo.mmui.ud.UDViewGroup;
 import com.immomo.mmui.ui.LuaRecyclerView;
 import com.immomo.mmui.ui.MLSRecyclerView;
 
-import org.luaj.vm2.LuaBoolean;
 import org.luaj.vm2.LuaFunction;
 import org.luaj.vm2.LuaNumber;
+import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
+import org.luaj.vm2.utils.CGenerate;
 import org.luaj.vm2.utils.LuaApiUsed;
 
 import java.util.ArrayList;
@@ -49,65 +51,10 @@ import static com.immomo.mls.fun.ud.view.IClipRadius.LEVEL_FORCE_NOTCLIP;
  * (alias = {"CollectionView", "TableView", "WaterfallView"})
  */
 @LuaApiUsed
-public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadListener,
-        A extends UDBaseRecyclerAdapter, L extends UDBaseRecyclerLayout> extends UDViewGroup<T> implements SizeChangedListener {
+public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadListener & ILView,
+        A extends UDBaseRecyclerAdapter, L extends UDBaseRecyclerLayout> extends UDView<T> implements SizeChangedListener {
+    public static final String LUA_META_NAME = "_C_UDRecyclerView";
     public static final String[] LUA_CLASS_NAME = {"CollectionView", "TableView", "WaterfallView"};
-
-    public static final String[] methods = new String[]{
-            "refreshEnable",
-            "loadEnable",
-            "scrollDirection",
-            "loadThreshold",
-            "openReuseCell",
-            "reloadData",
-            "setScrollEnable",
-            "reloadAtRow",
-            "reloadAtSection",
-            "showScrollIndicator",
-            "scrollToTop",
-            "scrollToCell",
-            "insertCellAtRow",
-            "insertRow",
-            "deleteCellAtRow",
-            "deleteRow",
-            "isRefreshing",
-            "startRefreshing",
-            "stopRefreshing",
-            "isLoading",
-            "stopLoading",
-            "noMoreData",
-            "resetLoading",
-            "loadError",
-            "adapter",
-            "layout",
-            "setRefreshingCallback",
-            "setLoadingCallback",
-            "setScrollingCallback",
-            "setScrollBeginCallback",
-            "setScrollEndCallback",
-            "setEndDraggingCallback",
-            "setStartDeceleratingCallback",
-            "insertCellsAtSection",
-            "insertRowsAtSection",
-            "deleteRowsAtSection",
-            "deleteCellsAtSection",
-            "addHeaderView",
-            "removeHeaderView",
-            "setContentInset",
-            "getContentInset",
-            "useAllSpanForLoading",
-            "getRecycledViewNum",
-            "isStartPosition",
-            "cellWithSectionRow",
-            "visibleCells",
-            "scrollEnabled",
-            "setOffsetWithAnim",
-            "contentOffset",
-            "disallowFling",
-            "pagerContentOffset",
-            "i_bounces",
-            "i_pagingEnabled",
-    };
 
     private ILoadViewDelegete loadViewDelegete;
 
@@ -116,29 +63,44 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
 
     RecyclerView.LayoutManager mLayoutManager;
 
+    @CGenerate(defaultConstructor = true)
     @LuaApiUsed
-    public UDRecyclerView(long L, LuaValue[] initParams) {
-        super(L, initParams);
+    public UDRecyclerView(long L) {
+        this(L, false, false, false);
+    }
+
+    @CGenerate
+    @LuaApiUsed
+    public UDRecyclerView(long L, boolean refresh) {
+        this(L, refresh, false, false);
+    }
+
+    @CGenerate
+    @LuaApiUsed
+    public UDRecyclerView(long L, boolean refresh, boolean load) {
+        this(L, refresh, load, false);
+    }
+
+    @CGenerate
+    @LuaApiUsed
+    public UDRecyclerView(long L, boolean refresh, boolean load, boolean viewpager) {
+        super(L, null);
         mScrollEnabled = true;
         view.setSizeChangedListener(this);
+        getRecyclerView().setOnFlingListener(onFlingListener);
+        mRefreshEnabled = refresh;
+        view.setRefreshEnable(refresh);
+        view.setLoadEnable(load);
+        if (view instanceof IPager)
+            ((IPager) view).setViewpager(viewpager);
     }
+
+    public static native void _init();
+    public static native void _register(long l, String parent);
 
     @Override
     protected T newView(LuaValue[] init) {
-        boolean loadEnable = false;
-        boolean isViewPager = false;
-        if (init.length > 0) {
-            mRefreshEnabled = init[0].toBoolean();
-        }
-        if (init.length > 1) {
-            loadEnable = init[1].toBoolean();
-        }
-        if (init.length > 2) {
-            isViewPager = init[2].toBoolean();
-        }
-        LuaRecyclerView luaRecyclerView = new LuaRecyclerView(getContext(), this, mRefreshEnabled, loadEnable);
-        luaRecyclerView.setViewpager(isViewPager);
-        return (T) luaRecyclerView;
+        return (T) new LuaRecyclerView(getContext(), this, false, false);
     }
 
     public void setLoadViewDelegete(ILoadViewDelegete loadViewDelegete) {
@@ -156,14 +118,16 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
     private LuaFunction scrollEndCallback;
     private LuaFunction endDraggingCallback;
     private LuaFunction startDeceleratingCallback;
+    private LuaFunction onFlingCallback;
     private boolean scrollListenerAdded = false;
+    private boolean disallowFling = false;
     private List<View> headerViews;
     private boolean useAllSpanForLoading = true;
     private float loadThreshold = 0;
     private boolean openReuseCell;
     private RecycledViewPoolManager poolManager;
     private float footerPaddingBottom = Float.MIN_VALUE;
-    private LuaValue[] mContentInsetLuaValue;
+    private final float[] mContentInsetLuaValue = new float[4];
 
     private int settedWidth;
     private int settedHeight;
@@ -174,10 +138,6 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
         return getView().getRecyclerView();
     }
 
-    public L getLayout() {
-        return layout;
-    }
-
     @Override
     public void onAttached() {
         super.onAttached();
@@ -185,8 +145,8 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
     }
 
     //<editor-fold desc="API">
+    //<editor-fold desc="override">
 
-    //<editor-fold desc="Property">
     @Override
     @LuaApiUsed
     public LuaValue[] clipToBounds(LuaValue[] p) {
@@ -196,56 +156,60 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
         view.getRecyclerView().setClipToPadding(clip);
         view.getRecyclerView().setClipChildren(clip);
         if (view instanceof IClipRadius) {//统一：clipToBounds(true)，切割圆角
-            ((IClipRadius) view).forceClipLevel(clip ? LEVEL_FORCE_CLIP: LEVEL_FORCE_NOTCLIP);
+            ((IClipRadius) view).forceClipLevel(clip ? LEVEL_FORCE_CLIP : LEVEL_FORCE_NOTCLIP);
         }
         return null;
     }
+    //</editor-fold>
+
+    //<editor-fold desc="Property">
+
+    //<editor-fold desc="native">
 
     @LuaApiUsed
-    public LuaValue[] refreshEnable(LuaValue[] values) {
-        if (values.length > 0) {
-            mRefreshEnabled = values[0].toBoolean();
-            getView().setRefreshEnable(mRefreshEnabled);
-            return null;
-        }
-
-        return LuaValue.rBoolean(getView().isRefreshEnable());
+    public boolean isRefreshEnable() {
+        return getView().isRefreshEnable();
     }
 
     @LuaApiUsed
-    public LuaValue[] loadEnable(LuaValue[] values) {
-        if (values.length > 0) {
-            boolean enable = values[0].toBoolean();
-            getView().setLoadEnable(enable);
-            if (getRecyclerView().getAdapter() instanceof Adapter) {
-                ((Adapter) getRecyclerView().getAdapter()).setFooterAdded(enable);
-            }
-            return null;
-        }
-        return LuaValue.rBoolean(getView().isLoadEnable());
+    public void setRefreshEnable(boolean refreshEnable) {
+        mRefreshEnabled = refreshEnable;
+        getView().setRefreshEnable(mRefreshEnabled);
     }
 
+    @LuaApiUsed
+    public boolean isLoadEnable() {
+        return getView().isLoadEnable();
+    }
 
     @LuaApiUsed
-    public LuaValue[] scrollDirection(LuaValue[] values) {
-        if (values.length > 0) {
-            int newOrientation = parseDirection(values[0].toInt());
-            boolean change = orientation != newOrientation;
-            orientation = newOrientation;
-            //动态设置，需要重新计算inset和spacing，两端统一差异
-            if (change && adapter != null && layout != null) {
-                layout.setOrientation(orientation);
-                if (layout instanceof ILayoutInSet) {
-                    removeAllItemDecorations(getRecyclerView());//移除之前的decoration
-                    getRecyclerView().addItemDecoration(layout.getItemDecoration());
-                    adapter.setMarginForVerticalGridLayout(getRecyclerView());
-                }
-            }
-            setOrientation(getRecyclerView().getLayoutManager());
-
-            return null;
+    public void setLoadEnable(boolean loadEnable) {
+        getView().setLoadEnable(loadEnable);
+        if (getRecyclerView().getAdapter() instanceof Adapter) {
+            ((Adapter) getRecyclerView().getAdapter()).setFooterAdded(loadEnable);
         }
-        return varargsOf(LuaNumber.valueOf(parseDirection(orientation)));
+    }
+
+    @LuaApiUsed
+    public int getScrollDirection() {
+        return parseDirection(orientation);
+    }
+
+    @LuaApiUsed
+    public void setScrollDirection(int scrollDirection) {
+        scrollDirection = parseDirection(scrollDirection);
+        boolean change = orientation != scrollDirection;
+        orientation = scrollDirection;
+        //动态设置，需要重新计算inset和spacing，两端统一差异
+        if (change && adapter != null && layout != null) {
+            layout.setOrientation(orientation);
+            if (layout instanceof ILayoutInSet) {
+                removeAllItemDecorations(getRecyclerView());//移除之前的decoration
+                getRecyclerView().addItemDecoration(layout.getItemDecoration());
+                adapter.setMarginForVerticalGridLayout(getRecyclerView());
+            }
+        }
+        setOrientation(getRecyclerView().getLayoutManager());
     }
 
     private int parseDirection(int old) {
@@ -255,105 +219,113 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
     }
 
     @LuaApiUsed
-    public LuaValue[] loadThreshold(LuaValue[] values) {
-        if (values.length > 0) {
-            this.loadThreshold = (float) values[0].toDouble();
-            ((MLSRecyclerView) getRecyclerView()).setLoadThreshold(loadThreshold);
-            return null;
-        }
-        return varargsOf(LuaNumber.valueOf(loadThreshold));
+    public float getLoadThreshold() {
+        return loadThreshold;
     }
 
     @LuaApiUsed
-    public LuaValue[] openReuseCell(LuaValue[] values) {
-        if (values.length > 0) {
-            openReuseCell = values[0].toBoolean();
-            if (openReuseCell) {
-                poolManager = RecycledViewPoolManager.getInstance(getGlobals());
-                getRecyclerView().setRecycledViewPool(poolManager.getRecycleViewPoolInstance());
-                if (adapter != null) {
-                    RecyclerView.LayoutManager layoutManager = adapter.getLayoutManager();
-                    if (layoutManager instanceof LinearLayoutManager) {
-                        ((LinearLayoutManager) layoutManager).setRecycleChildrenOnDetach(true);
-                    }
-                    adapter.setRecycledViewPoolIDGenerator(poolManager.getIdGenerator());
+    public void setLoadThreshold(float loadThreshold) {
+        this.loadThreshold = loadThreshold;
+        ((MLSRecyclerView) getRecyclerView()).setLoadThreshold(loadThreshold);
+    }
+
+    @LuaApiUsed
+    public boolean isOpenReuseCell() {
+        return openReuseCell;
+    }
+
+    @LuaApiUsed
+    public void setOpenReuseCell(boolean openReuseCell) {
+        this.openReuseCell = openReuseCell;
+        if (openReuseCell) {
+            poolManager = RecycledViewPoolManager.getInstance(getGlobals());
+            getRecyclerView().setRecycledViewPool(poolManager.getRecycleViewPoolInstance());
+            if (adapter != null) {
+                RecyclerView.LayoutManager layoutManager = adapter.getLayoutManager();
+                if (layoutManager instanceof LinearLayoutManager) {
+                    ((LinearLayoutManager) layoutManager).setRecycleChildrenOnDetach(true);
                 }
-            } else {
-                poolManager = null;
-                if (adapter != null) {
-                    adapter.setRecycledViewPoolIDGenerator(null);
-                }
+                adapter.setRecycledViewPoolIDGenerator(poolManager.getIdGenerator());
             }
-            return null;
         } else {
-            return LuaValue.rBoolean(openReuseCell);
+            poolManager = null;
+            if (adapter != null) {
+                adapter.setRecycledViewPoolIDGenerator(null);
+            }
         }
     }
 
-    //滑动到指定位置
     @LuaApiUsed
-    public LuaValue[] setOffsetWithAnim(LuaValue[] values) {
-        if (values.length == 1) {
-            UDPoint point = (UDPoint) values[0];
-            getView().smoothScrollTo(point.getPoint());
-            point.destroy();
+    public UDPoint getContentOffset() {
+        return new UDPoint(globals, getView().getContentOffset());
+    }
+
+    @LuaApiUsed
+    public void setContentOffset(UDPoint contentOffset) {
+        getView().setContentOffset(contentOffset.getPoint());
+        contentOffset.destroy();
+    }
+
+    @LuaApiUsed
+    public void i_bounces() {}
+
+    @LuaApiUsed
+    public void i_pagingEnabled() {}
+
+    @LuaApiUsed
+    public boolean isShowScrollIndicator() {
+        return orientation == RecyclerView.VERTICAL
+                ? getRecyclerView().isVerticalScrollBarEnabled()
+                : getRecyclerView().isHorizontalScrollBarEnabled();
+    }
+
+    @LuaApiUsed
+    public void setShowScrollIndicator(boolean showScrollIndicator) {
+        getRecyclerView().setVerticalScrollBarEnabled(showScrollIndicator);
+        getRecyclerView().setHorizontalScrollBarEnabled(showScrollIndicator);
+    }
+    //</editor-fold>
+
+    @LuaApiUsed
+    public float[] getPagerContentOffset() {
+        if (view instanceof IPager) {
+            return ((IPager) view).getPagerContentOffset();
         }
         return null;
     }
 
     @LuaApiUsed
-    public LuaValue[] contentOffset(LuaValue[] p) {
-        if (p.length == 1) {
-            getView().setContentOffset(((UDPoint) p[0]).getPoint());
-            p[0].destroy();
-            return null;
+    public void setPagerContentOffset(float x, float y) {
+        if (view instanceof IPager) {
+            ((IPager) view).pagerContentOffset(x, y);
         }
-        return varargsOf(new UDPoint(globals, getView().getContentOffset()));
     }
-
-    @LuaApiUsed
-    public LuaValue[] pagerContentOffset(LuaValue[] p) {
-        if (p.length == 2) {
-            getView().pagerContentOffset(p[0].toFloat(), p[1].toFloat());
-            return null;
-        }
-        float[] contentOffset = getView().getPagerContentOffset();
-        return varargsOf(LuaNumber.valueOf(contentOffset[0]), LuaNumber.valueOf(contentOffset[1]));
-    }
-
-    @LuaApiUsed
-    public LuaValue[] i_bounces(LuaValue[] bounces) {
-        return null;
-    }
-
-    @LuaApiUsed
-    public LuaValue[] i_pagingEnabled(LuaValue[] bounces) {
-        return null;
-    }
-//</editor-fold>
+    //</editor-fold>
 
     //<editor-fold desc="Method">
+
+    //<editor-fold desc="native">
+    //滑动到指定位置
+    @LuaApiUsed
+    public void setOffsetWithAnim(UDPoint point) {
+        getView().smoothScrollTo(point.getPoint());
+        point.destroy();
+    }
 
     /**
      * 重新渲染
      */
     @LuaApiUsed
-    public LuaValue[] reloadData(LuaValue[] values) {
+    public void reloadData() {
         if (adapter != null)
             adapter.reload();
-        return null;
     }
 
     /**
      * 是否可以滚动
      */
     @LuaApiUsed
-    public LuaValue[] setScrollEnable(LuaValue[] values) {
-        setScrollEnable(values[0].toBoolean());
-        return null;
-    }
-
-    private void setScrollEnable(boolean enable) {
+    public void setScrollEnable(boolean enable) {
         mScrollEnabled = enable;
 
         if (mLayoutManager instanceof IScrollEnabled) {
@@ -367,513 +339,358 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
      * (section,row) 重新渲染某个item
      */
     @LuaApiUsed
-    public LuaValue[] reloadAtRow(LuaValue[] values) {
-        if (values.length == 3) {
-            if (adapter != null)
-                adapter.reloadAtRow(values[1].toInt() - 1, values[0].toInt() - 1, values[2].toBoolean());
-        }
-        return null;
+    public void reloadAtRow(int r, int s, boolean a) {
+        if (adapter != null)
+            adapter.reloadAtRow(s - 1, r - 1, a);
     }
 
     /**
      * (section) 重新渲染某个section
      */
     @LuaApiUsed
-    public LuaValue[] reloadAtSection(LuaValue[] values) {
-        if (values.length == 2) {
-            if (adapter != null)
-                adapter.reloadAtSection(values[0].toInt() - 1, values[1].toBoolean());
-        }
-        return null;
+    public void reloadAtSection(int s, boolean a) {
+        if (adapter != null)
+            adapter.reloadAtSection(s - 1, a);
     }
 
-    /**
-     * 设置滚动条的显隐
-     */
     @LuaApiUsed
-    public LuaValue[] showScrollIndicator(LuaValue[] values) {
-        if (values.length >= 1) {
-            boolean show = values[0].toBoolean();
-            getRecyclerView().setVerticalScrollBarEnabled(show);
-            getRecyclerView().setHorizontalScrollBarEnabled(show);
-            return null;
-        }
-
-        boolean scrollBarEnabled = orientation == RecyclerView.VERTICAL ? getRecyclerView().isVerticalScrollBarEnabled() : getRecyclerView().isHorizontalScrollBarEnabled();
-        return LuaValue.varargsOf(LuaBoolean.valueOf(scrollBarEnabled));
+    public void scrollToTop() {
+        scrollToTop(false);
     }
 
-    /**
-     * 滚动到顶
-     */
     @LuaApiUsed
-    public LuaValue[] scrollToTop(LuaValue[] values) {
-        boolean anim = false;
-        if (values.length >= 1) {
-            anim = values[0].toBoolean();
-        }
+    public void scrollToTop(boolean anim) {
         if (mScrollEnabled)
             callScrollToTop(anim);
-        return null;
     }
 
-    /**
-     * 滚动到某个item
-     * <p>
-     * row
-     * section
-     * anim
-     */
     @LuaApiUsed
-    public LuaValue[] scrollToCell(LuaValue[] values) {
-        if (adapter != null && values.length >= 2) {
+    public void scrollToCell(int r, int s) {
+        scrollToCell(r, s, false);
+    }
+
+    @LuaApiUsed
+    public void scrollToCell(int r, int s, boolean smooth) {
+        if (adapter != null) {
             if (!mScrollEnabled) {
-                return null;
+                return;
             }
-            int position = adapter.getPositionBySectionAndRow(values[1].toInt() - 1, values[0].toInt() - 1);
+            int position = adapter.getPositionBySectionAndRow(s - 1, r - 1);
             RecyclerView recyclerView = getRecyclerView();
-            if (recyclerView instanceof MLSRecyclerView && values.length >= 3) {
-                ((MLSRecyclerView) recyclerView).smoothMoveToPosition(!values[2].toBoolean(), position + adapter.getAdapter().getHeaderCount());
+            if (recyclerView instanceof MLSRecyclerView) {
+                ((MLSRecyclerView) recyclerView).smoothMoveToPosition(!smooth, position + adapter.getAdapter().getHeaderCount());
             }
         }
-        return null;
     }
 
     @LuaApiUsed
-    public LuaValue[] insertCellAtRow(LuaValue[] values) {
+    public void insertCellAtRow(int r, int s) {
         if (adapter != null) {
             adapter.setItemAnimated(false);
-            adapter.insertCellAtRow(values[1].toInt() - 1, values[0].toInt() - 1);
+            adapter.insertCellAtRow(s - 1, r - 1);
         }
-        return null;
     }
 
     @LuaApiUsed
-    public LuaValue[] insertRow(LuaValue[] values) {
-        if (adapter == null || values.length < 2)
-            return null;
-
-        boolean animated = false;
-        if (values.length >= 3) {
-            animated = values[2].toBoolean();
-        }
-
-        adapter.insertCellAtRowAnimated(values[1].toInt() - 1, values[0].toInt() - 1, animated);
-        return null;
+    public void insertRow(int r, int s) {
+        insertRow(r, s, false);
     }
 
     @LuaApiUsed
-    public LuaValue[] deleteCellAtRow(LuaValue[] values) {
+    public void insertRow(int r, int s, boolean animated) {
+        if (adapter == null)
+            return;
+        adapter.insertCellAtRowAnimated(s - 1, r - 1, animated);
+    }
+
+    @LuaApiUsed
+    public void deleteCellAtRow(int r, int s) {
         if (adapter != null) {
             adapter.setItemAnimated(false);
-            adapter.deleteCellAtRow(values[1].toInt() - 1, values[0].toInt() - 1);
+            adapter.deleteCellAtRow(s - 1, r - 1);
         }
-        return null;
     }
 
     @LuaApiUsed
-    public LuaValue[] deleteRow(LuaValue[] values) {
-
-        if (adapter == null || values.length < 2)
-            return null;
-
-        boolean animated = false;
-        if (values.length >= 3) {
-            animated = values[2].toBoolean();
-        }
-
-        adapter.deleteCellAtRowAnimated(values[1].toInt() - 1, values[0].toInt() - 1, animated);
-        return null;
+    public void deleteRow(int r, int s) {
+        deleteRow(r, s, false);
     }
 
-    /**
-     * 判断是否正在刷新
-     *
-     * @return
-     */
     @LuaApiUsed
-    public LuaValue[] isRefreshing(LuaValue[] values) {
-        return LuaValue.rBoolean(getView().isRefreshing());
+    public void deleteRow(int r, int s, boolean animated) {
+        if (adapter == null)
+            return;
+        adapter.deleteCellAtRowAnimated(s - 1, r - 1, animated);
+    }
+
+    @LuaApiUsed
+    public boolean isRefreshing() {
+        return getView().isRefreshing();
     }
 
     /**
      * 执行下拉刷新动画，并回调 Android专用
      */
     @LuaApiUsed
-    public LuaValue[] startRefreshing(LuaValue[] values) {
+    public void startRefreshing() {
         getView().startRefreshing();
-        return null;
     }
 
-    /**
-     * 停止下拉刷新动画
-     */
     @LuaApiUsed
-    public LuaValue[] stopRefreshing(LuaValue[] values) {
+    public void stopRefreshing() {
         getView().stopRefreshing();
-        return null;
     }
 
-    /**
-     * 判断是否正在加载
-     *
-     * @return
-     */
     @LuaApiUsed
-    public LuaValue[] isLoading(LuaValue[] values) {
-        return LuaValue.rBoolean(getView().isLoading());
+    public boolean isLoading() {
+        return getView().isLoading();
     }
 
-    /**
-     * 停止加载
-     */
     @LuaApiUsed
-    public LuaValue[] stopLoading(LuaValue[] values) {
+    public void stopLoading() {
         getView().stopLoading();
-        return null;
     }
 
     /**
      * 通知无更多数据，将加载动画删除
      */
     @LuaApiUsed
-    public LuaValue[] noMoreData(LuaValue[] values) {
+    public void noMoreData() {
         getView().noMoreData();
-        return null;
     }
 
     /**
      * 重置加载状态，和noMoreData相反
      */
     @LuaApiUsed
-    public LuaValue[] resetLoading(LuaValue[] values) {
+    public void resetLoading() {
         getView().resetLoading();
-        return null;
     }
 
     /**
      * 加载失败，显示点击加载
      */
     @LuaApiUsed
-    public LuaValue[] loadError(LuaValue[] values) {
+    public void loadError() {
         getView().loadError();
-        return null;
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="adapter layout">
+
+    @LuaApiUsed
+    public UDBaseRecyclerAdapter getAdapter() {
+        return adapter;
     }
 
-    /**
-     * 设置adapter，不同类型adapter类型不同
-     * <p>
-     * adapter
-     */
     @LuaApiUsed
-    public final LuaValue[] adapter(LuaValue[] values) {
-        if (values.length > 0) {
-            LuaValue value = values[0];
-            if (value != null && value.isUserdata()) {
-                final A a = (A) value.toUserdata();
-                MainThreadExecutor.postAtFrontOfQueue(new Runnable() {
-                    @Override//解决adapter 与其他方法的时序问题
-                    public void run() {
-                        onAdapterSet(a);
-                    }
-                });
+    public void setAdapter(final UDBaseRecyclerAdapter adapter) {
+        MainThreadExecutor.postAtFrontOfQueue(new Runnable() {
+            @Override//解决adapter 与其他方法的时序问题
+            public void run() {
+                onAdapterSet((A)adapter);
             }
-            return null;
-        }
-        return varargsOf(adapter != null ? adapter : Nil());
+        });
     }
 
-    /**
-     * 设置layout，不同类型layout类型不同
-     * <p>
-     * UDBaseRecyclerLayout layout
-     */
     @LuaApiUsed
-    public LuaValue[] layout(LuaValue[] values) {
-        if (values.length > 0) {
-            LuaValue value = values[0];
-            if (value != null && value.isUserdata()) {
-                L l = (L) value.toUserdata();
-                if (adapter != null) {
-                    adapter.setLayout(l, getView());
-                }
-                this.layout = l;
-            }
-            return null;
+    public void setLayout(UDBaseRecyclerLayout layout) {
+        if (adapter != null) {
+            adapter.setLayout(layout, getView());
         }
-
-        return varargsOf(this.layout != null ? layout : Nil());
+        this.layout = (L) layout;
     }
 
-    /**
-     * 设置下拉刷新的回调
-     * <p>
-     * fun
-     */
     @LuaApiUsed
-    public LuaValue[] setRefreshingCallback(LuaValue[] values) {
+    public UDBaseRecyclerLayout getLayout() {
+        return layout;
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="callback">
+
+    @LuaApiUsed
+    public void setRefreshingCallback(LuaFunction f) {
         if (refreshCallback != null)
             refreshCallback.destroy();
-        LuaValue value = values[0];
-        if (value != null && value.isFunction())
-            refreshCallback = value.toLuaFunction();
-        return null;
+        refreshCallback = f;
     }
 
-    /**
-     * 设置上拉加载的回调
-     * <p>
-     * fun
-     */
     @LuaApiUsed
-    public LuaValue[] setLoadingCallback(LuaValue[] values) {
+    public void setLoadingCallback(LuaFunction f) {
         if (loadCallback != null)
             loadCallback.destroy();
-        LuaValue value = values[0];
-        if (value != null && value.isFunction())
-            loadCallback = value.toLuaFunction();
-        return null;
+        loadCallback = f;
     }
 
-    /**
-     * 滚动回调
-     * <p>
-     * fun
-     */
     @LuaApiUsed
-    public LuaValue[] setScrollingCallback(LuaValue[] values) {
+    public void setScrollingCallback(LuaFunction f) {
         if (scrollCallback != null)
             scrollCallback.destroy();
-        LuaValue value = values[0];
-        if (value != null && value.isFunction()) {
-            scrollCallback = value.toLuaFunction();
-            if (scrollCallback != null && !scrollListenerAdded) {
-                getRecyclerView().addOnScrollListener(onScrollListener);
-                scrollListenerAdded = true;
-            }
+        scrollCallback = f;
+        if (scrollCallback != null && !scrollListenerAdded) {
+            getRecyclerView().addOnScrollListener(onScrollListener);
+            scrollListenerAdded = true;
         }
-        return null;
     }
 
-    /**
-     * 开始滚动回调
-     * <p>
-     * fun
-     */
     @LuaApiUsed
-    public LuaValue[] setScrollBeginCallback(LuaValue[] values) {
+    public void setScrollBeginCallback(LuaFunction f) {
         if (scrollBeginCallback != null)
             scrollBeginCallback.destroy();
-        LuaValue value = values[0];
-        if (value != null && value.isFunction()) {
-            scrollBeginCallback = value.toLuaFunction();
-            if (scrollBeginCallback != null && !scrollListenerAdded) {
-                getRecyclerView().addOnScrollListener(onScrollListener);
-                scrollListenerAdded = true;
-            }
+        scrollBeginCallback = f;
+        if (scrollBeginCallback != null && !scrollListenerAdded) {
+            getRecyclerView().addOnScrollListener(onScrollListener);
+            scrollListenerAdded = true;
         }
-        return null;
     }
 
-    /**
-     * 结束滚动回调
-     * <p>
-     * fun
-     */
     @LuaApiUsed
-    public LuaValue[] setScrollEndCallback(LuaValue[] values) {
+    public void setScrollEndCallback(LuaFunction f) {
         if (scrollEndCallback != null)
             scrollEndCallback.destroy();
-        LuaValue value = values[0];
-        if (value != null && value.isFunction()) {
-            scrollEndCallback = value.toLuaFunction();
-            if (scrollEndCallback != null && !scrollListenerAdded) {
-                getRecyclerView().addOnScrollListener(onScrollListener);
-                scrollListenerAdded = true;
-            }
+        scrollEndCallback = f;
+        if (scrollEndCallback != null && !scrollListenerAdded) {
+            getRecyclerView().addOnScrollListener(onScrollListener);
+            scrollListenerAdded = true;
         }
-        return null;
     }
 
     @LuaApiUsed
-    public LuaValue[] setEndDraggingCallback(LuaValue[] values) {
+    public void setEndDraggingCallback(LuaFunction f) {
         if (endDraggingCallback != null)
             endDraggingCallback.destroy();
-        LuaValue value = values[0];
-        if (value != null && value.isFunction()) {
-            endDraggingCallback = value.toLuaFunction();
-            if (endDraggingCallback != null && !scrollListenerAdded) {
-                getRecyclerView().addOnScrollListener(onScrollListener);
-                scrollListenerAdded = true;
-            }
+        endDraggingCallback = f;
+        if (endDraggingCallback != null && !scrollListenerAdded) {
+            getRecyclerView().addOnScrollListener(onScrollListener);
+            scrollListenerAdded = true;
         }
-        return null;
     }
 
     @LuaApiUsed
-    public LuaValue[] setStartDeceleratingCallback(LuaValue[] values) {
+    public void setScrollWillEndDraggingCallback(LuaFunction f) {
+        if (onFlingCallback != null)
+            onFlingCallback.destroy();
+        onFlingCallback = f;
+        ((MLSRecyclerView) getRecyclerView()).setFlingListener(true);
+    }
+
+    @LuaApiUsed
+    public void setStartDeceleratingCallback(LuaFunction f) {
         if (startDeceleratingCallback != null)
             startDeceleratingCallback.destroy();
-        LuaValue value = values[0];
-        if (value != null && value.isFunction()) {
-            startDeceleratingCallback = value.toLuaFunction();
-            if (startDeceleratingCallback != null && !scrollListenerAdded) {
-                getRecyclerView().addOnScrollListener(onScrollListener);
-                scrollListenerAdded = true;
-            }
+        startDeceleratingCallback = f;
+        if (startDeceleratingCallback != null && !scrollListenerAdded) {
+            getRecyclerView().addOnScrollListener(onScrollListener);
+            scrollListenerAdded = true;
         }
-        return null;
+    }
+
+    //</editor-fold>
+
+    //<editor-fold desc="insert delete">
+
+    @LuaApiUsed
+    public void insertCellsAtSection(int s, int sr, int er) {
+        insertRowsAtSection(s, sr, er, false);
     }
 
     @LuaApiUsed
-    public LuaValue[] insertCellsAtSection(LuaValue[] values) {
+    public void insertRowsAtSection(int s, int sr, int er, boolean anim) {
         if (adapter != null) {
-            adapter.setItemAnimated(false);
-            adapter.insertCellsAtSection(values[0].toInt() - 1, values[1].toInt() - 1, (values[2].toInt() - values[1].toInt()) + 1);
+            adapter.setItemAnimated(anim);
+            adapter.insertCellsAtSection(s - 1, sr - 1, (er - sr) + 1);
         }
-        return null;
     }
 
     @LuaApiUsed
-    public LuaValue[] insertRowsAtSection(LuaValue[] values) {
+    public void deleteRowsAtSection(int s, int sr, int er, boolean anim) {
         if (adapter != null) {
-            adapter.setItemAnimated(values[3].toBoolean());
-            adapter.insertCellsAtSection(values[0].toInt() - 1, values[1].toInt() - 1, (values[2].toInt() - values[1].toInt()) + 1);
+            adapter.setItemAnimated(anim);
+            checkEndRowBeyondBounds(s, er);
+            adapter.deleteCellsAtSection(s - 1, sr - 1, (er - sr) + 1);
         }
-        return null;
     }
 
     @LuaApiUsed
-    public LuaValue[] deleteRowsAtSection(LuaValue[] values) {
-        if (adapter != null) {
-            adapter.setItemAnimated(values[3].toBoolean());
-            checkEndRowBeyondBounds(values);
-            adapter.deleteCellsAtSection(values[0].toInt() - 1, values[1].toInt() - 1, (values[2].toInt() - values[1].toInt()) + 1);
-        }
-        return null;
+    public void deleteCellsAtSection(int s, int sr, int er) {
+        deleteRowsAtSection(s, sr, er, false);
     }
+    //</editor-fold>
 
     @LuaApiUsed
-    public LuaValue[] deleteCellsAtSection(LuaValue[] values) {
-        if (adapter != null) {
-            adapter.setItemAnimated(false);
-            checkEndRowBeyondBounds(values);
-            adapter.deleteCellsAtSection(values[0].toInt() - 1, values[1].toInt() - 1, (values[2].toInt() - values[1].toInt()) + 1);
-        }
-        return null;
-    }
-
-    @Deprecated
-    @LuaApiUsed
-    public LuaValue[] addHeaderView(LuaValue[] values) {
-        ErrorUtils.debugDeprecatedMethod("WaterfallView:addHeaderView method is deprecated, use WaterfallAdapter:initHeader and WaterfallAdapter:fillHeaderData methods instead!", getGlobals());
-        UDView v = (UDView) values[0];
-        if (adapter == null) {
-            if (headerViews == null) {
-                headerViews = new ArrayList<>();
-            }
-            headerViews.add(v.getView());
-            return null;
-        }
-        adapter.getAdapter().addHeaderView(v.getView());
-        return null;
-    }
-
-    @Deprecated
-    @LuaApiUsed
-    public LuaValue[] removeHeaderView(LuaValue[] values) {
-        ErrorUtils.debugDeprecatedMethod("WaterfallView:removeHeaderView method is deprecated, use WaterfallAdapter:initHeader and WaterfallAdapter:fillHeaderData methods instead!", getGlobals());
-        if (headerViews != null) {
-            headerViews.clear();
-        }
-        if (adapter != null) {
-            adapter.getAdapter().removeAllHeaderView();
-        }
-        return null;
-    }
-
-    @LuaApiUsed
-    public LuaValue[] setContentInset(LuaValue[] values) {
-        mContentInsetLuaValue = values;
-        if (values.length > 3) {
-            footerPaddingBottom = DimenUtil.dpiToPx((float) values[2].toDouble());
-        }
+    public void setContentInset(float t, float r, float b, float l) {
+        mContentInsetLuaValue[0] = t;
+        mContentInsetLuaValue[1] = r;
+        mContentInsetLuaValue[2] = b;
+        mContentInsetLuaValue[3] = l;
+        footerPaddingBottom = DimenUtil.dpiToPx(b);
         setFooterViewMaigin();
-        return null;
     }
 
-    /**
-     * function
-     */
+    @CGenerate(alias = "getContentInset", params = "F")
     @LuaApiUsed
-    public LuaValue[] getContentInset(LuaValue[] values) {
-        if (values.length >= 1 && values[0].isFunction()) {
-            if (mContentInsetLuaValue != null)
-                values[0].toLuaFunction().invoke(mContentInsetLuaValue);
-            else {
-                LuaValue zero = LuaNumber.valueOf(0);
-                values[0].toLuaFunction().invoke(varargsOf(zero, zero, zero, zero));
-            }
+    public void getContentInsetByFunction(long fun) {
+        if (fun != 0) {
+            RecyclerLuaFunction f = new RecyclerLuaFunction(globals, fun);
+            f.fastInvoke(mContentInsetLuaValue[0],
+                    mContentInsetLuaValue[1],
+                    mContentInsetLuaValue[2],
+                    mContentInsetLuaValue[3]);
+            f.destroy();
         }
-        return null;
     }
 
     @LuaApiUsed
-    public LuaValue[] useAllSpanForLoading(LuaValue[] values) {
-        useAllSpanForLoading = values[0].toBoolean();
+    public void useAllSpanForLoading(boolean useAllSpanForLoading) {
+        this.useAllSpanForLoading = useAllSpanForLoading;
         if (adapter != null) {
             adapter.getAdapter().useAllSpanForLoading(useAllSpanForLoading);
         }
-        return null;
     }
 
     @LuaApiUsed
-    public LuaValue[] getRecycledViewNum(LuaValue[] values) {
-        return LuaValue.rNumber(poolManager != null ? poolManager.getRecycledViewNum() : 0);
+    public int getRecycledViewNum() {
+        return poolManager != null ? poolManager.getRecycledViewNum() : 0;
     }
 
     @LuaApiUsed
-    public LuaValue[] isStartPosition(LuaValue[] values) {
+    public boolean isStartPosition() {
         if (orientation == RecyclerView.VERTICAL) {
-            return LuaValue.rBoolean(!getRecyclerView().canScrollVertically(-1));
+            return !getRecyclerView().canScrollVertically(-1);
         } else {
-            return LuaValue.rBoolean(!getRecyclerView().canScrollHorizontally(-1));
+            return !getRecyclerView().canScrollHorizontally(-1);
         }
     }
 
-    /**
-     * section
-     * row
-     *
-     * @return 返回指定位置的cell，版本1.0.2
-     */
+    @CGenerate(returnType = "T")
     @LuaApiUsed
-    public LuaValue[] cellWithSectionRow(LuaValue[] values) {
+    public long cellWithSectionRow(int s, int r) {
         if (adapter == null) {
-            return LuaValue.rNil();
+            return 0;
         }
-        int position = adapter.getPositionBySectionAndRow(values[0].toInt() - 1, values[1].toInt() - 1);
+        int position = adapter.getPositionBySectionAndRow(s - 1, r - 1);
         View view = getRecyclerView().getLayoutManager().findViewByPosition(position);
         if (view == null) {
-            return LuaValue.rNil();
+            return 0;
         }
         ViewHolder holder = (ViewHolder) getRecyclerView().getChildViewHolder(view);
-        return varargsOf(holder.getCell());
+        LuaValue v = holder.getCell();
+        if (v != null)
+            return v.nativeGlobalKey();
+        return 0;
     }
 
-    /**
-     * @return 返回当前屏幕展示的所有cell，版本1.0.2
-     */
     @LuaApiUsed
-    public LuaValue[] visibleCells(LuaValue[] values) {
+    public UDArray visibleCells() {
         List list = new ArrayList();
         if (adapter == null) {
-            return varargsOf(new UDArray(getGlobals(), list));
+            return new UDArray(getGlobals(), list);
         }
 
         RecyclerView.LayoutManager layoutManager = getRecyclerView().getLayoutManager();
         if (layoutManager == null) {
-            return varargsOf(new UDArray(getGlobals(), list));
+            return new UDArray(getGlobals(), list);
         }
 
         int firstPosition = ((MLSRecyclerView) getRecyclerView()).findFirstVisibleItemPosition();
@@ -888,28 +705,31 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
                 list.add(holder.getCell());
             }
         }
-        return varargsOf(new UDArray(getGlobals(), list));
+        return new UDArray(getGlobals(), list);
     }
 
     @LuaApiUsed
-    public LuaValue[] scrollEnabled(LuaValue[] values) {
-        if (values.length > 0) {
-            LuaValue value = values[0];
-            getRecyclerView().setLayoutFrozen(value.toBoolean());
-            return null;
-        }
-
-        return LuaValue.rBoolean(getRecyclerView().isLayoutFrozen());
+    public boolean isDisallowFling() {
+        return disallowFling;
     }
 
     @LuaApiUsed
-    public LuaValue[] disallowFling(LuaValue[] values) {
-        if (values.length > 0) {
-            boolean enable = values[0].toBoolean();
-            ((MLSRecyclerView) getRecyclerView()).setDisallowFling(enable);
-            return null;
+    public void setDisallowFling(boolean disallowFling) {
+        this.disallowFling = disallowFling;
+        ((MLSRecyclerView) getRecyclerView()).setDisallowFling(disallowFling);
+    }
+
+    @CGenerate(returnType = "T")
+    @LuaApiUsed
+    public long visibleCellsRows() {
+        int firstPos = ((MLSRecyclerView) getRecyclerView()).findFirstVisibleItemPosition() + 1;
+        int lastPos = ((MLSRecyclerView) getRecyclerView()).findLastVisibleItemPosition() + 1;
+        LuaTable table = LuaTable.create(globals);
+        for (int i = firstPos; i < lastPos + 1; i++) {
+            table.set(i - firstPos + 1, i);
         }
-        return LuaValue.rBoolean(((MLSRecyclerView) getRecyclerView()).isDisallowFling());
+
+        return table.nativeGlobalKey();
     }
 
     //</editor-fold>
@@ -918,12 +738,12 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
     //<editor-fold desc="call by uirecyclerview">
     public void callbackRefresh() {
         if (refreshCallback != null)
-            refreshCallback.invoke(null);
+            refreshCallback.fastInvoke();
     }
 
     public void callbackLoading() {
         if (loadCallback != null)
-            loadCallback.invoke(null);
+            loadCallback.fastInvoke();
     }
 
     public void setFooterViewMaigin() {
@@ -968,6 +788,7 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
             if (newState == RecyclerView.SCROLL_STATE_SETTLING) {
                 newSettlingState = true;
             }
+
 
             if (!scrolling) {
                 scrolling = true;
@@ -1017,7 +838,7 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
         private void callbackWithPoint(LuaFunction c) {
             float sx = getRecyclerView().computeHorizontalScrollOffset();
             float sy = getRecyclerView().computeVerticalScrollOffset();
-            c.invoke(varargsOf(LuaNumber.valueOf(DimenUtil.pxToDpi(sx)), LuaNumber.valueOf(DimenUtil.pxToDpi(sy))));
+            c.fastInvoke(DimenUtil.pxToDpi(sx), DimenUtil.pxToDpi(sy));
         }
 
         private void callbackWithPoint(LuaFunction c, boolean decelerating) {
@@ -1027,6 +848,31 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
         }
     };
     //</editor-fold>
+
+    private RecyclerView.OnFlingListener onFlingListener = new RecyclerView.OnFlingListener() {
+        private mRunnable runnable;
+
+        @Override
+        public boolean onFling(int velocityX, int velocityY) {
+            if (onFlingCallback != null) {
+                if (runnable == null) {
+                    runnable = new mRunnable();
+                }
+                runnable.velocityY = (Math.abs(velocityY / 8000f) < 0.1) ? 0 : velocityY / 8000f;
+                view.post(runnable);
+            }
+            return disallowFling;
+        }
+
+        class mRunnable implements Runnable {
+            float velocityY;
+
+            @Override
+            public void run() {
+                onFlingCallback.fastInvoke(velocityY);
+            }
+        }
+    };
 
     //<editor-fold desc="SizeChangedListener">
     @Override
@@ -1050,12 +896,6 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
     public void setHeight(float h) {
         super.setHeight(h);
         settedHeight = (int) h;
-    }
-
-    @Override
-    public LuaValue[] addView(LuaValue[] var) {
-        ErrorUtils.debugDeprecatedMethod("not support addView", getGlobals());
-        return super.addView(var);
     }
 
     @CallSuper
@@ -1142,17 +982,9 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
         }
     }
 
-    private int getOrientation() {
-        RecyclerView.LayoutManager layoutManager = getRecyclerView().getLayoutManager();
-        if (layoutManager instanceof LinearLayoutManager) {
-            return ((LinearLayoutManager) layoutManager).getOrientation();
-        }
-        return RecyclerView.VERTICAL;
-    }
-
-    private void checkEndRowBeyondBounds(LuaValue[] values) {
+    private void checkEndRowBeyondBounds(int s, int r) {
         if (MLSEngine.DEBUG)
-            adapter.getPositionBySectionAndRow(values[0].toInt() - 1, values[2].toInt() - 1);
+            adapter.getPositionBySectionAndRow(s, r - 1);
     }
 
     // 是否 滑动到最底部和最顶部

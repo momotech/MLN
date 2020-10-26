@@ -15,9 +15,9 @@ import androidx.annotation.NonNull;
 import com.immomo.mls.fun.other.Size;
 import com.immomo.mls.utils.AssertUtils;
 import com.immomo.mls.utils.ErrorUtils;
+import com.immomo.mmui.ud.AdapterLuaFunction;
 
-import org.luaj.vm2.LuaFunction;
-import org.luaj.vm2.LuaValue;
+import org.luaj.vm2.utils.CGenerate;
 import org.luaj.vm2.utils.LuaApiUsed;
 
 import java.util.HashMap;
@@ -29,22 +29,21 @@ import java.util.Map;
 @LuaApiUsed
 public abstract class UDBaseNeedHeightAdapter<L extends UDBaseRecyclerLayout> extends UDBaseRecyclerAdapter<L> {
     public static final String LUA_CLASS_NAME = "__BaseNeedHeightAdapter";
-    public static final String[] methods = new String[]{
-            "heightForCell",
-            "heightForHeader",
-            "heightForCellByReuseId"
-    };
-    protected LuaFunction heightForCell, heightForHeader;
-    protected Map<String, LuaFunction> heightDelegates;
+    protected AdapterLuaFunction heightForCell, heightForHeader;
+    protected Map<String, AdapterLuaFunction> heightDelegates;
     private SparseArray<Size> sizeCache;
 
     private Size initSize;
 
+    @CGenerate(defaultConstructor = true)
     @LuaApiUsed
-    public UDBaseNeedHeightAdapter(long L, LuaValue[] v) {
-        super(L, v);
+    public UDBaseNeedHeightAdapter(long L) {
+        super(L);
         initValue();
     }
+    public static native void _init();
+    public static native void _register(long l, String parent);
+
     //<editor-fold desc="API">
 
     private void initValue() {
@@ -56,10 +55,13 @@ public abstract class UDBaseNeedHeightAdapter<L extends UDBaseRecyclerLayout> ex
      * <p>
      * fun
      */
+    @CGenerate(params = "F")
     @LuaApiUsed
-    public LuaValue[] heightForCell(LuaValue[] values) {
-        heightForCell = values[0].toLuaFunction();
-        return null;
+    public void heightForCell(long f) {
+        if (f == 0)
+            heightForCell = null;
+        else
+            heightForCell = new AdapterLuaFunction(globals, f);
     }
 
     /**
@@ -67,19 +69,25 @@ public abstract class UDBaseNeedHeightAdapter<L extends UDBaseRecyclerLayout> ex
      * <p>
      * fun
      */
+    @CGenerate(params = "F")
     @LuaApiUsed
-    public LuaValue[] heightForHeader(LuaValue[] values) {
-        heightForHeader = values[0].toLuaFunction();
-        return null;
+    public void heightForHeader(long f) {
+        if (f == 0)
+            heightForHeader = null;
+        else
+            heightForHeader = new AdapterLuaFunction(globals, f);
     }
 
+    @CGenerate(params = "0F")
     @LuaApiUsed
-    public LuaValue[] heightForCellByReuseId(LuaValue[] values) {
+    public void heightForCellByReuseId(String t, long f) {
         if (heightDelegates == null) {
             heightDelegates = new HashMap<>();
         }
-        heightDelegates.put(values[0].toJavaString(), values[1].toLuaFunction());
-        return null;
+        if (f == 0)
+            heightDelegates.put(t, null);
+        else
+            heightDelegates.put(t, new AdapterLuaFunction(globals, f));
     }
     //</editor-fold>
 
@@ -109,44 +117,27 @@ public abstract class UDBaseNeedHeightAdapter<L extends UDBaseRecyclerLayout> ex
         if (cellSize != null)
             return cellSize;
 
-        int[] sr = getSectionAndRowIn(position);
-
-        LuaValue s = toLuaInt(sr[0]);
-        LuaValue r = toLuaInt(sr[1]);
-
-        LuaFunction caller;
+        AdapterLuaFunction caller;
         if (heightDelegates != null) {
             String id = getReuseIdByType(getAdapter().getItemViewType(position));
             caller = heightDelegates.get(id);
             if (!AssertUtils.assertFunction(caller,
-                    "if heightForCellByReuseId is setted once, all type must setted by invoke heightForCellByReuseId",
+                    "heightForCellByReuseId和heightForCell互斥，请统一使用方法",
                     getGlobals())) {
                 return new Size(Size.MATCH_PARENT, Size.WRAP_CONTENT);
             }
         } else {
             caller = heightForCell;
         }
-        if (!AssertUtils.assertFunction(caller, "heightForCell must retrun a function", getGlobals())) {
+        if (!AssertUtils.assertFunction(caller, "必须通过heightForCell将函数设置到adapter中", getGlobals())) {
             return new Size(Size.MATCH_PARENT, Size.WRAP_CONTENT);
         }
 
-        LuaValue[] rets = caller.invoke(varargsOf(s, r));
-        if (rets == null || rets.length == 0) {
-            return new Size(Size.MATCH_PARENT, Size.WRAP_CONTENT);
-        }
-        LuaValue ret = rets[0];
-
-        if (!AssertUtils.assertNumber(ret, caller, getGlobals())) {
-            return new Size(Size.MATCH_PARENT, Size.WRAP_CONTENT);
-        }
-
-        int h = ret.toInt();
+        int[] sr = getSectionAndRowIn(position);
+        int h = caller.fastInvokeII_I(sr[0] + 1, sr[1] + 1);
         h = h < 0 ? 0 : h; //两端统一返回高度<0,默认为0。
-
         cellSize = new Size(Size.MATCH_PARENT, h);
-
         sizeCache.put(position, cellSize);
-
         return cellSize;
     }
 
@@ -154,25 +145,12 @@ public abstract class UDBaseNeedHeightAdapter<L extends UDBaseRecyclerLayout> ex
     @Override
     public Size getHeaderSize(int position) {
 
-        LuaFunction caller = heightForHeader;
-        if (caller == null) {
+        if (heightForHeader == null) {
             ErrorUtils.debugLuaError("The 'heightForHeader' callback must not be nil!", globals);
             return new Size(Size.MATCH_PARENT, Size.WRAP_CONTENT);
         }
-        LuaValue[] rets = caller.invoke(null);
 
-        final LuaValue ret;
-        if (rets == null || rets.length == 0) {
-            ret = Nil();
-        } else {
-            ret = rets[0];
-        }
-
-        if (!AssertUtils.assertNumber(ret, caller, getGlobals())) {
-            return new Size(Size.MATCH_PARENT, Size.WRAP_CONTENT);
-        }
-
-        int h = ret.toInt();
+        int h = heightForHeader.fastInvoke_I();
         h = h < 0 ? 0 : h; //两端统一返回高度<0,默认为0。
 
         return new Size(Size.MATCH_PARENT, h);

@@ -4,6 +4,9 @@ package com.immomo.mls;
 
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Example local unit test, which will execute on the development machine (host).
  *
@@ -13,7 +16,8 @@ import org.junit.Test;
 public class ExampleUnitTest {
     @Test
     public void testHashCast() throws Exception {
-
+        List<String> test = new ArrayList();
+        test.set(10,"10");
     }
 
 }

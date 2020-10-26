@@ -30,7 +30,7 @@ public class LuaLabel<U extends UDLabel> extends BorderRadiusTextView implements
     private UDLabel udLabel;
     private ILView.ViewLifeCycleCallback cycleCallback;
 
-    public LuaLabel(Context context, U metaTable, LuaValue[] init) {
+    public LuaLabel(Context context, U metaTable) {
         super(context);
         this.udLabel = metaTable;
         setViewLifeCycleCallback(udLabel);

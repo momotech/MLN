@@ -17,6 +17,7 @@ import com.immomo.mmui.databinding.bean.MMUIColor;
 import org.luaj.vm2.Globals;
 import org.luaj.vm2.LuaUserdata;
 import org.luaj.vm2.LuaValue;
+import org.luaj.vm2.utils.CGenerate;
 import org.luaj.vm2.utils.LuaApiUsed;
 
 
@@ -24,210 +25,146 @@ import org.luaj.vm2.utils.LuaApiUsed;
  * Created by XiongFangyu on 2018/7/31.
  */
 @LuaApiUsed
-public class UDColor extends LuaUserdata {
+public class UDColor extends LuaUserdata<MMUIColor> {
 
     public static final String LUA_CLASS_NAME = "Color";
-    public static final String[] methods = new String[]{
-            "hex",
-            "alpha",
-            "red",
-            "green",
-            "blue",
-            "setHexA",
-            "setRGBA",
-            "clear",
-            "setAColor",
-            "setColor",
-    };
-
 
     public UDColor(Globals g, int color) {
-        super(g, color);
-        javaUserdata = new MMUIColor(color);
-        getJavaUserdata().setColor(color);
+        super(g, new MMUIColor(color));
     }
 
-
+    @CGenerate
     @LuaApiUsed
-    protected UDColor(long L, LuaValue[] v) {
-        super(L, v);
-        javaUserdata = new MMUIColor(Color.TRANSPARENT);
-        init(v);
+    protected UDColor(long L) {
+        super(L, null);
+        javaUserdata = new MMUIColor(0);
     }
 
-    @Override
-    public MMUIColor getJavaUserdata() {
-        return (MMUIColor)javaUserdata;
+    @CGenerate
+    @LuaApiUsed
+    protected UDColor(long L, int r, int g, int b) {
+        super(L, null);
+        javaUserdata = new MMUIColor(Color.rgb(r, g, b));
+    }
+
+    @CGenerate
+    @LuaApiUsed
+    protected UDColor(long L, int r, int g, int b, float a) {
+        super(L, null);
+        javaUserdata = new MMUIColor(Color.argb((int) (dealAlphaVal(a) * 255), r, g, b));
     }
 
     public UDColor(Globals g, MMUIColor color) {
         super(g, color);
-        this.javaUserdata = color;
     }
 
-    private void init(LuaValue[] initParams) {
-        if (initParams != null) {
-            if (initParams.length == 4) {
-                getJavaUserdata().setColor(Color.argb((int) (dealAlphaVal(initParams[3].toDouble()) * 255),
-                        dealColorVal(initParams[0].toInt()),
-                        dealColorVal(initParams[1].toInt()),
-                        dealColorVal(initParams[2].toInt())));
-            } else if (initParams.length == 3) {
-                getJavaUserdata().setColor(Color.argb(255,
-                        dealColorVal(initParams[0].toInt()),
-                        dealColorVal(initParams[1].toInt()),
-                        dealColorVal(initParams[2].toInt())));
-
-            } else if (initParams.length != 0) {
-                ErrorUtils.debugLuaError("Color only zero or three or four parameters can be used for constructor method", getGlobals());
-            }
-        }
-    }
-
-    public static final IJavaObjectGetter<UDColor, Integer> J = new IJavaObjectGetter<UDColor, Integer>() {
-        @Override
-        public Integer getJavaObject(UDColor lv) {
-            return lv.getColor();
-        }
-    };
+    public static native void _init();
+    public static native void _register(long l, String parent);
 
     //<editor-fold desc="API">
     //<editor-fold desc="Property">
+
     @LuaApiUsed
-    public LuaValue[] hex(LuaValue[] p) {
-        if (p.length == 1) {
-            int a = getAlpha();
-            getJavaUserdata().setColor(p[0].toInt());
-            setAlpha(a);
-            return null;
-        }
-        return rNumber(getColor());
+    public int getHex() {
+        return javaUserdata.getColor();
     }
 
     @LuaApiUsed
-    public LuaValue[] alpha(LuaValue[] p) {
-        if (p.length == 1) {
-            setAlpha((int) (dealAlphaVal(p[0].toDouble()) * 255));
-            return null;
-        }
-        return rNumber(getAlpha() / 255f);
+    public void setHex(int hex) {
+        int a = javaUserdata.getAlpha();
+        javaUserdata.setColor(hex);
+        javaUserdata.setAlpha(a);
     }
 
     @LuaApiUsed
-    public LuaValue[] red(LuaValue[] p) {
-        if (p.length == 1) {
-            setRed(dealColorVal(p[0].toInt()));
-            return null;
-        }
-        return rNumber(getRed());
+    public float getAlpha() {
+        return javaUserdata.getAlpha() / 255f;
     }
 
     @LuaApiUsed
-    public LuaValue[] green(LuaValue[] p) {
-        if (p.length == 1) {
-            setGreen(dealColorVal(p[0].toInt()));
-            return null;
-        }
-        return rNumber(getGreen());
+    public void setAlpha(float alpha) {
+        javaUserdata.setAlpha((int) (dealAlphaVal(alpha) * 255));
     }
 
     @LuaApiUsed
-    public LuaValue[] blue(LuaValue[] p) {
-        if (p.length == 1) {
-            setBlue(dealColorVal(p[0].toInt()));
-            return null;
-        }
-        return rNumber(getBlue());
+    public int getRed() {
+        return javaUserdata.getRed();
     }
 
-    private void setAlpha(int a) {
-        getJavaUserdata().setColor(Color.argb(a, getRed(), getGreen(), getBlue()));
+    @LuaApiUsed
+    public void setRed(int red) {
+        javaUserdata.setRed(red);
     }
 
-    private void setRed(int r) {
-        getJavaUserdata().setColor(Color.argb(getAlpha(), r, getGreen(), getBlue()));
+    @LuaApiUsed
+    public int getGreen() {
+        return javaUserdata.getGreen();
     }
 
-    private void setGreen(int g) {
-        getJavaUserdata().setColor(Color.argb(getAlpha(), getRed(), g, getBlue()));
+    @LuaApiUsed
+    public void setGreen(int green) {
+        javaUserdata.setGreen(green);
     }
 
-    private void setBlue(int b) {
-        getJavaUserdata().setColor(Color.argb(getAlpha(), getRed(), getGreen(), b));
+    @LuaApiUsed
+    public int getBlue() {
+        return javaUserdata.getBlue();
     }
 
-    private int getAlpha() {
-        return (getColor() == 0) ? 255 : Color.alpha(getColor());
-    }
-
-    private int getRed() {
-        return Color.red(getColor());
-    }
-
-    private int getGreen() {
-        return Color.green(getColor());
-    }
-
-    private int getBlue() {
-        return Color.blue(getColor());
+    @LuaApiUsed
+    public void setBlue(int blue) {
+        javaUserdata.setBlue(blue);
     }
     //</editor-fold>
 
     //<editor-fold desc="Method">
     @LuaApiUsed
-    public LuaValue[] setHexA(LuaValue[] p) {
-        getJavaUserdata().setColor(p[0].toInt());
-        setAlpha((int) (dealAlphaVal(p[1].toDouble()) * 255));
-        return null;
+    public void setHexA(int h, float a) {
+        javaUserdata.setColor(h);
+        javaUserdata.setAlpha((int) (dealAlphaVal(a) * 255));
     }
 
     @LuaApiUsed
-    public LuaValue[] setRGBA(LuaValue[] p) {
-        getJavaUserdata().setColor(Color.argb((int) (dealAlphaVal(p[3].toDouble()) * 255),
-                dealColorVal(p[0].toInt()),
-                dealColorVal(p[1].toInt()),
-                dealColorVal(p[2].toInt())));
-        return null;
+    public void setRGBA(int r, int g, int b, float a) {
+        javaUserdata.setColor(Color.argb((int) (dealAlphaVal(a) * 255),
+                dealColorVal(r),
+                dealColorVal(g),
+                dealColorVal(b)));
     }
 
     @LuaApiUsed
-    public LuaValue[] clear(LuaValue[] p) {
-        getJavaUserdata().setColor(Color.TRANSPARENT);
-        return null;
+    public void clear() {
+        javaUserdata.setColor(Color.TRANSPARENT);
     }
 
     @LuaApiUsed
-    public LuaValue[] setAColor(LuaValue[] p) {
-        String colorStr = p[0].toJavaString();
+    public void setAColor(String colorStr) {
         if (colorStr == null || colorStr.length() == 0) {
             throw new IllegalArgumentException("Unknown color");
         }
         colorStr = colorStr.trim().toLowerCase();
         if (colorStr.charAt(0) == '#') {
-            getJavaUserdata().setColor(Color.parseColor(colorStr));
+            javaUserdata.setColor(Color.parseColor(colorStr));
         }
-        return null;
     }
 
     @LuaApiUsed
-    public LuaValue[] setColor(LuaValue[] p) {
-        String colorStr = p[0].toJavaString();
-        getJavaUserdata().setColor(ColorUtils.setColorString(colorStr));
-        return null;
+    public void setColor(String colorStr) {
+        javaUserdata.setColor(ColorUtils.setColorString(colorStr));
     }
 
     //</editor-fold>
     //</editor-fold>
 
     public int getColor() {
-        return  getJavaUserdata().getColor();
+        return javaUserdata.getColor();
     }
 
     public void setColor(int color) {
-        this.javaUserdata = new MMUIColor(color);
+        javaUserdata.setColor(color);
     }
 
-    public int dealColorVal(int val) {
+    private int dealColorVal(int val) {
         if (val > 255) {
             return 255;
         }
@@ -237,7 +174,7 @@ public class UDColor extends LuaUserdata {
         return val;
     }
 
-    public double dealAlphaVal(double val) {
+    private double dealAlphaVal(double val) {
         if (val > 1) {
             return 1;
         }
@@ -251,4 +188,11 @@ public class UDColor extends LuaUserdata {
     public String toString() {
         return ColorUtils.toHexColorString(getColor()) + " " + ColorUtils.toRGBAColorString(getColor());
     }
+
+    public static final IJavaObjectGetter<UDColor, Integer> J = new IJavaObjectGetter<UDColor, Integer>() {
+        @Override
+        public Integer getJavaObject(UDColor lv) {
+            return lv.getColor();
+        }
+    };
 }

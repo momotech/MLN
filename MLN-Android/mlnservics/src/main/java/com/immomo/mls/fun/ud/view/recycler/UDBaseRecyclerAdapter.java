@@ -816,7 +816,7 @@ public abstract class UDBaseRecyclerAdapter<L extends UDBaseRecyclerLayout> exte
         if (globals.isDestroyed()) {
             return;
         }
-        if (!AssertUtils.assertFunction(delegate, "initCell callback must be a function", getGlobals()))
+        if (!AssertUtils.assertFunction(delegate, "必须通过initCell将函数设置到adapter中", getGlobals()))
             return;
         delegate.invoke(varargsOf(cell));
     }

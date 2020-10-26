@@ -546,7 +546,7 @@ public class MLSBuilder {
             register.registerEnum(c);
         }
         for (SIHolder h : siHolders) {
-            register.registerSingleInstance(h.luaClassName, h.clz);
+            register.registerSingleInstance(h.luaClassName, h.clz,h.isMLN);
         }
         for (CHolder h : cHolders) {
             if (h.defaultL2J) {
@@ -595,9 +595,20 @@ public class MLSBuilder {
          */
         public Class clz;
 
+        /**
+         * 是否是MLN独有的
+         */
+        public boolean isMLN;
+
         public SIHolder(String lcn, Class clz) {
             luaClassName = lcn;
             this.clz = clz;
+        }
+
+        public SIHolder(String lcn, Class clz,boolean isMLN) {
+            luaClassName = lcn;
+            this.clz = clz;
+            this.isMLN = isMLN;
         }
     }
 

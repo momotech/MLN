@@ -108,8 +108,8 @@ public class SettingDialog extends AppCompatDialog implements View.OnClickListen
                 setHotReload();
             dismiss();
         } else if(id == R.id.btn_start_log) {
-            Globals.setStatisticOpen(false);
-            Globals.setStatisticOpen(true);
+            Globals.setStatistic((char) 0);
+            Globals.setStatistic((char) (Globals.STATISTIC_BRIDGE + Globals.STATISTIC_REQUIRE));
         } else if(id == R.id.btn_finish_log) {
             Globals.notifyStatisticsCallback();
         }

@@ -10,10 +10,8 @@ package com.immomo.mmui;
 import android.content.Context;
 
 import com.immomo.mls.MLSEngine;
-import com.immomo.mls.fun.lt.SINavigator;
 import com.immomo.mls.adapter.ILoadLibAdapter;
 import com.immomo.mls.adapter.impl.LoadLibAdapterImpl;
-import com.immomo.mls.fun.lt.SISystem;
 import com.immomo.mls.util.LogUtil;
 import com.immomo.mls.utils.MainThreadExecutor;
 import com.immomo.mls.wrapper.IJavaObjectGetter;
@@ -26,28 +24,25 @@ import com.immomo.mmui.constants.MainAxis;
 import com.immomo.mmui.constants.PositionType;
 import com.immomo.mmui.constants.Wrap;
 import com.immomo.mmui.databinding.LTCDataBinding;
+import com.immomo.mmui.databinding.annotation.WatchContext;
 import com.immomo.mmui.globals.UDLuaView;
 import com.immomo.mmui.sbridge.SMMUI;
-import com.immomo.mmui.ud.UDNodeGroup;
 import com.immomo.mmui.ud.SIPageLink;
 import com.immomo.mmui.ud.UDCanvasView;
 import com.immomo.mmui.ud.UDColor;
 import com.immomo.mmui.ud.UDEditText;
-import com.immomo.mmui.ud.UDNodeView;
 import com.immomo.mmui.ud.UDHStack;
 import com.immomo.mmui.ud.UDImageButton;
 import com.immomo.mmui.ud.UDImageView;
 import com.immomo.mmui.ud.UDLabel;
+import com.immomo.mmui.ud.UDNodeGroup;
 import com.immomo.mmui.ud.UDSafeAreaRect;
 import com.immomo.mmui.ud.UDScrollView;
 import com.immomo.mmui.ud.UDSpacer;
 import com.immomo.mmui.ud.UDStyleString;
 import com.immomo.mmui.ud.UDSwitch;
-import com.immomo.mmui.ud.UDTabLayout;
 import com.immomo.mmui.ud.UDVStack;
 import com.immomo.mmui.ud.UDView;
-import com.immomo.mmui.ud.UDViewGroup;
-import com.immomo.mmui.ud.UDViewPager;
 import com.immomo.mmui.ud.anim.InteractiveBehavior;
 import com.immomo.mmui.ud.anim.InteractiveDirection;
 import com.immomo.mmui.ud.anim.InteractiveType;
@@ -67,8 +62,8 @@ import com.immomo.mmui.ud.recycler.UDListAdapter;
 import com.immomo.mmui.ud.recycler.UDListAutoFitAdapter;
 import com.immomo.mmui.ud.recycler.UDRecyclerView;
 import com.immomo.mmui.ud.recycler.UDWaterFallAdapter;
+import com.immomo.mmui.ud.recycler.UDWaterFallAutoFitAdapter;
 import com.immomo.mmui.ud.recycler.UDWaterFallLayout;
-import com.immomo.mmui.ud.viewpager.UDViewPagerAdapter;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -117,8 +112,9 @@ public class MMUIEngine {
         registerMMUIEnum(registerConstants());
         registerStaticClass(registerStaticClass());
         registerCovert(registerCovertClass());
-        registerSingleInstance(registerSingleInstance());
+        registerNewSingleInstance(registerNewSingleInstance());
         registerNewStaticClass(registerNewStaticClass());
+        registerNewUserdata(registerNewUserdata());
 
         MLSEngine.singleRegister.registerStaticBridge(SMMUI.LUA_CLASS_NAME, SMMUI.class);
 
@@ -171,9 +167,21 @@ public class MMUIEngine {
         }
     }
 
+    private static void registerNewUserdata(Register.NewUDHolder... udHolders) {
+        for (Register.NewUDHolder h : udHolders) {
+            singleRegister.registerNewUserdata(h);
+        }
+    }
+
     public static void registerSingleInstance(SIHolder... siHolders) {
         for (SIHolder siHolder : siHolders) {
             singleRegister.registerSingleInstance(siHolder.luaClassName, siHolder.clz);
+        }
+    }
+
+    public static void registerNewSingleInstance(SIHolder... holders) {
+        for (SIHolder h : holders) {
+            singleRegister.registerNewSingleInstance(h.luaClassName, h.clz);
         }
     }
 
@@ -210,40 +218,13 @@ public class MMUIEngine {
     private static Register.UDHolder[] registerUD() {
         return new Register.UDHolder[]{
                 Register.newUDHolder(UDView.LUA_CLASS_NAME, UDView.class, false, UDView.methods),
-                Register.newUDHolder(UDNodeView.LUA_CLASS_NAME, UDNodeView.class, false, UDNodeView.methods),
-                Register.newUDHolder(UDViewGroup.LUA_CLASS_NAME[0], UDViewGroup.class, false, UDViewGroup.methods),
-                Register.newUDHolder(UDViewGroup.LUA_CLASS_NAME[1], UDViewGroup.class, false, UDViewGroup.methods),
-                Register.newUDHolder(UDNodeGroup.LUA_CLASS_NAME, UDNodeGroup.class, false, UDNodeGroup.methods),
-                Register.newUDHolder(UDLuaView.LUA_CLASS_NAME, UDLuaView.class, false, UDLuaView.methods),
-                Register.newUDHolder(UDLabel.LUA_CLASS_NAME, UDLabel.class, false, UDLabel.methods),
-                Register.newUDHolder(UDEditText.LUA_CLASS_NAME, UDEditText.class, false, UDEditText.methods),
-                Register.newUDHolder(UDImageView.LUA_CLASS_NAME, UDImageView.class, false, UDImageView.methods),
-                Register.newUDHolder(UDImageButton.LUA_CLASS_NAME, UDImageButton.class, false, UDImageButton.methods),
-                Register.newUDHolder(UDScrollView.LUA_CLASS_NAME, UDScrollView.class, false, UDScrollView.methods),
-                Register.newUDHolder(UDBaseRecyclerAdapter.LUA_CLASS_NAME, UDBaseRecyclerAdapter.class, false, UDBaseRecyclerAdapter.methods),
-                Register.newUDHolder(UDBaseNeedHeightAdapter.LUA_CLASS_NAME, UDBaseNeedHeightAdapter.class, false, UDBaseNeedHeightAdapter.methods),
-                Register.newUDHolder(UDBaseRecyclerLayout.LUA_CLASS_NAME, UDBaseRecyclerLayout.class, false, UDBaseRecyclerLayout.methods),
-                Register.newUDHolder(UDRecyclerView.LUA_CLASS_NAME[0], UDRecyclerView.class, false, UDRecyclerView.methods),
-                Register.newUDHolder(UDRecyclerView.LUA_CLASS_NAME[1], UDRecyclerView.class, false, UDRecyclerView.methods),
-                Register.newUDHolder(UDRecyclerView.LUA_CLASS_NAME[2], UDRecyclerView.class, false, UDRecyclerView.methods),
-                Register.newUDHolder(UDViewPager.LUA_CLASS_NAME, UDViewPager.class, false, UDViewPager.methods),
-                Register.newUDHolder(UDTabLayout.LUA_CLASS_NAME, UDTabLayout.class, false, UDTabLayout.methods),
                 Register.newUDHolder(UDSwitch.LUA_CLASS_NAME, UDSwitch.class, false, UDSwitch.methods),
                 Register.newUDHolder(UDCanvasView.LUA_CLASS_NAME, UDCanvasView.class, false, UDCanvasView.methods),
-                Register.newUDHolder(UDVStack.LUA_CLASS_NAME, UDVStack.class, false, UDVStack.methods),
-                Register.newUDHolder(UDHStack.LUA_CLASS_NAME, UDHStack.class, false, UDHStack.methods),
-                Register.newUDHolder(UDSpacer.LUA_CLASS_NAME, UDSpacer.class, false, UDSpacer.methods),
 
-                Register.newUDHolder(UDListAdapter.LUA_CLASS_NAME, UDListAdapter.class, false, UDListAdapter.methods),
                 Register.newUDHolder(UDListAutoFitAdapter.LUA_CLASS_NAME, UDListAutoFitAdapter.class, false),
-                Register.newUDHolder(UDCollectionAdapter.LUA_CLASS_NAME, UDCollectionAdapter.class, false, UDCollectionAdapter.methods),
-                Register.newUDHolder(UDCollectionAutoFitAdapter.LUA_CLASS_NAME, UDCollectionAutoFitAdapter.class, false, UDCollectionAutoFitAdapter.methods),
-                Register.newUDHolder(UDCollectionLayout.LUA_CLASS_NAME, UDCollectionLayout.class, false, UDCollectionLayout.methods),
-                Register.newUDHolder(UDWaterFallAdapter.LUA_CLASS_NAME, UDWaterFallAdapter.class, false, UDWaterFallAdapter.methods),
-                Register.newUDHolder(UDWaterFallLayout.LUA_CLASS_NAME, UDWaterFallLayout.class, false, UDWaterFallLayout.methods),
-                Register.newUDHolder(UDViewPagerAdapter.LUA_CLASS_NAME, UDViewPagerAdapter.class, false, UDViewPagerAdapter.methods),
-
-                Register.newUDHolder(UDColor.LUA_CLASS_NAME, UDColor.class, false, UDColor.methods),
+                Register.newUDHolder(UDCollectionAutoFitAdapter.LUA_CLASS_NAME, UDCollectionAutoFitAdapter.class, false),
+                Register.newUDHolder(UDWaterFallAdapter.LUA_CLASS_NAME, UDWaterFallAdapter.class, false),
+                Register.newUDHolder(UDWaterFallAutoFitAdapter.LUA_CLASS_NAME, UDWaterFallAutoFitAdapter.class, false),
         };
     }
 
@@ -251,12 +232,6 @@ public class MMUIEngine {
         return new Register.UDHolder[]{
                 /// 两种方式生成udholder
                 /// 第一种，类继承自LuaUserdata时，使用这种方式
-                Register.newUDHolder(UDStyleString.LUA_CLASS_NAME, UDStyleString.class, false, UDStyleString.methods),
-                Register.newUDHolder(UDSafeAreaRect.LUA_CLASS_NAME, UDSafeAreaRect.class, false, UDSafeAreaRect.methods),
-
-                Register.newUDHolderWithLuaClass(UDBaseAnimation.LUA_CLASS_NAME, UDBaseAnimation.class, false),
-                Register.newUDHolderWithLuaClass(UDAnimation.LUA_CLASS_NAME, UDAnimation.class, false),
-                Register.newUDHolderWithLuaClass(UDAnimatorSet.LUA_CLASS_NAME, UDAnimatorSet.class, false),
         };
     }
 
@@ -271,7 +246,8 @@ public class MMUIEngine {
                 Timing.class,
                 InteractiveDirection.class,
                 InteractiveType.class,
-                TouchType.class
+                TouchType.class,
+                WatchContext.class
         };
     }
 
@@ -284,53 +260,56 @@ public class MMUIEngine {
     private static Register.NewStaticHolder[] registerNewStaticClass() {
         return new Register.NewStaticHolder[] {
                 new Register.NewStaticHolder(LTCDataBinding.LUA_CLASS_NAME, LTCDataBinding.class),
-                new Register.NewStaticHolder(InteractiveBehavior.LUA_CLASS_NAME, InteractiveBehavior.class)
         };
     }
 
+    private static Register.NewUDHolder[] registerNewUserdata() {
+        return new Register.NewUDHolder[] {
+                new Register.NewUDHolder(InteractiveBehavior.LUA_CLASS_NAME, InteractiveBehavior.class),
+                new Register.NewUDHolder(UDView.LUA_CLASS_NAME, UDView.class),
+                new Register.NewUDHolder(UDNodeGroup.LUA_CLASS_NAME, UDNodeGroup.class),
+                new Register.NewUDHolder(UDHStack.LUA_CLASS_NAME, UDHStack.class),
+                new Register.NewUDHolder(UDVStack.LUA_CLASS_NAME, UDVStack.class),
+                new Register.NewUDHolder(UDSpacer.LUA_CLASS_NAME, UDSpacer.class),
+                new Register.NewUDHolder(UDLuaView.LUA_CLASS_NAME, UDLuaView.class),
+                new Register.NewUDHolder(UDColor.LUA_CLASS_NAME, UDColor.class),
+                new Register.NewUDHolder(UDLabel.LUA_CLASS_NAME, UDLabel.class),
+                new Register.NewUDHolder(UDStyleString.LUA_CLASS_NAME, UDStyleString.class),
+                new Register.NewUDHolder(UDEditText.LUA_CLASS_NAME, UDEditText.class),
+                new Register.NewUDHolder(UDImageView.LUA_CLASS_NAME, UDImageView.class),
+                new Register.NewUDHolder(UDImageButton.LUA_CLASS_NAME, UDImageButton.class),
+                new Register.NewUDHolder(UDRecyclerView.LUA_META_NAME, UDRecyclerView.class),
+                new Register.NewUDHolder(UDScrollView.LUA_CLASS_NAME, UDScrollView.class),
+
+                new Register.NewUDHolder(UDBaseRecyclerAdapter.LUA_CLASS_NAME, UDBaseRecyclerAdapter.class),
+                new Register.NewUDHolder(UDBaseNeedHeightAdapter.LUA_CLASS_NAME, UDBaseNeedHeightAdapter.class),
+                new Register.NewUDHolder(UDListAdapter.LUA_CLASS_NAME, UDListAdapter.class),
+                new Register.NewUDHolder(UDCollectionAdapter.LUA_CLASS_NAME, UDCollectionAdapter.class),
+                new Register.NewUDHolder(UDBaseRecyclerLayout.LUA_CLASS_NAME, UDBaseRecyclerLayout.class),
+                new Register.NewUDHolder(UDCollectionLayout.LUA_CLASS_NAME, UDCollectionLayout.class),
+                new Register.NewUDHolder(UDWaterFallLayout.LUA_CLASS_NAME, UDWaterFallLayout.class),
+
+                new Register.NewUDHolder(UDSafeAreaRect.LUA_CLASS_NAME, UDSafeAreaRect.class),
+                new Register.NewUDHolder(UDBaseAnimation.LUA_CLASS_NAME, UDBaseAnimation.class),
+                new Register.NewUDHolder(UDAnimation.LUA_CLASS_NAME, UDAnimation.class),
+                new Register.NewUDHolder(UDAnimatorSet.LUA_CLASS_NAME, UDAnimatorSet.class),
+        };
+    }
 
     public static CHolder[] registerCovertClass() {
         return new CHolder[]{
                 new CHolder(UDColor.class, UDColor.J, null),
-                new CHolder(UDBaseAnimation.class),
-                new CHolder(UDAnimation.class),
-                new CHolder(UDAnimatorSet.class),
         };
     }
 
-
     /**
-     * 注册单例
-     * @return
+     * 注册高性能bridge单例
      */
-    public static SIHolder[] registerSingleInstance() {
+    public static SIHolder[] registerNewSingleInstance() {
         return new SIHolder[]{
-            new SIHolder(SISystem.KEY, SISystem.class),
-            new SIHolder(SINavigator.LUA_CLASS_NAME, SINavigator.class),
-            new SIHolder(SIPageLink.LUA_CLASS_NAME, SIPageLink.class)
+                new SIHolder(SIPageLink.LUA_CLASS_NAME, SIPageLink.class)
         };
     }
-
-    /**
-     * 注册页面
-     * @param linkHolders
-     */
-    public static void registerActivity(LinkHolder... linkHolders) {
-        for(LinkHolder linkHolder: linkHolders) {
-            MMUILinkRegister.register(linkHolder.linkKey,linkHolder.linkActivity);
-        }
-    }
-
-    public static class LinkHolder {
-        public String linkKey;
-        public Class linkActivity;
-        public LinkHolder(String linkKey, Class linkActivity) {
-            this.linkKey = linkKey;
-            this.linkActivity  = linkActivity;
-        }
-    }
-
-
 
     /**
      * 单例包裹类

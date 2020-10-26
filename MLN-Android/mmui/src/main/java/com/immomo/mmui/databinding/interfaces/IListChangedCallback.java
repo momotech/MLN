@@ -7,6 +7,8 @@
   */
 package com.immomo.mmui.databinding.interfaces;
 
+import com.immomo.mmui.databinding.annotation.ListNotifyType;
+
 /**
  * Description:
  * Author: xuejingfei
@@ -14,5 +16,12 @@ package com.immomo.mmui.databinding.interfaces;
  * Date: 2020-03-09 18:58
  */
 public interface IListChangedCallback {
-    void notifyChange(int type, int start, int count);
+
+    /**
+     * list改变回调
+     * @param type 改变类型
+     * @param positionStart 改变的index
+     * @param itemCount 改变的数量
+     */
+    void notifyChange(@ListNotifyType int type, int positionStart, int itemCount);
 }

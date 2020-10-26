@@ -9,6 +9,7 @@ package com.immomo.mmui.databinding;
 
 import com.immomo.mmui.databinding.bean.ObservableList;
 import com.immomo.mmui.databinding.bean.ObservableMap;
+import com.immomo.mmui.databinding.filter.IWatchKeyFilter;
 import com.immomo.mmui.databinding.interfaces.IPropertyCallback;
 import com.immomo.mmui.ud.UDView;
 
@@ -64,8 +65,20 @@ public class DataBinding {
      * @param key
      * @param iPropertyCallback
      */
-    public static String watch(Globals target, String key, IPropertyCallback iPropertyCallback) {
-        return DataBindingEngine.getInstance().watch(target, key, iPropertyCallback);
+    public static String watchValue(Globals target, String key, IWatchKeyFilter iWatchKeyFilter, IPropertyCallback iPropertyCallback) {
+        return DataBindingEngine.getInstance().watchValue(target, key, iWatchKeyFilter,iPropertyCallback);
+    }
+
+
+    /**
+     *  通过key值，设置数据行为监听（只有在完整的key被赋值时才会触发回调）
+     * @param target
+     * @param key
+     * @param iPropertyCallback
+     * @return
+     */
+    public static String watch(Globals target, String key, IWatchKeyFilter iWatchKeyFilter, IPropertyCallback iPropertyCallback) {
+        return DataBindingEngine.getInstance().watch(target,key,iWatchKeyFilter,iPropertyCallback);
     }
 
 

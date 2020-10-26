@@ -75,6 +75,14 @@ public class Size {
         return DimenUtil.dpiToPx(height);
     }
 
+    public boolean isMatchOrWrapWidth() {
+        return isMatchParent(width) || isWrapContent(width);
+    }
+
+    public boolean isMatchOrWrapHeight() {
+        return isMatchParent(height) || isWrapContent(height);
+    }
+
     private boolean isMatchParent(float s) {
         return s == MATCH_PARENT;
     }

@@ -15,6 +15,16 @@ import java.io.*;
 public class FileUtils {
     public static final int BUFFER_SIZE = 8 * 1024; //8k
 
+    private static File currentJarPath;
+
+    public static File getCurrentJarPath() {
+        if (currentJarPath == null) {
+            File jar = new File(FileUtils.class.getProtectionDomain().getCodeSource().getLocation().getPath());
+            currentJarPath = jar.getParentFile();
+        }
+        return currentJarPath;
+    }
+
     public static byte[] readBytes(File f) throws IOException {
         try (InputStream inputStream = new FileInputStream(f)) {
             return toBytes(inputStream);

@@ -12,9 +12,9 @@ import android.view.ViewGroup;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.immomo.mls.fun.ui.LuaLinearLayoutManager;
+import com.immomo.mmui.ui.LuaLinearLayoutManager;
 
-import org.luaj.vm2.LuaValue;
+import org.luaj.vm2.utils.CGenerate;
 import org.luaj.vm2.utils.LuaApiUsed;
 
 /**
@@ -23,16 +23,16 @@ import org.luaj.vm2.utils.LuaApiUsed;
 @LuaApiUsed
 public class UDListAdapter extends UDBaseNeedHeightAdapter {
     public static final String LUA_CLASS_NAME = "TableViewAdapter";
-    public static final String[] methods = new String[]{
-
-    };
 
     private LinearLayoutManager layoutManager;
 
+    @CGenerate(defaultConstructor = true)
     @LuaApiUsed
-    public UDListAdapter(long L, LuaValue[] v) {
-        super(L, v);
+    public UDListAdapter(long L) {
+        super(L);
     }
+    public static native void _init();
+    public static native void _register(long l, String parent);
 
     @Override
     public RecyclerView.LayoutManager getLayoutManager() {

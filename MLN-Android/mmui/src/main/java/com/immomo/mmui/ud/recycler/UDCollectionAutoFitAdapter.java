@@ -20,13 +20,10 @@ import org.luaj.vm2.utils.LuaApiUsed;
 @LuaApiUsed
 public class UDCollectionAutoFitAdapter extends UDCollectionAdapter {
     public static final String LUA_CLASS_NAME = "CollectionViewAutoFitAdapter";
-    public static final String[] methods = new String[]{
-
-    };
 
     @LuaApiUsed
     public UDCollectionAutoFitAdapter(long L, LuaValue[] v) {
-        super(L, v);
+        super(L);
     }
 
     @Override

@@ -17,6 +17,7 @@
         android:roundIcon="@drawable/main_logo"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
+        android:usesCleartextTraffic="true"
         android:name="com.immomo.demo.App">
 
         <meta-data

@@ -7,15 +7,21 @@
   */
 package com.immomo.mmui.databinding.core;
 
+import android.util.Log;
+
+import com.immomo.mmui.databinding.DataBinding;
 import com.immomo.mmui.databinding.DataBindingEngine;
+import com.immomo.mmui.databinding.bean.CallBackWrap;
 import com.immomo.mmui.databinding.bean.ObservableList;
 import com.immomo.mmui.databinding.bean.ObservableMap;
+import com.immomo.mmui.databinding.filter.IWatchKeyFilter;
+import com.immomo.mmui.databinding.filter.WatchActionFilter;
 import com.immomo.mmui.databinding.interfaces.IGetSet;
+import com.immomo.mmui.databinding.interfaces.IMapAssembler;
 import com.immomo.mmui.databinding.interfaces.IObservable;
 import com.immomo.mmui.databinding.interfaces.IPropertyCallback;
 import com.immomo.mmui.databinding.utils.Constants;
-import com.immomo.mmui.databinding.utils.ObserverUtils;
-import com.immomo.mmui.databinding.utils.DataBindUtils;
+
 import org.luaj.vm2.Globals;
 
 
@@ -42,76 +48,41 @@ public class DataProcessor {
      * @param globals
      * @param observed
      * @param tag
+     * @param iWatchKeyFilter
      * @param iPropertyCallback
      */
-    public void watch(Globals globals, final Object observed, String tag, IPropertyCallback iPropertyCallback) {
+    public CallBackWrap watchValue(Globals globals, final Object observed, String tag, IWatchKeyFilter iWatchKeyFilter, IPropertyCallback iPropertyCallback) {
         if(observed instanceof IObservable) {
-            String[] tags = tag.split(Constants.SPOT_SPLIT);
-            int finalNumIndex = getFinalNumFromTag(tags);
-            if (finalNumIndex == -1) { //表示没有数字
-                String newTag = new StringBuilder(Constants.GLOBAL).append(Constants.SPOT).append(tag).toString();
-                addObserver(globals, observed, true, true, newTag, iPropertyCallback);
-            } else {
-                String beforeNumTag = getBeforeStr(tags, finalNumIndex);
-                String newTag;
-                if (beforeNumTag.length() != tag.length()) {
-                    String afterNumTag = tag.substring(beforeNumTag.length() + 1);
-                    newTag = new StringBuilder(beforeNumTag.replace(Constants.SPOT, "")).append(Constants.SPOT).append(afterNumTag).toString();
-                } else {
-                    newTag = beforeNumTag.replace(Constants.SPOT, "");
-                }
-                Object observer = get(observed, beforeNumTag);
-                addObserver(globals, observer, true, true, newTag, iPropertyCallback);
-            }
+            final String observerTag = Constants.GLOBAL + Constants.SPOT + tag;
+            IMapAssembler iMapAssembler = ((IObservable)observed).watchAll(globals,observerTag).filterItemChange(true).filter(iWatchKeyFilter).callback(iPropertyCallback);
+            return CallBackWrap.obtain(iMapAssembler.getObserved(),iMapAssembler.getObservedTag());
         }
+        return null;
     }
 
 
     /**
-     * 获取数组中最后一个数字的index
-     *
-     * @param tags
-     * @return -1表示返回无数字
-     */
-    private int getFinalNumFromTag(String[] tags) {
-        int numIndex = -1;
-        for (int i = tags.length - 1; i > 0; i--) {
-            if (DataBindUtils.isNumber(tags[i])) {
-                numIndex = i;
-                break;
-            }
-        }
-        return numIndex;
-    }
-
-
-    private String getBeforeStr(String[] tags, int index) {
-        StringBuilder stringBuilder = new StringBuilder();
-        for (int i = 0; i <= index; i++) {
-            stringBuilder.append(stringBuilder.length() == 0 ? "" : Constants.SPOT).append(tags[i]);
-        }
-        return stringBuilder.toString();
-    }
-
-
-    /**
-     * 添加观察者
+     * 监控被观察者的行为，
+     * 如tag为'userData.source.1.person.name' --  只有之后节点的person执行setName时触发
      * @param globals
      * @param observed
-     * @param observedTag
+     * @param tag
      * @param iPropertyCallback
+     * @return
      */
-    public void addObserver(Globals globals, final Object observed, boolean isSelfObserved,boolean isItemChanged,final String observedTag, IPropertyCallback iPropertyCallback) {
+    public CallBackWrap watch(Globals globals, final Object observed, String tag, IWatchKeyFilter iWatchKeyFilter, IPropertyCallback iPropertyCallback) {
         if(observed instanceof IObservable) {
-            globals.addOnDestroyListener(new Globals.OnDestroyListener() {
-                @Override
-                public void onDestroy(Globals g) {
-                    ObserverUtils.removeObserver(g.hashCode(),observed,observedTag);
-                }
-            });
-            ((IObservable)observed).watch(globals.hashCode(),observedTag,isSelfObserved,isItemChanged,iPropertyCallback);
+            final String observerTag = Constants.GLOBAL + Constants.SPOT + tag;
+            IMapAssembler iMapAssembler = ((IObservable)observed).watchAll(globals,observerTag)
+                    .filterItemChange(false)
+                    .filterAction(new WatchActionFilter(observerTag))
+                    .filter(iWatchKeyFilter)
+                    .callback(iPropertyCallback);
+            return CallBackWrap.obtain(iMapAssembler.getObserved(),iMapAssembler.getObservedTag());
         }
+        return null;
     }
+
 
 
 
@@ -164,19 +135,22 @@ public class DataProcessor {
      * 移除观察者
      *
      * @param observed
-     * @param observableId
+     * @param callBackId
      * @param observerTag
      */
-    public void removeObserver(final Object observed, String observableId, String observerTag) {
+    public void removeObserver(final Object observed, String callBackId, String observerTag) {
+        if(DataBinding.isLog) {
+            Log.d(DataBinding.TAG, "removeObserver---" + observerTag);
+        }
         String[] fieldTags = observerTag.split(Constants.SPOT_SPLIT);
         Object templeObj = observed;
         if (templeObj instanceof IObservable) {
-            ((IObservable) templeObj).removeObserverByCallBackId(observableId);
+            ((IObservable) templeObj).removeObserverByCallBackId(callBackId);
         }
-        for (String fieldTag : fieldTags) {
-            templeObj = DataBindingEngine.getInstance().getGetSetAdapter().get(observed, fieldTag);
+        for (int i=1;i<fieldTags.length;i++) {
+            templeObj = DataBindingEngine.getInstance().getGetSetAdapter().get(templeObj, fieldTags[i]);
             if (templeObj instanceof IObservable) {
-                ((IObservable) templeObj).removeObserverByCallBackId(observableId);
+                ((IObservable) templeObj).removeObserverByCallBackId(callBackId);
             }
         }
     }

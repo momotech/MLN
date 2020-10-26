@@ -14,14 +14,14 @@ public class ViewPositionYAnimatable extends Animatable {
     @Override
     public void writeValue(View view, float[] upDateValues) {
 
-        view.setY(upDateValues[0] - (float) view.getLayoutParams().height / 2);
+        view.setY(upDateValues[0]);
 
     }
 
     @Override
     public void readValue(View view, float[] upDateValues) {
 
-        upDateValues[0] = view.getY() + (float) view.getLayoutParams().height / 2;
+        upDateValues[0] = view.getY();
 
     }
 

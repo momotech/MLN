@@ -7,6 +7,8 @@
   */
 package com.immomo.mmui.databinding.bean;
 
+import android.graphics.Color;
+
 /**
  * Description: UDColor 对应的javaUserData
  * Author: xuejingfei
@@ -20,6 +22,10 @@ public class MMUIColor {
         this.color = color;
     }
 
+    public static MMUIColor getColor(int color) {
+        MMUIColor mmuiColor = new MMUIColor(color);
+        return mmuiColor;
+    }
 
     public int getColor() {
         return color;
@@ -27,5 +33,37 @@ public class MMUIColor {
 
     public void setColor(int color) {
         this.color = color;
+    }
+
+    public void setAlpha(int a) {
+        color = Color.argb(a, Color.red(color), Color.green(color), Color.blue(color));
+    }
+
+    public void setRed(int a) {
+        color = Color.argb(Color.alpha(color), a, Color.green(color), Color.blue(color));
+    }
+
+    public void setGreen(int a) {
+        color = Color.argb(Color.alpha(color), Color.red(color), a, Color.blue(color));
+    }
+
+    public void setBlue(int a) {
+        color = Color.argb(Color.alpha(color), Color.red(color), Color.green(color), a);
+    }
+
+    public int getAlpha() {
+        return (color == 0) ? 255 : Color.alpha(color);
+    }
+
+    public int getRed() {
+        return Color.red(color);
+    }
+
+    public int getGreen() {
+        return Color.green(color);
+    }
+
+    public int getBlue() {
+        return Color.blue(color);
     }
 }

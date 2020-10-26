@@ -43,7 +43,14 @@ dependencies {
     compileOnly "androidx.recyclerview:recyclerview:$androidxVersion"
     compileOnly "androidx.appcompat:appcompat:$androidxVersion"
 
-    if (implementation_debug) {
+    if (lua_debug) {
+        compileOnly project(":MMLua4Android:mlncore")
+        compileOnly project(':MMLua4Android:HotReload')
+        api project(':MMLua4Android:annotation')
+        annotationProcessor project(':MMLua4Android:processor')
+        implementation project(':MMLua4Android:mlnservics')
+        implementation project(':MMLua4Android:yoga')
+    } else if (implementation_debug) {
         compileOnly project(":mlncore")
         compileOnly project(':HotReload')
         api project(':annotation')

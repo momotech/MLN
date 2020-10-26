@@ -37,7 +37,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
  * Created by XiongFangyu on 2018/7/19.
  */
 public class LuaRecyclerView<A extends UDBaseRecyclerAdapter, L extends UDBaseRecyclerLayout>
-        extends BorderRadiusSwipeRefreshLayout implements ILViewGroup<UDRecyclerView>, IRefreshRecyclerView, OnLoadListener, SwipeRefreshLayout.OnRefreshListener {
+        extends BorderRadiusSwipeRefreshLayout implements ILViewGroup<UDRecyclerView>, IRefreshRecyclerView, OnLoadListener, SwipeRefreshLayout.OnRefreshListener, IPager {
     private final MLSRecyclerView recyclerView;
     private final UDRecyclerView userdata;
     private final ILoadViewDelegete loadViewDelegete;

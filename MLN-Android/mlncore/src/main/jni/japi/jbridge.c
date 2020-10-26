@@ -21,8 +21,6 @@
 
 #define S_DEFAULT_SIG "(J[" LUAVALUE_CLASS ")[" LUAVALUE_CLASS
 
-static void pushStaticClosure(lua_State *L, jclass clz, jmethodID m, const char *clzName, const char *methodName, int pc);
-
 static int executeJavaStaticFunction(lua_State *L);
 
 static int executeJavaIndexFunction(lua_State *L);
@@ -62,13 +60,13 @@ static int traverse_listener(const void *key, const void *value, void *ud) {
     context *c = (context *) ud;
 
     lua_pushstring(c->L, methodName);
-    pushStaticClosure(c->L, c->clz, m, c->className, methodName, -1);
+    pushStaticClosure(c->L, c->clz, m, c->className, methodName, -1, 1);
     lua_rawset(c->L, -3);
     return 0;
 }
 
-void jni_registerStaticClassSimple(JNIEnv *env, jobject jobj, jlong L, jstring jn, jstring ln,
-                                   jstring lpcn) {
+static void register_static_bridge(JNIEnv *env, lua_State *LS,
+        jstring jn, jstring ln, jstring lpcn) {
     const char *jclassname = GetString(env, jn);
     jclass clz = getClassByName(env, jclassname);
     if (!clz) {
@@ -77,32 +75,59 @@ void jni_registerStaticClassSimple(JNIEnv *env, jobject jobj, jlong L, jstring j
     }
     ReleaseChar(env, jn, jclassname);
 
-    lua_State *LS = (lua_State *) L;
     lua_lock(LS);
-    lua_createtable(LS, 0, 0);
+    const char *lname = GetString(env, ln);
+    lua_getglobal(LS, lname);
+    if (!lua_istable(LS, -1)) {
+        lua_pop(LS, 1);
+        lua_newtable(LS);
+    }
+    /// -1:table
 
     /// 有父类的情况
     if (lpcn) {
         const char *parent_name = GetString(env, lpcn);
         lua_getglobal(LS, parent_name);
-        if (lua_istable(LS, -1))
-            copyTable(LS, -1, -2);
+        if (!lua_istable(LS, -1)) {
+            lua_pop(LS, 1);
+            lua_newtable(LS);
+            lua_pushvalue(LS, -1);
+            lua_setglobal(LS, parent_name);
+        }
+        /// -1:parent -2:mytable
+        setParentTable(LS, -2, -1);
         lua_pop(LS, 1);
         ReleaseChar(env, lpcn, parent_name);
     } else {
         /// 设置空方法
         lua_getglobal(LS, EMPTY_METHOD_TABLE);
-        copyTable(LS, -1, -2);
+        if (lua_istable(LS, -11))
+            copyTable(LS, -1, -2);
         lua_pop(LS, 1);
     }
 
-    const char *lname = GetString(env, ln);
     context c = {LS, clz, lname};
     traverseAllMethods(clz, traverse_listener, &c);
 
     lua_setglobal(LS, lname);
     ReleaseChar(env, ln, lname);
     lua_unlock(LS);
+}
+
+void jni_registerAllStaticClass(JNIEnv *env, jobject jobj,
+                                jlong Ls, jobjectArray lcns, jobjectArray lpcns, jobjectArray jcns) {
+    int len = GetArrLen(env, lcns);
+    int i;
+    for (i = 0; i < len; ++i) {
+        jstring lcn = (*env)->GetObjectArrayElement(env, lcns, i);
+        jstring lpcn = (*env)->GetObjectArrayElement(env, lpcns, i);
+        jstring jcn = (*env)->GetObjectArrayElement(env, jcns, i);
+
+        register_static_bridge(env, (lua_State *) Ls, jcn, lcn, lpcn);
+        FREE(env, lcn);
+        FREE(env, lpcn);
+        FREE(env, jcn);
+    }
 }
 
 void jni_registerJavaMetatable(JNIEnv *env, jobject jobj, jlong LS, jstring jn, jstring ln) {
@@ -193,7 +218,7 @@ void jni_registerStringEnum(JNIEnv *env, jobject jobj, jlong LS, jstring lcn, jo
 /**
  * 对应executeJavaStaticFunction
  */
-static void pushStaticClosure(lua_State *L, jclass clz, jmethodID m, const char *className, const char *methodName, int pc) {
+void pushStaticClosure(lua_State *L, jclass clz, jmethodID m, const char *className, const char *methodName, int pc, int colonCall) {
     UDjclass udclz = (UDjclass) lua_newuserdata(L, sizeof(jclass));
     *udclz = clz;
 
@@ -203,7 +228,8 @@ static void pushStaticClosure(lua_State *L, jclass clz, jmethodID m, const char 
     lua_pushstring(L, className);
     lua_pushstring(L, methodName);
     lua_pushinteger(L, (lua_Integer) pc);
-    lua_pushcclosure(L, executeJavaStaticFunction, 5);
+    lua_pushboolean(L, colonCall);
+    lua_pushcclosure(L, executeJavaStaticFunction, 6);
 }
 
 /**
@@ -213,7 +239,8 @@ static void pushStaticClosure(lua_State *L, jclass clz, jmethodID m, const char 
  *              2:UDjmethod,
  *              3:className
  *              4:methodName
- *              5:parmaCount
+ *              5:paramCount
+ *              6:false'.'调用 true':'调用
  */
 static int executeJavaStaticFunction(lua_State *L) {
 #ifdef STATISTIC_PERFORMANCE
@@ -245,16 +272,22 @@ static int executeJavaStaticFunction(lua_State *L) {
     /// -1表示可变个数
     int pc = lua_tointeger(L, lua_upvalueindex(5));
     if (pc == -1) {
-        pc = lua_gettop(L) - 1; ///去掉栈底的table
+        pc = lua_gettop(L);
     }
 
-    if (!lua_istable(L, 1)) {
-        lua_pushstring(L, "use ':' instead of '.' to call method!!");
-        lua_unlock(L);
-        return lua_error(L);
+    /// 第6个参数表示函数调用方法
+    int colonCall = lua_toboolean(L, lua_upvalueindex(6));
+
+    if (colonCall) {
+        if (!lua_istable(L, 1)) {
+            lua_pushstring(L, "use ':' instead of '.' to call method!!");
+            lua_unlock(L);
+            return lua_error(L);
+        }
+        pc --;///去掉栈底的table
     }
 
-    jobjectArray p = newLuaValueArrayFromStack(env, L, pc, 2);
+    jobjectArray p = newLuaValueArrayFromStack(env, L, pc, colonCall ? 2 : 1);
 
     jobjectArray result = (jobjectArray) (*env)->CallStaticObjectMethod(env, getuserdata(udclz),
                                                                         getuserdata(udmethod),

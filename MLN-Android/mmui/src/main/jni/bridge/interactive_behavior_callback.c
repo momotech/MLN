@@ -6,28 +6,38 @@
  * For the full copyright and license information,please view the LICENSE file in the root directory of this source tree.
  */
 //
-// Created by XiongFangyu on 2020/7/24.
+// Created by Generator on 2020-10-16
 //
 
 #include "lua.h"
 #include "jfunction.h"
 #include <jni.h>
+#define _Call(R) JNIEXPORT R JNICALL
+#define _Method(s) Java_com_immomo_mmui_ud_anim_InteractiveBehaviorCallback_ ## s
+#define _PRE4PARAMS JNIEnv *env, jobject jobj, jlong Ls, jlong function
 
-#define IBC_Void_Call JNIEXPORT void JNICALL
+static inline void push_number(lua_State *L, jdouble num) {
+    lua_Integer li1 = (lua_Integer) num;
+    if (li1 == num) {
+        lua_pushinteger(L, li1);
+    } else {
+        lua_pushnumber(L, num);
+    }
+}
 
-#define IBC_Method(s) Java_com_immomo_mmui_ud_anim_InteractiveBehaviorCallback_ ## s
-
-#define IBC_PRE4PARAMS JNIEnv *env, jobject jobj, jlong Ls, jlong function,
-
-//<editor-fold desc="fast call">
-IBC_Void_Call IBC_Method(nativeCallback)(IBC_PRE4PARAMS jint type, jfloat dis, jfloat v);
-//</editor-fold>
-
-IBC_Void_Call IBC_Method(nativeCallback)(IBC_PRE4PARAMS jint type, jfloat dis, jfloat v) {
+static inline void push_string(JNIEnv *env, lua_State *L, jstring s) {
+    const char *str = GetString(env, s);
+    if (str)
+        lua_pushstring(L, str);
+    else
+        lua_pushnil(L);
+    ReleaseChar(env, s, str);
+}
+_Call(void) _Method(nativeCallback)(_PRE4PARAMS,jint p1,jfloat p2,jfloat p3) {
     lua_State *L = (lua_State *) Ls;
     check_and_call_method(L, 3, {
-        lua_pushinteger(L, type);
-        lua_pushnumber(L, dis);
-        lua_pushnumber(L, v);
+        lua_pushinteger(L, (lua_Integer)p1);
+        push_number(L, p2);
+        push_number(L, p3);
     })
 }

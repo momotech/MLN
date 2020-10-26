@@ -7,15 +7,16 @@
   */
 package com.immomo.mmui.ud.anim;
 
-import com.immomo.mls.annotation.LuaBridge;
-import com.immomo.mls.annotation.LuaClass;
-import com.immomo.mls.utils.convert.ConvertUtils;
+import androidx.annotation.NonNull;
+
 import com.immomo.mmui.anim.animations.MultiAnimation;
 import com.immomo.mmui.anim.base.Animation;
 
-import org.luaj.vm2.Globals;
+import org.luaj.vm2.LuaNumber;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
+import org.luaj.vm2.utils.CGenerate;
+import org.luaj.vm2.utils.LuaApiUsed;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,21 +24,27 @@ import java.util.List;
 /**
  * Created by wang.yang on 2020/6/8.
  */
-@LuaClass
+@LuaApiUsed
 public class UDAnimatorSet extends UDBaseAnimation {
 
     public static final String LUA_CLASS_NAME = "AnimatorSet";
     private List<UDAnimation> animationList = new ArrayList<>();
-    private SetPercentBehavior percentBehavior;
 
-    // 必须有此构造函数
-    public UDAnimatorSet(Globals globals, LuaValue[] init) {
-        super(globals, init);
-        animation = new MultiAnimation();
+    @CGenerate(defaultConstructor = true)
+    @LuaApiUsed
+    public UDAnimatorSet(long L) {
+        super(L);
+        javaUserdata = defaultAnimation();
     }
+    public static native void _init();
+    public static native void _register(long l, String parent);
 
-    // lua虚拟机清除相关userdata时，会调用此方法，可无
-    public void __onLuaGc() {
+    @Override
+    public void initPercentBehavior() {
+        if (percentBehavior == null) {
+            percentBehavior = new SetPercentBehavior();
+        }
+        percentBehavior.setAnimation(this);  // 设置相关属性信息
     }
 
     @Override
@@ -45,13 +52,30 @@ public class UDAnimatorSet extends UDBaseAnimation {
         return new MultiAnimation();
     }
 
+    public List<UDAnimation> getAnimationList() {
+        return animationList;
+    }
 
-    @LuaBridge
+    private static List<UDAnimation> toList(@NonNull LuaTable table) {
+        List<UDAnimation> ret = new ArrayList<>();
+        if (!table.startTraverseTable()) {
+            return ret;
+        }
+        LuaValue[] next;
+        while ((next = table.next()) != null) {
+            ret.add((UDAnimation) next[1]);
+        }
+        table.endTraverseTable();
+        table.destroy();
+        return ret;
+    }
+
+    @LuaApiUsed
     public void together(LuaTable udAnimations) {
         if (udAnimations == null) {
             return;
         }
-        List<UDAnimation> list = ConvertUtils.toList(udAnimations);
+        List<UDAnimation> list = toList(udAnimations);
         animationList.clear();
         animationList.addAll(list);
         if (list.isEmpty()) {
@@ -59,17 +83,17 @@ public class UDAnimatorSet extends UDBaseAnimation {
         }
         List<Animation> animations = new ArrayList<>();
         for (UDAnimation udAnimation : list) {
-            animations.add(udAnimation.getAnimation());
+            animations.add(udAnimation.getJavaUserdata());
         }
-        ((MultiAnimation) animation).runTogether(animations);
+        ((MultiAnimation) javaUserdata).runTogether(animations);
     }
 
-    @LuaBridge
+    @LuaApiUsed
     public void sequentially(LuaTable udAnimations) {
         if (udAnimations == null) {
             return;
         }
-        List<UDAnimation> list = ConvertUtils.toList(udAnimations);
+        List<UDAnimation> list = toList(udAnimations);
         animationList.clear();
         animationList.addAll(list);
         if (list.isEmpty()) {
@@ -77,20 +101,20 @@ public class UDAnimatorSet extends UDBaseAnimation {
         }
         List<Animation> animations = new ArrayList<>();
         for (UDAnimation udAnimation : list) {
-            animations.add(udAnimation.getAnimation());
+            animations.add(udAnimation.getJavaUserdata());
         }
-        ((MultiAnimation) animation).runSequentially(animations);
+        ((MultiAnimation) javaUserdata).runSequentially(animations);
     }
 
     // 重写回调，回调的Animation为子Animation
     @Override
     public void repeat(Animation animation, int count) {
-        if (repeatCallback != null) {
+        if (repeatBlock != null) {
             UDAnimation subAnimation = getSubAnimation(animation);
             if (subAnimation != null) {
-                repeatCallback.call(subAnimation, count);
+                repeatBlock.invoke(varargsOf(subAnimation, LuaNumber.valueOf(count)));
             } else {
-                repeatCallback.call(this, count);
+                repeatBlock.invoke(varargsOf(this, LuaNumber.valueOf(count)));
             }
         }
     }
@@ -99,21 +123,12 @@ public class UDAnimatorSet extends UDBaseAnimation {
         UDAnimation subAnimation = null;
         if (animation != null) {
             for (UDAnimation udAnimation : animationList) {
-                if (udAnimation.getAnimation() == animation) {
+                if (udAnimation.getJavaUserdata() == animation) {
                     subAnimation = udAnimation;
                     break;
                 }
             }
         }
         return subAnimation;
-    }
-
-    @LuaBridge
-    public void update(float percent) {
-        if (percentBehavior == null) {
-            percentBehavior = new SetPercentBehavior();
-        }
-        percentBehavior.setAnimation((MultiAnimation) getAnimation());  // 设置相关属性信息
-        percentBehavior.update(percent);
     }
 }

@@ -18,24 +18,25 @@ import java.util.List;
  * 用于通过百分比驱动的动画
  * Created by wang.yang on 2020-07-20
  */
-public class SetPercentBehavior {
+public class SetPercentBehavior extends PercentBehavior {
 
     private List<PercentBehavior> percentBehaviors = new ArrayList<>();
     private boolean isRunTogether;
 
-    public void setAnimation(MultiAnimation multiAnimation) {
+    @Override
+    public void setAnimation(UDBaseAnimation ud) {
+        UDAnimatorSet set = (UDAnimatorSet) ud;
+        MultiAnimation multiAnimation = (MultiAnimation) ud.getJavaUserdata();
         isRunTogether = multiAnimation.isRunTogether();
-        List<Animation> animations = multiAnimation.getAnimations();
-        if (animations != null && !animations.isEmpty()) {
-            for (Animation animation : animations) {
-                PercentBehavior percentBehavior = new PercentBehavior();
-                percentBehavior.targetView(animation.getTarget());
-                percentBehavior.setAnimation((ObjectAnimation) animation);  // 设置相关属性信息
-                percentBehaviors.add(percentBehavior);
+        List<UDAnimation> list = set.getAnimationList();
+        if (list != null) {
+            for (UDAnimation ua : list) {
+                percentBehaviors.add(ua.getPercentBehavior());
             }
         }
     }
 
+    @Override
     public void update(float percent) {
         if (percentBehaviors.isEmpty()) {
             return;

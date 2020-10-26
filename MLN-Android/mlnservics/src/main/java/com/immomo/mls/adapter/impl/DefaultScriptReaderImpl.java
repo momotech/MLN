@@ -10,6 +10,9 @@ package com.immomo.mls.adapter.impl;
 import android.annotation.SuppressLint;
 import android.text.TextUtils;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.immomo.mls.Constants;
 import com.immomo.mls.MLSAdapterContainer;
 import com.immomo.mls.MLSEngine;
@@ -22,7 +25,6 @@ import com.immomo.mls.util.PreloadUtils;
 import com.immomo.mls.utils.ERROR;
 import com.immomo.mls.utils.GlobalStateUtils;
 import com.immomo.mls.utils.LuaUrlUtils;
-import com.immomo.mls.utils.MLSUtils;
 import com.immomo.mls.utils.ParsedUrl;
 import com.immomo.mls.utils.ScriptLoadException;
 import com.immomo.mls.utils.loader.Callback;
@@ -37,9 +39,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.lang.ref.WeakReference;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 /**
  * Created by Xiong.Fangyu on 2019-08-27
@@ -165,6 +164,13 @@ public class DefaultScriptReaderImpl implements ScriptReader {
             callbackError(callback, url, new ScriptLoadException(ERROR.FILE_NOT_FOUND, new FileNotFoundException(url.toString())));
             return;
         }
+        innerExecuteTask(task);
+    }
+
+    /**
+     * 执行异步任务
+     */
+    protected void innerExecuteTask(@NonNull Runnable task) {
         MLSAdapterContainer.getThreadAdapter().executeTaskByTag(getTaskTag(), task);
     }
 
@@ -399,8 +405,8 @@ public class DefaultScriptReaderImpl implements ScriptReader {
      */
     @SuppressLint("WrongConstant")
     protected ScriptBundle parseAssetsToBundle(ParsedUrl parsedUrl) throws ScriptLoadException {
-        String url = parsedUrl.toString();
-        ScriptBundle ret = new ScriptBundle(url, LuaUrlUtils.getParentPath(url));
+        ScriptBundle ret = new ScriptBundle(parsedUrl.toString(),
+                LuaUrlUtils.getParentPath(parsedUrl.getUrlWithoutParams()));
         ScriptFile main = PreloadUtils.parseAssetMainScript(parsedUrl);//asset解析scriptFile
         ret.setMain(main);
         ret.addFlag(ScriptBundle.TYPE_ASSETS | ScriptBundle.SINGLE_FILE);
@@ -502,7 +508,7 @@ public class DefaultScriptReaderImpl implements ScriptReader {
      * 判断是assets目录.lua单文件
      */
     private static boolean isAssetsSingleLua(ParsedUrl url) {
-        String assetsPath = url.toString();
+        String assetsPath = url.getUrlWithoutParams();
         return url.isAssetsPath() && !TextUtils.isEmpty(assetsPath) && FileUtil.isSuffix(assetsPath, Constants.POSTFIX_LUA);
     }
     //</editor-fold>

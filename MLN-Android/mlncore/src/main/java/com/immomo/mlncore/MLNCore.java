@@ -42,12 +42,20 @@ public class MLNCore {
      * 回调
      */
     private static Callback callback;
+    /**
+     * 全局Globals销毁回调
+     */
+    private static OnGlobalsDestroy onGlobalsDestroy;
 
     /**
      * 设置回调
      */
     public static void setCallback(Callback callback) {
         MLNCore.callback = callback;
+    }
+
+    public static void setOnGlobalsDestroy(OnGlobalsDestroy onGlobalsDestroy) {
+        MLNCore.onGlobalsDestroy = onGlobalsDestroy;
     }
 
     /**
@@ -101,6 +109,14 @@ public class MLNCore {
     }
 
     /**
+     * Globals自身调用
+     */
+    public static void onGlobalsDestroy(Globals g) {
+        if (onGlobalsDestroy != null)
+            onGlobalsDestroy.onDestroy(g);
+    }
+
+    /**
      * 可监听从native创建虚拟机的回调（isolate）
      * 或监听lua中的报错
      */
@@ -151,5 +167,12 @@ public class MLNCore {
          * @param jsonData json字符串
          */
         void onRequireCallback(String jsonData);
+    }
+
+    /**
+     * 虚拟机销毁时调用
+     */
+    public interface OnGlobalsDestroy {
+        void onDestroy(Globals g);
     }
 }

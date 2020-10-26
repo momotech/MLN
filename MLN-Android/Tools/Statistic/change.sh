@@ -7,4 +7,4 @@ META_DIR=src/main/java/META-INF
 META_NAME=MANIFEST.MF
 
 jar umf ${META_DIR}/${META_NAME} ${NAME}
-#mv ${NAME} ${OUT_NAME}
+mv ${NAME} ../../${NAME}
