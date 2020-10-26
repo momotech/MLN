@@ -105,7 +105,6 @@ end
 
 --- 批量设置元表 -- 不做上下文连接
 local function bindMeta_batchSetMeta(t, path, ck, pk)
-    local mapt = {}
     for _k, _v in pairs(t) do
         if type(_v) == "table" then
             bindMeta_batchSetMeta(_v, bindMeta_path(path , _k), _k, ck)
@@ -113,7 +112,7 @@ local function bindMeta_batchSetMeta(t, path, ck, pk)
             BindMeta(bindMeta_path(path , _k), {}, _v, _k, ck, true)
         end
     end
-    return BindMeta(bindMeta_path(path), mapt, t, ck, pk, true)
+    return BindMeta(bindMeta_path(path), {}, t, ck, pk, true)
 end
 
 local function bindMeta_getAndCacheTab(mt, isCache, isCell)
@@ -167,14 +166,22 @@ local function bindMeta_update(path, v, cKey, cacheValue)
     DataBinding:update(path, v)
 end
 
-local function bindMeta_watch(mt, v, isWatchA)
+local function bindMeta_watch(mt, v, isWatchA, filter)
     local k = bindMeta_path(bindMeta_getWatchPath(mt.__kvoname, mt.__ck))
     if k == nil then return end
     local w_id
     if isWatchA then
-        w_id = DataBinding:watchAction(k, v)
+        if filter then
+            w_id = DataBinding:watchAction(k, filter, v)
+        else
+            w_id = DataBinding:watchAction(k, v)
+        end
     else
-        w_id = DataBinding:watch(k, v)
+        if filter then
+            w_id = DataBinding:watch(k, filter, v)
+        else
+            w_id = DataBinding:watch(k, v)
+        end
     end
     if w_id then
         BindMetaWatchAdd(w_id)
@@ -245,7 +252,7 @@ local function bindMeta__index(t, k)
             ---@see BindMetaWatchListCell() -- 结束
             BindMetaPush(_cellBinds)
             if __open_combine_data__ then
-                temp_v = bindMeta_getAndCacheTab(mt, true, true)
+                temp_v = bindMeta_getAndCacheTab(mt, false, true)
             end
         end
         return BindMeta(bindMeta_path(mt.__kvoname),
@@ -340,7 +347,12 @@ local function bindMeta__call(t, ...)
         end
         return
     elseif op == __watch or op == __watchA then
-        return bindMeta_watch(mt,p1, op == __watchA)
+        local filter = nil
+        if size == 2 then
+            filter = p1
+            p1 = select(2, ...)
+        end
+        return bindMeta_watch(mt,p1, op == __watchA, filter)
     end
 
     if debug_preview_watch then
@@ -516,7 +528,7 @@ end
 -- 设置 list cell 绑定数据
 -- https://git.wemomo.com/sun_109/LuaParser_JavaCode/-/issues/340
 function BindMetaWatchListCell(source, section, row)
-    if __open_combine_data__ then
+    if __open_combine_data__ and __open_use_set_cache__ then
         BindMetaPopForach()
     end
     local paths = BindMetaPop(_cellBinds)

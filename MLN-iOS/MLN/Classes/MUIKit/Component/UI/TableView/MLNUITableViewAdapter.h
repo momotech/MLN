@@ -17,6 +17,7 @@
 
 @property (nonatomic, weak) UITableView *targetTableView;
 @property (nonatomic, weak) MLNUITableView *mlnuiTableView;
+@property (nonatomic, strong, readonly) Class tableViewCellClass;
 @property (nonatomic, strong, readonly) NSMutableDictionary<NSString *, MLNUIBlock *> *initedCellCallbacks;
 @property (nonatomic, strong, readonly) NSMutableDictionary<NSString *, MLNUIBlock *> *fillCellDataCallbacks;
 @property (nonatomic, strong, readonly) NSMutableDictionary<NSString *, MLNUIBlock *> *heightForRowCallbacks;

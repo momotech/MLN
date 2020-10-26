@@ -11,6 +11,10 @@
 #import "MLNUIHeader.h"
 #import "MLNUIKitHeader.h"
 #import "MLNUIWaterfallLayoutDelegate.h"
+#import "MLNUILayoutMacro.h"
+#import "MLNUIWaterfallAutoAdapter.h"
+
+#define OPEN_CELL_ESTIMATE [self.collectionView.delegate isKindOfClass:[MLNUIWaterfallAutoAdapter class]]
 
 @interface MLNUIWaterfallLayout ()
 
@@ -24,10 +28,17 @@
 @property (strong, nonatomic) NSMutableDictionary *headLayoutInfo;//保存头视图的布局
 @property (assign, nonatomic) CGFloat startY;   //记录开始的Y
 @property (nonatomic, assign) BOOL needRelayout;
+@property (nonatomic, assign) CGFloat itemWidth;
 
 @end
 
 @implementation MLNUIWaterfallLayout
+
+- (CGSize)avaliableSizeForLayoutItem {
+    return CGSizeMake(_itemWidth, MLNUIUndefined);
+}
+
+#pragma mark -
 
 - (instancetype)init
 {
@@ -62,8 +73,6 @@
 
 - (void)_in_prepareLayout
 {
-    [super prepareLayout];
-    
     //重新布局需要清空
     [_cellLayoutInfo removeAllObjects];
     [_headLayoutInfo removeAllObjects];
@@ -81,7 +90,7 @@
     NSAssert([self.collectionView.delegate respondsToSelector:@selector(headerIsSettingInNewWayWithWaterfallView:)], @"The delegate of Waterfall must implement 'headerIsSettingInNewWayWithWaterfallView:' method!");
     NSAssert([self.collectionView.delegate respondsToSelector:@selector(headerIsValidWithWaterfallView:)], @"The delegate of Waterfall must implement 'headerIsValidWithWaterfallView:' method!");
     
-    CGFloat itemWidth = (self.collectionView.frame.size.width - self.layoutInset.left - self.layoutInset.right - ((columnCount - 1) * self.itemSpacing)) / columnCount;
+    _itemWidth = (self.collectionView.frame.size.width - self.layoutInset.left - self.layoutInset.right - ((columnCount - 1) * self.itemSpacing)) / columnCount;
     //取有多少个section
     NSInteger sectionsCount = [self.collectionView numberOfSections];
     for (NSInteger section = 0; section < sectionsCount; section++) {
@@ -128,13 +137,19 @@
                 }
             }
             //计算x值
-            CGFloat x = self.layoutInset.left + (currentRow *(itemWidth + self.itemSpacing));
+            CGFloat x = self.layoutInset.left + (currentRow *(_itemWidth + self.itemSpacing));
             //根据代理去当前cell的高度  因为当前是采用通过列数计算的宽度，高度根据图片的原始宽高比进行设置的
             //    高度
             CGFloat height = [(id<MLNUIWaterfallLayoutDelegate>)self.collectionView.delegate collectionView:self.collectionView layout:self heightForItemAtIndexPath:cellIndePath];
+            if (OPEN_CELL_ESTIMATE) { // collectionView开启估算cell大小机制后，若 attribute.size 含有小数部分，iOS9的系统上会crash
+                if (@available(iOS 10, *)) {} else {
+                    _itemWidth = ceil(_itemWidth);
+                    height = ceil(height);
+                }
+            }
             
             //设置当前cell布局对象的frame
-            attribute.frame = CGRectMake(x, y, itemWidth, height);
+            attribute.frame = CGRectMake(x, y, _itemWidth, height);
             //重新设置当前列的Y值
             y = y + self.lineSpacing + height;
             self.colunMaxYDic[@(currentRow)] = @(y);

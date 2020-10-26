@@ -29,6 +29,7 @@
 #import "MLNUILoadTimeStatistics.h"
 #import "MLNUIHeader.h"
 #import "MLNUIMyErrorHandler.h"
+#import "ArgoUIErrorHandlerComponent.h"
 
 @interface MLNAppDelegate ()
 
@@ -45,7 +46,7 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    [[MLNUIFPSStatus sharedInstance] open];
+//    [[MLNUIFPSStatus sharedInstance] open];
 //    [[FLEXManager sharedManager] showExplorer];
 //    [MLNUILogViewer setup];
     [self setupMLNKitEnvironment];
@@ -72,7 +73,8 @@
     self.navHandler = [[MLNNavigatorHandler alloc] init];
     // MLNUIKit
     self.imgLoader2 = [[MLNUIMyImageHandler alloc] init];
-    self.errorHandler = [MLNUIMyErrorHandler new];
+//    self.errorHandler = [MLNUIMyErrorHandler new];
+    self.errorHandler = [ArgoUIErrorHandlerComponent new];
     
     [MLNKitEnvironment instancePreload];
     [MLNKitEnvironment setDefaultHttpHandler:self.httpHandler];
@@ -92,7 +94,7 @@
     [MLNUIKitEnvironment setDefaultImageLoader:self.imgLoader2];
     [MLNUIKitEnvironment setDefaultNavigatorHandler:self.navHandler];
     [MLNUIKitEnvironment setDefaultErrorHandler:self.errorHandler];
-#if DEBUG && 0
+#if DEBUG && Argo_Debug_Performance_Enable
     [MLNUIKitEnvironment setPerformanceMonitor: [MLNUILoadTimeStatistics sharedStatistics]];
     MLNUIKitPerformanceMonitorForDebug = [MLNUILoadTimeStatistics sharedStatistics];
 #endif

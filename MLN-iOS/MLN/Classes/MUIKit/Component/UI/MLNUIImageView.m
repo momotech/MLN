@@ -446,6 +446,10 @@
     return YES;
 }
 
+- (BOOL)luaui_canPinch {
+    return YES;
+}
+
 - (BOOL)mlnui_layoutEnable
 {
     return YES;

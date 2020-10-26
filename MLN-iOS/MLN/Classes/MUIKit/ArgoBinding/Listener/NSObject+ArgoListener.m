@@ -24,13 +24,14 @@ NSString *const kArgoListenerWrapper = @"argo_wrapper";
 NSString *const kArgoConstString_Dot = @".";
 
 ArgoListenerFilter kArgoWatchKeyListenerFilter = ^BOOL(ArgoWatchContext context, NSDictionary *change) {
-//    NSString *changedKey = [change objectForKey:kArgoListenerChangedKey];
     ArgoListenerWrapper *wrap = [change objectForKey:kArgoListenerWrapper];
     if (!wrap.keyPath || !wrap.key) {
         return YES;
     }
-    BOOL r = [wrap.keyPath hasSuffix:wrap.key];
-    return r;
+    if ([wrap.keyPath isEqualToString:kArgoListenerArrayPlaceHolder]) { // TODO：数组的变化也会被watch到？
+        return YES;
+    }
+    return [wrap.keyPath hasSuffix:wrap.key];
 };
 
 //只用于 ArgoObservableMap & ArgoObservableArray
@@ -158,12 +159,13 @@ ArgoListenerFilter kArgoWatchKeyListenerFilter = ^BOOL(ArgoWatchContext context,
             NSMutableDictionary *dic = [self argoChangedKeysMap];
             NSMutableDictionary *change = [dic objectForKey:wrapper.key];
             if (change) {
-                [dic removeObjectForKey:wrapper.key];
                 [change setObject:wrapper.key forKey:kArgoListenerChangedKey];
                 [change setObject:wrapper forKey:kArgoListenerWrapper];
                 //TODO: 是否传递新值?
 //                [change setObject:[self argoGetForKeyPath:wrapper.key] forKey:NSKeyValueChangeNewKey];
-                [wrapper callWithChange:change];
+                if([wrapper callWithChange:change]) {
+                    [dic removeObjectForKey:wrapper.key];
+                }
 //                [self handleNotifyMapWithWrapper:wrapper change:change.mutableCopy];
             }
         }
@@ -214,7 +216,11 @@ ArgoListenerFilter kArgoWatchKeyListenerFilter = ^BOOL(ArgoWatchContext context,
             // 重新添加监听
             NSArray *subPaths = [subKeyPath componentsSeparatedByString:kArgoConstString_Dot];
             if (subPaths.count) {
-                [self argo_addListenerWithChangeBlock:wrap.block object:newMap obID:wrap.obID keyPath:wrap.keyPath paths:subPaths filter:wrap.filter triggerWhenAdd:wrap.triggerWhenAdd wrapper:reuseWrap ? wrap : nil];
+                id<ArgoListenerProtocol> obj = [self argo_addListenerWithChangeBlock:wrap.block object:newMap obID:wrap.obID keyPath:wrap.keyPath paths:subPaths filter:wrap.filter triggerWhenAdd:wrap.triggerWhenAdd wrapper:reuseWrap ? wrap : nil];
+                ArgoObservableArray *array = (ArgoObservableArray *)obj;
+                if ([array isKindOfClass:[ArgoObservableArray class]]) {
+                    [self argo_addArrayListenerWithChangeBlock:wrap.block array:array obID:wrap.obID observedObject:wrap.observedObject keyPath:wrap.keyPath filter:wrap.filter triggerWhenAdd:wrap.triggerWhenAdd wrapper:reuseWrap ? wrap : nil];
+                }
             }
         } else if([newMap isKindOfClass:[ArgoObservableArray class]]) {
             //如果是array，重新添加监听，需要处理二维

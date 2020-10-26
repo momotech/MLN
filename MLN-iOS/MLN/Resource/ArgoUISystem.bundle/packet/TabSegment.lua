@@ -110,6 +110,10 @@ function _class:onSelected(callback)
     self._onSelected = callback
 end
 
+function _class:updateViews(views)
+    self:_setupUI(views)
+end
+
 ---
 --- @private
 ---
@@ -128,28 +132,44 @@ function _class:_create(models, callback)
     self:_setupUI(views)
 end
 
+
 function _class:_setupUI(views)
     if not views or #views == 0 then
         print("[ArgoUI Warning] The views can not be nil when create TabSegment!")
         return
     end
 
-    local scrollView = self.contentView
-    local container = VStack():basis(1):crossSelf(CrossAxis.STRETCH)
-    local itemsView = HStack():padding(15, 30, 10, 0):mainAxis(MainAxis.SPACE_EVENLY):crossSelf(CrossAxis.STRETCH):crossAxis(CrossAxis.STRETCH)
-
-    for i, v in ipairs(views) do
-        v:marginLeft(30):onClick(function()
-            self._isClickTabSegment = true
-            self:_clickItem(i, true)
-        end)
-        table.insert(self._subviews, v)
-        itemsView:addView(v)
-        v:layoutComplete(function()
-            self:_executeItemAnimation(v, false, 1, false)
+    local function _addViews_(itemsView)
+        for i, v in ipairs(views) do
+            v:marginLeft(30):onClick(function()
+                self._isClickTabSegment = true
+                self:_clickItem(i, true)
+            end)
+            table.insert(self._subviews, v)
+            itemsView:addView(v)
+        end
+        local layoutCompleted = false
+        local endView = views[#views]
+        endView:layoutComplete(function()
+            if layoutCompleted then return end
+            layoutCompleted = true
+            self:_executeItemAnimation(endView, false, 1, false)
             self:_clickItem((self._currentIndex and self._currentIndex or 1), false) --UI布局完成后需要设置默认选中效果
         end)
     end
+
+    if self.itemsView then
+        self.itemsView:removeAllSubviews()
+        _addViews_(self.itemsView)
+        return
+    end
+
+    local scrollView = self.contentView
+    local container = VStack():basis(1):crossSelf(CrossAxis.STRETCH)
+    local itemsView = HStack():padding(15, 30, 10, 0):mainAxis(MainAxis.SPACE_EVENLY):crossSelf(CrossAxis.STRETCH):crossAxis(CrossAxis.STRETCH)
+    self.itemsView = itemsView
+
+    _addViews_(itemsView)
 
     scrollView:addView(container)
     container:addView(itemsView)

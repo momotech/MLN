@@ -285,13 +285,12 @@ YG_PROPERTY(CGFloat, aspectRatio, AspectRatio)
 
 #pragma mark - Layout and Sizing
 
-- (YGDirection)resolvedDirection
-{
+- (YGDirection)resolvedDirection {
     return YGNodeLayoutGetDirection(self.node);
 }
 
 - (CGSize)applyLayout {
-    return [self applyLayoutWithSize:self.view.bounds.size];
+    return [self applyLayoutWithSize:CGSizeZero];
 }
 
 - (CGSize)applyLayoutWithSize:(CGSize)size {
@@ -312,22 +311,22 @@ YG_PROPERTY(CGFloat, aspectRatio, AspectRatio)
     YGApplyLayoutRecursive(self.view.mlnui_layoutNode, 0, 0);
 }
 
-- (CGSize)intrinsicSize
-{
-    const CGSize constrainedSize = {
-        .width = YGUndefined,
-        .height = YGUndefined,
-    };
-    return [self calculateLayoutWithSize:constrainedSize];
+- (CGSize)calculateLayout {
+    return [self calculateLayoutWithSize:CGSizeZero];
 }
 
-- (CGSize)calculateLayoutWithSize:(CGSize)size
-{
+- (CGSize)calculateLayoutWithSize:(CGSize)size {
     NSAssert([NSThread isMainThread], @"layout calculation must be done on main.");
     YGAttachNodesFromViewHierachy(self.view);
     
+    if (size.width > 0) {
+        self.maxWidth = MLNUIPointValue(size.width);
+    }
+    if (size.height > 0) {
+        self.maxHeight = MLNUIPointValue(size.height);
+    }
     const YGNodeRef node = self.node;
-    YGNodeCalculateLayout(node, size.width, size.height, YGNodeStyleGetDirection(node));
+    YGNodeCalculateLayout(node, MLNUIUndefined, MLNUIUndefined, YGNodeStyleGetDirection(node));
     
     return (CGSize) {
         .width = YGNodeLayoutGetWidth(node),

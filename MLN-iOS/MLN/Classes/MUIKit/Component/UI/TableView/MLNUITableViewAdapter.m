@@ -146,6 +146,18 @@
     return longPressRowCallback;
 }
 
+- (Class)tableViewCellClass {
+    return [MLNUITableViewCell class];
+}
+
+#pragma mark - Private
+
+- (void)prepareToUseCell:(MLNUITableViewCell *)cell {
+    [cell createLuaTableAsCellNameForLuaIfNeed:self.mlnui_luaCore];
+    [cell createLayoutNodeIfNeedWithFitSize:cell.frame.size /*cell.luaContentView大小要和cell保持一致*/
+                                    maxSize:cell.frame.size];
+}
+
 #pragma mark - UITableViewAdapterDelegate
 - (void)setTargetTableView:(UITableView *)targetTableView
 {
@@ -157,9 +169,9 @@
 {
     NSDictionary<NSString *, MLNUIBlock *> *initedCellCallbacks = self.initedCellCallbacks.copy;
     [initedCellCallbacks enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull key, MLNUIBlock * _Nonnull obj, BOOL * _Nonnull stop) {
-        [self.targetTableView registerClass:[MLNUITableViewCell class] forCellReuseIdentifier:key];
+        [self.targetTableView registerClass:self.tableViewCellClass forCellReuseIdentifier:key];
     }];
-    [self.targetTableView registerClass:[MLNUITableViewCell class] forCellReuseIdentifier:kMLNUITableViewCellReuseID];
+    [self.targetTableView registerClass:self.tableViewCellClass forCellReuseIdentifier:kMLNUITableViewCellReuseID];
 }
 
 #pragma mark - UITableViewDataSource
@@ -210,14 +222,12 @@
     MLNUIBlock *initCallback = [self initedCellCallbackByReuseId:reuseId];
     MLNUIKitLuaAssert(initCallback, @"It must not be nil callback of cell init!");
     if (!initCallback) {
-        [self.targetTableView registerClass:[MLNUITableViewCell class] forCellReuseIdentifier:reuseId];
+        [self.targetTableView registerClass:self.tableViewCellClass forCellReuseIdentifier:reuseId];
     }
     MLNUITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:reuseId forIndexPath:indexPath];
     cell.delegate = self;
+    [self prepareToUseCell:cell];
     
-//    NSLog(@">>>>>> cell %p row %zd",cell,indexPath.row);
-    
-    [cell pushContentViewWithLuaCore:self.mlnui_luaCore];
     if (!cell.isInited) {
         [initCallback addLuaTableArgument:[cell getLuaTable]];
         [initCallback callIfCan];
@@ -230,7 +240,7 @@
         [reuseCallback addIntArgument:(int)indexPath.row+1];
         [reuseCallback callIfCan];
     }
-    [cell mlnui_requestLayoutIfNeed];
+//    [cell mlnui_requestLayoutIfNeed];
     return cell;
 }
 
@@ -346,7 +356,7 @@
     MLNUIKitLuaAssert(callback , @"The callback must not be nil!");
     MLNUIKitLuaAssert(reuseId && reuseId.length >0 , @"The reuse id must not be nil!");
     if (reuseId && reuseId.length >0) {
-        [self.targetTableView registerClass:[MLNUITableViewCell class] forCellReuseIdentifier:reuseId];
+        [self.targetTableView registerClass:self.tableViewCellClass forCellReuseIdentifier:reuseId];
         [self.selectedRowCallbacks mlnui_setObject:callback forKey:reuseId];
     }
 }
@@ -361,7 +371,7 @@
     MLNUIKitLuaAssert(callback , @"The callback must not be nil!");
     MLNUIKitLuaAssert(reuseId && reuseId.length >0 , @"The reuse id must not be nil!");
     if (reuseId && reuseId.length >0) {
-        [self.targetTableView registerClass:[MLNUITableViewCell class] forCellReuseIdentifier:reuseId];
+        [self.targetTableView registerClass:self.tableViewCellClass forCellReuseIdentifier:reuseId];
         [self.longPressRowCallbacks mlnui_setObject:callback forKey:reuseId];
     }
 }
@@ -417,7 +427,7 @@
     MLNUIKitLuaAssert(callback , @"The callback must not be nil!");
     MLNUIKitLuaAssert(reuseId && reuseId.length >0 , @"The reuse id must not be nil!");
     if (reuseId && reuseId.length >0) {
-        [self.targetTableView registerClass:[MLNUITableViewCell class] forCellReuseIdentifier:reuseId];
+        [self.targetTableView registerClass:self.tableViewCellClass forCellReuseIdentifier:reuseId];
         [self.initedCellCallbacks mlnui_setObject:callback forKey:reuseId];
     }
 }
@@ -427,7 +437,7 @@
     MLNUIKitLuaAssert(callback , @"The callback must not be nil!");
     MLNUIKitLuaAssert(reuseId && reuseId.length >0 , @"The reuse id must not be nil!");
     if (reuseId && reuseId.length >0) {
-        [self.targetTableView registerClass:[MLNUITableViewCell class] forCellReuseIdentifier:reuseId];
+        [self.targetTableView registerClass:self.tableViewCellClass forCellReuseIdentifier:reuseId];
         [self.fillCellDataCallbacks mlnui_setObject:callback forKey:reuseId];
     }
 }

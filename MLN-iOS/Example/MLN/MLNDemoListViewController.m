@@ -106,6 +106,7 @@
                        @"LinearLayoutDemo.lua",
                        @"TableViewDemo.lua",
                        @"ArgoTableViewCeilingCellDemo.lua",
+                       @"ArgoTableViewZoomPictureDemo.lua",
                        @"ViewPagerDemo.lua",
                        @"WaterfallViewDemo.lua",
 //                       @"MLNBindModelViewController",
@@ -116,7 +117,8 @@
                        @"MLNDataBindHotReload",
                        @"MLNPerformanceTestController",
                        @"MLNKuaController",
-                       @"MLNViewPagerDemo",
+//                       @"MLNKuaControllerAsync",
+//                       @"MLNViewPagerDemo",
                        @"DemoLiyifengViewController",
                        ];
     }
