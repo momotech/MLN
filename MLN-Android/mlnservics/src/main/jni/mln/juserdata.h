@@ -22,11 +22,7 @@
 #define getUDMetaname(n) joinstr(METATABLE_PREFIX, n)
 
 #define LUA_INDEX "__index"
-/// 设置metatable
-#define SET_METATABLE(L)          \
-    lua_pushstring(L, LUA_INDEX); \
-    lua_pushvalue(L, -2);         \
-    lua_rawset(L, -3);
+#define LUA_NEWINDEX "__newindex"
 
 struct javaUserdata {
     jlong id;
@@ -64,6 +60,18 @@ void pushUserdataBoolClosure(JNIEnv *env, lua_State *L, jclass clz);
  */
 void pushUserdataGcClosure(JNIEnv *env, lua_State *L, jclass clz);
 /**
+ * 创建或取出相应的metatable
+ * @return 0:对应metatable已存在; 1:新建metatable
+ *          栈顶:对应metatable
+ */
+int u_newmetatable(lua_State *L, const char *tname);
+/**
+ * 给当前table设置父类
+ * @param L -1: metatable
+ * @param parent 父类的metatable名称
+ */
+void setParentMetatable(JNIEnv *env, lua_State *L, const char *parent);
+/**
  * 注册所有的userdata
  * @param lcns  lua类名数组
  * @param lpcns lua父类名数组
@@ -73,6 +81,7 @@ void pushUserdataGcClosure(JNIEnv *env, lua_State *L, jclass clz);
 void jni_registerAllUserdata(JNIEnv *env, jobject jobj, jlong L, jobjectArray lcns, jobjectArray lpcns, jobjectArray jcns, jbooleanArray lazy);
 void jni_registerUserdata(JNIEnv *env, jobject jobj, jlong L, jstring lcn, jstring lpcn, jstring jcn);
 void jni_registerUserdataLazy(JNIEnv *env, jobject jobj, jlong L, jstring lcn, jstring lpcn, jstring jcn);
+void jni_registerJavaInstance(JNIEnv *env, jobject jobj, jlong L);
 /**
  * 创建userdata，然后设置到global表里
  * 用来创建单例，Lua代码中可直接用 ObjectName:method()调用

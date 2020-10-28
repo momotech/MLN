@@ -88,4 +88,9 @@ public interface iHotReloadListener {
      */
     public void onGencoveragereport();
 
+    /**
+     * 插件端将ip地址传入手机
+     */
+    public void onIpChanged(String ip);
+
 }

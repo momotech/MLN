@@ -16,6 +16,7 @@ import com.immomo.demo.provider.GlideImageProvider;
 import com.immomo.mls.MLSEngine;
 import com.immomo.mls.fun.lt.SIApplication;
 import com.immomo.mls.global.LVConfigBuilder;
+import com.immomo.mmui.MMUIEngine;
 
 import org.luaj.vm2.Globals;
 
@@ -60,6 +61,8 @@ public class App extends Application {
                 .build(true);
         /// 设置二维码扫描结果处理工具
         OuterResultHandler.registerResultHandler(new QRResultHandler());
+        MMUIEngine.init(this);
+        MMUIEngine.preInit(1);
         log("onCreate: " + Globals.isInit() + " " + Globals.isIs32bit());
     }
 

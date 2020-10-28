@@ -38,6 +38,8 @@ abstract class NLuaValue extends LuaValue {
      * @see LuaUserdata
      */
     NLuaValue(Globals globals, long nativeGlobalKey) {
+        if (globals == null)
+            throw new NullPointerException();
         this.globals = globals;
         this.nativeGlobalKey = nativeGlobalKey;
     }
@@ -57,6 +59,10 @@ abstract class NLuaValue extends LuaValue {
     NLuaValue(long L_state, long nativeGlobalKey) {
         this(nativeGlobalKey);
         this.globals = Globals.getGlobalsByLState(L_state);
+        if (globals == null)
+            throw new NullPointerException(
+                    "no Globals object for pointer " + Long.toHexString(L_state) +
+                    "\n" + Globals.debugGlobalsPointers());
     }
 
     /**

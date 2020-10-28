@@ -22,6 +22,9 @@ import com.immomo.mls.InitData;
 import com.immomo.mls.MLSBundleUtils;
 import com.immomo.mls.MLSEngine;
 import com.immomo.mls.activity.LuaViewActivity;
+import com.immomo.mls.util.LogUtil;
+
+import org.luaj.vm2.Globals;
 
 public class MainActivity extends BaseActivity implements View.OnClickListener{
     private static final String URL_COURSE = "https://mln.immomo.com/zh-cn/docs/build_dev_environment.html";
@@ -73,7 +76,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
                 break;
             case R.id.tvDemo:
                 Intent intent = new Intent(this, LuaViewActivity.class);
-                InitData initData = MLSBundleUtils.createInitData(Constants.ASSETS_PREFIX + "gallery/meilishuo.lua");
+                String path = Globals.isIs32bit() ? Constants.ASSETS_PREFIX + "gallery/meilishuo.lua" : Constants.ASSETS_PREFIX + "gallery_x64/meilishuo.lua";
+                InitData initData = MLSBundleUtils.createInitData(path);
                 intent.putExtras(MLSBundleUtils.createBundle(initData));
                 startActivity(intent);
                 break;

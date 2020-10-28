@@ -26,6 +26,8 @@ import com.immomo.mls.adapter.PreinstallError;
 import com.immomo.mls.adapter.ScriptReaderCreator;
 import com.immomo.mls.adapter.ToastAdapter;
 import com.immomo.mls.adapter.TypeFaceAdapter;
+import com.immomo.mls.adapter.X64PathAdapter;
+import com.immomo.mls.fun.ui.MLNSafeAreaAdapter;
 import com.immomo.mls.global.LVConfig;
 import com.immomo.mls.global.LuaViewConfig;
 import com.immomo.mls.log.DefaultPrinter;
@@ -58,10 +60,12 @@ public class MLSBuilder {
     private final List<Class> constantsClass;
     private final List<SIHolder> siHolders;
     private final List<CHolder> cHolders;
-    private final List<Class<? extends LuaUserdata>> newUDHolders;
+    private final List<Register.NewUDHolder> newUDHolders;
+    private final List<Register.NewStaticHolder> newStaticHolders;
     private final Register register;
     private int preGlobalNum = 3;
     private boolean clearAll = false;
+    private int delay = 0;
 
     public MLSBuilder(Register register) {
         this.register = register;
@@ -71,6 +75,7 @@ public class MLSBuilder {
         siHolders = new ArrayList<>();
         cHolders = new ArrayList<>();
         newUDHolders = new ArrayList<>();
+        newStaticHolders = new ArrayList<>();
     }
 
     //<editor-fold desc="Adapter">
@@ -163,12 +168,23 @@ public class MLSBuilder {
         MLSAdapterContainer.setFileCache(iFileCache);
         return this;
     }
+
+    public MLSBuilder setSafeAreaAdapter(MLNSafeAreaAdapter safeAreaAdapter) {
+        MLSAdapterContainer.setSafeAreaAdapter(safeAreaAdapter);
+        return this;
+    }
+
+    public MLSBuilder setX64PathAdapter(X64PathAdapter x64PathAdapter) {
+        MLSAdapterContainer.setX64PathAdapter(x64PathAdapter);
+        return this;
+    }
     //</editor-fold>
 
     //<editor-fold desc="Register">
     public MLSBuilder clearAll() {
         udHolders.clear();
         newUDHolders.clear();
+        newStaticHolders.clear();
         sHolders.clear();
         constantsClass.clear();
         siHolders.clear();
@@ -182,8 +198,17 @@ public class MLSBuilder {
      * 写法可参照{@link com.immomo.mls.fun.ud.UDCCanvas}，且需要在c层注册文件
      * 建议使用Android Studio的模板生成java代码，实现完java层逻辑后，使用mlncgen.jar生成c层注册文件
      */
-    public MLSBuilder registerNewUD(Class<? extends LuaUserdata>... clz) {
-        newUDHolders.addAll(Arrays.asList(clz));
+    public MLSBuilder registerNewUD(Register.NewUDHolder... holders) {
+        newUDHolders.addAll(Arrays.asList(holders));
+        return this;
+    }
+
+    /**
+     * 注册高性能bridge
+     * @see Register#registerNewStaticBridge(Register.NewStaticHolder)
+     */
+    public MLSBuilder registerNewStaticBridge(Register.NewStaticHolder... holders) {
+        newStaticHolders.addAll(Arrays.asList(holders));
         return this;
     }
 
@@ -211,9 +236,18 @@ public class MLSBuilder {
         cHolders.addAll(Arrays.asList(holder));
         return this;
     }
+
+    public MLSBuilder registerEmptyMethods(String... methods) {
+        register.registerEmptyMethods(methods);
+        return this;
+    }
     //</editor-fold>
 
     //<editor-fold desc="Setting">
+    public MLSBuilder setDelay(int d) {
+        this.delay = d;
+        return this;
+    }
 
     /**
      * 设置lua查找so的路径
@@ -358,8 +392,8 @@ public class MLSBuilder {
     /**
      * 设置是否在java层读取脚本文件
      */
+    @Deprecated
     public MLSBuilder setReadScriptFileInJava(boolean readScriptFileInJava) {
-        MLSConfigs.readScriptFileInJava = readScriptFileInJava;
         return this;
     }
 
@@ -499,8 +533,11 @@ public class MLSBuilder {
         for (Register.UDHolder h : udHolders) {
             register.registerUserdata(h);
         }
-        for (Class<? extends LuaUserdata> clz : newUDHolders) {
-            register.registerNewUserdata(clz);
+        for (Register.NewUDHolder h : newUDHolders) {
+            register.registerNewUserdata(h);
+        }
+        for (Register.NewStaticHolder h : newStaticHolders) {
+            register.registerNewStaticBridge(h);
         }
         for (Register.SHolder h : sHolders) {
             register.registerStaticBridge(h);
@@ -509,7 +546,7 @@ public class MLSBuilder {
             register.registerEnum(c);
         }
         for (SIHolder h : siHolders) {
-            register.registerSingleInstance(h.luaClassName, h.clz);
+            register.registerSingleInstance(h.luaClassName, h.clz,h.isMLN);
         }
         for (CHolder h : cHolders) {
             if (h.defaultL2J) {
@@ -523,7 +560,7 @@ public class MLSBuilder {
                 Translator.registerJ2L(h.clz, h.j2l);
             }
         }
-        MainThreadExecutor.post(new Runnable() {
+        Runnable task = new Runnable() {
             @Override
             public void run() {
                 long ps = SystemClock.uptimeMillis();
@@ -532,7 +569,12 @@ public class MLSBuilder {
                 if (MLSEngine.DEBUG)
                     MLSAdapterContainer.getConsoleLoggerAdapter().d("MLSBuilder", "pre init globals cast: %d", (SystemClock.uptimeMillis() - ps));
             }
-        });
+        };
+        if (delay <= 0) {
+            MainThreadExecutor.post(task);
+        } else {
+            MainThreadExecutor.postDelayed(this, task, delay);
+        }
         if (MLSEngine.DEBUG)
             MLSAdapterContainer.getConsoleLoggerAdapter().d("MLSBuilder", "build cast: %d", (SystemClock.uptimeMillis() - start));
     }
@@ -547,15 +589,26 @@ public class MLSBuilder {
      * 适用于需要获取状态的类中，或需要在虚拟机销毁时，释放资源的类中
      */
     public static class SIHolder {
-        String luaClassName;
+        public String luaClassName;
         /**
          * 类中必须有{@link com.immomo.mls.annotation.LuaClass}注解
          */
-        Class clz;
+        public Class clz;
+
+        /**
+         * 是否是MLN独有的
+         */
+        public boolean isMLN;
 
         public SIHolder(String lcn, Class clz) {
             luaClassName = lcn;
             this.clz = clz;
+        }
+
+        public SIHolder(String lcn, Class clz,boolean isMLN) {
+            luaClassName = lcn;
+            this.clz = clz;
+            this.isMLN = isMLN;
         }
     }
 

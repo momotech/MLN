@@ -18,7 +18,8 @@ public class JSERegister {
 
     public static void registerLuaJava(Globals g) {
         g.registerJavaMetatable(Luajava.class, Luajava.NAME);
-        g.registerUserdataSimple(JavaInstance.LUA_CLASS_NAME, JavaInstance.class);
-        g.registerUserdataSimple(JavaClass.LUA_CLASS_NAME, JavaClass.class);
+        _registerJSE(g.getL_State());
     }
+
+    private static native void _registerJSE(long l);
 }

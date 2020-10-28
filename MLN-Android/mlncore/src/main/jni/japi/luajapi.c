@@ -18,12 +18,15 @@
 #include "mlog.h"
 #include "luasocket.h"
 #include <time.h>
+#include "argo/argo_lib.h"
 #include "m_mem.h"
 #include "compiler.h"
 #include "saes.h"
 #include "llimits.h"
 #include "lfunc.h"
 #include "isolate.h"
+#include "statistics.h"
+#include "statistics_require.h"
 
 extern JavaVM *g_jvm;
 
@@ -68,6 +71,65 @@ jboolean jni_isSAESFile(JNIEnv *env, jobject jobj, jstring path) {
     return r;
 }
 
+#ifdef STATISTIC_PERFORMANCE
+static jclass Java_Statistic = NULL;
+static jmethodID Java_Statistic_callback = NULL;
+
+static jclass Java_Require_Statistic = NULL;
+static jmethodID Java_Require_Statistic_callback = NULL;
+
+static void _inner_callback(const char *str, jclass jclass, jmethodID jmethodId) {
+    if (!str)
+        return;
+    JNIEnv *env;
+    int need = getEnv(&env);
+    (*env)->CallStaticVoidMethod(env, jclass, jmethodId, newJString(env, str));
+    if (need)
+        detachEnv();
+}
+
+static void _inner_bridge_callback(const char *str) {
+    _inner_callback(str, Java_Statistic, Java_Statistic_callback);
+}
+
+static void _inner_require_callback(const char *str) {
+    _inner_callback(str, Java_Require_Statistic, Java_Require_Statistic_callback);
+}
+#endif
+
+void jni_notifyStatisticsCallback(JNIEnv *env, jobject jobj){
+    notifyStatisticsCallback();
+}
+
+void jni_notifyRequireCallback(JNIEnv *env, jobject jobj) {
+    notifyRequireCallback();
+}
+
+void jni_setStatisticsOpen(JNIEnv *env, jobject jobj, jboolean open) {
+#ifdef STATISTIC_PERFORMANCE
+    if (open) {
+        if (!Java_Statistic) {
+            Java_Statistic = (*env)->FindClass(env, "com/immomo/mlncore/Statistic");
+            Java_Statistic_callback = (*env)->GetStaticMethodID(env, Java_Statistic, "onBridgeCallback",
+                                                                "(" STRING_CLASS ")V");
+            Java_Statistic = GLOBAL(env, Java_Statistic);
+        }
+        setStrCallback(_inner_bridge_callback);
+
+
+        if (!Java_Require_Statistic) {
+            Java_Require_Statistic = (*env)->FindClass(env, "com/immomo/mlncore/Statistic");
+            Java_Require_Statistic_callback = (*env)->GetStaticMethodID(env, Java_Statistic, "onRequireCallback",
+                                                                "(" STRING_CLASS ")V");
+            Java_Require_Statistic = GLOBAL(env, Java_Require_Statistic);
+        }
+        setRequireStrCallback(_inner_require_callback);
+
+    }
+    setOpenStatistics((int)open);
+    setOpenRequireStatistics((int)open);
+#endif
+}
 // --------------------------define field--------------------------
 extern jclass LuaValue;
 // --------------------------define private--------------------------
@@ -156,6 +218,57 @@ jlong jni_lvmMemUse(JNIEnv *env, jobject jobj, jlong L) {
 /// ------------------------------------------------------------------
 /// ------------------------------L State-----------------------------
 /// ------------------------------------------------------------------
+
+/**
+ * 执行空方法
+ * @param L
+ *      1: method name
+ */
+int exeEmptyMethod(lua_State *L) {
+    lua_lock(L);
+    int isUD = -1;
+    if (lua_isuserdata(L, 1)) {
+        isUD = 1;
+    } else if (lua_istable(L, 1)) {
+        isUD = 0;
+    }
+    if (isUD == -1) {
+        lua_pushstring(L, "use ':' instead of '.' to call method!!");
+        lua_unlock(L);
+        lua_error(L);
+        return 1;
+    }
+
+    const char *clz;
+    if (isUD) {
+        UDjavaobject ud = (UDjavaobject) lua_touserdata(L, 1);
+        clz = ud->name;
+    } else {
+        clz = "Unknown static class";
+    }
+    const char *mn;
+    int idx = lua_upvalueindex(1);
+    mn = lua_tostring(L, idx);
+
+    onEmptyMethodCall(L, clz, mn);
+
+    lua_settop(L, 1);
+    lua_unlock(L);
+    return 1;
+}
+/**
+ * -1: table
+ */
+void emptyMethodTable(const void *value, void *ud) {
+    lua_State *L = (lua_State *) ud;
+    const char *name = (const char *) value;
+    lua_pushstring(L, name);
+    lua_pushvalue(L, -1);
+    lua_pushcclosure(L, exeEmptyMethod, 1);
+    /// -1: closure, -2: name, -3: table
+    lua_rawset(L, -3);
+}
+
 extern void openlibs_forlua(lua_State *L, int debug) {
     lua_lock(L);
     L->l_G->gc_callback = NULL;
@@ -164,6 +277,7 @@ extern void openlibs_forlua(lua_State *L, int debug) {
     lua_pushcfunction(L, isolate_open);
     lua_setfield(L, -2, ISOLATE_LIB_NAME);
     lua_pop(L, 1);
+    argo_preload(L);
 
     if (debug) {
         luaopen_socket_core(L);
@@ -180,17 +294,29 @@ extern void openlibs_forlua(lua_State *L, int debug) {
     init_cache(L);
 
     lua_getglobal(L, LUA_LOADLIBNAME);          //-1 package table
+
+    lua_pushnil(L);                             //-1 nil -2 table
+    lua_setfield(L, -2, "path");         //package.path = nil -1 table
+
     luaL_getsubtable(L, -1, "searchers");       //-1 package.searchers table; -2 package table
+    int len = lua_objlen(L, -1);
+#ifdef ANDROID
     lua_pushcfunction(L,
                       searcher_Lua_asset);   //-1: fun;-2 package.searchers table; -3 package table
-    int len = lua_objlen(L, -2);
     lua_rawseti(L, -2, ++len);                  //-1: package.searchers table; -2 package table
+#endif
     lua_pushcfunction(L,
                       searcher_java);        //-1: fun;-2 package.searchers table; -3 package table
     lua_rawseti(L, -2, ++len);
     lua_pop(L, 2);
     if (gc_offset_time > 0)
         G(L)->gc_callback = gc_cb;
+
+    if (hasEmptyMethod()) {
+        lua_newtable(L);
+        traverseAllEmptyMethods(emptyMethodTable, L);
+        lua_setglobal(L, EMPTY_METHOD_TABLE);
+    }
     lua_unlock(L);
 }
 
@@ -214,6 +340,7 @@ void jni_openDebug(JNIEnv *env, jobject jobj, jlong L) {
 
 void jni_close(JNIEnv *env, jobject jobj, jlong L) {
     lua_State *LS = (lua_State *) L;
+    argo_close(LS);
 #if defined(J_API_INFO)
     void *ud = G(LS)->ud;
 #endif
@@ -241,6 +368,14 @@ jobjectArray jni_dumpStack(JNIEnv *env, jobject jobj, jlong L) {
     }
     lua_unlock(LS);
     return arr;
+}
+
+jstring jni_traceback(JNIEnv *env, jobject jobj, jlong l) {
+    lua_State *L = (lua_State *) l;
+    luaL_traceback(L, L, NULL, 0);
+    const char *trace = lua_tostring(L, -1);
+    lua_pop(L, 1);
+    return newJString(env, trace);
 }
 
 void jni_lgc(JNIEnv *env, jobject jobj, jlong L) {

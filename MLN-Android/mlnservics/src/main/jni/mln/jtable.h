@@ -18,11 +18,21 @@
  * 将src table中的数据拷贝到desc table中
  */
 void copyTable(lua_State *L, int src, int desc);
+/**
+ * 将parent设置为t的metatable，并用__index指向
+ * t.metatable = {__index=parent}
+ */
+void setParentTable(lua_State *L, int t, int parent);
 
 jlong jni_createTable(JNIEnv *env, jobject jobj, jlong L);
+jboolean jni_isEmpty(JNIEnv *env, jobject jobj, jlong L, jlong table);
 
 jint jni_getTableSize(JNIEnv *env, jobject jobj, jlong L, jlong table);
 void jni_clearTableArray(JNIEnv *env, jobject jobj, jlong L, jlong table, jint from, jint to);
+void jni_removeTableIndex(JNIEnv *env, jobject jobj,jlong L,jlong table,jint index);
+void jni_clearTable(JNIEnv *env, jobject jobj,jlong L,jlong table);
+jlong jni_setMetatable(JNIEnv *env, jobject jobj, jlong Ls, jlong table, jlong meta);
+jlong jni_getMetatable(JNIEnv *env,jobject jobj,jlong Ls, jlong table);
 
 void jni_setTableNumber(JNIEnv *env, jobject jobj, jlong L, jlong table, jint k, jdouble v);
 void jni_setTableBoolean(JNIEnv *env, jobject jobj, jlong L, jlong table, jint k, jboolean v);
@@ -37,6 +47,9 @@ void jni_setTableSString(JNIEnv *env, jobject jobj, jlong L, jlong table, jstrin
 void jni_setTableSNil(JNIEnv *env, jobject jobj, jlong L, jlong table, jstring k);
 void jni_setTableSChild(JNIEnv *env, jobject jobj, jlong L, jlong table, jstring k, jobject c);
 void jni_setTableSChildN(JNIEnv *env, jobject jobj, jlong L, jlong table, jstring k, jlong c, jint type);
+
+void jni_setTableMethod(JNIEnv *env, jobject jobj, jlong L, jlong table, jint k, jstring clz, jstring methodName);
+void jni_setTableSMethod(JNIEnv *env, jobject jobj, jlong L, jlong table, jstring k, jstring clz, jstring methodName);
 
 jobject jni_getTableValue(JNIEnv *env, jobject jobj, jlong L, jlong table, jint k);
 jobject jni_getTableSValue(JNIEnv *env, jobject jobj, jlong L, jlong table, jstring k);

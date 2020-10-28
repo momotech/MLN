@@ -12,6 +12,7 @@
 #include "assets_reader.h"
 #include "saes.h"
 #include <unistd.h>
+#include <string.h>
 
 
 static AAssetManager *assetManager = NULL;

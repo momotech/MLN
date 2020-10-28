@@ -19,8 +19,11 @@ void _printTable(lua_State *L, int idx);    // for test
 void _dumpStack(lua_State *L);              // for test
 void _startTick();                          // for test
 void _endTick();                            // for test
+void _printTableReverse(lua_State *L, int idx, int level); // for test
 /// 打印table
 #define printTable(L, idx) _printTable(L, idx)
+/// 会打印table中的metatable，及子table
+#define printTableReverse(L, idx) _printTableReverse(L, idx, 0)
 /// 打印当前栈
 #define dumpStack(L) _dumpStack(L)
 /// 计时开始
@@ -29,6 +32,7 @@ void _endTick();                            // for test
 #define endTick()   _endTick()
 #else
 #define printTable(L, idx)
+#define printTableReverse(L, idx)
 #define dumpStack(L)
 #define startTick()
 #define endTick()

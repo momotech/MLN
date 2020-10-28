@@ -7,10 +7,15 @@
   */
 package com.immomo.mls.adapter;
 
+import androidx.annotation.NonNull;
+
 /**
  * Created by Xiong.Fangyu on 2018/11/13
  */
 public interface ScriptReaderCreator {
-
-    ScriptReader newScriptLoader(String src);
+    /**
+     * 根据信息创建脚本加载器
+     * @param src 路径或url等
+     */
+    @NonNull ScriptReader newScriptLoader(String src);
 }

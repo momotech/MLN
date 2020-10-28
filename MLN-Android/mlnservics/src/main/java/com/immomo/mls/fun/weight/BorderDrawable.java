@@ -28,9 +28,9 @@ public class BorderDrawable extends Drawable implements IBorderRadius {
 
     @NonNull
     protected final Path borderPath = new Path();
-    protected final RectF pathRect = new RectF();
+    protected final RectF borderPathRect = new RectF();
     @NonNull
-    private final Paint borderPathPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    protected final Paint borderPathPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 
     protected float borderWidth;
     protected final float[] radii, radiiIn;//borderWith内圈;
@@ -91,20 +91,20 @@ public class BorderDrawable extends Drawable implements IBorderRadius {
             return;
         }
         borderPath.reset();
-        pathRect.set(0, 0, w, h);
-        borderPath.addRoundRect(pathRect, radii, Path.Direction.CW);
+        borderPathRect.set(0, 0, w, h);
+        borderPath.addRoundRect(borderPathRect, radii, Path.Direction.CW);
 
         if (borderWidth > w / 2 || borderWidth > h / 2) {
             return;  //边框大于view宽高，效果异常
         }
 
-        pathRect.set(borderWidth, borderWidth, w - borderWidth, h - borderWidth);
+        borderPathRect.set(borderWidth, borderWidth, w - borderWidth, h - borderWidth);
 
         radiiIn[0] = radiiIn[1] = radii[0] - borderWidth > 0 ? radii[0] - borderWidth : 0;
         radiiIn[2] = radiiIn[3] = radii[2] - borderWidth > 0 ? radii[2] - borderWidth : 0;
         radiiIn[4] = radiiIn[5] = radii[4] - borderWidth > 0 ? radii[4] - borderWidth : 0;
         radiiIn[6] = radiiIn[7] = radii[6] - borderWidth > 0 ? radii[6] - borderWidth : 0;
-        borderPath.addRoundRect(pathRect, radiiIn, Path.Direction.CCW);
+        borderPath.addRoundRect(borderPathRect, radiiIn, Path.Direction.CCW);
     }
     //</editor-fold>
 

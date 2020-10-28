@@ -17,8 +17,9 @@ import com.immomo.mls.MLSConfigs;
 import com.immomo.mls.fun.constants.StatusBarStyle;
 import com.immomo.mls.fun.ud.UDColor;
 import com.immomo.mls.fun.ud.UDMap;
+import com.immomo.mls.fun.ud.UDSafeAreaRect;
 import com.immomo.mls.fun.ud.view.UDViewGroup;
-import com.immomo.mls.fun.ui.SafeAreaManager;
+import com.immomo.mls.fun.ui.DefaultSafeAreaManager;
 import com.immomo.mls.receiver.ConnectionStateChangeBroadcastReceiver;
 import com.immomo.mls.util.AndroidUtil;
 import com.immomo.mls.util.DimenUtil;
@@ -69,6 +70,11 @@ public class UDLuaView extends UDViewGroup<LuaView> implements ConnectionStateCh
             "sizeChangeEnable",
             "backKeyEnabled",
             "safeArea",
+            "safeAreaInsetsTop",
+            "safeAreaInsetsBottom",
+            "safeAreaInsetsLeft",
+            "safeAreaInsetsRight",
+            "safeAreaAdapter",
             "i_keyBoardFrameChangeCallback",
     };
 
@@ -82,7 +88,7 @@ public class UDLuaView extends UDViewGroup<LuaView> implements ConnectionStateCh
 
     private UDMap extraData;
     private int statusTextStyle = -1;
-    private SafeAreaManager safeAreaManager;
+    private DefaultSafeAreaManager safeAreaManager;
 
     @LuaApiUsed
     protected UDLuaView(long L, LuaValue[] v) {
@@ -277,13 +283,46 @@ public class UDLuaView extends UDViewGroup<LuaView> implements ConnectionStateCh
 
     @LuaApiUsed
     public LuaValue[] safeArea(LuaValue[] v) {
-        int safeArea = v.length > 0 ? v[0].toInt() : SafeAreaManager.CLOSE;
+        int safeArea = v.length > 0 ? v[0].toInt() : DefaultSafeAreaManager.CLOSE;
 
-        if (safeAreaManager == null) {
-            safeAreaManager = new SafeAreaManager();
-        }
-        safeAreaManager.safeArea(safeArea, this);
+        getSafeArea().safeArea(safeArea, this);
         return null;
+    }
+
+    @LuaApiUsed
+    public LuaValue[] safeAreaInsetsTop(LuaValue[] v) {
+        return getSafeArea().safeAreaInsetsTop();
+    }
+
+    @LuaApiUsed
+    public LuaValue[] safeAreaInsetsBottom(LuaValue[] v) {
+        return getSafeArea().safeAreaInsetsBottom();
+    }
+
+    @LuaApiUsed
+    public LuaValue[] safeAreaInsetsLeft(LuaValue[] v) {
+        return getSafeArea().safeAreaInsetsLeft();
+    }
+
+    @LuaApiUsed
+    public LuaValue[] safeAreaInsetsRight(LuaValue[] v) {
+        return getSafeArea().safeAreaInsetsRight();
+    }
+
+    @LuaApiUsed
+    public LuaValue[] safeAreaAdapter(LuaValue[] v) {
+        UDSafeAreaRect safeAreaAdapter = v.length > 0 ? (UDSafeAreaRect) v[0].toUserdata() : null;
+        if (safeAreaAdapter != null) {
+            getSafeArea().setSafeAreaAdapter(safeAreaAdapter,this);
+        }
+        return null;
+    }
+
+    private DefaultSafeAreaManager getSafeArea() {
+        if (safeAreaManager == null) {
+            safeAreaManager = new DefaultSafeAreaManager(getContext());
+        }
+        return safeAreaManager;
     }
 
     @Override

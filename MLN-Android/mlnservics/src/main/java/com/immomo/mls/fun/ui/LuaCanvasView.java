@@ -17,7 +17,7 @@ import com.immomo.mls.fun.weight.BorderRadiusView;
 /**
  * Created by Zhang.ke on 2019/7/26.
  */
-public class LuaCanvasView<U extends UDCanvasView> extends BorderRadiusView  implements ILView<U>{
+public class LuaCanvasView<U extends UDCanvasView> extends BorderRadiusView implements ILView<U> {
     protected U userdata;
 
     private ViewLifeCycleCallback cycleCallback;
@@ -57,10 +57,23 @@ public class LuaCanvasView<U extends UDCanvasView> extends BorderRadiusView  imp
     }
 
     @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        getUserdata().measureOverLayout(widthMeasureSpec, heightMeasureSpec);
+    }
+
+    @Override
+    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+        super.onLayout(changed, left, top, right, bottom);
+        getUserdata().layoutOverLayout(left, top, right, bottom);
+    }
+
+    @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         if (getUserdata() != null) {
             ((ICanvasView) getUserdata()).onDrawCallback(canvas);
+            getUserdata().drawOverLayout(canvas);
         }
     }
 

@@ -27,7 +27,6 @@ public class MLSConfigs {
     public static int viewPagerConfig = 1;      //0 | 1
 
     public static int maxLoadCount = 2;
-    public static boolean readScriptFileInJava = false;
     /**
      * 默认加载超时为20s
      */
@@ -43,8 +42,8 @@ public class MLSConfigs {
     public static OnLayoutException onLayoutException;
 
     static boolean openDebug = false;
-    static CharSequence uninitTitle = "当前版本不支持";
-    static CharSequence uninitMsg = "";
+    public static CharSequence uninitTitle = "当前版本不支持";
+    public static CharSequence uninitMsg = "";
 
     public static void setUninitTitle(CharSequence uninitTitle) {
         MLSConfigs.uninitTitle = uninitTitle;

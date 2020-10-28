@@ -1,0 +1,344 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ArtifactsWorkspaceSettings">
+    <artifacts-to-build>
+      <artifact name="mlncgen:jar" />
+    </artifacts-to-build>
+  </component>
+  <component name="BranchesTreeState">
+    <expand>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="LOCAL_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="LOCAL_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="GROUP_NODE:feature" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="LOCAL_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="GROUP_NODE:merge" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="GROUP_NODE:origin" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="GROUP_NODE:origin" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="GROUP_NODE:feature" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="GROUP_NODE:origin" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="GROUP_NODE:merge" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="GROUP_NODE:origin" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="GROUP_NODE:wangyang" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="GROUP_NODE:origin" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="GROUP_NODE:xjf" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="GROUP_NODE:origin" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="GROUP_NODE:zhangke" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+    </expand>
+    <select />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="77cad24b-e2d9-4eb2-8892-c7398ac76eec" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/../../mlncore/src/main/java/org/luaj/vm2/utils/CGenerate.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../gen_import.sh" beforeDir="false" afterPath="$PROJECT_DIR$/../../gen_import.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../mlncgen.jar" beforeDir="false" afterPath="$PROJECT_DIR$/../../mlncgen.jar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../mlnservics/generateNativeBridge.sh" beforeDir="false" afterPath="$PROJECT_DIR$/../../mlnservics/generateNativeBridge.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../mlnservics/src/main/jni/mln/bridge/mmarray.c" beforeDir="false" afterPath="$PROJECT_DIR$/../../mlnservics/src/main/jni/mln/bridge/mmarray.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../mlnservics/src/main/jni/mln/bridge/mmcanvas.c" beforeDir="false" afterPath="$PROJECT_DIR$/../../mlnservics/src/main/jni/mln/bridge/mmcanvas.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../mlnservics/src/main/jni/mln/bridge/mmmap.c" beforeDir="false" afterPath="$PROJECT_DIR$/../../mlnservics/src/main/jni/mln/bridge/mmmap.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../mmui/generateNativeBridge.sh" beforeDir="false" afterPath="$PROJECT_DIR$/../../mmui/generateNativeBridge.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../mmui/src/main/java/com/immomo/mmui/databinding/LTCDataBinding.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../mmui/src/main/java/com/immomo/mmui/databinding/LTCDataBinding.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../mmui/src/main/java/com/immomo/mmui/ud/anim/InteractiveBehavior.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../mmui/src/main/java/com/immomo/mmui/ud/anim/InteractiveBehavior.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../mmui/src/main/jni/bridge/interactive_behavior.c" beforeDir="false" afterPath="$PROJECT_DIR$/../../mmui/src/main/jni/bridge/interactive_behavior.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../mmui/src/main/jni/bridge/mmdatabinding.c" beforeDir="false" afterPath="$PROJECT_DIR$/../../mmui/src/main/jni/bridge/mmdatabinding.c" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="DefaultGradleProjectSettings">
+    <option name="isMigrated" value="true" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../.." />
+  </component>
+  <component name="ProjectFrameBounds" extendedState="6">
+    <option name="x" value="657" />
+    <option name="y" value="37" />
+    <option name="width" value="1680" />
+    <option name="height" value="970" />
+  </component>
+  <component name="ProjectId" id="1e9y2HDoGaJO5fy2atqElKIgG7w" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="project.structure.last.edited" value="Artifacts" />
+    <property name="project.structure.proportion" value="0.15" />
+    <property name="project.structure.side.proportion" value="0.2" />
+    <property name="restartRequiresConfirmation" value="false" />
+    <property name="settings.editor.selected.configurable" value="preferences.keymap" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveInnerDialog.RECENTS_KEY">
+      <recent name="com.xfy.shell" />
+    </key>
+  </component>
+  <component name="RunManager">
+    <configuration default="true" type="Applet">
+      <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Main" type="Application" factoryName="Application" temporary="true">
+      <option name="MAIN_CLASS_NAME" value="com.xfy.shell.Main" />
+      <module name="mlncgen" />
+      <option name="PROGRAM_PARAMETERS" value="-in $PROJECT_DIR$/../mmui/src/main/java/com/immomo/mmui/ud/anim/InteractiveBehavior.java -out $PROJECT_DIR$/../mmui/src/main/java/com/immomo/mmui/ud/anim" />
+      <RunnerSettings RunnerId="Run" />
+      <ConfigurationWrapper RunnerId="Run" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="Application" factoryName="Application">
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="JUnit" factoryName="JUnit">
+      <option name="TEST_OBJECT" value="class" />
+      <option name="WORKING_DIRECTORY" value="$MODULE_DIR$" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="TestNG">
+      <option name="TEST_OBJECT" value="CLASS" />
+      <option name="WORKING_DIRECTORY" value="$MODULE_DIR$" />
+      <properties />
+      <listeners />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="#org.jetbrains.idea.devkit.run.PluginConfigurationType">
+      <module name="" />
+      <option name="VM_PARAMETERS" value="-Xmx512m -Xms256m -XX:MaxPermSize=250m -ea" />
+      <option name="PROGRAM_PARAMETERS" />
+      <predefined_log_file enabled="true" id="idea.log" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Application.Main" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="77cad24b-e2d9-4eb2-8892-c7398ac76eec" name="Default Changelist" comment="" />
+      <created>1581488838307</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1581488838307</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="oldMeFiltersMigrated" value="true" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="341" y="1303" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1599537951460">
+      <screen x="199" y="1050" width="1344" height="1008" />
+    </state>
+    <state x="178" y="264" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1680.1050/-1080.-325.1080.1920@0.0.1680.1050" timestamp="1597138068846" />
+    <state x="341" y="1303" key="#com.intellij.execution.impl.EditConfigurationsDialog/199.1050.1344.1008/0.0.1680.1050@199.1050.1344.1008" timestamp="1599537951460" />
+    <state x="684" y="1267" key="#com.intellij.ide.util.MemberChooser" timestamp="1599554787676">
+      <screen x="199" y="1050" width="1344" height="1008" />
+    </state>
+    <state x="684" y="1267" key="#com.intellij.ide.util.MemberChooser/199.1050.1344.1008/0.0.1680.1050@199.1050.1344.1008" timestamp="1599554787676" />
+    <state x="909" y="1427" key="#xdebugger.evaluate" timestamp="1599552373964">
+      <screen x="199" y="1050" width="1344" height="1008" />
+    </state>
+    <state x="888" y="393" key="#xdebugger.evaluate/0.0.1680.1050/-1080.-325.1080.1920@0.0.1680.1050" timestamp="1595846451426" />
+    <state x="909" y="1427" key="#xdebugger.evaluate/199.1050.1344.1008/0.0.1680.1050@199.1050.1344.1008" timestamp="1599552373964" />
+    <state width="453" height="466" key="DebuggerActiveHint" timestamp="1595846196613">
+      <screen x="0" y="0" width="1680" height="1050" />
+    </state>
+    <state width="453" height="466" key="DebuggerActiveHint/0.0.1680.1050/-1080.-325.1080.1920@0.0.1680.1050" timestamp="1595846196613" />
+    <state x="100" y="100" width="1480" height="850" key="DiffContextDialog" timestamp="1594095883334">
+      <screen x="0" y="23" width="1680" height="970" />
+    </state>
+    <state x="100" y="100" width="1480" height="850" key="DiffContextDialog/0.0.1680.1050@0.0.1680.1050" timestamp="1594089689297" />
+    <state x="100" y="100" width="1480" height="850" key="DiffContextDialog/0.23.1680.970@0.23.1680.970" timestamp="1594095883334" />
+    <state width="1302" height="281" key="GridCell.Tab.0.bottom" timestamp="1599557826738">
+      <screen x="199" y="1050" width="1344" height="1008" />
+    </state>
+    <state width="1638" height="421" key="GridCell.Tab.0.bottom/0.0.1680.1050/-1080.-325.1080.1920@0.0.1680.1050" timestamp="1597136156570" />
+    <state width="1638" height="307" key="GridCell.Tab.0.bottom/0.0.1680.1050@0.0.1680.1050" timestamp="1594114984692" />
+    <state width="1638" height="421" key="GridCell.Tab.0.bottom/0.23.1680.970/-1080.-302.1080.1897@0.23.1680.970" timestamp="1595846904412" />
+    <state width="1638" height="307" key="GridCell.Tab.0.bottom/0.23.1680.970@0.23.1680.970" timestamp="1594114885669" />
+    <state width="1302" height="281" key="GridCell.Tab.0.bottom/199.1050.1344.1008/0.0.1680.1050@199.1050.1344.1008" timestamp="1599557826738" />
+    <state width="1302" height="281" key="GridCell.Tab.0.center" timestamp="1599557826736">
+      <screen x="199" y="1050" width="1344" height="1008" />
+    </state>
+    <state width="1638" height="421" key="GridCell.Tab.0.center/0.0.1680.1050/-1080.-325.1080.1920@0.0.1680.1050" timestamp="1597136156568" />
+    <state width="1638" height="307" key="GridCell.Tab.0.center/0.0.1680.1050@0.0.1680.1050" timestamp="1594114984690" />
+    <state width="1638" height="421" key="GridCell.Tab.0.center/0.23.1680.970/-1080.-302.1080.1897@0.23.1680.970" timestamp="1595846904410" />
+    <state width="1638" height="307" key="GridCell.Tab.0.center/0.23.1680.970@0.23.1680.970" timestamp="1594114885648" />
+    <state width="1302" height="281" key="GridCell.Tab.0.center/199.1050.1344.1008/0.0.1680.1050@199.1050.1344.1008" timestamp="1599557826736" />
+    <state width="1302" height="281" key="GridCell.Tab.0.left" timestamp="1599557826736">
+      <screen x="199" y="1050" width="1344" height="1008" />
+    </state>
+    <state width="1638" height="421" key="GridCell.Tab.0.left/0.0.1680.1050/-1080.-325.1080.1920@0.0.1680.1050" timestamp="1597136156567" />
+    <state width="1638" height="307" key="GridCell.Tab.0.left/0.0.1680.1050@0.0.1680.1050" timestamp="1594114984690" />
+    <state width="1638" height="421" key="GridCell.Tab.0.left/0.23.1680.970/-1080.-302.1080.1897@0.23.1680.970" timestamp="1595846904409" />
+    <state width="1638" height="307" key="GridCell.Tab.0.left/0.23.1680.970@0.23.1680.970" timestamp="1594114885634" />
+    <state width="1302" height="281" key="GridCell.Tab.0.left/199.1050.1344.1008/0.0.1680.1050@199.1050.1344.1008" timestamp="1599557826736" />
+    <state width="1302" height="281" key="GridCell.Tab.0.right" timestamp="1599557826737">
+      <screen x="199" y="1050" width="1344" height="1008" />
+    </state>
+    <state width="1638" height="421" key="GridCell.Tab.0.right/0.0.1680.1050/-1080.-325.1080.1920@0.0.1680.1050" timestamp="1597136156569" />
+    <state width="1638" height="307" key="GridCell.Tab.0.right/0.0.1680.1050@0.0.1680.1050" timestamp="1594114984691" />
+    <state width="1638" height="421" key="GridCell.Tab.0.right/0.23.1680.970/-1080.-302.1080.1897@0.23.1680.970" timestamp="1595846904411" />
+    <state width="1638" height="307" key="GridCell.Tab.0.right/0.23.1680.970@0.23.1680.970" timestamp="1594114885653" />
+    <state width="1302" height="281" key="GridCell.Tab.0.right/199.1050.1344.1008/0.0.1680.1050@199.1050.1344.1008" timestamp="1599557826737" />
+    <state width="1302" height="347" key="GridCell.Tab.1.bottom" timestamp="1599553561085">
+      <screen x="199" y="1050" width="1344" height="1008" />
+    </state>
+    <state width="1638" height="456" key="GridCell.Tab.1.bottom/0.0.1680.1050/-1080.-325.1080.1920@0.0.1680.1050" timestamp="1595921033218" />
+    <state width="1638" height="456" key="GridCell.Tab.1.bottom/0.0.1680.1050@0.0.1680.1050" timestamp="1594113624281" />
+    <state width="1302" height="347" key="GridCell.Tab.1.bottom/199.1050.1344.1008/0.0.1680.1050@199.1050.1344.1008" timestamp="1599553561085" />
+    <state width="1302" height="347" key="GridCell.Tab.1.center" timestamp="1599553561084">
+      <screen x="199" y="1050" width="1344" height="1008" />
+    </state>
+    <state width="1638" height="456" key="GridCell.Tab.1.center/0.0.1680.1050/-1080.-325.1080.1920@0.0.1680.1050" timestamp="1595921033217" />
+    <state width="1638" height="456" key="GridCell.Tab.1.center/0.0.1680.1050@0.0.1680.1050" timestamp="1594113624280" />
+    <state width="1302" height="347" key="GridCell.Tab.1.center/199.1050.1344.1008/0.0.1680.1050@199.1050.1344.1008" timestamp="1599553561084" />
+    <state width="1302" height="347" key="GridCell.Tab.1.left" timestamp="1599553561083">
+      <screen x="199" y="1050" width="1344" height="1008" />
+    </state>
+    <state width="1638" height="456" key="GridCell.Tab.1.left/0.0.1680.1050/-1080.-325.1080.1920@0.0.1680.1050" timestamp="1595921033216" />
+    <state width="1638" height="456" key="GridCell.Tab.1.left/0.0.1680.1050@0.0.1680.1050" timestamp="1594113624279" />
+    <state width="1302" height="347" key="GridCell.Tab.1.left/199.1050.1344.1008/0.0.1680.1050@199.1050.1344.1008" timestamp="1599553561083" />
+    <state width="1302" height="347" key="GridCell.Tab.1.right" timestamp="1599553561084">
+      <screen x="199" y="1050" width="1344" height="1008" />
+    </state>
+    <state width="1638" height="456" key="GridCell.Tab.1.right/0.0.1680.1050/-1080.-325.1080.1920@0.0.1680.1050" timestamp="1595921033218" />
+    <state width="1638" height="456" key="GridCell.Tab.1.right/0.0.1680.1050@0.0.1680.1050" timestamp="1594113624280" />
+    <state width="1302" height="347" key="GridCell.Tab.1.right/199.1050.1344.1008/0.0.1680.1050@199.1050.1344.1008" timestamp="1599553561084" />
+    <state x="486" y="288" key="NewModule_or_Project.wizard" timestamp="1597135485418">
+      <screen x="0" y="0" width="1680" height="1050" />
+    </state>
+    <state x="486" y="288" key="NewModule_or_Project.wizard/0.0.1680.1050/-1080.-325.1080.1920@0.0.1680.1050" timestamp="1597135485418" />
+    <state x="461" y="1152" key="SettingsEditor" timestamp="1599122865461">
+      <screen x="199" y="1050" width="1344" height="1008" />
+    </state>
+    <state x="328" y="106" key="SettingsEditor/0.0.1680.1050/-1080.-325.1080.1920@0.0.1680.1050" timestamp="1597135354372" />
+    <state x="461" y="1152" key="SettingsEditor/199.1050.1344.1008/0.0.1680.1050@199.1050.1344.1008" timestamp="1599122865461" />
+    <state x="601" y="1304" width="549" height="524" key="StructurePopup" timestamp="1599550357190">
+      <screen x="199" y="1050" width="1344" height="1008" />
+    </state>
+    <state x="601" y="1304" width="549" height="524" key="StructurePopup/199.1050.1344.1008/0.0.1680.1050@199.1050.1344.1008" timestamp="1599550357190" />
+    <state width="840" height="525" key="XDebugger.FullValuePopup" timestamp="1595920826659">
+      <screen x="0" y="0" width="1680" height="1050" />
+    </state>
+    <state width="840" height="525" key="XDebugger.FullValuePopup/0.0.1680.1050/-1080.-325.1080.1920@0.0.1680.1050" timestamp="1595920826659" />
+    <state x="632" y="1319" width="556" height="490" key="find.popup" timestamp="1599557813572">
+      <screen x="199" y="1050" width="1344" height="1008" />
+    </state>
+    <state x="541" y="280" width="598" height="490" key="find.popup/0.0.1680.1050/-1080.-325.1080.1920@0.0.1680.1050" timestamp="1597140679971" />
+    <state x="632" y="1319" width="556" height="490" key="find.popup/199.1050.1344.1008/0.0.1680.1050@199.1050.1344.1008" timestamp="1599557813572" />
+    <state x="300" y="137" key="new project wizard" timestamp="1597135575131">
+      <screen x="0" y="0" width="1680" height="1050" />
+    </state>
+    <state x="300" y="137" key="new project wizard/0.0.1680.1050/-1080.-325.1080.1920@0.0.1680.1050" timestamp="1597135575131" />
+    <state x="662" y="1327" key="refactoring.ChangeSignatureDialog" timestamp="1599548335714">
+      <screen x="199" y="1050" width="1344" height="1008" />
+    </state>
+    <state x="662" y="1327" key="refactoring.ChangeSignatureDialog/199.1050.1344.1008/0.0.1680.1050@199.1050.1344.1008" timestamp="1599548335714" />
+    <state x="505" y="248" key="run.anything.popup" timestamp="1595848427953">
+      <screen x="0" y="0" width="1680" height="1050" />
+    </state>
+    <state x="505" y="248" key="run.anything.popup/0.0.1680.1050/-1080.-325.1080.1920@0.0.1680.1050" timestamp="1595848427953" />
+    <state x="603" y="1274" width="670" height="649" key="search.everywhere.popup" timestamp="1599119623667">
+      <screen x="199" y="1050" width="1344" height="1008" />
+    </state>
+    <state x="505" y="233" width="670" height="676" key="search.everywhere.popup/0.0.1680.1050/-1080.-325.1080.1920@0.0.1680.1050" timestamp="1595843018900" />
+    <state x="603" y="1274" width="670" height="649" key="search.everywhere.popup/199.1050.1344.1008/0.0.1680.1050@199.1050.1344.1008" timestamp="1599119623667" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/com/xfy/shell/Annotation.java</url>
+          <line>120</line>
+          <option name="timeStamp" value="16" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+    <watches-manager>
+      <configuration name="Application">
+        <watch expression="new String(chars, i, 100)" language="JAVA" custom="java.lang.String" />
+        <watch expression="new String(chars, methodEnd, 100)" language="JAVA" custom="java.lang.String" />
+        <watch expression="new String(chars, min, i-min+1)" language="JAVA" />
+      </configuration>
+    </watches-manager>
+  </component>
+</project>

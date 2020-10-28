@@ -29,7 +29,7 @@ typedef struct {
 
 static l_noret error(LoadState* S, const char* why)
 {
- luaO_pushfstring(S->L,"%s: %s precompiled chunk",S->name,why);
+ luaO_pushfstring(S->L,"%s:编译后二进制文件%s ",S->name,why);
  luaD_throw(S->L,LUA_ERRSYNTAX);
 }
 
@@ -44,7 +44,7 @@ static l_noret error(LoadState* S, const char* why)
 
 static void LoadBlock(LoadState* S, void* b, size_t size)
 {
- if (luaZ_read(S->Z,b,size)!=0) error(S,"truncated");
+ if (luaZ_read(S->Z,b,size)!=0) error(S,"不完整");
 }
 
 static int LoadChar(LoadState* S)
@@ -58,7 +58,7 @@ static int LoadInt(LoadState* S)
 {
  int x;
  LoadVar(S,x);
- if (x<0) error(S,"corrupted");
+ if (x<0) error(S,"损坏");
  return x;
 }
 
@@ -199,9 +199,13 @@ static void LoadHeader(LoadState* S)
  memcpy(s,h,sizeof(char));			/* first char already read */
  LoadBlock(S,s+sizeof(char),LUAC_HEADERSIZE-sizeof(char));
  if (memcmp(h,s,N0)==0) return;
- if (memcmp(h,s,N1)!=0) error(S,"not a");
- if (memcmp(h,s,N2)!=0) error(S,"version mismatch in");
- if (memcmp(h,s,N3)!=0) error(S,"incompatible"); else error(S,"corrupted");
+ if (memcmp(h,s,N1)!=0) error(S,"头错误");
+ if (memcmp(h,s,N2)!=0) error(S,"版本错误，请使用" LUA_RELEASE "编译");
+ if (memcmp(h,s,N3)!=0) {
+  if (sizeof(size_t) == 8) error(S, "不兼容，请使用" LUA_RELEASE " x64版本编译");
+  else error(S, "不兼容，请使用" LUA_RELEASE " x32版本编译");
+ }
+ else error(S,"损坏");
 }
 
 /*

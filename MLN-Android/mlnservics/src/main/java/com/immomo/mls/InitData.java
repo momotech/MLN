@@ -20,6 +20,11 @@ import java.util.Map;
  * Created by XiongFangyu on 2018/8/15.
  */
 public class InitData implements Parcelable {
+
+    /**
+     * lua文件的根目录
+     */
+    public String rootPath;
     /**
      * lua脚本地址
      */
@@ -55,6 +60,7 @@ public class InitData implements Parcelable {
         showLoadingView(true);
         showLoadingBackground(true);
         forceDebug(MLSConfigs.openDebug);
+        forceNotUseX64();
     }
 
     /**
@@ -102,11 +108,13 @@ public class InitData implements Parcelable {
         return this;
     }
 
-    /**
-     * 不使用x64文件夹加载脚本，一般在扫码中使用
-     */
     public InitData forceNotUseX64() {
         addType(Constants.LT_NO_X64);
+        return this;
+    }
+
+    public InitData useX64() {
+        removeType(Constants.LT_NO_X64);
         return this;
     }
 

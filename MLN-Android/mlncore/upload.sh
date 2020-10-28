@@ -14,11 +14,13 @@ function changeSettingAfter {
 function closeNativeInfo() {
     sed -i '' "s/#*\(.*DJ_API_INFO\)/#\1/g" ./src/main/jni/japi/CMakeLists.txt
     sed -i '' "s/#*\(.*DMEM_INFO\)/#\1/g" ./src/main/jni/japi/CMakeLists.txt
+    sed -i '' "s/#*\(.*DSTATISTIC_PERFORMANCE\)/#\1/g" ./src/main/jni/japi/CMakeLists.txt
 }
 
 function openNativeInfo() {
     sed -i '' "s/#*\(.*DJ_API_INFO\)/\1/g" ./src/main/jni/japi/CMakeLists.txt
-    sed -i '' "s/#*\(.*DMEM_INFO\)/\1/g" ./src/main/jni/japi/CMakeLists.txt
+#    sed -i '' "s/#*\(.*DMEM_INFO\)/\1/g" ./src/main/jni/japi/CMakeLists.txt
+    sed -i '' "s/#*\(.*DSTATISTIC_PERFORMANCE\)/\1/g" ./src/main/jni/japi/CMakeLists.txt
 }
 
 changeSettingBefore
@@ -26,6 +28,8 @@ closeNativeInfo
 
 echo '--------------task:bintrayUpload--------------'
 ./../gradlew :mlncore:bintrayUpload
+ret=$?
 
 changeSettingAfter
 openNativeInfo
+exit $ret

@@ -25,10 +25,32 @@
 
             <EditText
                 android:id="@+id/hr_use_port"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="8172"
                 android:inputType="numberDecimal"
+                android:textSize="20sp"
+                android:textColor="#080808" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/lua_setting_serial"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#080808"
+                android:text="手机序列号："
+                android:textSize="20sp" />
+
+            <EditText
+                android:id="@+id/hr_serial"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="unknown"
                 android:textSize="20sp"
                 android:textColor="#080808" />
         </LinearLayout>
@@ -101,6 +123,30 @@
                     android:textColor="#080808"
                     android:textOff="@string/debug_close"
                     android:textOn="@string/debug_open" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="20sp"
+                    android:text="@string/log_tip"
+                    android:textColor="#080808" />
+                <Button
+                    android:id="@+id/btn_start_log"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/start_log_tip"
+                    android:layout_marginLeft="5dp"/>
+
+                <Button
+                    android:id="@+id/btn_finish_log"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/finish_log_tip"
+                    android:layout_marginLeft="5dp"/>
             </LinearLayout>
         </LinearLayout>
 

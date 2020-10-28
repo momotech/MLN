@@ -31,7 +31,7 @@ public class ScriptFile {
 
     private byte[] sourceData;
     private boolean compiled = false;
-
+    private final boolean isAssetsPath;
     /**
      * 构造方法
      * @param chunkName require时需要的名称
@@ -44,6 +44,7 @@ public class ScriptFile {
         this.isMain = isMain;
         path = null;
         pathType = false;
+        isAssetsPath = false;
     }
 
     /**
@@ -53,10 +54,15 @@ public class ScriptFile {
      * @param isMain    是否是主入口
      */
     public ScriptFile(String chunkName, String path, boolean isMain) {
+        this(chunkName, path, isMain, path.startsWith(Constants.ASSETS_PREFIX));
+    }
+
+    public ScriptFile(String chunkName, String path, boolean isMain, boolean isAssets) {
         this.chunkName = chunkName;
         this.path = path;
         pathType = true;
         this.isMain = isMain;
+        this.isAssetsPath = isAssets;
     }
 
     /**
@@ -113,13 +119,15 @@ public class ScriptFile {
     }
 
     public boolean isAssetsPath() {
-        return path != null && path.startsWith(Constants.ASSETS_PREFIX);
+        return isAssetsPath;
     }
 
     public String getAssetsPath() {
-        if (path == null || !path.startsWith(Constants.ASSETS_PREFIX))
+        if (!isAssetsPath)
             return path;
-        return path.substring(Constants.ASSETS_PREFIX.length());
+        if (path.startsWith(Constants.ASSETS_PREFIX))
+            return path.substring(Constants.ASSETS_PREFIX.length());
+        return path;
     }
     /**
      * 设置assets目录下文件，并读入内存中

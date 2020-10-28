@@ -19,18 +19,21 @@ import org.luaj.vm2.utils.LuaApiUsed;
  */
 @LuaApiUsed
 public class ${ClassName} extends LuaUserdata<${WrapClass}> {
+    public static final String LUA_CLASS_NAME = "${LuaClassName}";
     //<editor-fold desc="native method">
     /**
      * 初始化方法
+     * 反射调用
+     * @see com.immomo.mls.wrapper.Register.NewUDHolder
      */
     public static native void _init();
 
     /**
      * 注册到虚拟机方法
-     * @param l 虚拟机C层地址
-     * @see Globals#getL_State()
+     * 反射调用
+     * @see com.immomo.mls.wrapper.Register.NewUDHolder
      */
-    public static native void _register(long l);
+    public static native void _register(long l, String parent);
     //</editor-fold>
 
     //<editor-fold desc="Constructors">
