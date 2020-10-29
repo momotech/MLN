@@ -31,7 +31,7 @@ public class MLSResourceFinder implements ResourceFinder {
     public MLSResourceFinder(String src, ParsedUrl url) {
         this.src = src;
         this.parsedUrl = url;
-        path = LuaUrlUtils.getUrlPath(url.toString());
+        path = LuaUrlUtils.getUrlPath(url.getUrlWithoutParams());
         errorMsg = new StringBuilder();
         if (!path.endsWith(File.separator)) {
             path += File.separator;

@@ -11,6 +11,7 @@ import android.content.Context;
 import android.util.AttributeSet;
 
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * Author       :   wu.tianlong@immomo.com
@@ -45,5 +46,12 @@ public class LuaGridLayoutManager extends GridLayoutManager implements IScrollEn
     @Override
     public boolean canScrollHorizontally() {
         return isScrollEnabled && super.canScrollHorizontally();
+    }
+
+    @Override
+    public void onLayoutChildren(RecyclerView.Recycler recycler, RecyclerView.State state) {
+        try {
+            super.onLayoutChildren(recycler, state);
+        } catch (Throwable ignore) {}
     }
 }

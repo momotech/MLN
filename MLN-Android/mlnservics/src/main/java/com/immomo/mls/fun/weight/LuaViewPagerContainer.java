@@ -8,6 +8,7 @@
 package com.immomo.mls.fun.weight;
 
 import android.content.Context;
+import android.graphics.Canvas;
 
 import com.immomo.mls.fun.ud.view.UDViewPager;
 import com.immomo.mls.fun.ui.IViewPager;
@@ -30,6 +31,24 @@ public class LuaViewPagerContainer extends BorderRadiusFrameLayout implements IV
         udViewPager = userdata;
         luaViewPager = new LuaViewPager(context, userdata);
         addView(luaViewPager, LuaViewUtil.createRelativeLayoutParamsMM());
+    }
+
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        getUserdata().measureOverLayout(widthMeasureSpec, heightMeasureSpec);
+    }
+
+    @Override
+    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+        super.onLayout(changed, left, top, right, bottom);
+        getUserdata().layoutOverLayout(left, top, right, bottom);
+    }
+
+    @Override
+    protected void dispatchDraw(Canvas canvas) {
+        super.dispatchDraw(canvas);
+        getUserdata().drawOverLayout(canvas);
     }
 
     @Override

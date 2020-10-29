@@ -36,5 +36,6 @@ message pbbasecommand {
                 COVERAGESUMMARY = 13;
                 COVERAGEDETAIL = 14;
                 COVREAGEVISUAL = 15;
+                IPADDRESS = 16;
             }
 }

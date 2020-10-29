@@ -24,6 +24,7 @@ allprojects {
     }
 
     ext {
+        lua_debug = false
         implementation_debug = true
 
         compileSdkVersion = 28
@@ -34,14 +35,25 @@ allprojects {
         recyclerViewVersion = "1.1.0-beta05"
         protobufVersion = '3.0.1'
 
-        mlnCoreVersion = '1.0.0'
-        mlnsVersion = '1.0.0'
-        processorVersion = '1.0.0'
-        annotationVersion = '1.0.0'
-        hotreloadVersion = '1.0.0'
+        mlnCoreVersion = '1.2.1_beta10261'
+        mlnsVersion = '1.2.1_beta10261'
+        processorVersion = '1.2.0'
+        annotationVersion = '1.2.0'
+        hotreloadVersion = '1.2.1_beta10261'
+        mmuiVersion = '1.0.1_beta10261'
+        yogaVersion = '1.0.1_beta10261'
     }
 }
 
 task clean(type: Delete) {
     delete rootProject.buildDir
+}
+subprojects {
+    configurations.all {
+        resolutionStrategy {
+            dependencySubstitution {
+                force "androidx.recyclerview:recyclerview:$androidxVersion"
+            }
+        }
+    }
 }

@@ -1125,7 +1125,7 @@ static void *in_thread(void *arg) {
     Thread_Arg *ta = (Thread_Arg *) arg;
     Isolate *parent = ta->parent;
     const char *tname = copystr(ta->thread_name);
-#if defined(JAVA_ENV)
+#if defined(ANDROID)
     pthread_t pt = pthread_self();
     pthread_setname_np(pt, tname);
 #else

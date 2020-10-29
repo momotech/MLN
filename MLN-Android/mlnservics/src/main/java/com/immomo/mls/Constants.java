@@ -31,8 +31,8 @@ public interface Constants {
     /**
      * 适当的时候，更新sdk版本，更新需记录文档，并同步iOS
      */
-    String SDK_VERSION = "1.5.1";
-    int SDK_VERSION_INT = 41;
+    String SDK_VERSION = "1.6.0";
+    int SDK_VERSION_INT = 43;
     //Bundle encrypt and decrypt
     String POSTFIX_LUA = ".lua";
     String POSTFIX_X64 = "64";

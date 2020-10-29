@@ -7,6 +7,9 @@
   */
 package com.immomo.mls;
 
+import android.os.Looper;
+import android.os.SystemClock;
+
 import androidx.annotation.Nullable;
 
 import com.immomo.mls.adapter.MLSThreadAdapter;
@@ -18,6 +21,7 @@ import org.luaj.vm2.Globals;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -82,7 +86,7 @@ public class PreGlobalInitUtils {
         MLSAdapterContainer.getThreadAdapter().execute(MLSThreadAdapter.Priority.HIGH, new Runnable() {
             @Override
             public void run() {
-                LuaViewManager.setupGlobals(globals);
+                setupGlobals(globals);
                 try {
                     lock.lock();
                     preInitGlobals.addLast(globals);
@@ -91,5 +95,67 @@ public class PreGlobalInitUtils {
                 }
             }
         });
+    }
+
+    /**
+     * setup global values
+     *
+     * @param globals
+     */
+    public static Globals setupGlobals(final Globals globals) {
+        if (globals == null)
+            return null;
+        if (Looper.myLooper() == Looper.getMainLooper()) {
+            realSetupGlobals(globals);
+        } else {
+            final Lock lock = new ReentrantLock();
+            final Condition condition = lock.newCondition();
+            MainThreadExecutor.post(new LockRunnable(lock, condition) {
+                @Override
+                public void realRun() {
+                    realSetupGlobals(globals);
+                }
+            });
+            try {
+                lock.lock();
+                condition.await();
+            } catch (InterruptedException ignore) {
+            } finally {
+                lock.unlock();
+            }
+        }
+        return globals;
+    }
+
+    private static void realSetupGlobals(Globals globals) {
+        long t = SystemClock.uptimeMillis();
+        MLSEngine.singleRegister.install(globals);
+        t = SystemClock.uptimeMillis() - t;
+        if (MLSEngine.DEBUG) {
+            MLSAdapterContainer.getConsoleLoggerAdapter().d("LuaViewManager", "init cast: " + t);
+        }
+        if (MLSEngine.isInit())
+        NativeBridge.registerNativeBridge(globals);
+    }
+
+    private abstract static class LockRunnable implements Runnable {
+        final Lock lock;
+        final Condition condition;
+        LockRunnable(Lock lock, Condition condition) {
+            this.lock = lock;
+            this.condition = condition;
+        }
+        @Override
+        public void run() {
+            try {
+                lock.lock();
+                realRun();
+                condition.signal();
+            } finally {
+                lock.unlock();
+            }
+        }
+
+        protected abstract void realRun();
     }
 }

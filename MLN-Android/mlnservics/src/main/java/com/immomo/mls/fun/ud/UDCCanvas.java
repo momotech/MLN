@@ -15,7 +15,7 @@ import com.immomo.mls.util.DimenUtil;
 
 import org.luaj.vm2.Globals;
 import org.luaj.vm2.LuaUserdata;
-import org.luaj.vm2.LuaValue;
+import org.luaj.vm2.utils.CGenerate;
 import org.luaj.vm2.utils.LuaApiUsed;
 
 /**
@@ -24,32 +24,29 @@ import org.luaj.vm2.utils.LuaApiUsed;
  */
 @LuaApiUsed
 public class UDCCanvas extends LuaUserdata<Canvas> {
+    public static final String LUA_CLASS_NAME = "CCanvas";
     //<editor-fold desc="native method">
     /**
      * 初始化方法
+     * 反射调用
+     * @see com.immomo.mls.wrapper.Register.NewUDHolder
      */
     public static native void _init();
 
     /**
      * 注册到虚拟机方法
-     * @param l 虚拟机C层地址
-     * @see Globals#getL_State()
+     * 反射调用
+     * @see com.immomo.mls.wrapper.Register.NewUDHolder
      */
-    public static native void _register(long l);
+    public static native void _register(long l, String parent);
     //</editor-fold>
 
     //<editor-fold desc="Constructors">
 
-    /**
-     * 提供给Lua的构造函数
-     * 必须存在
-     *
-     * @param L 虚拟机底层地址
-     * @param v 初始化参数，非空，但长度可能为0
-     */
+    @CGenerate(defaultConstructor = true)
     @LuaApiUsed
-    protected UDCCanvas(long L, @NonNull LuaValue[] v) {
-        super(L, v);
+    protected UDCCanvas(long L) {
+        super(L, null);
         /// 必须完成包裹对象的初始化
 //        javaUserdata = new Canvas();
     }

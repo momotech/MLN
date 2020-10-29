@@ -72,6 +72,22 @@ public class DimenUtil {
 
     /**
      * convert a value to px，返回给Android系统的必须是整数
+     * 支持NAN类型，给Flex新布局使用
+     * @param value
+     * @return
+     */
+    public static float dpiToPxWithNaN(LuaValue value) {
+        if (value != null && value.isNumber()) {
+            if(Float.isNaN(value.toFloat())){
+                return value.toFloat();
+            }
+            return (int) (value.toFloat() * sScale + 0.5f);//向上取整数
+        }
+        return 0;
+    }
+
+    /**
+     * convert a value to px，返回给Android系统的必须是整数
      *
      * @param value
      * @return
@@ -103,6 +119,16 @@ public class DimenUtil {
 
     public static int dpiToPx(double dpi) {
         return (int) (dpi * sScale + 0.5);
+    }
+
+    /**
+     * 支持NAN类型，给Flex新布局使用
+     */
+    public static float dpiToPxWithNaN(float dpi) {
+        if (Float.isNaN(dpi)) {
+            return dpi;
+        }
+        return (int) (dpi * sScale);
     }
 
     /**

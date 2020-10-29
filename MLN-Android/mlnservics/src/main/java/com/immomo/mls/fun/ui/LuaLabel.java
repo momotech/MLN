@@ -75,6 +75,19 @@ public class LuaLabel<U extends UDLabel> extends BorderRadiusTextView implements
     }
     //</editor-fold>
 
+
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        getUserdata().measureOverLayout(widthMeasureSpec, heightMeasureSpec);
+    }
+
+    @Override
+    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+        super.onLayout(changed, left, top, right, bottom);
+        getUserdata().layoutOverLayout(left, top, right, bottom);
+    }
+
     @Override
     protected void onDraw(Canvas canvas) {
         try {
@@ -82,6 +95,7 @@ public class LuaLabel<U extends UDLabel> extends BorderRadiusTextView implements
         } catch (final Throwable t) {
             LogUtil.e(t, "draw text error: " + getText());
         }
+        getUserdata().drawOverLayout(canvas);
     }
 
     /**

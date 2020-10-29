@@ -23,7 +23,8 @@ import java.util.HashMap;
  * @see #isValidClassType(Class, boolean) 是否是基础类型或基础封装类或是LuaValue类型，或相关数组类型
  */
 public class SignatureUtils {
-    public static final String VALID_METHOD_SIG = "([Lcom/xfy/luajava/LuaValue;)[Lcom/xfy/luajava/LuaValue;";
+    private static final String VALID_METHOD_SIG = "([Lorg/luaj/vm2/LuaValue;)[Lorg/luaj/vm2/LuaValue;";
+    private static final String VALID_STATIC_METHOD_SIG = "(J[Lorg/luaj/vm2/LuaValue;)[Lorg/luaj/vm2/LuaValue;";
 
     private static final HashMap<Class, String> primitive;
     private static final Class[] Primitive;
@@ -76,6 +77,14 @@ public class SignatureUtils {
         }
         String name = StringReplaceUtils.replaceAllChar(clz.getName(), '.', '/');
         return "L" + name + ";";
+    }
+
+    public static boolean isValidUserdataMethodSignature(String sig) {
+        return VALID_METHOD_SIG.equals(sig);
+    }
+
+    public static boolean isValidStaticMethodSignature(String sig) {
+        return VALID_STATIC_METHOD_SIG.equals(sig);
     }
 
     /**

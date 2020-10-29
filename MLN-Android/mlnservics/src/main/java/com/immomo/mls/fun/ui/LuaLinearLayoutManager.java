@@ -13,6 +13,7 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.LinearSmoothScroller;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.immomo.mls.MLSEngine;
@@ -24,9 +25,10 @@ import com.immomo.mls.util.LogUtil;
  * Time         :   下午5:34
  * Description  :
  */
-public class LuaLinearLayoutManager extends LinearLayoutManager implements  IScrollEnabled{
+public class LuaLinearLayoutManager extends LinearLayoutManager implements IScrollEnabled {
     private boolean isScrollEnabled = true;
     private final LinearChildrenStateHelper childrenStateHelper = new LinearChildrenStateHelper();
+    private TopLinearSmoothScroller linearSmoothScroller;
 
     public LuaLinearLayoutManager(Context context) {
         super(context);
@@ -75,4 +77,28 @@ public class LuaLinearLayoutManager extends LinearLayoutManager implements  IScr
         }
         return 0;
     }
+
+    @Override
+    public void smoothScrollToPosition(RecyclerView recyclerView, RecyclerView.State state, int position) {
+        if (linearSmoothScroller == null) {
+            linearSmoothScroller =
+                    new TopLinearSmoothScroller(recyclerView.getContext());
+        }
+        linearSmoothScroller.setTargetPosition(position);
+        startSmoothScroll(linearSmoothScroller);
+    }
+
+
+    public class TopLinearSmoothScroller extends LinearSmoothScroller {
+
+        public TopLinearSmoothScroller(Context context) {
+            super(context);
+        }
+
+        @Override
+        protected int getVerticalSnapPreference() {
+            return SNAP_TO_START;
+        }
+    }
+
 }

@@ -13,7 +13,10 @@ import com.immomo.mlncore.MLNCore;
 
 import org.luaj.vm2.utils.DisposableIterator;
 import org.luaj.vm2.utils.LuaApiUsed;
+import org.luaj.vm2.utils.SignatureUtils;
 
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Iterator;
 
@@ -27,6 +30,8 @@ import java.util.Iterator;
 @LuaApiUsed
 public class LuaTable extends NLuaValue implements Iterable {
     private static final Entrys EMPTY_ENTRYS = new Entrys(empty(), empty());
+
+    private boolean inTraverse = false;
 
     /**
      * 由{@link Globals}继承
@@ -125,7 +130,7 @@ public class LuaTable extends NLuaValue implements Iterable {
      * table.name = value
      */
     public void set(String name, LuaValue value) {
-        if (!checkValid())
+        if (!checkValidForGetSet())
             return;
         int t = value.type();
         switch (t) {
@@ -157,7 +162,7 @@ public class LuaTable extends NLuaValue implements Iterable {
      * table.name = num
      */
     public void set(String name, double num) {
-        if (!checkValid())
+        if (!checkValidForGetSet())
             return;
         LuaCApi._setTableNumber(globals.L_State, nativeGlobalKey, name, num);
     }
@@ -166,7 +171,7 @@ public class LuaTable extends NLuaValue implements Iterable {
      * table.name = b
      */
     public void set(String name, boolean b) {
-        if (!checkValid())
+        if (!checkValidForGetSet())
             return;
         LuaCApi._setTableBoolean(globals.L_State, nativeGlobalKey, name, b);
     }
@@ -175,9 +180,49 @@ public class LuaTable extends NLuaValue implements Iterable {
      * table.name = s
      */
     public void set(String name, String s) {
-        if (!checkValid())
+        if (!checkValidForGetSet())
             return;
         LuaCApi._setTableString(globals.L_State, nativeGlobalKey, name, s);
+    }
+
+    /**
+     * table[index] = function(...) method.invoke(...) end
+     * @param clz 类，必须含有{@link LuaApiUsed}注解
+     * @param method 方法，必须含有{@link LuaApiUsed}注解，方法模型：static LuaValue[] xxx(LuaValue[])
+     */
+    public void set(int index, Class<?> clz, Method method) {
+        if (!checkValid())
+            return;
+        if ((method.getModifiers() & Modifier.STATIC) != Modifier.STATIC)
+            throw new IllegalArgumentException("method must be static");
+        if (method.getAnnotation(LuaApiUsed.class) == null || clz.getAnnotation(LuaApiUsed.class) == null)
+            throw new IllegalArgumentException("class and method must have @LuaApiUsed annotation");
+        String methodSig = SignatureUtils.getMethodSignature(method);
+        if (!SignatureUtils.isValidStaticMethodSignature(methodSig))
+            throw new IllegalArgumentException("method invalid, must like LuaValue[] " + method.getName() + "(long,LuaValue[])");
+
+        String clzSig = SignatureUtils.getClassName(clz);
+        LuaCApi._setTableMethod(globals.L_State, nativeGlobalKey, index, clzSig, method.getName());
+    }
+
+    /**
+     * table.k = function(...) method.invoke(...) end
+     * @param clz 类，必须含有{@link LuaApiUsed}注解
+     * @param method 方法，必须含有{@link LuaApiUsed}注解，方法模型：static LuaValue[] xxx(LuaValue[])
+     */
+    public void set(String k, Class<?> clz, Method method) {
+        if (!checkValidForGetSet())
+            return;
+        if ((method.getModifiers() & Modifier.STATIC) != Modifier.STATIC)
+            throw new IllegalArgumentException("method must be static");
+        if (method.getAnnotation(LuaApiUsed.class) == null || clz.getAnnotation(LuaApiUsed.class) == null)
+            throw new IllegalArgumentException("class and method must have @LuaApiUsed annotation");
+        String methodSig = SignatureUtils.getMethodSignature(method);
+        if (!SignatureUtils.isValidStaticMethodSignature(methodSig))
+            throw new IllegalArgumentException("method invalid, must like LuaValue[] " + method.getName() + "(long,LuaValue[])");
+
+        String clzSig = SignatureUtils.getClassName(clz);
+        LuaCApi._setTableMethod(globals.L_State, nativeGlobalKey, k, clzSig, method.getName());
     }
 
     /**
@@ -193,11 +238,44 @@ public class LuaTable extends NLuaValue implements Iterable {
      * 获取table.name
      */
     public LuaValue get(String name) {
-        if (!checkValid())
+        if (!checkValidForGetSet())
             return Nil();
         return (LuaValue) LuaCApi._getTableValue(globals.L_State, nativeGlobalKey, name);
     }
     //</editor-fold>
+
+//<editor-fold desc="other">
+
+    @Override
+    public final LuaTable setMetatalbe(LuaTable t) {
+        if (!checkValid())
+            return null;
+        if (t == null) {
+            long ret = LuaCApi._setMetatable(globals.L_State, nativeGlobalKey, 0);
+            if (ret != 0)
+                return new LuaTable(globals, ret);
+            return null;
+        }
+        t.checkValid();
+        long ret = LuaCApi._setMetatable(globals.L_State, nativeGlobalKey, t.nativeGlobalKey);
+        if (ret != 0)
+            return new LuaTable(globals, ret);
+        return null;
+    }
+
+
+    @Override
+    public LuaTable getMetatable() {
+        if (!checkValid())
+            return null;
+        long ret = LuaCApi._getMetatable(globals.L_State,nativeGlobalKey);
+
+        if (ret != 0)
+            return new LuaTable(globals, ret);
+
+        return null;
+    }
+
 
     /**
      * 清楚table的数组部分
@@ -211,7 +289,28 @@ public class LuaTable extends NLuaValue implements Iterable {
     }
 
     /**
+     * 根据index清除table
+     * @param index 下标
+     */
+    public final void remove(int index) {
+        if (!checkValid())
+            return;
+        LuaCApi._removeTableIndex(globals.L_State,nativeGlobalKey,index);
+    }
+
+    /**
+     * 清除全部数据
+     */
+    public final void clear() {
+        if (!checkValid())
+            return;
+        LuaCApi._clearTable(globals.L_State,nativeGlobalKey);
+    }
+
+    /**
      * 直接使用{@link #newEntry()}获取所有key value，并获取长度
+     * 若table有hash部分，推荐通过{@link #iterator()}取出数据后计算长度
+     * 若想读取array部分长度，使用{@link #getn()}
      */
     @Deprecated
     public final int size() {
@@ -219,23 +318,39 @@ public class LuaTable extends NLuaValue implements Iterable {
     }
 
     /**
-     * 获取table的长度
-     * table.getn(table)
-     * 长度不一定是table的真实长度
+     * 判断table是否为空，只要table中数组部分或hash部分不为空，返回true
+     */
+    public final boolean isEmpty() {
+        if (!checkValid())
+            return true;
+        return LuaCApi._isEmpty(globals.L_State, nativeGlobalKey);
+    }
+
+    /**
+     * 获取table数组部分的长度 = table.getn(table)
+     * 若数组部分中间有nil，则长度不是真实长度
+     * eg: {1,2,nil,4,5} 长度为2
      * @return 长度
      */
     public final int getn() {
+        if (!checkValid())
+            return -1;
         return LuaCApi._getTableSize(globals.L_State, nativeGlobalKey);
     }
+//</editor-fold>
+
     //<editor-fold desc="Traverse">
 
     /**
      * 遍历table，一次性将table中key value全部取出来，并放入{@link Entrys}中
      * 不会返回Null
      * @see Entrys
+     * Deprecated 性能很低
+     * use {@link #iterator()}
      */
+    @Deprecated
     public final Entrys newEntry() {
-        if (!checkValid())
+        if (!checkValidForGetSet())
             return EMPTY_ENTRYS;
         return (Entrys) LuaCApi._getTableEntry(globals.L_State, nativeGlobalKey);
     }
@@ -260,9 +375,10 @@ public class LuaTable extends NLuaValue implements Iterable {
      * @return 若当前表不存在，则返回false
      */
     public final boolean startTraverseTable() {
-        if (!checkValid())
+        if (!checkValidForGetSet())
             return false;
-        return LuaCApi._startTraverseTable(globals.L_State, nativeGlobalKey);
+        inTraverse = LuaCApi._startTraverseTable(globals.L_State, nativeGlobalKey);
+        return inTraverse;
     }
 
     /**
@@ -272,7 +388,9 @@ public class LuaTable extends NLuaValue implements Iterable {
      * @return 如果不存在，返回null
      */
     public final LuaValue[] next() {
-        return LuaCApi._nextEntry(globals.L_State, this == globals);
+        if (inTraverse)
+            return LuaCApi._nextEntry(globals.L_State, this == globals);
+        return null;
     }
 
     /**
@@ -280,7 +398,10 @@ public class LuaTable extends NLuaValue implements Iterable {
      * 若{@link #startTraverseTable}返回true，此方法必须调用
      */
     public final void endTraverseTable() {
-        LuaCApi._endTraverseTable(globals.L_State);
+        if (inTraverse) {
+            LuaCApi._endTraverseTable(globals.L_State);
+            inTraverse = false;
+        }
     }
 
     /**
@@ -306,6 +427,7 @@ public class LuaTable extends NLuaValue implements Iterable {
             public boolean hasNext() {
                 LuaValue[] next = LuaTable.this.next();
                 if (next == null) {
+                    endTraverseTable();
                     return false;
                 }
                 kv = new KV(next[0], next[1]);
@@ -415,6 +537,15 @@ public class LuaTable extends NLuaValue implements Iterable {
         }
     }
     //</editor-fold>
+
+    private boolean checkValidForGetSet() {
+        globals.checkMainThread();
+        if (!isDestroyed() && nativeGlobalKey != 0)
+            return true;
+        if (MLNCore.DEBUG)
+            throwNotValid();
+        return false;
+    }
 
     private boolean checkValid() {
         globals.checkMainThread();

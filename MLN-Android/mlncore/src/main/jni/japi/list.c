@@ -111,6 +111,17 @@ void * list_get(List * list, size_t index) {
     return list->arr[index];
 }
 
+void list_traverse(List *list, list_look_fun fun, void *ud) {
+    if (list->_c) return;
+    size_t i = 0;
+    for (; i < list->_arr_used; ++i) {
+        if (list->arr[i]) {
+            if (fun(list->arr[i], ud))
+                break;
+        }
+    }
+}
+
 size_t list_index(List * list, void * v) {
     if (list->_c) return list->size + 2;
     size_t i;
@@ -139,6 +150,31 @@ void * list_remove(List * list, size_t index) {
         list->_arr_used --;
     }
     return ret;
+}
+
+void list_remove_obj(List *list, void *obj) {
+    if (list->_c) return;
+    size_t i;
+    int find = 0;
+    for (i = 0; i < list->_arr_used; ++i) {
+        if (list->arr[i] == obj
+            || (list->f_equals && list->f_equals(list->arr[i], obj))) {
+            list->arr[i] = NULL;
+            list->size --;
+            find = 1;
+            break;
+        }
+    }
+    if (find && list->autoRelist) {
+        size_t index;
+        for (index = i; index <= list->size; index ++) {
+            if (index < list->size)
+                list->arr[index] = list->arr[index + 1];
+            else
+                list->arr[index] = NULL;
+        }
+        list->_arr_used --;
+    }
 }
 
 size_t list_size(List * list) {

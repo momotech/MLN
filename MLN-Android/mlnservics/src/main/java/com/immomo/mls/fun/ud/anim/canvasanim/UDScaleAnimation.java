@@ -26,9 +26,6 @@ public class UDScaleAnimation extends UDBaseAnimation {
     private float fromX, tox;
     private float fromY, toY;
 
-    private float pivotXValue = 0.5f;
-    private float pivotYValue = 0.5f;
-
     public UDScaleAnimation(Globals g, LuaValue[] init) {
         super(g, init);
         final int len = init != null ? init.length : 0;
@@ -37,10 +34,6 @@ public class UDScaleAnimation extends UDBaseAnimation {
             tox = (float) init[1].toDouble();
             fromY = (float) init[2].toDouble();
             toY = (float) init[3].toDouble();
-            if (len == 6) {
-                pivotXValue = (float) init[4].toDouble();
-                pivotYValue = (int) init[5].toDouble();
-            }
         }
     }
 
@@ -64,24 +57,14 @@ public class UDScaleAnimation extends UDBaseAnimation {
     public void setToY(float y) {
         toY = y;
     }
-
-    @LuaBridge
-    public void setPivotX(float x) {
-        pivotXValue = x;
-    }
-
-    @LuaBridge
-    public void setPivotY(int y) {
-        pivotYValue = y;
-    }
     //</editor-fold>
 
     @Override
     protected Animation build() {
         return new ScaleAnimation(fromX, tox,
                 fromY, toY,
-                Animation.RELATIVE_TO_SELF, pivotXValue,
-                Animation.RELATIVE_TO_SELF, pivotYValue);
+                Animation.RELATIVE_TO_SELF, 0.5f,
+                Animation.RELATIVE_TO_SELF, 0.5f);
     }
 
     @Override
@@ -91,8 +74,6 @@ public class UDScaleAnimation extends UDBaseAnimation {
         anim.tox = tox;
         anim.fromY = fromY;
         anim.toY = toY;
-        anim.pivotXValue = pivotXValue;
-        anim.pivotYValue = pivotYValue;
         return anim;
     }
 }

@@ -13,12 +13,15 @@
 #define MMLUA4ANDROID_JBRIDGE_H
 
 #include <jni.h>
-
-void jni_registerStaticClassSimple(JNIEnv *env, jobject jobj, jlong L, jstring jn, jstring ln, jstring lpcn);
+void jni_registerAllStaticClass(JNIEnv *env, jobject jobj, jlong Ls, jobjectArray lcns, jobjectArray lpcns, jobjectArray jcns);
 
 void jni_registerJavaMetatable(JNIEnv * env, jobject jobj, jlong LS, jstring jn, jstring ln);
 
 void jni_registerNumberEnum(JNIEnv *env, jobject jobj, jlong L, jstring lcn, jobjectArray keys, jdoubleArray values);
 
 void jni_registerStringEnum(JNIEnv *env, jobject jobj, jlong L, jstring lcn, jobjectArray keys, jobjectArray values);
+/**
+ * 将java的class和method组成一个c函数，并push到栈顶
+ */
+void pushStaticClosure(lua_State *L, jclass clz, jmethodID m, const char *clzName, const char *methodName, int pc, int colonCall);
 #endif //MMLUA4ANDROID_JBRIDGE_H

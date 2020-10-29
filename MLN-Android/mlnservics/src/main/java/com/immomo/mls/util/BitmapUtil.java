@@ -32,7 +32,7 @@ public class BitmapUtil {
      * @return
      */
     public static Bitmap blurBitmap(Bitmap src, int radius) {
-        if (src == null || radius <= 1 || !MLSEngine.isLibInit("lblur")) {
+        if (src == null || radius <= 1 || !MLSEngine.isLibInit(MLSEngine.BLUR_LIB)) {
             return src;
         }
         nativeBlurBitmap(src, radius);

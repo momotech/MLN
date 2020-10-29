@@ -265,17 +265,6 @@ static size_t obj_size(void *v) {
 
 #endif
 
-unsigned int str_hash(const void *k) {
-    const char *str = (const char *) k;
-    size_t l = strlen(str);
-    unsigned int h = (unsigned int) l ^891604371;
-    size_t l1;
-    size_t step = (l >> 5) + 1;
-    for (l1 = l; l1 >= step; l1 -= step)
-        h = h ^ ((h << 5) + (h >> 2) + (char) str[l1 - 1]);
-    return h;
-}
-
 static void init_map() {
     if (!__map) {
         __map = map_new(NULL, 50);
@@ -285,8 +274,8 @@ static void init_map() {
         } else {
             map_set_free(__map, s_free, NULL);
             map_set_equals(__map, str_equals);
-            map_set_hash(__map, str_hash);
 #if defined(J_API_INFO)
+            map_set_ud(__map, 1);
             map_set_sizeof(__map, NULL, NULL);
 #endif
         }
@@ -319,7 +308,6 @@ void cj_put(const char *name, void *obj) {
  */
 void *cj_get(const char *name) {
     if (!__map) {
-        LOGE("cj_get-- map is not init!!!");
         return NULL;
     }
     return map_get(__map, name);
@@ -357,7 +345,7 @@ size_t cj_mem_size() {
 ///------------------------jclsss->constructor--------------------------------
 ///---------------------------------------------------------------------------
 
-static Map *__classData;
+static Map *__classData = NULL;
 
 static int class_equals(const void *a, const void *b) {
     return a == b;
@@ -395,7 +383,7 @@ typedef struct classDataValue {
 void jc_put(jclass clz, jmethodID m) {
     init_classData();
     if (!__classData) {
-        LOGE("jc_put-- __classData is not init!!!");
+        LOGE("jc_put-- __classData init error!!!");
         return;
     }
 
@@ -419,7 +407,6 @@ void jc_put(jclass clz, jmethodID m) {
  */
 void *jc_get(jclass clz) {
     if (!__classData) {
-        LOGE("jc_put-- __classData is not init!!!");
         return NULL;
     }
     CDV *cdv = (CDV *) map_get(__classData, clz);
@@ -439,7 +426,6 @@ static Map *init_methods_map() {
     } else {
         map_set_free(ret, s_free, NULL);
         map_set_equals(ret, str_equals);
-        map_set_hash(ret, str_hash);
 #if defined(J_API_INFO)
         map_set_sizeof(__classData, NULL, NULL);
 #endif
@@ -453,7 +439,7 @@ static Map *init_methods_map() {
 void jm_put(jclass clz, const char *name, jmethodID m) {
     init_classData();
     if (!__classData) {
-        LOGE("jc_put-- __classData is not init!!!");
+        LOGE("jm_put-- __classData is not init!!!");
         return;
     }
     CDV *cdv = map_get(__classData, clz);
@@ -487,7 +473,7 @@ void jm_put(jclass clz, const char *name, jmethodID m) {
  */
 void *jm_get(jclass clz, const char *name) {
     if (!__classData) {
-        LOGE("jc_put-- __classData is not init!!!");
+        LOGE("jm_get-- __classData is not init!!!");
         return NULL;
     }
 
@@ -505,7 +491,7 @@ void *jm_get(jclass clz, const char *name) {
  */
 void jm_traverse_all_method(jclass clz, map_look_fun fun, void *ud) {
     if (!__classData) {
-        LOGE("jc_put-- __classData is not init!!!");
+        LOGE("jm_traverse_all_method-- __classData is not init!!!");
         return;
     }
 

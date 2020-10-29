@@ -10,6 +10,8 @@ package com.immomo.mls.utils;
 import android.net.Uri;
 import androidx.annotation.NonNull;
 
+import java.io.File;
+
 /**
  * Created by Xiong.Fangyu on 2018/11/13
  */
@@ -47,5 +49,15 @@ public class LuaUrlUtils {
             }
             return path.substring(1);
         }
+    }
+
+    public static String getParentPath(String path) {
+        int index = path.lastIndexOf(File.separatorChar);
+        if (index < 0) {
+            return null;
+        }
+        if (index == 0)
+            return File.separator;
+        return path.substring(0, index);
     }
 }

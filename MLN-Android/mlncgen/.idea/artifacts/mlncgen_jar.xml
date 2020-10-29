@@ -1,8 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="jar" name="mlncgen:jar">
-    <output-path>$PROJECT_DIR$/out/artifacts/mlncgen_jar</output-path>
-    <root id="archive" name="mlncgen.jar">
-      <element id="module-output" name="Shell" />
-    </root>
-  </artifact>
-</component>

@@ -1,10 +1,14 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.immomo.mls" >
 
-    <application>
-        <activity
-            android:name="com.immomo.mls.activity.LuaViewActivity"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustPan|stateAlwaysHidden" />
-    </application>
+    <!--internet-->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <!--write file-->
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <!--network state-->
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+
 </manifest>

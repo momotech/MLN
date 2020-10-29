@@ -41,6 +41,7 @@ public class UDPaint extends LuaUserdata<Paint> {
             "style",
             "cap",
             "setBlurMask",
+            "a_setAntiAlias",
     };
 
     @LuaApiUsed
@@ -118,7 +119,7 @@ public class UDPaint extends LuaUserdata<Paint> {
         if (values.length > 0) {
             LuaValue value = values[0];
             if (value.isNumber()) {
-                javaUserdata.setColor(value.toInt());
+                javaUserdata.setColor((int) value.toLong());
             } else {
                 UDColor color = (UDColor) values[0].toUserdata();
                 javaUserdata.setColor(color.getColor());
@@ -228,5 +229,12 @@ public class UDPaint extends LuaUserdata<Paint> {
         return null;
     }
 
+    @LuaApiUsed
+    public LuaValue[] a_setAntiAlias(LuaValue[] v) {
+        boolean isAnitiAlias = v.length > 0 && v[0].toBoolean();
+        javaUserdata.setAntiAlias(isAnitiAlias);
+
+        return null;
+    }
     //</editor-fold>
 }

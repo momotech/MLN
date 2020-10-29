@@ -27,6 +27,12 @@ typedef void* (*list_alloc) (void *, size_t, size_t);
  * 判断value是否相等
  */
 typedef int (*list_eqauls) (const void *, const void *);
+/**
+ * 遍历函数，返回0表示继续遍历，1表示遍历完成
+ * @see list_traverse
+ * @param ud 自定义数据
+ */
+typedef int (*list_look_fun) (const void *value, void *ud);
 
 struct list_;
 
@@ -70,6 +76,13 @@ void list_relist(List *);
  */
 void * list_get(List *, size_t);
 /**
+ * 遍历list
+ * @param list 目标list
+ * @param fun  遍历每个非空数据，并调用此函数
+ * @param ud   自定义数据
+ */
+void list_traverse(List *list, list_look_fun fun, void *ud);
+/**
  * 获取数据相应位置
  * @return 若有错误，返回list_size + 2; 未查找到数据，返回list_size + 1
  */
@@ -79,6 +92,10 @@ size_t list_index(List *, void *);
  * @return 若原有位置有数据，则返回原有数据
  */
 void * list_remove(List *, size_t);
+/**
+ * 移除某个数据
+ */
+void list_remove_obj(List *, void *);
 /**
  * 当前列表中数据个数
  */

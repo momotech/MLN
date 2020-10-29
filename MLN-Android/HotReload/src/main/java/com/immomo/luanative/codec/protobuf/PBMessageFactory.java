@@ -55,6 +55,9 @@ public class PBMessageFactory {
             case PackageConst.TYPE_CVISUAL: {
                 return PBCoverageVisualCommand.pbcoveragevisualcommand.parseFrom(data);
             }
+            case PackageConst.TYPE_IPADDRESS: {
+                return PBIPAddressCommand.pbipaddresscommand.parseFrom(data);
+            }
             default: {
                 throw new Exception("未知类型的消息");
             }

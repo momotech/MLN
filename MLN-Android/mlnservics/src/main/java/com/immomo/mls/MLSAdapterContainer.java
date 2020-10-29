@@ -23,6 +23,7 @@ import com.immomo.mls.adapter.PreinstallError;
 import com.immomo.mls.adapter.ScriptReaderCreator;
 import com.immomo.mls.adapter.ToastAdapter;
 import com.immomo.mls.adapter.TypeFaceAdapter;
+import com.immomo.mls.adapter.X64PathAdapter;
 import com.immomo.mls.adapter.impl.DefaultConsoleLoggerAdapter;
 import com.immomo.mls.adapter.impl.DefaultEmptyViewAdapter;
 import com.immomo.mls.adapter.impl.DefaultHttpAdapter;
@@ -34,6 +35,9 @@ import com.immomo.mls.adapter.impl.DefaultToastAdapter;
 import com.immomo.mls.adapter.impl.DefaultTypeFaceAdapter;
 import com.immomo.mls.adapter.impl.FileCacheImpl;
 import com.immomo.mls.adapter.impl.MLSReloadButtonCreatorImpl;
+import com.immomo.mls.adapter.impl.X64PathAdapterImpl;
+import com.immomo.mls.fun.ui.DefaultSafeAreaAdapter;
+import com.immomo.mls.fun.ui.MLNSafeAreaAdapter;
 import com.immomo.mls.provider.ImageProvider;
 import com.immomo.mls.utils.AssertUtils;
 
@@ -60,6 +64,8 @@ public class MLSAdapterContainer {
     private static MLSReloadButtonCreator reloadButtonCreator = new MLSReloadButtonCreatorImpl();
     private static PreinstallError preinstallError;
     private static IFileCache fileCache = new FileCacheImpl();
+    private static MLNSafeAreaAdapter safeAreaAdapter = new DefaultSafeAreaAdapter();
+    private static X64PathAdapter x64PathAdapter = new X64PathAdapterImpl();
 
     public static MLSThreadAdapter getThreadAdapter() {
         return threadAdapter;
@@ -196,5 +202,21 @@ public class MLSAdapterContainer {
 
     public static void setFileCache(IFileCache fileCache) {
         MLSAdapterContainer.fileCache = fileCache;
+    }
+
+    public static MLNSafeAreaAdapter getSafeAreaAdapter() {
+        return safeAreaAdapter;
+    }
+
+    public static void setSafeAreaAdapter(MLNSafeAreaAdapter safeAreaAdapter) {
+        MLSAdapterContainer.safeAreaAdapter = safeAreaAdapter;
+    }
+
+    public static X64PathAdapter getX64PathAdapter() {
+        return x64PathAdapter;
+    }
+
+    public static void setX64PathAdapter(X64PathAdapter x64PathAdapter) {
+        MLSAdapterContainer.x64PathAdapter = x64PathAdapter;
     }
 }

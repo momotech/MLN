@@ -11,14 +11,28 @@ import com.immomo.mls.utils.loader.ScriptInfo;
 
 /**
  * Created by Xiong.Fangyu on 2018/11/1
+ * 根据信息寻找或读取脚本
  */
 public interface ScriptReader {
-
+    /**
+     * 根据信息开始寻找或读取脚本
+     * 通过{@link ScriptInfo#callback}回调结果
+     * @see ScriptInfo
+     */
     void loadScriptImpl(final ScriptInfo info);
 
+    /**
+     * 脚本版本号，供debug使用
+     */
     String getScriptVersion();
 
+    /**
+     * 任务tag
+     */
     Object getTaskTag();
 
+    /**
+     * 页面销毁时调用
+     */
     void onDestroy();
 }

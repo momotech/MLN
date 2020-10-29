@@ -60,11 +60,11 @@ public class DefaultPrinter extends RecyclerView implements IPrinter {
             return;
         }
         Data pre = data[len -2];
-        if (pre.type == 0) {
+        if (pre.errorType == ErrorType.LOG) {
             addNormalError(s);
             return;
         }
-        if (pre.type == -1 && s.equals(pre.getSB())) {
+        if (s.equals(pre.getSB()) && pre.errorType == ErrorType.ERROR_REPEAT) {
             pre.count ++;
             adapter.notifyItemChanged(len - 2);
             return;
@@ -72,7 +72,7 @@ public class DefaultPrinter extends RecyclerView implements IPrinter {
 
         if (s.equals(pre.getSB())) {
             Data last = getLastSB();
-            last.type = -1;
+            last.errorType = ErrorType.ERROR_REPEAT;
             last.sb = data[len - 2].sb;
             last.count = 1;
             adapter.notifyItemChanged(len - 1);
@@ -84,6 +84,51 @@ public class DefaultPrinter extends RecyclerView implements IPrinter {
     }
 
     @Override
+    public void error(String msg, ErrorType errorType) {
+        if (len <= 1) {
+            addError(msg, errorType);
+            return;
+        }
+        Data pre = data[len -2];
+        if (pre.errorType == ErrorType.LOG) {
+            addError(msg, errorType);
+            return;
+        }
+        if (errorType == ErrorType.ERROR && pre.errorType == ErrorType.ERROR_REPEAT && msg.equals(pre.getSB())) {
+            pre.count ++;
+            adapter.notifyItemChanged(len - 2);
+            return;
+        }
+        if (errorType == ErrorType.ERROR && pre.errorType == ErrorType.ERROR && msg.equals(pre.getSB())) {
+            Data last = getLastSB();
+            last.errorType = ErrorType.ERROR_REPEAT;
+            last.sb = data[len - 2].sb;
+            last.count = 1;
+            adapter.notifyItemChanged(len - 1);
+            newLine();
+            return;
+        }
+
+        if (errorType == ErrorType.WARNING && pre.errorType == ErrorType.WARNING_REPEAT && msg.equals(pre.getSB())) {
+            pre.count ++;
+            adapter.notifyItemChanged(len - 2);
+            return;
+        }
+
+        if (errorType == ErrorType.WARNING && pre.errorType == ErrorType.WARNING && msg.equals(pre.getSB())) {
+            Data last = getLastSB();
+            last.errorType = ErrorType.WARNING_REPEAT;
+            last.sb = data[len - 2].sb;
+            last.count = 1;
+            adapter.notifyItemChanged(len - 1);
+            newLine();
+            return;
+        }
+
+        addError(msg, errorType);
+    }
+
+    @Override
     public void clear() {
         Arrays.fill(data, null);
         len = 0;
@@ -92,8 +137,16 @@ public class DefaultPrinter extends RecyclerView implements IPrinter {
 
     private void addNormalError(String s) {
         Data last = getLastSB();
-        last.type = 1;
+        last.errorType = ErrorType.ERROR;
         last.append(s);
+        adapter.notifyItemChanged(len - 1);
+        newLine();
+    }
+
+    private void addError(String msg, ErrorType errorType) {
+        Data last = getLastSB();
+        last.errorType = errorType;
+        last.append(msg);
         adapter.notifyItemChanged(len - 1);
         newLine();
     }
@@ -102,9 +155,9 @@ public class DefaultPrinter extends RecyclerView implements IPrinter {
         if (len <= 1)
             return null;
         Data last = data[len - 2];
-        if (last.type == 0)
+        if (last.errorType == ErrorType.LOG)
             return null;
-        if (last.type == -1) {
+        if (last.errorType == ErrorType.ERROR_REPEAT) {
             return last.getSB();
         }
         return last.toString();
@@ -171,13 +224,7 @@ public class DefaultPrinter extends RecyclerView implements IPrinter {
         @Override
         public void onBindViewHolder(VH holder, int position) {
             Data d = data[position];
-            final int color;
-            if (d.type == 0) {
-                color = Color.WHITE;
-            } else {
-                color = Color.RED;
-            }
-            holder.tv.setTextColor(color);
+            holder.tv.setTextColor(d.errorType.getErrorColor());
             holder.tv.setText(d.toString());
         }
 
@@ -197,11 +244,14 @@ public class DefaultPrinter extends RecyclerView implements IPrinter {
 
     private static final class Data {
         private StringBuilder sb;
-        private byte type = 0;
+        private ErrorType errorType = ErrorType.LOG;
+
         private int count;
 
         public String toString() {
-            if (type == -1)
+            if (errorType == ErrorType.ERROR_REPEAT)
+                return "⚠️same error as before, count: " + count;
+            if (errorType == ErrorType.WARNING_REPEAT)
                 return "⚠️same error as before, count: " + count;
             return getSB();
         }

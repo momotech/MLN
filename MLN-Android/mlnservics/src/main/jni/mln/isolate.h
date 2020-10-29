@@ -12,9 +12,11 @@
 #ifndef ISOLATE_H
 #define ISOLATE_H
 
+#ifndef JAVA_ENV
 #ifdef __APPLE__
 #ifndef iOS_ENV
 #define iOS_ENV 1
+#endif
 #endif
 #endif
 
@@ -31,6 +33,6 @@ int isolate_open (lua_State *L);
 
 int luaopen_isolate(lua_State *L);
 
-void* mln_thread_sync_to_main(lua_State *L, void*(*callback)(void *));
+extern void* mln_thread_sync_to_main(lua_State *L, void*(*callback)(void *));
 
 #endif  //ISOLATE_H

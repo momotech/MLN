@@ -13,7 +13,6 @@
 #include "mmbridge.h"
 #include "lauxlib.h"
 #include "mmoslib.h"
-#include "mln_coverage.h"
 
 #define MM_BIT "MBit"
 
@@ -48,10 +47,6 @@ void mm_openlibs(lua_State *L, int debug) {
     }
     lua_pop(L, 1);  /* remove _PRELOAD table */
     luaopen_mmos(L);
-#if defined(J_API_INFO)
-    if (debug)
-        mln_opencoveragec(L);
-#endif
 }
 
 JNIEXPORT void JNICALL Java_com_immomo_mls_NativeBridge__1openLib

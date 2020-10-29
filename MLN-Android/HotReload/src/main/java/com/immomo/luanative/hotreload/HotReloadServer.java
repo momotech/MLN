@@ -13,6 +13,7 @@ import com.immomo.luanative.codec.encode.iEncoder;
 import com.immomo.luanative.codec.protobuf.PBCoverageVisualCommand;
 import com.immomo.luanative.codec.protobuf.PBCreateCommand;
 import com.immomo.luanative.codec.protobuf.PBEntryFileCommand;
+import com.immomo.luanative.codec.protobuf.PBIPAddressCommand;
 import com.immomo.luanative.codec.protobuf.PBMoveCommand;
 import com.immomo.luanative.codec.protobuf.PBReloadCommand;
 import com.immomo.luanative.codec.protobuf.PBRemoveCommand;
@@ -255,6 +256,16 @@ public class HotReloadServer implements IHotReloadServer {
         }
     }
 
+    @Override
+    public void setSerial(String serial) {
+        PBCommandFactory.Serial = serial;
+    }
+
+    @Override
+    public String getSerial() {
+        return PBCommandFactory.Serial;
+    }
+
     //
     //    ---------- usb client
     //
@@ -313,10 +324,14 @@ public class HotReloadServer implements IHotReloadServer {
             listener.onFileMove(cmd.getOldFilePath(), cmd.getOldRelativeFilePath(), cmd.getNewFilePath(), cmd.getNewRelativeFilePath());
         } else if (msg instanceof PBReloadCommand.pbreloadcommand) {
             // 刷新
-            PBReloadCommand.pbreloadcommand cmd = (PBReloadCommand.pbreloadcommand) msg;
+
             listener.onReload(getEntryFilePath(), getRelativeEntryFilePath(), getParams());
         } else if (msg instanceof PBCoverageVisualCommand.pbcoveragevisualcommand) {
             listener.onGencoveragereport();
+        } else if (msg instanceof PBIPAddressCommand.pbipaddresscommand) {
+            PBIPAddressCommand.pbipaddresscommand cmd = (PBIPAddressCommand.pbipaddresscommand) msg;
+            String ip = cmd.getMacIPAddress();
+            listener.onIpChanged(ip);
         }
     }
 

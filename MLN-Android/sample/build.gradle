@@ -1,4 +1,10 @@
 apply plugin: 'com.android.application'
+//apply plugin: 'com.immomo.mln.plugin.databinding'
+
+
+//DataBindingExt {
+//    whitelist = ["com.xfy.demo.bean"]
+//}
 
 android {
     compileSdkVersion project.compileSdkVersion
@@ -8,9 +14,6 @@ android {
         targetSdkVersion project.targetSdkVersion
         versionCode 1
         versionName "1.0"
-//        ndk {
-//            abiFilters "armeabi-v7a"
-//        }
     }
     signingConfigs {
         release {
@@ -23,9 +26,9 @@ android {
     }
     buildTypes {
         release {
-            minifyEnabled true
-            zipAlignEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            minifyEnabled false
+            zipAlignEnabled false
+//            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.release
         }
     }
@@ -34,11 +37,6 @@ android {
         jni.srcDirs = []
     }
 
-    defaultConfig {
-        ndk {
-            abiFilters "armeabi-v7a"
-        }
-    }
 }
 
 dependencies {
@@ -55,10 +53,14 @@ dependencies {
         implementation project(':mlncore')
         implementation project(':mlnservics')
         implementation project(':HotReload')
+        implementation project(':mmui')
+        implementation project(':yoga')
         annotationProcessor project(':processor')
     } else {
         implementation "com.immomo.mlncore:core:$mlnCoreVersion"
         implementation "com.immomo.mls:mln:$mlnsVersion"
+        implementation "com.immomo.mmui:mmui:$mmuiVersion"
+        implementation "com.immomo.yoga:yoga:$yogaVersion"
         debugImplementation "com.immomo.luanative:hotreload:$hotreloadVersion"
         releaseImplementation "com.immomo.luanative:hotreload_empty:$hotreloadVersion"
         annotationProcessor "com.immomo.mls:processor:$processorVersion"

@@ -113,6 +113,8 @@ public class PackageConst {
      */
     public static final int TYPE_PONG = PBBaseCommand.pbbasecommand.InstructionType.PONG_VALUE;
 
+    public static final int TYPE_IPADDRESS = PBBaseCommand.pbbasecommand.InstructionType.IPADDRESS_VALUE;
+
     /**
      * The constant INDEX_MAGIC.
      */
