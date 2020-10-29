@@ -16,6 +16,7 @@
 #import "MLNUISnapshotManager.h"
 #import "MLNUICanvasAnimation.h"
 #import "MLNUIKitInstanceHandlersManager.h"
+#import "MLNUIGestureConflictManager.h"
 
 #define kMLNUIDefaultRippleColor [UIColor colorWithRed:247/255.0 green:246/255.0 blue:244/255.0 alpha:1.0]
 
@@ -576,13 +577,18 @@ static const void *kLuaRenderContext = &kLuaRenderContext;
 }
 
 #pragma mark - Responder Chain
-static const void *kLuaDispatch = &kLuaDispatch;
+
 - (void)setArgo_notDispatch:(BOOL)argo_notDispatch {
-    objc_setAssociatedObject(self, kLuaDispatch, @(argo_notDispatch), OBJC_ASSOCIATION_ASSIGN);
+    objc_setAssociatedObject(self, @selector(argo_notDispatch), @(argo_notDispatch), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    [MLNUIGestureConflictManager disableSubviewsInteraction:argo_notDispatch forView:self];
 }
 
 - (BOOL)argo_notDispatch {
-    return [objc_getAssociatedObject(self, kLuaDispatch) boolValue];
+    return [objc_getAssociatedObject(self, _cmd) boolValue];
+}
+
+- (UIView *)actualView {
+    return self;
 }
 
 #pragma mark - Gesture
@@ -605,6 +611,8 @@ static const void *kLuaDispatch = &kLuaDispatch;
 {
     return NO;
 }
+
+#pragma mark - Gesture (UITapGestureRecognizer)
 
 - (void)luaui_addTouch:(MLNUIBlock *)touchCallBack
 {
@@ -644,24 +652,29 @@ static const void *kLuaDispatch = &kLuaDispatch;
     }
 }
 
-- (void)mlnui_in_tapClickAction:(UIGestureRecognizer *)gesture
-{
-    if (!self.luaui_enable) {
+- (void)mlnui_in_tapClickAction:(UIGestureRecognizer *)gesture {
+    [MLNUIGestureConflictManager setCurrentGesture:gesture];
+    UIView *responder = [MLNUIGestureConflictManager currentGestureResponder];
+    if (!responder || !responder.luaui_enable) {
+        [MLNUIGestureConflictManager setCurrentGesture:nil];
         return;
     }
-    if (self.mlnui_tapClickBlock) {
-        [self.mlnui_tapClickBlock callIfCan];
+    
+    if (responder.mlnui_tapClickBlock) {
+        [responder.mlnui_tapClickBlock callIfCan];
     }
-    if ([self luaui_needDismissKeyboard]) {
-        [self.window endEditing:YES];
+    if ([responder luaui_needDismissKeyboard]) {
+        [responder.window endEditing:YES];
     }
-    if (self.mlnui_touchClickBlock) {
-        CGPoint point = [gesture locationInView:self];
-        [self.mlnui_touchClickBlock addFloatArgument:point.x];
-        [self.mlnui_touchClickBlock addFloatArgument:point.y];
-        [self.mlnui_touchClickBlock callIfCan];
+    if (responder.mlnui_touchClickBlock) {
+        CGPoint point = [gesture locationInView:responder];
+        [responder.mlnui_touchClickBlock addFloatArgument:point.x];
+        [responder.mlnui_touchClickBlock addFloatArgument:point.y];
+        [responder.mlnui_touchClickBlock callIfCan];
     }
 }
+
+#pragma mark - Gesture (UILongPressGestureRecognizer)
 
 - (void)luaui_addLongPress:(MLNUIBlock *)longPressCallback
 {
@@ -678,86 +691,34 @@ static const void *kLuaDispatch = &kLuaDispatch;
     }
 }
 
-- (void)mlnui_in_longPressAction:(UIGestureRecognizer *)gesture
-{
-    if (!self.luaui_enable) {
-        return;
-    }
-    if (!self.mlnui_longPressBlock) return;
-    if (gesture.state == UIGestureRecognizerStateBegan) {
-        CGPoint point = [gesture locationInView:self];
-        [self.mlnui_longPressBlock addFloatArgument:point.x];
-        [self.mlnui_longPressBlock addFloatArgument:point.y];
-        [self.mlnui_longPressBlock callIfCan];
-    }
-}
-
-// android 上的捏合手势叫做 scale
-- (void)argo_addScaleBeginCallback:(MLNUIBlock *)argo_scaleBeginBlock {
-    MLNUIMarkViewNeedRender;
-    [self argo_in_addPinchGestureIfNeed];
-    self.argo_scaleBeginBlock = argo_scaleBeginBlock;
-}
-
-- (void)argo_addScalingCallback:(MLNUIBlock *)argo_scalingBlock {
-    MLNUIMarkViewNeedRender;
-    [self argo_in_addPinchGestureIfNeed];
-    self.argo_scalingBlock = argo_scalingBlock;
-}
-
-- (void)argo_addScaleEndCallback:(MLNUIBlock *)argo_scaleEndBlock {
-    MLNUIMarkViewNeedRender;
-    [self argo_in_addPinchGestureIfNeed];
-    self.argo_scaleEndBlock = argo_scaleEndBlock;
-}
-
-
-- (void)argo_in_addPinchGestureIfNeed {
-    UIPinchGestureRecognizer *gesture = [self argo_in_getPinchGesture];
-    if (!gesture && [self luaui_canPinch]) {
-        gesture = [[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(argo_in_pinchAction:)];
-        [self addGestureRecognizer:gesture];
-        gesture.cancelsTouchesInView = NO;
-        [self argo_in_setPinchGesture:gesture];
+- (void)mlnui_in_longPressAction:(UIGestureRecognizer *)gesture {
+    switch (gesture.state) {
+        case UIGestureRecognizerStateBegan: {
+            [MLNUIGestureConflictManager setCurrentGesture:gesture];
+            UIView *responder = [MLNUIGestureConflictManager currentGestureResponder];
+            NSParameterAssert([responder isKindOfClass:NSClassFromString(@"MLNUIView")]);
+            if (!responder || !responder.luaui_enable || !responder.mlnui_longPressBlock) {
+                [MLNUIGestureConflictManager setCurrentGesture:nil];
+                return;
+            }
+            CGPoint point = [gesture locationInView:responder];
+            [responder.mlnui_longPressBlock addFloatArgument:point.x];
+            [responder.mlnui_longPressBlock addFloatArgument:point.y];
+            [responder.mlnui_longPressBlock callIfCan];
+        }
+            break;
+            
+        case UIGestureRecognizerStateCancelled:
+        case UIGestureRecognizerStateEnded:
+        case UIGestureRecognizerStateFailed:
+            [MLNUIGestureConflictManager setCurrentGesture:nil];
+            break;
+        default:
+            break;
     }
 }
 
-static const void *kLuaScaleBeginBlock = &kLuaScaleBeginBlock;
-- (void)setArgo_scaleBeginBlock:(MLNUIBlock *)argo_scaleBeginBlock {
-    objc_setAssociatedObject(self, kLuaScaleBeginBlock, argo_scaleBeginBlock, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-}
-
-- (MLNUIBlock *)argo_scaleBeginBlock {
-    return objc_getAssociatedObject(self, kLuaScaleBeginBlock);
-}
-
-static const void *kLuaScalingBlock = &kLuaScalingBlock;
-- (void)setArgo_scalingBlock:(MLNUIBlock *)argo_scalingBlock {
-    objc_setAssociatedObject(self, kLuaScalingBlock, argo_scalingBlock, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-}
-
-- (MLNUIBlock *)argo_scalingBlock {
-    return objc_getAssociatedObject(self, kLuaScalingBlock);
-}
-
-static const void *kLuaScaleEndBlock = &kLuaScaleEndBlock;
-- (void)setArgo_scaleEndBlock:(MLNUIBlock *)argo_scaleEndBlock {
-    objc_setAssociatedObject(self, kLuaScaleEndBlock, argo_scaleEndBlock, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-}
-
-- (MLNUIBlock *)argo_scaleEndBlock {
-    return objc_getAssociatedObject(self, kLuaScaleEndBlock);
-}
-
-static const void *kLuaPinchGesture = &kLuaPinchGesture;
-
-- (void)argo_in_setPinchGesture:(UIPinchGestureRecognizer *)gesture {
-    objc_setAssociatedObject(self, kLuaPinchGesture, gesture, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-}
-
-- (UIPinchGestureRecognizer *)argo_in_getPinchGesture {
-    return objc_getAssociatedObject(self, kLuaPinchGesture);
-}
+#pragma mark -
 
 static const void *kLuaClickGesture = &kLuaClickGesture;
 - (void)mlnui_in_setClickGesture:(UITapGestureRecognizer *)gesture

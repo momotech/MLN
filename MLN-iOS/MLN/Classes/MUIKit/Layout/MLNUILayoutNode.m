@@ -216,6 +216,8 @@ static YGConfigRef globalConfig;
 
 - (NSArray<MLNUILayoutNode *> *)subNodes {
     int count = YGNodeGetChildCount(self.node);
+    NSParameterAssert(count);
+    if (count == 0) return nil;
     NSMutableArray *array = [NSMutableArray arrayWithCapacity:count];
     for (int i = 0; i < count; i++) {
         UIView *view = (__bridge id)YGNodeGetContext(YGNodeGetChild(self.node, i));

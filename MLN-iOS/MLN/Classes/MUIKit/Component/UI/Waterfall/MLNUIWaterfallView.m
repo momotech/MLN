@@ -438,6 +438,12 @@ FOUNDATION_EXTERN CGSize MLNUICollectionViewAutoFitCellEstimateSize;
     return NO;
 }
 
+#pragma mark - Override (GestureConflict)
+
+- (UIView *)actualView {
+    return self.innerWaterfallView;
+}
+
 #pragma mark - Gesture
 - (void)handleLongPress:(UIGestureRecognizer *)gesture {
     if (gesture.state != UIGestureRecognizerStateBegan) {

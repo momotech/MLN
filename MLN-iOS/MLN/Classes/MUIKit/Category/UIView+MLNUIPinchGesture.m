@@ -7,12 +7,70 @@
 
 #import "UIView+MLNUIPinchGesture.h"
 #import "UIView+MLNUIKit.h"
-#import "MLNUIBLock.h"
+#import "MLNUIBlock.h"
 #import <objc/runtime.h>
+#import "MLNUIGestureConflictManager.h"
+
+@interface UIView ()
+
+@property (nonatomic, strong) MLNUIBlock *argo_scaleBeginBlock;
+@property (nonatomic, strong) MLNUIBlock *argo_scalingBlock;
+@property (nonatomic, strong) MLNUIBlock *argo_scaleEndBlock;
+@property (nonatomic, strong) UIPinchGestureRecognizer *argo_pinchGesture;
+
+@end
 
 @implementation UIView (MLNUIPinchGesture)
 
-- (void)argo_in_pinchAction:(UIPinchGestureRecognizer *)gesture {
+#pragma mark - Export To Lua
+
+- (void)argo_addScaleBeginCallback:(MLNUIBlock *)argo_scaleBeginBlock {
+    [self argo_in_addPinchGestureIfNeed];
+    self.argo_scaleBeginBlock = argo_scaleBeginBlock;
+}
+
+- (void)argo_addScalingCallback:(MLNUIBlock *)argo_scalingBlock {
+    [self argo_in_addPinchGestureIfNeed];
+    self.argo_scalingBlock = argo_scalingBlock;
+}
+
+- (void)argo_addScaleEndCallback:(MLNUIBlock *)argo_scaleEndBlock {
+    [self argo_in_addPinchGestureIfNeed];
+    self.argo_scaleEndBlock = argo_scaleEndBlock;
+}
+
+#pragma mark - Private
+
+- (void)argo_in_addPinchGestureIfNeed {
+    UIPinchGestureRecognizer *gesture = self.argo_pinchGesture;
+    if (!gesture && [self luaui_canPinch]) {
+        self.mlnui_needRender = YES;
+        gesture = [[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(argo_preparePinchGestureAction:)];
+        [self addGestureRecognizer:gesture];
+        gesture.cancelsTouchesInView = NO;
+        self.argo_pinchGesture = gesture;
+    }
+}
+
+- (void)argo_preparePinchGestureAction:(UIPinchGestureRecognizer *)gesture {
+    switch (gesture.state) {
+        case UIGestureRecognizerStateBegan:
+            [MLNUIGestureConflictManager setCurrentGesture:gesture];
+            break;
+        case UIGestureRecognizerStateEnded:
+        case UIGestureRecognizerStateCancelled:
+        case UIGestureRecognizerStateFailed:
+            [MLNUIGestureConflictManager setCurrentGesture:nil];
+            break;
+        default:
+            break;
+    }
+    UIView *responder = [MLNUIGestureConflictManager currentGestureResponder];
+    if (!responder) return;
+    [responder argo_handlePinchGestureAction:gesture];
+}
+
+- (void)argo_handlePinchGestureAction:(UIPinchGestureRecognizer *)gesture {
     if (!self.luaui_enable) {
         return;
     }
@@ -72,9 +130,9 @@
 }
 
 - (NSDictionary *)pinchResultWithGestureRecognizer:(UIPinchGestureRecognizer *)recognizer {
-    CGPoint location = [recognizer locationInView:recognizer.view];
-    CGPoint location0 = [recognizer locationOfTouch:0 inView:recognizer.view];
-    CGPoint location1 = [recognizer locationOfTouch:1 inView:recognizer.view];
+    CGPoint location = [recognizer locationInView:self];
+    CGPoint location0 = [recognizer locationOfTouch:0 inView:self];
+    CGPoint location1 = [recognizer locationOfTouch:1 inView:self];
     CGFloat spanX = fabs(location0.x - location1.x);
     CGFloat spanY = fabs(location0.y - location1.y);
     CGFloat span = sqrt(pow(spanX, 2) + pow(spanY, 2));
@@ -88,6 +146,43 @@
     resultTouch[@"factor"] = @(recognizer.scale);
     
     return resultTouch;
+}
+
+#pragma mark - Property
+
+static const void *kLuaScaleBeginBlock = &kLuaScaleBeginBlock;
+- (void)setArgo_scaleBeginBlock:(MLNUIBlock *)argo_scaleBeginBlock {
+    objc_setAssociatedObject(self, kLuaScaleBeginBlock, argo_scaleBeginBlock, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+
+- (MLNUIBlock *)argo_scaleBeginBlock {
+    return objc_getAssociatedObject(self, kLuaScaleBeginBlock);
+}
+
+static const void *kLuaScalingBlock = &kLuaScalingBlock;
+- (void)setArgo_scalingBlock:(MLNUIBlock *)argo_scalingBlock {
+    objc_setAssociatedObject(self, kLuaScalingBlock, argo_scalingBlock, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+
+- (MLNUIBlock *)argo_scalingBlock {
+    return objc_getAssociatedObject(self, kLuaScalingBlock);
+}
+
+static const void *kLuaScaleEndBlock = &kLuaScaleEndBlock;
+- (void)setArgo_scaleEndBlock:(MLNUIBlock *)argo_scaleEndBlock {
+    objc_setAssociatedObject(self, kLuaScaleEndBlock, argo_scaleEndBlock, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+
+- (MLNUIBlock *)argo_scaleEndBlock {
+    return objc_getAssociatedObject(self, kLuaScaleEndBlock);
+}
+
+- (void)setArgo_pinchGesture:(UIPinchGestureRecognizer *)gesture {
+    objc_setAssociatedObject(self, @selector(argo_pinchGesture), gesture, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+
+- (UIPinchGestureRecognizer *)argo_pinchGesture {
+    return objc_getAssociatedObject(self, _cmd);
 }
 
 static const void *kLuaPinchGestureParams = &kLuaPinchGestureParams;

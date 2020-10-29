@@ -19,6 +19,7 @@
 #import "MLNUIInnerTableView.h"
 #import "UIView+MLNUIKit.h"
 #import "NSObject+MLNUICore.h"
+#import "UIScrollView+MLNUIGestureConflict.h"
 
 @interface MLNUITableView()
 @property (nonatomic, strong) MLNUIInnerTableView *innerTableView;
@@ -378,6 +379,12 @@
 {
     MLNUIKitLuaAssert(NO, @"TableView does not supoort this method!");
     return NO;
+}
+
+#pragma mark - Override (GestureConflict)
+
+- (UIView *)actualView {
+    return self.innerTableView;
 }
 
 #pragma mark - Gesture

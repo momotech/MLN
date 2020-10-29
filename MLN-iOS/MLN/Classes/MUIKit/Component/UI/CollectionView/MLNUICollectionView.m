@@ -467,6 +467,12 @@
     return NO;
 }
 
+#pragma mark - Override (GestureConflict)
+
+- (UIView *)actualView {
+    return self.innerCollectionView;
+}
+
 #pragma mark - Gesture
 
 - (void)handleLongPress:(UIGestureRecognizer *)gesture

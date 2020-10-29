@@ -15,6 +15,7 @@
 #import "UIView+MLNUIKit.h"
 #import "MLNUIHStack.h"
 #import "MLNUIVStack.h"
+#import "UIScrollView+MLNUIGestureConflict.h"
 
 @interface MLNUIInnerScrollViewContentStackNode : MLNUILayoutNode
 
@@ -87,6 +88,8 @@
 
 @implementation MLNUIInnerScrollViewContentStackNode
 
+#pragma mark - Override
+
 - (CGSize)applyLayout {
     MLNUIInnerScrollViewContentStack *stack = (MLNUIInnerScrollViewContentStack *)self.view;
     if (stack && stack.requestLayout) {
@@ -98,7 +101,7 @@
 @end
 
 
-@interface MLNUIInnerScrollView()
+@interface MLNUIInnerScrollView()<UIGestureRecognizerDelegate>
 
 @property (nonatomic, weak) MLNUILuaCore *mlnui_luaCore;
 @property (nonatomic, strong) MLNUIScrollViewDelegate *luaui_delegate;
@@ -106,6 +109,10 @@
 @end
 
 @implementation MLNUIInnerScrollView
+
++ (void)load {
+    [self argoui_installScrollViewPanGestureConflictHandler];
+}
 
 #pragma mark - Override
 
@@ -131,6 +138,16 @@
 - (void)layoutSubviews {
     [super layoutSubviews];
     self.contentSize = self.mlnui_contentView.frame.size;
+}
+
+#pragma mark - UIGestureRecognizerDelegate
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {
+    if ([gestureRecognizer isKindOfClass:self.panGestureRecognizer.class] &&
+        [otherGestureRecognizer isKindOfClass:self.panGestureRecognizer.class]) {
+        return YES;
+    }
+    return NO;
 }
 
 #pragma mark - Private

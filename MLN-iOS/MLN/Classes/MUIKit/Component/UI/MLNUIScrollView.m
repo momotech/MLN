@@ -228,6 +228,13 @@
 - (CGSize)luaui_contentSize {
     return self.innerScrollView.contentSize;
 }
+
+#pragma mark - Override (GestureConflict)
+
+- (UIView *)actualView {
+    return self.innerScrollView;
+}
+
 #pragma mark - Override (Layout)
 
 - (BOOL)mlnui_layoutEnable {
@@ -258,7 +265,7 @@
             MLNUILayoutNode *contentNode = self.innerScrollView.mlnui_contentView.mlnui_layoutNode;
             contentNode.minWidth = MLNUIPointValue(MAX(contentNode.layoutWidth, self.frame.size.width));
             contentNode.minHeight = MLNUIPointValue(MAX(contentNode.layoutHeight, self.frame.size.height));
-            [contentNode applyLayoutWithSize:self.frame.size];
+            [contentNode applyLayoutWithSize:CGSizeZero]; // 因为 MLNUIInnerScrollViewContentStackNode 重写了`applyLayout`, 内部会调用 MLNUIScrollView 的测量布局, 所以此处若直接调用`applyLayout`会导致无限循环
         }
     }
 }

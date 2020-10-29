@@ -6,14 +6,19 @@
 //
 
 #import "MLNUIInternalWaterfallView.h"
+#import "UIScrollView+MLNUIGestureConflict.h"
 
-@interface MLNUIInternalWaterfallView()
+@interface MLNUIInternalWaterfallView()<UIGestureRecognizerDelegate>
 
 @property (nonatomic, strong, nullable) UIView *headerView; //瀑布流header 老接口需要用到此属性
 
 @end
 
 @implementation MLNUIInternalWaterfallView
+
++ (void)load {
+    [self argoui_installScrollViewPanGestureConflictHandler];
+}
 
 - (void)setHeaderView:(UIView *)headerView
 {
@@ -32,6 +37,16 @@
         return waterfallView.headerView;
     }
     return nil;
+}
+
+#pragma mark - UIGestureRecognizerDelegate
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {
+    if ([gestureRecognizer isKindOfClass:self.panGestureRecognizer.class] &&
+        [otherGestureRecognizer isKindOfClass:self.panGestureRecognizer.class]) {
+        return YES;
+    }
+    return NO;
 }
 
 @end

@@ -8,6 +8,7 @@
 #import "MLNUIView.h"
 #import "MLNUIViewExporterMacro.h"
 #import "UIView+MLNUIKit.h"
+#import "MLNUIGestureConflictManager.h"
 
 @implementation MLNUIView
 
@@ -45,13 +46,6 @@
     return YES;
 }
 
-#pragma mark - Responder Chain
-- (nullable UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event {
-    if (self.argo_notDispatch) {
-        return self;
-    }
-    return [super hitTest:point withEvent:event];
-}
 #pragma mark - Export For Lua
 
 LUAUI_EXPORT_VIEW_BEGIN(MLNUIView)
