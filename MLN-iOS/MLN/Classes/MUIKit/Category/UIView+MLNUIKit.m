@@ -111,8 +111,12 @@ static const void *kLuaKeyboardDismiss = &kLuaKeyboardDismiss;
         UITouch *touch = [touches anyObject];
         CGPoint screenLocation = [touch locationInView:self.window];
         CGPoint pageLocation = [touch locationInView:self];
-        NSDictionary *touchDict = [self touchResultWithScreenLocation:screenLocation pageLocation:pageLocation target:self];
-        [self.mlnui_touchesBeganExtensionCallback addObjArgument:[NSMutableDictionary dictionaryWithDictionary:touchDict]];
+        [self.mlnui_touchesBeganExtensionCallback addFloatArgument:pageLocation.x];
+        [self.mlnui_touchesBeganExtensionCallback addFloatArgument:pageLocation.y];
+        [self.mlnui_touchesBeganExtensionCallback addFloatArgument:screenLocation.x];
+        [self.mlnui_touchesBeganExtensionCallback addFloatArgument:screenLocation.y];
+        [self.mlnui_touchesBeganExtensionCallback addObjArgument:self];
+        [self.mlnui_touchesBeganExtensionCallback addDoubleArgument:[NSDate date].timeIntervalSince1970];
         [self.mlnui_touchesBeganExtensionCallback callIfCan];
     }
 }
@@ -138,8 +142,12 @@ static const void *kLuaKeyboardDismiss = &kLuaKeyboardDismiss;
         UITouch *touch = [touches anyObject];
         CGPoint screenLocation = [touch locationInView:self.window];
         CGPoint pageLocation = [touch locationInView:self];
-        NSDictionary *touchDict = [self touchResultWithScreenLocation:screenLocation pageLocation:pageLocation target:self];
-        [self.mlnui_touchesMovedExtensionCallback addObjArgument:touchDict.mutableCopy];
+        [self.mlnui_touchesMovedExtensionCallback addFloatArgument:pageLocation.x];
+        [self.mlnui_touchesMovedExtensionCallback addFloatArgument:pageLocation.y];
+        [self.mlnui_touchesMovedExtensionCallback addFloatArgument:screenLocation.x];
+        [self.mlnui_touchesMovedExtensionCallback addFloatArgument:screenLocation.y];
+        [self.mlnui_touchesMovedExtensionCallback addObjArgument:self];
+        [self.mlnui_touchesMovedExtensionCallback addDoubleArgument:[NSDate date].timeIntervalSince1970];
         [self.mlnui_touchesMovedExtensionCallback callIfCan];
     }
 }
@@ -173,8 +181,12 @@ static const void *kLuaKeyboardDismiss = &kLuaKeyboardDismiss;
         UITouch *touch = [touches anyObject];
         CGPoint screenLocation = [touch locationInView:self.window];
         CGPoint pageLocation = [touch locationInView:self];
-        NSDictionary *touchDict = [self touchResultWithScreenLocation:screenLocation pageLocation:pageLocation target:self];
-        [self.mlnui_touchesEndedExtensionCallback addObjArgument:touchDict.mutableCopy];
+        [self.mlnui_touchesEndedExtensionCallback addFloatArgument:pageLocation.x];
+        [self.mlnui_touchesEndedExtensionCallback addFloatArgument:pageLocation.y];
+        [self.mlnui_touchesEndedExtensionCallback addFloatArgument:screenLocation.x];
+        [self.mlnui_touchesEndedExtensionCallback addFloatArgument:screenLocation.y];
+        [self.mlnui_touchesEndedExtensionCallback addObjArgument:self];
+        [self.mlnui_touchesEndedExtensionCallback addDoubleArgument:[NSDate date].timeIntervalSince1970];
         [self.mlnui_touchesEndedExtensionCallback callIfCan];
     }
 }
@@ -207,8 +219,12 @@ static const void *kLuaKeyboardDismiss = &kLuaKeyboardDismiss;
         UITouch *touch = [touches anyObject];
         CGPoint screenLocation = [touch locationInView:self.window];
         CGPoint pageLocation = [touch locationInView:self];
-        NSDictionary *touchDict = [self touchResultWithScreenLocation:screenLocation pageLocation:pageLocation target:self];
-        [self.mlnui_touchesCancelledExtensionCallback addObjArgument:touchDict.mutableCopy];
+        [self.mlnui_touchesCancelledExtensionCallback addFloatArgument:pageLocation.x];
+        [self.mlnui_touchesCancelledExtensionCallback addFloatArgument:pageLocation.y];
+        [self.mlnui_touchesCancelledExtensionCallback addFloatArgument:screenLocation.x];
+        [self.mlnui_touchesCancelledExtensionCallback addFloatArgument:screenLocation.y];
+        [self.mlnui_touchesCancelledExtensionCallback addObjArgument:self];
+        [self.mlnui_touchesCancelledExtensionCallback addDoubleArgument:[NSDate date].timeIntervalSince1970];
         [self.mlnui_touchesCancelledExtensionCallback callIfCan];
     }
 }
@@ -612,6 +628,10 @@ static const void *kLuaRenderContext = &kLuaRenderContext;
     return NO;
 }
 
+- (BOOL)luaui_canPinch {
+    return NO;
+}
+
 #pragma mark - Gesture (UITapGestureRecognizer)
 
 - (void)luaui_addTouch:(MLNUIBlock *)touchCallBack
@@ -871,19 +891,6 @@ static const void *kLuaOnDetachedFromWindowCallback = &kLuaOnDetachedFromWindowC
 - (MLNUIBlock *)mlnui_onDetachedFromWindowCallback
 {
     return objc_getAssociatedObject(self, kLuaOnDetachedFromWindowCallback);
-}
-
-#pragma mark - Utils
-- (NSDictionary *)touchResultWithScreenLocation:(CGPoint)screenLocation pageLocation:(CGPoint)pageLocation target:(UIView *)targetView
-{
-    NSMutableDictionary *resultTouch = [[NSMutableDictionary alloc] initWithCapacity:5];
-    resultTouch[@"screenX"] = @(screenLocation.x);
-    resultTouch[@"screenY"] = @(screenLocation.y);
-    resultTouch[@"pageX"] = @(pageLocation.x);
-    resultTouch[@"pageY"] = @(pageLocation.y);
-    resultTouch[@"timeStamp"] = @([NSDate date].timeIntervalSince1970);
-    resultTouch[@"target"] = targetView;
-    return resultTouch;
 }
 
 #pragma mark - Open Ripple
