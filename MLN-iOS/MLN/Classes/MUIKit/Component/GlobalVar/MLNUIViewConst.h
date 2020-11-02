@@ -87,7 +87,9 @@ typedef NS_ENUM(NSUInteger, MLNUITouchType) {
 };
 
 typedef NS_ENUM(NSUInteger, InteractiveType) {
-    InteractiveType_Gesture
+    InteractiveType_Gesture, ///< 手势驱动
+    InteractiveType_Scale,   ///< 双指缩放驱动
+    InteractiveType_Rotate,  ///< 双指旋转驱动（暂不实现）
 };
 
 typedef NS_ENUM(NSUInteger, InteractiveDirection) {
