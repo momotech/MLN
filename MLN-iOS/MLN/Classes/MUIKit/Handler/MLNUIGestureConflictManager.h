@@ -23,6 +23,10 @@ NS_ASSUME_NONNULL_BEGIN
 /// @param view 该view的子视图是否接受手势响应
 + (void)disableSubviewsInteraction:(BOOL)disable forView:(UIView *)view;
 
+/// 存在手势冲突时，执行responder手势的action
+/// @param gesture 当下系统实际响应的手势，但不应该允许其执行action，而应执行responder手势的action.
++ (void)handleResponderGestureActionsWithCurrentGesture:(UIGestureRecognizer *)gesture;
+
 @end
 
 NS_ASSUME_NONNULL_END

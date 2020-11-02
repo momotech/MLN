@@ -11,11 +11,37 @@
 #import "MLNUIWindow.h"
 #import "MLNUIView.h"
 #import "UIView+MLNUIKit.h"
+#import "MLNUIGestureRecognizer.h"
 
 #define IS_ARGOUI_WINDOW(view) [view isMemberOfClass:[MLNUIWindow class]]
 
 static __weak __kindof UIView *_responder = nil;
 static __weak __kindof UIGestureRecognizer *_gesture = nil;
+
+@interface UIGestureRecognizer (MLNUIGesture)
+
+/// 在<MLNUIGestureRecogizerDelegate>中声明，用于替代`state`.
+@property (nonatomic, assign) UIGestureRecognizerState argoui_state;
+
+@end
+
+@implementation UIGestureRecognizer (MLNUIGesture)
+
+- (void)setArgoui_state:(UIGestureRecognizerState)state {
+    objc_setAssociatedObject(self, @selector(argoui_state), @(state), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+
+- (UIGestureRecognizerState)argoui_state {
+    UIGestureRecognizerState newState = [objc_getAssociatedObject(self, _cmd) boolValue];
+    if (newState == UIGestureRecognizerStatePossible) {
+        return self.state; // return origin state if doesn't set newState.
+    }
+    return newState;
+}
+
+@end
+
+#pragma mark -
 
 @implementation MLNUIGestureConflictManager
 
@@ -79,11 +105,29 @@ static inline BOOL ARGOUICanAcceptGesture(UIView *view) {
     }
 }
 
++ (void)handleResponderGestureActionsWithCurrentGesture:(UIGestureRecognizer *)gesture {
+    NSParameterAssert(gesture);
+    if (!gesture || !_responder) return;
+    __block UIGestureRecognizer<MLNUIGestureRecogizerDelegate> *responderGesture = nil;
+    [_responder.gestureRecognizers enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(__kindof UIGestureRecognizer *_Nonnull obj, NSUInteger idx, BOOL *_Nonnull stop) {
+        if ([obj isKindOfClass:gesture.class]) { // 如果有多个同类型的手势，应该先响应最后添加的，故倒序遍历
+            responderGesture = obj;
+            *stop = YES;
+        }
+    }];
+    NSParameterAssert(responderGesture);
+    if ([responderGesture respondsToSelector:@selector(argoui_handleTargetActions)]) {
+        responderGesture.argoui_state = gesture.state; // 手势冲突时，系统认为应该响应gesture，responderGesture状态为failed，故使用argoui_state
+        [responderGesture argoui_handleTargetActions];
+        responderGesture.argoui_state = UIGestureRecognizerStatePossible; // reset
+    }
+}
+
 #pragma mark - Private
 
 // 向上找
 + (UIView *_Nullable)hitTop:(UIView *)view currentGesture:(UIGestureRecognizer *)currentGesture {
-    if (!view || !currentGesture) {
+    if (IS_ARGOUI_WINDOW(view) || !view || !currentGesture) {
         return nil;
     }
     
@@ -93,11 +137,6 @@ static inline BOOL ARGOUICanAcceptGesture(UIView *view) {
             return view.actualView;
         }
         return [self hitTop:view.superview currentGesture:currentGesture];
-    }
-    
-    // 只处理 MLNUIView 及其子类的连续手势
-    if ([view isKindOfClass:[MLNUIView class]] == NO) {
-        return nil;
     }
     
     __block BOOL matchGesture = NO;
@@ -135,11 +174,6 @@ static inline BOOL ARGOUICanAcceptGesture(UIView *view) {
             hit = ret; *stop = YES; // 返回符合条件的叶子视图
         }];
         return hit;
-    }
-    
-    // 只处理 MLNUIView 及其子类的连续手势
-    if ([view isKindOfClass:[MLNUIView class]] == NO) {
-        return nil;
     }
     
     __block BOOL matchGesture = NO;

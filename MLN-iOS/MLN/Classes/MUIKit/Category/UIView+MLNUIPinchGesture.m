@@ -10,13 +10,14 @@
 #import "MLNUIBlock.h"
 #import <objc/runtime.h>
 #import "MLNUIGestureConflictManager.h"
+#import "MLNUIPinchGestureRecognizer.h"
 
 @interface UIView ()
 
 @property (nonatomic, strong) MLNUIBlock *argo_scaleBeginBlock;
 @property (nonatomic, strong) MLNUIBlock *argo_scalingBlock;
 @property (nonatomic, strong) MLNUIBlock *argo_scaleEndBlock;
-@property (nonatomic, strong) UIPinchGestureRecognizer *argo_pinchGesture;
+@property (nonatomic, strong) MLNUIPinchGestureRecognizer *argo_pinchGesture;
 
 @end
 
@@ -42,17 +43,17 @@
 #pragma mark - Private
 
 - (void)argo_in_addPinchGestureIfNeed {
-    UIPinchGestureRecognizer *gesture = self.argo_pinchGesture;
+    MLNUIPinchGestureRecognizer *gesture = self.argo_pinchGesture;
     if (!gesture && [self luaui_canPinch]) {
         self.mlnui_needRender = YES;
-        gesture = [[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(argo_preparePinchGestureAction:)];
+        gesture = [[MLNUIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(argo_preparePinchGestureAction:)];
         [self addGestureRecognizer:gesture];
         gesture.cancelsTouchesInView = NO;
         self.argo_pinchGesture = gesture;
     }
 }
 
-- (void)argo_preparePinchGestureAction:(UIPinchGestureRecognizer *)gesture {
+- (void)argo_preparePinchGestureAction:(MLNUIPinchGestureRecognizer *)gesture {
     switch (gesture.state) {
         case UIGestureRecognizerStateBegan:
             [MLNUIGestureConflictManager setCurrentGesture:gesture];
@@ -67,10 +68,14 @@
     }
     UIView *responder = [MLNUIGestureConflictManager currentGestureResponder];
     if (!responder) return;
+    if (responder != gesture.view) {
+        [MLNUIGestureConflictManager handleResponderGestureActionsWithCurrentGesture:gesture];
+        return;
+    }
     [responder argo_handlePinchGestureAction:gesture];
 }
 
-- (void)argo_handlePinchGestureAction:(UIPinchGestureRecognizer *)gesture {
+- (void)argo_handlePinchGestureAction:(MLNUIPinchGestureRecognizer *)gesture {
     if (!self.luaui_enable) {
         return;
     }
@@ -106,19 +111,19 @@
     }
 }
 
-- (void)runScaleCallback:(MLNUIBlock *)callback gestureRecognizer:(UIPinchGestureRecognizer *)recognizer {
+- (void)runScaleCallback:(MLNUIBlock *)callback gestureRecognizer:(MLNUIPinchGestureRecognizer *)recognizer {
     [self runScaleCallback:callback gestureRecognizer:recognizer params:[self pinchResultWithGestureRecognizer:recognizer]];
 }
 
 // 仿照Android,当手势的手指数为1时,执行 scaleEndCallback.
 // 返回的坐标就是当前手指的坐标. scaleFactor 为 1
-- (void)runScaleEndCallback:(UIPinchGestureRecognizer *)recognizer {
+- (void)runScaleEndCallback:(MLNUIPinchGestureRecognizer *)recognizer {
     NSMutableDictionary *params = [[self pinchGestureParams] mutableCopy];
     params[@"factor"] = @(1.0);
     [self runScaleCallback:self.argo_scaleEndBlock gestureRecognizer:recognizer params:params];
 }
 
-- (void)runScaleCallback:(MLNUIBlock *)callback gestureRecognizer:(UIPinchGestureRecognizer *)recognizer params:(NSDictionary *)params {
+- (void)runScaleCallback:(MLNUIBlock *)callback gestureRecognizer:(MLNUIPinchGestureRecognizer *)recognizer params:(NSDictionary *)params {
     if (!callback) {
         return;
     }
@@ -129,7 +134,7 @@
     [callback callIfCan];
 }
 
-- (NSDictionary *)pinchResultWithGestureRecognizer:(UIPinchGestureRecognizer *)recognizer {
+- (NSDictionary *)pinchResultWithGestureRecognizer:(MLNUIPinchGestureRecognizer *)recognizer {
     CGPoint location = [recognizer locationInView:self];
     CGPoint location0 = [recognizer locationOfTouch:0 inView:self];
     CGPoint location1 = [recognizer locationOfTouch:1 inView:self];
@@ -177,11 +182,11 @@ static const void *kLuaScaleEndBlock = &kLuaScaleEndBlock;
     return objc_getAssociatedObject(self, kLuaScaleEndBlock);
 }
 
-- (void)setArgo_pinchGesture:(UIPinchGestureRecognizer *)gesture {
+- (void)setArgo_pinchGesture:(MLNUIPinchGestureRecognizer *)gesture {
     objc_setAssociatedObject(self, @selector(argo_pinchGesture), gesture, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
-- (UIPinchGestureRecognizer *)argo_pinchGesture {
+- (MLNUIPinchGestureRecognizer *)argo_pinchGesture {
     return objc_getAssociatedObject(self, _cmd);
 }
 

@@ -17,6 +17,8 @@
 #import "MLNUICanvasAnimation.h"
 #import "MLNUIKitInstanceHandlersManager.h"
 #import "MLNUIGestureConflictManager.h"
+#import "MLNUITapGestureRecognizer.h"
+#import "MLNUILongPressGestureRecognizer.h"
 
 #define kMLNUIDefaultRippleColor [UIColor colorWithRed:247/255.0 green:246/255.0 blue:244/255.0 alpha:1.0]
 
@@ -651,9 +653,9 @@ static const void *kLuaRenderContext = &kLuaRenderContext;
 
 - (void)mlnui_in_addTapGestureIfNeed
 {
-    UITapGestureRecognizer *gesture = [self mlnui_in_getClickGesture];
+    MLNUITapGestureRecognizer *gesture = [self mlnui_in_getClickGesture];
     if (!gesture && [self luaui_canClick]) {
-        gesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(mlnui_in_tapClickAction:)];
+        gesture = [[MLNUITapGestureRecognizer alloc] initWithTarget:self action:@selector(mlnui_in_tapClickAction:)];
         [self addGestureRecognizer:gesture];
         [self mlnui_in_setClickGesture:gesture];
     }
@@ -665,18 +667,22 @@ static const void *kLuaRenderContext = &kLuaRenderContext;
         return;
     }
     
-    UITapGestureRecognizer *gesture = [self mlnui_in_getClickGesture];
+    MLNUITapGestureRecognizer *gesture = [self mlnui_in_getClickGesture];
     if (gesture) {
         [self removeGestureRecognizer:gesture];
         [self mlnui_in_setClickGesture:nil];
     }
 }
 
-- (void)mlnui_in_tapClickAction:(UIGestureRecognizer *)gesture {
+- (void)mlnui_in_tapClickAction:(MLNUITapGestureRecognizer *)gesture {
     [MLNUIGestureConflictManager setCurrentGesture:gesture];
     UIView *responder = [MLNUIGestureConflictManager currentGestureResponder];
     if (!responder || !responder.luaui_enable) {
         [MLNUIGestureConflictManager setCurrentGesture:nil];
+        return;
+    }
+    if (responder != gesture.view) {
+        [MLNUIGestureConflictManager handleResponderGestureActionsWithCurrentGesture:gesture];
         return;
     }
     
@@ -692,6 +698,7 @@ static const void *kLuaRenderContext = &kLuaRenderContext;
         [responder.mlnui_touchClickBlock addFloatArgument:point.y];
         [responder.mlnui_touchClickBlock callIfCan];
     }
+    [MLNUIGestureConflictManager setCurrentGesture:nil];
 }
 
 #pragma mark - Gesture (UILongPressGestureRecognizer)
@@ -706,19 +713,23 @@ static const void *kLuaRenderContext = &kLuaRenderContext;
 - (void)mlnui_in_addLongPressGestureIfNeed
 {
     if (!self.mlnui_longPressBlock && [self luaui_canLongPress]) {
-        UILongPressGestureRecognizer *gesture = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(mlnui_in_longPressAction:)];
+        MLNUILongPressGestureRecognizer *gesture = [[MLNUILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(mlnui_in_longPressAction:)];
         [self addGestureRecognizer:gesture];
     }
 }
 
-- (void)mlnui_in_longPressAction:(UIGestureRecognizer *)gesture {
-    switch (gesture.state) {
+- (void)mlnui_in_longPressAction:(MLNUILongPressGestureRecognizer *)gesture {
+    switch (gesture.argoui_state) {
         case UIGestureRecognizerStateBegan: {
             [MLNUIGestureConflictManager setCurrentGesture:gesture];
             UIView *responder = [MLNUIGestureConflictManager currentGestureResponder];
             NSParameterAssert([responder isKindOfClass:NSClassFromString(@"MLNUIView")]);
             if (!responder || !responder.luaui_enable || !responder.mlnui_longPressBlock) {
                 [MLNUIGestureConflictManager setCurrentGesture:nil];
+                return;
+            }
+            if (responder != gesture.view) {
+                [MLNUIGestureConflictManager handleResponderGestureActionsWithCurrentGesture:gesture];
                 return;
             }
             CGPoint point = [gesture locationInView:responder];
@@ -741,12 +752,12 @@ static const void *kLuaRenderContext = &kLuaRenderContext;
 #pragma mark -
 
 static const void *kLuaClickGesture = &kLuaClickGesture;
-- (void)mlnui_in_setClickGesture:(UITapGestureRecognizer *)gesture
+- (void)mlnui_in_setClickGesture:(MLNUITapGestureRecognizer *)gesture
 {
     objc_setAssociatedObject(self, kLuaClickGesture, gesture, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
-- (UITapGestureRecognizer *)mlnui_in_getClickGesture
+- (MLNUITapGestureRecognizer *)mlnui_in_getClickGesture
 {
     return objc_getAssociatedObject(self, kLuaClickGesture);
 }

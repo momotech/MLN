@@ -19,6 +19,9 @@
 #import "MLNUICollectionViewLayoutProtocol.h"
 #import "UIView+MLNUIKit.h"
 #import "MLNUICollectionViewLayoutProtocol.h"
+#import "MLNUILongPressGestureRecognizer.h"
+#import "MLNUITapGestureRecognizer.h"
+#import "MLNUIGestureConflictManager.h"
 
 @interface MLNUICollectionView()
 @property (nonatomic, strong) MLNUIInnerCollectionView *innerCollectionView;
@@ -475,9 +478,15 @@
 
 #pragma mark - Gesture
 
-- (void)handleLongPress:(UIGestureRecognizer *)gesture
-{
-    if (gesture.state != UIGestureRecognizerStateBegan) {
+- (void)handleLongPress:(MLNUILongPressGestureRecognizer *)gesture {
+    if (gesture.argoui_state != UIGestureRecognizerStateBegan) {
+        [MLNUIGestureConflictManager setCurrentGesture:nil];
+        return;
+    }
+    [MLNUIGestureConflictManager setCurrentGesture:gesture];
+    UIView *responder = [MLNUIGestureConflictManager currentGestureResponder];
+    if (responder != gesture.view) {
+        [MLNUIGestureConflictManager handleResponderGestureActionsWithCurrentGesture:gesture];
         return;
     }
     CGPoint p = [gesture locationInView:self];
@@ -505,10 +514,10 @@
         [self addSubview:_innerCollectionView];
         
         // fix:父视图添加tapGesture、longPressGesture手势CollectionView点击、长按回调不响应的问题
-        UILongPressGestureRecognizer *lpgr = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleLongPress:)];
+        MLNUILongPressGestureRecognizer *lpgr = [[MLNUILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleLongPress:)];
         lpgr.minimumPressDuration  = 0.5;
         [_innerCollectionView addGestureRecognizer:lpgr];
-        UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:nil];
+        MLNUITapGestureRecognizer *tapGesture = [[MLNUITapGestureRecognizer alloc] initWithTarget:self action:nil];
         [tapGesture requireGestureRecognizerToFail:lpgr];
         tapGesture.cancelsTouchesInView = NO;
         [_innerCollectionView addGestureRecognizer:tapGesture];
