@@ -14,6 +14,7 @@ import androidx.annotation.IntDef;
 import com.immomo.luanative.hotreload.HotReloadServer;
 import com.immomo.luanative.hotreload.IHotReloadServer;
 import com.immomo.luanative.hotreload.iHotReloadListener;
+import com.immomo.mls.global.LuaViewConfig;
 import com.immomo.mls.util.FileUtil;
 import com.immomo.mls.util.IOUtil;
 import com.immomo.mls.util.LogUtil;
@@ -21,7 +22,6 @@ import com.immomo.mls.utils.MainThreadExecutor;
 import com.immomo.mls.wrapper.GlobalsContainer;
 
 import org.luaj.vm2.Globals;
-import org.luaj.vm2.utils.LuaApiUsed;
 import org.luaj.vm2.utils.StringReplaceUtils;
 
 import java.io.File;
@@ -45,7 +45,6 @@ import static java.lang.annotation.RetentionPolicy.SOURCE;
 /**
  * Created by Xiong.Fangyu on 2019-07-16
  */
-@LuaApiUsed
 public class HotReloadHelper {
     private static final String TAG = "HotReloadHelper";
     /**
@@ -93,6 +92,14 @@ public class HotReloadHelper {
     private static Pattern P;
 
     private static ConnectListener connectListener;
+
+    public static void setSerial(String serial) {
+        HotReloadServer.getInstance().setSerial(serial);
+    }
+
+    public static String getSerial() {
+        return HotReloadServer.getInstance().getSerial();
+    }
 
     private static File getHotReloadPath() {
         File f = new File(FileUtil.getCacheDir(), "LuaHotReload");
@@ -272,6 +279,9 @@ public class HotReloadHelper {
                     waitReloading();
 
                     File f = new File(getHotReloadPath(), relativeFilePath);
+                    for (Callback cb : callbacks) {
+                        cb.onUpdateFiles(f.getAbsolutePath());
+                    }
                     File parent = f.getParentFile();
                     if (!parent.isDirectory()) {
                         parent.mkdirs();
@@ -371,7 +381,6 @@ public class HotReloadHelper {
         @Override
         public void disconnecte(int type, String ip, int port, String error) {
             LogUtil.d(TAG, "disconnecte", type, ip, port, error);
-//            toast(String.format("断开与HotReload插件的%s连接，error: %s", (type == NET_CONNECTION ? "wifi, 检查是否与电脑在同一个网络环境下" : "usb"), error));
             connectState = CS_Disconnect;
             connectType &= ~type;
             HotReloadServer.getInstance().stop();
@@ -397,6 +406,11 @@ public class HotReloadHelper {
                     }
                 });
             }
+        }
+
+        @Override
+        public void onIpChanged(String ip) {
+            LuaViewConfig.setDebugIp(ip);
         }
 
         private Globals getGlobals() {
@@ -524,6 +538,8 @@ public class HotReloadHelper {
 
     public static interface Callback {
 
+        void onUpdateFiles(String f);
+
         void onReload(String path, HashMap<String, String> params, @STATE int state);
 
         boolean reloadFinish();
@@ -535,10 +551,5 @@ public class HotReloadHelper {
         void onConnected(boolean hasCallback);
 
         void onDisConnected();
-    }
-
-    @LuaApiUsed
-    private static void onReportFromLua(long L, String summaryPath, String detailPath) {
-        HotReloadServer.getInstance().onReport(summaryPath, detailPath);
     }
 }

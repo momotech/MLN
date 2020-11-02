@@ -16,6 +16,8 @@
 #include "llimits.h"
 #include "jinfo.h"
 #include "cache.h"
+#include "jbridge.h"
+#include <string.h>
 
 extern jclass LuaValue;
 extern jclass Entrys;
@@ -35,6 +37,48 @@ void jni_clearTableArray(JNIEnv *env, jobject jobj, jlong L, jlong table, jint f
     lua_unlock(LS);
 }
 
+
+void jni_removeTableIndex(JNIEnv *env, jobject jobj, jlong L, jlong table, jint index) {
+    lua_State *LS = (lua_State *) L;
+    lua_lock(LS);
+
+    getValueFromGNV(LS, (ptrdiff_t) table, LUA_TTABLE);/// -1 table
+
+    while (index <= lua_objlen(LS, -1)) {
+        lua_pushinteger(LS, index);   /// -1 index -2 table
+        lua_pushinteger(LS, index + 1);  ///-1 index+1  -2 index -3 table
+        lua_rawget(LS, -3);  ///-1 value(index+1) -2 index -3 table
+        lua_rawset(LS, -3);   ///table -1
+        index++;
+    }
+
+    lua_pop(LS, 1);
+    lua_unlock(LS);
+}
+
+
+void jni_clearTable(JNIEnv *env, jobject jobj, jlong L, jlong table) {
+    lua_State *LS = (lua_State *) L;
+    lua_lock(LS);
+    getValueFromGNV(LS, (ptrdiff_t) table, LUA_TTABLE); /// -1 table
+
+    lua_pushnil(LS);///-1 nil  -2 table
+
+    while (lua_next(LS, -2)) ///-1 v -2 k -3 table
+    {
+        lua_pop(LS, 1);  /// -1 k -2 table
+
+        lua_pushvalue(LS, -1);/// -1 k -2 k -3 table
+
+        lua_pushnil(LS); /// -1nil -2 k -3 k -4 table
+        lua_rawset(LS, -4); /// -1 k -2 table
+    }
+
+    lua_pop(LS, 1);
+    lua_unlock(LS);
+}
+
+
 jlong jni_createTable(JNIEnv *env, jobject jobj, jlong L) {
     lua_State *LS = (lua_State *) L;
     lua_lock(LS);
@@ -43,6 +87,17 @@ jlong jni_createTable(JNIEnv *env, jobject jobj, jlong L) {
     lua_pop(LS, 1);
     lua_unlock(LS);
     return (jlong) key;
+}
+
+jboolean jni_isEmpty(JNIEnv *env, jobject jobj, jlong L, jlong table) {
+    lua_State *LS = (lua_State *) L;
+    lua_lock(LS);
+    getValueFromGNV(LS, (ptrdiff_t) table, LUA_TTABLE);
+    lua_pushnil(LS);
+    int ret = lua_next(LS, -2);
+    lua_pop(LS, (ret ? 3 : 1));
+    lua_unlock(LS);
+    return !ret;
 }
 
 jint jni_getTableSize(JNIEnv *env, jobject jobj, jlong L, jlong table) {
@@ -54,6 +109,58 @@ jint jni_getTableSize(JNIEnv *env, jobject jobj, jlong L, jlong table) {
     lua_unlock(LS);
     return size;
 }
+
+jlong jni_setMetatable(JNIEnv *env, jobject jobj, jlong Ls, jlong table, jlong meta) {
+    lua_State *L = (lua_State *) Ls;
+    lua_lock(L);
+    getValueFromGNV(L, (ptrdiff_t) table, LUA_TTABLE);
+    if (!lua_istable(L, -1)) {
+        lua_pop(L ,1);
+        lua_unlock(L);
+        return 0;
+    }
+    getValueFromGNV(L,(ptrdiff_t) meta, LUA_TTABLE);
+    if (!lua_istable(L, -1)) {
+        lua_pop(L, 1);
+        lua_newtable(L);
+        meta = (jlong) copyValueToGNV(L, -1);
+    }
+    /// -1:metatalbe, -2:src table
+    lua_setmetatable(L, -2);
+    lua_pop(L, 1);
+    lua_unlock(L);
+    return meta;
+}
+
+
+jlong jni_getMetatable(JNIEnv *env, jobject jobj, jlong Ls, jlong table) {
+    lua_State *L = (lua_State *) Ls;
+    lua_lock(L);
+
+    // -1 table
+    getValueFromGNV(L, (ptrdiff_t) table, LUA_TTABLE);
+    if (!lua_istable(L, -1)) {
+        lua_pop(L ,1);
+        lua_unlock(L);
+        return 0;
+    }
+
+    if(lua_getmetatable(L,-1) == 0) {
+        lua_pop(L ,1);
+        lua_unlock(L);
+        return 0;
+    }
+
+    // -1 metatable -2 table src
+    ptrdiff_t key = copyValueToGNV(L, -1);
+
+    lua_pop(L, 2);
+    lua_unlock(L);
+
+    return (jlong)key;
+}
+
+
 
 /// -----------------------------------------------------------------------------------------
 /// -----------------------------------------------------------------------------------------
@@ -177,6 +284,46 @@ void jni_setTableSChild(JNIEnv *env, jobject jobj, jlong L, jlong table, jstring
 void jni_setTableSChildN(JNIEnv *env, jobject jobj, jlong L, jlong table, jstring k, jlong c, jint type) {
     setTableS(env, L, table, k,
               getValueFromGNV(LS, (ptrdiff_t) c, type);
+    )
+}
+
+void jni_setTableMethod(JNIEnv *env, jobject jobj, jlong L, jlong table, jint k, jstring clz, jstring methodName) {
+    setTableBefore(L, table, k)
+
+    const char *clzName = GetString(env, clz);
+    const char *mName = GetString(env, methodName);
+    jclass jclz = getClassByName(env, clzName);
+    jmethodID jmethod = getStaticMethodByName(env, jclz, mName);
+
+    size_t len = strlen(clzName);
+    while (len > 0) {
+        if (clzName[--len] == '/')
+            break;
+    }
+    pushStaticClosure(LS, jclz, jmethod, &clzName[len + 1], mName, -1, 0);
+    ReleaseChar(env, clz, clzName);
+    ReleaseChar(env, methodName, mName);
+
+    setTableAfter(LS)
+}
+
+void jni_setTableSMethod(JNIEnv *env, jobject jobj, jlong L, jlong table, jstring k, jstring clz, jstring methodName) {
+    setTableS(env, L, table, k,
+            {
+                const char *clzName = GetString(env, clz);
+                const char *mName = GetString(env, methodName);
+                jclass jclz = getClassByName(env, clzName);
+                jmethodID jmethod = getStaticMethodByName(env, jclz, mName);
+
+                size_t len = strlen(clzName);
+                while (len > 0) {
+                    if (clzName[--len] == '/')
+                        break;
+                }
+                pushStaticClosure(LS, jclz, jmethod, &clzName[len + 1], mName, -1, 0);
+                ReleaseChar(env, clz, clzName);
+                ReleaseChar(env, methodName, mName);
+            }
     )
 }
 
@@ -347,5 +494,19 @@ void copyTable(lua_State *L, int src, int desc) {
         lua_rawset(L, desc);
         lua_pop(L, 1);
     }
+    lua_unlock(L);
+}
+
+void setParentTable(lua_State *L, int t, int parent) {
+    lua_lock(L);
+    int oldTop = lua_gettop(L);
+    t = t < 0 ? oldTop + t + 1 : t;
+    parent = parent < 0 ? oldTop + parent + 1 : parent;
+    lua_createtable(L, 0, 1);   //metatable
+    lua_pushstring(L, "__index");
+    lua_pushvalue(L, parent);
+    lua_rawset(L, -3);
+    /// -1:metatable
+    lua_setmetatable(L, t);
     lua_unlock(L);
 }

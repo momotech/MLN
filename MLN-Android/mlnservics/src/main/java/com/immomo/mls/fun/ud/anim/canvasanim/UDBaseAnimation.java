@@ -91,6 +91,10 @@ public abstract class UDBaseAnimation implements Animation.AnimationListener {
         delay = (int) (d * 1000);
     }
 
+    public int getDelay() {
+        return delay;
+    }
+
     @LuaBridge
     public void setInterpolator(int type) {
         interpolator = Utils.parse(type);
@@ -167,7 +171,7 @@ public abstract class UDBaseAnimation implements Animation.AnimationListener {
         animation.setFillBefore(false);
         animation.setInterpolator(interpolator);
         animation.setDuration(duration);
-        animation.setStartOffset(delay);
+//        animation.setStartOffset(delay);
         animation.setAnimationListener(this);
         return animation;
     }

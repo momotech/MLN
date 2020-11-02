@@ -66,7 +66,7 @@ public class UDColor extends LuaUserdata {
                         dealColorVal(initParams[2].toInt()));
 
             } else if (initParams.length != 0) {
-                ErrorUtils.debugIllegalStateError("Color only zero or three or four parameters can be used for constructor method");
+                ErrorUtils.debugLuaError("Color only zero or three or four parameters can be used for constructor method", getGlobals());
             }
         }
     }

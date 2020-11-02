@@ -76,7 +76,7 @@ public class KeyboardViewUtil {
     }
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
-    static boolean isFitsSystemWindows(final Context context) {
+    public static boolean isFitsSystemWindows(final Context context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
             if (context instanceof Activity) {
                 return ((ViewGroup) (((Activity) context).findViewById(android.R.id.content))).getChildAt(0).

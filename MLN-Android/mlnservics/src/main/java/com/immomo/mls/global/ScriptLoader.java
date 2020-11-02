@@ -35,11 +35,9 @@ public class ScriptLoader {
         return Looper.getMainLooper() == Looper.myLooper();
     }
 
-    public static void loadScriptBundle(@NonNull UDLuaView ud,
-                                        @NonNull final ScriptBundle scriptBundle,
+    public static void loadScriptBundle(@NonNull final ScriptBundle scriptBundle,
                                         @NonNull final Globals globals,
                                         @Nullable final Callback callback) {
-        AssertUtils.assertNullForce(ud);
         AssertUtils.assertNullForce(scriptBundle);
         AssertUtils.assertNullForce(globals);
         final ScriptFile scriptFile = scriptBundle.getMain();

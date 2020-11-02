@@ -2,6 +2,9 @@
 <resources>
     <string name="str_touch_move">长按拖动，点击清除</string>
     <string name="debug_tip">debug状态:</string>
+    <string name="log_tip">bridge状态:</string>
+    <string name="start_log_tip">清除</string>
+    <string name="finish_log_tip">打印</string>
     <string name="debug_scan">扫码获取ip</string>
     <string name="debug_ip">debug ip:</string>
     <string name="debug_port">debug port:</string>

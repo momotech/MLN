@@ -33,7 +33,19 @@ public interface InterpolatorType {
     @Constant
     int Bounce = 5;
 
-    @IntDef({Linear, Accelerate, Decelerate, AccelerateDecelerate, Overshoot, Bounce})
+    @Constant
+    int Normal = Linear;
+    @Constant
+    int Spring = 6;
+    @Constant
+    int EaseIn = 7;
+    @Constant
+    int EaseOut = 8;
+    @Constant
+    int EaseInOut = 9;
+
+    @IntDef({Linear, Accelerate, Decelerate, AccelerateDecelerate, Overshoot, Bounce,
+            Spring, EaseIn, EaseOut, EaseInOut})
     @Retention(RetentionPolicy.SOURCE)
     public @interface Interpolators {}
 }

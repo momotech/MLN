@@ -6,15 +6,13 @@
   * For the full copyright and license information,please view the LICENSE file in the root directory of this source tree.
   */
 //
-//  compiler.c
-//
-//  Created by XiongFangyu on 2019/6/13.
-//  Copyright © 2019 XiongFangyu. All rights reserved.
+// Created by XiongFangyu on 2020/8/24.
 //
 
+#include "compiler.h"
 #include <errno.h>
 #include <sys/stat.h>
-#include "compiler.h"
+#include <time.h>
 #include "saes.h"
 #include "lundump.h"
 #include "m_mem.h"
@@ -27,68 +25,74 @@
 #include "cache.h"
 #include "jfunction.h"
 #include "jtable.h"
+#include "statistics_require.h"
+#ifdef ANDROID
 #include "assets_reader.h"
+#endif
 
 /**
  * 是否开启文件加密，若开启，读lua文件判断是否是加密文件，写lua文件都加密
  *                若关闭，读写都不使用加密
  */
 static int opensaes = 0;
+
+#define FILE_NOT_FOUND -404
+#define WRITE_FILE_ERROR -300
+#define CLOSE_FILE_ERROR -301
+#define BUFFER_SIZE 1024
+
 extern jclass Globals;
 extern jclass StringClass;
 extern jmethodID Globals__onLuaRequire;
 extern jmethodID Globals__getRequireError;
 
-#define FILE_NOT_FOUND -404
-#define WRITE_FILE_ERROR -300
-#define CLOSE_FILE_ERROR -301
-#define GET_PROTO(L) getproto(L->top - 1)
-#define BUFFER_SIZE 1024
-#define READ_BLOCK 1024
+//<editor-fold desc="define static function">
+//<editor-fold desc="define read function">
+/**
+ * 编译数据，并将结果放入栈顶
+ * @param chunkname 可为空
+ * @return LUA_OK: 成功，其他，失败
+ */
+static int compile_buffer(lua_State *L, const char *data, size_t size, const char *chunkname);
+/**
+ * 编译文件数据，并将结果放入栈顶
+ * @param chunkname 可为空，则使用file当作chunkname
+ * @return LUA_OK: 成功，其他，失败
+ */
+static int compile_file(lua_State *L, const char *file, const char *chunkname);
+#ifdef ANDROID
+/**
+ * 编译Android Assets文件数据，并将结果放入栈顶
+ * @param chunkname  可为空，则使用file当作chunkname
+ * @return LUA_OK: 成功，其他，失败
+ */
+static int compile_assets(lua_State *L, const char *file, const char *chunkname);
+#endif
+//</editor-fold>
 
-typedef struct LoadEF {
-    int n;                 /* number of pre-read characters */
-    int aes;               /* nead aes?*/
-    FILE *f;               /* file being read */
-    char buff[READ_BLOCK]; /* area for reading file */
-} LoadEF;
+//<editor-fold desc="define java read function">
 
-typedef struct LoadES {
-    const char *s;
-    size_t size;
-} LoadES;
+static int j_compile_buffer(JNIEnv *env, lua_State *L, jstring name, jbyteArray data);
 
-static int getLuaClosureAndSave(JNIEnv *env, lua_State *L, jstring savePath, jstring chunkname);
+static int j_compile_file(JNIEnv *env, lua_State *L, jstring path, jstring chunkname);
 
-static int loadbuffer(JNIEnv *env, lua_State *L, jstring name, jbyteArray data);
-
-static int real_loadbuffer(lua_State *L, char *nd, size_t size, const char *cn);
-
-static const char *getES(lua_State *L, void *ud, size_t *size);
-
-static int loadfile(JNIEnv *env, lua_State *L, jstring path, jstring chunkname);
-
-static int real_loadfile(lua_State *L, const char *filename, const char *chunkname);
-
-static int loadAssetsfile(JNIEnv *env, lua_State *L, jstring path, jstring chunkname);
-
-static int real_loadassetsfile(lua_State *L, const char *filename, const char *chunkname);
-
-static int errfile(lua_State *L, const char *what, const char *filename);
-
-static SIZE get_file_size(const char *__restrict file);
-
-static const char *getF(lua_State *L, void *ud, size_t *size);
-
-static void checkSaveError(JNIEnv *env, int ret);
-
-static int writer(lua_State *L, const void *p, size_t size, void *u);
-
-static int saveProto(lua_State *L, const Proto *p, const char *file);
+#ifdef ANDROID
+static int j_compile_assets(JNIEnv *env, lua_State *L, jstring path, jstring chunkname);
+#endif
 
 static void throwUndumpError(JNIEnv *env, const char *msg);
+//</editor-fold>
 
-/// ------------------------jni methods------------------------
+/**
+ * 保存lua function，栈顶必须是luafunction
+ * @param file 保存位置
+ * @return LUA_OK: 成功
+ */
+static int saveProto(lua_State *L, const char *file);
+//</editor-fold>
+
+//<editor-fold desc="jni methods">
+
 void jni_openSAES(JNIEnv *env, jobject jobj, jboolean open) {
     opensaes = (int) open;
 }
@@ -96,7 +100,7 @@ void jni_openSAES(JNIEnv *env, jobject jobj, jboolean open) {
 jint jni_loadData(JNIEnv *env, jobject jobj, jlong L_state_pointer, jstring name, jbyteArray data) {
     lua_State *L = (lua_State *) L_state_pointer;
     lua_lock(L);
-    jint r = (jint) loadbuffer(env, L, name, data);
+    jint r = (jint) j_compile_buffer(env, L, name, data);
     lua_unlock(L);
     return r;
 }
@@ -105,19 +109,21 @@ jint
 jni_loadFile(JNIEnv *env, jobject jobj, jlong L_state_pointer, jstring path, jstring chunkname) {
     lua_State *L = (lua_State *) L_state_pointer;
     lua_lock(L);
-    jint r = (jint) loadfile(env, L, path, chunkname);
+    jint r = (jint) j_compile_file(env, L, path, chunkname);
     lua_unlock(L);
     return r;
 }
 
+#ifdef ANDROID
 jint
 jni_loadAssetsFile(JNIEnv *env, jobject jobj, jlong L_state_pointer, jstring path, jstring chunkname) {
     lua_State *L = (lua_State *) L_state_pointer;
     lua_lock(L);
-    jint r = (jint) loadAssetsfile(env, L, path, chunkname);
+    jint r = (jint) j_compile_assets(env, L, path, chunkname);
     lua_unlock(L);
     return r;
 }
+#endif
 
 jboolean jni_setMainEntryFromPreload(JNIEnv *env, jobject jobj, jlong LS, jstring name) {
     lua_State *L = (lua_State *) LS;
@@ -140,49 +146,6 @@ jboolean jni_setMainEntryFromPreload(JNIEnv *env, jobject jobj, jlong LS, jstrin
     return JNI_FALSE;
 }
 
-void jni_preloadData(JNIEnv *env, jobject jobj, jlong LS, jstring name, jbyteArray data) {
-    lua_State *L = (lua_State *) LS;
-    lua_lock(L);
-    int ret = loadbuffer(env, L, name, data);
-    if (ret) {
-        lua_unlock(L);
-        return;
-    }
-    luaL_getsubtable(L, LUA_REGISTRYINDEX, "_PRELOAD");
-    lua_pushvalue(L, -2);
-    const char *cn = GetString(env, name);
-    lua_setfield(L, -2, cn);
-    ReleaseChar(env, name, cn);
-    lua_pop(L, 2);
-    lua_unlock(L);
-}
-
-void jni_preloadFile(JNIEnv *env, jobject jobj, jlong LS, jstring name, jstring path) {
-    lua_State *L = (lua_State *) LS;
-    lua_lock(L);
-    const char *p = GetString(env, path);
-    int ret = real_loadfile(L, p, NULL);
-    ReleaseChar(env, path, p);
-    if (ret) {
-        const char *errmsg;
-        if (lua_isstring(L, -1))
-            errmsg = lua_tostring(L, -1);
-        else
-            errmsg = "unkonw error";
-        throwUndumpError(env, errmsg);
-        lua_pop(L, 1);
-        lua_unlock(L);
-        return;
-    }
-    const char *cn = GetString(env, name);
-    luaL_getsubtable(L, LUA_REGISTRYINDEX, "_PRELOAD");
-    lua_pushvalue(L, -2);
-    lua_setfield(L, -2, cn);
-    ReleaseChar(env, name, cn);
-    lua_pop(L, 2);
-    lua_unlock(L);
-}
-
 jint jni_doLoadedData(JNIEnv *env, jobject jobj, jlong L_state_pointer) {
     lua_State *L = (lua_State *) L_state_pointer;
     lua_lock(L);
@@ -197,6 +160,119 @@ jint jni_doLoadedData(JNIEnv *env, jobject jobj, jlong L_state_pointer) {
         throwInvokeError(env, errmsg);
     }
     lua_unlock(L);
+    return ret;
+}
+
+static inline void _set_to_preload(JNIEnv *env, lua_State *L, jstring name, int ret) {
+    if (ret) {
+        lua_pop(L, 1);
+        return;
+    }
+    luaL_getsubtable(L, LUA_REGISTRYINDEX, "_PRELOAD");
+    lua_pushvalue(L, -2);
+    const char *cn = GetString(env, name);
+    lua_setfield(L, -2, cn);
+    ReleaseChar(env, name, cn);
+    lua_pop(L, 2);
+}
+
+void jni_preloadData(JNIEnv *env, jobject jobj, jlong LS, jstring name, jbyteArray data) {
+    lua_State *L = (lua_State *) LS;
+    lua_lock(L);
+    int ret = j_compile_buffer(env, L, name, data);
+    _set_to_preload(env, L, name, ret);
+    lua_unlock(L);
+}
+
+void jni_preloadFile(JNIEnv *env, jobject jobj, jlong LS, jstring name, jstring path) {
+    lua_State *L = (lua_State *) LS;
+    lua_lock(L);
+    int ret = j_compile_file(env, L, path, name);
+    _set_to_preload(env, L, name, ret);
+    lua_unlock(L);
+}
+
+#ifdef ANDROID
+void jni_preloadAssets(JNIEnv *env, jobject jobj, jlong LS, jstring chunkname, jstring path) {
+    lua_State *L = (lua_State *) LS;
+    lua_lock(L);
+    int ret = j_compile_assets(env, L, path, chunkname);
+    _set_to_preload(env, L, chunkname, ret);
+    lua_unlock(L);
+}
+
+jint jni_preloadAssetsAndSave(JNIEnv *env, jobject jobj, jlong LS, jstring chunkname, jstring path, jstring savePath) {
+    lua_State *L = (lua_State *) LS;
+    const char *p = GetString(env, path);
+    const char *cn = GetString(env, chunkname);
+    lua_lock(L);
+    int ret = compile_assets(L, p, cn);
+    ReleaseChar(env, path, p);
+    if (ret) {
+        if (cn)
+            ReleaseChar(env, chunkname, cn);
+        const char *errmsg;
+        if (lua_isstring(L, -1))
+            errmsg = lua_tostring(L, -1);
+        else
+            errmsg = "unkonw error";
+        lua_pop(L, 1);
+        throwUndumpError(env, errmsg);
+        lua_unlock(L);
+        return 0;
+    }
+    luaL_getsubtable(L, LUA_REGISTRYINDEX, "_PRELOAD");
+    lua_pushvalue(L, -2);
+    lua_setfield(L, -2, cn);
+    /// -1 table -2 function
+    lua_pop(L, 1);
+    if (cn)
+        ReleaseChar(env, chunkname, cn);
+    const char *file = GetString(env, savePath);
+    int saveRet = saveProto(L, file);
+    ReleaseChar(env, savePath, file);
+    lua_pop(L, 1);
+    lua_unlock(L);
+    return saveRet;
+}
+#endif
+
+jint jni_require(JNIEnv *env, jobject jobj, jlong LS, jstring path) {
+    lua_State *L = (lua_State *) LS;
+    int errFun = getErrorFunctionIndex(L);
+    lua_getglobal(L, "require");
+    if (!lua_isfunction(L, -1)) {
+        lua_pop(L, 1);
+        return -1;
+    }
+    const char *s = GetString(env, path);
+    lua_pushstring(L, s);
+    ReleaseChar(env, path, s);
+    if (lua_pcall(L, 1, 0, errFun)) {
+        const char *msg;
+        if (lua_isstring(L, -1)) {
+            msg = lua_tostring(L, -1);
+        } else {
+            msg = "unknown error";
+        }
+        lua_pop(L, 1);
+        throwInvokeError(env, msg);
+        return 0;
+    }
+    return 0;
+}
+
+jint jni_dumpFunction(JNIEnv *env, jobject jobj, jlong LS, jlong fun, jstring path) {
+    lua_State *L = (lua_State *) LS;
+    getValueFromGNV(L, (ptrdiff_t) fun, LUA_TFUNCTION);
+    if (!lua_isfunction(L, -1)) {
+        lua_pop(L, 1);
+        return -1;
+    }
+    const char *file = GetString(env, path);
+    int ret = saveProto(L, file);
+    ReleaseChar(env, path, file);
+    lua_pop(L, 1);
     return ret;
 }
 
@@ -238,7 +314,7 @@ jint jni_startDebug(JNIEnv *env, jobject jobj, jlong LS, jbyteArray data, jstrin
     lua_State *L = (lua_State *) LS;
     lua_lock(L);
     /// 加载debug脚本
-    int ret = loadbuffer(env, L, NULL, data); // -1: debug
+    int ret = j_compile_buffer(env, L, NULL, data); // -1: debug
     if (ret) {
         lua_unlock(L);
         return (jint) ret;
@@ -290,210 +366,106 @@ jint jni_startDebug(JNIEnv *env, jobject jobj, jlong LS, jbyteArray data, jstrin
     lua_unlock(L);
     return (jint) ret;
 }
+//</editor-fold>
 
-///--------------------------------------------------------------------------------
-///-----------------------------------static---------------------------------------
-///--------------------------------------------------------------------------------
-static int getLuaClosureAndSave(JNIEnv *env, lua_State *L, jstring savePath, jstring chunkname) {
-    lua_lock(L);
-    const char *cn = GetString(env, chunkname);
-    lua_pushstring(L, cn); // -1: cn --table
-    ReleaseChar(env, chunkname, cn);
-    lua_rawget(L, -2); // -1: preloadFunction --table
-    if (lua_isnil(L, -1) || !isLfunction(L->top - 1)) {
-        lua_pop(L, 2);
-        lua_unlock(L);
-        return -400;
-    }
-    const char *p = GetString(env, savePath);
-    const Proto *f = GET_PROTO(L);
-    int ret = saveProto(L, f, p);
-    lua_pop(L, 2);
-    ReleaseChar(env, savePath, p);
-    checkSaveError(env, ret);
-    lua_unlock(L);
-    return ret;
-}
+//<editor-fold desc="implement function">
+//<editor-fold desc="implement read function">
 
-static int real_loadbuffer(lua_State *L, char *nd, size_t size, const char *cn) {
-    if (!opensaes) return luaL_loadbuffer(L, nd, size, cn);
-    SIZE cs = check_header(nd);
+static int compile_buffer(lua_State *L, const char *data, size_t size, const char *chunkname) {
+    if (!opensaes) return luaL_loadbuffer(L, data, size, chunkname);
+    SIZE cs = check_header(data);
     int ret;
     if (cs == size) {
-        encrypt(nd, size);
-        LoadES les;
-        les.s = nd;
-        les.size = size;
-        ret = lua_load(L, getES, &les, cn, NULL);
+        char *dest = (char *) m_malloc(NULL, 0, size * sizeof(char));
+        decrypt_cpy(dest, data + SOURCE_LEN + HEADER_LEN, size);
+        ret = luaL_loadbuffer(L, dest, size, chunkname);
+        m_malloc(dest, size * sizeof(char), 0);
     } else {
-        ret = luaL_loadbuffer(L, nd, size, cn);
+        ret = luaL_loadbuffer(L, data, size, chunkname);
     }
     return ret;
 }
 
-static int loadbuffer(JNIEnv *env, lua_State *L, jstring name, jbyteArray data) {
-    jbyte *nd = (*env)->GetByteArrayElements(env, data, 0);
-    size_t size = (size_t) GetArrLen(env, data);
-    const char *cn = GetString(env, name);
+//<editor-fold desc="file read function">
 
-    lua_lock(L);
-    int ret = real_loadbuffer(L, (char *) nd, size, cn);
-    (*env)->ReleaseByteArrayElements(env, data, nd, 0);
-    if (name)
-        ReleaseChar(env, name, cn);
-    if (ret) {
-        const char *errmsg;
-        if (lua_isstring(L, -1))
-            errmsg = lua_tostring(L, -1);
-        else
-            errmsg = "unkonw error";
-        lua_pop(L, 1);
-        throwUndumpError(env, errmsg);
-    }
-    lua_unlock(L);
-    return ret;
-}
-
-static const char *getES(lua_State *L, void *ud, size_t *size) {
-    LoadES *ls = (LoadES *) ud;
+typedef struct FileData {
+    int n;                 /* number of pre-read characters */
+    int aes;               /* nead aes?*/
+    FILE *f;               /* file being read */
+    char buff[BUFFER_SIZE]; /* area for reading file */
+} FileData;
+/**
+ * for compile_file
+ */
+static const char *_file_reader(lua_State *L, void *ud, size_t *size) {
+    FileData *lf = (FileData *) ud;
     (void) L; /* not used */
-    if (ls->size == 0)
-        return NULL;
-    *size = ls->size;
-    ls->size = 0;
-    return ls->s + SOURCE_LEN + HEADER_LEN;
-}
-
-static int loadAssetsfile(JNIEnv *env, lua_State *L, jstring path, jstring chunkname) {
-    const char *p = GetString(env, path);
-    const char *cn = GetString(env, chunkname);
-    lua_lock(L);
-    int ret = real_loadassetsfile(L, p, cn);
-    ReleaseChar(env, path, p);
-    if (cn)
-        ReleaseChar(env, chunkname, cn);
-    if (ret) {
-        const char *errmsg;
-        if (lua_isstring(L, -1))
-            errmsg = lua_tostring(L, -1);
-        else
-            errmsg = "unkonw error";
-        lua_pop(L, 1);
-        throwUndumpError(env, errmsg);
-    }
-    lua_unlock(L);
-    return ret;
-}
-
-static int loadfile(JNIEnv *env, lua_State *L, jstring path, jstring chunkname) {
-    const char *p = GetString(env, path);
-    const char *cn = GetString(env, chunkname);
-    lua_lock(L);
-    int ret = real_loadfile(L, p, cn);
-    ReleaseChar(env, path, p);
-    if (cn)
-        ReleaseChar(env, chunkname, cn);
-    if (ret) {
-        const char *errmsg;
-        if (lua_isstring(L, -1))
-            errmsg = lua_tostring(L, -1);
-        else
-            errmsg = "unkonw error";
-        lua_pop(L, 1);
-        throwUndumpError(env, errmsg);
-    }
-    lua_unlock(L);
-    return ret;
-}
-
-static int real_loadassetsfile(lua_State *L, const char *filename, const char *chunkname) {
-    int oldTop = lua_gettop(L);
-    if (chunkname)
-        lua_pushstring(L, chunkname);
-    else
-        lua_pushfstring(L, "@%s", filename);
-
-    AD ad;
-    int code = initAssetsData(&ad, filename);
-    if (code != AR_OK) {
-        lua_pushfstring(L, "find %s from native asset failed, code: %d", lua_tostring(L, -1), code);
-        return 1;
-    }
-    if (opensaes) {
-        unsigned short preReadLen;
-        const char *preData = preReadData(&ad, HEADER_LEN + SOURCE_LEN, &preReadLen);
-        if (!preData) {
-            destroyAssetsData(&ad);
-            lua_pushfstring(L, "preload %s from native asset failed!", lua_tostring(L, -1));
-            return 1;
-        }
-
-        size_t len = (size_t) ad.len;
-
-        if (preReadLen < (HEADER_LEN + SOURCE_LEN)) {
-            /// 非加密
-            ad.aes = 0;
-            ad.remain = preReadLen;
-        } else {
-            int aes = check_header(preData) == (len - HEADER_LEN - SOURCE_LEN);
-            ad.aes = aes;
-            ad.remain = aes ? 0 : preReadLen;
-        }
+    if (lf->n > 0) {   /* are there pre-read characters to be read? */
+        *size = lf->n; /* return them (chars already in buffer) */
+        lf->n = 0;     /* no more pre-read characters */
     } else {
-        ad.aes = 0;
-        ad.remain = 0;
+        /// 检查文件是否已读完
+        if (feof(lf->f))
+            return NULL;
+        *size = fread(lf->buff, 1, BUFFER_SIZE, lf->f); /* read block */
+        if (*size && lf->aes) decrypt(lf->buff, *size);
     }
-    code = lua_load(L, getFromAssets, &ad, lua_tostring(L, -1), NULL);
-    destroyAssetsData(&ad);
-    lua_remove(L, oldTop + 1);
-
-    if (code != LUA_OK) {
-        lua_pushfstring(L, "error loading '%s' from asset, code: %d",
-                        lua_tostring(L, -1), code);
-    }
-    return code;
+    return lf->buff;
 }
-
-static int real_loadfile(lua_State *L, const char *filename, const char *chunkname) {
-    if (!opensaes) return luaL_loadfilec(L, filename, chunkname);
-    LoadEF lf;
-    lf.aes = 0;
-    lf.n = 0;
+/**
+ * 文件操作出错时调用 for compile_file
+ * 将错误信息放到栈顶
+ */
+static inline int errfile(lua_State *L, const char *what, const char *filename) {
+    const char *serr = strerror(errno);
+    lua_pushfstring(L, "cannot %s %s: %s", what, filename, serr);
+    return LUA_ERRFILE;
+}
+/**
+ * 获取文件大小
+ */
+static inline SIZE get_file_size(const char *__restrict file) {
+    struct stat statbuf;
+    stat(file, &statbuf);
+    return (SIZE) statbuf.st_size;
+}
+static int compile_file(lua_State *L, const char *filename, const char *chunkname) {
     int oldTop = lua_gettop(L);
+    FileData lf;
+    lf.n = 0;
+    lf.aes = 0;
+    lf.buff[0] = '\0';
+    /// 先使用二进制读取，检查文件类型
+    lf.f = fopen(filename, "rb");
+    if (!lf.f) return errfile(L, "open(byte)", filename);
     if (chunkname)
         lua_pushstring(L, chunkname);
     else
         lua_pushfstring(L, "@%s", filename);
-    /// 先使用二进制读取，检查是否是加密文件
-    lf.f = fopen(filename, "rb");
-    if (!lf.f) return errfile(L, "open", filename);
-    /// check aes
-    SIZE size = get_file_size(filename);
-    if (size > HEADER_LEN + SOURCE_LEN) {
-        int r = fread(lf.buff, HEADER_LEN + SOURCE_LEN, 1, lf.f);
-        lf.aes = r && check_header(lf.buff) == (size - HEADER_LEN - SOURCE_LEN);
+    if (opensaes) {
+        /// check aes
+        SIZE size = get_file_size(filename);
+        if (size > HEADER_LEN + SOURCE_LEN) {
+            int r = fread(lf.buff, HEADER_LEN + SOURCE_LEN, 1, lf.f);
+            lf.aes = r && check_header(lf.buff) == (size - HEADER_LEN - SOURCE_LEN);
+        }
     }
     /// 1: bytecode
     /// 2: source code
     /// 3: aes code
-    int codeType = 0;
-    /// check end
+    int codeType = 3;
     if (!lf.aes) {
         /// 源码的情况
         if (lf.buff[0] != LUA_SIGNATURE[0]) {
             lf.f = freopen(filename, "r", lf.f);
             if (!lf.f) return errfile(L, "reopen", filename);
             codeType = 2;
-        }
-        /// bytecode
-        else {
+        } else {
             lf.n = HEADER_LEN + SOURCE_LEN;
             codeType = 1;
         }
-    } else {
-        codeType = 4;
     }
-    int state = lua_load(L, getF, &lf, lua_tostring(L, -1), NULL);
+    int state = lua_load(L, _file_reader, &lf, lua_tostring(L, -1), NULL);
     int readstatus = ferror(lf.f);
     fclose(lf.f);
     if (readstatus) {
@@ -515,55 +487,152 @@ static int real_loadfile(lua_State *L, const char *filename, const char *chunkna
         }
         return errfile(L, info, filename);
     }
-    lua_remove(L, oldTop + 1);
+    lua_remove(L, -2);
     return state;
 }
+//</editor-fold>
 
-static SIZE get_file_size(const char *__restrict file) {
-    struct stat statbuf;
-    stat(file, &statbuf);
-    return (SIZE) statbuf.st_size;
-}
+#ifdef ANDROID
+static int compile_assets(lua_State *L, const char *filename, const char *chunkname) {
+    if (chunkname)
+        lua_pushstring(L, chunkname);
+    else
+        lua_pushfstring(L, "@%s", filename);
 
-static int errfile(lua_State *L, const char *what, const char *filename) {
-    const char *serr = strerror(errno);
-    lua_pushfstring(L, "cannot %s %s: %s", what, filename, serr);
-    return LUA_ERRFILE;
-}
+    AD ad;
+    int code = initAssetsData(&ad, filename);
+    if (code != AR_OK) {
+        lua_pushfstring(L, "find %s from native asset failed, code: %d", filename, code);
+        return code;
+    }
+    if (opensaes) {
+        unsigned short preReadLen;
+        const char *preData = preReadData(&ad, HEADER_LEN + SOURCE_LEN, &preReadLen);
+        if (!preData) {
+            destroyAssetsData(&ad);
+            lua_pushfstring(L, "preload %s from native asset failed!", filename);
+            return 1;
+        }
 
-static const char *getF(lua_State *L, void *ud, size_t *size) {
-    LoadEF *lf = (LoadEF *) ud;
-    (void) L; /* not used */
-    if (lf->n > 0) {                  /* are there pre-read characters to be read? */
-        *size = lf->n; /* return them (chars already in buffer) */
-        lf->n = 0;     /* no more pre-read characters */
+        size_t len = (size_t) ad.len;
+        if (preReadLen < (HEADER_LEN + SOURCE_LEN)) {
+            /// 非加密
+            ad.aes = 0;
+            ad.remain = preReadLen;
+        } else {
+            int aes = check_header(preData) == (len - HEADER_LEN - SOURCE_LEN);
+            ad.aes = aes;
+            ad.remain = aes ? 0 : preReadLen;
+        }
     } else {
-        /// 检查文件是否已读完
-        if (feof(lf->f))
-            return NULL;
-        *size = fread(lf->buff, 1, READ_BLOCK, lf->f); /* read block */
-        if (*size && lf->aes) decrypt(lf->buff, *size);
+        ad.aes = 0;
+        ad.remain = 0;
     }
-    return lf->buff;
+    code = lua_load(L, getFromAssets, &ad, lua_tostring(L, -1), NULL);
+    destroyAssetsData(&ad);
+    lua_remove(L, -2);  //remove chunkname
+
+    return code;
+}
+#endif
+//</editor-fold>
+
+//<editor-fold desc="implement java read function">
+
+static int j_compile_buffer(JNIEnv *env, lua_State *L, jstring name, jbyteArray data) {
+    jbyte *nd = (*env)->GetByteArrayElements(env, data, 0);
+    size_t size = (size_t) GetArrLen(env, data);
+    const char *cn = GetString(env, name);
+
+    lua_lock(L);
+    int ret = compile_buffer(L, (char *) nd, size, cn);
+    (*env)->ReleaseByteArrayElements(env, data, nd, 0);
+    if (name)
+        ReleaseChar(env, name, cn);
+    if (ret) {
+        const char *errmsg;
+        if (lua_isstring(L, -1))
+            errmsg = lua_tostring(L, -1);
+        else
+            errmsg = "unkonw error";
+        lua_pop(L, 1);
+        throwUndumpError(env, errmsg);
+    }
+    lua_unlock(L);
+    return ret;
 }
 
-static void checkSaveError(JNIEnv *env, int ret) {
-    switch (ret) {
-        case 0:
-            break;
-        case FILE_NOT_FOUND:
-            throwRuntimeError(env, "cannot open or find file!");
-            break;
-        case WRITE_FILE_ERROR:
-            throwRuntimeError(env, "cannot write");
-            break;
-        case CLOSE_FILE_ERROR:
-            throwRuntimeError(env, "cannot close");
-            break;
+static int j_compile_file(JNIEnv *env, lua_State *L, jstring path, jstring chunkname) {
+    const char *p = GetString(env, path);
+    const char *cn = GetString(env, chunkname);
+    lua_lock(L);
+    int ret = compile_file(L, p, cn);
+    ReleaseChar(env, path, p);
+    if (cn)
+        ReleaseChar(env, chunkname, cn);
+    if (ret) {
+        const char *errmsg;
+        if (lua_isstring(L, -1))
+            errmsg = lua_tostring(L, -1);
+        else
+            errmsg = "unkonw error";
+        lua_pop(L, 1);
+        throwUndumpError(env, errmsg);
     }
+    lua_unlock(L);
+    return ret;
 }
 
-static int saveProto(lua_State *L, const Proto *p, const char *file) {
+#ifdef ANDROID
+static int j_compile_assets(JNIEnv *env, lua_State *L, jstring path, jstring chunkname) {
+    const char *p = GetString(env, path);
+    const char *cn = GetString(env, chunkname);
+    lua_lock(L);
+    int ret = compile_assets(L, p, cn);
+    ReleaseChar(env, path, p);
+    if (cn)
+        ReleaseChar(env, chunkname, cn);
+    if (ret) {
+        const char *errmsg;
+        if (lua_isstring(L, -1))
+            errmsg = lua_tostring(L, -1);
+        else
+            errmsg = "unkonw error";
+        lua_pop(L, 1);
+        throwUndumpError(env, errmsg);
+    }
+    lua_unlock(L);
+    return ret;
+}
+#endif
+
+static jclass UndumpError;
+static void throwUndumpError(JNIEnv *env, const char *msg) {
+    ClearException(env);
+    if (!UndumpError)
+        UndumpError = GLOBAL(env, (*env)->FindClass(env, JAVA_PATH
+                "exception/UndumpError"));
+    (*env)->ThrowNew(env, UndumpError, msg);
+}
+//</editor-fold>
+
+static int writer(lua_State *L, const void *p, size_t size, void *u) {
+    if (!size)
+        return 1;
+    if (!opensaes)
+        return fwrite(p, size, 1, (FILE *) u) != 1;
+    char temp[BUFFER_SIZE];
+    while (size) {
+        size_t realsize = size > BUFFER_SIZE ? BUFFER_SIZE : size;
+        size -= realsize;
+        encrypt_cpy(temp, (const char *) p, realsize);
+        if (!fwrite(temp, realsize, 1, (FILE *) u)) return 1;
+    }
+
+    return 0;
+}
+
+static int saveProto(lua_State *L, const char *file) {
     FILE *F = fopen(file, "wb");
     if (!F)
         return FILE_NOT_FOUND;
@@ -576,6 +645,7 @@ static int saveProto(lua_State *L, const Proto *p, const char *file) {
             return WRITE_FILE_ERROR;
         }
     }
+    const Proto *p = getproto(L->top - 1);
     int ret = luaU_dump(L, p, writer, F, 0);
     if (ferror(F))
         return WRITE_FILE_ERROR;
@@ -608,63 +678,9 @@ static int saveProto(lua_State *L, const Proto *p, const char *file) {
         return CLOSE_FILE_ERROR;
     return ret;
 }
+//</editor-fold>
 
-static int writer(lua_State *L, const void *p, size_t size, void *u) {
-    if (!size)
-        return 1;
-    if (!opensaes)
-        return fwrite(p, size, 1, (FILE *) u) != 1;
-    char temp[BUFFER_SIZE];
-    while (size) {
-        size_t realsize = size > BUFFER_SIZE ? BUFFER_SIZE : size;
-        size -= realsize;
-        encrypt_cpy(temp, (const char *) p, realsize);
-        if (!fwrite(temp, realsize, 1, (FILE *) u)) return 1;
-    }
-
-    return 0;
-}
-
-static jclass UndumpError;
-
-static void throwUndumpError(JNIEnv *env, const char *msg) {
-    ClearException(env);
-    if (!UndumpError)
-        UndumpError = GLOBAL(env, (*env)->FindClass(env, JAVA_PATH
-                "exception/UndumpError"));
-    (*env)->ThrowNew(env, UndumpError, msg);
-}
-///--------------------------------------------------------------------------------
-///----------------------------------require---------------------------------------
-///--------------------------------------------------------------------------------
-#define BIN_CHAR 'b'
-#define BINARY_SUFFIX_END "b"
-#define isBinaryPath(p) (p[strlen(p) - 1] == BIN_CHAR)
-#define isBinaryData(d) (memcmp(d, LUA_SIGNATURE, 4) == 0)
-
-static int isAutosave(lua_State *L) {
-    lua_getglobal(L, LUA_LOADLIBNAME); //-1 package table
-    lua_getfield(L, -1, AUTO_SAVE);    //-1 v -- table
-    int r = lua_toboolean(L, -1);
-    lua_pop(L, 2);
-    return r;
-}
-
-static const char *getAutoSavePath(lua_State *L) {
-    lua_getglobal(L, LUA_LOADLIBNAME); //-1 package table
-    lua_getfield(L, -1, AUTO_SAVE);    //-1 v -- table
-    if (lua_toboolean(L, -1)) {
-        lua_pop(L, 1);               //-1 table
-        lua_getfield(L, -1, "path"); //-1 path -- table
-        if (lua_isstring(L, -1)) {
-            const char *r = lua_tostring(L, -1);
-            lua_pop(L, 2);
-            return r;
-        }
-    }
-    lua_pop(L, 2);
-    return NULL;
-}
+//<editor-fold desc="require">
 
 static int readable(const char *filename) {
     FILE *f = fopen(filename, "r"); /* try to open file */
@@ -674,68 +690,67 @@ static int readable(const char *filename) {
     return 1;
 }
 
-static char *getBinaryPath(const char *path) {
-    int len = strlen(path);
-    char *sp = (char *) m_malloc(NULL, 0, sizeof(char) * (len + 2));
-    memcpy(sp, path, len);
-    sp[len] = BIN_CHAR;
-    sp[len + 1] = '\0';
-    return sp;
+/**
+ * 不需要free
+ */
+static char *replaceLuaRequire(lua_State *L, const char *name) {
+    size_t len = strlen(name);
+    if (name[len-4] == '.'
+    && name[len-3] == 'l'
+    && name[len-2] == 'u'
+    && name[len-1] == 'a') {
+        char *nameNoLua = m_malloc(NULL, 0, sizeof(char) * (len - 3));
+        memcpy(nameNoLua, name, len - 4);
+        nameNoLua[len-4] = '\0';
+        const char *path = luaL_gsub(L, nameNoLua, ".", LUA_DIRSEP);
+#if defined(J_API_INFO)
+        m_malloc(nameNoLua, (len - 3) * sizeof(char), 0);
+#else
+        free(nameNoLua);
+#endif
+        return path;
+    }
+    return luaL_gsub(L, name, ".", LUA_DIRSEP);
 }
 
 static char *findfile4lua(lua_State *L, const char *name) {
     const char *path;
     lua_getfield(L, lua_upvalueindex(1), "path");
-    path = lua_tostring(L, -1);
-    if (!path)
-        luaL_error(L, "'package.path' must be a string");
-    name = luaL_gsub(L, name, ".", LUA_DIRSEP);
-    char *ret = formatstr("%s" LUA_DIRSEP "%s.lua" BINARY_SUFFIX_END, path, name);
-    size_t len = strlen(ret);
+    if (lua_isstring(L, -1))
+        path = lua_tostring(L, -1);
+    else
+        path = NULL;
     lua_pop(L, 1);
-    if (!ret)
-        return NULL;
-    if (readable(ret))
-        return ret;
-    ret[len - 1] = '\0';
-    if (readable(ret))
-        return ret;
-    m_malloc(ret, (len + 1) * sizeof(char), 0);
-    return NULL;
-}
-
-static int return_success(lua_State *L, char *filename, int autosave) {
-    if (autosave) {
-        char *bp = getBinaryPath(filename);
-        saveProto(L, GET_PROTO(L), bp);
-        m_malloc(bp, (strlen(bp) + 1) * sizeof(char), 0);
+    name = replaceLuaRequire(L, name);
+    char *ret;
+    if (!path) {
+        ret = joinstr(name, ".lua");
+    } else {
+        ret = formatstr("%s" LUA_DIRSEP "%s.lua", path, name);
     }
-    lua_pushstring(L, filename); /* will be 2nd argument to module */
+    if (!ret) {
+        lua_pushfstring(L, "\n\tformat %s error!", name);
+        return NULL;
+    }
+    if (readable(ret))
+        return ret;
+    lua_pushfstring(L, "\n\tfile %s is not readable", ret);
 #if defined(J_API_INFO)
-    m_malloc(filename, (strlen(filename) + 1 + (isBinaryPath(filename) ? 0 : 1)) * sizeof(char), 0);
+    m_malloc(ret, (strlen(ret) + 1) * sizeof(char), 0);
 #else
-    free(filename);
+    free(ret);
 #endif
-    return 2; /* return open function and file name */
-}
-
-static int return_failed(lua_State *L, char *filename) {
-    const char *fn = lua_pushstring(L, filename);
-#if defined(J_API_INFO)
-    m_malloc(filename, (strlen(filename) + 1 + (isBinaryPath(filename) ? 0 : 1)) * sizeof(char), 0);
-#else
-    free(filename);
-#endif
-    lua_pop(L, 1);
-    lua_pushfstring(L, "error loading module '%s' from file '%s':\n\t%s",
-                    lua_tostring(L, 1), fn, lua_tostring(L, -1));
-    return 1;
+    return NULL;
 }
 
 /**
  * loadlib.c createsearcherstable
  */
 int searcher_Lua(lua_State *L) {
+#ifdef STATISTIC_PERFORMANCE
+    double startTime = getStartTime();
+#endif
+
     lua_lock(L);
     char *filename;
     const char *name = luaL_checkstring(L, 1);
@@ -744,44 +759,30 @@ int searcher_Lua(lua_State *L) {
         lua_unlock(L);
         return 1; /* module not found in this path */
     }
-    int autosave = 0;
-    lua_getfield(L, lua_upvalueindex(1), AUTO_SAVE);
-    autosave = lua_toboolean(L, -1);
-    lua_pop(L, 1);
-    int isbin = isBinaryPath(filename);
-    int result;
 
-    if (real_loadfile(L, filename, name) == LUA_OK) {
-        result = return_success(L, filename, autosave && !isbin);
-        lua_unlock(L);
-        return result;
-    }
-    // 加载失败
-    if (isbin) {
-        //删除二进制文件
-        remove(filename);
+    if (compile_file(L, filename, name) == LUA_OK) {
+        lua_pushstring(L, filename); /* will be 2nd argument to module */
 #if defined(J_API_INFO)
         m_malloc(filename, (strlen(filename) + 1) * sizeof(char), 0);
 #else
         free(filename);
 #endif
-        filename = findfile4lua(L, name);
-        if (!filename) {
-            lua_unlock(L);
-            return 1; /* module not found in this path */
-        }
-        if (real_loadfile(L, filename, name)) {
-            result = return_failed(L, filename);
-            lua_unlock(L);
-            return result;
-        }
-        result = return_success(L, filename, autosave);
         lua_unlock(L);
-        return result;
+#ifdef STATISTIC_PERFORMANCE
+        statistics_searcher_Call(FROM_SEARCHER_LUA, name, getoffsetTime(startTime));
+#endif
+        return 2;
     }
-    result = return_failed(L, filename);
+
+    lua_pushfstring(L, "\n\terror loading module '%s' from file '%s':\n\t%s",
+                    lua_tostring(L, 1), filename, lua_tostring(L, -1));
+#if defined(J_API_INFO)
+    m_malloc(filename, (strlen(filename) + 1) * sizeof(char), 0);
+#else
+    free(filename);
+#endif
     lua_unlock(L);
-    return result;
+    return 1;
 }
 
 /**
@@ -789,10 +790,14 @@ int searcher_Lua(lua_State *L) {
  * 返回2 : -1: string, -2: function(or nil)
  */
 int searcher_java(lua_State *L) {
+#ifdef STATISTIC_PERFORMANCE
+    double startTime = getStartTime();
+#endif
+
     JNIEnv *env;
     int need = getEnv(&env);
     lua_lock(L);
-    const char *name = lua_tostring(L, -1);
+    const char *name = luaL_checkstring(L, 1);
     jstring str = newJString(env, name);
     jobject r = (*env)->CallStaticObjectMethod(env, Globals, Globals__onLuaRequire, (jlong) L, str);
     FREE(env, str);
@@ -800,10 +805,10 @@ int searcher_java(lua_State *L) {
         jobject errorStr = (*env)->CallStaticObjectMethod(env, Globals, Globals__getRequireError, (jlong) L);
         const char *em = GetString(env, errorStr);
         if (em) {
-            lua_pushfstring(L, "\n\trequire %s failed, error: %s", name, em);
+            lua_pushfstring(L, "\n\trequire %s from java failed, error: %s", name, em);
             ReleaseChar(env, errorStr, em);
         } else {
-            lua_pushfstring(L, "\n\trequire %s failed, unknown error", name);
+            lua_pushfstring(L, "\n\trequire %s from java failed, unknown error", name);
         }
         if (need) detachEnv();
         lua_unlock(L);
@@ -814,110 +819,82 @@ int searcher_java(lua_State *L) {
     if (isstr) // return a path(string), call real_loadfile
     {
         const char *path = GetString(env, r);
-        if (real_loadfile(L, path, name) == LUA_OK) {
-            if (!isBinaryPath(path) && isAutosave(L)) {
-                char *sp = getBinaryPath(path);
-                saveProto(L, GET_PROTO(L), sp);
-                m_malloc(sp, (strlen(sp) + 1) * sizeof(char), 0);
-            }
+        if (compile_file(L, path, name) == LUA_OK) {
             lua_pushstring(L, path);
             ReleaseChar(env, r, path);
             FREE(env, r);
             if (need) detachEnv();
             lua_unlock(L);
+#ifdef STATISTIC_PERFORMANCE
+            statistics_searcher_Call(FROM_SEARCHER_JAVA, name, getoffsetTime(startTime));
+#endif
             return 2;
         }
-        const char *err = lua_pushfstring(L, "error loading module '%s' from file '%s':\n\t%s",
+        lua_pushfstring(L, "\n\terror loading module '%s' from java file '%s':\n\t%s",
                                           name, path, lua_tostring(L, -1));
         ReleaseChar(env, r, path);
         FREE(env, r);
-        lua_pop(L, 2);
         if (need) detachEnv();
         lua_unlock(L);
-        return luaL_error(L, err);
+        return 1;
     } else // return file content (byte array ), call real_loadbuffer
     {
         jbyteArray arr = (jbyteArray) r;
         jbyte *nd = (*env)->GetByteArrayElements(env, arr, 0);
         size_t size = (size_t) GetArrLen(env, arr);
-        int isbin = isBinaryData(nd);
-        int r = real_loadbuffer(L, (char *) nd, size, name);
+        int loadresult = compile_buffer(L, (char *) nd, size, name);
         (*env)->ReleaseByteArrayElements(env, arr, nd, 0);
         FREE(env, arr);
-        if (r == LUA_OK) {
-            if (!isbin) {
-                const char *bp = getAutoSavePath(L);
-                if (bp) {
-                    bp = lua_pushfstring(L, "%s" LUA_DIRSEP "%s.lua" BINARY_SUFFIX_END, bp,
-                                         luaL_gsub(L, name, ".", LUA_DIRSEP));
-                    lua_pop(L, 2);
-                    saveProto(L, GET_PROTO(L), bp);
-                }
-            }
+        if (loadresult == LUA_OK) {
             lua_pushstring(L, name);
             if (need) detachEnv();
             lua_unlock(L);
+#ifdef STATISTIC_PERFORMANCE
+            statistics_searcher_Call(FROM_SEARCHER_JAVA, name, getoffsetTime(startTime));
+#endif
             return 2;
         }
         if (need) detachEnv();
         lua_unlock(L);
-        return luaL_error(L, "error loading module '%s' from data:\n\t%s", name,
-                          lua_tostring(L, -1));
+        lua_pushfstring(L, "\n\terror loading module '%s' from java data:\n\t%s", name,
+                        lua_tostring(L, -1));
+        return 1;
     }
 }
 
+#ifdef ANDROID
 /**
  * require时调用
  */
 int searcher_Lua_asset(lua_State *L) {
+#ifdef STATISTIC_PERFORMANCE
+    double startTime = getStartTime();
+#endif
     const char *name = luaL_checkstring(L, 1);
-    name = luaL_gsub(L, name, ".", LUA_DIRSEP);
-    const char *filename = formatstr("%s.lua", name);
-    AD ad;
-    int code = initAssetsData(&ad, filename);
+    const char *filename = formatstr("%s.lua", replaceLuaRequire(L, name));
+    int code = compile_assets(L, filename, name);
 #if defined(J_API_INFO)
     m_malloc((void *) filename, (strlen(filename) + 1) * sizeof(char), 0);
 #else
     free(filename);
 #endif
-    if (code != AR_OK) {
-        lua_pushfstring(L, "\n\tfind %s from native asset failed, code: %d", name, code);
-        return 1;
-    }
-
-    if (opensaes) {
-        unsigned short preReadLen;
-        const char *preData = preReadData(&ad, HEADER_LEN + SOURCE_LEN, &preReadLen);
-        if (!preData) {
-            destroyAssetsData(&ad);
-            lua_pushfstring(L, "\n\tpreload %s from native asset failed!", name);
-            return 1;
-        }
-
-        size_t len = (size_t) ad.len;
-
-        if (preReadLen < (HEADER_LEN + SOURCE_LEN)) {
-            /// 非加密
-            ad.aes = 0;
-            ad.remain = preReadLen;
-        } else {
-            int aes = check_header(preData) == (len - HEADER_LEN - SOURCE_LEN);
-            ad.aes = aes;
-            ad.remain = aes ? 0 : preReadLen;
-        }
-    } else {
-        ad.aes = 0;
-        ad.remain = 0;
-    }
-
-    code = lua_load(L, getFromAssets, &ad, name, NULL);
-    destroyAssetsData(&ad);
-
     if (code == LUA_OK) {
         lua_pushvalue(L, 1);
+#ifdef STATISTIC_PERFORMANCE
+        statistics_searcher_Call(FROM_SEARCHER_ASSET, name, getoffsetTime(startTime));
+#endif
         return 2;
     }
-    lua_pushfstring(L, "\n\terror loading module '%s' from asset '%s', code: %d",
-                      name, name, code);
+    const char *err;
+    if (lua_isstring(L, -1)) {
+        err = lua_tostring(L, -1);
+    } else {
+        err = "unknown error!";
+    }
+    lua_pop(L, 1);
+    lua_pushfstring(L, "\n\terror loading module '%s' from asset '%s', code: %d, err: %s",
+                    name, filename, code, err);
     return 1;
 }
+#endif
+//</editor-fold>

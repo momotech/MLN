@@ -12,9 +12,9 @@ import org.luaj.vm2.Globals;
 /**
  * Created by Xiong.Fangyu on 2019-08-28
  */
-class NativeBridge {
+public class NativeBridge {
 
-    static void registerNativeBridge(Globals g) {
+    public static void registerNativeBridge(Globals g) {
         _openLib(g.getL_State(), MLSEngine.DEBUG);
         NativeBroadcastChannel.register(g);
     }

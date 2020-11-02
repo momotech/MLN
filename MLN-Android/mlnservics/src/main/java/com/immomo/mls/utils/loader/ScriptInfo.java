@@ -7,6 +7,8 @@
   */
 package com.immomo.mls.utils.loader;
 
+import android.content.Context;
+
 import com.immomo.mls.Constants;
 import com.immomo.mls.InitData;
 
@@ -16,17 +18,41 @@ import org.luaj.vm2.Globals;
  * Created by Xiong.Fangyu on 2018/11/13
  */
 public final class ScriptInfo {
+    public Context context;
+    /**
+     * @see Constants.LoadType
+     */
     public int loadType;
+    /**
+     * 虚拟机
+     */
     public Globals globals;
+    /**
+     * 回调
+     */
     public Callback callback;
+    /**
+     * 需要预加载的脚本
+     */
     public String[] preloadScripts;
+    /**
+     * 热重载使用的url
+     */
     public String hotReloadUrl;
+    /**
+     * 超时，ms
+     */
     public long timeout;
 
     public ScriptInfo(InitData initData) {
         preloadScripts = initData.preloadScripts;
         loadType = initData.loadType;
         timeout = initData.loadTimeout;
+    }
+
+    public ScriptInfo withContext(Context context) {
+        this.context = context;
+        return this;
     }
 
     public ScriptInfo withLoadType(@Constants.LoadType int loadType) {

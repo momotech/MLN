@@ -1,0 +1,4 @@
+classes=('com.immomo.mls.fun.ud.UDArray' 'com.immomo.mls.fun.ud.UDMap' 'com.immomo.mls.fun.ud.UDCCanvas')
+out_files=('mmarray.c' 'mmmap.c' 'mmcanvas.c')
+#callback_classes=('com.immomo.mmui.ud.anim.InteractiveBehaviorCallback')
+#callback_out_files=('interactive_behavior_callback.c')

@@ -62,6 +62,8 @@ public class PBCommandConvert {
             baseCmd = ((PBCoverageSummaryCommand.pbcoveragesummarycommand) obj).getBasecommand();
         } else if (obj instanceof PBCoverageDetailCommand.pbcoveragedetailcommand) {
             baseCmd = ((PBCoverageDetailCommand.pbcoveragedetailcommand) obj).getBasecommand();
+        } else if (obj instanceof PBIPAddressCommand.pbipaddresscommand) {
+            baseCmd = ((PBIPAddressCommand.pbipaddresscommand) obj).getBasecommand();
         }
 
         if (baseCmd != null) {

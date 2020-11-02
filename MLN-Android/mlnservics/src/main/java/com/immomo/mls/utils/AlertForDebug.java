@@ -10,7 +10,7 @@ package com.immomo.mls.utils;
 /**
  * Created by Xiong.Fangyu on 2019-09-17
  */
-public class AlertForDebug extends Exception {
+public class AlertForDebug extends RuntimeException {
 
     public static AlertForDebug showInDebug(String s) {
         return new AlertForDebug(s);

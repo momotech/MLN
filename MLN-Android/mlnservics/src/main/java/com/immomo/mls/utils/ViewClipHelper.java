@@ -244,13 +244,14 @@ public class ViewClipHelper {
     private static boolean containsSurfaceView(@NonNull ViewGroup parent, boolean detectOnlyChild) {
         int childCount = parent.getChildCount();
         for (int i = 0; i < childCount; i = i + 1) {
-            if (parent.getChildAt(i) instanceof SurfaceView) {
+            View v = parent.getChildAt(i);
+            if (v instanceof SurfaceView || v instanceof ISurfaceView) {
                 return true;
             }
         }
         if (childCount == 1 && detectOnlyChild) {
             View onlyChild = parent.getChildAt(0);
-            if (onlyChild instanceof ViewGroup) {
+            if (onlyChild instanceof ViewGroup || onlyChild instanceof ISurfaceView) {
                 return containsSurfaceView((ViewGroup) onlyChild, false);
             }
         }
@@ -259,5 +260,9 @@ public class ViewClipHelper {
 
     public static boolean containsSurfaceView(@NonNull ViewGroup parent) {
         return containsSurfaceView(parent, true);
+    }
+
+    public static interface ISurfaceView {
+
     }
 }

@@ -197,7 +197,9 @@ class Generator {
                 .addParameter(long.class, "L")
                 .addParameter(LuaValue_Arr, "v")
                 .addStatement("super(L, v)");
-        con.addStatement("javaUserdata = newUserdata(v)");
+        /// 继承其他类情况下，不应该再次初始化
+        if (parent == null)
+            con.addStatement("javaUserdata = newUserdata(v)");
         if (__setUserdata != null) {
             con.addStatement("(($T) javaUserdata).__setUserdata(this)", typeElement);
         }
@@ -286,21 +288,22 @@ class Generator {
         builder.addMethod(mb.build());
 
         /**
-         * 重写__onLuaGc
+         * 只有在有__onLuaGc时，才重写__onLuaGc
          */
-        mb = MethodSpec.methodBuilder("__onLuaGc")
-                .addModifiers(Modifier.PROTECTED)
-                .addAnnotation(LuaApiUsed)
-                .returns(void.class);
         if (__onLuaGc != null) {
-            mb.addCode("if (javaUserdata != null) {\n" +
+            mb = MethodSpec.methodBuilder("__onLuaGc")
+                    .addModifiers(Modifier.PROTECTED)
+                    .addAnnotation(LuaApiUsed)
+                    .returns(void.class)
+                    .addCode("if (javaUserdata != null) {\n" +
                     "  final $T jud = ($T)javaUserdata;\n" +
                     "  javaUserdata = null;\n" +
                     "  jud.__onLuaGc();\n" +
-                    "}\n", typeElement, typeElement);
+                    "  javaUserdata = null;\n"+
+                    "}\n", typeElement, typeElement)
+                    .addStatement("super.__onLuaGc()");
+            builder.addMethod(mb.build());
         }
-        mb.addStatement("javaUserdata = null").addStatement("super.__onLuaGc()");
-        builder.addMethod(mb.build());
     }
 
     private void addMethodNamesField(TypeSpec.Builder builder, List<String> methods) {
@@ -644,7 +647,6 @@ class Generator {
         call = call
                 .replaceAll("\\$T", typeElement.getSimpleName().toString())
                 .replaceAll("\\$N", methodName.toString());
-        note("directly call " + call);
         returnExceptVoidAndLuaValue(mb, call, returnType, initGlobals);
     }
 

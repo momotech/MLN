@@ -28,6 +28,12 @@ public interface RepeatType {
     @Constant
     int REVERSE = ValueAnimator.REVERSE;
 
+    @Constant
+    int Normal = FROM_START;
+
+    @Constant
+    int Reverse = REVERSE;
+
     @IntDef({FROM_START, REVERSE})
     @Retention(RetentionPolicy.SOURCE)
     public @interface RepeatMode {}

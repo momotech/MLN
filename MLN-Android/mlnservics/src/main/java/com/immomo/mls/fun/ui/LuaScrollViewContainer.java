@@ -8,6 +8,7 @@
 package com.immomo.mls.fun.ui;
 
 import android.content.Context;
+import android.graphics.Canvas;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.ViewGroup;
@@ -66,6 +67,24 @@ public class LuaScrollViewContainer extends BorderRadiusFrameLayout implements I
     @Override
     public void setViewLifeCycleCallback(ViewLifeCycleCallback cycleCallback) {
         this.cycleCallback = cycleCallback;
+    }
+
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        getUserdata().measureOverLayout(widthMeasureSpec, heightMeasureSpec);
+    }
+
+    @Override
+    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+        super.onLayout(changed, left, top, right, bottom);
+        getUserdata().layoutOverLayout(left, top, right, bottom);
+    }
+
+    @Override
+    protected void dispatchDraw(Canvas canvas) {
+        super.dispatchDraw(canvas);
+        getUserdata().drawOverLayout(canvas);
     }
 
     @Override

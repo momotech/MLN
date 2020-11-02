@@ -81,8 +81,19 @@ void map_set_equals(Map *, map_equals);
 /**
  * 设置key、value释放内存函数
  * 默认为使用free函数
+ * 在调用map_free时会调用key、value的释放函数
+ * 在调用map_remove时会，若传入的key和map中存储的key不同，则会调用释放函数释放存储key
+ * 若不想被调用，则设置为空
  */
 void map_set_free(Map *, map_free_kv, map_free_kv);
+/**
+ * 设置自定义数据
+ */
+void map_set_ud(Map *, void *);
+/**
+ * 获取用户自定义数据
+ */
+void *map_get_ud(Map *);
 /**
  * 释放map对象
  */
@@ -100,6 +111,10 @@ void *map_get(Map *map, const void *key);
  * 移除map中对应key的value，并返回
  */
 void *map_remove(Map *map, const void *key);
+/**
+ * 移除map钟所有数据
+ */
+void map_remove_all(Map *map);
 /**
  * 获取map中key-value个数
  */
@@ -142,4 +157,7 @@ size_t map_mem(Map *);
 void map_set_sizeof(Map *, sizeof_kv, sizeof_kv);
 
 #endif
+
+typedef char *(*map_value_to_string)(const void *value, int *needFree);
+char *map_to_string(Map *, map_value_to_string, map_value_to_string);
 #endif  //MAP_H

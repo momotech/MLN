@@ -37,19 +37,17 @@ import androidx.recyclerview.widget.RecyclerView;
  */
 public class Adapter extends RecyclerView.Adapter<ViewHolder> {
 
-    private static final String TAG = Adapter.class.getSimpleName();
-
     public static final int TYPE_FOOT = Integer.MIN_VALUE;
 
-    private final UDBaseRecyclerAdapter userData;
-    private final ILoadViewDelegete loadViewDelegete;
-    private boolean footerAdded = false;
-    private List<View> headerViews;
-    private boolean useAllSpanForLoading = false;
-    private View footerView;
+    protected final UDBaseRecyclerAdapter userData;
+    protected final ILoadViewDelegete loadViewDelegete;
+    protected boolean footerAdded = false;
+    protected List<View> headerViews;
+    protected boolean useAllSpanForLoading = false;
+    protected View footerView;
 
-    private boolean canCallFillCell = true;
-    private HashMap<ViewHolder, Integer> lazyTasks;
+    protected boolean canCallFillCell = true;
+    protected HashMap<ViewHolder, Integer> lazyTasks;
 
     public Adapter(@NonNull UDBaseRecyclerAdapter ud, @NonNull ILoadViewDelegete delegete) {
         setHasStableIds(true);

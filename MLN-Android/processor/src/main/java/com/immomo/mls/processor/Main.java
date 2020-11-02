@@ -55,7 +55,6 @@ public class Main extends AbstractProcessor implements Logger{
         super.init(env);
         skip = new HashSet<>();
         options = new Options(env.getOptions());
-        note(null, "=====================================init=========================================");
     }
 
     @Override
@@ -91,7 +90,6 @@ public class Main extends AbstractProcessor implements Logger{
                 }
             }
         }
-        note(null, "=====================================end=========================================");
         if (hasError) {
             throw new RuntimeException("error occur when process, see log before");
         }
@@ -100,7 +98,6 @@ public class Main extends AbstractProcessor implements Logger{
 
     private Set<ClassName> getNeedSkipClass(RoundEnvironment roundEnv) {
         Set<? extends Element> skip = roundEnv.getElementsAnnotatedWith(CreatedByApt.class);
-        note(null, "sk: %s", skip);
         Set<ClassName> ret = new HashSet<>(skip.size());
         for (Element e : skip) {
             TypeElement te = (TypeElement) e;

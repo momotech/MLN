@@ -9,6 +9,7 @@ package com.immomo.mls;
 
 import android.os.Bundle;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 /**
  * Created by XiongFangyu on 2018/6/26.
@@ -20,8 +21,7 @@ public class MLSBundleUtils {
     private MLSBundleUtils(){}
 
     public static @NonNull InitData createInitData(@NonNull String luaUrl) {
-        InitData initData = new InitData(luaUrl);
-        return initData;
+        return new InitData(luaUrl);
     }
 
     public static @NonNull InitData createInitData(@NonNull String luaUrl, boolean forceDownload) {
@@ -30,7 +30,10 @@ public class MLSBundleUtils {
         return initData;
     }
 
-    public static @NonNull InitData parseFromBundle(Bundle bundle) {
+    public static @Nullable
+    InitData parseFromBundle(@Nullable Bundle bundle) {
+        if (bundle == null)
+            return null;
         InitData initData = bundle.getParcelable(KEY_INIT_DATA);
         if (initData == null) {
             initData = new InitData(bundle.getString(KEY_URL));

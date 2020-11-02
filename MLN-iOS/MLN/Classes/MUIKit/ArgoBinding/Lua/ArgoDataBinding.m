@@ -74,13 +74,14 @@
     NSParameterAssert(key);
     if (key) {
         LOCK();
-        [self.dataMap lua_putValue:data forKey:key];
+//        [self.dataMap lua_putValue:data forKey:key];
+        [self.dataMap native_putValue:data forKey:key];
 //        [self.dataMap lua_rawPutValue:data forKey:key];
         UNLOCK();
     }
 }
 
-- (void)bindData:(nullable NSObject<ArgoListenerProtocol> *)data {
+- (void)bindData:(nonnull NSObject<ArgoListenerProtocol> *)data {
     SEL sel = sel_registerName("modelKey");
     NSAssert([data.class respondsToSelector:sel], @"Data必须实现方法：modelKey ");
 #pragma clang diagnostic push
@@ -88,6 +89,16 @@
     NSString *key = [data.class performSelector:sel];
 #pragma clang diagnostic pop
     [self bindData:data forKey:key];
+}
+
+- (void)unbindData:(NSObject<ArgoListenerProtocol> *)data {
+    SEL sel = sel_registerName("modelKey");
+    NSAssert([data.class respondsToSelector:sel], @"Data必须实现方法：modelKey ");
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
+    NSString *key = [data.class performSelector:sel];
+#pragma clang diagnostic pop
+    [self bindData:nil forKey:key];
 }
 
 - (id)dataForKeyPath:(NSString *)keyPath {

@@ -9,6 +9,7 @@ package com.immomo.mls.fun.ui;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.RectF;
 import android.graphics.drawable.Animatable;
 import android.graphics.drawable.BitmapDrawable;
@@ -28,19 +29,14 @@ import com.immomo.mls.fun.weight.BorderRadiusImageView;
 import com.immomo.mls.provider.DrawableLoadCallback;
 import com.immomo.mls.provider.ImageProvider;
 import com.immomo.mls.util.BitmapUtil;
-import com.immomo.mls.util.FileUtil;
 import com.immomo.mls.util.LogUtil;
 import com.immomo.mls.util.RelativePathUtils;
 import com.immomo.mls.utils.AssertUtils;
 import com.immomo.mls.utils.MainThreadExecutor;
 
-import org.luaj.vm2.LuaBoolean;
-import org.luaj.vm2.LuaFunction;
-import org.luaj.vm2.LuaString;
 import org.luaj.vm2.LuaValue;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -98,6 +94,9 @@ public class LuaImageView<U extends UDImageView> extends BorderRadiusImageView i
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+
+        getUserdata().measureOverLayout(widthMeasureSpec, heightMeasureSpec);
+
         Drawable drawable = getDrawable();
         if (drawable == null) {
             return;
@@ -118,6 +117,21 @@ public class LuaImageView<U extends UDImageView> extends BorderRadiusImageView i
                 mw = Math.min(mw, MeasureSpec.getSize(widthMeasureSpec));
             setMeasuredDimension(mw, mh);
         }
+    }
+
+    @Override
+    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+        super.onLayout(changed, left, top, right, bottom);
+        getUserdata().layoutOverLayout(left, top, right, bottom);
+    }
+
+    @Override
+    protected void onDraw(Canvas canvas) {
+        canvas.save();
+        canvas.clipRect(0, 0, getWidth(), getHeight());
+        super.onDraw(canvas);
+        canvas.restore();
+        getUserdata().drawOverLayout(canvas);
     }
 
     @Override
@@ -281,6 +295,14 @@ public class LuaImageView<U extends UDImageView> extends BorderRadiusImageView i
         Drawable d = provider.loadProjectImage(getContext(), url);
         if (d != null) {
             setImageDrawable(d);
+            return;
+        }
+
+        if (RelativePathUtils.isAssetUrl(url)) {
+            url = RelativePathUtils.getAbsoluteAssetUrl(url);
+            d = provider.loadProjectImage(getContext(), url);
+            if (d != null)
+                setImageDrawable(d);
             return;
         }
 

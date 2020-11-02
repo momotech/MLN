@@ -28,6 +28,7 @@
 
 #define GetArrLen(env, arr) (int)((*env)->GetArrayLength(env, arr))
 
+void jni_preRegisterEmptyMethods(JNIEnv *env, jobject jobj, jobjectArray methods);
 void jni_preRegisterUD(JNIEnv *env, jobject jobj, jstring className, jobjectArray methods);
 void jni_preRegisterStatic(JNIEnv *env, jobject jobj, jstring className, jobjectArray methods);
 
@@ -97,6 +98,15 @@ jobjectArray newLuaValueArrayFromStack(JNIEnv *env, lua_State *L, int count, int
  * 将LuaValue对象obj转成lua数据类型，并push到栈顶
  */
 void pushJavaValue(JNIEnv *env, lua_State *L, jobject obj);
+/**
+ * 将java的String对象转成lua数据类型，并push到栈顶
+ * obj可为空
+ */
+void pushJavaString(JNIEnv *env, lua_State *L, jstring obj);
+/**
+ * 将LuaFunction对象obj转成lua数据类型，并push到栈顶
+ */
+void pushJavaUserdata(JNIEnv *env, lua_State *L, jobject ud);
 
 /**
  * 函数返回时使用，将java方法结果转成lua数据，push到栈中，并返回参数个数
@@ -157,6 +167,11 @@ int getThrowableMsg(JNIEnv *, jthrowable, char *, size_t);
 int catchJavaException(JNIEnv *, lua_State *, const char *);
 
 /**
+ * 判断class是否是JavaUserdata
+ */
+int isStrongUserdata(JNIEnv *, jclass);
+
+/**
  * 根据名称获取jclass对象
  * 若有缓存，取缓存，若无，通过反射获取，并缓存
  */
@@ -185,14 +200,12 @@ jmethodID getStaticMethodByName(JNIEnv *env, jclass clz, const char *name);
  */
 void traverseAllMethods(jclass clz, map_look_fun fun, void *ud);
 
-#define METHOD_INDEX    0
-#define METHOD_NEWINDEX 1
-#define METHOD_TOSTRING 2
-#define METHOD_EQAULS   3
-#define METHOD_GC       4
+#define METHOD_TOSTRING 0
+#define METHOD_EQAULS   1
+#define METHOD_GC       2
 
 static const char *special_methods[] = {
-        "__index", "__newindex", "toString", "__onLuaEq", "__onLuaGc", NULL
+        "toString", "__onLuaEq", "__onLuaGc", NULL
 };
 
 /**
@@ -204,5 +217,20 @@ jmethodID getSpecialMethod(JNIEnv *env, jclass clz, int type);
  * 获取静态index函数
  */
 jmethodID getIndexStaticMethod(JNIEnv *env, jclass clz);
-
+/**
+ * 遍历所有空函数
+ */
+typedef void (*traverse_empty)(const void *value, void *ud);
+/**
+ * 是否注册了emptymethods
+ */
+int hasEmptyMethod();
+/**
+ * 遍历所有空函数
+ */
+void traverseAllEmptyMethods(traverse_empty fun, void *ud);
+/**
+ * 调用空方法时，同志java层
+ */
+void onEmptyMethodCall(lua_State *L, const char *clz, const char *methodName);
 #endif //J_INFO_H

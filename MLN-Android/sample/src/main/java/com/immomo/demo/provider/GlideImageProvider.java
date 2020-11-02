@@ -17,7 +17,11 @@ package com.immomo.demo.provider;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.AssetManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.RectF;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.text.TextUtils;
@@ -38,6 +42,8 @@ import com.bumptech.glide.request.target.Target;
 import com.immomo.mls.provider.DrawableLoadCallback;
 import com.immomo.mls.provider.ImageProvider;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.ref.WeakReference;
 
 /**
@@ -100,9 +106,9 @@ public class GlideImageProvider implements ImageProvider {
             builder = Glide.with(context).load(url);
         }
         if (placeHolder != null) {
-            int id = ResourcesUtils.getResourceIdByUrl(placeHolder, null, ResourcesUtils.TYPE.DRAWABLE);
-            if (id > 0) {
-                builder = builder.apply(new RequestOptions().placeholder(id));
+            Drawable placeHolderDrawable = loadProjectImage(context,placeHolder);
+            if(placeHolderDrawable !=null) {
+                builder = builder.apply(new RequestOptions().placeholder(placeHolderDrawable));
             }
         }
         builder.into(imageView);
@@ -132,7 +138,7 @@ public class GlideImageProvider implements ImageProvider {
         if (id > 0) {
             return context.getResources().getDrawable(id);
         }
-        return null;
+        return getImageFromAssert(context,name);
     }
 
     @Override
@@ -157,5 +163,23 @@ public class GlideImageProvider implements ImageProvider {
             builder = Glide.with(context).load(url);
         }
         builder.preload();
+    }
+
+    /**
+     * 从Assert里面获取图片
+     * @param context
+     * @param fileName
+     * @return
+     */
+    public Drawable getImageFromAssert(Context context,String fileName) {
+        AssetManager assetManager = context.getAssets();
+        InputStream inputStream;//filename是assets目录下的图片名
+        try {
+            inputStream = assetManager.open(fileName);
+            Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+            return new BitmapDrawable(bitmap) ;
+        } catch (IOException e) {
+            return null;
+        }
     }
 }

@@ -12,6 +12,8 @@ import android.util.Log;
 import com.immomo.mls.utils.DebugLog;
 import com.immomo.mls.utils.GlobalStateSDKListener;
 
+import org.luaj.vm2.Globals;
+
 import java.io.PrintStream;
 
 /**
@@ -29,6 +31,7 @@ public class GlobalStateListener extends GlobalStateSDKListener {
         protected void log(String s, PrintStream ps) {
             super.log(s, ps);
             Log.d(TAG,s);
+            Globals.notifyStatisticsCallback();
         }
     }
 }
