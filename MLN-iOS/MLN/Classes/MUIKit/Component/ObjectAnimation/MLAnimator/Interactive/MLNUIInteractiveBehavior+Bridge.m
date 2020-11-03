@@ -11,6 +11,10 @@
 
 @implementation MLNUIInteractiveBehavior (Bridge)
 
+- (MLNUILuaCore *)luaCore {
+    return self.mlnui_luaCore;
+}
+
 #pragma - Lua Bridge
 
 LUAUI_EXPORT_BEGIN(MLNUIInteractiveBehavior)

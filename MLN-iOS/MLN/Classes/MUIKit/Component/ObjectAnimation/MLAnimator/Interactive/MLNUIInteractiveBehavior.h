@@ -37,8 +37,6 @@ typedef void(^MLNUITouchBehaviorBlock)(MLNUITouchType type, CGFloat delta, CGFlo
 /// 触摸回调
 @property (nonatomic, strong) MLNUITouchBehaviorBlock touchBlock;
 
-- (instancetype)initWithType:(InteractiveType)type;
-
 - (void)addAnimation:(MLAValueAnimation *)ani;
 - (void)removeAnimation:(MLAValueAnimation *)ani;
 - (void)removeAllAnimations;

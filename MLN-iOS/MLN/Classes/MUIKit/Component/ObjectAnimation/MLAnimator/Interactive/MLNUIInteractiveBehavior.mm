@@ -10,6 +10,7 @@
 #import "MLAAnimation.h"
 #import "MLAValueAnimation+Interactive.h"
 #import "MLNUIPinchGestureRecognizer.h"
+#import "MLNUIInteractiveBehavior+Bridge.h"
 
 #include "ObjectAnimation.h"
 #include "MultiAnimation.h"
@@ -55,7 +56,7 @@ union MLNUIAnimationTypes {
 #pragma mark - Public
 
 - (instancetype)initWithLuaCore:(MLNUILuaCore *)luaCore type:(InteractiveType)type {
-    if (self = [super init]) {
+    if (self = [super initWithMLNUILuaCore:luaCore]) {
         [self setupWithType:type];
     }
     return self;
@@ -287,7 +288,7 @@ static inline CGFloat MLNUIDeltaValueOfTwoPoints(CGPoint point1, CGPoint point2)
 #pragma mark - NSCopying
 
 - (id)copyWithZone:(nullable NSZone *)zone {
-    MLNUIInteractiveBehavior *beh = [[MLNUIInteractiveBehavior alloc] initWithType:self.type];
+    MLNUIInteractiveBehavior *beh = [[MLNUIInteractiveBehavior alloc] initWithLuaCore:self.luaCore type:self.type];
     beh.type = self.type;
     beh.direction = self.direction;
     beh.max = self.max;
