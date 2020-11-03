@@ -40,6 +40,11 @@
     Method originMethod = class_getInstanceMethod(self, originSelector);
     NSAssert(originMethod || (!originMethod && originBlock), @"The method swizzle will be failed, because the origin method doesn't exist and the originBlock parameter is nil.");
     if (originMethod) {
+        id block = imp_getBlock(method_getImplementation(originMethod));
+        if ([block isKindOfClass:NSClassFromString(@"NSBlock")]) {
+            NSAssert1(false, @"The selector (%s) has already swizzled (maybe swizzled in super class).", sel_getName(originSelector)); // 暂时忽略originImp是block的情况（因为有可能是已经执行了一次方法交换）
+            return;
+        }
         class_addMethod(self, newSelector, newImp, method_getTypeEncoding(originMethod));
         BOOL added = class_addMethod(self, originSelector, newImp, method_getTypeEncoding(originMethod));
         if (added) {

@@ -16,10 +16,6 @@
 
 @implementation MLNUIInternalWaterfallView
 
-+ (void)load {
-    [self argoui_installScrollViewPanGestureConflictHandler];
-}
-
 - (void)setHeaderView:(UIView *)headerView
 {
     _headerView = headerView;
