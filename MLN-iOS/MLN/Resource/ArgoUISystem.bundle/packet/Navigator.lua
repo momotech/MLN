@@ -38,8 +38,11 @@ function _class:pushPage(page)
     end
     --栈不存在该page，添加
     if page then
-        if page:width() ~= window:width() then
+        if page:width() == 0 and page:widthPercent() == 0 then
             page:width(window:width())
+        end
+        if page:height() == 0 and page:heightPercent() == 0 then
+            page:height(window:height())
         end
         table.insert(self._pageStack, page)
         page:positionType(PositionType.ABSOLUTE)
