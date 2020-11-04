@@ -20,6 +20,31 @@ if (!self.luaui_isContainer) { \
 
 static const void *kMLNUILayoutAssociatedKey = &kMLNUILayoutAssociatedKey;
 
+@interface UIView (MLNUILayoutVirtualView)
+
+// 当virtualView执行removeFromSuper时，会将其所有的subNode以及subNode对应的view，
+// 从superNode以及superView上移除。若virtualView再想添加到视图上时，
+// 由于其子视图已全部移除，因而无法添加，故这里存储virtualView的所有子视图.
+@property (nonatomic, strong, readonly) NSMutableArray<UIView *> *virtualViewSubviews;
+
+@end
+
+@implementation UIView (MLNUILayoutVirtualView)
+
+- (NSMutableArray<UIView *> *)virtualViewSubviews {
+    NSMutableArray *subviews = objc_getAssociatedObject(self, _cmd);
+    if (!subviews) {
+        subviews = [NSMutableArray array];
+        objc_setAssociatedObject(self, _cmd, subviews, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    }
+    NSParameterAssert([subviews isKindOfClass:[NSMutableArray class]]);
+    return subviews;
+}
+
+@end
+
+#pragma mark -
+
 @implementation UIView (MLNUILayout)
 
 - (Class)mlnui_bindedLayoutNodeClass {
@@ -127,22 +152,34 @@ static inline UIView *MLNUIValidSuperview(UIView *self) {
 }
 
 - (void)_mlnui_transferSubviewsFromView:(UIView *)view {
-    if (view.subviews.count == 0) {
+    if (!view.mlnui_isVirtualView) return;
+    NSArray<UIView *> *subviews = [view virtualViewSubviews];
+    if (subviews.count == 0) {
         return;
     }
     UIView *toView = self.mlnui_isVirtualView ? MLNUIValidSuperview(self) : self;
-    for (UIView<MLNUIEntityExportProtocol> *subview in view.subviews) {
+    for (UIView<MLNUIEntityExportProtocol> *subview in subviews) {
         MLNUITransferView(subview, toView);
+        if (!subview.mlnui_layoutNode.superNode) {
+            MLNUI_Lua_UserData_Retain_With_Index(2, subview);
+            [view.mlnui_layoutNode addSubNode:subview.mlnui_layoutNode];
+        }
     }
 }
 
 - (void)_mlnui_transferSubviewsFromView:(UIView *)view atIndex:(NSInteger)index {
-    if (view.subviews.count == 0) {
+    if (!view.mlnui_isVirtualView) return;
+    NSArray<UIView *> *subviews = [view virtualViewSubviews];
+    if (subviews.count == 0) {
         return;
     }
     UIView *toView = self.mlnui_isVirtualView ? MLNUIValidSuperview(self) : self;
-    for (UIView<MLNUIEntityExportProtocol> *subview in view.subviews) {
+    for (UIView<MLNUIEntityExportProtocol> *subview in subviews) {
         MLNUITransferViewAtIndex(subview, toView, index);
+        if (!subview.mlnui_layoutNode.superNode) {
+            MLNUI_Lua_UserData_Retain_With_Index(2, subview);
+            [view.mlnui_layoutNode insertSubNode:subview.mlnui_layoutNode atIndex:index];
+        }
     }
 }
 
@@ -178,13 +215,18 @@ static inline UIView *MLNUIValidSuperview(UIView *self) {
     }
     
     if (view.mlnui_isVirtualView) {
-        [self _mlnui_transferSubviewsFromView:view];
+        [self _mlnui_transferSubviewsFromView:view]; // -[view add:virtualView]
     } else if (self.mlnui_isVirtualView && self.mlnui_layoutNode.superNode) {
-        [self _mlnui_transferViewToSuperview:view]; // add virtual view firstly and then add subviews to virtual view.
+        [self _mlnui_transferViewToSuperview:view];  // -[virtualView add:view]
     } else {
         [self addSubview:view];
     }
-    MLNUI_Lua_UserData_Retain_With_Index(2, view); // should retain view 
+    
+    if (self.mlnui_isVirtualView) {
+        [self.virtualViewSubviews addObject:view];
+    }
+    
+    MLNUI_Lua_UserData_Retain_With_Index(2, view); // should retain view
     [self.mlnui_layoutNode addSubNode:view.mlnui_layoutNode];
 }
 
@@ -211,6 +253,11 @@ static inline UIView *MLNUIValidSuperview(UIView *self) {
 }
 
 - (void)luaui_removeFromSuperview {
+    UIView *superview = [self superview];
+    if ([superview.virtualViewSubviews containsObject:self]) {
+        [superview.virtualViewSubviews removeObject:self];
+    }
+    
     [self removeFromSuperview];
     MLNUI_Lua_UserData_Release(self); // 删除Lua强引用
     [self.mlnui_layoutNode.superNode removeSubNode:self.mlnui_layoutNode];
@@ -229,6 +276,10 @@ static inline UIView *MLNUIValidSuperview(UIView *self) {
         [subNodes enumerateObjectsUsingBlock:^(MLNUILayoutNode *_Nonnull node, NSUInteger idx, BOOL *_Nonnull stop) {
             [node.view luaui_removeFromSuperview];
         }];
+    }
+    
+    if (self.virtualViewSubviews.count > 0) {
+        [self.virtualViewSubviews removeAllObjects];
     }
 }
 
