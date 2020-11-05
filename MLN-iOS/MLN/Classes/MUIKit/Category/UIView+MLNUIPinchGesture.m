@@ -54,7 +54,7 @@
 }
 
 - (void)argo_preparePinchGestureAction:(MLNUIPinchGestureRecognizer *)gesture {
-    switch (gesture.state) {
+    switch (gesture.argoui_state) {
         case UIGestureRecognizerStateBegan:
             [MLNUIGestureConflictManager setCurrentGesture:gesture];
             break;
@@ -68,11 +68,7 @@
     }
     UIView *responder = [MLNUIGestureConflictManager currentGestureResponder];
     if (!responder) return;
-    if (responder != gesture.view) {
-        [MLNUIGestureConflictManager handleResponderGestureActionsWithCurrentGesture:gesture];
-        return;
-    }
-    [responder argo_handlePinchGestureAction:gesture];
+    [responder argo_handlePinchGestureAction:gesture]; // 直接处理responder的action
 }
 
 - (void)argo_handlePinchGestureAction:(MLNUIPinchGestureRecognizer *)gesture {
@@ -91,7 +87,7 @@
         [self setPinchGestureTouchNumber:gesture.numberOfTouches];
     } else if (gesture.numberOfTouches == 2) {
         [self setPinchGestureTouchNumber:gesture.numberOfTouches];
-        switch (gesture.state) {
+        switch (gesture.argoui_state) {
             case UIGestureRecognizerStateBegan:
                 [self runScaleCallback:self.argo_scaleBeginBlock gestureRecognizer:gesture];
                 break;

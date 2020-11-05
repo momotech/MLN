@@ -49,7 +49,8 @@ static inline BOOL ARGOUICanAcceptGesture(UIView *view) {
     UIView *current = view;
     do {
         current = current.superview;
-        if (current.argo_notDispatch) {
+        if (current.argo_notDispatch ||
+            (current.superview.actualView == current && current.superview.argo_notDispatch)) {
             return NO;
         }
     } while (current != nil && current != _responder && !IS_ARGOUI_WINDOW(current));
@@ -88,12 +89,12 @@ static inline BOOL ARGOUICanAcceptGesture(UIView *view) {
 + (void)disableSubviewsInteraction:(BOOL)disable forView:(UIView *)view {
     if (!_gesture) return;
     if (disable) {
-        if (_responder && ![view isDescendantOfView:_responder]) { // 从view开始向上找符合currentGesture的手势
+        if (_responder && ![view.actualView isDescendantOfView:_responder]) { // 从view开始向上找符合currentGesture的手势
             UIView *hit = [self hitTop:view currentGesture:_gesture];
             if (hit) _responder = hit;
         }
     } else {
-        if (_responder && [view isDescendantOfView:_responder]) { // 从view开始向下找符合currentGesture的手势
+        if (_responder && [view.actualView isDescendantOfView:_responder]) { // 从view开始向下找符合currentGesture的手势
             CGPoint touchPoint = [_gesture locationInView:nil];
             UIView *hit = [self hitTest:touchPoint withView:view currentGesture:_gesture];
             if (hit) _responder = hit;

@@ -7,13 +7,18 @@
 
 #import "UIScrollView+MLNUIGestureConflict.h"
 #import "NSObject+MLNUISwizzle.h"
-#import <objc/runtime.h>
 #import "MLNUIGestureConflictManager.h"
+#import <objc/message.h>
 
-static inline IMP ARGOUI_GetIMP(NSObject *receiver, SEL selector) {
-    Class cls = object_getClass(receiver);
-    Method method = class_getInstanceMethod(cls, selector);
-    return method_getImplementation(method);
+static inline void ARGOUI_CallOriginMethod(Class cls, id receiver, SEL selector, id value) {
+    if (cls == [receiver class]) {
+        ((void(*)(id, SEL, id))objc_msgSend)(receiver, selector, value);
+    } else if (cls == [receiver superclass]) {
+        struct objc_super superReceiver = {receiver, cls};
+        ((void(*)(struct objc_super *, SEL, id))objc_msgSendSuper)(&superReceiver, selector, value);
+    } else {
+        NSCParameterAssert(false);
+    }
 }
 
 static BOOL _should_scroll = YES;
@@ -40,9 +45,7 @@ static inline void ARGOUI_SetContentOffsetSafely(UIScrollView *scrollView, CGPoi
     SEL swizzle = sel_getUid("argoui_setDelegate:");
     [self mlnui_swizzleInstanceSelector:origin withNewSelector:swizzle newImpBlock:^(__kindof UIScrollView *receiver, id<UIScrollViewDelegate> delegate) {
         [self argoui_hookScrollViewDelegateMethodWithClass:object_getClass(delegate)];
-        IMP imp = ARGOUI_GetIMP(receiver, swizzle);
-        if (!imp) return;
-        ((void(*)(id, SEL, id))imp)(receiver, swizzle, delegate);
+        ARGOUI_CallOriginMethod(self, receiver, swizzle, delegate);
     } addOriginImpBlockIfNeeded:^{}];
 }
 
@@ -53,47 +56,21 @@ static inline void ARGOUI_SetContentOffsetSafely(UIScrollView *scrollView, CGPoi
     SEL swizzle = sel_getUid("argoui_scrollViewDidScroll:");
     [delegateClass mlnui_swizzleInstanceSelector:origin withNewSelector:swizzle newImpBlock:^(id<UIScrollViewDelegate> receiver, __kindof UIScrollView *scrollView) {
         if (!_should_scroll) return;
-        IMP imp = ARGOUI_GetIMP(receiver, swizzle);
-        ((void(*)(id, SEL, id))imp)(receiver, swizzle, scrollView);
-        
+        ARGOUI_CallOriginMethod(delegateClass, receiver, swizzle, scrollView);
         UIScrollView *responder = [MLNUIGestureConflictManager currentGestureResponder];
         if (responder && scrollView != responder) {
             ARGOUI_SetContentOffsetSafely(scrollView, scrollView.argoui_previousContentOffset); // 禁止滚动
         }
         scrollView.argoui_previousContentOffset = scrollView.contentOffset;
-        
-    } forceAddOriginImpBlock:^{}];
+    } addOriginImpBlockIfNeeded:^{}];
     
     origin = @selector(scrollViewWillBeginDragging:);
     swizzle = sel_getUid("argoui_scrollViewWillBeginDragging:");
     [delegateClass mlnui_swizzleInstanceSelector:origin withNewSelector:swizzle newImpBlock:^(id<UIScrollViewDelegate>receiver, UIScrollView *scrollView) {
-        IMP imp = ARGOUI_GetIMP(receiver, swizzle);
-        ((void(*)(id, SEL, id))imp)(receiver, swizzle, scrollView);
+        ARGOUI_CallOriginMethod(delegateClass, receiver, swizzle, scrollView);
+        [MLNUIGestureConflictManager setCurrentGesture:nil];
         [MLNUIGestureConflictManager setCurrentGesture:scrollView.panGestureRecognizer];
-    } forceAddOriginImpBlock:^{}];
-    
-    origin = @selector(scrollViewDidEndDragging:willDecelerate:);
-    swizzle = sel_getUid("argoui_scrollViewDidEndDragging:willDecelerate:");
-    [delegateClass mlnui_swizzleInstanceSelector:origin withNewSelector:swizzle newImpBlock:^(id<UIScrollViewDelegate>receiver, UIScrollView *scrollView, BOOL decelerate) {
-        IMP imp = ARGOUI_GetIMP(receiver, swizzle);
-        ((void(*)(id, SEL, id, BOOL))imp)(receiver, swizzle, scrollView, decelerate);
-        if (decelerate) return;
-        UIScrollView *responder = [MLNUIGestureConflictManager currentGestureResponder];
-        if (responder && scrollView == responder) {
-            [MLNUIGestureConflictManager setCurrentGesture:nil]; // scrolling end
-        }
-    } forceAddOriginImpBlock:^{}];
-    
-    origin = @selector(scrollViewDidEndDecelerating:);
-    swizzle = sel_getUid("argoui_scrollViewDidEndDecelerating:");
-    [delegateClass mlnui_swizzleInstanceSelector:origin withNewSelector:swizzle newImpBlock:^(id<UIScrollViewDelegate>receiver, UIScrollView *scrollView) {
-        IMP imp = ARGOUI_GetIMP(receiver, swizzle);
-        ((void(*)(id, SEL, id))imp)(receiver, swizzle, scrollView);
-        UIScrollView *responder = [MLNUIGestureConflictManager currentGestureResponder];
-        if (responder && scrollView == responder) {
-            [MLNUIGestureConflictManager setCurrentGesture:nil]; // scrolling end
-        }
-    } forceAddOriginImpBlock:^{}];
+    } addOriginImpBlockIfNeeded:^{}];
 }
 
 - (void)setArgoui_previousContentOffset:(CGPoint)argoui_previousContentOffset {

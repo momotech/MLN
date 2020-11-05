@@ -147,6 +147,7 @@ lcoal__start = CFAbsoluteTimeGetCurrent()
 #pragma mark - UITableViewDelegate
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
+    [super scrollViewDidScroll:scrollView];
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(reloadCellIfNeeded) object:nil];
     [self performSelector:@selector(reloadCellIfNeeded) withObject:nil afterDelay:0.05];
 }
