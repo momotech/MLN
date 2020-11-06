@@ -15,6 +15,7 @@ target 'LuaNative' do
   pod 'FLEX'
   pod 'Masonry'
   pod 'YYModel'
+  pod 'LookinServer', :configurations => ['Debug']
 end
 
 #target 'MLN_Tests' do

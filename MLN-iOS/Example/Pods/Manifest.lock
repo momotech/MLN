@@ -30,6 +30,7 @@ PODS:
   - ArgoUIComponent/ErrorHandler (0.1.2):
     - ArgoUI
   - FLEX (3.0.0)
+  - LookinServer (1.0.0)
   - Masonry (1.1.0)
   - MJRefresh (3.1.16)
   - MLN (1.0.0.11.beta):
@@ -84,6 +85,7 @@ DEPENDENCIES:
   - ArgoUI (from `../../`)
   - ArgoUIComponent (from `../../`)
   - FLEX
+  - LookinServer
   - Masonry
   - MJRefresh (= 3.1.16)
   - MLN (from `../../`)
@@ -96,6 +98,7 @@ SPEC REPOS:
   https://github.com/CocoaPods/Specs.git:
     - AFNetworking
     - FLEX
+    - LookinServer
     - Masonry
     - MJRefresh
     - Protobuf
@@ -119,6 +122,7 @@ SPEC CHECKSUMS:
   ArgoUI: 544cceb5ea66f20d2209fae018ff8054363cdd71
   ArgoUIComponent: c208b954b688481017a29bb6b5ca8056774ccbd3
   FLEX: d66c759bce0f6ebbbf472c742380874d846f2883
+  LookinServer: 0002891cd3cec5e082a910e897dfe71b4f06b89e
   Masonry: 678fab65091a9290e40e2832a55e7ab731aad201
   MJRefresh: 7798e16e53a5ef7f332dd05b27664db4e29530fd
   MLN: 49a86502211319c94bb9b15bcd686ade68ed6ed6
@@ -129,6 +133,6 @@ SPEC CHECKSUMS:
   Toast: 91b396c56ee72a5790816f40d3a94dd357abc196
   YYModel: 2a7fdd96aaa4b86a824e26d0c517de8928c04b30
 
-PODFILE CHECKSUM: 3425dfaea8efd55f71732b376d7dc4df9ee7a481
+PODFILE CHECKSUM: ab9b9897aa88b6e86d74bab04382d13189c5d4e1
 
 COCOAPODS: 1.9.3
