@@ -490,7 +490,7 @@ static inline NSString *BOOLString(BOOL value) {
 }
 
 - (NSString *)debugDescription {
-    return [NSString stringWithFormat:@"<%@\n-> view: %@\n-> isRootNode: %@\n-> isLeaf: %@\n-> isDirty: %@\n-> subNodes: %@>", self, _view, BOOLString(self.isRootNode), BOOLString(self.isLeaf), BOOLString(self.isDirty), self.subNodes];
+    return [NSString stringWithFormat:@"<\n%@\n-> view: %@\n-> isRootNode: %@\n-> isLeaf: %@\n-> isVirtualView: %@\n-> isDirty: %@\n-> superNode: %@\n-> subNodes: %@\n>", self, _view, BOOLString(self.isRootNode), BOOLString(self.isLeaf), BOOLString(self.view.mlnui_isVirtualView),  BOOLString(self.isDirty), self.superNode, self.subNodes];
 }
 
 @end

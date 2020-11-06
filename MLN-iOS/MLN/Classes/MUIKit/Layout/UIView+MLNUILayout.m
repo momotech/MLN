@@ -128,18 +128,18 @@ static const void *kMLNUILayoutAssociatedKey = &kMLNUILayoutAssociatedKey;
     }
 }
 
-static inline void MLNUITransferView(UIView *fromView, UIView *toView) {
-    if (fromView.superview) {
-        [fromView removeFromSuperview];
+static inline void MLNUITransferView(UIView *view, UIView *targetSuperview) {
+    if (view.superview) {
+        [view removeFromSuperview];
     }
-    [toView addSubview:fromView];
+    [targetSuperview addSubview:view];
 }
 
-static inline void MLNUITransferViewAtIndex(UIView *fromView, UIView *toView, NSInteger index) {
-    if (fromView.superview) {
-        [fromView removeFromSuperview];
+static inline void MLNUITransferViewAtIndex(UIView *view, UIView *targetSuperview, NSInteger index) {
+    if (view.superview) {
+        [view removeFromSuperview];
     }
-    [toView insertSubview:fromView atIndex:index];
+    [targetSuperview insertSubview:view atIndex:index];
 }
 
 static inline UIView *MLNUIValidSuperview(UIView *self) {
@@ -158,11 +158,15 @@ static inline UIView *MLNUIValidSuperview(UIView *self) {
         return;
     }
     UIView *toView = self.mlnui_isVirtualView ? MLNUIValidSuperview(self) : self;
-    for (UIView<MLNUIEntityExportProtocol> *subview in subviews) {
-        MLNUITransferView(subview, toView);
-        if (!subview.mlnui_layoutNode.superNode) {
-            MLNUI_Lua_UserData_Retain_With_Index(2, subview);
-            [view.mlnui_layoutNode addSubNode:subview.mlnui_layoutNode];
+    for (UIView<MLNUIEntityExportProtocol> *sub in subviews) {
+        if (sub.mlnui_isVirtualView) {
+            [toView _mlnui_transferSubviewsFromView:sub];
+        } else {
+            MLNUITransferView(sub, toView);
+        }
+        if (!sub.mlnui_layoutNode.superNode) {
+            MLNUI_Lua_UserData_Retain_With_Index(2, sub);
+            [view.mlnui_layoutNode addSubNode:sub.mlnui_layoutNode];
         }
     }
 }
@@ -174,11 +178,15 @@ static inline UIView *MLNUIValidSuperview(UIView *self) {
         return;
     }
     UIView *toView = self.mlnui_isVirtualView ? MLNUIValidSuperview(self) : self;
-    for (UIView<MLNUIEntityExportProtocol> *subview in subviews) {
-        MLNUITransferViewAtIndex(subview, toView, index);
-        if (!subview.mlnui_layoutNode.superNode) {
-            MLNUI_Lua_UserData_Retain_With_Index(2, subview);
-            [view.mlnui_layoutNode insertSubNode:subview.mlnui_layoutNode atIndex:index];
+    for (UIView<MLNUIEntityExportProtocol> *sub in subviews.reverseObjectEnumerator) { // 插入时，视图是往后堆叠，故倒叙遍历
+        if (sub.mlnui_isVirtualView) {
+            [toView _mlnui_transferSubviewsFromView:sub atIndex:index];
+        } else {
+            MLNUITransferViewAtIndex(sub, toView, index);
+        }
+        if (!sub.mlnui_layoutNode.superNode) {
+            MLNUI_Lua_UserData_Retain_With_Index(2, sub);
+            [view.mlnui_layoutNode insertSubNode:sub.mlnui_layoutNode atIndex:index];
         }
     }
 }
