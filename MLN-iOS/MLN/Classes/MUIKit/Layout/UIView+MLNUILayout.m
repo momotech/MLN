@@ -25,13 +25,16 @@ static const void *kMLNUILayoutAssociatedKey = &kMLNUILayoutAssociatedKey;
 // 当virtualView执行removeFromSuper时，会将其所有的subNode以及subNode对应的view，
 // 从superNode以及superView上移除。若virtualView再想添加到视图上时，
 // 由于其子视图已全部移除，因而无法添加，故这里存储virtualView的所有子视图.
-@property (nonatomic, strong, readonly) NSMutableArray<UIView *> *virtualViewSubviews;
+@property (nonatomic, strong, readonly) NSMutableArray<UIView *> *mlnui_virtualViewSubviews;
+
+// 被add到view层级上时，根据是否需要渲染来决定是否为虚拟视图，默认NO.
+@property (nonatomic, assign) BOOL mlnui_markVirtualView;
 
 @end
 
 @implementation UIView (MLNUILayoutVirtualView)
 
-- (NSMutableArray<UIView *> *)virtualViewSubviews {
+- (NSMutableArray<UIView *> *)mlnui_virtualViewSubviews {
     NSMutableArray *subviews = objc_getAssociatedObject(self, _cmd);
     if (!subviews) {
         subviews = [NSMutableArray array];
@@ -39,6 +42,21 @@ static const void *kMLNUILayoutAssociatedKey = &kMLNUILayoutAssociatedKey;
     }
     NSParameterAssert([subviews isKindOfClass:[NSMutableArray class]]);
     return subviews;
+}
+
+- (void)mlnui_markViewAsVirtualViewIfNeeded {
+    if (self.mlnui_needRender) {
+        return;
+    }
+    self.mlnui_markVirtualView = YES;
+}
+
+- (void)setMlnui_markVirtualView:(BOOL)mark {
+    objc_setAssociatedObject(self, _cmd, @(mark), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+
+- (BOOL)mlnui_markVirtualView {
+    return [objc_getAssociatedObject(self, _cmd) boolValue];
 }
 
 @end
@@ -78,7 +96,7 @@ static const void *kMLNUILayoutAssociatedKey = &kMLNUILayoutAssociatedKey;
     if (!self.mlnui_allowVirtualLayout) {
         return NO;
     }
-    return !self.mlnui_needRender;
+    return self.mlnui_markVirtualView;
 }
 
 - (BOOL)mlnui_resetOriginAfterLayout {
@@ -153,7 +171,7 @@ static inline UIView *MLNUIValidSuperview(UIView *self) {
 
 - (void)_mlnui_transferSubviewsFromView:(UIView *)view {
     if (!view.mlnui_isVirtualView) return;
-    NSArray<UIView *> *subviews = [view virtualViewSubviews];
+    NSArray<UIView *> *subviews = [view mlnui_virtualViewSubviews];
     if (subviews.count == 0) {
         return;
     }
@@ -173,7 +191,7 @@ static inline UIView *MLNUIValidSuperview(UIView *self) {
 
 - (void)_mlnui_transferSubviewsFromView:(UIView *)view atIndex:(NSInteger)index {
     if (!view.mlnui_isVirtualView) return;
-    NSArray<UIView *> *subviews = [view virtualViewSubviews];
+    NSArray<UIView *> *subviews = [view mlnui_virtualViewSubviews];
     if (subviews.count == 0) {
         return;
     }
@@ -221,6 +239,7 @@ static inline UIView *MLNUIValidSuperview(UIView *self) {
     if (view.superview) {
         [view luaui_removeFromSuperview];
     }
+    [view mlnui_markViewAsVirtualViewIfNeeded];
     
     if (view.mlnui_isVirtualView) {
         [self _mlnui_transferSubviewsFromView:view]; // -[view add:virtualView]
@@ -231,7 +250,7 @@ static inline UIView *MLNUIValidSuperview(UIView *self) {
     }
     
     if (self.mlnui_isVirtualView) {
-        [self.virtualViewSubviews addObject:view];
+        [self.mlnui_virtualViewSubviews addObject:view];
     }
     
     MLNUI_Lua_UserData_Retain_With_Index(2, view); // should retain view
@@ -245,6 +264,7 @@ static inline UIView *MLNUIValidSuperview(UIView *self) {
     if (view.superview) {
         [view luaui_removeFromSuperview];
     }
+    [view mlnui_markViewAsVirtualViewIfNeeded];
     
     index = index - 1;
     index = index >= 0 && index < self.subviews.count? index : self.subviews.count;
@@ -262,8 +282,8 @@ static inline UIView *MLNUIValidSuperview(UIView *self) {
 
 - (void)luaui_removeFromSuperview {
     UIView *superview = [self superview];
-    if ([superview.virtualViewSubviews containsObject:self]) {
-        [superview.virtualViewSubviews removeObject:self];
+    if ([superview.mlnui_virtualViewSubviews containsObject:self]) {
+        [superview.mlnui_virtualViewSubviews removeObject:self];
     }
     
     [self removeFromSuperview];
@@ -286,8 +306,8 @@ static inline UIView *MLNUIValidSuperview(UIView *self) {
         }];
     }
     
-    if (self.virtualViewSubviews.count > 0) {
-        [self.virtualViewSubviews removeAllObjects];
+    if (self.mlnui_virtualViewSubviews.count > 0) {
+        [self.mlnui_virtualViewSubviews removeAllObjects];
     }
 }
 

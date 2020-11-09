@@ -37,7 +37,7 @@ static inline void ARGOUI_SetContentOffsetSafely(UIScrollView *scrollView, CGPoi
 #pragma mark - Public
 
 + (void)argoui_installScrollViewPanGestureConflictHandler {
-   BOOL validClass = [self isSubclassOfClass:[UIScrollView class]];
+    BOOL validClass = [self isSubclassOfClass:[UIScrollView class]];
     NSParameterAssert(validClass);
     if (!validClass) return;
 
