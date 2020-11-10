@@ -147,6 +147,7 @@ LUAUI_EXPORT_VIEW_METHOD(touchEndExtension, "luaui_setTouchesEndedExtensionCallb
 LUAUI_EXPORT_VIEW_METHOD(touchCancelExtension, "luaui_setTouchesCancelledExtensionCallback:",MLNUIView)
 // responder chain
 LUAUI_EXPORT_VIEW_PROPERTY(notDispatch, "setArgo_notDispatch:", "argo_notDispatch",MLNUIView)
+LUAUI_EXPORT_VIEW_PROPERTY(eventCross, "setArgo_eventCross:", "argo_eventCross", MLUIView)
 // transform
 LUAUI_EXPORT_VIEW_METHOD(anchorPoint, "luaui_anchorPoint:y:", MLNUIView)
 LUAUI_EXPORT_VIEW_METHOD(transform, "luaui_transform:adding:", MLNUIView)

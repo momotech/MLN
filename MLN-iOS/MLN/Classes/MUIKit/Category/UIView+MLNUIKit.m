@@ -8,7 +8,7 @@
 #import "UIView+MLNUIKit.h"
 #import "UIView+MLNUILayout.h"
 #import "MLNUIKitHeader.h"
-#import <objc/runtime.h>
+#import <objc/message.h>
 #import "MLNUIViewConst.h"
 #import "MLNUIRenderContext.h"
 #import "MLNUIBlock.h"
@@ -19,6 +19,7 @@
 #import "MLNUIGestureConflictManager.h"
 #import "MLNUITapGestureRecognizer.h"
 #import "MLNUILongPressGestureRecognizer.h"
+#import "NSObject+MLNUISwizzle.h"
 
 #define kMLNUIDefaultRippleColor [UIColor colorWithRed:247/255.0 green:246/255.0 blue:244/255.0 alpha:1.0]
 
@@ -69,6 +70,16 @@ static const void *kLuaKeyboardDismiss = &kLuaKeyboardDismiss;
         Method origMethod5 = class_getInstanceMethod([self class], @selector(removeFromSuperview));
         Method swizzledMethod5 = class_getInstanceMethod([self class], @selector(mlnui_in_removeFromSuperview));
         method_exchangeImplementations(origMethod5, swizzledMethod5);
+        
+        SEL origin = @selector(hitTest:withEvent:);
+        SEL swizzle = sel_getUid("argo_hitTest:withEvent:");
+        [self mlnui_swizzleInstanceSelector:origin withNewSelector:swizzle newImpBlock:^UIView *(UIView *receiver, CGPoint point, UIEvent *event) {
+            UIView *view = ((id(*)(id, SEL, CGPoint, id))objc_msgSend)(receiver, swizzle, point, event);
+            if (view.argo_eventCross) {
+                return nil;
+            }
+            return view;
+        } addOriginImpBlockIfNeeded:^{}];
     });
 }
 
@@ -596,12 +607,23 @@ static const void *kLuaRenderContext = &kLuaRenderContext;
 
 #pragma mark - Responder Chain
 
-- (void)setArgo_notDispatch:(BOOL)argo_notDispatch {
-    objc_setAssociatedObject(self, @selector(argo_notDispatch), @(argo_notDispatch), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-    [MLNUIGestureConflictManager disableSubviewsInteraction:argo_notDispatch forView:self];
+- (void)setArgo_notDispatch:(BOOL)notDispatch {
+    if (self.argo_notDispatch == notDispatch) {
+        return;
+    }
+    objc_setAssociatedObject(self, @selector(argo_notDispatch), @(notDispatch), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    [MLNUIGestureConflictManager disableSubviewsInteraction:notDispatch forView:self];
 }
 
 - (BOOL)argo_notDispatch {
+    return [objc_getAssociatedObject(self, _cmd) boolValue];
+}
+
+- (void)setArgo_eventCross:(BOOL)argo_eventCross {
+    objc_setAssociatedObject(self, @selector(argo_eventCross), @(argo_eventCross), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+
+- (BOOL)argo_eventCross {
     return [objc_getAssociatedObject(self, _cmd) boolValue];
 }
 

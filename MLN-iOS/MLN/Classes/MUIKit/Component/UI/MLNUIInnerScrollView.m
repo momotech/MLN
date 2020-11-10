@@ -145,7 +145,12 @@
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {
     if ([gestureRecognizer isKindOfClass:self.panGestureRecognizer.class] &&
         [otherGestureRecognizer isKindOfClass:self.panGestureRecognizer.class]) {
-        return YES;
+        UIScrollView *view1 = (UIScrollView *)gestureRecognizer.view;
+        UIScrollView *view2 = (UIScrollView *)otherGestureRecognizer.view;
+        if (view1.argoui_isVerticalDirection == view2.argoui_isVerticalDirection) {
+            return YES;
+        }
+        return NO;
     }
     return NO;
 }

@@ -13,7 +13,7 @@
 static inline void ARGOUI_CallOriginMethod(Class cls, id receiver, SEL selector, id value) {
     if (cls == [receiver class]) {
         ((void(*)(id, SEL, id))objc_msgSend)(receiver, selector, value);
-    } else if (cls == [receiver superclass]) {
+    } else if ([[receiver class] isSubclassOfClass:cls]) {
         struct objc_super superReceiver = {receiver, cls};
         ((void(*)(struct objc_super *, SEL, id))objc_msgSendSuper)(&superReceiver, selector, value);
     } else {
@@ -49,6 +49,21 @@ static inline void ARGOUI_SetContentOffsetSafely(UIScrollView *scrollView, CGPoi
     } addOriginImpBlockIfNeeded:^{}];
 }
 
+- (BOOL)argoui_isVerticalDirection {
+    if ([self isKindOfClass:[UITableView class]]) {
+        return YES;
+    }
+    if ([self isKindOfClass:[UICollectionView class]]) {
+        UICollectionViewFlowLayout *layout = (UICollectionViewFlowLayout *)[(UICollectionView *)self collectionViewLayout];
+        return (layout.scrollDirection == UICollectionViewScrollDirectionVertical);
+    }
+    UIEdgeInsets inset = self.contentInset;
+    if (self.contentSize.height + inset.top + inset.bottom > self.frame.size.height) {
+        return YES;
+    }
+    return NO;
+}
+
 #pragma mark - Private
 
 + (void)argoui_hookScrollViewDelegateMethodWithClass:(Class)delegateClass {
@@ -56,10 +71,11 @@ static inline void ARGOUI_SetContentOffsetSafely(UIScrollView *scrollView, CGPoi
     SEL swizzle = sel_getUid("argoui_scrollViewDidScroll:");
     [delegateClass mlnui_swizzleInstanceSelector:origin withNewSelector:swizzle newImpBlock:^(id<UIScrollViewDelegate> receiver, __kindof UIScrollView *scrollView) {
         if (!_should_scroll) return;
-        ARGOUI_CallOriginMethod(delegateClass, receiver, swizzle, scrollView);
         UIScrollView *responder = [MLNUIGestureConflictManager currentGestureResponder];
         if (responder && scrollView != responder) {
             ARGOUI_SetContentOffsetSafely(scrollView, scrollView.argoui_previousContentOffset); // 禁止滚动
+        } else {
+            ARGOUI_CallOriginMethod(delegateClass, receiver, swizzle, scrollView);
         }
         scrollView.argoui_previousContentOffset = scrollView.contentOffset;
     } addOriginImpBlockIfNeeded:^{}];

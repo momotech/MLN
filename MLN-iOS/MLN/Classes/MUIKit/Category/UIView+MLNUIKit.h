@@ -26,6 +26,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - Responder Chain
 @property (nonatomic, assign) BOOL argo_notDispatch;
+@property (nonatomic, assign) BOOL argo_eventCross;
 
 /// 用于接收事件响应的view, 通常情况下即为self. 但像 MLNUIScrollView、MLNUITableView等，则为其内部持有的 innerScrollView、innerTableView.
 @property (nonatomic, strong, readonly) UIView *actualView;
