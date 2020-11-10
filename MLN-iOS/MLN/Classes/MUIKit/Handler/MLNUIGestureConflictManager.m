@@ -82,7 +82,11 @@ static inline BOOL ARGOUICanAcceptGesture(UIView *view) {
     }
     
     if (!_responder) { // give it one more chance
-        _responder = [self hitTop:gesture.view.superview currentGesture:gesture];
+        UIView *superView = gesture.view.superview;
+        if (superView.actualView == gesture.view) { // 此情况为：superView=MLNUITableView，gesture.view=MLNUIInnerTableView.
+            superView = superView.superview;
+        }
+        _responder = [self hitTop:superView currentGesture:gesture];
     }
 }
 
