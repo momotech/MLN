@@ -54,17 +54,8 @@
 }
 
 - (void)argo_preparePinchGestureAction:(MLNUIPinchGestureRecognizer *)gesture {
-    switch (gesture.argoui_state) {
-        case UIGestureRecognizerStateBegan:
-            [MLNUIGestureConflictManager setCurrentGesture:gesture];
-            break;
-        case UIGestureRecognizerStateEnded:
-        case UIGestureRecognizerStateCancelled:
-        case UIGestureRecognizerStateFailed:
-            [MLNUIGestureConflictManager setCurrentGesture:nil];
-            break;
-        default:
-            break;
+    if (gesture.argoui_state == UIGestureRecognizerStateBegan) {
+        [MLNUIGestureConflictManager setCurrentGesture:gesture];
     }
     UIView *responder = [MLNUIGestureConflictManager currentGestureResponder];
     if (!responder) return;
@@ -85,6 +76,7 @@
             [self runScaleEndCallback:gesture];
         }
         [self setPinchGestureTouchNumber:gesture.numberOfTouches];
+        
     } else if (gesture.numberOfTouches == 2) {
         [self setPinchGestureTouchNumber:gesture.numberOfTouches];
         switch (gesture.argoui_state) {
@@ -98,6 +90,8 @@
 
             case UIGestureRecognizerStateEnded:
             case UIGestureRecognizerStateCancelled:
+            case UIGestureRecognizerStateFailed:
+                [MLNUIGestureConflictManager setCurrentGesture:nil];
                 [self setPinchGestureTouchNumber:0];
                 [self runScaleEndCallback:gesture];
                 break;

@@ -48,6 +48,8 @@ union MLNUIAnimationTypes {
 @property (nonatomic, assign) CGFloat lastDistance;
 @property (nonatomic, strong) MLNUIBlock *luaTouchBlock;
 @property (nonatomic, assign) MLNUIAnimationTypes animationTypes;
+@property (nonatomic, assign) CGFloat pinchPointDistance;
+@property (nonatomic, assign) CGFloat prePinchFactor;
 
 @end
 
@@ -150,11 +152,13 @@ static inline CGFloat MLNUIDeltaValueOfTwoPoints(CGPoint point1, CGPoint point2)
 }
 
 - (void)pinchGestureAction:(MLNUIPinchGestureRecognizer *)gesture {
-    if (gesture.numberOfTouches < 2) return;
-    CGPoint point1 = [gesture locationOfTouch:0 inView:gesture.view.superview];
-    CGPoint point2 = [gesture locationOfTouch:1 inView:gesture.view.superview];
-    CGFloat delta = MLNUIDeltaValueOfTwoPoints(point1, point2);
-    CGFloat factor = (self.max > 0) ? (delta / self.max) : 0;
+    if (gesture.numberOfTouches >= 2) {
+        CGPoint point1 = [gesture locationOfTouch:0 inView:gesture.view.superview];
+        CGPoint point2 = [gesture locationOfTouch:1 inView:gesture.view.superview];
+        _pinchPointDistance = MLNUIDeltaValueOfTwoPoints(point1, point2);
+    }
+    CGFloat delta = _pinchPointDistance;
+    CGFloat factor = gesture.scale - 1 + _prePinchFactor;
     
     switch (gesture.argoui_state) {
         case UIGestureRecognizerStateBegan:
@@ -174,6 +178,7 @@ static inline CGFloat MLNUIDeltaValueOfTwoPoints(CGPoint point1, CGPoint point2)
         case UIGestureRecognizerStateEnded:
         case UIGestureRecognizerStateCancelled:
             [self onTouch:MLNUITouchType_End delta:delta velocity:factor];
+            _prePinchFactor = factor;
             break;
             
         default:

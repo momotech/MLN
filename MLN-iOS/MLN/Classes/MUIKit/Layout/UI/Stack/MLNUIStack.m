@@ -60,8 +60,17 @@
     }];
 }
 
+- (void)setArgo_eventCross:(BOOL)cross {
+    objc_setAssociatedObject(self, @selector(argo_eventCross), @(cross), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+
+- (BOOL)argo_eventCross {
+    return [objc_getAssociatedObject(self, _cmd) boolValue];
+}
+
 LUAUI_EXPORT_VIEW_BEGIN(MLNUIStack)
 LUAUI_EXPORT_VIEW_METHOD(children, "luaui_children:", MLNUIStack)
+LUAUI_EXPORT_VIEW_PROPERTY(eventCross, "setArgo_eventCross:", "argo_eventCross", MLNUIStack)
 LUAUI_EXPORT_VIEW_END(MLNUIStack, Stack, YES, "MLNUIView", "initWithMLNUILuaCore:disableVirtualLayout:")
 
 @end

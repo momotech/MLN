@@ -20,6 +20,7 @@
 #import "MLNUITapGestureRecognizer.h"
 #import "MLNUILongPressGestureRecognizer.h"
 #import "NSObject+MLNUISwizzle.h"
+#import "MLNUIStack.h"
 
 #define kMLNUIDefaultRippleColor [UIColor colorWithRed:247/255.0 green:246/255.0 blue:244/255.0 alpha:1.0]
 
@@ -75,7 +76,8 @@ static const void *kLuaKeyboardDismiss = &kLuaKeyboardDismiss;
         SEL swizzle = sel_getUid("argo_hitTest:withEvent:");
         [self mlnui_swizzleInstanceSelector:origin withNewSelector:swizzle newImpBlock:^UIView *(UIView *receiver, CGPoint point, UIEvent *event) {
             UIView *view = ((id(*)(id, SEL, CGPoint, id))objc_msgSend)(receiver, swizzle, point, event);
-            if (view.argo_eventCross) {
+            if ([view isKindOfClass:[MLNUIStack class]] &&
+                [(MLNUIStack *)view argo_eventCross]) {
                 return nil;
             }
             return view;
@@ -616,14 +618,6 @@ static const void *kLuaRenderContext = &kLuaRenderContext;
 }
 
 - (BOOL)argo_notDispatch {
-    return [objc_getAssociatedObject(self, _cmd) boolValue];
-}
-
-- (void)setArgo_eventCross:(BOOL)argo_eventCross {
-    objc_setAssociatedObject(self, @selector(argo_eventCross), @(argo_eventCross), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-}
-
-- (BOOL)argo_eventCross {
     return [objc_getAssociatedObject(self, _cmd) boolValue];
 }
 

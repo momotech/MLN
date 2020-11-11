@@ -45,14 +45,20 @@ static const void *kMLNUILayoutAssociatedKey = &kMLNUILayoutAssociatedKey;
 }
 
 - (void)mlnui_markViewAsVirtualViewIfNeeded {
-    if (self.mlnui_needRender) {
+    if (!self.mlnui_allowVirtualLayout || self.mlnui_needRender) {
         return;
     }
     self.mlnui_markVirtualView = YES;
+    if (self.mlnui_virtualViewSubviews.count == 0) { // 当标记虚拟视图时，要把其所有子视图转移到该数组中
+        NSArray<MLNUILayoutNode *> *subNodes = [[self mlnui_layoutNode] subNodes];
+        [subNodes enumerateObjectsUsingBlock:^(MLNUILayoutNode *_Nonnull obj, NSUInteger idx, BOOL *_Nonnull stop) {
+            [self.mlnui_virtualViewSubviews addObject:obj.view];
+        }];
+    }
 }
 
 - (void)setMlnui_markVirtualView:(BOOL)mark {
-    objc_setAssociatedObject(self, _cmd, @(mark), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    objc_setAssociatedObject(self, @selector(mlnui_markVirtualView), @(mark), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
 - (BOOL)mlnui_markVirtualView {
@@ -233,10 +239,10 @@ static inline UIView *MLNUIValidSuperview(UIView *self) {
 }
 
 - (void)luaui_addSubview:(UIView *)view {
-    if (view.superview && view.superview == self) {
+    if (view.mlnui_layoutNode.superNode == self.mlnui_layoutNode) {
         return;
     }
-    if (view.superview) {
+    if (view.mlnui_layoutNode.superNode) {
         [view luaui_removeFromSuperview];
     }
     [view mlnui_markViewAsVirtualViewIfNeeded];
