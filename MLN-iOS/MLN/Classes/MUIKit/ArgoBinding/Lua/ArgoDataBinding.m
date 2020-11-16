@@ -188,8 +188,9 @@
 - (NSInteger)argo_watchKeyPath:(NSString *)keyPath withHandler:(MLNUIBlock *)handler filter:(MLNUIBlock *)filter {
     return [self _watchKeyPath:keyPath handler:handler listView:nil filter:filter == nil ? kArgoFilter_Native : ^BOOL(ArgoWatchContext context, NSDictionary *change) {
         [filter addUIntegerArgument:context];
-        id new = [change objectForKey:NSKeyValueChangeNewKey];
-        [filter addObjArgument:new];
+        NSUInteger count = [[change objectForKey:kArgoListenerCallCountKey] unsignedIntegerValue];
+        [filter addUIntegerArgument:count];
+        
         id res = [filter callIfCan];
         return [res boolValue];
     } triggerWhenAdd:NO];
@@ -198,8 +199,9 @@
 - (NSInteger)argo_watchKeyPath2:(NSString *)keyPath withHandler:(MLNUIBlock *)handler filter:(MLNUIBlock *)filter {
     return [self _watchKeyPath:keyPath handler:handler listView:nil filter:filter == nil ? nil : ^BOOL(ArgoWatchContext context, NSDictionary *change) {
         [filter addUIntegerArgument:context];
-        id new = [change objectForKey:NSKeyValueChangeNewKey];
-        [filter addObjArgument:new];
+        NSUInteger count = [[change objectForKey:kArgoListenerCallCountKey] unsignedIntegerValue];
+        [filter addUIntegerArgument:count];
+        
         id res = [filter callIfCan];
         return [res boolValue];
     } triggerWhenAdd:NO];
@@ -216,8 +218,9 @@
         BOOL r = kArgoWatchKeyListenerFilter(context, change);
         if (r) {
             [filter addUIntegerArgument:context];
-            id new = [change objectForKey:NSKeyValueChangeNewKey];
-            [filter addObjArgument:new];
+            NSUInteger count = [[change objectForKey:kArgoListenerCallCountKey] unsignedIntegerValue];
+            [filter addUIntegerArgument:count];
+            
             id res = [filter callIfCan];
             r &= [res boolValue];
         }

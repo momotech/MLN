@@ -652,7 +652,6 @@
 				6003F593195388D20070C39A /* Example for MLN */,
 				6003F5B5195388D20070C39A /* Tests */,
 				00A0C99F243C3C0500F0D003 /* LuaNativeUITests */,
-				6003F58C195388D20070C39A /* Frameworks */,
 				6003F58B195388D20070C39A /* Products */,
 				4DADC4E2A37EF6A986E99F07 /* Pods */,
 			);
@@ -679,6 +678,7 @@
 				28CCCDF75246FDF349FE71B3 /* libPods-LuaNative.a */,
 			);
 			name = Frameworks;
+			path = ..;
 			sourceTree = "<group>";
 		};
 		6003F593195388D20070C39A /* Example for MLN */ = {
@@ -733,6 +733,7 @@
 		6003F5B5195388D20070C39A /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				6003F58C195388D20070C39A /* Frameworks */,
 				0011BBB42410AC46003AE819 /* DataBinding */,
 				6003F5BB195388D20070C39A /* Tests.m */,
 				6003F5B6195388D20070C39A /* Supporting Files */,

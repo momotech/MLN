@@ -68,7 +68,8 @@
 //    id oldValueConvert = [oldValue mlnui_convertToLuaObject];
     [self.block addObjArgument:newValueConvert];
     //    [self.block addObjArgument:oldValueConvert];
-    [self.block lazyCallIfCan:nil];
+//    [self.block lazyCallIfCan:nil];
+    [self.block callIfCan];
 }
 
 @end
