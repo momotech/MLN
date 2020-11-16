@@ -136,12 +136,12 @@
     return _argoListeners;
 }
 
-- (NSMutableDictionary *)argoChangedKeysMap {
-    if (!_argoChangedKeysMap) {
-        _argoChangedKeysMap = [NSMutableDictionary dictionary];
-    }
-    return _argoChangedKeysMap;
-}
+//- (NSMutableDictionary *)argoChangedKeysMap {
+//    if (!_argoChangedKeysMap) {
+//        _argoChangedKeysMap = [NSMutableDictionary dictionary];
+//    }
+//    return _argoChangedKeysMap;
+//}
 
 - (ArgoLuaCacheAdapter *)cacheAdapter {
     if (!_cacheAdapter) {

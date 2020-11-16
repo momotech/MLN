@@ -222,7 +222,7 @@
             r &= [res boolValue];
         }
         return r;
-    } triggerWhenAdd:YES];
+    } triggerWhenAdd:NO];
 }
 
 - (NSInteger)_watchKeyPath:(NSString *)keyPath handler:(MLNUIBlock *)handler listView:(UIView *)listView filter:(ArgoListenerFilter)filter triggerWhenAdd:(BOOL)triggerWhenAdd {
