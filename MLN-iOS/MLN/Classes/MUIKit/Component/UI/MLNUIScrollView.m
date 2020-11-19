@@ -221,14 +221,6 @@
     return self.innerScrollView.luaui_disallowFling;
 }
 
-- (void)setLuaui_ContentSize:(CGSize)contentSize {
-    self.innerScrollView.contentSize = contentSize;
-}
-
-- (CGSize)luaui_contentSize {
-    return self.innerScrollView.contentSize;
-}
-
 #pragma mark - Override (GestureConflict)
 
 - (UIView *)actualView {
@@ -298,7 +290,6 @@
 
 #pragma mark - Export For Lua
 LUAUI_EXPORT_VIEW_BEGIN(MLNUIScrollView)
-LUAUI_EXPORT_VIEW_PROPERTY(contentSize, "setLuaui_ContentSize:", "luaui_contentSize", MLNUIScrollView)
 LUAUI_EXPORT_VIEW_PROPERTY(loadThreshold, "setLuaui_loadahead:", "luaui_loadahead", MLNUIScrollView)
 LUAUI_EXPORT_VIEW_PROPERTY(contentOffset, "setLuaui_ContentOffset:", "luaui_contentOffset", MLNUIScrollView)
 LUAUI_EXPORT_VIEW_PROPERTY(scrollEnabled, "setLuaui_ScrollEnabled:", "luaui_isScrollEnabled", MLNUIScrollView)

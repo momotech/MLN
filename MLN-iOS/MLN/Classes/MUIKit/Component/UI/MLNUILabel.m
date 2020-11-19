@@ -429,12 +429,6 @@ LUAUI_EXPORT_VIEW_METHOD(padding, "luaui_setPaddingWithTop:right:bottom:left:", 
 LUAUI_EXPORT_VIEW_METHOD(setTextBold, "luaui_setTextBold", MLNUILabel)
 LUAUI_EXPORT_VIEW_METHOD(setTextFontStyle, "luaui_setTextFontStyle:", MLNUILabel)
 LUAUI_EXPORT_VIEW_METHOD(fontNameSize, "luaui_fontName:size:", MLNUILabel)
-LUAUI_EXPORT_VIEW_METHOD(setWrapContent, "setLuaui_wrapContent:",MLNUILabel) //SDK>=1.0.2
-LUAUI_EXPORT_VIEW_METHOD(setMaxWidth, "setLuaui_maxWidth:",MLNUILabel) //SDK>=1.0.3，自适应时的限制
-LUAUI_EXPORT_VIEW_METHOD(setMinWidth, "setLuaui_minWidth:",MLNUILabel) //SDK>=1.0.3，自适应时的限制
-LUAUI_EXPORT_VIEW_METHOD(setMaxHeight, "luaui_setMaxHeight:",MLNUILabel) //SDK>=1.0.3，自适应时的限制
-LUAUI_EXPORT_VIEW_METHOD(setMinHeight, "luaui_setMinHeight:",MLNUILabel) //SDK>=1.0.3，自适应时的限制
-LUAUI_EXPORT_VIEW_METHOD(setLineSpacing, "luaui_setLineSpacing:",MLNUILabel) //SDK>=1.0.3，自适应时的限制
-LUAUI_EXPORT_VIEW_METHOD(a_setIncludeFontPadding, "luaui_a_setIncludeFontPadding:", MLNUILabel)
+LUAUI_EXPORT_VIEW_METHOD(setWrapContent, "setLuaui_wrapContent:",MLNUILabel)
 LUAUI_EXPORT_VIEW_END(MLNUILabel, Label, YES, "MLNUIView", "initWithMLNUILuaCore:frame:")
 @end

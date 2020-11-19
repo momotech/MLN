@@ -423,16 +423,6 @@ static inline UIView *MLNUIValidSuperview(UIView *self) {
     self.mlnui_layoutNode.width = MLNUIPercentValue(widthPercent);
 }
 
-- (void)setLuaui_viewWidth:(CGFloat)luaui_width {
-    CGRect frame = self.frame;
-    frame.size.width = luaui_width;
-    self.frame = frame;
-}
-
-- (CGFloat)luaui_viewWidth {
-    return self.frame.size.width;
-}
-
 - (CGFloat)luaui_widthPercent {
     MLNUIValue value = self.mlnui_layoutNode.width;
     if (value.unit == MLNUIUnitPercent) {
