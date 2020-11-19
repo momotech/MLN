@@ -239,10 +239,11 @@ static inline UIView *MLNUIValidSuperview(UIView *self) {
 }
 
 - (void)luaui_addSubview:(UIView *)view {
-    if (view.mlnui_layoutNode.superNode == self.mlnui_layoutNode) {
+    MLNUILayoutNode *superNode = view.mlnui_layoutNode.superNode;
+    if (superNode && superNode == self.mlnui_layoutNode) {
         return;
     }
-    if (view.mlnui_layoutNode.superNode) {
+    if (superNode) {
         [view luaui_removeFromSuperview];
     }
     [view mlnui_markViewAsVirtualViewIfNeeded];
