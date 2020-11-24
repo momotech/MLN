@@ -221,6 +221,10 @@
     return self.innerScrollView.luaui_disallowFling;
 }
 
+- (CGSize)luaui_contentSize {
+    return self.innerScrollView.contentSize;
+}
+
 #pragma mark - Override (GestureConflict)
 
 - (UIView *)actualView {
@@ -310,6 +314,7 @@ LUAUI_EXPORT_VIEW_METHOD(setScrollEndCallback, "setLuaui_scrollEndCallback:",MLN
 LUAUI_EXPORT_VIEW_METHOD(setContentInset, "luaui_setContentInset:right:bottom:left:", MLNUIScrollView)
 LUAUI_EXPORT_VIEW_METHOD(getContentInset, "luaui_getContetnInset:", MLNUIScrollView)
 LUAUI_EXPORT_VIEW_METHOD(setScrollIndicatorInset, "luaui_setScrollIndicatorInset:right:bottom:left:", MLNUIScrollView)
+LUAUI_EXPORT_VIEW_METHOD(contentSize, "luaui_contentSize", MLNUIScrollView)
 LUAUI_EXPORT_VIEW_METHOD(setOffsetWithAnim, "luaui_setContentOffsetWithAnimation:", MLNUIScrollView)
 LUAUI_EXPORT_VIEW_METHOD(setScrollEnable, "mlnui_setLuaScrollEnable:", MLNUIScrollView)
 LUAUI_EXPORT_VIEW_END(MLNUIScrollView, ScrollView, YES, "MLNUIView", "initWithMLNUILuaCore:isHorizontal:")

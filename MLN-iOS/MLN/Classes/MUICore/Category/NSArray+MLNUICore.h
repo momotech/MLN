@@ -11,6 +11,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface NSArray (MLNUICore)
 
+@property (nonatomic, strong, nullable) NSMutableArray *mlnui_metaArray;
+
 @end
 
 NS_ASSUME_NONNULL_END

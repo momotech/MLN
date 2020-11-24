@@ -11,6 +11,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface NSDictionary (MLNUICore)
 
+@property (nonatomic, strong, nullable) NSMutableDictionary *mlnui_metaDictionary;
+
 @end
 
 NS_ASSUME_NONNULL_END

@@ -240,8 +240,18 @@ static inline NSObject *MLNUIConvertDataObjectToModel(__unsafe_unretained id dat
         return nil;
     }
     NSCAssert([NSThread isMainThread], @"This method will trigger data_binding and will update UI.");
+    
     if ([dataObject isKindOfClass:[NSDictionary class]]) {
+        NSDictionary *metaDic = [(NSDictionary *)dataObject mlnui_metaDictionary];
+        NSDictionary *updateDic = metaDic[@"__update"];
+        
         [(NSDictionary *)dataObject enumerateKeysAndObjectsUsingBlock:^(id _Nonnull key, id _Nonnull obj, BOOL *_Nonnull stop) {
+            if (updateDic) {
+                NSNumber *value = updateDic[key];
+                if ([value isKindOfClass:[NSNumber class]] && value.intValue == 0) {
+                    return; // key-value若无更改则不执行赋值操作，避免触发数据绑定
+                }
+            }
             @try {
 #if OCPERF_USE_NEW_DB
                 [model setValue:obj forKey:key];
@@ -257,6 +267,7 @@ static inline NSObject *MLNUIConvertDataObjectToModel(__unsafe_unretained id dat
             } @finally { }
         }];
     }
+    
     return model;
 }
 

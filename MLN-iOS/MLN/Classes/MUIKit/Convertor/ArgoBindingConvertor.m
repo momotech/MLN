@@ -65,8 +65,33 @@ static MLNUI_FORCE_INLINE id __argo__toobj(lua_State* L, MLNUILuaCore *luaCore,i
             lua_checkstack(L, 128);
             ArgoObservableMap* dic = nil;
             ArgoObservableArray* array = nil;
+            ArgoObservableMap *dicMeta = nil;
+            ArgoObservableArray *arrayMeta = nil;
             lua_pushvalue(L, idx);
             // stack now contains: -1 => table
+            
+            int ret = lua_getmetatable(L, -1);
+            if (ret != 0) {
+                lua_pushnil(L);
+                while (lua_next(L, -2)) {
+                    id value = __argo__toobj(L, luaCore, -1, error);
+                    if(value) {
+                        if(lua_isnumber(L, -2)) {
+                            if(!arrayMeta) arrayMeta = [ArgoObservableArray array];
+                            [arrayMeta addObject:value];
+                        } else {
+                            NSString* key = __argo__tonsstring(L, -2, error);
+                            if(key) {
+                                if(!dicMeta) dicMeta = [ArgoObservableMap dictionary];
+                                [dicMeta lua_rawPutValue:value forKey:key];
+                            }
+                        }
+                    }
+                    lua_pop(L, 1);
+                }
+                lua_pop(L, 1); // remove meta table
+            }
+            
             lua_pushnil(L);
             // stack now contains: -1 => nil; -2 => table
             while (lua_next(L, -2)) {
@@ -95,10 +120,16 @@ static MLNUI_FORCE_INLINE id __argo__toobj(lua_State* L, MLNUILuaCore *luaCore,i
             lua_pop(L, 1);
             if([dic count] > 0) {
 //                return [dic copy];
+                if (dicMeta) {
+                    dic.mlnui_metaDictionary = dicMeta;
+                }
                 return dic;
             }
             if ([array count] > 0) {
 //                return [array copy];
+                if (arrayMeta) {
+                    array.mlnui_metaArray = arrayMeta;
+                }
                 return array;
             }
             // Stack is now the same as it was on entry to this function
