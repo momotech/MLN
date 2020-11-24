@@ -36,12 +36,13 @@ union MLNUIAnimationTypes {
     };
 };
 
-@interface MLNUIInteractiveBehavior ()
+@interface MLNUIInteractiveBehavior ()<UIGestureRecognizerDelegate>
 
 @property (nonatomic, assign) InteractiveType type;
 @property (nonatomic, strong) NSHashTable <MLAValueAnimation *> *valueAnimations;
 @property (nonatomic, strong) MLNUITouchCallback touchCallback;
-@property (nonatomic, strong) MLNUIPinchGestureRecognizer *pinchGesture;
+@property (nonatomic, strong) MLNUIPinchGestureRecognizer *scalePinchGesture;
+@property (nonatomic, strong) UIPanGestureRecognizer *scalePanGesture;
 @property (nonatomic, assign) CGPoint beginPoint;
 @property (nonatomic, assign) CGPoint endPoint;
 @property (nonatomic, assign) CGPoint tolerant;
@@ -50,6 +51,7 @@ union MLNUIAnimationTypes {
 @property (nonatomic, assign) MLNUIAnimationTypes animationTypes;
 @property (nonatomic, assign) CGFloat pinchPointDistance;
 @property (nonatomic, assign) CGFloat prePinchFactor;
+@property (nonatomic, assign) CGPoint preScalePanLocation;
 
 @end
 
@@ -137,54 +139,20 @@ static inline CGFloat MLNUIDeltaValueOfTwoPoints(CGPoint point1, CGPoint point2)
     _valueAnimations = [NSHashTable weakObjectsHashTable];
 }
 
-- (void)addPinchActionWithTargetView:(UIView *)targetView {
-    [self.targetView removeGestureRecognizer:self.pinchGesture];
-    if (targetView) {
-        [targetView addGestureRecognizer:self.pinchGesture];
+- (void)onTouch:(MLNUITouchType)type delta:(CGFloat)delta velocity:(float)velocity {
+    if (self.touchBlock) {
+        self.touchBlock(type, delta, velocity);
     }
+    if (self.luaTouchBlock) {
+        [self.luaTouchBlock addUIntegerArgument:type];
+        [self.luaTouchBlock addFloatArgument:delta];
+        [self.luaTouchBlock addFloatArgument:velocity];
+        [self.luaTouchBlock callIfCan];
+    }
+    self.lastDistance = delta;
 }
 
-- (MLNUIPinchGestureRecognizer *)pinchGesture {
-    if (!_pinchGesture) {
-        _pinchGesture = [[MLNUIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(pinchGestureAction:)];
-    }
-    return _pinchGesture;
-}
-
-- (void)pinchGestureAction:(MLNUIPinchGestureRecognizer *)gesture {
-    if (gesture.numberOfTouches >= 2) {
-        CGPoint point1 = [gesture locationOfTouch:0 inView:gesture.view.superview];
-        CGPoint point2 = [gesture locationOfTouch:1 inView:gesture.view.superview];
-        _pinchPointDistance = MLNUIDeltaValueOfTwoPoints(point1, point2);
-    }
-    CGFloat delta = _pinchPointDistance;
-    CGFloat factor = gesture.scale - 1 + _prePinchFactor;
-    
-    switch (gesture.argoui_state) {
-        case UIGestureRecognizerStateBegan:
-            [self onTouch:MLNUITouchType_Begin delta:delta velocity:factor];
-            break;
-            
-        case UIGestureRecognizerStateChanged: {
-            BOOL shouldReturn = !self.overBoundary && (factor > 1 || factor < 0);
-            if (shouldReturn) return;
-            [self onTouch:MLNUITouchType_Move delta:delta velocity:factor];
-            for (MLAValueAnimation *ani in self.valueAnimations) {
-                [ani updateWithFactor:factor isBegan:NO];
-            }
-        }
-            break;
-            
-        case UIGestureRecognizerStateEnded:
-        case UIGestureRecognizerStateCancelled:
-            [self onTouch:MLNUITouchType_End delta:delta velocity:factor];
-            _prePinchFactor = factor;
-            break;
-            
-        default:
-            break;
-    }
-}
+#pragma mark - InteractiveType_Gesture
 
 - (void)addTouchActionWithTargetView:(UIView *)targetView {
     __weak __typeof(self) weakSelf = self;
@@ -277,17 +245,96 @@ static inline CGFloat MLNUIDeltaValueOfTwoPoints(CGPoint point1, CGPoint point2)
     lastSpeed = newSpeed;
 }
 
-- (void)onTouch:(MLNUITouchType)type delta:(CGFloat)delta velocity:(float)velocity {
-    if (self.touchBlock) {
-        self.touchBlock(type, delta, velocity);
+#pragma mark - InteractiveType_Scale
+
+- (void)addPinchActionWithTargetView:(UIView *)targetView {
+    [self.targetView removeGestureRecognizer:self.scalePanGesture];
+    [self.targetView removeGestureRecognizer:self.scalePinchGesture];
+    if (targetView) {
+        [targetView addGestureRecognizer:self.scalePanGesture];
+        [targetView addGestureRecognizer:self.scalePinchGesture];
     }
-    if (self.luaTouchBlock) {
-        [self.luaTouchBlock addUIntegerArgument:type];
-        [self.luaTouchBlock addFloatArgument:delta];
-        [self.luaTouchBlock addFloatArgument:velocity];
-        [self.luaTouchBlock callIfCan];
+}
+
+- (MLNUIPinchGestureRecognizer *)scalePinchGesture {
+    if (!_scalePinchGesture) {
+        _scalePinchGesture = [[MLNUIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(scalePinchGestureAction:)];
+        _scalePinchGesture.delegate = self;
     }
-    self.lastDistance = delta;
+    return _scalePinchGesture;
+}
+
+- (void)scalePinchGestureAction:(MLNUIPinchGestureRecognizer *)gesture {
+    if (gesture.numberOfTouches >= 2) {
+        CGPoint point1 = [gesture locationOfTouch:0 inView:gesture.view.superview];
+        CGPoint point2 = [gesture locationOfTouch:1 inView:gesture.view.superview];
+        _pinchPointDistance = MLNUIDeltaValueOfTwoPoints(point1, point2);
+    }
+    CGFloat delta = _pinchPointDistance;
+    CGFloat factor = gesture.scale - 1 + _prePinchFactor;
+    
+    switch (gesture.argoui_state) {
+        case UIGestureRecognizerStateBegan:
+            [self onTouch:MLNUITouchType_Begin delta:delta velocity:factor];
+            break;
+            
+        case UIGestureRecognizerStateChanged: {
+            BOOL shouldReturn = !self.overBoundary && (factor > 1 || factor < 0);
+            if (shouldReturn) return;
+            [self onTouch:MLNUITouchType_Move delta:delta velocity:factor];
+            for (MLAValueAnimation *ani in self.valueAnimations) {
+                [ani updateWithFactor:factor isBegan:NO];
+            }
+        }
+            break;
+            
+        case UIGestureRecognizerStateEnded:
+        case UIGestureRecognizerStateCancelled:
+            [self onTouch:MLNUITouchType_End delta:delta velocity:factor];
+            _prePinchFactor = factor;
+            break;
+            
+        default:
+            break;
+    }
+}
+
+- (UIPanGestureRecognizer *)scalePanGesture {
+    if (!_scalePanGesture) {
+        _scalePanGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(scalePanGestureAction:)];
+        _scalePanGesture.minimumNumberOfTouches = 2;
+        _scalePanGesture.maximumNumberOfTouches = 2;
+    }
+    return _scalePanGesture;
+}
+
+- (void)scalePanGestureAction:(UIPanGestureRecognizer *)gesture {
+    if (!MLNUIFollowEnable(self) || gesture.numberOfTouches != 2) {
+        return;
+    }
+ 
+    CGPoint location = [gesture translationInView:gesture.view.superview];
+    switch (gesture.state) {
+        case UIGestureRecognizerStateBegan:
+            _preScalePanLocation = location;
+            break;
+            
+        case UIGestureRecognizerStateChanged: {
+            CGFloat deltaX = location.x - _preScalePanLocation.x;
+            CGFloat deltaY = location.y - _preScalePanLocation.y;
+            _preScalePanLocation = location;
+            CGPoint center = self.targetView.center;
+            self.targetView.center = (CGPoint){center.x + deltaX, center.y + deltaY};
+        }
+            break;
+
+        default:
+            break;
+    }
+}
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {
+    return YES;
 }
 
 #pragma mark - NSCopying
