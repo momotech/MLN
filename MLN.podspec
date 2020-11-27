@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
     s.name             = 'MLN'
-    s.version          = '1.0.0.1.fix12'
+    s.version          = '1.0.0.1.fix13'
     s.summary          = 'A lib of Momo Lua Native.'
     
     # This description is used to generate tags and improve search results.
@@ -28,6 +28,7 @@ Pod::Spec.new do |s|
     s.source           = { :git => 'https://github.com/momotech/MLN.git', :tag => s.version.to_s }
     # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
     s.header_dir = '.'
+    s.module_name = s.name
 
     s.ios.deployment_target = '8.0'
     s.libraries = 'z'
