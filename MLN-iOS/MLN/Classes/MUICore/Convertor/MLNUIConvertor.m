@@ -366,9 +366,9 @@ static MLNUI_FORCE_INLINE id __mlnui_luaui_toobj(lua_State* L, int idx, NSError 
         case LUA_TTABLE: {
             lua_checkstack(L, 128);
             NSMutableDictionary *dic = nil;
-            NSMutableDictionary *dicMeta = nil;
+            MLNUITable *dicMeta = nil;
             NSMutableArray *array = nil;
-            NSMutableArray *arrayMeta = nil;
+            MLNUITable *arrayMeta = nil;
             lua_pushvalue(L, idx);
             // stack now contains: -1 => table
             
@@ -379,12 +379,12 @@ static MLNUI_FORCE_INLINE id __mlnui_luaui_toobj(lua_State* L, int idx, NSError 
                     id value = __mlnui_luaui_toobj(L, -1, error);
                     if(value) {
                         if(lua_isnumber(L, -2)) {
-                            if(!arrayMeta) arrayMeta = [NSMutableArray array];
+                            if(!arrayMeta) arrayMeta = [MLNUITable array];
                             [arrayMeta addObject:value];
                         } else {
                             NSString *key = __mlnui_luaui_tonsstring(L, -2, error);
                             if(key) {
-                                if(!dicMeta) dicMeta = [NSMutableDictionary dictionary];
+                                if(!dicMeta) dicMeta = [MLNUITable dictionary];
                                 [dicMeta setObject:value forKey:key];
                             }
                         }
@@ -422,13 +422,13 @@ static MLNUI_FORCE_INLINE id __mlnui_luaui_toobj(lua_State* L, int idx, NSError 
             lua_pop(L, 1);
             if([dic count] > 0) {
                 if (dicMeta) {
-                    dic.mlnui_metaDictionary = dicMeta;
+                    dic.mlnui_metaTable = dicMeta;
                 }
                 return [dic copy];
             }
             if ([array count] > 0) {
                 if (arrayMeta) {
-                    array.mlnui_metaArray = arrayMeta;
+                    array.mlnui_metaTable = arrayMeta;
                 }
                 return [array copy];
             }

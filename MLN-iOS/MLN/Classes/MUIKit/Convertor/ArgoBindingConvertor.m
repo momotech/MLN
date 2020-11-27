@@ -65,8 +65,8 @@ static MLNUI_FORCE_INLINE id __argo__toobj(lua_State* L, MLNUILuaCore *luaCore,i
             lua_checkstack(L, 128);
             ArgoObservableMap* dic = nil;
             ArgoObservableArray* array = nil;
-            ArgoObservableMap *dicMeta = nil;
-            ArgoObservableArray *arrayMeta = nil;
+            MLNUITable *dicMeta = nil;
+            MLNUITable *arrayMeta = nil;
             lua_pushvalue(L, idx);
             // stack now contains: -1 => table
             
@@ -77,13 +77,13 @@ static MLNUI_FORCE_INLINE id __argo__toobj(lua_State* L, MLNUILuaCore *luaCore,i
                     id value = __argo__toobj(L, luaCore, -1, error);
                     if(value) {
                         if(lua_isnumber(L, -2)) {
-                            if(!arrayMeta) arrayMeta = [ArgoObservableArray array];
+                            if(!arrayMeta) arrayMeta = [MLNUITable array];
                             [arrayMeta addObject:value];
                         } else {
                             NSString* key = __argo__tonsstring(L, -2, error);
                             if(key) {
-                                if(!dicMeta) dicMeta = [ArgoObservableMap dictionary];
-                                [dicMeta lua_rawPutValue:value forKey:key];
+                                if(!dicMeta) dicMeta = [MLNUITable dictionary];
+                                [dicMeta setObject:value forKey:key];
                             }
                         }
                     }
@@ -121,14 +121,14 @@ static MLNUI_FORCE_INLINE id __argo__toobj(lua_State* L, MLNUILuaCore *luaCore,i
             if([dic count] > 0) {
 //                return [dic copy];
                 if (dicMeta) {
-                    dic.mlnui_metaDictionary = dicMeta;
+                    dic.mlnui_metaTable = dicMeta;
                 }
                 return dic;
             }
             if ([array count] > 0) {
 //                return [array copy];
                 if (arrayMeta) {
-                    array.mlnui_metaArray = arrayMeta;
+                    array.mlnui_metaTable = arrayMeta;
                 }
                 return array;
             }

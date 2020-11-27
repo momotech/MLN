@@ -12,6 +12,7 @@
 #import "ArgoBindingConvertor.h"
 #import "ArgoObservableMap.h"
 #import "ArgoObservableArray.h"
+#import "MLNUITable.h"
 
 #define ARGOUI_ERROR(errmsg) do {\
 if (error) { *error = [NSError errorWithDomain:@"com.argoui.error" code:-1 userInfo:@{NSLocalizedDescriptionKey:errmsg}]; }\
@@ -22,6 +23,14 @@ if (error) { *error = [NSError errorWithDomain:@"com.argoui.error" code:-1 userI
 #else
 #define ARGOUI_ERROR_LOG(errmsg)
 #endif
+
+typedef NS_ENUM(NSInteger, MLNUIAutoWireType) {
+    MLNUIAutoWireTypeNone = 0,
+    MLNUIAutoWireTypeUpdate = 1,
+    MLNUIAutoWireTypeInsert = 2,
+    MLNUIAutoWireTypeRemove = 3,
+    MLNUIAutoWireTypeSort   = 4
+};
 
 typedef void(^MLNLUIModelHandleTask)(void);
 
@@ -235,6 +244,156 @@ static inline BOOL MLNUIConvertModelToLuaTable(__unsafe_unretained NSObject *mod
     return YES;
 }
 
+static inline void MLNUIExchangeArrayObjectAtIndex(NSMutableArray *array, id object, NSUInteger index) {
+    NSCParameterAssert(index < array.count);
+    if (object && index < array.count) {
+        [array replaceObjectAtIndex:index withObject:object];
+    }
+}
+
+static inline void MLNUIUpdateDictionary(NSMutableDictionary *dic, id object, id key) {
+    NSCParameterAssert(key && object);
+    if (object && key) {
+        [dic setObject:object forKey:key];
+    }
+}
+
+static inline NSDictionary *MLNUIUpdateAutoWireDictionary(NSMutableDictionary *dictionary) {
+    if (!dictionary) return nil;
+    MLNUITable *metaTable = dictionary.mlnui_metaTable;
+    if (!metaTable) return dictionary;
+    NSArray<NSDictionary *> *updateArray = [metaTable objectForKey:@"__update"];
+    
+    for (NSDictionary *dic in updateArray) {
+        MLNUIAutoWireType opType = [dic[@"op"] integerValue];
+        id key = dic[@"key"];
+        id value = dic[@"value"];
+        if (!key || !value) continue;
+        if (![key isKindOfClass:[NSNumber class]]) {
+            NSCAssert(false, @"The key should be kind of NSNumber class.");
+            continue;
+        }
+        switch (opType) {
+            case MLNUIAutoWireTypeUpdate:
+                MLNUIUpdateDictionary(dictionary, value, key);
+                break;
+            default: {
+                if ([value isKindOfClass:[NSArray class]]) {
+                    value = MLNUIUpdateAutoWireArray([value mutableCopy]);
+                    MLNUIUpdateDictionary(dictionary, value, key);
+                } else if ([value isKindOfClass:[NSDictionary class]]) {
+                    value = MLNUIUpdateAutoWireDictionary([value mutableCopy]);
+                    MLNUIUpdateDictionary(dictionary, value, key);
+                }
+                break;
+            }
+        }
+    }
+    
+    return dictionary;
+}
+
+static inline NSArray *MLNUIUpdateAutoWireArray(NSMutableArray *array) {
+    if (!array) return nil;
+    MLNUITable *metaTable = array.mlnui_metaTable;
+    if (!metaTable) return array;
+    NSArray<NSDictionary *> *updateArray = [metaTable objectForKey:@"__update"];
+    
+    for (NSDictionary *dic in updateArray) {
+        MLNUIAutoWireType opType = [dic[@"op"] integerValue];
+        id key = dic[@"key"];
+        id value = dic[@"value"];
+        if (!key || !value) continue;
+        if (![key isKindOfClass:[NSNumber class]]) {
+            NSCAssert(false, @"The key should be kind of NSNumber class.");
+            continue;
+        }
+        NSUInteger index = [key unsignedIntegerValue];
+        switch (opType) {
+            case MLNUIAutoWireTypeInsert: {
+                if (index <= array.count) {
+                    [array insertObject:value atIndex:index];
+                } else {
+                    NSCAssert(false, @"The index of array is invalid when MLNUIAutoWireTypeInsert");
+                }
+                break;
+            }
+            case MLNUIAutoWireTypeRemove: {
+                if (index < array.count) {
+                    [array removeObjectAtIndex:index];
+                } else {
+                    NSCAssert(false, @"The index of array is invalid when MLNUIAutoWireTypeRemove");
+                }
+                break;
+            }
+            case MLNUIAutoWireTypeSort: {
+                // TODO
+                break;
+            }
+            default: {
+                if ([value isKindOfClass:[NSArray class]]) {
+                    value = MLNUIUpdateAutoWireArray([value mutableCopy]);
+                    MLNUIExchangeArrayObjectAtIndex(array, value, index);
+                } else if ([value isKindOfClass:[NSDictionary class]]) {
+                    value = MLNUIUpdateAutoWireDictionary([value mutableCopy]);
+                    MLNUIExchangeArrayObjectAtIndex(array, value, index);
+                }
+                break;
+            }
+        }
+    }
+    
+    return array;
+}
+
+static inline void MLNUISetKeyValueForModel(NSObject *model, id key, id value) {
+    @try {
+#if OCPERF_USE_NEW_DB
+        [model setValue:value forKey:key];
+#else
+        if ([value isKindOfClass:[NSArray class]] || [value isKindOfClass:[NSDictionary class]]) {
+            [model setValue:[value mutableCopy] forKey:key];
+        } else {
+            [model setValue:value forKey:key];
+        }
+#endif
+    } @catch (NSException *exception) {
+        ARGOUI_ERROR_LOG([exception description]);
+    } @finally { }
+}
+
+static inline void MLNUIAssignAutoWireDataToModel(NSObject *model, NSArray<NSDictionary *> *autoWireData) {
+    [autoWireData enumerateObjectsUsingBlock:^(NSDictionary *_Nonnull obj, NSUInteger idx, BOOL *_Nonnull stop) {
+        MLNUIAutoWireType opType = [obj[@"op"] integerValue];
+        id key = obj[@"key"];
+        id value = obj[@"value"];
+        switch (opType) {
+            case MLNUIAutoWireTypeUpdate:
+                MLNUISetKeyValueForModel(model, key, value);
+                break;
+            case MLNUIAutoWireTypeInsert:
+            case MLNUIAutoWireTypeRemove:
+            case MLNUIAutoWireTypeSort: {
+                if ([value isKindOfClass:[NSArray class]]) {
+                    value = MLNUIUpdateAutoWireArray([value mutableCopy]);
+                    MLNUISetKeyValueForModel(model, key, value); // TODO: __TODO: 是否应该将数组直接赋给model, 否则model应该持有一个可变数组
+                }
+                break;
+            }
+            default: {
+                if ([value isKindOfClass:[NSArray class]]) {
+                    value = MLNUIUpdateAutoWireArray([value mutableCopy]);
+                    MLNUISetKeyValueForModel(model, key, value); // TODO: __TODO: 是否应该将数组直接赋给model, 否则model应该持有一个可变数组
+                } else if ([value isKindOfClass:[NSDictionary class]]) {
+                    value = MLNUIUpdateAutoWireDictionary([value mutableCopy]);
+                    MLNUISetKeyValueForModel(model, key, value); // TODO: __TODO: 是否应该将数组直接赋给model, 否则model应该持有一个可变数组
+                }
+                break;
+            }
+        }
+    }];
+}
+
 static inline NSObject *MLNUIConvertDataObjectToModel(__unsafe_unretained id dataObject, __unsafe_unretained NSObject *model) {
     if (!dataObject || !model) {
         return nil;
@@ -242,30 +401,15 @@ static inline NSObject *MLNUIConvertDataObjectToModel(__unsafe_unretained id dat
     NSCAssert([NSThread isMainThread], @"This method will trigger data_binding and will update UI.");
     
     if ([dataObject isKindOfClass:[NSDictionary class]]) {
-        NSDictionary *metaDic = [(NSDictionary *)dataObject mlnui_metaDictionary];
-        NSDictionary *updateDic = metaDic[@"__update"];
-        
-        [(NSDictionary *)dataObject enumerateKeysAndObjectsUsingBlock:^(id _Nonnull key, id _Nonnull obj, BOOL *_Nonnull stop) {
-            if (updateDic) {
-                NSNumber *value = updateDic[key];
-                if ([value isKindOfClass:[NSNumber class]] && value.intValue == 0) {
-                    return; // key-value若无更改则不执行赋值操作，避免触发数据绑定
-                }
-            }
-            @try {
-#if OCPERF_USE_NEW_DB
-                [model setValue:obj forKey:key];
-#else
-                if ([obj isKindOfClass:[NSArray class]] || [obj isKindOfClass:[NSDictionary class]]) {
-                    [model setValue:[obj mutableCopy] forKey:key];
-                } else {
-                    [model setValue:obj forKey:key];
-                }
-#endif
-            } @catch (NSException *exception) {
-                ARGOUI_ERROR_LOG([exception description]);
-            } @finally { }
-        }];
+        MLNUITable *metaTable = [(NSDictionary *)dataObject mlnui_metaTable];
+        NSArray<NSDictionary *> *updateArray = [metaTable objectForKey:@"__update"];
+        if (updateArray.count > 0) {
+            MLNUIAssignAutoWireDataToModel(model, updateArray);
+        } else {
+            [(NSDictionary *)dataObject enumerateKeysAndObjectsUsingBlock:^(id _Nonnull key, id _Nonnull obj, BOOL *_Nonnull stop) {
+                MLNUISetKeyValueForModel(model, key, obj);
+            }];
+        }
     }
     
     return model;

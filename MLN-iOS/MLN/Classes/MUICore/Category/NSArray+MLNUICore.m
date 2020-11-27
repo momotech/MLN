@@ -16,11 +16,11 @@
     return MLNUINativeTypeArray;
 }
 
-- (void)setMlnui_metaArray:(NSMutableArray *)array {
-    objc_setAssociatedObject(self, @selector(mlnui_metaArray), array, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+- (void)setMlnui_metaTable:(MLNUITable *)table {
+    objc_setAssociatedObject(self, @selector(mlnui_metaTable), table, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
-- (NSMutableArray *)mlnui_metaArray {
+- (MLNUITable *)mlnui_metaTable {
     return objc_getAssociatedObject(self, _cmd);
 }
 

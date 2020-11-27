@@ -684,11 +684,11 @@ static inline UIView *MLNUIValidSuperview(UIView *self) {
  * Flex
  */
 - (void)setLuaui_basis:(CGFloat)basis {
-    self.mlnui_layoutNode.flex = basis;
+    self.mlnui_layoutNode.flexBasis = MLNUIPointValue(basis);
 }
 
 - (CGFloat)luaui_basis {
-    return self.mlnui_layoutNode.flex;
+    return self.mlnui_layoutNode.flexBasis.value;
 }
 
 - (void)setLuaui_grow:(CGFloat)grow {
