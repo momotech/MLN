@@ -424,9 +424,15 @@ static MLNUI_FORCE_INLINE id __mlnui_luaui_toobj(lua_State* L, int idx, NSError 
                 if (dicMeta) {
                     dic.mlnui_metaTable = dicMeta;
                 }
+                if (arrayMeta) {
+                    dic.mlnui_metaTable = arrayMeta;
+                }
                 return [dic copy];
             }
             if ([array count] > 0) {
+                if (dicMeta) {
+                    array.mlnui_metaTable = dicMeta;
+                }
                 if (arrayMeta) {
                     array.mlnui_metaTable = arrayMeta;
                 }

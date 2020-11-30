@@ -123,10 +123,16 @@ static MLNUI_FORCE_INLINE id __argo__toobj(lua_State* L, MLNUILuaCore *luaCore,i
                 if (dicMeta) {
                     dic.mlnui_metaTable = dicMeta;
                 }
+                if (arrayMeta) {
+                    dic.mlnui_metaTable = arrayMeta;
+                }
                 return dic;
             }
             if ([array count] > 0) {
 //                return [array copy];
+                if (dicMeta) {
+                    array.mlnui_metaTable = dicMeta;
+                }
                 if (arrayMeta) {
                     array.mlnui_metaTable = arrayMeta;
                 }
