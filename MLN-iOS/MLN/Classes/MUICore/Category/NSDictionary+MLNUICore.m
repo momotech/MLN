@@ -16,11 +16,11 @@
     return MLNUINativeTypeDictionary;
 }
 
-- (void)setMlnui_metaDictionary:(NSMutableDictionary *)dic {
-    objc_setAssociatedObject(self, @selector(mlnui_metaDictionary), dic, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+- (void)setMlnui_metaTable:(MLNUITable *)table {
+    objc_setAssociatedObject(self, @selector(mlnui_metaTable), table, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
-- (NSMutableDictionary *)mlnui_metaDictionary {
+- (MLNUITable *)mlnui_metaTable {
     return objc_getAssociatedObject(self, _cmd);
 }
 

@@ -6,12 +6,13 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "MLNUITable.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface NSDictionary (MLNUICore)
 
-@property (nonatomic, strong, nullable) NSMutableDictionary *mlnui_metaDictionary;
+@property (nonatomic, strong, nullable) MLNUITable *mlnui_metaTable;
 
 @end
 
