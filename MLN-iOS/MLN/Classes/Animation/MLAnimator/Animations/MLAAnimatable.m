@@ -8,8 +8,8 @@
 #import "MLACGUtils.h"
 #import "MLALayerExtras.h"
 #import <UIKit/UIKit.h>
-#import "UIView+MLNUILayout.h"
-#import "MLNUILabel.h"
+//#import "UIView+MLNUILayout.h"
+#import "UIView+AKFrame.h"
 
 NSString * const kMLAViewAlpha = @"view.alpha";
 NSString * const kMLAViewColor = @"view.backgroundColor";
@@ -87,14 +87,14 @@ static MLAValueHelper kStaticHelpers[] =
     {
         kMLAViewPosition,
         ^(UIView *obj, CGFloat values[]) {
-            values[0] = obj.mlnuiAnimationPosition.x;
-            values[1] = obj.mlnuiAnimationPosition.y;
+            values[0] = obj.akAnimationPosition.x;
+            values[1] = obj.akAnimationPosition.y;
         },
         ^(UIView *obj, const CGFloat values[]) {
-            CGPoint position = obj.mlnuiAnimationPosition;
+            CGPoint position = obj.akAnimationPosition;
             position.x = values[0];
             position.y = values[1];
-            obj.mlnuiAnimationPosition = position;
+            obj.akAnimationPosition = position;
         },
         kThresholdPoint,
         kValueCountTwo
@@ -102,12 +102,12 @@ static MLAValueHelper kStaticHelpers[] =
     {
         kMLAViewPositionX,
         ^(UIView *obj, CGFloat values[]) {
-            values[0] = obj.mlnuiAnimationPosition.x;
+            values[0] = obj.akAnimationPosition.x;
         },
         ^(UIView *obj, const CGFloat values[]) {
-            CGPoint position = obj.mlnuiAnimationPosition;
+            CGPoint position = obj.akAnimationPosition;
             position.x = values[0];
-            obj.mlnuiAnimationPosition = position;
+            obj.akAnimationPosition = position;
         },
         kThresholdPoint,
         kValueCountOne
@@ -115,12 +115,12 @@ static MLAValueHelper kStaticHelpers[] =
     {
         kMLAViewPositionY,
         ^(UIView *obj, CGFloat values[]) {
-            values[0] = obj.mlnuiAnimationPosition.y;
+            values[0] = obj.akAnimationPosition.y;
         },
         ^(UIView *obj, const CGFloat values[]) {
-            CGPoint position = obj.mlnuiAnimationPosition;
+            CGPoint position = obj.akAnimationPosition;
             position.y = values[0];
-            obj.mlnuiAnimationPosition = position;
+            obj.akAnimationPosition = position;
         },
         kThresholdPoint,
         kValueCountOne
@@ -191,32 +191,41 @@ static MLAValueHelper kStaticHelpers[] =
         kThresholdRotation,
         kValueCountOne
     },
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
     {
         kMLAViewContentOffset,
-        ^(UIView *obj, CGFloat values[]) {
-            UIScrollView *contentView = (UIScrollView *)obj.mlnui_contentView;
-            if (contentView && [contentView isKindOfClass:[UIScrollView class]]) {
-                 values_from_point(values, contentView.contentOffset);
+        ^(UIScrollView *obj, CGFloat values[]) {
+            SEL content = NSSelectorFromString(@"mlnui_contentView");
+            if([obj respondsToSelector:content]) {
+                obj = [obj performSelector:content];
+            }
+            if(obj && [obj respondsToSelector:@selector(contentOffset)]) {
+                values_from_point(values, obj.contentOffset);
             }
         },
-        ^(UIView *obj, const CGFloat values[]) {
-            UIScrollView *contentView = (UIScrollView *)obj.mlnui_contentView;
-            if (contentView && [contentView isKindOfClass:[UIScrollView class]]) {
-                contentView.contentOffset = values_to_point(values);
+        ^(UIScrollView *obj, const CGFloat values[]) {
+            SEL content = NSSelectorFromString(@"mlnui_contentView");
+            if([obj respondsToSelector:content]) {
+                obj = [obj performSelector:content];
             }
+            if(obj && [obj respondsToSelector:@selector(setContentOffset:)]) {
+                obj.contentOffset = values_to_point(values);            }
         },
         kThresholdPoint,
         kValueCountTwo
     },
+#pragma clang diagnostic pop
+
     {
         kMLAViewTextColor,
-        ^(MLNUILabel *obj, CGFloat values[]) {
-            if ([obj isKindOfClass:[MLNUILabel class]]) {
+        ^(UILabel *obj, CGFloat values[]) {
+            if ([obj respondsToSelector:@selector(textColor)]) {
                 RGBAFromUIColor(values, obj.textColor);
             }
         },
-        ^(MLNUILabel *obj, const CGFloat values[]) {
-            if ([obj isKindOfClass:[MLNUILabel class]]) {
+        ^(UILabel *obj, const CGFloat values[]) {
+            if ([obj respondsToSelector:@selector(setTextColor:)]) {
                 obj.textColor = UIColorFromRGBA(values);
             }
         },
