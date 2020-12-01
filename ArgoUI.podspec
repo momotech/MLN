@@ -52,13 +52,14 @@ Pod::Spec.new do |s|
                                  'MLN-iOS/MLN/Classes/MUIKit/ArgoBinding/Protocol/ArgoListenerProtocol.h',
                                  'MLN-iOS/MLN/Classes/MUIKit/ArgoBinding/Protocol/ArgoObserverProtocol.h'
         k.dependency 'ArgoUI/Core'
+        k.dependency 'ArgoAnimation'
         
-        k.subspec 'AnimationCPP' do |ani|
-          ani.name = 'AnimationCPP'
-          ani.source_files = 'MLN-iOS/MLN/Classes/MUIKit/Component/ObjectAnimation/Source/**/*.{h,c,cpp}'
-          ani.compiler_flags = '-x objective-c++'
-          ani.dependency 'ArgoUI/Core'
-        end
+#        k.subspec 'AnimationCPP' do |ani|
+#          ani.name = 'AnimationCPP'
+#          ani.source_files = 'MLN-iOS/MLN/Classes/MUIKit/Component/ObjectAnimation/Source/**/*.{h,c,cpp}'
+#          ani.compiler_flags = '-x objective-c++'
+#          ani.dependency 'ArgoUI/Core'
+#        end
     end
     
 end

@@ -120,6 +120,7 @@
 		B2DD3E60237990E9002AB6AD /* MLNActionItem.m in Sources */ = {isa = PBXBuildFile; fileRef = B2DD3E55237990E9002AB6AD /* MLNActionItem.m */; };
 		B2DD3E61237990E9002AB6AD /* MLNControlContext.m in Sources */ = {isa = PBXBuildFile; fileRef = B2DD3E56237990E9002AB6AD /* MLNControlContext.m */; };
 		B2DD3E62237990E9002AB6AD /* MLNActionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = B2DD3E58237990E9002AB6AD /* MLNActionManager.m */; };
+		BD80EAEDFF20427AB08BB5D8 /* libPods-LuaNative.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E3B85300B16BCA7FE631D5E /* libPods-LuaNative.a */; };
 		FA383453239A4C61000F900E /* MLNHomeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FA383452239A4C61000F900E /* MLNHomeViewController.m */; };
 		FA383456239A6357000F900E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FA383454239A6356000F900E /* Main.storyboard */; };
 		FA383459239A64AF000F900E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FA383457239A64AF000F900E /* LaunchScreen.storyboard */; };
@@ -269,6 +270,7 @@
 		30E24E9022F3D74900A0E78C /* MLNGlobalVarTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLNGlobalVarTest.m; sourceTree = "<group>"; };
 		30E24E9122F3D74900A0E78C /* MLNTestMe.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLNTestMe.h; sourceTree = "<group>"; };
 		30E24E9222F3D74900A0E78C /* MLNGlobalVarTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLNGlobalVarTest.h; sourceTree = "<group>"; };
+		3E3B85300B16BCA7FE631D5E /* libPods-LuaNative.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-LuaNative.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		6003F58A195388D20070C39A /* LuaNative.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LuaNative.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6003F58D195388D20070C39A /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		6003F58F195388D20070C39A /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -449,6 +451,7 @@
 				6003F592195388D20070C39A /* UIKit.framework in Frameworks */,
 				6003F58E195388D20070C39A /* Foundation.framework in Frameworks */,
 				3D4540A8AC05DB9A1936AA12 /* libPods-LuaNative.a in Frameworks */,
+				BD80EAEDFF20427AB08BB5D8 /* libPods-LuaNative.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -654,6 +657,7 @@
 				00A0C99F243C3C0500F0D003 /* LuaNativeUITests */,
 				6003F58B195388D20070C39A /* Products */,
 				4DADC4E2A37EF6A986E99F07 /* Pods */,
+				FB36ECB1E9385D63958D930F /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -1125,6 +1129,14 @@
 				007FF99925072DCD000A8E92 /* MLNUIMyErrorHandler.m */,
 			);
 			path = Handler;
+			sourceTree = "<group>";
+		};
+		FB36ECB1E9385D63958D930F /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				3E3B85300B16BCA7FE631D5E /* libPods-LuaNative.a */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

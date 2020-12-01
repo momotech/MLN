@@ -57,20 +57,11 @@
       "dependencies": {
         "ArgoUI/Core": [
 
-        ]
-      },
-      "subspecs": [
-        {
-          "name": "AnimationCPP",
-          "source_files": "MLN-iOS/MLN/Classes/MUIKit/Component/ObjectAnimation/Source/**/*.{h,c,cpp}",
-          "compiler_flags": "-x objective-c++",
-          "dependencies": {
-            "ArgoUI/Core": [
+        ],
+        "ArgoAnimation": [
 
-            ]
-          }
-        }
-      ]
+        ]
+      }
     }
   ]
 }
