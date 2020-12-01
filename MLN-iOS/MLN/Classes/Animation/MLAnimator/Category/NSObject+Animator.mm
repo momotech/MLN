@@ -19,12 +19,12 @@ static char kMLAAnimationDelegate;
 
 @implementation NSObject (Animator)
 
-- (id<MLAAnimationDelegate>)delegate {
+- (id<MLAAnimationDelegate>)mla_delegate {
     MLAWeakDelegate* weakObj = objc_getAssociatedObject(self, &kMLAAnimationDelegate);
     return weakObj.delegate;
 }
 
-- (void)setDelegate:(id<MLAAnimationDelegate>)delegate {
+- (void)setMla_delegate:(id<MLAAnimationDelegate>)delegate {
     if (delegate) {
         MLAWeakDelegate *weakObj = [MLAWeakDelegate new];
         weakObj.delegate = delegate;

@@ -17,7 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface NSObject (Animator)
 
-@property (weak, nonatomic) id<MLAAnimationDelegate> delegate;
+@property (weak, nonatomic) id<MLAAnimationDelegate> mla_delegate;
 
 - (void)mla_addAnimation:(MLAAnimation *)animation forKey:(NSString *)key;
 
