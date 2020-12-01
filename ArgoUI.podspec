@@ -45,7 +45,7 @@ Pod::Spec.new do |s|
         k.name = 'Kit'
         k.framework = 'Foundation', 'UIKit', 'CoreGraphics', 'AVFoundation'
         k.source_files = 'MLN-iOS/MLN/Classes/MUIKit/**/*.{h,m,c,cpp,mm}'
-        k.exclude_files = 'MLN-iOS/MLN/Classes/MUIKit/Component/ObjectAnimation/Source/**/*.{h,c,cpp}'
+#        k.exclude_files = 'MLN-iOS/MLN/Classes/MUIKit/Component/ObjectAnimation/Source/**/*.{h,c,cpp}'
         k.public_header_files = 'MLN-iOS/MLN/Classes/MUIKit/**/*.h'
         k.private_header_files = 'MLN-iOS/MLN/Classes/MUIKit/ArgoBinding/Listener/**/*.h',
                                  'MLN-iOS/MLN/Classes/MUIKit/ArgoBinding/Lua/**/*.h',

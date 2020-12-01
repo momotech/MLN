@@ -67,6 +67,4 @@ typedef void (^MLAValueWriteBlock)(id obj, const CGFloat values[_Nonnull]);
 
 @end
 
-typedef void(^MLAMutableAnimatableInitializeHandler)(MLAMutableAnimatable *animatable);
-
 NS_ASSUME_NONNULL_END

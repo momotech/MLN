@@ -5,15 +5,17 @@
 
 #import <CoreGraphics/CoreGraphics.h>
 #import "MLADefines.h"
-#import "MLAAnimatable.h"
+//#import "MLAAnimatable.h"
 
 // 动画过程回调Block
-@class MLAAnimation, MLNUIObjectAnimation;
+@class MLAAnimation, MLNUIObjectAnimation, MLAMutableAnimatable;
 typedef void(^MLAAnimationStartBlock)(MLAAnimation* animation);
 typedef void(^MLAAnimationPauseBlock)(MLAAnimation* animation);
 typedef void(^MLAAnimationResumeBlock)(MLAAnimation* animation);
 typedef void(^MLAAnimationRepeatBlock)(MLAAnimation* animation, NSUInteger count);
 typedef void(^MLAAnimationFinishBlock)(MLAAnimation* animation, BOOL finish);
+
+typedef void(^MLAMutableAnimatableInitializeHandler)(MLAMutableAnimatable *animatable);
 
 #pragma mark - MLAAnimation
 /**

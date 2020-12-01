@@ -18,11 +18,11 @@
   },
   "libraries": "c++",
   "requires_arc": true,
-  "source_files": "MLN-iOS/MLN/Classes/Animation/MLAnimator/**/*.{h,m,c,mm,cpp}",
+  "source_files": "MLN-iOS/MLN/Classes/Animation/MLAnimator/**/*.{h,c,cpp,m,mm}",
   "subspecs": [
     {
       "name": "AnimationCPP",
-      "source_files": "MLN-iOS/MLN/Classes/Animation/CPP/**/*.{h,c,cpp,mm}",
+      "source_files": "MLN-iOS/MLN/Classes/Animation/CPP/**/*.{h,c,cpp,m,mm}",
       "compiler_flags": "-x objective-c++"
     }
   ]

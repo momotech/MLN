@@ -32,12 +32,12 @@ Pod::Spec.new do |s|
     s.libraries = 'c++'
     s.requires_arc = true
     # s.resource = 'MLN-iOS/MLN/Resource/ArgoUISystem.bundle'
-    s.source_files = 'MLN-iOS/MLN/Classes/Animation/MLAnimator/**/*.{h,m,c,mm,cpp}'
+    s.source_files = 'MLN-iOS/MLN/Classes/Animation/MLAnimator/**/*.{h,c,cpp,m,mm}'
 #    s.public_header_files = 'MLN-iOS/MLN/Classes/ArgoAnimation/**/*.h'
 
     s.subspec 'AnimationCPP' do |ani|
         ani.name = 'AnimationCPP'
-        ani.source_files = 'MLN-iOS/MLN/Classes/Animation/CPP/**/*.{h,c,cpp,mm}'
+        ani.source_files = 'MLN-iOS/MLN/Classes/Animation/CPP/**/*.{h,c,cpp,m,mm}'
         ani.compiler_flags = '-x objective-c++'
     end
 end
