@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
     s.name             = 'ArgoAnimation'
-    s.version          = '0.1.5'
+    s.version          = '0.1.6'
     s.summary          = 'Animation Component'
     
     # This description is used to generate tags and improve search results.
@@ -28,7 +28,7 @@ Pod::Spec.new do |s|
     s.source           = { :git => 'https://github.com/momotech/MLN.git', :tag => 'ArgoAnimation/' + s.version.to_s }
     # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
 #     s.module_name = 'AGAnimation'
-   s.module_map = 'MLN-iOS/MLN/Classes/Animation/MLAnimator/module.modulemap'
+    s.module_map = 'MLN-iOS/MLN/Classes/Animation/MLAnimator/module.modulemap'
 #    s.pod_target_xcconfig = {
 #'DEFINES_MODULE' => 'YES'
 #}
