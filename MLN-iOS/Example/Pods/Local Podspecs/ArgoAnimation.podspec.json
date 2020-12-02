@@ -1,6 +1,6 @@
 {
   "name": "ArgoAnimation",
-  "version": "0.1.4",
+  "version": "0.1.5.beta5",
   "summary": "Animation Component",
   "description": "Animation Component",
   "homepage": "https://mln.immomo.com",
@@ -11,8 +11,9 @@
   "authors": "MoMo",
   "source": {
     "git": "https://github.com/momotech/MLN.git",
-    "tag": "ArgoAnimation/0.1.4"
+    "tag": "ArgoAnimation/0.1.5.beta5"
   },
+  "module_map": "MLN-iOS/MLN/Classes/Animation/MLAnimator/module.modulemap",
   "platforms": {
     "ios": "8.0"
   },
@@ -29,7 +30,8 @@
     {
       "name": "AnimationCPP",
       "source_files": "MLN-iOS/MLN/Classes/Animation/CPP/**/*.{h,c,cpp,m,mm}",
-      "compiler_flags": "-x objective-c++"
+      "compiler_flags": "-x objective-c++",
+      "private_header_files": "MLN-iOS/MLN/Classes/Animation/CPP/**/*.h"
     }
   ]
 }

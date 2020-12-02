@@ -6,15 +6,14 @@
 //
 
 #import "MLAAnimation.h"
+#import "MLAInteractiveBehaviorProtocol.h"
 
-@class MLNUIInteractiveBehavior;
+//@class MLNUIInteractiveBehavior;
 NS_ASSUME_NONNULL_BEGIN
 
 @interface MLAValueAnimation ()
-
 @property (nonatomic, strong, nullable) id obscureFrom;
-@property (nonatomic, strong) NSMutableArray <MLNUIInteractiveBehavior *> *behaviors;
-
+@property (nonatomic, strong) NSMutableArray <id<MLAInteractiveBehaviorProtocol>> *behaviors;
 @end
 
 @interface MLAValueAnimation (Interactive)
@@ -29,13 +28,13 @@ NS_ASSUME_NONNULL_BEGIN
  * @param behavior 交互行为
  * @discussion 向动画中添加一个交互行为
  */
-- (void)addInteractiveBehavior:(MLNUIInteractiveBehavior *)behavior;
+- (void)addInteractiveBehavior:(id<MLAInteractiveBehaviorProtocol>)behavior;
 
 /**
  * @param behavior 交互行为
  * @discussion 从动画中移除一个交互行为
 */
-- (void)removeInteractiveBehavior:(MLNUIInteractiveBehavior *)behavior;
+- (void)removeInteractiveBehavior:(id<MLAInteractiveBehaviorProtocol>)behavior;
 
 @end
 

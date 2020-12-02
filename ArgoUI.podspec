@@ -32,6 +32,9 @@ Pod::Spec.new do |s|
     s.libraries = 'z','c++'
     s.requires_arc = true
     s.resource = 'MLN-iOS/MLN/Resource/ArgoUISystem.bundle'
+#    s.module_map = 'MLN-iOS/MLN/Classes/ArgoUI.modulemap'
+#    s.source_files = 'MLN-iOS/MLN/Classes/ArgoUI.h'
+#    s.module_name = 'ArgoUI'
     
     s.subspec 'Core' do |c|
         c.name = 'Core'

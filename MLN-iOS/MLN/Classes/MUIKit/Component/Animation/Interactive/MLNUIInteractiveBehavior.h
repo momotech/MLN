@@ -7,12 +7,13 @@
 
 #import <Foundation/Foundation.h>
 #import "MLNUIViewConst.h"
+#import <ArgoAnimation/MLAInteractiveBehaviorProtocol.h>
 
 NS_ASSUME_NONNULL_BEGIN
 @class MLAValueAnimation;
 @class MLNUILuaCore, MLNUIBlock;
 
-@interface MLNUIInteractiveBehavior : NSObject <NSCopying>
+@interface MLNUIInteractiveBehavior : NSObject <NSCopying, MLAInteractiveBehaviorProtocol>
 
 /// 目标视图
 @property (nonatomic, weak) UIView *targetView;
@@ -33,7 +34,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) BOOL followEnable;
 
 /// 触摸回调
-@property (nonatomic, strong) void(^touchBlock)(MLNUITouchType type,CGFloat dx, CGFloat dy, CGFloat dis, CGFloat velocity);
+@property (nonatomic, strong) void(^touchBlock)(NSUInteger/*MLNUITouchType*/ type,CGFloat dx, CGFloat dy, CGFloat dis, CGFloat velocity);
 
 - (instancetype)initWithType:(InteractiveType)type;
 

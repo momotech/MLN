@@ -13,8 +13,8 @@
 #import "MLNUIBeforeWaitingTask.h"
 #import "UIView+MLNUILayout.h"
 #import "MLNUIInteractiveBehavior.h"
-#import "MLAValueAnimation+Interactive.h"
 #import "MLNUILabel.h"
+#import <ArgoAnimation/ArgoAnimation.h>
 
 @interface MLNUIObjectAnimation()
 

@@ -22,7 +22,7 @@
 
 #import "MLADefines.h"
 #import "MLAAnimatable.h"
-#import "MLNUIInteractiveBehavior.h"
+//#import "MLNUIInteractiveBehavior.h"
 
 @interface MLAValueAnimation ()
 @property(nonatomic, strong) MLAAnimatable *animatable;
@@ -125,7 +125,7 @@ static BezierControlPoints staticControls[] = {
     self.animatable.writeBlock(self.target, current->data());
 }
 
-- (void)addInteractiveBehavior:(MLNUIInteractiveBehavior *)behavior {
+- (void)addInteractiveBehavior:(id<MLAInteractiveBehaviorProtocol>)behavior {
     [behavior addAnimation:self];
     if (!self.behaviors) {
         self.behaviors = [NSMutableArray array];
@@ -135,7 +135,7 @@ static BezierControlPoints staticControls[] = {
     }
 }
 
-- (void)removeInteractiveBehavior:(MLNUIInteractiveBehavior *)behavior {
+- (void)removeInteractiveBehavior:(id<MLAInteractiveBehaviorProtocol>)behavior {
     if (behavior) {
         [behavior removeAnimation:self];
         [self.behaviors removeObject:behavior];

@@ -189,10 +189,10 @@ using namespace ANIMATOR_NAMESPACE;
 @interface MLAValueAnimation ()
 
 @property(readwrite, strong) NSString *valueName;
-
 @property(nonatomic, strong) MLAAnimatable *animatable;
 
 @end
+
 
 @implementation MLAValueAnimation
 @synthesize target;

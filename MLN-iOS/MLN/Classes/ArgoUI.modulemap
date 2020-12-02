@@ -1,0 +1,6 @@
+module ArgoUI {
+  umbrella header "ArgoUI.h"
+
+  export *
+  module * { export * }
+}
