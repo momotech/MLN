@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
     s.name             = 'ArgoAnimation'
-    s.version          = '0.1.4'
+    s.version          = '0.1.5.beta1'
     s.summary          = 'Animation Component'
     
     # This description is used to generate tags and improve search results.
@@ -48,6 +48,6 @@ Pod::Spec.new do |s|
         ani.name = 'AnimationCPP'
         ani.source_files = 'MLN-iOS/MLN/Classes/Animation/CPP/**/*.{h,c,cpp,m,mm}'
         ani.compiler_flags = '-x objective-c++'
-        ani.private_header_files = 'MLN-iOS/MLN/Classes/Animation/CPP/**/*.h'
+#        ani.private_header_files = 'MLN-iOS/MLN/Classes/Animation/CPP/**/*.h'
     end
 end
