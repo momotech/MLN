@@ -146,6 +146,7 @@ typedef void(^MLAMutableAnimatableInitializeHandler)(MLAMutableAnimatable *anima
 - (instancetype)initWithValueName:(NSString *)valueName tartget:(id)target
       mutableAnimatableInitialize:(MLAMutableAnimatableInitializeHandler)initializeHandler;
 
+- (void)updateWithProgress:(CGFloat)progress NS_SWIFT_NAME(update(progress:));
 
 @end
 
@@ -223,6 +224,8 @@ typedef void(^MLAMutableAnimatableInitializeHandler)(MLAMutableAnimatable *anima
 - (void)runTogether:(NSArray<MLAAnimation *> *)animations;
 
 - (void)runSequentially:(NSArray<MLAAnimation *> *)animations;
+
+- (void)updateWithProgress:(CGFloat)progress NS_SWIFT_NAME(update(progress:));
 
 @end
 

@@ -17,7 +17,7 @@
 #include "MultiAnimation.h"
 #include "CustomAnimation.h"
 #include "MLAActionEnabler.h"
-//#import "MLAValueAnimation+Interactive.h" //不可删除
+#import "MLAValueAnimation+Interactive.h" //不可删除
 //#import "MLNUIObjectAnimation.h"
 
 using namespace ANIMATOR_NAMESPACE;
@@ -267,6 +267,10 @@ using namespace ANIMATOR_NAMESPACE;
         ValueAnimation *valueAnimation = (ValueAnimation*)self.animation;
         self.animatable.writeBlock(self.target, valueAnimation->GetCurrentValue().data());
     }
+}
+
+- (void)updateWithProgress:(CGFloat)progress {
+    [self updateWithFactor:progress isBegan:NO];
 }
 
 @end
@@ -521,6 +525,47 @@ typedef NS_ENUM(NSInteger) {
 - (void)reset {
     for (MLAAnimation *objcAnimation in self.animations) {
         [objcAnimation reset];
+    }
+}
+
+static inline CGFloat MIN_MAX(CGFloat value, CGFloat min, CGFloat max) {
+    if (value < min) value = min;
+    if (value > max) value = max;
+    return value;
+}
+
+- (void)updateWithProgress:(CGFloat)progress {
+    switch (_runningType) {
+        case RunningTypeTogether: {
+            for (MLAValueAnimation *anim in self.animations) {
+                [anim updateWithProgress:progress];
+            }
+            break;
+        }
+            
+        case RunningTypeSequentially: {
+            static NSInteger index = 0;
+            CGFloat section = 1.0 / self.animations.count;  // 所有动画平分progress
+            CGFloat progressOfEachAnimation = progress - index * section;
+            CGFloat validProgress = MIN_MAX(progressOfEachAnimation * self.animations.count, 0, 1);
+            
+            MLAValueAnimation *anim = (MLAValueAnimation *)self.animations[MIN(index, self.animations.count-1)];
+            [anim updateWithProgress:validProgress];
+            
+            if (progressOfEachAnimation >= section) { // 当前动画的进度超过其所分配的范围，则表示当前动画执行完毕，需执行下一个动画
+                index++;
+            }
+            if (progressOfEachAnimation <= 0) { // 当前动画的进度为负数，则表示当前动画执行完毕，需执行上一个动画
+                index--;
+            }
+            if (progress >= 1.0) { // 所有动画执行完则index复位
+                index = 0;
+            }
+            break;
+        }
+            
+        default:
+            break;
     }
 }
 
