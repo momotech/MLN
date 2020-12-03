@@ -8,7 +8,7 @@
 
 #import "MLNKuaControllerAsync.h"
 #import "UserData.h"
-#import "ArgoUIKIt.h"
+#import "ArgoUIKit.h"
 //#import "ArgoKuaViewModelUtils.h"
 
 @interface MLNKuaControllerAsync ()

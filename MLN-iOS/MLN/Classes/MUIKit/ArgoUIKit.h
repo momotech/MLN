@@ -1,5 +1,5 @@
 //
-//  ArgoUIKIt.h
+//  ArgoUIKit.h
 //  ArgoUI
 //
 //  Created by Dongpeng Dai on 2020/8/31.

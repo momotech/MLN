@@ -9,7 +9,7 @@
 #import "MLNKuaController.h"
 //#import "MLNUIViewController.h"
 #import "UserData.h"
-#import "ArgoUIKIt.h"
+#import "ArgoUIKit.h"
 #import "ArgoKuaViewModelUtils.h"
 
 @interface MLNKuaController ()

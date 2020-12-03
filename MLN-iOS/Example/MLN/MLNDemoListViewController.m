@@ -12,7 +12,7 @@
 #import "MLNUILuaBundle.h"
 #import "MLNUIViewController.h"
 #import "MLNUIBridge.h"
-#import "ArgoUIKIt.h"
+#import "ArgoUIKit.h"
 
 @interface MLNDemoListViewController () <UITableViewDelegate, UITableViewDataSource>
 

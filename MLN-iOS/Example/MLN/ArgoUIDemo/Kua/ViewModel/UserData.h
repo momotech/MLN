@@ -1,5 +1,5 @@
 #import <UIKit/UIKit.h>
-#import "ArgoUIKIt.h"
+#import "ArgoUIKit.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

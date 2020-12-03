@@ -11,7 +11,7 @@
 #import "ArgoObservableArray.h"
 //#import "NSObject+ArgoListener.h"
 //#import "NSObject+ArgoListener.h"
-#import "ArgoUIKIt.h"
+#import "ArgoUIKit.h"
 
 @interface ArgoBindingTest : NSObject
 
