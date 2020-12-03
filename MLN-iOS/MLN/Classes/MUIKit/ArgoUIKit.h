@@ -1,12 +1,12 @@
 //
-//  ArgoKit.h
+//  ArgoUIKIt.h
 //  ArgoUI
 //
 //  Created by Dongpeng Dai on 2020/8/31.
 //
 
-#ifndef ArgoKit_h
-#define ArgoKit_h
+#ifndef ArgoUIKit_h
+#define ArgoUIKit_h
 
 #import "MLNUIKit.h"
 #import "MLNUIModelHandler.h"

@@ -14,15 +14,15 @@ PODS:
   - AFNetworking/Serialization (3.2.1)
   - AFNetworking/UIKit (3.2.1):
     - AFNetworking/NSURLSession
-  - ArgoAnimation (0.1.5.beta5):
-    - ArgoAnimation/AnimationCPP (= 0.1.5.beta5)
-  - ArgoAnimation/AnimationCPP (0.1.5.beta5)
-  - ArgoUI (0.3.6):
-    - ArgoUI/Core (= 0.3.6)
-    - ArgoUI/Kit (= 0.3.6)
-  - ArgoUI/Core (0.3.6):
+  - ArgoAnimation (0.1.6):
+    - ArgoAnimation/AnimationCPP (= 0.1.6)
+  - ArgoAnimation/AnimationCPP (0.1.6)
+  - ArgoUI (0.3.8):
+    - ArgoUI/Core (= 0.3.8)
+    - ArgoUI/Kit (= 0.3.8)
+  - ArgoUI/Core (0.3.8):
     - MLN/LuaLib
-  - ArgoUI/Kit (0.3.6):
+  - ArgoUI/Kit (0.3.8):
     - ArgoAnimation
     - ArgoUI/Core
   - ArgoUIComponent (0.1.2):
@@ -120,8 +120,8 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   AFNetworking: b6f891fdfaed196b46c7a83cf209e09697b94057
-  ArgoAnimation: b2e2b835580c9a40f4ea2438000307bb452ae26e
-  ArgoUI: 5e7944d9a3a69e6bdf899beaf150d6ebdfafcd67
+  ArgoAnimation: 6459f65c5a56bb677c78a4c1826d01a2d9ae1528
+  ArgoUI: d823524fadc4686977acfd6487185353c6b56dab
   ArgoUIComponent: c208b954b688481017a29bb6b5ca8056774ccbd3
   FLEX: d66c759bce0f6ebbbf472c742380874d846f2883
   Masonry: 678fab65091a9290e40e2832a55e7ab731aad201
