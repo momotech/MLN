@@ -221,13 +221,16 @@
     return self.innerScrollView.luaui_disallowFling;
 }
 
-- (void)setLuaui_ContentSize:(CGSize)contentSize {
-    self.innerScrollView.contentSize = contentSize;
-}
-
 - (CGSize)luaui_contentSize {
     return self.innerScrollView.contentSize;
 }
+
+#pragma mark - Override (GestureConflict)
+
+- (UIView *)actualView {
+    return self.innerScrollView;
+}
+
 #pragma mark - Override (Layout)
 
 - (BOOL)mlnui_layoutEnable {
@@ -258,7 +261,7 @@
             MLNUILayoutNode *contentNode = self.innerScrollView.mlnui_contentView.mlnui_layoutNode;
             contentNode.minWidth = MLNUIPointValue(MAX(contentNode.layoutWidth, self.frame.size.width));
             contentNode.minHeight = MLNUIPointValue(MAX(contentNode.layoutHeight, self.frame.size.height));
-            [contentNode applyLayoutWithSize:self.frame.size];
+            [contentNode applyLayoutWithSize:CGSizeZero]; // 因为 MLNUIInnerScrollViewContentStackNode 重写了`applyLayout`, 内部会调用 MLNUIScrollView 的测量布局, 所以此处若直接调用`applyLayout`会导致无限循环
         }
     }
 }
@@ -291,7 +294,6 @@
 
 #pragma mark - Export For Lua
 LUAUI_EXPORT_VIEW_BEGIN(MLNUIScrollView)
-LUAUI_EXPORT_VIEW_PROPERTY(contentSize, "setLuaui_ContentSize:", "luaui_contentSize", MLNUIScrollView)
 LUAUI_EXPORT_VIEW_PROPERTY(loadThreshold, "setLuaui_loadahead:", "luaui_loadahead", MLNUIScrollView)
 LUAUI_EXPORT_VIEW_PROPERTY(contentOffset, "setLuaui_ContentOffset:", "luaui_contentOffset", MLNUIScrollView)
 LUAUI_EXPORT_VIEW_PROPERTY(scrollEnabled, "setLuaui_ScrollEnabled:", "luaui_isScrollEnabled", MLNUIScrollView)
@@ -312,6 +314,7 @@ LUAUI_EXPORT_VIEW_METHOD(setScrollEndCallback, "setLuaui_scrollEndCallback:",MLN
 LUAUI_EXPORT_VIEW_METHOD(setContentInset, "luaui_setContentInset:right:bottom:left:", MLNUIScrollView)
 LUAUI_EXPORT_VIEW_METHOD(getContentInset, "luaui_getContetnInset:", MLNUIScrollView)
 LUAUI_EXPORT_VIEW_METHOD(setScrollIndicatorInset, "luaui_setScrollIndicatorInset:right:bottom:left:", MLNUIScrollView)
+LUAUI_EXPORT_VIEW_METHOD(contentSize, "luaui_contentSize", MLNUIScrollView)
 LUAUI_EXPORT_VIEW_METHOD(setOffsetWithAnim, "luaui_setContentOffsetWithAnimation:", MLNUIScrollView)
 LUAUI_EXPORT_VIEW_METHOD(setScrollEnable, "mlnui_setLuaScrollEnable:", MLNUIScrollView)
 LUAUI_EXPORT_VIEW_END(MLNUIScrollView, ScrollView, YES, "MLNUIView", "initWithMLNUILuaCore:isHorizontal:")

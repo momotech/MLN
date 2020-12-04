@@ -20,6 +20,55 @@ if (!self.luaui_isContainer) { \
 
 static const void *kMLNUILayoutAssociatedKey = &kMLNUILayoutAssociatedKey;
 
+@interface UIView (MLNUILayoutVirtualView)
+
+// 当virtualView执行removeFromSuper时，会将其所有的subNode以及subNode对应的view，
+// 从superNode以及superView上移除。若virtualView再想添加到视图上时，
+// 由于其子视图已全部移除，因而无法添加，故这里存储virtualView的所有子视图.
+@property (nonatomic, strong, readonly) NSMutableArray<UIView *> *mlnui_virtualViewSubviews;
+
+// 被add到view层级上时，根据是否需要渲染来决定是否为虚拟视图，默认NO.
+@property (nonatomic, assign) BOOL mlnui_markVirtualView;
+
+@end
+
+@implementation UIView (MLNUILayoutVirtualView)
+
+- (NSMutableArray<UIView *> *)mlnui_virtualViewSubviews {
+    NSMutableArray *subviews = objc_getAssociatedObject(self, _cmd);
+    if (!subviews) {
+        subviews = [NSMutableArray array];
+        objc_setAssociatedObject(self, _cmd, subviews, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    }
+    NSParameterAssert([subviews isKindOfClass:[NSMutableArray class]]);
+    return subviews;
+}
+
+- (void)mlnui_markViewAsVirtualViewIfNeeded {
+    if (!self.mlnui_allowVirtualLayout || self.mlnui_needRender) {
+        return;
+    }
+    self.mlnui_markVirtualView = YES;
+    if (self.mlnui_virtualViewSubviews.count == 0) { // 当标记虚拟视图时，要把其所有子视图转移到该数组中
+        NSArray<MLNUILayoutNode *> *subNodes = [[self mlnui_layoutNode] subNodes];
+        [subNodes enumerateObjectsUsingBlock:^(MLNUILayoutNode *_Nonnull obj, NSUInteger idx, BOOL *_Nonnull stop) {
+            [self.mlnui_virtualViewSubviews addObject:obj.view];
+        }];
+    }
+}
+
+- (void)setMlnui_markVirtualView:(BOOL)mark {
+    objc_setAssociatedObject(self, @selector(mlnui_markVirtualView), @(mark), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+
+- (BOOL)mlnui_markVirtualView {
+    return [objc_getAssociatedObject(self, _cmd) boolValue];
+}
+
+@end
+
+#pragma mark -
+
 @implementation UIView (MLNUILayout)
 
 - (Class)mlnui_bindedLayoutNodeClass {
@@ -53,7 +102,7 @@ static const void *kMLNUILayoutAssociatedKey = &kMLNUILayoutAssociatedKey;
     if (!self.mlnui_allowVirtualLayout) {
         return NO;
     }
-    return !self.mlnui_needRender;
+    return self.mlnui_markVirtualView;
 }
 
 - (BOOL)mlnui_resetOriginAfterLayout {
@@ -103,18 +152,18 @@ static const void *kMLNUILayoutAssociatedKey = &kMLNUILayoutAssociatedKey;
     }
 }
 
-static inline void MLNUITransferView(UIView *fromView, UIView *toView) {
-    if (fromView.superview) {
-        [fromView removeFromSuperview];
+static inline void MLNUITransferView(UIView *view, UIView *targetSuperview) {
+    if (view.superview) {
+        [view removeFromSuperview];
     }
-    [toView addSubview:fromView];
+    [targetSuperview addSubview:view];
 }
 
-static inline void MLNUITransferViewAtIndex(UIView *fromView, UIView *toView, NSInteger index) {
-    if (fromView.superview) {
-        [fromView removeFromSuperview];
+static inline void MLNUITransferViewAtIndex(UIView *view, UIView *targetSuperview, NSInteger index) {
+    if (view.superview) {
+        [view removeFromSuperview];
     }
-    [toView insertSubview:fromView atIndex:index];
+    [targetSuperview insertSubview:view atIndex:index];
 }
 
 static inline UIView *MLNUIValidSuperview(UIView *self) {
@@ -127,22 +176,42 @@ static inline UIView *MLNUIValidSuperview(UIView *self) {
 }
 
 - (void)_mlnui_transferSubviewsFromView:(UIView *)view {
-    if (view.subviews.count == 0) {
+    if (!view.mlnui_isVirtualView) return;
+    NSArray<UIView *> *subviews = [view mlnui_virtualViewSubviews];
+    if (subviews.count == 0) {
         return;
     }
     UIView *toView = self.mlnui_isVirtualView ? MLNUIValidSuperview(self) : self;
-    for (UIView<MLNUIEntityExportProtocol> *subview in view.subviews) {
-        MLNUITransferView(subview, toView);
+    for (UIView<MLNUIEntityExportProtocol> *sub in subviews) {
+        if (sub.mlnui_isVirtualView) {
+            [toView _mlnui_transferSubviewsFromView:sub];
+        } else {
+            MLNUITransferView(sub, toView);
+        }
+        if (!sub.mlnui_layoutNode.superNode) {
+            MLNUI_Lua_UserData_Retain_With_Index(2, sub);
+            [view.mlnui_layoutNode addSubNode:sub.mlnui_layoutNode];
+        }
     }
 }
 
 - (void)_mlnui_transferSubviewsFromView:(UIView *)view atIndex:(NSInteger)index {
-    if (view.subviews.count == 0) {
+    if (!view.mlnui_isVirtualView) return;
+    NSArray<UIView *> *subviews = [view mlnui_virtualViewSubviews];
+    if (subviews.count == 0) {
         return;
     }
     UIView *toView = self.mlnui_isVirtualView ? MLNUIValidSuperview(self) : self;
-    for (UIView<MLNUIEntityExportProtocol> *subview in view.subviews) {
-        MLNUITransferViewAtIndex(subview, toView, index);
+    for (UIView<MLNUIEntityExportProtocol> *sub in subviews.reverseObjectEnumerator) { // 插入时，视图是往后堆叠，故倒叙遍历
+        if (sub.mlnui_isVirtualView) {
+            [toView _mlnui_transferSubviewsFromView:sub atIndex:index];
+        } else {
+            MLNUITransferViewAtIndex(sub, toView, index);
+        }
+        if (!sub.mlnui_layoutNode.superNode) {
+            MLNUI_Lua_UserData_Retain_With_Index(2, sub);
+            [view.mlnui_layoutNode insertSubNode:sub.mlnui_layoutNode atIndex:index];
+        }
     }
 }
 
@@ -170,21 +239,28 @@ static inline UIView *MLNUIValidSuperview(UIView *self) {
 }
 
 - (void)luaui_addSubview:(UIView *)view {
-    if (view.superview && view.superview == self) {
+    MLNUILayoutNode *superNode = view.mlnui_layoutNode.superNode;
+    if (superNode && superNode == self.mlnui_layoutNode) {
         return;
     }
-    if (view.superview) {
+    if (superNode) {
         [view luaui_removeFromSuperview];
     }
+    [view mlnui_markViewAsVirtualViewIfNeeded];
     
     if (view.mlnui_isVirtualView) {
-        [self _mlnui_transferSubviewsFromView:view];
+        [self _mlnui_transferSubviewsFromView:view]; // -[view add:virtualView]
     } else if (self.mlnui_isVirtualView && self.mlnui_layoutNode.superNode) {
-        [self _mlnui_transferViewToSuperview:view]; // add virtual view firstly and then add subviews to virtual view.
+        [self _mlnui_transferViewToSuperview:view];  // -[virtualView add:view]
     } else {
         [self addSubview:view];
     }
-    MLNUI_Lua_UserData_Retain_With_Index(2, view); // should retain view 
+    
+    if (self.mlnui_isVirtualView) {
+        [self.mlnui_virtualViewSubviews addObject:view];
+    }
+    
+    MLNUI_Lua_UserData_Retain_With_Index(2, view); // should retain view
     [self.mlnui_layoutNode addSubNode:view.mlnui_layoutNode];
 }
 
@@ -195,6 +271,7 @@ static inline UIView *MLNUIValidSuperview(UIView *self) {
     if (view.superview) {
         [view luaui_removeFromSuperview];
     }
+    [view mlnui_markViewAsVirtualViewIfNeeded];
     
     index = index - 1;
     index = index >= 0 && index < self.subviews.count? index : self.subviews.count;
@@ -211,6 +288,11 @@ static inline UIView *MLNUIValidSuperview(UIView *self) {
 }
 
 - (void)luaui_removeFromSuperview {
+    UIView *superview = [self superview];
+    if ([superview.mlnui_virtualViewSubviews containsObject:self]) {
+        [superview.mlnui_virtualViewSubviews removeObject:self];
+    }
+    
     [self removeFromSuperview];
     MLNUI_Lua_UserData_Release(self); // 删除Lua强引用
     [self.mlnui_layoutNode.superNode removeSubNode:self.mlnui_layoutNode];
@@ -229,6 +311,10 @@ static inline UIView *MLNUIValidSuperview(UIView *self) {
         [subNodes enumerateObjectsUsingBlock:^(MLNUILayoutNode *_Nonnull node, NSUInteger idx, BOOL *_Nonnull stop) {
             [node.view luaui_removeFromSuperview];
         }];
+    }
+    
+    if (self.mlnui_virtualViewSubviews.count > 0) {
+        [self.mlnui_virtualViewSubviews removeAllObjects];
     }
 }
 
@@ -336,16 +422,6 @@ static inline UIView *MLNUIValidSuperview(UIView *self) {
 
 - (void)setLuaui_widthPercent:(CGFloat)widthPercent {
     self.mlnui_layoutNode.width = MLNUIPercentValue(widthPercent);
-}
-
-- (void)setLuaui_viewWidth:(CGFloat)luaui_width {
-    CGRect frame = self.frame;
-    frame.size.width = luaui_width;
-    self.frame = frame;
-}
-
-- (CGFloat)luaui_viewWidth {
-    return self.frame.size.width;
 }
 
 - (CGFloat)luaui_widthPercent {
@@ -608,11 +684,15 @@ static inline UIView *MLNUIValidSuperview(UIView *self) {
  * Flex
  */
 - (void)setLuaui_basis:(CGFloat)basis {
-    self.mlnui_layoutNode.flex = basis;
+    self.mlnui_layoutNode.flexBasis = MLNUIPointValue(basis);
 }
 
 - (CGFloat)luaui_basis {
-    return self.mlnui_layoutNode.flex;
+    MLNUIValue basis = self.mlnui_layoutNode.flexBasis;
+    if (basis.unit == MLNUIUnitPoint && !isnan(basis.value)) {
+        return basis.value;
+    }
+    return 0;
 }
 
 - (void)setLuaui_grow:(CGFloat)grow {

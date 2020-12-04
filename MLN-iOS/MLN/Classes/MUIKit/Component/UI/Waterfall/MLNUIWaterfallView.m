@@ -19,6 +19,9 @@
 #import "UIView+MLNUILayout.h"
 #import "MLNUICollectionViewLayoutProtocol.h"
 #import "UIView+MLNUIKit.h"
+#import "MLNUILongPressGestureRecognizer.h"
+#import "MLNUITapGestureRecognizer.h"
+#import "MLNUIGestureConflictManager.h"
 
 FOUNDATION_EXTERN CGSize MLNUICollectionViewAutoFitCellEstimateSize;
 
@@ -438,9 +441,22 @@ FOUNDATION_EXTERN CGSize MLNUICollectionViewAutoFitCellEstimateSize;
     return NO;
 }
 
+#pragma mark - Override (GestureConflict)
+
+- (UIView *)actualView {
+    return self.innerWaterfallView;
+}
+
 #pragma mark - Gesture
-- (void)handleLongPress:(UIGestureRecognizer *)gesture {
-    if (gesture.state != UIGestureRecognizerStateBegan) {
+- (void)handleLongPress:(MLNUILongPressGestureRecognizer *)gesture {
+    if (gesture.argoui_state != UIGestureRecognizerStateBegan) {
+        [MLNUIGestureConflictManager setCurrentGesture:nil];
+        return;
+    }
+    [MLNUIGestureConflictManager setCurrentGesture:gesture];
+    UIView *responder = [MLNUIGestureConflictManager currentGestureResponder];
+    if (responder != gesture.view) {
+        [MLNUIGestureConflictManager handleResponderGestureActionsWithCurrentGesture:gesture];
         return;
     }
     CGPoint p = [gesture locationInView:self];
@@ -469,10 +485,10 @@ FOUNDATION_EXTERN CGSize MLNUICollectionViewAutoFitCellEstimateSize;
         [self addSubview:_innerWaterfallView];
         
         // fix:父视图添加tapGesture、longPressGesture手势WaterfallView点击、长按回调不响应的问题
-        UILongPressGestureRecognizer *lpgr = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleLongPress:)];
+        MLNUILongPressGestureRecognizer *lpgr = [[MLNUILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleLongPress:)];
         lpgr.minimumPressDuration  = 0.5;
         [_innerWaterfallView addGestureRecognizer:lpgr];
-        UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:nil];
+        MLNUITapGestureRecognizer *tapGesture = [[MLNUITapGestureRecognizer alloc] initWithTarget:self action:nil];
         [tapGesture requireGestureRecognizerToFail:lpgr];
         tapGesture.cancelsTouchesInView = NO;
         [_innerWaterfallView addGestureRecognizer:tapGesture];

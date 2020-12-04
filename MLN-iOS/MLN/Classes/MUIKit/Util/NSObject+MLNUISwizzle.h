@@ -20,6 +20,11 @@ NS_ASSUME_NONNULL_BEGIN
                         newImpBlock:(id)block
              forceAddOriginImpBlock:(nullable id)originBlock;
 
++ (void)mlnui_swizzleInstanceSelector:(SEL)originSelector
+                      withNewSelector:(SEL)newSelector
+                          newImpBlock:(id)block
+            addOriginImpBlockIfNeeded:(nullable id)originBlock;
+
 + (void)mlnui_swizzleClassSelector:(SEL)originSelector
              withNewSelector:(SEL)newSelector
                  newImpBlock:(id)block;

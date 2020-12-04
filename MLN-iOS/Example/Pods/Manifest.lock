@@ -14,23 +14,24 @@ PODS:
   - AFNetworking/Serialization (3.2.1)
   - AFNetworking/UIKit (3.2.1):
     - AFNetworking/NSURLSession
-  - ArgoAnimation (0.1.6):
-    - ArgoAnimation/AnimationCPP (= 0.1.6)
-  - ArgoAnimation/AnimationCPP (0.1.6)
-  - ArgoUI (0.3.8):
-    - ArgoUI/Core (= 0.3.8)
-    - ArgoUI/Kit (= 0.3.8)
-  - ArgoUI/Core (0.3.8):
+  - ArgoAnimation (0.1.7):
+    - ArgoAnimation/AnimationCPP (= 0.1.7)
+  - ArgoAnimation/AnimationCPP (0.1.7)
+  - ArgoUI (0.4.0):
+    - ArgoUI/Core (= 0.4.0)
+    - ArgoUI/Kit (= 0.4.0)
+  - ArgoUI/Core (0.4.0):
     - MLN/LuaLib
-  - ArgoUI/Kit (0.3.8):
+  - ArgoUI/Kit (0.4.0):
     - ArgoAnimation
     - ArgoUI/Core
-  - ArgoUIComponent (0.1.2):
+  - ArgoUIComponent (0.1.4):
     - ArgoUI
-    - ArgoUIComponent/ErrorHandler (= 0.1.2)
-  - ArgoUIComponent/ErrorHandler (0.1.2):
+    - ArgoUIComponent/ErrorHandler (= 0.1.4)
+  - ArgoUIComponent/ErrorHandler (0.1.4):
     - ArgoUI
   - FLEX (3.0.0)
+  - LookinServer (1.0.0)
   - Masonry (1.1.0)
   - MJRefresh (3.1.16)
   - MLN (1.0.0.11.beta):
@@ -86,6 +87,7 @@ DEPENDENCIES:
   - ArgoUI (from `../../`)
   - ArgoUIComponent (from `../../`)
   - FLEX
+  - LookinServer
   - Masonry
   - MJRefresh (= 3.1.16)
   - MLN (from `../../`)
@@ -98,6 +100,7 @@ SPEC REPOS:
   https://github.com/CocoaPods/Specs.git:
     - AFNetworking
     - FLEX
+    - LookinServer
     - Masonry
     - MJRefresh
     - Protobuf
@@ -120,10 +123,11 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   AFNetworking: b6f891fdfaed196b46c7a83cf209e09697b94057
-  ArgoAnimation: 6459f65c5a56bb677c78a4c1826d01a2d9ae1528
-  ArgoUI: d823524fadc4686977acfd6487185353c6b56dab
-  ArgoUIComponent: c208b954b688481017a29bb6b5ca8056774ccbd3
+  ArgoAnimation: fcec4a80797568e9af23ddb8fe25a9ff6ae942ed
+  ArgoUI: 12c14bb06d993e52e271132235441129b0a8adab
+  ArgoUIComponent: 574a30b3d524d03e04e72340318180bb734bc904
   FLEX: d66c759bce0f6ebbbf472c742380874d846f2883
+  LookinServer: 0002891cd3cec5e082a910e897dfe71b4f06b89e
   Masonry: 678fab65091a9290e40e2832a55e7ab731aad201
   MJRefresh: 7798e16e53a5ef7f332dd05b27664db4e29530fd
   MLN: 49a86502211319c94bb9b15bcd686ade68ed6ed6
@@ -134,6 +138,6 @@ SPEC CHECKSUMS:
   Toast: 91b396c56ee72a5790816f40d3a94dd357abc196
   YYModel: 2a7fdd96aaa4b86a824e26d0c517de8928c04b30
 
-PODFILE CHECKSUM: 676f5ca63c4517111aa4e15699a7f2504ea17525
+PODFILE CHECKSUM: 8e66a97b79b9f09fd2bc5b2c43793419fa2cf9b7
 
 COCOAPODS: 1.10.0

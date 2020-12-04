@@ -242,11 +242,17 @@
 }
 
 /**
- *android 是否执行返回到上一个页面的操作，默认为true，Android方法，iOS空实现
+ *android 是否执行返回到上一个页面的操作，默认为true，Android方法，iOS用来表示是否开启侧滑返回手势
  **/
 - (void)luaui_backKeyEnabled:(BOOL)enable
 {
-    
+    UIViewController *currentController = MLNUI_KIT_INSTANCE(self.mlnui_luaCore).viewController;
+    if (currentController) {
+        UINavigationController *navigationController = [currentController navigationController];
+        if (navigationController) {
+            navigationController.interactivePopGestureRecognizer.enabled = enable;
+        }
+    }
 }
 
 - (void)luaui_cachePushView:(UIView *)view {
@@ -517,7 +523,6 @@ LUAUI_EXPORT_VIEW_METHOD(sizeChanged, "luaui_setOnSizeChanged:", MLNUIWindow)
 LUAUI_EXPORT_VIEW_METHOD(onDestroy, "luaui_setOnDestroy:", MLNUIWindow)
 LUAUI_EXPORT_VIEW_METHOD(getExtra, "luaui_getExtraData", MLNUIWindow)
 LUAUI_EXPORT_VIEW_METHOD(keyboardShowing, "luaui_setKeyboardStatusCallback:", MLNUIWindow)
-LUAUI_EXPORT_VIEW_METHOD(setPageColor, "luaui_setBackgroundColor:", MLNUIWindow)
 LUAUI_EXPORT_VIEW_METHOD(stateBarHeight, "luaui_stateBarHeight", MLNUIWindow)
 LUAUI_EXPORT_VIEW_METHOD(statusBarHeight, "luaui_statusBarHeight", MLNUIWindow)
 LUAUI_EXPORT_VIEW_METHOD(navBarHeight, "luaui_navBarHeight", MLNUIWindow)

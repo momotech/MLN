@@ -27,6 +27,9 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark - Responder Chain
 @property (nonatomic, assign) BOOL argo_notDispatch;
 
+/// 用于接收事件响应的view, 通常情况下即为self. 但像 MLNUIScrollView、MLNUITableView等，则为其内部持有的 innerScrollView、innerTableView.
+@property (nonatomic, strong, readonly) UIView *actualView;
+
 - (CGPoint)luaui_convertRelativePointToView:(UIView *)view point:(CGPoint)point;
 
 #pragma mark - TouchEvent
@@ -40,14 +43,11 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) MLNUIBlock *mlnui_touchesCancelledExtensionCallback;
 
 #pragma mark - render
-@property (nonatomic, assign, readonly) BOOL mlnui_needRender;
+@property (nonatomic, assign) BOOL mlnui_needRender;
 @property (nonatomic, strong, readonly) MLNUIRenderContext *mlnui_renderContext;
 
 #pragma mark - Gesture
 @property (nonatomic, strong) MLNUIBlock * mlnui_tapClickBlock;
-@property (nonatomic, strong) MLNUIBlock * argo_scaleBeginBlock;
-@property (nonatomic, strong) MLNUIBlock * argo_scalingBlock;
-@property (nonatomic, strong) MLNUIBlock * argo_scaleEndBlock;
 @property (nonatomic, strong) MLNUIBlock * mlnui_touchClickBlock;
 @property (nonatomic, strong) MLNUIBlock * mlnui_longPressBlock;
 

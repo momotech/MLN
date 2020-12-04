@@ -12,6 +12,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface MLNUIStack : MLNUIView
 
+/// 是否事件穿透，若为YES，则该视图不响应触摸事件，但其子视图仍可响应。默认NO.
+@property (nonatomic, assign) BOOL argo_eventCross;
+
 @end
 
 @interface MLNUIPlaneStack : MLNUIStack

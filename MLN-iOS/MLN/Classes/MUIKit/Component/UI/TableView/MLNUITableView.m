@@ -19,6 +19,10 @@
 #import "MLNUIInnerTableView.h"
 #import "UIView+MLNUIKit.h"
 #import "NSObject+MLNUICore.h"
+#import "UIScrollView+MLNUIGestureConflict.h"
+#import "MLNUIGestureConflictManager.h"
+#import "MLNUILongPressGestureRecognizer.h"
+#import "MLNUITapGestureRecognizer.h"
 
 @interface MLNUITableView()
 @property (nonatomic, strong) MLNUIInnerTableView *innerTableView;
@@ -380,9 +384,22 @@
     return NO;
 }
 
+#pragma mark - Override (GestureConflict)
+
+- (UIView *)actualView {
+    return self.innerTableView;
+}
+
 #pragma mark - Gesture
-- (void)handleLongPress:(UIGestureRecognizer *)gesture {
-    if (gesture.state != UIGestureRecognizerStateBegan) {
+- (void)handleLongPress:(MLNUILongPressGestureRecognizer *)gesture {
+    if (gesture.argoui_state != UIGestureRecognizerStateBegan) {
+        [MLNUIGestureConflictManager setCurrentGesture:nil];
+        return;
+    }
+    [MLNUIGestureConflictManager setCurrentGesture:gesture];
+    UIView *responder = [MLNUIGestureConflictManager currentGestureResponder];
+    if (responder != gesture.view) {
+        [MLNUIGestureConflictManager handleResponderGestureActionsWithCurrentGesture:gesture];
         return;
     }
     CGPoint p = [gesture locationInView:self.innerTableView];
@@ -392,8 +409,14 @@
     }
 }
 
-- (void)handleSingleTap:(UIGestureRecognizer *)gesture
+- (void)handleSingleTap:(MLNUITapGestureRecognizer *)gesture
 {
+    [MLNUIGestureConflictManager setCurrentGesture:gesture];
+    UIView *responder = [MLNUIGestureConflictManager currentGestureResponder];
+    if (responder != gesture.view) {
+        [MLNUIGestureConflictManager handleResponderGestureActionsWithCurrentGesture:gesture];
+        return;
+    }
     CGPoint p = [gesture locationInView:self.innerTableView];
     NSIndexPath *indexPath = [self.innerTableView indexPathForRowAtPoint:p];
     if (indexPath && [self.adapter respondsToSelector:@selector(tableView:singleTapSelectRowAtIndexPath:)]) {
@@ -417,12 +440,12 @@
         _innerTableView.backgroundColor = [UIColor clearColor];
         _innerTableView.containerView = self;
         
-        UILongPressGestureRecognizer *lpgr = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleLongPress:)];
+        MLNUILongPressGestureRecognizer *lpgr = [[MLNUILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleLongPress:)];
         lpgr.minimumPressDuration  = 0.5;
         lpgr.cancelsTouchesInView = NO;
         [_innerTableView addGestureRecognizer:lpgr];
         
-        UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleSingleTap:)];
+        MLNUITapGestureRecognizer *tapGesture = [[MLNUITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleSingleTap:)];
         tapGesture.cancelsTouchesInView = NO;
         [tapGesture requireGestureRecognizerToFail:lpgr];
         [_innerTableView addGestureRecognizer:tapGesture];

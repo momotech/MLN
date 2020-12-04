@@ -13,6 +13,8 @@ NS_ASSUME_NONNULL_BEGIN
 @class MLAValueAnimation;
 @class MLNUILuaCore, MLNUIBlock;
 
+typedef void(^MLNUITouchBehaviorBlock)(MLNUITouchType type, CGFloat dx, CGFloat dy, CGFloat dis, CGFloat velocity);
+
 @interface MLNUIInteractiveBehavior : NSObject <NSCopying, MLAInteractiveBehaviorProtocol>
 
 /// 目标视图
@@ -20,9 +22,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// 交互行为方向
 @property (nonatomic, assign) InteractiveDirection direction;
-
-/// 目标距离
-@property (nonatomic, assign) CGFloat endDistance;
 
 /// 是否越界
 @property (nonatomic, assign) BOOL overBoundary;
@@ -33,10 +32,11 @@ NS_ASSUME_NONNULL_BEGIN
 /// 是否跟随手势
 @property (nonatomic, assign) BOOL followEnable;
 
-/// 触摸回调
-@property (nonatomic, strong) void(^touchBlock)(NSUInteger/*MLNUITouchType*/ type,CGFloat dx, CGFloat dy, CGFloat dis, CGFloat velocity);
+/// 驱动最大值，当移动、缩放或旋转手势超过最大值时，动画到达最大值
+@property (nonatomic, assign) CGFloat max;
 
-- (instancetype)initWithType:(InteractiveType)type;
+/// 触摸回调
+@property (nonatomic, strong) MLNUITouchBehaviorBlock touchBlock;
 
 - (void)addAnimation:(MLAValueAnimation *)ani;
 - (void)removeAnimation:(MLAValueAnimation *)ani;

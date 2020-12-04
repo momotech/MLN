@@ -47,11 +47,29 @@ printf("==>>ArgoUI time cost: %0.2fms\n", (end - begin) * 1000);
 #pragma mark - Test
 
 - (void)testModelHandle {
-    id dataObject = @{@"ec":@(100), @"em":@"success", @"data":@{}};
+    id dataObject = @{@"ec":@(100),
+                      @"em":@"success",
+                      @"errcode":@(404),
+                      @"data":@{},
+                      @"list":@[]};
     
     MLNUIBenchMarkBegin
     MLNUITestModel *model = [MLNUITestModel new];
-    const char *luaFunctionChunk = "return function(data, model, extra) model[\"em\"] = \"okok\" return model end";
+    model.errcode = 808;
+    model.data = @{@"name":@"Tom", @"age":@(25), @"sex":@"man"}.mutableCopy;
+    model.list = @[@"BB", @"CC", @"AA"].mutableCopy;
+        
+    const char *luaFunctionChunk = "return function(data, model, extra)\
+    local viewModel = AutoWirePack(model) \
+    viewModel.data.name = \"Alice\"\
+    viewModel.list[1] = nil\
+    local mm = AutoWireUnPack(viewModel) \
+    return mm\
+    end";
+    
+    
+//    [[viewModel.em = \"okok\" \
+//    [[viewModel.ec = 2020\
     
 //    dispatch_async(dispatch_get_global_queue(0, 0), ^{
 //        MLNUITestModel *resultModel = [MLNUIModelHandler buildModelWithDataObject:dataObject model:model extra:nil functionChunk:luaFunctionChunk error:nil];

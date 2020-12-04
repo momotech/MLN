@@ -74,7 +74,9 @@ LUAUI_EXPORT_GLOBAL_VAR(Flex, (@{@"UNDEFINED":@(NAN)}))
 LUAUI_EXPORT_GLOBAL_VAR(PositionType, (@{@"RELATIVE":@(MLNUIPositionTypeRelative),
                                          @"ABSOLUTE":@(MLNUIPositionTypeAbsolute)}))
 
-LUAUI_EXPORT_GLOBAL_VAR(InteractiveType, (@{@"GESTURE":@(InteractiveType_Gesture)}))
+LUAUI_EXPORT_GLOBAL_VAR(InteractiveType, (@{@"GESTURE":@(InteractiveType_Gesture),
+                                            @"SCALE":@(InteractiveType_Scale),
+                                            @"ROTATE":@(InteractiveType_Rotate)}))
 LUAUI_EXPORT_GLOBAL_VAR(InteractiveDirection, (@{@"X":@(InteractiveDirection_X),
                                                  @"Y":@(InteractiveDirection_Y)}))
 LUAUI_EXPORT_GLOBAL_VAR(TouchType, (@{@"BEGIN" : @(MLNUITouchType_Begin),

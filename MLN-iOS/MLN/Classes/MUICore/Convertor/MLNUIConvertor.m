@@ -365,10 +365,35 @@ static MLNUI_FORCE_INLINE id __mlnui_luaui_toobj(lua_State* L, int idx, NSError 
         }
         case LUA_TTABLE: {
             lua_checkstack(L, 128);
-            NSMutableDictionary* dic = nil;
-            NSMutableArray* array = nil;
+            NSMutableDictionary *dic = nil;
+            MLNUITable *dicMeta = nil;
+            NSMutableArray *array = nil;
+            MLNUITable *arrayMeta = nil;
             lua_pushvalue(L, idx);
             // stack now contains: -1 => table
+            
+            int ret = lua_getmetatable(L, -1);
+            if (ret != 0) {
+                lua_pushnil(L);
+                while (lua_next(L, -2)) {
+                    id value = __mlnui_luaui_toobj(L, -1, error);
+                    if(value) {
+                        if(lua_isnumber(L, -2)) {
+                            if(!arrayMeta) arrayMeta = [MLNUITable array];
+                            [arrayMeta addObject:value];
+                        } else {
+                            NSString *key = __mlnui_luaui_tonsstring(L, -2, error);
+                            if(key) {
+                                if(!dicMeta) dicMeta = [MLNUITable dictionary];
+                                [dicMeta setObject:value forKey:key];
+                            }
+                        }
+                    }
+                    lua_pop(L, 1);
+                }
+                lua_pop(L, 1); // remove meta table
+            }
+            
             lua_pushnil(L);
             // stack now contains: -1 => nil; -2 => table
             while (lua_next(L, -2)) {
@@ -396,9 +421,21 @@ static MLNUI_FORCE_INLINE id __mlnui_luaui_toobj(lua_State* L, int idx, NSError 
             }
             lua_pop(L, 1);
             if([dic count] > 0) {
+                if (dicMeta) {
+                    dic.mlnui_metaTable = dicMeta;
+                }
+                if (arrayMeta) {
+                    dic.mlnui_metaTable = arrayMeta;
+                }
                 return [dic copy];
             }
             if ([array count] > 0) {
+                if (dicMeta) {
+                    array.mlnui_metaTable = dicMeta;
+                }
+                if (arrayMeta) {
+                    array.mlnui_metaTable = arrayMeta;
+                }
                 return [array copy];
             }
             // Stack is now the same as it was on entry to this function
