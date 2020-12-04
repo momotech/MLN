@@ -17,7 +17,7 @@
 //
 @property (nonatomic, strong) NSMutableDictionary *argoListeners;
 @property (nonatomic, strong) ArgoLuaCacheAdapter *cacheAdapter;
-
+@property (nonatomic, assign) NSUInteger callCount;
 @end
 
 @implementation ArgoObservableArray
@@ -80,6 +80,7 @@
 
 
 - (void)notifyWithType:(NSKeyValueChange)type indexSet:(NSIndexSet *)indexSet newValue:(id)newValue oldValue:(id)oldValue context:(ArgoWatchContext)context {
+    self.callCount++;
     NSMutableDictionary *change = [NSMutableDictionary dictionary];
     [change setObject:@(type) forKey:NSKeyValueChangeKindKey];
     [change setObject:@(context) forKey:kArgoListenerContext];
@@ -93,9 +94,11 @@
     if (oldValue) {
         [change setObject:oldValue forKey:NSKeyValueChangeOldKey];
     }
+    [change setObject:@(self.callCount) forKey:kArgoListenerCallCountKey];
     
     [self.cacheAdapter notifyChange:change];
     [self notifyArgoListenerKey:kArgoListenerArrayPlaceHolder Change:change];
+    self.callCount--;
 }
 
 #pragma mark - ArgoListenerLuaTableProtocol

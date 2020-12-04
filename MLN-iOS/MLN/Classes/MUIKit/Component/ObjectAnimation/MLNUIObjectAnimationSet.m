@@ -12,7 +12,8 @@
 #import "MLNUIAnimationConst.h"
 #import "MLNUIObjectAnimation.h"
 #import "MLNUIBeforeWaitingTask.h"
-#import "MLAValueAnimation+Interactive.h"
+//#import "MLAValueAnimation+Interactive.h"
+#import <ArgoAnimation/MLAValueAnimation+Interactive.h>
 
 typedef NS_ENUM(NSUInteger, MLNUIObjectAnimationSetType) {
     MLNUIObjectAnimationSetTypeTogether,

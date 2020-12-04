@@ -23,7 +23,7 @@
 #import "MLNUICollectionView.h"
 
 @implementation MLNUIDataBinding (MLNUIKit)
-#if 1
+#if !OCPERF_USE_C
 #pragma mark - Watch/Get/Update
 + (NSString *)luaui_watchDataForKeys:(NSString *)keys handler:(MLNUIBlock *)handler {
     TICK();

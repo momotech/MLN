@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
     s.name             = 'ArgoUI'
-    s.version          = '0.3.5'
+    s.version          = '0.4.0'
     s.summary          = 'A lib of Momo Lua UI.'
     
     # This description is used to generate tags and improve search results.
@@ -32,6 +32,9 @@ Pod::Spec.new do |s|
     s.libraries = 'z','c++'
     s.requires_arc = true
     s.resource = 'MLN-iOS/MLN/Resource/ArgoUISystem.bundle'
+#    s.module_map = 'MLN-iOS/MLN/Classes/ArgoUI.modulemap'
+#    s.source_files = 'MLN-iOS/MLN/Classes/ArgoUI.h'
+#    s.module_name = 'ArgoUI'
     
     s.subspec 'Core' do |c|
         c.name = 'Core'
@@ -45,20 +48,21 @@ Pod::Spec.new do |s|
         k.name = 'Kit'
         k.framework = 'Foundation', 'UIKit', 'CoreGraphics', 'AVFoundation'
         k.source_files = 'MLN-iOS/MLN/Classes/MUIKit/**/*.{h,m,c,cpp,mm}'
-        k.exclude_files = 'MLN-iOS/MLN/Classes/MUIKit/Component/ObjectAnimation/Source/**/*.{h,c,cpp}'
+#        k.exclude_files = 'MLN-iOS/MLN/Classes/MUIKit/Component/ObjectAnimation/Source/**/*.{h,c,cpp}'
         k.public_header_files = 'MLN-iOS/MLN/Classes/MUIKit/**/*.h'
         k.private_header_files = 'MLN-iOS/MLN/Classes/MUIKit/ArgoBinding/Listener/**/*.h',
                                  'MLN-iOS/MLN/Classes/MUIKit/ArgoBinding/Lua/**/*.h',
                                  'MLN-iOS/MLN/Classes/MUIKit/ArgoBinding/Protocol/ArgoListenerProtocol.h',
                                  'MLN-iOS/MLN/Classes/MUIKit/ArgoBinding/Protocol/ArgoObserverProtocol.h'
         k.dependency 'ArgoUI/Core'
+        k.dependency 'ArgoAnimation'
         
-        k.subspec 'AnimationCPP' do |ani|
-          ani.name = 'AnimationCPP'
-          ani.source_files = 'MLN-iOS/MLN/Classes/MUIKit/Component/ObjectAnimation/Source/**/*.{h,c,cpp}'
-          ani.compiler_flags = '-x objective-c++'
-          ani.dependency 'ArgoUI/Core'
-        end
+#        k.subspec 'AnimationCPP' do |ani|
+#          ani.name = 'AnimationCPP'
+#          ani.source_files = 'MLN-iOS/MLN/Classes/MUIKit/Component/ObjectAnimation/Source/**/*.{h,c,cpp}'
+#          ani.compiler_flags = '-x objective-c++'
+#          ani.dependency 'ArgoUI/Core'
+#        end
     end
     
 end

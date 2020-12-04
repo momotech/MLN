@@ -8,6 +8,7 @@
 #import "MLNUIViewConst.h"
 #import "MLNUIGlobalVarExporterMacro.h"
 #import "MLNUILayoutMacro.h"
+#import <ArgoAnimation/MLAInteractiveBehaviorProtocol.h>
 
 @implementation MLNUIViewConst
 

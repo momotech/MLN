@@ -21,6 +21,7 @@ extern NSString *const kArgoListenerChangedObject;
 extern NSString *const kArgoListenerChangedKey;
 extern NSString *const kArgoListenerContext;
 extern NSString *const kArgoListenerWrapper;
+extern NSString *const kArgoListenerCallCountKey;
 
 //extern NSString const *const kArgoListener2DArray;
 extern NSString *const kArgoConstString_Dot;

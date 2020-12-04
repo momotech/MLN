@@ -1,0 +1,6 @@
+framework module ArgoAnimation {
+  umbrella header "ArgoAnimation.h"
+
+  export *
+  module * { export * }
+}
