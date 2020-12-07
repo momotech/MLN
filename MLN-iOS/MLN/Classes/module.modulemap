@@ -1,4 +1,4 @@
-module MLN {
+framework module MLN {
   umbrella header "MLN.h"
 
   export *
