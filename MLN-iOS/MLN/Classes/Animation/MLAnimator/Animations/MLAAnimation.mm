@@ -558,7 +558,7 @@ static inline CGFloat MIN_MAX(CGFloat value, CGFloat min, CGFloat max) {
             if (progressOfEachAnimation <= 0) { // 当前动画的进度为负数，则表示当前动画执行完毕，需执行上一个动画
                 index--;
             }
-            if (progress >= 1.0) { // 所有动画执行完则index复位
+            if (progress >= 0.999/*注意精度*/) { // 所有动画执行完则index复位
                 index = 0;
             }
             break;
