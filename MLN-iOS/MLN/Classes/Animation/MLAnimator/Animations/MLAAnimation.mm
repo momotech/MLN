@@ -545,6 +545,9 @@ static inline CGFloat MIN_MAX(CGFloat value, CGFloat min, CGFloat max) {
             
         case RunningTypeSequentially: {
             static NSInteger index = 0;
+            if (self.animations.count > 1 && index == 0 && progress >= 1.0) {
+                return; // 过滤极端情况 (具有多个动画，但当第一个动画执行时，progress就>=1.0，不合理)
+            }
             CGFloat section = 1.0 / self.animations.count;  // 所有动画平分progress
             CGFloat progressOfEachAnimation = progress - index * section;
             CGFloat validProgress = MIN_MAX(progressOfEachAnimation * self.animations.count, 0, 1);
@@ -558,7 +561,7 @@ static inline CGFloat MIN_MAX(CGFloat value, CGFloat min, CGFloat max) {
             if (progressOfEachAnimation <= 0) { // 当前动画的进度为负数，则表示当前动画执行完毕，需执行上一个动画
                 index--;
             }
-            if (progress >= 0.999/*注意精度*/) { // 所有动画执行完则index复位
+            if (progress >= 1.0) { // 所有动画执行完则index复位
                 index = 0;
             }
             break;
