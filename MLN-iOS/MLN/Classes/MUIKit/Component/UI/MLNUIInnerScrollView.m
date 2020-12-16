@@ -137,7 +137,17 @@
 
 - (void)layoutSubviews {
     [super layoutSubviews];
-    self.contentSize = self.mlnui_contentView.frame.size;
+    CGSize contentSize = self.mlnui_contentView.frame.size;
+    self.contentSize = contentSize;
+    if (self.mlnui_horizontal) {
+        if (contentSize.height > self.frame.size.height) {
+            [self.superview mlnui_markNeedsLayout]; // 水平滚动，contentSize.height大于父视图，要重新计算布局，以修正父视图大小
+        }
+    } else {
+        if (contentSize.width > self.frame.size.width) {
+            [self.superview mlnui_markNeedsLayout]; // 竖直滚动，contentSize.width大于父视图，要重新计算布局，以修正父视图大小
+        }
+    }
 }
 
 #pragma mark - UIGestureRecognizerDelegate

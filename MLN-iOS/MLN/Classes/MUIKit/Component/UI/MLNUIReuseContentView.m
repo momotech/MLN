@@ -11,6 +11,7 @@
 #import "UIView+MLNUIKit.h"
 #import "UIView+MLNUILayout.h"
 #import "MLNUILuaTable.h"
+#import "UIView+AKFrame.h"
 
 @interface MLNUIReuseContentView()
 
@@ -103,10 +104,10 @@
     [super mlnui_layoutDidChange];
     if (!CGRectEqualToRect(self.oldFrame, CGRectZero)) {
         if (self.didChangeLayout) {
-            self.didChangeLayout(self.mlnuiLayoutFrame.size);
+            self.didChangeLayout(self.akLayoutFrame.size);
         }
     }
-    self.oldFrame = self.mlnuiLayoutFrame;
+    self.oldFrame = self.akLayoutFrame;
 }
 
 #pragma mark - Override Method For Lua

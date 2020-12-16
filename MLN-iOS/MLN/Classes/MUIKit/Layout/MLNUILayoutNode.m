@@ -7,6 +7,7 @@
 
 #import "MLNUILayoutNode.h"
 #import "UIView+MLNUILayout.h"
+#import "UIView+AKFrame.h"
 
 #define YG_PROPERTY(type, lowercased_name, capitalized_name)    \
 - (type)lowercased_name                                         \
@@ -452,15 +453,15 @@ static void YGApplyLayoutRecursive(MLNUILayoutNode *layoutNode, float xOffset, f
             YGApplyLayoutRecursive(subNode, origin.x + xOffset, origin.y + yOffset);
         }
     } else {
-        CGRect frame = view.mlnuiLayoutFrame;
+        CGRect frame = view.akLayoutFrame;
         CGPoint oldOrigin = layoutNode.resetOriginAfterLayout ? CGPointZero : frame.origin;
         frame.origin = (CGPoint){origin.x + oldOrigin.x + xOffset, origin.y + oldOrigin.y + yOffset};
         frame.size = (CGSize){
             YGRoundPixelValue(YGNodeLayoutGetWidth(node)),
             YGRoundPixelValue(YGNodeLayoutGetHeight(node))
         };
-        if (!CGRectEqualToRect(view.mlnuiLayoutFrame, frame)) {
-            view.mlnuiLayoutFrame = frame;
+        if (!CGRectEqualToRect(view.akLayoutFrame, frame)) {
+            view.akLayoutFrame = frame;
             [view mlnui_layoutDidChange];
         }
         [view mlnui_layoutCompleted];

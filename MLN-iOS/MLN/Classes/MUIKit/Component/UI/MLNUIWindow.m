@@ -15,6 +15,7 @@
 #import "MLNUIDevice.h"
 #import "MLNUISafeAreaProxy.h"
 #import "MLNUISafeAreaAdapter.h"
+#import "UIView+AKFrame.h"
 
 @interface MLNUIWindow ()
 
@@ -321,11 +322,11 @@
             CGRect frame = self.frame;
             frame.origin.y += statusBarHeight;
             frame.size.height -= statusBarHeight;
-            self.mlnuiLayoutFrame = frame;
+            self.akLayoutFrame = frame;
         }
     } else {
         if (!CGRectEqualToRect(self.frame, [UIScreen mainScreen].bounds)) {
-            self.mlnuiLayoutFrame = [UIScreen mainScreen].bounds;
+            self.akLayoutFrame = [UIScreen mainScreen].bounds;
         }
     }
 }
