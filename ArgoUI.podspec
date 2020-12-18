@@ -32,7 +32,7 @@ Pod::Spec.new do |s|
     s.libraries = 'z','c++'
     s.requires_arc = true
     s.resource = 'MLN-iOS/MLN/Resource/ArgoUISystem.bundle'
-#    s.module_map = 'MLN-iOS/MLN/Classes/ArgoUI.modulemap'
+    s.module_map = 'MLN-iOS/MLN/Classes/module.modulemap'
 #    s.source_files = 'MLN-iOS/MLN/Classes/ArgoUI.h'
 #    s.module_name = 'ArgoUI'
     
@@ -41,6 +41,8 @@ Pod::Spec.new do |s|
         c.framework = 'Foundation', 'UIKit'
         c.source_files = 'MLN-iOS/MLN/Classes/MUICore/**/*.{h,m,c}'
         c.public_header_files = 'MLN-iOS/MLN/Classes/MUICore/**/*.h'
+        c.private_header_files = 'MLN-iOS/MLN/Classes/MUICore/argo_db/**/*.h'
+
         c.dependency  'MLN/LuaLib'
     end
     
@@ -51,9 +53,8 @@ Pod::Spec.new do |s|
 #        k.exclude_files = 'MLN-iOS/MLN/Classes/MUIKit/Component/ObjectAnimation/Source/**/*.{h,c,cpp}'
         k.public_header_files = 'MLN-iOS/MLN/Classes/MUIKit/**/*.h'
         k.private_header_files = 'MLN-iOS/MLN/Classes/MUIKit/ArgoBinding/Listener/**/*.h',
-                                 'MLN-iOS/MLN/Classes/MUIKit/ArgoBinding/Lua/**/*.h',
-                                 'MLN-iOS/MLN/Classes/MUIKit/ArgoBinding/Protocol/ArgoListenerProtocol.h',
-                                 'MLN-iOS/MLN/Classes/MUIKit/ArgoBinding/Protocol/ArgoObserverProtocol.h'
+                                 'MLN-iOS/MLN/Classes/MUIKit/ArgoBinding/Lua/**/*.h'
+                                 
         k.dependency 'ArgoUI/Core'
         k.dependency 'ArgoAnimation'
         

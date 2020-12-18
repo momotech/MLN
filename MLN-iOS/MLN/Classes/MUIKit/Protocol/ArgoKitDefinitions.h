@@ -8,6 +8,8 @@
 #ifndef ArgoKitDefinitions_h
 #define ArgoKitDefinitions_h
 
+#import <Foundation/Foundation.h>
+
 #define ArgoKitInstance MLNUIKitInstance
 #define ArgoKitInstanceHandlersManager MLNUIKitInstanceHandlersManager
 #define ArgoExportProtocol MLNUIExportProtocol
