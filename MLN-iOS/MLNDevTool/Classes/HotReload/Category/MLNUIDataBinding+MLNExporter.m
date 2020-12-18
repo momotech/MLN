@@ -6,8 +6,8 @@
 //
 
 #import "MLNUIDataBinding+MLNExporter.h"
-#import "MLNStaticExporterMacro.h"
-#import "MLNUIStaticExporterMacro.h"
+#import <MLN/MLNStaticExporterMacro.h>
+#import <ArgoUI/MLNUIStaticExporterMacro.h>
 
 @implementation MLNUIDataBinding (MLNExporter)
 

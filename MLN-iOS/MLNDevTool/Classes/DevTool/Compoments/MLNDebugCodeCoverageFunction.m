@@ -6,9 +6,9 @@
 //
 
 #import "MLNDebugCodeCoverageFunction.h"
-#import "MLNExporter.h"
+#import <MLN/MLNExporter.h>
 #import "MLNServer.h"
-#import "MLNUIGlobalFuncExporterMacro.h"
+#import <ArgoUI/MLNUIGlobalFuncExporterMacro.h>
 
 @implementation MLNDebugCodeCoverageFunction
 

@@ -7,7 +7,7 @@
 
 #import "MLNDebugContext.h"
 #import "NSBundle+MLNDebugTool.h"
-#import "MLNUIKit.h"
+#import <ArgoUI/MLNUIKit.h>
 
 #define MLNDEBUG_IP_KEY   @"MLNDebugContextDebugIPAddressKey"
 #define MLNDEBUG_PORT_KEY @"MLNDebugContextDebugPortKey"

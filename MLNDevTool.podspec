@@ -27,16 +27,17 @@ Pod::Spec.new do |s|
     s.author           = 'MoMo'
     s.source           = { :git => 'https://github.com/momotech/MLN.git', :tag => 'devtool-' + s.version.to_s }
     # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
-    
+    s.module_map = 'MLN-iOS/MLNDevTool/Classes/module.modulemap'
     s.ios.deployment_target = '8.0'
     s.libraries = 'z', 'c++'
     s.requires_arc = true
     s.public_header_files = 'MLN-iOS/MLNDevTool/Classes/*.h'
     s.dependency 'ArgoUI'
-
+    
     s.subspec 'MLNProtobuf' do |pb|
       pb.name = 'MLNProtobuf'
       pb.source_files = 'MLN-iOS/MLNDevTool/Classes/MLNProtobuf/**/*.{h,m}'
+      pb.private_header_files = 'MLN-iOS/MLNDevTool/Classes/MLNProtobuf/**/*.h'
       pb.pod_target_xcconfig = { 'GCC_PREPROCESSOR_DEFINITIONS' => '$(inherited) GPB_USE_PROTOBUF_FRAMEWORK_IMPORTS=1' }
       pb.dependency 'Protobuf'
     end
@@ -45,14 +46,15 @@ Pod::Spec.new do |s|
       conn.name = 'Conn'
       conn.framework = 'Foundation', 'UIKit', 'CoreGraphics', 'AVFoundation'
       conn.source_files = 'MLN-iOS/MLNDevTool/Classes/Conn/**/*.{h,m,c}'
-      conn.public_header_files = 'MLN-iOS/MLNDevTool/Classes/Conn/**/*.h'
+      conn.private_header_files = 'MLN-iOS/MLNDevTool/Classes/Conn/**/*.h'
       conn.dependency 'MLNDevTool/MLNProtobuf'
     end
     
     s.subspec 'DevTool' do |d|
       d.name = 'DevTool'
       d.source_files = 'MLN-iOS/MLNDevTool/Classes/DevTool/**/*.{h,m,c}'
-      d.public_header_files = 'MLN-iOS/MLNDevTool/Classes/DevTool/**/*.h'
+      d.public_header_files = 'MLN-iOS/MLNDevTool/Classes/DevTool/MLNDevToolProtocol.h',
+                              'MLN-iOS/MLNDevTool/Classes/DevTool/Util/QRCode/**/*.h'
       d.resource_bundles = {
         'MLNDevTool_Util' => 'MLN-iOS/MLNDevTool/Classes/DevTool/Util/**/Assets/*.{png,lua,xib,storyboard}',
         'MLNDevTool_UI' => 'MLN-iOS/MLNDevTool/Classes/DevTool/UI/**/Assets/*.{png,xib}'
@@ -71,7 +73,7 @@ Pod::Spec.new do |s|
     s.subspec 'Offline' do |o|
         o.name = 'Offline'
         o.source_files = 'MLN-iOS/MLNDevTool/Classes/Offline/**/*.{h,m,c}'
-        o.public_header_files = 'MLN-iOS/MLNDevTool/Classes/Offline/**/*.h'
+        o.public_header_files = 'MLN-iOS/MLNDevTool/Classes/Offline/MLNOfflineViewController.h'
         o.resource_bundles = {
           'MLNDevTool_Offline' => 'MLN-iOS/MLNDevTool/Classes/Offline/**/Assets/*.{png,lua,xib}'
         }
@@ -83,7 +85,8 @@ Pod::Spec.new do |s|
         h.name = 'HotReload'
         h.framework = 'Foundation', 'UIKit'
         h.source_files = 'MLN-iOS/MLNDevTool/Classes/HotReload/**/*.{h,m,c}'
-        h.public_header_files = 'MLN-iOS/MLNDevTool/Classes/HotReload/**/*.h'
+        h.public_header_files = 'MLN-iOS/MLNDevTool/Classes/HotReload/MLNHotReload.h',
+                                'MLN-iOS/MLNDevTool/Classes/HotReload/UI/**/*.h'
         h.dependency 'MLNDevTool/DevTool'
         h.dependency 'MLNDevTool/Conn'
         h.resource_bundles = {

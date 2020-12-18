@@ -6,7 +6,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "MLNUIPerformanceHeader.h"
+#import <ArgoUI/MLNUIPerformanceHeader.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
