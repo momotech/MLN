@@ -8,7 +8,7 @@
 #import "MLNUIKitInstance+DevToolDebug.h"
 #import <objc/runtime.h>
 #import "MLNHotReload.h"
-#import "MLNUIKit.h"
+#import <ArgoUI/MLNUIKit.h>
 
 @implementation MLNUIKitInstance (DevToolDebug)
 

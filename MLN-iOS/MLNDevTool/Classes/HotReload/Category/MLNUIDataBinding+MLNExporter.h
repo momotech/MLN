@@ -4,7 +4,7 @@
 //
 //  Created by Dai Dongpeng on 2020/5/26.
 //
-#import "MLNUIDataBinding.h"
+#import <ArgoUI/MLNUIDataBinding.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

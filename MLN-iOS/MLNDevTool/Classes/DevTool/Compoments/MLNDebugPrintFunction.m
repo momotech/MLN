@@ -6,7 +6,7 @@
 //
 
 #import "MLNDebugPrintFunction.h"
-#import "MLNUIGlobalFuncExporterMacro.h"
+#import <ArgoUI/MLNUIGlobalFuncExporterMacro.h>
 
 
 @implementation MLNDebugPrintFunction

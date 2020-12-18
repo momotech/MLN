@@ -1177,7 +1177,7 @@ static const void *kViewTransform = &kViewTransform;
 
 @end
 
-@implementation UIView (Layout)
+@implementation UIView (MLNUILayout)
 
 - (BOOL)luaui_isContainer
 {
@@ -1186,7 +1186,7 @@ static const void *kViewTransform = &kViewTransform;
 
 @end
 
-@implementation UIView (LazyTask)
+@implementation UIView (MLNUILazyTask)
 
 - (void)mlnui_pushLazyTask:(id<MLNUIBeforeWaitingTaskProtocol>)lazyTask;
 {
