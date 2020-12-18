@@ -7,8 +7,8 @@
 
 #import "MLNUIInteractiveBehavior.h"
 #import "UIView+MLNUIKit.h"
-//#import "MLAAnimation.h"
-#import "MLAValueAnimation+Interactive.h"
+#import <ArgoAnimation/MLAAnimation.h>
+#import <ArgoAnimation/MLAValueAnimation+Interactive.h>
 #import "MLNUIPinchGestureRecognizer.h"
 #import "MLNUIInteractiveBehavior+Bridge.h"
 
