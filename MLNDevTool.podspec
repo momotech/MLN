@@ -54,7 +54,9 @@ Pod::Spec.new do |s|
       d.name = 'DevTool'
       d.source_files = 'MLN-iOS/MLNDevTool/Classes/DevTool/**/*.{h,m,c}'
       d.public_header_files = 'MLN-iOS/MLNDevTool/Classes/DevTool/MLNDevToolProtocol.h',
-                              'MLN-iOS/MLNDevTool/Classes/DevTool/Util/QRCode/**/*.h'
+                              'MLN-iOS/MLNDevTool/Classes/DevTool/Util/QRCode/**/*.h',
+                              'MLN-iOS/MLNDevTool/Classes/DevTool/Util/MLNZipArchive/**/*.h',
+                              'MLN-iOS/MLNDevTool/Classes/DevTool/UI/**/*.h'
       d.resource_bundles = {
         'MLNDevTool_Util' => 'MLN-iOS/MLNDevTool/Classes/DevTool/Util/**/Assets/*.{png,lua,xib,storyboard}',
         'MLNDevTool_UI' => 'MLN-iOS/MLNDevTool/Classes/DevTool/UI/**/Assets/*.{png,xib}'
