@@ -14,9 +14,9 @@ PODS:
   - AFNetworking/Serialization (3.2.1)
   - AFNetworking/UIKit (3.2.1):
     - AFNetworking/NSURLSession
-  - ArgoAnimation (0.1.7):
-    - ArgoAnimation/AnimationCPP (= 0.1.7)
-  - ArgoAnimation/AnimationCPP (0.1.7)
+  - ArgoAnimation (0.1.9):
+    - ArgoAnimation/AnimationCPP (= 0.1.9)
+  - ArgoAnimation/AnimationCPP (0.1.9)
   - ArgoUI (0.4.0):
     - ArgoUI/Core (= 0.4.0)
     - ArgoUI/Kit (= 0.4.0)
@@ -123,8 +123,8 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   AFNetworking: b6f891fdfaed196b46c7a83cf209e09697b94057
-  ArgoAnimation: fcec4a80797568e9af23ddb8fe25a9ff6ae942ed
-  ArgoUI: 12c14bb06d993e52e271132235441129b0a8adab
+  ArgoAnimation: aae4b98341894c8f12cab56fdf04c1ca559b2160
+  ArgoUI: 47304f637d42c0f4da395acd01271f3b320d29f4
   ArgoUIComponent: 574a30b3d524d03e04e72340318180bb734bc904
   FLEX: d66c759bce0f6ebbbf472c742380874d846f2883
   LookinServer: 0002891cd3cec5e082a910e897dfe71b4f06b89e
