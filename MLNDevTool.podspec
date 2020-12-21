@@ -58,7 +58,7 @@ Pod::Spec.new do |s|
         d.name = 'DevTool'
         d.source_files = 'MLN-iOS/MLNDevTool/Classes/DevTool/**/*.{h,m,c}'
         d.private_header_files = 'MLN-iOS/MLNDevTool/Classes/DevTool/Util/DebugLib/**/*.h'
-        perf.framework = 'Foundation', 'UIKit', 'AVFoundation'
+        d.framework = 'Foundation', 'UIKit', 'AVFoundation'
         d.resource_bundles = {
             'MLNDevTool_Util' => 'MLN-iOS/MLNDevTool/Classes/DevTool/Util/**/Assets/*.{png,lua,xib,storyboard}',
             'MLNDevTool_UI' => 'MLN-iOS/MLNDevTool/Classes/DevTool/UI/**/Assets/*.{png,xib}'

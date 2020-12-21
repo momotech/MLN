@@ -1,6 +1,6 @@
 {
   "name": "MLNDevTool",
-  "version": "0.2.8",
+  "version": "0.2.10",
   "summary": "Debug Tool of MLN.",
   "description": "Debug Tool of MLN.",
   "homepage": "https://mln.immomo.com",
@@ -11,7 +11,7 @@
   "authors": "MoMo",
   "source": {
     "git": "https://github.com/momotech/MLN.git",
-    "tag": "devtool-0.2.8"
+    "tag": "devtool-0.2.10"
   },
   "module_map": "MLN-iOS/MLNDevTool/Classes/module.modulemap",
   "platforms": {
@@ -21,14 +21,11 @@
     "z",
     "c++"
   ],
-  "requires_arc": true,
-  "public_header_files": "MLN-iOS/MLNDevTool/Classes/*.h",
-  "dependencies": {
-    "ArgoUI": [
-
-    ]
-  },
   "subspecs": [
+    {
+      "name": "Header",
+      "source_files": "MLN-iOS/MLNDevTool/Classes/MLNDevTool.h"
+    },
     {
       "name": "MLNProtobuf",
       "source_files": "MLN-iOS/MLNDevTool/Classes/MLNProtobuf/**/*.{h,m}",
@@ -37,6 +34,9 @@
         "GCC_PREPROCESSOR_DEFINITIONS": "$(inherited) GPB_USE_PROTOBUF_FRAMEWORK_IMPORTS=1"
       },
       "dependencies": {
+        "MLNDevTool/Header": [
+
+        ],
         "Protobuf": [
 
         ]
@@ -47,12 +47,14 @@
       "frameworks": [
         "Foundation",
         "UIKit",
-        "CoreGraphics",
-        "AVFoundation"
+        "CFNetwork"
       ],
-      "source_files": "MLN-iOS/MLNDevTool/Classes/Conn/**/*.{h,m,c}",
+      "source_files": "MLN-iOS/MLNDevTool/Classes/Conn/**/*.{h,m}",
       "private_header_files": "MLN-iOS/MLNDevTool/Classes/Conn/**/*.h",
       "dependencies": {
+        "MLNDevTool/Header": [
+
+        ],
         "MLNDevTool/MLNProtobuf": [
 
         ]
@@ -61,21 +63,27 @@
     {
       "name": "DevTool",
       "source_files": "MLN-iOS/MLNDevTool/Classes/DevTool/**/*.{h,m,c}",
-      "public_header_files": [
-        "MLN-iOS/MLNDevTool/Classes/DevTool/MLNDevToolProtocol.h",
-        "MLN-iOS/MLNDevTool/Classes/DevTool/Util/QRCode/**/*.h",
-        "MLN-iOS/MLNDevTool/Classes/DevTool/Util/MLNZipArchive/**/*.h",
-        "MLN-iOS/MLNDevTool/Classes/DevTool/UI/**/*.h"
+      "private_header_files": "MLN-iOS/MLNDevTool/Classes/DevTool/Util/DebugLib/**/*.h",
+      "frameworks": [
+        "Foundation",
+        "UIKit",
+        "AVFoundation"
       ],
       "resource_bundles": {
         "MLNDevTool_Util": "MLN-iOS/MLNDevTool/Classes/DevTool/Util/**/Assets/*.{png,lua,xib,storyboard}",
         "MLNDevTool_UI": "MLN-iOS/MLNDevTool/Classes/DevTool/UI/**/Assets/*.{png,xib}"
       },
       "dependencies": {
-        "MLN": [
+        "MLNDevTool/Header": [
 
         ],
         "MLNDevTool/Conn": [
+
+        ],
+        "MLN": [
+
+        ],
+        "ArgoUI": [
 
         ]
       }
@@ -84,12 +92,18 @@
       "name": "Performance",
       "frameworks": [
         "Foundation",
-        "UIKit",
-        "CoreGraphics",
-        "AVFoundation"
+        "UIKit"
       ],
       "source_files": "MLN-iOS/MLNDevTool/Classes/Performance/**/*.{h,m,c}",
-      "public_header_files": "MLN-iOS/MLNDevTool/Classes/Performance/**/*.h"
+      "public_header_files": "MLN-iOS/MLNDevTool/Classes/Performance/**/*.h",
+      "dependencies": {
+        "MLNDevTool/Header": [
+
+        ],
+        "ArgoUI": [
+
+        ]
+      }
     },
     {
       "name": "Offline",
@@ -99,6 +113,9 @@
         "MLNDevTool_Offline": "MLN-iOS/MLNDevTool/Classes/Offline/**/Assets/*.{png,lua,xib}"
       },
       "dependencies": {
+        "MLNDevTool/Header": [
+
+        ],
         "MLNDevTool/DevTool": [
 
         ],
@@ -118,7 +135,13 @@
         "MLN-iOS/MLNDevTool/Classes/HotReload/MLNHotReload.h",
         "MLN-iOS/MLNDevTool/Classes/HotReload/UI/**/*.h"
       ],
+      "resource_bundles": {
+        "MLNDevTool_HotReload": "MLN-iOS/MLNDevTool/Classes/HotReload/**/Assets/*.{png,xib}"
+      },
       "dependencies": {
+        "MLNDevTool/Header": [
+
+        ],
         "MLNDevTool/DevTool": [
 
         ],
@@ -127,10 +150,10 @@
         ],
         "MLN": [
 
+        ],
+        "ArgoUI": [
+
         ]
-      },
-      "resource_bundles": {
-        "MLNDevTool_HotReload": "MLN-iOS/MLNDevTool/Classes/HotReload/**/Assets/*.{png,xib}"
       }
     }
   ]
