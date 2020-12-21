@@ -15,7 +15,7 @@
 #import "MLNUIDevice.h"
 #import "MLNUISafeAreaProxy.h"
 #import "MLNUISafeAreaAdapter.h"
-#import "UIView+AKFrame.h"
+#import <ArgoAnimation/UIView+AKFrame.h>
 
 @interface MLNUIWindow ()
 

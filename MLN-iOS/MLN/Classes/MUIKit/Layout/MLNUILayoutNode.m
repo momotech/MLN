@@ -7,7 +7,7 @@
 
 #import "MLNUILayoutNode.h"
 #import "UIView+MLNUILayout.h"
-#import "UIView+AKFrame.h"
+#import <ArgoAnimation/UIView+AKFrame.h>
 
 #define YG_PROPERTY(type, lowercased_name, capitalized_name)    \
 - (type)lowercased_name                                         \

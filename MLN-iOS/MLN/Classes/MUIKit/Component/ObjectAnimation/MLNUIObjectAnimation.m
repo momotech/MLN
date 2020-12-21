@@ -15,7 +15,6 @@
 #import "MLNUIInteractiveBehavior.h"
 #import "MLNUILabel.h"
 #import <ArgoAnimation/ArgoAnimation.h>
-#import "UIView+AKFrame.h"
 
 @interface MLNUIObjectAnimation()
 
