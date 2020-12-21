@@ -6,7 +6,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <MLNUIImageLoaderProtocol.h>
+#import "MLNUIImageLoaderProtocol.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
