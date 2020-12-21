@@ -7,6 +7,7 @@
 
 #ifndef LNDecoderProtocol_h
 #define LNDecoderProtocol_h
+#import <Foundation/Foundation.h>
 
 @protocol LNDecoderProtocol <NSObject>
 

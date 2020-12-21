@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
     s.name             = 'MLNDevTool'
-    s.version          = '0.2.9'
+    s.version          = '0.2.10'
     s.summary          = 'Debug Tool of MLN.'
     
     # This description is used to generate tags and improve search results.
@@ -30,46 +30,52 @@ Pod::Spec.new do |s|
     s.module_map = 'MLN-iOS/MLNDevTool/Classes/module.modulemap'
     s.ios.deployment_target = '8.0'
     s.libraries = 'z', 'c++'
-    s.requires_arc = true
-    s.public_header_files = 'MLN-iOS/MLNDevTool/Classes/*.h'
-    s.dependency 'ArgoUI'
+    
+    s.subspec 'Header' do |s|
+        s.name = 'Header'
+        s.source_files = 'MLN-iOS/MLNDevTool/Classes/MLNDevTool.h'
+    end
     
     s.subspec 'MLNProtobuf' do |pb|
-      pb.name = 'MLNProtobuf'
-      pb.source_files = 'MLN-iOS/MLNDevTool/Classes/MLNProtobuf/**/*.{h,m}'
-      pb.private_header_files = 'MLN-iOS/MLNDevTool/Classes/MLNProtobuf/**/*.h'
-      pb.pod_target_xcconfig = { 'GCC_PREPROCESSOR_DEFINITIONS' => '$(inherited) GPB_USE_PROTOBUF_FRAMEWORK_IMPORTS=1' }
-      pb.dependency 'Protobuf'
+        pb.name = 'MLNProtobuf'
+        pb.source_files = 'MLN-iOS/MLNDevTool/Classes/MLNProtobuf/**/*.{h,m}'
+        pb.private_header_files = 'MLN-iOS/MLNDevTool/Classes/MLNProtobuf/**/*.h'
+        pb.pod_target_xcconfig = { 'GCC_PREPROCESSOR_DEFINITIONS' => '$(inherited) GPB_USE_PROTOBUF_FRAMEWORK_IMPORTS=1' }
+        pb.dependency 'MLNDevTool/Header'
+        pb.dependency 'Protobuf'
     end
     
     s.subspec 'Conn' do |conn|
-      conn.name = 'Conn'
-      conn.framework = 'Foundation', 'UIKit', 'CoreGraphics', 'AVFoundation'
-      conn.source_files = 'MLN-iOS/MLNDevTool/Classes/Conn/**/*.{h,m,c}'
-      conn.private_header_files = 'MLN-iOS/MLNDevTool/Classes/Conn/**/*.h'
-      conn.dependency 'MLNDevTool/MLNProtobuf'
+        conn.name = 'Conn'
+        conn.framework = 'Foundation', 'UIKit', 'CFNetwork'
+        conn.source_files = 'MLN-iOS/MLNDevTool/Classes/Conn/**/*.{h,m}'
+        conn.private_header_files = 'MLN-iOS/MLNDevTool/Classes/Conn/**/*.h'
+        conn.dependency 'MLNDevTool/Header'
+        conn.dependency 'MLNDevTool/MLNProtobuf'
     end
     
     s.subspec 'DevTool' do |d|
-      d.name = 'DevTool'
-      d.source_files = 'MLN-iOS/MLNDevTool/Classes/DevTool/**/*.{h,m,c}'
-      d.public_header_files = 'MLN-iOS/MLNDevTool/Classes/DevTool/MLNDevToolProtocol.h',
-                              'MLN-iOS/MLNDevTool/Classes/DevTool/Util/QRCode/**/*.h',
-                              'MLN-iOS/MLNDevTool/Classes/DevTool/Util/MLNZipArchive/**/*.h',
-                              'MLN-iOS/MLNDevTool/Classes/DevTool/UI/**/*.h'
-      d.resource_bundles = {
-        'MLNDevTool_Util' => 'MLN-iOS/MLNDevTool/Classes/DevTool/Util/**/Assets/*.{png,lua,xib,storyboard}',
-        'MLNDevTool_UI' => 'MLN-iOS/MLNDevTool/Classes/DevTool/UI/**/Assets/*.{png,xib}'
-      }
-      d.dependency 'MLN'
-      d.dependency 'MLNDevTool/Conn'
+        d.name = 'DevTool'
+        d.source_files = 'MLN-iOS/MLNDevTool/Classes/DevTool/**/*.{h,m,c}'
+        d.private_header_files = 'MLN-iOS/MLNDevTool/Classes/DevTool/Util/DebugLib/**/*.h'
+        perf.framework = 'Foundation', 'UIKit', 'AVFoundation'
+        d.resource_bundles = {
+            'MLNDevTool_Util' => 'MLN-iOS/MLNDevTool/Classes/DevTool/Util/**/Assets/*.{png,lua,xib,storyboard}',
+            'MLNDevTool_UI' => 'MLN-iOS/MLNDevTool/Classes/DevTool/UI/**/Assets/*.{png,xib}'
+        }
+        d.dependency 'MLNDevTool/Header'
+        d.dependency 'MLNDevTool/Conn'
+        d.dependency 'MLN'
+        d.dependency 'ArgoUI'
     end
 
     s.subspec 'Performance' do |perf|
-      perf.name = 'Performance'
-      perf.framework = 'Foundation', 'UIKit', 'CoreGraphics', 'AVFoundation'
-      perf.source_files = 'MLN-iOS/MLNDevTool/Classes/Performance/**/*.{h,m,c}'
-      perf.public_header_files = 'MLN-iOS/MLNDevTool/Classes/Performance/**/*.h'
+        perf.name = 'Performance'
+        perf.framework = 'Foundation', 'UIKit'
+        perf.source_files = 'MLN-iOS/MLNDevTool/Classes/Performance/**/*.{h,m,c}'
+        perf.public_header_files = 'MLN-iOS/MLNDevTool/Classes/Performance/**/*.h'
+        perf.dependency 'MLNDevTool/Header'
+        perf.dependency 'ArgoUI'
     end
         
     s.subspec 'Offline' do |o|
@@ -77,8 +83,9 @@ Pod::Spec.new do |s|
         o.source_files = 'MLN-iOS/MLNDevTool/Classes/Offline/**/*.{h,m,c}'
         o.public_header_files = 'MLN-iOS/MLNDevTool/Classes/Offline/MLNOfflineViewController.h'
         o.resource_bundles = {
-          'MLNDevTool_Offline' => 'MLN-iOS/MLNDevTool/Classes/Offline/**/Assets/*.{png,lua,xib}'
+            'MLNDevTool_Offline' => 'MLN-iOS/MLNDevTool/Classes/Offline/**/Assets/*.{png,lua,xib}'
         }
+        o.dependency 'MLNDevTool/Header'
         o.dependency 'MLNDevTool/DevTool'
         o.dependency 'MLN'
     end
@@ -89,12 +96,14 @@ Pod::Spec.new do |s|
         h.source_files = 'MLN-iOS/MLNDevTool/Classes/HotReload/**/*.{h,m,c}'
         h.public_header_files = 'MLN-iOS/MLNDevTool/Classes/HotReload/MLNHotReload.h',
                                 'MLN-iOS/MLNDevTool/Classes/HotReload/UI/**/*.h'
+        h.resource_bundles = {
+            'MLNDevTool_HotReload' => 'MLN-iOS/MLNDevTool/Classes/HotReload/**/Assets/*.{png,xib}'
+        }
+        h.dependency 'MLNDevTool/Header'
         h.dependency 'MLNDevTool/DevTool'
         h.dependency 'MLNDevTool/Conn'
-        h.resource_bundles = {
-          'MLNDevTool_HotReload' => 'MLN-iOS/MLNDevTool/Classes/HotReload/**/Assets/*.{png,xib}'
-        }
         h.dependency 'MLN'
+        h.dependency 'ArgoUI'
     end
     
 end

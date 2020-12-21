@@ -7,6 +7,7 @@
 
 #ifndef MLNQRCodeHistoryInfoProtocol_h
 #define MLNQRCodeHistoryInfoProtocol_h
+#import <Foundation/Foundation.h>
 
 @protocol MLNQRCodeHistoryInfoProtocol <NSObject, NSCoding>
 
