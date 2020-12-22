@@ -55,6 +55,9 @@ typedef void(^MLAMutableAnimatableInitializeHandler)(MLAMutableAnimatable *anima
  */
 @property(nonatomic, strong) NSNumber *autoReverses;
 
+/// 重置动画结束后是否重置为初始状态, 默认为NO.
+@property (nonatomic, assign) BOOL resetOnFinish;
+
 /**
  * 动画开始回调
  */

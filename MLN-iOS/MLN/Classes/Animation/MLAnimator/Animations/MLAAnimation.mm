@@ -180,6 +180,13 @@ using namespace ANIMATOR_NAMESPACE;
         ActionEnabler enabler;
         self.finishBlock(self, finish);
     }
+    if (self.resetOnFinish) {
+        [self resetAnimationToOriginalState];
+    }
+}
+
+- (void)resetAnimationToOriginalState {
+    // subclass should override
 }
 
 @end
@@ -271,6 +278,13 @@ using namespace ANIMATOR_NAMESPACE;
 
 - (void)updateWithProgress:(CGFloat)progress {
     [self updateWithFactor:progress isBegan:NO];
+}
+
+- (void)resetAnimationToOriginalState {
+    if (self.animatable && self.target && self.animation) {
+        ValueAnimation *valueAnimation = (ValueAnimation*)self.animation;
+        self.animatable.writeBlock(self.target, valueAnimation->GetFromValue().data());
+    }
 }
 
 @end
@@ -525,6 +539,12 @@ typedef NS_ENUM(NSInteger) {
 - (void)reset {
     for (MLAAnimation *objcAnimation in self.animations) {
         [objcAnimation reset];
+    }
+}
+
+- (void)resetAnimationToOriginalState {
+    for (MLAAnimation *objcAnimation in self.animations) {
+        [objcAnimation resetAnimationToOriginalState];
     }
 }
 

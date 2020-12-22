@@ -14,7 +14,7 @@ static NSUInteger mla_hash_index = 0;
 - (NSUInteger)mla_hash {
     NSUInteger hash = [objc_getAssociatedObject(self, &kMLAObjectHash) unsignedIntegerValue];
     if (hash == 0) {
-        hash = mla_hash_index ++;
+        hash = ++mla_hash_index;
         if (mla_hash_index == NSUIntegerMax) {
             mla_hash_index = 0;
         }

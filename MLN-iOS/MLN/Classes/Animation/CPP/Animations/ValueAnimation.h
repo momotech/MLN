@@ -41,6 +41,20 @@ public:
     ANIMATOR_INLINE const AnimationValue& GetCurrentValue() const {
         return currentValue;
     }
+    
+    ANIMATOR_INLINE const AnimationValue& GetFromValue() const {
+        if (GetAutoreverses()) {
+            return toValue;
+        }
+        return fromValue;
+    }
+    
+    ANIMATOR_INLINE const AnimationValue& GetToValue() const {
+        if (GetAutoreverses()) {
+            return fromValue;
+        }
+        return toValue;
+    }
 
     static const char* ANIMATION_TYPENAME;ANIMATION_TYPE_DEF(ANIMATION_TYPENAME)
 
