@@ -88,10 +88,7 @@ typedef void(^MLNLUIModelHandleTask)(void);
         argCount++;
     }
 #if OCPERF_USE_NEW_DB
-//    if ([luaCore.convertor pushArgoBindingNativeObject:model error:error]) {
-//        argCount++;
-//    }
-    if (MLNUIConvertModelToLuaTable(model, luaCore)) {
+    if ([luaCore.convertor pushArgoBindingNativeObject:model error:error]) {
         argCount++;
     }
 #else
@@ -276,12 +273,12 @@ static inline void MLNUISetKeyValueForModel(NSObject *model, id key, id value) {
 
 static inline void MLNUIUpdateDictionaryForModel(NSDictionary *dic, NSObject *model) {
     if (!dic || !model) return;
-    if ([model isKindOfClass:[NSDictionary class]]) {
-        NSCParameterAssert([model isKindOfClass:[NSMutableDictionary class]]);
-        if ([model isKindOfClass:[NSMutableDictionary class]] == NO) {
-            return;
-        }
-    }
+//    if ([model isKindOfClass:[NSDictionary class]]) {
+//        NSCParameterAssert([model isKindOfClass:[NSMutableDictionary class]]);
+//        if ([model isKindOfClass:[NSMutableDictionary class]] == NO) {
+//            return;
+//        }
+//    }
     MLNUITable *metaTable = [dic mlnui_metaTable];
     NSArray<NSDictionary *> *updateArray = [metaTable objectForKey:@"__update"];
     [updateArray enumerateObjectsUsingBlock:^(NSDictionary *_Nonnull obj, NSUInteger idx, BOOL *_Nonnull stop) {
