@@ -101,7 +101,7 @@ static void register_static_bridge(JNIEnv *env, lua_State *LS,
     } else {
         /// 设置空方法
         lua_getglobal(LS, EMPTY_METHOD_TABLE);
-        if (lua_istable(LS, -11))
+        if (lua_istable(LS, -1))
             copyTable(LS, -1, -2);
         lua_pop(LS, 1);
     }
