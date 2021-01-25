@@ -1,8 +1,6 @@
 --1
-
-_argo_model_key_ = {"model"}
-
 require("packet/BindMeta")
+require("packet/style")
 if model== nil then
 model= BindMeta("model")
 end
@@ -10,21 +8,37 @@ if ui_views == nil then
 ui_views=setmetatable({}, { __mode = 'v'})
 BindMetaCreateFindGID(ui_views)
 end
-local vwj1 = HStack()
-ui_views.vwj1 = vwj1
-vwj1:marginTop(10)
-vwj1:marginLeft(10)
-vwj1:width(394)
---vwj1:height(80)
-vwj1:bgColor(Color(0, 255, 0, 1))
+ui_class=__module.defModule("ui")
+function ui_class:init(uiSuper)
+self._view=uiSuper
+self=__module.weakSelf(self)
+local vwj1 = VStack(true)
+self.vwj1 = vwj1
+self.vwj1:marginTop(10)
+self.vwj1:marginLeft(10)
+self.vwj1:width(394)
+self.vwj1:bgColor(Color(0, 255, 0, 1))
 local vwj2 = Label()
-ui_views.vwj2 = vwj2
-vwj2:lines(0)
-vwj2:text(model.title.__get)
-model.title.__watch=function(new)
-vwj2:text(new)
+self.vwj2 = vwj2
+self.vwj2:lines(0)
+self.vwj2:marginTop(10)
+self.vwj2:marginLeft(20)
+self.vwj1:children({self.vwj2})
+self._view:addView(self.vwj1)
+return self
 end
-vwj2:padding(12, 18, 12, 18)
-vwj2:marginLeft(10)
-vwj1:children({vwj2})
-window:addView(vwj1)
+function ui_class:updateData(uiSuper)
+self=__module.weakSelf(self)
+self.vwj2:text(model.title.__get)
+if self._autoWatch then
+self:addObserverId(model.title.__watchValueAll(function(new)
+self.vwj2:text(new)
+end
+))
+end
+self.vwj1:onClick(function ()
+model.title="dongxin"
+end)
+end
+local kvar1=ui(window)
+kvar1:update(nil, window)

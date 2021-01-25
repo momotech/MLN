@@ -7,12 +7,7 @@
 //
 
 #import "MLNDemoTableViewController.h"
-#import <MLNUIKitViewController.h>
-#import <MLNUIKitInstance.h>
-#import <MLNUIViewController+DataBinding.h>
-#import <MLNUIDataBinding.h>
-#import <ArgoObservableMap.h>
-#import <MLNUIModelHandler.h>
+#import <ArgoUIViewLoader.h>
 
 #define DLog(fmt, ...) NSLog(@"==>>"fmt, ##__VA_ARGS__)
 
@@ -22,82 +17,25 @@
 #define FONT_SIZE 15
 #define ROW_HEIGHT 200
 
-@interface MyView : UIView
-
-@end
-
-@implementation MyView
-
-- (void)willMoveToSuperview:(UIView *)newSuperview {
-    [super willMoveToSuperview:newSuperview];
-}
-
-- (void)willRemoveSubview:(UIView *)subview {
-    NSLog(@"subview: %@", subview);
-    [super willRemoveSubview:subview];
-}
-
-@end
-
-static NSString * kCellIdentifier = @"cell";
-
 @interface MLNDemoTableViewController ()<UITableViewDelegate, UITableViewDataSource>
 
 @property (nonatomic, strong) UITableView *tableView;
 @property (nonatomic, strong) NSMutableArray<NSDictionary *> *cellItems;
 @property (nonatomic, strong) NSMutableDictionary<NSString *, UITableViewCell *> *calculCells;
 
-@property (nonatomic, strong) MLNUIKitViewController *kitVC;
-@property (nonatomic, strong) NSMutableDictionary<NSString *, MLNUIKitViewController *> *vmReusePool;
-
 @end
 
 @implementation MLNDemoTableViewController
-
-- (NSMutableDictionary<NSString *,MLNUIKitViewController *> *)vmReusePool {
-    if (!_vmReusePool) {
-        _vmReusePool = [NSMutableDictionary dictionary];
-    }
-    return _vmReusePool;
-}
-
-- (MLNUIKitViewController *)kitVC {
-    if (!_kitVC) {
-        _kitVC = [[MLNUIKitViewController alloc] initWithEntryFilePath:@"MyCell"];
-    }
-    return _kitVC;
-}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.view.backgroundColor = [UIColor whiteColor];
     
     for (int i = 0; i < 20; i++) {
-//        NSDictionary *model = @{@"title":[NSString stringWithFormat:@"text %d", i]};
-        
-        NSDictionary *dic = @{@"title":[NSString stringWithFormat:@"text %d", i]};
-        ArgoObservableMap *model = [ArgoObservableMap new];
-        [model setObject:[NSString stringWithFormat:@"text %d", i] forKey:@"title"];
-//        NSDictionary *model = @{@"title": [NSString stringWithFormat:@"text %d", i]};
-//        [self.cellItems addObject:model];
-//        [model setDictionary:dic];
-        [self.cellItems addObject:model];
+        NSDictionary *dic = @{@"title": [NSString stringWithFormat:@"text %d", i]};
+        [self.cellItems addObject:dic];
     }
     [self createSubviews];
-}
-
-static NSString *DISGUISE(id value) {
-    return [NSString stringWithFormat:@"%p", value];
-}
-
-- (MLNUIKitViewController *)kitVCFromReusePool:(UITableViewCell *)cell {
-    MLNUIKitViewController *vc = [self.vmReusePool objectForKey:DISGUISE(cell)];
-    if (!vc) {
-        vc = [[MLNUIKitViewController alloc] initWithEntryFilePath:@"MyCell.lua"];
-        NSLog(@"---->>> create vm: %@ === cell: %p", vc, cell);
-        [self.vmReusePool setObject:vc forKey:DISGUISE(cell)];
-    }
-    return vc;
 }
 
 #pragma mark - UITableView
@@ -121,41 +59,36 @@ static NSString *DISGUISE(id value) {
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     NSLog(@"点击第 %ld 个cell", indexPath.row + 1);
-    NSIndexPath *newIndexPath = [NSIndexPath indexPathForRow:indexPath.row + 1 inSection:0];
     
     UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
     UIView *content = [cell viewWithTag:2021];
     
-    ArgoObservableMap *model = [self.cellItems objectAtIndex:indexPath.row - 1];
-    [ArgoUIViewLoader updateData:model forView:content autoWire:NO];
+//    NSDictionary *dic = [self.cellItems objectAtIndex:indexPath.row];
+//    [ArgoUIViewLoader updateData:dic forView:content autoWire:NO];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cell"];
     if (!cell) {
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"cell"];
-        
-//        MLNUIKitViewController *kitVC = [self kitVCFromReusePool:cell];
-//        NSDictionary *model = [self.cellItems objectAtIndex:indexPath.row];
-//        [kitVC.mlnui_dataBinding bindData:model forKey:@"model"];
-//
-//        UIView *content = [[[[kitVC view] subviews] firstObject] subviews].firstObject;
-//        NSLog(@"******++>> %@", kitVC.view);
-//        [cell.contentView addSubview:content];
-        
 
-        UIView *content = [ArgoUIViewLoader loadViewFromLuaFilePath:@"MyCell.lua" withModelKey:@"model" observer:^(NSString *_Nonnull key, id _Nonnull newValue) {
-            
-        }];
-
+        UIView *content = [ArgoUIViewLoader loadViewFromLuaFilePath:@"MyCell.lua" modelKey:@"model"];
         content.tag = 2021;
         [cell.contentView addSubview:content];
-        NSDictionary *model = [self.cellItems objectAtIndex:indexPath.row];
-        [ArgoUIViewLoader updateData:model forView:content autoWire:NO];
+        NSDictionary *dic = [self.cellItems objectAtIndex:indexPath.row];
+        [ArgoUIViewLoader updateData:dic forView:content autoWire:YES];
+        
+        [ArgoUIViewLoader dataUpdatedCallbackForView:content callback:^(NSString * _Nonnull keyPath, id  _Nonnull newValue) {
+            NSIndexPath *currentIndexPath = [tableView indexPathForCell:cell];
+            NSLog(@"keyPath: %@ == newValue: %@ ==> indexPath: [%@-%@]", keyPath, newValue, @(currentIndexPath.section), @(currentIndexPath.row));
+            NSString *key = [[keyPath componentsSeparatedByString:@"."] lastObject];
+            NSDictionary *newDic = @{key: [newValue stringByAppendingFormat:@"%@", @(currentIndexPath.row)]};
+            [self.cellItems replaceObjectAtIndex:currentIndexPath.row withObject:newDic];
+        }];
     }
     
-//    NSDictionary *model = [self.cellItems objectAtIndex:indexPath.row];
-//    [ArgoUIViewLoader updateData:model forView:[cell.contentView viewWithTag:2021]];
+    NSDictionary *model = [self.cellItems objectAtIndex:indexPath.row];
+    [ArgoUIViewLoader updateData:model forView:[cell.contentView viewWithTag:2021] autoWire:NO];
     
     return cell;
 }
@@ -195,5 +128,4 @@ static NSString *DISGUISE(id value) {
     return _calculCells;
 }
     
-
 @end

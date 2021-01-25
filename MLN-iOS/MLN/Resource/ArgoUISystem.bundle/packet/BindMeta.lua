@@ -1,12 +1,12 @@
 ---
+--- 使用Android/iOS数据绑定
+---
 --- BindMeta.lua
 --- Created by sun.
 --- DateTime: 2020-05-25 19:18
----
+--- 版本号 每次修改完内容后需要自动增加版本号/或者保证不会影响老版本
+--- @version 1.1
 
-local __remove = "__removew"
-local __watch = "__watch"
-local __watchA = "__watchA"
 local __get = "__get"
 local __path = "__path"
 local __ishook = "__ishook"
@@ -15,10 +15,41 @@ local __set = "__set"
 local __asize = "__asize" --获取数组大小
 local __vv = "__vv" -- 实际存的值
 local __ignore = "__ignore" -- watch忽略
-local __greal = "__greal" -- 获取值并缓存
-local __rreal = "__rreal" -- 移除缓存
 local __ci = "__ci" -- cell item
 local __cii = "__cii"
+
+---
+--- 只监听lua端修改值引起的变化
+watch_from_native = function(context) return context == WatchContext.NATIVE  end
+
+---
+--- 只监听native端修改值引起的变化
+watch_from_lua = function(context) return context == WatchContext.LUA  end
+
+---
+--- 只监听native与lua端修改值引起的变化
+watch_all = function() return true end
+
+local __OperationType = {
+    WT_normal = 1, -- __watch1 / watchAction -- 普通watch 监听最后一个key的值变化 a.b.c 只有c变化时才走回调
+    WT_value  = 2, -- __watchValue -- a.b.c b/c的变化走会走回调
+    WT_all    = 3, -- __watchAll -- 同时监听lua与原生的变化
+    WT_end    = 4,
+    ------ 分割线 -------
+    OP_remove = 10, -- __remove
+    OP_rreal  = 11, -- __rreal -- 移除缓存
+    OP_greal  = 12, -- __greal -- 获取值并缓存
+}
+
+-- get操作转为call
+local __getToCallOPs = {}
+__getToCallOPs["__watch1"] = __OperationType.WT_normal
+__getToCallOPs["__watch"] = __OperationType.WT_normal
+__getToCallOPs["__watchValue"] = __OperationType.WT_value
+__getToCallOPs["__watchValueAll"] = __OperationType.WT_all
+__getToCallOPs["__remove"] = __OperationType.OP_remove
+__getToCallOPs["__rreal"] = __OperationType.OP_rreal
+__getToCallOPs["__greal"] = __OperationType.OP_greal
 
 -- debug
 --local __ck = "__ck" -- 当前key
@@ -29,35 +60,55 @@ local FOREACH = "forEach"
 local __b_G = "G_G"
 local __b_G_ = "G_G."
 local __b_G_l = string.len(__b_G_)
+local __use_gg = false ---是否前置添加G_G 现默认不填了
 
-_kpathCache = {} -- {path = MetaTab }
-_watchCache = {} -- {watchid1 = {path, func1}, watchid2 = {path, func2}, ...}
-_debugpwacths = {} --preview {path = {func1, funct2, ...}}
-_ckeyTabCaches = {} -- ckey对应缓存
-_cellBinds = {} -- list cell binds
-_foreachCaches = {} -- 用于foreach中的缓存
+local _kpathCache = {} -- {path = MetaTab }
+local _watchCache = {} -- {watchid1 = {path, func1}, watchid2 = {path, func2}, ...}
+local _debugpwacths = {} --preview {path = {func1, funct2, ...}}
+local _ckeyTabCaches = {} -- ckey对应缓存
+local _cellBinds = {} -- list cell binds
+local _foreachCaches = {} -- 用于foreach中的缓存
 
-debug_preview_open = false
-debug_preview_watch = false
-__open_combine_data__ = true --- 开启list cell 一次性获取全部item数据
-__open_cell_data__ = false --- 是否开启cell data 获取方法
-__open_use_set_cache__ = true --- 是否使用数据缓存
+if debug_preview_open == nil then
+    debug_preview_open = false
+end
+if debug_preview_watch == nil then
+    debug_preview_watch = false
+end
+if __open_combine_data__ == nil then
+    __open_combine_data__ = true --- 开启list cell 一次性获取全部item数据
+end
+if __open_cell_data__ == nil then
+    __open_cell_data__ = false --- 是否开启cell data 获取方法
+end
+if __open_use_set_cache__ == nil then --- 是否使用数据缓存
+    __open_use_set_cache__ = true
+end
 
 -- 创建弱引用表
 function createWeakT(mode) --"k" / "v" / "kv"
     return setmetatable({}, { __mode = mode})
 end
 
+-------
+--- function def
+----
+local bindMeta_setmetable
+local bindMeta_push
+local bindMeta_pop
+local bindMeta_get
+local bindMeta_add
+
 -------------------------------------------------------------------------------------------------------------
 ------------- 空表初始化               --------------------------
 -----------------------------------------------------------------------------------------------------------
-_emptyTab = {}
+local _emptyTab = {}
 setmetatable(_emptyTab, {
     __index = function(_, k)
         if k == __get then return nil end
         if k == __asize then
             if __open_use_set_cache__ then
-                BindMetaPush(_foreachCaches)
+                bindMeta_push(_foreachCaches)
             end
             return 0
         end
@@ -73,6 +124,13 @@ setmetatable(_emptyTab, {
 })
 -------------------------------------------------------------------------------------------------------------
 -----------------------------------------------------------------------------------------------------------
+local rowSectionMeta = {
+    __index = function(t) return t end,
+    __call = function()  end
+}
+local function bindMeta_rowOrSection(value)
+    return setmetatable({ __get = value}, rowSectionMeta)
+end
 
 -- 用于缓存值不统一引起的 - list时 一维二维相互转换引起key不同
 local __e_ = {}
@@ -92,7 +150,10 @@ end
 --- 拼接 path -
 local function bindMeta_path(k1, k2, force)
     -- preview模式下会前面会多个 G. 所以需要删除
-    if force or (debug_preview_open == false and debug_preview_watch) then
+    if k1 == nil then
+        return k2 or ""
+    end
+    if __use_gg and (force or (debug_preview_open == false and debug_preview_watch)) then
         if string.len(k1) > __b_G_l and string.sub(k1, 1, __b_G_l) == __b_G_ then
             k1 = string.sub(k1, __b_G_l + 1)
         end
@@ -117,7 +178,7 @@ end
 
 local function bindMeta_getAndCacheTab(mt, isCache, isCell)
     if __open_use_set_cache__ then
-        BindMetaPush(_foreachCaches)
+        bindMeta_push(_foreachCaches)
     end
     local t = mt.__vv
     if isCache and t ~= nil then
@@ -126,7 +187,16 @@ local function bindMeta_getAndCacheTab(mt, isCache, isCell)
         if isCell and __open_cell_data__ then
             local bind = string.sub(mt.__kvoname, 1,
                     #mt.__kvoname - #(tostring(mt.__pk) .. tostring(mt.__ck)) - 2)
-            t = DataBinding:getCellData(bind, mt.__pk, mt.__ck)
+            local section = mt.__pk
+            if type(section) == "number" then
+                bind = string.sub(mt.__kvoname, 1,
+                        #mt.__kvoname - #(tostring(section) .. tostring(mt.__ck)) - 2)
+            else
+                bind = string.sub(mt.__kvoname, 1,
+                        #mt.__kvoname - #(tostring(mt.__ck)) - 1)
+                section = 1
+            end
+            t = DataBinding:getCellData(bind, section, mt.__ck)
         else
             t = DataBinding:get(bindMeta_path(mt.__kvoname))
         end
@@ -158,33 +228,34 @@ local function bindMeta_getWatchPath(keypath, ck)
     return keypath
 end
 
-local function bindMeta_update(path, v, cKey, cacheValue)
-    if cacheValue then cacheValue[cKey] = v end
+local function bindMeta_update(path, v, cKey, pmt)
+    if pmt then pmt.__vv = nil end
     for _v, _ in pairs(bindMeta_ckeyGet(cKey)) do --同属性key修改先置为空 - 使用时需要本地读取
         _v.__vv = nil
     end
     DataBinding:update(path, v)
 end
 
-local function bindMeta_watch(mt, v, isWatchA, filter)
+local function bindMeta_watch(mt, v, operation, filter)
     local k = bindMeta_path(bindMeta_getWatchPath(mt.__kvoname, mt.__ck))
     if k == nil then return end
     local w_id
-    if isWatchA then
-        if filter then
-            w_id = DataBinding:watchAction(k, filter, v)
-        else
-            w_id = DataBinding:watchAction(k, v)
-        end
-    else
+    if operation == __OperationType.WT_normal then
         if filter then
             w_id = DataBinding:watch(k, filter, v)
         else
             w_id = DataBinding:watch(k, v)
         end
+    elseif operation == __OperationType.WT_value then
+        if filter then
+            w_id = DataBinding:watchValue(k, filter, v)
+        else
+            w_id = DataBinding:watchValue(k, v)
+        end
+    elseif operation == __OperationType.WT_all then
+        w_id = DataBinding:watchValueAll(k, v)
     end
     if w_id then
-        BindMetaWatchAdd(w_id)
         _watchCache[w_id] = {k, v}
     end
     return w_id
@@ -193,14 +264,17 @@ end
 local function bindMeta_cacheSet(mt, path, v)
     if __open_use_set_cache__ then
         mt.__vv = v
-        BindMetaGet(_foreachCaches)[path] = true
+        bindMeta_get(_foreachCaches)[path] = true
     end
 end
 
 --- 存储 list 数据绑定path
-local function bindMeta_setCellPath(path)
-    if BindMetaGet(_cellBinds) then
-        BindMetaAdd(_cellBinds, path, true)
+local function bindMeta_setCellPath(path, mt)
+    if bindMeta_get(_cellBinds) then
+        if type(mt.__ck) == "number" then
+            path = string.sub(path, 1, #path - #tostring(mt.__ck) - 1)
+        end
+        bindMeta_add(_cellBinds, path, true)
     end
 end
 
@@ -217,6 +291,9 @@ local function bindMeta__index(t, k)
     elseif type(k) == "number" and k <= 0 then
         return _emptyTab
     end
+    if k == "-1" then
+        return t
+    end
 
     local mt = getmetatable(t)
     if k == __kvoname or k == __ishook then
@@ -228,8 +305,7 @@ local function bindMeta__index(t, k)
     --print("to Get::" .. mt.__kvoname, k)
     if k == __get then -- get
         local temp_path = bindMeta_path(mt.__kvoname)
-        bindMeta_setCellPath(temp_path)
-        BindMetaWatchAddmeta(mt)
+        bindMeta_setCellPath(temp_path, mt)
         local temp_v = mt.__vv
         if temp_v ~= nil then return temp_v end -- 有缓存先使用缓存内容
         --print("to Get::" .. mt.__kvoname, k)
@@ -243,20 +319,22 @@ local function bindMeta__index(t, k)
     elseif k == __asize then
         --return DataBinding:arraySize(bindMeta_path(mt.__kvoname)) or 0
         return bindMeta_getArraySize(mt)
-    elseif k == __remove or k == __rreal or k == __greal or k == __watch or k == __watchA then
+    elseif __getToCallOPs[k] then
         mt.__opname = k
         return t
     elseif k == __ci or k == __cii then
         local temp_v
+        local section = type(mt.__pk) == "number" and mt.__pk or 1
         if k == __ci then
             ---@see BindMetaWatchListCell() -- 结束
-            BindMetaPush(_cellBinds)
+            bindMeta_push(_cellBinds)
             if __open_combine_data__ then
                 temp_v = bindMeta_getAndCacheTab(mt, false, true)
             end
         end
         return BindMeta(bindMeta_path(mt.__kvoname),
-                {row={__get=mt.__ck}, section={__get=mt.__pk}}, temp_v, mt.__ck, mt.__pk)
+                {row=bindMeta_rowOrSection(mt.__ck), section={__get=bindMeta_rowOrSection(section)}},
+                temp_v, mt.__ck, mt.__pk)
     end
     if debug_preview_watch then
         if k == WATCH or k == FOREACH then
@@ -271,8 +349,9 @@ end
 local function bindMeta__newindex(t, k, v)
     if k == nil or k == __vv or k == __ignore then return end
     local mt = getmetatable(t)
-    if k == __watch or k == __watchA then -- watch
-        bindMeta_watch(mt, v, k == __watchA)
+    local operation = __getToCallOPs[k] or 0
+    if operation > 0 and operation < __OperationType.WT_end then -- watch
+        bindMeta_watch(mt, v, operation)
         return
     end
 
@@ -293,7 +372,7 @@ local function bindMeta__newindex(t, k, v)
     local path = bindMeta_path(mt.__kvoname, k)
     if debug_preview_watch then
         -- mock顶层数据
-        if mt.__kvoname == __b_G then
+        if __use_gg and mt.__kvoname == __b_G then
             DataBinding:mock(k, v)
             for _, _t in pairs(_watchCache) do
                 _t[2](DataBinding:get(_t[1]), nil)
@@ -303,13 +382,13 @@ local function bindMeta__newindex(t, k, v)
         if type(v) == "table" and v.__ishook then
             v = v.__get
         end
-        bindMeta_update(path, v, k, mt.__vv)
+        bindMeta_update(path, v, k, mt)
         for _, __f in pairs(_debugpwacths[path] or {}) do
             __f(v)
         end
         return
     end
-    bindMeta_update(path, v, k, mt.__vv)
+    bindMeta_update(path, v, k, mt)
 end
 
 -- __call
@@ -322,11 +401,13 @@ local function bindMeta__call(t, ...)
     end
     mt.__opname = nil
 
-    if op == __greal then -- bind中缓存相关
+    local operation = __getToCallOPs[op] or 0
+
+    if operation == __OperationType.OP_greal then -- bind中缓存相关
         bindMeta_getAndCacheTab(mt, false)
         return
     end
-    if op == __rreal then
+    if operation == __OperationType.OP_rreal then
         BindMetaPopForach()
         return
     end
@@ -337,7 +418,7 @@ local function bindMeta__call(t, ...)
     end
 
     local p1 = select(1, ...)
-    if op == __remove then
+    if operation == __OperationType.OP_remove then
         -- remove watch
         for _id, _t in pairs(_watchCache) do
             if _t[2] == p1 then
@@ -346,13 +427,13 @@ local function bindMeta__call(t, ...)
             end
         end
         return
-    elseif op == __watch or op == __watchA then
+    elseif operation > 0 and operation < __OperationType.WT_end then
         local filter = nil
         if size == 2 then
             filter = p1
             p1 = select(2, ...)
         end
-        return bindMeta_watch(mt,p1, op == __watchA, filter)
+        return bindMeta_watch(mt,p1, operation, filter)
     end
 
     if debug_preview_watch then
@@ -373,7 +454,7 @@ local function bindMeta__call(t, ...)
     end
 end
 
-function bindMeta_setmetable(o, kpath, v, cKey, preKey, batch)
+bindMeta_setmetable = function(o, kpath, v, cKey, preKey, batch)
     _kpathCache[kpath] = o
     local meta = getmetatable(o)
     local mt = {
@@ -393,9 +474,8 @@ function bindMeta_setmetable(o, kpath, v, cKey, preKey, batch)
     end
     setmetatable(o, mt)
     if (#_foreachCaches) > 0 then
-        BindMetaGet(_foreachCaches)[kpath] = true
+        bindMeta_get(_foreachCaches)[kpath] = true
     end
-    BindMetaWatchAddmeta(mt)
     bindMeta_ckeyPut(cKey, mt)
 end
 -------------------------------------------------------------------------------------------------------------
@@ -429,7 +509,7 @@ if hook_table_insert == nil then
         hook_table_remove(t, ...)
     end
 end
-----------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------
 --------------------------------         主入口方法  初始化                 --------------------------
 -------------------------------------------------------------------------------------------------------------
 ---@param kpath string path
@@ -478,7 +558,7 @@ function BindMetaRemoveWatchs(t)
         DataBinding:removeObserver(t)
         return
     end
-    for _, id in ipairs(t) do
+    for _, id in pairs(t) do
         _watchCache[id] = nil
         DataBinding:removeObserver(id)
     end
@@ -488,7 +568,7 @@ end
 function BindMetaPopForach()
     if not __open_use_set_cache__ then  return end
 
-    local t = BindMetaPop(_foreachCaches)
+    local t = bindMeta_pop(_foreachCaches)
     if t then
         local _t
         for k, _ in pairs(t) do
@@ -531,10 +611,16 @@ function BindMetaWatchListCell(source, section, row)
     if __open_combine_data__ and __open_use_set_cache__ then
         BindMetaPopForach()
     end
-    local paths = BindMetaPop(_cellBinds)
+    local paths = bindMeta_pop(_cellBinds)
     if not paths then return end
 
     local s_path = bindMeta_path(getmetatable(source).__kvoname);
+
+    if __open_use_argo_bind__ and __open_use_argo_bind__ == true then
+        DataBinding:bindCell(s_path, section, row, paths)
+        return
+    end
+
     local ret, map = {}, {}
     local s_len = string.len(s_path)
     if section == -1 then -- 适配viewpager
@@ -569,13 +655,13 @@ end
 -------------------------------------------------------------------------------------------------------
 --------------------------                   栈操作                           --------------------------
 -------------------------------------------------------------------------------------------------------
-function BindMetaPush(t)
+bindMeta_push = function(t)
     if t then
         t[#t + 1] = {}
     end
 end
 
-function BindMetaPop(t)
+bindMeta_pop = function (t)
     if t and #t > 0 then
         local v = t[#t]
         t[#t] = nil
@@ -584,16 +670,16 @@ function BindMetaPop(t)
     return nil
 end
 
-function BindMetaGet(t)
+bindMeta_get = function (t)
     if t and #t > 0 then
         return t[#t]
     end
     return nil
 end
 
-function BindMetaAdd(t, v, current)
+bindMeta_add = function (t, v, current)
     if current then
-        local _t = BindMetaGet(t)
+        local _t = bindMeta_get(t)
         if _t then
             _t[#_t + 1] = v
         end
@@ -625,7 +711,6 @@ function BindMetaCreateFindGID(IDs) -- 创建全局表_G查找view变量名方�
     end
 end
 
-
 -------------------------------------------------------------------------------------------------------
 --------------------------        map/list初始化                        --------------------------
 -------------------------------------------------------------------------------------------------------
@@ -652,106 +737,295 @@ end
 -------------------------------------------------------------------------------------------------------
 ------------------------------     watch 链   -----------------------------------------------------
 -------------------------------------------------------------------------------------------------------
-__watch_map = createWeakT("k")
-function BindMetaWatchClear()
-    __watch_map = createWeakT("k")
-    __watch_current_view = nil
-end
-function BindMetaWatchPush(moduleView)
-    local t = {}
-    t.vt = createWeakT("v") --/ .view .pre
-    t.subs = createWeakT("kv")
-    t.metas = createWeakT("k") -- meta:true
-    t.ids = {} -- 1 : string
-    t.vt.view = moduleView
-    if __watch_current_view then
-        __watch_current_view.subs[moduleView] = t
-        t.vt.pre = __watch_current_view
-    end
-    __watch_current_view = t
-    __watch_map[moduleView] = t
-    if type(moduleView) == "table" and moduleView.contentView then
-        __watch_map[moduleView.contentView] = t
+---
+--- 删除module
+function removeModuleWatchs(module)
+    if module and module.dealloc then
+        module:dealloc()
     end
 end
-function BindMetaWatchPop(moduleView)
-    if moduleView and __watch_current_view then
-         __watch_current_view = __watch_current_view.vt.pre
-        return
-    end
-    if moduleView then
-        local t = __watch_map[moduleView]
-        if t then
-            __watch_current_view = t.vt.pre
-            return
+
+
+---
+--- merge table
+function BindMetaMerge(...)
+    local size = select("#", ...)
+    local ret = {}
+    local index = 1
+    for i = 1, size do
+        local v = select(i, ...)
+        if type(v) == "table" then
+            for _, _v in ipairs(v) do
+                ret[index] = _v
+                index = index + 1
+            end
+        else
+            ret[index] = v
+            index = index + 1
         end
     end
-    if __watch_current_view then
-        __watch_current_view = __watch_current_view.vt.pre
-        return
-    end
+    return ret
 end
-function BindMetaWatchRemove(moduleView)
-    if not moduleView then return end
-    local t = __watch_map[moduleView]
-    if t then
-        local function removeids(ids)
-            if not ids then return end
-            for _, v in pairs(ids) do
-                DataBinding:removeObserver(v)
-                _watchCache[v] = nil
-            end
-        end
-        local function clearMetaCache(ms)
-            if not ms then return end
-            for v,_ in pairs(ms) do
-                v.__vv = nil;
-            end
-        end
-        local function removesubs(subs)
-            if not subs then return end
-            for _, v in pairs(subs) do
-                removeids(v.ids)
-                removesubs(v.subs)
-                clearMetaCache(v.metas)
-                __watch_map[v.vt.view] = nil
-            end
-        end
-        removesubs({t})
-    end
-end
-function removeModuleWatchs(moduleView, model)
-    BindMetaWatchRemove(moduleView)
-    if model then
-        local removeModelK
-        if type(model) == "table" then
-            local mt = getmetatable(model)
-            if mt and mt.__kvoname then
-                removeModelK = bindMeta_path(mt.__kvoname)
-            end
-        elseif type(model) == "string" then
-            if string.len(model) > 0 then
-                removeModelK = model
-            end
-        end
-        if removeModelK then
-            local k_l  = #removeModelK
-            for k, v in pairs(_kpathCache) do
-                if string.sub(k, 1, k_l) == removeModelK then
-                    getmetatable(v).__vv = nil
+
+---//////////////////////////////////////////////////////////////////////////////
+--- 子模块优化
+---
+--function clz:init(...)
+--    return self
+--end
+--function clz:update(...)
+--    self:dealloc()
+--    self._isDealloc = false
+--    self:updateData(...)
+--    --for _, subModule in pairs(self.subs) do
+--    --    --- 需修改参数
+--    --    subModule:update(...)
+--    --end
+--    return self
+--end
+--function clz:updateData(...) ---重写
+--    return self
+--end
+---//////////////////////////////////////////////////////////////////////////////
+
+__module = {
+    __innerPrivateFunc = {
+        __initModuleClass = function()
+            local clz = {
+                dealloc = function(self)
+                    if self._isDeallocating then return end
+                    self._isDeallocating = true
+                    if self._observerIndex > 1 then
+                        BindMetaRemoveWatchs(self._observers)
+                        self._observers = {}
+                        self._observerIndex = 1
+                    end
+                    for _, subModule in pairs(self._subs) do
+                        subModule:dealloc()
+                    end
+                    self._isDeallocating = false
+                end,
+                init = function(self, ...)
+                    print("请实现 View 代码 ....")
+                end,
+                update = function(self, super, ...)
+                    if super then self._autoWatch=super._autoWatch end
+                    self.dealloc(self)
+                    self.updateData(self, ...)
+                end,
+                updateData = function(self, ...)
+                    print("请实现 module updateData ...")
+                end,
+                addObserverId = function(self, id)
+                    if id then
+                        self._observers[self._observerIndex] = id
+                        self._observerIndex = self._observerIndex + 1
+                    end
+                    return id
+                end
+            }
+            clz.__index = clz
+            return clz
+        end,
+        __initSelf = function(super)
+            local self = {
+                _observers = {}, --- watchid集合
+                _subs = {}, --- 子模块集合
+                _subIndex = 1;
+                _observerIndex = 1,
+                _view = nil,
+                _autoWatch = true,
+                _isDeallocating = false,
+            }
+            local meta = {
+                __index = function(t, k)
+                    local ret = super[k]
+                    if ret then return ret end
+
+                    local view = rawget(t, "_view")
+                    if view then
+                        local method = view[k]
+                        if method then
+                            return __module.__innerPrivateFunc.__callView(view, method)
+                        end
+                    end
+                    return nil
+                end
+            }
+            --- 自动释放管理
+            if newproxy then
+                local prox = newproxy(true)
+                getmetatable(prox).__gc = function()
+                    super.dealloc(self)
+                end
+                meta.__prox = prox
+            else
+                meta.__gc = function()
+                    super.dealloc(self)
                 end
             end
+            return setmetatable(self, meta)
+        end,
+
+        --- 消息转发调用view
+        __callView = function(view, method)
+            if type(method) ~= "function" then return method end
+            local ret = __module.__innerPrivateFunc.__viewStack
+            if ret == nil then
+                ret = {calls = {}}
+                ret.push = function(v, func)
+                    ret.calls[#ret.calls + 1] = { v, func }
+                end
+                ret.pop = function()
+                    local size = #ret.calls
+                    if size > 0 then
+                        local viewT = ret.calls[size]
+                        ret.calls[size] = nil
+                        return viewT
+                    end
+                    return nil
+                end
+                setmetatable(ret, {
+                    __call = function(_, _, ...)
+                        local t = ret.pop()
+                        if t ~= nil then
+                            return t[2](t[1], ...)
+                        end
+                        return nil
+                    end
+                })
+                __module.__innerPrivateFunc.__viewStack = ret
+            end
+            ret.push(view, method)
+            return ret
+        end
+    },
+
+    defModule = function(moduleName)
+        local class = __module.__innerPrivateFunc.__initModuleClass()
+        _G[moduleName] = function(...)
+            local self = __module.__innerPrivateFunc.__initSelf(class)
+            self:init(...)
+            return self
+        end
+        return class
+    end
+    ,
+    Object = function()
+       return __module.__innerPrivateFunc.__initSelf(__module.__innerPrivateFunc.__initModuleClass())
+    end
+    ,
+    addSubModule = function(self, subModule, key)
+        if self ~= nil and subModule ~= nil and type(self) == 'table' and self._subs ~= nil then
+            if key then
+                self._subs[key] = subModule
+            else
+                self._subs[self._subIndex] = subModule
+                self._subIndex = self._subIndex + 1
+            end
         end
     end
-end
----
---- 存储watch id 与模块绑定
-function BindMetaWatchAdd(id)
-    if (not __watch_current_view) then return end
-    __watch_current_view.ids[#__watch_current_view.ids +1] = id
-end
---- 存储get数据与模块绑定
-function BindMetaWatchAddmeta(meta)
-    if (not __watch_current_view) then return end
-    __watch_current_view.metas[meta] = true
-end
+    ,
+    weakSelf = function(self) --- self弱引用
+        if __module.__empty == nil then
+            __module.__empty = {}
+            setmetatable(__module.__empty, {
+                __newindex = function() end,
+                __index = function() return __module.__empty end,
+                __call = function() return __module.__empty end
+            })
+        end
+        local __weak = setmetatable({self=self}, {__mode = 'v'})
+        return setmetatable({}, {
+            __index = function(_, k)
+                if __weak.self == nil then
+                    print("self has deallocated ... ")
+                    return __module.__empty
+                end
+                return __weak.self[k]
+            end,
+            __newindex = function(_, k, v)
+                if __weak.self == nil then
+                    print("self has deallocated ... ")
+                    return
+                end
+                __weak.self[k] = v
+            end
+        })
+    end
+    --- self指当前模块，不再指当前控件等 @see:https://git.wemomo.com/sun_109/LuaParser_JavaCode/-/issues/654
+    --,
+    --viewSelf = function(self, view) --- 自动区分self 是view还是module
+    --    if self == nil or view == nil then return view end
+    --    local __weak = setmetatable({self=self, view=view}, {__mode = 'v'})
+    --    return setmetatable({}, {
+    --        __index = function(_, k)
+    --            if __weak.self == nil or __weak.view == nil then
+    --                print("self has deallocated ... ")
+    --                return __module.__empty
+    --            end
+    --            local ret = __weak.view[k]
+    --            if ret ~= nil then
+    --                return __module.__innerPrivateFunc.__callView(__weak.view, ret)
+    --            end
+    --            return __weak.self[k]
+    --        end,
+    --        __newindex = function(_, k, v)
+    --            if __weak.self == nil or __weak.view == nil then
+    --                print("self has deallocated ... ")
+    --                return
+    --            end
+    --            __weak.self[k] = v
+    --        end
+    --    })
+    --end
+    ,
+    initCell = function(cell, moduleSelf, autoWatch)
+        cell._isCell_ = true
+        cell._autoWatch = autoWatch
+        cell._subs = {}
+        cell._observers = {} --- watchid集合
+        cell._subIndex = 1
+        cell._observerIndex = 1
+        setmetatable(cell, __module.__innerPrivateFunc.__initModuleClass())
+        __module.addSubModule(moduleSelf, cell)
+    end,
+    foreach = { --- foreach
+        container = function(superView, key, createAgain)
+            local o = superView._subs[key]
+            if o then o:dealloc() end
+            if not createAgain and o then
+                return o
+            end
+            o = {
+                dealloc = function(self)
+                    for _, v in pairs(self) do
+                        if type(v) == "table" and v.dealloc then
+                            v:dealloc()
+                        end
+                    end
+                end}
+            superView._subs[key] = o
+            return o
+        end,
+        itemAutoInit = function(superView, container, index, createAgain)
+            local ret = container[index]
+            if ret then ret:dealloc() end
+            if createAgain or ret == nil then
+                ret = __module.Object()
+                ret._initView = false;
+            end
+            ret._autoWatch = superView._autoWatch
+            container[index] = ret
+            local self = setmetatable({}, {
+                __index = function(_, k)
+                    local method = ret[k]
+                    if method ~= nil then return __module.__innerPrivateFunc.__callView(ret, method) end
+                    return __module.__innerPrivateFunc.__callView(superView, superView[k])
+                end,
+                __newindex = ret
+            })
+            return ret, self
+        end,
+    }
+}

@@ -52,25 +52,3 @@ typedef void(^MLNUIModelHandleComplete)(__kindof NSObject *_Nullable model, NSEr
 @end
 
 NS_ASSUME_NONNULL_END
-
-
-
-
-////////////////////////////////////////////////////////////////
-
-
-NS_ASSUME_NONNULL_BEGIN
-
-typedef void(^ArgoUIViewLoaderObserver)(NSString *key, id newValue);
-
-@interface ArgoUIViewLoader : NSObject
-
-+ (void)preload:(NSUInteger)capacity;
-
-+ (nullable UIView *)loadViewFromLuaFilePath:(NSString *)filePath withModelKey:(NSString *)modelKey observer:(nullable ArgoUIViewLoaderObserver)observer;
-
-+ (void)updateData:(NSObject *)data forView:(UIView *)view autoWire:(BOOL)autoWire;
-
-@end
-
-NS_ASSUME_NONNULL_END
