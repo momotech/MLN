@@ -38,7 +38,7 @@
             self.active = YES;
         }
     };
-    [self.viewController addLifeCycleListener:self.lifeCycleListener];
+//    [self.viewController addLifeCycleListener:self.lifeCycleListener];
 }
 
 - (void)setActive:(BOOL)active {

@@ -149,6 +149,8 @@
 		FAE72F1625106DA00092E87D /* ArgoBindingTest.m in Sources */ = {isa = PBXBuildFile; fileRef = FAE72F1525106DA00092E87D /* ArgoBindingTest.m */; };
 		FAE9C59323A250CD002C830D /* gallery.bundle in Resources */ = {isa = PBXBuildFile; fileRef = FAE9C59223A250CD002C830D /* gallery.bundle */; };
 		FAE9C59523A2529C002C830D /* inner_demo.bundle in Resources */ = {isa = PBXBuildFile; fileRef = FAE9C59423A2529C002C830D /* inner_demo.bundle */; };
+		FAFABF1C25B6EFB200FE72DB /* MLNDemoTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FAFABF1B25B6EFB200FE72DB /* MLNDemoTableViewController.m */; };
+		FAFABF2125B6F0A000FE72DB /* MyCell.lua in Resources */ = {isa = PBXBuildFile; fileRef = FAFABF2025B6F0A000FE72DB /* MyCell.lua */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -432,6 +434,9 @@
 		FAE72F1525106DA00092E87D /* ArgoBindingTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArgoBindingTest.m; sourceTree = "<group>"; };
 		FAE9C59223A250CD002C830D /* gallery.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = gallery.bundle; sourceTree = "<group>"; };
 		FAE9C59423A2529C002C830D /* inner_demo.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = inner_demo.bundle; sourceTree = "<group>"; };
+		FAFABF1A25B6EFB200FE72DB /* MLNDemoTableViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNDemoTableViewController.h; sourceTree = "<group>"; };
+		FAFABF1B25B6EFB200FE72DB /* MLNDemoTableViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNDemoTableViewController.m; sourceTree = "<group>"; };
+		FAFABF2025B6F0A000FE72DB /* MyCell.lua */ = {isa = PBXFileReference; lastKnownFileType = text; path = MyCell.lua; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -696,6 +701,9 @@
 				6003F59D195388D20070C39A /* MLNAppDelegate.m */,
 				FA383451239A4C61000F900E /* MLNHomeViewController.h */,
 				FA383452239A4C61000F900E /* MLNHomeViewController.m */,
+				FAFABF2025B6F0A000FE72DB /* MyCell.lua */,
+				FAFABF1A25B6EFB200FE72DB /* MLNDemoTableViewController.h */,
+				FAFABF1B25B6EFB200FE72DB /* MLNDemoTableViewController.m */,
 				B2D0ABB32370136000B1D349 /* MLNGalleryViewController.h */,
 				B2D0ABB42370136000B1D349 /* MLNGalleryViewController.m */,
 				6003F5A5195388D20070C39A /* MLNLuaGalleryViewController.h */,
@@ -1256,6 +1264,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FAFABF2125B6F0A000FE72DB /* MyCell.lua in Resources */,
 				FA383459239A64AF000F900E /* LaunchScreen.storyboard in Resources */,
 				00E9132C24E53E46006614C4 /* KuaCell.xib in Resources */,
 				FAE9C59323A250CD002C830D /* gallery.bundle in Resources */,
@@ -1416,6 +1425,7 @@
 				B27F65AC2377AA9700F2D341 /* MLNNativeWaterfallHeaderView.m in Sources */,
 				00E9132A24E53B41006614C4 /* MLNKuaController_Native.m in Sources */,
 				A4C3142624C7DE2700444CA4 /* MLNGlobalTimeTest.m in Sources */,
+				FAFABF1C25B6EFB200FE72DB /* MLNDemoTableViewController.m in Sources */,
 				30A4EB60231CD75200995416 /* MLNMyRefreshHandler.m in Sources */,
 				30A4EB5D231CC86B00995416 /* MLNMyImageHandler.m in Sources */,
 				00E652532417695900A878B8 /* MLNDataBindHotReload.m in Sources */,
