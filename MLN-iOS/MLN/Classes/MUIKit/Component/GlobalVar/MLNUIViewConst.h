@@ -86,15 +86,6 @@ typedef NS_ENUM(NSUInteger, MLNUITouchType) {
 //    MLNUITouchType_Cancel
 };
 
-typedef NS_ENUM(NSUInteger, InteractiveType) {
-    InteractiveType_Gesture
-};
-
-typedef NS_ENUM(NSUInteger, InteractiveDirection) {
-    InteractiveDirection_X,
-    InteractiveDirection_Y
-};
-
 typedef void(^MLNUITouchCallback)(MLNUITouchType type, UITouch * _Nonnull touch, UIEvent * _Nonnull event);
 
 NS_ASSUME_NONNULL_BEGIN

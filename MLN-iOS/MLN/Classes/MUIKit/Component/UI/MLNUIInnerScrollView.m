@@ -15,6 +15,7 @@
 #import "UIView+MLNUIKit.h"
 #import "MLNUIHStack.h"
 #import "MLNUIVStack.h"
+#import "UIScrollView+MLNUIGestureConflict.h"
 
 @interface MLNUIInnerScrollViewContentStackNode : MLNUILayoutNode
 
@@ -87,6 +88,8 @@
 
 @implementation MLNUIInnerScrollViewContentStackNode
 
+#pragma mark - Override
+
 - (CGSize)applyLayout {
     MLNUIInnerScrollViewContentStack *stack = (MLNUIInnerScrollViewContentStack *)self.view;
     if (stack && stack.requestLayout) {
@@ -98,7 +101,7 @@
 @end
 
 
-@interface MLNUIInnerScrollView()
+@interface MLNUIInnerScrollView()<UIGestureRecognizerDelegate>
 
 @property (nonatomic, weak) MLNUILuaCore *mlnui_luaCore;
 @property (nonatomic, strong) MLNUIScrollViewDelegate *luaui_delegate;
@@ -106,6 +109,10 @@
 @end
 
 @implementation MLNUIInnerScrollView
+
++ (void)load {
+    [self argoui_installScrollViewPanGestureConflictHandler];
+}
 
 #pragma mark - Override
 
@@ -130,7 +137,32 @@
 
 - (void)layoutSubviews {
     [super layoutSubviews];
-    self.contentSize = self.mlnui_contentView.frame.size;
+    CGSize contentSize = self.mlnui_contentView.frame.size;
+    self.contentSize = contentSize;
+    if (self.mlnui_horizontal) {
+        if (contentSize.height > self.frame.size.height) {
+            [self.superview mlnui_markNeedsLayout]; // 水平滚动，contentSize.height大于父视图，要重新计算布局，以修正父视图大小
+        }
+    } else {
+        if (contentSize.width > self.frame.size.width) {
+            [self.superview mlnui_markNeedsLayout]; // 竖直滚动，contentSize.width大于父视图，要重新计算布局，以修正父视图大小
+        }
+    }
+}
+
+#pragma mark - UIGestureRecognizerDelegate
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {
+    if ([gestureRecognizer isKindOfClass:self.panGestureRecognizer.class] &&
+        [otherGestureRecognizer isKindOfClass:self.panGestureRecognizer.class]) {
+        UIScrollView *view1 = (UIScrollView *)gestureRecognizer.view;
+        UIScrollView *view2 = (UIScrollView *)otherGestureRecognizer.view;
+        if (view1.argoui_isVerticalDirection == view2.argoui_isVerticalDirection) {
+            return YES;
+        }
+        return NO;
+    }
+    return NO;
 }
 
 #pragma mark - Private

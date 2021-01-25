@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.RandomAccessFile;
+import java.nio.ByteBuffer;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.file.Files;
@@ -585,6 +586,33 @@ public class FileUtil {
                 logError(e);
             } finally {
                 IOUtil.closeQuietly(inputStream);
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 将文件读取到direct buffer中
+     * @return 读取失败，返回null
+     */
+    public static ByteBuffer readByteBuffer(File f) {
+        if (f != null && f.exists() && f.isFile()) {
+            long fl = f.length();
+            if (fl > Integer.MAX_VALUE)
+                return null;
+            RandomAccessFile raf = null;
+            FileChannel channel = null;
+            try {
+                raf = new RandomAccessFile(f, "r");
+                channel = raf.getChannel();
+                ByteBuffer byteBuffer = ByteBuffer.allocateDirect((int) fl);
+                channel.read(byteBuffer);
+                return byteBuffer;
+            } catch (IOException e) {
+                logError(e);
+            } finally {
+                IOUtil.closeQuietly(channel);
+                IOUtil.closeQuietly(raf);
             }
         }
         return null;

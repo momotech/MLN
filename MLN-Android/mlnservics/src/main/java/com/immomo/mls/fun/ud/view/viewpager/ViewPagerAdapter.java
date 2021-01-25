@@ -137,12 +137,12 @@ public class ViewPagerAdapter extends PagerAdapter implements IViewPager.Callbac
             if (!ret.isInit())
                 userData.callInitView(ret.getCell(), reuseId, position);
             userData.callFillCellData(ret.getCell(), reuseId, position);
+        } else {
+            if (needCallFillCells == null) {
+                needCallFillCells = new SparseArray<>();
+            }
+            needCallFillCells.put(position, ret);
         }
-
-        if (needCallFillCells == null) {
-            needCallFillCells = new SparseArray<>();
-        }
-        needCallFillCells.put(position, ret);
 
         ret.setOnClickListener(userData.getOnClickListener());
 
@@ -176,8 +176,14 @@ public class ViewPagerAdapter extends PagerAdapter implements IViewPager.Callbac
 
     @Override
     public void destroyItem(ViewGroup container, int position, Object object) {
+        if (recurrenceRepeat() && getRealCount() != 0)
+            position = position % getRealCount();
+        //轮播时，只有2或3个页面，会导致页面空白，原因：销毁的上一页，其实是下一页。这里特殊判断。
+        int realCount = getRealCount();
+        boolean notRemove = recurrenceRepeat() && (realCount == 2 || realCount == 3);
+
         container.removeView((View) object);
-        if (needCallFillCells != null && needCallFillCells.size() >= getRealCount())
+        if (needCallFillCells != null && !notRemove)
             needCallFillCells.remove(position);
         String id = userData.callGetReuseId(position);
         if (!validReuseId(id)) {

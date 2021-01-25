@@ -32,13 +32,17 @@ public final class LuaNumber extends LuaValue {
     @LuaApiUsed
     private final double value;
 
+    private final boolean isInt;
+
     private LuaNumber(int value) {
         this.value = value;
+        isInt = true;
     }
 
     @LuaApiUsed
     private LuaNumber(double value) {
         this.value = value;
+        isInt = false;
     }
 
     /**
@@ -76,6 +80,11 @@ public final class LuaNumber extends LuaValue {
     @Override
     public double toDouble() {
         return value;
+    }
+
+    @Override
+    public boolean isInt() {
+        return isInt;
     }
 
     @Override

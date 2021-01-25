@@ -15,9 +15,10 @@ android {
         }
         externalNativeBuild {
             cmake {
+                arguments '-DANDROID_TOOLCHAIN=clang -D'
                 cppFlags "-frtti -fexceptions"
                 cFlags "-pie -fPIE"
-                abiFilters  'armeabi-v7a'//, 'arm64-v8a'
+                abiFilters 'armeabi-v7a', 'arm64-v8a'
             }
         }
     }
@@ -48,6 +49,7 @@ dependencies {
     compileOnly "androidx.appcompat:appcompat:$androidxVersion"
     testImplementation 'junit:junit:4.12'
     testImplementation 'org.mockito:mockito-core:2.23.0'
+
     if (implementation_debug) {
         compileOnly project(":mlncore")
         compileOnly project(':HotReload')

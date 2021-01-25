@@ -14,10 +14,14 @@
 #import "MLNUISizeCahceManager.h"
 #import "MLNUICollectionViewCell.h"
 #import "MLNUICollectionViewAdapter.h"
+#import "MLNUICollectionViewAutoFitAdapter.h"
 #import "MLNUIInnerCollectionView.h"
 #import "MLNUICollectionViewLayoutProtocol.h"
 #import "UIView+MLNUIKit.h"
 #import "MLNUICollectionViewLayoutProtocol.h"
+#import "MLNUILongPressGestureRecognizer.h"
+#import "MLNUITapGestureRecognizer.h"
+#import "MLNUIGestureConflictManager.h"
 
 @interface MLNUICollectionView()
 @property (nonatomic, strong) MLNUIInnerCollectionView *innerCollectionView;
@@ -39,6 +43,16 @@
     // 去除强引用
     MLNUI_Lua_UserData_Release(self.layout);
     [super mlnui_user_data_dealloc];
+}
+
+// cell自适应场景下要开启估算功能
+- (void)ensureOpenCellEstimateMechanismForAutoAdapter {
+    MLNUICollectionViewGridLayout *layout = (MLNUICollectionViewGridLayout *)self.layout;
+    MLNUICollectionViewAutoFitAdapter *adapter = (MLNUICollectionViewAutoFitAdapter *)self.adapter;
+    if ([layout isKindOfClass:[MLNUICollectionViewGridLayout class]] &&
+        [adapter isKindOfClass:[MLNUICollectionViewAutoFitAdapter class]]) {
+        layout.estimatedItemSize = MLNUICollectionViewAutoFitCellEstimateSize;
+    }
 }
 
 #pragma mark - Getter & setter
@@ -71,6 +85,7 @@
         _adapter = adapter;
         _adapter.collectionView = self.innerCollectionView;
         [self mlnui_pushLazyTask:self.lazyTask];
+        [self ensureOpenCellEstimateMechanismForAutoAdapter];
     }
 }
 
@@ -85,6 +100,7 @@
         layout.scrollDirection = self.innerCollectionView.mlnui_horizontal? MLNUIScrollDirectionHorizontal : MLNUIScrollDirectionVertical;
         _layout = layout;
         self.innerCollectionView.collectionViewLayout = layout;
+        [self ensureOpenCellEstimateMechanismForAutoAdapter];
     }
 }
 
@@ -454,11 +470,23 @@
     return NO;
 }
 
+#pragma mark - Override (GestureConflict)
+
+- (UIView *)actualView {
+    return self.innerCollectionView;
+}
+
 #pragma mark - Gesture
 
-- (void)handleLongPress:(UIGestureRecognizer *)gesture
-{
-    if (gesture.state != UIGestureRecognizerStateBegan) {
+- (void)handleLongPress:(MLNUILongPressGestureRecognizer *)gesture {
+    if (gesture.argoui_state != UIGestureRecognizerStateBegan) {
+        [MLNUIGestureConflictManager setCurrentGesture:nil];
+        return;
+    }
+    [MLNUIGestureConflictManager setCurrentGesture:gesture];
+    UIView *responder = [MLNUIGestureConflictManager currentGestureResponder];
+    if (responder != gesture.view) {
+        [MLNUIGestureConflictManager handleResponderGestureActionsWithCurrentGesture:gesture];
         return;
     }
     CGPoint p = [gesture locationInView:self];
@@ -486,10 +514,10 @@
         [self addSubview:_innerCollectionView];
         
         // fix:父视图添加tapGesture、longPressGesture手势CollectionView点击、长按回调不响应的问题
-        UILongPressGestureRecognizer *lpgr = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleLongPress:)];
+        MLNUILongPressGestureRecognizer *lpgr = [[MLNUILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleLongPress:)];
         lpgr.minimumPressDuration  = 0.5;
         [_innerCollectionView addGestureRecognizer:lpgr];
-        UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:nil];
+        MLNUITapGestureRecognizer *tapGesture = [[MLNUITapGestureRecognizer alloc] initWithTarget:self action:nil];
         [tapGesture requireGestureRecognizerToFail:lpgr];
         tapGesture.cancelsTouchesInView = NO;
         [_innerCollectionView addGestureRecognizer:tapGesture];

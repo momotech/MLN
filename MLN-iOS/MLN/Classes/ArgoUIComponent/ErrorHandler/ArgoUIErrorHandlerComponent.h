@@ -6,7 +6,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "ArgoKit.h"
+#import "ArgoUIKit.h"
 
 #define ArgoUI_Debugger_Pause_Enable 1
 

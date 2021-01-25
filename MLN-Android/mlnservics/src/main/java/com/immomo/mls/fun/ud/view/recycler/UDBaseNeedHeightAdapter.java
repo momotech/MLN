@@ -123,14 +123,14 @@ public abstract class UDBaseNeedHeightAdapter<L extends UDBaseRecyclerLayout> ex
             String id = getReuseIdByType(getAdapter().getItemViewType(position));
             caller = heightDelegates.get(id);
             if (!AssertUtils.assertFunction(caller,
-                    "if heightForCellByReuseId is setted once, all type must setted by invoke heightForCellByReuseId",
+                    "heightForCellByReuseId和heightForCell互斥，请统一使用方法",
                     getGlobals())) {
                 return new Size(Size.MATCH_PARENT, Size.WRAP_CONTENT);
             }
         } else {
             caller = heightForCell;
         }
-        if (!AssertUtils.assertFunction(caller, "heightForCell must retrun a function", getGlobals())) {
+        if (!AssertUtils.assertFunction(caller, "必须通过heightForCell将函数设置到adapter中", getGlobals())) {
             return new Size(Size.MATCH_PARENT, Size.WRAP_CONTENT);
         }
 

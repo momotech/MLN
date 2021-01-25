@@ -13,8 +13,8 @@
 #import "MLNUIBeforeWaitingTask.h"
 #import "UIView+MLNUILayout.h"
 #import "MLNUIInteractiveBehavior.h"
-#import "MLAValueAnimation+Interactive.h"
 #import "MLNUILabel.h"
+#import <ArgoAnimation/ArgoAnimation.h>
 
 @interface MLNUIObjectAnimation()
 
@@ -377,7 +377,7 @@
 - (id)mlnui_getDefaultValue
 {
     if (CGPointEqualToPoint(CGPointZero, _defaultOrigin)) {
-        _defaultOrigin = self.targetView.mlnuiAnimationFrame.origin;
+        _defaultOrigin = self.targetView.akAnimationFrame.origin;
     }
     if (_defaultAlpha <= 0) {
         _defaultAlpha = self.targetView.alpha;
@@ -402,7 +402,7 @@
         case MLNUIAnimationPropertyTypeColor:
             return self.targetView.backgroundColor;
         case MLNUIAnimationPropertyTypePosition: {
-            return [NSValue valueWithCGPoint:_targetView.mlnuiLayoutFrame.origin];
+            return [NSValue valueWithCGPoint:_targetView.akLayoutFrame.origin];
         }
         case MLNUIAnimationPropertyTypeScale:
             return @(CGPointMake(1.0, 1.0));
@@ -469,7 +469,7 @@
             }
             if ([velocity isKindOfClass:[NSArray class]]) {
                 NSArray *value = (NSArray *)velocity;
-                if (value.count == 4) {
+                if (value.count == 3) {
                     return [UIColor colorWithRed:[value[0] floatValue]/255.0 green:[value[1] floatValue]/255.0 blue:[value[2] floatValue]/255.0 alpha:1.0];
                 }
                 if (value.count == 4) {

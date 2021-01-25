@@ -12,7 +12,11 @@ local _class = {
     _animCache = {},
     _onSelected = nil,
     _autoAnimTime = 0.2,
+    _itemSpace = 30,
     _viewpager = nil,
+    _animTypes = {AnimProperty.Scale},
+    _froms = {[AnimProperty.Scale] = {1.0, 1.0}},
+    _tos = {[AnimProperty.Scale] = {1.5, 1.5}},
     ---@public
     contentView = nil
 }
@@ -38,18 +42,59 @@ function _class:setupAnimation(callback)
 end
 
 function _class:animationType(type)
-    self._animType = type
+    self._animTypes = {type}
     return self
 end
 
 function _class:from(f)
-    self._from = f
+    local type = self._animTypes[1]
+    self._froms[type] = f
     return self
 end
 
 function _class:to(t)
-    self._to = t
+    local type = self._animTypes[1]
+    self._tos[type] = t
     return self
+end
+
+function _class:selectStyle(style)
+    if not style then return end
+    self._selectStyle = style
+
+    local type_values = self:_parseStyle(style, function(name, size)
+        self._selectFontName = name
+        self._maxFontSize = size
+        if self._minFontSize then
+            return {self._maxFontSize/self._minFontSize, self._maxFontSize/self._minFontSize}
+        end
+        return nil
+    end)
+    self._tos = type_values
+    return self
+end
+
+function _class:unSelectStyle(style)
+    if not style then return end
+    self._unSelectStyle = style
+
+    local type_values = self:_parseStyle(style, function(name, size)
+        self._unSelectFontName = name
+        self._minFontSize = size
+        if self._maxFontSize then
+            self._tos[AnimProperty.Scale] = {self._maxFontSize/self._minFontSize, self._maxFontSize/self._minFontSize}
+        end
+        return {1, 1}
+    end)
+
+    self._froms = type_values
+    return self
+end
+
+function _class:itemSpacing(space)
+    if space then
+        self._itemSpace = space
+    end
 end
 
 function _class:setupProgressBar(callback)
@@ -118,6 +163,45 @@ end
 --- @private
 ---
 
+function _class:_parseStyle(style, handleFontSize)
+    self._animTypes = {}
+    local type_values = {}
+
+    for _, t in pairs(style) do
+        for k, v in pairs(t) do
+            local type, values = nil
+
+            if k == "fontNameSize" then
+                if handleFontSize then
+                    type = AnimProperty.Scale
+                    table.insert(self._animTypes, type)
+                    values = handleFontSize(v[1], v[2])
+                end
+            elseif k == "fontSize" then
+                if handleFontSize then
+                    type = AnimProperty.Scale
+                    table.insert(self._animTypes, type)
+                    values = handleFontSize(nil, v[1])
+                end
+            elseif k == "bgColor" then
+                type = AnimProperty.Color
+                table.insert(self._animTypes, type)
+                values = {v:red(), v:green(), v:blue(), v:alpha()}
+            elseif k == "textColor" then
+                type = AnimProperty.TextColor
+                table.insert(self._animTypes, type)
+                values = {v:red(), v:green(), v:blue(), v:alpha()}
+            end
+
+            if type and values then
+                type_values[type] = values
+            end
+        end
+    end
+
+    return type_values
+end
+
 local function CenterX(view)
     if not view then return 0 end
     return view:getX() + view:width() / 2
@@ -141,12 +225,17 @@ function _class:_setupUI(views)
 
     local function _addViews_(itemsView)
         for i, v in ipairs(views) do
-            v:marginLeft(30):onClick(function()
+            _set_label_font_if_need(v, self._unSelectFontName, self._minFontSize) --布局前要设置label默认字体
+            v:marginLeft(self._itemSpace):onClick(function()
                 self._isClickTabSegment = true
                 self:_clickItem(i, true)
             end)
             table.insert(self._subviews, v)
             itemsView:addView(v)
+            v:layoutComplete(function()
+                if self._currentIndex and self._currentIndex == i then return end
+                self:_executeItemAnimation(v, false, 1, false) --设置非选中效果
+            end)
         end
         local layoutCompleted = false
         local endView = views[#views]
@@ -154,7 +243,9 @@ function _class:_setupUI(views)
             if layoutCompleted then return end
             layoutCompleted = true
             self:_executeItemAnimation(endView, false, 1, false)
-            self:_clickItem((self._currentIndex and self._currentIndex or 1), false) --UI布局完成后需要设置默认选中效果
+            if self._currentIndex and self._currentIndex > 0 then
+                self:_clickItem((self._currentIndex and self._currentIndex or 1), false) --UI布局完成后需要设置默认选中效果
+            end
         end)
     end
 
@@ -166,7 +257,7 @@ function _class:_setupUI(views)
 
     local scrollView = self.contentView
     local container = VStack():basis(1):crossSelf(CrossAxis.STRETCH)
-    local itemsView = HStack():padding(15, 30, 10, 0):mainAxis(MainAxis.SPACE_EVENLY):crossSelf(CrossAxis.STRETCH):crossAxis(CrossAxis.STRETCH)
+    local itemsView = HStack():padding(15, self._itemSpace, 10, 0):mainAxis(MainAxis.SPACE_EVENLY):crossSelf(CrossAxis.STRETCH):crossAxis(CrossAxis.STRETCH)
     self.itemsView = itemsView
 
     _addViews_(itemsView)
@@ -313,28 +404,104 @@ function _class:_executeScrollViewOffsetAnimation(toIndex, progress, autoAnim)
     end
 end
 
+function _set_label_font_if_need(label, name, size)
+    if not label then return end
+    if not size then return end
+    if name then
+        label:fontNameSize(name, size)
+    else
+        label:fontSize(size)
+    end
+end
+
+function _class:_parseItemAnimValue(anims, froms, tos)
+    for type, anim in pairs(anims) do
+        if type ~= "set" then
+            local f = froms[type]
+            local t = tos[type]
+            if f then anim:from(f[1], f[2], f[3], f[4]) end
+            if t then anim:to(t[1], t[2], t[3], t[4]) end
+        end
+    end
+end
+
 function _class:_executeItemAnimation(tab, positive, progress, auto)
-    if not tab then
-        return nil
+    if not tab then return nil end
+    if not self._animTypes or #self._animTypes == 0 then
+        print("[ArgoUI Warning] The TabSegment has no type of item animation.")
+        return
+    end
+    if not self._froms then
+        print("[ArgoUI Warning] The TabSegment has no from values of item animation.")
+        return
+    end
+    if not self._tos then
+        print("[ArgoUI Warning] The TabSegment has no to values of item animation.")
+        return
     end
 
+    local anims = self._animCache[tab]
+    if not anims then
+        anims = {}
+        local allItemAnims = {}
+
+        for _, type in ipairs(self._animTypes) do
+            local ani = ObjectAnimation(type, tab)
+            ani:duration(self._autoAnimTime)
+            anims[type] = ani
+            table.insert(allItemAnims, ani)
+        end
+
+        local set = AnimatorSet()
+        anims["set"] = set
+        anims["all"] = allItemAnims
+        self._animCache[tab] = anims
+    end
+
+    local animSet = anims["set"]
+
+    if positive then
+        _set_label_font_if_need(tab, self._selectFontName, self._minFontSize)
+        self:_parseItemAnimValue(anims, self._froms, self._tos)
+    else
+        _set_label_font_if_need(tab, self._unSelectFontName, self._minFontSize)
+        self:_parseItemAnimValue(anims, self._tos, self._froms)
+    end
+
+    animSet:together(anims["all"])
+    animSet:finishBlock(function(_)
+        self._isClickTabSegment = false
+        self._allItemAnims = nil
+        self._animCache[tab] = nil
+    end)
+
+    if auto then
+        animSet:start()
+    else
+        animSet:update(progress)
+    end
+
+    --[[
     local anim = self._animCache[tab]
     if not anim then
-        if not self._animType then --default tab animation
-            self._animType = AnimProperty.Scale
-            self._from = {1.0, 1.0}
-            self._to = {1.5, 1.5}
-        end
+        if not self._animType then self._animType = AnimProperty.Scale end
+        if not self._from then self._from = {1.0, 1.0} end
+        if not self._to then self._to = {1.5, 1.5} end
         anim = ObjectAnimation(self._animType, tab)
-        anim:finishBlock(function() self._isClickTabSegment = false end)
         self._animCache[tab] = anim
     end
     anim:stop() --must stop previous animation
 
+    anim:finishBlock(function()
+        self._isClickTabSegment = false
+    end)
+
     if positive then
+        _set_label_font_if_need(tab, self._selectFontName, self._minFontSize)
         anim:from(self._from[1], self._from[2], self._from[3], self._from[4])
         anim:to(self._to[1], self._to[2], self._to[3], self._to[4])
     else
+        _set_label_font_if_need(tab, self._unSelectFontName, self._minFontSize)
         anim:from(self._to[1], self._to[2], self._to[3], self._to[4])
         anim:to(self._from[1], self._from[2], self._from[3], self._from[4])
     end
@@ -345,6 +512,7 @@ function _class:_executeItemAnimation(tab, positive, progress, auto)
     else
         anim:update(progress)
     end
+    --]]
 end
 
 
@@ -387,3 +555,4 @@ _class.__call = function(t, k, ...)
 end
 
 return _class
+

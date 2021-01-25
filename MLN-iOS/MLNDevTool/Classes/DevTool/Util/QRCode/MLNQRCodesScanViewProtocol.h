@@ -7,6 +7,7 @@
 
 #ifndef MLNQRCodesScanViewProtocol_h
 #define MLNQRCodesScanViewProtocol_h
+#import <Foundation/Foundation.h>
 
 @protocol MLNQRCodesScanViewProtocol <NSObject>
 

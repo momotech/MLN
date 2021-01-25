@@ -1,1 +1,1 @@
-../../../../../MLN/Classes/MUIKit/Component/ObjectAnimation/MLAnimator/Interactive/MLNUIInteractiveBehavior+Bridge.h
+../../../../../MLN/Classes/MUIKit/Component/Animation/Interactive/MLNUIInteractiveBehavior+Bridge.h

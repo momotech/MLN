@@ -31,6 +31,7 @@ import com.immomo.mls.util.RelativePathUtils;
 import com.immomo.mls.wrapper.callback.IVoidCallback;
 
 import org.luaj.vm2.Globals;
+import org.luaj.vm2.LuaFunction;
 import org.luaj.vm2.LuaValue;
 
 import java.io.File;
@@ -97,7 +98,7 @@ public class SINavigator implements NavigatorAnimType {
      * 进入新页面，并获取结果
      */
     @LuaBridge
-    public void gotoAndGetResult(String action, Map params, @AnimType int animType, IVoidCallback callback) {
+    public void gotoAndGetResult(String action, Map params, @AnimType int animType, LuaFunction callback) {
         OnActivityResultListener l = new DefaultOnActivityResultListener(callback);
         int requestCode = generateRequestCode();
         saveListener(requestCode, l);

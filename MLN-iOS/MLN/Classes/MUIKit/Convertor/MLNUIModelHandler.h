@@ -7,6 +7,8 @@
 
 #import <Foundation/Foundation.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 @protocol MLNUIModelHandlerProtocol <NSObject>
 @optional
 /// @return YES 启用 viewModel 和 服务器返回数据的 key-path 校验功能
@@ -14,9 +16,6 @@
 /// @return 返回 viewModel 的 key-path 字典功能，ArgoUI 自动生成。
 - (NSMutableDictionary *_Nonnull)keyPaths;
 @end
-
-
-NS_ASSUME_NONNULL_BEGIN
 
 typedef void(^MLNUIModelHandleComplete)(__kindof NSObject *model, NSError *error);
 
@@ -41,6 +40,13 @@ typedef void(^MLNUIModelHandleComplete)(__kindof NSObject *model, NSError *error
 /// @param complete 结果回调。
 + (void)buildModelWithDataObject:(id)dataObject model:(NSObject <MLNUIModelHandlerProtocol>*)model extra:(id _Nullable)extra functionChunk:(const char *)functionChunk complete:(MLNUIModelHandleComplete)complete;
 
+/// 将字典转为viewModel
+/// @param model 绑定到视图上的viewModel
+/// @param dic 待转换的字典
+/// @return 即转换后的参数`model`
++ (NSObject *)convertViewModel:(NSObject <MLNUIModelHandlerProtocol> *)model fromDictionary:(NSDictionary *)dic;
+
 @end
 
 NS_ASSUME_NONNULL_END
+

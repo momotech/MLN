@@ -19,7 +19,9 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
+import android.view.animation.Animation;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.TextView;
 
 import com.immomo.mls.LuaViewManager;
 import com.immomo.mls.MLSAdapterContainer;
@@ -42,6 +44,7 @@ import com.immomo.mls.fun.ud.UDRect;
 import com.immomo.mls.fun.ud.UDSize;
 import com.immomo.mls.fun.ud.anim.canvasanim.UDBaseAnimation;
 import com.immomo.mls.fun.ui.LuaLinearLayout;
+import com.immomo.mls.fun.ui.LuaOverlayContainer;
 import com.immomo.mls.fun.weight.ILimitSizeView;
 import com.immomo.mls.fun.weight.IPriorityObserver;
 import com.immomo.mls.provider.DrawableLoadCallback;
@@ -72,6 +75,7 @@ import java.util.List;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import static android.view.ViewGroup.*;
 import static com.immomo.mls.fun.ud.view.IClipRadius.LEVEL_FORCE_CLIP;
 import static com.immomo.mls.fun.ud.view.IClipRadius.LEVEL_FORCE_NOTCLIP;
 
@@ -172,6 +176,8 @@ public abstract class UDView<V extends View> extends JavaUserdata<V> implements 
             "removeAllAnimation",
             "onDraw",
             "onDetachedView",
+            "clipToChildren",
+            "overlay",
     };
 
     private List<Animator> animatorCacheList;
@@ -216,6 +222,9 @@ public abstract class UDView<V extends View> extends JavaUserdata<V> implements 
 
     protected final @NonNull
     V view;
+
+    protected UDView overView;//overLay方法，包裹view
+    protected UDViewGroup overContainer;
 
     /**
      * 必须有传入long和LuaValue[]的构造方法，且不可混淆
@@ -329,6 +338,33 @@ public abstract class UDView<V extends View> extends JavaUserdata<V> implements 
     public V getView() {
         return view;
     }
+
+    //<editor-fold desc="overlay API">
+
+    public void measureOverLayout(int widthMeasureSpec, int heightMeasureSpec) {
+        if (overContainer != null && overView != null) {
+            View overContainerView = overContainer.getView();
+
+            overContainerView.measure(getChildMeasureSpec(widthMeasureSpec,
+                0, getView().getMeasuredWidth())
+                , getChildMeasureSpec(heightMeasureSpec,
+                    0, getView().getMeasuredHeight()));
+        }
+    }
+
+    public void layoutOverLayout(int left, int top, int right, int bottom) {
+        if (overContainer != null && overView != null) {
+            View overContainerView = overContainer.getView();
+            overContainerView.layout(0, 0, right - left, bottom - top);
+        }
+    }
+
+    public void drawOverLayout(Canvas canvas) {
+        if (overContainer != null && overView != null) {
+            overContainer.getView().draw(canvas);
+        }
+    }
+    //</editor-fold>
 
     //<editor-fold desc="API">
     //<editor-fold desc="Property">
@@ -832,6 +868,10 @@ public abstract class UDView<V extends View> extends JavaUserdata<V> implements 
         mPaddingRight = DimenUtil.dpiToPx((float) p[1].toDouble());
         mPaddingBottom = DimenUtil.dpiToPx((float) p[2].toDouble());
 
+        if (overContainer != null) {
+            overContainer.padding(p);
+        }
+
         view.setPadding(
                 mPaddingLeft,
                 mPaddingTop,
@@ -853,6 +893,7 @@ public abstract class UDView<V extends View> extends JavaUserdata<V> implements 
     @LuaApiUsed
     public LuaValue[] setGravity(LuaValue[] var) {
         udLayoutParams.gravity = var[0].toInt();
+        udLayoutParams.isSetGravity = true;
         setRealMargins();
         return null;
     }
@@ -1144,7 +1185,7 @@ public abstract class UDView<V extends View> extends JavaUserdata<V> implements 
             return null;
         iBorderRadiusView.setAddShadow(color.getColor(), offset.getSize(), radius, alpha);
 
-        ErrorUtils.debugLuaError("The 'addShadow' method is deprected, use 'setShadow' method instead!", getGlobals());
+        ErrorUtils.debugDeprecateMethod("addShadow", "setShadow", getGlobals());
         return null;
     }
 
@@ -1216,6 +1257,12 @@ public abstract class UDView<V extends View> extends JavaUserdata<V> implements 
         return null;
     }
 
+    /**
+     * 建议使用{@link UDView#clipToChildren(LuaValue[])}，两端实现一致
+     *
+     * @param p
+     * @return
+     */
     @LuaApiUsed
     public LuaValue[] clipToBounds(LuaValue[] p) {
         boolean clip = p[0].toBoolean();
@@ -1233,6 +1280,49 @@ public abstract class UDView<V extends View> extends JavaUserdata<V> implements 
         }
         return null;
     }
+
+    @LuaApiUsed
+    public LuaValue[] clipToChildren(LuaValue[] p) {
+        boolean clip = p[0].toBoolean();
+        if (view instanceof ViewGroup) {
+            ((ViewGroup) view).setClipChildren(clip);
+        }
+//        if (view instanceof IClipRadius) {//统一：clipToBounds(true)，切割圆角
+//            ((IClipRadius) view).forceClipLevel(clip ? LEVEL_FORCE_CLIP : LEVEL_FORCE_NOTCLIP);
+//        }
+        return null;
+    }
+
+    @LuaApiUsed
+    public LuaValue[] overlay(LuaValue[] p) {
+        overView = p.length > 0 && !p[0].isNil() ? (UDView) p[0] : null;
+
+        if (overContainer == null) {
+            overContainer = new UDViewGroup(globals) {
+                @Override
+                protected ViewGroup newView(LuaValue[] init) {
+                    return new LuaOverlayContainer(getContext(), this);
+                }
+            };
+
+        }
+        overContainer.padding(LuaValue.varargsOf(LuaNumber.valueOf(DimenUtil.pxToDpi(mPaddingTop))
+            , LuaNumber.valueOf(DimenUtil.pxToDpi(mPaddingRight))
+            , LuaNumber.valueOf(DimenUtil.pxToDpi(mPaddingBottom))
+            , LuaNumber.valueOf(DimenUtil.pxToDpi(mPaddingLeft))
+        ));
+
+        if (overView != null) {
+            View view = overView.getView();
+            if (view instanceof TextView) {//overContainer没有addView，导致label计算有问题，原因是Center时受下面的属性影响，文字宽度为VERY_WIDE = 1024 * 1024。
+                ((TextView) view).setHorizontallyScrolling(false);
+            }
+        }
+        overContainer.removeAllSubviews(null);
+        overContainer.insertView(overView, -1);
+        return null;
+    }
+
 
     /**
      * call when getView is not null!
@@ -1423,7 +1513,17 @@ public abstract class UDView<V extends View> extends JavaUserdata<V> implements 
     //<editor-fold desc="Animation">
     @LuaApiUsed
     public LuaValue[] startAnimation(LuaValue[] v) {
-        UDBaseAnimation anim = (UDBaseAnimation) v[0].toUserdata().getJavaUserdata();
+        final UDBaseAnimation anim = (UDBaseAnimation) v[0].toUserdata().getJavaUserdata();
+        int delay = anim.getDelay();
+        if (delay > 0) {
+            final View view = getView();
+            view.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    view.startAnimation(anim.getAnimation());
+                }
+            }, delay);
+        }
         getView().startAnimation(anim.getAnimation());
         return null;
     }
@@ -1505,13 +1605,13 @@ public abstract class UDView<V extends View> extends JavaUserdata<V> implements 
             float ydp = DimenUtil.pxToDpi(event.getY());
 
             if (touchCallback != null) {
-                touchCallback.invoke(varargsOf(LuaNumber.valueOf(xdp), LuaNumber.valueOf(ydp)));
+                touchCallback.fastInvoke(xdp, ydp);
             }
 
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
                     if (touchBeginCallback != null)
-                        touchBeginCallback.invoke(varargsOf(LuaNumber.valueOf(xdp), LuaNumber.valueOf(DimenUtil.pxToDpi(event.getY()))));
+                        touchBeginCallback.fastInvoke(xdp, ydp);
 
                     touchExtension2Lua(touchBeginExtensionCallback, v, event);
 
@@ -1519,7 +1619,7 @@ public abstract class UDView<V extends View> extends JavaUserdata<V> implements 
 
                 case MotionEvent.ACTION_MOVE:
                     if (touchMoveCallback != null)
-                        touchMoveCallback.invoke(varargsOf(LuaNumber.valueOf(xdp), LuaNumber.valueOf(ydp)));
+                        touchMoveCallback.fastInvoke(xdp, ydp);
 
                     touchExtension2Lua(touchMoveExtensionCallback, v, event);
 
@@ -1528,7 +1628,7 @@ public abstract class UDView<V extends View> extends JavaUserdata<V> implements 
                 case MotionEvent.ACTION_UP:
 
                     if (touchEndCallback != null)
-                        touchEndCallback.invoke(varargsOf(LuaNumber.valueOf(xdp), LuaNumber.valueOf(ydp)));
+                        touchEndCallback.fastInvoke(xdp, ydp);
 
                     touchExtension2Lua(touchEndExtensionCallback, v, event);
 
@@ -1537,7 +1637,7 @@ public abstract class UDView<V extends View> extends JavaUserdata<V> implements 
                 case MotionEvent.ACTION_CANCEL:
 
                     if (touchCancelCallback != null)
-                        touchCancelCallback.invoke(varargsOf(LuaNumber.valueOf(xdp), LuaNumber.valueOf(ydp)));
+                        touchCancelCallback.fastInvoke(xdp, ydp);
 
                     touchExtension2Lua(touchCancelExtensionCallback, v, event);
 
@@ -1580,7 +1680,7 @@ public abstract class UDView<V extends View> extends JavaUserdata<V> implements 
 //            if (!canDoClick())//IOS没有防抖动，Android也去掉
 //                return;
             if (clickCallback != null) {
-                clickCallback.invoke(null);
+                clickCallback.fastInvoke();
             }
             if (canEndEditing) {
                 InputMethodManager im = ((InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE));
@@ -1598,7 +1698,7 @@ public abstract class UDView<V extends View> extends JavaUserdata<V> implements 
         @Override
         public boolean onLongClick(View v) {
             if (longClickCallback != null) {
-                longClickCallback.invoke(null);
+                longClickCallback.fastInvoke();
                 return true;
             }
             return false;
@@ -1714,7 +1814,7 @@ public abstract class UDView<V extends View> extends JavaUserdata<V> implements 
     @Override
     public void onDetached() {
         if (detachFunction != null)
-            detachFunction.invoke(null);
+            detachFunction.fastInvoke();
         stopAnimation();
     }
 
@@ -1943,6 +2043,12 @@ public abstract class UDView<V extends View> extends JavaUserdata<V> implements 
          * @see #setRealMargins
          */
         public int gravity = Gravity.LEFT | Gravity.TOP;
+
+        /**
+         * 记录是否设置过gravity，因为gravity默认值不是-1，不好判断Left/Top
+         */
+        public boolean isSetGravity;
+
         /**
          * 普通容器判断是否使用gravity和realmargin
          *

@@ -7,6 +7,7 @@
 
 #import "MLNUILayoutNode.h"
 #import "UIView+MLNUILayout.h"
+#import <ArgoAnimation/UIView+AKFrame.h>
 
 #define YG_PROPERTY(type, lowercased_name, capitalized_name)    \
 - (type)lowercased_name                                         \
@@ -216,6 +217,7 @@ static YGConfigRef globalConfig;
 
 - (NSArray<MLNUILayoutNode *> *)subNodes {
     int count = YGNodeGetChildCount(self.node);
+    if (count == 0) return nil;
     NSMutableArray *array = [NSMutableArray arrayWithCapacity:count];
     for (int i = 0; i < count; i++) {
         UIView *view = (__bridge id)YGNodeGetContext(YGNodeGetChild(self.node, i));
@@ -285,13 +287,12 @@ YG_PROPERTY(CGFloat, aspectRatio, AspectRatio)
 
 #pragma mark - Layout and Sizing
 
-- (YGDirection)resolvedDirection
-{
+- (YGDirection)resolvedDirection {
     return YGNodeLayoutGetDirection(self.node);
 }
 
 - (CGSize)applyLayout {
-    return [self applyLayoutWithSize:self.view.bounds.size];
+    return [self applyLayoutWithSize:CGSizeZero];
 }
 
 - (CGSize)applyLayoutWithSize:(CGSize)size {
@@ -312,22 +313,22 @@ YG_PROPERTY(CGFloat, aspectRatio, AspectRatio)
     YGApplyLayoutRecursive(self.view.mlnui_layoutNode, 0, 0);
 }
 
-- (CGSize)intrinsicSize
-{
-    const CGSize constrainedSize = {
-        .width = YGUndefined,
-        .height = YGUndefined,
-    };
-    return [self calculateLayoutWithSize:constrainedSize];
+- (CGSize)calculateLayout {
+    return [self calculateLayoutWithSize:CGSizeZero];
 }
 
-- (CGSize)calculateLayoutWithSize:(CGSize)size
-{
+- (CGSize)calculateLayoutWithSize:(CGSize)size {
     NSAssert([NSThread isMainThread], @"layout calculation must be done on main.");
     YGAttachNodesFromViewHierachy(self.view);
     
+    if (size.width > 0) {
+        self.maxWidth = MLNUIPointValue(size.width);
+    }
+    if (size.height > 0) {
+        self.maxHeight = MLNUIPointValue(size.height);
+    }
     const YGNodeRef node = self.node;
-    YGNodeCalculateLayout(node, size.width, size.height, YGNodeStyleGetDirection(node));
+    YGNodeCalculateLayout(node, MLNUIUndefined, MLNUIUndefined, YGNodeStyleGetDirection(node));
     
     return (CGSize) {
         .width = YGNodeLayoutGetWidth(node),
@@ -452,15 +453,15 @@ static void YGApplyLayoutRecursive(MLNUILayoutNode *layoutNode, float xOffset, f
             YGApplyLayoutRecursive(subNode, origin.x + xOffset, origin.y + yOffset);
         }
     } else {
-        CGRect frame = view.mlnuiLayoutFrame;
+        CGRect frame = view.akLayoutFrame;
         CGPoint oldOrigin = layoutNode.resetOriginAfterLayout ? CGPointZero : frame.origin;
         frame.origin = (CGPoint){origin.x + oldOrigin.x + xOffset, origin.y + oldOrigin.y + yOffset};
         frame.size = (CGSize){
             YGRoundPixelValue(YGNodeLayoutGetWidth(node)),
             YGRoundPixelValue(YGNodeLayoutGetHeight(node))
         };
-        if (!CGRectEqualToRect(view.mlnuiLayoutFrame, frame)) {
-            view.mlnuiLayoutFrame = frame;
+        if (!CGRectEqualToRect(view.akLayoutFrame, frame)) {
+            view.akLayoutFrame = frame;
             [view mlnui_layoutDidChange];
         }
         [view mlnui_layoutCompleted];
@@ -490,7 +491,7 @@ static inline NSString *BOOLString(BOOL value) {
 }
 
 - (NSString *)debugDescription {
-    return [NSString stringWithFormat:@"<%@\n-> view: %@\n-> isRootNode: %@\n-> isLeaf: %@\n-> isDirty: %@\n-> subNodes: %@>", self, _view, BOOLString(self.isRootNode), BOOLString(self.isLeaf), BOOLString(self.isDirty), self.subNodes];
+    return [NSString stringWithFormat:@"<\n%@\n-> view: %@\n-> isRootNode: %@\n-> isLeaf: %@\n-> isVirtualView: %@\n-> isDirty: %@\n-> superNode: %@\n-> subNodes: %@\n>", self, _view, BOOLString(self.isRootNode), BOOLString(self.isLeaf), BOOLString(self.view.mlnui_isVirtualView),  BOOLString(self.isDirty), self.superNode, self.subNodes];
 }
 
 @end

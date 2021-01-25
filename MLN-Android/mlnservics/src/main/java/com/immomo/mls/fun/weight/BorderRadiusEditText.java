@@ -7,11 +7,13 @@
   */
 package com.immomo.mls.fun.weight;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.view.MotionEvent;
+import android.widget.EditText;
 
 import com.immomo.mls.fun.other.Size;
 import com.immomo.mls.fun.ud.view.IBorderRadiusView;
@@ -26,9 +28,10 @@ import androidx.annotation.NonNull;
 /**
  * Created by XiongFangyu on 2018/8/1.
  */
-public class BorderRadiusEditText extends androidx.appcompat.widget.AppCompatEditText implements IBorderRadiusView, IClipRadius, ViewClipHelper.SuperDrawAction, IShowKeyboard {
-    private final @NonNull
-    BorderBackgroundDrawable backgroundDrawable;
+@SuppressLint("AppCompatCustomView")
+public class BorderRadiusEditText extends EditText implements IBorderRadiusView, IClipRadius, ViewClipHelper.SuperDrawAction, IShowKeyboard {
+    private final  @NonNull
+    BorderBackgroundEditTextDrawable backgroundDrawable;
     private final @NonNull
     ViewClipHelper viewClipHelper;
     private final @NonNull
@@ -36,7 +39,7 @@ public class BorderRadiusEditText extends androidx.appcompat.widget.AppCompatEdi
 
     public BorderRadiusEditText(Context context) {
         super(context);
-        backgroundDrawable = new BorderBackgroundDrawable();
+        backgroundDrawable = new BorderBackgroundEditTextDrawable();
         viewClipHelper = new ViewClipHelper(this);
         viewShadowHelper = new ViewShadowHelper();
     }

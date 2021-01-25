@@ -155,7 +155,7 @@ public class UDCollectionAdapter extends UDBaseRecyclerAdapter<UDCollectionLayou
 
             if (!(UDCollectionAdapter.this instanceof UDCollectionAutoFitAdapter)) {
                 //两端在不声明size for cell时，有UI差异。统一报错处理
-                ErrorUtils.debugLuaError("size For Cell must be Called", getGlobals());
+                ErrorUtils.debugLuaError("sizeForCell must be Called when not using CollectionViewAutoFitAdapter", getGlobals());
             }
             return layout.getSize();
         }

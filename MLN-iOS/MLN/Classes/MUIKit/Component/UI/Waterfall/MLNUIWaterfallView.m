@@ -11,6 +11,7 @@
 #import "MLNUIWaterfallLayout.h"
 #import "MLNUIInternalWaterfallView.h"
 #import "MLNUIWaterfallAdapter.h"
+#import "MLNUIWaterfallAutoAdapter.h"
 #import "MLNUIBlock.h"
 #import "MLNUIBeforeWaitingTask.h"
 #import "UIScrollView+MLNUIKit.h"
@@ -18,6 +19,11 @@
 #import "UIView+MLNUILayout.h"
 #import "MLNUICollectionViewLayoutProtocol.h"
 #import "UIView+MLNUIKit.h"
+#import "MLNUILongPressGestureRecognizer.h"
+#import "MLNUITapGestureRecognizer.h"
+#import "MLNUIGestureConflictManager.h"
+
+FOUNDATION_EXTERN CGSize MLNUICollectionViewAutoFitCellEstimateSize;
 
 @interface MLNUIWaterfallView()
 @property (nonatomic, strong, readwrite) MLNUIInternalWaterfallView *innerWaterfallView;
@@ -35,6 +41,16 @@
     // 去除强引用
     MLNUI_Lua_UserData_Release(self.layout);
     [super mlnui_user_data_dealloc];
+}
+
+// cell自适应场景下要开启估算功能
+- (void)ensureOpenCellEstimateMechanismForAutoAdapter {
+    MLNUIWaterfallLayout *layout = (MLNUIWaterfallLayout *)self.layout;
+    MLNUIWaterfallAutoAdapter *adapter = (MLNUIWaterfallAutoAdapter *)self.adapter;
+    if ([layout isKindOfClass:[MLNUIWaterfallLayout class]] &&
+        [adapter isKindOfClass:[MLNUIWaterfallAutoAdapter class]]) {
+        layout.estimatedItemSize = MLNUICollectionViewAutoFitCellEstimateSize;
+    }
 }
 
 #pragma mark - Header
@@ -85,7 +101,9 @@
         // 添加强引用
         MLNUI_Lua_UserData_Retain_With_Index(2, adapter);
         _adapter = adapter;
+        _adapter.collectionView = self.innerWaterfallView;
         [self mlnui_pushLazyTask:self.lazyTask];
+        [self ensureOpenCellEstimateMechanismForAutoAdapter];
     }
 }
 
@@ -98,6 +116,7 @@
         MLNUI_Lua_UserData_Retain_With_Index(2, layout);
         _layout = layout;
         self.innerWaterfallView.collectionViewLayout = layout;
+        [self ensureOpenCellEstimateMechanismForAutoAdapter];
     }
     
 }
@@ -422,9 +441,22 @@
     return NO;
 }
 
+#pragma mark - Override (GestureConflict)
+
+- (UIView *)actualView {
+    return self.innerWaterfallView;
+}
+
 #pragma mark - Gesture
-- (void)handleLongPress:(UIGestureRecognizer *)gesture {
-    if (gesture.state != UIGestureRecognizerStateBegan) {
+- (void)handleLongPress:(MLNUILongPressGestureRecognizer *)gesture {
+    if (gesture.argoui_state != UIGestureRecognizerStateBegan) {
+        [MLNUIGestureConflictManager setCurrentGesture:nil];
+        return;
+    }
+    [MLNUIGestureConflictManager setCurrentGesture:gesture];
+    UIView *responder = [MLNUIGestureConflictManager currentGestureResponder];
+    if (responder != gesture.view) {
+        [MLNUIGestureConflictManager handleResponderGestureActionsWithCurrentGesture:gesture];
         return;
     }
     CGPoint p = [gesture locationInView:self];
@@ -453,10 +485,10 @@
         [self addSubview:_innerWaterfallView];
         
         // fix:父视图添加tapGesture、longPressGesture手势WaterfallView点击、长按回调不响应的问题
-        UILongPressGestureRecognizer *lpgr = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleLongPress:)];
+        MLNUILongPressGestureRecognizer *lpgr = [[MLNUILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleLongPress:)];
         lpgr.minimumPressDuration  = 0.5;
         [_innerWaterfallView addGestureRecognizer:lpgr];
-        UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:nil];
+        MLNUITapGestureRecognizer *tapGesture = [[MLNUITapGestureRecognizer alloc] initWithTarget:self action:nil];
         [tapGesture requireGestureRecognizerToFail:lpgr];
         tapGesture.cancelsTouchesInView = NO;
         [_innerWaterfallView addGestureRecognizer:tapGesture];

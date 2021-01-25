@@ -7,7 +7,6 @@
 
 #import "MLNUIAnimationConst.h"
 #import "MLNUIGlobalVarExporterMacro.h"
-#import "MLAAnimation.h"
 
 NSString * const kMUIDefaultGroupAnimation = @"com.milua.group.animation";
 NSString * const kMUIDefaultScaleAnimation = @"com.milua.scale.animation";

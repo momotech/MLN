@@ -54,6 +54,7 @@ public class UDScrollView<V extends ViewGroup & IScrollView> extends UDViewGroup
             "i_bounces",
             "i_bounceHorizontal",
             "i_bounceVertical",
+            "i_pagingEnabled",
             "setScrollEnable",
             "setScrollBeginCallback",
             "setScrollingCallback",
@@ -254,6 +255,11 @@ public class UDScrollView<V extends ViewGroup & IScrollView> extends UDViewGroup
 
     @LuaApiUsed
     public LuaValue[] i_bounceVertical(LuaValue[] bounces) {
+        return null;
+    }
+
+    @LuaApiUsed
+    public LuaValue[] i_pagingEnabled(LuaValue[] bounces) {
         return null;
     }
 

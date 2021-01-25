@@ -8,6 +8,8 @@
 #ifndef ArgoKitDefinitions_h
 #define ArgoKitDefinitions_h
 
+#import <Foundation/Foundation.h>
+
 #define ArgoKitInstance MLNUIKitInstance
 #define ArgoKitInstanceHandlersManager MLNUIKitInstanceHandlersManager
 #define ArgoExportProtocol MLNUIExportProtocol
@@ -21,6 +23,7 @@ extern NSString *const kArgoListenerChangedObject;
 extern NSString *const kArgoListenerChangedKey;
 extern NSString *const kArgoListenerContext;
 extern NSString *const kArgoListenerWrapper;
+extern NSString *const kArgoListenerCallCountKey;
 
 //extern NSString const *const kArgoListener2DArray;
 extern NSString *const kArgoConstString_Dot;

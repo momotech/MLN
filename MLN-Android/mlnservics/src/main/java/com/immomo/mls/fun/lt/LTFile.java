@@ -19,7 +19,6 @@ import com.immomo.mls.util.EncryptUtil;
 import com.immomo.mls.util.FileUtil;
 import com.immomo.mls.util.IOUtil;
 import com.immomo.mls.util.JsonUtil;
-import com.immomo.mls.util.LogUtil;
 import com.immomo.mls.util.RelativePathUtils;
 import com.immomo.mls.utils.ErrorUtils;
 import com.immomo.mls.utils.LVCallback;
@@ -34,11 +33,8 @@ import org.luaj.vm2.LuaValue;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -96,7 +92,7 @@ public class LTFile {
 
     @LuaBridge
     public static void asyncMoveFile(Globals g, String fromPath, String toPath, final LVCallback callback) {
-        ErrorUtils.debugDeprecateMethod("asyncMoveFile", "moveTo", g);
+        ErrorUtils.debugDeprecateMethod("asyncMoveFile", "syncMoveFile", g);
         MLSAdapterContainer.getThreadAdapter().execute(MLSThreadAdapter.Priority.HIGH, new MoveFileTask(fromPath, toPath, callback));
     }
 
@@ -165,36 +161,61 @@ public class LTFile {
 
     @LuaBridge
     public static void asyncReadFile(String path, final LVCallback callback) {
+        if (RelativePathUtils.isLocalUrl(path)) {
+            path = RelativePathUtils.getAbsoluteUrl(path);
+        }
         MLSAdapterContainer.getThreadAdapter().execute(MLSThreadAdapter.Priority.HIGH, new StringReadTask(path, callback));
     }
 
     @LuaBridge
     public static void asyncReadMapFile(String path, LVCallback callback) {
+        if (RelativePathUtils.isLocalUrl(path)) {
+            path = RelativePathUtils.getAbsoluteUrl(path);
+        }
         MLSAdapterContainer.getThreadAdapter().execute(MLSThreadAdapter.Priority.HIGH, new JSONReadTask(path, callback));
     }
 
     @LuaBridge
     public static void asyncReadArrayFile(String path, LVCallback callback) {
+        if (RelativePathUtils.isLocalUrl(path)) {
+            path = RelativePathUtils.getAbsoluteUrl(path);
+        }
         MLSAdapterContainer.getThreadAdapter().execute(MLSThreadAdapter.Priority.HIGH, new JSONArrayTask(path, callback));
     }
 
     @LuaBridge
     public static void asyncWriteFile(String path, String str, LVCallback callback) {
+        if (RelativePathUtils.isLocalUrl(path)) {
+            path = RelativePathUtils.getAbsoluteUrl(path);
+        }
         MLSAdapterContainer.getThreadAdapter().execute(MLSThreadAdapter.Priority.HIGH, new WriteStringTask(path, callback, str));
     }
 
     @LuaBridge
     public static void asyncWriteMap(String path, Map map, LVCallback callback) {
+        if (RelativePathUtils.isLocalUrl(path)) {
+            path = RelativePathUtils.getAbsoluteUrl(path);
+        }
         MLSAdapterContainer.getThreadAdapter().execute(MLSThreadAdapter.Priority.HIGH, new WriteJsonTask(path, callback, map));
     }
 
     @LuaBridge
     public static void asyncWriteArray(String path, List array, LVCallback callback) {
+        if (RelativePathUtils.isLocalUrl(path)) {
+            path = RelativePathUtils.getAbsoluteUrl(path);
+        }
         MLSAdapterContainer.getThreadAdapter().execute(MLSThreadAdapter.Priority.HIGH, new WriteArrayTask(path, callback, array));
     }
 
     @LuaBridge
     public static void asyncUnzipFile(String sourcePath, String targetPath, LVCallback callback) {
+        String returnPath = sourcePath;
+        if (RelativePathUtils.isLocalUrl(sourcePath)) {
+            sourcePath = RelativePathUtils.getAbsoluteUrl(sourcePath);
+        }
+        if (RelativePathUtils.isLocalUrl(targetPath)) {
+            targetPath = RelativePathUtils.getAbsoluteUrl(targetPath);
+        }
         MLSAdapterContainer.getThreadAdapter().execute(MLSThreadAdapter.Priority.HIGH,
                 new UnZipTask(sourcePath, targetPath, sourcePath, callback));
     }
@@ -215,6 +236,9 @@ public class LTFile {
 
     @LuaBridge
     public static int syncWriteFile(String path, String str) {
+        if (RelativePathUtils.isLocalUrl(path)) {
+            path = RelativePathUtils.getAbsoluteUrl(path);
+        }
         int result = makeFile(path);
         if (result != CODE_NO_ERROR) {
             return result;
@@ -224,6 +248,9 @@ public class LTFile {
 
     @LuaBridge
     public static int syncWriteMap(String path, Map map) {
+        if (RelativePathUtils.isLocalUrl(path)) {
+            path = RelativePathUtils.getAbsoluteUrl(path);
+        }
         int result = makeFile(path);
         if (result != CODE_NO_ERROR) {
             return result;
@@ -233,6 +260,9 @@ public class LTFile {
 
     @LuaBridge
     public static int syncWriteArray(String path, List array) {
+        if (RelativePathUtils.isLocalUrl(path)) {
+            path = RelativePathUtils.getAbsoluteUrl(path);
+        }
         int result = makeFile(path);
         if (result != CODE_NO_ERROR) {
             return result;
@@ -266,7 +296,6 @@ public class LTFile {
             return LuaString.valueOf(md5);
         }
 
-        ErrorUtils.debugIllegalStateError("文件不存在 or 不是一个文件");
         return LuaValue.Nil();
     }
 
@@ -496,12 +525,6 @@ public class LTFile {
 
         @Override
         public void run() {
-            if (RelativePathUtils.isLocalUrl(sourcePath)) {
-                sourcePath = RelativePathUtils.getAbsoluteUrl(sourcePath);
-            }
-            if (RelativePathUtils.isLocalUrl(targetPath)) {
-                targetPath = RelativePathUtils.getAbsoluteUrl(targetPath);
-            }
             int code = unZipFile(sourcePath, targetPath);
             callbackInMain(code, returnPath);
         }
@@ -535,7 +558,6 @@ public class LTFile {
                 callbackInMain(md5);
                 return;
             }
-            ErrorUtils.debugLuaError("文件不存在 or 不是一个文件",globals);
             callbackInMain(LuaValue.Nil());
         }
     }
@@ -550,22 +572,7 @@ public class LTFile {
 
         @Override
         public void run() {
-            if (TextUtils.isEmpty(path)) {
-                callbackError(CODE_CREATE_FAILED);
-                return;
-            }
-            if (RelativePathUtils.isLocalUrl(path)) {
-                path = RelativePathUtils.getAbsoluteUrl(path);
-            }
-            try {
-                if (FileUtil.createFile(path, true)) {
-                    callbackError(CODE_NO_ERROR);
-                    return;
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            callbackError(CODE_CREATE_FAILED);
+            callbackError(makeFile(path));
         }
     }
 
@@ -579,19 +586,7 @@ public class LTFile {
 
         @Override
         public void run() {
-            int code = makeDirs(path);
-            if (code != CODE_NO_ERROR) {
-                callbackError(code);
-                return;
-            }
-            File file = new File(path);
-            if (!file.exists()) {
-                if (file.mkdirs()) {
-                    callbackError(CODE_NO_ERROR);
-                    return;
-                }
-            }
-            callbackError(CODE_MKDIRS_FAILED);
+            callbackError(makeDirs(path));
         }
     }
 
@@ -620,7 +615,6 @@ public class LTFile {
                         callbackError(CODE_NO_ERROR);
                         return;
                     } catch (Throwable t) {
-                        LogUtil.e(t);
                     }
                 }
             }
@@ -779,21 +773,39 @@ public class LTFile {
         return makeDirsOrFile(path, false);
     }
 
-    private static int makeDirsOrFile(String path, boolean checkDirectory) {
+    private static int makeDirsOrFile(String path, boolean isFile) {
         if (RelativePathUtils.isLocalUrl(path)) {
             path = RelativePathUtils.getAbsoluteUrl(path);
         }
         File target = new File(path);
+        if (target.exists()) {
+            if (isFile && !target.isFile()) {
+                return CODE_NOT_FILE;
+            }
+            if (!isFile && !target.isDirectory()) {
+                return CODE_MKDIRS_FAILED;
+            }
+            return CODE_NO_ERROR;
+        }
         File parentFile = target.getParentFile();
         if (parentFile != null && !parentFile.exists()) {
             if (!parentFile.mkdirs()) {
                 return CODE_MKDIRS_FAILED;
             }
         }
-        if (checkDirectory && target.isDirectory()) {
-            return CODE_NOT_FILE;
+        if (isFile) {
+            try {
+                if (target.createNewFile())
+                    return CODE_NO_ERROR;
+                return CODE_CREATE_FAILED;
+            } catch (Throwable t) {
+                return CODE_CREATE_FAILED;
+            }
+        } else if (target.mkdir()) {
+            return CODE_NO_ERROR;
+        } else {
+            return CODE_MKDIRS_FAILED;
         }
-        return CODE_NO_ERROR;
     }
 
     private static int writeFileByte(File file, String content) {

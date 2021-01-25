@@ -7,6 +7,7 @@
 
 #ifndef LNEncoderProtocol_h
 #define LNEncoderProtocol_h
+#import <Foundation/Foundation.h>
 
 @protocol LNEncoderProtocol <NSObject>
 

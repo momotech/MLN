@@ -15,7 +15,7 @@ import org.luaj.vm2.Globals;
 final class NativeBroadcastChannel {
 
     static void register(Globals g) {
-        if (MLSEngine.isLibInit("mlnbc"))
+        if (MLSEngine.isLibInit(MLSEngine.BC_Lib))
             _openLib(g.getL_State());
     }
 

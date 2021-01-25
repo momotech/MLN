@@ -12,7 +12,8 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.util.LongSparseArray;
+
+import androidx.collection.LongSparseArray;
 
 import com.immomo.mlncore.MLNCore;
 
@@ -21,10 +22,12 @@ import org.luaj.vm2.exception.UndumpError;
 import org.luaj.vm2.utils.IGlobalsUserdata;
 import org.luaj.vm2.utils.LuaApiUsed;
 import org.luaj.vm2.utils.NativeLog;
+import org.luaj.vm2.utils.OnEmptyMethodCalledListener;
 import org.luaj.vm2.utils.ResourceFinder;
 import org.luaj.vm2.utils.SignatureUtils;
 
 import java.io.File;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -44,9 +47,6 @@ import java.util.Set;
  * @see #loadData                   加载Lua源码或二进制码
  * @see #callLoadedData             执行已加载成功的Lua源码或二进制码
  * @see #getState                   获取加载或执行的状态码
- * @see #compileAndSave             将Lua源码编译成二进制码并保存到文件
- * @see #registerUserdataSimple     注册userdata
- * @see #registerStaticBridgeSimple 注册静态Bridge
  * @see #createUserdataAndSet       在全局表中注册一个userdata实例
  * @see #destroy()                  销毁当前虚拟机
  * <p>
@@ -77,6 +77,11 @@ public final class Globals extends LuaTable {
     public static final int LUA_ERRERR = 6;
     public static final int LUA_ERRINJAVA = -1;
     public static final int LUA_CALLING = 100;
+    /**
+     * 统计开关
+     */
+    public static final char STATISTIC_BRIDGE = 1;
+    public static final char STATISTIC_REQUIRE = 2;
     /**
      * 标记底层库是否load完成
      */
@@ -232,11 +237,22 @@ public final class Globals extends LuaTable {
      * @see #createLState(boolean)
      * @see #getGlobalsByLState(long)
      */
-    private static final LongSparseArray<Globals> cache = new LongSparseArray<>();
+    private static LongSparseArray<Globals> cache = new LongSparseArray<>();
     /**
      * 全局虚拟机
      */
-    private static final LongSparseArray<Globals> g_cahce = new LongSparseArray<>();
+    private static LongSparseArray<Globals> g_cahce = new LongSparseArray<>();
+    /**
+     * 空方法回调
+     */
+    private static OnEmptyMethodCalledListener onEmptyMethodCalledListener;
+    /**
+     * 开启虚拟机统计
+     * @see #setStatistic
+     * @see #STATISTIC_BRIDGE
+     * @see #STATISTIC_REQUIRE
+     */
+    private static char statisticsStatus;
 
     /**
      * @see #createLState(boolean)
@@ -278,8 +294,63 @@ public final class Globals extends LuaTable {
     /**
      * 判断平台是否是32位平台
      */
+    @Deprecated
     public static boolean isIs32bit() {
         return is32bit;
+    }
+
+    /**
+     * 判断平台是否是32位平台
+     */
+    public static boolean is32bit() {
+        return is32bit;
+    }
+
+    /**
+     * 打开统计bridge或require调用
+     * @see #STATISTIC_BRIDGE
+     * @see #STATISTIC_REQUIRE
+     */
+    public static void setStatistic(char status) {
+        if (status != STATISTIC_BRIDGE
+                && status != STATISTIC_REQUIRE
+                && status != (STATISTIC_REQUIRE + STATISTIC_BRIDGE)
+                && status != 0)
+            return;
+        statisticsStatus = status;
+        LuaCApi._setStatisticsOpen(statisticsStatus != 0);
+    }
+
+    /**
+     * 添加统计bridge或require调用
+     * @see #STATISTIC_BRIDGE
+     * @see #STATISTIC_REQUIRE
+     */
+    public static void addStatisticStatus(char status) {
+        if (status != STATISTIC_BRIDGE && status != STATISTIC_REQUIRE)
+            return;
+        if (statisticsStatus == 0) {
+            LuaCApi._setStatisticsOpen(true);
+        }
+        statisticsStatus = (char) (statisticsStatus | status);
+    }
+
+    /**
+     * 是否打开了统计开关
+     */
+    public static boolean isOpenStatistics() {
+        return ((statisticsStatus & STATISTIC_BRIDGE) == STATISTIC_BRIDGE)
+                || ((statisticsStatus & STATISTIC_REQUIRE) == STATISTIC_REQUIRE);
+    }
+
+    /**
+     * 通知打印统计信息
+     */
+    public static void notifyStatisticsCallback() {
+        if ((statisticsStatus & STATISTIC_BRIDGE) == STATISTIC_BRIDGE)
+            LuaCApi._notifyStatisticsCallback();
+        if ((statisticsStatus & STATISTIC_REQUIRE) == STATISTIC_REQUIRE)
+            LuaCApi._notifyRequireCallback();
     }
 
     /**
@@ -349,6 +420,14 @@ public final class Globals extends LuaTable {
     }
 
     /**
+     * 为每个Bridge注册空方法，调用空方法不会报错，会返回调用者本身
+     * 回调用{@link #__onEmptyMethodCall(long, String, String)}
+     */
+    public static void preRegisterEmptyMethods(String... methods) {
+        LuaCApi._preRegisterEmptyMethods(methods);
+    }
+
+    /**
      * 提前加载userdata
      */
     public static void preRegisterUserdata(String clz, String... methods) {
@@ -358,8 +437,8 @@ public final class Globals extends LuaTable {
     /**
      * 提前加载static
      */
-    public static void preRegisterStatic(Class clz, String... methods) {
-        LuaCApi._preRegisterStatic(SignatureUtils.getClassName(clz), methods);
+    public static void preRegisterStatic(String clz, String... methods) {
+        LuaCApi._preRegisterStatic(clz, methods);
     }
 
     /**
@@ -437,6 +516,34 @@ public final class Globals extends LuaTable {
         Globals g = cache.get(state);
         if (g == null) g = g_cahce.get(state);
         return g;
+    }
+
+    /**
+     * 返回所有的虚拟机指针
+     */
+    public static String debugGlobalsPointers() {
+        int count = cache.size();
+        StringBuilder sb = new StringBuilder("normal globals pointers:[");
+        for (int i = 0; i < count; i ++) {
+            long p = cache.keyAt(i);
+            if (i == 0) {
+                sb.append(Long.toHexString(p));
+            } else {
+                sb.append(',').append(Long.toHexString(p));
+            }
+        }
+        sb.append(']')
+                .append("\nspecial globals pointers:[");
+        count = g_cahce.size();
+        for (int i = 0; i < count; i ++) {
+            long p = g_cahce.keyAt(i);
+            if (i == 0) {
+                sb.append(Long.toHexString(p));
+            } else {
+                sb.append(',').append(Long.toHexString(p));
+            }
+        }
+        return sb.append(']').toString();
     }
 
     /**
@@ -673,6 +780,45 @@ public final class Globals extends LuaTable {
     }
 
     /**
+     * 预加载Lua文件，并将二进制码存储到savePath中
+     * @param chunkName 脚本名称，Lua代码中require()时使用
+     * @param path      脚本asset路径
+     * @param savePath  二进制码存储文件
+     * @throws UndumpError 若编译出错，则抛出异常
+     * @return 0: 成功
+     * @see org.luaj.vm2.LuaValue.ErrorCode
+     */
+    public final @ErrorCode int preloadAssetsAndSave(String chunkName, String path, String savePath) throws UndumpError {
+        checkDestroy();
+        File parent = new File(savePath).getParentFile();
+        if (!parent.exists()) {
+            if (!parent.mkdirs())
+                return ERR_CREATE_DIR;
+        }
+        return LuaCApi._preloadAssetsAndSave(L_State, chunkName, path, savePath);
+    }
+
+    /**
+     * 预加载Lua文件
+     * @param chunkName 脚本名称，Lua代码中require()时使用
+     * @param path      脚本asset路径
+     * @throws UndumpError 若编译出错，则抛出异常
+     */
+    public final void preloadAssets(String chunkName, String path) throws UndumpError {
+        checkDestroy();
+        LuaCApi._preloadAssets(L_State, chunkName, path);
+    }
+
+    /**
+     * 相当于调用lua的require函数
+     * @param path 支持绝对路径、相对路径、lua写法: dir.name
+     */
+    public final boolean require(String path) throws InvokeError {
+        checkDestroy();
+        return LuaCApi._require(L_State, path) == LUA_OK;
+    }
+
+    /**
      * 设置主入口，必须已通过{@link #preloadData} 或 {@link #preloadFile} 预加载成功
      * @param chunkname 预加载时的米
      * @return true: 设置成功，可通过 {@link #callLoadedData()}执行
@@ -778,56 +924,23 @@ public final class Globals extends LuaTable {
     //<editor-fold desc="Register">
 
     /**
-     * 注册静态Bridge
+     * 注册所有的静态Bridge
      * 在Lua中可通过 luaClassName:method()调用
      *
      * 方法必须返回LuaValue数组，且参数必须为 (long, LuaValue[])
      *
      * 必须和{@link #callLoadedData()}在同一线程！
      *
-     * @param clz          java类
-     * @param luaClassName lua中调用的名称
+     * @param lcns          lua调用的类名
+     * @param lpcns         继承自lua的类名
+     * @param jcns          java的class {@link SignatureUtils#getClassName(Class)}
      */
-    public final void registerStaticBridgeSimple(String luaClassName, Class clz) {
+    public final void registerAllStaticClass(String[] lcns, String[] lpcns, String[] jcns) {
         checkDestroy();
-        LuaCApi._registerStaticClassSimple(L_State,
-                SignatureUtils.getClassName(clz),
-                luaClassName,
-                findLuaParentClass(clz, luaClassNameMap));
-        luaClassNameMap.put(clz, luaClassName);
-    }
-
-    /**
-     * 注册只包含静态__index方法的类
-     */
-    public final void registerJavaMetatable(Class clz, String name) {
-        LuaCApi._registerJavaMetatable(L_State,
-                SignatureUtils.getClassName(clz),
-                name);
-    }
-
-    /**
-     * 注册java userdata
-     * 注意java构造函数一定需要有 Globals, LuaValue[] 参数
-     * 方法的返回值和参数都必须是 LuaValue[]类型
-     *
-     * 若注册的class为{@link LuaUserdata}的子类，则会将对象保存到GNV表中，不可释放
-     * 直到原生调用{@link LuaUserdata#destroy()}
-     *
-     * 注册后，马上设置元表，提升使用时性能
-     *
-     * 必须和{@link #callLoadedData()}在同一线程！
-     *
-     * @param luaClassName lua调用的类名
-     * @param clz          java的class
-     */
-    public final void registerUserdataSimple(String luaClassName, Class<? extends LuaUserdata> clz) throws RuntimeException {
-        checkDestroy();
-        LuaCApi._registerUserdata(L_State,
-                luaClassName,
-                findLuaParentClass(clz, luaClassNameMap),
-                SignatureUtils.getClassName(clz));
-        luaClassNameMap.put(clz, luaClassName);
+        final int len = lcns.length;
+        if (len != lpcns.length || len != jcns.length)
+            throw new IllegalArgumentException("lcns lpcns jcns must have same length");
+        LuaCApi._registerAllStaticClass(L_State, lcns, lpcns, jcns);
     }
 
     /**
@@ -855,27 +968,12 @@ public final class Globals extends LuaTable {
     }
 
     /**
-     * 注册java userdata
-     * 注意java构造函数一定需要有 Globals, LuaValue[] 参数
-     * 方法的返回值和参数都必须是 LuaValue[]类型
-     *
-     * 若注册的class为{@link LuaUserdata}的子类，则会将对象保存到GNV表中，不可释放
-     * 直到原生调用{@link LuaUserdata#destroy()}
-     *
-     * 注册后，lua脚本未初始化此userdata时，将不会设置元表，减少内存和注册时间
-     *
-     * 必须和{@link #callLoadedData()}在同一线程！
-     *
-     * @param luaClassName  lua调用的类名
-     * @param clz           java的class
+     * 注册只包含静态__index方法的类
      */
-    public final void registerLazyUserdataSimple(String luaClassName, Class<? extends LuaUserdata>  clz) throws RuntimeException {
-        checkDestroy();
-        LuaCApi._registerUserdataLazy(L_State,
-                luaClassName,
-                findLuaParentClass(clz, luaClassNameMap),
-                SignatureUtils.getClassName(clz));
-        luaClassNameMap.put(clz, luaClassName);
+    public final void registerJavaMetatable(Class clz, String name) {
+        LuaCApi._registerJavaMetatable(L_State,
+                SignatureUtils.getClassName(clz),
+                name);
     }
 
     /**
@@ -1032,6 +1130,21 @@ public final class Globals extends LuaTable {
     }
 
     /**
+     * 获取Lua调用栈
+     */
+    public final String luaTraceBack() {
+        checkDestroy();
+        return LuaCApi._traceback(L_State);
+    }
+
+    /**
+     * 判断当前是否在lua函数调用过程中
+     */
+    public final boolean isInLuaFunction() {
+        return state == LUA_CALLING || calledFunction > 0;
+    }
+
+    /**
      * post事件
      * @return true post成功
      */
@@ -1068,6 +1181,7 @@ public final class Globals extends LuaTable {
         }
         if (isDestroyed())
             return;
+        MLNCore.onGlobalsDestroy(this);
         if (onDestroyListeners != null) {
             for (OnDestroyListener l : onDestroyListeners) {
                 l.onDestroy(this);
@@ -1081,6 +1195,7 @@ public final class Globals extends LuaTable {
             handler.removeCallbacksAndMessages(TAG);
         }
         if (!isIsolate()) LuaCApi._close(pointer);
+        userdataCache.onDestroy();
         if (javaUserdata != null) {
             javaUserdata.onGlobalsDestroy(this);
         }
@@ -1092,7 +1207,6 @@ public final class Globals extends LuaTable {
         resourceFinder = null;
         if (resourceFinders != null)
             resourceFinders.clear();
-        userdataCache.onDestroy();
     }
 
     /**
@@ -1144,6 +1258,13 @@ public final class Globals extends LuaTable {
     /**
      * 设置class和luaclassname的对应关系
      */
+    public final void putLuaClassName(Class<? extends LuaUserdata> clz, String lcn) {
+        luaClassNameMap.put(clz, lcn);
+    }
+
+    /**
+     * 设置class和luaclassname的对应关系
+     */
     public final void putLuaClassName(Map<Class, String> other) {
         luaClassNameMap.putAll(other);
     }
@@ -1169,13 +1290,20 @@ public final class Globals extends LuaTable {
     }
 
     /**
+     * 设置空方法监听
+     */
+    public static void setOnEmptyMethodCalledListener(OnEmptyMethodCalledListener listener) {
+        onEmptyMethodCalledListener = listener;
+    }
+
+    /**
      * 查找class对象或其父class对象的注册信息
      * @param c class对象
      * @return 注册到Lua的类名
      */
     public static String findLuaParentClass(Class c, Map<Class, String> luaClassNameMap) {
-        Class p = c;
-        while (p != Object.class && p != JavaUserdata.class && p != LuaUserdata.class) {
+        Class p = c.getSuperclass();
+        while (p != null && p != Object.class && p != JavaUserdata.class && p != LuaUserdata.class) {
             String s = luaClassNameMap.get(p);
             if (s != null)
                 return s;
@@ -1308,6 +1436,10 @@ public final class Globals extends LuaTable {
         unsupported();
     }
 
+    public final void set(int index, Class<?> clz, Method method) {
+        unsupported();
+    }
+
     @Override
     public final LuaValue get(int index) {
         unsupported();
@@ -1353,6 +1485,18 @@ public final class Globals extends LuaTable {
     }
 
     /**
+     * 调用注册的空方法时，会走到这
+     */
+    @LuaApiUsed
+    private static void __onEmptyMethodCall(long L, String clz, String methodName) {
+        if (onEmptyMethodCalledListener != null) {
+            Globals g = getGlobalsByLState(L);
+            if (g != null)
+                onEmptyMethodCalledListener.onCalled(g, clz, methodName);
+        }
+    }
+
+    /**
      * isolate 状态
      */
     private static final int DESTROYED = -2;
@@ -1391,6 +1535,12 @@ public final class Globals extends LuaTable {
         if (requireErrorMsg != null) {
             requireErrorMsg.setLength(0);
         }
+        if (resourceFinder == null && resourceFinders == null) {
+            if (requireErrorMsg == null)
+                requireErrorMsg = new StringBuilder();
+            requireErrorMsg.append("\n\t\tno resource finder set in java!");
+            return null;
+        }
         Object ret = findResource(resourceFinder, name);
         if (ret != null)
             return ret;
@@ -1415,6 +1565,8 @@ public final class Globals extends LuaTable {
     }
 
     private void combineErrorMessage(ResourceFinder rf) {
+        if (rf == null)
+            return;
         String error = rf.getError();
         if (error == null || error.length() == 0)
             return;

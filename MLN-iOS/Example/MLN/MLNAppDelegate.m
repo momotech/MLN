@@ -143,6 +143,7 @@
 }
 
 - (void)registerLink {
+    [MLNLink registerName:@"CustomHotReload" linkClassName:@"MLNUICustomHotReloadViewController"];
     [MLNUILink registerName:@"CustomHotReload" linkClassName:@"MLNUICustomHotReloadViewController"];
 }
 

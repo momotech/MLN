@@ -12,7 +12,8 @@ NS_ASSUME_NONNULL_BEGIN
 @class MLNUIBlock, MLNUILuaTable;
 @interface ArgoDataBinding : NSObject
 
-- (void)bindData:(nullable NSObject<ArgoListenerProtocol> *)data;
+- (void)bindData:(nonnull NSObject<ArgoListenerProtocol> *)data;
+- (void)unbindData:(nonnull NSObject<ArgoListenerProtocol> *)data;
 - (void)bindData:(nullable NSObject<ArgoListenerProtocol> *)data forKey:(NSString *)key;
 
 //- (id __nullable)dataForKeyPath:(NSString *)keyPath;
@@ -27,6 +28,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (id __nullable)argo_get:(NSString *)keyPath;
 - (void)argo_updateValue:(id)value forKeyPath:(NSString *)keyPath;
 - (NSInteger)argo_watchKeyPath:(NSString *)keyPath withHandler:(MLNUIBlock *)handler filter:(MLNUIBlock *)filter;
+- (NSInteger)argo_watchKeyPath2:(NSString *)keyPath withHandler:(MLNUIBlock *)handler filter:(MLNUIBlock *)filter;
 - (NSInteger)argo_watchKey:(NSString *)key withHandler:(MLNUIBlock *)handler filter:(MLNUIBlock *)filter;
 - (void)argo_unwatch:(NSInteger)tokenID;
 

@@ -24,6 +24,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) NSString *errmsg;
 @property (nonatomic, assign) NSInteger timesec;
 @property (nonatomic, strong) NSDictionary *data;
+@property (nonatomic, strong) NSArray *list;
 
 @end
 

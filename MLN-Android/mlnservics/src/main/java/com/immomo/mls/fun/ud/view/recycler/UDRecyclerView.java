@@ -18,6 +18,7 @@ import com.immomo.mls.fun.ud.UDPoint;
 import com.immomo.mls.fun.ud.view.IClipRadius;
 import com.immomo.mls.fun.ud.view.UDView;
 import com.immomo.mls.fun.ud.view.UDViewGroup;
+import com.immomo.mls.fun.ui.IPager;
 import com.immomo.mls.fun.ui.IRefreshRecyclerView;
 import com.immomo.mls.fun.ui.IScrollEnabled;
 import com.immomo.mls.fun.ui.LuaRecyclerView;
@@ -105,6 +106,10 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
             "scrollEnabled",
             "setOffsetWithAnim",
             "contentOffset",
+            "disallowFling",
+            "pagerContentOffset",
+            "i_bounces",
+            "i_pagingEnabled",
     };
 
     private ILoadViewDelegete loadViewDelegete;
@@ -124,13 +129,19 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
     @Override
     protected T newView(LuaValue[] init) {
         boolean loadEnable = false;
+        boolean isViewPager = false;
         if (init.length > 0) {
             mRefreshEnabled = init[0].toBoolean();
         }
         if (init.length > 1) {
             loadEnable = init[1].toBoolean();
         }
-        return (T) new LuaRecyclerView(getContext(), this, mRefreshEnabled, loadEnable);
+        if (init.length > 2) {
+            isViewPager = init[2].toBoolean();
+        }
+        LuaRecyclerView luaRecyclerView = new LuaRecyclerView(getContext(), this, mRefreshEnabled, loadEnable);
+        luaRecyclerView.setViewpager(isViewPager);
+        return (T) luaRecyclerView;
     }
 
     public void setLoadViewDelegete(ILoadViewDelegete loadViewDelegete) {
@@ -164,6 +175,10 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
 
     protected RecyclerView getRecyclerView() {
         return getView().getRecyclerView();
+    }
+
+    public L getLayout() {
+        return layout;
     }
 
     @Override
@@ -297,6 +312,31 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
             return null;
         }
         return varargsOf(new UDPoint(globals, getView().getContentOffset()));
+    }
+
+    @LuaApiUsed
+    public LuaValue[] pagerContentOffset(LuaValue[] p) {
+        if (p.length == 2) {
+            if (view instanceof IPager) {
+                ((IPager) view).pagerContentOffset(p[0].toFloat(), p[1].toFloat());
+            }
+            return null;
+        }
+        if (view instanceof IPager) {
+            float[] contentOffset = ((IPager) view).getPagerContentOffset();
+            return varargsOf(LuaNumber.valueOf(contentOffset[0]), LuaNumber.valueOf(contentOffset[1]));
+        }
+        return rNil();
+    }
+
+    @LuaApiUsed
+    public LuaValue[] i_bounces(LuaValue[] bounces) {
+        return null;
+    }
+
+    @LuaApiUsed
+    public LuaValue[] i_pagingEnabled(LuaValue[] bounces) {
+        return null;
     }
 //</editor-fold>
 
@@ -734,7 +774,7 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
     @Deprecated
     @LuaApiUsed
     public LuaValue[] addHeaderView(LuaValue[] values) {
-        ErrorUtils.debugLuaError("WaterfallView:addHeaderView method is deprecated, use WaterfallAdapter:initHeader and WaterfallAdapter:fillHeaderData methods instead!", getGlobals());
+        ErrorUtils.debugDeprecatedMethod("WaterfallView:addHeaderView method is deprecated, use WaterfallAdapter:initHeader and WaterfallAdapter:fillHeaderData methods instead!", getGlobals());
         UDView v = (UDView) values[0];
         if (adapter == null) {
             if (headerViews == null) {
@@ -750,7 +790,7 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
     @Deprecated
     @LuaApiUsed
     public LuaValue[] removeHeaderView(LuaValue[] values) {
-        ErrorUtils.debugLuaError("WaterfallView:removeHeaderView method is deprecated, use WaterfallAdapter:initHeader and WaterfallAdapter:fillHeaderData methods instead!", getGlobals());
+        ErrorUtils.debugDeprecatedMethod("WaterfallView:removeHeaderView method is deprecated, use WaterfallAdapter:initHeader and WaterfallAdapter:fillHeaderData methods instead!", getGlobals());
         if (headerViews != null) {
             headerViews.clear();
         }
@@ -868,6 +908,16 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
         }
 
         return LuaValue.rBoolean(getRecyclerView().isLayoutFrozen());
+    }
+
+    @LuaApiUsed
+    public LuaValue[] disallowFling(LuaValue[] values) {
+        if (values.length > 0) {
+            boolean enable = values[0].toBoolean();
+            ((MLSRecyclerView) getRecyclerView()).setDisallowFling(enable);
+            return null;
+        }
+        return LuaValue.rBoolean(((MLSRecyclerView) getRecyclerView()).isDisallowFling());
     }
 
     //</editor-fold>
@@ -1012,31 +1062,31 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
 
     @Override
     public LuaValue[] setMinWidth(LuaValue[] p) {//两端统一，不支持宽高限制
-        ErrorUtils.debugLuaError("Not support 'setMinWidth'  method!", getGlobals());
+        ErrorUtils.debugDeprecatedMethod("Not support 'setMinWidth'  method!", getGlobals());
         return super.setMinWidth(p);
     }
 
     @Override
     public LuaValue[] setMaxWidth(LuaValue[] pa) {
-        ErrorUtils.debugLuaError("Not support 'setMaxWidth'  method!", getGlobals());
+        ErrorUtils.debugDeprecatedMethod("Not support 'setMaxWidth'  method!", getGlobals());
         return super.setMaxWidth(pa);
     }
 
     @Override
     public LuaValue[] setMinHeight(LuaValue[] p) {
-        ErrorUtils.debugLuaError("Not support 'setMinHeight'  method!", getGlobals());
+        ErrorUtils.debugDeprecatedMethod("Not support 'setMinHeight'  method!", getGlobals());
         return super.setMinHeight(p);
     }
 
     @Override
     public LuaValue[] setMaxHeight(LuaValue[] pa) {
-        ErrorUtils.debugLuaError("Not support 'setMaxHeight'  method!", getGlobals());
+        ErrorUtils.debugDeprecatedMethod("Not support 'setMaxHeight'  method!", getGlobals());
         return super.setMaxHeight(pa);
     }
 
     @Override
     public LuaValue[] addView(LuaValue[] var) {
-        ErrorUtils.debugLuaError("not support addView", getGlobals());
+        ErrorUtils.debugDeprecatedMethod("not support addView", getGlobals());
         return super.addView(var);
     }
 

@@ -3,11 +3,11 @@
 CC      = gcc
 AR      = ar
 
-CFLAGS		:= -Wall -O2 -DLUA_COMPAT_ALL -DLUA_DL_DLOPEN -DLUA_USE_C89 -DLUA_COMPAT_5_1 -DLUA_COMPAT_5_2 -DLUA_USE_LINUX
+CFLAGS		:= -Wall -O2 -DLUA_COMPAT_ALL -DLUA_DL_DLOPEN -DLUA_USE_C89 -DLUA_COMPAT_5_1 -DLUA_COMPAT_5_2 -DLUA_USE_LINUX -DJAVA_ENV
 
 SOURCE_ROOT = $(shell pwd)
 
-INCLUDE_DIR := -I ${JNI_H} -I ${JNI_MD} -I ${SOURCE_ROOT}/../lua
+INCLUDE_DIR := -I $(JAVA_HOME)/include -I $(JAVA_HOME)/include/darwin -I ${SOURCE_ROOT}/../lua -I ${SOURCE_ROOT}/../japi
 
 APP_NAME=libmlsocket.a
 
@@ -40,4 +40,4 @@ $(APP_NAME): $(STATIC_OBJ_C)
 
 clean:
 	@rm -f *.o *.a
-.PHONY: clean	
+.PHONY: clean

@@ -1,2 +1,8 @@
 /build
 src/test/test.db
+src/main/libs/arm64-v8a/liblblur.so
+src/main/libs/arm64-v8a/libmlnbc.so
+src/main/libs/arm64-v8a/libmlnbridge.so
+src/main/libs/armeabi-v7a/liblblur.so
+src/main/libs/armeabi-v7a/libmlnbc.so
+src/main/libs/armeabi-v7a/libmlnbridge.so

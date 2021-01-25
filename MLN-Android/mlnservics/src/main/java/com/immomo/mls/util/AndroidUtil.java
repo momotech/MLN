@@ -400,6 +400,7 @@ public class AndroidUtil {
         }
     }
 
+    @Deprecated
     public static void setStatusBarColor(Activity activity, int color) {
         Window window = activity.getWindow();
         if (window == null)
@@ -415,6 +416,39 @@ public class AndroidUtil {
                             View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
                 }
             }
+        }
+    }
+
+    public static int getStatusColor(Activity activity) {
+        Window window = activity.getWindow();
+        if (window == null)
+            return -1;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            return window.getStatusBarColor();
+        }
+        return -1;
+    }
+
+    public static void setStatusColor(Activity activity, int color) {
+        Window window = activity.getWindow();
+        if (window == null)
+            return;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            window.setStatusBarColor(color);
+        }
+    }
+
+    public static void setTranslucent(Activity activity) {
+        Window window = activity.getWindow();
+        if (window == null)
+            return;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            window.getDecorView().setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
         }
     }
 

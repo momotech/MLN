@@ -5,7 +5,7 @@
 //  Created by MOMO on 2020/5/8.
 //
 
-#import "MLNKitInstance.h"
+#import <MLN/MLNKitInstance.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

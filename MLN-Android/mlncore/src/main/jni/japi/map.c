@@ -17,7 +17,7 @@
 
 typedef struct _map_entry
 {
-    int hash;                   /*key的hash值*/
+    unsigned int hash;          /*key的hash值*/
     void * key;                 /*key 默认为字符串*/
     void * value;               /*value*/
     struct _map_entry * next;   /*hash冲突时使用链表解决*/
@@ -36,6 +36,7 @@ struct map_
     map_free_kv f_free_v;   /*释放value的函数*/
     int _c;                 /*错误代码*/
     map_alloc f_alloc;      /*内存申请或释放函数*/
+    void *ud;               /*用户自定义数据*/
 #if defined(J_API_INFO)
     sizeof_kv f_sizeof_k;   /*计算key内存使用*/
     sizeof_kv f_sizeof_v;   /*计算value内存使用*/
@@ -122,6 +123,15 @@ void map_set_free(Map * map, map_free_kv fk, map_free_kv fv) {
     map->f_free_v = fv;
 }
 
+void map_set_ud(Map *map, void *ud) {
+    if (map_error(map)) return;
+    map->ud = ud;
+}
+
+void *map_get_ud(Map *map) {
+    return map->ud;
+}
+
 void map_free(Map * map) {
     map_free_kv fk = map->f_free_k;
     map_free_kv fv = map->f_free_v;
@@ -147,6 +157,24 @@ void map_free(Map * map) {
     map->_mem = 0;
 #endif
     map->f_alloc(map, sizeof(Map), 0);
+}
+
+void map_remove_all(Map *map) {
+    map_free_kv fk = map->f_free_k;
+    map_free_kv fv = map->f_free_v;
+    size_t i;
+    for (i = 0; i < map->_len; i++) {
+        _Entry* entry = map->table[i];
+        if (!entry) continue;
+        do {
+            map_free_entry(fk, fv, entry);
+            _Entry * temp = entry->next;
+            map->f_alloc(entry, EntrySize, 0);
+            entry = temp;
+        } while (entry);
+        map->table[i] = NULL;
+    }
+    map->size = 0;
 }
 
 void * map_put(Map * map, void * key, void * value) {
@@ -313,13 +341,7 @@ static unsigned int str_hash(const void * str) {
 static int str_equals(const void * a, const void * b) {
     const char * ba = (const char *) a;
     const char * bb = (const char *) b;
-    while(*ba && *bb) {
-        if (*ba != *bb) return 0;
-        ba++;
-        bb++;
-    }
-    if (*ba != *bb) return 0;
-    return 1;
+    return strcmp(ba, bb) == 0;
 }
 
 static void s_free(void * p) {
@@ -384,6 +406,133 @@ static void resize(Map *map) {
     map->_mem += EntryPSize * (new_len - old_len);
     #endif
 }
+
+//<editor-fold desc="to string">
+#define _f_error (char) 1
+#define _f_malloc (char) 2
+#define _f_finf (char) 4
+
+#define _is_error(d) (((d)->flag) & _f_error)
+#define _set_error(d) (d)->flag = (((d)->flag) | _f_error)
+
+#define _is_malloc(d) (((d)->flag) & _f_malloc)
+#define _set_malloc(d) (d)->flag = (((d)->flag) | _f_malloc)
+
+#define _is_in_first(d) (((d)->flag) & _f_finf)
+#define _set_not_in_first(d) (d)->flag = (((d)->flag) & ~(_f_finf))
+
+typedef struct _data {
+    char* str;
+    size_t len;
+    size_t i;
+    /// 使用3位
+    /// * * * *
+    /// *     1   是否有错误
+    /// *   1     str是否是堆内存
+    /// * 1       map是否是第一个数据
+    char flag;
+    map_value_to_string k2s;
+    map_value_to_string v2s;
+    map_alloc allocFun;
+} _data;
+
+/**
+ * 增加字符串的长度
+ * @return 0：成功
+ */
+int _increase_str(_data *d, size_t min) {
+    map_alloc m_malloc = d->allocFun;
+    if (d->len - d->i < min) {
+        /// 字符串放不下的情况
+        size_t newlen = (size_t) (d->len * 1.75f);
+        size_t needlen = min + d->i;
+        newlen = newlen < needlen ? needlen : newlen;
+        if (_is_malloc(d)) {
+            d->str = m_malloc(d->str, d->len * sizeof(char), newlen);
+            memset(d->str + d->len, 0, newlen - d->len);
+        } else {
+            char *new_str = m_malloc(NULL, 0, newlen);
+            if (!new_str)
+                return 1;
+            memcpy(new_str, d->str, d->len);
+            d->str = new_str;
+        }
+        if (!d->str) {
+            //有错误
+            return 1;
+        }
+        d->len = newlen;
+        _set_malloc(d);
+    }
+    return 0;
+}
+
+int _map_look_to_json(const void *key, const void *value, void *ud) {
+    _data *d = (_data *)ud;
+    int needFreeKeyStr;
+    int needFreeValueStr;
+    char *keystr = d->k2s(key, &needFreeKeyStr);
+    char *valuestr = d->v2s(value, &needFreeValueStr);
+    size_t sl = strlen(keystr);
+    size_t vl = strlen(valuestr);
+    int isFirstData = _is_in_first(d);
+    if (_increase_str(d, vl + sl + (isFirstData ? 3 : 4))) { //"key": 多"":三个字符，第二个数据在前面多一个','
+        if (needFreeKeyStr)
+            d->allocFun(keystr, (sl + 1) * sizeof(char), 0);
+        if (needFreeValueStr)
+            d->allocFun(valuestr, (vl + 1) * sizeof(char), 0);
+        _set_error(d);
+        return 1;
+    }
+    if (!isFirstData)
+        d->str[d->i++] = ',';
+    else
+        _set_not_in_first(d);
+//    LOGI("%s 开始, \n\tstr:%s\n\tlen:%d\n\ti:%d", clz, d->str, d->len, d->i);
+    d->str[d->i++] = '"';
+    memcpy(&d->str[d->i], keystr, sl * sizeof(char));
+    d->i += sl;
+    d->str[d->i++] = '"';
+    d->str[d->i++] = ':';
+    /// "key":  完成
+    memcpy(&d->str[d->i], valuestr, vl * sizeof(char));
+    d->i += vl;
+    if (needFreeKeyStr)
+        d->allocFun(keystr, (sl + 1) * sizeof(char), 0);
+    if (needFreeValueStr)
+        d->allocFun(valuestr, (vl + 1) * sizeof(char), 0);
+    return 0;
+}
+
+static char *__default_to_string(const void *v, int *needFree) {
+    if (needFree) *needFree = 0;
+    return (char *)v;
+}
+
+char *map_to_string(Map *map, map_value_to_string k2s, map_value_to_string v2s) {
+    if (map_error(map)) return NULL;
+    static const size_t len = 100;
+    char str[len] = {'{', '\0'};
+    if (!k2s)
+        k2s = __default_to_string;
+    if (!v2s)
+        v2s = __default_to_string;
+    _data d = {str, len, 1,   _f_finf, k2s, v2s, map->f_alloc};
+    map_traverse(map, _map_look_to_json, &d);
+    if (_is_error(&d) || _increase_str(&d, d.len + 2))
+        return NULL;
+    d.str[d.i++] = '}';
+    d.str[d.i] = '\0';
+    char *ret = map->f_alloc(NULL, 0, (strlen(d.str) + 1) * sizeof(char));
+    if (ret) {
+        strcpy(ret, d.str);
+    }
+    if (_is_malloc(&d)) {
+        map->f_alloc(d.str, d.len * sizeof(char), 0);
+    }
+    return ret;
+}
+//</editor-fold>
 
 #if defined(J_API_INFO)
 size_t map_mem(Map * map) {

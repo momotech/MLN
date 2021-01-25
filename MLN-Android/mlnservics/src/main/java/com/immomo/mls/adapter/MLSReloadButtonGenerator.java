@@ -131,7 +131,7 @@ public class MLSReloadButtonGenerator implements View.OnClickListener {
         }
 
         if (!isHotReloadPage)
-        log = logView();
+            log = logView();
         if (log != null) {
             log.setOnClickListener(this);
             root.addView(log);

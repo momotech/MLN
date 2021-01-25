@@ -474,8 +474,7 @@ static int global_connect(lua_State *L) {
 
 #include <pthread.h>
 #include <poll.h>
-#include "isolate.h"
-
+extern void* mln_thread_sync_to_main(lua_State *L, void*(*callback)(void *));
 /*-------------------------------------------------------------------------*\
 * Poll socket in background thread
 \*-------------------------------------------------------------------------*/
@@ -528,7 +527,7 @@ static void* mln_handle_socket_command_message(void *data) {
 static void* mln_poll_socket_func(void *ctx) {
     if (!ctx) return NULL;
     const char *tname = "com.mln.poll.socket.thread";
-#if defined(JAVA_ENV)
+#if defined(ANDROID)
     pthread_t pt = pthread_self();
     pthread_setname_np(pt, tname);
 #else

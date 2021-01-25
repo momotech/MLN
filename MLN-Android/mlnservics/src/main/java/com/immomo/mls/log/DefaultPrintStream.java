@@ -18,7 +18,7 @@ import java.io.PrintStream;
 /**
  * Created by XiongFangyu on 2018/9/6.
  */
-public class DefaultPrintStream extends PrintStream {
+public class DefaultPrintStream extends PrintStream implements ErrorPrintStream {
     private final IPrinter printer;
     public DefaultPrintStream(@NonNull IPrinter out) {
         super(new FileOutputStream(FileDescriptor.out));
@@ -63,6 +63,19 @@ public class DefaultPrintStream extends PrintStream {
                 @Override
                 public void run() {
                     printer.error(s);
+                }
+            });
+        }
+    }
+
+    public void error(final String msg, final ErrorType errorType) {
+        if (MainThreadExecutor.isMainThread()) {
+            printer.error(msg, errorType);
+        } else {
+            MainThreadExecutor.post(new Runnable() {
+                @Override
+                public void run() {
+                    printer.error(msg, errorType);
                 }
             });
         }

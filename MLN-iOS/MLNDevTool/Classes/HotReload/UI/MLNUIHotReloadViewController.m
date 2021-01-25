@@ -9,9 +9,9 @@
 #import "MLNHotReload.h"
 #import "PBCommandBuilder.h"
 #import "MLNDebugPrintFunction.h"
-#import "MLNUIDataBinding.h"
-#import "MLNUIDataBindingCBridge.h"
-#import "MLNUIKit.h"
+#import <ArgoUI/MLNUIDataBinding.h>
+#import <ArgoUI/MLNUIDataBindingCBridge.h>
+#import <ArgoUI/MLNUIKit.h>
 
 @interface MLNUIHotReloadViewController ()
 // NavigationBar

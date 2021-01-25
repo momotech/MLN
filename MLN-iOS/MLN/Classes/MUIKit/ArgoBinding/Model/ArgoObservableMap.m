@@ -12,6 +12,7 @@
 #import "ArgoLuaCacheAdapter.h"
 #import "MLNUILuaTable.h"
 #import "NSObject+MLNUICore.h"
+#import "MLNUIHeader.h"
 
 @interface ArgoObservableMap()
 @property (nonatomic, strong) NSMutableDictionary *proxy;
@@ -22,6 +23,7 @@
 @property (nonatomic, strong) ArgoLuaCacheAdapter *cacheAdapter;
 //@property (nonatomic, copy, readonly) ArgoObservableMap *(^set)(NSString *key, NSObject *value);
 //@property (nonatomic, copy, readonly) NSObject *(^get)(NSString *key);
+@property (nonatomic, strong) NSMutableDictionary <NSString *, NSNumber *> *callcountMap;
 @end
 
 @implementation ArgoObservableMap
@@ -40,6 +42,10 @@
     [self _putValue:value forKey:key context:ArgoWatchContext_Lua notify:NO];
 }
 
+- (void)native_rawPutValue:(NSObject *)value forKey:(NSString *)key {
+    [self _putValue:value forKey:key context:ArgoWatchContext_Native notify:NO];
+}
+
 - (void)native_putValue:(NSObject *)value forKey:(NSString *)key {
     [self _putValue:value forKey:key context:ArgoWatchContext_Native notify:YES];
 }
@@ -51,6 +57,11 @@
 
 - (void)_putValue:(NSObject *)value forKey:(NSString *)key context:(ArgoWatchContext)context notify:(BOOL)notify{
     if(!key) return;
+#if DEBUG
+    if ([value isKindOfClass:[NSDictionary class]] && ![value isKindOfClass:[ArgoObservableMap class]]) {
+        NSLog(@"[ArgoError] value should be kindOfClass ArgoObservableMap");
+    }
+#endif
     NSObject *old = [self.proxy objectForKey:key];
     if (value) {
         [self.proxy setObject:value forKey:key];
@@ -59,6 +70,7 @@
     }
     
     if (notify) {
+        NSNumber *count = [self increaseCallCountForKey:key];
         //lua table cache
         [self.cacheAdapter putValue:value forKey:key];
         
@@ -71,10 +83,32 @@
             [change setObject:old forKey:NSKeyValueChangeOldKey];
         }
         [change setObject:@(context) forKey:kArgoListenerContext];
+        [change setObject:count forKey:kArgoListenerCallCountKey];
         
         [self.argoChangedKeysMap setObject:change forKey:key];
         [self notifyArgoListenerKey:key Change:change];
+        [self decreaseCallCountForKey:key];
     }
+}
+
+- (NSNumber *)increaseCallCountForKey:(NSString *)key {
+    NSNumber *count = [self.callcountMap objectForKey:key];
+    if (!count) {
+        count = @0;
+    }
+    count = @(count.unsignedIntegerValue + 1);
+    [self.callcountMap setObject:count forKey:key];
+    return count;
+}
+
+- (NSNumber *)decreaseCallCountForKey:(NSString *)key {
+    NSNumber *count = [self.callcountMap objectForKey:key];
+    if (!count) {
+        count = @1;
+    }
+    count = @(count.unsignedIntegerValue - 1);
+    [self.callcountMap setObject:count forKey:key];
+    return count;
 }
 
 - (void)addLuaTabe:(MLNUILuaTable *)table {
@@ -87,9 +121,17 @@
 
 - (ArgoWatchWrapper * _Nonnull (^)(NSString * _Nonnull))watch {
     @weakify(self);
+    return ^ArgoWatchWrapper *(NSString *key) {
+        @strongify(self);
+        return [ArgoWatchWrapper wrapperWithKeyPath:key observedObject:self watchValue:NO];
+    };
+}
+
+- (ArgoWatchWrapper * _Nonnull (^)(NSString * _Nonnull))watchValue {
+    @weakify(self);
     return ^ArgoWatchWrapper *(NSString *keyPath) {
         @strongify(self);
-        return [ArgoWatchWrapper wrapperWithKeyPath:keyPath observedObject:self];
+        return [ArgoWatchWrapper wrapperWithKeyPath:keyPath observedObject:self watchValue:YES];
     };
 }
 
@@ -118,12 +160,19 @@
     return _argoListeners;
 }
 
-- (NSMutableDictionary *)argoChangedKeysMap {
-    if (!_argoChangedKeysMap) {
-        _argoChangedKeysMap = [NSMutableDictionary dictionary];
+- (NSMutableDictionary<NSString *,NSNumber *> *)callcountMap {
+    if (!_callcountMap) {
+        _callcountMap = [NSMutableDictionary dictionary];
     }
-    return _argoChangedKeysMap;
+    return _callcountMap;
 }
+
+//- (NSMutableDictionary *)argoChangedKeysMap {
+//    if (!_argoChangedKeysMap) {
+//        _argoChangedKeysMap = [NSMutableDictionary dictionary];
+//    }
+//    return _argoChangedKeysMap;
+//}
 
 - (ArgoLuaCacheAdapter *)cacheAdapter {
     if (!_cacheAdapter) {

@@ -55,6 +55,7 @@ public class Alert {
     private byte state;
 
     private AlertDialog mAlertDialog;
+    private Context context;
 
     public Alert(Globals g, LuaValue[] init) {
         globals = g;
@@ -64,6 +65,9 @@ public class Alert {
         this.globals = globals;
     }
 
+    public Alert(Context context) {
+        this.context = context;
+    }
 
     //<editor-fold desc="API">
     //<editor-fold desc="Property">
@@ -123,9 +127,11 @@ public class Alert {
 
     @LuaBridge
     public void show() {
-
-        LuaViewManager m = (LuaViewManager) globals.getJavaUserdata();
-        Context context = (m != null ? m.context : null);
+        Context context = this.context;
+        if (context == null) {
+            LuaViewManager m = (LuaViewManager) globals.getJavaUserdata();
+            context = (m != null ? m.context : null);
+        }
 
         if (context == null)
             return;

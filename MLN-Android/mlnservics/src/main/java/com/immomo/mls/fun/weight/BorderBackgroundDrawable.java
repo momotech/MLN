@@ -130,15 +130,17 @@ public class BorderBackgroundDrawable extends BorderDrawable implements IBorderR
     protected void updatePath(int w, int h) {
         super.updatePath(w, h);
         roundPath.reset();
-        if (w == 0 || h == 0)
+        if (w == 0 || h == 0) {
+            pathRect.set(0, 0, w, h);
             return;
-        updatePaint();
+        }
         pathRect.set(0, 0, w, h);
+        updatePaint();
 
         if (hasRadii) {
             for (int i = 0; i < radii.length; i++) {
                 float radiu = radii[i];
-                backRadii[i] = radiu > 0 ? radiu  : 0;
+                backRadii[i] = radiu > 0 ? radiu : 0;
             }
             roundPath.addRoundRect(pathRect, backRadii, Path.Direction.CW);
         }

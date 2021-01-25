@@ -8,6 +8,7 @@
 #import "MLNUIView.h"
 #import "MLNUIViewExporterMacro.h"
 #import "UIView+MLNUIKit.h"
+#import "MLNUIGestureConflictManager.h"
 
 @implementation MLNUIView
 
@@ -40,6 +41,11 @@
     return YES;
 }
 
+- (BOOL)luaui_canPinch
+{
+    return YES;
+}
+
 #pragma mark - Export For Lua
 
 LUAUI_EXPORT_VIEW_BEGIN(MLNUIView)
@@ -57,7 +63,6 @@ LUAUI_EXPORT_VIEW_PROPERTY(wrap, "setLuaui_wrap:","luaui_wrap", MLNUIView)
 
 LUAUI_EXPORT_VIEW_PROPERTY(width, "setLuaui_width:","luaui_width", MLNUIView)
 LUAUI_EXPORT_VIEW_METHOD(widthAuto, "setLuaui_widthAuto", MLNUIView)
-LUAUI_EXPORT_VIEW_PROPERTY(viewWidth, "setLuaui_viewWidth:", "luaui_viewWidth", MLNUIView) // 业务不可使用，仅供LuaSDK使用
 LUAUI_EXPORT_VIEW_PROPERTY(minWidth, "setLuaui_minWidth:","luaui_minWidth", MLNUIView)
 LUAUI_EXPORT_VIEW_PROPERTY(maxWidth, "setLuaui_maxWidth:","luaui_maxWidth", MLNUIView)
 LUAUI_EXPORT_VIEW_PROPERTY(widthPercent, "setLuaui_widthPercent:","luaui_widthPercent", MLNUIView)
@@ -122,6 +127,9 @@ LUAUI_EXPORT_VIEW_METHOD(setGradientColorWithDirection, "luaui_setGradientColor:
 // user interaction
 LUAUI_EXPORT_VIEW_PROPERTY(enabled, "setLuaui_enable:","luaui_enable", MLNUIView)
 LUAUI_EXPORT_VIEW_METHOD(onClick, "luaui_addClick:",MLNUIView)
+LUAUI_EXPORT_VIEW_METHOD(scaleBegin, "argo_addScaleBeginCallback:",MLNUIView)
+LUAUI_EXPORT_VIEW_METHOD(scaling, "argo_addScalingCallback:",MLNUIView)
+LUAUI_EXPORT_VIEW_METHOD(scaleEnd, "argo_addScaleEndCallback:",MLNUIView)
 LUAUI_EXPORT_VIEW_METHOD(onLongPress, "luaui_addLongPress:",MLNUIView)
 LUAUI_EXPORT_VIEW_METHOD(onTouch, "luaui_addTouch:",MLNUIView)
 LUAUI_EXPORT_VIEW_METHOD(hasFocus, "isFirstResponder",MLNUIView)
@@ -136,6 +144,8 @@ LUAUI_EXPORT_VIEW_METHOD(touchBeginExtension, "luaui_setTouchesBeganExtensionCal
 LUAUI_EXPORT_VIEW_METHOD(touchMoveExtension, "luaui_setTouchesMovedExtensionCallback:",MLNUIView)
 LUAUI_EXPORT_VIEW_METHOD(touchEndExtension, "luaui_setTouchesEndedExtensionCallback:",MLNUIView)
 LUAUI_EXPORT_VIEW_METHOD(touchCancelExtension, "luaui_setTouchesCancelledExtensionCallback:",MLNUIView)
+// responder chain
+LUAUI_EXPORT_VIEW_PROPERTY(notDispatch, "setArgo_notDispatch:", "argo_notDispatch",MLNUIView)
 // transform
 LUAUI_EXPORT_VIEW_METHOD(anchorPoint, "luaui_anchorPoint:y:", MLNUIView)
 LUAUI_EXPORT_VIEW_METHOD(transform, "luaui_transform:adding:", MLNUIView)

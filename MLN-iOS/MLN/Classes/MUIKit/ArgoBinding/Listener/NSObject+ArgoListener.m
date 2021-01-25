@@ -20,17 +20,19 @@ NSString *const kArgoListenerChangedKey = @"argo_changeed_key";
 NSString *const kArgoListenerContext = @"argo_context";
 NSString *const kArgoListenerWrapper = @"argo_wrapper";
 //NSString const *const kArgoListener2DArray = @"argo_2d_array";
+NSString *const kArgoListenerCallCountKey = @"argo_call_count";
 
 NSString *const kArgoConstString_Dot = @".";
 
 ArgoListenerFilter kArgoWatchKeyListenerFilter = ^BOOL(ArgoWatchContext context, NSDictionary *change) {
-//    NSString *changedKey = [change objectForKey:kArgoListenerChangedKey];
     ArgoListenerWrapper *wrap = [change objectForKey:kArgoListenerWrapper];
     if (!wrap.keyPath || !wrap.key) {
         return YES;
     }
-    BOOL r = [wrap.keyPath hasSuffix:wrap.key];
-    return r;
+    if ([wrap.keyPath isEqualToString:kArgoListenerArrayPlaceHolder]) { // TODO：数组的变化也会被watch到？
+        return YES;
+    }
+    return [wrap.keyPath hasSuffix:wrap.key];
 };
 
 //只用于 ArgoObservableMap & ArgoObservableArray
@@ -158,12 +160,13 @@ ArgoListenerFilter kArgoWatchKeyListenerFilter = ^BOOL(ArgoWatchContext context,
             NSMutableDictionary *dic = [self argoChangedKeysMap];
             NSMutableDictionary *change = [dic objectForKey:wrapper.key];
             if (change) {
-                [dic removeObjectForKey:wrapper.key];
                 [change setObject:wrapper.key forKey:kArgoListenerChangedKey];
                 [change setObject:wrapper forKey:kArgoListenerWrapper];
                 //TODO: 是否传递新值?
 //                [change setObject:[self argoGetForKeyPath:wrapper.key] forKey:NSKeyValueChangeNewKey];
-                [wrapper callWithChange:change];
+                if([wrapper callWithChange:change]) {
+                    [dic removeObjectForKey:wrapper.key];
+                }
 //                [self handleNotifyMapWithWrapper:wrapper change:change.mutableCopy];
             }
         }

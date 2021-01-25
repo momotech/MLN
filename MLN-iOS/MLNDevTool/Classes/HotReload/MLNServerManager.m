@@ -10,7 +10,7 @@
 #import "LNFileManager.h"
 #import "MLNServer.h"
 #import "PBCommandBuilder.h"
-#import "MLNNetworkReachabilityManager.h"
+#import <MLN/MLNNetworkReachabilityManager.h>
 
 #define kConnectErrorPortBeingUsedCode 48
 #define kConnectErrorNetUnConnect -1000

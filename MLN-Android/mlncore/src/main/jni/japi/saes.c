@@ -42,6 +42,14 @@ void decrypt(char * data, SIZE len)
     }
 }
 
+void decrypt_cpy(char *dest, const char *src, SIZE len) {
+    SIZE i;
+    for (i = 0; i < len; i++)
+    {
+        dest[i] = decryptc(src[i]);
+    }
+}
+
 /**
  * 低位加密后放到高位
  */

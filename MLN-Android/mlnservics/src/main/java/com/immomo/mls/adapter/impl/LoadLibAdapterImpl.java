@@ -8,6 +8,7 @@
 package com.immomo.mls.adapter.impl;
 
 import com.immomo.mls.adapter.ILoadLibAdapter;
+import com.immomo.mls.util.LogUtil;
 
 /**
  * Created by Xiong.Fangyu on 2019-12-23
@@ -35,7 +36,7 @@ public class LoadLibAdapterImpl implements ILoadLibAdapter {
             System.loadLibrary(libName);
             return true;
         } catch (Throwable e) {
-            e.printStackTrace();
+            LogUtil.e(e, "load " + libName + " failed");
         }
         return false;
     }

@@ -7,7 +7,7 @@
 
 #import "MLNUILoadTimeStatistics.h"
 #import "MLNUILogViewer.h"
-#import "MLNUIExtScope.h"
+#import <ArgoUI/MLNUIExtScope.h>
 
 @interface _MLNUILOadTimeModel : NSObject
 @property (nonatomic, strong) NSString *key;

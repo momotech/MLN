@@ -62,17 +62,4 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-@interface UIView (MLNUIFrame)
-
-@property (nonatomic, assign) CGFloat mlnuiAnimationX;
-@property (nonatomic, assign) CGFloat mlnuiAnimationY;
-@property (nonatomic, assign) CGFloat mlnuiAnimationWidth;
-@property (nonatomic, assign) CGFloat mlnuiAnimationHeight;
-@property (nonatomic, assign) CGPoint mlnuiAnimationPosition; // @Note 相对于原点而不是锚点
-@property (nonatomic, assign) CGRect mlnuiAnimationFrame;
-
-@property (nonatomic, assign) CGRect mlnuiLayoutFrame;
-
-@end
-
 NS_ASSUME_NONNULL_END

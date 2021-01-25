@@ -7,11 +7,13 @@
   */
 package com.immomo.mls.fun.weight;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.text.StaticLayout;
+import android.widget.TextView;
 
 import com.immomo.mls.weight.ForegroundDelegate;
 import com.immomo.mls.weight.IForeground;
@@ -19,7 +21,8 @@ import com.immomo.mls.weight.IForeground;
 /**
  * TextView can se foreground
  */
-public class ForegroundTextView extends androidx.appcompat.widget.AppCompatTextView implements IForeground {
+@SuppressLint("AppCompatCustomView")
+public class ForegroundTextView extends TextView implements IForeground {
 
     private ForegroundDelegate mForegroundDelegate;
     private boolean enableForeground;

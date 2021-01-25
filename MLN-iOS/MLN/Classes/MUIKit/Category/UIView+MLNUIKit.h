@@ -24,6 +24,12 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) CGRect luaui_frame;
 @property (nonatomic, assign) BOOL luaui_enable;
 
+#pragma mark - Responder Chain
+@property (nonatomic, assign) BOOL argo_notDispatch;
+
+/// 用于接收事件响应的view, 通常情况下即为self. 但像 MLNUIScrollView、MLNUITableView等，则为其内部持有的 innerScrollView、innerTableView.
+@property (nonatomic, strong, readonly) UIView *actualView;
+
 - (CGPoint)luaui_convertRelativePointToView:(UIView *)view point:(CGPoint)point;
 
 #pragma mark - TouchEvent
@@ -37,7 +43,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) MLNUIBlock *mlnui_touchesCancelledExtensionCallback;
 
 #pragma mark - render
-@property (nonatomic, assign, readonly) BOOL mlnui_needRender;
+@property (nonatomic, assign) BOOL mlnui_needRender;
 @property (nonatomic, strong, readonly) MLNUIRenderContext *mlnui_renderContext;
 
 #pragma mark - Gesture
@@ -56,6 +62,10 @@ NS_ASSUME_NONNULL_BEGIN
  Return YES if it can respond to long press events. Default is NO
  */
 - (BOOL)luaui_canLongPress;
+/**
+ Return YES if it can respond to pinch events. Default is NO
+ */
+- (BOOL)luaui_canPinch;
 
 - (void)mlnui_addTouchBlock:(MLNUITouchCallback)block;
 - (void)mlnui_removeTouchBlock:(MLNUITouchCallback)block;
@@ -80,7 +90,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-@interface UIView(Snapshot)
+@interface UIView(MLNUISnapshot)
 
 /**
  对当前视图截图，并将图片按指定文件名称存贮。
@@ -92,7 +102,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-@interface UIView (Layout)
+@interface UIView (MLNUILayout)
 
 // override and return YES, if is container view.
 @property (nonatomic, assign, readonly) BOOL luaui_isContainer;
@@ -102,7 +112,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  很多场景下，如果你要做的一些操作，需要依赖于MLNUI布局之后，请使用以下方法
  */
-@interface UIView (LazyTask)
+@interface UIView (MLNUILazyTask)
 
 /**
  压栈自动布局完成以后执行的任务

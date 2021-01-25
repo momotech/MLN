@@ -8,7 +8,7 @@
 #import "UIView+MLNUIKit.h"
 #import "UIView+MLNUILayout.h"
 #import "MLNUIKitHeader.h"
-#import <objc/runtime.h>
+#import <objc/message.h>
 #import "MLNUIViewConst.h"
 #import "MLNUIRenderContext.h"
 #import "MLNUIBlock.h"
@@ -16,6 +16,11 @@
 #import "MLNUISnapshotManager.h"
 #import "MLNUICanvasAnimation.h"
 #import "MLNUIKitInstanceHandlersManager.h"
+#import "MLNUIGestureConflictManager.h"
+#import "MLNUITapGestureRecognizer.h"
+#import "MLNUILongPressGestureRecognizer.h"
+#import "NSObject+MLNUISwizzle.h"
+#import "MLNUIStack.h"
 
 #define kMLNUIDefaultRippleColor [UIColor colorWithRed:247/255.0 green:246/255.0 blue:244/255.0 alpha:1.0]
 
@@ -66,6 +71,17 @@ static const void *kLuaKeyboardDismiss = &kLuaKeyboardDismiss;
         Method origMethod5 = class_getInstanceMethod([self class], @selector(removeFromSuperview));
         Method swizzledMethod5 = class_getInstanceMethod([self class], @selector(mlnui_in_removeFromSuperview));
         method_exchangeImplementations(origMethod5, swizzledMethod5);
+        
+        SEL origin = @selector(hitTest:withEvent:);
+        SEL swizzle = sel_getUid("argo_hitTest:withEvent:");
+        [self mlnui_swizzleInstanceSelector:origin withNewSelector:swizzle newImpBlock:^UIView *(UIView *receiver, CGPoint point, UIEvent *event) {
+            UIView *view = ((id(*)(id, SEL, CGPoint, id))objc_msgSend)(receiver, swizzle, point, event);
+            if ([view isKindOfClass:[MLNUIStack class]] &&
+                [(MLNUIStack *)view argo_eventCross]) {
+                return nil;
+            }
+            return view;
+        } addOriginImpBlockIfNeeded:^{}];
     });
 }
 
@@ -110,8 +126,12 @@ static const void *kLuaKeyboardDismiss = &kLuaKeyboardDismiss;
         UITouch *touch = [touches anyObject];
         CGPoint screenLocation = [touch locationInView:self.window];
         CGPoint pageLocation = [touch locationInView:self];
-        NSDictionary *touchDict = [self touchResultWithScreenLocation:screenLocation pageLocation:pageLocation target:self];
-        [self.mlnui_touchesBeganExtensionCallback addObjArgument:[NSMutableDictionary dictionaryWithDictionary:touchDict]];
+        [self.mlnui_touchesBeganExtensionCallback addFloatArgument:pageLocation.x];
+        [self.mlnui_touchesBeganExtensionCallback addFloatArgument:pageLocation.y];
+        [self.mlnui_touchesBeganExtensionCallback addFloatArgument:screenLocation.x];
+        [self.mlnui_touchesBeganExtensionCallback addFloatArgument:screenLocation.y];
+        [self.mlnui_touchesBeganExtensionCallback addObjArgument:self];
+        [self.mlnui_touchesBeganExtensionCallback addDoubleArgument:[NSDate date].timeIntervalSince1970];
         [self.mlnui_touchesBeganExtensionCallback callIfCan];
     }
 }
@@ -137,8 +157,12 @@ static const void *kLuaKeyboardDismiss = &kLuaKeyboardDismiss;
         UITouch *touch = [touches anyObject];
         CGPoint screenLocation = [touch locationInView:self.window];
         CGPoint pageLocation = [touch locationInView:self];
-        NSDictionary *touchDict = [self touchResultWithScreenLocation:screenLocation pageLocation:pageLocation target:self];
-        [self.mlnui_touchesMovedExtensionCallback addObjArgument:touchDict.mutableCopy];
+        [self.mlnui_touchesMovedExtensionCallback addFloatArgument:pageLocation.x];
+        [self.mlnui_touchesMovedExtensionCallback addFloatArgument:pageLocation.y];
+        [self.mlnui_touchesMovedExtensionCallback addFloatArgument:screenLocation.x];
+        [self.mlnui_touchesMovedExtensionCallback addFloatArgument:screenLocation.y];
+        [self.mlnui_touchesMovedExtensionCallback addObjArgument:self];
+        [self.mlnui_touchesMovedExtensionCallback addDoubleArgument:[NSDate date].timeIntervalSince1970];
         [self.mlnui_touchesMovedExtensionCallback callIfCan];
     }
 }
@@ -172,8 +196,12 @@ static const void *kLuaKeyboardDismiss = &kLuaKeyboardDismiss;
         UITouch *touch = [touches anyObject];
         CGPoint screenLocation = [touch locationInView:self.window];
         CGPoint pageLocation = [touch locationInView:self];
-        NSDictionary *touchDict = [self touchResultWithScreenLocation:screenLocation pageLocation:pageLocation target:self];
-        [self.mlnui_touchesEndedExtensionCallback addObjArgument:touchDict.mutableCopy];
+        [self.mlnui_touchesEndedExtensionCallback addFloatArgument:pageLocation.x];
+        [self.mlnui_touchesEndedExtensionCallback addFloatArgument:pageLocation.y];
+        [self.mlnui_touchesEndedExtensionCallback addFloatArgument:screenLocation.x];
+        [self.mlnui_touchesEndedExtensionCallback addFloatArgument:screenLocation.y];
+        [self.mlnui_touchesEndedExtensionCallback addObjArgument:self];
+        [self.mlnui_touchesEndedExtensionCallback addDoubleArgument:[NSDate date].timeIntervalSince1970];
         [self.mlnui_touchesEndedExtensionCallback callIfCan];
     }
 }
@@ -206,8 +234,12 @@ static const void *kLuaKeyboardDismiss = &kLuaKeyboardDismiss;
         UITouch *touch = [touches anyObject];
         CGPoint screenLocation = [touch locationInView:self.window];
         CGPoint pageLocation = [touch locationInView:self];
-        NSDictionary *touchDict = [self touchResultWithScreenLocation:screenLocation pageLocation:pageLocation target:self];
-        [self.mlnui_touchesCancelledExtensionCallback addObjArgument:touchDict.mutableCopy];
+        [self.mlnui_touchesCancelledExtensionCallback addFloatArgument:pageLocation.x];
+        [self.mlnui_touchesCancelledExtensionCallback addFloatArgument:pageLocation.y];
+        [self.mlnui_touchesCancelledExtensionCallback addFloatArgument:screenLocation.x];
+        [self.mlnui_touchesCancelledExtensionCallback addFloatArgument:screenLocation.y];
+        [self.mlnui_touchesCancelledExtensionCallback addObjArgument:self];
+        [self.mlnui_touchesCancelledExtensionCallback addDoubleArgument:[NSDate date].timeIntervalSince1970];
         [self.mlnui_touchesCancelledExtensionCallback callIfCan];
     }
 }
@@ -575,6 +607,24 @@ static const void *kLuaRenderContext = &kLuaRenderContext;
     self.mlnui_touchesCancelledExtensionCallback = callback;
 }
 
+#pragma mark - Responder Chain
+
+- (void)setArgo_notDispatch:(BOOL)notDispatch {
+    if (self.argo_notDispatch == notDispatch) {
+        return;
+    }
+    objc_setAssociatedObject(self, @selector(argo_notDispatch), @(notDispatch), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    [MLNUIGestureConflictManager disableSubviewsInteraction:notDispatch forView:self];
+}
+
+- (BOOL)argo_notDispatch {
+    return [objc_getAssociatedObject(self, _cmd) boolValue];
+}
+
+- (UIView *)actualView {
+    return self;
+}
+
 #pragma mark - Gesture
 - (BOOL)luaui_enable
 {
@@ -596,6 +646,12 @@ static const void *kLuaRenderContext = &kLuaRenderContext;
     return NO;
 }
 
+- (BOOL)luaui_canPinch {
+    return NO;
+}
+
+#pragma mark - Gesture (UITapGestureRecognizer)
+
 - (void)luaui_addTouch:(MLNUIBlock *)touchCallBack
 {
     MLNUIKitLuaAssert(NO, @"View:onTouch method is deprecated");
@@ -613,9 +669,9 @@ static const void *kLuaRenderContext = &kLuaRenderContext;
 
 - (void)mlnui_in_addTapGestureIfNeed
 {
-    UITapGestureRecognizer *gesture = [self mlnui_in_getClickGesture];
+    MLNUITapGestureRecognizer *gesture = [self mlnui_in_getClickGesture];
     if (!gesture && [self luaui_canClick]) {
-        gesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(mlnui_in_tapClickAction:)];
+        gesture = [[MLNUITapGestureRecognizer alloc] initWithTarget:self action:@selector(mlnui_in_tapClickAction:)];
         [self addGestureRecognizer:gesture];
         [self mlnui_in_setClickGesture:gesture];
     }
@@ -627,31 +683,41 @@ static const void *kLuaRenderContext = &kLuaRenderContext;
         return;
     }
     
-    UITapGestureRecognizer *gesture = [self mlnui_in_getClickGesture];
+    MLNUITapGestureRecognizer *gesture = [self mlnui_in_getClickGesture];
     if (gesture) {
         [self removeGestureRecognizer:gesture];
         [self mlnui_in_setClickGesture:nil];
     }
 }
 
-- (void)mlnui_in_tapClickAction:(UIGestureRecognizer *)gesture
-{
-    if (!self.luaui_enable) {
+- (void)mlnui_in_tapClickAction:(MLNUITapGestureRecognizer *)gesture {
+    [MLNUIGestureConflictManager setCurrentGesture:gesture];
+    UIView *responder = [MLNUIGestureConflictManager currentGestureResponder];
+    if (!responder || !responder.luaui_enable) {
+        [MLNUIGestureConflictManager setCurrentGesture:nil];
         return;
     }
-    if (self.mlnui_tapClickBlock) {
-        [self.mlnui_tapClickBlock callIfCan];
+    if (responder != gesture.view) {
+        [MLNUIGestureConflictManager handleResponderGestureActionsWithCurrentGesture:gesture];
+        return;
     }
-    if ([self luaui_needDismissKeyboard]) {
-        [self.window endEditing:YES];
+    
+    if (responder.mlnui_tapClickBlock) {
+        [responder.mlnui_tapClickBlock callIfCan];
     }
-    if (self.mlnui_touchClickBlock) {
-        CGPoint point = [gesture locationInView:self];
-        [self.mlnui_touchClickBlock addFloatArgument:point.x];
-        [self.mlnui_touchClickBlock addFloatArgument:point.y];
-        [self.mlnui_touchClickBlock callIfCan];
+    if ([responder luaui_needDismissKeyboard]) {
+        [responder.window endEditing:YES];
     }
+    if (responder.mlnui_touchClickBlock) {
+        CGPoint point = [gesture locationInView:responder];
+        [responder.mlnui_touchClickBlock addFloatArgument:point.x];
+        [responder.mlnui_touchClickBlock addFloatArgument:point.y];
+        [responder.mlnui_touchClickBlock callIfCan];
+    }
+    [MLNUIGestureConflictManager setCurrentGesture:nil];
 }
+
+#pragma mark - Gesture (UILongPressGestureRecognizer)
 
 - (void)luaui_addLongPress:(MLNUIBlock *)longPressCallback
 {
@@ -663,32 +729,51 @@ static const void *kLuaRenderContext = &kLuaRenderContext;
 - (void)mlnui_in_addLongPressGestureIfNeed
 {
     if (!self.mlnui_longPressBlock && [self luaui_canLongPress]) {
-        UILongPressGestureRecognizer *gesture = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(mlnui_in_longPressAction:)];
+        MLNUILongPressGestureRecognizer *gesture = [[MLNUILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(mlnui_in_longPressAction:)];
         [self addGestureRecognizer:gesture];
     }
 }
 
-- (void)mlnui_in_longPressAction:(UIGestureRecognizer *)gesture
-{
-    if (!self.luaui_enable) {
-        return;
-    }
-    if (!self.mlnui_longPressBlock) return;
-    if (gesture.state == UIGestureRecognizerStateBegan) {
-        CGPoint point = [gesture locationInView:self];
-        [self.mlnui_longPressBlock addFloatArgument:point.x];
-        [self.mlnui_longPressBlock addFloatArgument:point.y];
-        [self.mlnui_longPressBlock callIfCan];
+- (void)mlnui_in_longPressAction:(MLNUILongPressGestureRecognizer *)gesture {
+    switch (gesture.argoui_state) {
+        case UIGestureRecognizerStateBegan: {
+            [MLNUIGestureConflictManager setCurrentGesture:gesture];
+            UIView *responder = [MLNUIGestureConflictManager currentGestureResponder];
+            NSParameterAssert([responder isKindOfClass:NSClassFromString(@"MLNUIView")]);
+            if (!responder || !responder.luaui_enable || !responder.mlnui_longPressBlock) {
+                [MLNUIGestureConflictManager setCurrentGesture:nil];
+                return;
+            }
+            if (responder != gesture.view) {
+                [MLNUIGestureConflictManager handleResponderGestureActionsWithCurrentGesture:gesture];
+                return;
+            }
+            CGPoint point = [gesture locationInView:responder];
+            [responder.mlnui_longPressBlock addFloatArgument:point.x];
+            [responder.mlnui_longPressBlock addFloatArgument:point.y];
+            [responder.mlnui_longPressBlock callIfCan];
+        }
+            break;
+            
+        case UIGestureRecognizerStateCancelled:
+        case UIGestureRecognizerStateEnded:
+        case UIGestureRecognizerStateFailed:
+            [MLNUIGestureConflictManager setCurrentGesture:nil];
+            break;
+        default:
+            break;
     }
 }
 
+#pragma mark -
+
 static const void *kLuaClickGesture = &kLuaClickGesture;
-- (void)mlnui_in_setClickGesture:(UITapGestureRecognizer *)gesture
+- (void)mlnui_in_setClickGesture:(MLNUITapGestureRecognizer *)gesture
 {
     objc_setAssociatedObject(self, kLuaClickGesture, gesture, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
-- (UITapGestureRecognizer *)mlnui_in_getClickGesture
+- (MLNUITapGestureRecognizer *)mlnui_in_getClickGesture
 {
     return objc_getAssociatedObject(self, kLuaClickGesture);
 }
@@ -833,19 +918,6 @@ static const void *kLuaOnDetachedFromWindowCallback = &kLuaOnDetachedFromWindowC
 - (MLNUIBlock *)mlnui_onDetachedFromWindowCallback
 {
     return objc_getAssociatedObject(self, kLuaOnDetachedFromWindowCallback);
-}
-
-#pragma mark - Utils
-- (NSDictionary *)touchResultWithScreenLocation:(CGPoint)screenLocation pageLocation:(CGPoint)pageLocation target:(UIView *)targetView
-{
-    NSMutableDictionary *resultTouch = [[NSMutableDictionary alloc] initWithCapacity:5];
-    resultTouch[@"screenX"] = @(screenLocation.x);
-    resultTouch[@"screenY"] = @(screenLocation.y);
-    resultTouch[@"pageX"] = @(pageLocation.x);
-    resultTouch[@"pageY"] = @(pageLocation.y);
-    resultTouch[@"timeStamp"] = @([NSDate date].timeIntervalSince1970);
-    resultTouch[@"target"] = targetView;
-    return resultTouch;
 }
 
 #pragma mark - Open Ripple
@@ -1105,7 +1177,7 @@ static const void *kViewTransform = &kViewTransform;
 
 @end
 
-@implementation UIView (Layout)
+@implementation UIView (MLNUILayout)
 
 - (BOOL)luaui_isContainer
 {
@@ -1114,7 +1186,7 @@ static const void *kViewTransform = &kViewTransform;
 
 @end
 
-@implementation UIView (LazyTask)
+@implementation UIView (MLNUILazyTask)
 
 - (void)mlnui_pushLazyTask:(id<MLNUIBeforeWaitingTaskProtocol>)lazyTask;
 {

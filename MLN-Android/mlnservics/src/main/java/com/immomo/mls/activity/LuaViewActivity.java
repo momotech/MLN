@@ -15,13 +15,14 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.immomo.luanative.hotreload.HotReloadServer;
+import com.immomo.mls.Constants;
 import com.immomo.mls.InitData;
 import com.immomo.mls.MLSBundleUtils;
 import com.immomo.mls.MLSInstance;
-
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 
 public class LuaViewActivity extends AppCompatActivity {
     public static final String KEY_HOT_RELOAD = "KEY_HOTRELOAD";
@@ -29,7 +30,7 @@ public class LuaViewActivity extends AppCompatActivity {
     private MLSInstance instance;
 
     public static void startHotReload(Context context, boolean usb) {
-        InitData initData = MLSBundleUtils.createInitData("http://cdnst.momocdn.com/w/u/others/2019/09/23/1569224693764-HotReload.lua?ct=" + (usb ? HotReloadServer.USB_CONNECTION : HotReloadServer.NET_CONNECTION)).forceNotUseX64();
+        InitData initData = MLSBundleUtils.createInitData(Constants.ASSETS_PREFIX + "hotreload.lua?ct=" + (usb ? HotReloadServer.USB_CONNECTION : HotReloadServer.NET_CONNECTION));
         Intent intent = new Intent(context, LuaViewActivity.class);
         intent.putExtras(MLSBundleUtils.createBundle(initData));
         intent.putExtra(KEY_HOT_RELOAD, true);

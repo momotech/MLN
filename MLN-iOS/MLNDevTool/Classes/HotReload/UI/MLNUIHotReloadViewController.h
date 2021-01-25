@@ -5,7 +5,7 @@
 //  Created by Dai Dongpeng on 2020/5/26.
 //
 
-#import "MLNUIViewController.h"
+#import <ArgoUI/MLNUIViewController.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

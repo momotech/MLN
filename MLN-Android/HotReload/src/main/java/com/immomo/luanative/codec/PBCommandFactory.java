@@ -7,6 +7,9 @@
   */
 package com.immomo.luanative.codec;
 
+import android.annotation.SuppressLint;
+import android.os.Build;
+
 import com.google.protobuf.ByteString;
 import com.immomo.luanative.codec.proto.PackageConst;
 import com.immomo.luanative.codec.protobuf.PBBaseCommand;
@@ -23,6 +26,7 @@ import com.immomo.luanative.codec.protobuf.PBReloadCommand;
 import com.immomo.luanative.codec.protobuf.PBUpdateCommand;
 
 public class PBCommandFactory {
+    public static String Serial = Build.UNKNOWN;
 
     public static Object getEntryFileCommand(String entryFilePath) {
         PBEntryFileCommand.pbentryfilecommand.Builder builder = PBEntryFileCommand.pbentryfilecommand.newBuilder();
@@ -31,7 +35,7 @@ public class PBCommandFactory {
         return builder.build();
     }
 
-    public static Object getUpdateCommand(String filePath , String fileData) {
+    public static Object getUpdateCommand(String filePath, String fileData) {
         PBUpdateCommand.pbupdatecommand.Builder builder = PBUpdateCommand.pbupdatecommand.newBuilder();
         builder.setFilePath(filePath);
         builder.setFileData(ByteString.copyFromUtf8(fileData));
@@ -89,9 +93,10 @@ public class PBCommandFactory {
         return builder.build();
     }
 
+    @SuppressLint("MissingPermission")
     public static PBBaseCommand.pbbasecommand getBaseCommand(int code) {
         PBBaseCommand.pbbasecommand.Builder builder = PBBaseCommand.pbbasecommand.newBuilder();
-        builder.setSerialNumber(android.os.Build.SERIAL);
+        builder.setSerialNumber(Serial);
         builder.setOsType("Android");
         builder.setVersion(1);
         builder.setInstruction(code);
