@@ -22,7 +22,6 @@
 #import "MLNUIBridge.h"
 #import "MLNUIDB.h"
 #import "MLNGlobalTimeTest.h"
-#import "MLNDemoTableViewController.h"
 
 #define kConsoleWidth 250.f
 #define kConsoleHeight 280.f
@@ -86,7 +85,7 @@
 }
 
 - (IBAction)meilishuoButtonAction:(id)sender {
-    MLNDemoTableViewController *viewController = [[MLNDemoTableViewController alloc] init];
+    MLNLuaGalleryViewController *viewController = [[MLNLuaGalleryViewController alloc] init];
     [self.navigationController pushViewController:viewController animated:YES];
 }
 

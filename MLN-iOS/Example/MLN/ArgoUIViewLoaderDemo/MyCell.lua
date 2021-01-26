@@ -14,9 +14,10 @@ self._view=uiSuper
 self=__module.weakSelf(self)
 local vwj1 = VStack(true)
 self.vwj1 = vwj1
-self.vwj1:marginTop(10)
+self.vwj1:marginTop(20)
 self.vwj1:marginLeft(10)
 self.vwj1:width(394)
+self.vwj1:height(60)
 self.vwj1:bgColor(Color(0, 255, 0, 1))
 local vwj2 = Label()
 self.vwj2 = vwj2
@@ -37,7 +38,7 @@ end
 ))
 end
 self.vwj1:onClick(function ()
-model.title="dongxin"
+model.title="lua中修改了title"
 end)
 end
 local kvar1=ui(window)

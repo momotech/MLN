@@ -1,8 +1,8 @@
 //
-//  MLNDemoTableViewController.h
+//  ArgoUIViewLoaderDemoController.h
 //  LuaNative
 //
-//  Created by xindong on 2021/1/19.
+//  Created by xindong on 2021/1/26.
 //  Copyright © 2021 MoMo. All rights reserved.
 //
 
@@ -10,7 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface MLNDemoTableViewController : UIViewController
+@interface ArgoUIViewLoaderDemoController : UIViewController
 
 @end
 

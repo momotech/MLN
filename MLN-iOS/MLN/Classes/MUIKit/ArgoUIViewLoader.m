@@ -7,17 +7,6 @@
 
 #import "ArgoUIViewLoader.h"
 #import <objc/message.h>
-
-#if __has_include(<ArgoUIKit.h>)
-#import <MLNUILuaBundle.h>
-#import <ArgoDataBinding.h>
-#import <MLNUIKitInstance.h>
-#import <MLNUIModelHandler.h>
-#import <ArgoObservableMap.h>
-#import <ArgoObservableArray.h>
-#import <NSObject+ArgoListener.h>
-#import <ArgoViewController.h>
-#else
 #import "MLNUILuaBundle.h"
 #import "ArgoDataBinding.h"
 #import "MLNUIKitInstance.h"
@@ -26,7 +15,6 @@
 #import "ArgoObservableArray.h"
 #import "NSObject+ArgoListener.h"
 #import "ArgoViewController.h"
-#endif
 
 @interface ArgoUIViewLoaderDataBinding : ArgoDataBinding
 @property (nonatomic, strong) ArgoUIViewLoaderCallback callback;
@@ -45,27 +33,28 @@
 
 @end
 
-@interface ArgoUIViewLoaderKit: MLNUIKitInstance
-+ (ArgoUIViewLoaderKit *)kit;
+@interface ArgoUIViewLoaderKitInstance: MLNUIKitInstance
++ (ArgoUIViewLoaderKitInstance *)kitInstance;
 @property (nonatomic, strong) ArgoUIViewLoaderDataBinding *inner_dataBinding;
 @property (nonatomic, strong) NSString *modelKey;
+@property (nonatomic, strong) ArgoObservableMap *observableData;
 @end
 
 @interface ArgoUIViewLoaderController : UIViewController<MLNUIViewControllerProtocol>
-@property (nonatomic, weak) ArgoUIViewLoaderKit *instance;
+@property (nonatomic, weak) ArgoUIViewLoaderKitInstance *instance;
 @end
 
-@implementation ArgoUIViewLoaderKit {
+@implementation ArgoUIViewLoaderKitInstance {
     UIViewController *_innerController;
 }
 
-+ (ArgoUIViewLoaderKit *)kit {
++ (ArgoUIViewLoaderKitInstance *)kitInstance {
     static UIView *rootView = nil;
     if (!rootView) {
         rootView = [[UIView alloc] initWithFrame:[UIApplication sharedApplication].keyWindow.bounds];
     }
     ArgoUIViewLoaderController *controller = [ArgoUIViewLoaderController new];
-    ArgoUIViewLoaderKit *instance = [[ArgoUIViewLoaderKit alloc] initWithLuaBundle:[MLNUILuaBundle mainBundle] rootView:rootView viewController:controller];
+    ArgoUIViewLoaderKitInstance *instance = [[ArgoUIViewLoaderKitInstance alloc] initWithLuaBundle:[MLNUILuaBundle mainBundle] rootView:rootView viewController:controller];
     instance->_innerController = controller; // retain it or controller will be released.
     controller.instance = instance;
     return instance;
@@ -98,13 +87,11 @@
 
 static __weak UIView *_view = nil;
 static NSUInteger _capacity = 0;
-static NSMutableArray<ArgoUIViewLoaderKit *> *_kitQueue = nil;
-static const char *ArgoUIViewLoaderKitInstanceKey = "ArgoUIViewLoaderKitInstanceKey";
+static NSMutableArray<ArgoUIViewLoaderKitInstance *> *_kitQueue = nil;
+const char *ArgoUIViewLoaderKitInstanceInstanceKey = "ArgoUIViewLoaderKitInstanceInstanceKey";
 
 @interface ArgoUIViewLoader ()
-
-@property (nonatomic, readonly, class) NSMutableArray<ArgoUIViewLoaderKit *> *kitQueue;
-
+@property (nonatomic, readonly, class) NSMutableArray<ArgoUIViewLoaderKitInstance *> *kitQueue;
 @end
 
 @implementation ArgoUIViewLoader
@@ -117,7 +104,7 @@ static const char *ArgoUIViewLoaderKitInstanceKey = "ArgoUIViewLoaderKitInstance
 }
 
 + (nullable UIView *)loadViewFromLuaFilePath:(NSString *)filePath modelKey:(nonnull NSString *)modelKey {
-    ArgoUIViewLoaderKit *kit = [self getInstance];
+    ArgoUIViewLoaderKitInstance *kit = [self getInstance];
     kit.modelKey = modelKey;
     
     NSError *error = nil;
@@ -130,42 +117,50 @@ static const char *ArgoUIViewLoaderKitInstanceKey = "ArgoUIViewLoaderKitInstance
     }
     
     UIView *view = [(UIView *)kit.luaWindow subviews].firstObject;
-    objc_setAssociatedObject(view, ArgoUIViewLoaderKitInstanceKey, kit, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    objc_setAssociatedObject(view, ArgoUIViewLoaderKitInstanceInstanceKey, kit, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     return view;
 }
 
 + (void)dataUpdatedCallbackForView:(UIView *)view callback:(ArgoUIViewLoaderCallback)callback {
-    ArgoUIViewLoaderKit *kit = objc_getAssociatedObject(view, ArgoUIViewLoaderKitInstanceKey);
+    ArgoUIViewLoaderKitInstance *kit = objc_getAssociatedObject(view, ArgoUIViewLoaderKitInstanceInstanceKey);
     kit.inner_dataBinding.callback = callback;
 }
 
 + (void)updateData:(NSObject *)data forView:(nonnull UIView *)view autoWire:(BOOL)autoWire {
-    ArgoUIViewLoaderKit *kit = objc_getAssociatedObject(view, ArgoUIViewLoaderKitInstanceKey);
+    ArgoUIViewLoaderKitInstance *kit = objc_getAssociatedObject(view, ArgoUIViewLoaderKitInstanceInstanceKey);
     NSParameterAssert(kit);
     if (!kit) return;
     NSString *key = kit.modelKey;
     NSParameterAssert(key);
     if (!key) return;
+    
+    NSObject<ArgoListenerProtocol> *model = nil;
     if (autoWire) {
-        NSObject<ArgoListenerProtocol> *model = [MLNUIModelHandler autoWireData:data model:nil extra:nil modelKey:key luaCore:kit.luaCore];
-        [kit.inner_dataBinding bindData:model forKey:key];
+        model = [MLNUIModelHandler autoWireData:data model:nil extra:nil modelKey:key luaCore:kit.luaCore];
     } else {
-        NSObject<ArgoListenerProtocol> *model = [self convertToObservableObject:data];
-        [kit.inner_dataBinding bindData:model forKey:key];
+        model = [self convertToObservableObject:data];
     }
+    kit.observableData = (ArgoObservableMap *)model;
+    [kit.inner_dataBinding bindData:model forKey:key];
+}
+
++ (ArgoObservableMap *)observableDataForView:(UIView *)view {
+    if (!view) return nil;
+    ArgoUIViewLoaderKitInstance *kit = objc_getAssociatedObject(view, ArgoUIViewLoaderKitInstanceInstanceKey);
+    return kit.observableData;
 }
 
 #pragma mark - Private
 
-+ (NSMutableArray<ArgoUIViewLoaderKit *> *)kitQueue {
++ (NSMutableArray<ArgoUIViewLoaderKitInstance *> *)kitQueue {
     if (!_kitQueue) {
         _kitQueue = [NSMutableArray array];
     }
     return _kitQueue;
 }
 
-+ (ArgoUIViewLoaderKit *)getInstance {
-    ArgoUIViewLoaderKit *instance = [self.kitQueue firstObject];
++ (ArgoUIViewLoaderKitInstance *)getInstance {
+    ArgoUIViewLoaderKitInstance *instance = [self.kitQueue firstObject];
     if (!instance) {
         instance = [self createInstance];
     } else {
@@ -180,7 +175,7 @@ static const char *ArgoUIViewLoaderKitInstanceKey = "ArgoUIViewLoaderKitInstance
         return;
     }
     dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0), ^{
-        ArgoUIViewLoaderKit *instance = [self createInstance];
+        ArgoUIViewLoaderKitInstance *instance = [self createInstance];
         dispatch_async(dispatch_get_main_queue(), ^{
             [self.kitQueue addObject:instance];
             [self preload];
@@ -188,8 +183,8 @@ static const char *ArgoUIViewLoaderKitInstanceKey = "ArgoUIViewLoaderKitInstance
     });
 }
 
-+ (ArgoUIViewLoaderKit *)createInstance {
-    return [ArgoUIViewLoaderKit kit];
++ (ArgoUIViewLoaderKitInstance *)createInstance {
+    return [ArgoUIViewLoaderKitInstance kitInstance];
 }
 
 + (NSObject<ArgoListenerProtocol> *)convertToObservableObject:(id)data {

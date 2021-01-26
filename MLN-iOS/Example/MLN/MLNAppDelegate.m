@@ -145,6 +145,7 @@
 - (void)registerLink {
     [MLNLink registerName:@"CustomHotReload" linkClassName:@"MLNUICustomHotReloadViewController"];
     [MLNUILink registerName:@"CustomHotReload" linkClassName:@"MLNUICustomHotReloadViewController"];
+    [MLNUILink registerName:@"ArgoUIViewLoader" linkClassName:@"ArgoUIViewLoaderDemoController"];
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application

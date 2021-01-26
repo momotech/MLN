@@ -88,7 +88,7 @@ static const void *kLuaKeyboardDismiss = &kLuaKeyboardDismiss;
 - (void)mlnui_in_removeFromSuperview
 {
     if ([self mlnui_isConvertible]) {
-        [self mlnui_in_traverseAllSubviewsCallbackDetached];
+        [self mlnui_removeAdditionalIfNeeded];
     }
     [self mlnui_in_removeFromSuperview];
 }
@@ -1020,6 +1020,14 @@ static const void *kLuaOnDetachedFromWindowCallback = &kLuaOnDetachedFromWindowC
 - (void)luaui_onDetachedFromWindowCallback:(MLNUIBlock *)callback
 {
     [self setMlnui_onDetachedFromWindowCallback:callback];
+}
+
+FOUNDATION_EXTERN const char *ArgoUIViewLoaderKitInstanceInstanceKey;
+- (void)mlnui_removeAdditionalIfNeeded {
+    [self mlnui_in_traverseAllSubviewsCallbackDetached];
+    if (objc_getAssociatedObject(self, ArgoUIViewLoaderKitInstanceInstanceKey)) {
+        objc_setAssociatedObject(self, ArgoUIViewLoaderKitInstanceInstanceKey, nil, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    }
 }
 
 #pragma mark - Detached
