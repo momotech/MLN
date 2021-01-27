@@ -2,7 +2,8 @@
 --- ViewPagerAdapter是Lua中，用于在lua的window上，针对ViewPager设置的适配器。
 --- Created by wang.yang
 --- DateTime: 2020-07-24
----
+--- 版本号 每次修改完内容后需要自动增加版本号/或者保证不会影响老版本
+--- @version 1.0
 
 local _class = {}
 _class._type = 'ui'
@@ -35,7 +36,7 @@ end
 ----Factory Method
 
 function _class:initAdapter()
-    local adapter = CollectionViewAdapter()
+    local adapter = CollectionViewAutoFitAdapter()
     adapter:sectionCount(function()
         return 1
     end)
@@ -77,15 +78,6 @@ end
 function _class:getCount(count)
     self.adapter:rowCount(function(section)
         return count()
-    end)
-    return self
-end
-
---设置cell大小的回调
-function _class:sizeForCell(size)
-    self.cellSize = size()
-    self.adapter:sizeForCell(function(section, row)
-        return size()
     end)
     return self
 end
@@ -147,6 +139,13 @@ function _class:fillCellDataByReuseId(reuseId, fillCell)
     if self.isReuseEnable == true then
         self:realFillCellDataByReuseId(reuseId, fillCell)
     else
+        -- 重复设置时，先清空之前的
+        local treuseId = reuseId .. "_"
+        for k, _ in pairs(self.ids) do
+            if string.sub(k, 1, #reuseId + 1) == treuseId then
+                self.ids[k] = nil
+            end
+        end
         self.ids_fillCell[reuseId] = fillCell
     end
     return self
@@ -183,12 +182,6 @@ function _class:realFillCellDataByReuseId(reuseId, fillCell)
             return fillCell(cell, row)
         end
     end)
-end
-
---设置cell大小的回调
-function _class:sizeForCellByReuseId(reuseId, size)
-    self:sizeForCell(size)
-    return self
 end
 
 return _class

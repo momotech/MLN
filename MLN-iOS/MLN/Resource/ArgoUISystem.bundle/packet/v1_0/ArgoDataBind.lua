@@ -132,26 +132,4 @@ end
 
 
 
-
-
-
----
----  数据装配代理方法
----
----@param autoWiredFunc function  真正用户写的autoWire函数
----@param origin Map  请求返回的数据
----@param b table  lua中用到的数据，即页面展示用到的data
----@return void
-function autoWiredProxy(autoWiredFunc, origin, ...)
-    return autoWiredFunc(ArgoUI.mapToTable(origin), ...)
-end
-
-
-
-
-
-
-
-
-
 return class

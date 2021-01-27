@@ -1,3 +1,6 @@
+--- 版本号 每次修改完内容后需要自动增加版本号/或者保证不会影响老版本
+--- @version 1.0
+
 _view_style_param_func_ = {
     -- 1
     function(view, func, value)
@@ -69,5 +72,21 @@ function _view_set_style_with_filter(view, style, filter)
                 end
             end
         end
+    end
+end
+
+function _style_selector_update_view(view, ID)
+    --- id string
+    if not view then return end
+    local style = StyleSelector.id[ID]
+    if style ~= nil then
+        _view_set_style(view, style)
+    end
+    local class = StyleSelector.class[ID]
+    if class ~= nil then
+        local className = class[1]
+        style = class[2]
+
+        ---@todo: 重新addsubview 方法 --
     end
 end
