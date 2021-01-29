@@ -1,3 +1,6 @@
+--- 版本号 每次修改完内容后需要自动增加版本号/或者保证不会影响老版本
+--- @version 1.0
+
 local _class = {}
 _class._version = "1.0"
 _class._classname = "KeyboardManager"
@@ -266,10 +269,10 @@ function _class:translateTarget(isShowing, keyboardHeight, viewTable, keyboardMo
 
     --print("translationY",translationY)
     if keyboardMode == _class.WINDOW_PUSH then
-        window:translation(0, translationY, true)
+        window:translation(0, translationY, false)
         _class.lastTranslationY = isShowing and translationY or 0
     else
-        targetView:translation(0, translationY, true)
+        targetView:translation(0, translationY, false)
         viewTable.lastTranslationY = isShowing and translationY or 0
     end
 end

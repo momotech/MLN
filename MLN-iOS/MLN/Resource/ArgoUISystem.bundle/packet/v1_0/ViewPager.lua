@@ -2,7 +2,8 @@
 --- ViewPager是Lua中，用于在lua的window上，一个可以滚动可翻页的基础组件。
 --- Created by wang.yang
 --- DateTime: 2020-07-24
----
+--- 版本号 每次修改完内容后需要自动增加版本号/或者保证不会影响老版本
+--- @version 1.0
 
 local _class = {}
 _class._type = 'ui'
@@ -262,16 +263,10 @@ end
 --- 初始化相关数据
 function _class:initSize()
     if self.adapterv ~= nil then
-        -- adapterv没有设置高度时，等collectionView布局完成之后再设置高度和自适应
-        if self.adapterv.cellSize == nil then
-            self.adapterv:sizeForCell(function()
-                return Size(self.contentView:width(), self.contentView:height())
-            end)
-        end
         self.contentView:adapter(self.adapterv.adapter)
         if self:isHorizontal() then
-            self.cellSize = self.adapterv.cellSize:width()
-            self.HALF_SIZE = self.contentView:width() / 2
+            self.cellSize = self.contentView:width()
+            self.HALF_SIZE = self.cellSize / 2
             self.MAX_SIZE = window:width() / 2
             -- 初始化相关配置
             if self:layoutPadding() < 0 then
@@ -283,8 +278,8 @@ function _class:initSize()
             end
             self.layout:itemSpacing(self.itemSpace)
         else
-            self.cellSize = self.adapterv.cellSize:height()
-            self.HALF_SIZE = self.contentView:height() / 2
+            self.cellSize = self.contentView:height()
+            self.HALF_SIZE = self.cellSize / 2
             self.MAX_SIZE = window:height() / 2
             -- 初始化相关配置
             if self:layoutPadding() < 0 then

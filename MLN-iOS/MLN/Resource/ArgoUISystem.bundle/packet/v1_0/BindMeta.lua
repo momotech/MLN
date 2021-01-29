@@ -5,7 +5,7 @@
 --- Created by sun.
 --- DateTime: 2020-05-25 19:18
 --- 版本号 每次修改完内容后需要自动增加版本号/或者保证不会影响老版本
---- @version 1.1
+--- @version 1.0
 
 local __get = "__get"
 local __path = "__path"
@@ -806,7 +806,7 @@ __module = {
                     self._isDeallocating = false
                 end,
                 init = function(self, ...)
-                    print("请实现 View 代码 ....")
+                    error("请实现 View 代码 ....", 3)
                 end,
                 update = function(self, super, ...)
                     if super then self._autoWatch=super._autoWatch end
@@ -814,7 +814,7 @@ __module = {
                     self.updateData(self, ...)
                 end,
                 updateData = function(self, ...)
-                    print("请实现 module updateData ...")
+                    error("请实现 module updateData ...", 3)
                 end,
                 addObserverId = function(self, id)
                     if id then
@@ -1029,3 +1029,14 @@ __module = {
         end,
     }
 }
+
+
+---
+---  数据装配代理方法
+---
+---@param autoWiredFunc function  真正用户写的autoWired函数
+---@param origin Map  请求返回的数据，为map类型，代替用户写的autoWired函数的第一个参数
+---@return void
+function autoWiredProxy(autoWiredFunc, origin, ...)
+    return autoWiredFunc(ArgoUI:mapToTable(origin), ...)
+end
