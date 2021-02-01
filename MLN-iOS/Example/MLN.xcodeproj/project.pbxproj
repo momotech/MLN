@@ -147,6 +147,7 @@
 		FA6C1CE1248E41D10025BA96 /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = FA6C1CE0248E41D10025BA96 /* libc++.tbd */; };
 		FA906FA024EBC8D500F8DAE2 /* MLNUICustomHotReloadViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FA906F9F24EBC8D500F8DAE2 /* MLNUICustomHotReloadViewController.m */; };
 		FA906FA424EBCAB700F8DAE2 /* MLNUITestModel.m in Sources */ = {isa = PBXBuildFile; fileRef = FA906FA324EBCAB700F8DAE2 /* MLNUITestModel.m */; };
+		FACD42D725C421C00076041F /* MyCell.arg in Resources */ = {isa = PBXBuildFile; fileRef = FACD42D625C421C00076041F /* MyCell.arg */; };
 		FAE72F1625106DA00092E87D /* ArgoBindingTest.m in Sources */ = {isa = PBXBuildFile; fileRef = FAE72F1525106DA00092E87D /* ArgoBindingTest.m */; };
 		FAE9C59323A250CD002C830D /* gallery.bundle in Resources */ = {isa = PBXBuildFile; fileRef = FAE9C59223A250CD002C830D /* gallery.bundle */; };
 		FAE9C59523A2529C002C830D /* inner_demo.bundle in Resources */ = {isa = PBXBuildFile; fileRef = FAE9C59423A2529C002C830D /* inner_demo.bundle */; };
@@ -433,6 +434,7 @@
 		FA906F9F24EBC8D500F8DAE2 /* MLNUICustomHotReloadViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNUICustomHotReloadViewController.m; sourceTree = "<group>"; };
 		FA906FA224EBCAB700F8DAE2 /* MLNUITestModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNUITestModel.h; sourceTree = "<group>"; };
 		FA906FA324EBCAB700F8DAE2 /* MLNUITestModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNUITestModel.m; sourceTree = "<group>"; };
+		FACD42D625C421C00076041F /* MyCell.arg */ = {isa = PBXFileReference; lastKnownFileType = text; path = MyCell.arg; sourceTree = "<group>"; };
 		FAE72F1525106DA00092E87D /* ArgoBindingTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArgoBindingTest.m; sourceTree = "<group>"; };
 		FAE9C59223A250CD002C830D /* gallery.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = gallery.bundle; sourceTree = "<group>"; };
 		FAE9C59423A2529C002C830D /* inner_demo.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = inner_demo.bundle; sourceTree = "<group>"; };
@@ -1036,6 +1038,7 @@
 		FA2C87E025BFCE72004C020A /* ArgoUIViewLoaderDemo */ = {
 			isa = PBXGroup;
 			children = (
+				FACD42D625C421C00076041F /* MyCell.arg */,
 				FAFABF2025B6F0A000FE72DB /* MyCell.lua */,
 				FA2C87EA25BFCED7004C020A /* ArgoUIViewLoaderDemoController.h */,
 				FA2C87EB25BFCED7004C020A /* ArgoUIViewLoaderDemoController.m */,
@@ -1282,6 +1285,7 @@
 				00E9131524E51837006614C4 /* ViewPagerDemoMUI.bundle in Resources */,
 				000B3BDF2505D753001142E2 /* KuaDemoMUI2.bundle in Resources */,
 				FA604C0A2518571800175D97 /* kuaDetailArgoUI.bundle in Resources */,
+				FACD42D725C421C00076041F /* MyCell.arg in Resources */,
 				FA383456239A6357000F900E /* Main.storyboard in Resources */,
 				FA604C0F251881B500175D97 /* KuaDemoMUI.bundle in Resources */,
 				00D5986B24B8732F00EA1660 /* PerformanceDemoMUI.bundle in Resources */,

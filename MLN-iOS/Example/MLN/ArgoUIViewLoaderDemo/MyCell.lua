@@ -1,6 +1,6 @@
 --1
-require("packet/BindMeta")
-require("packet/style")
+require("packet/v1_0/BindMeta")
+require("packet/v1_0/style")
 if model== nil then
 model= BindMeta("model")
 end

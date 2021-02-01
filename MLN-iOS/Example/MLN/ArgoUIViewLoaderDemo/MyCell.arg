@@ -1,0 +1,21 @@
+
+model(model)
+
+ui = {
+    VStack()
+    .top(20).left(10).width(394).height(60)
+    .bgColor(0, 255, 0, 1)
+    .subs(
+        Label(model.title)
+        .lines(0)
+        .top(10)
+        .left(20)
+    )
+    .onClick(function()
+        model.title = "lua中修改了title"
+    end)
+}
+
+function preview()
+    model.title = "alice"
+end
