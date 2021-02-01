@@ -287,6 +287,9 @@ static int mlnui_errorFunc_traceback (lua_State *L) {
     PSTART_TAG(MLNUILoadTimeStatisticsType_ReadFile, filePath);
     NSString *realFilePath = [self.currentBundle filePathWithName:filePath];
     NSData *data = [NSData dataWithContentsOfFile:realFilePath];
+    if (!data) {
+        data = [NSData dataWithContentsOfFile:filePath];
+    }
     PEND_TAG_INFO(MLNUILoadTimeStatisticsType_ReadFile, filePath, filePath);
     
     PSTART_TAG(MLNUILoadTimeStatisticsType_Compile,filePath);

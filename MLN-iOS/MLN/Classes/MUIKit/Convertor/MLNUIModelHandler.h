@@ -6,6 +6,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "ArgoListenerProtocol.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -17,7 +18,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSMutableDictionary *_Nonnull)keyPaths;
 @end
 
-typedef void(^MLNUIModelHandleComplete)(__kindof NSObject *model, NSError *error);
+typedef void(^MLNUIModelHandleComplete)(__kindof NSObject *_Nullable model, NSError *error);
 
 @interface MLNUIModelHandler : NSObject
 
@@ -46,7 +47,8 @@ typedef void(^MLNUIModelHandleComplete)(__kindof NSObject *model, NSError *error
 /// @return 即转换后的参数`model`
 + (NSObject *)convertViewModel:(NSObject <MLNUIModelHandlerProtocol> *)model fromDictionary:(NSDictionary *)dic;
 
++ (NSObject<ArgoListenerProtocol> *)autoWireData:(id)dataObject model:(nullable NSObject<ArgoListenerProtocol> *)model extra:(nullable id)extra modelKey:(NSString *)modelKey luaCore:(MLNUILuaCore *)luaCore;
+
 @end
 
 NS_ASSUME_NONNULL_END
-

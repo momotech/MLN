@@ -99,6 +99,7 @@
     if (!_demoArray) {
         _demoArray = @[
 //                       @"CustomHotReload.lua",
+                       @"ArgoUIViewLoaderDemo.lua",
                        @"CollectionViewDemo.lua",
                        @"DialogDemo.lua",
                        @"EditTextViewDemo.lua",
