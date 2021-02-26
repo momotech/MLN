@@ -10,7 +10,7 @@
 #import <ArgoUIViewLoader.h>
 #import <MLNUILinkProtocol.h>
 
-#define ROW_HEIGHT 100
+#define ROW_HEIGHT 300
 
 @interface ArgoUIViewLoaderDemoController ()<UITableViewDelegate, UITableViewDataSource, MLNUILinkProtocol>
 
@@ -48,22 +48,24 @@
     UIView *content = [cell viewWithTag:2021];
     
     // 在原生中修改数据中的某个字段，UI会自动更新
-    ArgoObservableMap *data = [ArgoUIViewLoader observableDataForView:content];
-    [data setObject:@"原生中修改了title" forKey:@"title"];
+//    ArgoObservableMap *data = [ArgoUIViewLoader observableDataForView:content];
+//    [data setObject:@"原生中修改了title" forKey:@"title"];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cell"];
     if (!cell) {
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"cell"];
-        UIView *contentView = [ArgoUIViewLoader loadViewFromLuaFilePath:@"MyCell.lua" modelKey:@"model"];
+        UIView *contentView = [ArgoUIViewLoader loadViewFromLuaFilePath:@"Theme302.lua" modelKey:@"model"];
         contentView.tag = 2021;
+        contentView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleRightMargin;
         [cell.contentView addSubview:contentView];
-        [self addLuaDataUpdatedCallback:contentView];
+        
+//        [self addLuaDataUpdatedCallback:contentView];
     }
     NSDictionary *model = [self.cellItems objectAtIndex:indexPath.row];
 //    CFAbsoluteTime begin = CFAbsoluteTimeGetCurrent();
-    [ArgoUIViewLoader updateData:model forView:[cell.contentView viewWithTag:2021] autoWire:NO];
+//    [ArgoUIViewLoader updateData:model forView:[cell.contentView viewWithTag:2021] autoWire:NO];
 //    CFAbsoluteTime end = CFAbsoluteTimeGetCurrent();
 //    NSLog(@"time cost: %0.2f ms", (end - begin) * 1000);
     return cell;

@@ -132,6 +132,8 @@
 		FA4103E625090347007ADC8F /* DemoLiyifengTableViewHeaderCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FA4103DD25090346007ADC8F /* DemoLiyifengTableViewHeaderCell.m */; };
 		FA4103E725090347007ADC8F /* data.plist in Resources */ = {isa = PBXBuildFile; fileRef = FA4103DE25090346007ADC8F /* data.plist */; };
 		FA4103E825090347007ADC8F /* DemoLiyifengModel.m in Sources */ = {isa = PBXBuildFile; fileRef = FA4103E025090346007ADC8F /* DemoLiyifengModel.m */; };
+		FA4213B925E8FDAC00D739C0 /* Theme302.lua in Resources */ = {isa = PBXBuildFile; fileRef = FA4213B825E8FDAC00D739C0 /* Theme302.lua */; };
+		FA4213BE25E8FDC600D739C0 /* Theme302.ag in Resources */ = {isa = PBXBuildFile; fileRef = FA4213BD25E8FDC600D739C0 /* Theme302.ag */; };
 		FA4EE2FA2379067000449250 /* MLNGalleryMinePageCellBaseModel.m in Sources */ = {isa = PBXBuildFile; fileRef = FA4EE2F92379067000449250 /* MLNGalleryMinePageCellBaseModel.m */; };
 		FA4EE2FD237907B000449250 /* MLNGalleryMinePageCellHomeModel.m in Sources */ = {isa = PBXBuildFile; fileRef = FA4EE2FC237907B000449250 /* MLNGalleryMinePageCellHomeModel.m */; };
 		FA4EE3002379080100449250 /* MLNGalleryMinePageCellDynamicModel.m in Sources */ = {isa = PBXBuildFile; fileRef = FA4EE2FF2379080100449250 /* MLNGalleryMinePageCellDynamicModel.m */; };
@@ -407,6 +409,8 @@
 		FA4103E025090346007ADC8F /* DemoLiyifengModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DemoLiyifengModel.m; sourceTree = "<group>"; };
 		FA4103E125090347007ADC8F /* DemoLiyifengModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DemoLiyifengModel.h; sourceTree = "<group>"; };
 		FA4103E225090347007ADC8F /* DemoLiyifengTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DemoLiyifengTableViewCell.h; sourceTree = "<group>"; };
+		FA4213B825E8FDAC00D739C0 /* Theme302.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Theme302.lua; sourceTree = "<group>"; };
+		FA4213BD25E8FDC600D739C0 /* Theme302.ag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Theme302.ag; sourceTree = "<group>"; };
 		FA4EE2F82379067000449250 /* MLNGalleryMinePageCellBaseModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNGalleryMinePageCellBaseModel.h; sourceTree = "<group>"; };
 		FA4EE2F92379067000449250 /* MLNGalleryMinePageCellBaseModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNGalleryMinePageCellBaseModel.m; sourceTree = "<group>"; };
 		FA4EE2FB237907B000449250 /* MLNGalleryMinePageCellHomeModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNGalleryMinePageCellHomeModel.h; sourceTree = "<group>"; };
@@ -1038,6 +1042,8 @@
 		FA2C87E025BFCE72004C020A /* ArgoUIViewLoaderDemo */ = {
 			isa = PBXGroup;
 			children = (
+				FA4213BD25E8FDC600D739C0 /* Theme302.ag */,
+				FA4213B825E8FDAC00D739C0 /* Theme302.lua */,
 				FACD42D625C421C00076041F /* MyCell.arg */,
 				FAFABF2025B6F0A000FE72DB /* MyCell.lua */,
 				FA2C87EA25BFCED7004C020A /* ArgoUIViewLoaderDemoController.h */,
@@ -1276,9 +1282,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				FAFABF2125B6F0A000FE72DB /* MyCell.lua in Resources */,
+				FA4213B925E8FDAC00D739C0 /* Theme302.lua in Resources */,
 				FA383459239A64AF000F900E /* LaunchScreen.storyboard in Resources */,
 				00E9132C24E53E46006614C4 /* KuaCell.xib in Resources */,
 				FAE9C59323A250CD002C830D /* gallery.bundle in Resources */,
+				FA4213BE25E8FDC600D739C0 /* Theme302.ag in Resources */,
 				FA4103E725090347007ADC8F /* data.plist in Resources */,
 				30CB3BFB23684CD400AB90C6 /* MLN.podspec in Resources */,
 				30CB3BF923684B7F00AB90C6 /* MLNDevTool.podspec in Resources */,

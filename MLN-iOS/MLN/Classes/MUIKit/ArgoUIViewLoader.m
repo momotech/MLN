@@ -116,7 +116,8 @@ const char *ArgoUIViewLoaderKitInstanceInstanceKey = "ArgoUIViewLoaderKitInstanc
         return nil;
     }
     
-    UIView *view = [(UIView *)kit.luaWindow subviews].firstObject;
+//    UIView *view = [(UIView *)kit.luaWindow subviews].firstObject;
+    UIView *view = (UIView *)kit.luaWindow;
     objc_setAssociatedObject(view, ArgoUIViewLoaderKitInstanceInstanceKey, kit, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     return view;
 }

@@ -1,0 +1,107 @@
+---
+---  Lua - UI
+---  project[ FeedTheme ]
+---  package[  ]
+---  Theme302.ag
+---  Created by momo on 2021/02/25 7:03 下午.
+---  Copyright © 2021. All rights reserved.
+---
+--feed cell通用部分
+mExpanLabel(lineNum, str, endStr, textColor, endColor) {
+    VStack().subs(
+        Label(str).lines(lineNum).textColor(textColor).ID(descLabel)
+        ,
+        Label().textColor(textColor).ID(showAllLabel)
+        .styleText(
+            StyleString("aaaa" .. endStr)
+            --.setFontColorForRange(endColor, string.len(endStr) - 2, string.len(endStr))
+            .setFontColorForRange(endColor, 5, 2)
+        )
+        .padding(0, 0, 0, 3)
+        .bgColor(Color(0xffffff))
+        --.positionType(PositionType.ABSOLUTE)
+        --.positionBottom(0).positionRight(0)
+        .onClick(function()
+            print("descLabel.lines()= ", descLabel.lines())
+
+            if descLabel.lines() > 0 then
+                descLabel.lines(0)
+                showAllLabel.text("收起")
+            else
+                descLabel.lines(lineNum)
+                showAllLabel.text("... " .. endStr)
+            end
+        end)
+    )
+}
+mCommLayout() {
+    VStack().widthPercent(100).subs(
+        HStack().widthPercent(100).subs(
+            ImageView().width(60).height(60)
+            .bgColor(Color(0xa0a0dd))
+            .cornerRadius(50)
+            ,
+            VStack().heightPercent(100)
+            .basis(0).grow(1)
+            .bgColor(Color(0xdddda0)).width(100)
+            .left(12).mainAxis(MainAxis.SPACE_EVENLY)
+            .subs(
+                Label("开普勒")
+                ,
+                Label("10分钟前")
+            )
+        )
+        ,
+        mExpanLabel(4, "请各位同事仔细阅读此制度，对于有疑惑的地方，可以随时通过邮件或者moji向内审部同事咨询，帮助大家充分理解制度条文。谢谢！请各位同事仔细阅读此制度，对于有疑惑的地方，可以随时通过邮件或者moji向内审部同事咨询，帮助大家充分理解制度条文。谢谢！",
+                    "全文", Color(0x000000), Color(0xa0a0dd))
+        .left(72).top(12)
+    )
+}
+
+mCommOper(type, str) {
+    HStack().subs(
+        ImageView().width(30).height(30).bgColor(Color(0xdddddd))
+        .ID(operImg)
+        ,
+        Label(str).left(8).heightPercent(100)
+    )
+}
+mCommOper_Data(type, str) {
+    watch(function()
+        if type == 1 then
+            operImg.bgColor(Color(0xa0a0dd))
+        elseif type == 2 then
+            operImg.bgColor(Color(0xdddda0))
+        elseif type == 3 then
+            operImg.bgColor(Color(0xdda0a0))
+        end
+    end)
+}
+--feed cell点赞评论
+mOperLayout() {
+    HStack().widthPercent(100).bgColor(Color(0xdddddd))
+    .subs(
+        mCommOper(1, "20")
+        ,
+        mCommOper(2, "259").left(30)
+        ,
+        Spacer()
+        ,
+        mCommOper(3, "66")
+    )
+}
+---
+--- UI
+ui {
+    --- layout views
+    mCommLayout()
+    ,
+    mOperLayout().paddingLeft(72).top(12)
+}
+
+---
+--- preview
+local function preview()
+
+
+end
