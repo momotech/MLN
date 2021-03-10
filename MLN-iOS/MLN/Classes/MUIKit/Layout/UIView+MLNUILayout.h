@@ -49,6 +49,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)mlnui_markNeedsLayout;
 - (void)mlnui_requestLayoutIfNeed;
 - (void)mlnui_requestLayoutIfNeedWithSize:(CGSize)size; // constraint size
+- (CGSize)mlnui_calculateLayoutWithSize:(CGSize)size; // calculateLayout with constraint size
 
 /// 当时视图的Frame发生变更时被调用，如果在视图Frame变更时，需要处理自己的事件，可以重写该方法。
 - (void)mlnui_layoutDidChange NS_REQUIRES_SUPER;

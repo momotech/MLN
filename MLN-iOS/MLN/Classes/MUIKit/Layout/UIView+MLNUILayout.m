@@ -792,6 +792,13 @@ static inline UIView *MLNUIValidSuperview(UIView *self) {
     }
 }
 
+- (CGSize)mlnui_calculateLayoutWithSize:(CGSize)size{
+    self.mlnui_layoutNode.width = MLNUIPointValue(size.width);
+    self.mlnui_layoutNode.height = MLNUIPointValue(size.height);
+    CGSize size_ = [self.mlnui_layoutNode calculateLayoutWithSize:size];
+    return size_;
+}
+
 - (void)mlnui_layoutDidChange {
     // 1.如果当前View的Frame变更，检查是否需要修正圆角
     [self mlnui_updateCornersIfNeed];
