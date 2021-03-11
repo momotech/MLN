@@ -507,6 +507,15 @@
     return (MLNUIStatusBarStyle)[[UIApplication sharedApplication] statusBarStyle];
 }
 
+-(CGSize)sizeThatFits:(CGSize)size{
+    return [self mlnui_calculateLayoutWithSize:size];
+}
+- (void)sizeToFit{
+    CGSize size = [self sizeThatFits:CGSizeMake(self.bounds.size.width, NAN)];
+    CGRect bounds = self.bounds;
+    bounds.size = size;
+    self.bounds = bounds;
+}
 #pragma mark - Export
 
 LUAUI_EXPORT_VIEW_BEGIN(MLNUIWindow)
