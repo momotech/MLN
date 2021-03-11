@@ -796,6 +796,8 @@ static inline UIView *MLNUIValidSuperview(UIView *self) {
     self.mlnui_layoutNode.width = MLNUIPointValue(size.width);
     self.mlnui_layoutNode.height = MLNUIPointValue(size.height);
     CGSize size_ = [self.mlnui_layoutNode calculateLayoutWithSize:size];
+    self.mlnui_layoutNode.width = MLNUIPointValue(size_.width);
+    self.mlnui_layoutNode.height = MLNUIPointValue(size_.height);
     return size_;
 }
 
