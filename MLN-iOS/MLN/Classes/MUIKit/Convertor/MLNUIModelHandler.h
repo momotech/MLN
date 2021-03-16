@@ -47,7 +47,18 @@ typedef void(^MLNUIModelHandleComplete)(__kindof NSObject *_Nullable model, NSEr
 /// @return 即转换后的参数`model`
 + (NSObject *)convertViewModel:(NSObject <MLNUIModelHandlerProtocol> *)model fromDictionary:(NSDictionary *)dic;
 
-+ (NSObject<ArgoListenerProtocol> *)autoWireData:(id)dataObject model:(nullable NSObject<ArgoListenerProtocol> *)model extra:(nullable id)extra modelKey:(NSString *)modelKey luaCore:(MLNUILuaCore *)luaCore;
++ (NSObject<ArgoListenerProtocol> *)autoWireData:(id)dataObject
+                                           model:(nullable NSObject<ArgoListenerProtocol> *)model
+                                           extra:(nullable id)extra
+                                        modelKey:(NSString *)modelKey
+                                         luaCore:(MLNUILuaCore *)luaCore;
+
++ (NSObject<ArgoListenerProtocol> *)autoWireData:(id)dataObject
+                                           model:(nullable NSObject<ArgoListenerProtocol> *)model
+                                           extra:(nullable id)extra
+                                        modelKey:(NSString *)modelKey
+                                         luaCore:(MLNUILuaCore *)luaCore
+                                           error:(NSError * _Nullable __autoreleasing * _Nullable)error;
 
 @end
 

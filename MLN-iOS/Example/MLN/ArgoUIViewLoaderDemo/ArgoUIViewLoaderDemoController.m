@@ -28,7 +28,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.view.backgroundColor = [UIColor whiteColor];
-    for (int i = 0; i < 20; i++) {
+    for (int i = 0; i < 1; i++) {
         NSDictionary *dic = @{@"title": [NSString stringWithFormat:@"text %d", i]};
         [self.cellItems addObject:dic];
     }
@@ -56,7 +56,9 @@
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cell"];
     if (!cell) {
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"cell"];
-        UIView *contentView = [ArgoUIViewLoader loadViewFromLuaFilePath:@"Theme302.lua" modelKey:@"model"];
+        NSError *error = nil;
+        UIView *contentView = [ArgoUIViewLoader loadViewFromLuaFilePath:@"MyCell.lua" modelKey:@"model" error:&error];
+        
         contentView.tag = 2021;
         contentView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleRightMargin;
         [cell.contentView addSubview:contentView];
@@ -64,8 +66,9 @@
 //        [self addLuaDataUpdatedCallback:contentView];
     }
     NSDictionary *model = [self.cellItems objectAtIndex:indexPath.row];
+    NSNumber *model1 = @(100);
 //    CFAbsoluteTime begin = CFAbsoluteTimeGetCurrent();
-//    [ArgoUIViewLoader updateData:model forView:[cell.contentView viewWithTag:2021] autoWire:NO];
+    [ArgoUIViewLoader updateData:model1 forView:[cell.contentView viewWithTag:2021] autoWire:NO];
 //    CFAbsoluteTime end = CFAbsoluteTimeGetCurrent();
 //    NSLog(@"time cost: %0.2f ms", (end - begin) * 1000);
     return cell;

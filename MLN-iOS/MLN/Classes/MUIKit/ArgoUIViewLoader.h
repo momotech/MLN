@@ -26,6 +26,14 @@ typedef void(^ArgoUIViewLoaderCallback)(NSString *keyPath, id newValue);
 /// @param modelKey ArgoUI文件中的model名字
 + (nullable UIView *)loadViewFromLuaFilePath:(NSString *)filePath modelKey:(NSString *)modelKey;
 
+/// 加载lua脚本生成对应的view
+/// @param filePath lua文件路径
+/// @param modelKey ArgoUI文件中的model名字
+/// @param error ArgoUI文件加载过程中的错误
++ (nullable UIView *)loadViewFromLuaFilePath:(NSString *)filePath
+                                    modelKey:(nonnull NSString *)modelKey
+                                       error:(NSError * _Nullable __autoreleasing * _Nullable)error;
+
 /// 原生监听Lua中的数据变更
 /// @param view 加载lua脚本返回的view
 /// @param callback 数据变更的回调
@@ -36,6 +44,16 @@ typedef void(^ArgoUIViewLoaderCallback)(NSString *keyPath, id newValue);
 /// @param view 加载lua脚本返回的view
 /// @param autoWire 是否执行lua中自动装配的函数
 + (void)updateData:(NSObject *)data forView:(UIView *)view autoWire:(BOOL)autoWire;
+
+/// 更新视图上的所有数据
+/// @param data 数据，通常为NSDictionary
+/// @param view 加载lua脚本返回的view
+/// @param autoWire 是否执行lua中自动装配的函数
+/// @param error 更新视图上的所有数据时的错误
++ (void)updateData:(NSObject *)data
+           forView:(UIView *)view
+          autoWire:(BOOL)autoWire
+             error:(NSError * _Nullable __autoreleasing * _Nullable)error;
 
 /// 获取view上的数据，修改该数据的某个字段可触发Lua中的UI更新
 /// @param view 加载lua脚本返回的view

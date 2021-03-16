@@ -73,8 +73,8 @@
     self.navHandler = [[MLNNavigatorHandler alloc] init];
     // MLNUIKit
     self.imgLoader2 = [[MLNUIMyImageHandler alloc] init];
-//    self.errorHandler = [MLNUIMyErrorHandler new];
-    self.errorHandler = [ArgoUIErrorHandlerComponent new];
+    self.errorHandler = [MLNUIMyErrorHandler new];
+//    self.errorHandler = [ArgoUIErrorHandlerComponent new];
     
     [MLNKitEnvironment instancePreload];
     [MLNKitEnvironment setDefaultHttpHandler:self.httpHandler];

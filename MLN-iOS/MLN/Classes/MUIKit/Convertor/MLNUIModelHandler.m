@@ -74,8 +74,64 @@ typedef void(^MLNLUIModelHandleTask)(void);
 }
 
 + (NSObject<ArgoListenerProtocol> *)autoWireData:(id)dataObject model:(NSObject<ArgoListenerProtocol> *)model extra:(id)extra modelKey:(NSString *)modelKey luaCore:(MLNUILuaCore *)luaCore {
+//    NSParameterAssert(dataObject && modelKey);
+//    if (!dataObject || !modelKey) {
+//        return nil;
+//    }
+//    if (!model) {
+//#pragma clang diagnostic push
+//#pragma clang diagnostic ignored "-Wincompatible-pointer-types"
+//        model = [ArgoObservableMap new];
+//#pragma clang diagnostic pop
+//    }
+//
+//    // push parameters
+//    int argCount = 0;
+//    if ([luaCore pushLuaTable:dataObject error:nil]) {
+//        argCount++;
+//    }
+//    if ([luaCore.convertor pushArgoBindingNativeObject:model error:nil]) {
+//        argCount++;
+//    }
+//    if (extra) {
+//        argCount++;
+//        MLNUIPushObject(extra, luaCore);
+//    }
+//
+//    // push function
+//    lua_State *L = luaCore.state;
+//    const char *func = [@"autoWire" stringByAppendingString:modelKey].UTF8String;
+//    lua_getglobal(L, func);
+//    if (lua_type(L, -1) != LUA_TFUNCTION) {
+//        NSString *errmsg = [NSString stringWithFormat:@"The element of top stack isn't function. (%s)", lua_typename(L, lua_type(L, -1))];
+//        ARGOUI_ERROR_LOG(errmsg);
+//        MLNUIError(luaCore, @"%@", errmsg);
+//        return model;
+//    }
+//
+//    // call
+//    NSError *error = nil;
+//    [luaCore call:argCount retCount:1 error:&error]; // return model
+//    if (error) {
+//        NSString *errmsg = [NSString stringWithFormat:@"The functionChunk called error. (%s)", [error localizedDescription].UTF8String];
+//        ARGOUI_ERROR_LOG(errmsg);
+//        MLNUIError(luaCore, @"%@", errmsg);
+//        return model;
+//    }
+//    return [luaCore.convertor toArgoBindingNativeObject:-1 error:NULL];
+    NSError *error = nil;
+    return [self autoWireData:dataObject model:model extra:extra modelKey:modelKey luaCore:luaCore error:&error];
+}
+
++ (NSObject<ArgoListenerProtocol> *)autoWireData:(id)dataObject
+                                           model:(NSObject<ArgoListenerProtocol> *)model
+                                           extra:(id)extra
+                                        modelKey:(NSString *)modelKey
+                                         luaCore:(MLNUILuaCore *)luaCore
+                                           error:(NSError * _Nullable __autoreleasing * _Nullable)error {
     NSParameterAssert(dataObject && modelKey);
     if (!dataObject || !modelKey) {
+        ARGOUI_ERROR(@"data or modelkey is nil")
         return nil;
     }
     if (!model) {
@@ -104,15 +160,15 @@ typedef void(^MLNLUIModelHandleTask)(void);
     lua_getglobal(L, func);
     if (lua_type(L, -1) != LUA_TFUNCTION) {
         NSString *errmsg = [NSString stringWithFormat:@"The element of top stack isn't function. (%s)", lua_typename(L, lua_type(L, -1))];
+        ARGOUI_ERROR(errmsg)
         ARGOUI_ERROR_LOG(errmsg);
         return model;
     }
     
     // call
-    NSError *error = nil;
-    [luaCore call:argCount retCount:1 error:&error]; // return model
+    [luaCore call:argCount retCount:1 error:error]; // return model
     if (error) {
-        NSString *errmsg = [NSString stringWithFormat:@"The functionChunk called error. (%s)", [error localizedDescription].UTF8String];
+        NSString *errmsg = [NSString stringWithFormat:@"The functionChunk called error. (%s)", [*error localizedDescription].UTF8String];
         ARGOUI_ERROR_LOG(errmsg);
         return model;
     }
