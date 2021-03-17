@@ -59,6 +59,11 @@ Lua中的根视图。
 @property (nonatomic, copy, readonly) NSString *entryFilePath;
 
 /**
+ 当前执行模块的键标识
+ */
+@property (nonatomic, copy) NSString *modelKey;
+
+/**
 传递参数
 */
 @property (nonatomic, strong, readonly) NSMutableDictionary *windowExtra;

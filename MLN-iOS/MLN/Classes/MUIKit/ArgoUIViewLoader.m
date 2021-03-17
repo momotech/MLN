@@ -15,7 +15,7 @@
 #import "ArgoObservableArray.h"
 #import "NSObject+ArgoListener.h"
 #import "ArgoViewController.h"
-
+#import "MLNUIKitInstanceHandlersManager.h"
 @interface ArgoUIViewLoaderDataBinding : ArgoDataBinding
 @property (nonatomic, strong) ArgoUIViewLoaderCallback callback;
 @end
@@ -36,7 +36,6 @@
 @interface ArgoUIViewLoaderKitInstance: MLNUIKitInstance
 + (ArgoUIViewLoaderKitInstance *)kitInstance;
 @property (nonatomic, strong) ArgoUIViewLoaderDataBinding *inner_dataBinding;
-@property (nonatomic, strong) NSString *modelKey;
 @property (nonatomic, strong) ArgoObservableMap *observableData;
 @end
 
@@ -129,7 +128,6 @@ const char *ArgoUIViewLoaderKitInstanceInstanceKey = "ArgoUIViewLoaderKitInstanc
                                        error:(NSError * _Nullable __autoreleasing * _Nullable)error{
     ArgoUIViewLoaderKitInstance *kit = [self getInstance];
     kit.modelKey = modelKey;
-    
 //    NSError *error = nil;
     BOOL success = [kit runWithEntryFile:filePath windowExtra:nil error:error];
     if (!success) {
@@ -138,7 +136,7 @@ const char *ArgoUIViewLoaderKitInstanceInstanceKey = "ArgoUIViewLoaderKitInstanc
 #endif
         return nil;
     }
-    
+
 //    UIView *view = [(UIView *)kit.luaWindow subviews].firstObject;
     UIView *view = (UIView *)kit.luaWindow;
     objc_setAssociatedObject(view, ArgoUIViewLoaderKitInstanceInstanceKey, kit, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
@@ -179,7 +177,8 @@ const char *ArgoUIViewLoaderKitInstanceInstanceKey = "ArgoUIViewLoaderKitInstanc
     NSParameterAssert(kit);
     if (!kit) {
         if(error){
-            *error = [NSError errorWithDomain:@"com.argoui.error" code:-1 userInfo:@{NSLocalizedDescriptionKey:@"loader kit is nil"}];
+            *error = [NSError errorWithDomain:@"com.argoui.error" code:-1 userInfo:@{NSLocalizedDescriptionKey:@"loaderkit instance is nil"}];
+            [[MLNUIKitInstanceHandlersManager defaultManager].errorHandler instance:[ArgoUIViewLoaderKitInstance kitInstance] error:@"loaderkit instance is nil"];
         }
         return;
     }
@@ -189,6 +188,7 @@ const char *ArgoUIViewLoaderKitInstanceInstanceKey = "ArgoUIViewLoaderKitInstanc
         if(error){
             *error = [NSError errorWithDomain:@"com.argoui.error" code:-1 userInfo:@{NSLocalizedDescriptionKey:@"loader kit modelkey is nil"}];
         }
+        [[MLNUIKitInstanceHandlersManager defaultManager].errorHandler instance:kit error:@"data formate is not Array or dictionary"];
         return;
     }
     NSObject<ArgoListenerProtocol> *model = nil;
@@ -196,6 +196,9 @@ const char *ArgoUIViewLoaderKitInstanceInstanceKey = "ArgoUIViewLoaderKitInstanc
         model = [MLNUIModelHandler autoWireData:data model:nil extra:nil modelKey:key luaCore:kit.luaCore error:error];
     } else {
         model = [self convertToObservableObject:data error:error];
+        if (!model) {
+            [[MLNUIKitInstanceHandlersManager defaultManager].errorHandler instance:kit error:@"data formate is not Array or dictionary"];
+        }
     }
     kit.observableData = (ArgoObservableMap *)model;
     [kit.inner_dataBinding bindData:model forKey:key];
