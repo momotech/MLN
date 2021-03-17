@@ -64,6 +64,11 @@ Lua中的根视图。
 @property (nonatomic, copy) NSString *modelKey;
 
 /**
+ 用户端自定义透传数据
+ */
+@property (nonatomic, strong, nullable) id userInfo;
+
+/**
 传递参数
 */
 @property (nonatomic, strong, readonly) NSMutableDictionary *windowExtra;

@@ -29,9 +29,11 @@ typedef void(^ArgoUIViewLoaderCallback)(NSString *keyPath, id newValue);
 /// 加载lua脚本生成对应的view
 /// @param filePath lua文件路径
 /// @param modelKey ArgoUI文件中的model名字
+/// @param userInfo 透传数据
 /// @param error ArgoUI文件加载过程中的错误
 + (nullable UIView *)loadViewFromLuaFilePath:(NSString *)filePath
                                     modelKey:(nonnull NSString *)modelKey
+                                    userInfo:(id _Nullable)userInfo
                                        error:(NSError * _Nullable __autoreleasing * _Nullable)error;
 
 /// 原生监听Lua中的数据变更

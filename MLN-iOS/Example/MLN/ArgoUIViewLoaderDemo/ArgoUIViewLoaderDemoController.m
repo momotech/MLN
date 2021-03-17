@@ -57,7 +57,7 @@
     if (!cell) {
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"cell"];
         NSError *error = nil;
-        UIView *contentView = [ArgoUIViewLoader loadViewFromLuaFilePath:@"MyCell.lua" modelKey:@"model" error:&error];
+        UIView *contentView = [ArgoUIViewLoader loadViewFromLuaFilePath:@"MyCell.lua" modelKey:@"model"];
         
         contentView.tag = 2021;
         contentView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleRightMargin;

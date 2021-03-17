@@ -120,14 +120,16 @@ const char *ArgoUIViewLoaderKitInstanceInstanceKey = "ArgoUIViewLoaderKitInstanc
 //    objc_setAssociatedObject(view, ArgoUIViewLoaderKitInstanceInstanceKey, kit, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 //    return view;
     NSError *error = nil;
-    UIView *view = [self loadViewFromLuaFilePath:filePath modelKey:modelKey error:&error];
+    UIView *view = [self loadViewFromLuaFilePath:filePath modelKey:modelKey userInfo:nil error:&error];
     return view;
 }
 + (nullable UIView *)loadViewFromLuaFilePath:(NSString *)filePath
                                     modelKey:(nonnull NSString *)modelKey
+                                    userInfo:(id _Nullable)userInfo
                                        error:(NSError * _Nullable __autoreleasing * _Nullable)error{
     ArgoUIViewLoaderKitInstance *kit = [self getInstance];
     kit.modelKey = modelKey;
+    kit.userInfo = userInfo;
 //    NSError *error = nil;
     BOOL success = [kit runWithEntryFile:filePath windowExtra:nil error:error];
     if (!success) {
