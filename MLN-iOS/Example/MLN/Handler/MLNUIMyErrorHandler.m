@@ -15,11 +15,13 @@
 }
 
 - (void)instance:(MLNUIKitInstance *)instance error:(NSString *)error {
-    NSAssert(NO, error);
+    NSLog(@"MLNUIMyErrorHandler1 :%@",error);
+//    NSAssert(NO, error);
 }
 
 - (void)instance:(MLNUIKitInstance *)instance luaError:(NSString *)error luaTraceback:(NSString *)luaTraceback {
-    NSAssert(NO, error);
+    NSLog(@"MLNUIMyErrorHandler2 :%@",error);
+//    NSAssert(NO, error);
 }
 
 @end

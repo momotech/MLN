@@ -11,7 +11,7 @@
 #import "MLNUIBlock.h"
 #import "MLNUIDevice.h"
 #import "MLNUINetworkReachabilityManager.h"
-#import <pthread/pthread.h>
+
 @implementation MLNUISystem
 
 + (NSString *)luaui_osVersion
@@ -47,15 +47,10 @@
 
 + (void)luaui_asyncDoInMain:(MLNUIBlock *)callback
 {
-    dispatch_block_t block = ^{
-        if (!callback) return;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (!callback) return ;
         [callback callIfCan];
-    };
-    if (pthread_main_np()) {
-        block();
-    }else{
-        dispatch_async(dispatch_get_main_queue(),block);
-    };
+    });
 }
 
 
