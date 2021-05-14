@@ -542,14 +542,15 @@ const CGFloat kMLNTabSegmentViewLabelOffsetWeight = 10.0f;
     CGFloat baseWidth = self.configuration.pointSize.width > 0 ? self.configuration.pointSize.width : 5;
     CGFloat width = baseWidth + offset * (1 - scale);
      */
-    
-    CGFloat differenceWidth = newLabel.frame.size.width - oldLable.frame.size.width;
+    CGFloat newWidth = newLabel.frame.size.width;
     CGFloat oldWidth = oldLable.frame.size.width;
-    CGFloat progressWidth = oldWidth + differenceWidth * progress;
-
-    CGRect frame = self.bottomPointView.frame;
-    frame.size.width = progressWidth;
-    self.bottomPointView.frame = frame;
+    if (newWidth != oldWidth) {
+        CGFloat differenceWidth = newWidth - oldWidth;
+        CGFloat progressWidth = oldWidth + differenceWidth * progress;
+        CGRect frame = self.bottomPointView.frame;
+        frame.size.width = progressWidth;
+        self.bottomPointView.frame = frame;
+    }
     
     CGPoint center = self.bottomPointView.center;
     center.x = startPointX + (endPointX-startPointX) * progress;
