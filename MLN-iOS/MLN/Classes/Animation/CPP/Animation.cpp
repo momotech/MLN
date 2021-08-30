@@ -58,7 +58,7 @@ void Animation::SetRepeatCount(AMTInt count) {
 
 void Animation::updateAnimationExecuteCount(AMTInt repeatCount, AMTBool autoreverse) {
     executeCount = 1;
-    executeCount += (repeatCount > 0) ? repeatCount : 0;
+    executeCount += (repeatCount - 1 > 0) ? repeatCount - 1 : 0;
     executeCount *= autoreverse ? 2 : 1;
 }
 
