@@ -75,6 +75,7 @@
 #endif
 
 #if __has_include(<ArgoUI/ArgoUIKit.h>)
+#import <ArgoUI/ArgoUIViewLoader.h>
 #import <ArgoUI/ArgoUIKit.h>
 #import <ArgoUI/ArgoViewController.h>
 #import <ArgoUI/MLNUIBlock+LazyCall.h>
