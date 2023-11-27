@@ -14,8 +14,8 @@ if (upload_symbols) {
     apply plugin: 'rifle.symbols'
 
     symbolsConfig {
-        appId = appId
-        appKey = appKey
+        appId = project.ext.appId
+        appKey = project.ext.appKey
     }
 }
 

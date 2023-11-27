@@ -44,7 +44,7 @@ allprojects {
 
     ext {
         implementation_debug = true
-        update_hello_group = false
+        update_hello_group = true
         upload_symbols = false
         compileSdkVersion = 29
         buildToolsVersion = "29.0.3"
@@ -53,12 +53,12 @@ allprojects {
         androidXVersion = "1.1.0"
         protobufVersion = '3.0.1'
 
-        mlnCoreVersion = '2.0_beta1'
-        mlnsVersion = '2.0_beta1'
-        processorVersion = '2.0_beta1'
-        annotationVersion = '2.0_beta1'
+        mlnCoreVersion = 'hello_group_1.0_test_new_release'
+        mlnsVersion = 'hello_group_1.0_test_new_release'
+        processorVersion = 'hello_group_1.0_test_new_release'
+        annotationVersion = 'hello_group_1.0_test_new_release'
 
-        hotreloadVersion = '2.0_beta1'
+        hotreloadVersion = 'hello_group_1.0_test_new_release'
     }
 }
 tasks.withType(JavaCompile) {
