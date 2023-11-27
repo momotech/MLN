@@ -4,7 +4,7 @@ local.properties
 /.idea
 .DS_Store
 /build
-
+.settings/
 # Generated files
 bin/
 gen/
