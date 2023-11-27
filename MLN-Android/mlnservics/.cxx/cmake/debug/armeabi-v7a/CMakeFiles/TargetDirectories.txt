@@ -1,8 +1,0 @@
-/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/.cxx/cmake/debug/armeabi-v7a/CMakeFiles/rebuild_cache.dir
-/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/.cxx/cmake/debug/armeabi-v7a/CMakeFiles/edit_cache.dir
-/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/.cxx/cmake/debug/armeabi-v7a/bitmap/CMakeFiles/rebuild_cache.dir
-/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/.cxx/cmake/debug/armeabi-v7a/bitmap/CMakeFiles/edit_cache.dir
-/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/.cxx/cmake/debug/armeabi-v7a/bitmap/CMakeFiles/lblur.dir
-/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/.cxx/cmake/debug/armeabi-v7a/mln/CMakeFiles/rebuild_cache.dir
-/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/.cxx/cmake/debug/armeabi-v7a/mln/CMakeFiles/edit_cache.dir
-/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/.cxx/cmake/debug/armeabi-v7a/mln/CMakeFiles/mlnbridge.dir
