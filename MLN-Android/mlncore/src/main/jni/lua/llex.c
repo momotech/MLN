@@ -23,9 +23,12 @@
 #include "ltable.h"
 #include "lzio.h"
 
-
-
+#ifdef LOAD_TOKEN
+static size_t _line_offset = 0;
+#define next(ls) ({ls->current = zgetc(ls->z); _line_offset ++;})
+#else
 #define next(ls) (ls->current = zgetc(ls->z))
+#endif
 
 
 
@@ -170,6 +173,9 @@ void luaX_setinput (lua_State *L, LexState *ls, ZIO *z, TString *source,
   ls->envn = luaS_new(L, LUA_ENV);  /* create env name */
   luaS_fix(ls->envn);  /* never collect this name */
   luaZ_resizebuffer(ls->L, ls->buff, LUA_MINBUFFER);  /* initialize buffer */
+#ifdef LOAD_TOKEN
+  _line_offset = 0;
+#endif
 }
 
 
@@ -421,12 +427,20 @@ static int llex (LexState *ls, SemInfo *seminfo) {
           if (sep >= 0) {
             read_long_string(ls, NULL, sep);  /* skip long comment */
             luaZ_resetbuffer(ls->buff);  /* previous call may dirty the buff. */
+#ifdef LOAD_TOKEN
+            if (ls->ud)
+              ls->ud->tl(ls->ud->ud, -1, NULL, 0, 1, 0, 0);
+#endif
             break;
           }
         }
         /* else short comment */
         while (!currIsNewline(ls) && ls->current != EOZ)
           next(ls);  /* skip until end of line (or end of file) */
+#ifdef LOAD_TOKEN
+        if (ls->ud)
+          ls->ud->tl(ls->ud->ud, -1, NULL, 0, 1, 0, 0);
+#endif
         break;
       }
       case '[': {  /* long string or simply '[' */
@@ -519,6 +533,21 @@ void luaX_next (LexState *ls) {
   }
   else
     ls->t.token = llex(ls, &ls->t.seminfo);  /* read next token */
+#ifdef LOAD_TOKEN
+  if (ls->ud) {
+    const char* str;
+    lua_Number num = 0;
+    if (ls->t.token == TK_STRING || ls->t.token == TK_NAME) {
+      str = getstr(ls->t.seminfo.ts);
+    } else if (ls->t.token == TK_NUMBER) {
+      num = ls->t.seminfo.r;
+      str = NULL;
+    } else {
+      str = NULL;
+    }
+    ls->ud->tl(ls->ud->ud, ls->t.token, str, num, currIsNewline(ls), ls->linenumber, _line_offset);
+  }
+#endif
 }
 
 

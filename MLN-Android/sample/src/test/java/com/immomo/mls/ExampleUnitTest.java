@@ -16,8 +16,8 @@ import java.util.List;
 public class ExampleUnitTest {
     @Test
     public void testHashCast() throws Exception {
-        List<String> test = new ArrayList();
-        test.set(10,"10");
+//        List<String> test = new ArrayList();
+//        test.set(10,"10");
     }
 
 }

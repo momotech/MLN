@@ -112,8 +112,8 @@ public class TextDotTabInfoLua extends BaseTabLayout.TabInfo {
         this.scale = scale - 1;
     }
 
-    public void upDataScale() {
-        if (titleScaleLayout != null)
+    public void upDataScale(@NonNull BaseTabLayout tabLayout) {
+        if (titleScaleLayout != null && tabLayout.isEnableScale())
             titleScaleLayout.setChildScale(1 + scale, 1 + scale);
     }
 

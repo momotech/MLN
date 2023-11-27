@@ -1,10 +1,10 @@
 /**
-  * Created by MomoLuaNative.
-  * Copyright (c) 2019, Momo Group. All rights reserved.
+ * Created by MomoLuaNative.
+ * Copyright (c) 2019, Momo Group. All rights reserved.
   *
-  * This source code is licensed under the MIT.
-  * For the full copyright and license information,please view the LICENSE file in the root directory of this source tree.
-  */
+ * This source code is licensed under the MIT.
+ * For the full copyright and license information,please view the LICENSE file in the root directory of this source tree.
+ */
 package com.immomo.mls.fun.ud.view;
 
 import android.widget.ImageView;
@@ -16,7 +16,6 @@ import com.immomo.mls.fun.ui.LuaImageView;
 import com.immomo.mls.util.DimenUtil;
 import com.immomo.mls.utils.ErrorUtils;
 import com.immomo.mls.utils.MainThreadExecutor;
-import com.immomo.mls.utils.convert.ConvertUtils;
 
 import org.luaj.vm2.LuaBoolean;
 import org.luaj.vm2.LuaFunction;
@@ -30,10 +29,13 @@ import org.luaj.vm2.utils.LuaApiUsed;
 import java.util.ArrayList;
 import java.util.List;
 
+import kotlin.Unit;
+import kotlin.jvm.functions.Function3;
+
 /**
  * Created by XiongFangyu on 2018/8/1.
  */
-@LuaApiUsed
+@LuaApiUsed(ignoreTypeArgs = true)
 public class UDImageView<I extends ImageView & ILuaImageView> extends UDView<I> {
 
     public static final String LUA_CLASS_NAME = "ImageView";
@@ -58,7 +60,10 @@ public class UDImageView<I extends ImageView & ILuaImageView> extends UDView<I> 
 
     private LuaFunction imageLoadCallback;
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(UDImageView.class))
+    })
     public UDImageView(long L, LuaValue[] v) {
         super(L, v);
     }
@@ -70,7 +75,13 @@ public class UDImageView<I extends ImageView & ILuaImageView> extends UDView<I> 
 
     //<editor-fold desc="API">
     //<editor-fold desc="Property">
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(String.class),
+            }, returns = @LuaApiUsed.Type(UDImageView.class)),
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(String.class)),
+    })
     public LuaValue[] image(LuaValue[] var) {
         if (var.length == 1) {
             cleanNineImage();
@@ -91,7 +102,13 @@ public class UDImageView<I extends ImageView & ILuaImageView> extends UDView<I> 
         return luaValues;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Integer.class),
+            }, returns = @LuaApiUsed.Type(UDImageView.class)),
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(Integer.class)),
+    })
     public LuaValue[] contentMode(LuaValue[] var) {
         if (var.length == 1) {
             if (var[0].isNil()) {
@@ -102,13 +119,24 @@ public class UDImageView<I extends ImageView & ILuaImageView> extends UDView<I> 
             if (type == ContentMode.CENTER) {
                 ErrorUtils.debugDeprecatedMethod("ContentMode.CENTER is deprecated", globals);
             }
+            if (type >= ContentMode.TOP) {
+                getView().setCompatScaleType(type);
+                return null;
+            }
             getView().setScaleType(ImageView.ScaleType.values()[type]);
             return null;
         }
         return varargsOf(LuaNumber.valueOf(getView().getScaleType().ordinal()));
     }
 
-    @LuaApiUsed
+
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Boolean.class),
+            }, returns = @LuaApiUsed.Type(UDImageView.class)),
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(Boolean.class)),
+    })
     public LuaValue[] lazyLoad(LuaValue[] var) {
         if (var.length == 1) {
             getView().setLazyLoad(var[0].toBoolean());
@@ -117,7 +145,12 @@ public class UDImageView<I extends ImageView & ILuaImageView> extends UDView<I> 
         return getView().isLazyLoad() ? varargsOf(LuaBoolean.True()) : varargsOf(LuaBoolean.False());
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(String.class),
+                    @LuaApiUsed.Type(String.class)
+            }, returns = @LuaApiUsed.Type(UDImageView.class))
+    })
     public LuaValue[] setImageUrl(LuaValue[] var) {
         cleanNineImage();
         String url = var.length > 0 && !var[0].isNil() ? var[0].toJavaString() : null;
@@ -128,7 +161,15 @@ public class UDImageView<I extends ImageView & ILuaImageView> extends UDView<I> 
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(String.class),
+                    @LuaApiUsed.Type(String.class),
+                    @LuaApiUsed.Type(value = Function3.class, typeArgs = {
+                            Boolean.class, String.class, String.class, Unit.class
+                    })
+            }, returns = @LuaApiUsed.Type(UDImageView.class))
+    })
     public LuaValue[] setImageWithCallback(LuaValue[] var) {
         String url = var.length > 0 && !var[0].isNil() ? var[0].toJavaString() : null;
         String placeHolder = var.length > 1 && !var[1].isNil() ? var[1].toJavaString() : null;
@@ -138,7 +179,11 @@ public class UDImageView<I extends ImageView & ILuaImageView> extends UDView<I> 
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Double.class)
+            }, returns = @LuaApiUsed.Type(UDImageView.class))
+    })
     public LuaValue[] blurImage(LuaValue[] var) {
         //ios新增参数2，Android不处理
         if (var.length > 0 && !var[0].isNil()) {
@@ -182,18 +227,37 @@ public class UDImageView<I extends ImageView & ILuaImageView> extends UDView<I> 
         getView().setImageUrlWithPlaceHolder(url, placeHolder);
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Float.class)
+            }, returns = @LuaApiUsed.Type(UDImageView.class))
+    })
     public LuaValue[] borderWidth(LuaValue[] width) {
         return super.borderWidth(varargsOf(LuaNumber.valueOf((float) width[0].toDouble())));
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(UDImageView.class))
+    })
     public LuaValue[] padding(LuaValue[] width) {
         ErrorUtils.debugUnsupportError("ImageView not support padding");
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(String.class),
+                    @LuaApiUsed.Type(String.class),
+                    @LuaApiUsed.Type(Double.class),
+            }, returns = @LuaApiUsed.Type(UDImageView.class)),
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(String.class),
+                    @LuaApiUsed.Type(String.class),
+                    @LuaApiUsed.Type(Double.class),
+                    @LuaApiUsed.Type(Integer.class)
+            }, returns = @LuaApiUsed.Type(UDImageView.class))
+    })
     public LuaValue[] setCornerImage(LuaValue[] var) {
         cleanNineImage();
 
@@ -214,7 +278,18 @@ public class UDImageView<I extends ImageView & ILuaImageView> extends UDView<I> 
     //</editor-fold>
 
     //<editor-fold desc="Method">
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = UDArray.class),
+                    @LuaApiUsed.Type(Double.class),
+                    @LuaApiUsed.Type(Boolean.class),
+            }, returns = @LuaApiUsed.Type(UDImageView.class)),
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(String.class),
+                    @LuaApiUsed.Type(Double.class),
+                    @LuaApiUsed.Type(Boolean.class),
+            }, returns = @LuaApiUsed.Type(UDImageView.class))
+    })
     public LuaValue[] startAnimationImages(LuaValue[] values) {
         // LuaValue value, float d, boolean repeat
         cleanNineImage();
@@ -236,13 +311,19 @@ public class UDImageView<I extends ImageView & ILuaImageView> extends UDView<I> 
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(UDImageView.class))
+    })
     public LuaValue[] stopAnimationImages(LuaValue[] v) {
         getView().stop();
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(Boolean.class))
+    })
     public LuaValue[] isAnimating(LuaValue[] v) {
         return varargsOf(LuaBoolean.valueOf(getView().isRunning()));
     }

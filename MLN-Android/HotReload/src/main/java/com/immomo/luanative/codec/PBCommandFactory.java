@@ -14,8 +14,6 @@ import com.google.protobuf.ByteString;
 import com.immomo.luanative.codec.proto.PackageConst;
 import com.immomo.luanative.codec.protobuf.PBBaseCommand;
 import com.immomo.luanative.codec.protobuf.PBCloseCommand;
-import com.immomo.luanative.codec.protobuf.PBCoverageDetailCommand;
-import com.immomo.luanative.codec.protobuf.PBCoverageSummaryCommand;
 import com.immomo.luanative.codec.protobuf.PBDeviceCommand;
 import com.immomo.luanative.codec.protobuf.PBEntryFileCommand;
 import com.immomo.luanative.codec.protobuf.PBErrorCommand;
@@ -102,21 +100,5 @@ public class PBCommandFactory {
         builder.setInstruction(code);
         builder.setTimestamp(System.currentTimeMillis());
         return builder.build();
-    }
-
-    public static PBCoverageSummaryCommand.pbcoveragesummarycommand getSummaryCommand(String file, byte[] data) {
-        return PBCoverageSummaryCommand.pbcoveragesummarycommand.newBuilder()
-                .setFilePath(file)
-                .setFileData(ByteString.copyFrom(data))
-                .setBasecommand(getBaseCommand(PackageConst.TYPE_CSUMMER))
-                .build();
-    }
-
-    public static PBCoverageDetailCommand.pbcoveragedetailcommand getDetailCommand(String file, byte[] data) {
-        return PBCoverageDetailCommand.pbcoveragedetailcommand.newBuilder()
-                .setFilePath(file)
-                .setFileData(ByteString.copyFrom(data))
-                .setBasecommand(getBaseCommand(PackageConst.TYPE_CDETAIL))
-                .build();
     }
 }

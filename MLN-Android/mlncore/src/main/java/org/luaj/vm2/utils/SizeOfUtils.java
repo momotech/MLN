@@ -9,6 +9,8 @@ package org.luaj.vm2.utils;
 
 import android.util.ArrayMap;
 
+import com.immomo.mlncore.MLNCore;
+
 import java.lang.ref.Reference;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
@@ -37,6 +39,10 @@ public class SizeOfUtils {
      * 数组长度占用，按int计算
      */
     private static final int LENGTH_SIZE = 4;
+    /**
+     * 若获取类中信息出错，按16字节算
+     */
+    private static final int DEFUALT_SIZE = 16;
 
     private static final Map<Class, Long> classMemCache = new ArrayMap<>(20);
 
@@ -147,28 +153,34 @@ public class SizeOfUtils {
      * 获取某个类最少占用内存
      * 不计算父类
      */
-    private static long _sizeof(Class clz) {
+    private static synchronized long _sizeof(Class clz) {
         Long cache = classMemCache.get(clz);
         if (cache != null)
             return cache;
         long size = 0;
-        Field[] fields = clz.getDeclaredFields();
-        for (Field f : fields) {
-            Class type = f.getType();
-            if ((type.getModifiers() & Modifier.STATIC) == Modifier.STATIC)
-                continue;
-            if (type.isPrimitive()) {
-                size += _primitiveSize(type);
-                continue;
+        try {
+            Field[] fields = clz.getDeclaredFields();
+            for (Field f : fields) {
+                Class type = f.getType();
+                if ((type.getModifiers() & Modifier.STATIC) == Modifier.STATIC)
+                    continue;
+                if (type.isPrimitive()) {
+                    size += _primitiveSize(type);
+                    continue;
+                }
+                /// 数组类型 对象头+指针长度+数组长度的长度
+                /// 先加上数组长度的长度
+                if (type.isArray()) {
+                    size += PTR_HEAD + PTR_SIZE + LENGTH_SIZE;
+                    continue;
+                }
+                /// 对象类型 对象头+指针长度
+                size += PTR_HEAD + PTR_SIZE;
             }
-            /// 数组类型 对象头+指针长度+数组长度的长度
-            /// 先加上数组长度的长度
-            if (type.isArray()) {
-                size += PTR_HEAD + PTR_SIZE + LENGTH_SIZE;
-                continue;
-            }
-            /// 对象类型 对象头+指针长度
-            size += PTR_HEAD + PTR_SIZE;
+        } catch (Throwable e) {
+            if (MLNCore.DEBUG)
+                throw e;
+            size += DEFUALT_SIZE;
         }
         classMemCache.put(clz, size);
         return size;

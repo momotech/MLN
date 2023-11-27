@@ -11,18 +11,19 @@ import android.view.ViewGroup;
 
 import com.immomo.mls.fun.ui.LuaHStack;
 
+import kotlin.jvm.functions.Function4;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.utils.LuaApiUsed;
 
 
-@LuaApiUsed
+@LuaApiUsed(ignoreTypeArgs = true)
 public class UDHStack<V extends LuaHStack> extends UDBaseHVStack<V> {
     public static final String LUA_CLASS_NAME = "HStack";
     public static final String[] methods = {
         "ellipsize"
     };
 
-    @LuaApiUsed
+    @LuaApiUsed(ignore = true)
     protected UDHStack(long L, LuaValue[] v) {
         super(L, v);//HStack 主轴默认充满父容器
         setWidth(ViewGroup.LayoutParams.MATCH_PARENT);
@@ -34,7 +35,12 @@ public class UDHStack<V extends LuaHStack> extends UDBaseHVStack<V> {
     }
 
     //<editor-fold desc="API">
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Boolean.class),
+                    @LuaApiUsed.Type(UDView.class)
+            }, returns = @LuaApiUsed.Type(UDHStack.class))
+    })
     public LuaValue[] ellipsize(LuaValue[] var) {
         boolean enable = var.length > 0 && var[0].toBoolean();
         UDView udview = var.length > 1 && !var[1].isNil() ? (UDView) var[1].toUserdata() : null;

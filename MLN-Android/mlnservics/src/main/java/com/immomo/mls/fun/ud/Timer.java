@@ -13,6 +13,8 @@ import com.immomo.mls.annotation.LuaBridge;
 import com.immomo.mls.annotation.LuaClass;
 import com.immomo.mls.utils.MainThreadExecutor;
 
+import kotlin.Unit;
+import kotlin.jvm.functions.Function1;
 import org.luaj.vm2.Globals;
 import org.luaj.vm2.LuaFunction;
 import org.luaj.vm2.LuaValue;
@@ -68,7 +70,10 @@ public class Timer {
     //</editor-fold>
 
     //<editor-fold desc="Methods">
-    @LuaBridge
+    @LuaBridge(value = {
+            @LuaBridge.Func(params = {
+                    @LuaBridge.Type(value = Function1.class, typeArgs = {Boolean.class, Unit.class})})
+    })
     public void start(LuaFunction task) {
         if (state == STATE_RUNNING || state == STATE_PAUSING) {
             return;
@@ -141,7 +146,7 @@ public class Timer {
             }
             if (repeatCount <= 0 || repeatCount > ++doCount) {
                 try {
-                    task.invoke(LuaValue.rFalse());
+                    task.fastInvoke(false);
                     MainThreadExecutor.cancelSpecificRunnable(getTag(),this);
                     MainThreadExecutor.postDelayed(getTag(), this, interval);
                 } catch (InvokeError e) {
@@ -149,7 +154,7 @@ public class Timer {
                 }
             } else {
                 try {
-                    task.invoke(LuaValue.rTrue());
+                    task.fastInvoke(true);
                 } catch (InvokeError ignore) {}
                 state = STATE_END;
                 task = null;

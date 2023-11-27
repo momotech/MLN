@@ -7,8 +7,6 @@ android {
     defaultConfig {
         minSdkVersion project.minSdkVersion
         targetSdkVersion project.targetSdkVersion
-        versionCode 1
-        versionName "1.0"
     }
     buildTypes {
         release {
@@ -20,6 +18,12 @@ android {
 
 dependencies {
 }
-
-apply from: "../bintrayUpload.gradle"
-version=hotreloadVersion
+if (!implementation_debug) {
+    if (update_hello_group) {
+        ext.versionForMomo = rootProject.ext.hotreloadVersion
+        apply from: '../publish_to_hellogroup_maven_central.gradle'
+    } else {
+        project.ext["publish.version"] = hotreloadVersion
+        apply from: "../publish_to_maven_central.gradle"
+    }
+}

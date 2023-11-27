@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import com.immomo.mls.MLSConfigs;
 import com.immomo.mls.base.ud.lv.ILViewGroup;
 import com.immomo.mls.fun.constants.LinearType;
+import com.immomo.mls.fun.ud.UDColor;
 import com.immomo.mls.fun.ui.LuaLinearLayout;
 import com.immomo.mls.fun.weight.LinearLayout;
 import com.immomo.mls.util.LuaViewUtil;
@@ -22,11 +23,13 @@ import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.utils.LuaApiUsed;
 
 
-@LuaApiUsed
+@LuaApiUsed(ignoreTypeArgs = true)
 public class UDLinearLayout<V extends ViewGroup & ILViewGroup> extends UDViewGroup<V> {
     public static final String LUA_CLASS_NAME = "LinearLayout";
 
-    @LuaApiUsed
+    @LuaApiUsed({@LuaApiUsed.Func(params = {
+            @LuaApiUsed.Type(Integer.class)
+    })})
     protected UDLinearLayout(long L, LuaValue[] v) {
         super(L, v);
     }

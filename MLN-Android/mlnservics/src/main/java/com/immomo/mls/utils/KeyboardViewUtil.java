@@ -56,32 +56,24 @@ public class KeyboardViewUtil {
      * @return
      */
     public static boolean isSystemUiVisibilityFullScreen(Context context) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            if (context instanceof Activity) {
-                return (((Activity) context).getWindow().getDecorView().getSystemUiVisibility() & ((View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN))) != 0;
-            }
+        if (context instanceof Activity) {
+            return (((Activity) context).getWindow().getDecorView().getSystemUiVisibility() & ((View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN))) != 0;
         }
         return false;
     }
 
-    @TargetApi(Build.VERSION_CODES.KITKAT)
     public static boolean isTranslucentStatus(final Context context) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            if (context instanceof Activity) {
-                return (((Activity) context).getWindow().getAttributes().flags &
-                        WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS) != 0;
-            }
+        if (context instanceof Activity) {
+            return (((Activity) context).getWindow().getAttributes().flags &
+                    WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS) != 0;
         }
         return false;
     }
 
-    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     public static boolean isFitsSystemWindows(final Context context) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            if (context instanceof Activity) {
-                return ((ViewGroup) (((Activity) context).findViewById(android.R.id.content))).getChildAt(0).
-                        getFitsSystemWindows();
-            }
+        if (context instanceof Activity) {
+            return ((ViewGroup) (((Activity) context).findViewById(android.R.id.content))).getChildAt(0).
+                    getFitsSystemWindows();
         }
         return false;
     }

@@ -1,13 +1,15 @@
 #!/bin/bash
 
-MODULE=('mlncore' 'mlnservics' 'mmui')
+MODULE=('mlncore' 'mlnservics')
 ARM=('armeabi-v7a' 'arm64-v8a')
-SO_FILE=('libluajapi.so' 'libmlnbridge.so' 'libmmuibridge.so')
+SO_FILE=('libluajapi.so' 'libmlnbridge.so' )
+RELEASE_DIR="release_so_symbols/obj"
 
 function inform() {
     echo "usage: ./addr2line.sh [option] ..."
     echo "options:"
     echo "  -x: x32 mode"
+    echo "  -r: for release"
     echo "  -m: module, default 0"
     for (( i = 0; i < ${#MODULE[*]}; i++ )); do
         echo "     ${i} for ${MODULE[${i}]}"
@@ -16,9 +18,10 @@ function inform() {
 }
 
 x=${ARM[1]}
+r=0
 m=0
 idx=0
-while getopts "hxm:" optname
+while getopts "hxrm:" optname
 do
     case "$optname" in
         "h")
@@ -27,6 +30,10 @@ do
             ;;
         "x")
             x=${ARM[0]}
+            let idx=idx+1
+            ;;
+        "r")
+            r=1
             let idx=idx+1
             ;;
         "m")
@@ -68,7 +75,11 @@ while read line; do
 done < ./local.properties
 
 cd ${ndkDir}/toolchains/aarch64-linux-android-4.9/prebuilt/darwin-x86_64/bin
-so_path="${work_path}/${MODULE[${m}]}/src/main/libs"
+if [ $r -eq 1 ]; then
+    so_path="${work_path}/${RELEASE_DIR}"
+else
+    so_path="${work_path}/${MODULE[${m}]}/src/main/libs"
+fi
 params=($@)
 params=(${params[@]:idx})
 so_path="${so_path}/${x}/${SO_FILE[${m}]}"

@@ -28,7 +28,7 @@ import java.util.List;
  * Created by Xiong.Fangyu on 2020/9/3
  * java -jar mlncgen.jar -module mlnservics -class com.immomo.mls.fun.ud.UDArray -jni mln/bridge -name mmarray.c
  */
-@LuaApiUsed
+@LuaApiUsed(name = "List", ignore = true)
 public class UDArray extends LuaUserdata<List> {
     public static final String LUA_CLASS_NAME = "Array";
 

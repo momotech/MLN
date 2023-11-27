@@ -1,24 +1,33 @@
 /**
-  * Created by MomoLuaNative.
-  * Copyright (c) 2019, Momo Group. All rights reserved.
-  *
-  * This source code is licensed under the MIT.
-  * For the full copyright and license information,please view the LICENSE file in the root directory of this source tree.
-  */
+ * Created by MomoLuaNative.
+ * Copyright (c) 2019, Momo Group. All rights reserved.
+ * <p>
+ * This source code is licensed under the MIT.
+ * For the full copyright and license information,please view the LICENSE file in the root directory of this source tree.
+ */
 package com.immomo.mls.fun.ud.view.recycler;
+
+import static com.immomo.mls.fun.ud.view.IClipRadius.LEVEL_FORCE_CLIP;
+import static com.immomo.mls.fun.ud.view.IClipRadius.LEVEL_FORCE_NOTCLIP;
 
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.annotation.CallSuper;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.PagerSnapHelper;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.immomo.mls.MLSEngine;
 import com.immomo.mls.fun.other.Adapter;
 import com.immomo.mls.fun.other.ViewHolder;
 import com.immomo.mls.fun.ud.UDArray;
+import com.immomo.mls.fun.ud.UDCell;
 import com.immomo.mls.fun.ud.UDPoint;
 import com.immomo.mls.fun.ud.view.IClipRadius;
 import com.immomo.mls.fun.ud.view.UDView;
 import com.immomo.mls.fun.ud.view.UDViewGroup;
-import com.immomo.mls.fun.ui.IPager;
 import com.immomo.mls.fun.ui.IRefreshRecyclerView;
 import com.immomo.mls.fun.ui.IScrollEnabled;
 import com.immomo.mls.fun.ui.LuaRecyclerView;
@@ -28,7 +37,13 @@ import com.immomo.mls.fun.weight.MLSRecyclerView;
 import com.immomo.mls.util.DimenUtil;
 import com.immomo.mls.utils.ErrorUtils;
 import com.immomo.mls.utils.MainThreadExecutor;
+import com.immomo.mls.utils.WhiteScreenUtil;
 import com.immomo.mls.weight.load.ILoadViewDelegete;
+
+import kotlin.Unit;
+import kotlin.jvm.functions.Function0;
+import kotlin.jvm.functions.Function2;
+import kotlin.jvm.functions.Function4;
 
 import org.luaj.vm2.LuaBoolean;
 import org.luaj.vm2.LuaFunction;
@@ -36,22 +51,16 @@ import org.luaj.vm2.LuaNumber;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.utils.LuaApiUsed;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
-
-import androidx.annotation.CallSuper;
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
-import static com.immomo.mls.fun.ud.view.IClipRadius.LEVEL_FORCE_CLIP;
-import static com.immomo.mls.fun.ud.view.IClipRadius.LEVEL_FORCE_NOTCLIP;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Created by XiongFangyu
  * (alias = {"CollectionView", "TableView", "WaterfallView"})
  */
-@LuaApiUsed
+@LuaApiUsed(ignoreTypeArgs = true)
 public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadListener,
         A extends UDBaseRecyclerAdapter, L extends UDBaseRecyclerLayout> extends UDViewGroup<T> implements SizeChangedListener {
     public static final String[] LUA_CLASS_NAME = {"CollectionView", "TableView", "WaterfallView"};
@@ -64,11 +73,13 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
             "openReuseCell",
             "reloadData",
             "setScrollEnable",
+            "setScrollEnabled",
             "reloadAtRow",
             "reloadAtSection",
             "showScrollIndicator",
             "scrollToTop",
             "scrollToCell",
+            "scrollBy",
             "insertCellAtRow",
             "insertRow",
             "deleteCellAtRow",
@@ -86,6 +97,7 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
             "setRefreshingCallback",
             "setLoadingCallback",
             "setScrollingCallback",
+            "setOnScrollCallback",
             "setScrollBeginCallback",
             "setScrollEndCallback",
             "setEndDraggingCallback",
@@ -107,10 +119,12 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
             "setOffsetWithAnim",
             "contentOffset",
             "disallowFling",
-            "pagerContentOffset",
             "i_bounces",
             "i_pagingEnabled",
+            "a_pagingEnabled",
+            "fixScrollConflict",
     };
+    private static final String TAG = "UDRecyclerView";
 
     private ILoadViewDelegete loadViewDelegete;
 
@@ -118,8 +132,13 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
     protected boolean mRefreshEnabled;
 
     RecyclerView.LayoutManager mLayoutManager;
+    private WhiteScreenUtil whiteScreenUtil;
+    private PagerSnapHelper snapHelper;
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(UDRecyclerView.class))
+    })
     public UDRecyclerView(long L, LuaValue[] initParams) {
         super(L, initParams);
         mScrollEnabled = true;
@@ -129,18 +148,13 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
     @Override
     protected T newView(LuaValue[] init) {
         boolean loadEnable = false;
-        boolean isViewPager = false;
         if (init.length > 0) {
             mRefreshEnabled = init[0].toBoolean();
         }
         if (init.length > 1) {
             loadEnable = init[1].toBoolean();
         }
-        if (init.length > 2) {
-            isViewPager = init[2].toBoolean();
-        }
         LuaRecyclerView luaRecyclerView = new LuaRecyclerView(getContext(), this, mRefreshEnabled, loadEnable);
-        luaRecyclerView.setViewpager(isViewPager);
         return (T) luaRecyclerView;
     }
 
@@ -155,6 +169,7 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
     private LuaFunction refreshCallback;
     private LuaFunction loadCallback;
     private LuaFunction scrollCallback;
+    private LuaFunction onScrollCallback;
     private LuaFunction scrollBeginCallback;
     private LuaFunction scrollEndCallback;
     private LuaFunction endDraggingCallback;
@@ -172,6 +187,11 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
     private int settedHeight;
 
     private boolean mAttachFirst = false;
+    /**
+     * 首次初始化执行  校验规定时间内是否执行加载数据 以监测白屏的可能性
+     */
+    private boolean isFirstInit = true;
+    private AtomicBoolean hasLoadData = new AtomicBoolean();
 
     protected RecyclerView getRecyclerView() {
         return getView().getRecyclerView();
@@ -185,13 +205,34 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
     public void onAttached() {
         super.onAttached();
         mAttachFirst = true;
+        if (isFirstInit) {
+            whiteScreenUtil = new WhiteScreenUtil(new WeakReference<View>(getRecyclerView())
+                    , getTaskTag()
+                    , hasLoadData
+                    , getLuaViewManager() == null ? "" : getLuaViewManager().url);
+            whiteScreenUtil.checkList();
+            isFirstInit = false;
+        }
     }
 
-    //<editor-fold desc="API">
+    private Object getTaskTag() {
+        return TAG + hashCode();
+    }
+
+    @Override
+    public void onDetached() {
+        super.onDetached();
+        WhiteScreenUtil.cancel(getTaskTag());
+    }
+//<editor-fold desc="API">
 
     //<editor-fold desc="Property">
     @Override
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Boolean.class)
+            }, returns = @LuaApiUsed.Type(UDRecyclerView.class))
+    })
     public LuaValue[] clipToBounds(LuaValue[] p) {
         boolean clip = p[0].toBoolean();
         view.setClipToPadding(clip);
@@ -199,12 +240,18 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
         view.getRecyclerView().setClipToPadding(clip);
         view.getRecyclerView().setClipChildren(clip);
         if (view instanceof IClipRadius) {//统一：clipToBounds(true)，切割圆角
-            ((IClipRadius) view).forceClipLevel(clip ? LEVEL_FORCE_CLIP: LEVEL_FORCE_NOTCLIP);
+            ((IClipRadius) view).forceClipLevel(clip ? LEVEL_FORCE_CLIP : LEVEL_FORCE_NOTCLIP);
         }
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Boolean.class)
+            }, returns = @LuaApiUsed.Type(UDRecyclerView.class)),
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(Boolean.class))
+    })
     public LuaValue[] refreshEnable(LuaValue[] values) {
         if (values.length > 0) {
             mRefreshEnabled = values[0].toBoolean();
@@ -215,7 +262,13 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
         return LuaValue.rBoolean(getView().isRefreshEnable());
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Boolean.class)
+            }, returns = @LuaApiUsed.Type(UDRecyclerView.class)),
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(Boolean.class))
+    })
     public LuaValue[] loadEnable(LuaValue[] values) {
         if (values.length > 0) {
             boolean enable = values[0].toBoolean();
@@ -229,7 +282,13 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
     }
 
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Integer.class)
+            }, returns = @LuaApiUsed.Type(UDRecyclerView.class)),
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(Integer.class))
+    })
     public LuaValue[] scrollDirection(LuaValue[] values) {
         if (values.length > 0) {
             int newOrientation = parseDirection(values[0].toInt());
@@ -257,7 +316,13 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
         return 0;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Float.class)
+            }, returns = @LuaApiUsed.Type(UDRecyclerView.class)),
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(Float.class))
+    })
     public LuaValue[] loadThreshold(LuaValue[] values) {
         if (values.length > 0) {
             this.loadThreshold = (float) values[0].toDouble();
@@ -267,7 +332,13 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
         return varargsOf(LuaNumber.valueOf(loadThreshold));
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Boolean.class)
+            }, returns = @LuaApiUsed.Type(UDRecyclerView.class)),
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(Boolean.class))
+    })
     public LuaValue[] openReuseCell(LuaValue[] values) {
         if (values.length > 0) {
             openReuseCell = values[0].toBoolean();
@@ -294,7 +365,11 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
     }
 
     //滑动到指定位置
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(UDPoint.class)
+            }, returns = @LuaApiUsed.Type(UDRecyclerView.class))
+    })
     public LuaValue[] setOffsetWithAnim(LuaValue[] values) {
         if (values.length == 1) {
             UDPoint point = (UDPoint) values[0];
@@ -304,7 +379,13 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(UDPoint.class)
+            }, returns = @LuaApiUsed.Type(UDRecyclerView.class)),
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(UDPoint.class))
+    })
     public LuaValue[] contentOffset(LuaValue[] p) {
         if (p.length == 1) {
             getView().setContentOffset(((UDPoint) p[0]).getPoint());
@@ -314,28 +395,26 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
         return varargsOf(new UDPoint(globals, getView().getContentOffset()));
     }
 
-    @LuaApiUsed
-    public LuaValue[] pagerContentOffset(LuaValue[] p) {
-        if (p.length == 2) {
-            if (view instanceof IPager) {
-                ((IPager) view).pagerContentOffset(p[0].toFloat(), p[1].toFloat());
-            }
-            return null;
-        }
-        if (view instanceof IPager) {
-            float[] contentOffset = ((IPager) view).getPagerContentOffset();
-            return varargsOf(LuaNumber.valueOf(contentOffset[0]), LuaNumber.valueOf(contentOffset[1]));
-        }
-        return rNil();
-    }
-
-    @LuaApiUsed
+    @LuaApiUsed(ignore = true)
     public LuaValue[] i_bounces(LuaValue[] bounces) {
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed(ignore = true)
     public LuaValue[] i_pagingEnabled(LuaValue[] bounces) {
+        return null;
+    }
+
+    @LuaApiUsed(ignore = true)
+    public LuaValue[] a_pagingEnabled(LuaValue[] values) {
+        if (values.length > 0) {
+            if (values[0].toBoolean()) {
+                snapHelper = new PagerSnapHelper();
+                snapHelper.attachToRecyclerView(getRecyclerView());
+            } else {
+                snapHelper.attachToRecyclerView(null);
+            }
+        }
         return null;
     }
 //</editor-fold>
@@ -345,19 +424,40 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
     /**
      * 重新渲染
      */
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(UDRecyclerView.class))
+    })
     public LuaValue[] reloadData(LuaValue[] values) {
-        if (adapter != null)
+        if (adapter != null) {
+            hasLoadData.set(true);
             adapter.reload();
+        }
         return null;
     }
 
     /**
      * 是否可以滚动
      */
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Boolean.class)
+            }, returns = @LuaApiUsed.Type(UDRecyclerView.class))
+    })
     public LuaValue[] setScrollEnable(LuaValue[] values) {
         setScrollEnable(values[0].toBoolean());
+        return null;
+    }
+
+    /**
+     *  适配coordinate嵌套list后再嵌套list
+     * @param values
+     * @return
+     */
+    @LuaApiUsed
+    public LuaValue[] setScrollEnabled(LuaValue[] values) {
+        setScrollEnable(values[0].toBoolean());
+        getRecyclerView().setNestedScrollingEnabled(values[0].toBoolean());
         return null;
     }
 
@@ -374,11 +474,19 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
     /**
      * (section,row) 重新渲染某个item
      */
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Integer.class),
+                    @LuaApiUsed.Type(Integer.class),
+                    @LuaApiUsed.Type(Boolean.class)
+            }, returns = @LuaApiUsed.Type(UDRecyclerView.class))
+    })
     public LuaValue[] reloadAtRow(LuaValue[] values) {
         if (values.length == 3) {
-            if (adapter != null)
+            if (adapter != null) {
+                hasLoadData.set(true);
                 adapter.reloadAtRow(values[1].toInt() - 1, values[0].toInt() - 1, values[2].toBoolean());
+            }
         }
         return null;
     }
@@ -386,11 +494,18 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
     /**
      * (section) 重新渲染某个section
      */
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Integer.class),
+                    @LuaApiUsed.Type(Boolean.class)
+            }, returns = @LuaApiUsed.Type(UDRecyclerView.class))
+    })
     public LuaValue[] reloadAtSection(LuaValue[] values) {
         if (values.length == 2) {
-            if (adapter != null)
+            if (adapter != null) {
+                hasLoadData.set(true);
                 adapter.reloadAtSection(values[0].toInt() - 1, values[1].toBoolean());
+            }
         }
         return null;
     }
@@ -398,7 +513,13 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
     /**
      * 设置滚动条的显隐
      */
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Boolean.class)
+            }, returns = @LuaApiUsed.Type(UDRecyclerView.class)),
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(Boolean.class))
+    })
     public LuaValue[] showScrollIndicator(LuaValue[] values) {
         if (values.length >= 1) {
             boolean show = values[0].toBoolean();
@@ -414,7 +535,11 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
     /**
      * 滚动到顶
      */
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Boolean.class)
+            }, returns = @LuaApiUsed.Type(UDRecyclerView.class))
+    })
     public LuaValue[] scrollToTop(LuaValue[] values) {
         boolean anim = false;
         if (values.length >= 1) {
@@ -432,7 +557,13 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
      * section
      * anim
      */
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Integer.class),
+                    @LuaApiUsed.Type(Integer.class),
+                    @LuaApiUsed.Type(Boolean.class)
+            }, returns = @LuaApiUsed.Type(UDRecyclerView.class))
+    })
     public LuaValue[] scrollToCell(LuaValue[] values) {
         if (adapter != null && values.length >= 2) {
             if (!mScrollEnabled) {
@@ -447,16 +578,43 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
         return null;
     }
 
-    @LuaApiUsed
+
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Float.class),
+                    @LuaApiUsed.Type(Float.class)
+            }, returns = @LuaApiUsed.Type(UDRecyclerView.class))
+    })
+    public LuaValue[] scrollBy(LuaValue[] values) {
+        if (adapter != null && values.length >= 2) {
+            RecyclerView recyclerView = getRecyclerView();
+            recyclerView.scrollBy(DimenUtil.dpiToPx(values[0].toFloat()), DimenUtil.dpiToPx(values[1].toFloat()));
+        }
+        return null;
+    }
+
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Integer.class),
+                    @LuaApiUsed.Type(Integer.class)
+            }, returns = @LuaApiUsed.Type(UDRecyclerView.class))
+    })
     public LuaValue[] insertCellAtRow(LuaValue[] values) {
         if (adapter != null) {
+            hasLoadData.set(true);
             adapter.setItemAnimated(false);
             adapter.insertCellAtRow(values[1].toInt() - 1, values[0].toInt() - 1);
         }
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Integer.class),
+                    @LuaApiUsed.Type(Integer.class),
+                    @LuaApiUsed.Type(Boolean.class)
+            }, returns = @LuaApiUsed.Type(UDRecyclerView.class))
+    })
     public LuaValue[] insertRow(LuaValue[] values) {
         if (adapter == null || values.length < 2)
             return null;
@@ -465,12 +623,17 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
         if (values.length >= 3) {
             animated = values[2].toBoolean();
         }
-
+        hasLoadData.set(true);
         adapter.insertCellAtRowAnimated(values[1].toInt() - 1, values[0].toInt() - 1, animated);
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Integer.class),
+                    @LuaApiUsed.Type(Integer.class),
+            }, returns = @LuaApiUsed.Type(UDRecyclerView.class))
+    })
     public LuaValue[] deleteCellAtRow(LuaValue[] values) {
         if (adapter != null) {
             adapter.setItemAnimated(false);
@@ -479,7 +642,13 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Integer.class),
+                    @LuaApiUsed.Type(Integer.class),
+                    @LuaApiUsed.Type(Boolean.class)
+            }, returns = @LuaApiUsed.Type(UDRecyclerView.class))
+    })
     public LuaValue[] deleteRow(LuaValue[] values) {
 
         if (adapter == null || values.length < 2)
@@ -499,7 +668,10 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
      *
      * @return
      */
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(Boolean.class))
+    })
     public LuaValue[] isRefreshing(LuaValue[] values) {
         return LuaValue.rBoolean(getView().isRefreshing());
     }
@@ -507,7 +679,10 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
     /**
      * 执行下拉刷新动画，并回调 Android专用
      */
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(UDRecyclerView.class))
+    })
     public LuaValue[] startRefreshing(LuaValue[] values) {
         getView().startRefreshing();
         return null;
@@ -516,7 +691,10 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
     /**
      * 停止下拉刷新动画
      */
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(UDRecyclerView.class))
+    })
     public LuaValue[] stopRefreshing(LuaValue[] values) {
         getView().stopRefreshing();
         return null;
@@ -527,7 +705,10 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
      *
      * @return
      */
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(Boolean.class))
+    })
     public LuaValue[] isLoading(LuaValue[] values) {
         return LuaValue.rBoolean(getView().isLoading());
     }
@@ -535,7 +716,10 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
     /**
      * 停止加载
      */
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(UDRecyclerView.class))
+    })
     public LuaValue[] stopLoading(LuaValue[] values) {
         getView().stopLoading();
         return null;
@@ -544,7 +728,10 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
     /**
      * 通知无更多数据，将加载动画删除
      */
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(UDRecyclerView.class))
+    })
     public LuaValue[] noMoreData(LuaValue[] values) {
         getView().noMoreData();
         return null;
@@ -553,7 +740,10 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
     /**
      * 重置加载状态，和noMoreData相反
      */
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(UDRecyclerView.class))
+    })
     public LuaValue[] resetLoading(LuaValue[] values) {
         getView().resetLoading();
         return null;
@@ -562,7 +752,10 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
     /**
      * 加载失败，显示点击加载
      */
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(UDRecyclerView.class))
+    })
     public LuaValue[] loadError(LuaValue[] values) {
         getView().loadError();
         return null;
@@ -573,7 +766,13 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
      * <p>
      * adapter
      */
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(UDBaseRecyclerAdapter.class)
+            }, returns = @LuaApiUsed.Type(UDRecyclerView.class)),
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(UDBaseRecyclerAdapter.class))
+    })
     public final LuaValue[] adapter(LuaValue[] values) {
         if (values.length > 0) {
             LuaValue value = values[0];
@@ -596,7 +795,13 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
      * <p>
      * UDBaseRecyclerLayout layout
      */
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(UDBaseRecyclerLayout.class)
+            }, returns = @LuaApiUsed.Type(UDRecyclerView.class)),
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(UDBaseRecyclerLayout.class))
+    })
     public LuaValue[] layout(LuaValue[] values) {
         if (values.length > 0) {
             LuaValue value = values[0];
@@ -618,7 +823,11 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
      * <p>
      * fun
      */
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = Function0.class, typeArgs = {Unit.class})
+            }, returns = @LuaApiUsed.Type(UDRecyclerView.class))
+    })
     public LuaValue[] setRefreshingCallback(LuaValue[] values) {
         if (refreshCallback != null)
             refreshCallback.destroy();
@@ -633,7 +842,11 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
      * <p>
      * fun
      */
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = Function0.class, typeArgs = {Unit.class})
+            }, returns = @LuaApiUsed.Type(UDRecyclerView.class))
+    })
     public LuaValue[] setLoadingCallback(LuaValue[] values) {
         if (loadCallback != null)
             loadCallback.destroy();
@@ -648,7 +861,12 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
      * <p>
      * fun
      */
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = Function2.class, typeArgs = {
+                            Integer.class, Integer.class, Unit.class})
+            }, returns = @LuaApiUsed.Type(UDRecyclerView.class))
+    })
     public LuaValue[] setScrollingCallback(LuaValue[] values) {
         if (scrollCallback != null)
             scrollCallback.destroy();
@@ -663,12 +881,38 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
         return null;
     }
 
+    //仅限android 意图是提供滑动为负数的
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = Function2.class, typeArgs = {
+                            Float.class, Float.class, Unit.class})
+            }, returns = @LuaApiUsed.Type(UDRecyclerView.class))
+    })
+    public LuaValue[] setOnScrollCallback(LuaValue[] values) {
+        if (onScrollCallback != null)
+            onScrollCallback.destroy();
+        LuaValue value = values[0];
+        if (value != null && value.isFunction()) {
+            onScrollCallback = value.toLuaFunction();
+            if (onScrollCallback != null && !scrollListenerAdded) {
+                getRecyclerView().addOnScrollListener(onScrollListener);
+                scrollListenerAdded = true;
+            }
+        }
+        return null;
+    }
+
     /**
      * 开始滚动回调
      * <p>
      * fun
      */
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = Function2.class, typeArgs = {
+                            Integer.class, Integer.class, Unit.class})
+            }, returns = @LuaApiUsed.Type(UDRecyclerView.class))
+    })
     public LuaValue[] setScrollBeginCallback(LuaValue[] values) {
         if (scrollBeginCallback != null)
             scrollBeginCallback.destroy();
@@ -688,7 +932,12 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
      * <p>
      * fun
      */
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = Function2.class, typeArgs = {
+                            Integer.class, Integer.class, Unit.class})
+            }, returns = @LuaApiUsed.Type(UDRecyclerView.class))
+    })
     public LuaValue[] setScrollEndCallback(LuaValue[] values) {
         if (scrollEndCallback != null)
             scrollEndCallback.destroy();
@@ -703,7 +952,12 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = Function2.class, typeArgs = {
+                            Integer.class, Integer.class, Unit.class})
+            }, returns = @LuaApiUsed.Type(UDRecyclerView.class))
+    })
     public LuaValue[] setEndDraggingCallback(LuaValue[] values) {
         if (endDraggingCallback != null)
             endDraggingCallback.destroy();
@@ -718,7 +972,12 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = Function2.class, typeArgs = {
+                            Integer.class, Integer.class, Unit.class})
+            }, returns = @LuaApiUsed.Type(UDRecyclerView.class))
+    })
     public LuaValue[] setStartDeceleratingCallback(LuaValue[] values) {
         if (startDeceleratingCallback != null)
             startDeceleratingCallback.destroy();
@@ -733,25 +992,47 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Integer.class),
+                    @LuaApiUsed.Type(Integer.class),
+                    @LuaApiUsed.Type(Integer.class)
+            }, returns = @LuaApiUsed.Type(UDRecyclerView.class))
+    })
     public LuaValue[] insertCellsAtSection(LuaValue[] values) {
         if (adapter != null) {
+            hasLoadData.set(true);
             adapter.setItemAnimated(false);
             adapter.insertCellsAtSection(values[0].toInt() - 1, values[1].toInt() - 1, (values[2].toInt() - values[1].toInt()) + 1);
         }
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Integer.class),
+                    @LuaApiUsed.Type(Integer.class),
+                    @LuaApiUsed.Type(Integer.class),
+                    @LuaApiUsed.Type(Boolean.class)
+            }, returns = @LuaApiUsed.Type(UDRecyclerView.class))
+    })
     public LuaValue[] insertRowsAtSection(LuaValue[] values) {
         if (adapter != null) {
+            hasLoadData.set(true);
             adapter.setItemAnimated(values[3].toBoolean());
             adapter.insertCellsAtSection(values[0].toInt() - 1, values[1].toInt() - 1, (values[2].toInt() - values[1].toInt()) + 1);
         }
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Integer.class),
+                    @LuaApiUsed.Type(Integer.class),
+                    @LuaApiUsed.Type(Integer.class),
+                    @LuaApiUsed.Type(Boolean.class)
+            }, returns = @LuaApiUsed.Type(UDRecyclerView.class))
+    })
     public LuaValue[] deleteRowsAtSection(LuaValue[] values) {
         if (adapter != null) {
             adapter.setItemAnimated(values[3].toBoolean());
@@ -761,7 +1042,13 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Integer.class),
+                    @LuaApiUsed.Type(Integer.class),
+                    @LuaApiUsed.Type(Integer.class)
+            }, returns = @LuaApiUsed.Type(UDRecyclerView.class))
+    })
     public LuaValue[] deleteCellsAtSection(LuaValue[] values) {
         if (adapter != null) {
             adapter.setItemAnimated(false);
@@ -772,7 +1059,11 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
     }
 
     @Deprecated
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(UDView.class)
+            }, returns = @LuaApiUsed.Type(UDRecyclerView.class))
+    })
     public LuaValue[] addHeaderView(LuaValue[] values) {
         ErrorUtils.debugDeprecatedMethod("WaterfallView:addHeaderView method is deprecated, use WaterfallAdapter:initHeader and WaterfallAdapter:fillHeaderData methods instead!", getGlobals());
         UDView v = (UDView) values[0];
@@ -788,7 +1079,10 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
     }
 
     @Deprecated
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(UDRecyclerView.class))
+    })
     public LuaValue[] removeHeaderView(LuaValue[] values) {
         ErrorUtils.debugDeprecatedMethod("WaterfallView:removeHeaderView method is deprecated, use WaterfallAdapter:initHeader and WaterfallAdapter:fillHeaderData methods instead!", getGlobals());
         if (headerViews != null) {
@@ -800,7 +1094,14 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Float.class),
+                    @LuaApiUsed.Type(Float.class),
+                    @LuaApiUsed.Type(Float.class),
+                    @LuaApiUsed.Type(Float.class)
+            }, returns = @LuaApiUsed.Type(UDRecyclerView.class))
+    })
     public LuaValue[] setContentInset(LuaValue[] values) {
         mContentInsetLuaValue = values;
         if (values.length > 3) {
@@ -813,7 +1114,13 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
     /**
      * function
      */
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = Function4.class, typeArgs = {
+                            Float.class, Float.class, Float.class, Float.class, Unit.class
+                    })
+            }, returns = @LuaApiUsed.Type(UDRecyclerView.class))
+    })
     public LuaValue[] getContentInset(LuaValue[] values) {
         if (values.length >= 1 && values[0].isFunction()) {
             if (mContentInsetLuaValue != null)
@@ -826,7 +1133,11 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Boolean.class)
+            }, returns = @LuaApiUsed.Type(UDRecyclerView.class))
+    })
     public LuaValue[] useAllSpanForLoading(LuaValue[] values) {
         useAllSpanForLoading = values[0].toBoolean();
         if (adapter != null) {
@@ -835,12 +1146,18 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(Integer.class))
+    })
     public LuaValue[] getRecycledViewNum(LuaValue[] values) {
         return LuaValue.rNumber(poolManager != null ? poolManager.getRecycledViewNum() : 0);
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(Boolean.class))
+    })
     public LuaValue[] isStartPosition(LuaValue[] values) {
         if (orientation == RecyclerView.VERTICAL) {
             return LuaValue.rBoolean(!getRecyclerView().canScrollVertically(-1));
@@ -855,7 +1172,12 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
      *
      * @return 返回指定位置的cell，版本1.0.2
      */
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Integer.class),
+                    @LuaApiUsed.Type(Integer.class)
+            }, returns = @LuaApiUsed.Type(LuaValue.class))
+    })
     public LuaValue[] cellWithSectionRow(LuaValue[] values) {
         if (adapter == null) {
             return LuaValue.rNil();
@@ -872,7 +1194,10 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
     /**
      * @return 返回当前屏幕展示的所有cell，版本1.0.2
      */
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(UDArray.class))
+    })
     public LuaValue[] visibleCells(LuaValue[] values) {
         List list = new ArrayList();
         if (adapter == null) {
@@ -899,7 +1224,12 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
         return varargsOf(new UDArray(getGlobals(), list));
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Boolean.class)
+            }, returns = @LuaApiUsed.Type(UDRecyclerView.class)),
+            @LuaApiUsed.Func(returns = @LuaApiUsed.Type(Boolean.class))
+    })
     public LuaValue[] scrollEnabled(LuaValue[] values) {
         if (values.length > 0) {
             LuaValue value = values[0];
@@ -910,7 +1240,12 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
         return LuaValue.rBoolean(getRecyclerView().isLayoutFrozen());
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Boolean.class)
+            }, returns = @LuaApiUsed.Type(UDRecyclerView.class)),
+            @LuaApiUsed.Func(returns = @LuaApiUsed.Type(Boolean.class))
+    })
     public LuaValue[] disallowFling(LuaValue[] values) {
         if (values.length > 0) {
             boolean enable = values[0].toBoolean();
@@ -1003,9 +1338,12 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
 
             if (mAttachFirst)
                 mAttachFirst = false;
-            else if (scrollCallback != null)
-                callbackWithPoint(scrollCallback);
-
+            else {
+                if (scrollCallback != null)
+                    callbackWithPoint(scrollCallback);
+                if (onScrollCallback != null)
+                    callbackWithPoint(onScrollCallback, dx, dy);
+            }
             if (newSettlingState) {
 
                 if (startDeceleratingCallback != null) {
@@ -1033,7 +1371,13 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
             float sy = getRecyclerView().computeVerticalScrollOffset();
             c.invoke(varargsOf(LuaNumber.valueOf(DimenUtil.pxToDpi(sx)), LuaNumber.valueOf(DimenUtil.pxToDpi(sy)), decelerating ? LuaValue.True() : LuaValue.False()));
         }
+
+        private void callbackWithPoint(LuaFunction c, int dx, int dy) {
+            c.invoke(varargsOf(LuaNumber.valueOf(DimenUtil.pxToDpi(dx)), LuaNumber.valueOf(DimenUtil.pxToDpi(dy))));
+        }
     };
+
+
     //</editor-fold>
 
     //<editor-fold desc="SizeChangedListener">
@@ -1088,6 +1432,21 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
     public LuaValue[] addView(LuaValue[] var) {
         ErrorUtils.debugDeprecatedMethod("not support addView", getGlobals());
         return super.addView(var);
+    }
+
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Boolean.class)
+            }, returns = @LuaApiUsed.Type(UDRecyclerView.class))
+    })
+    public LuaValue[] fixScrollConflict(LuaValue[] values) {
+        if (values.length > 0) {
+            boolean param = values[0].toBoolean();
+            if (getRecyclerView() instanceof MLSRecyclerView)
+                ((MLSRecyclerView) getRecyclerView()).setFixScrollConflict(param);
+            return null;
+        }
+        return null;
     }
 
     @CallSuper

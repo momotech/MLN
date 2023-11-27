@@ -1,0 +1,476 @@
+[
+  {
+    "level": "INFO",
+    "message": "Start JSON generation. Platform version: 21 min SDK version: armeabi-v7a",
+    "file": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "No CMake version was specified in build.gradle. Using default version 3.10.2.",
+    "file": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "Trying to locate CMake in local SDK repository.",
+    "file": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "- CMake found in SDK at \u0027/Users/XiongFangyu/Library/Android/sdk/cmake/3.10.2.4988404\u0027 had version \u00273.10.2\u0027",
+    "file": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "CMake \u00273.18.1\u0027 found in SDK did not match requested version \u00273.10.2\u0027.",
+    "file": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "CMake \u00273.22.1\u0027 found in SDK did not match requested version \u00273.10.2\u0027.",
+    "file": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "CMake \u00273.6.0\u0027 found in SDK did not match requested version \u00273.10.2\u0027.",
+    "file": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "rebuilding JSON /Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/.cxx/cmake/release/armeabi-v7a/android_gradle_build.json due to:",
+    "file": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "- expected json /Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/.cxx/cmake/release/armeabi-v7a/android_gradle_build.json file is not present, will remove stale json folder",
+    "file": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "- missing previous command file /Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/.cxx/cmake/release/armeabi-v7a/build_command.txt, will remove stale json folder",
+    "file": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "- command changed from previous, will remove stale json folder",
+    "file": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "removing stale contents from \u0027/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/.cxx/cmake/release/armeabi-v7a\u0027",
+    "file": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "created folder \u0027/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/.cxx/cmake/release/armeabi-v7a\u0027",
+    "file": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "executing cmake Executable : /Users/XiongFangyu/Library/Android/sdk/cmake/3.10.2.4988404/bin/cmake\narguments : \n-H/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni\n-DCMAKE_CXX_FLAGS\u003d-frtti -fexceptions\n-DCMAKE_C_FLAGS\u003d-pie -fPIE\n-DCMAKE_FIND_ROOT_PATH\u003d/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/.cxx/cmake/release/prefab/armeabi-v7a/prefab\n-DCMAKE_BUILD_TYPE\u003dRelease\n-DCMAKE_TOOLCHAIN_FILE\u003d/Users/XiongFangyu/Library/Android/sdk/ndk/21.0.6113669/build/cmake/android.toolchain.cmake\n-DANDROID_ABI\u003darmeabi-v7a\n-DANDROID_NDK\u003d/Users/XiongFangyu/Library/Android/sdk/ndk/21.0.6113669\n-DANDROID_PLATFORM\u003dandroid-21\n-DCMAKE_ANDROID_ARCH_ABI\u003darmeabi-v7a\n-DCMAKE_ANDROID_NDK\u003d/Users/XiongFangyu/Library/Android/sdk/ndk/21.0.6113669\n-DCMAKE_EXPORT_COMPILE_COMMANDS\u003dON\n-DCMAKE_LIBRARY_OUTPUT_DIRECTORY\u003d/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/build/intermediates/cmake/release/obj/armeabi-v7a\n-DCMAKE_MAKE_PROGRAM\u003d/Users/XiongFangyu/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja\n-DCMAKE_SYSTEM_NAME\u003dAndroid\n-DCMAKE_SYSTEM_VERSION\u003d21\n-DANDROID_TOOLCHAIN\u003dclang -D\n-B/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/.cxx/cmake/release/armeabi-v7a\n-GNinja\njvmArgs : \n\n",
+    "file": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "\n",
+    "file": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "[\u003d\u003d \"CMake Server\" \u003d\u003d[\n",
+    "file": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "{\"supportedProtocolVersions\":[{\"isExperimental\":true,\"major\":1,\"minor\":1}],\"type\":\"hello\"}\n",
+    "file": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "]\u003d\u003d \"CMake Server\" \u003d\u003d]\n",
+    "file": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "{\n  \"type\": \"handshake\",\n  \"cookie\": \"gradle-cmake-cookie\",\n  \"protocolVersion\": {\n    \"isExperimental\": true,\n    \"major\": 1,\n    \"minor\": 1\n  },\n  \"sourceDirectory\": \"/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni\",\n  \"buildDirectory\": \"/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/.cxx/cmake/release/armeabi-v7a\",\n  \"generator\": \"Ninja\"\n}\n",
+    "file": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "{\"cookie\":\"gradle-cmake-cookie\",\"inReplyTo\":\"handshake\",\"type\":\"reply\"}\n",
+    "file": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "{\n  \"type\": \"configure\",\n  \"cacheArguments\": [\n    \"\",\n    \"-DCMAKE_CXX_FLAGS\\u003d-frtti -fexceptions\",\n    \"-DCMAKE_C_FLAGS\\u003d-pie -fPIE\",\n    \"-DCMAKE_FIND_ROOT_PATH\\u003d/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/.cxx/cmake/release/prefab/armeabi-v7a/prefab\",\n    \"-DCMAKE_BUILD_TYPE\\u003dRelease\",\n    \"-DCMAKE_TOOLCHAIN_FILE\\u003d/Users/XiongFangyu/Library/Android/sdk/ndk/21.0.6113669/build/cmake/android.toolchain.cmake\",\n    \"-DANDROID_ABI\\u003darmeabi-v7a\",\n    \"-DANDROID_NDK\\u003d/Users/XiongFangyu/Library/Android/sdk/ndk/21.0.6113669\",\n    \"-DANDROID_PLATFORM\\u003dandroid-21\",\n    \"-DCMAKE_ANDROID_ARCH_ABI\\u003darmeabi-v7a\",\n    \"-DCMAKE_ANDROID_NDK\\u003d/Users/XiongFangyu/Library/Android/sdk/ndk/21.0.6113669\",\n    \"-DCMAKE_EXPORT_COMPILE_COMMANDS\\u003dON\",\n    \"-DCMAKE_LIBRARY_OUTPUT_DIRECTORY\\u003d/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/build/intermediates/cmake/release/obj/armeabi-v7a\",\n    \"-DCMAKE_MAKE_PROGRAM\\u003d/Users/XiongFangyu/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja\",\n    \"-DCMAKE_SYSTEM_NAME\\u003dAndroid\",\n    \"-DCMAKE_SYSTEM_VERSION\\u003d21\",\n    \"-DANDROID_TOOLCHAIN\\u003dclang -D\"\n  ]\n}\n",
+    "file": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "{\"cookie\":\"\",\"inReplyTo\":\"configure\",\"message\":\"Check for working C compiler: /Users/XiongFangyu/Library/Android/sdk/ndk/21.0.6113669/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang\",\"type\":\"message\"}\n",
+    "file": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "Check for working C compiler: /Users/XiongFangyu/Library/Android/sdk/ndk/21.0.6113669/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang",
+    "file": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "{\"cookie\":\"\",\"inReplyTo\":\"configure\",\"progressCurrent\":33,\"progressMaximum\":1000,\"progressMessage\":\"Configuring\",\"progressMinimum\":0,\"type\":\"progress\"}\n",
+    "file": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "{\"cookie\":\"\",\"inReplyTo\":\"configure\",\"message\":\"Check for working C compiler: /Users/XiongFangyu/Library/Android/sdk/ndk/21.0.6113669/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang -- works\",\"type\":\"message\"}\n",
+    "file": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "Check for working C compiler: /Users/XiongFangyu/Library/Android/sdk/ndk/21.0.6113669/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang -- works",
+    "file": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "{\"cookie\":\"\",\"inReplyTo\":\"configure\",\"message\":\"Detecting C compiler ABI info\",\"type\":\"message\"}\n",
+    "file": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "Detecting C compiler ABI info",
+    "file": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "{\"cookie\":\"\",\"inReplyTo\":\"configure\",\"progressCurrent\":65,\"progressMaximum\":1000,\"progressMessage\":\"Configuring\",\"progressMinimum\":0,\"type\":\"progress\"}\n",
+    "file": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "{\"cookie\":\"\",\"inReplyTo\":\"configure\",\"message\":\"Detecting C compiler ABI info - done\",\"type\":\"message\"}\n",
+    "file": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "Detecting C compiler ABI info - done",
+    "file": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "{\"cookie\":\"\",\"inReplyTo\":\"configure\",\"message\":\"Detecting C compile features\",\"type\":\"message\"}\n",
+    "file": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "Detecting C compile features",
+    "file": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "{\"cookie\":\"\",\"inReplyTo\":\"configure\",\"progressCurrent\":96,\"progressMaximum\":1000,\"progressMessage\":\"Configuring\",\"progressMinimum\":0,\"type\":\"progress\"}\n",
+    "file": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "{\"cookie\":\"\",\"inReplyTo\":\"configure\",\"progressCurrent\":126,\"progressMaximum\":1000,\"progressMessage\":\"Configuring\",\"progressMinimum\":0,\"type\":\"progress\"}\n",
+    "file": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "{\"cookie\":\"\",\"inReplyTo\":\"configure\",\"progressCurrent\":155,\"progressMaximum\":1000,\"progressMessage\":\"Configuring\",\"progressMinimum\":0,\"type\":\"progress\"}\n",
+    "file": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "{\"cookie\":\"\",\"inReplyTo\":\"configure\",\"message\":\"Detecting C compile features - done\",\"type\":\"message\"}\n",
+    "file": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "Detecting C compile features - done",
+    "file": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "{\"cookie\":\"\",\"inReplyTo\":\"configure\",\"message\":\"Check for working CXX compiler: /Users/XiongFangyu/Library/Android/sdk/ndk/21.0.6113669/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++\",\"type\":\"message\"}\n",
+    "file": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "Check for working CXX compiler: /Users/XiongFangyu/Library/Android/sdk/ndk/21.0.6113669/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++",
+    "file": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "{\"cookie\":\"\",\"inReplyTo\":\"configure\",\"progressCurrent\":184,\"progressMaximum\":1000,\"progressMessage\":\"Configuring\",\"progressMinimum\":0,\"type\":\"progress\"}\n",
+    "file": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "{\"cookie\":\"\",\"inReplyTo\":\"configure\",\"message\":\"Check for working CXX compiler: /Users/XiongFangyu/Library/Android/sdk/ndk/21.0.6113669/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++ -- works\",\"type\":\"message\"}\n",
+    "file": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "Check for working CXX compiler: /Users/XiongFangyu/Library/Android/sdk/ndk/21.0.6113669/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++ -- works",
+    "file": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "{\"cookie\":\"\",\"inReplyTo\":\"configure\",\"message\":\"Detecting CXX compiler ABI info\",\"type\":\"message\"}\n",
+    "file": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "Detecting CXX compiler ABI info",
+    "file": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "{\"cookie\":\"\",\"inReplyTo\":\"configure\",\"progressCurrent\":211,\"progressMaximum\":1000,\"progressMessage\":\"Configuring\",\"progressMinimum\":0,\"type\":\"progress\"}\n",
+    "file": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "{\"cookie\":\"\",\"inReplyTo\":\"configure\",\"message\":\"Detecting CXX compiler ABI info - done\",\"type\":\"message\"}\n",
+    "file": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "Detecting CXX compiler ABI info - done",
+    "file": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "{\"cookie\":\"\",\"inReplyTo\":\"configure\",\"message\":\"Detecting CXX compile features\",\"type\":\"message\"}\n",
+    "file": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "Detecting CXX compile features",
+    "file": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "{\"cookie\":\"\",\"inReplyTo\":\"configure\",\"progressCurrent\":237,\"progressMaximum\":1000,\"progressMessage\":\"Configuring\",\"progressMinimum\":0,\"type\":\"progress\"}\n",
+    "file": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "{\"cookie\":\"\",\"inReplyTo\":\"configure\",\"progressCurrent\":262,\"progressMaximum\":1000,\"progressMessage\":\"Configuring\",\"progressMinimum\":0,\"type\":\"progress\"}\n",
+    "file": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "{\"cookie\":\"\",\"inReplyTo\":\"configure\",\"progressCurrent\":287,\"progressMaximum\":1000,\"progressMessage\":\"Configuring\",\"progressMinimum\":0,\"type\":\"progress\"}\n",
+    "file": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "{\"cookie\":\"\",\"inReplyTo\":\"configure\",\"progressCurrent\":311,\"progressMaximum\":1000,\"progressMessage\":\"Configuring\",\"progressMinimum\":0,\"type\":\"progress\"}\n",
+    "file": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "{\"cookie\":\"\",\"inReplyTo\":\"configure\",\"message\":\"Detecting CXX compile features - done\",\"type\":\"message\"}\n",
+    "file": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "Detecting CXX compile features - done",
+    "file": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "{\"cookie\":\"\",\"inReplyTo\":\"configure\",\"progressCurrent\":334,\"progressMaximum\":1000,\"progressMessage\":\"Configuring\",\"progressMinimum\":0,\"type\":\"progress\"}\n",
+    "file": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "{\"cookie\":\"\",\"inReplyTo\":\"configure\",\"progressCurrent\":356,\"progressMaximum\":1000,\"progressMessage\":\"Configuring\",\"progressMinimum\":0,\"type\":\"progress\"}\n",
+    "file": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "{\"cookie\":\"\",\"inReplyTo\":\"configure\",\"progressCurrent\":933,\"progressMaximum\":1000,\"progressMessage\":\"Configuring\",\"progressMinimum\":0,\"type\":\"progress\"}\n",
+    "file": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "{\"cookie\":\"\",\"inReplyTo\":\"configure\",\"progressCurrent\":966,\"progressMaximum\":1000,\"progressMessage\":\"Configuring\",\"progressMinimum\":0,\"type\":\"progress\"}\n",
+    "file": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "{\"cookie\":\"\",\"inReplyTo\":\"configure\",\"progressCurrent\":1000,\"progressMaximum\":1000,\"progressMessage\":\"Configuring\",\"progressMinimum\":0,\"type\":\"progress\"}\n",
+    "file": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "{\"cookie\":\"\",\"inReplyTo\":\"configure\",\"message\":\"Configuring done\",\"type\":\"message\"}\n",
+    "file": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "Configuring done",
+    "file": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "{\"cookie\":\"\",\"inReplyTo\":\"configure\",\"type\":\"reply\"}\n",
+    "file": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "{\"type\":\"compute\"}\n",
+    "file": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "{\"cookie\":\"\",\"inReplyTo\":\"compute\",\"progressCurrent\":333,\"progressMaximum\":1000,\"progressMessage\":\"Generating\",\"progressMinimum\":0,\"type\":\"progress\"}\n",
+    "file": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "{\"cookie\":\"\",\"inReplyTo\":\"compute\",\"progressCurrent\":666,\"progressMaximum\":1000,\"progressMessage\":\"Generating\",\"progressMinimum\":0,\"type\":\"progress\"}\n",
+    "file": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "{\"cookie\":\"\",\"inReplyTo\":\"compute\",\"progressCurrent\":1000,\"progressMaximum\":1000,\"progressMessage\":\"Generating\",\"progressMinimum\":0,\"type\":\"progress\"}\n",
+    "file": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "{\"cookie\":\"\",\"inReplyTo\":\"compute\",\"message\":\"Generating done\",\"type\":\"message\"}\n",
+    "file": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "Generating done",
+    "file": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "{\"cookie\":\"\",\"inReplyTo\":\"compute\",\"type\":\"reply\"}\n",
+    "file": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "{\"type\":\"cmakeInputs\"}\n",
+    "file": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "{\"buildFiles\":[{\"isCMake\":true,\"isTemporary\":false,\"sources\":[\"../../../../../../Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/CMakeDetermineSystem.cmake\",\"../../../../../../Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/Platform/Android-Determine.cmake\",\"../../../../../../Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/CMakeSystem.cmake.in\",\"../../../../../../Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/CMakeSystemSpecificInitialize.cmake\",\"../../../../../../Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/Platform/Android-Initialize.cmake\",\"../../../../../../Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/CMakeDetermineCCompiler.cmake\",\"../../../../../../Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/CMakeDetermineCompiler.cmake\",\"../../../../../../Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/Platform/Android-Determine-C.cmake\",\"../../../../../../Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/Platform/Android/Determine-Compiler.cmake\",\"../../../../../../Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/CMakeFindBinUtils.cmake\",\"../../../../../../Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/Compiler/Clang-FindBinUtils.cmake\",\"../../../../../../Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/CMakeCCompiler.cmake.in\",\"../../../../../../Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/CMakeDetermineCXXCompiler.cmake\",\"../../../../../../Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/CMakeDetermineCompiler.cmake\",\"../../../../../../Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/Platform/Android-Determine-CXX.cmake\",\"../../../../../../Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/Platform/Android/Determine-Compiler.cmake\",\"../../../../../../Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/CMakeFindBinUtils.cmake\",\"../../../../../../Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/Compiler/Clang-FindBinUtils.cmake\",\"../../../../../../Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/CMakeCXXCompiler.cmake.in\",\"../../../../../../Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/CMakeSystemSpecificInformation.cmake\",\"../../../../../../Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/CMakeGenericSystem.cmake\",\"../../../../../../Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/Platform/Android.cmake\",\"../../../../../../Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/Platform/Linux.cmake\",\"../../../../../../Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/Platform/UnixPaths.cmake\",\"../../../../../../Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/CMakeCInformation.cmake\",\"../../../../../../Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/CMakeLanguageInformation.cmake\",\"../../../../../../Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/Compiler/Clang-C.cmake\",\"../../../../../../Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/Compiler/Clang.cmake\",\"../../../../../../Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/Compiler/CMakeCommonCompilerMacros.cmake\",\"../../../../../../Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/Compiler/GNU.cmake\",\"../../../../../../Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/Compiler/CMakeCommonCompilerMacros.cmake\",\"../../../../../../Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/Platform/Android-Clang-C.cmake\",\"../../../../../../Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/Platform/Android-Clang.cmake\",\"../../../../../../Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/CMakeCommonLanguageInclude.cmake\",\"../../../../../../Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/CMakeTestCCompiler.cmake\",\"../../../../../../Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/CMakeTestCompilerCommon.cmake\",\"../../../../../../Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/CMakeDetermineCompilerABI.cmake\",\"../../../../../../Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/CMakeParseImplicitLinkInfo.cmake\",\"../../../../../../Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/CMakeCCompilerABI.c\",\"../../../../../../Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/CMakeDetermineCompileFeatures.cmake\",\"../../../../../../Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/Internal/FeatureTesting.cmake\",\"../../../../../../Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/Compiler/Clang-C-FeatureTests.cmake\",\"../../../../../../Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/Compiler/Clang-C-FeatureTests.cmake\",\"../../../../../../Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/Compiler/Clang-C-FeatureTests.cmake\",\"../../../../../../Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/CMakeCCompiler.cmake.in\",\"../../../../../../Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/CMakeCXXInformation.cmake\",\"../../../../../../Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/CMakeLanguageInformation.cmake\",\"../../../../../../Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/Compiler/Clang-CXX.cmake\",\"../../../../../../Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/Compiler/Clang.cmake\",\"../../../../../../Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/Platform/Android-Clang-CXX.cmake\",\"../../../../../../Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/Platform/Android-Clang.cmake\",\"../../../../../../Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/CMakeCommonLanguageInclude.cmake\",\"../../../../../../Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/CMakeTestCXXCompiler.cmake\",\"../../../../../../Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/CMakeTestCompilerCommon.cmake\",\"../../../../../../Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/CMakeDetermineCompilerABI.cmake\",\"../../../../../../Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/CMakeParseImplicitLinkInfo.cmake\",\"../../../../../../Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/CMakeCXXCompilerABI.cpp\",\"../../../../../../Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/CMakeDetermineCompileFeatures.cmake\",\"../../../../../../Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/Internal/FeatureTesting.cmake\",\"../../../../../../Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/Compiler/Clang-CXX-FeatureTests.cmake\",\"../../../../../../Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/Compiler/Clang-CXX-TestableFeatures.cmake\",\"../../../../../../Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/Compiler/Clang-CXX-FeatureTests.cmake\",\"../../../../../../Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/Compiler/Clang-CXX-TestableFeatures.cmake\",\"../../../../../../Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/Compiler/Clang-CXX-FeatureTests.cmake\",\"../../../../../../Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/Compiler/Clang-CXX-TestableFeatures.cmake\",\"../../../../../../Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/Compiler/Clang-CXX-FeatureTests.cmake\",\"../../../../../../Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/Compiler/Clang-CXX-TestableFeatures.cmake\",\"../../../../../../Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10/Modules/CMakeCXXCompiler.cmake.in\"]},{\"isCMake\":false,\"isTemporary\":false,\"sources\":[\"CMakeLists.txt\",\"../../../../../../Library/Android/sdk/ndk/21.0.6113669/build/cmake/android.toolchain.cmake\",\"../../../../../../Library/Android/sdk/ndk/21.0.6113669/build/cmake/platforms.cmake\",\"../../../../../../Library/Android/sdk/ndk/21.0.6113669/build/cmake/android.toolchain.cmake\",\"bitmap/CMakeLists.txt\",\"mln/CMakeLists.txt\"]},{\"isCMake\":false,\"isTemporary\":true,\"sources\":[\"../../../.cxx/cmake/release/armeabi-v7a/CMakeFiles/3.10.2/CMakeSystem.cmake\",\"../../../.cxx/cmake/release/armeabi-v7a/CMakeFiles/3.10.2/CMakeCCompiler.cmake\",\"../../../.cxx/cmake/release/armeabi-v7a/CMakeFiles/3.10.2/CMakeCXXCompiler.cmake\",\"../../../.cxx/cmake/release/armeabi-v7a/CMakeFiles/feature_tests.c\",\"../../../.cxx/cmake/release/armeabi-v7a/CMakeFiles/feature_tests.c\",\"../../../.cxx/cmake/release/armeabi-v7a/CMakeFiles/feature_tests.c\",\"../../../.cxx/cmake/release/armeabi-v7a/CMakeFiles/3.10.2/CMakeCCompiler.cmake\",\"../../../.cxx/cmake/release/armeabi-v7a/CMakeFiles/feature_tests.cxx\",\"../../../.cxx/cmake/release/armeabi-v7a/CMakeFiles/feature_tests.cxx\",\"../../../.cxx/cmake/release/armeabi-v7a/CMakeFiles/feature_tests.cxx\",\"../../../.cxx/cmake/release/armeabi-v7a/CMakeFiles/feature_tests.cxx\",\"../../../.cxx/cmake/release/armeabi-v7a/CMakeFiles/3.10.2/CMakeCXXCompiler.cmake\"]}],\"cmakeRootDirectory\":\"/Users/XiongFangyu/Library/Android/sdk/cmake/3.10.2.4988404/share/cmake-3.10\",\"cookie\":\"\",\"inReplyTo\":\"cmakeInputs\",\"sourceDirectory\":\"/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni\",\"type\":\"reply\"}\n",
+    "file": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "{\"type\":\"codemodel\"}\n",
+    "file": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "{\"configurations\":[{\"name\":\"Release\",\"projects\":[{\"buildDirectory\":\"/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/.cxx/cmake/release/armeabi-v7a\",\"name\":\"Project\",\"sourceDirectory\":\"/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni\",\"targets\":[{\"artifacts\":[\"/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/libs/armeabi-v7a/liblblur.so\"],\"buildDirectory\":\"/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/.cxx/cmake/release/armeabi-v7a/bitmap\",\"fileGroups\":[{\"compileFlags\":\"-g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE\u003d2 -march\u003darmv7-a -mthumb -Wformat -Werror\u003dformat-security -pie -fPIE -Oz -DNDEBUG  -fPIC  \",\"defines\":[\"lblur_EXPORTS\"],\"isGenerated\":false,\"language\":\"C\",\"sources\":[\"bitmap_util.c\"]}],\"fullName\":\"liblblur.so\",\"linkFlags\":\"-Wl,--exclude-libs,libgcc_real.a -Wl,--exclude-libs,libatomic.a -static-libstdc++ -Wl,--build-id -Wl,--fatal-warnings -Wl,--exclude-libs,libunwind.a -Wl,--no-undefined -Qunused-arguments\",\"linkLibraries\":\"-llog -ljnigraphics -latomic -lm\",\"linkerLanguage\":\"C\",\"name\":\"lblur\",\"sourceDirectory\":\"/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/bitmap\",\"sysroot\":\"/Users/XiongFangyu/Library/Android/sdk/ndk/21.0.6113669/toolchains/llvm/prebuilt/darwin-x86_64/sysroot\",\"type\":\"SHARED_LIBRARY\"},{\"artifacts\":[\"/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/libs/armeabi-v7a/libmlnbridge.so\"],\"buildDirectory\":\"/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/.cxx/cmake/release/armeabi-v7a/mln\",\"fileGroups\":[{\"compileFlags\":\"-g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE\u003d2 -march\u003darmv7-a -mthumb -Wformat -Werror\u003dformat-security -pie -fPIE -Oz -DNDEBUG  -fPIC  \",\"defines\":[\"JAVA_ENV\",\"LUA_COMPAT_5_1\",\"LUA_COMPAT_ALL\",\"LUA_DL_DLOPEN\",\"LUA_USE_C89\",\"LUA_USE_LINUX\",\"P_ANDROID\",\"mlnbridge_EXPORTS\"],\"includePath\":[{\"path\":\"/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/mln/lua_include\"},{\"path\":\"/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/mln\"}],\"isGenerated\":false,\"language\":\"C\",\"sources\":[\"bridge/mmoslib.c\",\"bridge/mmbit.c\",\"bridge/jse.c\",\"bridge/mmbridge.c\",\"bridge/mmarray.c\",\"bridge/mmmap.c\",\"bridge/mmcanvas.c\"]}],\"fullName\":\"libmlnbridge.so\",\"linkFlags\":\"-Wl,--exclude-libs,libgcc_real.a -Wl,--exclude-libs,libatomic.a -static-libstdc++ -Wl,--build-id -Wl,--fatal-warnings -Wl,--exclude-libs,libunwind.a -Wl,--no-undefined -Qunused-arguments\",\"linkLibraries\":\"-llog -lluajapi -latomic -lm\",\"linkPath\":\"-L/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/../linkLibs/armeabi-v7a\",\"linkerLanguage\":\"C\",\"name\":\"mlnbridge\",\"sourceDirectory\":\"/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/mln\",\"sysroot\":\"/Users/XiongFangyu/Library/Android/sdk/ndk/21.0.6113669/toolchains/llvm/prebuilt/darwin-x86_64/sysroot\",\"type\":\"SHARED_LIBRARY\"}]}]}],\"cookie\":\"\",\"inReplyTo\":\"codemodel\",\"type\":\"reply\"}\n",
+    "file": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "done executing cmake",
+    "file": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "write build output /Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/.cxx/cmake/release/armeabi-v7a/build_output.txt",
+    "file": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "write command file /Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/.cxx/cmake/release/armeabi-v7a/build_command.txt",
+    "file": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "JSON generation completed without problems",
+    "file": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  }
+]

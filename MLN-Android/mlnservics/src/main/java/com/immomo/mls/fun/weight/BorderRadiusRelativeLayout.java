@@ -12,6 +12,7 @@ import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.view.MotionEvent;
+import android.widget.RelativeLayout;
 
 import com.immomo.mls.fun.other.Size;
 import com.immomo.mls.fun.ud.view.IBorderRadiusView;
@@ -22,7 +23,7 @@ import com.immomo.mls.utils.ViewShadowHelper;
 
 import androidx.annotation.NonNull;
 
-public class BorderRadiusRelativeLayout extends ForegroundRelativeLayout implements IBorderRadiusView, IClipRadius, ViewClipHelper.SuperDrawAction {
+public class BorderRadiusRelativeLayout extends RelativeLayout implements IBorderRadiusView, IClipRadius, ViewClipHelper.SuperDrawAction {
     private final @NonNull
     BorderBackgroundDrawable backgroundDrawable;
     private final @NonNull
@@ -74,11 +75,9 @@ public class BorderRadiusRelativeLayout extends ForegroundRelativeLayout impleme
 
     @Override
     public void setAddShadow(int color, Size offset, float shadowRadius, float alpha) {
-        if (Build.VERSION.SDK_INT >= 21) {
-            // 这个是加外边框，通过 setRoundRect 添加
-            viewShadowHelper.setShadowData(color,offset,shadowRadius,alpha);
-            viewShadowHelper.setOutlineProvider(this);
-        }
+        // 这个是加外边框，通过 setRoundRect 添加
+        viewShadowHelper.setShadowData(color,offset,shadowRadius,alpha);
+        viewShadowHelper.setOutlineProvider(this);
     }
 
     @Override

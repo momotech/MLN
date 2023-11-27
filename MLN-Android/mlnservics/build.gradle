@@ -1,4 +1,8 @@
-apply plugin: 'com.android.library'
+plugins {
+    id 'com.android.library'
+    id 'kotlin-android'
+    id 'kotlin-kapt'
+}
 
 android {
     compileSdkVersion project.compileSdkVersion
@@ -6,8 +10,6 @@ android {
     defaultConfig {
         minSdkVersion project.minSdkVersion
         targetSdkVersion project.targetSdkVersion
-        versionCode 1
-        versionName "1.0"
         javaCompileOptions {
             annotationProcessorOptions {
                 arguments = [isSdk: 'true']
@@ -35,7 +37,7 @@ android {
 
     externalNativeBuild {
         cmake {
-            path file('src/main/jni/CMakeLists.txt')
+            path 'src/main/jni/CMakeLists.txt'
         }
     }
     testOptions {
@@ -43,26 +45,40 @@ android {
     }
 }
 
+repositories {
+    mavenCentral()
+}
+
 dependencies {
     compileOnly 'androidx.legacy:legacy-support-v4:1.0.0'
-    compileOnly "androidx.recyclerview:recyclerview:$recyclerViewVersion"
-    compileOnly "androidx.appcompat:appcompat:$androidxVersion"
+    compileOnly "androidx.recyclerview:recyclerview:$androidXVersion"
+    compileOnly "androidx.appcompat:appcompat:$androidXVersion"
     testImplementation 'junit:junit:4.12'
     testImplementation 'org.mockito:mockito-core:2.23.0'
-
+    api 'com.cosmos.baseutil:cpp_shared:r17c'
+    compileOnly "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    compileOnly "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlin_coroutines_version"
+    compileOnly "org.jetbrains.kotlinx:kotlinx-coroutines-android:$kotlin_coroutines_version"
+    implementation 'androidx.lifecycle:lifecycle-common:2.2.0'
     if (implementation_debug) {
         compileOnly project(":mlncore")
         compileOnly project(':HotReload')
         api project(':annotation')
-        annotationProcessor project(':processor')
+        kapt project(':processor')
     } else {
         compileOnly "com.immomo.mlncore:core:$mlnCoreVersion"
         compileOnly "com.immomo.luanative:hotreload:$hotreloadVersion"
         api "com.immomo.mls:annotation:$annotationVersion"
-        annotationProcessor "com.immomo.mls:processor:$processorVersion"
+        kapt "com.immomo.mls:processor:$processorVersion"
     }
 }
 
-
-apply from: "../bintrayUpload.gradle"
-version=mlnsVersion
+if (!implementation_debug) {
+    if (update_hello_group) {
+        ext.versionForMomo = rootProject.ext.mlnsVersion
+        apply from: '../publish_to_hellogroup_maven_central.gradle'
+    } else {
+        project.ext["publish.version"] = rootProject.ext.mlnsVersion
+        apply from: "../publish_to_maven_central.gradle"
+    }
+}

@@ -18,9 +18,12 @@
 #include "lua.h"
 
 #define AR_OK               0
-#define AR_NOT_INIT         1
-#define AR_FILE_NOT_FOUND   2
-#define AR_READ_ERROR       3
+#define AR_NOT_INIT         -1
+#define AR_FILE_NOT_FOUND   -2
+#define AR_READ_ERROR       -3
+#define ERROR_NOT_INIT      "未初始化AssetManager"
+#define ERROR_FILE_NOT_FOUND "找不到文件"
+#define ERROR_READ_ERROR    "文件读取出错"
 #define AR_CONTINUE         100
 
 #define READ_BLOCK          1024
@@ -29,6 +32,10 @@
  * @param assetManager java的assetsManager对象
  */
 void jni_setAssetManager(JNIEnv *env, jobject jobj, jobject assetManager);
+/**
+ * 通过error code返回error message
+ */
+const char *errorCode2String(int);
 
 /**
  * 读取Assets下name文件，将数据读到out里，最多读取max字节

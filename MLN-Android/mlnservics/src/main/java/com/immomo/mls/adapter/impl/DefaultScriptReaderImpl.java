@@ -9,29 +9,32 @@ package com.immomo.mls.adapter.impl;
 
 import android.annotation.SuppressLint;
 import android.text.TextUtils;
+import android.util.Pair;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.immomo.mls.Constants;
+import com.immomo.mls.LuaToolUtilInfo;
 import com.immomo.mls.MLSAdapterContainer;
 import com.immomo.mls.MLSEngine;
+import com.immomo.mls.adapter.LuaToolFinder;
 import com.immomo.mls.adapter.ScriptReader;
 import com.immomo.mls.adapter.X64PathAdapter;
+import com.immomo.mls.adapter.dependence.DependenceFetcher;
 import com.immomo.mls.util.FileUtil;
 import com.immomo.mls.util.IOUtil;
 import com.immomo.mls.util.LogUtil;
 import com.immomo.mls.util.PreloadUtils;
 import com.immomo.mls.utils.ERROR;
 import com.immomo.mls.utils.GlobalStateUtils;
-import com.immomo.mls.utils.LuaUrlUtils;
 import com.immomo.mls.utils.ParsedUrl;
+import com.immomo.mls.utils.ScriptBundleParseUtils;
 import com.immomo.mls.utils.ScriptLoadException;
 import com.immomo.mls.utils.loader.Callback;
 import com.immomo.mls.utils.loader.LoadTypeUtils;
 import com.immomo.mls.utils.loader.ScriptInfo;
 import com.immomo.mls.wrapper.ScriptBundle;
-import com.immomo.mls.wrapper.ScriptFile;
 
 import org.luaj.vm2.Globals;
 
@@ -39,10 +42,11 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.lang.ref.WeakReference;
+import java.util.List;
 
 /**
  * Created by Xiong.Fangyu on 2019-08-27
- *
+ * <p>
  * 加载流程：
  * ┌──────────┐
  * │ url info │
@@ -59,7 +63,7 @@ import java.lang.ref.WeakReference;
  * ┌──────────────┐
  * │ 通知读脚本成功 │
  * └──────────────┘
- *
+ * <p>
  * 以上任何步骤出错，则流程断开，调用{@link #callbackError(Callback, ParsedUrl, ScriptLoadException)}
  */
 public class DefaultScriptReaderImpl implements ScriptReader {
@@ -77,9 +81,16 @@ public class DefaultScriptReaderImpl implements ScriptReader {
 
     protected long timeout;
 
+    protected LuaToolFinder luaToolFinder;
+    protected DependenceFetcher dependenceFetcher;
+
     public DefaultScriptReaderImpl(String url) {
         srcUrl = url;
         init();
+    }
+
+    public void setDependenceFetcher(DependenceFetcher dependenceFetcher) {
+        this.dependenceFetcher = dependenceFetcher;
     }
 
     /**
@@ -95,6 +106,7 @@ public class DefaultScriptReaderImpl implements ScriptReader {
      */
     @Override
     public void loadScriptImpl(ScriptInfo info) {
+        luaToolFinder = info.luaToolFinder;
         this.loadType = info.loadType;
         final String hotReloadUrl = info.hotReloadUrl;
         final Globals globals = info.globals;
@@ -106,12 +118,12 @@ public class DefaultScriptReaderImpl implements ScriptReader {
             PreloadUtils.checkDebug(info.globals);
 
         /// step2: 检查url，并初始化resourceFinder
-        final ParsedUrl newUrl = hotReloadUrl == null ? mSrcParsedUrl : new ParsedUrl(hotReloadUrl);
+        final ParsedUrl newUrl = hotReloadUrl == null ? mSrcParsedUrl : new ParsedUrl(hotReloadUrl, true);
         globals.clearResourceFinder();
         globals.addResourceFinder(MLSAdapterContainer.getResourceFinderAdapter().newFinder(srcUrl, newUrl));
 
         /// step3: 环境准备完成
-        GlobalStateUtils.onEnvPrepared(srcUrl);
+        GlobalStateUtils.onEnvPrepared(srcUrl, info.tag);
 
         /// step4: 根据url检查文件
         checkFileByUrl(newUrl, callback);
@@ -136,8 +148,19 @@ public class DefaultScriptReaderImpl implements ScriptReader {
         try {
             ScriptBundle ret = check(url);
             if (ret != null) {
-                callbackSuccess(callback, ret);
-                return;
+                if (dependenceFetcher == null) {
+                    callbackSuccess(callback, ret);
+                    return;
+                }
+                if (url.isHotReload()) {
+                    dependenceFetcher.fetchDependence(ret);
+                    callbackSuccess(callback, ret);
+                    return;
+                }
+                if (dependenceFetcher.fetchLocalDependence(ret)) {
+                    callbackSuccess(callback, ret);
+                    return;
+                }
             }
         } catch (ScriptLoadException e) {
             callbackError(callback, url, e);
@@ -167,6 +190,7 @@ public class DefaultScriptReaderImpl implements ScriptReader {
         innerExecuteTask(task);
     }
 
+
     /**
      * 执行异步任务
      */
@@ -181,6 +205,7 @@ public class DefaultScriptReaderImpl implements ScriptReader {
     Runnable newNetworkTask(final ParsedUrl url, final Callback callback, boolean forceDownload) {
         return new NetTask(url, callback, forceDownload);
     }
+
 
     /**
      * 获取本地异步任务，可为空
@@ -297,7 +322,9 @@ public class DefaultScriptReaderImpl implements ScriptReader {
                     return;
                 callbackSuccess(callbackRef.get(), afterDownload());
             } catch (ScriptLoadException e) {
-                callbackError(callbackRef.get(), url, e);
+                if (callbackRef.get() != null) {
+                    callbackError(callbackRef.get(), url, e);
+                }
             }
             callbackRef.clear();
         }
@@ -331,10 +358,16 @@ public class DefaultScriptReaderImpl implements ScriptReader {
                 return parseAssetsToBundle(url);
             } else {
                 final String file = checkFilePath(path, name);
-                if (file == null)
+                if (file == null) {
                     throw new ScriptLoadException(ERROR.UNKNOWN_ERROR,
                             new IllegalStateException(String.format("can not find %s from path: %s", name, path)));
-                return parseToBundle(url.toString(), file);
+                }
+                ScriptBundle bundle = parseToBundle(url.toString(), file);
+                setLuaToolInfoToScriptBundle(new File(file), bundle);
+                if (dependenceFetcher != null) {
+                    dependenceFetcher.fetchDependence(bundle);
+                }
+                return bundle;
             }
         }
 
@@ -359,6 +392,16 @@ public class DefaultScriptReaderImpl implements ScriptReader {
 
         protected long now() {
             return System.currentTimeMillis();
+        }
+    }
+
+    protected void setLuaToolInfoToScriptBundle(File file, ScriptBundle bundle) {
+        if (luaToolFinder != null) {
+            Pair<List<LuaToolUtilInfo>, List<LuaToolUtilInfo>> pair = luaToolFinder.getLuaToolFile(file);
+            if (pair != null) {
+                bundle.setLuaToolLocalInfoList(pair.first);
+                bundle.setLuaToolLocalAssetInfoList(pair.second);
+            }
         }
     }
     //</editor-fold>
@@ -390,12 +433,7 @@ public class DefaultScriptReaderImpl implements ScriptReader {
      */
     @SuppressLint("WrongConstant")
     protected ScriptBundle parseToBundle(String oldUrl, String localPath) throws ScriptLoadException {
-        final File f = new File(localPath);
-        ScriptBundle ret = new ScriptBundle(oldUrl, f.getParent());
-        ScriptFile main = PreloadUtils.parseMainScript(f);
-        ret.setMain(main);
-        ret.addFlag(ScriptBundle.TYPE_FILE | ScriptBundle.SINGLE_FILE);
-        return ret;
+        return ScriptBundleParseUtils.getInstance().parseToBundle(oldUrl, localPath);
     }
 
     /**
@@ -405,12 +443,7 @@ public class DefaultScriptReaderImpl implements ScriptReader {
      */
     @SuppressLint("WrongConstant")
     protected ScriptBundle parseAssetsToBundle(ParsedUrl parsedUrl) throws ScriptLoadException {
-        ScriptBundle ret = new ScriptBundle(parsedUrl.toString(),
-                LuaUrlUtils.getParentPath(parsedUrl.getUrlWithoutParams()));
-        ScriptFile main = PreloadUtils.parseAssetMainScript(parsedUrl);//asset解析scriptFile
-        ret.setMain(main);
-        ret.addFlag(ScriptBundle.TYPE_ASSETS | ScriptBundle.SINGLE_FILE);
-        return ret;
+        return ScriptBundleParseUtils.getInstance().parseAssetsToBundle(parsedUrl);
     }
 
     /**
@@ -466,7 +499,7 @@ public class DefaultScriptReaderImpl implements ScriptReader {
         } else if (url.isLocalPath()) {
             final String s = url.getUrlWithoutParams();
             File f = new File(s);
-            return new String[] {f.getParent(), f.getName()};
+            return new String[]{f.getParent(), f.getName()};
         } else {
             path = new File(FileUtil.getLuaDir(), FileUtil.getUrlPath(url.getUrlWithoutParams())).getAbsolutePath();
         }

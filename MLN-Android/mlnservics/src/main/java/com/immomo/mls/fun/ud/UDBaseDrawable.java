@@ -20,9 +20,13 @@ import com.immomo.mls.annotation.LuaClass;
 import com.immomo.mls.util.DimenUtil;
 import com.immomo.mls.wrapper.callback.IVoidCallback;
 
+import kotlin.Unit;
+import kotlin.jvm.functions.Function1;
 import org.luaj.vm2.Globals;
 import org.luaj.vm2.LuaNumber;
 import org.luaj.vm2.LuaValue;
+
+import java.util.Map;
 
 import static com.immomo.mls.fun.ud.MeasureMode.*;
 
@@ -158,7 +162,10 @@ public abstract class UDBaseDrawable {
     /**
      * 设置刷新回调，子类不可重写
      */
-    @LuaBridge
+    @LuaBridge(value = {
+            @LuaBridge.Func(params = {
+                    @LuaBridge.Type(value = Function1.class, typeArgs = {Map.class, Unit.class})})
+    })
     final void setRefreshFunction(IVoidCallback fun) {
         refreshFunction = fun;
     }
@@ -166,7 +173,10 @@ public abstract class UDBaseDrawable {
     /**
      * 设置layout回调，子类不可重写
      */
-    @LuaBridge
+    @LuaBridge(value = {
+            @LuaBridge.Func(params = {
+                    @LuaBridge.Type(value = Function1.class, typeArgs = {Map.class, Unit.class})})
+    })
     final void setLayoutFunction(IVoidCallback fun) {
         layoutFunction = fun;
     }

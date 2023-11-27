@@ -7,8 +7,13 @@
   */
 package com.immomo.mls.fun.constants;
 
+import androidx.annotation.IntDef;
+
 import com.immomo.mls.wrapper.ConstantClass;
 import com.immomo.mls.wrapper.Constant;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
 /**
  * Created by XiongFangyu on 2018/8/21.
@@ -25,4 +30,9 @@ public interface RectCorner {
     int BOTTOM_RIGHT = 8;
     @Constant
     int ALL_CORNERS = 15;
+
+
+    @IntDef({TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT, ALL_CORNERS})
+    @Retention(RetentionPolicy.SOURCE)
+    @interface Direction {}
 }

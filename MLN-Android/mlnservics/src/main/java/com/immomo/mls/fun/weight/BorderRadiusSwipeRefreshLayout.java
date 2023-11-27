@@ -78,11 +78,9 @@ public class BorderRadiusSwipeRefreshLayout extends SwipeRefreshLayout implement
 
     @Override
     public void setAddShadow(int color, Size offset, float shadowRadius, float alpha) {
-        if (Build.VERSION.SDK_INT >= 21) {
-            // 这个是加外边框，通过 setRoundRect 添加
-            viewShadowHelper.setShadowData(color,offset,shadowRadius,alpha);
-            viewShadowHelper.setOutlineProvider(this);
-        }
+        // 这个是加外边框，通过 setRoundRect 添加
+        viewShadowHelper.setShadowData(color,offset,shadowRadius,alpha);
+        viewShadowHelper.setOutlineProvider(this);
     }
 
     @Override

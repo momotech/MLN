@@ -22,7 +22,7 @@ import org.luaj.vm2.utils.LuaApiUsed;
  * @see LuaThread
  */
 @LuaApiUsed
-abstract class NLuaValue extends LuaValue {
+public abstract class NLuaValue extends LuaValue {
     /**
      * 虚拟机
      */
@@ -101,6 +101,11 @@ abstract class NLuaValue extends LuaValue {
      */
     public final Globals getGlobals() {
         return globals;
+    }
+
+    @Override
+    public final NLuaValue toNLuaValue() {
+        return this;
     }
 
     @Override

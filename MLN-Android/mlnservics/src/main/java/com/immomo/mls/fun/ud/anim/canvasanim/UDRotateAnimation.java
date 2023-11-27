@@ -28,6 +28,18 @@ public class UDRotateAnimation extends UDBaseAnimation {
     private float pivotXValue = 0.5f;
     private float pivotYValue = 0.5f;
 
+    @LuaBridge(value = {
+            @LuaBridge.Func(params = {
+                    @LuaBridge.Type(value = Float.class),
+                    @LuaBridge.Type(value = Float.class)
+            }),
+            @LuaBridge.Func(params = {
+                    @LuaBridge.Type(value = Float.class),
+                    @LuaBridge.Type(value = Float.class),
+                    @LuaBridge.Type(value = Double.class),
+                    @LuaBridge.Type(value = Double.class)
+            })
+    })
     public UDRotateAnimation(Globals g, LuaValue[] init) {
         super(g, init);
         final int len = init != null ? init.length : 0;

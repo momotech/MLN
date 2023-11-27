@@ -10,8 +10,11 @@ package com.immomo.mls.fun.java;
 import android.widget.Toast;
 
 import com.immomo.mls.MLSAdapterContainer;
+import com.immomo.mls.annotation.LuaBridge;
 import com.immomo.mls.annotation.LuaClass;
 
+import kotlin.Unit;
+import kotlin.jvm.functions.Function0;
 import org.luaj.vm2.Globals;
 import org.luaj.vm2.LuaValue;
 
@@ -21,7 +24,11 @@ import org.luaj.vm2.LuaValue;
 @LuaClass
 public class JToast {
     public static final String LUA_CLASS_NAME = "Toast";
-
+    @LuaBridge(value = {
+            @LuaBridge.Func(params = {
+                    @LuaBridge.Type( value = String.class),
+            })
+    })
     public JToast(Globals globals, LuaValue[] init) {
         String msg = "";
 

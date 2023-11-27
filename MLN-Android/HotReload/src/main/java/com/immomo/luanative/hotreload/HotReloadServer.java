@@ -10,7 +10,6 @@ package com.immomo.luanative.hotreload;
 import com.immomo.luanative.codec.PBCommandFactory;
 import com.immomo.luanative.codec.encode.EncoderFactory;
 import com.immomo.luanative.codec.encode.iEncoder;
-import com.immomo.luanative.codec.protobuf.PBCoverageVisualCommand;
 import com.immomo.luanative.codec.protobuf.PBCreateCommand;
 import com.immomo.luanative.codec.protobuf.PBEntryFileCommand;
 import com.immomo.luanative.codec.protobuf.PBIPAddressCommand;
@@ -95,9 +94,9 @@ public class HotReloadServer implements IHotReloadServer {
 
     /**
      * 启动HotReload 服务.
-     * @note 如果USB服务未开启，则开启USB服务，如果已开启USB，则不会重复开启。
      *
      * @param listener the listener
+     * @note 如果USB服务未开启，则开启USB服务，如果已开启USB，则不会重复开启。
      */
     public void start(iHotReloadListener listener) {
         this.listener = listener;
@@ -229,31 +228,11 @@ public class HotReloadServer implements IHotReloadServer {
             if (inputStream != null) {
                 try {
                     inputStream.close();
-                } catch (Throwable ignore) {}
-            }
-        }
-        return null;
-    }
-
-    @Override
-    public void onReport(String summaryPath, String detailPath) {
-        if (summaryPath != null) {
-            File file = new File(summaryPath);
-            if (file.isFile()) {
-                byte[] data = readFile(file);
-                if (data != null) {
-                    writeMsg(PBCommandFactory.getSummaryCommand(summaryPath, data));
+                } catch (Throwable ignore) {
                 }
             }
         }
-        if (detailPath != null) {
-            File file = new File(detailPath);
-            if (file.isFile()) {
-                byte[] data = readFile(file);
-                if (data != null)
-                    writeMsg(PBCommandFactory.getDetailCommand(detailPath, data));
-            }
-        }
+        return null;
     }
 
     @Override
@@ -318,16 +297,14 @@ public class HotReloadServer implements IHotReloadServer {
             // 重命名文件 或 文件夹
             PBRenameCommand.pbrenamecommand cmd = (PBRenameCommand.pbrenamecommand) msg;
             listener.onFileRename(cmd.getOldFilePath(), cmd.getOldRelativeFilePath(), cmd.getNewFilePath(), cmd.getNewRelativeFilePath());
-        }  else if (msg instanceof PBMoveCommand.pbmovecommand) {
+        } else if (msg instanceof PBMoveCommand.pbmovecommand) {
             // 移动文件 或 文件夹
             PBMoveCommand.pbmovecommand cmd = (PBMoveCommand.pbmovecommand) msg;
             listener.onFileMove(cmd.getOldFilePath(), cmd.getOldRelativeFilePath(), cmd.getNewFilePath(), cmd.getNewRelativeFilePath());
         } else if (msg instanceof PBReloadCommand.pbreloadcommand) {
             // 刷新
-
-            listener.onReload(getEntryFilePath(), getRelativeEntryFilePath(), getParams());
-        } else if (msg instanceof PBCoverageVisualCommand.pbcoveragevisualcommand) {
-            listener.onGencoveragereport();
+            PBReloadCommand.pbreloadcommand cmd = (PBReloadCommand.pbreloadcommand) msg;
+            listener.onReload(getEntryFilePath(), getRelativeEntryFilePath(), getParams() + "&hotReload_SerialNum=" + cmd.getSerialNum());
         } else if (msg instanceof PBIPAddressCommand.pbipaddresscommand) {
             PBIPAddressCommand.pbipaddresscommand cmd = (PBIPAddressCommand.pbipaddresscommand) msg;
             String ip = cmd.getMacIPAddress();

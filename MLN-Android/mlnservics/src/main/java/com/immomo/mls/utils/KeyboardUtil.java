@@ -1,10 +1,10 @@
 /**
-  * Created by MomoLuaNative.
-  * Copyright (c) 2019, Momo Group. All rights reserved.
-  *
-  * This source code is licensed under the MIT.
-  * For the full copyright and license information,please view the LICENSE file in the root directory of this source tree.
-  */
+ * Created by MomoLuaNative.
+ * Copyright (c) 2019, Momo Group. All rights reserved.
+ * <p>
+ * This source code is licensed under the MIT.
+ * For the full copyright and license information,please view the LICENSE file in the root directory of this source tree.
+ */
 package com.immomo.mls.utils;
 
 import android.annotation.TargetApi;
@@ -19,6 +19,7 @@ import android.view.Display;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.view.Window;
 
 import com.immomo.mls.MLSConfigs;
 import com.immomo.mls.util.AndroidUtil;
@@ -91,14 +92,8 @@ public class KeyboardUtil {
      *
      * @param l ViewTreeObserver.OnGlobalLayoutListener returned by {@link #attach} method
      */
-    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     public static void detach(ViewGroup contentView, ViewTreeObserver.OnGlobalLayoutListener l) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            contentView.getViewTreeObserver().removeOnGlobalLayoutListener(l);
-        } else {
-            //noinspection deprecation
-            contentView.getViewTreeObserver().removeGlobalOnLayoutListener(l);
-        }
+        contentView.getViewTreeObserver().removeOnGlobalLayoutListener(l);
     }
 
     private static class KeyboardStatusListener implements ViewTreeObserver.OnGlobalLayoutListener {
@@ -110,12 +105,12 @@ public class KeyboardUtil {
         private final boolean isTranslucentStatus;
         private final boolean isFitSystemWindows;
         private final boolean isSystemUiVisibilityFullScreen;
-        private final int statusBarHeight;
+        private int statusBarHeight;
         private boolean lastKeyboardShowing;
         private final OnKeyboardShowingListener keyboardShowingListener;
         private int screenHeight;
-
         private boolean isDisplayHeightContainsStatusBar = false;
+        private boolean isInit = false;
 
         KeyboardStatusListener(boolean isFullScreen, boolean isTranslucentStatus,
                                boolean isFitSystemWindows, boolean isSystemUiVisibilityFullScreen,
@@ -135,7 +130,10 @@ public class KeyboardUtil {
         public void onGlobalLayout() {
             final View userRootView = contentView.getChildAt(0);
             final View contentParentView = (View) contentView.getParent();
-
+            if (!isInit) {
+                this.statusBarHeight = stateBarHeight(contentView.getContext());
+                isInit = true;
+            }
             // Step 1. calculate the current display frame's height.
             Rect r = new Rect();
 
@@ -195,9 +193,15 @@ public class KeyboardUtil {
             } else {
                 keyboardHeight = Math.abs(displayHeight - previousDisplayHeight);
             }
-
             return keyboardHeight;
         }
+//
+//        private void resetStatusBarHeight(int keyboardHeight) {
+//            if (isReset)
+//                return;
+//            statusBarHeight += keyboardHeight;
+//            isReset = true;
+//        }
 
         private int maxOverlayLayoutHeight;
 
@@ -224,7 +228,6 @@ public class KeyboardUtil {
                     isKeyboardShowing = lastKeyboardShowing;
                 } else {
                     if (isSystemUiVisibilityFullScreen) {
-                        //考虑到状态栏的高度
                         isKeyboardShowing = actionBarOverlayLayoutHeight > (displayHeight + statusBarHeight);
                     } else {
                         isKeyboardShowing = actionBarOverlayLayoutHeight > displayHeight;
@@ -268,7 +271,7 @@ public class KeyboardUtil {
 //                    changeEditorLayoutBottomMargin();
 //                }
                 if (keyboardShowingListener != null) {
-                    keyboardShowingListener.onKeyboardShowing(isKeyboardShowing,keyboardHeight);
+                    keyboardShowingListener.onKeyboardShowing(isKeyboardShowing, keyboardHeight);
                 }
             }
 
@@ -285,14 +288,26 @@ public class KeyboardUtil {
         if (MLSConfigs.noStateBarHeight)
             return 0;
         if (context != null) {
-            return AndroidUtil.getStatusBarHeight(context);
+            if (context instanceof Activity) {
+                int statusBarHeight = AndroidUtil.getStatusBarHeight(context);
+                int refHeight = 0;
+                if (((Activity) context).getWindow() != null && ((Activity) context).getWindow().getDecorView() != null) {
+                    Rect outRect1 = new Rect();
+                    ((Activity) context).getWindow().getDecorView().getWindowVisibleDisplayFrame(outRect1);
+                    refHeight = outRect1.top;
+                }
+                if (refHeight > 0 && refHeight > statusBarHeight) {
+                    return refHeight;
+                }
+                return statusBarHeight;
+            }
         }
         return 0;
     }
 
     public static int getMinKeyboardHeight() {
         if (MIN_KEYBOARD_HEIGHT == 0) {
-            MIN_KEYBOARD_HEIGHT =  DimenUtil.dpiToPx(80);
+            MIN_KEYBOARD_HEIGHT = DimenUtil.dpiToPx(80);
         }
         return MIN_KEYBOARD_HEIGHT;
     }
@@ -306,7 +321,8 @@ public class KeyboardUtil {
      * @return Whether handle the conflict by show panel placeholder, otherwise, handle by delay the
      * visible or gone of panel.
      */
-    public static boolean isHandleByPlaceholder(boolean isFullScreen, boolean isTranslucentStatus,
+    public static boolean isHandleByPlaceholder(boolean isFullScreen,
+                                                boolean isTranslucentStatus,
                                                 boolean isFitsSystem, boolean isSystemUiVisibilityFullScreen) {
         return isFullScreen || (isTranslucentStatus && !isFitsSystem) || isSystemUiVisibilityFullScreen;
     }
@@ -329,7 +345,7 @@ public class KeyboardUtil {
          *
          * @param isShowing Indicate whether keyboard is showing or not.
          */
-        void onKeyboardShowing(boolean isShowing,int keyboardHeight);
+        void onKeyboardShowing(boolean isShowing, int keyboardHeight);
 
     }
 

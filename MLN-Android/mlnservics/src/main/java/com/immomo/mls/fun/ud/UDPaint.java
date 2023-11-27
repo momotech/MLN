@@ -14,6 +14,8 @@ import android.text.TextUtils;
 
 import com.immomo.mls.MLSAdapterContainer;
 import com.immomo.mls.adapter.TypeFaceAdapter;
+import com.immomo.mls.fun.ud.view.UDBaseHVStack;
+import com.immomo.mls.fun.ud.view.UDLuaViewRoot;
 import com.immomo.mls.util.DimenUtil;
 
 import org.luaj.vm2.Globals;
@@ -44,7 +46,7 @@ public class UDPaint extends LuaUserdata<Paint> {
             "a_setAntiAlias",
     };
 
-    @LuaApiUsed
+    @LuaApiUsed(ignore = true)
     protected UDPaint(long L, LuaValue[] v) {
         super(L, v);
         javaUserdata = new Paint();
@@ -62,14 +64,23 @@ public class UDPaint extends LuaUserdata<Paint> {
     }
 
     //<editor-fold desc="api">
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Float.class)
+            }, returns = @LuaApiUsed.Type(UDPaint.class))
+    })
     public LuaValue[] fontSize(LuaValue[] values) {
         if (javaUserdata != null)
             javaUserdata.setTextSize(DimenUtil.spToPx(values[0].toFloat()));
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(String.class),
+                    @LuaApiUsed.Type(Integer.class)
+            }, returns = @LuaApiUsed.Type(UDPaint.class))
+    })
     public LuaValue[] fontNameSize(LuaValue[] values) {
         String fontName = values.length > 0 ? values[0].toJavaString() : null;
         int size = values.length > 1 ? DimenUtil.spToPx(values[1].toInt()) : 0;
@@ -85,7 +96,14 @@ public class UDPaint extends LuaUserdata<Paint> {
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Integer.class),
+                    @LuaApiUsed.Type(Integer.class),
+                    @LuaApiUsed.Type(Integer.class),
+                    @LuaApiUsed.Type(UDColor.class)
+            }, returns = @LuaApiUsed.Type(UDPaint.class))
+    })
     public LuaValue[] setShadowLayer(LuaValue[] values) {//Android Only
         int raduis = values.length > 0 ? DimenUtil.spToPx(values[0].toInt()) : 0;
         int dx = values.length > 1 ? DimenUtil.spToPx(values[1].toInt()) : 0;
@@ -99,7 +117,11 @@ public class UDPaint extends LuaUserdata<Paint> {
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(UDArray.class)
+            }, returns = @LuaApiUsed.Type(UDPaint.class))
+    })
     public LuaValue[] setDash(LuaValue[] values) {
         LuaTable dashsArray = values.length > 0 ? values[0].toLuaTable() : null;
         int phase = values.length > 1 ? values[1].toInt() - 1 : 0;
@@ -114,7 +136,16 @@ public class UDPaint extends LuaUserdata<Paint> {
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Integer.class),
+            }, returns = @LuaApiUsed.Type(UDPaint.class)),
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(UDColor.class),
+            }, returns = @LuaApiUsed.Type(UDPaint.class)),
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(Integer.class)),
+    })
     public LuaValue[] paintColor(LuaValue[] values) {
         if (values.length > 0) {
             LuaValue value = values[0];
@@ -130,7 +161,13 @@ public class UDPaint extends LuaUserdata<Paint> {
         return varargsOf(new UDColor(getGlobals(), javaUserdata.getColor()));
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Integer.class),
+            }, returns = @LuaApiUsed.Type(UDPaint.class)),
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(Integer.class)),
+    })
     public LuaValue[] width(LuaValue[] values) {
         int width = values.length > 0 ? DimenUtil.dpiToPx(values[0].toInt()) : -1;
         if (width != -1) {
@@ -140,7 +177,13 @@ public class UDPaint extends LuaUserdata<Paint> {
         return varargsOf(LuaValue.rNumber(javaUserdata.getStrokeWidth()));
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Float.class),
+            }, returns = @LuaApiUsed.Type(UDPaint.class)),
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(Float.class)),
+    })
     public LuaValue[] alpha(LuaValue[] values) {
         int alpha = values.length > 0 ? (int) (values[0].toFloat() * 255) : -1;
         if (alpha != -1) {
@@ -150,7 +193,13 @@ public class UDPaint extends LuaUserdata<Paint> {
         return varargsOf(LuaValue.rNumber(javaUserdata.getAlpha()));
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Integer.class),
+            }, returns = @LuaApiUsed.Type(UDPaint.class)),
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(Integer.class)),
+    })
     public LuaValue[] style(LuaValue[] values) {
         int styleCode = values.length > 0 ? values[0].toInt() : -1;
         if (styleCode != -1) {
@@ -175,7 +224,13 @@ public class UDPaint extends LuaUserdata<Paint> {
     }
 
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Integer.class),
+            }, returns = @LuaApiUsed.Type(UDPaint.class)),
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(Integer.class)),
+    })
     public LuaValue[] cap(LuaValue[] values) {//Android Only
         int capCode = values.length > 0 ? values[0].toInt() : -1;
         if (capCode != -1) {
@@ -200,7 +255,12 @@ public class UDPaint extends LuaUserdata<Paint> {
         return varargsOf(LuaValue.rNumber(javaUserdata.getStrokeCap().ordinal()));
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Float.class),
+                    @LuaApiUsed.Type(Integer.class)
+            }, returns = @LuaApiUsed.Type(UDPaint.class))
+    })
     public LuaValue[] setBlurMask(LuaValue[] v) {
         float radius = v.length > 0 ? v[0].toFloat() : 0;
         int blurCode = v.length > 1 ? v[1].toInt() : 0;
@@ -229,7 +289,11 @@ public class UDPaint extends LuaUserdata<Paint> {
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Boolean.class)
+            }, returns = @LuaApiUsed.Type(UDPaint.class))
+    })
     public LuaValue[] a_setAntiAlias(LuaValue[] v) {
         boolean isAnitiAlias = v.length > 0 && v[0].toBoolean();
         javaUserdata.setAntiAlias(isAnitiAlias);

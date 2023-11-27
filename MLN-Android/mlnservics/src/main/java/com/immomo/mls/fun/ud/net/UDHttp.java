@@ -17,6 +17,10 @@ import com.immomo.mls.util.FileUtil;
 import com.immomo.mls.utils.LVCallback;
 import com.immomo.mls.utils.MainThreadExecutor;
 
+import kotlin.Unit;
+import kotlin.jvm.functions.Function0;
+import kotlin.jvm.functions.Function2;
+import kotlin.jvm.functions.Function3;
 import org.luaj.vm2.Globals;
 import org.luaj.vm2.LuaValue;
 
@@ -36,7 +40,7 @@ import static com.immomo.mls.fun.ud.net.CachePolicy.REFRESH_CACHE_BY_API;
 /**
  * http
  */
-@LuaClass(gcByLua = false)
+@LuaClass(name = "Http", gcByLua = false)
 public class UDHttp {
     public static final String LUA_CLASS_NAME = "Http";
 
@@ -65,22 +69,49 @@ public class UDHttp {
         this.baseUrl = baseUrl;
     }
 
-    @LuaBridge
+    @LuaBridge(value = {
+            @LuaBridge.Func(params = {
+                    @LuaBridge.Type(name = "url", value = String.class),
+                    @LuaBridge.Type(name = "params", value = Map.class),
+                    @LuaBridge.Type(name = "callback", value = Function3.class, typeArgs = {Boolean.class, UDMap.class, UDMap.class, Unit.class}, typeArgsNullable = {false, true, true, false}),
+            })
+    })
     public void post(String url, Map params, LVCallback callback) {
         MLSAdapterContainer.getThreadAdapter().executeTaskByTag(hashCode(), generatePostTask(realUrl(url), params, callback));
     }
 
-    @LuaBridge
+    @LuaBridge(value = {
+            @LuaBridge.Func(params = {
+                    @LuaBridge.Type(name = "url", value = String.class),
+                    @LuaBridge.Type(name = "params", value = Map.class),
+                    @LuaBridge.Type(name = "callback", value = Function3.class, typeArgs = {Boolean.class, UDMap.class, UDMap.class, Unit.class}, typeArgsNullable = {false, true, true, false}),
+            })
+    })
     public void get(String url, Map params, LVCallback callback) {
         MLSAdapterContainer.getThreadAdapter().executeTaskByTag(hashCode(), generateGetTask(realUrl(url), params, callback));
     }
 
-    @LuaBridge
+    @LuaBridge(value = {
+            @LuaBridge.Func(params = {
+                    @LuaBridge.Type(name = "url", value = String.class),
+                    @LuaBridge.Type(name = "params", value = Map.class),
+                    @LuaBridge.Type(name = "progressCallback", value = Function2.class, typeArgs = {Float.class, Integer.class, Unit.class}),
+                    @LuaBridge.Type(name = "callback", value = Function3.class, typeArgs = {Boolean.class, UDMap.class, UDMap.class, Unit.class}, typeArgsNullable = {false, true, true, false}),
+            })
+    })
     public void download(String url, Map params, LVCallback progressCallback, LVCallback callback) {
         MLSAdapterContainer.getThreadAdapter().executeTaskByTag(hashCode(), generateDownloadTask(realUrl(url), params, progressCallback, callback));
     }
 
-    @LuaBridge
+    @LuaBridge(value = {
+            @LuaBridge.Func(params = {
+                    @LuaBridge.Type(name = "url", value = String.class),
+                    @LuaBridge.Type(name = "params", value = Map.class),
+                    @LuaBridge.Type(name = "filePaths", value = List.class),
+                    @LuaBridge.Type(name = "parameterNames", value = List.class),
+                    @LuaBridge.Type(name = "callback", value = Function3.class, typeArgs = {Boolean.class, UDMap.class, UDMap.class, Unit.class}, typeArgsNullable = {false, true, true, false}),
+            })
+    })
     public void upload(String url, Map params, List filePaths, List parameterNames, LVCallback callback) {
         Runnable task = generateUploadTask(realUrl(url), params, filePaths, parameterNames, callback);
         if (task != null) {
@@ -289,7 +320,7 @@ public class UDHttp {
                         if (response.isSuccess()) {
                             callback.call(LuaValue.True(), new UDMap(globals, response.getMessageMap()));
                         } else {
-                            callback.call(LuaValue.False(), LuaValue.Nil(), new UDMap(globals, response.getMessageMap()));
+                            callback.call(LuaValue.False(),new UDMap(globals, response.getMessageMap()), new UDMap(globals, response.getMessageMap()));
                         }
                     }
                 });

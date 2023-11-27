@@ -10,6 +10,12 @@
 //
 
 #if defined(MEM_INFO)
+#ifndef WSTACK
+#define WSTACK
+#endif
+#endif
+
+#if defined(WSTACK)
 #include "stack.h"
 #include <dlfcn.h>
 #include <stdlib.h>
@@ -52,9 +58,10 @@ int get_call_stack(stack_symbol * out, int ignore, int get_method_name) {
     si.pcs = out->pc;
     si.method_name = out->method_name;
     si.size = 0;
-    si.max = MAX_STACK_LENGTH;
+    si.max = out->max;
     si.ignore = ignore;
     si._gmn = get_method_name;
-    return _Unwind_Backtrace(unwind_backtrace_callback, &si) == _URC_END_OF_STACK;
+    _Unwind_Backtrace(unwind_backtrace_callback, &si);
+    return 1;//ret == _URC_END_OF_STACK;
 }
-#endif  //MEM_INFO
+#endif  //WSTACK

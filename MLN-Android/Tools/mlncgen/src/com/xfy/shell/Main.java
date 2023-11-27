@@ -44,25 +44,9 @@ public class Main {
     }
 
     private static final File Project = new File("/Users/XiongFangyu/Desktop/MMLua4Android");
-    private static final String TestDir = "/Users/XiongFangyu/Desktop/MMLua4Android/mmui/src/main/java";
     private static final String TestDir2 = "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/java";
 
     public static void main(String[] args) throws Exception {
-//        testMethodParams();
-//        testParse(Project, "mmui", "com.immomo.mmui.ud.AdapterLuaFunction");
-//        autoGenerate(Project, "mmui", "com.immomo.mmui.ud.recycler.UDRecyclerView", "bridge", "mmrecyclerview.c");
-//        testParse(TestDir, "com.immomo.mmui.ud.UDColor");
-//        testParse(TestDir + "/com/immomo/mmui/ud/UDLabel.java");
-//        testParse(TestDir + "/com/immomo/mmui/ud/anim/InteractiveBehavior.java");
-//        testParse(TestDir + "/com/immomo/mmui/databinding/LTCDataBinding.java");
-//        testAnnotation();
-//        autoGenerate(TestDir + "/com/immomo/mmui/ud/anim/UDAnimation.java", "/Users/XiongFangyu/Downloads", "temp.c");
-//        autoGenerate(TestDir + "/com/immomo/mmui/ud/UDVStack.java", "/Users/XiongFangyu/Downloads", "temp.c");
-//        autoGenerate(TestDir + "/com/immomo/mmui/ud/UDColor.java", "/Users/XiongFangyu/Downloads", "temp.c");
-//        autoGenerate(TestDir + "/com/immomo/mmui/ud/UDStyleString.java", "/Users/XiongFangyu/Downloads", "temp.c");
-//        autoGenerate(TestDir + "/com/immomo/mmui/databinding/LTCDataBinding.java",
-//                "/Users/XiongFangyu/Downloads", "temp.c");
-//        autoGenerateCallback(Project, "mmui", "com.immomo.mmui.ud.RecyclerLuaFunction", "bridge", "temp.c");
         mainGenerate(args);
     }
 

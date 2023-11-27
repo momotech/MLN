@@ -39,7 +39,7 @@ jni_invoke(JNIEnv *env, jobject jobj, jlong L, jlong function, jobjectArray para
     int len = pushJavaArray(env, LS, params);
     int ret = lua_pcall(LS, len, (int) rc, erridx);
     if (ret != 0) {
-        throwJavaError(env, LS);
+        checkAndThrowInvokeError(env, LS);
         lua_settop(LS, oldTop);
         lua_unlock(LS);
         return NULL;
@@ -87,13 +87,6 @@ jstring jni_getFunctionSource(JNIEnv *env, jobject jobj, jlong LS, jlong functio
         return ret;
     }
     return NULL;
-}
-
-void throwJavaError(JNIEnv *env, lua_State *L) {
-    const char *errMsg = NULL;
-    if (lua_isstring(L, -1))
-        errMsg = lua_tostring(L, -1);
-    throwInvokeError(env, errMsg);
 }
 
 //<editor-fold desc="fast call">

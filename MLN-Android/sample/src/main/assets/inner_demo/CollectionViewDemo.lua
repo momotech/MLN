@@ -8,7 +8,7 @@ end
 local function initCollectionView()
     collectionView = CollectionView(true, true)
             :width(MeasurementType.MATCH_PARENT)
-            :height(H - 100 - topHeight)
+            :height(MeasurementType.MATCH_PARENT)
             :scrollDirection(ScrollDirection.VERTICAL)--竖直方向滑动
     --:scrollDirection(ScrollDirection.HORIZONTAL)--水平方向滑动
             :showScrollIndicator(true)--是否显示滑动指示器
@@ -50,8 +50,8 @@ local function initCollectionView()
     end)
     return collectionView
 end
---初始化CollectionViewLayout
-local function initCollectionViewLayout()
+--初始化CollectionViewGridLayout
+local function initCollectionViewGridLayout()
 
     collectionLayout = CollectionViewLayout()
     collectionLayout:itemSpacing(5)--间隔大小
@@ -63,7 +63,7 @@ end
 --初始化适配器
 local function initAdapter()
 
-    adapter = CollectionViewAdapter()
+    adapter = TableViewAdapter()
 
     adapter:sectionCount(function()
         return 1
@@ -76,9 +76,9 @@ local function initAdapter()
     end)
     ------------------------------设置cell宽高----------------------------------------
     --根据类型标识设置对应子view的宽高
-    adapter:sizeForCellByReuseId("CellId", function(section, row)
-        return Size(100, 100)
-    end)
+    --adapter:sizeForCellByReuseId("CellId", function(section, row)
+    --    return Size(MeasurementType.MATCH_PARENT, MeasurementType.MATCH_PARENT)
+    --end)
     -------------------------------子view类型-----------------------------------------
     --返回当前位置子view的类型标识
     adapter:reuseId(function(section, row)
@@ -88,6 +88,9 @@ local function initAdapter()
     adapter:initCellByReuseId("CellId", function(cell)
 
         cell.userView = LinearLayout(LinearType.VERTICAL)
+                :height(window:height())
+                :bgColor(Color(100, 200, 10, 1))
+                :width(MeasurementType.MATCH_PARENT)
                 :setGravity(Gravity.CENTER)
         --头像
         cell.imageView = ImageView():width(50):height(50):cornerRadius(45)
@@ -127,11 +130,12 @@ contentView:width(W):height(H)
            :bgColor(Color(255, 255, 255, 1))
 --初始化CollectionView
 collectionView = initCollectionView()
---初始化CollectionViewLayout
-collectionLayout = initCollectionViewLayout()
+collectionView:a_pagingEnabled(true)
+--初始化CollectionViewGridLayout
+--collectionLayout = initCollectionViewGridLayout()
 --初始化CollectionViewAdapter
 adapter = initAdapter()
-collectionView:layout(collectionLayout)
+--collectionView:layout(collectionLayout)
 collectionView:adapter(adapter)
 contentView:addView(collectionView)
 --操作栏
@@ -154,7 +158,8 @@ subLabel:onClick(function()
     collectionView:deleteCellsAtSection(1, 1, 2)
     --collectionView:deleteRowsAtSection(1, 1, 2,true)
 end)
-operLayout:addView(addLabel)
-operLayout:addView(subLabel)
-contentView:addView(operLayout)
+--operLayout:addView(addLabel)
+--operLayout:addView(subLabel)
+--contentView:addView(operLayout)
 window:addView(contentView)
+window:bgColor(Color(123, 3, 1, 1))

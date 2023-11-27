@@ -13,6 +13,9 @@ import android.animation.ValueAnimator;
 import com.immomo.mls.annotation.LuaBridge;
 import com.immomo.mls.annotation.LuaClass;
 import com.immomo.mls.utils.LVCallback;
+import kotlin.Unit;
+import kotlin.jvm.functions.Function0;
+import kotlin.jvm.functions.Function1;
 
 @LuaClass
 public class UDAnimator extends ValueAnimator implements ValueAnimator.AnimatorUpdateListener, Animator.AnimatorListener {
@@ -78,35 +81,50 @@ public class UDAnimator extends ValueAnimator implements ValueAnimator.AnimatorU
         super.cancel();
     }
 
-    @LuaBridge
+    @LuaBridge(value = {
+            @LuaBridge.Func(params = {
+                    @LuaBridge.Type(value = Function0.class, typeArgs = {Unit.class})})
+    })
     public void setStartCallback(LVCallback startCallback) {
         if (this.startCallback != null)
             this.startCallback.destroy();
         this.startCallback = startCallback;
     }
 
-    @LuaBridge
+    @LuaBridge(value = {
+            @LuaBridge.Func(params = {
+                    @LuaBridge.Type(value = Function0.class, typeArgs = {Unit.class})})
+    })
     public void setStopCallback(LVCallback endCallback) {
         if (this.stopCallback != null)
             this.stopCallback.destroy();
         this.stopCallback = endCallback;
     }
 
-    @LuaBridge
+    @LuaBridge(value = {
+            @LuaBridge.Func(params = {
+                    @LuaBridge.Type(value = Function0.class, typeArgs = {Unit.class})})
+    })
     public void setCancelCallback(LVCallback cancelCallback) {
         if (this.cancelCallback != null)
             this.cancelCallback.destroy();
         this.cancelCallback = cancelCallback;
     }
 
-    @LuaBridge
+    @LuaBridge(value = {
+            @LuaBridge.Func(params = {
+                    @LuaBridge.Type(value = Function0.class, typeArgs = {Unit.class})})
+    })
     public void setRepeatCallback(LVCallback repeatCallback) {
         if (this.repeatCallback != null)
             this.repeatCallback.destroy();
         this.repeatCallback = repeatCallback;
     }
 
-    @LuaBridge
+    @LuaBridge(value = {
+            @LuaBridge.Func(params = {
+                    @LuaBridge.Type(value = Function1.class, typeArgs = {Float.class, Unit.class})})
+    })
     public void setOnAnimationUpdateCallback(LVCallback updateCallback) {
         if (this.updateCallback != null)
             this.updateCallback.destroy();

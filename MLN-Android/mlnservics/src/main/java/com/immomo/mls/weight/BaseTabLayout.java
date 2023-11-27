@@ -38,6 +38,7 @@ import android.os.Build;
 import android.text.Layout;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,6 +46,7 @@ import android.view.ViewParent;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
 import android.view.animation.Interpolator;
+import android.view.animation.LinearInterpolator;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -272,7 +274,7 @@ public class BaseTabLayout extends BorderRadiusHorizontalScrollView {
 
     int mTabGravity;
     int mMode;
-    boolean mEnableScale = true;
+    boolean mEnableScale = false;
 
     private OnTabSelectedListener mSelectedListener;
     private final ArrayList<OnTabSelectedListener> mSelectedListeners = new ArrayList<>();
@@ -820,7 +822,7 @@ public class BaseTabLayout extends BorderRadiusHorizontalScrollView {
             viewPager.addOnPageChangeListener(mPageChangeListener);
 
             // Now we'll add a tab selected listener to set ViewPager's current item
-            mCurrentVpSelectedListener = new ViewPagerOnTabSelectedListener(viewPager,false);
+            mCurrentVpSelectedListener = new ViewPagerOnTabSelectedListener(viewPager,true);
             addOnTabSelectedListener(mCurrentVpSelectedListener);
 
 
@@ -1777,15 +1779,15 @@ public class BaseTabLayout extends BorderRadiusHorizontalScrollView {
             int left, right;
 
             if (selectedTitle != null && selectedTitle.getWidth() > 0) {
-                left = selectedTitle.getLeft();
-                right = selectedTitle.getRight();
+                left = selectedTitle.getLeft() + selectedTitle.getPaddingLeft();
+                right = selectedTitle.getRight() - selectedTitle.getPaddingRight();
 
                 if (mSelectionOffset > 0f && mSelectedPosition < getChildCount() - 1) {
                     // Draw the selection partway between the tabs
                     View nextTitle = getChildAt(mSelectedPosition + 1);
-                    left = (int) (mSelectionOffset * nextTitle.getLeft() +
+                    left = (int) (mSelectionOffset * (nextTitle.getLeft() + nextTitle.getPaddingLeft()) +
                             (1.0f - mSelectionOffset) * left);
-                    right = (int) (mSelectionOffset * nextTitle.getRight() +
+                    right = (int) (mSelectionOffset * (nextTitle.getRight() -nextTitle.getPaddingRight()) +
                             (1.0f - mSelectionOffset) * right);
                 }
             } else {
@@ -1829,8 +1831,8 @@ public class BaseTabLayout extends BorderRadiusHorizontalScrollView {
                 return;
             }
 
-            final int targetLeft = targetView.getLeft();
-            final int targetRight = targetView.getRight();
+            final int targetLeft = targetView.getLeft() + targetView.getPaddingLeft();
+            final int targetRight = targetView.getRight() - targetView.getPaddingRight();
             final int startLeft;
             final int startRight;
 

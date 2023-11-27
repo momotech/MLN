@@ -13,6 +13,7 @@ import android.text.TextUtils;
 import android.webkit.URLUtil;
 
 import static com.immomo.mls.Constants.ASSETS_PREFIX;
+
 import com.immomo.mls.util.FileUtil;
 import com.immomo.mls.util.RelativePathUtils;
 
@@ -41,9 +42,21 @@ public class ParsedUrl {
 
     private String urlWithoutParams;
     private byte urlType = URL_TYPE_UNKNOWN;
-
+    private boolean isHotReload;
     public ParsedUrl(@NonNull String url) {
+        this(url,false);
+    }
+    public ParsedUrl(@NonNull String url,boolean hotReload) {
         setUrl(url);
+        isHotReload = hotReload;
+    }
+
+    public boolean isHotReload() {
+        return isHotReload;
+    }
+
+    public void setHotReload(boolean hotReload) {
+        isHotReload = hotReload;
     }
 
     public void setUrl(@NonNull String url) {

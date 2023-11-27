@@ -136,6 +136,7 @@ import com.immomo.mls.wrapper.AssetsResourceFinder;
 import com.immomo.mls.wrapper.IJavaObjectGetter;
 import com.immomo.mls.wrapper.ILuaValueGetter;
 import com.immomo.mls.wrapper.Register;
+import com.immomo.mls.wrapper.Translator;
 
 import org.luaj.vm2.Globals;
 import org.luaj.vm2.LuaUserdata;
@@ -148,6 +149,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Created by XiongFangyu on 2018/6/26.
@@ -172,12 +174,16 @@ public class MLSEngine {
         otherLibs.put(BLUR_LIB, false);
     }
 
-    private static boolean init = false;
+    private static final AtomicBoolean init = new AtomicBoolean(false);
 
     private static Context context;
     public static boolean DEBUG;
 
     public static Register singleRegister;
+    public static Translator singleTranslator;/**
+     * 允许重复注册
+     */
+    private static boolean allowDuplicateRegister = true;
 
     final static List<ResourceFinder> globalResourceFinder = new ArrayList<>();
 
@@ -186,7 +192,7 @@ public class MLSEngine {
         if (globalsUserdata == null) {
             synchronized (MLSEngine.class) {
                 if (globalsUserdata == null) {
-                    globalsUserdata = new LuaViewManager(context);
+                    globalsUserdata = new LuaViewManager(context, singleTranslator);
                 }
             }
         }
@@ -199,6 +205,12 @@ public class MLSEngine {
 
     public static List<ResourceFinder> getGlobalResourceFinder() {
         return globalResourceFinder;
+    }
+
+    public static void setDuplicatedRegister(boolean allow) {
+        allowDuplicateRegister = allow;
+        if (singleRegister != null)
+            singleRegister.setAllowDuplicateRegister(allow);
     }
 
     /**
@@ -230,12 +242,14 @@ public class MLSEngine {
     /**
      * 初始化核心库
      */
-    public static void initCoreLibs(ILoadLibAdapter loadLibAdapter) {
+    public static synchronized void initCoreLibs(ILoadLibAdapter loadLibAdapter) {
+        if (MLSEngine.init.get())
+            return;
         boolean init = true;
         for (String s : coreLibs) {
             init = loadLibAdapter.load(s) && init;
         }
-        MLSEngine.init = init;
+        MLSEngine.init.set(init);
     }
 
     /**
@@ -263,17 +277,19 @@ public class MLSEngine {
     }
 
     public static MLSBuilder init(Context context, @NonNull ILoadLibAdapter adapter, final boolean debug) {
-        if (!init) {
+        if (!init.get()) {
             DEBUG = debug;
             initCoreLibs(adapter);
         }
-        if (!init)
+        if (!init.get())
             return null;
         boolean firstInit = false;
         if (singleRegister == null) {
             synchronized (MLSEngine.class) {
                 if (singleRegister == null) {
                     singleRegister = new Register();
+                    singleRegister.setAllowDuplicateRegister(allowDuplicateRegister);
+                    singleTranslator = new Translator();
                     firstInit = true;
                 }
             }
@@ -289,13 +305,18 @@ public class MLSEngine {
                         g.setResourceFinders(MLSEngine.getGlobalResourceFinder());
                     }
                     singleRegister.install(g, false);
-                    if (init)
+                    if (init.get())
                         NativeBridge.registerNativeBridge(g);
                 }
 
                 @Override
                 public boolean hookLuaError(Throwable t, Globals g) {
                     return Environment.hook(t, g);
+                }
+
+                @Override
+                public void onLuaFatalError(Globals g, String msg) {
+                    Environment.beforeAbort(g, msg);
                 }
 
                 @Override
@@ -415,8 +436,8 @@ public class MLSEngine {
                 Register.newUDHolder(UDLuaView.LUA_CLASS_NAME, UDLuaView.class, false, UDLuaView.methods),
                 Register.newUDHolder(UDLinearLayout.LUA_CLASS_NAME, UDLinearLayout.class, false),
                 Register.newUDHolder(UDRelativeLayout.LUA_CLASS_NAME, UDRelativeLayout.class, false, UDRelativeLayout.methods),
-                Register.newUDHolder(UDLabel.LUA_CLASS_NAME, UDLabel.class, false, UDLabel.methods),
                 Register.newUDHolder(UDEditText.LUA_CLASS_NAME, UDEditText.class, false, UDEditText.methods),
+                Register.newUDHolder(UDLabel.LUA_CLASS_NAME, UDLabel.class, false, UDLabel.methods),
                 Register.newUDHolder(UDImageView.LUA_CLASS_NAME, UDImageView.class, false, UDImageView.methods),
                 Register.newUDHolder(UDImageButton.LUA_CLASS_NAME, UDImageButton.class, false, UDImageButton.methods),
                 Register.newUDHolder(UDScrollView.LUA_CLASS_NAME, UDScrollView.class, false, UDScrollView.methods),
@@ -438,7 +459,7 @@ public class MLSEngine {
                 Register.newUDHolder(UDSpacer.LUA_CLASS_NAME, UDSpacer.class, false, UDSpacer.methods),
 
                 Register.newUDHolder(UDListAdapter.LUA_CLASS_NAME, UDListAdapter.class, false, true, UDListAdapter.methods),
-                Register.newUDHolder(UDListAutoFitAdapter.LUA_CLASS_NAME, UDListAutoFitAdapter.class, false, true),
+                Register.newUDHolder(UDListAutoFitAdapter.LUA_CLASS_NAME, UDListAutoFitAdapter.class, false, true, UDListAutoFitAdapter.methods),
                 Register.newUDHolder(UDCollectionAdapter.LUA_CLASS_NAME, UDCollectionAdapter.class, false, true, UDCollectionAdapter.methods),
                 Register.newUDHolder(UDCollectionAutoFitAdapter.LUA_CLASS_NAME, UDCollectionAutoFitAdapter.class, false, true, UDCollectionAutoFitAdapter.methods),
                 Register.newUDHolder(UDCollectionLayout.LUA_CLASS_NAME, UDCollectionLayout.class, false,true, UDCollectionLayout.methods),
@@ -516,15 +537,15 @@ public class MLSEngine {
 
     public static MLSBuilder.SIHolder[] registerSingleInstance() {
         return new MLSBuilder.SIHolder[]{
-                new MLSBuilder.SIHolder(SISystem.KEY, SISystem.class),
-                new MLSBuilder.SIHolder(SITimeManager.KEY, SITimeManager.class),
-                new MLSBuilder.SIHolder(SClipboard.KEY, SClipboard.class),
+                new MLSBuilder.SIHolder(SISystem.LUA_CLASS_NAME, SISystem.class),
+                new MLSBuilder.SIHolder(SITimeManager.LUA_CLASS_NAME, SITimeManager.class),
+                new MLSBuilder.SIHolder(SClipboard.LUA_CLASS_NAME, SClipboard.class),
                 new MLSBuilder.SIHolder(SIGlobalEvent.LUA_CLASS_NAME, SIGlobalEvent.class),
                 new MLSBuilder.SIHolder(SIApplication.LUA_CLASS_NAME, SIApplication.class),
                 new MLSBuilder.SIHolder(SIEventCenter.LUA_CLASS_NAME, SIEventCenter.class),
                 new MLSBuilder.SIHolder(SINetworkReachability.LUA_CLASS_NAME, SINetworkReachability.class),
                 new MLSBuilder.SIHolder(SILoading.LUA_CLASS_NAME, SILoading.class),
-                new MLSBuilder.SIHolder(SINavigator.LUA_CLASS_NAME, SINavigator.class,true),
+                new MLSBuilder.SIHolder(SINavigator.LUA_CLASS_NAME, SINavigator.class),
                 new MLSBuilder.SIHolder(SICornerRadiusManager.LUA_CLASS_NAME, SICornerRadiusManager.class),
         };
     }

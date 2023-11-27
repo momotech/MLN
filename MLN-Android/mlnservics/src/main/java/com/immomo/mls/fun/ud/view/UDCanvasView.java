@@ -11,6 +11,7 @@ import android.graphics.Paint;
 import android.util.ArrayMap;
 import android.view.View;
 
+import com.immomo.mls.fun.ud.UDCanvas;
 import com.immomo.mls.fun.ud.UDPaint;
 import com.immomo.mls.fun.ui.LuaCanvasView;
 
@@ -30,14 +31,17 @@ public class UDCanvasView extends UDView {
 
     private final ArrayMap<String, Runnable> delayTasks;
 
-    @LuaApiUsed
+    @LuaApiUsed(ignore = true)
     protected UDCanvasView(long L, LuaValue[] v) {
         super(L, v);
         delayTasks = new ArrayMap<>();
     }
 
     @Override
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(UDCanvasView.class))
+    })
     public void __onLuaGc() {
         super.__onLuaGc();
         final View view = getView();
@@ -54,13 +58,20 @@ public class UDCanvasView extends UDView {
     }
 
     @Override
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(UDCanvasView.class))
+    })
     public LuaValue[] refresh(LuaValue[] p) {
         view.invalidate();
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(UDPaint.class)
+            }, returns = @LuaApiUsed.Type(UDCanvasView.class))
+    })
     protected LuaValue[] closeHardWare(LuaValue[] v) {
         UDPaint udpait = v.length > 0 && v[0].isUserdata() ? (UDPaint) v[0].toUserdata() : null;
         Paint paint = null;

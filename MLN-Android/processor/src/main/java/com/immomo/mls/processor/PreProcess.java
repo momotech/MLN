@@ -44,17 +44,17 @@ class PreProcess {
     static Logger logger;
     static Options options;
 
-    static Map<TypeElement, Generator> process(Set<ClassName> skip,
-                                                Set<? extends TypeElement> annotations,
-                                                RoundEnvironment roundEnv,
-                                                Options options,
-                                                Logger logger) {
+    static Map<TypeElement, LuaClassGenerator> process(Set<ClassName> skip,
+                                                       Set<? extends TypeElement> annotations,
+                                                       RoundEnvironment roundEnv,
+                                                       Options options,
+                                                       Logger logger) {
         PreProcess.logger = logger;
         PreProcess.options = options;
         
         Set<? extends Element> set = roundEnv.getElementsAnnotatedWith(LuaClass.class);
         final int len = set.size();
-        Map<TypeElement, Generator> result = new HashMap<>(len);
+        Map<TypeElement, LuaClassGenerator> result = new HashMap<>(len);
         for (Element e : set) {
             if (!(e instanceof TypeElement)) {
                 continue;
@@ -70,22 +70,22 @@ class PreProcess {
         return result;
     }
     
-    private static Generator parse(Map<TypeElement, Generator> all, TypeElement element) {
+    private static LuaClassGenerator parse(Map<TypeElement, LuaClassGenerator> all, TypeElement element) {
         LuaClass luaClass = element.getAnnotation(LuaClass.class);
         if (luaClass == null)
             return null;
-        Generator result = all.get(element);
+        LuaClassGenerator result = all.get(element);
         if (result != null) {
             return result;
         }
-        Generator parentGenerator = getParentGenerator(all, element);
+        LuaClassGenerator parentGenerator = getParentGenerator(all, element);
 
         List<? extends Element> list = element.getEnclosedElements();
         final int len = list.size();
 
         int skipI = 0;
         final int[] skipIndex = new int[len / 2];
-        Generator.Builder builder = new Generator.Builder(logger, element, luaClass);
+        LuaClassGenerator.Builder builder = new LuaClassGenerator.Builder(logger, element, luaClass);
         builder.setParent(parentGenerator);
 
         for (int i = 0; i < len; i ++) {
@@ -167,9 +167,9 @@ class PreProcess {
         return null;
     }
 
-    private static Generator getParentGenerator(Map<TypeElement, Generator> all, TypeElement e) {
+    private static LuaClassGenerator getParentGenerator(Map<TypeElement, LuaClassGenerator> all, TypeElement e) {
         TypeElement parent = findParentType(e);
-        Generator parentGenerator = null;
+        LuaClassGenerator parentGenerator = null;
         LuaClass lc;
         if (parent != null && (lc = parent.getAnnotation(LuaClass.class)) != null) {
             parentGenerator = all.get(parent);
@@ -177,7 +177,7 @@ class PreProcess {
                 String name = parent.getQualifiedName().toString();
                 name = name.substring(0, name.lastIndexOf("."));
                 if (isSkipPackage(name)) {
-                    parentGenerator = new Generator.Builder(logger, parent, lc).build();
+                    parentGenerator = new LuaClassGenerator.Builder(logger, parent, lc).build();
                 } else {
                     parentGenerator = parse(all, parent);
                 }

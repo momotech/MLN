@@ -18,7 +18,6 @@ import com.immomo.mls.weight.BaseTabLayout;
 
 public class DefaultSlidingIndicator implements BaseTabLayout.ISlidingIndicator {
     private Paint paint;
-    private int width;
     private int height;
     private int radius;
     private int color = UDTabLayout.DEFAULT_COLOR;
@@ -29,8 +28,7 @@ public class DefaultSlidingIndicator implements BaseTabLayout.ISlidingIndicator 
     public DefaultSlidingIndicator(Context context) {
         this(0);
         this.context = context;
-        width = getPixels(6);
-        height = getPixels(4);
+        height = getPixels(2);
         radius = getPixels(2);
     }
 
@@ -41,6 +39,14 @@ public class DefaultSlidingIndicator implements BaseTabLayout.ISlidingIndicator 
         }
     }
 
+    public void setHeight(int height) {
+        this.height = getPixels(height);
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
     public DefaultSlidingIndicator(int paddingBottom) {
         paint = new Paint(Paint.ANTI_ALIAS_FLAG);
         paint.setColor(color);
@@ -49,11 +55,8 @@ public class DefaultSlidingIndicator implements BaseTabLayout.ISlidingIndicator 
 
     @Override
     public void onDraw(Canvas canvas, int left, int top, int right, int bottom, float percent) {
-        int newWidth = width + (int) ((0.5F - Math.abs(percent - 0.5F)) * width * 2);
-        int drawableLeft = (left + right) / 2 - width / 2;
-        int drawableRight = drawableLeft + newWidth;
         bottom = bottom - paddingBottom;
-        canvas.drawRoundRect(new RectF(drawableLeft, bottom - height, drawableRight, bottom),
+        canvas.drawRoundRect(new RectF(left, bottom - height, right, bottom),
                 radius, radius, paint);
     }
 

@@ -1,48 +1,68 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
+    ext.kotlin_version = '1.3.72'
+    ext.kotlin_coroutines_version = '1.3.7'
+
     repositories {
         google()
-        jcenter()
-
+        mavenCentral()
+        maven {
+            url getProperty('mmdev_url')
+            credentials {
+                username NEXUS_USERNAME
+                password NEXUS_PASSWORD
+            }
+        }
+        maven{ url "https://s01.oss.sonatype.org/content/repositories/releases/"}
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.4.0'
-        classpath 'com.novoda:bintray-release:0.9'
-        classpath 'com.github.dcendents:android-maven-gradle-plugin:1.5'
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.1'
-        // NOTE: Do not place your application dependencies here; they belong
-        // in the individual module build.gradle files
+        classpath 'com.android.tools.build:gradle:4.1.3'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath "com.jdd.android:mln-plugin:0.0.1_beta5"
+        classpath 'com.cosmos.rifle:symbols:1.0.0.11011231'
     }
 }
 
 allprojects {
     repositories {
+        mavenCentral()
         google()
-        jcenter()
-
+        maven {out
+            url getProperty('mmdev_url')
+            credentials {
+                username NEXUS_USERNAME
+                password NEXUS_PASSWORD
+            }
+        }
+        maven {
+            url = getProperty('mmpublic_url')
+            allowInsecureProtocol = true
+        }
+        maven{ url "https://s01.oss.sonatype.org/content/repositories/releases/"}
     }
 
     ext {
-        lua_debug = false
         implementation_debug = true
-
-        compileSdkVersion = 28
-        buildToolsVersion = "28.0.3"
-        minSdkVersion = 19
+        update_hello_group = false
+        upload_symbols = false
+        compileSdkVersion = 29
+        buildToolsVersion = "29.0.3"
+        minSdkVersion = 21
         targetSdkVersion = 26
-        androidxVersion = "1.1.0"
-        recyclerViewVersion = "1.1.0-beta05"
+        androidXVersion = "1.1.0"
         protobufVersion = '3.0.1'
 
-        mlnCoreVersion = '1.2.1_beta10261'
-        mlnsVersion = '1.2.1_beta10261'
-        processorVersion = '1.2.0'
-        annotationVersion = '1.2.0'
-        hotreloadVersion = '1.2.1_beta10261'
-        mmuiVersion = '1.0.1_beta10261'
-        yogaVersion = '1.0.1_beta10261'
+        mlnCoreVersion = '2.0_beta1'
+        mlnsVersion = '2.0_beta1'
+        processorVersion = '2.0_beta1'
+        annotationVersion = '2.0_beta1'
+
+        hotreloadVersion = '2.0_beta1'
     }
+}
+tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
 }
 
 task clean(type: Delete) {
@@ -52,7 +72,7 @@ subprojects {
     configurations.all {
         resolutionStrategy {
             dependencySubstitution {
-                force "androidx.recyclerview:recyclerview:$androidxVersion"
+                force "androidx.recyclerview:recyclerview:$androidXVersion"
             }
         }
     }

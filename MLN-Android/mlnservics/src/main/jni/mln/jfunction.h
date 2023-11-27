@@ -33,7 +33,7 @@ extern int getErrorFunctionIndex(lua_State *L);
             params;                                                     \
             int ret = lua_pcall(L, n, p, erridx);                       \
             if (ret != 0) {                                             \
-                throwJavaError(env, L);                                 \
+                checkAndThrowInvokeError(env, L);                       \
                 lua_settop(L, oldTop);                                  \
                 lua_unlock(L);                                          \
                 dr;                                                     \
@@ -42,13 +42,9 @@ extern int getErrorFunctionIndex(lua_State *L);
             lua_settop(L, oldTop);                                      \
             lua_unlock(L);
 
-#define check_and_call_method(L, n, params) call_method_return((L), (n), 0, params, ((void *)0), return)
+#define check_and_call_method(L, n, params) call_method_return((L), (n), 0, params, NULL, return)
 
 jobjectArray jni_invoke(JNIEnv *env, jobject jobj, jlong L, jlong function, jobjectArray params, jint rc);
 
 jstring jni_getFunctionSource(JNIEnv *env, jobject jobj, jlong LS, jlong function);
-/**
- * 根据lua栈顶信息抛出java异常
- */
-void throwJavaError(JNIEnv *env, lua_State *L);
 #endif //MMLUA4ANDROID_JFUNCTION_H

@@ -10,6 +10,7 @@ package com.immomo.mls.fun.ud;
 import android.graphics.Path;
 import android.graphics.RectF;
 
+import com.immomo.mls.fun.constants.FillType;
 import com.immomo.mls.util.DimenUtil;
 
 import org.luaj.vm2.LuaUserdata;
@@ -19,7 +20,7 @@ import org.luaj.vm2.utils.LuaApiUsed;
 /**
  * Created by Xiong.Fangyu on 2019-05-27
  */
-@LuaApiUsed
+@LuaApiUsed(name = "Path")
 public class UDPath extends LuaUserdata<Path> {
     public static final String LUA_CLASS_NAME = "Path";
 
@@ -38,45 +39,82 @@ public class UDPath extends LuaUserdata<Path> {
             "addCircle",
     };
 
-    @LuaApiUsed
+    @LuaApiUsed(ignore = true)
     protected UDPath(long L, LuaValue[] v) {
         super(L, v);
         javaUserdata = new Path();
     }
 
     //<editor-fold desc="api">
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(UDPath.class))
+    })
     LuaValue[] reset(LuaValue[] v) {
         javaUserdata.reset();
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(name = "ta", params = {
+                    @LuaApiUsed.Type(Float.class),
+                    @LuaApiUsed.Type(Float.class),
+            }, returns = @LuaApiUsed.Type(UDPath.class))
+    })
     LuaValue[] moveTo(LuaValue[] v) {
         javaUserdata.moveTo(DimenUtil.dpiToPx(v[0].toFloat()), DimenUtil.dpiToPx(v[1].toFloat()));
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Float.class),
+                    @LuaApiUsed.Type(Float.class),
+            }, returns = @LuaApiUsed.Type(UDPath.class))
+    })
     LuaValue[] lineTo(LuaValue[] v) {
         javaUserdata.lineTo(DimenUtil.dpiToPx(v[0].toFloat()), DimenUtil.dpiToPx(v[1].toFloat()));
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Float.class),
+                    @LuaApiUsed.Type(Float.class),
+                    @LuaApiUsed.Type(Float.class),
+                    @LuaApiUsed.Type(Float.class),
+            }, returns = @LuaApiUsed.Type(UDPath.class))
+    })
     LuaValue[] quadTo(LuaValue[] v) {
         javaUserdata.quadTo(DimenUtil.dpiToPx(v[2].toFloat()), DimenUtil.dpiToPx(v[3].toFloat()), DimenUtil.dpiToPx(v[0].toFloat()), DimenUtil.dpiToPx(v[1].toFloat()));
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Float.class),
+                    @LuaApiUsed.Type(Float.class),
+                    @LuaApiUsed.Type(Float.class),
+                    @LuaApiUsed.Type(Float.class),
+                    @LuaApiUsed.Type(Float.class),
+                    @LuaApiUsed.Type(Float.class),
+            }, returns = @LuaApiUsed.Type(UDPath.class))
+    })
     LuaValue[] cubicTo(LuaValue[] v) {
         javaUserdata.cubicTo(DimenUtil.dpiToPx(v[2].toFloat()), DimenUtil.dpiToPx(v[3].toFloat()), DimenUtil.dpiToPx(v[4].toFloat()), DimenUtil.dpiToPx(v[5].toFloat()), DimenUtil.dpiToPx(v[0].toFloat()), DimenUtil.dpiToPx(v[1].toFloat()));
         return null;
     }
 
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Float.class),
+                    @LuaApiUsed.Type(Float.class),
+                    @LuaApiUsed.Type(Float.class),
+                    @LuaApiUsed.Type(Float.class),
+                    @LuaApiUsed.Type(Float.class),
+            }, returns = @LuaApiUsed.Type(UDPath.class))
+    })
     LuaValue[] arcTo(LuaValue[] values) {
         float centerX = values.length > 0 ? DimenUtil.dpiToPx(values[0].toFloat()) : 0;
         float centerY = values.length > 1 ? DimenUtil.dpiToPx(values[1].toFloat()) : 0;
@@ -85,11 +123,15 @@ public class UDPath extends LuaUserdata<Path> {
         int endAngle = values.length > 4 ? values[4].toInt() : 0;
 
         javaUserdata.arcTo(new RectF(centerX - radius, centerY - radius, centerX + radius,
-            centerY + radius), startAngle, endAngle - startAngle);
+                centerY + radius), startAngle, endAngle - startAngle);
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(UDPath.class),
+            }, returns = @LuaApiUsed.Type(UDPath.class))
+    })
     LuaValue[] addPath(LuaValue[] v) {
         UDPath udPath = v.length > 0 ? (UDPath) v[0].toUserdata() : null;
         if (udPath != null) {
@@ -99,13 +141,20 @@ public class UDPath extends LuaUserdata<Path> {
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(UDPath.class))
+    })
     LuaValue[] close(LuaValue[] v) {
         javaUserdata.close();
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Integer.class),
+            }, returns = @LuaApiUsed.Type(UDPath.class))
+    })
     LuaValue[] setFillType(LuaValue[] values) {
         int code = values.length > 0 ? values[0].toInt() : -1;
         if (code != -1) {
@@ -129,7 +178,15 @@ public class UDPath extends LuaUserdata<Path> {
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Integer.class),
+                    @LuaApiUsed.Type(Integer.class),
+                    @LuaApiUsed.Type(Integer.class),
+                    @LuaApiUsed.Type(Integer.class),
+                    @LuaApiUsed.Type(Boolean.class),
+            }, returns = @LuaApiUsed.Type(UDPath.class))
+    })
     LuaValue[] addRect(LuaValue[] values) {
         int left = values.length > 0 ? DimenUtil.dpiToPx(values[0].toInt()) : 0;
         int top = values.length > 1 ? DimenUtil.dpiToPx(values[1].toInt()) : 0;
@@ -146,7 +203,15 @@ public class UDPath extends LuaUserdata<Path> {
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Float.class),
+                    @LuaApiUsed.Type(Float.class),
+                    @LuaApiUsed.Type(Integer.class),
+                    @LuaApiUsed.Type(Integer.class),
+                    @LuaApiUsed.Type(Integer.class)
+            }, returns = @LuaApiUsed.Type(UDPath.class))
+    })
     LuaValue[] addArc(LuaValue[] values) {
         float centerX = values.length > 0 ? DimenUtil.dpiToPx(values[0].toFloat()) : 0;
         float centerY = values.length > 1 ? DimenUtil.dpiToPx(values[1].toFloat()) : 0;
@@ -161,11 +226,18 @@ public class UDPath extends LuaUserdata<Path> {
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Integer.class),
+                    @LuaApiUsed.Type(Integer.class),
+                    @LuaApiUsed.Type(Integer.class),
+                    @LuaApiUsed.Type(Boolean.class),
+            }, returns = @LuaApiUsed.Type(UDPath.class))
+    })
     LuaValue[] addCircle(LuaValue[] values) {
         int x = values.length > 0 ? DimenUtil.dpiToPx(values[0].toInt()) : -1;
         int y = values.length > 1 ? DimenUtil.dpiToPx(values[1].toInt()) : -1;
-        int radius = values.length > 2  ? DimenUtil.dpiToPx(values[2].toInt()) : -1;
+        int radius = values.length > 2 ? DimenUtil.dpiToPx(values[2].toInt()) : -1;
         boolean clockwise = values.length > 3 && values[3].toBoolean();
 
         Path.Direction direction = Path.Direction.CCW;

@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 
 import com.immomo.mls.MLSConfigs;
 import com.immomo.mls.base.ud.lv.ILViewGroup;
+import com.immomo.mls.fun.ud.UDColor;
 import com.immomo.mls.fun.weight.newui.BaseRowColumn;
 import com.immomo.mls.util.LuaViewUtil;
 import com.immomo.mls.utils.AssertUtils;
@@ -22,7 +23,7 @@ import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.utils.LuaApiUsed;
 
 
-@LuaApiUsed
+@LuaApiUsed(ignoreTypeArgs = true)
 public class UDBaseHVStack<V extends BaseRowColumn & ILViewGroup> extends UDBaseStack<V> {
     public static final String LUA_CLASS_NAME = "_BaseHVStack";
     public static final String[] methods = {
@@ -31,7 +32,10 @@ public class UDBaseHVStack<V extends BaseRowColumn & ILViewGroup> extends UDBase
         "wrap"
     };
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(UDBaseHVStack.class))
+    })
     protected UDBaseHVStack(long L, LuaValue[] v) {
         super(L, v);
     }
@@ -47,7 +51,13 @@ public class UDBaseHVStack<V extends BaseRowColumn & ILViewGroup> extends UDBase
         return MLSConfigs.defaultClipContainer;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Integer.class),
+            }, returns = @LuaApiUsed.Type(UDBaseHVStack.class)),
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(Integer.class)),
+    })
     public LuaValue[] mainAxisAlignment(LuaValue[] var) {
         if (var.length > 0) {
             int value = var[0].toInt();
@@ -57,7 +67,13 @@ public class UDBaseHVStack<V extends BaseRowColumn & ILViewGroup> extends UDBase
         return LuaNumber.rNumber(getView().getMainAxisAlignment());
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Integer.class),
+            }, returns = @LuaApiUsed.Type(UDBaseHVStack.class)),
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(Integer.class)),
+    })
     public LuaValue[] crossAxisAlignment(LuaValue[] var) {
         if (var.length > 0) {
             int value = var[0].toInt();
@@ -67,7 +83,13 @@ public class UDBaseHVStack<V extends BaseRowColumn & ILViewGroup> extends UDBase
         return LuaNumber.rNumber(getView().getCrossAxisAlignment());
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Integer.class),
+            }, returns = @LuaApiUsed.Type(UDBaseHVStack.class)),
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(Integer.class)),
+    })
     public LuaValue[] wrap(LuaValue[] var) {
         if (var.length > 0) {
             int value = var[0].toInt();

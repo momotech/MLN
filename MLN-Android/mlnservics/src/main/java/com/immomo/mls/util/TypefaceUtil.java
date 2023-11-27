@@ -48,10 +48,10 @@ public class TypefaceUtil {
      */
     private static Typeface createByName(final String fontName) {
         try {
-            final Typeface typeface = Typeface.create(fontName, Typeface.BOLD_ITALIC);
-            if (typeface != null && Typeface.BOLD_ITALIC == typeface.getStyle()) {//得到的是默认字体则返回null
-                return null;
-            }
+            final Typeface typeface = Typeface.create(fontName, Typeface.NORMAL);
+//            if (typeface != null)) {//得到的是默认字体则返回null
+//                return null;
+//            }
             return typeface;
         } catch (Exception e) {
             return null;

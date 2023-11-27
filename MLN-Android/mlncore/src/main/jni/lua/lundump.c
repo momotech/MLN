@@ -191,6 +191,31 @@ static void LoadFunction(LoadState* S, Proto* f)
 #define VERSION		MYINT(LUA_VERSION_MAJOR)*16+MYINT(LUA_VERSION_MINOR)
 #define FORMAT		0		/* this is the official format */
 
+#define MAX_MSG_SIZE 100
+static inline void error_message_with_header(const char *fm, char *out, lu_byte *h, lu_byte *nh) {
+ const static size_t HX_SIZE = N3;
+ const static size_t LEN = HX_SIZE * 2;
+ char hx[LEN + 1];
+ char rhx[LEN + 1];
+ for (int i = 0; i < HX_SIZE; ++i) {
+  sprintf(&hx[i * 2],  "%.2x", h[i]);
+  sprintf(&rhx[i * 2], "%.2x", nh[i]);
+ }
+ hx[LEN] = '\0';
+ rhx[LEN] = '\0';
+ size_t l = strlen(fm);
+ memcpy(out, fm, l);
+ out[l ++] = ' ';
+ out[l ++] = 'R';
+ out[l ++] = ':';
+ memcpy(&out[l], hx, LEN);
+ l += LEN;
+ out[l ++] = 'H';
+ out[l ++] = ':';
+ memcpy(&out[l], rhx, LEN);
+ out[l + LEN] = '\0';
+}
+
 static void LoadHeader(LoadState* S)
 {
  lu_byte h[LUAC_HEADERSIZE];
@@ -199,13 +224,22 @@ static void LoadHeader(LoadState* S)
  memcpy(s,h,sizeof(char));			/* first char already read */
  LoadBlock(S,s+sizeof(char),LUAC_HEADERSIZE-sizeof(char));
  if (memcmp(h,s,N0)==0) return;
- if (memcmp(h,s,N1)!=0) error(S,"头错误");
- if (memcmp(h,s,N2)!=0) error(S,"版本错误，请使用" LUA_RELEASE "编译");
- if (memcmp(h,s,N3)!=0) {
-  if (sizeof(size_t) == 8) error(S, "不兼容，请使用" LUA_RELEASE " x64版本编译");
-  else error(S, "不兼容，请使用" LUA_RELEASE " x32版本编译");
+ char why[MAX_MSG_SIZE] = {0};
+ const char *fem;
+ if (memcmp(h,s,N1)!=0)
+  fem = "头错误";
+ else if (memcmp(h,s,N2)!=0)
+  fem = "和" LUA_RELEASE "不兼容";
+ else if (memcmp(h,s,N3)!=0) {
+  if (sizeof(size_t) == 8)
+   fem = "与" LUA_RELEASE "x64不兼容";
+  else
+   fem = "与" LUA_RELEASE "x32不兼容";
  }
- else error(S,"损坏");
+ else
+  fem = "损坏";
+ error_message_with_header(fem, why, s, h);
+ error(S, why);
 }
 
 /*

@@ -7,8 +7,6 @@ android {
     defaultConfig {
         minSdkVersion project.minSdkVersion
         targetSdkVersion project.targetSdkVersion
-        versionCode 1
-        versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
@@ -22,6 +20,7 @@ android {
 }
 
 dependencies {
-    compileOnly "androidx.appcompat:appcompat:$androidxVersion"
-    implementation "com.google.android.material:material:1.1.0-beta01"
+    compileOnly "androidx.appcompat:appcompat:$androidXVersion"
+    implementation "com.google.android.material:material:$androidXVersion"
+    implementation 'com.android.support:appcompat-v7:28.0.3'
 }

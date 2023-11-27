@@ -10,10 +10,13 @@ package com.immomo.mls.fun.ud.view.recycler;
 import android.util.SparseArray;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.immomo.mls.MLSEngine;
-
-
 import com.immomo.mls.fun.other.Size;
+import com.immomo.mls.fun.ud.UDCCanvas;
 import com.immomo.mls.fun.ud.UDSize;
 import com.immomo.mls.fun.ui.LuaGridLayoutManager;
 import com.immomo.mls.util.AndroidUtil;
@@ -21,22 +24,18 @@ import com.immomo.mls.util.DimenUtil;
 import com.immomo.mls.utils.AssertUtils;
 import com.immomo.mls.utils.ErrorUtils;
 
+import kotlin.jvm.functions.Function2;
 import org.luaj.vm2.LuaFunction;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.utils.LuaApiUsed;
 
-
 import java.util.HashMap;
 import java.util.Map;
-
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * Created by XiongFangyu on 2018/7/19.
  */
-@LuaApiUsed
+@LuaApiUsed(ignoreTypeArgs = true)
 public class UDCollectionAdapter extends UDBaseRecyclerAdapter<UDCollectionLayout> {
     public static final String LUA_CLASS_NAME = "CollectionViewAdapter";
     public static final String[] methods = new String[]{
@@ -53,14 +52,13 @@ public class UDCollectionAdapter extends UDBaseRecyclerAdapter<UDCollectionLayou
     private SparseArray<Size> sizeCache;
     Size initSize;
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(UDCollectionAdapter.class))
+    })
     public UDCollectionAdapter(long L, LuaValue[] v) {
         super(L, v);
         initSize = initSize();
-    }
-
-    protected Size initSize() {
-        return new Size(Size.MATCH_PARENT, Size.WRAP_CONTENT);
     }
 
 //<editor-fold desc="api">
@@ -70,13 +68,26 @@ public class UDCollectionAdapter extends UDBaseRecyclerAdapter<UDCollectionLayou
      * <p>
      * fun
      */
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = Function2.class, typeArgs = {
+                            Integer.class, Integer.class, UDSize.class
+                    })
+            }, returns = @LuaApiUsed.Type(UDCollectionAdapter.class))
+    })
     public LuaValue[] sizeForCell(LuaValue[] values) {
         cellSizeDelegate = values.length > 0 ? values[0].toLuaFunction() : null;
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(String.class),
+                    @LuaApiUsed.Type(value = Function2.class, typeArgs = {
+                            Integer.class, Integer.class, UDSize.class
+                    })
+            }, returns = @LuaApiUsed.Type(UDCollectionAdapter.class))
+    })
     public LuaValue[] sizeForCellByReuseId(LuaValue[] values) {
         if (cellSizeDelegates == null) {
             cellSizeDelegates = new HashMap<>();
@@ -85,12 +96,44 @@ public class UDCollectionAdapter extends UDBaseRecyclerAdapter<UDCollectionLayou
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = Function2.class, typeArgs = {
+                            Integer.class, Integer.class, Integer.class
+                    })
+            }, returns = @LuaApiUsed.Type(UDCollectionAdapter.class))
+    })
     public LuaValue[] setSpanSizeLookUp(LuaValue[] values) {
         spanSizeLookUpDelegate = values.length > 0 ? values[0].toLuaFunction() : null;
         return null;
     }
     //</editor-fold>
+
+    protected Size initSize() {
+        return new Size(Size.WRAP_CONTENT, Size.WRAP_CONTENT);
+    }
+
+    /**
+     * autoFitAdapter 两端统一，cellSize用Wrap_Content
+     */
+    @Override
+    protected void onOrientationChanged() {
+        if (layout != null) {
+            onLayoutSet(layout);
+        }
+        initSize.setHeight(Size.WRAP_CONTENT);
+        initSize.setWidth(Size.WRAP_CONTENT);
+    }
+
+    @Override
+    public boolean hasCellSize() {
+        return false;
+    }
+
+    /*@Override
+    public boolean hasCellSize() {
+        return cellSizeDelegate != null || (layout != null && layout.getSize() != null);
+    }*/
 
     @Override
     public void setViewSize(int w, int h) {
@@ -114,11 +157,6 @@ public class UDCollectionAdapter extends UDBaseRecyclerAdapter<UDCollectionLayou
     @Override
     public int getCellViewHeight() {
         return layout.getSize().getHeightPx();
-    }
-
-    @Override
-    public boolean hasCellSize() {
-        return cellSizeDelegate != null || (layout != null && layout.getSize() != null);
     }
 
     @NonNull
@@ -151,11 +189,6 @@ public class UDCollectionAdapter extends UDBaseRecyclerAdapter<UDCollectionLayou
         if (caller == null || caller.isNil()) {
             if (!AssertUtils.assertNull(layout, "must set layout before!", getGlobals())) {
                 return new Size(Size.WRAP_CONTENT, Size.WRAP_CONTENT);
-            }
-
-            if (!(UDCollectionAdapter.this instanceof UDCollectionAutoFitAdapter)) {
-                //两端在不声明size for cell时，有UI差异。统一报错处理
-                ErrorUtils.debugLuaError("sizeForCell must be Called when not using CollectionViewAutoFitAdapter", getGlobals());
             }
             return layout.getSize();
         }
@@ -284,14 +317,6 @@ public class UDCollectionAdapter extends UDBaseRecyclerAdapter<UDCollectionLayou
                 int[] paddingValues = mLayout.getPaddingValues();
                 int realWidth = realPositionSize.getWidthPx();
                 int realHeight = realPositionSize.getHeightPx();
-                if (recyclerViewWidth < (paddingValues[0] + paddingValues[2] + realWidth) ||
-                        recyclerViewHeight < (paddingValues[1] + paddingValues[3] + realHeight)) {
-
-                    if (!(UDCollectionAdapter.this instanceof UDCollectionAutoFitAdapter)) {
-                        //layoutInset+cellSize 不能大于recyclerView宽高,两端统一报错
-                        ErrorUtils.debugLuaError("The sum of cellWidth，leftInset，rightInset should not bigger than the width of collectionView", getGlobals());
-                    }
-                }
 
                 if (realWidth < 0 || realHeight < 0) {//两端统一报错效果
                     ErrorUtils.debugLuaError("size for cell can`t < 0", getGlobals());
@@ -325,20 +350,6 @@ public class UDCollectionAdapter extends UDBaseRecyclerAdapter<UDCollectionLayou
         }
     };
     //</editor-fold>
-
-    @Override
-    protected void onOrientationChanged() {
-        if (orientation == RecyclerView.HORIZONTAL) {
-            initSize.setWidth(Size.WRAP_CONTENT);
-            initSize.setHeight(Size.MATCH_PARENT);
-        } else {
-            initSize.setHeight(Size.WRAP_CONTENT);
-            initSize.setWidth(Size.MATCH_PARENT);
-        }
-        if (layout != null) {
-            onLayoutSet(layout);
-        }
-    }
 
     @Override
     protected void onReload() {

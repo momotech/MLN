@@ -13,6 +13,7 @@ package com.immomo.mls;
 public interface ScriptStateListener {
     enum Reason{
         LOAD_FAILED,
+        COMPILE_FAILED,
         EXCUTE_FAILED,
     }
 

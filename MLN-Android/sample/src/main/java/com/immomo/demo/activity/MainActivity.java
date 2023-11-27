@@ -15,14 +15,15 @@ import android.view.View;
 
 import androidx.core.app.ActivityCompat;
 
-import com.immomo.mln.R;
+import com.immomo.demo.R;
+import com.immomo.mls.BuildConfig;
 import com.immomo.mls.Constants;
 import com.immomo.mls.HotReloadHelper;
 import com.immomo.mls.InitData;
+import com.immomo.mls.MLSAdapterContainer;
 import com.immomo.mls.MLSBundleUtils;
 import com.immomo.mls.MLSEngine;
 import com.immomo.mls.activity.LuaViewActivity;
-import com.immomo.mls.util.LogUtil;
 
 import org.luaj.vm2.Globals;
 

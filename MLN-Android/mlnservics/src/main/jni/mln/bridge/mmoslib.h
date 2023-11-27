@@ -12,10 +12,10 @@
 #ifndef MMLUA4ANDROID_MM_UTILS_H
 #define MMLUA4ANDROID_MM_UTILS_H
 
-#ifdef __APPLE__
-#include "mil_lua.h"
-#else
+#ifdef JAVA_ENV
 #include "lua.h"
+#else
+#include "mil_lua.h"
 #endif
 
 LUALIB_API int luaopen_mmos (lua_State *L);

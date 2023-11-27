@@ -1,21 +1,23 @@
 /**
-  * Created by MomoLuaNative.
-  * Copyright (c) 2019, Momo Group. All rights reserved.
-  *
-  * This source code is licensed under the MIT.
-  * For the full copyright and license information,please view the LICENSE file in the root directory of this source tree.
-  */
+ * Created by MomoLuaNative.
+ * Copyright (c) 2019, Momo Group. All rights reserved.
+ * <p>
+ * This source code is licensed under the MIT.
+ * For the full copyright and license information,please view the LICENSE file in the root directory of this source tree.
+ */
 package com.immomo.mls.fun.ui;
 
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Matrix;
 import android.graphics.RectF;
 import android.graphics.drawable.Animatable;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 import android.view.MotionEvent;
+import android.view.ViewGroup;
 import android.webkit.URLUtil;
 
 import com.immomo.mls.MLSAdapterContainer;
@@ -41,6 +43,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 /**
  * Created by XiongFangyu on 2018/8/1.
@@ -59,6 +62,7 @@ public class LuaImageView<U extends UDImageView> extends BorderRadiusImageView i
     private Bitmap mSourceBitmap;
     private final @NonNull AtomicInteger modiCount;
     private final @NonNull ImageProvider provider;
+    private int compatScaleType = -1;
 
     public LuaImageView(Context context, UDImageView metaTable, LuaValue[] initParams) {
         super(context);
@@ -84,7 +88,7 @@ public class LuaImageView<U extends UDImageView> extends BorderRadiusImageView i
         this.cycleCallback = cycleCallback;
     }
 
-    public void setImageUrlEmpty(){
+    public void setImageUrlEmpty() {
         this.image = "";
     }
 
@@ -157,7 +161,7 @@ public class LuaImageView<U extends UDImageView> extends BorderRadiusImageView i
         }
         image = url;
 
-        setImageWithoutCheck(url, null, changed, isNetworkUrl,false, false);
+        setImageWithoutCheck(url, null, changed, isNetworkUrl, false, false);
     }
 
     @Override
@@ -230,7 +234,7 @@ public class LuaImageView<U extends UDImageView> extends BorderRadiusImageView i
         }
         image = url;
         final boolean isNetworkUrl = URLUtil.isNetworkUrl(url);
-        setImageWithoutCheck(url, placeholder, false, isNetworkUrl,true, true);
+        setImageWithoutCheck(url, placeholder, false, isNetworkUrl, true, true);
     }
 
     //</editor-fold>
@@ -461,6 +465,125 @@ public class LuaImageView<U extends UDImageView> extends BorderRadiusImageView i
         }
     }
 
+    @Override
+    public void setImageDrawable(@Nullable Drawable drawable) {
+        super.setImageDrawable(drawable);
+        configurationScaleMatrix();
+    }
+
+    @Override
+    public void setCompatScaleType(int type) {
+        compatScaleType = type;
+        setScaleType(ScaleType.MATRIX);
+        configurationScaleMatrix();
+    }
+
+    private void configurationScaleMatrix() {
+        Drawable drawable = getDrawable();
+        if (drawable == null) {
+            return;
+        }
+        ScaleType scaleType = getScaleType();
+        if (scaleType != ScaleType.MATRIX) {
+            return;
+        }
+        if (compatScaleType < 0) {
+            return;
+        }
+        if (compatScaleType == ContentMode.TOP) {
+            setScaleTypeTop();
+        }
+        if (compatScaleType == ContentMode.BOTTOM) {
+            setScaleTypeBottom();
+        }
+        if (compatScaleType == ContentMode.LEFT) {
+            setScaleTypeLeft();
+        }
+        if (compatScaleType == ContentMode.RIGHT) {
+            setScaleTypeRight();
+        }
+    }
+
+    private void setScaleTypeRight() {
+        ViewGroup.LayoutParams layoutParams = getLayoutParams();
+        if (layoutParams == null) {
+            return;
+        }
+        int width = layoutParams.width;
+        int height =layoutParams.height;
+        Drawable drawable = getDrawable();
+        if (drawable == null) {
+            return;
+        }
+        int intrinsicWidth = drawable.getIntrinsicWidth();
+        int intrinsicHeight = drawable.getIntrinsicHeight();
+
+        Matrix matrix = new Matrix();
+        matrix.setScale(1F, 1F);
+        matrix.setTranslate(width - intrinsicWidth, (height - intrinsicHeight) / 2F);
+        setImageMatrix(matrix);
+    }
+
+    private void setScaleTypeLeft() {
+        ViewGroup.LayoutParams layoutParams = getLayoutParams();
+        if (layoutParams == null) {
+            return;
+        }
+        int width = layoutParams.width;
+        int height =layoutParams.height;
+        Drawable drawable = getDrawable();
+        if (drawable == null) {
+            return;
+        }
+        int intrinsicWidth = drawable.getIntrinsicWidth();
+        int intrinsicHeight = drawable.getIntrinsicHeight();
+
+        Matrix matrix = new Matrix();
+        matrix.setScale(1F, 1F);
+        matrix.setTranslate(0, (height - intrinsicHeight) / 2F);
+        setImageMatrix(matrix);
+    }
+
+    private void setScaleTypeBottom() {
+        ViewGroup.LayoutParams layoutParams = getLayoutParams();
+        if (layoutParams == null) {
+            return;
+        }
+        int width = layoutParams.width;
+        int height =layoutParams.height;
+        Drawable drawable = getDrawable();
+        if (drawable == null) {
+            return;
+        }
+        int intrinsicWidth = drawable.getIntrinsicWidth();
+        int intrinsicHeight = drawable.getIntrinsicHeight();
+
+        Matrix matrix = new Matrix();
+        matrix.setScale(1F, 1F);
+        matrix.setTranslate((width - intrinsicWidth) / 2F, height - intrinsicHeight);
+        setImageMatrix(matrix);
+    }
+
+    private void setScaleTypeTop() {
+        ViewGroup.LayoutParams layoutParams = getLayoutParams();
+        if (layoutParams == null) {
+            return;
+        }
+        int width = layoutParams.width;
+        int height =layoutParams.height;
+        Drawable drawable = getDrawable();
+        if (drawable == null) {
+            return;
+        }
+        int intrinsicWidth = drawable.getIntrinsicWidth();
+        int intrinsicHeight = drawable.getIntrinsicHeight();
+
+        Matrix matrix = new Matrix();
+        matrix.setScale(1F, 1F);
+        matrix.setTranslate((width - intrinsicWidth) / 2F, 0);
+        setImageMatrix(matrix);
+    }
+
     private final class AnimationTask implements Animatable {
         private final List<String> list;
         private final long duration;
@@ -510,7 +633,7 @@ public class LuaImageView<U extends UDImageView> extends BorderRadiusImageView i
                 }
 
                 String url = list.get(nowIndex++);
-                setImageWithoutCheck(url, null, false, URLUtil.isNetworkUrl(url),true, false);
+                setImageWithoutCheck(url, null, false, URLUtil.isNetworkUrl(url), true, false);
 
                 preloadNextImageUrl();
 

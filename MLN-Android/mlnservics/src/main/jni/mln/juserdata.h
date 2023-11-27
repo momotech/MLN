@@ -38,6 +38,7 @@ typedef javaUserdata *UDjavaobject;
 #define udHasFlag(ud, f) (ud->flag & (1 << (f)))
 
 #define isJavaUserdata(ud) ((ud) && (ud->id) && (strstr(ud->name, METATABLE_PREFIX)))
+
 /**
  * push构造函数
  * @param clz 类
@@ -45,6 +46,7 @@ typedef javaUserdata *UDjavaobject;
  * @param metaname 对应的meta name
  */
 void pushConstructorMethod(lua_State *L, jclass clz, jmethodID con, const char *metaname);
+
 /**
  * 对应userdata_tostring_fun
  */
@@ -59,18 +61,21 @@ void pushUserdataBoolClosure(JNIEnv *env, lua_State *L, jclass clz);
  * 对应gc_userdata
  */
 void pushUserdataGcClosure(JNIEnv *env, lua_State *L, jclass clz);
+
 /**
  * 创建或取出相应的metatable
  * @return 0:对应metatable已存在; 1:新建metatable
  *          栈顶:对应metatable
  */
 int u_newmetatable(lua_State *L, const char *tname);
+
 /**
  * 给当前table设置父类
  * @param L -1: metatable
  * @param parent 父类的metatable名称
  */
 void setParentMetatable(JNIEnv *env, lua_State *L, const char *parent);
+
 /**
  * 注册所有的userdata
  * @param lcns  lua类名数组
@@ -78,10 +83,18 @@ void setParentMetatable(JNIEnv *env, lua_State *L, const char *parent);
  * @param jcns  java类名数组
  * @param lazy  是否lazy数组
  */
-void jni_registerAllUserdata(JNIEnv *env, jobject jobj, jlong L, jobjectArray lcns, jobjectArray lpcns, jobjectArray jcns, jbooleanArray lazy);
-void jni_registerUserdata(JNIEnv *env, jobject jobj, jlong L, jstring lcn, jstring lpcn, jstring jcn);
-void jni_registerUserdataLazy(JNIEnv *env, jobject jobj, jlong L, jstring lcn, jstring lpcn, jstring jcn);
+void
+jni_registerAllUserdata(JNIEnv *env, jobject jobj, jlong L, jobjectArray lcns, jobjectArray lpcns,
+                        jobjectArray jcns, jbooleanArray lazy);
+
+void
+jni_registerUserdata(JNIEnv *env, jobject jobj, jlong L, jstring lcn, jstring lpcn, jstring jcn);
+
+void jni_registerUserdataLazy(JNIEnv *env, jobject jobj, jlong L, jstring lcn, jstring lpcn,
+                              jstring jcn);
+
 void jni_registerJavaInstance(JNIEnv *env, jobject jobj, jlong L);
+
 /**
  * 创建userdata，然后设置到global表里
  * 用来创建单例，Lua代码中可直接用 ObjectName:method()调用
@@ -90,5 +103,14 @@ void jni_registerJavaInstance(JNIEnv *env, jobject jobj, jlong L);
  * @param p 初始化参数
  * @return 原生LuaUserdata对象
  */
-jobject jni_createUserdataAndSet(JNIEnv *env, jobject jobj, jlong L, jstring key, jstring lcn, jobjectArray p);
+jobject jni_createUserdataAndSet(JNIEnv *env, jobject jobj, jlong L, jstring key, jstring lcn,
+                                 jobjectArray p);
+
+void
+registerUserdata(JNIEnv const *env, lua_State *L, const char *lcn, const char *lpcn,
+                 jclass clz, int lazy);
+
+int registerSingleton(lua_State *LS,
+                      const char *kstr, const char *name, jobjectArray p);
+
 #endif //MMLUA4ANDROID_JUSERDATA_H

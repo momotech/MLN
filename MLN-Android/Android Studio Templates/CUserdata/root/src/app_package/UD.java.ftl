@@ -10,6 +10,7 @@ import com.immomo.mls.MLSBuilder;
 import org.luaj.vm2.Globals;
 import org.luaj.vm2.LuaUserdata;
 import org.luaj.vm2.LuaValue;
+import org.luaj.vm2.utils.CGenerate;
 import org.luaj.vm2.utils.LuaApiUsed;
 
 /**
@@ -39,17 +40,57 @@ public class ${ClassName} extends LuaUserdata<${WrapClass}> {
     //<editor-fold desc="Constructors">
 
     /**
-     * 提供给Lua的构造函数
-     * 必须存在
+     * 提供给Lua的构造函数，推荐使用
+     * 使用{@link CGenerate}注解可生成快速构造函数
+     * 此时可去掉{@link #${ClassName}(long, LuaValue[])}构造函数
+     *
      * @param L 虚拟机底层地址
-     * @param v 初始化参数，非空，但长度可能为0
+     *
+     * 没有其他参数，表明此构造函数不接受初始化参数
+     * defaultConstructor = true表示当lua调用构造函数参数和其他构造函数参数不匹配时，则调用此构造函数
+     * 并非需要一个默认构造函数，当userdata中没有构造函数时，若lua调用参数不匹配，将抛出lua错误
+     * @see CGenerate
+     * @see CGenerate#defaultConstructor
      */
+    @CGenerate(defaultConstructor = true)
     @LuaApiUsed
-    protected ${ClassName}(long L, @NonNull LuaValue[] v) {
-        super(L, v);
+    protected ${ClassName}(long L) {
+        super(L, null);
         /// 必须完成包裹对象的初始化
         javaUserdata = new ${WrapClass}();
     }
+
+    /**
+     * 提供给Lua的构造函数
+     * 使用{@link CGenerate}注解可生成快速构造函数
+     *
+     * @param L 虚拟机底层地址，必须包含
+     * 参数支持所有基础数据类型、String、LuaValue类型、特殊指针类型 {@link CGenerate#params}
+     *
+     * lua调用构造方法中，必须完全匹配类型，才能调用此方法
+     * @see CGenerate
+     * @see CGenerate#params
+     */
+    //@CGenerate
+    //@LuaApiUsed
+    //protected ${ClassName}(long L, boolean p0, int p1, long p2, float p3, String p4, LuaTable p5, LuaFunction p6, LuaUserdata p7, LuaValue p8) {
+    //
+    //}
+
+    /**
+     * 提供给Lua的构造函数，不推荐使用
+     * 默认构造函数
+     * 可使用{@link CGenerate}注解来生成快速构造函数
+     * @param L 虚拟机底层地址
+     * @param v 初始化参数，非空，但长度可能为0
+     * @see ${ClassName}(long)
+     */
+    //@LuaApiUsed
+    //protected ${ClassName}(long L, @NonNull LuaValue[] v) {
+    //    super(L, v);
+    //    /// 必须完成包裹对象的初始化
+    //    javaUserdata = new ${WrapClass}();
+    //}
 
     /**
      * 提供给Java的构造函数
@@ -106,6 +147,14 @@ public class ${ClassName} extends LuaUserdata<${WrapClass}> {
      */
     //@Override
     //public boolean equals(Object o) { }
+
+    /**
+     * lua中对象转换成string调用此方法
+     */
+    //@Override
+    //public String toString() {
+    //    return javaUserdata.toString();
+    //}
     //</editor-fold>
 
     //<editor-fold desc="Auto Convert">

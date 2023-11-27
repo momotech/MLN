@@ -112,8 +112,13 @@ typedef struct FuncState {
 } FuncState;
 
 
+#ifdef LOAD_TOKEN
+LUAI_FUNC Closure *luaY_parser (lua_State *L, ZIO *z, Mbuffer *buff,
+                      Dyndata *dyd, const char *name, int firstchar, TokenListenData *ud);
+#else
 LUAI_FUNC Closure *luaY_parser (lua_State *L, ZIO *z, Mbuffer *buff,
                                 Dyndata *dyd, const char *name, int firstchar);
+#endif
 
 
 #endif

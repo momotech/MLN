@@ -7,6 +7,7 @@ import android.view.View;
 
 import com.immomo.mls.Environment;
 import com.immomo.mls.fun.constants.MotionEvent;
+import com.immomo.mls.fun.ud.UDArray;
 import com.immomo.mls.fun.ud.UDCCanvas;
 import com.immomo.mls.fun.ud.UDPaint;
 import com.immomo.mls.fun.ud.UDCanvas;
@@ -23,7 +24,7 @@ import org.luaj.vm2.utils.LuaApiUsed;
  * Created by Xiong.Fangyu on 2020-01-02
  * 充当Lua层View的ViewRoot实现
  */
-@LuaApiUsed
+@LuaApiUsed(ignoreTypeArgs = true)
 public class UDLuaViewRoot extends UDViewGroup<LuaViewGroup> {
     public static final String LUA_CLASS_NAME = "LuaViewRoot";
 
@@ -47,7 +48,7 @@ public class UDLuaViewRoot extends UDViewGroup<LuaViewGroup> {
     private final ArrayMap<String, Runnable> delayTasks;
     private UDCCanvas udCanvas;
 
-    @LuaApiUsed
+    @LuaApiUsed(ignore = true)
     protected UDLuaViewRoot(long L, LuaValue[] v) {
         super(L, v);
         delayTasks = new ArrayMap<>();
@@ -66,7 +67,10 @@ public class UDLuaViewRoot extends UDViewGroup<LuaViewGroup> {
     }
 
     @Override
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(UDLuaViewRoot.class))
+    })
     public void __onLuaGc() {
         super.__onLuaGc();
         final View view = getView();
@@ -78,13 +82,20 @@ public class UDLuaViewRoot extends UDViewGroup<LuaViewGroup> {
     }
 
     @Override
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(UDLuaViewRoot.class))
+    })
     public LuaValue[] refresh(LuaValue[] p) {
         view.invalidate();
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = UDArray.class),
+            }, returns = @LuaApiUsed.Type(UDLuaViewRoot.class))
+    })
     public LuaValue[] invalidate(LuaValue[] p) {
         LuaValue.destroyAllParams(p);
 //        LuaTable table = p[0].toLuaTable();
@@ -102,7 +113,7 @@ public class UDLuaViewRoot extends UDViewGroup<LuaViewGroup> {
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed(ignore = true)
     protected LuaValue[] closeHardWare(LuaValue[] v) {
         UDPaint udpait = v.length > 0 && v[0].isUserdata() ? (UDPaint) v[0].toUserdata() : null;
         Paint paint = null;
@@ -124,7 +135,7 @@ public class UDLuaViewRoot extends UDViewGroup<LuaViewGroup> {
      * 会将触摸事件封装成table回调
      * table封装效果见: {@link #onTouchListener}
      */
-    @LuaApiUsed
+    @LuaApiUsed(ignore = true)
     private LuaValue[] setOnTouchListener(LuaValue[] v) {
         if (onTouchFunction != null) {
             onTouchFunction.destroy();
@@ -148,7 +159,7 @@ public class UDLuaViewRoot extends UDViewGroup<LuaViewGroup> {
      * <p>
      * doInNextFrame(function, ...)
      */
-    @LuaApiUsed
+    @LuaApiUsed(ignore = true)
     private LuaValue[] doInNextFrame(LuaValue[] v) {
         final LuaFunction fun = v[0].toLuaFunction();
         final LuaValue[] params = sub(v, 1);
@@ -176,7 +187,7 @@ public class UDLuaViewRoot extends UDViewGroup<LuaViewGroup> {
      * doAfter(key, function, delay, ...)
      * delay: s
      */
-    @LuaApiUsed
+    @LuaApiUsed(ignore = true)
     private LuaValue[] doAfter(LuaValue[] v) {
         final String key = v[0].toJavaString();
         final LuaFunction fun = v[1].toLuaFunction();
@@ -208,7 +219,7 @@ public class UDLuaViewRoot extends UDViewGroup<LuaViewGroup> {
      * 移除延迟任务
      * removeTask(key)
      */
-    @LuaApiUsed
+    @LuaApiUsed(ignore = true)
     private LuaValue[] removeTask(LuaValue[] v) {
         final String key = v[0].toJavaString();
         Runnable task = delayTasks.remove(key);

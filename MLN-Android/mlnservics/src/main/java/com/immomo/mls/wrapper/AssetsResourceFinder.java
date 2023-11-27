@@ -21,7 +21,7 @@ import java.util.Objects;
 
 /**
  * Created by Xiong.Fangyu on 2019/3/20
- *
+ * <p>
  * 寻找在Android assets包下存在的文件数据
  */
 public class AssetsResourceFinder implements ResourceFinder {
@@ -59,7 +59,7 @@ public class AssetsResourceFinder implements ResourceFinder {
             if (is.read(data) == data.length)
                 return data;
         } catch (Throwable e) {
-            errorMsg = "ARF: " + e.toString();
+            errorMsg = "ARF: 从Assets中读取" + name + "出错，" + e.toString();
         } finally {
             IOUtil.closeQuietly(is);
         }

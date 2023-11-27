@@ -153,9 +153,7 @@ public class ScalpelFrameLayout extends FrameLayout {
         viewBorderPaint.setStyle(STROKE);
         viewBorderPaint.setTextSize(textSize);
         setChromeShadowColor(CHROME_SHADOW_COLOR);
-        if (Build.VERSION.SDK_INT >= JELLY_BEAN) {
-            viewBorderPaint.setTypeface(Typeface.create("sans-serif-condensed", NORMAL));
-        }
+        viewBorderPaint.setTypeface(Typeface.create("sans-serif-condensed", NORMAL));
     }
 
     /** Set the view border chrome color. */

@@ -14,6 +14,8 @@
 
 #include "global_define.h"
 #include "map.h"
+#include "list.h"
+
 /**
  * Java调用，从GNV表中移除相关数据
  * @param k key，see copyValueToGNV
@@ -21,6 +23,7 @@
  * @return 相关对象引用计数
  */
 jint jni_removeNativeValue(JNIEnv *env, jobject job, jlong L, jlong k, jint lt);
+
 /**
  * Java调用，判断GNV表中是否又相关数据
  * @param key see copyValueToGNV
@@ -51,6 +54,10 @@ void getValueFromGNV(lua_State *L, ptrdiff_t key, int ltype);
  */
 ptrdiff_t copyValueToGNV(lua_State *L, int idx);
 
+/**
+ * 将idx位置的数据(Table, Function, Userdata, Thread)从GNV表中移除
+ */
+void removeValueFromGNVByIndex(lua_State *L, int idx);
 ///---------------------------------------------------------------------------
 ///------------------------classname->jclass----------------------------------
 ///---------------------------------------------------------------------------
@@ -112,4 +119,29 @@ void *jm_get(jclass, const char *);
  */
 void jm_traverse_all_method(jclass clz, map_look_fun fun, void *ud);
 
+typedef struct classInfo {
+    int classType;//0:普通user 1 singleton 2 static
+    const char *key;//lua中调用的名称 eg.System
+    const char *fullNameKey;//lua 中真实的类名 eg.__System
+    List *clzArray;//type:jclass 多个类 是由于类似System key相同的继承关系
+    const char *luaParentClass;//父metatable名称
+} ClassInfo;
+
+/**
+ * 存储类luaname对应的jclass
+ * @param luaname lua名称
+ * @param obj  jclass对象（global变量）
+ * @param luaParentName
+ * @param isSingleton  是否是单例
+ */
+void l2j_put(const char *name, const char *luaFullName, void *obj, const char *luaParentName,
+             int classType);
+
+/**
+ * 取出luaname 对应的jclass
+ * @param name lua名称
+ * @return 对应的jclass(global变量)
+ */
+
+ClassInfo *l2j_get(const char *name);
 #endif //L_CACHE_H

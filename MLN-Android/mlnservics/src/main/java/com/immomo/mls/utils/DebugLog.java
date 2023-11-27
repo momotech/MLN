@@ -35,6 +35,7 @@ public class DebugLog implements Cloneable {
     public @Nullable String bundleString;
     public boolean executeSuccess;
     public String url;
+    public String realLoadUrl;
 
     public void onStart(String url) {
         clear();
@@ -56,6 +57,7 @@ public class DebugLog implements Cloneable {
 
     public void loaded(ScriptBundle bundle) {
         if (bundle != null) {
+            realLoadUrl = bundle.getUrl();
             this.bundleSize = bundle.size() + 1;
             if (MLSEngine.DEBUG)
                 this.bundleString = bundle.getFlagDebugString();
@@ -104,7 +106,7 @@ public class DebugLog implements Cloneable {
     }
 
     private static final String TEMPLATE = "------Lua page executed. \n" +
-            "url: %s\n\n" +
+            "url: %s\nrealLoadUrl: %s\n" +
             "load file : %d \t type: %s\n" +
             "global prepare cast: %.2f\n"+
             "prepare env cast: %.2f\n" +
@@ -118,7 +120,7 @@ public class DebugLog implements Cloneable {
     @SuppressLint("DefaultLocale")
     public String createLog() {
         return String.format(TEMPLATE,
-                url,
+                url, realLoadUrl,
                 bundleSize, String.valueOf(bundleString),
                 globalPrepareTime,
                 envPrepareTime,
@@ -127,7 +129,7 @@ public class DebugLog implements Cloneable {
                 prepareTime,
                 executedTime,
                 totalTime,
-                Globals.isIs32bit()?"32":"64");
+                Globals.is32bit()?"32":"64");
     }
 
     protected void log(String s, PrintStream ps) {

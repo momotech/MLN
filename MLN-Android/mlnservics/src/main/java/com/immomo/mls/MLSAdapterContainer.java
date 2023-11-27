@@ -9,6 +9,8 @@ package com.immomo.mls;
 
 import com.immomo.mls.adapter.ConsoleLoggerAdapter;
 import com.immomo.mls.adapter.IFileCache;
+import com.immomo.mls.adapter.LuaToolFinder;
+import com.immomo.mls.adapter.IMaybeWhiteScreenAdapter;
 import com.immomo.mls.adapter.MLSEmptyViewAdapter;
 import com.immomo.mls.adapter.MLSGlobalEventAdapter;
 import com.immomo.mls.adapter.MLSGlobalStateListener;
@@ -28,6 +30,7 @@ import com.immomo.mls.adapter.impl.DefaultConsoleLoggerAdapter;
 import com.immomo.mls.adapter.impl.DefaultEmptyViewAdapter;
 import com.immomo.mls.adapter.impl.DefaultHttpAdapter;
 import com.immomo.mls.adapter.impl.DefaultLoadViewAdapter;
+import com.immomo.mls.adapter.impl.DefaultMaybeWhiteScreenAdapter;
 import com.immomo.mls.adapter.impl.DefaultResourceFinderAdapterImpl;
 import com.immomo.mls.adapter.impl.DefaultScriptReaderCreatorImpl;
 import com.immomo.mls.adapter.impl.DefaultThreadAdapter;
@@ -59,6 +62,7 @@ public class MLSAdapterContainer {
     private static MLSResourceFinderAdapter resourceFinderAdapter = new DefaultResourceFinderAdapterImpl();
     private static ImageProvider imageProvider;
     private static ScriptReaderCreator scriptReaderCreator = new DefaultScriptReaderCreatorImpl();
+    private static LuaToolFinder luaToolFinder;
     private static MLSQrCaptureAdapter qrCaptureAdapter;
     private static OnRemovedUserdataAdapter onRemovedUserdataAdapter;
     private static MLSReloadButtonCreator reloadButtonCreator = new MLSReloadButtonCreatorImpl();
@@ -66,6 +70,7 @@ public class MLSAdapterContainer {
     private static IFileCache fileCache = new FileCacheImpl();
     private static MLNSafeAreaAdapter safeAreaAdapter = new DefaultSafeAreaAdapter();
     private static X64PathAdapter x64PathAdapter = new X64PathAdapterImpl();
+    private static IMaybeWhiteScreenAdapter maybeWhiteScreenAdapter = new DefaultMaybeWhiteScreenAdapter();
 
     public static MLSThreadAdapter getThreadAdapter() {
         return threadAdapter;
@@ -91,7 +96,8 @@ public class MLSAdapterContainer {
         MLSAdapterContainer.consoleLoggerAdapter = consoleLoggerAdapter;
     }
 
-    public static @NonNull MLSHttpAdapter getHttpAdapter() {
+    public static @NonNull
+    MLSHttpAdapter getHttpAdapter() {
         return httpAdapter;
     }
 
@@ -167,6 +173,14 @@ public class MLSAdapterContainer {
         return scriptReaderCreator;
     }
 
+    public static LuaToolFinder getLuaToolFinder() {
+        return luaToolFinder;
+    }
+
+    public static void setLuaToolFinder(LuaToolFinder finder) {
+        luaToolFinder = finder;
+    }
+
     public static void setScriptReaderCreator(ScriptReaderCreator scriptReaderCreator) {
         MLSAdapterContainer.scriptReaderCreator = scriptReaderCreator;
     }
@@ -218,5 +232,13 @@ public class MLSAdapterContainer {
 
     public static void setX64PathAdapter(X64PathAdapter x64PathAdapter) {
         MLSAdapterContainer.x64PathAdapter = x64PathAdapter;
+    }
+
+    public static IMaybeWhiteScreenAdapter getMaybeWhiteScreenAdapter() {
+        return maybeWhiteScreenAdapter;
+    }
+
+    public static void setMaybeWhiteScreenAdapter(IMaybeWhiteScreenAdapter maybeWhiteScreenAdapter) {
+        MLSAdapterContainer.maybeWhiteScreenAdapter = maybeWhiteScreenAdapter;
     }
 }

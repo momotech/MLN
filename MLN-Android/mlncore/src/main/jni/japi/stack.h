@@ -13,12 +13,19 @@
 #define __STACK_H
 
 #if defined(MEM_INFO)
+#ifndef WSTACK
+#define WSTACK
+#endif
+#endif
+
+#if defined(WSTACK)
 #include <unwind.h>
 #define MAX_STACK_LENGTH 5
 
 typedef struct stack_symbol {
-    uintptr_t pc[MAX_STACK_LENGTH];         //  调用栈相对位置
-    char * method_name[MAX_STACK_LENGTH];   //  对应调用栈函数名称 nullable
+    uintptr_t * pc;         // 调用栈相对位置
+    char ** method_name;    // 对应调用栈函数名称 nullable
+    int max;                // pc和method_name长度
 } stack_symbol;
 
 /**
@@ -29,6 +36,6 @@ typedef struct stack_symbol {
  * return 1: 获取成功; 0: 获取失败
  */
 int get_call_stack(stack_symbol * out, int ignore, int get_method_name);
-#endif  //MEM_INFO
+#endif  //WSTACK
 
 #endif

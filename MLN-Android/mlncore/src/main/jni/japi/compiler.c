@@ -25,21 +25,40 @@
 #include "cache.h"
 #include "jfunction.h"
 #include "jtable.h"
+#include "juserdata.h"
+#include "jbridge.h"
+
+#ifdef LOAD_TOKEN
+#include "lua.h"
+#endif
+#ifdef STATISTIC_PERFORMANCE
+
 #include "statistics_require.h"
+
+#endif
 #ifdef ANDROID
+
 #include "assets_reader.h"
+
 #endif
 
 /**
- * 是否开启文件加密，若开启，读lua文件判断是否是加密文件，写lua文件都加密
- *                若关闭，读写都不使用加密
+ * * *
+ *   1 是否加密
+ * 1   是否可读源码
  */
-static int opensaes = 0;
+static unsigned int _file_configs = 3;
+
+#define opensaes ((_file_configs & 1) == 1)
+#define open_read_source ((_file_configs & 2) == 2)
 
 #define FILE_NOT_FOUND -404
 #define WRITE_FILE_ERROR -300
 #define CLOSE_FILE_ERROR -301
 #define BUFFER_SIZE 1024
+#define REQUIRE_KEY "require"
+#define IMPORTER_KEY "import"
+#define OLD_REQUIRE_KEY "__old_require"
 
 extern jclass Globals;
 extern jclass StringClass;
@@ -54,19 +73,23 @@ extern jmethodID Globals__getRequireError;
  * @return LUA_OK: 成功，其他，失败
  */
 static int compile_buffer(lua_State *L, const char *data, size_t size, const char *chunkname);
+
 /**
  * 编译文件数据，并将结果放入栈顶
  * @param chunkname 可为空，则使用file当作chunkname
  * @return LUA_OK: 成功，其他，失败
  */
 static int compile_file(lua_State *L, const char *file, const char *chunkname);
+
 #ifdef ANDROID
+
 /**
  * 编译Android Assets文件数据，并将结果放入栈顶
  * @param chunkname  可为空，则使用file当作chunkname
  * @return LUA_OK: 成功，其他，失败
  */
 static int compile_assets(lua_State *L, const char *file, const char *chunkname);
+
 #endif
 //</editor-fold>
 
@@ -77,7 +100,9 @@ static int j_compile_buffer(JNIEnv *env, lua_State *L, jstring name, jbyteArray 
 static int j_compile_file(JNIEnv *env, lua_State *L, jstring path, jstring chunkname);
 
 #ifdef ANDROID
+
 static int j_compile_assets(JNIEnv *env, lua_State *L, jstring path, jstring chunkname);
+
 #endif
 
 static void throwUndumpError(JNIEnv *env, const char *msg);
@@ -93,8 +118,12 @@ static int saveProto(lua_State *L, const char *file);
 
 //<editor-fold desc="jni methods">
 
-void jni_openSAES(JNIEnv *env, jobject jobj, jboolean open) {
-    opensaes = (int) open;
+void jni_setNativeFileConfigs(JNIEnv *env, jobject jobj, jint configs) {
+    _file_configs = (unsigned int) configs;
+}
+
+jint jni_getNativeFileConfigs(JNIEnv *env, jobject jobj) {
+    return (jint) _file_configs;
 }
 
 jint jni_loadData(JNIEnv *env, jobject jobj, jlong L_state_pointer, jstring name, jbyteArray data) {
@@ -115,14 +144,17 @@ jni_loadFile(JNIEnv *env, jobject jobj, jlong L_state_pointer, jstring path, jst
 }
 
 #ifdef ANDROID
+
 jint
-jni_loadAssetsFile(JNIEnv *env, jobject jobj, jlong L_state_pointer, jstring path, jstring chunkname) {
+jni_loadAssetsFile(JNIEnv *env, jobject jobj, jlong L_state_pointer, jstring path,
+                   jstring chunkname) {
     lua_State *L = (lua_State *) L_state_pointer;
     lua_lock(L);
     jint r = (jint) j_compile_assets(env, L, path, chunkname);
     lua_unlock(L);
     return r;
 }
+
 #endif
 
 jboolean jni_setMainEntryFromPreload(JNIEnv *env, jobject jobj, jlong LS, jstring name) {
@@ -152,12 +184,7 @@ jint jni_doLoadedData(JNIEnv *env, jobject jobj, jlong L_state_pointer) {
     int err = lua_iscfunction(L, 1) ? 1 : 0;
     jint ret = (jint) lua_pcall(L, 0, LUA_MULTRET, err);
     if (ret) {
-        const char *errmsg;
-        if (lua_isstring(L, -1))
-            errmsg = lua_tostring(L, -1);
-        else
-            errmsg = "unkonw error";
-        throwInvokeError(env, errmsg);
+        checkAndThrowInvokeError(env, L);
     }
     lua_unlock(L);
     return ret;
@@ -193,6 +220,7 @@ void jni_preloadFile(JNIEnv *env, jobject jobj, jlong LS, jstring name, jstring 
 }
 
 #ifdef ANDROID
+
 void jni_preloadAssets(JNIEnv *env, jobject jobj, jlong LS, jstring chunkname, jstring path) {
     lua_State *L = (lua_State *) LS;
     lua_lock(L);
@@ -201,7 +229,8 @@ void jni_preloadAssets(JNIEnv *env, jobject jobj, jlong LS, jstring chunkname, j
     lua_unlock(L);
 }
 
-jint jni_preloadAssetsAndSave(JNIEnv *env, jobject jobj, jlong LS, jstring chunkname, jstring path, jstring savePath) {
+jint jni_preloadAssetsAndSave(JNIEnv *env, jobject jobj, jlong LS, jstring chunkname, jstring path,
+                              jstring savePath) {
     lua_State *L = (lua_State *) LS;
     const char *p = GetString(env, path);
     const char *cn = GetString(env, chunkname);
@@ -235,12 +264,13 @@ jint jni_preloadAssetsAndSave(JNIEnv *env, jobject jobj, jlong LS, jstring chunk
     lua_unlock(L);
     return saveRet;
 }
+
 #endif
 
 jint jni_require(JNIEnv *env, jobject jobj, jlong LS, jstring path) {
     lua_State *L = (lua_State *) LS;
     int errFun = getErrorFunctionIndex(L);
-    lua_getglobal(L, "require");
+    lua_getglobal(L, REQUIRE_KEY);
     if (!lua_isfunction(L, -1)) {
         lua_pop(L, 1);
         return -1;
@@ -249,14 +279,8 @@ jint jni_require(JNIEnv *env, jobject jobj, jlong LS, jstring path) {
     lua_pushstring(L, s);
     ReleaseChar(env, path, s);
     if (lua_pcall(L, 1, 0, errFun)) {
-        const char *msg;
-        if (lua_isstring(L, -1)) {
-            msg = lua_tostring(L, -1);
-        } else {
-            msg = "unknown error";
-        }
+        checkAndThrowInvokeError(env, L);
         lua_pop(L, 1);
-        throwInvokeError(env, msg);
         return 0;
     }
     return 0;
@@ -277,6 +301,7 @@ jint jni_dumpFunction(JNIEnv *env, jobject jobj, jlong LS, jlong fun, jstring pa
 }
 
 extern jclass LuaValue;
+
 jobjectArray jni_doLoadedDataAndGetResult(JNIEnv *env, jobject jobj, jlong LS) {
     lua_State *L = (lua_State *) LS;
     lua_lock(L);
@@ -284,12 +309,7 @@ jobjectArray jni_doLoadedDataAndGetResult(JNIEnv *env, jobject jobj, jlong LS) {
     int oldTop = lua_gettop(L) - 1;
     jint ret = (jint) lua_pcall(L, 0, LUA_MULTRET, err);
     if (ret) {
-        const char *errmsg;
-        if (lua_isstring(L, -1))
-            errmsg = lua_tostring(L, -1);
-        else
-            errmsg = "unkonw error";
-        throwInvokeError(env, errmsg);
+        checkAndThrowInvokeError(env, L);
         lua_unlock(L);
         return NULL;
     }
@@ -322,17 +342,12 @@ jint jni_startDebug(JNIEnv *env, jobject jobj, jlong LS, jbyteArray data, jstrin
     /// 执行debug脚本，返回table，需要调用table.start(ip, port)
     ret = lua_pcall(L, 0, 1, 0); // -1: table
     if (ret) {
-        const char *errmsg;
-        if (lua_isstring(L, -1))
-            errmsg = lua_tostring(L, -1);
-        else
-            errmsg = "unkonw error";
-        throwInvokeError(env, errmsg);
+        checkAndThrowInvokeError(env, L);
         lua_unlock(L);
         return (jint) ret;
     }
     if (!lua_istable(L, -1)) {
-        throwInvokeError(env, "return value not a table!");
+        throwInvokeError(env, "debug脚本返回类型不是table!");
         lua_unlock(L);
         return -1;
     }
@@ -342,7 +357,7 @@ jint jni_startDebug(JNIEnv *env, jobject jobj, jlong LS, jbyteArray data, jstrin
     if (!lua_isfunction(L, -1)) // -1: start fun; -2: table
     {
         lua_pop(L, 2);
-        throwInvokeError(env, "start is not function in table!");
+        throwInvokeError(env, "debug脚本返回的table.start不是函数!");
         lua_unlock(L);
         return -1;
     }
@@ -353,12 +368,7 @@ jint jni_startDebug(JNIEnv *env, jobject jobj, jlong LS, jbyteArray data, jstrin
     /// 调用table.start(ip, port)
     ret = lua_pcall(L, 2, 1, 0); // -1: result; -2: table
     if (ret) {
-        const char *errmsg;
-        if (lua_isstring(L, -1))
-            errmsg = lua_tostring(L, -1);
-        else
-            errmsg = "unkonw error";
-        throwInvokeError(env, errmsg);
+        checkAndThrowInvokeError(env, L);
         lua_unlock(L);
         return (jint) ret;
     }
@@ -394,6 +404,7 @@ typedef struct FileData {
     FILE *f;               /* file being read */
     char buff[BUFFER_SIZE]; /* area for reading file */
 } FileData;
+
 /**
  * for compile_file
  */
@@ -412,15 +423,17 @@ static const char *_file_reader(lua_State *L, void *ud, size_t *size) {
     }
     return lf->buff;
 }
+
 /**
  * 文件操作出错时调用 for compile_file
  * 将错误信息放到栈顶
  */
 static inline int errfile(lua_State *L, const char *what, const char *filename) {
     const char *serr = strerror(errno);
-    lua_pushfstring(L, "cannot %s %s: %s", what, filename, serr);
+    lua_pushfstring(L, "不能%s\"%s\": %s", what, filename, serr);
     return LUA_ERRFILE;
 }
+
 /**
  * 获取文件大小
  */
@@ -429,6 +442,7 @@ static inline SIZE get_file_size(const char *__restrict file) {
     stat(file, &statbuf);
     return (SIZE) statbuf.st_size;
 }
+
 static int compile_file(lua_State *L, const char *filename, const char *chunkname) {
     int oldTop = lua_gettop(L);
     FileData lf;
@@ -437,7 +451,7 @@ static int compile_file(lua_State *L, const char *filename, const char *chunknam
     lf.buff[0] = '\0';
     /// 先使用二进制读取，检查文件类型
     lf.f = fopen(filename, "rb");
-    if (!lf.f) return errfile(L, "open(byte)", filename);
+    if (!lf.f) return errfile(L, "用二进制方式打开文件", filename);
     if (chunkname)
         lua_pushstring(L, chunkname);
     else
@@ -448,6 +462,7 @@ static int compile_file(lua_State *L, const char *filename, const char *chunknam
         if (size > HEADER_LEN + SOURCE_LEN) {
             int r = fread(lf.buff, HEADER_LEN + SOURCE_LEN, 1, lf.f);
             lf.aes = r && check_header(lf.buff) == (size - HEADER_LEN - SOURCE_LEN);
+            lf.n = HEADER_LEN + SOURCE_LEN;
         }
     }
     /// 1: bytecode
@@ -457,11 +472,8 @@ static int compile_file(lua_State *L, const char *filename, const char *chunknam
     if (!lf.aes) {
         /// 源码的情况
         if (lf.buff[0] != LUA_SIGNATURE[0]) {
-            lf.f = freopen(filename, "r", lf.f);
-            if (!lf.f) return errfile(L, "reopen", filename);
             codeType = 2;
         } else {
-            lf.n = HEADER_LEN + SOURCE_LEN;
             codeType = 1;
         }
     }
@@ -473,16 +485,16 @@ static int compile_file(lua_State *L, const char *filename, const char *chunknam
         const char *info;
         switch (codeType) {
             case 1:
-                info = "read bytecode";
+                info = "读取二进制文件";
                 break;
             case 2:
-                info = "read source code";
+                info = "读取源码文件";
                 break;
             case 3:
-                info = "read aes bytecode";
+                info = "读取加密二进制文件";
                 break;
             default:
-                info = "read unknown code";
+                info = "读取未知类型文件";
                 break;
         }
         return errfile(L, info, filename);
@@ -493,6 +505,7 @@ static int compile_file(lua_State *L, const char *filename, const char *chunknam
 //</editor-fold>
 
 #ifdef ANDROID
+
 static int compile_assets(lua_State *L, const char *filename, const char *chunkname) {
     if (chunkname)
         lua_pushstring(L, chunkname);
@@ -502,7 +515,7 @@ static int compile_assets(lua_State *L, const char *filename, const char *chunkn
     AD ad;
     int code = initAssetsData(&ad, filename);
     if (code != AR_OK) {
-        lua_pushfstring(L, "find %s from native asset failed, code: %d", filename, code);
+        lua_pushfstring(L, "在Asset中未查找到\"%s\"，原因: %d", filename, errorCode2String(code));
         return code;
     }
     if (opensaes) {
@@ -510,7 +523,7 @@ static int compile_assets(lua_State *L, const char *filename, const char *chunkn
         const char *preData = preReadData(&ad, HEADER_LEN + SOURCE_LEN, &preReadLen);
         if (!preData) {
             destroyAssetsData(&ad);
-            lua_pushfstring(L, "preload %s from native asset failed!", filename);
+            lua_pushfstring(L, "预读文件\"%s\"失败!", filename);
             return 1;
         }
 
@@ -534,6 +547,7 @@ static int compile_assets(lua_State *L, const char *filename, const char *chunkn
 
     return code;
 }
+
 #endif
 //</editor-fold>
 
@@ -584,6 +598,7 @@ static int j_compile_file(JNIEnv *env, lua_State *L, jstring path, jstring chunk
 }
 
 #ifdef ANDROID
+
 static int j_compile_assets(JNIEnv *env, lua_State *L, jstring path, jstring chunkname) {
     const char *p = GetString(env, path);
     const char *cn = GetString(env, chunkname);
@@ -604,9 +619,11 @@ static int j_compile_assets(JNIEnv *env, lua_State *L, jstring path, jstring chu
     lua_unlock(L);
     return ret;
 }
+
 #endif
 
 static jclass UndumpError;
+
 static void throwUndumpError(JNIEnv *env, const char *msg) {
     ClearException(env);
     if (!UndumpError)
@@ -693,15 +710,15 @@ static int readable(const char *filename) {
 /**
  * 不需要free
  */
-static char *replaceLuaRequire(lua_State *L, const char *name) {
+static const char *replaceLuaRequire(lua_State *L, const char *name) {
     size_t len = strlen(name);
-    if (name[len-4] == '.'
-    && name[len-3] == 'l'
-    && name[len-2] == 'u'
-    && name[len-1] == 'a') {
+    if (name[len - 4] == '.'
+        && name[len - 3] == 'l'
+        && name[len - 2] == 'u'
+        && name[len - 1] == 'a') {
         char *nameNoLua = m_malloc(NULL, 0, sizeof(char) * (len - 3));
         memcpy(nameNoLua, name, len - 4);
-        nameNoLua[len-4] = '\0';
+        nameNoLua[len - 4] = '\0';
         const char *path = luaL_gsub(L, nameNoLua, ".", LUA_DIRSEP);
 #if defined(J_API_INFO)
         m_malloc(nameNoLua, (len - 3) * sizeof(char), 0);
@@ -729,12 +746,17 @@ static char *findfile4lua(lua_State *L, const char *name) {
         ret = formatstr("%s" LUA_DIRSEP "%s.lua", path, name);
     }
     if (!ret) {
-        lua_pushfstring(L, "\n\tformat %s error!", name);
+        if (!path) {
+            lua_pushfstring(L, "\n\t将\"%s\"与\".lua\"连接发生错误!", name);
+        } else {
+            lua_pushfstring(L, "\n\t将\"%s\"、\"%s\"和\".lua\"连接发生错误!", path, name);
+        }
         return NULL;
     }
     if (readable(ret))
         return ret;
-    lua_pushfstring(L, "\n\tfile %s is not readable", ret);
+    const char *serr = strerror(errno);
+    lua_pushfstring(L, "\n\t文件\"%s\"不可读 原因：%s", ret, serr);
 #if defined(J_API_INFO)
     m_malloc(ret, (strlen(ret) + 1) * sizeof(char), 0);
 #else
@@ -774,8 +796,8 @@ int searcher_Lua(lua_State *L) {
         return 2;
     }
 
-    lua_pushfstring(L, "\n\terror loading module '%s' from file '%s':\n\t%s",
-                    lua_tostring(L, 1), filename, lua_tostring(L, -1));
+    lua_pushfstring(L, "\n\t从文件'%s'中require('%s')出错:\n\t%s",
+                    filename, lua_tostring(L, 1), lua_tostring(L, -1));
 #if defined(J_API_INFO)
     m_malloc(filename, (strlen(filename) + 1) * sizeof(char), 0);
 #else
@@ -802,13 +824,14 @@ int searcher_java(lua_State *L) {
     jobject r = (*env)->CallStaticObjectMethod(env, Globals, Globals__onLuaRequire, (jlong) L, str);
     FREE(env, str);
     if (!r) {
-        jobject errorStr = (*env)->CallStaticObjectMethod(env, Globals, Globals__getRequireError, (jlong) L);
+        jobject errorStr = (*env)->CallStaticObjectMethod(env, Globals, Globals__getRequireError,
+                                                          (jlong) L);
         const char *em = GetString(env, errorStr);
         if (em) {
-            lua_pushfstring(L, "\n\trequire %s from java failed, error: %s", name, em);
+            lua_pushfstring(L, "\n\t从java中require('%s')出错: %s", name, em);
             ReleaseChar(env, errorStr, em);
         } else {
-            lua_pushfstring(L, "\n\trequire %s from java failed, unknown error", name);
+            lua_pushfstring(L, "\n\t从java中require('%s')出错(未知错误)", name);
         }
         if (need) detachEnv();
         lua_unlock(L);
@@ -830,8 +853,8 @@ int searcher_java(lua_State *L) {
 #endif
             return 2;
         }
-        lua_pushfstring(L, "\n\terror loading module '%s' from java file '%s':\n\t%s",
-                                          name, path, lua_tostring(L, -1));
+        lua_pushfstring(L, "\n\t从java返回的文件'%s'中require('%s')出错:\n\t%s",
+                        path, name, lua_tostring(L, -1));
         ReleaseChar(env, r, path);
         FREE(env, r);
         if (need) detachEnv();
@@ -856,13 +879,14 @@ int searcher_java(lua_State *L) {
         }
         if (need) detachEnv();
         lua_unlock(L);
-        lua_pushfstring(L, "\n\terror loading module '%s' from java data:\n\t%s", name,
+        lua_pushfstring(L, "\n\t从java返回文件数据中require('%s')出错:\n\t%s", name,
                         lua_tostring(L, -1));
         return 1;
     }
 }
 
 #ifdef ANDROID
+
 /**
  * require时调用
  */
@@ -871,15 +895,15 @@ int searcher_Lua_asset(lua_State *L) {
     double startTime = getStartTime();
 #endif
     const char *name = luaL_checkstring(L, 1);
-    const char *filename = formatstr("%s.lua", replaceLuaRequire(L, name));
+    char *filename = formatstr("%s.lua", replaceLuaRequire(L, name));
     int code = compile_assets(L, filename, name);
-#if defined(J_API_INFO)
-    m_malloc((void *) filename, (strlen(filename) + 1) * sizeof(char), 0);
-#else
-    free(filename);
-#endif
     if (code == LUA_OK) {
         lua_pushvalue(L, 1);
+#if defined(J_API_INFO)
+        m_malloc((void *) filename, (strlen(filename) + 1) * sizeof(char), 0);
+#else
+        free((void *) filename);
+#endif
 #ifdef STATISTIC_PERFORMANCE
         statistics_searcher_Call(FROM_SEARCHER_ASSET, name, getoffsetTime(startTime));
 #endif
@@ -892,9 +916,182 @@ int searcher_Lua_asset(lua_State *L) {
         err = "unknown error!";
     }
     lua_pop(L, 1);
-    lua_pushfstring(L, "\n\terror loading module '%s' from asset '%s', code: %d, err: %s",
-                    name, filename, code, err);
+    lua_pushfstring(L, "\n\t从Assets文件'%s'中require('%s')出错: %s",
+                    filename, name, err);
+#if defined(J_API_INFO)
+    m_malloc((void *) filename, (strlen(filename) + 1) * sizeof(char), 0);
+#else
+    free((void *) filename);
+#endif
     return 1;
+}
+
+static int _require(lua_State *L) {
+    int errFun = getErrorFunctionIndex(L);
+    lua_getglobal(L, OLD_REQUIRE_KEY);
+    lua_pushvalue(L, 1);
+    /// -1: name; -2:fun
+    int ret = lua_pcall(L, 1, 1, errFun);
+    if (ret != LUA_OK) {
+        const char *msg;
+        if (lua_isstring(L, -1)) {
+            msg = lua_tostring(L, -1);
+        } else {
+            msg = "unknown error";
+        }
+        setErrorType(L, require);
+        return lua_error(L);
+    }
+    return 1;
+}
+
+void init_require(lua_State *L) {
+    lua_getglobal(L, REQUIRE_KEY);
+    if (!lua_isfunction(L, -1))
+        return;
+    /// -1: require
+    lua_setglobal(L, OLD_REQUIRE_KEY);
+    lua_pushcfunction(L, _require);
+    lua_setglobal(L, REQUIRE_KEY);
+}
+
+/**
+ * 请求向lua虚拟机中注入相关userdata组件
+ * @param L
+ * @return
+ */
+static int _importer(lua_State *L) {
+
+    JNIEnv *env;
+    int needDetach = getEnv(&env);
+    lua_lock(L);
+    const char *luaClassName = luaL_checkstring(L, 1);
+    //1.避免重复import
+    lua_getglobal(L, luaClassName);
+    if (!lua_isnil(L, -1)) {
+        lua_pop(L, 1);
+        lua_unlock(L);
+        return 0;
+    }
+    lua_pop(L, 1);
+    //2.import
+    ClassInfo *classInfo = l2j_get(luaClassName);
+    if (classInfo && classInfo->clzArray && list_size(classInfo->clzArray)) {
+        //判断是否已存在
+        if (classInfo->classType == 0 || classInfo->classType == 1) {
+            //2.1 import userdata
+            int index = 0;
+            for (index; index < list_size(classInfo->clzArray); index++) {//key存在
+                jclass clz = list_get(classInfo->clzArray, index);
+                if (clz) {
+                    registerUserdata(env, L, classInfo->fullNameKey, classInfo->luaParentClass, clz,
+                                     0);
+                }
+
+            }
+            //2.2 初始化单例
+            if (classInfo->classType == 1) {
+                int ret = registerSingleton(L, classInfo->key, classInfo->fullNameKey, NULL);
+                if (!ret) {
+                    lua_pushfstring(L, "import %s failed because of registerSingleton",
+                                    luaClassName);
+                    lua_error(L);
+                    lua_unlock(L);
+                    return 0;
+                }
+            }
+        } else if (classInfo->classType == 2) {
+            //2.3 import 静态类
+            registerStaticBridge(env, L, classInfo->fullNameKey, classInfo->luaParentClass,
+                                 list_get(classInfo->clzArray, 0));
+        }
+    } else {
+        lua_pushfstring(L, "import %s failed because of class info is empty", luaClassName);
+        lua_error(L);
+        lua_unlock(L);
+        return 0;
+    }
+    if (needDetach) detachEnv();
+    lua_unlock(L);
+    return 1;
+}
+
+void init_importer(lua_State *L) {
+    lua_pushcfunction(L, _importer);
+    lua_setglobal(L, IMPORTER_KEY);
+}
+
+#endif
+//</editor-fold>
+
+//<editor-fold desc="TOKEN">
+#ifdef LOAD_TOKEN
+typedef struct tokenData {
+    JNIEnv *env;
+    jmethodID addToken;
+    jobject listener;
+} TokenData;
+
+static void _listener(void *ud, int tk, const char *v, const lua_Number n, int line, int lnum, size_t offset) {
+    TokenData *td = (TokenData *)ud;
+    jstring str = NULL;
+    if (v)
+        str = (*td->env)->NewStringUTF(td->env, v);
+    (*td->env)->CallVoidMethod(td->env, td->listener, td->addToken, tk, str, n, line, lnum, offset);
+    FREE(td->env, str);
+}
+typedef struct LoadS {
+    const char *s;
+    size_t size;
+} LoadS;
+
+static const char *getS (lua_State *L, void *ud, size_t *size) {
+    LoadS *ls = (LoadS *)ud;
+    (void)L;  /* not used */
+    if (ls->size == 0) return NULL;
+    *size = ls->size;
+    ls->size = 0;
+    return ls->s;
+}
+jint jni_loadToken(JNIEnv *env, jobject jobj, jlong Ls, jstring name, jbyteArray data, jobject listener) {
+    if (!listener)
+        return -1;
+    jclass tokenListener = (*env)->FindClass(env, "com/immomo/mlncore/TokenListener");
+    if (!(*env)->IsInstanceOf(env, listener, tokenListener)) {
+        return -1;
+    }
+    jmethodID addToken = (*env)->GetMethodID(env, tokenListener, "addToken", "(I" STRING_CLASS "DZIJ)V");
+
+    TokenData td = {env, addToken, listener};
+    TokenListenData tld = {_listener, &td};
+
+    jbyte *nd = (*env)->GetByteArrayElements(env, data, 0);
+    size_t size = (size_t) GetArrLen(env, data);
+    const char *cn = GetString(env, name);
+
+    LoadS ls;
+    ls.s = (char *) nd;
+    ls.size = size;
+
+    lua_State *L = (lua_State *) Ls;
+    lua_lock(L);
+    int ret = lua_load_token(L, getS, &ls, cn, NULL, &tld);
+    (*env)->ReleaseByteArrayElements(env, data, nd, 0);
+    if (name)
+        ReleaseChar(env, name, cn);
+    if (ret) {
+        const char *errmsg;
+        if (lua_isstring(L, -1))
+            errmsg = lua_tostring(L, -1);
+        else
+            errmsg = "unkonw error";
+        lua_pop(L, 1);
+        throwUndumpError(env, errmsg);
+    }
+
+    lua_unlock(L);
+    FREE(env, tokenListener);
+    return ret;
 }
 #endif
 //</editor-fold>

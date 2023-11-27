@@ -13,10 +13,19 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
 
+import com.immomo.mls.MLSAdapterContainer;
+import com.immomo.mls.fun.ud.UDMap;
+import com.immomo.mls.fun.ud.view.VisibilityType;
 import com.immomo.mls.fun.ui.LuaViewGroup;
 import com.immomo.mls.global.ScriptLoader;
+import com.immomo.mls.lite.LuaClient;
+import com.immomo.mls.util.StopWatch;
 import com.immomo.mls.utils.KeyboardUtil;
+import com.immomo.mls.utils.convert.ConvertUtils;
 import com.immomo.mls.wrapper.ScriptBundle;
+
+import org.luaj.vm2.LuaNumber;
+import org.luaj.vm2.LuaValue;
 
 import java.util.Map;
 
@@ -30,6 +39,29 @@ public class LuaView extends LuaViewGroup<UDLuaView> {
     public boolean sizeChangeEnable = false;
 
     //<editor-fold desc="创建方法">
+    private LuaValue invalidateFunc;
+
+    public void setInvalidateFunc(LuaValue invalidateFunc) {
+        this.invalidateFunc = invalidateFunc;
+    }
+
+    public LuaValue[] invalidate(Map map) {
+
+        if (getUserdata().getGlobals().isDestroyed())
+            return LuaValue.rNil();
+        if (invalidateFunc != null && !invalidateFunc.isNil()) {
+            StopWatch watch = new StopWatch();
+            watch.start();
+            UDMap udMap = new UDMap(getUserdata().getGlobals(), map);
+            LuaValue[] result = invalidateFunc.invoke(new LuaValue[]{udMap});
+            watch.stop();
+            MLSAdapterContainer.getConsoleLoggerAdapter().i(LuaClient.TAG, String.format("lua updateView take %s ms", watch.toString()));
+            return result;
+        }
+
+        return LuaValue.rNil();
+    }
+
     public LuaView(Context context, UDLuaView userdata) {
         super(context, userdata);
     }
@@ -108,7 +140,7 @@ public class LuaView extends LuaViewGroup<UDLuaView> {
         UDLuaView ud = getUserdata();
         if (ud != null) {
             ud.getGlobals().setRunning(true);
-            ud.callbackAppear();
+            ud.callbackAppear(VisibilityType.LifeCycle);
         }
     }
 
@@ -116,7 +148,29 @@ public class LuaView extends LuaViewGroup<UDLuaView> {
         UDLuaView ud = getUserdata();
         if (ud != null) {
             ud.getGlobals().setRunning(false);
-            ud.callbackDisappear();
+            ud.callbackDisappear(VisibilityType.LifeCycle);
+        }
+    }
+
+    public void viewAppear(@VisibilityType.Type int type) {
+        if (!isAttachedToWindow() && type == VisibilityType.LifeCycle) {
+            return;
+        }
+        UDLuaView ud = getUserdata();
+        if (ud != null) {
+            ud.getGlobals().setRunning(true);
+            ud.callbackAppear(type);
+        }
+    }
+
+    public void viewDisappear(@VisibilityType.Type int type) {
+        if (!isAttachedToWindow() && type == VisibilityType.LifeCycle) {
+            return;
+        }
+        UDLuaView ud = getUserdata();
+        if (ud != null) {
+            ud.getGlobals().setRunning(false);
+            ud.callbackDisappear(type);
         }
     }
 

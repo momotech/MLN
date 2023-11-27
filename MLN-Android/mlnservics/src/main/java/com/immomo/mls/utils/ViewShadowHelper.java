@@ -7,14 +7,11 @@
  */
 package com.immomo.mls.utils;
 
-import android.annotation.TargetApi;
 import android.graphics.Outline;
-import android.os.Build;
 import android.view.View;
 import android.view.ViewOutlineProvider;
 
 import com.immomo.mls.fun.other.Size;
-
 
 /**
  * Created by zhang.ke
@@ -45,7 +42,6 @@ public class ViewShadowHelper {
         this.alpha = alpha;
     }
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public void setOutlineProvider(View view) {
         if (isError) {
             ErrorUtils.debugUnsupportError("Do not setting corner with method 'setCornerRadiusWithDirection' and setting shadow with method 'setShadow', or shadow will be clipped!");

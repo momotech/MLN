@@ -236,6 +236,10 @@ public abstract class LuaValue {
         return toString();
     }
 
+    public NLuaValue toNLuaValue() {
+        throw new LuaTypeError("This value type is " + LUA_TYPE_NAME[type()] + ", cannot be cast to native lua value");
+    }
+
     public LuaFunction toLuaFunction() {
         typeError(LUA_TYPE_NAME[LUA_TFUNCTION]);
         return null;

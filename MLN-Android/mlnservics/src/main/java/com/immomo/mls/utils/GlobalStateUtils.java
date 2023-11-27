@@ -16,51 +16,51 @@ import com.immomo.mls.wrapper.ScriptBundle;
  */
 public class GlobalStateUtils {
 
-    public static void onStartLoadScript(String oldUrl) {
+    public static void onStartLoadScript(String oldUrl, String tag) {
         MLSGlobalStateListener adapter = MLSAdapterContainer.getGlobalStateListener();
         if (adapter != null)
-            adapter.onStartLoadScript(oldUrl);
+            adapter.onStartLoadScript(oldUrl, tag);
     }
 
-    public static void onGlobalPrepared(String url) {
+    public static void onGlobalPrepared(String url, String tag) {
         MLSGlobalStateListener adapter = MLSAdapterContainer.getGlobalStateListener();
         if (adapter != null)
-            adapter.onGlobalPrepared(url);
+            adapter.onGlobalPrepared(url, tag);
     }
 
-    public static void onEnvPrepared(String url) {
+    public static void onEnvPrepared(String url, String tag) {
         MLSGlobalStateListener adapter = MLSAdapterContainer.getGlobalStateListener();
         if (adapter != null)
-            adapter.onEnvPrepared(url);
+            adapter.onEnvPrepared(url, tag);
     }
 
-    public static void onScriptLoaded(String url, ScriptBundle bundle) {
+    public static void onScriptLoaded(String url, ScriptBundle bundle, String tag) {
         MLSGlobalStateListener adapter = MLSAdapterContainer.getGlobalStateListener();
         if (adapter != null)
-            adapter.onScriptLoaded(url, bundle);
+            adapter.onScriptLoaded(url, bundle, tag);
     }
 
-    public static void onScriptLoadFailed(String url, ScriptLoadException e) {
+    public static void onScriptLoadFailed(String url, ScriptLoadException e, String tag) {
         MLSGlobalStateListener adapter = MLSAdapterContainer.getGlobalStateListener();
         if (adapter != null)
-            adapter.onScriptLoadFailed(url, e);
+            adapter.onScriptLoadFailed(url, e, tag);
     }
 
-    public static void onScriptCompiled(String url) {
+    public static void onScriptCompiled(String url, String tag) {
         MLSGlobalStateListener adapter = MLSAdapterContainer.getGlobalStateListener();
         if (adapter != null)
-            adapter.onScriptCompiled(url);
+            adapter.onScriptCompiled(url, tag);
     }
 
-    public static void onScriptPrepared(String url) {
+    public static void onScriptPrepared(String url, String tag) {
         MLSGlobalStateListener adapter = MLSAdapterContainer.getGlobalStateListener();
         if (adapter != null)
-            adapter.onScriptPrepared(url);
+            adapter.onScriptPrepared(url, tag);
     }
 
-    public static void onScriptExecuted(String url, boolean success) {
+    public static void onScriptExecuted(String url, boolean success, String tag, String errorMsg) {
         MLSGlobalStateListener adapter = MLSAdapterContainer.getGlobalStateListener();
         if (adapter != null)
-            adapter.onScriptExecuted(url, success);
+            adapter.onScriptExecuted(url, success, tag, errorMsg);
     }
 }

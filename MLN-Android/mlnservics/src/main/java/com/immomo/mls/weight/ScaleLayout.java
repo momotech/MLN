@@ -37,11 +37,7 @@ public class ScaleLayout extends ViewGroup {
     public void setChildScale(float scaleX, float scaleY) {
         childScaleX = scaleX;
         childScaleY = scaleY;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-            if (!isInLayout()) {
-                requestLayout();
-            }
-        } else {
+        if (!isInLayout()) {
             requestLayout();
         }
     }

@@ -42,7 +42,7 @@ public abstract class BaseLuaTest {
         assertTrue(Globals.isInit());
         MLSAdapterContainer.setConsoleLoggerAdapter(new LogImpl());
         register = new Register();
-        Log.i("Lua vm is " + (Globals.isIs32bit() ? "32" : "64") + " bits");
+        Log.i("Lua vm is " + (Globals.is32bit() ? "32" : "64") + " bits");
     }
 
     private void mockLooper() {

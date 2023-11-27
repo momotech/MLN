@@ -7,6 +7,7 @@
   */
 package com.immomo.mls.wrapper;
 
+import com.immomo.mls.LuaViewManager;
 import com.immomo.mls.base.ud.lv.ILView;
 import com.immomo.mls.utils.LVCallback;
 import com.immomo.mls.utils.SimpleLVCallback;
@@ -44,10 +45,15 @@ import java.util.Map;
  *  @see #registerL2J(Class, IJavaObjectGetter)
  */
 public class Translator {
-    private static final Map<Class, ILuaValueGetter> javaToLuaMap = new HashMap<>(20);
-    private static final Map<Class, IJavaObjectGetter> luaToJavaMap = new HashMap<>(20);
+    private final Map<Class, ILuaValueGetter> javaToLuaMap = new HashMap<>(20);
+    private final Map<Class, IJavaObjectGetter> luaToJavaMap = new HashMap<>(20);
 
-    static {
+    public static Translator fromGlobals(Globals g) {
+        LuaViewManager lm = (LuaViewManager) g.getJavaUserdata();
+        return lm != null ? lm.translator : null;
+    }
+
+    public Translator() {
         luaToJavaMap.put(IVoidCallback.class, DefaultVoidCallback.G);
         luaToJavaMap.put(IIntCallback.class, DefaultIntCallback.G);
         luaToJavaMap.put(IBoolCallback.class, DefaultBoolCallback.G);
@@ -58,7 +64,7 @@ public class Translator {
     /**
      * 清除所有注册的转换逻辑
      */
-    public static void clearAll() {
+    public void clearAll() {
         javaToLuaMap.clear();
         luaToJavaMap.clear();
         luaToJavaMap.put(IVoidCallback.class, DefaultVoidCallback.G);
@@ -77,7 +83,7 @@ public class Translator {
      * @param <T>   java接收类型
      * @return nullable
      */
-    public static <T> T translateLuaToJava(LuaValue lv, Class<T> clz) {
+    public <T> T translateLuaToJava(LuaValue lv, Class<T> clz) {
         if (LuaValue.class.isAssignableFrom(clz))
             return (T) lv;
         IJavaObjectGetter getter = luaToJavaMap.get(clz);
@@ -103,7 +109,7 @@ public class Translator {
      * @param o java原始数据
      * @return non null
      */
-    public static LuaValue translateJavaToLua(Globals g, Object o) {
+    public LuaValue translateJavaToLua(Globals g, Object o) {
         if (o == null)
             return LuaValue.Nil();
         if (o instanceof LuaValue)
@@ -136,7 +142,7 @@ public class Translator {
      * @param c java数据类型
      * @return non null
      */
-    public static LuaValue translateJavaToLua(Globals g, Object o, Class c) {
+    public LuaValue translateJavaToLua(Globals g, Object o, Class c) {
         if (o == null)
             return LuaValue.Nil();
         if (o instanceof LuaValue)
@@ -203,7 +209,7 @@ public class Translator {
      * @see #registerJ2LAuto(Class, Class)
      * @see #registerJ2L(Class, ILuaValueGetter)
      */
-    public static void registerJ2LAuto(Class clz) {
+    public synchronized void registerJ2LAuto(Class clz) {
         registerJ2LAuto(clz, Register.getUDClass(clz));
     }
 
@@ -213,7 +219,7 @@ public class Translator {
      *
      * @see #registerJ2L(Class, ILuaValueGetter)
      */
-    public static void registerJ2LAuto(Class clz, Class<? extends LuaUserdata> udClz) {
+    public void registerJ2LAuto(Class clz, Class<? extends LuaUserdata> udClz) {
         registerJ2L(clz, new DefaultGetter(udClz));
     }
 
@@ -222,7 +228,7 @@ public class Translator {
      * @param clz java类
      * @param con LuaUserdata生成方式
      */
-    public static void registerJ2L(Class clz, ILuaValueGetter con) {
+    public synchronized void registerJ2L(Class clz, ILuaValueGetter con) {
         javaToLuaMap.put(clz, con);
     }
     //</editor-fold>
@@ -236,7 +242,7 @@ public class Translator {
      *
      * @see #registerL2J(Class, IJavaObjectGetter)
      */
-    public static void registerL2JAuto(Class clz) {
+    public synchronized void registerL2JAuto(Class clz) {
         registerL2J(clz, new DefaultUserdataGetter());
     }
 
@@ -245,7 +251,7 @@ public class Translator {
      * @param clz    java类
      * @param getter 从LuaUserdata转换成java对象的转换方式
      */
-    public static void registerL2J(Class clz, IJavaObjectGetter getter) {
+    public synchronized void registerL2J(Class clz, IJavaObjectGetter getter) {
         luaToJavaMap.put(clz, getter);
     }
     //</editor-fold>

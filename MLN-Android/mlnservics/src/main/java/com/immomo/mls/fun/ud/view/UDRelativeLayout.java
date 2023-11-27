@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
 import com.immomo.mls.MLSConfigs;
+import com.immomo.mls.fun.ud.UDRect;
 import com.immomo.mls.fun.ui.LuaRelativeLayout;
 import com.immomo.mls.util.LuaViewUtil;
 
@@ -20,7 +21,7 @@ import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.utils.LuaApiUsed;
 
 
-@LuaApiUsed
+@LuaApiUsed(ignoreTypeArgs = true)
 public class UDRelativeLayout extends UDViewGroup<LuaRelativeLayout> {
     public static final String LUA_CLASS_NAME = "RelativeLayout";
     public static final String[] methods = {
@@ -34,7 +35,7 @@ public class UDRelativeLayout extends UDViewGroup<LuaRelativeLayout> {
             "alignParentRight",
     };
 
-    @LuaApiUsed
+    @LuaApiUsed(ignore = true)
     protected UDRelativeLayout(long L, LuaValue[] v) {
         super(L, v);
     }
@@ -60,56 +61,92 @@ public class UDRelativeLayout extends UDViewGroup<LuaRelativeLayout> {
 
     //<editor-fold desc="not support method">
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(UDView.class),
+                    @LuaApiUsed.Type(UDView.class)
+            }, returns = @LuaApiUsed.Type(UDRelativeLayout.class)),
+    })
     public LuaValue[] left(LuaValue[] p) {
         UDView sourceUDView = (UDView) p[0], relativeUDView = (UDView) p[1];
         getView().leftTopRightBottom(relativeUDView, sourceUDView, RelativeLayout.RIGHT_OF);
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(UDView.class),
+                    @LuaApiUsed.Type(UDView.class)
+            }, returns = @LuaApiUsed.Type(UDRelativeLayout.class)),
+    })
     public LuaValue[] top(LuaValue[] p) {
         UDView sourceUDView = (UDView) p[0], relativeUDView = (UDView) p[1];
         getView().leftTopRightBottom(relativeUDView, sourceUDView, RelativeLayout.BELOW);
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(UDView.class),
+                    @LuaApiUsed.Type(UDView.class)
+            }, returns = @LuaApiUsed.Type(UDRelativeLayout.class)),
+    })
     public LuaValue[] right(LuaValue[] p) {
         UDView sourceUDView = (UDView) p[0], relativeUDView = (UDView) p[1];
         getView().leftTopRightBottom(sourceUDView, relativeUDView, RelativeLayout.RIGHT_OF);
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(UDView.class),
+                    @LuaApiUsed.Type(UDView.class)
+            }, returns = @LuaApiUsed.Type(UDRelativeLayout.class)),
+    })
     public LuaValue[] bottom(LuaValue[] p) {
         UDView sourceUDView = (UDView) p[0], relativeUDView = (UDView) p[1];
         getView().leftTopRightBottom(sourceUDView, relativeUDView, RelativeLayout.BELOW);
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(UDView.class)
+            }, returns = @LuaApiUsed.Type(UDRelativeLayout.class)),
+    })
     public LuaValue[] alignParentTop(LuaValue[] p) {
         UDView sourceUDView = (UDView) p[0];
         getView().alignParentDependsRules(sourceUDView, RelativeLayout.ALIGN_PARENT_TOP);
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(UDView.class)
+            }, returns = @LuaApiUsed.Type(UDRelativeLayout.class)),
+    })
     public LuaValue[] alignParentBottom(LuaValue[] p) {
         UDView sourceUDView = (UDView) p[0];
         getView().alignParentDependsRules(sourceUDView, RelativeLayout.ALIGN_PARENT_BOTTOM);
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(UDView.class)
+            }, returns = @LuaApiUsed.Type(UDRelativeLayout.class)),
+    })
     public LuaValue[] alignParentLeft(LuaValue[] p) {
         UDView sourceUDView = (UDView) p[0];
         getView().alignParentDependsRules(sourceUDView, RelativeLayout.ALIGN_PARENT_LEFT);
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(UDView.class)
+            }, returns = @LuaApiUsed.Type(UDRelativeLayout.class)),
+    })
     public LuaValue[] alignParentRight(LuaValue[] p) {
         UDView sourceUDView = (UDView) p[0];
         getView().alignParentDependsRules(sourceUDView, RelativeLayout.ALIGN_PARENT_RIGHT);

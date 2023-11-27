@@ -24,6 +24,10 @@ import com.immomo.mls.utils.ErrorUtils;
 import com.immomo.mls.utils.LVCallback;
 import com.immomo.mls.utils.MainThreadExecutor;
 
+import kotlin.Unit;
+import kotlin.jvm.functions.Function0;
+import kotlin.jvm.functions.Function1;
+import kotlin.jvm.functions.Function2;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -75,33 +79,71 @@ public class LTFile {
         return FileUtil.getRootDir().getAbsolutePath();
     }
 
-    @LuaBridge
+    @LuaBridge(value = {
+            @LuaBridge.Func(params = {
+                    @LuaBridge.Type(name = "path", value = String.class),
+                    @LuaBridge.Type(value = Function1.class, typeArgs = {Integer.class, Unit.class})
+            })
+    })
     public static void asyncCreateFile(String path, final LVCallback callback) {
         MLSAdapterContainer.getThreadAdapter().execute(MLSThreadAdapter.Priority.HIGH, new CreateFileTask(path, callback));
     }
 
-    @LuaBridge
+    @LuaBridge(value = {
+            @LuaBridge.Func(params = {
+                    @LuaBridge.Type(name = "path", value = String.class),
+                    @LuaBridge.Type(value = Function1.class, typeArgs = {Integer.class, Unit.class})
+            })
+    })
     public static void asyncCreateDirs(String path, final LVCallback callback) {
         MLSAdapterContainer.getThreadAdapter().execute(MLSThreadAdapter.Priority.HIGH, new CreateDirsTask(path, callback));
     }
 
-    @LuaBridge
+    @LuaBridge(value = {
+            @LuaBridge.Func(params = {
+                    @LuaBridge.Type(name = "path", value = String.class),
+                    @LuaBridge.Type(value = Function1.class, typeArgs = {Integer.class, Unit.class})
+            })
+    })
     public static void asyncDelete(String path, final LVCallback callback) {
         MLSAdapterContainer.getThreadAdapter().execute(MLSThreadAdapter.Priority.HIGH, new DeleteTask(path, callback));
     }
 
-    @LuaBridge
+    @LuaBridge(value = {
+            @LuaBridge.Func(params = {
+                    @LuaBridge.Type(name = "fromPath", value = String.class),
+                    @LuaBridge.Type(name = "toPath", value = String.class),
+                    @LuaBridge.Type(value = Function1.class, typeArgs = {Integer.class, Unit.class})
+            })
+    })
     public static void asyncMoveFile(Globals g, String fromPath, String toPath, final LVCallback callback) {
         ErrorUtils.debugDeprecateMethod("asyncMoveFile", "syncMoveFile", g);
         MLSAdapterContainer.getThreadAdapter().execute(MLSThreadAdapter.Priority.HIGH, new MoveFileTask(fromPath, toPath, callback));
     }
 
-    @LuaBridge
+    @LuaBridge(value = {
+            @LuaBridge.Func(params = {
+                    @LuaBridge.Type(name = "fromPath", value = String.class),
+                    @LuaBridge.Type(name = "toPath", value = String.class),
+                    @LuaBridge.Type(value = Function1.class, typeArgs = {Integer.class, Unit.class})
+            })
+    })
     public static void asyncCopyFile(String fromPath, String toPath, final LVCallback callback) {
         MLSAdapterContainer.getThreadAdapter().execute(MLSThreadAdapter.Priority.HIGH, new CopyFileTask(fromPath, toPath, callback));
     }
 
-    @LuaBridge
+    @LuaBridge(value = {
+            @LuaBridge.Func(params = {
+                    @LuaBridge.Type(name = "fromPath", value = String.class),
+                    @LuaBridge.Type(name = "recurisve", value = Boolean.class),
+                    @LuaBridge.Type(value = Function1.class, typeArgs = {Integer.class, Unit.class})
+            }),
+            @LuaBridge.Func(params = {
+                    @LuaBridge.Type(name = "fromPath", value = String.class),
+                    @LuaBridge.Type(name = "recurisve", value = Boolean.class),
+                    @LuaBridge.Type(value = Function2.class, typeArgs = {Integer.class, List.class, Unit.class})
+            })
+    })
     public static void asyncGetFileList(String path, boolean recurisve, final LVCallback callback) {
         MLSAdapterContainer.getThreadAdapter().execute(MLSThreadAdapter.Priority.HIGH, new GetFileListTask(path, recurisve, callback));
     }
@@ -159,7 +201,12 @@ public class LTFile {
         return new File(path).isFile();
     }
 
-    @LuaBridge
+    @LuaBridge(value = {
+            @LuaBridge.Func(params = {
+                    @LuaBridge.Type(name = "path", value = String.class),
+                    @LuaBridge.Type(value = Function0.class, typeArgs = {Unit.class})
+            })
+    })
     public static void asyncReadFile(String path, final LVCallback callback) {
         if (RelativePathUtils.isLocalUrl(path)) {
             path = RelativePathUtils.getAbsoluteUrl(path);
@@ -167,7 +214,12 @@ public class LTFile {
         MLSAdapterContainer.getThreadAdapter().execute(MLSThreadAdapter.Priority.HIGH, new StringReadTask(path, callback));
     }
 
-    @LuaBridge
+    @LuaBridge(value = {
+            @LuaBridge.Func(params = {
+                    @LuaBridge.Type(name = "path", value = String.class),
+                    @LuaBridge.Type(value = Function1.class, typeArgs = {Integer.class, Unit.class})
+            })
+    })
     public static void asyncReadMapFile(String path, LVCallback callback) {
         if (RelativePathUtils.isLocalUrl(path)) {
             path = RelativePathUtils.getAbsoluteUrl(path);
@@ -175,7 +227,12 @@ public class LTFile {
         MLSAdapterContainer.getThreadAdapter().execute(MLSThreadAdapter.Priority.HIGH, new JSONReadTask(path, callback));
     }
 
-    @LuaBridge
+    @LuaBridge(value = {
+            @LuaBridge.Func(params = {
+                    @LuaBridge.Type(name = "path", value = String.class),
+                    @LuaBridge.Type(value = Function1.class, typeArgs = {Integer.class, Unit.class})
+            })
+    })
     public static void asyncReadArrayFile(String path, LVCallback callback) {
         if (RelativePathUtils.isLocalUrl(path)) {
             path = RelativePathUtils.getAbsoluteUrl(path);
@@ -183,7 +240,13 @@ public class LTFile {
         MLSAdapterContainer.getThreadAdapter().execute(MLSThreadAdapter.Priority.HIGH, new JSONArrayTask(path, callback));
     }
 
-    @LuaBridge
+    @LuaBridge(value = {
+            @LuaBridge.Func(params = {
+                    @LuaBridge.Type(name = "path", value = String.class),
+                    @LuaBridge.Type(name = "str", value = String.class),
+                    @LuaBridge.Type(value = Function0.class, typeArgs = {Unit.class})
+            })
+    })
     public static void asyncWriteFile(String path, String str, LVCallback callback) {
         if (RelativePathUtils.isLocalUrl(path)) {
             path = RelativePathUtils.getAbsoluteUrl(path);
@@ -191,7 +254,13 @@ public class LTFile {
         MLSAdapterContainer.getThreadAdapter().execute(MLSThreadAdapter.Priority.HIGH, new WriteStringTask(path, callback, str));
     }
 
-    @LuaBridge
+    @LuaBridge(value = {
+            @LuaBridge.Func(params = {
+                    @LuaBridge.Type(name = "path", value = String.class),
+                    @LuaBridge.Type(name = "map", value = Map.class),
+                    @LuaBridge.Type(value = Function0.class, typeArgs = {Unit.class})
+            })
+    })
     public static void asyncWriteMap(String path, Map map, LVCallback callback) {
         if (RelativePathUtils.isLocalUrl(path)) {
             path = RelativePathUtils.getAbsoluteUrl(path);
@@ -199,7 +268,13 @@ public class LTFile {
         MLSAdapterContainer.getThreadAdapter().execute(MLSThreadAdapter.Priority.HIGH, new WriteJsonTask(path, callback, map));
     }
 
-    @LuaBridge
+    @LuaBridge(value = {
+            @LuaBridge.Func(params = {
+                    @LuaBridge.Type(name = "path", value = String.class),
+                    @LuaBridge.Type(name = "array", value = List.class),
+                    @LuaBridge.Type(value = Function0.class, typeArgs = {Unit.class})
+            })
+    })
     public static void asyncWriteArray(String path, List array, LVCallback callback) {
         if (RelativePathUtils.isLocalUrl(path)) {
             path = RelativePathUtils.getAbsoluteUrl(path);
@@ -207,7 +282,13 @@ public class LTFile {
         MLSAdapterContainer.getThreadAdapter().execute(MLSThreadAdapter.Priority.HIGH, new WriteArrayTask(path, callback, array));
     }
 
-    @LuaBridge
+    @LuaBridge(value = {
+            @LuaBridge.Func(params = {
+                    @LuaBridge.Type(name = "sourcePath", value = String.class),
+                    @LuaBridge.Type(name = "targetPath", value = String.class),
+                    @LuaBridge.Type(value = Function2.class, typeArgs = {Integer.class, String.class, Unit.class})
+            })
+    })
     public static void asyncUnzipFile(String sourcePath, String targetPath, LVCallback callback) {
         String returnPath = sourcePath;
         if (RelativePathUtils.isLocalUrl(sourcePath)) {
@@ -220,7 +301,16 @@ public class LTFile {
                 new UnZipTask(sourcePath, targetPath, sourcePath, callback));
     }
 
-    @LuaBridge
+    @LuaBridge(value = {
+            @LuaBridge.Func(params = {
+                    @LuaBridge.Type(name = "path", value = String.class),
+                    @LuaBridge.Type(value = Function1.class, typeArgs = {Integer.class, Unit.class})
+            }),
+            @LuaBridge.Func(params = {
+                    @LuaBridge.Type(name = "path", value = String.class),
+                    @LuaBridge.Type(value = Function0.class, typeArgs = {Unit.class})
+            })
+    })
     public static void asyncMd5File(Globals g, String path, final LVCallback callback) {
         MLSAdapterContainer.getThreadAdapter().execute(MLSThreadAdapter.Priority.HIGH, new FileMD5Task(g, path, callback));
     }

@@ -63,7 +63,12 @@ public class UDRect extends LuaUserdata {
      * @param L 虚拟机地址
      * @param v lua脚本传入的构造参数
      */
-    @LuaApiUsed
+    @LuaApiUsed({@LuaApiUsed.Func(params = {
+            @LuaApiUsed.Type(Double.class),
+            @LuaApiUsed.Type(Double.class),
+            @LuaApiUsed.Type(Double.class),
+            @LuaApiUsed.Type(Double.class)
+    }, returns = @LuaApiUsed.Type(value = UDRect.class))})
     protected UDRect(long L, LuaValue[] v) {
         super(L, null);
         rect = new Rect();
@@ -89,7 +94,13 @@ public class UDRect extends LuaUserdata {
     }
 
     //<editor-fold desc="API">
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Float.class),
+            }, returns = @LuaApiUsed.Type(UDRect.class)),
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(Float.class))
+    })
     public LuaValue[] x(LuaValue[] varargs) {
         if (varargs.length == 1) {
             rect.setX((float) varargs[0].toDouble());
@@ -98,7 +109,13 @@ public class UDRect extends LuaUserdata {
         return rNumber(rect.getX());
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Float.class),
+            }, returns = @LuaApiUsed.Type(UDRect.class)),
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(Float.class))
+    })
     public LuaValue[] y(LuaValue[] varargs) {
         if (varargs.length == 1) {
             rect.setY((float) varargs[0].toDouble());
@@ -107,7 +124,13 @@ public class UDRect extends LuaUserdata {
         return rNumber(rect.getY());
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Float.class),
+            }, returns = @LuaApiUsed.Type(UDRect.class)),
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(Float.class))
+    })
     public LuaValue[] width(LuaValue[] varargs) {
         if (varargs.length == 1) {
             rect.setWidth((float) varargs[0].toDouble());
@@ -116,7 +139,13 @@ public class UDRect extends LuaUserdata {
         return rNumber(rect.getWidth());
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Float.class),
+            }, returns = @LuaApiUsed.Type(UDRect.class)),
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(Float.class))
+    })
     public LuaValue[] height(LuaValue[] varargs) {
         if (varargs.length == 1) {
             rect.setHeight((float) varargs[0].toDouble());
@@ -125,7 +154,13 @@ public class UDRect extends LuaUserdata {
         return rNumber(rect.getHeight());
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Float.class),
+            }, returns = @LuaApiUsed.Type(UDRect.class)),
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(Float.class))
+    })
     public LuaValue[] point(LuaValue[] varargs) {
         if (varargs.length == 1) {
             UDPoint udPoint = (UDPoint) varargs[0];
@@ -135,7 +170,13 @@ public class UDRect extends LuaUserdata {
         return varargsOf(new UDPoint(getGlobals(), rect.getPoint()));
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Float.class),
+            }, returns = @LuaApiUsed.Type(UDRect.class)),
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(Float.class))
+    })
     public LuaValue[] size(LuaValue[] varargs) {
         if (varargs.length == 1) {
             UDSize udSize = (UDSize) varargs[0];

@@ -28,7 +28,7 @@ public class LuaViewConfig {
     public static String getDebugIp() {
         if (debugIp == null) {
             IFileCache fileCache = MLSAdapterContainer.getFileCache();
-            debugIp = fileCache.get(IP_KEY, "172.16.39.13");
+            debugIp = fileCache.get(IP_KEY, "");
             port = Integer.parseInt(fileCache.get(PORT_KEY, port + ""));
         }
         return debugIp;

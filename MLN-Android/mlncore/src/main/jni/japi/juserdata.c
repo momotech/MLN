@@ -61,21 +61,25 @@ static void pushMethodClosure(lua_State *L, jmethodID m, const char *mn);
  *              2:string methodname
  */
 static int executeJavaUDFunction(lua_State *L);
+
 /**
  * 对应execute_new_ud_lazy
  */
-static void push_lazy_init(JNIEnv *env, lua_State *L, jclass clz, const char *metaname, const char *p_metaname);
+static void
+push_lazy_init(JNIEnv *env, lua_State *L, jclass clz, const char *metaname, const char *p_metaname);
 
 /**
  * 对应 push_lazy_init
  * upvalue顺序为:1: metaname
  */
 static int execute_new_ud_lazy(lua_State *L);
+
 /**
  * 对应execute_new_ud
  */
 static void
 push_init(JNIEnv *env, lua_State *L, jclass clz, const char *metaname, const char *p_metaname);
+
 /**
  * 对应push_init
  * upvalue顺序为:
@@ -89,7 +93,8 @@ static int execute_new_ud(lua_State *L);
  * -1: metatable
  * return void with -1: metatable
  */
-static void fillUDMetatable(JNIEnv *env, lua_State *LS, jclass clz, const char *self, const char *parent_mn);
+static void
+fillUDMetatable(JNIEnv *env, lua_State *LS, jclass clz, const char *self, const char *parent_mn);
 
 /**
  * 注册ud
@@ -134,6 +139,7 @@ jni_registerAllUserdata(JNIEnv *env, jobject jobj, jlong L, jobjectArray lcns, j
     (*env)->ReleaseBooleanArrayElements(env, lazy, lz, 0);
 }
 
+
 jobject jni_createUserdataAndSet(JNIEnv *env, jobject jobj, jlong L, jstring key, jstring lcn,
                                  jobjectArray p) {
     const char *kstr = GetString(env, key);
@@ -143,8 +149,8 @@ jobject jni_createUserdataAndSet(JNIEnv *env, jobject jobj, jlong L, jstring key
 
     lua_getglobal(LS, name);
     if (!lua_isfunction(LS, -1)) {
-        char *em = joinstr(name, "not registed!");
-        throwRuntimeError(env, em);
+        char *em = joinstr(name, " not registed!");
+        throwInvokeError(env, em);
         m_malloc(em, (strlen(em) + 1) * sizeof(char), 0);
         ReleaseChar(env, key, kstr);
         ReleaseChar(env, lcn, name);
@@ -160,9 +166,7 @@ jobject jni_createUserdataAndSet(JNIEnv *env, jobject jobj, jlong L, jstring key
             errmsg = lua_pushfstring(LS, "create %s error, msg: %s", name, lua_tostring(LS, -1));
         else
             errmsg = lua_pushfstring(LS, "create %s error, unknown msg", name);
-
-        clearException(env);
-        throwRuntimeError(env, errmsg);
+        throwInvokeError(env, errmsg);
         lua_pop(LS, 1);
         ReleaseChar(env, key, kstr);
         ReleaseChar(env, lcn, name);
@@ -171,7 +175,7 @@ jobject jni_createUserdataAndSet(JNIEnv *env, jobject jobj, jlong L, jstring key
         return NULL;
     }
     if (!lua_isuserdata(LS, -1)) {
-        throwRuntimeError(env, lua_pushfstring(LS, "create %s error, not a userdata!", name));
+        throwInvokeError(env, lua_pushfstring(LS, "create %s error, not a userdata!", name));
         ReleaseChar(env, key, kstr);
         ReleaseChar(env, lcn, name);
         lua_pop(LS, 1);
@@ -184,6 +188,32 @@ jobject jni_createUserdataAndSet(JNIEnv *env, jobject jobj, jlong L, jstring key
     ReleaseChar(env, lcn, name);
     lua_unlock(LS);
     return getUserdata(env, LS, ud);
+
+}
+
+int registerSingleton(lua_State *LS,
+                      const char *kstr, const char *name, jobjectArray p) {
+    lua_lock(LS);
+    lua_getglobal(LS, name);
+    if (!lua_isfunction(LS, -1)) {
+        lua_pop(LS, 1);
+        lua_unlock(LS);
+        return 0;
+    }
+
+    if (lua_pcall(LS, 0, 1, 0)) {
+        lua_pop(LS, 1);
+        lua_unlock(LS);
+        return 0;
+    }
+    if (!lua_isuserdata(LS, -1)) {
+        lua_pop(LS, 1);
+        lua_unlock(LS);
+        return 0;
+    }
+    lua_setglobal(LS, kstr);
+    lua_unlock(LS);
+    return 1;
 }
 //</editor-fold>
 
@@ -201,7 +231,6 @@ static void
 register_ud(JNIEnv *env, lua_State *L, const char *lcn, const char *lpcn, const char *jcn,
             int lazy) {
     jclass clz = getClassByName(env, jcn);
-
     char *metaname = getUDMetaname(lcn);
     char *p_metaname = NULL;
     if (lpcn) {
@@ -222,9 +251,38 @@ register_ud(JNIEnv *env, lua_State *L, const char *lcn, const char *lpcn, const 
     m_malloc(metaname, (strlen(metaname) + 1) * sizeof(char), 0);
 #else
     if (p_metaname) free(p_metaname);
-    free(metaname);
+        free(metaname);
+#endif
+
+}
+
+void
+registerUserdata(JNIEnv const *env, lua_State *L, const char *lcn, const char *lpcn,
+                 jclass clz, int lazy) {
+    char *metaname = getUDMetaname(lcn);
+    char *p_metaname = NULL;
+    if (lpcn) {
+        p_metaname = getUDMetaname(lpcn);
+    }
+
+    lua_lock(L);
+    if (lazy) {
+        push_lazy_init(env, L, clz, metaname, p_metaname);
+    } else {
+        push_init(env, L, clz, metaname, p_metaname);
+    }
+    lua_setglobal(L, lcn);
+    lua_unlock(L);
+
+#if defined(J_API_INFO)
+    if (p_metaname) m_malloc(p_metaname, (strlen(p_metaname) + 1) * sizeof(char), 0);
+    m_malloc(metaname, (strlen(metaname) + 1) * sizeof(char), 0);
+#else
+    if (p_metaname) free(p_metaname);
+        free(metaname);
 #endif
 }
+
 
 /**
  * 通过堆栈生成java对象，并push到栈顶
@@ -234,7 +292,6 @@ register_ud(JNIEnv *env, lua_State *L, const char *lcn, const char *lpcn, const 
  */
 static int new_java_obj(JNIEnv *env, lua_State *L, jclass clz, jmethodID con, const char *metaname,
                         int offset) {
-
     int pc = lua_gettop(L) - offset;
     jobjectArray p = newLuaValueArrayFromStack(env, L, pc, 1);
     jobject javaObj = (*env)->NewObject(env, clz, con, (jlong) L, p);
@@ -251,12 +308,12 @@ static int new_java_obj(JNIEnv *env, lua_State *L, jclass clz, jmethodID con, co
         m_malloc(info, sizeof(char) * (1 + strlen(info)), 0);
     FREE(env, p);
 
-    jlong mem = (*env)->CallLongMethod(env, javaObj, LuaUserdata_memoryCast);
-    clearException(env);
-    mem = mem < 0 ? 0 : (mem >> 10);
+//    jlong mem = (*env)->CallLongMethod(env, javaObj, LuaUserdata_memoryCast);
+//    clearException(env);
+//    mem = mem < 0 ? 0 : (mem >> 10);
 
     UDjavaobject ud = (UDjavaobject) lua_newuserdata(L, sizeof(javaUserdata));
-    lua_gc(L, LUA_GCSTEP, (int) mem);
+//    lua_gc(L, LUA_GCSTEP, (int) mem);
     ud->id = getUserdataId(env, javaObj);
     if (isStrongUserdata(env, clz)) {
         setUDFlag(ud, JUD_FLAG_STRONG);
@@ -286,10 +343,12 @@ int u_newmetatable(lua_State *L, const char *tname) {
 #define CLZ_KEY_IN_TABLE  "__clz"
 #define PARENT_META "__P_META"
 #define METATABLE_INIT "__INIT"
+
 /**
  * 对应execute_new_ud_lazy
  */
-static void push_lazy_init(JNIEnv *env, lua_State *L, jclass clz, const char *metaname, const char *p_metaname) {
+static void push_lazy_init(JNIEnv *env, lua_State *L, jclass clz, const char *metaname,
+                           const char *p_metaname) {
     /// 注册表中已有相关metatable，则填充metatable
     if (!u_newmetatable(L, metaname)) {
         fillUDMetatable(env, L, clz, metaname, p_metaname);
@@ -370,6 +429,17 @@ static int execute_new_ud_lazy(lua_State *L) {
     jclass clz = init_lazy_metatable(env, L, metaname);
     ///metatable
     jmethodID con = getConstructor(env, clz);
+    if (!con) {
+        char *info = joinstr(metaname + strlen(METATABLE_PREFIX), "<init>");
+        if (catchJavaException(env, L, info)) {
+            if (info)
+                m_malloc(info, sizeof(char) * (1 + strlen(info)), 0);
+            if (need) detachEnv();
+            lua_unlock(L);
+            lua_error(L);
+            return 1;
+        }
+    }
     if (new_java_obj(env, L, clz, con, metaname, 1)) {
         if (need) detachEnv();
         lua_unlock(L);
@@ -451,6 +521,17 @@ static int execute_new_ud(lua_State *L) {
     idx = lua_upvalueindex(3);
     const char *metaname = lua_tostring(L, idx);
 
+    if (!con) {
+        char *info = joinstr(metaname + strlen(METATABLE_PREFIX), "<init>");
+        if (catchJavaException(env, L, info)) {
+            if (info)
+                m_malloc(info, sizeof(char) * (1 + strlen(info)), 0);
+            if (need) detachEnv();
+            lua_unlock(L);
+            lua_error(L);
+            return 1;
+        }
+    }
     if (new_java_obj(env, L, clz, con, metaname, 0)) {
         if (need) detachEnv();
         lua_unlock(L);
@@ -475,6 +556,32 @@ static int execute_new_ud(lua_State *L) {
 //</editor-fold>
 
 //<editor-fold desc="fill metatable">
+/**
+ * upvalue:
+ *      methodname
+ */
+static int exeEmptyMethod(lua_State *L) {
+    if (!openCallbackEmptyMethod()) {
+        lua_settop(L, 1);
+        return 1;
+    }
+    lua_lock(L);
+    if (!lua_isuserdata(L, 1)) {
+        lua_pushstring(L, "use ':' instead of '.' to call method!!");
+        lua_unlock(L);
+        setErrorType(L, lua);
+        lua_error(L);
+        return 1;
+    }
+
+    UDjavaobject ud = (UDjavaobject) lua_touserdata(L, 1);
+    const char *clz = ud->name;
+    const char *mn = lua_tostring(L, lua_upvalueindex(1));
+    onEmptyMethodCall(L, clz, mn);
+    lua_settop(L, 1);
+    lua_unlock(L);
+    return 1;
+}
 
 static int traverse_listener(const void *key, const void *value, void *ud) {
     const char *m = (const char *) key;
@@ -489,11 +596,17 @@ static int traverse_listener(const void *key, const void *value, void *ud) {
     jmethodID method = (jmethodID) value;
     lua_State *L = (lua_State *) ud;
     lua_pushstring(L, m);
-    pushMethodClosure(L, method, m);
+    if (isEmptyMethod(method)) {
+        lua_pushvalue(L, -1);
+        lua_pushcclosure(L, exeEmptyMethod, 1);
+    } else {
+        pushMethodClosure(L, method, m);
+    }
     lua_rawset(L, -3); //metatable.m = closure
 
     return 0;
 }
+
 /**
  * 给当前table设置父类
  * @param L -1: metatable
@@ -511,11 +624,13 @@ void setParentMetatable(JNIEnv *env, lua_State *L, const char *parent) {
     else
         lua_pop(L, 1);
 }
+
 /**
  * -1: metatable
  * return void with -1: metatable
  */
-static void fillUDMetatable(JNIEnv *env, lua_State *LS, jclass clz, const char *self, const char *parent_mn) {
+static void
+fillUDMetatable(JNIEnv *env, lua_State *LS, jclass clz, const char *self, const char *parent_mn) {
     /// get metatable.__index
     lua_pushstring(LS, LUA_INDEX);
     lua_rawget(LS, -2);
@@ -541,14 +656,6 @@ static void fillUDMetatable(JNIEnv *env, lua_State *LS, jclass clz, const char *
     pushUserdataBoolClosure(env, LS, clz);
     /// 设置__tostring
     pushUserdataTostringClosure(env, LS, clz);
-
-    /// 设置空方法
-    lua_getglobal(LS, EMPTY_METHOD_TABLE);
-    if (lua_istable(LS, -1)) {
-        /// -1: empty table -2 nt -3 metatable
-        copyTable(LS, -1, -2);
-    }
-    lua_pop(LS, 1);
 
     /// -1:newtable    -2:metatable
     traverseAllMethods(clz, traverse_listener, LS);
@@ -582,6 +689,7 @@ static int userdata_tostring_fun(lua_State *L) {
     if (!lua_isuserdata(L, 1)) {
         lua_pushstring(L, "use ':' instead of '.' to call method!!");
         lua_unlock(L);
+        setErrorType(L, lua);
         lua_error(L);
         return 1;
     }
@@ -593,6 +701,7 @@ static int userdata_tostring_fun(lua_State *L) {
     jobject jobj = getUserdata(env, L, ud);
     if (!jobj) {
         lua_pushfstring(L, "get java object from java failed, id: %d", ud->id);
+        setErrorType(L, bridge);
         lua_error(L);
         return 1;
     }
@@ -659,12 +768,14 @@ static int userdata_bool_fun(lua_State *L) {
     jobject jobj1 = getUserdata(env, L, ud);
     if (!jobj1) {
         lua_pushfstring(L, "get java object from java failed, id: %d", ud->id);
+        setErrorType(L, bridge);
         lua_error(L);
         return 1;
     }
     jobject jobj2 = getUserdata(env, L, other);
     if (!jobj2) {
         lua_pushfstring(L, "get java object from java failed, id: %d", other->id);
+        setErrorType(L, bridge);
         lua_error(L);
         return 1;
     }
@@ -708,6 +819,7 @@ static int gc_userdata(lua_State *L) {
     if (!lua_isuserdata(L, 1)) {
         lua_pushstring(L, "use ':' instead of '.' to call method!!");
         lua_unlock(L);
+        setErrorType(L, lua);
         lua_error(L);
         return 0;
     }
@@ -762,6 +874,7 @@ static int executeJavaUDFunction(lua_State *L) {
     if (!lua_isuserdata(L, 1)) {
         lua_pushstring(L, "use ':' instead of '.' to call method!!");
         lua_unlock(L);
+        setErrorType(L, lua);
         lua_error(L);
         return 1;
     }
@@ -781,6 +894,7 @@ static int executeJavaUDFunction(lua_State *L) {
     if (!m) {
         lua_pushfstring(L, "no method implement for %s", n);
         lua_unlock(L);
+        setErrorType(L, lua);
         lua_error(L);
         return 1;
     }
@@ -790,6 +904,7 @@ static int executeJavaUDFunction(lua_State *L) {
     jobject jobj = getUserdata(env, L, ud);
     if (!jobj) {
         lua_pushfstring(L, "get java object from java failed, id: %d", ud->id);
+        setErrorType(L, bridge);
         lua_error(L);
         return 1;
     }

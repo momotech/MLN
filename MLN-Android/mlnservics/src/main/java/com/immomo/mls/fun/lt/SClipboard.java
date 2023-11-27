@@ -21,9 +21,9 @@ import org.luaj.vm2.LuaValue;
 import androidx.annotation.Nullable;
 
 
-@LuaClass
+@LuaClass(name = "Clipboard", isSingleton = true)
 public class SClipboard {
-    public static final String KEY = "Clipboard";
+    public static final String LUA_CLASS_NAME = "Clipboard";
 
     private Globals globals;
     ClipboardManager mClipboardManager;

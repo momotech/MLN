@@ -24,6 +24,7 @@ public interface Constants {
     String KEY_URL = "url";
     String KEY_LUA_SOURCE = "LuaSource";//判断lua来源，url/本地文件,参考window方法:getLuaSource(）
     String KEY_OFFLINE_VERSION = "offlineVersion";
+    String KEY_OFFLINE_VERSION_NAME = "offlineVersionName";
     String KEY_OFFLINE_URL = "offlineUrl";
     String KEY_DEBUG_BUTTON_EVENT = "debugButtonEvent";
     String KEY_DEBUG_BUTTON_PARAMS = "open";
@@ -63,6 +64,7 @@ public interface Constants {
     int LT_SHOW_LOAD_BG     = 1<<5;/*加载时显示load背景*/
     int LT_FORCE_DEBUG      = 1<<6;/*强制debug*/
     int LT_NO_WINDOW_SIZE   = 1<<7;/*不关心window是否有宽高大小*/
+    int LT_FIXED_WINDOW_SIZE   = 1<<8;/*固定window的大小 以避免切换线程*/
 
     @Target(ElementType.PARAMETER)
     @IntDef({LT_FORCE_DOWNLOAD,
@@ -71,7 +73,8 @@ public interface Constants {
             LT_NO_X64,
             LT_SHOW_LOAD,
             LT_SHOW_LOAD_BG,
-            LT_FORCE_DEBUG})
+            LT_FORCE_DEBUG,
+            LT_NO_WINDOW_SIZE})
     @Retention(RetentionPolicy.SOURCE)
     @interface LoadType { }
 }

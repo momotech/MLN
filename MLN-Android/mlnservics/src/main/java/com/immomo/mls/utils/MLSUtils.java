@@ -51,7 +51,7 @@ public class MLSUtils {
      * @return 加载目录
      */
     public static String checkArm64(String path) {
-        if (TextUtils.isEmpty(path) || Globals.isIs32bit()) {
+        if (TextUtils.isEmpty(path) || Globals.is32bit()) {
             return path;
         }
         String nameWithPostfix = path;

@@ -1,0 +1,220 @@
+{
+  "abi": "ARMEABI_V7A",
+  "abiPlatformVersion": 21,
+  "buildSettings": {
+    "environmentVariables": []
+  },
+  "cmake": {
+    "cmakeArtifactsBaseFolder": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/.cxx/cmake/release/armeabi-v7a",
+    "cmakeServerLogFile": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/.cxx/cmake/release/armeabi-v7a/cmake_server_log.txt",
+    "cmakeWrappingBaseFolder": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/.cxx/cxx/release/armeabi-v7a",
+    "effectiveConfiguration": {
+      "name": "traditional-android-studio-cmake-environment",
+      "description": "Composite reified CMakeSettings configuration",
+      "generator": "Ninja",
+      "inheritEnvironments": [
+        "ndk"
+      ],
+      "buildRoot": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/.cxx/cmake/release/armeabi-v7a",
+      "cmakeToolchain": "/Users/XiongFangyu/Library/Android/sdk/ndk/21.0.6113669/build/cmake/android.toolchain.cmake",
+      "cmakeExecutable": "/Users/XiongFangyu/Library/Android/sdk/cmake/3.10.2.4988404/bin/cmake",
+      "variables": [
+        {
+          "name": "CMAKE_CXX_FLAGS",
+          "value": "-frtti -fexceptions"
+        },
+        {
+          "name": "CMAKE_C_FLAGS",
+          "value": "-pie -fPIE"
+        },
+        {
+          "name": "CMAKE_FIND_ROOT_PATH",
+          "value": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/.cxx/cmake/release/prefab/armeabi-v7a/prefab"
+        },
+        {
+          "name": "CMAKE_BUILD_TYPE",
+          "value": "Release"
+        },
+        {
+          "name": "CMAKE_TOOLCHAIN_FILE",
+          "value": "/Users/XiongFangyu/Library/Android/sdk/ndk/21.0.6113669/build/cmake/android.toolchain.cmake"
+        },
+        {
+          "name": "ANDROID_ABI",
+          "value": "armeabi-v7a"
+        },
+        {
+          "name": "ANDROID_NDK",
+          "value": "/Users/XiongFangyu/Library/Android/sdk/ndk/21.0.6113669"
+        },
+        {
+          "name": "ANDROID_PLATFORM",
+          "value": "android-21"
+        },
+        {
+          "name": "CMAKE_ANDROID_ARCH_ABI",
+          "value": "armeabi-v7a"
+        },
+        {
+          "name": "CMAKE_ANDROID_NDK",
+          "value": "/Users/XiongFangyu/Library/Android/sdk/ndk/21.0.6113669"
+        },
+        {
+          "name": "CMAKE_EXPORT_COMPILE_COMMANDS",
+          "value": "ON"
+        },
+        {
+          "name": "CMAKE_LIBRARY_OUTPUT_DIRECTORY",
+          "value": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/build/intermediates/cmake/release/obj/armeabi-v7a"
+        },
+        {
+          "name": "CMAKE_MAKE_PROGRAM",
+          "value": "/Users/XiongFangyu/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja"
+        },
+        {
+          "name": "CMAKE_SYSTEM_NAME",
+          "value": "Android"
+        },
+        {
+          "name": "CMAKE_SYSTEM_VERSION",
+          "value": "21"
+        },
+        {
+          "name": "ANDROID_TOOLCHAIN",
+          "value": "clang -D"
+        }
+      ]
+    }
+  },
+  "cxxBuildFolder": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/.cxx/cmake/release/armeabi-v7a",
+  "info": {
+    "abi": "ARMEABI_V7A",
+    "bitness": 32,
+    "deprecated": false,
+    "default": true
+  },
+  "originalCxxBuildFolder": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/.cxx/cmake/release/armeabi-v7a",
+  "variant": {
+    "buildSystemArgumentList": [
+      "-DANDROID_TOOLCHAIN\u003dclang -D"
+    ],
+    "buildTargetSet": [],
+    "implicitBuildTargetSet": [],
+    "cFlagsList": [
+      "-pie -fPIE"
+    ],
+    "cmakeSettingsConfiguration": "android-gradle-plugin-predetermined-name",
+    "cppFlagsList": [
+      "-frtti -fexceptions"
+    ],
+    "isDebuggableEnabled": false,
+    "module": {
+      "buildSystem": "CMAKE",
+      "cmake": {
+        "cmakeExe": "/Users/XiongFangyu/Library/Android/sdk/cmake/3.10.2.4988404/bin/cmake",
+        "minimumCmakeVersion": "3.10.2",
+        "ninjaExe": "/Users/XiongFangyu/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja"
+      },
+      "cmakeToolchainFile": "/Users/XiongFangyu/Library/Android/sdk/ndk/21.0.6113669/build/cmake/android.toolchain.cmake",
+      "cxxFolder": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/.cxx",
+      "gradleModulePathName": ":mlnservics",
+      "intermediatesFolder": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/build/intermediates",
+      "makeFile": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/CMakeLists.txt",
+      "moduleBuildFile": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/build.gradle",
+      "moduleRootFolder": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics",
+      "ndkDefaultAbiList": [
+        "ARMEABI_V7A",
+        "ARM64_V8A",
+        "X86",
+        "X86_64"
+      ],
+      "ndkFolder": "/Users/XiongFangyu/Library/Android/sdk/ndk/21.0.6113669",
+      "ndkMetaAbiList": [
+        {
+          "abi": "ARMEABI_V7A",
+          "bitness": 32,
+          "deprecated": false,
+          "default": true
+        },
+        {
+          "abi": "ARM64_V8A",
+          "bitness": 64,
+          "deprecated": false,
+          "default": true
+        },
+        {
+          "abi": "X86",
+          "bitness": 32,
+          "deprecated": false,
+          "default": true
+        },
+        {
+          "abi": "X86_64",
+          "bitness": 64,
+          "deprecated": false,
+          "default": true
+        }
+      ],
+      "ndkMetaPlatforms": {
+        "min": 16,
+        "max": 29,
+        "aliases": {
+          "20": 19,
+          "25": 24,
+          "J": 16,
+          "J-MR1": 17,
+          "J-MR2": 18,
+          "K": 19,
+          "L": 21,
+          "L-MR1": 22,
+          "M": 23,
+          "N": 24,
+          "N-MR1": 24,
+          "O": 26,
+          "O-MR1": 27,
+          "P": 28,
+          "Q": 29
+        }
+      },
+      "ndkSupportedAbiList": [
+        "ARMEABI_V7A",
+        "ARM64_V8A",
+        "X86",
+        "X86_64"
+      ],
+      "ndkDefaultStl": "LIBCXX_STATIC",
+      "ndkVersion": "21.0.6113669",
+      "project": {
+        "compilerSettingsCacheFolder": "/Users/XiongFangyu/Desktop/MMLua4Android/.cxx",
+        "cxxFolder": "/Users/XiongFangyu/Desktop/MMLua4Android/.cxx",
+        "isBuildOnlyTargetAbiEnabled": true,
+        "isCmakeBuildCohabitationEnabled": false,
+        "isNativeCompilerSettingsCacheEnabled": false,
+        "rootBuildGradleFolder": "/Users/XiongFangyu/Desktop/MMLua4Android",
+        "sdkFolder": "/Users/XiongFangyu/Library/Android/sdk",
+        "isPrefabEnabled": false
+      },
+      "splitsAbiFilterSet": [],
+      "stlSharedObjectMap": {
+        "LIBCXX_SHARED": {
+          "ARMEABI_V7A": "/Users/XiongFangyu/Library/Android/sdk/ndk/21.0.6113669/toolchains/llvm/prebuilt/darwin-x86_64/sysroot/usr/lib/arm-linux-androideabi/libc++_shared.so",
+          "ARM64_V8A": "/Users/XiongFangyu/Library/Android/sdk/ndk/21.0.6113669/toolchains/llvm/prebuilt/darwin-x86_64/sysroot/usr/lib/aarch64-linux-android/libc++_shared.so",
+          "X86": "/Users/XiongFangyu/Library/Android/sdk/ndk/21.0.6113669/toolchains/llvm/prebuilt/darwin-x86_64/sysroot/usr/lib/i686-linux-android/libc++_shared.so",
+          "X86_64": "/Users/XiongFangyu/Library/Android/sdk/ndk/21.0.6113669/toolchains/llvm/prebuilt/darwin-x86_64/sysroot/usr/lib/x86_64-linux-android/libc++_shared.so"
+        },
+        "LIBCXX_STATIC": {},
+        "NONE": {},
+        "SYSTEM": {}
+      }
+    },
+    "objFolder": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/build/intermediates/cmake/release/obj",
+    "variantName": "release",
+    "validAbiList": [
+      "ARMEABI_V7A",
+      "ARM64_V8A"
+    ],
+    "prefabDirectory": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/.cxx/cmake/release/prefab",
+    "prefabPackageDirectoryList": []
+  },
+  "prefabFolder": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/.cxx/cmake/release/prefab/armeabi-v7a"
+}

@@ -1,13 +1,15 @@
 /**
-  * Created by MomoLuaNative.
-  * Copyright (c) 2019, Momo Group. All rights reserved.
-  *
-  * This source code is licensed under the MIT.
-  * For the full copyright and license information,please view the LICENSE file in the root directory of this source tree.
-  */
+ * Created by MomoLuaNative.
+ * Copyright (c) 2019, Momo Group. All rights reserved.
+ * <p>
+ * This source code is licensed under the MIT.
+ * For the full copyright and license information,please view the LICENSE file in the root directory of this source tree.
+ */
 package com.immomo.mls.processor;
 
 import com.google.auto.service.AutoService;
+import com.immomo.mls.annotation.MLN;
+import com.immomo.mls.annotation.MLNRegister;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.JavaFile;
 import com.immomo.mls.annotation.CreatedByApt;
@@ -33,17 +35,18 @@ import javax.tools.Diagnostic;
 
 /**
  * Created by XiongFangyu on 2018/8/29.
- *
+ * <p>
  * 入口文件
  */
 @SupportedOptions({Options.SDK, Options.SKIP_PACKAGE})
 @AutoService(Processor.class)
-public class Main extends AbstractProcessor implements Logger{
+public class Main extends AbstractProcessor implements Logger {
 
-    private static final Class<? extends Annotation>[] SUPPORT_TYPE = new Class[] {
+    private static final Class<? extends Annotation>[] SUPPORT_TYPE = new Class[]{
             CreatedByApt.class,
             LuaClass.class,
             LuaBridge.class,
+            MLN.class,
     };
 
     private Set<ClassName> skip;
@@ -65,7 +68,7 @@ public class Main extends AbstractProcessor implements Logger{
     @Override
     public Set<String> getSupportedAnnotationTypes() {
         Set<String> set = new HashSet<>();
-        for (int i = 0, l = SUPPORT_TYPE.length; i < l; i ++) {
+        for (int i = 0, l = SUPPORT_TYPE.length; i < l; i++) {
             set.add(SUPPORT_TYPE[i].getCanonicalName());
         }
         return set;
@@ -75,21 +78,21 @@ public class Main extends AbstractProcessor implements Logger{
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
         skip.addAll(getNeedSkipClass(roundEnv));
         final Filer filer = processingEnv.getFiler();
-        Map<TypeElement, Generator> map = PreProcess.process(skip, annotations, roundEnv, options, this);
-        if (map != null) {
-            for (Map.Entry<TypeElement, Generator> entry : map.entrySet()) {
-                TypeElement typeElement = entry.getKey();
-                Generator generator = entry.getValue();
-                JavaFile file = generator.generateFile();
-                if (file == null)
-                    continue;
-                try {
-                    file.writeTo(filer);
-                } catch (IOException e) {
-                    error(typeElement, "Unable to generate code for typeElement %s: %s", typeElement, e.getMessage());
-                }
+        Map<TypeElement, LuaClassGenerator> map = PreProcess.process(skip, annotations, roundEnv, options, this);
+        LuaRegisterProcessor.INSTANCE.process(processingEnv, roundEnv, filer, this);
+        for (Map.Entry<TypeElement, LuaClassGenerator> entry : map.entrySet()) {
+            TypeElement typeElement = entry.getKey();
+            LuaClassGenerator generator = entry.getValue();
+            JavaFile file = generator.generateFile();
+            if (file == null)
+                continue;
+            try {
+                file.writeTo(filer);
+            } catch (IOException e) {
+                error(typeElement, "Unable to generate code for typeElement %s: %s", typeElement, e.getMessage());
             }
         }
+
         if (hasError) {
             throw new RuntimeException("error occur when process, see log before");
         }
@@ -100,6 +103,8 @@ public class Main extends AbstractProcessor implements Logger{
         Set<? extends Element> skip = roundEnv.getElementsAnnotatedWith(CreatedByApt.class);
         Set<ClassName> ret = new HashSet<>(skip.size());
         for (Element e : skip) {
+            if (e.getAnnotation(MLNRegister.class) != null)
+                continue;
             TypeElement te = (TypeElement) e;
             ClassName cn = ClassName.get(te);
             String name = cn.simpleName();

@@ -8,7 +8,6 @@
 package com.immomo.mls.fun.lt;
 
 import com.immomo.mls.LuaViewManager;
-import com.immomo.mls.MLSConfigs;
 import com.immomo.mls.annotation.LuaBridge;
 import com.immomo.mls.annotation.LuaClass;
 
@@ -52,7 +51,7 @@ import org.luaj.vm2.LuaValue;
  * on 2019/10/28
  */
 
-@LuaClass
+@LuaClass(name = "CornerManager", isSingleton = true)
 public class SICornerRadiusManager {
     public static final String LUA_CLASS_NAME = "CornerManager";
     private final Globals globals;

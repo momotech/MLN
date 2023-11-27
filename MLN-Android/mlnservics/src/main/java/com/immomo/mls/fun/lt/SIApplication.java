@@ -10,6 +10,8 @@ package com.immomo.mls.fun.lt;
 import com.immomo.mls.annotation.LuaBridge;
 import com.immomo.mls.annotation.LuaClass;
 
+import kotlin.Unit;
+import kotlin.jvm.functions.Function0;
 import org.luaj.vm2.Globals;
 import org.luaj.vm2.LuaFunction;
 
@@ -23,7 +25,7 @@ import java.util.Map;
  * Description  :   通知 lua 层 整个APP是否被压入后台，比如按 HOME 键操作
  */
 
-@LuaClass
+@LuaClass(name = "Application", isSingleton = true)
 public class SIApplication implements Globals.OnDestroyListener {
     public static final String LUA_CLASS_NAME = "Application";
 
@@ -44,7 +46,11 @@ public class SIApplication implements Globals.OnDestroyListener {
         instance.remove(g);
     }
 
-    @LuaBridge
+    @LuaBridge(value = {
+            @LuaBridge.Func(params = {
+                    @LuaBridge.Type(value = Function0.class, typeArgs = {Unit.class})
+            })
+    })
     public void setForeground2BackgroundCallback(LuaFunction fun) {
         if (mDisappearFunction != null)
             mDisappearFunction.destroy();
@@ -56,7 +62,11 @@ public class SIApplication implements Globals.OnDestroyListener {
         }
     }
 
-    @LuaBridge
+    @LuaBridge(value = {
+            @LuaBridge.Func(params = {
+                    @LuaBridge.Type(value = Function0.class, typeArgs = {Unit.class})
+            })
+    })
     public void setBackground2ForegroundCallback(LuaFunction fun) {
         if (mAppearFunction != null)
             mAppearFunction.destroy();

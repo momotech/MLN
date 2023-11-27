@@ -22,8 +22,8 @@ import org.luaj.vm2.utils.LuaApiUsed;
 /**
  * Created by XiongFangyu on 2018/7/19.
  */
-@LuaApiUsed
-public class UDCollectionLayout extends UDBaseRecyclerLayout implements ILayoutInSet {
+@LuaApiUsed(ignoreTypeArgs = true)
+public class UDCollectionLayout extends UDBaseRecyclerLayout  implements ILayoutInSet {
     public static final String LUA_CLASS_NAME = "CollectionViewLayout";
     public static final String[] methods = new String[]{
             "itemSize",
@@ -42,14 +42,23 @@ public class UDCollectionLayout extends UDBaseRecyclerLayout implements ILayoutI
     private final int[] paddingValues;
     private boolean spanCountInit = false;
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(UDCollectionLayout.class))
+    })
     public UDCollectionLayout(long L, LuaValue[] v) {
         super(L, v);
         paddingValues = new int[4];
     }
 
     //<editor-fold desc="api">
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(UDSize.class)
+            }, returns = @LuaApiUsed.Type(UDCollectionLayout.class)),
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(UDSize.class))
+    })
     public LuaValue[] itemSize(LuaValue[] values) {
         LuaValue value = values[0];
         if (value != null) {
@@ -64,7 +73,13 @@ public class UDCollectionLayout extends UDBaseRecyclerLayout implements ILayoutI
         return varargsOf(getitemSize());
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Integer.class)
+            }, returns = @LuaApiUsed.Type(UDCollectionLayout.class)),
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(Integer.class))
+    })
     public LuaValue[] spanCount(LuaValue[] values) {
         if (values != null && values.length > 0) {
             this.spanCount = values[0].toInt();
@@ -75,7 +90,14 @@ public class UDCollectionLayout extends UDBaseRecyclerLayout implements ILayoutI
         return LuaValue.rNumber(spanCount);
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Double.class),
+                    @LuaApiUsed.Type(Double.class),
+                    @LuaApiUsed.Type(Double.class),
+                    @LuaApiUsed.Type(Double.class)
+            }, returns = @LuaApiUsed.Type(UDCollectionLayout.class))
+    })
     public LuaValue[] layoutInset(LuaValue[] values) {
         paddingValues[0] = DimenUtil.dpiToPx(values[1].toDouble());//left
         paddingValues[1] = DimenUtil.dpiToPx(values[0].toDouble());//top
@@ -84,7 +106,11 @@ public class UDCollectionLayout extends UDBaseRecyclerLayout implements ILayoutI
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Boolean.class)
+            }, returns = @LuaApiUsed.Type(UDCollectionLayout.class))
+    })
     public LuaValue[] canScroll2Screen(LuaValue[] values) {
         this.mIsCanScrollTolScreenLeft = values[0].toBoolean();
         return null;

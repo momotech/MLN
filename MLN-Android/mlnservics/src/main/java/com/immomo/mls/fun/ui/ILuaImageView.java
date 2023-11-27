@@ -35,4 +35,6 @@ public interface ILuaImageView {
     void setImageUrlWithPlaceHolder(String urlString, String placeholder);
 
     void setBlurImage(float blurValue);
+
+    void setCompatScaleType(int type);
 }

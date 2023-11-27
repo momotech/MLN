@@ -15,7 +15,6 @@ import org.luaj.vm2.Globals;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaUserdata;
 import org.luaj.vm2.LuaValue;
-import org.luaj.vm2.utils.DisposableIterator;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -72,7 +71,8 @@ public class ConvertUtils {
             case LuaValue.LUA_TLIGHTUSERDATA:
                 LuaUserdata ud = value.toUserdata();
                 Object jud = ud.getJavaUserdata();
-                return Translator.translateLuaToJava(ud, jud != null ? jud.getClass() : null);
+                Translator t = Translator.fromGlobals(ud.getGlobals());
+                return t.translateLuaToJava(ud, jud != null ? jud.getClass() : null);
         }
         return value;
     }
@@ -233,8 +233,9 @@ public class ConvertUtils {
         if (ret == null && value instanceof IUserdataHolder) {
             return ((IUserdataHolder) value).getUserdata();
         }
-        if (ret == null)
-            ret = Translator.translateJavaToLua(globals, value);
+        Translator t = Translator.fromGlobals(globals);
+        if (ret == null && t != null)
+            ret = t.translateJavaToLua(globals, value);
         return ret;
     }
 }

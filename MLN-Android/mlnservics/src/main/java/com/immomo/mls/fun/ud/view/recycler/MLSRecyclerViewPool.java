@@ -16,7 +16,7 @@ import android.util.SparseBooleanArray;
 public class MLSRecyclerViewPool extends RecyclerView.RecycledViewPool {
     private SparseBooleanArray setted = new SparseBooleanArray();
 
-    private int max = 8;
+    protected int max = 8;
     public MLSRecyclerViewPool(int max) {
         this.max = max;
     }

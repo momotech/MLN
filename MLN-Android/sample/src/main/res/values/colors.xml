@@ -7,4 +7,9 @@
     <color name="btn_color">#fff6f6f6</color>
     <color name="btn_color_pressed">#fff6f6f6</color>
     <color name="btn_color_border">#ffdcdcdc</color>
+    <color name="background_normal">#ffffff</color>
+    <color name="background_normal_ad">#fafafa</color>
+    <color name="background_normal_press">#e9e8eb</color>
+    <color name="background_normal_selected">#fffff2ab</color>
+    <color name="background_normal_ripple">#e9e8eb</color>
 </resources>

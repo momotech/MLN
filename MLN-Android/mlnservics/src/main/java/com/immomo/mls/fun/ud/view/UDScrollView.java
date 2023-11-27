@@ -18,6 +18,7 @@ import com.immomo.mls.base.ud.lv.ILViewGroup;
 import com.immomo.mls.fun.constants.MeasurementType;
 import com.immomo.mls.fun.constants.ScrollDirection;
 import com.immomo.mls.fun.other.Size;
+import com.immomo.mls.fun.ud.UDArray;
 import com.immomo.mls.fun.ud.UDPoint;
 import com.immomo.mls.fun.ud.UDSize;
 import com.immomo.mls.fun.ui.IScrollView;
@@ -25,6 +26,8 @@ import com.immomo.mls.fun.ui.LuaScrollViewContainer;
 import com.immomo.mls.util.DimenUtil;
 import com.immomo.mls.util.LuaViewUtil;
 
+import kotlin.Unit;
+import kotlin.jvm.functions.Function2;
 import org.luaj.vm2.LuaBoolean;
 import org.luaj.vm2.LuaFunction;
 import org.luaj.vm2.LuaNumber;
@@ -39,7 +42,7 @@ import static com.immomo.mls.fun.ud.view.IClipRadius.LEVEL_FORCE_NOTCLIP;
 /**
  * Created by XiongFangyu on 2018/8/3.
  */
-@LuaApiUsed
+@LuaApiUsed(ignoreTypeArgs = true)
 public class UDScrollView<V extends ViewGroup & IScrollView> extends UDViewGroup<V>
         implements IScrollView.OnScrollListener,IScrollView.touchActionListener,IScrollView.FlingListener, View.OnTouchListener {
     public static final String LUA_CLASS_NAME = "ScrollView";
@@ -78,7 +81,7 @@ public class UDScrollView<V extends ViewGroup & IScrollView> extends UDViewGroup
 
     Size mSize;
 
-    @LuaApiUsed
+    @LuaApiUsed(ignore = true)
     protected UDScrollView(long L, LuaValue[] v) {
         super(L, v);
     }
@@ -119,7 +122,12 @@ public class UDScrollView<V extends ViewGroup & IScrollView> extends UDViewGroup
             mSize = new Size(Size.WRAP_CONTENT, Size.WRAP_CONTENT);
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Float.class)
+            }, returns = @LuaApiUsed.Type(value = UDScrollView.class)),
+            @LuaApiUsed.Func(params = {}, returns = @LuaApiUsed.Type(Float.class))
+    })
     @Override
     public LuaValue[] width(LuaValue[] varargs) {
         initSize();
@@ -146,7 +154,12 @@ public class UDScrollView<V extends ViewGroup & IScrollView> extends UDViewGroup
         return super.width(varargs);
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Float.class)
+            }, returns = @LuaApiUsed.Type(value = UDScrollView.class)),
+            @LuaApiUsed.Func(params = {}, returns = @LuaApiUsed.Type(Float.class))
+    })
     @Override
     public LuaValue[] height(LuaValue[] varargs) {
         initSize();
@@ -190,7 +203,12 @@ public class UDScrollView<V extends ViewGroup & IScrollView> extends UDViewGroup
 
     //<editor-fold desc="API">
     //<editor-fold desc="Property">
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(UDSize.class)
+            }, returns = @LuaApiUsed.Type(value = UDScrollView.class)),
+            @LuaApiUsed.Func(params = {}, returns = @LuaApiUsed.Type(UDSize.class))
+    })
     public LuaValue[] contentSize(LuaValue[] p) {
         if (p.length == 1) {
             setContentSize(((UDSize) p[0]).getSize());
@@ -200,7 +218,12 @@ public class UDScrollView<V extends ViewGroup & IScrollView> extends UDViewGroup
         return varargsOf(new UDSize(globals, getView().getContentSize()));
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(UDPoint.class)
+            }, returns = @LuaApiUsed.Type(value = UDScrollView.class)),
+            @LuaApiUsed.Func(params = {}, returns = @LuaApiUsed.Type(UDPoint.class))
+    })
     public LuaValue[] contentOffset(LuaValue[] p) {
         if (p.length == 1) {
             getView().setContentOffset(((UDPoint) p[0]).getPoint());
@@ -210,7 +233,12 @@ public class UDScrollView<V extends ViewGroup & IScrollView> extends UDViewGroup
         return varargsOf(new UDPoint(globals, getView().getContentOffset()));
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Boolean.class)
+            }, returns = @LuaApiUsed.Type(value = UDScrollView.class)),
+            @LuaApiUsed.Func(params = {}, returns = @LuaApiUsed.Type(Boolean.class))
+    })
     public LuaValue[] scrollEnabled(LuaValue[] p) {
         if (p.length == 1) {
             getView().setEnabled(p[0].toBoolean());
@@ -219,7 +247,12 @@ public class UDScrollView<V extends ViewGroup & IScrollView> extends UDViewGroup
         return rBoolean(getView().isEnabled());
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Boolean.class)
+            }, returns = @LuaApiUsed.Type(value = UDScrollView.class)),
+            @LuaApiUsed.Func(params = {}, returns = @LuaApiUsed.Type(Boolean.class))
+    })
     public LuaValue[] showsHorizontalScrollIndicator(LuaValue[] p) {
         if (p.length == 1) {
             getView().setHorizontalScrollBarEnabled(p[0].toBoolean());
@@ -228,7 +261,12 @@ public class UDScrollView<V extends ViewGroup & IScrollView> extends UDViewGroup
         return rBoolean(getView().isHorizontalScrollBarEnabled());
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Boolean.class)
+            }, returns = @LuaApiUsed.Type(value = UDScrollView.class)),
+            @LuaApiUsed.Func(params = {}, returns = @LuaApiUsed.Type(Boolean.class))
+    })
     public LuaValue[] showsVerticalScrollIndicator(LuaValue[] p) {
         if (p.length == 1) {
             getView().setVerticalScrollBarEnabled(p[0].toBoolean());
@@ -237,28 +275,32 @@ public class UDScrollView<V extends ViewGroup & IScrollView> extends UDViewGroup
         return rBoolean(getView().isVerticalScrollBarEnabled());
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Boolean.class)
+            }, returns = @LuaApiUsed.Type(value = UDScrollView.class)),
+    })
     public LuaValue[] setScrollEnable(LuaValue[] p) {
         getView().setScrollEnable(p[0].toBoolean());
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed(ignore = true)
     public LuaValue[] i_bounces(LuaValue[] bounces) {
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed(ignore = true)
     public LuaValue[] i_bounceHorizontal(LuaValue[] bounces) {
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed(ignore = true)
     public LuaValue[] i_bounceVertical(LuaValue[] bounces) {
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed(ignore = true)
     public LuaValue[] i_pagingEnabled(LuaValue[] bounces) {
         return null;
     }
@@ -289,7 +331,13 @@ public class UDScrollView<V extends ViewGroup & IScrollView> extends UDViewGroup
     }
     //<editor-fold desc="Method">
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = Function2.class, typeArgs = {
+                            Integer.class, Integer.class, Unit.class
+                    })
+            }, returns = @LuaApiUsed.Type(value = UDScrollView.class)),
+    })
     public LuaValue[] setScrollBeginCallback(LuaValue[] p) {
         if (scrollBeginCallback != null)
             scrollBeginCallback.destroy();
@@ -299,7 +347,13 @@ public class UDScrollView<V extends ViewGroup & IScrollView> extends UDViewGroup
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = Function2.class, typeArgs = {
+                            Integer.class, Integer.class, Unit.class
+                    })
+            }, returns = @LuaApiUsed.Type(value = UDScrollView.class)),
+    })
     public LuaValue[] setScrollingCallback(LuaValue[] p) {
         if (scrollingCallback != null)
             scrollingCallback.destroy();
@@ -309,7 +363,13 @@ public class UDScrollView<V extends ViewGroup & IScrollView> extends UDViewGroup
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = Function2.class, typeArgs = {
+                            Integer.class, Integer.class, Unit.class
+                    })
+            }, returns = @LuaApiUsed.Type(value = UDScrollView.class)),
+    })
     public LuaValue[] setScrollEndCallback(LuaValue[] p) {
         if (scrollEndCallback != null)
             scrollEndCallback.destroy();
@@ -319,20 +379,34 @@ public class UDScrollView<V extends ViewGroup & IScrollView> extends UDViewGroup
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(UDArray.class)
+            }, returns = @LuaApiUsed.Type(value = UDScrollView.class)),
+    })
     public LuaValue[] setContentInset(LuaValue[] v) {
         destroyAllParams(v);
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(UDPoint.class)
+            }, returns = @LuaApiUsed.Type(value = UDScrollView.class)),
+    })
     public LuaValue[] setOffsetWithAnim(LuaValue[] p) {
         getView().setOffsetWithAnim(((UDPoint) p[0]).getPoint());
         p[0].destroy();
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = Function2.class, typeArgs = {
+                            Integer.class, Integer.class, Unit.class
+                    })
+            }, returns = @LuaApiUsed.Type(value = UDScrollView.class)),
+    })
     public LuaValue[] setEndDraggingCallback(LuaValue[] p) {
         if (endDraggingCallback != null)
             endDraggingCallback.destroy();
@@ -343,7 +417,13 @@ public class UDScrollView<V extends ViewGroup & IScrollView> extends UDViewGroup
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = Function2.class, typeArgs = {
+                            Integer.class, Integer.class, Unit.class
+                    })
+            }, returns = @LuaApiUsed.Type(value = UDScrollView.class)),
+    })
     public LuaValue[] touchBegin(LuaValue[] p) {
         if (touchDownCallback != null)
             touchDownCallback.destroy();
@@ -354,7 +434,13 @@ public class UDScrollView<V extends ViewGroup & IScrollView> extends UDViewGroup
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = Function2.class, typeArgs = {
+                            Integer.class, Integer.class, Unit.class
+                    })
+            }, returns = @LuaApiUsed.Type(value = UDScrollView.class)),
+    })
     public LuaValue[] setStartDeceleratingCallback(LuaValue[] p) {
         if (startDeceleratingCallback != null)
             startDeceleratingCallback.destroy();
@@ -365,12 +451,15 @@ public class UDScrollView<V extends ViewGroup & IScrollView> extends UDViewGroup
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed(ignore = true)
     public LuaValue[] getContentInset(LuaValue[] p) {
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(value = UDScrollView.class)),
+    })
     public LuaValue[] removeAllSubviews(LuaValue[] p) {
         ViewGroup v = getView().getContentView();
         if (v == null)
@@ -379,7 +468,11 @@ public class UDScrollView<V extends ViewGroup & IScrollView> extends UDViewGroup
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Float.class)
+            }, returns = @LuaApiUsed.Type(value = UDScrollView.class)),
+    })
     public LuaValue[] a_flingSpeed(LuaValue[] p) {
         ViewGroup v = getView().getContentView();
         if (v == null)
@@ -389,7 +482,11 @@ public class UDScrollView<V extends ViewGroup & IScrollView> extends UDViewGroup
     }
 
     @Override
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Boolean.class)
+            }, returns = @LuaApiUsed.Type(value = UDScrollView.class)),
+    })
     public LuaValue[] clipToBounds(LuaValue[] p) {
         boolean clip = p[0].toBoolean();
         view.setClipToPadding(clip);

@@ -12,6 +12,8 @@ import com.immomo.mls.annotation.LuaClass;
 import com.immomo.mls.utils.MainThreadExecutor;
 import com.immomo.mls.wrapper.callback.IVoidCallback;
 
+import kotlin.Unit;
+import kotlin.jvm.functions.Function0;
 import org.luaj.vm2.Globals;
 import org.luaj.vm2.LuaFunction;
 import org.luaj.vm2.LuaValue;
@@ -22,9 +24,9 @@ import java.util.List;
 /**
  * Created by XiongFangyu on 2018/7/31.
  */
-@LuaClass
+@LuaClass(name = "TimeManager", isSingleton = true)
 public class SITimeManager {
-    public static final String KEY = "TimeManager";
+    public static final String LUA_CLASS_NAME = "TimeManager";
 
     private List<IntervalTask> tasks;
     private final Object tag;
@@ -37,7 +39,12 @@ public class SITimeManager {
         clearInterval();
     }
 
-    @LuaBridge
+    @LuaBridge(value = {
+            @LuaBridge.Func(params = {
+                    @LuaBridge.Type(name = "fun", value = Function0.class, typeArgs = {Unit.class}),
+                    @LuaBridge.Type(name = "delay", value = Float.class)
+            })
+    })
     public void setTimeOut(final IVoidCallback fun, float delay) {
         MainThreadExecutor.postDelayed(getTag(), new Runnable() {
             @Override
@@ -47,7 +54,12 @@ public class SITimeManager {
         }, (long) (delay * 1000));
     }
 
-    @LuaBridge
+    @LuaBridge(value = {
+            @LuaBridge.Func(params = {
+                    @LuaBridge.Type(name = "fun", value = Function0.class, typeArgs = {Unit.class}),
+                    @LuaBridge.Type(name = "delay", value = Float.class)
+            })
+    })
     public void setInterval(final LuaFunction fun, float timeInterval) {
         long t = (long) (timeInterval * 1000);
         IntervalTask task = new IntervalTask(fun, t);

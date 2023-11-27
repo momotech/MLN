@@ -76,6 +76,7 @@ public interface Template {
             "\n" +
             "#define PRE if (!lua_isuserdata(L, 1)) {                            \\\n" +
             "        lua_pushstring(L, \"use ':' instead of '.' to call method!!\");\\\n" +
+            "        setErrorType(L, lua);                                       \\\n" +
             "        lua_error(L);                                               \\\n" +
             "        return 1;                                                   \\\n" +
             "    }                                                               \\\n" +
@@ -85,6 +86,7 @@ public interface Template {
             "            jobject jobj = getUserdata(env, L, ud);                 \\\n" +
             "            if (!jobj) {                                            \\\n" +
             "                lua_pushfstring(L, \"get java object from java failed, id: %d\", ud->id); \\\n" +
+            "                setErrorType(L, bridge);                            \\\n" +
             "                lua_error(L);                                       \\\n" +
             "                return 1;                                           \\\n" +
             "            }\n" +
@@ -99,6 +101,7 @@ public interface Template {
             "            getEnv(&env);                                                       \\\n" +
             "            if (!lua_istable(L, 1)) {                                           \\\n" +
             "                lua_pushstring(L, \"use ':' instead of '.' to call method!!\");   \\\n" +
+            "                setErrorType(L, lua);                                           \\\n" +
             "                return lua_error(L);                                            \\\n" +
             "            }\n" +
             "\n" +
@@ -416,6 +419,7 @@ public interface Template {
 
     String ConstructorParamsCountError =
             "        lua_pushstring(L, LUA_CLASS_NAME \"构造函数有: %s，当前参数个数不支持任意一种\");\n" +
+            "        setErrorType(L, bridge);\n" +
             "        return lua_error(L);\n";
 
     /**
@@ -425,4 +429,12 @@ public interface Template {
             BLANK + "dumpParams(L, 2);\n" +
             BLANK + "lua_pushfstring(L, LUA_CLASS_NAME \".%s函数%d个参数有: %s ，当前参数不匹配 (%%s)\", lua_tostring(L, -1));\n";
     String ReturnLuaError = "return lua_error(L);\n";
+    String SetErrorType = "setErrorType(L, %s);\n ";
+
+    enum ErrorType {
+        no,
+        bridge,
+        require,
+        lua
+    }
 }

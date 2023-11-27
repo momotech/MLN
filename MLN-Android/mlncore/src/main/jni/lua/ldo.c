@@ -625,6 +625,9 @@ struct SParser {  /* data to `f_parser' */
   Dyndata dyd;  /* dynamic structures used by the parser */
   const char *mode;
   const char *name;
+#ifdef LOAD_TOKEN
+  TokenListenData *ud;
+#endif
 };
 
 
@@ -648,7 +651,11 @@ static void f_parser (lua_State *L, void *ud) {
   }
   else {
     checkmode(L, p->mode, "text");
+#ifdef LOAD_TOKEN
+    cl = luaY_parser(L, p->z, &p->buff, &p->dyd, p->name, c, p->ud);
+#else
     cl = luaY_parser(L, p->z, &p->buff, &p->dyd, p->name, c);
+#endif
   }
   lua_assert(cl->l.nupvalues == cl->l.p->sizeupvalues);
   for (i = 0; i < cl->l.nupvalues; i++) {  /* initialize upvalues */
@@ -659,8 +666,13 @@ static void f_parser (lua_State *L, void *ud) {
 }
 
 
+#ifdef LOAD_TOKEN
+int luaD_protectedparser (lua_State *L, ZIO *z, const char *name,
+                                        const char *mode, TokenListenData *ud) {
+#else
 int luaD_protectedparser (lua_State *L, ZIO *z, const char *name,
                                         const char *mode) {
+#endif
   struct SParser p;
   int status;
   L->nny++;  /* cannot yield during parsing */
@@ -668,6 +680,9 @@ int luaD_protectedparser (lua_State *L, ZIO *z, const char *name,
   p.dyd.actvar.arr = NULL; p.dyd.actvar.size = 0;
   p.dyd.gt.arr = NULL; p.dyd.gt.size = 0;
   p.dyd.label.arr = NULL; p.dyd.label.size = 0;
+#ifdef LOAD_TOKEN
+  p.ud = ud;
+#endif
   luaZ_initbuffer(L, &p.buff);
   status = luaD_pcall(L, f_parser, &p, savestack(L, L->top), L->errfunc);
   luaZ_freebuffer(L, &p.buff);

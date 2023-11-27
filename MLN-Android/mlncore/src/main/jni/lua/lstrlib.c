@@ -829,6 +829,12 @@ static int str_gsub (lua_State *L) {
 */
 #define MAX_FORMAT	(sizeof(FLAGS) + sizeof(LUA_INTFRMLEN) + 10)
 
+#ifdef CNTRL
+/**
+* 系统iscntrl有问题，有些汉字不能识别，使用最原始的判断方法，可能出问题
+*/
+#define __iscntrl(c) (((c) > 0 && (c) < 0x1f) || (c) == 0x7f)
+#endif
 
 static void addquoted (lua_State *L, luaL_Buffer *b, int arg) {
   size_t l;
@@ -839,7 +845,11 @@ static void addquoted (lua_State *L, luaL_Buffer *b, int arg) {
       luaL_addchar(b, '\\');
       luaL_addchar(b, *s);
     }
+#ifdef CNTRL
+    else if (*s == '\0' || __iscntrl(uchar(*s))) {
+#else
     else if (*s == '\0' || iscntrl(uchar(*s))) {
+#endif
       char buff[10];
       if (!isdigit(uchar(*(s+1))))
         sprintf(buff, "\\%d", (int)uchar(*s));

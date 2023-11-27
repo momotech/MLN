@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.4.1)
 
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/../libs/${ANDROID_ABI})
+set(LINK_LIBRARY_DIRECTORY ${PROJECT_SOURCE_DIR}/../linkLibs/${ANDROID_ABI}/)
 
 #添加子目录，将自动找到子目录中的CMakeLists.txt
 ADD_SUBDIRECTORY(${CMAKE_CURRENT_SOURCE_DIR}/bitmap)

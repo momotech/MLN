@@ -26,14 +26,16 @@ import org.luaj.vm2.utils.LuaApiUsed;
 /**
  * Created by XiongFangyu on 2018/7/31.
  */
-@LuaApiUsed
+@LuaApiUsed(ignoreTypeArgs = true)
 public class UDZStack<V extends ZStack & ILViewGroup> extends UDBaseStack<V> {
     public static final String LUA_CLASS_NAME = "ZStack";
     public static final String[] methods = {
         "childGravity",
     };
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(returns = @LuaApiUsed.Type(UDVStack.class)),
+    })
     protected UDZStack(long L, LuaValue[] v) {
         super(L, v);
     }
@@ -44,7 +46,11 @@ public class UDZStack<V extends ZStack & ILViewGroup> extends UDBaseStack<V> {
     }
 
     //<editor-fold desc="API">
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(
+                    params = {@LuaApiUsed.Type(Integer.class)},
+                    returns = @LuaApiUsed.Type(UDVStack.class)),
+    })
     public LuaValue[] childGravity(LuaValue[] var) {
         int value = var.length > 0 ? var[0].toInt() : Gravity.START | Gravity.TOP;
         getView().setGravity(value);

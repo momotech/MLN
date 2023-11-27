@@ -18,7 +18,7 @@ import java.lang.annotation.Target;
  * 注解在需要提供给lua调用的方法上
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.METHOD, ElementType.FIELD})
+@Target({ElementType.METHOD, ElementType.FIELD, ElementType.CONSTRUCTOR})
 public @interface LuaBridge {
     /**
      * 别名，有别名用别名
@@ -44,4 +44,25 @@ public @interface LuaBridge {
      * 若不设置，将通过alias前加'get'寻找
      */
     String getterIs() default "";
+
+
+//    若不设置则取默认参数
+    Func[] value() default {};
+    @interface Func {
+        String name() default "";
+        Type[] params() default {};
+        Type[] returns() default {};
+        String comment() default "";
+    }
+
+    @interface Type {
+        String name() default "";
+        Class value() default Object.class;
+        //目前仅支持一层泛型
+        Class[] typeArgs() default {};
+
+        boolean[] typeArgsNullable() default {};
+
+        boolean nullable() default false;
+    }
 }

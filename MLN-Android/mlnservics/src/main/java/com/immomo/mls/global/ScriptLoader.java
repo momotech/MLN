@@ -12,7 +12,7 @@ import android.os.Looper;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.immomo.mls.fun.globals.UDLuaView;
+import com.immomo.mlncore.MLNCore;
 import com.immomo.mls.util.CompileUtils;
 import com.immomo.mls.utils.AssertUtils;
 import com.immomo.mls.utils.GlobalStateUtils;
@@ -37,7 +37,8 @@ public class ScriptLoader {
 
     public static void loadScriptBundle(@NonNull final ScriptBundle scriptBundle,
                                         @NonNull final Globals globals,
-                                        @Nullable final Callback callback) {
+                                        @Nullable final Callback callback,
+                                        String tag) {
         AssertUtils.assertNullForce(scriptBundle);
         AssertUtils.assertNullForce(globals);
         final ScriptFile scriptFile = scriptBundle.getMain();
@@ -45,19 +46,21 @@ public class ScriptLoader {
         try {
             CompileUtils.compile(scriptBundle, globals);
         } catch (ScriptLoadException e) {
+            MLNCore.hookLuaError(e, globals);
             callbackExecuted(callback, Callback.COMPILE_FAILED, e.getMsg());
             return;
         }
-        GlobalStateUtils.onScriptCompiled(scriptBundle.getUrl());
-        execute(scriptBundle, globals, callback);
+        GlobalStateUtils.onScriptCompiled(scriptBundle.getUrl(), tag);
+        execute(scriptBundle, globals, callback, tag);
     }
 
     private static void execute(@NonNull ScriptBundle scriptBundle,
                                 @NonNull Globals globals,
-                                @Nullable Callback callback) {
+                                @Nullable Callback callback,
+                                String tag) {
         if (globals.isDestroyed())
             return;
-        GlobalStateUtils.onScriptPrepared(scriptBundle.getUrl());
+        GlobalStateUtils.onScriptPrepared(scriptBundle.getUrl(), tag);
         if (globals.callLoadedData()) {
             callbackExecuted(callback, Callback.SUCCESS, null);
         } else {

@@ -18,9 +18,13 @@ import com.immomo.mls.LuaViewManager;
 import com.immomo.mls.annotation.BridgeType;
 import com.immomo.mls.annotation.LuaBridge;
 import com.immomo.mls.annotation.LuaClass;
+import com.immomo.mls.fun.ud.view.UDView;
 import com.immomo.mls.util.LuaViewUtil;
 import com.immomo.mls.utils.LVCallback;
 
+import kotlin.Unit;
+import kotlin.jvm.functions.Function0;
+import kotlin.jvm.functions.Function1;
 import org.luaj.vm2.Globals;
 
 /**
@@ -63,7 +67,10 @@ public class LuaDialog extends AppCompatDialog {
     }
 
     //<editor-fold desc="API">
-    @LuaBridge
+    @LuaBridge(value = {
+            @LuaBridge.Func(params = {
+                    @LuaBridge.Type(value = UDView.class)})
+    })
     public void setContent(View v) {
         contentView = v;
     }
@@ -80,12 +87,18 @@ public class LuaDialog extends AppCompatDialog {
         return mCancelable;
     }
 
-    @LuaBridge
+    @LuaBridge(value = {
+            @LuaBridge.Func(params = {
+                    @LuaBridge.Type(value = Function0.class, typeArgs = {Unit.class})})
+    })
     public void dialogAppear(LVCallback dialogAppear) {
         this.dialogAppear = dialogAppear;
     }
 
-    @LuaBridge
+    @LuaBridge(value = {
+            @LuaBridge.Func(params = {
+                    @LuaBridge.Type(value = Function0.class, typeArgs = {Unit.class})})
+    })
     public void dialogDisAppear(LVCallback dialogDisAppear) {
         this.dialogDisAppear = dialogDisAppear;
     }

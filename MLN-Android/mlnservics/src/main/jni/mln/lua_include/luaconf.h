@@ -204,7 +204,7 @@
 #define LUA_IDSIZE	60
 
 
-#include "../jlog.h"
+#include "jlog.h"
 /* print a string */
 #if !defined(luai_writestring)
 #define luai_writestring(L, s,l)   JLOGI(L, s)

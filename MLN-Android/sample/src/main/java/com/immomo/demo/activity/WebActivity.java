@@ -17,7 +17,7 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
-import com.immomo.mln.R;
+import com.immomo.demo.R;
 
 
 /**

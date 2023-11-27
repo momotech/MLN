@@ -17,6 +17,7 @@ public interface ScriptReader {
     /**
      * 根据信息开始寻找或读取脚本
      * 通过{@link ScriptInfo#callback}回调结果
+     *
      * @see ScriptInfo
      */
     void loadScriptImpl(final ScriptInfo info);

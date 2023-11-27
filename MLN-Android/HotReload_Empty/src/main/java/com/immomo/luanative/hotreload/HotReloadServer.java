@@ -58,11 +58,6 @@ public class HotReloadServer implements IHotReloadServer {
     public void startNetClient(String ip, int port) {
     }
 
-    @Override
-    public void onReport(String summaryPath, String detailPath) {
-
-    }
-
     public void setSerial(String serial) {}
 
     public String getSerial() {

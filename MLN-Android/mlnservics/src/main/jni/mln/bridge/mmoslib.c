@@ -11,12 +11,12 @@
 
 #include "mmoslib.h"
 
-#ifdef __APPLE__
-#include "mil_lauxlib.h"
-#include <sys/time.h>
-#else
+#ifdef JAVA_ENV
 #include "lauxlib.h"
 #include <time.h>
+#else
+#include "mil_lauxlib.h"
+#include <sys/time.h>
 #endif
 
 #define LUA_MMOSLIBNAME "mmos"

@@ -2,13 +2,13 @@
 # 基础版本号
 
 function changeSettingBefore {
-    sed -i '' "s/\(.*\)/\/\/\1/g" ../settings.gradle
+    sed -i '' "s/\(include.*\)/\/\/\1/g" ../settings.gradle
 
-    sed -i '' "s/\/*\(.*mlncore\)/\1/g" ../settings.gradle
+    sed -i '' "s/\/*\(include.*mlncore\)/\1/g" ../settings.gradle
 }
 
 function changeSettingAfter {
-    sed -i '' "s/\/*\(.*\)/\1/g" ../settings.gradle
+    sed -i '' "s/\/*\(include.*\)/\1/g" ../settings.gradle
 }
 
 function closeNativeInfo() {
@@ -27,7 +27,7 @@ changeSettingBefore
 closeNativeInfo
 
 echo '--------------task:bintrayUpload--------------'
-./../gradlew :mlncore:bintrayUpload
+./../gradlew :mlncore:publish
 ret=$?
 
 changeSettingAfter

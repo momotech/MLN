@@ -7,6 +7,7 @@
   */
 package org.luaj.vm2.jse;
 
+import com.immomo.mls.fun.ud.view.UDLabel;
 import org.luaj.vm2.Globals;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
@@ -23,11 +24,10 @@ import java.util.List;
 /**
  * Created by Xiong.Fangyu on 2019-06-28
  */
-@LuaApiUsed
+@LuaApiUsed(ignore = true)
 public class Luajava {
     public static final String NAME = "luajava";
 
-    @LuaApiUsed
     public static LuaValue[] __index(long L, String name, LuaValue[] params) {
         try {
             LuaValue ret = null;

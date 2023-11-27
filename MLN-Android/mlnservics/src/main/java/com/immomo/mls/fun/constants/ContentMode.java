@@ -25,4 +25,12 @@ public interface ContentMode {
     int SCALE_ASPECT_FILL = ImageView.ScaleType.CENTER_CROP.ordinal();
     @Constant
     int CENTER = ImageView.ScaleType.CENTER.ordinal();
+    @Constant
+    int TOP = 9;
+    @Constant
+    int BOTTOM = 10;
+    @Constant
+    int LEFT = 11;
+    @Constant
+    int RIGHT = 12;
 }

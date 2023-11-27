@@ -464,12 +464,22 @@ public class LuaViewPager extends BorderRadiusViewPager implements IViewPager<UD
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
-        return scrollable && super.onInterceptTouchEvent(ev);
+        try {
+            return scrollable && super.onInterceptTouchEvent(ev);
+        } catch (IllegalArgumentException ex) {
+            ex.printStackTrace();
+        }
+        return false;
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
-        return scrollable && super.onTouchEvent(ev);
+        try {
+            return scrollable && super.onTouchEvent(ev);
+        } catch (IllegalArgumentException ex) {
+            ex.printStackTrace();
+        }
+        return false;
     }
 
     // ViewPager嵌套时，当子Viewpager不可以滚动后，滑动子Viewpager 相当于滑动父ViewPager

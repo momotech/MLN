@@ -7,6 +7,7 @@
   */
 package com.immomo.mls.weight;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Canvas;
@@ -23,6 +24,7 @@ import android.widget.ImageView;
 /**
  * Created by XiongFangyu on 2018/6/28.
  */
+@SuppressLint("AppCompatCustomView")
 public class CircleImageView extends ImageView {
 
     private static final int KEY_SHADOW_COLOR = 0x1E000000;
@@ -45,34 +47,10 @@ public class CircleImageView extends ImageView {
         mShadowRadius = (int) (density * SHADOW_RADIUS);
 
         ShapeDrawable circle;
-        if (elevationSupported()) {
-            circle = new ShapeDrawable(new OvalShape());
-            setElevation(SHADOW_ELEVATION * density);
-        } else {
-            OvalShape oval = new OvalShadow(mShadowRadius);
-            circle = new ShapeDrawable(oval);
-            setLayerType(LAYER_TYPE_SOFTWARE, circle.getPaint());
-            circle.getPaint().setShadowLayer(mShadowRadius,
-                    shadowXOffset, shadowYOffset, KEY_SHADOW_COLOR);
-            final int padding = mShadowRadius;
-            // set padding so the inner image sits correctly within the shadow.
-            setPadding(padding, padding, padding, padding);
-        }
+        circle = new ShapeDrawable(new OvalShape());
+        setElevation(SHADOW_ELEVATION * density);
         circle.getPaint().setColor(color);
-        setBackgroundDrawable(circle);
-    }
-
-    private boolean elevationSupported() {
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
-    }
-
-    @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        if (!elevationSupported()) {
-            setMeasuredDimension(getMeasuredWidth() + mShadowRadius * 2,
-                    getMeasuredHeight() + mShadowRadius * 2);
-        }
+        setBackground(circle);
     }
 
     public void setAnimationListener(Animation.AnimationListener listener) {

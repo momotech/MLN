@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.immomo.mln">
+    package="com.immomo.demo">
 
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -18,7 +18,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
-        android:name="com.immomo.demo.App">
+        android:name=".App">
 
         <meta-data
             android:name="android.max_aspect"
@@ -34,13 +34,13 @@
             android:name="com.immomo.demo.provider.GlideConfiguration"
             android:value="GlideModule"/>
 
-        <activity android:name="com.immomo.demo.activity.AssetsChooserActivity"/>
+        <activity android:name=".activity.AssetsChooserActivity"/>
         <activity
-            android:name="com.immomo.demo.activity.WebActivity"
+            android:name=".activity.WebActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
         <activity android:name="com.immomo.mls.activity.LuaViewActivity"/>
-        <activity android:name="com.immomo.demo.activity.MainActivity"
+        <activity android:name=".activity.MainActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

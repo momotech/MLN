@@ -13,6 +13,9 @@ import com.immomo.mls.annotation.LuaBridge;
 import com.immomo.mls.annotation.LuaClass;
 import com.immomo.mls.utils.LVCallback;
 
+import kotlin.Unit;
+import kotlin.jvm.functions.Function0;
+import kotlin.jvm.functions.Function1;
 import org.luaj.vm2.Globals;
 import org.luaj.vm2.LuaValue;
 
@@ -24,7 +27,7 @@ import java.util.Map;
 /**
  * Created by XiongFangyu on 2018/7/2.
  */
-@LuaClass
+@LuaClass(name = "GlobalEvent", isSingleton = true)
 public class SIGlobalEvent {
     public static final String LUA_CLASS_NAME = "GlobalEvent";
 
@@ -88,7 +91,12 @@ public class SIGlobalEvent {
     //</editor-fold>
 
     @Deprecated
-    @LuaBridge
+    @LuaBridge(value = {
+            @LuaBridge.Func(params = {
+                    @LuaBridge.Type(name = "event", value = String.class),
+                    @LuaBridge.Type(value = Function1.class, typeArgs = {Map.class, Unit.class})
+            })
+    })
     public void addEventListener(String event, LVCallback callback) {
         MLSGlobalEventAdapter adapter = MLSAdapterContainer.getGlobalEventAdapter();
         if (adapter != null) {
@@ -103,7 +111,12 @@ public class SIGlobalEvent {
      * @param event
      * @param callback
      */
-    @LuaBridge
+    @LuaBridge(value = {
+            @LuaBridge.Func(params = {
+                    @LuaBridge.Type(name = "event", value = String.class),
+                    @LuaBridge.Type(value = Function1.class, typeArgs = {Map.class, Unit.class})
+            })
+    })
     public void addListener(String event, LVCallback callback) {
         MLSGlobalEventAdapter adapter = MLSAdapterContainer.getGlobalEventAdapter();
         if (adapter != null) {

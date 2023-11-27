@@ -9,7 +9,7 @@ package com.immomo.mls.fun.weight;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 
 import com.immomo.mls.MLSAdapterContainer;
@@ -19,7 +19,6 @@ import com.immomo.mls.fun.constants.LoadingState;
 import com.immomo.mls.fun.ud.view.recycler.MLSRecyclerViewPool;
 import com.immomo.mls.fun.ui.OnLoadListener;
 import com.immomo.mls.provider.ImageProvider;
-import com.immomo.mls.util.AndroidUtil;
 import com.immomo.mls.weight.load.ILoadViewDelegete;
 import com.immomo.mls.weight.load.ScrollableView;
 
@@ -35,6 +34,7 @@ public class MLSRecyclerView extends RecyclerView implements ScrollableView {
     private boolean scrolled = false;
     private boolean footerShow = false;
     private boolean disallowFling = false;
+    private boolean fixScrollConflict = false;
     private ILoadViewDelegete loadViewDelegete;
     private OnLoadListener onLoadListener;
     private int[] staggeredGridCache = null;
@@ -312,6 +312,13 @@ public class MLSRecyclerView extends RecyclerView implements ScrollableView {
     }
 
     @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        if (cycleCallback != null)
+            cycleCallback.onAttached();
+    }
+
+    @Override
     protected void onDetachedFromWindow() {
         if (cycleCallback != null)
             cycleCallback.onDetached();
@@ -333,5 +340,36 @@ public class MLSRecyclerView extends RecyclerView implements ScrollableView {
         } else {
             return super.fling(velocityX, velocityY);
         }
+    }
+
+    public boolean isFixScrollConflict() {
+        return fixScrollConflict;
+    }
+
+    public void setFixScrollConflict(boolean fixScrollConflict) {
+        this.fixScrollConflict = fixScrollConflict;
+    }
+
+    private float downX = 0f;
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        if (fixScrollConflict) {
+            if (ev.getAction() == MotionEvent.ACTION_DOWN) {
+                getParent().requestDisallowInterceptTouchEvent(true);
+                downX = ev.getX();
+            } else if (ev.getAction() == MotionEvent.ACTION_MOVE) {
+                if ((!canScrollHorizontally(1) && ev.getX() < downX)
+                        || (!canScrollHorizontally(-1) && ev.getX() > downX)
+                ) {
+                    getParent().requestDisallowInterceptTouchEvent(false);
+                } else {
+                    getParent().requestDisallowInterceptTouchEvent(true);
+                }
+            } else if (ev.getAction() == MotionEvent.ACTION_UP || ev.getAction() == MotionEvent.ACTION_CANCEL) {
+                downX = 0f;
+            }
+        }
+        return super.dispatchTouchEvent(ev);
     }
 }

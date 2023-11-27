@@ -6,7 +6,7 @@
  * For the full copyright and license information,please view the LICENSE file in the root directory of this source tree.
  */
 //
-// Created by Generator on 2020-10-16
+// Created by Generator on 2021-03-03
 //
 
 #include <jni.h>
@@ -20,6 +20,7 @@
 
 #define PRE if (!lua_isuserdata(L, 1)) {                            \
         lua_pushstring(L, "use ':' instead of '.' to call method!!");\
+        setErrorType(L, lua);                                       \
         lua_error(L);                                               \
         return 1;                                                   \
     }                                                               \
@@ -29,6 +30,7 @@
             jobject jobj = getUserdata(env, L, ud);                 \
             if (!jobj) {                                            \
                 lua_pushfstring(L, "get java object from java failed, id: %d", ud->id); \
+                setErrorType(L, bridge);                            \
                 lua_error(L);                                       \
                 return 1;                                           \
             }
@@ -255,8 +257,10 @@ static int _put(lua_State *L) {
             int p2 = lua_toboolean(L, 3);
             (*env)->CallVoidMethod(env, jobj, put4ID, (jdouble)p1, (jboolean)p2);
             if (catchJavaException(env, L, LUA_CLASS_NAME ".put")) {
+                FREE(env, jobj);
                 return lua_error(L);
             }
+            FREE(env, jobj);
             lua_settop(L, 1);
 #ifdef STATISTIC_PERFORMANCE
             gettimeofday(&end, NULL);
@@ -269,8 +273,10 @@ static int _put(lua_State *L) {
             lua_Number p2 = luaL_checknumber(L, 3);
             (*env)->CallVoidMethod(env, jobj, put5ID, (jdouble)p1, (jdouble)p2);
             if (catchJavaException(env, L, LUA_CLASS_NAME ".put")) {
+                FREE(env, jobj);
                 return lua_error(L);
             }
+            FREE(env, jobj);
             lua_settop(L, 1);
 #ifdef STATISTIC_PERFORMANCE
             gettimeofday(&end, NULL);
@@ -284,9 +290,11 @@ static int _put(lua_State *L) {
             (*env)->CallVoidMethod(env, jobj, put6ID, (jdouble)p1, p2);
             if (catchJavaException(env, L, LUA_CLASS_NAME ".put")) {
                 FREE(env, p2);
+                FREE(env, jobj);
                 return lua_error(L);
             }
             FREE(env, p2);
+            FREE(env, jobj);
             lua_settop(L, 1);
 #ifdef STATISTIC_PERFORMANCE
             gettimeofday(&end, NULL);
@@ -300,9 +308,11 @@ static int _put(lua_State *L) {
             (*env)->CallVoidMethod(env, jobj, put7ID, (jdouble)p1, p2);
             if (catchJavaException(env, L, LUA_CLASS_NAME ".put")) {
                 FREE(env, p2);
+                FREE(env, jobj);
                 return lua_error(L);
             }
             FREE(env, p2);
+            FREE(env, jobj);
             lua_settop(L, 1);
 #ifdef STATISTIC_PERFORMANCE
             gettimeofday(&end, NULL);
@@ -316,9 +326,11 @@ static int _put(lua_State *L) {
             (*env)->CallVoidMethod(env, jobj, put0ID, p1, (jboolean)p2);
             if (catchJavaException(env, L, LUA_CLASS_NAME ".put")) {
                 FREE(env, p1);
+                FREE(env, jobj);
                 return lua_error(L);
             }
             FREE(env, p1);
+            FREE(env, jobj);
             lua_settop(L, 1);
 #ifdef STATISTIC_PERFORMANCE
             gettimeofday(&end, NULL);
@@ -332,9 +344,11 @@ static int _put(lua_State *L) {
             (*env)->CallVoidMethod(env, jobj, put1ID, p1, (jdouble)p2);
             if (catchJavaException(env, L, LUA_CLASS_NAME ".put")) {
                 FREE(env, p1);
+                FREE(env, jobj);
                 return lua_error(L);
             }
             FREE(env, p1);
+            FREE(env, jobj);
             lua_settop(L, 1);
 #ifdef STATISTIC_PERFORMANCE
             gettimeofday(&end, NULL);
@@ -349,10 +363,12 @@ static int _put(lua_State *L) {
             if (catchJavaException(env, L, LUA_CLASS_NAME ".put")) {
                 FREE(env, p1);
                 FREE(env, p2);
+                FREE(env, jobj);
                 return lua_error(L);
             }
             FREE(env, p1);
             FREE(env, p2);
+            FREE(env, jobj);
             lua_settop(L, 1);
 #ifdef STATISTIC_PERFORMANCE
             gettimeofday(&end, NULL);
@@ -367,10 +383,12 @@ static int _put(lua_State *L) {
             if (catchJavaException(env, L, LUA_CLASS_NAME ".put")) {
                 FREE(env, p1);
                 FREE(env, p2);
+                FREE(env, jobj);
                 return lua_error(L);
             }
             FREE(env, p1);
             FREE(env, p2);
+            FREE(env, jobj);
             lua_settop(L, 1);
 #ifdef STATISTIC_PERFORMANCE
             gettimeofday(&end, NULL);
@@ -384,10 +402,12 @@ static int _put(lua_State *L) {
         if (catchJavaException(env, L, LUA_CLASS_NAME ".put")) {
             FREE(env, p1);
             FREE(env, p2);
+            FREE(env, jobj);
             return lua_error(L);
         }
         FREE(env, p1);
         FREE(env, p2);
+        FREE(env, jobj);
         lua_settop(L, 1);
 #ifdef STATISTIC_PERFORMANCE
         gettimeofday(&end, NULL);
@@ -395,6 +415,7 @@ static int _put(lua_State *L) {
 #endif
         return 1;
     }
+    FREE(env, jobj);
     lua_settop(L, 1);
     return 1;
 }
@@ -412,9 +433,11 @@ static int _putAll(lua_State *L) {
     (*env)->CallVoidMethod(env, jobj, putAllID, p1);
     if (catchJavaException(env, L, LUA_CLASS_NAME ".putAll")) {
         FREE(env, p1);
+        FREE(env, jobj);
         return lua_error(L);
     }
     FREE(env, p1);
+    FREE(env, jobj);
     lua_settop(L, 1);
 #ifdef STATISTIC_PERFORMANCE
     gettimeofday(&end, NULL);
@@ -439,8 +462,10 @@ static int _remove(lua_State *L) {
             lua_Number p1 = luaL_checknumber(L, 2);
             (*env)->CallVoidMethod(env, jobj, remove1ID, (jdouble)p1);
             if (catchJavaException(env, L, LUA_CLASS_NAME ".remove")) {
+                FREE(env, jobj);
                 return lua_error(L);
             }
+            FREE(env, jobj);
             lua_settop(L, 1);
 #ifdef STATISTIC_PERFORMANCE
             gettimeofday(&end, NULL);
@@ -453,9 +478,11 @@ static int _remove(lua_State *L) {
             (*env)->CallVoidMethod(env, jobj, remove0ID, p1);
             if (catchJavaException(env, L, LUA_CLASS_NAME ".remove")) {
                 FREE(env, p1);
+                FREE(env, jobj);
                 return lua_error(L);
             }
             FREE(env, p1);
+            FREE(env, jobj);
             lua_settop(L, 1);
 #ifdef STATISTIC_PERFORMANCE
             gettimeofday(&end, NULL);
@@ -467,9 +494,11 @@ static int _remove(lua_State *L) {
         (*env)->CallVoidMethod(env, jobj, remove2ID, p1);
         if (catchJavaException(env, L, LUA_CLASS_NAME ".remove")) {
             FREE(env, p1);
+            FREE(env, jobj);
             return lua_error(L);
         }
         FREE(env, p1);
+        FREE(env, jobj);
         lua_settop(L, 1);
 #ifdef STATISTIC_PERFORMANCE
         gettimeofday(&end, NULL);
@@ -477,6 +506,7 @@ static int _remove(lua_State *L) {
 #endif
         return 1;
     }
+    FREE(env, jobj);
     lua_settop(L, 1);
     return 1;
 }
@@ -492,8 +522,10 @@ static int _removeAll(lua_State *L) {
     PRE
     (*env)->CallVoidMethod(env, jobj, removeAllID);
     if (catchJavaException(env, L, LUA_CLASS_NAME ".removeAll")) {
+        FREE(env, jobj);
         return lua_error(L);
     }
+    FREE(env, jobj);
     lua_settop(L, 1);
 #ifdef STATISTIC_PERFORMANCE
     gettimeofday(&end, NULL);
@@ -518,8 +550,10 @@ static int _get(lua_State *L) {
             lua_Number p1 = luaL_checknumber(L, 2);
             jobject ret = (*env)->CallObjectMethod(env, jobj, get1ID, (jdouble)p1);
             if (catchJavaException(env, L, LUA_CLASS_NAME ".get")) {
+                FREE(env, jobj);
                 return lua_error(L);
             }
+            FREE(env, jobj);
             pushJavaValue(env, L, ret);
             FREE(env, ret);
 #ifdef STATISTIC_PERFORMANCE
@@ -533,9 +567,11 @@ static int _get(lua_State *L) {
             jobject ret = (*env)->CallObjectMethod(env, jobj, get0ID, p1);
             if (catchJavaException(env, L, LUA_CLASS_NAME ".get")) {
                 FREE(env, p1);
+                FREE(env, jobj);
                 return lua_error(L);
             }
             FREE(env, p1);
+            FREE(env, jobj);
             pushJavaValue(env, L, ret);
             FREE(env, ret);
 #ifdef STATISTIC_PERFORMANCE
@@ -548,9 +584,11 @@ static int _get(lua_State *L) {
         jobject ret = (*env)->CallObjectMethod(env, jobj, get2ID, p1);
         if (catchJavaException(env, L, LUA_CLASS_NAME ".get")) {
             FREE(env, p1);
+            FREE(env, jobj);
             return lua_error(L);
         }
         FREE(env, p1);
+        FREE(env, jobj);
         pushJavaValue(env, L, ret);
         FREE(env, ret);
 #ifdef STATISTIC_PERFORMANCE
@@ -559,6 +597,7 @@ static int _get(lua_State *L) {
 #endif
         return 1;
     }
+    FREE(env, jobj);
     lua_settop(L, 1);
     return 1;
 }
@@ -574,8 +613,10 @@ static int _size(lua_State *L) {
     PRE
     jint ret = (*env)->CallIntMethod(env, jobj, sizeID);
     if (catchJavaException(env, L, LUA_CLASS_NAME ".size")) {
+        FREE(env, jobj);
         return lua_error(L);
     }
+    FREE(env, jobj);
     lua_pushinteger(L, (lua_Integer) ret);
 #ifdef STATISTIC_PERFORMANCE
     gettimeofday(&end, NULL);
@@ -595,8 +636,10 @@ static int _allKeys(lua_State *L) {
     PRE
     jobject ret = (*env)->CallObjectMethod(env, jobj, allKeysID);
     if (catchJavaException(env, L, LUA_CLASS_NAME ".allKeys")) {
+        FREE(env, jobj);
         return lua_error(L);
     }
+    FREE(env, jobj);
     pushJavaValue(env, L, ret);
     FREE(env, ret);
 #ifdef STATISTIC_PERFORMANCE
@@ -619,9 +662,11 @@ static int _removeObjects(lua_State *L) {
     (*env)->CallVoidMethod(env, jobj, removeObjectsID, p1);
     if (catchJavaException(env, L, LUA_CLASS_NAME ".removeObjects")) {
         FREE(env, p1);
+        FREE(env, jobj);
         return lua_error(L);
     }
     FREE(env, p1);
+    FREE(env, jobj);
     lua_settop(L, 1);
 #ifdef STATISTIC_PERFORMANCE
     gettimeofday(&end, NULL);

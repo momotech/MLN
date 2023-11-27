@@ -11,7 +11,6 @@ import android.view.ViewGroup;
 
 import com.immomo.mls.fun.ui.LuaStaggeredGridLayoutManager;
 
-import org.luaj.vm2.Globals;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.utils.LuaApiUsed;
 
@@ -22,7 +21,7 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 /**
  * Created by XiongFangyu on 2018/7/20.
  */
-@LuaApiUsed
+@LuaApiUsed(ignoreTypeArgs = true)
 public class UDWaterFallAdapter extends UDBaseNeedHeightAdapter<UDWaterFallLayout> {
     public static final String LUA_CLASS_NAME = "WaterfallAdapter";
     public static final String[] methods = new String[]{
@@ -30,7 +29,9 @@ public class UDWaterFallAdapter extends UDBaseNeedHeightAdapter<UDWaterFallLayou
     };
     private LuaStaggeredGridLayoutManager layoutManager;
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(returns = @LuaApiUsed.Type(UDWaterFallAdapter.class)),
+    })
     public UDWaterFallAdapter(long L, LuaValue[] v) {
         super(L, v);
     }

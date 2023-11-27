@@ -10,6 +10,7 @@ package com.immomo.mls.fun.other;
 import androidx.annotation.NonNull;
 import android.view.ViewGroup;
 
+import com.immomo.mls.fun.constants.MeasurementType;
 import com.immomo.mls.util.DimenUtil;
 
 /**
@@ -56,39 +57,38 @@ public class Size {
     }
 
     public int getWidthPx() {
-        if (isMatchParent(width)) {
-            return ViewGroup.LayoutParams.MATCH_PARENT;
-        }
-        if (isWrapContent(width)) {
-            return ViewGroup.LayoutParams.WRAP_CONTENT;
-        }
-        return DimenUtil.dpiToPx(width);
+        return toPx(width);
     }
 
     public int getHeightPx() {
-        if (isMatchParent(height)) {
-            return ViewGroup.LayoutParams.MATCH_PARENT;
-        }
-        if (isWrapContent(height)) {
-            return ViewGroup.LayoutParams.WRAP_CONTENT;
-        }
-        return DimenUtil.dpiToPx(height);
+        return toPx(height);
     }
 
     public boolean isMatchOrWrapWidth() {
-        return isMatchParent(width) || isWrapContent(width);
+        return width == MATCH_PARENT || width == WRAP_CONTENT;
     }
 
     public boolean isMatchOrWrapHeight() {
-        return isMatchParent(height) || isWrapContent(height);
+        return height == MATCH_PARENT || height == WRAP_CONTENT;
     }
 
-    private boolean isMatchParent(float s) {
-        return s == MATCH_PARENT;
+    public static int toPx(float v) {
+        if (v == MATCH_PARENT) {
+            return ViewGroup.LayoutParams.MATCH_PARENT;
+        }
+        if (v == WRAP_CONTENT) {
+            return ViewGroup.LayoutParams.WRAP_CONTENT;
+        }
+        return DimenUtil.dpiToPx(v);
     }
 
-    private boolean isWrapContent(float s) {
-        return s == WRAP_CONTENT;
+    public static float toSize(float v) {
+        if (v == MeasurementType.MATCH_PARENT) {
+            v = Size.MATCH_PARENT;
+        } else if (v == MeasurementType.WRAP_CONTENT) {
+            v = Size.WRAP_CONTENT;
+        }
+        return v;
     }
 
     @Override

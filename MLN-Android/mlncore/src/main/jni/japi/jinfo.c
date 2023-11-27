@@ -17,6 +17,9 @@
 #include <string.h>
 #include "m_utf.h"
 #include "m_mem.h"
+#include "luajapi.h"
+#include "msignal.h"
+#include "signal_try_catch.h"
 
 static jboolean init = 0;
 JavaVM *g_jvm;
@@ -77,13 +80,14 @@ jmethodID Throwable_getStackTrace = NULL;
 jmethodID Globals__getUserdata = NULL;
 jfieldID LuaUserdata_id = NULL;
 jmethodID LuaUserdata_addRef = NULL;
-
+// table
 jclass Entrys = NULL;
 jmethodID Entrys_C = NULL;
+// empty method
+jmethodID EmptyMethodID = (jmethodID) 1;
+int CallbackEmptyMethod = 0;
 
-char **emtpyMethods = NULL;
-
-void initJavaInfo(JNIEnv *env) {
+static void initJavaInfo(JNIEnv *env) {
     if (init) {
         return;
     }
@@ -92,14 +96,16 @@ void initJavaInfo(JNIEnv *env) {
     Throwable = GLOBAL(env, (*env)->FindClass(env, "java/lang/Throwable"));
     jclass OBJECT = (*env)->FindClass(env, "java/lang/Object");
     obj__toString = (*env)->GetMethodID(env, OBJECT, "toString", "()" STRING_CLASS);
-    Throwable_getStackTrace = (*env)->GetMethodID(env, Throwable, "getStackTrace", "()[Ljava/lang/StackTraceElement;");
+    Throwable_getStackTrace = (*env)->GetMethodID(env, Throwable, "getStackTrace",
+                                                  "()[Ljava/lang/StackTraceElement;");
     if ((*env)->ExceptionCheck(env))
         (*env)->ExceptionClear(env);
 
     Globals = GLOBAL(env, findTypeClass(env, "Globals"));
     Globals__onLuaRequire = (*env)->GetStaticMethodID(env, Globals, "__onLuaRequire",
                                                       "(J" STRING_CLASS ")" OBJECT_CLASS);
-    Globals__getRequireError = (*env)->GetStaticMethodID(env, Globals, "__getRequireError", "(J)" STRING_CLASS);
+    Globals__getRequireError = (*env)->GetStaticMethodID(env, Globals, "__getRequireError",
+                                                         "(J)" STRING_CLASS);
     Globals__onLuaGC = (*env)->GetStaticMethodID(env, Globals, "__onLuaGC", "(J)V");
     Globals__onNativeCreateGlobals = (*env)->GetStaticMethodID(env, Globals,
                                                                "__onNativeCreateGlobals", "(JJZ)V");
@@ -107,8 +113,10 @@ void initJavaInfo(JNIEnv *env) {
                                                                   "__onGlobalsDestroyInNative",
                                                                   "(J)V");
     Globals__postCallback = (*env)->GetStaticMethodID(env, Globals, "__postCallback", "(JJJ)I");
-    Globals__onEmptyMethodCall = (*env)->GetStaticMethodID(env, Globals, "__onEmptyMethodCall", "(J" STRING_CLASS STRING_CLASS ")V");
-    Globals__getUserdata = (*env)->GetStaticMethodID(env, Globals, "__getUserdata", "(JJ)" OBJECT_CLASS);
+    Globals__onEmptyMethodCall = (*env)->GetStaticMethodID(env, Globals, "__onEmptyMethodCall",
+                                                           "(J" STRING_CLASS STRING_CLASS ")V");
+    Globals__getUserdata = (*env)->GetStaticMethodID(env, Globals, "__getUserdata",
+                                                     "(JJ)" OBJECT_CLASS);
 
     LuaValue = GLOBAL(env, findTypeClass(env, "LuaValue"));
     LuaValue_type = (*env)->GetMethodID(env, LuaValue, "type", "()I");
@@ -166,10 +174,66 @@ void initJavaInfo(JNIEnv *env) {
     init = 1;
 }
 
-extern int AndroidVersion;
+jint JNI_OnLoad(JavaVM *vm, void *reserved) {
+    JNIEnv *env = NULL;
+
+    jint result = -1;
+    if ((*vm)->GetEnv(vm, (void **) &env, JNI_VERSION_1_4) != JNI_OK) {
+        return JNI_ERR;
+    }
+    jclass cls = (*env)->FindClass(env, JAVA_PATH "LuaCApi");
+    if (!cls) {
+        return JNI_ERR;
+    }
+
+    int len = sizeof(jni_methods) / sizeof(jni_methods[0]);
+    if ((*env)->RegisterNatives(env, cls, jni_methods, len) < 0) {
+        LOGE("on load error");
+        return JNI_ERR;
+    }
+    FREE(env, cls);
+    initJavaInfo(env);
+    g_jvm = vm;
+    start_catch_signal();
+    return JNI_VERSION_1_4;
+}
+
+jboolean jni_check32bit(JNIEnv *env, jobject jobj) {
+    return sizeof(size_t) == 4;
+}
+
+int AndroidVersion = 0;
+
+void jni_setAndroidVersion(JNIEnv *env, jobject jobj, jint v) {
+    AndroidVersion = (int) v;
+}
+
+int DEBUG = 0;
+
+void jni_setAndroidDebug(JNIEnv *env, jobject jobj, jint v) {
+    DEBUG = (int) v;
+}
+
+static int _protect_new_jstring = 0;
+
+void jni_setProtectNewJString(JNIEnv *env, jobject jobj, jboolean open) {
+    _protect_new_jstring = open;
+}
 
 jstring newJString(JNIEnv *env, const char *s) {
+#ifdef ANDROID
     if (AndroidVersion >= USE_NDK_NEWSTRING_VERSION) {
+        if (_protect_new_jstring) {
+            jstring ret;
+            _try(SIGABRT) {
+                ret = (*env)->NewStringUTF(env, s);
+            }
+            _catch(e) {
+                LOGE("catch error");
+                ret = NULL;
+            }
+            return ret;
+        }
         return (*env)->NewStringUTF(env, s);
     }
     size_t len = strlen(s);
@@ -179,6 +243,9 @@ jstring newJString(JNIEnv *env, const char *s) {
     jstring ret = (*env)->NewString(env, jcs, (jsize) len);
     free(jcs);
     return ret;
+#else
+    return (*env)->NewStringUTF(env, s);
+#endif
 }
 
 jobject newLuaNumber(JNIEnv *env, jdouble num) {
@@ -301,6 +368,7 @@ jobjectArray newLuaValueArrayFromStack(JNIEnv *env, lua_State *L, int count, int
 
 void pushUserdataFromJUD(JNIEnv *env, lua_State *L, jobject obj) {
     lua_lock(L);
+
     jstring lcn = (jstring) (*env)->GetObjectField(env, obj, LuaUserdata_luaclassName);
     const char *luaclassname = GetString(env, lcn);
 
@@ -410,6 +478,16 @@ void throwInvokeError(JNIEnv *env, const char *errmsg) {
     (*env)->ThrowNew(env, InvokeError, errmsg);
 }
 
+void checkAndThrowInvokeError(JNIEnv *env, lua_State *L) {
+    const char *errMsg = NULL;
+    if (lua_isstring(L, -1))
+        errMsg = lua_tostring(L, -1);
+    else
+        errMsg = "unknown error";
+    setErrorType(L, lua);
+    throwInvokeError(env, errMsg);
+}
+
 void throwRuntimeError(JNIEnv *env, const char *msg) {
     ClearException(env);
     if (!RuntimeException)
@@ -466,7 +544,7 @@ int getThrowableMsg(JNIEnv *env, jthrowable t, char *out, size_t len) {
         return -3;
 
     if (len - copy_len > EXCEPTION_STACK_LEN && Throwable_getStackTrace) {
-        jobjectArray stacks = (*env)->CallObjectMethod(env, t,Throwable_getStackTrace);
+        jobjectArray stacks = (*env)->CallObjectMethod(env, t, Throwable_getStackTrace);
         if ((*env)->ExceptionCheck(env) || !stacks) {
             return 0;
         }
@@ -501,7 +579,7 @@ int isStrongUserdata(JNIEnv *env, jclass clz) {
     return (*env)->IsAssignableFrom(env, clz, JavaUserdata);
 }
 
-int catchJavaException(JNIEnv *env, lua_State *L, const char * mn) {
+int catchJavaException(JNIEnv *env, lua_State *L, const char *mn) {
     jthrowable thr = (*env)->ExceptionOccurred(env);
     if (thr) {
         (*env)->ExceptionClear(env);
@@ -512,6 +590,7 @@ int catchJavaException(JNIEnv *env, lua_State *L, const char * mn) {
         } else {
             lua_pushfstring(L, "exception throws in java (%s)!", mn);
         }
+        setErrorType(L, bridge);
         return 1;
     }
     return 0;
@@ -533,12 +612,12 @@ jclass getClassByName(JNIEnv *env, const char *name) {
     return clz;
 }
 
+
 jmethodID getConstructor(JNIEnv *env, jclass clz) {
     jmethodID id = (jmethodID) jc_get(clz);
     if (!id) {
         id = findConstructor(env, clz, "J["
                 LUAVALUE_CLASS);
-        (*env)->ExceptionClear(env);
         if (id) {
             jc_put(clz, id);
         } else {
@@ -552,8 +631,11 @@ jmethodID getMethodByName(JNIEnv *env, jclass clz, const char *name) {
     jmethodID id = jm_get(clz, name);
     if (!id) {
         id = (*env)->GetMethodID(env, clz, name, DEFAULT_SIG);
-        if (id)
-            jm_put(clz, name, id);
+        if (!id) {
+            (*env)->ExceptionClear(env);
+            id = EmptyMethodID;
+        }
+        jm_put(clz, name, id);
     }
     return id;
 }
@@ -564,8 +646,11 @@ jmethodID getStaticMethodByName(JNIEnv *env, jclass clz, const char *name) {
     jmethodID id = jm_get(clz, name);
     if (!id) {
         id = (*env)->GetStaticMethodID(env, clz, name, S_DEFAULT_SIG);
-        if (id)
-            jm_put(clz, name, id);
+        if (!id) {
+            (*env)->ExceptionClear(env);
+            id = EmptyMethodID;
+        }
+        jm_put(clz, name, id);
     }
     return id;
 }
@@ -615,15 +700,53 @@ void traverseAllMethods(jclass clz, map_look_fun fun, void *ud) {
     jm_traverse_all_method(clz, fun, ud);
 }
 
-void jni_preRegisterUD(JNIEnv *env, jobject jobj, jstring className, jobjectArray methods) {
+void jni_preRegisterUD(JNIEnv *env, jobject jobj, jstring className, jstring lcnStr,
+                       jstring luaParentString, jint classType,
+                       jobjectArray methods) {
+
     const char *cname = GetString(env, className);
+    //1.获取java class
     jclass clz = getClassByName(env, cname);
-    ReleaseChar(env, className, cname);
+
+    //2.存储luaname-->javaclass映射
+    const char *luaClassName = GetString(env, lcnStr);
+    const char *luaParentName = GetString(env, luaParentString);
+    if (classType == 1) {
+        //字符串最后一位\0
+        //lua 中的key 非单例时key=luaClassName 单例时 key= luaClassName去除头两个下划线字符
+        int keyLength = strlen(luaClassName) - 1;
+        char temp[keyLength];
+        strcpy(temp, &luaClassName[2]);
+        temp[keyLength - 1] = '\0';
+        l2j_put(temp, luaClassName, clz, luaParentName, classType);
+    } else {
+        l2j_put(luaClassName, luaClassName, clz, luaParentName, classType);
+    }
+    ReleaseChar(env, luaParentString, luaParentName);
+    FREE(env, luaParentString);
+    ReleaseChar(env, lcnStr, luaClassName);
+    FREE(env, lcnStr);
+
     if (!clz) {
+        ReleaseChar(env, className, cname);
         return;
     }
 
     if (!getConstructor(env, clz)) {
+        if (DEBUG) {//debug模式下主动抛出异常
+            if ((*env)->ExceptionCheck(env)) {
+                jthrowable thr = (*env)->ExceptionOccurred(env);
+                if (thr) {
+                    (*env)->ExceptionClear(env);
+                    (*env)->Throw(env, thr);
+                }
+            }
+        } else {
+            //线上模式 清除异常
+            (*env)->ExceptionClear(env);
+        }
+
+        ReleaseChar(env, className, cname);
         return;
     }
 
@@ -631,26 +754,41 @@ void jni_preRegisterUD(JNIEnv *env, jobject jobj, jstring className, jobjectArra
     jsize i = 0;
     jstring jname;
     const char *name;
-    jmethodID id;
     for (i = 0; i < len; ++i) {
         jname = (jstring) (*env)->GetObjectArrayElement(env, methods, i);
         name = GetString(env, jname);
-        id = getMethodByName(env, clz, name);
-        if (!id) return;
-
+        if (!name) {
+            throwRuntimeError(env, cname);
+            ReleaseChar(env, className, cname);
+            FREE(env, jname);
+            return;
+        }
+        getMethodByName(env, clz, name);
         ReleaseChar(env, jname, name);
         FREE(env, jname);
     }
+    ReleaseChar(env, className, cname);
 
     for (i = METHOD_TOSTRING; i <= METHOD_GC; ++i) {
         getSpecialMethod(env, clz, i);
     }
+
 }
 
-void jni_preRegisterStatic(JNIEnv *env, jobject jobj, jstring className, jobjectArray methods) {
+void jni_preRegisterStatic(JNIEnv *env, jobject jobj, jstring className, jstring lcnStr,
+                           jstring luaParentString, jobjectArray methods) {
     const char *cname = GetString(env, className);
     jclass clz = getClassByName(env, cname);
+    //2.存储luaname-->javaclass映射
+    const char *luaClassName = GetString(env, lcnStr);
+    const char *luaParentName = GetString(env, luaParentString);
+    l2j_put(luaClassName, luaClassName, clz, luaParentName, 2);
     ReleaseChar(env, className, cname);
+    FREE(env, className);
+    ReleaseChar(env, luaParentString, luaParentName);
+    FREE(env, luaParentString);
+    ReleaseChar(env, lcnStr, luaClassName);
+    FREE(env, lcnStr);
     if (!clz) {
         return;
     }
@@ -659,58 +797,25 @@ void jni_preRegisterStatic(JNIEnv *env, jobject jobj, jstring className, jobject
     jsize i = 0;
     jstring jname;
     const char *name;
-    jmethodID id;
     for (i = 0; i < len; ++i) {
         jname = (jstring) (*env)->GetObjectArrayElement(env, methods, i);
         name = GetString(env, jname);
-        id = getStaticMethodByName(env, clz, name);
-        if (!id) return;
-
+        getStaticMethodByName(env, clz, name);
         ReleaseChar(env, jname, name);
         FREE(env, jname);
     }
 }
 
-void jni_preRegisterEmptyMethods(JNIEnv *env, jobject jobj, jobjectArray methods) {
-    /// 覆盖操作，先释放旧内存
-    if (emtpyMethods) {
-        int i = 0;
-        char *s;
-        while ((s = emtpyMethods[i++]) != NULL) {
-            m_malloc(s, strlen(s) + 1, 0);
-        }
-        m_malloc(emtpyMethods, sizeof(char*) * i, 0);
-    }
-    int len = GetArrLen(env, methods);
-    emtpyMethods = m_malloc(0, 0, (len + 1) * sizeof(char *));
-    int i;
-    jstring jname;
-    const char *name;
-    for (i = 0; i < len; ++i) {
-        jname = (jstring) (*env)->GetObjectArrayElement(env, methods, i);
-        name = GetString(env, jname);
-        emtpyMethods[i] = copystr(name);
-        ReleaseChar(env, jname, name);
-        FREE(env, jname);
-    }
-    emtpyMethods[i] = 0;
+void jni_setCallbackEmptyMethod(JNIEnv *env, jobject jobj, jboolean open) {
+    CallbackEmptyMethod = (int) open;
 }
 
-int hasEmptyMethod() {
-    return emtpyMethods != NULL;
+int isEmptyMethod(jmethodID id) {
+    return id == EmptyMethodID;
 }
 
-/**
- * 遍历所有空函数
- */
-void traverseAllEmptyMethods(traverse_empty fun, void *ud) {
-    if (emtpyMethods) {
-        char **temp = emtpyMethods;
-        while (*temp) {
-            fun(*temp, ud);
-            temp++;
-        }
-    }
+int openCallbackEmptyMethod() {
+    return CallbackEmptyMethod;
 }
 
 void onEmptyMethodCall(lua_State *L, const char *clz, const char *methodName) {

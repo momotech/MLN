@@ -310,11 +310,16 @@ public class NativeGenerator {
                         StringBuilder tab = new StringBuilder();
                         appendTab(tab, 2);
                         String error = String.format(MethodParamsCountError, name, paramCount, methodSig.toString()).replace(BLANK, tab);
-                        impl.append(error);
-                        appendTab(impl, 2).append(ReturnLuaError);
+                        impl.append(error)
+                                .append(tab)
+                                .append(String.format(SetErrorType, ErrorType.lua.toString()))
+                                .append(tab)
+                                .append(ReturnLuaError);
                     }
                     appendTab(impl, 1).append("}\n");
                 }
+                if (!useStatic)
+                appendTab(impl, 1).append("FREE(env, jobj);\n");
                 appendTab(impl, 1).append(String.format(Template.LUA_SET_TOP, 1)).append(";\n");
                 appendTab(impl, 1).append("return 1;\n");
             } else {
@@ -574,6 +579,8 @@ public class NativeGenerator {
         CGenerate cGenerate = m.getCGenerate();
         CGenerate.SpecialType[] paramSpecialTypes = cGenerate != null ? cGenerate.getParamType() : null;
         luaToNative(sb, paramsSb, freeSb, m.params, paramSpecialTypes, tabCount, 2, m.name, noNil);
+        if (!useStatic)
+        freeSb.append(BLANK).append("FREE(env, jobj);\n");
 
         StringBuilder tab = new StringBuilder();
         appendTab(tab, tabCount);

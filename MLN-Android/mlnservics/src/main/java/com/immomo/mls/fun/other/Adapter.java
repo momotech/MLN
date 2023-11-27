@@ -13,6 +13,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.immomo.mls.MLSConfigs;
 import com.immomo.mls.MLSEngine;
 import com.immomo.mls.fun.ud.UDCell;
@@ -28,9 +31,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * Created by XiongFangyu on 2018/7/19.
@@ -338,6 +338,9 @@ public class Adapter extends RecyclerView.Adapter<ViewHolder> {
     private void initSize(View itemView, int type) {
         Size size = userData.getInitCellSize(type);
         setLayoutParams(itemView, size);
+        if (userData.isUseAllSpanForCell(type)) {
+            itemView.setLayoutParams(userData.newLayoutParams(itemView.getLayoutParams(), true));
+        }
     }
 
     private void setLayoutParams(View view, Size size) {

@@ -18,9 +18,15 @@ import com.immomo.mls.LuaViewManager;
 
 import static com.immomo.mls.fun.ud.MeasureMode.*;
 
+import com.immomo.mls.fun.ud.view.UDView;
+import com.immomo.mls.fun.ud.view.UDViewGroup;
+import com.immomo.mls.fun.ud.view.recycler.UDBaseNeedHeightAdapter;
 import com.immomo.mls.util.DimenUtil;
 import com.immomo.mls.utils.AssertUtils;
 
+import kotlin.Unit;
+import kotlin.jvm.functions.Function0;
+import kotlin.jvm.functions.Function1;
 import org.luaj.vm2.Globals;
 import org.luaj.vm2.LuaFunction;
 import org.luaj.vm2.LuaNumber;
@@ -37,7 +43,7 @@ import org.luaj.vm2.utils.LuaApiUsed;
  *
  * @see UDBaseDrawable
  */
-@LuaApiUsed
+@LuaApiUsed(ignoreTypeArgs = true)
 public abstract class UDBaseNView<V extends View> extends LuaUserdata<V> {
     /**
      * Lua类名
@@ -71,14 +77,17 @@ public abstract class UDBaseNView<V extends View> extends LuaUserdata<V> {
 
     //<editor-fold desc="Constructors">
 
-    @LuaApiUsed
+    @LuaApiUsed(ignore = true)
     protected UDBaseNView(long L, @NonNull LuaValue[] v) {
         super(L, v);
         javaUserdata = newView(getContext(), v);
         AssertUtils.assertNullForce(javaUserdata);
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(UDBaseNView.class))
+    })
     public UDBaseNView(@NonNull Globals g, V o) {
         super(g, o);
     }
@@ -212,7 +221,7 @@ public abstract class UDBaseNView<V extends View> extends LuaUserdata<V> {
      * 若继承，必须调用super
      */
     @CallSuper
-    @LuaApiUsed
+    @LuaApiUsed(ignore = true)
     protected LuaValue[] onAddedToViewTree(LuaValue[] params) {
         if (this.selfParams != null)
             this.selfParams.destroy();
@@ -227,7 +236,7 @@ public abstract class UDBaseNView<V extends View> extends LuaUserdata<V> {
      * 若继承，必须调用super
      */
     @CallSuper
-    @LuaApiUsed
+    @LuaApiUsed(ignore = true)
     protected LuaValue[] onRemovedFromViewTree(LuaValue[] p) {
         if (selfParams != null)
             selfParams.destroy();
@@ -240,7 +249,11 @@ public abstract class UDBaseNView<V extends View> extends LuaUserdata<V> {
     /**
      * 设置刷新回调，子类不可重写
      */
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = Function1.class, typeArgs = {LuaValue.class, Unit.class})
+            }, returns = @LuaApiUsed.Type(UDBaseNView.class)),
+    })
     private LuaValue[] setRefreshFunction(LuaValue[] fun) {
         refreshFunction = fun[0].toLuaFunction();
         return null;
@@ -249,7 +262,11 @@ public abstract class UDBaseNView<V extends View> extends LuaUserdata<V> {
     /**
      * 设置layout回调，子类不可重写
      */
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = Function1.class, typeArgs = {LuaValue.class, Unit.class})
+            }, returns = @LuaApiUsed.Type(UDBaseNView.class)),
+    })
     private LuaValue[] setLayoutFunction(LuaValue[] fun) {
         layoutFunction = fun[0].toLuaFunction();
         return null;
@@ -262,7 +279,14 @@ public abstract class UDBaseNView<V extends View> extends LuaUserdata<V> {
      *
      * @return 返回宽和高
      */
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Integer.class),
+                    @LuaApiUsed.Type(Double.class),
+                    @LuaApiUsed.Type(Integer.class),
+                    @LuaApiUsed.Type(Double.class)
+            }, returns = @LuaApiUsed.Type(UDBaseNView.class)),
+    })
     private LuaValue[] onMeasure(LuaValue[] params) {
         int wm = params[0].toInt();
         double ws = params[1].toDouble();
@@ -279,7 +303,15 @@ public abstract class UDBaseNView<V extends View> extends LuaUserdata<V> {
      *
      * @see #onLayout(boolean, double, double, double, double)
      */
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Boolean.class),
+                    @LuaApiUsed.Type(Double.class),
+                    @LuaApiUsed.Type(Double.class),
+                    @LuaApiUsed.Type(Double.class),
+                    @LuaApiUsed.Type(Double.class)
+            }, returns = @LuaApiUsed.Type(UDBaseNView.class)),
+    })
     private LuaValue[] onLayout(LuaValue[] params) {
         onLayout(params[0].toBoolean(), params[1].toDouble(), params[2].toDouble(), params[3].toDouble(), params[4].toDouble());
         return null;
@@ -290,7 +322,14 @@ public abstract class UDBaseNView<V extends View> extends LuaUserdata<V> {
      *
      * @see #onPadding(double, double, double, double)
      */
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Double.class),
+                    @LuaApiUsed.Type(Double.class),
+                    @LuaApiUsed.Type(Double.class),
+                    @LuaApiUsed.Type(Double.class)
+            }, returns = @LuaApiUsed.Type(UDBaseNView.class)),
+    })
     private LuaValue[] onPadding(LuaValue[] params) {
         onPadding(params[0].toDouble(), params[1].toDouble(), params[2].toDouble(), params[3].toDouble());
         return null;

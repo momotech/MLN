@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.immomo.mls.fun.constants.MeasurementType;
+import com.immomo.mls.fun.ud.UDSize;
 import com.immomo.mls.fun.weight.newui.Spacer;
 import com.immomo.mls.utils.ErrorUtils;
 
@@ -23,11 +24,11 @@ import androidx.annotation.NonNull;
  * Created by zhang.ke on 2018/7/31.
  * 占位View
  */
-@LuaApiUsed
+@LuaApiUsed(ignoreTypeArgs = true)
 public class UDSpacer extends UDView<Spacer> {
     public static final String LUA_CLASS_NAME = "Spacer";
 
-    @LuaApiUsed
+    @LuaApiUsed(ignore = true)
     protected UDSpacer(long L, LuaValue[] v) {
         super(L, v);
         setHeight(0);//默认为0，isVerExPand默认为true，不影响延展测量
@@ -57,7 +58,13 @@ public class UDSpacer extends UDView<Spacer> {
         return result;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Float.class)
+            }, returns = @LuaApiUsed.Type(UDSize.class)),
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(Float.class))
+    })
     @Override
     public LuaValue[] height(LuaValue[] varargs) {
         LuaValue[] result = super.height(varargs);

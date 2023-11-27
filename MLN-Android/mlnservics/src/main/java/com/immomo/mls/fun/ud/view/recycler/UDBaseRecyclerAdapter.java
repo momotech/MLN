@@ -1,10 +1,10 @@
 /**
-  * Created by MomoLuaNative.
-  * Copyright (c) 2019, Momo Group. All rights reserved.
-  *
-  * This source code is licensed under the MIT.
-  * For the full copyright and license information,please view the LICENSE file in the root directory of this source tree.
-  */
+ * Created by MomoLuaNative.
+ * Copyright (c) 2019, Momo Group. All rights reserved.
+ * <p>
+ * This source code is licensed under the MIT.
+ * For the full copyright and license information,please view the LICENSE file in the root directory of this source tree.
+ */
 package com.immomo.mls.fun.ud.view.recycler;
 
 import android.content.Context;
@@ -12,6 +12,12 @@ import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+
+import androidx.annotation.CallSuper;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.immomo.mls.Environment;
 import com.immomo.mls.LuaViewManager;
@@ -21,15 +27,23 @@ import com.immomo.mls.fun.other.Adapter;
 import com.immomo.mls.fun.other.Size;
 import com.immomo.mls.fun.other.ViewHolder;
 import com.immomo.mls.fun.ud.UDColor;
+import com.immomo.mls.fun.ud.view.UDView;
 import com.immomo.mls.fun.ui.IRefreshRecyclerView;
 import com.immomo.mls.fun.ui.OnLoadListener;
 import com.immomo.mls.utils.AssertUtils;
 import com.immomo.mls.utils.ErrorUtils;
 import com.immomo.mls.weight.load.ILoadViewDelegete;
 
+import kotlin.Unit;
+import kotlin.jvm.functions.Function0;
+import kotlin.jvm.functions.Function1;
+import kotlin.jvm.functions.Function2;
+import kotlin.jvm.functions.Function3;
+
 import org.luaj.vm2.JavaUserdata;
 import org.luaj.vm2.LuaFunction;
 import org.luaj.vm2.LuaNumber;
+import org.luaj.vm2.LuaString;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.utils.LuaApiUsed;
 
@@ -37,16 +51,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import androidx.annotation.CallSuper;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.recyclerview.widget.DefaultItemAnimator;
-import androidx.recyclerview.widget.RecyclerView;
-
 /**
  * Created by XiongFangyu on 2018/7/19.
  */
-@LuaApiUsed
+@LuaApiUsed(ignoreTypeArgs = true)
 public abstract class UDBaseRecyclerAdapter<L extends UDBaseRecyclerLayout> extends JavaUserdata implements OnLoadListener {
     public static final String LUA_CLASS_NAME = "__BaseRecyclerAdapter";
     public static final String[] methods = new String[]{
@@ -74,6 +82,8 @@ public abstract class UDBaseRecyclerAdapter<L extends UDBaseRecyclerLayout> exte
             "cellWillAppearByReuseId",
             "headerDidDisappear",
             "headerWillAppear",
+            "useAllSpanForCell",
+            "useReusedID"
     };
     //(section,row) 返回不同类型的id 字符串
     private LuaFunction reuseIdDelegate;
@@ -119,8 +129,12 @@ public abstract class UDBaseRecyclerAdapter<L extends UDBaseRecyclerLayout> exte
     private LuaFunction headerDisappearDelegate;
     //header显示时回调
     private LuaFunction headerAppearDelegate;
+    //function(reuseid): boolean
+    private LuaFunction useAllSpanForCellDelegates;
     //点击cell后高亮
     public boolean showPressed = false;
+
+    public boolean useReusedID = true;
     //点击后的高亮颜色
     public int pressedColor;
 
@@ -167,7 +181,10 @@ public abstract class UDBaseRecyclerAdapter<L extends UDBaseRecyclerLayout> exte
     protected boolean notifyWhenViewSizeInit = false;
     protected int orientation = RecyclerView.VERTICAL;
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(UDBaseRecyclerAdapter.class))
+    })
     public UDBaseRecyclerAdapter(long L, LuaValue[] v) {
         super(L, v);
         idGenerator = new IDGenerator();
@@ -349,7 +366,13 @@ public abstract class UDBaseRecyclerAdapter<L extends UDBaseRecyclerLayout> exte
 
     //<editor-fold desc="API">
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Boolean.class),
+            }, returns = @LuaApiUsed.Type(UDBaseRecyclerAdapter.class)),
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(Boolean.class)),
+    })
     public LuaValue[] showPressed(LuaValue[] values) {
         if (values.length >= 1 && values[0] != null) {
             this.showPressed = values[0].toBoolean();
@@ -361,11 +384,26 @@ public abstract class UDBaseRecyclerAdapter<L extends UDBaseRecyclerLayout> exte
         return LuaValue.rBoolean(getShowPressed());
     }
 
+    @LuaApiUsed
+    public LuaValue[] useReusedID(LuaValue[] values) {
+        if (values.length >= 1 && values[0] != null) {
+            this.useReusedID = values[0].toBoolean();
+            return null;
+        }
+        return LuaValue.rBoolean(useReusedID);
+    }
+
     public boolean getShowPressed() {
         return showPressed;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = UDColor.class, nullable = true),
+            }, returns = @LuaApiUsed.Type(UDBaseRecyclerAdapter.class)),
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(UDColor.class)),
+    })
     public LuaValue[] pressedColor(LuaValue[] values) {
         if (values.length == 1) {
             if (values[0] == LuaValue.Nil())
@@ -397,7 +435,11 @@ public abstract class UDBaseRecyclerAdapter<L extends UDBaseRecyclerLayout> exte
      * <p>
      * fun
      */
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = Function2.class, typeArgs = {Integer.class, Integer.class, String.class}),
+            }, returns = @LuaApiUsed.Type(UDBaseRecyclerAdapter.class)),
+    })
     public LuaValue[] reuseId(LuaValue[] values) {
         reuseIdDelegate = values[0].toLuaFunction();
         return null;
@@ -408,7 +450,11 @@ public abstract class UDBaseRecyclerAdapter<L extends UDBaseRecyclerLayout> exte
      * <p>
      * fun
      */
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = Function1.class, typeArgs = {LuaValue.class, Unit.class}),
+            }, returns = @LuaApiUsed.Type(UDBaseRecyclerAdapter.class)),
+    })
     public LuaValue[] initCell(LuaValue[] values) {
         initCellDelegate = values[0].toLuaFunction();
         return null;
@@ -420,7 +466,12 @@ public abstract class UDBaseRecyclerAdapter<L extends UDBaseRecyclerLayout> exte
      * id
      * fun
      */
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = String.class),
+                    @LuaApiUsed.Type(value = Function1.class, typeArgs = {LuaValue.class, Unit.class}),
+            }, returns = @LuaApiUsed.Type(UDBaseRecyclerAdapter.class)),
+    })
     public LuaValue[] initCellByReuseId(LuaValue[] values) {
         if (typeCellDelegate == null) {
             typeCellDelegate = new HashMap<>();
@@ -434,7 +485,11 @@ public abstract class UDBaseRecyclerAdapter<L extends UDBaseRecyclerLayout> exte
      * <p>
      * fun
      */
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = Function0.class, typeArgs = {Boolean.class}),
+            }, returns = @LuaApiUsed.Type(UDBaseRecyclerAdapter.class)),
+    })
     public LuaValue[] headerValid(LuaValue[] values) {
         headerValidDelegate = values[0].toLuaFunction();
 
@@ -446,7 +501,11 @@ public abstract class UDBaseRecyclerAdapter<L extends UDBaseRecyclerLayout> exte
      * <p>
      * fun
      */
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = Function1.class, typeArgs = {LuaValue.class, Boolean.class}),
+            }, returns = @LuaApiUsed.Type(UDBaseRecyclerAdapter.class)),
+    })
     public LuaValue[] initHeader(LuaValue[] values) {
         initHeaderDelegate = values[0].toLuaFunction();
 
@@ -458,7 +517,11 @@ public abstract class UDBaseRecyclerAdapter<L extends UDBaseRecyclerLayout> exte
      * <p>
      * fun
      */
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = Function3.class, typeArgs = {LuaValue.class, Integer.class, Integer.class, Unit.class}),
+            }, returns = @LuaApiUsed.Type(UDBaseRecyclerAdapter.class)),
+    })
     public LuaValue[] fillHeaderData(LuaValue[] values) {
         bindHeaderDelegate = values[0].toLuaFunction();
 
@@ -487,7 +550,11 @@ public abstract class UDBaseRecyclerAdapter<L extends UDBaseRecyclerLayout> exte
      * <p>
      * fun
      */
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = Function3.class, typeArgs = {LuaValue.class, Integer.class, Integer.class, Unit.class}),
+            }, returns = @LuaApiUsed.Type(UDBaseRecyclerAdapter.class)),
+    })
     public LuaValue[] fillCellData(LuaValue[] values) {
         bindDataDelegate = values[0].toLuaFunction();
         return null;
@@ -499,7 +566,12 @@ public abstract class UDBaseRecyclerAdapter<L extends UDBaseRecyclerLayout> exte
      * id
      * fun
      */
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = String.class),
+                    @LuaApiUsed.Type(value = Function3.class, typeArgs = {LuaValue.class, Integer.class, Integer.class, Unit.class}),
+            }, returns = @LuaApiUsed.Type(UDBaseRecyclerAdapter.class)),
+    })
     public LuaValue[] fillCellDataByReuseId(LuaValue[] values) {
         if (bindTypeDataDelegate == null) {
             bindTypeDataDelegate = new HashMap<>();
@@ -513,7 +585,11 @@ public abstract class UDBaseRecyclerAdapter<L extends UDBaseRecyclerLayout> exte
      * <p>
      * fun
      */
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = Function0.class, typeArgs = {Integer.class}),
+            }, returns = @LuaApiUsed.Type(UDBaseRecyclerAdapter.class)),
+    })
     public LuaValue[] sectionCount(LuaValue[] values) {
         sectionCountDelegate = values[0].toLuaFunction();
         return null;
@@ -524,7 +600,14 @@ public abstract class UDBaseRecyclerAdapter<L extends UDBaseRecyclerLayout> exte
      * <p>
      * fun
      */
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = Function1.class, typeArgs = {Integer.class, Integer.class}),
+            }, returns = @LuaApiUsed.Type(UDBaseRecyclerAdapter.class)),
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = Function1.class, typeArgs = {Integer.class, Unit.class}),
+            }, returns = @LuaApiUsed.Type(UDBaseRecyclerAdapter.class))
+    })
     public LuaValue[] rowCount(LuaValue[] values) {
         rowCountDelegate = values[0].toLuaFunction();
         return null;
@@ -535,7 +618,11 @@ public abstract class UDBaseRecyclerAdapter<L extends UDBaseRecyclerLayout> exte
      * <p>
      * fun
      */
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = Function3.class, typeArgs = {LuaValue.class, Integer.class, Integer.class, Unit.class}),
+            }, returns = @LuaApiUsed.Type(UDBaseRecyclerAdapter.class)),
+    })
     public LuaValue[] selectedRow(LuaValue[] values) {
         clickDelegate = values[0].toLuaFunction();
         return null;
@@ -546,7 +633,11 @@ public abstract class UDBaseRecyclerAdapter<L extends UDBaseRecyclerLayout> exte
      * <p>
      * fun
      */
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = Function3.class, typeArgs = {LuaValue.class, Integer.class, Integer.class, Unit.class}),
+            }, returns = @LuaApiUsed.Type(UDBaseRecyclerAdapter.class)),
+    })
     public LuaValue[] longPressRow(LuaValue[] values) {
         clickLongDelegate = values[0].toLuaFunction();
         return null;
@@ -558,7 +649,12 @@ public abstract class UDBaseRecyclerAdapter<L extends UDBaseRecyclerLayout> exte
      * id
      * fun
      */
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = String.class),
+                    @LuaApiUsed.Type(value = Function3.class, typeArgs = {LuaValue.class, Integer.class, Integer.class, Unit.class}),
+            }, returns = @LuaApiUsed.Type(UDBaseRecyclerAdapter.class)),
+    })
     public LuaValue[] selectedRowByReuseId(LuaValue[] values) {
         if (typeClickDelegate == null) {
             typeClickDelegate = new HashMap<>();
@@ -573,7 +669,12 @@ public abstract class UDBaseRecyclerAdapter<L extends UDBaseRecyclerLayout> exte
      * id
      * fun
      */
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = String.class),
+                    @LuaApiUsed.Type(value = Function3.class, typeArgs = {LuaValue.class, Integer.class, Integer.class, Unit.class}),
+            }, returns = @LuaApiUsed.Type(UDBaseRecyclerAdapter.class)),
+    })
     public LuaValue[] longPressRowByReuseId(LuaValue[] values) {
         if (typeLongClickDelegate == null) {
             typeLongClickDelegate = new HashMap<>();
@@ -586,7 +687,9 @@ public abstract class UDBaseRecyclerAdapter<L extends UDBaseRecyclerLayout> exte
      * 点击了编辑栏
      * IOS only
      */
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(returns = @LuaApiUsed.Type(UDBaseRecyclerAdapter.class)),
+    })
     public LuaValue[] editAction(LuaValue[] values) {
         return null;
     }
@@ -595,7 +698,9 @@ public abstract class UDBaseRecyclerAdapter<L extends UDBaseRecyclerLayout> exte
      * 返回针对某cell的事件配置
      * IOS only
      */
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(returns = @LuaApiUsed.Type(UDBaseRecyclerAdapter.class)),
+    })
     public LuaValue[] editParam(LuaValue[] values) {
         return null;
     }
@@ -605,7 +710,11 @@ public abstract class UDBaseRecyclerAdapter<L extends UDBaseRecyclerLayout> exte
      * <p>
      * fun
      */
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = Function3.class, typeArgs = {LuaValue.class, Integer.class, Integer.class, Unit.class}),
+            }, returns = @LuaApiUsed.Type(UDBaseRecyclerAdapter.class)),
+    })
     public LuaValue[] cellDidDisappear(LuaValue[] values) {
         this.cellDisappearDelegate = values[0].toLuaFunction();
         return null;
@@ -614,7 +723,12 @@ public abstract class UDBaseRecyclerAdapter<L extends UDBaseRecyclerLayout> exte
     /**
      * ('type',Callback(cell, section, row))item显示时回调，设置后，没找到的type报错
      */
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = String.class),
+                    @LuaApiUsed.Type(value = Function3.class, typeArgs = {LuaValue.class, Integer.class, Integer.class, Unit.class}),
+            }, returns = @LuaApiUsed.Type(UDBaseRecyclerAdapter.class)),
+    })
     public LuaValue[] cellDidDisappearByReuseId(LuaValue[] values) {
         if (cellDisappearTypeDelegate == null) {
             cellDisappearTypeDelegate = new HashMap<>();
@@ -628,7 +742,11 @@ public abstract class UDBaseRecyclerAdapter<L extends UDBaseRecyclerLayout> exte
      * <p>
      * fun
      */
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = Function3.class, typeArgs = {LuaValue.class, Integer.class, Integer.class, Unit.class}),
+            }, returns = @LuaApiUsed.Type(UDBaseRecyclerAdapter.class)),
+    })
     public LuaValue[] cellWillAppear(LuaValue[] values) {
         cellAppearDelegate = values[0].toLuaFunction();
         return null;
@@ -637,7 +755,12 @@ public abstract class UDBaseRecyclerAdapter<L extends UDBaseRecyclerLayout> exte
     /**
      * ('type',Callback(cell, section, row))item显示时回调，设置后，没找到的type报错
      */
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = String.class),
+                    @LuaApiUsed.Type(value = Function3.class, typeArgs = {LuaValue.class, Integer.class, Integer.class, Unit.class}),
+            }, returns = @LuaApiUsed.Type(UDBaseRecyclerAdapter.class)),
+    })
     public LuaValue[] cellWillAppearByReuseId(LuaValue[] values) {
         if (cellAppearTypeDelegate == null) {
             cellAppearTypeDelegate = new HashMap<>();
@@ -651,7 +774,11 @@ public abstract class UDBaseRecyclerAdapter<L extends UDBaseRecyclerLayout> exte
      * <p>
      * fun
      */
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = Function3.class, typeArgs = {LuaValue.class, Integer.class, Integer.class, Unit.class}),
+            }, returns = @LuaApiUsed.Type(UDBaseRecyclerAdapter.class)),
+    })
     public LuaValue[] headerDidDisappear(LuaValue[] values) {
         headerDisappearDelegate = values[0].toLuaFunction();
         return null;
@@ -662,14 +789,37 @@ public abstract class UDBaseRecyclerAdapter<L extends UDBaseRecyclerLayout> exte
      * <p>
      * fun
      */
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = Function3.class, typeArgs = {LuaValue.class, Integer.class, Integer.class, Unit.class}),
+            }, returns = @LuaApiUsed.Type(UDBaseRecyclerAdapter.class)),
+    })
     public LuaValue[] headerWillAppear(LuaValue[] values) {
         headerAppearDelegate = values[0].toLuaFunction();
+        return null;
+    }
+
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = Function1.class, typeArgs = {String.class, Unit.class}),
+            }, returns = @LuaApiUsed.Type(UDBaseRecyclerAdapter.class)),
+    })
+    public LuaValue[] useAllSpanForCell(LuaValue[] values) {
+        useAllSpanForCellDelegates = values[0].toLuaFunction();
         return null;
     }
     //</editor-fold>
 
     //<editor-fold desc="adapter 调用">
+    public boolean isUseAllSpanForCell(int viewType) {
+        if (useAllSpanForCellDelegates != null) {
+            String id = getReuseIdByType(viewType);
+            LuaValue[] values = useAllSpanForCellDelegates.invoke(varargsOf(LuaString.valueOf(id)));
+            return values.length > 0 && values[0].toBoolean();
+        }
+        return false;
+    }
+
     public long getItemId(int pos) {
         return itemIDGenerator.getIdBy(pos, getViewType(pos));
     }
@@ -1094,10 +1244,11 @@ public abstract class UDBaseRecyclerAdapter<L extends UDBaseRecyclerLayout> exte
                 }
             }
 
-            if (reuseIdCache == null) {
+            if (reuseIdCache == null && useReusedID) {
                 reuseIdCache = new SparseArray<>();
             }
-            reuseIdCache.put(position, result);
+            if (reuseIdCache != null)
+                reuseIdCache.put(position, result);
             return result;
         }
         return null;

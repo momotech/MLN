@@ -428,11 +428,7 @@ public class DefaultPageIndicator extends View implements PageIndicator {
                 public void onGlobalLayout() {
                     if (mViewPager.getHeight() != 0) {
                         changeLayoutParams();
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                            mViewPager.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                        } else {
-                            mViewPager.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-                        }
+                        mViewPager.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                     }
                 }
             });

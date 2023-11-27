@@ -1,0 +1,8 @@
+/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/.cxx/cmake/release/arm64-v8a/CMakeFiles/rebuild_cache.dir
+/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/.cxx/cmake/release/arm64-v8a/CMakeFiles/edit_cache.dir
+/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/.cxx/cmake/release/arm64-v8a/bitmap/CMakeFiles/rebuild_cache.dir
+/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/.cxx/cmake/release/arm64-v8a/bitmap/CMakeFiles/edit_cache.dir
+/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/.cxx/cmake/release/arm64-v8a/bitmap/CMakeFiles/lblur.dir
+/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/.cxx/cmake/release/arm64-v8a/mln/CMakeFiles/rebuild_cache.dir
+/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/.cxx/cmake/release/arm64-v8a/mln/CMakeFiles/edit_cache.dir
+/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/.cxx/cmake/release/arm64-v8a/mln/CMakeFiles/mlnbridge.dir

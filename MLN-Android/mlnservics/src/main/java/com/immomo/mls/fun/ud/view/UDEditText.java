@@ -1,12 +1,13 @@
 /**
-  * Created by MomoLuaNative.
-  * Copyright (c) 2019, Momo Group. All rights reserved.
-  *
-  * This source code is licensed under the MIT.
-  * For the full copyright and license information,please view the LICENSE file in the root directory of this source tree.
-  */
+ * Created by MomoLuaNative.
+ * Copyright (c) 2019, Momo Group. All rights reserved.
+ * <p>
+ * This source code is licensed under the MIT.
+ * For the full copyright and license information,please view the LICENSE file in the root directory of this source tree.
+ */
 package com.immomo.mls.fun.ud.view;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.text.Editable;
 import android.text.InputFilter;
@@ -18,6 +19,7 @@ import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
 import android.view.Gravity;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
@@ -27,9 +29,16 @@ import android.widget.TextView;
 import com.immomo.mls.MLSEngine;
 import com.immomo.mls.fun.constants.EditTextViewInputMode;
 import com.immomo.mls.fun.ud.UDColor;
+import com.immomo.mls.fun.ud.UDWindowManager;
 import com.immomo.mls.fun.ui.LuaEditText;
 import com.immomo.mls.util.LogUtil;
 import com.immomo.mls.utils.ErrorUtils;
+
+import kotlin.Unit;
+import kotlin.jvm.functions.Function0;
+import kotlin.jvm.functions.Function1;
+import kotlin.jvm.functions.Function3;
+import kotlin.jvm.functions.Function4;
 
 import org.luaj.vm2.LuaBoolean;
 import org.luaj.vm2.LuaFunction;
@@ -44,7 +53,7 @@ import static android.view.inputmethod.EditorInfo.IME_ACTION_UNSPECIFIED;
 /**
  * Created by XiongFangyu on 2018/8/1.
  */
-@LuaApiUsed
+@LuaApiUsed(ignoreTypeArgs = true)
 public class UDEditText<L extends EditText> extends UDLabel<L> implements TextWatcher, TextView.OnEditorActionListener, IShowKeyboard {
     public static final String LUA_CLASS_NAME = "EditTextView";
 
@@ -65,7 +74,8 @@ public class UDEditText<L extends EditText> extends UDLabel<L> implements TextWa
             "setCanEdit",
             "showKeyboard",
             "dismissKeyboard",
-            "setShouldChangeCallback"
+            "setShouldChangeCallback",
+            "fixScrollConflict"
     };
     private static final String TAG = UDEditText.class.getSimpleName();
 
@@ -87,7 +97,7 @@ public class UDEditText<L extends EditText> extends UDLabel<L> implements TextWa
     private boolean hasMaxBytesLisenter = false;
     private int mTextAlign;
 
-    @LuaApiUsed
+    @LuaApiUsed(ignore = true)
     protected UDEditText(long L, LuaValue[] v) {
         super(L, v);
     }
@@ -111,7 +121,13 @@ public class UDEditText<L extends EditText> extends UDLabel<L> implements TextWa
         }
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(String.class),
+            }, returns = @LuaApiUsed.Type(UDEditText.class)),
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(String.class)),
+    })
     public LuaValue[] placeholder(LuaValue[] placeholder) {
         if (placeholder != null && placeholder.length >= 1) {
 
@@ -129,7 +145,13 @@ public class UDEditText<L extends EditText> extends UDLabel<L> implements TextWa
         return varargsOf(LuaString.valueOf(getView().getHint().toString()));
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(UDColor.class),
+            }, returns = @LuaApiUsed.Type(UDEditText.class)),
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(UDColor.class)),
+    })
     public LuaValue[] placeholderColor(LuaValue[] color) {
         if (color != null && color.length >= 1) {
             getView().setHintTextColor(((UDColor) color[0]).getColor());
@@ -139,7 +161,13 @@ public class UDEditText<L extends EditText> extends UDLabel<L> implements TextWa
         return varargsOf(udColor);
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Integer.class),
+            }, returns = @LuaApiUsed.Type(UDEditText.class)),
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(Integer.class)),
+    })
     public LuaValue[] inputMode(LuaValue[] i) {
         if (i != null && i.length >= 1) {
             int value = i[0].toInt();
@@ -167,7 +195,13 @@ public class UDEditText<L extends EditText> extends UDLabel<L> implements TextWa
     /**
      * 设置单行横向滑动模式，对齐方式切换为居中
      */
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Boolean.class),
+            }, returns = @LuaApiUsed.Type(UDEditText.class)),
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(Boolean.class)),
+    })
     public LuaValue[] singleLine(LuaValue[] singleLine) {
         if (singleLine != null && singleLine.length >= 1) {
             boolean isSingleLine = singleLine[0].toBoolean();
@@ -198,7 +232,13 @@ public class UDEditText<L extends EditText> extends UDLabel<L> implements TextWa
         return varargsOf(LuaBoolean.valueOf(singleLineMode));
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Integer.class),
+            }, returns = @LuaApiUsed.Type(UDEditText.class)),
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(Integer.class)),
+    })
     public LuaValue[] textAlign(LuaValue[] var) {
         if (var.length == 1) {
             mTextAlign = var[0].toInt();
@@ -208,7 +248,13 @@ public class UDEditText<L extends EditText> extends UDLabel<L> implements TextWa
         return varargsOf(LuaNumber.valueOf(getView().getGravity()));
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Boolean.class),
+            }, returns = @LuaApiUsed.Type(UDEditText.class)),
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(Boolean.class)),
+    })
     public LuaValue[] passwordMode(LuaValue[] enable) {
         if (enable != null && enable.length >= 1) {
             int sectionStart = getView().getSelectionStart();
@@ -220,7 +266,13 @@ public class UDEditText<L extends EditText> extends UDLabel<L> implements TextWa
         return varargsOf(LuaBoolean.valueOf(passwordMode));
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Integer.class),
+            }, returns = @LuaApiUsed.Type(UDEditText.class)),
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(Integer.class)),
+    })
     public LuaValue[] maxLength(LuaValue[] lengths) {
         if (lengths != null && lengths.length >= 1) {
             int length = lengths[0].toInt();
@@ -254,7 +306,13 @@ public class UDEditText<L extends EditText> extends UDLabel<L> implements TextWa
         return false;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Integer.class),
+            }, returns = @LuaApiUsed.Type(UDEditText.class)),
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(Integer.class)),
+    })
     public LuaValue[] maxBytes(LuaValue[] lengths) {
         if (lengths != null && lengths.length >= 1) {
             this.maxBytes = lengths[0].toInt();
@@ -270,7 +328,13 @@ public class UDEditText<L extends EditText> extends UDLabel<L> implements TextWa
         return varargsOf(LuaNumber.valueOf(maxBytes));
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Integer.class),
+            }, returns = @LuaApiUsed.Type(UDEditText.class)),
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(Integer.class)),
+    })
     public LuaValue[] returnMode(LuaValue[] mode) {
         if (mode != null && mode.length >= 1) {
             getView().setImeOptions(mode[0].toInt());
@@ -285,7 +349,11 @@ public class UDEditText<L extends EditText> extends UDLabel<L> implements TextWa
     //</editor-fold>
 
     //<editor-fold desc="Method">
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = Function0.class, typeArgs = {Unit.class}),
+            }, returns = @LuaApiUsed.Type(UDEditText.class))
+    })
     public LuaValue[] setBeginChangingCallback(LuaValue[] fun) {
         if (beginChangingCallback != null)
             beginChangingCallback.destroy();
@@ -294,7 +362,11 @@ public class UDEditText<L extends EditText> extends UDLabel<L> implements TextWa
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = Function3.class, typeArgs = {String.class, Integer.class, Integer.class, Unit.class}),
+            }, returns = @LuaApiUsed.Type(UDEditText.class))
+    })
     public LuaValue[] setDidChangingCallback(LuaValue[] callback) {
         if (changingCallback != null)
             changingCallback.destroy();
@@ -303,7 +375,11 @@ public class UDEditText<L extends EditText> extends UDLabel<L> implements TextWa
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = Function1.class, typeArgs = {String.class, Unit.class}),
+            }, returns = @LuaApiUsed.Type(UDEditText.class))
+    })
     public LuaValue[] setEndChangedCallback(LuaValue[] callback) {
         if (endChangedCallback != null)
             endChangedCallback.destroy();
@@ -312,7 +388,11 @@ public class UDEditText<L extends EditText> extends UDLabel<L> implements TextWa
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = Function0.class, typeArgs = {Unit.class}),
+            }, returns = @LuaApiUsed.Type(UDEditText.class))
+    })
     public LuaValue[] setReturnCallback(LuaValue[] callback) {
         if (returnCallback != null)
             returnCallback.destroy();
@@ -323,7 +403,11 @@ public class UDEditText<L extends EditText> extends UDLabel<L> implements TextWa
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(UDColor.class),
+            }, returns = @LuaApiUsed.Type(UDEditText.class))
+    })
     public LuaValue[] setCursorColor(LuaValue[] color) {
         if (color != null && color.length >= 1) {
             if (getView() instanceof LuaEditText) {
@@ -333,7 +417,11 @@ public class UDEditText<L extends EditText> extends UDLabel<L> implements TextWa
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Boolean.class),
+            }, returns = @LuaApiUsed.Type(UDEditText.class))
+    })
     public LuaValue[] setCanEdit(LuaValue[] enable) {
         if (enable != null && enable.length >= 1) {
             getView().setEnabled(enable[0].toBoolean());
@@ -348,6 +436,32 @@ public class UDEditText<L extends EditText> extends UDLabel<L> implements TextWa
         return result;
     }
 
+    @SuppressLint("ClickableViewAccessibility")
+    @LuaApiUsed
+    public LuaValue[] fixScrollConflict(LuaValue[] p) {
+        getView().setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                // 当触摸的是EditText & 当前EditText可滚动时，则将事件交给EditText处理；
+                v.getParent().requestDisallowInterceptTouchEvent(true);
+                if ((event.getAction() & MotionEvent.ACTION_MASK) == MotionEvent.ACTION_UP) {
+                    v.getParent().requestDisallowInterceptTouchEvent(false);
+                }
+                return false;
+            }
+        });
+        return null;
+    }
+
+    // 判断当前EditText是否可滚动
+    private boolean canVerticalScroll() {
+
+        if (getView().getLineCount() > getView().getMaxLines()) {
+            return true;
+        }
+        return false;
+    }
+
     @Override
     public LuaValue[] cancelFocus(LuaValue[] p) {
         LuaValue[] result = super.cancelFocus(p);
@@ -355,7 +469,11 @@ public class UDEditText<L extends EditText> extends UDLabel<L> implements TextWa
         return result;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = Function4.class, typeArgs = {String.class, String.class, Integer.class, Integer.class, Boolean.class}),
+            }, returns = @LuaApiUsed.Type(UDEditText.class))
+    })
     public LuaValue[] setShouldChangeCallback(LuaValue[] p) {
         if (mSetShouldChangeFunction != null)
             mSetShouldChangeFunction.destroy();
@@ -378,7 +496,10 @@ public class UDEditText<L extends EditText> extends UDLabel<L> implements TextWa
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(UDEditText.class))
+    })
     public LuaValue[] showKeyboard(LuaValue[] v) {
         InputMethodManager im = ((InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE));
         if (!getView().isFocused()) {
@@ -393,7 +514,10 @@ public class UDEditText<L extends EditText> extends UDLabel<L> implements TextWa
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(UDEditText.class))
+    })
     public LuaValue[] dismissKeyboard(LuaValue[] v) {
         InputMethodManager im = ((InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE));
         View curFocusView = getView().isFocused() ? getView() : null;

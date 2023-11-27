@@ -1,5 +1,20 @@
+pluginManagement {
+    repositories {
+        maven {
+            url getProperty('mmdev_url')
+            credentials {
+                username NEXUS_USERNAME
+                password NEXUS_PASSWORD
+            }
+        }
+        maven {
+            url = getProperty('mmpublic_url')
+            allowInsecureProtocol = true
+        }
+    }
+}
+
 include ':sample'
-include ':yoga'
 include ':mlncore'
 include ':HotReload'
 include ':HotReload_Empty'
@@ -7,4 +22,3 @@ include ':annotation'
 include ':processor'
 include ':mlnservics'
 include ':scan'
-include ':mmui'

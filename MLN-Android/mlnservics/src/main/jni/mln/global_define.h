@@ -14,9 +14,47 @@
 
 #include <jni.h>
 #include <string.h>
+#include <stdio.h>
 #include "lua.h"
+#include "lstate.h"
 #include "utils.h"
 #include "luaconf.h"
+#include "mempool.h"
+
+#if defined(J_API_INFO)
+#include <pthread.h>
+#include "lstate.h"
+#include "mlog.h"
+#define _checkThread(ud) while((ud)->create_thread != pthread_self()) {\
+LOGE("%s:函数%s(%d)执行线程和虚拟机创建线程不符",__FILE__, __FUNCTION__, __LINE__);\
+exit(1);\
+}
+#define CheckThread(L) _checkThread((LuaJData *)(G((L))->ud))
+#else
+#define CheckThread(L) ((void) 0)
+#endif
+
+typedef enum ErrorType {
+    no = 0,
+    bridge = 1,
+    require = 2,
+    lua = 3
+} ErrorType;
+
+typedef struct LuaJData {
+#if defined(J_API_INFO)
+    /// lua使用内存
+    size_t use_mem;
+    pthread_t create_thread;
+#endif
+    ErrorType type;
+    char vm_is_closing;
+    mem_pool *pool;
+} LuaJData;
+
+#define clearErrorType(L) setErrorType(L, no)
+#define getErrorType(L) ((LuaJData *)(G((L))->ud))->type
+#define setErrorType(L, t) {if (getErrorType(L) == no) ((LuaJData *)(G((L))->ud))->type = (t);}
 
 #if defined(__arm64__) || defined(__aarch64__)
     /**
@@ -38,8 +76,6 @@
 #define JAVA_INSTANCE_META METATABLE_PREFIX "__JavaInstance"
 #define JAVA_CLASS_META METATABLE_PREFIX "__JavaClass"
 #define METATABLE_FORMAT METATABLE_PREFIX "%s"
-
-#define EMPTY_METHOD_TABLE "__EMTPY_METHOD"
 
 #define DEFAULT_SIG "([" LUAVALUE_CLASS ")[" LUAVALUE_CLASS
 

@@ -192,6 +192,6 @@ static int resize(List * list) {
         return 1;
     }
     list->_len = newl;
-    memset(list->arr + old * sizeof(void *), 0, (newl - old) * sizeof(void *));
+    memset(&list->arr[old], 0, (newl - old) * sizeof(void *));
     return 0;
 }

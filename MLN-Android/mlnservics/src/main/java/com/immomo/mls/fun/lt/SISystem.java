@@ -20,6 +20,8 @@ import android.provider.Settings;
 import android.view.Window;
 import android.view.WindowManager;
 
+import androidx.annotation.Nullable;
+
 import com.immomo.mls.Constants;
 import com.immomo.mls.LuaViewManager;
 import com.immomo.mls.MLSConfigs;
@@ -31,26 +33,27 @@ import com.immomo.mls.fun.other.Size;
 import com.immomo.mls.receiver.ConnectionStateChangeBroadcastReceiver;
 import com.immomo.mls.util.AndroidUtil;
 import com.immomo.mls.util.DimenUtil;
+import com.immomo.mls.util.LogUtil;
 import com.immomo.mls.util.NetworkUtil;
 import com.immomo.mls.utils.MainThreadExecutor;
 import com.immomo.mls.wrapper.callback.IVoidCallback;
 
+import kotlin.Unit;
+import kotlin.jvm.functions.Function0;
+import kotlin.jvm.functions.Function1;
 import org.luaj.vm2.Globals;
 import org.luaj.vm2.LuaFunction;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import java.lang.ref.WeakReference;
 
 /**
  * Created by XiongFangyu on 2018/8/6.
  */
-@LuaClass
+@LuaClass(name = "System", isSingleton = true)
 public class SISystem implements ConnectionStateChangeBroadcastReceiver.OnConnectionChangeListener {
-    public static final String KEY = "System";
+    public static final String LUA_CLASS_NAME = "System";
 
     protected Globals globals;
     protected Context context;
@@ -199,17 +202,27 @@ public class SISystem implements ConnectionStateChangeBroadcastReceiver.OnConnec
         }
     }
 
-    @LuaBridge
-    public boolean asyncDoInMain(final IVoidCallback fun) {
+    @LuaBridge(value = {
+            @LuaBridge.Func(params = {
+                    @LuaBridge.Type(value = Function0.class, typeArgs = {Unit.class})})
+    })
+    public boolean asyncDoInMain(final LuaFunction fun) {
         return globals.post(new Runnable() {
             @Override
             public void run() {
-                fun.callback();
+                if (fun.isDestroyed()) {
+                    LogUtil.e("asyncDoInMain fun is destroy");
+                    return;
+                }
+                fun.fastInvoke();
             }
         });
     }
 
-    @LuaBridge
+    @LuaBridge(value = {
+            @LuaBridge.Func(params = {
+                    @LuaBridge.Type(value = Function1.class, typeArgs = {Integer.class, Unit.class})})
+    })
     public void setOnNetworkStateChange(LuaFunction callback) {
         if (networkStateCallback != null)
             networkStateCallback.destroy();
@@ -217,7 +230,12 @@ public class SISystem implements ConnectionStateChangeBroadcastReceiver.OnConnec
         NetworkUtil.registerConnectionChangeListener(getContext(), this);
     }
 
-    @LuaBridge
+    @LuaBridge(value = {
+            @LuaBridge.Func(params = {
+                    @LuaBridge.Type(name = "task", value = Function0.class, typeArgs = {Unit.class}),
+                    @LuaBridge.Type(name = "delay", value = Float.class)
+            })
+    })
     public void setTimeOut(final IVoidCallback task, float delay) {
         globals.postDelayed(new Runnable() {
             @Override

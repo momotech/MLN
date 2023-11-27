@@ -20,7 +20,7 @@ import org.luaj.vm2.utils.LuaApiUsed;
 /**
  * Created by XiongFangyu on 2018/8/3.
  */
-@LuaApiUsed
+@LuaApiUsed(ignoreTypeArgs = true)
 public class UDImageButton<I extends ImageView & ILuaImageButton> extends UDImageView<LuaImageButton> {
 
     public static final String LUA_CLASS_NAME = "ImageButton";
@@ -30,7 +30,10 @@ public class UDImageButton<I extends ImageView & ILuaImageButton> extends UDImag
             "padding"
     };
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(value = UDImageButton.class))
+    })
     public UDImageButton(long L, LuaValue[] v) {
         super(L, v);
     }
@@ -41,7 +44,12 @@ public class UDImageButton<I extends ImageView & ILuaImageButton> extends UDImag
     }
 
     //<editor-fold desc="API">
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(String.class),
+                    @LuaApiUsed.Type(String.class)
+            }, returns = @LuaApiUsed.Type(UDImageButton.class))
+    })
     public LuaValue[] setImage(LuaValue[] values) {
         String normal = null;
         String press = null;
@@ -58,7 +66,14 @@ public class UDImageButton<I extends ImageView & ILuaImageButton> extends UDImag
     /**
      * iOS只在文本控件中支持
      */
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Integer.class),
+                    @LuaApiUsed.Type(Integer.class),
+                    @LuaApiUsed.Type(Integer.class),
+                    @LuaApiUsed.Type(Integer.class)
+            }, returns = @LuaApiUsed.Type(UDImageButton.class))
+    })
     public LuaValue[] padding(LuaValue[] values) {
         int topvalue = DimenUtil.dpiToPx(values[0].toInt());
         int rightvalue = DimenUtil.dpiToPx(values[1].toInt());

@@ -40,8 +40,6 @@ public interface IHotReloadServer {
 
     public void startNetClient(String ip, int port);
 
-    public void onReport(String summaryPath, String detailPath);
-
     void setSerial(String serial);
 
     String getSerial();

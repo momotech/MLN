@@ -22,10 +22,14 @@ import com.immomo.mls.annotation.LuaBridge;
 import com.immomo.mls.annotation.LuaClass;
 import com.immomo.mls.utils.LVCallback;
 
+import kotlin.Unit;
+import kotlin.jvm.functions.Function0;
+import kotlin.jvm.functions.Function1;
 import org.luaj.vm2.Globals;
 import org.luaj.vm2.LuaValue;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by XiongFangyu on 2018/8/9.
@@ -93,7 +97,12 @@ public class Alert {
 
     //</editor-fold>
     //<editor-fold desc="METHOD">
-    @LuaBridge
+    @LuaBridge(value = {
+            @LuaBridge.Func(params = {
+                    @LuaBridge.Type(name = "text", value = String.class),
+                    @LuaBridge.Type(value = Function0.class, typeArgs = {Unit.class})
+            })
+    })
     public void setCancel(String text, LVCallback callback) {
         state |= STATE_DOUBLE;
         cancelText = text;
@@ -101,7 +110,12 @@ public class Alert {
         check();
     }
 
-    @LuaBridge
+    @LuaBridge(value = {
+            @LuaBridge.Func(params = {
+                    @LuaBridge.Type(name = "text", value = String.class),
+                    @LuaBridge.Type(value = Function0.class, typeArgs = {Unit.class})
+            })
+    })
     public void setOk(String text, LVCallback callback) {
         state |= STATE_DOUBLE;
         okText = text;
@@ -109,7 +123,12 @@ public class Alert {
         check();
     }
 
-    @LuaBridge
+    @LuaBridge(value = {
+            @LuaBridge.Func(params = {
+                    @LuaBridge.Type(name = "text", value = List.class),
+                    @LuaBridge.Type(value = Function1.class, typeArgs = {Integer.class, Unit.class})
+            })
+    })
     public void setButtonList(List text, LVCallback callback) {
         state |= STATE_LIST;
         this.buttonList = text;
@@ -117,7 +136,12 @@ public class Alert {
         check();
     }
 
-    @LuaBridge
+    @LuaBridge(value = {
+            @LuaBridge.Func(params = {
+                    @LuaBridge.Type(name = "text", value = String.class),
+                    @LuaBridge.Type(value = Function0.class, typeArgs = {Unit.class})
+            })
+    })
     public void setSingleButton(String text, LVCallback callback) {
         state |= STATE_SINGLE;
         singleCallback = callback;

@@ -1615,9 +1615,17 @@ static void mainfunc (LexState *ls, FuncState *fs) {
 }
 
 
+#ifdef LOAD_TOKEN
+Closure *luaY_parser (lua_State *L, ZIO *z, Mbuffer *buff,
+                      Dyndata *dyd, const char *name, int firstchar, TokenListenData *ud) {
+#else
 Closure *luaY_parser (lua_State *L, ZIO *z, Mbuffer *buff,
                       Dyndata *dyd, const char *name, int firstchar) {
+#endif
   LexState lexstate;
+#ifdef LOAD_TOKEN
+  lexstate.ud = ud;
+#endif
   FuncState funcstate;
   Closure *cl = luaF_newLclosure(L, 1);  /* create main closure */
   /* anchor closure (to avoid being collected) */

@@ -13,6 +13,7 @@
 #include <pthread.h>
 #include "m_mem.h"
 #include "map.h"
+#include "global_define.h"
 
 #if defined(J_API_INFO)
 static size_t all_size = 0;
@@ -27,14 +28,6 @@ static pthread_rwlock_t rwlock;
 static void init_map();
 #endif
 #endif
-
-jlong jni_allLvmMemUse(JNIEnv *env, jobject jobj) {
-#if defined(J_API_INFO)
-    return (jlong) (all_size);
-#else
-    return 0;
-#endif
-}
 
 void jni_logMemoryInfo(JNIEnv *env, jobject jobj) {
 #if defined(J_API_INFO) && defined(MEM_INFO)
@@ -66,25 +59,6 @@ void * m_malloc(void* src, size_t os, size_t ns) {
 
 #if defined(J_API_INFO)
 
-void *m_alloc(void *ud, void *ptr, size_t osize, size_t nsize) {
-    size_t *sp = (size_t *) ud;
-    if (nsize == 0) {
-        free(ptr);
-        if (ptr) {
-            *sp = *sp - osize;
-            all_size -= osize;
-        }
-        return NULL;
-    } else {
-        void *nb = realloc(ptr, nsize);
-        if (nb) {
-            size_t of = (ptr) ? (nsize - osize) : nsize;
-            *sp = *sp + of;
-            all_size += of;
-        }
-        return nb;
-    }
-}
 size_t m_mem_use() {
     return all_size;
 }
@@ -132,7 +106,7 @@ m_mem_info ** m_get_mem_infos(size_t * out) {
 
 void m_log_mem_infos() {
     #if defined(ENV_64) //64位机器
-    static const int MAX = 1000;
+    static const int MAX = 2000;
     static const int TEMP = 16 + 4;
     static const int R_MAX = MAX - 7 * TEMP;
     #else               //32位
@@ -195,6 +169,8 @@ void m_log_mem_infos() {
         memcpy(logstr + logindex, temp, l);
         logindex += l;
         l = snprintf(temp, TEMP, "%p", entry.key);
+        if (l == TEMP)
+            l = TEMP - 1;
         memcpy(logstr + logindex, temp, l);
         logindex += l;
         memcpy(logstr + logindex, "\n", 1);
@@ -210,9 +186,12 @@ static void free_mt(m_mem_info * mt) {
     while (mt->stack_s.method_name[i])
     {
         free(mt->stack_s.method_name[i]);
-        mt->stack_s.method_name[i] = NULL;
+        mt->stack_s.method_name[i++] = NULL;
     }
-
+    free(mt->stack_s.method_name);
+    mt->stack_s.method_name = NULL;
+    free(mt->stack_s.pc);
+    mt->stack_s.pc = NULL;
     free(mt);
 }
 
@@ -254,7 +233,11 @@ static void save_trace(void *p, size_t s) {
     }
     mt = (m_mem_info * )malloc(sizeof(m_mem_info));
     memset(mt, 0, sizeof(m_mem_info));
-    get_call_stack(&mt->stack_s, 2, 1);
+    stack_symbol *_ss = &mt->stack_s;
+    _ss->method_name = (char **) malloc(sizeof(char *) * MAX_STACK_LENGTH);
+    _ss->pc = malloc(sizeof(uintptr_t) * MAX_STACK_LENGTH);
+    _ss->max = MAX_STACK_LENGTH;
+    get_call_stack(_ss, 2, 1);
     mt->size = s;
 
     pthread_rwlock_wrlock(&rwlock);

@@ -196,6 +196,17 @@ public class PreloadUtils {
         return createScriptFile(name, file, true);
     }
 
+
+    public static ScriptFile parseCacheMainScript(byte[] data,File file) throws ScriptLoadException {
+        String name = file.getName();
+        if (name.endsWith(Constants.POSTFIX_LUA)) {
+            name = name.substring(0, name.length() - Constants.POSTFIX_LUA.length());
+        } else if (name.endsWith(Constants.POSTFIX_B_LUA)) {
+            name = name.substring(0, name.length() - Constants.POSTFIX_B_LUA.length());
+        }
+        return createScriptFileByCache(name, data, true);
+    }
+
     public static ScriptFile parseAssetMainScript(ParsedUrl parsedUrl) {
         String name = parsedUrl.getName();
         if (name.endsWith(Constants.POSTFIX_LUA)) {
@@ -208,6 +219,10 @@ public class PreloadUtils {
 
     private static ScriptFile createScriptFile(String cn, File f, boolean isMain) {
         return new ScriptFile(cn, f.getAbsolutePath(), isMain);
+    }
+
+    private static ScriptFile createScriptFileByCache(String cn, byte[] data, boolean isMain) {
+        return new ScriptFile(cn, data, isMain);
     }
 
     /**

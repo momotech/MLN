@@ -7,6 +7,8 @@
   */
 package com.immomo.mls;
 
+import android.util.Log;
+
 import com.immomo.mls.log.ErrorPrintStream;
 import com.immomo.mls.log.ErrorType;
 import com.immomo.mls.util.LogUtil;
@@ -26,8 +28,14 @@ public class Environment {
     public static UncatchExceptionListener uncatchExceptionListener = new UncatchExceptionListener() {
         @Override
         public boolean onUncatch(boolean fatal, Globals globals, Throwable e) {
-            e.printStackTrace();
+            Log.e("[LUA_ERROR]", "uncatch lua error type: " + globals.getErrorType(), e);
             return true;
+        }
+    };
+    public static BeforeAbortBlock beforeAbortBlock = new BeforeAbortBlock() {
+        @Override
+        public void beforeAbort(Globals g, String msg) {
+            LogUtil.e("onLuaFatalError", g, msg);
         }
     };
     public static boolean hook(Throwable t, Globals globals) {
@@ -47,6 +55,10 @@ public class Environment {
         return false;
     }
 
+    public static void beforeAbort(Globals g, String msg) {
+        beforeAbortBlock.beforeAbort(g, msg);
+    }
+
     public static void error(Throwable t, Globals globals) {
         String error = getErrorMsg(t);
         LuaViewManager m = (LuaViewManager) globals.getJavaUserdata();
@@ -60,7 +72,7 @@ public class Environment {
             }
             m.showPrinterIfNot();
         } else {
-            LogUtil.e(t);
+            LogUtil.e(t, LUA_ERROR);
         }
     }
 
@@ -95,6 +107,18 @@ public class Environment {
          * @return true to handle uncatch throwable, false otherwise.
          */
         boolean onUncatch(boolean fatal, Globals globals, Throwable e);
+    }
+
+    /**
+     * abort前回调
+     */
+    public static interface BeforeAbortBlock {
+        /**
+         * abort前回调，在其中不要做其他线程处理，因为整个app会被abort，线程并不能开启
+         * @param g 虚拟机
+         * @param msg 日志
+         */
+        void beforeAbort(Globals g, String msg);
     }
 
     private static String getErrorMsg(Throwable t) {

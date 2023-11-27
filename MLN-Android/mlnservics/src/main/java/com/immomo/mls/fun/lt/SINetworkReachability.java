@@ -13,18 +13,23 @@ import com.immomo.mls.LuaViewManager;
 import com.immomo.mls.annotation.LuaBridge;
 import com.immomo.mls.annotation.LuaClass;
 import com.immomo.mls.fun.constants.NetworkState;
+import com.immomo.mls.fun.ud.UDMap;
 import com.immomo.mls.receiver.ConnectionStateChangeBroadcastReceiver;
 import com.immomo.mls.util.NetworkUtil;
 import com.immomo.mls.utils.MainThreadExecutor;
 
+import kotlin.Unit;
+import kotlin.jvm.functions.Function1;
 import org.luaj.vm2.Globals;
 import org.luaj.vm2.LuaFunction;
 import org.luaj.vm2.LuaValue;
 
+import java.util.Map;
+
 /**
  * Created by fanqiang on 2018/9/28.
  */
-@LuaClass
+@LuaClass(name = "NetworkReachability", isSingleton = true)
 public class SINetworkReachability implements ConnectionStateChangeBroadcastReceiver.OnConnectionChangeListener {
 
     public static final String LUA_CLASS_NAME = "NetworkReachability";
@@ -77,7 +82,11 @@ public class SINetworkReachability implements ConnectionStateChangeBroadcastRece
         }
     }
 
-    @LuaBridge
+    @LuaBridge(value = {
+            @LuaBridge.Func(params = {
+                    @LuaBridge.Type(name = "callback", value = Function1.class, typeArgs = {Integer.class, Unit.class}),
+            })
+    })
     public void setOnNetworkStateChange(LuaFunction callback) {
         if (networkStateCallback != null) {
             networkStateCallback.destroy();

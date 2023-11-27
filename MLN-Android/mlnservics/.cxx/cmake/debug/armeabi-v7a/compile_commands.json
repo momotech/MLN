@@ -1,0 +1,49 @@
+[
+{
+  "directory": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/.cxx/cmake/debug/armeabi-v7a",
+  "command": "/Users/XiongFangyu/Library/Android/sdk/ndk/21.0.6113669/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang --target=armv7-none-linux-androideabi21 --gcc-toolchain=/Users/XiongFangyu/Library/Android/sdk/ndk/21.0.6113669/toolchains/llvm/prebuilt/darwin-x86_64 --sysroot=/Users/XiongFangyu/Library/Android/sdk/ndk/21.0.6113669/toolchains/llvm/prebuilt/darwin-x86_64/sysroot -Dlblur_EXPORTS  -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -march=armv7-a -mthumb -Wformat -Werror=format-security -pie -fPIE -O0  -fPIC   -o bitmap/CMakeFiles/lblur.dir/bitmap_util.c.o   -c /Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/bitmap/bitmap_util.c",
+  "file": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/bitmap/bitmap_util.c"
+},
+
+{
+  "directory": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/.cxx/cmake/debug/armeabi-v7a",
+  "command": "/Users/XiongFangyu/Library/Android/sdk/ndk/21.0.6113669/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang --target=armv7-none-linux-androideabi21 --gcc-toolchain=/Users/XiongFangyu/Library/Android/sdk/ndk/21.0.6113669/toolchains/llvm/prebuilt/darwin-x86_64 --sysroot=/Users/XiongFangyu/Library/Android/sdk/ndk/21.0.6113669/toolchains/llvm/prebuilt/darwin-x86_64/sysroot -DJAVA_ENV -DJ_API_INFO -DLUA_COMPAT_5_1 -DLUA_COMPAT_ALL -DLUA_DL_DLOPEN -DLUA_USE_C89 -DLUA_USE_LINUX -DP_ANDROID -DSTATISTIC_PERFORMANCE -Dmlnbridge_EXPORTS -I/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/mln/lua_include -I/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/mln  -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -march=armv7-a -mthumb -Wformat -Werror=format-security -pie -fPIE -O0  -fPIC   -o mln/CMakeFiles/mlnbridge.dir/bridge/mmoslib.c.o   -c /Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/mln/bridge/mmoslib.c",
+  "file": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/mln/bridge/mmoslib.c"
+},
+
+{
+  "directory": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/.cxx/cmake/debug/armeabi-v7a",
+  "command": "/Users/XiongFangyu/Library/Android/sdk/ndk/21.0.6113669/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang --target=armv7-none-linux-androideabi21 --gcc-toolchain=/Users/XiongFangyu/Library/Android/sdk/ndk/21.0.6113669/toolchains/llvm/prebuilt/darwin-x86_64 --sysroot=/Users/XiongFangyu/Library/Android/sdk/ndk/21.0.6113669/toolchains/llvm/prebuilt/darwin-x86_64/sysroot -DJAVA_ENV -DJ_API_INFO -DLUA_COMPAT_5_1 -DLUA_COMPAT_ALL -DLUA_DL_DLOPEN -DLUA_USE_C89 -DLUA_USE_LINUX -DP_ANDROID -DSTATISTIC_PERFORMANCE -Dmlnbridge_EXPORTS -I/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/mln/lua_include -I/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/mln  -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -march=armv7-a -mthumb -Wformat -Werror=format-security -pie -fPIE -O0  -fPIC   -o mln/CMakeFiles/mlnbridge.dir/bridge/mmbit.c.o   -c /Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/mln/bridge/mmbit.c",
+  "file": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/mln/bridge/mmbit.c"
+},
+
+{
+  "directory": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/.cxx/cmake/debug/armeabi-v7a",
+  "command": "/Users/XiongFangyu/Library/Android/sdk/ndk/21.0.6113669/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang --target=armv7-none-linux-androideabi21 --gcc-toolchain=/Users/XiongFangyu/Library/Android/sdk/ndk/21.0.6113669/toolchains/llvm/prebuilt/darwin-x86_64 --sysroot=/Users/XiongFangyu/Library/Android/sdk/ndk/21.0.6113669/toolchains/llvm/prebuilt/darwin-x86_64/sysroot -DJAVA_ENV -DJ_API_INFO -DLUA_COMPAT_5_1 -DLUA_COMPAT_ALL -DLUA_DL_DLOPEN -DLUA_USE_C89 -DLUA_USE_LINUX -DP_ANDROID -DSTATISTIC_PERFORMANCE -Dmlnbridge_EXPORTS -I/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/mln/lua_include -I/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/mln  -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -march=armv7-a -mthumb -Wformat -Werror=format-security -pie -fPIE -O0  -fPIC   -o mln/CMakeFiles/mlnbridge.dir/bridge/jse.c.o   -c /Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/mln/bridge/jse.c",
+  "file": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/mln/bridge/jse.c"
+},
+
+{
+  "directory": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/.cxx/cmake/debug/armeabi-v7a",
+  "command": "/Users/XiongFangyu/Library/Android/sdk/ndk/21.0.6113669/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang --target=armv7-none-linux-androideabi21 --gcc-toolchain=/Users/XiongFangyu/Library/Android/sdk/ndk/21.0.6113669/toolchains/llvm/prebuilt/darwin-x86_64 --sysroot=/Users/XiongFangyu/Library/Android/sdk/ndk/21.0.6113669/toolchains/llvm/prebuilt/darwin-x86_64/sysroot -DJAVA_ENV -DJ_API_INFO -DLUA_COMPAT_5_1 -DLUA_COMPAT_ALL -DLUA_DL_DLOPEN -DLUA_USE_C89 -DLUA_USE_LINUX -DP_ANDROID -DSTATISTIC_PERFORMANCE -Dmlnbridge_EXPORTS -I/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/mln/lua_include -I/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/mln  -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -march=armv7-a -mthumb -Wformat -Werror=format-security -pie -fPIE -O0  -fPIC   -o mln/CMakeFiles/mlnbridge.dir/bridge/mmbridge.c.o   -c /Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/mln/bridge/mmbridge.c",
+  "file": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/mln/bridge/mmbridge.c"
+},
+
+{
+  "directory": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/.cxx/cmake/debug/armeabi-v7a",
+  "command": "/Users/XiongFangyu/Library/Android/sdk/ndk/21.0.6113669/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang --target=armv7-none-linux-androideabi21 --gcc-toolchain=/Users/XiongFangyu/Library/Android/sdk/ndk/21.0.6113669/toolchains/llvm/prebuilt/darwin-x86_64 --sysroot=/Users/XiongFangyu/Library/Android/sdk/ndk/21.0.6113669/toolchains/llvm/prebuilt/darwin-x86_64/sysroot -DJAVA_ENV -DJ_API_INFO -DLUA_COMPAT_5_1 -DLUA_COMPAT_ALL -DLUA_DL_DLOPEN -DLUA_USE_C89 -DLUA_USE_LINUX -DP_ANDROID -DSTATISTIC_PERFORMANCE -Dmlnbridge_EXPORTS -I/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/mln/lua_include -I/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/mln  -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -march=armv7-a -mthumb -Wformat -Werror=format-security -pie -fPIE -O0  -fPIC   -o mln/CMakeFiles/mlnbridge.dir/bridge/mmarray.c.o   -c /Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/mln/bridge/mmarray.c",
+  "file": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/mln/bridge/mmarray.c"
+},
+
+{
+  "directory": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/.cxx/cmake/debug/armeabi-v7a",
+  "command": "/Users/XiongFangyu/Library/Android/sdk/ndk/21.0.6113669/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang --target=armv7-none-linux-androideabi21 --gcc-toolchain=/Users/XiongFangyu/Library/Android/sdk/ndk/21.0.6113669/toolchains/llvm/prebuilt/darwin-x86_64 --sysroot=/Users/XiongFangyu/Library/Android/sdk/ndk/21.0.6113669/toolchains/llvm/prebuilt/darwin-x86_64/sysroot -DJAVA_ENV -DJ_API_INFO -DLUA_COMPAT_5_1 -DLUA_COMPAT_ALL -DLUA_DL_DLOPEN -DLUA_USE_C89 -DLUA_USE_LINUX -DP_ANDROID -DSTATISTIC_PERFORMANCE -Dmlnbridge_EXPORTS -I/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/mln/lua_include -I/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/mln  -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -march=armv7-a -mthumb -Wformat -Werror=format-security -pie -fPIE -O0  -fPIC   -o mln/CMakeFiles/mlnbridge.dir/bridge/mmmap.c.o   -c /Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/mln/bridge/mmmap.c",
+  "file": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/mln/bridge/mmmap.c"
+},
+
+{
+  "directory": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/.cxx/cmake/debug/armeabi-v7a",
+  "command": "/Users/XiongFangyu/Library/Android/sdk/ndk/21.0.6113669/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang --target=armv7-none-linux-androideabi21 --gcc-toolchain=/Users/XiongFangyu/Library/Android/sdk/ndk/21.0.6113669/toolchains/llvm/prebuilt/darwin-x86_64 --sysroot=/Users/XiongFangyu/Library/Android/sdk/ndk/21.0.6113669/toolchains/llvm/prebuilt/darwin-x86_64/sysroot -DJAVA_ENV -DJ_API_INFO -DLUA_COMPAT_5_1 -DLUA_COMPAT_ALL -DLUA_DL_DLOPEN -DLUA_USE_C89 -DLUA_USE_LINUX -DP_ANDROID -DSTATISTIC_PERFORMANCE -Dmlnbridge_EXPORTS -I/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/mln/lua_include -I/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/mln  -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -march=armv7-a -mthumb -Wformat -Werror=format-security -pie -fPIE -O0  -fPIC   -o mln/CMakeFiles/mlnbridge.dir/bridge/mmcanvas.c.o   -c /Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/mln/bridge/mmcanvas.c",
+  "file": "/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/mln/bridge/mmcanvas.c"
+}
+]

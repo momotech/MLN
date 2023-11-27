@@ -14,6 +14,8 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import androidx.annotation.NonNull;
 
+import com.immomo.mls.fun.constants.RectCorner;
+
 public class RadiusDrawer {
     @NonNull
     private final Path[] drawRadiusPath;
@@ -34,6 +36,21 @@ public class RadiusDrawer {
         drawRadiusPaint.setColor(color);
     }
 
+    public void updateOne(@RectCorner.Direction int d, float r) {
+        if ((d & RectCorner.TOP_LEFT) == RectCorner.TOP_LEFT) {
+            update(0, r);
+        }
+        if ((d & RectCorner.TOP_RIGHT) == RectCorner.TOP_RIGHT) {
+            update(1, r);
+        }
+        if ((d & RectCorner.BOTTOM_LEFT) == RectCorner.BOTTOM_LEFT) {
+            update(2, r);
+        }
+        if ((d & RectCorner.BOTTOM_RIGHT) == RectCorner.BOTTOM_RIGHT) {
+            update(3, r);
+        }
+    }
+
     public void update(float tl, float tr, float bl, float br) {
         update(0, tl);
         update(1, tr);
@@ -42,7 +59,7 @@ public class RadiusDrawer {
     }
 
     private void update(int pos, float r) {
-        if (r > 0) {
+        if (r >= 0) {
             if (drawRadiusPath[pos] == null) {
                 drawRadiusPath[pos] = new Path();
                 radius[pos] = new RectF();

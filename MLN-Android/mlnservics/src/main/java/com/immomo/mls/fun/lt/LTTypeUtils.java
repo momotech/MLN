@@ -10,6 +10,7 @@ package com.immomo.mls.fun.lt;
 import com.immomo.mls.fun.ud.UDArray;
 import com.immomo.mls.fun.ud.UDMap;
 
+import com.immomo.mls.fun.ud.view.UDTabLayout;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.utils.LuaApiUsed;
 
@@ -24,12 +25,20 @@ public class LTTypeUtils {
     };
 
     //<editor-fold desc="API">
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(LuaValue.class)
+            }, returns = @LuaApiUsed.Type(LTTypeUtils.class))
+    })
     public static LuaValue[] isMap(long L, LuaValue[] o) {
         return o.length == 1 && o[0] instanceof UDMap ? LuaValue.rTrue() : LuaValue.rFalse();
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(LuaValue.class)
+            }, returns = @LuaApiUsed.Type(LTTypeUtils.class))
+    })
     public static LuaValue[] isArray(long L, LuaValue[] o) {
         return o.length == 1 && o[0] instanceof UDArray ? LuaValue.rTrue() : LuaValue.rFalse();
     }

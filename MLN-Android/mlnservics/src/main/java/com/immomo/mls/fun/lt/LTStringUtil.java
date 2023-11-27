@@ -1,10 +1,10 @@
 /**
-  * Created by MomoLuaNative.
-  * Copyright (c) 2019, Momo Group. All rights reserved.
-  *
-  * This source code is licensed under the MIT.
-  * For the full copyright and license information,please view the LICENSE file in the root directory of this source tree.
-  */
+ * Created by MomoLuaNative.
+ * Copyright (c) 2019, Momo Group. All rights reserved.
+ * <p>
+ * This source code is licensed under the MIT.
+ * For the full copyright and license information,please view the LICENSE file in the root directory of this source tree.
+ */
 package com.immomo.mls.fun.lt;
 
 import android.content.Context;
@@ -23,6 +23,7 @@ import com.immomo.mls.fun.other.Size;
 import com.immomo.mls.fun.ud.UDArray;
 import com.immomo.mls.fun.ud.UDMap;
 import com.immomo.mls.fun.ud.UDSize;
+import com.immomo.mls.fun.ud.view.UDView;
 import com.immomo.mls.util.DimenUtil;
 import com.immomo.mls.util.EncryptUtil;
 import com.immomo.mls.util.JsonUtil;
@@ -37,12 +38,15 @@ import org.luaj.vm2.LuaValue;
 import java.util.List;
 import java.util.Map;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import org.luaj.vm2.utils.LuaApiUsed;
 
 /**
  * Created by fanqiang on 2018/10/11.
  */
-@LuaClass(isStatic = true)
+@LuaClass(isStatic = true, isSingleton = true)
 public class LTStringUtil {
     public static final String LUA_CLASS_NAME = "StringUtil";
 
@@ -63,7 +67,11 @@ public class LTStringUtil {
         return content.length();
     }
 
-    @LuaBridge
+    @LuaBridge(value = {
+            @LuaBridge.Func(params = {
+                    @LuaBridge.Type(name = "obj", value = String.class)
+            }, returns = @LuaBridge.Type(value = Map.class))
+    })
     public static Map jsonToMap(LuaValue obj) {
         Map<String, Object> map = null;
         try {
@@ -82,7 +90,11 @@ public class LTStringUtil {
         return map;
     }
 
-    @LuaBridge
+    @LuaBridge(value = {
+            @LuaBridge.Func(params = {
+                    @LuaBridge.Type(name = "obj", value = String.class)
+            }, returns = @LuaBridge.Type(value = List.class))
+    })
     public static List jsonToArray(LuaValue obj) {
         List array = null;
         try {
@@ -101,7 +113,11 @@ public class LTStringUtil {
         return array;
     }
 
-    @LuaBridge
+    @LuaBridge(value = {
+            @LuaBridge.Func(params = {
+                    @LuaBridge.Type(name = "obj", value = List.class)
+            }, returns = @LuaBridge.Type(value = String.class))
+    })
     public static String arrayToJSON(LuaValue obj) {
         if (obj == null) {
             return null;
@@ -117,7 +133,11 @@ public class LTStringUtil {
         return JsonUtil.toJsonArray(list).toString();
     }
 
-    @LuaBridge
+    @LuaBridge(value = {
+            @LuaBridge.Func(params = {
+                    @LuaBridge.Type(name = "obj", value = Map.class)
+            }, returns = @LuaBridge.Type(value = String.class))
+    })
     public static String mapToJSON(LuaValue obj) {
         if (obj == null) {
             return null;
@@ -133,12 +153,23 @@ public class LTStringUtil {
         return JsonUtil.toJson(map).toString();
     }
 
-    @LuaBridge
+    @LuaBridge(value = {
+            @LuaBridge.Func(params = {
+                    @LuaBridge.Type(name = "content", value = String.class),
+                    @LuaBridge.Type(name = "fontSize", value = Float.class)
+            }, returns = @LuaBridge.Type(value = UDSize.class))
+    })
     public static UDSize sizeWithContentFontSize(Globals g, String content, float fontSize) {
         return callSizeWithContentFontSize(g, content, fontSize, null);
     }
 
-    @LuaBridge
+    @LuaBridge(value = {
+            @LuaBridge.Func(params = {
+                    @LuaBridge.Type(name = "content", value = String.class),
+                    @LuaBridge.Type(name = "fontName", value = String.class),
+                    @LuaBridge.Type(name = "fontSize", value = Float.class)
+            }, returns = @LuaBridge.Type(value = UDSize.class))
+    })
     public static UDSize sizeWithContentFontNameSize(Globals g, String content, String fontName, float fontSize) {
         return callSizeWithContentFontSize(g, content, fontSize, fontName);
     }
@@ -185,6 +216,12 @@ public class LTStringUtil {
         size.setWidth((float) Math.ceil(DimenUtil.pxToDpi(paint.measureText(maxLenghtText))));
         size.setHeight((float) Math.ceil(DimenUtil.pxToDpi(singleHeight)));
         return size;
+    }
+
+    @LuaBridge
+    public static @NonNull
+    String replaceAllChar(@NonNull String src, String find, String replacement) {
+        return src.replace(find, replacement);
     }
 
 }

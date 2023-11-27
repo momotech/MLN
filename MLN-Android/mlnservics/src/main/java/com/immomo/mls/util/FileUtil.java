@@ -8,8 +8,10 @@
 package com.immomo.mls.util;
 
 import android.content.Context;
+import android.content.res.AssetManager;
 import android.net.Uri;
 import android.os.Build;
+import android.provider.ContactsContract;
 import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
@@ -52,6 +54,7 @@ public class FileUtil {
     public static final void setUseMemoryMap(boolean use) {
         useMemoryMap = use;
     }
+
     /**
      * zip压缩包不合法文件名
      */
@@ -59,6 +62,7 @@ public class FileUtil {
             "../",
             "~/"
     };
+
     public static boolean validEntry(@NonNull String name) {
         for (int i = 0, l = INVALID_ZIP_ENTRY_NAME.length; i < l; i++) {
             if (name.contains(INVALID_ZIP_ENTRY_NAME[i]))
@@ -71,6 +75,7 @@ public class FileUtil {
      * 处理相对parent的绝对路径
      * 若src中不含../，则返回parent+src
      * 若含有，则结合后再返回
+     *
      * @param parent 父路径
      * @param src    相对路径
      */
@@ -80,7 +85,7 @@ public class FileUtil {
         final int sl = src.length();
         if (pl > 0 && parent.charAt(pl - 1) == File.separatorChar) {
             parent = parent.substring(0, pl - 1);
-            pl --;
+            pl--;
         }
         /// 若src以 '/'开头，去掉'/'
         if (src.charAt(0) == File.separatorChar) {
@@ -109,17 +114,19 @@ public class FileUtil {
 
     /**
      * 解压文件
+     *
      * @param path
      * @param is
      * @throws Exception
      */
-    public static void unzip(@NonNull String path, InputStream is) throws Exception{
+    public static void unzip(@NonNull String path, InputStream is) throws Exception {
         unzipWithoutModifyTime(path, is);
         generateModifyTimeForAllDir(new File(path));
     }
 
     /**
      * 解压文件
+     *
      * @param path
      * @param is
      * @throws Exception
@@ -214,11 +221,12 @@ public class FileUtil {
 
     /**
      * 写文件
+     *
      * @param file
      * @param is
      * @throws Exception
      */
-    public static void writeFile(@NonNull File file, InputStream is) throws Exception{
+    public static void writeFile(@NonNull File file, InputStream is) throws Exception {
         byte data[] = new byte[BUFFER];
         BufferedOutputStream dest = new BufferedOutputStream(new FileOutputStream(file), BUFFER);
         int count = 0;
@@ -231,6 +239,7 @@ public class FileUtil {
 
     /**
      * 是否是相对路径
+     *
      * @see RelativePathUtils#isLocalUrl
      */
     @Deprecated
@@ -250,6 +259,7 @@ public class FileUtil {
 
     /**
      * 将绝对路径转换为相对路径
+     *
      * @see RelativePathUtils#getLocalUrl
      */
     @Deprecated
@@ -593,6 +603,7 @@ public class FileUtil {
 
     /**
      * 将文件读取到direct buffer中
+     *
      * @return 读取失败，返回null
      */
     public static ByteBuffer readByteBuffer(File f) {
@@ -661,6 +672,25 @@ public class FileUtil {
             IOUtil.closeQuietly(outChannel);
         }
         return true;
+    }
+
+    /**
+     * 在文件后增加数据
+     *
+     * @param file          原文件
+     * @param startPosition 插入位置
+     * @param data          数据
+     * @throws IOException
+     */
+    public static boolean append(File file, int startPosition, byte[] data) {
+        try (RandomAccessFile rf = new RandomAccessFile(file, "rw")) {
+            rf.seek(startPosition);
+            rf.write(data);
+            return true;
+        } catch (IOException e) {
+            logError(e);
+            return false;
+        }
     }
 
     /**
@@ -805,7 +835,7 @@ public class FileUtil {
         void onProgress(float p);
     }
 
-    public static void copy(final InputStream input, final String filePath, final long total, ProgressCallback callback) throws Exception{
+    public static void copy(final InputStream input, final String filePath, final long total, ProgressCallback callback) throws Exception {
         final int bufSize = BUFFER;
         File file = FileUtil.createFile(filePath);
         OutputStream output = null;
@@ -818,7 +848,7 @@ public class FileUtil {
                 output.write(buffer, 0, read);
                 readed += read;
                 if (callback != null) {
-                    callback.onProgress((float) (readed / (double)total));
+                    callback.onProgress((float) (readed / (double) total));
                 }
             }
             output.flush();
@@ -868,6 +898,29 @@ public class FileUtil {
                 }
             }
             return true;
+        }
+        return false;
+    }
+
+    /**
+     * 判断assets文件夹下的文件是否存在
+     *
+     * @return false 不存在    true 存在
+     */
+    public static boolean isFileExists(String absolutePath, Context context) {
+        AssetManager assetManager = context.getAssets();
+        try {
+            File file = new File(absolutePath);
+            String filename = file.getName();
+            String[] names = assetManager.list(file.getParent() == null ? "" : file.getParent());
+            for (int i = 0; i < names.length; i++) {
+                LogUtil.e(names[i]);
+                if (names[i].equals(filename.trim())) {
+                    return true;
+                }
+            }
+        } catch (IOException e) {
+            return false;
         }
         return false;
     }

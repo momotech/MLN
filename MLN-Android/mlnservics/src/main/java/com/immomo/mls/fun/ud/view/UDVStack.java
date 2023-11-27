@@ -9,17 +9,20 @@ package com.immomo.mls.fun.ud.view;
 
 import android.view.ViewGroup;
 
+import com.immomo.mls.fun.ud.view.viewpager.UDViewPagerAdapter;
 import com.immomo.mls.fun.ui.LuaVStack;
 
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.utils.LuaApiUsed;
 
 
-@LuaApiUsed
+@LuaApiUsed(ignoreTypeArgs = true)
 public class UDVStack<V extends LuaVStack> extends UDBaseHVStack<V> {
     public static final String LUA_CLASS_NAME = "VStack";
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(returns = @LuaApiUsed.Type(UDVStack.class)),
+    })
     protected UDVStack(long L, LuaValue[] v) {
         super(L, v);//VStack 主轴默认充满父容器
         setHeight(ViewGroup.LayoutParams.MATCH_PARENT);

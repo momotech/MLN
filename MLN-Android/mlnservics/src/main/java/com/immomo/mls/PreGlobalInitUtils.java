@@ -14,6 +14,7 @@ import androidx.annotation.Nullable;
 
 import com.immomo.mls.adapter.MLSThreadAdapter;
 import com.immomo.mls.global.LuaViewConfig;
+import com.immomo.mls.lite.interceptor.DefaultUserDataInjectInterceptor;
 import com.immomo.mls.utils.AssertUtils;
 import com.immomo.mls.utils.MainThreadExecutor;
 
@@ -27,7 +28,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Created by Xiong.Fangyu on 2019-08-08
- *
+ * <p>
  * 提前初始化一些Globals以供使用
  */
 public class PreGlobalInitUtils {
@@ -36,12 +37,19 @@ public class PreGlobalInitUtils {
 
     private final static Lock lock = new ReentrantLock(true);
 
-    private static int preInitSize = 0;
+    private static OnSetupGlobalsListener onSetupGlobalsListener;
+
+    public static void setOnSetupGlobalsListener(OnSetupGlobalsListener onSetupGlobalsListener) {
+        PreGlobalInitUtils.onSetupGlobalsListener = onSetupGlobalsListener;
+    }
+
+    private volatile static int preInitSize = 0;
 
     /**
      * Call in Main Thread
      */
-    public static @Nullable Globals take() {
+    public static @Nullable
+    Globals take() {
         AssertUtils.assetTrue(MainThreadExecutor.isMainThread());
         try {
             lock.lock();
@@ -67,7 +75,7 @@ public class PreGlobalInitUtils {
         MLSEngine.singleRegister.preInstall();
         if (!MLSEngine.singleRegister.isPreInstall())
             return;
-        while (num -- > 0) {
+        while (num-- > 0) {
             preInit();
         }
     }
@@ -77,6 +85,10 @@ public class PreGlobalInitUtils {
      */
     public static int hasPreInitSize() {
         return preInitSize;
+    }
+
+    public static int currentInitGlobals() {
+        return preInitGlobals.size();
     }
 
     private static void preInit() {
@@ -135,16 +147,40 @@ public class PreGlobalInitUtils {
             MLSAdapterContainer.getConsoleLoggerAdapter().d("LuaViewManager", "init cast: " + t);
         }
         if (MLSEngine.isInit())
-        NativeBridge.registerNativeBridge(globals);
+            NativeBridge.registerNativeBridge(globals);
+        if (onSetupGlobalsListener != null)
+            onSetupGlobalsListener.onSetup(globals);
+    }
+
+    /**
+     * 针对luaclient 嵌入list中的样式 注册的轻量级userdata列表
+     *
+     * @param globals luaVM
+     */
+    public static void realSetupLightGlobals(Globals globals) {
+        long t = SystemClock.uptimeMillis();
+        DefaultUserDataInjectInterceptor.register.preInstall();
+        DefaultUserDataInjectInterceptor.register.install(globals);
+        MLSEngine.singleRegister.installEnum(globals);
+        t = SystemClock.uptimeMillis() - t;
+        if (MLSEngine.DEBUG) {
+            MLSAdapterContainer.getConsoleLoggerAdapter().d("LuaViewManager", "init cast: " + t);
+        }
+        if (MLSEngine.isInit())
+            NativeBridge.registerNativeBridge(globals);
+        if (onSetupGlobalsListener != null)
+            onSetupGlobalsListener.onSetup(globals);
     }
 
     private abstract static class LockRunnable implements Runnable {
         final Lock lock;
         final Condition condition;
+
         LockRunnable(Lock lock, Condition condition) {
             this.lock = lock;
             this.condition = condition;
         }
+
         @Override
         public void run() {
             try {
@@ -157,5 +193,9 @@ public class PreGlobalInitUtils {
         }
 
         protected abstract void realRun();
+    }
+
+    public static interface OnSetupGlobalsListener {
+        void onSetup(Globals g);
     }
 }

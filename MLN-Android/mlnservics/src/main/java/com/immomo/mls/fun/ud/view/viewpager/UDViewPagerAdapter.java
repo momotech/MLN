@@ -11,10 +11,15 @@ import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.immomo.mls.fun.ud.view.UDViewGroup;
 import com.immomo.mls.fun.ud.view.UDViewPager;
 import com.immomo.mls.utils.AssertUtils;
 import com.immomo.mls.utils.ErrorUtils;
 
+import kotlin.Unit;
+import kotlin.jvm.functions.Function0;
+import kotlin.jvm.functions.Function1;
+import kotlin.jvm.functions.Function2;
 import org.luaj.vm2.JavaUserdata;
 import org.luaj.vm2.LuaFunction;
 import org.luaj.vm2.LuaNumber;
@@ -56,38 +61,61 @@ public class UDViewPagerAdapter extends JavaUserdata {
 
     private int allCountCache;
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(returns = @LuaApiUsed.Type(UDViewPagerAdapter.class)),
+    })
     public UDViewPagerAdapter(long L, LuaValue[] v) {
         super(L, v);
         allCountCache = -1;
     }
 
     //<editor-fold desc="API">
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = Function0.class, typeArgs = {Integer.class})
+            }, returns = @LuaApiUsed.Type(UDViewPagerAdapter.class)),
+    })
     public LuaValue[] getCount(LuaValue[] values) {
         this.funGetCount = values[0].toLuaFunction();
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = Function2.class, typeArgs = {LuaValue.class, Integer.class, Unit.class})
+            }, returns = @LuaApiUsed.Type(UDViewPagerAdapter.class)),
+    })
     public LuaValue[] initCell(LuaValue[] values) {
         this.funInitCell = values[0].toLuaFunction();
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = Function2.class, typeArgs = {LuaValue.class, Integer.class, Unit.class})
+            }, returns = @LuaApiUsed.Type(UDViewPagerAdapter.class)),
+    })
     public LuaValue[] fillCellData(LuaValue[] values) {
         this.funFillCellData = values[0].toLuaFunction();
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = Function1.class, typeArgs = {Integer.class, String.class})
+            }, returns = @LuaApiUsed.Type(UDViewPagerAdapter.class)),
+    })
     public LuaValue[] reuseId(LuaValue[] values) {
         funReuseid = values[0].toLuaFunction();
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(String.class),
+                    @LuaApiUsed.Type(value = Function2.class, typeArgs = {LuaValue.class, Integer.class, Unit.class})
+            }, returns = @LuaApiUsed.Type(UDViewPagerAdapter.class)),
+    })
     public LuaValue[] initCellByReuseId(LuaValue[] values) {
         if (initCellFunctions == null) {
             initCellFunctions = new HashMap<>();
@@ -98,7 +126,12 @@ public class UDViewPagerAdapter extends JavaUserdata {
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(String.class),
+                    @LuaApiUsed.Type(value = Function2.class, typeArgs = {LuaValue.class, Integer.class, Unit.class})
+            }, returns = @LuaApiUsed.Type(UDViewPagerAdapter.class)),
+    })
     public LuaValue[] fillCellDataByReuseId(LuaValue[] values) {
         if (fillCellDataFunctions == null) {
             fillCellDataFunctions = new HashMap<>();
@@ -112,7 +145,11 @@ public class UDViewPagerAdapter extends JavaUserdata {
      * <p>
      * call
      */
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Boolean.class)
+            }, returns = @LuaApiUsed.Type(UDViewPagerAdapter.class)),
+    })
     public LuaValue[] callInitAndFillWhenReloadData(LuaValue[] values) {
         getAdapter().setViewPagerConfig(values[0].toBoolean() ? 1 : 0);
         return null;

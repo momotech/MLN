@@ -26,7 +26,6 @@ import com.immomo.mls.activity.LuaViewActivity;
 import com.immomo.mls.util.FileUtil;
 import com.immomo.mls.utils.MainThreadExecutor;
 import com.immomo.mls.utils.ScriptLoadException;
-import com.immomo.mmui.MMUIActivity;
 
 /**
  * Created by Xiong.Fangyu on 2019/4/22
@@ -51,8 +50,7 @@ public class QRResultHandler implements OuterResultHandler.IResultHandler {
         }
 
         Uri uri = Uri.parse(code);
-        boolean isMMUI = "true".equals(uri.getQueryParameter("mmui"));
-        Class<? extends Activity> clz = isMMUI ? MMUIActivity.class : LuaViewActivity.class;
+        Class<? extends Activity> clz = LuaViewActivity.class;
         Intent intent = new Intent(activity, clz);
         InitData initData = MLSBundleUtils.createInitData(code).forceDownload();
         if (isDebugScript(uri)) {

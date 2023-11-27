@@ -14,4 +14,8 @@ public class ProGuardError extends Error {
     public ProGuardError(String msg) {
         super(msg);
     }
+
+    public ProGuardError(String msg, Throwable e) {
+        super(msg, e);
+    }
 }

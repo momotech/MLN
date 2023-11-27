@@ -11,9 +11,11 @@ import android.view.ViewGroup;
 
 import com.immomo.mls.MLSConfigs;
 import com.immomo.mls.base.ud.lv.ILViewGroup;
+import com.immomo.mls.fun.ud.view.recycler.UDBaseRecyclerAdapter;
 import com.immomo.mls.utils.AssertUtils;
 import com.immomo.mls.utils.ErrorUtils;
 
+import kotlin.jvm.functions.Function2;
 import org.luaj.vm2.Globals;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
@@ -21,14 +23,17 @@ import org.luaj.vm2.utils.DisposableIterator;
 import org.luaj.vm2.utils.LuaApiUsed;
 
 
-@LuaApiUsed
+@LuaApiUsed(ignoreTypeArgs = true)
 public class UDBaseStack<V extends ViewGroup & ILViewGroup> extends UDViewGroup<V> {
     public static final String LUA_CLASS_NAME = "_BaseStack";
     public static final String[] methods = {
         "children"
     };
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(UDBaseStack.class))
+    })
     protected UDBaseStack(long L, LuaValue[] v) {
         super(L, v);
     }
@@ -48,7 +53,11 @@ public class UDBaseStack<V extends ViewGroup & ILViewGroup> extends UDViewGroup<
     }
 
     //<editor-fold desc="API">
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = LuaValue.class),
+            }, returns = @LuaApiUsed.Type(UDBaseStack.class)),
+    })
     public LuaValue[] children(LuaValue[] var) {
         if (var.length > 0) {
             LuaTable children = var[0].toLuaTable();

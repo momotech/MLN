@@ -10,6 +10,7 @@ package com.immomo.mls.fun.ud;
 
 import com.immomo.mls.fun.constants.MeasurementType;
 import com.immomo.mls.fun.other.Size;
+import com.immomo.mls.fun.ud.view.UDScrollView;
 import com.immomo.mls.wrapper.ILuaValueGetter;
 
 import org.luaj.vm2.Globals;
@@ -54,7 +55,7 @@ public class UDSize extends LuaUserdata {
      * @param L 虚拟机地址
      * @param v lua脚本传入的构造参数
      */
-    @LuaApiUsed
+    @LuaApiUsed(ignore = true)
     protected UDSize(long L, LuaValue[] v) {
         super(L, null);
         mSize = new Size();
@@ -84,16 +85,22 @@ public class UDSize extends LuaUserdata {
         return mSize;
     }
 
-    public float getWidthPx() {
+    public int getWidthPx() {
         return mSize.getWidthPx();
     }
 
-    public float getHeightPx() {
-        return (int) mSize.getHeightPx();
+    public int getHeightPx() {
+        return mSize.getHeightPx();
     }
 
     //-----------------------API-------------------------
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Float.class)
+            }, returns = @LuaApiUsed.Type(UDSize.class)),
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(Float.class))
+    })
     public LuaValue[] width(LuaValue[] var) {
         if (var.length == 1) {
             setWidth((float) var[0].toDouble());
@@ -103,16 +110,16 @@ public class UDSize extends LuaUserdata {
     }
 
     public void setWidth(float p0) {
-        if (p0 == MeasurementType.MATCH_PARENT) {
-            p0 = Size.MATCH_PARENT;
-        }
-        if (p0 == MeasurementType.WRAP_CONTENT) {
-            p0 = Size.WRAP_CONTENT;
-        }
-        mSize.setWidth(p0);
+        mSize.setWidth(Size.toSize(p0));
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Float.class)
+            }, returns = @LuaApiUsed.Type(UDSize.class)),
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(Float.class))
+    })
     public LuaValue[] height(LuaValue[] var) {
         if (var.length == 1) {
             setHeight((float) var[0].toDouble());
@@ -122,16 +129,13 @@ public class UDSize extends LuaUserdata {
     }
 
     public void setHeight(float p0) {
-        if (p0 == MeasurementType.MATCH_PARENT) {
-            p0 = Size.MATCH_PARENT;
-        }
-        if (p0 == MeasurementType.WRAP_CONTENT) {
-            p0 = Size.WRAP_CONTENT;
-        }
-        mSize.setHeight(p0);
+        mSize.setHeight(Size.toSize(p0));
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(String.class))
+    })
     @Override
     public String toString() {
         return mSize.toString();

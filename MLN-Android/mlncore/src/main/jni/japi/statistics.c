@@ -183,7 +183,7 @@ static char *_int_to_string(const void *value, int *needFree) {
     sprintf(count, "%d", params->count);
     sprintf(time, "%lf", params->time);
     if (needFree) *needFree = 1;
-    char *str = (char *) malloc(
+    char *str = (char *) m_malloc(NULL, 0,
             strlen(BRACKET_PRE) +
             strlen(COUNT_KEY) + strlen(COLON) + strlen(count) +
             strlen(COMMA) +

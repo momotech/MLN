@@ -28,18 +28,27 @@
 
 #define GetArrLen(env, arr) (int)((*env)->GetArrayLength(env, arr))
 
-void jni_preRegisterEmptyMethods(JNIEnv *env, jobject jobj, jobjectArray methods);
-void jni_preRegisterUD(JNIEnv *env, jobject jobj, jstring className, jobjectArray methods);
-void jni_preRegisterStatic(JNIEnv *env, jobject jobj, jstring className, jobjectArray methods);
+void jni_setAndroidVersion(JNIEnv *env, jobject jobj, jint v);
 
-/**
- * 初始化，在加载so时调用
- */
-void initJavaInfo(JNIEnv *);
+void jni_setAndroidDebug(JNIEnv *env, jobject jobj, jint v);
+
+void jni_preRegisterUD(JNIEnv *env, jobject jobj, jstring className, jstring lcnStr,
+                       jstring luaParentString, jint classType,
+                       jobjectArray methods);
+
+void jni_preRegisterStatic(JNIEnv *env, jobject jobj, jstring className, jstring lcnStr,
+                           jstring luaParentString, jobjectArray methods);
+
+void jni_setCallbackEmptyMethod(JNIEnv *env, jobject jobj, jboolean open);
+
+void jni_setProtectNewJString(JNIEnv *env, jobject jobj, jboolean open);
+
+jboolean jni_check32bit(JNIEnv *env, jobject jobj);
+
 /**
  * 创建java string
  * 如果当前Android版本号小于USE_NDK_NEWSTRING_VERSION，使用utf工具生成String
- * @return java对象
+ * @return jnewJStringava对象
  */
 jstring newJString(JNIEnv *, const char *);
 
@@ -62,12 +71,14 @@ jobject newLuaThread(JNIEnv *env, lua_State *L, int idx);
  * @param jobj java对象可为空
  */
 void copyUDToGNV(JNIEnv *env, lua_State *L, UDjavaobject ud, int idx, jobject jobj);
+
 /**
  * 获取Java userdata对象的id属性
  * @see LuaUserdata#id
  * @param ud LuaUserdata对象
  */
 jlong getUserdataId(JNIEnv *env, jobject ud);
+
 /**
  * 通过Java的缓存获取对应的LuaUserdata对象
  * @see UserdataCache
@@ -98,11 +109,13 @@ jobjectArray newLuaValueArrayFromStack(JNIEnv *env, lua_State *L, int count, int
  * 将LuaValue对象obj转成lua数据类型，并push到栈顶
  */
 void pushJavaValue(JNIEnv *env, lua_State *L, jobject obj);
+
 /**
  * 将java的String对象转成lua数据类型，并push到栈顶
  * obj可为空
  */
 void pushJavaString(JNIEnv *env, lua_State *L, jstring obj);
+
 /**
  * 将LuaFunction对象obj转成lua数据类型，并push到栈顶
  */
@@ -117,6 +130,11 @@ int pushJavaArray(JNIEnv *env, lua_State *L, jobjectArray arr);
  * 抛出调用异常
  */
 void throwInvokeError(JNIEnv *env, const char *errmsg);
+
+/**
+ * 从虚拟机栈-1位置查找错误信息，并调用throwInvokeError抛出异常
+ */
+void checkAndThrowInvokeError(JNIEnv *, lua_State *);
 
 /**
  * 超出运行时异常
@@ -177,6 +195,7 @@ int isStrongUserdata(JNIEnv *, jclass);
  */
 jclass getClassByName(JNIEnv *, const char *);
 
+
 /**
  * 获取构造函数
  * 若有缓存，取缓存，若无，通过反射获取，并缓存
@@ -217,20 +236,20 @@ jmethodID getSpecialMethod(JNIEnv *env, jclass clz, int type);
  * 获取静态index函数
  */
 jmethodID getIndexStaticMethod(JNIEnv *env, jclass clz);
+
 /**
- * 遍历所有空函数
+ * 判断给定method id是否是空函数
  */
-typedef void (*traverse_empty)(const void *value, void *ud);
+int isEmptyMethod(jmethodID);
+
 /**
- * 是否注册了emptymethods
+ * lua调用空函数时，是否回调原生
  */
-int hasEmptyMethod();
+int openCallbackEmptyMethod();
+
 /**
- * 遍历所有空函数
- */
-void traverseAllEmptyMethods(traverse_empty fun, void *ud);
-/**
- * 调用空方法时，同志java层
+ * 调用空方法时，通知java层
  */
 void onEmptyMethodCall(lua_State *L, const char *clz, const char *methodName);
+
 #endif //J_INFO_H

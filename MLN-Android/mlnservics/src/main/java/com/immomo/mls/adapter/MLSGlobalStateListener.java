@@ -12,24 +12,24 @@ import com.immomo.mls.wrapper.ScriptBundle;
 
 /**
  * Created by XiongFangyu on 2018/6/26.
- *
+ * <p>
  * 监听脚本下载，脚本加载
  */
 public interface MLSGlobalStateListener {
 
-    void onStartLoadScript(String oldUrl);
+    void onStartLoadScript(String oldUrl, String tag);
 
-    void onGlobalPrepared(String url);
+    void onGlobalPrepared(String url, String tag);
 
-    void onEnvPrepared(String url);
+    void onEnvPrepared(String url, String tag);
 
-    void onScriptLoaded(String url, ScriptBundle bundle);
+    void onScriptLoaded(String url, ScriptBundle bundle, String tag);
 
-    void onScriptLoadFailed(String url, ScriptLoadException e);
+    void onScriptLoadFailed(String url, ScriptLoadException e, String tag);
 
-    void onScriptCompiled(String url);
+    void onScriptCompiled(String url, String tag);
 
-    void onScriptPrepared(String url);
+    void onScriptPrepared(String url, String tag);
 
-    void onScriptExecuted(String url, boolean success);
+    void onScriptExecuted(String url, boolean success, String tag, String errorMsg);
 }

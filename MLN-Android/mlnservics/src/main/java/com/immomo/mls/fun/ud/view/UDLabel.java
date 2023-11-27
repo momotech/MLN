@@ -32,6 +32,8 @@ import com.immomo.mls.util.DimenUtil;
 import com.immomo.mls.util.LogUtil;
 import com.immomo.mls.utils.ErrorUtils;
 
+import kotlin.Unit;
+import kotlin.jvm.functions.Function2;
 import org.luaj.vm2.LuaFunction;
 import org.luaj.vm2.LuaNumber;
 import org.luaj.vm2.LuaString;
@@ -43,7 +45,7 @@ import java.util.List;
 /**
  * Created by XiongFangyu on 2018/8/1.
  */
-@LuaApiUsed
+@LuaApiUsed(ignoreTypeArgs = true)
 public class UDLabel<U extends TextView> extends UDView<U> {
 
     public static final String LUA_CLASS_NAME = "Label";
@@ -78,7 +80,10 @@ public class UDLabel<U extends TextView> extends UDView<U> {
     private int breakMode = BreakMode.CLIPPING;
 
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(UDLabel.class))
+    })
     public UDLabel(long L, LuaValue[] v) {
         super(L, v);
     }
@@ -91,7 +96,13 @@ public class UDLabel<U extends TextView> extends UDView<U> {
 
     //<editor-fold desc="API">
     //<editor-fold desc="Property">
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(String.class),
+            }, returns = @LuaApiUsed.Type(UDLabel.class)),
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(String.class)),
+    })
     public LuaValue[] text(LuaValue[] var) {
         String text = null;
         if (var.length == 1) {
@@ -119,7 +130,13 @@ public class UDLabel<U extends TextView> extends UDView<U> {
         }
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Integer.class),
+            }, returns = @LuaApiUsed.Type(UDLabel.class)),
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(Integer.class)),
+    })
     public LuaValue[] textAlign(LuaValue[] var) {
         if (var.length == 1) {
             getView().setGravity(var[0].toInt());
@@ -128,7 +145,13 @@ public class UDLabel<U extends TextView> extends UDView<U> {
         return varargsOf(LuaNumber.valueOf(getView().getGravity()));
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Double.class),
+            }, returns = @LuaApiUsed.Type(UDLabel.class)),
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(Double.class)),
+    })
     public LuaValue[] fontSize(LuaValue[] var) {
         if (var.length == 1) {
             getView().setTextSize(TypedValue.COMPLEX_UNIT_SP, (float) var[0].toDouble());
@@ -137,7 +160,13 @@ public class UDLabel<U extends TextView> extends UDView<U> {
         return varargsOf(LuaNumber.valueOf(DimenUtil.pxToSp(getView().getTextSize())));
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(UDColor.class),
+            }, returns = @LuaApiUsed.Type(UDLabel.class)),
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(UDColor.class)),
+    })
     public LuaValue[] textColor(LuaValue[] var) {
         if (var.length == 1 && var[0] instanceof UDColor) {
             UDColor color = (UDColor) var[0];
@@ -155,7 +184,13 @@ public class UDLabel<U extends TextView> extends UDView<U> {
         return varargsOf(ret);
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Integer.class),
+            }, returns = @LuaApiUsed.Type(UDLabel.class)),
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(Integer.class)),
+    })
     public LuaValue[] lines(LuaValue[] var) {
         if (var.length == 1) {
             int i = var[0].toInt();
@@ -174,7 +209,13 @@ public class UDLabel<U extends TextView> extends UDView<U> {
         getView().setMaxLines(maxLines);
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Integer.class),
+            }, returns = @LuaApiUsed.Type(UDLabel.class)),
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(Integer.class)),
+    })
     public LuaValue[] breakMode(LuaValue[] var) {
         if (var.length == 1) {
             int i = var[0].toInt();
@@ -200,14 +241,20 @@ public class UDLabel<U extends TextView> extends UDView<U> {
         return varargsOf(LuaNumber.valueOf(a.ordinal()));
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(UDStyleString.class),
+            }, returns = @LuaApiUsed.Type(UDLabel.class)),
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(UDStyleString.class)),
+    })
     public LuaValue[] styleText(LuaValue[] var) {
         if (var.length == 1) {
             if (styleString != null)
                 styleString.destroy();
             this.styleString = (UDStyleString) var[0];
             this.styleString.setUDView(this);
-
+            getView().setMovementMethod(LinkMovementMethod.getInstance());
             getView().setText(styleString.getText());
             return null;
         }
@@ -219,14 +266,22 @@ public class UDLabel<U extends TextView> extends UDView<U> {
 
     //<editor-fold desc="Method">
     @Deprecated
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(UDLabel.class))
+    })
     public LuaValue[] setTextBold(LuaValue[] var) {
         getView().setTypeface(getView().getTypeface(), Typeface.BOLD);
         deprecatedMethodPrint(UDLabel.class.getSimpleName(), "setTextBold()");
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(String.class),
+                    @LuaApiUsed.Type(Double.class)
+            }, returns = @LuaApiUsed.Type(UDLabel.class))
+    })
     public LuaValue[] fontNameSize(LuaValue[] var) {
         String name = var[0].toJavaString();
         float size = (float) var[1].toDouble();
@@ -238,27 +293,39 @@ public class UDLabel<U extends TextView> extends UDView<U> {
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Double.class),
+            }, returns = @LuaApiUsed.Type(UDLabel.class)),
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(Double.class))
+    })
     public LuaValue[] setLineSpacing(LuaValue[] spacing) {
         if (spacing.length == 1) {
             getView().setLineSpacing((float) spacing[0].toDouble(), 1);
             return null;
         }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
-            return varargsOf(LuaNumber.valueOf(getView().getLineSpacingExtra()));
+        return varargsOf(LuaNumber.valueOf(getView().getLineSpacingExtra()));
 
-        return varargsOf(LuaNumber.valueOf(0));
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Integer.class),
+            }, returns = @LuaApiUsed.Type(UDLabel.class))
+    })
     public LuaValue[] setTextFontStyle(LuaValue[] style) {
         getView().setTypeface(null, style[0].toInt());
         return null;
     }
 
     @Deprecated
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Boolean.class),
+            }, returns = @LuaApiUsed.Type(UDLabel.class))
+    })
     public LuaValue[] setAutoFit(LuaValue[] autoFit) {
         udLayoutParams.useRealMargin = false;
         if (autoFit[0].toBoolean()) {
@@ -277,13 +344,21 @@ public class UDLabel<U extends TextView> extends UDView<U> {
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Float.class),
+            }, returns = @LuaApiUsed.Type(UDLabel.class))
+    })
     public LuaValue[] setMaxWidth(LuaValue[] w) {
         getView().setMaxWidth((int) DimenUtil.dpiToPx((float) w[0].toDouble()));
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Float.class),
+            }, returns = @LuaApiUsed.Type(UDLabel.class))
+    })
     public LuaValue[] setMaxHeight(LuaValue[] h) {
         maxLines = Integer.MAX_VALUE;
         getView().setSingleLine(false);
@@ -291,13 +366,21 @@ public class UDLabel<U extends TextView> extends UDView<U> {
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Float.class),
+            }, returns = @LuaApiUsed.Type(UDLabel.class))
+    })
     public LuaValue[] setMinWidth(LuaValue[] minWidth) {
         getView().setMinWidth((int) DimenUtil.dpiToPx((float) minWidth[0].toDouble()));
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Float.class),
+            }, returns = @LuaApiUsed.Type(UDLabel.class))
+    })
     public LuaValue[] setMinHeight(LuaValue[] minHeight) {
         maxLines = Integer.MAX_VALUE;
         getView().setSingleLine(false);
@@ -305,19 +388,31 @@ public class UDLabel<U extends TextView> extends UDView<U> {
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed(ignore = true)
     public LuaValue[] notClip(LuaValue[] p) {
         return null;
     }
 
     // 设置为 false  可以修复文字内容偏下问题 安卓私有方法
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Boolean.class),
+            }, returns = @LuaApiUsed.Type(UDLabel.class))
+    })
     public LuaValue[] a_setIncludeFontPadding(LuaValue[] values) {
         getView().setIncludeFontPadding(values[0].toBoolean());
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = UDArray.class),
+                    @LuaApiUsed.Type(value = Function2.class,typeArgs = {
+                            String.class, Integer.class, Unit.class
+                    }),
+                    @LuaApiUsed.Type(UDColor.class)
+            }, returns = @LuaApiUsed.Type(UDLabel.class))
+    })
     public LuaValue[] addTapTexts(LuaValue[] vars) {
         UDArray targetTextsArray = vars.length > 0 ? (UDArray) vars[0] : null;
         LuaFunction selectedFunction = vars.length > 1 ? (LuaFunction) vars[1] : null;

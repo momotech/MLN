@@ -15,6 +15,7 @@ import android.graphics.Path;
 import android.graphics.RectF;
 import android.graphics.Shader;
 
+import com.immomo.mls.fun.ud.view.UDView;
 import com.immomo.mls.util.DimenUtil;
 
 import org.luaj.vm2.Globals;
@@ -22,6 +23,8 @@ import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaUserdata;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.utils.LuaApiUsed;
+
+import java.util.List;
 
 
 /**
@@ -49,7 +52,10 @@ public class UDCanvas extends LuaUserdata<Canvas> {
 
     private RectF rectFTemp;
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(UDCanvas.class))
+    })
     public UDCanvas(long L, LuaValue[] v) {
         super(L, v);
     }
@@ -64,7 +70,10 @@ public class UDCanvas extends LuaUserdata<Canvas> {
 
     //<editor-fold desc="api">
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(UDCanvas.class))
+    })
     public LuaValue[] save(LuaValue[] values) {
         if (javaUserdata != null) {
             return rNumber(javaUserdata.save());
@@ -72,7 +81,11 @@ public class UDCanvas extends LuaUserdata<Canvas> {
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Integer.class)
+            }, returns = @LuaApiUsed.Type(UDCanvas.class))
+    })
     public LuaValue[] restore(LuaValue[] values) {
         if (javaUserdata != null) {
             if (values.length > 0 && values[0].isNumber()) {
@@ -84,7 +97,17 @@ public class UDCanvas extends LuaUserdata<Canvas> {
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Float.class),
+                    @LuaApiUsed.Type(Float.class),
+                    @LuaApiUsed.Type(Float.class),
+                    @LuaApiUsed.Type(Float.class),
+                    @LuaApiUsed.Type(Float.class),
+                    @LuaApiUsed.Type(Float.class),
+                    @LuaApiUsed.Type(UDPaint.class),
+            }, returns = @LuaApiUsed.Type(UDCanvas.class))
+    })
     public LuaValue[] drawArc(LuaValue[] v) {
         if (javaUserdata == null)
             return null;
@@ -100,7 +123,14 @@ public class UDCanvas extends LuaUserdata<Canvas> {
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Integer.class)
+            }, returns = @LuaApiUsed.Type(UDCanvas.class)),
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(UDColor.class)
+            }, returns = @LuaApiUsed.Type(UDCanvas.class))
+    })
     public LuaValue[] drawColor(LuaValue[] values) {
         if (javaUserdata == null)
             return null;
@@ -115,7 +145,15 @@ public class UDCanvas extends LuaUserdata<Canvas> {
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Float.class),
+                    @LuaApiUsed.Type(Float.class),
+                    @LuaApiUsed.Type(Float.class),
+                    @LuaApiUsed.Type(Float.class),
+                    @LuaApiUsed.Type(UDPaint.class)
+            }, returns = @LuaApiUsed.Type(UDCanvas.class))
+    })
     public LuaValue[] drawLine(LuaValue[] v) {
         if (javaUserdata == null)
             return null;
@@ -128,7 +166,12 @@ public class UDCanvas extends LuaUserdata<Canvas> {
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Float.class),
+                    @LuaApiUsed.Type(UDPaint.class)
+            }, returns = @LuaApiUsed.Type(UDCanvas.class))
+    })
     public LuaValue[] drawPath(LuaValue[] v) {
         if (javaUserdata == null)
             return null;
@@ -140,7 +183,13 @@ public class UDCanvas extends LuaUserdata<Canvas> {
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Float.class),
+                    @LuaApiUsed.Type(Float.class),
+                    @LuaApiUsed.Type(UDPaint.class)
+            }, returns = @LuaApiUsed.Type(UDCanvas.class))
+    })
     public LuaValue[] drawPoint(LuaValue[] v) {
         if (javaUserdata == null)
             return null;
@@ -153,7 +202,14 @@ public class UDCanvas extends LuaUserdata<Canvas> {
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(String.class),
+                    @LuaApiUsed.Type(Float.class),
+                    @LuaApiUsed.Type(Float.class),
+                    @LuaApiUsed.Type(UDPaint.class)
+            }, returns = @LuaApiUsed.Type(UDCanvas.class))
+    })
     public LuaValue[] drawText(LuaValue[] v) {
         if (javaUserdata == null)
             return null;
@@ -166,7 +222,14 @@ public class UDCanvas extends LuaUserdata<Canvas> {
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Float.class),
+                    @LuaApiUsed.Type(Float.class),
+                    @LuaApiUsed.Type(Float.class),
+                    @LuaApiUsed.Type(UDPaint.class)
+            }, returns = @LuaApiUsed.Type(UDCanvas.class))
+    })
     public LuaValue[] drawCircle(LuaValue[] v) {
         if (javaUserdata == null)
             return null;
@@ -179,7 +242,15 @@ public class UDCanvas extends LuaUserdata<Canvas> {
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Float.class),
+                    @LuaApiUsed.Type(Float.class),
+                    @LuaApiUsed.Type(Float.class),
+                    @LuaApiUsed.Type(Float.class),
+                    @LuaApiUsed.Type(UDPaint.class)
+            }, returns = @LuaApiUsed.Type(UDCanvas.class))
+    })
     public LuaValue[] drawRect(LuaValue[] v) {
         if (javaUserdata == null)
             return null;
@@ -192,7 +263,15 @@ public class UDCanvas extends LuaUserdata<Canvas> {
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Float.class),
+                    @LuaApiUsed.Type(Float.class),
+                    @LuaApiUsed.Type(Float.class),
+                    @LuaApiUsed.Type(Float.class),
+                    @LuaApiUsed.Type(UDPaint.class)
+            }, returns = @LuaApiUsed.Type(UDCanvas.class))
+    })
     public LuaValue[] drawOval(LuaValue[] v) {
         if (javaUserdata == null)
             return null;
@@ -208,7 +287,17 @@ public class UDCanvas extends LuaUserdata<Canvas> {
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Float.class),
+                    @LuaApiUsed.Type(Float.class),
+                    @LuaApiUsed.Type(Float.class),
+                    @LuaApiUsed.Type(Float.class),
+                    @LuaApiUsed.Type(value = UDArray.class),
+                    @LuaApiUsed.Type(UDPath.class),
+                    @LuaApiUsed.Type(UDPaint.class)
+            }, returns = @LuaApiUsed.Type(UDCanvas.class))
+    })
     public LuaValue[] drawGradientColor(LuaValue[] v) {
         if (javaUserdata == null)
             return null;

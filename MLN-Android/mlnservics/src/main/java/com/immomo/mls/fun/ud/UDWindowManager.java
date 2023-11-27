@@ -25,12 +25,17 @@ import com.immomo.mls.LuaViewManager;
 import com.immomo.mls.MLSEngine;
 import com.immomo.mls.fun.constants.MeasurementType;
 import com.immomo.mls.fun.other.Rect;
+import com.immomo.mls.fun.ud.view.UDBaseHVStack;
 import com.immomo.mls.fun.ud.view.UDView;
+import com.immomo.mls.fun.ud.view.recycler.UDCollectionLayout;
 import com.immomo.mls.util.AndroidUtil;
 import com.immomo.mls.util.DimenUtil;
 import com.immomo.mls.util.GravityUtils;
 import com.immomo.mls.util.LuaViewUtil;
 
+import kotlin.Unit;
+import kotlin.jvm.functions.Function0;
+import kotlin.jvm.functions.Function2;
 import org.luaj.vm2.Globals;
 import org.luaj.vm2.JavaUserdata;
 import org.luaj.vm2.LuaFunction;
@@ -46,7 +51,7 @@ import org.luaj.vm2.utils.LuaApiUsed;
  * Description  :
  */
 
-@LuaApiUsed
+@LuaApiUsed(ignore = true)
 public class UDWindowManager extends JavaUserdata {
     public static final String LUA_CLASS_NAME = "ContentWindow";
     public static final String[] methods = new String[]{
@@ -91,7 +96,9 @@ public class UDWindowManager extends JavaUserdata {
 
     WindowManager.LayoutParams lp;
 
-    @LuaApiUsed
+    @LuaApiUsed(@LuaApiUsed.Func(params = {
+            @LuaApiUsed.Type(value = Rect.class)
+    }, returns = @LuaApiUsed.Type(value = UDWindowManager.class)))
     protected UDWindowManager(long L, LuaValue[] initParams) {
         super(L, initParams);
         if (initParams != null) {
@@ -121,7 +128,13 @@ public class UDWindowManager extends JavaUserdata {
         return m != null ? m.context : null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Boolean.class)
+            }, returns = @LuaApiUsed.Type(UDWindowManager.class)),
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(Boolean.class))
+    })
     public LuaValue[] cancelable(LuaValue[] p) {
         if (p.length == 1) {
             this.cancelable = p[0].toBoolean();
@@ -130,7 +143,11 @@ public class UDWindowManager extends JavaUserdata {
         return cancelable ? rTrue() : rFalse();
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Double.class)
+            }, returns = @LuaApiUsed.Type(UDWindowManager.class))
+    })
     public LuaValue[] width(LuaValue[] p) {
         float width = (float) p[0].toDouble();
         if (width == MeasurementType.MATCH_PARENT || width == MeasurementType.WRAP_CONTENT) {
@@ -143,7 +160,11 @@ public class UDWindowManager extends JavaUserdata {
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Double.class)
+            }, returns = @LuaApiUsed.Type(UDWindowManager.class))
+    })
     public LuaValue[] height(LuaValue[] p) {
         float height = (float) p[0].toDouble();
         if (height == MeasurementType.MATCH_PARENT || height == MeasurementType.WRAP_CONTENT) {
@@ -156,7 +177,13 @@ public class UDWindowManager extends JavaUserdata {
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Float.class),
+            }, returns = @LuaApiUsed.Type(UDWindowManager.class)),
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(Float.class)),
+    })
     public LuaValue[] x(LuaValue[] p) {
         if (p.length == 1) {
             mXPoint = DimenUtil.dpiToPx((float) p[0].toDouble());
@@ -169,7 +196,13 @@ public class UDWindowManager extends JavaUserdata {
         return rNumber(DimenUtil.pxToDpi(mXPoint));
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Float.class),
+            }, returns = @LuaApiUsed.Type(UDWindowManager.class)),
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(Float.class)),
+    })
     public LuaValue[] marginTop(LuaValue[] var) {
         if (var.length == 1) {
             mYPoint = DimenUtil.dpiToPx((float) var[0].toDouble());
@@ -180,7 +213,13 @@ public class UDWindowManager extends JavaUserdata {
         return rNumber(DimenUtil.pxToDpi(mYPoint));
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Float.class),
+            }, returns = @LuaApiUsed.Type(UDWindowManager.class)),
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(Float.class)),
+    })
     public LuaValue[] marginLeft(LuaValue[] var) {
         if (var.length == 1) {
             mXPoint = DimenUtil.dpiToPx((float) var[0].toDouble());
@@ -193,13 +232,25 @@ public class UDWindowManager extends JavaUserdata {
         return rNumber(DimenUtil.pxToDpi(mXPoint));
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Float.class),
+            }, returns = @LuaApiUsed.Type(UDWindowManager.class)),
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(Float.class)),
+    })
     public LuaValue[] setGravity(LuaValue[] var) {
         mGravity = var[0].toInt();
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Float.class),
+            }, returns = @LuaApiUsed.Type(UDWindowManager.class)),
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(Float.class)),
+    })
     public LuaValue[] y(LuaValue[] p) {
         if (p.length == 1) {
             mYPoint = DimenUtil.dpiToPx((float) p[0].toDouble());
@@ -210,7 +261,13 @@ public class UDWindowManager extends JavaUserdata {
         return rNumber(DimenUtil.pxToDpi(mYPoint));
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Float.class),
+            }, returns = @LuaApiUsed.Type(UDWindowManager.class)),
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(Float.class)),
+    })
     public LuaValue[] alpha(LuaValue[] p) {
         if (p.length != 0) {
             mAlpha = (float) p[0].toDouble();
@@ -218,7 +275,11 @@ public class UDWindowManager extends JavaUserdata {
         return rNumber(mAlpha);
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(UDView.class)
+            }, returns = @LuaApiUsed.Type(UDWindowManager.class))
+    })
     public LuaValue[] addView(LuaValue[] p) {
 
         if (mContentFrameLayout == null)
@@ -228,7 +289,11 @@ public class UDWindowManager extends JavaUserdata {
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(UDView.class)
+            }, returns = @LuaApiUsed.Type(UDWindowManager.class))
+    })
     public LuaValue[] setContent(LuaValue[] p) {
         UDView subView = (UDView) p[0];
 
@@ -253,7 +318,10 @@ public class UDWindowManager extends JavaUserdata {
         }
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(UDWindowManager.class))
+    })
     public LuaValue[] removeAllSubviews(LuaValue[] p) {
         if (mContentFrameLayout == null)
             return null;
@@ -262,14 +330,17 @@ public class UDWindowManager extends JavaUserdata {
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed(ignore = true)
     public LuaValue[] canEndEditing(LuaValue[] p) {
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(UDWindowManager.class))
+    })
     public LuaValue[] show(LuaValue[] p) {
-        if (Build.VERSION.SDK_INT >= 23 && Settings.canDrawOverlays(getContext())) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && Settings.canDrawOverlays(getContext())) {
             if (isFirstAddView)
                 addDefaultFrameLayout();
 
@@ -278,12 +349,18 @@ public class UDWindowManager extends JavaUserdata {
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed(ignore = true)
     public LuaValue[] windowLevel(LuaValue[] p) {
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = Function2.class, typeArgs = {
+                            Float.class, Float.class, Unit.class
+                    })
+            }, returns = @LuaApiUsed.Type(UDWindowManager.class))
+    })
     public LuaValue[] onTouch(LuaValue[] p) {
         if (mOnTouchFunction != null)
             mOnTouchFunction.destroy();
@@ -291,19 +368,32 @@ public class UDWindowManager extends JavaUserdata {
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(UDColor.class)
+            }, returns = @LuaApiUsed.Type(UDWindowManager.class))
+    })
     public LuaValue[] bgColor(LuaValue[] p) {
         mBackGroundUDColor = ((UDColor) p[0]).getColor();
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(UDWindowManager.class))
+    })
     public LuaValue[] dismiss(LuaValue[] p) {
         dismiss();
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = Function0.class, typeArgs = {
+                            Unit.class
+                    })
+            }, returns = @LuaApiUsed.Type(UDWindowManager.class))
+    })
     public LuaValue[] contentWindowDisAppear(LuaValue[] p) {
         if (mDismissFunction != null)
             mDismissFunction.destroy();
@@ -391,9 +481,9 @@ public class UDWindowManager extends JavaUserdata {
                 PixelFormat.TRANSLUCENT);
 
 
-        if (Build.VERSION.SDK_INT >= 26) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             lp.type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
-        } else if (Build.VERSION.SDK_INT >= 24) { /*android7.0不能用TYPE_TOAST*/
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) { /*android7.0不能用TYPE_TOAST*/
             lp.type = WindowManager.LayoutParams.TYPE_PHONE;
         } else { /*以下代码块使得android6.0之后的用户不必再去手动开启悬浮窗权限*/
             String packname = context.getPackageName();

@@ -58,10 +58,6 @@ public class PBCommandConvert {
             baseCmd = ((PBRemoveCommand.pbremovecommand)obj).getBasecommand();
         } else if (obj instanceof PBCreateCommand.pbcreatecommand) {
             baseCmd = ((PBCreateCommand.pbcreatecommand)obj).getBasecommand();
-        } else if (obj instanceof PBCoverageSummaryCommand.pbcoveragesummarycommand) {
-            baseCmd = ((PBCoverageSummaryCommand.pbcoveragesummarycommand) obj).getBasecommand();
-        } else if (obj instanceof PBCoverageDetailCommand.pbcoveragedetailcommand) {
-            baseCmd = ((PBCoverageDetailCommand.pbcoveragedetailcommand) obj).getBasecommand();
         } else if (obj instanceof PBIPAddressCommand.pbipaddresscommand) {
             baseCmd = ((PBIPAddressCommand.pbipaddresscommand) obj).getBasecommand();
         }

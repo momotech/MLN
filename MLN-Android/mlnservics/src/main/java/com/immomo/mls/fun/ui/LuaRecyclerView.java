@@ -12,6 +12,9 @@ import android.graphics.Canvas;
 import android.view.LayoutInflater;
 import android.view.View;
 
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
 import com.immomo.mls.MLSAdapterContainer;
 import com.immomo.mls.MLSFlag;
 import com.immomo.mls.R;
@@ -20,7 +23,6 @@ import com.immomo.mls.fun.other.Point;
 import com.immomo.mls.fun.ud.view.UDView;
 import com.immomo.mls.fun.ud.view.recycler.UDBaseRecyclerAdapter;
 import com.immomo.mls.fun.ud.view.recycler.UDBaseRecyclerLayout;
-import com.immomo.mls.fun.ud.view.recycler.UDCollectionLayout;
 import com.immomo.mls.fun.ud.view.recycler.UDRecyclerView;
 import com.immomo.mls.fun.weight.BorderRadiusSwipeRefreshLayout;
 import com.immomo.mls.fun.weight.MLSRecyclerView;
@@ -29,22 +31,17 @@ import com.immomo.mls.util.LuaViewUtil;
 import com.immomo.mls.utils.MainThreadExecutor;
 import com.immomo.mls.weight.load.ILoadViewDelegete;
 
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
 /**
  * Created by XiongFangyu on 2018/7/19.
  */
 public class LuaRecyclerView<A extends UDBaseRecyclerAdapter, L extends UDBaseRecyclerLayout>
-        extends BorderRadiusSwipeRefreshLayout implements ILViewGroup<UDRecyclerView>, IRefreshRecyclerView, OnLoadListener, SwipeRefreshLayout.OnRefreshListener, IPager {
+        extends BorderRadiusSwipeRefreshLayout implements ILViewGroup<UDRecyclerView>, IRefreshRecyclerView, OnLoadListener, SwipeRefreshLayout.OnRefreshListener {
     private final MLSRecyclerView recyclerView;
     private final UDRecyclerView userdata;
     private final ILoadViewDelegete loadViewDelegete;
     private SizeChangedListener sizeChangedListener;
     private boolean loadEnable = false;
     private boolean isLoading = false;
-    private boolean isViewPager = false;
     private ViewLifeCycleCallback cycleCallback;
 
     public LuaRecyclerView(Context context, UDRecyclerView javaUserdata, boolean refreshEnable, boolean loadEnable) {
@@ -75,6 +72,12 @@ public class LuaRecyclerView<A extends UDBaseRecyclerAdapter, L extends UDBaseRe
     @Override
     public void setViewLifeCycleCallback(ViewLifeCycleCallback cycleCallback) {
         this.cycleCallback = cycleCallback;
+    }
+
+    @Override
+    public void setClipChildren(boolean clipChildren) {
+        super.setClipChildren(clipChildren);
+        getRecyclerView().setClipChildren(clipChildren);
     }
 
     @Override
@@ -282,29 +285,6 @@ public class LuaRecyclerView<A extends UDBaseRecyclerAdapter, L extends UDBaseRe
     @Override
     public Point getContentOffset() {
         return new Point(DimenUtil.pxToDpi(getRecyclerView().computeHorizontalScrollOffset()), DimenUtil.pxToDpi(getRecyclerView().computeVerticalScrollOffset()));
-    }
-
-    @Override
-    public boolean isViewPager() {
-        return isViewPager;
-    }
-
-    @Override
-    public void setViewpager(boolean viewpager) {
-        isViewPager = viewpager;
-    }
-
-    // 针对viewPager单独设计的接口
-    public void pagerContentOffset(float x, float y) {
-        UDCollectionLayout layout = (UDCollectionLayout) userdata.getLayout();  // viewPager 是基于CollectionView底层做的
-        GridLayoutManager layoutManager = (GridLayoutManager) getRecyclerView().getLayoutManager();
-        getRecyclerView().scrollBy(DimenUtil.dpiToPx(x) - ViewPagerOffsetCompute.computeHorizontalScrollOffset(layoutManager, layout), DimenUtil.dpiToPx(y) - ViewPagerOffsetCompute.computeVerticalScrollOffset(layoutManager, layout));
-    }
-
-    public float[] getPagerContentOffset() {
-        UDCollectionLayout layout = (UDCollectionLayout) userdata.getLayout();  // viewPager 是基于CollectionView底层做的
-        GridLayoutManager layoutManager = (GridLayoutManager) getRecyclerView().getLayoutManager();
-        return new float[]{DimenUtil.pxToDpi(ViewPagerOffsetCompute.computeHorizontalScrollOffset(layoutManager, layout)), DimenUtil.pxToDpi(ViewPagerOffsetCompute.computeVerticalScrollOffset(layoutManager, layout))};
     }
 
     @Override

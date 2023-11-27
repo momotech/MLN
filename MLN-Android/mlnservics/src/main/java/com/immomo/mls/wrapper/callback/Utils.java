@@ -34,6 +34,7 @@ class Utils {
         }
         LuaValue[] p = new LuaValue[len];
         Globals globals = luaFunction.getGlobals();
+        Translator t = Translator.fromGlobals(globals);
         for (int i = 0; i < len; i++) {
             Object pn = params[i];
             if (pn == null) {
@@ -48,7 +49,8 @@ class Utils {
                 p[i] = Translator.translatePrimitiveToLua(pn);
                 continue;
             }
-            p[i] = Translator.translateJavaToLua(globals, params[i]);
+            if (t != null)
+                p[i] = t.translateJavaToLua(globals, params[i]);
         }
         return luaFunction.invoke(p);
     }

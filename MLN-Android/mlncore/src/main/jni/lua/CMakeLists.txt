@@ -39,4 +39,5 @@ add_library( lua STATIC
         lzio.c )
 
 add_definitions(-DLUA_DL_DLOPEN -DLUA_USE_C89 -DLUA_COMPAT_5_1 -DLUA_COMPAT_ALL -DLUA_USE_LINUX -DANDROID)
+add_definitions(-U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=0)
 #add_definitions(-DMULTI_THREAD)

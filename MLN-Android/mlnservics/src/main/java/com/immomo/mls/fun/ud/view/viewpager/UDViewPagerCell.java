@@ -17,7 +17,7 @@ import org.luaj.vm2.utils.LuaApiUsed;
 /**
  * Created by fanqiang on 2018/8/30.
  */
-@LuaApiUsed
+@LuaApiUsed(ignore = true)
 public class UDViewPagerCell<T extends ViewPagerContent> extends UDViewGroup<T> {
     protected static final String WINDOW = "contentView";
     private LuaTable cell;

@@ -15,7 +15,6 @@
 #include <stdlib.h>
 #include <jni.h>
 
-jlong jni_allLvmMemUse(JNIEnv *env, jobject jobj);
 void jni_logMemoryInfo(JNIEnv *env, jobject jobj);
 
 /**
@@ -27,11 +26,6 @@ void jni_logMemoryInfo(JNIEnv *env, jobject jobj);
 void * m_malloc(void* src, size_t os, size_t ns);
 
 #if defined(J_API_INFO)
-/**
- * lua的内存申请释放入口
- * @param ud size_t
- */
-void *m_alloc(void *ud, void *ptr, size_t osize, size_t nsize);
 /**
  * 通过m_malloc使用的内存
  */

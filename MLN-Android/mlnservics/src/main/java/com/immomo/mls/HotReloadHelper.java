@@ -15,6 +15,7 @@ import com.immomo.luanative.hotreload.HotReloadServer;
 import com.immomo.luanative.hotreload.IHotReloadServer;
 import com.immomo.luanative.hotreload.iHotReloadListener;
 import com.immomo.mls.global.LuaViewConfig;
+import com.immomo.mls.util.FileHelper;
 import com.immomo.mls.util.FileUtil;
 import com.immomo.mls.util.IOUtil;
 import com.immomo.mls.util.LogUtil;
@@ -101,7 +102,7 @@ public class HotReloadHelper {
         return HotReloadServer.getInstance().getSerial();
     }
 
-    private static File getHotReloadPath() {
+    public static File getHotReloadPath() {
         File f = new File(FileUtil.getCacheDir(), "LuaHotReload");
         if (!f.exists()) {
             f.mkdirs();
@@ -166,7 +167,7 @@ public class HotReloadHelper {
 
     private static final class HotReloadImpl implements iHotReloadListener {
 
-        private final ExecutorService threads = new ThreadPoolExecutor(2, 3, 1, TimeUnit.MINUTES, new LinkedBlockingQueue<Runnable>());
+        private final ExecutorService threads = new ThreadPoolExecutor(1, 1, 1, TimeUnit.MINUTES, new LinkedBlockingQueue<Runnable>());
         private final ExecutorService reloadThread = new ThreadPoolExecutor(1, 1, 1, TimeUnit.MINUTES, new LinkedBlockingQueue<Runnable>());
         private final AtomicInteger changeFiles = new AtomicInteger(0);
 
@@ -357,9 +358,8 @@ public class HotReloadHelper {
 
                     File f = new File(getHotReloadPath(), relativeFilePath);
                     if (f.exists()) {
-                        f.delete();
+                        FileHelper.INSTANCE.deleteRecursively(f);
                     }
-
                     changeFiles.decrementAndGet();
                 }
             });
@@ -384,28 +384,6 @@ public class HotReloadHelper {
             connectState = CS_Disconnect;
             connectType &= ~type;
             HotReloadServer.getInstance().stop();
-        }
-
-        @Override
-        public void onGencoveragereport() {
-            final Globals g = getGlobals();
-            if (g != null) {
-                g.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (g.isDestroyed())
-                            return;
-                        if (!MLSEngine.isInit()) {
-                            MLSAdapterContainer.getToastAdapter().toast("未初始化");
-                            return;
-                        }
-                        int c = NativeBridge.callGencoveragereport(g);
-                        if (c != Globals.LUA_OK) {
-                            MLSAdapterContainer.getToastAdapter().toast("callGencoveragereport failed, code: " + c);
-                        }
-                    }
-                });
-            }
         }
 
         @Override

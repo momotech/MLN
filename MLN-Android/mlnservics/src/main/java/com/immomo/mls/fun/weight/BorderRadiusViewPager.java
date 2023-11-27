@@ -21,8 +21,9 @@ import com.immomo.mls.utils.ViewClipHelper;
 import com.immomo.mls.utils.ViewShadowHelper;
 
 import androidx.annotation.NonNull;
+import androidx.viewpager.widget.ViewPager;
 
-public class BorderRadiusViewPager extends ForegroundViewPager implements IBorderRadiusView, IClipRadius, ViewClipHelper.SuperDrawAction {
+public class BorderRadiusViewPager extends ViewPager implements IBorderRadiusView, IClipRadius, ViewClipHelper.SuperDrawAction {
     private final @NonNull
     BorderBackgroundDrawable backgroundDrawable;
     private final @NonNull
@@ -74,11 +75,9 @@ public class BorderRadiusViewPager extends ForegroundViewPager implements IBorde
 
     @Override
     public void setAddShadow(int color, Size offset, float shadowRadius, float alpha) {
-        if (Build.VERSION.SDK_INT >= 21) {
-            // 这个是加外边框，通过 setRoundRect 添加
-            viewShadowHelper.setShadowData(color,offset,shadowRadius,alpha);
-            viewShadowHelper.setOutlineProvider(this);
-        }
+        // 这个是加外边框，通过 setRoundRect 添加
+        viewShadowHelper.setShadowData(color,offset,shadowRadius,alpha);
+        viewShadowHelper.setOutlineProvider(this);
     }
 
     @Override

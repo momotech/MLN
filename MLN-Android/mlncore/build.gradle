@@ -6,13 +6,12 @@ android {
     defaultConfig {
         minSdkVersion project.minSdkVersion
         targetSdkVersion project.targetSdkVersion
-        versionCode 1
-        versionName "1.0"
 
         externalNativeBuild {
             cmake {
                 cppFlags "-frtti -fexceptions"
                 cFlags "-pie -fPIE"
+                arguments  "-DFLAVOR_NAME=ANDROID"
                 abiFilters 'armeabi-v7a', 'arm64-v8a'
             }
         }
@@ -27,7 +26,7 @@ android {
 
     externalNativeBuild {
         cmake {
-            path file('src/main/jni/CMakeLists.txt')
+            path 'src/main/jni/CMakeLists.txt'
         }
     }
 
@@ -37,11 +36,18 @@ android {
 }
 
 dependencies {
-    compileOnly "androidx.appcompat:appcompat:$androidxVersion"
+    //noinspection GradleDependency
+    compileOnly "androidx.appcompat:appcompat:$androidXVersion"
     testImplementation 'junit:junit:4.12'
     testImplementation 'org.mockito:mockito-core:2.23.0'
-    testImplementation "androidx.appcompat:appcompat:$androidxVersion"
+    testImplementation "androidx.appcompat:appcompat:$androidXVersion"
 }
-
-apply from: "../bintrayUpload.gradle"
-version=mlnCoreVersion
+if (!implementation_debug) {
+    if (update_hello_group) {
+        ext.versionForMomo = rootProject.ext.mlnCoreVersion
+        apply from: '../publish_to_hellogroup_maven_central.gradle'
+    } else {
+        project.ext["publish.version"] = mlnCoreVersion
+        apply from: "../publish_to_maven_central.gradle"
+    }
+}

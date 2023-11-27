@@ -21,7 +21,7 @@ srcDir=src/main
 # jni结构
 jniDir=${srcDir}/jni
 # so文件夹结构
-libsDir=${srcDir}/libs
+libsDir=${srcDir}/linkLibs
 # cpu类型
 arm=('armeabi-v7a' 'arm64-v8a')
 
@@ -68,5 +68,5 @@ function copy_so() {
 }
 
 copy_h ${coreDir}/${mln_from} ${mlnDir}/${mln_include}
-#copy_h ${coreDir}/${lua_from} ${mlnDir}/${lua_include}
-copy_so ${coreDir}/${libsDir} ${mlnDir}/${libsDir}
+copy_h ${coreDir}/${lua_from} ${mlnDir}/${lua_include}
+copy_so ${coreDir}/${srcDir}/libs ${mlnDir}/${libsDir}

@@ -1,10 +1,10 @@
 /**
-  * Created by MomoLuaNative.
-  * Copyright (c) 2019, Momo Group. All rights reserved.
-  *
-  * This source code is licensed under the MIT.
-  * For the full copyright and license information,please view the LICENSE file in the root directory of this source tree.
-  */
+ * Created by MomoLuaNative.
+ * Copyright (c) 2019, Momo Group. All rights reserved.
+ * <p>
+ * This source code is licensed under the MIT.
+ * For the full copyright and license information,please view the LICENSE file in the root directory of this source tree.
+ */
 package com.immomo.mls.util;
 
 import android.annotation.TargetApi;
@@ -16,6 +16,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.os.Build;
+import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.Display;
@@ -54,16 +55,11 @@ public class AndroidUtil {
      * @param context
      * @return
      */
-    @TargetApi(16)
     public static Long getTotalMemorySize(Context context) {
         ActivityManager.MemoryInfo mi = new ActivityManager.MemoryInfo();
         ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
         activityManager.getMemoryInfo(mi);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            return mi != null ? mi.totalMem : null;
-        } else {
-            return null;
-        }
+        return mi != null ? mi.totalMem : null;
     }
 
     /**
@@ -121,6 +117,13 @@ public class AndroidUtil {
 
     public static String getManufacturer() {
         return Build.MANUFACTURER;
+    }
+
+    /**
+     * 判断是否是三星的手机
+     */
+    public static boolean isSamsung() {
+        return !TextUtils.isEmpty(getManufacturer()) && getManufacturer().toLowerCase().contains("samsung");
     }
 
     /**
@@ -203,13 +206,9 @@ public class AndroidUtil {
     public static int[] getWindowSize(Context context) {
         final WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         final Display display = wm.getDefaultDisplay();
-        if (android.os.Build.VERSION.SDK_INT >= 13) {
-            Point point = new Point();
-            display.getSize(point);
-            return new int[]{point.x, point.y};
-        } else {
-            return new int[]{display.getWidth(), display.getHeight()};
-        }
+        Point point = new Point();
+        display.getSize(point);
+        return new int[]{point.x, point.y};
     }
 
     /**
@@ -238,7 +237,7 @@ public class AndroidUtil {
 
         if (actionBarHeight == 0) {
             final TypedValue tv = new TypedValue();
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB && (context.getTheme() != null && context.getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true))) {
+            if (context.getTheme() != null && context.getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true)) {
                 actionBarHeight = TypedValue.complexToDimensionPixelSize(tv.data, context.getResources().getDisplayMetrics());
             }
         }
@@ -308,17 +307,7 @@ public class AndroidUtil {
         Display display = windowManager.getDefaultDisplay();
         Point size = new Point();
 
-        if (Build.VERSION.SDK_INT >= 17) {
-            display.getRealSize(size);
-        } else if (Build.VERSION.SDK_INT >= 14) {
-            try {
-                size.x = (Integer) Display.class.getMethod("getRawWidth").invoke(display);
-                size.y = (Integer) Display.class.getMethod("getRawHeight").invoke(display);
-            } catch (IllegalAccessException e) {
-            } catch (InvocationTargetException e) {
-            } catch (NoSuchMethodException e) {
-            }
-        }
+        display.getRealSize(size);
         return size;
     }
 
@@ -405,16 +394,14 @@ public class AndroidUtil {
         Window window = activity.getWindow();
         if (window == null)
             return;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-            window.setStatusBarColor(color);
-            if (Color.alpha(color) < 255) {//沉浸式
-                View decor = window.getDecorView();
-                if (decor != null) {
-                    decor.setSystemUiVisibility(
-                            View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
-                }
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        window.setStatusBarColor(color);
+        if (Color.alpha(color) < 255) {//沉浸式
+            View decor = window.getDecorView();
+            if (decor != null) {
+                decor.setSystemUiVisibility(
+                        View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
             }
         }
     }
@@ -423,33 +410,26 @@ public class AndroidUtil {
         Window window = activity.getWindow();
         if (window == null)
             return -1;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            return window.getStatusBarColor();
-        }
-        return -1;
+        return window.getStatusBarColor();
     }
 
     public static void setStatusColor(Activity activity, int color) {
         Window window = activity.getWindow();
         if (window == null)
             return;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-            window.setStatusBarColor(color);
-        }
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        window.setStatusBarColor(color);
     }
 
     public static void setTranslucent(Activity activity) {
         Window window = activity.getWindow();
         if (window == null)
             return;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-            window.getDecorView().setSystemUiVisibility(
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        window.getDecorView().setSystemUiVisibility(
                 View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
-        }
     }
 
     public static boolean isLayoutStable(Activity activity) {//判断沉浸式，依据

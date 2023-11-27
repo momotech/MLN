@@ -414,6 +414,16 @@ struct lua_Debug {
   struct CallInfo *i_ci;  /* active function */
 };
 
+#ifdef LOAD_TOKEN
+typedef void (*token_listener) (void *ud, int tk, const char *v, const lua_Number n, int line, int lnum, size_t offset);
+typedef struct TokenListenData {
+	token_listener tl;
+	void *ud;
+} TokenListenData;
+LUA_API int   (lua_load_token) (lua_State *L, lua_Reader reader, void *dt,
+						  const char *chunkname,
+						  const char *mode, TokenListenData *ud);
+#endif
 /* }====================================================================== */
 
 

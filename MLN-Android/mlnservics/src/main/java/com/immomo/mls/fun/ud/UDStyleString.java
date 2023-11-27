@@ -1,10 +1,10 @@
 /**
-  * Created by MomoLuaNative.
-  * Copyright (c) 2019, Momo Group. All rights reserved.
-  *
-  * This source code is licensed under the MIT.
-  * For the full copyright and license information,please view the LICENSE file in the root directory of this source tree.
-  */
+ * Created by MomoLuaNative.
+ * Copyright (c) 2019, Momo Group. All rights reserved.
+ * <p>
+ * This source code is licensed under the MIT.
+ * For the full copyright and license information,please view the LICENSE file in the root directory of this source tree.
+ */
 package com.immomo.mls.fun.ud;
 
 import android.graphics.Paint;
@@ -16,10 +16,12 @@ import android.text.StaticLayout;
 import android.text.TextPaint;
 import android.text.style.AbsoluteSizeSpan;
 import android.text.style.BackgroundColorSpan;
+import android.text.style.ClickableSpan;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
 import android.text.style.TypefaceSpan;
 import android.text.style.UnderlineSpan;
+import android.view.View;
 
 import com.immomo.mls.Environment;
 import com.immomo.mls.LuaViewManager;
@@ -35,8 +37,13 @@ import com.immomo.mls.fun.weight.span.ImageSpan;
 import com.immomo.mls.fun.weight.span.UrlImageSpan;
 import com.immomo.mls.util.DimenUtil;
 import com.immomo.mls.util.LogUtil;
+import com.immomo.mls.utils.LVCallback;
 import com.immomo.mls.weight.WeightStyleSpan;
+import com.immomo.mls.wrapper.CustomClickableSpan;
+import com.immomo.mls.wrapper.Translator;
 
+import kotlin.Unit;
+import kotlin.jvm.functions.Function0;
 import org.luaj.vm2.Globals;
 import org.luaj.vm2.JavaUserdata;
 import org.luaj.vm2.LuaNumber;
@@ -46,6 +53,8 @@ import org.luaj.vm2.utils.LuaApiUsed;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import androidx.annotation.NonNull;
 
 /**
  * Created by XiongFangyu on 2018/8/1.
@@ -72,11 +81,13 @@ public class UDStyleString extends JavaUserdata implements UrlImageSpan.ILoadDra
             "showAsImage",
             "setText",
             "imageAlign",
+            "setLinkCallback",
     };
 
     private SpannableStringBuilder text;
     private AbsoluteSizeSpan sizeSpan;
     private WeightStyleSpan weightSpan;
+    private ClickableSpan clickableSpan;
     private TypefaceSpan typefaceSpan;
     private int weight;
     private StyleSpan styleSpan;
@@ -101,7 +112,11 @@ public class UDStyleString extends JavaUserdata implements UrlImageSpan.ILoadDra
         initPaint();
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = String.class, nullable = true)
+            }, returns = @LuaApiUsed.Type(UDStyleString.class))
+    })
     protected UDStyleString(long L, LuaValue[] v) {
         super(L, v);
         if (v != null && v.length >= 1) {
@@ -144,7 +159,11 @@ public class UDStyleString extends JavaUserdata implements UrlImageSpan.ILoadDra
     //<editor-fold desc="API">
     //<editor-fold desc="Property">
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(String.class)
+            }, returns = @LuaApiUsed.Type(UDStyleString.class))
+    })
     public LuaValue[] fontName(LuaValue[] p) {
         if (p.length == 0) {
             return typefaceSpan == null ? rNil() : rString(typefaceSpan.getFamily());
@@ -161,7 +180,13 @@ public class UDStyleString extends JavaUserdata implements UrlImageSpan.ILoadDra
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Float.class)
+            }, returns = @LuaApiUsed.Type(UDStyleString.class)),
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(Float.class))
+    })
     public LuaValue[] fontSize(LuaValue[] p) {
         if (p.length != 0) {
             if (sizeSpan != null) {
@@ -177,7 +202,13 @@ public class UDStyleString extends JavaUserdata implements UrlImageSpan.ILoadDra
         return varargsOf(LuaNumber.valueOf(DimenUtil.pxToSp(sizeSpan.getSize())));
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Integer.class)
+            }, returns = @LuaApiUsed.Type(UDStyleString.class)),
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(Integer.class))
+    })
     public LuaValue[] fontWeight(LuaValue[] p) {
         if (p.length != 0) {
             if (weightSpan != null) {
@@ -191,7 +222,13 @@ public class UDStyleString extends JavaUserdata implements UrlImageSpan.ILoadDra
         return rNumber(this.weight);
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Integer.class)
+            }, returns = @LuaApiUsed.Type(UDStyleString.class)),
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(Integer.class))
+    })
     public LuaValue[] fontStyle(LuaValue[] p) {
         if (p.length != 0) {
             if (styleSpan != null) {
@@ -208,7 +245,13 @@ public class UDStyleString extends JavaUserdata implements UrlImageSpan.ILoadDra
         return rNumber(styleSpan.getStyle());
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(UDColor.class)
+            }, returns = @LuaApiUsed.Type(UDStyleString.class)),
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(UDColor.class))
+    })
     public LuaValue[] fontColor(LuaValue[] p) {
         if (p.length != 0) {
             if (colorSpan != null) {
@@ -223,7 +266,13 @@ public class UDStyleString extends JavaUserdata implements UrlImageSpan.ILoadDra
         return varargsOf(new UDColor(globals, colorSpan.getForegroundColor()));
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(UDColor.class)
+            }, returns = @LuaApiUsed.Type(UDStyleString.class)),
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(UDColor.class))
+    })
     public LuaValue[] backgroundColor(LuaValue[] p) {
         if (p.length != 0) {
             if (backgroundColorSpan != null) {
@@ -238,7 +287,33 @@ public class UDStyleString extends JavaUserdata implements UrlImageSpan.ILoadDra
         return varargsOf(new UDColor(globals, backgroundColorSpan.getBackgroundColor()));
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = Function0.class, typeArgs = {Unit.class}),
+                    @LuaApiUsed.Type(Boolean.class)
+            }, returns = @LuaApiUsed.Type(UDStyleString.class))
+    })
+    public LuaValue[] setLinkCallback(LuaValue[] p) {
+        if (p.length != 0) {
+            if (clickableSpan != null) {
+                removeSpan(clickableSpan);
+            }
+            LVCallback callback = ((p.length > 0 && !p[0].isNil()) ? (LVCallback) Translator.fromGlobals(getGlobals()).translateLuaToJava(p[0], LVCallback.class) : null);
+
+            clickableSpan = new CustomClickableSpan(callback, p.length > 1 && p[1].toBoolean(),getColor());
+            setSpan(clickableSpan);
+            return null;
+        }
+        return null;
+    }
+
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Integer.class)
+            }, returns = @LuaApiUsed.Type(UDStyleString.class)),
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(Integer.class))
+    })
     public LuaValue[] underline(LuaValue[] p) {
         if (p.length != 0) {
             int i = p[0].toInt();
@@ -256,7 +331,11 @@ public class UDStyleString extends JavaUserdata implements UrlImageSpan.ILoadDra
     //</editor-fold>
 
     //<editor-fold desc="Method">
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(UDStyleString.class)
+            }, returns = @LuaApiUsed.Type(UDStyleString.class))
+    })
     public LuaValue[] append(LuaValue[] p) {
         CharSequence charSequence = ((UDStyleString) p[0]).text;
 
@@ -279,7 +358,13 @@ public class UDStyleString extends JavaUserdata implements UrlImageSpan.ILoadDra
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Float.class)
+            }, returns = @LuaApiUsed.Type(UDStyleString.class)),
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(Float.class))
+    })
     public LuaValue[] calculateSize(LuaValue[] p) {
         int maxWidth = DimenUtil.dpiToPx((float) p[0].toDouble());
         if (maxWidth < 0) {
@@ -330,7 +415,13 @@ public class UDStyleString extends JavaUserdata implements UrlImageSpan.ILoadDra
      * 需要用start+lenght
      * 如：p[2].toInt() - 1 + p[1].toInt() - 1
      */
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(String.class),
+                    @LuaApiUsed.Type(Integer.class),
+                    @LuaApiUsed.Type(Integer.class)
+            }, returns = @LuaApiUsed.Type(UDStyleString.class))
+    })
     public LuaValue[] setFontNameForRange(LuaValue[] p) {
         checkStartPosition(p[1]);
         try {
@@ -342,7 +433,13 @@ public class UDStyleString extends JavaUserdata implements UrlImageSpan.ILoadDra
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Float.class),
+                    @LuaApiUsed.Type(Integer.class),
+                    @LuaApiUsed.Type(Integer.class)
+            }, returns = @LuaApiUsed.Type(UDStyleString.class))
+    })
     public LuaValue[] setFontSizeForRange(LuaValue[] p) {
         checkStartPosition(p[1]);
         try {
@@ -356,7 +453,13 @@ public class UDStyleString extends JavaUserdata implements UrlImageSpan.ILoadDra
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Integer.class),
+                    @LuaApiUsed.Type(Integer.class),
+                    @LuaApiUsed.Type(Integer.class)
+            }, returns = @LuaApiUsed.Type(UDStyleString.class))
+    })
     public LuaValue[] setFontStyleForRange(LuaValue[] p) {
         checkStartPosition(p[1]);
         try {
@@ -424,7 +527,13 @@ public class UDStyleString extends JavaUserdata implements UrlImageSpan.ILoadDra
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(UDColor.class),
+                    @LuaApiUsed.Type(Integer.class),
+                    @LuaApiUsed.Type(Integer.class)
+            }, returns = @LuaApiUsed.Type(UDStyleString.class))
+    })
     public LuaValue[] setFontColorForRange(LuaValue[] p) {
         checkStartPosition(p[1]);
         try {
@@ -435,7 +544,13 @@ public class UDStyleString extends JavaUserdata implements UrlImageSpan.ILoadDra
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(UDColor.class),
+                    @LuaApiUsed.Type(Integer.class),
+                    @LuaApiUsed.Type(Integer.class)
+            }, returns = @LuaApiUsed.Type(UDStyleString.class))
+    })
     public LuaValue[] setBackgroundColorForRange(LuaValue[] p) {
         checkStartPosition(p[1]);
         try {
@@ -453,7 +568,13 @@ public class UDStyleString extends JavaUserdata implements UrlImageSpan.ILoadDra
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Integer.class),
+                    @LuaApiUsed.Type(Integer.class),
+                    @LuaApiUsed.Type(Integer.class)
+            }, returns = @LuaApiUsed.Type(UDStyleString.class))
+    })
     public LuaValue[] setUnderlineForRange(LuaValue[] p) {
         checkStartPosition(p[1]);
         int underline = p[0].toInt();
@@ -476,7 +597,11 @@ public class UDStyleString extends JavaUserdata implements UrlImageSpan.ILoadDra
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(UDSize.class)
+            }, returns = @LuaApiUsed.Type(UDStyleString.class))
+    })
     public LuaValue[] showAsImage(LuaValue[] p) {
         imageSize = ((UDSize) p[0]).getSize();
         imageSpan = new UrlImageSpan(((LuaViewManager) globals.getJavaUserdata()).context, text.toString(), imageSize, this, mVerticalAlignment);
@@ -484,7 +609,11 @@ public class UDStyleString extends JavaUserdata implements UrlImageSpan.ILoadDra
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(String.class)
+            }, returns = @LuaApiUsed.Type(UDStyleString.class))
+    })
     public LuaValue[] setText(LuaValue[] p) {
         text.clear();
         text.append(p[0].toJavaString());
@@ -492,7 +621,11 @@ public class UDStyleString extends JavaUserdata implements UrlImageSpan.ILoadDra
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Integer.class)
+            }, returns = @LuaApiUsed.Type(UDStyleString.class))
+    })
     public LuaValue[] imageAlign(LuaValue[] p) {
         mVerticalAlignment = p.length > 0 ? p[0].toInt() : StyleImageAlign.Default;
         return null;
@@ -503,7 +636,7 @@ public class UDStyleString extends JavaUserdata implements UrlImageSpan.ILoadDra
 
     @Override
     public void loadDrawableResult(ImageSpan imageSpan) {
-        if (imageSpan != null){
+        if (imageSpan != null) {
             setSpan(imageSpan);
             invalidaLabelText();
         }
@@ -560,7 +693,8 @@ public class UDStyleString extends JavaUserdata implements UrlImageSpan.ILoadDra
     }
 
     UDView mUDView;
-    public void setUDView(UDView udView){
+
+    public void setUDView(UDView udView) {
         mUDView = udView;
     }
 

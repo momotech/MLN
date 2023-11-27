@@ -12,6 +12,7 @@ import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.view.MotionEvent;
+import android.widget.FrameLayout;
 
 import com.immomo.mls.fun.other.Size;
 import com.immomo.mls.fun.ud.view.IBorderRadiusView;
@@ -25,13 +26,16 @@ import androidx.annotation.NonNull;
 /**
  * Created by XiongFangyu on 2018/8/1.
  */
-public class BorderRadiusFrameLayout extends ForegroundFrameLayout implements IBorderRadiusView, IClipRadius, ViewClipHelper.SuperDrawAction {
+public class BorderRadiusFrameLayout extends FrameLayout
+        implements IBorderRadiusView, IClipRadius, ViewClipHelper.SuperDrawAction, ILimitSizeView {
     private final @NonNull
     BorderBackgroundDrawable backgroundDrawable;
     private final @NonNull
     ViewClipHelper viewClipHelper;
     private final @NonNull
     ViewShadowHelper viewShadowHelper;
+    private int mMaxWidth = Integer.MAX_VALUE;
+    private int mMaxHeight = Integer.MAX_VALUE;
 
     public BorderRadiusFrameLayout(@NonNull Context context) {
         super(context);
@@ -77,11 +81,9 @@ public class BorderRadiusFrameLayout extends ForegroundFrameLayout implements IB
 
     @Override
     public void setAddShadow(int color, Size offset, float shadowRadius, float alpha) {
-        if (Build.VERSION.SDK_INT >= 21) {
-            // 这个是加外边框，通过 setRoundRect 添加
-            viewShadowHelper.setShadowData(color,offset,shadowRadius,alpha);
-            viewShadowHelper.setOutlineProvider(this);
-        }
+        // 这个是加外边框，通过 setRoundRect 添加
+        viewShadowHelper.setShadowData(color,offset,shadowRadius,alpha);
+        viewShadowHelper.setOutlineProvider(this);
     }
 
     @Override
@@ -212,5 +214,43 @@ public class BorderRadiusFrameLayout extends ForegroundFrameLayout implements IB
             setClickable(true);
         backgroundDrawable.setDrawRipple(drawRipple);
         LuaViewUtil.setBackground(this, backgroundDrawable);
+    }
+
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        widthMeasureSpec=getSpec(widthMeasureSpec, (int) mMaxWidth);
+        heightMeasureSpec=getSpec(heightMeasureSpec, (int) mMaxHeight);
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+    }
+
+    @Override
+    public void setMaxWidth(int mMaxWidth) {
+        this.mMaxWidth = mMaxWidth;
+    }
+
+    @Override
+    public void setMaxHeight(int mMaxHeight) {
+        this.mMaxHeight = mMaxHeight;
+    }
+
+    @Override
+    public int getMaxWidth() {
+        return mMaxWidth;
+    }
+
+    @Override
+    public int getMaxHeight() {
+        return mMaxHeight;
+    }
+
+    private int getSpec(int src, int max) {
+        int mode = MeasureSpec.getMode(src);
+        if (mode == MeasureSpec.EXACTLY)
+            return src;
+        int size = MeasureSpec.getSize(src);
+        if (size > max) {
+            return MeasureSpec.makeMeasureSpec(max, mode);
+        }
+        return src;
     }
 }

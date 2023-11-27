@@ -14,13 +14,17 @@ import com.immomo.mls.utils.LVCallback;
 import com.immomo.mls.utils.event.EventCenter;
 import com.immomo.mls.utils.event.EventListener;
 
+import kotlin.Unit;
+import kotlin.jvm.functions.Function1;
 import org.luaj.vm2.Globals;
 import org.luaj.vm2.LuaValue;
+
+import java.util.Map;
 
 /**
  * Created by XiongFangyu on 2018/8/6.
  */
-@LuaClass
+@LuaClass(name = "EventCenter", isSingleton = true)
 public class SIEventCenter {
     public static final String LUA_CLASS_NAME = "EventCenter";
 
@@ -35,7 +39,11 @@ public class SIEventCenter {
     }
 
     //<editor-fold desc="API">
-    @LuaBridge
+    @LuaBridge(value = {
+            @LuaBridge.Func(params = {
+                    @LuaBridge.Type(name = "eventKey", value = String.class),
+                    @LuaBridge.Type(value = Function1.class, typeArgs = {Map.class, Unit.class})})
+    })
     public void addEventListener(String eventKey, LVCallback callback) {
         addEventImpl(eventKey, callback);
     }

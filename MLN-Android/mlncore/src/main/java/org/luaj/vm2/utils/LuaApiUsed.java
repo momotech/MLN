@@ -21,4 +21,24 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE, ElementType.METHOD, ElementType.FIELD, ElementType.CONSTRUCTOR})
 public @interface LuaApiUsed {
+    String name() default "";
+    Func[] value() default {};
+
+    boolean ignore() default false;
+    boolean ignoreTypeArgs() default false;
+    @interface Func {
+        String name() default "";
+        Type[] params() default {};
+        Type[] returns() default {};
+        String comment() default "";
+    }
+
+    @interface Type {
+        String name() default "";
+        Class value() default Object.class;
+        //目前仅支持一层泛型
+        Class[] typeArgs() default {};
+        boolean[] typeArgsNullable() default {};
+        boolean nullable() default false;
+    }
 }

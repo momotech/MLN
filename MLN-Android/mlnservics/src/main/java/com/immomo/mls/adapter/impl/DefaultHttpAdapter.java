@@ -7,10 +7,10 @@
   */
 package com.immomo.mls.adapter.impl;
 
+import android.text.TextUtils;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
-import android.text.TextUtils;
 
 import com.immomo.mls.adapter.MLSHttpAdapter;
 import com.immomo.mls.util.FileUtil;

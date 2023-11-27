@@ -27,7 +27,7 @@ import java.util.Iterator;
  * <p>
  * 使用完成及时调用{@link #destroy()}
  */
-@LuaApiUsed
+@LuaApiUsed(name = "Table", ignore = true)
 public class LuaTable extends NLuaValue implements Iterable {
     private static final Entrys EMPTY_ENTRYS = new Entrys(empty(), empty());
 

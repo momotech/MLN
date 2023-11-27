@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 import com.immomo.mls.LuaViewManager;
 
 import org.luaj.vm2.Globals;
+import org.luaj.vm2.utils.CGenerate;
 import org.luaj.vm2.utils.LuaApiUsed;
 
 /**
@@ -38,6 +39,9 @@ public class ${ClassName} {
     //<editor-fold desc="Bridge API">
     /**
      * 在C层中调用
+     * 参数支持所有基础数据类型、String、LuaValue类型、特殊指针类型 {@link CGenerate#params}
+     * @see CGenerate
+     * @see CGenerate#params
      */
     @LuaApiUsed
     static void methodA(int a) {

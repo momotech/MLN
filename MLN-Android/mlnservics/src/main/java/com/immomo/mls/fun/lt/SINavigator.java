@@ -30,6 +30,8 @@ import com.immomo.mls.util.FileUtil;
 import com.immomo.mls.util.RelativePathUtils;
 import com.immomo.mls.wrapper.callback.IVoidCallback;
 
+import kotlin.Unit;
+import kotlin.jvm.functions.Function0;
 import org.luaj.vm2.Globals;
 import org.luaj.vm2.LuaFunction;
 import org.luaj.vm2.LuaValue;
@@ -45,7 +47,7 @@ import androidx.annotation.Nullable;
 /**
  * Created by XiongFangyu on 2018/8/13.
  */
-@LuaClass
+@LuaClass(name = "Navigator",isSingleton = true)
 public class SINavigator implements NavigatorAnimType {
     public static final String LUA_CLASS_NAME = "Navigator";
 
@@ -97,7 +99,13 @@ public class SINavigator implements NavigatorAnimType {
      * Android 测试接口
      * 进入新页面，并获取结果
      */
-    @LuaBridge
+    @LuaBridge(value = {
+            @LuaBridge.Func(params = {
+                    @LuaBridge.Type(name = "action", value = String.class),
+                    @LuaBridge.Type(name = "params", value = Map.class),
+                    @LuaBridge.Type(name = "animType", value = Integer.class),
+                    @LuaBridge.Type(value = Function0.class, typeArgs = {Unit.class})})
+    })
     public void gotoAndGetResult(String action, Map params, @AnimType int animType, LuaFunction callback) {
         OnActivityResultListener l = new DefaultOnActivityResultListener(callback);
         int requestCode = generateRequestCode();

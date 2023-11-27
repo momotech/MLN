@@ -50,7 +50,7 @@ public class MLSResourceFinder implements ResourceFinder {
 
     protected byte[] getAssetsData(String name) {
         if (assetsPath == null) {
-            errorMsg.append("\tAnd ").append("assetsPath is null.");
+            errorMsg.append("\tassetsPath为空");
             return null;
         }
         InputStream is = null;
@@ -60,7 +60,7 @@ public class MLSResourceFinder implements ResourceFinder {
             if (is.read(data) == data.length)
                 return data;
         } catch (Throwable t) {
-            errorMsg.append("\tAnd ").append(t.toString());
+            errorMsg.append("\t从Assets中读取").append(FileUtil.dealRelativePath(assetsPath, name)).append("失败，").append(t.toString());
         } finally {
             IOUtil.closeQuietly(is);
         }
@@ -83,7 +83,7 @@ public class MLSResourceFinder implements ResourceFinder {
         if (f.exists()) {
             return name;
         } else {
-            errorMsg.append("file ").append(name).append(" not exists.");
+            errorMsg.append("文件'").append(name).append("'不存在");
         }
         return null;
     }

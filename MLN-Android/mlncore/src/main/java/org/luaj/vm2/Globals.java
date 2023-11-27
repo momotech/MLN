@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -41,6 +42,7 @@ import java.util.Set;
  * <p>
  * Global表
  * <p>
+ *
  * @see #createLState               创建全局表
  * @see #setResourceFinder          设置资源查找器
  * @see #loadString                 加载Lua源码
@@ -50,7 +52,7 @@ import java.util.Set;
  * @see #createUserdataAndSet       在全局表中注册一个userdata实例
  * @see #destroy()                  销毁当前虚拟机
  * <p>
- *
+ * <p>
  * 资源查找流程：
  * 1、native层，通过接口{@link #setBasePath(String, boolean)}获取根路径，在根路径下查找，若失败，进入java层查找
  * 2、java层，{@link #__onLuaRequire(long, String)} {@link #onRequire(String)}，通过设置的{@link ResourceFinder}查找
@@ -78,6 +80,13 @@ public final class Globals extends LuaTable {
     public static final int LUA_ERRINJAVA = -1;
     public static final int LUA_CALLING = 100;
     /**
+     * lua底层读文件相关配置
+     *
+     * @see #nativeFileConfig(int)
+     */
+    public static final int LUA_FILE_CONFIG_SAES = 1;
+    public static final int LUA_FILE_CINFIG_SOURCE_FILE = 1 << 1;
+    /**
      * 统计开关
      */
     public static final char STATISTIC_BRIDGE = 1;
@@ -96,12 +105,14 @@ public final class Globals extends LuaTable {
     private static final int JUST_INIT = Integer.MIN_VALUE;
     /**
      * GC间隔时间，默认10s
+     *
      * @see #gc()
      * @see #removeStack(LuaValue)
      */
     private static long LUA_GC_OFFSET = 10000;
     /**
      * 默认销毁100个lua对象将执行gc
+     *
      * @see #gc()
      * @see #removeStack(LuaValue)
      */
@@ -124,6 +135,7 @@ public final class Globals extends LuaTable {
     final long parent_L_State;
     /**
      * 标记正在调用的lua函数个数
+     *
      * @see LuaFunction#invoke
      */
     long calledFunction = 0;
@@ -140,7 +152,12 @@ public final class Globals extends LuaTable {
      */
     private Throwable error = null;
     /**
+     * 错误类型
+     */
+    private ErrorType errorType = ErrorType.no;
+    /**
      * require错误信息
+     *
      * @see #__onLuaRequire(long, String)
      * @see #onRequire
      */
@@ -154,16 +171,17 @@ public final class Globals extends LuaTable {
      * @see #onRequire(String)
      */
     private ResourceFinder resourceFinder;
+
     /**
      * 资源寻找器，Lua脚本调用require时需要
-     *
+     * <p>
      * 低优先
      *
      * @see #addResourceFinder(ResourceFinder)
      * @see #__onLuaRequire(long, String)
      * @see #onRequire(String)
      */
-    private Set<ResourceFinder> resourceFinders;
+    private LinkedHashSet<ResourceFinder> resourceFinders;
     /**
      * class -> luaClassName
      */
@@ -211,6 +229,10 @@ public final class Globals extends LuaTable {
      */
     private boolean isGlobal;
     /**
+     * 是否只是注册了轻量级的基础userdata 如果是的话 会实时从用户提供的扩展userdata中去拿需要的userdata
+     */
+    private boolean isRegisterLightUserdata;
+    /**
      * 上一次执行lua gc时间
      */
     private long lastGcTime = 0;
@@ -248,6 +270,7 @@ public final class Globals extends LuaTable {
     private static OnEmptyMethodCalledListener onEmptyMethodCalledListener;
     /**
      * 开启虚拟机统计
+     *
      * @see #setStatistic
      * @see #STATISTIC_BRIDGE
      * @see #STATISTIC_REQUIRE
@@ -283,6 +306,7 @@ public final class Globals extends LuaTable {
             try {
                 is32bit = LuaCApi.is32bit();
                 LuaCApi._setAndroidVersion(Build.VERSION.SDK_INT);
+                LuaCApi._setAndroidDebug(MLNCore.DEBUG ? 1 : 0);
                 init = true;
             } catch (Throwable ignore) {
                 init = false;
@@ -307,7 +331,23 @@ public final class Globals extends LuaTable {
     }
 
     /**
+     * LuaClient 相关逻辑 用以判断是否是从预加载池中拿的拥有全量userdata的global 如果不是 则会注册轻量级的userdata
+     * 这样就会执行CustomUserDataInjectInterceptor  去注册需要的userdata
+     * eg.在列表中 一次性展示了多条lua cell 造成lua虚拟机池用光 就会实时注册轻量的虚拟机
+     *
+     * @return 是否是轻量虚拟机
+     */
+    public boolean isRegisterLightUserdata() {
+        return isRegisterLightUserdata;
+    }
+
+    public void setRegisterLightUserdata(boolean registerLightUserdata) {
+        isRegisterLightUserdata = registerLightUserdata;
+    }
+
+    /**
      * 打开统计bridge或require调用
+     *
      * @see #STATISTIC_BRIDGE
      * @see #STATISTIC_REQUIRE
      */
@@ -323,6 +363,7 @@ public final class Globals extends LuaTable {
 
     /**
      * 添加统计bridge或require调用
+     *
      * @see #STATISTIC_BRIDGE
      * @see #STATISTIC_REQUIRE
      */
@@ -364,7 +405,7 @@ public final class Globals extends LuaTable {
         if (num == 0) return;
 
         long now = System.currentTimeMillis();
-        for (int i = 0, l = cache.size(); i < l; i ++) {
+        for (int i = 0, l = cache.size(); i < l; i++) {
             final Globals g = cache.valueAt(i);
             if (g.canGc(now)) {
                 num--;
@@ -392,10 +433,40 @@ public final class Globals extends LuaTable {
      * 是否打开文件加密
      * 打开后，读取文件会判断是否是加密文件，写入文件会写入加密数据
      * 关闭后，读写文件都不使用加密
+     *
      * @param open false default
+     * @see #setNativeFileConfigs(int)
+     * @deprecated use {@link #setNativeFileConfigs(int)}
      */
+    @Deprecated
     public static void openSAES(boolean open) {
-        LuaCApi._openSAES(open);
+        int now = LuaCApi._getNativeFileConfigs();
+        if (open) {
+            LuaCApi._setNativeFileConfigs(now | LUA_FILE_CONFIG_SAES);
+        } else {
+            LuaCApi._setNativeFileConfigs(now & (~LUA_FILE_CONFIG_SAES));
+        }
+    }
+
+    /**
+     * 设置底层文件配置信息
+     * 用 LUA_FILE_CONFIG_xx来配置
+     *
+     * @see #LUA_FILE_CONFIG_SAES
+     * @see #LUA_FILE_CINFIG_SOURCE_FILE
+     * @see #getNativeFileConfigs()
+     */
+    public static void setNativeFileConfigs(int configs) {
+        LuaCApi._setNativeFileConfigs(configs);
+    }
+
+    /**
+     * 获取当前底层文件配置信息
+     *
+     * @see #getNativeFileConfigs()
+     */
+    public static int getNativeFileConfigs() {
+        return LuaCApi._getNativeFileConfigs();
     }
 
     /**
@@ -420,25 +491,25 @@ public final class Globals extends LuaTable {
     }
 
     /**
-     * 为每个Bridge注册空方法，调用空方法不会报错，会返回调用者本身
-     * 回调用{@link #__onEmptyMethodCall(long, String, String)}
+     * 当调用空方法时，是否回调{@link #__onEmptyMethodCall(long, String, String)}
      */
-    public static void preRegisterEmptyMethods(String... methods) {
-        LuaCApi._preRegisterEmptyMethods(methods);
+    public static void setCallbackEmptyMethod(boolean open) {
+        LuaCApi._setCallbackEmptyMethod(open);
     }
 
     /**
      * 提前加载userdata
      */
-    public static void preRegisterUserdata(String clz, String... methods) {
-        LuaCApi._preRegisterUD(clz, methods);
+    public static void preRegisterUserdata(String clz, String luaClassName, String parentName, int type, String... methods) {
+
+        LuaCApi._preRegisterUD(clz, luaClassName, parentName, type, methods);
     }
 
     /**
      * 提前加载static
      */
-    public static void preRegisterStatic(String clz, String... methods) {
-        LuaCApi._preRegisterStatic(clz, methods);
+    public static void preRegisterStatic(String clz, String luaClassName, String parentName, String... methods) {
+        LuaCApi._preRegisterStatic(clz, luaClassName, parentName, methods);
     }
 
     /**
@@ -455,8 +526,9 @@ public final class Globals extends LuaTable {
     /**
      * lua中使用isolate，将在native层创建虚拟机
      * 回调该方法
-     * @param p_vm  父虚拟机
-     * @param vm    当前虚拟机native层指针
+     *
+     * @param p_vm       父虚拟机
+     * @param vm         当前虚拟机native层指针
      * @param debuggable 能否debug
      */
     @LuaApiUsed
@@ -475,7 +547,7 @@ public final class Globals extends LuaTable {
             g.setSoPath(parent.soPath);
             g.setResourceFinder(parent.resourceFinder);
             if (parent.resourceFinders != null)
-                g.resourceFinders = new HashSet<>(parent.resourceFinders);
+                g.resourceFinders = new LinkedHashSet<>(parent.resourceFinders);
         }
         saveGlobals(g);
         MLNCore.onNativeCreateGlobals(g, p_vm == 0);
@@ -483,6 +555,7 @@ public final class Globals extends LuaTable {
 
     /**
      * lua中使用isolate创建的虚拟机会自动销毁，销毁时回调
+     *
      * @param vm 虚拟机native层指针
      */
     @LuaApiUsed
@@ -505,6 +578,20 @@ public final class Globals extends LuaTable {
     }
 
     /**
+     * 设置使用内存池来创建虚拟机
+     *
+     * @param use 打开后，后续的虚拟机都使用内存池来创建
+     */
+    public static void setUseMemoryPool(boolean use) {
+        LuaCApi._setUseMemoryPool(use);
+    }
+
+    /// for mem debug
+//    public void testMemoryPool() {
+//        LuaCApi._testMemoryPool(L_State);
+//    }
+
+    /**
      * 通过Native虚拟机指针获取Java Globals表
      * 必须通过{@link #createLState(boolean)}创建的虚拟机才能返回对应的表
      *
@@ -524,7 +611,7 @@ public final class Globals extends LuaTable {
     public static String debugGlobalsPointers() {
         int count = cache.size();
         StringBuilder sb = new StringBuilder("normal globals pointers:[");
-        for (int i = 0; i < count; i ++) {
+        for (int i = 0; i < count; i++) {
             long p = cache.keyAt(i);
             if (i == 0) {
                 sb.append(Long.toHexString(p));
@@ -535,7 +622,7 @@ public final class Globals extends LuaTable {
         sb.append(']')
                 .append("\nspecial globals pointers:[");
         count = g_cahce.size();
-        for (int i = 0; i < count; i ++) {
+        for (int i = 0; i < count; i++) {
             long p = g_cahce.keyAt(i);
             if (i == 0) {
                 sb.append(Long.toHexString(p));
@@ -555,6 +642,7 @@ public final class Globals extends LuaTable {
 
     /**
      * 获取所有lua虚拟机使用的内存量，单位Byte
+     *
      * @return 如果编译时，没有打开J_API_INFO编译选项，则返回为0
      * @see #getLVMMemUse() 获取单个虚拟机的内存使用量
      */
@@ -573,8 +661,9 @@ public final class Globals extends LuaTable {
     /**
      * 设置lua gc回调java gc时间间隔
      * 若小于等于0，表示关闭回调
-     * @see #__onLuaGC(long)
+     *
      * @param offset <=0 mean close
+     * @see #__onLuaGC(long)
      */
     public static void setGcOffset(int offset) {
         LuaCApi._setGcOffset(offset);
@@ -582,9 +671,10 @@ public final class Globals extends LuaTable {
 
     /**
      * 设置gc间隔时间
+     *
+     * @param ms 毫秒
      * @see #gc()
      * @see #removeStack(LuaValue)
-     * @param ms 毫秒
      */
     public static void setLuaGcOffset(long ms) {
         LUA_GC_OFFSET = ms;
@@ -592,9 +682,10 @@ public final class Globals extends LuaTable {
 
     /**
      * 设置需要销毁多少lua对象才执行gc
+     *
+     * @param n 个数，默认100
      * @see #gc()
      * @see #removeStack(LuaValue)
-     * @param n 个数，默认100
      */
     public static void setNeedDestroyNumber(int n) {
         LUA_GC_NUM_VALUES = n;
@@ -602,12 +693,21 @@ public final class Globals extends LuaTable {
 
     /**
      * 设置Lua中db文件存储路径
+     *
      * @param path 路径必须存在
      */
     public static void setDatabasePath(String path) {
         if (!new File(path).exists())
-            throw new IllegalStateException(path + " is not exists!");
+            throw new IllegalStateException(path + "不存在");
         LuaCApi._setDatabasePath(path);
+    }
+
+    /**
+     * 设置保护调用env->NewStringUTF函数
+     * 通过设置jmp、设置signal handler实现
+     */
+    public static void setProtectNewJString(boolean open) {
+        LuaCApi._setProtectNewJString(open);
     }
     //</editor-fold>
 
@@ -633,10 +733,11 @@ public final class Globals extends LuaTable {
     /**
      * 设置lua包根路径，require时使用
      * 优先级最高
+     *
      * @param basePath 根路径
      * @param autoSave 是否自动保存二进制文件
      *                 true：native查找到相关文件luab后缀是否可用，若可用，直接使用；
-     *                       若不可用，查找lua相关文件是否可用，若可用，保存编译后二进制文件(luab)
+     *                 若不可用，查找lua相关文件是否可用，若可用，保存编译后二进制文件(luab)
      *                 false：native只查找已lua为后缀的相关文件
      */
     public final void setBasePath(String basePath, boolean autoSave) {
@@ -648,6 +749,7 @@ public final class Globals extends LuaTable {
     /**
      * 设置lua查找so文件的路径
      * require时使用
+     *
      * @param path 路径，可使用;分割多个路径
      */
     public final void setSoPath(String path) {
@@ -661,6 +763,7 @@ public final class Globals extends LuaTable {
     /**
      * 打开调试
      * 需要在脚本未执行时打开，否则不生效
+     *
      * @param debug debug脚本
      * @param ip    ip地址
      * @param port  port
@@ -678,6 +781,7 @@ public final class Globals extends LuaTable {
         } catch (Throwable t) {
             error = t;
             errorMsg = t.getMessage();
+            getErrorTypeFromNative();
             state = LUA_ERRINJAVA;
         }
         debugOpened = state == LUA_OK;
@@ -759,6 +863,7 @@ public final class Globals extends LuaTable {
 
     /**
      * 预加载Lua脚本
+     *
      * @param chunkName 脚本名称，Lua代码中require()时使用
      * @param data      源码或二进制码
      * @throws UndumpError 若编译出错，则抛出异常
@@ -770,6 +875,7 @@ public final class Globals extends LuaTable {
 
     /**
      * 预加载Lua文件
+     *
      * @param chunkName 脚本名称，Lua代码中require()时使用
      * @param path      脚本绝对路径
      * @throws UndumpError 若编译出错，则抛出异常
@@ -781,14 +887,16 @@ public final class Globals extends LuaTable {
 
     /**
      * 预加载Lua文件，并将二进制码存储到savePath中
+     *
      * @param chunkName 脚本名称，Lua代码中require()时使用
      * @param path      脚本asset路径
      * @param savePath  二进制码存储文件
-     * @throws UndumpError 若编译出错，则抛出异常
      * @return 0: 成功
+     * @throws UndumpError 若编译出错，则抛出异常
      * @see org.luaj.vm2.LuaValue.ErrorCode
      */
-    public final @ErrorCode int preloadAssetsAndSave(String chunkName, String path, String savePath) throws UndumpError {
+    public final @ErrorCode
+    int preloadAssetsAndSave(String chunkName, String path, String savePath) throws UndumpError {
         checkDestroy();
         File parent = new File(savePath).getParentFile();
         if (!parent.exists()) {
@@ -800,6 +908,7 @@ public final class Globals extends LuaTable {
 
     /**
      * 预加载Lua文件
+     *
      * @param chunkName 脚本名称，Lua代码中require()时使用
      * @param path      脚本asset路径
      * @throws UndumpError 若编译出错，则抛出异常
@@ -811,6 +920,7 @@ public final class Globals extends LuaTable {
 
     /**
      * 相当于调用lua的require函数
+     *
      * @param path 支持绝对路径、相对路径、lua写法: dir.name
      */
     public final boolean require(String path) throws InvokeError {
@@ -820,6 +930,7 @@ public final class Globals extends LuaTable {
 
     /**
      * 设置主入口，必须已通过{@link #preloadData} 或 {@link #preloadFile} 预加载成功
+     *
      * @param chunkname 预加载时的米
      * @return true: 设置成功，可通过 {@link #callLoadedData()}执行
      */
@@ -830,7 +941,7 @@ public final class Globals extends LuaTable {
             return true;
         } else {
             state = -404;
-            errorMsg = "Did not find " + chunkname + " module from _preload table";
+            errorMsg = chunkname + "没有预加载";
             error = new Exception(errorMsg);
         }
         return false;
@@ -838,9 +949,9 @@ public final class Globals extends LuaTable {
 
     /**
      * 若已通过
-     *      {@link #loadString}
-     *      {@link #loadData}
-     *      {@link #setMainEntryFromPreload}
+     * {@link #loadString}
+     * {@link #loadData}
+     * {@link #setMainEntryFromPreload}
      * 加载成功，可通过此方法执行加载脚本，并返回执行状态
      *
      * @return true: 成功，false: 失败，可通过{@link #getState()}查看执行状态
@@ -849,9 +960,9 @@ public final class Globals extends LuaTable {
         checkDestroy();
         if (state != LUA_OK) {
             if (state == JUST_INIT) {
-                throw new IllegalStateException("Lua script is not loaded!");
+                throw new IllegalStateException("没有加载任何lua脚本!");
             }
-            throw new IllegalStateException("state of loading lua script is not ok, code: " + state);
+            throw new IllegalStateException("请加载成功lua脚本后再执行当前方法, code: " + state);
         }
         try {
             state = LUA_CALLING;
@@ -859,29 +970,45 @@ public final class Globals extends LuaTable {
         } catch (Throwable t) {
             error = t;
             state = LUA_ERRINJAVA;
+            getErrorTypeFromNative();
             MLNCore.hookLuaError(t, this);
             errorMsg = t.getMessage();
         }
         return state == LUA_OK;
     }
 
+    final void getErrorTypeFromNative() {
+        if (MLNCore.errorTypeEnabled && !isDestroyed())
+            errorType = ErrorType.values()[LuaCApi._getErrorType(L_State)];
+    }
+
+    /**
+     * 发生错误时，获取错误类型
+     *
+     * @see ErrorType
+     */
+    public final ErrorType getErrorType() {
+        return errorType;
+    }
+
     /**
      * 若已通过
-     *      {@link #loadString}
-     *      {@link #loadData}
-     *      {@link #setMainEntryFromPreload}
+     * {@link #loadString}
+     * {@link #loadData}
+     * {@link #setMainEntryFromPreload}
      * 加载成功，可通过此方法执行加载脚本，并返回执行状态
+     *
      * @return lua执行结果，可能为空
      * @throws IllegalStateException 当前虚拟机状态不可用时，抛出
-     * @throws InvokeError 执行出错，抛出（由C层）
+     * @throws InvokeError           执行出错，抛出（由C层）
      */
     public final LuaValue[] callLoadedDataAndGetResult() throws IllegalStateException, InvokeError {
         checkDestroy();
         if (state != LUA_OK) {
             if (state == JUST_INIT) {
-                throw new IllegalStateException("Lua script is not loaded!");
+                throw new IllegalStateException("没有加载任何lua脚本!");
             }
-            throw new IllegalStateException("state of loading lua script is not ok, code: " + state);
+            throw new IllegalStateException("请加载成功lua脚本后再执行当前方法, code: " + state);
         }
         state = LUA_CALLING;
         LuaValue[] ret = LuaCApi._doLoadedDataAndGetResult(L_State);
@@ -926,20 +1053,20 @@ public final class Globals extends LuaTable {
     /**
      * 注册所有的静态Bridge
      * 在Lua中可通过 luaClassName:method()调用
-     *
+     * <p>
      * 方法必须返回LuaValue数组，且参数必须为 (long, LuaValue[])
-     *
+     * <p>
      * 必须和{@link #callLoadedData()}在同一线程！
      *
-     * @param lcns          lua调用的类名
-     * @param lpcns         继承自lua的类名
-     * @param jcns          java的class {@link SignatureUtils#getClassName(Class)}
+     * @param lcns  lua调用的类名
+     * @param lpcns 继承自lua的类名
+     * @param jcns  java的class {@link SignatureUtils#getClassName(Class)}
      */
     public final void registerAllStaticClass(String[] lcns, String[] lpcns, String[] jcns) {
         checkDestroy();
         final int len = lcns.length;
         if (len != lpcns.length || len != jcns.length)
-            throw new IllegalArgumentException("lcns lpcns jcns must have same length");
+            throw new IllegalArgumentException("lcns、lpcns、jcns三个数组长度不一致");
         LuaCApi._registerAllStaticClass(L_State, lcns, lpcns, jcns);
     }
 
@@ -947,25 +1074,27 @@ public final class Globals extends LuaTable {
      * 注册所有的java userdata
      * 注意java构造函数一定需要有 Globals, LuaValue[] 参数
      * 方法的返回值和参数都必须是 LuaValue[]类型
-     *
+     * <p>
      * 若注册的class为{@link LuaUserdata}的子类，则会将对象保存到GNV表中，不可释放
      * 直到原生调用{@link LuaUserdata#destroy()}
-     *
+     * <p>
      * 注册后，马上设置元表，提升使用时性能
-     *
+     * <p>
      * 必须和{@link #callLoadedData()}在同一线程！
-     * @param lcns          lua调用的类名
-     * @param lpcns         继承自lua的类名
-     * @param jcns          java的class {@link SignatureUtils#getClassName(Class)}
-     * @param lazy          每个userdata是否是lazy
+     *
+     * @param lcns  lua调用的类名
+     * @param lpcns 继承自lua的类名
+     * @param jcns  java的class {@link SignatureUtils#getClassName(Class)}
+     * @param lazy  每个userdata是否是lazy
      */
     public final void registerAllUserdata(String[] lcns, String[] lpcns, String[] jcns, boolean[] lazy) throws RuntimeException {
         checkDestroy();
         final int len = lcns.length;
         if (len != lpcns.length || len != jcns.length)
-            throw new IllegalArgumentException("lcns lpcns jcns must have same length");
+            throw new IllegalArgumentException("lcns、lpcns、jcns三个数组长度不一致");
         LuaCApi._registerAllUserdata(L_State, lcns, lpcns, jcns, lazy);
     }
+
 
     /**
      * 注册只包含静态__index方法的类
@@ -978,32 +1107,34 @@ public final class Globals extends LuaTable {
 
     /**
      * 注册数字型枚举变量
-     * @param lcn       lua中的名称
-     * @param keys      枚举名称
-     * @param values    数值
+     *
+     * @param lcn    lua中的名称
+     * @param keys   枚举名称
+     * @param values 数值
      */
     public final void registerNumberEnum(String lcn, String[] keys, double[] values) {
         checkDestroy();
         if (keys == null || values == null)
             return;
         if (keys.length != values.length) {
-            throw new IllegalArgumentException("keys and values must have same length!");
+            throw new IllegalArgumentException("keys、values长度不一致!");
         }
         LuaCApi._registerNumberEnum(L_State, lcn, keys, values);
     }
 
     /**
      * 注册字符串型枚举变量
-     * @param lcn       lua中的名称
-     * @param keys      枚举名称
-     * @param values    数值
+     *
+     * @param lcn    lua中的名称
+     * @param keys   枚举名称
+     * @param values 数值
      */
     public final void registerStringEnum(String lcn, String[] keys, String[] values) {
         checkDestroy();
         if (keys == null || values == null)
             return;
         if (keys.length != values.length) {
-            throw new IllegalArgumentException("keys and values must have same length!");
+            throw new IllegalArgumentException("keys、values长度不一致!");
         }
         LuaCApi._registerStringEnum(L_State, lcn, keys, values);
     }
@@ -1015,7 +1146,7 @@ public final class Globals extends LuaTable {
      * 给全局虚拟机设置finder
      */
     private static void addAllPathRFFromGlobals(Globals gg) {
-        for (int i = 0, l = cache.size(); i < l;i ++) {
+        for (int i = 0, l = cache.size(); i < l; i++) {
             Globals g = cache.valueAt(i);
             Set<ResourceFinder> grfs = g.resourceFinders;
             if (grfs == null) continue;
@@ -1029,14 +1160,14 @@ public final class Globals extends LuaTable {
      * 给全局虚拟机设置finder
      */
     private static void addRFToGlobals(ResourceFinder rf) {
-        for (int i = 0, l = g_cahce.size(); i < l;i ++) {
+        for (int i = 0, l = g_cahce.size(); i < l; i++) {
             g_cahce.valueAt(i).resourceFinders.add(rf);
         }
     }
 
     /**
      * 设置资源寻找器
-     *
+     * <p>
      * 高优先
      *
      * @see #resourceFinder
@@ -1053,15 +1184,16 @@ public final class Globals extends LuaTable {
 
     /**
      * 设置资源寻找器集合
+     *
      * @param rfs 集合
      */
     public void setResourceFinders(Collection<ResourceFinder> rfs) {
-        resourceFinders = new HashSet<>(rfs);
+        resourceFinders = new LinkedHashSet<>(rfs);
     }
 
     /**
      * 添加资源寻找器
-     *
+     * <p>
      * 低优先
      *
      * @see #resourceFinders
@@ -1071,7 +1203,7 @@ public final class Globals extends LuaTable {
      */
     public void addResourceFinder(ResourceFinder rf) {
         if (resourceFinders == null) {
-            resourceFinders = new HashSet<>();
+            resourceFinders = new LinkedHashSet<>();
         }
         resourceFinders.add(rf);
         if (!isGlobal) {
@@ -1111,6 +1243,7 @@ public final class Globals extends LuaTable {
 
     /**
      * 获取当前虚拟机使用的内存量，单位Byte
+     *
      * @return 如果编译时，没有打开J_API_INFO编译选项，则返回为0
      * @see #getAllLVMMemUse() 获取所有虚拟机的内存使用量
      */
@@ -1146,6 +1279,7 @@ public final class Globals extends LuaTable {
 
     /**
      * post事件
+     *
      * @return true post成功
      */
     public final boolean post(Runnable r) {
@@ -1157,6 +1291,7 @@ public final class Globals extends LuaTable {
 
     /**
      * 延迟post事件
+     *
      * @return true post 成功
      */
     public final boolean postDelayed(Runnable r, long ms) {
@@ -1177,7 +1312,7 @@ public final class Globals extends LuaTable {
     public final void destroy() {
         checkMainThread();
         if (!isDestroyed() && MLNCore.DEBUG && (state == LUA_CALLING || calledFunction > 0)) {
-            throw new IllegalStateException("throw in debug mode, cannot destroy lua vm when lua function is calling!");
+            throw new IllegalStateException("当前有lua函数正在调用，请不要调用Globals.destroy方法!");
         }
         if (isDestroyed())
             return;
@@ -1246,9 +1381,9 @@ public final class Globals extends LuaTable {
 
     /**
      * 通过class获取在lua中的名称
+     *
      * @param c clz
      * @return may be null
-     *
      * @see LuaUserdata
      */
     public final String getLuaClassName(Class c) {
@@ -1298,6 +1433,7 @@ public final class Globals extends LuaTable {
 
     /**
      * 查找class对象或其父class对象的注册信息
+     *
      * @param c class对象
      * @return 注册到Lua的类名
      */
@@ -1311,6 +1447,7 @@ public final class Globals extends LuaTable {
         }
         return null;
     }
+
     //</editor-fold>
 
     //<editor-fold desc="Package Methods">
@@ -1334,11 +1471,12 @@ public final class Globals extends LuaTable {
      */
     void checkMainThread() {
         if (!isMainThread())
-            throw new IllegalStateException("must called in main thread: " + globals.mainThread);
+            throw new IllegalStateException("必须在主线程(" + globals.mainThread + ")中调用");
     }
 
     /**
      * 获取global表的位置
+     *
      * @see LuaUserdata
      */
     long globalsIndex() {
@@ -1360,7 +1498,7 @@ public final class Globals extends LuaTable {
         if (key == 0 || key == GLOBALS_INDEX)
             return true;
         if (isMainThread() && canDestroySync()) {
-            boolean destroy =  LuaCApi._removeNativeValue(L_State, key, value.type()) <= 0;
+            boolean destroy = LuaCApi._removeNativeValue(L_State, key, value.type()) <= 0;
             if (destroy) {
                 destroyedValues++;
                 gc();
@@ -1447,7 +1585,7 @@ public final class Globals extends LuaTable {
     }
 
     private void unsupported() {
-        throw new UnsupportedOperationException("global is not support set/get a number key!");
+        throw new UnsupportedOperationException("global不支持set/get一个数字key");
     }
     //</editor-fold>
 
@@ -1466,6 +1604,7 @@ public final class Globals extends LuaTable {
 
     /**
      * Lua脚本调用require时，获取错误信息
+     *
      * @param L Lua虚拟机地址
      * @return 可为空
      */
@@ -1501,13 +1640,14 @@ public final class Globals extends LuaTable {
      */
     private static final int DESTROYED = -2;
     private static final int NONE_LOOP = -3;
-    private static final int SUCCESS   = 0;
+    private static final int SUCCESS = 0;
 
     /**
      * Called by jinfo.c
      * 不同lua进程发送消息
-     * @param L     目标进程
-     * @param args  传递参数
+     *
+     * @param L    目标进程
+     * @param args 传递参数
      */
     @LuaApiUsed
     private static int __postCallback(final long L, final long method, final long args) {
@@ -1525,6 +1665,15 @@ public final class Globals extends LuaTable {
     }
 
     /**
+     * Called by luajapi.c panic_function()
+     * 虚拟机中发生严重异常，回调完成后会abort进程
+     */
+    @LuaApiUsed
+    private static void __onFatalError(final long L, final String errmsg) {
+        MLNCore.onLuaFatalError(Globals.getGlobalsByLState(L), errmsg);
+    }
+
+    /**
      * Lua脚本调用require时
      *
      * @param name require名称，一般不带后缀
@@ -1532,13 +1681,13 @@ public final class Globals extends LuaTable {
      * @see #__onLuaRequire
      */
     private Object onRequire(String name) {
-        if (requireErrorMsg != null) {
+        if (requireErrorMsg == null)
+            requireErrorMsg = new StringBuilder();
+        else
             requireErrorMsg.setLength(0);
-        }
+
         if (resourceFinder == null && resourceFinders == null) {
-            if (requireErrorMsg == null)
-                requireErrorMsg = new StringBuilder();
-            requireErrorMsg.append("\n\t\tno resource finder set in java!");
+            requireErrorMsg.append("\n\t\t没有设置resource finder，请调用Globals#addResourceFinder!");
             return null;
         }
         Object ret = findResource(resourceFinder, name);
@@ -1579,6 +1728,7 @@ public final class Globals extends LuaTable {
     /**
      * 获取缓存的userdata
      * 提供给native调用
+     *
      * @param L  虚拟机
      * @param id id
      * @return 返回缓存的userdata
@@ -1593,7 +1743,7 @@ public final class Globals extends LuaTable {
 
     private void checkDestroy() {
         if (isDestroyed()) {
-            throw new IllegalStateException("this lua vm is destroyed!");
+            throw new IllegalStateException("当前虚拟机已销毁!");
         }
     }
 
@@ -1620,7 +1770,7 @@ public final class Globals extends LuaTable {
 
     @Override
     public int hashCode() {
-        return (int)(L_State ^ (L_State >>> 32));
+        return (int) (L_State ^ (L_State >>> 32));
     }
 
     @Override
@@ -1635,6 +1785,7 @@ public final class Globals extends LuaTable {
         /**
          * 在虚拟机销毁前调用
          * 可调用lua接口
+         *
          * @param g 虚拟机
          */
         void onDestroy(Globals g);

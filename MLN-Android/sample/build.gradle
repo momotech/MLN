@@ -1,10 +1,6 @@
 apply plugin: 'com.android.application'
-//apply plugin: 'com.immomo.mln.plugin.databinding'
-
-
-//DataBindingExt {
-//    whitelist = ["com.xfy.demo.bean"]
-//}
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
 
 android {
     compileSdkVersion project.compileSdkVersion
@@ -25,6 +21,10 @@ android {
         }
     }
     buildTypes {
+        debug {
+            buildConfigField("String", "BUILD_TIME", "\"hi2\"")
+            minifyEnabled false
+        }
         release {
             minifyEnabled false
             zipAlignEnabled false
@@ -32,9 +32,9 @@ android {
             signingConfig signingConfigs.release
         }
     }
-    sourceSets.main {
-        jniLibs.srcDir 'src/main/libs'
-        jni.srcDirs = []
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 
 }
@@ -44,25 +44,27 @@ dependencies {
     implementation 'com.alibaba:fastjson:1.1.46.android'
     implementation 'com.github.bumptech.glide:glide:4.6.1'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation "androidx.recyclerview:recyclerview:$recyclerViewVersion"
-    implementation "androidx.appcompat:appcompat:$androidxVersion"
+    implementation "androidx.recyclerview:recyclerview:$androidXVersion"
+    implementation "androidx.appcompat:appcompat:$androidXVersion"
     implementation "com.google.protobuf:protobuf-lite:$protobufVersion"
     testImplementation 'junit:junit:4.12'
+
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlin_coroutines_version"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$kotlin_coroutines_version"
 
     if (implementation_debug) {
         implementation project(':mlncore')
         implementation project(':mlnservics')
         implementation project(':HotReload')
-        implementation project(':mmui')
-        implementation project(':yoga')
-        annotationProcessor project(':processor')
+        implementation project(':annotation')
+        kapt project(':processor')
     } else {
         implementation "com.immomo.mlncore:core:$mlnCoreVersion"
         implementation "com.immomo.mls:mln:$mlnsVersion"
-        implementation "com.immomo.mmui:mmui:$mmuiVersion"
-        implementation "com.immomo.yoga:yoga:$yogaVersion"
         debugImplementation "com.immomo.luanative:hotreload:$hotreloadVersion"
         releaseImplementation "com.immomo.luanative:hotreload_empty:$hotreloadVersion"
-        annotationProcessor "com.immomo.mls:processor:$processorVersion"
+        kapt "com.immomo.mls:processor:$processorVersion"
+        implementation "com.immomo.mls:annotation:$annotationVersion"
     }
 }

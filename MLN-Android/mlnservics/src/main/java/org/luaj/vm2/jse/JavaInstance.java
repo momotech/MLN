@@ -20,7 +20,7 @@ import org.luaj.vm2.utils.LuaApiUsed;
  * luaj helper
  * 未注册java对象
  */
-@LuaApiUsed
+@LuaApiUsed(ignore = true)
 public class JavaInstance<T> extends LuaUserdata {
     public static final String LUA_CLASS_NAME = "__JavaInstance";
 

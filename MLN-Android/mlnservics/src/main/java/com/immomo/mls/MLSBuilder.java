@@ -7,7 +7,7 @@
   */
 package com.immomo.mls;
 
-import android.os.SystemClock;
+import androidx.annotation.NonNull;
 
 import com.immomo.mlncore.MLNCore;
 import com.immomo.mls.adapter.ConsoleLoggerAdapter;
@@ -41,41 +41,28 @@ import com.immomo.mls.wrapper.Translator;
 
 import org.luaj.vm2.Globals;
 import org.luaj.vm2.LuaConfigs;
-import org.luaj.vm2.LuaUserdata;
 import org.luaj.vm2.utils.MemoryMonitor;
 import org.luaj.vm2.utils.ResourceFinder;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import androidx.annotation.NonNull;
+import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Created by XiongFangyu on 2018/6/26.
  */
 public class MLSBuilder {
-    private final List<Register.UDHolder> udHolders;
-    private final List<Register.SHolder> sHolders;
-    private final List<Class> constantsClass;
-    private final List<SIHolder> siHolders;
-    private final List<CHolder> cHolders;
-    private final List<Register.NewUDHolder> newUDHolders;
-    private final List<Register.NewStaticHolder> newStaticHolders;
+    private static int preGlobalNum = 3;
+    private static int delay = 0;
+    private static long buildTime = 0;
+    private static final long TIME_FOR_BUILD = 3000;
+    private static AtomicInteger builderCount = new AtomicInteger(0);
+
     private final Register register;
-    private int preGlobalNum = 3;
     private boolean clearAll = false;
-    private int delay = 0;
 
     public MLSBuilder(Register register) {
         this.register = register;
-        udHolders = new ArrayList<>();
-        sHolders = new ArrayList<>();
-        constantsClass = new ArrayList<>();
-        siHolders = new ArrayList<>();
-        cHolders = new ArrayList<>();
-        newUDHolders = new ArrayList<>();
-        newStaticHolders = new ArrayList<>();
+        builderCount.incrementAndGet();
     }
 
     //<editor-fold desc="Adapter">
@@ -126,6 +113,13 @@ public class MLSBuilder {
 
     public MLSBuilder setUncatchExceptionListener(Environment.UncatchExceptionListener listener) {
         Environment.uncatchExceptionListener = listener;
+        return this;
+    }
+
+    public MLSBuilder setBeforeAbortBlock(Environment.BeforeAbortBlock b) {
+        if (b == null)
+            throw new NullPointerException();
+        Environment.beforeAbortBlock = b;
         return this;
     }
 
@@ -182,13 +176,6 @@ public class MLSBuilder {
 
     //<editor-fold desc="Register">
     public MLSBuilder clearAll() {
-        udHolders.clear();
-        newUDHolders.clear();
-        newStaticHolders.clear();
-        sHolders.clear();
-        constantsClass.clear();
-        siHolders.clear();
-        cHolders.clear();
         clearAll = true;
         return this;
     }
@@ -199,7 +186,9 @@ public class MLSBuilder {
      * 建议使用Android Studio的模板生成java代码，实现完java层逻辑后，使用mlncgen.jar生成c层注册文件
      */
     public MLSBuilder registerNewUD(Register.NewUDHolder... holders) {
-        newUDHolders.addAll(Arrays.asList(holders));
+        for (Register.NewUDHolder h : holders) {
+            register.registerNewUserdata(h);
+        }
         return this;
     }
 
@@ -208,42 +197,69 @@ public class MLSBuilder {
      * @see Register#registerNewStaticBridge(Register.NewStaticHolder)
      */
     public MLSBuilder registerNewStaticBridge(Register.NewStaticHolder... holders) {
-        newStaticHolders.addAll(Arrays.asList(holders));
+        for (Register.NewStaticHolder h : holders) {
+            register.registerNewStaticBridge(h);
+        }
         return this;
     }
 
     public MLSBuilder registerUD(Register.UDHolder... holder) {
-        udHolders.addAll(Arrays.asList(holder));
+        for (Register.UDHolder h : holder) {
+            register.registerUserdata(h);
+        }
         return this;
     }
 
     public MLSBuilder registerSC(Register.SHolder... holder) {
-        sHolders.addAll(Arrays.asList(holder));
+        for (Register.SHolder h : holder) {
+            register.registerStaticBridge(h);
+        }
         return this;
     }
 
     public MLSBuilder registerConstants(Class... clz) {
-        constantsClass.addAll(Arrays.asList(clz));
+        for (Class c: clz) {
+            register.registerEnum(c);
+        }
         return this;
     }
 
     public MLSBuilder registerSingleInsance(SIHolder... holder) {
-        siHolders.addAll(Arrays.asList(holder));
+        for (SIHolder s : holder) {
+            register.registerSingleInstance(s.luaClassName, s.clz);
+        }
         return this;
     }
 
     public MLSBuilder registerCovert(CHolder... holder) {
-        cHolders.addAll(Arrays.asList(holder));
+        for (CHolder h : holder) {
+            if (h.defaultL2J) {
+                MLSEngine.singleTranslator.registerL2JAuto(h.clz);
+            } else if (h.l2j != null) {
+                MLSEngine.singleTranslator.registerL2J(h.clz, h.l2j);
+            }
+            if (h.defaultJ2L) {
+                MLSEngine.singleTranslator.registerJ2LAuto(h.clz);
+            } else if (h.j2l != null) {
+                MLSEngine.singleTranslator.registerJ2L(h.clz, h.j2l);
+            }
+        }
         return this;
     }
 
-    public MLSBuilder registerEmptyMethods(String... methods) {
-        register.registerEmptyMethods(methods);
-        return this;
-    }
     //</editor-fold>
 
     //<editor-fold desc="Setting">
+    public MLSBuilder luaErrorTypeEnable(boolean enable) {
+        MLNCore.errorTypeEnabled = enable;
+        return this;
+    }
+
+    public MLSBuilder setUseMemPoolForVm(boolean use) {
+        Globals.setUseMemoryPool(use);
+        return this;
+    }
+
     public MLSBuilder setDelay(int d) {
         this.delay = d;
         return this;
@@ -401,9 +417,20 @@ public class MLSBuilder {
      * 是否开启加密
      * @see Globals#openSAES(boolean)
      * @param open false default
+     * @deprecated use {@link #setNativeFileConfigs(int)}
+     * @see #setNativeFileConfigs(int)
      */
+    @Deprecated
     public MLSBuilder setOpenSAES(boolean open) {
         Globals.openSAES(open);
+        return this;
+    }
+
+    /**
+     * 设置底层文件配置信息
+     */
+    public MLSBuilder setNativeFileConfigs(int configs) {
+        Globals.setNativeFileConfigs(configs);
         return this;
     }
 
@@ -510,74 +537,68 @@ public class MLSBuilder {
     }
     //</editor-fold>
 
+    private void onBuild() {
+        builderCount.decrementAndGet();
+        if (clearAll) {
+            register.clearAll();
+            MLSEngine.singleTranslator.clearAll();
+            return;
+        }
+    }
+
+    /**
+     * 在队列线程中执行{@link #task}
+     * 保证task能正确执行
+     */
+    public void buildWhenReady() {
+        onBuild();
+        if (builderCount.get() > 0)
+            return;
+        preInitGlobals();
+    }
+
+    static void preInitGlobals() {
+        MainThreadExecutor.cancelSpecificRunnable(MLSBuilder.class, task);
+        if (delay <= 0) {
+            MainThreadExecutor.post(task);
+        } else {
+            MainThreadExecutor.postDelayed(MLSBuilder.class, task, delay);
+        }
+    }
+
+    /**
+     * 使用{@link #buildWhenReady()} 代替
+     * @see #buildWhenReady()
+     */
+    @Deprecated
     public void build(boolean inThread) {
         if (inThread) {
-            realBuild();
+            onBuild();
+            preInitGlobals();
             return;
         }
         MLSAdapterContainer.getThreadAdapter().execute(MLSThreadAdapter.Priority.HIGH, new Runnable() {
             @Override
             public void run() {
-                realBuild();
+                onBuild();
+                preInitGlobals();
             }
         });
     }
 
-    private void realBuild() {
-        if (clearAll) {
-            register.clearAll();
-            Translator.clearAll();
-            return;
-        }
-        long start = SystemClock.uptimeMillis();
-        for (Register.UDHolder h : udHolders) {
-            register.registerUserdata(h);
-        }
-        for (Register.NewUDHolder h : newUDHolders) {
-            register.registerNewUserdata(h);
-        }
-        for (Register.NewStaticHolder h : newStaticHolders) {
-            register.registerNewStaticBridge(h);
-        }
-        for (Register.SHolder h : sHolders) {
-            register.registerStaticBridge(h);
-        }
-        for (Class c : constantsClass) {
-            register.registerEnum(c);
-        }
-        for (SIHolder h : siHolders) {
-            register.registerSingleInstance(h.luaClassName, h.clz,h.isMLN);
-        }
-        for (CHolder h : cHolders) {
-            if (h.defaultL2J) {
-                Translator.registerL2JAuto(h.clz);
-            } else if (h.l2j != null){
-                Translator.registerL2J(h.clz, h.l2j);
+    private static Runnable task = new Runnable() {
+        @Override
+        public void run() {
+            if (builderCount.get() > 0) {
+                return;
             }
-            if (h.defaultJ2L) {
-                Translator.registerJ2LAuto(h.clz);
-            } else if (h.j2l != null) {
-                Translator.registerJ2L(h.clz, h.j2l);
-            }
+            long ps = System.nanoTime();
+            if (PreGlobalInitUtils.hasPreInitSize() == 0)
+                PreGlobalInitUtils.initFewGlobals(preGlobalNum);
+            if (MLSEngine.DEBUG)
+                MLSAdapterContainer.getConsoleLoggerAdapter().d("MLSBuilder", "pre init globals cast: %f", (System.nanoTime() - ps)/1e6f);
         }
-        Runnable task = new Runnable() {
-            @Override
-            public void run() {
-                long ps = SystemClock.uptimeMillis();
-                if (PreGlobalInitUtils.hasPreInitSize() == 0)
-                    PreGlobalInitUtils.initFewGlobals(preGlobalNum);
-                if (MLSEngine.DEBUG)
-                    MLSAdapterContainer.getConsoleLoggerAdapter().d("MLSBuilder", "pre init globals cast: %d", (SystemClock.uptimeMillis() - ps));
-            }
-        };
-        if (delay <= 0) {
-            MainThreadExecutor.post(task);
-        } else {
-            MainThreadExecutor.postDelayed(this, task, delay);
-        }
-        if (MLSEngine.DEBUG)
-            MLSAdapterContainer.getConsoleLoggerAdapter().d("MLSBuilder", "build cast: %d", (SystemClock.uptimeMillis() - start));
-    }
+    };
 
     /**
      * 单例包裹类
@@ -595,20 +616,23 @@ public class MLSBuilder {
          */
         public Class clz;
 
-        /**
-         * 是否是MLN独有的
-         */
-        public boolean isMLN;
-
         public SIHolder(String lcn, Class clz) {
             luaClassName = lcn;
             this.clz = clz;
         }
 
-        public SIHolder(String lcn, Class clz,boolean isMLN) {
-            luaClassName = lcn;
-            this.clz = clz;
-            this.isMLN = isMLN;
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            SIHolder siHolder = (SIHolder) o;
+            return luaClassName.equals(siHolder.luaClassName) &&
+                    clz.equals(siHolder.clz);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(luaClassName, clz);
         }
     }
 
@@ -621,11 +645,11 @@ public class MLSBuilder {
      * @see ILuaValueGetter
      */
     public static class CHolder {
-        Class clz;
-        boolean defaultL2J = true;
-        IJavaObjectGetter l2j;
-        boolean defaultJ2L = true;
-        ILuaValueGetter j2l;
+        public Class clz;
+        public boolean defaultL2J = true;
+        public IJavaObjectGetter l2j;
+        public boolean defaultJ2L = true;
+        public ILuaValueGetter j2l;
 
         public CHolder(Class clz, IJavaObjectGetter l2j, ILuaValueGetter j2l) {
             this.clz = clz;
@@ -647,6 +671,23 @@ public class MLSBuilder {
         public CHolder(Class clz, ILuaValueGetter j2l, boolean defaultL2J) {
             this(clz, null, j2l);
             this.defaultL2J = defaultL2J;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            CHolder cHolder = (CHolder) o;
+            return defaultL2J == cHolder.defaultL2J &&
+                    defaultJ2L == cHolder.defaultJ2L &&
+                    clz.equals(cHolder.clz) &&
+                    Objects.equals(l2j, cHolder.l2j) &&
+                    Objects.equals(j2l, cHolder.j2l);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(clz, defaultL2J, l2j, defaultJ2L, j2l);
         }
     }
 }

@@ -9,6 +9,7 @@ package com.immomo.mls.fun.ud;
 
 import android.graphics.Color;
 
+import com.immomo.mls.fun.ud.view.UDEditText;
 import com.immomo.mls.util.ColorUtils;
 import com.immomo.mls.utils.ErrorUtils;
 import com.immomo.mls.wrapper.IJavaObjectGetter;
@@ -22,7 +23,7 @@ import org.luaj.vm2.utils.LuaApiUsed;
 /**
  * Created by XiongFangyu on 2018/7/31.
  */
-@LuaApiUsed
+@LuaApiUsed(name = "Color")
 public class UDColor extends LuaUserdata {
 
     public static final String LUA_CLASS_NAME = "Color";
@@ -46,7 +47,19 @@ public class UDColor extends LuaUserdata {
         this.color = color;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Float.class),
+                    @LuaApiUsed.Type(Float.class),
+                    @LuaApiUsed.Type(Float.class),
+                    @LuaApiUsed.Type(Float.class),
+            }, returns = @LuaApiUsed.Type(UDColor.class)),
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Float.class),
+                    @LuaApiUsed.Type(Float.class),
+                    @LuaApiUsed.Type(Float.class),
+            }, returns = @LuaApiUsed.Type(UDColor.class)),
+    })
     protected UDColor(long L, LuaValue[] v) {
         super(L, v);
         init(v);
@@ -80,7 +93,13 @@ public class UDColor extends LuaUserdata {
 
     //<editor-fold desc="API">
     //<editor-fold desc="Property">
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Integer.class),
+            }, returns = @LuaApiUsed.Type(UDColor.class)),
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(Integer.class))
+    })
     public LuaValue[] hex(LuaValue[] p) {
         if (p.length == 1) {
             int a = getAlpha();
@@ -91,7 +110,13 @@ public class UDColor extends LuaUserdata {
         return rNumber(color);
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Double.class),
+            }, returns = @LuaApiUsed.Type(UDColor.class)),
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(Double.class))
+    })
     public LuaValue[] alpha(LuaValue[] p) {
         if (p.length == 1) {
             setAlpha((int) (dealAlphaVal(p[0].toDouble()) * 255));
@@ -100,7 +125,13 @@ public class UDColor extends LuaUserdata {
         return rNumber(getAlpha() / 255f);
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Integer.class),
+            }, returns = @LuaApiUsed.Type(UDColor.class)),
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(Integer.class))
+    })
     public LuaValue[] red(LuaValue[] p) {
         if (p.length == 1) {
             setRed(dealColorVal(p[0].toInt()));
@@ -109,7 +140,13 @@ public class UDColor extends LuaUserdata {
         return rNumber(getRed());
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Integer.class),
+            }, returns = @LuaApiUsed.Type(UDColor.class)),
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(Integer.class))
+    })
     public LuaValue[] green(LuaValue[] p) {
         if (p.length == 1) {
             setGreen(dealColorVal(p[0].toInt()));
@@ -118,7 +155,13 @@ public class UDColor extends LuaUserdata {
         return rNumber(getGreen());
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Integer.class),
+            }, returns = @LuaApiUsed.Type(UDColor.class)),
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(Integer.class))
+    })
     public LuaValue[] blue(LuaValue[] p) {
         if (p.length == 1) {
             setBlue(dealColorVal(p[0].toInt()));
@@ -161,14 +204,25 @@ public class UDColor extends LuaUserdata {
     //</editor-fold>
 
     //<editor-fold desc="Method">
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Double.class),
+            }, returns = @LuaApiUsed.Type(UDColor.class))
+    })
     public LuaValue[] setHexA(LuaValue[] p) {
         color = p[0].toInt();
         setAlpha((int) (dealAlphaVal(p[1].toDouble()) * 255));
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Double.class),
+                    @LuaApiUsed.Type(Integer.class),
+                    @LuaApiUsed.Type(Integer.class),
+                    @LuaApiUsed.Type(Integer.class)
+            }, returns = @LuaApiUsed.Type(UDColor.class))
+    })
     public LuaValue[] setRGBA(LuaValue[] p) {
         color = Color.argb((int) (dealAlphaVal(p[3].toDouble()) * 255),
                 dealColorVal(p[0].toInt()),
@@ -177,13 +231,20 @@ public class UDColor extends LuaUserdata {
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(UDColor.class))
+    })
     public LuaValue[] clear(LuaValue[] p) {
         color = Color.TRANSPARENT;
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(String.class),
+            }, returns = @LuaApiUsed.Type(UDColor.class))
+    })
     public LuaValue[] setAColor(LuaValue[] p) {
         String colorStr = p[0].toJavaString();
         if (colorStr == null || colorStr.length() == 0) {
@@ -196,7 +257,11 @@ public class UDColor extends LuaUserdata {
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(String.class),
+            }, returns = @LuaApiUsed.Type(UDColor.class))
+    })
     public LuaValue[] setColor(LuaValue[] p) {
         String colorStr = p[0].toJavaString();
         this.color = ColorUtils.setColorString(colorStr);

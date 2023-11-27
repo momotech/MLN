@@ -279,9 +279,7 @@ public class BaseRippleDrawable extends Drawable {
      * @return
      */
     public static boolean isSupportClippath(Canvas canvas) {
-        boolean res1 = canvas.isHardwareAccelerated();
-        boolean res2 = Build.VERSION.SDK_INT >= 18;
-        return !res1 || res2;
+        return true;
     }
 
     protected void setRadius(float radius) {

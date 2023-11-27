@@ -55,7 +55,7 @@ public @interface CGenerate {
 
     /**
      * 标记构造函数是默认构造函数，在其他所有参数不匹配的情况下，使用这个构造函数创建对象
-     * 一般
+     * 并非需要一个默认构造函数，当userdata中没有构造函数时，若lua调用参数不匹配，将抛出lua错误
      */
     boolean defaultConstructor() default false;
 }

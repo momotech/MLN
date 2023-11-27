@@ -35,7 +35,9 @@ class LuaCApi {
     private static native boolean _check32bit();
 
     static native void _setStatisticsOpen(boolean open);
+
     static native void _notifyStatisticsCallback();
+
     static native void _notifyRequireCallback();
 
     //<editor-fold desc="isolate">
@@ -43,15 +45,14 @@ class LuaCApi {
     //</editor-fold>
 
     //<editor-fold desc="Pre register">
-    static native void _preRegisterEmptyMethods(String[] methods);
+    static native void _preRegisterUD(String className, String luaClassName, String luaParentClassName, int type, String[] methods);
 
-    static native void _preRegisterUD(String className, String[] methods);
-
-    static native void _preRegisterStatic(String className, String[] methods);
+    static native void _preRegisterStatic(String className, String luaClassName, String luaParentClassName, String[] methods);
     //</editor-fold>
 
     //<editor-fold desc="debug">
     static native LuaValue[] _dumpStack(long L_state);
+
     static native String _traceback(long L);
 
     //<editor-fold desc="debug mem">
@@ -64,7 +65,17 @@ class LuaCApi {
     //</editor-fold>
 
     //<editor-fold desc="Setting">
+    static native void _setUseMemoryPool(boolean use);
+
+    static native void _testMemoryPool(long L);
+
+    static native void _setCallbackEmptyMethod(boolean open);
+
     static native void _setAndroidVersion(int v);
+
+    static native void _setAndroidDebug(int v);
+
+    static native void _setProtectNewJString(boolean open);
 
     static native void _setGcOffset(int offset);
 
@@ -75,10 +86,13 @@ class LuaCApi {
     static native void _setBasePath(long L, String basePath, boolean autoSave);
 
     static native void _setSoPath(long L, String path);
+
     //<editor-fold desc="saes">
     static native boolean _isSAESFile(String path);
 
-    static native void _openSAES(boolean open);
+    static native void _setNativeFileConfigs(int configs);
+
+    static native int _getNativeFileConfigs();
     //</editor-fold>
     //</editor-fold>
 
@@ -88,6 +102,8 @@ class LuaCApi {
     static native void _openDebug(long L);
 
     static native void _close(long L_state);
+
+    static native int _getErrorType(long L);
 
     static native void _lgc(long L);
     //</editor-fold>
@@ -122,6 +138,8 @@ class LuaCApi {
     static native int _preloadAssetsAndSave(long L, String chunkName, String path, String savePath);
 
     static native int _require(long L, String path);
+
+//    static native int _loadToken(long L, String chunkName, byte[] data, TokenListener listener);
     //</editor-fold>
 
     //<editor-fold desc="Table api">
@@ -133,13 +151,13 @@ class LuaCApi {
 
     static native void _clearTableArray(long L, long table, int from, int to);
 
-    static native void _removeTableIndex(long L,long table,int index);
+    static native void _removeTableIndex(long L, long table, int index);
 
-    static native void _clearTable(long L,long table);
+    static native void _clearTable(long L, long table);
 
     static native long _setMetatable(long L, long table, long metatable);
 
-    static native long _getMetatable(long L,long table);
+    static native long _getMetatable(long L, long table);
 
     static native void _setTableNumber(long L, long table, int k, double n);
 

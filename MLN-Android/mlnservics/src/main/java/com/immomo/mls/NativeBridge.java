@@ -16,14 +16,7 @@ public class NativeBridge {
 
     public static void registerNativeBridge(Globals g) {
         _openLib(g.getL_State(), MLSEngine.DEBUG);
-        NativeBroadcastChannel.register(g);
-    }
-
-    static int callGencoveragereport(Globals g) {
-        return _callGencoveragereport(g.getL_State());
     }
 
     private static native void _openLib(long l, boolean debug);
-
-    private static native int _callGencoveragereport(long L);
 }

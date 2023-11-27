@@ -32,7 +32,24 @@ public class UDTranslateAnimation extends UDBaseAnimation {
     private float fromYValue;
     private int toYType = AnimationValueType.ABSOLUTE;
     private float toYValue;
-
+    @LuaBridge(value = {
+            @LuaBridge.Func(params = {
+                    @LuaBridge.Type(value = Float.class),
+                    @LuaBridge.Type(value = Float.class),
+                    @LuaBridge.Type(value = Float.class),
+                    @LuaBridge.Type(value = Float.class)
+            }),
+            @LuaBridge.Func(params = {
+                    @LuaBridge.Type(value = Integer.class),
+                    @LuaBridge.Type(value = Float.class),
+                    @LuaBridge.Type(value = Integer.class),
+                    @LuaBridge.Type(value = Float.class),
+                    @LuaBridge.Type(value = Integer.class),
+                    @LuaBridge.Type(value = Float.class),
+                    @LuaBridge.Type(value = Integer.class),
+                    @LuaBridge.Type(value = Float.class)
+            })
+    })
     public UDTranslateAnimation(Globals g, LuaValue[] init) {
         super(g, init);
         final int len = init != null ? init.length : 0;

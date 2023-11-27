@@ -11,6 +11,7 @@ import android.graphics.Canvas;
 
 import androidx.annotation.NonNull;
 
+import com.immomo.mls.fun.ud.view.UDCanvasView;
 import com.immomo.mls.util.DimenUtil;
 
 import org.luaj.vm2.Globals;
@@ -44,7 +45,7 @@ public class UDCCanvas extends LuaUserdata<Canvas> {
     //<editor-fold desc="Constructors">
 
     @CGenerate(defaultConstructor = true)
-    @LuaApiUsed
+    @LuaApiUsed(ignore = true)
     protected UDCCanvas(long L) {
         super(L, null);
         /// 必须完成包裹对象的初始化
@@ -57,7 +58,10 @@ public class UDCCanvas extends LuaUserdata<Canvas> {
      * @param g 虚拟机
      * @param o 初始化对象
      */
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(UDCCanvas.class))
+    })
     public UDCCanvas(@NonNull Globals g, Canvas o) {
         super(g, o);
     }
@@ -67,24 +71,24 @@ public class UDCCanvas extends LuaUserdata<Canvas> {
         this.javaUserdata = javaUserdata;
     }
     //<editor-fold desc="Bridge API">
-    @LuaApiUsed
+    @LuaApiUsed(ignore = true)
     protected int save() {
         return javaUserdata != null ? javaUserdata.save() : -1;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed(ignore = true)
     protected void restore() {
         if (javaUserdata != null)
             javaUserdata.restore();
     }
 
-    @LuaApiUsed
+    @LuaApiUsed(ignore = true)
     protected void restoreToCount(int c) {
         if (javaUserdata != null)
             javaUserdata.restoreToCount(c);
     }
 
-    @LuaApiUsed
+    @LuaApiUsed(ignore = true)
     protected void translate(double x, double y) {
         if (javaUserdata == null)
             return;
@@ -93,7 +97,7 @@ public class UDCCanvas extends LuaUserdata<Canvas> {
         javaUserdata.translate(dx, dy);
     }
 
-    @LuaApiUsed
+    @LuaApiUsed(ignore = true)
     protected void clipRect(double l, double t, double r, double b) {
         if (javaUserdata == null)
             return;
@@ -104,21 +108,21 @@ public class UDCCanvas extends LuaUserdata<Canvas> {
                 DimenUtil.dpiToPx(b));
     }
 
-    @LuaApiUsed
+    @LuaApiUsed(ignore = true)
     protected void clipPath(UDPath ud) {
         if (javaUserdata == null)
             return;
         javaUserdata.clipPath(ud.getJavaUserdata());
     }
 
-    @LuaApiUsed
+    @LuaApiUsed(ignore = true)
     protected void drawColor(int c) {
         if (javaUserdata == null)
             return;
         javaUserdata.drawColor(c);
     }
 
-    @LuaApiUsed
+    @LuaApiUsed(ignore = true)
     protected void drawRect(double l, double t, double r, double b, UDPaint p) {
         if (javaUserdata == null)
             return;

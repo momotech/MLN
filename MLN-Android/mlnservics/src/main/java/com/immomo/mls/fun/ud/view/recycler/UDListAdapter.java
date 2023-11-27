@@ -9,22 +9,20 @@ package com.immomo.mls.fun.ud.view.recycler;
 
 import android.view.ViewGroup;
 
-
-import com.immomo.mls.annotation.LuaClass;
-import com.immomo.mls.fun.ui.LuaLinearLayoutManager;
-
-import org.luaj.vm2.Globals;
-import org.luaj.vm2.LuaValue;
-import org.luaj.vm2.utils.LuaApiUsed;
-
-
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.immomo.mls.annotation.LuaClass;
+import com.immomo.mls.fun.ud.view.UDSwitch;
+import com.immomo.mls.fun.ui.LuaLinearLayoutManager;
+
+import org.luaj.vm2.LuaValue;
+import org.luaj.vm2.utils.LuaApiUsed;
 
 /**
  * Created by XiongFangyu on 2018/7/20.
  */
-@LuaApiUsed
+@LuaApiUsed(ignoreTypeArgs = true)
 public class UDListAdapter extends UDBaseNeedHeightAdapter {
     public static final String LUA_CLASS_NAME = "TableViewAdapter";
     public static final String[] methods = new String[]{
@@ -33,7 +31,10 @@ public class UDListAdapter extends UDBaseNeedHeightAdapter {
 
     private LinearLayoutManager layoutManager;
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(UDListAdapter.class))
+    })
     public UDListAdapter(long L, LuaValue[] v) {
         super(L, v);
     }
@@ -62,5 +63,10 @@ public class UDListAdapter extends UDBaseNeedHeightAdapter {
     @Override
     protected void onLayoutSet(UDBaseRecyclerLayout layout) {
         throw new UnsupportedOperationException("cannot set layout to list adapter");
+    }
+
+    @Override
+    public boolean hasCellSize() {
+        return false;
     }
 }

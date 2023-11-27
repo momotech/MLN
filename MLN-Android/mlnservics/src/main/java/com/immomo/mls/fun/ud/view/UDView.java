@@ -7,6 +7,10 @@
   */
 package com.immomo.mls.fun.ud.view;
 
+import static android.view.ViewGroup.getChildMeasureSpec;
+import static com.immomo.mls.fun.ud.view.IClipRadius.LEVEL_FORCE_CLIP;
+import static com.immomo.mls.fun.ud.view.IClipRadius.LEVEL_FORCE_NOTCLIP;
+
 import android.animation.Animator;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -19,9 +23,11 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
-import android.view.animation.Animation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.immomo.mls.LuaViewManager;
 import com.immomo.mls.MLSAdapterContainer;
@@ -37,12 +43,9 @@ import com.immomo.mls.fun.lt.SICornerRadiusManager;
 import com.immomo.mls.fun.other.Point;
 import com.immomo.mls.fun.other.Rect;
 import com.immomo.mls.fun.other.Size;
-import com.immomo.mls.fun.ud.UDCanvas;
-import com.immomo.mls.fun.ud.UDColor;
-import com.immomo.mls.fun.ud.UDPoint;
-import com.immomo.mls.fun.ud.UDRect;
-import com.immomo.mls.fun.ud.UDSize;
+import com.immomo.mls.fun.ud.*;
 import com.immomo.mls.fun.ud.anim.canvasanim.UDBaseAnimation;
+import com.immomo.mls.fun.ud.view.recycler.UDBaseRecyclerLayout;
 import com.immomo.mls.fun.ui.LuaLinearLayout;
 import com.immomo.mls.fun.ui.LuaOverlayContainer;
 import com.immomo.mls.fun.weight.ILimitSizeView;
@@ -58,6 +61,10 @@ import com.immomo.mls.utils.AssertUtils;
 import com.immomo.mls.utils.ErrorUtils;
 import com.immomo.mls.utils.convert.ConvertUtils;
 
+import kotlin.Unit;
+import kotlin.jvm.functions.Function0;
+import kotlin.jvm.functions.Function1;
+import kotlin.jvm.functions.Function2;
 import org.luaj.vm2.Globals;
 import org.luaj.vm2.JavaUserdata;
 import org.luaj.vm2.LuaFunction;
@@ -72,17 +79,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
-import static android.view.ViewGroup.*;
-import static com.immomo.mls.fun.ud.view.IClipRadius.LEVEL_FORCE_CLIP;
-import static com.immomo.mls.fun.ud.view.IClipRadius.LEVEL_FORCE_NOTCLIP;
-
 /**
  * Created by XiongFangyu on 2018/7/31.
  */
-@LuaApiUsed
+@LuaApiUsed(ignoreTypeArgs = true, name = "BaseView")
 public abstract class UDView<V extends View> extends JavaUserdata<V> implements ILView.ViewLifeCycleCallback {
     public static final String LUA_CLASS_NAME = "__BaseView";
     public static final String[] methods = new String[]{
@@ -235,7 +235,7 @@ public abstract class UDView<V extends View> extends JavaUserdata<V> implements 
      * @param L 虚拟机地址
      * @param v lua脚本传入的构造参数
      */
-    @LuaApiUsed
+    @LuaApiUsed(ignore = true)
     protected UDView(long L, LuaValue[] v) {
         super(L, v);
         view = newView(v);
@@ -346,9 +346,9 @@ public abstract class UDView<V extends View> extends JavaUserdata<V> implements 
             View overContainerView = overContainer.getView();
 
             overContainerView.measure(getChildMeasureSpec(widthMeasureSpec,
-                0, getView().getMeasuredWidth())
-                , getChildMeasureSpec(heightMeasureSpec,
-                    0, getView().getMeasuredHeight()));
+                            0, getView().getMeasuredWidth())
+                    , getChildMeasureSpec(heightMeasureSpec,
+                            0, getView().getMeasuredHeight()));
         }
     }
 
@@ -368,7 +368,13 @@ public abstract class UDView<V extends View> extends JavaUserdata<V> implements 
 
     //<editor-fold desc="API">
     //<editor-fold desc="Property">
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = Number.class),
+            }, returns = @LuaApiUsed.Type(UDView.class)),
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(Number.class)),
+    })
     public LuaValue[] width(LuaValue[] varargs) {
         if (varargs.length == 1) {
             double src = varargs[0].toDouble();
@@ -408,7 +414,13 @@ public abstract class UDView<V extends View> extends JavaUserdata<V> implements 
         return view.getWidth();
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = Double.class),
+            }, returns = @LuaApiUsed.Type(UDView.class)),
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(Double.class)),
+    })
     public LuaValue[] height(LuaValue[] varargs) {
         if (varargs.length == 1) {
             double src = varargs[0].toDouble();
@@ -440,7 +452,12 @@ public abstract class UDView<V extends View> extends JavaUserdata<V> implements 
         return view.getHeight();
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Double.class),
+                    @LuaApiUsed.Type(Double.class)
+            }, returns = @LuaApiUsed.Type(UDView.class))
+    })
     public LuaValue[] anchorPoint(LuaValue[] p) {
         float x = (float) p[0].toDouble();
         float y = (float) p[1].toDouble();
@@ -469,7 +486,13 @@ public abstract class UDView<V extends View> extends JavaUserdata<V> implements 
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = Double.class),
+            }, returns = @LuaApiUsed.Type(UDView.class)),
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(Double.class)),
+    })
     public LuaValue[] x(LuaValue[] p) {
         if (p.length == 1) {
             ErrorUtils.debugDeprecatedSetter("x", globals);
@@ -494,7 +517,13 @@ public abstract class UDView<V extends View> extends JavaUserdata<V> implements 
         return p.leftMargin;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = Double.class),
+            }, returns = @LuaApiUsed.Type(UDView.class)),
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(Double.class)),
+    })
     public LuaValue[] y(LuaValue[] p) {
         if (p.length == 1) {
             ErrorUtils.debugDeprecatedSetter("y", globals);
@@ -519,7 +548,13 @@ public abstract class UDView<V extends View> extends JavaUserdata<V> implements 
         return p.topMargin;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = Double.class),
+            }, returns = @LuaApiUsed.Type(UDView.class)),
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(Double.class)),
+    })
     public LuaValue[] bottom(LuaValue[] p) {
         if (p.length == 1) {
             ErrorUtils.debugDeprecatedSetter("bottom", globals);
@@ -539,7 +574,13 @@ public abstract class UDView<V extends View> extends JavaUserdata<V> implements 
         return udLayoutParams.marginBottom == 0 ? getY() + getHeight() : udLayoutParams.marginBottom;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = Double.class),
+            }, returns = @LuaApiUsed.Type(UDView.class)),
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(Double.class)),
+    })
     public LuaValue[] right(LuaValue[] p) {
         if (p.length == 1) {
             ErrorUtils.debugDeprecatedSetter("right", globals);
@@ -560,7 +601,13 @@ public abstract class UDView<V extends View> extends JavaUserdata<V> implements 
     }
 
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = Integer.class),
+            }, returns = @LuaApiUsed.Type(UDView.class)),
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(Integer.class)),
+    })
     public LuaValue[] marginLeft(LuaValue[] var) {
         if (var.length == 1) {
             setMarginLeft(DimenUtil.dpiToPx(var[0]));
@@ -575,7 +622,13 @@ public abstract class UDView<V extends View> extends JavaUserdata<V> implements 
         view.setTranslationX(0);
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = Integer.class),
+            }, returns = @LuaApiUsed.Type(UDView.class)),
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(Integer.class)),
+    })
     public LuaValue[] marginTop(LuaValue[] var) {
         if (var.length == 1) {
             setMarginTop(DimenUtil.dpiToPx(var[0]));
@@ -590,7 +643,13 @@ public abstract class UDView<V extends View> extends JavaUserdata<V> implements 
         view.setTranslationY(0);
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = Integer.class),
+            }, returns = @LuaApiUsed.Type(UDView.class)),
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(Integer.class)),
+    })
     public LuaValue[] marginRight(LuaValue[] var) {
         if (var.length == 1) {
             setMarginRight(DimenUtil.dpiToPx(var[0]));
@@ -604,7 +663,13 @@ public abstract class UDView<V extends View> extends JavaUserdata<V> implements 
         setRealMargins();
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = Integer.class),
+            }, returns = @LuaApiUsed.Type(UDView.class)),
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(Integer.class)),
+    })
     public LuaValue[] marginBottom(LuaValue[] var) {
         if (var.length == 1) {
             udLayoutParams.realMarginBottom = DimenUtil.dpiToPx(var[0]);
@@ -614,7 +679,13 @@ public abstract class UDView<V extends View> extends JavaUserdata<V> implements 
         return varargsOf(LuaNumber.valueOf(DimenUtil.pxToDpi(udLayoutParams.realMarginBottom)));
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = Double.class),
+            }, returns = @LuaApiUsed.Type(UDView.class)),
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(Double.class)),
+    })
     public LuaValue[] priority(LuaValue[] var) {
         if (var.length == 1) {
             int p = var[0].toInt();
@@ -629,7 +700,13 @@ public abstract class UDView<V extends View> extends JavaUserdata<V> implements 
         return varargsOf(LuaNumber.valueOf(udLayoutParams.priority));
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = Integer.class),
+            }, returns = @LuaApiUsed.Type(UDView.class)),
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(Integer.class)),
+    })
     public LuaValue[] weight(LuaValue[] var) {
         if (var.length == 1) {
             int p = var[0].toInt();
@@ -694,7 +771,13 @@ public abstract class UDView<V extends View> extends JavaUserdata<V> implements 
         return (ViewGroup.MarginLayoutParams) p;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = UDRect.class),
+            }, returns = @LuaApiUsed.Type(UDView.class)),
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(UDRect.class)),
+    })
     public LuaValue[] frame(LuaValue[] varargs) {
         if (varargs.length == 1) {
             ErrorUtils.debugDeprecatedSetter("frame", globals);
@@ -714,7 +797,13 @@ public abstract class UDView<V extends View> extends JavaUserdata<V> implements 
         return varargsOf(new UDRect(globals, rect));
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = UDSize.class),
+            }, returns = @LuaApiUsed.Type(UDView.class)),
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(UDSize.class)),
+    })
     public LuaValue[] size(LuaValue[] varargs) {
         if (varargs.length == 1) {
             ErrorUtils.debugDeprecatedSetter("size", globals);
@@ -729,7 +818,13 @@ public abstract class UDView<V extends View> extends JavaUserdata<V> implements 
         return varargsOf(new UDSize(globals, size));
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = UDPoint.class),
+            }, returns = @LuaApiUsed.Type(UDView.class)),
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(UDPoint.class)),
+    })
     public LuaValue[] point(LuaValue[] varargs) {
         if (varargs.length == 1) {
             ErrorUtils.debugDeprecatedSetter("point", globals);
@@ -744,7 +839,13 @@ public abstract class UDView<V extends View> extends JavaUserdata<V> implements 
         return varargsOf(new UDPoint(globals, point));
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = Float.class),
+            }, returns = @LuaApiUsed.Type(UDView.class)),
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(Float.class)),
+    })
     public LuaValue[] centerX(LuaValue[] p) {
         if (p.length == 1) {
             ErrorUtils.debugDeprecatedSetter("centerX", globals);
@@ -767,7 +868,13 @@ public abstract class UDView<V extends View> extends JavaUserdata<V> implements 
         applyCenter();
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = Float.class),
+            }, returns = @LuaApiUsed.Type(UDView.class)),
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(Float.class)),
+    })
     public LuaValue[] centerY(LuaValue[] p) {
         if (p.length == 1) {
             ErrorUtils.debugDeprecatedSetter("centerY", globals);
@@ -809,7 +916,10 @@ public abstract class UDView<V extends View> extends JavaUserdata<V> implements 
      * @return
      */
     @Deprecated
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(Integer.class)),
+    })
     public LuaValue[] getCenterX(LuaValue[] p) {
         return varargsOf(LuaNumber.valueOf(DimenUtil.pxToDpi(getCenterX())));
     }
@@ -820,19 +930,28 @@ public abstract class UDView<V extends View> extends JavaUserdata<V> implements 
      * @return
      */
     @Deprecated
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(Integer.class)),
+    })
     public LuaValue[] getCenterY(LuaValue[] p) {
         return varargsOf(LuaNumber.valueOf(DimenUtil.pxToDpi(getCenterY())));
     }
 
     @Deprecated
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(UDView.class)),
+    })
     public LuaValue[] sizeToFit(LuaValue[] p) {
         udLayoutParams.useRealMargin = false;
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(UDView.class)),
+    })
     public LuaValue[] removeFromSuper(LuaValue[] var) {
         if (view.getParent() instanceof ViewGroup) {
             final ViewGroup parent = (ViewGroup) view.getParent();
@@ -841,16 +960,22 @@ public abstract class UDView<V extends View> extends JavaUserdata<V> implements 
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(UDView.class)),
+    })
     public LuaValue[] superview(LuaValue[] var) {
         if (view.getParent() instanceof ILView) {
             return varargsOf(((ILView) view.getParent()).getUserdata());
         }
-        return null;
+        return varargsOf(Nil());
     }
 
     @Deprecated
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(UDView.class)),
+    })
     public LuaValue[] layoutIfNeeded(LuaValue[] p) {
         ErrorUtils.debugUnsupportError("Method: layoutIfNeeded() is Deprecated");
         udLayoutParams.useRealMargin = false;
@@ -861,7 +986,14 @@ public abstract class UDView<V extends View> extends JavaUserdata<V> implements 
     /**
      * iOS只在文本控件中支持
      */
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Float.class),
+                    @LuaApiUsed.Type(Float.class),
+                    @LuaApiUsed.Type(Float.class),
+                    @LuaApiUsed.Type(Float.class)
+            }, returns = @LuaApiUsed.Type(UDView.class)),
+    })
     public LuaValue[] padding(LuaValue[] p) {
         mPaddingLeft = DimenUtil.dpiToPx((float) p[3].toDouble());
         mPaddingTop = DimenUtil.dpiToPx((float) p[0].toDouble());
@@ -880,17 +1012,27 @@ public abstract class UDView<V extends View> extends JavaUserdata<V> implements 
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(UDView.class)),
+    })
     public LuaValue[] addBlurEffect(LuaValue[] p) {
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(UDView.class)),
+    })
     public LuaValue[] removeBlurEffect(LuaValue[] p) {
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Integer.class)
+            }, returns = @LuaApiUsed.Type(UDView.class)),
+    })
     public LuaValue[] setGravity(LuaValue[] var) {
         udLayoutParams.gravity = var[0].toInt();
         udLayoutParams.isSetGravity = true;
@@ -898,14 +1040,21 @@ public abstract class UDView<V extends View> extends JavaUserdata<V> implements 
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(UDView.class)),
+    })
     public LuaValue[] requestLayout(LuaValue[] p) {
         view.requestLayout();
         return null;
     }
 
     @Deprecated
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Boolean.class)
+            }, returns = @LuaApiUsed.Type(UDView.class)),
+    })
     public LuaValue[] setWrapContent(LuaValue[] pa) {
         if (pa[0].toBoolean()) {
             int settedSize = ViewGroup.LayoutParams.WRAP_CONTENT;
@@ -922,7 +1071,11 @@ public abstract class UDView<V extends View> extends JavaUserdata<V> implements 
     }
 
     @Deprecated
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Boolean.class)
+            }, returns = @LuaApiUsed.Type(UDView.class)),
+    })
     public LuaValue[] setMatchParent(LuaValue[] pa) {
         if (pa[0].toBoolean()) {
             int settedSize = ViewGroup.LayoutParams.MATCH_PARENT;
@@ -938,7 +1091,11 @@ public abstract class UDView<V extends View> extends JavaUserdata<V> implements 
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Boolean.class)
+            }, returns = @LuaApiUsed.Type(UDView.class)),
+    })
     public LuaValue[] openRipple(LuaValue[] var) {
         if (view instanceof IRippleView) {
             ((IRippleView) view).setDrawRipple(var[0].toBoolean());
@@ -952,7 +1109,12 @@ public abstract class UDView<V extends View> extends JavaUserdata<V> implements 
      * SDK>=1.0.4
      */
     @Deprecated
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Boolean.class),
+                    @LuaApiUsed.Type(Boolean.class)
+            }, returns = @LuaApiUsed.Type(UDView.class)),
+    })
     public LuaValue[] transform(LuaValue[] var) {
         ErrorUtils.debugUnsupportError("Method: transform() is Deprecated,  use rotation instead");
 
@@ -970,7 +1132,10 @@ public abstract class UDView<V extends View> extends JavaUserdata<V> implements 
     }
 
     // 重置所有变化到初始状态
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(UDView.class)),
+    })
     public LuaValue[] transformIdentity(LuaValue[] var) {
         getInitValue();
         view.setRotation(mInitRotation);
@@ -981,7 +1146,12 @@ public abstract class UDView<V extends View> extends JavaUserdata<V> implements 
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Float.class),
+                    @LuaApiUsed.Type(Boolean.class)
+            }, returns = @LuaApiUsed.Type(UDView.class)),
+    })
     public LuaValue[] rotation(LuaValue[] var) {
         float angle = (float) var[0].toDouble();
         boolean notNeedAdding = var.length > 1 && var[1].toBoolean();
@@ -996,7 +1166,12 @@ public abstract class UDView<V extends View> extends JavaUserdata<V> implements 
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Float.class),
+                    @LuaApiUsed.Type(Float.class)
+            }, returns = @LuaApiUsed.Type(UDView.class)),
+    })
     public LuaValue[] translation(LuaValue[] var) {
         float xTranslate = (float) var[0].toDouble();
         float yTranslate = (float) var[1].toDouble();
@@ -1008,7 +1183,12 @@ public abstract class UDView<V extends View> extends JavaUserdata<V> implements 
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Float.class),
+                    @LuaApiUsed.Type(Float.class)
+            }, returns = @LuaApiUsed.Type(UDView.class)),
+    })
     public LuaValue[] scale(LuaValue[] var) {
         float xScale = Math.abs((float) var[0].toDouble());
         float yScale = Math.abs((float) var[1].toDouble());
@@ -1024,7 +1204,11 @@ public abstract class UDView<V extends View> extends JavaUserdata<V> implements 
     /**
      * iOS没有，测试用
      */
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Float.class)
+            }, returns = @LuaApiUsed.Type(UDView.class)),
+    })
     public LuaValue[] setMaxWidth(LuaValue[] pa) {
         if (view instanceof ILimitSizeView) {
             ((ILimitSizeView) view).setMaxWidth(DimenUtil.dpiToPx((float) pa[0].toDouble()));
@@ -1035,7 +1219,11 @@ public abstract class UDView<V extends View> extends JavaUserdata<V> implements 
     /**
      * iOS没有，测试用
      */
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Float.class)
+            }, returns = @LuaApiUsed.Type(UDView.class)),
+    })
     public LuaValue[] setMaxHeight(LuaValue[] pa) {
         if (view instanceof ILimitSizeView) {
             ((ILimitSizeView) view).setMaxHeight(DimenUtil.dpiToPx((float) pa[0].toDouble()));
@@ -1043,19 +1231,31 @@ public abstract class UDView<V extends View> extends JavaUserdata<V> implements 
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Float.class)
+            }, returns = @LuaApiUsed.Type(UDView.class)),
+    })
     public LuaValue[] setMinWidth(LuaValue[] p) {
         view.setMinimumWidth(DimenUtil.dpiToPx((float) p[0].toDouble()));
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Float.class)
+            }, returns = @LuaApiUsed.Type(UDView.class)),
+    })
     public LuaValue[] setMinHeight(LuaValue[] p) {
         view.setMinimumHeight(DimenUtil.dpiToPx((float) p[0].toDouble()));
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(UDView.class)
+            }, returns = @LuaApiUsed.Type(UDView.class)),
+    })
     public LuaValue[] bringSubviewToFront(LuaValue[] var) {
         if (view instanceof ILViewGroup && var[0] instanceof UDView) {
             ((ILViewGroup) view).bringSubviewToFront((UDView) var[0]);
@@ -1063,7 +1263,11 @@ public abstract class UDView<V extends View> extends JavaUserdata<V> implements 
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(UDView.class)
+            }, returns = @LuaApiUsed.Type(UDView.class)),
+    })
     public LuaValue[] sendSubviewToBack(LuaValue[] var) {
         if (view instanceof ILViewGroup && var[0] instanceof UDView) {
             ((ILViewGroup) view).sendSubviewToBack((UDView) var[0]);
@@ -1071,7 +1275,11 @@ public abstract class UDView<V extends View> extends JavaUserdata<V> implements 
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Boolean.class)
+            }, returns = @LuaApiUsed.Type(UDView.class)),
+    })
     public LuaValue[] canEndEditing(LuaValue[] p) {
         if (p != null && p.length > 0 && p[0].isBoolean()) {
             canEndEditing = p[0].toBoolean();
@@ -1084,7 +1292,13 @@ public abstract class UDView<V extends View> extends JavaUserdata<V> implements 
     //</editor-fold>
 
     //<editor-fold desc="Render">
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = Float.class),
+            }, returns = @LuaApiUsed.Type(UDView.class)),
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(Float.class)),
+    })
     public LuaValue[] alpha(LuaValue[] p) {
         if (p.length == 1) {
             view.setAlpha((float) p[0].toDouble());
@@ -1093,7 +1307,13 @@ public abstract class UDView<V extends View> extends JavaUserdata<V> implements 
         return varargsOf(LuaNumber.valueOf(view.getAlpha()));
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = Float.class),
+            }, returns = @LuaApiUsed.Type(UDView.class)),
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(Float.class)),
+    })
     public LuaValue[] borderWidth(LuaValue[] p) {
         if (p.length == 1) {
             setBorderWidth(DimenUtil.dpiToPx((float) p[0].toDouble()));
@@ -1102,7 +1322,13 @@ public abstract class UDView<V extends View> extends JavaUserdata<V> implements 
         return varargsOf(LuaNumber.valueOf(DimenUtil.pxToDpi(getBorderWidth())));
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = UDColor.class),
+            }, returns = @LuaApiUsed.Type(UDView.class)),
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(UDColor.class)),
+    })
     public LuaValue[] borderColor(LuaValue[] p) {
         if (p.length == 1) {
             setBorderColor(((UDColor) p[0]).getColor());
@@ -1112,7 +1338,13 @@ public abstract class UDView<V extends View> extends JavaUserdata<V> implements 
         return varargsOf(new UDColor(globals, getBorderColor()));
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = Boolean.class),
+            }, returns = @LuaApiUsed.Type(UDView.class)),
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(UDView.class)),
+    })
     public LuaValue[] hidden(LuaValue[] var) {
         if (var.length == 1 && var[0].isBoolean()) {
             view.setVisibility(var[0].toBoolean() ? View.INVISIBLE : View.VISIBLE);
@@ -1121,7 +1353,13 @@ public abstract class UDView<V extends View> extends JavaUserdata<V> implements 
         return view.getVisibility() != View.VISIBLE ? rTrue() : rFalse();
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = Boolean.class),
+            }, returns = @LuaApiUsed.Type(UDView.class)),
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(Boolean.class)),
+    })
     public LuaValue[] gone(LuaValue[] var) {
         if (var.length == 1 && var[0].isBoolean()) {
             view.setVisibility(var[0].toBoolean() ? View.GONE : View.VISIBLE);
@@ -1130,7 +1368,13 @@ public abstract class UDView<V extends View> extends JavaUserdata<V> implements 
         return view.getVisibility() == View.GONE ? rTrue() : rFalse();
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = UDColor.class),
+            }, returns = @LuaApiUsed.Type(UDView.class)),
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(UDColor.class)),
+    })
     public LuaValue[] bgColor(LuaValue[] var) {
         if (var.length == 1 && AssertUtils.assertUserData(var[0], UDColor.class, "bgColor", getGlobals())) {
             setBgColor(((UDColor) var[0]).getColor());
@@ -1142,7 +1386,11 @@ public abstract class UDView<V extends View> extends JavaUserdata<V> implements 
         return varargsOf(ret);
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(String.class)
+            }, returns = @LuaApiUsed.Type(UDView.class)),
+    })
     public LuaValue[] setNineImage(LuaValue[] var) {
         if (var.length == 1 && var[0].isString()) {
             hasNineImage = true;
@@ -1152,7 +1400,13 @@ public abstract class UDView<V extends View> extends JavaUserdata<V> implements 
         return rNil();
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = Float.class),
+            }, returns = @LuaApiUsed.Type(UDView.class)),
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(Float.class)),
+    })
     public LuaValue[] cornerRadius(LuaValue[] var) {
         if (var.length == 1) {
             setCornerRadius(DimenUtil.dpiToPx(var[0]));
@@ -1161,7 +1415,13 @@ public abstract class UDView<V extends View> extends JavaUserdata<V> implements 
         return varargsOf(LuaNumber.valueOf(DimenUtil.pxToDpi(getCornerRadiusWithDirections(RectCorner.TOP_LEFT))));
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = Integer.class),
+            }, returns = @LuaApiUsed.Type(UDView.class)),
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(Integer.class)),
+    })
     public LuaValue[] getCornerRadiusWithDirection(LuaValue[] var) {
         int direction = RectCorner.TOP_LEFT;
         if (var.length == 1) {
@@ -1171,7 +1431,15 @@ public abstract class UDView<V extends View> extends JavaUserdata<V> implements 
     }
 
     @Deprecated
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(UDColor.class),
+                    @LuaApiUsed.Type(UDSize.class),
+                    @LuaApiUsed.Type(Float.class),
+                    @LuaApiUsed.Type(Float.class),
+                    @LuaApiUsed.Type(Boolean.class)
+            }, returns = @LuaApiUsed.Type(UDView.class)),
+    })
     public LuaValue[] addShadow(LuaValue[] var) {
 
         UDColor color = (UDColor) var[0];
@@ -1189,7 +1457,13 @@ public abstract class UDView<V extends View> extends JavaUserdata<V> implements 
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(UDSize.class),
+                    @LuaApiUsed.Type(Float.class),
+                    @LuaApiUsed.Type(Float.class)
+            }, returns = @LuaApiUsed.Type(UDView.class)),
+    })
     public LuaValue[] setShadow(LuaValue[] var) {
 
         final UDSize offset = (UDSize) var[0];
@@ -1205,14 +1479,22 @@ public abstract class UDView<V extends View> extends JavaUserdata<V> implements 
     }
 
     @Deprecated
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(UDView.class)),
+    })
     public LuaValue[] refresh(LuaValue[] p) {
         ErrorUtils.debugUnsupportError("Method: refresh() is Deprecated");
         view.invalidate();
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Float.class),
+                    @LuaApiUsed.Type(Integer.class)
+            }, returns = @LuaApiUsed.Type(UDView.class)),
+    })
     public LuaValue[] setCornerRadiusWithDirection(LuaValue[] var) {
         int direction = RectCorner.ALL_CORNERS;
         if (var.length == 2) {
@@ -1235,7 +1517,13 @@ public abstract class UDView<V extends View> extends JavaUserdata<V> implements 
 
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Float.class),
+                    @LuaApiUsed.Type(UDColor.class),
+                    @LuaApiUsed.Type(Integer.class)
+            }, returns = @LuaApiUsed.Type(UDView.class)),
+    })
     public LuaValue[] addCornerMask(LuaValue[] var) {
         IBorderRadiusView view = getIBorderRadiusView();
         if (view == null)
@@ -1263,7 +1551,11 @@ public abstract class UDView<V extends View> extends JavaUserdata<V> implements 
      * @param p
      * @return
      */
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Boolean.class)
+            }, returns = @LuaApiUsed.Type(UDView.class)),
+    })
     public LuaValue[] clipToBounds(LuaValue[] p) {
         boolean clip = p[0].toBoolean();
         ViewParent vp = view.getParent();
@@ -1281,7 +1573,11 @@ public abstract class UDView<V extends View> extends JavaUserdata<V> implements 
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Boolean.class)
+            }, returns = @LuaApiUsed.Type(UDView.class)),
+    })
     public LuaValue[] clipToChildren(LuaValue[] p) {
         boolean clip = p[0].toBoolean();
         if (view instanceof ViewGroup) {
@@ -1293,7 +1589,11 @@ public abstract class UDView<V extends View> extends JavaUserdata<V> implements 
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = UDView.class)
+            }, returns = @LuaApiUsed.Type(UDView.class)),
+    })
     public LuaValue[] overlay(LuaValue[] p) {
         overView = p.length > 0 && !p[0].isNil() ? (UDView) p[0] : null;
 
@@ -1307,9 +1607,9 @@ public abstract class UDView<V extends View> extends JavaUserdata<V> implements 
 
         }
         overContainer.padding(LuaValue.varargsOf(LuaNumber.valueOf(DimenUtil.pxToDpi(mPaddingTop))
-            , LuaNumber.valueOf(DimenUtil.pxToDpi(mPaddingRight))
-            , LuaNumber.valueOf(DimenUtil.pxToDpi(mPaddingBottom))
-            , LuaNumber.valueOf(DimenUtil.pxToDpi(mPaddingLeft))
+                , LuaNumber.valueOf(DimenUtil.pxToDpi(mPaddingRight))
+                , LuaNumber.valueOf(DimenUtil.pxToDpi(mPaddingBottom))
+                , LuaNumber.valueOf(DimenUtil.pxToDpi(mPaddingLeft))
         ));
 
         if (overView != null) {
@@ -1409,7 +1709,13 @@ public abstract class UDView<V extends View> extends JavaUserdata<V> implements 
         return 0;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(UDColor.class),
+                    @LuaApiUsed.Type(UDColor.class),
+                    @LuaApiUsed.Type(Integer.class)
+            }, returns = @LuaApiUsed.Type(UDView.class)),
+    })
     public LuaValue[] setGradientColorWithDirection(LuaValue[] var) {
         int s = ((UDColor) var[0]).getColor();
         int e = ((UDColor) var[1]).getColor();
@@ -1422,7 +1728,13 @@ public abstract class UDView<V extends View> extends JavaUserdata<V> implements 
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(UDColor.class),
+                    @LuaApiUsed.Type(UDColor.class),
+                    @LuaApiUsed.Type(Boolean.class)
+            }, returns = @LuaApiUsed.Type(UDView.class)),
+    })
     public LuaValue[] setGradientColor(LuaValue[] var) {
         int s = ((UDColor) var[0]).getColor();
         int e = ((UDColor) var[1]).getColor();
@@ -1436,7 +1748,11 @@ public abstract class UDView<V extends View> extends JavaUserdata<V> implements 
     }
 
     @Deprecated
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Boolean.class)
+            }, returns = @LuaApiUsed.Type(UDView.class)),
+    })
     public LuaValue[] notClip(LuaValue[] p) {
         IBorderRadiusView view = getIBorderRadiusView();
         if (view != null) {
@@ -1447,7 +1763,11 @@ public abstract class UDView<V extends View> extends JavaUserdata<V> implements 
     //</editor-fold>
 
     //<editor-fold desc="Interaction">
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Boolean.class)
+            }, returns = @LuaApiUsed.Type(Boolean.class)),
+    })
     public LuaValue[] enabled(LuaValue[] var) {
         if (var.length == 1 && var[0].isBoolean()) {
             boolean enable = var[0].toBoolean();
@@ -1458,7 +1778,11 @@ public abstract class UDView<V extends View> extends JavaUserdata<V> implements 
     }
 
     @Deprecated
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = Function2.class, typeArgs = {Float.class, Float.class, Unit.class})
+            }, returns = @LuaApiUsed.Type(UDView.class)),
+    })
     public LuaValue[] onTouch(LuaValue[] var) {
         ErrorUtils.debugUnsupportError("Method: onTouch() is Deprecated");
         touchCallback = var[0].isFunction() ? var[0].toLuaFunction() : null;
@@ -1466,7 +1790,11 @@ public abstract class UDView<V extends View> extends JavaUserdata<V> implements 
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = Function0.class, typeArgs = {Unit.class})
+            }, returns = @LuaApiUsed.Type(UDView.class)),
+    })
     public LuaValue[] onClick(LuaValue[] var) {
         if (clickCallback != null) {
             clickCallback.destroy();
@@ -1478,7 +1806,11 @@ public abstract class UDView<V extends View> extends JavaUserdata<V> implements 
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = Function0.class, typeArgs = {Unit.class})
+            }, returns = @LuaApiUsed.Type(UDView.class)),
+    })
     public LuaValue[] onLongPress(LuaValue[] var) {
         longClickCallback = var[0].isFunction() ? var[0].toLuaFunction() : null;
         if (longClickCallback != null) {
@@ -1487,23 +1819,35 @@ public abstract class UDView<V extends View> extends JavaUserdata<V> implements 
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(Boolean.class)),
+    })
     public LuaValue[] hasFocus(LuaValue[] p) {
         return view.isFocused() ? rTrue() : rFalse();
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(Boolean.class)),
+    })
     public LuaValue[] canFocus(LuaValue[] p) {
         return view.isFocusable() ? rTrue() : rFalse();
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(UDView.class)),
+    })
     public LuaValue[] requestFocus(LuaValue[] p) {
         view.requestFocus();
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(UDView.class)),
+    })
     public LuaValue[] cancelFocus(LuaValue[] p) {
         view.clearFocus();
         return null;
@@ -1511,7 +1855,11 @@ public abstract class UDView<V extends View> extends JavaUserdata<V> implements 
     //</editor-fold>
 
     //<editor-fold desc="Animation">
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(UDBaseAnimation.class)
+            }, returns = @LuaApiUsed.Type(UDView.class))
+    })
     public LuaValue[] startAnimation(LuaValue[] v) {
         final UDBaseAnimation anim = (UDBaseAnimation) v[0].toUserdata().getJavaUserdata();
         int delay = anim.getDelay();
@@ -1528,14 +1876,21 @@ public abstract class UDView<V extends View> extends JavaUserdata<V> implements 
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(UDView.class))
+    })
     public LuaValue[] clearAnimation(LuaValue[] v) {
         getView().clearAnimation();
         return null;
     }
 
     // 设置背景图片，只支持本地资源  不能同bgColor 同时设置，否则会被后设置的覆盖
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(String.class)
+            }, returns = @LuaApiUsed.Type(UDView.class)),
+    })
     public LuaValue[] bgImage(LuaValue[] var) {
         if (var.length == 1) {
             String url = var[0].toJavaString();
@@ -1570,14 +1925,20 @@ public abstract class UDView<V extends View> extends JavaUserdata<V> implements 
     //</editor-fold>
     //</editor-fold>
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(UDView.class)),
+    })
     public LuaValue[] setPositionAdjustForKeyboard(LuaValue[] p) {
         deprecatedMethodPrint(UDView.class.getSimpleName(), "setPositionAdjustForKeyboard()");
         //do nothing
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(UDView.class)),
+    })
     public LuaValue[] setPositionAdjustForKeyboardAndOffset(LuaValue[] p) {
         deprecatedMethodPrint(UDView.class.getSimpleName(), "setPositionAdjustForKeyboardAndOffset()");
         //do nothing
@@ -1709,12 +2070,20 @@ public abstract class UDView<V extends View> extends JavaUserdata<V> implements 
         return new ViewGroup.MarginLayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(UDPoint.class)),
+    })
     public LuaValue[] convertRelativePointTo(LuaValue[] p) {
         return convertPointTo(p);
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(UDView.class),
+                    @LuaApiUsed.Type(UDPoint.class)
+            }, returns = @LuaApiUsed.Type(value = UDPoint.class)),
+    })
     public LuaValue[] convertPointTo(LuaValue[] p) {
         if (p.length != 2)
             return null;
@@ -1743,13 +2112,22 @@ public abstract class UDView<V extends View> extends JavaUserdata<V> implements 
         return varargsOf(new UDPoint(getGlobals(), result));
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(UDView.class)),
+    })
     public LuaValue[] removeAllAnimation(LuaValue[] p) {
         stopAnimation();
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(UDView.class),
+                    @LuaApiUsed.Type(UDPoint.class),
+                    @LuaApiUsed.Type(Integer.class)
+            }, returns = @LuaApiUsed.Type(value = UDPoint.class)),
+    })
     public LuaValue[] convertPointFrom(LuaValue[] p) {
         if (p.length != 2)
             return null;
@@ -1818,7 +2196,11 @@ public abstract class UDView<V extends View> extends JavaUserdata<V> implements 
         stopAnimation();
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = Function0.class, typeArgs = {Unit.class})
+            }, returns = @LuaApiUsed.Type(UDView.class)),
+    })
     public LuaValue[] onDetachedView(LuaValue[] p) {
         if (detachFunction != null)
             detachFunction.destroy();
@@ -1831,7 +2213,11 @@ public abstract class UDView<V extends View> extends JavaUserdata<V> implements 
 
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = Function2.class, typeArgs = {Float.class, Float.class, Unit.class})
+            }, returns = @LuaApiUsed.Type(UDView.class)),
+    })
     public LuaValue[] touchBegin(LuaValue[] p) {
         if (touchBeginCallback != null)
             touchBeginCallback.destroy();
@@ -1840,7 +2226,11 @@ public abstract class UDView<V extends View> extends JavaUserdata<V> implements 
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = Function2.class, typeArgs = {Float.class, Float.class, Unit.class})
+            }, returns = @LuaApiUsed.Type(UDView.class)),
+    })
     public LuaValue[] touchMove(LuaValue[] p) {
         if (touchMoveCallback != null)
             touchMoveCallback.destroy();
@@ -1850,7 +2240,11 @@ public abstract class UDView<V extends View> extends JavaUserdata<V> implements 
     }
 
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = Function2.class, typeArgs = {Float.class, Float.class, Unit.class})
+            }, returns = @LuaApiUsed.Type(UDView.class)),
+    })
     public LuaValue[] touchEnd(LuaValue[] p) {
         if (touchEndCallback != null)
             touchEndCallback.destroy();
@@ -1859,7 +2253,11 @@ public abstract class UDView<V extends View> extends JavaUserdata<V> implements 
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = Function2.class, typeArgs = {Float.class, Float.class, Unit.class})
+            }, returns = @LuaApiUsed.Type(UDView.class)),
+    })
     public LuaValue[] touchCancel(LuaValue[] p) {
         if (touchCancelCallback != null)
             touchCancelCallback.destroy();
@@ -1868,7 +2266,11 @@ public abstract class UDView<V extends View> extends JavaUserdata<V> implements 
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = Function1.class, typeArgs = {UDMap.class, Unit.class})
+            }, returns = @LuaApiUsed.Type(UDView.class)),
+    })
     public LuaValue[] touchBeginExtension(LuaValue[] p) {
         if (touchBeginExtensionCallback != null)
             touchBeginExtensionCallback.destroy();
@@ -1877,7 +2279,11 @@ public abstract class UDView<V extends View> extends JavaUserdata<V> implements 
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = Function1.class, typeArgs = {UDMap.class, Unit.class})
+            }, returns = @LuaApiUsed.Type(UDView.class)),
+    })
     public LuaValue[] touchMoveExtension(LuaValue[] p) {
         if (touchMoveExtensionCallback != null)
             touchMoveExtensionCallback.destroy();
@@ -1886,7 +2292,11 @@ public abstract class UDView<V extends View> extends JavaUserdata<V> implements 
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = Function1.class, typeArgs = {UDMap.class, Unit.class})
+            }, returns = @LuaApiUsed.Type(UDView.class)),
+    })
     public LuaValue[] touchEndExtension(LuaValue[] p) {
         if (touchEndExtensionCallback != null)
             touchEndExtensionCallback.destroy();
@@ -1895,7 +2305,11 @@ public abstract class UDView<V extends View> extends JavaUserdata<V> implements 
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = Function1.class, typeArgs = {UDMap.class, Unit.class})
+            }, returns = @LuaApiUsed.Type(UDView.class)),
+    })
     public LuaValue[] touchCancelExtension(LuaValue[] p) {
         if (touchCancelExtensionCallback != null)
             touchCancelExtensionCallback.destroy();
@@ -1904,13 +2318,21 @@ public abstract class UDView<V extends View> extends JavaUserdata<V> implements 
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(String.class)
+            }, returns = @LuaApiUsed.Type(String.class)),
+    })
     public LuaValue[] snapshot(LuaValue[] p) {
         String path = captureScreenforRecord(p[0].toJavaString());
         return path != null ? rString(path) : rNil();
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = Function1.class, typeArgs = {UDView.class, Unit.class})
+            }, returns = @LuaApiUsed.Type(UDView.class)),
+    })
     public LuaValue[] onDraw(LuaValue[] values) {
         if (onDrawCallback != null) {
             onDrawCallback.destroy();

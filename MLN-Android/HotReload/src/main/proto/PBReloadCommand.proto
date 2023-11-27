@@ -11,7 +11,8 @@ import "PBBaseCommand.proto";
 
 option java_package = "com.immomo.luanative.codec.protobuf";
 option java_outer_classname = "PBReloadCommand";
-
 message pbreloadcommand {
-    pbbasecommand basecommand = 1;
+  pbbasecommand basecommand = 1;
+  string serialNum = 2;
+
 }

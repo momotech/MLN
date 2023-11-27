@@ -94,7 +94,10 @@ public class Utils {
         if (v == null || v.isNil() || need == null) return null;
         if (need == String.class) return v.toJavaString();
         if (v.isUserdata() || v.isTable()) {
-            return Translator.translateLuaToJava(v, need);
+            Translator t = Translator.fromGlobals(v.toNLuaValue().getGlobals());
+            if (t != null)
+                return t.translateLuaToJava(v, need);
+            return null;
         }
         if (need.isPrimitive()) {
             return toPrimitive(v, need);

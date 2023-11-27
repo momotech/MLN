@@ -126,6 +126,7 @@ executeJavaIndexOrNewindexFunction(JNIEnv *env, lua_State *L, jmethodID m, const
     jobject jobj = getUserdata(env, L, udjobj);
     if (!jobj) {
         lua_pushfstring(L, "get java object from java failed, id: %d", udjobj->id);
+        setErrorType(L, lua);
         lua_error(L);
         return 1;
     }
@@ -175,6 +176,7 @@ static int executeJavaIndexFunction(lua_State *L) {
     if (!lua_isuserdata(L, 1)) {
         lua_pushstring(L, "use ':' instead of '.' to call method!!");
         lua_unlock(L);
+        setErrorType(L, lua);
         lua_error(L);
         return 1;
     }

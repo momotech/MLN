@@ -11,6 +11,7 @@ import android.content.Context;
 
 import com.immomo.mls.Constants;
 import com.immomo.mls.InitData;
+import com.immomo.mls.adapter.LuaToolFinder;
 
 import org.luaj.vm2.Globals;
 
@@ -43,11 +44,26 @@ public final class ScriptInfo {
      * 超时，ms
      */
     public long timeout;
+    /**
+     * 获取工具库依赖路径回调
+     */
+    public LuaToolFinder luaToolFinder;
+
+    public String tag;
 
     public ScriptInfo(InitData initData) {
         preloadScripts = initData.preloadScripts;
         loadType = initData.loadType;
         timeout = initData.loadTimeout;
+    }
+
+    public ScriptInfo(Callback callback) {
+        this.callback = callback;
+    }
+
+    public ScriptInfo withLuaToolFinder(LuaToolFinder luaToolFindert) {
+        this.luaToolFinder = luaToolFindert;
+        return this;
     }
 
     public ScriptInfo withContext(Context context) {
@@ -67,6 +83,10 @@ public final class ScriptInfo {
 
     public ScriptInfo withGlobals(Globals globals) {
         this.globals = globals;
+        return this;
+    }
+    public ScriptInfo tag(String tag) {
+        this.tag = tag;
         return this;
     }
 

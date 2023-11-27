@@ -50,7 +50,7 @@ public abstract class BaseLuaTest {
         assertTrue(Globals.isInit());
         mockGlboalsLongSparseArray();
         mockNativeLogLongSparseArray();
-        Log.i("Lua vm is " + (Globals.isIs32bit() ? "32" : "64") + " bits");
+        Log.i("Lua vm is " + (Globals.is32bit() ? "32" : "64") + " bits");
     }
 
     private <T> void mockLongSparseArray(LongSparseArray<T> r, final ALongSparseArray<T> m, Class<T> clz) {

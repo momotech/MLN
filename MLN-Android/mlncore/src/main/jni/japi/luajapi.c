@@ -13,56 +13,21 @@
 #include "lualib.h"
 #include "lobject.h"
 #include "lstate.h"
+#include "llimits.h"
+#include "lfunc.h"
+#include <time.h>
+#include <fcntl.h>
+#include <unistd.h>
 #include "luajapi.h"
 #include "debug_info.h"
 #include "mlog.h"
-#include "luasocket.h"
-#include <time.h>
-#include "argo/argo_lib.h"
 #include "m_mem.h"
 #include "compiler.h"
 #include "saes.h"
-#include "llimits.h"
-#include "lfunc.h"
-#include "isolate.h"
 #include "statistics.h"
 #include "statistics_require.h"
-
-extern JavaVM *g_jvm;
-
-jint JNI_OnLoad(JavaVM *vm, void *reserved) {
-    JNIEnv *env = NULL;
-
-    jint result = -1;
-    if ((*vm)->GetEnv(vm, (void **) &env, JNI_VERSION_1_4) != JNI_OK) {
-        return JNI_ERR;
-    }
-    jclass cls = (*env)->FindClass(env, JAVA_PATH "LuaCApi");
-    if (!cls) {
-        return JNI_ERR;
-    }
-
-    int len = sizeof(jni_methods) / sizeof(jni_methods[0]);
-    // LOGI("on load, SOURCE_LEN : %d, int : %d, void* : %d", SOURCE_LEN, sizeof(int), sizeof(void *));
-    if ((*env)->RegisterNatives(env, cls, jni_methods, len) < 0) {
-        LOGE("on load error");
-        return JNI_ERR;
-    }
-    FREE(env, cls);
-    initJavaInfo(env);
-    g_jvm = vm;
-    return JNI_VERSION_1_4;
-}
-
-int AndroidVersion = 0;
-
-void jni_setAndroidVersion(JNIEnv *env, jobject jobj, jint v) {
-    AndroidVersion = (int) v;
-}
-
-jboolean jni_check32bit(JNIEnv *env, jobject jobj) {
-    return sizeof(size_t) == 4;
-}
+#include "reflib.h"
+#include "mempool.h"
 
 jboolean jni_isSAESFile(JNIEnv *env, jobject jobj, jstring path) {
     const char *file = GetString(env, path);
@@ -71,6 +36,7 @@ jboolean jni_isSAESFile(JNIEnv *env, jobject jobj, jstring path) {
     return r;
 }
 
+//<editor-fold desc="statistic callback">
 #ifdef STATISTIC_PERFORMANCE
 static jclass Java_Statistic = NULL;
 static jmethodID Java_Statistic_callback = NULL;
@@ -130,21 +96,54 @@ void jni_setStatisticsOpen(JNIEnv *env, jobject jobj, jboolean open) {
     setOpenRequireStatistics((int)open);
 #endif
 }
-// --------------------------define field--------------------------
-extern jclass LuaValue;
-// --------------------------define private--------------------------
+//</editor-fold>
+
+//<editor-fold desc="error function">
 /**
- * 错误处理函数
+ * 一般lua异常
  */
-static int error_func_traceback(lua_State *);
+static int error_func_traceback(lua_State *L) {
+    const char *msg = lua_isstring(L, 1) ? lua_tostring(L, 1) : "unknown error";
+    luaL_traceback(L, L, msg, 2);
+    return 1;
+}
+//jmp_buf _jmp_buf;
+extern jclass Globals;
 
 /**
- * 获取pcall中处理错误的函数的栈位置
+ * 调用 abort
+ * @param L 一般指虚拟机
+ * @param msg 错误信息
  */
-int getErrorFunctionIndex(lua_State *L);
+void must_abort(void *L, const char *msg) {
+    JNIEnv *env;
+    getEnv(&env);
+    jmethodID __onFatalError = (*env)->GetStaticMethodID(env, Globals, "__onFatalError", "(J" STRING_CLASS ")V");
+    (*env)->CallStaticVoidMethod(env, Globals, __onFatalError, (jlong) L, newJString(env, msg));
+    abort();
+}
+/**
+ * 虚拟机出现重大异常，会走到这个函数，并abort
+ */
+static int panic_function(lua_State *L) {
+    const char *msg = lua_tostring(L, -1);
+    luaL_traceback(L, L, msg, 0);
+    msg = lua_tostring(L, -1);
+    must_abort(L, msg);
+//    _longjmp(_jmp_buf, 1);
+    return 1;
+}
 
-// --------------------------end--------------------------
+int getErrorFunctionIndex(lua_State *L) {
+    if (lua_iscfunction(L, 1) && lua_tocfunction(L, 1) == error_func_traceback) {
+        return 1;
+    }
+    lua_getglobal(L, ERROR_FUN);
+    return lua_gettop(L);
+}
+//</editor-fold>
 
+//<editor-fold desc="db、base、so path">
 const char *l_db_path = NULL;
 
 void jni_setDatabasePath(JNIEnv *env, jobject jobj, jstring path) {
@@ -176,10 +175,9 @@ void jni_setSoPath(JNIEnv *env, jobject jobj, jlong LS, jstring path) {
     ReleaseChar(env, path, bp);
     lua_unlock(L);
 }
-/// ------------------------------------------------------------------
-// ---------------------------------gc--------------------------------
-/// ------------------------------------------------------------------
+//</editor-fold>
 
+//<editor-fold desc="GC">
 #define GC_OFFSET_TIME (CLOCKS_PER_SEC >> 3)
 static clock_t last_gc_time = 0;
 static int gc_offset_time = 0;
@@ -201,89 +199,100 @@ static void gc_cb(lua_State *L, int type) {
 void jni_setGcOffset(JNIEnv *env, jobject jobj, int offset) {
     gc_offset_time = offset * GC_OFFSET_TIME;
 }
+//</editor-fold>
 
-/// ------------------------------------------------------------------
-/// -------------------------------debug------------------------------
-/// ------------------------------------------------------------------
-
-jlong jni_lvmMemUse(JNIEnv *env, jobject jobj, jlong L) {
+//<editor-fold desc="lua vm init">
+static int use_mem_pool = 0;
 #if defined(J_API_INFO)
-    lua_State *LS = (lua_State *) L;
-    return *(size_t *) (G(LS)->ud);
+static size_t _all_vm_use_mem = 0;
+#endif
+
+jlong jni_allLvmMemUse(JNIEnv *env, jobject jobj) {
+#if defined(J_API_INFO)
+    return (jlong) m_mem_use() + _all_vm_use_mem;
 #else
     return 0;
 #endif
 }
 
-/// ------------------------------------------------------------------
-/// ------------------------------L State-----------------------------
-/// ------------------------------------------------------------------
+void jni_setUseMemoryPool(JNIEnv *env, jobject jobj, jboolean use) {
+    use_mem_pool = (int) use;
+}
 
-/**
- * 执行空方法
- * @param L
- *      1: method name
- */
-int exeEmptyMethod(lua_State *L) {
-    lua_lock(L);
-    int isUD = -1;
-    if (lua_isuserdata(L, 1)) {
-        isUD = 1;
-    } else if (lua_istable(L, 1)) {
-        isUD = 0;
-    }
-    if (isUD == -1) {
-        lua_pushstring(L, "use ':' instead of '.' to call method!!");
-        lua_unlock(L);
-        lua_error(L);
-        return 1;
-    }
+/// 96K
+#define POOL_MIN_MEM_SIZE (24 << 12)
 
-    const char *clz;
-    if (isUD) {
-        UDjavaobject ud = (UDjavaobject) lua_touserdata(L, 1);
-        clz = ud->name;
+void *m_alloc(void *ud, void *ptr, size_t osize, size_t nsize) {
+    LuaJData *jd = (LuaJData *) ud;
+    if (jd->pool) {
+        if (nsize == 0) {
+#if defined(J_API_INFO)
+            _all_vm_use_mem -= osize;
+            jd->use_mem -= osize;
+#endif
+            if (!jd->vm_is_closing && ptr)
+                mp_free(jd->pool, ptr);
+            return NULL;
+        }
+        if (!ptr) {
+            ptr = mp_alloc(jd->pool, nsize);
+            osize = 0;
+        }
+        /// 当vm在关闭过程中时，osize>=nsize表示当前指针可以不用改变
+        else if (!(jd->vm_is_closing && osize >= nsize)) {
+            ptr = mp_realloc(jd->pool, ptr, nsize);
+//            void *nptr = mp_alloc(jd->pool, nsize);
+//            memcpy(nptr, ptr, osize < nsize ? osize : nsize);
+//            ptr = nptr;
+        }
+#if defined(J_API_INFO)
+        if (ptr) {
+            jd->use_mem += nsize - osize;
+            _all_vm_use_mem += nsize - osize;
+        }
+#endif
+        return ptr;
+    }
+    if (nsize == 0) {
+        free(ptr);
+#if defined(J_API_INFO)
+        _all_vm_use_mem -= osize;
+        jd->use_mem -= osize;
+#endif
+        return NULL;
     } else {
-        clz = "Unknown static class";
+        if (!ptr) {
+            ptr = malloc(nsize);
+#if defined(J_API_INFO)
+            if (ptr) {
+                jd->use_mem += nsize;
+                _all_vm_use_mem += nsize;
+            }
+#endif
+        } else {
+            ptr = realloc(ptr, nsize);
+#if defined(J_API_INFO)
+            if (ptr) {
+                jd->use_mem += nsize - osize;
+                _all_vm_use_mem += nsize - osize;
+            }
+#endif
+        }
+        return ptr;
     }
-    const char *mn;
-    int idx = lua_upvalueindex(1);
-    mn = lua_tostring(L, idx);
-
-    onEmptyMethodCall(L, clz, mn);
-
-    lua_settop(L, 1);
-    lua_unlock(L);
-    return 1;
 }
-/**
- * -1: table
- */
-void emptyMethodTable(const void *value, void *ud) {
-    lua_State *L = (lua_State *) ud;
-    const char *name = (const char *) value;
-    lua_pushstring(L, name);
-    lua_pushvalue(L, -1);
-    lua_pushcclosure(L, exeEmptyMethod, 1);
-    /// -1: closure, -2: name, -3: table
-    lua_rawset(L, -3);
-}
+
+void init_importer(lua_State *pState);
 
 extern void openlibs_forlua(lua_State *L, int debug) {
     lua_lock(L);
     L->l_G->gc_callback = NULL;
     luaL_openlibs(L);
-    luaL_getsubtable(L, LUA_REGISTRYINDEX, "_PRELOAD");
-    lua_pushcfunction(L, isolate_open);
-    lua_setfield(L, -2, ISOLATE_LIB_NAME);
-    lua_pop(L, 1);
-    argo_preload(L);
+    ref_open(L);
+    init_require(L);
+    init_importer(L);
 
-    if (debug) {
-        luaopen_socket_core(L);
-        lua_pop(L, 1);
-    }
-    lua_atpanic(L, error_func_traceback);
+    lua_atpanic(L, panic_function);
     lua_pushcfunction(L, error_func_traceback);
     lua_setglobal(L, ERROR_FUN);
     lua_getglobal(L, ERROR_FUN);
@@ -311,49 +320,82 @@ extern void openlibs_forlua(lua_State *L, int debug) {
     lua_pop(L, 2);
     if (gc_offset_time > 0)
         G(L)->gc_callback = gc_cb;
-
-    if (hasEmptyMethod()) {
-        lua_newtable(L);
-        traverseAllEmptyMethods(emptyMethodTable, L);
-        lua_setglobal(L, EMPTY_METHOD_TABLE);
-    }
     lua_unlock(L);
 }
 
 jlong jni_createLState(JNIEnv *env, jobject jobj, jboolean debug) {
+    LuaJData *ud = (LuaJData *) m_malloc(NULL, 0, sizeof(LuaJData));
 #if defined(J_API_INFO)
-    size_t *ud = (size_t *) m_malloc(NULL, 0, sizeof(size_t));
-    *ud = 0;
-    lua_State *L = luaL_newstate1(m_alloc, ud);
-#else
-    lua_State *L = luaL_newstate();
+    ud->use_mem = 0;
+    ud->create_thread = pthread_self();
 #endif
-    openlibs_forlua(L, (int) debug);
+    ud->type = no;
+    ud->vm_is_closing = 0;
+    if (use_mem_pool) {
+        ud->pool = mp_new_pool(POOL_MIN_MEM_SIZE, MP_MAX_SIZE);
+    } else {
+        ud->pool = NULL;
+    }
+    lua_State *L = lua_newstate(m_alloc, ud);
+    if (L)
+        openlibs_forlua(L, (int) debug);
+    else {
+        if (ud->pool)
+            mp_free_pool(ud->pool);
+        m_malloc(ud, sizeof(LuaJData), 0);
+    }
 
     return (jlong) L;
 }
 
+jint jni_getErrorType(JNIEnv *env, jobject jobj, jlong L) {
+    int ret = getErrorType((lua_State *)L);
+    clearErrorType((lua_State *)L);
+    return ret;
+}
+
+#ifdef MEM_POOL_TEST
+void jni_testMemoryPool(JNIEnv *env, jobject jobj, jlong L) {
+    lua_State *LS = (lua_State *) L;
+    LuaJData *ud = G(LS)->ud;
+    mp_test(ud->pool);
+}
+#endif
+
 void jni_openDebug(JNIEnv *env, jobject jobj, jlong L) {
-    luaopen_socket_core((lua_State *) L);
-    lua_pop((lua_State *) L, 1);
 }
 
 void jni_close(JNIEnv *env, jobject jobj, jlong L) {
     lua_State *LS = (lua_State *) L;
-    argo_close(LS);
+    LuaJData *ud = G(LS)->ud;
+    ud->vm_is_closing = 1;
 #if defined(J_API_INFO)
-    void *ud = G(LS)->ud;
+    _checkThread(ud);
 #endif
     lua_close(LS);
+    if (ud->pool) {
+        mp_free_pool(ud->pool);
+    }
+    m_malloc(ud, sizeof(LuaJData), 0);
 #if defined(J_API_INFO)
-    m_malloc(ud, sizeof(size_t), 0);
     cj_log();
 #endif
 }
+//</editor-fold>
 
-/// ------------------------------------------------------------------
-/// --------------------------stack for java--------------------------
-/// ------------------------------------------------------------------
+//<editor-fold desc="debug jni method">
+jlong jni_lvmMemUse(JNIEnv *env, jobject jobj, jlong L) {
+    LuaJData *ud = G(((lua_State *) L))->ud;
+    if (ud->pool)
+        return ud->pool->use_mem;
+#if defined(J_API_INFO)
+    return ud->use_mem;
+#else
+    return 0;
+#endif
+}
+
+extern jclass LuaValue;
 jobjectArray jni_dumpStack(JNIEnv *env, jobject jobj, jlong L) {
     lua_State *LS = (lua_State *) L;
     lua_lock(LS);
@@ -382,26 +424,11 @@ void jni_lgc(JNIEnv *env, jobject jobj, jlong L) {
     lua_State * LS = (lua_State *)L;
     lua_gc(LS, LUA_GCCOLLECT, 0);
 }
-
-// --------------------------function--------------------------
+//</editor-fold>
 
 void jni_callMethod(JNIEnv *env, jobject jobj, jlong L, jlong method, jlong arg) {
     lua_State *LS = (lua_State *) L;
+    CheckThread(LS);
     callback_method m = (callback_method) method;
     m(LS, (void *) arg);
-}
-
-// --------------------------error function--------------------------
-int getErrorFunctionIndex(lua_State *L) {
-    if (lua_iscfunction(L, 1) && lua_tocfunction(L, 1) == error_func_traceback) {
-        return 1;
-    }
-    lua_getglobal(L, ERROR_FUN);
-    return lua_gettop(L);
-}
-
-static int error_func_traceback(lua_State *L) {
-    const char *msg = lua_isstring(L, 1) ? lua_tostring(L, 1) : "unknown error";
-    luaL_traceback(L, L, msg, 2);
-    return 1;
 }

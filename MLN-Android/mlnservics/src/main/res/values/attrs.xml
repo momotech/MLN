@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="SweepLightLayout">
+        <attr name="sll_start_color" format="color|reference" />
+        <attr name="sll_middle_color" format="color|reference" />
+        <attr name="sll_end_color" format="color|reference" />
+        <attr name="sll_animation_duration" format="integer|reference" />
+        <attr name="sll_angle" format="integer|reference" />
+        <attr name="sll_mask_width" format="float|reference" />
+        <attr name="sll_reverse_animation" format="boolean|reference" />
+    </declare-styleable>
+</resources>

@@ -62,6 +62,9 @@ typedef struct LexState {
   TString *source;  /* current source name */
   TString *envn;  /* environment variable name */
   char decpoint;  /* locale decimal point */
+#ifdef LOAD_TOKEN
+  TokenListenData *ud;/* callback every token */
+#endif
 } LexState;
 
 

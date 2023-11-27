@@ -15,11 +15,16 @@ import com.immomo.mls.annotation.LuaClass;
 import com.immomo.mls.fun.ud.anim.InterpolatorType;
 import com.immomo.mls.fun.ud.anim.RepeatType;
 import com.immomo.mls.fun.ud.anim.Utils;
+import com.immomo.mls.fun.ud.view.UDVStack;
 import com.immomo.mls.util.DimenUtil;
 import com.immomo.mls.utils.LVCallback;
 
+import kotlin.Unit;
+import kotlin.jvm.functions.Function0;
+import kotlin.jvm.functions.Function1;
 import org.luaj.vm2.Globals;
 import org.luaj.vm2.LuaValue;
+import org.luaj.vm2.utils.LuaApiUsed;
 
 /**
  * Created by Xiong.Fangyu on 2019-05-27
@@ -107,21 +112,27 @@ public abstract class UDBaseAnimation implements Animation.AnimationListener {
             animation.cancel();
     }
 
-    @LuaBridge
+    @LuaBridge(value = {
+            @LuaBridge.Func(params = {@LuaBridge.Type(value = Function0.class, typeArgs = {Unit.class})})
+    })
     public void setStartCallback(LVCallback callback) {
         if (startCallback != null)
             startCallback.destroy();
         startCallback = callback;
     }
 
-    @LuaBridge
+    @LuaBridge(value = {
+            @LuaBridge.Func(params = {@LuaBridge.Type(value = Function1.class, typeArgs = {Boolean.class, Unit.class})})
+    })
     public void setEndCallback(LVCallback callback) {
         if (endCallback != null)
             endCallback.destroy();
         endCallback = callback;
     }
 
-    @LuaBridge
+    @LuaBridge(value = {
+            @LuaBridge.Func(params = {@LuaBridge.Type(value = Function0.class, typeArgs = {Unit.class})})
+    })
     public void setRepeatCallback(LVCallback callback) {
         if (repeatCallback != null)
             repeatCallback.destroy();

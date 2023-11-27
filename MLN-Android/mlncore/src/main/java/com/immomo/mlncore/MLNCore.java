@@ -37,7 +37,13 @@ public class MLNCore {
      * cache类型
      * @see org.luaj.vm2.UserdataCache
      */
-    public static byte UserdataCacheType = TYPE_REMOVE;
+    public static byte UserdataCacheType = TYPE_REMOVE_CACHE;
+    /**
+     * 获取lua异常类型
+     * @see Globals#getErrorType()
+     * @see org.luaj.vm2.ErrorType
+     */
+    public static boolean errorTypeEnabled = true;
     /**
      * 回调
      */
@@ -84,6 +90,14 @@ public class MLNCore {
         if (callback != null)
             return callback.hookLuaError(t, g);
         return false;
+    }
+
+    /**
+     * lua中发生严重异常，回调完成后，会abort进程
+     */
+    public static void onLuaFatalError(Globals g, String msg) {
+        if (callback != null)
+            callback.onLuaFatalError(g, msg);
     }
 
     /**
@@ -135,6 +149,13 @@ public class MLNCore {
          * @return true: 消费异常；false: 不消费，将抛出
          */
         boolean hookLuaError(Throwable t, Globals g);
+
+        /**
+         * 底层严重异常，执行完回调后，将abort进程
+         * @param g 在此虚拟机发生的异常
+         * @param msg 异常信息
+         */
+        void onLuaFatalError(Globals g, String msg);
 
         /**
          * 回调执行lua gc耗时

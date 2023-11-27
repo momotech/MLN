@@ -7,17 +7,15 @@
   */
 package com.immomo.mls.util;
 
+import androidx.annotation.NonNull;
+
+import com.immomo.mls.LuaViewManager;
 import com.immomo.mls.utils.ERROR;
 import com.immomo.mls.utils.ScriptLoadException;
 import com.immomo.mls.wrapper.ScriptBundle;
 import com.immomo.mls.wrapper.ScriptFile;
 
 import org.luaj.vm2.Globals;
-
-import java.util.Collection;
-import java.util.Map;
-
-import androidx.annotation.NonNull;
 
 /**
  * Created by Xiong.Fangyu on 2019/4/19
@@ -42,13 +40,29 @@ public class CompileUtils {
             throw new ScriptLoadException(ERROR.COMPILE_FAILED, null);
         }
         String chunkname = scriptFile.getChunkName();
-        boolean compiled = scriptFile.pathType ?
-                (scriptFile.isAssetsPath() ? globals.loadAssetsFile(scriptFile.getAssetsPath(), chunkname) : globals.loadFile(scriptFile.path, chunkname))
-                : globals.loadData(chunkname, scriptFile.getSourceData());
-        scriptFile.setCompiled(compiled);
+        if (scriptFile.pathType) {
+            if (scriptFile.isAssetsPath()) {
+                    scriptFile.setCompiled(globals.loadAssetsFile(scriptFile.getAssetsPath(), chunkname));
+            } else if (globals.loadFile(scriptFile.path, chunkname)) {
+                scriptFile.setCompiled(true);
+            } else if ((Globals.getNativeFileConfigs() & Globals.LUA_FILE_CINFIG_SOURCE_FILE) != Globals.LUA_FILE_CINFIG_SOURCE_FILE){
+                //尝试在java层读取代码
+                LuaViewManager vm = (LuaViewManager) globals.getJavaUserdata();
+                scriptFile.toSourceDataType(vm != null ? vm.context : null);
+            } else {
+                scriptFile.setCompiled(false);
+            }
+        }
+        if (!scriptFile.isCompiled()) {
+            final byte[] data = scriptFile.getSourceData();
+            if (data != null) {
+                scriptFile.setCompiled(globals.loadData(chunkname, data));
+            }
+        }
         scriptFile.setSourceData(null);
-        if (!compiled) {
-            throw new ScriptLoadException(-5, "compile error" + globals.getErrorMsg(), null);
+
+        if (!scriptFile.isCompiled()) {
+            throw new ScriptLoadException(ERROR.COMPILE_FAILED, globals.getError());
         }
     }
 

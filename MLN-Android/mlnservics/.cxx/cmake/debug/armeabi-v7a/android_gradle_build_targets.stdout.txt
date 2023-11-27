@@ -1,0 +1,25 @@
+ninja: Entering directory `/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/.cxx/cmake/debug/armeabi-v7a'
+[1/8] Building C object mln/CMakeFiles/mlnbridge.dir/bridge/mmoslib.c.o
+clang: warning: argument unused during compilation: '-pie' [-Wunused-command-line-argument]
+[2/8] Building C object mln/CMakeFiles/mlnbridge.dir/bridge/mmbridge.c.o
+clang: warning: argument unused during compilation: '-pie' [-Wunused-command-line-argument]
+[3/8] Building C object mln/CMakeFiles/mlnbridge.dir/bridge/mmbit.c.o
+clang: warning: argument unused during compilation: '-pie' [-Wunused-command-line-argument]
+[4/8] Building C object mln/CMakeFiles/mlnbridge.dir/bridge/jse.c.o
+clang: warning: argument unused during compilation: '-pie' [-Wunused-command-line-argument]
+[5/8] Building C object mln/CMakeFiles/mlnbridge.dir/bridge/mmcanvas.c.o
+clang: warning: argument unused during compilation: '-pie' [-Wunused-command-line-argument]
+[6/8] Building C object mln/CMakeFiles/mlnbridge.dir/bridge/mmmap.c.o
+clang: warning: argument unused during compilation: '-pie' [-Wunused-command-line-argument]
+[7/8] Building C object mln/CMakeFiles/mlnbridge.dir/bridge/mmarray.c.o
+clang: warning: argument unused during compilation: '-pie' [-Wunused-command-line-argument]
+[8/8] Linking C shared library /Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/libs/armeabi-v7a/libmlnbridge.so
+FAILED: /Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/libs/armeabi-v7a/libmlnbridge.so 
+: && /Users/XiongFangyu/Library/Android/sdk/ndk/21.0.6113669/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang --target=armv7-none-linux-androideabi21 --gcc-toolchain=/Users/XiongFangyu/Library/Android/sdk/ndk/21.0.6113669/toolchains/llvm/prebuilt/darwin-x86_64 --sysroot=/Users/XiongFangyu/Library/Android/sdk/ndk/21.0.6113669/toolchains/llvm/prebuilt/darwin-x86_64/sysroot -fPIC -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -march=armv7-a -mthumb -Wformat -Werror=format-security -pie -fPIE -O0  -Wl,--exclude-libs,libgcc_real.a -Wl,--exclude-libs,libatomic.a -static-libstdc++ -Wl,--build-id -Wl,--fatal-warnings -Wl,--exclude-libs,libunwind.a -Wl,--no-undefined -Qunused-arguments -shared -Wl,-soname,libmlnbridge.so -o /Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/libs/armeabi-v7a/libmlnbridge.so mln/CMakeFiles/mlnbridge.dir/bridge/mmoslib.c.o mln/CMakeFiles/mlnbridge.dir/bridge/mmbit.c.o mln/CMakeFiles/mlnbridge.dir/bridge/jse.c.o mln/CMakeFiles/mlnbridge.dir/bridge/mmbridge.c.o mln/CMakeFiles/mlnbridge.dir/bridge/mmarray.c.o mln/CMakeFiles/mlnbridge.dir/bridge/mmmap.c.o mln/CMakeFiles/mlnbridge.dir/bridge/mmcanvas.c.o -L/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/../linkLibs/armeabi-v7a -llog -lluajapi -latomic -lm && :
+/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/mln/bridge/mmbit.c:123: error: undefined reference to 'luaL_checkversion_'
+/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/mln/bridge/jse.c:114: error: undefined reference to 'lua_rotate'
+/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/mln/bridge/mmarray.c:274: error: undefined reference to 'lua_setglobal'
+/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/mln/bridge/mmmap.c:232: error: undefined reference to 'lua_setglobal'
+/Users/XiongFangyu/Desktop/MMLua4Android/mlnservics/src/main/jni/mln/bridge/mmcanvas.c:199: error: undefined reference to 'lua_setglobal'
+clang: error: linker command failed with exit code 1 (use -v to see invocation)
+ninja: build stopped: subcommand failed.

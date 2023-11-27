@@ -13,9 +13,13 @@ import android.view.ViewGroup;
 
 import com.immomo.mls.annotation.LuaClass;
 import com.immomo.mls.fun.other.Size;
+import com.immomo.mls.fun.ud.view.UDBaseHVStack;
+import com.immomo.mls.fun.ud.view.UDView;
 import com.immomo.mls.utils.AssertUtils;
 import com.immomo.mls.utils.ErrorUtils;
 
+import kotlin.jvm.functions.Function0;
+import kotlin.jvm.functions.Function2;
 import org.luaj.vm2.Globals;
 import org.luaj.vm2.LuaFunction;
 import org.luaj.vm2.LuaValue;
@@ -30,7 +34,7 @@ import androidx.annotation.NonNull;
 /**
  * Created by XiongFangyu on 2018/7/20.
  */
-@LuaApiUsed
+@LuaApiUsed(ignoreTypeArgs = true)
 public abstract class UDBaseNeedHeightAdapter<L extends UDBaseRecyclerLayout> extends UDBaseRecyclerAdapter<L> {
     public static final String LUA_CLASS_NAME = "__BaseNeedHeightAdapter";
     public static final String[] methods = new String[]{
@@ -44,7 +48,10 @@ public abstract class UDBaseNeedHeightAdapter<L extends UDBaseRecyclerLayout> ex
 
     private Size initSize;
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(UDBaseNeedHeightAdapter.class))
+    })
     public UDBaseNeedHeightAdapter(long L, LuaValue[] v) {
         super(L, v);
         initValue();
@@ -60,7 +67,11 @@ public abstract class UDBaseNeedHeightAdapter<L extends UDBaseRecyclerLayout> ex
      * <p>
      * fun
      */
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = Function0.class, typeArgs = {Integer.class}),
+            }, returns = @LuaApiUsed.Type(UDBaseNeedHeightAdapter.class)),
+    })
     public LuaValue[] heightForCell(LuaValue[] values) {
         heightForCell = values[0].toLuaFunction();
         return null;
@@ -71,13 +82,22 @@ public abstract class UDBaseNeedHeightAdapter<L extends UDBaseRecyclerLayout> ex
      * <p>
      * fun
      */
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = Function0.class, typeArgs = {Integer.class}),
+            }, returns = @LuaApiUsed.Type(UDBaseNeedHeightAdapter.class)),
+    })
     public LuaValue[] heightForHeader(LuaValue[] values) {
         heightForHeader = values[0].toLuaFunction();
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(String.class),
+                    @LuaApiUsed.Type(value = Function2.class, typeArgs = {Integer.class, Integer.class, Integer.class}),
+            }, returns = @LuaApiUsed.Type(UDBaseNeedHeightAdapter.class)),
+    })
     public LuaValue[] heightForCellByReuseId(LuaValue[] values) {
         if (heightDelegates == null) {
             heightDelegates = new HashMap<>();

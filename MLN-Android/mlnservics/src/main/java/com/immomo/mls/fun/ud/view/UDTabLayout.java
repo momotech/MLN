@@ -1,10 +1,10 @@
 /**
-  * Created by MomoLuaNative.
-  * Copyright (c) 2019, Momo Group. All rights reserved.
-  *
-  * This source code is licensed under the MIT.
-  * For the full copyright and license information,please view the LICENSE file in the root directory of this source tree.
-  */
+ * Created by MomoLuaNative.
+ * Copyright (c) 2019, Momo Group. All rights reserved.
+ * <p>
+ * This source code is licensed under the MIT.
+ * For the full copyright and license information,please view the LICENSE file in the root directory of this source tree.
+ */
 package com.immomo.mls.fun.ud.view;
 
 import android.graphics.Color;
@@ -13,6 +13,9 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+
+import androidx.core.view.ViewCompat;
+import androidx.viewpager.widget.ViewPager;
 
 import com.immomo.mls.Environment;
 import com.immomo.mls.fun.constants.TabSegmentAlignment;
@@ -32,6 +35,10 @@ import com.immomo.mls.utils.convert.ConvertUtils;
 import com.immomo.mls.weight.BaseTabLayout;
 import com.immomo.mls.weight.TextDotTabInfoLua;
 
+import kotlin.Unit;
+import kotlin.jvm.functions.Function1;
+import kotlin.jvm.functions.Function3;
+
 import org.luaj.vm2.LuaFunction;
 import org.luaj.vm2.LuaNumber;
 import org.luaj.vm2.LuaTable;
@@ -40,14 +47,11 @@ import org.luaj.vm2.utils.LuaApiUsed;
 
 import java.util.List;
 
-import androidx.core.view.ViewCompat;
-import androidx.viewpager.widget.ViewPager;
-
 
 /**
  * Created by fanqiang on 2018/9/14.
  */
-@LuaApiUsed
+@LuaApiUsed(ignoreTypeArgs = true)
 public class UDTabLayout<T extends LuaTabLayout> extends UDViewGroup<T> implements ITabLayoutScrollProgress {
 
     public static final String LUA_CLASS_NAME = "TabSegmentView";
@@ -70,7 +74,9 @@ public class UDTabLayout<T extends LuaTabLayout> extends UDViewGroup<T> implemen
             "changeRedDotStatusAtIndex",
             "selectedColor",
             "setTabScrollingListener",
-            "indicatorColor"
+            "indicatorColor",
+            "removeTab",
+            "setIndicatorHeight"
 
     };
 
@@ -79,11 +85,12 @@ public class UDTabLayout<T extends LuaTabLayout> extends UDViewGroup<T> implemen
     private LuaFunction itemClickCallBackFunction;
     private LuaFunction mTabScrollingProgressFunction;
 
-    public static final int DEFAULT_COLOR = Color.argb(255, 50, 51, 51);
+    public static final int DEFAULT_COLOR = Color.argb(255, 170, 170, 170);
+    private static final int DEFAULT_SELECT_COLOR = Color.argb(255, 50, 51, 51);
 
     private int textColor = DEFAULT_COLOR;
-    private int selectTextColor = DEFAULT_COLOR;
-    private int indicatorColor = DEFAULT_COLOR;
+    private int selectTextColor = DEFAULT_SELECT_COLOR;
+    private int indicatorColor = DEFAULT_SELECT_COLOR;
 
     private boolean mLuaSetIndicatorColor = false;
 
@@ -92,7 +99,17 @@ public class UDTabLayout<T extends LuaTabLayout> extends UDViewGroup<T> implemen
     private int mAlign;
     DefaultSlidingIndicator indicator = null;
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(UDRect.class),
+                    @LuaApiUsed.Type(UDArray.class),
+            }, returns = @LuaApiUsed.Type(value = UDTabLayout.class)),
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(UDRect.class),
+                    @LuaApiUsed.Type(UDArray.class),
+                    @LuaApiUsed.Type(value = UDColor.class)
+            }, returns = @LuaApiUsed.Type(value = UDTabLayout.class))
+    })
     public UDTabLayout(long L, LuaValue[] v) {
         super(L, v);
         mAlign = TabSegmentAlignment.LEFT;
@@ -114,6 +131,7 @@ public class UDTabLayout<T extends LuaTabLayout> extends UDViewGroup<T> implemen
         if (varargs.length > 2) {
             UDColor color = (UDColor) varargs[2];
             textColor = color.getColor();
+            indicator.setColor(selectTextColor);
         }
         getTabLayout().setTabTextColors(textColor, textColor);
 
@@ -155,7 +173,11 @@ public class UDTabLayout<T extends LuaTabLayout> extends UDViewGroup<T> implemen
         return (T) new LuaTabLayout(getContext(), this, init);
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = Function1.class, typeArgs = {Integer.class, Unit.class})
+            }, returns = @LuaApiUsed.Type(value = UDTabLayout.class))
+    })
     public LuaValue[] setTabSelectedListener(LuaValue[] v) {
         if (addTabSelectedCallback != null)
             addTabSelectedCallback.destroy();
@@ -163,7 +185,11 @@ public class UDTabLayout<T extends LuaTabLayout> extends UDViewGroup<T> implemen
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = Function1.class, typeArgs = {Integer.class, Unit.class})
+            }, returns = @LuaApiUsed.Type(value = UDTabLayout.class))
+    })
     public LuaValue[] setItemTabClickListener(LuaValue[] v) {
         if (itemClickCallBackFunction != null)
             itemClickCallBackFunction.destroy();
@@ -171,8 +197,39 @@ public class UDTabLayout<T extends LuaTabLayout> extends UDViewGroup<T> implemen
         return null;
     }
 
-    //<editor-fold>
     @LuaApiUsed
+    public LuaValue[] setIndicatorHeight(LuaValue[] v) {
+        if (v.length > 0) {
+            int height = (int) v[0].toInt();
+            int h = DimenUtil.dpiToPx(height);
+            int cs = DimenUtil.check(h);
+            indicator.setHeight(cs);
+            return null;
+        }
+        return varargsOf(LuaNumber.valueOf(DimenUtil.pxToDpi(getHeight())));
+    }
+
+
+    @LuaApiUsed
+    public LuaValue[] removeTab(LuaValue[] v) {
+        int index = (int) v[0].toInt();
+        if (getTabLayout().getTabCount() > index) {
+            BaseTabLayout.Tab tab = getTabLayout().getTabAt(index);
+            if (tab != null) {
+                getTabLayout().removeTab(tab);
+            }
+        }
+        return null;
+    }
+
+    //<editor-fold>
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Float.class)
+            }, returns = @LuaApiUsed.Type(value = UDTabLayout.class)),
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(Float.class))
+    })
     public LuaValue[] selectScale(LuaValue[] v) {
         if (v.length == 0) {
             if (getTabLayout().getTabCount() >= 1) {
@@ -193,13 +250,19 @@ public class UDTabLayout<T extends LuaTabLayout> extends UDViewGroup<T> implemen
             if (tab != null) {
                 tab.select();
                 TextDotTabInfoLua info = tab.getTabInfo();
-                info.upDataScale();
+                info.upDataScale(getTabLayout());
             }
         }
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Float.class)
+            }, returns = @LuaApiUsed.Type(value = UDTabLayout.class)),
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(Float.class))
+    })
     public LuaValue[] normalFontSize(LuaValue[] v) {
         if (v.length == 0) {
             if (getTabLayout().getTabCount() >= 1) {
@@ -218,7 +281,13 @@ public class UDTabLayout<T extends LuaTabLayout> extends UDViewGroup<T> implemen
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(UDColor.class)
+            }, returns = @LuaApiUsed.Type(value = UDTabLayout.class)),
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(UDColor.class))
+    })
     public LuaValue[] tintColor(LuaValue[] v) {
         if (v.length == 0) {
             UDColor ret = new UDColor(getGlobals(), this.textColor);
@@ -232,7 +301,13 @@ public class UDTabLayout<T extends LuaTabLayout> extends UDViewGroup<T> implemen
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(UDColor.class)
+            }, returns = @LuaApiUsed.Type(value = UDTabLayout.class)),
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(UDColor.class))
+    })
     public LuaValue[] selectedColor(LuaValue[] v) {
         if (v.length == 0) {
             UDColor ret = new UDColor(getGlobals(), this.selectTextColor);
@@ -249,7 +324,13 @@ public class UDTabLayout<T extends LuaTabLayout> extends UDViewGroup<T> implemen
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(UDColor.class)
+            }, returns = @LuaApiUsed.Type(value = UDTabLayout.class)),
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(UDColor.class))
+    })
     public LuaValue[] indicatorColor(LuaValue[] v) {
         if (v.length == 0) {
             UDColor ret = new UDColor(getGlobals(), this.indicatorColor);
@@ -267,7 +348,11 @@ public class UDTabLayout<T extends LuaTabLayout> extends UDViewGroup<T> implemen
         (getView()).getTabLayout().getTabStrip().invalidate();
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = Function3.class, typeArgs = {Float.class, Integer.class, Integer.class, Unit.class})
+            }, returns = @LuaApiUsed.Type(value = UDTabLayout.class))
+    })
     public LuaValue[] setTabScrollingListener(LuaValue[] v) {
         if (mTabScrollingProgressFunction != null)
             mTabScrollingProgressFunction.destroy();
@@ -276,7 +361,13 @@ public class UDTabLayout<T extends LuaTabLayout> extends UDViewGroup<T> implemen
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Integer.class)
+            }, returns = @LuaApiUsed.Type(value = UDTabLayout.class)),
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(Integer.class))
+    })
     public LuaValue[] currentIndex(LuaValue[] v) {
         if (v.length != 0) {
             getTabLayout().setSelectedTabPosition(v[0].toInt() - 1);
@@ -286,7 +377,11 @@ public class UDTabLayout<T extends LuaTabLayout> extends UDViewGroup<T> implemen
         return rNumber(getTabLayout().getSelectedTabPosition() + 1);
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(UDViewPager.class)
+            }, returns = @LuaApiUsed.Type(value = UDTabLayout.class))
+    })
     public LuaValue[] relatedToViewPager(LuaValue[] v) {
         if (v.length == 0 || v[0].isNil()) {
             return null;
@@ -294,7 +389,7 @@ public class UDTabLayout<T extends LuaTabLayout> extends UDViewGroup<T> implemen
 
         mViewPager = ((UDViewPager) v[0]).getViewPager();
 
-        boolean animated = false;
+        boolean animated = true;
         if (v.length >= 2)
             animated = v[1].toBoolean();
 
@@ -307,12 +402,16 @@ public class UDTabLayout<T extends LuaTabLayout> extends UDViewGroup<T> implemen
                 mViewPager.getAdapter().notifyDataSetChanged();
         }
 
-        mViewPager.addOnPageChangeListener(new BaseTabLayout.TabLayoutOnPageChangeListener(getTabLayout(),this));
+        mViewPager.addOnPageChangeListener(new BaseTabLayout.TabLayoutOnPageChangeListener(getTabLayout(), this));
         getTabLayout().addOnTabSelectedListener(new BaseTabLayout.ViewPagerOnTabSelectedListener(mViewPager, animated));
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Integer.class)
+            }, returns = @LuaApiUsed.Type(value = UDTabLayout.class))
+    })
     public LuaValue[] setCurrentIndexAnimated(LuaValue[] v) {
         if (v.length != 0) {
             final int index = v[0].toInt();
@@ -333,7 +432,12 @@ public class UDTabLayout<T extends LuaTabLayout> extends UDViewGroup<T> implemen
         return "UDTabLayout" + hashCode();
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Integer.class),
+                    @LuaApiUsed.Type(Integer.class)
+            }, returns = @LuaApiUsed.Type(value = UDTabLayout.class))
+    })
     public LuaValue[] setTapBadgeNumAtIndex(LuaValue[] v) {
         if (!v[0].isNumber() || !v[1].isNumber()) {//参数不是number，直接返回
             return null;
@@ -353,7 +457,11 @@ public class UDTabLayout<T extends LuaTabLayout> extends UDViewGroup<T> implemen
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(String.class)
+            }, returns = @LuaApiUsed.Type(value = UDTabLayout.class))
+    })
     public LuaValue[] setTapBadgeTitleAtIndex(LuaValue[] v) {
         if (v[0].isNil()) {
             IllegalArgumentException e = new IllegalArgumentException("setTapBadgeTitleAtIndex() method  title cannot be nil ");
@@ -377,7 +485,11 @@ public class UDTabLayout<T extends LuaTabLayout> extends UDViewGroup<T> implemen
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Integer.class)
+            }, returns = @LuaApiUsed.Type(value = UDTabLayout.class))
+    })
     public LuaValue[] setAlignment(LuaValue[] alignment) {
 
         if (alignment.length == 1) {
@@ -392,7 +504,12 @@ public class UDTabLayout<T extends LuaTabLayout> extends UDViewGroup<T> implemen
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Float.class),
+                    @LuaApiUsed.Type(Float.class)
+            }, returns = @LuaApiUsed.Type(value = UDTabLayout.class))
+    })
     public LuaValue[] setTabSpacing(LuaValue[] v) {
         float tabSpacing = (float) v[0].toDouble();
         BaseTabLayout.SlidingTabStrip slidingTabStrip = getTabLayout().getTabStrip();
@@ -425,7 +542,13 @@ public class UDTabLayout<T extends LuaTabLayout> extends UDViewGroup<T> implemen
         return null;
     }
 
-    @LuaApiUsed
+
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Integer.class),
+                    @LuaApiUsed.Type(Boolean.class)
+            }, returns = @LuaApiUsed.Type(value = UDTabLayout.class))
+    })
     public LuaValue[] setRedDotHiddenAtIndex(LuaValue[] v) {
         int index = v[0].toInt() - 1;
         if (index > getTabLayout().getTabCount() - 1) {
@@ -441,13 +564,23 @@ public class UDTabLayout<T extends LuaTabLayout> extends UDViewGroup<T> implemen
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = Integer.class),
+                    @LuaApiUsed.Type(value = Boolean.class)
+            }, returns = @LuaApiUsed.Type(value = UDTabLayout.class))
+    })
     public LuaValue[] changeRedDotStatusAtIndex(LuaValue[] v) {
         setRedDotHiddenAtIndex(v);
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(name = "title", value = String.class),
+                    @LuaApiUsed.Type(name = "index", value = Integer.class)
+            }, returns = @LuaApiUsed.Type(value = UDTabLayout.class))
+    })
     public LuaValue[] setTapTitleAtIndex(LuaValue[] v) {
         String title = v.length > 0 ? v[0].toJavaString() : null;
         int index = v.length > 1 ? v[1].toInt() - 1 : -1;
@@ -460,6 +593,17 @@ public class UDTabLayout<T extends LuaTabLayout> extends UDViewGroup<T> implemen
     }
 
     //</editor-fold>
+
+    public void setIndicatorColor() {
+        if (indicatorColor != DEFAULT_SELECT_COLOR)
+            indicator.setColor(indicatorColor);
+        else if (selectTextColor != DEFAULT_SELECT_COLOR)
+            indicator.setColor(selectTextColor);
+        else
+            indicator.setColor(textColor);
+
+        getView().invalidate();
+    }
 
     private void addTabs(List<String> array) {
         if (array == null || array.size() == 0) {
@@ -552,7 +696,7 @@ public class UDTabLayout<T extends LuaTabLayout> extends UDViewGroup<T> implemen
         for (int i = 0; i < getTabLayout().getTabCount(); i++) {
             BaseTabLayout.Tab tab1 = getTabLayout().getTabAt(i);
             TextDotTabInfoLua info1 = tab1.getTabInfo();
-            if (position == i ) {
+            if (position == i) {
                 info1.setTitleColor(selectTextColor);
             } else
                 info1.setTitleColor(textColor);
@@ -562,7 +706,7 @@ public class UDTabLayout<T extends LuaTabLayout> extends UDViewGroup<T> implemen
     }
 
     @Override
-    public void tabScrollProgress(double progresss, int fromIndex,  int  toIndex) {
+    public void tabScrollProgress(double progresss, int fromIndex, int toIndex) {
         if (mTabScrollingProgressFunction != null)
             mTabScrollingProgressFunction.invoke(varargsOf(LuaNumber.valueOf(progresss), LuaNumber.valueOf(fromIndex + 1), LuaNumber.valueOf(toIndex + 1)));
     }

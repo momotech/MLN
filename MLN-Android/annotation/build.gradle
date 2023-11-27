@@ -1,7 +1,17 @@
 apply plugin: 'java-library'
 
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
 dependencies {
 }
-
-apply from: "../bintrayUpload.gradle"
-version=annotationVersion
+if (!implementation_debug) {
+    if (update_hello_group) {
+        ext.versionForMomo = rootProject.ext.annotationVersion
+        apply from: '../publish_to_hellogroup_maven_central.gradle'
+    } else {
+        project.ext["publish.version"] = annotationVersion
+        apply from: "../publish_to_maven_central.gradle"
+    }
+}

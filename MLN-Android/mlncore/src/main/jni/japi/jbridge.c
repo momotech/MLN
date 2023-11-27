@@ -48,11 +48,34 @@ typedef struct context {
 } context;
 
 /**
+ * upvalue:
+ *      classname
+ *      methodname
+ */
+static int exeEmptyMethod(lua_State *L) {
+    if (!openCallbackEmptyMethod()) {
+        lua_settop(L, 1);
+        return 1;
+    }
+    lua_lock(L);
+    if (!lua_istable(L, 1)) {
+        lua_pushstring(L, "use ':' instead of '.' to call method!!");
+        lua_unlock(L);
+        setErrorType(L, lua);
+        lua_error(L);
+        return 1;
+    }
+
+    const char *clz = lua_tostring(L, lua_upvalueindex(1));
+    const char *mn = lua_tostring(L, lua_upvalueindex(2));
+    onEmptyMethodCall(L, clz, mn);
+    lua_settop(L, 1);
+    lua_unlock(L);
+    return 1;
+}
+
+/**
  * -1: table
- * @param key
- * @param value
- * @param ud
- * @return
  */
 static int traverse_listener(const void *key, const void *value, void *ud) {
     const char *methodName = (const char *) key;
@@ -60,13 +83,19 @@ static int traverse_listener(const void *key, const void *value, void *ud) {
     context *c = (context *) ud;
 
     lua_pushstring(c->L, methodName);
-    pushStaticClosure(c->L, c->clz, m, c->className, methodName, -1, 1);
+    if (isEmptyMethod(m)) {
+        lua_pushstring(c->L, c->className);
+        lua_pushstring(c->L, methodName);
+        lua_pushcclosure(c->L, exeEmptyMethod, 2);
+    } else {
+        pushStaticClosure(c->L, c->clz, m, c->className, methodName, -1, 1);
+    }
     lua_rawset(c->L, -3);
     return 0;
 }
 
 static void register_static_bridge(JNIEnv *env, lua_State *LS,
-        jstring jn, jstring ln, jstring lpcn) {
+                                   jstring jn, jstring ln, jstring lpcn) {
     const char *jclassname = GetString(env, jn);
     jclass clz = getClassByName(env, jclassname);
     if (!clz) {
@@ -98,12 +127,6 @@ static void register_static_bridge(JNIEnv *env, lua_State *LS,
         setParentTable(LS, -2, -1);
         lua_pop(LS, 1);
         ReleaseChar(env, lpcn, parent_name);
-    } else {
-        /// 设置空方法
-        lua_getglobal(LS, EMPTY_METHOD_TABLE);
-        if (lua_istable(LS, -11))
-            copyTable(LS, -1, -2);
-        lua_pop(LS, 1);
     }
 
     context c = {LS, clz, lname};
@@ -113,9 +136,41 @@ static void register_static_bridge(JNIEnv *env, lua_State *LS,
     ReleaseChar(env, ln, lname);
     lua_unlock(LS);
 }
+//后面重构
+ void registerStaticBridge(JNIEnv const *env, lua_State *LS, const char *lname, const char *parent_name,
+                                 jclass clz) {
+    lua_lock(LS);
+    lua_getglobal(LS, lname);
+    if (!lua_istable(LS, -1)) {
+        lua_pop(LS, 1);
+        lua_newtable(LS);
+    }
+    /// -1:table
+
+    /// 有父类的情况
+    if (parent_name) {
+        lua_getglobal(LS, parent_name);
+        if (!lua_istable(LS, -1)) {
+            lua_pop(LS, 1);
+            lua_newtable(LS);
+            lua_pushvalue(LS, -1);
+            lua_setglobal(LS, parent_name);
+        }
+        /// -1:parent -2:mytable
+        setParentTable(LS, -2, -1);
+        lua_pop(LS, 1);
+    }
+
+    context c = {LS, clz, lname};
+    traverseAllMethods(clz, traverse_listener, &c);
+
+    lua_setglobal(LS, lname);
+    lua_unlock(LS);
+}
 
 void jni_registerAllStaticClass(JNIEnv *env, jobject jobj,
-                                jlong Ls, jobjectArray lcns, jobjectArray lpcns, jobjectArray jcns) {
+                                jlong Ls, jobjectArray lcns, jobjectArray lpcns,
+                                jobjectArray jcns) {
     int len = GetArrLen(env, lcns);
     int i;
     for (i = 0; i < len; ++i) {
@@ -218,7 +273,8 @@ void jni_registerStringEnum(JNIEnv *env, jobject jobj, jlong LS, jstring lcn, jo
 /**
  * 对应executeJavaStaticFunction
  */
-void pushStaticClosure(lua_State *L, jclass clz, jmethodID m, const char *className, const char *methodName, int pc, int colonCall) {
+void pushStaticClosure(lua_State *L, jclass clz, jmethodID m, const char *className,
+                       const char *methodName, int pc, int colonCall) {
     UDjclass udclz = (UDjclass) lua_newuserdata(L, sizeof(jclass));
     *udclz = clz;
 
@@ -282,9 +338,10 @@ static int executeJavaStaticFunction(lua_State *L) {
         if (!lua_istable(L, 1)) {
             lua_pushstring(L, "use ':' instead of '.' to call method!!");
             lua_unlock(L);
+            setErrorType(L, lua);
             return lua_error(L);
         }
-        pc --;///去掉栈底的table
+        pc--;///去掉栈底的table
     }
 
     jobjectArray p = newLuaValueArrayFromStack(env, L, pc, colonCall ? 2 : 1);

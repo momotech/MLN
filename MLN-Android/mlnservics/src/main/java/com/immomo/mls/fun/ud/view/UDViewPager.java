@@ -22,8 +22,13 @@ import com.immomo.mls.fun.ui.LuaViewPager;
 import com.immomo.mls.fun.weight.LuaViewPagerContainer;
 import com.immomo.mls.utils.ErrorUtils;
 
+import kotlin.Unit;
+import kotlin.jvm.functions.Function1;
+import kotlin.jvm.functions.Function2;
+import kotlin.jvm.functions.Function3;
 import org.luaj.vm2.LuaFunction;
 import org.luaj.vm2.LuaNumber;
+import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.utils.LuaApiUsed;
 
@@ -32,7 +37,7 @@ import androidx.viewpager.widget.PagerAdapter;
 /**
  * Created by fanqiang on 2018/8/30.
  */
-@LuaApiUsed
+@LuaApiUsed(ignoreTypeArgs = true)
 public class UDViewPager<T extends FrameLayout & IViewPager> extends UDViewGroup<T> implements View.OnClickListener {
     public static final String LUA_CLASS_NAME = "ViewPager";
     public static final String[] methods = new String[]{
@@ -76,7 +81,10 @@ public class UDViewPager<T extends FrameLayout & IViewPager> extends UDViewGroup
     private int mScrollToPage = 0;
     private boolean mScrollToPageAnimated = false;
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(UDViewPager.class))
+    })
     public UDViewPager(long L, LuaValue[] v) {
         super(L, v);
     }
@@ -109,7 +117,11 @@ public class UDViewPager<T extends FrameLayout & IViewPager> extends UDViewGroup
         return values;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(UDViewPagerAdapter.class)
+            }, returns = @LuaApiUsed.Type(UDViewPager.class))
+    })
     public LuaValue[] adapter(LuaValue[] values) {
         if (values.length == 0) {
             if (this.adapter != null)
@@ -151,7 +163,9 @@ public class UDViewPager<T extends FrameLayout & IViewPager> extends UDViewGroup
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(returns = @LuaApiUsed.Type(UDViewPager.class))
+    })
     public LuaValue[] reloadData(LuaValue[] values) {
         if (adapter != null) {
             adapter.reloadData();
@@ -171,7 +185,12 @@ public class UDViewPager<T extends FrameLayout & IViewPager> extends UDViewGroup
         return getView().isAutoScroll();
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Boolean.class)
+            }, returns = @LuaApiUsed.Type(UDViewPager.class)),
+            @LuaApiUsed.Func(returns = @LuaApiUsed.Type(Boolean.class))
+    })
     public LuaValue[] autoScroll(LuaValue[] values) {
         if (values.length >= 1 && values[0] != null) {
             getView().setAutoScroll(values[0].toBoolean());
@@ -184,7 +203,12 @@ public class UDViewPager<T extends FrameLayout & IViewPager> extends UDViewGroup
         return getView().isRepeat();
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Boolean.class)
+            }, returns = @LuaApiUsed.Type(UDViewPager.class)),
+            @LuaApiUsed.Func(returns = @LuaApiUsed.Type(Boolean.class))
+    })
     public LuaValue[] recurrence(LuaValue[] values) {
         if (values.length >= 1 && values[0] != null) {
             boolean repeat = values[0].toBoolean();
@@ -209,7 +233,12 @@ public class UDViewPager<T extends FrameLayout & IViewPager> extends UDViewGroup
         return getView().getFrameInterval();
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Float.class)
+            }, returns = @LuaApiUsed.Type(UDViewPager.class)),
+            @LuaApiUsed.Func(returns = @LuaApiUsed.Type(Float.class))
+    })
     public LuaValue[] frameInterval(LuaValue[] values) {
         if (values.length >= 1 && values[0] != null) {
             getView().setFrameInterval((float) values[0].toDouble());
@@ -220,7 +249,11 @@ public class UDViewPager<T extends FrameLayout & IViewPager> extends UDViewGroup
     }
 
     @Deprecated
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = Function1.class, typeArgs = {Integer.class, Unit.class})
+            }, returns = @LuaApiUsed.Type(UDViewPager.class))
+    })
     public LuaValue[] endDragging(LuaValue[] values) {
         ErrorUtils.debugDeprecatedMethodHook("endDragging", getGlobals());
 
@@ -240,7 +273,12 @@ public class UDViewPager<T extends FrameLayout & IViewPager> extends UDViewGroup
         return getView().getPageIndicator() != null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Boolean.class)
+            }, returns = @LuaApiUsed.Type(UDViewPager.class)),
+            @LuaApiUsed.Func(returns = @LuaApiUsed.Type(Boolean.class))
+    })
     public LuaValue[] showIndicator(LuaValue[] values) {
         if (values.length >= 1 && values[0] != null) {
             mDefaultAddIndicator = values[0].toBoolean();
@@ -250,7 +288,12 @@ public class UDViewPager<T extends FrameLayout & IViewPager> extends UDViewGroup
         return LuaValue.rBoolean(isShowIndicator());
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Integer.class),
+                    @LuaApiUsed.Type(Boolean.class)
+            }, returns = @LuaApiUsed.Type(UDViewPager.class))
+    })
     public LuaValue[] scrollToPage(LuaValue[] values) {
         if (getViewPager().getAdapter() == null) {
             mScrollToPage = values[0].toInt() - 1;
@@ -279,7 +322,9 @@ public class UDViewPager<T extends FrameLayout & IViewPager> extends UDViewGroup
             getViewPager().setCurrentItem(mScrollToPage, mScrollToPageAnimated);
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(returns = @LuaApiUsed.Type(Integer.class))
+    })
     public LuaValue[] currentPage(LuaValue[] values) {
 
         ViewPagerAdapter viewPagerAdapter = ((ViewPagerAdapter) getViewPager().getAdapter());
@@ -292,7 +337,12 @@ public class UDViewPager<T extends FrameLayout & IViewPager> extends UDViewGroup
         return LuaValue.rNumber(getViewPager().getCurrentItem() + 1);
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(UDColor.class)
+            }, returns = @LuaApiUsed.Type(UDViewPager.class)),
+            @LuaApiUsed.Func(returns = @LuaApiUsed.Type(UDColor.class))
+    })
     public LuaValue[] currentPageColor(LuaValue[] values) {
         if (values.length >= 1) {
             mIndicatorSelectedColor = ((UDColor) values[0]).getColor();
@@ -303,7 +353,12 @@ public class UDViewPager<T extends FrameLayout & IViewPager> extends UDViewGroup
         return mDefaultPageIndicator == null ? null : varargsOf(new UDColor(getGlobals(), mDefaultPageIndicator.getFillColor()));
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(UDColor.class)
+            }, returns = @LuaApiUsed.Type(UDViewPager.class)),
+            @LuaApiUsed.Func(returns = @LuaApiUsed.Type(UDColor.class))
+    })
     public LuaValue[] pageDotColor(LuaValue[] values) {
         if (values.length >= 1) {
             mIndicatorDefaultColor = ((UDColor) values[0]).getColor();
@@ -314,7 +369,11 @@ public class UDViewPager<T extends FrameLayout & IViewPager> extends UDViewGroup
         return mDefaultPageIndicator == null ? null : varargsOf(new UDColor(getGlobals(), mDefaultPageIndicator.getPageColor()));
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Integer.class)
+            }, returns = @LuaApiUsed.Type(UDViewPager.class))
+    })
     public LuaValue[] setPreRenderCount(LuaValue[] values) {
         int count = values[0].toInt();
         preRenderCount = count;
@@ -330,13 +389,22 @@ public class UDViewPager<T extends FrameLayout & IViewPager> extends UDViewGroup
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Boolean.class)
+            }, returns = @LuaApiUsed.Type(UDViewPager.class))
+    })
     public LuaValue[] setScrollEnable(LuaValue[] values) {
         getViewPager().setScrollable(values[0].toBoolean());
         return null;
     }
 
-    @Override
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(UDColor.class)
+            }, returns = @LuaApiUsed.Type(UDViewPager.class)),
+            @LuaApiUsed.Func(returns = @LuaApiUsed.Type(UDColor.class))
+    })
     public LuaValue[] bgColor(LuaValue[] var) {
         if (var.length == 1 && var[0] instanceof UDColor) {
             getView().setBackgroundColor(((UDColor) var[0]).getColor());
@@ -346,7 +414,12 @@ public class UDViewPager<T extends FrameLayout & IViewPager> extends UDViewGroup
         return varargsOf(ret);
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Boolean.class)
+            }, returns = @LuaApiUsed.Type(UDViewPager.class)),
+            @LuaApiUsed.Func(returns = @LuaApiUsed.Type(Boolean.class))
+    })
     public LuaValue[] aheadLoad(LuaValue[] values) {
         if (values.length >= 1 && values[0] != null && values[0].isBoolean()) {
             if (values[0].toBoolean()) {
@@ -359,20 +432,32 @@ public class UDViewPager<T extends FrameLayout & IViewPager> extends UDViewGroup
         return LuaValue.rBoolean(preRenderCount > 0);
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = Function2.class, typeArgs = {LuaValue.class, Integer.class, Unit.class})
+            }, returns = @LuaApiUsed.Type(UDViewPager.class))
+    })
     public LuaValue[] cellWillAppear(LuaValue[] values) {
         cellWillAppearFun = values[0].toLuaFunction();
         getViewPager().firstAttachAppearZeroPosition();
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = Function2.class, typeArgs = {LuaValue.class, Integer.class, Unit.class})
+            }, returns = @LuaApiUsed.Type(UDViewPager.class))
+    })
     public LuaValue[] cellDidDisappear(LuaValue[] values) {
         cellDidDisappearFun = values[0].toLuaFunction();
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = Function1.class, typeArgs = {Integer.class, Unit.class})
+            }, returns = @LuaApiUsed.Type(UDViewPager.class))
+    })
     public LuaValue[] setPageClickListener(LuaValue[] values) {
         funOnPageClick = values[0].toLuaFunction();
         if (funOnPageClick != null && adapter != null) {
@@ -381,7 +466,11 @@ public class UDViewPager<T extends FrameLayout & IViewPager> extends UDViewGroup
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = Function3.class, typeArgs = {Float.class, Integer.class, Integer.class, Unit.class})
+            }, returns = @LuaApiUsed.Type(UDViewPager.class))
+    })
     public LuaValue[] setTabScrollingListener(LuaValue[] v) {
         if (mTabScrollingProgressFunction != null)
             mTabScrollingProgressFunction.destroy();
@@ -389,7 +478,11 @@ public class UDViewPager<T extends FrameLayout & IViewPager> extends UDViewGroup
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = Function1.class, typeArgs = {Integer.class, Unit.class})
+            }, returns = @LuaApiUsed.Type(UDViewPager.class))
+    })
     public LuaValue[] onChangeSelected(LuaValue[] v) {
         if (mPageSelectedFunction != null)
             mPageSelectedFunction.destroy();

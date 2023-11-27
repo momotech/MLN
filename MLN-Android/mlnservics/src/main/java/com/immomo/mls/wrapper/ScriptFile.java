@@ -9,6 +9,9 @@ package com.immomo.mls.wrapper;
 
 import android.content.Context;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.immomo.mls.Constants;
 
 import org.luaj.vm2.Globals;
@@ -122,6 +125,17 @@ public class ScriptFile {
         return isAssetsPath;
     }
 
+    public boolean toSourceDataType(@Nullable Context context) {
+        if (!pathType)
+            return false;
+        if (isAssetsPath()) {
+            if (context == null)
+                return false;
+            return setAssetsPath(context, getAssetsPath());
+        }
+        return setFilePath(new File(path));
+    }
+
     public String getAssetsPath() {
         if (!isAssetsPath)
             return path;
@@ -133,7 +147,7 @@ public class ScriptFile {
      * 设置assets目录下文件，并读入内存中
      * @return true 读取成功
      */
-    public boolean setAssetsPath(Context context, String assetsPath) {
+    public boolean setAssetsPath(@NonNull Context context, String assetsPath) {
         try {
             InputStream is = context.getAssets().open(assetsPath);
             byte[] sourceData = new byte[is.available()];

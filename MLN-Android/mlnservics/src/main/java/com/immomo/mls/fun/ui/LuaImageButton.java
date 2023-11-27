@@ -1,13 +1,16 @@
 /**
-  * Created by MomoLuaNative.
-  * Copyright (c) 2019, Momo Group. All rights reserved.
-  *
-  * This source code is licensed under the MIT.
-  * For the full copyright and license information,please view the LICENSE file in the root directory of this source tree.
-  */
+ * Created by MomoLuaNative.
+ * Copyright (c) 2019, Momo Group. All rights reserved.
+ * <p>
+ * This source code is licensed under the MIT.
+ * For the full copyright and license information,please view the LICENSE file in the root directory of this source tree.
+ */
 package com.immomo.mls.fun.ui;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.StateListDrawable;
 import android.text.TextUtils;
@@ -18,6 +21,7 @@ import com.immomo.mls.fun.ud.view.UDImageButton;
 import com.immomo.mls.fun.ud.view.UDImageView;
 import com.immomo.mls.provider.DrawableLoadCallback;
 import com.immomo.mls.provider.ImageProvider;
+import com.immomo.mls.util.FileUtil;
 import com.immomo.mls.utils.MainThreadExecutor;
 
 import org.luaj.vm2.LuaValue;
@@ -87,23 +91,34 @@ public class LuaImageButton<U extends UDImageButton> extends LuaImageView<U> imp
     }
 
     private void updateDrawable(boolean normal, Drawable d) {
-        if (normal) {
-            normalDrawable = d;
-        } else {
-            pressDrawable = d;
+        try {
+            if (d instanceof BitmapDrawable) {
+                if (((BitmapDrawable) d).getBitmap().isRecycled()) {
+                    return;
+                }
+                Bitmap originalBitmap = ((BitmapDrawable) d).getBitmap();
+                Bitmap copiedBitmap = originalBitmap.copy(originalBitmap.getConfig(), true);
+                d = new BitmapDrawable(getResources(), copiedBitmap);
+            }
+            if (normal) {
+                normalDrawable = d;
+            } else {
+                pressDrawable = d;
+            }
+
+            if (normalDrawable != null && pressDrawable != null) {
+                StateListDrawable sd = new StateListDrawable();
+                sd.addState(NORMAL_STATE, normalDrawable);
+                sd.addState(PRESSED_STATE, pressDrawable);
+                setImageDrawable(sd);
+
+            } else if (normalDrawable != null) {
+                StateListDrawable sd = new StateListDrawable();
+                sd.addState(NORMAL_STATE, normalDrawable);
+                setImageDrawable(sd);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-
-        if (normalDrawable != null && pressDrawable != null) {
-            StateListDrawable sd = new StateListDrawable();
-            sd.addState(NORMAL_STATE, normalDrawable);
-            sd.addState(PRESSED_STATE, pressDrawable);
-            setImageDrawable(sd);
-
-        } else if (normalDrawable != null) {
-            StateListDrawable sd = new StateListDrawable();
-            sd.addState(NORMAL_STATE, normalDrawable);
-            setImageDrawable(sd);
-        }
-
     }
 }

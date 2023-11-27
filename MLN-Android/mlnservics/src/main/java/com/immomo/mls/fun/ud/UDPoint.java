@@ -58,7 +58,12 @@ public class UDPoint extends LuaUserdata {
      * @param L 虚拟机地址
      * @param v lua脚本传入的构造参数
      */
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Float.class),
+                    @LuaApiUsed.Type(Float.class)
+            })
+    })
     protected UDPoint(long L, LuaValue[] v) {
         super(L, null);
         point = new Point();
@@ -78,7 +83,13 @@ public class UDPoint extends LuaUserdata {
     }
 
     //<editor-fold desc="API">
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Float.class),
+            }, returns = @LuaApiUsed.Type(UDPoint.class)),
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(Float.class))
+    })
     public LuaValue[] x(LuaValue[] varargs) {
         if (varargs.length == 1) {
             setX((float) varargs[0].toDouble());
@@ -87,7 +98,13 @@ public class UDPoint extends LuaUserdata {
         return rNumber(getX());
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Float.class),
+            }, returns = @LuaApiUsed.Type(UDPoint.class)),
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(Float.class))
+    })
     public LuaValue[] y(LuaValue[] varargs) {
         if (varargs.length == 1) {
             setY((float) varargs[0].toDouble());

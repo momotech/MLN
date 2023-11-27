@@ -21,6 +21,19 @@ void jni_setAssetManager(JNIEnv *env, jobject jobj, jobject am) {
     assetManager = AAssetManager_fromJava(env, am);
 }
 
+const char *errorCode2String(int ec) {
+    switch (ec) {
+        case AR_NOT_INIT:
+            return ERROR_NOT_INIT;
+        case AR_READ_ERROR:
+            return ERROR_READ_ERROR;
+        case AR_FILE_NOT_FOUND:
+            return ERROR_FILE_NOT_FOUND;
+        default:
+            return "未知错误";
+    }
+}
+
 int readFromAssets(const char *name, char *out, size_t max, int *error) {
     if (!assetManager) {
         if (error) *error = AR_NOT_INIT;

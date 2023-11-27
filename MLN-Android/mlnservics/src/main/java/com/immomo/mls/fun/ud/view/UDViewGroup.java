@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.immomo.mls.base.ud.lv.ILViewGroup;
+import com.immomo.mls.fun.ud.view.recycler.UDRecyclerView;
 import com.immomo.mls.fun.ui.LuaViewGroup;
 import com.immomo.mls.util.LuaViewUtil;
 import com.immomo.mls.utils.AssertUtils;
@@ -23,13 +24,14 @@ import org.luaj.vm2.utils.LuaApiUsed;
 /**
  * Created by XiongFangyu on 2018/7/31.
  */
-@LuaApiUsed
+@LuaApiUsed(ignoreTypeArgs = true)
 public class UDViewGroup<V extends ViewGroup> extends UDView<V> {
     public static final String[] LUA_CLASS_NAME = {"View", "AnimationZone"};
     public static final String[] methods = {
             "addView", "insertView", "removeAllSubviews"
     };
 
+    @LuaApiUsed(ignore = true)
     protected UDViewGroup(long L, LuaValue[] v) {
         super(L, v);
     }
@@ -48,7 +50,11 @@ public class UDViewGroup<V extends ViewGroup> extends UDView<V> {
     }
 
     //<editor-fold desc="API">
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(UDView.class)
+            }, returns = @LuaApiUsed.Type(UDViewGroup.class))
+    })
     public LuaValue[] addView(LuaValue[] var) {
         if (var.length == 1) {
             if (var[0].isNil()) {
@@ -61,7 +67,12 @@ public class UDViewGroup<V extends ViewGroup> extends UDView<V> {
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(UDView.class),
+                    @LuaApiUsed.Type(Integer.class)
+            }, returns = @LuaApiUsed.Type(UDViewGroup.class)),
+    })
     public LuaValue[] insertView(LuaValue[] var) {
         LuaValue v = var[0];
         insertView(v.isNil() ? null : (UDView) v, var[1].toInt() - 1);
@@ -93,7 +104,9 @@ public class UDViewGroup<V extends ViewGroup> extends UDView<V> {
         v.addView(LuaViewUtil.removeFromParent(sub), index, layoutParams);
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(returns = @LuaApiUsed.Type(UDViewGroup.class)),
+    })
     public LuaValue[] removeAllSubviews(LuaValue[] p) {
         V v = getView();
         if (v == null)

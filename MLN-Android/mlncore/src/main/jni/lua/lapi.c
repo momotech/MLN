@@ -977,7 +977,11 @@ LUA_API int lua_load (lua_State *L, lua_Reader reader, void *data,
   lua_lock(L);
   if (!chunkname) chunkname = "?";
   luaZ_init(L, &z, reader, data);
+#ifdef LOAD_TOKEN
+  status = luaD_protectedparser(L, &z, chunkname, mode, NULL);
+#else
   status = luaD_protectedparser(L, &z, chunkname, mode);
+#endif
   if (status == LUA_OK) {  /* no errors? */
     LClosure *f = clLvalue(L->top - 1);  /* get newly created function */
     if (f->nupvalues == 1) {  /* does it have one upvalue? */
@@ -992,6 +996,32 @@ LUA_API int lua_load (lua_State *L, lua_Reader reader, void *data,
   lua_unlock(L);
   return status;
 }
+
+#ifdef LOAD_TOKEN
+LUA_API int lua_load_token (lua_State *L, lua_Reader reader, void *data,
+                                const char *chunkname,
+                                const char *mode, TokenListenData *ud) {
+  ZIO z;
+  int status;
+  lua_lock(L);
+  if (!chunkname) chunkname = "?";
+  luaZ_init(L, &z, reader, data);
+  status = luaD_protectedparser(L, &z, chunkname, mode, ud);
+  if (status == LUA_OK) {  /* no errors? */
+    LClosure *f = clLvalue(L->top - 1);  /* get newly created function */
+    if (f->nupvalues == 1) {  /* does it have one upvalue? */
+      /* get global table from registry */
+      Table *reg = hvalue(&G(L)->l_registry);
+      const TValue *gt = luaH_getint(reg, LUA_RIDX_GLOBALS);
+      /* set global table as 1st upvalue of 'f' (may be LUA_ENV) */
+      setobj(L, f->upvals[0]->v, gt);
+      luaC_barrier(L, f->upvals[0], gt);
+    }
+  }
+  lua_unlock(L);
+  return status;
+}
+#endif
 
 
 LUA_API int lua_dump (lua_State *L, lua_Writer writer, void *data) {

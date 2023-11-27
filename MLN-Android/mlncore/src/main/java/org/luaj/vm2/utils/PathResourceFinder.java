@@ -11,7 +11,7 @@ import java.io.File;
 
 /**
  * Created by Xiong.Fangyu on 2019/3/20
- *
+ * <p>
  * 寻找存在的文件绝对路径
  */
 public class PathResourceFinder implements ResourceFinder {
@@ -44,7 +44,10 @@ public class PathResourceFinder implements ResourceFinder {
         File f = new File(basePath, name);
         if (f.isFile())
             return f.getAbsolutePath();
-        errorMsg = "PRF: " + f.getAbsolutePath() + " not a file";
+        errorMsg = "PRF: " + f.getAbsolutePath() + "不是文件,";
+        try {
+            errorMsg += "文件是否存在：" + f.exists() + "文件是否可读：" + f.canRead();
+        } catch (Exception ignore) { }
         return null;
     }
 

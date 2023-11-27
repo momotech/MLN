@@ -84,11 +84,6 @@ public interface iHotReloadListener {
     public void disconnecte(int type, String ip, int port, String error);
 
     /**
-     * 其他消息
-     */
-    public void onGencoveragereport();
-
-    /**
      * 插件端将ip地址传入手机
      */
     public void onIpChanged(String ip);

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <View
+        android:id="@+id/placeHolder1"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="30dp"
+        android:background="@drawable/circle_111111_bg" />
+
+    <View
+        android:id="@+id/placeHolder2"
+        android:layout_width="100dp"
+        android:layout_height="10dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="32dp"
+        android:layout_toRightOf="@+id/placeHolder1"
+        android:background="@drawable/shape_111111_2dp_bg" />
+
+    <View
+        android:id="@+id/placeHolder3"
+        android:layout_width="176.5dp"
+        android:layout_height="10dp"
+        android:layout_below="@+id/placeHolder2"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="14dp"
+        android:layout_toRightOf="@+id/placeHolder1"
+        android:background="@drawable/shape_111111_2dp_bg" />
+
+    <View
+        android:id="@+id/placeHolder4"
+        android:layout_width="match_parent"
+        android:layout_height="10dp"
+        android:layout_below="@+id/placeHolder3"
+        android:layout_marginEnd="20dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="28dp"
+        android:background="@drawable/shape_111111_2dp_bg" />
+
+    <View
+        android:id="@+id/placeHolder5"
+        android:layout_width="match_parent"
+        android:layout_height="10dp"
+        android:layout_below="@+id/placeHolder4"
+        android:layout_marginBottom="30dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="14dp"
+        android:background="@drawable/shape_111111_2dp_bg" />
+</RelativeLayout>

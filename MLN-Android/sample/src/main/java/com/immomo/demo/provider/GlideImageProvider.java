@@ -1,10 +1,10 @@
 /**
-  * Created by MomoLuaNative.
-  * Copyright (c) 2019, Momo Group. All rights reserved.
+ * Created by MomoLuaNative.
+ * Copyright (c) 2019, Momo Group. All rights reserved.
   *
-  * This source code is licensed under the MIT.
-  * For the full copyright and license information,please view the LICENSE file in the root directory of this source tree.
-  */
+ * This source code is licensed under the MIT.
+ * For the full copyright and license information,please view the LICENSE file in the root directory of this source tree.
+ */
 /*
  * Created by LuaView.
  * Copyright (c) 2017, Alibaba Group. All rights reserved.
@@ -23,7 +23,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.text.TextUtils;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -57,6 +56,7 @@ import java.lang.ref.WeakReference;
  */
 public class GlideImageProvider implements ImageProvider {
     private static final LruCache<String, Integer> IdCache = new LruCache<>(50);
+
     @Override
     public void pauseRequests(final ViewGroup view, Context context) {
         Glide.with(context).pauseRequests();
@@ -83,34 +83,38 @@ public class GlideImageProvider implements ImageProvider {
         RequestBuilder builder;
         if (callback != null) {
             final WeakReference<DrawableLoadCallback> cf = new WeakReference<DrawableLoadCallback>(callback);
-            builder = Glide.with(context).load(url).listener(new RequestListener<Drawable>() {
-                @Override
-                public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                    if (e != null)
-                        e.printStackTrace();
-                    if (cf.get() != null) {
-                        cf.get().onLoadResult(null, e != null ? e.getMessage() : null);
-                    }
-                    return false;
-                }
+            builder = Glide.with(context)
+                    .load(url)
+                    .apply(RequestOptions.centerInsideTransform())
+                    .listener(new RequestListener<Drawable>() {
+                        @Override
+                        public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                            if (e != null)
+                                e.printStackTrace();
+                            if (cf.get() != null) {
+                                cf.get().onLoadResult(null, e != null ? e.getMessage() : null);
+                            }
+                            return false;
+                        }
 
-                @Override
-                public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-                    if (cf.get() != null) {
-                        cf.get().onLoadResult(resource, null);
-                    }
-                    return false;
-                }
-            });
+                        @Override
+                        public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                            if (cf.get() != null) {
+                                cf.get().onLoadResult(resource, null);
+                            }
+                            return false;
+                        }
+                    });
         } else {
-            builder = Glide.with(context).load(url);
+            builder = Glide.with(context).load(url).apply(RequestOptions.centerInsideTransform());
         }
         if (placeHolder != null) {
-            Drawable placeHolderDrawable = loadProjectImage(context,placeHolder);
-            if(placeHolderDrawable !=null) {
+            Drawable placeHolderDrawable = loadProjectImage(context, placeHolder);
+            if (placeHolderDrawable != null) {
                 builder = builder.apply(new RequestOptions().placeholder(placeHolderDrawable));
             }
         }
+
         builder.into(imageView);
     }
 
@@ -138,7 +142,7 @@ public class GlideImageProvider implements ImageProvider {
         if (id > 0) {
             return context.getResources().getDrawable(id);
         }
-        return getImageFromAssert(context,name);
+        return getImageFromAssert(context, name);
     }
 
     @Override
@@ -171,13 +175,13 @@ public class GlideImageProvider implements ImageProvider {
      * @param fileName
      * @return
      */
-    public Drawable getImageFromAssert(Context context,String fileName) {
+    public Drawable getImageFromAssert(Context context, String fileName) {
         AssetManager assetManager = context.getAssets();
         InputStream inputStream;//filename是assets目录下的图片名
         try {
             inputStream = assetManager.open(fileName);
             Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
-            return new BitmapDrawable(bitmap) ;
+            return new BitmapDrawable(bitmap);
         } catch (IOException e) {
             return null;
         }

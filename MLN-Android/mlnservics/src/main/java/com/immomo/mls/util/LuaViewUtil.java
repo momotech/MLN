@@ -40,13 +40,9 @@ public class LuaViewUtil {
      */
     public static void setId(View view) {
         if (view != null) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-                try {//samsung SM-N9009(4.3) crash here, so protected
-                    view.setId(View.generateViewId());
-                } catch (Exception e) {
-                    view.setId(generateViewId());
-                }
-            } else {
+            try {
+                view.setId(View.generateViewId());
+            } catch (Exception e) {
                 view.setId(generateViewId());
             }
         }
@@ -79,11 +75,7 @@ public class LuaViewUtil {
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     public static void setBackground(View view, Drawable drawable) {
         if (view != null) {
-            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) {
-                view.setBackground(drawable);
-            } else {
-                view.setBackgroundDrawable(drawable);
-            }
+            view.setBackground(drawable);
         }
     }
 
@@ -96,12 +88,8 @@ public class LuaViewUtil {
      */
     public static void removeAllViews(ViewGroup viewGroup) {
         if (viewGroup != null) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-                if (viewGroup.isInLayout()) {
-                    viewGroup.removeAllViewsInLayout();
-                } else {
-                    viewGroup.removeAllViews();
-                }
+            if (viewGroup.isInLayout()) {
+                viewGroup.removeAllViewsInLayout();
             } else {
                 viewGroup.removeAllViews();
             }
@@ -118,12 +106,8 @@ public class LuaViewUtil {
         //这里不使用post来做，这样代码更可控，而是改为将refresh下拉动作延后一帧处理，见@link
         //这里调用removeViewInLayout方法，可以在onLayout的时候调用，否则会产生问题
         if (parent != null && view != null) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-                if (parent.isInLayout()) {
-                    parent.removeViewInLayout(view);
-                } else {
-                    parent.removeView(view);
-                }
+            if (parent.isInLayout()) {
+                parent.removeViewInLayout(view);
             } else {
                 parent.removeView(view);
             }

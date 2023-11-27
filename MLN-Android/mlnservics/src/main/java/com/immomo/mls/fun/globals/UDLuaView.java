@@ -18,13 +18,19 @@ import com.immomo.mls.fun.constants.StatusBarStyle;
 import com.immomo.mls.fun.ud.UDColor;
 import com.immomo.mls.fun.ud.UDMap;
 import com.immomo.mls.fun.ud.UDSafeAreaRect;
+import com.immomo.mls.fun.ud.UDWindowManager;
 import com.immomo.mls.fun.ud.view.UDViewGroup;
+import com.immomo.mls.fun.ud.view.VisibilityType;
 import com.immomo.mls.fun.ui.DefaultSafeAreaManager;
 import com.immomo.mls.receiver.ConnectionStateChangeBroadcastReceiver;
 import com.immomo.mls.util.AndroidUtil;
 import com.immomo.mls.util.DimenUtil;
 import com.immomo.mls.utils.KeyboardUtil;
 
+import kotlin.Unit;
+import kotlin.jvm.functions.Function0;
+import kotlin.jvm.functions.Function1;
+import kotlin.jvm.functions.Function2;
 import org.luaj.vm2.LuaBoolean;
 import org.luaj.vm2.LuaFunction;
 import org.luaj.vm2.LuaNumber;
@@ -40,7 +46,7 @@ import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 /**
  * Created by XiongFangyu on 2018/8/1.
  */
-@LuaApiUsed
+@LuaApiUsed(ignoreTypeArgs = true)
 public class UDLuaView extends UDViewGroup<LuaView> implements ConnectionStateChangeBroadcastReceiver.OnConnectionChangeListener, KeyboardUtil.OnKeyboardShowingListener {
     public static final String LUA_CLASS_NAME = "__WINDOW";
     public static final String LUA_SINGLE_NAME = "window";
@@ -90,7 +96,7 @@ public class UDLuaView extends UDViewGroup<LuaView> implements ConnectionStateCh
     private int statusTextStyle = -1;
     private DefaultSafeAreaManager safeAreaManager;
 
-    @LuaApiUsed
+    @LuaApiUsed(ignore = true)
     protected UDLuaView(long L, LuaValue[] v) {
         super(L, v);
     }
@@ -101,24 +107,39 @@ public class UDLuaView extends UDViewGroup<LuaView> implements ConnectionStateCh
     }
 
     //<editor-fold desc="API">
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(String.class))
+    })
     public LuaValue[] getLuaVersion(LuaValue[] p) {
         return rString(getLuaViewManager().scriptVersion);
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = Function1.class, typeArgs = {Integer.class, Unit.class})
+            }, returns = @LuaApiUsed.Type(UDLuaView.class))
+    })
     public LuaValue[] viewAppear(LuaValue[] p) {
         viewAppearCallback = p[0].toLuaFunction();
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = Function1.class, typeArgs = {Integer.class, Unit.class})
+            }, returns = @LuaApiUsed.Type(UDLuaView.class))
+    })
     public LuaValue[] viewDisappear(LuaValue[] p) {
         viewDisappearCallback = p[0].toLuaFunction();
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = Function0.class, typeArgs = {Unit.class})
+            }, returns = @LuaApiUsed.Type(UDLuaView.class))
+    })
     public LuaValue[] backKeyPressed(LuaValue[] p) {
         backKeyPressedCallback = p[0].toLuaFunction();
         return null;
@@ -129,7 +150,13 @@ public class UDLuaView extends UDViewGroup<LuaView> implements ConnectionStateCh
     /**
      * 是否屏蔽返回键操作
      */
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Boolean.class)
+            }, returns = @LuaApiUsed.Type(UDLuaView.class)),
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(UDLuaView.class))
+    })
     public LuaValue[] backKeyEnabled(LuaValue[] values) {
         if (values.length >= 1 && values[0].isBoolean()) {
             backKeyEnabled = values[0].toBoolean();
@@ -139,19 +166,37 @@ public class UDLuaView extends UDViewGroup<LuaView> implements ConnectionStateCh
     }
 
     // ios 私有方法，安卓空实现
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = Function2.class, typeArgs = {
+                            Float.class, Float.class, Unit.class
+                    })
+            }, returns = @LuaApiUsed.Type(UDLuaView.class))
+    })
     public LuaValue[] i_keyBoardFrameChangeCallback(LuaValue[] p) {
 
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = Function2.class, typeArgs = {
+                            Float.class, Float.class, Unit.class
+                    })
+            }, returns = @LuaApiUsed.Type(UDLuaView.class))
+    })
     public LuaValue[] sizeChanged(LuaValue[] p) {
         sizeChangedCallback = p[0].toLuaFunction();
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = Function2.class, typeArgs = {
+                            Boolean.class, Float.class, Unit.class
+                    })
+            }, returns = @LuaApiUsed.Type(UDLuaView.class))
+    })
     public LuaValue[] keyboardShowing(LuaValue[] p) {
         LuaFunction fun = p[0].isFunction() ? p[0].toLuaFunction() : null;
         if (keyboardShowingCallbacks == null) {
@@ -171,7 +216,13 @@ public class UDLuaView extends UDViewGroup<LuaView> implements ConnectionStateCh
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = Function2.class, typeArgs = {
+                            Boolean.class, Float.class, Unit.class
+                    })
+            }, returns = @LuaApiUsed.Type(UDLuaView.class))
+    })
     public LuaValue[] removeKeyboardCallback(LuaValue[] p) {
         if (keyboardShowingCallbacks != null) {
             keyboardShowingCallbacks.remove(p[0].toLuaFunction());
@@ -179,14 +230,18 @@ public class UDLuaView extends UDViewGroup<LuaView> implements ConnectionStateCh
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(returns = @LuaApiUsed.Type(UDMap.class))
+    })
     public LuaValue[] getExtra(LuaValue[] p) {
         if (extraData == null)
             return rNil();
         return varargsOf(extraData);
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(returns = @LuaApiUsed.Type(String.class))
+    })
     public LuaValue[] getLuaSource(LuaValue[] p) {
         if (extraData != null && extraData.getMap() != null) {
             Object luaSource = extraData.getMap().get(Constants.KEY_LUA_SOURCE);
@@ -198,19 +253,31 @@ public class UDLuaView extends UDViewGroup<LuaView> implements ConnectionStateCh
     }
 
     @Deprecated
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = Function0.class, typeArgs = {Unit.class})
+            }, returns = @LuaApiUsed.Type(UDLuaView.class))
+    })
     public LuaValue[] onDestory(LuaValue[] p) {
         destroyCallback = p[0].toLuaFunction();
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = Function0.class, typeArgs = {Unit.class})
+            }, returns = @LuaApiUsed.Type(UDLuaView.class))
+    })
     public LuaValue[] onDestroy(LuaValue[] p) {
         destroyCallback = p[0].toLuaFunction();
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(UDColor.class)
+            }, returns = @LuaApiUsed.Type(UDLuaView.class))
+    })
     public LuaValue[] setPageColor(LuaValue[] p) {
         Activity a = getActivity();
         if (a == null)
@@ -222,7 +289,11 @@ public class UDLuaView extends UDViewGroup<LuaView> implements ConnectionStateCh
     }
 
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Integer.class)
+            }, returns = @LuaApiUsed.Type(UDLuaView.class))
+    })
     public LuaValue[] setStatusBarStyle(LuaValue[] p) {
         int style = p[0].toInt();
 
@@ -245,43 +316,61 @@ public class UDLuaView extends UDViewGroup<LuaView> implements ConnectionStateCh
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(returns = @LuaApiUsed.Type(Integer.class))
+    })
     public LuaValue[] getStatusBarStyle(LuaValue[] p) {
         return rNumber(statusTextStyle);
     }
 
     @Deprecated
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(returns = @LuaApiUsed.Type(Float.class))
+    })
     public LuaValue[] stateBarHeight(LuaValue[] p) {
         return rNumber(0);
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(returns = @LuaApiUsed.Type(Float.class))
+    })
     public LuaValue[] statusBarHeight(LuaValue[] p) {
         return rNumber(DimenUtil.pxToDpi(AndroidUtil.getStatusBarHeight(getContext())));
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(returns = @LuaApiUsed.Type(Float.class))
+    })
     public LuaValue[] navBarHeight(LuaValue[] p) {
         return rNumber(MLSConfigs.defaultNavBarHeight);
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(returns = @LuaApiUsed.Type(Float.class))
+    })
     public LuaValue[] tabBarHeight(LuaValue[] p) {
         return rNumber(0);
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(returns = @LuaApiUsed.Type(Float.class))
+    })
     public LuaValue[] homeHeight(LuaValue[] p) {
         return rNumber(0);
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(returns = @LuaApiUsed.Type(Float.class))
+    })
     public LuaValue[] homeBarHeight(LuaValue[] p) {
         return rNumber(DimenUtil.pxToDpi(AndroidUtil.getNavigationBarHeight(getContext())));
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Integer.class)
+            }, returns = @LuaApiUsed.Type(UDLuaView.class))
+    })
     public LuaValue[] safeArea(LuaValue[] v) {
         int safeArea = v.length > 0 ? v[0].toInt() : DefaultSafeAreaManager.CLOSE;
 
@@ -289,31 +378,43 @@ public class UDLuaView extends UDViewGroup<LuaView> implements ConnectionStateCh
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(returns = @LuaApiUsed.Type(Float.class))
+    })
     public LuaValue[] safeAreaInsetsTop(LuaValue[] v) {
         return getSafeArea().safeAreaInsetsTop();
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(returns = @LuaApiUsed.Type(Float.class))
+    })
     public LuaValue[] safeAreaInsetsBottom(LuaValue[] v) {
         return getSafeArea().safeAreaInsetsBottom();
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(returns = @LuaApiUsed.Type(Float.class))
+    })
     public LuaValue[] safeAreaInsetsLeft(LuaValue[] v) {
         return getSafeArea().safeAreaInsetsLeft();
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(returns = @LuaApiUsed.Type(Float.class))
+    })
     public LuaValue[] safeAreaInsetsRight(LuaValue[] v) {
         return getSafeArea().safeAreaInsetsRight();
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(UDSafeAreaRect.class)
+            }, returns = @LuaApiUsed.Type(UDLuaView.class))
+    })
     public LuaValue[] safeAreaAdapter(LuaValue[] v) {
         UDSafeAreaRect safeAreaAdapter = v.length > 0 ? (UDSafeAreaRect) v[0].toUserdata() : null;
         if (safeAreaAdapter != null) {
-            getSafeArea().setSafeAreaAdapter(safeAreaAdapter,this);
+            getSafeArea().setSafeAreaAdapter(safeAreaAdapter, this);
         }
         return null;
     }
@@ -342,7 +443,11 @@ public class UDLuaView extends UDViewGroup<LuaView> implements ConnectionStateCh
     /**
      * Android端，私有APi
      */
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Boolean.class)
+            }, returns = @LuaApiUsed.Type(UDLuaView.class))
+    })
     public LuaValue[] sizeChangeEnable(LuaValue[] p) {
         if (p.length != 0 && p[0].isBoolean()) {
             getView().sizeChangeEnable(p[0].toBoolean());
@@ -370,13 +475,25 @@ public class UDLuaView extends UDViewGroup<LuaView> implements ConnectionStateCh
 
     public void callbackAppear() {
         if (viewAppearCallback != null) {
-            viewAppearCallback.invoke(null);
+            viewAppearCallback.invoke(LuaValue.rNumber(VisibilityType.NORMAL));
         }
     }
 
     public void callbackDisappear() {
         if (viewDisappearCallback != null) {
-            viewDisappearCallback.invoke(null);
+            viewDisappearCallback.invoke(LuaValue.rNumber(VisibilityType.NORMAL));
+        }
+    }
+
+    public void callbackAppear(@VisibilityType.Type int type) {
+        if (viewAppearCallback != null) {
+            viewAppearCallback.invoke(LuaValue.rNumber(type));
+        }
+    }
+
+    public void callbackDisappear(@VisibilityType.Type int type) {
+        if (viewDisappearCallback != null) {
+            viewDisappearCallback.invoke(LuaValue.rNumber(type));
         }
     }
 

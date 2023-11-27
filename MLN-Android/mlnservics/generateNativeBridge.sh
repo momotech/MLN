@@ -6,11 +6,14 @@ function echo_err() {
 }
 
 basepath=$(cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd)
-if [ ! -f ${basepath}/nativeBridgeConfig ]; then
-    echo_err "找不到配置文件${basepath}/nativeBridgeConfig"
+if [ ! -f ${basepath}/nativeBridge.config ]; then
+    echo_err "找不到配置文件${basepath}/nativeBridge.config"
     exit 1
 fi
-source ${basepath}/nativeBridgeConfig
+
+. ${basepath}/../parseConfig.sh ${basepath}/nativeBridge.config ${basepath}/temp.config
+source ${basepath}/temp.config
+rm -f ${basepath}/temp.config
 
 . ${basepath}/../gen_import.sh
 
@@ -18,3 +21,5 @@ echo "--------------userdata生成--------------"
 gen_classes ${basepath}/.. mlnservics mln/bridge ${only_new}
 echo "--------------callback生成--------------"
 gen_callback ${basepath}/.. mlnservics mln/bridge ${only_new}
+echo "--------------cmakelist生成--------------"
+gen_cmakelists ${basepath}/src/main/jni/mln/CMakeLists.txt "bridge/"

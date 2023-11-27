@@ -18,6 +18,8 @@ import com.immomo.mls.annotation.LuaBridge;
 import com.immomo.mls.annotation.LuaClass;
 import com.immomo.mls.utils.LVCallback;
 
+import kotlin.Unit;
+import kotlin.jvm.functions.Function0;
 import org.luaj.vm2.Globals;
 import org.luaj.vm2.LuaValue;
 
@@ -30,7 +32,7 @@ import androidx.appcompat.app.AppCompatDialog;
  * Description  :    加载中对话框
  */
 
-@LuaClass
+@LuaClass(name = "Loading", isSingleton = true)
 public class SILoading {
     public static final String LUA_CLASS_NAME = "Loading";
 
@@ -106,7 +108,9 @@ public class SILoading {
     }
 
     // 只有lua中 cancel方法设为true，并且是用户手动点击旁白消失，才会发生回调
-    @LuaBridge
+    @LuaBridge(value = {
+            @LuaBridge.Func(params = {@LuaBridge.Type(value = Function0.class, typeArgs = {Unit.class})})
+    })
     public void setOnCancelCallBack(LVCallback cancelCallBack) {
 //        if (mOnCancelCallBack != null)
 //            mOnCancelCallBack.destroy();

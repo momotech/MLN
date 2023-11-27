@@ -24,6 +24,7 @@
  * @return 返回引用计数
  */
 static int removeValueFromGNV(lua_State *L, ptrdiff_t key, int ltype);
+
 /**
  * 判断GNV表中是否有相应对象
  */
@@ -44,6 +45,8 @@ jboolean jni_hasNativeValue(JNIEnv *env, jobject obj, jlong L, jlong key, jint l
 }
 
 static void init_map();
+
+void copyValue(const char *name, char **keyCopy);
 
 void init_cache(lua_State *L) {
     init_map();
@@ -184,6 +187,11 @@ static int hasNativeValue(lua_State *L, ptrdiff_t key, int ltype) {
     return 1;
 }
 
+void removeValueFromGNVByIndex(lua_State *L, int idx) {
+    ptrdiff_t addr = (ptrdiff_t) lua_topointer(L, idx);
+    removeValueFromGNV(L, addr, lua_type(L, idx));
+}
+
 static int removeValueFromGNV(lua_State *L, ptrdiff_t key, int ltype) {
     if (!key) return -1;
 
@@ -275,7 +283,7 @@ static void init_map() {
             map_set_free(__map, s_free, NULL);
             map_set_equals(__map, str_equals);
 #if defined(J_API_INFO)
-            map_set_ud(__map, 1);
+//            map_set_ud(__map, 1);
             map_set_sizeof(__map, NULL, NULL);
 #endif
         }
@@ -342,7 +350,7 @@ size_t cj_mem_size() {
 
 
 ///---------------------------------------------------------------------------
-///------------------------jclsss->constructor--------------------------------
+///------------------------jclass->constructor--------------------------------
 ///---------------------------------------------------------------------------
 
 static Map *__classData = NULL;
@@ -502,4 +510,102 @@ void jm_traverse_all_method(jclass clz, map_look_fun fun, void *ud) {
     if (!method_map) return;
 
     map_traverse(method_map, fun, ud);
+}
+
+///---------------------------------------------------------------------------
+///------------------------lua name->java class--------------------------------
+///---------------------------------------------------------------------------
+
+
+static Map *__lua2JavaData = NULL;
+
+
+static void init_lua2JavaData() {
+    if (!__lua2JavaData) {
+        __lua2JavaData = map_new(NULL, 50);
+        if (map_ero(__lua2JavaData)) {
+            map_free(__lua2JavaData);
+            __lua2JavaData = NULL;
+        } else {
+            map_set_free(__lua2JavaData, s_free, NULL);
+            map_set_equals(__lua2JavaData, str_equals);
+#if defined(J_API_INFO)
+            map_set_sizeof(__lua2JavaData, NULL, NULL);
+#endif
+        }
+    }
+}
+
+/**
+ * 存储类对应的构造函数
+ */
+void l2j_put(const char *name, const char *luaFullName, void *obj, const char *luaParentName,
+             int classType) {
+    init_lua2JavaData();
+    if (!__lua2JavaData) {
+        LOGE("jc_put-- __lua2JavaData init error!!!");
+        return;
+    }
+    int len = strlen(name) + 1;
+
+    char *keyCopy;
+    copyValue(name, &keyCopy);
+
+    char *fullNameCopy;
+    copyValue(luaFullName, &fullNameCopy);
+
+    char *parentClassCopy;
+    copyValue(luaParentName, &parentClassCopy);
+    ClassInfo *classInfo = map_get(__lua2JavaData, keyCopy);
+    if (!classInfo) {
+        classInfo = (ClassInfo *) malloc(sizeof(ClassInfo));
+        if (classInfo) {
+            void *v = map_put(__lua2JavaData, keyCopy, classInfo);
+            if (v) m_malloc(keyCopy, sizeof(char) * len, 0);
+#if defined(J_API_INFO)
+            if (!v) remove_by_pointer(keyCopy, sizeof(char) * len);
+#endif
+            memset(classInfo, 0, sizeof(ClassInfo));
+        }
+    }
+
+    if (!classInfo)
+        return;
+    List *list = classInfo->clzArray;
+    if (!list) {
+        list = list_new(list, 1, 0);
+        if (!list) {
+            return;
+        }
+        list_set_equals(list, class_equals);
+        classInfo->clzArray = list;
+    }
+    classInfo->classType = classType;
+    classInfo->key = keyCopy;
+    classInfo->fullNameKey = fullNameCopy;
+    if (luaParentName)
+        classInfo->luaParentClass = parentClassCopy;
+    if (list_index(list, (void *) obj) < list_size(list)) {
+        return;
+    }
+    if (obj) {
+        list_add(list, obj);
+    }
+}
+
+void copyValue(const char *name, char **keyCopy) {
+    if (!name)
+        return;
+    int len = strlen(name) + 1;
+    (*keyCopy) = (char *) m_malloc(NULL, 0, sizeof(char) * len);
+    strcpy((*keyCopy), name);
+    (*keyCopy)[len - 1] = '\0';
+}
+
+ClassInfo *l2j_get(const char *luaName) {
+    if (!__lua2JavaData) {
+        return NULL;
+    }
+    ClassInfo *classInfo = (ClassInfo *) map_get(__lua2JavaData, luaName);
+    return classInfo;
 }

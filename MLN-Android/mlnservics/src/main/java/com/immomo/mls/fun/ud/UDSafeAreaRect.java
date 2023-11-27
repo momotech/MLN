@@ -9,6 +9,8 @@ package com.immomo.mls.fun.ud;
 
 import android.graphics.Rect;
 
+import com.immomo.mls.fun.ud.view.UDRelativeLayout;
+import com.immomo.mls.fun.ud.view.UDView;
 import org.luaj.vm2.Globals;
 import org.luaj.vm2.LuaUserdata;
 import org.luaj.vm2.LuaValue;
@@ -54,32 +56,48 @@ public class UDSafeAreaRect extends LuaUserdata {
      * @param L 虚拟机地址
      * @param v lua脚本传入的构造参数
      */
-    @LuaApiUsed
+    @LuaApiUsed(ignore = true)
     protected UDSafeAreaRect(long L, LuaValue[] v) {
         super(L, v);
         safeArea = new Rect();
     }
 
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Integer.class)
+            }, returns = @LuaApiUsed.Type(UDSafeAreaRect.class)),
+    })
     public LuaValue[] insetsTop(LuaValue[] v) {
         safeArea.top = v.length > 0 ? v[0].toInt() : 0;
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Integer.class)
+            }, returns = @LuaApiUsed.Type(UDSafeAreaRect.class)),
+    })
     public LuaValue[] insetsBottom(LuaValue[] v) {
         safeArea.bottom = v.length > 0 ? v[0].toInt() : 0;
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Integer.class)
+            }, returns = @LuaApiUsed.Type(UDSafeAreaRect.class)),
+    })
     public LuaValue[] insetsLeft(LuaValue[] v) {
         safeArea.left = v.length > 0 ? v[0].toInt() : 0;
         return null;
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Integer.class)
+            }, returns = @LuaApiUsed.Type(UDSafeAreaRect.class)),
+    })
     public LuaValue[] insetsRight(LuaValue[] v) {
         safeArea.right = v.length > 0 ? v[0].toInt() : 0;
         return null;

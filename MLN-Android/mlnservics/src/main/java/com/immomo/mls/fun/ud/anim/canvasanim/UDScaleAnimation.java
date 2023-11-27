@@ -13,6 +13,8 @@ import android.view.animation.ScaleAnimation;
 import com.immomo.mls.annotation.LuaBridge;
 import com.immomo.mls.annotation.LuaClass;
 
+import kotlin.Unit;
+import kotlin.jvm.functions.Function1;
 import org.luaj.vm2.Globals;
 import org.luaj.vm2.LuaValue;
 
@@ -26,6 +28,14 @@ public class UDScaleAnimation extends UDBaseAnimation {
     private float fromX, tox;
     private float fromY, toY;
 
+    @LuaBridge(value = {
+            @LuaBridge.Func(params = {
+                    @LuaBridge.Type(value = Double.class),
+                    @LuaBridge.Type(value = Double.class),
+                    @LuaBridge.Type(value = Double.class),
+                    @LuaBridge.Type(value = Double.class)
+            })
+    })
     public UDScaleAnimation(Globals g, LuaValue[] init) {
         super(g, init);
         final int len = init != null ? init.length : 0;

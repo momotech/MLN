@@ -13,6 +13,7 @@ import android.util.SparseArray;
 import com.immomo.mls.cache.LuaCache;
 import com.immomo.mls.log.ErrorPrintStream;
 import com.immomo.mls.util.LogUtil;
+import com.immomo.mls.wrapper.Translator;
 
 import org.luaj.vm2.Globals;
 import org.luaj.vm2.utils.IGlobalsUserdata;
@@ -36,10 +37,12 @@ public class LuaViewManager implements IGlobalsUserdata{
      * 虚拟机全局圆角配置
      */
     private boolean defaltCornerClip = false ;//全局默认属性：false
+    public final Translator translator;
 
-    public LuaViewManager(Context c) {
+    public LuaViewManager(Context c, Translator translator) {
         context = c;
         luaCache = new LuaCache();
+        this.translator = translator;
     }
 
     public void putOnActivityResultListener(int code, OnActivityResultListener l) {

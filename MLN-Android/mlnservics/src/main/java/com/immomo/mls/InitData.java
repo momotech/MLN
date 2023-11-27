@@ -54,6 +54,8 @@ public class InitData implements Parcelable {
      * 单位ms
      */
     public long loadTimeout = MLSConfigs.defaultLoadScriptTimeout;
+    private int width;
+    private int height;
 
     public InitData(String url) {
         this.url = url;
@@ -69,6 +71,10 @@ public class InitData implements Parcelable {
     public InitData forceDownload() {
         addType(Constants.LT_FORCE_DOWNLOAD);
         return this;
+    }
+
+    public boolean checkSize() {
+        return width > 0 && height > 0;
     }
 
     /**
@@ -135,6 +141,21 @@ public class InitData implements Parcelable {
         return this;
     }
 
+    public InitData setWindowSize(int width, int height) {
+        this.width = width;
+        this.height = height;
+        addType(Constants.LT_FIXED_WINDOW_SIZE);
+        return this;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
     /**
      * 是否自动预加载，当{@link #preloadScripts}为空时
      * 且{@link UrlParams#getPreload()} 为空时，自动预加载根目录下所有的lua文件
@@ -157,23 +178,47 @@ public class InitData implements Parcelable {
     }
 
     @Override
+    public String toString() {
+        return url;
+    }
+
+    @Override
     public int describeContents() {
         return 0;
     }
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.rootPath);
         dest.writeString(this.url);
-        dest.writeInt(this.loadType);
         dest.writeSerializable(this.extras);
         dest.writeStringArray(this.preloadScripts);
+        dest.writeInt(this.loadType);
+        dest.writeLong(this.loadTimeout);
+        dest.writeInt(this.width);
+        dest.writeInt(this.height);
+    }
+
+    public void readFromParcel(Parcel source) {
+        this.rootPath = source.readString();
+        this.url = source.readString();
+        this.extras = (HashMap) source.readSerializable();
+        this.preloadScripts = source.createStringArray();
+        this.loadType = source.readInt();
+        this.loadTimeout = source.readLong();
+        this.width = source.readInt();
+        this.height = source.readInt();
     }
 
     protected InitData(Parcel in) {
+        this.rootPath = in.readString();
         this.url = in.readString();
-        this.loadType = in.readInt();
         this.extras = (HashMap) in.readSerializable();
         this.preloadScripts = in.createStringArray();
+        this.loadType = in.readInt();
+        this.loadTimeout = in.readLong();
+        this.width = in.readInt();
+        this.height = in.readInt();
     }
 
     public static final Creator<InitData> CREATOR = new Creator<InitData>() {
@@ -187,9 +232,4 @@ public class InitData implements Parcelable {
             return new InitData[size];
         }
     };
-
-    @Override
-    public String toString() {
-        return url;
-    }
 }

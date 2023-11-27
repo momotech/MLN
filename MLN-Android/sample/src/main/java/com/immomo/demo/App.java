@@ -16,7 +16,6 @@ import com.immomo.demo.provider.GlideImageProvider;
 import com.immomo.mls.MLSEngine;
 import com.immomo.mls.fun.lt.SIApplication;
 import com.immomo.mls.global.LVConfigBuilder;
-import com.immomo.mmui.MMUIEngine;
 
 import org.luaj.vm2.Globals;
 
@@ -38,6 +37,7 @@ public class App extends Application {
         registerActivityLifecycleCallbacks(new ActivityLifecycleMonitor());
         /// ---------------------END-------------------
 
+
         MLSEngine.init(this, true)//BuildConfig.DEBUG)
                 .setLVConfig(new LVConfigBuilder(this)
                         .setRootDir(SD_CARD_PATH)
@@ -58,11 +58,9 @@ public class App extends Application {
                 ///注册单例
                 .registerSingleInsance(
                 )
-                .build(true);
+                .buildWhenReady();
         /// 设置二维码扫描结果处理工具
         OuterResultHandler.registerResultHandler(new QRResultHandler());
-        MMUIEngine.init(this);
-        MMUIEngine.preInit(1);
         log("onCreate: " + Globals.isInit() + " " + Globals.isIs32bit());
     }
 

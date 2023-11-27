@@ -4,7 +4,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.google.protobuf:protobuf-gradle-plugin:0.8.8'
+        classpath 'com.google.protobuf:protobuf-gradle-plugin:0.8.17'
     }
 }
 
@@ -17,8 +17,6 @@ android {
     defaultConfig {
         minSdkVersion project.minSdkVersion
         targetSdkVersion project.targetSdkVersion
-        versionCode 1
-        versionName "1.0"
     }
     buildTypes {
         release {
@@ -26,15 +24,30 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 }
 
+
 protobuf {
-    protoc {
-        artifact = 'com.google.protobuf:protoc:3.0.0'
+    protobuf {
+        protoc {
+            if (osdetector.os == "osx") {
+                artifact = 'com.google.protobuf:protoc:3.0.0:osx-x86_64'
+            } else {
+                artifact = 'com.google.protobuf:protoc:3.0.0'
+            }
+        }
     }
     plugins {
         javalite {
-            artifact = 'com.google.protobuf:protoc-gen-javalite:3.0.0'
+            if (osdetector.os == "osx") {
+                artifact = 'com.google.protobuf:protoc-gen-javalite:3.0.0:osx-x86_64'
+            } else {
+                artifact = 'com.google.protobuf:protoc-gen-javalite:3.0.0'
+            }
         }
     }
     generateProtoTasks {
@@ -54,6 +67,12 @@ protobuf {
 dependencies {
     compileOnly "com.google.protobuf:protobuf-lite:$protobufVersion"
 }
-
-apply from: "../bintrayUpload.gradle"
-version=hotreloadVersion
+if (!implementation_debug) {
+    if (update_hello_group) {
+        ext.versionForMomo = rootProject.ext.hotreloadVersion
+        apply from: '../publish_to_hellogroup_maven_central.gradle'
+    } else {
+        project.ext["publish.version"] = hotreloadVersion
+        apply from: "../publish_to_maven_central.gradle"
+    }
+}

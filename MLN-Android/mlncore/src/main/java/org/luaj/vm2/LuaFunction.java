@@ -299,13 +299,13 @@ public class LuaFunction extends NLuaValue {
      */
     protected boolean checkStatus() {
         if (globals.isDestroyed()) {
-            invokeError = new InvokeError("globals is destroyed.", 2);
+            invokeError = new InvokeError("当前虚拟机已销毁", 2);
             if (MLNCore.DEBUG || globals.getState() == Globals.LUA_CALLING)
                 throw invokeError;
             return false;
         }
         if (!checkStateByNative()) {
-            invokeError = new InvokeError("function is destroyed.", 1);
+            invokeError = new InvokeError("当前lua函数已销毁", 1);
             if (MLNCore.DEBUG || globals.getState() == Globals.LUA_CALLING)
                 throw invokeError;
             return false;
@@ -337,6 +337,7 @@ public class LuaFunction extends NLuaValue {
     protected final void functionInvokeError(InvokeError e) {
         invokeError = e;
         globals.calledFunction --;
+        globals.getErrorTypeFromNative();
         if (globals.getState() != Globals.LUA_CALLING && MLNCore.hookLuaError(e, globals))
             return;
         throw e;

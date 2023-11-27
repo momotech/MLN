@@ -8,9 +8,11 @@
 package com.immomo.mls.fun.ud.view.recycler;
 
 import com.immomo.mls.MLSEngine;
+import com.immomo.mls.fun.ud.view.UDView;
 import com.immomo.mls.util.AndroidUtil;
 import com.immomo.mls.util.DimenUtil;
 
+import kotlin.jvm.functions.Function2;
 import org.luaj.vm2.JavaUserdata;
 import org.luaj.vm2.LuaNumber;
 import org.luaj.vm2.LuaValue;
@@ -23,7 +25,7 @@ import androidx.recyclerview.widget.RecyclerView;
 /**
  * Created by XiongFangyu on 2018/7/19.
  */
-@LuaApiUsed
+@LuaApiUsed(ignoreTypeArgs = true)
 public abstract class UDBaseRecyclerLayout<A extends UDBaseRecyclerAdapter> extends JavaUserdata {
     public static final String LUA_CLASS_NAME = "__BaseRecyclerLayout";
     public static final String[] methods = new String[]{
@@ -40,13 +42,22 @@ public abstract class UDBaseRecyclerLayout<A extends UDBaseRecyclerAdapter> exte
     protected int orientation = RecyclerView.VERTICAL;
     protected A adapter;
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(UDBaseRecyclerLayout.class))
+    })
     protected UDBaseRecyclerLayout(long L, LuaValue[] v) {
         super(L, v);
     }
 
     //<editor-fold desc="API">
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = Number.class),
+            }, returns = @LuaApiUsed.Type(UDBaseRecyclerLayout.class)),
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(Number.class)),
+    })
     public LuaValue[] lineSpacing(LuaValue[] values) {
         if (values.length > 0) {
             this.lineSpacing = DimenUtil.dpiToPx(values[0]);
@@ -55,7 +66,13 @@ public abstract class UDBaseRecyclerLayout<A extends UDBaseRecyclerAdapter> exte
         return varargsOf(getLineSpacing());
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = Number.class),
+            }, returns = @LuaApiUsed.Type(UDBaseRecyclerLayout.class)),
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(Number.class)),
+    })
     public LuaValue[] itemSpacing(LuaValue[] values) {
         if (values.length > 0) {
             this.itemSpacing = DimenUtil.dpiToPx(values[0]);

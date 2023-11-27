@@ -30,10 +30,14 @@
 // ------------------------------------------------------------------------------
 // -------------------------------JNI METHOD ------------------------------------
 // ------------------------------------------------------------------------------
+jlong jni_allLvmMemUse(JNIEnv *env, jobject jobj);
+void jni_setUseMemoryPool(JNIEnv *env, jobject jobj, jboolean use);
+#ifdef MEM_POOL_TEST
+void jni_testMemoryPool(JNIEnv *env, jobject jobj, jlong L);
+#endif
 void jni_setStatisticsOpen(JNIEnv *env, jobject jobj, jboolean open);
 void jni_notifyStatisticsCallback(JNIEnv *env, jobject jobj);
 void jni_notifyRequireCallback(JNIEnv *env, jobject jobj);
-void jni_setAndroidVersion(JNIEnv *env, jobject jobj, jint v);
 jboolean jni_check32bit(JNIEnv *env, jobject jobj);
 jboolean jni_isSAESFile(JNIEnv *env, jobject jobj, jstring path);
 jlong jni_lvmMemUse(JNIEnv * env, jobject jobj, jlong L);
@@ -45,27 +49,35 @@ void jni_setSoPath(JNIEnv *env, jobject jobj, jlong LS, jstring path);
 jlong jni_createLState(JNIEnv *env, jobject jobj, jboolean debug);
 void jni_openDebug(JNIEnv *env, jobject jobj, jlong L);
 void jni_close(JNIEnv *env, jobject jobj, jlong L_state_pointer);
+jint jni_getErrorType(JNIEnv *env, jobject jobj, jlong L);
 jobjectArray jni_dumpStack(JNIEnv *env, jobject jobj, jlong L);
 jstring jni_traceback(JNIEnv *env, jobject jobj, jlong L);
 void jni_lgc(JNIEnv *env, jobject jobj, jlong L);
 void jni_callMethod(JNIEnv * env, jobject jobj, jlong L, jlong method, jlong arg);
 
 static JNINativeMethod jni_methods[] = {
+    {"_setUseMemoryPool", "(Z)V", (void *)jni_setUseMemoryPool},
+#ifdef MEM_POOL_TEST
+    {"_testMemoryPool", "(J)V", (void *)jni_testMemoryPool},
+#endif
     {"_setAndroidVersion", "(I)V", (void *)jni_setAndroidVersion},
+    {"_setAndroidDebug", "(I)V", (void *) jni_setAndroidDebug},
+    {"_setProtectNewJString", "(Z)V", (void *)jni_setProtectNewJString},
+    {"_setCallbackEmptyMethod", "(Z)V", (void *)jni_setCallbackEmptyMethod},
     {"_setStatisticsOpen", "(Z)V", (void *)jni_setStatisticsOpen},
     {"_notifyStatisticsCallback", "()V", (void *)jni_notifyStatisticsCallback},
     {"_notifyRequireCallback", "()V", (void *)jni_notifyRequireCallback},
     {"_check32bit", "()Z", (void *)jni_check32bit},
     {"_isSAESFile", "(" STRING_CLASS ")Z", (void *)jni_isSAESFile},
-    {"_openSAES", "(Z)V", (void *)jni_openSAES},
+    {"_setNativeFileConfigs", "(I)V", (void *)jni_setNativeFileConfigs},
+    {"_getNativeFileConfigs", "()I", (void *)jni_getNativeFileConfigs},
     {"_lvmMemUse", "(J)J", (void *)jni_lvmMemUse},
     {"_allLvmMemUse", "()J", (void *)jni_allLvmMemUse},
     {"_logMemoryInfo", "()V", (void *)jni_logMemoryInfo},
     {"_setGcOffset", "(I)V", (void *)jni_setGcOffset},
     {"_setDatabasePath", "(" STRING_CLASS ")V", (void *)jni_setDatabasePath},
-    {"_preRegisterEmptyMethods", "([" STRING_CLASS ")V", (void *)jni_preRegisterEmptyMethods},
-    {"_preRegisterUD", "(" STRING_CLASS "[" STRING_CLASS ")V", (void *)jni_preRegisterUD},
-    {"_preRegisterStatic", "(" STRING_CLASS "[" STRING_CLASS ")V", (void *)jni_preRegisterStatic},
+    {"_preRegisterUD", "(" STRING_CLASS "" STRING_CLASS "" STRING_CLASS "I" "[" STRING_CLASS ")V", (void *)jni_preRegisterUD},
+    {"_preRegisterStatic", "(" STRING_CLASS "" STRING_CLASS "" STRING_CLASS "[" STRING_CLASS ")V", (void *)jni_preRegisterStatic},
 #ifdef ANDROID
     {"_setAssetManager", "(Landroid/content/res/AssetManager;)V", (void *)jni_setAssetManager},
 #endif
@@ -75,6 +87,7 @@ static JNINativeMethod jni_methods[] = {
     {"_setBasePath", "(J" STRING_CLASS "Z)V", (void *)jni_setBasePath},
     {"_setSoPath", "(J" STRING_CLASS ")V", (void *)jni_setSoPath},
     {"_close", "(J)V", (void *)jni_close},
+    {"_getErrorType", "(J)I", (void *)jni_getErrorType},
     {"_dumpStack", "(J)[" LUAVALUE_CLASS, (void *)jni_dumpStack},
     {"_traceback", "(J)" STRING_CLASS, (void *)jni_traceback},
     {"_removeNativeValue", "(JJI)I", (void *)jni_removeNativeValue},
@@ -92,8 +105,10 @@ static JNINativeMethod jni_methods[] = {
     {"_setMainEntryFromPreload", "(J" STRING_CLASS ")Z", (void *)jni_setMainEntryFromPreload},
     {"_preloadData", "(J" STRING_CLASS "[B)V", (void *)jni_preloadData},
     {"_preloadFile", "(J" STRING_CLASS "" STRING_CLASS ")V", (void *)jni_preloadFile},
+#ifdef ANDROID
     {"_preloadAssets", "(J" STRING_CLASS "" STRING_CLASS ")V", (void *)jni_preloadAssets},
     {"_preloadAssetsAndSave", "(J" STRING_CLASS "" STRING_CLASS "" STRING_CLASS ")I", (void *)jni_preloadAssetsAndSave},
+#endif
     {"_require", "(J" STRING_CLASS ")I", (void *)jni_require},
     {"_dumpFunction", "(JJ" STRING_CLASS ")I", (void *)jni_dumpFunction},
 
@@ -141,6 +156,8 @@ static JNINativeMethod jni_methods[] = {
     {"_createUserdataAndSet", "(J" STRING_CLASS "" STRING_CLASS "[" LUAVALUE_CLASS ")" OBJECT_CLASS, (void *)jni_createUserdataAndSet},
 
     {"_callMethod", "(JJJ)V", (void *)jni_callMethod},
-
+#ifdef LOAD_TOKEN
+    {"_loadToken", "(J" STRING_CLASS "[BLcom/immomo/mlncore/TokenListener;)I", (void *)jni_loadToken},
+#endif
 };
 #endif //LUA_J_API_H

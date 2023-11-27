@@ -32,7 +32,7 @@ import java.util.Map;
  * native存储native对象，lua get时转换成lua对象
  * java -jar mlncgen.jar -module mlnservics -class com.immomo.mls.fun.ud.UDMap -jni mln/bridge -name mmmap.c
  */
-@LuaApiUsed
+@LuaApiUsed(name = "Map", ignore = true)
 public class UDMap extends LuaUserdata<Map> {
     public static final String LUA_CLASS_NAME = "Map";
     //<editor-fold desc="native method">
@@ -58,7 +58,11 @@ public class UDMap extends LuaUserdata<Map> {
     }
 
     @CGenerate
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(value = Integer.class, name = "capacity")
+            }, returns = @LuaApiUsed.Type(UDMap.class)),
+    })
     protected UDMap(long L, int init) {
         super(L, null);
         javaUserdata = new HashMap(init);
@@ -93,92 +97,171 @@ public class UDMap extends LuaUserdata<Map> {
     }
     //<editor-fold desc="API">
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(String.class),
+                    @LuaApiUsed.Type(Boolean.class),
+            }),
+    })
     public void put(String k, boolean v) {
         javaUserdata.put(k, v);
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(String.class),
+                    @LuaApiUsed.Type(Double.class),
+            }),
+    })
     public void put(String k, double v) {
         javaUserdata.put(k, double2Obj(v));
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(String.class),
+                    @LuaApiUsed.Type(String.class),
+            }),
+    })
     public void put(String k, String v) {
         javaUserdata.put(k, v);
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(String.class),
+                    @LuaApiUsed.Type(LuaValue.class),
+            }),
+    })
     public void put(String k, LuaValue v) {
         javaUserdata.put(k, toNative(v));
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Double.class),
+                    @LuaApiUsed.Type(Boolean.class),
+            }),
+    })
     public void put(double k, boolean v) {
         javaUserdata.put(double2Obj(k), v);
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Double.class),
+                    @LuaApiUsed.Type(Double.class),
+            }),
+    })
     public void put(double k, double v) {
         javaUserdata.put(double2Obj(k), double2Obj(v));
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Double.class),
+                    @LuaApiUsed.Type(String.class),
+            }),
+    })
     public void put(double k, String v) {
         javaUserdata.put(double2Obj(k), v);
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Double.class),
+                    @LuaApiUsed.Type(LuaValue.class),
+            }),
+    })
     public void put(double k, LuaValue v) {
         javaUserdata.put(double2Obj(k), toNative(v));
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(LuaValue.class),
+                    @LuaApiUsed.Type(LuaValue.class),
+            }),
+    })
     public void put(LuaValue k, LuaValue v) {
         javaUserdata.put(k, toNative(v));
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(UDMap.class),
+            }),
+    })
     public void putAll(UDMap map) {
         javaUserdata.putAll(map.javaUserdata);
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(String.class),
+            }),
+    })
     public void remove(String k) {
         javaUserdata.remove(k);
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Double.class),
+            }),
+    })
     public void remove(double k) {
         javaUserdata.remove(double2Obj(k));
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(LuaValue.class),
+            }),
+    })
     public void remove(LuaValue k) {
         javaUserdata.remove(toNative(k));
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+            }),
+    })
     public void removeAll() {
         javaUserdata.clear();
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(String.class),
+            }, returns = @LuaApiUsed.Type(LuaValue.class)),
+    })
     public LuaValue get(String k) {
         return ConvertUtils.toLuaValue(getGlobals(), javaUserdata.get(k));
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(Double.class),
+            }, returns = @LuaApiUsed.Type(LuaValue.class)),
+    })
     public LuaValue get(double k) {
         return ConvertUtils.toLuaValue(getGlobals(), javaUserdata.get(double2Obj(k)));
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+                    @LuaApiUsed.Type(LuaValue.class),
+            }, returns = @LuaApiUsed.Type(LuaValue.class)),
+    })
     public LuaValue get(LuaValue k) {
         return ConvertUtils.toLuaValue(getGlobals(), javaUserdata.get(toNative(k)));
     }
 
-    @LuaApiUsed
+    @LuaApiUsed({
+            @LuaApiUsed.Func(params = {
+            }, returns = @LuaApiUsed.Type(Integer.class)),
+    })
     public int size() {
         return javaUserdata.size();
     }
