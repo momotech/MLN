@@ -28,8 +28,8 @@ Pod::Spec.new do |s|
     s.source           = { :git => 'https://github.com/momotech/MLN.git', :tag => 'MLN/' + s.version.to_s }
     # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
     s.header_dir = '.'
-    s.source_files = 'MLN-iOS/MLN/Classes/MLN.h'
-    s.module_map = 'MLN-iOS/MLN/Classes/module.modulemap'
+    s.source_files = 'MLN/Classes/MLN.h'
+    s.module_map = 'MLN/Classes/module.modulemap'
     s.module_name = s.name
 
     s.ios.deployment_target = '8.0'
@@ -39,23 +39,23 @@ Pod::Spec.new do |s|
     
     s.subspec 'LuaLib' do |lua|
         lua.name = 'LuaLib'
-        lua.source_files = 'MLN-iOS/MLN/Classes/LuaLib/**/*.{h,m,c}'
-        lua.public_header_files = 'MLN-iOS/MLN/Classes/LuaLib/**/*.h'
+        lua.source_files = 'MLN/Classes/LuaLib/**/*.{h,m,c}'
+        lua.public_header_files = 'MLN/Classes/LuaLib/**/*.h'
     end
     
     s.subspec 'Core' do |c|
         c.name = 'Core'
         c.framework = 'Foundation', 'UIKit'
-        c.source_files = 'MLN-iOS/MLN/Classes/Core/**/*.{h,m,c}'
-        c.public_header_files = 'MLN-iOS/MLN/Classes/Core/**/*.h'
+        c.source_files = 'MLN/Classes/Core/**/*.{h,m,c}'
+        c.public_header_files = 'MLN/Classes/Core/**/*.h'
         c.dependency  'MLN/LuaLib'
     end
     
     s.subspec 'Kit' do |k|
         k.name = 'Kit'
         k.framework = 'Foundation', 'UIKit', 'CoreGraphics', 'AVFoundation'
-        k.source_files = 'MLN-iOS/MLN/Classes/Kit/**/*.{h,m,c}'
-        k.public_header_files = 'MLN-iOS/MLN/Classes/Kit/**/*.h'
+        k.source_files = 'MLN/Classes/Kit/**/*.{h,m,c}'
+        k.public_header_files = 'MLN/Classes/Kit/**/*.h'
         k.dependency  'MLN/Core'
         #k.dependency  'KVOController'
     end
