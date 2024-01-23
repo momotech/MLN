@@ -7,6 +7,7 @@
 
 #ifndef MLNFileHandlerProtocol_h
 #define MLNFileHandlerProtocol_h
+#import <Foundation/Foundation.h>
 
 @protocol MLNFileHandlerProtocol <NSObject>
 

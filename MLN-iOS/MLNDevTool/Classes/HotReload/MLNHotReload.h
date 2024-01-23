@@ -7,11 +7,10 @@
 
 #import <Foundation/Foundation.h>
 #import <MLN/MLNKit.h>
+//#import <MLN/MLNDebugHeader.h>
 #import "MLNDevToolProtocol.h"
 
 #define kLuaHotReloadHost  @"https://hotreload.com"
-#define kLuaDebugModeKey  @"kLuaDebugModeKey"
-#define kLuaDebugModeHotReload  @"kLuaDebugModeHotReload"
 
 NS_ASSUME_NONNULL_BEGIN
 @class MLNKitInstance;
@@ -20,6 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy) void(^registerBridgeClassesCallback)(MLNKitInstance *instance);
 @property (nonatomic, copy) NSDictionary *(^extraInfoCallback)(NSDictionary *params);
 @property (nonatomic, copy) void(^setupInstanceCallback)(MLNKitInstance *instance);
+@property (nonatomic, copy) BOOL(^loadBridge)(MLNKitInstance *instance,NSString *bridgeName);
 @property (nonatomic, copy) void(^updateCallback)(MLNKitInstance *instance);
 @property (nonatomic, weak) UIViewController<MLNViewControllerProtocol> *viewController;
 @property (nonatomic, copy, readonly) NSString *hotReloadBundlePath;
@@ -27,7 +27,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy, readonly) NSString *entryFilePath;
 @property (nonatomic, copy, readonly) NSString *relativeEntryFilePath;
 @property (nonatomic, assign, getter=isOpenAssert) BOOL openAssert;
-@property (nonatomic, assign) BOOL useArgo;
 
 + (void)openBreakpointDebugIfNeeded:(MLNKitInstance *)instance;
 

@@ -32,7 +32,6 @@ Pod::Spec.new do |s|
     s.libraries = 'z', 'c++'
     s.requires_arc = true
     s.public_header_files = 'MLN-iOS/MLNDevTool/Classes/*.h'
-    s.dependency 'ArgoUI'
 
     s.subspec 'MLNProtobuf' do |pb|
       pb.name = 'MLNProtobuf'

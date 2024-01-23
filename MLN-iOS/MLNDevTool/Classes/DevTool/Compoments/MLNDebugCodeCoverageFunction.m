@@ -6,9 +6,8 @@
 //
 
 #import "MLNDebugCodeCoverageFunction.h"
-#import "MLNExporter.h"
+#import <MLN/MLNExporter.h>
 #import "MLNServer.h"
-#import "MLNUIGlobalFuncExporterMacro.h"
 
 @implementation MLNDebugCodeCoverageFunction
 
@@ -68,12 +67,5 @@ LUA_EXPORT_GLOBAL_C_FUNC(reportCoverageSummary, mln_reportCodeCoverageSummary, M
 LUA_EXPORT_GLOBAL_C_FUNC(MLNCodeCovClearPreviousResult, mln_clearCodeCoverageResult, MLNDebugCodeCoverageFunction)
 LUA_EXPORT_GLOBAL_C_FUNC(MLNBundlePath, mln_luaBundlePath, MLNDebugCodeCoverageFunction)
 LUA_EXPORT_GLOBAL_FUNC_END(MLNDebugCodeCoverageFunction)
-
-
-LUAUI_EXPORT_GLOBAL_FUNC_BEGIN(MLNDebugCodeCoverageFunction)
-LUAUI_EXPORT_GLOBAL_C_FUNC(reportCoverageSummary, mln_reportCodeCoverageSummary, MLNDebugCodeCoverageFunction)
-LUAUI_EXPORT_GLOBAL_C_FUNC(MLNCodeCovClearPreviousResult, mln_clearCodeCoverageResult, MLNDebugCodeCoverageFunction)
-LUAUI_EXPORT_GLOBAL_C_FUNC(MLNBundlePath, mln_luaBundlePath, MLNDebugCodeCoverageFunction)
-LUAUI_EXPORT_GLOBAL_FUNC_END(MLNDebugCodeCoverageFunction)
 
 @end

@@ -7,7 +7,6 @@
 //
 
 #import "MLNFloatingMenu.h"
-#import "MLNUIBundle.h"
 
 #define kMenuWidth 140.f
 #define kSubIconWidth 35.f
@@ -166,8 +165,10 @@
 {
     if (!_iconView) {
         _iconView = [[UIImageView alloc] initWithFrame:CGRectMake(kCenterIconWidth, kCenterIconWidth, kCenterIconWidth, kCenterIconWidth)];
-        NSString *path = [[MLNUIBundle UIBundle] pngPathWithName:@"lua"];
-        _iconView.image = [UIImage imageWithContentsOfFile:path];
+        NSBundle *bd = [NSBundle bundleWithPath:[[NSBundle bundleForClass:[self class]] pathForResource:@"MLNDevTool" ofType:@"bundle"]];
+        NSString *path = [bd pathForResource:@"lua" ofType:@"png"];
+        UIImage *img = [UIImage imageWithContentsOfFile:path];
+        _iconView.image = img;
         _iconView.contentMode = UIViewContentModeScaleAspectFit;
         _iconView.userInteractionEnabled = YES;
         UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapAction)];

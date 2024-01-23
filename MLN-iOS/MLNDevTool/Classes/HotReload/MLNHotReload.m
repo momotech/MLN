@@ -10,15 +10,14 @@
 #import "PBCommandBuilder.h"
 #import "MLNDebugPrintFunction.h"
 #import "MLNDebugCodeCoverageFunction.h"
-#import "NSDictionary+MLNSafety.h"
 #import "MLNHotReloadPresenter.h"
 #import "MLNServerManager.h"
-#import "MLNKitInstanceFactory.h"
 #import "MLNDebugCodeCoverageFunction.h"
 #import "MLNDebugContext.h"
 #import "mln_luasocket.h"
-#import "MLNUIKVOObserverProtocol.h"
-#import "MLNUIKitInstanceFactory.h"
+#import <MLN/NSDictionary+MLNSafety.h>
+#import <MLN/MLNKitInstanceFactory.h>
+
 
 @interface MLNHotReload () <MLNKitInstanceErrorHandlerProtocol, MLNKitInstanceDelegate, MLNServerManagerDelegate, MLNDebugPrintObserver, MLNServerListenerProtocol, MLNHotReloadPresenterDelegate> {
     int _usbPort;
@@ -128,11 +127,7 @@ static MLNHotReload *sharedInstance;
 
 - (MLNKitInstance *)getKitInstance {
     MLNKitInstance *luaInstance;
-    if (self.useArgo) {
-        luaInstance = (MLNKitInstance *)[[MLNUIKitInstanceFactory defaultFactory]  createKitInstanceWithViewController:self.viewController];
-    } else {
-        luaInstance = [[MLNKitInstanceFactory defaultFactory] createKitInstanceWithViewController:self.viewController];
-    }
+    luaInstance = [[MLNKitInstanceFactory defaultFactory] createKitInstanceWithViewController:self.viewController];
     return luaInstance;
 }
 
@@ -179,31 +174,6 @@ static MLNHotReload *sharedInstance;
     }
     dispatch_async(dispatch_get_main_queue(), ^{
         UIViewController *vc = self.viewController;
-        if(self.useArgo) {
-            //加载lua文件之前清除掉数据绑定，解决刷新时会使用到上次的数据.
-            // MLNKitInstanceDelegate, MLNViewControllerProtocol
-            BOOL is_mln = [vc conformsToProtocol:@protocol(MLNKitInstanceDelegate)];
-            if (!is_mln) {
-                is_mln = [vc conformsToProtocol:@protocol(MLNViewControllerProtocol)];
-            }
-            if (!is_mln) {
-                id obj = objc_getAssociatedObject(vc, @selector(mlnui_dataBinding));
-                if (obj) {
-                    objc_setAssociatedObject(vc, @selector(mlnui_dataBinding), nil, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-                } else {
-                    obj = objc_getAssociatedObject(vc, @selector(argo_dataBinding));
-                    if (obj) {
-                        objc_setAssociatedObject(vc, @selector(argo_dataBinding), nil, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-                    } else {
-                        @try {
-                            [vc setValue:nil forKey:@"_dataBinding"];
-                        } @catch (NSException *exception) {
-                            NSLog(@"ex %@",exception);
-                        }
-                    }
-                }
-            }
-        }
 
         self.benchLuaInstance = [self createLuaInstance:bundlePath entryFilePath:entryFilePath params:params];
         // 参数
@@ -213,7 +183,7 @@ static MLNHotReload *sharedInstance;
         relativePath = [relativePath stringByAppendingPathComponent:entryFilePath];
         NSString *resouce = [kLuaHotReloadHost stringByAppendingString:relativePath];
         [extraInfo mln_setObject:resouce forKey:@"LuaSource"];
-        [extraInfo mln_setObject:kLuaDebugModeHotReload forKey:kLuaDebugModeKey];
+//        [extraInfo mln_setObject:kLuaDebugModeHotReload forKey:kLuaDebugModeKey];
         // -请求外部参数
         if (self.extraInfoCallback) {
             NSDictionary *tmp =  self.extraInfoCallback(extraInfo);
@@ -222,7 +192,11 @@ static MLNHotReload *sharedInstance;
             }
         }
         [self closeSocketConnectionOfPreviousLuaCore]; // 在上一个luaState释放之前，先主动发一条close消息
-        [self.benchLuaInstance runWithEntryFile:entryFilePath windowExtra:extraInfo error:NULL]; // 更新bundlePath
+        self.benchLuaInstance.windowExtra = extraInfo;
+        void (^finished)(void) = ^void() {
+            [self.benchLuaInstance runWithEntryFile:entryFilePath windowExtra:extraInfo error:NULL]; // 更新bundlePath
+        };
+        [self.benchLuaInstance loadDependenceWithLuaBundleRootPath:bundlePath finished:finished];
     });
 }
 
@@ -355,6 +329,25 @@ extern int mln_luaopen_socket_core(lua_State *L);
         [self.luaInstance doLuaWindowDidAppear];
         [self.presenter tip:@"内容已刷新" duration:0.3 delay:1];
     }
+}
+
+- (NSData *)instance:(MLNKitInstance *)instance tryLoad:(NSString *)currentPath filePath:(NSString *)filePath
+{
+    NSArray *directoryContents = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:currentPath error:NULL];
+    NSData *data = nil;
+    for (NSString *dir in directoryContents) {
+        NSString *tmpPath = [NSString stringWithFormat:@"%@/%@/src/%@", currentPath, dir, filePath];
+        BOOL exist = [[NSFileManager defaultManager] fileExistsAtPath:tmpPath];
+        if (exist) {
+            data = [NSData dataWithContentsOfFile:tmpPath options:NSDataReadingMappedIfSafe error:NULL];
+            break;
+        }
+    }
+    return data;
+}
+
+- (BOOL)instance:(MLNKitInstance *)instance loadBridge:(NSString *)bridgeName {
+    return self.loadBridge ? self.loadBridge(instance, bridgeName) : NO;
 }
 
 #pragma mark - Getter

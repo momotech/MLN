@@ -7,7 +7,6 @@
 
 #import "MLNConsole.h"
 #import <MLN/MLNKit.h>
-#import "MLNUIBundle.h"
 
 // Close
 #define kConsoleTitleHeightClose 35.f
@@ -286,7 +285,7 @@
 
 - (NSString *)imgPathWithName:(NSString *)name
 {
-    return [[MLNUIBundle UIBundle] pngPathWithName:name];
+    return [[NSBundle bundleForClass:[self class]] pathForResource:name ofType:@"png"];
 }
 
 #pragma mark - Getter

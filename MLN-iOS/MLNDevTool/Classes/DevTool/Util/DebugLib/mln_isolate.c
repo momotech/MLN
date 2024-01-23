@@ -44,7 +44,7 @@
       io1->value_ = io2->value_; io1->tt_ = io2->tt_; \
       }
 
-#define LERR(L, s, p)       luai_writestringerror(L, s, p)
+#define LERR(s, p)       luai_writestringerror(s, p)
 #else                       /**Lua 5.1 */
 /**from lobject.h */
 #define ctb(t)              ((t))
@@ -56,7 +56,7 @@
 #define api_incr_top(L)     {api_check(L, L->top < L->ci->top); L->top++;}
 /**from  lauxlib.h*/
 #define ispseudo(i)         ((i) <= LUA_REGISTRYINDEX)
-#define LERR(L, s, p)       printf(s, p);
+#define LERR(s, p)       printf(s, p);
 #define luaH_getint(t,n)    mln_luaH_getnum(t,n)
 #define LUA_RIDX_GLOBALS    LUA_GLOBALSINDEX
 
@@ -224,7 +224,7 @@ static int lua_safe_call(lua_State *L, int nargs, int nresults) {
             errmsg = lua_tostring(L, -1);
         else
             errmsg = "unkonw error";
-        LERR(L, errmsg, NULL);
+        LERR(errmsg, NULL);
     }
     return ret;
 }
@@ -657,13 +657,13 @@ static int copy_value(TValue *dest, TValue *src) {
             break;
         case LUA_TUSERDATA:
         default:
-            LERR(NULL, "not support type: %d", type);
+            LERR("not support type: %d", type);
             setnilvalue(dest);
             return STATE_WRONG_PARAM;
     }
     if (ret) {
         setnilvalue(dest);
-        LERR(NULL, "copy failed, error code: %d", ret);
+        LERR("copy failed, error code: %d", ret);
     }
     return ret;
 }
@@ -1048,7 +1048,7 @@ static FORCE_INLIEN int call_callback(lua_State *L, void *ud) {
     lua_getglobal(L, ISOLATE_FUN_NAME);
     if (!lua_isfunction(L, -1)) {
         lua_settop(L, oldTop);
-        LERR(L, "%s", "must call isolate.registerCallback(function) first!");
+        LERR("%s", "must call isolate.registerCallback(function) first!");
         return OTHER_ERROR;
     }
 
@@ -1087,7 +1087,7 @@ static lua_State *_inner_in_thread(Thread_Arg *ta) {
         free_thread_arg(ta);
         const char *em = lua_tostring(L, -1);
         em = lua_pushfstring(L, "load function failed:%s", em);
-        LERR(L, "%s", em);
+        LERR("%s", em);
     } else {
         int size = push_thread_args(L, ta);
         lua_safe_call(L, size, LUA_MULTRET);
