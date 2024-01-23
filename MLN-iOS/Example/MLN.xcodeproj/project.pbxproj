@@ -7,52 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		000B3BDF2505D753001142E2 /* KuaDemoMUI2.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 000B3BDE2505D753001142E2 /* KuaDemoMUI2.bundle */; };
-		000B3BE22505D75C001142E2 /* UserData.m in Sources */ = {isa = PBXBuildFile; fileRef = 000B3BE02505D75C001142E2 /* UserData.m */; };
-		0011BBB32410AC3F003AE819 /* MLNDatabindingTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 0011BBB22410AC3F003AE819 /* MLNDatabindingTests.m */; };
-		0011BBB72410AC6F003AE819 /* MLNTestModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 0011BBB62410AC6F003AE819 /* MLNTestModel.m */; };
-		0026755324B3514900D8C617 /* MLNUIDB.m in Sources */ = {isa = PBXBuildFile; fileRef = 0026755224B3514900D8C617 /* MLNUIDB.m */; };
 		00268A4124B7011500D8C617 /* EYLogViewer.m in Sources */ = {isa = PBXBuildFile; fileRef = 00268A3F24B7011500D8C617 /* EYLogViewer.m */; };
-		00574F94246A8B3200927744 /* MLNDataBindArrayViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 00574F93246A8B3200927744 /* MLNDataBindArrayViewController.m */; };
-		006E8FDF2501E60300DB3368 /* ArgoKuaViewModelUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 006E8FDE2501E60300DB3368 /* ArgoKuaViewModelUtils.m */; };
-		007F89E7246C0D8400FF50F1 /* MLNBindTestCaseModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 007F89E6246C0D8400FF50F1 /* MLNBindTestCaseModel.m */; };
-		007FC90E250630B1000A8E92 /* HomePageArgoUI.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 007FC90D250630B1000A8E92 /* HomePageArgoUI.bundle */; };
-		007FF99A25072DCD000A8E92 /* MLNUIMyErrorHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 007FF99925072DCD000A8E92 /* MLNUIMyErrorHandler.m */; };
-		009DD8D524114B9600452458 /* MLNArrayBindingTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 009DD8D424114B9600452458 /* MLNArrayBindingTests.m */; };
 		00A0C999243C180500F0D003 /* MLNPerformanceTestController.m in Sources */ = {isa = PBXBuildFile; fileRef = 00A0C998243C180500F0D003 /* MLNPerformanceTestController.m */; };
 		00A0C9A1243C3C0500F0D003 /* LuaNativeUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00A0C9A0243C3C0500F0D003 /* LuaNativeUITests.m */; };
-		00A312E024EFB4A80043A164 /* MLNUITestBridgeModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 00A312DF24EFB4A80043A164 /* MLNUITestBridgeModel.m */; };
-		00A45F7624850C35001A07D9 /* MLNUIBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = 00A45F7524850C35001A07D9 /* MLNUIBridge.m */; };
-		00A9991C247EA73D00307914 /* MLNUIMyImageHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 00A9991B247EA73D00307914 /* MLNUIMyImageHandler.m */; };
-		00A9B364247F8ED100307914 /* MLNUITestTableHotReload.m in Sources */ = {isa = PBXBuildFile; fileRef = 00A9B363247F8ED100307914 /* MLNUITestTableHotReload.m */; };
-		00A9B367247F914D00307914 /* MDFashionItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 00A9B366247F914D00307914 /* MDFashionItem.m */; };
-		00C1E94224756BC6000DB89A /* MLNArrayBindingTests2.m in Sources */ = {isa = PBXBuildFile; fileRef = 00C1E94124756BC6000DB89A /* MLNArrayBindingTests2.m */; };
-		00C1E9492477732E000DB89A /* MLNDataBindOperator.m in Sources */ = {isa = PBXBuildFile; fileRef = 00C1E9482477732E000DB89A /* MLNDataBindOperator.m */; };
-		00C1E94C2477797E000DB89A /* MLNDBTestModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 00C1E94B2477797E000DB89A /* MLNDBTestModel.m */; };
-		00C1E94E24790329000DB89A /* FormatKeysTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00C1E94D24790329000DB89A /* FormatKeysTests.m */; };
-		00D5985E24B825BF00EA1660 /* MLNBindTestShopStoreController.m in Sources */ = {isa = PBXBuildFile; fileRef = 00D5985D24B825BF00EA1660 /* MLNBindTestShopStoreController.m */; };
-		00D5986624B8277300EA1660 /* GoodsDataList.m in Sources */ = {isa = PBXBuildFile; fileRef = 00D5986324B8277200EA1660 /* GoodsDataList.m */; };
-		00D5986724B8277300EA1660 /* GoodsData.m in Sources */ = {isa = PBXBuildFile; fileRef = 00D5986524B8277300EA1660 /* GoodsData.m */; };
-		00D5986B24B8732F00EA1660 /* PerformanceDemoMUI.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 00D5986A24B8732F00EA1660 /* PerformanceDemoMUI.bundle */; };
-		00D5986E24B8766C00EA1660 /* MLNBindTestLayoutController.m in Sources */ = {isa = PBXBuildFile; fileRef = 00D5986D24B8766C00EA1660 /* MLNBindTestLayoutController.m */; };
-		00DA72B9243ED12700981719 /* MLNReflectTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00DA72B8243ED12700981719 /* MLNReflectTests.m */; };
-		00DA72BC243F011700981719 /* DataBindTest.lua in Resources */ = {isa = PBXBuildFile; fileRef = 00DA72BA243F011100981719 /* DataBindTest.lua */; };
-		00E652532417695900A878B8 /* MLNDataBindHotReload.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E652522417695900A878B8 /* MLNDataBindHotReload.m */; };
-		00E6525624176A0F00A878B8 /* MLNDataBindModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E6525524176A0F00A878B8 /* MLNDataBindModel.m */; };
-		00E6525C2418EFF200A878B8 /* MLNDictionaryTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E6525B2418EFF200A878B8 /* MLNDictionaryTests.m */; };
-		00E6526B2420AD1800A878B8 /* MLNBindModelViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E6526A2420AD1800A878B8 /* MLNBindModelViewController.m */; };
-		00E6526E2420BCCE00A878B8 /* MLNBindTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E6526D2420BCCE00A878B8 /* MLNBindTableViewController.m */; };
-		00E911CC24E2B8EC006614C4 /* MLNKuaController.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E911CB24E2B8EC006614C4 /* MLNKuaController.m */; };
-		00E9131524E51837006614C4 /* ViewPagerDemoMUI.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 00E9130924E51837006614C4 /* ViewPagerDemoMUI.bundle */; };
-		00E9131724E51837006614C4 /* HomeDataPageModels.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E9131024E51837006614C4 /* HomeDataPageModels.m */; };
-		00E9131824E51837006614C4 /* HomeDataPageModelsPage.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E9131124E51837006614C4 /* HomeDataPageModelsPage.m */; };
-		00E9132124E519B3006614C4 /* CellModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E9131B24E519B1006614C4 /* CellModel.m */; };
-		00E9132224E519B3006614C4 /* CellModelItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E9131D24E519B2006614C4 /* CellModelItem.m */; };
-		00E9132324E519B3006614C4 /* HomeData.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E9131F24E519B2006614C4 /* HomeData.m */; };
-		00E9132624E51CC3006614C4 /* MLNViewPagerDemo.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E9132524E51CC3006614C4 /* MLNViewPagerDemo.m */; };
-		00E9132A24E53B41006614C4 /* MLNKuaController_Native.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E9132924E53B41006614C4 /* MLNKuaController_Native.m */; };
-		00E9132C24E53E46006614C4 /* KuaCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 00E9132B24E53E46006614C4 /* KuaCell.xib */; };
-		00FDB74E24591C3300D4A211 /* MLNBlockKVOTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00FDB74D24591C3300D4A211 /* MLNBlockKVOTests.m */; };
 		3012BB102326822F00FA2BB2 /* MLNNavigatorHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 3012BB0F2326822F00FA2BB2 /* MLNNavigatorHandler.m */; };
 		30A4EB5A231CC5CD00995416 /* MLNMyHttpHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 30A4EB59231CC5CD00995416 /* MLNMyHttpHandler.m */; };
 		30A4EB5D231CC86B00995416 /* MLNMyImageHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 30A4EB5C231CC86B00995416 /* MLNMyImageHandler.m */; };
@@ -77,7 +34,6 @@
 		6003F5B2195388D20070C39A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F591195388D20070C39A /* UIKit.framework */; };
 		6003F5BA195388D20070C39A /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6003F5B8195388D20070C39A /* InfoPlist.strings */; };
 		6003F5BC195388D20070C39A /* Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6003F5BB195388D20070C39A /* Tests.m */; };
-		A4C3142624C7DE2700444CA4 /* MLNGlobalTimeTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A4C3142524C7DE2700444CA4 /* MLNGlobalTimeTest.m */; };
 		B27F658C2377AA6C00F2D341 /* MLNGalleryMineBottomPage.m in Sources */ = {isa = PBXBuildFile; fileRef = B27F657C2377AA6B00F2D341 /* MLNGalleryMineBottomPage.m */; };
 		B27F658F2377AA6C00F2D341 /* MLNGalleryMineInfoViewModel.m in Sources */ = {isa = PBXBuildFile; fileRef = B27F65842377AA6B00F2D341 /* MLNGalleryMineInfoViewModel.m */; };
 		B27F65902377AA6C00F2D341 /* MLNGalleryMineHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = B27F65862377AA6B00F2D341 /* MLNGalleryMineHeaderView.m */; };
@@ -139,13 +95,7 @@
 		FA4EE30D237909AB00449250 /* MLNGalleryMineBottomPageDynamicCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FA4EE30C237909AB00449250 /* MLNGalleryMineBottomPageDynamicCell.m */; };
 		FA4EE310237909BC00449250 /* MLNGalleryMineBottomPageCollectCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FA4EE30F237909BC00449250 /* MLNGalleryMineBottomPageCollectCell.m */; };
 		FA4EE313237917E500449250 /* MLNGalleryMinePageCellCollectCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FA4EE312237917E500449250 /* MLNGalleryMinePageCellCollectCell.m */; };
-		FA604C0A2518571800175D97 /* kuaDetailArgoUI.bundle in Resources */ = {isa = PBXBuildFile; fileRef = FA604C092518571700175D97 /* kuaDetailArgoUI.bundle */; };
-		FA604C0D2518580300175D97 /* MLNKuaControllerAsync.m in Sources */ = {isa = PBXBuildFile; fileRef = FA604C0C2518580300175D97 /* MLNKuaControllerAsync.m */; };
-		FA604C0F251881B500175D97 /* KuaDemoMUI.bundle in Resources */ = {isa = PBXBuildFile; fileRef = FA604C0E251881B500175D97 /* KuaDemoMUI.bundle */; };
 		FA6C1CE1248E41D10025BA96 /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = FA6C1CE0248E41D10025BA96 /* libc++.tbd */; };
-		FA906FA024EBC8D500F8DAE2 /* MLNUICustomHotReloadViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FA906F9F24EBC8D500F8DAE2 /* MLNUICustomHotReloadViewController.m */; };
-		FA906FA424EBCAB700F8DAE2 /* MLNUITestModel.m in Sources */ = {isa = PBXBuildFile; fileRef = FA906FA324EBCAB700F8DAE2 /* MLNUITestModel.m */; };
-		FAE72F1625106DA00092E87D /* ArgoBindingTest.m in Sources */ = {isa = PBXBuildFile; fileRef = FAE72F1525106DA00092E87D /* ArgoBindingTest.m */; };
 		FAE9C59323A250CD002C830D /* gallery.bundle in Resources */ = {isa = PBXBuildFile; fileRef = FAE9C59223A250CD002C830D /* gallery.bundle */; };
 		FAE9C59523A2529C002C830D /* inner_demo.bundle in Resources */ = {isa = PBXBuildFile; fileRef = FAE9C59423A2529C002C830D /* inner_demo.bundle */; };
 /* End PBXBuildFile section */
@@ -168,86 +118,13 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		000B3BDE2505D753001142E2 /* KuaDemoMUI2.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = KuaDemoMUI2.bundle; sourceTree = "<group>"; };
-		000B3BE02505D75C001142E2 /* UserData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserData.m; sourceTree = "<group>"; };
-		000B3BE12505D75C001142E2 /* UserData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserData.h; sourceTree = "<group>"; };
-		0011BBB22410AC3F003AE819 /* MLNDatabindingTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNDatabindingTests.m; sourceTree = "<group>"; };
-		0011BBB52410AC6F003AE819 /* MLNTestModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNTestModel.h; sourceTree = "<group>"; };
-		0011BBB62410AC6F003AE819 /* MLNTestModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNTestModel.m; sourceTree = "<group>"; };
-		0026755124B3514900D8C617 /* MLNUIDB.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNUIDB.h; sourceTree = "<group>"; };
-		0026755224B3514900D8C617 /* MLNUIDB.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNUIDB.m; sourceTree = "<group>"; };
 		00268A3F24B7011500D8C617 /* EYLogViewer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EYLogViewer.m; sourceTree = "<group>"; };
 		00268A4024B7011500D8C617 /* EYLogViewer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EYLogViewer.h; sourceTree = "<group>"; };
-		00574F92246A8B3200927744 /* MLNDataBindArrayViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNDataBindArrayViewController.h; sourceTree = "<group>"; };
-		00574F93246A8B3200927744 /* MLNDataBindArrayViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNDataBindArrayViewController.m; sourceTree = "<group>"; };
-		006E8FDD2501E60300DB3368 /* ArgoKuaViewModelUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ArgoKuaViewModelUtils.h; sourceTree = "<group>"; };
-		006E8FDE2501E60300DB3368 /* ArgoKuaViewModelUtils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ArgoKuaViewModelUtils.m; sourceTree = "<group>"; };
-		007F89E5246C0D8400FF50F1 /* MLNBindTestCaseModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNBindTestCaseModel.h; sourceTree = "<group>"; };
-		007F89E6246C0D8400FF50F1 /* MLNBindTestCaseModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNBindTestCaseModel.m; sourceTree = "<group>"; };
-		007FC90D250630B1000A8E92 /* HomePageArgoUI.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = HomePageArgoUI.bundle; sourceTree = "<group>"; };
-		007FF99825072DCD000A8E92 /* MLNUIMyErrorHandler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNUIMyErrorHandler.h; sourceTree = "<group>"; };
-		007FF99925072DCD000A8E92 /* MLNUIMyErrorHandler.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNUIMyErrorHandler.m; sourceTree = "<group>"; };
-		009DD8D424114B9600452458 /* MLNArrayBindingTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNArrayBindingTests.m; sourceTree = "<group>"; };
 		00A0C997243C180500F0D003 /* MLNPerformanceTestController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNPerformanceTestController.h; sourceTree = "<group>"; };
 		00A0C998243C180500F0D003 /* MLNPerformanceTestController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNPerformanceTestController.m; sourceTree = "<group>"; };
 		00A0C99E243C3C0400F0D003 /* LuaNativeUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = LuaNativeUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		00A0C9A0243C3C0500F0D003 /* LuaNativeUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LuaNativeUITests.m; sourceTree = "<group>"; };
 		00A0C9A2243C3C0500F0D003 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		00A312DE24EFB4A80043A164 /* MLNUITestBridgeModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNUITestBridgeModel.h; sourceTree = "<group>"; };
-		00A312DF24EFB4A80043A164 /* MLNUITestBridgeModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNUITestBridgeModel.m; sourceTree = "<group>"; };
-		00A45F7424850C35001A07D9 /* MLNUIBridge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNUIBridge.h; sourceTree = "<group>"; };
-		00A45F7524850C35001A07D9 /* MLNUIBridge.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNUIBridge.m; sourceTree = "<group>"; };
-		00A9991A247EA73D00307914 /* MLNUIMyImageHandler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNUIMyImageHandler.h; sourceTree = "<group>"; };
-		00A9991B247EA73D00307914 /* MLNUIMyImageHandler.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNUIMyImageHandler.m; sourceTree = "<group>"; };
-		00A9B362247F8ED100307914 /* MLNUITestTableHotReload.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNUITestTableHotReload.h; sourceTree = "<group>"; };
-		00A9B363247F8ED100307914 /* MLNUITestTableHotReload.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNUITestTableHotReload.m; sourceTree = "<group>"; };
-		00A9B365247F914D00307914 /* MDFashionItem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MDFashionItem.h; sourceTree = "<group>"; };
-		00A9B366247F914D00307914 /* MDFashionItem.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MDFashionItem.m; sourceTree = "<group>"; };
-		00C1E94124756BC6000DB89A /* MLNArrayBindingTests2.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNArrayBindingTests2.m; sourceTree = "<group>"; };
-		00C1E9472477732E000DB89A /* MLNDataBindOperator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNDataBindOperator.h; sourceTree = "<group>"; };
-		00C1E9482477732E000DB89A /* MLNDataBindOperator.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNDataBindOperator.m; sourceTree = "<group>"; };
-		00C1E94A2477797E000DB89A /* MLNDBTestModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNDBTestModel.h; sourceTree = "<group>"; };
-		00C1E94B2477797E000DB89A /* MLNDBTestModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNDBTestModel.m; sourceTree = "<group>"; };
-		00C1E94D24790329000DB89A /* FormatKeysTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FormatKeysTests.m; sourceTree = "<group>"; };
-		00D5985C24B825BF00EA1660 /* MLNBindTestShopStoreController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNBindTestShopStoreController.h; sourceTree = "<group>"; };
-		00D5985D24B825BF00EA1660 /* MLNBindTestShopStoreController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNBindTestShopStoreController.m; sourceTree = "<group>"; };
-		00D5986224B8277100EA1660 /* GoodsData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GoodsData.h; sourceTree = "<group>"; };
-		00D5986324B8277200EA1660 /* GoodsDataList.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GoodsDataList.m; sourceTree = "<group>"; };
-		00D5986424B8277200EA1660 /* GoodsDataList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GoodsDataList.h; sourceTree = "<group>"; };
-		00D5986524B8277300EA1660 /* GoodsData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GoodsData.m; sourceTree = "<group>"; };
-		00D5986A24B8732F00EA1660 /* PerformanceDemoMUI.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = PerformanceDemoMUI.bundle; sourceTree = "<group>"; };
-		00D5986C24B8766C00EA1660 /* MLNBindTestLayoutController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNBindTestLayoutController.h; sourceTree = "<group>"; };
-		00D5986D24B8766C00EA1660 /* MLNBindTestLayoutController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNBindTestLayoutController.m; sourceTree = "<group>"; };
-		00DA72B8243ED12700981719 /* MLNReflectTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNReflectTests.m; sourceTree = "<group>"; };
-		00DA72BA243F011100981719 /* DataBindTest.lua */ = {isa = PBXFileReference; lastKnownFileType = text; path = DataBindTest.lua; sourceTree = "<group>"; };
-		00E652512417695900A878B8 /* MLNDataBindHotReload.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNDataBindHotReload.h; sourceTree = "<group>"; };
-		00E652522417695900A878B8 /* MLNDataBindHotReload.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNDataBindHotReload.m; sourceTree = "<group>"; };
-		00E6525424176A0F00A878B8 /* MLNDataBindModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNDataBindModel.h; sourceTree = "<group>"; };
-		00E6525524176A0F00A878B8 /* MLNDataBindModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNDataBindModel.m; sourceTree = "<group>"; };
-		00E6525B2418EFF200A878B8 /* MLNDictionaryTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNDictionaryTests.m; sourceTree = "<group>"; };
-		00E652692420AD1800A878B8 /* MLNBindModelViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNBindModelViewController.h; sourceTree = "<group>"; };
-		00E6526A2420AD1800A878B8 /* MLNBindModelViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNBindModelViewController.m; sourceTree = "<group>"; };
-		00E6526C2420BCCE00A878B8 /* MLNBindTableViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNBindTableViewController.h; sourceTree = "<group>"; };
-		00E6526D2420BCCE00A878B8 /* MLNBindTableViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNBindTableViewController.m; sourceTree = "<group>"; };
-		00E911CA24E2B8EC006614C4 /* MLNKuaController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNKuaController.h; sourceTree = "<group>"; };
-		00E911CB24E2B8EC006614C4 /* MLNKuaController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNKuaController.m; sourceTree = "<group>"; };
-		00E9130924E51837006614C4 /* ViewPagerDemoMUI.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = ViewPagerDemoMUI.bundle; sourceTree = "<group>"; };
-		00E9130C24E51837006614C4 /* HomeDataPageModels.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HomeDataPageModels.h; sourceTree = "<group>"; };
-		00E9130D24E51837006614C4 /* HomeDataPageModelsPage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HomeDataPageModelsPage.h; sourceTree = "<group>"; };
-		00E9131024E51837006614C4 /* HomeDataPageModels.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HomeDataPageModels.m; sourceTree = "<group>"; };
-		00E9131124E51837006614C4 /* HomeDataPageModelsPage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HomeDataPageModelsPage.m; sourceTree = "<group>"; };
-		00E9131B24E519B1006614C4 /* CellModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CellModel.m; sourceTree = "<group>"; };
-		00E9131C24E519B1006614C4 /* CellModelItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CellModelItem.h; sourceTree = "<group>"; };
-		00E9131D24E519B2006614C4 /* CellModelItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CellModelItem.m; sourceTree = "<group>"; };
-		00E9131E24E519B2006614C4 /* CellModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CellModel.h; sourceTree = "<group>"; };
-		00E9131F24E519B2006614C4 /* HomeData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HomeData.m; sourceTree = "<group>"; };
-		00E9132024E519B3006614C4 /* HomeData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HomeData.h; sourceTree = "<group>"; };
-		00E9132424E51CC3006614C4 /* MLNViewPagerDemo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNViewPagerDemo.h; sourceTree = "<group>"; };
-		00E9132524E51CC3006614C4 /* MLNViewPagerDemo.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNViewPagerDemo.m; sourceTree = "<group>"; };
-		00E9132824E53B41006614C4 /* MLNKuaController_Native.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNKuaController_Native.h; sourceTree = "<group>"; };
-		00E9132924E53B41006614C4 /* MLNKuaController_Native.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNKuaController_Native.m; sourceTree = "<group>"; };
-		00E9132B24E53E46006614C4 /* KuaCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = KuaCell.xib; sourceTree = "<group>"; };
-		00FDB74D24591C3300D4A211 /* MLNBlockKVOTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNBlockKVOTests.m; sourceTree = "<group>"; };
 		0BFEA11F75FC7C356E75DFD6 /* Pods-MLN_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MLN_Example.release.xcconfig"; path = "Target Support Files/Pods-MLN_Example/Pods-MLN_Example.release.xcconfig"; sourceTree = "<group>"; };
 		1018AD05C0E113C32A1AD38C /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
 		28CCCDF75246FDF349FE71B3 /* libPods-LuaNative.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-LuaNative.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -290,8 +167,6 @@
 		606FC2411953D9B200FFA9A0 /* Tests-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Tests-Prefix.pch"; sourceTree = "<group>"; };
 		60CB3A6486D530BC91B53B3C /* Pods-LuaNative.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LuaNative.release.xcconfig"; path = "Target Support Files/Pods-LuaNative/Pods-LuaNative.release.xcconfig"; sourceTree = "<group>"; };
 		6ED891C3203090F5CB5310E5 /* Pods-LuaNative.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LuaNative.debug.xcconfig"; path = "Target Support Files/Pods-LuaNative/Pods-LuaNative.debug.xcconfig"; sourceTree = "<group>"; };
-		A4C3142424C7DE2700444CA4 /* MLNGlobalTimeTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLNGlobalTimeTest.h; sourceTree = "<group>"; };
-		A4C3142524C7DE2700444CA4 /* MLNGlobalTimeTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLNGlobalTimeTest.m; sourceTree = "<group>"; };
 		B27F657C2377AA6B00F2D341 /* MLNGalleryMineBottomPage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLNGalleryMineBottomPage.m; sourceTree = "<group>"; };
 		B27F657E2377AA6B00F2D341 /* MLNGalleryMineBottomPage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLNGalleryMineBottomPage.h; sourceTree = "<group>"; };
 		B27F65842377AA6B00F2D341 /* MLNGalleryMineInfoViewModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLNGalleryMineInfoViewModel.m; sourceTree = "<group>"; };
@@ -418,16 +293,7 @@
 		FA4EE30F237909BC00449250 /* MLNGalleryMineBottomPageCollectCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNGalleryMineBottomPageCollectCell.m; sourceTree = "<group>"; };
 		FA4EE311237917E500449250 /* MLNGalleryMinePageCellCollectCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNGalleryMinePageCellCollectCell.h; sourceTree = "<group>"; };
 		FA4EE312237917E500449250 /* MLNGalleryMinePageCellCollectCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNGalleryMinePageCellCollectCell.m; sourceTree = "<group>"; };
-		FA604C092518571700175D97 /* kuaDetailArgoUI.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = kuaDetailArgoUI.bundle; sourceTree = "<group>"; };
-		FA604C0B2518580300175D97 /* MLNKuaControllerAsync.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNKuaControllerAsync.h; sourceTree = "<group>"; };
-		FA604C0C2518580300175D97 /* MLNKuaControllerAsync.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNKuaControllerAsync.m; sourceTree = "<group>"; };
-		FA604C0E251881B500175D97 /* KuaDemoMUI.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = KuaDemoMUI.bundle; sourceTree = "<group>"; };
 		FA6C1CE0248E41D10025BA96 /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "usr/lib/libc++.tbd"; sourceTree = SDKROOT; };
-		FA906F9E24EBC8D500F8DAE2 /* MLNUICustomHotReloadViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNUICustomHotReloadViewController.h; sourceTree = "<group>"; };
-		FA906F9F24EBC8D500F8DAE2 /* MLNUICustomHotReloadViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNUICustomHotReloadViewController.m; sourceTree = "<group>"; };
-		FA906FA224EBCAB700F8DAE2 /* MLNUITestModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNUITestModel.h; sourceTree = "<group>"; };
-		FA906FA324EBCAB700F8DAE2 /* MLNUITestModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNUITestModel.m; sourceTree = "<group>"; };
-		FAE72F1525106DA00092E87D /* ArgoBindingTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArgoBindingTest.m; sourceTree = "<group>"; };
 		FAE9C59223A250CD002C830D /* gallery.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = gallery.bundle; sourceTree = "<group>"; };
 		FAE9C59423A2529C002C830D /* inner_demo.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = inner_demo.bundle; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -465,23 +331,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		0011BBB42410AC46003AE819 /* DataBinding */ = {
-			isa = PBXGroup;
-			children = (
-				0011BBB52410AC6F003AE819 /* MLNTestModel.h */,
-				0011BBB62410AC6F003AE819 /* MLNTestModel.m */,
-				0011BBB22410AC3F003AE819 /* MLNDatabindingTests.m */,
-				009DD8D424114B9600452458 /* MLNArrayBindingTests.m */,
-				00C1E94124756BC6000DB89A /* MLNArrayBindingTests2.m */,
-				00E6525B2418EFF200A878B8 /* MLNDictionaryTests.m */,
-				00DA72B8243ED12700981719 /* MLNReflectTests.m */,
-				00DA72BA243F011100981719 /* DataBindTest.lua */,
-				00FDB74D24591C3300D4A211 /* MLNBlockKVOTests.m */,
-				00C1E94D24790329000DB89A /* FormatKeysTests.m */,
-			);
-			path = DataBinding;
-			sourceTree = "<group>";
-		};
 		00A0C99F243C3C0500F0D003 /* LuaNativeUITests */ = {
 			isa = PBXGroup;
 			children = (
@@ -489,149 +338,6 @@
 				00A0C9A2243C3C0500F0D003 /* Info.plist */,
 			);
 			path = LuaNativeUITests;
-			sourceTree = "<group>";
-		};
-		00A9B361247F8E7600307914 /* TestTable */ = {
-			isa = PBXGroup;
-			children = (
-				00A9B362247F8ED100307914 /* MLNUITestTableHotReload.h */,
-				00A9B363247F8ED100307914 /* MLNUITestTableHotReload.m */,
-				00A9B365247F914D00307914 /* MDFashionItem.h */,
-				00A9B366247F914D00307914 /* MDFashionItem.m */,
-				0026755124B3514900D8C617 /* MLNUIDB.h */,
-				0026755224B3514900D8C617 /* MLNUIDB.m */,
-			);
-			path = TestTable;
-			sourceTree = "<group>";
-		};
-		00C1E94624777286000DB89A /* TestCase */ = {
-			isa = PBXGroup;
-			children = (
-				00E652512417695900A878B8 /* MLNDataBindHotReload.h */,
-				00E652522417695900A878B8 /* MLNDataBindHotReload.m */,
-				00C1E9472477732E000DB89A /* MLNDataBindOperator.h */,
-				00C1E9482477732E000DB89A /* MLNDataBindOperator.m */,
-				00C1E94A2477797E000DB89A /* MLNDBTestModel.h */,
-				00C1E94B2477797E000DB89A /* MLNDBTestModel.m */,
-			);
-			name = TestCase;
-			sourceTree = "<group>";
-		};
-		00D5986124B8275F00EA1660 /* ShopStore */ = {
-			isa = PBXGroup;
-			children = (
-				00D5986A24B8732F00EA1660 /* PerformanceDemoMUI.bundle */,
-				00D5985C24B825BF00EA1660 /* MLNBindTestShopStoreController.h */,
-				00D5985D24B825BF00EA1660 /* MLNBindTestShopStoreController.m */,
-				00D5986224B8277100EA1660 /* GoodsData.h */,
-				00D5986524B8277300EA1660 /* GoodsData.m */,
-				00D5986424B8277200EA1660 /* GoodsDataList.h */,
-				00D5986324B8277200EA1660 /* GoodsDataList.m */,
-				00D5986C24B8766C00EA1660 /* MLNBindTestLayoutController.h */,
-				00D5986D24B8766C00EA1660 /* MLNBindTestLayoutController.m */,
-			);
-			name = ShopStore;
-			sourceTree = "<group>";
-		};
-		00E652502417693600A878B8 /* DataBind */ = {
-			isa = PBXGroup;
-			children = (
-				FAE72F1525106DA00092E87D /* ArgoBindingTest.m */,
-				00D5986124B8275F00EA1660 /* ShopStore */,
-				00A9B361247F8E7600307914 /* TestTable */,
-				00C1E94624777286000DB89A /* TestCase */,
-				00E6525424176A0F00A878B8 /* MLNDataBindModel.h */,
-				00E6525524176A0F00A878B8 /* MLNDataBindModel.m */,
-				00E652692420AD1800A878B8 /* MLNBindModelViewController.h */,
-				00E6526A2420AD1800A878B8 /* MLNBindModelViewController.m */,
-				00E6526C2420BCCE00A878B8 /* MLNBindTableViewController.h */,
-				00E6526D2420BCCE00A878B8 /* MLNBindTableViewController.m */,
-				00574F92246A8B3200927744 /* MLNDataBindArrayViewController.h */,
-				00574F93246A8B3200927744 /* MLNDataBindArrayViewController.m */,
-				007F89E5246C0D8400FF50F1 /* MLNBindTestCaseModel.h */,
-				007F89E6246C0D8400FF50F1 /* MLNBindTestCaseModel.m */,
-				00A45F7424850C35001A07D9 /* MLNUIBridge.h */,
-				00A45F7524850C35001A07D9 /* MLNUIBridge.m */,
-				00A312DE24EFB4A80043A164 /* MLNUITestBridgeModel.h */,
-				00A312DF24EFB4A80043A164 /* MLNUITestBridgeModel.m */,
-			);
-			path = DataBind;
-			sourceTree = "<group>";
-		};
-		00E911C924E2B8B9006614C4 /* ArgoUIDemo */ = {
-			isa = PBXGroup;
-			children = (
-				00E9132724E53B24006614C4 /* KuaNative */,
-				00E9130824E5180B006614C4 /* Kua */,
-				00E9130624E517C9006614C4 /* ViewPager */,
-				FA906FA124EBC8E000F8DAE2 /* CustomHotReload */,
-			);
-			path = ArgoUIDemo;
-			sourceTree = "<group>";
-		};
-		00E911CE24E2BCE4006614C4 /* ViewModel */ = {
-			isa = PBXGroup;
-			children = (
-				000B3BE12505D75C001142E2 /* UserData.h */,
-				000B3BE02505D75C001142E2 /* UserData.m */,
-				006E8FDD2501E60300DB3368 /* ArgoKuaViewModelUtils.h */,
-				006E8FDE2501E60300DB3368 /* ArgoKuaViewModelUtils.m */,
-			);
-			path = ViewModel;
-			sourceTree = "<group>";
-		};
-		00E9130624E517C9006614C4 /* ViewPager */ = {
-			isa = PBXGroup;
-			children = (
-				007FC90D250630B1000A8E92 /* HomePageArgoUI.bundle */,
-				00E9130A24E51837006614C4 /* ViewModel */,
-				00E9130924E51837006614C4 /* ViewPagerDemoMUI.bundle */,
-				00E9132424E51CC3006614C4 /* MLNViewPagerDemo.h */,
-				00E9132524E51CC3006614C4 /* MLNViewPagerDemo.m */,
-			);
-			path = ViewPager;
-			sourceTree = "<group>";
-		};
-		00E9130824E5180B006614C4 /* Kua */ = {
-			isa = PBXGroup;
-			children = (
-				FA604C0E251881B500175D97 /* KuaDemoMUI.bundle */,
-				FA604C092518571700175D97 /* kuaDetailArgoUI.bundle */,
-				000B3BDE2505D753001142E2 /* KuaDemoMUI2.bundle */,
-				00E911CE24E2BCE4006614C4 /* ViewModel */,
-				00E911CA24E2B8EC006614C4 /* MLNKuaController.h */,
-				00E911CB24E2B8EC006614C4 /* MLNKuaController.m */,
-				FA604C0B2518580300175D97 /* MLNKuaControllerAsync.h */,
-				FA604C0C2518580300175D97 /* MLNKuaControllerAsync.m */,
-			);
-			path = Kua;
-			sourceTree = "<group>";
-		};
-		00E9130A24E51837006614C4 /* ViewModel */ = {
-			isa = PBXGroup;
-			children = (
-				00E9131E24E519B2006614C4 /* CellModel.h */,
-				00E9131B24E519B1006614C4 /* CellModel.m */,
-				00E9131C24E519B1006614C4 /* CellModelItem.h */,
-				00E9131D24E519B2006614C4 /* CellModelItem.m */,
-				00E9132024E519B3006614C4 /* HomeData.h */,
-				00E9131F24E519B2006614C4 /* HomeData.m */,
-				00E9130C24E51837006614C4 /* HomeDataPageModels.h */,
-				00E9131024E51837006614C4 /* HomeDataPageModels.m */,
-				00E9130D24E51837006614C4 /* HomeDataPageModelsPage.h */,
-				00E9131124E51837006614C4 /* HomeDataPageModelsPage.m */,
-			);
-			path = ViewModel;
-			sourceTree = "<group>";
-		};
-		00E9132724E53B24006614C4 /* KuaNative */ = {
-			isa = PBXGroup;
-			children = (
-				00E9132B24E53E46006614C4 /* KuaCell.xib */,
-				00E9132824E53B41006614C4 /* MLNKuaController_Native.h */,
-				00E9132924E53B41006614C4 /* MLNKuaController_Native.m */,
-			);
-			name = KuaNative;
 			sourceTree = "<group>";
 		};
 		4DADC4E2A37EF6A986E99F07 /* Pods */ = {
@@ -703,13 +409,11 @@
 				00A0C997243C180500F0D003 /* MLNPerformanceTestController.h */,
 				00A0C998243C180500F0D003 /* MLNPerformanceTestController.m */,
 				FA4103C425090265007ADC8F /* iOSDemo */,
-				00E911C924E2B8B9006614C4 /* ArgoUIDemo */,
 				FAE9C59723A2603F002C830D /* Handler */,
 				FAE9C59623A2600B002C830D /* BridgeTest */,
 				B2DD3E54237990E9002AB6AD /* MLNActionManager */,
 				B2DD3E4F237990E9002AB6AD /* MLNPackageManager */,
 				B29500B42371855900F48F09 /* Gallery_Native */,
-				00E652502417693600A878B8 /* DataBind */,
 				FA383454239A6356000F900E /* Main.storyboard */,
 				FA383457239A64AF000F900E /* LaunchScreen.storyboard */,
 				6003F5A8195388D20070C39A /* Images.xcassets */,
@@ -733,7 +437,6 @@
 		6003F5B5195388D20070C39A /* Tests */ = {
 			isa = PBXGroup;
 			children = (
-				0011BBB42410AC46003AE819 /* DataBinding */,
 				6003F5BB195388D20070C39A /* Tests.m */,
 				6003F5B6195388D20070C39A /* Supporting Files */,
 			);
@@ -1065,17 +768,6 @@
 			path = BottomCell;
 			sourceTree = "<group>";
 		};
-		FA906FA124EBC8E000F8DAE2 /* CustomHotReload */ = {
-			isa = PBXGroup;
-			children = (
-				FA906F9E24EBC8D500F8DAE2 /* MLNUICustomHotReloadViewController.h */,
-				FA906F9F24EBC8D500F8DAE2 /* MLNUICustomHotReloadViewController.m */,
-				FA906FA224EBCAB700F8DAE2 /* MLNUITestModel.h */,
-				FA906FA324EBCAB700F8DAE2 /* MLNUITestModel.m */,
-			);
-			path = CustomHotReload;
-			sourceTree = "<group>";
-		};
 		FADC4062237462E4002249D4 /* Message */ = {
 			isa = PBXGroup;
 			children = (
@@ -1093,8 +785,6 @@
 		FAE9C59623A2600B002C830D /* BridgeTest */ = {
 			isa = PBXGroup;
 			children = (
-				A4C3142424C7DE2700444CA4 /* MLNGlobalTimeTest.h */,
-				A4C3142524C7DE2700444CA4 /* MLNGlobalTimeTest.m */,
 				30E24E8C22F3D74900A0E78C /* MLNGlobalFuncTest.h */,
 				30E24E8D22F3D74900A0E78C /* MLNGlobalFuncTest.m */,
 				30E24E9222F3D74900A0E78C /* MLNGlobalVarTest.h */,
@@ -1118,10 +808,6 @@
 				30A4EB5C231CC86B00995416 /* MLNMyImageHandler.m */,
 				3012BB0E2326822F00FA2BB2 /* MLNNavigatorHandler.h */,
 				3012BB0F2326822F00FA2BB2 /* MLNNavigatorHandler.m */,
-				00A9991A247EA73D00307914 /* MLNUIMyImageHandler.h */,
-				00A9991B247EA73D00307914 /* MLNUIMyImageHandler.m */,
-				007FF99825072DCD000A8E92 /* MLNUIMyErrorHandler.h */,
-				007FF99925072DCD000A8E92 /* MLNUIMyErrorHandler.m */,
 			);
 			path = Handler;
 			sourceTree = "<group>";
@@ -1243,20 +929,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				FA383459239A64AF000F900E /* LaunchScreen.storyboard in Resources */,
-				00E9132C24E53E46006614C4 /* KuaCell.xib in Resources */,
 				FAE9C59323A250CD002C830D /* gallery.bundle in Resources */,
 				FA4103E725090347007ADC8F /* data.plist in Resources */,
 				30CB3BFB23684CD400AB90C6 /* MLN.podspec in Resources */,
 				30CB3BF923684B7F00AB90C6 /* MLNDevTool.podspec in Resources */,
-				00E9131524E51837006614C4 /* ViewPagerDemoMUI.bundle in Resources */,
-				000B3BDF2505D753001142E2 /* KuaDemoMUI2.bundle in Resources */,
-				FA604C0A2518571800175D97 /* kuaDetailArgoUI.bundle in Resources */,
 				FA383456239A6357000F900E /* Main.storyboard in Resources */,
-				FA604C0F251881B500175D97 /* KuaDemoMUI.bundle in Resources */,
-				00D5986B24B8732F00EA1660 /* PerformanceDemoMUI.bundle in Resources */,
 				6003F5A9195388D20070C39A /* Images.xcassets in Resources */,
 				6003F598195388D20070C39A /* InfoPlist.strings in Resources */,
-				007FC90E250630B1000A8E92 /* HomePageArgoUI.bundle in Resources */,
 				FAE9C59523A2529C002C830D /* inner_demo.bundle in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1266,7 +945,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				6003F5BA195388D20070C39A /* InfoPlist.strings in Resources */,
-				00DA72BC243F011700981719 /* DataBindTest.lua in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1340,7 +1018,6 @@
 			files = (
 				B27F65D92377AAC400F2D341 /* MLNHomeTableViewCell.m in Sources */,
 				00268A4124B7011500D8C617 /* EYLogViewer.m in Sources */,
-				0026755324B3514900D8C617 /* MLNUIDB.m in Sources */,
 				B27F65B12377AA9700F2D341 /* MLNDiscoverTagView.m in Sources */,
 				30A4EB5A231CC5CD00995416 /* MLNMyHttpHandler.m in Sources */,
 				B27F65C72377AAAE00F2D341 /* MLNGalleryMessageDescCellModel.m in Sources */,
@@ -1348,87 +1025,55 @@
 				30E24E9422F3D74A00A0E78C /* MLNGlobalFuncTest.m in Sources */,
 				30E24E9522F3D74A00A0E78C /* MLNStaticTest.m in Sources */,
 				FA4EE3032379086F00449250 /* MLNGalleryMinePageCellCollectModel.m in Sources */,
-				00574F94246A8B3200927744 /* MLNDataBindArrayViewController.m in Sources */,
 				B2DD3E61237990E9002AB6AD /* MLNControlContext.m in Sources */,
-				00D5986624B8277300EA1660 /* GoodsDataList.m in Sources */,
 				FA4EE3002379080100449250 /* MLNGalleryMinePageCellDynamicModel.m in Sources */,
-				00E9131824E51837006614C4 /* HomeDataPageModelsPage.m in Sources */,
 				B27F65902377AA6C00F2D341 /* MLNGalleryMineHeaderView.m in Sources */,
-				FA906FA424EBCAB700F8DAE2 /* MLNUITestModel.m in Sources */,
-				00E9132224E519B3006614C4 /* CellModelItem.m in Sources */,
 				B2DD3E60237990E9002AB6AD /* MLNActionItem.m in Sources */,
-				00E9132624E51CC3006614C4 /* MLNViewPagerDemo.m in Sources */,
 				6003F59E195388D20070C39A /* MLNAppDelegate.m in Sources */,
-				00E9131724E51837006614C4 /* HomeDataPageModels.m in Sources */,
 				FA4103E625090347007ADC8F /* DemoLiyifengTableViewHeaderCell.m in Sources */,
-				00A9991C247EA73D00307914 /* MLNUIMyImageHandler.m in Sources */,
 				B27F65DD2377AB0700F2D341 /* MLNGalleryNavigationBar.m in Sources */,
 				B29500F72372D5B400F48F09 /* MLNSimpleViewPagerCell.m in Sources */,
 				B29500D92372627000F48F09 /* MLNNativeTabSegmentScrollHandler.m in Sources */,
 				B27F65AE2377AA9700F2D341 /* MLNDiscoverInspirCategoryView.m in Sources */,
 				B27F65AB2377AA9700F2D341 /* MLNDiscoverAlbumDetailCell.m in Sources */,
 				B27F65AA2377AA9700F2D341 /* MLNDiscoverAlbumDetailViewController.m in Sources */,
-				00D5986724B8277300EA1660 /* GoodsData.m in Sources */,
 				FA4EE3072379095700449250 /* MLNGalleryMineBottomPageBaseCell.m in Sources */,
 				FA4EE313237917E500449250 /* MLNGalleryMinePageCellCollectCell.m in Sources */,
 				FA4EE30D237909AB00449250 /* MLNGalleryMineBottomPageDynamicCell.m in Sources */,
-				00E6526E2420BCCE00A878B8 /* MLNBindTableViewController.m in Sources */,
 				FA4103E425090347007ADC8F /* DemoLiyifengViewController.m in Sources */,
-				00C1E94C2477797E000DB89A /* MLNDBTestModel.m in Sources */,
 				B29500D62372627000F48F09 /* MLNNativeTabSegmentView.m in Sources */,
 				B29500EA2372A3A400F48F09 /* MLNSimpleViewPager.m in Sources */,
 				B27F65C52377AAAE00F2D341 /* MLNGalleryMessageBaseCellModel.m in Sources */,
 				FA4EE30A2379099700449250 /* MLNGalleryMineBottomPageHomeCell.m in Sources */,
-				00D5986E24B8766C00EA1660 /* MLNBindTestLayoutController.m in Sources */,
-				007F89E7246C0D8400FF50F1 /* MLNBindTestCaseModel.m in Sources */,
 				B27F65AC2377AA9700F2D341 /* MLNNativeWaterfallHeaderView.m in Sources */,
-				00E9132A24E53B41006614C4 /* MLNKuaController_Native.m in Sources */,
-				A4C3142624C7DE2700444CA4 /* MLNGlobalTimeTest.m in Sources */,
 				30A4EB60231CD75200995416 /* MLNMyRefreshHandler.m in Sources */,
 				30A4EB5D231CC86B00995416 /* MLNMyImageHandler.m in Sources */,
-				00E652532417695900A878B8 /* MLNDataBindHotReload.m in Sources */,
 				30E24E9622F3D74A00A0E78C /* MLNGlobalVarTest.m in Sources */,
 				B27F65C62377AAAE00F2D341 /* MLNGalleryMessageToolCellModel.m in Sources */,
-				00E6525624176A0F00A878B8 /* MLNDataBindModel.m in Sources */,
 				6003F5A7195388D20070C39A /* MLNLuaGalleryViewController.m in Sources */,
-				000B3BE22505D75C001142E2 /* UserData.m in Sources */,
 				3012BB102326822F00FA2BB2 /* MLNNavigatorHandler.m in Sources */,
 				B2DD3E5E237990E9002AB6AD /* MLNPackage.m in Sources */,
-				FAE72F1625106DA00092E87D /* ArgoBindingTest.m in Sources */,
-				00A9B367247F914D00307914 /* MDFashionItem.m in Sources */,
 				B27F65B02377AA9700F2D341 /* MLNDiscoverAblbumDeatilHeaderView.m in Sources */,
-				FA604C0D2518580300175D97 /* MLNKuaControllerAsync.m in Sources */,
-				00E9132124E519B3006614C4 /* CellModel.m in Sources */,
 				B29500CA23725EB800F48F09 /* UIImage+MLNResize.m in Sources */,
 				B27F658C2377AA6C00F2D341 /* MLNGalleryMineBottomPage.m in Sources */,
 				FA4103E525090347007ADC8F /* DemoTableViewHeaderView.m in Sources */,
 				6003F59A195388D20070C39A /* main.m in Sources */,
-				00A45F7624850C35001A07D9 /* MLNUIBridge.m in Sources */,
-				00E911CC24E2B8EC006614C4 /* MLNKuaController.m in Sources */,
 				B29500B72371A3ED00F48F09 /* MLNGalleryMainViewController.m in Sources */,
-				FA906FA024EBC8D500F8DAE2 /* MLNUICustomHotReloadViewController.m in Sources */,
 				FA4103E825090347007ADC8F /* DemoLiyifengModel.m in Sources */,
-				00E6526B2420AD1800A878B8 /* MLNBindModelViewController.m in Sources */,
 				B27F65D62377AAC400F2D341 /* MLNHomeDataHandler.m in Sources */,
-				00D5985E24B825BF00EA1660 /* MLNBindTestShopStoreController.m in Sources */,
 				30E24E9322F3D74A00A0E78C /* MLNTestMe.m in Sources */,
 				FA4EE2FD237907B000449250 /* MLNGalleryMinePageCellHomeModel.m in Sources */,
 				00A0C999243C180500F0D003 /* MLNPerformanceTestController.m in Sources */,
 				FA383453239A4C61000F900E /* MLNHomeViewController.m in Sources */,
-				00A9B364247F8ED100307914 /* MLNUITestTableHotReload.m in Sources */,
 				B27F65CC2377AAAE00F2D341 /* MLNGalleryMessageToolCell.m in Sources */,
 				B27F658F2377AA6C00F2D341 /* MLNGalleryMineInfoViewModel.m in Sources */,
 				B27F65CD2377AAAE00F2D341 /* MLNGalleryMessageDetailViewController.m in Sources */,
 				B2D0ABB52370136000B1D349 /* MLNGalleryViewController.m in Sources */,
 				FA4103E325090347007ADC8F /* DemoLiyifengTableViewCell.m in Sources */,
-				006E8FDF2501E60300DB3368 /* ArgoKuaViewModelUtils.m in Sources */,
 				B27F65D72377AAC400F2D341 /* MLNGalleryHomeViewController.m in Sources */,
-				00E9132324E519B3006614C4 /* HomeData.m in Sources */,
-				007FF99A25072DCD000A8E92 /* MLNUIMyErrorHandler.m in Sources */,
 				FA38349B239B5A4C000F900E /* MLNDemoListViewController.m in Sources */,
 				FA4EE2FA2379067000449250 /* MLNGalleryMinePageCellBaseModel.m in Sources */,
 				B27F65AF2377AA9700F2D341 /* MLNNativeWaterfallLayout.m in Sources */,
-				00C1E9492477732E000DB89A /* MLNDataBindOperator.m in Sources */,
 				B27F65AD2377AA9700F2D341 /* MLNNativeWaterfallView.m in Sources */,
 				B27F65A92377AA9700F2D341 /* MLNNativeWaterfallViewCell.m in Sources */,
 				B29500D82372627000F48F09 /* MLNNativeBadgeView.m in Sources */,
@@ -1439,7 +1084,6 @@
 				FA4EE310237909BC00449250 /* MLNGalleryMineBottomPageCollectCell.m in Sources */,
 				B27F65912377AA6C00F2D341 /* MLNGalleryMineViewController.m in Sources */,
 				B27F65CA2377AAAE00F2D341 /* MLNGalleryMessageBaseCell.m in Sources */,
-				00A312E024EFB4A80043A164 /* MLNUITestBridgeModel.m in Sources */,
 				B2DD3E5F237990E9002AB6AD /* MLNPackageManager.m in Sources */,
 				B27F65E12377AB1600F2D341 /* MLNGalleryPlusViewController.m in Sources */,
 				B27F65A82377AA9700F2D341 /* MLNGalleryDiscoverViewController.m in Sources */,
@@ -1450,15 +1094,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				00C1E94224756BC6000DB89A /* MLNArrayBindingTests2.m in Sources */,
-				00C1E94E24790329000DB89A /* FormatKeysTests.m in Sources */,
 				6003F5BC195388D20070C39A /* Tests.m in Sources */,
-				00DA72B9243ED12700981719 /* MLNReflectTests.m in Sources */,
-				009DD8D524114B9600452458 /* MLNArrayBindingTests.m in Sources */,
-				0011BBB32410AC3F003AE819 /* MLNDatabindingTests.m in Sources */,
-				0011BBB72410AC6F003AE819 /* MLNTestModel.m in Sources */,
-				00E6525C2418EFF200A878B8 /* MLNDictionaryTests.m in Sources */,
-				00FDB74E24591C3300D4A211 /* MLNBlockKVOTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

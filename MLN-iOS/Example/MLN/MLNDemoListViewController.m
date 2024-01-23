@@ -9,10 +9,6 @@
 #import "MLNDemoListViewController.h"
 #import "MLNKitViewController.h"
 #import "MLNLuaBundle.h"
-#import "MLNUILuaBundle.h"
-#import "MLNUIViewController.h"
-#import "MLNUIBridge.h"
-#import "ArgoKit.h"
 
 @interface MLNDemoListViewController () <UITableViewDelegate, UITableViewDataSource>
 
@@ -74,16 +70,10 @@
         [self.navigationController pushViewController:vc animated:YES];
         return;
     }
-    if ([demoName hasPrefix:@"Argo"]) {
-        ArgoViewController *viewController = [[ArgoViewController alloc] initWithEntryFileName:demoName bundleName:@"inner_demo.bundle"];
-        [self.navigationController pushViewController:viewController animated:YES];
-    } else {
-        MLNKitViewController *viewController = [[MLNKitViewController alloc] initWithEntryFilePath:demoName];
-        [viewController regClasses:@[[MLNUIBridge class]]];
-        MLNLuaBundle *bundle = [MLNLuaBundle mainBundleWithPath:@"inner_demo.bundle"];
-        [viewController changeCurrentBundle:bundle];
-        [self.navigationController pushViewController:viewController animated:YES];
-    }
+    MLNKitViewController *viewController = [[MLNKitViewController alloc] initWithEntryFilePath:demoName];
+    MLNLuaBundle *bundle = [MLNLuaBundle mainBundleWithPath:@"inner_demo.bundle"];
+    [viewController changeCurrentBundle:bundle];
+    [self.navigationController pushViewController:viewController animated:YES];
 }
 
 #pragma life cycle
@@ -105,8 +95,6 @@
                        @"LabelDemo.lua",
                        @"LinearLayoutDemo.lua",
                        @"TableViewDemo.lua",
-                       @"ArgoTableViewCeilingCellDemo.lua",
-                       @"ArgoTableViewZoomPictureDemo.lua",
                        @"ViewPagerDemo.lua",
                        @"WaterfallViewDemo.lua",
 //                       @"MLNBindModelViewController",

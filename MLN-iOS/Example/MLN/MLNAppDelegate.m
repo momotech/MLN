@@ -20,16 +20,7 @@
 #import "MLNMyImageHandler.h"
 #import "MLNNavigatorHandler.h"
 #import <MLNLink.h>
-#import "MLNUIKVOObserver.h"
-#import "MLNUIKit.h"
-#import "MLNUIMyImageHandler.h"
 #import "FLEXManager.h"
-#import "MLNUIFPSStatus.h"
-#import "MLNUILogViewer.h"
-#import "MLNUILoadTimeStatistics.h"
-#import "MLNUIHeader.h"
-#import "MLNUIMyErrorHandler.h"
-#import "ArgoUIErrorHandlerComponent.h"
 
 @interface MLNAppDelegate ()
 
@@ -37,18 +28,12 @@
 @property (nonatomic, strong) id<MLNRefreshDelegate> refreshHandler;
 @property (nonatomic, strong) id<MLNImageLoaderProtocol> imgLoader;
 @property (nonatomic, strong) id<MLNNavigatorHandlerProtocol> navHandler;
-@property (nonatomic, strong) id<MLNUIErrorHandlerProtocol> errorHandler;
-
-@property (nonatomic, strong) id<MLNUIImageLoaderProtocol> imgLoader2;
 @end
 
 @implementation MLNAppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-//    [[MLNUIFPSStatus sharedInstance] open];
-//    [[FLEXManager sharedManager] showExplorer];
-//    [MLNUILogViewer setup];
     [self setupMLNKitEnvironment];
     // 根据标志位判断是否禁用图片加载功能
     if (kDisableImageLoad) {
@@ -58,8 +43,6 @@
     
     // copy 主bundle中文件到沙盒中
     [self copyJsonFilesToSandbox];
-    
-    [self registerLink];
 
     return YES;
 }
@@ -71,34 +54,13 @@
     self.refreshHandler = [[MLNMyRefreshHandler alloc] init];
     self.imgLoader = [[MLNMyImageHandler alloc] init];
     self.navHandler = [[MLNNavigatorHandler alloc] init];
-    // MLNUIKit
-    self.imgLoader2 = [[MLNUIMyImageHandler alloc] init];
-//    self.errorHandler = [MLNUIMyErrorHandler new];
-    self.errorHandler = [ArgoUIErrorHandlerComponent new];
     
     [MLNKitEnvironment instancePreload];
     [MLNKitEnvironment setDefaultHttpHandler:self.httpHandler];
     [MLNKitEnvironment setDefaultScrollRefreshHandler:self.refreshHandler];
     [MLNKitEnvironment setDefaultImageLoader:self.imgLoader];
     [MLNKitEnvironment setDefaultNavigatorHandler:self.navHandler];
-    
-    [MLNLink registerName:@"MLNLuaGallery" linkClassName:@"MLNLuaGalleryViewController"];
-    [self setupMLNUIKitEnvironment];
-}
 
-- (void)setupMLNUIKitEnvironment
-{
-    [MLNUIKitEnvironment instancePreload];
-    [MLNUIKitEnvironment setDefaultHttpHandler:self.httpHandler];
-    [MLNUIKitEnvironment setDefaultScrollRefreshHandler:self.refreshHandler];
-    [MLNUIKitEnvironment setDefaultImageLoader:self.imgLoader2];
-    [MLNUIKitEnvironment setDefaultNavigatorHandler:self.navHandler];
-    [MLNUIKitEnvironment setDefaultErrorHandler:self.errorHandler];
-#if DEBUG && Argo_Debug_Performance_Enable
-    [MLNUIKitEnvironment setPerformanceMonitor: [MLNUILoadTimeStatistics sharedStatistics]];
-    MLNUIKitPerformanceMonitorForDebug = [MLNUILoadTimeStatistics sharedStatistics];
-#endif
-    [MLNUILink registerName:@"MLNLuaGallery" linkClassName:@"MLNLuaGalleryViewController"];
 }
 
 - (void)copyJsonFilesToSandbox
@@ -140,10 +102,6 @@
 - (void)sd_setImageWithURL:(NSURL *)url placeholderImage:(nullable UIImage *)placeholder
 {
     // @note: 测试内存占用时候去掉图片
-}
-
-- (void)registerLink {
-    [MLNUILink registerName:@"CustomHotReload" linkClassName:@"MLNUICustomHotReloadViewController"];
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application

@@ -18,9 +18,6 @@
 #import "MLNLuaGalleryViewController.h"
 #import "MLNDemoListViewController.h"
 #import "MLNStaticTest.h"
-#import "MLNUIHotReloadViewController.h"
-#import "MLNUIBridge.h"
-#import "MLNUIDB.h"
 #import "MLNGlobalTimeTest.h"
 
 #define kConsoleWidth 250.f
@@ -70,9 +67,7 @@
 #pragma mark - action
 
 - (IBAction)hotReloadAction:(id)sender {
-    MLNUIHotReloadViewController *hotReloadVC = [[MLNUIHotReloadViewController alloc] initWithEntryFileName:nil];
-    [hotReloadVC setRegClasses:@[[MLNStaticTest class]/*, [MLNUIBridge class]*/, [MLNUIDB class], [MLNGlobalTimeTest class]]];
-    [self.navigationController pushViewController:hotReloadVC animated:YES];
+    //此按钮无效果
 }
 - (IBAction)mlnHotReloadAction:(id)sender {
     MLNHotReloadViewController *hotReloadVC = [MLNHotReloadViewController.alloc initWithEntryFilePath:nil];

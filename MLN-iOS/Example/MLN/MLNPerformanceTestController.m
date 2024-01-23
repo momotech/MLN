@@ -7,11 +7,9 @@
 //
 
 #import "MLNPerformanceTestController.h"
-#import "MLNUIViewController.h"
 #import "MLNLuaBundle.h"
-//#import "MLNKitInstanceFactory.h"
+#import "MLNKitInstanceFactory.h"
 #import <os/signpost.h>
-#import "MLNUIKitInstanceFactory.h"
 
 @interface MLNPerformanceTestController () <UITableViewDelegate, UITableViewDataSource> {
     os_log_t _luaPerfUseCache;
@@ -40,16 +38,13 @@
 }
 
 - (BOOL)useLuaCoreCache {
-    NSMutableArray *corePool = [[MLNUIKitInstanceFactory defaultFactory] valueForKeyPath:@"luaCorePool.luaCoreQueue"];
+    NSMutableArray *corePool = [[MLNKitInstanceFactory defaultFactory] valueForKeyPath:@"luaCorePool.luaCoreQueue"];
     return corePool != nil;
 }
 
 - (void)setUseLuaCoreCache:(BOOL)use {
-//    [[MLNKitInstanceFactory defaultFactory] setValue:use ? @[].mutableCopy : nil forKeyPath:@"luaCorePool.luaCoreQueue"];
-//    [[MLNKitInstanceFactory defaultFactory] setValue:use? @(1) : @(0) forKeyPath:@"luaCorePool.capacity"];
-    
-    [[MLNUIKitInstanceFactory defaultFactory] setValue:use ? @[].mutableCopy : nil forKeyPath:@"luaCorePool.luaCoreQueue"];
-    [[MLNUIKitInstanceFactory defaultFactory] setValue:use? @(1) : @(0) forKeyPath:@"luaCorePool.capacity"];
+    [[MLNKitInstanceFactory defaultFactory] setValue:use ? @[].mutableCopy : nil forKeyPath:@"luaCorePool.luaCoreQueue"];
+    [[MLNKitInstanceFactory defaultFactory] setValue:use? @(1) : @(0) forKeyPath:@"luaCorePool.capacity"];
 }
 
 - (void)barButtonItemAction:(UIBarButtonItem *)item {
@@ -121,11 +116,6 @@
     
     os_signpost_interval_begin(luaLoad, ident, "load", "%s",demoName.UTF8String);
     CFAbsoluteTime s = CFAbsoluteTimeGetCurrent();
-
-     MLNUIViewController*viewController = [[MLNUIViewController alloc] initWithEntryFileName:demoName bundleName:@"inner_demo"];
-//    MLNLuaBundle *bundle = [MLNLuaBundle mainBundleWithPath:@"inner_demo.bundle"];
-//    [viewController changeCurrentBundle:bundle];
-    [viewController view];
     
     CFAbsoluteTime cost = (CFAbsoluteTimeGetCurrent() -  s)  *  1000;
     os_signpost_interval_end(luaLoad, ident, "load", "%s",demoName.UTF8String);
@@ -166,7 +156,6 @@
                            @"MLNBindModelViewController",
                            @"MLNBindTableViewController",
                            @"UIViewController",
-                           @"MLNUIViewController"
                            ];
         } else {
             _demoArray = @[];

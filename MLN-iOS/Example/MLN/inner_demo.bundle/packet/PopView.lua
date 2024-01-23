@@ -8,7 +8,6 @@ local _class = {}
 _class._type = 'ui'
 _class._version = '1.0'
 _class._classname = 'PopView'
-_class.__mlnui_autoadd = false --mlnui ui{}中，不自动添加到window开关。
 
 function PopView(o)
    return _class:new(o)

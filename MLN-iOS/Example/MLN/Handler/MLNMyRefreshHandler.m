@@ -8,7 +8,6 @@
 
 #import "MLNMyRefreshHandler.h"
 #import <MJRefresh.h>
-#import "MLNUIKit.h"
 
 @implementation MLNMyRefreshHandler
 

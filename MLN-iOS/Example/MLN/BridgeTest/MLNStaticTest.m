@@ -7,7 +7,6 @@
 //
 
 #import "MLNStaticTest.h"
-#import "MLNUIKit.h"
 
 @implementation MLNStaticTest
 

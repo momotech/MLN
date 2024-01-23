@@ -99,9 +99,4 @@ window:onClick(function()
     end
     userData.source = s
     
-    --local mlnui = MLNUI('layout_fromMLN.lua'):bind('userData',userData)
-    local mlnui = MLNUI('layout_fromMLN'):bind('userData',userData)
-
-    mlnui:display()
-    
 end)

@@ -1,6 +1,6 @@
 {
   "name": "MLN",
-  "version": "1.0.0.11.beta",
+  "version": "0.2.9",
   "summary": "A lib of Momo Lua Native.",
   "description": "A lib of Momo Lua Native Core.",
   "homepage": "https://mln.immomo.com",
@@ -11,13 +11,18 @@
   "authors": "MoMo",
   "source": {
     "git": "https://github.com/momotech/MLN.git",
-    "tag": "MLN/1.0.0.11.beta"
+    "tag": "MLN/0.2.9"
   },
+  "header_dir": ".",
+  "source_files": "MLN-iOS/MLN/Classes/MLN.h",
+  "module_map": "MLN-iOS/MLN/Classes/module.modulemap",
+  "module_name": "MLN",
   "platforms": {
     "ios": "8.0"
   },
   "libraries": "z",
   "requires_arc": true,
+  "static_framework": true,
   "subspecs": [
     {
       "name": "LuaLib",

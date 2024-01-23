@@ -4,9 +4,6 @@ platform :ios, '8.0'
 
 target 'LuaNative' do
   pod 'MLN', :path => '../../'
-  pod 'ArgoUI', :path => '../../'
-  pod 'ArgoUIComponent', :path => '../../'
-
   pod 'MLNDevTool', :path => '../../'
   pod 'AFNetworking', '~> 3.0'
   pod 'MJRefresh', '3.1.16'
@@ -25,18 +22,4 @@ end
 #  pod 'Expecta'
 #  pod 'FBSnapshotTestCase'
 #  pod 'Expecta+Snapshots'
-#end
-
-#post_install do |installer|
-#    installer.generated_projects.each do |project|
-#        project.targets.each do |target|
-#            target.build_configurations.each do |config|
-#
-#                # 临时过滤MLNDevTool 解决头文件报错问题，后续需要修改其中protobuf的引用方式
-#                if target.name == "MLNUI"
-#                  config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] ||= 'MLNUI_INTERNAL=1'
-#                end
-#            end
-#        end
-#    end
 #end
