@@ -9,7 +9,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface MLNHStack : MLNPlaneStack
+@interface MLNHStack : MLNStack
 
 @end
 

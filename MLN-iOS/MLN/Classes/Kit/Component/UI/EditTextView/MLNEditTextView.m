@@ -39,8 +39,6 @@
 @property (nonatomic, copy) NSString *changedString;
 @property (nonatomic, assign) NSRange newRange;
 @property (nonatomic, assign) NSRange originSelectedRange;
-@property (nonatomic, assign) BOOL switchToSecure;
-@property (nonatomic, copy) NSString *cacheText;
 
 @end
 @implementation MLNEditTextView
@@ -148,11 +146,7 @@
     if ([_changedString isEqualToString:@"\n"]) {
         [self callReturnCallbackIfNeed];
     }
-    //   刚切换密码模式的情况，需要将原始文本重新赋值，保持两端一致
-    if (self.switchToSecure && self.cacheText) {
-        self.text = self.cacheText;
-        self.cacheText = nil;
-    }
+
     UITextRange *markedTextRange = [internalTextView markedTextRange];
     //    有裁剪必要，先对设置限制数进行裁剪
     if (_maxBytes || _maxLength) {
@@ -279,11 +273,8 @@
 - (void)setupSwitchStatusWityType:(MLNInternalTextViewType)type
 {
     if (type == MLNInternalTextViewTypeSingleLine) {
-        self.switchToSecure = [self passwordMode];
-        self.cacheText = self.text;
-    } else {
-        self.switchToSecure = NO;
-        self.cacheText = nil;
+        [self passwordMode];
+        self.internalTextView.text = self.text;
     }
 }
 
@@ -549,6 +540,15 @@
     self.internalTextView.tintColor = color;
 }
 
+- (void)lua_setContentType:(MLNInternalTextAutoFillType)autoFillType {
+
+    if (autoFillType == MLNInternalTextAutoFillUserName) {
+        [self.internalTextView setAutoFillType:UITextContentTypeUsername];
+    } else if(autoFillType == MLNInternalTextAutoFillPassword) {
+        [self.internalTextView setAutoFillType:UITextContentTypePassword];
+    }
+}
+
 - (void)lua_setSingleLine:(BOOL)singleLine
 {
     self.type = !singleLine;
@@ -682,6 +682,7 @@ LUA_EXPORT_VIEW_METHOD(padding, "lua_setPadding:right:bottom:left:", MLNEditText
 LUA_EXPORT_VIEW_METHOD(dismissKeyboard, "lua_dismissKeyboard", MLNEditTextView)
 LUA_EXPORT_VIEW_METHOD(showKeyboard, "lua_showKeyboard", MLNEditTextView)
 LUA_EXPORT_VIEW_METHOD(setCursorColor, "lua_setCursorColor:", MLNEditTextView)
+LUA_EXPORT_VIEW_METHOD(setContentType, "lua_setContentType:", MLNEditTextView)
 LUA_EXPORT_VIEW_END(MLNEditTextView, EditTextView, YES, "MLNView", NULL)
 
 @end

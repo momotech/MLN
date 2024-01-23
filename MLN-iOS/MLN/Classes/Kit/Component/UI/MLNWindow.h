@@ -10,14 +10,24 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+typedef NS_ENUM(NSInteger, MLNWindowAppearType) {
+    MLNWindowAppearTypeViewAppear = 0,
+    MLNWindowAppearTypeEnterForground,
+};
+
+typedef NS_ENUM(NSInteger, MLNWindowDisappearType) {
+    MLNWindowDisappearTypeViewDisappear = 0,
+    MLNWindowDisappearTypeEnterBackground,
+};
+
 @interface MLNWindow : MLNView <MLNSafeAreaViewProtocol>
 
 @property (nonatomic, strong) NSMutableDictionary *extraInfo;
 
 - (BOOL)canDoLuaViewDidAppear;
-- (void)doLuaViewDidAppear;
+- (void)doLuaViewDidAppear:(MLNWindowAppearType)appearType;
 - (BOOL)canDoLuaViewDidDisappear;
-- (void)doLuaViewDidDisappear;
+- (void)doLuaViewDidDisappear:(MLNWindowDisappearType)disapperType;
 - (void)doLuaViewDestroy;
 - (void)doSizeChanged;
 

@@ -116,9 +116,17 @@
             [subnode measureSizeLightMatchParentWithMaxWidth:subMaxWidth maxHeight:subMaxHeight];
         }
     }
-    
     return CGSizeMake(self.measuredWidth, self.measuredHeight);
 }
+
+- (MLNLayoutMeasurementType)adjustmentWidthType:(CGFloat) width {
+    return self.widthType;
+}
+
+- (MLNLayoutMeasurementType)adjustmentHeightType:(CGFloat) height {
+    return self.heightType;
+}
+
 
 - (void)layoutSubnodes
 {
@@ -142,9 +150,6 @@
         [subnode updateTargetViewFrameIfNeed];
         if (subnode.isContainer) {
             [(MLNLayoutContainerNode *)subnode layoutSubnodes];
-        }
-        if (subnode.overlayNode) {
-            [subnode layoutOverlayNode];
         }
     }
 }

@@ -22,6 +22,8 @@ typedef void(^MLNImageLoadFinishedCallback)(NSAttributedString *attributeText);
 
 @property(nonatomic,strong, readonly) NSMutableAttributedString *mutableStyledString;
 
+@property (nonatomic, strong, readonly) NSMutableDictionary *styleElementsDictM;
+
 @property (nonatomic, copy) MLNImageLoadFinishedCallback loadFinishedCallback;
 
 @end

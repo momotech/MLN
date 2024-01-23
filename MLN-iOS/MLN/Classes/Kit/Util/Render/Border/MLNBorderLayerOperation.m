@@ -76,9 +76,8 @@
     CGFloat borderWidth = _borderWidth < maxBorderWidth? _borderWidth : maxBorderWidth;
     self.borderLayer.path = [MLNCornerManagerTool bezierPathWithRect:self.targetView.bounds multiRadius:self.multiRadius  lineWidth:borderWidth].CGPath;
     self.borderLayer.frame = self.targetView.bounds;
-    self.borderLayer.lineWidth = borderWidth;
+    self.borderLayer.lineWidth = borderWidth+0.5;
     self.borderLayer.lineCap = [self existRoundCorner]? kCALineCapRound : kCALineCapSquare;
-    self.borderLayer.masksToBounds = YES;
     self.borderLayer.allowsGroupOpacity = NO;
     [self.targetView.layer addSublayer:self.borderLayer];
 }

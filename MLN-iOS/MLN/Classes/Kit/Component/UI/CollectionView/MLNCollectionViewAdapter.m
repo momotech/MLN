@@ -11,6 +11,7 @@
 #import "MLNCollectionViewCell.h"
 #import "MLNBlock.h"
 #import "NSDictionary+MLNSafety.h"
+#import "UIScrollView+MLNKit.h"
 
 
 #define kReuseIndentifierPlaceholder @"kReuseIndentifierPlaceholder"
@@ -319,19 +320,6 @@ static NSValue *kSizeValueZero = nil;
 #pragma mark - UICollectionViewDelegateFlowLayout & MLNCollectionViewGridLayoutDelegate
 - (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSString *reuseId = [self reuseIdentifierAtIndexPath:indexPath];
-    MLNBlock *sizeForCellCallback = [self sizeForCellCallbackByReuseId:reuseId];
-    if (!sizeForCellCallback) {
-        if (!sizeForCellCallback) {
-            if ([collectionView.collectionViewLayout isKindOfClass:[UICollectionViewFlowLayout class]]) {
-                return ((UICollectionViewFlowLayout *)collectionViewLayout).itemSize;
-            } else {
-                return CGSizeZero;
-            }
-        }
-    }
-    NSUInteger section = indexPath.section;
-    NSUInteger item = indexPath.item;
     // 1. cache
     NSValue *sizeValue = [self.cachesManager layoutInfoWithIndexPath:indexPath];
     if (sizeValue) {
@@ -340,22 +328,34 @@ static NSValue *kSizeValueZero = nil;
             return size;
         }
     }
-    // 2. call lua
-    [sizeForCellCallback addIntArgument:(int)section+1];
-    [sizeForCellCallback addIntArgument:(int)item+1];
-    sizeValue = [sizeForCellCallback callIfCan];
-    MLNKitLuaAssert(sizeValue && [sizeValue isKindOfClass:[NSValue class]] &&
-              ![sizeValue isMemberOfClass:NSClassFromString(@"__NSCFBoolean")] &&
-              ![sizeValue isMemberOfClass:NSClassFromString(@"__NSCFNumber")], @"The return value of method 'sizeForCell/sizeForCellByReuseId' must be a Size!");
-    MLNKitLuaAssert([sizeValue CGSizeValue].width > 0 && [sizeValue CGSizeValue].height > 0, @"The width and height of cell must greater than 0!");
-    // 处理边界值
-    sizeValue = [self handleCellBoundaryValueWithSize:[sizeValue CGSizeValue]];
-    if (!sizeValue) {
-        return CGSizeZero;
+    // 2. calculate size
+    NSString *reuseId = [self reuseIdentifierAtIndexPath:indexPath];
+    [self registerCellClassIfNeed:collectionView reuseId:reuseId];
+    CGFloat width = collectionView.frame.size.width;
+    CGFloat height = collectionView.frame.size.height;
+    CGFloat maxWidth = width;
+    CGFloat maxHeight = CGFLOAT_MAX;
+    if (collectionView.mln_horizontal) {
+        maxWidth = CGFLOAT_MAX;
+        maxHeight = height;
     }
+    MLNCollectionViewCell *cell = [[MLNCollectionViewCell alloc] initWithFrame:CGRectMake(0, 0, width, height)];
+    [cell pushContentViewWithLuaCore:self.mln_luaCore];
+    if (!cell.isInited) {
+        MLNBlock *initCallback = [self initedCellCallbackByReuseId:reuseId];
+        [initCallback addLuaTableArgument:[cell getLuaTable]];
+        [initCallback callIfCan];
+        [cell initCompleted];
+    }
+    MLNBlock *reuseCallback = [self fillCellDataCallbackByReuseId:reuseId];
+    [reuseCallback addLuaTableArgument:[cell getLuaTable]];
+    [reuseCallback addIntArgument:(int)indexPath.section+1];
+    [reuseCallback addIntArgument:(int)indexPath.item+1];
+    [reuseCallback callIfCan];
+    CGSize size = [cell calculSizeWithMaxWidth:maxWidth maxHeight:maxHeight];
     // 3. update cache
-    [self.cachesManager updateLayoutInfo:sizeValue forIndexPath:indexPath];
-    return [sizeValue CGSizeValue];
+    [self.cachesManager updateLayoutInfo:[NSValue valueWithCGSize:size] forIndexPath:indexPath];
+    return size;
 }
 
 #pragma mark - Save UICollectionViewDataSource Callback

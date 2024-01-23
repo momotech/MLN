@@ -24,12 +24,12 @@ static MLN_FORCE_INLINE BOOL __mln_lua_in_checkParams(lua_State *L, int countOfP
             if (ud) {
                 id array = (__bridge __unsafe_unretained id )ud->object;
                 if ([array mln_nativeType] != MLNNativeTypeMArray) {
-                    mln_lua_error(L, @"Must use ':' to call this method！\n number of arguments must be %d!", countOfParams);
+                    mln_lua_error(L, @"Must use ':' to call this method！\n number of argments must be %d!", countOfParams);
                     return NO;
                 }
             }
         }
-        mln_lua_error(L, @"number of arguments must be %d!", countOfParams);
+        mln_lua_error(L, @"number of argments must be %d!", countOfParams);
         return NO;
     }
     return YES;
@@ -52,11 +52,11 @@ static int lua_newArray(lua_State *L) {
                 [MLN_LUA_CORE(L) pushNativeObject:array error:nil];
                 return 1;
             }
-            mln_lua_error(L, @"error type of argument, capacity must be number");
+            mln_lua_error(L, @"error type of argment, capacity must be number");
             break;
         }
         default: {
-            mln_lua_error(L, @"number of argument more than 1");
+            mln_lua_error(L, @"number of argment more than 1");
             break;
         }
     }
@@ -117,7 +117,7 @@ static int lua_array_addObjectsFromArray(lua_State *L) {
                 break;
             }
             default: {
-                mln_lua_error(L, @"The argument must be a array!");
+                mln_lua_error(L, @"The argment must be a array!");
                 break;
             }
         }
@@ -154,7 +154,7 @@ static int lua_array_removeObject(lua_State *L) {
     if (ud) {
         NSMutableArray *array = (__bridge __unsafe_unretained NSMutableArray *)ud->object;
         id obj = [MLN_LUA_CORE(L) toNativeObject:2 error:nil];
-        mln_lua_assert(L, obj, @"The argument must not be nil!");
+        mln_lua_assert(L, obj, @"The argment must not be nil!");
         if (obj) {
             [array removeObject:obj];
         }
@@ -172,7 +172,7 @@ static int lua_array_removeObjects(lua_State *L) {
     if (ud) {
         NSMutableArray *array = (__bridge __unsafe_unretained NSMutableArray *)ud->object;
         id objs = [MLN_LUA_CORE(L) toNativeObject:2 error:nil];
-        mln_lua_assert(L, objs, @"The argument must not be nil!");
+        mln_lua_assert(L, objs, @"The argment must not be nil!");
         if (objs && [objs isKindOfClass:[NSArray class]]) {
             [array removeObjectsInArray:objs];
         }

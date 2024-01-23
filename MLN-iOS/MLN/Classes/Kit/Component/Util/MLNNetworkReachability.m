@@ -46,7 +46,7 @@
     // new
     networkReachability.reachabilityStatusBlock = ^(MLNNetworkStatus status) {
         if (callback) {
-            [callback addIntArgument:(int)status];
+            [callback addIntArgument:status];
             [callback callIfCan];
         }
     };

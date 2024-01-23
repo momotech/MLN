@@ -11,6 +11,15 @@
 
 @implementation MLNView
 
+- (instancetype)init
+{
+    self = [super init];
+    if (self) {
+        
+    }
+    return self;
+}
+
 #pragma mark - Override
 - (BOOL)lua_canClick
 {
@@ -34,6 +43,9 @@
 
 #pragma mark - Export For Lua
 LUA_EXPORT_VIEW_BEGIN(MLNView)
+
+LUA_EXPORT_VIEW_PROPERTY(accessibilityIdentifier, "setLua_accessibilityIdentifier:","lua_accessibilityIdentifier", MLNView)
+
 // layout
 LUA_EXPORT_VIEW_PROPERTY(x, "setLua_x:","lua_x", MLNView)
 LUA_EXPORT_VIEW_PROPERTY(y, "setLua_y:","lua_y", MLNView)
@@ -91,6 +103,7 @@ LUA_EXPORT_VIEW_METHOD(setGradientColor, "lua_setGradientColor:endColor:vertical
 LUA_EXPORT_VIEW_METHOD(setGradientColorWithDirection, "lua_setGradientColor:endColor:direction:",MLNView)
 // user interaction
 LUA_EXPORT_VIEW_PROPERTY(enabled, "setLua_enable:","lua_enable", MLNView)
+LUA_EXPORT_VIEW_PROPERTY(touchesPriority, "setMln_touchesPriority:","mln_touchesPriority", MLNView)
 LUA_EXPORT_VIEW_METHOD(onClick, "lua_addClick:",MLNView)
 LUA_EXPORT_VIEW_METHOD(onLongPress, "lua_addLongPress:",MLNView)
 LUA_EXPORT_VIEW_METHOD(onTouch, "lua_addTouch:",MLNView)
@@ -126,7 +139,6 @@ LUA_EXPORT_VIEW_METHOD(addBlurEffect, "lua_addBlurEffect", MLNView)
 LUA_EXPORT_VIEW_METHOD(removeBlurEffect, "lua_removeBlurEffect", MLNView)
 LUA_EXPORT_VIEW_METHOD(openRipple, "lua_openRipple:", MLNView)
 LUA_EXPORT_VIEW_METHOD(canEndEditing, "lua_endEditing:", MLNView)
-LUA_EXPORT_VIEW_METHOD(keyboardDismiss, "lua_keyboardDismiss:", MLNView)
 LUA_EXPORT_VIEW_METHOD(bringSubviewToFront, "lua_bringSubviewToFront:", MLNView)
 LUA_EXPORT_VIEW_METHOD(sendSubviewToBack, "lua_sendSubviewToBack:", MLNView)
 //view的背景图片

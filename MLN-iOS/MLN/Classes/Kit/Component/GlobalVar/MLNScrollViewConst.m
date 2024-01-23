@@ -14,6 +14,6 @@
 LUA_EXPORT_GLOBAL_VAR_BEGIN()
 LUA_EXPORT_GLOBAL_VAR(ScrollDirection, (@{@"VERTICAL":@(MLNScrollDirectionVertical),
                                           @"HORIZONTAL":@(MLNScrollDirectionHorizontal)}))
-LUA_EXPORT_GLOBAL_VAR_END()
+LUA_EXPORT_GLOBAL_VAR_END(MLNScrollViewConst)
 
 @end

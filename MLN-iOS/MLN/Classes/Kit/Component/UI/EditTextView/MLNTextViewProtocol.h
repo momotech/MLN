@@ -42,6 +42,7 @@
 @property (nonatomic, readonly) UITextPosition *beginningOfDocument;
 @property (nonatomic, readonly) UITextPosition *endOfDocument;
 @property (nonatomic, assign) NSRange selectedRange;
+@property (nonatomic, copy) UITextContentType autoFillType;
 
 - (UITextRange *)textRangeFromPosition:(UITextPosition *)fromPosition toPosition:(UITextPosition *)toPosition;
 - (UITextPosition *)positionFromPosition:(UITextPosition *)position offset:(NSInteger)offset;

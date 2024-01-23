@@ -40,6 +40,20 @@
  */
 - (void)luaCore:(MLNLuaCore *)luaCore didFailLoad:(NSData *)data filePath:(NSString *)filePath error:(NSError *)error;
 
+/**
+ 尝试加载其他路径文件
+ 
+ @param luaCore Lua引擎
+ @param currentPath 入口文件资源路径
+ @param filePath 文件路径
+ */
+- (NSData *)luaCore:(MLNLuaCore *)luaCore tryLoad:(NSString *)currentPath filePath:(NSString *)filePath;
+
+/// 加载bridge
+/// @param luaCore luaCore Lua引擎
+/// @param bridgeName Lua侧桥接的名字
+- (BOOL)luaCore:(MLNLuaCore *)luaCore loadBridge:(NSString *)bridgeName;
+
 @end
 
 #endif /* MLNLuaCoreDelegate_h */

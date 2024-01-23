@@ -30,18 +30,27 @@
     return [[MLNVStackNode alloc] initWithTargetView:targetView];
 }
 
-#pragma mark - Override
-
-- (void)lua_addSubview:(UIView *)view {
-    [super lua_addSubview:view];
-    if ([view isKindOfClass:[MLNVStack class]]) {
-        [(MLNVStackNode *)view.lua_node invalidateMainAxisMatchParentMeasureType];
-    }
-}
-
 #pragma mark - Export Lua
 
+- (void)lua_setMainAxisAlignment:(MLNStackMainAlignment)alignment {
+    self.node.mainAxisAlignment = alignment;
+}
+
+- (MLNStackMainAlignment)lua_mainAxisAlignment {
+    return self.node.mainAxisAlignment;
+}
+
+- (void)lua_setCrossAxisAlignment:(MLNStackCrossAlignment)alignment {
+    self.node.crossAxisAlignment = alignment;
+}
+
+- (MLNStackCrossAlignment)lua_crossAxisAlignment {
+    return self.node.crossAxisAlignment;
+}
+
 LUA_EXPORT_VIEW_BEGIN(MLNVStack)
-LUA_EXPORT_VIEW_END(MLNVStack, VStack, YES, "MLNPlaneStack", NULL)
+LUA_EXPORT_VIEW_PROPERTY(mainAxisAlignment, "lua_setMainAxisAlignment:", "lua_mainAxisAlignment", MLNVStack)
+LUA_EXPORT_VIEW_PROPERTY(crossAxisAlignment, "lua_setCrossAxisAlignment:", "lua_crossAxisAlignment", MLNVStack)
+LUA_EXPORT_VIEW_END(MLNVStack, VStack, YES, "MLNStack", NULL)
 
 @end

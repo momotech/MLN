@@ -8,6 +8,7 @@
 #import "MLNWaterfallView.h"
 #import "MLNViewExporterMacro.h"
 #import "MLNCollectionViewCell.h"
+#import "MLNCollectionViewFlowLayout.h"
 #import "MLNWaterfallLayout.h"
 #import "MLNInternalWaterfallView.h"
 #import "MLNWaterfallAdapter.h"
@@ -18,11 +19,13 @@
 #import "UIView+MLNLayout.h"
 #import "MLNCollectionViewLayoutProtocol.h"
 #import "UIView+MLNKit.h"
+#import "MDListWhiteDetector.h"
 
 @interface MLNWaterfallView()
 @property (nonatomic, strong, readwrite) MLNInternalWaterfallView *innerWaterfallView;
 @property (nonatomic, strong) MLNBeforeWaitingTask *lazyTask;
 @property (nonatomic, strong) UICollectionViewLayout *layout;
+@property (nonatomic, strong) MDListWhiteDetector *whiteDetector;
 @end
 
 @implementation MLNWaterfallView
@@ -177,6 +180,16 @@
     return CGPointZero;
 }
 
+- (void)scrollBy:(int)x
+               y:(int)y
+{
+    UIScrollView *scrollView = (UIScrollView *)self.lua_contentView;
+    if([scrollView isKindOfClass:[UIScrollView class]])
+    {
+        [scrollView setContentOffset:CGPointMake(x, y)];
+    }
+}
+
 #pragma mark - Relaod
 - (void)lua_reloadAtSection:(NSInteger)section animation:(BOOL)animation
 {
@@ -235,6 +248,7 @@
     }
     [self.innerWaterfallView.collectionViewLayout invalidateLayout];
     [self.innerWaterfallView reloadData];
+    [self.whiteDetector reload];
 }
 
 #pragma mark - Insert
@@ -457,9 +471,33 @@
         UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:nil];
         [tapGesture requireGestureRecognizerToFail:lpgr];
         tapGesture.cancelsTouchesInView = NO;
+        tapGesture.delegate = self;
         [_innerWaterfallView addGestureRecognizer:tapGesture];
+        MLNKitInstance *instance = MLN_KIT_INSTANCE([(UIView<MLNEntityExportProtocol> *)self mln_luaCore]);
+        self.whiteDetector = [[MDListWhiteDetector alloc] initWithDetectItem:instance.detectItem];
+        if ([instance.identifier isEqualToString:@"MLNLuaView"]) {
+            [self.whiteDetector start:self.lua_node];
+        } else {
+            __weak __typeof(self) weakSelf = self;
+            void (^appearBlock)(void) = ^void(void){
+                [weakSelf.whiteDetector start:weakSelf.lua_node];
+            };
+            [instance.appearMArray addObject:appearBlock];
+        }
     }
     return _innerWaterfallView;
+}
+
+- (void)dealloc {
+    [self.whiteDetector stop];
+}
+
+#pragma mark - UIGestureRecognizerDelegate
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch {
+    if (touch.view != self && [touch.view.mln_touchesPriority integerValue] > [self.mln_touchesPriority integerValue]) {
+        return NO;
+    }
+    return YES;
 }
 
 #pragma mark - Export For Lua
@@ -467,5 +505,6 @@ LUA_EXPORT_VIEW_BEGIN(MLNWaterfallView)
 LUA_EXPORT_VIEW_METHOD(addHeaderView, "lua_addHeaderView:", MLNWaterfallView)
 LUA_EXPORT_VIEW_METHOD(removeHeaderView, "lua_removeHeaderView", MLNWaterfallView)
 LUA_EXPORT_METHOD(useAllSpanForLoading, "lua_useAllSpanForLoading:", MLNWaterfallView)
+LUA_EXPORT_VIEW_METHOD(scrollBy, "scrollBy:y:", MLNWaterfallView)
 LUA_EXPORT_VIEW_END(MLNWaterfallView, WaterfallView, YES, "MLNCollectionView", "initWithLuaCore:refreshEnable:loadEnable:")
 @end

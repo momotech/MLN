@@ -26,6 +26,9 @@ NS_ASSUME_NONNULL_BEGIN
 @class MLNLayoutEngine;
 @class MLNKitInstanceHandlersManager;
 @class MLNKitInstanceConsts;
+@class MLNListDetectItem;
+@class MLNDependence;
+@protocol MLNDependenceProtocol;
 /**
  承载Kit库bridge和LuaCore的实例，用来运行Lua文件。
  */
@@ -44,7 +47,7 @@ Lua中的根视图。
 /**
  LuaWindowd所在的视图控制器
  */
-@property (nonatomic, weak, readonly) UIViewController<MLNViewControllerProtocol> *viewController;
+@property (nonatomic, weak) id<MLNViewControllerProtocol> viewController;
 
 /**
  承载LuaWindow的根视图
@@ -55,16 +58,6 @@ Lua中的根视图。
  当前执行模块的入口文件，相对LuaBundle的路径
  */
 @property (nonatomic, copy, readonly) NSString *entryFilePath;
-
-/**
-传递参数
-*/
-@property (nonatomic, strong, readonly) NSMutableDictionary *windowExtra;
-
-/**
-注册的bridge集合
-*/
-@property (nonatomic, strong) NSArray<Class<MLNExportProtocol>> *registerClasses;
 
 /**
  代理对象
@@ -87,6 +80,11 @@ Lua中的根视图。
 @property (nonatomic, strong, readonly) MLNLuaBundle *currentBundle;
 
 /**
+ 当前lua core运行的lua bundle根路径。
+ */
+@property (nonatomic, copy, readonly) NSString *currentBundleRootPath;
+
+/**
  布局引擎
  */
 @property (nonatomic, strong, readonly) MLNLayoutEngine *layoutEngine;
@@ -101,6 +99,23 @@ Lua中的根视图。
  */
 @property (nonatomic, strong, readonly) MLNKitInstanceConsts *instanceConsts;
 
+/// 方便调用方在 instance 记录信息
+@property (nonatomic, strong) NSMutableDictionary *info;
+/// window布局相关信息
+@property (nonatomic, strong) NSMutableDictionary *windowExtra;
+/// window尺寸
+@property (nonatomic, assign) CGSize size;
+
+@property (nonatomic, strong) MLNDependence *dependence;
+
+/// 依赖相关信息
+@property (nonatomic, strong, nullable) NSDictionary *widgetInfo;
+
+/// 白屏检测配置
+@property (nonatomic, strong) MLNListDetectItem *detectItem;
+@property (nonatomic, strong) NSMutableArray<void (^)(void)> *appearMArray;
+@property (nonatomic, copy, readonly) NSString *identifier;
+
 /**
  初始化方法, 默认运行的Lua bundle环境为Main Bundle.
  
@@ -108,7 +123,7 @@ Lua中的根视图。
  @param viewController LuaWindow所在的视图控制器，并使用viewController.view作为承载LuaWindow的根视图
  @return Lua Core 实例
  */
-- (instancetype)initWithLuaCoreBuilder:(id<MLNKitLuaCoeBuilderProtocol>)luaCoreBuilder viewController:(UIViewController<MLNViewControllerProtocol> *)viewController;
+- (instancetype)initWithLuaCoreBuilder:(id<MLNKitLuaCoeBuilderProtocol>)luaCoreBuilder viewController:(id<MLNViewControllerProtocol>)viewController;
 
 /**
  初始化方法
@@ -118,7 +133,7 @@ Lua中的根视图。
  @param viewController LuaWindow所在的视图控制器，并使用viewController.view作为承载LuaWindow的根视图
  @return LuaInstance实例
  */
-- (instancetype)initWithLuaBundlePath:(NSString *__nullable)luaBundlePath luaCoreBuilder:(id<MLNKitLuaCoeBuilderProtocol>)luaCoreBuilder viewController:(UIViewController<MLNViewControllerProtocol> *)viewController;
+- (instancetype)initWithLuaBundlePath:(NSString *__nullable)luaBundlePath luaCoreBuilder:(id<MLNKitLuaCoeBuilderProtocol>)luaCoreBuilder viewController:(id<MLNViewControllerProtocol>)viewController;
 
 /**
  初始化方法
@@ -128,7 +143,7 @@ Lua中的根视图。
  @param viewController LuaWindow所在的视图控制器，并使用viewController.view作为承载LuaWindow的根视图
  @return Lua Core 实例
  */
-- (instancetype)initWithLuaBundle:(MLNLuaBundle *__nullable)luaBundle luaCoreBuilder:(id<MLNKitLuaCoeBuilderProtocol>)luaCoreBuilder viewController:(UIViewController<MLNViewControllerProtocol> *)viewController;
+- (instancetype)initWithLuaBundle:(MLNLuaBundle *__nullable)luaBundle luaCoreBuilder:(id<MLNKitLuaCoeBuilderProtocol>)luaCoreBuilder viewController:(id<MLNViewControllerProtocol>)viewController;
 
 /**
  默认的初始化方法
@@ -140,7 +155,7 @@ Lua中的根视图。
  @param viewController LuaWindowd所在的视图控制器
  @return LuaInstance实例
  */
-- (instancetype)initWithLuaBundle:(MLNLuaBundle *__nullable)luaBundle luaCoreBuilder:(id<MLNKitLuaCoeBuilderProtocol>)luaCoreBuilder rootView:(UIView * __nullable)rootView viewController:(UIViewController<MLNViewControllerProtocol> *)viewController NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithLuaBundle:(MLNLuaBundle *__nullable)luaBundle luaCoreBuilder:(id<MLNKitLuaCoeBuilderProtocol>)luaCoreBuilder rootView:(UIView * __nullable)rootView viewController:(id<MLNViewControllerProtocol>)viewController NS_DESIGNATED_INITIALIZER;
 
 + (instancetype)new NS_UNAVAILABLE;
 - (instancetype)init NS_UNAVAILABLE; 
@@ -190,6 +205,21 @@ Lua中的根视图。
  @return 导出是否成功
  */
 - (BOOL)registerClasses:(NSArray<Class<MLNExportProtocol>> *)classes error:(NSError ** __nullable)error;
+
+/// 准备依赖组件
+/// @param rootPath lua project bundle的根路径
+/// @param handle dependence handle
+/// @param finished 完成回调
+- (void)loadDependenceWithLuaBundleRootPath:(NSString *)rootPath withHandle:(id<MLNDependenceProtocol>)handle finished:(void (^)(void))finished;
+
+/// 准备依赖组件
+/// @param rootPath lua project bundle的根路径
+/// @param finished 完成回调
+- (void)loadDependenceWithLuaBundleRootPath:(NSString *)rootPath finished:(void (^)(void))finished;
+
+/// 准备依赖组件,如果本地不存在不会进行下载或者解压
+/// @param rootPath lua project bundle的根路径
+- (void)loadDependenceWithLuaBundleRootPath:(NSString *)rootPath;
 
 /**
  变更lua bundle环境
@@ -380,6 +410,12 @@ Lua中的根视图。
 @end
 
 
+@interface MLNKitInstance (Debug)
+
+- (NSString *)loadDebugModelIfNeed;
+
+@end
+
 @interface MLNKitInstance (Deprecated)
 /**
  初始化方法
@@ -389,7 +425,7 @@ Lua中的根视图。
  @param viewController LuaWindow所在的视图控制器，并使用viewController.view作为承载LuaWindow的根视图
  @return Lua Core 实例
  */
-- (instancetype)initWithLuaBundle:(MLNLuaBundle *__nullable)luaBundle rootView:(UIView * __nullable)rootView viewController:(UIViewController<MLNViewControllerProtocol> *)viewController;
+- (instancetype)initWithLuaBundle:(MLNLuaBundle *__nullable)luaBundle rootView:(UIView * __nullable)rootView viewController:(id<MLNViewControllerProtocol>)viewController;
 
 /**
  废弃的初始化方法
@@ -402,9 +438,11 @@ Lua中的根视图。
  @param viewController LuaWindowd所在的视图控制器
  @return LuaInstance实例
  */
-- (instancetype)initWithLuaBundle:(MLNLuaBundle *__nullable)luaBundle convertor:(Class<MLNConvertorProtocol> __nullable)convertorClass exporter:(Class<MLNExporterProtocol> __nullable)exporterClass rootView:(UIView * __nullable)rootView viewController:(UIViewController<MLNViewControllerProtocol> *)viewController;
+- (instancetype)initWithLuaBundle:(MLNLuaBundle *__nullable)luaBundle convertor:(Class<MLNConvertorProtocol> __nullable)convertorClass exporter:(Class<MLNExporterProtocol> __nullable)exporterClass rootView:(UIView * __nullable)rootView viewController:(id<MLNViewControllerProtocol>)viewController;
 
 - (void)registerKitClasses;
+
+-(MLNLayoutContainerNode *)setLayoutInfo;
 @end
 
 NS_ASSUME_NONNULL_END

@@ -1,8 +1,8 @@
 //
 //  MLNWaterfallLayout.m
-//  MLN
+//  
 //
-//  Created by MoMo on 2019/11/1.
+//  Created by MoMo on 2018/7/18.
 //
 
 #import "MLNWaterfallLayout.h"
@@ -22,6 +22,7 @@
 @property (nonatomic, strong) NSMutableDictionary *colunMaxYDic;
 @property (strong, nonatomic) NSMutableDictionary *cellLayoutInfo;//保存cell的布局
 @property (strong, nonatomic) NSMutableDictionary *headLayoutInfo;//保存头视图的布局
+
 @property (assign, nonatomic) CGFloat startY;   //记录开始的Y
 @property (nonatomic, assign) BOOL needRelayout;
 
@@ -60,6 +61,7 @@
     [self _in_prepareLayout];
 }
 
+
 - (void)_in_prepareLayout
 {
     [super prepareLayout];
@@ -81,7 +83,8 @@
     NSAssert([self.collectionView.delegate respondsToSelector:@selector(headerIsSettingInNewWayWithWaterfallView:)], @"The delegate of Waterfall must implement 'headerIsSettingInNewWayWithWaterfallView:' method!");
     NSAssert([self.collectionView.delegate respondsToSelector:@selector(headerIsValidWithWaterfallView:)], @"The delegate of Waterfall must implement 'headerIsValidWithWaterfallView:' method!");
     
-    CGFloat itemWidth = (self.collectionView.frame.size.width - self.layoutInset.left - self.layoutInset.right - ((columnCount - 1) * self.itemSpacing)) / columnCount;
+    CGFloat itemWidth = (self.collectionView.frame.size.width - self.layoutInset.left - self.layoutInset.right - ((columnCount + 1) * self.itemSpacing)) / columnCount;
+    CGFloat fullWidth = self.collectionView.frame.size.width - self.layoutInset.left - self.layoutInset.right;
     //取有多少个section
     NSInteger sectionsCount = [self.collectionView numberOfSections];
     for (NSInteger section = 0; section < sectionsCount; section++) {
@@ -118,6 +121,15 @@
             NSIndexPath *cellIndePath =[NSIndexPath indexPathForItem:row inSection:section];
             UICollectionViewLayoutAttributes *attribute = [UICollectionViewLayoutAttributes layoutAttributesForCellWithIndexPath:cellIndePath];
             
+            //根据代理去当前cell的高度  因为当前是采用通过列数计算的宽度，高度根据图片的原始宽高比进行设置的
+            //    高度
+            CGFloat height = [(id<MLNWaterfallLayoutDelegate>)self.collectionView.delegate collectionView:self.collectionView layout:self heightForItemAtIndexPath:cellIndePath];
+            
+            BOOL useAllSpan = NO;
+            if ([(id<MLNWaterfallLayoutDelegate>)self.collectionView.delegate respondsToSelector:@selector(collectionView:layout:isFullWidthAtIndexPath:)]) {
+                useAllSpan = [(id<MLNWaterfallLayoutDelegate>)self.collectionView.delegate collectionView:self.collectionView layout:self isFullWidthAtIndexPath:cellIndePath];
+            }
+            
             //计算当前的cell加到哪一列（瀑布流是加载到最短的一列）
             CGFloat y = [self.colunMaxYDic[@(0)] floatValue];
             NSInteger currentRow = 0;
@@ -127,17 +139,26 @@
                     currentRow = i;
                 }
             }
+            
+            CGFloat x = 0;
             //计算x值
-            CGFloat x = self.layoutInset.left + (currentRow *(itemWidth + self.itemSpacing));
-            //根据代理去当前cell的高度  因为当前是采用通过列数计算的宽度，高度根据图片的原始宽高比进行设置的
-            //    高度
-            CGFloat height = [(id<MLNWaterfallLayoutDelegate>)self.collectionView.delegate collectionView:self.collectionView layout:self heightForItemAtIndexPath:cellIndePath];
+            if (useAllSpan) {
+                x = self.layoutInset.left;
+            }else {
+                x = self.layoutInset.left + (currentRow *(itemWidth + self.itemSpacing));
+            }
             
             //设置当前cell布局对象的frame
-            attribute.frame = CGRectMake(x, y, itemWidth, height);
+            attribute.frame = CGRectMake(x, y, useAllSpan ? fullWidth : itemWidth, height);
             //重新设置当前列的Y值
             y = y + self.lineSpacing + height;
-            self.colunMaxYDic[@(currentRow)] = @(y);
+            if (useAllSpan) {
+                for (int i = 0; i < columnCount; i++) {
+                    self.colunMaxYDic[@(i)] = @(y);
+                }
+            }else {
+                self.colunMaxYDic[@(currentRow)] = @(y);
+            }
             //保留cell的布局对象
             self.cellLayoutInfo[cellIndePath] = attribute;
             
@@ -204,7 +225,6 @@
     return self.myContentSize;
 }
 
-#pragma mark -
 - (BOOL)isHeaderSettingInNewWay
 {
     BOOL isHeaderSettingInNewWay = [(id<MLNWaterfallLayoutDelegate>)self.collectionView.delegate headerIsSettingInNewWayWithWaterfallView:self.collectionView];
@@ -216,8 +236,6 @@
     BOOL isHeaderValid = [(id<MLNWaterfallLayoutDelegate>)self.collectionView.delegate headerIsValidWithWaterfallView:self.collectionView];
     return isHeaderValid;
 }
-
-
 
 - (NSMutableDictionary *)cellLayoutInfo
 {
@@ -249,8 +267,7 @@ LUA_EXPORT_BEGIN(MLNWaterfallLayout)
 LUA_EXPORT_PROPERTY(spanCount, "setColumnCount:", "columnCount", MLNWaterfallLayout)
 LUA_EXPORT_PROPERTY(lineSpacing, "setLineSpacing:","lineSpacing", MLNWaterfallLayout)
 LUA_EXPORT_PROPERTY(itemSpacing, "setItemSpacing:","itemSpacing", MLNWaterfallLayout)
-LUA_EXPORT_METHOD(layoutInset, "lua_setlayoutInset:left:bottom:right:", MLNWaterfallLayout)
+LUA_EXPORT_METHOD(layoutInset, "lua_setlayoutInset:left:bottom:right:", MLLuaWaterFallFlowLayout)
 LUA_EXPORT_END(MLNWaterfallLayout, WaterfallLayout, NO, NULL, NULL)
 
 @end
-

@@ -48,6 +48,11 @@
             measureHorizontal(self, maxWidth, maxHeight);
             break;
     }
+    if (self.overlayNode) {
+        CGFloat overlayMaxWidth = self.measuredWidth - self.overlayNode.marginLeft - self.overlayNode.marginRight;
+        CGFloat overlayMaxHeight = self.measuredHeight - self.overlayNode.marginTop - self.overlayNode.marginBottom;
+        [self.overlayNode measureSizeWithMaxWidth:overlayMaxWidth maxHeight:overlayMaxHeight];
+    }
     return CGSizeMake(self.measuredWidth, self.measuredHeight);
 }
 
@@ -64,8 +69,6 @@ MLN_FORCE_INLINE void measureHorizontal(MLNLinearLayoutNode __unsafe_unretained 
     int totalWeight = 0;
     
     NSArray<MLNLayoutNode *> *subnodes = node.prioritySubnodes;
-    NSMutableArray<MLNLayoutNode *> *measureMatchParentNodes = subnodes.mutableCopy;
-
     for (NSUInteger i  = 0; i < subnodes.count; i++) {
         MLNLayoutNode *subnode = subnodes[i];
         if (subnode.isGone) {
@@ -74,11 +77,6 @@ MLN_FORCE_INLINE void measureHorizontal(MLNLinearLayoutNode __unsafe_unretained 
             }
             continue;
         }
-        
-        if (subnode.widthType == MLNLayoutMeasurementTypeMatchParent || subnode.heightType == MLNLayoutMeasurementTypeMatchParent) {
-            [measureMatchParentNodes addObject:subnode];
-        }
-        
         if (subnode.weight > 0 && subnode.widthType != MLNLayoutNodeStatusIdle) {
             totalWeight += subnode.weight;
         }
@@ -149,14 +147,6 @@ MLN_FORCE_INLINE void measureHorizontal(MLNLinearLayoutNode __unsafe_unretained 
     if (totalWeight > 0) {
         measureHeightForWeightHorizontal(node, measuredWidth, myMaxHeight, totalWeight);
     }
-    
-    for (MLNLayoutNode *subnode in measureMatchParentNodes) {
-        CGFloat usableZoneWidth = node.measuredWidth - node.paddingLeft - node.paddingRight;
-        CGFloat usableZoneHeight = node.measuredHeight - node.paddingTop - node.paddingBottom;
-        CGFloat subMaxWidth = usableZoneWidth - subnode.marginLeft - subnode.marginRight;
-        CGFloat subMaxHeight = usableZoneHeight - subnode.marginTop - subnode.marginBottom;
-        [subnode measureSizeLightMatchParentWithMaxWidth:subMaxWidth maxHeight:subMaxHeight];
-    }
 }
 
 // 只可能变高度-宽度不变
@@ -177,7 +167,6 @@ MLN_FORCE_INLINE void measureHeightForWeightHorizontal(MLNLinearLayoutNode __uns
             subnode.widthProportion = subnode.weight * 1.f / totalWeight * 1.f;
             [subnode needLayout];
             [proportionNodes addObject:subnode];
-            totalWeight -= subnode.weight;
         } else{
             subWidth = subnode.measuredWidth;
         }
@@ -190,6 +179,7 @@ MLN_FORCE_INLINE void measureHeightForWeightHorizontal(MLNLinearLayoutNode __uns
                 break;
             }
         }
+        totalWeight -= subnode.weight;
     }
     
     CGFloat needMaxHeight = 0.f;
@@ -230,9 +220,7 @@ MLN_FORCE_INLINE void measureHeightForWeightHorizontal(MLNLinearLayoutNode __uns
             default:
                 measuredHeight = maxHeight;
         }
-        if (measuredHeight > node.measuredHeight) {
-            node.measuredHeight = measuredHeight;
-        }
+        node.measuredHeight = measuredHeight;
     }
 }
 
@@ -250,8 +238,6 @@ MLN_FORCE_INLINE void measureVertical(MLNLinearLayoutNode __unsafe_unretained *n
     int totalWeight = 0;
     
     NSArray<MLNLayoutNode *> *subnodes = node.prioritySubnodes;
-    NSMutableArray<MLNLayoutNode *> *measureMatchParentNodes = subnodes.mutableCopy;
-    
     for (NSUInteger i  = 0; i < subnodes.count; i++) {
         MLNLayoutNode *subnode = subnodes[i];
         if (subnode.isGone) {
@@ -260,11 +246,6 @@ MLN_FORCE_INLINE void measureVertical(MLNLinearLayoutNode __unsafe_unretained *n
             }
             continue;
         }
-        
-        if (subnode.widthType == MLNLayoutMeasurementTypeMatchParent || subnode.heightType == MLNLayoutMeasurementTypeMatchParent) {
-            [measureMatchParentNodes addObject:subnode];
-        }
-        
         if (subnode.weight > 0 && subnode.heightType != MLNLayoutNodeStatusIdle) {
             totalWeight += subnode.weight;
         }
@@ -337,14 +318,6 @@ MLN_FORCE_INLINE void measureVertical(MLNLinearLayoutNode __unsafe_unretained *n
     if (totalWeight > 0) {
         measureWidthForWeightVertical(node, measuredWidth, measuredHeight, myMaxWidth, totalWeight);
     }
-    
-    for (MLNLayoutNode *subnode in measureMatchParentNodes) {
-        CGFloat usableZoneWidth = node.measuredWidth - node.paddingLeft - node.paddingRight;
-        CGFloat usableZoneHeight = node.measuredHeight - node.paddingTop - node.paddingBottom;
-        CGFloat subMaxWidth = usableZoneWidth - subnode.marginLeft - subnode.marginRight;
-        CGFloat subMaxHeight = usableZoneHeight - subnode.marginTop - subnode.marginBottom;
-        [subnode measureSizeLightMatchParentWithMaxWidth:subMaxWidth maxHeight:subMaxHeight];
-    }
 }
 
 // 只可能变宽度-高度不变
@@ -367,7 +340,6 @@ MLN_FORCE_INLINE void measureWidthForWeightVertical(MLNLinearLayoutNode __unsafe
             needDirty = YES;
             [subnode needLayout];
             [proportionNodes addObject:subnode];
-            totalWeight -= subnode.weight;
         } else{
             subHeight = subnode.measuredHeight;
         }
@@ -380,6 +352,7 @@ MLN_FORCE_INLINE void measureWidthForWeightVertical(MLNLinearLayoutNode __unsafe
                 break;
             }
         }
+        totalWeight -= subnode.weight;
     }
     
     int needMaxWidth = 0.f;

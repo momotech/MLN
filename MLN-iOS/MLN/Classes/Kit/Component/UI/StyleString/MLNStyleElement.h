@@ -7,6 +7,7 @@
 
 #import <Foundation/Foundation.h>
 #import "MLNTextConst.h"
+#import "MLNBlock.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -28,6 +29,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong, readonly) NSDictionary *attributes;
 @property (nonatomic, assign) BOOL changed;
 @property (nonatomic, weak) MLNKitInstance *instance;
+@property (nonatomic, strong) MLNBlock *linkCallBack;
 
 @end
 

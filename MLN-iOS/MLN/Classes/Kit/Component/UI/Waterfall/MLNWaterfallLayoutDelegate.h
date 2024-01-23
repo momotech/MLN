@@ -14,6 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout heightForItemAtIndexPath:(NSIndexPath *)indexPath;
 
 @optional
+- (BOOL)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout isFullWidthAtIndexPath:(NSIndexPath *)indexPath;
 - (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout referenceSizeForHeaderInSection:(NSInteger)section;
 - (BOOL)headerIsValidWithWaterfallView:(UICollectionView *)waterfallView;
 - (BOOL)headerIsSettingInNewWayWithWaterfallView:(UICollectionView *)waterfallView;

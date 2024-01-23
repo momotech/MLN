@@ -9,10 +9,13 @@
 #import "MLNEntityExportProtocol.h"
 #import "MLNScrollCallbackView.h"
 #import "MLNCollectionViewAdapterProtocol.h"
+@class MLNInnerCollectionView;
 
 @interface MLNCollectionView : MLNScrollCallbackView <MLNEntityExportProtocol>
 
 @property (nonatomic, weak) id<MLNCollectionViewAdapterProtocol> adapter;
+
+@property (nonatomic, strong, readonly) MLNInnerCollectionView *innerCollectionView;
 
 @end
 

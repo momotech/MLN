@@ -32,8 +32,7 @@ static const void *kLuaBlurEffectView = &kLuaBlurEffectView;
 static const void *kLuaOpenRipple = &kLuaOpenRipple;
 static const void *kLuaOldColor = &kLuaOldColor;
 static const void *kDidSetLuaOldColor = &kDidSetLuaOldColor;
-static const void *kLuaNeedEndEditing = &kLuaNeedEndEditing;
-static const void *kLuaKeyboardDismiss = &kLuaKeyboardDismiss;
+static const void *kNeedEndEditing = &kNeedEndEditing;
 
 @implementation UIView (MLNKit)
 
@@ -85,7 +84,6 @@ static const void *kLuaKeyboardDismiss = &kLuaKeyboardDismiss;
     if (![self isKindOfClass:[UIView class]]) {
         return;
     }
-    
     if([self isOpenRipple]) {
         if (![self oldColor] && ![self lua_didSetOldColor]) {
             [self setOldColor:self.backgroundColor];
@@ -93,13 +91,8 @@ static const void *kLuaKeyboardDismiss = &kLuaKeyboardDismiss;
         }
         self.backgroundColor = kMLNDefaultRippleColor;
     }
-    
-    if ([self lua_needEndEditing]) {
+    if ([self needEndEditing]) {
         [self endEditing:YES];
-    }
-    
-    if ([self lua_needDismissKeyboard]) {
-        [self.window endEditing:YES];
     }
     
     if (self.mln_touchesBeganCallback) {
@@ -209,6 +202,16 @@ static const void *kLuaKeyboardDismiss = &kLuaKeyboardDismiss;
         [self.mln_touchesCancelledExtensionCallback addObjArgument:touchDict.mutableCopy];
         [self.mln_touchesCancelledExtensionCallback callIfCan];
     }
+}
+
+- (void)setLua_accessibilityIdentifier:(NSString *)accessibilityIdentifier {
+    if (accessibilityIdentifier == nil || [accessibilityIdentifier isKindOfClass:[NSString class]]) {
+        self.accessibilityIdentifier = accessibilityIdentifier;
+    }
+}
+
+- (NSString *)lua_accessibilityIdentifier {
+    return self.accessibilityIdentifier;
 }
 
 #pragma mark - Geometry
@@ -824,6 +827,7 @@ static const void *kLuaRenderContext = &kLuaRenderContext;
 {
     if (!self.mln_tapClickBlock && [self lua_canClick]) {
         UITapGestureRecognizer *gesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(mln_in_tapClickAction:)];
+        gesture.delegate = self;
         [self addGestureRecognizer:gesture];
     }
 }
@@ -1002,6 +1006,21 @@ static const void *kLuaTouchesCancelledExtensionEvent = &kLuaTouchesCancelledExt
     return objc_getAssociatedObject(self, kLuaTouchesCancelledExtensionEvent);
 }
 
+static const void *kLuaTouchesPriority = &kLuaTouchesPriority;
+- (void)setMln_touchesPriority:(NSNumber *)priority
+{
+    objc_setAssociatedObject(self, kLuaTouchesPriority, priority, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+
+- (NSNumber *)mln_touchesPriority
+{
+    id touchPriority = objc_getAssociatedObject(self, kLuaTouchesPriority);
+    if (touchPriority && [touchPriority isKindOfClass:[NSNumber class]]) {
+        return touchPriority;
+    }
+    return @1000;
+}
+
 static const void *kLuaOnDetachedFromWindowCallback = &kLuaOnDetachedFromWindowCallback;
 - (void)setMln_onDetachedFromWindowCallback:(MLNBlock *)callback
 {
@@ -1109,26 +1128,12 @@ static const void *kLuaOnDetachedFromWindowCallback = &kLuaOnDetachedFromWindowC
 
 - (void)lua_endEditing:(BOOL)needEnd
 {
-    objc_setAssociatedObject(self,kLuaNeedEndEditing,@(needEnd),OBJC_ASSOCIATION_ASSIGN);
+    objc_setAssociatedObject(self,kNeedEndEditing,@(needEnd),OBJC_ASSOCIATION_ASSIGN);
 }
 
-- (BOOL)lua_needEndEditing
+- (BOOL)needEndEditing
 {
-    NSNumber* number = objc_getAssociatedObject(self, kLuaNeedEndEditing);
-    if (number) {
-        return [number boolValue];
-    }
-    return NO;
-}
-
-- (void)lua_keyboardDismiss:(BOOL)autodismiss
-{
-    objc_setAssociatedObject(self,kLuaKeyboardDismiss,@(autodismiss),OBJC_ASSOCIATION_ASSIGN);
-}
-
-- (BOOL)lua_needDismissKeyboard
-{
-    NSNumber* number = objc_getAssociatedObject(self, kLuaKeyboardDismiss);
+    NSNumber* number = objc_getAssociatedObject(self, kNeedEndEditing);
     if (number) {
         return [number boolValue];
     }
@@ -1174,6 +1179,14 @@ static const void *kLuaOnDetachedFromWindowCallback = &kLuaOnDetachedFromWindowC
     [self.mln_onDetachedFromWindowCallback callIfCan];
 }
 
+#pragma mark - UIGestureRecognizerDelegate
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch {
+    if (touch.view != self && [touch.view.mln_touchesPriority integerValue] > [self.mln_touchesPriority integerValue]) {
+        return NO;
+    }
+    return YES;
+}
+
 #pragma mark - Transform
 - (void)lua_resetTransformIfNeed
 {
@@ -1190,59 +1203,43 @@ static const void *kLuaOnDetachedFromWindowCallback = &kLuaOnDetachedFromWindowC
     [self.lua_node changeAnchorPoint:CGPointMake(x, y)];
 }
 
-- (void)lua_transform:(CGFloat)angle adding:(NSNumber *)add
+- (void)lua_transform:(CGFloat)angle adding:(BOOL)add
 {
-    BOOL needAdd = YES;
-    if ([add isKindOfClass:[NSNumber class]]) {
-        needAdd = [add boolValue];
-    }
     MLNKitLuaAssert(NO, @"View:transform method is deprecated , please use View:rotation method to achieve the same effect");
     MLNTransformTask *myTransform = [self mln_in_getTransform];
     angle = angle / 360.0 * M_PI * 2;
-    if (!needAdd) {
+    if (!add) {
         myTransform.transform = CGAffineTransformMakeRotation(angle);
     } else   {
         myTransform.transform = CGAffineTransformRotate(myTransform.transform, angle);
     }
 }
 
-- (void)lua_rotation:(CGFloat)angle notNeedAdding:(NSNumber *)notNeedAdding
+- (void)lua_rotation:(CGFloat)angle notNeedAdding:(BOOL)notNeedAdding
 {
-    BOOL needAdd = YES;
-    if ([notNeedAdding isKindOfClass:[NSNumber class]]) {
-        needAdd = ![notNeedAdding boolValue];
-    }
     MLNTransformTask *myTransform = [self mln_in_getTransform];
     angle = angle / 360.0 * M_PI * 2;
-    if (!needAdd) {
+    if (notNeedAdding) {
         myTransform.transform = CGAffineTransformMakeRotation(angle);
     } else   {
         myTransform.transform = CGAffineTransformRotate(myTransform.transform, angle);
     }
 }
 
-- (void)lua_scale:(CGFloat)sx sy:(CGFloat)sy notNeedAdding:(NSNumber *)notNeedAdding
+- (void)lua_scale:(CGFloat)sx sy:(CGFloat)sy notNeedAdding:(BOOL)notNeedAdding
 {
-    BOOL needAdd = YES;
-    if ([notNeedAdding isKindOfClass:[NSNumber class]]) {
-        needAdd = ![notNeedAdding boolValue];
-    }
     MLNTransformTask *myTransform = [self mln_in_getTransform];
-    if (!needAdd) {
+    if (notNeedAdding) {
         myTransform.transform = CGAffineTransformMakeScale(sx, sy);
     } else   {
         myTransform.transform = CGAffineTransformScale(myTransform.transform, sx, sy);
     }
 }
 
-- (void)lua_translation:(CGFloat)tx ty:(CGFloat)ty notNeedAdding:(NSNumber *)notNeedAdding
+- (void)lua_translation:(CGFloat)tx ty:(CGFloat)ty notNeedAdding:(BOOL)notNeedAdding
 {
-    BOOL needAdd = YES;
-    if ([notNeedAdding isKindOfClass:[NSNumber class]]) {
-        needAdd = ![notNeedAdding boolValue];
-    }
     MLNTransformTask *myTransform = [self mln_in_getTransform];
-    if (!needAdd) {
+    if (notNeedAdding) {
         myTransform.transform = CGAffineTransformMakeTranslation(tx, ty);
     } else   {
         myTransform.transform = CGAffineTransformTranslate(myTransform.transform, tx, ty);

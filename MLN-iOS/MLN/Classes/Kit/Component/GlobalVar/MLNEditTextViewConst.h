@@ -13,6 +13,12 @@ typedef enum : NSUInteger {
     MLNEditTextViewInputModeNumber = 2,
 } MLNEditTextViewInputMode;
 
+// 账密自动填充类型
+typedef enum : NSUInteger {
+    MLNInternalTextAutoFillUserName = 1,
+    MLNInternalTextAutoFillPassword = 2,
+} MLNInternalTextAutoFillType;
+
 typedef enum : NSUInteger {
     MLNEditTextViewReturnTypeDefault = 1,
     MLNEditTextViewReturnTypeGo = 2,

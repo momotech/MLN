@@ -31,9 +31,10 @@ kGlobalVarMap: LUA_VALUES},\
 /**
  导出全局变量结束
  */
-#define LUA_EXPORT_GLOBAL_VAR_END() \
+#define LUA_EXPORT_GLOBAL_VAR_END(CLZ) \
 ];\
 }\
-LUA_EXPORT_TYPE(MLNExportTypeGlobalVar)
+LUA_EXPORT_TYPE(MLNExportTypeGlobalVar)\
+LUA_ExportBind(CLZ, CLZ)
 
 #endif /* MLNGlobalVarExporterMacro_h */

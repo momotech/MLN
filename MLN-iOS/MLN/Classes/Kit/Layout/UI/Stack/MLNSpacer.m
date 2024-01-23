@@ -7,19 +7,13 @@
 
 #import "MLNSpacer.h"
 #import "MLNKitHeader.h"
+#import "MLNSpacerNode.h"
 #import "UIView+MLNLayout.h"
 #import "MLNViewExporterMacro.h"
 
 @implementation MLNSpacer
 
 #pragma mark - Override
-
-- (instancetype)initWithFrame:(CGRect)frame {
-    if (self = [super initWithFrame:frame]) {
-        self.lua_weight = 1;
-    }
-    return self;
-}
 
 - (BOOL)lua_isContainer {
     return NO;

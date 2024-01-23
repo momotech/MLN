@@ -229,7 +229,6 @@
         return;
     }
     self.flowLayout.itemSize = newRect.size;
-    
     id delegate = self.mainView.delegate;
     self.mainView.delegate = nil;
     self.mainView.frame = newRect;
@@ -250,21 +249,13 @@
     if (!_showPageControl) {
         return;
     }
-    NSInteger pages = _showPageControl?self.adapter.cellCounts:0;
-    CGRect newRect = self.mainView.frame;
-    CGSize size = CGSizeMake(self.adapter.cellCounts * self.pageControlDotSize.width * 1.5, self.pageControlDotSize.height);
-    CGFloat x = newRect.origin.x +  (newRect.size.width - size.width) * 0.5;
-    CGFloat y = newRect.origin.y + newRect.size.height - size.height - 10;
-    CGRect pageControlFrame = CGRectMake(x, y, size.width, size.height);
-    if (!CGRectEqualToRect(self.pageControl.frame, pageControlFrame)) {
-        self.pageControl.frame = pageControlFrame;
-    }
+    NSInteger pages = _showPageControl ? self.adapter.cellCounts : 0;
     self.pageControl.numberOfPages = pages;
 }
 
 - (void)automaticScroll
 {
-    if (0 == _totalItemsCount) return;
+    if (self.adapter.cellCounts <= 1) return;
     int currentIndex = [self currentIndex];
     int targetIndex = (currentIndex + 1) % _totalItemsCount;
     [self scrollToIndex:targetIndex animated:YES];
@@ -449,7 +440,12 @@
         pageControl.currentPageIndicatorTintColor = self.currentPageDotColor;
         pageControl.pageIndicatorTintColor = self.pageDotColor;
         pageControl.userInteractionEnabled = NO;
+        pageControl.translatesAutoresizingMaskIntoConstraints = NO;
         [self addSubview:pageControl];
+        
+        [pageControl.bottomAnchor constraintEqualToAnchor:self.bottomAnchor constant:- 8.f].active = YES;
+        [pageControl.centerXAnchor constraintEqualToAnchor:self.centerXAnchor constant:0.f].active = YES;
+        
         _pageControl = pageControl;
     }
     return _pageControl;

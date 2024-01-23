@@ -57,11 +57,11 @@ typedef NS_OPTIONS(NSUInteger, MLNLayoutDirection){
     MLNLayoutDirectionVertical = 2,
 };
 
-typedef enum : NSInteger {
+typedef NS_ENUM(NSInteger, MLNLayoutMeasurementType) {
     MLNLayoutMeasurementTypeIdle = 0,
     MLNLayoutMeasurementTypeMatchParent = -1,
     MLNLayoutMeasurementTypeWrapContent = -2,
-} MLNLayoutMeasurementType;
+};
 
 typedef enum : NSUInteger {
     MLNStatusBarStyleDefault = 0,

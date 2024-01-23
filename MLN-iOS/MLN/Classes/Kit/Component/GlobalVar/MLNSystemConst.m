@@ -16,6 +16,6 @@ LUA_EXPORT_GLOBAL_VAR(NetworkState, (@{@"UNKNOWN": @(MLNNetworkStatusUnknown),
                                        @"NO_NETWORK": @(MLNNetworkStatusNoNetwork),
                                        @"CELLULAR": @(MLNNetworkStatusWWAN),
                                        @"WIFI": @(MLNNetworkStatusWifi)}))
-LUA_EXPORT_GLOBAL_VAR_END()
+LUA_EXPORT_GLOBAL_VAR_END(MLNSystemConst)
 
 @end

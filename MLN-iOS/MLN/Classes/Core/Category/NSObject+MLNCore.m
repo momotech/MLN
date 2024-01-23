@@ -21,11 +21,6 @@
     return self;
 }
 
-- (void)mln_user_data_dealloc
-{
-    // do nothing
-}
-
 - (BOOL)mln_isMultiple
 {
     return NO;
@@ -85,4 +80,8 @@ static const void *kMLNIsLuaObject = &kMLNIsLuaObject;
     return self;
 }
 
+- (void)mln_user_data_dealloc
+{
+    // nop
+}
 @end

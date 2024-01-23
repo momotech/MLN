@@ -41,6 +41,7 @@ static MLN_FORCE_INLINE int mln_pushTable(lua_State *L, void * key, MLNLuaTableE
 
 - (void)createTableWithNumArray:(NSInteger)narr numHash:(NSInteger)nrec
 {
+//    NSAssert([NSThread isMainThread], @"This method to be executed in the main thread!");
     lua_State *L = self.luaCore.state;
     MLNAssert(self.luaCore, L, @"The lua state must not be nil!");
     if (L) {
@@ -61,6 +62,7 @@ static MLN_FORCE_INLINE int mln_pushTable(lua_State *L, void * key, MLNLuaTableE
 
 - (void)setObjectWithIndex:(int)objIndex key:(NSString *)key
 {
+//    NSAssert([NSThread isMainThread], @"This method to be executed in the main thread!");
     lua_State *L = self.luaCore.state;
     MLNAssert(self.luaCore, L, @"The lua state must not be nil!");
     if (!key || key.length <= 0) {
@@ -81,6 +83,7 @@ static MLN_FORCE_INLINE int mln_pushTable(lua_State *L, void * key, MLNLuaTableE
 
 - (void)setObjectWithIndex:(int)objIndex cKey:(void *)cKey
 {
+//    NSAssert([NSThread isMainThread], @"This method to be executed in the main thread!");
     lua_State *L = self.luaCore.state;
     MLNAssert(self.luaCore, L, @"The lua state must not be nil!");
     if (cKey == NULL) {
@@ -101,6 +104,7 @@ static MLN_FORCE_INLINE int mln_pushTable(lua_State *L, void * key, MLNLuaTableE
 
 - (void)setObject:(id<MLNEntityExportProtocol>)obj key:(NSString *)key
 {
+//    NSAssert([NSThread isMainThread], @"This method to be executed in the main thread!");
     lua_State *L = self.luaCore.state;
     MLNAssert(self.luaCore, L, @"The lua state must not be nil!");
     if (!key || key.length <= 0) {
@@ -119,6 +123,7 @@ static MLN_FORCE_INLINE int mln_pushTable(lua_State *L, void * key, MLNLuaTableE
 
 - (void)setObject:(id<MLNEntityExportProtocol>)obj cKey:(void *)cKey
 {
+//    NSAssert([NSThread isMainThread], @"This method to be executed in the main thread!");
     lua_State *L = self.luaCore.state;
     MLNAssert(self.luaCore, L, @"The lua state must not be nil!");
     if (cKey == NULL) {
@@ -137,6 +142,7 @@ static MLN_FORCE_INLINE int mln_pushTable(lua_State *L, void * key, MLNLuaTableE
 
 - (void)removeObject:(NSString *)key
 {
+//    NSAssert([NSThread isMainThread], @"This method to be executed in the main thread!");
     lua_State *L = self.luaCore.state;
     MLNAssert(self.luaCore, L, @"The lua state must not be nil!");
     if (key == NULL) {
@@ -156,6 +162,7 @@ static MLN_FORCE_INLINE int mln_pushTable(lua_State *L, void * key, MLNLuaTableE
 
 - (void)removeObjectForCKey:(void *)cKey
 {
+//    NSAssert([NSThread isMainThread], @"This method to be executed in the main thread!");
     lua_State *L = self.luaCore.state;
     MLNAssert(self.luaCore, L, @"The lua state must not be nil!");
     if (cKey == NULL) {
@@ -175,6 +182,7 @@ static MLN_FORCE_INLINE int mln_pushTable(lua_State *L, void * key, MLNLuaTableE
 
 - (NSInteger)pushObjectToLuaStack:(NSString *)key
 {
+//    NSAssert([NSThread isMainThread], @"This method to be executed in the main thread!");
     lua_State *L = self.luaCore.state;
     if (!L) {
         MLNError(self.luaCore, @"The lua state must not be nil!");
@@ -196,6 +204,7 @@ static MLN_FORCE_INLINE int mln_pushTable(lua_State *L, void * key, MLNLuaTableE
 
 - (NSInteger)pushObjectToLuaStackForCKey:(void *)cKey
 {
+//    NSAssert([NSThread isMainThread], @"This method to be executed in the main thread!");
     lua_State *L = self.luaCore.state;
     if (!L) {
         MLNError(self.luaCore, @"The lua state must not be nil!");
@@ -217,6 +226,7 @@ static MLN_FORCE_INLINE int mln_pushTable(lua_State *L, void * key, MLNLuaTableE
 
 - (NSInteger)pushToLuaStack
 {
+//    NSAssert([NSThread isMainThread], @"This method to be executed in the main thread!");
     lua_State *L = self.luaCore.state;
     if (!L) {
         MLNError(self.luaCore, @"The lua state must not be nil!");
@@ -227,6 +237,7 @@ static MLN_FORCE_INLINE int mln_pushTable(lua_State *L, void * key, MLNLuaTableE
 
 - (void)dealloc
 {
+//    NSAssert([NSThread isMainThread], @"This method to be executed in the main thread!");
     lua_State *L = self.luaCore.state;
     if(L) {
         lua_checkstack(L, 2);

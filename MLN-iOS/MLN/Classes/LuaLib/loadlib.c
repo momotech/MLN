@@ -20,6 +20,7 @@
 
 #include "mln_lauxlib.h"
 #include "mln_lualib.h"
+#include "debug_info.h"
 
 
 /* prefix for open functions in C libraries */
@@ -493,6 +494,49 @@ static int ll_require (lua_State *L) {
   return 1;
 }
 
+static int ll_import (lua_State *L) {
+    int base = lua_gettop(L);
+    const char *name = luaL_checkstring(L, 1);
+    int i;
+//    lua_getglobal(L, name);
+//    if (lua_toboolean(L, -1)) {
+//        // reset
+//        lua_settop(L, base);
+//        return 1;
+//    }
+    _dumpStack(L);
+    lua_settop(L, 1);  /* _LOADED table will be at index 2 */
+    lua_getfield(L, LUA_REGISTRYINDEX, "_LOADED");
+    lua_getfield(L, 2, name);
+    if (lua_toboolean(L, -1)) {  /* is it there? */
+      if (lua_touserdata(L, -1) == sentinel)  /* check loops */
+        luaL_error(L, "import bridge fail: " LUA_QS, name);
+      return 1;  /* package is already loaded */
+    }
+    /* else must load it; iterate over available loaders */
+    lua_getfield(L, LUA_ENVIRONINDEX, "import");
+    if (!lua_istable(L, -1))
+    luaL_error(L, LUA_QL("package.import") " must be a table");
+    lua_pushliteral(L, "");  /* error message accumulator */
+    for (i=1; ; i++) {
+        lua_rawgeti(L, -2, i);  /* get a import func */
+        if (lua_isnil(L, -1))
+            continue;
+        lua_pushstring(L, name);
+        lua_call(L, 1, 1);  /* call it */
+        if (lua_isnil(L, -1)) /* throw error message? */
+        {
+            luaL_error(L, "import bridge fail:  " LUA_QS, name);
+            lua_pop(L, 1);
+        }
+        else
+            break;  /* module loaded successfully */
+    }
+    // reset
+    lua_settop(L, base);
+    return 1;
+  }
+
 /* }====================================================== */
 
 
@@ -616,6 +660,7 @@ static const luaL_Reg pk_funcs[] = {
 static const luaL_Reg ll_funcs[] = {
   {"module", ll_module},
   {"require", ll_require},
+  {"import", ll_import},
   {NULL, NULL}
 };
 
@@ -650,6 +695,9 @@ LUALIB_API int luaopen_package (lua_State *L) {
     lua_rawseti(L, -2, i+1);
   }
   lua_setfield(L, -2, "loaders");  /* put it in field `loaders' */
+    /* create `import' table */
+  lua_createtable(L, 0, 1);
+  lua_setfield(L, -2, "import");  /* put it in field `import' */
   setpath(L, "path", LUA_PATH, LUA_PATH_DEFAULT);  /* set field `path' */
   setpath(L, "cpath", LUA_CPATH, LUA_CPATH_DEFAULT); /* set field `cpath' */
   /* store config information */

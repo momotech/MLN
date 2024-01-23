@@ -8,7 +8,7 @@
 #import <Foundation/Foundation.h>
 #import "MLNEntityExportProtocol.h"
 
-typedef enum : int {
+typedef enum : NSInteger {
     MLNLuaTableEnvGlobal = -10002, // default
     MLNLuaTableEnvRegister = -10000,
 } MLNLuaTableEnvironment;

@@ -20,6 +20,16 @@
     return CGSizeZero;
 }
 
+#pragma mark - Override (Init)
+
+- (instancetype)initWithTargetView:(UIView *)targetView {
+    if (self = [super initWithTargetView:targetView]) {
+        _mainAxisAlignment = MLNStackMainAlignmentStart;
+        _crossAxisAlignment = MLNStackCrossAlignmentStart;
+    }
+    return self;
+}
+
 #pragma mark - Override (Measure)
 
 - (CGSize)measureSizeWithMaxWidth:(CGFloat)maxWidth maxHeight:(CGFloat)maxHeight {
@@ -37,7 +47,13 @@
     [self mergeMeasurementTypes];
     resortingSubnodesIfNeed(self);
     
-    return [self measureSubNodes:self.prioritySubnodes maxWidth:maxWidth maxHeight:maxHeight];
+    CGSize size = [self measureSubNodes:self.prioritySubnodes maxWidth:maxWidth maxHeight:maxHeight];
+    if (self.overlayNode) {
+        CGFloat overlayMaxWidth = size.width - self.overlayNode.marginLeft - self.overlayNode.marginRight;
+        CGFloat overlayMaxHeight = size.height - self.overlayNode.marginTop - self.overlayNode.marginBottom;
+        [self.overlayNode measureSizeWithMaxWidth:overlayMaxWidth maxHeight:overlayMaxHeight];
+    }
+    return size;
 }
 
 #pragma mark - Sort
@@ -92,25 +108,6 @@ static MLN_FORCE_INLINE void quickSort(MLNStackNode __unsafe_unretained *node, N
     if (j < nodes_m.count -1 && j+1 < tail) {
         quickSort(node, nodes_m, j+1, tail);
     }
-}
-
-@end
-
-
-@implementation MLNPlaneStackNode
-
-- (void)invalidateMainAxisMatchParentMeasureType {
-    // do nothing
-}
-
-#pragma mark - Override (Init)
-
-- (instancetype)initWithTargetView:(UIView *)targetView {
-    if (self = [super initWithTargetView:targetView]) {
-        _mainAxisAlignment = MLNStackMainAlignmentStart;
-        _crossAxisAlignment = MLNStackCrossAlignmentStart;
-    }
-    return self;
 }
 
 @end

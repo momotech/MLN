@@ -38,6 +38,7 @@
     copy.imagePath = _imagePath;
     copy.imageSize = _imageSize;
     copy.instance = _instance;
+    copy.linkCallBack = _linkCallBack;
     
     return copy;
 }

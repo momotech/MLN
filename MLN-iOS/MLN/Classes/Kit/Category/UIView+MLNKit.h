@@ -39,6 +39,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) MLNBlock *mln_touchesMovedExtensionCallback;
 @property (nonatomic, strong) MLNBlock *mln_touchesEndedExtensionCallback;
 @property (nonatomic, strong) MLNBlock *mln_touchesCancelledExtensionCallback;
+@property (nonatomic, strong) NSNumber *mln_touchesPriority;
 
 #pragma mark - render
 @property (nonatomic, strong, readonly) MLNRenderContext *mln_renderContext;

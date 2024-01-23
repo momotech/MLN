@@ -125,6 +125,10 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (BOOL)loadFile:(NSString *)filePath error:(NSError **__nullable)error;
 
+/// 加载bridge
+/// @param bridgeName Lua侧桥接的名字
+- (BOOL)loadBridge:(NSString *)bridgeName;
+
 /**
  将数据加载到状态机栈顶
 
@@ -448,6 +452,8 @@ NS_ASSUME_NONNULL_BEGIN
  @return 返回traceback信息
  */
 - (int)tracebackCount;
+
+static void mln_import (lua_State *L, const char *class);
 
 @end
 

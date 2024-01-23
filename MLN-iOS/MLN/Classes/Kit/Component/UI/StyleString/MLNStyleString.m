@@ -443,6 +443,27 @@
 
 }
 
+- (void)lua_setLinkCallback:(MLNBlock *) callback {
+    NSInteger location = 0;
+    NSInteger length = self.mutableStyledString.length;
+    _statusChanged = YES;
+    NSRange newRange = NSMakeRange(location, length);
+    NSArray *interRangesArray = [self shouldChangedElementWithNewRange:&newRange];
+    
+    if (interRangesArray.count > 0) {
+        for (MLNStyleElement *element in interRangesArray) {
+            element.linkCallBack = callback;
+        }
+    }
+    
+    if (newRange.length != 0) {
+        MLNStyleElement *element = [self styleElementWithKey:NSStringFromRange(newRange)];
+        element.range = newRange;
+        element.linkCallBack = callback;
+    }
+}
+
+
 - (void)lua_setImageAlignType:(MLNStyleImageAlignType)alignType
 {
     self.imageAlign = alignType;
@@ -581,6 +602,7 @@ LUA_EXPORT_METHOD(setFontColorForRange,"lua_setFontColor:location:length:",MLNSt
 LUA_EXPORT_METHOD(backgroundColor,"lua_setBackgroundColor:",MLNStyleString)
 LUA_EXPORT_METHOD(setBackgroundColorForRange,"lua_setBackgroundColor:location:length:",MLNStyleString)
 LUA_EXPORT_METHOD(underline,"lua_setUnderLineStyle:",MLNStyleString)
+LUA_EXPORT_METHOD(setLinkCallback,"lua_setLinkCallback:",MLNStyleString)
 LUA_EXPORT_METHOD(setUnderlineForRange,"lua_setUnderLineStyle:location:length:",MLNStyleString)
 LUA_EXPORT_METHOD(showAsImage,"lua_showAsImageWithSize:",MLNStyleString)
 LUA_EXPORT_METHOD(append, "lua_append:", MLNStyleString)

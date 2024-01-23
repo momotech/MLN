@@ -129,12 +129,13 @@ static void MLNNetworkReachabilityCallback(SCNetworkReachabilityRef __unused tar
     SCNetworkReachabilitySetCallback(self.networkReachability, MLNNetworkReachabilityCallback, &context);
     SCNetworkReachabilityScheduleWithRunLoop(self.networkReachability, CFRunLoopGetMain(), kCFRunLoopCommonModes);
     
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0),^{
-        SCNetworkReachabilityFlags flags;
-        if (SCNetworkReachabilityGetFlags(self.networkReachability, &flags)) {
-            MLNPostReachabilityStatusChange(flags, callback);
-        }
-    });
+    //    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0),^{
+    //    });
+    // if判断有些bad access的crash，去除异步尝试解决
+    SCNetworkReachabilityFlags flags;
+    if (SCNetworkReachabilityGetFlags(self.networkReachability, &flags)) {
+        MLNPostReachabilityStatusChange(flags, callback);
+    }
 }
 
 - (void)changeNetworkStatusAndCallback:(MLNNetworkStatus)status

@@ -15,6 +15,11 @@ LUA_EXPORT_GLOBAL_VAR_BEGIN()
 LUA_EXPORT_GLOBAL_VAR(ContentMode, (@{@"SCALE_ASPECT_FILL":@(UIViewContentModeScaleAspectFill),
                                       @"SCALE_ASPECT_FIT":@(UIViewContentModeScaleAspectFit),
                                       @"SCALE_TO_FILL":@(UIViewContentModeScaleToFill),
-                                      @"CENTER":@(UIViewContentModeCenter)}))
-LUA_EXPORT_GLOBAL_VAR_END()
+                                      @"CENTER":@(UIViewContentModeCenter),
+                                      @"LEFT":@(UIViewContentModeLeft),
+                                      @"RIGHT":@(UIViewContentModeRight),
+                                      @"TOP":@(UIViewContentModeTop),
+                                      @"BOTTOM":@(UIViewContentModeBottom)
+                                    }))
+LUA_EXPORT_GLOBAL_VAR_END(MLNContentMode)
 @end

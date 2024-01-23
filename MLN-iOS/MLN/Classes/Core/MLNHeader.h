@@ -82,7 +82,7 @@ __VA_ARGS__;\
  @param str NSString 字符串
  @return YES/NO
  */
-#define stringNotEmpty(str) (str && str.length >0)
+#define stringNotEmpty(str) ([str isKindOfClass:[NSString class]] && str.length > 0)
 
 /**
  lua状态机转换成lua core

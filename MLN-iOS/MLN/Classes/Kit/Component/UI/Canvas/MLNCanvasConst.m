@@ -17,7 +17,7 @@ LUA_EXPORT_GLOBAL_VAR(DrawStyle, (@{ @"Stroke": @(MLNCanvasDrawStyleStroke),
                                      @"FillStroke": @(MLNCanvasDrawStyleFillStroke)}))
 LUA_EXPORT_GLOBAL_VAR(FillType, (@{@"WINDING": @(MLNCanvasFillTypeWinding),
                                    @"EVEN_ODD": @(MLNCanvasFillTypeEvenOdd)}))
-LUA_EXPORT_GLOBAL_VAR_END()
+LUA_EXPORT_GLOBAL_VAR_END(MLNCanvasConst)
 
 
 @end

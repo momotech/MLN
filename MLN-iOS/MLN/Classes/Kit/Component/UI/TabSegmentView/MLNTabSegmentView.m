@@ -19,7 +19,7 @@
 const CGFloat kMLNTabSegmentViewDefaultHeight = 50.0f;
 const CGFloat kMLNTabSegmentViewLabelOffsetWeight = 10.0f;
 #define kMLNTabSegmentViewDefaultFontWeight UIFontWeightRegular
-#define kMLNTabDefaultColor [UIColor colorWithRed:50/255.0 green:51/255.0 blue:51/255.0 alpha:1.0]
+#define kMLNTabDefaultColor [UIColor colorWithRed:170/255.0 green:170/255.0 blue:170/255.0 alpha:1.0]
 
 @interface MLNTabSegmentView() <MLNTabSegmentScrollHandlerDelegate>
 {
@@ -125,6 +125,7 @@ const CGFloat kMLNTabSegmentViewLabelOffsetWeight = 10.0f;
         [node changeHeight:frame.size.height];
         tintColor = tintColor?:kMLNTabDefaultColor;
         self.configuration.customTiniColor = tintColor;
+        _selectedTintColor = self.configuration.selectedColor;
         _customTintColor = tintColor;
         _shouldReConfigure = YES;
         _missionIndex = -1;
@@ -176,6 +177,11 @@ const CGFloat kMLNTabSegmentViewLabelOffsetWeight = 10.0f;
             if (_selectedTintColor) {
                 segmentLabel.titleLabel.textColor = _selectedTintColor;
             }
+            
+            CGRect frame = self.bottomPointView.frame;
+            frame.size.width = width;
+            self.bottomPointView.frame = frame;
+
             CGPoint center = self.bottomPointView.center;
             center.x = CGRectGetMidX(segmentLabel.frame);
             self.bottomPointView.center = center;
@@ -448,7 +454,8 @@ const CGFloat kMLNTabSegmentViewLabelOffsetWeight = 10.0f;
     [self layoutSegmentTitle];
     
     CGRect frame = self.bottomPointView.frame;
-    frame.size.width = self.configuration.pointSize.width > 0 ? self.configuration.pointSize.width : 5.5;
+    // frame.size.width = self.configuration.pointSize.width > 0 ? self.configuration.pointSize.width : 5.5;
+    frame.size.width = currentLabel.frame.size.width;
     self.bottomPointView.frame = frame;
     CGPoint center = self.bottomPointView.center;
     center.x = CGRectGetMidX(currentLabel.frame);
@@ -526,6 +533,7 @@ const CGFloat kMLNTabSegmentViewLabelOffsetWeight = 10.0f;
     CGFloat startPointX = CGRectGetMidX(oldLable.frame);
     CGFloat endPointX = CGRectGetMidX(newLabel.frame);
     
+    /*
     CGFloat scale = fabs(1 - progress*2);
     CGFloat offset = 0;
     if (toIndex!=fromIndex) {
@@ -533,9 +541,16 @@ const CGFloat kMLNTabSegmentViewLabelOffsetWeight = 10.0f;
     }
     CGFloat baseWidth = self.configuration.pointSize.width > 0 ? self.configuration.pointSize.width : 5;
     CGFloat width = baseWidth + offset * (1 - scale);
-    CGRect frame = self.bottomPointView.frame;
-    frame.size.width = width;
-    self.bottomPointView.frame = frame;
+     */
+    CGFloat newWidth = newLabel.frame.size.width;
+    CGFloat oldWidth = oldLable.frame.size.width;
+    if (newWidth != oldWidth) {
+        CGFloat differenceWidth = newWidth - oldWidth;
+        CGFloat progressWidth = oldWidth + differenceWidth * progress;
+        CGRect frame = self.bottomPointView.frame;
+        frame.size.width = progressWidth;
+        self.bottomPointView.frame = frame;
+    }
     
     CGPoint center = self.bottomPointView.center;
     center.x = startPointX + (endPointX-startPointX) * progress;
@@ -703,6 +718,7 @@ const CGFloat kMLNTabSegmentViewLabelOffsetWeight = 10.0f;
     if (_selectScale == scale) {
         return;
     }
+    scale = 1;   //tab样式修改需求统一将lua的tab放大效果去掉了
     _selectScale = scale;
     self.configuration.selectScale = scale;
     _shouldReConfigure = YES;
@@ -936,11 +952,13 @@ LUA_EXPORT_VIEW_END(MLNTabSegmentView,TabSegmentView, YES, "MLNView", "initWithL
     configuration.itemPadding = 20;
     
     configuration.normalFontSize = 15;
-    configuration.selectScale = 1.6;
+    configuration.selectScale = 1.0;
     
-    configuration.customTiniColor = [UIColor colorWithRed:50/255.0 green:51/255.0 blue:51/255.0 alpha:1.0];
-    configuration.pointSize = CGSizeMake(5.5, 4);
-    configuration.pointInsetBottom = 8;
+    configuration.customTiniColor = [UIColor colorWithRed:170/255.0 green:170/255.0 blue:170/255.0 alpha:1.0];
+    configuration.indicatorColor = [UIColor colorWithRed:50/255.0 green:51/255.0 blue:51/255.0 alpha:1.0];
+    configuration.selectedColor = [UIColor colorWithRed:50/255.0 green:51/255.0 blue:51/255.0 alpha:1.0];
+    configuration.pointSize = CGSizeMake(5.5, 2);
+    configuration.pointInsetBottom = 2;
     
     return configuration;
 }

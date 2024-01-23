@@ -9,6 +9,15 @@
 #define MLNExporterMacro_h
 
 #import "MLNInvocation.h"
+#import "MLNMachORegister.h"
+
+
+#define  MLNExportBindSplit @"___MLNExportBind___"
+#define  MLNExportBindSectionNameSpace @"MLNExportBind"
+
+// 注册Goto actionName与处理类
+#define LUA_ExportBind(luaClass, nativeClass) \
+MLNMachORegisterK_VSet(MLNExportBind, luaClass##___MLNExportBind___##nativeClass);
 
 /**
  构建方法列表

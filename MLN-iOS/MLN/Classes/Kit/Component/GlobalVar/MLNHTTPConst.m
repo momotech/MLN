@@ -23,6 +23,6 @@ LUA_EXPORT_GLOBAL_VAR(ErrorKey, (@{@"MSG": @"errmsg",
                                    @"CODE": @"errcode"}))
 LUA_EXPORT_GLOBAL_VAR(EncType, (@{@"NORMAL": @(MLNHTTPEncrptyTypeNORMAL),
                                   @"NO": @(MLNHTTPEncrptyTypeNO)}))
-LUA_EXPORT_GLOBAL_VAR_END()
+LUA_EXPORT_GLOBAL_VAR_END(MLNHTTPConst)
 
 @end

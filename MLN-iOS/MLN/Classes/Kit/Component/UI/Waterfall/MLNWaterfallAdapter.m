@@ -28,10 +28,24 @@
 @property (nonatomic, strong) MLNBlock *heightForCellCallback;
 @property (nonatomic, strong) MLNBlock *headerWillAppearCallback;
 @property (nonatomic, strong) MLNBlock *headerDidDisappearCallback;
+@property (nonatomic, strong) MLNBlock *useAllSpanForCellCallback;
 
 @end
 
 @implementation MLNWaterfallAdapter
+
+- (BOOL)collectionView:(UICollectionView *)collectionView
+                layout:(UICollectionViewLayout *)collectionViewLayout
+isFullWidthAtIndexPath:(NSIndexPath *)indexPath {
+    if (self.useAllSpanForCellCallback) {
+        NSString *reuseId = [self reuseIdentifierAtIndexPath:indexPath];
+        [self.useAllSpanForCellCallback addStringArgument:reuseId];
+        id useAllSpanValue = [self.useAllSpanForCellCallback callIfCan];
+        MLNKitLuaAssert(useAllSpanValue && [useAllSpanValue isMemberOfClass:NSClassFromString(@"__NSCFBoolean")], @"The return value of method 'useAllSpanForCell' must be a bool!");
+        return [useAllSpanValue boolValue];
+    }
+    return NO;
+}
 
 - (CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout heightForItemAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -206,6 +220,7 @@ LUA_EXPORT_METHOD(headerValid, "lua_headValidCallback:", MLNWaterfallAdapter)
 LUA_EXPORT_METHOD(heightForCell, "setHeightForCellCallback:", MLNWaterfallAdapter)
 LUA_EXPORT_METHOD(headerWillAppear, "lua_headerWillAppearCallback:", MLNWaterfallAdapter)
 LUA_EXPORT_METHOD(headerDidDisappear, "lua_headerDidDisappearCallback:", MLNWaterfallAdapter)
+LUA_EXPORT_METHOD(useAllSpanForCell, "setUseAllSpanForCellCallback:", MLNWaterfallAdapter)
 LUA_EXPORT_END(MLNWaterfallAdapter, WaterfallAdapter, YES, "MLNCollectionViewAdapter", NULL)
 
 @end

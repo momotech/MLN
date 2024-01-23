@@ -8,29 +8,19 @@
 #import "MLNLayoutContainerNode.h"
 #import "MLNStackConst.h"
 
-#define MLN_IS_WRAP_MODE (self.wrapType == MLNStackWrapTypeWrap)
-
-#define MLN_NODE_HEIGHT_SHOULD_FORCE_USE_MATCHPARENT(node) \
-        (node.heightType == MLNLayoutMeasurementTypeMatchParent && node.mergedHeightType == MLNLayoutMeasurementTypeWrapContent)
-#define MLN_NODE_WIDTH_SHOULD_FORCE_USE_MATCHPARENT(node) \
-        (node.widthType == MLNLayoutMeasurementTypeMatchParent && node.mergedWidthType == MLNLayoutMeasurementTypeWrapContent)
+#define MLN_IS_EXPANDED_SPACER_NODE_IN_HSTACK(node) \
+        (node.isSpacerNode && ((MLNSpacerNode *)node).changedWidth == NO)
+#define MLN_IS_EXPANDED_SPACER_NODE_IN_VSTACK(node) \
+        (node.isSpacerNode && ((MLNSpacerNode *)node).changedHeight == NO)
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface MLNStackNode : MLNLayoutContainerNode
 
-- (CGSize)measureSubNodes:(NSArray<MLNLayoutNode *> *)subNods maxWidth:(CGFloat)maxWidth maxHeight:(CGFloat)maxHeight;
-
-@end
-
-@interface MLNPlaneStackNode : MLNStackNode
-
 @property (nonatomic, assign) MLNStackMainAlignment mainAxisAlignment;
 @property (nonatomic, assign) MLNStackCrossAlignment crossAxisAlignment;
-@property (nonatomic, assign) MLNStackWrapType wrapType;
 
-// subclass should override
-- (void)invalidateMainAxisMatchParentMeasureType;
+- (CGSize)measureSubNodes:(NSArray<MLNLayoutNode *> *)subNods maxWidth:(CGFloat)maxWidth maxHeight:(CGFloat)maxHeight;
 
 @end
 

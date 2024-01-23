@@ -49,9 +49,6 @@
     NSArray<MLNLayoutNode *> *subnodes_t = self.subnodes;
     for (NSUInteger i = 0; i < subnodes_t.count; i++) {
         MLNLayoutNode *subnode = subnodes_t[i];
-        if (subnode.isGone) {
-            continue;
-        }
         // need resize for match parent node
         if (subnode.widthType == MLNLayoutMeasurementTypeMatchParent ||
             subnode.heightType == MLNLayoutMeasurementTypeMatchParent) {
@@ -132,6 +129,12 @@
         }
     }
     
+    if (self.overlayNode) {
+        CGFloat overlayMaxWidth = self.measuredWidth - self.overlayNode.marginLeft - self.overlayNode.marginRight;
+        CGFloat overlayMaxHeight = self.measuredHeight - self.overlayNode.marginTop - self.overlayNode.marginBottom;
+        [self.overlayNode measureSizeWithMaxWidth:overlayMaxWidth maxHeight:overlayMaxHeight];
+    }
+    
     return CGSizeMake(self.measuredWidth, self.measuredHeight);
 }
 
@@ -196,10 +199,17 @@
 
 - (void)onMeasure
 {
-    CGFloat superWidth = self.supernode.width > 0 ? self.supernode.width : (self.targetView.superview.frame.size.width - self.supernode.offsetWidth);
-    CGFloat superHeight = self.supernode.height > 0 ? self.supernode.height : (self.targetView.superview.frame.size.height - self.supernode.offsetWidth);
-    CGFloat usableZoneWidth = superWidth - self.supernode.paddingLeft - self.supernode.paddingRight;
-    CGFloat usableZoneHeight = superHeight - self.supernode.paddingTop - self.supernode.paddingBottom;
+    CGFloat usableZoneWidth = 0;
+    CGFloat usableZoneHeight = 0;
+    if (self.supernode) {
+        CGFloat superWidth = self.supernode.width > 0 ? self.supernode.width : (self.targetView.superview.frame.size.width - self.supernode.offsetWidth);
+        CGFloat superHeight = self.supernode.height > 0 ? self.supernode.height : (self.targetView.superview.frame.size.height - self.supernode.offsetWidth);
+        usableZoneWidth = superWidth - self.supernode.paddingLeft - self.supernode.paddingRight;
+        usableZoneHeight = superHeight - self.supernode.paddingTop - self.supernode.paddingBottom;
+    } else {
+        usableZoneWidth = self.maxWidth;
+        usableZoneHeight = self.maxHeight;
+    }
     [self onMeasureWithMaxWidth:usableZoneWidth maxHeight:usableZoneHeight];
 }
 

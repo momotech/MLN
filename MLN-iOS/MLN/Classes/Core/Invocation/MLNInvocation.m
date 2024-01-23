@@ -24,7 +24,7 @@ static MLN_FORCE_INLINE Class __mln_lua_getclass (lua_State *L) {
 static MLN_FORCE_INLINE SEL __mln_lua_getselector_at_index (lua_State *L, int idx) {
     mln_lua_checkstring(L, lua_upvalueindex(idx));
     NSString *selectorString = [NSString stringWithUTF8String:lua_tostring(L, lua_upvalueindex(idx))];
-    mln_lua_assert(L, (selectorString && selectorString.length > 0), @"The selector name must not be nil!!");
+    mln_lua_assert(L, (selectorString && selectorString.length > 0),@ "The selector name must not be nil!!");
     return NSSelectorFromString(selectorString);
 }
 
@@ -456,7 +456,7 @@ static MLN_FORCE_INLINE int __mln_lua_objc_invoke (lua_State *L, int statrtStack
         NSString *targetMsg = s_clazz;
         NSString *selMsg = NSStringFromSelector(selector);
         NSString *errmsg = [NSString stringWithFormat:@"The method signature cannot be nil! \n taget : %@ \n selector : %@",targetMsg, selMsg];
-        mln_lua_error(L, @"%@", errmsg);
+        mln_lua_error(L, errmsg);
         return 0;
     }
     // 当方法为init...初始化方法时，默认传递参数的个数为3，其他情况为2
@@ -479,7 +479,7 @@ static MLN_FORCE_INLINE int __mln_lua_objc_invoke (lua_State *L, int statrtStack
             NSString *targetMsg = target ? (isclass ? NSStringFromClass(target) : target) : @"<nil>";
             NSString *selMsg = selector ? NSStringFromSelector(selector) : @"<nil>";
             NSString *errmsg = [NSString stringWithFormat:@"The method signature cannot be nil! \n taget : %@ \n selector : %@",targetMsg, selMsg];
-            mln_lua_error(L, @"%@", errmsg);
+            mln_lua_error(L, errmsg);
             return 0;
         }
         stackIdx++;

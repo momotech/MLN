@@ -16,11 +16,9 @@ NS_ASSUME_NONNULL_BEGIN
 @class MLNKitInstanceHandlersManager;
 @class MLNLuaBundle;
 /**
- 提供一个默认的包含MLNKitInstance的视图控制器
+ 提供一个默认的包含MLNKitInstance的试图控制器
  */
-@interface MLNKitViewController : UIViewController <MLNViewControllerProtocol> {
-@protected MLNKitInstance *_kitInstance;
-}
+@interface MLNKitViewController : UIViewController <MLNViewControllerProtocol>
 
 /**
  当前KitInstance
@@ -65,7 +63,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  创建KitViewController
- 
+
  @param entryFilePath 入口文件
  @return KitViewController
  */
@@ -73,7 +71,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  创建KitViewController
- 
+
  @param entryFilePath 入口文件
  @param extraInfo 传递给Lua的参数
  @return KitViewController
@@ -96,14 +94,14 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)initWithNibName:(nullable NSString *)nibNameOrNil bundle:(nullable NSBundle *)nibBundleOrNil NS_UNAVAILABLE;
 /**
  更改Bundle环境,默认为Main Bundle
- 
+
  @param bundlePath Bundle路径
  */
 - (void)changeCurrentBundlePath:(NSString *)bundlePath;
 
 /**
  更改Bundle环境,默认为Main Bundle
- 
+
  @param bundle Lua Bundle
  */
 - (void)changeCurrentBundle:(MLNLuaBundle *)bundle;
@@ -115,14 +113,14 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  重新加载
- 
+
  @param entryFilePath 要被加载的入口文件
  */
 - (void)reloadWithEntryFilePath:(NSString *)entryFilePath;
 
 /**
  重新加载
- 
+
  @param entryFilePath 要被加载的入口文件
  @param bundlePath 入口文件所在的Bundle环境
  */
@@ -130,7 +128,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  重新加载
- 
+
  @param entryFilePath 要被加载的入口文件
  @param extraInfo 透传的参数
  @param bundlePath 入口文件所在的Bundle环境
@@ -139,7 +137,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  注册Bridge
- 
+
  @param registerClasses 要被注册的Bridge数组
  @return 是否成功
  */

@@ -11,7 +11,6 @@
 #import "MLNKitInstance.h"
 #import "MLNLayoutEngine.h"
 #import "MLNTextConst.h"
-#import "MLNViewConst.h"
 #import "MLNFont.h"
 #import "UIView+MLNKit.h"
 #import "UIView+MLNLayout.h"
@@ -20,17 +19,27 @@
 #import "MLNBeforeWaitingTask.h"
 #import "NSAttributedString+MLNKit.h"
 #import "MLNStyleString.h"
+#import "MLNLabel+Interface.h"
+#import "MLNStyleElement.h"
+
+@interface MLNRunItem : NSObject
+@property(nonatomic) CGRect            frame;
+@property (nonatomic) NSRange           range;
+@end
+
+@implementation MLNRunItem
+@end
 
 @interface MLNLabel ()
 
-@property (nonatomic, strong) UILabel *innerLabel;
 @property (nonatomic, assign) CGFloat fontSize;
 @property (nonatomic, copy) NSString *fontName;
 @property (nonatomic, assign) MLNFontStyle fontStyle;
 @property (nonatomic, assign) CGFloat lineSpacing;
 @property (nonatomic, copy) NSString *originText;
-@property (nonatomic, assign) MLNLabelMaxMode limitMode;
 @property (nonatomic, assign) NSLineBreakMode labelBreakMode;
+@property (nonatomic, copy) MLNStyleString *originString;
+@property (nonatomic, strong) UITapGestureRecognizer *textTap;
 @end
 
 @implementation MLNLabel
@@ -133,6 +142,7 @@
     if ([self.text isEqualToString:text]) {
         return;
     }
+    self.originString = nil;
     [self lua_needLayoutAndSpread];
     self.innerLabel.text = [self mln_handleSingleLineBreakLineWithText:text];
 }
@@ -153,12 +163,15 @@
     }
     
     if (attributedText.lua_styleString) {
+        self.originString = attributedText.lua_styleString;
         __weak typeof(self) weakSelf = self;
         attributedText.lua_styleString.loadFinishedCallback = ^(NSAttributedString *attributeText) {
             __strong typeof(weakSelf) strongSelf = weakSelf;
             [strongSelf setAttributedText:[attributedText copy]];
         };
         [attributedText.lua_styleString mln_checkImageIfNeed];
+    } else {
+        self.originString = nil;
     }
     
     NSMutableAttributedString* strM = [[NSMutableAttributedString alloc] initWithAttributedString:attributedText];
@@ -333,7 +346,8 @@
 - (void)lua_setText:(NSString *)text
 {
     if (![text isKindOfClass:[NSString class]]) {
-        text = [NSString stringWithFormat:@"%@", text ? text : @""];
+        MLNLuaAssert(self.mln_luaCore, [text isKindOfClass:[NSString class]], @"Error! Cannot assign a non-NSString type to label ");
+        return;
     }
     self.text = text;
     [self handleLineSpacing];
@@ -403,10 +417,6 @@
     return YES;
 }
 
-- (BOOL)lua_supportOverlay {
-    return YES;
-}
-
 - (void)lua_addSubview:(UIView *)view
 {
     MLNLuaAssert(self.mln_luaCore, NO, @"Not found \"addView\" method, just continar of View has it!");
@@ -432,6 +442,132 @@
     //Android方法 iOS空实现
 }
 
+//点击支持
+-(void)setOriginString:(MLNStyleString *)originString {
+    _originString = originString;
+    if (originString) {//add tapgesture
+        BOOL needHandle = NO;
+        NSDictionary *map = self.originString.styleElementsDictM;
+        NSArray *keys = [map allKeys];
+        for (NSString *rangeStr in keys) {
+            MLNStyleElement *element = map[rangeStr];
+            if (element.linkCallBack) {
+                needHandle = YES;
+                break;
+            }
+        }
+        if (needHandle) {
+            UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapAction:)];
+            tap.cancelsTouchesInView = NO;
+            [self addGestureRecognizer:tap];
+            self.textTap = tap;
+        }
+    } else {//remove tapgesture
+        if (self.textTap) {
+            [self removeGestureRecognizer:self.textTap];
+        }
+    }
+}
+
+- (void)tapAction:(UITapGestureRecognizer *)tapRecognizer {
+    if (tapRecognizer.state == UIGestureRecognizerStateEnded) {
+        CGPoint touchPoint = [tapRecognizer locationInView: self];
+        [self clickOnStrWithPoint:touchPoint];
+    }
+}
+
+- (void)clickOnStrWithPoint:(CGPoint)location
+{
+    if (!CGRectContainsPoint(self.bounds, location)) {
+        return ;
+    }
+    CGMutablePathRef path = CGPathCreateMutable();
+    CGFloat height = CGRectGetHeight(self.innerLabel.bounds);
+    CGFloat width = CGRectGetWidth(self.innerLabel.bounds);
+    CGPathAddRect(path, NULL, CGRectMake(0.f, 0.f, width, height));
+    NSArray *res = MLN_CollectionRunFrame(self.originString.mutableStyledString, path, self.innerLabel.frame.origin);
+    if (res.count) {
+        NSDictionary *map = _originString.styleElementsDictM;
+        NSArray *allKeys = [map allKeys];
+        if (allKeys.count) {
+            for (MLNRunItem *item in res) {
+                if (CGRectContainsPoint(item.frame, location)) {
+                    for (NSString *key in allKeys) {
+                        NSRange range = NSRangeFromString(key);
+                        bool isC = NSRangeContainsRange(range,item.range);
+                        if (isC) {
+                            NSString *key = NSStringFromRange(range);
+                            MLNStyleElement *element = map[key];
+                            if (element.linkCallBack) {
+                                [element.linkCallBack callIfCan];
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    CFRelease(path);
+}
+
+NSArray * MLN_CollectionRunFrame(NSMutableAttributedString *aString, CGMutablePathRef path, CGPoint viewOrigin) {
+    CTFramesetterRef frameRef = CTFramesetterCreateWithAttributedString((CFAttributedStringRef)aString);
+    CTFrameRef frame = CTFramesetterCreateFrame(frameRef, CFRangeMake(0, aString.length), path, NULL);
+    NSArray *lines = (__bridge NSArray *)CTFrameGetLines(frame);
+    
+    CFIndex linesCount = [lines count];
+    MLNRunItem *lastItem = nil;
+    CTLineRef line = NULL;
+    CGFloat lineY = 0;
+    NSMutableArray *res = [NSMutableArray array];
+    for(CFIndex i = 0; i < linesCount; ++i) {
+        line = (__bridge CTLineRef)[lines objectAtIndex:i];
+        CGFloat descent, ascent, leading;
+        CTLineGetTypographicBounds(line, &ascent, &descent, &leading);
+        lineY = lineY+ascent+descent+leading;
+        NSArray *runs = (__bridge NSArray *)CTLineGetGlyphRuns(line);
+        CFIndex runsCount = [runs count];
+        lastItem = nil;
+        CFRelease(line);
+        
+        for(CFIndex j = 0; j < runsCount; ++j) {
+            CTRunRef run = (__bridge CTRunRef)[runs objectAtIndex:j];
+            CGRect runFrame = CGRectZero;
+            if (lastItem) {
+                runFrame.origin.x = CGRectGetMaxX(lastItem.frame);
+            }
+            if (i != 0) {
+                CGFloat tY = lineY-(ascent+descent+leading);
+                runFrame.origin.y =  tY > 0 ? tY : 0;
+            }
+            CGFloat runAscent = 0.0f, runDescent = 0.0f, runLeading = 0.0f;
+            //计算得到上下行高、行间距以及CTRun绘制区域宽度
+            runFrame.size.width = (CGFloat)CTRunGetTypographicBounds(run, CFRangeMake(0, 0), &runAscent, &runDescent, &runLeading);
+            //计算高度，注意下行高为负数的情况
+            CGFloat runHeight = runAscent + fabs(runDescent);
+            runFrame.size.height = runHeight;
+            CFRange cRange = CTRunGetStringRange(run);
+            NSRange range =  NSMakeRange(cRange.location, cRange.length);
+            MLNRunItem *item = [MLNRunItem new];
+            item.frame = runFrame;
+            item.range = range;
+            [res addObject:item];
+            lastItem = item;
+        }
+    }
+    return res;
+}
+
+bool NSRangeContainsRange (NSRange range1, NSRange range2) {
+    BOOL retval = NO;
+    if (range1.location <= range2.location && range1.location+range1.length >= range2.length+range2.location) {
+        retval = YES;;
+    }
+    
+    return retval;
+}
+
 #pragma mark - Export To Lua
 LUA_EXPORT_VIEW_BEGIN(MLNLabel)
 LUA_EXPORT_VIEW_PROPERTY(text, "lua_setText:", "text", MLNLabel)
@@ -454,9 +590,4 @@ LUA_EXPORT_VIEW_METHOD(setMinHeight, "lua_setMinHeight:",MLNLabel) //SDK>=1.0.3�
 LUA_EXPORT_VIEW_METHOD(setLineSpacing, "lua_setLineSpacing:",MLNLabel) //SDK>=1.0.3，自适应时的限制
 LUA_EXPORT_VIEW_METHOD(a_setIncludeFontPadding, "lua_a_setIncludeFontPadding:", MLNLabel)
 LUA_EXPORT_VIEW_END(MLNLabel, Label, YES, "MLNView", "initWithLuaCore:frame:")
-@end
-
-@implementation MLNOverlayLabel
-LUA_EXPORT_VIEW_BEGIN(MLNOverlayLabel) // 兼容Android
-LUA_EXPORT_VIEW_END(MLNOverlayLabel, OverLabel, YES, "MLNLabel", "initWithLuaCore:frame:")
 @end

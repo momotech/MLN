@@ -16,5 +16,5 @@ LUA_EXPORT_GLOBAL_VAR(StyleImageAlign, (@{@"Default": @(MLNStyleImageAlignTypeDe
                                          @"Top": @(MLNStyleImageAlignTypeTop),
                                          @"Center": @(MLNStyleImageAlignTypeCenter),
                                          @"Bottom": @(MLNStyleImageAlignTypeBottom)}))
-LUA_EXPORT_GLOBAL_VAR_END()
+LUA_EXPORT_GLOBAL_VAR_END(MLNStyleStringConst)
 @end

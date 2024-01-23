@@ -341,10 +341,17 @@ static NSString *fileManagerRootPath = nil;
     NSString *realDstPath = [self realFilePath:dstPath createDirIfNeed:YES];
     dispatch_async(file_operation_completion_queue(), ^{
         NSError *error = nil;
-        BOOL result = [[NSFileManager defaultManager] moveItemAtPath:realSrcPath toPath:realDstPath error:&error];
+        __block int errCode = MLNFileErrorCodeMoveFileFailed;
+        if (!(realSrcPath.length > 0 && realDstPath.length > 0)) {
+            errCode = MLNFileErrorCodeMoveFileFailed;
+        } else if (![self existAtPath:realSrcPath]) {
+            errCode = MLNFileErrorCodeSourceFileNotExist;
+        } else {
+            BOOL result = [[NSFileManager defaultManager] moveItemAtPath:realSrcPath toPath:realDstPath error:&error];
+            errCode = result? 0 : MLNFileErrorCodeMoveFileFailed;
+        }
         dispatch_async(dispatch_get_main_queue(), ^{
             if (completion) {
-                int errCode = result? 0 : MLNFileErrorCodeMoveFileFailed;
                 [completion addIntArgument:errCode];
                 [completion addStringArgument:srcPath];
                 [completion callIfCan];

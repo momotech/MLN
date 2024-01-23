@@ -20,10 +20,12 @@
 #import "MLNInnerTableView.h"
 #import "UIView+MLNKit.h"
 #import "NSObject+MLNCore.h"
+#import "MDListWhiteDetector.h"
 
 @interface MLNTableView()
 @property (nonatomic, strong) MLNInnerTableView *innerTableView;
 @property (nonatomic, strong) MLNBeforeWaitingTask *lazyTask;
+@property (nonatomic, strong) MDListWhiteDetector *whiteDetector;
 @end
 
 @implementation MLNTableView
@@ -287,6 +289,7 @@
         [self.adapter tableViewReloadData:self.innerTableView];
     }
     [self.innerTableView reloadData];
+    [self.whiteDetector reload];
 }
 
 #pragma mark - Override
@@ -379,11 +382,23 @@
         [_innerTableView addGestureRecognizer:lpgr];
         
         UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleSingleTap:)];
+        tapGesture.delegate = self;
         tapGesture.cancelsTouchesInView = NO;
         [tapGesture requireGestureRecognizerToFail:lpgr];
         [_innerTableView addGestureRecognizer:tapGesture];
         
         [self addSubview:_innerTableView];
+        MLNKitInstance *instance = MLN_KIT_INSTANCE([(UIView<MLNEntityExportProtocol> *)self mln_luaCore]);
+        self.whiteDetector = [[MDListWhiteDetector alloc] initWithDetectItem:instance.detectItem];
+        if ([instance.identifier isEqualToString:@"MLNLuaView"]) {
+            [self.whiteDetector start:self.lua_node];
+        } else {
+            __weak __typeof(self) weakSelf = self;
+            void (^appearBlock)(void) = ^void(void){
+                [weakSelf.whiteDetector start:weakSelf.lua_node];
+            };
+            [instance.appearMArray addObject:appearBlock];
+        }
     }
     
     return _innerTableView;
@@ -394,6 +409,17 @@
     return self.innerTableView;
 }
 
+- (void)dealloc {
+    [self.whiteDetector stop];
+}
+
+#pragma mark - UIGestureRecognizerDelegate
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch {
+    if (touch.view != self && [touch.view.mln_touchesPriority integerValue] > [self.mln_touchesPriority integerValue]) {
+        return NO;
+    }
+    return YES;
+}
 
 #pragma mark - Setup For Lua
 LUA_EXPORT_VIEW_BEGIN(MLNTableView)

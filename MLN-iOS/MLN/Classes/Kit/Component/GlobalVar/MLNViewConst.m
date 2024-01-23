@@ -50,7 +50,7 @@ LUA_EXPORT_GLOBAL_VAR(SafeArea, (@{@"CLOSE":@(MLNSafeAreaClose),
                                    @"RIGHT":@(MLNSafeAreaRight),
                                    @"BOTTOM":@(MLNSafeAreaBottom)}))
 
-LUA_EXPORT_GLOBAL_VAR_END()
+LUA_EXPORT_GLOBAL_VAR_END(MLNViewConst)
 
 
 @end

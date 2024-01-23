@@ -25,32 +25,6 @@ FOUNDATION_EXPORT NSString * const kRotaionZ;
 FOUNDATION_EXPORT NSString * const kOpacity;
 FOUNDATION_EXPORT NSString * const kTransform;
 
-FOUNDATION_EXPORT NSString * const kTimingConfigDuration;
-FOUNDATION_EXPORT NSString * const kTimingConfigVelocity;
-FOUNDATION_EXPORT NSString * const kTimingConfigBounciness;
-FOUNDATION_EXPORT NSString * const kTimingConfigSpeed;
-FOUNDATION_EXPORT NSString * const kTimingConfigTension;
-FOUNDATION_EXPORT NSString * const kTimingConfigFriction;
-FOUNDATION_EXPORT NSString * const kTimingConfigMass;
-
-FOUNDATION_EXPORT NSString * const kAnimPropertyAlpha;
-FOUNDATION_EXPORT NSString * const kAnimPropertyColor;
-FOUNDATION_EXPORT NSString * const kAnimPropertyOrigin;
-FOUNDATION_EXPORT NSString * const kAnimPropertyOriginX;
-FOUNDATION_EXPORT NSString * const kAnimPropertyOriginY;
-FOUNDATION_EXPORT NSString * const kAnimPropertyCenter;
-FOUNDATION_EXPORT NSString * const kAnimPropertyCenterX;
-FOUNDATION_EXPORT NSString * const kAnimPropertyCenterY;
-FOUNDATION_EXPORT NSString * const kAnimPropertySize;
-FOUNDATION_EXPORT NSString * const kAnimPropertyFrame;
-FOUNDATION_EXPORT NSString * const kAnimPropertyScale;
-FOUNDATION_EXPORT NSString * const kAnimPropertyScaleX;
-FOUNDATION_EXPORT NSString * const kAnimPropertyScaleY;
-FOUNDATION_EXPORT NSString * const kAnimPropertyRotation;
-FOUNDATION_EXPORT NSString * const kAnimPropertyRotationX;
-FOUNDATION_EXPORT NSString * const kAnimPropertyRotationY;
-
-
 typedef enum : NSUInteger {
     MLNAnimationRepeatTypeNone,
     MLNAnimationRepeatTypeBeginToEnd,
@@ -82,15 +56,6 @@ typedef enum : NSInteger {
     MLNAnimationValueTypeRelativeToSelf,
     MLNAnimationValueTypeRelativeToParent
 }MLNAnimationValueType;
-
-typedef enum : NSInteger {
-    MLNAnimationTimingFunctionDefault,
-    MLNAnimationTimingFunctionLinear,
-    MLNAnimationTimingFunctionEaseIn,
-    MLNAnimationTimingFunctionEaseOut,
-    MLNAnimationTimingFunctionEaseInEaseOut,
-    MLNAnimationTimingFunctionSpring,
-} MLNAnimationTimingFunction;
 
 @interface MLNAnimationConst : NSObject <MLNGlobalVarExportProtocol>
 

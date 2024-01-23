@@ -77,6 +77,20 @@
 - (void)instance:(MLNKitInstance *)instance didFailRun:(NSString *)entryFileName error:(NSError *)error;
 
 /**
+ 尝试加载其他路径文件
+ 
+ @param instance 承载Lua引擎的实例
+ @param currentPath 入口文件资源路径
+ @param filePath 文件路径
+ */
+- (NSData *)instance:(MLNKitInstance *)instance tryLoad:(NSString *)currentPath filePath:(NSString *)filePath;
+
+/// 加载bridge
+/// @param instance 承载Lua引擎的实例
+/// @param bridgeName bridgeName Lua侧桥接的名字
+- (BOOL)instance:(MLNKitInstance *)instance loadBridge:(NSString *)bridgeName;
+
+/**
  即将释放Lua引擎
 
  @param instance 承载Lua引擎的实例

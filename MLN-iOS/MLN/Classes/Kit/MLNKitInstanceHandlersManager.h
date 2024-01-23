@@ -12,6 +12,7 @@
 #import "MLNHttpHandlerProtocol.h"
 #import "MLNKitInstance.h"
 #import "MLNNavigatorHandlerProtocol.h"
+#import "MLNDependenceProtocol.h"
 
 NS_ASSUME_NONNULL_BEGIN
 @class MLNApplication;
@@ -47,6 +48,11 @@ NS_ASSUME_NONNULL_BEGIN
  页面跳转处理句柄
  */
 @property (nonatomic, weak) id<MLNNavigatorHandlerProtocol> navigatorHandler;
+
+/**
+ 依赖处理句柄
+ */
+@property (nonatomic, weak) id<MLNDependenceProtocol> dependenceHandler;
 
 /**
  应用级别事务处理工具

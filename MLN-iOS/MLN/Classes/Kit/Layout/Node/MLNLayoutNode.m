@@ -14,8 +14,6 @@
 @interface MLNLayoutNode ()
 
 @property (nonatomic, assign) BOOL needUpdateAnchorPoint;
-@property (nonatomic, assign) BOOL widthForceMatchParent;
-@property (nonatomic, assign) BOOL heightForceMatchParent;
 
 @end
 @implementation MLNLayoutNode
@@ -43,48 +41,17 @@
 }
 
 #pragma mark - Measure Size
-
-- (void)forceUseMatchParentForWidthMeasureType {
-    if (self.widthType == MLNLayoutMeasurementTypeMatchParent &&
-        self.mergedWidthType == MLNLayoutMeasurementTypeWrapContent) {
-        self.widthForceMatchParent = YES;
-    }
-}
-
-- (void)forceUseMatchParentForHeightMeasureType {
-    if (self.heightType == MLNLayoutMeasurementTypeMatchParent &&
-        self.mergedHeightType == MLNLayoutMeasurementTypeWrapContent) {
-        self.heightForceMatchParent = YES;
-    }
-}
-
-static MLN_FORCE_INLINE BOOL MLNLayoutNodeWidthNeedMerge(MLNLayoutNode *self) {
-    if (self.widthForceMatchParent) {
-        self.widthForceMatchParent = NO;
-        return NO;
-    }
-    return isLayoutNodeWidthNeedMerge(self);
-}
-
-static MLN_FORCE_INLINE BOOL MLNLayoutNodeHeightNeedMerge(MLNLayoutNode *self) {
-    if (self.heightForceMatchParent) {
-        self.heightForceMatchParent = NO;
-        return NO;
-    }
-    return isLayoutNodeHeightNeedMerge(self);
-}
-
 - (void)mergeMeasurementTypes
 {
     _mergedWidthType = self.widthType;
     _mergedHeightType = self.heightType;
     if (self.supernode) {
         // width
-        if (MLNLayoutNodeWidthNeedMerge(self)) {
+        if (isLayoutNodeWidthNeedMerge(self)) {
             _mergedWidthType = MLNLayoutMeasurementTypeWrapContent;
         }
         // height
-        if (MLNLayoutNodeHeightNeedMerge(self)) {
+        if (isLayoutNodeHeightNeedMerge(self)) {
             _mergedHeightType = MLNLayoutMeasurementTypeWrapContent;
         }
     }
@@ -112,12 +79,6 @@ static MLN_FORCE_INLINE BOOL MLNLayoutNodeHeightNeedMerge(MLNLayoutNode *self) {
     if (self.overlayNode) {
         CGFloat overlayMaxWidth = self.measuredWidth - self.overlayNode.marginLeft - self.overlayNode.marginRight;
         CGFloat overlayMaxHeight = self.measuredHeight - self.overlayNode.marginTop - self.overlayNode.marginBottom;
-        if (self.overlayNode.width > self.measuredWidth) {
-            [self.overlayNode changeWidth:self.measuredWidth];
-        }
-        if (self.overlayNode.height > self.measuredHeight) {
-            [self.overlayNode changeHeight:self.measuredHeight];
-        }
         [self.overlayNode measureSizeWithMaxWidth:overlayMaxWidth maxHeight:overlayMaxHeight];
     }
     return CGSizeMake(self.measuredWidth, self.measuredHeight);
@@ -275,14 +236,10 @@ MLN_FORCE_INLINE void measureSimapleAutoNodeSize(MLNLayoutNode __unsafe_unretain
 
 - (void)changeWidth:(CGFloat)width
 {
-    MLNLayoutMeasurementType type = width;
+    MLNLayoutMeasurementType type = [self adjustmentWidthType:width];
     //⚠️ 小于0且不等于MLNLayoutMeasurementTypeWrapContent和MLNLayoutMeasurementTypeMatchParent
     //   认为是绝对宽度0
-    if (width != MLNLayoutMeasurementTypeWrapContent &&
-        width != MLNLayoutMeasurementTypeMatchParent) {
-        type = MLNLayoutMeasurementTypeIdle;
-        width = width < 0.f ? 0.f : width;
-    }
+    width = width < 0.f ? 0.f : width;
     BOOL needLayout = NO;
     if (_width != width  || _offsetWidth != 0.f) {
         _width = width;
@@ -298,16 +255,21 @@ MLN_FORCE_INLINE void measureSimapleAutoNodeSize(MLNLayoutNode __unsafe_unretain
     }
 }
 
+- (MLNLayoutMeasurementType)adjustmentWidthType:(CGFloat) width {
+    MLNLayoutMeasurementType type = width;
+    if (width != MLNLayoutMeasurementTypeWrapContent &&
+        width != MLNLayoutMeasurementTypeMatchParent) {
+        type = MLNLayoutMeasurementTypeIdle;
+    }
+    return type;
+}
+
 - (void)changeHeight:(CGFloat)height
 {
-    MLNLayoutMeasurementType type = height;
+    MLNLayoutMeasurementType type = [self adjustmentHeightType:height];
     //⚠️ 小于0且不等于MLNLayoutMeasurementTypeWrapContent和MLNLayoutMeasurementTypeMatchParent
     //   认为是绝对高度0
-    if (height != MLNLayoutMeasurementTypeWrapContent &&
-        height != MLNLayoutMeasurementTypeMatchParent) {
-        type = MLNLayoutMeasurementTypeIdle;
-        height = height < 0.f ? 0.f : height;
-    }
+    height = height < 0.f ? 0.f : height;
     BOOL needLayout = NO;
     if (_height != height || _offsetHeight != 0.f) {
         _height = height;
@@ -321,6 +283,15 @@ MLN_FORCE_INLINE void measureSimapleAutoNodeSize(MLNLayoutNode __unsafe_unretain
     if (needLayout) {
         [self needLayoutAndSpread];
     }
+}
+
+- (MLNLayoutMeasurementType)adjustmentHeightType:(CGFloat) height {
+    MLNLayoutMeasurementType type = height;
+    if (height != MLNLayoutMeasurementTypeWrapContent &&
+        height != MLNLayoutMeasurementTypeMatchParent) {
+        type = MLNLayoutMeasurementTypeIdle;
+    }
+    return type;
 }
 
 - (void)changeAnchorPoint:(CGPoint)point
@@ -362,11 +333,11 @@ MLN_FORCE_INLINE void measureSimapleAutoNodeSize(MLNLayoutNode __unsafe_unretain
 - (void)updateTargetViewFrameIfNeed
 {
     if ([self hasNewLayout]) {
-        CGRect newFrame = CGRectMake(self.measuredX + self.offsetX, self.measuredY + self.offsetY, self.measuredWidth + self.offsetWidth, self.measuredHeight + self.offsetHeight);
-        if (self.overlayNode) {
-            self.targetView.superview.frame = newFrame; // 设置overlay的视图的父视图是个临时的wrapView，不参与node布局计算
-            newFrame = CGRectMake(0, 0, CGRectGetWidth(newFrame), CGRectGetHeight(newFrame));
-        }
+        CGFloat x = [self filterNAN:self.measuredX + self.offsetX];
+        CGFloat y = [self filterNAN:self.measuredY + self.offsetY];
+        CGFloat width = [self filterNAN:self.measuredWidth + self.offsetWidth];
+        CGFloat height = [self filterNAN:self.measuredHeight + self.offsetHeight];
+        CGRect newFrame = CGRectMake(x, y, width, height);
         if (!CGRectEqualToRect(self.targetView.frame, newFrame)) {
             self.targetView.transform = CGAffineTransformIdentity;
             self.targetView.frame = newFrame;
@@ -377,6 +348,11 @@ MLN_FORCE_INLINE void measureSimapleAutoNodeSize(MLNLayoutNode __unsafe_unretain
     [self updatedLayout];
     resetArchpointIfNeed(self);
     [self.targetView lua_layoutCompleted];
+}
+
+-(CGFloat)filterNAN:(CGFloat) number {
+    //According to the IEEE standard, NaN values have the odd property that comparisons involving them are always false
+    return (number != number) ? 0 : number;
 }
 
 MLN_FORCE_INLINE void resetArchpointIfNeed(MLNLayoutNode __unsafe_unretained *node) {
@@ -738,6 +714,10 @@ MLN_FORCE_INLINE void resetArchpointIfNeed(MLNLayoutNode __unsafe_unretained *no
 - (CGFloat)measurePriority
 {
     return self.priority - (self.idx * 0.001f);
+}
+
+- (BOOL)isSpacerNode {
+    return NO;
 }
 
 #pragma mark - bind & unbind

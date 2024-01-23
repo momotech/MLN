@@ -110,6 +110,12 @@
         self.measuredHeight = maxHeight;
     }
     
+    if (self.overlayNode) {
+        CGFloat overlayMaxWidth = self.measuredWidth - self.overlayNode.marginLeft - self.overlayNode.marginRight;
+        CGFloat overlayMaxHeight = self.measuredHeight - self.overlayNode.marginTop - self.overlayNode.marginBottom;
+        [self.overlayNode measureSizeWithMaxWidth:overlayMaxWidth maxHeight:overlayMaxHeight];
+    }
+    
     // 6. calculate content size
     [self measureContentSize:rawContentWidth rawContentHeight:rawContentHeight];
     return CGSizeMake(self.measuredWidth, self.measuredHeight);

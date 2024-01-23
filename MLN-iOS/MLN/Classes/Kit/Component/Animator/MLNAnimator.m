@@ -15,7 +15,6 @@
 @interface MLNAnimator ()
 
 @property (nonatomic, assign, getter=isRunning) BOOL running;
-@property (nonatomic, assign, getter=isStarted) BOOL started;
 @property (nonatomic, assign) MLNAnimationRepeatType repeatMode;
 @property (nonatomic, assign) NSInteger repeatCount;
 @property (nonatomic, assign) NSTimeInterval duration;
@@ -47,12 +46,16 @@
 - (void)start
 {
     if (self.isRunning) {
+        MLNLuaError(self.mln_luaCore, @"The animtor is running!");
         return;
     }
     self.running = YES;
     [[self animationHandler] resume];
     [self setup];
     [[self animationHandler] addCallback:self];
+    if (self.startCallback) {
+        [self.startCallback callIfCan];
+    }
 }
 
 - (void)setup
@@ -64,22 +67,33 @@
 - (void)cancel
 {
     if (!self.isRunning) {
-        return;
+        if (self.startCallback) {
+            [self.startCallback callIfCan];
+        }
     }
+    [[self animationHandler] removeCallback:self];
+    self.running = NO;
     if (self.cancelCallback) {
         [self.cancelCallback callIfCan];
     }
-    [self doAnimationEnd];
+    if (self.endCallback) {
+        [self.endCallback callIfCan];
+    }
 }
 
 - (void)end
 {
     if (!self.isRunning) {
-        return;
+        if (self.startCallback) {
+            [self.startCallback callIfCan];
+        }
     }
-    CGFloat percentage = (self.repeatMode == MLNAnimationRepeatTypeReverse && self.repeatCount >= 0) ? ((self.repeatCount + 1) % 2): 1.f;
-    [self doUpdateFrameWithPercentage:percentage];
-    [self doAnimationEnd];
+    [[self animationHandler] removeCallback:self];
+    [self percentageWithCurrentDuration:1.f];
+    self.running = NO;
+    if (self.endCallback) {
+        [self.endCallback callIfCan];
+    }
 }
 
 - (void)setRepeat:(MLNAnimationRepeatType)repeatMode count:(NSInteger)count
@@ -98,15 +112,6 @@
 - (void)doAnimationFrame:(NSTimeInterval)frameTime
 {
     NSTimeInterval durationTime = frameTime - self.startTime - self.delay;
-    // 处理延时
-    if (durationTime <0) {
-        return;
-    }
-    // 开始动画
-    if (!self.isStarted && self.startCallback) {
-        self.started = YES;
-        [self.startCallback callIfCan];
-    }
     // 矫正当前重复次数，避免阻塞时间过长导致的次数记录错误问题
     if (frameTime - self.lastTime >= self.duration) {
         self.doCount = (NSInteger)(durationTime *1000) / (NSInteger)(self.duration *1000);
@@ -123,7 +128,8 @@
             return;
         }
         // 剩余次数大于零，则表示还未结束，重复动画
-        if (self.repeatCount - self.doCount > 0) {
+        NSInteger remainCount = self.repeatCount - self.doCount;
+        if (remainCount > 0) {
             [self doAnimationRepeat];
             return;
         }
@@ -150,7 +156,6 @@
 - (void)doAnimationEnd
 {
     self.running = NO;
-    self.started = NO;
     [[self animationHandler] removeCallback:self];
     if (self.endCallback) {
         [self.endCallback callIfCan];

@@ -17,7 +17,7 @@
 
 #define kDefaultPressColor [UIColor colorWithRed:211/255.0 green:211/255.0 blue:211/255.0 alpha:1.0]
 
-@interface MLNTableViewAdapter()<MLNTableViewCellSettingProtocol>
+@interface MLNTableViewAdapter()
 
 @property (nonatomic, strong) MLNBlock *sectionsNumberCallback;
 @property (nonatomic, strong) MLNBlock *rowNumbersCallback;
@@ -28,6 +28,7 @@
 @property (nonatomic, strong) NSMutableDictionary<NSString *, MLNBlock *> *cellDidDisappearByReuseIdCallbacks;
 @property (nonatomic, assign, getter=isShowPressedColor) BOOL showPressedColor;
 @property (nonatomic, strong) UIColor *pressedColor;
+@property (nonatomic, strong) NSMutableDictionary<NSString *, MLNTableViewCell *> *calculCells;
 @end
 
 @implementation MLNTableViewAdapter
@@ -264,20 +265,27 @@
     if (height > 0) {
         return height;
     }
+    CGFloat tableViewWidth = tableView.frame.size.width;
     NSString *reuseId = [self reuseIdAt:indexPath];
-    MLNBlock *reuseHeightForRowCallback = [self heightForRowCallbackByReuseId:reuseId];
-    MLNKitLuaAssert(reuseHeightForRowCallback, @"The 'heightForCell' callback must not be nil!");
-    if (reuseHeightForRowCallback) {
-        [reuseHeightForRowCallback addIntArgument:(int)indexPath.section+1];
-        [reuseHeightForRowCallback addIntArgument:(int)indexPath.row+1];
-        id heightValue = [reuseHeightForRowCallback callIfCan];
-        MLNKitLuaAssert(heightValue && [heightValue isMemberOfClass:NSClassFromString(@"__NSCFNumber")], @"The return value of method 'heightForCell/heightForCellByReuseId' must be a number!");
-        height = [heightValue floatValue];
-        height = height < 0 ? 0 : height;
-        [self.cachesManager updateLayoutInfo:heightValue forIndexPath:indexPath];
-        return height;
+    MLNTableViewCell *cell = [self tableView:tableView dequeueCalculCellForIdentifier:reuseId];
+    [self updateCellWidthIfNeed:cell tableViewWidth:tableViewWidth];
+    [cell pushContentViewWithLuaCore:self.mln_luaCore];
+    if (!cell.isInited) {
+        MLNBlock *initCallback = [self initedCellCallbackByReuseId:reuseId];
+        MLNKitLuaAssert(initCallback, @"It must not be nil callback of cell init!");
+        [initCallback addLuaTableArgument:[cell getLuaTable]];
+        [initCallback callIfCan];
+        [cell initCompleted];
     }
-    return 0.f;
+    MLNBlock *reuseCallback = [self fillCellDataCallbackByReuseId:reuseId];
+    MLNKitLuaAssert(reuseCallback, @"It must not be nil callback of cell reuse!");
+    [reuseCallback addLuaTableArgument:[cell getLuaTable]];
+    [reuseCallback addIntArgument:(int)indexPath.section+1];
+    [reuseCallback addIntArgument:(int)indexPath.row+1];
+    [reuseCallback callIfCan];
+    height = [cell calculHeightWithWidth:tableViewWidth maxHeight:CGFLOAT_MAX];
+    [self.cachesManager updateLayoutInfo:@(height) forIndexPath:indexPath];
+    return height;
 }
 
 - (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell<MLNReuseCellProtocol> *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
@@ -450,6 +458,38 @@
     [self lua_heightForRowBy:kMLNTableViewCellReuseID callback:callback];
 }
 
+#pragma mark - AutoFitAdapter
+- (MLNTableViewCell *)tableView:(UITableView *)tableView dequeueCalculCellForIdentifier:(NSString *)identifier
+{
+    MLNTableViewCell *cell = [self.calculCells objectForKey:identifier];
+    if (!cell) {
+        cell = [tableView dequeueReusableCellWithIdentifier:identifier];
+        if (!cell) {
+            [tableView registerClass:[MLNTableViewCell class] forCellReuseIdentifier:identifier];
+            cell = [tableView dequeueReusableCellWithIdentifier:identifier];
+        }
+        [self.calculCells mln_setObject:cell forKey:identifier];
+    }
+    return cell;
+}
+
+- (void)updateCellWidthIfNeed:(MLNTableViewCell *)cell tableViewWidth:(CGFloat)tableViewWidth
+{
+    if (cell.frame.size.width != tableViewWidth) {
+        CGRect frame = cell.frame;
+        frame.size.width = tableViewWidth;
+        cell.frame = frame;
+    }
+}
+
+#pragma mark - Getter
+- (NSMutableDictionary<NSString *,MLNTableViewCell *> *)calculCells
+{
+    if (!_calculCells) {
+        _calculCells = [NSMutableDictionary dictionary];
+    }
+    return _calculCells;
+}
 
 #pragma mark - Setup For Lua
 LUA_EXPORT_BEGIN(MLNTableViewAdapter)

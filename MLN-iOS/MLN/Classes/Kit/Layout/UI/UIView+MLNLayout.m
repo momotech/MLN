@@ -18,14 +18,14 @@
 
 - (void)mln_user_data_dealloc
 {
-    [super mln_user_data_dealloc];
     // 如果是归属于lua的视图，在对应UserData被GC时候，应该从界面上移除
     if (self.mln_isLuaObject) {
         [self lua_removeFromSuperview];
-        if (self.lua_isContainer) {
+        if ([self lua_isContainer]) {
             [self lua_removeAllSubViews];
         }
     }
+    [super mln_user_data_dealloc];
 }
 
 #pragma mark - View Tree
@@ -41,15 +41,13 @@
 - (void)lua_addSubview:(UIView *)view
 {
     //    MLNCheckTypeAndNilValue(view, @"View", UIView);
+    //TODO: mlnview class && subviews > 1 报错
     [self addSubview:view];
     // 添加Lua强引用
     MLN_Lua_UserData_Retain_With_Index(2, view);
     if (view.lua_node) {
         [(MLNLayoutContainerNode *)self.lua_node addSubnode:view.lua_node];
     }
-    
-    // 添加overlay
-    [view addOverlayIfNeeded];
 }
 
 - (void)lua_insertSubview:(UIView *)view atIndex:(NSInteger)index
@@ -81,45 +79,16 @@
 }
 
 - (void)lua_overlay:(UIView *)overlay {
-    if (self.lua_supportOverlay == NO) {
-        return;
-    }
     if ([overlay isKindOfClass:[UIView class]]) {
-        [self removeOverlayIfNeeded]; // 移除旧的(若有)
-        self.lua_node.overlayNode = overlay.lua_node;
-        if (self.superview) { // 先将视图添加到父视图后设置overlay的情况
-            [self addOverlayIfNeeded];
+        MLNLayoutNode *oldOverlay = self.lua_node.overlayNode;
+        if (oldOverlay) {
+            [oldOverlay.targetView removeFromSuperview];
+            MLN_Lua_UserData_Release(oldOverlay.targetView);
         }
+        [self addSubview:overlay];
+        MLN_Lua_UserData_Retain_With_Index(2, overlay);
+        self.lua_node.overlayNode = overlay.lua_node;
     }
-}
-
-- (void)addOverlayIfNeeded {
-    MLNLayoutNode *overlayNode = self.lua_node.overlayNode;
-    if (overlayNode) {
-        UIView *wrapView = [[UIView alloc] init]; // 避免overlay被clip
-        [self.superview addSubview:wrapView];
-        MLNChangeSuperview(self, wrapView); // 只调整视图层级，不调整node层级，这样测量布局均只计算self而不是wrapView
-        [wrapView addSubview:overlayNode.targetView];
-        MLN_Lua_UserData_Retain_With_Index(2, overlayNode.targetView);
-        [overlayNode.targetView addOverlayIfNeeded]; // overlay还有overlay的情况
-    }
-}
-
-- (void)removeOverlayIfNeeded {
-    MLNLayoutNode *oldOverlay = self.lua_node.overlayNode;
-    if (oldOverlay && oldOverlay.targetView.superview) {
-        UIView *wrapView = self.superview;
-        MLNChangeSuperview(self, wrapView.superview); // 恢复视图层级
-        [oldOverlay.targetView removeFromSuperview];
-        MLN_Lua_UserData_Release(self);
-        self.lua_node.overlayNode = nil;
-        [wrapView removeFromSuperview]; // remove overlay's wrapView
-    }
-}
-
-static MLN_FORCE_INLINE void MLNChangeSuperview(UIView *view, UIView *newSuperview) {
-    [view removeFromSuperview];
-    [newSuperview addSubview:view];
 }
 
 #pragma mark - Layout
@@ -239,10 +208,6 @@ static const void *kLuaLayoutEnable = &kLuaLayoutEnable;
 
 - (BOOL)lua_isContainer
 {
-    return NO;
-}
-
-- (BOOL)lua_supportOverlay {
     return NO;
 }
 

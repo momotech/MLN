@@ -10,9 +10,12 @@
 #import "MLNEntityExportProtocol.h"
 #import "MLNTableViewAdapterProtocol.h"
 #import "MLNScrollCallbackView.h"
+@class MLNInnerTableView;
 
 @interface MLNTableView : MLNScrollCallbackView <MLNEntityExportProtocol>
 
 @property (nonatomic, weak) id<MLNTableViewAdapterProtocol> adapter;
+
+@property (nonatomic, strong, readonly) MLNInnerTableView *innerTableView;
 
 @end

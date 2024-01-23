@@ -141,5 +141,8 @@
     return [self mln_in_selectedRange];
 }
 
+- (void)setAutoFillType:(UITextContentType)autoFillType {
+    self.textContentType = autoFillType;
+}
 
 @end

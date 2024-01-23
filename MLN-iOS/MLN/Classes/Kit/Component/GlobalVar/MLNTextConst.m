@@ -27,6 +27,6 @@ LUA_EXPORT_GLOBAL_VAR(FontStyle, (@{@"NORMAL": @(MLNFontStyleDefault),//正常
                                     @"BOLD_ITALIC": @(MLNFontStyleBoldItalic)}))
 LUA_EXPORT_GLOBAL_VAR(UnderlineStyle, (@{@"NONE": @(MLNUnderlineStyleNone),
                                          @"LINE": @(MLNUnderlineStyleSingle)}))
-LUA_EXPORT_GLOBAL_VAR_END()
+LUA_EXPORT_GLOBAL_VAR_END(MLNTextConst)
 
 @end

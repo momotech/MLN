@@ -26,11 +26,6 @@ typedef NS_ENUM(NSInteger, MLNStackCrossAlignment) {
     MLNStackCrossAlignmentEnd,
 };
 
-typedef NS_ENUM(NSInteger, MLNStackWrapType) {
-    MLNStackWrapTypeNone = 0,
-    MLNStackWrapTypeWrap = 1,
-};
-
 @interface MLNStackConst : NSObject<MLNGlobalVarExportProtocol>
 
 @end

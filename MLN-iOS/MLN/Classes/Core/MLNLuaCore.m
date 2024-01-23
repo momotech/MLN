@@ -12,6 +12,7 @@
 #import "MLNConvertor.h"
 #import "MLNFileLoader.h"
 #import "MLNLuaTable.h"
+#import "MLNImportLoader.h"
 
 static void * mln_state_alloc(void *ud, void *ptr, size_t osize, size_t nsize) {
     (void)ud;
@@ -34,12 +35,12 @@ static int mln_errorFunc_traceback (lua_State *L) {
     if(!lua_isstring(L,1))
         return 1;
     lua_getfield(L,LUA_GLOBALSINDEX,"debug");
-    if(!lua_istable(L,-1)) {
+    if(lua_istable(L,-1)) {
         lua_pop(L,1);
         return 1;
     }
     lua_getfield(L,-1,"traceback");
-    if(!lua_isfunction(L,-1)) {
+    if(lua_isfunction(L,-1)) {
         lua_pop(L,2);
         return 1;
     }
@@ -48,6 +49,11 @@ static int mln_errorFunc_traceback (lua_State *L) {
     lua_call(L,2,1);
     return 1;
 }
+
+static void mln_import (lua_State *L, const char *class) {
+    
+}
+
 
 @interface MLNLuaCore ()
 
@@ -160,31 +166,12 @@ static int mln_errorFunc_traceback (lua_State *L) {
 {
     lua_State *L = self.state;
     if (L) {
-        int base = lua_gettop(L);
-         lua_getglobal(L, "debug");
-         if(!lua_istable(L,-1)) {
-             lua_settop(L, base);
-             return @"\ntraceback not found!";
-         }
-         lua_getfield(L,-1,"traceback");
-         if(!lua_isfunction(L,-1)) {
-             lua_settop(L, base);
-             return @"\ntraceback not found!";
-         }
+        lua_getglobal(L, "debug");
+        lua_getfield(L, -1, "traceback");
         int iError = lua_pcall(L, 0, 1, 0);
-        if (!lua_isstring(L, -1)) {
-            lua_settop(L, base);
-            return @"\ntraceback not found!";
-        }
-        NSString *msg = nil;
-        const char *s = lua_tostring(L, -1);
-        if (s) {
-            msg = [NSString stringWithFormat:@"\nError Code For Traceback: %d \n %s", iError, lua_tostring(L, -1)];
-        }
-        lua_settop(L, base);
-        return msg;
+        return [NSString stringWithFormat:@"Error Code For Traceback: %d \n %s", iError, lua_tostring(L, -1)];
     }
-    return @"\nThe lua state is released";
+    return @"The lua state is released";
 }
 
 - (int)tracebackCount
@@ -266,11 +253,24 @@ static int mln_errorFunc_traceback (lua_State *L) {
     return [self call:0 error:error];
 }
 
+- (BOOL)loadBridge:(NSString *)bridgeName {
+    if ([self.delegate respondsToSelector:@selector(luaCore:loadBridge:)]) {
+        return [self.delegate luaCore:self loadBridge:bridgeName];
+    }
+    return NO;
+}
+
 - (BOOL)loadFile:(NSString *)filePath error:(NSError * _Nullable __autoreleasing *)error
 {
     _filePath = filePath;
     NSString *realFilePath = [self.currentBundle filePathWithName:filePath];
     NSData *data = [NSData dataWithContentsOfFile:realFilePath];
+    if (!data) { // 查找不到，尝试去别的路径查找资源
+        if ([self.delegate respondsToSelector:@selector(luaCore:tryLoad:filePath:)]) {
+            data = [self.delegate luaCore:self tryLoad:self.currentBundle.bundlePath filePath:filePath];
+        }
+    }
+    
     return  [self loadData:data name:filePath error:error];
 }
 
@@ -409,7 +409,9 @@ static int mln_errorFunc_traceback (lua_State *L) {
             lua_pop(L, 1);  /* remove previous result */
             /* try global variable (and create one if it does not exist) */
             if (luaL_findtable(L, LUA_GLOBALSINDEX, libName, size) != NULL)
-                luaL_error(L, "name conflict for module " LUA_QS, libName);
+            {
+                mln_lua_error(L, @"name conflict for module " LUA_QS, libName);
+            }
             lua_pushvalue(L, -1);
             lua_setfield(L, -3, libName);  /* _LOADED[libname] = new table */
         }
@@ -455,7 +457,12 @@ static int mln_errorFunc_traceback (lua_State *L) {
 - (BOOL)registerClazz:(Class<MLNExportProtocol>)clazz error:(NSError **)error
 {
     NSParameterAssert(clazz);
-    return [self.exporter exportClass:clazz error:error];
+    BOOL ret = [self.exporter exportClass:clazz error:error];
+    if (!ret) {
+        MLNError(self, @"%@", *error);
+        return NO;
+    }
+    return YES;
 }
 
 - (BOOL)registerClasses:(NSArray<Class<MLNExportProtocol>> *)classes error:(NSError **)error
@@ -681,7 +688,7 @@ static int mln_errorFunc_traceback (lua_State *L) {
 
 - (void)registerMLNBridge
 {
-    NSArray *classes = @[[MLNFileLoader class]];
+    NSArray *classes = @[[MLNFileLoader class], [MLNImportLoader class]];
     [self registerClasses:classes error:NULL];
 }
 
@@ -698,11 +705,17 @@ static int mln_errorFunc_traceback (lua_State *L) {
 
 - (void)releaseLuaCore
 {
+    doInMainQueue([self __releaseLuaState];);
+}
+
+- (void)__releaseLuaState
+{
     lua_State *l = self.state;
     if (l) {
-        _state = NULL;
-        doInMainQueue(lua_close(l));
+        lua_close(l);
+        l = NULL;
     }
+    _state = NULL;
 }
 
 @end

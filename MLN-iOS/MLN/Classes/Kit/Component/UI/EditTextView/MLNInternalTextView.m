@@ -146,6 +146,9 @@
     }
 }
 
+- (void)setAutoFillType:(UITextContentType)autoFillType {
+}
+
 #pragma mark - UITextViewDelegate
 - (void)textViewDidBeginEditing:(MLNInternalTextView *)textView
 {

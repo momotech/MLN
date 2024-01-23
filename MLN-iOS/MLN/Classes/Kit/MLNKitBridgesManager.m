@@ -15,6 +15,7 @@
 #import "MLNAlert.h"
 #import "MLNAnimationZoneView.h"
 #import "MLNLabel.h"
+#import "MLNFixLabel.h"
 #import "MLNButton.h"
 #import "MLNImageView.h"
 #import "MLNLoading.h"
@@ -23,10 +24,9 @@
 #import "MLNToast.h"
 #import "MLNTableView.h"
 #import "MLNTableViewAdapter.h"
-#import "MLNTableViewAutoFitAdapter.h"
 #import "MLNCollectionView.h"
 #import "MLNCollectionViewAdapter.h"
-#import "MLNCollectionViewAutoFitAdapter.h"
+#import "MLNCollectionViewFlowLayout.h"
 #import "MLNCollectionViewGridLayout.h"
 #import "MLNCollectionLayout.h"
 #import "MLNWaterfallView.h"
@@ -74,7 +74,6 @@
 #import "mmoslib.h"
 #import "MLNCornerUtil.h"
 #import "MLNSafeAreaAdapter.h"
-#import "MLNLink.h"
 // Animations
 #import "MLNAnimator.h"
 #import "MLNAnimation.h"
@@ -134,20 +133,18 @@ static NSArray<Class<MLNExportProtocol>> *viewClasses;
                         [MLNLinearLayout class],
                         [MLNAlert class],
                         [MLNLabel class],
-                        [MLNOverlayLabel class],
+                        [MLNFixLabel class],
                         [MLNButton class],
                         [MLNImageView class],
-                        [MLNOverlayImageView class],
                         [MLNLoading class],
                         [MLNScrollView class],
                         [MLNSwitch class],
                         [MLNToast class],
                         [MLNTableView class],
                         [MLNTableViewAdapter class],
-                        [MLNTableViewAutoFitAdapter class],
                         [MLNCollectionView class],
                         [MLNCollectionViewAdapter class],
-                        [MLNCollectionViewAutoFitAdapter class],
+                        [MLNCollectionViewFlowLayout class],
                         [MLNCollectionViewGridLayout class],
                         [MLNCollectionLayout class],
                         [MLNWaterfallView class],
@@ -214,7 +211,6 @@ static NSArray<Class<MLNExportProtocol>> *utilClasses;
                         [MLNNetworkReachability class],
                         [MLNCornerUtil class],
                         [MLNSafeAreaAdapter class],
-                        [MLNLink class],
                         ];
     }
     return utilClasses;

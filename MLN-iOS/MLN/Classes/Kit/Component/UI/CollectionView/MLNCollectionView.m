@@ -14,11 +14,13 @@
 #import "MLNBeforeWaitingTask.h"
 #import "MLNSizeCahceManager.h"
 #import "MLNCollectionViewCell.h"
+#import "MLNCollectionViewFlowLayout.h"
 #import "MLNCollectionViewAdapter.h"
 #import "MLNInnerCollectionView.h"
 #import "MLNCollectionViewLayoutProtocol.h"
 #import "UIView+MLNKit.h"
 #import "MLNCollectionViewLayoutProtocol.h"
+#import "MDListWhiteDetector.h"
 
 @interface MLNCollectionView()
 @property (nonatomic, strong) MLNInnerCollectionView *innerCollectionView;
@@ -28,6 +30,7 @@
 @property (nonatomic, assign) NSInteger missionSection;
 @property (nonatomic, assign) BOOL missionAnimated;
 @property (nonatomic, strong) MLNBeforeWaitingTask *lazyTask;
+@property (nonatomic, strong) MDListWhiteDetector *whiteDetector;
 
 @end
 
@@ -246,6 +249,7 @@
     }
     [self.innerCollectionView.collectionViewLayout invalidateLayout];
     [self.innerCollectionView reloadData];
+    [self.whiteDetector reload];
 }
 
 #pragma mark - Insert
@@ -465,7 +469,7 @@
 - (UICollectionView *)innerCollectionView
 {
     if (!_innerCollectionView) {
-        UICollectionViewFlowLayout *layout = [[UICollectionViewFlowLayout alloc] init];
+        MLNCollectionViewFlowLayout *layout = [[MLNCollectionViewFlowLayout alloc] init];
         _innerCollectionView = [[MLNInnerCollectionView alloc] initWithFrame:CGRectZero collectionViewLayout:layout];
         _innerCollectionView.containerView = self;
         if (@available(iOS 11.0, *)) {
@@ -484,7 +488,19 @@
         UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:nil];
         [tapGesture requireGestureRecognizerToFail:lpgr];
         tapGesture.cancelsTouchesInView = NO;
+        tapGesture.delegate = self;
         [_innerCollectionView addGestureRecognizer:tapGesture];
+        MLNKitInstance *instance = MLN_KIT_INSTANCE([(UIView<MLNEntityExportProtocol> *)self mln_luaCore]);
+        self.whiteDetector = [[MDListWhiteDetector alloc] initWithDetectItem:instance.detectItem];
+        if ([instance.identifier isEqualToString:@"MLNLuaView"]) {
+            [self.whiteDetector start:self.lua_node];
+        } else {
+            __weak __typeof(self) weakSelf = self;
+            void (^appearBlock)(void) = ^void(void){
+                [weakSelf.whiteDetector start:weakSelf.lua_node];
+            };
+            [instance.appearMArray addObject:appearBlock];
+        }
     }
     return _innerCollectionView;
 }
@@ -492,6 +508,18 @@
 - (UIView *)lua_contentView
 {
     return self.innerCollectionView;
+}
+
+- (void)dealloc {
+    [self.whiteDetector stop];
+}
+
+#pragma mark - UIGestureRecognizerDelegate
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch {
+    if (touch.view != self && [touch.view.mln_touchesPriority integerValue] > [self.mln_touchesPriority integerValue]) {
+        return NO;
+    }
+    return YES;
 }
 
 #pragma mark - Export For Lua

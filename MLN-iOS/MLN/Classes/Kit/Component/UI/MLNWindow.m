@@ -62,21 +62,24 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(enterForground:) name:UIApplicationWillEnterForegroundNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(enterBackground:) name:UIApplicationDidEnterBackgroundNotification object:nil];
     // Safe Area
-    UINavigationBar *navbar = MLN_KIT_INSTANCE(self.mln_luaCore).viewController.navigationController.navigationBar;
-    self.safeAreaProxy = [[MLNSafeAreaProxy alloc] initWithSafeAreaView:self navigationBar:navbar viewController:MLN_KIT_INSTANCE(self.mln_luaCore).viewController];
+    if ([MLN_KIT_INSTANCE(self.mln_luaCore).viewController isKindOfClass:[UIViewController class]]) {
+        UIViewController *vc = MLN_KIT_INSTANCE(self.mln_luaCore).viewController;
+        UINavigationBar *navbar = vc.navigationController.navigationBar;
+        self.safeAreaProxy = [[MLNSafeAreaProxy alloc] initWithSafeAreaView:self navigationBar:navbar viewController:MLN_KIT_INSTANCE(self.mln_luaCore).viewController];
+    }
 }
 
 - (void)enterForground:(NSNotification *)notification
 {
     if (self.isAppear) {
-        [self doLuaViewDidAppear];
+        [self doLuaViewDidAppear:MLNWindowAppearTypeEnterForground];
     }
 }
 
 - (void)enterBackground:(NSNotification *)notification
 {
     if (self.isAppear) {
-        [self doLuaViewDidDisappear];
+        [self doLuaViewDidDisappear:MLNWindowDisappearTypeEnterBackground];
         self.isAppear = YES;
     }
 }
@@ -218,10 +221,11 @@
     return self.viewAppearCallback!=nil;
 }
 
-- (void)doLuaViewDidAppear
+- (void)doLuaViewDidAppear:(MLNWindowAppearType)appearType
 {
     self.isAppear = YES;
     if ([self canDoLuaViewDidAppear]) {
+        [self.viewAppearCallback addIntegerArgument:appearType];
         [self.viewAppearCallback callIfCan];
     }
 }
@@ -231,10 +235,11 @@
     return self.viewDisappearCallback!=nil;
 }
 
-- (void)doLuaViewDidDisappear
+- (void)doLuaViewDidDisappear:(MLNWindowDisappearType)disapperType
 {
     self.isAppear = NO;
     if ([self canDoLuaViewDidDisappear]) {
+        [self.viewDisappearCallback addIntegerArgument:disapperType];
         [self.viewDisappearCallback callIfCan];
     } else {
         self.autoDoLuaViewDidDisappear = YES;
@@ -273,7 +278,7 @@
     MLNCheckTypeAndNilValue(callback, @"function", MLNBlock);
     self.viewDisappearCallback = callback;
     if (self.autoDoLuaViewDidDisappear) {
-        [self doLuaViewDidDisappear];
+        [self doLuaViewDidDisappear:MLNWindowDisappearTypeViewDisappear];
     }
 }
 

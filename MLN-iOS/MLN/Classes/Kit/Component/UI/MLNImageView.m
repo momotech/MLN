@@ -179,7 +179,14 @@
 
 - (void)lua_setImageWith:(nonnull NSString *)imageName placeHolderImage:(NSString *)placeHolder
 {
-    if ((!stringNotEmpty(imageName) && !stringNotEmpty(placeHolder))) {
+    if (!stringNotEmpty(imageName)) {
+        imageName = @"";
+    }
+    if (!stringNotEmpty(placeHolder)) {
+        placeHolder = @"";
+    }
+    
+    if (imageName.length == 0 && placeHolder.length == 0) {
         self.image = nil;
         return;
     }
@@ -191,8 +198,15 @@
 
 - (void)lua_setImageWith:(nonnull NSString *)imageName placeHolderImage:(NSString *)placeHolder callback:(MLNBlock *)callback
 {
+    if (!stringNotEmpty(imageName)) {
+        imageName = @"";
+    }
+    if (!stringNotEmpty(placeHolder)) {
+        placeHolder = @"";
+    }
+        
     self.imageViewMode = MLNImageViewModeNone;
-    if ((!stringNotEmpty(imageName) && !stringNotEmpty(placeHolder))) {
+    if (imageName.length == 0 && placeHolder.length == 0) {
         self.image = nil;
         return;
     }
@@ -218,8 +232,15 @@
 
 - (void)lua_setCornerImageWith:(nonnull NSString *)imageName placeHolderImage:(NSString*)placeHolder cornerRadius:(NSInteger)radius direction:(MLNRectCorner)direction
 {
+    if (!stringNotEmpty(imageName)) {
+        imageName = @"";
+    }
+    if (!stringNotEmpty(placeHolder)) {
+        placeHolder = @"";
+    }
+    
     self.imageViewMode = MLNImageViewModeNone;
-    if ((!stringNotEmpty(imageName) && !stringNotEmpty(placeHolder))) {
+    if (imageName.length == 0 && placeHolder.length == 0) {
         self.image = nil;
         return;
     }
@@ -293,32 +314,25 @@
     MLNKitLuaAssert(imageLoder, @"The image delegate must not be nil!");
     MLNKitLuaAssert([imageLoder respondsToSelector:@selector(view:loadImageWithPath:completed:)], @"-[imageLoder view:loadImageWithPath:completed:] was not found!");
     NSMutableArray *imageArray = [NSMutableArray arrayWithCapacity:urlArray.count];
-    NSMutableArray *failImageArray = [NSMutableArray arrayWithCapacity:urlArray.count];
-    for (NSUInteger i = 0; i < urlArray.count; i++) {
-        [imageArray addObject:[NSNull null]];
-        [failImageArray addObject:[urlArray objectAtIndex:i]];
-    }
     dispatch_group_t imagesGroup = dispatch_group_create();
-    for (NSUInteger i = 0; i < urlArray.count; i++) {
-        NSString *urlStr = [urlArray objectAtIndex:i];
+    for (NSString *urlStr in urlArray) {
         dispatch_group_enter(imagesGroup);
         [imageLoder view:self loadImageWithPath:urlStr completed:^(UIImage *image, NSError *error, NSString *imagePath) {
-            doInMainQueue(if (image) {
-                [imageArray replaceObjectAtIndex:i withObject:image];
-                [failImageArray removeObject:urlStr];
+            if (image) {
+                [imageArray addObject:image];
             }
-                          dispatch_group_leave(imagesGroup);)
+            dispatch_group_leave(imagesGroup);
         }];
     }
     dispatch_group_notify(imagesGroup, dispatch_get_main_queue(), ^{
-        if (failImageArray.count <= 0) {
+        if (imageArray.count == urlArray.count) {
             [self setImage:imageArray.lastObject];
             [self setAnimationImages:imageArray];
             [self setAnimationDuration:duration];
             [self setAnimationRepeatCount:repeat?0:1];
             [self startAnimating];
         } else {
-            MLNKitLuaAssert(NO, @"images: %@ download failed!", failImageArray);
+            MLNKitLuaAssert(NO, @"Some images download failed!");
         }
     });
 }
@@ -438,10 +452,6 @@
     return YES;
 }
 
-- (BOOL)lua_supportOverlay {
-    return YES;
-}
-
 #pragma mark - Export For Lua
 LUA_EXPORT_VIEW_BEGIN(MLNImageView)
 LUA_EXPORT_VIEW_PROPERTY(contentMode, "lua_setContentMode:","contentMode", MLNImageView)
@@ -458,9 +468,4 @@ LUA_EXPORT_VIEW_METHOD(blurImage, "lua_setBlurValue:processImage:", MLNImageView
 LUA_EXPORT_VIEW_METHOD(addShadow, "lua_addShadow:shadowOffset:shadowRadius:shadowOpacity:isOval:", MLNImageView)
 LUA_EXPORT_VIEW_END(MLNImageView, ImageView, YES, "MLNView", NULL)
 
-@end
-
-@implementation MLNOverlayImageView
-LUA_EXPORT_VIEW_BEGIN(MLNOverlayImageView) // 兼容Android
-LUA_EXPORT_VIEW_END(MLNOverlayImageView, OverImageView, YES, "MLNImageView", NULL)
 @end

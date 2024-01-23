@@ -11,6 +11,10 @@
 #import "MLNKitInstanceFactory.h"
 
 @interface MLNKitViewController ()
+{
+    MLNKitInstance *_luaInstance;
+}
+
 @property (nonatomic, strong) NSMutableDictionary *globalModel;
 @end
 
@@ -149,12 +153,9 @@
 
 - (MLNKitInstance *)kitInstance
 {
-    if (!_kitInstance) {
-        _kitInstance = [[MLNKitInstanceFactory defaultFactory] createKitInstanceWithViewController:self];
-        if (_regClasses && _regClasses.count > 0) {
-            [_kitInstance registerClasses:_regClasses error:NULL];
-        }
+    if (!_luaInstance) {
+        _luaInstance = [[MLNKitInstanceFactory defaultFactory] createKitInstanceWithViewController:self];
     }
-    return _kitInstance;
+    return _luaInstance;
 }
 @end

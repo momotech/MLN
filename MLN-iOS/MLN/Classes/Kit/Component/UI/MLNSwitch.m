@@ -53,6 +53,12 @@
     return self.isOn;
 }
 
+- (void)lua_setSelectedColor:(UIColor *)color
+{
+    MLNCheckTypeAndNilValue(color, @"Color", [UIColor class])
+    self.onTintColor = color;
+}
+
 - (void)lua_setSwitchChangedCallback:(MLNBlock *)callback
 {
     MLNCheckTypeAndNilValue(callback, @"function", MLNBlock);
@@ -97,6 +103,7 @@
 #pragma mark - Export For Lua
 LUA_EXPORT_VIEW_BEGIN(MLNSwitch)
 LUA_EXPORT_PROPERTY(on, "lua_setOn:", "lua_on", MLNSwitch)
+LUA_EXPORT_VIEW_METHOD(setSelectedColor, "lua_setSelectedColor:", MLNSwitch)
 LUA_EXPORT_VIEW_METHOD(setSwitchChangedCallback, "lua_setSwitchChangedCallback:", MLNSwitch)
 LUA_EXPORT_VIEW_END(MLNSwitch, Switch, YES, "MLNView", NULL)
 
