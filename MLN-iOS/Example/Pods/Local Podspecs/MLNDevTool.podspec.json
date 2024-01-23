@@ -22,11 +22,6 @@
   ],
   "requires_arc": true,
   "public_header_files": "MLN-iOS/MLNDevTool/Classes/*.h",
-  "dependencies": {
-    "ArgoUI": [
-
-    ]
-  },
   "subspecs": [
     {
       "name": "MLNProtobuf",

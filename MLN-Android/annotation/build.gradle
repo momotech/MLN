@@ -1,7 +1,0 @@
-apply plugin: 'java-library'
-
-dependencies {
-}
-
-apply from: "../bintrayUpload.gradle"
-version=annotationVersion
