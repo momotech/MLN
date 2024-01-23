@@ -1,3 +1,0 @@
-
-
-Link:link("CustomHotReload")
