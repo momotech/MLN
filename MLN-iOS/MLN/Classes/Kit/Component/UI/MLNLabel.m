@@ -21,6 +21,8 @@
 #import "MLNStyleString.h"
 #import "MLNLabel+Interface.h"
 #import "MLNStyleElement.h"
+#import <CoreText/CTFramesetter.h>
+#import <CoreText/CTRun.h>
 
 @interface MLNRunItem : NSObject
 @property(nonatomic) CGRect            frame;
