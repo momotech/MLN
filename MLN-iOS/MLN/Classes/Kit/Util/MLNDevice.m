@@ -39,20 +39,19 @@
 
 + (BOOL)isIPHX
 {
-    NSString *platform = [self platform];
-    if ([platform isEqualToString:@"iPhone10,3"] ||
-        [platform isEqualToString:@"iPhone10,6"] ||
-        [platform isEqualToString:@"iPhone11,2"] ||
-        [platform isEqualToString:@"iPhone11,4"] ||
-        [platform isEqualToString:@"iPhone11,6"] ||
-        [platform isEqualToString:@"iPhone11,8"] ||
-        [platform isEqualToString:@"iPhone12,1"] ||
-        [platform isEqualToString:@"iPhone12,3"] ||
-        [platform isEqualToString:@"iPhone12,5"] ||
-        ([self isiPhoneSimulator] && (CGSizeEqualToSize([[UIScreen mainScreen] bounds].size, CGSizeMake(375.f, 812.f))
-                                      || CGSizeEqualToSize([[UIScreen mainScreen] bounds].size, CGSizeMake(414.f, 896.f)))))
-        return YES;
-    return NO;
+    static BOOL isX = YES;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        CGFloat height = [UIApplication sharedApplication].statusBarFrame.size.height;
+        if (height <= 20) {
+            UIWindow *win = [UIApplication sharedApplication].keyWindow;
+            isX = win.safeAreaInsets.bottom > 0;
+        } else {
+            isX = YES;
+        }
+        
+    });
+    return isX;
 }
 
 + (BOOL)isiPhoneSimulator
