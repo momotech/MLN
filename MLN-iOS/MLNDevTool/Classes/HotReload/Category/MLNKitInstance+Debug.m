@@ -32,7 +32,7 @@
 
 - (BOOL)debug_runWithEntryFile:(NSString *)entryFilePath windowExtra:(NSDictionary *)windowExtra error:(NSError * _Nullable __autoreleasing * _Nullable)error {
     if (entryFilePath.length == 0) return NO;
-    [MLNHotReload openBreakpointDebugIfNeeded:self];
+//    [MLNHotReload openBreakpointDebugIfNeeded:self];
     return [self debug_runWithEntryFile:entryFilePath windowExtra:windowExtra error:error];
 }
 

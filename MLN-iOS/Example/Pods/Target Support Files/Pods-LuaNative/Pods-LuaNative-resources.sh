@@ -97,7 +97,6 @@ EOM
   esac
 }
 if [[ "$CONFIGURATION" == "Debug" ]]; then
-  install_resource "${PODS_ROOT}/../../MLN/Resource/ArgoUISystem.bundle"
   install_resource "${PODS_ROOT}/MJRefresh/MJRefresh/MJRefresh.bundle"
   install_resource "${PODS_CONFIGURATION_BUILD_DIR}/MLNDevTool/MLNDevTool_Util.bundle"
   install_resource "${PODS_CONFIGURATION_BUILD_DIR}/MLNDevTool/MLNDevTool_UI.bundle"
@@ -105,7 +104,6 @@ if [[ "$CONFIGURATION" == "Debug" ]]; then
   install_resource "${PODS_CONFIGURATION_BUILD_DIR}/MLNDevTool/MLNDevTool_Offline.bundle"
 fi
 if [[ "$CONFIGURATION" == "Release" ]]; then
-  install_resource "${PODS_ROOT}/../../MLN/Resource/ArgoUISystem.bundle"
   install_resource "${PODS_ROOT}/MJRefresh/MJRefresh/MJRefresh.bundle"
   install_resource "${PODS_CONFIGURATION_BUILD_DIR}/MLNDevTool/MLNDevTool_Util.bundle"
   install_resource "${PODS_CONFIGURATION_BUILD_DIR}/MLNDevTool/MLNDevTool_UI.bundle"

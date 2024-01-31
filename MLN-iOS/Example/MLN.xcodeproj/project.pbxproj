@@ -14,8 +14,6 @@
 		30A4EB5A231CC5CD00995416 /* MLNMyHttpHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 30A4EB59231CC5CD00995416 /* MLNMyHttpHandler.m */; };
 		30A4EB5D231CC86B00995416 /* MLNMyImageHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 30A4EB5C231CC86B00995416 /* MLNMyImageHandler.m */; };
 		30A4EB60231CD75200995416 /* MLNMyRefreshHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 30A4EB5F231CD75200995416 /* MLNMyRefreshHandler.m */; };
-		30CB3BF923684B7F00AB90C6 /* MLNDevTool.podspec in Resources */ = {isa = PBXBuildFile; fileRef = 30CB3BF823684B7F00AB90C6 /* MLNDevTool.podspec */; };
-		30CB3BFB23684CD400AB90C6 /* MLN.podspec in Resources */ = {isa = PBXBuildFile; fileRef = 30CB3BFA23684CD400AB90C6 /* MLN.podspec */; };
 		30E24E9322F3D74A00A0E78C /* MLNTestMe.m in Sources */ = {isa = PBXBuildFile; fileRef = 30E24E8B22F3D74900A0E78C /* MLNTestMe.m */; };
 		30E24E9422F3D74A00A0E78C /* MLNGlobalFuncTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 30E24E8D22F3D74900A0E78C /* MLNGlobalFuncTest.m */; };
 		30E24E9522F3D74A00A0E78C /* MLNStaticTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 30E24E8E22F3D74900A0E78C /* MLNStaticTest.m */; };
@@ -136,8 +134,6 @@
 		30A4EB5C231CC86B00995416 /* MLNMyImageHandler.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNMyImageHandler.m; sourceTree = "<group>"; };
 		30A4EB5E231CD75200995416 /* MLNMyRefreshHandler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNMyRefreshHandler.h; sourceTree = "<group>"; };
 		30A4EB5F231CD75200995416 /* MLNMyRefreshHandler.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNMyRefreshHandler.m; sourceTree = "<group>"; };
-		30CB3BF823684B7F00AB90C6 /* MLNDevTool.podspec */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = MLNDevTool.podspec; path = ../../MLNDevTool.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
-		30CB3BFA23684CD400AB90C6 /* MLN.podspec */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = MLN.podspec; path = ../../MLN.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		30E24E8B22F3D74900A0E78C /* MLNTestMe.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLNTestMe.m; sourceTree = "<group>"; };
 		30E24E8C22F3D74900A0E78C /* MLNGlobalFuncTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLNGlobalFuncTest.h; sourceTree = "<group>"; };
 		30E24E8D22F3D74900A0E78C /* MLNGlobalFuncTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLNGlobalFuncTest.m; sourceTree = "<group>"; };
@@ -294,6 +290,8 @@
 		FA4EE311237917E500449250 /* MLNGalleryMinePageCellCollectCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MLNGalleryMinePageCellCollectCell.h; sourceTree = "<group>"; };
 		FA4EE312237917E500449250 /* MLNGalleryMinePageCellCollectCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNGalleryMinePageCellCollectCell.m; sourceTree = "<group>"; };
 		FA6C1CE0248E41D10025BA96 /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "usr/lib/libc++.tbd"; sourceTree = SDKROOT; };
+		FAD37D942B6A2DFF0042A8FA /* MLNDevTool.podspec */ = {isa = PBXFileReference; lastKnownFileType = text; name = MLNDevTool.podspec; path = ../MLNDevTool.podspec; sourceTree = "<group>"; };
+		FAD37D952B6A2DFF0042A8FA /* MLN.podspec */ = {isa = PBXFileReference; lastKnownFileType = text; name = MLN.podspec; path = ../MLN.podspec; sourceTree = "<group>"; };
 		FAE9C59223A250CD002C830D /* gallery.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = gallery.bundle; sourceTree = "<group>"; };
 		FAE9C59423A2529C002C830D /* inner_demo.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = inner_demo.bundle; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -456,8 +454,8 @@
 		60FF7A9C1954A5C5007DD14C /* Podspec Metadata */ = {
 			isa = PBXGroup;
 			children = (
-				30CB3BFA23684CD400AB90C6 /* MLN.podspec */,
-				30CB3BF823684B7F00AB90C6 /* MLNDevTool.podspec */,
+				FAD37D952B6A2DFF0042A8FA /* MLN.podspec */,
+				FAD37D942B6A2DFF0042A8FA /* MLNDevTool.podspec */,
 				1018AD05C0E113C32A1AD38C /* README.md */,
 				C0FB2CAC8F9592C3092ACF62 /* LICENSE */,
 			);
@@ -931,8 +929,6 @@
 				FA383459239A64AF000F900E /* LaunchScreen.storyboard in Resources */,
 				FAE9C59323A250CD002C830D /* gallery.bundle in Resources */,
 				FA4103E725090347007ADC8F /* data.plist in Resources */,
-				30CB3BFB23684CD400AB90C6 /* MLN.podspec in Resources */,
-				30CB3BF923684B7F00AB90C6 /* MLNDevTool.podspec in Resources */,
 				FA383456239A6357000F900E /* Main.storyboard in Resources */,
 				6003F5A9195388D20070C39A /* Images.xcassets in Resources */,
 				6003F598195388D20070C39A /* InfoPlist.strings in Resources */,
@@ -958,7 +954,6 @@
 			);
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-LuaNative/Pods-LuaNative-resources.sh",
-				"${PODS_ROOT}/../../MLN/Resource/ArgoUISystem.bundle",
 				"${PODS_ROOT}/MJRefresh/MJRefresh/MJRefresh.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/MLNDevTool/MLNDevTool_Util.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/MLNDevTool/MLNDevTool_UI.bundle",
@@ -967,7 +962,6 @@
 			);
 			name = "[CP] Copy Pods Resources";
 			outputPaths = (
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ArgoUISystem.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MJRefresh.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MLNDevTool_Util.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MLNDevTool_UI.bundle",

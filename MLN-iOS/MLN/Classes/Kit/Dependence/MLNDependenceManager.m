@@ -43,6 +43,8 @@ NSString *kDependenceFileName = @"dependenceConfig.json";
     if (!handle) {
         handle = [MLNKitInstanceHandlersManager defaultManager].dependenceHandler;
     }
+    
+    MLNDependence *dependance = [[MLNDependence alloc] init];
     NSString *debugFlag = Instance.windowExtra[kLuaDebugModeKey];
     if ([debugFlag isEqualToString:kLuaDebugModeHotReload] && handle == nil) {
         finished ? finished(nil) : nil;

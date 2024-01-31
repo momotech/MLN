@@ -14,35 +14,19 @@ PODS:
   - AFNetworking/Serialization (3.2.1)
   - AFNetworking/UIKit (3.2.1):
     - AFNetworking/NSURLSession
-  - ArgoUI (0.3.5):
-    - ArgoUI/Core (= 0.3.5)
-    - ArgoUI/Kit (= 0.3.5)
-  - ArgoUI/Core (0.3.5):
-    - MLN/LuaLib
-  - ArgoUI/Kit (0.3.5):
-    - ArgoUI/Core
-    - ArgoUI/Kit/AnimationCPP (= 0.3.5)
-  - ArgoUI/Kit/AnimationCPP (0.3.5):
-    - ArgoUI/Core
-  - ArgoUIComponent (0.1.2):
-    - ArgoUI
-    - ArgoUIComponent/ErrorHandler (= 0.1.2)
-  - ArgoUIComponent/ErrorHandler (0.1.2):
-    - ArgoUI
   - FLEX (3.0.0)
   - Masonry (1.1.0)
   - MJRefresh (3.1.16)
-  - MLN (1.0.0.11.beta):
-    - MLN/Core (= 1.0.0.11.beta)
-    - MLN/Kit (= 1.0.0.11.beta)
-    - MLN/LuaLib (= 1.0.0.11.beta)
-  - MLN/Core (1.0.0.11.beta):
+  - MLN (0.2.9):
+    - MLN/Core (= 0.2.9)
+    - MLN/Kit (= 0.2.9)
+    - MLN/LuaLib (= 0.2.9)
+  - MLN/Core (0.2.9):
     - MLN/LuaLib
-  - MLN/Kit (1.0.0.11.beta):
+  - MLN/Kit (0.2.9):
     - MLN/Core
-  - MLN/LuaLib (1.0.0.11.beta)
+  - MLN/LuaLib (0.2.9)
   - MLNDevTool (0.2.8):
-    - ArgoUI
     - MLNDevTool/Conn (= 0.2.8)
     - MLNDevTool/DevTool (= 0.2.8)
     - MLNDevTool/HotReload (= 0.2.8)
@@ -50,44 +34,36 @@ PODS:
     - MLNDevTool/Offline (= 0.2.8)
     - MLNDevTool/Performance (= 0.2.8)
   - MLNDevTool/Conn (0.2.8):
-    - ArgoUI
     - MLNDevTool/MLNProtobuf
   - MLNDevTool/DevTool (0.2.8):
-    - ArgoUI
     - MLN
     - MLNDevTool/Conn
   - MLNDevTool/HotReload (0.2.8):
-    - ArgoUI
     - MLN
     - MLNDevTool/Conn
     - MLNDevTool/DevTool
   - MLNDevTool/MLNProtobuf (0.2.8):
-    - ArgoUI
     - Protobuf
   - MLNDevTool/Offline (0.2.8):
-    - ArgoUI
     - MLN
     - MLNDevTool/DevTool
-  - MLNDevTool/Performance (0.2.8):
-    - ArgoUI
-  - Protobuf (3.12.0)
-  - SDCycleScrollView (1.80):
+  - MLNDevTool/Performance (0.2.8)
+  - Protobuf (3.13.0)
+  - SDCycleScrollView (1.82):
     - SDWebImage (>= 5.0.0)
-  - SDWebImage (5.3.3):
-    - SDWebImage/Core (= 5.3.3)
-  - SDWebImage/Core (5.3.3)
+  - SDWebImage (5.9.5):
+    - SDWebImage/Core (= 5.9.5)
+  - SDWebImage/Core (5.9.5)
   - Toast (4.0.0)
   - YYModel (1.0.4)
 
 DEPENDENCIES:
   - AFNetworking (~> 3.0)
-  - ArgoUI (from `../../`)
-  - ArgoUIComponent (from `../../`)
   - FLEX
   - Masonry
   - MJRefresh (= 3.1.16)
-  - MLN (from `../../`)
-  - MLNDevTool (from `../../`)
+  - MLN (from `../`)
+  - MLNDevTool (from `../`)
   - SDCycleScrollView (>= 1.80)
   - Toast (~> 4.0.0)
   - YYModel
@@ -105,30 +81,24 @@ SPEC REPOS:
     - YYModel
 
 EXTERNAL SOURCES:
-  ArgoUI:
-    :path: "../../"
-  ArgoUIComponent:
-    :path: "../../"
   MLN:
-    :path: "../../"
+    :path: "../"
   MLNDevTool:
-    :path: "../../"
+    :path: "../"
 
 SPEC CHECKSUMS:
-  AFNetworking: b6f891fdfaed196b46c7a83cf209e09697b94057
-  ArgoUI: 544cceb5ea66f20d2209fae018ff8054363cdd71
-  ArgoUIComponent: c208b954b688481017a29bb6b5ca8056774ccbd3
+  AFNetworking: cb604b1c2bded0871f5f61f5d53653739e841d6b
   FLEX: d66c759bce0f6ebbbf472c742380874d846f2883
   Masonry: 678fab65091a9290e40e2832a55e7ab731aad201
   MJRefresh: 7798e16e53a5ef7f332dd05b27664db4e29530fd
-  MLN: 49a86502211319c94bb9b15bcd686ade68ed6ed6
-  MLNDevTool: 4d35c4e3f8d188d62de30b006fbf536db7313505
-  Protobuf: 2793fcd0622a00b546c60e7cbbcc493e043e9bb9
-  SDCycleScrollView: b3c9a5ed840c771c4938978174c7c9d9feefeb96
-  SDWebImage: 51ab1ce3ebd20dec6665ae8ba25c928da323db41
+  MLN: 6a43f54ddebea763f90bf92952ae9f7e6f158d92
+  MLNDevTool: cc3c516758ddc5f84a51bd350c706d63a5c3b2a4
+  Protobuf: 3dac39b34a08151c6d949560efe3f86134a3f748
+  SDCycleScrollView: a0d74c3384caa72bdfc81470bdbc8c14b3e1fbcf
+  SDWebImage: 0b2ba0d56479bf6a45ecddbfd5558bea93150d25
   Toast: 91b396c56ee72a5790816f40d3a94dd357abc196
   YYModel: 2a7fdd96aaa4b86a824e26d0c517de8928c04b30
 
-PODFILE CHECKSUM: 3425dfaea8efd55f71732b376d7dc4df9ee7a481
+PODFILE CHECKSUM: af94071cff9206ddf6a2bb83609138af2ccad03d
 
-COCOAPODS: 1.9.3
+COCOAPODS: 1.14.3
