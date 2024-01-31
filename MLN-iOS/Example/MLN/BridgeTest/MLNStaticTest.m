@@ -39,11 +39,4 @@ LUA_EXPORT_STATIC_METHOD(hiddenNavBar, "hiddenNavBar:", MLNStaticTest)
 LUA_EXPORT_STATIC_METHOD(navBarAlpha, "navBarAlpha:", MLNStaticTest)
 LUA_EXPORT_STATIC_END(MLNStaticTest, StaticTest, NO, NULL)
 
-LUAUI_EXPORT_STATIC_BEGIN(MLNStaticTest)
-LUAUI_EXPORT_STATIC_METHOD(test, "test:", MLNStaticTest)
-LUAUI_EXPORT_STATIC_METHOD(hiddenStatusBar, "hiddenStatusBar:", MLNStaticTest)
-LUAUI_EXPORT_STATIC_METHOD(hiddenNavBar, "hiddenNavBar:", MLNStaticTest)
-LUAUI_EXPORT_STATIC_METHOD(navBarAlpha, "navBarAlpha:", MLNStaticTest)
-LUAUI_EXPORT_STATIC_END(MLNStaticTest, StaticTest, NO, NULL)
-
 @end
