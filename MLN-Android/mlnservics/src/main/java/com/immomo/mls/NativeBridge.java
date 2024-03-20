@@ -16,6 +16,7 @@ public class NativeBridge {
 
     public static void registerNativeBridge(Globals g) {
         _openLib(g.getL_State(), MLSEngine.DEBUG);
+        NativeBroadcastChannel.register(g);
     }
 
     private static native void _openLib(long l, boolean debug);

@@ -1,0 +1,75 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
+
+android {
+    compileSdkVersion project.compileSdkVersion
+    buildToolsVersion project.buildToolsVersion
+
+    defaultConfig {
+        minSdkVersion project.minSdkVersion
+        targetSdkVersion project.targetSdkVersion
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = [isSdk: 'true']
+            }
+        }
+        externalNativeBuild {
+            cmake {
+                cppFlags "-frtti -fexceptions"
+                cFlags "-pie -fPIE"
+                abiFilters 'armeabi-v7a', 'arm64-v8a'
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    externalNativeBuild {
+        cmake {
+            path 'src/main/jni/CMakeLists.txt'
+        }
+    }
+}
+
+dependencies {
+    compileOnly 'androidx.legacy:legacy-support-v4:1.0.0'
+    compileOnly "androidx.recyclerview:recyclerview:$androidXVersion"
+    compileOnly "androidx.appcompat:appcompat:$androidXVersion"
+
+    compileOnly "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    compileOnly "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlin_coroutines_version"
+    compileOnly "org.jetbrains.kotlinx:kotlinx-coroutines-android:$kotlin_coroutines_version"
+
+    if (lua_debug) {
+        compileOnly project(":MMLua4Android:mlncore")
+        compileOnly project(':MMLua4Android:HotReload')
+        compileOnly project(':MMLua4Android:annotation')
+        kapt project(':MMLua4Android:processor')
+        compileOnly project(':MMLua4Android:mlnservics')
+        implementation project(':MMLua4Android:yoga')
+    } else if (implementation_debug) {
+        compileOnly project(":mlncore")
+        compileOnly project(':HotReload')
+        api project(':annotation')
+        kapt project(':processor')
+        implementation project(':mlnservics')
+        implementation project(':yoga')
+    } else {
+        compileOnly "com.immomo.mlncore:core:$mlnCoreVersion"
+        compileOnly "com.immomo.luanative:hotreload:$hotreloadVersion"
+        api "com.immomo.mls:annotation:$annotationVersion"
+        kapt "com.immomo.mls:processor:$processorVersion"
+        implementation "com.immomo.mls:mln:$mlnsVersion"
+        implementation "com.immomo.yoga:yoga:$yogaVersion"
+    }
+}
+
+apply from: "../bintrayUpload.gradle"
+version=mmuiVersion

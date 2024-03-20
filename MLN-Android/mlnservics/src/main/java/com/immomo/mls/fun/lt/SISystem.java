@@ -189,7 +189,7 @@ public class SISystem implements ConnectionStateChangeBroadcastReceiver.OnConnec
 
     @LuaBridge
     public int networkState() {
-        NetworkUtil.NetworkType type = NetworkUtil.getCurrentType(getContext());
+        NetworkUtil.NetworkType type = NetworkUtil.getCurrentType(MLSEngine.getContext() == null ? getContext().getApplicationContext() : MLSEngine.getContext());
         switch (type) {
             case NETWORK_2G:
             case NETWORK_3G:

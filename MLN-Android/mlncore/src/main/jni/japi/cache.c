@@ -106,7 +106,7 @@ ptrdiff_t copyValueToGNV(lua_State *L, int idx) {
     int type = lua_type(L, -1);
     getGlobalNVTableForType(L, type);                 // -1: table --value
 
-    lua_pushlightuserdata(L, (void *) addr);    // -1: addr --table-value
+    lua_pushnumber(L, addr);                          // -1: addr --table-value
     lua_rawget(L, -2);                                // -1: newtable; --table-value
     /// 已有缓存的情况，增加引用计数
     if (lua_istable(L, -1)) {
@@ -122,7 +122,7 @@ ptrdiff_t copyValueToGNV(lua_State *L, int idx) {
     /// 剩下的情况：缓存一定为空
     /// -1: nil --table-value
     lua_pop(L, 1);                  // -1: table --value
-    lua_pushlightuserdata(L, (void *) addr);        // -1: addr --table-value
+    lua_pushnumber(L, addr);        // -1: addr --table-value
     /// ud情况下，肯定没有缓存，且不处理引用计数
     if (type == LUA_TUSERDATA) {
         lua_pushvalue(L, -3);       // -1: value --addr-table-value
@@ -154,7 +154,7 @@ void getValueFromGNV(lua_State *L, ptrdiff_t key, int ltype) {
     }
 
     getGlobalNVTableForType(L, ltype);
-    lua_pushlightuserdata(L, (void *) key); //-1:key --table
+    lua_pushnumber(L, key); //-1:key --table
     lua_rawget(L, -2);      //-1:newtable --table
     lua_remove(L, -2);      //-1:newtable
     if (lua_isnil(L, -1)) {
@@ -174,7 +174,7 @@ void getValueFromGNV(lua_State *L, ptrdiff_t key, int ltype) {
 static int hasNativeValue(lua_State *L, ptrdiff_t key, int ltype) {
     lua_lock(L);
     getGlobalNVTableForType(L, ltype);  //-1: table
-    lua_pushlightuserdata(L, (void *) key);             //-1: key--table
+    lua_pushnumber(L, key);             //-1: key--table
     lua_rawget(L, -2);                  //-1: newtable --table
     if (lua_isnil(L, -1)) {
         lua_pop(L, 2);
@@ -212,7 +212,7 @@ static int removeValueFromGNV(lua_State *L, ptrdiff_t key, int ltype) {
         if (ud->refCount <= 0) {
             clearUDFlag(ud, JUD_FLAG_SKEY);
             lua_pop(L, 1);              // -1: table
-            lua_pushlightuserdata(L, (void *) key);     // -1: key --table
+            lua_pushnumber(L, key);     // -1: key --table
             lua_pushnil(L);
             lua_rawset(L, -3);          // table[key] = nil -1: table
             lua_pop(L, 1);
@@ -234,7 +234,7 @@ static int removeValueFromGNV(lua_State *L, ptrdiff_t key, int ltype) {
     }
     /// 引用计数为0的情况
     lua_pop(L, 2);                  //-1: table
-    lua_pushlightuserdata(L, (void *) key);         //-1: key --table
+    lua_pushnumber(L, key);         //-1: key --table
     lua_pushnil(L);                 //-1: nil --key-table
     lua_rawset(L, -3);
     lua_pop(L, 1);
@@ -283,7 +283,7 @@ static void init_map() {
             map_set_free(__map, s_free, NULL);
             map_set_equals(__map, str_equals);
 #if defined(J_API_INFO)
-            map_set_ud(__map, 1);
+//            map_set_ud(__map, 1);
             map_set_sizeof(__map, NULL, NULL);
 #endif
         }

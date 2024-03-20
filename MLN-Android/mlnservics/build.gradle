@@ -2,6 +2,15 @@ plugins {
     id 'com.android.library'
     id 'kotlin-android'
     id 'kotlin-kapt'
+    id 'com.google.devtools.ksp' version '1.5.30-1.0.0' apply false
+    id 'com.immomo.momo.mua.mlnkit' version '0.0.40' apply false
+}
+if (ext.applyGenerator) {
+    mlnkit_generator {
+        gitURL 'https://git.wemomo.com/LuaProject/momokit'
+        version '0.0.3_contentMode_hello_group'
+        branch 'muakit_Hello'
+    }
 }
 
 android {
@@ -71,14 +80,19 @@ dependencies {
         api "com.immomo.mls:annotation:$annotationVersion"
         kapt "com.immomo.mls:processor:$processorVersion"
     }
+    if (applyGenerator) {
+        ksp("com.immomo.momo.mua:mlnkit-generator:0.0.47")
+    }
 }
 
 if (!implementation_debug) {
     if (update_hello_group) {
         ext.versionForMomo = rootProject.ext.mlnsVersion
-        apply from: '../publish_to_hellogroup_maven_central.gradle'
+        apply from: '../upload_maven.gradle'
     } else {
-        project.ext["publish.version"] = rootProject.ext.mlnsVersion
-        apply from: "../publish_to_maven_central.gradle"
+        apply from: "../bintrayUpload.gradle"
+        version = mlnsVersion
     }
 }
+
+apply from: 'muaGenerator.gradle'

@@ -38,13 +38,13 @@ function changeArmSettingAfter() {
 }
 
 function changeSettingBefore {
-    sed -i '' "s/\(include.*\)/\/\/\1/g" ../settings.gradle
+    sed -i '' "s/\(.*\)/\/\/\1/g" ../settings.gradle
 
-    sed -i '' "s/\/*\(include.*mlncore\)/\1/g" ../settings.gradle
+    sed -i '' "s/\/*\(.*mlncore\)/\1/g" ../settings.gradle
 }
 
 function changeSettingAfter {
-    sed -i '' "s/\/*\(include.*\)/\1/g" ../settings.gradle
+    sed -i '' "s/\/*\(.*\)/\1/g" ../settings.gradle
 }
 
 function changeVersion {
@@ -153,8 +153,8 @@ for ARM in ${arm[*]} ; do
       openNativeInfo
       openStatistic
       echo upload failed!!! code: $uploadResult
-#      echo revert build.gradle file!!!
-#      git checkout -- ../build.gradle
+      echo revert build.gradle file!!!
+      git checkout -- ../build.gradle
       exit $uploadResult
   fi
   echo "----------------------------finish ${ARM}----------------------------"

@@ -2,28 +2,28 @@
 
 
 function changeSettingBefore {
-    sed -i '' "s/\(include.*\)/\/\/\1/g" ../settings.gradle
-    sed -i '' "s/\/*\(include.*HotReload\)/\1/g" ../settings.gradle
+    sed -i '' "s/\(.*\)/\/\/\1/g" ../settings.gradle
+    sed -i '' "s/\/*\(.*HotReload\)/\1/g" ../settings.gradle
 
     sed -i '' "s/\(.*implementation_debug\).*/\1 = false/g" ../build.gradle
 }
 
 function changeSettingAfter {
-    sed -i '' "s/\/*\(include.*\)/\1/g" ../settings.gradle
+    sed -i '' "s/\/*\(.*\)/\1/g" ../settings.gradle
 
     sed -i '' "s/\(.*implementation_debug\).*/\1 = true/g" ../build.gradle
 }
 
 changeSettingBefore
-./../gradlew :HotReload:publish
+./../gradlew :HotReload:bintrayUpload
 if [ $? -ne 0 ]; then
-    echo "HotReload:publish error"
+    echo "HotReload:bintrayUpload error"
     changeSettingAfter
     exit 1
 fi
-./../gradlew :HotReload_Empty:publish
+./../gradlew :HotReload_Empty:bintrayUpload
 if [ $? -ne 0 ]; then
-    echo "HotReload_Empty:publish error"
+    echo "HotReload_Empty:bintrayUpload error"
     changeSettingAfter
     exit 1
 fi

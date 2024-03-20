@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-PACKAGE=('annotation' 'processor' 'mlncore' 'HotReload' 'mlnservics')
+PACKAGE=('annotation' 'mlncore' 'HotReload' 'mlnservics')
 DEFAULT_PACKAGE=('mlncore' 'mlnservics')
 VERSION=hello_group_1.0
 function inform() {
@@ -133,19 +133,15 @@ else
 fi
 
 compat_plugin 1
-
-sed -i '' "s/\(implementation_debug = \).*/\1false/g" ./build.gradle
-sed -i '' "s/\(update_hello_group = \).*/\1true/g" ./build.gradle
-
 for pack in ${packages[*]} ; do
     cmd="./upload_hello_group.sh "
     if [[ ${D} -eq 1 ]]; then
         cmd="${cmd}-D "
     fi
-    if [ "${pack}" == "mlncore" ] || [ "${pack}" == "mlnservics" ]; then
-        cmd="${cmd}-a ${arm} -b ${b}"
-    else
+    if [ "${pack}" == "HotReload" ]; then
         cmd="${cmd}-b ${b}"
+    else
+        cmd="${cmd}-a ${arm} -b ${b}"
     fi
     cd ${pack}
     if [ $? -ne 0 ]; then
@@ -163,8 +159,8 @@ for pack in ${packages[*]} ; do
     cd ../
     if [[ $uploadResult -ne 0 ]]; then
         echo upload ${pack} failed!!! code: $uploadResult
-#        echo revert build.gradle file!!!
-#        git checkout -- build.gradle
+        echo revert build.gradle file!!!
+        git checkout -- build.gradle
         sed -i '' "s/upload_symbols.*/upload_symbols = false/g" ./build.gradle
         compat_plugin 0
         exit $uploadResult
@@ -173,10 +169,8 @@ for pack in ${packages[*]} ; do
         echo " >> copy so"
         ./copySo.sh
     fi
-    if [ "${pack}" == "mlncore" ] || [ "${pack}" == "mlnservics" ]; then
-      echo " >> copy symbol so"
-      copy_so_symbols ${pack}
-    fi
+    echo " >> copy symbol so"
+    copy_so_symbols ${pack}
 done
 
 compat_plugin 0

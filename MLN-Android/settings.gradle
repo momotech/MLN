@@ -1,14 +1,14 @@
 pluginManagement {
     repositories {
         maven {
-            url getProperty('mmdev_url')
+            url getProperty('apppkg.artifactory.url')
             credentials {
                 username NEXUS_USERNAME
                 password NEXUS_PASSWORD
             }
         }
         maven {
-            url = getProperty('mmpublic_url')
+            url = uri("http://bjrw-platform-android.dev.bjrw.momo.com:8083/artifactory/momo-public/")
             allowInsecureProtocol = true
         }
     }
@@ -22,3 +22,4 @@ include ':annotation'
 include ':processor'
 include ':mlnservics'
 include ':scan'
+include ':muaGenerator'

@@ -50,7 +50,7 @@ public class QRResultHandler implements OuterResultHandler.IResultHandler {
         }
 
         Uri uri = Uri.parse(code);
-        Class<? extends Activity> clz = LuaViewActivity.class;
+        Class<? extends Activity> clz = /*isMMUI ? MMUIActivity.class : */LuaViewActivity.class;
         Intent intent = new Intent(activity, clz);
         InitData initData = MLSBundleUtils.createInitData(code).forceDownload();
         if (isDebugScript(uri)) {

@@ -48,6 +48,7 @@ typedef struct LuaJData {
     pthread_t create_thread;
 #endif
     ErrorType type;
+    char use_argo;
     char vm_is_closing;
     mem_pool *pool;
 } LuaJData;

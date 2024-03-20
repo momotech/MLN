@@ -28,9 +28,15 @@ add_library( luajapi SHARED
             jtable.c
             juserdata.c
             compiler.c
+            message_looper.c
+            isolate.c
+            argo/mtree.c
+            argo/LuaIPC.c
+            argo/databindengine.c
+            argo/argo_lib.c
             luajapi.c )
 
-add_definitions(-DLUA_DL_DLOPEN -DLUA_USE_C89 -DLUA_COMPAT_5_1 -DLUA_COMPAT_ALL -DLUA_USE_LINUX -DJAVA_ENV -DP_ANDROID -DJAVA_CACHE_UD)
+add_definitions(-DLUA_DL_DLOPEN -DLUA_USE_C89 -DLUA_COMPAT_5_1 -DLUA_COMPAT_ALL -DLUA_USE_LINUX -DJAVA_ENV -DP_ANDROID -DJAVA_CACHE_UD -DNATIVE_ARGO)
 add_definitions(-DJ_API_INFO)
 #add_definitions(-DWSTACK)
 #add_definitions(-DMEM_INFO)
@@ -43,4 +49,4 @@ set(LINKER_DIR ${CMAKE_SOURCE_DIR}/linker/${ANDROID_ABI})
 find_library( log-lib log )
 find_library( android-lib android)
 
-target_link_libraries( luajapi ${log-lib} ${android-lib} lua)
+target_link_libraries( luajapi ${log-lib} ${android-lib} mlsocket lua)

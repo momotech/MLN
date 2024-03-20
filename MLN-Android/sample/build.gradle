@@ -1,6 +1,13 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
+apply plugin:'mln-plugin'
+//apply plugin: 'com.immomo.mln.plugin.databinding'
+
+
+//DataBindingExt {
+//    whitelist = ["com.xfy.demo.bean"]
+//}
 
 android {
     compileSdkVersion project.compileSdkVersion
@@ -57,11 +64,15 @@ dependencies {
         implementation project(':mlncore')
         implementation project(':mlnservics')
         implementation project(':HotReload')
+//        implementation project(':mmui')
+//        implementation project(':yoga')
         implementation project(':annotation')
         kapt project(':processor')
     } else {
         implementation "com.immomo.mlncore:core:$mlnCoreVersion"
         implementation "com.immomo.mls:mln:$mlnsVersion"
+//        implementation "com.immomo.mmui:mmui:$mmuiVersion"
+//        implementation "com.immomo.yoga:yoga:$yogaVersion"
         debugImplementation "com.immomo.luanative:hotreload:$hotreloadVersion"
         releaseImplementation "com.immomo.luanative:hotreload_empty:$hotreloadVersion"
         kapt "com.immomo.mls:processor:$processorVersion"
