@@ -58,7 +58,7 @@ allprojects {
 
         broadcastchannel = '0.3.20191111.1920'
         mlnCoreVersion = 'hello_group_1.0_beta2_6'
-        mlnsVersion = 'hello_group_1.0_beta2_71'
+        mlnsVersion = 'hello_group_1.0_beta2_72'
         processorVersion = 'hello_group_1.0_beta2_16'
         annotationVersion = 'hello_group_1.0_beta2_15'
 
