@@ -141,13 +141,7 @@ public class UDCollectionLayout extends UDBaseRecyclerLayout  implements ILayout
     @Override
     public @Nullable
     RecyclerView.ItemDecoration getItemDecoration() {
-        if (itemDecoration == null) {
-            setItemDecoration();
-        } else if (!itemDecoration.isSame(itemSpacing, lineSpacing)) {
-            setItemDecoration();
-        }
-
-        return itemDecoration;
+        return null;
     }
 
     @Override
