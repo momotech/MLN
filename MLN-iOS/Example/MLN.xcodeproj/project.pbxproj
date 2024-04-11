@@ -1321,7 +1321,7 @@
 					"\"${PODS_ROOT}/Headers/Public/Specta\"",
 				);
 				INFOPLIST_FILE = "MLN/MLN-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_GENERATE_MAP_FILE = YES;
 				MODULE_NAME = ExampleApp;
 				OTHER_LDFLAGS = (
@@ -1390,7 +1390,7 @@
 					"\"${PODS_ROOT}/Headers/Public/Specta\"",
 				);
 				INFOPLIST_FILE = "MLN/MLN-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_GENERATE_MAP_FILE = YES;
 				MODULE_NAME = ExampleApp;
 				OTHER_LDFLAGS = (
