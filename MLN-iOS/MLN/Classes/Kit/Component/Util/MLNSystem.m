@@ -95,12 +95,7 @@
 
 + (BOOL)isIPhoneX
 {
-    static BOOL x = NO;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        x = [MLNDevice isIPHX];
-    });
-    return x;
+    return [MLNDevice isIPHX];
 }
 
 + (NSString *)lua_deviceInfo

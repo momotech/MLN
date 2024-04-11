@@ -21,11 +21,11 @@
     "c++"
   ],
   "requires_arc": true,
-  "public_header_files": "MLN-iOS/MLNDevTool/Classes/*.h",
+  "public_header_files": "MLNDevTool/Classes/*.h",
   "subspecs": [
     {
       "name": "MLNProtobuf",
-      "source_files": "MLN-iOS/MLNDevTool/Classes/MLNProtobuf/**/*.{h,m}",
+      "source_files": "MLNDevTool/Classes/MLNProtobuf/**/*.{h,m}",
       "pod_target_xcconfig": {
         "GCC_PREPROCESSOR_DEFINITIONS": "$(inherited) GPB_USE_PROTOBUF_FRAMEWORK_IMPORTS=1"
       },
@@ -43,8 +43,8 @@
         "CoreGraphics",
         "AVFoundation"
       ],
-      "source_files": "MLN-iOS/MLNDevTool/Classes/Conn/**/*.{h,m,c}",
-      "public_header_files": "MLN-iOS/MLNDevTool/Classes/Conn/**/*.h",
+      "source_files": "MLNDevTool/Classes/Conn/**/*.{h,m,c}",
+      "public_header_files": "MLNDevTool/Classes/Conn/**/*.h",
       "dependencies": {
         "MLNDevTool/MLNProtobuf": [
 
@@ -53,11 +53,11 @@
     },
     {
       "name": "DevTool",
-      "source_files": "MLN-iOS/MLNDevTool/Classes/DevTool/**/*.{h,m,c}",
-      "public_header_files": "MLN-iOS/MLNDevTool/Classes/DevTool/**/*.h",
+      "source_files": "MLNDevTool/Classes/DevTool/**/*.{h,m,c}",
+      "public_header_files": "MLNDevTool/Classes/DevTool/**/*.h",
       "resource_bundles": {
-        "MLNDevTool_Util": "MLN-iOS/MLNDevTool/Classes/DevTool/Util/**/Assets/*.{png,lua,xib,storyboard}",
-        "MLNDevTool_UI": "MLN-iOS/MLNDevTool/Classes/DevTool/UI/**/Assets/*.{png,xib}"
+        "MLNDevTool_Util": "MLNDevTool/Classes/DevTool/Util/**/Assets/*.{png,lua,xib,storyboard}",
+        "MLNDevTool_UI": "MLNDevTool/Classes/DevTool/UI/**/Assets/*.{png,xib}"
       },
       "dependencies": {
         "MLN": [
@@ -76,15 +76,15 @@
         "CoreGraphics",
         "AVFoundation"
       ],
-      "source_files": "MLN-iOS/MLNDevTool/Classes/Performance/**/*.{h,m,c}",
-      "public_header_files": "MLN-iOS/MLNDevTool/Classes/Performance/**/*.h"
+      "source_files": "MLNDevTool/Classes/Performance/**/*.{h,m,c}",
+      "public_header_files": "MLNDevTool/Classes/Performance/**/*.h"
     },
     {
       "name": "Offline",
-      "source_files": "MLN-iOS/MLNDevTool/Classes/Offline/**/*.{h,m,c}",
-      "public_header_files": "MLN-iOS/MLNDevTool/Classes/Offline/**/*.h",
+      "source_files": "MLNDevTool/Classes/Offline/**/*.{h,m,c}",
+      "public_header_files": "MLNDevTool/Classes/Offline/**/*.h",
       "resource_bundles": {
-        "MLNDevTool_Offline": "MLN-iOS/MLNDevTool/Classes/Offline/**/Assets/*.{png,lua,xib}"
+        "MLNDevTool_Offline": "MLNDevTool/Classes/Offline/**/Assets/*.{png,lua,xib}"
       },
       "dependencies": {
         "MLNDevTool/DevTool": [
@@ -101,8 +101,8 @@
         "Foundation",
         "UIKit"
       ],
-      "source_files": "MLN-iOS/MLNDevTool/Classes/HotReload/**/*.{h,m,c}",
-      "public_header_files": "MLN-iOS/MLNDevTool/Classes/HotReload/**/*.h",
+      "source_files": "MLNDevTool/Classes/HotReload/**/*.{h,m,c}",
+      "public_header_files": "MLNDevTool/Classes/HotReload/**/*.h",
       "dependencies": {
         "MLNDevTool/DevTool": [
 
@@ -115,7 +115,7 @@
         ]
       },
       "resource_bundles": {
-        "MLNDevTool_HotReload": "MLN-iOS/MLNDevTool/Classes/HotReload/**/Assets/*.{png,xib}"
+        "MLNDevTool_HotReload": "MLNDevTool/Classes/HotReload/**/Assets/*.{png,xib}"
       }
     }
   ]

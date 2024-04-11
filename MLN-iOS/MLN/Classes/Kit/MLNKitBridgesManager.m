@@ -48,6 +48,7 @@
 #import "MLNStyleString.h"
 // Kit Classes's Global Var
 #import "MLNScrollViewConst.h"
+#import "MLNCollectionViewConst.h"
 #import "MLNViewConst.h"
 #import "MLNSystemConst.h"
 #import "MLNStyleStringConst.h"
@@ -180,6 +181,7 @@ static NSArray<Class<MLNExportProtocol>> *gvarClasses;
 {
     if (!gvarClasses) {
         gvarClasses = @[[MLNScrollViewConst class],
+                        [MLNCollectionViewConst class],
                         [MLNViewConst class],
                         [MLNSystemConst class],
                         [MLNStyleStringConst class],

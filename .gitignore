@@ -29,3 +29,18 @@ xcuserdata/
 *.ipa
 *.dSYM.zip
 *.dSYM
+
+# Android
+local.properties
+*.iml
+.gradle
+.idea
+bin/
+gen/
+out/
+.vscode
+.externalNativeBuild
+.cxx
+.project
+.classpath
+.settings
