@@ -64,6 +64,7 @@
 
 // Kit Classes's Global Var
 #import "MLNScrollViewConst.h"
+#import "MLNCollectionViewConst.h"
 #import "MLNViewConst.h"
 #import "MLNSystemConst.h"
 #import "MLNStyleStringConst.h"

@@ -31,6 +31,7 @@
 @property (nonatomic, assign) BOOL missionAnimated;
 @property (nonatomic, strong) MLNBeforeWaitingTask *lazyTask;
 @property (nonatomic, strong) MDListWhiteDetector *whiteDetector;
+@property (nonatomic, assign) UICollectionViewScrollPosition scrollPosition;
 
 @end
 
@@ -91,6 +92,10 @@
     }
 }
 
+- (void)lua_setScrollPosition:(UICollectionViewScrollPosition) position {
+    self.scrollPosition = position;
+}
+
 - (UICollectionViewLayout<MLNCollectionViewLayoutProtocol> *)lua_collectionViewLayout
 {
     return (UICollectionViewLayout<MLNCollectionViewLayoutProtocol> *)self.innerCollectionView.collectionViewLayout;
@@ -115,6 +120,16 @@
 - (BOOL)lua_isShowScrollIndicator
 {
     return self.innerCollectionView.showsHorizontalScrollIndicator && self.innerCollectionView.showsVerticalScrollIndicator;
+}
+
+- (void)mln_setPagingEnable:(BOOL)pagingEnabled
+{
+    self.innerCollectionView.pagingEnabled = pagingEnabled;
+}
+
+- (BOOL)mln_pagingEnabled
+{
+    return self.innerCollectionView.pagingEnabled;
 }
 
 #pragma mark - direction
@@ -152,7 +167,10 @@
         NSInteger count = [self.innerCollectionView numberOfItemsInSection:realSection];
         MLNKitLuaAssert(realRow >= 0 && realRow < count, @"This row number is wrong!");
         if (realRow >= 0 && realRow < count) {
-            [self.innerCollectionView scrollToItemAtIndexPath:[NSIndexPath indexPathForRow:realRow inSection:realSection] atScrollPosition:UICollectionViewScrollPositionTop animated:animate];
+            if (_scrollPosition == 0) {
+                _scrollPosition = UICollectionViewScrollPositionTop;
+            }
+            [self.innerCollectionView scrollToItemAtIndexPath:[NSIndexPath indexPathForRow:realRow inSection:realSection] atScrollPosition:_scrollPosition animated:animate];
         }
     }
 }
@@ -531,6 +549,8 @@ LUA_EXPORT_VIEW_PROPERTY(scrollDirection, "lua_setScrollDirection:","lua_scrollD
 LUA_EXPORT_VIEW_PROPERTY(showScrollIndicator, "lua_showScrollIndicator:","lua_isShowScrollIndicator", MLNCollectionView)
 LUA_EXPORT_VIEW_PROPERTY(showsHorizontalScrollIndicator, "lua_setShowsHorizontalScrollIndicator:", "lua_showsHorizontalScrollIndicator", MLNCollectionView)
 LUA_EXPORT_VIEW_PROPERTY(showsVerticalScrollIndicator, "lua_setShowsVerticalScrollIndicator:", "lua_showsVerticalScrollIndicator", MLNCollectionView)
+LUA_EXPORT_VIEW_PROPERTY(i_pagingEnabled, "mln_setPagingEnable:", "mln_pagingEnabled" , MLNCollectionView)
+LUA_EXPORT_VIEW_METHOD(i_setScrollPosition, "lua_setScrollPosition:", MLNCollectionView)
 LUA_EXPORT_VIEW_METHOD(reloadData, "lua_reloadData", MLNCollectionView)
 LUA_EXPORT_VIEW_METHOD(reloadAtRow, "lua_reloadAtRow:section:animation:", MLNCollectionView)
 LUA_EXPORT_VIEW_METHOD(reloadAtSection, "lua_reloadAtSection:animation:", MLNCollectionView)

@@ -18,7 +18,6 @@
 #import "MLNLuaGalleryViewController.h"
 #import "MLNDemoListViewController.h"
 #import "MLNStaticTest.h"
-#import "MLNGlobalTimeTest.h"
 
 #define kConsoleWidth 250.f
 #define kConsoleHeight 280.f
