@@ -30,6 +30,10 @@ MLN是一个移动跨平台开发框架，让开发者用一套代码构建Andro
 MLN支持热重载开发方式，修改代码，立即生效，免去编译等待阶段
 ![热重载.gif](https://s.momocdn.com/w/u/others/custom/LuaNative/readme3.gif)
 
+## 技术介绍
+
+[技术介绍中文文档，持续更新中](./docs/index.md)
+
 ## 如何交流
 
 为了方便及时联系，请加QQ群：738117655
