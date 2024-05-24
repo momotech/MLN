@@ -7,22 +7,11 @@ buildscript {
     repositories {
         google()
         mavenCentral()
-        maven {
-            url getProperty('apppkg.artifactory.url')
-            credentials {
-                username NEXUS_USERNAME
-                password NEXUS_PASSWORD
-            }
-        }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:4.1.0'
-        classpath 'com.novoda:bintray-release:0.9'
         classpath 'com.github.dcendents:android-maven-gradle-plugin:1.5'
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.1'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath "com.jdd.android:mln-plugin:0.0.1_beta5"
-        classpath 'com.cosmos.rifle:symbols:1.0.0.11011231'
     }
 }
 
@@ -30,24 +19,12 @@ allprojects {
     repositories {
         mavenCentral()
         google()
-        maven {
-            url getProperty('apppkg.artifactory.url')
-            credentials {
-                username NEXUS_USERNAME
-                password NEXUS_PASSWORD
-            }
-        }
-        maven {
-            url = uri("http://bjrw-platform-android.dev.bjrw.momo.com:8083/artifactory/momo-public/")
-            allowInsecureProtocol = true
-        }
     }
 
     ext {
-        implementation_debug = false
-        update_hello_group = true
+        implementation_debug = true
+        update_hello_group = false
         upload_symbols = false
-        applyGenerator = false
         compileSdkVersion = 29
         buildToolsVersion = "29.0.3"
         minSdkVersion = 21
@@ -56,7 +33,6 @@ allprojects {
         protobufVersion = '3.0.1'
 
 
-        broadcastchannel = '0.3.20191111.1920'
         mlnCoreVersion = 'hello_group_1.0_beta2_6'
         mlnsVersion = 'hello_group_1.0_beta2_72'
         processorVersion = 'hello_group_1.0_beta2_16'

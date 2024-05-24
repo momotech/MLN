@@ -1,13 +1,6 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
-apply plugin:'mln-plugin'
-//apply plugin: 'com.immomo.mln.plugin.databinding'
-
-
-//DataBindingExt {
-//    whitelist = ["com.xfy.demo.bean"]
-//}
 
 android {
     compileSdkVersion project.compileSdkVersion

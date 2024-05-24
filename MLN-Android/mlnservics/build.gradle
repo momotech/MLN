@@ -2,15 +2,6 @@ plugins {
     id 'com.android.library'
     id 'kotlin-android'
     id 'kotlin-kapt'
-    id 'com.google.devtools.ksp' version '1.5.30-1.0.0' apply false
-    id 'com.immomo.momo.mua.mlnkit' version '0.0.40' apply false
-}
-if (ext.applyGenerator) {
-    mlnkit_generator {
-        gitURL 'https://git.wemomo.com/LuaProject/momokit'
-        version '0.0.3_contentMode_hello_group'
-        branch 'muakit_Hello'
-    }
 }
 
 android {
@@ -57,14 +48,12 @@ android {
 repositories {
     mavenCentral()
 }
-
 dependencies {
     compileOnly 'androidx.legacy:legacy-support-v4:1.0.0'
     compileOnly "androidx.recyclerview:recyclerview:$androidXVersion"
     compileOnly "androidx.appcompat:appcompat:$androidXVersion"
     testImplementation 'junit:junit:4.12'
     testImplementation 'org.mockito:mockito-core:2.23.0'
-    api 'com.cosmos.baseutil:cpp_shared:r17c'
     compileOnly "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     compileOnly "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlin_coroutines_version"
     compileOnly "org.jetbrains.kotlinx:kotlinx-coroutines-android:$kotlin_coroutines_version"
@@ -79,9 +68,6 @@ dependencies {
         compileOnly "com.immomo.luanative:hotreload:$hotreloadVersion"
         api "com.immomo.mls:annotation:$annotationVersion"
         kapt "com.immomo.mls:processor:$processorVersion"
-    }
-    if (applyGenerator) {
-        ksp("com.immomo.momo.mua:mlnkit-generator:0.0.47")
     }
 }
 
