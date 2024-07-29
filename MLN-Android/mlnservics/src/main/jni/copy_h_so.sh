@@ -69,4 +69,4 @@ function copy_so() {
 
 copy_h ${coreDir}/${mln_from} ${mlnDir}/${mln_include}
 copy_h ${coreDir}/${lua_from} ${mlnDir}/${lua_include}
-copy_so ${coreDir}/${srcDir}/libs ${mlnDir}/${libsDir}
+copy_so ${coreDir}/${libsDir} ${mlnDir}/${libsDir}

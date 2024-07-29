@@ -1,0 +1,67 @@
+task upgradeKotlin() {
+    group "upload"
+    doFirst {
+        def line = project.rootProject.buildFile.readLines()
+        def strBuilder = new StringBuilder()
+        line.forEach {
+            def result = it
+            if (it.contains("ext.kotlin_version") && !it.contains("result")) {
+                result = "    ext.kotlin_version = '1.5.31'"
+            }
+            if (it.contains("applyGenerator =") && !it.contains("//script")) {//script
+                result = "        applyGenerator = true"//script
+            }
+            strBuilder.append(result + "\n")
+        }
+        project.rootProject.buildFile.write(strBuilder.toString())
+
+        def line2 = project.buildFile.readLines()
+        def strBuilder2 = new StringBuilder()
+        line2.forEach {
+            def result = it
+            if (it.contains("com.google.devtools.ksp") && !it.contains("//script")) {//script
+                result = result.replace("false", "true")
+            }
+            if (it.contains("'com.immomo.momo.mua.mlnkit") && !it.contains("//script")) {//script
+                result = result.replace("false", "true")
+            }
+            strBuilder2.append(result + "\n")
+        }
+        project.buildFile.write(strBuilder2.toString())
+
+    }
+}
+
+task revertKotlin() {
+    group "upload"
+    doFirst {
+        def line = project.rootProject.buildFile.readLines()
+        def strBuilder = new StringBuilder()
+        line.forEach {
+            def result = it
+            if (it.contains("ext.kotlin_version") && !it.contains("result")) {
+                result = "    ext.kotlin_version = '1.3.72'"
+            }
+            if (it.contains("applyGenerator =") && !it.contains("//script")) {//script
+                result = "        applyGenerator = false"//script
+            }
+            strBuilder.append(result + "\n")
+        }
+        project.rootProject.buildFile.write(strBuilder.toString())
+
+        def line2 = project.buildFile.readLines()
+        def strBuilder2 = new StringBuilder()
+        line2.forEach {
+            def result = it
+            if (it.contains("com.google.devtools.ksp") && !it.contains("//script")) {//script
+                result = result.replace("true", "false")
+            }
+            if (it.contains("'com.immomo.momo.mua.mlnkit") && !it.contains("//script")) {//script
+                result = result.replace("true", "false")
+            }
+            strBuilder2.append(result + "\n")
+        }
+        project.buildFile.write(strBuilder2.toString())
+
+    }
+}

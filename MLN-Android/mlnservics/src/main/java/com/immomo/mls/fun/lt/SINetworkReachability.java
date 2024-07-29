@@ -10,6 +10,7 @@ package com.immomo.mls.fun.lt;
 import android.content.Context;
 
 import com.immomo.mls.LuaViewManager;
+import com.immomo.mls.MLSEngine;
 import com.immomo.mls.annotation.LuaBridge;
 import com.immomo.mls.annotation.LuaClass;
 import com.immomo.mls.fun.constants.NetworkState;
@@ -67,7 +68,7 @@ public class SINetworkReachability implements ConnectionStateChangeBroadcastRece
 
     @LuaBridge
     public int networkState() {
-        NetworkUtil.NetworkType type = NetworkUtil.getCurrentType(getContext());
+        NetworkUtil.NetworkType type = NetworkUtil.getCurrentType(MLSEngine.getContext() == null ? getContext().getApplicationContext() : MLSEngine.getContext());
         switch (type) {
             case NETWORK_2G:
             case NETWORK_3G:

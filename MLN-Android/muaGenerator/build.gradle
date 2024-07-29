@@ -1,0 +1,17 @@
+plugins {
+    id 'java-library'
+    id 'org.jetbrains.kotlin.jvm'
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+dependencies {
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:1.6.20")
+    implementation("com.squareup:javapoet:1.12.1")
+    implementation("com.squareup:kotlinpoet:1.12.0")
+    implementation("com.squareup:kotlinpoet-ksp:1.12.0")
+    implementation("com.google.devtools.ksp:symbol-processing-api:1.6.20-1.0.4")
+}

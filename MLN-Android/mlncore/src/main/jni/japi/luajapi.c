@@ -15,6 +15,7 @@
 #include "lstate.h"
 #include "llimits.h"
 #include "lfunc.h"
+#include "luasocket.h"
 #include <time.h>
 #include <fcntl.h>
 #include <unistd.h>
@@ -24,6 +25,7 @@
 #include "m_mem.h"
 #include "compiler.h"
 #include "saes.h"
+#include "isolate.h"
 #include "statistics.h"
 #include "statistics_require.h"
 #include "reflib.h"
@@ -215,6 +217,15 @@ jlong jni_allLvmMemUse(JNIEnv *env, jobject jobj) {
 #endif
 }
 
+void jni_openArgo(JNIEnv *env, jobject jobj, jlong Ls) {
+#ifdef NATIVE_ARGO
+    lua_State *L = (lua_State *) Ls;
+    argo_preload(L);
+    LuaJData *jd = (LuaJData *) (G((L))->ud);
+    jd->use_argo = 1;
+#endif
+}
+
 void jni_setUseMemoryPool(JNIEnv *env, jobject jobj, jboolean use) {
     use_mem_pool = (int) use;
 }
@@ -291,7 +302,15 @@ extern void openlibs_forlua(lua_State *L, int debug) {
     ref_open(L);
     init_require(L);
     init_importer(L);
+    luaL_getsubtable(L, LUA_REGISTRYINDEX, "_PRELOAD");
+    lua_pushcfunction(L, isolate_open);
+    lua_setfield(L, -2, ISOLATE_LIB_NAME);
+    lua_pop(L, 1);
 
+    if (debug) {
+        luaopen_socket_core(L);
+        lua_pop(L, 1);
+    }
     lua_atpanic(L, panic_function);
     lua_pushcfunction(L, error_func_traceback);
     lua_setglobal(L, ERROR_FUN);
@@ -330,6 +349,7 @@ jlong jni_createLState(JNIEnv *env, jobject jobj, jboolean debug) {
     ud->create_thread = pthread_self();
 #endif
     ud->type = no;
+    ud->use_argo = 0;
     ud->vm_is_closing = 0;
     if (use_mem_pool) {
         ud->pool = mp_new_pool(POOL_MIN_MEM_SIZE, MP_MAX_SIZE);
@@ -363,6 +383,8 @@ void jni_testMemoryPool(JNIEnv *env, jobject jobj, jlong L) {
 #endif
 
 void jni_openDebug(JNIEnv *env, jobject jobj, jlong L) {
+    luaopen_socket_core((lua_State *) L);
+    lua_pop((lua_State *) L, 1);
 }
 
 void jni_close(JNIEnv *env, jobject jobj, jlong L) {
@@ -372,6 +394,8 @@ void jni_close(JNIEnv *env, jobject jobj, jlong L) {
 #if defined(J_API_INFO)
     _checkThread(ud);
 #endif
+    if (ud->use_argo)
+        argo_close(LS);
     lua_close(LS);
     if (ud->pool) {
         mp_free_pool(ud->pool);

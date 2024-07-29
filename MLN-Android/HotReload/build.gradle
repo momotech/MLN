@@ -70,9 +70,9 @@ dependencies {
 if (!implementation_debug) {
     if (update_hello_group) {
         ext.versionForMomo = rootProject.ext.hotreloadVersion
-        apply from: '../publish_to_hellogroup_maven_central.gradle'
+        apply from: '../upload_maven.gradle'
     } else {
-        project.ext["publish.version"] = hotreloadVersion
-        apply from: "../publish_to_maven_central.gradle"
+        apply from: "../bintrayUpload.gradle"
+        version = hotreloadVersion
     }
 }

@@ -1,0 +1,19 @@
+apply plugin: 'java'
+
+allprojects {
+    repositories {
+        maven {
+            url "http://bjrw-platform-android.dev.bjrw.momo.com:8083/artifactory/momo-dev"
+            credentials {
+                username getProperty("apppkg.artifactory.username").toString()
+                password getProperty("apppkg.artifactory.password").toString()
+            }
+        }
+        google()
+    }
+}
+
+dependencies {
+//    runtime subprojects.findAll { it.getTasksByName("jar", false) }
+    runtime subprojects.collect { project(it.path) }
+}

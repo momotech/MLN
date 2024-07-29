@@ -1,21 +1,12 @@
 apply plugin: 'maven'
 
-File localPropsFile = project.rootProject.file('local.properties')
-if (localPropsFile.exists()) {
-    Properties props = new Properties()
-    props.load(new FileInputStream(localPropsFile))
-    props.each {name, value ->
-        project.ext[name] = value
-    }
-}
-
 //apply plugin: 'armeabi.compat'
 if (upload_symbols) {
     apply plugin: 'rifle.symbols'
 
     symbolsConfig {
-        appId = project.ext.appId
-        appKey = project.ext.appKey
+        appId = "157ddd13f75e8d7b926bbe3656dd83e4"
+        appKey = "3f7d1703d4872e886261cb76c760bf7f"
     }
 }
 

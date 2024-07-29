@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-PACKAGE=('annotation' 'processor' 'mlncore' 'HotReload' 'mlnservics')
-DEFAULT_PACKAGE=('mlncore' 'mlnservics')
+PACKAGE=('annotation' 'processor' 'mlncore' 'HotReload' 'mlnservics' 'yoga' 'mmui')
+DEFAULT_PACKAGE=('mlncore' 'mlnservics' 'mmui')
 
 function inform() {
     echo "usage: ./upload.sh <option> [-p <packages>]"
@@ -9,26 +9,20 @@ function inform() {
     echo "  -p: packages to upload, Default: ${DEFAULT_PACKAGE[@]}"
     echo "      all: ${PACKAGE[@]}"
     echo "  -c: commit and push"
-    echo "  -d: show debug info"
     echo "  -h: help"
 }
 
 # commit automatic, default false
 c=0
-d=0
 options=($@)
 idx=0
 packages=(${DEFAULT_PACKAGE[@]})
-while getopts "hdcp" optname
+while getopts "hcp" optname
 do
     case "$optname" in
         "h")
             inform
             exit 0
-            ;;
-        "d")
-            let idx=idx+1
-            d=1
             ;;
         "c")
             let idx=idx+1
@@ -61,10 +55,6 @@ if [ ${#packages[*]} -eq 0 ]; then
     inform
     exit 1
 fi
-
-sed -i '' "s/\(implementation_debug = \).*/\1false/g" ./build.gradle
-sed -i '' "s/\(update_hello_group = \).*/\1false/g" ./build.gradle
-
 echo "------------------uploading ${#packages[*]} package: ${packages[*]}------------------"
 sleep 1s
 
@@ -80,12 +70,7 @@ for pack in ${packages[*]} ; do
     echo "======================================================"
     echo "-------------------upload ${pack} --------------------"
     echo "======================================================"
-    if [ $d -eq 1 ]; then
-      ${cmd}
-    else
-      ${cmd} >/dev/null
-    fi
-
+    ${cmd} >/dev/null
     uploadResult=$?
     cd ../
     if [[ $uploadResult -ne 0 ]]; then

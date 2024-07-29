@@ -38,14 +38,14 @@ function changeArmSettingAfter() {
 }
 
 function changeSettingBefore {
-    sed -i '' "s/\(include.*\)/\/\/\1/g" ../settings.gradle
-    sed -i '' "s/\/*\(include.*mlnservics\)/\1/g" ../settings.gradle
+    sed -i '' "s/\(.*\)/\/\/\1/g" ../settings.gradle
+    sed -i '' "s/\/*\(.*mlnservics\)/\1/g" ../settings.gradle
 
     sed -i '' "s/\(.*implementation_debug\).*/\1 = false/g" ../build.gradle
 }
 
 function changeSettingAfter {
-    sed -i '' "s/\/*\(include.*\)/\1/g" ../settings.gradle
+    sed -i '' "s/\/*\(.*\)/\1/g" ../settings.gradle
 
     sed -i '' "s/\(.*implementation_debug\).*/\1 = true/g" ../build.gradle
 }
@@ -67,11 +67,15 @@ function changeVersion {
 function closeNativeInfo() {
     sed -i '' "s/#*\(.*DJ_API_INFO\)/#\1/g" ./src/main/jni/mln/CMakeLists.txt
     sed -i '' "s/#*\(.*DMEM_INFO\)/#\1/g" ./src/main/jni/mln/CMakeLists.txt
+
+    sed -i '' "s/^mln_coverage/#mln_coverage/g" ./src/main/jni/mln/CMakeLists.txt
 }
 
 function openNativeInfo() {
     sed -i '' "s/#*\(.*DJ_API_INFO\)/\1/g" ./src/main/jni/mln/CMakeLists.txt
 #    sed -i '' "s/#*\(.*DMEM_INFO\)/\1/g" ./src/main/jni/mln/CMakeLists.txt
+
+    sed -i '' "s/#mln_coverage/mln_coverage/g" ./src/main/jni/mln/CMakeLists.txt
 }
 
 function openStatistic() {
@@ -157,8 +161,8 @@ for ARM in ${arm[*]} ; do
       openNativeInfo
       openStatistic
       echo upload failed!!! code: $uploadResult
-#      echo revert build.gradle file!!!
-#      git checkout -- ../build.gradle
+      echo revert build.gradle file!!!
+      git checkout -- ../build.gradle
       exit $uploadResult
   fi
   echo "----------------------------finish ${ARM}----------------------------"

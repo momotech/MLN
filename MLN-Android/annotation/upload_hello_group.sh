@@ -11,12 +11,12 @@ function inform() {
 }
 
 function changeSettingBefore {
-    sed -i '' "s/\(include.*\)/\/\/\1/g" ../settings.gradle
-    sed -i '' "s/\/*\(include.*annotation\)/\1/g" ../settings.gradle
+    sed -i '' "s/\(.*\)/\/\/\1/g" ../settings.gradle
+    sed -i '' "s/\/*\(.*annotation\)/\1/g" ../settings.gradle
 }
 
 function changeSettingAfter {
-    sed -i '' "s/\/*\(include.*\)/\1/g" ../settings.gradle
+    sed -i '' "s/\/*\(.*\)/\1/g" ../settings.gradle
 }
 
 function changeVersion {

@@ -235,4 +235,8 @@ class LuaCApi {
 
     static native void _registerStringEnum(long L, String lcn, String[] keys, String[] values);
     //</editor-fold>
+
+    static native void _openArgo(long L);
+
+    static native void _freeArgo();
 }

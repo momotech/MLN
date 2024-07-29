@@ -26,3 +26,4 @@ add_definitions(-DSTATISTIC_PERFORMANCE)
 find_library( log-lib log )
 target_link_libraries( mlnbridge ${log-lib}
         luajapi)
+#ADD_SUBDIRECTORY(${CMAKE_CURRENT_SOURCE_DIR}/bc)

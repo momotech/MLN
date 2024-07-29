@@ -1,0 +1,49 @@
+plugins {
+    id 'org.jetbrains.kotlin.jvm' version '1.3.72'
+}
+
+repositories {
+    google()
+    mavenCentral()
+}
+
+dependencies {
+    implementation gradleApi()//gradle sdk
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib:1.3.72'
+    implementation 'com.android.tools.build:gradle:4.1.0'
+
+    implementation 'org.ow2.asm:asm:7.0'
+    implementation 'org.ow2.asm:asm-commons:7.0'
+
+    implementation 'commons-io:commons-io:2.6'
+}
+
+/****使用maven构建****/
+
+apply plugin: 'maven'
+
+def getRepositoryUsername() {
+    return hasProperty('NEXUS_USERNAME') ? NEXUS_USERNAME : ""
+}
+
+def getRepositoryPassword() {
+    return hasProperty('NEXUS_PASSWORD') ? NEXUS_PASSWORD : ""
+}
+
+afterEvaluate { project ->
+    uploadArchives {
+        repositories {
+            mavenDeployer {
+                pom.groupId = "com.jdd.android"
+                pom.artifactId = "mln-plugin"
+                pom.version = "0.0.1_beta6"
+                repository(url: FRAMEWORK_RELEASE_REPOSITORY_URL) {
+                    authentication(userName: getRepositoryUsername(), password: getRepositoryPassword())
+                }
+                snapshotRepository(url: FRAMEWORK_SPAPSHOT_REPOSITORY_URL) {
+                    authentication(userName: getRepositoryUsername(), password: getRepositoryPassword())
+                }
+            }
+        }
+    }
+}

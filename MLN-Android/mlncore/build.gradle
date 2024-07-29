@@ -36,7 +36,6 @@ android {
 }
 
 dependencies {
-    //noinspection GradleDependency
     compileOnly "androidx.appcompat:appcompat:$androidXVersion"
     testImplementation 'junit:junit:4.12'
     testImplementation 'org.mockito:mockito-core:2.23.0'
@@ -45,9 +44,9 @@ dependencies {
 if (!implementation_debug) {
     if (update_hello_group) {
         ext.versionForMomo = rootProject.ext.mlnCoreVersion
-        apply from: '../publish_to_hellogroup_maven_central.gradle'
+        apply from: '../upload_maven.gradle'
     } else {
-        project.ext["publish.version"] = mlnCoreVersion
-        apply from: "../publish_to_maven_central.gradle"
+        apply from: "../bintrayUpload.gradle"
+        version = mlnCoreVersion
     }
 }

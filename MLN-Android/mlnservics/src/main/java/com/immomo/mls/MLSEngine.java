@@ -64,6 +64,7 @@ import com.immomo.mls.fun.lt.SINavigator;
 import com.immomo.mls.fun.lt.SINetworkReachability;
 import com.immomo.mls.fun.lt.SISystem;
 import com.immomo.mls.fun.lt.SITimeManager;
+import com.immomo.mls.fun.lt.SIVibrate;
 import com.immomo.mls.fun.other.Point;
 import com.immomo.mls.fun.other.Rect;
 import com.immomo.mls.fun.other.Size;
@@ -539,6 +540,7 @@ public class MLSEngine {
         return new MLSBuilder.SIHolder[]{
                 new MLSBuilder.SIHolder(SISystem.LUA_CLASS_NAME, SISystem.class),
                 new MLSBuilder.SIHolder(SITimeManager.LUA_CLASS_NAME, SITimeManager.class),
+                new MLSBuilder.SIHolder(SIVibrate.LUA_CLASS_NAME, SIVibrate.class),
                 new MLSBuilder.SIHolder(SClipboard.LUA_CLASS_NAME, SClipboard.class),
                 new MLSBuilder.SIHolder(SIGlobalEvent.LUA_CLASS_NAME, SIGlobalEvent.class),
                 new MLSBuilder.SIHolder(SIApplication.LUA_CLASS_NAME, SIApplication.class),

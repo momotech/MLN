@@ -1,8 +1,8 @@
 #!/bin/bash
 
-MODULE=('mlncore' 'mlnservics')
+MODULE=('mlncore' 'mlnservics' 'mmui')
 ARM=('armeabi-v7a' 'arm64-v8a')
-SO_FILE=('libluajapi.so' 'libmlnbridge.so' )
+SO_FILE=('libluajapi.so' 'libmlnbridge.so' 'libmmuibridge.so')
 RELEASE_DIR="release_so_symbols/obj"
 
 function inform() {

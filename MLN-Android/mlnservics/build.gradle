@@ -48,14 +48,12 @@ android {
 repositories {
     mavenCentral()
 }
-
 dependencies {
     compileOnly 'androidx.legacy:legacy-support-v4:1.0.0'
     compileOnly "androidx.recyclerview:recyclerview:$androidXVersion"
     compileOnly "androidx.appcompat:appcompat:$androidXVersion"
     testImplementation 'junit:junit:4.12'
     testImplementation 'org.mockito:mockito-core:2.23.0'
-    api 'com.cosmos.baseutil:cpp_shared:r17c'
     compileOnly "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     compileOnly "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlin_coroutines_version"
     compileOnly "org.jetbrains.kotlinx:kotlinx-coroutines-android:$kotlin_coroutines_version"
@@ -76,9 +74,11 @@ dependencies {
 if (!implementation_debug) {
     if (update_hello_group) {
         ext.versionForMomo = rootProject.ext.mlnsVersion
-        apply from: '../publish_to_hellogroup_maven_central.gradle'
+        apply from: '../upload_maven.gradle'
     } else {
-        project.ext["publish.version"] = rootProject.ext.mlnsVersion
-        apply from: "../publish_to_maven_central.gradle"
+        apply from: "../bintrayUpload.gradle"
+        version = mlnsVersion
     }
 }
+
+apply from: 'muaGenerator.gradle'

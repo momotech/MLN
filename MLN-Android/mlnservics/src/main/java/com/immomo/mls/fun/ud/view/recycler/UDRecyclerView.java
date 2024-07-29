@@ -299,7 +299,9 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
                 layout.setOrientation(orientation);
                 if (layout instanceof ILayoutInSet) {
                     removeAllItemDecorations(getRecyclerView());//移除之前的decoration
-                    getRecyclerView().addItemDecoration(layout.getItemDecoration());
+                    RecyclerView.ItemDecoration d = layout.getItemDecoration();
+                    if (d != null)
+                        getRecyclerView().addItemDecoration(d);
                     adapter.setMarginForVerticalGridLayout(getRecyclerView());
                 }
             }
@@ -1460,7 +1462,9 @@ public class UDRecyclerView<T extends ViewGroup & IRefreshRecyclerView & OnLoadL
             layout.setAdapter(adapter);
             adapter.setLayout(layout, getView());
             removeAllItemDecorations(recyclerView);//移除之前的decoration
-            recyclerView.addItemDecoration(layout.getItemDecoration());
+            RecyclerView.ItemDecoration d = layout.getItemDecoration();
+            if (d != null)
+                getRecyclerView().addItemDecoration(d);
 
             if (layout instanceof ILayoutInSet) {//修复原CollectionViewGridLayout 两端差异
                 adapter.setMarginForVerticalGridLayout(recyclerView);

@@ -7,7 +7,7 @@ if [ "${gen_every_file}" == "1" ]; then
 else
     only_new=1
 fi
-modules=('mlnservics')
+modules=('mmui' 'mlnservics')
 
 file_name=generateNativeBridge.sh
 

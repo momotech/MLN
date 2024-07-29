@@ -23,6 +23,9 @@
 #include "jtable.h"
 #include "juserdata.h"
 #include "m_mem.h"
+#ifdef NATIVE_ARGO
+#include "argo/argo_lib.h"
+#endif
 #ifdef ANDROID
 #include "assets_reader.h"
 #endif
@@ -55,7 +58,13 @@ jstring jni_traceback(JNIEnv *env, jobject jobj, jlong L);
 void jni_lgc(JNIEnv *env, jobject jobj, jlong L);
 void jni_callMethod(JNIEnv * env, jobject jobj, jlong L, jlong method, jlong arg);
 
+void jni_openArgo(JNIEnv *env, jobject jobj, jlong L);
+
 static JNINativeMethod jni_methods[] = {
+#ifdef NATIVE_ARGO
+    {"_freeArgo", "()V", (void *)argo_free},
+    {"_openArgo", "(J)V", (void *)jni_openArgo},
+#endif
     {"_setUseMemoryPool", "(Z)V", (void *)jni_setUseMemoryPool},
 #ifdef MEM_POOL_TEST
     {"_testMemoryPool", "(J)V", (void *)jni_testMemoryPool},

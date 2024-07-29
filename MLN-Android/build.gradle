@@ -7,20 +7,11 @@ buildscript {
     repositories {
         google()
         mavenCentral()
-        maven {
-            url getProperty('mmdev_url')
-            credentials {
-                username NEXUS_USERNAME
-                password NEXUS_PASSWORD
-            }
-        }
-        maven{ url "https://s01.oss.sonatype.org/content/repositories/releases/"}
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.1.3'
+        classpath 'com.android.tools.build:gradle:4.1.0'
+        classpath 'com.github.dcendents:android-maven-gradle-plugin:1.5'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath "com.jdd.android:mln-plugin:0.0.1_beta5"
-        classpath 'com.cosmos.rifle:symbols:1.0.0.11011231'
     }
 }
 
@@ -28,23 +19,11 @@ allprojects {
     repositories {
         mavenCentral()
         google()
-        maven {out
-            url getProperty('mmdev_url')
-            credentials {
-                username NEXUS_USERNAME
-                password NEXUS_PASSWORD
-            }
-        }
-        maven {
-            url = getProperty('mmpublic_url')
-            allowInsecureProtocol = true
-        }
-        maven{ url "https://s01.oss.sonatype.org/content/repositories/releases/"}
     }
 
     ext {
         implementation_debug = true
-        update_hello_group = true
+        update_hello_group = false
         upload_symbols = false
         compileSdkVersion = 29
         buildToolsVersion = "29.0.3"
@@ -53,12 +32,13 @@ allprojects {
         androidXVersion = "1.1.0"
         protobufVersion = '3.0.1'
 
-        mlnCoreVersion = 'hello_group_1.0_test_new_release'
-        mlnsVersion = 'hello_group_1.0_test_new_release'
-        processorVersion = 'hello_group_1.0_test_new_release'
-        annotationVersion = 'hello_group_1.0_test_new_release'
 
-        hotreloadVersion = 'hello_group_1.0_test_new_release'
+        mlnCoreVersion = 'hello_group_1.0_beta2_6'
+        mlnsVersion = 'hello_group_1.0_beta2_72'
+        processorVersion = 'hello_group_1.0_beta2_16'
+        annotationVersion = 'hello_group_1.0_beta2_15'
+
+        hotreloadVersion = 'hello_group_1.0_beta2_5'
     }
 }
 tasks.withType(JavaCompile) {
