@@ -19,12 +19,13 @@
 
 static MLN_FORCE_INLINE void __mln_lua_createUDLuatable(lua_State *L, int index) {
     lua_checkstack(L, 8);
-    lua_pushvalue(L, index);
-    lua_createtable(L, 8, 0);
-    if(lua_isuserdata(L, -2)){
-        lua_setfenv(L, index);
-    }
-    lua_pop(L, 1);
+//    lua_pushvalue(L, index);
+//    lua_createtable(L, 8, 0);
+//    if(lua_isuserdata(L, -2)){
+//        lua_setFenv(L,index)
+////        lua_getuservalue(L,index);
+//    }
+//    lua_pop(L, 1);
 }
 
 static MLN_FORCE_INLINE void __mln_lua_pushentity(lua_State *L, id<MLNEntityExportProtocol> obj) {

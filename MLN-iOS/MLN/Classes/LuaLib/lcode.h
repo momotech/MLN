@@ -1,5 +1,5 @@
 /*
-** $Id: lcode.h,v 1.48.1.1 2007/12/27 13:02:25 roberto Exp $
+** $Id: lcode.h,v 1.58.1.1 2013/04/12 18:48:47 roberto Exp $
 ** Code generator for Lua
 ** See Copyright Notice in lua.h
 */
@@ -21,31 +21,37 @@
 
 
 /*
-** grep "ORDER OPR" if you change these enums
+** grep "ORDER OPR" if you change these enums  (ORDER OP)
 */
+#define BinOpr mln_BinOpr
 typedef enum BinOpr {
   OPR_ADD, OPR_SUB, OPR_MUL, OPR_DIV, OPR_MOD, OPR_POW,
   OPR_CONCAT,
-  OPR_NE, OPR_EQ,
-  OPR_LT, OPR_LE, OPR_GT, OPR_GE,
+  OPR_EQ, OPR_LT, OPR_LE,
+  OPR_NE, OPR_GT, OPR_GE,
   OPR_AND, OPR_OR,
   OPR_NOBINOPR
 } BinOpr;
 
 
+#define UnOpr mln_UnOpr
 typedef enum UnOpr { OPR_MINUS, OPR_NOT, OPR_LEN, OPR_NOUNOPR } UnOpr;
 
 
-#define getcode(fs,e)	((fs)->f->code[(e)->u.s.info])
+#define getcode(fs,e)	((fs)->f->code[(e)->u.info])
 
 #define luaK_codeAsBx(fs,o,A,sBx)	luaK_codeABx(fs,o,A,(sBx)+MAXARG_sBx)
 
 #define luaK_setmultret(fs,e)	luaK_setreturns(fs, e, LUA_MULTRET)
 
+#define luaK_jumpto(fs,t)	luaK_patchlist(fs, luaK_jump(fs), t)
+
 #define luaK_codeABx mln_luaK_codeABx
 LUAI_FUNC int luaK_codeABx (FuncState *fs, OpCode o, int A, unsigned int Bx);
 #define luaK_codeABC mln_luaK_codeABC
 LUAI_FUNC int luaK_codeABC (FuncState *fs, OpCode o, int A, int B, int C);
+#define luaK_codek mln_luaK_codek
+LUAI_FUNC int luaK_codek (FuncState *fs, int reg, int k);
 #define luaK_fixline mln_luaK_fixline
 LUAI_FUNC void luaK_fixline (FuncState *fs, int line);
 #define luaK_nil mln_luaK_nil
@@ -62,6 +68,8 @@ LUAI_FUNC int luaK_numberK (FuncState *fs, lua_Number r);
 LUAI_FUNC void luaK_dischargevars (FuncState *fs, expdesc *e);
 #define luaK_exp2anyreg mln_luaK_exp2anyreg
 LUAI_FUNC int luaK_exp2anyreg (FuncState *fs, expdesc *e);
+#define luaK_exp2anyregup mln_luaK_exp2anyregup
+LUAI_FUNC void luaK_exp2anyregup (FuncState *fs, expdesc *e);
 #define luaK_exp2nextreg mln_luaK_exp2nextreg
 LUAI_FUNC void luaK_exp2nextreg (FuncState *fs, expdesc *e);
 #define luaK_exp2val mln_luaK_exp2val
@@ -74,6 +82,8 @@ LUAI_FUNC void luaK_self (FuncState *fs, expdesc *e, expdesc *key);
 LUAI_FUNC void luaK_indexed (FuncState *fs, expdesc *t, expdesc *k);
 #define luaK_goiftrue mln_luaK_goiftrue
 LUAI_FUNC void luaK_goiftrue (FuncState *fs, expdesc *e);
+#define luaK_goiffalse mln_luaK_goiffalse
+LUAI_FUNC void luaK_goiffalse (FuncState *fs, expdesc *e);
 #define luaK_storevar mln_luaK_storevar
 LUAI_FUNC void luaK_storevar (FuncState *fs, expdesc *var, expdesc *e);
 #define luaK_setreturns mln_luaK_setreturns
@@ -88,16 +98,19 @@ LUAI_FUNC void luaK_ret (FuncState *fs, int first, int nret);
 LUAI_FUNC void luaK_patchlist (FuncState *fs, int list, int target);
 #define luaK_patchtohere mln_luaK_patchtohere
 LUAI_FUNC void luaK_patchtohere (FuncState *fs, int list);
+#define luaK_patchclose mln_luaK_patchclose
+LUAI_FUNC void luaK_patchclose (FuncState *fs, int list, int level);
 #define luaK_concat mln_luaK_concat
 LUAI_FUNC void luaK_concat (FuncState *fs, int *l1, int l2);
 #define luaK_getlabel mln_luaK_getlabel
 LUAI_FUNC int luaK_getlabel (FuncState *fs);
 #define luaK_prefix mln_luaK_prefix
-LUAI_FUNC void luaK_prefix (FuncState *fs, UnOpr op, expdesc *v);
+LUAI_FUNC void luaK_prefix (FuncState *fs, UnOpr op, expdesc *v, int line);
 #define luaK_infix mln_luaK_infix
 LUAI_FUNC void luaK_infix (FuncState *fs, BinOpr op, expdesc *v);
 #define luaK_posfix mln_luaK_posfix
-LUAI_FUNC void luaK_posfix (FuncState *fs, BinOpr op, expdesc *v1, expdesc *v2);
+LUAI_FUNC void luaK_posfix (FuncState *fs, BinOpr op, expdesc *v1,
+                            expdesc *v2, int line);
 #define luaK_setlist mln_luaK_setlist
 LUAI_FUNC void luaK_setlist (FuncState *fs, int base, int nelems, int tostore);
 

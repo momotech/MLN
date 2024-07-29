@@ -10,7 +10,7 @@
 
 typedef enum : NSInteger {
     MLNLuaTableEnvGlobal = -10002, // default
-    MLNLuaTableEnvRegister = -10000,
+    MLNLuaTableEnvRegister = LUA_REGISTRYINDEX,
 } MLNLuaTableEnvironment;
 
 NS_ASSUME_NONNULL_BEGIN

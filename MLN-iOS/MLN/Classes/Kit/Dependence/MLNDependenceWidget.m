@@ -24,7 +24,7 @@
 }
 
 - (void)setValue:(id)value forUndefinedKey:(NSString *)key {
-    if([key isEqualToString:@"ios64"] &&
+    if([key isEqualToString:@"android64"] &&
        [value isKindOfClass:[NSDictionary class]]) {
         id size = value[@"size"];
         if ([size isKindOfClass:[NSNumber class]]) {

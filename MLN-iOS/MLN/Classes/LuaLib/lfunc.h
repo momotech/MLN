@@ -1,5 +1,5 @@
 /*
-** $Id: lfunc.h,v 2.4.1.1 2007/12/27 13:02:25 roberto Exp $
+** $Id: lfunc.h,v 2.8.1.1 2013/04/12 18:48:47 roberto Exp $
 ** Auxiliary functions to manipulate prototypes and closures
 ** See Copyright Notice in lua.h
 */
@@ -21,9 +21,9 @@
 #define luaF_newproto mln_luaF_newproto
 LUAI_FUNC Proto *luaF_newproto (lua_State *L);
 #define luaF_newCclosure mln_luaF_newCclosure
-LUAI_FUNC Closure *luaF_newCclosure (lua_State *L, int nelems, Table *e);
+LUAI_FUNC Closure *luaF_newCclosure (lua_State *L, int nelems);
 #define luaF_newLclosure mln_luaF_newLclosure
-LUAI_FUNC Closure *luaF_newLclosure (lua_State *L, int nelems, Table *e);
+LUAI_FUNC Closure *luaF_newLclosure (lua_State *L, int nelems);
 #define luaF_newupval mln_luaF_newupval
 LUAI_FUNC UpVal *luaF_newupval (lua_State *L);
 #define luaF_findupval mln_luaF_findupval
@@ -32,8 +32,6 @@ LUAI_FUNC UpVal *luaF_findupval (lua_State *L, StkId level);
 LUAI_FUNC void luaF_close (lua_State *L, StkId level);
 #define luaF_freeproto mln_luaF_freeproto
 LUAI_FUNC void luaF_freeproto (lua_State *L, Proto *f);
-#define luaF_freeclosure mln_luaF_freeclosure
-LUAI_FUNC void luaF_freeclosure (lua_State *L, Closure *c);
 #define luaF_freeupval mln_luaF_freeupval
 LUAI_FUNC void luaF_freeupval (lua_State *L, UpVal *uv);
 #define luaF_getlocalname mln_luaF_getlocalname

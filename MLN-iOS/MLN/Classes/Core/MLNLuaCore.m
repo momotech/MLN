@@ -34,7 +34,7 @@ static MLN_FORCE_INLINE int mln_libsize (const struct mln_objc_method *list) {
 static int mln_errorFunc_traceback (lua_State *L) {
     if(!lua_isstring(L,1))
         return 1;
-    lua_getfield(L,LUA_GLOBALSINDEX,"debug");
+    lua_getglobal(L, "debug");
     if(lua_istable(L,-1)) {
         lua_pop(L,1);
         return 1;
@@ -403,14 +403,14 @@ static void mln_import (lua_State *L, const char *class) {
     if (libName) {
         int size = mln_libsize(list);
         /* check whether lib already exists */
-        luaL_findtable(L, LUA_REGISTRYINDEX, "_LOADED", 1);
+        luaL_findtable(L, LUA_REGISTRYINDEX, "_LOADED", 1);  /* get _LOADED table */
         lua_getfield(L, -1, libName);  /* get _LOADED[libname] */
         if (!lua_istable(L, -1)) {  /* not found? */
             lua_pop(L, 1);  /* remove previous result */
             /* try global variable (and create one if it does not exist) */
-            if (luaL_findtable(L, LUA_GLOBALSINDEX, libName, size) != NULL)
-            {
-                mln_lua_error(L, @"name conflict for module " LUA_QS, libName);
+            lua_pushglobaltable(L);
+            if (luaL_findtable(L, 0, libName, size) != NULL) {
+                luaL_error(L, "name conflict for module " LUA_QS, libName);
             }
             lua_pushvalue(L, -1);
             lua_setfield(L, -3, libName);  /* _LOADED[libname] = new table */
